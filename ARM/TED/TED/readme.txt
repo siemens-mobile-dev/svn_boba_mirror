@@ -1,4 +1,4 @@
- TED v1.2 (версия для S75)
+ TED v1.3 (версия для S75)
 
  Conception of TED on SL45 by Rst7/CBSIE.
 
