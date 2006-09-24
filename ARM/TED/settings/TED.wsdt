@@ -17,7 +17,7 @@
     <Build><ColumnWidth0>20</ColumnWidth0><ColumnWidth1>916</ColumnWidth1><ColumnWidth2>244</ColumnWidth2><ColumnWidth3>61</ColumnWidth3></Build></Static>
     <Windows>
       
-    <Wnd2>
+    <Wnd0>
         <Tabs>
           <Tab>
             <Identity>TabID-19102-27654</Identity>
@@ -29,20 +29,20 @@
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd2><Wnd3><Tabs><Tab><Identity>TabID-9361-16765</Identity><TabName>Build</TabName><Factory>Build</Factory><Session/></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd3></Windows>
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1><Tabs><Tab><Identity>TabID-9361-16765</Identity><TabName>Build</TabName><Factory>Build</Factory><Session/></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd1></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\main.c</Filename><XPos>0</XPos><YPos>1134</YPos><SelStart>25984</SelStart><SelEnd>25984</SelEnd></Tab><ActiveTab>0</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\linework.c</Filename><XPos>0</XPos><YPos>15</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\convert_simple.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>445</SelStart><SelEnd>445</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\convert_format.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\func.asm</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>447</SelStart><SelEnd>447</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\swilib.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>461</SelStart><SelEnd>461</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\saver.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\test.xcl</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>273</SelStart><SelEnd>273</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\config_data.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>747</SelStart><SelEnd>747</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>10</SelStart><SelEnd>21</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\linework.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\convert_simple.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\convert_format.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>21</SelStart><SelEnd>21</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\func.asm</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>447</SelStart><SelEnd>447</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\swilib.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>461</SelStart><SelEnd>461</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\saver.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>21</SelStart><SelEnd>21</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\test.xcl</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>273</SelStart><SelEnd>273</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>E:\ARM\TED\config_data.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>747</SelStart><SelEnd>747</SelEnd></Tab><ActiveTab>8</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00a1e470><key>iaridepm1</key></Toolbar-00a1e470></Sizes></Row0></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>744</Bottom><Right>198</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>202840</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>756592</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>202840</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>202840</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-00a1e470><key>iaridepm1</key></Toolbar-00a1e470></Sizes></Row0></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>744</Bottom><Right>198</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>202840</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>756592</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>202840</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>202840</sizeVertCY></Rect></Wnd1></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 

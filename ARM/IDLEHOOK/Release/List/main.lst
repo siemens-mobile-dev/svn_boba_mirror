@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                            #
-# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    08/Sep/2006  13:29:30 #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:30:00 #
 # Copyright 1999-2005 IAR Systems. All rights reserved.                      #
 #                                                                            #
 #    Cpu mode        =  interwork                                            #
@@ -20,7 +20,7 @@
 ##############################################################################
 
 E:\ARM\IDLEHOOK\main.c
-      1          #include "E:\ARM\swilib.h"
+      1          #include "..\swilib.h"
       2          
       3          #define UPDATE_TIME (1*262)
       4          #define WIDTH 50

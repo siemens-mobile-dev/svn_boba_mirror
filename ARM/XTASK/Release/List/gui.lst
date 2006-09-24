@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                            #
-# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    08/Sep/2006  13:36:06 #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:29:18 #
 # Copyright 1999-2005 IAR Systems. All rights reserved.                      #
 #                                                                            #
 #    Cpu mode        =  interwork                                            #
@@ -19,7 +19,7 @@
 ##############################################################################
 
 E:\ARM\XTASK\gui.c
-      1          #include "E:\ARM\swilib.h"
+      1          #include "..\swilib.h"
       2          
       3          extern int mode;
       4          extern CSM_RAM *under_idle;

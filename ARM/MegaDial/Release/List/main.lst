@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                            #
-# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    30/Aug/2006  08:03:28 #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:29:39 #
 # Copyright 1999-2005 IAR Systems. All rights reserved.                      #
 #                                                                            #
 #    Cpu mode        =  interwork                                            #
@@ -20,7 +20,7 @@
 ##############################################################################
 
 E:\ARM\MegaDial\main.c
-      1          #include "E:\ARM\swilib.h"
+      1          #include "..\swilib.h"
       2          
       3          #define MAX_RECORDS 5000
       4          

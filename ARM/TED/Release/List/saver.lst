@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                            #
-# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:16:09 #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:28:54 #
 # Copyright 1999-2005 IAR Systems. All rights reserved.                      #
 #                                                                            #
 #    Cpu mode        =  interwork                                            #
@@ -19,7 +19,7 @@
 ##############################################################################
 
 E:\ARM\TED\saver.c
-      1          #include "E:\ARM\swilib.h"
+      1          #include "..\swilib.h"
       2          
       3          extern unsigned int STKSZ;
       4          extern unsigned int STKSZ50;

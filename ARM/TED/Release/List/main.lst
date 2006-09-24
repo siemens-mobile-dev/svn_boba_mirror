@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                            #
-# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:16:09 #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:28:53 #
 # Copyright 1999-2005 IAR Systems. All rights reserved.                      #
 #                                                                            #
 #    Cpu mode        =  interwork                                            #
@@ -19,7 +19,7 @@
 ##############################################################################
 
 E:\ARM\TED\main.c
-      1          #include "E:\ARM\swilib.h"
+      1          #include "..\swilib.h"
       2          
 
    \                                 In segment DATA_I, align 4, align-sorted
@@ -8306,9 +8306,9 @@ E:\ARM\TED\main.c
    \              0A53        
    \   00000020   657020323420       DC8 65H, 70H, 20H, 32H, 34H, 20H, 32H, 30H
    \              3230        
-   \   00000028   30360A31373A       DC8 30H, 36H, 0AH, 31H, 37H, 3AH, 31H, 36H
-   \              3136        
-   \   00000030   3A30330A436F       DC8 3AH, 30H, 33H, 0AH, 43H, 6FH, 70H, 79H
+   \   00000028   30360A31373A       DC8 30H, 36H, 0AH, 31H, 37H, 3AH, 32H, 38H
+   \              3238        
+   \   00000030   3A34360A436F       DC8 3AH, 34H, 36H, 0AH, 43H, 6FH, 70H, 79H
    \              7079        
    \   00000038   726967687428       DC8 72H, 69H, 67H, 68H, 74H, 28H, 43H, 29H
    \              4329        

@@ -1,4 +1,4 @@
-#include "E:\ARM\swilib.h"
+#include "..\swilib.h"
 
 #define UPDATE_TIME (1*262)
 #define WIDTH 50
