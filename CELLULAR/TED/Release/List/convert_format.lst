@@ -1,0 +1,1087 @@
+##############################################################################
+#                                                                            #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    27/Aug/2006  12:41:39 #
+# Copyright 1999-2005 IAR Systems. All rights reserved.                      #
+#                                                                            #
+#    Cpu mode        =  interwork                                            #
+#    Endian          =  little                                               #
+#    Stack alignment =  4                                                    #
+#    Source file     =  E:\ARM\TED\convert_format.c                          #
+#    Command line    =  E:\ARM\TED\convert_format.c -lC                      #
+#                       E:\ARM\TED\Release\List\ -o E:\ARM\TED\Release\Obj\  #
+#                       -s9 --no_unroll --no_clustering --cpu_mode arm       #
+#                       --endian little --cpu ARM926EJ-S --stack_align 4     #
+#                       --interwork -e --fpu None -I D:\IARARM\ARM\INC\      #
+#    List file       =  E:\ARM\TED\Release\List\convert_format.lst           #
+#    Object file     =  E:\ARM\TED\Release\Obj\convert_format.r79            #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+E:\ARM\TED\convert_format.c
+      1          #include "E:\ARM\swilib.h"
+      2          
+
+   \                                 In segment CODE, align 4, keep-with-next
+      3          void memset(void *dst, int v, unsigned int len)
+      4          {
+      5            char *d=(char *)dst;
+      6            if (len)
+   \                     memset:
+   \   00000000   000052E3           CMP      R2,#+0
+   \   00000004   1EFF2F01           BXEQ     LR
+      7            {
+      8              do
+      9              {
+     10                *d++=v;
+   \                     ??memset_0:
+   \   00000008   ........           STRB     R1,[R0], #+1
+     11              }
+     12              while(--len);
+   \   0000000C   012052E2           SUBS     R2,R2,#+1
+   \   00000010   FCFFFF1A           BNE      ??memset_0
+     13            }
+     14          }
+   \   00000014   1EFF2FE1           BX       LR               ;; return
+     15          
+     16          extern unsigned long curline; //Наружная переменная, счетчик строк
+     17          extern unsigned int max_x; //Наружная переменная - макс. размер строки
+     18          
+     19          extern char *dstk;
+     20          extern char *ustk;
+     21          
+     22          extern unsigned int FL_loader(int fin, unsigned int p);
+     23          extern unsigned int FL_saver(int fs, unsigned int p);
+     24          
+     25          extern int win_dos_koi;
+     26          extern const char wintranslation[];
+     27          extern const char koi8translation[];
+     28          
+
+   \                                 In segment DATA_C, align 4, align-sorted
+     29          static const char ctype[128]=
+   \                     ctype:
+   \   00000000   020101010102       DC8 2, 1, 1, 1, 1, 2, 1, 1, 2, 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1
+   \              010102030101
+   \              010102010101
+   \              0102010101  
+   \   00000017   010101030203       DC8 1, 1, 1, 3, 2, 3, 2, 2, 2, 2, 1, 1, 1, 1, 2, 1, 1, 2, 3, 1, 1, 1, 1
+   \              020202020101
+   \              010102010102
+   \              0301010101  
+   \   0000002E   020100000000       DC8 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              000000000000
+   \              0000000000  
+   \   00000045   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              000000000000
+   \              0000000000  
+   \   0000005C   000000000101       DC8 0, 0, 0, 0, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 3, 2, 3, 2, 2, 2, 2, 2, 2
+   \              010201010101
+   \              010103020302
+   \              0202020202  
+   \   00000073   020202020200       DC8 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00          
+     30          {
+     31            2,1,1,1,1,2,1,1, 2,3,1,1,1,1,2,1,
+     32            1,1,1,2,1,1,1,1, 1,1,3,2,3,2,2,2,
+     33            2,1,1,1,1,2,1,1, 2,3,1,1,1,1,2,1,
+     34            0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,
+     35            0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,
+     36            0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,
+     37            1,1,1,2,1,1,1,1, 1,1,3,2,3,2,2,2,
+     38            2,2,2,2,2,2,2,2, 0,0,0,0,0,0,0,0,
+     39          };
+     40          
+
+   \                                 In segment CODE, align 4, keep-with-next
+     41          int GetCharType_x(int c)
+     42          {
+     43            if (c==' ') return(4); //Пробел
+   \                     GetCharType_x:
+   \   00000000   200050E3           CMP      R0,#+32
+   \   00000004   0400A003           MOVEQ    R0,#+4
+   \   00000008   1EFF2F01           BXEQ     LR
+     44            if (c<32) return(5); //Конец строки
+   \   0000000C   200050E3           CMP      R0,#+32
+   \   00000010   0500A0B3           MOVLT    R0,#+5
+   \   00000014   1EFF2FB1           BXLT     LR
+     45            if ((c=='i')||(c=='I')) return 2; //Гласная для украинского ;)
+   \   00000018   690050E3           CMP      R0,#+105
+   \   0000001C   49005013           CMPNE    R0,#+73
+   \   00000020   0200A003           MOVEQ    R0,#+2
+   \   00000024   1EFF2F01           BXEQ     LR
+     46            if (c<128) return(0); //Не русская буква
+   \   00000028   800050E3           CMP      R0,#+128
+   \   0000002C   0D0000BA           BLT      ??GetCharType_x_0
+     47            switch(win_dos_koi)
+   \   00000030   ........           LDR      R1,??DataTable1  ;; win_dos_koi
+   \   00000034   001091E5           LDR      R1,[R1, #+0]
+   \   00000038   011051E2           SUBS     R1,R1,#+1
+   \   0000003C   0200000A           BEQ      ??GetCharType_x_1
+   \   00000040   011051E2           SUBS     R1,R1,#+1
+   \   00000044   0200000A           BEQ      ??GetCharType_x_2
+   \   00000048   040000EA           B        ??GetCharType_x_3
+     48            {
+     49            case 1:
+     50              //Win->Dos
+     51              c=wintranslation[c-128];
+   \                     ??GetCharType_x_1:
+   \   0000004C   2C109FE5           LDR      R1,??GetCharType_x_4  ;; wintranslation
+   \   00000050   000000EA           B        ??GetCharType_x_5
+     52              break;
+     53            case 2:
+     54              //Koi8->Dos
+     55              c=koi8translation[c-128];
+   \                     ??GetCharType_x_2:
+   \   00000054   28109FE5           LDR      R1,??GetCharType_x_4+0x4  ;; koi8translation
+   \                     ??GetCharType_x_5:
+   \   00000058   010080E0           ADD      R0,R0,R1
+   \   0000005C   800050E5           LDRB     R0,[R0, #-128]
+     56              break;
+     57            }
+     58            if (c<128) return(0); //Не русская буква
+   \                     ??GetCharType_x_3:
+   \   00000060   800050E3           CMP      R0,#+128
+   \   00000064   010000AA           BGE      ??GetCharType_x_6
+   \                     ??GetCharType_x_0:
+   \   00000068   0000A0E3           MOV      R0,#+0
+   \   0000006C   1EFF2FE1           BX       LR
+     59            return(ctype[c-128]);
+   \                     ??GetCharType_x_6:
+   \   00000070   10109FE5           LDR      R1,??GetCharType_x_4+0x8  ;; ctype
+   \   00000074   010080E0           ADD      R0,R0,R1
+   \   00000078   800050E5           LDRB     R0,[R0, #-128]
+   \   0000007C   1EFF2FE1           BX       LR               ;; return
+   \                     ??GetCharType_x_4:
+   \   00000080   ........           DC32     wintranslation
+   \   00000084   ........           DC32     koi8translation
+   \   00000088   ........           DC32     ctype
+     60          }
+     61          
+     62          unsigned int def_code (void);
+     63          
+     64          //Процедура форматирования текста
+
+   \                                 In segment CODE, align 4, keep-with-next
+     65          unsigned int ConvertFormat(int fin,int fs,int fmt)
+     66          {
+   \                     ConvertFormat:
+   \   00000000   F74F2DE9           PUSH     {R0-R2,R4-R11,LR}
+   \   00000004   43DF4DE2           SUB      SP,SP,#+268
+     67            unsigned int c0;
+     68            unsigned int c1=1; //Начать с пропуска символов
+     69            unsigned int c2=1;
+     70            unsigned int c3=32; //Начать с абзаца, раз у нас форматирование ;)
+     71          
+     72            //unsigned int last_space;
+     73          
+     74            unsigned int sl;
+     75          
+     76            register unsigned int s;
+     77            register unsigned int d;
+     78            char ct[256]; //Массив для описания типа символов
+     79          
+     80            char *ds=dstk;
+     81            register char *us=ustk;
+   \   00000008   EC039FE5           LDR      R0,??ConvertFormat_0  ;; ustk
+   \   0000000C   ........           LDR      R9,??DataTable1  ;; win_dos_koi
+   \   00000010   006090E5           LDR      R6,[R0, #+0]
+   \   00000014   0110A0E3           MOV      R1,#+1
+   \   00000018   00108DE5           STR      R1,[SP, #+0]
+   \   0000001C   ........           LDR      R1,??DataTable4  ;; dstk
+     82          
+     83            extern unsigned int STKSZ50;
+     84          
+     85            int maxstk=STKSZ50;
+     86          
+     87            d=0;
+   \   00000020   00A0A0E3           MOV      R10,#+0
+   \   00000024   001091E5           LDR      R1,[R1, #+0]
+   \   00000028   0A00A0E1           MOV      R0,R10
+   \   0000002C   04108DE5           STR      R1,[SP, #+4]
+   \   00000030   C8139FE5           LDR      R1,??ConvertFormat_0+0x4  ;; STKSZ50
+     88            us[d]=0;
+     89            sl=0;
+   \   00000034   0080A0E1           MOV      R8,R0
+   \   00000038   001091E5           LDR      R1,[R1, #+0]
+   \   0000003C   0140A0E3           MOV      R4,#+1
+   \   00000040   08108DE5           STR      R1,[SP, #+8]
+   \   00000044   0000C6E5           STRB     R0,[R6, #+0]
+     90            //last_space=0xFFFF;
+     91            s=FL_loader(fin,0xFFFFFFFF);
+   \   00000048   0010E0E1           MVN      R1,R0
+   \   0000004C   0C019DE5           LDR      R0,[SP, #+268]
+   \   00000050   2050A0E3           MOV      R5,#+32
+   \   00000054   ........           _BLF     FL_loader,??FL_loader??rA
+   \   00000058   0070A0E1           MOV      R7,R0
+     92          
+     93            if (win_dos_koi==0xFF) win_dos_koi=def_code ();
+   \   0000005C   000099E5           LDR      R0,[R9, #+0]
+   \   00000060   FF0050E3           CMP      R0,#+255
+   \   00000064   0100001A           BNE      ??ConvertFormat_1
+   \   00000068   ........           BL       def_code
+   \   0000006C   000089E5           STR      R0,[R9, #+0]
+     94          
+     95            //Подготавливаем массив ct
+     96            c0=0;
+   \                     ??ConvertFormat_1:
+   \   00000070   0090A0E3           MOV      R9,#+0
+   \   00000074   0CB08DE2           ADD      R11,SP,#+12
+     97            do
+     98            {
+     99              ct[c0]=GetCharType_x(c0);
+   \                     ??ConvertFormat_2:
+   \   00000078   0900A0E1           MOV      R0,R9
+   \   0000007C   ........           BL       GetCharType_x
+   \   00000080   ........           STRB     R0,[R11], #+1
+    100            }
+    101            while((++c0)!=sizeof(ct));
+   \   00000084   019089E2           ADD      R9,R9,#+1
+   \   00000088   400F59E3           CMP      R9,#+256
+   \   0000008C   F9FFFF1A           BNE      ??ConvertFormat_2
+    102          
+    103          #define GetCharType(VAR) (ct[VAR])
+    104          
+    105            for(;;)
+    106            {
+    107              c0=c1;
+   \                     ??ConvertFormat_3:
+   \   00000090   0490A0E1           MOV      R9,R4
+    108              c1=c2;
+   \   00000094   00409DE5           LDR      R4,[SP, #+0]
+    109              c2=c3;
+   \   00000098   00508DE5           STR      R5,[SP, #+0]
+   \   0000009C   030000EA           B        ??ConvertFormat_4
+    110            LSKIP1:
+    111              c3=ds[s++];
+    112              if (s>=maxstk) s=FL_loader(fin,s);
+    113              if (c3==9) c3=' '; //Замена табуляции на пробел
+   \                     ??ConvertFormat_5:
+   \   000000A0   2050A0E3           MOV      R5,#+32
+   \                     ??ConvertFormat_6:
+   \   000000A4   00009DE5           LDR      R0,[SP, #+0]
+   \   000000A8   200050E3           CMP      R0,#+32
+   \   000000AC   1600001A           BNE      ??ConvertFormat_7
+   \                     ??ConvertFormat_4:
+   \   000000B0   04009DE5           LDR      R0,[SP, #+4]
+   \   000000B4   0050D7E7           LDRB     R5,[R7, +R0]
+   \   000000B8   08009DE5           LDR      R0,[SP, #+8]
+   \   000000BC   017087E2           ADD      R7,R7,#+1
+   \   000000C0   000057E1           CMP      R7,R0
+   \   000000C4   0300003A           BCC      ??ConvertFormat_8
+   \   000000C8   0C019DE5           LDR      R0,[SP, #+268]
+   \   000000CC   0710A0E1           MOV      R1,R7
+   \   000000D0   ........           _BLF     FL_loader,??FL_loader??rA
+   \   000000D4   0070A0E1           MOV      R7,R0
+   \                     ??ConvertFormat_8:
+   \   000000D8   090055E3           CMP      R5,#+9
+    114              if (c3==1) c3=' '; //Замена служ. символов
+   \   000000DC   01005513           CMPNE    R5,#+1
+   \   000000E0   EEFFFF0A           BEQ      ??ConvertFormat_5
+    115              if ((c3==' ')&&(c2==' ')) goto LSKIP1; //Пропуск пробелов
+   \   000000E4   200055E3           CMP      R5,#+32
+   \   000000E8   EDFFFF0A           BEQ      ??ConvertFormat_6
+    116              if ((c3==13)&&(ds[s]==10)) s++; //0D0A->0D
+   \   000000EC   0D0055E3           CMP      R5,#+13
+   \   000000F0   0500001A           BNE      ??ConvertFormat_7
+   \   000000F4   04009DE5           LDR      R0,[SP, #+4]
+   \   000000F8   0000D7E7           LDRB     R0,[R7, +R0]
+   \   000000FC   0A0050E3           CMP      R0,#+10
+   \   00000100   0800001A           BNE      ??ConvertFormat_9
+   \   00000104   017087E2           ADD      R7,R7,#+1
+   \   00000108   060000EA           B        ??ConvertFormat_9
+    117              if ((c3==10)&&(ds[s]==13)) s++; //0A0D->0A
+   \                     ??ConvertFormat_7:
+   \   0000010C   0A0055E3           CMP      R5,#+10
+   \   00000110   0400001A           BNE      ??ConvertFormat_9
+   \   00000114   04009DE5           LDR      R0,[SP, #+4]
+    118              if (c3==10) c3=13; //0A->0D
+   \   00000118   0D50A0E3           MOV      R5,#+13
+   \   0000011C   0000D7E7           LDRB     R0,[R7, +R0]
+   \   00000120   0D0050E3           CMP      R0,#+13
+   \   00000124   01708702           ADDEQ    R7,R7,#+1
+    119              if (c0==0) goto LEOF; //Конец текста
+   \                     ??ConvertFormat_9:
+   \   00000128   06008AE0           ADD      R0,R10,R6
+   \   0000012C   01108AE2           ADD      R1,R10,#+1
+   \   00000130   000059E3           CMP      R9,#+0
+   \   00000134   0E00001A           BNE      ??ConvertFormat_10
+    120              if (fmt==1)
+    121              {
+    122                if ((c0>' ')&&(c1=='-')&&(c2==13)&&(c3>' '))
+    123                {
+    124          	//Удаление переноса
+    125          	c1=1;
+    126          	c2=1;
+    127          	goto LSYM;
+    128                }
+    129                if ((c0>' ')&&(c1==13)&&(c2>' '))
+    130                {
+    131          	//Замена перевода строки на пробел между словами
+    132          	c1=' ';
+    133          	goto LSYM;
+    134                }
+    135              }
+    136              if (c0==13)
+    137              {
+    138                //Во всех других случаях перенос строки - это абзац
+    139                //last_space=0xFFFF;
+    140                sl=0;
+    141                d=FL_saver(fs,d); //Сливаем не слитое
+    142                us[d++]=0; //Конец строки
+    143                curline++;
+    144                if ((c1>' ')&&(fmt==2))
+    145                {
+    146          	us[d++]=' '; //Если сл. символ - буква, добавляем отступ
+    147          	sl++;
+    148                }
+    149                continue;
+    150              }
+    151            LSYM:
+    152              if (c0!=1)
+    153              {
+    154                us[d]=c0;
+    155                //if ((c0==' ')&&sl) last_space=d; //Запоминаем последний пробел
+    156                d++;
+    157                sl++;
+    158                if (sl>max_x)
+    159                {
+    160          	//Слишком длинная строка, ищем, куда вставить перенос
+    161          	unsigned int pp=d+2; //Начинаем с конца c учетом доп. символов
+    162          	unsigned int pg1=0xFFFFFFFF;
+    163          	unsigned int pg2=0xFFFFFFFF;
+    164          	int c;
+    165          	us[d]=c1;
+    166          	us[d+1]=c2;
+    167          	us[d+2]=c3;
+    168          	for(;;)
+    169          	{
+    170          	  c=GetCharType(us[pp]);
+    171          	  if ((c==5)&&(pp<d))
+    172          	  {
+    173          	    //Нет подходящих пробелов, режем по живому ;)
+    174          	  L_CUT:
+    175          	    d--;
+    176          	    d=FL_saver(fs,d);
+    177          	    us[d++]=0;
+    178          	    us[d++]=c0;
+    179          	    sl=1;
+    180          	    break;
+    181          	  }
+    182          	  if ((c==4)&&(pp<d))
+    183          	  {
+    184          	    //Режем по пробелу
+    185          	    if (us[pp-1]<2) goto L_CUT; //Первый пробел не обрезаем
+    186          	    us[pp]=0; //Обрезаем по пробелу и признак форматирования
+    187          	    sl=(d-pp)-1;
+    188          	    d=FL_saver(fs,d); //Сливаем не слитое
+    189          	    //last_space=0xFFFF;
+    190          	    break;
+    191          	  }
+    192          	  if ((c<1)||(c>3))
+    193          	  {
+    194          	    pg1=0xFFFFFFFF; //Новое слово
+    195          	    pg2=0xFFFFFFFF;
+    196          	  }
+    197          	  if (c==2)
+    198          	  {
+    199          	    pg2=pg1;
+    200          	    pg1=pp;
+    201          	    if (pg2!=0xFFFFFFFF)
+    202          	    {
+    203          	      //Нашли 2 гласных
+    204          	      unsigned int pm=(pg2+pg1+1)>>1;
+    205          	      if (GetCharType(us[pm])==3) pm++; //Если нельзя отрывать букву
+    206          	      c=GetCharType(us[pm-2]);
+    207          	      if ((pm<(d-1))&&(c>0)&&(c<4))
+    208          	      {
+    209          		if (pm==pg2)
+    210          		{
+    211          		  //Если гласная непостредственно справа, проверяем не одна ли она
+    212          		  c=GetCharType(us[pg2+1]);
+    213          		  if ((c<1)||(c>3)) goto L_NOPERE;
+    214          		}
+    215          		{
+    216          		  //memmove(us+(pm+2),us+pm,d-pm);
+    217          		  unsigned int len=d-pm;
+    218          		  if (len)
+    219          		  {
+    220          		    char *d=us+(pm+2)+len-1;
+    221          		    char *s=us+pm+len-1;
+    222          		    do
+    223          		    {
+    224          		      *d=*s;
+    225          		      d--;
+    226          		      s--;
+    227          		    }
+    228          		    while(--len);
+    229          		  }
+    230          		}
+    231          		us[pm++]='-';
+    232          		us[pm++]=0;
+    233          		d+=2; //Т.к. вставили 2 символа
+    234          		sl=(d-pm);
+    235          		d=FL_saver(fs,d); //Сливаем не слитое
+    236          		break;
+    237          	      L_NOPERE:
+    238          		;
+    239          	      }
+    240          	    }
+    241          	  }
+    242          	  pp--;
+    243          	}
+    244          	curline++;
+    245                }
+    246              }
+    247            }
+    248          LEOF:
+    249            if (sl) //Не записана последняя строка
+   \   00000138   000058E3           CMP      R8,#+0
+   \   0000013C   0700000A           BEQ      ??ConvertFormat_11
+    250            {
+    251              us[d++]=0;
+   \   00000140   01A0A0E1           MOV      R10,R1
+    252              curline++;
+   \   00000144   B8129FE5           LDR      R1,??ConvertFormat_0+0x8  ;; curline
+   \   00000148   0020A0E3           MOV      R2,#+0
+   \   0000014C   0020C0E5           STRB     R2,[R0, #+0]
+   \   00000150   AC029FE5           LDR      R0,??ConvertFormat_0+0x8  ;; curline
+   \   00000154   001091E5           LDR      R1,[R1, #+0]
+   \   00000158   011081E2           ADD      R1,R1,#+1
+   \   0000015C   001080E5           STR      R1,[R0, #+0]
+    253            }
+    254            d=FL_saver(fs,d); //Сливаем не слитое
+    255            return(d);
+   \                     ??ConvertFormat_11:
+   \   00000160   10019DE5           LDR      R0,[SP, #+272]
+   \   00000164   0A10A0E1           MOV      R1,R10
+   \   00000168   ........           _BLF     FL_saver,??FL_saver??rA
+   \   0000016C   46DF8DE2           ADD      SP,SP,#+280
+   \   00000170   F08FBDE8           POP      {R4-R11,PC}      ;; return
+   \                     ??ConvertFormat_10:
+   \   00000174   14219DE5           LDR      R2,[SP, #+276]
+   \   00000178   010052E3           CMP      R2,#+1
+   \   0000017C   1300001A           BNE      ??ConvertFormat_12
+   \   00000180   210059E3           CMP      R9,#+33
+   \   00000184   1100003A           BCC      ??ConvertFormat_12
+   \   00000188   2D0054E3           CMP      R4,#+45
+   \   0000018C   0800001A           BNE      ??ConvertFormat_13
+   \   00000190   00209DE5           LDR      R2,[SP, #+0]
+   \   00000194   0D0052E3           CMP      R2,#+13
+   \   00000198   2600001A           BNE      ??ConvertFormat_14
+   \   0000019C   210055E3           CMP      R5,#+33
+   \   000001A0   2400003A           BCC      ??ConvertFormat_14
+   \   000001A4   0140A0E3           MOV      R4,#+1
+   \   000001A8   0130A0E3           MOV      R3,#+1
+   \   000001AC   00308DE5           STR      R3,[SP, #+0]
+   \   000001B0   200000EA           B        ??ConvertFormat_14
+   \                     ??ConvertFormat_13:
+   \   000001B4   0D0054E3           CMP      R4,#+13
+   \   000001B8   1E00001A           BNE      ??ConvertFormat_14
+   \   000001BC   00209DE5           LDR      R2,[SP, #+0]
+   \   000001C0   210052E3           CMP      R2,#+33
+   \   000001C4   1B00003A           BCC      ??ConvertFormat_14
+   \   000001C8   2040A0E3           MOV      R4,#+32
+   \   000001CC   190000EA           B        ??ConvertFormat_14
+   \                     ??ConvertFormat_12:
+   \   000001D0   0D0059E3           CMP      R9,#+13
+   \   000001D4   1500001A           BNE      ??ConvertFormat_15
+   \   000001D8   10019DE5           LDR      R0,[SP, #+272]
+   \   000001DC   0A10A0E1           MOV      R1,R10
+   \   000001E0   ........           _BLF     FL_saver,??FL_saver??rA
+   \   000001E4   0010A0E3           MOV      R1,#+0
+   \   000001E8   0610C0E7           STRB     R1,[R0, +R6]
+   \   000001EC   10129FE5           LDR      R1,??ConvertFormat_0+0x8  ;; curline
+   \   000001F0   01A080E2           ADD      R10,R0,#+1
+   \   000001F4   08029FE5           LDR      R0,??ConvertFormat_0+0x8  ;; curline
+   \   000001F8   001091E5           LDR      R1,[R1, #+0]
+   \   000001FC   0080A0E3           MOV      R8,#+0
+   \   00000200   011081E2           ADD      R1,R1,#+1
+   \   00000204   001080E5           STR      R1,[R0, #+0]
+   \   00000208   210054E3           CMP      R4,#+33
+   \   0000020C   9FFFFF3A           BCC      ??ConvertFormat_3
+   \   00000210   14019DE5           LDR      R0,[SP, #+276]
+   \   00000214   020050E3           CMP      R0,#+2
+   \   00000218   9CFFFF1A           BNE      ??ConvertFormat_3
+   \   0000021C   2000A0E3           MOV      R0,#+32
+   \   00000220   0600CAE7           STRB     R0,[R10, +R6]
+   \   00000224   01A08AE2           ADD      R10,R10,#+1
+   \   00000228   0180A0E3           MOV      R8,#+1
+   \   0000022C   97FFFFEA           B        ??ConvertFormat_3
+   \                     ??ConvertFormat_15:
+   \   00000230   010059E3           CMP      R9,#+1
+   \   00000234   95FFFF0A           BEQ      ??ConvertFormat_3
+   \                     ??ConvertFormat_14:
+   \   00000238   0090C0E5           STRB     R9,[R0, #+0]
+   \   0000023C   C4019FE5           LDR      R0,??ConvertFormat_0+0xC  ;; max_x
+   \   00000240   01A0A0E1           MOV      R10,R1
+   \   00000244   000090E5           LDR      R0,[R0, #+0]
+   \   00000248   018088E2           ADD      R8,R8,#+1
+   \   0000024C   080050E1           CMP      R0,R8
+   \   00000250   8EFFFF2A           BCS      ??ConvertFormat_3
+   \   00000254   06108AE0           ADD      R1,R10,R6
+   \   00000258   0040C1E5           STRB     R4,[R1, #+0]
+   \   0000025C   00309DE5           LDR      R3,[SP, #+0]
+   \   00000260   02208AE2           ADD      R2,R10,#+2
+   \   00000264   0000E0E3           MVN      R0,#+0
+   \   00000268   0130C1E5           STRB     R3,[R1, #+1]
+   \   0000026C   0250C1E5           STRB     R5,[R1, #+2]
+   \   00000270   000000EA           B        ??ConvertFormat_16
+   \                     ??ConvertFormat_17:
+   \   00000274   012042E2           SUB      R2,R2,#+1
+   \                     ??ConvertFormat_16:
+   \   00000278   063082E0           ADD      R3,R2,R6
+   \   0000027C   0010D3E5           LDRB     R1,[R3, #+0]
+   \   00000280   0C808DE2           ADD      R8,SP,#+12
+   \   00000284   08B0D1E7           LDRB     R11,[R1, +R8]
+   \   00000288   01104AE2           SUB      R1,R10,#+1
+   \   0000028C   05005BE3           CMP      R11,#+5
+   \   00000290   0A00001A           BNE      ??ConvertFormat_18
+   \   00000294   0A0052E1           CMP      R2,R10
+   \   00000298   1900002A           BCS      ??ConvertFormat_19
+   \                     ??ConvertFormat_20:
+   \   0000029C   10019DE5           LDR      R0,[SP, #+272]
+   \   000002A0   0180A0E3           MOV      R8,#+1
+   \   000002A4   ........           _BLF     FL_saver,??FL_saver??rA
+   \   000002A8   0010A0E3           MOV      R1,#+0
+   \   000002AC   0610C0E7           STRB     R1,[R0, +R6]
+   \   000002B0   010080E2           ADD      R0,R0,#+1
+   \   000002B4   0690C0E7           STRB     R9,[R0, +R6]
+   \   000002B8   01A080E2           ADD      R10,R0,#+1
+   \   000002BC   480000EA           B        ??ConvertFormat_21
+   \                     ??ConvertFormat_18:
+   \   000002C0   04005BE3           CMP      R11,#+4
+   \   000002C4   0A00001A           BNE      ??ConvertFormat_22
+   \   000002C8   0A0052E1           CMP      R2,R10
+   \   000002CC   0C00002A           BCS      ??ConvertFormat_19
+   \   000002D0   010053E5           LDRB     R0,[R3, #-1]
+   \   000002D4   020050E3           CMP      R0,#+2
+   \   000002D8   EFFFFF3A           BCC      ??ConvertFormat_20
+   \   000002DC   0000A0E3           MOV      R0,#+0
+   \   000002E0   0000C3E5           STRB     R0,[R3, #+0]
+   \   000002E4   02004AE0           SUB      R0,R10,R2
+   \   000002E8   018040E2           SUB      R8,R0,#+1
+   \   000002EC   0A10A0E1           MOV      R1,R10
+   \   000002F0   380000EA           B        ??ConvertFormat_23
+   \                     ??ConvertFormat_22:
+   \   000002F4   01005BE3           CMP      R11,#+1
+   \   000002F8   010000BA           BLT      ??ConvertFormat_19
+   \   000002FC   04005BE3           CMP      R11,#+4
+   \   00000300   000000BA           BLT      ??ConvertFormat_24
+   \                     ??ConvertFormat_19:
+   \   00000304   0000E0E3           MVN      R0,#+0
+   \                     ??ConvertFormat_24:
+   \   00000308   02005BE3           CMP      R11,#+2
+   \   0000030C   D8FFFF1A           BNE      ??ConvertFormat_17
+   \   00000310   00C0A0E1           MOV      R12,R0
+   \   00000314   0200A0E1           MOV      R0,R2
+   \   00000318   01007CE3           CMN      R12,#+1
+   \   0000031C   D4FFFF0A           BEQ      ??ConvertFormat_17
+   \   00000320   00308CE0           ADD      R3,R12,R0
+   \   00000324   013083E2           ADD      R3,R3,#+1
+   \   00000328   A330A0E1           LSR      R3,R3,#+1
+   \   0000032C   0680D3E7           LDRB     R8,[R3, +R6]
+   \   00000330   0CB08DE2           ADD      R11,SP,#+12
+   \   00000334   0CE08DE2           ADD      LR,SP,#+12
+   \   00000338   0B80D8E7           LDRB     R8,[R8, +R11]
+   \   0000033C   030058E3           CMP      R8,#+3
+   \   00000340   01308302           ADDEQ    R3,R3,#+1
+   \   00000344   068083E0           ADD      R8,R3,R6
+   \   00000348   02B058E5           LDRB     R11,[R8, #-2]
+   \   0000034C   010053E1           CMP      R3,R1
+   \   00000350   0EB0DBE7           LDRB     R11,[R11, +LR]
+   \   00000354   C6FFFF2A           BCS      ??ConvertFormat_17
+   \   00000358   01005BE3           CMP      R11,#+1
+   \   0000035C   C4FFFFBA           BLT      ??ConvertFormat_17
+   \   00000360   04005BE3           CMP      R11,#+4
+   \   00000364   C2FFFFAA           BGE      ??ConvertFormat_17
+   \   00000368   0C0053E1           CMP      R3,R12
+   \   0000036C   0700001A           BNE      ??ConvertFormat_25
+   \   00000370   06108CE0           ADD      R1,R12,R6
+   \   00000374   0110D1E5           LDRB     R1,[R1, #+1]
+   \   00000378   0CB08DE2           ADD      R11,SP,#+12
+   \   0000037C   0BB0D1E7           LDRB     R11,[R1, +R11]
+   \   00000380   01005BE3           CMP      R11,#+1
+   \   00000384   BAFFFFBA           BLT      ??ConvertFormat_17
+   \   00000388   04005BE3           CMP      R11,#+4
+   \   0000038C   B8FFFFAA           BGE      ??ConvertFormat_17
+   \                     ??ConvertFormat_25:
+   \   00000390   03005AE0           SUBS     R0,R10,R3
+   \   00000394   0700000A           BEQ      ??ConvertFormat_26
+   \   00000398   061080E0           ADD      R1,R0,R6
+   \   0000039C   011083E0           ADD      R1,R3,R1
+   \   000003A0   012081E2           ADD      R2,R1,#+1
+   \   000003A4   011041E2           SUB      R1,R1,#+1
+   \                     ??ConvertFormat_27:
+   \   000003A8   ........           LDRB     R9,[R1], #-1
+   \   000003AC   010050E2           SUBS     R0,R0,#+1
+   \   000003B0   ........           STRB     R9,[R2], #-1
+   \   000003B4   FBFFFF1A           BNE      ??ConvertFormat_27
+   \                     ??ConvertFormat_26:
+   \   000003B8   2D00A0E3           MOV      R0,#+45
+   \   000003BC   0000C8E5           STRB     R0,[R8, #+0]
+   \   000003C0   013083E2           ADD      R3,R3,#+1
+   \   000003C4   0000A0E3           MOV      R0,#+0
+   \   000003C8   0600C3E7           STRB     R0,[R3, +R6]
+   \   000003CC   02108AE2           ADD      R1,R10,#+2
+   \   000003D0   030041E0           SUB      R0,R1,R3
+   \   000003D4   018040E2           SUB      R8,R0,#+1
+   \                     ??ConvertFormat_23:
+   \   000003D8   10019DE5           LDR      R0,[SP, #+272]
+   \   000003DC   ........           _BLF     FL_saver,??FL_saver??rA
+   \   000003E0   00A0A0E1           MOV      R10,R0
+   \                     ??ConvertFormat_21:
+   \   000003E4   18109FE5           LDR      R1,??ConvertFormat_0+0x8  ;; curline
+   \   000003E8   14009FE5           LDR      R0,??ConvertFormat_0+0x8  ;; curline
+   \   000003EC   001091E5           LDR      R1,[R1, #+0]
+   \   000003F0   011081E2           ADD      R1,R1,#+1
+   \   000003F4   001080E5           STR      R1,[R0, #+0]
+   \   000003F8   24FFFFEA           B        ??ConvertFormat_3
+   \                     ??ConvertFormat_0:
+   \   000003FC   ........           DC32     ustk
+   \   00000400   ........           DC32     STKSZ50
+   \   00000404   ........           DC32     curline
+   \   00000408   ........           DC32     max_x
+    256          }
+    257          
+    258          //-------------------------------------------------------------
+    259          // Автоматическое определение кодировки (по первой загрузке)
+    260          //-------------------------------------------------------------
+    261          /* Таблица сочетаний */
+    262          
+
+   \                                 In segment DATA_C, align 4, align-sorted
+    263          static const unsigned char table_2s[128]={0xFF,0xFF,0xFF,0xC7,0xFE,0xBE,0xF7,0xFB,
+   \                     table_2s:
+   \   00000000   FFFFFFC7FEBE       DC8 255, 255, 255, 199, 254, 190, 247, 251, 253, 191, 247, 249, 252
+   \              F7FBFDBFF7F9
+   \              FC          
+   \   0000000D   BEF180FFFFF7       DC8 190, 241, 128, 255, 255, 247, 187, 255, 255, 255, 207, 222, 191
+   \              BBFFFFFFCFDE
+   \              BF          
+   \   0000001A   D108FFBFF1BF       DC8 209, 8, 255, 191, 241, 191, 255, 255, 255, 199, 29, 63, 127, 129
+   \              FFFFFFC71D3F
+   \              7F81        
+   \   00000028   A7B6F282FFFF       DC8 167, 182, 242, 130, 255, 255, 117, 219, 252, 191, 215, 157, 255
+   \              75DBFCBFD79D
+   \              FF          
+   \   00000035   AEFBDFFFFFFF       DC8 174, 251, 223, 255, 255, 255, 199, 132, 183, 243, 159, 255, 255
+   \              C784B7F39FFF
+   \              FF          
+   \   00000042   FFDBFFBFFFFF       DC8 255, 219, 255, 191, 255, 255, 253, 191, 255, 255, 255, 255, 231
+   \              FDBFFFFFFFFF
+   \              E7          
+   \   0000004F   C7849EF012BC       DC8 199, 132, 158, 240, 18, 188, 191, 240, 132, 164, 186, 16, 16, 164
+   \              BFF084A4BA10
+   \              10A4        
+   \   0000005D   BEB888ACBFF7       DC8 190, 184, 136, 172, 191, 247, 10, 132, 134, 144, 8, 4, 0, 0, 3, 127
+   \              0A8486900804
+   \              0000037F    
+   \   0000006D   FDF7C17DAE6F       DC8 253, 247, 193, 125, 174, 111, 203, 21, 61, 252, 0, 127, 125, 231
+   \              CB153DFC007F
+   \              7DE7        
+   \   0000007B   C27FFDF7C3         DC8 194, 127, 253, 247, 195
+    264          0xFD,0xBF,0xF7,0xF9,0xFC,0xBE,0xF1,0x80,0xFF,0xFF,0xF7,0xBB,0xFF,0xFF,0xFF,
+    265          0xCF,0xDE,0xBF,0xD1,0x08,0xFF,0xBF,0xF1,0xBF,0xFF,0xFF,0xFF,0xC7,0x1D,0x3F,
+    266          0x7F,0x81,0xA7,0xB6,0xF2,0x82,0xFF,0xFF,0x75,0xDB,0xFC,0xBF,0xD7,0x9D,0xFF,
+    267          0xAE,0xFB,0xDF,0xFF,0xFF,0xFF,0xC7,0x84,0xB7,0xF3,0x9F,0xFF,0xFF,0xFF,0xDB,
+    268          0xFF,0xBF,0xFF,0xFF,0xFD,0xBF,0xFF,0xFF,0xFF,0xFF,0xE7,0xC7,0x84,0x9E,0xF0,
+    269          0x12,0xBC,0xBF,0xF0,0x84,0xA4,0xBA,0x10,0x10,0xA4,0xBE,0xB8,0x88,0xAC,0xBF,
+    270          0xF7,0x0A,0x84,0x86,0x90,0x08,0x04,0x00,0x00,0x03,0x7F,0xFD,0xF7,0xC1,0x7D,
+    271          0xAE,0x6F,0xCB,0x15,0x3D,0xFC,0x00,0x7F,0x7D,0xE7,0xC2,0x7F,0xFD,0xF7,0xC3};
+    272          
+    273          /* =========================================================================
+    274          Вспомогательная функция alt2num.
+    275          Вход: a - код русской буквы в кодировке ALT.
+    276          Выход: порядковый номер этой буквы (0-31).
+    277          ========================================================================= */
+
+   \                                 In segment CODE, align 4, keep-with-next
+    278          unsigned int alt2num (int a)
+    279          {
+    280            if (a>=0xE0) a-=0x30;
+   \                     alt2num:
+   \   00000000   E00050E3           CMP      R0,#+224
+   \   00000004   300040A2           SUBGE    R0,R0,#+48
+    281            return (a&31);
+   \   00000008   1F0000E2           AND      R0,R0,#0x1F
+   \   0000000C   1EFF2FE1           BX       LR               ;; return
+    282          }
+    283          /* =========================================================================
+    284          Вспомогательная функция koi2num.
+    285          Вход: a - код русской буквы в кодировке KOI.
+    286          Выход: порядковый номер этой буквы (0-31).
+    287          ========================================================================= */
+
+   \                                 In segment CODE, align 4, keep-with-next
+    288          unsigned int koi2num (int a)
+    289          {
+    290            static const unsigned char t[32]={30,0,1,22,4,5,20,3,21,8,9,10,11,12,13,14,15,31,
+    291            16,17,18,19,6,2,28,27,7,24,29,25,23,26};
+    292            return (t[a&31]);
+   \                     koi2num:
+   \   00000000   ........           LDR      R1,??DataTable5  ;; ??t
+   \   00000004   1F0000E2           AND      R0,R0,#0x1F
+   \   00000008   0100D0E7           LDRB     R0,[R0, +R1]
+   \   0000000C   1EFF2FE1           BX       LR               ;; return
+    293          }
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     ??t:
+   \   00000000   1E0001160405       DC8 30, 0, 1, 22, 4, 5, 20, 3, 21, 8, 9, 10, 11, 12, 13, 14, 15, 31, 16
+   \              14031508090A
+   \              0B0C0D0E0F1F
+   \              10          
+   \   00000013   11121306021C       DC8 17, 18, 19, 6, 2, 28, 27, 7, 24, 29, 25, 23, 26
+   \              1B07181D1917
+   \              1A          
+    294          
+    295          /* =========================================================================
+    296          Вспомогательная функция work_2s - обработка двухбуквенного сочетания.
+    297          Вход:  с1 - порядковый номер первой буквы (0-31),
+    298          c2 - порядковый номер второй буквы (0-31),
+    299          check - надо ли проверять, встречалось ли сочетание раньше
+    300          (1 - да, 0 - нет),
+    301          buf - адрес массива с информацией о встреченных сочетаниях.
+    302          Выход: 0 - указанное сочетание уже встречалось раньше,
+    303          1 - сочетание не встречалось раньше и является допустимым,
+    304          2 - сочетание не встречалось раньше и является недопустимым.
+    305          ========================================================================= */
+    306          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    307          unsigned int work_2s (unsigned int c1, unsigned int c2, unsigned int check, unsigned char buf[128])
+    308          {
+    309            unsigned int i=(c1<<2)+(c2>>3); /* Номер байта в массиве. */
+   \                     work_2s:
+   \   00000000   A1C1A0E1           LSR      R12,R1,#+3
+   \   00000004   00018CE0           ADD      R0,R12,R0, LSL #+2
+    310            unsigned int mask=0x80>>(c2&7); /* Маска, соответствующая номеру бита в байте. */
+   \   00000008   80C0A0E3           MOV      R12,#+128
+   \   0000000C   071001E2           AND      R1,R1,#0x7
+   \   00000010   3C11A0E1           LSR      R1,R12,R1
+    311          
+    312            /* Если check=1, проверяем: если соответствующий бит массива buf равен 0,
+    313            значит, указанное сочетание уже встречалось раньше. Тогда выходим из
+    314            функции, возвращая 0. Если же сочетание не встречалось, то помечаем, что
+    315            оно встретилось (обнуляем соответствующий бит массива buf). */
+    316          
+    317            if (check==1)
+   \   00000014   010052E3           CMP      R2,#+1
+   \   00000018   0600001A           BNE      ??work_2s_0
+    318            {
+    319              if ((buf[i]&mask)==0) return (0);
+   \   0000001C   032080E0           ADD      R2,R0,R3
+   \   00000020   0030D2E5           LDRB     R3,[R2, #+0]
+   \   00000024   030011E1           TST      R1,R3
+   \   00000028   0000A003           MOVEQ    R0,#+0
+   \   0000002C   1EFF2F01           BXEQ     LR
+    320              buf[i]&=~mask;
+   \   00000030   0130C3E1           BIC      R3,R3,R1
+   \   00000034   0030C2E5           STRB     R3,[R2, #+0]
+    321            }
+    322          
+    323            /* Проверяем, допустимо сочетание или нет. */
+    324          
+    325            if ((table_2s[i]&mask)!=0) return (1); /* Допустимо. */
+   \                     ??work_2s_0:
+   \   00000038   14209FE5           LDR      R2,??work_2s_1   ;; table_2s
+   \   0000003C   0200D0E7           LDRB     R0,[R0, +R2]
+   \   00000040   000011E1           TST      R1,R0
+   \   00000044   0100A013           MOVNE    R0,#+1
+   \   00000048   1EFF2F11           BXNE     LR
+    326            return (2);                            /* Недопустимо. */
+   \   0000004C   0200A0E3           MOV      R0,#+2
+   \   00000050   1EFF2FE1           BX       LR               ;; return
+   \                     ??work_2s_1:
+   \   00000054   ........           DC32     table_2s
+    327          }
+    328          
+    329          /* =========================================================================
+    330          Вспомогательная функция def_code - определение кодировки текста. Функции
+    331          m_def_code и f_def_code - лишь надстройки над этой функцией.
+    332          Вход:  get_char - указатель на функцию, которую надо вызывать для получения
+    333          очередного символа текста. Функция должна возвращать либо
+    334          код символа, либо, при достижении конца текста, -1.
+    335          n - количество различных сочетаний русских букв (1-255), которого
+    336          достаточно для определения кодировки.
+    337          Выход: 0 - текст в кодировке ALT, 1 - WIN, 2 - KOI.
+    338          ========================================================================= */
+    339          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    340          unsigned int def_code (void)
+    341          {
+   \                     def_code:
+   \   00000000   F04F2DE9           PUSH     {R4-R11,LR}
+   \   00000004   41DF4DE2           SUB      SP,SP,#+260
+    342            /* В массиве buf_1 хранится информация о том, какие сочетания руских букв
+    343            уже встречались в варианте ALT, а в массиве buf_2 - в варианте WIN. */
+    344          
+    345            unsigned char buf_1 [128];
+    346            unsigned char buf_2 [128];
+    347          
+    348          
+    349            unsigned int s=0;
+   \   00000008   0010A0E3           MOV      R1,#+0
+   \   0000000C   00108DE5           STR      R1,[SP, #+0]
+    350          
+    351            unsigned int bad_1=0;
+    352            unsigned int bad_2=0;
+   \   00000010   01A0A0E1           MOV      R10,R1
+    353            unsigned int bad_3=0;
+   \   00000014   0140A0E1           MOV      R4,R1
+    354            unsigned int all_1=0;
+   \   00000018   0190A0E1           MOV      R9,R1
+    355            unsigned int all_3=0;  /* all_2=all_3 */
+   \   0000001C   0150A0E1           MOV      R5,R1
+    356          
+    357            unsigned int c1;
+    358            unsigned int c2=0; /* Символы текущего обрабатываемого сочетания. */
+   \   00000020   0170A0E1           MOV      R7,R1
+    359          
+    360            /* Инициализация buf_1 и buf_2. */
+    361          
+    362            memset(buf_1,0xFF,sizeof(buf_1));
+   \   00000024   8020A0E3           MOV      R2,#+128
+   \   00000028   FF10A0E3           MOV      R1,#+255
+   \   0000002C   04008DE2           ADD      R0,SP,#+4
+   \   00000030   ........           BL       memset
+    363            memset(buf_2,0xFF,sizeof(buf_2));
+   \   00000034   8020A0E3           MOV      R2,#+128
+   \   00000038   FF10A0E3           MOV      R1,#+255
+   \   0000003C   84008DE2           ADD      R0,SP,#+132
+   \   00000040   ........           BL       memset
+   \   00000044   0080A0E3           MOV      R8,#+0
+   \   00000048   020000EA           B        ??def_code_0
+    364          
+    365            /* Главный цикл - обработка сочетаний для каждого из трёх вариантов. Цикл
+    366            выполняется, пока не кончится текст или в каком-либо из вариантов не
+    367            встретится n сочетаний. */
+    368          
+    369            while ((s<16384)&&(all_1<255)&&(all_3<255))
+   \                     ??def_code_1:
+   \   0000004C   FF0059E3           CMP      R9,#+255
+   \   00000050   FF005533           CMPCC    R5,#+255
+   \   00000054   4400002A           BCS      ??def_code_2
+    370            {
+    371              c1=c2;
+    372              if ((c2=dstk[s])==0) break;
+   \                     ??def_code_0:
+   \   00000058   ........           LDR      R1,??DataTable4  ;; dstk
+   \   0000005C   00009DE5           LDR      R0,[SP, #+0]
+   \   00000060   001091E5           LDR      R1,[R1, #+0]
+   \   00000064   0760A0E1           MOV      R6,R7
+   \   00000068   0170D0E7           LDRB     R7,[R0, +R1]
+   \   0000006C   000057E3           CMP      R7,#+0
+   \   00000070   3D00000A           BEQ      ??def_code_2
+    373              s++;
+   \   00000074   011080E2           ADD      R1,R0,#+1
+   \   00000078   00108DE5           STR      R1,[SP, #+0]
+    374              /* Вариант ALT. Вначале проверяем, являются ли символы текущего сочетания
+    375              кодами русских букв в кодировке ALT. */
+    376          
+    377              if ((((c1>=0x80)&&(c1<0xB0))||((c1>=0xE0)&&(c1<0xF0)))&&
+    378          	(((c2>=0x80)&&(c2<0xB0))||((c2>=0xE0)&&(c2<0xF0))))
+   \   0000007C   800056E3           CMP      R6,#+128
+   \   00000080   0100003A           BCC      ??def_code_3
+   \   00000084   B00056E3           CMP      R6,#+176
+   \   00000088   0300003A           BCC      ??def_code_4
+   \                     ??def_code_3:
+   \   0000008C   E00056E3           CMP      R6,#+224
+   \   00000090   1800003A           BCC      ??def_code_5
+   \   00000094   F00056E3           CMP      R6,#+240
+   \   00000098   1600002A           BCS      ??def_code_5
+   \                     ??def_code_4:
+   \   0000009C   800057E3           CMP      R7,#+128
+   \   000000A0   0100003A           BCC      ??def_code_6
+   \   000000A4   B00057E3           CMP      R7,#+176
+   \   000000A8   0300003A           BCC      ??def_code_7
+   \                     ??def_code_6:
+   \   000000AC   E00057E3           CMP      R7,#+224
+   \   000000B0   1000003A           BCC      ??def_code_5
+   \   000000B4   F00057E3           CMP      R7,#+240
+   \   000000B8   0E00002A           BCS      ??def_code_5
+    379              {
+    380                switch (work_2s(alt2num(c1),alt2num(c2),1,buf_1)) /* Обработали. */
+   \                     ??def_code_7:
+   \   000000BC   0700A0E1           MOV      R0,R7
+   \   000000C0   ........           BL       alt2num
+   \   000000C4   00B0A0E1           MOV      R11,R0
+   \   000000C8   0600A0E1           MOV      R0,R6
+   \   000000CC   ........           BL       alt2num
+   \   000000D0   04308DE2           ADD      R3,SP,#+4
+   \   000000D4   0120A0E3           MOV      R2,#+1
+   \   000000D8   0B10A0E1           MOV      R1,R11
+   \   000000DC   ........           BL       work_2s
+   \   000000E0   010050E2           SUBS     R0,R0,#+1
+   \   000000E4   0200000A           BEQ      ??def_code_8
+   \   000000E8   010050E2           SUBS     R0,R0,#+1
+   \   000000EC   0100001A           BNE      ??def_code_5
+    381                {
+    382                case 2: bad_1++;
+   \   000000F0   018088E2           ADD      R8,R8,#+1
+    383                case 1: all_1++;
+   \                     ??def_code_8:
+   \   000000F4   019089E2           ADD      R9,R9,#+1
+    384                }
+    385              }
+    386              /* Варианты WIN и KOI. Вначале проверяем, являются ли символы текущего
+    387              сочетания кодами русских букв в этих кодировках (в обеих кодировках
+    388              диапазоны кодов русских букв совпадают). */
+    389          
+    390              if ((c1&c2)>=0xC0) /* Эквивалентно условию (c1>=0xC0)&&(c2>=0xC0). */
+   \                     ??def_code_5:
+   \   000000F8   060007E0           AND      R0,R7,R6
+   \   000000FC   C00050E3           CMP      R0,#+192
+   \   00000100   1600003A           BCC      ??def_code_9
+    391              {
+    392                switch (work_2s(c1&31,c2&31,1,buf_2)) /* Обработали. */
+   \   00000104   84308DE2           ADD      R3,SP,#+132
+   \   00000108   0120A0E3           MOV      R2,#+1
+   \   0000010C   1F1007E2           AND      R1,R7,#0x1F
+   \   00000110   1F0006E2           AND      R0,R6,#0x1F
+   \   00000114   ........           BL       work_2s
+   \   00000118   000050E3           CMP      R0,#+0
+   \   0000011C   0F00000A           BEQ      ??def_code_9
+   \   00000120   020050E2           SUBS     R0,R0,#+2
+    393                {
+    394                case 0: continue; /* Если сочетание букв уже встречалось в варианте WIN,
+    395                то оно уже встречалось и в варианте KOI, так что
+    396                пропускаем обработку варианта KOI и переходим
+    397                к следующей итерации главного цикла. */
+    398                case 2: bad_2++;
+    399                }
+    400          
+    401                /* Если сочетание букв ещё не встречалось в варианте WIN, то оно заведомо
+    402                не встречалось и в варианте KOI, поэтому специально проверять это не
+    403                надо - значит, функцию work_2s вызываем с параметром check, равным 0. */
+    404          
+    405                switch (work_2s(koi2num(c1),koi2num(c2),0,NULL)) /* Обработали. */
+   \   00000124   ........           LDR      R0,??DataTable5  ;; ??t
+   \   00000128   1F1007E2           AND      R1,R7,#0x1F
+   \   0000012C   0010D1E7           LDRB     R1,[R1, +R0]
+   \   00000130   1F6006E2           AND      R6,R6,#0x1F
+   \   00000134   0000D6E7           LDRB     R0,[R6, +R0]
+   \   00000138   01A08A02           ADDEQ    R10,R10,#+1
+   \   0000013C   0030A0E3           MOV      R3,#+0
+   \   00000140   0020A0E3           MOV      R2,#+0
+   \   00000144   ........           BL       work_2s
+   \   00000148   010050E2           SUBS     R0,R0,#+1
+   \   0000014C   0200000A           BEQ      ??def_code_10
+   \   00000150   010050E2           SUBS     R0,R0,#+1
+   \   00000154   0100001A           BNE      ??def_code_9
+    406                {
+    407                case 2: bad_3++;
+   \   00000158   014084E2           ADD      R4,R4,#+1
+    408                case 1: all_3++;
+   \                     ??def_code_10:
+   \   0000015C   015085E2           ADD      R5,R5,#+1
+    409                }
+    410              }
+    411            }
+   \                     ??def_code_9:
+   \   00000160   00009DE5           LDR      R0,[SP, #+0]
+   \   00000164   400C50E3           CMP      R0,#+16384
+   \   00000168   B7FFFF3A           BCC      ??def_code_1
+    412          
+    413            /* Данные собраны. Теперь, если в каком-либо из вариантов недопустимых
+    414            сочетаний не больше 1/32 от общего их числа, то считаем, что их и не
+    415            было. */
+    416          
+    417            if (bad_1<=(all_1>>5)) bad_1=0;
+   \                     ??def_code_2:
+   \   0000016C   A90258E1           CMP      R8,R9, LSR #+5
+   \   00000170   0080A093           MOVLS    R8,#+0
+    418            if (bad_2<=(all_3>>5)) bad_2=0;
+   \   00000174   A502A0E1           LSR      R0,R5,#+5
+   \   00000178   0A0050E1           CMP      R0,R10
+   \   0000017C   00A0A023           MOVCS    R10,#+0
+    419            if (bad_3<=(all_3>>5)) bad_3=0;
+   \   00000180   040050E1           CMP      R0,R4
+   \   00000184   0040A023           MOVCS    R4,#+0
+    420          
+    421            /* Получаем результат. */
+    422          
+    423            {
+    424              unsigned int a=((255-bad_1)<<8)+all_1;
+   \   00000188   FF0068E2           RSB      R0,R8,#+255
+   \   0000018C   000489E0           ADD      R0,R9,R0, LSL #+8
+    425              unsigned int b=((255-bad_2)<<8)+all_3;
+   \   00000190   FF106AE2           RSB      R1,R10,#+255
+   \   00000194   011485E0           ADD      R1,R5,R1, LSL #+8
+    426              unsigned int c=((255-bad_3)<<8)+all_3;
+   \   00000198   FF2064E2           RSB      R2,R4,#+255
+   \   0000019C   022485E0           ADD      R2,R5,R2, LSL #+8
+    427          
+    428              if ((a>=b)&&(a>=c)) return (0);
+   \   000001A0   010050E1           CMP      R0,R1
+   \   000001A4   02005021           CMPCS    R0,R2
+   \   000001A8   0000A023           MOVCS    R0,#+0
+   \   000001AC   0200002A           BCS      ??def_code_11
+    429              if (b>=c) return (1); else return (2);
+   \   000001B0   020051E1           CMP      R1,R2
+   \   000001B4   0100A023           MOVCS    R0,#+1
+   \   000001B8   0200A033           MOVCC    R0,#+2
+   \                     ??def_code_11:
+   \   000001BC   41DF8DE2           ADD      SP,SP,#+260      ;; stack cleaning
+   \   000001C0   F08FBDE8           POP      {R4-R11,PC}      ;; return
+    430            }
+    431          }
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable1:
+   \   00000000   ........           DC32     win_dos_koi
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable4:
+   \   00000000   ........           DC32     dstk
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable5:
+   \   00000000   ........           DC32     ??t
+
+   Maximum stack usage in bytes:
+
+     Function      CSTACK
+     --------      ------
+     ConvertFormat   316
+     GetCharType_x     0
+     alt2num           0
+     def_code        296
+     koi2num           0
+     memset            0
+     work_2s           0
+
+
+   Segment part sizes:
+
+     Function/Label Bytes
+     -------------- -----
+     memset           24
+     ctype           128
+     GetCharType_x   140
+     ConvertFormat  1036
+     table_2s        128
+     alt2num          16
+     koi2num          16
+     t                32
+     work_2s          88
+     def_code        452
+     ??DataTable1      4
+     ??DataTable4      4
+     ??DataTable5      4
+      Others          52
+
+ 
+ 1 836 bytes in segment CODE
+   288 bytes in segment DATA_C
+ 
+ 1 784 bytes of CODE  memory (+ 52 bytes shared)
+   288 bytes of CONST memory
+
+Errors: none
+Warnings: none
