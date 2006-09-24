@@ -1,0 +1,3919 @@
+//////////////////////////////////////////////////////////////////////////////
+//                                                                           /
+// IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION   13/Sep/2006  13:42:05 /
+// Copyright 1999-2005 IAR Systems. All rights reserved.                     /
+//                                                                           /
+//    Cpu mode        =  interwork                                           /
+//    Endian          =  little                                              /
+//    Stack alignment =  4                                                   /
+//    Source file     =  E:\ARM\MegaDial\CX75\main.c                         /
+//    Command line    =  E:\ARM\MegaDial\CX75\main.c -lC                     /
+//                       E:\ARM\MegaDial\CX75\Release\List\ -lA              /
+//                       E:\ARM\MegaDial\CX75\Release\List\ -o               /
+//                       E:\ARM\MegaDial\CX75\Release\Obj\ -s9 --no_unroll   /
+//                       --cpu_mode arm --endian little --cpu ARM926EJ-S     /
+//                       --stack_align 4 --interwork -e --fpu None -I        /
+//                       D:\IARARM\ARM\INC\                                  /
+//    List file       =  E:\ARM\MegaDial\CX75\Release\List\main.s79          /
+//                                                                           /
+//                                                                           /
+//////////////////////////////////////////////////////////////////////////////
+
+        NAME main
+
+        RTMODEL "StackAlign4", "USED"
+        RTMODEL "__cpu_mode", "__pcs__interwork"
+        RTMODEL "__data_model", "absolute"
+        RTMODEL "__endian", "little"
+        RTMODEL "__rt_version", "6"
+
+        RSEG CSTACK:DATA:NOROOT(2)
+
+        MULTWEAK ??ABnumber2str??rA
+        MULTWEAK ??AllocWS??rA
+        MULTWEAK ??AllocWS??rA?DEBUG1
+        MULTWEAK ??AllocWS??rT
+        MULTWEAK ??CreateMenu??rA
+??DataTable1 EQU 0
+??DataTable10 EQU 0
+??DataTable11 EQU 0
+??DataTable12 EQU 0
+??DataTable13 EQU 0
+??DataTable14 EQU 0
+??DataTable15 EQU 0
+??DataTable16 EQU 0
+??DataTable17 EQU 0
+??DataTable18 EQU 0
+??DataTable19 EQU 0
+??DataTable2 EQU 0
+??DataTable20 EQU 0
+??DataTable3 EQU 0
+??DataTable33 EQU 0
+??DataTable35 EQU 0
+??DataTable4 EQU 0
+??DataTable6 EQU 0
+??DataTable8 EQU 0
+??DataTable9 EQU 0
+        MULTWEAK ??DrawFrameInNativeMenu??rA
+        MULTWEAK ??DrawString??rA
+        MULTWEAK ??ESI??rT
+        MULTWEAK ??FindCSMbyID??rA
+        MULTWEAK ??FindCSMbyID??rA?DEBUG1
+        MULTWEAK ??FindCSMbyID??rT
+        MULTWEAK ??FlashSMS??rA
+        MULTWEAK ??FreeUnPackABrecord??rA
+        MULTWEAK ??FreeWS??rA?DEBUG1
+        MULTWEAK ??FreeWS??rT
+        MULTWEAK ??GetCurrMenuItem??rA
+        MULTWEAK ??GetDataOfItemByID??rT
+        MULTWEAK ??GetPaletteAdrByColorIndex??rA
+        MULTWEAK ??IDLECSM_onCreate??rA
+        MULTWEAK ??MakeVoiceCallTo??rA
+        MULTWEAK ??OpenABRecord??rA?DEBUG1
+        MULTWEAK ??OpenABRecord??rT
+        MULTWEAK ??Open_NewSMS_Dialog??rA
+        MULTWEAK ??PendedRedrawGUI??rA?DEBUG1
+        MULTWEAK ??UnPackAB??rT
+        MULTWEAK ??UnPackABrecord??rA
+        MULTWEAK ??char8to16??rA
+        MULTWEAK ??char8to16??rT
+        MULTWEAK ??cnv??rT
+        MULTWEAK ??cutwstr??rA?DEBUG1
+        MULTWEAK ??cutwstr??rT
+        MULTWEAK ??ed_inp_redraw??rT
+        MULTWEAK ??fclose??rA
+        MULTWEAK ??fclose??rT
+        MULTWEAK ??fopen??rA
+        MULTWEAK ??fopen??rT
+        MULTWEAK ??fread??rA
+        MULTWEAK ??fread??rT
+        MULTWEAK ??fwrite??rA
+        MULTWEAK ??getDialString??rA?DEBUG1
+        MULTWEAK ??getDialString??rT
+        MULTWEAK ??getDialStringLen??rA?DEBUG2
+        MULTWEAK ??gmproc??rT
+        MULTWEAK ??main??rT
+        MULTWEAK ??malloc??rA
+        MULTWEAK ??malloc??rT
+        MULTWEAK ??memcpy??rA
+        MULTWEAK ??memcpy??rT
+        MULTWEAK ??menup1??rT
+        MULTWEAK ??menup2??rT
+        MULTWEAK ??menup3??rT
+        MULTWEAK ??menup4??rT
+        MULTWEAK ??mfree??rA
+        MULTWEAK ??mfree??rT
+        MULTWEAK ??onKeyGUI??rT
+        MULTWEAK ??rT0xA02CB7E5
+        MULTWEAK ??redraw??rA
+        MULTWEAK ??sprintf??rA
+        MULTWEAK ??strcat??rA
+        MULTWEAK ??strcat??rT
+        MULTWEAK ??strcpy??rA?DEBUG1
+        MULTWEAK ??strcpy??rT
+        MULTWEAK ??strlen??rA
+        MULTWEAK ??strlen??rA?DEBUG1
+        MULTWEAK ??strlen??rT
+        MULTWEAK ??strstr??rA?DEBUG1
+        MULTWEAK ??strstr??rT
+        MULTWEAK ??uni2cp1251??rT
+        MULTWEAK ??unpack??rT
+        MULTWEAK ??ws2ascii??rA
+        MULTWEAK ??ws2ascii??rA?DEBUG1
+        MULTWEAK ??ws2ascii??rT
+        MULTWEAK ??ws2asciz??rT
+        MULTWEAK ??wsaddwchar??rA
+        MULTWEAK ??wsaddwchar??rT
+        MULTWEAK ??wsprintf??rA
+        MULTWEAK ??wsprintf??rA?DEBUG1
+        MULTWEAK ??wstrcat??rT
+        MULTWEAK ??wstrcpy??rA
+        MULTWEAK ??wstrlen??rA
+        MULTWEAK ??wstrlen??rA?DEBUG1
+        MULTWEAK ??wstrlen??rT
+        MULTWEAK ??zeromem??rA
+        MULTWEAK ??zeromem??rT
+        PUBLIC ABfout
+        PUBLIC ABmain
+        PUBLIC ABpath
+        PUBLIC ESI
+        FUNCTION ESI,0203H
+        LOCFRAME CSTACK, 12, STACK
+        PUBLIC FlashSMS
+        FUNCTION FlashSMS,0603H
+        LOCFRAME CSTACK, 16, STACK
+        PUBLIC MenuItems
+        PUBLIC OpenABRecord
+        FUNCTION OpenABRecord,0203H
+        LOCFRAME CSTACK, 48, STACK
+        PUBLIC UnPackAB
+        FUNCTION UnPackAB,0201H
+        LOCFRAME CSTACK, 252, STACK
+        PUBLIC char8to16
+        FUNCTION char8to16,0203H
+        PUBLIC cnv
+        FUNCTION cnv,0203H
+        LOCFRAME CSTACK, 8, STACK
+        PUBLIC color
+        PUBLIC doit
+        FUNCTION doit,0603H
+        LOCFRAME CSTACK, 392, STACK
+        PUBLIC dos2unicode
+        PUBLIC dsRects
+        PUBLIC ed_inp_redraw
+        FUNCTION ed_inp_redraw,0603H
+        LOCFRAME CSTACK, 56, STACK
+        PUBLIC fname
+        PUBLIC gmproc
+        FUNCTION gmproc,0603H
+        LOCFRAME CSTACK, 12, STACK
+        PUBLIC icons
+        PUBLIC keytab
+        PUBLIC main
+        FUNCTION main,0e03H
+        LOCFRAME CSTACK, 8, STACK
+        PUBLIC menu4
+        PUBLIC menuheader
+        PUBLIC menup1
+        FUNCTION menup1,0603H
+        PUBLIC menup2
+        FUNCTION menup2,0603H
+        PUBLIC menup3
+        FUNCTION menup3,0603H
+        PUBLIC menup4
+        FUNCTION menup4,0603H
+        PUBLIC menuprocs
+        PUBLIC menuskey
+        PUBLIC onKeyGUI
+        FUNCTION onKeyGUI,0603H
+        LOCFRAME CSTACK, 88, STACK
+        PUBLIC redraw
+        FUNCTION redraw,0603H
+        LOCFRAME CSTACK, 372, STACK
+        PUBLIC resize
+        FUNCTION resize,0203H
+        LOCFRAME CSTACK, 12, STACK
+        PUBLIC skey
+        PUBLIC skeys
+        PUBLIC uni2cp1251
+        FUNCTION uni2cp1251,0203H
+        PUBLIC unpack
+        FUNCTION unpack,0203H
+        PUBLIC wintranslation
+        PUBLIC ws2asciz
+        FUNCTION ws2asciz,0203H
+        LOCFRAME CSTACK, 20, STACK
+        
+        CFI Names cfiNames0
+        CFI StackFrame CFA R13 HUGEDATA
+        CFI Resource R0:32, R1:32, R2:32, R3:32, R4:32, R5:32, R6:32, R7:32
+        CFI Resource R8:32, R9:32, R10:32, R11:32, R12:32, CPSR:32, R13:32
+        CFI Resource R14:32, SPSR:32
+        CFI VirtualResource ?RET:32
+        CFI EndNames cfiNames0
+        
+        CFI Common cfiCommon0 Using cfiNames0
+        CFI CodeAlign 2
+        CFI DataAlign 4
+        CFI ReturnAddress ?RET CODE
+        CFI CFA R13+0
+        CFI R0 Undefined
+        CFI R1 Undefined
+        CFI R2 Undefined
+        CFI R3 Undefined
+        CFI R4 SameValue
+        CFI R5 SameValue
+        CFI R6 SameValue
+        CFI R7 SameValue
+        CFI R8 SameValue
+        CFI R9 SameValue
+        CFI R10 SameValue
+        CFI R11 SameValue
+        CFI R12 Undefined
+        CFI CPSR SameValue
+        CFI R14 Undefined
+        CFI SPSR SameValue
+        CFI ?RET R14
+        CFI EndCommon cfiCommon0
+        
+        
+        CFI Common cfiCommon1 Using cfiNames0
+        CFI CodeAlign 4
+        CFI DataAlign 4
+        CFI ReturnAddress ?RET CODE
+        CFI CFA R13+0
+        CFI R0 Undefined
+        CFI R1 Undefined
+        CFI R2 Undefined
+        CFI R3 Undefined
+        CFI R4 SameValue
+        CFI R5 SameValue
+        CFI R6 SameValue
+        CFI R7 SameValue
+        CFI R8 SameValue
+        CFI R9 SameValue
+        CFI R10 SameValue
+        CFI R11 SameValue
+        CFI R12 Undefined
+        CFI CPSR SameValue
+        CFI R14 Undefined
+        CFI SPSR SameValue
+        CFI ?RET R14
+        CFI EndCommon cfiCommon1
+        
+ABnumber2str        SYMBOL "ABnumber2str"
+AllocWS             SYMBOL "AllocWS"
+CreateMenu          SYMBOL "CreateMenu"
+DrawFrameInNativeMenu SYMBOL "DrawFrameInNativeMenu"
+DrawString          SYMBOL "DrawString"
+FindCSMbyID         SYMBOL "FindCSMbyID"
+FreeUnPackABrecord  SYMBOL "FreeUnPackABrecord"
+FreeWS              SYMBOL "FreeWS"
+GetCurrMenuItem     SYMBOL "GetCurrMenuItem"
+GetDataOfItemByID   SYMBOL "GetDataOfItemByID"
+GetPaletteAdrByColorIndex SYMBOL "GetPaletteAdrByColorIndex"
+IDLECSM_onCreate    SYMBOL "IDLECSM_onCreate"
+MakeVoiceCallTo     SYMBOL "MakeVoiceCallTo"
+Open_NewSMS_Dialog  SYMBOL "Open_NewSMS_Dialog"
+PendedRedrawGUI     SYMBOL "PendedRedrawGUI"
+UnPackABrecord      SYMBOL "UnPackABrecord"
+cutwstr             SYMBOL "cutwstr"
+fclose              SYMBOL "fclose"
+fopen               SYMBOL "fopen"
+fread               SYMBOL "fread"
+fwrite              SYMBOL "fwrite"
+getDialString       SYMBOL "getDialString"
+getDialStringLen    SYMBOL "getDialStringLen"
+malloc              SYMBOL "malloc"
+memcpy              SYMBOL "memcpy"
+mfree               SYMBOL "mfree"
+sprintf             SYMBOL "sprintf"
+strcat              SYMBOL "strcat"
+strcpy              SYMBOL "strcpy"
+strlen              SYMBOL "strlen"
+strstr              SYMBOL "strstr"
+ws2ascii            SYMBOL "ws2ascii"
+wsaddwchar          SYMBOL "wsaddwchar"
+wsprintf            SYMBOL "wsprintf"
+wstrcat             SYMBOL "wstrcat"
+wstrcpy             SYMBOL "wstrcpy"
+wstrlen             SYMBOL "wstrlen"
+zeromem             SYMBOL "zeromem"
+??ABnumber2str??rA  SYMBOL "??rA", ABnumber2str
+??AllocWS??rA       SYMBOL "??rA", AllocWS
+??AllocWS??rA?DEBUG1 SYMBOL "??rA?DEBUG1", AllocWS
+??AllocWS??rT       SYMBOL "??rT", AllocWS
+??CreateMenu??rA    SYMBOL "??rA", CreateMenu
+??DrawFrameInNativeMenu??rA SYMBOL "??rA", DrawFrameInNativeMenu
+??DrawString??rA    SYMBOL "??rA", DrawString
+ESI                 SYMBOL "ESI"
+??ESI??rT           SYMBOL "??rT", ESI
+??FindCSMbyID??rA   SYMBOL "??rA", FindCSMbyID
+??FindCSMbyID??rA?DEBUG1 SYMBOL "??rA?DEBUG1", FindCSMbyID
+??FindCSMbyID??rT   SYMBOL "??rT", FindCSMbyID
+FlashSMS            SYMBOL "FlashSMS"
+??FlashSMS??rA      SYMBOL "??rA", FlashSMS
+??FreeUnPackABrecord??rA SYMBOL "??rA", FreeUnPackABrecord
+??FreeWS??rA?DEBUG1 SYMBOL "??rA?DEBUG1", FreeWS
+??FreeWS??rT        SYMBOL "??rT", FreeWS
+??GetCurrMenuItem??rA SYMBOL "??rA", GetCurrMenuItem
+??GetDataOfItemByID??rT SYMBOL "??rT", GetDataOfItemByID
+??GetPaletteAdrByColorIndex??rA SYMBOL "??rA", GetPaletteAdrByColorIndex
+??IDLECSM_onCreate??rA SYMBOL "??rA", IDLECSM_onCreate
+??MakeVoiceCallTo??rA SYMBOL "??rA", MakeVoiceCallTo
+OpenABRecord        SYMBOL "OpenABRecord"
+??OpenABRecord??rA?DEBUG1 SYMBOL "??rA?DEBUG1", OpenABRecord
+??OpenABRecord??rT  SYMBOL "??rT", OpenABRecord
+??Open_NewSMS_Dialog??rA SYMBOL "??rA", Open_NewSMS_Dialog
+??PendedRedrawGUI??rA?DEBUG1 SYMBOL "??rA?DEBUG1", PendedRedrawGUI
+UnPackAB            SYMBOL "UnPackAB"
+??UnPackAB??rT      SYMBOL "??rT", UnPackAB
+??UnPackABrecord??rA SYMBOL "??rA", UnPackABrecord
+char8to16           SYMBOL "char8to16"
+??char8to16??rA     SYMBOL "??rA", char8to16
+??char8to16??rT     SYMBOL "??rT", char8to16
+cnv                 SYMBOL "cnv"
+??cnv??rT           SYMBOL "??rT", cnv
+??cutwstr??rA?DEBUG1 SYMBOL "??rA?DEBUG1", cutwstr
+??cutwstr??rT       SYMBOL "??rT", cutwstr
+ed_inp_redraw       SYMBOL "ed_inp_redraw"
+??ed_inp_redraw??rT SYMBOL "??rT", ed_inp_redraw
+??fclose??rA        SYMBOL "??rA", fclose
+??fclose??rT        SYMBOL "??rT", fclose
+??fopen??rA         SYMBOL "??rA", fopen
+??fopen??rT         SYMBOL "??rT", fopen
+??fread??rA         SYMBOL "??rA", fread
+??fread??rT         SYMBOL "??rT", fread
+??fwrite??rA        SYMBOL "??rA", fwrite
+??getDialString??rA?DEBUG1 SYMBOL "??rA?DEBUG1", getDialString
+??getDialString??rT SYMBOL "??rT", getDialString
+??getDialStringLen??rA?DEBUG2 SYMBOL "??rA?DEBUG2", getDialStringLen
+gmproc              SYMBOL "gmproc"
+??gmproc??rT        SYMBOL "??rT", gmproc
+main                SYMBOL "main"
+??main??rT          SYMBOL "??rT", main
+??malloc??rA        SYMBOL "??rA", malloc
+??malloc??rT        SYMBOL "??rT", malloc
+??memcpy??rA        SYMBOL "??rA", memcpy
+??memcpy??rT        SYMBOL "??rT", memcpy
+menup1              SYMBOL "menup1"
+??menup1??rT        SYMBOL "??rT", menup1
+menup2              SYMBOL "menup2"
+??menup2??rT        SYMBOL "??rT", menup2
+menup3              SYMBOL "menup3"
+??menup3??rT        SYMBOL "??rT", menup3
+menup4              SYMBOL "menup4"
+??menup4??rT        SYMBOL "??rT", menup4
+??mfree??rA         SYMBOL "??rA", mfree
+??mfree??rT         SYMBOL "??rT", mfree
+onKeyGUI            SYMBOL "onKeyGUI"
+??onKeyGUI??rT      SYMBOL "??rT", onKeyGUI
+redraw              SYMBOL "redraw"
+??redraw??rA        SYMBOL "??rA", redraw
+??sprintf??rA       SYMBOL "??rA", sprintf
+??strcat??rA        SYMBOL "??rA", strcat
+??strcat??rT        SYMBOL "??rT", strcat
+??strcpy??rA?DEBUG1 SYMBOL "??rA?DEBUG1", strcpy
+??strcpy??rT        SYMBOL "??rT", strcpy
+??strlen??rA        SYMBOL "??rA", strlen
+??strlen??rA?DEBUG1 SYMBOL "??rA?DEBUG1", strlen
+??strlen??rT        SYMBOL "??rT", strlen
+??strstr??rA?DEBUG1 SYMBOL "??rA?DEBUG1", strstr
+??strstr??rT        SYMBOL "??rT", strstr
+uni2cp1251          SYMBOL "uni2cp1251"
+??uni2cp1251??rT    SYMBOL "??rT", uni2cp1251
+unpack              SYMBOL "unpack"
+??unpack??rT        SYMBOL "??rT", unpack
+??ws2ascii??rA      SYMBOL "??rA", ws2ascii
+??ws2ascii??rA?DEBUG1 SYMBOL "??rA?DEBUG1", ws2ascii
+??ws2ascii??rT      SYMBOL "??rT", ws2ascii
+ws2asciz            SYMBOL "ws2asciz"
+??ws2asciz??rT      SYMBOL "??rT", ws2asciz
+??wsaddwchar??rA    SYMBOL "??rA", wsaddwchar
+??wsaddwchar??rT    SYMBOL "??rT", wsaddwchar
+??wsprintf??rA      SYMBOL "??rA", wsprintf
+??wsprintf??rA?DEBUG1 SYMBOL "??rA?DEBUG1", wsprintf
+??wstrcat??rT       SYMBOL "??rT", wstrcat
+??wstrcpy??rA       SYMBOL "??rA", wstrcpy
+??wstrlen??rA       SYMBOL "??rA", wstrlen
+??wstrlen??rA?DEBUG1 SYMBOL "??rA?DEBUG1", wstrlen
+??wstrlen??rT       SYMBOL "??rT", wstrlen
+??zeromem??rA       SYMBOL "??rA", zeromem
+??zeromem??rT       SYMBOL "??rT", zeromem
+
+        EXTERN ABnumber2str
+        FUNCTION ABnumber2str,0202H
+        EXTERN AllocWS
+        FUNCTION AllocWS,0202H
+        EXTERN CSM_root
+        EXTERN CreateMenu
+        FUNCTION CreateMenu,0202H
+        EXTERN DrawFrameInNativeMenu
+        FUNCTION DrawFrameInNativeMenu,0202H
+        EXTERN DrawString
+        FUNCTION DrawString,0202H
+        EXTERN FindCSMbyID
+        FUNCTION FindCSMbyID,0202H
+        EXTERN FreeUnPackABrecord
+        FUNCTION FreeUnPackABrecord,0202H
+        EXTERN FreeWS
+        FUNCTION FreeWS,0202H
+        EXTERN GetCurrMenuItem
+        FUNCTION GetCurrMenuItem,0202H
+        EXTERN GetDataOfItemByID
+        FUNCTION GetDataOfItemByID,0202H
+        EXTERN GetPaletteAdrByColorIndex
+        FUNCTION GetPaletteAdrByColorIndex,0202H
+        EXTERN IDLECSM_onCreate
+        FUNCTION IDLECSM_onCreate,0202H
+        EXTERN MakeVoiceCallTo
+        FUNCTION MakeVoiceCallTo,0202H
+        EXTERN Open_NewSMS_Dialog
+        FUNCTION Open_NewSMS_Dialog,0202H
+        EXTERN PendedRedrawGUI
+        FUNCTION PendedRedrawGUI,0202H
+        EXTERN UnPackABrecord
+        FUNCTION UnPackABrecord,0202H
+        EXTERN cutwstr
+        FUNCTION cutwstr,0202H
+        EXTERN fclose
+        FUNCTION fclose,0202H
+        EXTERN fopen
+        FUNCTION fopen,0202H
+        EXTERN fread
+        FUNCTION fread,0202H
+        EXTERN fwrite
+        FUNCTION fwrite,0202H
+        EXTERN getDialString
+        FUNCTION getDialString,0202H
+        EXTERN getDialStringLen
+        FUNCTION getDialStringLen,0202H
+        EXTERN malloc
+        FUNCTION malloc,0202H
+        EXTERN memcpy
+        FUNCTION memcpy,0202H
+        EXTERN mfree
+        FUNCTION mfree,0602H
+        EXTERN sprintf
+        FUNCTION sprintf,0202H
+        EXTERN strcat
+        FUNCTION strcat,0202H
+        EXTERN strcpy
+        FUNCTION strcpy,0202H
+        EXTERN strlen
+        FUNCTION strlen,0202H
+        EXTERN strstr
+        FUNCTION strstr,0202H
+        EXTERN ws2ascii
+        FUNCTION ws2ascii,0202H
+        EXTERN wsaddwchar
+        FUNCTION wsaddwchar,0202H
+        EXTERN wsprintf
+        FUNCTION wsprintf,0202H
+        EXTERN wstrcat
+        FUNCTION wstrcat,0202H
+        EXTERN wstrcpy
+        FUNCTION wstrcpy,0202H
+        EXTERN wstrlen
+        FUNCTION wstrlen,0202H
+        EXTERN zeromem
+        FUNCTION zeromem,0202H
+
+// E:\ARM\MegaDial\CX75\main.c
+//    1 #include "arm_siemens.h"
+//    2 #define ramStr(strnum) (0xB0000000|strnum)
+//    3 
+//    4 
+//    5 #define MAX_ABFILE_SIZE 30000
+//    6 
+//    7 
+
+        RSEG DEBUG4:CONST:SORT:NOROOT(2)
+//    8 const char fname[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\abT9";
+fname:
+        DATA
+        DC8 "0:\\System\\apo\\addr\\abT9"
+
+        RSEG DEBUG4:CONST:SORT:NOROOT(2)
+//    9 const char ABpath[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\";
+ABpath:
+        DATA
+        DC8 "0:\\System\\apo\\addr\\"
+//   10 const char ABmain[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\main";
+ABmain:
+        DC8 "0:\\System\\apo\\addr\\main"
+//   11 const char ABfout[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\abT9";
+ABfout:
+        DC8 "0:\\System\\apo\\addr\\abT9"
+//   12 
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+//   13 const unsigned short dsRects[4][4]  @ "DEBUG3" =
+dsRects:
+        DATA
+        DC16 4, 22, 131, 44, 4, 26, 131, 44, 4, 27, 131, 44, 4, 20, 131, 44
+//   14 {
+//   15   {4,22,131,44},
+//   16   {4,26,131,44},
+//   17   {4,27,131,44},
+//   18   {4,20,131,44}
+//   19 };
+//   20 
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+//   21 const unsigned char color[4] @ "DEBUG3" =
+color:
+        DATA
+        DC8 255, 255, 144, 255
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock0 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??main??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock0
+        REQUIRE main
+//   22 
+//   23 {255,255,0x90,255};
+//   24 
+//   25 typedef struct
+//   26 {
+//   27   char unk[3];
+//   28   char itemID;
+//   29   int unk1;
+//   30   int *pnt;
+//   31 }ABitem;
+//   32 
+//   33 
+//   34 typedef struct
+//   35 {
+//   36   CSM_RAM csm;
+//   37   char dummy[0xCC-sizeof(CSM_RAM)];
+//   38   WSHDR *str1;
+//   39   WSHDR *strings[5];
+//   40   int myAB;
+//   41   char *fileAB;
+//   42   char flashSMS;
+//   43 }IDLECSM;
+//   44 
+//   45 //Вместо onCreate
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock1 Using cfiCommon1
+        CFI Function main
+        ARM
+//   46 void main(IDLECSM *icsm)
+//   47 {
+main:
+        PUSH     {R4,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R4 Frame(CFA, -8)
+        CFI CFA R13+8
+        MOV      R4,R0
+//   48 
+//   49 
+//   50 //  unsigned int err;
+//   51 //  int f;
+//   52   //void (__thumb *OldOnCreate)(void *)=(void(*)(void *))(0xA02A781C+1);
+//   53   icsm->str1=AllocWS(256);
+        MOV      R0,#+256
+        _BLF     AllocWS,??AllocWS??rA
+        STR      R0,[R4, #+204]
+//   54   icsm->strings[0]=AllocWS(50);
+        MOV      R0,#+50
+        _BLF     AllocWS,??AllocWS??rA
+        STR      R0,[R4, #+208]
+//   55   icsm->strings[1]=AllocWS(50);
+        MOV      R0,#+50
+        _BLF     AllocWS,??AllocWS??rA
+        STR      R0,[R4, #+212]
+//   56   icsm->strings[2]=AllocWS(50);
+        MOV      R0,#+50
+        _BLF     AllocWS,??AllocWS??rA
+        STR      R0,[R4, #+216]
+//   57   icsm->strings[3]=AllocWS(50);
+        MOV      R0,#+50
+        _BLF     AllocWS,??AllocWS??rA
+        STR      R0,[R4, #+220]
+//   58   icsm->strings[4]=AllocWS(50);
+        MOV      R0,#+50
+        _BLF     AllocWS,??AllocWS??rA
+        STR      R0,[R4, #+224]
+//   59   icsm->flashSMS=0;
+        MOV      R0,#+0
+        STRB     R0,[R4, #+236]
+//   60 
+//   61   icsm->myAB=0;
+        STR      R0,[R4, #+228]
+//   62 /*  icsm->fileAB=malloc(MAX_ABFILE_SIZE+1);
+//   63   if ((f=fopen((char *)fname,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+//   64   {
+//   65     icsm->fileAB[fread(f,icsm->fileAB,MAX_ABFILE_SIZE,&err)]=0;
+//   66     fclose(f,&err);
+//   67   }
+//   68   wsprintf(icsm->str1,"num : ");
+//   69 */
+//   70   IDLECSM_onCreate((CSM_RAM*)icsm);
+        MOV      R0,R4
+        POP      {R4,LR}          ;; Pop
+        _BF      IDLECSM_onCreate,??IDLECSM_onCreate??rA  ;; tailcall
+        CFI EndBlock cfiBlock1
+//   71 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock2 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??menup1??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock2
+        REQUIRE menup1
+//   72 
+//   73 
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+//   74 const char keytab[10][10] @ "DEBUG3" =
+keytab:
+        DATA
+        DC8 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 192, 193, 194, 195, 65, 66, 67
+        DC8 0, 0, 51, 196, 197, 168, 198, 199, 68, 69, 70, 0, 52, 200, 201, 202
+        DC8 203, 71, 72, 73, 0, 0, 53, 204, 205, 206, 74, 75, 76, 0, 0, 0, 54
+        DC8 207, 208, 209, 77, 78, 79, 0, 0, 0, 55, 210, 211, 212, 213, 80, 81
+        DC8 82, 83, 0, 56, 214, 215, 216, 217, 218, 84, 85, 86, 0, 57, 219, 220
+        DC8 221, 222, 223, 87, 88, 89, 90, 48, 43, 0, 0, 0, 0, 0, 0, 0, 0
+//   75 {
+//   76   {'1',0,0,0,0,0,0,0,0,0},
+//   77   {'2','А','Б','В','Г','A','B','C',0,0 },
+//   78   {'3','Д','Е','Ё','Ж','З','D','E','F',0 },
+//   79   {'4','И','Й','К','Л','G','H','I',0,0},
+//   80   {'5','М','Н','О','J','K','L',0,0,0},
+//   81   {'6','П','Р','С','M','N','O',0,0,0},
+//   82   {'7','Т','У','Ф','Х','P','Q','R','S',0},
+//   83   {'8','Ц','Ч','Ш','Щ','Ъ','T','U','V',0},
+//   84   {'9','Ы','Ь','Э','Ю','Я','W','X','Y','Z'},
+//   85   {'0','+',0,0,0,0,0,0,0,0}
+//   86 };
+//   87 
+//   88 
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+//   89 const char wintranslation[128] @ "DEBUG3" =
+//   90 {
+//   91   0x5F,0x5F,0x27,0x5F,0x22,0x3A,0xC5,0xD8,0x5F,0x25,0x5F,0x3C,0x5F,0x5F,0x5F,0x5F,
+//   92   0x5F,0x27,0x27,0x22,0x22,0x07,0x2D,0x2D,0x5F,0x54,0x5F,0x3E,0x5F,0x5F,0x5F,0x5F,
+//   93   0xFF,0xF6,0xF7,0x5F,0xFD,0x83,0xB3,0x15,0xF0,0x63,0xF2,0x3C,0xBF,0x2D,0x52,0xF4,
+//   94   0xF8,0x2B,'I' ,'i' ,0xA3,0xE7,0x14,0xFA,0xF1,0xFC,0xF3,0x3E,0x5F,0x5F,0x5F,0xF5,
+//   95   0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,0x8F,
+//   96   0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9A,0x9B,0x9C,0x9D,0x9E,0x9F,
+//   97   0xA0,0xA1,0xA2,0xA3,0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,0xAF,
+//   98   0xE0,0xE1,0xE2,0xE3,0xE4,0xE5,0xE6,0xE7,0xE8,0xE9,0xEA,0xEB,0xEC,0xED,0xEE,0xEF
+//   99 };
+//  100 
+//  101 const unsigned short dos2unicode[128] @"DEBUG3"=
+dos2unicode:
+        DATA
+        DC16 1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048, 1049, 1050
+        DC16 1051, 1052, 1053, 1054, 1055, 1056, 1057, 1058, 1059, 1060, 1061
+        DC16 1062, 1063, 1064, 1065, 1066, 1067, 1068, 1069, 1070, 1071, 1072
+        DC16 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083
+        DC16 1084, 1085, 1086, 1087, 45, 45, 45, 166, 43, 166, 166, 172, 172
+        DC16 166, 166, 172, 45, 45, 45, 172, 76, 43, 84, 43, 45, 43, 166, 166
+        DC16 76, 1075, 166, 84, 166, 61, 43, 166, 166, 84, 84, 76, 76, 45, 1075
+        DC16 43, 43, 45, 45, 45, 45, 166, 166, 45, 1088, 1089, 1090, 1091, 1092
+        DC16 1093, 1094, 1095, 1096, 1097, 1098, 1099, 1100, 1101, 1102, 1103
+        DC16 1025, 1105, 1028, 1108, 1031, 1111, 1038, 1118, 176, 8226, 183
+        DC16 118, 8470, 164, 166, 160
+wintranslation:
+        DC8 95, 95, 39, 95, 34, 58, 197, 216, 95, 37, 95, 60, 95, 95, 95, 95
+        DC8 95, 39, 39, 34, 34, 7, 45, 45, 95, 84, 95, 62, 95, 95, 95, 95, 255
+        DC8 246, 247, 95, 253, 131, 179, 21, 240, 99, 242, 60, 191, 45, 82, 244
+        DC8 248, 43, 73, 105, 163, 231, 20, 250, 241, 252, 243, 62, 95, 95, 95
+        DC8 245, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139
+        DC8 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152
+        DC8 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165
+        DC8 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 224, 225, 226
+        DC8 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239
+//  102 {
+//  103   0x0410,0x0411,0x0412,0x0413,0x0414,0x0415,0x0416,0x0417,
+//  104   0x0418,0x0419,0x041A,0x041B,0x041C,0x041D,0x041E,0x041F,
+//  105   0x0420,0x0421,0x0422,0x0423,0x0424,0x0425,0x0426,0x0427,
+//  106   0x0428,0x0429,0x042A,0x042B,0x042C,0x042D,0x042E,0x042F,
+//  107   0x0430,0x0431,0x0432,0x0433,0x0434,0x0435,0x0436,0x0437,
+//  108   0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F,
+//  109   0x002D,0x002D,0x002D,0x00A6,0x002B,0x00A6,0x00A6,0x00AC,
+//  110   0x00AC,0x00A6,0x00A6,0x00AC,0x002D,0x002D,0x002D,0x00AC,
+//  111   0x004C,0x002B,0x0054,0x002B,0x002D,0x002B,0x00A6,0x00A6,
+//  112   0x004C,0x0433,0x00A6,0x0054,0x00A6,0x003D,0x002B,0x00A6,
+//  113   0x00A6,0x0054,0x0054,0x004C,0x004C,0x002D,0x0433,0x002B,
+//  114   0x002B,0x002D,0x002D,0x002D,0x002D,0x00A6,0x00A6,0x002D,
+//  115   0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
+//  116   0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F,
+//  117   0x0401,0x0451,0x0404,0x0454,0x0407,0x0457,0x040E,0x045E,
+//  118   0x00B0,0x2022,0x00B7,0x0076,0x2116,0x00A4,0x00A6,0x00A0
+//  119 };
+//  120 //=======================================================================
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock3 Using cfiCommon1
+        CFI Function menup1
+        ARM
+//  121 void menup1(void)
+//  122 {
+//  123 }
+menup1:
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock3
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock4 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??menup2??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock4
+        REQUIRE menup2
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock5 Using cfiCommon1
+        CFI Function menup2
+        ARM
+//  124 void menup2(void)
+//  125 {
+//  126 }
+menup2:
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock5
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock6 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??menup3??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock6
+        REQUIRE menup3
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock7 Using cfiCommon1
+        CFI Function menup3
+        ARM
+//  127 void menup3(void)
+//  128 {
+//  129 }
+menup3:
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock7
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock8 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??menup4??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock8
+        REQUIRE menup4
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock9 Using cfiCommon1
+        CFI Function menup4
+        ARM
+//  130 void menup4(void)
+//  131 {
+//  132 }
+menup4:
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock9
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock10 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??uni2cp1251??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock10
+        REQUIRE uni2cp1251
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock11 Using cfiCommon1
+        CFI Function uni2cp1251
+        ARM
+//  133 char uni2cp1251(unsigned short c)
+//  134 {
+//  135   if (c>0x40F)
+uni2cp1251:
+        CMP      R0,#+1040
+        BCC      ??uni2cp1251_0
+//  136   {
+//  137     if (c==0x451) return(0xB8);
+        MOV      R1,#+81
+        ORR      R1,R1,#0x400
+        CMP      R0,R1
+        MOVEQ    R0,#+184
+        BXEQ     LR
+//  138     return(c-0x350);
+        ADD      R0,R0,#+176
+//  139   }
+//  140   return(c);
+??uni2cp1251_0:
+        AND      R0,R0,#0xFF
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock11
+//  141 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock12 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??ws2asciz??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock12
+        REQUIRE ws2asciz
+//  142 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock13 Using cfiCommon1
+        CFI Function ws2asciz
+        ARM
+//  143 void ws2asciz( char * d ,WSHDR * s, int len)
+//  144 {
+ws2asciz:
+        PUSH     {R4-R7,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R7 Frame(CFA, -8)
+        CFI R6 Frame(CFA, -12)
+        CFI R5 Frame(CFA, -16)
+        CFI R4 Frame(CFA, -20)
+        CFI CFA R13+20
+        MOV      R4,R0
+        MOV      R5,R1
+        MOV      R6,R2
+//  145   int i=1;
+        MOV      R7,#+1
+//  146   do
+//  147   {
+//  148     *d++=uni2cp1251(s->wsbody[i++]);
+??ws2asciz_0:
+        LDR      R0,[R5, #+0]
+        ADD      R0,R0,R7, LSL #+1
+        LDRH     R0,[R0, #+0]
+        ADD      R7,R7,#+1
+        BL       uni2cp1251
+        STRB     R0,[R4], #+1
+//  149   }
+//  150   while(--len);
+        SUBS     R6,R6,#+1
+        BNE      ??ws2asciz_0
+//  151   *d=0;
+        MOV      R0,#+0
+        STRB     R0,[R4, #+0]
+        POP      {R4-R7,PC}       ;; return
+        CFI EndBlock cfiBlock13
+//  152 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock14 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??cnv??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock14
+        REQUIRE cnv
+//  153 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock15 Using cfiCommon1
+        CFI Function cnv
+        ARM
+//  154 char cnv(char c)
+//  155 {
+cnv:
+        PUSH     {R4,R5}
+        CFI R5 Frame(CFA, -4)
+        CFI R4 Frame(CFA, -8)
+        CFI CFA R13+8
+//  156   int i,j;
+//  157   char cc;
+//  158   if ((unsigned char)c>0x40)
+        CMP      R0,#+65
+        BCC      ??cnv_0
+//  159     cc=c&~0x20;
+        AND      R1,R0,#0xDF
+//  160   else
+//  161     cc=c;
+//  162 
+//  163   if (c==' ') return(' ');
+//  164   for (i=0;i<10;i++)
+??cnv_1:
+        LDR      R2,??cnv_2       ;; keytab
+        MOV      R0,#+0
+        MOV      R3,R2
+        B        ??cnv_3
+??cnv_0:
+        MOV      R1,R0
+        CMP      R0,#+32
+        BNE      ??cnv_1
+??cnv_4:
+        POP      {R4,R5}
+        CFI R4 SameValue
+        CFI R5 SameValue
+        CFI CFA R13+0
+        MOV      R0,#+32
+        BX       LR
+        CFI R4 Frame(CFA, -8)
+        CFI R5 Frame(CFA, -4)
+        CFI CFA R13+8
+//  165     for (j=0;j<10;j++)
+??cnv_5:
+        ADD      R12,R12,#+1
+        CMP      R12,#+10
+        BLT      ??cnv_6
+        ADD      R0,R0,#+1
+        ADD      R3,R3,#+10
+        CMP      R0,#+10
+        BGE      ??cnv_4
+??cnv_3:
+        MOV      R12,#+0
+        MOV      R4,R3
+//  166       if  (cc==keytab[i][j]) return(keytab[i][0]);
+??cnv_6:
+        LDRB     R5,[R4], #+1
+        CMP      R1,R5
+        BNE      ??cnv_5
+        MOV      R1,#+10
+        MLA      R0,R1,R0,R2
+        LDRB     R0,[R0, #+0]
+        POP      {R4,R5}
+        CFI R4 SameValue
+        CFI R5 SameValue
+        CFI CFA R13+0
+        BX       LR               ;; return
+        DATA
+??cnv_2:
+        DC32     keytab
+        CFI EndBlock cfiBlock15
+//  167 
+//  168   return(' ');
+//  169 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock16 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??UnPackAB??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock16
+        REQUIRE UnPackAB
+//  170 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock17 Using cfiCommon1
+        CFI Function UnPackAB
+        ARM
+//  171 void UnPackAB()
+//  172 {
+UnPackAB:
+        PUSH     {R4-R11,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R11 Frame(CFA, -8)
+        CFI R10 Frame(CFA, -12)
+        CFI R9 Frame(CFA, -16)
+        CFI R8 Frame(CFA, -20)
+        CFI R7 Frame(CFA, -24)
+        CFI R6 Frame(CFA, -28)
+        CFI R5 Frame(CFA, -32)
+        CFI R4 Frame(CFA, -36)
+        CFI CFA R13+36
+        SUB      SP,SP,#+212
+        CFI CFA R13+248
+//  173   unsigned int err;
+//  174   int f;
+//  175   int numrec=0;
+        MOV      R1,#+0
+        STR      R1,[SP, #+4]
+//  176   int rnum=-1;
+        MVN      R1,R1
+        STR      R1,[SP, #+16]
+//  177   char ABrecname[40];
+//  178   char st[20];
+//  179   char *record=malloc(2048);
+        MOV      R0,#+2048
+        _BLF     malloc,??malloc??rA
+        STR      R0,[SP, #+20]
+//  180   char *main=malloc(132);
+        MOV      R0,#+132
+        _BLF     malloc,??malloc??rA
+        STR      R0,[SP, #+12]
+//  181   char *result=malloc(MAX_ABFILE_SIZE);
+        MOV      R0,#+48
+        ORR      R0,R0,#0x7500
+        _BLF     malloc,??malloc??rA
+        MOV      R4,R0
+//  182   int rp=0;
+//  183   zeromem(result,sizeof(result));
+        MOV      R1,#+4
+        _BLF     zeromem,??zeromem??rA
+        LDR      R0,??UnPackAB_0  ;; ABpath + 20
+        MOV      R11,#+0
+        MOV      R3,SP
+        MOV      R2,#+384
+        MOV      R1,#+32768
+//  184 
+//  185   if ((f=fopen((char *)ABmain,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+        _BLF     fopen,??fopen??rA
+        MOV      R5,R0
+        CMN      R5,#+1
+        BEQ      ??UnPackAB_1
+//  186   {
+//  187     fread(f,main,132,&err);
+        LDR      R1,[SP, #+12]
+        MOV      R3,SP
+        MOV      R2,#+132
+        _BLF     fread,??fread??rA
+//  188     fclose(f,&err);
+        MOV      R1,SP
+        MOV      R0,R5
+        _BLF     fclose,??fclose??rA
+//  189 
+//  190     memcpy(main,&main[4],128);
+        LDR      R0,[SP, #+12]
+        MOV      R2,#+128
+        ADD      R1,R0,#+4
+        _BLF     memcpy,??memcpy??rA
+//  191     do
+//  192     {
+//  193       if(main[numrec>>3] & (1<<(numrec &7)))
+??UnPackAB_2:
+        LDR      R0,[SP, #+4]
+        LDR      R1,[SP, #+12]
+        LDR      R2,[SP, #+4]
+        LDRB     R0,[R1, +R0, ASR #+3]
+        MOV      R1,#+1
+        AND      R2,R2,#0x7
+        TST      R0,R1, LSL R2
+        BEQ      ??UnPackAB_3
+//  194       {
+//  195         memcpy(ABrecname,ABpath,23);
+        LDR      R1,??UnPackAB_0+0x4  ;; ABpath
+        MOV      R2,#+23
+        ADD      R0,SP,#+172
+        _BLF     memcpy,??memcpy??rA
+//  196         sprintf(st,"%02X\\%02X",numrec>>5,numrec&0x1F);
+        LDR      R0,[SP, #+4]
+        LDR      R1,??UnPackAB_0+0x8  ;; `?<Constant "%02X\\\\%02X">`
+        AND      R3,R0,#0x1F
+        ASR      R2,R0,#+5
+        ADD      R0,SP,#+32
+        _BLF     sprintf,??sprintf??rA
+//  197         strcat(ABrecname,st);
+        ADD      R1,SP,#+32
+        ADD      R0,SP,#+172
+        _BLF     strcat,??strcat??rA
+//  198 
+//  199         if ((f=fopen((char *)ABrecname,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+        MOV      R3,SP
+        MOV      R2,#+384
+        MOV      R1,#+32768
+        ADD      R0,SP,#+172
+        _BLF     fopen,??fopen??rA
+        MOV      R5,R0
+        CMN      R5,#+1
+        BEQ      ??UnPackAB_3
+//  200         {
+//  201           char ttype[6];
+//  202           char str [80];
+//  203           char flag;
+//  204           fread(f,record,1024,&err);
+        LDR      R1,[SP, #+20]
+        MOV      R3,SP
+        MOV      R2,#+1024
+        _BLF     fread,??fread??rA
+//  205           fclose(f,&err);
+        MOV      R1,SP
+        MOV      R0,R5
+        _BLF     fclose,??fclose??rA
+//  206           int * struc1=malloc(0x1C);
+        MOV      R0,#+28
+        _BLF     malloc,??malloc??rA
+        STR      R0,[SP, #+8]
+//  207           zeromem(struc1,0x1C);
+        MOV      R1,#+28
+        _BLF     zeromem,??zeromem??rA
+//  208           UnPackABrecord(struc1,record+4,100,0x28);
+        LDR      R0,[SP, #+20]
+        MOV      R3,#+40
+        MOV      R2,#+100
+        ADD      R1,R0,#+4
+        LDR      R0,[SP, #+8]
+        MOV      R5,#+0
+        _BLF     UnPackABrecord,??UnPackABrecord??rA
+//  209           {
+//  210             rnum++;
+        LDR      R1,[SP, #+16]
+//  211             flag=0;
+        MOV      R6,#+0
+        ADD      R1,R1,#+1
+        STR      R1,[SP, #+16]
+//  212             char itemcount = ((short*)struc1)[1];
+        LDR      R0,[SP, #+8]
+//  213             ABitem * items = (ABitem*)struc1[3];
+//  214             char num[40];
+//  215             str[0]=0;
+//  216             zeromem(ttype,sizeof(ttype));
+        MOV      R1,#+6
+        LDRSH    R7,[R0, #+2]
+        LDR      R8,[R0, #+12]
+        STRB     R5,[SP, #+52]
+        ADD      R0,SP,#+24
+        _BLF     zeromem,??zeromem??rA
+        AND      R7,R7,#0xFF
+//  217             do
+//  218             {
+//  219               switch(items->itemID)
+??UnPackAB_4:
+        LDRB     R0,[R8, #+3]
+        SUB      R0,R0,#+35
+        CMP      R0,#+1
+        BLS      ??UnPackAB_5
+        SUB      R0,R0,#+7
+        CMP      R0,#+3
+        BLS      ??UnPackAB_6
+        B        ??UnPackAB_7
+//  220               {
+//  221               case 0x23:
+//  222               case 0x24:
+//  223 
+//  224                 strcat(str," ");
+??UnPackAB_5:
+        ADR      R1,??DataTable0  ;; " "
+        ADD      R0,SP,#+52
+        _BLF     strcat,??strcat??rA
+//  225                 ws2asciz(str+strlen(str),(WSHDR*)items->pnt,wstrlen((WSHDR*)items->pnt));
+        LDR      R0,[R8, #+8]
+        _BLF     wstrlen,??wstrlen??rA
+        MOV      R9,R0
+        ADD      R0,SP,#+52
+        _BLF     strlen,??strlen??rA
+        LDR      R1,[R8, #+8]
+        MOV      R2,R9
+        ADD      R3,SP,#+52
+        ADD      R0,R0,R3
+        BL       ws2asciz
+        B        ??UnPackAB_7
+//  226                 break;
+//  227               case 0x2D:
+//  228 
+//  229               case 0x2A:
+//  230               case 0x2C:
+//  231               case 0x2B:
+//  232                 if (!flag)
+??UnPackAB_6:
+        MOVS     R0,R6
+        BNE      ??UnPackAB_8
+//  233                 {
+//  234 
+//  235                   {char j=0;do{result[rp++]=str[j++];}while(j<strlen(str));result[rp++]=0;}
+        MOV      R10,#+0
+        ADD      R9,R11,R4
+??UnPackAB_9:
+        ADD      R1,SP,#+52
+        LDRB     R0,[R10, +R1]
+        ADD      R10,R10,#+1
+        AND      R10,R10,#0xFF
+        STRB     R0,[R9], #+1
+        MOV      R0,R10
+        PUSH     {R0}
+        CFI CFA R13+252
+        ADD      R11,R11,#+1
+        ADD      R0,SP,#+56
+        _BLF     strlen,??strlen??rA
+        POP      {R1}
+        CFI CFA R13+248
+        CMP      R1,R0
+        BLT      ??UnPackAB_9
+        STRB     R5,[R11, +R4]
+        ADD      R11,R11,#+1
+//  236                   char i=0;
+        MOV      R9,#+0
+//  237                   do
+//  238                   {
+//  239                     result[rp++]=cnv(str[i++]);
+??UnPackAB_10:
+        ADD      R1,SP,#+52
+        LDRB     R0,[R9, +R1]
+        ADD      R9,R9,#+1
+        AND      R9,R9,#0xFF
+        BL       cnv
+        STRB     R0,[R11, +R4]
+        ADD      R11,R11,#+1
+//  240                   }
+//  241                   while(i<strlen(str));
+        ADD      R0,SP,#+52
+        _BLF     strlen,??strlen??rA
+        CMP      R9,R0
+        BLT      ??UnPackAB_10
+//  242                 }
+//  243                 ttype[flag++]=items->itemID;
+??UnPackAB_8:
+        LDRB     R2,[R8, #+3]
+        ADD      R1,SP,#+24
+//  244                 ABnumber2str(items->pnt,num,0x2A,0);
+        MOV      R3,#+0
+        STRB     R2,[R6, +R1]
+        LDR      R0,[R8, #+8]
+        ADD      R6,R6,#+1
+        AND      R6,R6,#0xFF
+        MOV      R2,#+42
+        ADD      R1,SP,#+132
+        _BLF     ABnumber2str,??ABnumber2str??rA
+//  245                 result[rp++]=' ';
+        MOV      R0,#+32
+        STRB     R0,[R11, +R4]
+        ADD      R11,R11,#+1
+//  246                 {char j=0;do{result[rp++]=num[j++];}while(j<strlen(num));}
+        MOV      R9,R5
+??UnPackAB_11:
+        ADD      R1,SP,#+132
+        LDRB     R0,[R9, +R1]
+        ADD      R9,R9,#+1
+        AND      R9,R9,#0xFF
+        STRB     R0,[R11, +R4]
+        ADD      R11,R11,#+1
+        ADD      R0,SP,#+132
+        _BLF     strlen,??strlen??rA
+        CMP      R9,R0
+        BLT      ??UnPackAB_11
+//  247                 break;
+//  248               }
+//  249               items++;
+??UnPackAB_7:
+        ADD      R8,R8,#+12
+//  250             }
+//  251             while(--itemcount);
+        SUB      R7,R7,#+1
+        ANDS     R7,R7,#0xFF
+        BNE      ??UnPackAB_4
+//  252             result[rp++]=0;
+        STRB     R5,[R11, +R4]
+//  253             result[rp++]=(char)rnum;
+        LDR      R1,[SP, #+16]
+        ADD      R0,R11,#+1
+        STRB     R1,[R0, +R4]
+//  254             result[rp++]=(char)(rnum >>8)|((flag-1)<<2);
+        LDR      R1,[SP, #+16]
+        ADD      R0,R0,#+1
+        ASR      R1,R1,#+8
+        SUB      R2,R6,#+1
+        ORR      R1,R1,R2, LSL #+2
+        STRB     R1,[R0, +R4]
+        ADD      R5,R0,#+1
+//  255             memcpy(&result[rp],ttype,sizeof(ttype));
+        MOV      R2,#+6
+        ADD      R1,SP,#+24
+        ADD      R0,R5,R4
+        _BLF     memcpy,??memcpy??rA
+//  256             rp+=sizeof(ttype);
+//  257           }
+//  258           FreeUnPackABrecord(struc1,mfree);
+        LDR      R1,??DataTable28  ;; mfree
+        LDR      R0,[SP, #+8]
+        ADD      R11,R5,#+6
+        _BLF     FreeUnPackABrecord,??FreeUnPackABrecord??rA
+//  259           mfree(struc1);
+        LDR      R0,[SP, #+8]
+        _BLF     mfree,??mfree??rA
+//  260         }
+//  261       }
+//  262     }while(++numrec<1024);
+??UnPackAB_3:
+        LDR      R1,[SP, #+4]
+        ADD      R1,R1,#+1
+        STR      R1,[SP, #+4]
+        CMP      R1,#+1024
+        BLT      ??UnPackAB_2
+//  263 
+//  264   }
+//  265 
+//  266   if ((f=fopen((char *)ABfout,A_ReadWrite+A_BIN+A_Create+A_Truncate,P_READ+P_WRITE,&err))!=-1)
+??UnPackAB_1:
+        LDR      R0,??UnPackAB_0+0xC  ;; ABpath + 44
+        MOV      R3,SP
+        MOV      R2,#+384
+        MOV      R1,#+2
+        ORR      R1,R1,#0x8300
+        _BLF     fopen,??fopen??rA
+        MOV      R5,R0
+        CMN      R5,#+1
+        BEQ      ??UnPackAB_12
+//  267   {
+//  268     fwrite(f,result,rp-1,&err);
+        MOV      R3,SP
+        SUB      R2,R11,#+1
+        MOV      R1,R4
+        _BLF     fwrite,??fwrite??rA
+//  269     fclose(f,&err);
+        MOV      R1,SP
+        MOV      R0,R5
+        _BLF     fclose,??fclose??rA
+//  270   }
+//  271 
+//  272 
+//  273   mfree(record);
+??UnPackAB_12:
+        LDR      R0,[SP, #+20]
+        _BLF     mfree,??mfree??rA
+//  274   mfree(main);
+        LDR      R0,[SP, #+12]
+        _BLF     mfree,??mfree??rA
+//  275   mfree(result);
+        MOV      R0,R4
+        _BLF     mfree,??mfree??rA
+//  276 }
+        ADD      SP,SP,#+212
+        CFI CFA R13+36
+        POP      {R4-R11,PC}      ;; return
+        DATA
+??UnPackAB_0:
+        DC32     ABpath + 20
+        DC32     ABpath
+        DC32     `?<Constant "%02X\\\\%02X">`
+        DC32     ABpath + 44
+        CFI EndBlock cfiBlock17
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable0:
+        DC8      " ",+0,+0
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock18 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??onKeyGUI??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock18
+        REQUIRE onKeyGUI
+//  277 
+//  278 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock19 Using cfiCommon1
+        CFI Function onKeyGUI
+        ARM
+//  279 int onKeyGUI(void * GUI, GUI_MSG * msg)
+//  280 {
+onKeyGUI:
+        PUSH     {R4-R7,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R7 Frame(CFA, -8)
+        CFI R6 Frame(CFA, -12)
+        CFI R5 Frame(CFA, -16)
+        CFI R4 Frame(CFA, -20)
+        CFI CFA R13+20
+        SUB      SP,SP,#+64
+        CFI CFA R13+84
+        MOV      R4,#+9
+        MOV      R7,R1
+//  281   int item=GetCurrMenuItem(GUI);
+        _BLF     GetCurrMenuItem,??GetCurrMenuItem??rA
+        MOV      R5,R0
+//  282   IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+        LDR      R0,??DataTable7  ;; CSM_root + 4
+        ORR      R4,R4,#0x4200
+        LDR      R0,[R0, #+0]
+        _BLF     FindCSMbyID,??FindCSMbyID??rA
+        MOV      R6,R0
+//  283 
+//  284   if (msg->unk2==0x018)
+        LDRSH    R0,[R7, #+2]
+        CMP      R0,#+24
+        BNE      ??onKeyGUI_0
+//  285   {
+//  286     char num[20];
+//  287     WSHDR * dummystr=AllocWS(1);
+        MOV      R0,#+1
+        _BLF     AllocWS,??AllocWS??rA
+        MOV      R7,R0
+//  288     icsm->flashSMS=0;
+        MOV      R0,#+0
+        STRB     R0,[R6, #+236]
+//  289     ws2ascii(num,icsm->strings[item+1],wstrlen(icsm->strings[item+1]));
+        ADD      R5,R6,R5, LSL #+2
+??onKeyGUI_1:
+        LDR      R0,[R5, #+212]
+        _BLF     wstrlen,??wstrlen??rA
+        LDR      R1,[R5, #+212]
+        MOV      R2,R0
+        MOV      R0,SP
+        _BLF     ws2ascii,??ws2ascii??rA
+//  290     Open_NewSMS_Dialog(dummystr,(char*)num,0x4209,0x00C1,0x0001);
+        MOV      R0,#+1
+        PUSH     {R0}
+        CFI CFA R13+88
+        MOV      R3,#+193
+        MOV      R2,R4
+        ADD      R1,SP,#+4
+        MOV      R0,R7
+        _BLF     Open_NewSMS_Dialog,??Open_NewSMS_Dialog??rA
+//  291     return(1);
+        MOV      R0,#+1
+        ADD      SP,SP,#+4
+        CFI CFA R13+84
+        B        ??onKeyGUI_2
+//  292   }
+//  293 
+//  294   if (msg->unk2==0x031)
+??onKeyGUI_0:
+        ADD      R5,R6,R5, LSL #+2
+        CMP      R0,#+49
+        BNE      ??onKeyGUI_3
+//  295   {
+//  296 
+//  297     char num[20];
+//  298     WSHDR * dummystr=AllocWS(1);
+        MOV      R0,#+1
+        _BLF     AllocWS,??AllocWS??rA
+        MOV      R7,R0
+//  299     icsm->flashSMS=1;
+        MOV      R0,#+1
+        STRB     R0,[R6, #+236]
+        B        ??onKeyGUI_1
+//  300     ws2ascii(num,icsm->strings[item+1],wstrlen(icsm->strings[item+1]));
+//  301     Open_NewSMS_Dialog(dummystr,(char*)num,0x4209,0x00C1,0x0001);
+//  302     return(1);
+//  303   }
+//  304 
+//  305   if (msg->msg->submess==GREEN_BUTTON)
+??onKeyGUI_3:
+        LDR      R0,[R7, #+4]
+        LDR      R0,[R0, #+4]
+        CMP      R0,#+11
+        BNE      ??onKeyGUI_4
+//  306   {
+//  307     char pnum[41];
+//  308     ws2ascii(pnum,icsm->strings[item+1],wstrlen(icsm->strings[item+1]) );
+        LDR      R0,[R5, #+212]
+        _BLF     wstrlen,??wstrlen??rA
+        LDR      R1,[R5, #+212]
+        MOV      R2,R0
+        ADD      R0,SP,#+20
+        _BLF     ws2ascii,??ws2ascii??rA
+//  309     MakeVoiceCallTo(pnum,0x10,0x20C1);
+        MOV      R2,#+193
+        ORR      R2,R2,#0x2000
+        MOV      R1,#+16
+        ADD      R0,SP,#+20
+        _BLF     MakeVoiceCallTo,??MakeVoiceCallTo??rA
+//  310     return(1);
+        MOV      R0,#+1
+??onKeyGUI_2:
+        ADD      SP,SP,#+64
+        CFI CFA R13+20
+        POP      {R4-R7,PC}
+        CFI CFA R13+84
+//  311   }
+//  312   return(0);
+??onKeyGUI_4:
+        MOV      R0,#+0
+        ADD      SP,SP,#+64
+        CFI CFA R13+20
+        POP      {R4-R7,PC}       ;; return
+        CFI EndBlock cfiBlock19
+//  313 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock20 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??gmproc??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock20
+        REQUIRE gmproc
+//  314 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock21 Using cfiCommon1
+        CFI Function gmproc
+        ARM
+//  315 int gmproc(void * GUI, int cmd)
+//  316 {
+gmproc:
+        PUSH     {R4,R5,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R5 Frame(CFA, -8)
+        CFI R4 Frame(CFA, -12)
+        CFI CFA R13+12
+//  317   //  SetNMenuItems(GUI,2);
+//  318   if (cmd==2)
+//  319   {
+//  320     //    SetMenuItemIcon(GUI,0,3);
+//  321     //    SetNMenuItems(GUI,1);
+//  322   }
+//  323   if (cmd==3)
+        CMP      R1,#+3
+        MOV      R4,R0
+        BNE      ??gmproc_0
+//  324   {
+//  325     MENU_DESC *menu=((MENU_DESC**)GUI)[2];
+        LDR      R5,[R4, #+8]
+//  326     mfree(menu->items);
+        LDR      R0,[R5, #+32]
+        _BLF     mfree,??mfree??rA
+//  327     mfree(menu);
+        MOV      R0,R5
+        _BLF     mfree,??mfree??rA
+//  328   }
+//  329   return((int)GUI);
+??gmproc_0:
+        MOV      R0,R4
+        POP      {R4,R5,PC}       ;; return
+        CFI EndBlock cfiBlock21
+//  330 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock22 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??OpenABRecord??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock22
+        REQUIRE OpenABRecord
+//  331 
+//  332 
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+//  333 const int icons[] @"DEBUG3"={0x43A,0x39B,0x397,0x39A,0x399,0};
+icons:
+        DATA
+        DC32 1082, 923, 919, 922, 921, 0
+//  334 
+//  335 const HEADER_DESC menuheader @"DEBUG3" ={3,24,126,41,(int *)icons,ramStr(0),0x7FFF};
+menuheader:
+        DC16 3, 24, 126, 41
+        DC32 icons, -1342177280, 32767
+//  336 
+//  337 const SOFTKEY_DESC skeys[] @"DEBUG3" =
+//  338 {
+//  339   {0x018,0x018,(int)"SMS"},
+//  340   {0x031,0x031,(int)"Flash"},
+//  341   {0x030,0x030,(int)""}
+//  342 };
+//  343 
+//  344 const int menuskey[4][3] @"DEBUG3" =
+//  345 {
+//  346   {0,1,2},
+//  347   {1,2,0},
+//  348   {2,0,1},
+//  349   {0,1,9}
+//  350 }
+//  351 ;
+//  352 
+//  353 const SOFTKEYSTAB skey @"DEBUG3"={ (SOFTKEY_DESC*)skeys,3 };
+//  354 
+//  355 const MENUITEM_DESC MenuItems[] @"DEBUG3" =
+MenuItems:
+        DC32 icons + 4H, -1342177279, 0, 0, menuskey, 3, 1400, icons + 8H
+        DC32 -1342177278, 0, 0, menuskey + 4H, 3, 1400, icons + 0CH
+        DC32 -1342177277, 0, 0, menuskey + 8H, 3, 1400, icons + 0CH
+        DC32 -1342177276, 0, 0, menuskey + 0CH, 3, 1400
+//  356 {
+//  357   {(int*)icons+1,ramStr(1),0x0,0x000,(int*)menuskey,0x003,0x578},
+//  358   {(int*)icons+2,ramStr(2),0x0,0x000,(int*)menuskey+1,0x003,0x578},
+//  359   {(int*)icons+3,ramStr(3),0x0,0x000,(int*)menuskey+2,0x003,0x578},
+//  360   {(int*)icons+3,ramStr(4),0x0,0x000,(int*)menuskey+3,0x003,0x578}
+//  361 
+//  362 };
+//  363 
+//  364 const void * const menuprocs[4] @"DEBUG3" ={(void *)menup1,(void *)menup2,(void *)menup3,(void *)menup4};
+//  365 
+//  366 const MENU_DESC menu4 @"DEBUG3" =
+menu4:
+        DC32 0, onKeyGUI, gmproc, 0H, menuskey, skey, 1, 0H, MenuItems
+        DC32 menuprocs, 4
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+skeys:
+        DATA
+        DC16 24, 24
+        DC32 `?<Constant "SMS">`
+        DC16 49, 49
+        DC32 `?<Constant "Flash">`
+        DC16 48, 48
+        DC32 `?<Constant "">`
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+menuskey:
+        DATA
+        DC32 0, 1, 2, 1, 2, 0, 2, 0, 1, 0, 1, 9
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+skey:
+        DATA
+        DC32 skeys, 3
+
+        RSEG DEBUG3:CONST:SORT:NOROOT(2)
+menuprocs:
+        DATA
+        DC32 menup1, menup2, menup3, menup4
+//  367 {
+//  368   0,				//0x00
+//  369   (void*)onKeyGUI,		//0x04
+//  370   (void*)gmproc,		//0x08
+//  371   NULL,				//0x0C
+//  372   (int *)menuskey,		//0x10
+//  373   (SOFTKEYSTAB *)(&skey),	//0x14
+//  374   1,				//0x18
+//  375   NULL,				//0x1C
+//  376   (MENUITEM_DESC *)MenuItems,	//0x20
+//  377   (void **)menuprocs,		//0x24
+//  378   4				//0x28
+//  379 };
+//  380 
+//  381 //=======================================================================
+//  382 
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock23 Using cfiCommon1
+        CFI Function char8to16
+        ARM
+//  383 unsigned short char8to16(char c) @"DEBUG1"
+//  384 {
+//  385   if (c<32) return('_');
+char8to16:
+        CMP      R0,#+32
+        MOVCC    R0,#+95
+        BXCC     LR
+//  386   if (c>=128)
+        CMP      R0,#+128
+        BXCC     LR
+//  387   {
+//  388     c=wintranslation[c-128];
+//  389     return(dos2unicode[c-128]);
+        LDR      R1,??char8to16_0  ;; dos2unicode
+        MVN      R2,#+255
+        ADD      R0,R0,R1
+        LDRB     R0,[R0, #+128]
+        ADD      R0,R1,R0, LSL #+1
+        LDRH     R0,[R2, +R0]
+        BX       LR               ;; return
+        DATA
+??char8to16_0:
+        DC32     dos2unicode
+        CFI EndBlock cfiBlock23
+//  390   }
+//  391   return(c);
+//  392 }
+//  393 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock24 Using cfiCommon1
+        CFI Function OpenABRecord
+        ARM
+//  394 void OpenABRecord(char * s,char sname[],IDLECSM *icsm, char *p)
+//  395 {
+OpenABRecord:
+        PUSH     {R4-R10,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R10 Frame(CFA, -8)
+        CFI R9 Frame(CFA, -12)
+        CFI R8 Frame(CFA, -16)
+        CFI R7 Frame(CFA, -20)
+        CFI R6 Frame(CFA, -24)
+        CFI R5 Frame(CFA, -28)
+        CFI R4 Frame(CFA, -32)
+        CFI CFA R13+32
+        MOV      R7,R1
+        MOV      R9,R0
+        MOV      R5,R2
+        MOV      R4,R3
+//  396   char i=0;
+        MOV      R6,#+0
+        MOV      R10,#+0
+//  397   char *s1=sname;
+        MOV      R0,R7
+        ADR      R8,??OpenABRecord_0  ;; "%t"
+//  398   do
+//  399   {
+//  400     if (*s!=32)
+??OpenABRecord_1:
+        LDRB     R1,[R9, #+0]
+        CMP      R1,#+32
+//  401     {
+//  402       *s1++=*s;
+        STRBNE   R1,[R0], #+1
+        BNE      ??OpenABRecord_2
+//  403     }
+//  404     else
+//  405     {
+//  406       *s1=0;
+        STRB     R6,[R0, #+0]
+//  407       i++;
+        ADD      R10,R10,#+1
+        AND      R10,R10,#0xFF
+//  408       wsprintf(icsm->strings[i],"%t",(int*)sname);
+        MOV      R2,R7
+        MOV      R1,R8
+        ADD      R0,R5,R10, LSL #+2
+        LDR      R0,[R0, #+208]
+        _BLF     wsprintf,??wsprintf??rA
+//  409       s1=sname;
+        MOV      R0,R7
+//  410     }
+//  411   }
+//  412   while(*s++);
+??OpenABRecord_2:
+        LDRB     R1,[R9], #+1
+        CMP      R1,#+0
+        BNE      ??OpenABRecord_1
+//  413   i++;
+        ADD      R9,R10,#+1
+        AND      R9,R9,#0xFF
+//  414   wsprintf(icsm->strings[i],"%t",(int*)sname);
+        MOV      R2,R7
+        MOV      R1,R8
+        ADD      R0,R5,R9, LSL #+2
+        LDR      R0,[R0, #+208]
+        _BLF     wsprintf,??wsprintf??rA
+//  415   sname[0]=0;
+        STRB     R6,[R7, #+0]
+        LDR      R6,??OpenABRecord_0+0x4  ;; icons
+//  416 
+//  417 
+//  418   MENUITEM_DESC * items_desc = malloc(sizeof(MenuItems));
+        MOV      R0,#+112
+        _BLF     malloc,??malloc??rA
+        MOV      R7,R0
+//  419   MENU_DESC * menu_desc = malloc(sizeof(menu4));
+        MOV      R0,#+44
+        _BLF     malloc,??malloc??rA
+        MOV      R5,R0
+//  420 
+//  421 
+//  422   memcpy(items_desc,MenuItems,sizeof(MenuItems));
+        MOV      R2,#+112
+        ADD      R1,R6,#+44
+        MOV      R0,R7
+        _BLF     memcpy,??memcpy??rA
+//  423   memcpy(menu_desc,&menu4,sizeof(menu4));
+        MOV      R2,#+44
+        ADD      R1,R6,#+156
+        MOV      R0,R5
+        _BLF     memcpy,??memcpy??rA
+//  424   menu_desc->n_items=i;
+        STR      R9,[R5, #+40]
+//  425   menu_desc->items=items_desc;
+        STR      R7,[R5, #+32]
+//  426 
+//  427   menu_desc->items[0].icon=(int *)(icons+((*p++)-0x29));
+        LDRB     R2,[R4], #+1
+        MVN      R1,#+163
+//  428   menu_desc->items[1].icon=(int *)(icons+((*p++)-0x29));
+//  429   menu_desc->items[2].icon=(int *)(icons+((*p++)-0x29));
+//  430   menu_desc->items[3].icon=(int *)(icons+((*p)-0x29));
+//  431   CreateMenu(1,0,menu_desc,&menuheader,0,1,0,0);
+        ADD      R3,R6,#+24
+        ADD      R2,R6,R2, LSL #+2
+        ADD      R1,R1,R2
+        STR      R1,[R7, #+0]
+        LDRB     R2,[R4], #+1
+        LDR      R0,[R5, #+32]
+        MVN      R1,#+163
+        ADD      R2,R6,R2, LSL #+2
+        ADD      R1,R1,R2
+        STR      R1,[R0, #+28]
+        LDRB     R2,[R4, #+0]
+        LDR      R0,[R5, #+32]
+        MVN      R1,#+163
+        ADD      R2,R6,R2, LSL #+2
+        ADD      R1,R1,R2
+        STR      R1,[R0, #+56]
+        LDRB     R2,[R4, #+1]
+        LDR      R0,[R5, #+32]
+        MVN      R1,#+163
+        ADD      R2,R6,R2, LSL #+2
+        ADD      R1,R1,R2
+        STR      R1,[R0, #+84]
+        MOV      R0,#+0
+        PUSH     {R0}
+        CFI CFA R13+36
+        PUSH     {R0}
+        CFI CFA R13+40
+        MOV      R2,R5
+        MOV      R1,#+0
+        MOV      R0,#+1
+        PUSH     {R0}
+        CFI CFA R13+44
+        MOV      R0,#+0
+        PUSH     {R0}
+        CFI CFA R13+48
+        MOV      R0,#+1
+        _BLF     CreateMenu,??CreateMenu??rA
+//  432 }
+        ADD      SP,SP,#+16
+        CFI CFA R13+32
+        POP      {R4-R10,PC}      ;; return
+        DATA
+??OpenABRecord_0:
+        DC8      "%t",+0
+        DC32     icons
+        CFI EndBlock cfiBlock24
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock25 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??ed_inp_redraw??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock25
+        REQUIRE ed_inp_redraw
+//  433 
+//  434 
+//  435 
+//  436 
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock26 Using cfiCommon1
+        CFI Function doit
+        ARM
+//  437 int doit(void *gui, GUI_MSG *msg) @ "DEBUG1"
+//  438 {
+doit:
+        PUSH     {R0,R4-R11,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R11 Frame(CFA, -8)
+        CFI R10 Frame(CFA, -12)
+        CFI R9 Frame(CFA, -16)
+        CFI R8 Frame(CFA, -20)
+        CFI R7 Frame(CFA, -24)
+        CFI R6 Frame(CFA, -28)
+        CFI R5 Frame(CFA, -32)
+        CFI R4 Frame(CFA, -36)
+        CFI CFA R13+40
+        SUB      SP,SP,#+352
+        CFI CFA R13+392
+        MOV      R4,R1
+//  439   int (*OldMethod)(void *, GUI_MSG *)=(int (*)(void *, GUI_MSG *))(0xA02CB28E+1);
+//  440   int i,j,key;
+//  441   char dstr[41];
+//  442   unsigned short index[6][2];
+//  443   unsigned short tmp;
+//  444   WSHDR *str;
+//  445   void *adr=((void ****)gui)[0x50/4][0x4C/4][0x28/4];
+        LDR      R1,[R0, #+80]
+        LDR      R1,[R1, #+76]
+        LDR      R1,[R1, #+40]
+        STR      R1,[SP, #+0]
+//  446   dstr[0]=' ';
+//  447   ws2ascii(&dstr[1],getDialString(adr),wstrlen(getDialString(adr)));
+        LDR      R0,[SP, #+0]
+        MOV      R1,#+32
+        STRB     R1,[SP, #+308]
+        _BLF     getDialString,??getDialString??rA?DEBUG1
+        _BLF     wstrlen,??wstrlen??rA?DEBUG1
+        MOV      R5,R0
+        LDR      R0,[SP, #+0]
+        _BLF     getDialString,??getDialString??rA?DEBUG1
+        MOV      R1,R0
+        MOV      R2,R5
+        ADD      R0,SP,#+53
+        ADD      R0,R0,#+256
+        _BLF     ws2ascii,??ws2ascii??rA?DEBUG1
+//  448 
+//  449   IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+        LDR      R0,??doit_0+0x4  ;; CSM_root + 4
+        LDR      R0,[R0, #+0]
+        _BLF     FindCSMbyID,??FindCSMbyID??rA?DEBUG1
+        MOV      R5,R0
+//  450   char sname[80];
+//  451   char ss[200];
+//  452   char *s=icsm->fileAB;
+//  453 
+//  454   key=msg->msg->submess;
+        LDR      R0,[R4, #+4]
+        LDR      R8,[R5, #+232]
+        LDR      R10,[R0, #+4]
+        CMP      R10,#+59
+        CMPNE    R10,#+60
+        BNE      ??doit_1
+//  455   if ((key==UP_BUTTON)||(key==DOWN_BUTTON))
+//  456   {
+//  457     i=0;
+        MOV      R11,#+0
+//  458     msg->unk2=0;
+        MOV      R0,#+0
+        STRH     R0,[R4, #+2]
+        B        ??doit_2
+//  459   }
+//  460   else
+//  461   {
+//  462     if (key!=GREEN_BUTTON)  i=(*OldMethod)(gui, msg);
+??doit_1:
+        CMP      R10,#+11
+        BEQ      ??doit_2
+        LDR      R0,[SP, #+352]
+        LDR      R2,??doit_0+0x8  ;; 0xa02cb28f
+        MOV      R1,R4
+        BLX      R2
+        MOV      R11,R0
+//  463   }
+//  464 #define cp (icsm->myAB)
+//  465   str=AllocWS(20);
+??doit_2:
+        MOV      R0,#+20
+        _BLF     AllocWS,??AllocWS??rA?DEBUG1
+        MOV      R6,R0
+//  466   cutwstr(icsm->str1,0);
+        LDR      R0,[R5, #+204]
+        MOV      R1,#+0
+        _BLF     cutwstr,??cutwstr??rA?DEBUG1
+//  467 
+//  468 
+//  469   j=0;
+        MOV      R9,#+0
+//  470   do
+//  471   {
+//  472     strcpy(sname,s);
+??doit_3:
+        MOV      R1,R8
+        ADD      R0,SP,#+4
+        _BLF     strcpy,??strcpy??rA?DEBUG1
+//  473     s+=strlen(sname)+1;
+        ADD      R0,SP,#+4
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R0,R0,R8
+        ADD      R7,R0,#+1
+//  474     strcpy(ss,s);
+        MOV      R1,R7
+        ADD      R0,SP,#+108
+        _BLF     strcpy,??strcpy??rA?DEBUG1
+//  475     s+=strlen(ss)+1;
+        ADD      R0,SP,#+108
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R0,R0,R7
+        ADD      R8,R0,#+1
+//  476     tmp=(*s++);
+        LDRB     R0,[R8], #+1
+//  477     tmp|=((unsigned short)(*s++))<<8;
+        LDRB     R1,[R8], #+7
+        ORR      R7,R0,R1, LSL #+8
+//  478     s+=6;
+//  479     if (strstr(ss,dstr))
+        ADD      R1,SP,#+308
+        ADD      R0,SP,#+108
+        _BLF     strstr,??strstr??rA?DEBUG1
+        CMP      R0,#+0
+        BEQ      ??doit_4
+//  480     {
+//  481       // номер записи в файле.
+//  482       index[j][0]=tmp&0x03FF;
+        ADD      R0,SP,#+84
+        ADD      R0,R0,R9, LSL #+2
+        MOV      R1,R7
+        LSL      R1,R1,#+22
+        LSR      R1,R1,#+22
+        STRH     R1,[R0, #+0]
+//  483       // количество номеров в записи.
+//  484       index[j][1]=tmp>>10;
+        LSR      R1,R7,#+10
+        STRH     R1,[R0, #+2]
+//  485       j++;
+        ADD      R9,R9,#+1
+//  486     }
+//  487   }
+//  488   while(((*s)&&(j<6)));
+??doit_4:
+        LDRB     R0,[R8, #+0]
+        CMP      R0,#+0
+        BEQ      ??doit_5
+        CMP      R9,#+6
+        BLT      ??doit_3
+//  489   FreeWS(str);
+??doit_5:
+        MOV      R0,R6
+        _BLF     FreeWS,??FreeWS??rA?DEBUG1
+//  490 
+//  491   //--------------------------------------------------
+//  492 
+//  493   if (msg->msg->msg== KEY_DOWN)
+        LDR      R0,[R4, #+4]
+        MOV      R1,#+147
+        LDRSH    R0,[R0, #+2]
+        ORR      R1,R1,#0x100
+        CMP      R0,R1
+        BNE      ??doit_6
+//  494   {
+//  495     switch (key)
+        LDR      R0,[R5, #+228]
+        SUB      R1,R9,#+1
+        MVN      R2,#+0
+        SUBS     R3,R10,#+1
+        BEQ      ??doit_7
+        SUBS     R3,R3,#+58
+        BEQ      ??doit_8
+        SUBS     R3,R3,#+1
+        BEQ      ??doit_9
+        B        ??doit_10
+//  496     {
+//  497     case UP_BUTTON:
+//  498       if ((cp)&&(cp!=-1)) cp--; else cp=j-1;
+??doit_8:
+        CMP      R0,#+0
+        CMPNE    R0,R2
+        BEQ      ??doit_11
+        SUB      R0,R0,#+1
+??doit_12:
+        STR      R0,[R5, #+228]
+        B        ??doit_10
+??doit_11:
+        STR      R1,[R5, #+228]
+        B        ??doit_10
+//  499       break;
+//  500     case DOWN_BUTTON:
+//  501       if (cp<(j-1)) cp++; else cp=0;
+??doit_9:
+        CMP      R0,R1
+        ADDLT    R0,R0,#+1
+        BLT      ??doit_12
+        MOV      R0,#+0
+        B        ??doit_12
+//  502     		break;
+//  503     case LEFT_SOFT: cp=-1;
+??doit_7:
+        STR      R2,[R5, #+228]
+//  504     break;
+//  505     }
+//  506     if ((key >= 0x30)&&(key <= 0x39))
+??doit_10:
+        CMP      R10,#+48
+        BLT      ??doit_13
+        CMP      R10,#+58
+//  507     {
+//  508       //      wsaddwchar(icsm->str1,key);
+//  509       cp=-1;
+        STRLT    R2,[R5, #+228]
+//  510     }
+//  511     PendedRedrawGUI();
+??doit_13:
+        _BLF     PendedRedrawGUI,??PendedRedrawGUI??rA?DEBUG1
+//  512   }
+//  513 
+//  514 
+//  515   if ((key == ENTER_BUTTON))
+??doit_6:
+        LDR      R0,[R5, #+228]
+        MOV      R6,#+255
+        ORR      R6,R6,#0xFF00
+        CMP      R10,#+26
+        BNE      ??doit_14
+//  516   {
+//  517     if ((unsigned int)cp<6)
+        CMP      R0,#+6
+        BCS      ??doit_15
+//  518     {
+//  519       //      WSHDR *str=getDialString(adr);
+//  520       char *p;
+//  521       s=icsm->fileAB;
+        LDR      R8,[R5, #+232]
+//  522       tmp=index[cp][0]+1;
+        ADD      R1,SP,#+84
+        ADD      R0,R1,R0, LSL #+2
+        LDRH     R0,[R0, #+0]
+        ADD      R7,R0,#+1
+        MOV      R7,R7, LSL #+16
+        MOV      R7,R7, LSR #+16
+//  523       do
+//  524       {
+//  525         strcpy(sname,s);
+??doit_16:
+        MOV      R1,R8
+        ADD      R0,SP,#+4
+        _BLF     strcpy,??strcpy??rA?DEBUG1
+//  526         s+=strlen(sname)+1;
+        ADD      R0,SP,#+4
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R0,R0,R8
+        ADD      R8,R0,#+1
+//  527         strcpy(ss,s);
+        MOV      R1,R8
+        ADD      R0,SP,#+108
+        _BLF     strcpy,??strcpy??rA?DEBUG1
+//  528         s+=strlen(ss)+3+6;
+        ADD      R0,SP,#+108
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R0,R0,R8
+        ADD      R8,R0,#+9
+//  529       }
+//  530       while(--tmp);
+        ADD      R7,R6,R7
+        MOV      R7,R7, LSL #+16
+        MOVS     R7,R7, LSR #+16
+        BNE      ??doit_16
+//  531       p=s-6;
+        SUB      R6,R8,#+6
+//  532       s=ss+strlen(sname)+1;
+        ADD      R0,SP,#+4
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R1,SP,#+108
+        ADD      R0,R0,R1
+        ADD      R8,R0,#+1
+//  533       j=1;
+//  534 
+//  535       wsprintf(icsm->strings[0],"%t",(int*)sname);
+        LDR      R0,[R5, #+208]
+        ADD      R2,SP,#+4
+        ADR      R1,??doit_0      ;; "%t"
+        _BLF     wsprintf,??wsprintf??rA?DEBUG1
+//  536       OpenABRecord(s,sname,icsm,p);
+        MOV      R3,R6
+??doit_17:
+        MOV      R2,R5
+        ADD      R1,SP,#+4
+        MOV      R0,R8
+        _BLF     OpenABRecord,??OpenABRecord??rA?DEBUG1
+//  537       i=0;
+        MOV      R11,#+0
+//  538       msg->unk2=0;
+        MOV      R0,#+0
+        STRH     R0,[R4, #+2]
+        MOV      R0,R11
+        ADD      SP,SP,#+356
+        CFI CFA R13+36
+        POP      {R4-R11,PC}
+        CFI CFA R13+392
+//  539     }
+//  540   }
+//  541 
+//  542   if ((key == GREEN_BUTTON))
+??doit_14:
+        CMP      R10,#+11
+        BNE      ??doit_15
+//  543   {
+//  544     if ((unsigned int)cp<6)
+        CMP      R0,#+6
+        BCS      ??doit_18
+//  545     {
+//  546       WSHDR *str=getDialString(adr);
+        LDR      R0,[SP, #+0]
+        _BLF     getDialString,??getDialString??rA?DEBUG1
+//  547       char *p;
+//  548       s=icsm->fileAB;
+        LDR      R8,[R5, #+232]
+        MOV      R10,R0
+//  549       tmp=index[cp][0]+1;
+        LDR      R0,[R5, #+228]
+        ADD      R1,SP,#+84
+        ADD      R0,R1,R0, LSL #+2
+        LDRH     R0,[R0, #+0]
+        ADD      R7,R0,#+1
+        MOV      R7,R7, LSL #+16
+        MOV      R7,R7, LSR #+16
+//  550       do
+//  551       {
+//  552         strcpy(sname,s);
+??doit_19:
+        MOV      R1,R8
+        ADD      R0,SP,#+4
+        _BLF     strcpy,??strcpy??rA?DEBUG1
+//  553         s+=strlen(sname)+1;
+        ADD      R0,SP,#+4
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R0,R0,R8
+        ADD      R8,R0,#+1
+//  554         strcpy(ss,s);
+        MOV      R1,R8
+        ADD      R0,SP,#+108
+        _BLF     strcpy,??strcpy??rA?DEBUG1
+//  555         s+=strlen(ss)+3+6;
+        ADD      R0,SP,#+108
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R0,R0,R8
+        ADD      R8,R0,#+9
+//  556       }
+//  557       while(--tmp);
+        ADD      R7,R6,R7
+        MOV      R7,R7, LSL #+16
+        MOVS     R7,R7, LSR #+16
+        BNE      ??doit_19
+//  558       p=s-6;
+        SUB      R7,R8,#+6
+//  559       s=ss+strlen(sname)+1;
+        ADD      R0,SP,#+4
+        _BLF     strlen,??strlen??rA?DEBUG1
+        ADD      R1,SP,#+108
+        ADD      R0,R0,R1
+        ADD      R8,R0,#+1
+//  560       j=1;
+//  561 
+//  562       wsprintf(icsm->strings[0],"%t",(int*)sname);
+        LDR      R0,[R5, #+208]
+        ADD      R2,SP,#+4
+        ADR      R1,??doit_0      ;; "%t"
+        _BLF     wsprintf,??wsprintf??rA?DEBUG1
+//  563 
+//  564       if (index[cp][1])
+        LDR      R0,[R5, #+228]
+        ADD      R1,SP,#+84
+        ADD      R0,R1,R0, LSL #+2
+        LDRH     R0,[R0, #+2]
+        MOV      R9,#+1
+        CMP      R0,#+0
+        BEQ      ??doit_20
+//  565       {
+//  566         OpenABRecord(s,sname,icsm,p);
+        MOV      R3,R7
+        B        ??doit_17
+//  567         i=0;
+//  568         msg->unk2=0;
+//  569       }
+//  570       else
+//  571       {
+//  572         while(*s)
+//  573         {
+//  574           str->wsbody[j]=*s++;
+??doit_21:
+        LDRB     R1,[R8], #+1
+        ADD      R0,R0,R9, LSL #+1
+//  575           j++;
+        ADD      R9,R9,#+1
+        STRH     R1,[R0, #+0]
+//  576         }
+??doit_20:
+        LDRB     R0,[R8, #+0]
+        CMP      R0,#+0
+        LDR      R0,[R10, #+0]
+        BNE      ??doit_21
+//  577         str->wsbody[0]=j-1;
+        ADD      R1,R6,R9
+        STRH     R1,[R0, #+0]
+//  578         i=(*OldMethod)(gui, msg);
+//  579       }
+//  580     }
+//  581     else
+//  582       i=(*OldMethod)(gui, msg);
+??doit_18:
+        LDR      R0,[SP, #+352]
+        LDR      R2,??doit_0+0x8  ;; 0xa02cb28f
+        MOV      R1,R4
+        BLX      R2
+        MOV      R11,R0
+//  583   }
+//  584 
+//  585   //  FreeWS(str);
+//  586   //--------  --------------------------------------------------------
+//  587 
+//  588 
+//  589   return(i);
+??doit_15:
+        MOV      R0,R11
+        ADD      SP,SP,#+356
+        CFI CFA R13+36
+        POP      {R4-R11,PC}      ;; return
+        DATA
+??doit_0:
+        DC8      "%t",+0
+        DC32     CSM_root + 4
+        DC32     0xa02cb28f
+        CFI EndBlock cfiBlock26
+//  590 #undef cp
+//  591 }
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock27 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??getDialString??rA?DEBUG1:
+        LDR      R12,??Subroutine41_0  ;; getDialString
+        BX       R12
+        DATA
+??Subroutine41_0:
+        DC32     getDialString
+        CFI EndBlock cfiBlock27
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock28 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??wstrlen??rA?DEBUG1:
+        LDR      R12,??Subroutine42_0  ;; wstrlen
+        BX       R12
+        DATA
+??Subroutine42_0:
+        DC32     wstrlen
+        CFI EndBlock cfiBlock28
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock29 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??ws2ascii??rA?DEBUG1:
+        LDR      R12,??Subroutine43_0  ;; ws2ascii
+        BX       R12
+        DATA
+??Subroutine43_0:
+        DC32     ws2ascii
+        CFI EndBlock cfiBlock29
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock30 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??FindCSMbyID??rA?DEBUG1:
+        LDR      R12,??Subroutine44_0  ;; FindCSMbyID
+        BX       R12
+        DATA
+??Subroutine44_0:
+        DC32     FindCSMbyID
+        CFI EndBlock cfiBlock30
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock31 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??AllocWS??rA?DEBUG1:
+        LDR      R12,??Subroutine45_0  ;; AllocWS
+        BX       R12
+        DATA
+??Subroutine45_0:
+        DC32     AllocWS
+        CFI EndBlock cfiBlock31
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock32 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??cutwstr??rA?DEBUG1:
+        LDR      R12,??Subroutine46_0  ;; cutwstr
+        BX       R12
+        DATA
+??Subroutine46_0:
+        DC32     cutwstr
+        CFI EndBlock cfiBlock32
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock33 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??strcpy??rA?DEBUG1:
+        LDR      R12,??Subroutine47_0  ;; strcpy
+        BX       R12
+        DATA
+??Subroutine47_0:
+        DC32     strcpy
+        CFI EndBlock cfiBlock33
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock34 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??strlen??rA?DEBUG1:
+        LDR      R12,??Subroutine48_0  ;; strlen
+        BX       R12
+        DATA
+??Subroutine48_0:
+        DC32     strlen
+        CFI EndBlock cfiBlock34
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock35 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??strstr??rA?DEBUG1:
+        LDR      R12,??Subroutine49_0  ;; strstr
+        BX       R12
+        DATA
+??Subroutine49_0:
+        DC32     strstr
+        CFI EndBlock cfiBlock35
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock36 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??FreeWS??rA?DEBUG1:
+        LDR      R12,??Subroutine50_0  ;; FreeWS
+        BX       R12
+        DATA
+??Subroutine50_0:
+        DC32     FreeWS
+        CFI EndBlock cfiBlock36
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock37 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??PendedRedrawGUI??rA?DEBUG1:
+        LDR      R12,??Subroutine51_0  ;; PendedRedrawGUI
+        BX       R12
+        DATA
+??Subroutine51_0:
+        DC32     PendedRedrawGUI
+        CFI EndBlock cfiBlock37
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock38 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??wsprintf??rA?DEBUG1:
+        LDR      R12,??Subroutine52_0  ;; wsprintf
+        BX       R12
+        DATA
+??Subroutine52_0:
+        DC32     wsprintf
+        CFI EndBlock cfiBlock38
+
+        RSEG DEBUG1:CODE:NOROOT(2)
+        CFI Block cfiBlock39 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??OpenABRecord??rA?DEBUG1:
+        LDR      R12,??Subroutine53_0  ;; OpenABRecord
+        BX       R12
+        DATA
+??Subroutine53_0:
+        DC32     OpenABRecord
+        CFI EndBlock cfiBlock39
+//  592 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock40 Using cfiCommon1
+        CFI Function ed_inp_redraw
+        ARM
+//  593 void ed_inp_redraw(void *data)
+//  594 {
+//  595   ((void(*)(void *))(0xA07FE476+1))(data);
+ed_inp_redraw:
+        LDR      R1,??ed_inp_redraw_0  ;; 0xa07fe477
+        PUSH     {R4,R5,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R5 Frame(CFA, -8)
+        CFI R4 Frame(CFA, -12)
+        CFI CFA R13+12
+        LDR      R5,??ed_inp_redraw_0+0x4  ;; color
+        SUB      SP,SP,#+4
+        CFI CFA R13+16
+        BLX      R1
+//  596   //Вставлять свое
+//  597   IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+        LDR      R0,??DataTable7  ;; CSM_root + 4
+        LDR      R0,[R0, #+0]
+        _BLF     FindCSMbyID,??FindCSMbyID??rA
+        MOV      R4,R0
+//  598   DrawFrameInNativeMenu(8,47,130,154,0,0,0,
+//  599                         GetPaletteAdrByColorIndex(1),
+//  600                         (int)&color[0]/*GetPaletteAdrByColorIndex(7)*/);
+        MOV      R0,#+1
+        _BLF     GetPaletteAdrByColorIndex,??GetPaletteAdrByColorIndex??rA
+        MOV      R1,R5
+        PUSH     {R1}
+        CFI CFA R13+20
+        PUSH     {R0}
+        CFI CFA R13+24
+        MOV      R3,#+154
+        MOV      R2,#+130
+        MOV      R1,#+47
+        MOV      R0,#+0
+        PUSH     {R0}
+        CFI CFA R13+28
+        PUSH     {R0}
+        CFI CFA R13+32
+        PUSH     {R0}
+        CFI CFA R13+36
+        MOV      R0,#+8
+        _BLF     DrawFrameInNativeMenu,??DrawFrameInNativeMenu??rA
+//  601   DrawString(icsm->str1,   12,49,128,152,   3,0x0,    GetPaletteAdrByColorIndex(1),
+//  602              (int)&color[0]/*GetPaletteAdrByColorIndex(7)*/);
+        MOV      R0,#+1
+        _BLF     GetPaletteAdrByColorIndex,??GetPaletteAdrByColorIndex??rA
+        PUSH     {R5}
+        CFI CFA R13+40
+        PUSH     {R0}
+        CFI CFA R13+44
+        MOV      R3,#+128
+        MOV      R2,#+49
+        MOV      R1,#+12
+        MOV      R0,#+0
+        PUSH     {R0}
+        CFI CFA R13+48
+        MOV      R0,#+3
+        PUSH     {R0}
+        CFI CFA R13+52
+        MOV      R0,#+152
+        PUSH     {R0}
+        CFI CFA R13+56
+        LDR      R0,[R4, #+204]
+        _BLF     DrawString,??DrawString??rA
+        ADD      SP,SP,#+40
+        CFI CFA R13+16
+//  603 }
+        ADD      SP,SP,#+4
+        CFI CFA R13+12
+        POP      {R4,R5,PC}       ;; return
+        DATA
+??ed_inp_redraw_0:
+        DC32     0xa07fe477
+        DC32     color
+        CFI EndBlock cfiBlock40
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock41 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??redraw??rA:
+        ADD      R12,PC,#+1
+        BX       R12
+        CFI EndBlock cfiBlock41
+        REQUIRE redraw
+//  604 
+
+        RSEG CODE:CODE:ROOT(2)
+        CFI Block cfiBlock42 Using cfiCommon0
+        CFI Function redraw
+        THUMB
+//  605 __thumb __root int redraw (void * data, int cmd)
+//  606 {
+redraw:
+        PUSH     {R0,R1,R4-R7,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R7 Frame(CFA, -8)
+        CFI R6 Frame(CFA, -12)
+        CFI R5 Frame(CFA, -16)
+        CFI R4 Frame(CFA, -20)
+        CFI CFA R13+28
+        SUB      SP,SP,#+340
+        CFI CFA R13+368
+//  607   int i;
+//  608   int (*OldMethod)(void *,int)=(int (*)(void *,int))(0xA02CB7E4+1);
+//  609   void * * methods;
+//  610   WSHDR *str;
+//  611   void *adr=((void ****)data)[0x50/4][0x4C/4][0x28/4];
+//  612   str=getDialString(adr);
+        LDR      R0,[R0, #+80]
+        LDR      R0,[R0, #+76]
+        LDR      R0,[R0, #+40]
+        _BLF     getDialString,??getDialString??rT
+        MOVS     R5,R0
+//  613   IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+        LDR      R0,??DataTable7  ;; CSM_root + 4
+        LDR      R0,[R0, #+0]
+        _BLF     FindCSMbyID,??FindCSMbyID??rT
+        MOVS     R6,R0
+        LDR      R0,[SP, #+344]
+        CMP      R0,#+2
+        BNE      ??redraw_0
+//  614 
+//  615   if (cmd==2)
+//  616   {
+//  617     //Called after onCreate
+//  618     unsigned int err;
+//  619     int f;
+//  620     methods=malloc(64+4);
+        MOVS     R0,#+68
+        _BLF     malloc,??malloc??rT
+        MOVS     R4,R0
+//  621     void **m=GetDataOfItemByID(data,4);
+        LDR      R0,[SP, #+340]
+        MOVS     R1,#+4
+        _BLF     GetDataOfItemByID,??GetDataOfItemByID??rT
+        MOVS     R5,R0
+//  622     memcpy(methods,m[1],64);
+        LDR      R1,[R5, #+4]
+        MOVS     R2,#+64
+        MOVS     R0,R4
+        _BLF     memcpy,??memcpy??rT
+//  623     *methods=(void *)ed_inp_redraw;
+        LDR      R0,??redraw_1    ;; ed_inp_redraw
+//  624     methods[16]=m[1];
+//  625     m[1]=methods;
+//  626     icsm->fileAB=malloc(MAX_ABFILE_SIZE+1);
+        ADDS     R6,R6,#+204
+        STR      R0,[R4, #+0]
+        LDR      R0,[R5, #+4]
+        STR      R0,[R4, #+64]
+        LDR      R0,??redraw_1+0x4  ;; 0x7531
+        STR      R4,[R5, #+4]
+        MOVS     R4,R6
+//  627     zeromem(icsm->fileAB,MAX_ABFILE_SIZE);
+        LDR      R6,??redraw_1+0x8  ;; 0x7530
+        _BLF     malloc,??malloc??rT
+        STR      R0,[R4, #+28]
+        MOVS     R1,R6
+        _BLF     zeromem,??zeromem??rT
+//  628 //    UnPackAB(icsm->fileAB);
+//  629 
+//  630     if ((f=fopen((char *)fname,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+        LDR      R0,??redraw_1+0xC  ;; fname
+        MOV      R3,SP
+        MOVS     R2,#+192
+        LSLS     R2,R2,#+1
+        MOVS     R1,#+128
+        LSLS     R1,R1,#+8
+        _BLF     fopen,??fopen??rT
+        MOVS     R5,R0
+        MOVS     R0,#+0
+        MVNS     R0,R0
+        CMP      R5,R0
+        BNE      .+5
+        B        ??redraw_2
+//  631     {
+//  632       icsm->fileAB[fread(f,icsm->fileAB,MAX_ABFILE_SIZE,&err)]=0;
+        LDR      R1,[R4, #+28]
+        MOV      R3,SP
+        MOVS     R2,R6
+        MOVS     R0,R5
+        _BLF     fread,??fread??rT
+        LDR      R1,[R4, #+28]
+        MOVS     R2,#+0
+        STRB     R2,[R1, R0]
+//  633       fclose(f,&err);
+        MOV      R1,SP
+        MOVS     R0,R5
+        _BLF     fclose,??fclose??rT
+        B        ??redraw_2
+//  634     }
+//  635 
+//  636 
+//  637 
+//  638   }
+//  639   if (cmd==3)
+??redraw_0:
+        MOVS     R4,R6
+        ADDS     R4,R4,#+204
+        CMP      R0,#+3
+        BNE      ??redraw_3
+//  640   {
+//  641     void **m=GetDataOfItemByID(data,4);
+        LDR      R0,[SP, #+340]
+        MOVS     R1,#+4
+        _BLF     GetDataOfItemByID,??GetDataOfItemByID??rT
+        MOVS     R1,R0
+//  642     void **mm=m[1];
+        LDR      R0,[R1, #+4]
+//  643     m[1]=mm[16];
+//  644     mfree(mm);
+//  645     cutwstr(icsm->str1,0);
+//  646     icsm->flashSMS=0;
+        ADDS     R6,R6,#+236
+        LDR      R2,[R0, #+64]
+        STR      R2,[R1, #+4]
+        _BLF     mfree,??mfree??rT
+        LDR      R0,[R4, #+0]
+        MOVS     R1,#+0
+        _BLF     cutwstr,??cutwstr??rT
+        MOVS     R0,#+0
+        STRB     R0,[R6, #+0]
+//  647     mfree(icsm->fileAB);
+        LDR      R0,[R4, #+28]
+        _BLF     mfree,??mfree??rT
+        B        ??redraw_2
+//  648   }
+//  649   if ((cmd==7)&&(wstrlen(str)))
+??redraw_3:
+        CMP      R0,#+7
+        BEQ      .+5
+        B        ??redraw_2
+        MOVS     R0,R5
+        _BLF     wstrlen,??wstrlen??rT
+        CMP      R0,#+0
+        BNE      .+5
+        B        ??redraw_2
+//  650   {
+//  651     char dstr[41];
+//  652     char j,k;
+//  653     dstr[0]=' ';
+        ADD      R6,SP,#+16
+        MOVS     R0,#+32
+        STRB     R0,[R6, #+0]
+//  654     ws2ascii(&dstr[1],str,wstrlen(str));
+        MOVS     R0,R5
+        _BLF     wstrlen,??wstrlen??rT
+        MOVS     R2,R0
+        MOVS     R1,R5
+        ADDS     R0,R6,#+1
+        _BLF     ws2ascii,??ws2ascii??rT
+//  655     char sname[80];
+//  656     char ss[200];
+//  657     char *s=icsm->fileAB;
+        LDR      R0,[R4, #+28]
+        STR      R0,[SP, #+4]
+//  658 #define cp (icsm->myAB)
+//  659 
+//  660     str=AllocWS(20);
+        MOVS     R0,#+20
+        _BLF     AllocWS,??AllocWS??rT
+        MOVS     R5,R0
+//  661     cutwstr(icsm->str1,0);
+        LDR      R0,[R4, #+0]
+        MOVS     R1,#+0
+        _BLF     cutwstr,??cutwstr??rT
+//  662     j=0;
+        MOVS     R0,#+0
+        STR      R0,[SP, #+8]
+//  663     do
+//  664     {
+//  665       strcpy(sname,s);
+??redraw_4:
+        LDR      R1,[SP, #+4]
+        ADD      R0,SP,#+260
+        _BLF     strcpy,??strcpy??rT
+//  666       s+=strlen(sname)+1;
+        ADD      R0,SP,#+260
+        _BLF     strlen,??strlen??rT
+        LDR      R1,[SP, #+4]
+        ADDS     R6,R1,R0
+        ADDS     R6,R6,#+1
+//  667       strcpy(ss,s);
+        MOVS     R1,R6
+        ADD      R0,SP,#+60
+        _BLF     strcpy,??strcpy??rT
+//  668       s+=strlen(ss)+1;
+        ADD      R0,SP,#+60
+        _BLF     strlen,??strlen??rT
+        ADDS     R0,R6,R0
+        ADDS     R0,R0,#+1
+//  669       s+=2+6;
+        ADDS     R0,R0,#+8
+        STR      R0,[SP, #+4]
+//  670       if (strstr(ss,dstr))
+        ADD      R1,SP,#+16
+        ADD      R0,SP,#+60
+        _BLF     strstr,??strstr??rT
+        CMP      R0,#+0
+        BNE      .+5
+        B        ??redraw_5
+//  671       {
+//  672         char *ss1;
+//  673         k=(strstr(ss,dstr)-ss);
+        ADD      R1,SP,#+16
+        ADD      R0,SP,#+60
+        _BLF     strstr,??strstr??rT
+        ADD      R1,SP,#+60
+        SUBS     R0,R0,R1
+        LSLS     R0,R0,#+24
+        LSRS     R0,R0,#+24
+        STR      R0,[SP, #+0]
+//  674         cutwstr(str,0);
+        MOVS     R1,#+0
+        MOVS     R0,R5
+        _BLF     cutwstr,??cutwstr??rT
+//  675         if (j==cp) wsaddwchar(str,0xE003);
+        LDR      R0,[SP, #+8]
+        LSLS     R0,R0,#+24
+        LSRS     R0,R0,#+24
+        STR      R0,[SP, #+12]
+        LDR      R1,[R4, #+24]
+        CMP      R0,R1
+        BNE      ??redraw_6
+        LDR      R1,??redraw_1+0x10  ;; 0xe003
+        MOVS     R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rT
+//  676         ss1=sname+1;
+??redraw_6:
+        ADD      R6,SP,#+260
+        ADDS     R6,R6,#+1
+//  677         if (strlen(sname)>16) {sname[14]='.';sname[15]='.';sname[16]=0;}
+        ADD      R0,SP,#+260
+        _BLF     strlen,??strlen??rT
+        CMP      R0,#+17
+        BLT      ??redraw_7
+        MOVS     R0,#+46
+        ADD      R1,SP,#+260
+        STRB     R0,[R1, #+14]
+        STRB     R0,[R1, #+15]
+        MOVS     R0,#+0
+        STRB     R0,[R1, #+16]
+//  678         strcat(sname," ");
+??redraw_7:
+        ADR      R1,??DataTable5  ;; " "
+        ADD      R0,SP,#+260
+        _BLF     strcat,??strcat??rT
+//  679         do
+//  680         {
+//  681           if ((j!=cp)&&(k<(strlen(sname)))&&(cp==-1))
+??redraw_8:
+        LDR      R7,[SP, #+0]
+        LDR      R0,[SP, #+12]
+        LDR      R1,[R4, #+24]
+        LSLS     R7,R7,#+24
+        LSRS     R7,R7,#+24
+        CMP      R0,R1
+        BEQ      ??redraw_9
+        ADD      R0,SP,#+260
+        _BLF     strlen,??strlen??rT
+        CMP      R7,R0
+        BGE      ??redraw_9
+        LDR      R0,[R4, #+24]
+        MOVS     R1,#+0
+        MVNS     R1,R1
+        CMP      R0,R1
+        BNE      ??redraw_9
+//  682           {
+//  683             if (k==wstrlen(str)) wsaddwchar(str,0xE003);
+        MOVS     R0,R5
+        _BLF     wstrlen,??wstrlen??rT
+        CMP      R7,R0
+        BNE      ??redraw_10
+        LDR      R1,??redraw_1+0x10  ;; 0xe003
+        MOVS     R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rT
+//  684             if ((wstrlen(str)==(k+(strlen(dstr))))) {wsaddwchar(str,0xE004);}
+??redraw_10:
+        MOVS     R0,R5
+        _BLF     wstrlen,??wstrlen??rT
+        PUSH     {R0}
+        CFI CFA R13+372
+        ADD      R0,SP,#+20
+        _BLF     strlen,??strlen??rT
+        ADDS     R1,R7,R0
+        POP      {R0}
+        CFI CFA R13+368
+        CMP      R0,R1
+        BNE      ??redraw_9
+        LDR      R1,??redraw_1+0x14  ;; 0xe004
+        MOVS     R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rT
+//  685           }
+//  686           wsaddwchar(str,char8to16(*ss1));
+??redraw_9:
+        LDRB     R0,[R6, #+0]
+//  687           ss1++;
+        ADDS     R6,R6,#+1
+        _BLF     char8to16,??char8to16??rT
+        MOVS     R1,R0
+        MOVS     R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rT
+//  688         }
+//  689         while(*ss1);
+        LDRB     R0,[R6, #+0]
+        CMP      R0,#+0
+        BNE      ??redraw_8
+//  690         if ((wstrlen(str)<=(k+(strlen(dstr))))) {wsaddwchar(str,0xE004);}
+        ADD      R0,SP,#+16
+        _BLF     strlen,??strlen??rT
+        ADDS     R6,R7,R0
+        MOVS     R0,R5
+        _BLF     wstrlen,??wstrlen??rT
+        CMP      R6,R0
+        BLT      ??redraw_11
+        LDR      R1,??redraw_1+0x14  ;; 0xe004
+        MOVS     R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rT
+//  691         if (j==cp) wsaddwchar(str,0xE004);
+??redraw_11:
+        LDR      R0,[SP, #+12]
+        LDR      R1,[R4, #+24]
+        CMP      R0,R1
+        BNE      ??redraw_12
+        LDR      R1,??redraw_1+0x14  ;; 0xe004
+        MOVS     R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rT
+//  692         wsaddwchar(str,'\n');
+??redraw_12:
+        MOVS     R1,#+10
+        MOVS     R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rT
+//  693         wstrcat(icsm->str1,str);
+        LDR      R0,[R4, #+0]
+        MOVS     R1,R5
+        _BLF     wstrcat,??wstrcat??rT
+//  694         j++;
+        LDR      R0,[SP, #+8]
+        ADDS     R0,R0,#+1
+        LSLS     R0,R0,#+24
+        LSRS     R0,R0,#+24
+        STR      R0,[SP, #+8]
+//  695       }
+//  696     }
+//  697     while(((*s)&&(j<6)));
+??redraw_5:
+        LDR      R0,[SP, #+4]
+        LDRB     R0,[R0, #+0]
+        CMP      R0,#+0
+        BEQ      ??redraw_13
+        LDR      R0,[SP, #+8]
+        LSLS     R0,R0,#+24
+        LSRS     R0,R0,#+24
+        CMP      R0,#+6
+        BCS      .+5
+        B        ??redraw_4
+//  698     FreeWS(str);
+??redraw_13:
+        MOVS     R0,R5
+        _BLF     FreeWS,??FreeWS??rT
+//  699 
+//  700 #undef cp
+//  701   }
+//  702 
+//  703 
+//  704   i=OldMethod(data,cmd);
+//  705 
+//  706   /*  if (cmd==7)
+//  707   {
+//  708 }*/
+//  709 
+//  710   return(i);
+??redraw_2:
+        LDR      R1,[SP, #+344]
+        LDR      R0,[SP, #+340]
+        _BLF     -1607682075,??rT0xA02CB7E5
+        ADD      SP,SP,#+348
+        CFI CFA R13+20
+        POP      {R4-R7,PC}       ;; return
+        DATA
+??redraw_1:
+        DC32     ed_inp_redraw
+        DC32     0x7531
+        DC32     0x7530
+        DC32     fname
+        DC32     0xe003
+        DC32     0xe004
+        CFI EndBlock cfiBlock42
+//  711 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable5:
+        DC8      " ",+0,+0
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock43 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??ESI??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock43
+        REQUIRE ESI
+//  712 
+
+        RSEG DEBUG2:CODE:NOROOT(2)
+        CFI Block cfiBlock44 Using cfiCommon1
+        CFI Function resize
+        ARM
+//  713 int resize(void *GUI) @ "DEBUG2"
+//  714 {
+resize:
+        PUSH     {R4,R5,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R5 Frame(CFA, -8)
+        CFI R4 Frame(CFA, -12)
+        CFI CFA R13+12
+//  715   unsigned int *curSize=((unsigned int ****)GUI)[0x50/4][0x4C/4][0x28/4]+(0x14/4);
+        LDR      R1,[R0, #+80]
+        LDR      R1,[R1, #+76]
+        LDR      R1,[R1, #+40]
+        ADD      R4,R1,#+20
+//  716   unsigned short *fontSize=((unsigned short ******)GUI)[0x50/4][0x4C/4][0x28/4][0x68/4][0x08/4]+(0x0E/2);
+        LDR      R1,[R0, #+80]
+        LDR      R1,[R1, #+76]
+        LDR      R1,[R1, #+40]
+        LDR      R1,[R1, #+104]
+        LDR      R1,[R1, #+8]
+        ADD      R5,R1,#+14
+//  717   unsigned int dsLen=getDialStringLen(GUI);
+        _BLF     getDialStringLen,??getDialStringLen??rA?DEBUG2
+//  718 
+//  719 
+//  720   int i;
+//  721   if (dsLen>13)
+        CMP      R0,#+14
+        BCC      ??resize_0
+//  722   {
+//  723     if (dsLen>17)
+        CMP      R0,#+18
+        BCC      ??resize_1
+//  724     {
+//  725       *curSize=7;
+        MOV      R1,#+7
+//  726       *fontSize=2;
+        MOV      R2,#+2
+//  727       if (dsLen>20) i=24; else i=16;
+        CMP      R0,#+21
+        MOVCC    R0,#+16
+        MOVCS    R0,#+24
+        B        ??resize_2
+//  728     }
+//  729     else
+//  730     {
+//  731       *curSize=2;
+??resize_1:
+        MOV      R1,#+2
+//  732       *fontSize=4;
+        MOV      R2,#+4
+//  733       i=8;
+        MOV      R0,#+8
+        B        ??resize_2
+//  734     }
+//  735   }
+//  736   else
+//  737   {
+//  738     *curSize=1;
+??resize_0:
+        MOV      R1,#+1
+//  739     *fontSize=5;
+        MOV      R2,#+5
+//  740     i=0;
+        MOV      R0,#+0
+??resize_2:
+        STRH     R2,[R5, #+0]
+        STR      R1,[R4, #+0]
+//  741   }
+//  742   return((int)(&dsRects)+i);
+        LDR      R1,??resize_3    ;; dsRects
+        ADD      R0,R0,R1
+        POP      {R4,R5,PC}       ;; return
+        DATA
+??resize_3:
+        DC32     dsRects
+        CFI EndBlock cfiBlock44
+//  743 }
+
+        RSEG DEBUG2:CODE:NOROOT(2)
+        CFI Block cfiBlock45 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??getDialStringLen??rA?DEBUG2:
+        LDR      R12,??Subroutine80_0  ;; getDialStringLen
+        BX       R12
+        DATA
+??Subroutine80_0:
+        DC32     getDialStringLen
+        CFI EndBlock cfiBlock45
+//  744 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock46 Using cfiCommon1
+        CFI Function ESI
+        ARM
+//  745 void ESI(char *s, WSHDR *ws)
+//  746 {
+ESI:
+        PUSH     {R4,R5,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R5 Frame(CFA, -8)
+        CFI R4 Frame(CFA, -12)
+        CFI CFA R13+12
+        MOV      R4,R0
+//  747   int c;
+//  748   if ((((unsigned int)s)>>28)==0x0B)
+        LSR      R0,R4,#+28
+        MOV      R5,R1
+        CMP      R0,#+11
+        BNE      ??ESI_0
+//  749   {
+//  750     IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+        LDR      R0,??DataTable7  ;; CSM_root + 4
+        LDR      R0,[R0, #+0]
+        _BLF     FindCSMbyID,??FindCSMbyID??rA
+//  751     wstrcpy(ws,icsm->strings[((unsigned int)s)&0x0F]);
+        AND      R1,R4,#0xF
+        ADD      R0,R0,R1, LSL #+2
+        LDR      R1,[R0, #+208]
+        MOV      R0,R5
+        POP      {R4,R5,LR}       ;; Pop
+        _BF      wstrcpy,??wstrcpy??rA  ;; tailcall
+//  752     return;
+//  753   }
+//  754   if ((((unsigned int)s)>>28)!=0x0A) return;
+??ESI_0:
+        CMP      R0,#+10
+        POPNE    {R4,R5,PC}
+        B        ??ESI_1
+//  755   while((c=*s++))
+//  756   {
+//  757     wsaddwchar(ws,char8to16(c));
+??ESI_2:
+        _BLF     char8to16,??char8to16??rA
+        MOV      R1,R0
+        MOV      R0,R5
+        _BLF     wsaddwchar,??wsaddwchar??rA
+//  758   }
+??ESI_1:
+        LDRB     R0,[R4], #+1
+        CMP      R0,#+0
+        BNE      ??ESI_2
+        POP      {R4,R5,PC}       ;; return
+        CFI EndBlock cfiBlock46
+//  759 }
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock47 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??FlashSMS??rA:
+        ADD      R12,PC,#+1
+        BX       R12
+        CFI EndBlock cfiBlock47
+        REQUIRE FlashSMS
+//  760 
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock48 Using cfiCommon0
+        CFI Function FlashSMS
+        THUMB
+//  761 __thumb void FlashSMS(char * dest, char * source)
+//  762 {
+FlashSMS:
+        PUSH     {R4-R6,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R6 Frame(CFA, -8)
+        CFI R5 Frame(CFA, -12)
+        CFI R4 Frame(CFA, -16)
+        CFI CFA R13+16
+        MOVS     R4,R0
+//  763   IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+        LDR      R0,??DataTable7  ;; CSM_root + 4
+        MOVS     R6,R1
+        LDR      R0,[R0, #+0]
+        _BLF     FindCSMbyID,??FindCSMbyID??rT
+        MOVS     R5,R0
+//  764 
+//  765   memcpy(dest+0x0A,source,0x0D);
+        MOVS     R2,#+13
+        MOVS     R1,R6
+        MOVS     R0,R4
+        ADDS     R0,R0,#+10
+        _BLF     memcpy,??memcpy??rT
+//  766 
+//  767   if (icsm->flashSMS)
+        ADDS     R5,R5,#+236
+        LDRB     R0,[R5, #+0]
+        CMP      R0,#+0
+        BEQ      ??FlashSMS_0
+//  768   {
+//  769     icsm->flashSMS=0;
+        MOVS     R0,#+0
+        STRB     R0,[R5, #+0]
+//  770     dest-=0xB8;
+        SUBS     R4,R4,#+184
+//  771     switch (*dest)
+        LDRB     R0,[R4, #+0]
+        CMP      R0,#+0
+        BEQ      ??FlashSMS_1
+        CMP      R0,#+8
+        BNE      ??FlashSMS_0
+//  772     {
+//  773     case 0x08:*dest=0x18;    break;
+        MOVS     R0,#+24
+        STRB     R0,[R4, #+0]
+        POP      {R4-R6,PC}
+//  774     case 0x00:*dest=0xF0;    break;
+??FlashSMS_1:
+        MOVS     R0,#+240
+        STRB     R0,[R4, #+0]
+//  775     }
+//  776   }
+//  777 }
+??FlashSMS_0:
+        POP      {R4-R6,PC}       ;; return
+        CFI EndBlock cfiBlock48
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable7:
+        DC32     CSM_root + 4
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock49 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??unpack??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock49
+        REQUIRE unpack
+//  778 
+
+        RSEG CODE:CODE:ROOT(2)
+        CFI Block cfiBlock50 Using cfiCommon1
+        CFI Function unpack
+        ARM
+//  779 __root __arm void unpack(void * data, int cmd)
+//  780 {
+//  781 }
+unpack:
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock50
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock51 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??AllocWS??rA:
+        LDR      R12,??DataTable31  ;; AllocWS
+        BX       R12
+        CFI EndBlock cfiBlock51
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock52 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??IDLECSM_onCreate??rA:
+        LDR      R12,??Subroutine18_0  ;; IDLECSM_onCreate
+        BX       R12
+        DATA
+??Subroutine18_0:
+        DC32     IDLECSM_onCreate
+        CFI EndBlock cfiBlock52
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock53 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??malloc??rA:
+        LDR      R12,??DataTable22  ;; malloc
+        BX       R12
+        CFI EndBlock cfiBlock53
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock54 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??zeromem??rA:
+        LDR      R12,??DataTable24  ;; zeromem
+        BX       R12
+        CFI EndBlock cfiBlock54
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock55 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??fopen??rA:
+        LDR      R12,??DataTable25  ;; fopen
+        BX       R12
+        CFI EndBlock cfiBlock55
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock56 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??fread??rA:
+        LDR      R12,??DataTable26  ;; fread
+        BX       R12
+        CFI EndBlock cfiBlock56
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock57 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??fclose??rA:
+        LDR      R12,??DataTable27  ;; fclose
+        BX       R12
+        CFI EndBlock cfiBlock57
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock58 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??memcpy??rA:
+        LDR      R12,??DataTable23  ;; memcpy
+        BX       R12
+        CFI EndBlock cfiBlock58
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock59 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??sprintf??rA:
+        LDR      R12,??Subroutine25_0  ;; sprintf
+        BX       R12
+        DATA
+??Subroutine25_0:
+        DC32     sprintf
+        CFI EndBlock cfiBlock59
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock60 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??strcat??rA:
+        LDR      R12,??DataTable34  ;; strcat
+        BX       R12
+        CFI EndBlock cfiBlock60
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock61 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??UnPackABrecord??rA:
+        LDR      R12,??Subroutine27_0  ;; UnPackABrecord
+        BX       R12
+        DATA
+??Subroutine27_0:
+        DC32     UnPackABrecord
+        CFI EndBlock cfiBlock61
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock62 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??wstrlen??rA:
+        LDR      R12,??DataTable29  ;; wstrlen
+        BX       R12
+        CFI EndBlock cfiBlock62
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock63 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??strlen??rA:
+        LDR      R12,??DataTable32  ;; strlen
+        BX       R12
+        CFI EndBlock cfiBlock63
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock64 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??ABnumber2str??rA:
+        LDR      R12,??Subroutine30_0  ;; ABnumber2str
+        BX       R12
+        DATA
+??Subroutine30_0:
+        DC32     ABnumber2str
+        CFI EndBlock cfiBlock64
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock65 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??FreeUnPackABrecord??rA:
+        LDR      R12,??Subroutine31_0  ;; FreeUnPackABrecord
+        BX       R12
+        DATA
+??Subroutine31_0:
+        DC32     FreeUnPackABrecord
+        CFI EndBlock cfiBlock65
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock66 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??mfree??rA:
+        LDR      R12,??DataTable28  ;; mfree
+        BX       R12
+        CFI EndBlock cfiBlock66
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock67 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??fwrite??rA:
+        LDR      R12,??Subroutine33_0  ;; fwrite
+        BX       R12
+        DATA
+??Subroutine33_0:
+        DC32     fwrite
+        CFI EndBlock cfiBlock67
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock68 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??GetCurrMenuItem??rA:
+        LDR      R12,??Subroutine34_0  ;; GetCurrMenuItem
+        BX       R12
+        DATA
+??Subroutine34_0:
+        DC32     GetCurrMenuItem
+        CFI EndBlock cfiBlock68
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock69 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??FindCSMbyID??rA:
+        LDR      R12,??DataTable21  ;; FindCSMbyID
+        BX       R12
+        CFI EndBlock cfiBlock69
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock70 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??ws2ascii??rA:
+        LDR      R12,??DataTable30  ;; ws2ascii
+        BX       R12
+        CFI EndBlock cfiBlock70
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock71 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??Open_NewSMS_Dialog??rA:
+        LDR      R12,??Subroutine37_0  ;; Open_NewSMS_Dialog
+        BX       R12
+        DATA
+??Subroutine37_0:
+        DC32     Open_NewSMS_Dialog
+        CFI EndBlock cfiBlock71
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock72 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??MakeVoiceCallTo??rA:
+        LDR      R12,??Subroutine38_0  ;; MakeVoiceCallTo
+        BX       R12
+        DATA
+??Subroutine38_0:
+        DC32     MakeVoiceCallTo
+        CFI EndBlock cfiBlock72
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock73 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??wsprintf??rA:
+        LDR      R12,??Subroutine39_0  ;; wsprintf
+        BX       R12
+        DATA
+??Subroutine39_0:
+        DC32     wsprintf
+        CFI EndBlock cfiBlock73
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock74 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??CreateMenu??rA:
+        LDR      R12,??Subroutine40_0  ;; CreateMenu
+        BX       R12
+        DATA
+??Subroutine40_0:
+        DC32     CreateMenu
+        CFI EndBlock cfiBlock74
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock75 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??GetPaletteAdrByColorIndex??rA:
+        LDR      R12,??Subroutine54_0  ;; GetPaletteAdrByColorIndex
+        BX       R12
+        DATA
+??Subroutine54_0:
+        DC32     GetPaletteAdrByColorIndex
+        CFI EndBlock cfiBlock75
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock76 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??DrawFrameInNativeMenu??rA:
+        LDR      R12,??Subroutine55_0  ;; DrawFrameInNativeMenu
+        BX       R12
+        DATA
+??Subroutine55_0:
+        DC32     DrawFrameInNativeMenu
+        CFI EndBlock cfiBlock76
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock77 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??DrawString??rA:
+        LDR      R12,??Subroutine56_0  ;; DrawString
+        BX       R12
+        DATA
+??Subroutine56_0:
+        DC32     DrawString
+        CFI EndBlock cfiBlock77
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock78 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??getDialString??rT:
+        LDR      R3,??Subroutine57_0  ;; getDialString
+        BX       R3
+        DATA
+??Subroutine57_0:
+        DC32     getDialString
+        CFI EndBlock cfiBlock78
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock79 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??FindCSMbyID??rT:
+        LDR      R3,??DataTable21  ;; FindCSMbyID
+        BX       R3
+        CFI EndBlock cfiBlock79
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable21:
+        DC32     FindCSMbyID
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock80 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??malloc??rT:
+        LDR      R3,??DataTable22  ;; malloc
+        BX       R3
+        CFI EndBlock cfiBlock80
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable22:
+        DC32     malloc
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock81 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??GetDataOfItemByID??rT:
+        LDR      R3,??Subroutine60_0  ;; GetDataOfItemByID
+        BX       R3
+        DATA
+??Subroutine60_0:
+        DC32     GetDataOfItemByID
+        CFI EndBlock cfiBlock81
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock82 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??memcpy??rT:
+        LDR      R3,??DataTable23  ;; memcpy
+        BX       R3
+        CFI EndBlock cfiBlock82
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable23:
+        DC32     memcpy
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock83 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??zeromem??rT:
+        LDR      R3,??DataTable24  ;; zeromem
+        BX       R3
+        CFI EndBlock cfiBlock83
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable24:
+        DC32     zeromem
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock84 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??fopen??rT:
+        PUSH     {R3}
+        CFI CFA R13+4
+        LDR      R3,??DataTable25  ;; fopen
+        MOV      R12,R3
+        POP      {R3}
+        CFI CFA R13+0
+        BX       R12
+        CFI EndBlock cfiBlock84
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable25:
+        DC32     fopen
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock85 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??fread??rT:
+        PUSH     {R3}
+        CFI CFA R13+4
+        LDR      R3,??DataTable26  ;; fread
+        MOV      R12,R3
+        POP      {R3}
+        CFI CFA R13+0
+        BX       R12
+        CFI EndBlock cfiBlock85
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable26:
+        DC32     fread
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock86 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??fclose??rT:
+        LDR      R3,??DataTable27  ;; fclose
+        BX       R3
+        CFI EndBlock cfiBlock86
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable27:
+        DC32     fclose
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock87 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??mfree??rT:
+        LDR      R3,??DataTable28  ;; mfree
+        BX       R3
+        CFI EndBlock cfiBlock87
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable28:
+        DC32     mfree
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock88 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??cutwstr??rT:
+        LDR      R3,??Subroutine67_0  ;; cutwstr
+        BX       R3
+        DATA
+??Subroutine67_0:
+        DC32     cutwstr
+        CFI EndBlock cfiBlock88
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock89 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??wstrlen??rT:
+        LDR      R3,??DataTable29  ;; wstrlen
+        BX       R3
+        CFI EndBlock cfiBlock89
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable29:
+        DC32     wstrlen
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock90 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??ws2ascii??rT:
+        LDR      R3,??DataTable30  ;; ws2ascii
+        BX       R3
+        CFI EndBlock cfiBlock90
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable30:
+        DC32     ws2ascii
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock91 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??AllocWS??rT:
+        LDR      R3,??DataTable31  ;; AllocWS
+        BX       R3
+        CFI EndBlock cfiBlock91
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable31:
+        DC32     AllocWS
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock92 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??strcpy??rT:
+        LDR      R3,??Subroutine71_0  ;; strcpy
+        BX       R3
+        DATA
+??Subroutine71_0:
+        DC32     strcpy
+        CFI EndBlock cfiBlock92
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock93 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??strlen??rT:
+        LDR      R3,??DataTable32  ;; strlen
+        BX       R3
+        CFI EndBlock cfiBlock93
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable32:
+        DC32     strlen
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock94 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??strstr??rT:
+        LDR      R3,??Subroutine73_0  ;; strstr
+        BX       R3
+        DATA
+??Subroutine73_0:
+        DC32     strstr
+        CFI EndBlock cfiBlock94
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock95 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??wsaddwchar??rT:
+        LDR      R3,??DataTable37  ;; wsaddwchar
+        BX       R3
+        CFI EndBlock cfiBlock95
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock96 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??strcat??rT:
+        LDR      R3,??DataTable34  ;; strcat
+        BX       R3
+        CFI EndBlock cfiBlock96
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable34:
+        DC32     strcat
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock97 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??char8to16??rT:
+        LDR      R3,??DataTable36  ;; char8to16
+        BX       R3
+        CFI EndBlock cfiBlock97
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock98 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??wstrcat??rT:
+        LDR      R3,??Subroutine77_0  ;; wstrcat
+        BX       R3
+        DATA
+??Subroutine77_0:
+        DC32     wstrcat
+        CFI EndBlock cfiBlock98
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock99 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??FreeWS??rT:
+        LDR      R3,??Subroutine78_0  ;; FreeWS
+        BX       R3
+        DATA
+??Subroutine78_0:
+        DC32     FreeWS
+        CFI EndBlock cfiBlock99
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock100 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??rT0xA02CB7E5:
+        LDR      R3,??Subroutine79_0  ;; 0xa02cb7e5
+        BX       R3
+        DATA
+??Subroutine79_0:
+        DC32     0xa02cb7e5
+        CFI EndBlock cfiBlock100
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock101 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??wstrcpy??rA:
+        LDR      R12,??Subroutine81_0  ;; wstrcpy
+        BX       R12
+        DATA
+??Subroutine81_0:
+        DC32     wstrcpy
+        CFI EndBlock cfiBlock101
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock102 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??char8to16??rA:
+        LDR      R12,??DataTable36  ;; char8to16
+        BX       R12
+        CFI EndBlock cfiBlock102
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable36:
+        DC32     char8to16
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock103 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??wsaddwchar??rA:
+        LDR      R12,??DataTable37  ;; wsaddwchar
+        BX       R12
+        CFI EndBlock cfiBlock103
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable37:
+        DC32     wsaddwchar
+//  782 
+//  783 
+//  784 //Патчи
+//  785 #pragma diag_suppress=Pe177
+
+        RSEG PATCH_MAKEFLASH:CONST:SORT:ROOT(2)
+        DATA
+        DC32 FlashSMS
+//  786 __root static const int NEW_MAKEFLASH @ "PATCH_MAKEFLASH" =(int)FlashSMS;
+
+        RSEG PATCH_ONDRAW:CONST:SORT:ROOT(2)
+        DATA
+        DC32 redraw
+//  787 __root static const int NEW_ONDRAW @ "PATCH_ONDRAW" =(int)redraw;
+
+        RSEG PATCH_ONKEY:CONST:SORT:ROOT(2)
+        DATA
+        DC32 doit
+//  788 __root static const int NEW_ONKEY @ "PATCH_ONKEY" =(int)doit;
+
+        RSEG PATCH_ONCREATE:CONST:SORT:ROOT(2)
+        DATA
+        DC32 main
+//  789 __root static const int NEW_ONCREATE @ "PATCH_ONCREATE" = (int)main;
+
+        RSEG PATCH_CSMSIZE:CONST:SORT:ROOT(2)
+        DATA
+        DC32 240
+
+        RSEG DATA_C:CONST:SORT:NOROOT(2)
+`?<Constant "SMS">`:
+        DATA
+        DC8 "SMS"
+
+        RSEG DATA_C:CONST:SORT:NOROOT(2)
+`?<Constant "Flash">`:
+        DATA
+        DC8 "Flash"
+        DC8 0, 0
+
+        RSEG DATA_C:CONST:SORT:NOROOT(0)
+`?<Constant "">`:
+        DATA
+        DC8 ""
+
+        RSEG DATA_C:CONST:SORT:NOROOT(2)
+`?<Constant "%02X\\\\%02X">`:
+        DATA
+        DC8 "%02X\\%02X"
+        DC8 0, 0
+
+        RSEG DATA_C:CONST:SORT:NOROOT(0)
+        DATA
+        DC8 " "
+
+        RSEG DATA_C:CONST:SORT:NOROOT(0)
+        DATA
+        DC8 "%t"
+
+        END
+//  790 __root static const int NEW_CSMSIZE @ "PATCH_CSMSIZE" =sizeof(IDLECSM);
+//  791 
+// 
+// 3 508 bytes in segment CODE
+//    30 bytes in segment DATA_C
+// 1 196 bytes in segment DEBUG1
+//   152 bytes in segment DEBUG2
+//   816 bytes in segment DEBUG3
+//    92 bytes in segment DEBUG4
+//     4 bytes in segment PATCH_CSMSIZE
+//     4 bytes in segment PATCH_MAKEFLASH
+//     4 bytes in segment PATCH_ONCREATE
+//     4 bytes in segment PATCH_ONDRAW
+//     4 bytes in segment PATCH_ONKEY
+// 
+// 4 176 bytes of CODE  memory (+ 680 bytes shared)
+//   958 bytes of CONST memory
+//
+//Errors: none
+//Warnings: none

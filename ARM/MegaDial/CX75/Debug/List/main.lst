@@ -1,0 +1,816 @@
+##############################################################################
+#                                                                            #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    15/Aug/2006  08:14:55 #
+# Copyright 1999-2005 IAR Systems. All rights reserved.                      #
+#                                                                            #
+#    Cpu mode        =  interwork                                            #
+#    Endian          =  little                                               #
+#    Stack alignment =  4                                                    #
+#    Source file     =  E:\ARM\MegaDial\CX75\main.c                          #
+#    Command line    =  E:\ARM\MegaDial\CX75\main.c -lcN                     #
+#                       E:\ARM\MegaDial\CX75\Debug\List\ -o                  #
+#                       E:\ARM\MegaDial\CX75\Debug\Obj\ -s9 --no_unroll      #
+#                       --debug --cpu_mode arm --endian little --cpu         #
+#                       ARM926EJ-S --stack_align 4 --interwork -e --fpu      #
+#                       None --dlib_config D:\IARARM\ARM\LIB\dl5tpainl8n.h   #
+#                       -I D:\IARARM\ARM\INC\                                #
+#    List file       =  E:\ARM\MegaDial\CX75\Debug\List\main.lst             #
+#    Object file     =  E:\ARM\MegaDial\CX75\Debug\Obj\main.r79              #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+E:\ARM\MegaDial\CX75\main.c
+      1          #include "arm_siemens.h"
+      2          #define ramStr(strnum) (0xB0000000|strnum)
+      3          
+      4          
+      5          #define MAX_ABFILE_SIZE 30000
+      6          
+      7          
+      8          const char fname[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\abT9";
+      9          const char ABpath[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\";
+     10          const char ABmain[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\main";
+     11          const char ABfout[]  @ "DEBUG4" =  "0:\\System\\apo\\addr\\abT9";
+     12          
+     13          const unsigned short dsRects[4][4]  @ "DEBUG3" =
+     14          {
+     15            {4,22,131,44},
+     16            {4,26,131,44},
+     17            {4,27,131,44},
+     18            {4,20,131,44}
+     19          };
+     20          
+     21          const unsigned char color[4] @ "DEBUG3" =
+     22          
+     23          {255,255,0x90,255};
+     24          
+     25          typedef struct
+     26          {
+     27            char unk[3];
+     28            char itemID;
+     29            int unk1;
+     30            int *pnt;
+     31          }ABitem;
+     32          
+     33          
+     34          typedef struct
+     35          {
+     36            CSM_RAM csm;
+     37            char dummy[0xCC-sizeof(CSM_RAM)];
+     38            WSHDR *str1;
+     39            WSHDR *strings[5];
+     40            int myAB;
+     41            char *fileAB;
+     42            char flashSMS;
+     43          }IDLECSM;
+     44          
+     45          //Вместо onCreate
+     46          void main(IDLECSM *icsm)
+     47          {
+     48          
+     49          
+     50          //  unsigned int err;
+     51          //  int f;
+     52            //void (__thumb *OldOnCreate)(void *)=(void(*)(void *))(0xA02A781C+1);
+     53            icsm->str1=AllocWS(256);
+     54            icsm->strings[0]=AllocWS(50);
+     55            icsm->strings[1]=AllocWS(50);
+     56            icsm->strings[2]=AllocWS(50);
+     57            icsm->strings[3]=AllocWS(50);
+     58            icsm->strings[4]=AllocWS(50);
+     59            icsm->flashSMS=0;
+     60          
+     61            icsm->myAB=0;
+     62          /*  icsm->fileAB=malloc(MAX_ABFILE_SIZE+1);
+     63            if ((f=fopen((char *)fname,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+     64            {
+     65              icsm->fileAB[fread(f,icsm->fileAB,MAX_ABFILE_SIZE,&err)]=0;
+     66              fclose(f,&err);
+     67            }
+     68            wsprintf(icsm->str1,"num : ");
+     69          */
+     70            IDLECSM_onCreate((CSM_RAM*)icsm);
+     71          }
+     72          
+     73          
+     74          const char keytab[10][10] @ "DEBUG3" =
+     75          {
+     76            {'1',0,0,0,0,0,0,0,0,0},
+     77            {'2','А','Б','В','Г','A','B','C',0,0 },
+     78            {'3','Д','Е','Ё','Ж','З','D','E','F',0 },
+     79            {'4','И','Й','К','Л','G','H','I',0,0},
+     80            {'5','М','Н','О','J','K','L',0,0,0},
+     81            {'6','П','Р','С','M','N','O',0,0,0},
+     82            {'7','Т','У','Ф','Х','P','Q','R','S',0},
+     83            {'8','Ц','Ч','Ш','Щ','Ъ','T','U','V',0},
+     84            {'9','Ы','Ь','Э','Ю','Я','W','X','Y','Z'},
+     85            {'0','+',0,0,0,0,0,0,0,0}
+     86          };
+     87          
+     88          
+     89          const char wintranslation[128] @ "DEBUG3" =
+     90          {
+     91            0x5F,0x5F,0x27,0x5F,0x22,0x3A,0xC5,0xD8,0x5F,0x25,0x5F,0x3C,0x5F,0x5F,0x5F,0x5F,
+     92            0x5F,0x27,0x27,0x22,0x22,0x07,0x2D,0x2D,0x5F,0x54,0x5F,0x3E,0x5F,0x5F,0x5F,0x5F,
+     93            0xFF,0xF6,0xF7,0x5F,0xFD,0x83,0xB3,0x15,0xF0,0x63,0xF2,0x3C,0xBF,0x2D,0x52,0xF4,
+     94            0xF8,0x2B,'I' ,'i' ,0xA3,0xE7,0x14,0xFA,0xF1,0xFC,0xF3,0x3E,0x5F,0x5F,0x5F,0xF5,
+     95            0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,0x8F,
+     96            0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9A,0x9B,0x9C,0x9D,0x9E,0x9F,
+     97            0xA0,0xA1,0xA2,0xA3,0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,0xAF,
+     98            0xE0,0xE1,0xE2,0xE3,0xE4,0xE5,0xE6,0xE7,0xE8,0xE9,0xEA,0xEB,0xEC,0xED,0xEE,0xEF
+     99          };
+    100          
+    101          const unsigned short dos2unicode[128] @"DEBUG3"=
+    102          {
+    103            0x0410,0x0411,0x0412,0x0413,0x0414,0x0415,0x0416,0x0417,
+    104            0x0418,0x0419,0x041A,0x041B,0x041C,0x041D,0x041E,0x041F,
+    105            0x0420,0x0421,0x0422,0x0423,0x0424,0x0425,0x0426,0x0427,
+    106            0x0428,0x0429,0x042A,0x042B,0x042C,0x042D,0x042E,0x042F,
+    107            0x0430,0x0431,0x0432,0x0433,0x0434,0x0435,0x0436,0x0437,
+    108            0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F,
+    109            0x002D,0x002D,0x002D,0x00A6,0x002B,0x00A6,0x00A6,0x00AC,
+    110            0x00AC,0x00A6,0x00A6,0x00AC,0x002D,0x002D,0x002D,0x00AC,
+    111            0x004C,0x002B,0x0054,0x002B,0x002D,0x002B,0x00A6,0x00A6,
+    112            0x004C,0x0433,0x00A6,0x0054,0x00A6,0x003D,0x002B,0x00A6,
+    113            0x00A6,0x0054,0x0054,0x004C,0x004C,0x002D,0x0433,0x002B,
+    114            0x002B,0x002D,0x002D,0x002D,0x002D,0x00A6,0x00A6,0x002D,
+    115            0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
+    116            0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F,
+    117            0x0401,0x0451,0x0404,0x0454,0x0407,0x0457,0x040E,0x045E,
+    118            0x00B0,0x2022,0x00B7,0x0076,0x2116,0x00A4,0x00A6,0x00A0
+    119          };
+    120          //=======================================================================
+    121          void menup1(void)
+    122          {
+    123          }
+    124          void menup2(void)
+    125          {
+    126          }
+    127          void menup3(void)
+    128          {
+    129          }
+    130          void menup4(void)
+    131          {
+    132          }
+    133          char uni2cp1251(unsigned short c)
+    134          {
+    135            if (c>0x40F)
+    136            {
+    137              if (c==0x451) return(0xB8);
+    138              return(c-0x350);
+    139            }
+    140            return(c);
+    141          }
+    142          
+    143          void ws2asciz( char * d ,WSHDR * s, int len)
+    144          {
+    145            int i=1;
+    146            do
+    147            {
+    148              *d++=uni2cp1251(s->wsbody[i++]);
+    149            }
+    150            while(--len);
+    151            *d=0;
+    152          }
+    153          
+    154          char cnv(char c)
+    155          {
+    156            int i,j;
+    157            char cc;
+    158            if ((unsigned char)c>0x40)
+    159              cc=c&~0x20;
+    160            else
+    161              cc=c;
+    162          
+    163            if (c==' ') return(' ');
+    164            for (i=0;i<10;i++)
+    165              for (j=0;j<10;j++)
+    166                if  (cc==keytab[i][j]) return(keytab[i][0]);
+    167          
+    168            return(' ');
+    169          }
+    170          
+    171          void UnPackAB()
+    172          {
+    173            unsigned int err;
+    174            int f;
+    175            int numrec=0;
+    176            int rnum=-1;
+    177            char ABrecname[40];
+    178            char st[20];
+    179            char *record=malloc(2048);
+    180            char *main=malloc(132);
+    181            char *result=malloc(MAX_ABFILE_SIZE);
+    182            int rp=0;
+    183            zeromem(result,sizeof(result));
+    184          
+    185            if ((f=fopen((char *)ABmain,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+    186            {
+    187              fread(f,main,132,&err);
+    188              fclose(f,&err);
+    189          
+    190              memcpy(main,&main[4],128);
+    191              do
+    192              {
+    193                if(main[numrec>>3] & (1<<(numrec &7)))
+    194                {
+    195                  memcpy(ABrecname,ABpath,23);
+    196                  sprintf(st,"%02X\\%02X",numrec>>5,numrec&0x1F);
+    197                  strcat(ABrecname,st);
+    198          
+    199                  if ((f=fopen((char *)ABrecname,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+    200                  {
+    201                    char ttype[6];
+    202                    char str [80];
+    203                    char flag;
+    204                    fread(f,record,1024,&err);
+    205                    fclose(f,&err);
+    206                    int * struc1=malloc(0x1C);
+    207                    zeromem(struc1,0x1C);
+    208                    UnPackABrecord(struc1,record+4,100,0x28);
+    209                    {
+    210                      rnum++;
+    211                      flag=0;
+    212                      char itemcount = ((short*)struc1)[1];
+    213                      ABitem * items = (ABitem*)struc1[3];
+    214                      char num[40];
+    215                      str[0]=0;
+    216                      zeromem(ttype,sizeof(ttype));
+    217                      do
+    218                      {
+    219                        switch(items->itemID)
+    220                        {
+    221                        case 0x23:
+    222                        case 0x24:
+    223          
+    224                          strcat(str," ");
+    225                          ws2asciz(str+strlen(str),(WSHDR*)items->pnt,wstrlen((WSHDR*)items->pnt));
+    226                          break;
+    227                        case 0x2D:
+    228          
+    229                        case 0x2A:
+    230                        case 0x2C:
+    231                        case 0x2B:
+    232                          if (!flag)
+    233                          {
+    234          
+    235                            {char j=0;do{result[rp++]=str[j++];}while(j<strlen(str));result[rp++]=0;}
+    236                            char i=0;
+    237                            do
+    238                            {
+    239                              result[rp++]=cnv(str[i++]);
+    240                            }
+    241                            while(i<strlen(str));
+    242                          }
+    243                          ttype[flag++]=items->itemID;
+    244                          ABnumber2str(items->pnt,num,0x2A,0);
+    245                          result[rp++]=' ';
+    246                          {char j=0;do{result[rp++]=num[j++];}while(j<strlen(num));}
+    247                          break;
+    248                        }
+    249                        items++;
+    250                      }
+    251                      while(--itemcount);
+    252                      result[rp++]=0;
+    253                      result[rp++]=(char)rnum;
+    254                      result[rp++]=(char)(rnum >>8)|((flag-1)<<2);
+    255                      memcpy(&result[rp],ttype,sizeof(ttype));
+    256                      rp+=sizeof(ttype);
+    257                    }
+    258                    FreeUnPackABrecord(struc1,mfree);
+    259                    mfree(struc1);
+    260                  }
+    261                }
+    262              }while(++numrec<1024);
+    263          
+    264            }
+    265          
+    266            if ((f=fopen((char *)ABfout,A_ReadWrite+A_BIN+A_Create+A_Truncate,P_READ+P_WRITE,&err))!=-1)
+    267            {
+    268              fwrite(f,result,rp-1,&err);
+    269              fclose(f,&err);
+    270            }
+    271          
+    272          
+    273            mfree(record);
+    274            mfree(main);
+    275            mfree(result);
+    276          }
+    277          
+    278          
+    279          int onKeyGUI(void * GUI, GUI_MSG * msg)
+    280          {
+    281            int item=GetCurrMenuItem(GUI);
+    282            IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+    283          
+    284            if (msg->unk2==0x018)
+    285            {
+    286              char num[20];
+    287              WSHDR * dummystr=AllocWS(1);
+    288              icsm->flashSMS=0;
+    289              ws2ascii(num,icsm->strings[item+1],wstrlen(icsm->strings[item+1]));
+    290              Open_NewSMS_Dialog(dummystr,(char*)num,0x4209,0x00C1,0x0001);
+    291              return(1);
+    292            }
+    293          
+    294            if (msg->unk2==0x031)
+    295            {
+    296          
+    297              char num[20];
+    298              WSHDR * dummystr=AllocWS(1);
+    299              icsm->flashSMS=1;
+    300              ws2ascii(num,icsm->strings[item+1],wstrlen(icsm->strings[item+1]));
+    301              Open_NewSMS_Dialog(dummystr,(char*)num,0x4209,0x00C1,0x0001);
+    302              return(1);
+    303            }
+    304          
+    305            if (msg->msg->submess==GREEN_BUTTON)
+    306            {
+    307              char pnum[41];
+    308              ws2ascii(pnum,icsm->strings[item+1],wstrlen(icsm->strings[item+1]) );
+    309              MakeVoiceCallTo(pnum,0x10,0x20C1);
+    310              return(1);
+    311            }
+    312            return(0);
+    313          }
+    314          
+    315          int gmproc(void * GUI, int cmd)
+    316          {
+    317            //  SetNMenuItems(GUI,2);
+    318            if (cmd==2)
+    319            {
+    320              //    SetMenuItemIcon(GUI,0,3);
+    321              //    SetNMenuItems(GUI,1);
+    322            }
+    323            if (cmd==3)
+    324            {
+    325              MENU_DESC *menu=((MENU_DESC**)GUI)[2];
+    326              mfree(menu->items);
+    327              mfree(menu);
+    328            }
+    329            return((int)GUI);
+    330          }
+    331          
+    332          
+    333          const int icons[] @"DEBUG3"={0x43A,0x39B,0x397,0x39A,0x399,0};
+    334          
+    335          const HEADER_DESC menuheader @"DEBUG3" ={3,24,126,41,(int *)icons,ramStr(0),0x7FFF};
+    336          
+    337          const SOFTKEY_DESC skeys[] @"DEBUG3" =
+    338          {
+    339            {0x018,0x018,(int)"SMS"},
+    340            {0x031,0x031,(int)"Flash"},
+    341            {0x030,0x030,(int)""}
+    342          };
+    343          
+    344          const int menuskey[4][3] @"DEBUG3" =
+    345          {
+    346            {0,1,2},
+    347            {1,2,0},
+    348            {2,0,1},
+    349            {0,1,9}
+    350          }
+    351          ;
+    352          
+    353          const SOFTKEYSTAB skey @"DEBUG3"={ (SOFTKEY_DESC*)skeys,3 };
+    354          
+    355          const MENUITEM_DESC MenuItems[] @"DEBUG3" =
+    356          {
+    357            {(int*)icons+1,ramStr(1),0x0,0x000,(int*)menuskey,0x003,0x578},
+    358            {(int*)icons+2,ramStr(2),0x0,0x000,(int*)menuskey+1,0x003,0x578},
+    359            {(int*)icons+3,ramStr(3),0x0,0x000,(int*)menuskey+2,0x003,0x578},
+    360            {(int*)icons+3,ramStr(4),0x0,0x000,(int*)menuskey+3,0x003,0x578}
+    361          
+    362          };
+    363          
+    364          const void * const menuprocs[4] @"DEBUG3" ={(void *)menup1,(void *)menup2,(void *)menup3,(void *)menup4};
+    365          
+    366          const MENU_DESC menu4 @"DEBUG3" =
+    367          {
+    368            0,				//0x00
+    369            (void*)onKeyGUI,		//0x04
+    370            (void*)gmproc,		//0x08
+    371            NULL,				//0x0C
+    372            (int *)menuskey,		//0x10
+    373            (SOFTKEYSTAB *)(&skey),	//0x14
+    374            1,				//0x18
+    375            NULL,				//0x1C
+    376            (MENUITEM_DESC *)MenuItems,	//0x20
+    377            (void **)menuprocs,		//0x24
+    378            4				//0x28
+    379          };
+    380          
+    381          //=======================================================================
+    382          
+    383          unsigned short char8to16(char c) @"DEBUG1"
+    384          {
+    385            if (c<32) return('_');
+    386            if (c>=128)
+    387            {
+    388              c=wintranslation[c-128];
+    389              return(dos2unicode[c-128]);
+    390            }
+    391            return(c);
+    392          }
+    393          
+    394          void OpenABRecord(char * s,char sname[],IDLECSM *icsm, char *p)
+    395          {
+    396            char i=0;
+    397            char *s1=sname;
+    398            do
+    399            {
+    400              if (*s!=32)
+    401              {
+    402                *s1++=*s;
+    403              }
+    404              else
+    405              {
+    406                *s1=0;
+    407                i++;
+    408                wsprintf(icsm->strings[i],"%t",(int*)sname);
+    409                s1=sname;
+    410              }
+    411            }
+    412            while(*s++);
+    413            i++;
+    414            wsprintf(icsm->strings[i],"%t",(int*)sname);
+    415            sname[0]=0;
+    416          
+    417          
+    418            MENUITEM_DESC * items_desc = malloc(sizeof(MenuItems));
+    419            MENU_DESC * menu_desc = malloc(sizeof(menu4));
+    420          
+    421          
+    422            memcpy(items_desc,MenuItems,sizeof(MenuItems));
+    423            memcpy(menu_desc,&menu4,sizeof(menu4));
+    424            menu_desc->n_items=i;
+    425            menu_desc->items=items_desc;
+    426          
+    427            menu_desc->items[0].icon=(int *)(icons+((*p++)-0x29));
+    428            menu_desc->items[1].icon=(int *)(icons+((*p++)-0x29));
+    429            menu_desc->items[2].icon=(int *)(icons+((*p++)-0x29));
+    430            menu_desc->items[3].icon=(int *)(icons+((*p)-0x29));
+    431            CreateMenu(1,0,menu_desc,&menuheader,0,1,0,0);
+    432          }
+    433          
+    434          
+    435          
+    436          
+    437          int doit(void *gui, GUI_MSG *msg) @ "DEBUG1"
+    438          {
+    439            int (*OldMethod)(void *, GUI_MSG *)=(int (*)(void *, GUI_MSG *))(0xA02CB28E+1);
+    440            int i,j,key;
+    441            char dstr[41];
+    442            unsigned short index[6][2];
+    443            unsigned short tmp;
+    444            WSHDR *str;
+    445            void *adr=((void ****)gui)[0x50/4][0x4C/4][0x28/4];
+    446            dstr[0]=' ';
+    447            ws2ascii(&dstr[1],getDialString(adr),wstrlen(getDialString(adr)));
+    448          
+    449            IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+    450            char sname[80];
+    451            char ss[200];
+    452            char *s=icsm->fileAB;
+    453          
+    454            key=msg->msg->submess;
+    455            if ((key==UP_BUTTON)||(key==DOWN_BUTTON))
+    456            {
+    457              i=0;
+    458              msg->unk2=0;
+    459            }
+    460            else
+    461            {
+    462              if (key!=GREEN_BUTTON)  i=(*OldMethod)(gui, msg);
+    463            }
+    464          #define cp (icsm->myAB)
+    465            str=AllocWS(20);
+    466            cutwstr(icsm->str1,0);
+    467          
+    468          
+    469            j=0;
+    470            do
+    471            {
+    472              strcpy(sname,s);
+    473              s+=strlen(sname)+1;
+    474              strcpy(ss,s);
+    475              s+=strlen(ss)+1;
+    476              tmp=(*s++);
+    477              tmp|=((unsigned short)(*s++))<<8;
+    478              s+=6;
+    479              if (strstr(ss,dstr))
+    480              {
+    481                // номер записи в файле.
+    482                index[j][0]=tmp&0x03FF;
+    483                // количество номеров в записи.
+    484                index[j][1]=tmp>>10;
+    485                j++;
+    486              }
+    487            }
+    488            while(((*s)&&(j<6)));
+    489            FreeWS(str);
+    490          
+    491            //--------------------------------------------------
+    492          
+    493            if (msg->msg->msg== KEY_DOWN)
+    494            {
+    495              switch (key)
+    496              {
+    497              case UP_BUTTON:
+    498                if ((cp)&&(cp!=-1)) cp--; else cp=j-1;
+    499                break;
+    500              case DOWN_BUTTON:
+    501                if (cp<(j-1)) cp++; else cp=0;
+    502              		break;
+    503              case LEFT_SOFT: cp=-1;
+    504              break;
+    505              }
+    506              if ((key >= 0x30)&&(key <= 0x39))
+    507              {
+    508                //      wsaddwchar(icsm->str1,key);
+    509                cp=-1;
+    510              }
+    511              PendedRedrawGUI();
+    512            }
+    513          
+    514          
+    515            if ((key == ENTER_BUTTON))
+    516            {
+    517              if ((unsigned int)cp<6)
+    518              {
+    519                //      WSHDR *str=getDialString(adr);
+    520                char *p;
+    521                s=icsm->fileAB;
+    522                tmp=index[cp][0]+1;
+    523                do
+    524                {
+    525                  strcpy(sname,s);
+    526                  s+=strlen(sname)+1;
+    527                  strcpy(ss,s);
+    528                  s+=strlen(ss)+3+6;
+    529                }
+    530                while(--tmp);
+    531                p=s-6;
+    532                s=ss+strlen(sname)+1;
+    533                j=1;
+    534          
+    535                wsprintf(icsm->strings[0],"%t",(int*)sname);
+    536                OpenABRecord(s,sname,icsm,p);
+    537                i=0;
+    538                msg->unk2=0;
+    539              }
+    540            }
+    541          
+    542            if ((key == GREEN_BUTTON))
+    543            {
+    544              if ((unsigned int)cp<6)
+    545              {
+    546                WSHDR *str=getDialString(adr);
+    547                char *p;
+    548                s=icsm->fileAB;
+    549                tmp=index[cp][0]+1;
+    550                do
+    551                {
+    552                  strcpy(sname,s);
+    553                  s+=strlen(sname)+1;
+    554                  strcpy(ss,s);
+    555                  s+=strlen(ss)+3+6;
+    556                }
+    557                while(--tmp);
+    558                p=s-6;
+    559                s=ss+strlen(sname)+1;
+    560                j=1;
+    561          
+    562                wsprintf(icsm->strings[0],"%t",(int*)sname);
+    563          
+    564                if (index[cp][1])
+    565                {
+    566                  OpenABRecord(s,sname,icsm,p);
+    567                  i=0;
+    568                  msg->unk2=0;
+    569                }
+    570                else
+    571                {
+    572                  while(*s)
+    573                  {
+    574                    str->wsbody[j]=*s++;
+    575                    j++;
+    576                  }
+    577                  str->wsbody[0]=j-1;
+    578                  i=(*OldMethod)(gui, msg);
+    579                }
+    580              }
+    581              else
+    582                i=(*OldMethod)(gui, msg);
+    583            }
+    584          
+    585            //  FreeWS(str);
+    586            //--------  --------------------------------------------------------
+    587          
+    588          
+    589            return(i);
+    590          #undef cp
+    591          }
+    592          
+    593          void ed_inp_redraw(void *data)
+    594          {
+    595            ((void(*)(void *))(0xA07FE476+1))(data);
+    596            //Вставлять свое
+    597            IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+    598            DrawFrameInNativeMenu(8,47,130,154,0,0,0,
+    599                                  GetPaletteAdrByColorIndex(1),
+    600                                  (int)&color[0]/*GetPaletteAdrByColorIndex(7)*/);
+    601            DrawString(icsm->str1,   12,49,128,152,   3,0x0,    GetPaletteAdrByColorIndex(1),
+    602                       (int)&color[0]/*GetPaletteAdrByColorIndex(7)*/);
+    603          }
+    604          
+    605          __thumb __root int redraw (void * data, int cmd)
+    606          {
+    607            int i;
+    608            int (*OldMethod)(void *,int)=(int (*)(void *,int))(0xA02CB7E4+1);
+    609            void * * methods;
+    610            WSHDR *str;
+    611            void *adr=((void ****)data)[0x50/4][0x4C/4][0x28/4];
+    612            str=getDialString(adr);
+    613            IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+    614          
+    615            if (cmd==2)
+    616            {
+    617              //Called after onCreate
+    618              unsigned int err;
+    619              int f;
+    620              methods=malloc(64+4);
+    621              void **m=GetDataOfItemByID(data,4);
+    622              memcpy(methods,m[1],64);
+    623              *methods=(void *)ed_inp_redraw;
+    624              methods[16]=m[1];
+    625              m[1]=methods;
+    626              icsm->fileAB=malloc(MAX_ABFILE_SIZE+1);
+    627              zeromem(icsm->fileAB,MAX_ABFILE_SIZE);
+    628          //    UnPackAB(icsm->fileAB);
+    629          
+    630              if ((f=fopen((char *)fname,A_ReadOnly|A_BIN,P_READ|P_WRITE,&err))!=-1)
+    631              {
+    632                icsm->fileAB[fread(f,icsm->fileAB,MAX_ABFILE_SIZE,&err)]=0;
+    633                fclose(f,&err);
+    634              }
+    635          
+    636          
+    637          
+    638            }
+    639            if (cmd==3)
+    640            {
+    641              void **m=GetDataOfItemByID(data,4);
+    642              void **mm=m[1];
+    643              m[1]=mm[16];
+    644              mfree(mm);
+    645              cutwstr(icsm->str1,0);
+    646              icsm->flashSMS=0;
+    647              mfree(icsm->fileAB);
+    648            }
+    649            if ((cmd==7)&&(wstrlen(str)))
+    650            {
+    651              char dstr[41];
+    652              char j,k;
+    653              dstr[0]=' ';
+    654              ws2ascii(&dstr[1],str,wstrlen(str));
+    655              char sname[80];
+    656              char ss[200];
+    657              char *s=icsm->fileAB;
+    658          #define cp (icsm->myAB)
+    659          
+    660              str=AllocWS(20);
+    661              cutwstr(icsm->str1,0);
+    662              j=0;
+    663              do
+    664              {
+    665                strcpy(sname,s);
+    666                s+=strlen(sname)+1;
+    667                strcpy(ss,s);
+    668                s+=strlen(ss)+1;
+    669                s+=2+6;
+    670                if (strstr(ss,dstr))
+    671                {
+    672                  char *ss1;
+    673                  k=(strstr(ss,dstr)-ss);
+    674                  cutwstr(str,0);
+    675                  if (j==cp) wsaddwchar(str,0xE003);
+    676                  ss1=sname+1;
+    677                  if (strlen(sname)>16) {sname[14]='.';sname[15]='.';sname[16]=0;}
+    678                  strcat(sname," ");
+    679                  do
+    680                  {
+    681                    if ((j!=cp)&&(k<(strlen(sname)))&&(cp==-1))
+    682                    {
+    683                      if (k==wstrlen(str)) wsaddwchar(str,0xE003);
+    684                      if ((wstrlen(str)==(k+(strlen(dstr))))) {wsaddwchar(str,0xE004);}
+    685                    }
+    686                    wsaddwchar(str,char8to16(*ss1));
+    687                    ss1++;
+    688                  }
+    689                  while(*ss1);
+    690                  if ((wstrlen(str)<=(k+(strlen(dstr))))) {wsaddwchar(str,0xE004);}
+    691                  if (j==cp) wsaddwchar(str,0xE004);
+    692                  wsaddwchar(str,'\n');
+    693                  wstrcat(icsm->str1,str);
+    694                  j++;
+    695                }
+    696              }
+    697              while(((*s)&&(j<6)));
+    698              FreeWS(str);
+    699          
+    700          #undef cp
+    701            }
+    702          
+    703          
+    704            i=OldMethod(data,cmd);
+    705          
+    706            /*  if (cmd==7)
+    707            {
+    708          }*/
+    709          
+    710            return(i);
+    711          }
+    712          
+    713          int resize(void *GUI) @ "DEBUG2"
+    714          {
+    715            unsigned int *curSize=((unsigned int ****)GUI)[0x50/4][0x4C/4][0x28/4]+(0x14/4);
+    716            unsigned short *fontSize=((unsigned short ******)GUI)[0x50/4][0x4C/4][0x28/4][0x68/4][0x08/4]+(0x0E/2);
+    717            unsigned int dsLen=getDialStringLen(GUI);
+    718          
+    719          
+    720            int i;
+    721            if (dsLen>13)
+    722            {
+    723              if (dsLen>17)
+    724              {
+    725                *curSize=7;
+    726                *fontSize=2;
+    727                if (dsLen>20) i=24; else i=16;
+    728              }
+    729              else
+    730              {
+    731                *curSize=2;
+    732                *fontSize=4;
+    733                i=8;
+    734              }
+    735            }
+    736            else
+    737            {
+    738              *curSize=1;
+    739              *fontSize=5;
+    740              i=0;
+    741            }
+    742            return((int)(&dsRects)+i);
+    743          }
+    744          
+    745          void ESI(char *s, WSHDR *ws)
+    746          {
+    747            int c;
+    748            if ((((unsigned int)s)>>28)==0x0B)
+    749            {
+    750              IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+    751              wstrcpy(ws,icsm->strings[((unsigned int)s)&0x0F]);
+    752              return;
+    753            }
+    754            if ((((unsigned int)s)>>28)!=0x0A) return;
+    755            while((c=*s++))
+    756            {
+    757              wsaddwchar(ws,char8to16(c));
+    758            }
+    759          }
+    760          
+    761          __thumb void FlashSMS(char * dest, char * source)
+    762          {
+    763            IDLECSM *icsm=FindCSMbyID(CSM_root.idle_id);
+    764          
+    765            memcpy(dest+0x0A,source,0x0D);
+    766          
+    767            if (icsm->flashSMS)
+    768            {
+    769              icsm->flashSMS=0;
+    770              dest-=0xB8;
+    771              switch (*dest)
+    772              {
+    773              case 0x08:*dest=0x18;    break;
+    774              case 0x00:*dest=0xF0;    break;
+    775              }
+    776            }
+    777          }
+    778          
+    779          __root __arm void unpack(void * data, int cmd)
+    780          {
+    781          }
+    782          
+    783          
+    784          //Патчи
+    785          volatile __root static const int NEW_MAKEFLASH @ "PATCH_MAKEFLASH" =(int)FlashSMS;
+    786          volatile __root static const int NEW_ONDRAW @ "PATCH_ONDRAW" =(int)redraw;
+    787          volatile __root static const int NEW_ONKEY @ "PATCH_ONKEY" =(int)doit;
+    788          volatile __root static const int NEW_ONCREATE @ "PATCH_ONCREATE" = (int)main;
+    789          volatile __root static const int NEW_CSMSIZE @ "PATCH_CSMSIZE" =sizeof(IDLECSM);
+    790          
+
+Errors: 5
+Warnings: none

@@ -1,0 +1,79 @@
+###############################################################################
+#                                                                             #
+#     IAR Systems ARM Assembler V4.40A/W32 15/Aug/2006  08:14:55              #
+#     Copyright 1999-2006 IAR Systems. All rights reserved.                   #
+#                                                                             #
+#           Source file   =  E:\ARM\MegaDial\CX75\patch.asm                   #
+#           List file     =  E:\ARM\MegaDial\CX75\Debug\List\patch.lst        #
+#           Object file   =  E:\ARM\MegaDial\CX75\Debug\Obj\patch.r79         #
+#           Command line  =  E:\ARM\MegaDial\CX75\patch.asm                   #
+#                            -OE:\ARM\MegaDial\CX75\Debug\Obj\ -s+ -M<> -w+   #
+#                            -r -LE:\ARM\MegaDial\CX75\Debug\List\ -t8 --cpu  #
+#                            ARM926EJ-S --fpu None -ID:\IARARM\ARM\INC\       #
+#                                                                             #
+###############################################################################
+
+    1    00000000                      RSEG    CODE:CODE
+    2    00000000                      CODE32
+    3    00000000                      EXTERN  UnPackAB
+    4    00000000              path1:
+    5    00000000 ........             BL      UnPackAB
+    6    00000004 10109FE5             LDR     R1, =0x427
+    7    00000008 0100A0E3             MOV     R0, #1
+    8    0000000C ........             BLX     0xA07C2D32+1
+    9    00000010 5C0084E5             STR     R0, [R4,#0x5C]
+   10    00000014 04209FE5             LDR     R2,=0xA060A540+1
+   11    00000018 12FF2FE1             BX      R2
+   12    0000001C              
+   13    0000001C                      RSEG    PATCH_ABCHANGED:CODE
+   13.1  0000001C                       TABLE
+   13.2  0000001C 27040000             Reference on line 6 
+   13.3  00000020 41A560A0             Reference on line 10 
+   13.4  00000000                      RSEG (including table)
+   13    00000000                      RSEG    PATCH_ABCHANGED:CODE
+   14    00000000                      CODE16
+   15    00000000                      EXTERN  unpack
+   16    00000000              
+   17    00000000 004A                 LDR     R2,=path1
+   18    00000002 1047                 BX      R2
+   19    00000004              
+   20    00000004              
+   21    00000004              
+   22    00000004              
+   23    00000004              
+   24    00000004                      RSEG    PATCH_RESIZE:CODE
+   24.1  00000004                       TABLE
+   24.2  00000004 ........             Reference on line 17 
+   24.3  00000000                      RSEG (including table)
+   24    00000000                      RSEG    PATCH_RESIZE:CODE
+   25    00000000                      CODE16
+   26    00000000                      EXTERN  resize
+   27    00000000              
+   28    00000000 0149                 LDR     R1,=resize
+   29    00000002 8847                 BLX     R1
+   30    00000004 011C                 MOV     R1,R0
+   31    00000006 ....                 B       resize_ret
+   32    00000008              
+   33    00000008                      RSEG    PATCH_RESIZE_RET:CODE
+   33.1  00000008                       TABLE
+   33.2  00000008 ........             Reference on line 28 
+   33.3  00000000                      RSEG (including table)
+   33    00000000                      RSEG    PATCH_RESIZE_RET:CODE
+   34    00000000                      CODE16
+   35    00000000              resize_ret:
+   36    00000000              
+   37    00000000                      
+   38    00000000              
+   39    00000000              
+   40    00000000              
+   41    00000000                      END
+##############################
+#          CRC:3B2D          #
+#        Errors:   0         #
+#        Warnings: 0         #
+#         Bytes: 56          #
+##############################
+
+
+
+

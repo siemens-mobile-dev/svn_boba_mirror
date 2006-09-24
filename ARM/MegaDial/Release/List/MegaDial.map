@@ -1,0 +1,761 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.59Z/386                                         #
+#                                                                              #
+#           Link time     =  30/Aug/2006  08:03:28                             #
+#           Target CPU    =  ARM                                               #
+#           List file     =  E:\ARM\MegaDial\Release\List\MegaDial.map         #
+#           Output file 1 =  E:\ARM\MegaDial\Release\Exe\MegaDial.elf          #
+#                            Format: elf, variant: -ynpra                      #
+#           Command line  =  E:\ARM\MegaDial\Release\Obj\func.r79              #
+#                            E:\ARM\MegaDial\Release\Obj\main.r79 -o           #
+#                            E:\ARM\MegaDial\Release\Exe\MegaDial.elf -Felf    #
+#                            -l E:\ARM\MegaDial\Release\List\MegaDial.map      #
+#                            -xmsnio -f E:\ARM\MegaDial\test.xcl (-carm        #
+#                            -V(CODE)CODE_AREA,12 -V(DATA)DATA_AREA,12         #
+#                            -Z(CODE_AREA)ELFBEGIN,DATA_ID,START,CODE,DATA_C,I #
+#                            NITTAB,DATA_Z,DATA_N,MYSEG=0-FFFFFFFF             #
+#                            -Z(DATA_AREA)DATA_I=0-FFFFFFFF) -ynpra -s main    #
+#                                                                              #
+#                        Copyright 1987-2006 IAR Systems. All rights reserved. #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : CODE_AREA 00000DFC  Relocatable, from module : main
+
+
+
+
+                ****************************************
+                *                                      *
+                *            RUNTIME MODEL             *
+                *                                      *
+                ****************************************
+
+  StackAlign4  = USED
+  __cpu_mode   = __pcs__interwork
+  __data_model = absolute
+  __endian     = little
+  __rt_version = 6
+
+
+
+                ****************************************
+                *                                      *
+                *              MODULE MAP              *
+                *                                      *
+                ****************************************
+
+
+  DEFINED ABSOLUTE ENTRIES
+    *************************************************************************
+
+  DEFINED ABSOLUTE ENTRIES
+    *************************************************************************
+
+  FILE NAME : E:\ARM\MegaDial\Release\Obj\func.r79
+  PROGRAM MODULE, NAME : func
+
+  SEGMENTS IN THE MODULE
+  ======================
+ELFBEGIN
+  Relative segment, address: CODE_AREA 00000000, align: 0
+  Segment part 0. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ELF_BEGIN               00000000 
+
+    *************************************************************************
+
+  FILE NAME : E:\ARM\MegaDial\Release\Obj\main.r79
+  PROGRAM MODULE, NAME : main
+
+  SEGMENTS IN THE MODULE
+  ======================
+DATA_Z
+  Relative segment, address: CODE_AREA 00000FE0 - 00001007 (0x28 bytes), align: 2
+  Segment part 8.             Intra module refs:   main
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           icsmd                   00000FE0 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 00001008 - 0000100B (0x4 bytes), align: 2
+  Segment part 9.             Intra module refs:   Segment part 76
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           old_icsm_onMessage      00001008 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 0000100C - 0000100F (0x4 bytes), align: 2
+  Segment part 10.            Intra module refs:   Segment part 68
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           old_ed_onkey            0000100C 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 00001010 - 00001013 (0x4 bytes), align: 2
+  Segment part 11.            Intra module refs:   Segment part 69
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           old_ed_ghook            00001010 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 00001014 - 00001017 (0x4 bytes), align: 2
+  Segment part 12.            Intra module refs:   Segment part 64
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           old_ed_redraw           00001014 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 00001018 - 0000101B (0x4 bytes), align: 2
+  Segment part 13.            Intra module refs:   Segment part 72
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           hook_state              00001018 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 0000101C - 0000101F (0x4 bytes), align: 2
+  Segment part 14.            Intra module refs:   Segment part 73
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           e_ws                    0000101C 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 00001020 - 00001023 (0x4 bytes), align: 2
+  Segment part 15.            Intra module refs:   Segment part 65
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           curpos                  00001020 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 00001024 - 00001027 (0x4 bytes), align: 2
+  Segment part 16.            Intra module refs:   Segment part 60
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           cltop                   00001024 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 00001028 - 0000102B (0x4 bytes), align: 2
+  Segment part 17.            Intra module refs:   Segment part 43
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           clbot                   00001028 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 0000102C - 000010CB (0xa0 bytes), align: 2
+  Segment part 18.            Intra module refs:   Segment part 30
+                                                   Segment part 61
+                                                   goto_2
+                                                   goto_3
+                                                   goto_4
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           dstr                    0000102C 
+    -------------------------------------------------------------------------
+CODE
+  Segment part 37. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000178 - 000001E3 (0x6c bytes), align: 2
+  Segment part 38.            Intra module refs:   ConstructList
+                                                   MyIDLECSM_onMessage
+                                                   my_ed_onkey
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FreeCLIST               00000178 
+               stack 1 = 00000000 ( 00000008 )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 39. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000001E4 - 000002B7 (0xd4 bytes), align: 2
+  Segment part 40.            Intra module refs:   ConstructList
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           CompareStrT9            000001E4 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 41. NOT NEEDED.
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000E58 - 00000E5F (0x8 bytes), align: 2
+  Segment part 2.             Intra module refs:   Segment part 24
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000E60 - 00000E67 (0x8 bytes), align: 2
+  Segment part 3.             Intra module refs:   Segment part 24
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000FC4 - 00000FC5 (0x2 bytes), align: 0
+  Segment part 4.             Intra module refs:   Segment part 24
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000E68 - 00000E7B (0x14 bytes), align: 2
+  Segment part 5.             Intra module refs:   Segment part 32
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000E7C - 00000EA3 (0x28 bytes), align: 2
+  Segment part 6.             Intra module refs:   ConstructList
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000EA4 - 00000EBB (0x18 bytes), align: 2
+  Segment part 7.             Intra module refs:   ConstructList
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000EBC - 00000FBB (0x100 bytes), align: 2
+  Segment part 19.            Intra module refs:   CompareStrT9
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000002B8 - 0000073F (0x488 bytes), align: 2
+  Segment part 42.            Intra module refs:   my_ed_ghook
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ConstructList           000002B8 
+               stack 1 = 00000000 ( 00000360 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000740 - 00000743 (0x4 bytes), align: 2
+  Segment part 43.            Intra module refs:   ConstructList
+                                                   FreeCLIST
+    -------------------------------------------------------------------------
+CODE
+  Segment part 44. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Segment part 45. NOT NEEDED.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           f_dummy                 
+               not allocated function
+    -------------------------------------------------------------------------
+CODE
+  Segment part 46. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000744 - 0000090F (0x1cc bytes), align: 2
+  Segment part 47.            Intra module refs:   my_ed_ghook
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           my_ed_redraw            00000744 
+               stack 1 = 00000000 ( 00000044 )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 48. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000910 - 00000997 (0x88 bytes), align: 2
+  Segment part 49.            Intra module refs:   my_ed_ghook
+                                                   my_ed_onkey
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ChangeRC                00000910 
+               stack 1 = 00000000 ( 0000000C )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 50. NOT NEEDED.
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000FBC - 00000FC3 (0x8 bytes), align: 2
+  Segment part 20.            Intra module refs:   ChangeRC
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000998 - 000009AF (0x18 bytes), align: 2
+  Segment part 51.            Intra module refs:   Segment part 28
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           goto_1                  00000998 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 52. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000009B0 - 000009CB (0x1c bytes), align: 2
+  Segment part 53.            Intra module refs:   Segment part 28
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           goto_2                  000009B0 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 54. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000009CC - 000009E7 (0x1c bytes), align: 2
+  Segment part 55.            Intra module refs:   Segment part 28
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           goto_3                  000009CC 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 56. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000009E8 - 00000A03 (0x1c bytes), align: 2
+  Segment part 57.            Intra module refs:   Segment part 28
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           goto_4                  000009E8 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Segment part 58. NOT NEEDED.
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 00000000 - 0000000B (0xc bytes), align: 2
+  Segment part 21.            Intra module refs:   Segment part 34
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menusoftkeys            00000000 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 0000000C - 00000023 (0x18 bytes), align: 2
+  Segment part 23.            Intra module refs:   Segment part 26
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menu_sk                 0000000C 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 00000024 - 0000002B (0x8 bytes), align: 2
+  Segment part 25.            Intra module refs:   Segment part 34
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menu_skt                00000024 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 0000002C - 0000003B (0x10 bytes), align: 2
+  Segment part 27.            Intra module refs:   Segment part 34
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           gotomenu_HNDLS          0000002C 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 0000003C - 00000137 (0xfc bytes), align: 2
+  Segment part 29.            Intra module refs:   Segment part 34
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           gotomenu_ITEMS          0000003C 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 00000138 - 0000014B (0x14 bytes), align: 2
+  Segment part 31.            Intra module refs:   my_ed_onkey
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           gotomenu_HDR            00000138 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 0000014C - 00000177 (0x2c bytes), align: 2
+  Segment part 33.            Intra module refs:   my_ed_onkey
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           gotomenu_STRUCT         0000014C 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000A04 - 00000BEB (0x1e8 bytes), align: 2
+  Segment part 59.            Intra module refs:   DoSplices
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           my_ed_onkey             00000A04 
+               stack 1 = 00000000 ( 0000002C )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000BEC - 00000BEF (0x4 bytes), align: 2
+  Segment part 60.            Intra module refs:   ConstructList
+                                                   FreeCLIST
+                                                   my_ed_onkey
+                                                   my_ed_redraw
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000BF0 - 00000BF3 (0x4 bytes), align: 2
+  Segment part 61.            Intra module refs:   goto_1
+                                                   my_ed_onkey
+    -------------------------------------------------------------------------
+CODE
+  Segment part 62. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000BF4 - 00000CEF (0xfc bytes), align: 2
+  Segment part 63.            Intra module refs:   DoSplices
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           my_ed_ghook             00000BF4 
+               stack 1 = 00000000 ( 00000044 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000CF0 - 00000CF3 (0x4 bytes), align: 2
+  Segment part 64.            Intra module refs:   my_ed_ghook
+                                                   my_ed_redraw
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000CF4 - 00000CF7 (0x4 bytes), align: 2
+  Segment part 65.            Intra module refs:   ConstructList
+                                                   my_ed_ghook
+                                                   my_ed_onkey
+                                                   my_ed_redraw
+    -------------------------------------------------------------------------
+CODE
+  Segment part 66. NOT NEEDED.
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 000010CC - 0000110B (0x40 bytes), align: 2
+  Segment part 35.            Intra module refs:   my_ed_ghook
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000CF8 - 00000D4F (0x58 bytes), align: 2
+  Segment part 67.            Intra module refs:   MyIDLECSM_onMessage
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           DoSplices               00000CF8 
+               stack 1 = 00000000 ( 0000000C )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000D50 - 00000D53 (0x4 bytes), align: 2
+  Segment part 68.            Intra module refs:   DoSplices
+                                                   my_ed_onkey
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000D54 - 00000D57 (0x4 bytes), align: 2
+  Segment part 69.            Intra module refs:   DoSplices
+                                                   my_ed_ghook
+    -------------------------------------------------------------------------
+CODE
+  Segment part 70. NOT NEEDED.
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 0000110C - 00001143 (0x38 bytes), align: 2
+  Segment part 36.            Intra module refs:   DoSplices
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000D58 - 00000DF3 (0x9c bytes), align: 2
+  Segment part 71.            Intra module refs:   main
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           MyIDLECSM_onMessage     00000D58 
+               stack 1 = 00000000 ( 00000010 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000DF4 - 00000DF7 (0x4 bytes), align: 2
+  Segment part 72.            Intra module refs:   ConstructList
+                                                   MyIDLECSM_onMessage
+                                                   my_ed_ghook
+                                                   my_ed_onkey
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000DF8 - 00000DFB (0x4 bytes), align: 2
+  Segment part 73.            Intra module refs:   ChangeRC
+                                                   ConstructList
+                                                   MyIDLECSM_onMessage
+                                                   my_ed_ghook
+                                                   my_ed_redraw
+    -------------------------------------------------------------------------
+CODE
+  Segment part 74. NOT NEEDED.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000DFC - 00000E53 (0x58 bytes), align: 2
+  Segment part 75.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           main                    00000DFC        Absolute parts (?ABS_ENTRY_MOD)
+               stack 1 = 00000000 ( 0000000C )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000E54 - 00000E57 (0x4 bytes), align: 2
+  Segment part 76.            Intra module refs:   MyIDLECSM_onMessage
+                                                   main
+    -------------------------------------------------------------------------
+CSTACK
+  Segment part 1. NOT NEEDED.
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 00000000 - 0000000B (0xc bytes), align: 2
+  Segment part 22.            Intra module refs:   menusoftkeys
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 0000000C - 00000023 (0x18 bytes), align: 2
+  Segment part 24.            Intra module refs:   menu_sk
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 00000024 - 0000002B (0x8 bytes), align: 2
+  Segment part 26.            Intra module refs:   menu_skt
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 0000002C - 0000003B (0x10 bytes), align: 2
+  Segment part 28.            Intra module refs:   gotomenu_HNDLS
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 0000003C - 00000137 (0xfc bytes), align: 2
+  Segment part 30.            Intra module refs:   gotomenu_ITEMS
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 00000138 - 0000014B (0x14 bytes), align: 2
+  Segment part 32.            Intra module refs:   gotomenu_HDR
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 0000014C - 00000177 (0x2c bytes), align: 2
+  Segment part 34.            Intra module refs:   gotomenu_STRUCT
+    -------------------------------------------------------------------------
+DATA_ID
+  Segment part 77. NOT NEEDED.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ?*?DATA_ID              
+    -------------------------------------------------------------------------
+INITTAB
+  Relative segment, address: CODE_AREA 00000FC8 - 00000FD3 (0xc bytes), align: 2
+  Segment part 78. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ?init?tab?DATA_I        00000FC8 
+    -------------------------------------------------------------------------
+INITTAB
+  Relative segment, address: CODE_AREA 00000FD4 - 00000FDF (0xc bytes), align: 2
+  Segment part 79. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ?init?tab?DATA_Z        00000FD4 
+
+
+
+
+                ****************************************
+                *                                      *
+                *            MODULE SUMMARY            *
+                *                                      *
+                ****************************************
+
+Module   CODE   DATA
+------   ----   ----
+        (Rel)  (Rel)
+main    4 418    376
+------  -----    ---
+Total:  4 418    376
+
+
+                ****************************************
+                *                                      *
+                *              CALL GRAPH              *
+                *                                      *
+                ****************************************
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  ConstructList
+      | Stack used (prev) :  00000000
+      | + function block  :  00000360
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000360
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  my_ed_redraw
+      | Stack used (prev) :  00000000
+      | + function block  :  00000044
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000044
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  goto_1
+      | Stack used (prev) :  00000000
+      | + function block  :  00000004
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000004
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  goto_2
+      | Stack used (prev) :  00000000
+      | + function block  :  00000004
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000004
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  goto_3
+      | Stack used (prev) :  00000000
+      | + function block  :  00000004
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000004
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  goto_4
+      | Stack used (prev) :  00000000
+      | + function block  :  00000004
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000004
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  my_ed_onkey
+      | Stack used (prev) :  00000000
+      | + function block  :  0000002C
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  0000002C
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  my_ed_ghook
+      | Stack used (prev) :  00000000
+      | + function block  :  00000044
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000044
+
+
+  ->Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+                             CSTACK
+    | Stack used (prev) :  00000000
+  01  MyIDLECSM_onMessage
+      | Stack used (prev) :  00000000
+      | + function block  :  00000010
+  <-Sub-tree of type: Indirectly called function tree that does not make
+                    : indirect calls (Is not an interrupt and is not flagged
+                    : as not overlayable)
+    | Stack used          :  00000010
+
+
+  ->Sub-tree of type: Function tree
+                             CSTACK
+    | Stack used (prev) :  00000360
+  01  FreeCLIST
+      | Stack used (prev) :  00000360
+      | + function block  :  00000008
+  <-Sub-tree of type: Function tree
+    | Stack used          :  00000368
+
+
+  ->Sub-tree of type: Function tree
+                             CSTACK
+    | Stack used (prev) :  00000368
+  01  CompareStrT9
+      | Stack used (prev) :  00000368
+      | + function block  :  00000004
+  <-Sub-tree of type: Function tree
+    | Stack used          :  0000036C
+
+
+  ->Sub-tree of type: Function tree
+                             CSTACK
+    | Stack used (prev) :  0000036C
+  01  ChangeRC
+      | Stack used (prev) :  0000036C
+      | + function block  :  0000000C
+  <-Sub-tree of type: Function tree
+    | Stack used          :  00000378
+
+
+  ->Sub-tree of type: Function tree
+                             CSTACK
+    | Stack used (prev) :  00000378
+  01  DoSplices
+      | Stack used (prev) :  00000378
+      | + function block  :  0000000C
+  <-Sub-tree of type: Function tree
+    | Stack used          :  00000384
+
+
+  ->Sub-tree of type: Function tree
+                             CSTACK
+    | Stack used (prev) :  00000384
+  01  main
+      | Stack used (prev) :  00000384
+      | + function block  :  0000000C
+  <-Sub-tree of type: Function tree
+    | Stack used          :  00000390
+
+
+
+
+                ****************************************
+                *                                      *
+                *      SEGMENTS IN ADDRESS ORDER       *
+                *                                      *
+                ****************************************
+
+
+SEGMENT              SPACE    START ADDRESS   END ADDRESS     SIZE  TYPE  ALIGN
+=======              =====    =============   ===========     ====  ====  =====
+ELFBEGIN             CODE_AREA           00000000                     rel    0
+DATA_ID              CODE_AREA      00000000 - 00000177         178   rel    2
+START                CODE_AREA           00000178                     dse    0
+CODE                 CODE_AREA      00000178 - 00000E57         CE0   rel    2
+DATA_C               CODE_AREA      00000E58 - 00000FC5         16E   rel    2
+INITTAB              CODE_AREA      00000FC8 - 00000FDF          18   rel    2
+DATA_Z               CODE_AREA      00000FE0 - 00001143         164   rel    2
+DATA_I               DATA_AREA      00000000 - 00000177         178   rel    2
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+ 4 418 bytes of CODE memory
+   376 bytes of DATA memory
+
+Errors: none
+Warnings: none
+

@@ -1,0 +1,1050 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.59Z/386                                         #
+#                                                                              #
+#           Link time     =  13/Sep/2006  13:42:12                             #
+#           Target CPU    =  ARM                                               #
+#           List file     =  E:\ARM\MegaDial\CX75\Release\List\main.map        #
+#           Output file 1 =  E:\ARM\MegaDial\CX75\Release\Exe\main.hex         #
+#                            Format: intel-extended                            #
+#           Command line  =  E:\ARM\MegaDial\CX75\Release\Obj\ESI.r79          #
+#                            E:\ARM\MegaDial\CX75\Release\Obj\func.r79         #
+#                            E:\ARM\MegaDial\CX75\Release\Obj\main.r79         #
+#                            E:\ARM\MegaDial\CX75\Release\Obj\patch.r79 -o     #
+#                            E:\ARM\MegaDial\CX75\Release\Exe\main.hex         #
+#                            -Fintel-extended -l                               #
+#                            E:\ARM\MegaDial\CX75\Release\List\main.map -xms   #
+#                            -f E:\ARM\MegaDial\CX75\1.xcl (-carm              #
+#                            -Z(CODE)START,CODE,SWITAB,DEBUG4,DEBUG3,DEBUG2,DE #
+#                            BUG1,DATA_C=A0FF0070-FFFFFFFF                     #
+#                            -Z(CODE)PATCH_ONCREATE=A04A3808-A04A380B          #
+#                            -Z(CODE)PATCH_CSMSIZE=A04A3810-A04A3813           #
+#                            -Z(CODE)PATCH_ONKEY=A04AB370-A04AB373             #
+#                            -Z(CODE)PATCH_RESIZE=A02CB224-A02CB23F            #
+#                            -Z(CODE)PATCH_RESIZE_RET=A02CB240-A02CB240        #
+#                            -Z(CODE)PATCH_KILL_KEY_DOWN=A02CB4D2-A02CB4D3     #
+#                            -Z(CODE)PATCH_ONDRAW=A04AB374-A04AB377            #
+#                            -Z(CODE)PATCH_MAKEFLASH=A0CDCAA0-A0CDCAA3         #
+#                            -Z(CODE)PATCH_ABCHANGED=A060A538-A060A53F         #
+#                            -Z(CONST)INITTAB,DATA_ID=A0FF0100-FFFFFFFF        #
+#                            -Z(CODE)PATCH_ESI=A0A8476C-A0A84773)              #
+#                                                                              #
+#                        Copyright 1987-2006 IAR Systems. All rights reserved. #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+                  There are no program entries.
+
+
+
+
+                ****************************************
+                *                                      *
+                *            RUNTIME MODEL             *
+                *                                      *
+                ****************************************
+
+  ARMv4M                 = USED
+  ARMv4T                 = USED
+  ARMv5T                 = USED
+  StackAlign4            = USED
+  __cpu_mode             = __pcs__interwork
+  __data_model           = absolute
+  __dlib_file_descriptor = 0
+  __endian               = little
+  __rt_version           = 6
+
+
+
+                ****************************************
+                *                                      *
+                *              MODULE MAP              *
+                *                                      *
+                ****************************************
+
+
+  DEFINED ABSOLUTE ENTRIES
+    *************************************************************************
+
+  FILE NAME : E:\ARM\MegaDial\CX75\Release\Obj\ESI.r79
+  PROGRAM MODULE, NAME : ESI
+
+  SEGMENTS IN THE MODULE
+  ======================
+PATCH_ESI
+  Relative segment, address: A0A8476C - A0A84773 (0x8 bytes), align: 2
+  Segment part 0. ROOT.
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0070 - A0FF00A7 (0x38 bytes), align: 2
+  Segment part 1.             Intra module refs:   Segment part 0
+
+    *************************************************************************
+
+  FILE NAME : E:\ARM\MegaDial\CX75\Release\Obj\func.r79
+  PROGRAM MODULE, NAME : func
+
+Absolute parts
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           malloc                  A0203C24        OpenABRecord (main)
+                                                   Segment part 92 (main)
+                                                   UnPackAB (main)
+                                                   redraw (main)
+           mfree                   A0203C8C        Segment part 105 (main)
+                                                   UnPackAB (main)
+                                                   gmproc (main)
+                                                   redraw (main)
+           memcpy                  A0EF4908        FlashSMS (main)
+                                                   OpenABRecord (main)
+                                                   Segment part 95 (main)
+                                                   UnPackAB (main)
+                                                   redraw (main)
+           zeromem                 A0219F1C        Segment part 97 (main)
+                                                   UnPackAB (main)
+                                                   redraw (main)
+           fopen                   A07CBB08        Segment part 99 (main)
+                                                   UnPackAB (main)
+                                                   redraw (main)
+           fclose                  A07CBA5C        Segment part 103 (main)
+                                                   UnPackAB (main)
+                                                   redraw (main)
+           fread                   A07CBB48        Segment part 101 (main)
+                                                   UnPackAB (main)
+                                                   redraw (main)
+           fwrite                  A07CBC30        UnPackAB (main)
+           fflush                  A07CBA8C 
+           lseek                   A07CBABC 
+           GBS_SendMessage         A020A770 
+           isCallActive            A050B02B 
+           getConvTime             A0554603 
+           CSM_root                A84C9964        Segment part 58 (main)
+                                                   doit (main)
+           CreateCSM               A07BED05 
+           FindCSMbyID             A07BED17        ESI (main)
+                                                   FindCSMbyID::??rA?DEBUG1 (main)
+                                                   FlashSMS (main)
+                                                   Segment part 90 (main)
+                                                   doit (main)
+                                                   ed_inp_redraw (main)
+                                                   onKeyGUI (main)
+                                                   redraw (main)
+           IDLECSM_onCreate        A02A781D        IDLECSM_onCreate::??rA (main)
+                                                   main (main)
+           DirectRedrawGUI         A07C3967 
+           DirectRedrawGUI_ID      A07C3981 
+           PendedRedrawGUI         A07C3A61        PendedRedrawGUI::??rA?DEBUG1 (main)
+                                                   doit (main)
+           DrawFrameInNativeMenu   A07F6317        DrawFrameInNativeMenu::??rA (main)
+                                                   ed_inp_redraw (main)
+           GetPaletteAdrByColorIndex
+                                   A07F85E9        GetPaletteAdrByColorIndex::??rA (main)
+                                                   ed_inp_redraw (main)
+           CreateMenu              A07C28DD        CreateMenu::??rA (main)
+                                                   OpenABRecord (main)
+           GetDataOfItemByID       A08037A9        GetDataOfItemByID::??rT (main)
+                                                   redraw (main)
+           SetMenuItemIcon         A07C786D 
+           DrawObject              A07FC5AB 
+           SetPropTo_Obj1          A089BBA9 
+           StoreXYWHtoRECT         A07FD255 
+           FreeDrawObject_subobj   A089941D 
+           SetColor                A0899367 
+           DrawString              A089BBF9        DrawString::??rA (main)
+                                                   ed_inp_redraw (main)
+           strcpy                  A0EF5105        doit (main)
+                                                   redraw (main)
+                                                   strcpy::??rA?DEBUG1 (main)
+           strlen                  A0EF5185        Segment part 115 (main)
+                                                   UnPackAB (main)
+                                                   doit (main)
+                                                   redraw (main)
+                                                   strlen::??rA?DEBUG1 (main)
+           strstr                  A0EF52E5        doit (main)
+                                                   redraw (main)
+                                                   strstr::??rA?DEBUG1 (main)
+           strcat                  A0EF5025        Segment part 119 (main)
+                                                   UnPackAB (main)
+                                                   redraw (main)
+           sprintf                 A0EF373D        UnPackAB (main)
+                                                   sprintf::??rA (main)
+           AllocWS                 A07BCA5B        AllocWS::??rA?DEBUG1 (main)
+                                                   Segment part 112 (main)
+                                                   doit (main)
+                                                   main (main)
+                                                   onKeyGUI (main)
+                                                   redraw (main)
+           FreeWS                  A07BCA97        FreeWS::??rA?DEBUG1 (main)
+                                                   FreeWS::??rT (main)
+                                                   doit (main)
+                                                   redraw (main)
+           CreateLocalWS           A07BC9F3 
+           wstrlen                 A07BC4A7        Segment part 108 (main)
+                                                   UnPackAB (main)
+                                                   doit (main)
+                                                   onKeyGUI (main)
+                                                   redraw (main)
+                                                   wstrlen::??rA?DEBUG1 (main)
+           wstrcpy                 A07BC445        ESI (main)
+                                                   wstrcpy::??rA (main)
+           wstrncpy                A07BC459 
+           wstrcpy_safe            A07BCB7B 
+           wstrcat                 A07BCBC1        redraw (main)
+                                                   wstrcat::??rT (main)
+           wsprintf                A07BC24B        OpenABRecord (main)
+                                                   doit (main)
+                                                   wsprintf::??rA (main)
+                                                   wsprintf::??rA?DEBUG1 (main)
+           wsaddwchar              A07BCCE9        ESI (main)
+                                                   Segment part 128 (main)
+                                                   redraw (main)
+           cutwstr                 A07BCE4F        cutwstr::??rA?DEBUG1 (main)
+                                                   cutwstr::??rT (main)
+                                                   doit (main)
+                                                   redraw (main)
+           ws2ascii                A07C1E2D        Segment part 110 (main)
+                                                   doit (main)
+                                                   onKeyGUI (main)
+                                                   redraw (main)
+                                                   ws2ascii::??rA?DEBUG1 (main)
+           asciz2wstr              A07BD1F1 
+           getDialStringLen        A049EEE8        resize (main)
+           getDialString           A08A1E89        doit (main)
+                                                   getDialString::??rA?DEBUG1 (main)
+                                                   getDialString::??rT (main)
+                                                   redraw (main)
+           openAB                  A032B501 
+           CreateEditViewCSM       A05CDE69 
+           Open_NewSMS_Dialog      A050E119        Open_NewSMS_Dialog::??rA (main)
+                                                   onKeyGUI (main)
+           GetCurrMenuItem         A07C63AB        GetCurrMenuItem::??rA (main)
+                                                   onKeyGUI (main)
+           SetNMenuItems           A07C681B 
+           MakeVoiceCallTo         A050861D        MakeVoiceCallTo::??rA (main)
+                                                   onKeyGUI (main)
+           StartMidlet             A088E3B4 
+           UnPackABrecord          A05FA6CF        UnPackAB (main)
+                                                   UnPackABrecord::??rA (main)
+           FreeUnPackABrecord      A055A35B        FreeUnPackABrecord::??rA (main)
+                                                   UnPackAB (main)
+           ABnumber2str            A083F6A3        ABnumber2str::??rA (main)
+                                                   UnPackAB (main)
+           ShowMsgInR1             A060A541 
+  SEGMENTS IN THE MODULE
+  ======================
+
+    *************************************************************************
+
+  FILE NAME : E:\ARM\MegaDial\CX75\Release\Obj\main.r79
+  PROGRAM MODULE, NAME : main
+
+  SEGMENTS IN THE MODULE
+  ======================
+DEBUG4
+  Relative segment, address: A0FF0DD8 - A0FF0DEF (0x18 bytes), align: 2
+  Segment part 8.             Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           fname                   A0FF0DD8 
+    -------------------------------------------------------------------------
+DEBUG4
+  Relative segment, address: A0FF0DF0 - A0FF0E33 (0x44 bytes), align: 2
+  Segment part 9.             Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ABfout                  A0FF0E1C 
+           ABmain                  A0FF0E04 
+           ABpath                  A0FF0DF0 
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF0E34 - A0FF0E53 (0x20 bytes), align: 2
+  Segment part 10.            Intra module refs:   resize
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           dsRects                 A0FF0E34 
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF0E54 - A0FF0E57 (0x4 bytes), align: 2
+  Segment part 11.            Intra module refs:   ed_inp_redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           color                   A0FF0E54 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF00A8 - A0FF010F (0x68 bytes), align: 2
+  Segment part 25.            Intra module refs:   Segment part 22
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           main                    A0FF00A8 
+               stack 1 = 00000000 ( 00000008 )
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF0E58 - A0FF0EBB (0x64 bytes), align: 2
+  Segment part 12.            Intra module refs:   cnv
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           keytab                  A0FF0E58 
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF0EBC - A0FF103B (0x180 bytes), align: 2
+  Segment part 13.            Intra module refs:   char8to16
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           dos2unicode             A0FF0EBC 
+           wintranslation          A0FF0FBC 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0110 - A0FF0113 (0x4 bytes), align: 2
+  Segment part 27.            Intra module refs:   menuprocs
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menup1                  A0FF0110 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0114 - A0FF0117 (0x4 bytes), align: 2
+  Segment part 29.            Intra module refs:   menuprocs
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menup2                  A0FF0114 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0118 - A0FF011B (0x4 bytes), align: 2
+  Segment part 31.            Intra module refs:   menuprocs
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menup3                  A0FF0118 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF011C - A0FF011F (0x4 bytes), align: 2
+  Segment part 33.            Intra module refs:   menuprocs
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menup4                  A0FF011C 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0120 - A0FF0147 (0x28 bytes), align: 2
+  Segment part 35.            Intra module refs:   ws2asciz
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           uni2cp1251              A0FF0120 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0148 - A0FF0187 (0x40 bytes), align: 2
+  Segment part 37.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ws2asciz                A0FF0148 
+               stack 1 = 00000000 ( 00000014 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0188 - A0FF0207 (0x80 bytes), align: 2
+  Segment part 39.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           cnv                     A0FF0188 
+               stack 1 = 00000000 ( 00000008 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0208 - A0FF05AB (0x3a4 bytes), align: 2
+  Segment part 41.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           UnPackAB                A0FF0208        Segment part 0 (patch)
+               stack 1 = 00000000 ( 000000FC )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF05AC - A0FF05AF (0x4 bytes), align: 2
+  Segment part 42.            Intra module refs:   UnPackAB
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF05B0 - A0FF06B7 (0x108 bytes), align: 2
+  Segment part 44.            Intra module refs:   Segment part 14
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           onKeyGUI                A0FF05B0 
+               stack 1 = 00000000 ( 00000058 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF06B8 - A0FF06E3 (0x2c bytes), align: 2
+  Segment part 46.            Intra module refs:   Segment part 14
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           gmproc                  A0FF06B8 
+               stack 1 = 00000000 ( 0000000C )
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF103C - A0FF1103 (0xc8 bytes), align: 2
+  Segment part 14.            Intra module refs:   OpenABRecord
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           MenuItems               A0FF1068 
+           icons                   A0FF103C 
+           menu4                   A0FF10D8 
+           menuheader              A0FF1054 
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF1104 - A0FF111B (0x18 bytes), align: 2
+  Segment part 15.            Intra module refs:   skey
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           skeys                   A0FF1104 
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF111C - A0FF114B (0x30 bytes), align: 2
+  Segment part 16.            Intra module refs:   Segment part 14
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menuskey                A0FF111C 
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF114C - A0FF1153 (0x8 bytes), align: 2
+  Segment part 17.            Intra module refs:   Segment part 14
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           skey                    A0FF114C 
+    -------------------------------------------------------------------------
+DEBUG3
+  Relative segment, address: A0FF1154 - A0FF1163 (0x10 bytes), align: 2
+  Segment part 18.            Intra module refs:   Segment part 14
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menuprocs               A0FF1154 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF11F0 - A0FF1223 (0x34 bytes), align: 2
+  Segment part 129.           Intra module refs:   ESI
+                                                   Segment part 126
+                                                   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           char8to16               A0FF11F0 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF06E4 - A0FF0847 (0x164 bytes), align: 2
+  Segment part 48.            Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           OpenABRecord            A0FF06E4 
+               stack 1 = 00000000 ( 00000030 )
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1224 - A0FF15FF (0x3dc bytes), align: 2
+  Segment part 130.           Intra module refs:   Segment part 21
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           doit                    A0FF1224 
+               stack 1 = 00000000 ( 00000188 )
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1600 - A0FF160B (0xc bytes), align: 2
+  Segment part 131.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           getDialString::??rA?DEBUG1
+                                   A0FF1600 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF160C - A0FF1617 (0xc bytes), align: 2
+  Segment part 132.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wstrlen::??rA?DEBUG1    A0FF160C 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1618 - A0FF1623 (0xc bytes), align: 2
+  Segment part 133.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ws2ascii::??rA?DEBUG1   A0FF1618 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1624 - A0FF162F (0xc bytes), align: 2
+  Segment part 134.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FindCSMbyID::??rA?DEBUG1
+                                   A0FF1624 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1630 - A0FF163B (0xc bytes), align: 2
+  Segment part 135.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           AllocWS::??rA?DEBUG1    A0FF1630 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF163C - A0FF1647 (0xc bytes), align: 2
+  Segment part 136.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           cutwstr::??rA?DEBUG1    A0FF163C 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1648 - A0FF1653 (0xc bytes), align: 2
+  Segment part 137.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           strcpy::??rA?DEBUG1     A0FF1648 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1654 - A0FF165F (0xc bytes), align: 2
+  Segment part 138.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           strlen::??rA?DEBUG1     A0FF1654 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1660 - A0FF166B (0xc bytes), align: 2
+  Segment part 139.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           strstr::??rA?DEBUG1     A0FF1660 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF166C - A0FF1677 (0xc bytes), align: 2
+  Segment part 140.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FreeWS::??rA?DEBUG1     A0FF166C 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1678 - A0FF1683 (0xc bytes), align: 2
+  Segment part 141.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           PendedRedrawGUI::??rA?DEBUG1
+                                   A0FF1678 
+    -------------------------------------------------------------------------
+DEBUG1
+  Relative segment, address: A0FF1684 - A0FF168F (0xc bytes), align: 2
+  Segment part 142.           Intra module refs:   doit
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wsprintf::??rA?DEBUG1   A0FF1684 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0848 - A0FF08F3 (0xac bytes), align: 2
+  Segment part 50.            Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ed_inp_redraw           A0FF0848 
+               stack 1 = 00000000 ( 00000038 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF08F4 - A0FF0B6B (0x278 bytes), align: 2
+  Segment part 52. ROOT.      Intra module refs:   Segment part 20
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           redraw                  A0FF08F5 
+               stack 1 = 00000000 ( 00000174 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0B6C - A0FF0B6F (0x4 bytes), align: 2
+  Segment part 53.            Intra module refs:   redraw
+    -------------------------------------------------------------------------
+DEBUG2
+  Relative segment, address: A0FF1164 - A0FF11EF (0x8c bytes), align: 2
+  Segment part 144.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           resize                  A0FF1164        Segment part 2 (patch)
+               stack 1 = 00000000 ( 0000000C )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0B70 - A0FF0BD7 (0x68 bytes), align: 2
+  Segment part 55.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ESI                     A0FF0B70        Segment part 1 (ESI)
+               stack 1 = 00000000 ( 0000000C )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0BD8 - A0FF0C17 (0x40 bytes), align: 2
+  Segment part 57.            Intra module refs:   Segment part 19
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FlashSMS                A0FF0BD9 
+               stack 1 = 00000000 ( 00000010 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C18 - A0FF0C1B (0x4 bytes), align: 2
+  Segment part 58.            Intra module refs:   ESI
+                                                   FlashSMS
+                                                   ed_inp_redraw
+                                                   onKeyGUI
+                                                   redraw
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C1C - A0FF0C1F (0x4 bytes), align: 2
+  Segment part 60. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           unpack                  A0FF0C1C 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C20 - A0FF0C27 (0x8 bytes), align: 2
+  Segment part 61.            Intra module refs:   main
+                                                   onKeyGUI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           AllocWS::??rA           A0FF0C20 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C28 - A0FF0C33 (0xc bytes), align: 2
+  Segment part 62.            Intra module refs:   main
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           IDLECSM_onCreate::??rA
+                                   A0FF0C28 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C34 - A0FF0C3F (0xc bytes), align: 2
+  Segment part 69.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           sprintf::??rA           A0FF0C34 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C40 - A0FF0C47 (0x8 bytes), align: 2
+  Segment part 70.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           strcat::??rA            A0FF0C40 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C48 - A0FF0C53 (0xc bytes), align: 2
+  Segment part 71.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           UnPackABrecord::??rA    A0FF0C48 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C54 - A0FF0C5B (0x8 bytes), align: 2
+  Segment part 72.            Intra module refs:   UnPackAB
+                                                   onKeyGUI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wstrlen::??rA           A0FF0C54 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C5C - A0FF0C63 (0x8 bytes), align: 2
+  Segment part 73.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           strlen::??rA            A0FF0C5C 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C64 - A0FF0C6F (0xc bytes), align: 2
+  Segment part 74.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ABnumber2str::??rA      A0FF0C64 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C70 - A0FF0C7B (0xc bytes), align: 2
+  Segment part 75.            Intra module refs:   UnPackAB
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FreeUnPackABrecord::??rA
+                                   A0FF0C70 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C7C - A0FF0C87 (0xc bytes), align: 2
+  Segment part 78.            Intra module refs:   onKeyGUI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           GetCurrMenuItem::??rA   A0FF0C7C 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C88 - A0FF0C8F (0x8 bytes), align: 2
+  Segment part 79.            Intra module refs:   ESI
+                                                   ed_inp_redraw
+                                                   onKeyGUI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FindCSMbyID::??rA       A0FF0C88 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C90 - A0FF0C97 (0x8 bytes), align: 2
+  Segment part 80.            Intra module refs:   onKeyGUI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ws2ascii::??rA          A0FF0C90 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0C98 - A0FF0CA3 (0xc bytes), align: 2
+  Segment part 81.            Intra module refs:   onKeyGUI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           Open_NewSMS_Dialog::??rA
+                                   A0FF0C98 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CA4 - A0FF0CAF (0xc bytes), align: 2
+  Segment part 82.            Intra module refs:   onKeyGUI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           MakeVoiceCallTo::??rA   A0FF0CA4 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CB0 - A0FF0CBB (0xc bytes), align: 2
+  Segment part 83.            Intra module refs:   OpenABRecord
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wsprintf::??rA          A0FF0CB0 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CBC - A0FF0CC7 (0xc bytes), align: 2
+  Segment part 84.            Intra module refs:   OpenABRecord
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           CreateMenu::??rA        A0FF0CBC 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CC8 - A0FF0CD3 (0xc bytes), align: 2
+  Segment part 85.            Intra module refs:   ed_inp_redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           GetPaletteAdrByColorIndex::??rA
+                                   A0FF0CC8 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CD4 - A0FF0CDF (0xc bytes), align: 2
+  Segment part 86.            Intra module refs:   ed_inp_redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           DrawFrameInNativeMenu::??rA
+                                   A0FF0CD4 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CE0 - A0FF0CEB (0xc bytes), align: 2
+  Segment part 87.            Intra module refs:   ed_inp_redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           DrawString::??rA        A0FF0CE0 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CEC - A0FF0CF3 (0x8 bytes), align: 2
+  Segment part 88.            Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           getDialString::??rT     A0FF0CED 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CF4 - A0FF0CF7 (0x4 bytes), align: 2
+  Segment part 89.            Intra module refs:   FlashSMS
+                                                   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FindCSMbyID::??rT       A0FF0CF5 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CF8 - A0FF0CFB (0x4 bytes), align: 2
+  Segment part 90.            Intra module refs:   FindCSMbyID::??rA
+                                                   FindCSMbyID::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0CFC - A0FF0CFF (0x4 bytes), align: 2
+  Segment part 91.            Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           malloc::??rT            A0FF0CFD 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D00 - A0FF0D03 (0x4 bytes), align: 2
+  Segment part 92.            Intra module refs:   malloc::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D04 - A0FF0D0B (0x8 bytes), align: 2
+  Segment part 93.            Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           GetDataOfItemByID::??rT
+                                   A0FF0D05 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D0C - A0FF0D0F (0x4 bytes), align: 2
+  Segment part 94.            Intra module refs:   FlashSMS
+                                                   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           memcpy::??rT            A0FF0D0D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D10 - A0FF0D13 (0x4 bytes), align: 2
+  Segment part 95.            Intra module refs:   memcpy::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D14 - A0FF0D17 (0x4 bytes), align: 2
+  Segment part 96.            Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           zeromem::??rT           A0FF0D15 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D18 - A0FF0D1B (0x4 bytes), align: 2
+  Segment part 97.            Intra module refs:   zeromem::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D1C - A0FF0D25 (0xa bytes), align: 2
+  Segment part 98.            Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           fopen::??rT             A0FF0D1D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D28 - A0FF0D2B (0x4 bytes), align: 2
+  Segment part 99.            Intra module refs:   fopen::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D2C - A0FF0D35 (0xa bytes), align: 2
+  Segment part 100.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           fread::??rT             A0FF0D2D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D38 - A0FF0D3B (0x4 bytes), align: 2
+  Segment part 101.           Intra module refs:   fread::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D3C - A0FF0D3F (0x4 bytes), align: 2
+  Segment part 102.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           fclose::??rT            A0FF0D3D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D40 - A0FF0D43 (0x4 bytes), align: 2
+  Segment part 103.           Intra module refs:   fclose::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D44 - A0FF0D47 (0x4 bytes), align: 2
+  Segment part 104.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           mfree::??rT             A0FF0D45 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D48 - A0FF0D4B (0x4 bytes), align: 2
+  Segment part 105.           Intra module refs:   UnPackAB
+                                                   mfree::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D4C - A0FF0D53 (0x8 bytes), align: 2
+  Segment part 106.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           cutwstr::??rT           A0FF0D4D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D54 - A0FF0D57 (0x4 bytes), align: 2
+  Segment part 107.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wstrlen::??rT           A0FF0D55 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D58 - A0FF0D5B (0x4 bytes), align: 2
+  Segment part 108.           Intra module refs:   wstrlen::??rA
+                                                   wstrlen::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D5C - A0FF0D5F (0x4 bytes), align: 2
+  Segment part 109.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ws2ascii::??rT          A0FF0D5D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D60 - A0FF0D63 (0x4 bytes), align: 2
+  Segment part 110.           Intra module refs:   ws2ascii::??rA
+                                                   ws2ascii::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D64 - A0FF0D67 (0x4 bytes), align: 2
+  Segment part 111.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           AllocWS::??rT           A0FF0D65 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D68 - A0FF0D6B (0x4 bytes), align: 2
+  Segment part 112.           Intra module refs:   AllocWS::??rA
+                                                   AllocWS::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D6C - A0FF0D6F (0x4 bytes), align: 2
+  Segment part 115.           Intra module refs:   strlen::??rA
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D70 - A0FF0D73 (0x4 bytes), align: 2
+  Segment part 117.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wsaddwchar::??rT        A0FF0D71 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D74 - A0FF0D77 (0x4 bytes), align: 2
+  Segment part 119.           Intra module refs:   strcat::??rA
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D78 - A0FF0D7B (0x4 bytes), align: 2
+  Segment part 120.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           char8to16::??rT         A0FF0D79 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D7C - A0FF0D83 (0x8 bytes), align: 2
+  Segment part 121.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wstrcat::??rT           A0FF0D7D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D84 - A0FF0D8B (0x8 bytes), align: 2
+  Segment part 122.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           FreeWS::??rT            A0FF0D85 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D8C - A0FF0D93 (0x8 bytes), align: 2
+  Segment part 123.           Intra module refs:   redraw
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ??rT0xA02CB7E5          A0FF0D8D 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0D94 - A0FF0D9F (0xc bytes), align: 2
+  Segment part 124.           Intra module refs:   ESI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wstrcpy::??rA           A0FF0D94 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0DA0 - A0FF0DA3 (0x4 bytes), align: 2
+  Segment part 126.           Intra module refs:   char8to16::??rT
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0DA4 - A0FF0DAB (0x8 bytes), align: 2
+  Segment part 127.           Intra module refs:   ESI
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           wsaddwchar::??rA        A0FF0DA4 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: A0FF0DAC - A0FF0DAF (0x4 bytes), align: 2
+  Segment part 128.           Intra module refs:   wsaddwchar::??rA
+                                                   wsaddwchar::??rT
+    -------------------------------------------------------------------------
+PATCH_MAKEFLASH
+  Relative segment, address: A0CDCAA0 - A0CDCAA3 (0x4 bytes), align: 2
+  Segment part 19. ROOT.
+    -------------------------------------------------------------------------
+PATCH_ONDRAW
+  Relative segment, address: A04AB374 - A04AB377 (0x4 bytes), align: 2
+  Segment part 20. ROOT.
+    -------------------------------------------------------------------------
+PATCH_ONKEY
+  Relative segment, address: A04AB370 - A04AB373 (0x4 bytes), align: 2
+  Segment part 21. ROOT.
+    -------------------------------------------------------------------------
+PATCH_ONCREATE
+  Relative segment, address: A04A3808 - A04A380B (0x4 bytes), align: 2
+  Segment part 22. ROOT.
+    -------------------------------------------------------------------------
+PATCH_CSMSIZE
+  Relative segment, address: A04A3810 - A04A3813 (0x4 bytes), align: 2
+  Segment part 23. ROOT.
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: A0FF1690 - A0FF1693 (0x4 bytes), align: 2
+  Segment part 2.             Intra module refs:   skeys
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: A0FF1694 - A0FF169B (0x8 bytes), align: 2
+  Segment part 3.             Intra module refs:   skeys
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: A0FF16A8 - A0FF16A8 (0x1 bytes), align: 0
+  Segment part 4.             Intra module refs:   skeys
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: A0FF169C - A0FF16A7 (0xc bytes), align: 2
+  Segment part 5.             Intra module refs:   UnPackAB
+
+    *************************************************************************
+
+  FILE NAME : E:\ARM\MegaDial\CX75\Release\Obj\patch.r79
+  PROGRAM MODULE, NAME : patch
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address: A0FF0DB0 - A0FF0DD7 (0x28 bytes), align: 2
+  Segment part 0. ROOT.       Intra module refs:   Segment part 1
+    -------------------------------------------------------------------------
+PATCH_ABCHANGED
+  Relative segment, address: A060A538 - A060A53F (0x8 bytes), align: 2
+  Segment part 1. ROOT.
+    -------------------------------------------------------------------------
+PATCH_RESIZE
+  Relative segment, address: A02CB224 - A02CB22F (0xc bytes), align: 2
+  Segment part 2. ROOT.
+    -------------------------------------------------------------------------
+PATCH_RESIZE_RET
+  Relative segment, address: A02CB240, align: 2
+  Segment part 3. ROOT.       Intra module refs:   Segment part 2
+
+
+
+
+                ****************************************
+                *                                      *
+                *      SEGMENTS IN ADDRESS ORDER       *
+                *                                      *
+                ****************************************
+
+
+SEGMENT              SPACE    START ADDRESS   END ADDRESS     SIZE  TYPE  ALIGN
+=======              =====    =============   ===========     ====  ====  =====
+PATCH_RESIZE                       A02CB224 - A02CB22F           C   rel    2
+PATCH_RESIZE_RET                        A02CB240                     rel    2
+PATCH_ONCREATE                     A04A3808 - A04A380B           4   rel    2
+PATCH_CSMSIZE                      A04A3810 - A04A3813           4   rel    2
+PATCH_ONKEY                        A04AB370 - A04AB373           4   rel    2
+PATCH_ONDRAW                       A04AB374 - A04AB377           4   rel    2
+PATCH_ABCHANGED                    A060A538 - A060A53F           8   rel    2
+PATCH_ESI                          A0A8476C - A0A84773           8   rel    2
+PATCH_MAKEFLASH                    A0CDCAA0 - A0CDCAA3           4   rel    2
+START                                   A0FF0070                     dse    0
+CODE                               A0FF0070 - A0FF0DD7         D68   rel    2
+SWITAB                                  A0FF0DD8                     dse    0
+DEBUG4                             A0FF0DD8 - A0FF0E33          5C   rel    2
+DEBUG3                             A0FF0E34 - A0FF1163         330   rel    2
+DEBUG2                             A0FF1164 - A0FF11EF          8C   rel    2
+DEBUG1                             A0FF11F0 - A0FF168F         4A0   rel    2
+DATA_C                             A0FF1690 - A0FF16A8          19   rel    2
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+ 5 737 bytes of CODE memory
+
+Errors: none
+Warnings: none
+

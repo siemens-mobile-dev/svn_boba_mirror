@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <configuration>
+    <name>Debug</name>
+    <outputs>
+      <file>$PROJ_DIR$\arm_siemens.h</file>
+      <file>$PROJ_DIR$\Debug\List\main.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbd</file>
+      <file>$PROJ_DIR$\Debug\Obj\ESI.r79</file>
+      <file>$PROJ_DIR$\Debug\List\patch.lst</file>
+      <file>$PROJ_DIR$\Debug\List\main.map</file>
+      <file>$PROJ_DIR$\Debug\Obj\patch.r79</file>
+      <file>$PROJ_DIR$\Debug\List\func.lst</file>
+      <file>$PROJ_DIR$\1.xcl</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$TOOLKIT_DIR$\lib\dl5tpainl8n.r79</file>
+      <file>$PROJ_DIR$\Debug\Exe\main.hex</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\ESI.lst</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\ESI.asm</file>
+      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
+      <file>$PROJ_DIR$\patch.asm</file>
+      <file>$PROJ_DIR$\func.asm</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\Debug\Obj\main.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 12</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\main.hex</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 8 9 10</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 5 11</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 9 1</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 12</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\ESI.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 3 13</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\patch.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 6 4</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 16 7</file>
+        </tool>
+      </outputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
+  </configuration>
+  <configuration>
+    <name>Release</name>
+    <outputs>
+      <file>$PROJ_DIR$\arm_siemens.h</file>
+      <file>$PROJ_DIR$\Release\Obj\dialer.r79</file>
+      <file>$PROJ_DIR$\1.xcl</file>
+      <file>$PROJ_DIR$\Release\List\patch.lst</file>
+      <file>$PROJ_DIR$\Release\List\ESI.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbd</file>
+      <file>$PROJ_DIR$\Release\List\func.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\ESI.r79</file>
+      <file>$PROJ_DIR$\Release\Exe\main.hex</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release\List\dialer.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\patch.r79</file>
+      <file>$PROJ_DIR$\Release\List\main.map</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\dialer.asm</file>
+      <file>$PROJ_DIR$\Release\List\main.s79</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\ESI.asm</file>
+      <file>$PROJ_DIR$\patch.asm</file>
+      <file>$PROJ_DIR$\func.asm</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\Release\Obj\main.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 11</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\main.hex</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 14</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 2 8 15 7 13</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 9 14</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\dialer.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 1 12</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 7 17 10</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\ESI.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 8 4</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\patch.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 13 3</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 15 6</file>
+        </tool>
+      </outputs>
+    </file>
+  </configuration>
+</project>
+
+

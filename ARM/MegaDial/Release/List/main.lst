@@ -1,0 +1,1991 @@
+##############################################################################
+#                                                                            #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    30/Aug/2006  08:03:28 #
+# Copyright 1999-2005 IAR Systems. All rights reserved.                      #
+#                                                                            #
+#    Cpu mode        =  interwork                                            #
+#    Endian          =  little                                               #
+#    Stack alignment =  4                                                    #
+#    Source file     =  E:\ARM\MegaDial\main.c                               #
+#    Command line    =  E:\ARM\MegaDial\main.c -lC                           #
+#                       E:\ARM\MegaDial\Release\List\ -o                     #
+#                       E:\ARM\MegaDial\Release\Obj\ -s9 --no_inline         #
+#                       --no_clustering --cpu_mode arm --endian little       #
+#                       --cpu ARM926EJ-S --stack_align 4 --interwork -e      #
+#                       --fpu None                                           #
+#    List file       =  E:\ARM\MegaDial\Release\List\main.lst                #
+#    Object file     =  E:\ARM\MegaDial\Release\Obj\main.r79                 #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+E:\ARM\MegaDial\main.c
+      1          #include "E:\ARM\swilib.h"
+      2          
+      3          #define MAX_RECORDS 5000
+      4          
+      5          #define LEVEL1_RN	(41*41)
+      6          #define LEVEL2_RN	(41)
+      7          
+      8          #define wslen(ARG) (ARG->wsbody[0])
+      9          
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     10          CSM_DESC icsmd;
+   \                     icsmd:
+   \   00000000                      DS8 40
+     11          
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     12          int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+   \                     old_icsm_onMessage:
+   \   00000000                      DS8 4
+     13          
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     14          int (*old_ed_onkey)(GUI *gui, GUI_MSG *msg);
+   \                     old_ed_onkey:
+   \   00000000                      DS8 4
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     15          void (*old_ed_ghook)(GUI *gui, int cmd);
+   \                     old_ed_ghook:
+   \   00000000                      DS8 4
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     16          void (*old_ed_redraw)(void *data);
+   \                     old_ed_redraw:
+   \   00000000                      DS8 4
+     17          
+     18          //0 - ждем появления диалога
+     19          //1 - диалог появился, зацепились, ждем зацепления за onRedraw
+     20          //2 - зацепили onRedraw, idle-режим
+     21          //3 - запрос поиска
+     22          //4 - отправлен запрос
+     23          //5 - производится поиск
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     24          volatile int hook_state=0;
+   \                     hook_state:
+   \   00000000                      DS8 4
+     25          
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     26          volatile WSHDR *e_ws;
+   \                     e_ws:
+   \   00000000                      DS8 4
+     27          
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     28          volatile int curpos; //Позиция курсора в списке
+   \                     curpos:
+   \   00000000                      DS8 4
+     29          
+     30          typedef struct
+     31          {
+     32            void *next;
+     33            WSHDR *name;
+     34            WSHDR *num[4];
+     35          }CLIST;
+     36          
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     37          volatile CLIST *cltop; //Начало
+   \                     cltop:
+   \   00000000                      DS8 4
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     38          volatile CLIST *clbot; //Конец
+   \                     clbot:
+   \   00000000                      DS8 4
+     39          
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+     40          char dstr[4][40];
+   \                     dstr:
+   \   00000000                      DS8 160
+     41          
+     42          //Уничтожить список
+
+   \                                 In segment CODE, align 4, keep-with-next
+     43          void FreeCLIST(void)
+     44          {
+   \                     FreeCLIST:
+   \   00000000   10402DE9           PUSH     {R4,LR}
+     45            LockSched();
+   \   00000004   460100EF           SWI      +326
+     46            CLIST *cl=(CLIST*)cltop;
+   \   00000008   ........           LDR      R0,??DataTable13  ;; cltop
+     47            cltop=0;
+   \   0000000C   0010A0E3           MOV      R1,#+0
+   \   00000010   004090E5           LDR      R4,[R0, #+0]
+   \   00000014   001080E5           STR      R1,[R0, #+0]
+     48            clbot=0;
+   \   00000018   ........           LDR      R0,??DataTable4  ;; clbot
+   \   0000001C   001080E5           STR      R1,[R0, #+0]
+     49            UnlockSched();
+   \   00000020   470100EF           SWI      +327
+   \   00000024   000054E3           CMP      R4,#+0
+   \   00000028   1080BD08           POPEQ    {R4,PC}
+     50            while(cl)
+     51            {
+     52              CLIST *p;
+     53              FreeWS(cl->name);
+   \                     ??FreeCLIST_0:
+   \   0000002C   040094E5           LDR      R0,[R4, #+4]
+   \   00000030   290100EF           SWI      +297
+     54              FreeWS(cl->num[0]);
+   \   00000034   080094E5           LDR      R0,[R4, #+8]
+   \   00000038   290100EF           SWI      +297
+     55              FreeWS(cl->num[1]);
+   \   0000003C   0C0094E5           LDR      R0,[R4, #+12]
+   \   00000040   290100EF           SWI      +297
+     56              FreeWS(cl->num[2]);
+   \   00000044   100094E5           LDR      R0,[R4, #+16]
+   \   00000048   290100EF           SWI      +297
+     57              FreeWS(cl->num[3]);
+   \   0000004C   140094E5           LDR      R0,[R4, #+20]
+   \   00000050   290100EF           SWI      +297
+     58              p=cl;
+   \   00000054   0400A0E1           MOV      R0,R4
+     59              cl=(CLIST*)(cl->next);
+   \   00000058   004094E5           LDR      R4,[R4, #+0]
+     60              mfree(p);
+   \   0000005C   150000EF           SWI      +21
+     61            }
+   \   00000060   000054E3           CMP      R4,#+0
+   \   00000064   F0FFFF1A           BNE      ??FreeCLIST_0
+     62          }
+   \   00000068   1080BDE8           POP      {R4,PC}          ;; return
+     63          
+     64          //-----------------------------------------------------
+     65          //Поиск подстроки в строке по методу Т9
+     66          //-----------------------------------------------------
+
+   \                                 In segment CODE, align 4, keep-with-next
+     67          int CompareStrT9(WSHDR *ws, WSHDR *ss)
+     68          {
+   \                     CompareStrT9:
+   \   00000000   10002DE9           PUSH     {R4}
+     69            int spos=1;
+     70            int wpos=1;
+     71            int c;
+     72          
+     73            //Таблица ключей для поиска текста
+     74            static const char key[256]=
+     75              "11111111111111111111111111111111"
+     76                "10001**0***0000*012345678900***0"
+     77          	"0222333444555666777788899991*110"
+     78          	  "122233344455566677778889999111*1"
+     79          	    "11111111111111111111111111111111"
+     80          	      "11111111111111111111111111111111"
+     81          		"22223333444455566677778888899999"
+     82          		  "22223333444455566677778888899999";
+     83          
+     84            if (!wslen(ss)) return(1); //Пустая строка всегда пляшет ;)
+   \   00000004   001091E5           LDR      R1,[R1, #+0]
+   \   00000008   0130A0E3           MOV      R3,#+1
+   \   0000000C   B0C0D1E1           LDRH     R12,[R1, #+0]
+   \   00000010   0120A0E3           MOV      R2,#+1
+   \   00000014   00005CE3           CMP      R12,#+0
+   \   00000018   0200001A           BNE      ??CompareStrT9_0
+   \                     ??CompareStrT9_1:
+   \   0000001C   1000BDE8           POP      {R4}
+   \   00000020   0100A0E3           MOV      R0,#+1
+   \   00000024   1EFF2FE1           BX       LR               ;; return
+     85            if (!wslen(ws)) return(0); //А пустая исходная не стреляет ;)
+   \                     ??CompareStrT9_0:
+   \   00000028   000090E5           LDR      R0,[R0, #+0]
+   \   0000002C   B0C0D0E1           LDRH     R12,[R0, #+0]
+   \   00000030   00005CE3           CMP      R12,#+0
+   \   00000034   0700001A           BNE      ??CompareStrT9_2
+   \                     ??CompareStrT9_3:
+   \   00000038   1000BDE8           POP      {R4}
+   \   0000003C   0000A0E3           MOV      R0,#+0
+   \   00000040   1EFF2FE1           BX       LR
+     86            do
+     87            {
+     88              c=ws->wsbody[wpos];
+     89              if ((wpos==1)&&(c=='+'))
+     90              {
+     91                wpos=2; //Пропуск первого '+'
+     92                continue;
+     93              }
+     94              if (!spos)
+     95              {
+     96                //Ищем пробел
+     97                if (c==' ') spos=1; //Начинаем заново
+     98              }
+     99              else
+    100              {
+    101                //Преобразуем в код кнопки
+    102                if ((c>=0x410)&&(c<0x450)) c-=0x350;
+    103                c&=0xFF;
+    104                c=key[c];
+    105                if (c==ss->wsbody[spos])
+    106                {
+    107          	spos++;
+    108          	if (spos>wslen(ss)) return(1); //Все совпало
+    109                }
+    110                else spos=0; //Ищем новое слово
+   \                     ??CompareStrT9_4:
+   \   00000044   0030A0E3           MOV      R3,#+0
+    111              }
+    112              wpos++;
+   \                     ??CompareStrT9_5:
+   \   00000048   012082E2           ADD      R2,R2,#+1
+    113            }
+    114            while(wpos<=wslen(ws));
+   \                     ??CompareStrT9_6:
+   \   0000004C   B0C0D0E1           LDRH     R12,[R0, #+0]
+   \   00000050   02005CE1           CMP      R12,R2
+   \   00000054   F7FFFFBA           BLT      ??CompareStrT9_3
+   \                     ??CompareStrT9_2:
+   \   00000058   82C080E0           ADD      R12,R0,R2, LSL #+1
+   \   0000005C   B0C0DCE1           LDRH     R12,[R12, #+0]
+   \   00000060   010052E3           CMP      R2,#+1
+   \   00000064   2B005C03           CMPEQ    R12,#+43
+   \   00000068   0220A003           MOVEQ    R2,#+2
+   \   0000006C   F6FFFF0A           BEQ      ??CompareStrT9_6
+   \   00000070   000053E3           CMP      R3,#+0
+   \   00000074   0300001A           BNE      ??CompareStrT9_7
+   \   00000078   20005CE3           CMP      R12,#+32
+   \   0000007C   F1FFFF1A           BNE      ??CompareStrT9_5
+   \   00000080   0130A0E3           MOV      R3,#+1
+   \   00000084   EFFFFFEA           B        ??CompareStrT9_5
+   \                     ??CompareStrT9_7:
+   \   00000088   410E5CE3           CMP      R12,#+1040
+   \   0000008C   030000BA           BLT      ??CompareStrT9_8
+   \   00000090   450E5CE3           CMP      R12,#+1104
+   \   00000094   4F40E0B3           MVNLT    R4,#+79
+   \   00000098   C04FC4B3           BICLT    R4,R4,#0x300
+   \   0000009C   0CC084B0           ADDLT    R12,R4,R12
+   \                     ??CompareStrT9_8:
+   \   000000A0   FF400CE2           AND      R4,R12,#0xFF
+   \   000000A4   24C09FE5           LDR      R12,??CompareStrT9_9  ;; ??key
+   \   000000A8   0C40D4E7           LDRB     R4,[R4, +R12]
+   \   000000AC   83C081E0           ADD      R12,R1,R3, LSL #+1
+   \   000000B0   B0C0DCE1           LDRH     R12,[R12, #+0]
+   \   000000B4   0C0054E1           CMP      R4,R12
+   \   000000B8   E1FFFF1A           BNE      ??CompareStrT9_4
+   \   000000BC   B040D1E1           LDRH     R4,[R1, #+0]
+   \   000000C0   013083E2           ADD      R3,R3,#+1
+   \   000000C4   030054E1           CMP      R4,R3
+   \   000000C8   DEFFFFAA           BGE      ??CompareStrT9_5
+   \   000000CC   D2FFFFEA           B        ??CompareStrT9_1
+   \                     ??CompareStrT9_9:
+   \   000000D0   ........           DC32     ??key
+    115            return(0);
+    116          }
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     ??key:
+   \   00000000   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   00000008   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   00000010   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   00000018   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   00000020   31303030312A       DC8 31H, 30H, 30H, 30H, 31H, 2AH, 2AH, 30H
+   \              2A30        
+   \   00000028   2A2A2A303030       DC8 2AH, 2AH, 2AH, 30H, 30H, 30H, 30H, 2AH
+   \              302A        
+   \   00000030   303132333435       DC8 30H, 31H, 32H, 33H, 34H, 35H, 36H, 37H
+   \              3637        
+   \   00000038   383930302A2A       DC8 38H, 39H, 30H, 30H, 2AH, 2AH, 2AH, 30H
+   \              2A30        
+   \   00000040   303232323333       DC8 30H, 32H, 32H, 32H, 33H, 33H, 33H, 34H
+   \              3334        
+   \   00000048   343435353536       DC8 34H, 34H, 35H, 35H, 35H, 36H, 36H, 36H
+   \              3636        
+   \   00000050   373737373838       DC8 37H, 37H, 37H, 37H, 38H, 38H, 38H, 39H
+   \              3839        
+   \   00000058   393939312A31       DC8 39H, 39H, 39H, 31H, 2AH, 31H, 31H, 30H
+   \              3130        
+   \   00000060   313232323333       DC8 31H, 32H, 32H, 32H, 33H, 33H, 33H, 34H
+   \              3334        
+   \   00000068   343435353536       DC8 34H, 34H, 35H, 35H, 35H, 36H, 36H, 36H
+   \              3636        
+   \   00000070   373737373838       DC8 37H, 37H, 37H, 37H, 38H, 38H, 38H, 39H
+   \              3839        
+   \   00000078   393939313131       DC8 39H, 39H, 39H, 31H, 31H, 31H, 2AH, 31H
+   \              2A31        
+   \   00000080   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   00000088   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   00000090   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   00000098   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   000000A0   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   000000A8   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   000000B0   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   000000B8   313131313131       DC8 31H, 31H, 31H, 31H, 31H, 31H, 31H, 31H
+   \              3131        
+   \   000000C0   323232323333       DC8 32H, 32H, 32H, 32H, 33H, 33H, 33H, 33H
+   \              3333        
+   \   000000C8   343434343535       DC8 34H, 34H, 34H, 34H, 35H, 35H, 35H, 36H
+   \              3536        
+   \   000000D0   363637373737       DC8 36H, 36H, 37H, 37H, 37H, 37H, 38H, 38H
+   \              3838        
+   \   000000D8   383838393939       DC8 38H, 38H, 38H, 39H, 39H, 39H, 39H, 39H
+   \              3939        
+   \   000000E0   323232323333       DC8 32H, 32H, 32H, 32H, 33H, 33H, 33H, 33H
+   \              3333        
+   \   000000E8   343434343535       DC8 34H, 34H, 34H, 34H, 35H, 35H, 35H, 36H
+   \              3536        
+   \   000000F0   363637373737       DC8 36H, 36H, 37H, 37H, 37H, 37H, 38H, 38H
+   \              3838        
+   \   000000F8   383838393939       DC8 38H, 38H, 38H, 39H, 39H, 39H, 39H, 39H
+   \              3939        
+    117          
+    118          //=====================================================
+    119          // Конструктор списка
+    120          //=====================================================
+
+   \                                 In segment CODE, align 4, keep-with-next
+    121          void ConstructList(void)
+    122          {
+   \                     ConstructList:
+   \   00000000   F04F2DE9           PUSH     {R4-R11,LR}
+   \   00000004   CDDF4DE2           SUB      SP,SP,#+820
+    123            int fin;
+    124            unsigned int ul;
+    125            char recname[128];
+    126          
+    127            AB_UNPRES ur;
+    128            void *buffer;
+    129          
+    130          #pragma pack(1)
+    131            struct
+    132            {
+    133              long dummy1;
+    134              short dummy2;
+    135              char bitmap[MAX_RECORDS/8];
+    136            } ABmain;
+    137          #pragma pack()
+    138          
+    139            int rec=0;
+    140            int fsz;
+    141            int total=0;
+    142            CLIST contact;
+    143          
+    144            WSHDR *sws=AllocWS(50);
+   \   00000008   3200A0E3           MOV      R0,#+50
+   \   0000000C   0070A0E3           MOV      R7,#+0
+   \   00000010   250100EF           SWI      +293
+   \   00000014   0050A0E1           MOV      R5,R0
+    145          
+    146            FreeCLIST(); //Уничтожаем пред. список
+   \   00000018   ........           BL       FreeCLIST
+    147            LockSched();
+   \   0000001C   460100EF           SWI      +326
+    148            if (e_ws) wstrcpy(sws,(WSHDR *)e_ws);
+   \   00000020   ........           LDR      R0,??DataTable26  ;; e_ws
+   \   00000024   0060A0E3           MOV      R6,#+0
+   \   00000028   001090E5           LDR      R1,[R0, #+0]
+   \   0000002C   000051E3           CMP      R1,#+0
+   \   00000030   0100000A           BEQ      ??ConstructList_0
+   \   00000034   0500A0E1           MOV      R0,R5
+   \   00000038   1F0100EF           SWI      +287
+    149            if (hook_state==4) hook_state=5;
+   \                     ??ConstructList_0:
+   \   0000003C   ........           LDR      R8,??DataTable25  ;; hook_state
+   \   00000040   000098E5           LDR      R0,[R8, #+0]
+   \   00000044   040050E3           CMP      R0,#+4
+   \   00000048   0500A003           MOVEQ    R0,#+5
+   \   0000004C   00008805           STREQ    R0,[R8, #+0]
+    150            UnlockSched();
+   \   00000050   470100EF           SWI      +327
+    151            zeromem(&contact,sizeof(contact));
+   \   00000054   1810A0E3           MOV      R1,#+24
+   \   00000058   04008DE2           ADD      R0,SP,#+4
+   \   0000005C   1D0100EF           SWI      +285
+    152            if ((buffer=malloc(65536)))
+   \   00000060   400BA0E3           MOV      R0,#+65536
+   \   00000064   140000EF           SWI      +20
+   \   00000068   1C008DE5           STR      R0,[SP, #+28]
+   \   0000006C   000050E3           CMP      R0,#+0
+   \   00000070   E700000A           BEQ      ??ConstructList_1
+    153            {
+    154              if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,0,&ul))!=-1)
+   \   00000074   FC039FE5           LDR      R0,??ConstructList_2  ;; `?<Constant "0:\\\\System\\\\apo\\\\addr\\\\main">`
+   \   00000078   0D30A0E1           MOV      R3,SP
+   \   0000007C   0020A0E3           MOV      R2,#+0
+   \   00000080   801CA0E3           MOV      R1,#+32768
+   \   00000084   0A0000EF           SWI      +10
+   \   00000088   0040A0E1           MOV      R4,R0
+   \   0000008C   010074E3           CMN      R4,#+1
+   \   00000090   DD00000A           BEQ      ??ConstructList_3
+    155              {
+    156                if (fread(fin,&ABmain,sizeof(ABmain),&ul)==sizeof(ABmain))
+   \   00000094   7790A0E3           MOV      R9,#+119
+   \   00000098   809F89E3           ORR      R9,R9,#0x200
+   \   0000009C   0D30A0E1           MOV      R3,SP
+   \   000000A0   0920A0E1           MOV      R2,R9
+   \   000000A4   3C108DE2           ADD      R1,SP,#+60
+   \   000000A8   0B0000EF           SWI      +11
+   \   000000AC   090050E1           CMP      R0,R9
+   \   000000B0   0D10A0E1           MOV      R1,SP
+   \   000000B4   0400A0E1           MOV      R0,R4
+   \   000000B8   D200001A           BNE      ??ConstructList_4
+    157                {
+    158          	fclose(fin,&ul);
+   \   000000BC   0D0000EF           SWI      +13
+   \   000000C0   0C0000EA           B        ??ConstructList_5
+    159          	do
+    160          	{
+    161          	  if (ABmain.bitmap[rec>>3]&(0x80>>(rec&7)))
+    162          	  {
+    163          	    //Запись есть в битмапе
+    164          	    unsigned int rl1;
+    165          	    unsigned int rl2;
+    166          	    unsigned int rl3;
+    167          	    rl1=rec/LEVEL1_RN;
+    168          	    rl2=(rec%LEVEL1_RN)/LEVEL2_RN;
+    169          	    rl3=rec%LEVEL2_RN;
+    170          	    snprintf(recname,128,"0:\\System\\apo\\addr\\data\\%02d\\%02d\\%02d",rl1,rl2,rl3);
+    171          	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+    172          	    {
+    173          	      zeromem(&ur,sizeof(ur));
+    174          	      fsz=fread(fin,buffer,65536,&ul);
+    175          	      fclose(fin,&ul);
+    176          	      UnpackABentry(&ur,((char *)buffer+8),fsz,0x28);
+    177          	      int i=0;
+    178          	      zeromem(&contact,sizeof(contact));
+    179          	      while(i<ur.number_of_records)
+    180          	      {
+    181          		AB_UNPRES_ITEM *r=ur.record_list+i;
+    182          		if (r->no_data!=1)
+    183          		{
+    184          		  switch(GetTypeOfAB_UNPRES_ITEM(r->item_type))
+    185          		  {
+    186          		  case 0x05:
+    187          		    if (r->item_type==0x81)
+    188          		    {
+    189          		      if (r->data)
+    190          		      {
+    191          			wstrcpy(contact.name=AllocWS(50),(WSHDR *)(r->data));
+    192          			*((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
+    193          		      }
+    194          		    }
+    195          		    break;
+    196          		  case 0x01:
+    197          		    {
+    198          		      PKT_NUM *p=(PKT_NUM*)r->data;
+    199          		      unsigned int n=r->item_type;
+    200          		      int j;
+    201          		      int c;
+    202          		      WSHDR *ws;
+    203          		      n-=0x62;
+    204          		      if (n<4)
+    205          		      {
+    206          			if (p)
+    207          			{
+    208          			  ws=contact.num[n]=AllocWS(50);
+    209          			  j=0;
+    210          			  if (p->format==0x91) wsAppendChar(ws,'+');
+    211          			  while(j<p->data_size)
+    212          			  {
+    213          			    c=(p->data[j])&0x0F;
+    214          			    if (c!=0x0F) wsAppendChar(ws,c+'0'); else break;
+    215          			    c=(p->data[j]>>4)&0x0F;
+    216          			    if (c!=0x0F) wsAppendChar(ws,c+'0'); else break;
+    217          			    j++;
+    218          			  }
+    219          			  *((int *)(&contact.next))|=CompareStrT9(ws,sws);
+    220          			}
+    221          		      }
+    222          		      break;
+    223          		    }
+    224          		  }
+    225          		}
+    226          		i++;
+    227          	      }
+    228          	      if (!contact.next)
+    229          	      {
+    230          		FreeWS(contact.name);
+    231          		FreeWS(contact.num[0]);
+    232          		FreeWS(contact.num[1]);
+    233          		FreeWS(contact.num[2]);
+    234          		FreeWS(contact.num[3]);
+    235          	      }
+    236          	      FreeUnpackABentry(&ur,mfree_adr());
+    237          	      if (hook_state!=5) goto L_STOP;
+    238          	      LockSched();
+    239          	      if ((hook_state==5)&&(contact.next))
+    240          	      {
+    241          		//Добавляем в список
+    242          		CLIST *p=malloc(sizeof(contact));
+    243          		CLIST *b=(CLIST *)clbot;
+    244          		contact.next=0;
+    245          		memcpy(p,&contact,sizeof(contact));
+    246          		if (b)
+    247          		{
+    248          		  //Не первый
+    249          		  b->next=p;
+    250          		  clbot=p;
+    251          		}
+    252          		else
+    253          		{
+    254          		  //Первый
+    255          		  cltop=p;
+    256          		  clbot=p;
+    257          		}
+    258          		if (curpos<2)
+    259          		{
+    260          		  if (total<5) REDRAW();
+    261          		}
+    262          		else
+    263          		{
+    264          		  if ((unsigned int)(total-(curpos-2))<5) REDRAW();
+   \                     ??ConstructList_6:
+   \   000000C4   000090E5           LDR      R0,[R0, #+0]
+   \   000000C8   000046E0           SUB      R0,R6,R0
+   \   000000CC   020080E2           ADD      R0,R0,#+2
+   \   000000D0   050050E3           CMP      R0,#+5
+   \   000000D4   0000002A           BCS      ??ConstructList_7
+   \                     ??ConstructList_8:
+   \   000000D8   720100EF           SWI      +370
+    265          		}
+    266          		total++;
+   \                     ??ConstructList_7:
+   \   000000DC   016086E2           ADD      R6,R6,#+1
+    267          	      }
+    268          	      UnlockSched();
+   \                     ??ConstructList_9:
+   \   000000E0   470100EF           SWI      +327
+    269          	    }
+    270          	  }
+    271          	  rec++;
+   \                     ??ConstructList_10:
+   \   000000E4   017087E2           ADD      R7,R7,#+1
+    272          	}
+    273          	while(rec<MAX_RECORDS);
+   \   000000E8   8800A0E3           MOV      R0,#+136
+   \   000000EC   4C0D80E3           ORR      R0,R0,#0x1300
+   \   000000F0   000057E1           CMP      R7,R0
+   \   000000F4   C40000AA           BGE      ??ConstructList_3
+   \                     ??ConstructList_5:
+   \   000000F8   42008DE2           ADD      R0,SP,#+66
+   \   000000FC   C701D0E7           LDRB     R0,[R0, +R7, ASR #+3]
+   \   00000100   8010A0E3           MOV      R1,#+128
+   \   00000104   072007E2           AND      R2,R7,#0x7
+   \   00000108   310210E1           TST      R0,R1, LSR R2
+   \   0000010C   F4FFFF0A           BEQ      ??ConstructList_10
+   \   00000110   64039FE5           LDR      R0,??ConstructList_2+0x4  ;; 0x63e7063f
+   \   00000114   9710C2E0           SMULL    R1,R2,R7,R0
+   \   00000118   2910A0E3           MOV      R1,#+41
+   \   0000011C   4222A0E1           ASR      R2,R2,#+4
+   \   00000120   A72F82E0           ADD      R2,R2,R7, LSR #+31
+   \   00000124   910202E0           MUL      R2,R1,R2
+   \   00000128   020047E0           SUB      R0,R7,R2
+   \   0000012C   01002DE9           PUSH     {R0}
+   \   00000130   48039FE5           LDR      R0,??ConstructList_2+0x8  ;; 0x9bf1fd43
+   \   00000134   9710C2E0           SMULL    R1,R2,R7,R0
+   \   00000138   691EE0E3           MVN      R1,#+1680
+   \   0000013C   072082E0           ADD      R2,R2,R7
+   \   00000140   4225A0E1           ASR      R2,R2,#+10
+   \   00000144   A72F82E0           ADD      R2,R2,R7, LSR #+31
+   \   00000148   910202E0           MUL      R2,R1,R2
+   \   0000014C   28139FE5           LDR      R1,??ConstructList_2+0x4  ;; 0x63e7063f
+   \   00000150   020087E0           ADD      R0,R7,R2, LSL #+0
+   \   00000154   9120C3E0           SMULL    R2,R3,R1,R0
+   \   00000158   4332A0E1           ASR      R3,R3,#+4
+   \   0000015C   A00F83E0           ADD      R0,R3,R0, LSR #+31
+   \   00000160   01002DE9           PUSH     {R0}
+   \   00000164   14039FE5           LDR      R0,??ConstructList_2+0x8  ;; 0x9bf1fd43
+   \   00000168   9017C2E0           SMULL    R1,R2,R0,R7
+   \   0000016C   8010A0E3           MOV      R1,#+128
+   \   00000170   072082E0           ADD      R2,R2,R7
+   \   00000174   4225A0E1           ASR      R2,R2,#+10
+   \   00000178   A73F82E0           ADD      R3,R2,R7, LSR #+31
+   \   0000017C   00239FE5           LDR      R2,??ConstructList_2+0xC  ;; `?<Constant "0:\\\\System\\\\apo\\\\addr\\\\da...">`
+   \   00000180   AF0F8DE2           ADD      R0,SP,#+700
+   \   00000184   1B0100EF           SWI      +283
+   \   00000188   08308DE2           ADD      R3,SP,#+8
+   \   0000018C   0020A0E3           MOV      R2,#+0
+   \   00000190   801CA0E3           MOV      R1,#+32768
+   \   00000194   AF0F8DE2           ADD      R0,SP,#+700
+   \   00000198   0A0000EF           SWI      +10
+   \   0000019C   0040A0E1           MOV      R4,R0
+   \   000001A0   010074E3           CMN      R4,#+1
+   \   000001A4   08D08DE2           ADD      SP,SP,#+8
+   \   000001A8   CDFFFF0A           BEQ      ??ConstructList_10
+   \   000001AC   1C10A0E3           MOV      R1,#+28
+   \   000001B0   20008DE2           ADD      R0,SP,#+32
+   \   000001B4   1D0100EF           SWI      +285
+   \   000001B8   1C109DE5           LDR      R1,[SP, #+28]
+   \   000001BC   0D30A0E1           MOV      R3,SP
+   \   000001C0   402BA0E3           MOV      R2,#+65536
+   \   000001C4   0400A0E1           MOV      R0,R4
+   \   000001C8   0B0000EF           SWI      +11
+   \   000001CC   0090A0E1           MOV      R9,R0
+   \   000001D0   0D10A0E1           MOV      R1,SP
+   \   000001D4   0400A0E1           MOV      R0,R4
+   \   000001D8   0D0000EF           SWI      +13
+   \   000001DC   1C009DE5           LDR      R0,[SP, #+28]
+   \   000001E0   2830A0E3           MOV      R3,#+40
+   \   000001E4   0920A0E1           MOV      R2,R9
+   \   000001E8   081080E2           ADD      R1,R0,#+8
+   \   000001EC   20008DE2           ADD      R0,SP,#+32
+   \   000001F0   6D0100EF           SWI      +365
+   \   000001F4   1810A0E3           MOV      R1,#+24
+   \   000001F8   04008DE2           ADD      R0,SP,#+4
+   \   000001FC   1D0100EF           SWI      +285
+   \   00000200   0090A0E3           MOV      R9,#+0
+   \   00000204   1A0000EA           B        ??ConstructList_11
+   \                     ??ConstructList_12:
+   \   00000208   301080E2           ADD      R1,R0,#+48
+   \   0000020C   0400A0E1           MOV      R0,R4
+   \   00000210   1C0000EF           SWI      +28
+   \   00000214   01B08BE2           ADD      R11,R11,#+1
+   \                     ??ConstructList_13:
+   \   00000218   0200DAE5           LDRB     R0,[R10, #+2]
+   \   0000021C   00005BE1           CMP      R11,R0
+   \   00000220   0C0000AA           BGE      ??ConstructList_14
+   \   00000224   0A008BE0           ADD      R0,R11,R10
+   \   00000228   0500D0E5           LDRB     R0,[R0, #+5]
+   \   0000022C   0F0000E2           AND      R0,R0,#0xF
+   \   00000230   0F0050E3           CMP      R0,#+15
+   \   00000234   0700000A           BEQ      ??ConstructList_14
+   \   00000238   301080E2           ADD      R1,R0,#+48
+   \   0000023C   0400A0E1           MOV      R0,R4
+   \   00000240   1C0000EF           SWI      +28
+   \   00000244   0A008BE0           ADD      R0,R11,R10
+   \   00000248   0500D0E5           LDRB     R0,[R0, #+5]
+   \   0000024C   2002A0E1           LSR      R0,R0,#+4
+   \   00000250   0F0050E3           CMP      R0,#+15
+   \   00000254   EBFFFF1A           BNE      ??ConstructList_12
+   \                     ??ConstructList_14:
+   \   00000258   04A09DE5           LDR      R10,[SP, #+4]
+   \   0000025C   0510A0E1           MOV      R1,R5
+   \   00000260   0400A0E1           MOV      R0,R4
+   \   00000264   ........           BL       CompareStrT9
+   \   00000268   0A0080E1           ORR      R0,R0,R10
+   \                     ??ConstructList_15:
+   \   0000026C   04008DE5           STR      R0,[SP, #+4]
+   \                     ??ConstructList_16:
+   \   00000270   019089E2           ADD      R9,R9,#+1
+   \                     ??ConstructList_11:
+   \   00000274   F202DDE1           LDRSH    R0,[SP, #+34]
+   \   00000278   000059E1           CMP      R9,R0
+   \   0000027C   300000AA           BGE      ??ConstructList_17
+   \   00000280   2C109DE5           LDR      R1,[SP, #+44]
+   \   00000284   0C00A0E3           MOV      R0,#+12
+   \   00000288   901924E0           MLA      R4,R0,R9,R1
+   \   0000028C   0200D4E5           LDRB     R0,[R4, #+2]
+   \   00000290   010050E3           CMP      R0,#+1
+   \   00000294   F5FFFF0A           BEQ      ??ConstructList_16
+   \   00000298   0300D4E5           LDRB     R0,[R4, #+3]
+   \   0000029C   6F0100EF           SWI      +367
+   \   000002A0   010050E2           SUBS     R0,R0,#+1
+   \   000002A4   1100000A           BEQ      ??ConstructList_18
+   \   000002A8   040050E2           SUBS     R0,R0,#+4
+   \   000002AC   0300D405           LDRBEQ   R0,[R4, #+3]
+   \   000002B0   81005003           CMPEQ    R0,#+129
+   \   000002B4   EDFFFF1A           BNE      ??ConstructList_16
+   \   000002B8   080094E5           LDR      R0,[R4, #+8]
+   \   000002BC   000050E3           CMP      R0,#+0
+   \   000002C0   EAFFFF0A           BEQ      ??ConstructList_16
+   \   000002C4   3200A0E3           MOV      R0,#+50
+   \   000002C8   250100EF           SWI      +293
+   \   000002CC   08008DE5           STR      R0,[SP, #+8]
+   \   000002D0   081094E5           LDR      R1,[R4, #+8]
+   \   000002D4   1F0100EF           SWI      +287
+   \   000002D8   04409DE5           LDR      R4,[SP, #+4]
+   \   000002DC   08009DE5           LDR      R0,[SP, #+8]
+   \   000002E0   0510A0E1           MOV      R1,R5
+   \   000002E4   ........           BL       CompareStrT9
+   \   000002E8   040080E1           ORR      R0,R0,R4
+   \   000002EC   DEFFFFEA           B        ??ConstructList_15
+   \                     ??ConstructList_18:
+   \   000002F0   0300D4E5           LDRB     R0,[R4, #+3]
+   \   000002F4   08A094E5           LDR      R10,[R4, #+8]
+   \   000002F8   624040E2           SUB      R4,R0,#+98
+   \   000002FC   040054E3           CMP      R4,#+4
+   \   00000300   DAFFFF2A           BCS      ??ConstructList_16
+   \   00000304   00005AE3           CMP      R10,#+0
+   \   00000308   D8FFFF0A           BEQ      ??ConstructList_16
+   \   0000030C   3200A0E3           MOV      R0,#+50
+   \   00000310   250100EF           SWI      +293
+   \   00000314   04108DE2           ADD      R1,SP,#+4
+   \   00000318   041181E0           ADD      R1,R1,R4, LSL #+2
+   \   0000031C   080081E5           STR      R0,[R1, #+8]
+   \   00000320   0040A0E1           MOV      R4,R0
+   \   00000324   0100DAE5           LDRB     R0,[R10, #+1]
+   \   00000328   00B0A0E3           MOV      R11,#+0
+   \   0000032C   910050E3           CMP      R0,#+145
+   \   00000330   B8FFFF1A           BNE      ??ConstructList_13
+   \   00000334   2B10A0E3           MOV      R1,#+43
+   \   00000338   0400A0E1           MOV      R0,R4
+   \   0000033C   1C0000EF           SWI      +28
+   \   00000340   B4FFFFEA           B        ??ConstructList_13
+   \                     ??ConstructList_17:
+   \   00000344   04009DE5           LDR      R0,[SP, #+4]
+   \   00000348   000050E3           CMP      R0,#+0
+   \   0000034C   0900001A           BNE      ??ConstructList_19
+   \   00000350   08009DE5           LDR      R0,[SP, #+8]
+   \   00000354   290100EF           SWI      +297
+   \   00000358   0C009DE5           LDR      R0,[SP, #+12]
+   \   0000035C   290100EF           SWI      +297
+   \   00000360   10009DE5           LDR      R0,[SP, #+16]
+   \   00000364   290100EF           SWI      +297
+   \   00000368   14009DE5           LDR      R0,[SP, #+20]
+   \   0000036C   290100EF           SWI      +297
+   \   00000370   18009DE5           LDR      R0,[SP, #+24]
+   \   00000374   290100EF           SWI      +297
+   \                     ??ConstructList_19:
+   \   00000378   158000EF           SWI      +32789
+   \   0000037C   0010A0E1           MOV      R1,R0
+   \   00000380   20008DE2           ADD      R0,SP,#+32
+   \   00000384   6E0100EF           SWI      +366
+   \   00000388   000098E5           LDR      R0,[R8, #+0]
+   \   0000038C   050050E3           CMP      R0,#+5
+   \   00000390   1D00001A           BNE      ??ConstructList_3
+   \   00000394   460100EF           SWI      +326
+   \   00000398   000098E5           LDR      R0,[R8, #+0]
+   \   0000039C   050050E3           CMP      R0,#+5
+   \   000003A0   4EFFFF1A           BNE      ??ConstructList_9
+   \   000003A4   04009DE5           LDR      R0,[SP, #+4]
+   \   000003A8   000050E3           CMP      R0,#+0
+   \   000003AC   4BFFFF0A           BEQ      ??ConstructList_9
+   \   000003B0   ........           LDR      R9,??DataTable4  ;; clbot
+   \   000003B4   1800A0E3           MOV      R0,#+24
+   \   000003B8   140000EF           SWI      +20
+   \   000003BC   00A099E5           LDR      R10,[R9, #+0]
+   \   000003C0   0040A0E1           MOV      R4,R0
+   \   000003C4   0010A0E3           MOV      R1,#+0
+   \   000003C8   04108DE5           STR      R1,[SP, #+4]
+   \   000003CC   1820A0E3           MOV      R2,#+24
+   \   000003D0   04108DE2           ADD      R1,SP,#+4
+   \   000003D4   1E0100EF           SWI      +286
+   \   000003D8   00005AE3           CMP      R10,#+0
+   \   000003DC   ........           LDREQ    R0,??DataTable13  ;; cltop
+   \   000003E0   00408A15           STRNE    R4,[R10, #+0]
+   \   000003E4   00408005           STREQ    R4,[R0, #+0]
+   \   000003E8   ........           LDR      R0,??DataTable22  ;; curpos
+   \   000003EC   004089E5           STR      R4,[R9, #+0]
+   \   000003F0   001090E5           LDR      R1,[R0, #+0]
+   \   000003F4   020051E3           CMP      R1,#+2
+   \   000003F8   31FFFFAA           BGE      ??ConstructList_6
+   \   000003FC   050056E3           CMP      R6,#+5
+   \   00000400   35FFFFAA           BGE      ??ConstructList_7
+   \   00000404   33FFFFEA           B        ??ConstructList_8
+    274                }
+    275                else
+    276                {
+    277          	fclose(fin,&ul);
+   \                     ??ConstructList_4:
+   \   00000408   0D0000EF           SWI      +13
+    278                }
+    279              }
+    280            L_STOP:
+    281              mfree(buffer);
+   \                     ??ConstructList_3:
+   \   0000040C   1C009DE5           LDR      R0,[SP, #+28]
+   \   00000410   150000EF           SWI      +21
+    282            }
+    283            if (contact.next)
+   \                     ??ConstructList_1:
+   \   00000414   04009DE5           LDR      R0,[SP, #+4]
+   \   00000418   000050E3           CMP      R0,#+0
+   \   0000041C   0900000A           BEQ      ??ConstructList_20
+    284            {
+    285              FreeWS(contact.name);
+   \   00000420   08009DE5           LDR      R0,[SP, #+8]
+   \   00000424   290100EF           SWI      +297
+    286              FreeWS(contact.num[0]);
+   \   00000428   0C009DE5           LDR      R0,[SP, #+12]
+   \   0000042C   290100EF           SWI      +297
+    287              FreeWS(contact.num[1]);
+   \   00000430   10009DE5           LDR      R0,[SP, #+16]
+   \   00000434   290100EF           SWI      +297
+    288              FreeWS(contact.num[2]);
+   \   00000438   14009DE5           LDR      R0,[SP, #+20]
+   \   0000043C   290100EF           SWI      +297
+    289              FreeWS(contact.num[3]);
+   \   00000440   18009DE5           LDR      R0,[SP, #+24]
+   \   00000444   290100EF           SWI      +297
+    290            }
+    291            LockSched();
+   \                     ??ConstructList_20:
+   \   00000448   460100EF           SWI      +326
+    292            if (hook_state==5) hook_state=2; else FreeCLIST();
+   \   0000044C   000098E5           LDR      R0,[R8, #+0]
+   \   00000450   050050E3           CMP      R0,#+5
+   \   00000454   0200A003           MOVEQ    R0,#+2
+   \   00000458   00008805           STREQ    R0,[R8, #+0]
+   \   0000045C   0000000A           BEQ      ??ConstructList_21
+   \   00000460   ........           BL       FreeCLIST
+    293            UnlockSched();
+   \                     ??ConstructList_21:
+   \   00000464   470100EF           SWI      +327
+    294            FreeWS(sws);
+   \   00000468   0500A0E1           MOV      R0,R5
+   \   0000046C   290100EF           SWI      +297
+    295          }
+   \   00000470   CDDF8DE2           ADD      SP,SP,#+820
+   \   00000474   F08FBDE8           POP      {R4-R11,PC}      ;; return
+   \                     ??ConstructList_2:
+   \   00000478   ........           DC32     `?<Constant "0:\\\\System\\\\apo\\\\addr\\\\main">`
+   \   0000047C   3F06E763           DC32     0x63e7063f
+   \   00000480   43FDF19B           DC32     0x9bf1fd43
+   \   00000484   ........           DC32     `?<Constant "0:\\\\System\\\\apo\\\\addr\\\\da...">`
+    296          
+    297          #pragma optimize=no_inline
+
+   \                                 In segment CODE, align 4, keep-with-next
+    298          void f_dummy(void){}
+   \                     f_dummy:
+   \   00000000   1EFF2FE1           BX       LR               ;; return
+    299          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    300          void my_ed_redraw(void *data)
+    301          {
+   \                     my_ed_redraw:
+   \   00000000   F0432DE9           PUSH     {R4-R9,LR}
+    302            //  WSHDR *ews=(WSHDR*)e_ws;
+    303            int i=curpos-2;
+   \   00000004   ........           LDR      R6,??DataTable22  ;; curpos
+   \   00000008   001096E5           LDR      R1,[R6, #+0]
+   \   0000000C   025041E2           SUB      R5,R1,#+2
+    304            int cp;
+    305            CLIST *cl=(CLIST *)cltop;
+   \   00000010   ........           LDR      R1,??DataTable13  ;; cltop
+   \   00000014   004091E5           LDR      R4,[R1, #+0]
+    306            old_ed_redraw(data);
+   \   00000018   ........           LDR      R1,??DataTable19  ;; old_ed_redraw
+   \   0000001C   001091E5           LDR      R1,[R1, #+0]
+   \   00000020   31FF2FE1           BLX      R1
+    307          
+    308            if (!cl) return;
+   \   00000024   000054E3           CMP      R4,#+0
+   \   00000028   F083BD08           POPEQ    {R4-R9,PC}
+    309          
+    310            if (!e_ws) return;
+   \   0000002C   ........           LDR      R0,??DataTable26  ;; e_ws
+   \   00000030   000090E5           LDR      R0,[R0, #+0]
+   \   00000034   000050E3           CMP      R0,#+0
+   \   00000038   F083BD08           POPEQ    {R4-R9,PC}
+    311          
+    312            if (e_ws->wsbody[0]<13) //Ее длина <13
+   \   0000003C   000090E5           LDR      R0,[R0, #+0]
+   \   00000040   B000D0E1           LDRH     R0,[R0, #+0]
+   \   00000044   0D0050E3           CMP      R0,#+13
+   \   00000048   F083BD28           POPCS    {R4-R9,PC}
+    313            {
+    314          
+    315              DrawRoundedFrame(1,63,130,152,0,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(7));
+   \   0000004C   0700A0E3           MOV      R0,#+7
+   \   00000050   2E0100EF           SWI      +302
+   \   00000054   0070A0E1           MOV      R7,R0
+   \   00000058   0100A0E3           MOV      R0,#+1
+   \   0000005C   2E0100EF           SWI      +302
+   \   00000060   80002DE9           PUSH     {R7}
+   \   00000064   01002DE9           PUSH     {R0}
+   \   00000068   9830A0E3           MOV      R3,#+152
+   \   0000006C   8220A0E3           MOV      R2,#+130
+   \   00000070   3F10A0E3           MOV      R1,#+63
+   \   00000074   0000A0E3           MOV      R0,#+0
+   \   00000078   01002DE9           PUSH     {R0}
+   \   0000007C   01002DE9           PUSH     {R0}
+   \   00000080   01002DE9           PUSH     {R0}
+   \   00000084   0100A0E3           MOV      R0,#+1
+   \   00000088   500100EF           SWI      +336
+    316          
+    317              if (i<0) cp=curpos; else cp=2;
+   \   0000008C   000055E3           CMP      R5,#+0
+   \   00000090   14D08DE2           ADD      SP,SP,#+20
+   \   00000094   00609645           LDRMI    R6,[R6, #+0]
+   \   00000098   0700004A           BMI      ??my_ed_redraw_0
+   \   0000009C   0260A0E3           MOV      R6,#+2
+   \   000000A0   010000EA           B        ??my_ed_redraw_1
+    318              while(i>0)
+    319              {
+    320                if (!cl) break;
+    321                cl=(CLIST *)(cl->next);
+   \                     ??my_ed_redraw_2:
+   \   000000A4   004094E5           LDR      R4,[R4, #+0]
+    322                i--;
+   \   000000A8   015045E2           SUB      R5,R5,#+1
+   \                     ??my_ed_redraw_1:
+   \   000000AC   010055E3           CMP      R5,#+1
+   \   000000B0   010000BA           BLT      ??my_ed_redraw_0
+   \   000000B4   000054E3           CMP      R4,#+0
+   \   000000B8   F9FFFF1A           BNE      ??my_ed_redraw_2
+    323              }
+    324              i=0;
+   \                     ??my_ed_redraw_0:
+   \   000000BC   0050A0E3           MOV      R5,#+0
+   \   000000C0   5070A0E3           MOV      R7,#+80
+    325              do
+    326              {
+    327                if (!cl) break;
+   \                     ??my_ed_redraw_3:
+   \   000000C4   000054E3           CMP      R4,#+0
+   \   000000C8   F083BD08           POPEQ    {R4-R9,PC}
+    328                if (i!=cp)
+   \   000000CC   0D8047E2           SUB      R8,R7,#+13
+   \   000000D0   060055E1           CMP      R5,R6
+   \   000000D4   1300000A           BEQ      ??my_ed_redraw_4
+    329                {
+    330          	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),5,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+   \   000000D8   1700A0E3           MOV      R0,#+23
+   \   000000DC   2E0100EF           SWI      +302
+   \   000000E0   0090A0E1           MOV      R9,R0
+   \   000000E4   0100A0E3           MOV      R0,#+1
+   \   000000E8   2E0100EF           SWI      +302
+   \   000000EC   00022DE9           PUSH     {R9}
+   \   000000F0   01002DE9           PUSH     {R0}
+   \   000000F4   8030A0E3           MOV      R3,#+128
+   \   000000F8   0820A0E1           MOV      R2,R8
+   \   000000FC   0310A0E3           MOV      R1,#+3
+   \   00000100   8000A0E3           MOV      R0,#+128
+   \   00000104   01002DE9           PUSH     {R0}
+   \   00000108   0500A0E3           MOV      R0,#+5
+   \   0000010C   01002DE9           PUSH     {R0}
+   \   00000110   0700A0E1           MOV      R0,R7
+   \   00000114   01002DE9           PUSH     {R0}
+   \   00000118   040094E5           LDR      R0,[R4, #+4]
+   \   0000011C   4C0100EF           SWI      +332
+   \   00000120   14D08DE2           ADD      SP,SP,#+20
+   \   00000124   220000EA           B        ??my_ed_redraw_5
+    331                }
+    332                else
+    333                {
+    334          	DrawRoundedFrame(2,65+(i*17),129,65+17+(i*17),0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
+   \                     ??my_ed_redraw_4:
+   \   00000128   0300A0E3           MOV      R0,#+3
+   \   0000012C   2E0100EF           SWI      +302
+   \   00000130   0090A0E1           MOV      R9,R0
+   \   00000134   0000A0E3           MOV      R0,#+0
+   \   00000138   2E0100EF           SWI      +302
+   \   0000013C   00022DE9           PUSH     {R9}
+   \   00000140   01002DE9           PUSH     {R0}
+   \   00000144   023087E2           ADD      R3,R7,#+2
+   \   00000148   8120A0E3           MOV      R2,#+129
+   \   0000014C   0F1047E2           SUB      R1,R7,#+15
+   \   00000150   0000A0E3           MOV      R0,#+0
+   \   00000154   01002DE9           PUSH     {R0}
+   \   00000158   01002DE9           PUSH     {R0}
+   \   0000015C   01002DE9           PUSH     {R0}
+   \   00000160   0200A0E3           MOV      R0,#+2
+   \   00000164   500100EF           SWI      +336
+    335          	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),5,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+   \   00000168   1700A0E3           MOV      R0,#+23
+   \   0000016C   2E0100EF           SWI      +302
+   \   00000170   0090A0E1           MOV      R9,R0
+   \   00000174   0000A0E3           MOV      R0,#+0
+   \   00000178   2E0100EF           SWI      +302
+   \   0000017C   00022DE9           PUSH     {R9}
+   \   00000180   01002DE9           PUSH     {R0}
+   \   00000184   8030A0E3           MOV      R3,#+128
+   \   00000188   0820A0E1           MOV      R2,R8
+   \   0000018C   0310A0E3           MOV      R1,#+3
+   \   00000190   8000A0E3           MOV      R0,#+128
+   \   00000194   01002DE9           PUSH     {R0}
+   \   00000198   0500A0E3           MOV      R0,#+5
+   \   0000019C   01002DE9           PUSH     {R0}
+   \   000001A0   0700A0E1           MOV      R0,R7
+   \   000001A4   01002DE9           PUSH     {R0}
+   \   000001A8   040094E5           LDR      R0,[R4, #+4]
+   \   000001AC   4C0100EF           SWI      +332
+   \   000001B0   28D08DE2           ADD      SP,SP,#+40
+    336                }
+    337                cl=(CLIST *)cl->next;
+   \                     ??my_ed_redraw_5:
+   \   000001B4   004094E5           LDR      R4,[R4, #+0]
+    338                i++;
+   \   000001B8   015085E2           ADD      R5,R5,#+1
+    339              }
+    340              while(i<5);
+   \   000001BC   117087E2           ADD      R7,R7,#+17
+   \   000001C0   050055E3           CMP      R5,#+5
+   \   000001C4   BEFFFFBA           BLT      ??my_ed_redraw_3
+   \   000001C8   F083BDE8           POP      {R4-R9,PC}       ;; return
+    341            }
+    342          }
+    343          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    344          void ChangeRC(GUI *gui)
+    345          {
+   \                     ChangeRC:
+   \   00000000   30402DE9           PUSH     {R4,R5,LR}
+   \   00000004   0040A0E1           MOV      R4,R0
+    346            static const RECT rc={6,40,126,100};
+    347            if (e_ws)
+   \   00000008   ........           LDR      R0,??DataTable26  ;; e_ws
+   \   0000000C   000090E5           LDR      R0,[R0, #+0]
+   \   00000010   000050E3           CMP      R0,#+0
+   \   00000014   0300000A           BEQ      ??ChangeRC_0
+    348            {
+    349              if (e_ws->wsbody[0]>12) return;
+   \   00000018   000090E5           LDR      R0,[R0, #+0]
+   \   0000001C   B000D0E1           LDRH     R0,[R0, #+0]
+   \   00000020   0D0050E3           CMP      R0,#+13
+   \   00000024   3080BD28           POPCS    {R4,R5,PC}
+    350            }
+    351            if (!gui) return;
+   \                     ??ChangeRC_0:
+   \   00000028   000054E3           CMP      R4,#+0
+    352            char *p=(char *)gui;
+    353            p+=DISPLACE_OF_EDGUI;
+    354            gui=*((GUI **)p);
+   \   0000002C   88409415           LDRNE    R4,[R4, #+136]
+    355            if (!gui) return;
+   \   00000030   00005413           CMPNE    R4,#+0
+   \   00000034   3080BD08           POPEQ    {R4,R5,PC}
+    356            void **m=GetDataOfItemByID(gui,4);
+   \   00000038   0410A0E3           MOV      R1,#+4
+   \   0000003C   0400A0E1           MOV      R0,R4
+   \   00000040   4F0100EF           SWI      +335
+   \   00000044   0050A0E1           MOV      R5,R0
+    357            if (gui->canvas) memcpy(gui->canvas,&rc,sizeof(rc));
+   \   00000048   000094E5           LDR      R0,[R4, #+0]
+   \   0000004C   30409FE5           LDR      R4,??ChangeRC_1  ;; ??rc
+   \   00000050   000050E3           CMP      R0,#+0
+   \   00000054   0200000A           BEQ      ??ChangeRC_2
+   \   00000058   0820A0E3           MOV      R2,#+8
+   \   0000005C   0410A0E1           MOV      R1,R4
+   \   00000060   1E0100EF           SWI      +286
+    358            if (!m) return;
+   \                     ??ChangeRC_2:
+   \   00000064   000055E3           CMP      R5,#+0
+    359            if (m[0]) memcpy(m[0],&rc,sizeof(rc));
+   \   00000068   00009515           LDRNE    R0,[R5, #+0]
+   \   0000006C   00005013           CMPNE    R0,#+0
+   \   00000070   3080BD08           POPEQ    {R4,R5,PC}
+   \   00000074   0820A0E3           MOV      R2,#+8
+   \   00000078   0410A0E1           MOV      R1,R4
+   \   0000007C   1E0100EF           SWI      +286
+   \   00000080   3080BDE8           POP      {R4,R5,PC}       ;; return
+   \                     ??ChangeRC_1:
+   \   00000084   ........           DC32     ??rc
+    360          }
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     ??rc:
+   \   00000000   060028007E00       DC16 6, 40, 126, 100
+   \              6400        
+    361          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    362          void goto_1(void)
+    363          {
+    364            MakeVoiceCall(dstr[0],0x10,0x20C0);
+   \                     goto_1:
+   \   00000000   ........           LDR      R0,??DataTable15  ;; dstr
+   \   00000004   00402DE9           PUSH     {LR}
+   \   00000008   832DA0E3           MOV      R2,#+8384
+   \   0000000C   1010A0E3           MOV      R1,#+16
+   \   00000010   700100EF           SWI      +368
+   \   00000014   0080BDE8           POP      {PC}             ;; return
+    365          }
+    366          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    367          void goto_2(void)
+    368          {
+    369            MakeVoiceCall(dstr[1],0x10,0x20C0);
+   \                     goto_2:
+   \   00000000   10009FE5           LDR      R0,??goto_2_0    ;; dstr + 40
+   \   00000004   00402DE9           PUSH     {LR}
+   \   00000008   832DA0E3           MOV      R2,#+8384
+   \   0000000C   1010A0E3           MOV      R1,#+16
+   \   00000010   700100EF           SWI      +368
+   \   00000014   0080BDE8           POP      {PC}             ;; return
+   \                     ??goto_2_0:
+   \   00000018   ........           DC32     dstr + 40
+    370          }
+    371          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    372          void goto_3(void)
+    373          {
+    374            MakeVoiceCall(dstr[2],0x10,0x20C0);
+   \                     goto_3:
+   \   00000000   10009FE5           LDR      R0,??goto_3_0    ;; dstr + 80
+   \   00000004   00402DE9           PUSH     {LR}
+   \   00000008   832DA0E3           MOV      R2,#+8384
+   \   0000000C   1010A0E3           MOV      R1,#+16
+   \   00000010   700100EF           SWI      +368
+   \   00000014   0080BDE8           POP      {PC}             ;; return
+   \                     ??goto_3_0:
+   \   00000018   ........           DC32     dstr + 80
+    375          }
+    376          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    377          void goto_4(void)
+    378          {
+    379            MakeVoiceCall(dstr[3],0x10,0x20C0);
+   \                     goto_4:
+   \   00000000   10009FE5           LDR      R0,??goto_4_0    ;; dstr + 120
+   \   00000004   00402DE9           PUSH     {LR}
+   \   00000008   832DA0E3           MOV      R2,#+8384
+   \   0000000C   1010A0E3           MOV      R1,#+16
+   \   00000010   700100EF           SWI      +368
+   \   00000014   0080BDE8           POP      {PC}             ;; return
+   \                     ??goto_4_0:
+   \   00000018   ........           DC32     dstr + 120
+    380          }
+    381          
+
+   \                                 In segment DATA_I, align 4, align-sorted
+    382          int menusoftkeys[]={0,1,2};
+   \                     menusoftkeys:
+   \   00000000                      DS8 12
+   \   0000000C                      REQUIRE `?<Initializer for menusoftkeys>`
+    383          
+
+   \                                 In segment DATA_I, align 4, align-sorted
+    384          SOFTKEY_DESC menu_sk[]=
+   \                     menu_sk:
+   \   00000000                      DS8 24
+   \   00000018                      REQUIRE `?<Initializer for menu_sk>`
+    385          {
+    386            {0x0018,0x0000,(int)"Select"},
+    387            {0x0001,0x0000,(int)"Back"},
+    388            {0x003D,0x0000,(int)"+"}
+    389          };
+    390          
+
+   \                                 In segment DATA_I, align 4, align-sorted
+    391          SOFTKEYSTAB menu_skt=
+   \                     menu_skt:
+   \   00000000                      DS8 8
+   \   00000008                      REQUIRE `?<Initializer for menu_skt>`
+    392          {
+    393            menu_sk,0
+    394          };
+    395          
+
+   \                                 In segment DATA_I, align 4, align-sorted
+    396          void *gotomenu_HNDLS[4]=
+   \                     gotomenu_HNDLS:
+   \   00000000                      DS8 16
+   \   00000010                      REQUIRE `?<Initializer for gotomenu_HNDLS>`
+    397          {
+    398            (void *)goto_1,
+    399            (void *)goto_2,
+    400            (void *)goto_3,
+    401            (void *)goto_4
+    402          };
+    403          
+
+   \                                 In segment DATA_I, align 4, align-sorted
+    404          MENUITEM_DESC gotomenu_ITEMS[9]=
+   \                     gotomenu_ITEMS:
+   \   00000000                      DS8 252
+   \   000000FC                      REQUIRE `?<Initializer for gotomenu_ITEMS>`
+    405          {
+    406            {NULL,(int)dstr[0],0x7FFFFFFF,0,NULL,0,0x59D},
+    407            {NULL,(int)dstr[1],0x7FFFFFFF,0,NULL,0,0x59D},
+    408            {NULL,(int)dstr[2],0x7FFFFFFF,0,NULL,0,0x59D},
+    409            {NULL,(int)dstr[3],0x7FFFFFFF,0,NULL,0,0x59D},
+    410          };
+    411          
+
+   \                                 In segment DATA_I, align 4, align-sorted
+    412          HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",0x7FFFFFFF};
+   \                     gotomenu_HDR:
+   \   00000000                      DS8 20
+   \   00000014                      REQUIRE `?<Initializer for gotomenu_HDR>`
+    413          
+
+   \                                 In segment DATA_I, align 4, align-sorted
+    414          MENU_DESC gotomenu_STRUCT=
+   \                     gotomenu_STRUCT:
+   \   00000000                      DS8 44
+   \   0000002C                      REQUIRE `?<Initializer for gotomenu_STRUCT>`
+    415          {
+    416            8,NULL,NULL,NULL,
+    417            menusoftkeys,
+    418            &menu_skt,
+    419            0,
+    420            NULL,
+    421            gotomenu_ITEMS,
+    422            gotomenu_HNDLS,
+    423            4
+    424          };
+    425          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    426          int my_ed_onkey(GUI *gui, GUI_MSG *msg)
+    427          {
+    428            int key=msg->gbsmsg->submess;
+    429            int m=msg->gbsmsg->msg;
+    430            int r;
+    431            int i=0;
+    432          
+    433            CLIST *cl=(CLIST *)cltop;
+   \                     my_ed_onkey:
+   \   00000000   ........           LDR      R2,??DataTable13  ;; cltop
+    434          
+    435            if (key==GREEN_BUTTON)
+   \   00000004   ........           LDR      R3,??DataTable22  ;; curpos
+   \   00000008   F0432DE9           PUSH     {R4-R9,LR}
+   \   0000000C   0040A0E1           MOV      R4,R0
+   \   00000010   002092E5           LDR      R2,[R2, #+0]
+   \   00000014   0150A0E1           MOV      R5,R1
+   \   00000018   040095E5           LDR      R0,[R5, #+4]
+   \   0000001C   0060A0E3           MOV      R6,#+0
+   \   00000020   081090E5           LDR      R1,[R0, #+8]
+   \   00000024   040090E5           LDR      R0,[R0, #+4]
+   \   00000028   0B0051E3           CMP      R1,#+11
+   \   0000002C   2F00001A           BNE      ??my_ed_onkey_0
+    436            {
+    437              if (!cl) goto L_OLDKEY;
+   \   00000030   000052E3           CMP      R2,#+0
+   \   00000034   0400001A           BNE      ??my_ed_onkey_1
+   \   00000038   5E0000EA           B        ??my_ed_onkey_2
+    438              while(i!=curpos)
+    439              {
+    440                i++;
+    441                cl=(CLIST *)cl->next;
+   \                     ??my_ed_onkey_3:
+   \   0000003C   002092E5           LDR      R2,[R2, #+0]
+   \   00000040   016086E2           ADD      R6,R6,#+1
+    442                if (!cl) goto L_OLDKEY;
+   \   00000044   000052E3           CMP      R2,#+0
+   \   00000048   5A00000A           BEQ      ??my_ed_onkey_2
+    443              }
+   \                     ??my_ed_onkey_1:
+   \   0000004C   000093E5           LDR      R0,[R3, #+0]
+   \   00000050   000056E1           CMP      R6,R0
+   \   00000054   F8FFFF1A           BNE      ??my_ed_onkey_3
+    444              //Теперь cl указывает на вход
+    445              i=0;
+    446              r=0;
+   \   00000058   ........           LDR      R9,??DataTable15  ;; dstr
+   \   0000005C   0060A0E3           MOV      R6,#+0
+   \   00000060   087082E2           ADD      R7,R2,#+8
+   \   00000064   0480A0E3           MOV      R8,#+4
+    447              do
+    448              {
+    449                if (cl->num[r]) {ws_2str(cl->num[r],dstr[i],39);i++;}
+   \                     ??my_ed_onkey_4:
+   \   00000068   000097E5           LDR      R0,[R7, #+0]
+   \   0000006C   000050E3           CMP      R0,#+0
+   \   00000070   0400000A           BEQ      ??my_ed_onkey_5
+   \   00000074   2720A0E3           MOV      R2,#+39
+   \   00000078   2830A0E3           MOV      R3,#+40
+   \   0000007C   939621E0           MLA      R1,R3,R6,R9
+   \   00000080   016086E2           ADD      R6,R6,#+1
+   \   00000084   A30000EF           SWI      +163
+    450                r++;
+    451              }
+    452              while(r<4);
+   \                     ??my_ed_onkey_5:
+   \   00000088   047087E2           ADD      R7,R7,#+4
+   \   0000008C   018058E2           SUBS     R8,R8,#+1
+   \   00000090   F4FFFF1A           BNE      ??my_ed_onkey_4
+    453              if (i==1)
+   \   00000094   010056E3           CMP      R6,#+1
+   \   00000098   0500001A           BNE      ??my_ed_onkey_6
+    454              {
+    455                MakeVoiceCall(dstr[0],0x10,0x20C0);
+   \   0000009C   832DA0E3           MOV      R2,#+8384
+   \   000000A0   1010A0E3           MOV      R1,#+16
+   \   000000A4   0900A0E1           MOV      R0,R9
+   \   000000A8   700100EF           SWI      +368
+    456                return(1); //Закрыть нах
+   \   000000AC   0100A0E3           MOV      R0,#+1
+   \   000000B0   F083BDE8           POP      {R4-R9,PC}
+    457              }
+    458              if (!i) goto L_OLDKEY;
+   \                     ??my_ed_onkey_6:
+   \   000000B4   000056E3           CMP      R6,#+0
+   \   000000B8   3E00000A           BEQ      ??my_ed_onkey_2
+    459              //Количество номеров больше 1, рисуем меню
+    460              gotomenu_STRUCT.n_items=i;
+   \   000000BC   1C219FE5           LDR      R2,??my_ed_onkey_7  ;; gotomenu_STRUCT
+    461              CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,i,0,0);
+   \   000000C0   1C319FE5           LDR      R3,??my_ed_onkey_7+0x4  ;; gotomenu_HDR
+   \   000000C4   286082E5           STR      R6,[R2, #+40]
+   \   000000C8   0000A0E3           MOV      R0,#+0
+   \   000000CC   01002DE9           PUSH     {R0}
+   \   000000D0   01002DE9           PUSH     {R0}
+   \   000000D4   40002DE9           PUSH     {R6}
+   \   000000D8   01002DE9           PUSH     {R0}
+   \   000000DC   0010A0E3           MOV      R1,#+0
+   \   000000E0   520100EF           SWI      +338
+    462              return(0);
+   \   000000E4   0000A0E3           MOV      R0,#+0
+   \   000000E8   10D08DE2           ADD      SP,SP,#+16
+   \   000000EC   F083BDE8           POP      {R4-R9,PC}
+    463            }
+    464            if ((key==UP_BUTTON)||(key==DOWN_BUTTON))
+   \                     ??my_ed_onkey_0:
+   \   000000F0   9370A0E3           MOV      R7,#+147
+   \   000000F4   407F87E3           ORR      R7,R7,#0x100
+   \   000000F8   3B0051E3           CMP      R1,#+59
+   \   000000FC   3C005113           CMPNE    R1,#+60
+   \   00000100   1A00001A           BNE      ??my_ed_onkey_8
+    465            {
+    466              //Не обрабатываем редактором вверх/вниз
+    467              msg->keys=0;
+   \   00000104   0080A0E3           MOV      R8,#+0
+   \   00000108   B280C5E1           STRH     R8,[R5, #+2]
+    468              if (m==KEY_DOWN)
+   \   0000010C   070050E1           CMP      R0,R7
+   \   00000110   1400001A           BNE      ??my_ed_onkey_9
+    469              {
+    470                if (key==UP_BUTTON)
+   \   00000114   3B0051E3           CMP      R1,#+59
+   \   00000118   0600001A           BNE      ??my_ed_onkey_10
+    471                {
+    472          	if (curpos) curpos--;
+   \   0000011C   000093E5           LDR      R0,[R3, #+0]
+   \   00000120   000050E3           CMP      R0,#+0
+   \   00000124   0F00000A           BEQ      ??my_ed_onkey_9
+   \   00000128   000093E5           LDR      R0,[R3, #+0]
+   \   0000012C   010040E2           SUB      R0,R0,#+1
+   \   00000130   000083E5           STR      R0,[R3, #+0]
+   \   00000134   0B0000EA           B        ??my_ed_onkey_9
+    473                }
+    474                if (key==DOWN_BUTTON)
+   \                     ??my_ed_onkey_10:
+   \   00000138   3C0051E3           CMP      R1,#+60
+   \   0000013C   0900001A           BNE      ??my_ed_onkey_9
+    475                {
+    476          	if (cl)
+   \   00000140   000052E3           CMP      R2,#+0
+   \   00000144   0600000A           BEQ      ??my_ed_onkey_11
+    477          	{
+    478          	  do
+    479          	  {
+    480          	    cl=(CLIST *)cl->next;
+   \                     ??my_ed_onkey_12:
+   \   00000148   002092E5           LDR      R2,[R2, #+0]
+    481          	    if (!cl) break;
+   \   0000014C   000052E3           CMP      R2,#+0
+   \   00000150   0300000A           BEQ      ??my_ed_onkey_11
+    482          	    i++;
+    483          	  }
+    484          	  while(i<=curpos);
+   \   00000154   000093E5           LDR      R0,[R3, #+0]
+   \   00000158   016086E2           ADD      R6,R6,#+1
+   \   0000015C   060050E1           CMP      R0,R6
+   \   00000160   F8FFFFAA           BGE      ??my_ed_onkey_12
+    485          	}
+    486          	curpos=i;
+   \                     ??my_ed_onkey_11:
+   \   00000164   006083E5           STR      R6,[R3, #+0]
+    487                }
+    488              }
+    489              r=-1; //Перерисовать
+   \                     ??my_ed_onkey_9:
+   \   00000168   0850E0E1           MVN      R5,R8
+   \   0000016C   170000EA           B        ??my_ed_onkey_13
+    490            }
+    491            else
+    492            {
+    493              if ((key>='0'&&key<='9')||(key=='*')||(key=='#')||(key==RIGHT_SOFT))
+   \                     ??my_ed_onkey_8:
+   \   00000170   300051E3           CMP      R1,#+48
+   \   00000174   020000BA           BLT      ??my_ed_onkey_14
+   \   00000178   3A0051E3           CMP      R1,#+58
+   \   0000017C   040000BA           BLT      ??my_ed_onkey_15
+   \   00000180   0C0000EA           B        ??my_ed_onkey_2
+   \                     ??my_ed_onkey_14:
+   \   00000184   2A0051E3           CMP      R1,#+42
+   \   00000188   23005113           CMPNE    R1,#+35
+   \   0000018C   04005113           CMPNE    R1,#+4
+   \   00000190   0800001A           BNE      ??my_ed_onkey_2
+    494              {
+    495                if (m==KEY_DOWN)
+   \                     ??my_ed_onkey_15:
+   \   00000194   070050E1           CMP      R0,R7
+   \   00000198   0600001A           BNE      ??my_ed_onkey_2
+    496                {
+    497          	if (hook_state>=2) //Возможно изменение строки ввода, требуется поиск
+   \   0000019C   ........           LDR      R0,??DataTable25  ;; hook_state
+   \   000001A0   001090E5           LDR      R1,[R0, #+0]
+   \   000001A4   020051E3           CMP      R1,#+2
+   \   000001A8   020000BA           BLT      ??my_ed_onkey_2
+    498          	{
+    499          	  hook_state=3;
+   \   000001AC   0310A0E3           MOV      R1,#+3
+   \   000001B0   001080E5           STR      R1,[R0, #+0]
+    500          	  FreeCLIST();
+   \   000001B4   ........           BL       FreeCLIST
+    501          	}
+    502                }
+    503              }
+    504            L_OLDKEY:
+    505              r=old_ed_onkey(gui,msg);
+   \                     ??my_ed_onkey_2:
+   \   000001B8   ........           LDR      R2,??DataTable23  ;; old_ed_onkey
+   \   000001BC   0510A0E1           MOV      R1,R5
+   \   000001C0   002092E5           LDR      R2,[R2, #+0]
+   \   000001C4   0400A0E1           MOV      R0,R4
+   \   000001C8   32FF2FE1           BLX      R2
+   \   000001CC   0050A0E1           MOV      R5,R0
+    506            }
+    507            ChangeRC(gui);
+   \                     ??my_ed_onkey_13:
+   \   000001D0   0400A0E1           MOV      R0,R4
+   \   000001D4   ........           BL       ChangeRC
+    508            return(r);
+   \   000001D8   0500A0E1           MOV      R0,R5
+   \   000001DC   F083BDE8           POP      {R4-R9,PC}       ;; return
+   \                     ??my_ed_onkey_7:
+   \   000001E0   ........           DC32     gotomenu_STRUCT
+   \   000001E4   ........           DC32     gotomenu_HDR
+    509          }
+    510          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    511          void my_ed_ghook(GUI *gui, int cmd)
+    512          {
+   \                     my_ed_ghook:
+   \   00000000   F0412DE9           PUSH     {R4-R8,LR}
+   \   00000004   ........           LDR      R5,??DataTable25  ;; hook_state
+   \   00000008   2CD04DE2           SUB      SP,SP,#+44
+   \   0000000C   0040A0E1           MOV      R4,R0
+   \   00000010   0160A0E1           MOV      R6,R1
+    513            static void *methods[16];
+    514            void **m=GetDataOfItemByID(gui,4);
+   \   00000014   0410A0E3           MOV      R1,#+4
+   \   00000018   4F0100EF           SWI      +335
+   \   0000001C   0070A0E1           MOV      R7,R0
+    515            if ((hook_state==1)/*&&(cmd==7)*/)
+   \   00000020   000095E5           LDR      R0,[R5, #+0]
+   \   00000024   010050E3           CMP      R0,#+1
+   \   00000028   1000001A           BNE      ??my_ed_ghook_0
+    516            {
+    517              //Цепляем метод onRedraw
+    518              if (m)
+   \   0000002C   000057E3           CMP      R7,#+0
+    519              {
+    520                if (m[1])
+   \   00000030   04009715           LDRNE    R0,[R7, #+4]
+   \   00000034   00005013           CMPNE    R0,#+0
+   \   00000038   0C00000A           BEQ      ??my_ed_ghook_0
+    521                {
+    522          	memcpy(methods,m[1],sizeof(methods));
+   \   0000003C   AC809FE5           LDR      R8,??my_ed_ghook_1  ;; ??methods
+   \   00000040   4020A0E3           MOV      R2,#+64
+   \   00000044   0010A0E1           MOV      R1,R0
+   \   00000048   0800A0E1           MOV      R0,R8
+   \   0000004C   1E0100EF           SWI      +286
+    523          	old_ed_redraw=(void (*)(void *))(methods[0]);
+   \   00000050   ........           LDR      R0,??DataTable19  ;; old_ed_redraw
+   \   00000054   001098E5           LDR      R1,[R8, #+0]
+   \   00000058   001080E5           STR      R1,[R0, #+0]
+    524          	methods[0]=(void *)my_ed_redraw;
+   \   0000005C   90009FE5           LDR      R0,??my_ed_ghook_1+0x4  ;; my_ed_redraw
+   \   00000060   000088E5           STR      R0,[R8, #+0]
+    525          	m[1]=methods;
+   \   00000064   048087E5           STR      R8,[R7, #+4]
+    526          	hook_state=3; //Запрос поиска
+   \   00000068   0300A0E3           MOV      R0,#+3
+   \   0000006C   000085E5           STR      R0,[R5, #+0]
+    527                }
+    528              }
+    529            }
+    530            old_ed_ghook(gui, cmd);
+   \                     ??my_ed_ghook_0:
+   \   00000070   ........           LDR      R2,??DataTable24  ;; old_ed_ghook
+   \   00000074   0610A0E1           MOV      R1,R6
+   \   00000078   002092E5           LDR      R2,[R2, #+0]
+   \   0000007C   0400A0E1           MOV      R0,R4
+   \   00000080   32FF2FE1           BLX      R2
+    531            if (cmd==7)
+   \   00000084   070056E3           CMP      R6,#+7
+   \   00000088   1400001A           BNE      ??my_ed_ghook_2
+    532            {
+    533              EDITCONTROL ec;
+    534              ExtractEditControl(gui,1,&ec);
+   \   0000008C   0D20A0E1           MOV      R2,SP
+   \   00000090   0110A0E3           MOV      R1,#+1
+   \   00000094   0400A0E1           MOV      R0,R4
+   \   00000098   690100EF           SWI      +361
+    535              //Новая строка поиска
+    536              if ((e_ws=ec.pWS)->wsbody[0]<13) //Ее длина <13
+   \   0000009C   ........           LDR      R0,??DataTable26  ;; e_ws
+   \   000000A0   28109DE5           LDR      R1,[SP, #+40]
+   \   000000A4   001080E5           STR      R1,[R0, #+0]
+   \   000000A8   000091E5           LDR      R0,[R1, #+0]
+   \   000000AC   B000D0E1           LDRH     R0,[R0, #+0]
+   \   000000B0   0D0050E3           CMP      R0,#+13
+   \   000000B4   0900002A           BCS      ??my_ed_ghook_2
+    537              {
+    538                if (hook_state==3)
+   \   000000B8   000095E5           LDR      R0,[R5, #+0]
+   \   000000BC   030050E3           CMP      R0,#+3
+   \   000000C0   0600001A           BNE      ??my_ed_ghook_2
+    539                {
+    540          	curpos=0;
+   \   000000C4   ........           LDR      R0,??DataTable22  ;; curpos
+   \   000000C8   0010A0E3           MOV      R1,#+0
+   \   000000CC   001080E5           STR      R1,[R0, #+0]
+    541          	hook_state=4;
+   \   000000D0   0400A0E3           MOV      R0,#+4
+   \   000000D4   000085E5           STR      R0,[R5, #+0]
+    542          	SUBPROC((void *)ConstructList);
+   \   000000D8   18009FE5           LDR      R0,??my_ed_ghook_1+0x8  ;; ConstructList
+   \   000000DC   710100EF           SWI      +369
+    543                }
+    544              }
+    545            }
+    546            ChangeRC(gui);
+   \                     ??my_ed_ghook_2:
+   \   000000E0   0400A0E1           MOV      R0,R4
+   \   000000E4   ........           BL       ChangeRC
+    547          }
+   \   000000E8   2CD08DE2           ADD      SP,SP,#+44
+   \   000000EC   F081BDE8           POP      {R4-R8,PC}       ;; return
+   \                     ??my_ed_ghook_1:
+   \   000000F0   ........           DC32     ??methods
+   \   000000F4   ........           DC32     my_ed_redraw
+   \   000000F8   ........           DC32     ConstructList
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+   \                     ??methods:
+   \   00000000                      DS8 64
+    548          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    549          void DoSplices(GUI *gui)
+    550          {
+   \                     DoSplices:
+   \   00000000   30402DE9           PUSH     {R4,R5,LR}
+    551            static INPUTDIA_DESC my_ed;
+    552            memcpy(&my_ed,gui->definition,sizeof(INPUTDIA_DESC));
+   \   00000004   40509FE5           LDR      R5,??DoSplices_0  ;; ??my_ed
+   \   00000008   0040A0E1           MOV      R4,R0
+   \   0000000C   081094E5           LDR      R1,[R4, #+8]
+   \   00000010   3820A0E3           MOV      R2,#+56
+   \   00000014   0500A0E1           MOV      R0,R5
+   \   00000018   1E0100EF           SWI      +286
+    553            old_ed_onkey=my_ed.onKey;
+   \   0000001C   ........           LDR      R0,??DataTable23  ;; old_ed_onkey
+   \   00000020   041095E5           LDR      R1,[R5, #+4]
+   \   00000024   001080E5           STR      R1,[R0, #+0]
+    554            old_ed_ghook=my_ed.global_hook_proc;
+   \   00000028   ........           LDR      R0,??DataTable24  ;; old_ed_ghook
+   \   0000002C   081095E5           LDR      R1,[R5, #+8]
+   \   00000030   001080E5           STR      R1,[R0, #+0]
+    555            my_ed.onKey=my_ed_onkey;
+   \   00000034   14009FE5           LDR      R0,??DoSplices_0+0x4  ;; my_ed_onkey
+   \   00000038   040085E5           STR      R0,[R5, #+4]
+    556            my_ed.global_hook_proc=my_ed_ghook;
+   \   0000003C   10009FE5           LDR      R0,??DoSplices_0+0x8  ;; my_ed_ghook
+   \   00000040   080085E5           STR      R0,[R5, #+8]
+    557            gui->definition=&my_ed;
+   \   00000044   085084E5           STR      R5,[R4, #+8]
+   \   00000048   3080BDE8           POP      {R4,R5,PC}       ;; return
+   \                     ??DoSplices_0:
+   \   0000004C   ........           DC32     ??my_ed
+   \   00000050   ........           DC32     my_ed_onkey
+   \   00000054   ........           DC32     my_ed_ghook
+    558          }
+
+   \                                 In segment DATA_Z, align 4, align-sorted
+   \                     ??my_ed:
+   \   00000000                      DS8 56
+    559          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    560          int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+    561          {
+   \                     MyIDLECSM_onMessage:
+   \   00000000   70402DE9           PUSH     {R4-R6,LR}
+    562          #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
+    563            int csm_result;
+    564          
+    565            if (msg->msg==MSG_GUI_DESTROYED)
+   \   00000004   ........           LDR      R5,??DataTable25  ;; hook_state
+   \   00000008   0040A0E1           MOV      R4,R0
+   \   0000000C   0160A0E1           MOV      R6,R1
+   \   00000010   040096E5           LDR      R0,[R6, #+4]
+   \   00000014   0E10A0E3           MOV      R1,#+14
+   \   00000018   641C81E3           ORR      R1,R1,#0x6400
+   \   0000001C   010050E1           CMP      R0,R1
+   \   00000020   0800001A           BNE      ??MyIDLECSM_onMessage_0
+    566            {
+    567              if ((int)msg->data0==edialgui_id)
+   \   00000024   0C0096E5           LDR      R0,[R6, #+12]
+   \   00000028   4C1094E5           LDR      R1,[R4, #+76]
+   \   0000002C   010050E1           CMP      R0,R1
+   \   00000030   0400001A           BNE      ??MyIDLECSM_onMessage_0
+    568              {
+    569                hook_state=0;
+    570                e_ws=0;
+   \   00000034   ........           LDR      R1,??DataTable26  ;; e_ws
+   \   00000038   0000A0E3           MOV      R0,#+0
+   \   0000003C   000085E5           STR      R0,[R5, #+0]
+   \   00000040   000081E5           STR      R0,[R1, #+0]
+    571                FreeCLIST();
+   \   00000044   ........           BL       FreeCLIST
+    572              }
+    573            }
+    574            csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
+   \                     ??MyIDLECSM_onMessage_0:
+   \   00000048   ........           LDR      R2,??DataTable28  ;; old_icsm_onMessage
+   \   0000004C   0610A0E1           MOV      R1,R6
+   \   00000050   002092E5           LDR      R2,[R2, #+0]
+   \   00000054   0400A0E1           MOV      R0,R4
+   \   00000058   32FF2FE1           BLX      R2
+   \   0000005C   0060A0E1           MOV      R6,R0
+    575            if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху
+   \   00000060   4C0094E5           LDR      R0,[R4, #+76]
+   \   00000064   350100EF           SWI      +309
+   \   00000068   000050E3           CMP      R0,#+0
+   \   0000006C   0800000A           BEQ      ??MyIDLECSM_onMessage_1
+    576            {
+    577              GUI *igui=GetTopGUI();
+   \   00000070   4D0100EF           SWI      +333
+    578              if (igui) //И он существует (а не в проекте ;))
+   \   00000074   000050E3           CMP      R0,#+0
+   \   00000078   0500000A           BEQ      ??MyIDLECSM_onMessage_1
+    579              {
+    580                if (!hook_state)
+   \   0000007C   001095E5           LDR      R1,[R5, #+0]
+   \   00000080   000051E3           CMP      R1,#+0
+   \   00000084   0200001A           BNE      ??MyIDLECSM_onMessage_1
+    581                {
+    582          	//Не было диалога
+    583          	DoSplices(igui);
+   \   00000088   ........           BL       DoSplices
+    584          	hook_state=1;
+   \   0000008C   0100A0E3           MOV      R0,#+1
+   \   00000090   000085E5           STR      R0,[R5, #+0]
+    585                }
+    586              }
+    587            }
+    588            return(csm_result);
+   \                     ??MyIDLECSM_onMessage_1:
+   \   00000094   0600A0E1           MOV      R0,R6
+   \   00000098   7080BDE8           POP      {R4-R6,PC}       ;; return
+    589          }
+    590          
+
+   \                                 In segment CODE, align 4, keep-with-next
+    591          int main(void)
+    592          {
+   \                     main:
+   \   00000000   30402DE9           PUSH     {R4,R5,LR}
+   \   00000004   44509FE5           LDR      R5,??main_0      ;; icsmd
+    593            LockSched();
+   \   00000008   460100EF           SWI      +326
+    594            CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+   \   0000000C   068100EF           SWI      +33030
+   \   00000010   040090E5           LDR      R0,[R0, #+4]
+   \   00000014   080100EF           SWI      +264
+   \   00000018   0040A0E1           MOV      R4,R0
+    595            memcpy(&icsmd,icsm->constr,sizeof(icsmd));
+   \   0000001C   081094E5           LDR      R1,[R4, #+8]
+   \   00000020   2820A0E3           MOV      R2,#+40
+   \   00000024   0500A0E1           MOV      R0,R5
+   \   00000028   1E0100EF           SWI      +286
+    596            old_icsm_onMessage=icsmd.onMessage;
+   \   0000002C   ........           LDR      R0,??DataTable28  ;; old_icsm_onMessage
+   \   00000030   001095E5           LDR      R1,[R5, #+0]
+   \   00000034   001080E5           STR      R1,[R0, #+0]
+    597            icsmd.onMessage=MyIDLECSM_onMessage;
+   \   00000038   14009FE5           LDR      R0,??main_0+0x4  ;; MyIDLECSM_onMessage
+   \   0000003C   000085E5           STR      R0,[R5, #+0]
+    598            icsm->constr=&icsmd;
+   \   00000040   085084E5           STR      R5,[R4, #+8]
+    599            UnlockSched();
+   \   00000044   470100EF           SWI      +327
+    600            return 0;
+   \   00000048   0000A0E3           MOV      R0,#+0
+   \   0000004C   3080BDE8           POP      {R4,R5,PC}       ;; return
+   \                     ??main_0:
+   \   00000050   ........           DC32     icsmd
+   \   00000054   ........           DC32     MyIDLECSM_onMessage
+    601          }
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable4:
+   \   00000000   ........           DC32     clbot
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable13:
+   \   00000000   ........           DC32     cltop
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable15:
+   \   00000000   ........           DC32     dstr
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable19:
+   \   00000000   ........           DC32     old_ed_redraw
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable22:
+   \   00000000   ........           DC32     curpos
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable23:
+   \   00000000   ........           DC32     old_ed_onkey
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable24:
+   \   00000000   ........           DC32     old_ed_ghook
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable25:
+   \   00000000   ........           DC32     hook_state
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable26:
+   \   00000000   ........           DC32     e_ws
+
+   \                                 In segment CODE, align 4, keep-with-next
+   \                     ??DataTable28:
+   \   00000000   ........           DC32     old_icsm_onMessage
+
+   \                                 In segment DATA_ID, align 4, align-sorted
+   \                     `?<Initializer for menusoftkeys>`:
+   \   00000000   000000000100       DC32 0, 1, 2
+   \              000002000000
+
+   \                                 In segment DATA_ID, align 4, align-sorted
+   \                     `?<Initializer for menu_sk>`:
+   \   00000000   18000000           DC16 24, 0
+   \   00000004   ........           DC32 `?<Constant "Select">`
+   \   00000008   01000000           DC16 1, 0
+   \   0000000C   ........           DC32 `?<Constant "Back">`
+   \   00000010   3D000000           DC16 61, 0
+   \   00000014   ........           DC32 `?<Constant "+">`
+
+   \                                 In segment DATA_ID, align 4, align-sorted
+   \                     `?<Initializer for menu_skt>`:
+   \   00000000   ........0000       DC32 menu_sk, 0
+   \              0000        
+
+   \                                 In segment DATA_ID, align 4, align-sorted
+   \                     `?<Initializer for gotomenu_HNDLS>`:
+   \   00000000   ............       DC32 goto_1, goto_2, goto_3, goto_4
+   \              ............
+   \              ........    
+
+   \                                 In segment DATA_ID, align 4, align-sorted
+   \                     `?<Initializer for gotomenu_ITEMS>`:
+   \   00000000   00000000....       DC32 0H, dstr, 2147483647, 0, 0H, 0, 1437, 0H, dstr + 40, 2147483647, 0
+   \              ....FFFFFF7F
+   \              000000000000
+   \              000000000000
+   \              9D0500000000
+   \              0000........
+   \              FFFFFF7F0000
+   \              0000        
+   \   0000002C   000000000000       DC32 0H, 0, 1437, 0H, dstr + 80, 2147483647, 0, 0H, 0, 1437, 0H
+   \              00009D050000
+   \              00000000....
+   \              ....FFFFFF7F
+   \              000000000000
+   \              000000000000
+   \              9D0500000000
+   \              0000        
+   \   00000058   ........FFFF       DC32 dstr + 120, 2147483647, 0, 0H, 0, 1437
+   \              FF7F00000000
+   \              000000000000
+   \              00009D050000
+   \   00000070   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   00000080   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   00000090   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   000000A0   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   000000B0   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   000000C0   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   000000D0   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   000000E0   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   000000F0   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+
+   \                                 In segment DATA_ID, align 4, align-sorted
+   \                     `?<Initializer for gotomenu_HDR>`:
+   \   00000000   000000008300       DC16 0, 0, 131, 21
+   \              1500        
+   \   00000008   00000000....       DC32 0H, `?<Constant "Select number...">`, 2147483647
+   \              ....FFFFFF7F
+
+   \                                 In segment DATA_ID, align 4, align-sorted
+   \                     `?<Initializer for gotomenu_STRUCT>`:
+   \   00000000   080000000000       DC32 8, 0H, 0H, 0H, menusoftkeys, menu_skt, 0, 0H, gotomenu_ITEMS
+   \              000000000000
+   \              00000000....
+   \              ............
+   \              000000000000
+   \              0000........
+   \   00000024   ........0400       DC32 gotomenu_HNDLS, 4
+   \              0000        
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     `?<Constant "Select">`:
+   \   00000000   53656C656374       DC8 "Select"
+   \              00          
+   \   00000007   00                 DC8 0
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     `?<Constant "Back">`:
+   \   00000000   4261636B00         DC8 "Back"
+   \   00000005   000000             DC8 0, 0, 0
+
+   \                                 In segment DATA_C, align 1, align-sorted
+   \                     `?<Constant "+">`:
+   \   00000000   2B00               DC8 "+"
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     `?<Constant "Select number...">`:
+   \   00000000   53656C656374       DC8 "Select number..."
+   \              206E756D6265
+   \              722E2E2E00  
+   \   00000011   000000             DC8 0, 0, 0
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     `?<Constant "0:\\\\System\\\\apo\\\\addr\\\\da...">`:
+   \   00000000   303A5C537973       DC8 "0:\\System\\apo\\addr\\data\\%02d\\%02d\\%02d"
+   \              74656D5C6170
+   \              6F5C61646472
+   \              5C646174615C
+   \              253032645C25
+   \              3032645C2530
+   \              326400      
+   \   00000027   00                 DC8 0
+
+   \                                 In segment DATA_C, align 4, align-sorted
+   \                     `?<Constant "0:\\\\System\\\\apo\\\\addr\\\\main">`:
+   \   00000000   303A5C537973       DC8 "0:\\System\\apo\\addr\\main"
+   \              74656D5C6170
+   \              6F5C61646472
+   \              5C6D61696E00
+
+   Maximum stack usage in bytes:
+
+     Function            CSTACK
+     --------            ------
+     ChangeRC               12
+     CompareStrT9            4
+     ConstructList         864
+     DoSplices              12
+     FreeCLIST               8
+     MyIDLECSM_onMessage    16
+     f_dummy                 0
+     goto_1                  4
+     goto_2                  4
+     goto_3                  4
+     goto_4                  4
+     main                   12
+     my_ed_ghook            68
+     my_ed_onkey            44
+     my_ed_redraw           68
+
+
+   Segment part sizes:
+
+     Function/Label                 Bytes
+     --------------                 -----
+     icsmd                            40
+     old_icsm_onMessage                4
+     old_ed_onkey                      4
+     old_ed_ghook                      4
+     old_ed_redraw                     4
+     hook_state                        4
+     e_ws                              4
+     curpos                            4
+     cltop                             4
+     clbot                             4
+     dstr                            160
+     FreeCLIST                       108
+     CompareStrT9                    212
+     key                             256
+     ConstructList                  1160
+     f_dummy                           4
+     my_ed_redraw                    460
+     ChangeRC                        136
+     rc                                8
+     goto_1                           24
+     goto_2                           28
+     goto_3                           28
+     goto_4                           28
+     menusoftkeys                     12
+     menu_sk                          24
+     menu_skt                          8
+     gotomenu_HNDLS                   16
+     gotomenu_ITEMS                  252
+     gotomenu_HDR                     20
+     gotomenu_STRUCT                  44
+     my_ed_onkey                     488
+     my_ed_ghook                     252
+     methods                          64
+     DoSplices                        88
+     my_ed                            56
+     MyIDLECSM_onMessage             156
+     main                             88
+     ??DataTable4                      4
+     ??DataTable13                     4
+     ??DataTable15                     4
+     ??DataTable19                     4
+     ??DataTable22                     4
+     ??DataTable23                     4
+     ??DataTable24                     4
+     ??DataTable25                     4
+     ??DataTable26                     4
+     ??DataTable28                     4
+     ?<Initializer for menusoftkeys>
+                                      12
+     ?<Initializer for menu_sk>       24
+     ?<Initializer for menu_skt>       8
+     ?<Initializer for gotomenu_HNDLS>
+                                      16
+     ?<Initializer for gotomenu_ITEMS>
+                                     252
+     ?<Initializer for gotomenu_HDR>
+                                      20
+     ?<Initializer for gotomenu_STRUCT>
+                                      44
+     ?<Constant "Select">              8
+     ?<Constant "Back">                8
+     ?<Constant "+">                   2
+     ?<Constant "Select number...">   20
+     ?<Constant "0:\\System\\apo\\addr\\da...">
+                                      40
+     ?<Constant "0:\\System\\apo\\addr\\main">
+                                      24
+      Others                          84
+
+ 
+ 3 360 bytes in segment CODE
+   366 bytes in segment DATA_C
+   376 bytes in segment DATA_I
+   376 bytes in segment DATA_ID
+   356 bytes in segment DATA_Z
+    24 bytes in segment INITTAB
+ 
+ 3 300 bytes of CODE  memory (+ 84 bytes shared)
+   742 bytes of CONST memory
+   732 bytes of DATA  memory
+
+Errors: none
+Warnings: none

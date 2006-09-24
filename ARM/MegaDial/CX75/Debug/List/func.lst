@@ -1,0 +1,324 @@
+###############################################################################
+#                                                                             #
+#     IAR Systems ARM Assembler V4.40A/W32 15/Aug/2006  08:14:55              #
+#     Copyright 1999-2006 IAR Systems. All rights reserved.                   #
+#                                                                             #
+#           Source file   =  E:\ARM\MegaDial\CX75\func.asm                    #
+#           List file     =  E:\ARM\MegaDial\CX75\Debug\List\func.lst         #
+#           Object file   =  E:\ARM\MegaDial\CX75\Debug\Obj\func.r79          #
+#           Command line  =  E:\ARM\MegaDial\CX75\func.asm                    #
+#                            -OE:\ARM\MegaDial\CX75\Debug\Obj\ -s+ -M<> -w+   #
+#                            -r -LE:\ARM\MegaDial\CX75\Debug\List\ -t8 --cpu  #
+#                            ARM926EJ-S --fpu None -ID:\IARARM\ARM\INC\       #
+#                                                                             #
+###############################################################################
+
+    1    00000000                      RTMODEL "ARMv4M", "USED"
+    2    00000000                      RTMODEL "ARMv4T", "USED"
+    3    00000000                      RTMODEL "ARMv5T", "USED"
+    4    00000000                      RTMODEL "StackAlign4", "USED"
+    5    00000000                      RTMODEL "__cpu_mode", "__pcs__interwork"
+    6    00000000                      RTMODEL "__data_model", "absolute"
+    7    00000000                      RTMODEL "__dlib_file_descriptor",
+                                "0"
+    8    00000000                      RTMODEL "__endian", "little"
+    9    00000000                      RTMODEL "__rt_version", "6"
+   10    00000000              
+   11    00000000                      RSEG CODE:CODE:NOROOT(2)
+   12    00000000              
+   17    00000000              
+   18    00000000              
+   19    00000000              ;-----------
+   20    00000000                      defadr malloc,0xA0203C24
+   20.1  00000000                      PUBLIC  malloc
+   20.2  A0203C24              malloc       EQU     0xA0203C24
+   20.3  00000000                      ENDM
+   21    00000000                      defadr mfree,0xA0203C8C
+   21.1  00000000                      PUBLIC  mfree
+   21.2  A0203C8C              mfree       EQU     0xA0203C8C
+   21.3  00000000                      ENDM
+   22    00000000                      defadr memcpy,0xA0EF4908
+   22.1  00000000                      PUBLIC  memcpy
+   22.2  A0EF4908              memcpy       EQU     0xA0EF4908
+   22.3  00000000                      ENDM
+   23    00000000                      defadr zeromem,0xA0219F1C
+   23.1  00000000                      PUBLIC  zeromem
+   23.2  A0219F1C              zeromem       EQU     0xA0219F1C
+   23.3  00000000                      ENDM
+   24    00000000              
+   25    00000000              ;File library
+   26    00000000                      defadr fopen,0xA07CBB08
+   26.1  00000000                      PUBLIC  fopen
+   26.2  A07CBB08              fopen       EQU     0xA07CBB08
+   26.3  00000000                      ENDM
+   27    00000000                      defadr fclose,0xA07CBA5C
+   27.1  00000000                      PUBLIC  fclose
+   27.2  A07CBA5C              fclose       EQU     0xA07CBA5C
+   27.3  00000000                      ENDM
+   28    00000000                      defadr fread,0xA07CBB48
+   28.1  00000000                      PUBLIC  fread
+   28.2  A07CBB48              fread       EQU     0xA07CBB48
+   28.3  00000000                      ENDM
+   29    00000000                      defadr fwrite,0xA07CBC30
+   29.1  00000000                      PUBLIC  fwrite
+   29.2  A07CBC30              fwrite       EQU     0xA07CBC30
+   29.3  00000000                      ENDM
+   30    00000000                      defadr fflush,0xA07CBA8C
+   30.1  00000000                      PUBLIC  fflush
+   30.2  A07CBA8C              fflush       EQU     0xA07CBA8C
+   30.3  00000000                      ENDM
+   31    00000000                      defadr lseek,0xA07CBABC
+   31.1  00000000                      PUBLIC  lseek
+   31.2  A07CBABC              lseek       EQU     0xA07CBABC
+   31.3  00000000                      ENDM
+   32    00000000              
+   33    00000000              ;GBS library
+   34    00000000                      defadr GBS_SendMessage,0xA020A770
+   34.1  00000000                      PUBLIC  GBS_SendMessage
+   34.2  A020A770              GBS_SendMessage       EQU     0xA020A770
+   34.3  00000000                      ENDM
+   35    00000000              
+   36    00000000              
+   37    00000000              ;GSM library
+   38    00000000              
+   39    00000000                      defadr isCallActive,0xA050B02A+1
+   39.1  00000000                      PUBLIC  isCallActive
+   39.2  A050B02B              isCallActive       EQU     0xA050B02A+1
+   39.3  00000000                      ENDM
+   40    00000000                      defadr getConvTime,0xA0554602+1
+   40.1  00000000                      PUBLIC  getConvTime
+   40.2  A0554603              getConvTime       EQU     0xA0554602+1
+   40.3  00000000                      ENDM
+   41    00000000              
+   42    00000000              ;CSM library
+   43    00000000                      defadr  CSM_root,0xA84C9964
+   43.1  00000000                      PUBLIC  CSM_root
+   43.2  A84C9964              CSM_root       EQU     0xA84C9964
+   43.3  00000000                      ENDM
+   44    00000000                      defadr  CreateCSM,0xA07BED04+1
+   44.1  00000000                      PUBLIC  CreateCSM
+   44.2  A07BED05              CreateCSM       EQU     0xA07BED04+1
+   44.3  00000000                      ENDM
+   45    00000000                      defadr  FindCSMbyID,0xA07BED16+1
+   45.1  00000000                      PUBLIC  FindCSMbyID
+   45.2  A07BED17              FindCSMbyID       EQU     0xA07BED16+1
+   45.3  00000000                      ENDM
+   46    00000000                      defadr  IDLECSM_onCreate,0xA02A781C+1
+   46.1  00000000                      PUBLIC  IDLECSM_onCreate
+   46.2  A02A781D              IDLECSM_onCreate       EQU     0xA02A781C+1
+   46.3  00000000                      ENDM
+   47    00000000              
+   48    00000000              ;GUI library
+   49    00000000                      defadr  DirectRedrawGUI,0xA07C3966+1
+   49.1  00000000                      PUBLIC  DirectRedrawGUI
+   49.2  A07C3967              DirectRedrawGUI       EQU     0xA07C3966+1
+   49.3  00000000                      ENDM
+   50    00000000                      defadr  DirectRedrawGUI_ID,0xA07C3980+1
+   50.1  00000000                      PUBLIC  DirectRedrawGUI_ID
+   50.2  A07C3981              DirectRedrawGUI_ID       EQU     0xA07C3980+1
+   50.3  00000000                      ENDM
+   51    00000000                      defadr  PendedRedrawGUI,0xA07C3A60+1
+   51.1  00000000                      PUBLIC  PendedRedrawGUI
+   51.2  A07C3A61              PendedRedrawGUI       EQU     0xA07C3A60+1
+   51.3  00000000                      ENDM
+   52    00000000                      defadr  DrawFrameInNativeMenu,0xA07F6316
+                               +1
+   52.1  00000000                      PUBLIC  DrawFrameInNativeMenu
+   52.2  A07F6317              DrawFrameInNativeMenu       EQU     0xA07F6316+1
+   52.3  00000000                      ENDM
+   53    00000000                      defadr  GetPaletteAdrByColorIndex,0xA07F
+                               85E8+1
+   53.1  00000000                      PUBLIC  GetPaletteAdrByColorIndex
+   53.2  A07F85E9              GetPaletteAdrByColorIndex       EQU    
+                                0xA07F85E8+1
+   53.3  00000000                      ENDM
+   54    00000000                      defadr  CreateMenu,0xA07C28DC+1
+   54.1  00000000                      PUBLIC  CreateMenu
+   54.2  A07C28DD              CreateMenu       EQU     0xA07C28DC+1
+   54.3  00000000                      ENDM
+   55    00000000                      defadr  GetDataOfItemByID,0xA08037A8+1
+   55.1  00000000                      PUBLIC  GetDataOfItemByID
+   55.2  A08037A9              GetDataOfItemByID       EQU     0xA08037A8+1
+   55.3  00000000                      ENDM
+   56    00000000                      defadr  SetMenuItemIcon,0xA07C786C+1
+   56.1  00000000                      PUBLIC  SetMenuItemIcon
+   56.2  A07C786D              SetMenuItemIcon       EQU     0xA07C786C+1
+   56.3  00000000                      ENDM
+   57    00000000              
+   58    00000000              ;Draw objects library
+   59    00000000                      defadr  DrawObject,0xA07FC5AA+1
+   59.1  00000000                      PUBLIC  DrawObject
+   59.2  A07FC5AB              DrawObject       EQU     0xA07FC5AA+1
+   59.3  00000000                      ENDM
+   60    00000000                      defadr  SetPropTo_Obj1,0xA089BBA8+1
+   60.1  00000000                      PUBLIC  SetPropTo_Obj1
+   60.2  A089BBA9              SetPropTo_Obj1       EQU     0xA089BBA8+1
+   60.3  00000000                      ENDM
+   61    00000000                      defadr  StoreXYWHtoRECT,0xA07FD254+1
+   61.1  00000000                      PUBLIC  StoreXYWHtoRECT
+   61.2  A07FD255              StoreXYWHtoRECT       EQU     0xA07FD254+1
+   61.3  00000000                      ENDM
+   62    00000000                      defadr  FreeDrawObject_subobj,0xA089941C
+                               +1
+   62.1  00000000                      PUBLIC  FreeDrawObject_subobj
+   62.2  A089941D              FreeDrawObject_subobj       EQU     0xA089941C+1
+   62.3  00000000                      ENDM
+   63    00000000                      defadr  SetColor,0xA0899366+1
+   63.1  00000000                      PUBLIC  SetColor
+   63.2  A0899367              SetColor       EQU     0xA0899366+1
+   63.3  00000000                      ENDM
+   64    00000000                      defadr  DrawString,0xA089BBF8+1
+   64.1  00000000                      PUBLIC  DrawString
+   64.2  A089BBF9              DrawString       EQU     0xA089BBF8+1
+   64.3  00000000                      ENDM
+   65    00000000              
+   66    00000000              ;Strings library
+   67    00000000                      defadr  strcpy,0xA0EF5104+1
+   67.1  00000000                      PUBLIC  strcpy
+   67.2  A0EF5105              strcpy       EQU     0xA0EF5104+1
+   67.3  00000000                      ENDM
+   68    00000000                      defadr  strlen,0xA0EF5184+1
+   68.1  00000000                      PUBLIC  strlen
+   68.2  A0EF5185              strlen       EQU     0xA0EF5184+1
+   68.3  00000000                      ENDM
+   69    00000000                      defadr  strstr,0xA0EF52E4+1
+   69.1  00000000                      PUBLIC  strstr
+   69.2  A0EF52E5              strstr       EQU     0xA0EF52E4+1
+   69.3  00000000                      ENDM
+   70    00000000                      defadr  strcat,0xA0EF5024+1
+   70.1  00000000                      PUBLIC  strcat
+   70.2  A0EF5025              strcat       EQU     0xA0EF5024+1
+   70.3  00000000                      ENDM
+   71    00000000                      defadr  sprintf,0xA0EF373C+1
+   71.1  00000000                      PUBLIC  sprintf
+   71.2  A0EF373D              sprintf       EQU     0xA0EF373C+1
+   71.3  00000000                      ENDM
+   72    00000000              
+   73    00000000              ;Wide strings library
+   74    00000000                      defadr  AllocWS,0xA07BCA5A+1
+   74.1  00000000                      PUBLIC  AllocWS
+   74.2  A07BCA5B              AllocWS       EQU     0xA07BCA5A+1
+   74.3  00000000                      ENDM
+   75    00000000                      defadr  FreeWS,0xA07BCA96+1
+   75.1  00000000                      PUBLIC  FreeWS
+   75.2  A07BCA97              FreeWS       EQU     0xA07BCA96+1
+   75.3  00000000                      ENDM
+   76    00000000                      defadr  CreateLocalWS,0xA07BC9F2+1
+   76.1  00000000                      PUBLIC  CreateLocalWS
+   76.2  A07BC9F3              CreateLocalWS       EQU     0xA07BC9F2+1
+   76.3  00000000                      ENDM
+   77    00000000                      defadr  wstrlen,0xA07BC4A6+1
+   77.1  00000000                      PUBLIC  wstrlen
+   77.2  A07BC4A7              wstrlen       EQU     0xA07BC4A6+1
+   77.3  00000000                      ENDM
+   78    00000000                      defadr  wstrcpy,0xA07BC444+1
+   78.1  00000000                      PUBLIC  wstrcpy
+   78.2  A07BC445              wstrcpy       EQU     0xA07BC444+1
+   78.3  00000000                      ENDM
+   79    00000000                      defadr  wstrncpy,0xA07BC458+1
+   79.1  00000000                      PUBLIC  wstrncpy
+   79.2  A07BC459              wstrncpy       EQU     0xA07BC458+1
+   79.3  00000000                      ENDM
+   80    00000000                      defadr  wstrcpy_safe,0xA07BCB7A+1
+   80.1  00000000                      PUBLIC  wstrcpy_safe
+   80.2  A07BCB7B              wstrcpy_safe       EQU     0xA07BCB7A+1
+   80.3  00000000                      ENDM
+   81    00000000                      defadr  wstrcat,0xA07BCBC0+1
+   81.1  00000000                      PUBLIC  wstrcat
+   81.2  A07BCBC1              wstrcat       EQU     0xA07BCBC0+1
+   81.3  00000000                      ENDM
+   82    00000000                      defadr  wsprintf,0xA07BC24A+1
+   82.1  00000000                      PUBLIC  wsprintf
+   82.2  A07BC24B              wsprintf       EQU     0xA07BC24A+1
+   82.3  00000000                      ENDM
+   83    00000000                      defadr  wsaddwchar,0xA07BCCE8+1
+   83.1  00000000                      PUBLIC  wsaddwchar
+   83.2  A07BCCE9              wsaddwchar       EQU     0xA07BCCE8+1
+   83.3  00000000                      ENDM
+   84    00000000                      defadr  cutwstr,0xA07BCE4E+1
+   84.1  00000000                      PUBLIC  cutwstr
+   84.2  A07BCE4F              cutwstr       EQU     0xA07BCE4E+1
+   84.3  00000000                      ENDM
+   85    00000000                      defadr  ws2ascii,0xA07C1E2C+1
+   85.1  00000000                      PUBLIC  ws2ascii
+   85.2  A07C1E2D              ws2ascii       EQU     0xA07C1E2C+1
+   85.3  00000000                      ENDM
+   86    00000000                      defadr  asciz2wstr,0xA07BD1F0+1
+   86.1  00000000                      PUBLIC  asciz2wstr
+   86.2  A07BD1F1              asciz2wstr       EQU     0xA07BD1F0+1
+   86.3  00000000                      ENDM
+   87    00000000              
+   88    00000000              ;------------- misc ------------
+   89    00000000              
+   90    00000000                      defadr  getDialStringLen,0xA049EEE8
+   90.1  00000000                      PUBLIC  getDialStringLen
+   90.2  A049EEE8              getDialStringLen       EQU     0xA049EEE8
+   90.3  00000000                      ENDM
+   91    00000000                      defadr  getDialString,0xA08A1E88+1
+   91.1  00000000                      PUBLIC  getDialString
+   91.2  A08A1E89              getDialString       EQU     0xA08A1E88+1
+   91.3  00000000                      ENDM
+   92    00000000                      defadr  openAB,0xA032B500+1
+   92.1  00000000                      PUBLIC  openAB
+   92.2  A032B501              openAB       EQU     0xA032B500+1
+   92.3  00000000                      ENDM
+   93    00000000                      defadr  CreateEditViewCSM,0xA05CDE68+1
+   93.1  00000000                      PUBLIC  CreateEditViewCSM
+   93.2  A05CDE69              CreateEditViewCSM       EQU     0xA05CDE68+1
+   93.3  00000000                      ENDM
+   94    00000000                      defadr  Open_NewSMS_Dialog,0xA050E118+1
+   94.1  00000000                      PUBLIC  Open_NewSMS_Dialog
+   94.2  A050E119              Open_NewSMS_Dialog       EQU     0xA050E118+1
+   94.3  00000000                      ENDM
+   95    00000000                      defadr  GetCurrMenuItem,0xA07C63AA+1
+   95.1  00000000                      PUBLIC  GetCurrMenuItem
+   95.2  A07C63AB              GetCurrMenuItem       EQU     0xA07C63AA+1
+   95.3  00000000                      ENDM
+   96    00000000                      defadr  SetNMenuItems,0xA07C681A+1
+   96.1  00000000                      PUBLIC  SetNMenuItems
+   96.2  A07C681B              SetNMenuItems       EQU     0xA07C681A+1
+   96.3  00000000                      ENDM
+   97    00000000                      defadr  MakeVoiceCallTo,0xA050861C+1;
+   97.1  00000000                      PUBLIC  MakeVoiceCallTo
+   97.2  A050861D              MakeVoiceCallTo       EQU     0xA050861C+1
+   97.3  00000000                      ENDM
+   98    00000000                      defadr  StartMidlet,0xA088E3B4
+   98.1  00000000                      PUBLIC  StartMidlet
+   98.2  A088E3B4              StartMidlet       EQU     0xA088E3B4
+   98.3  00000000                      ENDM
+   99    00000000                      defadr  UnPackABrecord,0xA05FA6CE+1
+   99.1  00000000                      PUBLIC  UnPackABrecord
+   99.2  A05FA6CF              UnPackABrecord       EQU     0xA05FA6CE+1
+   99.3  00000000                      ENDM
+  100    00000000                      defadr  FreeUnPackABrecord,0xA055A35A+1
+  100.1  00000000                      PUBLIC  FreeUnPackABrecord
+  100.2  A055A35B              FreeUnPackABrecord       EQU     0xA055A35A+1
+  100.3  00000000                      ENDM
+  101    00000000                      defadr  ABnumber2str,0xA083F6A2+1
+  101.1  00000000                      PUBLIC  ABnumber2str
+  101.2  A083F6A3              ABnumber2str       EQU     0xA083F6A2+1
+  101.3  00000000                      ENDM
+  102    00000000                      defadr  ShowMsgInR1,0xA060A540+1
+  102.1  00000000                      PUBLIC  ShowMsgInR1
+  102.2  A060A541              ShowMsgInR1       EQU     0xA060A540+1
+  102.3  00000000                      ENDM
+  103    00000000              
+  104    00000000              ;===============================================
+                               ====================
+  105    00000000              
+  106    00000000              ;       RSEG    PATCH1
+  107    00000000              ;       LDR     R0,=CreateCSM
+  108    00000000              ;        BX     R0
+  109    00000000              
+  110    00000000              
+  111    00000000                      END
+##############################
+#          CRC:8461          #
+#        Errors:   0         #
+#        Warnings: 0         #
+#          Bytes: 0          #
+##############################
+
+
+
+

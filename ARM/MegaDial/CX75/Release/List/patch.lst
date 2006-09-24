@@ -1,0 +1,85 @@
+###############################################################################
+#                                                                             #
+#     IAR Systems ARM Assembler V4.40A/W32 13/Sep/2006  13:42:11              #
+#     Copyright 1999-2006 IAR Systems. All rights reserved.                   #
+#                                                                             #
+#           Source file   =  E:\ARM\MegaDial\CX75\patch.asm                   #
+#           List file     =  E:\ARM\MegaDial\CX75\Release\List\patch.lst      #
+#           Object file   =  E:\ARM\MegaDial\CX75\Release\Obj\patch.r79       #
+#           Command line  =  E:\ARM\MegaDial\CX75\patch.asm                   #
+#                            -OE:\ARM\MegaDial\CX75\Release\Obj\ -s+ -M<>     #
+#                            -w+ -LE:\ARM\MegaDial\CX75\Release\List\ -t8     #
+#                            --cpu ARM926EJ-S --fpu None                      #
+#                            -ID:\IARARM\ARM\INC\                             #
+#                                                                             #
+###############################################################################
+
+    1    00000000                      RSEG    CODE:CODE
+    2    00000000                      CODE32
+    3    00000000                      EXTERN  UnPackAB
+    4    00000000              path1:
+    5    00000000 ........             BL      UnPackAB
+    6    00000004 14109FE5             LDR     R1, =0x427
+    7    00000008 0100A0E3             MOV     R0, #1
+    8    0000000C ........             BLX     0xA07C2D32+1
+    9    00000010 5C0084E5             STR     R0, [R4,#0x5C]
+   10    00000014 08209FE5             LDR     R2,=0xA060A540+1
+   11    00000018 12FF2FE1             BX      R2
+   12    0000001C                      
+   13    0000001C              ;       LDR     R1,[R1]
+   14    0000001C              ;       BX      R1
+   15    0000001C 401AA0E3             MOV     R1,#0x40000
+   16    00000020                      
+   17    00000020              
+   18    00000020                      RSEG    PATCH_ABCHANGED:CODE
+   18.1  00000020                       TABLE
+   18.2  00000020 27040000             Reference on line 6 
+   18.3  00000024 41A560A0             Reference on line 10 
+   18.4  00000000                      RSEG (including table)
+   18    00000000                      RSEG    PATCH_ABCHANGED:CODE
+   19    00000000                      CODE16
+   20    00000000                      EXTERN  unpack
+   21    00000000              
+   22    00000000 004A                 LDR     R2,=path1
+   23    00000002 1047                 BX      R2
+   24    00000004              
+   25    00000004              
+   26    00000004              
+   27    00000004              
+   28    00000004              
+   29    00000004                      RSEG    PATCH_RESIZE:CODE
+   29.1  00000004                       TABLE
+   29.2  00000004 ........             Reference on line 22 
+   29.3  00000000                      RSEG (including table)
+   29    00000000                      RSEG    PATCH_RESIZE:CODE
+   30    00000000                      CODE16
+   31    00000000                      EXTERN  resize
+   32    00000000              
+   33    00000000 0149                 LDR     R1,=resize
+   34    00000002 8847                 BLX     R1
+   35    00000004 011C                 MOV     R1,R0
+   36    00000006 ....                 B       resize_ret
+   37    00000008              
+   38    00000008                      RSEG    PATCH_RESIZE_RET:CODE
+   38.1  00000008                       TABLE
+   38.2  00000008 ........             Reference on line 33 
+   38.3  00000000                      RSEG (including table)
+   38    00000000                      RSEG    PATCH_RESIZE_RET:CODE
+   39    00000000                      CODE16
+   40    00000000              resize_ret:
+   41    00000000              
+   42    00000000                      
+   43    00000000              
+   44    00000000              
+   45    00000000              
+   46    00000000                      END
+##############################
+#          CRC:A15F          #
+#        Errors:   0         #
+#        Warnings: 0         #
+#         Bytes: 60          #
+##############################
+
+
+
+
