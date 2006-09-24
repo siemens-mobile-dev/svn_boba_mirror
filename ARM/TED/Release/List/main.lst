@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                            #
-# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    27/Aug/2006  12:41:47 #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    24/Sep/2006  17:16:09 #
 # Copyright 1999-2005 IAR Systems. All rights reserved.                      #
 #                                                                            #
 #    Cpu mode        =  interwork                                            #
@@ -3069,7 +3069,7 @@ E:\ARM\TED\main.c
    \   000001B0   000096E5           LDR      R0,[R6, #+0]
    \   000001B4   7E20A0E3           MOV      R2,#+126
    \   000001B8   6C0100EF           SWI      +364
-   1141                wsprintf(info_ws,"Text viewer/editor\nversion 1.2\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
+   1141                wsprintf(info_ws,"Text viewer/editor\nversion 1.3\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
    \   000001BC   002096E5           LDR      R2,[R6, #+0]
    \   000001C0   68179FE5           LDR      R1,??DrawScreen_1+0x1C  ;; `?<Constant "Text viewer/editor\\nve...">`
    \   000001C4   000097E5           LDR      R0,[R7, #+0]
@@ -8302,13 +8302,13 @@ E:\ARM\TED\main.c
    \              6974        
    \   00000010   6F720A766572       DC8 6FH, 72H, 0AH, 76H, 65H, 72H, 73H, 69H
    \              7369        
-   \   00000018   6F6E20312E32       DC8 6FH, 6EH, 20H, 31H, 2EH, 32H, 0AH, 41H
-   \              0A41        
-   \   00000020   756720323720       DC8 75H, 67H, 20H, 32H, 37H, 20H, 32H, 30H
+   \   00000018   6F6E20312E33       DC8 6FH, 6EH, 20H, 31H, 2EH, 33H, 0AH, 53H
+   \              0A53        
+   \   00000020   657020323420       DC8 65H, 70H, 20H, 32H, 34H, 20H, 32H, 30H
    \              3230        
-   \   00000028   30360A31323A       DC8 30H, 36H, 0AH, 31H, 32H, 3AH, 34H, 31H
-   \              3431        
-   \   00000030   3A34300A436F       DC8 3AH, 34H, 30H, 0AH, 43H, 6FH, 70H, 79H
+   \   00000028   30360A31373A       DC8 30H, 36H, 0AH, 31H, 37H, 3AH, 31H, 36H
+   \              3136        
+   \   00000030   3A30330A436F       DC8 3AH, 30H, 33H, 0AH, 43H, 6FH, 70H, 79H
    \              7079        
    \   00000038   726967687428       DC8 72H, 69H, 67H, 68H, 74H, 28H, 43H, 29H
    \              4329        
