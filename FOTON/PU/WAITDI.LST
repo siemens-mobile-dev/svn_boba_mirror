@@ -1,0 +1,9 @@
+
+AVRASM ver. 1.30  waitdi.asm Tue Apr 02 18:13:24 2002
+
+
+          aaa:
+000000 f3ff      	brie	aaa
+         
+
+Assembly complete with no errors.

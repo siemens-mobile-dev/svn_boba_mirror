@@ -1,0 +1,26 @@
+
+AVRASM ver. 1.30  rr.asm Thu Dec 27 09:42:08 2001
+
+
+000000 fb00      	bst	r16,0
+000001 f9e3      	bld	r30,3
+000002 fb01      	bst	r16,1
+000003 f9e2      	bld	r30,2
+000004 fb02      	bst	r16,2
+000005 f9e1      	bld	r30,1
+000006 fb03      	bst	r16,3
+000007 f9e0      	bld	r30,0
+         
+000008 fb04      	bst	r16,4
+000009 f9e7      	bld	r30,7
+00000a fb05      	bst	r16,5
+00000b f9e6      	bld	r30,6
+00000c fb06      	bst	r16,6
+00000d f9e5      	bld	r30,5
+00000e fb07      	bst	r16,7
+00000f f9e4      	bld	r30,4
+         
+000010 2f0e      	mov	r16,r30
+         
+
+Assembly complete with no errors.

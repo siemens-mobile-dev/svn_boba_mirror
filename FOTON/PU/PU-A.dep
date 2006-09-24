@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <configuration>
+    <name>Debug</name>
+    <outputs/>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
+  </configuration>
+  <configuration>
+    <name>Release</name>
+    <outputs>
+      <file>$PROJ_DIR$\KBDLCDLPT.c</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$TOOLKIT_DIR$\src\template\cfgm128.xcl</file>
+      <file>$PROJ_DIR$\Release\Obj\PU-A.pbd</file>
+      <file>$PROJ_DIR$\Boot.c</file>
+      <file>$PROJ_DIR$\vm.c</file>
+      <file>$PROJ_DIR$\Debug.c</file>
+      <file>$TOOLKIT_DIR$\inc\clib\ctype.h</file>
+      <file>$PROJ_DIR$\canll.h</file>
+      <file>$PROJ_DIR$\pupc.c</file>
+      <file>$PROJ_DIR$\ConfigTK.c</file>
+      <file>$PROJ_DIR$\Release\Exe\PU-A.a90</file>
+      <file>$PROJ_DIR$\EventParser.c</file>
+      <file>$TOOLKIT_DIR$\inc\iom103.h</file>
+      <file>$PROJ_DIR$\MainCAN.c</file>
+      <file>$PROJ_DIR$\RS.c</file>
+      <file>$PROJ_DIR$\can.h</file>
+      <file>$TOOLKIT_DIR$\inc\clib\setjmp.h</file>
+      <file>$PROJ_DIR$\EditAdr.c</file>
+      <file>$TOOLKIT_DIR$\inc\clib\stdarg.h</file>
+      <file>$PROJ_DIR$\Release\List\PU-A.map</file>
+      <file>$PROJ_DIR$\ConfigUPS.c</file>
+      <file>$PROJ_DIR$\SysInit.c</file>
+      <file>$PROJ_DIR$\devdef.h</file>
+      <file>$PROJ_DIR$\PGMCRC.c</file>
+      <file>$TOOLKIT_DIR$\inc\inavr.h</file>
+      <file>$TOOLKIT_DIR$\inc\iomacro.h</file>
+      <file>$PROJ_DIR$\Release\Obj\can.r90</file>
+      <file>$PROJ_DIR$\SensorConfig.c</file>
+      <file>$PROJ_DIR$\ViewLog.c</file>
+      <file>$PROJ_DIR$\Release\Obj\can.pbi</file>
+      <file>$TOOLKIT_DIR$\src\template\cfg3s.xcl</file>
+      <file>$PROJ_DIR$\Flash.c</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r90</file>
+      <file>$TOOLKIT_DIR$\inc\clib\pgmspace.h</file>
+      <file>$TOOLKIT_DIR$\inc\iom128.h</file>
+      <file>$PROJ_DIR$\EditSelect.c</file>
+      <file>$PROJ_DIR$\ConfigPU.c</file>
+      <file>$PROJ_DIR$\Release\Obj\RTCint.r90</file>
+      <file>$PROJ_DIR$\ConfigPPKP.c</file>
+      <file>$TOOLKIT_DIR$\inc\clib\sysmac.h</file>
+      <file>$TOOLKIT_DIR$\lib\clib\cl3s-ec_mul.r90</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\ConfigBRA.c</file>
+      <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
+      <file>$PROJ_DIR$\Release\List\can.lst</file>
+      <file>$PROJ_DIR$\Zone.c</file>
+      <file>$TOOLKIT_DIR$\inc\clib\string.h</file>
+      <file>$TOOLKIT_DIR$\inc\clib\stdio.h</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\RTCint.msa</file>
+      <file>$PROJ_DIR$\can.c</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\Release\Obj\PU-A.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 30 42</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\PU-A.a90</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 20</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 2 31 38 27 33 41</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 11 20</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCAVR</name>
+          <file> 33 1</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 42</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCAVR</name>
+          <file> 23 48 19 40 34 47 35 26 25 44 17 7 16 12 0 22 32 24 15 5 36 28 37 9 4 6 29 39 46 10 18 14 43 21</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 23 48 19 40 34 47 35 26 25 44 17 7 16 12 0 22 32 24 15 5 36 28 37 9 4 6 29 39 46 10 18 14 43 21</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\RTCint.msa</name>
+      <outputs>
+        <tool>
+          <name>AAVR</name>
+          <file> 38</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>AAVR</name>
+          <file> 13 26</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\can.c</name>
+      <outputs>
+        <tool>
+          <name>ICCAVR</name>
+          <file> 27 45</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 30</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCAVR</name>
+          <file> 35 26 8 23 16</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 35 26 8 23 16</file>
+        </tool>
+      </inputs>
+    </file>
+  </configuration>
+</project>
+
+

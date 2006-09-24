@@ -1,0 +1,15 @@
+Creating   'waitdi.eep'
+Creating   'waitdi.hex'
+Creating   'waitdi.obj'
+Creating   'waitdi.lst'
+
+Assembling 'waitdi.asm'
+
+Program memory usage:
+Code             :    1 words
+Constants (dw/db):    0 words
+Unused           :    0 words
+Total            :    1 words
+
+Assembly complete with no errors.
+Deleting   'waitdi.eep'
