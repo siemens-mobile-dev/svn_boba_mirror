@@ -5,8 +5,8 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Exe\TED.d79</file>
       <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Debug\Exe\TED.d79</file>
       <file>$PROJ_DIR$\main.c</file>
     </outputs>
     <file>
@@ -14,7 +14,7 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 0</file>
+          <file> 1</file>
         </tool>
       </outputs>
     </file>
@@ -23,7 +23,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1</file>
+          <file> 0</file>
         </tool>
       </outputs>
     </file>
@@ -35,63 +35,54 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\div.r79</file>
-      <file>$PROJ_DIR$\config_data.c</file>
-      <file>$PROJ_DIR$\Release\Obj\saver.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_format.pbi</file>
+      <file>$PROJ_DIR$\..\png\zlib.h</file>
       <file>$PROJ_DIR$\Release\Obj\convert_format.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
-      <file>$PROJ_DIR$\test.xcl</file>
       <file>$PROJ_DIR$\Release\Obj\linework.r79</file>
-      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
+      <file>$PROJ_DIR$\..\png\zconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_simple.r79</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\saver.pbi</file>
       <file>$PROJ_DIR$\Release\Exe\TED.elf</file>
-      <file>$PROJ_DIR$\..\swilib.h</file>
-      <file>$PROJ_DIR$\Release\List\saver.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
+      <file>$PROJ_DIR$\Release\List\convert_format.lst</file>
       <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
       <file>$PROJ_DIR$\Release\List\convert_simple.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_simple.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Release\List\linework.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\saver.r79</file>
-      <file>$PROJ_DIR$\Release\List\main.lst</file>
-      <file>$PROJ_DIR$\Release\List\TED.map</file>
-      <file>$PROJ_DIR$\Release\Obj\linework.pbi</file>
       <file>$PROJ_DIR$\Release\Obj\convert_simple.pbi</file>
-      <file>$PROJ_DIR$\Release\List\convert_format.lst</file>
-      <file>$PROJ_DIR$\linework.c</file>
-      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
-      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\Release\Obj\linework.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_format.pbi</file>
       <file>$PROJ_DIR$\saver.c</file>
-      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\Release\Obj\saver.r79</file>
+      <file>$PROJ_DIR$\Release\List\linework.lst</file>
+      <file>$PROJ_DIR$\..\swilib.h</file>
+      <file>$PROJ_DIR$\Release\List\saver.lst</file>
+      <file>$PROJ_DIR$\Release\List\TED.map</file>
+      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\config_data.c</file>
+      <file>$PROJ_DIR$\div.r79</file>
       <file>$PROJ_DIR$\convert_format.c</file>
       <file>$PROJ_DIR$\convert_simple.c</file>
+      <file>$PROJ_DIR$\linework.c</file>
+      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\..\png\png.h</file>
+      <file>$PROJ_DIR$\..\png\pngconf.h</file>
     </outputs>
-    <file>
-      <name>$PROJ_DIR$\config_data.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 12 8</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 5</file>
-        </tool>
-      </outputs>
-    </file>
     <file>
       <name>$PROJ_DIR$\Release\Exe\TED.elf</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 20</file>
+          <file> 23</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 6 12 4 15 16 7 25 18 0</file>
+          <file> 5 16 1 4 25 2 7 19 27</file>
         </tool>
       </inputs>
     </file>
@@ -100,67 +91,39 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 9 20</file>
+          <file> 9 23</file>
         </tool>
       </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\linework.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 7 17</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 21</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 25 19</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 13</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 10</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\saver.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 18 11</file>
+          <file> 19 22</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 2</file>
+          <file> 8</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 10</file>
+          <file> 21 33 0 3 34</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\func.asm</name>
+      <name>$PROJ_DIR$\config_data.c</name>
       <outputs>
         <tool>
-          <name>AARM</name>
-          <file> 16</file>
+          <name>ICCARM</name>
+          <file> 16 24</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15</file>
         </tool>
       </outputs>
     </file>
@@ -169,17 +132,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 4 23</file>
+          <file> 1 10</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 3</file>
+          <file> 17</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 10</file>
+          <file> 21 33 0 3 34</file>
         </tool>
       </inputs>
     </file>
@@ -188,13 +151,54 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 15 14</file>
+          <file> 4 12</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 22</file>
+          <file> 13</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\linework.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 2 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 14</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 25</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 7 6</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 21 33 0 3 34</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
 </project>
