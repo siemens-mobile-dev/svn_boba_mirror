@@ -1347,7 +1347,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe E:\ARM\TED\Release\Exe\TED.elf \MMCard\ZBin\TED\TED.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\TED.elf \MMCard\ZBin\TED\TED.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -1429,7 +1429,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>E:\ARM\TED\test.xcl</state>
+          <state>$PROJ_DIR$\test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>

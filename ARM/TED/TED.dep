@@ -5,20 +5,20 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\convert_simple.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\saver.r79</file>
       <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Debug\Exe\TED.d79</file>
+      <file>$PROJ_DIR$\Debug\Obj\convert_simple.r79</file>
       <file>$PROJ_DIR$\Debug\Obj\convert_format.r79</file>
       <file>$PROJ_DIR$\Debug\Obj\config_data.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\linework.r79</file>
-      <file>$PROJ_DIR$\Debug\Exe\TED.d79</file>
+      <file>$PROJ_DIR$\Debug\Obj\saver.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
       <file>$PROJ_DIR$\convert_format.c</file>
-      <file>$PROJ_DIR$\convert_simple.c</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\saver.c</file>
       <file>$PROJ_DIR$\linework.c</file>
       <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\saver.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\linework.r79</file>
+      <file>$PROJ_DIR$\convert_simple.c</file>
       <file>$PROJ_DIR$\config_data.c</file>
     </outputs>
     <file>
@@ -26,7 +26,7 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 7</file>
+          <file> 1</file>
         </tool>
       </outputs>
     </file>
@@ -35,34 +35,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 4</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\convert_simple.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 0</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 2</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\saver.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 1</file>
+          <file> 3</file>
         </tool>
       </outputs>
     </file>
@@ -71,7 +44,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 6</file>
+          <file> 12</file>
         </tool>
       </outputs>
     </file>
@@ -80,7 +53,34 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 3</file>
+          <file> 6</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\saver.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\convert_simple.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 2</file>
         </tool>
       </outputs>
     </file>
@@ -89,7 +89,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 5</file>
+          <file> 4</file>
         </tool>
       </outputs>
     </file>
@@ -101,134 +101,82 @@
   <configuration>
     <name>Release</name>
     <outputs>
+      <file>$PROJ_DIR$\Release\List\convert_format.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_simple.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_format.r79</file>
+      <file>$PROJ_DIR$\Release\List\saver.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
+      <file>$PROJ_DIR$\Release\List\linework.lst</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\Release\Exe\TED.elf</file>
+      <file>$PROJ_DIR$\Release\Obj\saver.pbi</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_format.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\linework.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\saver.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
       <file>$PROJ_DIR$\..\inc\swilib.h</file>
       <file>$PROJ_DIR$\Release\List\TED.map</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
-      <file>$PROJ_DIR$\Release\Exe\TED.elf</file>
-      <file>$PROJ_DIR$\Release\Obj\saver.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_simple.r79</file>
-      <file>$PROJ_DIR$\Release\List\linework.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_simple.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_format.pbi</file>
-      <file>$PROJ_DIR$\Release\List\convert_simple.lst</file>
-      <file>$PROJ_DIR$\convert_format.c</file>
-      <file>$PROJ_DIR$\convert_simple.c</file>
-      <file>$PROJ_DIR$\Release\Obj\saver.pbi</file>
-      <file>$PROJ_DIR$\Release\List\convert_format.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_format.r79</file>
-      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
-      <file>$PROJ_DIR$\..\swilib\swilib.h</file>
-      <file>$PROJ_DIR$\Release\Obj\linework.r79</file>
-      <file>$PROJ_DIR$\Release\List\saver.lst</file>
       <file>$PROJ_DIR$\Release\List\main.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\linework.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\saver.c</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
+      <file>$PROJ_DIR$\div.r79</file>
+      <file>$PROJ_DIR$\convert_format.c</file>
       <file>$PROJ_DIR$\linework.c</file>
       <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\saver.c</file>
+      <file>$PROJ_DIR$\Release\List\convert_simple.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_simple.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\linework.pbi</file>
       <file>$PROJ_DIR$\..\inc\pngconf.h</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
-      <file>$PROJ_DIR$\div.r79</file>
+      <file>$PROJ_DIR$\convert_simple.c</file>
       <file>$PROJ_DIR$\config_data.c</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
     </outputs>
-    <file>
-      <name>$PROJ_DIR$\Release\Exe\TED.elf</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 1</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 2 5 17 8 23 20 3 7 34</file>
-        </tool>
-      </inputs>
-    </file>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 6 1</file>
+          <file> 9 17</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\TED.elf</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 17</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 7 5 3 29 15 13 19 14 21</file>
+        </tool>
+      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\convert_format.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 17 16</file>
+          <file> 3 0</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 11</file>
+          <file> 12</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 0 32 31 33 30</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\convert_simple.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 8 12</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 10</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 3 22</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 4</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 0 32 31 33 30</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\saver.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 7 21</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 15</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 0 32 31 33 30</file>
+          <file> 16 8 11 34 31</file>
         </tool>
       </inputs>
     </file>
@@ -237,11 +185,11 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 20 9</file>
+          <file> 13 6</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 24</file>
+          <file> 30</file>
         </tool>
       </outputs>
     </file>
@@ -250,7 +198,58 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 23</file>
+          <file> 15</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 19 18</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 28</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 16 8 11 34 31</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\saver.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 14 4</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 10</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 16 8 11 34 31</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\convert_simple.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 29 27</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 2</file>
         </tool>
       </outputs>
     </file>
@@ -259,11 +258,11 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 5 18</file>
+          <file> 5 20</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 25</file>
+          <file> 1</file>
         </tool>
       </outputs>
     </file>
