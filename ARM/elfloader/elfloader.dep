@@ -5,65 +5,92 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\elfloader_s.s</file>
-      <file>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</file>
-      <file>$PROJ_DIR$\Debug\Exe\ELFLoader.d79</file>
-      <file>$PROJ_DIR$\Debug\Obj\IMB.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\rets.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\elfloader.pbi</file>
-      <file>$PROJ_DIR$\..\..\inc\png.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\elfloader_s.r79</file>
-      <file>$PROJ_DIR$\Debug\List\IMB.lst</file>
-      <file>$PROJ_DIR$\Debug\List\elfloader.s79</file>
-      <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
       <file>$PROJ_DIR$\..\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\Debug\List\ESI.lst</file>
-      <file>$PROJ_DIR$\..\..\inc\zconf.h</file>
-      <file>$PROJ_DIR$\..\..\swilib.h</file>
+      <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
+      <file>$PROJ_DIR$\Debug\List\elfloader.s79</file>
+      <file>$PROJ_DIR$\Debug\List\IMB.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\elfloader_s.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\elfloader.r79</file>
+      <file>$PROJ_DIR$\..\..\inc\zlib.h</file>
       <file>$PROJ_DIR$\..\..\inc\pngconf.h</file>
       <file>$PROJ_DIR$\Debug\Obj\ESI.r79</file>
-      <file>$PROJ_DIR$\Debug\List\elfloader.lst</file>
       <file>$PROJ_DIR$\Debug\List\elfloader_s.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\elfloader.r79</file>
-      <file>$PROJ_DIR$\elfloader.cpp</file>
-      <file>$PROJ_DIR$\rets.asm</file>
-      <file>$PROJ_DIR$\..\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\IMB.asm</file>
+      <file>$PROJ_DIR$\Debug\List\elfloader.lst</file>
+      <file>$PROJ_DIR$\Debug\Exe\ELFLoader.d79</file>
+      <file>$PROJ_DIR$\Debug\Obj\IMB.r79</file>
+      <file>$PROJ_DIR$\..\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\..\..\swilib.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\elfloader.pbi</file>
+      <file>$PROJ_DIR$\..\..\inc\png.h</file>
+      <file>$PROJ_DIR$\Debug\List\ESI.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</file>
+      <file>$PROJ_DIR$\elfloader_s.s</file>
+      <file>$PROJ_DIR$\Debug\Obj\rets.r79</file>
       <file>$PROJ_DIR$\ESI.asm</file>
+      <file>$PROJ_DIR$\rets.asm</file>
+      <file>$PROJ_DIR$\IMB.asm</file>
+      <file>$PROJ_DIR$\elfloader.cpp</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\elfloader_s.s</name>
+      <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
-          <name>AARM</name>
-          <file> 7 18</file>
+          <name>XLINK</name>
+          <file> 11</file>
         </tool>
       </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</name>
-      <inputs>
-        <tool>
-          <name>BILINK</name>
-          <file> 5</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\Debug\Exe\ELFLoader.d79</name>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 10 16 3 19</file>
+          <file> 1 8 12 5</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>[ROOT_NODE]</name>
+      <name>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 15</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\elfloader_s.s</name>
       <outputs>
         <tool>
-          <name>XLINK</name>
-          <file> 2</file>
+          <name>AARM</name>
+          <file> 4 9</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\ESI.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 8 17</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\rets.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 20</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\IMB.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 12 3</file>
         </tool>
       </outputs>
     </file>
@@ -72,11 +99,11 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 19 9 17</file>
+          <file> 5 2 10</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 5</file>
+          <file> 15</file>
         </tool>
       </outputs>
       <inputs>
@@ -86,36 +113,9 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 11 6 22 13 15</file>
+          <file> 0 16 6 13 7</file>
         </tool>
       </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\rets.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 4</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\IMB.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 3 8</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ESI.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 16 12</file>
-        </tool>
-      </outputs>
     </file>
     <forcedrebuild>
       <name>[MULTI_TOOL]</name>
@@ -125,63 +125,39 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\elfloader_s.s</file>
-      <file>$PROJ_DIR$\Release\Obj\rets.r79</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
       <file>$PROJ_DIR$\Release\List\elfloader.s79</file>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
-      <file>$PROJ_DIR$\Release\List\elfloader.lst</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\rets.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\elfloader.r79</file>
       <file>$PROJ_DIR$\..\inc\png.h</file>
       <file>$PROJ_DIR$\Release\Obj\ELFLoader.pbd</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\Release\Obj\IMB.r79</file>
-      <file>$PROJ_DIR$\Release\Exe\ELFLoader.hex</file>
-      <file>$PROJ_DIR$\Release\Obj\elfloader.r79</file>
-      <file>$PROJ_DIR$\Release\List\ELFLoader.map</file>
-      <file>$PROJ_DIR$\Release\List\ESI.lst</file>
-      <file>$PROJ_DIR$\Release\List\rets.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\ESI.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\elfloader.pbi</file>
-      <file>$PROJ_DIR$\Release\Exe\ELFLoader.elf</file>
-      <file>$PROJ_DIR$\Release\Obj\elfloader_s.r79</file>
       <file>$PROJ_DIR$\Release\List\IMB.lst</file>
-      <file>$PROJ_DIR$\elfloader.cpp</file>
-      <file>$PROJ_DIR$\ELFLoader_lnk.xcl</file>
+      <file>$PROJ_DIR$\Release\Obj\elfloader_s.r79</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release\List\elfloader.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\elfloader.pbi</file>
+      <file>$PROJ_DIR$\Release\List\ESI.lst</file>
+      <file>$PROJ_DIR$\Release\List\ELFLoader.map</file>
+      <file>$PROJ_DIR$\Release\Exe\ELFLoader.elf</file>
+      <file>$PROJ_DIR$\Release\List\rets.lst</file>
+      <file>$PROJ_DIR$\Release\Exe\ELFLoader.hex</file>
+      <file>$PROJ_DIR$\Release\Obj\ESI.r79</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\Release\Obj\IMB.r79</file>
+      <file>$PROJ_DIR$\elfloader_s.s</file>
+      <file>$PROJ_DIR$\ESI.asm</file>
       <file>$PROJ_DIR$\rets.asm</file>
       <file>$PROJ_DIR$\IMB.asm</file>
-      <file>$PROJ_DIR$\ESI.asm</file>
+      <file>$PROJ_DIR$\elfloader.cpp</file>
+      <file>$PROJ_DIR$\ELFLoader_lnk.xcl</file>
     </outputs>
-    <file>
-      <name>$PROJ_DIR$\elfloader_s.s</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 19</file>
-        </tool>
-      </outputs>
-    </file>
     <file>
       <name>$PROJ_DIR$\Release\Obj\ELFLoader.pbd</name>
       <inputs>
         <tool>
           <name>BILINK</name>
-          <file> 17</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Release\Exe\ELFLoader.hex</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 13 18</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 22 16 10 12 1</file>
+          <file> 11</file>
         </tool>
       </inputs>
     </file>
@@ -190,7 +166,7 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 11 13 18</file>
+          <file> 13 14 16</file>
         </tool>
       </outputs>
     </file>
@@ -199,48 +175,31 @@
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 22 12</file>
+          <file> 25 3</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\elfloader.cpp</name>
+      <name>$PROJ_DIR$\Release\Exe\ELFLoader.hex</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 12 2 4</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 17</file>
+          <name>XLINK</name>
+          <file> 13 14</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 8 6 9 5 3</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 8 6 9 5 3</file>
+          <name>XLINK</name>
+          <file> 25 17 19 3 2</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\rets.asm</name>
+      <name>$PROJ_DIR$\elfloader_s.s</name>
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 1 15</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\IMB.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 10 20</file>
+          <file> 7</file>
         </tool>
       </outputs>
     </file>
@@ -249,9 +208,50 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 16 14</file>
+          <file> 17 12</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\rets.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 2 15</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\IMB.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 19 6</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\elfloader.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 3 1 10</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 18 4 0 8 9</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 18 4 0 8 9</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
 </project>
