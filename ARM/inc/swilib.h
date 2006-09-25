@@ -1,4 +1,4 @@
-//Release 23.08.2006
+//Release 25.09.2006
 
 typedef unsigned int size_t;
 typedef unsigned long time_t;
