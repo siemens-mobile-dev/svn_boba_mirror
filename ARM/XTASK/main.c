@@ -1,4 +1,4 @@
-#include "..\swilib.h"
+#include "..\swilib\swilib.h"
 
 WSHDR *ws_nogui;
 

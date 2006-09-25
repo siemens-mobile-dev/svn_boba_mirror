@@ -5,15 +5,17 @@
   <configuration>
     <name>Debug</name>
     <outputs>
+      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
+      <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\Debug\Exe\MegaDial.d79</file>
-      <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\main.c</file>
     </outputs>
     <file>
-      <name>[ROOT_NODE]</name>
+      <name>$PROJ_DIR$\func.asm</name>
       <outputs>
         <tool>
-          <name>XLINK</name>
+          <name>AARM</name>
           <file> 0</file>
         </tool>
       </outputs>
@@ -23,6 +25,15 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
+          <file> 3</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
           <file> 2</file>
         </tool>
       </outputs>
@@ -35,42 +46,27 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\Release\Exe\MegaDial.elf</file>
+      <file>$PROJ_DIR$\..\png\png.h</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\..\swilib\swilib.h</file>
+      <file>$PROJ_DIR$\..\png\zconf.h</file>
       <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\Release\Obj\main.r79</file>
       <file>$PROJ_DIR$\Release\List\MegaDial.map</file>
-      <file>$PROJ_DIR$\..\png\png.h</file>
-      <file>$PROJ_DIR$\..\png\zlib.h</file>
-      <file>$PROJ_DIR$\Release\List\main.lst</file>
-      <file>$PROJ_DIR$\..\png\pngconf.h</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\..\swilib.h</file>
-      <file>$PROJ_DIR$\..\png\zconf.h</file>
       <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release\Exe\MegaDial.elf</file>
+      <file>$PROJ_DIR$\..\png\pngconf.h</file>
+      <file>$PROJ_DIR$\..\png\zlib.h</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\Release\Exe\MegaDial.elf</name>
+      <name>$PROJ_DIR$\func.asm</name>
       <outputs>
         <tool>
-          <name>XLINK</name>
-          <file> 3</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 8 1 2</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 0 3</file>
+          <name>AARM</name>
+          <file> 5</file>
         </tool>
       </outputs>
     </file>
@@ -79,28 +75,43 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 2 6</file>
+          <file> 7 1</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 13</file>
+          <file> 10</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 9 4 5 10 7</file>
+          <file> 3 0 13 4 12</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\func.asm</name>
+      <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
-          <name>AARM</name>
-          <file> 1</file>
+          <name>XLINK</name>
+          <file> 11 8</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\MegaDial.elf</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 8</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 2 5 7</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
 </project>

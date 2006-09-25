@@ -1,4 +1,4 @@
-#include "..\swilib.h"
+#include "..\swilib\swilib.h"
 
 #define MAX_RECORDS 5000
 

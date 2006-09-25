@@ -1,4 +1,4 @@
-#include "..\swilib.h"
+#include "..\swilib\swilib.h"
 
 extern unsigned int STKSZ;
 extern unsigned int STKSZ50;

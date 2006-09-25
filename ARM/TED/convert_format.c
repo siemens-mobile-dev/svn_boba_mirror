@@ -1,4 +1,4 @@
-#include "..\swilib.h"
+#include "..\swilib\swilib.h"
 
 void memset(void *dst, int v, unsigned int len)
 {

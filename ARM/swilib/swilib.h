@@ -14,7 +14,7 @@ typedef int jmp_buf[11];
 
 #define __int16 short
 
-#include "png/png.h"
+#include "../png/png.h"
 
 //Если S75, расскоментировать сл. строку
 #define NEWSGOLD
