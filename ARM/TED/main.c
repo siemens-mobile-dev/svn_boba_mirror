@@ -1,4 +1,4 @@
-#include "..\swilib\swilib.h"
+#include "..\inc\swilib.h"
 
 int menusoftkeys[]={0,1,2};
 
