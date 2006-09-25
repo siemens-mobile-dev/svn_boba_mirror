@@ -1,0 +1,4 @@
+-G "F:\CELLULAR\Sl45\TED\"
+-err "ted.err"
+-r
+-f "ted.mak"

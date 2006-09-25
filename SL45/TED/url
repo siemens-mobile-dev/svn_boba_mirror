@@ -1,0 +1,46 @@
+http://www.deep-shadows.com/cgi-bin/hax/search.cgi/rawsearch?charset=win1251&string=азимов
+
+точнее:
+http://www.deep-shadows.com/cgi-bin/hax/search.cgi/
+rawsearch?string=%CB%F3%EA%FC%FF%ED%E5%ED%EA%EE&codepage=Windows-1251&submit=Search
+
+
+GET /cgi-bin/hax/search.cgi/rawsearch?string=%CB%F3%EA%FC%FF%ED%E5%ED%EA%EE&codepage=Windows-1251&submit=Search HTTP/1.1
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.51
+Host: www.deep-shadows.com
+Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1
+Accept-Language: ru,en;q=0.9
+Accept-Charset: windows-1252, utf-8, utf-16, iso-8859-1;q=0.6, *;q=0.1
+Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0
+Cache-Control: no-cache
+Connection: Keep-Alive, TE
+TE: deflate, gzip, chunked, identity, trailers
+HTTP/1.1 200 OK
+Date: Thu, 06 Apr 2006 11:29:39 GMT
+Server: Apache
+Content: 
+Content-Length: 19767
+Keep-Alive: timeout=10, max=100
+Connection: Keep-Alive
+Content-Type: text/html
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Windows-1251">
+</head>
+
+<body bgcolor="#000000" text="#FFFFFF" link="#FFCC00">
+ReadManiac search engine <br><br>
+      <p>
+
+
+Search returned 125 matches:
+
+
+</p><p>1)"Атомный сон" (Сергей  Лукьяненко) - http://fictionbook.ru/author/lukyanenko_sergeyi/atomniyyi_son/lukyanenko_atomniyyi_son.html </p>
+
+
+----------------
+
+
+<p>2)"Атомный сон" (Сергей  Лукьяненко) - http://fictionbook.ru/author/lukyanenko_sergeyi/atomniyyi_son/lukyanenko_atomniyyi_son.txt.zip </p>

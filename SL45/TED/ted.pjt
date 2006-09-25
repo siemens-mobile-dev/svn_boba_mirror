@@ -1,0 +1,173 @@
+;Codewright Project File (do not remove or modify this line)
+[ProjInit]
+ConfigSetExtMode=2
+ProjSetConfigFlags=0x04110940
+
+[State]
+SysSetCwd='F:\CELLULAR\Sl45\Template'
+SrchSetFlags=0x0000600a
+SrchSetAgainFlags=0x00006002,0
+SrchSetAgainFlags=0x0200600a,1
+FileSortMode=0x0
+_StateView='F:\CELLULAR\Sl45\TED\convert_simple.c',110,110,659,373,-1,-1,23,1,23,1,5,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\TED\convert_format.c',132,132,659,373,-1,-1,23,1,1,1,6,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\TED\saver.c',66,66,659,373,-1,-1,41,62,27,1,4,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\TED\linework.c',132,132,659,373,-1,-1,37,1,28,1,7,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\TED\main.c',154,154,659,373,-1,-1,2441,1,2419,1,1,'',0x00100018,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\TED\sl45func.asm',110,110,659,373,-1,-1,136,1,114,1,2,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\TED\sl45.h',88,88,659,373,-1,-1,190,11,181,1,3,'',0x00100008,0,80,0,0,''
+_StateBuffer='F:\CELLULAR\Sl45\TED\convert_simple.c',0x0400048e,23,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\TED\convert_format.c',0x0400048e,23,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\TED\saver.c',0x0400048e,41,62,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\TED\linework.c',0x0400048e,37,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\TED\main.c',0x0400048e,2441,1,25,'5 9','',0x0,'',1,72,1,0
+_StateBuffer='F:\CELLULAR\Sl45\TED\sl45func.asm',0x0400048e,137,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\TED\sl45.h',0x0400048e,190,11,25,'5 9','',0x0,'',1,72,0,0
+_StateHistory=FILELIST,'F:\CELLULAR\Sl45\TED\main.src','F:\CELLULAR\Sl45\TED\convert_simple.c','F:\CELLULAR\Sl45\TED\convert_format.c','F:\CELLULAR\Sl45\TED\main.c','F:\CELLULAR\Sl45\TED\saver.c','F:\CELLULAR\Sl45\TED\sl45.h','F:\CELLULAR\Sl45\TED\sl45func.asm','F:\CELLULAR\Sl45\TED\linework.c'
+_StateHistory=SEARCH,'drawmode','draw_mode','dsp','move_up','history_pos','stkfile','menu_','total','HISTORY','win_dos_koi'
+_StateHistory=EDITFILE,'F:\CELLULAR\Sl45\FileORG\sl45func.asm','F:\CELLULAR\Sl45\MEGAdial\MEGAdial','E:\!\ted.pjt','F:\CELLULAR\Sl45\SND\SND','F:\CELLULAR\Sl45\SND\main.c','F:\CELLULAR\Sl45\SND\sl45func.asm','F:\CELLULAR\Sl45\Template\T.pjt','F:\CELLULAR\Sl45\TED\saver.c','F:\CELLULAR\Sl45\TED\sl45.h','F:\CELLULAR\Sl45\TED\linework.c'
+_StateHistory=DOCUMENTVISIT,'2337        1           F:\CELLULAR\Sl45\TED\main.c','1           1           F:\CELLULAR\Sl45\TED\convert_format.c','2325        29          F:\CELLULAR\Sl45\TED\main.c','152         11          F:\CELLULAR\Sl45\TED\sl45.h','1595        5           F:\CELLULAR\Sl45\TED\main.c','66          11          F:\CELLULAR\Sl45\TED\sl45.h','817         1           F:\CELLULAR\Sl45\TED\main.c','41          62          F:\CELLULAR\Sl45\TED\saver.c','190         11          F:\CELLULAR\Sl45\TED\sl45.h','137         1           F:\CELLULAR\Sl45\TED\sl45func.asm'
+_StateDocumentVisit=10
+
+[Editor]
+_RestoreSysFlags=0x43097fca, 0xfffffffc, 0
+_RestoreSysFlags=0x00010001, 0xffffffff, 1
+CollapseMode=0x13080610
+VCSProject=''
+VCSProjectPath=''
+VCSProjectLocalPath=''
+ScrapSetCount=1
+ClipboardSetCount=1
+ClipboardEnableSepStr=1
+ClipboardSetSepStr='\r\n',0
+ClipboardEnableTermStr=1
+ClipboardSetTermStr='\r\n',0
+
+[Tools]
+ToolDeleteList 
+ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
+
+[Compiler]
+TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
+BrowseSetFile='D:\c166\bin\tagfile.ptg'
+TagSetFile='D:\c166\bin\tagfile.tag'
+CompilerAddCmdEx='$_cw_proj_hash_$','',1073741904,'',80,'${FTEE} nmake',176,'${FTEE} nmake',176,'${FTEE} nmake',176,'${FTEE} nmake',176,'',0,'',0,'_ErrorInfoDefault','','','proj.err','%x'
+CompilerAddResponse='$_cw_proj_hash_$',
+CompilerNewExt=.v
+CompilerNewExt=.src
+CompilerNewExt=.htm
+CompilerNewExt=.bas
+CompilerNewExt=.awk
+CompilerNewExt=.jsp
+CompilerNewExt=.cfml
+CompilerNewExt=.adb
+CompilerNewExt=.vhd
+CompilerNewExt=.pl
+CompilerNewExt=.pas
+CompilerNewExt=.tk
+CompilerNewExt=.rul
+CompilerNewExt=.asp
+CompilerNewExt=.js
+CompilerNewExt=.cob
+CompilerNewExt=.tcl
+CompilerNewExt=.rc
+CompilerNewExt=.php
+CompilerNewExt=.cc
+CompilerNewExt=.ini
+CompilerNewExt=.html
+CompilerNewExt=.bat
+CompilerNewExt=.cs
+CompilerNewExt=.txt
+CompilerNewExt=.nrx
+CompilerNewExt=.xml
+CompilerNewExt=.sqlj
+CompilerNewExt=.java
+
+[VersionControl:PVCS]
+VCSSetCmd=VCS_CHECKIN_ID,'put -n -T@"%Q" -M@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKINLOCK_ID,'put -n -T@"%Q" -M@"%Q" -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUT_ID,'get -y "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUTLOCK_ID,'get -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOCK_ID,'vcs -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKUNLOCK_ID,'vcs -y -u "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLABEL_ID,'vcs -y -v"${VCSLABEL}" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOG_ID,'vlog "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKPROP_ID,'vlog -b "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKDIFF_ID,'vdiff -r "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKMENU_ID,'pvcsvmwn',0x8000000
+VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
+
+[Files]
+.\sl45func.asm
+.\sl45.h
+.\main.c
+.\convert_simple.c
+.\convert_format.c
+.\saver.c
+.\linework.c
+
+[Project]
+ConfigSetLinkDBFilename='D:\c166\bin\cwright.ldb'
+ConfigSetMarkDBFilename='D:\c166\bin\CWRIGHT.MRK'
+ConfigSetSymbolDBFilename='F:\CELLULAR\Sl45\TED\ted.sbl'
+EditSetPath=''
+
+[Ede]
+Toolchain=d:\c166\etc\c166.dol
+ToolchainName=TASKING Tools for C166/ST10 v7.5 r2
+ProjectDir=f:\cellular\sl45\ted
+UserMode=Expert
+EdeVersion=2.7r5 (094)
+CodeWrightVersion=6.5
+DefBuildSettings=True
+SaveFiles=True
+ScanDependencies=False
+StopAfterError=True
+KeepTmpFiles=False
+ExtMakefile=False
+ExtMakefileName=
+UseMakeOptions=False
+MakeOptions=
+ShowOptions=False
+ExtDebugger=False
+ExtDebuggerName=
+UseDOSShell=False
+SaveOptionMethod=0
+SaveOptionFileName=
+LoadOptionFileName=
+LoadOptionStartup=False
+GroupMisraC=0
+GroupList=GroupMisraC
+
+[Directories]
+Executables=d:\c166\bin
+Includes=d:\c166\include
+Libraries=d:\c166\lib
+
+[DefaultOptions]
+CMemModel=CModelLarge
+COptimClearNonInit=0
+CClearBitRam=0
+CEstimateUsk=0
+CDebug=0
+CUnsignedChar=1
+CLangExt=CAdvLangExt
+CAnsi14BitFarArith=1
+COptim=CAdvOptim
+OptConvPtrLongFar=1
+COptimCLibInline=1
+OutAbs=0
+OutIHex=1
+LocCheckClasses=1
+LnkLocStdLib=0
+LocVecTab=0
+LocMemIRAM=0
+LocCpuMemSize=0
+LocClasses=CMYINIT,CPROGRAM,CROM,CFARROM,CFAR(80000h-87FFFh),CFAR1(88000h-93FFFh),CFAR_SAV(94000h-97FFFh)
+LocUserStackSize=
+LnkLocSymbTab=1
+OptionList=CMemModel,COptimClearNonInit,CClearBitRam,CEstimateUsk,CDebug,CUnsignedChar,CLangExt,CAnsi14BitFarArith,COptim,OptConvPtrLongFar,COptimCLibInline,OutAbs,OutIHex,LocCheckClasses,LnkLocStdLib,LocVecTab,LocMemIRAM,LocCpuMemSize,LocClasses,LocUserStackSize,LnkLocSymbTab
+
+[Options]
+FileList=

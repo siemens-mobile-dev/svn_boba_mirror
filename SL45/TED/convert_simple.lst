@@ -1,0 +1,225 @@
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:46  Page:   1
+convert_simple
+
+ LOC CODE        LINE   SOURCELINE
+
+                     1   ; C166/ST10 C compiler v7.5 r2            SN00123412-435 (c) 2001 TASKING, Inc.
+                     2   ; options: -e -Id:\c166\include -xmifp -DCPUTYPE=0x167 -FSC -Ob -znocustack
+                     3   ;          -zautobitastruct-4 -zautobita-0 -T256 -s -zvolatile_union -u
+                     4   ;          -AcdFiklmpstuVx -OAcdFghjkLnoprSUx -Ml
+                     5   $EXTEND
+                     6   $NOMOD166
+                     7   $STDNAMES(reg.def)
+                     8   $SEGMENTED
+                     9   $CASE
+                    10   $MODEL(LARGE)
+                    11           NAME    CONVERT_SIMPLE_C
+                    12           ASSUME  DPP3:SYSTEM
+                    13   ; convert_simple.c    1 #include "sl45.h"
+                    14   ; convert_simple.c    2 
+                    15   ; convert_simple.c    3 extern unsigned long curline;
+                    16   ; convert_simple.c    4 
+                    17   ; convert_simple.c    5 extern unsigned char far dstk[];
+                    18   ; convert_simple.c    6 extern unsigned char far ustk[];
+                    19   ; convert_simple.c    7 
+                    20   ; convert_simple.c    8 extern unsigned int FL_loader(int fin, unsigned int p);
+                    21   ; convert_simple.c    9 extern unsigned int FL_saver(int fs, unsigned int p);
+                    22   ; convert_simple.c   10 
+                    23   ; convert_simple.c   11 unsigned int ConvertSimple(int fin,int fs)
+                    24   ; convert_simple.c   12 {
+                    25           PUBLIC  _ConvertSimple
+                    26   CONVERT_SIMPLE_1_PR     SECTION CODE WORD PUBLIC 'CPROGRAM'
+                    27   _ConvertSimple  PROC    FAR
+0000 8890           28           MOV     [-R0],R9
+0002 8880           29           MOV     [-R0],R8
+0004 8870           30           MOV     [-R0],R7
+0006 8860           31           MOV     [-R0],R6
+0008 88D0           32           MOV     [-R0],R13
+000A 88C0           33           MOV     [-R0],R12
+                    34   ; Locals:
+                    35   ; 
+                    36   ; Statics:
+                    37   ; 
+                    38   ; CSEs:
+                    39   ;     d = R8
+                    40   ;     s = R9
+                    41   ;     sym = R14
+                    42   ;     i = R6
+                    43   ;     eolsymb = R7
+                    44   ;     fin = offset 0
+                    45   ;     fs = offset 2
+                    46   ; 
+                    47   ; convert_simple.c   13  unsigned int s;
+                    48   ; convert_simple.c   14  unsigned int sym;
+                    49   ; convert_simple.c   15  unsigned int d=0;
+000C E008           50           MOV     R8,#00h
+                    51   ; convert_simple.c   16  unsigned int i=0;
+000E E006           52           MOV     R6,#00h
+                    53   ; convert_simple.c   17  unsigned int eolsymb=0;
+0010 E007           54           MOV     R7,#00h
+                    55   ; convert_simple.c   18 
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:46  Page:   2
+convert_simple
+
+ LOC CODE        LINE   SOURCELINE
+
+                    56   ; convert_simple.c   19  s=FL_loader(fin,0xFFFF);
+0012 E6FDFFFF       57           MOV     R13,#0FFFFh
+0016 DA000000  R    58           CALLS   SEG _FL_loader,_FL_loader
+001A F094           59           MOV     R9,R4
+                    60   ; convert_simple.c   20  while((sym=dstk[s++]))
+001C EA00A200  R    61           JMPA    cc_UC,_15
+0020                62   _3:
+                    63   ; convert_simple.c   21  {
+                    64   ; convert_simple.c   22    if (s>=8192) s=FL_loader(fin,s);
+0020 46F90020       65           CMP     R9,#02000h
+0024 8D08           66           JMPR    cc_ULT,_4
+0026 88E0           67           MOV     [-R0],R14
+0028 D4C00200       68           MOV     R12,[R0+#02H]
+002C F0D9           69           MOV     R13,R9
+002E DA000000  R    70           CALLS   SEG _FL_loader,_FL_loader
+0032 F094           71           MOV     R9,R4
+0034 98E0           72           MOV     R14,[R0+]
+0036                73   _4:
+                    74   ; convert_simple.c   23    switch(sym)
+0036 46FE0D00       75           CMP     R14,#0Dh
+003A 2D09           76           JMPR    cc_EQ,_6
+003C 46FE0A00       77           CMP     R14,#0Ah
+0040 2D06           78           JMPR    cc_EQ,_6
+0042 48E1           79           CMP     R14,#01h
+0044 2D18           80           JMPR    cc_EQ,_10
+0046 46FE0900       81           CMP     R14,#09h
+004A 2D15           82           JMPR    cc_EQ,_10
+004C 0D16           83           JMPR    cc_UC,_11
+                    84   ; convert_simple.c   24    {
+                    85   ; convert_simple.c   25     case 0x0D:
+                    86   ; convert_simple.c   26     case 0x0A:
+004E                87   _6:
+                    88   ; convert_simple.c   27      if (eolsymb==sym)
+004E 407E           89           CMP     R7,R14
+0050 2D03           90           JMPR    cc_EQ,_8
+                    91   ; convert_simple.c   28      {
+                    92   ; convert_simple.c   29           goto LEOL;
+                    93   ; convert_simple.c   30      }
+                    94   ; convert_simple.c   31      if (eolsymb) break; //Пропустили второе окончание строки
+0052 4870           95           CMP     R7,#00h
+0054 3D1D           96           JMPR    cc_NZ,_13
+                    97   ; convert_simple.c   32      eolsymb=sym; //Определили конец строки
+0056 F07E           98           MOV     R7,R14
+                    99   ; convert_simple.c   33          LEOL:
+0058               100   _8:
+                   101   ; convert_simple.c   34      curline++;
+0058 D7500000  R   102           EXTP    #PAG _curline,#02h
+005C 248F0000 2R   103           SUB     POF _curline,ONES
+0060 348F0000 1R   104           SUBC    POF (_curline+2),ONES
+                   105   ; convert_simple.c   35          i=0; //Начало строки
+0064 E006          106           MOV     R6,#00h
+                   107   ; convert_simple.c   36          ustk[d++]=0;
+0066 E102          108           MOVB    RL1,#00h
+0068 F0C8          109           MOV     R12,R8
+006A 0881          110           ADD     R8,#01h
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:46  Page:   3
+convert_simple
+
+ LOC CODE        LINE   SOURCELINE
+
+006C D7400000  R   111           EXTP    #PAG _ustk,#01h
+0070 E42C0000 1R   112           MOVB    [R12+#POF _ustk],RL1
+                   113   ; convert_simple.c   37          break;
+0074 0D0D          114           JMPR    cc_UC,_13
+                   115   ; convert_simple.c   38         case 0x01:
+                   116   ; convert_simple.c   39     case 0x09:
+0076               117   _10:
+                   118   ; convert_simple.c   40      sym=' '; //Пока преобразовали табуляцию в пробел
+0076 E6FE2000      119           MOV     R14,#020h
+                   120   ; convert_simple.c   41     default:
+007A               121   _11:
+                   122   ; convert_simple.c   42          ustk[d++]=sym;
+007A F01E          123           MOV     R1,R14
+007C F0C8          124           MOV     R12,R8
+007E 0881          125           ADD     R8,#01h
+0080 D7400000  R   126           EXTP    #PAG _ustk,#01h
+0084 E42C0000 1R   127           MOVB    [R12+#POF _ustk],RL1
+                   128   ; convert_simple.c   43      i++;
+0088 0861          129           ADD     R6,#01h
+                   130   ; convert_simple.c   44      if (i>255)
+008A 46F6FF00      131           CMP     R6,#0FFh
+008E EDE4          132           JMPR    cc_UGT,_8
+                   133   ; convert_simple.c   45      {
+                   134   ; convert_simple.c   46        goto LEOL; //Слишком длинная строка
+                   135   ; convert_simple.c   47          }
+                   136   ; convert_simple.c   48          break;
+                   137   ; convert_simple.c   49    }
+0090               138   _13:
+                   139   ; convert_simple.c   50    if (d>=8192) d=FL_saver(fs,d);
+0090 46F80020      140           CMP     R8,#02000h
+0094 8D06          141           JMPR    cc_ULT,_15
+0096 D4C00200      142           MOV     R12,[R0+#02H]
+009A F0D8          143           MOV     R13,R8
+009C DA000000  R   144           CALLS   SEG _FL_saver,_FL_saver
+00A0 F084          145           MOV     R8,R4
+00A2               146   _15:
+00A2 F0C9          147           MOV     R12,R9
+00A4 0891          148           ADD     R9,#01h
+00A6 D7400000  R   149           EXTP    #PAG _dstk,#01h
+00AA F42C0000 1R   150           MOVB    RL1,[R12+#POF _dstk]
+00AE C02E          151           MOVBZ   R14,RL1
+00B0 3DB7          152           JMPR    cc_NZ,_3
+                   153   ; convert_simple.c   51  }
+                   154   ; convert_simple.c   52  if (i)
+00B2 4860          155           CMP     R6,#00h
+00B4 2D0D          156           JMPR    cc_Z,_16
+                   157   ; convert_simple.c   53  {
+                   158   ; convert_simple.c   54    //Незавершенная строка
+                   159   ; convert_simple.c   55    ustk[d++]=0;
+00B6 E10C          160           MOVB    RL6,#00h
+00B8 F098          161           MOV     R9,R8
+00BA 0881          162           ADD     R8,#01h
+00BC D7400000  R   163           EXTP    #PAG _ustk,#01h
+00C0 E4C90000 1R   164           MOVB    [R9+#POF _ustk],RL6
+                   165   ; convert_simple.c   56    curline++;
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:46  Page:   4
+convert_simple
+
+ LOC CODE        LINE   SOURCELINE
+
+00C4 D7500000  R   166           EXTP    #PAG _curline,#02h
+00C8 248F0000 2R   167           SUB     POF _curline,ONES
+00CC 348F0000 1R   168           SUBC    POF (_curline+2),ONES
+                   169   ; convert_simple.c   57  }
+00D0               170   _16:
+                   171   ; convert_simple.c   58  if (d>=8192) d=FL_saver(fs,d);
+00D0 46F80020      172           CMP     R8,#02000h
+00D4 8D06          173           JMPR    cc_ULT,_17
+00D6 D4C00200      174           MOV     R12,[R0+#02H]
+00DA F0D8          175           MOV     R13,R8
+00DC DA000000  R   176           CALLS   SEG _FL_saver,_FL_saver
+00E0 F084          177           MOV     R8,R4
+00E2               178   _17:
+                   179   ; convert_simple.c   59  return(d);
+00E2 F048          180           MOV     R4,R8
+                   181   ; convert_simple.c   60 }
+00E4 0804          182           ADD     R0,#04h
+00E6 9860          183           MOV     R6,[R0+]
+00E8 9870          184           MOV     R7,[R0+]
+00EA 9880          185           MOV     R8,[R0+]
+00EC 9890          186           MOV     R9,[R0+]
+00EE DB00          187           RETS
+                   188   _ConvertSimple  ENDP
+                   189   ; convert_simple.c   61 
+                   190   ; convert_simple.c   62 
+                   191   ; convert_simple.c   63 
+                   192   ; convert_simple.c   64 
+                   193   ; convert_simple.c   65 
+                   194   CONVERT_SIMPLE_1_PR     ENDS
+                   195   
+                   196           EXTERN  _FL_loader:FAR
+                   197           EXTERN  _curline:WORD
+                   198           EXTERN  _FL_saver:FAR
+                   199           EXTERN  _dstk:BYTE
+                   200           EXTERN  _ustk:BYTE
+                   201           REGDEF  R0-R15
+                   202           END
+
+total errors: 0, warnings: 0
+

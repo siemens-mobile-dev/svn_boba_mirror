@@ -1,0 +1,259 @@
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:47  Page:   1
+linework
+
+ LOC CODE        LINE   SOURCELINE
+
+                     1   ; C166/ST10 C compiler v7.5 r2            SN00123412-435 (c) 2001 TASKING, Inc.
+                     2   ; options: -e -Id:\c166\include -xmifp -DCPUTYPE=0x167 -FSC -Ob -znocustack
+                     3   ;          -zautobitastruct-4 -zautobita-0 -T256 -s -zvolatile_union -u
+                     4   ;          -AcdFiklmpstuVx -OAcdFghjkLnoprSUx -Ml
+                     5   $EXTEND
+                     6   $NOMOD166
+                     7   $STDNAMES(reg.def)
+                     8   $SEGMENTED
+                     9   $CASE
+                    10   $MODEL(LARGE)
+                    11           NAME    LINEWORK_C
+                    12           ASSUME  DPP3:SYSTEM
+                    13   ; linework.c    1       #include "sl45.h"
+                    14   ; linework.c    2       
+                    15   ; linework.c    3       #define STKSZ (16384)
+                    16   ; linework.c    4       
+                    17   ; linework.c    5       extern unsigned int far usp; //Указатель на верхний стек
+                    18   ; linework.c    6       extern unsigned int far dsp; //Указатель на нижний стек
+                    19   ; linework.c    7       extern unsigned char far dstk[];
+                    20   ; linework.c    8       extern unsigned char far ustk[];
+                    21   ; linework.c    9       
+                    22   ; linework.c   10       unsigned int bl_us(unsigned int p)
+                    23   ; linework.c   11       {
+                    24           PUBLIC  _bl_us
+                    25   LINEWORK_1_PR   SECTION CODE WORD PUBLIC 'CPROGRAM'
+                    26   _bl_us  PROC    FAR
+                    27   ; Locals:
+                    28   ; 
+                    29   ; Statics:
+                    30   ; 
+                    31   ; CSEs:
+                    32   ;     p = R12
+                    33   ; 
+                    34   ; linework.c   12        if (!p) return(p);
+0000 48C0           35           CMP     R12,#00h
+0002 2D07           36           JMPR    cc_Z,_9
+                    37   ; linework.c   13        do
+0004                38   _7:
+                    39   ; linework.c   14        {
+                    40   ; linework.c   15         if (!(--p)) break;
+0004 28C1           41           SUB     R12,#01h
+0006 2D05           42           JMPR    cc_Z,_9
+                    43   ; linework.c   16        }
+                    44   ; linework.c   17        while(ustk[p-1]);
+0008 D7400000  R    45           EXTP    #PAG _ustk,#01h
+000C F42C0000 1R    46           MOVB    RL1,[R12+#POF _ustk-1]
+0010 3DF9           47           JMPR    cc_NZ,_7
+0012                48   _9:
+                    49   ; linework.c   18        return(p);
+0012 F04C           50           MOV     R4,R12
+                    51   ; linework.c   19       }
+0014 DB00           52           RETS
+                    53   _bl_us  ENDP
+                    54   ; linework.c   20       
+                    55   ; linework.c   21       unsigned int bl_ds(unsigned int p)
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:47  Page:   2
+linework
+
+ LOC CODE        LINE   SOURCELINE
+
+                    56   ; linework.c   22       {
+                    57           PUBLIC  _bl_ds
+                    58   _bl_ds  PROC    FAR
+                    59   ; Locals:
+                    60   ; 
+                    61   ; Statics:
+                    62   ; 
+                    63   ; CSEs:
+                    64   ;     p = R12
+                    65   ; 
+                    66   ; linework.c   23        if (p==STKSZ) return(p);
+0016 46FC0040       67           CMP     R12,#04000h
+001A 2D06           68           JMPR    cc_EQ,_14
+                    69   ; linework.c   24        do
+001C                70   _13:
+                    71   ; linework.c   25        {
+                    72   ; linework.c   26         p++;
+001C 08C1           73           ADD     R12,#01h
+                    74   ; linework.c   27        }
+                    75   ; linework.c   28        while(dstk[p-1]);
+001E D7400000  R    76           EXTP    #PAG _dstk,#01h
+0022 F42C0000 1R    77           MOVB    RL1,[R12+#POF _dstk-1]
+0026 3DFA           78           JMPR    cc_NZ,_13
+                    79   ; linework.c   29        return(p);
+0028                80   _14:
+0028 F04C           81           MOV     R4,R12
+                    82   ; linework.c   30       }
+002A DB00           83           RETS
+                    84   _bl_ds  ENDP
+                    85   ; linework.c   31       
+                    86   ; linework.c   32       //Перенос из верхнего стека в нижний (на строку вверх)
+                    87   ; linework.c   33       void move_up(void)
+                    88   ; linework.c   34       {
+                    89           PUBLIC  _move_up
+                    90   _move_up        PROC    FAR
+                    91   ; Locals:
+                    92   ; 
+                    93   ; Statics:
+                    94   ; 
+                    95   ; CSEs:
+                    96   ;     s = R12
+                    97   ;     d = R13
+                    98   ;     c = RL1
+                    99   ; 
+                   100   ; linework.c   35        unsigned int s=usp;
+002C D7400000  R   101           EXTP    #PAG _usp,#01h
+0030 F2FC0000 1R   102           MOV     R12,POF _usp
+                   103   ; linework.c   36        unsigned int d=dsp;
+0034 D7400000  R   104           EXTP    #PAG _dsp,#01h
+0038 F2FD0000 1R   105           MOV     R13,POF _dsp
+                   106   ; linework.c   37        unsigned char c;
+                   107   ; linework.c   38        if (!s) return;
+003C 48C0          108           CMP     R12,#00h
+003E 2D31          109           JMPR    cc_Z,_30
+                   110   ; linework.c   39        dstk[--d]=ustk[--s]; //Переносим 0
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:47  Page:   3
+linework
+
+ LOC CODE        LINE   SOURCELINE
+
+0040 28C1          111           SUB     R12,#01h
+0042 D7400000  R   112           EXTP    #PAG _ustk,#01h
+0046 F42C0000 1R   113           MOVB    RL1,[R12+#POF _ustk]
+004A 28D1          114           SUB     R13,#01h
+004C D7400000  R   115           EXTP    #PAG _dstk,#01h
+0050 E42D0000 1R   116           MOVB    [R13+#POF _dstk],RL1
+                   117   ; linework.c   40        if (s>256)
+0054 46FC0001      118           CMP     R12,#0100h
+0058 FD0E          119           JMPR    cc_ULE,_25
+                   120   ; linework.c   41        {
+                   121   ; linework.c   42         while((c=ustk[--s])) dstk[--d]=c;
+005A 0D05          122           JMPR    cc_UC,_24
+005C               123   _23:
+005C 28D1          124           SUB     R13,#01h
+005E D7400000  R   125           EXTP    #PAG _dstk,#01h
+0062 E42D0000 1R   126           MOVB    [R13+#POF _dstk],RL1
+0066               127   _24:
+0066 28C1          128           SUB     R12,#01h
+0068 D7400000  R   129           EXTP    #PAG _ustk,#01h
+006C F42C0000 1R   130           MOVB    RL1,[R12+#POF _ustk]
+0070 3DF5          131           JMPR    cc_NZ,_23
+                   132   ; linework.c   43         s++;
+0072 08C1          133           ADD     R12,#01h
+                   134   ; linework.c   44        }
+0074 0D0E          135           JMPR    cc_UC,_29
+                   136   ; linework.c   45        else
+                   137   ; linework.c   46        {
+                   138   ; linework.c   47         while(s)
+0076               139   _25:
+0076 0D0B          140           JMPR    cc_UC,_27
+0078               141   _26:
+                   142   ; linework.c   48         {
+                   143   ; linework.c   49          if (!(c=ustk[s-1])) break;
+0078 D7400000  R   144           EXTP    #PAG _ustk,#01h
+007C F42C0000 1R   145           MOVB    RL1,[R12+#POF _ustk-1]
+0080 2D08          146           JMPR    cc_Z,_29
+                   147   ; linework.c   50          s--;
+0082 28C1          148           SUB     R12,#01h
+                   149   ; linework.c   51          dstk[--d]=c;
+0084 28D1          150           SUB     R13,#01h
+0086 D7400000  R   151           EXTP    #PAG _dstk,#01h
+008A E42D0000 1R   152           MOVB    [R13+#POF _dstk],RL1
+008E               153   _27:
+008E 48C0          154           CMP     R12,#00h
+0090 3DF3          155           JMPR    cc_NZ,_26
+                   156   ; linework.c   52         }
+                   157   ; linework.c   53        }
+0092               158   _29:
+                   159   ; linework.c   54        usp=s;
+0092 D7400000  R   160           EXTP    #PAG _usp,#01h
+0096 F6FC0000 1R   161           MOV     POF _usp,R12
+                   162   ; linework.c   55        dsp=d;
+009A D7400000  R   163           EXTP    #PAG _dsp,#01h
+009E F6FD0000 1R   164           MOV     POF _dsp,R13
+                   165   ; linework.c   56       }
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:47  Page:   4
+linework
+
+ LOC CODE        LINE   SOURCELINE
+
+00A2               166   _30:
+00A2 DB00          167           RETS
+                   168   _move_up        ENDP
+                   169   ; linework.c   57       
+                   170   ; linework.c   58       //Перенос из нижнего стека в верхний (на строку вниз)
+                   171   ; linework.c   59       void move_dw(void)
+                   172   ; linework.c   60       {
+                   173           PUBLIC  _move_dw
+                   174   _move_dw        PROC    FAR
+                   175   ; Locals:
+                   176   ; 
+                   177   ; Statics:
+                   178   ; 
+                   179   ; CSEs:
+                   180   ;     s = R12
+                   181   ;     d = R13
+                   182   ; 
+                   183   ; linework.c   61        unsigned int s=dsp;
+00A4 D7400000  R   184           EXTP    #PAG _dsp,#01h
+00A8 F2FC0000 1R   185           MOV     R12,POF _dsp
+                   186   ; linework.c   62        unsigned int d=usp;
+00AC D7400000  R   187           EXTP    #PAG _usp,#01h
+00B0 F2FD0000 1R   188           MOV     R13,POF _usp
+                   189   ; linework.c   63        if (s==STKSZ) return;
+00B4 46FC0040      190           CMP     R12,#04000h
+00B8 3D01          191           JMPR    cc_NE,_35
+00BA DB00          192           RETS
+                   193   ; linework.c   64        while((ustk[d]=dstk[s]))
+00BC               194   _35:
+00BC 0D02          195           JMPR    cc_UC,_37
+00BE               196   _36:
+                   197   ; linework.c   65        {
+                   198   ; linework.c   66         d++;
+00BE 08D1          199           ADD     R13,#01h
+                   200   ; linework.c   67         s++;
+00C0 08C1          201           ADD     R12,#01h
+00C2               202   _37:
+00C2 D7400000  R   203           EXTP    #PAG _dstk,#01h
+00C6 F42C0000 1R   204           MOVB    RL1,[R12+#POF _dstk]
+00CA D7400000  R   205           EXTP    #PAG _ustk,#01h
+00CE E42D0000 1R   206           MOVB    [R13+#POF _ustk],RL1
+00D2 4920          207           CMPB    RL1,#00h
+00D4 3DF4          208           JMPR    cc_NZ,_36
+                   209   ; linework.c   68        }
+                   210   ; linework.c   69        d++;
+00D6 08D1          211           ADD     R13,#01h
+                   212   ; linework.c   70        s++;
+00D8 08C1          213           ADD     R12,#01h
+                   214   ; linework.c   71        dsp=s;
+00DA D7400000  R   215           EXTP    #PAG _dsp,#01h
+00DE F6FC0000 1R   216           MOV     POF _dsp,R12
+                   217   ; linework.c   72        usp=d;
+00E2 D7400000  R   218           EXTP    #PAG _usp,#01h
+00E6 F6FD0000 1R   219           MOV     POF _usp,R13
+                   220   ; linework.c   73       }
+C166/ST10 assembler v7.5 r2 SN00123412-223 (c) 2001 TASKING, Inc.                       Date: Apr  6 2006  Time: 11:55:47  Page:   5
+linework
+
+ LOC CODE        LINE   SOURCELINE
+
+00EA               221   _38:
+00EA DB00          222           RETS
+                   223   _move_dw        ENDP
+                   224   LINEWORK_1_PR   ENDS
+                   225   
+                   226           EXTERN  _dsp:WORD
+                   227           EXTERN  _usp:WORD
+                   228           EXTERN  _dstk:BYTE
+                   229           EXTERN  _ustk:BYTE
+                   230           REGDEF  R0-R15
+                   231           END
+
+total errors: 0, warnings: 0
+
