@@ -10,7 +10,7 @@
 #endif
 
 #ifndef winntel
-#include "..\..\inc\swilib.h"
+#include "..\inc\swilib.h"
 #endif
 
 typedef unsigned long  Elf32_Addr;	//Unsigned program address 4

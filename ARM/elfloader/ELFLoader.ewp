@@ -1429,7 +1429,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>E:\ARM\elfloader\ELFLoader\ELFLoader_lnk.xcl</state>
+          <state>$PROJ_DIR$\ELFLoader_lnk.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
