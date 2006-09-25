@@ -682,6 +682,11 @@ __swi __arm unsigned short *RamCap();
 __swi __arm  RAMNET * RamNet();
 //thumb
 
+#pragma swi_number=0x80E1
+__swi	__arm	 unsigned int *RamMPlayer_CtrlCode();
+//thumb
+//pattern= &(F8,B5,01,27,0D,1C,04,1C,08,1C,??,??,??,??,??,??,80,88,31,88,88,42+0E) + 4
+
 #pragma swi_number=0x0100
 __swi __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
 //arm
