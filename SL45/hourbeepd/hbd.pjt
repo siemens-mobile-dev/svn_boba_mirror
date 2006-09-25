@@ -1,0 +1,163 @@
+;Codewright Project File (do not remove or modify this line)
+[ProjInit]
+ConfigSetExtMode=2
+ProjSetConfigFlags=0x04110940
+
+[State]
+SysSetCwd='F:\CELLULAR\Sl45\SND'
+SrchSetFlags=0x0000600a
+SrchSetAgainFlags=0x00006002,0
+SrchSetAgainFlags=0x0200600a,1
+FileSortMode=0x0
+_StateView='F:\CELLULAR\Sl45\DAEMON\main.c',110,110,659,373,-1,-1,28,42,16,1,3,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\DAEMON\sl45.h',44,44,659,373,-1,-1,7,1,4,1,4,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\DAEMON\sl45func.asm',132,132,659,373,-1,-1,48,1,37,1,5,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\hourbeepd\main.c',0,0,659,373,-1,-1,32,1,1,1,1,'',0x00100018,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\ldrD\sl45func.asm',44,44,659,373,-1,-1,214,9,195,1,6,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\ldrD\main.c',66,66,659,373,-1,-1,1,1,1,1,7,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\hourbeepd\sl45.h',132,132,659,373,-1,-1,327,31,316,1,8,'',0x00100008,0,80,0,0,''
+_StateView='F:\CELLULAR\Sl45\hourbeepd\sl45func.asm',154,154,659,373,-1,-1,229,1,215,1,2,'',0x00100008,0,80,0,0,''
+_StateBuffer='F:\CELLULAR\Sl45\DAEMON\main.c',0x0400048e,28,42,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\DAEMON\sl45.h',0x0400048e,7,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\DAEMON\sl45func.asm',0x0400048e,48,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\hourbeepd\main.c',0x0400048e,32,1,25,'5 9','',0x0,'',1,72,1,0
+_StateBuffer='F:\CELLULAR\Sl45\ldrD\sl45func.asm',0x0c00048e,214,9,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\ldrD\main.c',0x0000048e,1,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\hourbeepd\sl45.h',0x0c00048e,327,31,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='F:\CELLULAR\Sl45\hourbeepd\sl45func.asm',0x0400048e,229,1,25,'5 9','',0x0,'',1,72,0,0
+_StateHistory=FILELIST,'F:\CELLULAR\Sl45\DAEMON\sl45func.asm','F:\CELLULAR\Sl45\DAEMON\daemon.mak','F:\CELLULAR\Sl45\DAEMON\sl45.h','F:\CELLULAR\Sl45\hourbeepd\main.c','F:\CELLULAR\Sl45\hourbeepd\hbd.mak','F:\CELLULAR\Sl45\hourbeepd\sl45.h','F:\CELLULAR\Sl45\hourbeepd\sl45func.asm','F:\CELLULAR\Sl45\ldrD\sl45func.asm','F:\CELLULAR\Sl45\ldrD\main.c'
+_StateHistory=SEARCH,'play'
+_StateHistory=EDITFILE,'F:\CELLULAR\Sl45\DAEMON\sl45.h'
+_StateHistory=DOCUMENTVISIT,'327         31          F:\CELLULAR\Sl45\hourbeepd\sl45.h','10          1           F:\CELLULAR\Sl45\hourbeepd\main.c','240         23          F:\CELLULAR\Sl45\hourbeepd\sl45func.asm','6           1           F:\CELLULAR\Sl45\hourbeepd\main.c','229         1           F:\CELLULAR\Sl45\hourbeepd\sl45func.asm','7           1           F:\CELLULAR\Sl45\hourbeepd\main.c','215         1           F:\CELLULAR\Sl45\ldrD\sl45func.asm','83          2           F:\CELLULAR\Sl45\ldrD\main.c','214         9           F:\CELLULAR\Sl45\ldrD\sl45func.asm','229         1           F:\CELLULAR\Sl45\hourbeepd\sl45func.asm'
+_StateDocumentVisit=10
+
+[Editor]
+FilterProjDeleteList 
+FilterProjAdd='Source Files','*.c;*.cc;*.cpp;*.cxx;*.ic;*.c96;*.fle;*.cmp;*.asm;*.src;*.s;*.a96;*.i;*.pcp',-1
+FilterProjAdd='Header Files','*.h;*.inc;*.sfr',-1
+FilterProjAdd='Project Files','*.pjt',-1
+FilterProjAdd='Resources','*.rc;*.bmp;*.ico;*.cur;*.dlg',-1
+FilterProjAdd='Other Files','*.*',-1
+VCSProject=''
+VCSProjectPath=''
+VCSProjectLocalPath=''
+ScrapSetCount=1
+ClipboardSetCount=1
+ClipboardEnableSepStr=1
+ClipboardSetSepStr='\r\n',0
+ClipboardEnableTermStr=1
+ClipboardSetTermStr='\r\n',0
+
+[Tools]
+ToolDeleteList 
+ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
+
+[Compiler]
+TagSetFile=''
+BrowseSetFile=''
+CompilerNewExt=.v
+CompilerNewExt=.src
+CompilerNewExt=.htm
+CompilerNewExt=.bas
+CompilerNewExt=.awk
+CompilerNewExt=.jsp
+CompilerNewExt=.cfml
+CompilerNewExt=.adb
+CompilerNewExt=.vhd
+CompilerNewExt=.pl
+CompilerNewExt=.pas
+CompilerNewExt=.tk
+CompilerNewExt=.rul
+CompilerNewExt=.asp
+CompilerNewExt=.js
+CompilerNewExt=.cob
+CompilerNewExt=.tcl
+CompilerNewExt=.rc
+CompilerNewExt=.php
+CompilerNewExt=.cc
+CompilerNewExt=.ini
+CompilerNewExt=.html
+CompilerNewExt=.bat
+CompilerNewExt=.cs
+CompilerNewExt=.txt
+CompilerNewExt=.nrx
+CompilerNewExt=.xml
+CompilerNewExt=.sqlj
+CompilerNewExt=.java
+TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
+
+[VersionControl:PVCS]
+VCSSetCmd=VCS_CHECKIN_ID,'put -n -T@"%Q" -M@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKINLOCK_ID,'put -n -T@"%Q" -M@"%Q" -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUT_ID,'get -y "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUTLOCK_ID,'get -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOCK_ID,'vcs -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKUNLOCK_ID,'vcs -y -u "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLABEL_ID,'vcs -y -v"${VCSLABEL}" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOG_ID,'vlog "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKPROP_ID,'vlog -b "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKDIFF_ID,'vdiff -r "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKMENU_ID,'pvcsvmwn',0x8000000
+VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
+
+[Files]
+.\main.c
+.\sl45func.asm
+.\sl45.h
+
+[Ede]
+Toolchain=d:\c166\etc\c166.dol
+ToolchainName=TASKING Tools for C166/ST10 v7.5 r2
+ProjectDir=f:\cellular\sl45\hourbeepd
+UserMode=Expert
+EdeVersion=2.7r5 (094)
+CodeWrightVersion=6.5
+DefBuildSettings=True
+SaveFiles=True
+ScanDependencies=False
+StopAfterError=True
+KeepTmpFiles=False
+ExtMakefile=False
+ExtMakefileName=
+UseMakeOptions=False
+MakeOptions=
+ShowOptions=False
+ExtDebugger=False
+ExtDebuggerName=
+UseDOSShell=False
+SaveOptionMethod=0
+SaveOptionFileName=
+LoadOptionFileName=
+LoadOptionStartup=False
+GroupMisraC=0
+GroupList=GroupMisraC
+
+[Directories]
+Executables=d:\c166\bin
+Includes=d:\c166\include
+Libraries=d:\c166\lib
+
+[DefaultOptions]
+MplGenerateStartupMacros=0
+CMemModel=CModelLarge
+COptimClearNonInit=0
+CClearBitRam=0
+CEstimateUsk=0
+CUnsignedChar=1
+CLangExt=CAdvLangExt
+CAnsi14BitFarArith=1
+COptim=CAdvOptim
+OptConvPtrLongFar=1
+COptimCLibInline=1
+OutAbs=0
+OutIHex=1
+LnkLocStdLib=0
+LocVecTab=0
+LocClasses=CMYINIT(80000h-8001Fh),CPROGRAM,CROM,CFARROM,CFAR(80020h-83FFFh)
+LocUserStackSize=
+LnkLocSymbTab=1
+OptionList=MplGenerateStartupMacros,CMemModel,COptimClearNonInit,CClearBitRam,CEstimateUsk,CUnsignedChar,CLangExt,CAnsi14BitFarArith,COptim,OptConvPtrLongFar,COptimCLibInline,OutAbs,OutIHex,LnkLocStdLib,LocVecTab,LocClasses,LocUserStackSize,LnkLocSymbTab
+
+[Options]
+FileList=
