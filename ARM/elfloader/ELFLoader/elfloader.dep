@@ -7,45 +7,53 @@
     <outputs>
       <file>$PROJ_DIR$\Debug\Obj\IMB.r79</file>
       <file>$PROJ_DIR$\..\..\swilib.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</file>
-      <file>$PROJ_DIR$\Debug\Obj\elfloader.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\elfloader_s.lst</file>
-      <file>$PROJ_DIR$\Debug\List\elfloader.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\rets.r79</file>
-      <file>$PROJ_DIR$\elfloader.cpp</file>
-      <file>$PROJ_DIR$\Debug\Obj\ESI.r79</file>
-      <file>$PROJ_DIR$\ELFLoader_lnk.xcl</file>
-      <file>$PROJ_DIR$\Debug\List\ESI.lst</file>
-      <file>$PROJ_DIR$\Debug\List\IMB.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\elfloader_s.r79</file>
-      <file>$PROJ_DIR$\IMB.asm</file>
-      <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
-      <file>$PROJ_DIR$\Debug\List\elfloader.s79</file>
-      <file>$PROJ_DIR$\rets.asm</file>
-      <file>$PROJ_DIR$\ESI.asm</file>
       <file>$PROJ_DIR$\elfloader_s.s</file>
+      <file>$PROJ_DIR$\rets.asm</file>
+      <file>$PROJ_DIR$\elfloader.cpp</file>
+      <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
+      <file>$PROJ_DIR$\ESI.asm</file>
+      <file>$PROJ_DIR$\Debug\List\elfloader.s79</file>
+      <file>$PROJ_DIR$\Debug\Obj\ESI.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\elfloader_s.r79</file>
+      <file>$PROJ_DIR$\Debug\List\elfloader.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\elfloader.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\rets.r79</file>
+      <file>$PROJ_DIR$\Debug\List\IMB.lst</file>
+      <file>$PROJ_DIR$\IMB.asm</file>
       <file>$PROJ_DIR$\Debug\Exe\ELFLoader.d79</file>
+      <file>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</file>
       <file>$PROJ_DIR$\Debug\Obj\elfloader.r79</file>
+      <file>$PROJ_DIR$\Debug\List\ESI.lst</file>
+      <file>$PROJ_DIR$\Debug\List\elfloader_s.lst</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</name>
-      <inputs>
+      <name>$PROJ_DIR$\elfloader_s.s</name>
+      <outputs>
         <tool>
-          <name>BILINK</name>
-          <file> 3</file>
+          <name>AARM</name>
+          <file> 9 19</file>
         </tool>
-      </inputs>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\rets.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 12</file>
+        </tool>
+      </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\elfloader.cpp</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 20 15 5</file>
+          <file> 17 7 10</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 3</file>
+          <file> 11</file>
         </tool>
       </outputs>
       <inputs>
@@ -56,11 +64,11 @@
       </inputs>
     </file>
     <file>
-      <name>[ROOT_NODE]</name>
+      <name>$PROJ_DIR$\ESI.asm</name>
       <outputs>
         <tool>
-          <name>XLINK</name>
-          <file> 19</file>
+          <name>AARM</name>
+          <file> 8 18</file>
         </tool>
       </outputs>
     </file>
@@ -69,34 +77,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 0 11</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\rets.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 6</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ESI.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 8 10</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\elfloader_s.s</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 12 4</file>
+          <file> 0 13</file>
         </tool>
       </outputs>
     </file>
@@ -105,9 +86,27 @@
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 14 8 0 20</file>
+          <file> 5 8 0 17</file>
         </tool>
       </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Obj\ELFLoader.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 11</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 15</file>
+        </tool>
+      </outputs>
     </file>
     <forcedrebuild>
       <name>[MULTI_TOOL]</name>
@@ -117,105 +116,87 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\Release\Obj\IMB.r79</file>
-      <file>$PROJ_DIR$\Release\Exe\ELFLoader.hex</file>
-      <file>$PROJ_DIR$\Release\List\ELFLoader.map</file>
       <file>$PROJ_DIR$\..\swilib.h</file>
       <file>$PROJ_DIR$\Release\Obj\rets.r79</file>
+      <file>$PROJ_DIR$\Release\List\ESI.lst</file>
+      <file>$PROJ_DIR$\elfloader_s.s</file>
+      <file>$PROJ_DIR$\Release\Exe\ELFLoader.hex</file>
+      <file>$PROJ_DIR$\rets.asm</file>
       <file>$PROJ_DIR$\elfloader.cpp</file>
-      <file>$PROJ_DIR$\..\..\png\pngconf.h</file>
-      <file>$PROJ_DIR$\ELFLoader_lnk.xcl</file>
-      <file>$PROJ_DIR$\Release\List\elfloader.lst</file>
+      <file>$PROJ_DIR$\..\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\Release\List\ELFLoader.map</file>
+      <file>$PROJ_DIR$\ESI.asm</file>
+      <file>$PROJ_DIR$\Release\Obj\ESI.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\IMB.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\elfloader_s.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\elfloader.pbi</file>
+      <file>$PROJ_DIR$\Release\Exe\ELFLoader.elf</file>
+      <file>$PROJ_DIR$\..\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\..\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\..\..\inc\png.h</file>
+      <file>$PROJ_DIR$\..\..\inc\zlib.h</file>
       <file>$PROJ_DIR$\Release\List\elfloader.s79</file>
+      <file>$PROJ_DIR$\IMB.asm</file>
+      <file>$PROJ_DIR$\Release\Obj\elfloader.r79</file>
       <file>$PROJ_DIR$\Release\List\rets.lst</file>
       <file>$PROJ_DIR$\Release\List\IMB.lst</file>
-      <file>$PROJ_DIR$\IMB.asm</file>
-      <file>$PROJ_DIR$\..\..\png\zlib.h</file>
-      <file>$PROJ_DIR$\..\..\png\zconf.h</file>
-      <file>$PROJ_DIR$\..\..\swilib\swilib.h</file>
-      <file>$PROJ_DIR$\..\..\png\png.h</file>
-      <file>$PROJ_DIR$\Release\Obj\elfloader.pbi</file>
-      <file>$PROJ_DIR$\Release\List\ESI.lst</file>
-      <file>$PROJ_DIR$\rets.asm</file>
       <file>$PROJ_DIR$\Release\Obj\ELFLoader.pbd</file>
-      <file>$PROJ_DIR$\Release\Obj\elfloader.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\elfloader_s.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\ESI.r79</file>
-      <file>$PROJ_DIR$\ESI.asm</file>
-      <file>$PROJ_DIR$\elfloader_s.s</file>
-      <file>$PROJ_DIR$\Release\Exe\ELFLoader.elf</file>
+      <file>$PROJ_DIR$\Release\List\elfloader.lst</file>
+      <file>$PROJ_DIR$\ELFLoader_lnk.xcl</file>
     </outputs>
+    <file>
+      <name>$PROJ_DIR$\elfloader_s.s</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 12</file>
+        </tool>
+      </outputs>
+    </file>
     <file>
       <name>$PROJ_DIR$\Release\Exe\ELFLoader.hex</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 2 26</file>
+          <file> 8 14</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 7 23 0 21 4</file>
+          <file> 26 10 11 21 1</file>
         </tool>
       </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\elfloader.cpp</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 21 9 8</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 17</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 15 16 13 14 6</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 3</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 1 2 26</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\IMB.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 0 11</file>
-        </tool>
-      </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\rets.asm</name>
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 4 10</file>
+          <file> 1 22</file>
         </tool>
       </outputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\Release\Obj\ELFLoader.pbd</name>
+      <name>$PROJ_DIR$\elfloader.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 21 19 25</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 13</file>
+        </tool>
+      </outputs>
       <inputs>
         <tool>
-          <name>BILINK</name>
-          <file> 17</file>
+          <name>ICCARM</name>
+          <file> 7 17 18 15 16</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0</file>
         </tool>
       </inputs>
     </file>
@@ -224,16 +205,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 23 18</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\elfloader_s.s</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 22</file>
+          <file> 10 2</file>
         </tool>
       </outputs>
     </file>
@@ -242,9 +214,36 @@
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 7 21</file>
+          <file> 26 21</file>
         </tool>
       </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\IMB.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 11 23</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Obj\ELFLoader.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 13</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 4 8 14</file>
+        </tool>
+      </outputs>
     </file>
   </configuration>
 </project>
