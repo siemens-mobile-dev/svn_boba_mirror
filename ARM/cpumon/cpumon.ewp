@@ -33,7 +33,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>3</version>
+          <version>5</version>
           <state>11</state>
         </option>
         <option>
@@ -349,7 +349,7 @@
       <name>AARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>6</version>
+        <version>7</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -479,18 +479,6 @@
         </option>
         <option>
           <name>AMultibyteSupport</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>AModuleTypeOverride</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>AModuleType</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>AModuleTypeCmdlineProducer</name>
           <state>0</state>
         </option>
         <option>
@@ -863,7 +851,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>3</version>
+          <version>5</version>
           <state>11</state>
         </option>
         <option>
@@ -937,7 +925,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.31A</state>
+          <state>4.40A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1179,7 +1167,7 @@
       <name>AARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>6</version>
+        <version>7</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1312,18 +1300,6 @@
           <state>0</state>
         </option>
         <option>
-          <name>AModuleTypeOverride</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>AModuleType</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>AModuleTypeCmdlineProducer</name>
-          <state>0</state>
-        </option>
-        <option>
           <name>ALimitErrorsCheck</name>
           <state>0</state>
         </option>
@@ -1453,7 +1429,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>E:\boba\projects\!phone\flash\patchs\75\s75\my\cpumon\test.xcl</state>
+          <state>$PROJ_DIR$\test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>

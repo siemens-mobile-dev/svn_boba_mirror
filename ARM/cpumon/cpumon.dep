@@ -5,40 +5,25 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\Debug\Exe\IDLEHOOK.d79</file>
-      <file>$PROJ_DIR$\Debug\Obj\cpumon.pbd</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Debug\Exe\cpumon.elf</file>
-      <file>$PROJ_DIR$\Debug\Exe\cpumon.d79</file>
-      <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
       <file>$PROJ_DIR$\..\swilib.h</file>
       <file>$TOOLKIT_DIR$\lib\dl4tpainl8n.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\cpumon.pbd</file>
+      <file>$PROJ_DIR$\Debug\Exe\cpumon.d79</file>
+      <file>$PROJ_DIR$\Debug\Exe\cpumon.elf</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
+      <file>$PROJ_DIR$\test.xcl</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\main.c</name>
+      <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 10</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 3</file>
+          <name>XLINK</name>
+          <file> 6</file>
         </tool>
       </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 8</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 8</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\Debug\Obj\cpumon.pbd</name>
@@ -50,29 +35,43 @@
       </inputs>
     </file>
     <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
+      <name>$PROJ_DIR$\Debug\Exe\cpumon.d79</name>
+      <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 5</file>
+          <file> 8 0 2</file>
         </tool>
-      </outputs>
+      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\Debug\Exe\cpumon.elf</name>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 4 10</file>
+          <file> 9 0</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\Debug\Exe\cpumon.d79</name>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 3</file>
+        </tool>
+      </outputs>
       <inputs>
         <tool>
-          <name>XLINK</name>
-          <file> 7 10 9</file>
+          <name>ICCARM</name>
+          <file> 1</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1</file>
         </tool>
       </inputs>
     </file>
@@ -80,57 +79,37 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Release\Exe\cpumon.elf</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Release\List\main.lst</file>
-      <file>$PROJ_DIR$\Release\List\IDLEHOOK.map</file>
-      <file>$PROJ_DIR$\Release\Obj\cpumon.pbd</file>
-      <file>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</file>
-      <file>$PROJ_DIR$\..\swilib.h</file>
+      <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
       <file>$PROJ_DIR$\Release\Obj\main.r79</file>
-      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\cpumon.pbd</file>
+      <file>$PROJ_DIR$\Release\Exe\cpumon.elf</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\..\swilib.h</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\test.xcl</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\main.c</name>
+      <name>$PROJ_DIR$\func.asm</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 10</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 9</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 8</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 8</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 2</file>
+          <name>AARM</name>
+          <file> 4</file>
         </tool>
       </outputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\Release\Exe\cpumon.elf</name>
+      <name>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</name>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 3 10</file>
+          <file> 14 2</file>
         </tool>
       </inputs>
     </file>
@@ -139,28 +118,46 @@
       <inputs>
         <tool>
           <name>BILINK</name>
-          <file> 9</file>
+          <file> 1</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</name>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 3 10</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\func.asm</name>
+      <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
-          <name>AARM</name>
-          <file> 1</file>
+          <name>XLINK</name>
+          <file> 6</file>
         </tool>
       </outputs>
     </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 2</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 12 10 9 7 8</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 12 10 9 7 8</file>
+        </tool>
+      </inputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
   </configuration>
 </project>
 
