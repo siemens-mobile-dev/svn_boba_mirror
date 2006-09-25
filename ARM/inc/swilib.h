@@ -593,6 +593,11 @@ __swi __arm void PlaySound(long param1, long param2, long param3, long tone, lon
 //arm
 //pattern=??,??,??,E9,??,??,??,E2,??,??,??,E2,??,??,??,E2,??,??,??,E5,??,??,??,E1,??,??,??,E1,??,??,??,E1,??,??,??,??,??,??,??,1A,??,??,??,??,??,??,??,E3,??,??,??,E1,??,??,??,??,??,??,??,E3,??,??,??,0A,??,??,??,EF,??,??,??,E3,??,??,??,E3,??,??,??,E1,??,??,??,E3,??,??,??,??,??,??,??,EA
 
+#pragma swi_number=42
+__swi __arm int *GetEELiteBlockAddress(short blocknum);
+//arm
+//pattern=FE,40,2D,E9,??,??,??,E5,00,40,A0,E1,00,10,D6,E5,??,??,??,E5,B2,00,D0,E1,00,00,51,E3,??,??,??,0A,01,00,51,E3,??,??,??,0A,02,00,51,E3,??,??,??,1A,10,10,96,E5,04,11,91,E7,00,00,51,E3,??,??,??,1A,04,20,8D,E2,04,10,A0,E1,??,??,??,EB,00,00,50,E3,??,??,??,1A
+
 #pragma swi_number=0x43
 __swi __arm int IsUnlocked(void);
 //thumb
@@ -622,6 +627,13 @@ __swi __arm unsigned char GetCPULoad();
 //pattern=??,B5,??,4C,??,68,??,28,??,D1,??,??,??,??,??,20,??,60,??,20,??,BD,??,??,??,??,??,BD
 //thumb
 //pattern=??,B5,??,??,??,68,??,28,??,D1,??,??,??,??,??,20,??,60,??,20,??,BD,??,??,??,??,??,BD
+
+#pragma swi_number=95                        ///Аналог GetNonPermMemAvail для SGOLD
+__swi __arm int GetFreeRamAvail();
+//arm
+//pattern=04,E0,2D,E5,??,??,??,E5,??,??,??,EB,??,??,??,E5,??,20,91,E5,??,10,91,E5,01,10,42,E0,01,00,80,E0,20,00,40,E2,04,F0,9D,E4
+
+
 
 #pragma swi_number=107
 __swi	__arm	int  FindFirstFile (DIR_ENTRY *DIRENTRY,char *mask,unsigned int *ErrorNumber);
@@ -738,6 +750,41 @@ __swi __arm char SetProfile(char);
 __swi __arm int dwMODdw(int denom,int number);
 //arm
 //pattern=80,24,10,E2,00,00,60,42,41,30,32,E0,00,10,61,22,A1,C1,70,E0
+
+#pragma swi_number=167
+__swi __arm char IsGPRSEnabled();
+//arm
+//pattern=??,48,??,68,70,47,F7,B5,??,49,06,1C,40,01,00,24,??,31
+
+#pragma swi_number=168
+__swi __arm char IsGPRSConnected();
+//thumb
+//pattern=80,B5,??,??,??,??,00,28,01,D0,01,20,80,BD,00,20,80,BD,80,B5,06,28,06,D2
+
+#pragma swi_number=186
+__swi __arm void *realloc(void *ptr, int size);
+//arm
+//pattern=70,40,2D,E9,00,40,A0,E1,02,00,A0,E3,01,60,A0,E1,??,??,??,EB,00,50,A0,E1,00,00,54,E3,00,00,55,13,08,00,00,0A,08,00,14,E5,04,10,A0,E1,00,00,56,E1,06,00,A0,31,00,20,A0,E1,05,00,A0,E1,??,??,??,EB,04,00,A0,E1,??,??,??,EB,05,00,A0,E1,70,80,BD,E8
+
+#pragma swi_number=187
+__swi __arm void *memset(void *s, int c, int n);
+//arm
+//pattern=FF,30,01,E2,02,10,A0,E1,03,24,83,E1,02,28,82,E1,??,??,??,EA,78,47
+
+#pragma swi_number=188
+__swi __arm int divide(int divisor, int dividend);
+//arm
+//pattern=00,20,A0,E3,A1,C1,70,E0,20,00,00,3A,21,C4,70,E0,0F,00,00,3A,00,04,A0,E1,FF,24,82,E3,21,C2,70,E0,17,00,00,3A,21,C4,70,E0,09,00,00,3A,00,04,A0,E1,FF,28,82,E3,21,C4,70,E0,00,04,A0,21,FF,2C,82,23,21,C2,70,E0,0E,00,00,3A,00,C0,70,E2,??,??,??,2A,20,04,A0,21,A1,C3,70,E0,80,13,41,20,02,20,A2,E0,21,C3,70,E0,00,13,41,20,02,20,A2,E0,A1,C2,70,E0,80,12,41,20,02,20,A2,E0,21,C2,70,E0,00,12,41,20,02,20,A2,E0,A1,C1,70,E0,80,11,41,20,02,20,A2,E0,21,C1,70,E0,00,11,41,20,02,20,A2,E0,A1,C0,70,E0,80,10,41,20,02,20,A2,E0,01,C0,70,E0,00,10,41,20,02,20,B2,E0,E5,FF,FF,2A,02,00,A0,E1,1E,FF,2F,E1
+
+#pragma swi_number=189
+__swi __arm  int DivBy10(int divident);
+//arm
+//pattern=00,30,B0,E1,00,00,60,42,0A,10,40,E2,20,01,40,E0,20,02,80,E0,20,04,80,E0,20,08,80,E0,A0,01,A0,E1,00,21,80,E0,82,10,51,E0,01,00,80,52,0A,10,81,42,03,30,B0,E1,00,00,60,42,00,10,61,42,1E,FF,2F,E1
+
+#pragma swi_number=198                          ///Аналог RAMCAP, но без запарки над рамой
+__swi __arm  char GetAkkuCapacity();
+//arm
+//pattern=??,??,??,E5,??,??,??,E1,1E,FF,2F,E1,08,40,2D,E9,03,10,A0,E3,00,00,A0,E3,??,??,??,EB,C8,0E,50,E3,00,00,A0,93,01,00,A0,83,08,80,BD,E8
 
 #pragma swi_number=0x80C8
 __swi __arm unsigned short *RamCap();
