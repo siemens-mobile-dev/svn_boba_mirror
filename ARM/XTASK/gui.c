@@ -1,4 +1,4 @@
-#include "..\swilib\swilib.h"
+#include "..\inc\swilib.h"
 
 extern int mode;
 extern CSM_RAM *under_idle;
