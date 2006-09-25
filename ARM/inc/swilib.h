@@ -517,6 +517,15 @@ __swi __arm int mkdir(const char * cFileName, unsigned int *ErrorNumber);
 //arm
 //pattern=38,40,2D,E9,01,50,A0,E1,00,40,A0,E1,??,??,??,??,00,30,E0,E3,??,??,??,??,28,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3
 
+#pragma swi_number=18
+__swi __arm int GetFileAttrib(const char *cFileName, unsigned char *cAttribute, unsigned int *ErrorNumber);
+//arm
+//pattern=7C,40,2D,E9,02,60,A0,E1,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,04,30,8D,E5,00,60,8D,E5,14,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
+
+#pragma swi_number=19
+__swi __arm int SetFileAttrib(const char *cFileName, unsigned char cAttribute, unsigned int *ErrorNumber);
+//arm
+//pattern=7C,40,2D,E9,02,60,A0,E1,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,04,30,8D,E5,00,60,8D,E5,44,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
 
 #pragma swi_number=20
 __swi __arm void *malloc(unsigned int size);
@@ -589,6 +598,12 @@ __swi __arm int IsUnlocked(void);
 //thumb
 //pattern=??,48,??,B5,??,68,??,28,??,D0,??,??,??,FF,??,28,??,D1,??,20,??,BD
 
+#pragma swi_number=60
+__swi __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned int *ErrorNumber);
+//arm
+//pattern=7C,40,2D,E9,01,60,A0,E1,02,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,00,30,8D,E5,48,C0,90,E5,00,00,A0,E3,05,30,A0,E1,06,20,A0,E1,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
+
+
 #pragma swi_number=77
 __swi __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
 //arm
@@ -623,6 +638,16 @@ __swi	__arm	int  FindClose (DIR_ENTRY *DIRENTRY,unsigned int *ErrorNumber);
 //arm
 //pattern=??,??,??,E9,??,??,??,E1,??,??,??,E1,??,??,??,0A,??,??,??,E1,??,??,??,??,??,??,??,EA,??,??,??,??,10,??,??,E5,??,??,??,E2,??,??,??,E1,??,??,??,E1,??,??,??,E8,??,??,??,E3,??,??,??,??,??,??,??,E1
 
+#pragma swi_number=111
+__swi __arm void RefreshGPRSTraffic();
+//arm
+//pattern=10,40,2D,E9,20,D0,4D,E2,04,00,8D,E2,??,??,??,EB,04,40,9D,E5,??,??,??,FA,04,00,80,E0,04,00,8D,E5,04,00,8D,E2,??,??,??,EB,20,D0,8D,E2,10,80,BD,E8
+
+#pragma swi_number=112
+__swi __arm int *GetGPRSTrafficPointer();
+//arm
+//pattern=??,??,??,E5,1E,FF,2F,E1,20,00,A0,E3,??,??,??,EA
+
 #pragma swi_number=124
 __swi __arm unsigned int SetVibration(unsigned int power);
 //thumb
@@ -633,15 +658,55 @@ __swi __arm int ShowCallList(int list, int zero);
 //thumb
 //pattern=??,B5,??,B0,??,91,??,A9,??,72,??,A9,??,20,??,80,??,90,??,22,??,73,??,90,??,90,??,90,??,90,??,90,??,A9,??,62,??,63,??,61,??,21,??,AC,??,1C,??,??,??,??,??,20,??,72,??,??,??,22,??,46,??,??,??,??,??,B0,??,BD
 
+#pragma swi_number=132
+__swi __arm int GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber);
+//arm
+//pattern=7C,40,2D,E9,02,60,A0,E1,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,04,30,8D,E5,00,60,8D,E5,50,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
+
+#pragma swi_number=138
+__swi __arm int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber);
+//arm
+//pattern=38,40,2D,E9,00,08,A0,E1,40,08,A0,E1,00,40,A0,E1,01,50,A0,E1,??,??,??,EB,18,C0,90,E5,04,D0,8D,E2,05,20,A0,E1,04,10,A0,E1,30,40,BD,E8
+
+#pragma swi_number=139
+__swi __arm int GetTotalFlexSpace(int DriveNum, unsigned int *ErrorNumber);
+//arm
+//pattern=10,40,2D,E9,00,40,A0,E1,??,??,??,EB,74,10,90,E5,04,00,A0,E1,10,40,BD,E8,11,FF,2F,E1
+
 #pragma swi_number=140
 __swi __arm void RegExplorerExt(REGEXPLEXT const *);
 //thumb
 //pattern=??,B5,??,68,??,1C,??,68,??,??,??,??,??,28,??,D1,??,??,??,3A,??,68,??,29,??,DA,??,20,??,43,??,1D,??,18,??,31,??,60,??,22,??,1C,??,??,??,??,??,BD
 
+#pragma swi_number=142
+__swi __arm int fmove(const char * SourceFileName, const char * DestFileName, unsigned int *ErrorNumber);
+//arm
+//pattern=7F,40,2D,E9,02,60,A0,E1,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,10,A0,E3,42,00,8D,E8,00,30,E0,E3,08,30,8D,E5,38,C0,90,E5,00,00,A0,E3,05,30,A0,E1,04,10,A0,E1,00,20,A0,E3,3C,FF,2F,E1,10,D0,8D,E2,70,80,BD,E8
+
+#pragma swi_number=143
+__swi __arm int rmdir(const char * cDirectory, unsigned int *ErrorNumber);
+//arm
+//pattern=38,40,2D,E9,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,00,30,8D,E5,3C,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3,04,10,A0,E1,3C,FF,2F,E1,38,80,BD,E8
+
+#pragma swi_number=144
+__swi __arm int truncate(int FileHandler, int length, int *errornumber);
+//arm
+//pattern=7C,40,2D,E9,01,60,A0,E1,02,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,00,30,8D,E5,54,C0,90,E5,00,00,A0,E3,05,30,A0,E1,06,20,A0,E1,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
+
+#pragma swi_number=145
+__swi __arm int isdir(const char * cDirectory, unsigned int *ErrorNumber);
+//arm
+//pattern=38,40,2D,E9,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,00,30,8D,E5,24,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3,04,10,A0,E1,3C,FF,2F,E1,38,80,BD,E8
+
 #pragma swi_number=163
 __swi __arm void ws_2str(WSHDR *ws, char *str, unsigned int size);
 //arm
 //pattern=??,??,??,E9,??,??,??,E2,??,??,??,E1,??,??,??,E1,??,??,??,E2,??,??,??,E2,??,??,??,E3,??,??,??,E3,??,??,??,??,??,??,??,E1,??,??,??,E3,??,??,??,E5,??,??,??,E1,??,??,??,E3,??,??,??,??,??,??,??,E1,??,??,??,EA
+
+#pragma swi_number=166
+__swi __arm void ResetGPRSTraffic();
+//arm
+//pattern=08,40,2D,E9,??,??,??,EB,??,??,??,FA,00,00,A0,E3,08,40,BD,E8,??,??,??,EA
 
 #pragma swi_number=171
 __swi __arm void loopback171();
