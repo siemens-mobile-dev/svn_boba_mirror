@@ -1347,7 +1347,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe E:\ARM\IDLEHOOK\Release\Exe\CpuMon.elf \MMCard\ZBin\Daemons\CpuMon.elf</postbuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
@@ -1359,11 +1359,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>CpuMon.elf</state>
+          <state>IDLEHOOK.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>

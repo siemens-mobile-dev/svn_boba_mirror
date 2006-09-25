@@ -7,27 +7,16 @@
     <outputs>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\Debug\Exe\IDLEHOOK.d79</file>
-      <file>$PROJ_DIR$\..\png\zlib.h</file>
-      <file>$PROJ_DIR$\..\swilib\swilib.h</file>
-      <file>$PROJ_DIR$\..\png\zconf.h</file>
-      <file>$PROJ_DIR$\..\png\pngconf.h</file>
       <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
-      <file>$PROJ_DIR$\..\png\png.h</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 6</file>
+          <file> 2</file>
         </tool>
       </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 3 7 2 4 5</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>[ROOT_NODE]</name>
@@ -46,75 +35,18 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\func.asm</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\..\png\zlib.h</file>
-      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
-      <file>$PROJ_DIR$\..\swilib\swilib.h</file>
       <file>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</file>
-      <file>$PROJ_DIR$\Release\List\CpuMon.map</file>
+      <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\Release\List\main.lst</file>
       <file>$PROJ_DIR$\..\swilib.h</file>
-      <file>$PROJ_DIR$\..\png\zconf.h</file>
-      <file>$PROJ_DIR$\..\png\pngconf.h</file>
-      <file>$PROJ_DIR$\..\png\png.h</file>
       <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Release\Exe\CpuMon.elf</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release\List\IDLEHOOK.map</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 5 9</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 1</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 13 4 11 12</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 10</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 15 8</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\func.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 3</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</name>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 14 5</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Release\Exe\CpuMon.elf</name>
       <outputs>
         <tool>
           <name>XLINK</name>
@@ -124,9 +56,42 @@
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 14 5</file>
+          <file> 4 7</file>
         </tool>
       </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 7 2</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 3</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 0 8</file>
+        </tool>
+      </outputs>
     </file>
   </configuration>
 </project>
