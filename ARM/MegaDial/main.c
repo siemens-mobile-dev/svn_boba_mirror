@@ -401,6 +401,15 @@ void *gotomenu_HNDLS[4]=
   (void *)goto_4
 };
 
+int gotomenu_onkey(GUI *data, GUI_MSG *msg)
+{
+  if ((msg->gbsmsg->msg==KEY_DOWN)&&(msg->gbsmsg->submess==GREEN_BUTTON))
+  {
+    msg->keys=0x18;
+  }
+  return(0);
+}
+
 MENUITEM_DESC gotomenu_ITEMS[9]=
 {
   {NULL,(int)dstr[0],0x7FFFFFFF,0,NULL,0,0x59D},
@@ -413,7 +422,7 @@ HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",0x7FFFFFF
 
 MENU_DESC gotomenu_STRUCT=
 {
-  8,NULL,NULL,NULL,
+  8,(void *)gotomenu_onkey,NULL,NULL,
   menusoftkeys,
   &menu_skt,
   0,
