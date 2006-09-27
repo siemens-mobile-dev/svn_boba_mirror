@@ -765,6 +765,16 @@ __swi __arm char IsGPRSConnected();
 //thumb
 //pattern=80,B5,??,??,??,??,00,28,01,D0,01,20,80,BD,00,20,80,BD,80,B5,06,28,06,D2
 
+#pragma swi_number=169
+__swi __arm void KbdLock();
+//thumb
+//pattern=??,49,80,B5,01,20,??,39,??,60,01,21,03,20,??,??,??,??,80,BD
+
+#pragma swi_number=185
+__swi __arm void KbdUnlock();
+//thumb
+//pattern=??,49,80,B5,00,20,??,60,01,21,03,20,??,??,??,??,80,BD
+
 #pragma swi_number=186
 __swi __arm void *realloc(void *ptr, int size);
 //arm
