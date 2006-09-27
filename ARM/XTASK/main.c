@@ -11,15 +11,23 @@ void ElfKiller(void)
   ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
 }
 
+
+// -1 - XTask GUI present
+// 0 - XTask GUI absent
+// 1 - IBUT longpressed, ready for exit
 int mode;
+
+// 0 - no press
+// 1 - long press REDBUT
+
 int mode_red;
 
 int my_keyhook(int submsg, int msg)
 {
-/*  void *icsm=FindCSMbyID(CSM_root()->idle_id);
+  void *icsm=FindCSMbyID(CSM_root()->idle_id);
   if (submsg==RED_BUTTON)
   {
-    if (IsGuiOnTop(((int *)icsm)[0x2C/4]))
+    if (IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4]))
     {
       if (msg==KEY_UP)
       {
@@ -34,13 +42,22 @@ int my_keyhook(int submsg, int msg)
     {
       if (msg==KEY_DOWN)
       {
+	if (mode_red==1) return(0);
+	if (mode==0)
+	{
+	  goto L_DOGUI;
+	}
+	return(2);
+      }
+      if (msg==KEY_UP)
+      {
 	if (mode_red==1)
 	{
-	  mode_red=0;
+	  mode_red=0; //Release after longpress
 	  return(0);
 	}
-	GBS_SendMessage(MMI_CEPID,KEY_DOWN,RIGHT_SOFT);
-	mode_red=2;
+	//Release after short press
+	if (mode==-1) GBS_SendMessage(MMI_CEPID,KEY_DOWN,LEFT_SOFT);
 	//GeneralFuncF0(0);
       }
       if (msg==LONG_PRESS)
@@ -50,7 +67,7 @@ int my_keyhook(int submsg, int msg)
       }
       return(2);
     }
-  }*/
+  }
   if (submsg!=INTERNET_BUTTON) return(0);
   if (mode==-1)
   {
@@ -74,6 +91,7 @@ int my_keyhook(int submsg, int msg)
     }
     {
       extern void do_gui(void);
+    L_DOGUI:
       do_gui();
     }
     break;

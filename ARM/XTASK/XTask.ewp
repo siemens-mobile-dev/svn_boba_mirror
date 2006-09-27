@@ -1347,7 +1347,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe E:\ARM\XTASK\Release\Exe\XTask.elf \MMCard\ZBin\Daemons\XTask.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\XTask.elf \MMCard\ZBin\Daemons\XTask.elf</postbuild>
       </data>
     </settings>
     <settings>
