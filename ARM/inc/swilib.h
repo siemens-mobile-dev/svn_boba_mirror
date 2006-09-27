@@ -632,11 +632,11 @@ __swi __arm unsigned char GetCPULoad();
 //thumb
 //pattern=??,B5,??,??,??,68,??,28,??,D1,??,??,??,??,??,20,??,60,??,20,??,BD,??,??,??,??,??,BD
 
-#pragma swi_number=95                        ///Аналог GetNonPermMemAvail для SGOLD
+///Аналог GetNonPermMemAvail для SGOLD
+#pragma swi_number=95
 __swi __arm int GetFreeRamAvail();
 //arm
 //pattern=04,E0,2D,E5,??,??,??,E5,??,??,??,EB,??,??,??,E5,??,20,91,E5,??,10,91,E5,01,10,42,E0,01,00,80,E0,20,00,40,E2,04,F0,9D,E4
-
 
 
 #pragma swi_number=107
@@ -795,7 +795,8 @@ __swi __arm  int DivBy10(int divident);
 //arm
 //pattern=00,30,B0,E1,00,00,60,42,0A,10,40,E2,20,01,40,E0,20,02,80,E0,20,04,80,E0,20,08,80,E0,A0,01,A0,E1,00,21,80,E0,82,10,51,E0,01,00,80,52,0A,10,81,42,03,30,B0,E1,00,00,60,42,00,10,61,42,1E,FF,2F,E1
 
-#pragma swi_number=198                          ///Аналог RAMCAP, но без запарки над рамой
+///Аналог RAMCAP, но без запарки над рамой
+#pragma swi_number=198
 __swi __arm  char GetAkkuCapacity();
 //arm
 //pattern=??,??,??,E5,??,??,??,E1,1E,FF,2F,E1,08,40,2D,E9,03,10,A0,E3,00,00,A0,E3,??,??,??,EB,C8,0E,50,E3,00,00,A0,93,01,00,A0,83,08,80,BD,E8
