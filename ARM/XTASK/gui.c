@@ -185,7 +185,7 @@ void method0(MAIN_GUI *data)
   DrawRoundedFrame(0,0,131,175,0,0,0,
 			GetPaletteAdrByColorIndex(0),
 			GetPaletteAdrByColorIndex(20));
-  wsprintf(data->ws1,"XTask v1.1\n(C)2006 by Rst7/CBSIE\n\n%t%d",
+  wsprintf(data->ws1,"XTask v1.3\n(C)2006 by Rst7/CBSIE\n\n%t%d",
 	   "Сейчас диалогов: ",
 	   GetNumberOfDialogs());
   DrawString(data->ws1,3,3,128,51,11,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));

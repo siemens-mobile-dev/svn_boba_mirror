@@ -5,12 +5,12 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\gui.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
       <file>$PROJ_DIR$\Debug\Exe\XTask.d79</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\func.asm</file>
-      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\gui.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
       <file>$PROJ_DIR$\gui.c</file>
     </outputs>
     <file>
@@ -18,7 +18,7 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 2</file>
+          <file> 1</file>
         </tool>
       </outputs>
     </file>
@@ -27,7 +27,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1</file>
+          <file> 5</file>
         </tool>
       </outputs>
     </file>
@@ -36,7 +36,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 5</file>
+          <file> 0</file>
         </tool>
       </outputs>
     </file>
@@ -45,7 +45,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 0</file>
+          <file> 4</file>
         </tool>
       </outputs>
     </file>
@@ -57,59 +57,59 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
-      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\Release\Obj\gui.r79</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
-      <file>$PROJ_DIR$\Release\List\main.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\Release\List\gui.lst</file>
-      <file>$PROJ_DIR$\Release\Exe\XTask.elf</file>
       <file>$PROJ_DIR$\Release\List\XTask.map</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release\Exe\XTask.elf</file>
+      <file>$PROJ_DIR$\Release\List\gui.lst</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\gui.r79</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\gui.c</file>
     </outputs>
     <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 11 12</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Release\Exe\XTask.elf</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 12</file>
+          <file> 0</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 8 7 4 1</file>
+          <file> 5 6 12 1</file>
         </tool>
       </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 2 0</file>
+        </tool>
+      </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1 6</file>
+          <file> 1 8</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 9 5 3 2 0</file>
+          <file> 4 9 10 11 7</file>
         </tool>
       </inputs>
     </file>
@@ -118,7 +118,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 7</file>
+          <file> 6</file>
         </tool>
       </outputs>
     </file>
@@ -127,13 +127,13 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 4 10</file>
+          <file> 12 3</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 9 5 3 2 0</file>
+          <file> 4 9 10 11 7</file>
         </tool>
       </inputs>
     </file>
