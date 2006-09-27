@@ -11,6 +11,7 @@ void ElfKiller(void)
   ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
 }
 
+extern void do_gui(int);
 
 // -1 - XTask GUI present
 // 0 - XTask GUI absent
@@ -37,17 +38,17 @@ int my_keyhook(int submsg, int msg)
 	  return(2);
 	}
       }
+      mode_red=0;
     }
     else
     {
       if (msg==KEY_DOWN)
       {
-	if (mode_red==1) return(0);
-	if (mode==0)
+	if (mode_red==1)
 	{
-	  goto L_DOGUI;
+	  mode_red=0;
+	  return(0); //Long press, continue with REDB PRESS
 	}
-	return(2);
       }
       if (msg==KEY_UP)
       {
@@ -57,8 +58,10 @@ int my_keyhook(int submsg, int msg)
 	  return(0);
 	}
 	//Release after short press
-	if (mode==-1) GBS_SendMessage(MMI_CEPID,KEY_DOWN,LEFT_SOFT);
-	//GeneralFuncF0(0);
+	if (mode==0)
+	{
+	  do_gui(1);
+	}
       }
       if (msg==LONG_PRESS)
       {
@@ -90,9 +93,7 @@ int my_keyhook(int submsg, int msg)
       break;
     }
     {
-      extern void do_gui(void);
-    L_DOGUI:
-      do_gui();
+      do_gui(0);
     }
     break;
   case LONG_PRESS:

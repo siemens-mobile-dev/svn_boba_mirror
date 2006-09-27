@@ -3,6 +3,8 @@
 extern int mode;
 extern CSM_RAM *under_idle;
 
+volatile int do_idle;
+
 const CSM_DESC maincsm;
 
 typedef struct
@@ -145,7 +147,7 @@ int GetNumberOfDialogs(void)
   return(count);
 }
 
-void SwapCSMS(void)
+void SwapCSMS(int no_no_gui)
 {
   CSM_RAM *icsm; //Нижний CSM
   CSM_RAM *ucsm; //Верхний CSM
@@ -167,6 +169,7 @@ void SwapCSMS(void)
     wcsm->prev=icsm;
   }
   while(ucsm->prev!=selcsm);
+  if (no_no_gui) return; //
   //Теперь рисуем "Нет GUI" на всякий случай
   DrawRoundedFrame(0,0,131,175,0,0,0,
 			GetPaletteAdrByColorIndex(0),
@@ -181,6 +184,15 @@ void method0(MAIN_GUI *data)
   int pos;
   int vcur;
   NAMELIST *nl;
+
+  if (do_idle)
+  {
+    selcsm=FindCSMbyID(CSM_root()->idle_id);
+    SwapCSMS(1);
+    GeneralFuncF1(1);
+    do_idle=0;
+    return;
+  }
 
   DrawRoundedFrame(0,0,131,175,0,0,0,
 			GetPaletteAdrByColorIndex(0),
@@ -293,7 +305,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case LEFT_SOFT:
       selcsm=FindCSMbyID(CSM_root()->idle_id);
     case ENTER_BUTTON:
-      SwapCSMS();
+      SwapCSMS(0);
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case UP_BUTTON:
@@ -380,9 +392,10 @@ const CSM_DESC maincsm=
   &minus11
 };
 
-void do_gui(void)
+void do_gui(int _do_idle)
 {
   char dummy[sizeof(MAIN_CSM)];
+  do_idle=_do_idle;
   my_csm_id=CreateCSM(&maincsm,dummy,0);
   mode=-1;
 }
