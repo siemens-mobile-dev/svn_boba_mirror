@@ -608,6 +608,10 @@ __swi __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned
 //arm
 //pattern=7C,40,2D,E9,01,60,A0,E1,02,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,00,30,8D,E5,48,C0,90,E5,00,00,A0,E3,05,30,A0,E1,06,20,A0,E1,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
 
+#pragma swi_number=67
+__swi __arm int IsKeybUnlock();
+//thumb
+//pattern=??,48,??,B5,??,68,??,28,??,D0,??,??,??,FF,??,28,??,D1,??,20,??,BD,??,20,??,BD
 
 #pragma swi_number=77
 __swi __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
