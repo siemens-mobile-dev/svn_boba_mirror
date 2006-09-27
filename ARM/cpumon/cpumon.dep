@@ -5,23 +5,39 @@
   <configuration>
     <name>Debug</name>
     <outputs>
+<<<<<<< .mine
+      <file>$TOOLKIT_DIR$\lib\dl4tpainl8n.r79</file>
       <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
       <file>$PROJ_DIR$\test.xcl</file>
       <file>$PROJ_DIR$\..\swilib.h</file>
+=======
+      <file>$TOOLKIT_DIR$\config\lnkarm.xcl</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\..\swilib.h</file>
+>>>>>>> .r68
       <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+<<<<<<< .mine
+=======
       <file>$TOOLKIT_DIR$\lib\dl4tpainl8n.r79</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\Debug\Exe\cpumon.elf</file>
       <file>$PROJ_DIR$\Debug\Obj\cpumon.pbd</file>
       <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+>>>>>>> .r68
       <file>$PROJ_DIR$\Debug\Exe\cpumon.d79</file>
+<<<<<<< .mine
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\Debug\Exe\cpumon.elf</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+=======
+>>>>>>> .r68
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 6</file>
+          <file> 8</file>
         </tool>
       </outputs>
     </file>
@@ -30,7 +46,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 3</file>
+          <file> 9</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -53,11 +69,17 @@
       <inputs>
         <tool>
           <name>XLINK</name>
+<<<<<<< .mine
+          <file> 1 4 0</file>
+=======
           <file> 1 3</file>
+>>>>>>> .r68
         </tool>
       </inputs>
     </file>
     <file>
+<<<<<<< .mine
+=======
       <name>$PROJ_DIR$\Debug\Obj\cpumon.pbd</name>
       <inputs>
         <tool>
@@ -67,11 +89,47 @@
       </inputs>
     </file>
     <file>
+>>>>>>> .r68
+<<<<<<< .mine
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 4</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 9</file>
+        </tool>
+      </outputs>
+=======
       <name>$PROJ_DIR$\Debug\Exe\cpumon.d79</name>
+>>>>>>> .r68
+      <inputs>
+        <tool>
+<<<<<<< .mine
+          <name>ICCARM</name>
+          <file> 3</file>
+=======
+          <name>XLINK</name>
+          <file> 0 3 4</file>
+>>>>>>> .r68
+        </tool>
+<<<<<<< .mine
+        <tool>
+          <name>BICOMP</name>
+          <file> 3</file>
+        </tool>
+=======
+>>>>>>> .r68
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\cpumon.elf</name>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 0 3 4</file>
+          <file> 2 4</file>
         </tool>
       </inputs>
     </file>
@@ -81,9 +139,16 @@
     <outputs>
       <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
       <file>$PROJ_DIR$\func.asm</file>
+<<<<<<< .mine
+      <file>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</file>
+=======
       <file>$PROJ_DIR$\..\inc\zconf.h</file>
       <file>$PROJ_DIR$\Release\Obj\cpumon.pbd</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+>>>>>>> .r68
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
       <file>$PROJ_DIR$\Release\Exe\cpumon.elf</file>
       <file>$PROJ_DIR$\..\inc\swilib.h</file>
       <file>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</file>
@@ -91,15 +156,31 @@
       <file>$PROJ_DIR$\..\inc\zlib.h</file>
       <file>$PROJ_DIR$\Release\Obj\main.r79</file>
       <file>$PROJ_DIR$\test.xcl</file>
+<<<<<<< .mine
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+=======
       <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+>>>>>>> .r68
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\test.xcl</file>
       <file>$PROJ_DIR$\main.c</file>
     </outputs>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 7</file>
+        </tool>
+      </outputs>
+    </file>
     <file>
       <name>$PROJ_DIR$\func.asm</name>
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 4</file>
+          <file> 11</file>
         </tool>
       </outputs>
     </file>
@@ -117,7 +198,11 @@
       <inputs>
         <tool>
           <name>XLINK</name>
+<<<<<<< .mine
+          <file> 12 6</file>
+=======
           <file> 11 10</file>
+>>>>>>> .r68
         </tool>
       </inputs>
     </file>
@@ -125,40 +210,65 @@
       <name>$PROJ_DIR$\Release\Exe\IDLEHOOK.elf</name>
       <inputs>
         <tool>
+<<<<<<< .mine
+          <name>BILINK</name>
+          <file> 9</file>
+=======
           <name>XLINK</name>
           <file> 11 10</file>
+>>>>>>> .r68
         </tool>
       </inputs>
     </file>
     <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
+      <name>$PROJ_DIR$\Release\Exe\cpumon.elf</name>
+      <inputs>
         <tool>
           <name>XLINK</name>
+<<<<<<< .mine
+          <file> 12 6</file>
+=======
           <file> 5</file>
+>>>>>>> .r68
         </tool>
-      </outputs>
+      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
+<<<<<<< .mine
+          <file> 6</file>
+=======
           <file> 10</file>
+>>>>>>> .r68
         </tool>
         <tool>
           <name>BICOMP</name>
+<<<<<<< .mine
+          <file> 9</file>
+=======
           <file> 0</file>
+>>>>>>> .r68
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
+<<<<<<< .mine
+          <file> 10 5 2 8 3</file>
+=======
           <file> 6 8 9 2 12</file>
+>>>>>>> .r68
         </tool>
         <tool>
           <name>BICOMP</name>
+<<<<<<< .mine
+          <file> 10 5 2 8 3</file>
+=======
           <file> 6 8 9 2 12</file>
+>>>>>>> .r68
         </tool>
       </inputs>
     </file>

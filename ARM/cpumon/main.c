@@ -69,13 +69,12 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   else
     csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
-  if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
+  if (IsGuiOnTop(idlegui_id)&&IsKeybUnlock()) //Если IdleGui на самом верху
   {
     GUI *igui=GetTopGUI();
     if (igui) //И он существует
     {
-      void *idata;
-      idata=GetDataOfItemByID(igui,2);
+      void *idata=GetDataOfItemByID(igui,2);
       if (idata)
       {
 	void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
