@@ -12,6 +12,8 @@ void MPlayer_Start(){Send_MPlayer_Command(PLAYER_PLAY,0);}
 void MPlayer_Next(){Send_MPlayer_Command(PLAYER_FWD,0);}
 void MPlayer_Prev(){Send_MPlayer_Command(PLAYER_RWD,0);}
 void MPlayer_Toggle(){Send_MPlayer_Command(PLAYER_TOGGLE,0);}
+void MPlayer_Shutdown(){Send_MPlayer_Command(PLAYER_KILL,0);}
+void MPlayer_Mute(){Send_MPlayer_Command(PLAYER_MUTE,0);}
 
 void MPlayer_VolChange(short dir)
 {
