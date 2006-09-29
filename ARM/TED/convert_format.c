@@ -1,6 +1,6 @@
 #include "..\inc\swilib.h"
 
-void memset(void *dst, int v, unsigned int len)
+void my_memset(void *dst, int v, unsigned int len)
 {
   char *d=(char *)dst;
   if (len)
@@ -359,8 +359,8 @@ unsigned int def_code (void)
 
   /* Инициализация buf_1 и buf_2. */
 
-  memset(buf_1,0xFF,sizeof(buf_1));
-  memset(buf_2,0xFF,sizeof(buf_2));
+  my_memset(buf_1,0xFF,sizeof(buf_1));
+  my_memset(buf_2,0xFF,sizeof(buf_2));
 
   /* Главный цикл - обработка сочетаний для каждого из трёх вариантов. Цикл
   выполняется, пока не кончится текст или в каком-либо из вариантов не

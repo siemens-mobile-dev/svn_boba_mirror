@@ -4,11 +4,13 @@ WSHDR *ws_nogui;
 
 CSM_RAM *under_idle;
 
+extern void kill_data(void *p, void (*func_p)(void *));
+
 void ElfKiller(void)
 {
   extern void *ELF_BEGIN;
   FreeWS(ws_nogui);
-  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
 extern void do_gui(int);

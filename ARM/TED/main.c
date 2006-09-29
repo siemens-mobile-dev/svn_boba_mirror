@@ -1550,9 +1550,12 @@ void method4(MAIN_GUI *data, void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
+extern void kill_data(void *p, void (*func_p)(void *));
+
 void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
-  mfree_adr(data);
+  kill_data(data,mfree_adr);
+//  mfree_adr(data);
 }
 
 int method8(void){return(0);}
@@ -2410,7 +2413,8 @@ void Killer(void)
   FreeWS(upinfo_ws);
   FreeWS(e_ws);
   unlink(stkfile,&ul);
-  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+//  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
 void maincsm_onclose(CSM_RAM *csm)

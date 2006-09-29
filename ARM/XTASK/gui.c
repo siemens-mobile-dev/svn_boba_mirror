@@ -322,7 +322,8 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
 
 void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
-  mfree_adr(data);
+  extern void kill_data(void *p, void (*func_p)(void *));
+  kill_data(data,mfree_adr);
 }
 
 int method8(void){return(0);}
