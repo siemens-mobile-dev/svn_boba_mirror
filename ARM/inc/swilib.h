@@ -30,7 +30,14 @@ typedef int jmp_buf[11];
 
 #else
 
+#define MSG_GUI_DESTROYED 0x98
+#define MMI_CEPID 0x4209
+#define DISPLACE_OF_EDGUI 0x50
+#define DISPLACE_OF_EDGUI_ID 0x4C
+#define DISPLACE_OF_IDLEGUI_ID 0x28
 #define DISPLACE_OF_IDLECANVAS 0x14
+
+
 #endif
 
 #define NAMECSM_MAGIC1 ((void *(*)(int))0x55AACCCC)
@@ -344,6 +351,18 @@ typedef struct{
   char file_name[200];
 #endif
 }DIR_ENTRY;
+
+typedef struct
+{
+  char unk1;
+  char unk2;
+  char unk3;
+  char unk4;
+  unsigned int size;
+  char unk5[28];
+  int  atributes;  //0-normal, 1-readonly, 2-hidden, 3-readonly+hidden
+}FSTATS;
+
 
 typedef struct
 {
