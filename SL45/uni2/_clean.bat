@@ -1,0 +1,22 @@
+@echo off
+del *.obj
+del *.src
+del *.lst
+del *.bak
+del packages\dialogs\*.bak
+del packages\common\*.bak
+del packages\dialogs\*.bak
+del packages\files\*.bak
+del packages\keys\*.bak
+del packages\messages\*.bak
+del packages\mp3_playlist\*.bak
+del packages\gsn_f\*.bak
+del packages\passwords\*.bak
+del packages\screen\*.bak
+del packages\setup\*.bak
+del packages\system\*.bak
+del packages\timers\*.bak
+del *.out
+del *.err
+del *.map
+hex2vkp test.hex __patch.vkp -FZ:\C166\BIN\fw56_iss_pit_pictures.bin
