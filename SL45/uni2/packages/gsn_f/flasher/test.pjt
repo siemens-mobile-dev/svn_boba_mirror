@@ -1,0 +1,185 @@
+;Codewright Project File (do not remove or modify this line)
+[ProjInit]
+ConfigSetExtMode=2
+ProjSetConfigFlags=0x04110940
+
+[State]
+SysSetCwd='Z:\C166\Soft\Tasking\examples\xvw'
+SrchSetFlags=0x0000600b
+SrchSetAgainFlags=0x00006003,0
+SrchSetAgainFlags=0x0200600b,1
+FileSortMode=0x0
+_StateView='Z:\C166\Projects\Tasking\.mamaich\Flasher\cstart.asm',0,0,1018,0,-1,-1,1,1,1,1,2,'',0x00100008,0,80,0,0,''
+_StateView='Z:\C166\Projects\Tasking\.mamaich\Flasher\test.c',22,22,930,178,-1,-1,376,1,352,1,1,'',0x00100018,0,80,0,0,''
+_StateBuffer='Z:\C166\Projects\Tasking\.mamaich\Flasher\cstart.asm',0x0000048e,1,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='Z:\C166\Projects\Tasking\.mamaich\Flasher\test.c',0x0400048e,376,1,25,'5 9','',0x0,'',1,72,1,0
+_StateHistory=FILELIST,'C:\Siemens\dc166\examples\testABS\test.c','C:\Siemens\dc166\examples\testABS\cstart.asm','C:\Siemens\dc166\examples\Flasher\cstart.asm','C:\Siemens\dc166\examples\Flasher\test.mak','C:\Siemens\dc166\examples\Flasher\test.c','C:\Siemens\dc166\examples\Flasher\test.src','Z:\C166\Projects\Tasking\online_flashing\1\flasher.c','Z:\C166\Projects\Tasking\.mamaich\Flasher\cstart.asm','Z:\C166\Projects\Tasking\.mamaich\Flasher\test.c'
+_StateHistory=SEARCH,'Flash_HC_RAM_loc','CMD_F','dpp','cmd_f','DetectWhichFlashICToUse','SetupFlashBoundaries','SetupAddress','CalculateAddress','cmd_F','BC35_type'
+_StateHistory=REPLACE,'myputs','print','Flash_HC_RAM_loc'
+_StateHistory=EDITFILE,'C:\Siemens\dc166\examples\test1\test.psp'
+_StateHistory=DIRECTORY,'C:\Siemens\dc166\examples\test','C:\Siemens\dc166\examples\test1','C:\Siemens\dc166\examples\testBin'
+_StateHistory=DOSHISTORY,'wmk','a','dir'
+_StateHistory=DOCUMENTVISIT,'10          1           Z:\C166\Projects\Tasking\online_flashing\1\flasher.c','1           1           Z:\C166\Projects\Tasking\.mamaich\Flasher\cstart.asm','376         14          Z:\C166\Projects\Tasking\.mamaich\Flasher\test.c'
+_StateHistory=XOBJECTS,'SetupFlashBoundaries'
+_StateDocumentVisit=3
+
+[Editor]
+FilterProjDeleteList 
+FilterProjAdd='Source Files','*.c;*.cc;*.cpp;*.cxx;*.ic;*.c96;*.fle;*.cmp;*.asm;*.src;*.s;*.a96;*.i;*.pcp',-1
+FilterProjAdd='Header Files','*.h;*.inc;*.sfr',-1
+FilterProjAdd='Project Files','*.pjt',-1
+FilterProjAdd='Resources','*.rc;*.bmp;*.ico;*.cur;*.dlg',-1
+FilterProjAdd='Other Files','*.*',-1
+_RestoreSysFlags=0x43097fca, 0xfffffffc, 0
+_RestoreSysFlags=0x40010005, 0xffffffff, 1
+CollapseMode=0x13080610
+VCSProject=''
+VCSProjectPath=''
+VCSProjectLocalPath=''
+ScrapSetCount=1
+ClipboardSetCount=1
+ClipboardEnableSepStr=1
+ClipboardSetSepStr='\r\n',0
+ClipboardEnableTermStr=1
+ClipboardSetTermStr='\r\n',0
+
+[Tools]
+ToolDeleteList 
+ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
+
+[Compiler]
+TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
+BrowseSetFile='C:\Siemens\dc166\examples\test\test.ptg'
+TagSetFile='C:\Siemens\dc166\examples\test\test.tag'
+CompilerAddCmdEx='TASKING src','"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING src',
+CompilerAddCmdEx='TASKING fle','"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING fle',
+CompilerAddCmdEx='TASKING asm','"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING asm',
+CompilerAddCmdEx='TASKING cmp','"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING cmp',
+CompilerAddCmdEx='$_cw_proj_hash_$','"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\siemens\dc166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\siemens\dc166\bin\xfw166.exe c:\siemens\dc166\examples\testbin\test.lno -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='$_cw_proj_hash_$',
+CompilerAddCmdEx='TASKING c','"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING c',
+CompilerNewExt=.htm
+CompilerAssign='TASKING src','.src'
+CompilerNewExt=.v
+CompilerNewExt=.awk
+CompilerNewExt=.bas
+CompilerAssign='TASKING c','.c'
+CompilerNewExt=.adb
+CompilerNewExt=.cfml
+CompilerNewExt=.jsp
+CompilerNewExt=.pl
+CompilerNewExt=.vhd
+CompilerNewExt=.pas
+CompilerNewExt=.tk
+CompilerNewExt=.asp
+CompilerNewExt=.rul
+CompilerNewExt=.cob
+CompilerNewExt=.js
+CompilerAssign='TASKING cmp','.cmp'
+CompilerNewExt=.php
+CompilerNewExt=.rc
+CompilerNewExt=.tcl
+CompilerAssign='TASKING fle','.fle'
+CompilerNewExt=.ini
+CompilerNewExt=.cc
+CompilerNewExt=.cs
+CompilerNewExt=.bat
+CompilerNewExt=.html
+CompilerAssign='TASKING asm','.asm'
+CompilerNewExt=.txt
+CompilerNewExt=.nrx
+CompilerNewExt=.java
+CompilerNewExt=.sqlj
+CompilerNewExt=.xml
+C:\Siemens\dc166\examples\test\a.bat',1073741984,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073741984,'${FTEE} nmake',0,'c:\siemens\dc166\bin\xfw166.exe c:\siemens\dc166\examples\test\test.hex -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+C:\Siemens\dc166\examples\test\a.bat',1073741984,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073741984,'${FTEE} nmake',0,'c:\siemens\dc166\bin\xfw166.exe c:\siemens\dc166\examples\test\test.hex -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+!ExecuteBuild(\'"C:\Siemens\dc166\examples\test\a.bat"\')',1073741984,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\siemens\dc166\bin\xfw166.exe c:\siemens\dc166\examples\test\test.hex -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+!ExecuteBuild(\'"C:\Siemens\dc166\examples\test\a.bat"\')',1073741984,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\siemens\dc166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\siemens\dc166\bin\xfw166.exe c:\siemens\dc166\examples\test\test.hex -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+
+[VersionControl:PVCS]
+VCSSetCmd=VCS_CHECKIN_ID,'put -n -T@"%Q" -M@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKINLOCK_ID,'put -n -T@"%Q" -M@"%Q" -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUT_ID,'get -y "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUTLOCK_ID,'get -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOCK_ID,'vcs -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKUNLOCK_ID,'vcs -y -u "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLABEL_ID,'vcs -y -v"${VCSLABEL}" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOG_ID,'vlog "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKPROP_ID,'vlog -b "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKDIFF_ID,'vdiff -r "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKMENU_ID,'pvcsvmwn',0x8000000
+VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
+
+[Files]
+.\test.c
+.\cstart.asm
+
+[Project]
+ConfigSetLinkDBFilename='C:\Siemens\dc166\bin\cwright.ldb'
+ConfigSetMarkDBFilename='C:\Siemens\dc166\bin\cwright.mrk'
+ConfigSetSymbolDBFilename='C:\Siemens\dc166\examples\test\test.sbl'
+EditSetPath=''
+
+[Ede]
+Toolchain=z:\c166\soft\tasking\etc\c166.dol
+ToolchainName=TASKING Tools for C166/ST10 v7.5 r2
+ProjectDir=z:\c166\projects\tasking\.mamaich\flasher
+UserMode=Expert
+EdeVersion=2.7r5 (094)
+CodeWrightVersion=6.5
+DefBuildSettings=True
+SaveFiles=True
+ScanDependencies=False
+StopAfterError=True
+KeepTmpFiles=False
+ExtMakefile=False
+ExtMakefileName=
+UseMakeOptions=False
+MakeOptions=
+ShowOptions=True
+ExtDebugger=False
+ExtDebuggerName=
+UseDOSShell=False
+SaveOptionMethod=0
+SaveOptionFileName=
+LoadOptionFileName=
+LoadOptionStartup=False
+GroupMisraC=0
+GroupList=GroupMisraC
+
+[Directories]
+Executables=z:\c166\soft\tasking\bin
+Includes=z:\c166\soft\tasking\include
+Libraries=z:\c166\soft\tasking\lib
+
+[DefaultOptions]
+OutAbs=0
+OutIHex=1
+OutStartAddr=15100h
+LocCheckClasses=1
+LnkListFile=LnkDefName
+LnkLocTrapFPLib=0
+LnkLocKeepDeb=0
+LocVecTab=0
+LocCpuMemSize=0
+LocMemSize=1000000h
+LocMemRom=015100h-016FFFh
+LocMemRam=17000h-17FFFh
+LocClasses=CMYINIT(015100h-01510Fh),  CROM, CINITIRAM(015110h-16FFFh), CFAR(017000h-17FFFh)
+XvwMonReserve=
+LocSmallModelDef=0
+LocSmallModelPag=1
+LocDPP1=5h
+LnkLocSymbTab=1
+LnkLocPaging=0
+LnkLocSupprWarn=152
+OptionList=OutAbs,OutIHex,OutStartAddr,LocCheckClasses,LnkListFile,LnkLocTrapFPLib,LnkLocKeepDeb,LocVecTab,LocCpuMemSize,LocMemSize,LocMemRom,LocMemRam,LocClasses,XvwMonReserve,LocSmallModelDef,LocSmallModelPag,LocDPP1,LnkLocSymbTab,LnkLocPaging,LnkLocSupprWarn
+
+[Options]
+FileList=

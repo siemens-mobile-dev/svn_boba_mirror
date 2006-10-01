@@ -1,0 +1,5 @@
+      jnb T0IR, loc_C307E8
+      bmovn P4.1, P4.1
+      bclr T0IR
+
+loc_C307E8:
