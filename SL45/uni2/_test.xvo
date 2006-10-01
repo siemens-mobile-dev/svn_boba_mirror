@@ -1,0 +1,13 @@
+-G "z:\c166\projects\tasking\uni2"
+-tcfg sim167.cfg
+--single_instance
+-i
+--load_application_download=true
+--load_application_signal=true
+--load_application_program_reset=true
+--load_application_target_reset=true
+--load_application_goto_main=true
+-a 100
+-b 200
+-c 32
+-s 26
