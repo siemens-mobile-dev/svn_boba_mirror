@@ -1,6 +1,6 @@
 #include "..\inc\swilib.h"
 
-void my_memset(void *dst, int v, unsigned int len)
+/*void my_memset(void *dst, int v, unsigned int len)
 {
   char *d=(char *)dst;
   if (len)
@@ -11,7 +11,8 @@ void my_memset(void *dst, int v, unsigned int len)
     }
     while(--len);
   }
-}
+}*/
+#define my_memset memset
 
 extern unsigned long curline; //Наружная переменная, счетчик строк
 extern unsigned int max_x; //Наружная переменная - макс. размер строки

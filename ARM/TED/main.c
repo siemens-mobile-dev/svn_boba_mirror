@@ -989,7 +989,7 @@ void DrawInfo(void)
   wsprintf(info_ws,"Time:\n%02d:%02d\n"
 	   "Current line %lu\nTotal lines %lu\n\nCurrent file:\n%w",
 	   t.hour,t.min,curline,total_line,e_ws);
-  DrawString(info_ws,3,3,128,172,11,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(info_ws,3,3,128,172,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 //=============================================================================
@@ -1024,7 +1024,7 @@ void DrawScreen(void)
       wsprintf(upinfo_ws,"Line %u...",curline);
     L_W1:
       DrawRoundedFrame(8,0,131,11,0,0,0,paper,paper);
-      DrawString(upinfo_ws,8,0,131,11,11,2,ink,paper);
+      DrawString(upinfo_ws,8,0,131,11,SMALL_FONT,2,ink,paper);
       goto L_WELLCOME2;
     }
     if (draw_mode==255) goto L_WELLCOME;
@@ -1122,7 +1122,7 @@ void DrawScreen(void)
       {
 	wsprintf(upinfo_ws,"Goto line %u...",curline);
 	DrawRoundedFrame(0,0,131,11,0,0,0,paper,paper);
-	DrawString(upinfo_ws,0,0,131,11,11,2,ink,paper);
+	DrawString(upinfo_ws,0,0,131,11,SMALL_FONT,2,ink,paper);
 	goto L_WELLCOME2;
       }
       //return;
@@ -1139,7 +1139,7 @@ void DrawScreen(void)
       DrawRoundedFrame(0,12,131,175,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
       wsprintf(info_ws,"Text viewer/editor\nversion 1.3\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
-      DrawString(info_ws,0,20,131,175,11,2,ink,paper);
+      DrawString(info_ws,0,20,131,175,SMALL_FONT,2,ink,paper);
       return;
     case 0:
       //Курсор
@@ -2483,10 +2483,12 @@ const struct
   {
   maincsm_onmessage,
   maincsm_oncreate,
+#ifdef NEWSGOLD
   0,
   0,
   0,
   0,
+#endif
   maincsm_onclose,
   sizeof(MAIN_CSM),
   1,
