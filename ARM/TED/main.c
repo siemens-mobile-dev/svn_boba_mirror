@@ -1429,7 +1429,7 @@ void ed_inp_ghook(GUI *data, int cmd)
     ecp--;
     while(ecp>curpos) doCurRight();
     while(ecp<curpos) doCurLeft();
-    SetSoftKey(data,&sk,1);
+    SetSoftKey(data,&sk,0);
     ExtractEditControl(data,1,&ec);
     wstrcpy(e_ws,ec.pWS);
   }
@@ -1449,6 +1449,7 @@ INPUTDIA_DESC ed_inp_desc=
   4,
   100,
   101,
+  0,
   0,
   0x40000000
 };
@@ -1720,7 +1721,7 @@ void sf_inp_ghook(GUI *data, int cmd)
   EDITCONTROL ec;
   if (cmd==7)
   {
-    SetSoftKey(data,&sk,1);
+    SetSoftKey(data,&sk,0);
     ExtractEditControl(data,1,&ec);
     wstrcpy(e_ws,ec.pWS);
   }
@@ -1742,6 +1743,7 @@ INPUTDIA_DESC sf_inp_desc=
   4,
   100,
   101,
+  0,
   0,
   0x40000000
 };
@@ -1976,7 +1978,7 @@ void gl_inp_ghook(GUI *data, int cmd)
   EDITCONTROL ec;
   if (cmd==7)
   {
-    SetSoftKey(data,&sk,1);
+    SetSoftKey(data,&sk,0);
     ExtractEditControl(data,1,&ec);
     wstrcpy(e_ws,ec.pWS);
   }
@@ -1999,6 +2001,7 @@ INPUTDIA_DESC gl_inp_desc=
   4,
   100,
   101,
+  0,
   0,
   0x40000000
 };
