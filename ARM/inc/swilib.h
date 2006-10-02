@@ -22,21 +22,24 @@ typedef int jmp_buf[11];
 #ifdef NEWSGOLD
 
 #define MSG_GUI_DESTROYED 0x640E
+#define MSG_IDLETMR_EXPIRED 0x6401
 #define MMI_CEPID 0x4209
 #define DISPLACE_OF_EDGUI 0x88
 #define DISPLACE_OF_EDGUI_ID 0x4C
 #define DISPLACE_OF_IDLEGUI_ID 0x2C
 #define DISPLACE_OF_IDLECANVAS 0x18
+#define SMALL_FONT 11
 
 #else
 
 #define MSG_GUI_DESTROYED 0x98
+#define MSG_IDLETMR_EXPIRED 0x95
 #define MMI_CEPID 0x4209
 #define DISPLACE_OF_EDGUI 0x50
 #define DISPLACE_OF_EDGUI_ID 0x4C
 #define DISPLACE_OF_IDLEGUI_ID 0x28
 #define DISPLACE_OF_IDLECANVAS 0x14
-
+#define SMALL_FONT 7
 
 #endif
 
@@ -184,6 +187,7 @@ typedef struct
 #endif
 }REGEXPLEXT;
 
+#ifdef NEWSGOLD
 typedef struct
 {
   RECT *canvas;
@@ -204,6 +208,29 @@ typedef struct
   int unk10;
   int flag30; //Используется при создании (бывает |=0x02)
 }GUI;
+#else
+typedef struct
+{
+  RECT *canvas;
+  void *methods;
+  void *definition;
+  char state;
+  char unk2;
+  char unk3;
+  char unk4;
+  int color1; //Параметр GeneralFunc пишется сюда?????
+//  int color2;
+  LLQ item_ll;
+  int unk5;
+  char unk6;
+  char unk7;
+  char unk8;
+  char unk9;
+  int unk10;
+  int flag30; //Используется при создании (бывает |=0x02)
+}GUI;
+#endif
+
 
 typedef struct
 {
