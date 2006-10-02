@@ -1,5 +1,5 @@
-;ELFpack v1.3 (C)2006 by Rst7/CBSIE, BoBa
-;Release 23.08.2006
+;ELFpack v1.4 (C)2006 by Rst7/CBSIE, BoBa
+;Release 2.10.2006
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -34,6 +34,7 @@
 0008: 0xA00020F0 ; 002: __arm void loopback2();
 000C: 0xA00020F0 ; 003: __arm void loopback3();
 0010: 0xA00020F0 ; 004: __arm void loopback4();
+0018: 0xA01AA3FC ; 006: __arm int GetAkku(int param1,int param2);
 0020: 0xA01B4958 ; 008: __arm long SetIllumination(unsigned char dev,unsigned long param1,unsigned short bright,unsigned long delay);
 0028: 0xA025127C ; 00A: __arm int fopen(const char * cFileName, unsigned int iFileFlags, unsigned int iFileMode, unsigned int *ErrorNumber);
 002C: 0xA025133C ; 00B: __arm int fread(int FileHandler, void *cBuffer, int iByteCount, unsigned int *ErrorNumber);
@@ -41,6 +42,8 @@
 0034: 0xA02511D0 ; 00D: __arm void fclose(int FileHandler, unsigned int *ErrorNumber);
 003C: 0xA0251230 ; 00F: __arm unsigned int lseek(int FileHandler, unsigned int offset, unsigned int origin, unsigned int *ErrorNumber, unsigned int *ErrorNumber2);
 0040: 0xA0250E74 ; 010: __arm int mkdir(const char * cFileName, unsigned int *ErrorNumber);
+0048: 0xA0250CD4 ; 012: __arm int GetFileAttrib(const char *cFileName, unsigned char *cAttribute, unsigned int *ErrorNumber);
+004C: 0xA0250FC8 ; 013: __arm int SetFileAttrib(const char *cFileName, unsigned char cAttribute, unsigned int *ErrorNumber);
 0050: 0xA0094B5C ; 014: __arm void *malloc(unsigned int size);
 0054: 0xA0094948 ; 015: __arm void mfree(void *);
 0058: 0xA0FC4385 ; 016: __thumb int sprintf(char *buf, char *str, ...);
@@ -52,22 +55,46 @@
 0070: 0xA01F5BCD ; 01C: __thumb void  wsAppendChar (void *WSHDR,int wchar);
 008C: 0xA029B7E1 ; 023: __thumb void DrawImg(unsigned char x, unsigned char y, short picture);
 0094: 0xA029ACDB ; 025: __thumb void DrawCanvas(void *data, int x1, int y1, int x2, int y2, int flag_one);
+00A8: 0xA01E4190 ; 02A: __arm int *GetEELiteBlockAddress(short blocknum);
 00C8: 0xA0280D20 ; 032: __arm void PlaySound(long param1, long param2, long param3, long tone, long param5);
+00F0: 0xA025137C ; 03C: __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned int *ErrorNumber);
+010C: 0xA09007BB ; 043: __thumb int IsUnlocked(void);
 0134: 0xA0093278 ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
 0170: 0xA01CF82C ; 05C: __arm char GetCPUClock();
 0174: 0xA0331C37 ; 05D: __thumb char GetCPULoad();
+017C: 0xA0094BE8 ; 05F: __arm int GetFreeRamAvail();
 01AC: 0xA0250D4C ; 06B: __arm int FindFirstFile (void *DIRENTRY,char *mask,int *ErrorNumber);
 01B0: 0xA0250DCC ; 06C: __arm int FindNextFile (void *DIRENTRY,int *ErrorNumber);
 01B4: 0xA0250C94 ; 06D: __arm int FindClose (void *DIRENTRY,int *ErrorNumber);
+01BC: 0xA0951CA8 ; 06F: __arm void RefreshGPRSTraffic();
+01C0: 0xA0951CD8 ; 070: __arm int *GetGPRSTrafficPointer();
 01F0: 0xA01AF22B ; 07C: __thumb unsigned SetVibration(unsigned int power);
 0200: 0xA05E212D ; 080: __thumb void ShowCallList(int list, int zero);
+0210: 0xA0251040 ; 084: __arm int GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber);
+0228: 0xA0250C24 ; 08A: __arm int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber);
+022C: 0xA02514D8 ; 08B: __arm int GetTotalFlexSpace(int DriveNum, unsigned int *ErrorNumber);
 0230: 0xA04D48A9 ; 08C: __thumb void RegExplorerExt(REGEXPLEXT *);
+0238: 0xA0250EDC ; 08E: __arm int fmove(const char * SourceFileName, const char * DestFileName, unsigned int *ErrorNumber);
+023C: 0xA0250F60 ; 08F: __arm int rmdir(const char * cDirectory, unsigned int *ErrorNumber);
+0240: 0xA02513F4 ; 090: __arm int truncate(int FileHandler, int length, int *errornumber);
+0244: 0xA0250E0C ; 091: __arm int isdir(const char * cDirectory, unsigned int *ErrorNumber);
 028C: 0xA02519BC ; 0A3: __arm void ws_2str(WSHDR *ws, char *str, unsigned int size);
+0298: 0xA0951C80 ; 0A6: __arm void ResetGPRSTraffic();
 02AC: 0xA00020F0 ; 0AB: __arm void loopback171();
 02D0: 0xA08FCD77 ; 0B4: __thumb void GetDateTime(TDate *, TTime *);
 02D4: 0xA026CAA3 ; 0B5: __thumb char GetWeek(TDate*);
 02D8: 0xA0288F27 ; 0B6: __thumb char GetProfile();
 02DC: 0xA0288F87 ; 0B7: __thumb char SetProfile(char);
+02E0: 0xA0FC5784 ; 0B8: __arm int dwMODdw(int denom,int number);
+029C: 0xA0D42E88 ; 0A7: __arm char IsGPRSEnabled();
+02A0: 0xA0D09EFD ; 0A8: __thumb char IsGPRSConnected();
+02A4: 0xA0900FA3 ; 0A9: __thumb void KbdLock();
+02E4: 0xA0900A87 ; 0B9: __thumb void KbdUnlock();
+02E8: 0xA0094B68 ; 0BA: __arm void *realloc(void *ptr, int size);
+02EC: 0xA0FC576C ; 0BB: __arm void *memset(void *s, int c, int n);
+02F0: 0xA0FC585C ; 0BC: __arm int divide(int divisor, int dividend);
+02F4: 0xA0FC5920 ; 0BD: __arm int DivBy10(int divident);
+0318: 0xA01A6B40 ; 0C6: __arm char GetAkkuCapacity();
 0400: 0xA0092A94 ; 100: __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
 0404: 0xA0091950 ; 101: __arm int GBS_ReciveMessage(GBS_MSG *);
 0408: 0xA009209C ; 102: __arm void GBS_AcceptMessage(void);
@@ -195,6 +222,10 @@
 05E8: 0xA0A50CE9 ; 17A: __thumb unsigned __int16 htons(unsigned __int16);
 05EC: 0xA0A50CF5 ; 17B: __thumb unsigned int htonl(unsigned int);
 05F0: 0xA8E25BF0 ; 817C: __arm int socklasterr(void);
+
+05F4: 0xA097840B ; 17D: __thumb void SetIDLETMR(int time_ms,int msg);
+05F8: 0xA097841B ; 17E: __thumb void RestartIDLETMR(void);
+05FC: 0xA0978426 ; 17F: __thumb void DisableIDLETMR(void);
 
 #pragma disable old_equal_ff
 +0
