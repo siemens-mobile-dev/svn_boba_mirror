@@ -274,6 +274,7 @@ unsigned int char8to16(int c)
       c=koi8translation[c-128];
       break;
     }
+    if (c<128) return(c);
     return(dos2unicode[c-128]);
   }
   return(c);

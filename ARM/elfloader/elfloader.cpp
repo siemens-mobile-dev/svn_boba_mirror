@@ -622,6 +622,7 @@ unsigned int char8to16(int c)
   {
     //Win->Dos
     c=wintranslation[c-128];
+    if (c<128) return(c);
     return(dos2unicode[c-128]);
   }
   return(c);
