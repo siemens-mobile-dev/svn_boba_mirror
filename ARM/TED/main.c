@@ -1542,6 +1542,7 @@ void method2(MAIN_GUI *data, void (*mfree_adr)(void *))
 void method3(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
   if (!draw_mode) draw_mode=1;
+  DisableIDLETMR();
   data->gui.state=2;
 }
 
