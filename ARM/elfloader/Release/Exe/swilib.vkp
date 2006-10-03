@@ -1,5 +1,5 @@
-;ELFpack v1.4 (C)2006 by Rst7/CBSIE, BoBa
-;Release 2.10.2006
+;ELFpack v1.5 (C)2006 by Rst7/CBSIE, BoBa
+;Release 3.10.2006
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -24,6 +24,8 @@
 ;+Вынесены адреса возврата в отдельный сегмент (RET_ADRS) для упрощения портирования
 ;
 ;+Ублажены юзеры МП - перенесен GetCPULoad
+;
+;+ESI теперь поддерживает украинские символы
 ;
 
 +0074000
@@ -225,7 +227,7 @@
 
 05F4: 0xA097840B ; 17D: __thumb void SetIDLETMR(int time_ms,int msg);
 05F8: 0xA097841B ; 17E: __thumb void RestartIDLETMR(void);
-05FC: 0xA0978426 ; 17F: __thumb void DisableIDLETMR(void);
+05FC: 0xA0978427 ; 17F: __thumb void DisableIDLETMR(void);
 
 #pragma disable old_equal_ff
 +0
