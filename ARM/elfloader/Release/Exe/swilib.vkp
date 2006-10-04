@@ -1,5 +1,5 @@
 ;ELFpack v1.5 (C)2006 by Rst7/CBSIE, BoBa
-;Release 3.10.2006
+;Release 4.10.2006
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -228,6 +228,12 @@
 05F4: 0xA097840B ; 17D: __thumb void SetIDLETMR(int time_ms,int msg);
 05F8: 0xA097841B ; 17E: __thumb void RestartIDLETMR(void);
 05FC: 0xA0978427 ; 17F: __thumb void DisableIDLETMR(void);
+
+0600: 0xA0A11EF5 ; 180: __thumb int EDIT_GetItemNumInFocusedComboBox(void *gui);
+0604: 0xA0A11E4D ; 181: __thumb void EDIT_SetTextToFocused(void *gui,WSHDR *ws);
+0608: 0xA0A11E95 ; 182: __thumb int EDIT_GetFocus(void *gui);
+060C: 0xA0A118E5 ; 183: __thumb int EDIT_GetUnFocus(void *gui);
+0610: 0xA0A0B73F ; 184: __thumb void ConstructComboBox(EDITCONTROL *EditControl,int type,int attr,WSHDR*,int maxlen,int unk_zero,int num_of_items,int start_item);
 
 #pragma disable old_equal_ff
 +0
