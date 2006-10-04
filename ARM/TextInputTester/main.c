@@ -34,8 +34,9 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 
 void ed1_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
+//  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
   EDITCONTROL ec;
+  int i;
   if (cmd==2)
   {
     //Create
@@ -46,6 +47,20 @@ void ed1_ghook(GUI *data, int cmd)
 //    SetSoftKey(data,&sk,1);
     ExtractEditControl(data,3,&ec);
     wstrcpy(ews,ec.pWS);
+  }
+  if (cmd==0x0D)
+  {
+    //onCombo
+    if ((i=EDIT_GetItemNumInFocusedComboBox(data)))
+    {
+      wsprintf(ews,"%t%d","Пункт: ",i);
+    }
+    else
+    {
+      ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
+      wstrcpy(ews,ec.pWS);
+    }
+    EDIT_SetTextToFocused(data,ews);
   }
 }
 
@@ -129,7 +144,7 @@ int create_ed(void)
   AddEditControlToEditQend(eq,&ec,ma);
 
   wsprintf(ews,"item1");
-  ConstructEditControl(&ec,7,0x40,ews,5);
+  ConstructComboBox(&ec,7,0x40,ews,10,0,3,1);
   AddEditControlToEditQend(eq,&ec,ma);
 
   return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);

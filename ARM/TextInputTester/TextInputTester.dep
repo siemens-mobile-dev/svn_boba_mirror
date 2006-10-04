@@ -6,15 +6,15 @@
     <name>Debug</name>
     <outputs>
       <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
-      <file>$PROJ_DIR$\Debug\Exe\TextInputTester.d79</file>
       <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\Debug\Exe\TextInputTester.d79</file>
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 1</file>
+          <file> 2</file>
         </tool>
       </outputs>
     </file>
@@ -35,27 +35,26 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\func.asm</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
       <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Release\Exe\TIT.elf</file>
       <file>$PROJ_DIR$\..\inc\zconf.h</file>
-      <file>$PROJ_DIR$\Release\Exe\TextInputTester.elf</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
       <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
       <file>$PROJ_DIR$\Release\List\main.lst</file>
       <file>$PROJ_DIR$\Release\List\TIT.map</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\Release\Exe\TIT.elf</file>
+      <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\main.c</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\func.asm</name>
+      <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
-          <name>AARM</name>
-          <file> 4</file>
+          <name>XLINK</name>
+          <file> 10 6</file>
         </tool>
       </outputs>
     </file>
@@ -64,22 +63,22 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 12</file>
+          <file> 6</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 5 4 10</file>
+          <file> 9 0 3</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>[ROOT_NODE]</name>
+      <name>$PROJ_DIR$\func.asm</name>
       <outputs>
         <tool>
-          <name>XLINK</name>
-          <file> 6 12</file>
+          <name>AARM</name>
+          <file> 0</file>
         </tool>
       </outputs>
     </file>
@@ -88,13 +87,13 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 10 11</file>
+          <file> 3 5</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1 2 9 7 3</file>
+          <file> 7 8 4 1 2</file>
         </tool>
       </inputs>
     </file>

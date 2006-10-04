@@ -3,6 +3,11 @@
 ELF_BEGIN
 
 
+defadr	MACRO	a,b
+	PUBLIC	a
+a	EQU	b
+	ENDM
+
 	RSEG	CODE:CODE
 	PUBLIC	kill_data
 	CODE32
