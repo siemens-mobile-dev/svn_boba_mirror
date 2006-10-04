@@ -1460,3 +1460,28 @@ __swi __arm void RestartIDLETMR(void);
 __swi __arm void DisableIDLETMR(void);
 //thumb
 //pattern=??,48,??,B5,??,68,_blf(00,22,00,21,??,E7),??,BD
+
+#pragma swi_number=0x0180
+__swi __arm int EDIT_GetItemNumInFocusedComboBox(void *gui);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0181
+__swi __arm void EDIT_SetTextToFocused(void *gui,WSHDR *ws);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0182
+__swi __arm int EDIT_GetFocus(void *gui);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0183
+__swi __arm int EDIT_GetUnFocus(void *gui);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0184
+__swi __arm void ConstructComboBox(EDITCONTROL *EditControl,int type,int attr,WSHDR*,int maxlen,int unk_zero,int num_of_items,int start_item);
+//thumb
+//pattern=F8,B5,04,1C,10,1C,06,AF,E4,CF,00,92,02,1C,20,1C,_blf(??,B5,??,B0,??,1C,??,1C,??,1C,??,29,??,9F,??,D0,??,2D,??,D1,??,2E,??,D0,??,DF,??,22,??,20,??,??,??,??,??,??,??,??,??,1C,??,??,??,??,??,70,??,98,??,60,??,62,??,83,??,B0,??,BD),25,72,66,83,A7,83,F8,BD
