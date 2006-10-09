@@ -4,7 +4,6 @@
 #define CFG_STR_WIN1251 4
 #define CFG_CBOX 5
 
-//#pragma pack(1)
 typedef struct
 {
   int type;
@@ -12,7 +11,11 @@ typedef struct
   unsigned int min;
   unsigned int max;
 }CFG_HDR;
-//#pragma pack()
+
+typedef struct
+{
+  char cbox_text[32];
+}CFG_CBOX_ITEM;
 
 
 
