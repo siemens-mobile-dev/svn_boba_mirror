@@ -1347,7 +1347,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\CfgEdit.elf \MMCard\ZBin\utilities\CfgEdit.elf</postbuild>
       </data>
     </settings>
     <settings>
