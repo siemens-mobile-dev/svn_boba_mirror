@@ -110,25 +110,38 @@ void ed1_ghook(GUI *data, int cmd)
         }
         *p=0;
         break;
+      case CFG_CBOX:
+         *((int *)(hp+1))=EDIT_GetItemNumInFocusedComboBox(data)-1;
+         break;
       default:
         break;
       }
     }
   }
-/*  if (cmd==0x0D)
+  if (cmd==0x0D)
   {
     //onCombo
-    if ((i=EDIT_GetItemNumInFocusedComboBox(data)))
+    i=EDIT_GetFocus(data);
+    ExtractEditControl(data,i,&ec);
+    if ((i>1)&&(i&1))
     {
-      wsprintf(ews,"%t%d","Пункт: ",i);
+      n=(i-3)>>1; //Индекс элемента в массиве cfg_h
+      hp=cfg_h[n];
+      if (hp->type==CFG_CBOX)
+      {
+        if ((j=EDIT_GetItemNumInFocusedComboBox(data)))
+        {
+          wsprintf(ews,_percent_t,((CFG_CBOX_ITEM*)((char *)hp+sizeof(CFG_HDR)+4))+(j-1));
+        }
+        else
+        {
+          ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
+          wstrcpy(ews,ec.pWS);
+        }
+        EDIT_SetTextToFocused(data,ews);
+      }
     }
-    else
-    {
-      ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
-      wstrcpy(ews,ec.pWS);
-    }
-    EDIT_SetTextToFocused(data,ews);
-  }*/
+  }
 }
 
 HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Edit Config",0x7FFFFFFF};
@@ -158,7 +171,7 @@ INPUTDIA_DESC ed1_desc=
 //  0x00000002 - ReadOnly
 //  0x00000004 - Не двигается курсор
 //  0x40000000 - Поменять местами софт-кнопки
-  0
+  0x40000000
 };
 
 void maincsm_oncreate(CSM_RAM *data)
@@ -451,6 +464,8 @@ int create_ed(void)
   int n=size_cfg;
   CFG_HDR *hp;
 
+  int i;
+
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
 
@@ -477,6 +492,7 @@ int create_ed(void)
       {
       L_ERRCONSTR:
         wsprintf(ews,"Unexpected EOF!!!");
+      L_ERRCONSTR1:
         ConstructEditControl(&ec,1,0x40,ews,256);
         AddEditControlToEditQend(eq,&ec,ma);
         goto L_ENDCONSTR;
@@ -509,6 +525,20 @@ int create_ed(void)
       ConstructEditControl(&ec,3,0x40,ews,hp->max);
       AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       p+=(hp->max+1+3)&(~3);
+      break;
+    case CFG_CBOX:
+      n-=hp->max*sizeof(CFG_CBOX_ITEM)+4;
+      if (n<0) goto L_ERRCONSTR;
+      i=*((int *)p);
+      if (i>=hp->max)
+      {
+        wsprintf(ews,"Bad index in combobox!!!");
+        goto L_ERRCONSTR1;
+      }
+      wsprintf(ews,_percent_t,((CFG_CBOX_ITEM*)(p+4))+i);
+      ConstructComboBox(&ec,7,0x40,ews,32,0,hp->max,i+1);
+      AddEditControlToEditQend(eq,&ec,ma);
+      p+=hp->max*sizeof(CFG_CBOX_ITEM)+4;
       break;
     default:
       wsprintf(ews,"Unsupported item %d",hp->type);
