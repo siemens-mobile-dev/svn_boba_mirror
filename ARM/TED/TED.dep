@@ -5,19 +5,19 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\config_data.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
       <file>$PROJ_DIR$\config_data.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\linework.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\convert_format.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\convert_simple.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\saver.r79</file>
-      <file>$PROJ_DIR$\Debug\Exe\TED.d79</file>
       <file>$PROJ_DIR$\linework.c</file>
       <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\saver.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\convert_simple.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Debug\Exe\TED.d79</file>
+      <file>$PROJ_DIR$\Debug\Obj\linework.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\convert_format.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\saver.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\config_data.r79</file>
       <file>$PROJ_DIR$\convert_format.c</file>
       <file>$PROJ_DIR$\convert_simple.c</file>
     </outputs>
@@ -26,7 +26,43 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 0</file>
+          <file> 12</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\linework.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 9</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 7</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 6</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\saver.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 11</file>
         </tool>
       </outputs>
     </file>
@@ -40,47 +76,11 @@
       </outputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\linework.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 3</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\func.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 5</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 1</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\saver.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 7</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
       <name>$PROJ_DIR$\convert_format.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 4</file>
+          <file> 10</file>
         </tool>
       </outputs>
     </file>
@@ -89,7 +89,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 6</file>
+          <file> 5</file>
         </tool>
       </outputs>
     </file>
@@ -101,76 +101,52 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\Release\List\linework.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\saver.pbi</file>
-      <file>$PROJ_DIR$\Release\Exe\TED.elf</file>
-      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\Release\List\saver.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_simple.pbi</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
       <file>$PROJ_DIR$\config_data.c</file>
-      <file>$PROJ_DIR$\Release\Obj\saver.r79</file>
-      <file>$PROJ_DIR$\test.xcl</file>
       <file>$PROJ_DIR$\div.r79</file>
-      <file>$PROJ_DIR$\Release\List\TED.map</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_simple.r79</file>
-      <file>$PROJ_DIR$\Release\List\main.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\linework.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_format.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\convert_format.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\linework.pbi</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
-      <file>$PROJ_DIR$\Release\List\convert_simple.lst</file>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
       <file>$PROJ_DIR$\linework.c</file>
       <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\saver.c</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\Release\List\saver.lst</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\linework.pbi</file>
+      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
       <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_simple.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_format.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_format.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\saver.pbi</file>
+      <file>$PROJ_DIR$\Release\Exe\TED.elf</file>
+      <file>$PROJ_DIR$\Release\List\linework.lst</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\Release\Obj\saver.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\linework.r79</file>
+      <file>$PROJ_DIR$\Release\List\convert_simple.lst</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\convert_simple.r79</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
       <file>$PROJ_DIR$\Release\List\convert_format.lst</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release\List\TED.map</file>
       <file>$PROJ_DIR$\convert_format.c</file>
       <file>$PROJ_DIR$\convert_simple.c</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
     </outputs>
-    <file>
-      <name>$PROJ_DIR$\Release\Exe\TED.elf</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 13</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 11 18 17 14 22 16 30 10 12</file>
-        </tool>
-      </inputs>
-    </file>
     <file>
       <name>$PROJ_DIR$\config_data.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 18 23</file>
+          <file> 14 11</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 4</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 2 13</file>
+          <file> 29</file>
         </tool>
       </outputs>
     </file>
@@ -179,11 +155,11 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 16 0</file>
+          <file> 23 19</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 20</file>
+          <file> 10</file>
         </tool>
       </outputs>
     </file>
@@ -192,7 +168,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 22</file>
+          <file> 9</file>
         </tool>
       </outputs>
     </file>
@@ -201,17 +177,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 30 15</file>
+          <file> 12 27</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 3</file>
+          <file> 28</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 21 8 5 34 25</file>
+          <file> 8 21 6 31 25</file>
         </tool>
       </inputs>
     </file>
@@ -220,17 +196,41 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 10 6</file>
+          <file> 22 7</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 1</file>
+          <file> 17</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 21 8 5 34 25</file>
+          <file> 8 21 6 31 25</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 18 32</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\TED.elf</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 32</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 20 14 16 26 9 23 12 22 1</file>
         </tool>
       </inputs>
     </file>
@@ -239,17 +239,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 17 31</file>
+          <file> 16 30</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 19</file>
+          <file> 15</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 21 8 5 34 25</file>
+          <file> 8 21 6 31 25</file>
         </tool>
       </inputs>
     </file>
@@ -258,11 +258,11 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 14 24</file>
+          <file> 26 24</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 7</file>
+          <file> 13</file>
         </tool>
       </outputs>
     </file>

@@ -2516,11 +2516,60 @@ void UpdateCSMname(void)
   FreeWS(ws);
 }
 
+#pragma segment="CONFIG_C"
+
+int LoadConfigData(const char *fname)
+{
+  int f;
+  unsigned int ul;
+  char *buf;
+  int result=0;
+  void *cfg;
+
+  extern const int ink_type; //first var in CONFIG
+  cfg=(void*)&ink_type;
+
+  unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
+
+  if (!(buf=malloc(len))) return -1;
+  if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  {
+    if (fread(f,buf,len,&ul)==len)
+    {
+      memcpy(cfg,buf,len);
+      fclose(f,&ul);
+    }
+    else
+    {
+      fclose(f,&ul);
+      goto L_SAVENEWCFG;
+    }
+  }
+  else
+  {
+  L_SAVENEWCFG:
+    if ((f=fopen(fname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+    {
+      if (fwrite(f,cfg,len,&ul)!=len) result=-1;
+      fclose(f,&ul);
+    }
+    else
+      result=-1;
+  }
+  mfree(buf);
+  return(result);
+}
+
+
 int main(char *exename, char *fname)
 {
   char dummy[sizeof(MAIN_CSM)];
   TDate d;
   TTime t;
+  if (LoadConfigData("4:\\ZBin\\etc\\TED.bcfg")>=0)
+  {
+    LoadConfigData("0:\\ZBin\\etc\\TED.bcfg");
+  }
   GetDateTime(&d,&t);
   snprintf(stkfile,sizeof(stkfile),"%s%d_%d_%d_%d_%d_%d.tmp",ted_path,d.year,d.month,d.day,t.hour,t.min,t.param);
   if (fname)
