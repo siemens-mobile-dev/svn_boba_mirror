@@ -264,9 +264,11 @@ void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
   int f;
   int sz=0;
   unsigned int ul;
+  extern const char csmlist_fname[128];
+
   data->ws1=AllocWS(256);
   data->ws2=AllocWS(256);
-  if ((f=fopen("4:\\ZBin\\etc\\CSMlist.txt",A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((f=fopen(csmlist_fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
   {
     sz=fread(f,csm_text,32767,&ul);
     fclose(f,&ul);
