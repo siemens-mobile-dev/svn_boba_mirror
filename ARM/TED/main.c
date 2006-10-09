@@ -1,4 +1,5 @@
 #include "..\inc\swilib.h"
+#include "..\inc\cfg_items.h"
 
 int menusoftkeys[]={0,1,2};
 
@@ -2526,8 +2527,8 @@ int LoadConfigData(const char *fname)
   int result=0;
   void *cfg;
 
-  extern const int ink_type; //first var in CONFIG
-  cfg=(void*)&ink_type;
+  extern const CFG_HDR cfghdr0; //first var in CONFIG
+  cfg=(void*)&cfghdr0;
 
   unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
 
