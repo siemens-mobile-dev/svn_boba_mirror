@@ -1140,7 +1140,7 @@ void DrawScreen(void)
     L_WELLCOME2:
       DrawRoundedFrame(0,12,131,175,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
-      wsprintf(info_ws,"Text viewer/editor\nversion 1.3\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
+      wsprintf(info_ws,"Text viewer/editor\nversion 1.4\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
       DrawString(info_ws,0,20,131,175,SMALL_FONT,2,ink,paper);
       return;
     case 0:
