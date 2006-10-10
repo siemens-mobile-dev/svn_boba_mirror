@@ -1,5 +1,5 @@
-;ELFpack v1.5 (C)2006 by Rst7/CBSIE, BoBa
-;Release 4.10.2006
+;ELFpack v1.6 (C)2006 by Rst7/CBSIE, BoBa
+;Release 10.10.2006
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -26,6 +26,8 @@
 ;+Ублажены юзеры МП - перенесен GetCPULoad
 ;
 ;+ESI теперь поддерживает украинские символы
+;
+;+Поддержка эльфов SVv4, генерируемых LD (respect DeathSoft)
 ;
 
 +0074000

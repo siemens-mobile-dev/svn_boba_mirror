@@ -1,15 +1,18 @@
-//#define wintel		//компелим под винду
+//#define wintel	//компелим под винду
 
 #define MAX_PHNUM	10	//максимальное количество програмных сегментов
 
 #ifdef wintel
+#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
+#define _CRT_SECURE_NO_DEPRECATE
 #include "stdlib.h"
 #include "stdio.h"
-#include "iostream.h"
+#include <iostream>
+using namespace std;
 #define mfree free
 #endif
 
-#ifndef winntel
+#ifndef wintel
 #include "..\inc\swilib.h"
 #endif
 
@@ -208,6 +211,12 @@ typedef struct{
   Elf32_Word r_info;
 } Elf32_Rel;
 
+typedef struct{
+  Elf32_Addr  r_offset;
+  Elf32_Word  r_info;
+  Elf32_Sword r_addend;
+} Elf32_Rela;
+
 #define ELF32_R_SYM(i) ((i)>>8)
 #define ELF32_R_TYPE(i) ((unsigned char)(i))
 #define ELF32_R_INFO(s,t) (((s)<<8)+(unsigned char)(t))
@@ -258,7 +267,11 @@ typedef struct{
 
 typedef long TElfEntry(char *, void *,void *,void *);
 
+#ifndef wintel
 __arm zeromem_a(void *d, int l){zeromem(d,l);}
+#else
+void zeromem_a(void *d, int l){memset(d,0, l);}
+#endif
 
 long elfload(char *filename, void *param1, void *param2, void *param3){
   Elf32_Ehdr ehdr;				                        //заголовок ельфа
@@ -267,11 +280,14 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
   char *reloc, *base;
   unsigned long minadr=(unsigned long)-1, maxadr=0;//, maxadrsize;
   int n,m;
+
+
+  zeromem_a(dyn, sizeof(dyn));
+
   /////////////////////////////////////////
   //WINTEL
 #ifdef wintel
   FILE *fin=NULL;
-
   if ((fin=fopen(filename,"rb"))==NULL) return -1;			//не открывается ельф
   if (fread(&ehdr,sizeof(Elf32_Ehdr),1,fin)!=1) return -2;	        //не читается ельф
 #endif
@@ -325,6 +341,8 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
       }
     }
 #ifdef wintel
+    cout << "minadr:"<<hex<<minadr<<endl;
+    cout << "maxadr:"<<hex<<maxadr<<endl;
     cout << "Program header"<<endl;
     cout << "phdr.p_type:"<<phdrs[n].p_type<<endl;
     cout << "phdr.p_offset:"<<phdrs[n].p_offset<<endl;
@@ -343,7 +361,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
   }
 //  t_zeromem(base,maxadr-minadr);
   zeromem_a(base,maxadr-minadr);
-  for(n=0;n<ehdr.e_phnum;n++){
+  for(n=0;n<ehdr.e_phnum;n++){ //  обход всех сегментов
     ////////////////////////////////////////////////////////////////////
     //WINTEL
 #ifdef wintel
@@ -358,7 +376,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
     /////////////////////////////////////////////////////////////////////
     switch (phdrs[n].p_type){
     case PT_LOAD:
-      //загрузем програмные сегменты с размером больше 0
+      //загрузим програмные сегменты с размером больше 0
       if (phdrs[n].p_filesz!=0) {
 	/////////////////////////////////////////////////////////////////////
 	//WINTEL
@@ -386,6 +404,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
       ///////////////////////////////////////////////////////////////////////
       //WINTEL
 #ifdef wintel
+      cout << "dyn seg: off="<<hex<<phdrs[n].p_offset<<", sz="<<phdrs[n].p_filesz<<endl;
       if (fread(reloc,phdrs[n].p_filesz,1,fin)!=1) {mfree(reloc); return -8;} //не читается динамический сегмент
 #endif
 
@@ -398,8 +417,12 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
       //				memset(dyn,0, sizeof(dyn));
       //вытащим все тэги из динамической секции
       m=0;
-      while (((Elf32_Dyn *)reloc)[m].d_tag!=0){
+      while (((Elf32_Dyn *)reloc)[m].d_tag!=DT_NULL){
 	if (((Elf32_Dyn *)reloc)[m].d_tag<=DT_BIND_NOW) {
+#ifdef wintel
+          cout<<"d_tag="<<((Elf32_Dyn *)reloc)[m].d_tag;
+          cout<<" d_val="<<((Elf32_Dyn *)reloc)[m].d_val<<endl;
+#endif
 	  dyn[((Elf32_Dyn *)reloc)[m].d_tag]=((Elf32_Dyn *)reloc)[m].d_val;
 	}
 	m++;
@@ -407,25 +430,46 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 #ifdef wintel
       cout << "Dynamic section" << endl;
       for (m = 0; m <= DT_BIND_NOW; m++) {
-	cout << m<<" = "<<dyn[m]<<endl;
+	cout << dec << m <<" = "<< hex << dyn[m]<<endl;
       }
+      cout<<"dyn[DT_REL]="<<dyn[DT_REL]<<", dyn[DT_RELA]="<<dyn[DT_RELA]<<endl;
+      cout<<"dyn[DT_RELSZ]="<<dyn[DT_RELSZ]<<", dyn[DT_RELASZ]="<<dyn[DT_RELASZ]<<endl;
 #endif
+
       m=0;
       //выполним релокацию REL
       if (dyn[DT_RELSZ]!=0) {
 	while (m*sizeof(Elf32_Rel)<dyn[DT_RELSZ]){
 #ifdef wintel
-	  cout<<((Elf32_Rel *)(reloc+dyn[DT_REL]))[m].r_offset
-	    <<" , "<<ELF32_R_SYM(((Elf32_Rel *)(reloc+dyn[DT_REL]))[m].r_info)
-	      <<" , "<<(int) ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]))[m].r_info)<<endl;
+	  cout<<"rel: of="<<hex<<((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset
+	    <<" , sym_idx="<<ELF32_R_SYM(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)
+            <<" , rel_type="<<dec<<(int) ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)<<endl;
 #endif
-	  switch(ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]))[m].r_info)){
+	  switch(ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)){
+
+	  case R_ARM_NONE: break; // пустой релокейшен
+
+          case R_ARM_ABS32:
+#ifdef wintel
+            cout << "base="<<hex<<(long)base<< endl;
+            cout << "of="<<hex<<((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr<<endl;
+#endif
+	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base;
+          break;
+
+          case R_ARM_RELATIVE: // вообще говоря не minadr а начало сегмента содержащего символ
+	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base-minadr;
+          break; // ignore
+
 	  case R_ARM_RABS32:
-	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]))[m].r_offset-minadr))+=(long)base-minadr;
-	    break;
+	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset))+=(long)base-minadr;
+          break;
+
 	  case R_ARM_RBASE: break;
 	  default: 	//неизвестный тип релокации
-#ifndef wintel
+#ifdef wintel
+            cout << "Invalid reloc type: " <<dec<<(unsigned)ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info) << endl;
+#else
 	    fclose(fin, &iError);
 #endif
 	    mfree(base);
@@ -435,6 +479,12 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 	  m++;
 	}
       }
+#ifdef wintel
+      else
+      {
+       cout << "No relocation information dyn[DT_RELSZ]=0" << endl;
+      }
+#endif
       mfree(reloc);
       break;
     default:	//неизвестный тип програмного сегмента
@@ -457,16 +507,22 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 #endif
 #ifdef wintel
   FILE fout;
-  char foutbuff[10];
+  char foutbuff[11];
   sprintf(foutbuff,"0x%08x",base);
   if ((fin=fopen(foutbuff,"wb"))==NULL) return -1000;
-  if (fwrite(base,maxadr+maxadrsize-minadr,1,fin)!=1) return -1001;
+  if (fwrite(base,maxadr-minadr,1,fin)!=1) return -1001; // vit
   return 0;
 #endif
 }
 
 #ifdef wintel
 int main(int argc, char* argv[]){
+  if(argc<2)
+  {
+   cout << "no .elf specified"<<endl;
+   return -1;
+  }
+
   cout << elfload(argv[1],0,0,0);
   return 1;
 }
