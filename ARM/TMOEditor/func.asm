@@ -1,0 +1,13 @@
+	PUBLIC	ELF_BEGIN
+	RSEG	ELFBEGIN:DATA
+ELF_BEGIN
+
+
+defadr	MACRO	a,b
+	PUBLIC	a
+a	EQU	b
+	ENDM
+
+
+	END
+	
