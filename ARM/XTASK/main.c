@@ -163,7 +163,7 @@ void main(void)
 {
   mode=0;
 
-  if (LoadConfigData("4:\\ZBin\\etc\\XTask.bcfg")>=0)
+  if (LoadConfigData("4:\\ZBin\\etc\\XTask.bcfg")<0)
   {
     LoadConfigData("0:\\ZBin\\etc\\XTask.bcfg");
   }
