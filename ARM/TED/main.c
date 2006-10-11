@@ -2567,7 +2567,7 @@ int main(char *exename, char *fname)
   char dummy[sizeof(MAIN_CSM)];
   TDate d;
   TTime t;
-  if (LoadConfigData("4:\\ZBin\\etc\\TED.bcfg")>=0)
+  if (LoadConfigData("4:\\ZBin\\etc\\TED.bcfg")<0)
   {
     LoadConfigData("0:\\ZBin\\etc\\TED.bcfg");
   }
