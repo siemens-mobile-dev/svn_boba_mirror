@@ -1,7 +1,6 @@
 #include "..\inc\swilib.h"
 
-char txt[]="upor";
-char s[16384];
+#define RECONNECT_TIME (1300*30)
 
 const char binary_profile[0x204]=
 {
@@ -42,15 +41,46 @@ const char binary_profile[0x204]=
 
 NAP_PARAM_CONT *nap_container;
 
-int connect_state=0;
-
-
-extern void kill_data(void *p, void (*func_p)(void *));
-
-void ElfKiller(void)
+GBSTMR mytmr;
+void reconnect(void)
 {
-  extern void *ELF_BEGIN;
-  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+  void do_connect(void);
+  SUBPROC((void *)do_connect);
+}
+
+
+#define HELPER_CEPID 0x4339
+#define MSG_HELPER_RUN 0x0001
+
+void proc_HELPER(void)
+{
+  GBS_MSG msg;
+  if (GBS_RecActDstMessage(&msg))
+  {
+    int m=msg.msg;
+    if (m==MSG_HELPER_RUN)
+    {
+      if (msg.data0)
+      {
+	((void (*)(int, void *))(msg.data0))(msg.submess,msg.data1);
+      }
+    }
+    else
+    {
+      if ((m>=0x80)&&(m<=0x8F))
+      {
+        //Трансляция в MMI
+        GBS_SendMessage(MMI_CEPID,MSG_NET_TRANSLATOR,m,msg.submess); //msg->submess, submess->data0
+      }
+      if (m==LMAN_DISCONNECT_CNF)
+      {
+        LockSched();
+        ShowMSG(1,(int)"Session closed!");
+        UnlockSched();
+        GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
+      }
+    }
+  }
 }
 
 int WaitForSpecialMsg(int waited_msg)
@@ -67,19 +97,19 @@ int WaitForSpecialMsg(int waited_msg)
 
 void do_connect(void)
 {
-  SOCK_ADDR sa;
-  int sock;
   REGSOCKCEPID_DATA rsc;
   LMAN_DATA lmd;
   NAP_PARAM_CONT *nc;
-  int i;
 
   //Устанавливаем соединение
   rsc._0x0080=0x0080;
   rsc._0xFFFF=0xFFFF;
   rsc._0x0000=0x0000;
   RegisterCepidForSocketWork(&rsc);
-  nap_container=nc=malloc(sizeof(NAP_PARAM_CONT));
+  if (!nap_container)
+  {
+    nap_container=nc=malloc(sizeof(NAP_PARAM_CONT));
+  }
   nc->len=sizeof(NAP_PARAM_CONT);
   nc->ctx_napdef=&(nc->napdef);
   nc->zero=0;
@@ -93,64 +123,29 @@ void do_connect(void)
   RequestLMANConnect(&lmd);
   if (WaitForSpecialMsg(LMAN_CONNECT_CNF)<0)
   {
-    LockSched();
-    ShowMSG(1,(int)"Can't create session!");
-    UnlockSched();
-    goto L_NO_CONNECT;
+    GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
   }
-  //Соединение установленно
-  sock=socket(1,1,0);
-  if (sock!=-1)
+  else
   {
-    sa.family=1;
-    sa.port=htons(80);
-    sa.ip=htonl(IP_ADDR(62,149,13,117));
-    if (connect(sock,&sa,sizeof(sa))!=-1)
-    {
-      if (WaitForSpecialMsg(ENIP_SOCK_CONNECTED)>=0)
-      {
-	sprintf(s,
-		"POST /scripts/wap-status.php HTTP/1.1\r\n"
-		  "Host: sms.n-host.info\r\n"
-		    "Content-Type: application/x-www-form-urlencoded\r\n"
-		      "Content-Length: %d\r\n"
-			"\r\n"
-			  "sms=%s&nomer=0662860762",
-			  strlen(txt)+21,txt
-			    );
-	send(sock,s,strlen(s),0);
-	zeromem(s,16384);
-        do
-        {
-	  i=recv(sock,s,16383,0);
-          if (i<0)
-          {
-            if (*socklasterr()==0xC9) i=0;
-          }
-        }
-        while(!i);
-        sprintf(s,"Recived %d bytes",i);
-        LockSched();
-        ShowMSG(1,(int)s);
-        UnlockSched();
-	shutdown(sock,2);
-      }
-      else
-      {
-        LockSched();
-        ShowMSG(1,(int)"Can't connect!");
-        UnlockSched();
-      }
-    }
-    closesocket(sock);
+    LockSched();
+    ShowMSG(1,(int)"Session started!");
+    UnlockSched();
   }
-L_NO_CONNECT:
-  SUBPROC((void *)ElfKiller);
 }
 
+void ChangeHelper(void)
+{
+  static const char name[]="EXT_HELPER";
+  LockSched();
+  KillGBSproc(GBS_GetCurCepid());
+  CreateGBSproc(HELPER_CEPID, name, proc_HELPER, 0x80, 0);
+  ShowMSG(1,(int)"Gprs daemon started!");
+  UnlockSched();
+  SUBPROC((void *)do_connect);
+}
 
 int main()
 {
-  SUBPROC((void *)do_connect);
+  SUBPROC((void *)ChangeHelper);
   return 0;
 }
