@@ -54,13 +54,13 @@ void send_req(void)
 {
   sprintf(buf,
           "POST /scripts/wap-status.php HTTP/1.1\r\n"
-		  "Host: sms.n-host.info\r\n"
-		    "Content-Type: application/x-www-form-urlencoded\r\n"
-		      "Content-Length: %d\r\n"
-			"\r\n"
-			  "sms=%s&nomer=0661653392",
-			  strlen(txt)+21,txt
-			    );
+            "Host: sms.n-host.info\r\n"
+              "Content-Type: application/x-www-form-urlencoded\r\n"
+                "Content-Length: %d\r\n"
+                  "\r\n"
+                    "sms=%s&nomer=0661653392",
+                    strlen(txt)+21,txt
+                      );
   send(sock,buf,strlen(buf),0);
   zeromem(buf,sizeof(buf));
   pbuf=0;
@@ -199,49 +199,47 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   }
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
-    switch((int)msg->data0)
+    if ((int)msg->data1==sock)
     {
-    case ENIP_SOCK_CONNECTED:
-      if (connect_state==1)
+      //Если наш сокет
+      switch((int)msg->data0)
       {
-        //Если посылали запрос
-        if ((int)msg->data1==sock)
+      case ENIP_SOCK_CONNECTED:
+        if (connect_state==1)
         {
-          //Если наш сокет
+          //Если посылали запрос
           SUBPROC((void *)send_req);
           REDRAW();
         }
-      }
-      break;
-    case ENIP_DATA_READ:
-      if (connect_state==2)
-      {
-        //Если посылали send
-        if ((int)msg->data1==sock)
+        else
         {
-          //Если наш сокет
+          ShowMSG(1,(int)"Illegal message ENIP_SOCK_CONNECTED!");
+        }
+        break;
+      case ENIP_DATA_READ:
+        if (connect_state==2)
+        {
+          //Если посылали send
           SUBPROC((void *)get_answer);
           REDRAW();
         }
-      }
-      break;
-    case ENIP_REMOTE_CLOSED:
-      //Закрыт со стороны сервера
-      if ((int)msg->data1==sock)
-      {
+        else
+        {
+          ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
+        }
+        break;
+      case ENIP_REMOTE_CLOSED:
+        //Закрыт со стороны сервера
         if (connect_state) SUBPROC((void *)end_socket);
-      }
-      break;
-    case ENIP_CLOSED:
-      //Закрыт вызовом closesocket
-      if ((int)msg->data1==sock)
-      {
+        break;
+      case ENIP_CLOSED:
+        //Закрыт вызовом closesocket
         sprintf(ss,"Recived %d bytes",pbuf);
         ShowMSG(1,(int)ss);
         connect_state=0;
         sock=-1;
+        break;
       }
-      break;
     }
   }
   return(1);
