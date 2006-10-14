@@ -1,5 +1,5 @@
-;ELFpack v1.6 (C)2006 by Rst7/CBSIE, BoBa
-;Release 10.10.2006
+;ELFpack v1.7 (C)2006 by Rst7/CBSIE, BoBa
+;Release 13.10.2006
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -29,6 +29,7 @@
 ;
 ;+Поддержка эльфов SVv4, генерируемых LD (respect DeathSoft)
 ;
+;+Ретрансляция сообщений из HELPER_PROC в MMI
 
 +0074000
 #pragma enable old_equal_ff
@@ -236,6 +237,10 @@
 0608: 0xA0A11E95 ; 182: __thumb int EDIT_GetFocus(void *gui);
 060C: 0xA0A118E5 ; 183: __thumb int EDIT_GetUnFocus(void *gui);
 0610: 0xA0A0B73F ; 184: __thumb void ConstructComboBox(EDITCONTROL *EditControl,int type,int attr,WSHDR*,int maxlen,int unk_zero,int num_of_items,int start_item);
+
+0614: 0xA00925C4 ;185: __arm int GBS_WaitForMsg(const int *msg_list, int msgs_num, GBS_MSG*, int timeout);
+0618: 0xA09915E5 ;186: __thumb int RegisterCepidForSocketWork(REGSOCKCEPID_DATA *);
+061C: 0xA09926F5 ;187: __thumb int RequestLMANConnect(LMAN_DATA *);
 
 #pragma disable old_equal_ff
 +0

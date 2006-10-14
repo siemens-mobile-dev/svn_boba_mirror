@@ -559,6 +559,10 @@ __arm void proc_HELPER(void) @ "HELPER_PROC"
 	((void (*)(int, void *))(msg.data0))(msg.submess,msg.data1);
       }
     }
+    else
+    {
+      GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,msg.pid_from,msg.msg,msg.submess);
+    }
   }
 }
 
