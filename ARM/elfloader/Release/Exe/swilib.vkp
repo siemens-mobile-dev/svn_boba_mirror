@@ -226,7 +226,7 @@
 05E4: 0xA0A49FAD ; 179: __thumb int send(int socket,const void *buf,int len,int flag);
 05E8: 0xA0A50CE9 ; 17A: __thumb unsigned __int16 htons(unsigned __int16);
 05EC: 0xA0A50CF5 ; 17B: __thumb unsigned int htonl(unsigned int);
-05F0: 0xA8E25BF0 ; 817C: __arm int socklasterr(void);
+05F0: 0xA8E25BF0 ; 817C: __arm int *socklasterr(void);
 
 05F4: 0xA097840B ; 17D: __thumb void SetIDLETMR(int time_ms,int msg);
 05F8: 0xA097841B ; 17E: __thumb void RestartIDLETMR(void);
@@ -241,6 +241,11 @@
 0614: 0xA00925C4 ;185: __arm int GBS_WaitForMsg(const int *msg_list, int msgs_num, GBS_MSG*, int timeout);
 0618: 0xA09915E5 ;186: __thumb int RegisterCepidForSocketWork(REGSOCKCEPID_DATA *);
 061C: 0xA09926F5 ;187: __thumb int RequestLMANConnect(LMAN_DATA *);
+
+0620: 0x00000084 ;8188: __arm int ScreenW(void);
+0624: 0x000000B0 ;8189: __arm int ScreenH(void);
+0628: 0x00000016 ;818A: __arm int HeaderH(void);
+062C: 0x00000016 ;818B: __arm int SoftkeyH(void);
 
 #pragma disable old_equal_ff
 +0
