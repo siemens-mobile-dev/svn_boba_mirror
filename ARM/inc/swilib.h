@@ -24,6 +24,9 @@ typedef int jmp_buf[11];
 #define LMAN_CONNECT_CNF 0x80
 #define LMAN_CONNECT_REJ 0x82
 #define LMAN_DISCONNECT_CNF 0x84
+
+#define ENIP_REMOTE_CLOSED 0x8F
+#define ENIP_CLOSED 0x8E
 #define ENIP_SOCK_CONNECTED 0x8D
 #define ENIP_DATA_READ 0x8C
 
