@@ -21,6 +21,14 @@ typedef int jmp_buf[11];
 
 #ifdef NEWSGOLD
 
+#define LMAN_CONNECT_CNF 0x80
+#define LMAN_CONNECT_REJ 0x82
+#define LMAN_DISCONNECT_CNF 0x84
+#define ENIP_SOCK_CONNECTED 0x8D
+#define ENIP_DATA_READ 0x8C
+
+#define MSG_HELPER_TRANSLATOR 0xDEAE
+
 #define MSG_GUI_DESTROYED 0x640E
 #define MSG_IDLETMR_EXPIRED 0x6401
 #define MMI_CEPID 0x4209
@@ -485,7 +493,7 @@ typedef struct
   unsigned int unk2;
 }SOCK_ADDR;
 
-#pragma pack(1)
+#pragma pack(2)
 typedef struct
 {
   unsigned short _0x0080;
@@ -493,6 +501,29 @@ typedef struct
   unsigned short _0x0000;
 }REGSOCKCEPID_DATA;
 #pragma pack()
+
+typedef struct
+{
+  char body[0x204];
+}CTX_NAPDEF;
+
+typedef struct
+{
+  unsigned int len;
+  CTX_NAPDEF *ctx_napdef;
+  unsigned int zero;
+  CTX_NAPDEF napdef;
+}NAP_PARAM_CONT;
+
+typedef struct
+{
+  char zero;
+  void *native_profile;
+  char _1;
+  char _4;
+  unsigned short _0;
+  NAP_PARAM_CONT *NapParameterContainer;
+}LMAN_DATA;
 
 #define IP_ADDR(A,B,C,D) (((unsigned long)A<<24)|((unsigned long)B<<16)|((unsigned long)C<<8)|((unsigned long)D<<0))
 
@@ -1485,3 +1516,18 @@ __swi __arm int EDIT_GetUnFocus(void *gui);
 __swi __arm void ConstructComboBox(EDITCONTROL *EditControl,int type,int attr,WSHDR*,int maxlen,int unk_zero,int num_of_items,int start_item);
 //thumb
 //pattern=F8,B5,04,1C,10,1C,06,AF,E4,CF,00,92,02,1C,20,1C,_blf(??,B5,??,B0,??,1C,??,1C,??,1C,??,29,??,9F,??,D0,??,2D,??,D1,??,2E,??,D0,??,DF,??,22,??,20,??,??,??,??,??,??,??,??,??,1C,??,??,??,??,??,70,??,98,??,60,??,62,??,83,??,B0,??,BD),25,72,66,83,A7,83,F8,BD
+
+#pragma swi_number=0x0185
+__arm int GBS_WaitForMsg(const int *msg_list, int msgs_num, GBS_MSG*, int timeout);
+//arm
+//pattern=
+
+#pragma swi_number=0x0186
+__swi __arm int RegisterCepidForSocketWork(REGSOCKCEPID_DATA *);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0187
+__swi __arm int RequestLMANConnect(LMAN_DATA *);
+//thumb
+//pattern=
