@@ -122,11 +122,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       LogWriter(s);
       ShowMSG(1,(int)s);
       GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
-    }else
+    }/*else
     {
       sprintf(s,"MSG: %04X\n%04X %04X",msg->submess,msg->data0,msg->data1);
       ShowMSG(1,(int)s);
-    }
+    }*/
   }
   return(csm_result);
 }
