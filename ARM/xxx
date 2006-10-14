@@ -1,0 +1,23 @@
+HTTP/1.1 200 OK
+Date: Fri, 13 Oct 2006 10:32:29 GMT
+Server: Apache (Unix)
+X-Powered-By: PHP/4.4.2
+Transfer-Encoding: chunked
+Content-Type: text/html
+
+7b 
+<wml>
+<card title="Status">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<p align ="center">
+
+4f 
+SMS to<br />Jeans<br />+380662860762<br /> 13 October 13:32:29<br />sent!<br />
+28 
+<a href='../sms.wml'>Send sms again?</a>
+13 
+</p>
+</card>
+</wml>
+0
+
