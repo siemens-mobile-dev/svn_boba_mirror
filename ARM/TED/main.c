@@ -117,6 +117,9 @@ unsigned int max_y;
 unsigned int max_y_emode;
 unsigned int max_x;
 
+unsigned int sheight_emode;
+unsigned int sheight;
+
 //---------------------------------
 // Состояние конвертора
 //---------------------------------
@@ -165,10 +168,14 @@ struct
   unsigned long bookm4;
 } HISTORY;
 
-char myscr[17*176];
+#define SCR_WIDTH 256
+#define SCR_MODULO (SCR_WIDTH/8)
 
-IMGHDR MyScrHdr = {132,176,0x1,0,myscr};
+char myscr[SCR_MODULO*320];
 
+//IMGHDR MyScrHdr = {SCR_WIDTH,320,0x1,0,myscr};
+
+IMGHDR MyScrHdr = {255,255,0x1,0,myscr};
 
 /*GBSTMR tmr2sec;
 
@@ -460,7 +467,7 @@ void DrawChar(int c,int x,int y)
   case 4:
     s=font+(c<<3);
     //Обрабатываем фонт размером 4
-    d=myscr+(y*(8*17)+(x>>1)); //Основной экран
+    d=myscr+(y*(8*SCR_MODULO)+(x>>1)); //Основной экран
     ms=0xF0;
     md=0x0F;
     if (x&1) {ms=0x0F;md=0xF0;}
@@ -468,21 +475,21 @@ void DrawChar(int c,int x,int y)
     do
     {
       *d=(*d&md)|(*s++&ms);
-      d+=17;
+      d+=SCR_MODULO;
     }
     while(--i);
     break;
   case 6:
     s=font+(c<<3);
     //Обрабатываем фонт размером 6
-    d=myscr+(y*(8*17)+((x>>2)*3)); //0E:160C - Основной экран
+    d=myscr+(y*(8*SCR_MODULO)+((x>>2)*3)); //0E:160C - Основной экран
     switch(x&3)
     {
     case 0:
       do
       {
 	*d=(*d&0x03)|(*s++);
-	d+=17;
+	d+=SCR_MODULO;
       }
       while(--i);
       break;
@@ -492,7 +499,7 @@ void DrawChar(int c,int x,int y)
 	*d=(*d&0xFC)|(*s>>6);
 	d++;
 	*d=(*d&0x0F)|(*s++<<2);
-	d+=16;
+	d+=SCR_MODULO-1;
       }
       while(--i);
       break;
@@ -503,7 +510,7 @@ void DrawChar(int c,int x,int y)
 	*d=(*d&0xF0)|(*s>>4);
 	d++;
 	*d=(*d&0x3F)|(*s++<<4);
-	d+=16;
+	d+=SCR_MODULO-1;
       }
       while(--i);
       break;
@@ -512,7 +519,7 @@ void DrawChar(int c,int x,int y)
       do
       {
 	*d=(*d&0xC0)|(*s++>>2);
-	d+=17;
+	d+=SCR_MODULO;
       }
       while(--i);
       break;
@@ -521,11 +528,11 @@ void DrawChar(int c,int x,int y)
   case 8:
     s=font+(c<<3);
     //Обрабатываем фонт размером 8
-    d=myscr+(y*(8*17)+x); //0E:160C - Основной экран
+    d=myscr+(y*(8*SCR_MODULO)+x); //0E:160C - Основной экран
     do
     {
       *d=*s++;
-      d+=17;
+      d+=SCR_MODULO;
     }
     while(--i);
     break;
@@ -533,11 +540,11 @@ void DrawChar(int c,int x,int y)
     i=14;
     s=font+(c*14);
     //Обрабатываем фонт размером 8
-    d=myscr+(y*(14*17)+x); //0E:160C - Основной экран
+    d=myscr+(y*(14*SCR_MODULO)+x); //0E:160C - Основной экран
     do
     {
       *d=*s++;
-      d+=17;
+      d+=SCR_MODULO;
     }
     while(--i);
     break;
@@ -545,11 +552,11 @@ void DrawChar(int c,int x,int y)
     i=16;
     s=font+(c*16);
     //Обрабатываем фонт размером 16
-    d=myscr+(y*(16*17)+x); //0E:160C - Основной экран
+    d=myscr+(y*(16*SCR_MODULO)+x); //0E:160C - Основной экран
     do
     {
       *d=*s++;
-      d+=17;
+      d+=SCR_MODULO;
     }
     while(--i);
     break;
@@ -986,12 +993,12 @@ void DrawInfo(void)
   TDate d;
   GetDateTime(&d,&t);
 
-  DrawRoundedFrame(0,0,131,175,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
+  DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
   str_2ws(e_ws,filename,126);
   wsprintf(info_ws,"Time:\n%02d:%02d\n"
 	   "Current line %lu\nTotal lines %lu\n\nCurrent file:\n%w",
 	   t.hour,t.min,curline,total_line,e_ws);
-  DrawString(info_ws,3,3,128,172,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(info_ws,3,3,ScreenW()-4,ScreenH()-4,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 //=============================================================================
@@ -1025,8 +1032,8 @@ void DrawScreen(void)
     {
       wsprintf(upinfo_ws,"Line %u...",curline);
     L_W1:
-      DrawRoundedFrame(8,0,131,11,0,0,0,paper,paper);
-      DrawString(upinfo_ws,8,0,131,11,SMALL_FONT,2,ink,paper);
+      DrawRoundedFrame(8,0,ScreenW()-1,11,0,0,0,paper,paper);
+      DrawString(upinfo_ws,8,0,ScreenW()-1,11,SMALL_FONT,2,ink,paper);
       goto L_WELLCOME2;
     }
     if (draw_mode==255) goto L_WELLCOME;
@@ -1080,10 +1087,10 @@ void DrawScreen(void)
       //DrawCursor(curpos-viewpos,curline-viewline);
       {
 	//Рисуем скролл-бар
-	char *d=myscr+16; //Последний байт
+	char *d=myscr+((ScreenW()-1)>>3); //Последний байт
 	if (total_line)
 	{
-	  y=((editmode?128-8:176-8)*curline)/total_line;
+	  y=((editmode?sheight_emode-8:sheight-8)*curline)/total_line;
 	}
 	else
 	{
@@ -1100,21 +1107,25 @@ void DrawScreen(void)
 	  {
 	    *d=0x78;
 	  }
-	  d+=17;
+	  d+=SCR_MODULO;
 	  p++;
 	}
-	while(p<176);
+	while(p<ScreenH());
       }
       if (editmode)
       {
-	MyScrHdr.h=128;
-	DrawRoundedFrame(0,22,131,23,0,0,0,paper,paper);
-	DrawRoundedFrame(0,24+128,131,25+128,0,0,0,paper,paper);
-	DrwImg(&MyScrHdr,0,24,ink,paper);
+        int h=HeaderH();
+        int rh=((h+7)&(~7));
+        int s=SoftkeyH();
+        int rs=((s+7)&(~7));
+	MyScrHdr.h=ScreenH()-rh-rs;
+	DrawRoundedFrame(0,HeaderH(),ScreenW()-1,rh-1,0,0,0,paper,paper);
+	DrawRoundedFrame(0,ScreenH()-rs,ScreenW()-1,ScreenH()-s-1,0,0,0,paper,paper);
+	DrwImg(&MyScrHdr,0,((HeaderH()+7)&(~7)),ink,paper);
       }
       else
       {
-	MyScrHdr.h=176;
+	MyScrHdr.h=ScreenH();
 	DrwImg(&MyScrHdr,0,0,ink,paper);
       }
       cursor_cnt=3;
@@ -1123,8 +1134,8 @@ void DrawScreen(void)
       //Процесс перехода на строку
       {
 	wsprintf(upinfo_ws,"Goto line %u...",curline);
-	DrawRoundedFrame(0,0,131,11,0,0,0,paper,paper);
-	DrawString(upinfo_ws,0,0,131,11,SMALL_FONT,2,ink,paper);
+	DrawRoundedFrame(0,0,ScreenW()-1,11,0,0,0,paper,paper);
+	DrawString(upinfo_ws,0,0,ScreenW()-1,11,SMALL_FONT,2,ink,paper);
 	goto L_WELLCOME2;
       }
       //return;
@@ -1135,13 +1146,13 @@ void DrawScreen(void)
     case 255:
       //Экран приветствия
     L_WELLCOME:
-      DrawRoundedFrame(0,0,131,11,0,0,0,paper,paper);
+      DrawRoundedFrame(0,0,ScreenW()-1,11,0,0,0,paper,paper);
       draw_mode=1;
     L_WELLCOME2:
-      DrawRoundedFrame(0,12,131,175,0,0,0,paper,paper);
+      DrawRoundedFrame(0,12,ScreenW()-1,ScreenH()-1,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
-      wsprintf(info_ws,"Text viewer/editor\nversion 1.4\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
-      DrawString(info_ws,0,20,131,175,SMALL_FONT,2,ink,paper);
+      wsprintf(info_ws,"Text viewer/editor\nversion 1.5\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
+      DrawString(info_ws,0,20,ScreenW()-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
       return;
     case 0:
       //Курсор
@@ -1154,7 +1165,7 @@ void DrawScreen(void)
       {
 	unsigned int x=curpos-viewpos;
 	unsigned int y=curline-viewline;
-	unsigned int dy=editmode?24:0;
+	unsigned int dy=editmode?((HeaderH()+7)&(~7)):0;
 	my=editmode?max_y_emode:max_y;
 	if ((x<max_x)&&(y<my)&&(!cursor_off))
 	{
@@ -1513,8 +1524,12 @@ void LightTimerProc(void)
 
 void SetViewIllumination(void)
 {
-  SetIllumination(0,1,DISPLAY_LIGHT,0);
-  SetIllumination(1,1,0,0);
+  extern const int ADJ_LIGHT;
+  if (ADJ_LIGHT)
+  {
+    SetIllumination(0,1,DISPLAY_LIGHT,0);
+    SetIllumination(1,1,0,0);
+  }
 //  light_count=30;
 //  GBS_StartTimerProc(&light_tmr,1,LightTimerProc);
 }
@@ -1769,28 +1784,35 @@ void loadfont(int flag)
   char fn_font[128];
   int fin;
   unsigned int ul;
+  int bytew;
+  int pixw;
+  int eh;
+
   snprintf(fn_font,sizeof(fn_font),"%s%d.fnt",ted_path,font_size);
   if ((fin=fopen(fn_font,A_ReadOnly+A_BIN,0,&ul))!=-1)
   {
     fread(fin,font,sizeof(font),&ul);
     fclose(fin,&ul);
   }
+  bytew=(ScreenW()-1)>>3;
+  pixw=bytew*8;
+  sheight_emode=eh=(sheight=ScreenH())-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
   switch(font_size)
   {
   case 16:
-    max_y_emode=128/16;
-    max_y=176/16;
-    max_x=128/8;
+    max_y_emode=eh/16;
+    max_y=ScreenH()/16;
+    max_x=pixw/8;
     break;
   case 14:
-    max_y_emode=128/14;
-    max_y=176/14;
-    max_x=128/8;
+    max_y_emode=eh/14;
+    max_y=ScreenH()/14;
+    max_x=pixw/8;
     break;
   default:
-    max_y_emode=128/8;
-    max_y=176/8;
-    max_x=128/font_size;
+    max_y_emode=eh/8;
+    max_y=ScreenH()/8;
+    max_x=pixw/font_size;
     break;
   }
   zeromem(myscr,sizeof(myscr));
@@ -2271,6 +2293,10 @@ void FirstLoadFile(unsigned int fmt)
   int fs;
   unsigned int ul;
 
+  extern const int ENA_AUTOF;
+  extern const int AUTOF_MODE;
+  extern const int AUTOF_FONT;
+
   u_disk=-1; //Дисковый указатель верхнего стека
   d_disk=-1; //Дисковый указатель нижнего стека
   zeromem(ubat,sizeof(ubat)); //Прочищаем таблицу блоков верхнего стека
@@ -2298,16 +2324,31 @@ void FirstLoadFile(unsigned int fmt)
     else
     {
       win_dos_koi=0xFF; //Неизвестный
-      font_size=6; //Минимальный шрифт
+      switch(AUTOF_FONT) //Шрифт
+      {
+      case 0: font_size=4; break;
+      default:
+      case 1: font_size=6; break;
+      case 2: font_size=8; break;
+      case 3: font_size=14; break;
+      case 4: font_size=16; break;
+      }
       zeromem(&HISTORY.line,4*6); //Все на самом верху
       HISTORY.cursor_off=cursor_off=1; //Выключить курсор
       HISTORY.total=1;
-      HISTORY.fmt=0;
+//      HISTORY.fmt=0;
       HISTORY.fmt=255; //Первый запуск!!!!
-      LockSched();
-      loadmenu_id=DrawLoadMenu(); //Определяем, как грузить через меню
-      UnlockSched();
-      return;
+      if (ENA_AUTOF)
+      {
+        HISTORY.fmt=fmt=AUTOF_MODE;
+      }
+      else
+      {
+        LockSched();
+        loadmenu_id=DrawLoadMenu(); //Определяем, как грузить через меню
+        UnlockSched();
+        return;
+      }
     }
   }
   if ((fmt&0x7F)>2) fmt=0;
