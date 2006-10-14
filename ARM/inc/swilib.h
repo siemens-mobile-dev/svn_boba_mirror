@@ -1534,3 +1534,19 @@ __swi __arm int RegisterCepidForSocketWork(REGSOCKCEPID_DATA *);
 __swi __arm int RequestLMANConnect(LMAN_DATA *);
 //thumb
 //pattern=
+
+#pragma swi_number=0x8188
+__swi __arm int ScreenW(void);
+//adr=132
+
+#pragma swi_number=0x8189
+__swi __arm int ScreenH(void);
+//adr=176
+
+#pragma swi_number=0x818A
+__swi __arm int HeaderH(void);
+//adr=22
+
+#pragma swi_number=0x818B
+__swi __arm int SoftkeyH(void);
+//adr=22
