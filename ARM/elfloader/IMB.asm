@@ -1,17 +1,15 @@
-	RSEG	CODE:CODE(2)
+        RSEG	CODE:CODE(2)
 
-;	PUBLIC OldOnCreate
-;OldOnCreate	EQU	0xA02FCB52+1
-
-;	PUBLIC OldOnClose
-;OldOnClose	EQU	0xA02FCD7A+1	
-;
 	PUBLIC	ExecuteIMB
 
 ExecuteIMB:
 	STR	LR,[SP, #-4]!
 	MRS	R2,CPSR
+        #ifdef NEWSGOLD
 	SWI	4		; Переключаемся в системный режим
+        #else
+	SWI	0		; Переключаемся в системный режим
+        #endif
 	MRS	R1,CPSR		; Запрещаем прерывания
 	ORR	R1,R1,#0xC0
 	MSR	CPSR_c,R1

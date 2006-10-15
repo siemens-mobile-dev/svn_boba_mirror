@@ -1,3 +1,4 @@
+#define DEFAULT_DISK "0"
 //#define wintel	//компелим под винду
 
 #define MAX_PHNUM	10	//максимальное количество програмных сегментов
@@ -540,11 +541,19 @@ void elfloader_onload(WSHDR *filename){
 //=======================================================================
 extern void(*OldOnClose)(void *);
 extern void(*OldOnCreate)(void *);
+#ifdef NEWSGOLD
 extern void(*OldShowMsg)(int, int);
+#else
+extern void(*OldTxtOpen)(WSHDR*, WSHDR*);
+#endif
 
 //-----------------------------------------------------------------------
 
+#ifdef NEWSGOLD
 #define HELPER_CEPID 0x4339
+#else
+#define HELPER_CEPID 0x4331
+#endif
 #define MSG_HELPER_RUN 0x0001
 
 __arm void proc_HELPER(void) @ "HELPER_PROC"
@@ -618,29 +627,41 @@ __arm void LoadDaemons(int dummy, char *path)
 
 __arm void MyIDLECSMonCreate(void *data)
 {
+#ifdef NEWSGOLD
   static const int smallicons[2]={0x3f5,0};
   static const int bigicons[2]={0x439,0};
+#else
+  static const int smallicons[2]={0x1F9,0};
+  static const int bigicons[2]={0x1FA,0};
+#endif
+
   static const REGEXPLEXT elf_reg=
   {
     "elf",
     0x55,
     //   0x59C1200,
+#ifdef NEWSGOLD
     0x59D43FF,
+#else
+    0x57807FF,
+#endif
 //    0x5431F04,
     smallicons,
     bigicons,
+#ifdef NEWSGOLD
     //   0xBB,
     0x109,
     0x197,
     //   0x7FFFC112,
     0x7FFFC0FB,
+#endif
     (void *)elfloader_onload,
     0
 
   };
   CreateHELPER_PROC();
   RegExplorerExt(&elf_reg);
-  SUBPROC((void *)LoadDaemons,0,"4:\\ZBin\\Daemons\\");
+  SUBPROC((void *)LoadDaemons,0,DEFAULT_DISK ":\\ZBin\\Daemons\\");
   OldOnCreate(data);
   asm("NOP\n");
 }
@@ -688,13 +709,19 @@ unsigned int char8to16(int c)
   return(c);
 }
 
-__arm void ESI(WSHDR *ws, int dummy, char *s)
+#ifdef NEWSGOLD
+__arm
+#endif
+void ESI(WSHDR *ws, int dummy, char *s)
 {
   int c;
+#ifdef NEWSGOLD
   CutWSTR(ws,0);
+#else
+  if ((((unsigned int)s)>>28)!=0x0A) return;
+#endif
   while((c=*s++))
   {
-    //if (c>=0xC0) c+=0x350;
     wsAppendChar(ws,char8to16(c));
   }
 }
@@ -705,7 +732,7 @@ int toupper(int c)
   return(c);
 }
 
-static const char extfile[]="4:\\ZBin\\etc\\extension.cfg";
+static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
 
 __arm int DoUnknownFileType(WSHDR *filename)
 {
@@ -813,6 +840,8 @@ __arm int DoUnknownFileType(WSHDR *filename)
   return 0;
 }
 
+
+#ifdef NEWSGOLD
 __thumb MyShowMSG(int p1, int p2)
 {
   if (p2!=(0x1DCC+5))
@@ -823,6 +852,33 @@ __thumb MyShowMSG(int p1, int p2)
   asm("MOVS R0,R6\n");
   DoUnknownFileType((WSHDR *)p1);
 }
+#else
+
+__arm int PropertyPatch(WSHDR *unk_foldername, WSHDR *unk_filename)
+{
+WSHDR *ws;
+ws=AllocWS(255);
+wstrcpy(ws,unk_foldername);
+wsAppendChar(ws,'\\');
+wstrcat (ws,unk_filename);
+DoUnknownFileType(ws);
+FreeWS(ws);
+return 0;
+}
+
+
+void PatchTxtOnOpen(WSHDR *unk_filename, WSHDR *unk_fileext)
+{
+  char fileext[6];
+  ws_2str(unk_fileext, fileext, 5);
+  if (strcmp(fileext,"txt"))
+  {
+    OldTxtOpen(unk_filename, unk_fileext);
+    return;
+  }
+  DoUnknownFileType(unk_filename);
+}
+#endif
 
 
 //Патчи
@@ -831,9 +887,13 @@ __root static const int NEW_ONCREATE @ "PATCH_ONCREATE" = (int)MyIDLECSMonCreate
 
 __root static const int NEW_ONCLOSE @ "PATCH_ONCLOSE" = (int)MyIDLECSMonClose;
 
+#ifdef NEWSGOLD
 __root static const int NEW_SHOWMSG @ "PATCH_SHOWMSG_BLF" = (int)MyShowMSG;
 
 __root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)DoUnknownFileType;
+#else
+__root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)PatchTxtOnOpen;
+#endif
 
 __root static const int SWILIB_FUNC171 @ "SWILIB_FUNC171" = (int)SUBPROC_impl;
 
