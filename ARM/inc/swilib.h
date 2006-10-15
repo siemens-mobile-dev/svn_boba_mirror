@@ -495,7 +495,7 @@ typedef struct
 }AB_UNPRES_ITEM;
 
 typedef struct{
-#ifdef NEWSGOLD 
+#ifdef NEWSGOLD
   short field_0;
   short number_of_records;
   short field_4;
@@ -522,7 +522,7 @@ typedef struct{
   short field_12;
   int field_14;
   int field_18;
-#endif 
+#endif
 }AB_UNPRES;
 
 #pragma pack(1)
