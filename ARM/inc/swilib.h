@@ -37,7 +37,7 @@ typedef int jmp_buf[11];
 #define ENIP_SOCK_CONNECTED 0x8D
 #define ENIP_SOCK_CLOSED 0x8E
 #define ENIP_SOCK_REMOTE_CLOSED 0x8F
-//#define 0x90
+#define ENIP_SOCK_ACCEPTED 0x90
 #define ENIP_SOCK_ICMP_ERROR 0x91
 
 #define MSG_HELPER_TRANSLATOR 0xDEAE
