@@ -44,6 +44,7 @@ void create_connect(void)
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
       connect_state=1;
+      REDRAW();
     }
     else
       closesocket(sock);
@@ -216,7 +217,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           ShowMSG(1,(int)"Illegal message ENIP_SOCK_CONNECTED!");
         }
         break;
-      case ENIP_DATA_READ:
+      case ENIP_SOCK_DATA_READ:
         if (connect_state==2)
         {
           //Если посылали send
@@ -228,11 +229,11 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
         }
         break;
-      case ENIP_REMOTE_CLOSED:
+      case ENIP_SOCK_REMOTE_CLOSED:
         //Закрыт со стороны сервера
         if (connect_state) SUBPROC((void *)end_socket);
         break;
-      case ENIP_CLOSED:
+      case ENIP_SOCK_CLOSED:
         //Закрыт вызовом closesocket
         sprintf(ss,"Recived %d bytes",pbuf);
         ShowMSG(1,(int)ss);
