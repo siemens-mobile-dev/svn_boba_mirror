@@ -710,9 +710,10 @@ unsigned int char8to16(int c)
 }
 
 #ifdef NEWSGOLD
-__arm
+__arm void ESI(WSHDR *ws, int dummy, char *s)
+#else
+void ESI(char *s, WSHDR *ws)
 #endif
-void ESI(WSHDR *ws, int dummy, char *s)
 {
   int c;
 #ifdef NEWSGOLD
