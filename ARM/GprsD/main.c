@@ -116,7 +116,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       LogWriter(s);
       ShowMSG(1,(int)s);
     }else
-    if ((m==LMAN_DISCONNECT_CNF)||(m==LMAN_CONNECT_REJ))
+    if ((m==LMAN_DISCONNECT_IND)/*||(m==LMAN_CONNECT_REJ)*/)
     {
       strcpy(s,"Session closed!");
       LogWriter(s);
