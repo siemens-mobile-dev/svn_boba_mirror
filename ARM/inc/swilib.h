@@ -478,15 +478,24 @@ typedef struct
 
 typedef struct
 {
+#ifdef NEWSGOLD
   short field_0;
   char no_data;
   char item_type;
   int field_4;
   void *data;
+#else
+  char field_0;
+  char no_data;
+  char field_2;
+  char item_type;
+  int field_4;
+  void *data;
+#endif
 }AB_UNPRES_ITEM;
 
-typedef struct
-{
+typedef struct{
+#ifdef NEWSGOLD 
   short field_0;
   short number_of_records;
   short field_4;
@@ -500,6 +509,20 @@ typedef struct
   short field_12;
   int field_14;
   int field_18;
+#else
+  short field_0;
+  short field_2;
+  short field_4;
+  short number_of_records;
+  short field_8;
+  short field_A;
+  AB_UNPRES_ITEM *record_list;
+  char field_10;
+  char field_11;
+  short field_12;
+  int field_14;
+  int field_18;
+#endif 
 }AB_UNPRES;
 
 #pragma pack(1)
