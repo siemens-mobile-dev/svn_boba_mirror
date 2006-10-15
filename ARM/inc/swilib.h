@@ -53,6 +53,27 @@ typedef int jmp_buf[11];
 
 #else
 
+#define LMAN_CONNECT_CNF 0x80
+#define LMAN_CONNECT_REJ_IND 0x81
+#define LMAN_DISCONNECT_IND 0x82
+//#define 0x83
+#define LMAN_DISCONNECT_CNF 0x84
+//#define 0x85
+//#define 0x86
+//#define 0x87
+//#define 0x88
+#define LMAN_LINK_UP_IND 0x89
+//#define 0x8A
+//#define 0x8B
+#define ENIP_SOCK_DATA_READ 0x8C
+#define ENIP_SOCK_CONNECTED 0x8D
+#define ENIP_SOCK_CLOSED 0x8E
+#define ENIP_SOCK_REMOTE_CLOSED 0x8F
+#define ENIP_SOCK_ACCEPTED 0x90
+#define ENIP_SOCK_ICMP_ERROR 0x91
+
+#define MSG_HELPER_TRANSLATOR 0x3F0
+
 #define MSG_GUI_DESTROYED 0x98
 #define MSG_IDLETMR_EXPIRED 0x95
 #define MMI_CEPID 0x4209
