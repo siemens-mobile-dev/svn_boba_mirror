@@ -854,6 +854,16 @@ __swi __arm int isdir(const char * cDirectory, unsigned int *ErrorNumber);
 //arm
 //pattern=38,40,2D,E9,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,00,30,8D,E5,24,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3,04,10,A0,E1,3C,FF,2F,E1,38,80,BD,E8
 
+#pragma swi_number=146
+__swi __arm void *calloc(size_t nelem, size_t elsize);
+//arm
+//pattern=91,00,00,E0,F4,FF,FF,EA
+
+#pragma swi_number=148
+__swi __arm int ExecuteFile (WSHDR *filepath, WSHDR *mimetype);
+//thumb
+//pattern=70,B5,16,1C,0D,1C,04,1C,00,28,18,D0,00,2D,03,D1,20,1C,??,??,??,??,07,E0,28,1C,??,??,??,??,00,28,02,D1,28,1C,??,??,??,??,??,??,??,??,00,28,06,D0,02,68,33,1C,21,1C,00,6A,??,??,??,??,70,BD,00,20,70,BD
+
 #pragma swi_number=163
 __swi __arm void ws_2str(WSHDR *ws, char *str, unsigned int size);
 //arm
@@ -863,6 +873,12 @@ __swi __arm void ws_2str(WSHDR *ws, char *str, unsigned int size);
 __swi __arm void ResetGPRSTraffic();
 //arm
 //pattern=08,40,2D,E9,??,??,??,EB,??,??,??,FA,00,00,A0,E3,08,40,BD,E8,??,??,??,EA
+
+#pragma swi_number=170
+__swi __arm char *GetCurrentLocale();
+//thumb
+//pattern=80,B5,??,??,??,??,??,??,2F,28,02,D9,2F,20,00,E0,08,31,0A,78,2F,2A,01,D0,82,42,F9,D1,48,68,80,BD
+
 
 #pragma swi_number=171
 __swi __arm void loopback171();
