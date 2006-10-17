@@ -1,5 +1,5 @@
 ;ELFpack v1.7 (C)2006 by Rst7/CBSIE, BoBa
-;Release 13.10.2006
+;Release 17.10.2006
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -83,8 +83,14 @@
 023C: 0xA0250F60 ; 08F: __arm int rmdir(const char * cDirectory, unsigned int *ErrorNumber);
 0240: 0xA02513F4 ; 090: __arm int truncate(int FileHandler, int length, int *errornumber);
 0244: 0xA0250E0C ; 091: __arm int isdir(const char * cDirectory, unsigned int *ErrorNumber);
+0248: 0xA09EA7B0 ; 092: __arm void *calloc(size_t nelem, size_t elsize);
+
+0250: 0xA04D4A45 ; 094: __thumb int ExecuteFile (WSHDR *filepath, WSHDR *mimetype);
+
 028C: 0xA02519BC ; 0A3: __arm void ws_2str(WSHDR *ws, char *str, unsigned int size);
 0298: 0xA0951C80 ; 0A6: __arm void ResetGPRSTraffic();
+
+02A8: 0xA0A12479 ; 0AA: __thumb char *GetCurrentLocale();
 02AC: 0xA00020F0 ; 0AB: __arm void loopback171();
 02D0: 0xA08FCD77 ; 0B4: __thumb void GetDateTime(TDate *, TTime *);
 02D4: 0xA026CAA3 ; 0B5: __thumb char GetWeek(TDate*);
