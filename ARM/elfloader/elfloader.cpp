@@ -1,5 +1,5 @@
 #define DEFAULT_DISK "0"
-//#define wintel	//компелим под винду
+#define wintel	//компелим под винду
 
 #define MAX_PHNUM	10	//максимальное количество програмных сегментов
 
@@ -350,6 +350,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
     cout << "phdr.p_vaddr:"<<phdrs[n].p_vaddr<<endl;
     cout << "phdr.p_paddr:"<<phdrs[n].p_paddr<<endl;
     cout << "phdr.p_filesz:"<<phdrs[n].p_filesz<<endl;
+    cout << "phdr.p_memsz:"<<phdrs[n].p_memsz<<endl;
 #endif
   }
 
