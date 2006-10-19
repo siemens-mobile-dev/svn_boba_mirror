@@ -11,7 +11,8 @@ unsigned int MAINCSM_ID = 0;
 unsigned int MAINGUI_ID = 0;
 
 WSHDR *ws_eddata;     // хранилище списка файлов
-char filename[128];     // глобальная переменная для имени файла
+char *filename;     // глобальная переменная для имени файла
+unsigned short findex=0;
 unsigned int errcode=0;
 short f_LoadFromPIT = 0;
 
@@ -162,7 +163,11 @@ int Read_Picture(int PicOffset)
       {
         f_size = lseek(hF, 0, S_END, &errcode, &errcode) - PicOffset;
       }
-      Pic_Buffer = malloc((f_size-0x20+3)&(~3));;
+      if(Pic_Buffer!=NULL)
+      {
+        mfree(Pic_Buffer);
+      }
+      Pic_Buffer = malloc((f_size-0x20+3)&(~3));
       if(Pic_Buffer==NULL)
       {
         ShowMSG(2,(int)"ОШИБКА! Память не выделена");
@@ -181,12 +186,21 @@ int Read_Picture(int PicOffset)
 return 1;
 }
 
+
+void KillFileList();
+
 void FreeResource()
 {
+  if(filename!=NULL)
+  {
+    mfree(filename);
+  }
+  FreeWS(ws_eddata);
   if(Pic_Buffer!=NULL)
   {
     mfree(Pic_Buffer);
   }
+  KillFileList();
 }
 
 void OnRedraw(MAIN_GUI *data) // OnRedraw
@@ -239,24 +253,283 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *)) //Unfocus
   data->gui.state=1;
 }
 
+typedef struct
+{
+  int fnumber;
+  char *fname;
+  void *next;
+  void *prev;
+}PFileList;
+
+PFileList *FileListRoot;
+unsigned short FileCount;
+PFileList *CurrentFile;
+
+
+// Получает в глобальные переменные указатель на струкуру с текущим файлом
+void SetCurrentFile()
+{
+  if(Terminate){return;}
+  PFileList *CurEx = FileListRoot;
+  if(CurEx==NULL)
+  {return;}
+  CurrentFile = FileListRoot;
+  do
+  {
+    if(strcmp(CurEx->fname, filename)==0)
+      {
+        CurrentFile = CurEx;
+      }
+    CurEx = CurEx->next;
+  }while(CurEx->fnumber!=1);  
+}
+
+char * GetFileDir(char *fname)
+{
+  char *xz = fname;
+//  sprintf(xz,"0:\\Misc\\patches\\gpf\\ELF.gpf");
+  
+//  char *q = malloc(128);
+  // Сначала ищем первый справа слеш
+  int len = strlen(xz);
+
+  int i;
+  char sym;
+  for(i=0;i<len;i++)
+  {
+    sym = xz[len-i-1];
+    if(sym=='\\')
+    {
+      break;
+    }
+  }
+//  q[len+1]=0x00;
+// sprintf(q,"%d",len-i);
+  len = len-i;
+  char *res = malloc(len+1);
+  for(i=0;i<len;i++)
+  {
+    res[i]=xz[i];
+  }
+  res[len]=0x00;
+//  ShowMSG(1,(int)res);
+  return res;
+}
+
+void AddFile(int fnum, char *fname)
+{
+  PFileList *CurEx = malloc(sizeof(PFileList));
+  CurEx->fname = fname;
+//  ShowMSG(1,(int)fname);
+  CurEx->fnumber = fnum;
+  CurEx->next=0;
+  CurEx->prev = 0;
+  LockSched();
+  if(!FileListRoot)
+  {
+    FileListRoot = CurEx;
+    CurEx->prev=FileListRoot;
+    CurEx->next=FileListRoot;
+  }
+  else
+  {
+    PFileList *temp = FileListRoot->next; // Второй элемент
+    FileListRoot->next = CurEx;           // Вставили вместо второго
+    
+    CurEx->prev = FileListRoot;           // Для добавленного FileListRoot - предыдущий
+    CurEx->next = temp;                   // А бывший второй - следующий
+    temp->prev = CurEx;                   // Коррекция ссылки на предыдущий у бывшего второго
+  }
+  UnlockSched();
+}
+
+// Заполняет список файлов текущей директории
+void FillFileList()
+{
+  DIR_ENTRY de;
+  unsigned int err;
+  int i=1;
+  char name[256];
+  char *newname;
+  char *path = GetFileDir(filename); // Получим путь
+  strcpy(name,path);
+  strcat(name,"*.gp?");
+  if (FindFirstFile(&de,name,&err))
+  {
+    do
+    {
+      strcpy(name,path);
+      strcat(name,de.file_name);
+      newname = malloc(128);
+      strcpy(newname,name);
+      AddFile(i, newname);
+      i++;
+    }
+    while(FindNextFile(&de,&err));
+
+  }
+  CurrentFile = FileListRoot;
+  FileCount = i -1;
+//  newname=malloc(10);
+//  sprintf(newname, "Cnt=%d",FileCount);
+//  ShowMSG(1,(int)newname);
+//  mfree(newname);
+  FindClose(&de,&err);
+}
+
+// Уничтожение списка файлов НАХ - пока не пашет!!!
+void KillFileList()
+{
+//  ShowMSG(1,(int)"Очистка произведена!");
+
+  if(FileListRoot==NULL)
+  {
+    return;
+  }
+ LockSched();
+ 
+while(FileListRoot!=NULL)
+{
+ if(FileListRoot==FileListRoot->next)
+ {
+//   ShowMSG(1,(int)"FileListRoot destroy");
+   mfree(FileListRoot->fname);
+   mfree(FileListRoot);
+   FileCount--;
+   CurrentFile = NULL;
+   FileListRoot=NULL;
+UnlockSched();   
+   return;
+ }
+ PFileList *CurEx = FileListRoot->next; // Второй элемент
+ ((PFileList*)(CurEx->next))->prev = FileListRoot; //Предыдущий у третьего - на первый
+ FileListRoot->next = ((PFileList*)(CurEx->next)); // Следующий у первого - на третий
+ mfree(CurEx->fname);
+ mfree(CurEx);
+ FileCount--;
+} 
+
+UnlockSched();
+/*
+  LockSched();
+  PFileList *CurEx = FileListRoot->next;
+  while(CurEx)
+  {
+    PFileList *p = CurEx;
+    mfree(CurEx->fname);
+    CurEx = CurEx->next;
+    if(p==CurEx)
+    {
+      break;
+    }
+    mfree(p);
+  }
+  mfree(CurEx);
+  UnlockSched();
+*/
+}
+
+
+void ShowFiles()
+{
+  if(FileListRoot==NULL)
+  {
+    ShowMSG(1,(int)"Список пуст");
+    return;
+  }
+  WSHDR *ws = AllocWS(256);
+  PFileList *CurEx = FileListRoot;
+  char *info = malloc(100);
+  int i=1;
+  do
+  {
+    sprintf(info,"%X - %X", CurEx->prev, CurEx->next);
+    str_2ws(ws, /*CurEx->fname*/info, 128);
+      DrawString(ws,1,1+i*15,131,(i+1)*15,5,0,GetPaletteAdrByColorIndex(4),GetPaletteAdrByColorIndex(23)); 
+      if(strcmp(CurEx->fname, filename)==0)
+      {
+        //ShowMSG(1,(int)"Us");
+      }
+    CurEx = CurEx->next;
+    i++;
+  }while(CurEx->fnumber!=1);
+  mfree(info);
+  FreeWS(ws);
+}
+
+
+// +1 = следующий файл
+// -1 = предыдущий файл
+void GetFNameByDir(char *buffer, short dir)
+{
+  if(FileListRoot==NULL){FillFileList();}
+  SetCurrentFile();
+  if(CurrentFile==NULL)
+  {
+    return;
+  }
+  if(dir==1){CurrentFile = CurrentFile->next;}
+  else{CurrentFile = CurrentFile->prev;}
+  strcpy(buffer, CurrentFile->fname);
+  return;
+}
+
 int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
 {
-  DirectRedrawGUI();
-//  wsprintf(data->ws2,"MSG:%08X %08X",msg->gbsmsg->msg,msg->gbsmsg->submess);
+DirectRedrawGUI();
+  //  wsprintf(data->ws2,"MSG:%08X %08X",msg->gbsmsg->msg,msg->gbsmsg->submess);
 //  DrawString(data->ws2,5,45,131,55,11,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+
+  if (msg->gbsmsg->msg==KEY_UP)
+  {
+    switch(msg->gbsmsg->submess)
+    {
+case '0': {ShowFiles();break;} 
+}
+}
 
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     switch(msg->gbsmsg->submess)
     {
     case RIGHT_SOFT:
-      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      {
+        Terminate=1;
+        return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      }
 /*    
     case '2': {MPlayer_VolChange(1); break;}
     case '8': {MPlayer_VolChange(-1); break;}
     case '7': {MPlayer_Shutdown(); break;}
     case '9': {MPlayer_Mute(); break;}
 */    
+    case '1': {KillFileList();char *q=malloc(10);sprintf(q,"q=%d",FileCount);ShowMSG(1,(int)q);mfree(q);break;}
+   
+     
+    case DOWN_BUTTON:
+    case '8':
+      {
+        //ShowFiles();
+        GetFNameByDir(filename,+1);
+        //ShowMSG(1,(int)filename);
+        if(Read_Picture(0))
+        {
+          Disp_Picture(f_LoadFromPIT);
+        }
+        break;
+      }
+
+    case UP_BUTTON:
+    case '2':
+      {
+        GetFNameByDir(filename,-1);
+        if(Read_Picture(0))
+        {
+          Disp_Picture(f_LoadFromPIT);
+        }
+        break;
+      }
+      
     case '5':
       {
         if(!f_LoadFromPIT)
@@ -275,6 +548,7 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
       {
 	void DispMenu(void);
 	DispMenu();
+        break;
       }
     
     case RIGHT_BUTTON:
@@ -297,12 +571,18 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
           Disp_Picture(f_LoadFromPIT);
         }        
         break;
-      } 
-     
+      }
     }
   }
   //  method0(data);
   return(0);
+}
+
+void Killer(void)
+{
+  extern void *ELF_BEGIN;
+  extern void kill_data(void *p, void (*func_p)(void *));
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
 void onDestroy(MAIN_GUI *data, void (*mfree_adr)(void *))
@@ -345,12 +625,10 @@ void maincsm_oncreate(CSM_RAM *data)
   MAINGUI_ID=csm->gui_id;
 }
 
+
 void maincsm_onclose(CSM_RAM *csm)
 {
-  extern void *ELF_BEGIN;
-  FreeWS(ws_eddata);
-  ws_eddata=NULL;
-  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  SUBPROC((void *)Killer);
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
@@ -399,8 +677,11 @@ void Disp_Picture(short LoadFromPIT)
       char *sh_fname;
       if(LoadFromPIT)
       {
-        width = Cur_Pichdr.w;//GetImgWidth(Cur_Pichdr.picnum);
-        height = Cur_Pichdr.h;//GetImgHeight(Cur_Pichdr.picnum);
+        width = GetImgWidth(Cur_Pichdr.picnum);
+        height = GetImgHeight(Cur_Pichdr.picnum);
+//        width = Cur_Pichdr.w;//GetImgWidth(Cur_Pichdr.picnum);
+//        height = Cur_Pichdr.h;//GetImgHeight(Cur_Pichdr.picnum);
+
       }
       else
       {
@@ -408,8 +689,8 @@ void Disp_Picture(short LoadFromPIT)
         height = Cur_Pichdr.h;
       }
       
-      wpos = 66 - width/2;
-      hpos = 86 - height/2;
+      wpos = (ScreenW() - width)/2;
+      hpos = (ScreenH() - height)/2;
 
       if(!LoadFromPIT)
       {
@@ -446,7 +727,7 @@ void UpdateCSMname(void)
 {
   WSHDR *ws=AllocWS(256);
   char *sh_fname = strrchr(filename,'\\');
-  str_2ws(ws,sh_fname,126);
+  str_2ws(ws,sh_fname,128);
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"GPView: %w",ws);
   FreeWS(ws);
 }
@@ -454,6 +735,7 @@ void UpdateCSMname(void)
 int main(char *exename, char *fname)
 {
   char dummy[sizeof(MAIN_CSM)];
+  filename = malloc(128);
   if (fname)
   {
     if (strlen(fname)<128)
@@ -462,7 +744,7 @@ int main(char *exename, char *fname)
       filePassed = 1;
       if(strstr(filename,".gpn"))
       {
-        Is_GPN=01;
+        Is_GPN=0x01;
       }
     }
   }
@@ -479,7 +761,7 @@ void menup2(void)  // Покинуть редактор (вызов из меню)
 
 void AboutDlg(void)
 {
-  char *str = "GP*-вьювер v0.9RC2 (0xC605)\r\n(c) 2006 Kibab\r\nInspired by RainMaker\r\n(r)Rst/CBSIE";
+  char *str = "GP*-вьювер v0.9RC3 (0xC605)\r\n(c) 2006 Kibab\r\nInspired by RainMaker\r\n(r)Rst/CBSIE";
   ShowMSG(2,(int)str); 
 }
 
