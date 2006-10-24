@@ -142,6 +142,11 @@ typedef struct{
 } GBS_MSG;
 
 typedef struct{
+  void *p;
+  int i;
+}MUTEX;
+
+typedef struct{
   void *next;
   void *prev;
   void /*CSM_DESC*/ *constr;
@@ -1601,7 +1606,7 @@ __swi __arm void ConstructComboBox(EDITCONTROL *EditControl,int type,int attr,WS
 //pattern=F8,B5,04,1C,10,1C,06,AF,E4,CF,00,92,02,1C,20,1C,_blf(??,B5,??,B0,??,1C,??,1C,??,1C,??,29,??,9F,??,D0,??,2D,??,D1,??,2E,??,D0,??,DF,??,22,??,20,??,??,??,??,??,??,??,??,??,1C,??,??,??,??,??,70,??,98,??,60,??,62,??,83,??,B0,??,BD),25,72,66,83,A7,83,F8,BD
 
 #pragma swi_number=0x0185
-__arm int GBS_WaitForMsg(const int *msg_list, int msgs_num, GBS_MSG*, int timeout);
+__swi __arm int GBS_WaitForMsg(const int *msg_list, int msgs_num, GBS_MSG*, int timeout);
 //arm
 //pattern=
 
@@ -1630,3 +1635,59 @@ __swi __arm int HeaderH(void);
 #pragma swi_number=0x818B
 __swi __arm int SoftkeyH(void);
 //adr=22
+
+#pragma swi_number=0x018C
+__swi __arm void GBS_DelTimer(GBSTMR *);
+//arm
+//pattern=
+
+#pragma swi_number=0x018D
+__swi __arm int available0(int sock);
+//arm
+//pattern=
+
+#pragma swi_number=0x018E
+__swi __arm void GPRS_OnOff(int on, int _1);
+//thumb
+//pattern=
+
+#pragma swi_number=0x018F
+__swi __arm int GetCurMenuItem(void *gui);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0190
+__swi __arm void MutexCreate(MUTEX *mtx);
+//arm
+//pattern=
+
+#pragma swi_number=0x0191
+__swi __arm void MutexDestroy(MUTEX *mtx);
+//arm
+//pattern=
+
+#pragma swi_number=0x0192
+__swi __arm void MutexLock(MUTEX *mtx);
+//arm
+//pattern=
+
+#pragma swi_number=0x0193
+__swi __arm void MutexLockEx(MUTEX *mtx, int flag);
+//arm
+//pattern=
+
+#pragma swi_number=0x0194
+__swi __arm void MutexUnlock(MUTEX *mtx);
+//arm
+//pattern=
+
+#pragma swi_number=0x0195
+__swi __arm void SetMenuItemIcon(void *gui,int item_n,int icon_n);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0196
+__swi __arm void RefreshGUI(void);
+//thumb
+//pattern=
+
