@@ -150,12 +150,14 @@ int create_ed(void)
   return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
 }
 
+int create_menu(void);
 
 void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-  csm->gui_id=create_ed();
+//  csm->gui_id=create_ed();
+  csm->gui_id=create_menu();
 }
 
 void Killer(void)
@@ -234,4 +236,79 @@ int main()
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();
   return 0;
+}
+
+//=-----
+// Тест меню
+//=-----
+const int S_ICONS[]={0x162,0x232,0x22F,0x17A,0x195,0x231,0x185,0x22C,
+0x24C, //message
+0x185, //Unknown
+0x0 //Конец списка
+};
+
+HEADER_DESC contactlist_menuhdr={0,0,131,21,NULL,(int)"Contacts...",0x7FFFFFFF};
+int menusoftkeys[]={0,1,2};
+/*SOFTKEY_DESC menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Options"},
+  {0x0001,0x0000,(int)"Close"},
+  {0x003D,0x0000,(int)"+"}
+};
+
+SOFTKEYSTAB menu_skt=
+{
+  menu_sk,0
+};*/
+
+void contactlist_menu_ghook(void *data, int cmd);
+int contactlist_menu_onkey(void *data, GUI_MSG *msg);
+void contactlist_menu_iconhndl(void *data, int curitem, int *unk);
+
+MENU_DESC contactlist_menu=
+{
+  8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
+  menusoftkeys,
+  &menu_skt,
+  0x11,
+  (void *)contactlist_menu_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0   //n
+};
+
+int create_menu(void)
+{
+  int i=256;
+  return(CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0));
+}
+
+void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
+{
+  void *item=AllocMenuItem(data);
+  WSHDR *ws=AllocMenuWS(data,10);
+  wsprintf(ws,"%d",curitem);
+  SetMenuItemIconArray(data,item,S_ICONS);
+  SetMenuItemText(data,item,ws,curitem);
+  SetMenuItemIcon(data,curitem,curitem&7);
+}
+
+void contactlist_menu_ghook(void *data, int cmd)
+{
+}
+
+int contactlist_menu_onkey(void *data, GUI_MSG *msg)
+{
+  if (msg->keys==0x18)
+  {
+//    GeneralFunc_F1(1);
+    ShowMSG(1,(int)"Under construction!");
+    return(-1);
+  }
+  if (msg->keys==0x3D)
+  {
+//    GeneralFunc_F1(1);
+    return(-1);
+  }
+  return(0);
 }
