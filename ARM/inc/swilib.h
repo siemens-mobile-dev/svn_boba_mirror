@@ -1691,3 +1691,22 @@ __swi __arm void RefreshGUI(void);
 //thumb
 //pattern=
 
+#pragma swi_number=0x0197
+__swi __arm void *AllocMenuItem(void *gui);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0198
+__swi __arm WSHDR *AllocMenuWS(void *gui, int len);
+//thumb
+//pattern=
+
+#pragma swi_number=0x0199
+__swi __arm void SetMenuItemIconArray(void *gui,void *item,const int *icons);
+//thumb
+//pattern=8A,62,70,47
+
+#pragma swi_number=0x019A
+__swi __arm void SetMenuItemText(void *gui,void *item,WSHDR *text,int item_n);
+//thumb
+//pattern=
