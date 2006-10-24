@@ -1,5 +1,5 @@
-#define DEFAULT_DISK "0"
-#define wintel	//компелим под винду
+#define DEFAULT_DISK "4"
+//#define wintel	//компелим под винду
 
 #define MAX_PHNUM	10	//максимальное количество програмных сегментов
 
