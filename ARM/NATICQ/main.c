@@ -659,10 +659,10 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
   //  method0(data);
   return(0);
 }
-void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
-{
-  mfree_adr(data);
-}
+//void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
+//{
+//  mfree_adr(data);
+//}
 
 int method8(void){return(0);}
 
@@ -676,7 +676,7 @@ const void * const gui_methods[11]={
   (void *)method4,	//Unfocus
   (void *)method5,	//OnKey
   0,
-  (void *)method7,	//Destroy
+  (void *)kill_data, //method7,	//Destroy
   (void *)method8,
   (void *)method9,
   0
