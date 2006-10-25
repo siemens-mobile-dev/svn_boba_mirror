@@ -598,9 +598,9 @@ void method0(MAIN_GUI *data)
   wsprintf(data->ws1,"State: %d, RXstate: %d\n%t",connect_state,RXstate,logmsg);
   DrawString(data->ws1,3,3,ScreenW()-4,ScreenH()-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,"Exit");
-  DrawString(data->ws2,(ScreenW()>>2)*3,ScreenH()-4-14,ScreenW()-4,ScreenH()-4,5,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,(ScreenW()>>2)*3,ScreenH()-4-14,ScreenW()-4,ScreenH()-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,cltop?"CList":empty_str);
-  DrawString(data->ws2,3,ScreenH()-4-14,(ScreenW()>>2),ScreenH()-4,5,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,3,ScreenH()-4-14,(ScreenW()>>2),ScreenH()-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
