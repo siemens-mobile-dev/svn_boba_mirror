@@ -50,6 +50,7 @@ typedef int jmp_buf[11];
 #define DISPLACE_OF_IDLEGUI_ID 0x2C
 #define DISPLACE_OF_IDLECANVAS 0x18
 #define SMALL_FONT 11
+#define MIDDLE_FONT 5
 
 #else
 
@@ -81,6 +82,7 @@ typedef int jmp_buf[11];
 #define DISPLACE_OF_EDGUI_ID 0x4C
 #define DISPLACE_OF_IDLEGUI_ID 0x28
 #define DISPLACE_OF_IDLECANVAS 0x14
+#define MIDDLE_FONT 5
 #define SMALL_FONT 7
 
 #endif
