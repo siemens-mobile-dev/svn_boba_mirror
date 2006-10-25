@@ -1710,3 +1710,8 @@ __swi __arm void SetMenuItemIconArray(void *gui,void *item,const int *icons);
 __swi __arm void SetMenuItemText(void *gui,void *item,WSHDR *text,int item_n);
 //thumb
 //pattern=
+
+#pragma swi_number=0x019B
+__swi __arm void EDIT_SetFocus(void *gui, int item);
+//thumb
+//pattern=
