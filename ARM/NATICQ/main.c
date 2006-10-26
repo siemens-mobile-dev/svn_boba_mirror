@@ -11,14 +11,25 @@
 #define T_CLENTRY 7
 #define T_STATUSCHANGE 9
 
+#define IS_OFFLINE 0
 const char S_OFFLINE[]="Offline";
+#define IS_INVISIBLE 1
 const char S_INVISIBLE[]="Invisible";
+#define IS_AWAY 2
 const char S_AWAY[]="Away";
+#define IS_NA 3
 const char S_NA[]="N/A";
+#define IS_OCCUPIED 4
 const char S_OCCUPIED[]="Occupied";
+#define IS_DND 5
 const char S_DND[]="DND";
+#define IS_ONLINE 6
 const char S_ONLINE[]="Online";
+#define IS_FFC 7
 const char S_FFC[]="FFC";
+#define IS_MSG 8
+
+#define IS_UNKNOWN 9
 
 int S_ICONS[11];
 
@@ -94,7 +105,7 @@ typedef struct
   void *next;
   unsigned int uin;
   char name[64];
-  char state[32];
+  unsigned short state;
   int isunread;
   char *log;
   char *answer;
@@ -165,26 +176,28 @@ void FreeCLIST(void)
 
 int GetIconIndex(CLIST *t)
 {
-  char *s;
-  int i=9;
+  unsigned short s;
   if (t)
   {
     s=t->state;
     if (t->isunread)
-      i=8;
+      return(IS_MSG);
     else
     {
-      if (strcmp(s,S_OFFLINE)==0) i=0;
-      if (strcmp(s,S_INVISIBLE)==0) i=1;
-      if (strcmp(s,S_AWAY)==0) i=2;
-      if (strcmp(s,S_NA)==0) i=3;
-      if (strcmp(s,S_OCCUPIED)==0) i=4;
-      if (strcmp(s,S_DND)==0) i=5;
-      if (strcmp(s,S_ONLINE)==0) i=6;
-      if (strcmp(s,S_FFC)==0) i=7;
+      if (s==0xFFFF) return(IS_OFFLINE);
+      if (s & 0x0020) return(IS_FFC);
+      if (s & 0x0001) return(IS_AWAY);
+      if (s & 0x0004) return(IS_NA);
+      if (s & 0x0010) return(IS_OCCUPIED);
+      if (s & 0x0002) return(IS_FFC);
+      if (s & 0x0100) return(IS_INVISIBLE);
     }
   }
-  return(i);
+  else
+  {
+    return(IS_UNKNOWN);
+  }
+  return(IS_ONLINE);
 }
 
 
@@ -319,7 +332,7 @@ CLIST *AddContact(unsigned int uin, char *name)
   zeromem(p,sizeof(CLIST));
   p->uin=uin;
   strncpy(p->name,name,sizeof(p->name)-1);
-  strncpy(p->state,S_OFFLINE,sizeof(p->state)-1);
+  p->state=0xFFFF;
   t=(CLIST *)cltop;
   if (t)
   {
@@ -459,10 +472,10 @@ void get_answer(void)
         //snprintf(logmsg,255,"CL: %s",RXbuf.data);
         break;
       case T_STATUSCHANGE:
-        j=i+sizeof(PKT)+1;
+        j=i+sizeof(PKT);
         p=malloc(j);
         memcpy(p,&RXbuf,j);
-        snprintf(logmsg,255,"SC%d: %s",RXbuf.pkt.uin,RXbuf.data);
+        snprintf(logmsg,255,"SC%d: %04X",RXbuf.pkt.uin,*((unsigned short *)(RXbuf.data)));
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         break;
       case T_ERROR:
@@ -541,7 +554,7 @@ ProcessPacket(TPKT *p)
     {
       if ((t=FindContactByUin(p->pkt.uin)))
       {
-        strcpy(t->state,S_OFFLINE);
+        t->state=0xFFFF;
       }
       else
       {
@@ -555,8 +568,8 @@ ProcessPacket(TPKT *p)
     t=FindContactByUin(p->pkt.uin);
     if (t)
     {
-      strncpy(t->state,p->data,31);
-      RefreshGUI();
+      t->state=*((unsigned short *)(p->data));
+      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     }
     break;
   case T_RECVMSG:
@@ -576,7 +589,7 @@ ProcessPacket(TPKT *p)
       }
       else
       {
-        RefreshGUI();
+        if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
       }
     }
     else
@@ -1100,7 +1113,13 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   int l;
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
-    if (msg->gbsmsg->submess==GREEN_BUTTON)
+    l=msg->gbsmsg->submess;
+    if ((l>='0')&&(l<='9'))
+    {
+      if (EDIT_GetFocus(data)!=edchat_answeritem)
+        EDIT_SetFocus(data,edchat_answeritem);
+    }
+    if (l==GREEN_BUTTON)
     {
       if (connect_state==3)
       {
@@ -1232,7 +1251,7 @@ void CreateEditChat(CLIST *t)
     }
     msg_buf[j]=0;
     wsprintf(ews,percent_t,msg_buf);
-    ConstructEditControl(&ec,3,0x41,ews,strlen(msg_buf));
+    ConstructEditControl(&ec,3,0x40,ews,strlen(msg_buf));
     AddEditControlToEditQend(eq,&ec,ma);
     edchat_toitem++;
   }
