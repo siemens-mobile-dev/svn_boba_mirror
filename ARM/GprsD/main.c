@@ -4,6 +4,7 @@
 #define RECONNECT_TIME (1000*10)
 
 CSM_DESC icsmd;
+extern const int ENA_GPRSD;
 
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 
@@ -27,6 +28,14 @@ void do_connect(void)
   REGSOCKCEPID_DATA rsc;
   LMAN_DATA lmd;
   NAP_PARAM_CONT *nc;
+  //ShowMSG(1,(int)"Ы"); 
+  // Перечитываем конфиг, дабы проверить, не откючены ли мы
+  InitConfig();
+  if(!ENA_GPRSD)
+  {
+    GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
+    return; // Если не разрешён коннект, выходим
+  }
 
   //Устанавливаем соединение
   rsc._0x0080=0x0080;
