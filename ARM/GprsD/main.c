@@ -1,12 +1,13 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
-#define RECONNECT_TIME (1000*10)
+#define RECONNECT_TIME (216*60)
 
 CSM_DESC icsmd;
 extern const int ENA_GPRSD;
 
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+void (*old_icsm_onClose)(CSM_RAM*);
 
 char binary_profile[0x204];
 
@@ -28,7 +29,7 @@ void do_connect(void)
   REGSOCKCEPID_DATA rsc;
   LMAN_DATA lmd;
   NAP_PARAM_CONT *nc;
-  //ShowMSG(1,(int)"Ы"); 
+  //ShowMSG(1,(int)"Ы");
   // Перечитываем конфиг, дабы проверить, не откючены ли мы
   InitConfig();
   if(!ENA_GPRSD)
@@ -85,15 +86,14 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
     int m=(int)msg->data0;
-//    sprintf(s,"MSG: %08X %08X %08X",msg->submess,msg->data0,msg->data1);
-//    LogWriter(s);
     if (m==LMAN_CONNECT_CNF)
     {
-//      GBS_StopTimer(&mytmr);
       strcpy(s,"Session started!");
       LogWriter(s);
       ShowMSG(1,(int)s);
-    }else
+    }
+    else
+    {
       if ((m==LMAN_DISCONNECT_IND)||(m==LMAN_CONNECT_REJ_IND))
       {
         if (m==LMAN_DISCONNECT_IND) strcpy(s,"Session closed!");
@@ -102,13 +102,17 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         LogWriter(s);
         ShowMSG(1,(int)s);
         GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
-      }/*else
-    {
-    sprintf(s,"MSG: %04X\n%04X %04X",msg->submess,msg->data0,msg->data1);
-    ShowMSG(1,(int)s);
-  }*/
+      }
+    }
   }
   return(csm_result);
+}
+
+void MyIDLECSM_onClose(CSM_RAM *data)
+{
+  extern void kill_data(void *p, void (*func_p)(void *));
+  GBS_DelTimer(&mytmr);
+  kill_data(data,(void (*)(void *))old_icsm_onClose);
 }
 
 int main()
@@ -117,7 +121,9 @@ int main()
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
   old_icsm_onMessage=icsmd.onMessage;
+  old_icsm_onClose=icsmd.onClose;
   icsmd.onMessage=MyIDLECSM_onMessage;
+  icsmd.onClose=MyIDLECSM_onClose;
   icsm->constr=&icsmd;
   UnlockSched();
   InitConfig(); // ADDED BY Kibab
