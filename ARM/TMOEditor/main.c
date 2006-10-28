@@ -1,7 +1,8 @@
 #include "..\inc\swilib.h"
+#include "conf_loader.h"
 
 const int minus11=-11; // стремная константа
-char *minigps_path = "0:\\Misc\\gps";
+char *minigps_path;
 
 unsigned short maincsm_name_body[140];
 int filePassed=0; // передано ли имя файла
@@ -132,12 +133,22 @@ void maincsm_oncreate(CSM_RAM *data)
   MAINGUI_ID=csm->gui_id;
 }
 
-void maincsm_onclose(CSM_RAM *csm)
+extern void kill_data(void *p, void (*func_p)(void *));
+
+void ElfKiller(void)
 {
   extern void *ELF_BEGIN;
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+void maincsm_onclose(CSM_RAM *csm)
+{
+  //extern void *ELF_BEGIN;
   FreeWS(ws_eddata);
-  ws_eddata=NULL;
-  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  mfree(minigps_path);
+  //ws_eddata=NULL;
+  //((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  SUBPROC((void *)ElfKiller);
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
@@ -215,6 +226,12 @@ int main(char *exename, char *fname)
   }
   ws_eddata=AllocWS(256);
   MAINCSM_ID = CreateCSM(&MAINCSM.maincsm,dummy,0);
+
+  // Инициализация конфигурации
+  InitConfig();
+  minigps_path = malloc(128);
+  minigps_path = getMiniGPSPath(minigps_path);
+  //ShowMSG(1, (int)minigps_path);
   return 0;
 }
 
@@ -288,7 +305,7 @@ void menup2(void)  // Покинуть редактор (вызов из меню)
 
 void AboutDlg(void)
 {
-  char *str = "TMO-редактор v2.8 RC2(0xC604)\r\n(c) 2006 Kibab\r\n(r) Rst7/CBSIE";
+  char *str = "TMO-редактор v3.0(0xC604)\r\n(c) 2006 Kibab\r\n(r) Rst7/CBSIE";
   ShowMSG(2,(int)str);
 /*
   unsigned short* RamCH  = RamNet();   // 648
@@ -471,7 +488,7 @@ void LaunchEditor(void)
   else
   {
     wsprintf(ws_eddata,"%t","0 ");
-    sprintf(filename,"new");
+    sprintf(filename,"\\<Новый>");
   } 
   UpdateCSMname();
   EDITCONTROL ec;

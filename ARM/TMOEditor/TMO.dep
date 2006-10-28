@@ -6,20 +6,20 @@
     <name>Debug</name>
     <outputs>
       <file>$PROJ_DIR$\Debug\Obj\TCSM.pbd</file>
-      <file>$PROJ_DIR$\Debug\Exe\TCSM.d79</file>
       <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\..\swilib.h</file>
+      <file>$PROJ_DIR$\Debug\Exe\TCSM.d79</file>
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 1</file>
+          <file> 7</file>
         </tool>
       </outputs>
     </file>
@@ -33,11 +33,20 @@
       </inputs>
     </file>
     <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 1</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 6</file>
+          <file> 2</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -47,22 +56,13 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 7</file>
+          <file> 6</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 7</file>
+          <file> 6</file>
         </tool>
       </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\func.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 2</file>
-        </tool>
-      </outputs>
     </file>
     <forcedrebuild>
       <name>[MULTI_TOOL]</name>
@@ -72,51 +72,74 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Release\Exe\TCSM.elf</file>
-      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
-      <file>$PROJ_DIR$\Release\List\main.lst</file>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
       <file>$PROJ_DIR$\Release\Obj\TMO.pbd</file>
       <file>$PROJ_DIR$\Release\List\main.s79</file>
-      <file>$PROJ_DIR$\Release\Exe\TMO.elf</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\Release\Obj\TCSM.pbd</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\tmo.xcl</file>
       <file>$PROJ_DIR$\Release\List\TMO.map</file>
-      <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\Release\List\func.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.pbi</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\..\inc\cfg_items.h</file>
+      <file>$PROJ_DIR$\Release\List\conf_loader.s79</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\Release\List\conf_loader.lst</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.r79</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\conf_loader.c</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Release\Exe\TMO.elf</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\config_data.c</file>
+      <file>$PROJ_DIR$\conf_loader.h</file>
+      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\tmo.xcl</file>
+      <file>$PROJ_DIR$\Release\List\config_data.s79</file>
+      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 8 17</file>
+          <file> 3 18</file>
         </tool>
       </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Release\Exe\TCSM.elf</name>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 1 15 3</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\Release\Obj\TMO.pbd</name>
       <inputs>
         <tool>
           <name>BILINK</name>
-          <file> 0</file>
+          <file> 6 20 5</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\conf_loader.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 13 9 11</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 6</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 23 15 10 21 7 12 8</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 23 15 10 21 7 12 8</file>
         </tool>
       </inputs>
     </file>
@@ -125,45 +148,36 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 17</file>
+          <file> 3</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 16 15 3</file>
+          <file> 26 13 0 17 19</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\Release\Obj\TCSM.pbd</name>
-      <inputs>
-        <tool>
-          <name>BILINK</name>
-          <file> 0</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
+      <name>$PROJ_DIR$\config_data.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 3 7 4</file>
+          <file> 0 27 28</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 0</file>
+          <file> 20</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 9 14 13 12 5</file>
+          <file> 8</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 9 14 13 12 5</file>
+          <file> 8</file>
         </tool>
       </inputs>
     </file>
@@ -172,9 +186,32 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 15 19</file>
+          <file> 17 4</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 19 2 14</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 10 21 7 12 23</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15 10 21 7 12 23</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
 </project>
