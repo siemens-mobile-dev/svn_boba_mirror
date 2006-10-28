@@ -341,7 +341,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\INC\</state>
         </option>
       </data>
     </settings>
@@ -1347,7 +1347,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\NATICQ.elf \MMCard\NATICQ.elf</postbuild>
+        <postbuild>"C:\Program Files\totalcmd65\Plugins\wfx\VSOFS\obexcopy.exe" $PROJ_DIR$\Release\Exe\NATICQ.elf \MMCard\NATICQ.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -1862,6 +1862,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\func.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\history.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>

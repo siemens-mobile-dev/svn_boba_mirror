@@ -1,5 +1,8 @@
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
+#include "NatICQ.h"
+#include "history.h"
+
 
 #define TMR_SECOND 216
 
@@ -100,16 +103,6 @@ void ElfKiller(void)
 }
 
 //===============================================================================================
-typedef struct
-{
-  void *next;
-  unsigned int uin;
-  char name[64];
-  unsigned short state;
-  int isunread;
-  char *log;
-  char *answer;
-}CLIST;
 
 volatile CLIST *cltop;
 
@@ -277,7 +270,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     ShowMSG(1,(int)"Under construction!");
     return(-1);
   }
-  if (msg->keys==0x3D)
+  if (msg->keys==LEFT_BUTTON)
   {
     void CreateEditChat(CLIST *t);
     i=GetCurMenuItem(data);
@@ -524,6 +517,7 @@ void AddStringToLog(CLIST *t, char code, char *s, char *name)
   }
   hs[127]=0;
   snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
+  Add2History(t, hs, s); // Запись хистори
   ns=malloc(strlen(t->log)+strlen(hs)+strlen(s)+1);
   strcpy(ns,t->log);
   strcat(ns,hs);
@@ -662,6 +656,17 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
         SUBPROC((void *)create_connect);
       }
       break;
+
+      case '5':
+  {
+    char hdr[] = "Date-time\r\n";
+    char msg[] = "message!\r\n";
+    CLIST *exp = malloc(sizeof(CLIST));
+    exp->uin=1574444;
+    Add2History(exp,hdr,msg);
+    mfree(exp);
+  }
+      
       /*    case '0':
       if (connect_state==3)
       {
@@ -669,6 +674,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     }
       break;*/
     }
+
   }
   //  method0(data);
   return(0);
