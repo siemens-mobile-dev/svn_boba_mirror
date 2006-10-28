@@ -15,4 +15,5 @@ typedef struct
   char *answer;
 }CLIST;
 
+
 #endif

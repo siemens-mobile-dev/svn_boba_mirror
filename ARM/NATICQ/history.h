@@ -4,5 +4,6 @@
 #include "naticq.h"
 
 void Add2History(CLIST *CListEx, char *header, char *message);
+void LogStatusChange(CLIST *CListEx);
 
 #endif

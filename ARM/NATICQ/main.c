@@ -2,6 +2,7 @@
 #include "../inc/cfg_items.h"
 #include "NatICQ.h"
 #include "history.h"
+#include "conf_loader.h"
 
 
 #define TMR_SECOND 216
@@ -14,6 +15,7 @@
 #define T_CLENTRY 7
 #define T_STATUSCHANGE 9
 
+// Константы статусов
 #define IS_OFFLINE 0
 const char S_OFFLINE[]="Offline";
 #define IS_INVISIBLE 1
@@ -516,8 +518,11 @@ void AddStringToLog(CLIST *t, char code, char *s, char *name)
     *(t->log=malloc(1))=0;
   }
   hs[127]=0;
-  snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
+
+  snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\r\n",code,tt.hour,tt.min,d.day,d.month,name);
   Add2History(t, hs, s); // Запись хистори
+
+  snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
   ns=malloc(strlen(t->log)+strlen(hs)+strlen(s)+1);
   strcpy(ns,t->log);
   strcat(ns,hs);
@@ -564,6 +569,7 @@ ProcessPacket(TPKT *p)
     if (t)
     {
       t->state=*((unsigned short *)(p->data));
+      LogStatusChange(t);
       if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     }
     break;
@@ -876,57 +882,13 @@ void UpdateCSMname(void)
   FreeWS(ws);
 }
 
-#pragma segment="CONFIG_C"
-
-int LoadConfigData(const char *fname)
-{
-  int f;
-  unsigned int ul;
-  char *buf;
-  int result=0;
-  void *cfg;
-
-  extern const CFG_HDR cfghdr0; //first var in CONFIG
-  cfg=(void*)&cfghdr0;
-
-  unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
-
-  if (!(buf=malloc(len))) return -1;
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
-  {
-    if (fread(f,buf,len,&ul)==len)
-    {
-      memcpy(cfg,buf,len);
-      fclose(f,&ul);
-    }
-    else
-    {
-      fclose(f,&ul);
-      goto L_SAVENEWCFG;
-    }
-  }
-  else
-  {
-  L_SAVENEWCFG:
-    if ((f=fopen(fname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-    {
-      if (fwrite(f,cfg,len,&ul)!=len) result=-1;
-      fclose(f,&ul);
-    }
-    else
-      result=-1;
-  }
-  mfree(buf);
-  return(result);
-}
 
 int main()
 {
   char dummy[sizeof(MAIN_CSM)];
-  if (LoadConfigData("4:\\ZBin\\etc\\NATICQ.bcfg")<0)
-  {
-    LoadConfigData("0:\\ZBin\\etc\\NATICQ.bcfg");
-  }
+
+  InitConfig();
+
   S_ICONS[0]=ICON0;
   S_ICONS[1]=ICON1;
   S_ICONS[2]=ICON2;
