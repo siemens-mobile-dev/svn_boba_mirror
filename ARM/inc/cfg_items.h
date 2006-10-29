@@ -3,6 +3,7 @@
 #define CFG_INT 3
 #define CFG_STR_WIN1251 4
 #define CFG_CBOX 5
+#define CFG_STR_PASS 6
 
 typedef struct
 {
