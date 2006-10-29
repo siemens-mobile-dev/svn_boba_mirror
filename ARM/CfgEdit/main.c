@@ -99,6 +99,7 @@ void ed1_ghook(GUI *data, int cmd)
       case CFG_STR_UTF8:
         ws_2str(ews,(char *)(hp+1),hp->max);
         break;
+      case CFG_STR_PASS:
       case CFG_STR_WIN1251:
         j=0;
         p=(char *)(hp+1);
@@ -202,6 +203,7 @@ void SaveConfig(void)
 void maincsm_onclose(CSM_RAM *csm)
 {
   FreeWS(ews);
+  if (cfg) mfree(cfg);
   SUBPROC((void *)Killer);
 }
 
@@ -539,6 +541,14 @@ int create_ed(void)
       ConstructComboBox(&ec,7,0x40,ews,32,0,hp->max,i+1);
       AddEditControlToEditQend(eq,&ec,ma);
       p+=hp->max*sizeof(CFG_CBOX_ITEM)+4;
+      break;
+    case CFG_STR_PASS:
+      n-=(hp->max+1+3)&(~3);
+      if (n<0) goto L_ERRCONSTR;
+      wsprintf(ews,_percent_t,p);
+      ConstructEditControl(&ec,3,0x50,ews,hp->max);
+      AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      p+=(hp->max+1+3)&(~3);
       break;
     default:
       wsprintf(ews,"Unsupported item %d",hp->type);
