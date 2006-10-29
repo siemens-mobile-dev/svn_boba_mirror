@@ -3,8 +3,8 @@
 __root const CFG_HDR cfghdr0={CFG_UINT,"UIN",0,0xFFFFFFFF};
 __root const unsigned int UIN=0;
 
-__root const CFG_HDR cfghdr1={CFG_STR_WIN1251,"Password",0,63};
-__root const char PASS[64]="";
+__root const CFG_HDR cfghdr1={CFG_STR_PASS,"Password",0,8};
+__root const char PASS[9]="";
 
 __root const CFG_HDR cfghdr2={CFG_STR_WIN1251,"History path",0,63};
 __root const char HIST_PATH[64]="4:\\NatICQ_hist";
