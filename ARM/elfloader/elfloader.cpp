@@ -599,6 +599,12 @@ __arm void SUBPROC_impl(void *f, int p2, void *p1) @ "HELPER_PROC"
   GBS_SendMessage(HELPER_CEPID,MSG_HELPER_RUN,p2,f,p1);
 }
 
+__thumb void SEQKILLER_impl(void *data, void(*next_in_seq)(void *), void *data_to_kill) @ "HELPER_PROC"
+{
+  next_in_seq(data);
+  mfree(data_to_kill);
+}
+
 __arm void MyIDLECSMonClose(void *data)
 {
   KillGBSproc(HELPER_CEPID);
@@ -900,6 +906,8 @@ __root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)PatchTxtOnOpen;
 __root static const int SWILIB_FUNC171 @ "SWILIB_FUNC171" = (int)SUBPROC_impl;
 
 __root static const int SWILIB_FUNC172 @ "SWILIB_FUNC172" = (int)REDRAW_impl;
+
+__root static const int SWILIB_FUNC19C @ "SWILIB_FUNC19C" = (int)SEQKILLER_impl;
 #pragma diag_default=Pe177
 #endif
 
