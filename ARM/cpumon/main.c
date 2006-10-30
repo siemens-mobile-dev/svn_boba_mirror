@@ -11,6 +11,7 @@
 CSM_DESC icsmd;
 
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+void (*old_icsm_onClose)(CSM_RAM*);
 
 GBSTMR mytmr;
 
@@ -69,7 +70,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   else
     csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
-  if (IsGuiOnTop(idlegui_id)&&IsKeybUnlock()) //Если IdleGui на самом верху
+  if (IsGuiOnTop(idlegui_id)/*&&IsUnlocked()*/) //Если IdleGui на самом верху
   {
     GUI *igui=GetTopGUI();
     if (igui) //И он существует
@@ -103,6 +104,14 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   return(csm_result);
 }
 
+void MyIDLECSM_onClose(CSM_RAM *data)
+{
+  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+  extern void *ELF_BEGIN;
+  GBS_DelTimer(&mytmr);
+  FreeWS(ws1);
+  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+}
 
 int main(void)
 {
@@ -111,7 +120,9 @@ int main(void)
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
   old_icsm_onMessage=icsmd.onMessage;
+  old_icsm_onClose=icsmd.onClose;
   icsmd.onMessage=MyIDLECSM_onMessage;
+  icsmd.onClose=MyIDLECSM_onClose;
   icsm->constr=&icsmd;
   ws1=AllocWS(100);
   wsprintf(ws1,"%t","CPUMon by BoBa, Rst7");
