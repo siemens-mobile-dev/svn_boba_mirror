@@ -110,9 +110,10 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 
 void MyIDLECSM_onClose(CSM_RAM *data)
 {
-  extern void kill_data(void *p, void (*func_p)(void *));
+  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+  extern void *ELF_BEGIN;
   GBS_DelTimer(&mytmr);
-  kill_data(data,(void (*)(void *))old_icsm_onClose);
+  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 
 int main()

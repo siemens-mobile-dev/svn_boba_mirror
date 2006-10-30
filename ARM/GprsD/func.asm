@@ -7,12 +7,9 @@ ELF_BEGIN
 	CODE32
 kill_data
 	BX	R1
-;
-;        STMFD   SP!,{LR}    ; Адрес возврата - в стек
-;        LDR     LR,[R1]     ; Адрес следующего обработчика - в LR, будет выполнен переход из mfree
-;        BX      R3
-
-
+        PUBLIC  seqkill
+seqkill
+        BX      R3
 
 
 
