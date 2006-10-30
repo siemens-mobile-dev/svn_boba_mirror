@@ -1,6 +1,9 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 
+CSM_DESC icsmd;
+void (*old_icsm_onClose)(CSM_RAM*);
+
 WSHDR *ws_nogui;
 
 CSM_RAM *under_idle;
@@ -100,9 +103,10 @@ int my_keyhook(int submsg, int msg)
   case KEY_UP:
     if (mode==1)
     {
-      RemoveKeybMsgHook((void *)my_keyhook);
-      ShowMSG(1,(int)"XTask отлючен!");
-      SUBPROC((void *)ElfKiller);
+      mode=0;
+      //RemoveKeybMsgHook((void *)my_keyhook);
+      //ShowMSG(1,(int)"XTask отлючен!");
+      //SUBPROC((void *)ElfKiller);
       break;
     }
     {
@@ -159,6 +163,15 @@ int LoadConfigData(const char *fname)
   return(result);
 }
 
+void MyIDLECSM_onClose(CSM_RAM *data)
+{
+  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+  extern void *ELF_BEGIN;
+  FreeWS(ws_nogui);
+  RemoveKeybMsgHook((void *)my_keyhook);
+  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+}
+
 void main(void)
 {
   mode=0;
@@ -177,6 +190,13 @@ void main(void)
   {
     extern const int ENA_HELLO_MSG;
     if (ENA_HELLO_MSG) ShowMSG(1,(int)"XTask установлен!");
+    {
+      CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+      memcpy(&icsmd,icsm->constr,sizeof(icsmd));
+      old_icsm_onClose=icsmd.onClose;
+      icsmd.onClose=MyIDLECSM_onClose;
+      icsm->constr=&icsmd;
+    }
     ws_nogui=AllocWS(256);
     wsprintf(ws_nogui,"%t","Нет GUI!");
     under_idle=(FindCSMbyID(CSM_root()->idle_id))->prev; //Ищем idle_dialog
