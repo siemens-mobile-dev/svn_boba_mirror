@@ -1717,3 +1717,8 @@ __swi __arm void SetMenuItemText(void *gui,void *item,WSHDR *text,int item_n);
 __swi __arm void EDIT_SetFocus(void *gui, int item);
 //thumb
 //pattern=
+
+#pragma swi_number=0x019C
+__swi __arm void SEQKILLER(void *data, void(*next_in_seq)(void *), void *data_to_kill);
+#pragma swi_number=0x819C
+__swi __arm void *SEQKILLER_ADR();
