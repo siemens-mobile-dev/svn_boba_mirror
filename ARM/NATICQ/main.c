@@ -578,7 +578,7 @@ ProcessPacket(TPKT *p)
     if (t)
     {
       GBS_StartTimerProc(&tmr_vibra,TMR_SECOND*1,stop_vibra);
-      SetVibration(100);
+      SetVibration(10);
       AddStringToLog(t,0x02,p->data,t->name);
       if (edchat_id)
       {
@@ -663,17 +663,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }
       break;
 
-      case '5':
-  {
-    char hdr[] = "Date-time\r\n";
-    char msg[] = "message!\r\n";
-    CLIST *exp = malloc(sizeof(CLIST));
-    exp->uin=1574444;
-    Add2History(exp,hdr,msg);
-    mfree(exp);
-  }
-      
-      /*    case '0':
+     /*    case '0':
       if (connect_state==3)
       {
       SUBPROC((void *)SendPreved);
