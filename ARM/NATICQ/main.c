@@ -109,12 +109,14 @@ void ElfKiller(void)
 volatile CLIST *cltop;
 
 volatile int contactlist_menu_id;
+volatile int request_close_clmenu;
 volatile int request_remake_clmenu;
 
 GBSTMR tmr_vibra;
 
 volatile int edchat_id;
 volatile int request_remake_edchat;
+volatile int request_close_edchat;
 volatile int edchat_toitem;
 volatile int edchat_answeritem;
 CLIST *edcontact;
@@ -259,7 +261,15 @@ void create_contactlist_menu(void)
 
 void contactlist_menu_ghook(void *data, int cmd)
 {
-  if (cmd==0x0A) DisableIDLETMR();
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+    if (request_close_clmenu)
+    {
+      request_close_clmenu=0;
+      GeneralFunc_flag1(contactlist_menu_id,1);
+    }
+  }
 }
 
 int contactlist_menu_onkey(void *data, GUI_MSG *msg)
@@ -311,7 +321,14 @@ void remake_clmenu(void)
   if (contactlist_menu_id)
   {
     request_remake_clmenu=1;
-    GeneralFunc_flag1(contactlist_menu_id,1);
+    if (IsGuiOnTop(contactlist_menu_id))
+    {
+      GeneralFunc_flag1(contactlist_menu_id,1);
+    }
+    else
+    {
+      request_close_clmenu=1;
+    }
   }
   else
   {
@@ -585,7 +602,14 @@ ProcessPacket(TPKT *p)
         if (edcontact->isunread)
         {
           request_remake_edchat=1;
-          GeneralFunc_flag1(edchat_id,1);
+          if (IsGuiOnTop(edchat_id))
+          {
+            GeneralFunc_flag1(edchat_id,1);
+          }
+          else
+          {
+            request_close_edchat=1;
+          }
         }
       }
       else
@@ -814,12 +838,26 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         if (edchat_id)
         {
           request_remake_edchat=0;
-          GeneralFunc_flag1(edchat_id,1);
+          if (IsGuiOnTop(edchat_id))
+          {
+            GeneralFunc_flag1(edchat_id,1);
+          }
+          else
+          {
+            request_close_edchat=1;
+          }
         }
         if (contactlist_menu_id)
         {
           request_remake_clmenu=0;
-          GeneralFunc_flag1(contactlist_menu_id,1);
+          if (IsGuiOnTop(contactlist_menu_id))
+          {
+            GeneralFunc_flag1(contactlist_menu_id,1);
+          }
+          else
+          {
+            request_close_clmenu=1;
+          }
         }
         connect_state=0;
         sock=-1;
@@ -1075,7 +1113,6 @@ unsigned int char16to8(unsigned int c)
 {
   const TUNICODE2CHAR *p=unicode2char;
   unsigned int i;
-  if (c<32) return(' ');
   if (c<128) return(c);
   while((i=p->u))
   {
@@ -1177,6 +1214,11 @@ void edchat_ghook(GUI *data, int cmd)
   if (cmd==0x0A)
   {
     DisableIDLETMR();
+    if (request_close_edchat)
+    {
+      request_close_edchat=0;
+      GeneralFunc_flag1(edchat_id,1);
+    }
   }
   if (cmd==7)
   {
