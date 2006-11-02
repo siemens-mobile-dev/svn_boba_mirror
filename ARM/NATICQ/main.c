@@ -4,7 +4,6 @@
 #include "history.h"
 #include "conf_loader.h"
 
-
 #define TMR_SECOND 216
 
 #define T_REQLOGIN 1
@@ -54,6 +53,10 @@ extern const unsigned int ICON6;
 extern const unsigned int ICON7;
 extern const unsigned int ICON8;
 extern const unsigned int ICON9;
+
+extern const unsigned int IDLEICON_X;
+extern const unsigned int IDLEICON_Y;
+
 
 const char percent_t[]="%t";
 const char empty_str[]="";
@@ -107,6 +110,8 @@ void ElfKiller(void)
   extern void *ELF_BEGIN;
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
+
+int total_unread;
 
 //===============================================================================================
 
@@ -568,6 +573,7 @@ void AddStringToLog(CLIST *t, char code, char *s, char *name)
   strcat(ns,s);
   mfree(t->log);
   t->log=ns;
+  if (!t->isunread) total_unread++;
   t->isunread=1;
 }
 
@@ -809,6 +815,43 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   //  char ss[100];
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  {
+    //Нарисуем иконочку моего статуса
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+    if (IsGuiOnTop(idlegui_id)/*&&IsUnlocked()*/) //Если IdleGui на самом верху
+    {
+      GUI *igui=GetTopGUI();
+      if (igui) //И он существует
+      {
+        void *idata=GetDataOfItemByID(igui,2);
+        if (idata)
+        {
+          int icn;
+//          void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+//          DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
+          if (total_unread)
+            icn=IS_MSG;
+          else
+          {
+            switch(connect_state)
+            {
+            case 0:
+              icn=IS_OFFLINE; break;
+            case 3:
+              icn=IS_ONLINE; break;
+            default:
+              icn=IS_UNKNOWN; break;
+            }
+          }
+          DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
+		   GetPaletteAdrByColorIndex(0),
+		   GetPaletteAdrByColorIndex(20));
+          DrawImg(IDLEICON_X+2,IDLEICON_Y+2,S_ICONS[icn]);
+        }
+      }
+    }
+  }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)
@@ -1379,6 +1422,7 @@ void CreateEditChat(CLIST *t)
     AddEditControlToEditQend(eq,&ec,ma);
     edchat_toitem++;
   }
+  if (t->isunread) total_unread--;
   t->isunread=0;
   wsprintf(ews,"-------");
   ConstructEditControl(&ec,1,0x40,ews,wstrlen(ews));

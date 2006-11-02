@@ -42,3 +42,9 @@ __root const unsigned int ICON8=0x24C;
 
 __root const CFG_HDR cfghdr12={CFG_UINT,"Unknown state icon",0,32767};
 __root const unsigned int ICON9=0x185;
+
+__root const CFG_HDR cfghdr13={CFG_UINT,"Idle icon X-pos",0,1000};
+__root const unsigned int IDLEICON_X=0;
+
+__root const CFG_HDR cfghdr14={CFG_UINT,"Idle icon Y-pos",0,1000};
+__root const unsigned int IDLEICON_Y=50;
