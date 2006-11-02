@@ -14,7 +14,7 @@ __root const int LOG_STATCH = 0;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 
 __root const CFG_HDR cfghdr3={CFG_UINT,"Offline icon",0,32767};
-__root const unsigned int ICON0=0x162;
+__root const unsigned int ICON0=774;//0x162;
 
 __root const CFG_HDR cfghdr4={CFG_UINT,"Invisible icon",0,32767};
 __root const unsigned int ICON1=0x232;
