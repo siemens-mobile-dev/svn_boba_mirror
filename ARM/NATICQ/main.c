@@ -96,6 +96,10 @@ int connect_state=0;
 
 int sock=-1;
 
+volatile int is_gprs_online=1;
+
+GBSTMR reconnect_tmr;
+
 extern void kill_data(void *p, void (*func_p)(void *));
 
 void ElfKiller(void)
@@ -113,6 +117,7 @@ volatile int request_close_clmenu;
 volatile int request_remake_clmenu;
 
 GBSTMR tmr_vibra;
+volatile int vibra_count;
 
 volatile int edchat_id;
 volatile int request_remake_edchat;
@@ -371,9 +376,11 @@ CLIST *AddContact(unsigned int uin, char *name)
 //===============================================================================================
 void create_connect(void)
 {
+  void do_reconnect(void);
   SOCK_ADDR sa;
   //Устанавливаем соединение
   connect_state=0;
+  GBS_DelTimer(&reconnect_tmr);
   sock=socket(1,1,0);
   if (sock!=-1)
   {
@@ -386,7 +393,22 @@ void create_connect(void)
       REDRAW();
     }
     else
+    {
       closesocket(sock);
+      sock=-1;
+      LockSched();
+      ShowMSG(1,(int)"Can't connect!");
+      UnlockSched();
+      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+    }
+  }
+  else
+  {
+    LockSched();
+    ShowMSG(1,(int)"Can't create socket, GPRS restarted!");
+    UnlockSched();
+    //Не осилили создания сокета, закрываем GPRS-сессию
+    GPRS_OnOff(0,1);
   }
 }
 
@@ -555,9 +577,20 @@ void SendAnswer(int dummy, TPKT *p)
   mfree(p);
 }
 
+void start_vibra(void)
+{
+  void stop_vibra(void);
+  SetVibration(100);
+  GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
+}
+
 void stop_vibra(void)
 {
   SetVibration(0);
+  if (--vibra_count)
+  {
+    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
+  }
 }
 
 ProcessPacket(TPKT *p)
@@ -579,7 +612,11 @@ ProcessPacket(TPKT *p)
       }
     }
     else
+    {
+      vibra_count=1;
+      start_vibra();
       remake_clmenu();
+    }
     break;
   case T_STATUSCHANGE:
     t=FindContactByUin(p->pkt.uin);
@@ -594,8 +631,8 @@ ProcessPacket(TPKT *p)
     t=FindContactByUin(p->pkt.uin);
     if (t)
     {
-      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND*1,stop_vibra);
-      SetVibration(10);
+      vibra_count=1;
+      start_vibra();
       AddStringToLog(t,0x02,p->data,t->name);
       if (edchat_id)
       {
@@ -681,12 +718,15 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case GREEN_BUTTON:
-      if (connect_state==0)
+      if ((connect_state==0)&&(sock==-1))
       {
+        GBS_DelTimer(&reconnect_tmr);
         SUBPROC((void *)create_connect);
       }
       break;
-
+    case '#':
+      GPRS_OnOff(0,1);
+      break;
      /*    case '0':
       if (connect_state==3)
       {
@@ -747,6 +787,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_ping);
   GBS_DelTimer(&tmr_vibra);
+  GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
   FreeCLIST();
   mfree(msg_buf);
@@ -756,6 +797,13 @@ void maincsm_onclose(CSM_RAM *csm)
   SUBPROC((void *)ElfKiller);
 }
 
+void do_reconnect(void)
+{
+  if (is_gprs_online)
+  {
+    SUBPROC((void*)create_connect);
+  }
+}
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
@@ -789,6 +837,18 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   }
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
+    switch((int)msg->data0)
+    {
+    case LMAN_DISCONNECT_IND:
+      is_gprs_online=0;
+      return(1);
+    case LMAN_CONNECT_CNF:
+      vibra_count=3;
+      start_vibra();
+      is_gprs_online=1;
+      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      return(1);
+    }
     if ((int)msg->data1==sock)
     {
       //Если наш сокет
@@ -803,6 +863,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_CONNECTED:
         if (connect_state==1)
         {
+          vibra_count=2;
+          start_vibra();
           //Соединение установленно, посылаем пакет login
           strcpy(logmsg,"Try to login...");
           TXbuf.pkt.uin=UIN;
@@ -861,7 +923,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
         connect_state=0;
         sock=-1;
+        vibra_count=4;
+        start_vibra();
         REDRAW();
+        GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
         break;
       }
     }
