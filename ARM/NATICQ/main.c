@@ -287,7 +287,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     ShowMSG(1,(int)"Under construction!");
     return(-1);
   }
-  if (msg->keys==LEFT_BUTTON)
+  if (msg->keys==0x3D)
   {
     void CreateEditChat(CLIST *t);
     i=GetCurMenuItem(data);
@@ -1207,10 +1207,13 @@ void edchat_locret(void){}
 void ExtractAnswer(WSHDR *ws)
 {
   int i=0;
+  int c;
   do
   {
     if (i>=ws->wsbody[0]) break;
-    msg_buf[i]=char16to8(ws->wsbody[i+1]);
+    c=ws->wsbody[i+1];
+    if (c==10) c=13;
+    msg_buf[i]=char16to8(c);
     i++;
   }
   while(i<16383);
