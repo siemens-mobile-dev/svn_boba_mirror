@@ -1639,6 +1639,9 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\conf_loader.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\config_data.c</name>
     <configuration>
       <name>Release</name>

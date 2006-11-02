@@ -1,7 +1,27 @@
 #include "..\inc\swilib.h"
+#include "conf_loader.h"
 
 extern int mode;
 extern CSM_RAM *under_idle;
+
+extern const char BM1NAME[32];
+extern const char BM1FILE[128];
+extern const char BM2NAME[32];
+extern const char BM2FILE[128];
+extern const char BM3NAME[32];
+extern const char BM3FILE[128];
+extern const char BM4NAME[32];
+extern const char BM4FILE[128];
+extern const char BM5NAME[32];
+extern const char BM5FILE[128];
+extern const char BM6NAME[32];
+extern const char BM6FILE[128];
+extern const char BM7NAME[32];
+extern const char BM7FILE[128];
+extern const char BM8NAME[32];
+extern const char BM8FILE[128];
+extern const char BM9NAME[32];
+extern const char BM9FILE[128];
 
 volatile int do_idle;
 
@@ -298,11 +318,164 @@ void method4(MAIN_GUI *data, void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
+const char *bm_name(int bm)
+{
+  switch(bm)
+  {
+  case 0: return BM1NAME;
+  case 1: return BM2NAME;
+  case 2: return BM3NAME;
+  case 3: return BM4NAME;
+  case 4: return BM5NAME;
+  case 5: return BM6NAME;
+  case 6: return BM7NAME;
+  case 7: return BM8NAME;
+  case 8: return BM9NAME;
+  }
+  return(0);
+}
+
+const char *bm_file(int bm)
+{
+  switch(bm)
+  {
+  case 0: return BM1FILE;
+  case 1: return BM2FILE;
+  case 2: return BM3FILE;
+  case 3: return BM4FILE;
+  case 4: return BM5FILE;
+  case 5: return BM6FILE;
+  case 6: return BM7FILE;
+  case 7: return BM8FILE;
+  case 8: return BM9FILE;
+  }
+  return(0);
+}
+
+int RunBM(int bm)
+{
+  const char *s=bm_file(bm);
+  if (s)
+  {
+    if (strlen(s))
+    {
+      WSHDR *ws;
+      ws=AllocWS(150);
+      str_2ws(ws,s,128);
+      ExecuteFile(ws,0);
+      FreeWS(ws);
+      return(1);
+    }
+  }
+  return(0);
+}
+
+HEADER_DESC bm_menuhdr={0,0,131,21,NULL,(int)"Bookmarks...",0x7FFFFFFF};
+int menusoftkeys[]={0,1,2};
+SOFTKEY_DESC menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Options"},
+  {0x0001,0x0000,(int)"Close"},
+  {0x003D,0x0000,(int)"+"}
+};
+
+SOFTKEYSTAB menu_skt=
+{
+  menu_sk,0
+};
+
+void bm_menu_ghook(void *data, int cmd){}
+int bm_menu_onkey(void *data, GUI_MSG *msg);
+void bm_menu_iconhndl(void *data, int curitem, int *unk);
+
+MENU_DESC bm_menu=
+{
+  8,(void *)bm_menu_onkey,(void*)bm_menu_ghook,NULL,
+  menusoftkeys,
+  &menu_skt,
+  0,//0x11,
+  (void *)bm_menu_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0   //n
+};
+
+int bm_menu_onkey(void *data, GUI_MSG *msg)
+{
+  int i;
+  i=GetCurMenuItem(data);
+  if (msg->keys==0x18)
+  {
+    //    GeneralFunc_F1(1);
+    ShowMSG(1,(int)"Under construction!");
+    return(-1);
+  }
+  if (msg->keys==0x3D)
+  {
+    if (RunBM(i))
+    {
+      GeneralFunc_flag1(((MAIN_CSM*)FindCSMbyID(my_csm_id))->gui_id,1);
+      return(1);
+    }
+    return(-1);
+  }
+  return(0);
+}
+
+
+void bm_menu_iconhndl(void *data, int curitem, int *unk)
+{
+  const char *s;
+  WSHDR *ws;
+  void *item=AllocMenuItem(data);
+
+  s=bm_name(curitem);
+  if (s)
+  {
+    if (strlen(s))
+    {
+      ws=AllocMenuWS(data,strlen(s));
+      wsprintf(ws,percent_t,s);
+    }
+    else
+    {
+      ws=AllocMenuWS(data,10);
+      wsprintf(ws,"Empty");
+    }
+  }
+  else
+  {
+    ws=AllocMenuWS(data,10);
+    wsprintf(ws,"error");
+  }
+//  SetMenuItemIconArray(data,item,S_ICONS);
+  SetMenuItemText(data,item,ws,curitem);
+//  SetMenuItemIcon(data,curitem,GetIconIndex(t));
+}
+
+void ShowBMmenu(void)
+{
+  CreateMenu(0,0,&bm_menu,&bm_menuhdr,0,9,0,0);
+}
+
 int method5(MAIN_GUI *data, GUI_MSG *msg)
 {
+  int i;
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
-    switch(msg->gbsmsg->submess)
+    i=msg->gbsmsg->submess;
+    {
+      if (i=='0')
+      {
+        ShowBMmenu();
+        return(0);
+      }
+      if ((i>='1')&&(i<='9'))
+      {
+        return RunBM(i-'1');
+      }
+    }
+    switch(i)
     {
     case LEFT_SOFT:
       selcsm=FindCSMbyID(CSM_root()->idle_id);
@@ -399,6 +572,7 @@ void do_gui(int _do_idle)
 {
   char dummy[sizeof(MAIN_CSM)];
   do_idle=_do_idle;
+  InitConfig();
   my_csm_id=CreateCSM(&maincsm,dummy,0);
   mode=-1;
 }
