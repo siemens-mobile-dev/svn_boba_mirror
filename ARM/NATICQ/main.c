@@ -13,6 +13,10 @@
 #define T_ERROR 6
 #define T_CLENTRY 7
 #define T_STATUSCHANGE 9
+#define T_AUTHREQ 10
+#define T_REQINFOSHORT 11
+#define T_ADDCONTACT 12
+#define T_SSLRESP 13
 
 // Константы статусов
 #define IS_OFFLINE 0
@@ -60,6 +64,7 @@ extern const unsigned int IDLEICON_Y;
 
 const char percent_t[]="%t";
 const char empty_str[]="";
+const char I_str[]="I";
 
 typedef struct
 {
@@ -178,6 +183,17 @@ void FreeCLIST(void)
     p=cl;
     cl=(CLIST*)(cl->next);
     mfree(p);
+  }
+}
+
+//Прописать всех в offline
+void FillAllOffline(void)
+{
+  CLIST *cl=(CLIST*)cltop;
+  while(cl)
+  {
+    cl->state=0xFFFF;
+    cl=(CLIST*)(cl->next);
   }
 }
 
@@ -529,6 +545,11 @@ void get_answer(void)
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         REDRAW();
         break;
+      case T_SSLRESP:
+        LockSched();
+        ShowMSG(1,(int)RXbuf.data);
+        UnlockSched();
+        break;
       }
       i=-(int)sizeof(PKT); //А может еще есть данные
     }
@@ -549,7 +570,7 @@ void SendPreved(void)
   send(sock,&TXbuf,sizeof(PKT)+l,0);
 }
 
-void AddStringToLog(CLIST *t, char code, char *s, char *name)
+void AddStringToLog(CLIST *t, char code, char *s, const char *name)
 {
   char hs[128];
   TTime tt;
@@ -610,7 +631,8 @@ ProcessPacket(TPKT *p)
     {
       if ((t=FindContactByUin(p->pkt.uin)))
       {
-        t->state=0xFFFF;
+//        t->state=0xFFFF;
+        strncpy(t->name,p->data,63);
       }
       else
       {
@@ -964,6 +986,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             request_close_clmenu=1;
           }
         }
+        FillAllOffline();
         connect_state=0;
         sock=-1;
         vibra_count=4;
@@ -1271,6 +1294,12 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   TPKT *p;
   char *s;
   int l;
+  if (msg->keys==0xFFF)
+  {
+    void ec_menu(void);
+    ec_menu();
+    return(-1);
+  }
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     l=msg->gbsmsg->submess;
@@ -1294,7 +1323,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
               p->pkt.type=T_SENDMSG;
               p->pkt.data_len=l;
               strcpy(p->data,s);
-              AddStringToLog(t,0x01,p->data,"I sad");
+              AddStringToLog(t,0x01,p->data,I_str);
               SUBPROC((void *)SendAnswer,0,p);
               mfree(s);
               t->answer=0;
@@ -1315,6 +1344,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 
 void edchat_ghook(GUI *data, int cmd)
 {
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Menu"};
   //  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
   char *s;
   EDITCONTROL ec;
@@ -1333,6 +1363,7 @@ void edchat_ghook(GUI *data, int cmd)
   }
   if (cmd==7)
   {
+    SetSoftKey(data,&sk,0);
     if (edchat_toitem)
     {
       EDIT_SetFocus(data,edchat_toitem);
@@ -1435,4 +1466,210 @@ void CreateEditChat(CLIST *t)
   edchat_toitem++;
   edchat_answeritem=edchat_toitem;
   edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,0);
+}
+
+//-----------------------------------------------------------------------------
+void GetShortInfo(void)
+{
+  TPKT *p;
+  CLIST *t;
+  if ((t=edcontact)&&(connect_state==3))
+  {
+    p=malloc(sizeof(PKT));
+    p->pkt.uin=t->uin;
+    p->pkt.type=T_REQINFOSHORT;
+    p->pkt.data_len=0;
+    AddStringToLog(t,0x01,"Request info...",I_str);
+    SUBPROC((void *)SendAnswer,0,p);
+  }
+  request_close_edchat=1;
+  request_remake_edchat=1;
+  GeneralFuncF1(1);
+}
+
+void AddCurContact(void)
+{
+  void AskNickAndAddContact(void);
+  if ((edcontact)&&(connect_state==3)) AskNickAndAddContact();
+  GeneralFuncF1(1);
+}
+
+void SendAuthReq(void)
+{
+  TPKT *p;
+  CLIST *t;
+  int l;
+  const char s[]="Please authorize me...";
+  if ((t=edcontact)&&(connect_state==3))
+  {
+    p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+    p->pkt.uin=t->uin;
+    p->pkt.type=T_AUTHREQ;
+    p->pkt.data_len=l;
+    strcpy(p->data,s);
+    AddStringToLog(t,0x01,p->data,I_str);
+    SUBPROC((void *)SendAnswer,0,p);
+  }
+  request_close_edchat=1;
+  request_remake_edchat=1;
+  GeneralFuncF1(1);
+}
+
+void ecmenu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+}
+
+MENUITEM_DESC ecmenu_ITEMS[4]=
+{
+  {NULL,(int)"Get short info",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Add/rename",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Send Auth Req",0x7FFFFFFF,0,NULL,0,0x59D}
+};
+
+void *ecmenu_HNDLS[3]=
+{
+  (void *)GetShortInfo,
+  (void *)AddCurContact,
+  (void *)SendAuthReq
+};
+
+char ecm_contactname[64];
+
+HEADER_DESC ecmenu_HDR={0,0,131,21,NULL,(int)ecm_contactname,0x7FFFFFFF};
+
+MENU_DESC ecmenu_STRUCT=
+{
+  8,NULL,(void *)ecmenu_ghook,NULL,
+  menusoftkeys,
+  &menu_skt,
+  1,
+  NULL,
+  ecmenu_ITEMS,
+  ecmenu_HNDLS,
+  3
+};
+
+void ec_menu(void)
+{
+  CLIST *t;
+  if ((t=edcontact))
+  {
+    if (t->name)
+    {
+      strncpy(ecm_contactname,t->name,63);
+    }
+    else
+    {
+      sprintf(ecm_contactname,"%u",t->uin);
+    }
+    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,3,0,0);
+  }
+}
+
+void anac_locret(void){}
+
+int anac_onkey(GUI *data, GUI_MSG *msg)
+{
+  CLIST *t;
+  TPKT *p;
+  int l;
+  char s[64];
+  int w;
+  EDITCONTROL ec;
+  if (msg->keys==0xFFF)
+  {
+    if (connect_state==3)
+    {
+      if ((t=edcontact))
+      {
+        ExtractEditControl(data,2,&ec);
+        l=0;
+        while(l<ec.pWS->wsbody[0])
+        {
+          w=char16to8(ec.pWS->wsbody[l+1]);
+          if (w<32) w='_';
+          s[l++]=w;
+          if (l==63) break;
+        }
+        s[l]=0;
+        if (strlen(s))
+        {
+          p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+          p->pkt.uin=t->uin;
+          p->pkt.type=T_ADDCONTACT;
+          p->pkt.data_len=l;
+          strcpy(p->data,s);
+          AddStringToLog(t,0x01,"Add contact...",I_str);
+          SUBPROC((void *)SendAnswer,0,p);
+          request_close_edchat=1;
+          request_remake_edchat=1;
+          return(1);
+        }
+      }
+    }
+  }
+  return(0);
+}
+
+void anac_ghook(GUI *data, int cmd)
+{
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Do it!"};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,0);
+  }
+}
+
+HEADER_DESC anac_hdr={0,0,131,21,NULL,(int)"Add/Rename",0x7FFFFFFF};
+
+INPUTDIA_DESC anac_desc=
+{
+  1,
+  anac_onkey,
+  anac_ghook,
+  (void *)anac_locret,
+  0,
+  &menu_skt,
+  {0,22,131,153},
+  4,
+  100,
+  101,
+  0,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+void AskNickAndAddContact(void)
+{
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  WSHDR *ews=AllocWS(256);
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  wsprintf(ews,"Set nickname of %u as",edcontact->uin);
+  ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);
+  wsprintf(ews,percent_t,edcontact->name);
+  ConstructEditControl(&ec,3,0x40,ews,63);
+  AddEditControlToEditQend(eq,&ec,ma);
+  CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,0);
+  FreeWS(ews);
 }

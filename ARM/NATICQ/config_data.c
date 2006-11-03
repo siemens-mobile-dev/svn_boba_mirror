@@ -48,3 +48,4 @@ __root const unsigned int IDLEICON_X=0;
 
 __root const CFG_HDR cfghdr14={CFG_UINT,"Idle icon Y-pos",0,1000};
 __root const unsigned int IDLEICON_Y=50;
+
