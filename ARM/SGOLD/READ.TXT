@@ -1,4 +1,0 @@
-Please put here SGOLD elf sources.
-Thanks!
-
-...I'm making elf like xTask for SGOLD, I will put here sources soon ;-)
