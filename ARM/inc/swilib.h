@@ -1722,3 +1722,18 @@ __swi __arm void EDIT_SetFocus(void *gui, int item);
 __swi __arm void SEQKILLER(void *data, void(*next_in_seq)(void *), void *data_to_kill);
 #pragma swi_number=0x819C
 __swi __arm void *SEQKILLER_ADR();
+
+
+#pragma swi_number=0x019D
+__swi __arm long long getCpuUsedTime_if_ena(void);
+//arm
+//pattern=
+
+#pragma swi_number=0x019E
+__swi __arm void StartCpuUsageCount(void);
+//arm
+//pattern=
+
+
+
+
