@@ -1,5 +1,5 @@
 ;ELFpack v1.8 (C)2006 by Rst7/CBSIE, BoBa
-;Release 30.10.2006
+;Release 7.11.2006 RED OCTOBER
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -66,6 +66,7 @@
 00C8: 0xA0280D20 ; 032: __arm void PlaySound(long param1, long param2, long param3, long tone, long param5);
 00F0: 0xA025137C ; 03C: __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned int *ErrorNumber);
 010C: 0xA09007BB ; 043: __thumb int IsUnlocked(void);
+0130: 0xA09B4959 ; 04C: GetMissedCallsCount
 0134: 0xA0093278 ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
 0170: 0xA01CF82C ; 05C: __arm char GetCPUClock();
 0174: 0xA0331C37 ; 05D: __thumb char GetCPULoad();
@@ -277,6 +278,9 @@
 
 ;Handmaded function
 ;0670: ;19C __arm void SEQKILLER(void *data, void(*next_in_seq)(void *), void *data_to_kill);
+
+0674: 0xA01D005C ;19D: __arm long long getCpuUsedTime_if_ena(void);
+0678: 0xA01D0000 ;19E: __arm void StartCpuUsageCount(void);
 
 #pragma disable old_equal_ff
 +0
