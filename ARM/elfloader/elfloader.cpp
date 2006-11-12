@@ -361,7 +361,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 #endif
     return -14;
   }
-//  t_zeromem(base,maxadr-minadr);
+  //  t_zeromem(base,maxadr-minadr);
   zeromem_a(base,maxadr-minadr);
   for(n=0;n<ehdr.e_phnum;n++){ //  обход всех сегментов
     ////////////////////////////////////////////////////////////////////
@@ -445,7 +445,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 #ifdef wintel
 	  cout<<"rel: of="<<hex<<((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset
 	    <<" , sym_idx="<<ELF32_R_SYM(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)
-            <<" , rel_type="<<dec<<(int) ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)<<endl;
+              <<" , rel_type="<<dec<<(int) ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)<<endl;
 #endif
 	  switch(ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)){
 
@@ -457,15 +457,15 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
             cout << "of="<<hex<<((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr<<endl;
 #endif
 	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base;
-          break;
+            break;
 
           case R_ARM_RELATIVE: // вообще говоря не minadr а начало сегмента содержащего символ
 	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base-minadr;
-          break; // ignore
+            break; // ignore
 
 	  case R_ARM_RABS32:
 	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset))+=(long)base-minadr;
-          break;
+            break;
 
 	  case R_ARM_RBASE: break;
 	  default: 	//неизвестный тип релокации
@@ -484,7 +484,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 #ifdef wintel
       else
       {
-       cout << "No relocation information dyn[DT_RELSZ]=0" << endl;
+        cout << "No relocation information dyn[DT_RELSZ]=0" << endl;
       }
 #endif
       mfree(reloc);
@@ -521,8 +521,8 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 int main(int argc, char* argv[]){
   if(argc<2)
   {
-   cout << "no .elf specified"<<endl;
-   return -1;
+    cout << "no .elf specified"<<endl;
+    return -1;
   }
 
   cout << elfload(argv[1],0,0,0);
@@ -531,10 +531,10 @@ int main(int argc, char* argv[]){
 #endif
 
 #ifndef wintel
-void elfloader_onload(WSHDR *filename){
+int elfloader_onload(WSHDR *filename, WSHDR *ext, void *param){
   char fn[128];
   ws_2str(filename,fn,126);
-  elfload(fn,0,0,0);
+  if (elfload(fn,param,0,0)) return 0; else return 1;
 }
 
 //=======================================================================
@@ -607,9 +607,11 @@ __thumb void SEQKILLER_impl(void *data, void(*next_in_seq)(void *), void *data_t
 
 __arm void MyIDLECSMonClose(void *data)
 {
+  extern BXR1(void *, void (*)(void *));
   KillGBSproc(HELPER_CEPID);
-  OldOnClose(data);
-  asm("NOP\n");
+  BXR1(data,OldOnClose);
+//  OldOnClose(data);
+//  asm("NOP\n");
 }
 
 __arm void LoadDaemons(int dummy, char *path)
@@ -648,29 +650,30 @@ __arm void MyIDLECSMonCreate(void *data)
     0x55,
     //   0x59C1200,
 #ifdef NEWSGOLD
-    0x59D43FF,
+0x59D43FF,
 #else
-    0x57807FF,
+0x57807FF,
 #endif
 //    0x5431F04,
-    smallicons,
-    bigicons,
+smallicons,
+bigicons,
 #ifdef NEWSGOLD
-    //   0xBB,
-    0x109,
-    0x197,
-    //   0x7FFFC112,
-    0x7FFFC0FB,
+//   0xBB,
+0x109, //LGP "Открыть"
+0x197, //LGP "Опции"
+//   0x7FFFC112,
+0x7FFFC0FB,
 #endif
-    (void *)elfloader_onload,
-    0
-
+(void *)elfloader_onload,
+0
   };
   CreateHELPER_PROC();
   RegExplorerExt(&elf_reg);
   SUBPROC((void *)LoadDaemons,0,DEFAULT_DISK ":\\ZBin\\Daemons\\");
-  OldOnCreate(data);
-  asm("NOP\n");
+  extern BXR1(void *, void (*)(void *));
+  BXR1(data,OldOnCreate);
+//  OldOnCreate(data);
+//  asm("NOP\n");
 }
 
 const char wintranslation[128]=
@@ -734,118 +737,20 @@ void ESI(char *s, WSHDR *ws)
   }
 }
 
-int toupper(int c)
+/*int toupper(int c)
 {
   if ((c>='a')&&(c<='z')) c+='A'-'a';
   return(c);
-}
+}*/
 
-static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
+//static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
 
-__arm int DoUnknownFileType(WSHDR *filename)
+__arm void DoUnknownFileType(WSHDR *filename)
 {
-  char fn[128];
-  char s[256];
-  int f;
-  unsigned int i;
-  unsigned int mi;
-  int c;
-  unsigned int sm=0;
-  char *execname=0;
-  char *fname;
-  unsigned int ul;
-
-  ws_2str(filename,fn,126);
-
-  i=strlen(fn);
-  if (!i) return 0;
-  if (i>127) return 0;
-
-  fname=fn+i; //Указатель на посл. байт
-  while(fname[-1]!='.')
-  {
-    i--;
-    if (i==0) {
-      fname="";
-      break;
-    }
-    fname--;
-  }
-  //Теперь fname указывает на расширение
-  if ((f=fopen(extfile,A_ReadOnly,0,&ul))!=-1)
-  {
-    i=fread(f,s,128,&ul);
-    mi=128;
-    if (i<128)
-      s[i]=0;
-    else
-    {
-    L1:
-      i=fread(f,s+128,128,&ul);
-      if (i<128)
-      {
-	(s+128)[i]=0;
-	mi=256;
-      }
-    }
-    i=0;
-    for(;;)
-    {
-      if (i==mi)
-      {
-	memcpy(s,s+128,128);
-	goto L1;
-      }
-      c=s[i++];
-      if (!c) break; //Конец файла
-      switch(sm)
-      {
-      case 0xFFFF:
-	//Ждем окончания строки
-	if (c==':')
-	{
-          execname=s+i; //Последний файл - универсальный
-          sm--; //Только первый вход
-	}
-      case 0xFFFE:
-	if ((c==0x0D)||(c==0x0A)) sm=0; break;
-      default:
-	if ((c==0x0D)||(c==0x0A))
-	{
-          //Неожиданный конец строки
-          sm=0;
-          break;
-	}
-	if ((c==':')&&(!fname[sm]))
-	{
-          //Полное совпадение
-          execname=s+i;
-          goto L_EOF;
-	}
-	if (toupper(c)==toupper(fname[sm])) sm++; else sm=0xFFFF;
-	break;
-      }
-    }
-    if (!execname)
-    {
-      ShowMSG(1,(int)"Nothing to run!");
-      return 0; //Нет сопоставлений
-    }
-  L_EOF:
-    fclose(f,&ul);
-    i=0;
-    while(execname[i]>31) i++;
-    execname[i]=0;
-    if (elfload(execname,fn,0,0))
-    {
-      ShowMSG(1,(int)"Can't run ELF!");
-    }
-  }
-  else
-  {
-    ShowMSG(1,(int)"Elfs.ext not found!");
-  }
-  return 0;
+  WSHDR *wsmime=AllocWS(15);
+  wsprintf(wsmime,"txt");
+  ExecuteFile(filename,wsmime,0);
+  FreeWS(wsmime);
 }
 
 
@@ -864,28 +769,16 @@ __thumb MyShowMSG(int p1, int p2)
 
 __arm int PropertyPatch(WSHDR *unk_foldername, WSHDR *unk_filename)
 {
-WSHDR *ws;
-ws=AllocWS(255);
-wstrcpy(ws,unk_foldername);
-wsAppendChar(ws,'\\');
-wstrcat (ws,unk_filename);
-DoUnknownFileType(ws);
-FreeWS(ws);
-return 0;
+  WSHDR *ws;
+  ws=AllocWS(255);
+  wstrcpy(ws,unk_foldername);
+  wsAppendChar(ws,'\\');
+  wstrcat (ws,unk_filename);
+  DoUnknownFileType(ws);
+  FreeWS(ws);
+  return 0;
 }
 
-
-void PatchTxtOnOpen(WSHDR *unk_filename, WSHDR *unk_fileext)
-{
-  char fileext[6];
-  ws_2str(unk_fileext, fileext, 5);
-  if (strcmp(fileext,"txt"))
-  {
-    OldTxtOpen(unk_filename, unk_fileext);
-    return;
-  }
-  DoUnknownFileType(unk_filename);
-}
 #endif
 
 
@@ -898,9 +791,9 @@ __root static const int NEW_ONCLOSE @ "PATCH_ONCLOSE" = (int)MyIDLECSMonClose;
 #ifdef NEWSGOLD
 __root static const int NEW_SHOWMSG @ "PATCH_SHOWMSG_BLF" = (int)MyShowMSG;
 
-__root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)DoUnknownFileType;
+//__root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)DoUnknownFileType;
 #else
-__root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)PatchTxtOnOpen;
+//__root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)PatchTxtOnOpen;
 #endif
 
 __root static const int SWILIB_FUNC171 @ "SWILIB_FUNC171" = (int)SUBPROC_impl;

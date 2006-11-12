@@ -1,4 +1,13 @@
+        RSEG    CODE:CODE(2)
+        PUBLIC  BXR1
+BXR1:
+        BX      R1
+
 #ifdef NEWSGOLD
+
+        THUMB
+        RSEG    PATCH_NO_BROWSE_TXT:CODE:ROOT(1)
+        ADDS    R0,R0,#8+0x28
 
 	RSEG	PATCH_ESI1:CODE:ROOT(2)
 	ARM
