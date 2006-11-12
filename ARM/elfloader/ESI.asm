@@ -26,6 +26,13 @@ callESI:
 	LDMFD	SP!, {R4-R8,PC}
 
 #else
+        THUMB
+        RSEG    PATCH_NO_BROWSE_TXT:CODE:ROOT(1)
+        EXTERN  OldTxtReg
+        B       0xA0BE4CC4+1
+
+
+
 
 	RSEG	PATCH_ESI:CODE:ROOT
 	CODE16

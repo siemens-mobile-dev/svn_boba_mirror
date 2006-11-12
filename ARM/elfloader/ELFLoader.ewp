@@ -107,7 +107,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.30A</state>
+          <state>4.40A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1657,15 +1657,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>Release SGOLD\Exe</state>
+          <state>Release_SGOLD\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>Release SGOLD\Obj</state>
+          <state>Release_SGOLD\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>Release SGOLD\List</state>
+          <state>Release_SGOLD\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2165,7 +2165,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>$PROJ_DIR$\..\!bin\elf2vkp $PROJ_DIR$\Release_SGOLD\exe\elfloader.elf $PROJ_DIR$\elfloader.vkp $PROJ_DIR$\..\!ff\cx70_56.bin</postbuild>
       </data>
     </settings>
     <settings>

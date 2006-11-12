@@ -24,11 +24,11 @@ OldOnClose:
 	PUBLIC	OldOnCreate
 OldOnCreate:
 	DCD	0xA171422C+1
+        
+	PUBLIC	OldTxtReg
+OldTxtReg:
+	DCD	0xA171422C+1        
 	
-	PUBLIC	OldTxtOpen
-OldTxtOpen:
-	DCD	0xA0BE4BB8+1
-
 	PUBLIC	ESIOld
 ESIOld:
 	DCD	0xA1559B4C+1

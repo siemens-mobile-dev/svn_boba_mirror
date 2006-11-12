@@ -1,4 +1,4 @@
-#define DEFAULT_DISK "4"
+
 //#define wintel	//компелим под винду
 
 #define MAX_PHNUM	10	//максимальное количество програмных сегментов
@@ -15,6 +15,12 @@ using namespace std;
 
 #ifndef wintel
 #include "..\inc\swilib.h"
+#endif
+
+#ifdef NEWSGOLD
+#define DEFAULT_DISK "4"
+#else
+#define DEFAULT_DISK "0"
 #endif
 
 typedef unsigned long  Elf32_Addr;	//Unsigned program address 4
