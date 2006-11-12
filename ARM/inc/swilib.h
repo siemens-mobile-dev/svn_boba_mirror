@@ -220,9 +220,9 @@ typedef struct
   int unk1;
   const int *icon1;
   const int *icon2;
-  int unk4;	//0x109
-  int unk5;	//0x10A
-  int unk6;	//0x7FFFC0FB
+  int Open_lgpid;	//0x109
+  int Options_lgpid;	//0x10A
+  int Enter_lgpid;	//0x7FFFC0FB
   void *proc;
   int zero;
 #else
@@ -867,7 +867,7 @@ __swi __arm void *calloc(size_t nelem, size_t elsize);
 //pattern=91,00,00,E0,F4,FF,FF,EA
 
 #pragma swi_number=148
-__swi __arm int ExecuteFile (WSHDR *filepath, WSHDR *mimetype);
+__swi __arm int ExecuteFile (WSHDR *filepath, WSHDR *mimetype, void *param);
 //thumb
 //pattern=70,B5,16,1C,0D,1C,04,1C,00,28,18,D0,00,2D,03,D1,20,1C,??,??,??,??,07,E0,28,1C,??,??,??,??,00,28,02,D1,28,1C,??,??,??,??,??,??,??,??,00,28,06,D0,02,68,33,1C,21,1C,00,6A,??,??,??,??,70,BD,00,20,70,BD
 
@@ -1735,5 +1735,18 @@ __swi __arm void StartCpuUsageCount(void);
 //pattern=
 
 
+#pragma swi_number=0x019F
+__swi __arm int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
+//thumb
+//pattern=??,B5,0D,1C,04,1C,00,2A,??,D0,10,78,31,28
 
+#pragma swi_number=0x01A0
+__swi __arm int inflate (z_streamp strm, int flush);
+//thumb
+//pattern=??,B5,??,??,??,??,00,29,??,D0,??,??,??,??,00,2E,??,D0
+
+#pragma swi_number=0x01A1
+__swi __arm int inflateEnd (z_streamp strm);
+//thumb
+//pattern=10,B5,04,1C,??,D0,??,??,00,28,??,D0,??,??,00,2A,??,D1
 
