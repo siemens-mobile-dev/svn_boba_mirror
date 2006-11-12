@@ -2,6 +2,12 @@
 
 #define MAX_EXTS 16
 
+#ifdef NEWSGOLD
+#define DEFAULT_DISK "4"
+#else
+#define DEFAULT_DISK "0"
+#endif
+
 /*CSM_DESC icsmd;
 
 void (*old_icsm_onClose)(CSM_RAM*);*/
@@ -51,8 +57,8 @@ REGEXPLEXT reg=
   NULL,
   0x55,
   0x57807FF,
-  smallicons,
-  bigicons,
+  NULL,
+  NULL,
   (void *)do_ext,
   0
 };
@@ -73,7 +79,7 @@ REGEXPLEXT reg=
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }*/
 
-static const char extfile[]="4:\\ZBin\\etc\\extension.cfg";
+static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
 
 int main()
 {
