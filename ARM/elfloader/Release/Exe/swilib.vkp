@@ -284,6 +284,9 @@
 
 0674: 0xA01D005C ;19D: __arm long long getCpuUsedTime_if_ena(void);
 0678: 0xA01D0000 ;19E: __arm void StartCpuUsageCount(void);
+067C: 0xA0132319 ; 19F: __thumb int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
+0680: 0xA013244F ; 1A0: __thumb int inflate (z_streamp strm, int flush);
+0684: 0xA013328B ; 1A1: __thumb int inflateEnd (z_streamp strm);
 
 #pragma disable old_equal_ff
 +0
