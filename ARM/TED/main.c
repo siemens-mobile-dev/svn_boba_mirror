@@ -34,6 +34,8 @@ volatile int terminated=0;
 volatile int loadmenu_id;
 volatile int edit_id;
 
+volatile int text_changed=0;
+
 void DrwImg(IMGHDR *img, int x, int y, int *pen, int *brush)
 {
   RECT rc;
@@ -56,9 +58,9 @@ volatile unsigned int clip_pasted;
 typedef struct
 {
   GUI gui;
-//  WSHDR *ws1;
-//  WSHDR *ws2;
-//  int i1;
+  //  WSHDR *ws1;
+  //  WSHDR *ws2;
+  //  int i1;
 }MAIN_GUI;
 
 typedef struct
@@ -181,16 +183,16 @@ IMGHDR MyScrHdr = {255,255,0x1,0,myscr};
 
 void tmr2sec_proc(void)
 {
-  if ((disk_access)||(draw_mode>1))
-  {
-    REDRAW;
-    GBS_StartTimerProc(&tmr2sec,262/2,tmr2sec_proc);
+if ((disk_access)||(draw_mode>1))
+{
+REDRAW;
+GBS_StartTimerProc(&tmr2sec,262/2,tmr2sec_proc);
   }
 }
 
 void Start_tmr2sec(void)
 {
-  GBS_StartTimerProc(&tmr2sec,262/2,tmr2sec_proc);
+GBS_StartTimerProc(&tmr2sec,262/2,tmr2sec_proc);
 }*/
 
 volatile char Q_DiskError;
@@ -239,7 +241,7 @@ const char koi8translation[128]=
   0x5F,0x27,0x27,0x22,0x22,0x07,0x2D,0x2D,0x5F,0x54,0x5F,0x3E,0x5F,0x5F,0x5F,0x5F,
   0xFF,0xF6,0xF7,0xF1,0xF3,0x5F,'i' ,0xF5,0xF0,0x63,0xF2,0x3C,0xBF,0xA3,0x52,0xF4,
   0xF8,0x2B,0x5F,0xF0,0xF2,0xE7,'I' ,0xF4,0xF1,0xFC,0xF3,0x3E,0x5F,0x83,0x5F,0xF5,
-
+  
   0xEE,0xA0,0xA1,0xE6,0xA4,0xA5,0xE4,0xA3,0xE5,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,
   0xAF,0xEF,0xE0,0xE1,0xE2,0xE3,0xA6,0xA2,0xEC,0xEB,0xA7,0xE8,0xED,0xE9,0xE7,0xEA,
   0x9E,0x80,0x81,0x96,0x84,0x85,0x94,0x83,0x95,0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,
@@ -595,7 +597,7 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
   unsigned long spcsum;
   unsigned long spcadd;
   unsigned int spcs=0;
-
+  
   //Надо посчитать пробелы
   i=0;
   if (*p)
@@ -619,7 +621,7 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
     spcsum=((unsigned long)i<<16)%spcs;
   }
   spcsum+=spcadd; //Начальное значение
-
+  
   i=0;
   c=*p;
   if (c)
@@ -694,7 +696,7 @@ void DoDiskAccess(unsigned int flag)
   char b;
   unsigned int ul;
   unsigned int seekpos;
-
+  
   if ((f=stk_fhandle)==-1)
   {
     stk_fhandle=f=fopen(stkfile,A_ReadWrite+A_BIN,P_READ+P_WRITE,&ul); //Файл верхнего стека
@@ -766,6 +768,22 @@ void CheckDiskAccess(void)
 //-------------------------------------------------------
 // Работа с историей
 //-------------------------------------------------------
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
+
+
 unsigned int SearchHistory(void)
 {
   unsigned int history_pos=0;
@@ -774,14 +792,14 @@ unsigned int SearchHistory(void)
   unsigned int ul;
   char historyfile[128];
   snprintf(historyfile,sizeof(historyfile),"%sTED.history",ted_path);
-
+  
   if ((fin=fopen(historyfile,A_ReadOnly+A_BIN,0,&ul))!=-1)
   {
     for(;;)
     {
       i=fread(fin,&HISTORY,sizeof(HISTORY),&ul);
       if (i<sizeof(HISTORY)) goto L_NO_HISTORY;
-      if (!strcmp(HISTORY.name,filename))
+      if (!strcmp_nocase(HISTORY.name,filename))
       {
    	history_pos|=0x8000;
 	break; //Нашли
@@ -801,10 +819,10 @@ void SaveHistory(void)
   unsigned int ul;
   char ss[sizeof(HISTORY)];
   unsigned int history_pos;
-
+  
   char historyfile[128];
   snprintf(historyfile,sizeof(historyfile),"%sTED.history",ted_path);
-
+  
   memcpy(ss,&HISTORY,sizeof(HISTORY));
   history_pos=SearchHistory()&0x7FFF;
   memcpy(&HISTORY,ss,sizeof(HISTORY));
@@ -822,19 +840,19 @@ void SaveHistory(void)
     fwrite(f,&HISTORY,sizeof(HISTORY),&ul);
     fclose(f,&ul);
   }
-/*  if (terminated)
+  /*  if (terminated)
   {
-    //Записываем snap-shoot
-    if ((f=FileOpen((STR)snapshootfile,_O_BINARY+_O_CREAT+_O_RDWR,_S_IEXEC))!=-1)
-    {
-      FileWrite(f,(void far *)0x80000,16384);
-      FileWrite(f,(void far *)0x84000,16384);
-      FileWrite(f,(void far *)0x88000,16384);
-      FileWrite(f,(void far *)0x8C000,16384);
-      FileWrite(f,(void far *)0x90000,16384);
-      FileClose(f);
-    }
-  }*/
+  //Записываем snap-shoot
+  if ((f=FileOpen((STR)snapshootfile,_O_BINARY+_O_CREAT+_O_RDWR,_S_IEXEC))!=-1)
+  {
+  FileWrite(f,(void far *)0x80000,16384);
+  FileWrite(f,(void far *)0x84000,16384);
+  FileWrite(f,(void far *)0x88000,16384);
+  FileWrite(f,(void far *)0x8C000,16384);
+  FileWrite(f,(void far *)0x90000,16384);
+  FileClose(f);
+}
+}*/
 }
 //------------------------------------------
 // Собственно редактор
@@ -844,7 +862,7 @@ void GotoLine(void) //Переход на строку seek_to_line, вызывается в контексте MMC
   // unsigned int l;
   // unsigned int p;
   unsigned int ul;
-
+  
   for(;;)
   {
     disk_access=0; //Закончили дисковые операции
@@ -992,7 +1010,7 @@ void DrawInfo(void)
   TTime t;
   TDate d;
   GetDateTime(&d,&t);
-
+  
   DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
   str_2ws(e_ws,filename,126);
   wsprintf(info_ws,"Time:\n%02d:%02d\n"
@@ -1011,10 +1029,10 @@ void DrawScreen(void)
   unsigned int c;
   int f;
   unsigned int my;
-
+  
   int *ink=GetPaletteAdrByColorIndex(INK);
   int *paper=GetPaletteAdrByColorIndex(PAPER);
-
+  
   if (disk_access)
   {
     DrwImg((IMGHDR *)&imgDiskAccess,0,0,ink,paper);
@@ -1151,7 +1169,7 @@ void DrawScreen(void)
     L_WELLCOME2:
       DrawRoundedFrame(0,12,ScreenW()-1,ScreenH()-1,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
-      wsprintf(info_ws,"Text viewer/editor\nversion 1.5\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
+      wsprintf(info_ws,"Text viewer/editor\nversion 1.6\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
       DrawString(info_ws,0,20,ScreenW()-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
       return;
     case 0:
@@ -1237,6 +1255,7 @@ void doCurLeft(void)
 
 void insline(void)
 {
+  text_changed=1;    
   dstk[--dsp]=0;
   total_line++;
   GeneralFuncF1(1);
@@ -1244,6 +1263,7 @@ void insline(void)
 
 void delline(void)
 {
+  text_changed=1;    
   if (dsp!=STKSZ)
   {
     dsp=bl_ds(dsp);
@@ -1265,6 +1285,7 @@ void splitline(void)
     ustk[usp++]=0;
     total_line++;
     curline++;
+    text_changed=1;    
   }
   GeneralFuncF1(1);
 }
@@ -1282,6 +1303,7 @@ void joinlines(void)
     }
     dsp++;
     total_line--;
+    text_changed=1;    
   }
   GeneralFuncF1(1);
 }
@@ -1294,6 +1316,7 @@ void instime(void)
   usp+=sprintf(ustk+usp,"%02d:%02d",t.hour,t.min)+1;
   curline++;
   total_line++;
+  text_changed=1;    
   GeneralFuncF1(1);
 }
 
@@ -1305,6 +1328,7 @@ void insdate(void)
   usp+=sprintf(ustk+usp,"%02d-%02d-%04d",d.day,d.month,d.year)+1;
   curline++;
   total_line++;
+  text_changed=1;    
   GeneralFuncF1(1);
 }
 
@@ -1368,7 +1392,7 @@ MENU_DESC edmenu_STRUCT=
 int ed_inp_onkey(GUI *data, GUI_MSG *msg)
 {
   int k=msg->gbsmsg->submess;
-
+  
   if (msg->keys==0xFFF)
   {
     editmode=0xFFF; //Признак меню
@@ -1396,7 +1420,7 @@ void ed_inp_redraw(void *data)
 {
   unsigned int sz;
   unsigned int p;
-
+  
   sz=e_ws->wsbody[0];
   p=0;
   while((p<255)&&(p<sz))
@@ -1406,7 +1430,15 @@ void ed_inp_redraw(void *data)
     p++;
   }
   editline[p]=0;
-  if ((sz=dsp)==STKSZ) total_line++;
+  if ((sz=dsp)==STKSZ)
+  {
+    text_changed=1;    
+    total_line++;
+  }
+  else
+  {
+    if (strcmp(editline,dstk+dsp)!=0) text_changed=1;
+  }
   sz=bl_ds(sz); //Ищем начало сл. строки
   sz-=p+1; //Вновь добавляемая строка
   strcpy(dstk+(dsp=sz),editline); //Добавляем
@@ -1427,7 +1459,7 @@ void ed_inp_ghook(GUI *data, int cmd)
     //Called after onCreate
     void **m=GetDataOfItemByID(data,4);
     memcpy(methods,m[1],sizeof(methods));
-//    old_inp_redraw=methods[0];
+    //    old_inp_redraw=methods[0];
     methods[0]=(void *)ed_inp_redraw;
     m[1]=methods;
   }
@@ -1474,11 +1506,11 @@ void CreateEditDialog(void)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
-
+  
   editmode=0;
   cursor_off=0;
   while ((curline-viewline)>=max_y_emode) viewline++; //Если ниже чем 16 строк - перемещаемся
-
+  
   CutWSTR(e_ws,0);
   if ((p=dsp)!=STKSZ)
   {
@@ -1497,16 +1529,16 @@ void CreateEditDialog(void)
 
 /*void add_to_clip(char far *s)
 {
-  int f=FileOpen((STR)clipfile,
-		 clip_pasted?_O_CREAT+_O_RDWR+_O_TRUNC:_O_CREAT+_O_RDWR+_O_APPEND
-		   ,_S_IREAD);
-  if (f!=-1)
-  {
-    FileWrite(f,s,strlen(s));
-    FileClose(f);
+int f=FileOpen((STR)clipfile,
+clip_pasted?_O_CREAT+_O_RDWR+_O_TRUNC:_O_CREAT+_O_RDWR+_O_APPEND
+,_S_IREAD);
+if (f!=-1)
+{
+FileWrite(f,s,strlen(s));
+FileClose(f);
   }
-  EX_heap_free_with_lock(s);
-  clip_pasted=0;
+EX_heap_free_with_lock(s);
+clip_pasted=0;
 }*/
 
 /*volatile int light_count;
@@ -1515,10 +1547,10 @@ GBSTMR light_tmr;
 
 void LightTimerProc(void)
 {
-  if (light_count)
-  {
-    light_count--;
-    GBS_StartTimerProc(&light_tmr,262,LightTimerProc);
+if (light_count)
+{
+light_count--;
+GBS_StartTimerProc(&light_tmr,262,LightTimerProc);
   }
 }*/
 
@@ -1530,8 +1562,8 @@ void SetViewIllumination(void)
     SetIllumination(0,1,DISPLAY_LIGHT,0);
     SetIllumination(1,1,0,0);
   }
-//  light_count=30;
-//  GBS_StartTimerProc(&light_tmr,1,LightTimerProc);
+  //  light_count=30;
+  //  GBS_StartTimerProc(&light_tmr,1,LightTimerProc);
 }
 
 //Перерисовка основного диалога
@@ -1574,7 +1606,7 @@ extern void kill_data(void *p, void (*func_p)(void *));
 void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   kill_data(data,mfree_adr);
-//  mfree_adr(data);
+  //  mfree_adr(data);
 }
 
 int method8(void){return(0);}
@@ -1603,14 +1635,13 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case RED_BUTTON:
-//  L_EXIT:
+    case RIGHT_SOFT:
+      //  L_EXIT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case GREEN_BUTTON:
-//    L_EDIT:
+      //    L_EDIT:
       CreateEditDialog();
       return(0);
-    case RIGHT_SOFT:
-      return(1);
     case ENTER_BUTTON:
       DrawLoadMenu();
       loadmenu_id=0;
@@ -1625,21 +1656,21 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
 	LineUp();
       draw_mode=1;
       break;
-/*    case RECORD_BUTTON:
+      /*    case RECORD_BUTTON:
       if (cursor_off||(dsp==STKSZ)) break;
       else
       {
-	unsigned int i=strlen(dstk+dsp); //Длина тек. строки
-	char far *s;
-	s=EX_heap_malloc_with_lock(i+2); //Т.к. добавляем 0 и 0d
-	if (s)
-	{
-	  strcpy(s,dstk+dsp);
-	  s[i]=0x0D;
-	  s[i+1]=0x00;
-	  FilesysICall_FP(add_to_clip,s);
-	}
-      }*/
+      unsigned int i=strlen(dstk+dsp); //Длина тек. строки
+      char far *s;
+      s=EX_heap_malloc_with_lock(i+2); //Т.к. добавляем 0 и 0d
+      if (s)
+      {
+      strcpy(s,dstk+dsp);
+      s[i]=0x0D;
+      s[i+1]=0x00;
+      FilesysICall_FP(add_to_clip,s);
+    }
+    }*/
     case DOWN_BUTTON:
       if (cursor_off)
 	PageDw(1);
@@ -1727,6 +1758,7 @@ int sf_inp_onkey(GUI *data, GUI_MSG *msg)
     UpdateCSMname();
     HISTORY.fmt=0; //Грузим его теперь как DirectLoad
     disk_access=SAVE_FILE;
+    text_changed=0;    
     SUBPROC((void *)savetext);
     return(1); //Close
   }
@@ -1787,7 +1819,7 @@ void loadfont(int flag)
   int bytew;
   int pixw;
   int eh;
-
+  
   snprintf(fn_font,sizeof(fn_font),"%s%d.fnt",ted_path,font_size);
   if ((fin=fopen(fn_font,A_ReadOnly+A_BIN,0,&ul))!=-1)
   {
@@ -2292,11 +2324,11 @@ void FirstLoadFile(unsigned int fmt)
   int fin;
   int fs;
   unsigned int ul;
-
+  
   extern const int ENA_AUTOF;
   extern const int AUTOF_MODE;
   extern const int AUTOF_FONT;
-
+  
   u_disk=-1; //Дисковый указатель верхнего стека
   d_disk=-1; //Дисковый указатель нижнего стека
   zeromem(ubat,sizeof(ubat)); //Прочищаем таблицу блоков верхнего стека
@@ -2307,10 +2339,11 @@ void FirstLoadFile(unsigned int fmt)
   viewpos=0;
   curpos=0;
   curline=0;
+  text_changed=0;
   //CSM=0;
-
+  
   draw_mode=255;
-
+  
   if (fmt==0xFFFFFFFF)
   {
     //Ищем историю
@@ -2336,7 +2369,7 @@ void FirstLoadFile(unsigned int fmt)
       zeromem(&HISTORY.line,4*6); //Все на самом верху
       HISTORY.cursor_off=cursor_off=1; //Выключить курсор
       HISTORY.total=1;
-//      HISTORY.fmt=0;
+      //      HISTORY.fmt=0;
       HISTORY.fmt=255; //Первый запуск!!!!
       if (ENA_AUTOF)
       {
@@ -2366,7 +2399,7 @@ void FirstLoadFile(unsigned int fmt)
   }
   //Загружаем шрифт
   loadfont(0);
-
+  
   //Конвертируем все строки в верхний стек
   fs=fopen(stkfile,A_Create+A_ReadWrite+A_BIN,P_READ+P_WRITE,&ul); //Файл верхнего стека
   if (fs==-1) DiskErrorMsg(3);
@@ -2430,13 +2463,13 @@ void maincsm_oncreate(CSM_RAM *data)
   MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
   MAIN_CSM*csm=(MAIN_CSM*)data;
   zeromem(main_gui,sizeof(MAIN_GUI));
-
+  
   ustk=malloc(STKSZ);
   dstk=malloc(STKSZ);
   info_ws=AllocWS(512);
   upinfo_ws=AllocWS(256);
   e_ws=AllocWS(256);
-
+  
   main_gui->gui.canvas=(void *)(&Canvas);
   main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods;
@@ -2450,6 +2483,18 @@ void Killer(void)
 {
   extern void *ELF_BEGIN;
   static unsigned int ul;
+  if (text_changed)
+  {
+    extern void savetext(void);
+    LockSched();
+    ShowMSG(1,(int)"File as .new saved!");
+    UnlockSched();
+    strcat(filename,".new");
+    HISTORY.fmt=0; //Грузим его теперь как DirectLoad
+    disk_access=SAVE_FILE;
+    text_changed=0;    
+    savetext();	
+  }
   if (HISTORY.fmt!=255)
   {
     SaveHistory();
@@ -2460,13 +2505,13 @@ void Killer(void)
   FreeWS(upinfo_ws);
   FreeWS(e_ws);
   unlink(stkfile,&ul);
-//  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  //  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-//  GBS_StopTimer(&light_tmr);
+  //  GBS_StopTimer(&light_tmr);
   SUBPROC((void *)Killer);
 }
 
@@ -2528,18 +2573,18 @@ const struct
 }MAINCSM =
 {
   {
-  maincsm_onmessage,
-  maincsm_oncreate,
+    maincsm_onmessage,
+    maincsm_oncreate,
 #ifdef NEWSGOLD
-  0,
-  0,
-  0,
-  0,
+0,
+0,
+0,
+0,
 #endif
-  maincsm_onclose,
-  sizeof(MAIN_CSM),
-  1,
-  &minus11
+maincsm_onclose,
+sizeof(MAIN_CSM),
+1,
+&minus11
   },
   {
     maincsm_name_body,
@@ -2567,12 +2612,12 @@ int LoadConfigData(const char *fname)
   char *buf;
   int result=0;
   void *cfg;
-
+  
   extern const CFG_HDR cfghdr0; //first var in CONFIG
   cfg=(void*)&cfghdr0;
-
+  
   unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
-
+  
   if (!(buf=malloc(len))) return -1;
   if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
   {
