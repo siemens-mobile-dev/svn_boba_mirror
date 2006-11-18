@@ -66,17 +66,17 @@ REGEXPLEXT reg=
 
 /*void MyIDLECSM_onClose(CSM_RAM *data)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
-  reg.icon1=NULL;
-  reg.icon2=NULL;
-  while(reg.unical_id!=0x55)
-  {
-    reg.proc=NULL;
-    RegExplorerExt(&reg);
-    reg.unical_id--;
+extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+extern void *ELF_BEGIN;
+reg.icon1=NULL;
+reg.icon2=NULL;
+while(reg.unical_id!=0x55)
+{
+reg.proc=NULL;
+RegExplorerExt(&reg);
+reg.unical_id--;
   }
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }*/
 
 static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
@@ -91,7 +91,7 @@ int main()
   unsigned int ul;
   unsigned int size_cfg;
   int c;
-
+  
   if ((f=fopen(extfile,A_ReadOnly,0,&ul))!=-1)
   {
     size_cfg=lseek(f,0,S_END,&ul,&ul);
@@ -153,8 +153,31 @@ int main()
         LockSched();
         RegExplorerExt(&reg);
         UnlockSched();
-        if (!c) break; //EOF
         i++;
+	if (strcmp(reg.ext,"txt")==0)
+	{
+	  if (i<MAX_EXTS)
+	  {
+#ifdef NEWSGOLD
+	    smallicons[i][0]=1033;
+	    largeicons[i][0]=1105;
+#else
+	    smallicons[i][0]=0x1F9;
+	    largeicons[i][0]=0x1FA;
+#endif
+	    reg.icon1=smallicons[i];
+	    reg.icon2=largeicons[i];
+	    reg.unical_id=0;
+	    exts[i][0]=0;
+	    reg.ext=exts[i];
+	    strcpy(elfs[i],elfs[i-1]);
+	    LockSched();
+	    RegExplorerExt(&reg);
+	    UnlockSched();
+	    i++;
+	  }
+	}
+        if (!c) break; //EOF
       }
       while(i<MAX_EXTS);
     L_EOF:
@@ -162,13 +185,13 @@ int main()
     }
     mfree(olds);
   }
-/*  LockSched();
+  /*  LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
   old_icsm_onClose=icsmd.onClose;
   icsmd.onClose=MyIDLECSM_onClose;
   icsm->constr=&icsmd;
-//  ShowMSG(1,(int)"ExtD installed!");
+  //  ShowMSG(1,(int)"ExtD installed!");
   UnlockSched();*/
   return 0;
 }
