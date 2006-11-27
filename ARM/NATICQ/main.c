@@ -17,6 +17,7 @@
 #define T_REQINFOSHORT 11
 #define T_ADDCONTACT 12
 #define T_SSLRESP 13
+#define T_AUTHGRANT 14
 
 // Константы статусов
 #define IS_OFFLINE 0
@@ -273,7 +274,7 @@ void create_contactlist_menu(void)
 {
   CLIST *t;
   int i;
-
+  
   t=(CLIST *)cltop;
   i=0;
   while(t)
@@ -325,7 +326,7 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
   CLIST *t;
   WSHDR *ws;
   void *item=AllocMenuItem(data);
-
+  
   t=FindContactByN(curitem);
   if (t)
   {
@@ -577,16 +578,16 @@ void AddStringToLog(CLIST *t, char code, char *s, const char *name)
   TDate d;
   char *ns;
   GetDateTime(&d,&tt);
-
+  
   if (!t->log)
   {
     *(t->log=malloc(1))=0;
   }
   hs[127]=0;
-
+  
   snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\r\n",code,tt.hour,tt.min,d.day,d.month,name);
   Add2History(t, hs, s); // Запись хистори
-
+  
   snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
   ns=malloc(strlen(t->log)+strlen(hs)+strlen(s)+1);
   strcpy(ns,t->log);
@@ -620,6 +621,18 @@ void stop_vibra(void)
   }
 }
 
+void ask_my_info(void)
+{
+/*  TPKT *p;
+  CLIST *t;
+  p=malloc(sizeof(PKT));
+  p->pkt.uin=UIN;
+  p->pkt.type=T_REQINFOSHORT;
+  p->pkt.data_len=0;
+//  AddStringToLog(t,0x01,"Request info...",I_str);
+  SUBPROC((void *)SendAnswer,0,p);*/
+}
+
 ProcessPacket(TPKT *p)
 {
   CLIST *t;
@@ -631,7 +644,7 @@ ProcessPacket(TPKT *p)
     {
       if ((t=FindContactByUin(p->pkt.uin)))
       {
-//        t->state=0xFFFF;
+	//        t->state=0xFFFF;
         strncpy(t->name,p->data,63);
       }
       else
@@ -643,6 +656,7 @@ ProcessPacket(TPKT *p)
     {
       vibra_count=1;
       start_vibra();
+      ask_my_info();
       remake_clmenu();
     }
     break;
@@ -755,14 +769,14 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case '#':
       GPRS_OnOff(0,1);
       break;
-     /*    case '0':
+      /*    case '0':
       if (connect_state==3)
       {
       SUBPROC((void *)SendPreved);
     }
       break;*/
     }
-
+    
   }
   //  method0(data);
   return(0);
@@ -850,8 +864,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         if (idata)
         {
           int icn;
-//          void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
-//          DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
+	  //          void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+	  //          DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
           if (total_unread)
             icn=IS_MSG;
           else
@@ -867,8 +881,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             }
           }
           DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
-		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(20));
+			   GetPaletteAdrByColorIndex(0),
+			   GetPaletteAdrByColorIndex(20));
           DrawImg(IDLEICON_X+2,IDLEICON_Y+2,S_ICONS[icn]);
         }
       }
@@ -1045,9 +1059,9 @@ void UpdateCSMname(void)
 int main()
 {
   char dummy[sizeof(MAIN_CSM)];
-
+  
   InitConfig();
-
+  
   S_ICONS[0]=ICON0;
   S_ICONS[1]=ICON1;
   S_ICONS[2]=ICON2;
@@ -1058,7 +1072,7 @@ int main()
   S_ICONS[7]=ICON6;
   S_ICONS[8]=ICON8;
   S_ICONS[9]=ICON9;
-
+  
   if (!UIN)
   {
     LockSched();
@@ -1416,26 +1430,26 @@ void CreateEditChat(CLIST *t)
   EDITCONTROL ec;
   int j;
   char hdr[128];
-
+  
   char *s=t->log;
-
+  
   //  if (!s) return;
-
+  
   edcontact=t;
   edchat_toitem=0;
-
+  
   edchat_hdr.lgp_id=(int)t->name;
   edchat_hdr.icon=(int *)S_ICONS+GetIconIndex(t);
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-
+  
   if (s) while(*s)
   {
     s++; //Пропуск типа
     j=0;
     while((hdr[j]=*s++)!='\n') j++;
     hdr[j]=0;
-//    wsprintf(ews,percent_t,hdr);
+    //    wsprintf(ews,percent_t,hdr);
     ascii2ws(ews,hdr);
     ConstructEditControl(&ec,1,0x40,ews,strlen(hdr));
     AddEditControlToEditQend(eq,&ec,ma);
@@ -1447,7 +1461,7 @@ void CreateEditChat(CLIST *t)
       while(msg_buf[j-1]==13) j--;
     }
     msg_buf[j]=0;
-//    wsprintf(ews,percent_t,msg_buf);
+    //    wsprintf(ews,percent_t,msg_buf);
     ascii2ws(ews,msg_buf);
     ConstructEditControl(&ec,3,0x40,ews,strlen(msg_buf));
     AddEditControlToEditQend(eq,&ec,ma);
@@ -1459,7 +1473,7 @@ void CreateEditChat(CLIST *t)
   ConstructEditControl(&ec,1,0x40,ews,wstrlen(ews));
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
-//  wsprintf(ews,percent_t,t->answer?t->answer:empty_str);
+  //  wsprintf(ews,percent_t,t->answer?t->answer:empty_str);
   ascii2ws(ews,t->answer?t->answer:empty_str);
   ConstructEditControl(&ec,3,0x00,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
@@ -1515,6 +1529,57 @@ void SendAuthReq(void)
   GeneralFuncF1(1);
 }
 
+void SendAuthGrant(void)
+{
+  TPKT *p;
+  CLIST *t;
+  int l;
+  const char s[]="You are autorized!";
+  if ((t=edcontact)&&(connect_state==3))
+  {
+    p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+    p->pkt.uin=t->uin;
+    p->pkt.type=T_AUTHGRANT;
+    p->pkt.data_len=l;
+    strcpy(p->data,s);
+    AddStringToLog(t,0x01,p->data,I_str);
+    SUBPROC((void *)SendAnswer,0,p);
+  }
+  request_close_edchat=1;
+  request_remake_edchat=1;
+  GeneralFuncF1(1);
+}
+
+void OpenLogfile(void)
+{
+  extern const char HIST_PATH[64];
+  CLIST *t;
+  WSHDR *ws=AllocWS(256);
+  if ((t=edcontact))
+  {
+    wsprintf(ws,"%s\\%u.txt",HIST_PATH,t->uin);
+    ExecuteFile(ws,NULL,NULL);
+  }
+  FreeWS(ws);
+  GeneralFuncF1(1);
+}
+
+void ClearLog(void)
+{
+  CLIST *t;
+  if ((t=edcontact))
+  {
+    if (t->log)
+    {
+      mfree(t->log);
+      t->log=NULL;
+      request_close_edchat=1;
+      request_remake_edchat=1;
+    }
+    GeneralFuncF1(1);
+  }
+}
+
 void ecmenu_ghook(void *data, int cmd)
 {
   if (cmd==0x0A)
@@ -1523,18 +1588,24 @@ void ecmenu_ghook(void *data, int cmd)
   }
 }
 
-MENUITEM_DESC ecmenu_ITEMS[4]=
+MENUITEM_DESC ecmenu_ITEMS[6]=
 {
   {NULL,(int)"Get short info",0x7FFFFFFF,0,NULL,0,0x59D},
   {NULL,(int)"Add/rename",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Send Auth Req",0x7FFFFFFF,0,NULL,0,0x59D}
+  {NULL,(int)"Send Auth Req",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Send Auth Grant",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Open logfile",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Clear log",0x7FFFFFFF,0,NULL,0,0x59D}
 };
 
-void *ecmenu_HNDLS[3]=
+void *ecmenu_HNDLS[6]=
 {
   (void *)GetShortInfo,
   (void *)AddCurContact,
-  (void *)SendAuthReq
+  (void *)SendAuthReq,
+  (void *)SendAuthGrant,
+  (void *)OpenLogfile,
+  (void *)ClearLog,
 };
 
 char ecm_contactname[64];
@@ -1550,7 +1621,7 @@ MENU_DESC ecmenu_STRUCT=
   NULL,
   ecmenu_ITEMS,
   ecmenu_HNDLS,
-  3
+  6
 };
 
 void ec_menu(void)
@@ -1566,7 +1637,7 @@ void ec_menu(void)
     {
       sprintf(ecm_contactname,"%u",t->uin);
     }
-    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,3,0,0);
+    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,6,0,0);
   }
 }
 
@@ -1586,29 +1657,29 @@ int anac_onkey(GUI *data, GUI_MSG *msg)
     {
       if ((t=edcontact))
       {
-        ExtractEditControl(data,2,&ec);
-        l=0;
-        while(l<ec.pWS->wsbody[0])
-        {
-          w=char16to8(ec.pWS->wsbody[l+1]);
-          if (w<32) w='_';
-          s[l++]=w;
-          if (l==63) break;
-        }
-        s[l]=0;
-        if (strlen(s))
-        {
-          p=malloc(sizeof(PKT)+(l=strlen(s))+1);
-          p->pkt.uin=t->uin;
-          p->pkt.type=T_ADDCONTACT;
-          p->pkt.data_len=l;
-          strcpy(p->data,s);
-          AddStringToLog(t,0x01,"Add contact...",I_str);
-          SUBPROC((void *)SendAnswer,0,p);
-          request_close_edchat=1;
-          request_remake_edchat=1;
-          return(1);
-        }
+	ExtractEditControl(data,2,&ec);
+	l=0;
+	while(l<ec.pWS->wsbody[0])
+	{
+	  w=char16to8(ec.pWS->wsbody[l+1]);
+	  if (w<32) w='_';
+	  s[l++]=w;
+	  if (l==63) break;
+	}
+	s[l]=0;
+	if (strlen(s))
+	{
+	  p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+	  p->pkt.uin=t->uin;
+	  p->pkt.type=T_ADDCONTACT;
+	  p->pkt.data_len=l;
+	  strcpy(p->data,s);
+	  AddStringToLog(t,0x01,"Add contact...",I_str);
+	  SUBPROC((void *)SendAnswer,0,p);
+	  request_close_edchat=1;
+	  request_remake_edchat=1;
+	  return(1);
+	}
       }
     }
   }
