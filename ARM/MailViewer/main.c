@@ -73,7 +73,7 @@ char * base64_decode(const char *str, size_t *size)
   
   if(str == NULL)
     str = "";
-  ou = output = (void *)malloc((size?*size:strlen(str)) + 1);
+  ou = output = malloc((size?*size:strlen(str)) + 1);
   if(output == NULL)
     /* ENOMEM? */
     return NULL;
@@ -251,7 +251,6 @@ typedef struct
 
 void ElfKiller(void)
 {
-  base64_decode("sg",0);
   extern void *ELF_BEGIN;
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
