@@ -362,7 +362,7 @@ int RunBM(int bm)
       WSHDR *ws;
       ws=AllocWS(150);
       str_2ws(ws,s,128);
-      ExecuteFile(ws,0);
+      ExecuteFile(ws,0,0);
       FreeWS(ws);
       return(1);
     }
