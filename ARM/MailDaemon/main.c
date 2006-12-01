@@ -894,7 +894,7 @@ const struct
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"E-Mail Client");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"Mail Daemon");
 }
 
 int main(char *exename, char *fname)
