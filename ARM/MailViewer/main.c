@@ -60,7 +60,6 @@ int ecnq(const char *a, const char *b,int n)
 }
 
 // --------------------------------------------------------------------------------
-static char *_sf_b64_buf = NULL;
 static size_t _sf_b64_len = 0;
 
 
@@ -132,7 +131,7 @@ char * base64_decode(const char *str, size_t *size)
   */
   //if(_sf_b64_buf)
     //mfree(_sf_b64_buf);
-  return (_sf_b64_buf=output);
+  return (output);
 }
 
 
