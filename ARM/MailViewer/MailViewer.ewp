@@ -1864,6 +1864,9 @@
     </configuration>
   </file>
   <file>
+    <name>$PROJ_DIR$\decode.cpp</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>

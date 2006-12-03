@@ -1,8 +1,7 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 #include "ctype.h"
-#include "base64.h"
-#include "sf_mime.h"
+
 
 extern const unsigned int ICON0;
 extern const unsigned int ICON1;
@@ -24,7 +23,10 @@ typedef struct
 #define MES_DOWN 2   // mes for download
 #define MES_DEL 3   // mes for delete
 
-
+int if_any_change=0;
+MAIL_HIST* buf; // buffer for maildb
+           //writted on create menu and destroy on it close
+unsigned int size; // size of this buffer
 // ------------------------------- Defines ----------------------------------------
 int ecq(const char *a, const char *b)
 {
@@ -59,174 +61,68 @@ int ecnq(const char *a, const char *b,int n)
   return 0;
 }
 
+unsigned int win2unicode(int letter)
+{
+  if (letter<168) goto L_ENG;
+  if (letter==168) goto L_BIG_YO;
+  letter-=168;
+  if (letter<24) goto L_UKR;
+  if (letter>87) goto L_ENG;
+//L_RUS:
+  letter-=8;
+  goto L_ADD_400;
+L_UKR:
+  switch(letter)
+  {
+  case 0x02:
+    letter=0x04;
+    break;
+  case 10:
+    letter=6;
+    break;
+  case 11:
+    letter=0x56;
+    break;
+  case 16:
+    letter=0x51;
+    break;
+  case 18:
+    letter=0x54;
+    break;
+  case 23:
+    letter=0x57;
+    break;
+  default:
+    goto L_ENG;
+  }
+  goto L_ADD_400;
+L_BIG_YO:
+  letter=0x01;
+L_ADD_400:
+  return (letter+0x400);
+  
+L_ENG: return (letter);
+}
+
+
+void ascii2ws(WSHDR *ws, const char *s)
+{
+  char c;
+  CutWSTR(ws,0);
+  while((c=*s++))
+  {
+    wsAppendChar(ws,win2unicode(c));
+  }
+}
+
+
 // --------------------------------------------------------------------------------
-static size_t _sf_b64_len = 0;
-
-
-char * base64_decode(const char *str, size_t *size)
-{
-  char *output, *ou;
-  unsigned int pr[6];
-  int n;
-  int doit;
-  
-  if(str == NULL)
-    str = "";
-  ou = output = malloc((size?*size:strlen(str)) + 1);
-  if(output == NULL)
-    /* ENOMEM? */
-    return NULL;
-  
-  if(size)
-    *size = 0;
-  
-  doit = 1;
-  
-  do
-  {
-    n = 0;
-    while(n < 4)
-    {
-      unsigned char ch;
-      ch = _sf_uc_bi[*(unsigned char *)str];
-      if(ch < B64_UNUSED)
-      {
-        pr[n] = ch;
-        n++;
-        str++;
-      }
-      else
-        if(ch == B64_UNUSED)
-        {
-          str++;
-	}
-        else
-        {
-          doit = 0;
-          break;
-        }
-    }
-    
-    if(doit == 0 && n < 4)
-    {
-      pr[n+2] = pr[n+1] = pr[n]='\0';
-    }
-    
-    *(ou+0) = (pr[0] << 2) | (pr[1] >> 4);
-    *(ou+1) = (pr[1] << 4) | (pr[2] >> 2);
-    *(ou+2) = (pr[2] << 6) | (pr[3] >> 0);
-    
-    ou = ou+((n * 3) >> 2);
-  }
-  while(doit);
-  
-  *ou = '\0';	/* NUL-terminate */
-  
-  _sf_b64_len = (ou - output);
-  if(size)
-    *size = _sf_b64_len;
-  
-  /*
-   * Replace the old buffer.
-  */
-  //if(_sf_b64_buf)
-    //mfree(_sf_b64_buf);
-  return (output);
-}
-
-
-
-char * quoted_printable_decode(const char *str, size_t *size)
-{
-  char *buf;
-  char *s;
-  register int n;
-
-  int first;
-  int second;
-  if(str == NULL) return NULL;
-  
-  /*
-  * Allocate sufficient space to hold decoded string.
-  */
-  
-  
-  s=buf=malloc((size?*size:strlen(str)) + 1);
-  if(buf == NULL)
-    
-    /* ENOMEM? */
-    return NULL;
-
-  for(; *str; str++)
-  {
-    if(*str == '_')
-    {
-      *s++ = ' ';
-      continue;
-    }
-    if(*str == '=')
-    {
-      *s = '\0';
-      n = *++str; 
-      if(n == '\0')
-      {
-        str--;
-        break;
-      }
-      if(str[1] == '\0')
-        break;
-      
-      if (n>='0'&&n<='9')
-        first = n - '0';
-      
-      if (n>='A'&&n<='F')
-        first =n - 'A' + 10;
-      
-      if (n>='a'&&n<='f')
-        first = n- 'a' + 10;
-      
-      if (n=='\r'||n=='\n')
-      {
-        *s++ = '=';
-        *s++ = n;
-        continue;
-      }
-      
-      n = *++str;
-      
-      if (n>='0'&&n<='9')
-        second = n - '0';
-      
-      
-      if (n>='A'&&n<='F')
-        second =n - 'A' + 10;
-      
-      if (n>='a'&&n<='f')
-        second = n- 'a' + 10;
-      
-      if (n=='\r'||n=='\n')
-      {
-        *s++ = n;
-        *s = ' ';
-        continue;
-      }
-      *s=(first<<4)+second;
-      s++;
-      continue;
-    }
-    *s++ = *str;
-  }
-  
-  *s = '\0';
-
-//  if(_sf_qp_buf)
-//    mfree(_sf_qp_buf);
-  if(size) *size = (s - buf);
-  return (buf);
-}
+extern char * base64_decode(const char *str, size_t *size);
+extern char * quoted_printable_decode(const char *str, size_t *size);
 
 // --------------------------------------------------------------------------------
 const char mailer_db_name[]="mails.db";
+const char _percent_t[]="%t";
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -237,8 +133,10 @@ int cur_menu;
 int main_menu_id;
 int maillist_menu_id;
 int options_menu_id;
+int view_mail_id;
 volatile int request_remake_mailmenu;
 volatile int request_close_mailmenu;
+
 // -------------------------- Global Variables -------------------------------------
 typedef struct
 {
@@ -270,10 +168,8 @@ SOFTKEYSTAB menu_skt=
 
 void get_eml_name(char* dest,int i)
 {
-  MAIL_HIST* fbuf;
-  fbuf=(MAIL_HIST*)read_db_file();
+  MAIL_HIST* fbuf=buf;
   sprintf(dest,"%s%s.eml",HIST_PATH,fbuf[i].uid);
-  mfree(fbuf);
 }
 
 // ----------------------------------------------------------------------------------
@@ -370,15 +266,44 @@ int get_file_size(const char * fname)
 {
   FSTATS fs;
   unsigned int err;
-  if (GetFileStats(fname,&fs,&err)==-1) return (-1);
-  else return (fs.size);
+  int n;
+  if ((n=GetFileStats(fname,&fs,&err))!=-1) return (fs.size);
+  else return (n);
 }
 
-char* find_subject(int i)
+unsigned int open_read_close_file(const char* fname,char **write_to)
 {
+  int size;
   int f;
   unsigned int err;
-  unsigned int f_size;
+  char* buf;
+  if ((size=get_file_size(fname))!=-1)
+  {
+    if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+    {
+      buf=malloc(size+1);
+      buf[size]=0;
+      *write_to=buf;
+      fread(f,buf,size,&err);
+      fclose(f,&err);
+    }
+    else 
+    {
+      write_to=NULL;
+      size=-1;
+    }
+  }
+  else 
+  {
+    write_to=NULL;
+    size=-1;
+  }
+  return size;
+}
+
+
+char* find_str(int i,char * str)
+{
   char* eml_buf;
   char* first_in_subj;
   char* sec_in_subj;
@@ -387,54 +312,142 @@ char* find_subject(int i)
   char eml_fname[128];
   char* subj;
   get_eml_name(eml_fname,i);
-  if ((f_size=get_file_size(eml_fname))!=0xFFFFFFFF)
+  if ((open_read_close_file(eml_fname,&eml_buf))!=-0xFFFFFFFF)
   {
-    if ((f=fopen(eml_fname,A_ReadOnly,P_READ,&err))!=-1)
-    {
-      eml_buf=malloc(f_size+1);
-      fread(f,eml_buf,f_size,&err);
-      fclose(f,&err);
-      eml_buf[f_size]=0;
-      first_in_subj=strstr(eml_buf,"Subject: ");
-      sec_in_subj=strstr(first_in_subj,"\r\n");
-      subj_len=sec_in_subj-first_in_subj;
-      subj=malloc(subj_len+1);
-      subj[subj_len]=0;
-      strncpy(subj,first_in_subj,subj_len);
-      decoded_str=decodestr(subj);
-      
-      mfree(subj);
-      mfree(eml_buf);
-      return (decoded_str);
-    }
+    first_in_subj=strstr(eml_buf,str);
+    sec_in_subj=strstr(first_in_subj,"\r\n");
+    subj_len=sec_in_subj-first_in_subj;
+    subj=malloc(subj_len+1);
+    subj[subj_len]=0;
+    strncpy(subj,first_in_subj,subj_len);
+    decoded_str=decodestr(subj);
+    mfree(subj);
+    mfree(eml_buf);
+    return (decoded_str);
   }
   return 0;
 }
 
-char* read_db_file(void)
-{
-  char db_fname[128];
-  snprintf(db_fname,sizeof(db_fname),"%s%s",HIST_PATH,mailer_db_name);
-  int f;
-  unsigned int err;
-  char* buf;
-  int fsize;
-  
-  if ((f=(fopen(db_fname,A_ReadOnly+A_BIN,P_READ,&err)))==-1) return 0;
-  {
-    
-    if ((fsize=get_file_size(db_fname))==-1) return 0;
-    {
-      buf=malloc(fsize+1);
-      buf[fsize]=0;
-      fread(f,buf,fsize,&err);
-      fclose(f,&err);
-      return buf;
-    }
-  }
-}
 
-void write_db_file(MAIL_HIST*buf,int fsize)
+char* find_full_str(int i,char * str)
+{
+  char* eml_buf;
+  char* first_in_subj;
+  char* sec_in_subj;
+  int subj_len;
+  char eml_fname[128];
+  char* subj;
+  int size;
+  get_eml_name(eml_fname,i);
+  if ((size=open_read_close_file(eml_fname,&eml_buf))!=-0xFFFFFFFF)
+  {
+    if (!(first_in_subj=strstr(eml_buf,str)))  return 0;
+    sec_in_subj=eml_buf+size;
+    subj_len=sec_in_subj-first_in_subj;
+    if (!(subj=malloc(subj_len+1))) return 0;
+    subj[subj_len]=0;
+    strncpy(subj,first_in_subj,subj_len);
+    mfree(eml_buf);
+    return (subj);
+  }
+  return 0;
+}
+//----------------------------------------------------------------------------------------------
+char subj[128];
+
+HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)subj,LGP_NULL};
+
+void ed1_locret(void){}
+
+int ed1_onkey(GUI *data, GUI_MSG *msg)
+{
+  return(0); 
+}
+void ed1_ghook(GUI *data, int cmd)
+{
+}
+INPUTDIA_DESC ed1_desc=
+{
+  1,
+  ed1_onkey,
+  ed1_ghook,
+  (void *)ed1_locret,
+  0,
+  &menu_skt,
+  {0,0,0,0},
+  4,
+  100,
+  101,
+  0,
+  0,
+  0
+};
+
+
+int create_view(int item)
+{
+  void *ma=malloc_adr();
+  void *eq;
+  WSHDR* ews=AllocWS(1024);
+  char* str;
+  EDITCONTROL ec;
+
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  
+  ascii2ws(ews,"From:");
+  ConstructEditControl(&ec,1,0x40,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  str=find_str(item,"From: ");
+  ascii2ws(ews,str+6);
+  mfree(str);
+  ConstructEditControl(&ec,3,0x40,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  ascii2ws(ews,"Subject:");
+  ConstructEditControl(&ec,1,0x40,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma); 
+    
+  
+  str=find_str(item,"Subject: ");
+  int len=strlen(str);
+  strncpy(subj,str,128);
+  subj[len]=0;
+  ascii2ws(ews,str+9);
+  mfree(str);
+  ConstructEditControl(&ec,3,0x40,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  FreeWS(ews);
+  
+  ascii2ws(ews,"Body:");
+  ConstructEditControl(&ec,1,0x40,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);   
+  
+  str=find_full_str(item,"\r\n\r\n");
+  ascii2ws(ews,str+4);
+  mfree(str);
+  ConstructEditControl(&ec,3,0x40,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  int width=ScreenW();
+  int heigth=ScreenH();
+  int head=HeaderH();
+  ed1_desc.rc.y=head+1;
+  ed1_desc.rc.x2=width-1;
+  ed1_desc.rc.y2=heigth-SoftkeyH();
+  ed1_hdr.rc.x2=width-1;
+  ed1_hdr.rc.y2=head;
+  return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
+}  
+  
+//----------------------------------------------------------------------------------------------
+      
+
+
+
+
+void write_db_file()
 {
   char db_fname[128];
   snprintf(db_fname,sizeof(db_fname),"%s%s",HIST_PATH,mailer_db_name);
@@ -442,7 +455,7 @@ void write_db_file(MAIL_HIST*buf,int fsize)
   unsigned int err;
   if ((f=(fopen(db_fname,A_ReadWrite+A_Truncate+A_BIN,P_READ+P_WRITE,&err)))==-1) return;
   {
-    fwrite(f,buf,fsize,&err);
+    fwrite(f,buf,size,&err);
     fclose(f,&err);
     return;
   }
@@ -450,10 +463,8 @@ void write_db_file(MAIL_HIST*buf,int fsize)
 
 int GetIconIndex(i)
 {
-  MAIL_HIST* fbuf;
-  fbuf=(MAIL_HIST*)read_db_file();
+  MAIL_HIST* fbuf=buf;
   int l=fbuf[i].type;
-  mfree(fbuf);
   
   switch (l)
   {
@@ -471,17 +482,11 @@ int GetIconIndex(i)
 
 // ---------------------------------------------------------------------------------
 
-void setstate(int state)
+void setstate(int item,int state)
 {
-  char db_fname[128];
-  MAIL_HIST* fbuf;
-  int fsize;
-  snprintf(db_fname,sizeof(db_fname),"%s%s",HIST_PATH,mailer_db_name);
-  if ((fsize=get_file_size(db_fname))==-1) return;
-  fbuf=(MAIL_HIST*)read_db_file();
-  fbuf[cur_menu].type=state;
-  write_db_file(fbuf,fsize);
-  mfree(fbuf);   
+  if_any_change=1;
+  MAIL_HIST* fbuf=buf;
+  fbuf[item].type=state;
 }
 
 
@@ -494,36 +499,51 @@ void options_menu_ghook(void)
 {
 }
 
+void set_state_for_all(int state)
+{
+  int n=size/sizeof(MAIL_HIST);
+  for (int i=0;i!=n;i++)
+  {
+    setstate(i,state);
+  }
+}
+
 void set_state_download()
 {
-  setstate(MES_DOWN);
+  setstate(cur_menu,MES_DOWN);
   GeneralFuncF1(1);
 }
 
 void set_state_delete()
 {
-  setstate(MES_DEL);
+  setstate(cur_menu,MES_DEL);
   GeneralFuncF1(1);
 }
 
+void set_state_download_all()
+{
+  set_state_for_all(MES_DOWN);
+  GeneralFuncF1(1);
+}
+
+void set_state_delete_all()
+{
+  set_state_for_all(MES_DEL);
+  GeneralFuncF1(1);
+}
 void delete_record()
 {
-  char db_fname[128];
-  MAIL_HIST* fbuf;
-  int fsize;
+  
+  MAIL_HIST* fbuf=buf;
   int num_rec;
   MAIL_HIST* endbuf;
   
+  num_rec=size/sizeof(MAIL_HIST);
   
-  snprintf(db_fname,sizeof(db_fname),"%s%s",HIST_PATH,mailer_db_name);
-  if ((fsize=get_file_size(db_fname))==-1) return;
-  num_rec=fsize/sizeof(MAIL_HIST);
-  
-  fbuf=(MAIL_HIST*)read_db_file();
   endbuf=fbuf+num_rec;
   memcpy(&fbuf[cur_menu],&fbuf[cur_menu+1],(endbuf-&fbuf[cur_menu+1])*sizeof(MAIL_HIST));
-  write_db_file(fbuf,fsize-sizeof(MAIL_HIST));
-  mfree(fbuf);
+  size-=sizeof(MAIL_HIST);
+  if_any_change=1;
   GeneralFuncF1(1);
   remake_mailmenu();
 }
@@ -534,24 +554,28 @@ void back()
 }
 
 
-HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",0x7FFFFFFF};
 
-MENUITEM_DESC options_menu_ITEMS[4]=
+HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",LGP_NULL};
+
+MENUITEM_DESC options_menu_ITEMS[6]=
 {
-  {NULL,(int)"Download",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Delete",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Delete rec",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Back",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Догрузить",     LGP_NULL, 0, NULL, 3, 0x578},
+  {NULL,(int)"Удалить",       LGP_NULL, 0, NULL, 3, 0x578},
+  {NULL,(int)"Удалить все",   LGP_NULL, 0, NULL, 3, 0x578},
+  {NULL,(int)"Удалить запись",LGP_NULL, 0, NULL, 3, 0x578},
+  {NULL,(int)"Догрузить все", LGP_NULL, 0, NULL, 3, 0x578},  
+  {NULL,(int)"Назад",         LGP_NULL, 0, NULL, 3, 0x578},
 };
 
-void *options_menu_HNDLS[4]=
+void *options_menu_HNDLS[6]=
 {
   (void *)set_state_download,
   (void *)set_state_delete,
+  (void *)set_state_delete_all,
   (void *)delete_record,
+  (void *)set_state_download_all,
   (void *)back,  
 };
-
 
 MENU_DESC options_menu_STRUCT=
 {
@@ -562,10 +586,8 @@ MENU_DESC options_menu_STRUCT=
   NULL,
   options_menu_ITEMS,   //Items
   options_menu_HNDLS,   //Procs
-  4  //n
+  6 //n
 };
-
-
 
 void create_options_menu(int i)
 {
@@ -575,18 +597,16 @@ void create_options_menu(int i)
   options_menuhdr.rc.x2=ScreenW()-6;
   options_menuhdr.rc.y2=0x18+HeaderH();
   
-  options_menu_id=CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,4,0,0);
+  options_menu_id=CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,6,0,0);
 }
 
 // ----------------------------------------------------------------------------------
 
-HEADER_DESC maillist_menuhdr={0,0,131,21,NULL,(int)"Входящие",0x7FFFFFFF};
+HEADER_DESC maillist_menuhdr={0,0,131,21,NULL,(int)"Входящие",LGP_NULL};
 
 
 int maillist_menu_onkey(void *data, GUI_MSG *msg)
 {
-  char eml_name[128];
-  WSHDR* ws;
   int i;
   int keycode;
   keycode=msg->keys;
@@ -599,11 +619,7 @@ int maillist_menu_onkey(void *data, GUI_MSG *msg)
     return(-1);
     
   case 0x3D:
-    get_eml_name(eml_name,i);
-    ws=AllocWS(128);
-    str_2ws(ws,eml_name,128);
-    ExecuteFile(ws,0,0);
-    FreeWS(ws);
+    view_mail_id=create_view(i);
     return(-1);
   } 
   return(0);
@@ -624,14 +640,13 @@ void maillist_menu_ghook(void *data, int cmd)
 
 void maillist_menu_iconhndl(void *data, int curitem, int *unk)
 {
-  MAIL_HIST* buf;
-  buf=(MAIL_HIST*)read_db_file();
+  //MAIL_HIST* fbuf=buf;
   char* subj;
   WSHDR *ws;
   void *item=AllocMenuItem(data);
   ws=AllocMenuWS(data,50);
   
-  if ((subj=find_subject(curitem)))
+  if ((subj=find_str(curitem,"Subject: ")))
   {
     ws=AllocMenuWS(data,strlen(subj));
     wsprintf(ws,"%t",subj+sizeof("Subject: ")-1);
@@ -645,9 +660,6 @@ void maillist_menu_iconhndl(void *data, int curitem, int *unk)
   SetMenuItemIconArray(data,item,S_ICONS);
   SetMenuItemText(data,item,ws,curitem);
   SetMenuItemIcon(data,curitem,GetIconIndex(curitem));
-  mfree(buf);
-  
-
 }
 
 
@@ -689,15 +701,18 @@ int main_menu_onkey(void *data, GUI_MSG *msg)
 
 void CreateMailList(void)
 {
-  char dbfname[128];
-  int fsize;
   int mails_num;
-  snprintf(dbfname,sizeof(dbfname),"%s%s",HIST_PATH,mailer_db_name);
-  if ((fsize=get_file_size(dbfname))!=-1)
+  char db_fname[128];
+  snprintf(db_fname,sizeof(db_fname),"%s%s",HIST_PATH,mailer_db_name);
+  if ((size=open_read_close_file(db_fname,(char**)&buf))!=0xFFFFFFFF)
   {
-    mails_num=fsize/sizeof(MAIL_HIST);
+    mails_num=size/sizeof(MAIL_HIST);
     maillist_menu_id=CreateMenu(0,0,&maillist_menu,&maillist_menuhdr,0,mails_num,0,0);
   }  
+  else
+  {
+    size=0;
+  }
 }
 
 void remake_mailmenu(void)
@@ -745,15 +760,15 @@ void Exit(void)
   GeneralFuncF1(1);
 }
 
-HEADER_DESC mainmenu_HDR={0,0,0,0,NULL,(int)"E-Mail Client...",0x7FFFFFFF};
+HEADER_DESC mainmenu_HDR={0,0,0,0,NULL,(int)"MailViewer",LGP_NULL};
 
 
 MENUITEM_DESC mainmenu_ITEMS[4]=
 {
-  {NULL,(int)"Входящие",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Исходящие",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Настройки",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Выход",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Входящие",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Исходящие",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Настройки",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Выход",LGP_NULL,0,NULL,0,0x59D},
 };
 
 void *mainmenu_HNDLS[6]=
@@ -803,6 +818,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     }
     if ((int)msg->data0==maillist_menu_id)
     {
+      if (if_any_change)
+      {
+        write_db_file();
+        mfree(buf);
+        if_any_change=0;
+      }
       maillist_menu_id=0;
       if (request_remake_mailmenu)
       {
@@ -848,7 +869,7 @@ const struct
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"*.eml File Viewer");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"MailViewer");
 }
 
 
