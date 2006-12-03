@@ -1,5 +1,4 @@
 #include "..\inc\swilib.h"
-#include "stdarg.h"
 
 extern const char MAIL_LOGIN[];
 extern const char MAIL_PASS[];
@@ -279,7 +278,7 @@ void get_uidl_n(char*str)
   mail_hist_cur[current_mes].uid[s-c-1]=0;
 }
 
-void send_str(char* str,void* p);
+void send_str(char* str,int p);
 void create_struct()
 {
   int len=sizeof(MAIL_HIST)*inpop3;
@@ -563,7 +562,7 @@ void get_answer(void)
 }
 
 
-void send_str(char* str,void*p)
+void send_str(char* str,int p)
 {
   char buf[128];
   int len;
@@ -575,12 +574,12 @@ void send_str(char* str,void*p)
 
 void send_login(void)
 {
-  send_str("USER %s\r\n",(void*)MAIL_LOGIN);    
+  send_str("USER %s\r\n",(int)MAIL_LOGIN);    
 }
 
 void send_pass(void)
 {
-  send_str("PASS %s\r\n",(void*)MAIL_PASS);    
+  send_str("PASS %s\r\n",(int)MAIL_PASS);    
 }
 
 void get_stat(void)
@@ -590,22 +589,22 @@ void get_stat(void)
 
 void send_get_mes(int i)
 {
-  send_str("RETR %u\r\n",(void*)(i+1));
+  send_str("RETR %u\r\n",i+1);
 }
 
 void send_get_headers(int i)
 {
-  send_str("TOP %u 0\r\n",(void*)(i+1));
+  send_str("TOP %u 0\r\n",i+1);
 }
 
 void send_del_mes(int i)
 {
-  send_str("DELE %u\r\n",(void*)(i+1));
+  send_str("DELE %u\r\n",i+1);
 }
 
 void get_uidl(int i)
 {
-  send_str("UIDL %u\r\n",(void*)(i+1));  
+  send_str("UIDL %u\r\n",i+1);  
 }
 void send_quit(void)
 {
