@@ -60,48 +60,70 @@ int ecnq(const char *a, const char *b,int n)
       return 1;
   return 0;
 }
-
-unsigned int win2unicode(int letter)
+const char wintranslation[128]=
 {
-  if (letter<168) goto L_ENG;
-  if (letter==168) goto L_BIG_YO;
-  letter-=168;
-  if (letter<24) goto L_UKR;
-  if (letter>87) goto L_ENG;
-//L_RUS:
-  letter-=8;
-  goto L_ADD_400;
-L_UKR:
-  switch(letter)
+  0x5F,0x5F,0x27,0x5F,0x22,0x3A,0xC5,0xD8,0x5F,0x25,0x5F,0x3C,0x5F,0x5F,0x5F,0x5F,
+  0x5F,0x27,0x27,0x22,0x22,0x07,0x2D,0x2D,0x5F,0x54,0x5F,0x3E,0x5F,0x5F,0x5F,0x5F,
+  0xFF,0xF6,0xF7,0x5F,0xFD,0x83,0xB3,0x15,0xF0,0x63,0xF2,0x3C,0xBF,0x2D,0x52,0xF4,
+  0xF8,0x2B,'I' ,'i' ,0xA3,0xE7,0x14,0xFA,0xF1,0xFC,0xF3,0x3E,0x5F,0x5F,0x5F,0xF5,
+  0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,0x8F,
+  0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9A,0x9B,0x9C,0x9D,0x9E,0x9F,
+  0xA0,0xA1,0xA2,0xA3,0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,0xAF,
+  0xE0,0xE1,0xE2,0xE3,0xE4,0xE5,0xE6,0xE7,0xE8,0xE9,0xEA,0xEB,0xEC,0xED,0xEE,0xEF
+};
+
+const char koi8translation[128]=
+{
+  0x5F,0x5F,0x27,0x5F,0x22,0x3A,0xC5,0xD8,0x5F,0x25,0x5F,0x3C,0x5F,0x5F,0x5F,0x5F,
+  0x5F,0x27,0x27,0x22,0x22,0x07,0x2D,0x2D,0x5F,0x54,0x5F,0x3E,0x5F,0x5F,0x5F,0x5F,
+  0xFF,0xF6,0xF7,0xF1,0xF3,0x5F,'i' ,0xF5,0xF0,0x63,0xF2,0x3C,0xBF,0xA3,0x52,0xF4,
+  0xF8,0x2B,0x5F,0xF0,0xF2,0xE7,'I' ,0xF4,0xF1,0xFC,0xF3,0x3E,0x5F,0x83,0x5F,0xF5,
+
+  0xEE,0xA0,0xA1,0xE6,0xA4,0xA5,0xE4,0xA3,0xE5,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,
+  0xAF,0xEF,0xE0,0xE1,0xE2,0xE3,0xA6,0xA2,0xEC,0xEB,0xA7,0xE8,0xED,0xE9,0xE7,0xEA,
+  0x9E,0x80,0x81,0x96,0x84,0x85,0x94,0x83,0x95,0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,
+  0x8F,0x9F,0x90,0x91,0x92,0x93,0x86,0x82,0x9C,0x9B,0x87,0x98,0x9D,0x99,0x97,0x9A
+};
+
+const unsigned short dos2unicode[128]=
+{
+  0x0410,0x0411,0x0412,0x0413,0x0414,0x0415,0x0416,0x0417,
+  0x0418,0x0419,0x041A,0x041B,0x041C,0x041D,0x041E,0x041F,
+  0x0420,0x0421,0x0422,0x0423,0x0424,0x0425,0x0426,0x0427,
+  0x0428,0x0429,0x042A,0x042B,0x042C,0x042D,0x042E,0x042F,
+  0x0430,0x0431,0x0432,0x0433,0x0434,0x0435,0x0436,0x0437,
+  0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F,
+  0x002D,0x002D,0x002D,0x00A6,0x002B,0x00A6,0x00A6,0x00AC,
+  0x00AC,0x00A6,0x00A6,0x00AC,0x002D,0x002D,0x002D,0x00AC,
+  0x004C,0x002B,0x0054,0x002B,0x002D,0x002B,0x00A6,0x00A6,
+  0x004C,0x0433,0x00A6,0x0054,0x00A6,0x003D,0x002B,0x00A6,
+  0x00A6,0x0054,0x0054,0x004C,0x004C,0x002D,0x0433,0x002B,
+  0x002B,0x002D,0x002D,0x002D,0x002D,0x00A6,0x00A6,0x002D,
+  0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
+  0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F,
+  0x0401,0x0451,0x0404,0x0454,0x0407,0x0457,0x040E,0x045E,
+  0x00B0,0x2022,0x00B7,0x0076,0x2116,0x00A4,0x00A6,0x00A0
+};
+
+unsigned int char8to16(int c, int type)
+{
+  if (c>=128)
   {
-  case 0x02:
-    letter=0x04;
-    break;
-  case 10:
-    letter=6;
-    break;
-  case 11:
-    letter=0x56;
-    break;
-  case 16:
-    letter=0x51;
-    break;
-  case 18:
-    letter=0x54;
-    break;
-  case 23:
-    letter=0x57;
-    break;
-  default:
-    goto L_ENG;
+    switch(type)
+    {
+    case 1:
+      //Win->Dos
+      c=wintranslation[c-128];
+      break;
+    case 2:
+      //Koi8->Dos
+      c=koi8translation[c-128];
+      break;
+    }
+    if (c<128) return(c);
+    return(dos2unicode[c-128]);
   }
-  goto L_ADD_400;
-L_BIG_YO:
-  letter=0x01;
-L_ADD_400:
-  return (letter+0x400);
-  
-L_ENG: return (letter);
+  return(c);
 }
 
 
@@ -111,10 +133,19 @@ void ascii2ws(WSHDR *ws, const char *s)
   CutWSTR(ws,0);
   while((c=*s++))
   {
-    wsAppendChar(ws,win2unicode(c));
+    wsAppendChar(ws,char8to16(c,1));
   }
 }
 
+void koi2ws(WSHDR *ws, const char *s)
+{
+  char c;
+  CutWSTR(ws,0);
+  while((c=*s++))
+  {
+    wsAppendChar(ws,char8to16(c,2));
+  }
+}
 
 // --------------------------------------------------------------------------------
 extern char * base64_decode(const char *str, size_t *size);
@@ -172,14 +203,25 @@ void get_eml_name(char* dest,int i)
   sprintf(dest,"%s%s.eml",HIST_PATH,fbuf[i].uid);
 }
 
+WSHDR* reAllocWS(WSHDR*ws,int n)
+{
+  WSHDR*ws1;
+  ws1=AllocWS(n);
+  if (ws)
+  {
+    wstrcpy(ws1,ws); 
+    FreeWS(ws);
+  }
+  return ws1;
+}
 // ----------------------------------------------------------------------------------
 
-char*decodestr(char* str)
+WSHDR*decodestr(char* str)
 {
-  char * buf=malloc(1024);
-  zeromem(buf,1024);
+  WSHDR* ws=0;
+  WSHDR* ws1;
+  int len_cod_type;
   int i=0;
-  int n=0;
   char* first;
   char* decode_start;
   char* decode_end;
@@ -187,80 +229,110 @@ char*decodestr(char* str)
   int type; // 1- base 64 2 - quote printable
   do
   {
-    if (str[i]=='=')
+    if (!strncmp(str+i,"=?",2))
     {
-      if (str[i+1]=='?')
+      i+=2;
+      first=str+i;
+      
+      len_cod_type=sizeof("windows-1251")-1;
+      if (ecnq(first,"windows-1251",len_cod_type))
       {
-        i+=2;
-        first=str+i;
-        if (ecnq(first,"windows-1251",sizeof("windows-1251")-1))
+        cod=1;
+        i+=len_cod_type;
+        goto L_NEXT_CHECK;
+      }
+      
+      len_cod_type=sizeof("koi8-r")-1;
+      if (ecnq(first,"koi8-r",len_cod_type))
+      {
+        cod=2;
+        i+=len_cod_type;
+      }
+      else goto L_NEXT;
+      
+    L_NEXT_CHECK:
+      if (str[i]=='?')
+      {
+        if (tolower(str[i+1])=='b')
         {
-          cod=1;
-          i+=sizeof("windows-1251")-1;
-          goto L_NEXT_CHECK;
+          type=1;
+          goto L_FIND_END;
         }
-        
-        if (ecnq(first,"koi8-r",sizeof("koi8-r")-1))
+        if (tolower(str[i+1])=='q')
         {
-          cod=2;
-          i+=sizeof("koi8-r")-1;
-        }
-        else goto L_NEXT;
-       
-      L_NEXT_CHECK:
-        
-        if (str[i]=='?')
-        {
-          if (tolower(str[i+1])=='b')
-          {
-            type=1;
-            goto L_FIND_END;
-          }
-          if (tolower(str[i+1])=='q')
-          {
-            type=2;
-          }
-          else goto L_NEXT;
-        L_FIND_END:
-          i+=3;
-          decode_start=str+i;
-          
-          decode_end=strstr(decode_start,"?=");
-          int decode_len=decode_end-decode_start;
-          char*decodstr=malloc(decode_len+1);
-          char* decoded_str;
-          
-          decodstr[decode_len]=0;
-          strncpy(decodstr,decode_start,decode_len);
-          switch(type)
-          {
-          case 1:
-            decoded_str=base64_decode(decodstr,0);
-            break;
-            
-          case 2:
-            decoded_str=quoted_printable_decode(decodstr,0);
-            break;
-          }
-          strcat(buf,decoded_str);
-          i=decode_end-str+2;
-          mfree(decoded_str);
-          mfree(decodstr);
+          type=2;
         }
         else goto L_NEXT;
+      L_FIND_END:
+        i+=3;
+        decode_start=str+i;
         
+        if (!(decode_end=strstr(decode_start,"?=")))  goto L_NEXT;
+        
+        int decode_len=decode_end-decode_start;
+        
+        char*decodstr=malloc(decode_len+1);
+        char* decoded_str;
+        
+        decodstr[decode_len]=0;
+        strncpy(decodstr,decode_start,decode_len);
+        switch(type)
+        {
+        case 1:
+          decoded_str=base64_decode(decodstr,0);
+          break;
+          
+        case 2:
+          decoded_str=quoted_printable_decode(decodstr,0);
+          break;
+        }
+        int len=strlen(decoded_str);
+        if(ws)
+        {
+          ws=reAllocWS(ws,wstrlen(ws)+len);
+        }
+        else
+        {
+          ws=AllocWS(len);
+        }
+        
+        ws1=AllocWS(len);
+        switch(cod)
+        {
+        case 1:
+          ascii2ws(ws1,decoded_str);
+          break;
+        case 2:
+          koi2ws(ws1,decoded_str);
+          break;
+        }
+        
+        wstrcat(ws,ws1);
+        FreeWS(ws1);
+        mfree(decoded_str);
+        i=decode_end-str+2;
+        mfree(decodstr);
       }
       else goto L_NEXT;
     }
     else
     {
     L_NEXT:
-      buf[n++]=str[i++];
+      if (ws)
+      {
+        ws=reAllocWS(ws,wstrlen(ws)+1);
+      }
+      else
+      {
+        ws=AllocWS(1);
+      }
+      wsAppendChar(ws,str[i++]);
     }
   }
   while(str[i]);
-  return buf;
+  return ws;
 }
+
 
 int get_file_size(const char * fname)
 {
@@ -302,28 +374,53 @@ unsigned int open_read_close_file(const char* fname,char **write_to)
 }
 
 
-char* find_str(int i,char * str)
+  
+  
+WSHDR* find_str(int i,char * str)
 {
   char* eml_buf;
   char* first_in_subj;
   char* sec_in_subj;
-  char* decoded_str;
+  WSHDR* ws=0;
+  WSHDR* ws1;
   int subj_len;
+  int len=0;
   char eml_fname[128];
-  char* subj;
+  char* subj_dec;
   get_eml_name(eml_fname,i);
-  if ((open_read_close_file(eml_fname,&eml_buf))!=-0xFFFFFFFF)
+  if ((open_read_close_file(eml_fname,&eml_buf))!=0xFFFFFFFF)
   {
-    first_in_subj=strstr(eml_buf,str);
+    first_in_subj=strstr(eml_buf,str)+strlen(str);
+  L_READ:
     sec_in_subj=strstr(first_in_subj,"\r\n");
     subj_len=sec_in_subj-first_in_subj;
-    subj=malloc(subj_len+1);
-    subj[subj_len]=0;
-    strncpy(subj,first_in_subj,subj_len);
-    decoded_str=decodestr(subj);
-    mfree(subj);
+   
+    subj_dec=malloc(subj_len+1);
+    subj_dec[subj_len]=0;
+    
+    strncpy(subj_dec,first_in_subj,subj_len);
+    ws1=decodestr(subj_dec);
+    len+=wstrlen(ws1);
+    
+    if (ws)
+    {
+      ws=AllocWS(len);
+    }
+    else
+    {
+      ws=reAllocWS(ws,len);
+    }
+    
+    wstrcat(ws,ws1);
+    FreeWS(ws1);
+    
+    if (sec_in_subj[2]==9)
+    {
+      first_in_subj=sec_in_subj+3;
+      goto L_READ;
+    }
     mfree(eml_buf);
-    return (decoded_str);
+    return (ws);
   }
   return 0;
 }
@@ -353,9 +450,7 @@ char* find_full_str(int i,char * str)
   return 0;
 }
 //----------------------------------------------------------------------------------------------
-char subj[128];
-
-HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)subj,LGP_NULL};
+HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)"Просмотр",LGP_NULL};
 
 void ed1_locret(void){}
 
@@ -386,53 +481,58 @@ INPUTDIA_DESC ed1_desc=
 
 int create_view(int item)
 {
+  int width;
+  int heigth;
+  int head;
+  int len;
   void *ma=malloc_adr();
   void *eq;
-  WSHDR* ews=AllocWS(1024);
+  WSHDR* ews=AllocWS(256);
+  WSHDR* ws;
   char* str;
   EDITCONTROL ec;
 
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
-  ascii2ws(ews,"From:");
-  ConstructEditControl(&ec,1,0x40,ews,1024);
+  ascii2ws(ews,"From: ");
+  ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
   
-  str=find_str(item,"From: ");
-  ascii2ws(ews,str+6);
-  mfree(str);
-  ConstructEditControl(&ec,3,0x40,ews,1024);
+  ws=find_str(item,"From: ");
+  ConstructEditControl(&ec,3,0x40,ws,wstrlen(ws));
   AddEditControlToEditQend(eq,&ec,ma);
+  FreeWS(ws);
   
-  ascii2ws(ews,"Subject:");
-  ConstructEditControl(&ec,1,0x40,ews,1024);
+  ascii2ws(ews,"Subject: ");
+  ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma); 
     
-  
-  str=find_str(item,"Subject: ");
-  int len=strlen(str);
-  strncpy(subj,str,128);
-  subj[len]=0;
-  ascii2ws(ews,str+9);
-  mfree(str);
-  ConstructEditControl(&ec,3,0x40,ews,1024);
+  ws=find_str(item,"Subject: ");
+  ConstructEditControl(&ec,3,0x40,ws,wstrlen(ws));
   AddEditControlToEditQend(eq,&ec,ma);
-  FreeWS(ews);
+  FreeWS(ws);
+  
+  if (buf[item].type!=0) goto L_END;
   
   ascii2ws(ews,"Body:");
-  ConstructEditControl(&ec,1,0x40,ews,1024);
+  ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);   
   
   str=find_full_str(item,"\r\n\r\n");
-  ascii2ws(ews,str+4);
+  len=strlen(str);
+  ws=AllocWS(len);
+  ascii2ws(ws,str);
   mfree(str);
-  ConstructEditControl(&ec,3,0x40,ews,1024);
+  ConstructEditControl(&ec,3,0x40,ws,len);
   AddEditControlToEditQend(eq,&ec,ma);
+  FreeWS(ws);
+L_END:  
+  FreeWS(ews);
+  width=ScreenW();
+  heigth=ScreenH();
+  head=HeaderH();
   
-  int width=ScreenW();
-  int heigth=ScreenH();
-  int head=HeaderH();
   ed1_desc.rc.y=head+1;
   ed1_desc.rc.x2=width-1;
   ed1_desc.rc.y2=heigth-SoftkeyH();
@@ -641,16 +741,14 @@ void maillist_menu_ghook(void *data, int cmd)
 void maillist_menu_iconhndl(void *data, int curitem, int *unk)
 {
   //MAIL_HIST* fbuf=buf;
-  char* subj;
   WSHDR *ws;
+  WSHDR *ws1;
   void *item=AllocMenuItem(data);
-  ws=AllocMenuWS(data,50);
-  
-  if ((subj=find_str(curitem,"Subject: ")))
+  if ((ws1=find_str(curitem,"Subject: ")))
   {
-    ws=AllocMenuWS(data,strlen(subj));
-    wsprintf(ws,"%t",subj+sizeof("Subject: ")-1);
-    mfree(subj);
+    ws=AllocMenuWS(data,wstrlen(ws1));
+    wstrcpy(ws,ws1);
+    FreeWS(ws1);
   }
   else 
   {
