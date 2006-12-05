@@ -43,7 +43,7 @@ REGEXPLEXT reg=
 {
   NULL,
   0x55,
-  0x59D43FF,
+  0x59D08FF, // 43 => 08 : чтобы сохранять в /Misc
   NULL,
   NULL,
   0x109, //LGP "Открыть"
@@ -56,7 +56,7 @@ REGEXPLEXT reg=
 {
   NULL,
   0x55,
-  0x57807FF,
+  0x57807FF, 
   NULL,
   NULL,
   (void *)do_ext,
