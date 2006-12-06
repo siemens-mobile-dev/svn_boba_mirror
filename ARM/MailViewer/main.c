@@ -12,10 +12,12 @@ extern const char HIST_PATH[];
 int S_ICONS[5];
 
 int displace_config;
+
 typedef struct
 {
   int type;
-  char uid[44];
+  int size;
+  char uid[40];
 }MAIL_HIST;
 
 #define FULL_MES 0   // normal mes
@@ -679,10 +681,10 @@ void *options_menu_HNDLS[6]=
 
 MENU_DESC options_menu_STRUCT=
 {
-  8,(void *)options_menu_onkey,(void*)options_menu_ghook,NULL,
+  0,(void *)options_menu_onkey,(void*)options_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
-  0x11,
+  8,
   NULL,
   options_menu_ITEMS,   //Items
   options_menu_HNDLS,   //Procs
