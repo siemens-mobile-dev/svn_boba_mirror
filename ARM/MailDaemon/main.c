@@ -4,27 +4,31 @@ extern const char MAIL_LOGIN[];
 extern const char MAIL_PASS[];
 extern const char HIST_PATH[];
 extern const int LOAD_ONLY;
+extern const char IP_ADRESS[];
 void InitConfig();
 // ------------------------------- Defines ----------------------------------------
 #define TMR_SECOND 216
 #define EOP -10
 char tempfile[128];
-
+const char mailer_db_name[]="mails.db";
 
 #define T_SEND_LOGIN 1
 #define T_SEND_PASS 2
 #define T_GET_STAT 3
 #define T_CREATE_STRUCT 4
-#define T_GET_UID 5
-#define T_PROCESS_MES 6
-#define T_RECEIVE_MAIL 7
-#define T_DELETE_MES 8
+#define T_GET_LIST 5
+#define T_GET_UIDL_LIST 6
+#define T_PROCESS_UIDL 7
+#define T_PROCESS_MES 8
+#define T_RECEIVE_MAIL 9
+#define T_DELETE_MES 10
 // -------------------------- Global Variables -------------------------------------
 
 typedef struct
 {
   int type;
-  char uid[44];
+  int size;
+  char uid[40];
 }MAIL_HIST;
 
 #define FULL_MES 0   // normal mes
@@ -39,14 +43,16 @@ const int minus11=-11;
 char filename[128];
 void ed1_locret(void){}
 char errstr[80];
-char* status[9]=
+char* status[11]=
 {
   "Disconnected",
-  "Connect to POP3",
-  "Check Login",
-  "Check Password",
+  "Verificating Login",
+  "Verificating Pass",
+  "Getting Stat",
+  "Creating Struct",
   "Loading List",
-  "Getting UID",
+  "Loading UIDL List",
+  "Process UID",
   "Ask for mail",
   "Receiving mail",
   "Deleting message"
@@ -57,7 +63,6 @@ char* log_buf;
 
 int size_prev_hist;
 int number_cur;
-int is_body=0;
 int inpop3;
 int total_size;
 int current_mes=0;
@@ -116,7 +121,7 @@ typedef struct
 }HISTORY;
 
 unsigned short maincsm_name_body[140];
-
+int if_rec=0;
 // --------------------------- Constant Strings ------------------------------------
 const char percent_t[]="%t";
 const char empty_str[]="";
@@ -193,6 +198,42 @@ void ascii2ws(WSHDR *ws, const char *s)
 // ---------------------------------- Mail List ------------------------------------
 
 // --------------------------------- Socket work -----------------------------------
+int fill_sock_addr(SOCK_ADDR* sa)
+{
+  char str[32];
+  char original[32];
+  int i=0;
+  int A;
+  int B;
+  int C;
+  int D;
+  int P;
+  char* next;
+  strncpy(original,IP_ADRESS,sizeof(original));
+  for (;original[i]!=0;i++)
+  {
+    if (original[i]<='9'&&original[i]>='0')
+    {
+      str[i]=original[i];
+    }
+    else
+    {
+      str[i]=0;
+    }
+  }
+  str[i]=0;
+  A=strtoul(str,&next,10);
+  B=strtoul(next+1,&next,10);
+  C=strtoul(next+1,&next,10);
+  D=strtoul(next+1,&next,10);
+  P=strtoul(next+1,&next,10);
+  sa->ip=htonl(IP_ADDR(A,B,C,D));
+  sa->port=htons(P);
+  sa->family=1;
+  return 1;
+  
+}
+
 
 void create_connect(void)
 {
@@ -205,20 +246,20 @@ void create_connect(void)
   sock=socket(1,1,0);
   if (sock!=-1)
   {
-    sa.family=1;
-    sa.port=htons(110);
-    sa.ip=htonl(IP_ADDR(217,197,114,149));
-    if (connect(sock,&sa,sizeof(sa))!=-1)
+    if (fill_sock_addr(&sa))
     {
-      connect_state=1;
-      REDRAW();
-    }
-    else
-    {
-      closesocket(sock);
-      sock=-1;
-      ShowErrMsg("Can't connect!");
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      if (connect(sock,&sa,sizeof(sa))!=-1)
+      {
+        connect_state=1;
+        REDRAW();
+      }
+      else
+      {
+        closesocket(sock);
+        sock=-1;
+        ShowErrMsg("Can't connect!");
+        GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      }
     }
   }
   else
@@ -241,7 +282,7 @@ void end_socket(void)
 
 void add_to_log(char* log)
 {
-  if (!is_body)
+  if (!if_rec)
   {
     int len=strlen(log);
     vbuf=pbuf;
@@ -316,7 +357,7 @@ void open_prev_hist()
   int f;
   int size;
   unsigned int er;
-  snprintf(hist_name,sizeof(hist_name),"%smails.db",HIST_PATH);
+  snprintf(hist_name,sizeof(hist_name),"%s%s",HIST_PATH,mailer_db_name);
   f=fopen(hist_name,A_ReadOnly,P_READ,&er);
   if (f==-1)
   {
@@ -369,7 +410,7 @@ void write_current_hist()
   int f;
   char hist_name[128];
   unsigned int er;
-  snprintf(hist_name,sizeof(hist_name),"%smails.db",HIST_PATH);
+  snprintf(hist_name,sizeof(hist_name),"%s%s",HIST_PATH,mailer_db_name);
   f=fopen(hist_name,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&er);
   if (f!=-1)
   {
@@ -385,13 +426,13 @@ void write_current_hist()
 }
 
 
-int find_uidl_in_hist()
+int find_uidl_in_hist(int cur_mes)
 {
   int i;
   i=size_prev_hist/(sizeof(MAIL_HIST));
   for (int d=0; d!=i;d++)
   {
-    if (!strcmp(mail_hist_cur[current_mes].uid,mail_hist_prev[d].uid)) return d;
+    if (!strcmp(mail_hist_cur[cur_mes].uid,mail_hist_prev[d].uid)) return d;
   }
   return (-1);
 }
@@ -401,7 +442,27 @@ void set_state_for_delete(int i)
   mail_hist_cur[i].type=-1;
 }
 
+void fill_struct_list(char*str,MAIL_HIST* mail_hist)
+{
+  char*str1;
+  int num;
+  int size;
+  str1=strchr(str,' ');
+  num=strtoul(str,0,10);
+  size=strtoul(str1+1,0,10); 
+  mail_hist[num-1].size=size;
+}
 
+void fill_struct_uidl(char*str,MAIL_HIST* mail_hist)
+{
+  char*str1;
+  char*str2;
+  int num;
+  str1=strchr(str,' ');
+  str2=strstr(str,eol);
+  num=strtoul(str,0,10);
+  strncpy(mail_hist[num-1].uid,str1+1,str2-str1-1);
+}
 
   
 void send_del_mes(int i);
@@ -411,7 +472,10 @@ void send_login();
 void get_stat();
 void get_uidl(int i);
 void send_quit();
-
+void get_list(void);
+void get_uidl_list();
+  
+  
 void process_line(char*mes)
 {
   switch(connect_state)
@@ -437,33 +501,84 @@ void process_line(char*mes)
     number_cur=get_values(mes);
     open_prev_hist();
     create_struct();
-    
-  case T_GET_UID:
-  L_GET_UIDL:
     if (current_mes>=inpop3) goto L_MES_RECEIVED;
-    connect_state=T_GET_UID;
-    get_uidl(current_mes);
-    connect_state=T_PROCESS_MES;
-    break;
+  case T_GET_LIST:
+    connect_state=T_GET_UIDL_LIST;
+    get_list();
+    break;   
+  case T_GET_UIDL_LIST:
+    if (!if_rec)
+    {
+      if(resp_ok(mes)) goto L_ERR_FREE;
+      else 
+      {
+        if_rec=1;
+        break;
+      }
+    }
+    else
+    {
+      if (strcmp(mes,".\r\n"))
+      {
+        fill_struct_list(mes,mail_hist_cur);
+        break;
+      }
+      else
+      {
+        connect_state=T_PROCESS_UIDL;
+        if_rec=0;
+        get_uidl_list();
+        break;
+      }
+    }
+  case T_PROCESS_UIDL:
+    if (!if_rec)
+    {
+      if(resp_ok(mes)) goto L_ERR_FREE;
+      else 
+      {
+        if_rec=1;
+        break;
+      }
+    }
+    else
+    {
+      if (strcmp(mes,".\r\n"))
+      {
+        fill_struct_uidl(mes,mail_hist_cur);
+        break;
+      }
+      else
+      {
+        connect_state=T_PROCESS_MES;
+        if_rec=0;
+        goto L_PROCESS_MES;
+      }
+    }    
+    
     
   case T_PROCESS_MES:
-    if(resp_ok(mes)) goto L_ERR1;
+  L_PROCESS_MES:
+    connect_state=T_PROCESS_MES;
+    REDRAW();
     if (current_mes>=inpop3) goto L_MES_RECEIVED;
-    get_uidl_n(mes);
     if (file_exist)
     {
       int i;
-      if ((i=find_uidl_in_hist())!=-1)
+      if ((i=find_uidl_in_hist(current_mes))!=-1)
       {
         switch(get_action_prev(i))
         {
         case FULL_MES:
+          set_current_action(FULL_MES,current_mes);
           goto L_NEXT_MES;
         case UNFULL_MES:
           set_current_action(UNFULL_MES,current_mes);
           goto L_NEXT_MES;
         case MES_DOWN:
-          goto L_GET_MSG;
+          connect_state=T_RECEIVE_MAIL;
+          send_get_mes(current_mes);
+          goto L_REDRAW;
         case MES_DEL:
           connect_state=T_DELETE_MES;
           send_del_mes(current_mes);
@@ -471,22 +586,21 @@ void process_line(char*mes)
         }
       }
     }
-    if (current_mes>=inpop3) goto L_MES_RECEIVED;
     if (LOAD_ONLY)
     {
-    L_GET_MSG:
       send_get_mes(current_mes);
+      set_current_action(FULL_MES,current_mes);
     }
     else
     {
       send_get_headers(current_mes);
       set_current_action(UNFULL_MES,current_mes);
     }
-    write_letter(0);
     connect_state=T_RECEIVE_MAIL;
     break;
+    
   case T_RECEIVE_MAIL:
-    if (is_body)
+    if (if_rec)
     {
       if (strcmp(mes,".\r\n"))
       {
@@ -495,19 +609,20 @@ void process_line(char*mes)
       else
       {
       L_NEXT_MES:
-        is_body=0;
+        if_rec=0;
         current_mes++;
-        goto L_GET_UIDL;
+        goto L_PROCESS_MES;
       }
     }
     else
     {
-      if(resp_ok(mes)) goto L_ERR1;
-      is_body=1;
+      if(resp_ok(mes)) goto L_ERR_FREE;
+      write_letter(0);
+      if_rec=1;
     }
     break;
   case T_DELETE_MES:
-    if(resp_ok(mes)) goto L_ERR1;
+    if(resp_ok(mes)) goto L_ERR_FREE;
     set_state_for_delete(current_mes);
     goto L_NEXT_MES;
     
@@ -531,7 +646,7 @@ L_ERR:
   connect_state=-1;
   strncpy(errstr,mes,sizeof(errstr));
   goto L_END;
-L_ERR1:
+L_ERR_FREE:
   connect_state=-1;
   strncpy(errstr,mes,sizeof(errstr));
   goto L_FREE;  
@@ -571,7 +686,8 @@ void send_str(char* str,int p)
   len=strlen(buf);
   send(sock,buf,len,0);
 }
-
+    
+    
 void send_login(void)
 {
   send_str("USER %s\r\n",(int)MAIL_LOGIN);    
@@ -587,6 +703,16 @@ void get_stat(void)
   send_str("STAT\r\n",NULL);
 }
 
+void get_list(void)
+{
+  send_str("LIST\r\n",NULL);
+}
+
+void get_uidl_list(void)
+{
+  send_str("UIDL\r\n",NULL);
+}
+           
 void send_get_mes(int i)
 {
   send_str("RETR %u\r\n",i+1);
@@ -640,7 +766,7 @@ void OnRedraw(MAIN_GUI *data)
     {
       wsprintf(data->ws2,"POP3 connect!");
     }
-    DrawString(data->ws2,3,30,x-4,y-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+    DrawString(data->ws2,3,50,x-4,y-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   }
   
   
