@@ -1,7 +1,7 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
-#define RECONNECT_TIME (216*60)
+#define RECONNECT_TIME (216*30)
 
 CSM_DESC icsmd;
 extern const int ENA_GPRSD;
@@ -10,7 +10,6 @@ int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
 
 char binary_profile[0x204];
-
 /*
 Del by Kibab - бинарные профили конфигурируются
 */
@@ -30,7 +29,11 @@ void do_connect(void)
   LMAN_DATA lmd;
   NAP_PARAM_CONT *nc;
   // Проверим, включён ли GPRS. Если нет - дальнейшие извращения бесмысленны
-  if(!IsGPRSEnabled()){return;}
+  if(!IsGPRSEnabled())
+  {
+    GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
+    return;
+  }
   
   // Перечитываем конфиг, дабы проверить, не откючены ли мы
   InitConfig();

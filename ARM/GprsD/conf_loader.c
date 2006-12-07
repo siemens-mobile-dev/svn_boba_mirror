@@ -4,6 +4,7 @@
 
 // Импорт переменных
 extern const char cfgAPN[20];
+extern const int ENA_GPRSD;
 extern const char cfgUSER[20];
 extern const char cfgPASS[20];
 extern const unsigned int cfgTimeout;
@@ -113,13 +114,48 @@ int LoadConfigData(const char *fname)
   return(result);
 }
 
+/*
+  Возвращает строку вида CC-NC - параметры текущей сети в буфере.
+  возвращает 0, Если сети не обнаружено:)
+*/
+char get_net_id(char *buf)
+{
+  char *x = (char*)Get_CC_NC();
+  char *y = x+1;
+  char *z = x+2;
+  char cc_2 = *x;
+  char cc_1 = *y;
+  // Немного жёсткого секса с BCD...
+  if(cc_1>=0xF0){cc_1 = cc_1 && 0x0F>>4;}
+  cc_2 = (cc_2<<4) + (cc_2>>4);
+  char nc = *z;
+  nc = (nc>>4) + (nc<<4);
+  if((nc == 0xFF)&&(cc_2==0xFF))
+  {
+    return 0;
+  }
+  // ... и золотой ключик у нас в кармане )
+  sprintf(buf, "%X%X-%02X", cc_2, cc_1, nc);
+  return 1;
+}
+
+
 // Инициализация конфигурации
 // Надо вызвать в начале работы для загрузки конфигурации
 // Поиск конфиг-файла согласно стандарту
 void InitConfig()
 {
-  if(LoadConfigData("4:\\ZBin\\etc\\GprsD.bcfg")<0)
+  char config_name[128];
+  char buf[10];
+  if(!get_net_id((char*)&buf))
   {
-    LoadConfigData("0:\\ZBin\\etc\\GprsD.bcfg");
+    return;
+  }
+  sprintf(config_name,"4:\\ZBin\\etc\\GprsD_%s.bcfg", buf);
+  //ShowMSG(1,(int)config_name);
+  if(LoadConfigData(config_name)<0)
+  {
+    config_name[0] = '0';
+    LoadConfigData(config_name);
   }
 }
