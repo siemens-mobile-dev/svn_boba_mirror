@@ -29,7 +29,9 @@ void do_connect(void)
   REGSOCKCEPID_DATA rsc;
   LMAN_DATA lmd;
   NAP_PARAM_CONT *nc;
-  //ShowMSG(1,(int)"Ы");
+  // Проверим, включён ли GPRS. Если нет - дальнейшие извращения бесмысленны
+  if(!IsGPRSEnabled()){return;}
+  
   // Перечитываем конфиг, дабы проверить, не откючены ли мы
   InitConfig();
   if(!ENA_GPRSD)
