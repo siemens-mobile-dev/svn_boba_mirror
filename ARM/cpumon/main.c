@@ -164,6 +164,9 @@ void MyIDLECSM_onClose(CSM_RAM *data)
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
   GBS_DelTimer(&mytmr);
+  mfree(loads);
+  mfree(clocks);
+  mfree(img1_bmp);
   FreeWS(ws1);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
@@ -178,8 +181,8 @@ int main(void)
   uiWidth  = (cfgW < MIN_WIDTH)  ? MIN_WIDTH  : cfgW;
   uiHeight = (cfgH < MIN_HEIGHT) ? MIN_HEIGHT : cfgH;
 
-  img1_bmp = malloc(2 * uiWidth * uiHeight - 1);
-  zeromem(img1_bmp, 2 * uiWidth * uiHeight - 1);
+  img1_bmp = malloc(2 * uiWidth * uiHeight);
+  zeromem(img1_bmp, 2 * uiWidth * uiHeight);
 
   img1.w = uiWidth;
   img1.h = uiHeight;
@@ -187,11 +190,11 @@ int main(void)
   img1.zero = 0;
   img1.bitmap = (char*) img1_bmp;
 
-  loads = malloc(uiWidth - 1);
-  zeromem(loads, uiWidth - 1);
+  loads = malloc(uiWidth);
+  zeromem(loads, uiWidth);
 
-  clocks = malloc(uiWidth - 1);
-  zeromem(clocks, uiWidth - 1);
+  clocks = malloc(uiWidth);
+  zeromem(clocks, uiWidth);
   //========================
 
   LockSched();
@@ -202,9 +205,9 @@ int main(void)
   icsmd.onMessage=MyIDLECSM_onMessage;
   icsmd.onClose=MyIDLECSM_onClose;
   icsm->constr=&icsmd;
+  UnlockSched();
   ws1=AllocWS(100);
   wsprintf(ws1,"%t","CPUMon by BoBa, Rst7");
   GBS_StartTimerProc(&mytmr,START_DELAY,TimerProc);
-  UnlockSched();
   return 0;
 }
