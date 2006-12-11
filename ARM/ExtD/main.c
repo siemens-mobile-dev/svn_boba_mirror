@@ -1,5 +1,8 @@
 #include "../inc/swilib.h"
 
+extern long  strtol (const char *nptr,char **endptr,int base);
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
 #define MAX_EXTS 16
 
 #ifdef NEWSGOLD
