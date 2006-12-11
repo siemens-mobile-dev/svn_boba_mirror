@@ -17,7 +17,7 @@ typedef int jmp_buf[11];
 #include "png.h"
 
 //Если S75, расскоментировать сл. строку
-#define NEWSGOLD
+//#define NEWSGOLD
 
 #ifdef NEWSGOLD
 
@@ -52,6 +52,7 @@ typedef int jmp_buf[11];
 #define SMALL_FONT 11
 #define MIDDLE_FONT 5
 #define LGP_NULL 0x7FFFFFFF
+#define SET_SOFT_KEY_N 0
 
 #else
 
@@ -83,10 +84,10 @@ typedef int jmp_buf[11];
 #define DISPLACE_OF_EDGUI_ID 0x4C
 #define DISPLACE_OF_IDLEGUI_ID 0x28
 #define DISPLACE_OF_IDLECANVAS 0x14
-#define MIDDLE_FONT 5
+#define MIDDLE_FONT 3
 #define SMALL_FONT 7
 #define LGP_NULL 0x7FFF
-
+#define SET_SOFT_KEY_N 1
 #endif
 
 #define NAMECSM_MAGIC1 ((void *(*)(int))0x55AACCCC)
