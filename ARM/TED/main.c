@@ -1,6 +1,32 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 
+#pragma inline
+void patch_header(HEADER_DESC* head)
+{
+  head->rc.x=0;
+  head->rc.y=0;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH();
+}
+
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp)
+{
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+
+#pragma inline
+void patch_rect(RECT*rc,int x,int y, int x2, int y2)
+{
+  rc->x=x;
+  rc->y=y;
+  rc->x2=x2;
+  rc->y2=y2;
+}
 int menusoftkeys[]={0,1,2};
 
 SOFTKEY_DESC menu_sk[]=
@@ -793,7 +819,7 @@ unsigned int SearchHistory(void)
   char historyfile[128];
   snprintf(historyfile,sizeof(historyfile),"%sTED.history",ted_path);
   
-  if ((fin=fopen(historyfile,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((fin=fopen(historyfile,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     for(;;)
     {
@@ -1010,18 +1036,21 @@ void DrawInfo(void)
   TTime t;
   TDate d;
   GetDateTime(&d,&t);
+  int scr_w=ScreenW();
+  int scr_h=ScreenH();
   
-  DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
+  DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
   str_2ws(e_ws,filename,126);
   wsprintf(info_ws,"Time:\n%02d:%02d\n"
 	   "Current line %lu\nTotal lines %lu\n\nCurrent file:\n%w",
 	   t.hour,t.min,curline,total_line,e_ws);
-  DrawString(info_ws,3,3,ScreenW()-4,ScreenH()-4,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(info_ws,3,3,scr_w-4,scr_h-4,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 //=============================================================================
 //Вывод на экран
 //=============================================================================
+#pragma optimize=z 9
 void DrawScreen(void)
 {
   unsigned int y;
@@ -1029,6 +1058,8 @@ void DrawScreen(void)
   unsigned int c;
   int f;
   unsigned int my;
+  int scr_w=ScreenW();
+  int scr_h=ScreenH();
   
   int *ink=GetPaletteAdrByColorIndex(INK);
   int *paper=GetPaletteAdrByColorIndex(PAPER);
@@ -1050,8 +1081,8 @@ void DrawScreen(void)
     {
       wsprintf(upinfo_ws,"Line %u...",curline);
     L_W1:
-      DrawRoundedFrame(8,0,ScreenW()-1,11,0,0,0,paper,paper);
-      DrawString(upinfo_ws,8,0,ScreenW()-1,11,SMALL_FONT,2,ink,paper);
+      DrawRoundedFrame(8,0,scr_w-1,11,0,0,0,paper,paper);
+      DrawString(upinfo_ws,8,0,scr_w-1,11,SMALL_FONT,2,ink,paper);
       goto L_WELLCOME2;
     }
     if (draw_mode==255) goto L_WELLCOME;
@@ -1105,7 +1136,7 @@ void DrawScreen(void)
       //DrawCursor(curpos-viewpos,curline-viewline);
       {
 	//Рисуем скролл-бар
-	char *d=myscr+((ScreenW()-1)>>3); //Последний байт
+	char *d=myscr+((scr_w-1)>>3); //Последний байт
 	if (total_line)
 	{
 	  y=((editmode?sheight_emode-8:sheight-8)*curline)/total_line;
@@ -1128,7 +1159,7 @@ void DrawScreen(void)
 	  d+=SCR_MODULO;
 	  p++;
 	}
-	while(p<ScreenH());
+	while(p<scr_h);
       }
       if (editmode)
       {
@@ -1136,14 +1167,14 @@ void DrawScreen(void)
         int rh=((h+7)&(~7));
         int s=SoftkeyH();
         int rs=((s+7)&(~7));
-	MyScrHdr.h=ScreenH()-rh-rs;
-	DrawRoundedFrame(0,HeaderH(),ScreenW()-1,rh-1,0,0,0,paper,paper);
-	DrawRoundedFrame(0,ScreenH()-rs,ScreenW()-1,ScreenH()-s-1,0,0,0,paper,paper);
+	MyScrHdr.h=scr_h-rh-rs;
+	DrawRoundedFrame(0,HeaderH(),scr_w-1,rh-1,0,0,0,paper,paper);
+	DrawRoundedFrame(0,scr_h-rs,scr_w-1,scr_h-s-1,0,0,0,paper,paper);
 	DrwImg(&MyScrHdr,0,((HeaderH()+7)&(~7)),ink,paper);
       }
       else
       {
-	MyScrHdr.h=ScreenH();
+	MyScrHdr.h=scr_h;
 	DrwImg(&MyScrHdr,0,0,ink,paper);
       }
       cursor_cnt=3;
@@ -1152,8 +1183,8 @@ void DrawScreen(void)
       //Процесс перехода на строку
       {
 	wsprintf(upinfo_ws,"Goto line %u...",curline);
-	DrawRoundedFrame(0,0,ScreenW()-1,11,0,0,0,paper,paper);
-	DrawString(upinfo_ws,0,0,ScreenW()-1,11,SMALL_FONT,2,ink,paper);
+	DrawRoundedFrame(0,0,scr_w-1,11,0,0,0,paper,paper);
+	DrawString(upinfo_ws,0,0,scr_w-1,11,SMALL_FONT,2,ink,paper);
 	goto L_WELLCOME2;
       }
       //return;
@@ -1164,13 +1195,13 @@ void DrawScreen(void)
     case 255:
       //Экран приветствия
     L_WELLCOME:
-      DrawRoundedFrame(0,0,ScreenW()-1,11,0,0,0,paper,paper);
+      DrawRoundedFrame(0,0,scr_w-1,11,0,0,0,paper,paper);
       draw_mode=1;
     L_WELLCOME2:
-      DrawRoundedFrame(0,12,ScreenW()-1,ScreenH()-1,0,0,0,paper,paper);
+      DrawRoundedFrame(0,12,scr_w-1,scr_h-1,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
       wsprintf(info_ws,"Text viewer/editor\nversion 1.6\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
-      DrawString(info_ws,0,20,ScreenW()-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
+      DrawString(info_ws,0,20,scr_w-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
       return;
     case 0:
       //Курсор
@@ -1365,17 +1396,17 @@ void *edmenu_HNDLS[8]=
 
 MENUITEM_DESC edmenu_ITEMS[8]=
 {
-  {NULL,(int)"Insert line",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Delete line",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Split line",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Join lines",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Insert time",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Insert date",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Paste",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Clear clipboard",0x7FFFFFFF,0,NULL,0,0x59D}
+  {NULL,(int)"Insert line",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Delete line",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Split line",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Join lines",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Insert time",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Insert date",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Paste",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Clear clipboard",LGP_NULL,0,NULL,0,0x59D}
 };
 
-HEADER_DESC edmenu_HDR={0,0,131,21,icon,(int)"Special...",0x7FFFFFFF};
+HEADER_DESC edmenu_HDR={0,0,0,0,icon,(int)"Special...",LGP_NULL};
 
 MENU_DESC edmenu_STRUCT=
 {
@@ -1396,6 +1427,7 @@ int ed_inp_onkey(GUI *data, GUI_MSG *msg)
   if (msg->keys==0xFFF)
   {
     editmode=0xFFF; //Признак меню
+    patch_header(&edmenu_HDR);
     edit_id=CreateMenu(0,0,&edmenu_STRUCT,&edmenu_HDR,0,8,0,0);
     return(1); //Закрываем лавочку
   }
@@ -1474,13 +1506,13 @@ void ed_inp_ghook(GUI *data, int cmd)
     ecp--;
     while(ecp>curpos) doCurRight();
     while(ecp<curpos) doCurLeft();
-    SetSoftKey(data,&sk,0);
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
     ExtractEditControl(data,1,&ec);
     wstrcpy(e_ws,ec.pWS);
   }
 }
 
-HEADER_DESC ed_inp_hdr={0,0,131,21,icon,(int)"Edit text",0x7FFFFFFF};
+HEADER_DESC ed_inp_hdr={0,0,0,0,icon,(int)"Edit text",LGP_NULL};
 
 INPUTDIA_DESC ed_inp_desc=
 {
@@ -1490,7 +1522,7 @@ INPUTDIA_DESC ed_inp_desc=
   (void *)ed_inp_locret,
   0,
   &menu_skt,
-  {0,22,131,153},
+  {0,0,0,0},
   4,
   100,
   101,
@@ -1524,6 +1556,9 @@ void CreateEditDialog(void)
   eq=AllocEQueue(ma,mfree_adr());
   ConstructEditControl(&ec,3,0x40,e_ws,255);
   AddEditControlToEditQend(eq,&ec,ma);
+  
+  patch_header(&ed_inp_hdr);
+  patch_input(&ed_inp_desc);
   edit_id=CreateInputTextDialog(&ed_inp_desc,&ed_inp_hdr,eq,1,0);
 }
 
@@ -1771,7 +1806,7 @@ void sf_inp_ghook(GUI *data, int cmd)
   EDITCONTROL ec;
   if (cmd==7)
   {
-    SetSoftKey(data,&sk,0);
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
     ExtractEditControl(data,1,&ec);
     wstrcpy(e_ws,ec.pWS);
   }
@@ -1779,7 +1814,7 @@ void sf_inp_ghook(GUI *data, int cmd)
 
 void sf_inp_locret(void){}
 
-HEADER_DESC sf_inp_hdr={0,0,131,21,icon,(int)"Save as:",0x7FFFFFFF};
+HEADER_DESC sf_inp_hdr={0,0,0,0,icon,(int)"Save as:",LGP_NULL};
 
 INPUTDIA_DESC sf_inp_desc=
 {
@@ -1789,7 +1824,7 @@ INPUTDIA_DESC sf_inp_desc=
   (void *)sf_inp_locret,
   0,
   &menu_skt,
-  {0,22,131,153},
+  {0,0,0,0},
   4,
   100,
   101,
@@ -1808,6 +1843,9 @@ void CreateSaveAsDialog(void)
   eq=AllocEQueue(ma,mfree_adr());
   ConstructEditControl(&ec,3,0x40,e_ws,128);
   AddEditControlToEditQend(eq,&ec,ma);
+  
+  patch_header(&sf_inp_hdr);
+  patch_input(&sf_inp_desc);
   CreateInputTextDialog(&sf_inp_desc,&sf_inp_hdr,eq,1,0);
 }
 
@@ -1821,7 +1859,7 @@ void loadfont(int flag)
   int eh;
   
   snprintf(fn_font,sizeof(fn_font),"%s%d.fnt",ted_path,font_size);
-  if ((fin=fopen(fn_font,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((fin=fopen(fn_font,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     fread(fin,font,sizeof(font),&ul);
     fclose(fin,&ul);
@@ -1936,19 +1974,19 @@ void *loadmenu_HNDLS[10]=
 
 MENUITEM_DESC loadmenu_ITEMS[10]=
 {
-  {NULL,(int)"Font size = 4",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 6",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 8",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 14",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 16",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Direct load",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"DOS format",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"WIN format",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Padding on/off",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Save as...",0x7FFFFFFF,0,NULL,0,0x59D}
+  {NULL,(int)"Font size = 4",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Font size = 6",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Font size = 8",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Font size = 14",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Font size = 16",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Direct load",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"DOS format",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"WIN format",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Padding on/off",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Save as...",LGP_NULL,0,NULL,0,0x59D}
 };
 
-HEADER_DESC loadmenu_HDR={0,0,131,21,icon,(int)"General...",0x7FFFFFFF};
+HEADER_DESC loadmenu_HDR={0,0,0,0,icon,(int)"General...",LGP_NULL};
 
 MENU_DESC loadmenu_STRUCT=
 {
@@ -1967,6 +2005,7 @@ int DrawLoadMenu(void)
   int n;
   if (disk_access==FIRSTLOAD) n=8; else n=10;
   *((int *)(&loadmenu_STRUCT.n_items))=n;
+  patch_header(&loadmenu_HDR);
   return CreateMenu(0,0,&loadmenu_STRUCT,&loadmenu_HDR,0,n,0,0);
 }
 
@@ -2035,7 +2074,7 @@ void gl_inp_ghook(GUI *data, int cmd)
   EDITCONTROL ec;
   if (cmd==7)
   {
-    SetSoftKey(data,&sk,0);
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
     ExtractEditControl(data,1,&ec);
     wstrcpy(e_ws,ec.pWS);
   }
@@ -2043,8 +2082,8 @@ void gl_inp_ghook(GUI *data, int cmd)
 
 void gl_inp_locret(void){}
 
-HEADER_DESC gl_inp_hdr_percent={0,0,131,21,icon,(int)"Goto percent:",0x7FFFFFFF};
-HEADER_DESC gl_inp_hdr_line={0,0,131,21,icon,(int)"Goto line:",0x7FFFFFFF};
+HEADER_DESC gl_inp_hdr_percent={0,0,0,0,icon,(int)"Goto percent:",LGP_NULL};
+HEADER_DESC gl_inp_hdr_line={0,0,0,0,icon,(int)"Goto line:",LGP_NULL};
 
 INPUTDIA_DESC gl_inp_desc=
 {
@@ -2054,7 +2093,7 @@ INPUTDIA_DESC gl_inp_desc=
   (void *)gl_inp_locret,
   0,
   &menu_skt,
-  {0,22,131,153},
+  {0,0,0,0},
   4,
   100,
   101,
@@ -2076,6 +2115,8 @@ void goto_line_inp(int f)
   eq=AllocEQueue(ma,mfree_adr());
   ConstructEditControl(&ec,2,0x40,e_ws,7);
   AddEditControlToEditQend(eq,&ec,ma);
+  patch_input(&gl_inp_desc);
+  patch_header(f?&gl_inp_hdr_percent:&gl_inp_hdr_line);
   CreateInputTextDialog(&gl_inp_desc,f?&gl_inp_hdr_percent:&gl_inp_hdr_line,eq,1,0);
 }
 
@@ -2128,18 +2169,18 @@ void *gotomenu_HNDLS[9]=
 
 MENUITEM_DESC gotomenu_ITEMS[9]=
 {
-  {NULL,(int)"Top",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Line",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Percent",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Bottom",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Last saved",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)t_bm1,0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)t_bm2,0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)t_bm3,0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)t_bm4,0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Top",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Line",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Percent",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Bottom",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Last saved",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,0x59D},
 };
 
-HEADER_DESC gotomenu_HDR={0,0,131,21,icon,(int)"Goto...",0x7FFFFFFF};
+HEADER_DESC gotomenu_HDR={0,0,0,0,icon,(int)"Goto...",LGP_NULL};
 
 MENU_DESC gotomenu_STRUCT=
 {
@@ -2156,6 +2197,7 @@ MENU_DESC gotomenu_STRUCT=
 void goto_menu(void)
 {
   GeneralFuncF1(1);
+  patch_header(&gotomenu_HDR);
   CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,9,0,0);
 }
 
@@ -2188,10 +2230,10 @@ void set_book4(void)
 
 MENUITEM_DESC bookmenu_ITEMS[4]=
 {
-  {NULL,(int)t_bm1,0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)t_bm2,0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)t_bm3,0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)t_bm4,0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,0x59D},
 };
 
 void *bookmenu_HNDLS[4]=
@@ -2202,7 +2244,7 @@ void *bookmenu_HNDLS[4]=
   (void *)set_book4
 };
 
-HEADER_DESC bookmenu_HDR={0,0,131,21,icon,(int)"Set Bookmark...",0x7FFFFFFF};
+HEADER_DESC bookmenu_HDR={0,0,0,0,icon,(int)"Set Bookmark...",LGP_NULL};
 
 MENU_DESC bookmenu_STRUCT=
 {
@@ -2219,6 +2261,7 @@ MENU_DESC bookmenu_STRUCT=
 void bookm_menu(void)
 {
   GeneralFuncF1(1);
+  patch_header(&bookmenu_HDR);
   CreateMenu(0,0,&bookmenu_STRUCT,&bookmenu_HDR,0,4,0,0);
 }
 //===================================================================
@@ -2231,9 +2274,9 @@ void search_menu(void)
 
 MENUITEM_DESC softmenu_ITEMS[3]=
 {
-  {NULL,(int)"Goto...",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Set Bookmark...",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Search...",0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)"Goto...",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Set Bookmark...",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Search...",LGP_NULL,0,NULL,0,0x59D},
 };
 
 void *softmenu_HNDLS[3]=
@@ -2243,7 +2286,7 @@ void *softmenu_HNDLS[3]=
   (void *)search_menu
 };
 
-HEADER_DESC softmenu_HDR={0,0,131,21,icon,(int)"TED menu",0x7FFFFFFF};
+HEADER_DESC softmenu_HDR={0,0,0,0,icon,(int)"TED menu",LGP_NULL};
 
 MENU_DESC softmenu_STRUCT=
 {
@@ -2264,6 +2307,7 @@ void DrawSoftMenu(void)
   sprintf(t_bm2+4,lfrm,HISTORY.bookm2);
   sprintf(t_bm3+4,lfrm,HISTORY.bookm3);
   sprintf(t_bm4+4,lfrm,HISTORY.bookm4);
+  patch_header(&softmenu_HDR);
   CreateMenu(0,0,&softmenu_STRUCT,&softmenu_HDR,0,3,0,0);
 }
 
@@ -2403,7 +2447,7 @@ void FirstLoadFile(unsigned int fmt)
   //Конвертируем все строки в верхний стек
   fs=fopen(stkfile,A_Create+A_ReadWrite+A_BIN,P_READ+P_WRITE,&ul); //Файл верхнего стека
   if (fs==-1) DiskErrorMsg(3);
-  if ((fin=fopen(filename,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((fin=fopen(filename,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     switch(fmt&0x7F)
     {
@@ -2456,7 +2500,7 @@ const void * const gui_methods[11]={
   0
 };
 
-const RECT Canvas={0,0,131,175};
+const RECT Canvas={0,0,0,0};
 
 void maincsm_oncreate(CSM_RAM *data)
 {
@@ -2469,7 +2513,7 @@ void maincsm_oncreate(CSM_RAM *data)
   info_ws=AllocWS(512);
   upinfo_ws=AllocWS(256);
   e_ws=AllocWS(256);
-  
+  patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas);
   main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods;
@@ -2619,7 +2663,7 @@ int LoadConfigData(const char *fname)
   unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
   
   if (!(buf=malloc(len))) return -1;
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     if (fread(f,buf,len,&ul)==len)
     {
