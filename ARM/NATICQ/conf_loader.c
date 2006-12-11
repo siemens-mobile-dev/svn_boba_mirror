@@ -17,7 +17,7 @@ int LoadConfigData(const char *fname)
   unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
 
   if (!(buf=malloc(len))) return -1;
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     if (fread(f,buf,len,&ul)==len)
     {

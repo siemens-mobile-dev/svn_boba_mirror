@@ -119,6 +119,33 @@ void ElfKiller(void)
 
 int total_unread;
 
+#pragma inline
+void patch_rect(RECT*rc,int x,int y, int x2, int y2)
+{
+  rc->x=x;
+  rc->y=y;
+  rc->x2=x2;
+  rc->y2=y2;
+}
+
+
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
+{
+  inp->rc.x=x;
+  inp->rc.y=y;
+  inp->rc.x2=x2;
+  inp->rc.y2=y2;
+}
+
+#pragma inline
+void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
+{
+  head->rc.x=x;
+  head->rc.y=y;
+  head->rc.x2=x2;
+  head->rc.y2=y2;
+}
 //===============================================================================================
 
 volatile CLIST *cltop;
@@ -139,7 +166,7 @@ CLIST *edcontact;
 
 //MUTEX contactlist_mtx;
 
-HEADER_DESC contactlist_menuhdr={0,0,131,21,NULL,(int)"Contacts...",0x7FFFFFFF};
+HEADER_DESC contactlist_menuhdr={0,0,NULL,NULL,NULL,(int)"Contacts...",LGP_NULL};
 int menusoftkeys[]={0,1,2};
 SOFTKEY_DESC menu_sk[]=
 {
@@ -283,6 +310,7 @@ void create_contactlist_menu(void)
     i++;
   }
   if (!i) return; //Нечего создавать
+  patch_rect(&contactlist_menuhdr.rc,0,0,ScreenW()-1,HeaderH());
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 }
 
@@ -709,15 +737,17 @@ ProcessPacket(TPKT *p)
 //===============================================================================================
 void method0(MAIN_GUI *data)
 {
-  DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,
+  int scr_w=ScreenW();
+  int scr_h=ScreenH();
+  DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
   wsprintf(data->ws1,"State: %d, RXstate: %d\n%t",connect_state,RXstate,logmsg);
-  DrawString(data->ws1,3,3,ScreenW()-4,ScreenH()-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,"Exit");
-  DrawString(data->ws2,(ScreenW()>>2)*3,ScreenH()-4-14,ScreenW()-4,ScreenH()-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,(scr_w>>2)*3,scr_h-4-14,scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,cltop?"CList":empty_str);
-  DrawString(data->ws2,3,ScreenH()-4-14,(ScreenW()>>2),ScreenH()-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,3,scr_h-4-14,(scr_w>>2),scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -804,13 +834,14 @@ const void * const gui_methods[11]={
   0
 };
 
-const RECT Canvas={0,0,131,175};
+const RECT Canvas={0,0,0,0};
 
 void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
   MAIN_CSM*csm=(MAIN_CSM*)data;
   zeromem(main_gui,sizeof(MAIN_GUI));
+  patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas);
   main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods;
@@ -1377,7 +1408,7 @@ void edchat_ghook(GUI *data, int cmd)
   }
   if (cmd==7)
   {
-    SetSoftKey(data,&sk,0);
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
     if (edchat_toitem)
     {
       EDIT_SetFocus(data,edchat_toitem);
@@ -1395,7 +1426,7 @@ void edchat_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC edchat_hdr={0,0,131,21,NULL,0,0x7FFFFFFF};
+HEADER_DESC edchat_hdr={0,0,NULL,NULL,NULL,0,LGP_NULL};
 
 INPUTDIA_DESC edchat_desc=
 {
@@ -1405,7 +1436,7 @@ INPUTDIA_DESC edchat_desc=
   (void *)edchat_locret,
   0,
   &menu_skt,
-  {0,22,131,153},
+  {0,NULL,NULL,NULL},
   4,
   100,
   101,
@@ -1437,9 +1468,10 @@ void CreateEditChat(CLIST *t)
   
   edcontact=t;
   edchat_toitem=0;
-  
+
   edchat_hdr.lgp_id=(int)t->name;
   edchat_hdr.icon=(int *)S_ICONS+GetIconIndex(t);
+
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
@@ -1479,6 +1511,13 @@ void CreateEditChat(CLIST *t)
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
   edchat_answeritem=edchat_toitem;
+  
+  int scr_w=ScreenW();
+  int scr_h=ScreenH();
+  int head_h=HeaderH();
+  
+  patch_header(&edchat_hdr,0,0,scr_w-1,head_h);
+  patch_input(&edchat_desc,0,head_h+1,scr_w-1,scr_h-SoftkeyH()-1);
   edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,0);
 }
 
@@ -1590,12 +1629,12 @@ void ecmenu_ghook(void *data, int cmd)
 
 MENUITEM_DESC ecmenu_ITEMS[6]=
 {
-  {NULL,(int)"Get short info",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Add/rename",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Send Auth Req",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Send Auth Grant",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Open logfile",0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)"Clear log",0x7FFFFFFF,0,NULL,0,0x59D}
+  {NULL,(int)"Get short info",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Add/rename",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Send Auth Req",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Send Auth Grant",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Open logfile",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Clear log",LGP_NULL,0,NULL,0,0x59D}
 };
 
 void *ecmenu_HNDLS[6]=
@@ -1610,7 +1649,7 @@ void *ecmenu_HNDLS[6]=
 
 char ecm_contactname[64];
 
-HEADER_DESC ecmenu_HDR={0,0,131,21,NULL,(int)ecm_contactname,0x7FFFFFFF};
+HEADER_DESC ecmenu_HDR={0,0,NULL,NULL,NULL,(int)ecm_contactname,LGP_NULL};
 
 MENU_DESC ecmenu_STRUCT=
 {
@@ -1637,6 +1676,7 @@ void ec_menu(void)
     {
       sprintf(ecm_contactname,"%u",t->uin);
     }
+    patch_header(&ecmenu_HDR,0,0,ScreenW()-1,HeaderH());
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,6,0,0);
   }
 }
@@ -1695,11 +1735,11 @@ void anac_ghook(GUI *data, int cmd)
   }
   if (cmd==7)
   {
-    SetSoftKey(data,&sk,0);
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
   }
 }
 
-HEADER_DESC anac_hdr={0,0,131,21,NULL,(int)"Add/Rename",0x7FFFFFFF};
+HEADER_DESC anac_hdr={0,0,NULL,NULL,NULL,(int)"Add/Rename",LGP_NULL};
 
 INPUTDIA_DESC anac_desc=
 {
@@ -1709,7 +1749,7 @@ INPUTDIA_DESC anac_desc=
   (void *)anac_locret,
   0,
   &menu_skt,
-  {0,22,131,153},
+  {0,NULL,NULL,NULL},
   4,
   100,
   101,
@@ -1741,6 +1781,10 @@ void AskNickAndAddContact(void)
   wsprintf(ews,percent_t,edcontact->name);
   ConstructEditControl(&ec,3,0x40,ews,63);
   AddEditControlToEditQend(eq,&ec,ma);
+  int scr_w=ScreenW();
+  int head_h=HeaderH();
+  patch_header(&anac_hdr,0,0,scr_w-1,head_h);
+  patch_input(&anac_desc,0,head_h+1,scr_w-1,ScreenH()-SoftkeyH()-1);
   CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,0);
   FreeWS(ews);
 }
