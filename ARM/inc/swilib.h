@@ -1754,32 +1754,7 @@ __swi __arm int inflateEnd (z_streamp strm);
 //thumb
 //pattern=10,B5,04,1C,??,D0,??,??,00,28,??,D0,??,??,00,2A,??,D1
 
-<<<<<<< .mine
-#pragma swi_number=0x01A2
-__swi __arm int ActivateDialUpProfile(unsigned int cep_id,int profile_num);
-//thumb
-//pattern=??,B5,??,B0,00,24,01,20,??,46,??,??,??,??,??,??,??,??,00,28,??,D0,01,21
 
-#pragma swi_number=0x01A3
-__swi __arm int GetCurrentGPRSProfile(void);
-//arm
-//pattern=10,40,2D,E9,??,??,??,E5,??,??,??,E1,19,00,50,E3,??,??,??,3A,01,00,A0,E3
-
-#pragma swi_number=0x01A4
-__swi __arm int GetDisconnectTime(void);
-//arm
-//pattern=??,??,??,E5,??,??,??,E1,FA,0F,50,E3,??,??,??,8A,0A,00,50,E3,??,??,??,2A
-
-#pragma swi_number=0x01A5
-__swi __arm void RegisterCepIdForCurProfile(unsigned int cep_id,int profile_num,unsigned int unk);
-//thumb
-//pattern=03,1C,??,??,03,60,02,71,C1,80,70,47
-
-#pragma swi_number=0x01A6
-__swi __arm int IsTimerProc(GBSTMR *);
-//arm
-//pattern=10,40,2D,E9,00,40,A0,E1,??,??,??,??,01,00,50,E3,??,??,??,1A,04,00,A0,E1,??,??,??,??,01,00,50,E3
-=======
 #pragma swi_number=0x01A2
 __swi __arm int ActivateDialUpProfile(unsigned int cep_id,int profile_num);
 //thumb
