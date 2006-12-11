@@ -1,5 +1,8 @@
 #include "..\inc\swilib.h"
 
+extern long  strtol (const char *nptr,char **endptr,int base);
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
 #include "..\inc\cfg_items.h"
 
 int icon[]={0x58,0};
