@@ -446,7 +446,7 @@ int main(const char *elf_name, const char *fname)
   int f;
   unsigned int ul;
   strncpy(cfg_name,fname,255);
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     size_cfg=lseek(f,0,S_END,&ul,&ul);
     lseek(f,0,S_SET,&ul,&ul);
