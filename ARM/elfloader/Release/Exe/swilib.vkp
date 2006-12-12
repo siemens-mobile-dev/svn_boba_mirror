@@ -287,6 +287,12 @@
 067C: 0xA0132319 ; 19F: __thumb int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
 0680: 0xA013244F ; 1A0: __thumb int inflate (z_streamp strm, int flush);
 0684: 0xA013328B ; 1A1: __thumb int inflateEnd (z_streamp strm);
+;688:              ; 1A2: int ActivateDialUpProfile(unsigned int cep_id,int profile_num)
+;68C:              ; 1A3: int GetCurrentGPRSProfile(void)
+;690:              ; 1A4: int GetDisconnectTime(void)
+;694:              ; 1A5: void RegisterCepIdForCurProfile(unsigned int cep_id,int profile_num,unsigned int unk)
+0698: 0xA0093388   ; 1A6: int IsTimerProc(GBSTMR *)
+069C: 0xA095A435   ; 1A7: char* Get_CC_NC()
 
 #pragma disable old_equal_ff
 +0
