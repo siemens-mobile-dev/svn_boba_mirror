@@ -2711,6 +2711,8 @@ int main(char *exename, char *fname)
     }
   }
   UpdateCSMname();
+  LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);
+  UnlockSched();
   return 0;
 }
