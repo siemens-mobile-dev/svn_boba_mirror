@@ -17,7 +17,7 @@ typedef int jmp_buf[11];
 #include "png.h"
 
 //Если S75, расскоментировать сл. строку
-//#define NEWSGOLD
+#define NEWSGOLD
 
 #ifdef NEWSGOLD
 
