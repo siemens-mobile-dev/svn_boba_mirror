@@ -4,17 +4,29 @@
 #define RECONNECT_TIME (216*30)
 
 CSM_DESC icsmd;
-extern const int ENA_GPRSD;
+
 
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
 
+
+#ifdef NEWSGOLD
 char binary_profile[0x204];
+extern const int ENA_GPRSD;
+NAP_PARAM_CONT *nap_container;
+#define DEFAULT_DISK "4"
+#else
+#define LINKMANAGER 0x40DD
+#define LMAN_DISCONNECT_REQ 0x800C
+#define LMAN_CONNECT_REQ 0x800A
+#define DEFAULT_DISK "0"
+#endif
+
 /*
 Del by Kibab - бинарные профили конфигурируются
 */
 
-NAP_PARAM_CONT *nap_container;
+
 
 GBSTMR mytmr;
 void reconnect(void)
@@ -23,6 +35,7 @@ void reconnect(void)
   SUBPROC((void *)do_connect);
 }
 
+#ifdef NEWSGOLD
 void do_connect(void)
 {
   REGSOCKCEPID_DATA rsc;
@@ -63,6 +76,19 @@ void do_connect(void)
   RequestLMANConnect(&lmd);
   //  GBS_StartTimerProc(&mytmr,RECONNECT_TIME*2,reconnect);
 }
+#else
+void do_connect(void)
+{
+  unsigned int cur_profile;
+  unsigned int cur_cepid;
+  unsigned int i;
+  cur_cepid=GBS_GetCurCepid();
+  cur_profile=GetCurrentGPRSProfile();
+  i=ActivateDialUpProfile(cur_cepid,cur_profile);
+  RegisterCepIdForCurProfile(cur_cepid,cur_profile,i);
+  GBS_SendMessage(LINKMANAGER,LMAN_CONNECT_REQ,0,0x80,0xFFFD);
+}
+#endif
 
 void LogWriter(const char *s)
 {
@@ -70,7 +96,7 @@ void LogWriter(const char *s)
   TDate d;
   char ss[100];
   unsigned int ul;
-  int f=fopen("4:\\ZBin\\etc\\GprsD.log",A_ReadWrite+A_Create+A_Append,P_READ+P_WRITE,&ul);
+  int f=fopen(DEFAULT_DISK":\\ZBin\\etc\\GprsD.log",A_ReadWrite+A_Create+A_Append,P_READ+P_WRITE,&ul);
   if (f!=-1)
   {
     GetDateTime(&d,&t);
@@ -132,7 +158,6 @@ int main()
   icsmd.onClose=MyIDLECSM_onClose;
   icsm->constr=&icsmd;
   UnlockSched();
-  InitConfig(); // ADDED BY Kibab
   SUBPROC((void*)do_connect);
   return 0;
 }
