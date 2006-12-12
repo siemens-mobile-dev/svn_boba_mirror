@@ -3,6 +3,23 @@
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
+{
+  inp->rc.x=x;
+  inp->rc.y=y;
+  inp->rc.x2=x2;
+  inp->rc.y2=y2;
+}
+
+#pragma inline
+void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
+{
+  head->rc.x=x;
+  head->rc.y=y;
+  head->rc.x2=x2;
+  head->rc.y2=y2;
+}
 #include "..\inc\cfg_items.h"
 
 int icon[]={0x58,0};
@@ -148,7 +165,7 @@ void ed1_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Edit Config",0x7FFFFFFF};
+HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)"Edit Config",LGP_NULL};
 
 INPUTDIA_DESC ed1_desc=
 {
@@ -158,7 +175,7 @@ INPUTDIA_DESC ed1_desc=
   (void *)ed1_locret,
   0,
   &menu_skt,
-  {0,22,131,153},
+  {0,0,0,0},
   4,
   100,
   101,
@@ -466,6 +483,7 @@ int create_ed(void)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
+  int scr_w,head_h;
 
   char *p=cfg;
   int n=size_cfg;
@@ -564,5 +582,9 @@ int create_ed(void)
     total_items++;
   }
 L_ENDCONSTR:
+  scr_w=ScreenW();
+  head_h=HeaderH();
+  patch_header(&ed1_hdr,0,0,scr_w-1,head_h);
+  patch_input(&ed1_desc,0,head_h+1,scr_w-1,ScreenH()-SoftkeyH()-1);
   return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
 }
