@@ -1785,3 +1785,57 @@ __swi __arm int IsTimerProc(GBSTMR *);
 __swi __arm char* Get_CC_NC();
 //thumb
 //pattern=??,B5,??,??,??,??,??,4C,07,34,??,??,??,??,??,1C,??,BD
+
+#pragma swi_number=0x1A8
+__swi __arm png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
+                                                 png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,
+                                                 png_malloc_ptr malloc_fn, png_free_ptr free_fn);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1A9
+__swi __arm void png_set_read_fn(png_structp png_ptr, png_voidp io_ptr, png_rw_ptr read_data_fn);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1AA
+__swi __arm void png_read_update_info(png_structp png_ptr,void *info_ptr);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1AB
+__swi __arm void png_set_palette_to_rgb(png_structp png_ptr);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1AC
+__swi __arm png_uint_32 png_get_valid(png_structp png_ptr,png_infop info_ptr, png_uint_32 flag);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1AD
+__swi __arm void png_set_tRNS_to_alpha(png_structp png_ptr);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1AE
+__swi __arm void png_set_filler(png_structp png_ptr,png_uint_32 filler, int flags);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1AF
+__swi __arm void png_set_strip_16(png_structp png_ptr);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1B0
+__swi __arm void png_set_packing(png_structp png_ptr);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1B1
+__swi __arm void png_set_gray_to_rgb(png_structp png_ptr);
+//thumb
+//pattern=
+
+
