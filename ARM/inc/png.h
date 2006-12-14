@@ -1430,10 +1430,10 @@ extern PNG_EXPORT(int,png_reset_zstream) PNGARG((png_structp png_ptr));
 
 /* New functions added in libpng-1.0.2 (not enabled by default until 1.2.0) */
 #ifdef PNG_USER_MEM_SUPPORTED
-extern PNG_EXPORT(png_structp,png_create_read_struct_2)
-   PNGARG((png_const_charp user_png_ver, png_voidp error_ptr,
-   png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,
-   png_malloc_ptr malloc_fn, png_free_ptr free_fn));
+//extern PNG_EXPORT(png_structp,png_create_read_struct_2)
+//   PNGARG((png_const_charp user_png_ver, png_voidp error_ptr,
+//   png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,
+//   png_malloc_ptr malloc_fn, png_free_ptr free_fn));
 extern PNG_EXPORT(png_structp,png_create_write_struct_2)
    PNGARG((png_const_charp user_png_ver, png_voidp error_ptr,
    png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,
@@ -1509,8 +1509,8 @@ extern PNG_EXPORT(void,png_set_expand) PNGARG((png_structp png_ptr));
 extern PNG_EXPORT(void,png_set_expand_gray_1_2_4_to_8) PNGARG((png_structp
   png_ptr));
 #endif
-extern PNG_EXPORT(void,png_set_palette_to_rgb) PNGARG((png_structp png_ptr));
-extern PNG_EXPORT(void,png_set_tRNS_to_alpha) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(void,png_set_palette_to_rgb) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(void,png_set_tRNS_to_alpha) PNGARG((png_structp png_ptr));
 #if defined(PNG_1_0_X) || defined (PNG_1_2_X)
 /* Deprecated */
 extern PNG_EXPORT(void,png_set_gray_1_2_4_to_8) PNGARG((png_structp png_ptr));
@@ -1524,7 +1524,7 @@ extern PNG_EXPORT(void,png_set_bgr) PNGARG((png_structp png_ptr));
 
 #if defined(PNG_READ_GRAY_TO_RGB_SUPPORTED)
 /* Expand the grayscale to 24-bit RGB if necessary. */
-extern PNG_EXPORT(void,png_set_gray_to_rgb) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(void,png_set_gray_to_rgb) PNGARG((png_structp png_ptr));
 #endif
 
 #if defined(PNG_READ_RGB_TO_GRAY_SUPPORTED)
@@ -1558,8 +1558,8 @@ extern PNG_EXPORT(void,png_set_invert_alpha) PNGARG((png_structp png_ptr));
 
 #if defined(PNG_READ_FILLER_SUPPORTED) || defined(PNG_WRITE_FILLER_SUPPORTED)
 /* Add a filler byte to 8-bit Gray or 24-bit RGB images. */
-extern PNG_EXPORT(void,png_set_filler) PNGARG((png_structp png_ptr,
-   png_uint_32 filler, int flags));
+//extern PNG_EXPORT(void,png_set_filler) PNGARG((png_structp png_ptr,
+//   png_uint_32 filler, int flags));
 /* The values of the PNG_FILLER_ defines should NOT be changed */
 #define PNG_FILLER_BEFORE 0
 #define PNG_FILLER_AFTER 1
@@ -1577,7 +1577,7 @@ extern PNG_EXPORT(void,png_set_swap) PNGARG((png_structp png_ptr));
 
 #if defined(PNG_READ_PACK_SUPPORTED) || defined(PNG_WRITE_PACK_SUPPORTED)
 /* Use 1 byte per pixel in 1, 2, or 4-bit depth files. */
-extern PNG_EXPORT(void,png_set_packing) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(void,png_set_packing) PNGARG((png_structp png_ptr));
 #endif
 
 #if defined(PNG_READ_PACKSWAP_SUPPORTED) || defined(PNG_WRITE_PACKSWAP_SUPPORTED)
@@ -1617,7 +1617,7 @@ extern PNG_EXPORT(void,png_set_background) PNGARG((png_structp png_ptr,
 
 #if defined(PNG_READ_16_TO_8_SUPPORTED)
 /* strip the second byte of information from a 16-bit depth file. */
-extern PNG_EXPORT(void,png_set_strip_16) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(void,png_set_strip_16) PNGARG((png_structp png_ptr));
 #endif
 
 #if defined(PNG_READ_DITHER_SUPPORTED)
@@ -2052,8 +2052,8 @@ extern PNG_EXPORT(void,png_chunk_warning) PNGARG((png_structp png_ptr,
  * png_info_struct.
  */
 /* Returns "flag" if chunk data is valid in info_ptr. */
-extern PNG_EXPORT(png_uint_32,png_get_valid) PNGARG((png_structp png_ptr,
-png_infop info_ptr, png_uint_32 flag));
+//extern PNG_EXPORT(png_uint_32,png_get_valid) PNGARG((png_structp png_ptr,
+//png_infop info_ptr, png_uint_32 flag));
 
 /* Returns number of bytes needed to hold a transformed row. */
 //extern PNG_EXPORT(png_uint_32,png_get_rowbytes) PNGARG((png_structp png_ptr,
