@@ -1,12 +1,20 @@
-#include "../inc/swilib.h"
+
+#include "pngext.h"
 
 #define DEFAULT_FOLDER "0:\\Zbin\\img\\"
 #define CACHE_PNG 50
 
-extern void kill_data(void *p, void (*func_p)(void *));
-extern void(*OldOnClose)(void *);
-extern void(*OldOnCreate)(void *);
-extern IMGHDR* create_imghdr(const char* fname);
+
+
+
+#ifdef SL65
+#define OLD_CSM_SIZE 0xEC
+#endif
+
+#ifdef CX70 
+#define OLD_CSM_SIZE 0xC4
+#endif
+
 
 typedef struct
 {
@@ -17,7 +25,7 @@ typedef struct
 typedef struct
 {
   CSM_RAM csm;
-  char dummy[0xC4-sizeof(CSM_RAM)];
+  char dummy[OLD_CSM_SIZE-sizeof(CSM_RAM)];
   int f;
   unsigned int errno;
   PNG_PICS * png;

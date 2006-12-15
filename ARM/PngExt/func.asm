@@ -1,3 +1,5 @@
+
+
 defadr	MACRO	a,b
 	PUBLIC	a
 a	EQU	b
@@ -14,22 +16,31 @@ kill_data
         RSEG	CODE:CODE
 
 	PUBLIC	OldOnClose
-OldOnClose:
-	DCD	0xA17143F0+1
-	
-	PUBLIC	OldOnCreate
-OldOnCreate:
-	DCD	0xA171422C+1
-        
+        PUBLIC	OldOnCreate
        
+#ifdef CX70
+OldOnClose:
+	DCD	0xA0FD8698
+OldOnCreate:
+	DCD	0xA0FD8754
+#endif       
+#ifdef SL65
+OldOnClose:
+	DCD	0xA0FD8698
+OldOnCreate:
+	DCD	0xA0FD8754        
+#endif
+	
+
         
-        RSEG	PATCH_GET_PIT:CODE:ROOT
+        
+        RSEG	PATCH_GET_PIT:CODE
 	CODE16
         LDR      R1, =Patch_PIT
         BX       R1
         
         EXTERN	PatchGetPIT
-        RSEG	CODE:CODE:ROOT  
+        RSEG	CODE:CODE 
         CODE32
 Patch_PIT:
 
@@ -42,14 +53,11 @@ Patch_PIT:
         ADD     SP,SP,#8
         LDMFD   SP!,{R4,PC}
         
-OldPit: MOV     R1, #0x600
-        ADD     R1, R1, #0x40
-        ADD     R0, R0, R1
+OldPit: ADD     R0, R0, #0x640
         LDR     R0, [R0,#0xC]
         LDRH    R0, [R0,#0x14]
         BX      LR
         
-     defadr  png_set_gray_to_rgb,0xA15EDB40+1
 
         
 	END

@@ -1,6 +1,4 @@
-#define PNG_USER_MEM_SUPPORTED
-
-#include "..\inc\swilib.h"
+#include "pngext.h"
 
 #define number 4
 
