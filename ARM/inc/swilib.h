@@ -423,7 +423,8 @@ typedef struct{
   char unk2[135];
   char file_name[655];
 #else
-  char unk1[20];
+  char unk1[16];
+  unsigned int create_date_time; 
   unsigned int file_size;
   char unk2[16];
   char folder_name[129];
@@ -1869,7 +1870,6 @@ __swi __arm void png_set_strip_16(png_structp png_ptr);
 //pattern_SGOLD=80,30,01,6B,01,22,92,02,11,43,01,63,70,47
 //arm
 //pattern=B0,10,90,E5,40,1E,81,E3,B0,10,80,E5,1E,FF,2F,E1
-
 
 #pragma swi_number=0x1B0
 __swi __arm void png_set_packing(png_structp png_ptr);
