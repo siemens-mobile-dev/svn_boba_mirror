@@ -423,7 +423,8 @@ typedef struct{
   char unk2[135];
   char file_name[655];
 #else
-  char unk1[16];
+  char unk1[14];
+  unsigned short atributes;
   unsigned int create_date_time; 
   unsigned int file_size;
   char unk2[16];
@@ -1226,7 +1227,9 @@ __swi	__arm	void  setColor (int a,int r,int g,int b,void *dest);
 //pattern=??,B5,??,9C,??,2C,??,D0,??,70,??,70,??,70,??,70,??,BD
 
 #pragma swi_number=0x0132
-__swi	__arm	void  deleted();
+__swi __arm void *memmove(void *dest,const void *source,int cnt);
+//thumb
+//pattern=01,30,40,E0,02,00,53,E1,??,??,??,2A,03,00,10,E3,03,00,11,03,??,??,??,0A
 
 #pragma swi_number=0x0133
 __swi	__arm	void  StoreXYWHtoRECT (void *RECT,int x,int y,int w,int h);
@@ -1462,7 +1465,11 @@ __swi __arm void png_read_end(png_structp png_ptr, png_infop info_ptr);
 //pattern_SGOLD=??,B5,04,1C,0F,1C,00,21,??,??,??,??,??,??,26,1C,FF,36,5D,36
 
 #pragma swi_number=0x015E
-__swi __arm void deleted();
+__swi __arm png_voidp png_get_io_ptr(png_structp png_ptr);
+//arm
+//pattern=94,00,90,E5,1E,FF,2F,E1
+//thumb
+//pattern_SGOLD=80,30,40,69,70,47
 
 #pragma swi_number=0x015F
 __swi __arm png_uint_32 png_get_rowbytes(png_structp png_ptr,png_infop info_ptr);
