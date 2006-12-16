@@ -6,15 +6,17 @@
 
 
 
+#ifdef CX70 
+#define OLD_CSM_SIZE 0xC4
+#endif
 
 #ifdef SL65
 #define OLD_CSM_SIZE 0xEC
 #endif
 
-#ifdef CX70 
-#define OLD_CSM_SIZE 0xC4
+#ifdef M75 
+#define OLD_CSM_SIZE 0xCC
 #endif
-
 
 typedef struct
 {

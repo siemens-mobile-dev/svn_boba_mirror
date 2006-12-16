@@ -30,7 +30,13 @@ OldOnClose:
 OldOnCreate:
 	DCD	0xA0FD8754        
 #endif
-	
+#ifdef M75
+OldOnClose:
+	DCD	0xA0FD8698
+OldOnCreate:
+	DCD	0xA0FD8754        
+#endif
+
 
         
         
@@ -52,11 +58,18 @@ Patch_PIT:
         BEQ     OldPit
         ADD     SP,SP,#8
         LDMFD   SP!,{R4,PC}
-        
+#ifndef M75        
 OldPit: ADD     R0, R0, #0x640
         LDR     R0, [R0,#0xC]
         LDRH    R0, [R0,#0x14]
         BX      LR
+#else
+OldPit: ADD     R0, R0, #0x640
+        LDR     R0, [R0,#0x30]
+        LDRH    R0, [R0,#0x14]
+        BX      LR
+#endif
+
         
 
         

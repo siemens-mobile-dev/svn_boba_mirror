@@ -1,9 +1,5 @@
 #include "../inc/swilib.h"
 
-#ifndef  NEWSGOLD
-#define SL65
-//#define CX70
-#endif
 
 extern void kill_data(void *p, void (*func_p)(void *));
 extern void(*OldOnClose)(void *);
