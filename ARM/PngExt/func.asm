@@ -7,9 +7,9 @@ a	EQU	b
         
         
 	RSEG	CODE:CODE
-	PUBLIC	kill_data
+	PUBLIC	BX_R1
 	CODE32
-kill_data
+BX_R1:
 	BX	R1      
         
         
@@ -39,7 +39,6 @@ OldOnCreate:
 
 
         
-        
         RSEG	PATCH_GET_PIT:CODE
 	CODE16
         LDR      R1, =Patch_PIT
@@ -59,13 +58,11 @@ Patch_PIT:
         ADD     SP,SP,#8
         LDMFD   SP!,{R4,PC}
 #ifndef M75        
-OldPit: ADD     R0, R0, #0x640
-        LDR     R0, [R0,#0xC]
+OldPit: LDR     R0, [R0,#0x64C]
         LDRH    R0, [R0,#0x14]
         BX      LR
 #else
-OldPit: ADD     R0, R0, #0x640
-        LDR     R0, [R0,#0x30]
+OldPit: LDR     R0, [R0,#0x670]
         LDRH    R0, [R0,#0x14]
         BX      LR
 #endif

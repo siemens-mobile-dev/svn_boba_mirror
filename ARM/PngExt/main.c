@@ -5,7 +5,6 @@
 #define CACHE_PNG 50
 
 
-
 #ifdef CX70 
 #define OLD_CSM_SIZE 0xC4
 #endif
@@ -20,17 +19,17 @@
 
 typedef struct
 {
+  void *next;
   char *pngname;
   IMGHDR * img;
-}PNG_PICS;
-  
+}PNGLIST;
+
+
 typedef struct
 {
   CSM_RAM csm;
   char dummy[OLD_CSM_SIZE-sizeof(CSM_RAM)];
-  int f;
-  unsigned int errno;
-  PNG_PICS * png;
+  PNGLIST * PNGTop;
 }IDLECSM;
 
 #pragma inline=forced
@@ -40,23 +39,6 @@ int toupper(int c)
   return(c);
 }
 
-int get_file_handler(void)
-{
-  IDLECSM *icsm=(IDLECSM *)FindCSMbyID(CSM_root()->idle_id);
-  return (icsm->f);
-}
-
-void set_file_handler(int f)
-{
-  IDLECSM *icsm=(IDLECSM *)FindCSMbyID(CSM_root()->idle_id);
-  icsm->f=f;
-}
-
-unsigned int* get_errno(void)
-{
-  IDLECSM *icsm=(IDLECSM *)FindCSMbyID(CSM_root()->idle_id);
-  return (&(icsm->errno));
-}
 
 int strcmp_nocase(const char *s1,const char *s2)
 {
@@ -72,64 +54,103 @@ int is_file_exist(const char* fname)
   FSTATS fs;
   return (GetFileStats(fname,&fs,&err));
 }
-int get_number_of_png(PNG_PICS*p)
+
+PNGLIST*getpltop(void)
 {
+  IDLECSM *icsm;
+  if (!(icsm=(IDLECSM *)FindCSMbyID(CSM_root()->idle_id))) return 0;
+  PNGLIST *pltop=icsm->PNGTop;
+  return (pltop);
+}
+
+void setpltop(PNGLIST*pltop)
+{
+  IDLECSM *icsm=(IDLECSM *)FindCSMbyID(CSM_root()->idle_id);
+  icsm->PNGTop=pltop;
+}
+     
+                 
+void free_png_list(PNGLIST *pl)
+{
+  mfree(pl->img->bitmap);
+  mfree(pl->img);
+  mfree(pl->pngname);
+  mfree(pl);
+}
+
+PNGLIST* find_pic_by_n(int n)
+{
+  PNGLIST *pl=getpltop();
   int i=0;
-  while (p[i].pngname&&i<CACHE_PNG)
+  while(i!=n)
   {
+    pl=pl->next;
+    i++;
+  }
+  return (pl);
+}
+
+int get_number_of_png(PNGLIST *pltop)
+{
+  PNGLIST *pl=pltop;
+  int i=0;
+  while (pl&&i<CACHE_PNG)
+  {
+    pl=pl->next;
     i++;
   }
   return (i); 
 }
 
-void add_to_first(const char* fname,IMGHDR* img,PNG_PICS*p)   // Используется для добавления в начало списка новых пнг, с перемещением старых
+void add_to_first(const char* fname,IMGHDR* img)   // Используется для добавления в начало списка новых пнг, с перемещением старых
 {
-  void * buf;
+  PNGLIST *pl_top=getpltop();
+  PNGLIST* cur;
   int n;
-  n=get_number_of_png(p);
-  if (n==0) goto L_STORE;               // если до этого не было записей то просто пишем в первую
-  if ((n+1)!=CACHE_PNG) goto L_MOVE;    // если были, но для одной записи места хватит
+  n=get_number_of_png(pl_top);
   if ((n+1)==CACHE_PNG)                 // для одной не хватит
   {
-    mfree(p[n].img->bitmap);
-    mfree(p[n].img);
-    mfree(p[n].pngname);
+    free_png_list(find_pic_by_n(n));
     n--;
+    
   }
-L_MOVE:
-  buf=malloc(n*sizeof(PNG_PICS));
-  memcpy(buf,&(p[0]),n*sizeof(PNG_PICS));
-  memcpy(&(p[1]),buf,n*sizeof(PNG_PICS));
-  mfree(buf); 
-L_STORE: 
-  p[0].pngname=malloc(strlen(fname)+1);
-  strcpy(p[0].pngname,fname);
-  p[0].img=img;
-  return;
+  cur=malloc(sizeof(PNGLIST));
+  cur->pngname=malloc(strlen(fname)+1);
+  strcpy(cur->pngname,fname);
+  cur->img=img;
+  cur->next=pl_top;
+  setpltop(cur);
 }
-
 
 // Используется для перемещения в начало списка старых пнг, с перемещением
 // при перемещении нет мороки с вытеснением, так что тут все просто..
-void move_to_first(int i,PNG_PICS*p)                   
+void move_to_first(int i)                   
 {
   if (!i)  return;
-  char* buf;
-  buf=malloc((i+1)*sizeof(PNG_PICS));
-  memcpy(buf,&(p[i]),sizeof(PNG_PICS));
-  memcpy(buf+sizeof(PNG_PICS),&(p[0]),i*sizeof(PNG_PICS));
-  memcpy(&(p[0]),buf,(i+1)*sizeof(PNG_PICS));
-  mfree(buf);
+  PNGLIST *pl_top=getpltop();
+  PNGLIST *pl_prev=find_pic_by_n(i-1);
+  PNGLIST *pl_cur=find_pic_by_n(i);
+  pl_prev->next=pl_cur->next;
+  pl_cur->next=pl_top;
+  setpltop(pl_cur);
 }
 
+
+
 // Ищем пнг в кеше
-int find_png_in_cache(const char* fname,PNG_PICS*p)
+int find_png_in_cache(const char* fname)
 {
+  PNGLIST *pl=getpltop();
   int i=0;
-  while(p[i].pngname&&i<CACHE_PNG)
+  while(pl&&i<CACHE_PNG)
   {
-    if (!strcmp_nocase(p[i].pngname,fname))  return i;
-    else i++;
+    if (!strcmp_nocase(pl->pngname,fname))
+      return i;
+    else
+    {
+      pl=pl->next;
+      i++;
+    }
   }
   return -1;
 }
@@ -147,29 +168,23 @@ IMGHDR * try_to_create(const char* fname)
 
 void MyIDLECSMonCreate(IDLECSM *icsm)
 {
-  void * buf=malloc(CACHE_PNG*sizeof(PNG_PICS));
-  zeromem(buf,CACHE_PNG*sizeof(PNG_PICS));
-  icsm->png=buf;
-  kill_data(icsm,OldOnCreate);
+  icsm->PNGTop=0;
+  BX_R1(icsm,OldOnCreate);
   
 }
 
 void MyIDLECSMonClose(IDLECSM *icsm)
 {
-  mfree(icsm->png);  
-  kill_data(icsm,OldOnClose);
+  BX_R1(icsm,OldOnClose);
 }
 
 IMGHDR* PatchGetPIT(unsigned int pic)
 {
-  IDLECSM *icsm;
   int i;
   IMGHDR * img;
   int idle_id=CSM_root()->idle_id;
   if (!idle_id) return 0;
-  if (!(icsm=(IDLECSM *)FindCSMbyID(idle_id))) return 0;
-  PNG_PICS*p;
-  p=icsm->png;
+  if (!(IDLECSM *)FindCSMbyID(idle_id)) return 0;
   char fname[256];
   if ((pic>>28)==0xA)
   {
@@ -179,16 +194,16 @@ IMGHDR* PatchGetPIT(unsigned int pic)
   {
     sprintf(fname,DEFAULT_FOLDER"%u.png",pic);
   } 
-  if ((i=find_png_in_cache(fname,p))==-1)
+  if ((i=find_png_in_cache(fname))==-1)
   {
     if (!(img=try_to_create(fname))) return 0;
-    add_to_first(fname,img,p);
+    add_to_first(fname,img);
   }
   else
   {
-    move_to_first(i,p);
+    move_to_first(i);
   }
-  return (p[0].img);   
+  return (getpltop()->img);   
 }
 
 //Патчи

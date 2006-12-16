@@ -3,10 +3,6 @@
 #define number 4
 
 
-extern int get_file_handler(void);
-extern unsigned int* get_errno(void);
-extern void set_file_handler(int f);
-
 void* xmalloc(int x,int n)
 {
   return malloc(n);
@@ -17,25 +13,31 @@ void xmfree(int x,void* n)
   mfree(n);
 }
 
+typedef struct
+{
+  int file_handler;
+  unsigned int errno;
+}READ_FILE;
 
  
 void read_data_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-  fread(get_file_handler(), data, length, get_errno());
+  READ_FILE*read;
+  read=png_get_io_ptr(png_ptr);
+  fread(read->file_handler, data, length, &read->errno);
 }
 
 
 
 IMGHDR* create_imghdr(const char* fname)
 {
-  int i;
+  READ_FILE read;
   char buf[number];
-  if ((i=fopen(fname, A_ReadOnly+A_BIN, P_READ, get_errno()))==-1) return 0;
-  set_file_handler(i);
+  if ((read.file_handler=fopen(fname, A_ReadOnly+A_BIN, P_READ, &read.errno))==-1) return 0;
 
-  if (fread(get_file_handler(), &buf, number, get_errno())!=number)
+  if (fread(read.file_handler, &buf, number, &read.errno)!=number)
   {
-    fclose(get_file_handler(), get_errno());
+    fclose(read.file_handler, &read.errno);
     return 0;
   }
   
@@ -62,11 +64,11 @@ IMGHDR* create_imghdr(const char* fname)
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-    fclose(get_file_handler(), get_errno());
+    fclose(read.file_handler, &read.errno);
     return (0);
   }
   
-  png_set_read_fn(png_ptr, 0, read_data_fn);
+  png_set_read_fn(png_ptr, &read, read_data_fn);
   
   png_set_sig_bytes(png_ptr, number);
   
@@ -122,7 +124,7 @@ IMGHDR* create_imghdr(const char* fname)
   png_read_end(png_ptr, end_info);
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
   
-  fclose(get_file_handler(), get_errno());
+  fclose(read.file_handler, &read.errno);
   mfree(row);
   
   return (img_h);
