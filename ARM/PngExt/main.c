@@ -17,6 +17,10 @@
 #define OLD_CSM_SIZE 0xCC
 #endif
 
+#ifdef NEWSGOLD 
+#define OLD_CSM_SIZE 0x118
+#endif
+
 typedef struct
 {
   void *next;
