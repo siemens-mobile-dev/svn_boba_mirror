@@ -1,4 +1,6 @@
-//Release 11.12.2006
+//Release 17.12.2006
+//Если S75/SL75, добавить Project/Options/C C++ Compiler/Preprocessor/Defined symbols: NEWSGOLD
+//Eсли EL71 добавить предыдущий дефайн и ELKA
 
 typedef unsigned int size_t;
 typedef unsigned long time_t;
@@ -16,8 +18,6 @@ typedef int jmp_buf[11];
 
 #include "png.h"
 
-//Если S75, расскоментировать сл. строку
-//#define NEWSGOLD
 
 #ifdef NEWSGOLD
 
@@ -361,8 +361,13 @@ typedef struct
 
 typedef struct
 {
+#ifdef ELKA
+  unsigned short w;
+  unsigned short h;
+#else
   char w;
   char h;
+#endif
   char bpnum; //For BW=1, 8bit=5, 16bit=8, 0x80 - packed
   char zero;
   char *bitmap;
@@ -876,6 +881,12 @@ __swi __arm int ExecuteFile (WSHDR *filepath, WSHDR *mimetype, void *param);
 //thumb
 //pattern=70,B5,16,1C,0D,1C,04,1C,00,28,18,D0,00,2D,03,D1,20,1C,??,??,??,??,07,E0,28,1C,??,??,??,??,00,28,02,D1,28,1C,??,??,??,??,??,??,??,??,00,28,06,D0,02,68,33,1C,21,1C,00,6A,??,??,??,??,70,BD,00,20,70,BD
 
+#pragma swi_number=149
+__swi __arm int UnRegExplorerExt(REGEXPLEXT const *);
+//thumb
+//pattern = F8,B5,??,4E,05,1C,00,24,37,1F,1D,E0,28,20,60,43,81,19,49,68,6A,68,91,42,15,D1,30,58,29,68,??,??,??,??,00,28,0F,D1,38,68,01,38,38,60,08,E0,28,20,60,43,80,19,01,1C,28,31,28,22,??,??,??,??,01,34,38,68,84,42,F3,DB,01,34,38,68,84,42,DE,DB,F8,BD
+
+
 #pragma swi_number=163
 __swi __arm void ws_2str(WSHDR *ws, char *str, unsigned int size);
 //arm
@@ -1228,8 +1239,9 @@ __swi	__arm	void  setColor (int a,int r,int g,int b,void *dest);
 
 #pragma swi_number=0x0132
 __swi __arm void *memmove(void *dest,const void *source,int cnt);
-//thumb
+//arm
 //pattern=01,30,40,E0,02,00,53,E1,??,??,??,2A,03,00,10,E3,03,00,11,03,??,??,??,0A
+
 
 #pragma swi_number=0x0133
 __swi	__arm	void  StoreXYWHtoRECT (void *RECT,int x,int y,int w,int h);
@@ -1824,71 +1836,70 @@ __swi __arm char* Get_CC_NC();
 __swi __arm png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
                                                  png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,
                                                  png_malloc_ptr malloc_fn, png_free_ptr free_fn);
-//thumb
-//pattern_SGOLD=??,B5,??,??,??,??,05,1C,32,1C,01,20,??,??,??,??,??,??,??,??,04,1C,??,D1,00,20,??,??,??,BD
 //arm
 //pattern=??,??,??,E9,??,??,??,E2,??,??,??,E2,??,??,??,E8,??,??,??,E1,??,??,??,E1,??,??,??,E3,??,??,??,E1,??,??,??,E1,??,??,??,E1
+//thumb
+//pattern_SGOLD=??,B5,??,??,??,??,05,1C,32,1C,01,20,??,??,??,??,??,??,??,??,04,1C,??,D1,00,20,??,??,??,BD
 
 #pragma swi_number=0x1A9
 __swi __arm void png_set_read_fn(png_structp png_ptr, png_voidp io_ptr, png_rw_ptr read_data_fn);
-//thumb
-//pattern_SGOLD=??,B5,04,1C,80,30,41,61,02,61,C1,68,00,25,00,29
 //arm
 //pattern=??,??,??,E9,??,??,??,E5,??,??,??,E1,??,??,??,E3,??,??,??,??,??,??,??,E3,??,??,??,05,??,??,??,15,??,??,??,E5,??,??,??,E3,??,??,??,0A
+//thumb
+//pattern_SGOLD=??,B5,04,1C,80,30,41,61,02,61,C1,68,00,25,00,29
 
 #pragma swi_number=0x1AA
 __swi __arm void png_read_update_info(png_structp png_ptr,void *info_ptr);
-//thumb
-//pattern_SGOLD=??,B5,0D,1C,04,1C,80,30,C0,6A,40,06
 //arm
 //pattern=??,??,??,E9,??,??,??,E1,??,??,??,E5,??,??,??,E1,??,??,??,E3,??,??,??,1A,??,??,??,E1,??,??,??,EB,??,??,??,EA
+//thumb
+//pattern_SGOLD=??,B5,0D,1C,04,1C,80,30,C0,6A,40,06
 
 #pragma swi_number=0x1AB
 __swi __arm void png_set_palette_to_rgb(png_structp png_ptr);
-//thumb
-//pattern_SGOLD=80,30,01,6B,01,22,12,03,11,43,01,63,70,47
 //arm
 //pattern=B0,10,90,E5,40,1D,81,E3,B0,10,80,E5,1E,FF,2F,E1
+//thumb
+//pattern_SGOLD=80,30,01,6B,01,22,12,03,11,43,01,63,70,47
 
 #pragma swi_number=0x1AC
 __swi __arm png_uint_32 png_get_valid(png_structp png_ptr,png_infop info_ptr, png_uint_32 flag);
-//thumb
-//pattern_SGOLD=00,28,??,D0,00,29,??,D0,88,68,10,40,70,47
 //arm
 //pattern=??,??,??,E3,??,??,??,13,??,??,??,15,??,??,??,03,??,??,??,10,??,??,??,E1
+//thumb
+//pattern_SGOLD=00,28,??,D0,00,29,??,D0,88,68,10,40,70,47
 
 #pragma swi_number=0x1AD
 __swi __arm void png_set_tRNS_to_alpha(png_structp png_ptr);
-//thumb
-//pattern_SGOLD=80,30,01,6B,01,22,12,03,11,43,01,63,70,47
 //arm
 //pattern=B0,10,90,E5,40,1D,81,E3,B0,10,80,E5,1E,FF,2F,E1
+//thumb
+//pattern_SGOLD=80,30,01,6B,01,22,12,03,11,43,01,63,70,47
 
 #pragma swi_number=0x1AE
 __swi __arm void png_set_filler(png_structp png_ptr,png_uint_32 filler, int flags);
-//thumb
-//pattern_SGOLD=??,B5,03,1C,80,33,1C,6B,01,25,ED,03,2C,43
 //arm
 //pattern=??,??,??,E5,??,??,??,E2,??,??,??,E3,??,??,??,E5,??,??,??,??,??,??,??,E3,??,??,??,E1,??,??,??,E5,??,??,??,13,??,??,??,03,??,??,??,E5,??,??,??,E5
+//thumb
+//pattern_SGOLD=??,B5,03,1C,80,33,1C,6B,01,25,ED,03,2C,43
 
 #pragma swi_number=0x1AF
 __swi __arm void png_set_strip_16(png_structp png_ptr);
-//thumb
-//pattern_SGOLD=80,30,01,6B,01,22,92,02,11,43,01,63,70,47
 //arm
 //pattern=B0,10,90,E5,40,1E,81,E3,B0,10,80,E5,1E,FF,2F,E1
+//thumb
+//pattern_SGOLD=80,30,01,6B,01,22,92,02,11,43,01,63,70,47
 
 #pragma swi_number=0x1B0
 __swi __arm void png_set_packing(png_structp png_ptr);
-//thumb
-//pattern_SGOLD=01,1C,FF,31,61,31,CA,79,08,2A,??,D2,80,30
 //arm
 //pattern=??,??,??,E5,??,??,??,E3,??,??,??,35,??,??,??,33,??,??,??,35,??,??,??,33,??,??,??,35,??,??,??,E1
+//thumb
+//pattern_SGOLD=01,1C,FF,31,61,31,CA,79,08,2A,??,D2,80,30
 
 #pragma swi_number=0x1B1
 __swi __arm void png_set_gray_to_rgb(png_structp png_ptr);
-//thumb
-//pattern_SGOLD=80,30,01,6B,01,22,92,03,11,43,01,63,70,47
 //arm
 //pattern=B0,10,90,E5,40,1C,81,E3,B0,10,80,E5,1E,FF,2F,E1
-
+//thumb
+//pattern_SGOLD=80,30,01,6B,01,22,92,03,11,43,01,63,70,47
