@@ -762,32 +762,55 @@ __arm void DoUnknownFileType(WSHDR *filename)
 
 __no_init int *EXT2_AREA;
 
+#ifndef NEWSGOLD 
+__arm int *GET_EXT2_AREA(void)
+{
+  int *p;
+  if (EXT2_AREA)
+  {
+    return(EXT2_AREA);
+  }
+  p=malloc(4);
+  *p=0;
+  return (EXT2_AREA=p);
+}
+#else
 __arm int *GET_EXT2_TABLE(void)
 {
   int *p;
-  LockSched();
-  if (!(p=EXT2_AREA))
+  if (EXT2_AREA)
   {
-    *(EXT2_AREA=p=malloc(4))=0;
+    return(EXT2_AREA+1);
   }
-  p++;
-  UnlockSched();
-  return(p);
+  p=malloc(4);
+  *p=0;
+  return ((EXT2_AREA=p)+1);
 }
+#endif  
 
 __arm int *EXT2_REALLOC(void)
 {
+  int size;
+#ifdef NEWSGOLD 
+  size=sizeof(REGEXPLEXT);
+#else
+  size=0x20;
+#endif  
   int *p;
   int *p2;
   int n;
   LockSched();
+#ifdef NEWSGOLD 
   n=*(p=EXT2_AREA);
-  p2=malloc((n+1)*sizeof(REGEXPLEXT)+4);
-  memcpy(p2,p,n*sizeof(REGEXPLEXT)+4);
+#else
+  n=*(p=GET_EXT2_AREA());
+#endif    
+  p2=malloc((n+1)*size+4);
+  memcpy(p2,p,n*size+4);
   *p2=n+1;
   mfree(p);
   EXT2_AREA=p2;
-  p2+=(n*(sizeof(REGEXPLEXT)/sizeof(int)))+1;
+  p2+=(n*(size/sizeof(int)))+1;
   UnlockSched();
   return (p2);
 }

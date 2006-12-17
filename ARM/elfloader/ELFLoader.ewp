@@ -2178,11 +2178,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ELFLoader.hex</state>
+          <state>ELFLoader.a79</state>
         </option>
         <option>
           <name>OutputFormat</name>

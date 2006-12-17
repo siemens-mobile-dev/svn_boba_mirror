@@ -4,6 +4,11 @@
 	CODE32
 
 	LDR	PC,main_jumper
+        
+        #ifndef NEWSGOLD
+        RSEG	FSWI_PATCH3:DATA
+	DC8     0
+        #endif
 
 	RSEG	FSWI_PATCH2:DATA(2)
 
