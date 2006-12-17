@@ -167,7 +167,6 @@
 04C0: 0xA09710CD ; 130: __thumb void  getRGBbyPaletteAdr (void *paletteAdr,void *dest);
 04C4: 0xA09710EB ; 131: __thumb void  setColor (int a,int r,int g,int b,void *dest);
 04C8: 0xA0FC56C8 ; 132: __arm void *memmove(void *dest,const void *source,int cnt);
-04C8: 0x00000000 ; 132: __thumb void  deleted();
 04CC: 0xA0975931 ; 133: __thumb void  StoreXYWHtoRECT (void *RECT,int x,int y,int w,int h);
 04D0: 0xA0975947 ; 134: __thumb void  StoreXYXYtoRECT (void *RECT,int x,int y,int x2,int y2);
 04D4: 0xA0978233 ; 135: __thumb int  IsGuiOnTop (int id);
@@ -211,7 +210,7 @@
 056C: 0xA01192DC ; 15B: __arm png_voidp png_malloc(png_structp png_ptr, png_uint_32 size);
 0570: 0xA00E3CE0 ; 15C: __arm void png_read_image(png_structp png_ptr, png_bytepp image);
 0574: 0xA00E3D40 ; 15D: __arm void png_read_end(png_structp png_ptr, png_infop info_ptr);
-0578: 0xA00E4404 ; 15E: __arm void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
+0578: 0xA00E1E40 ; 15E: __arm png_voidp png_get_io_ptr(png_structp png_ptr);
 057C: 0xA00E22B4 ; 15F: __arm png_uint_32 png_get_rowbytes(png_structp png_ptr,png_infop info_ptr);
 0580: 0xA00E3774 ; 160: __arm png_read_row(png_structp png_ptr,png_bytep row,png_bytep dsp_row);
 0584: 0xA00E1E48 ; 161: __arm png_init_io(png_structp png_ptr, int fp);
