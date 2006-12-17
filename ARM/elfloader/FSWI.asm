@@ -50,10 +50,10 @@ thumb_jumper:
 ;
 	RSEG    LIBR:DATA(2)
 Library:
-	DC32	nullsub
-	DC32	nullsub
-	DC32	nullsub
-	DC32	nullsub
-	DC32	nullsub
+;	DC32	nullsub
+;	DC32	nullsub
+;	DC32	nullsub
+;	DC32	nullsub
+;	DC32	nullsub
 ; È ò.ä.
 	END     ;main

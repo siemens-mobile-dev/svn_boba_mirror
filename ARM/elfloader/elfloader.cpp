@@ -557,7 +557,8 @@ extern void(*OldTxtOpen)(WSHDR*, WSHDR*);
 //-----------------------------------------------------------------------
 
 #ifdef NEWSGOLD
-#define HELPER_CEPID 0x4339
+//#define HELPER_CEPID 0x4339
+#define HELPER_CEPID 0x440A
 #else
 #define HELPER_CEPID 0x4331
 #endif
