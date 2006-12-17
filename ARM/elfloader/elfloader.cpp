@@ -759,6 +759,32 @@ __arm void DoUnknownFileType(WSHDR *filename)
   FreeWS(wsmime);
 }
 
+__no_init int *EXT2_AREA;
+
+__arm int *GET_EXT2_TABLE(void)
+{
+  int *p;
+  if (EXT2_AREA)
+  {
+    return(EXT2_AREA+1);
+  }
+  p=malloc(4);
+  *p=0;
+  return ((EXT2_AREA=p)+1);
+}
+
+__arm int *EXT2_REALLOC(void)
+{
+  int *p=EXT2_AREA;
+  int *p2;
+  int n=*p;
+  p2=malloc((n+1)*sizeof(REGEXPLEXT)+4);
+  memcpy(p2,p,n*sizeof(REGEXPLEXT)+4);
+  *p2=n+1;
+  mfree(p);
+  EXT2_AREA=p2;
+  return (p2+(n*(sizeof(REGEXPLEXT)/sizeof(int)))+1);
+}
 
 #ifdef NEWSGOLD
 __thumb MyShowMSG(int p1, int p2)
@@ -796,10 +822,6 @@ __root static const int NEW_ONCLOSE @ "PATCH_ONCLOSE" = (int)MyIDLECSMonClose;
 
 #ifdef NEWSGOLD
 __root static const int NEW_SHOWMSG @ "PATCH_SHOWMSG_BLF" = (int)MyShowMSG;
-
-//__root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)DoUnknownFileType;
-#else
-//__root static const int NEW_TXTEXT @ "PATCH_TXT_EXT" = (int)PatchTxtOnOpen;
 #endif
 
 __root static const int SWILIB_FUNC171 @ "SWILIB_FUNC171" = (int)SUBPROC_impl;

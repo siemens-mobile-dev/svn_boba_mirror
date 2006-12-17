@@ -1,5 +1,5 @@
-;ELFpack v1.8++ (C)2006 by Rst7/CBSIE, BoBa
-;Release 12.11.2006
+;ELFpack v2.0 (C)2006 by Rst7/CBSIE, BoBa
+;Release ??.??.200?
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -35,6 +35,9 @@
 ;
 ;+Функция SEQKILLER для освобождения памяти демонов при закрытии IDLE_CSM
 ;
+;+Расширение таблицы регистрации расширений файлов
+;
+;TODO - Расширение PIT при помощи .png файлов
 
 +0074000
 #pragma enable old_equal_ff
@@ -92,6 +95,7 @@
 0248: 0xA09EA7B0 ; 092: __arm void *calloc(size_t nelem, size_t elsize);
 
 0250: 0xA04D4A45 ; 094: __thumb int ExecuteFile (WSHDR *filepath, WSHDR *mimetype);
+0254: 0xA04D4987 ; 095: __thumb int UnRegExplorerExt(REGEXPLEXT const *);
 
 028C: 0xA02519BC ; 0A3: __arm void ws_2str(WSHDR *ws, char *str, unsigned int size);
 0298: 0xA0951C80 ; 0A6: __arm void ResetGPRSTraffic();
@@ -137,8 +141,8 @@
 0458: 0xA0FC601D ; 116: __thumb int  strncpy (char *dest,const char *source,int maxlen);
 045C: 0xA0FC6099 ; 117: __thumb char * strrchr (const char *s,int c);
 0460: 0xA0FC60B1 ; 118: __thumb char * strstr (const char *s1,const char *s2);
-0464: 0xA0FC60D9 ; 119: __thumb int  strtol (const char *nptr,char **endptr,int base);
-0468: 0xA0FC6155 ; 11A: __thumb int  strtoul (const char *nptr,char **endptr,int base);
+;0464: 0xA0FC60D9 ; 119: __thumb int  strtol (const char *nptr,char **endptr,int base);
+;0468: 0xA0FC6155 ; 11A: __thumb int  strtoul (const char *nptr,char **endptr,int base);
 046C: 0xA0FC4331 ; 11B: __thumb int snprintf (char *,int n,const char *format,...);
 0470: 0xA0018941 ; 11C: __thumb int  memcmp (void *m1,void *m2,int n);
 0474: 0xA0FC556C ; 11D: __arm void  zeromem (void *dest,int n);
@@ -162,11 +166,12 @@
 04BC: 0xA09710BD ; 12F: __thumb void  getRGBcolor (int ColorIndex,void *dest);
 04C0: 0xA09710CD ; 130: __thumb void  getRGBbyPaletteAdr (void *paletteAdr,void *dest);
 04C4: 0xA09710EB ; 131: __thumb void  setColor (int a,int r,int g,int b,void *dest);
+04C8: 0xA0FC56C8 ; 132: __arm void *memmove(void *dest,const void *source,int cnt);
 04C8: 0x00000000 ; 132: __thumb void  deleted();
 04CC: 0xA0975931 ; 133: __thumb void  StoreXYWHtoRECT (void *RECT,int x,int y,int w,int h);
 04D0: 0xA0975947 ; 134: __thumb void  StoreXYXYtoRECT (void *RECT,int x,int y,int x2,int y2);
 04D4: 0xA0978233 ; 135: __thumb int  IsGuiOnTop (int id);
-04D8: 0x00000000 ; 136: __unknown int  CreateGUI_ID (void *gui,int id);
+04D8: 0xA0978357 ; 136: __thumb int  CreateGUI_ID (void *gui,int id);
 04DC: 0xA0978367 ; 137: __thumb int  CreateGUI (void *gui);
 04E0: 0xA0978375 ; 138: __thumb int  CreateGUI_30or2 (void *gui);
 04E4: 0xA09783AF ; 139: __thumb int  CreateGUIWithDummyCSM (void *gui,int flag);
@@ -293,6 +298,16 @@
 ;694:              ; 1A5: void RegisterCepIdForCurProfile(unsigned int cep_id,int profile_num,unsigned int unk)
 0698: 0xA0093388   ; 1A6: int IsTimerProc(GBSTMR *)
 069C: 0xA095A435   ; 1A7: char* Get_CC_NC()
+06A0: 0xA00E2BB8 ; 1A8: __arm png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
+06A4: 0xA00E472C ; 1A9: __arm void png_set_read_fn(png_structp png_ptr, png_voidp io_ptr, png_rw_ptr read_data_fn);
+06A8: 0xA00E3724 ; 1AA: __arm void png_read_update_info(png_structp png_ptr,void *info_ptr);
+06AC: 0xA00E5074 ; 1AB: __arm void png_set_palette_to_rgb(png_structp png_ptr);
+06B0: 0xA00E229C ; 1AC: __arm png_uint_32 png_get_valid(png_structp png_ptr,png_infop info_ptr, png_uint_32 flag);
+06B4: 0xA00E5074 ; 1AD: __arm void png_set_tRNS_to_alpha(png_structp png_ptr);
+06B8: 0xA00E9C44 ; 1AE: __arm void png_set_filler(png_structp png_ptr,png_uint_32 filler, int flags);
+06BC: 0xA00E48A8 ; 1AF: __arm void png_set_strip_16(png_structp png_ptr);
+06C0: 0xA00E9BD0 ; 1B0: __arm void png_set_packing(png_structp png_ptr);
+06C4: 0xA00E50B4 ; 1B1: __arm void png_set_gray_to_rgb(png_structp png_ptr);
 
 #pragma disable old_equal_ff
 +0

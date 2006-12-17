@@ -956,6 +956,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -2464,6 +2465,12 @@
   </file>
   <file>
     <name>$PROJ_DIR$\ESI.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\EXT2.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\FSWI.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\IMB.asm</name>
