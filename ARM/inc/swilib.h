@@ -1810,7 +1810,7 @@ __swi __arm int ActivateDialUpProfile(unsigned int cep_id,int profile_num);
 #pragma swi_number=0x01A3
 __swi __arm int GetCurrentGPRSProfile(void);
 //arm
-//pattern=10,40,2D,E9,??,??,??,E5,??,??,??,E1,19,00,50,E3,??,??,??,3A,01,00,A0,E3
+//pattern=??,40,2D,E9,??,??,??,E5,??,??,??,E1,19,00,50,E3,??,??,??,3A,01,00,A0,E3
 
 #pragma swi_number=0x01A4
 __swi __arm int GetDisconnectTime(void);
@@ -1903,3 +1903,10 @@ __swi __arm void png_set_gray_to_rgb(png_structp png_ptr);
 //pattern=B0,10,90,E5,40,1C,81,E3,B0,10,80,E5,1E,FF,2F,E1
 //thumb
 //pattern_SGOLD=80,30,01,6B,01,22,92,03,11,43,01,63,70,47
+
+#pragma swi_number=0x1B2
+__swi __arm int png_check_sig(png_bytep sig, int num);
+//arm
+//pattern=??,??,??,E9,??,??,??,E1,??,??,??,E3,??,??,??,??,??,??,??,E2,??,??,??,33,??,??,??,E8
+//thumb
+//pattern_SGOLD=??,B5,0A,1C,00,21,_blf(??,B5,06,1C,0D,1C,14,1C,08,22),00,28,??,D1,01,20,??,BD
