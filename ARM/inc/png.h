@@ -1403,7 +1403,7 @@ extern PNG_EXPORT(int,png_sig_cmp) PNGARG((png_bytep sig, png_size_t start,
 /* Simple signature checking function.  This is the same as calling
  * png_check_sig(sig, n) := !png_sig_cmp(sig, 0, n).
  */
-extern PNG_EXPORT(int,png_check_sig) PNGARG((png_bytep sig, int num));
+//extern PNG_EXPORT(int,png_check_sig) PNGARG((png_bytep sig, int num));
 
 /* Allocate and initialize png_ptr struct for reading, and any other memory. */
 //extern PNG_EXPORT(png_structp,png_create_read_struct)
@@ -1884,7 +1884,7 @@ extern PNG_EXPORT(void,png_set_write_fn) PNGARG((png_structp png_ptr,
 //   png_voidp io_ptr, png_rw_ptr read_data_fn));
 
 /* Return the user pointer associated with the I/O functions */
-extern PNG_EXPORT(png_voidp,png_get_io_ptr) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(png_voidp,png_get_io_ptr) PNGARG((png_structp png_ptr));
 
 extern PNG_EXPORT(void,png_set_read_status_fn) PNGARG((png_structp png_ptr,
    png_read_status_ptr read_row_fn));
