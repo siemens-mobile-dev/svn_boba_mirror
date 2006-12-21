@@ -640,16 +640,14 @@ __arm void LoadDaemons(int dummy, char *path)
   }
   FindClose(&de,&err);
 }
-
+    
+               
+               
 __arm void MyIDLECSMonCreate(void *data)
 {
-#ifdef NEWSGOLD
-  static const int smallicons[2]={0x3f5,0};
-  static const int bigicons[2]={0x439,0};
-#else
-  static const int smallicons[2]={0x1F9,0};
-  static const int bigicons[2]={0x1FA,0};
-#endif
+  static const int smallicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_small.png",0};
+  static const int bigicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_big.png",0};
+
 
   static const REGEXPLEXT elf_reg=
   {
@@ -729,15 +727,11 @@ unsigned int char8to16(int c)
 #ifdef NEWSGOLD
 __arm void ESI(WSHDR *ws, int dummy, char *s)
 #else
-void ESI(char *s, WSHDR *ws)
+__arm void ESI(char *s, WSHDR *ws)
 #endif
 {
   int c;
-#ifdef NEWSGOLD
   CutWSTR(ws,0);
-#else
-  if ((((unsigned int)s)>>28)!=0x0A) return;
-#endif
   while((c=*s++))
   {
     wsAppendChar(ws,char8to16(c));

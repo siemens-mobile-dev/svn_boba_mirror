@@ -1,5 +1,7 @@
 ;SWI dispatcher v1.1 (C)2006 by Rst7/CBSIE
 ;
+
+        EXTERN  SWILIB
 	RSEG	FSWI_PATCH1:CODE:ROOT
 	CODE32
 
