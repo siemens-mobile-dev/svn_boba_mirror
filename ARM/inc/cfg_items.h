@@ -4,6 +4,8 @@
 #define CFG_STR_WIN1251 4
 #define CFG_CBOX 5
 #define CFG_STR_PASS 6
+#define CFG_COORDINATES 7
+#define CFG_COLOR 8
 
 typedef struct
 {
