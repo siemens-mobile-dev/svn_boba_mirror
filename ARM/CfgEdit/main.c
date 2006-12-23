@@ -1,8 +1,10 @@
 #include "..\inc\swilib.h"
 
+
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
-
+extern void EditCoordinates(unsigned int*x, unsigned int* y);
+extern void EditColors(char*color);
 #pragma inline
 void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
 {
@@ -66,7 +68,40 @@ void ed1_locret(void){}
 
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
-  //-1 - do redraw
+  EDITCONTROL ec;
+  CFG_HDR *hp;
+  int l;
+  int i;
+  int n;
+  char ss[16];
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    l=msg->gbsmsg->submess;
+    if (l==LEFT_SOFT||l==ENTER_BUTTON)
+    {
+      i=EDIT_GetFocus(data);
+      ExtractEditControl(data,i,&ec);
+      if ((i>1)&&(i&1))
+      {
+        n=(i-3)>>1; //Индекс элемента в массиве cfg_h
+        hp=cfg_h[n];
+        wstrcpy(ews,ec.pWS);
+        ws_2str(ews,ss,15);
+        switch(hp->type)
+        {
+        case CFG_COORDINATES:
+          EditCoordinates(((unsigned int *)(hp+1)),((unsigned int *)(hp+1)+1));
+          break;
+        case CFG_COLOR:
+          EditColors((char *)(hp+1));
+          break;
+        default:
+          return(0);
+        }
+        return (-1);
+      }
+    }
+  }
   return(0); //Do standart keys
   //1: close
 }
@@ -80,6 +115,7 @@ void ed1_ghook(GUI *data, int cmd)
   int j;
   int vi;
   unsigned int vui;
+  unsigned int vui2;
   char ss[16];
   char *p;
 
@@ -134,6 +170,17 @@ void ed1_ghook(GUI *data, int cmd)
       case CFG_CBOX:
          *((int *)(hp+1))=EDIT_GetItemNumInFocusedComboBox(data)-1;
          break;
+      case CFG_COORDINATES:
+        vui=*((int *)(hp+1));
+        vui2=*((int *)(hp+1)+1);
+        wsprintf(ews,"%d,%d",vui,vui2);
+        EDIT_SetTextToFocused(data,ews);
+        break;
+      case CFG_COLOR:
+        wsprintf(ews,"%02X,%02X,%02X,%02X",*((char *)(hp+1)),*((char *)(hp+1)+1),*((char *)(hp+1)+2),*((char *)(hp+1)+3));
+        EDIT_SetTextToFocused(data,ews);        
+        break;
+         
       default:
         break;
       }
@@ -573,6 +620,24 @@ int create_ed(void)
       AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       p+=(hp->max+1+3)&(~3);
       break;
+    case CFG_COORDINATES:
+      n-=8;
+      if (n<0) goto L_ERRCONSTR;
+      wsprintf(ews,"%d,%d",*((int *)p),*((int *)p+1));
+      ConstructEditControl(&ec,9,0x40,ews,10);
+      AddEditControlToEditQend(eq,&ec,ma); 
+      p+=8;
+      break;
+    case CFG_COLOR:
+      n-=4;
+      if (n<0) goto L_ERRCONSTR;
+      wsprintf(ews,"%02X,%02X,%02X,%02X",*((char *)p),*((char *)p+1),*((char *)p+2),*((char *)p+3));
+      ConstructEditControl(&ec,9,0x40,ews,12);
+      AddEditControlToEditQend(eq,&ec,ma);            
+      p+=4;
+      break;
+      
+      
     default:
       wsprintf(ews,"Unsupported item %d",hp->type);
       ConstructEditControl(&ec,1,0x40,ews,256);
