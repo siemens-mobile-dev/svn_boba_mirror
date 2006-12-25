@@ -66,6 +66,7 @@
 0068: 0xA0FC5ED1 ; 01A: __thumb char * strcpy (char *dest,const char *source);
 006C: 0xA0FC5F51 ; 01B: __thumb unsigned int strlen(char *);
 0070: 0xA01F5BCD ; 01C: __thumb void  wsAppendChar (void *WSHDR,int wchar);
+0078: 0xA0975D35 ; 01E: __thumb IMGHDR *GetPITaddr(int num);
 008C: 0xA029B7E1 ; 023: __thumb void DrawImg(unsigned char x, unsigned char y, short picture);
 0094: 0xA029ACDB ; 025: __thumb void DrawCanvas(void *data, int x1, int y1, int x2, int y2, int flag_one);
 00A8: 0xA01E4190 ; 02A: __arm int *GetEELiteBlockAddress(short blocknum);
@@ -107,7 +108,7 @@
 02D8: 0xA0288F27 ; 0B6: __thumb char GetProfile();
 02DC: 0xA0288F87 ; 0B7: __thumb char SetProfile(char);
 02E0: 0xA0FC5784 ; 0B8: __arm int dwMODdw(int denom,int number);
-029C: 0xA0D42E88 ; 0A7: __arm char IsGPRSEnabled();
+029C: 0xA0D42E89 ; 0A7: __thumb char IsGPRSEnabled();
 02A0: 0xA0D09EFD ; 0A8: __thumb char IsGPRSConnected();
 02A4: 0xA0900FA3 ; 0A9: __thumb void KbdLock();
 02E4: 0xA0900A87 ; 0B9: __thumb void KbdUnlock();
@@ -307,6 +308,9 @@
 06BC: 0xA00E48A8 ; 1AF: __arm void png_set_strip_16(png_structp png_ptr);
 06C0: 0xA00E9BD0 ; 1B0: __arm void png_set_packing(png_structp png_ptr);
 06C4: 0xA00E50B4 ; 1B1: __arm void png_set_gray_to_rgb(png_structp png_ptr);
+06C8: 0xA00E17C0 ; 1B2: __arm int png_check_sig(png_bytep sig, int num);
+06CC: 0xA0A0395F ; 1B3: __thumb void DrawLine(int x,int y,int x2,int y2,int type,char *pen);
+06D0: 0xA0A019BB ; 1B4: __thumb void DrawRectangle(int x,int y,int x2,int y2,int flags,char *pen,char *brush);
 
 #pragma disable old_equal_ff
 +0
