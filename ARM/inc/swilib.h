@@ -941,7 +941,7 @@ __swi __arm int dwMODdw(int denom,int number);
 
 #pragma swi_number=167
 __swi __arm char IsGPRSEnabled();
-//arm
+//thumb
 //pattern=??,48,??,68,70,47,F7,B5,??,49,06,1C,40,01,00,24,??,31
 
 #pragma swi_number=168
