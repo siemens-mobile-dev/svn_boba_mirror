@@ -62,7 +62,7 @@ volatile int edit_id;
 
 volatile int text_changed=0;
 
-void DrwImg(IMGHDR *img, int x, int y, int *pen, int *brush)
+void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 {
   RECT rc;
   DRWOBJ drwobj;
@@ -1061,8 +1061,8 @@ void DrawScreen(void)
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   
-  int *ink=GetPaletteAdrByColorIndex(INK);
-  int *paper=GetPaletteAdrByColorIndex(PAPER);
+  char *ink=GetPaletteAdrByColorIndex(INK);
+  char *paper=GetPaletteAdrByColorIndex(PAPER);
   
   if (disk_access)
   {
