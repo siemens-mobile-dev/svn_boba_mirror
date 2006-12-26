@@ -560,7 +560,8 @@ extern void(*OldTxtOpen)(WSHDR*, WSHDR*);
 //#define HELPER_CEPID 0x4339
 #define HELPER_CEPID 0x440A
 #else
-#define HELPER_CEPID 0x4331
+//#define HELPER_CEPID 0x4331
+#define HELPER_CEPID 0x4407
 #endif
 #define MSG_HELPER_RUN 0x0001
 

@@ -53,13 +53,6 @@ __arm IMGHDR* create_imghdr(const char* fname)
     goto L_CLOSE_FILE;
   }
   
-  png_infop end_info = png_create_info_struct(png_ptr);
-  if (!end_info)
-  {
-    png_destroy_read_struct(&png_ptr, &info_ptr,(png_infopp)NULL);
-    goto L_CLOSE_FILE;
-  }
-  
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
@@ -119,12 +112,10 @@ __arm IMGHDR* create_imghdr(const char* fname)
   img_h->bitmap=img;
   
   
-  png_read_end(png_ptr, end_info);
+  png_read_end(png_ptr, info_ptr);
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
    mfree(row);
   fclose(read.file_handler, &read.errno);
- 
-  
   return (img_h);
 }
 
@@ -217,6 +208,28 @@ int find_png_in_cache(const char* fname)
   return 1;
 }
 
+unsigned int div10(unsigned int v, unsigned int divisor, char *s)
+{
+ unsigned int c='0';
+ while(v>=divisor)
+ {
+  v-=divisor;
+  c++;
+ }
+ *s=c;
+ return v;
+}
+
+void print10(char *s, unsigned int v)
+{
+  if (v>=10000) v=div10(v,10000,s++);
+  if (v>=1000) v=div10(v,1000,s++);
+  if (v>=100) v=div10(v,100,s++);
+  if (v>=10) v=div10(v,10,s++);
+  *s++=v+'0';
+  *s='\0';
+}
+
 
 IMGHDR* PatchGetPIT(unsigned int pic)
 {
@@ -229,7 +242,8 @@ IMGHDR* PatchGetPIT(unsigned int pic)
   else
   {
     char*next=strcpy_tolow(fname,DEFAULT_FOLDER);
-    sprintf(next,"%i.png",pic);
+    print10(next,pic);
+    strcat(fname,".png");
   } 
   if ((find_png_in_cache(fname)))
   {
