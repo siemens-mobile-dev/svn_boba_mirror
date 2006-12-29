@@ -496,6 +496,7 @@ void end_socket(void)
   }
 }
 
+/*
 GBSTMR tmr_dorecv;
 
 void dorecv(void)
@@ -505,7 +506,7 @@ void dorecv(void)
   {
     SUBPROC((void *)get_answer);
   }
-}
+}*/
 
 void get_answer(void)
 {
@@ -584,7 +585,7 @@ void get_answer(void)
     }
   }
   RXstate=i;
-  GBS_StartTimerProc(&tmr_dorecv,3000,dorecv);
+//  GBS_StartTimerProc(&tmr_dorecv,3000,dorecv);
   //  REDRAW();
 }
 
@@ -857,7 +858,7 @@ void maincsm_oncreate(CSM_RAM *data)
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-  GBS_DelTimer(&tmr_dorecv);
+//  GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_ping);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
