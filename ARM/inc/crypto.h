@@ -57,6 +57,9 @@
  * [including the GNU Public Licence.]
  */
 
+#define NO_FP_API
+
+
 #ifndef HEADER_CRYPTO_H
 #define HEADER_CRYPTO_H
 
@@ -67,7 +70,7 @@ extern "C" {
 //#include <stdlib.h>
 
 #ifndef NO_FP_API
-//#include <stdio.h>
+#include <stdio.h>
 #endif
 
 //#include <openssl/stack.h>
