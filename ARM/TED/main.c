@@ -1,20 +1,33 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 
+#ifdef ELKA
+#define MENU_FLAG2 0x5AD
+//0x5A2
+#define MENU_FLAG 1
+#define YDISP (24)
+#define YFSIZE (23)
+#else
+#define MENU_FLAG2 0x59D
+#define MENU_FLAG 0
+#define YDISP (0)
+#define YFSIZE (11)
+#endif
+
 #pragma inline
 void patch_header(HEADER_DESC* head)
 {
   head->rc.x=0;
-  head->rc.y=0;
+  head->rc.y=YDISP;
   head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH();
+  head->rc.y2=HeaderH()+YDISP;
 }
 
 #pragma inline
 void patch_input(INPUTDIA_DESC* inp)
 {
   inp->rc.x=0;
-  inp->rc.y=HeaderH()+1;
+  inp->rc.y=HeaderH()+1+YDISP;
   inp->rc.x2=ScreenW()-1;
   inp->rc.y2=ScreenH()-SoftkeyH()-1;
 }
@@ -98,7 +111,7 @@ typedef struct
 const int minus11=-11;
 
 const char bmpDiskAccess[12]={0xFC,0x86,0xB3,0xA9,0xB1,0xA9,0x81,0xFF,0,0,0,0};
-const IMGHDR imgDiskAccess = {8,12,0x1,0,(char *)bmpDiskAccess};
+const IMGHDR imgDiskAccess = {8,12,0x1,(char *)bmpDiskAccess};
 
 //Указатель блока в верхнем стеке
 int u_disk; //Дисковый указатель верхнего стека (в блоках по STKSZ50)
@@ -164,9 +177,9 @@ unsigned int ConvertSimple(int fin,int fs);
 //Размер стеков
 unsigned int STKSZ=(SSIZE);
 //Размер, при котором происходит запись во временный файл
-unsigned int STKMAX=(SSIZE-6000);
+unsigned int STKMAX=(SSIZE-16000);
 //Размер, при котором происходит чтение из временного файла
-unsigned int STKMIN=(6000);
+unsigned int STKMIN=(16000);
 //Размер блока во временном файле
 unsigned int STKSZ50=(SSIZE/2);
 
@@ -201,9 +214,11 @@ struct
 
 char myscr[SCR_MODULO*320];
 
-//IMGHDR MyScrHdr = {SCR_WIDTH,320,0x1,0,myscr};
-
+#ifdef ELKA
+IMGHDR MyScrHdr = {SCR_WIDTH,320-YDISP,0x1,myscr};
+#else
 IMGHDR MyScrHdr = {255,255,0x1,0,myscr};
+#endif
 
 /*GBSTMR tmr2sec;
 
@@ -1039,12 +1054,12 @@ void DrawInfo(void)
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   
-  DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
+  DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
   str_2ws(e_ws,filename,126);
   wsprintf(info_ws,"Time:\n%02d:%02d\n"
 	   "Current line %lu\nTotal lines %lu\n\nCurrent file:\n%w",
 	   t.hour,t.min,curline,total_line,e_ws);
-  DrawString(info_ws,3,3,scr_w-4,scr_h-4,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(info_ws,3,3+YDISP,scr_w-4,scr_h-4,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 //=============================================================================
@@ -1066,7 +1081,7 @@ void DrawScreen(void)
   
   if (disk_access)
   {
-    DrwImg((IMGHDR *)&imgDiskAccess,0,0,ink,paper);
+    DrwImg((IMGHDR *)&imgDiskAccess,0,YDISP,ink,paper);
     if (draw_mode==2)
     {
       wsprintf(upinfo_ws,"Goto line %u...",curline);
@@ -1081,8 +1096,8 @@ void DrawScreen(void)
     {
       wsprintf(upinfo_ws,"Line %u...",curline);
     L_W1:
-      DrawRoundedFrame(8,0,scr_w-1,11,0,0,0,paper,paper);
-      DrawString(upinfo_ws,8,0,scr_w-1,11,SMALL_FONT,2,ink,paper);
+      DrawRoundedFrame(8,YDISP,scr_w-1,YFSIZE+YDISP,0,0,0,paper,paper);
+      DrawString(upinfo_ws,8,YDISP,scr_w-1,YFSIZE+YDISP,SMALL_FONT,2,ink,paper);
       goto L_WELLCOME2;
     }
     if (draw_mode==255) goto L_WELLCOME;
@@ -1163,19 +1178,19 @@ void DrawScreen(void)
       }
       if (editmode)
       {
-        int h=HeaderH();
+        int h=HeaderH()+YDISP;
         int rh=((h+7)&(~7));
         int s=SoftkeyH();
         int rs=((s+7)&(~7));
 	MyScrHdr.h=scr_h-rh-rs;
-	DrawRoundedFrame(0,HeaderH(),scr_w-1,rh-1,0,0,0,paper,paper);
+	DrawRoundedFrame(0,h,scr_w-1,rh-1,0,0,0,paper,paper);
 	DrawRoundedFrame(0,scr_h-rs,scr_w-1,scr_h-s-1,0,0,0,paper,paper);
-	DrwImg(&MyScrHdr,0,((HeaderH()+7)&(~7)),ink,paper);
+	DrwImg(&MyScrHdr,0,rh,ink,paper);
       }
       else
       {
-	MyScrHdr.h=scr_h;
-	DrwImg(&MyScrHdr,0,0,ink,paper);
+	MyScrHdr.h=scr_h-YDISP;
+	DrwImg(&MyScrHdr,0,YDISP,ink,paper);
       }
       cursor_cnt=3;
       goto L_CURSOR;
@@ -1183,8 +1198,8 @@ void DrawScreen(void)
       //Процесс перехода на строку
       {
 	wsprintf(upinfo_ws,"Goto line %u...",curline);
-	DrawRoundedFrame(0,0,scr_w-1,11,0,0,0,paper,paper);
-	DrawString(upinfo_ws,0,0,scr_w-1,11,SMALL_FONT,2,ink,paper);
+	DrawRoundedFrame(0,YDISP,scr_w-1,YFSIZE+YDISP,0,0,0,paper,paper);
+	DrawString(upinfo_ws,0,YDISP,scr_w-1,YFSIZE+YDISP,SMALL_FONT,2,ink,paper);
 	goto L_WELLCOME2;
       }
       //return;
@@ -1195,13 +1210,13 @@ void DrawScreen(void)
     case 255:
       //Экран приветствия
     L_WELLCOME:
-      DrawRoundedFrame(0,0,scr_w-1,11,0,0,0,paper,paper);
+      DrawRoundedFrame(0,YDISP,scr_w-1,YFSIZE+YDISP,0,0,0,paper,paper);
       draw_mode=1;
     L_WELLCOME2:
-      DrawRoundedFrame(0,12,scr_w-1,scr_h-1,0,0,0,paper,paper);
+      DrawRoundedFrame(0,YFSIZE+1+YDISP,scr_w-1,scr_h-1,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
       wsprintf(info_ws,"Text viewer/editor\nversion 1.6\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
-      DrawString(info_ws,0,20,scr_w-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
+      DrawString(info_ws,0,YFSIZE+9+YDISP,scr_w-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
       return;
     case 0:
       //Курсор
@@ -1224,12 +1239,12 @@ void DrawScreen(void)
 	  if (font_size>8)
 	  {
 	    //DrawRoundedFrame(xx,yy,xx+8,yy+font_size,0,0,0,(int *)&cur_color,GetPaletteAdrByColorIndex(23));
-	    DrawRoundedFrame(xx,yy,xx+8,yy+font_size,0,0,0,ink,GetPaletteAdrByColorIndex(23));
+	    DrawRoundedFrame(xx,yy+YDISP,xx+8,yy+YDISP+font_size,0,0,0,ink,GetPaletteAdrByColorIndex(23));
 	  }
 	  else
 	  {
 	    //DrawRoundedFrame(xx,yy,xx+font_size,yy+8,0,0,0,(int *)&cur_color,GetPaletteAdrByColorIndex(23));
-	    DrawRoundedFrame(xx,yy,xx+font_size,yy+8,0,0,0,ink,GetPaletteAdrByColorIndex(23));
+	    DrawRoundedFrame(xx,yy+YDISP,xx+font_size,yy+YDISP+8,0,0,0,ink,GetPaletteAdrByColorIndex(23));
 	  }
 	}
       }
@@ -1396,14 +1411,14 @@ void *edmenu_HNDLS[8]=
 
 MENUITEM_DESC edmenu_ITEMS[8]=
 {
-  {NULL,(int)"Insert line",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Delete line",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Split line",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Join lines",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Insert time",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Insert date",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Paste",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Clear clipboard",LGP_NULL,0,NULL,0,0x59D}
+  {NULL,(int)"Insert line",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Delete line",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Split line",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Join lines",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Insert time",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Insert date",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Paste",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Clear clipboard",LGP_NULL,0,NULL,0,MENU_FLAG2}
 };
 
 HEADER_DESC edmenu_HDR={0,0,0,0,icon,(int)"Special...",LGP_NULL};
@@ -1413,7 +1428,7 @@ MENU_DESC edmenu_STRUCT=
   8,NULL,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  0,
+  MENU_FLAG,
   NULL,
   edmenu_ITEMS,
   edmenu_HNDLS,
@@ -1594,8 +1609,11 @@ void SetViewIllumination(void)
   extern const int ADJ_LIGHT;
   if (ADJ_LIGHT)
   {
+#ifdef ELKA
+#else
     SetIllumination(0,1,DISPLAY_LIGHT,0);
     SetIllumination(1,1,0,0);
+#endif
   }
   //  light_count=30;
   //  GBS_StartTimerProc(&light_tmr,1,LightTimerProc);
@@ -1866,22 +1884,22 @@ void loadfont(int flag)
   }
   bytew=(ScreenW()-1)>>3;
   pixw=bytew*8;
-  sheight_emode=eh=(sheight=ScreenH())-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
+  sheight_emode=eh=(sheight=ScreenH()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
   switch(font_size)
   {
   case 16:
     max_y_emode=eh/16;
-    max_y=ScreenH()/16;
+    max_y=(ScreenH()-YDISP)/16;
     max_x=pixw/8;
     break;
   case 14:
     max_y_emode=eh/14;
-    max_y=ScreenH()/14;
+    max_y=(ScreenH()-YDISP)/14;
     max_x=pixw/8;
     break;
   default:
     max_y_emode=eh/8;
-    max_y=ScreenH()/8;
+    max_y=(ScreenH()-YDISP)/8;
     max_x=pixw/font_size;
     break;
   }
@@ -1974,16 +1992,16 @@ void *loadmenu_HNDLS[10]=
 
 MENUITEM_DESC loadmenu_ITEMS[10]=
 {
-  {NULL,(int)"Font size = 4",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 6",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 8",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 14",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Font size = 16",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Direct load",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"DOS format",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"WIN format",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Padding on/off",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Save as...",LGP_NULL,0,NULL,0,0x59D}
+  {NULL,(int)"Font size = 4",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Font size = 6",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Font size = 8",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Font size = 14",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Font size = 16",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Direct load",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"DOS format",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"WIN format",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Padding on/off",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Save as...",LGP_NULL,0,NULL,0,MENU_FLAG2}
 };
 
 HEADER_DESC loadmenu_HDR={0,0,0,0,icon,(int)"General...",LGP_NULL};
@@ -1993,7 +2011,7 @@ MENU_DESC loadmenu_STRUCT=
   8,NULL,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  0,
+  MENU_FLAG,
   NULL,
   loadmenu_ITEMS,
   loadmenu_HNDLS,
@@ -2169,15 +2187,15 @@ void *gotomenu_HNDLS[9]=
 
 MENUITEM_DESC gotomenu_ITEMS[9]=
 {
-  {NULL,(int)"Top",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Line",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Percent",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Bottom",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Last saved",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Top",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Line",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Percent",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Bottom",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Last saved",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,MENU_FLAG2},
 };
 
 HEADER_DESC gotomenu_HDR={0,0,0,0,icon,(int)"Goto...",LGP_NULL};
@@ -2187,7 +2205,7 @@ MENU_DESC gotomenu_STRUCT=
   8,NULL,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  0,
+  MENU_FLAG,
   NULL,
   gotomenu_ITEMS,
   gotomenu_HNDLS,
@@ -2230,10 +2248,10 @@ void set_book4(void)
 
 MENUITEM_DESC bookmenu_ITEMS[4]=
 {
-  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,MENU_FLAG2},
 };
 
 void *bookmenu_HNDLS[4]=
@@ -2274,9 +2292,9 @@ void search_menu(void)
 
 MENUITEM_DESC softmenu_ITEMS[3]=
 {
-  {NULL,(int)"Goto...",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Set Bookmark...",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Search...",LGP_NULL,0,NULL,0,0x59D},
+  {NULL,(int)"Goto...",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Set Bookmark...",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Search...",LGP_NULL,0,NULL,0,MENU_FLAG2},
 };
 
 void *softmenu_HNDLS[3]=

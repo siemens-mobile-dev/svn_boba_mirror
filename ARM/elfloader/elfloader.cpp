@@ -646,9 +646,18 @@ __arm void LoadDaemons(int dummy, char *path)
                
 __arm void MyIDLECSMonCreate(void *data)
 {
+#ifdef NEWSGOLD
+#ifdef ELKA
+  static const int smallicons[2]={0x3D6,0};
+  static const int bigicons[2]={0x41B,0};
+#else
+  static const int smallicons[2]={0x3F5,0};
+  static const int bigicons[2]={0x439,0};
+#endif
+#else
   static const int smallicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_small.png",0};
   static const int bigicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_big.png",0};
-
+#endif
 
   static const REGEXPLEXT elf_reg=
   {
@@ -656,7 +665,7 @@ __arm void MyIDLECSMonCreate(void *data)
     0x55,
     //   0x59C1200,
 #ifdef NEWSGOLD
-0x59D43FF,
+0x59D08FF,
 #else
 0x57807FF,
 #endif
@@ -756,33 +765,63 @@ __arm void DoUnknownFileType(WSHDR *filename)
 }
 
 __no_init int *EXT2_AREA;
+#ifdef ELKA
+__no_init int EXT2_CNT @ "REGEXPL_CNT";
+#endif
 
 #ifndef NEWSGOLD 
 __arm int *GET_EXT2_AREA(void)
 {
-  int *p;
-  if (EXT2_AREA)
+  int *p=EXT2_AREA;
+  if (p)
   {
-    return(EXT2_AREA);
+    return(p);
   }
   p=malloc(4);
   *p=0;
   return (EXT2_AREA=p);
 }
 #else
+#ifdef ELKA
+#else
 __arm int *GET_EXT2_TABLE(void)
 {
-  int *p;
-  if (EXT2_AREA)
+  int *p=EXT2_AREA;
+  if (p)
   {
-    return(EXT2_AREA+1);
+    return(p+1);
   }
   p=malloc(4);
   *p=0;
   return ((EXT2_AREA=p)+1);
 }
+#endif
 #endif  
 
+#ifdef ELKA
+__arm int *EXT2_REALLOC(void)
+{
+  int size;
+  size=sizeof(REGEXPLEXT);
+  int *p;
+  int *p2;
+  int n;
+  LockSched();
+  n=EXT2_CNT;
+  p=EXT2_AREA;
+  p2=malloc((n+1)*size);
+  if (p) 
+  {    
+    memcpy(p2,p,n*size);
+    mfree(p);
+  }
+  EXT2_CNT=n+1;
+  EXT2_AREA=p2;
+  p2+=(n*(size/sizeof(int)));
+  UnlockSched();
+  return (p2);
+}
+#else
 __arm int *EXT2_REALLOC(void)
 {
   int size;
@@ -809,11 +848,16 @@ __arm int *EXT2_REALLOC(void)
   UnlockSched();
   return (p2);
 }
+#endif
 
 #ifdef NEWSGOLD
 __thumb MyShowMSG(int p1, int p2)
 {
+#ifdef ELKA
+  if (p2!=0x1DD1)
+#else
   if (p2!=(0x1DCC+5))
+#endif    
   {
     OldShowMsg(p1,p2);
     return;

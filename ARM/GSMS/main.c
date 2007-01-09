@@ -51,6 +51,68 @@ void create_connect(void)
   }
 }
 
+int DNR_ID;
+int DNR_TRIES;
+const char host[]="cbsie.dyndns.info"; //BCB53AD4
+
+void ViewDNRresult(int ***p)
+{
+  char ss[100];
+  if (p)
+  {
+    if (p[3])
+    {
+      DNR_TRIES=0;
+      sprintf(ss,"%08X",p[3][0][0]);
+      LockSched();
+      ShowMSG(1,(int)ss);
+      UnlockSched();
+    }	
+  }
+  else
+  {
+    DNR_TRIES--;
+    LockSched();
+    ShowMSG(1,(int)"Host not found!");
+    UnlockSched();
+  }
+}
+
+void ask_dns(void)
+{
+  int id;
+  int ***p_res;
+  char ss[100];
+  int err=async_gethostbyname(host,&p_res,&id); //03461351 3<70<19<81
+  if (err==0)
+  {
+  }
+  else
+  {
+    if ((err==0xC9)||(err==0xD6))
+    {
+      if (id)
+      {
+	DNR_ID=id;
+	sprintf(ss,"Wait for DNR ID:%d...",id);
+	LockSched();
+	ShowMSG(1,(int)ss);
+	UnlockSched();
+	return;
+      }
+    }
+    else
+    {
+      sprintf(ss,"DNR ERROR %d!",err);
+      LockSched();
+      ShowMSG(1,(int)ss);
+      UnlockSched();
+      return;
+    }
+  }
+  ViewDNRresult(p_res);
+}
+
 void send_req(void)
 {
   sprintf(buf,
@@ -181,7 +243,9 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
-  SUBPROC((void *)create_connect);
+  DNR_TRIES=3;
+  SUBPROC((void *)ask_dns);
+  //  SUBPROC((void *)create_connect);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
@@ -200,11 +264,25 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   }
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
+    if ((int)msg->data0==ENIP_DNR_HOST_BY_NAME)
+    {
+      if ((int)msg->data1==DNR_ID)
+      {
+	if (DNR_TRIES) SUBPROC((void *)ask_dns);
+      }
+      return(1);
+    }
     if ((int)msg->data1==sock)
     {
       //Если наш сокет
       switch((int)msg->data0)
       {
+      case ENIP_BUFFER_FREE:
+	ShowMSG(1,(int)"ENIP_BUFFER_FREE");
+	break;
+      case ENIP_BUFFER_FREE1:
+	ShowMSG(1,(int)"ENIP_BUFFER_FREE");
+	break;
       case ENIP_SOCK_CONNECTED:
         if (connect_state==1)
         {

@@ -424,41 +424,84 @@ CLIST *AddContact(unsigned int uin, char *name)
 }
 
 //===============================================================================================
+int DNR_ID=0;
+int DNR_TRIES=3;
+const char NATICQ_host[]="cbsie.dyndns.info";
+
 void create_connect(void)
 {
+  int ***p_res=NULL;
   void do_reconnect(void);
   SOCK_ADDR sa;
   //Устанавливаем соединение
   connect_state=0;
   GBS_DelTimer(&reconnect_tmr);
-  sock=socket(1,1,0);
-  if (sock!=-1)
+  DNR_ID=0;
+  snprintf(logmsg,255,"Send DNR...");
+  REDRAW();
+  int err=async_gethostbyname(NATICQ_host,&p_res,&DNR_ID); //03461351 3<70<19<81
+  if (err)
   {
-    sa.family=1;
-    sa.port=htons(5050);
-    sa.ip=htonl(IP_ADDR(82,207,89,182));
-    if (connect(sock,&sa,sizeof(sa))!=-1)
+    if ((err==0xC9)||(err==0xD6))
     {
-      connect_state=1;
-      REDRAW();
+      if (DNR_ID)
+      {
+	return; //Ждем готовности DNR
+      }
     }
     else
     {
-      closesocket(sock);
-      sock=-1;
-      LockSched();
-      ShowMSG(1,(int)"Can't connect!");
-      UnlockSched();
+      snprintf(logmsg,255,"DNR ERROR %d!",err);
+      REDRAW();
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      return;
     }
+  }
+  if (p_res)
+  {
+    if (p_res[3])
+    {
+      snprintf(logmsg,255,"DNR Ok, connecting...");
+      REDRAW();
+      DNR_TRIES=0;
+      sock=socket(1,1,0);
+      if (sock!=-1)
+      {
+	sa.family=1;
+	sa.port=htons(5050);
+	sa.ip=p_res[3][0][0];
+	//    sa.ip=htonl(IP_ADDR(82,207,89,182));
+	if (connect(sock,&sa,sizeof(sa))!=-1)
+	{
+	  connect_state=1;
+	  REDRAW();
+	}
+	else
+	{
+	  closesocket(sock);
+	  sock=-1;
+	  LockSched();
+	  ShowMSG(1,(int)"Can't connect!");
+	  UnlockSched();
+	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+	}
+      }
+      else
+      {
+	LockSched();
+	ShowMSG(1,(int)"Can't create socket, GPRS restarted!");
+	UnlockSched();
+	//Не осилили создания сокета, закрываем GPRS-сессию
+	GPRS_OnOff(0,1);
+      }
+    }	
   }
   else
   {
+    DNR_TRIES--;
     LockSched();
-    ShowMSG(1,(int)"Can't create socket, GPRS restarted!");
+    ShowMSG(1,(int)"Host not found!");
     UnlockSched();
-    //Не осилили создания сокета, закрываем GPRS-сессию
-    GPRS_OnOff(0,1);
   }
 }
 
@@ -501,10 +544,10 @@ GBSTMR tmr_dorecv;
 
 void dorecv(void)
 {
-  void get_answer(void);
-  if (connect_state>1)
-  {
-    SUBPROC((void *)get_answer);
+void get_answer(void);
+if (connect_state>1)
+{
+SUBPROC((void *)get_answer);
   }
 }*/
 
@@ -585,7 +628,7 @@ void get_answer(void)
     }
   }
   RXstate=i;
-//  GBS_StartTimerProc(&tmr_dorecv,3000,dorecv);
+  //  GBS_StartTimerProc(&tmr_dorecv,3000,dorecv);
   //  REDRAW();
 }
 
@@ -652,13 +695,13 @@ void stop_vibra(void)
 
 void ask_my_info(void)
 {
-/*  TPKT *p;
+  /*  TPKT *p;
   CLIST *t;
   p=malloc(sizeof(PKT));
   p->pkt.uin=UIN;
   p->pkt.type=T_REQINFOSHORT;
   p->pkt.data_len=0;
-//  AddStringToLog(t,0x01,"Request info...",I_str);
+  //  AddStringToLog(t,0x01,"Request info...",I_str);
   SUBPROC((void *)SendAnswer,0,p);*/
 }
 
@@ -794,6 +837,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       if ((connect_state==0)&&(sock==-1))
       {
         GBS_DelTimer(&reconnect_tmr);
+	DNR_TRIES=3;
         SUBPROC((void *)create_connect);
       }
       break;
@@ -853,12 +897,13 @@ void maincsm_oncreate(CSM_RAM *data)
   ews=AllocWS(16384);
   msg_buf=malloc(16384);
   //  MutexCreate(&contactlist_mtx);
+  DNR_TRIES=3;
   SUBPROC((void *)create_connect);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-//  GBS_DelTimer(&tmr_dorecv);
+  //  GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_ping);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
@@ -875,6 +920,7 @@ void do_reconnect(void)
 {
   if (is_gprs_online)
   {
+    DNR_TRIES=3;
     SUBPROC((void*)create_connect);
   }
 }
@@ -958,6 +1004,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       start_vibra();
       is_gprs_online=1;
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      return(1);
+    case ENIP_DNR_HOST_BY_NAME:
+      if ((int)msg->data1==DNR_ID)
+      {
+	if (DNR_TRIES) SUBPROC((void *)create_connect);
+      }
       return(1);
     }
     if ((int)msg->data1==sock)
@@ -1469,10 +1521,10 @@ void CreateEditChat(CLIST *t)
   
   edcontact=t;
   edchat_toitem=0;
-
+  
   edchat_hdr.lgp_id=(int)t->name;
   edchat_hdr.icon=(int *)S_ICONS+GetIconIndex(t);
-
+  
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   

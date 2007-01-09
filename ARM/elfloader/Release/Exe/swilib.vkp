@@ -1,5 +1,5 @@
-;ELFpack v2.0 (C)2006 by Rst7/CBSIE, BoBa
-;Release ??.??.200?
+;ELFpack v2.0 (C)2007 by Rst7/CBSIE, BoBa
+;Release 08.01.2007
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -37,7 +37,14 @@
 ;
 ;+Расширение таблицы регистрации расширений файлов
 ;
-;TODO - Расширение PIT при помощи .png файлов
+;+Очередной перенос HELPER_PROC на cepid=440A для более корректной работы
+; с жабой
+;
+;+Расширение PIT при помощи .png файлов
+; Обрабатываются файлы из каталога 4:\ZBin\png с именами %d.png
+; для замены штатных картинок или из эльфов - указатель на строку
+; с именем файла вместо ID (аналогично ESI)
+;
 
 +0074000
 #pragma enable old_equal_ff
@@ -311,6 +318,24 @@
 06C8: 0xA00E17C0 ; 1B2: __arm int png_check_sig(png_bytep sig, int num);
 06CC: 0xA0A0395F ; 1B3: __thumb void DrawLine(int x,int y,int x2,int y2,int type,char *pen);
 06D0: 0xA0A019BB ; 1B4: __thumb void DrawRectangle(int x,int y,int x2,int y2,int flags,char *pen,char *brush);
+
+06D4: 0x00000001 ; 81B5: int isnewSGold(void);
+06D8: 0xA0A4AA21 ; 1B6: __thumb int async_gethostbyname(const char *host_name,int ****DNR_RES,int *DNR_ID);
+06DC: 0xA099B365 ; 1B7: __thumb unsigned int str2ip(const char *);
+
+;Handmaded function
+;06E0: 0x00000000 ; 81B8: void *EXT_TOP(void);
+;06E4: 0x00000000 ; 81B9: void *PNG_TOP(void);
+;06E8: 0x00000000 ; 81BA: void *LIB_TOP(void);
+;06EC: 0x00000000 ; 81BB: void *DATA_N_SFB(void);
+
+06F0: 0xA0F4432F ; 1BC: __thumb void SHA1_Init(SHA_CTX *c);
+06F4: 0xA0F44013 ; 1BD: __thumb void SHA1_Update(SHA_CTX *c, const void *data, unsigned long len);
+06F8: 0xA0F4420F ; 1BE: __thumb void SHA1_Final(char *md, SHA_CTX *c);
+06FC: 0xA0E8D945 ; 1BF: __thumb RSA * RSA_new_method(RSA_METHOD *method);
+0700: 0xA0E8D9D3 ; 1C0: __thumb void RSA_free (RSA *r);
+0704: 0xA0E8DB9F ; 1C1: __thumb int RSA_sign(int type, char *m, unsigned int m_len,
+0708: 0xA0E8A137 ; 1C2: __thumb BIGNUM *BN_bin2bn(const char *s,int len,BIGNUM *ret);
 
 #pragma disable old_equal_ff
 +0

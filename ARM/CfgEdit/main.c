@@ -1,5 +1,9 @@
 #include "..\inc\swilib.h"
-
+#ifdef ELKA
+#define YDISP (24)
+#else
+#define YDISP (0)
+#endif
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
@@ -9,7 +13,7 @@ extern void EditColors(char*color);
 void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
 {
   inp->rc.x=x;
-  inp->rc.y=y;
+  inp->rc.y=y+YDISP;
   inp->rc.x2=x2;
   inp->rc.y2=y2;
 }
@@ -18,9 +22,9 @@ void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
 void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
 {
   head->rc.x=x;
-  head->rc.y=y;
+  head->rc.y=y+YDISP;
   head->rc.x2=x2;
-  head->rc.y2=y2;
+  head->rc.y2=y2+YDISP;
 }
 #include "..\inc\cfg_items.h"
 

@@ -20,5 +20,8 @@ a	EQU	b
 //        defadr  RefreshGUI,0xA097851D
 //        defadr  EDIT_SetFocus,0xA0A118D9
 
+	defadr	async_gethostbyname,0xA0A4AA20+1
+
+
 	END
 	

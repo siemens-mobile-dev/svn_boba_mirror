@@ -341,7 +341,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\INC\</state>
         </option>
       </data>
     </settings>
@@ -955,7 +955,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1347,7 +1347,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe E:\ARM\GSMS\Release\Exe\GSMS.elf \MMCard\GSMS.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\GSMS.elf \MMCard\GSMS.elf</postbuild>
       </data>
     </settings>
     <settings>

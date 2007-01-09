@@ -38,7 +38,7 @@ typedef struct
 }MAIN_GUI_2;
 
 const char Pointer[5]={0x27,0x27,0xFF,0x27,0x27};
-const IMGHDR imgPointer = {5,5,0x1,0,(char *)Pointer};
+const IMGHDR imgPointer = {5,5,0x1,(char *)Pointer};
 
 void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 {

@@ -52,15 +52,16 @@ arm_jumper:
 thumb_jumper:
 	BX	R12
 	CODE32
+
 ;
 ; Собственно библиотека
 ;
 	RSEG    LIBR:DATA(2)
 Library:
-;	DC32	nullsub
-;	DC32	nullsub
-;	DC32	nullsub
-;	DC32	nullsub
-;	DC32	nullsub
-; И т.д.
+
+	RSEG	DATA_N:DATA(2)
+	PUBLIC	LIB_TOP
+LIB_TOP:
+	DS32	1
+
 	END     ;main
