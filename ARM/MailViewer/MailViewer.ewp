@@ -132,7 +132,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -342,6 +342,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -950,7 +955,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1160,6 +1165,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1768,7 +1778,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1979,6 +1989,11 @@
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
         </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -2165,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy $EXE_DIR$\$PROJ_FNAME$.elf \Data\Zbin\$PROJ_FNAME$.elf</postbuild>
+        <postbuild>obexcopy $EXE_DIR$\$PROJ_FNAME$.elf \MMCard\Zbin\$PROJ_FNAME$.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -2466,7 +2481,7 @@
       <settings>
         <name>ICCARM</name>
         <data>
-          <version>13</version>
+          <version>14</version>
           <wantNonLocal>0</wantNonLocal>
           <debug>0</debug>
           <option>
@@ -2677,6 +2692,11 @@
             <name>CCStdIncludePath</name>
             <state>$TOOLKIT_DIR$\INC\</state>
           </option>
+          <option>
+            <name>CCInlineThreshold</name>
+            <version>0</version>
+            <state>1</state>
+          </option>
         </data>
       </settings>
     </configuration>
@@ -2685,7 +2705,7 @@
       <settings>
         <name>ICCARM</name>
         <data>
-          <version>13</version>
+          <version>14</version>
           <wantNonLocal>1</wantNonLocal>
           <debug>0</debug>
           <option>
@@ -2895,6 +2915,11 @@
           <option>
             <name>CCStdIncludePath</name>
             <state>$TOOLKIT_DIR$\INC\</state>
+          </option>
+          <option>
+            <name>CCInlineThreshold</name>
+            <version>0</version>
+            <state>1</state>
           </option>
         </data>
       </settings>
