@@ -65,6 +65,14 @@ OldOnCreate:
 	PUBLIC	ESIOld
 ESIOld:
 	DCD	0xA1559B4C+1
+        
+        PUBLIC	PITgetN
+PITgetN:
+	DCD	0xA0CB75A6+1
+	
+	PUBLIC	PITret
+PITret:
+	DCD	0xA0CB75BC+1
 #endif
 
 	END

@@ -101,29 +101,31 @@ PATCH_EXT:
         LDMFD   SP!,{R5-R7, PC}
         
 ; ==============================================               
- 	RSEG	PATCH_GET_PIT:CODE:ROOT
-	CODE16
-        LDR      R1, =Patch_PIT
-        BX       R1
+	THUMB
+	RSEG	PATCH_GET_PIT:CODE:ROOT(2)
+//MAINCODE:A0975D34 10 B5                       PUSH    {R4,LR}
+//MAINCODE:A0975D36 04 1C                       ADD     R4, R0, #0
+//MAINCODE:A0975D38 B1 F0 F2 EC                 BLX     sub_A0A27720
+	LDR	R1,=J_PIT
+	BX	R1
              
 ; ----------------------------------------------       
-        EXTERN	PatchGetPIT
-        RSEG	CODE:CODE 
-        CODE32
-Patch_PIT:
-
-        STMFD   SP!,{R0,LR}
-        MOV     R0, R4
-        BL      PatchGetPIT
+	RSEG	PIT_PNG_EXTENSION:CODE(2)
+	EXTERN	PITgetN
+	EXTERN	PatchGetPIT
+	EXTERN	PITret
+	ARM
+J_PIT:
+	STMFD	SP!,{R4,LR}
+	MOV	R4,R0
+	BL	PatchGetPIT
         CMP     R0, #0
-        BEQ     OldPit
-        ADD     SP,SP,#8
-        LDMFD   SP!,{R4,PC}
-OldPit: 
-        LDMFD   SP!,{R0}
-        LDR     R0, [R0,#0x64C]
-        LDRH    R0, [R0,#0x14]
-        LDMFD   SP!,{PC}
+	LDMNEFD	SP!,{R4,PC}
+	MOV	R0,R4
+	LDR	R12,PITgetN
+	BLX	R12
+	LDR	R12,PITret
+	BX	R12
 
         
 
