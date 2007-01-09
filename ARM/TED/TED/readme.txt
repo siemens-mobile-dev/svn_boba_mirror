@@ -1,5 +1,7 @@
  TED v1.6 (версия для S75)
 
+ +Также относится и к Ёлке
+
  Conception of TED on SL45 by Rst7/CBSIE.
 
  Copyright (C)2006 by Rst7/CBSIE.
