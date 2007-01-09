@@ -419,6 +419,7 @@ WSHDR* find_str(int i,char * str)
     
     strncpy(subj_dec,first_in_subj,subj_len);
     ws1=decodestr(subj_dec);
+    mfree(subj_dec);
     len+=wstrlen(ws1);
     ws=reAllocWS(ws,len);
     wstrcat(ws,ws1);
