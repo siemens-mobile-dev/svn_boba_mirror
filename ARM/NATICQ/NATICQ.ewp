@@ -2909,6 +2909,21 @@
   <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\main.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\mainmenu.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\mainmenu.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\status_change.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\status_change.h</name>
+  </file>
 </project>
 
 

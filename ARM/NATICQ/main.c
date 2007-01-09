@@ -3,46 +3,28 @@
 #include "NatICQ.h"
 #include "history.h"
 #include "conf_loader.h"
+#include "mainmenu.h"
+#include "main.h"
 
 #define TMR_SECOND 216
 
-#define T_REQLOGIN 1
-#define T_SENDMSG 2
-#define T_RECVMSG 3
-#define T_LOGIN 4
-#define T_ERROR 6
-#define T_CLENTRY 7
-#define T_STATUSCHANGE 9
-#define T_AUTHREQ 10
-#define T_REQINFOSHORT 11
-#define T_ADDCONTACT 12
-#define T_SSLRESP 13
-#define T_AUTHGRANT 14
+// Строковые описания статусов
 
-// Константы статусов
-#define IS_OFFLINE 0
 const char S_OFFLINE[]="Offline";
-#define IS_INVISIBLE 1
 const char S_INVISIBLE[]="Invisible";
-#define IS_AWAY 2
 const char S_AWAY[]="Away";
-#define IS_NA 3
 const char S_NA[]="N/A";
-#define IS_OCCUPIED 4
 const char S_OCCUPIED[]="Occupied";
-#define IS_DND 5
 const char S_DND[]="DND";
-#define IS_ONLINE 6
 const char S_ONLINE[]="Online";
-#define IS_FFC 7
 const char S_FFC[]="FFC";
-#define IS_MSG 8
 
-#define IS_UNKNOWN 9
+char Is_Vibra_Enabled = 1;
 
 int S_ICONS[11];
 
 #define EOP -10
+int CurrentStatus;
 
 WSHDR *ews;
 
@@ -80,21 +62,7 @@ typedef struct
   WSHDR *ws2;
   int i1;
 }MAIN_GUI;
-
-typedef struct
-{
-  unsigned long uin;
-  unsigned short type;
-  unsigned short data_len;
-}PKT;
-
 int RXstate=EOP; //-sizeof(RXpkt)..-1 - receive header, 0..RXpkt.data_len - receive data
-
-typedef struct
-{
-  PKT pkt;
-  char data[16384];
-}TPKT;
 
 char *msg_buf;
 TPKT RXbuf;
@@ -341,7 +309,8 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
   if (msg->keys==0x18)
   {
     //    GeneralFunc_F1(1);
-    ShowMSG(1,(int)"Under construction!");
+    //ShowMSG(1,(int)"Under construction!");
+    ShowMainMenu();
     return(-1);
   }
   if (msg->keys==0x3D)
@@ -687,8 +656,11 @@ void SendAnswer(int dummy, TPKT *p)
 void start_vibra(void)
 {
   void stop_vibra(void);
-  SetVibration(100);
-  GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
+  if(Is_Vibra_Enabled)
+  {
+    SetVibration(100);
+    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
+  }  
 }
 
 void stop_vibra(void)
@@ -849,6 +821,11 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
         SUBPROC((void *)create_connect);
       }
       break;
+    case '*':
+      {
+        Is_Vibra_Enabled = !(Is_Vibra_Enabled);
+        break;
+      }
     case '#':
       GPRS_OnOff(0,1);
       break;

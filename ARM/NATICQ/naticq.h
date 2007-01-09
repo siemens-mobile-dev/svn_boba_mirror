@@ -15,5 +15,16 @@ typedef struct
   char *answer;
 }CLIST;
 
+typedef struct
+{
+  unsigned long uin;
+  unsigned short type;
+  unsigned short data_len;
+}PKT;
 
+typedef struct
+{
+  PKT pkt;
+  char data[16384];
+}TPKT;
 #endif
