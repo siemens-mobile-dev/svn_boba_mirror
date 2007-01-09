@@ -314,11 +314,18 @@ void create_contactlist_menu(void)
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 }
 
+int need_jump_to_top_cl;
+
 void contactlist_menu_ghook(void *data, int cmd)
 {
   if (cmd==0x0A)
   {
     DisableIDLETMR();
+    if (need_jump_to_top_cl) 
+    {
+      SetCursorToMenuItem(data,0);
+      need_jump_to_top_cl=0;
+    }
     if (request_close_clmenu)
     {
       request_close_clmenu=0;
@@ -765,6 +772,7 @@ ProcessPacket(TPKT *p)
       }
       else
       {
+	if (contactlist_menu_id) need_jump_to_top_cl=1;
         if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
       }
     }
