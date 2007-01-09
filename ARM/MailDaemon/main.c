@@ -1,5 +1,9 @@
 #include "..\inc\swilib.h"
 
+
+extern long  strtol (const char *nptr,char **endptr,int base);
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
 extern const char MAIL_LOGIN[];
 extern const char MAIL_PASS[];
 extern const char HIST_PATH[];
@@ -26,7 +30,8 @@ const char mailer_db_name[]="mails.db";
 
 typedef struct
 {
-  int type;
+  unsigned short type;
+  unsigned short is_readed;
   int size;
   char uid[40];
 }MAIL_HIST;
@@ -58,7 +63,7 @@ char* status[11]=
   "Deleting message"
 };
 
-#define BUF_SIZE 1024
+
 char* log_buf;
 
 int size_prev_hist;
@@ -89,7 +94,6 @@ SOFTKEYSTAB menu_skt=
   menu_sk,0
 };
 
-char *msg_buf;
 char *eml_buf;
 int pbuf=0;
 int vbuf=0;
@@ -209,7 +213,7 @@ int fill_sock_addr(SOCK_ADDR* sa)
   int D;
   int P;
   char* next;
-  strncpy(original,IP_ADRESS,sizeof(original));
+  strcpy(original,IP_ADRESS);
   for (;original[i]!=0;i++)
   {
     if (original[i]<='9'&&original[i]>='0')
@@ -218,7 +222,8 @@ int fill_sock_addr(SOCK_ADDR* sa)
     }
     else
     {
-      str[i]=0;
+      if (str[i-1])   str[i]=0;
+      
     }
   }
   str[i]=0;
@@ -303,21 +308,11 @@ int get_values(char* str)
 {
   char* c;
   c=strchr(str,' ');
-  inpop3=strtoul(++c,0,10);
-  c=strchr(c,' ');
-  total_size=strtoul(++c,0,10);
+  inpop3=strtoul(c+1,&c,10);
+  total_size=strtoul(c+1,0,10);
   return inpop3;
 }
 
-void get_uidl_n(char*str)
-{
-  char *c;
-  char *s;
-  c=strrchr(str,' ');
-  s=strstr(str,eol);
-  strncpy(mail_hist_cur[current_mes].uid,c+1,s-c-1);
-  mail_hist_cur[current_mes].uid[s-c-1]=0;
-}
 
 void send_str(char* str,int p);
 void create_struct()
@@ -401,6 +396,16 @@ void set_current_action(int n,int cur_item)
 {
   mail_hist_cur[cur_item].type=n;
 }
+
+int get_prev_state(int n)
+{
+  return mail_hist_cur[n].is_readed;
+}
+
+void set_current_state(int state,int cur_item)
+{
+  mail_hist_cur[cur_item].is_readed=state;
+}
   
 
 
@@ -416,7 +421,7 @@ void write_current_hist()
   {
     for (int i=0;i!=inpop3;i++)
     {
-      if (get_action_cur(i)!=-1)
+      if (get_action_cur(i)!=0xFFFF)
       {
         fwrite(f,&mail_hist_cur[i],sizeof(MAIL_HIST),&er);
       }
@@ -437,9 +442,11 @@ int find_uidl_in_hist(int cur_mes)
   return (-1);
 }
 
+
+
 void set_state_for_delete(int i)
 {
-  mail_hist_cur[i].type=-1;
+  mail_hist_cur[i].type=0xFFFF;
 }
 
 void fill_struct_list(char*str,MAIL_HIST* mail_hist)
@@ -447,8 +454,7 @@ void fill_struct_list(char*str,MAIL_HIST* mail_hist)
   char*str1;
   int num;
   int size;
-  str1=strchr(str,' ');
-  num=strtoul(str,0,10);
+  num=strtoul(str,&str1,10);
   size=strtoul(str1+1,0,10); 
   mail_hist[num-1].size=size;
 }
@@ -571,6 +577,7 @@ void process_line(char*mes)
         {
         case FULL_MES:
           set_current_action(FULL_MES,current_mes);
+          if (get_prev_state(i)) set_current_state(1,current_mes);
           goto L_NEXT_MES;
         case UNFULL_MES:
           set_current_action(UNFULL_MES,current_mes);
@@ -652,27 +659,48 @@ L_ERR_FREE:
   goto L_FREE;  
 }
 
+char *recived_line;
 
+
+#define BUF_SIZE 1024
 void get_answer(void)
 {
-  char* s;
-  int l=strlen(msg_buf);    
+  char msg_buf[BUF_SIZE];
+  char *s=msg_buf;
+  char *d; //Куда
+  int c;
   int i;
-  char *recived_line;
-  i=recv(sock,msg_buf+l,BUF_SIZE-l-1,0);
+  i=recv(sock,msg_buf,BUF_SIZE-1,0);
   if (i>0)
   {
-    msg_buf[i+l]=0;
-    while(s=strstr(msg_buf,eol))
+    d=recived_line;
+    if (d)
     {
-      recived_line=malloc(s-msg_buf+2+1);
-      strncpy(recived_line,msg_buf,s-msg_buf+2);
-      recived_line[s-msg_buf+2]=0;
-      add_to_log(recived_line);
-      process_line(recived_line);
-      strcpy(msg_buf,s+2);
-      mfree(recived_line);
+      //Уже была строка
+      d=recived_line=realloc(recived_line,strlen(d)+i+1); //Возможно, мы добавим весь буфер и \0
+      d+=strlen(d);
     }
+    else
+    {
+      //Заново
+     L_NEWLINE:
+       d=recived_line=malloc(i+1); //Возможно, это будет целый буфер и \0
+    }
+    while(i)
+    {
+      i--;
+      c=*d++=*s++; //Копируем символ
+      if (c=='\n')
+      {
+        //Конец строки
+        *d=0;
+        add_to_log(recived_line);
+        process_line(recived_line);
+        mfree(recived_line);
+        goto L_NEWLINE;
+      }
+    }
+    *d=0; //Временно закончили строку
   }
 }
 
@@ -723,8 +751,13 @@ void send_get_headers(int i)
   send_str("TOP %u 0\r\n",i+1);
 }
 
+
 void send_del_mes(int i)
 {
+  char string[80];
+  unsigned int err;
+  sprintf(string,"%s%s.eml",HIST_PATH,mail_hist_cur[i].uid);
+  unlink(string,&err);
   send_str("DELE %u\r\n",i+1);
 }
 
@@ -768,11 +801,10 @@ void OnRedraw(MAIN_GUI *data)
     }
     DrawString(data->ws2,3,50,x-4,y-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   }
-  
-  
   wsprintf(data->ws2,percent_t,"Exit");
   DrawString(data->ws2,(x>>2)*3,y-4-14,x-4,y-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
+
 
 void OnCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
@@ -873,8 +905,6 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
-  msg_buf=malloc(BUF_SIZE);
-  msg_buf[0]=0;
   log_buf=malloc(0x4000);
   zeromem(log_buf,0x4000);
   inpop3=-1;
@@ -894,12 +924,17 @@ void maincsm_onclose(CSM_RAM *csm)
     fclose(f,&ul);
   }
   GBS_DelTimer(&reconnect_tmr);
-  mfree(msg_buf);
   mfree(log_buf);
+  if (recived_line)
+  {
+    mfree(recived_line); 
+    recived_line=NULL;
+  }
   //  MutexDestroy(&contactlist_mtx);
   SUBPROC((void *)send_quit);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ElfKiller);
+
 }
 
 void do_reconnect(void)
