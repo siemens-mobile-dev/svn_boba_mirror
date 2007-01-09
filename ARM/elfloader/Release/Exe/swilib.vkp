@@ -1,5 +1,5 @@
 ;ELFpack v2.0 (C)2007 by Rst7/CBSIE, BoBa
-;Release 08.01.2007
+;Release 09.01.2007
 ;Также бибилиотека для патчей
 ;
 ;+Загрузка всех .elf-файлов из каталога 4:\ZBin\Daemons
@@ -336,6 +336,9 @@
 0700: 0xA0E8D9D3 ; 1C0: __thumb void RSA_free (RSA *r);
 0704: 0xA0E8DB9F ; 1C1: __thumb int RSA_sign(int type, char *m, unsigned int m_len,
 0708: 0xA0E8A137 ; 1C2: __thumb BIGNUM *BN_bin2bn(const char *s,int len,BIGNUM *ret);
+
+070C: 0xA0979B39 ; 1C3: __thumb void SetMenuItemCount(void *gui,int n);
+0710: 0xA0979AA1 ; 1C4: __thumb void SetCursorToMenuItem(void *gui,int n);
 
 #pragma disable old_equal_ff
 +0
