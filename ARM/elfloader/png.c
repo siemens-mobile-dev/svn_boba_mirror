@@ -31,30 +31,40 @@ __arm IMGHDR* create_imghdr(const char* fname)
 {
   READ_FILE read;
   char buf[number];
-  char *row=NULL;
-  char *img=NULL;
-  IMGHDR * img_h=NULL;
-  if ((read.file_handler=fopen(fname, A_ReadOnly+A_BIN, P_READ, &read.errno))==-1) return 0;
-  
-  if (fread(read.file_handler, &buf, number, &read.errno)!=number)
+  struct PP
   {
-  L_CLOSE_FILE:
-    mfree(row);
-    mfree(img);
-    mfree(img_h);
-    fclose(read.file_handler, &read.errno);
-    return NULL;
-  }
+    char *row;
+    char *img;
+    IMGHDR * img_h;
+  } *pp;
+  IMGHDR * img_hc;
+  png_structp png_ptr=NULL;
+  png_infop info_ptr=NULL;
+  png_uint_32 rowbytes;
+
+  if ((read.file_handler=fopen(fname, A_ReadOnly+A_BIN, P_READ, &read.errno))==-1) return 0;
+  pp=malloc(sizeof(struct PP));
+  pp->row=NULL;
+  pp->img=NULL;
+  pp->img_h=NULL;
+  
+  if (fread(read.file_handler, &buf, number, &read.errno)!=number) goto L_CLOSE_FILE;
   if  (!png_check_sig((png_bytep)buf,number)) goto  L_CLOSE_FILE;
   
-  png_structp png_ptr = png_create_read_struct_2("1.2.5", (png_voidp)0, 0, 0, (png_voidp)0,(png_malloc_ptr)xmalloc,(png_free_ptr)xmfree);
+  png_ptr = png_create_read_struct_2("1.2.5", (png_voidp)0, 0, 0, (png_voidp)0,(png_malloc_ptr)xmalloc,(png_free_ptr)xmfree);
   if (!png_ptr) goto L_CLOSE_FILE;
   
-  png_infop info_ptr = png_create_info_struct(png_ptr);
+  info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    goto L_CLOSE_FILE;
+  L_CLOSE_FILE:
+    mfree(pp->row);
+    mfree(pp->img);
+    mfree(pp->img_h);
+    mfree(pp);
+    fclose(read.file_handler, &read.errno);
+    return NULL;
   }
   
   if (setjmp(png_jmpbuf(png_ptr)))
@@ -92,35 +102,41 @@ __arm IMGHDR* create_imghdr(const char* fname)
   
   png_read_update_info(png_ptr, info_ptr);
   
-  png_uint_32 rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+  rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   
-  row=malloc(rowbytes);
-  img=malloc(width*height);
+  pp->row=malloc(rowbytes);
+  pp->img=malloc(width*height);
   
   for (unsigned int y = 0; y<height; y++)
   {
-    png_read_row(png_ptr, (png_bytep)row, NULL);
+    png_read_row(png_ptr, (png_bytep)pp->row, NULL);
     for (unsigned int x = 0; x<width; x++)
     {
-      if (!row[x*4+3])
-        img[x+y*width]=0xC0;
+      if (!pp->row[x*4+3])
+        pp->img[x+y*width]=0xC0;
       else
-        img[x+y*width]=(row[x*4+0] & 0xE0)|((row[x*4+1]>>3)&0x1C)|((row[x*4+2]>>6)&0x3);
+      {
+	char c=(pp->row[x*4+0] & 0xE0);
+	c|=((pp->row[x*4+1]>>3)&0x1C);
+	c|=((pp->row[x*4+2]>>6)&0x3);
+        pp->img[x+y*width]=c; //(row[x*4+0] & 0xE0)|((row[x*4+1]>>3)&0x1C)|((row[x*4+2]>>6)&0x3);
+      }
     }
   }
-  img_h=malloc(sizeof(IMGHDR));
-  img_h->w=width;
-  img_h->h=height;
-  img_h->bpnum=5;
+  pp->img_h=img_hc=malloc(sizeof(IMGHDR));
+  pp->img_h->w=width;
+  pp->img_h->h=height;
+  pp->img_h->bpnum=5;
   //  img_h->zero=0;
-  img_h->bitmap=img;
+  pp->img_h->bitmap=pp->img;
   
   
   png_read_end(png_ptr, info_ptr);
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-  mfree(row);
+  mfree(pp->row);
+  mfree(pp);
   fclose(read.file_handler, &read.errno);
-  return (img_h);
+  return (img_hc);
 }
 
 
