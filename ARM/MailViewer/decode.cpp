@@ -2,6 +2,19 @@
 #include "base64.h"
 #include "sf_mime.h"
 
+
+int chartohex(int ch)
+{
+  if (ch>='0'&&ch<='9')  return (ch-'0');
+  
+  if (ch>='A'&&ch<='F')  return (ch-'A'+10);
+  
+  if (ch>='a'&&ch<='f')  return (ch-'a'+10);
+  return ch;
+}
+
+
+
 char * base64_decode(const char *str, size_t *size)
 {
   char *output, *ou;
@@ -80,7 +93,7 @@ char * quoted_printable_decode(const char *str, size_t *size)
 
   int first;
   int second;
-  if(str == NULL) return NULL;
+  if(!str) return 0;
   
   /*
   * Allocate sufficient space to hold decoded string.
@@ -88,10 +101,10 @@ char * quoted_printable_decode(const char *str, size_t *size)
   
   
   s=buf=malloc((size?*size:strlen(str)) + 1);
-  if(buf == NULL)
+  if(!buf)
     
     /* ENOMEM? */
-    return NULL;
+    return 0;
 
   for(; *str; str++)
   {
@@ -112,16 +125,9 @@ char * quoted_printable_decode(const char *str, size_t *size)
       if(str[1] == '\0')
         break;
       
-      if (n>='0'&&n<='9')
-        first = n - '0';
-      
-      if (n>='A'&&n<='F')
-        first =n - 'A' + 10;
-      
-      if (n>='a'&&n<='f')
-        first = n- 'a' + 10;
-      
-      if (n=='\r'||n=='\n')
+      first=chartohex(n);
+     
+      if (first=='\r'||first=='\n')
       {
         *s++ = '=';
         *s++ = n;
@@ -129,25 +135,15 @@ char * quoted_printable_decode(const char *str, size_t *size)
       }
       
       n = *++str;
-      
-      if (n>='0'&&n<='9')
-        second = n - '0';
-      
-      
-      if (n>='A'&&n<='F')
-        second =n - 'A' + 10;
-      
-      if (n>='a'&&n<='f')
-        second = n- 'a' + 10;
-      
-      if (n=='\r'||n=='\n')
+      second=chartohex(n);
+           
+      if (second=='\r'||second=='\n')
       {
         *s++ = n;
         *s = ' ';
         continue;
       }
-      *s=(first<<4)+second;
-      s++;
+      *s++=(first<<4)+second;
       continue;
     }
     *s++ = *str;

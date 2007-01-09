@@ -1,21 +1,25 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
-#include "ctype.h"
 
 
-extern const unsigned int ICON0;
-extern const unsigned int ICON1;
-extern const unsigned int ICON2;
-extern const unsigned int ICON3;
+extern const char ICON0[];
+extern const char ICON1[];
+extern const char ICON2[];
+extern const char ICON3[];
+extern const char ICON4[];
+extern const char ICON5[];
+extern const char ICON6[];
+
 extern const char HIST_PATH[];
 
-int S_ICONS[5];
+int S_ICONS[8];
 
 int displace_config;
 
 typedef struct
 {
-  int type;
+  unsigned short type;
+  unsigned short is_readed;
   int size;
   char uid[40];
 }MAIL_HIST;
@@ -30,6 +34,18 @@ MAIL_HIST* buf; // buffer for maildb
            //writted on create menu and destroy on it close
 unsigned int size; // size of this buffer
 // ------------------------------- Defines ----------------------------------------
+#pragma inline
+int isupper(int C)
+{
+  return (C>='A' && C<='Z');
+}
+
+#pragma inline
+int tolower(int C)
+{
+  return (isupper(C)?C-'A'+'a':C);
+}
+
 int ecq(const char *a, const char *b)
 {
   register const unsigned char
@@ -328,7 +344,7 @@ WSHDR*decodestr(char* str)
       {
         ws=AllocWS(1);
       }
-      wsAppendChar(ws,str[i++]);
+      wsAppendChar(ws,char8to16(str[i++],1));
     }
   }
   while(str[i]);
@@ -392,9 +408,10 @@ WSHDR* find_str(int i,char * str)
   get_eml_name(eml_fname,i);
   if ((open_read_close_file(eml_fname,&eml_buf))!=0xFFFFFFFF)
   {
-    first_in_subj=strstr(eml_buf,str)+strlen(str);
+    if (!(first_in_subj=strstr(eml_buf,str)))   return ws;
+    first_in_subj+=strlen(str);  
   L_READ:
-    sec_in_subj=strstr(first_in_subj,"\r\n");
+    if (!(sec_in_subj=strstr(first_in_subj,"\r\n")))   return ws;
     subj_len=sec_in_subj-first_in_subj;
    
     subj_dec=malloc(subj_len+1);
@@ -403,16 +420,7 @@ WSHDR* find_str(int i,char * str)
     strncpy(subj_dec,first_in_subj,subj_len);
     ws1=decodestr(subj_dec);
     len+=wstrlen(ws1);
-    
-    if (ws)
-    {
-      ws=AllocWS(len);
-    }
-    else
-    {
-      ws=reAllocWS(ws,len);
-    }
-    
+    ws=reAllocWS(ws,len);
     wstrcat(ws,ws1);
     FreeWS(ws1);
     
@@ -441,6 +449,7 @@ char* find_full_str(int i,char * str)
   if ((size=open_read_close_file(eml_fname,&eml_buf))!=-0xFFFFFFFF)
   {
     if (!(first_in_subj=strstr(eml_buf,str)))  return 0;
+    first_in_subj+=strlen(str);
     sec_in_subj=eml_buf+size;
     subj_len=sec_in_subj-first_in_subj;
     if (!(subj=malloc(subj_len+1))) return 0;
@@ -570,14 +579,16 @@ int GetIconIndex(i)
   
   switch (l)
   {
-  case 0:
-    return 0;
-  case 1:
-    return 1;
-  case 2:
+  case FULL_MES:
+    if (fbuf[i].is_readed)
+      return 1;
+    else return 0;
+  case UNFULL_MES:
     return 2;
-  case 3:
-    return 3;
+  case MES_DOWN:
+    return 5;
+  case MES_DEL:
+    return 6;
   }
   return 0;
 }
@@ -591,11 +602,14 @@ void setstate(int item,int state)
   fbuf[item].type=state;
 }
 
-
-int options_menu_onkey(void)
+void set_isread(int item,int state)
 {
-  return 0;
+  if_any_change=1;
+  MAIL_HIST* fbuf=buf;
+  fbuf[item].is_readed=state;
 }
+
+
 
 void options_menu_ghook(void)
 {
@@ -650,6 +664,14 @@ void delete_record()
   remake_mailmenu();
 }
 
+void properties()
+{
+  MAIL_HIST* fbuf=buf;
+  char size[48];
+  sprintf(size,"%u",fbuf[cur_menu].size);
+  ShowMSG(1,(int)size);
+}
+
 void back()
 {
   GeneralFuncF1(1);
@@ -659,36 +681,38 @@ void back()
 
 HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",LGP_NULL};
 
-MENUITEM_DESC options_menu_ITEMS[6]=
+MENUITEM_DESC options_menu_ITEMS[7]=
 {
   {NULL,(int)"Догрузить",     LGP_NULL, 0, NULL, 3, 0x578},
   {NULL,(int)"Удалить",       LGP_NULL, 0, NULL, 3, 0x578},
   {NULL,(int)"Удалить все",   LGP_NULL, 0, NULL, 3, 0x578},
   {NULL,(int)"Удалить запись",LGP_NULL, 0, NULL, 3, 0x578},
-  {NULL,(int)"Догрузить все", LGP_NULL, 0, NULL, 3, 0x578},  
+  {NULL,(int)"Догрузить все", LGP_NULL, 0, NULL, 3, 0x578},
+  {NULL,(int)"Свойства",      LGP_NULL, 0, NULL, 3, 0x578},
   {NULL,(int)"Назад",         LGP_NULL, 0, NULL, 3, 0x578},
 };
 
-void *options_menu_HNDLS[6]=
+void *options_menu_HNDLS[7]=
 {
   (void *)set_state_download,
   (void *)set_state_delete,
   (void *)set_state_delete_all,
   (void *)delete_record,
   (void *)set_state_download_all,
+  (void *)properties,
   (void *)back,  
 };
 
 MENU_DESC options_menu_STRUCT=
 {
-  0,(void *)options_menu_onkey,(void*)options_menu_ghook,NULL,
+  0,(void *)NULL,(void*)options_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   8,
   NULL,
   options_menu_ITEMS,   //Items
   options_menu_HNDLS,   //Procs
-  6 //n
+  7 //n
 };
 
 void create_options_menu(int i)
@@ -697,9 +721,9 @@ void create_options_menu(int i)
   options_menuhdr.rc.x=3;
   options_menuhdr.rc.y=0x18;
   options_menuhdr.rc.x2=ScreenW()-6;
-  options_menuhdr.rc.y2=0x18+HeaderH();
+  options_menuhdr.rc.y2=0x18+0x13;
   
-  options_menu_id=CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,6,0,0);
+  options_menu_id=CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,7,0,0);
 }
 
 // ----------------------------------------------------------------------------------
@@ -721,6 +745,7 @@ int maillist_menu_onkey(void *data, GUI_MSG *msg)
     return(-1);
     
   case 0x3D:
+    set_isread(i,1);
     view_mail_id=create_view(i);
     return(-1);
   } 
@@ -977,11 +1002,14 @@ int main()
 {
   InitConfig();
   
-  S_ICONS[0]=ICON0;
-  S_ICONS[1]=ICON1;
-  S_ICONS[2]=ICON2;
-  S_ICONS[3]=ICON3;
-  
+  S_ICONS[0]=(int)ICON0;
+  S_ICONS[1]=(int)ICON1;
+  S_ICONS[2]=(int)ICON2;
+  S_ICONS[3]=(int)ICON3;
+  S_ICONS[4]=(int)ICON4;
+  S_ICONS[5]=(int)ICON5;
+  S_ICONS[6]=(int)ICON6;
+
   LockSched();
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
