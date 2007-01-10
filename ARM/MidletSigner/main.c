@@ -783,7 +783,7 @@ void FindFiles(const char *path)
       strcpy(name,de.folder_name);
       strcat(name,"\\");
       strcat(name,de.file_name);
-      if (isdir(name,&err))
+      if (de.file_attr&FA_DIRECTORY)
       {
         strcat(name,"\\");
         fl=Fill_FLIST(fl,name,de.file_name,1);
