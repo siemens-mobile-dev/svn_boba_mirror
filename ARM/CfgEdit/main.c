@@ -1,9 +1,4 @@
 #include "..\inc\swilib.h"
-#ifdef ELKA
-#define YDISP (24)
-#else
-#define YDISP (0)
-#endif
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
