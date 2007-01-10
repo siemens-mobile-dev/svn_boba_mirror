@@ -3,57 +3,101 @@
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
-#define MAX_EXTS 16
-
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
 #else
 #define DEFAULT_DISK "0"
 #endif
 
-/*CSM_DESC icsmd;
+CSM_DESC icsmd;
+void (*old_icsm_onClose)(CSM_RAM*);
 
-void (*old_icsm_onClose)(CSM_RAM*);*/
+const char empty_str[]="";
 
-char exts[MAX_EXTS][10];
-char elfs[MAX_EXTS][128];
-int smallicons[MAX_EXTS][2];
-int largeicons[MAX_EXTS][2];
+const char *uni_elf="";
+
+struct
+{
+  const char *uni_large;
+  int zero_ul;
+};
+
+struct
+{
+  const char *uni_small;
+  int zero_us;
+};
+
+const char *uni_altelf="";
+
+typedef struct
+{
+  const char *ext;
+  const char *small_png;
+  int zero_small;
+  const char *large_png;
+  int zero_large;
+  const char *elf;
+  const char *altelf;
+}ES;
+
+int ES_num=0;
+
+ES *es=NULL; //Указатель на массив структур
+char *CFG=NULL; //Указатель на загруженный extension.cfg
+
+const char default_ext[]="txt";
+
+int do_elf(WSHDR *filename, WSHDR *ext, void *param, int mode)
+{
+  int i=0;
+  char s[128];
+  ws_2str(ext,s,126);
+  ES *p=es;
+  if (!*s) strcpy(s,default_ext);
+  do
+  {
+    if (!strcmp(s,p->ext))
+    {
+      WSHDR *elfname=AllocWS(256);
+      str_2ws(elfname,mode?p->altelf:p->elf,126);
+      ws_2str(filename,s,126);
+      i=ExecuteFile(elfname,NULL,s);
+      FreeWS(elfname);
+      return(i);
+    }
+    p++;
+    i++;
+  }
+  while(i<ES_num);
+  return(0);
+}
 
 int do_ext(WSHDR *filename, WSHDR *ext, void *param)
 {
-  int i;
-  char s[128];
-  WSHDR *elfname=AllocWS(256);
-  ws_2str(ext,s,126);
-  i=-1;
-  do
-  {
-    i++;
-    if (i>=MAX_EXTS) return 0;
-  }
-  while(strcmp(s,exts[i]));
-  str_2ws(elfname,elfs[i],126);
-  ws_2str(filename,s,126);
-  i=ExecuteFile(elfname,NULL,s);
-  FreeWS(elfname);
-  return(i);
+  return do_elf(filename,ext,param,0);
 }
 
+int do_alternate(WSHDR *filename, WSHDR *ext, void *param)
+{
+  return do_elf(filename,ext,param,1);
+}
 
 REGEXPLEXT reg=
 #ifdef NEWSGOLD
 {
   NULL,
   0x55,
-  0x59D08FF, // 43 => 08 : чтобы сохранять в /Misc
+  0,
+  8, //Каталог Misc
+  0x59D,
   NULL,
   NULL,
-  0x109, //LGP "Открыть"
-  0x197, //LGP "Опции"
+  (int)"Open",    //LGP "Открыть"
+  (int)"AltOpen", //LGP "Опции"
   0x7FFFC0FB,
   (void *)do_ext,
-  0
+  (void *)do_alternate
 };
 #else
 {
@@ -67,135 +111,230 @@ REGEXPLEXT reg=
 };
 #endif
 
-/*void MyIDLECSM_onClose(CSM_RAM *data)
+REGEXPLEXT reg0=
+#ifdef NEWSGOLD
 {
-extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-extern void *ELF_BEGIN;
-reg.icon1=NULL;
-reg.icon2=NULL;
-while(reg.unical_id!=0x55)
+  empty_str,
+  0,
+  0,
+  8, //Каталог Misc
+  0x59D,
+  NULL,
+  NULL,
+  (int)"Open",    //LGP "Открыть"
+  (int)"AltOpen", //LGP "Опции"
+  0x7FFFC0FB,
+  (void *)do_ext,
+  (void *)do_alternate
+};
+#else
 {
-reg.proc=NULL;
-RegExplorerExt(&reg);
-reg.unical_id--;
+  empty_str,
+  0,
+  0x57807FF, 
+  NULL,
+  NULL,
+  (void *)do_ext,
+  0
+};
+#endif
+
+void UnregAll()
+{
+  int i=0;
+  ES *p=es;
+  while(i<ES_num)
+  {
+    reg.ext=p->ext;
+    reg.unical_id=i+0x56;
+    UnRegExplorerExt(&reg);
+    i++;
+    p++;
   }
-seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
-}*/
+  UnRegExplorerExt(&reg0);
+  mfree(es); //Отпускаем
+  mfree(CFG);
+}
+
+void MyIDLECSM_onClose(CSM_RAM *data)
+{
+  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+  extern void *ELF_BEGIN;
+  UnregAll();
+  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+}
+
+void Killer(void)
+{
+  extern void *ELF_BEGIN;
+  extern void kill_data(void *p, void (*func_p)(void *));
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
 
 static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
 
+char *find_eol(char *s)
+{
+  int c;
+  s--;
+  do
+  {
+    s++;
+    c=*s;
+  }
+  while((c)&&(c!=10)&&(c!=13));
+  return s;
+}
+
 int main()
 {
-  int i=0;
-  int p=0;
   char *s;
-  char *olds;
   int f;
   unsigned int ul;
   unsigned int size_cfg;
-  int c;
+  ES *p=NULL;
+  int i;
+  
+  uni_large=empty_str;
+  uni_small=empty_str;
   
   if ((f=fopen(extfile,A_ReadOnly,0,&ul))!=-1)
   {
     size_cfg=lseek(f,0,S_END,&ul,&ul);
     lseek(f,0,S_SET,&ul,&ul);
-    olds=s=malloc(size_cfg+1);
+    s=CFG=malloc(size_cfg+1);
     if (s)
     {
       s[fread(f,s,size_cfg,&ul)]=0;
-      i=0;
-      do
+      //Теперь файл загружен
+      while(s=strchr(s,'%'))
       {
-      L_NEXT:
-        p=0;
-#ifdef NEWSGOLD
-        smallicons[i][0]=1033;
-        largeicons[i][0]=1105;
-#else
-        smallicons[i][0]=0x1F9;
-        largeicons[i][0]=0x1FA;
-#endif
-        reg.icon1=smallicons[i];
-        reg.icon2=largeicons[i];
-        //Заполняем расширение
-        if (*s==';')
+	//Пока встречаются ключевые слова
+	if (!*(++s)) break; //Неожиданный конец строки
+        if (*s=='%')
         {
-          //Камент ;)
-          while((c=*s++)>=32);
-          if (!c) goto L_EOF;
+          s=find_eol(s);
+          continue;
         }
-        while((c=*s++)!=':')
-        {
-          if (!c) goto L_EOF;
-          if (c<32) goto L_NEXT;
-          if (c=='/')
-          {
-            smallicons[i][0]=strtol(s,&s,10);
-            c=*s++;
-            if (!c) goto L_EOF;
-            if (c<32) goto L_NEXT;
-            if (c=='/')
-            {
-              largeicons[i][0]=strtol(s,&s,10);
-            }
-            else s--;
-            if (*s==':') s++;
-            break;
-          }
-          if (p<9) exts[i][p++]=c;
-        }
-        exts[i][p]=0;
-        p=0;
-        while((c=*s++)>=32)
-        {
-          if (p<127) elfs[i][p++]=c;
-        }
-        elfs[i][p]=0;
-        reg.ext=exts[i];
-        reg.unical_id=0x56+i;
-        LockSched();
-        RegExplorerExt(&reg);
-        UnlockSched();
-        i++;
-	if (strcmp(reg.ext,"txt")==0)
+	if (!strncmp(s,"EXT:",4))
 	{
-	  if (i<MAX_EXTS)
-	  {
-#ifdef NEWSGOLD
-	    smallicons[i][0]=1033;
-	    largeicons[i][0]=1105;
-#else
-	    smallicons[i][0]=0x1F9;
-	    largeicons[i][0]=0x1FA;
-#endif
-	    reg.icon1=smallicons[i];
-	    reg.icon2=largeicons[i];
-	    reg.unical_id=0;
-	    exts[i][0]=0;
-	    reg.ext=exts[i];
-	    strcpy(elfs[i],elfs[i-1]);
-	    LockSched();
-	    RegExplorerExt(&reg);
-	    UnlockSched();
-	    i++;
-	  }
+	  s+=4;
+          p=es=realloc(es,(ES_num+1)*sizeof(ES));
+          p+=ES_num;
+	  p->ext=s;
+	  p->elf=uni_elf;
+	  p->altelf=uni_altelf;
+	  p->small_png=uni_small;
+	  p->large_png=uni_large;
+          p->zero_small=0;
+          p->zero_large=0;
+	  ES_num++;
+          s=find_eol(s); if (*s) {*s++=0; continue;} else break;
 	}
-        if (!c) break; //EOF
+	if (!strncmp(s,"RUN:",4))
+	{
+	  s+=4;
+	  if (p)
+	  {
+	    p->elf=s;
+	  }
+	  else
+	  {
+	    uni_elf=s;
+	  }
+          s=find_eol(s); if (*s) {*s++=0; continue;} else break;
+	}
+	if (!strncmp(s,"SMALL:",6))
+	{
+	  s+=6;
+	  if (p)
+	  {
+	    p->small_png=s;
+	  }
+	  else
+	  {
+	    uni_small=s;
+	  }
+          s=find_eol(s); if (*s) {*s++=0; continue;} else break;
+	}
+	if (!strncmp(s,"BIG:",4))
+	{
+	  s+=4;
+	  if (p)
+	  {
+	    p->large_png=s;
+	  }
+	  else
+	  {
+	    uni_large=s;
+	  }
+          s=find_eol(s); if (*s) {*s++=0; continue;} else break;
+	}
+	if (!strncmp(s,"ALTRUN:",7))
+	{
+	  s+=7;
+	  if (p)
+	  {
+	    p->altelf=s;
+	  }
+	  else
+	  {
+	    uni_altelf=s;
+	  }
+          s=find_eol(s); if (*s) {*s++=0; continue;} else break;
+	}
       }
-      while(i<MAX_EXTS);
-    L_EOF:
-      fclose(f,&ul);
+      i=0;
+      p=es;
+      while(i<ES_num)
+      {
+	reg.ext=p->ext;
+	reg.icon1=(int *)&(p->small_png);
+	reg.icon2=(int *)&(p->large_png);
+	reg.unical_id=0x56+i;
+	RegExplorerExt(&reg);
+	i++;
+	p++;
+      }
+      if (ES_num>0)
+      {
+        reg0.icon1=(int *)&uni_small;
+        reg0.icon2=(int *)&uni_large;
+        RegExplorerExt(&reg0);
+        //Для выгрузки
+        LockSched();
+        CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+        memcpy(&icsmd,icsm->constr,sizeof(icsmd));
+        old_icsm_onClose=icsmd.onClose;
+        icsmd.onClose=MyIDLECSM_onClose;
+        icsm->constr=&icsmd;
+        UnlockSched();
+      }
+      else
+      {
+        LockSched();
+        ShowMSG(1,(int)"ExtD: noting to do!");
+        UnlockSched();
+      }
     }
-    mfree(olds);
+    else
+    {
+      LockSched();
+      ShowMSG(1,(int)"ExtD: out of memory!");
+      UnlockSched();
+    }
+    fclose(f,&ul);
+    if (ES_num>0) return 0;
   }
-  /*  LockSched();
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onClose=MyIDLECSM_onClose;
-  icsm->constr=&icsmd;
-  //  ShowMSG(1,(int)"ExtD installed!");
-  UnlockSched();*/
+  else
+  {
+    LockSched();
+    ShowMSG(1,(int)"ExtD: can't open extension.cfg!");
+    UnlockSched();
+  }
+  mfree(CFG);
+  mfree(es);
+  SUBPROC((void *)Killer);
   return 0;
 }
 

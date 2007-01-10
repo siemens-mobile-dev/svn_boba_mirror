@@ -204,14 +204,16 @@ typedef struct
 #ifdef NEWSGOLD
   const char *ext;
   int unical_id;
-  int unk1;
+  char enabled_options;
+  char obex_path_id;
+  short menu_flag;
   const int *icon1;
   const int *icon2;
   int Open_lgpid;	//0x109
   int Options_lgpid;	//0x10A
   int Enter_lgpid;	//0x7FFFC0FB
   void *proc;
-  int zero;
+  void *altproc;
 #else
   const char *ext;
   int unical_id;
