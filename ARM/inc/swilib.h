@@ -279,6 +279,13 @@ typedef struct
 }GUI_MSG;
 
 //Constants
+//Attributes
+#define FA_READONLY 0x0001
+#define FA_HIDDEN 0x0002
+#define FA_SYSTEM 0x0004
+#define FA_DIRECTORY 0x0010
+#define FA_ARCHIVE 0x0020
+
 //Seek
 #define S_SET 0
 #define S_CUR 1
@@ -426,17 +433,25 @@ typedef struct
 
 typedef struct{
 #ifdef NEWSGOLD
-  char unk1[44];
+  char unk0[40];
+  unsigned int file_size;
   short file_attr;
-  char unk2[135];
-  char file_name[655];
+  unsigned int create_date_time;
+  char unk1[2];
+  char folder_name[128];
+  char unk2;
+  char file_name[128];
+  char unk3[11];
+  short wsfolder_name[128+1];
+  short wsfile_name[128+1];
 #else
   char unk1[14];
-  unsigned short atributes;
+  short file_attr;
   unsigned int create_date_time; 
   unsigned int file_size;
   char unk2[16];
-  char folder_name[129];
+  char folder_name[128];
+  char unk3;
   char file_name[271];
 #endif
 }DIR_ENTRY;
@@ -449,7 +464,7 @@ typedef struct
   char unk4;
   unsigned int size;
   char unk5[28];
-  int  atributes;  //0-normal, 1-readonly, 2-hidden, 3-readonly+hidden
+  int file_attr;
 }FSTATS;
 
 
