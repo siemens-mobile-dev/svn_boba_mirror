@@ -16,21 +16,22 @@ void xmfree(int x,void* ptr)
 typedef struct
 {
   int file_handler;
-  unsigned int errno;
 }READ_FILE;
 
 
 __arm void read_data_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 {
+  unsigned int err;
   READ_FILE*read;
   read=png_get_io_ptr(png_ptr);
-  fread(read->file_handler, data, length, &read->errno);
+  fread(read->file_handler, data, length, &err);
 }
 
 __arm IMGHDR* create_imghdr(const char* fname)
 {
   READ_FILE read;
   char buf[number];
+  unsigned int err;
   struct PP
   {
     char *row;
@@ -42,13 +43,13 @@ __arm IMGHDR* create_imghdr(const char* fname)
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
 
-  if ((read.file_handler=fopen(fname, A_ReadOnly+A_BIN, P_READ, &read.errno))==-1) return 0;
+  if ((read.file_handler=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
   pp=malloc(sizeof(struct PP));
   pp->row=NULL;
   pp->img=NULL;
   pp->img_h=NULL;
   
-  if (fread(read.file_handler, &buf, number, &read.errno)!=number) goto L_CLOSE_FILE;
+  if (fread(read.file_handler, &buf, number, &err)!=number) goto L_CLOSE_FILE;
   if  (!png_check_sig((png_bytep)buf,number)) goto  L_CLOSE_FILE;
   
   png_ptr = png_create_read_struct_2("1.2.5", (png_voidp)0, 0, 0, (png_voidp)0,(png_malloc_ptr)xmalloc,(png_free_ptr)xmfree);
@@ -63,7 +64,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
     mfree(pp->img);
     mfree(pp->img_h);
     mfree(pp);
-    fclose(read.file_handler, &read.errno);
+    fclose(read.file_handler, &err);
     return NULL;
   }
   
@@ -127,7 +128,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   pp->img_h->w=width;
   pp->img_h->h=height;
   pp->img_h->bpnum=5;
-  //  img_h->zero=0;
+  //pp->img_h->zero=0;
   pp->img_h->bitmap=pp->img;
   
   
@@ -135,7 +136,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
   mfree(pp->row);
   mfree(pp);
-  fclose(read.file_handler, &read.errno);
+  fclose(read.file_handler, &err);
   return (img_hc);
 }
 
@@ -143,7 +144,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
 #ifdef NEWSGOLD
 #define DEFAULT_FOLDER "4:\\ZBin\\img\\"
 #else
-#define DEFAULT_FOLDER "0:\\zbin\\img\\"
+#define DEFAULT_FOLDER "0:\\ZBin\\img\\"
 #endif
 #define CACHE_PNG 50
 
