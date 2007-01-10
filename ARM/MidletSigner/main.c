@@ -96,8 +96,9 @@ void zcfree(int unk, void* ptr)
 #define CANT_OPEN_JAR 9
 #define CANT_FIND_MANIFEST 10
 #define CANT_CREATE_JAD 11
+#define BAD_KEY_FILE 12
 
-const char* errors[12]=
+const char* errors[13]=
 {  
   "Done!",
   "Can't open *.jad!",
@@ -110,7 +111,8 @@ const char* errors[12]=
   "*.jad file already exists!",
   "Can't open *.jar!",
   "Can't find MANIFEST.MF!",
-  "Can't create *.jad!"
+  "Can't create *.jad!",
+  "Bad *.key file!"
 };
 
 void ErrMsg(int num)
@@ -123,6 +125,16 @@ void ElfKiller(void)
   extern void *ELF_BEGIN;
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
+
+int get_file_size(char* fname)
+{
+  int f;
+  unsigned int err;
+  FSTATS fs;
+  if ((f=GetFileStats(fname,&fs,&err))==-1)
+    return f;
+  return (fs.size);
+} 
 
 char * ReadCertificate(int* size)
 {
@@ -175,9 +187,11 @@ int CreateSHA1Hash(const char* file,char * hash)
   
     
 #pragma optimize=z 9
-BIGNUM *BN_bin2bn_mod(int f,unsigned int *err,char *s,unsigned int len,BIGNUM *ret)
+BIGNUM *BN_bin2bn_mod(int f,unsigned int len,BIGNUM *ret)
 {
-  fread(f,s,len,err);
+  char*s=malloc(len);
+  unsigned int err;
+  fread(f,s,len,&err);
   unsigned int ch;
   unsigned int k=len/2;
   for (unsigned int i=0; i<k; i++)
@@ -186,8 +200,11 @@ BIGNUM *BN_bin2bn_mod(int f,unsigned int *err,char *s,unsigned int len,BIGNUM *r
     s[i]=s[len-i-1];
     s[len-i-1]=ch;
   }
+  mfree(s);
   return (BN_bin2bn(s,len,ret));
 }
+
+
 
 int SignHash(char * hash,char*sign)
 {
@@ -195,10 +212,17 @@ int SignHash(char * hash,char*sign)
   int f;
   unsigned int err;
   unsigned int rsa_sha1_len=1024;
-  char buf[256];
+  char buf[128];
   sprintf(buf,"%s%s",WORKFOLDER,KEY_FILE);
+  if (get_file_size(buf)!=596)
+  {
+  L_BAD_KEY:
+    ErrMsg(BAD_KEY_FILE);
+    return(-1);
+  }
   if ((f=fopen(buf,A_ReadOnly+A_BIN,P_READ,&err))==-1)
-    return (-1);
+    goto L_BAD_KEY;
+  
   RSA *rsa;
   
   if ((rsa=RSA_new_method(0))==NULL)
@@ -206,28 +230,28 @@ int SignHash(char * hash,char*sign)
   
   lseek(f,0x10,S_SET,&err,&err);
   
-  if (!(rsa->e=BN_bin2bn_mod(f,&err,buf, 4, rsa->e)))
+  if (!(rsa->e=BN_bin2bn_mod(f,4,rsa->e)))
     goto L_BN_ERROR;
 
-  if (!(rsa->n=BN_bin2bn_mod(f,&err,buf, 1024/8, rsa->n)))
+  if (!(rsa->n=BN_bin2bn_mod(f,1024/8,rsa->n)))
     goto L_BN_ERROR;
   
-  if (!(rsa->p=BN_bin2bn_mod(f,&err,buf, 1024/16, rsa->p)))
+  if (!(rsa->p=BN_bin2bn_mod(f,1024/16,rsa->p)))
     goto L_BN_ERROR;
   
-  if (!(rsa->q=BN_bin2bn_mod(f,&err,buf, 1024/16, rsa->q)))
+  if (!(rsa->q=BN_bin2bn_mod(f,1024/16,rsa->q)))
     goto L_BN_ERROR;
   
-  if (!(rsa->dmp1=BN_bin2bn_mod(f,&err,buf,1024/16, rsa->dmp1)))
+  if (!(rsa->dmp1=BN_bin2bn_mod(f,1024/16,rsa->dmp1)))
     goto L_BN_ERROR;
   
-  if (!(rsa->dmq1=BN_bin2bn_mod(f,&err,buf, 1024/16, rsa->dmq1)))
+  if (!(rsa->dmq1=BN_bin2bn_mod(f,1024/16,rsa->dmq1)))
     goto L_BN_ERROR;
   
-  if (!(rsa->iqmp=BN_bin2bn_mod(f,&err,buf, 1024/16, rsa->iqmp)))
+  if (!(rsa->iqmp=BN_bin2bn_mod(f,1024/16,rsa->iqmp)))
     goto L_BN_ERROR;
   
-  if (!(rsa->d=BN_bin2bn_mod(f,&err,buf, 1024/8, rsa->d)))
+  if (!(rsa->d=BN_bin2bn_mod(f,1024/8,rsa->d)))
     goto L_BN_ERROR;
        
  
@@ -248,15 +272,7 @@ L_BN_ERROR:
   
 }
   
-int GetFileSize(char* fname)
-{
-  int f;
-  unsigned int err;
-  FSTATS fs;
-  if ((f=GetFileStats(fname,&fs,&err))==-1)
-    return f;
-  return (fs.size);
-} 
+
   
 int is_file_signed(char*jad, int size)
 {
@@ -266,8 +282,10 @@ int is_file_signed(char*jad, int size)
   
   if ((f=fopen(jad,A_ReadOnly+A_BIN,P_READ,&err))==-1)
     return 1;
-  buf=malloc(size+1);
-  buf[size]=0;
+  buf=malloc(size+3);
+  buf[size]=0x0D;
+  buf[size+1]=0x0A;   // Добавим на всякий случай конец строки в конец файла
+  buf[size+2]=0;
   fread(f,buf,size,&err);
   fclose(f,&err);
   
@@ -309,7 +327,7 @@ int signfile(char * jar)
   strcpy(jad_name,jar);
   strcpy(jad_name+(p-jar),".jad");
   
-  if ((size=GetFileSize(jad_name))==-1)
+  if ((size=get_file_size(jad_name))==-1)
   {
     ErrMsg(CANT_OPEN_JAD);
     return (-1);
@@ -543,7 +561,7 @@ void generate_jad()
     return;
   }
   
-  if ((fsize=GetFileSize(jar_f))==-1)
+  if ((fsize=get_file_size(jar_f))==-1)
   {
     ErrMsg(CANT_OPEN_JAR);
     return;
@@ -702,7 +720,7 @@ int CreateOptionsMenu()
 {
   char jar_f[256];
   ws_2str(jar_file,jar_f,255);
-  if (GetFileSize(jar_f)==-1)
+  if (get_file_size(jar_f)==-1)
   {
     ShowMSG(1,(int)"*jar file not found!");
     return (0);
@@ -746,10 +764,12 @@ FLIST* Fill_FLIST(FLIST*fl,char* full_name, char* file_name,int is_dir)
   ws=AllocWS(len);
   str_2ws(ws,file_name,len);
   fl->filename=ws;
+  
   len=strlen(full_name);
   ws=AllocWS(len);
   str_2ws(ws,full_name,len);
   fl->fullname=ws;  
+  
   fl->next=0;
   fl->is_dir=is_dir;
   return fl;
@@ -769,7 +789,6 @@ int GetFoldersLevel(const char * fname)
        
 void FindFiles(const char *path)
 {
-  FLIST * fl_prev;
   FLIST * fl=(FLIST *)fltop;
   DIR_ENTRY de;
   unsigned int err;
@@ -802,25 +821,25 @@ void FindFiles(const char *path)
   
   int len;
   WSHDR *ws; 
-  if (GetFoldersLevel(path)>=2)
+  if (GetFoldersLevel(path)>=2)  // Добавляем переход на уровень выше
   {
-    fl_prev=malloc(sizeof(FLIST));
-    fl_prev->next=(FLIST*)fltop;
+    fl=malloc(sizeof(FLIST));
+    fl->next=(FLIST*)fltop;
     ws=AllocWS(2);
     str_2ws(ws,"..",2);
-    fl_prev->filename=ws;
+    fl->filename=ws;
     
     strcpy(name,path);
     len=strlen(name);
-    len-=1;
+    len--;
     while(name[len-1]!='\\')
       len--;
     name[len]=0;
     ws=AllocWS(len);
     str_2ws(ws,name,len);
-    fl_prev->fullname=ws;  
-    fl_prev->is_dir=1;
-    fltop=fl_prev;
+    fl->fullname=ws;  
+    fl->is_dir=1;
+    fltop=fl;
   }
 }
 
@@ -875,7 +894,7 @@ FLIST *FindFLISTtByN(int n)
 #pragma inline
 int GetIconIndex(FLIST *t)
 {
-  return t->is_dir>1?2:t->is_dir;
+  return t->is_dir;
 }
 
 void create_menu_folder(void)
