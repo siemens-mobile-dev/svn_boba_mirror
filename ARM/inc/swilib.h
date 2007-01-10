@@ -498,6 +498,21 @@ typedef struct
 #define EDIT_CURSOR_POS(DATA) (((short ****)DATA)[0x50/4][0x4C/4][0x28/4][0x30/2])
 #endif
 
+//Menu flags and screen displace
+#ifdef ELKA
+#define MENU_FLAG3 3
+#define MENU_FLAG2 0x5A2
+#define MENU_FLAG 0
+#define YDISP (24)
+#define YFSIZE (23)
+#else
+#define MENU_FLAG3 3
+#define MENU_FLAG2 0x59D
+#define MENU_FLAG 0
+#define YDISP (0)
+#define YFSIZE (11)
+#endif
+
 typedef struct
 {
 #ifdef NEWSGOLD
