@@ -1,19 +1,6 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 
-#ifdef ELKA
-#define MENU_FLAG2 0x5AD
-//0x5A2
-#define MENU_FLAG 1
-#define YDISP (24)
-#define YFSIZE (23)
-#else
-#define MENU_FLAG2 0x59D
-#define MENU_FLAG 0
-#define YDISP (0)
-#define YFSIZE (11)
-#endif
-
 #pragma inline
 void patch_header(HEADER_DESC* head)
 {
@@ -217,7 +204,7 @@ char myscr[SCR_MODULO*320];
 #ifdef ELKA
 IMGHDR MyScrHdr = {SCR_WIDTH,320-YDISP,0x1,myscr};
 #else
-IMGHDR MyScrHdr = {255,255,0x1,0,myscr};
+IMGHDR MyScrHdr = {255,255,0x1,myscr};
 #endif
 
 /*GBSTMR tmr2sec;
@@ -1411,14 +1398,14 @@ void *edmenu_HNDLS[8]=
 
 MENUITEM_DESC edmenu_ITEMS[8]=
 {
-  {NULL,(int)"Insert line",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Delete line",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Split line",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Join lines",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Insert time",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Insert date",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Paste",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Clear clipboard",LGP_NULL,0,NULL,0,MENU_FLAG2}
+  {NULL,(int)"Insert line"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Delete line"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Split line"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Join lines"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Insert time"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Insert date"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Paste"          ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Clear clipboard",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
 HEADER_DESC edmenu_HDR={0,0,0,0,icon,(int)"Special...",LGP_NULL};
@@ -1992,16 +1979,16 @@ void *loadmenu_HNDLS[10]=
 
 MENUITEM_DESC loadmenu_ITEMS[10]=
 {
-  {NULL,(int)"Font size = 4",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Font size = 6",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Font size = 8",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Font size = 14",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Font size = 16",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Direct load",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"DOS format",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"WIN format",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Padding on/off",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Save as...",LGP_NULL,0,NULL,0,MENU_FLAG2}
+  {NULL,(int)"Font size = 4" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Font size = 6" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Font size = 8" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Font size = 14",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Font size = 16",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Direct load"   ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"DOS format"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"WIN format"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Padding on/off",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Save as..."    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
 HEADER_DESC loadmenu_HDR={0,0,0,0,icon,(int)"General...",LGP_NULL};
@@ -2187,15 +2174,15 @@ void *gotomenu_HNDLS[9]=
 
 MENUITEM_DESC gotomenu_ITEMS[9]=
 {
-  {NULL,(int)"Top",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Line",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Percent",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Bottom",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Last saved",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Top"       ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Line"      ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Percent"   ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Bottom"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Last saved",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)t_bm1       ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)t_bm2       ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)t_bm3       ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)t_bm4       ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 HEADER_DESC gotomenu_HDR={0,0,0,0,icon,(int)"Goto...",LGP_NULL};
@@ -2248,10 +2235,10 @@ void set_book4(void)
 
 MENUITEM_DESC bookmenu_ITEMS[4]=
 {
-  {NULL,(int)t_bm1,LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)t_bm2,LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)t_bm3,LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)t_bm4,LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)t_bm1,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)t_bm2,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)t_bm3,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)t_bm4,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *bookmenu_HNDLS[4]=
@@ -2269,7 +2256,7 @@ MENU_DESC bookmenu_STRUCT=
   8,NULL,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  1,
+  MENU_FLAG,
   NULL,
   bookmenu_ITEMS,
   bookmenu_HNDLS,
@@ -2292,9 +2279,9 @@ void search_menu(void)
 
 MENUITEM_DESC softmenu_ITEMS[3]=
 {
-  {NULL,(int)"Goto...",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Set Bookmark...",LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)"Search...",LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)"Goto..."        ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Set Bookmark...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Search..."      ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *softmenu_HNDLS[3]=
@@ -2311,7 +2298,7 @@ MENU_DESC softmenu_STRUCT=
   8,NULL,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  1,
+  MENU_FLAG,
   NULL,
   softmenu_ITEMS,
   softmenu_HNDLS,
@@ -2541,9 +2528,14 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->gui_id=CreateGUI(main_gui);
 }
 
-void Killer(void)
+void Killer2(void)
 {
   extern void *ELF_BEGIN;
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+void Killer(void)
+{
   static unsigned int ul;
   if (text_changed)
   {
@@ -2568,7 +2560,7 @@ void Killer(void)
   FreeWS(e_ws);
   unlink(stkfile,&ul);
   //  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
-  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+  SUBPROC((void *)Killer2);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
