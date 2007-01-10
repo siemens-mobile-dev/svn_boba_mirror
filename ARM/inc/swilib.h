@@ -502,13 +502,11 @@ typedef struct
 #ifdef ELKA
 #define MENU_FLAG3 3
 #define MENU_FLAG2 0x5A2
-#define MENU_FLAG 0
 #define YDISP (24)
 #define YFSIZE (23)
 #else
 #define MENU_FLAG3 3
 #define MENU_FLAG2 0x59D
-#define MENU_FLAG 0
 #define YDISP (0)
 #define YFSIZE (11)
 #endif
