@@ -13,23 +13,17 @@ void xmfree(int x,void* ptr)
   mfree(ptr);
 }
 
-typedef struct
-{
-  int file_handler;
-}READ_FILE;
-
-
 __arm void read_data_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 {
   unsigned int err;
-  READ_FILE*read;
-  read=png_get_io_ptr(png_ptr);
-  fread(read->file_handler, data, length, &err);
+  int* f;
+  f=png_get_io_ptr(png_ptr);
+  fread(*f, data, length, &err);
 }
 
 __arm IMGHDR* create_imghdr(const char* fname)
 {
-  READ_FILE read;
+  int f;
   char buf[number];
   unsigned int err;
   struct PP
@@ -43,13 +37,13 @@ __arm IMGHDR* create_imghdr(const char* fname)
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
 
-  if ((read.file_handler=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
+  if ((f=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
   pp=malloc(sizeof(struct PP));
   pp->row=NULL;
   pp->img=NULL;
   pp->img_h=NULL;
   
-  if (fread(read.file_handler, &buf, number, &err)!=number) goto L_CLOSE_FILE;
+  if (fread(f, &buf, number, &err)!=number) goto L_CLOSE_FILE;
   if  (!png_check_sig((png_bytep)buf,number)) goto  L_CLOSE_FILE;
   
   png_ptr = png_create_read_struct_2("1.2.5", (png_voidp)0, 0, 0, (png_voidp)0,(png_malloc_ptr)xmalloc,(png_free_ptr)xmfree);
@@ -64,7 +58,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
     mfree(pp->img);
     mfree(pp->img_h);
     mfree(pp);
-    fclose(read.file_handler, &err);
+    fclose(f, &err);
     return NULL;
   }
   
@@ -74,7 +68,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
     goto L_CLOSE_FILE;
   }
   
-  png_set_read_fn(png_ptr, &read, read_data_fn);
+  png_set_read_fn(png_ptr, &f, read_data_fn);
   
   png_set_sig_bytes(png_ptr, number);
   
@@ -136,7 +130,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
   mfree(pp->row);
   mfree(pp);
-  fclose(read.file_handler, &err);
+  fclose(f, &err);
   return (img_hc);
 }
 

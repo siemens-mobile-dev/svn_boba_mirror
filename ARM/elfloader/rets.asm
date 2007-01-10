@@ -8,11 +8,11 @@
 	DCD	LIB_TOP
 	DCD	SFE(DATA_N)
 
+
+
+        RSEG	RET_ADRS:CODE
+        
 #ifdef NEWSGOLD
-
- 	RSEG	RET_ADRS:CODE
-
-
 #ifdef	ELKA
 
 	PUBLIC	OldOnClose
@@ -50,10 +50,8 @@ PITret:
 	DCD	0xA0975D3C+1
 	
 #endif
-
 #else
-	RSEG	RET_ADRS:CODE
-
+	
 	PUBLIC	OldOnClose
 OldOnClose:
 	DCD	0xA17143F0+1

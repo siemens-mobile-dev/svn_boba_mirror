@@ -113,31 +113,31 @@ I_R5R7
 #else
         ARM
         RSEG    PATCH_EXT2_R2R3:CODE:ROOT
-	BL      R2R3
-        MOV     R1, #0
-        NOP
+        LDR     R12, =R2R3
+        BLX     R12
 
-        
-        RSEG    PATCH_EXT2_R8R10:CODE:ROOT
         ARM
-	BL      R8R10
-        NOP
+        RSEG    PATCH_EXT2_R8R10:CODE:ROOT
+        
+        LDR     R12, =R8R10
+        BLX     R12
         
         
-        EXTERN	EXT2_REALLOC
-              
 	RSEG	PATCH_EXT2_IMPL:CODE:ROOT
+        EXTERN	EXT2_REALLOC
         ARM
         
         LDR     LR, [SP,#0x1C]
-        MOV     R8, #0
         STMFD   SP!,{R0-R3,LR}
-	BL 	EXT2_REALLOC
+        ADD     LR, PC, #4
+        LDR     PC, J_EXT2_REALLOC
+J_EXT2_REALLOC  
+        DC32    EXT2_REALLOC
+        MOV     R8, #0
+        STR     R8, [R0]
         MOV     R7, R0
         LDMFD   SP!,{R0-R3,LR}
-	STR     R8,[R7]
-	NOP
-	NOP
+
 	     
              
         RSEG	PATCH_EXT2_IMPL_2:CODE:ROOT
@@ -149,17 +149,21 @@ I_R5R7
 	RSEG	CODE:CODE:NOROOT
         EXTERN	GET_EXT2_AREA
 R2R3
+        ADD     LR, LR, #4
         STMFD   SP!,{R0,LR}
 	BL	GET_EXT2_AREA
         MOV     R3, R0
         ADD     R2, R0, #4
+        MOV     R1, #0
 	LDMFD   SP!,{R0,PC}
         
 R8R10
+        ADD     LR, LR, #4 
         STMFD   SP!,{R0-R3,LR}
 	BL	GET_EXT2_AREA
         MOV     R10, R0 
         ADD     R8, R0, #4
+        MOV     R5, #0
 	LDMFD   SP!,{R0-R3,PC}
 
 
