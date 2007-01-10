@@ -4,6 +4,9 @@
 // Общие функции модуля MAIN.C
 void SendAnswer(int dummy, TPKT *p);
 
+//void patch_header(HEADER_DESC* head);
+//void patch_input(INPUTDIA_DESC* inp);
+
 // Константы статусов
 #define IS_OFFLINE 0
 #define IS_INVISIBLE 1

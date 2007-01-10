@@ -3,8 +3,26 @@
 #include "NatICQ.h"
 #include "main.h"
 #include "status_change.h"
-//#include "conf_loader.h"
 
+//===============================================================================================
+// ELKA Compatibility
+#pragma inline
+void patch_header(HEADER_DESC* head)
+{
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
+}
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp)
+{
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+//===============================================================================================
 
 
 extern int CurrentStatus;
@@ -12,15 +30,16 @@ extern  int S_ICONS[11];
 
 int StatChange_Menu_ID;
 
-void Change_Status(int status)
+void Change_Status(char status)
 {
+    CurrentStatus = status;
     TPKT *p;
-/*
+    p=malloc(sizeof(PKT)+1);
     p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
     p->pkt.type=T_MY_STATUS_CH; // Тип пакета: изменение статуса
     p->pkt.data_len=1;          // Длина пакета: 1 байт
-*/    
-
+    memcpy(p->data, &status, 1);
+/* 
     // Пока нихера не работает всё равно, пусть шлёт сообщение мне :)
     int l;
     char s[30];
@@ -30,24 +49,29 @@ void Change_Status(int status)
     p->pkt.uin=145555736;               // Никому; поле нужно проигнорировать на сервере
     p->pkt.type=T_SENDMSG; // Тип пакета: изменение статуса
     p->pkt.data_len=l;          // Длина пакета: 1 байт
-
+*/
     SUBPROC((void *)SendAnswer,0,p);
+
+    GeneralFunc_flag1(StatChange_Menu_ID,1);    
 }
 
 void Ch_Online()
 {
-  CurrentStatus = IS_ONLINE;
   Change_Status(IS_ONLINE);
-  GeneralFunc_flag1(StatChange_Menu_ID,1);
 }
 
 void Ch_Busy()
 {
-  CurrentStatus = IS_DND;
   Change_Status(IS_DND);
-  GeneralFunc_flag1(StatChange_Menu_ID,1);  
 }
 
+void Ch_Invisible()
+{
+  Change_Status(IS_INVISIBLE);
+}
+
+
+#define STATUSES_NUM 3
 
 int st_ch_dummy_icon[] = {0x50E,0};
 
@@ -55,13 +79,14 @@ HEADER_DESC st_menuhdr={0,0,131,21,st_ch_dummy_icon,(int)"Выбор статуса",0x7FFFF
 
 int st_menusoftkeys[]={0,1,2};
 
-MENUITEM_DESC st_menuitems[2]=
+MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
-  {st_ch_dummy_icon,(int)"Он-лайн",0x7FFFFFFF,0,NULL/*menusoftkeys*/,0,0x18},
-  {st_ch_dummy_icon,(int)"Занят",0x7FFFFFFF,0,NULL/*menusoftkeys*/,0,0x59F},
+  {st_ch_dummy_icon,(int)"Он-лайн",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {st_ch_dummy_icon,(int)"Занят",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {st_ch_dummy_icon,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *st_menuprocs[2]={(void *)Ch_Online, (void *)Ch_Busy};
+void *st_menuprocs[STATUSES_NUM]={(void *)Ch_Online, (void *)Ch_Busy , (void *)Ch_Invisible};
 
 SOFTKEY_DESC st_menu_sk[]=
 {
@@ -80,11 +105,11 @@ MENU_DESC st_tmenu=
   8,NULL,NULL,NULL,
   st_menusoftkeys,
   &st_menu_skt,
-  1,
+  1,//MENU_FLAG,
   NULL,
   st_menuitems,
   st_menuprocs,
-  2
+  STATUSES_NUM
 };
 
 
@@ -92,5 +117,6 @@ void DispStatusChangeMenu()
 {
   st_menuitems[0].icon = &S_ICONS[IS_ONLINE];
   st_menuitems[1].icon = &S_ICONS[IS_DND];  
-  StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,0,2,0,0);
+  patch_header(&st_menuhdr);
+  StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,0,STATUSES_NUM,0,0);
 }

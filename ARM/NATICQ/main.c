@@ -96,23 +96,23 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
   rc->y2=y2;
 }
 
-
+//===============================================================================================
+// ELKA Compatibility
 #pragma inline
-void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
+void patch_header(HEADER_DESC* head)
 {
-  inp->rc.x=x;
-  inp->rc.y=y;
-  inp->rc.x2=x2;
-  inp->rc.y2=y2;
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
 }
-
 #pragma inline
-void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
+void patch_input(INPUTDIA_DESC* inp)
 {
-  head->rc.x=x;
-  head->rc.y=y;
-  head->rc.x2=x2;
-  head->rc.y2=y2;
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 //===============================================================================================
 
@@ -402,7 +402,13 @@ CLIST *AddContact(unsigned int uin, char *name)
 //===============================================================================================
 int DNR_ID=0;
 int DNR_TRIES=3;
-const char NATICQ_host[]="cbsie.dyndns.info";
+
+//const char NATICQ_host[]="cbsie.dyndns.info";
+//const unsigned int NATICQ_PORT = 5050;
+
+const char NATICQ_host[]="kibab.no-ip.info";
+const unsigned int NATICQ_PORT = 5193;
+
 
 void create_connect(void)
 {
@@ -444,7 +450,7 @@ void create_connect(void)
       if (sock!=-1)
       {
 	sa.family=1;
-	sa.port=htons(5050);
+	sa.port=htons(NATICQ_PORT);
 	sa.ip=p_res[3][0][0];
 	//    sa.ip=htonl(IP_ADDR(82,207,89,182));
 	if (connect(sock,&sa,sizeof(sa))!=-1)
@@ -1550,12 +1556,12 @@ void CreateEditChat(CLIST *t)
   edchat_toitem++;
   edchat_answeritem=edchat_toitem;
   
-  int scr_w=ScreenW();
-  int scr_h=ScreenH();
-  int head_h=HeaderH();
+//  int scr_w=ScreenW();
+//  int scr_h=ScreenH();
+//  int head_h=HeaderH();
   
-  patch_header(&edchat_hdr,0,0,scr_w-1,head_h);
-  patch_input(&edchat_desc,0,head_h+1,scr_w-1,scr_h-SoftkeyH()-1);
+  patch_header(&edchat_hdr);
+  patch_input(&edchat_desc);
   edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,0);
 }
 
@@ -1714,7 +1720,7 @@ void ec_menu(void)
     {
       sprintf(ecm_contactname,"%u",t->uin);
     }
-    patch_header(&ecmenu_HDR,0,0,ScreenW()-1,HeaderH());
+    patch_header(&ecmenu_HDR);
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,6,0,0);
   }
 }
@@ -1819,10 +1825,10 @@ void AskNickAndAddContact(void)
   wsprintf(ews,percent_t,edcontact->name);
   ConstructEditControl(&ec,3,0x40,ews,63);
   AddEditControlToEditQend(eq,&ec,ma);
-  int scr_w=ScreenW();
-  int head_h=HeaderH();
-  patch_header(&anac_hdr,0,0,scr_w-1,head_h);
-  patch_input(&anac_desc,0,head_h+1,scr_w-1,ScreenH()-SoftkeyH()-1);
+//  int scr_w=ScreenW();
+//  int head_h=HeaderH();
+  patch_header(&anac_hdr);
+  patch_input(&anac_desc);
   CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,0);
   FreeWS(ews);
 }
