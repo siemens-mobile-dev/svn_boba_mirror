@@ -27,6 +27,14 @@ OldOnCreate:
 OldShowMsg:
 	DCD	0xA09554F2+1
 
+	PUBLIC	PITgetN
+PITgetN:
+	DCD	0xA0A38D44
+	
+	PUBLIC	PITret
+PITret:
+	DCD	0xA095393C+1
+
 #else
 
 	PUBLIC	OldOnClose
@@ -47,7 +55,7 @@ PITgetN:
 	
 	PUBLIC	PITret
 PITret:
-	DCD	0xA0975D3C+1
+	DCD	0xA0975D3E+1
 	
 #endif
 #else
