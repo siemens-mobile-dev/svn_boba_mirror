@@ -6,8 +6,14 @@ __root const unsigned int UIN=0;
 __root const CFG_HDR cfghdr1={CFG_STR_PASS,"Password",0,8};
 __root const char PASS[9]="";
 
+__root const CFG_HDR cfghdr1_1={CFG_STR_WIN1251,"Host",0,127};
+__root const char NATICQ_HOST[128]="cbsie.dyndns.info";
+
+__root const CFG_HDR cfghdr1_2={CFG_UINT,"Port",0,65535};
+__root const unsigned int NATICQ_PORT=5050;
+
 __root const CFG_HDR cfghdr2={CFG_STR_WIN1251,"History path",0,63};
-__root const char HIST_PATH[64]="4:\\NatICQ_hist";
+__root const char HIST_PATH[64]="4:\\ZBin\\NatICQ\\history";
 
 __root const CFG_HDR cfghdr2_0={CFG_CBOX,"Log status changes",0,2};
 __root const int LOG_STATCH = 0;

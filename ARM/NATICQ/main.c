@@ -140,7 +140,7 @@ SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Options"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt=
@@ -403,11 +403,8 @@ CLIST *AddContact(unsigned int uin, char *name)
 int DNR_ID=0;
 int DNR_TRIES=3;
 
-const char NATICQ_host[]="cbsie.dyndns.info";
-const unsigned int NATICQ_PORT = 5050;
-
-//const char NATICQ_host[]="kibab.no-ip.info";
-//const unsigned int NATICQ_PORT = 5193;
+extern const char NATICQ_HOST[];
+extern const unsigned int NATICQ_PORT;
 
 
 void create_connect(void)
@@ -421,7 +418,8 @@ void create_connect(void)
   DNR_ID=0;
   snprintf(logmsg,255,"Send DNR...");
   REDRAW();
-  int err=async_gethostbyname(NATICQ_host,&p_res,&DNR_ID); //03461351 3<70<19<81
+  *socklasterr()=0;
+  int err=async_gethostbyname(NATICQ_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
   if (err)
   {
     if ((err==0xC9)||(err==0xD6))

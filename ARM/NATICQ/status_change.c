@@ -92,7 +92,7 @@ SOFTKEY_DESC st_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Выбор"},
   {0x0001,0x0000,(int)"Назад"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB st_menu_skt=
