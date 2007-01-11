@@ -287,10 +287,10 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
   char *reloc, *base;
   unsigned long minadr=(unsigned long)-1, maxadr=0;//, maxadrsize;
   int n,m;
-
-
+  
+  
   zeromem_a(dyn, sizeof(dyn));
-
+  
   /////////////////////////////////////////
   //WINTEL
 #ifdef wintel
@@ -298,7 +298,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
   if ((fin=fopen(filename,"rb"))==NULL) return -1;			//не открывается ельф
   if (fread(&ehdr,sizeof(Elf32_Ehdr),1,fin)!=1) return -2;	        //не читается ельф
 #endif
-
+  
   //ARM
 #ifndef wintel
   int fin;
@@ -308,20 +308,20 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
   {fclose(fin, &iError); return -2;}
 #endif
   /////////////////////////////////////////
-
+  
   if (*((long *)ehdr.e_ident)!=0x464C457F){                               //да и не ельф это вовсе
 #ifndef wintel
     fclose(fin, &iError);
 #endif
     return -3;
   }
-
+  
 #ifdef wintel
   cout << "Elf header"<<endl;
   cout << "ehdr.e_entry:"<<ehdr.e_entry<<endl;
   cout << "ehdr.e_phoff:"<<ehdr.e_phoff<<endl;
 #endif
-
+  
   //прочитаем все програмные сегменты и вычислим необходимую область в раме
   if (ehdr.e_phnum>MAX_PHNUM) return -9;					//слишком много програмных сегментов
   for(n=0;n<ehdr.e_phnum;n++){
@@ -331,7 +331,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
     if (fseek(fin,ehdr.e_phoff+n*ehdr.e_phentsize,SEEK_SET)!=0) return -4;	//не сикается програмный заголовок
     if (fread(&(phdrs[n]),sizeof(Elf32_Phdr),1,fin)!=1) return -5;		//не читается програмный заголовок
 #endif
-
+    
     //ARM
 #ifndef wintel
     if (lseek(fin, ehdr.e_phoff+n*ehdr.e_phentsize, S_SET, &iError, &iError2)!=ehdr.e_phoff+n*ehdr.e_phentsize)
@@ -359,7 +359,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
     cout << "phdr.p_memsz:"<<phdrs[n].p_memsz<<endl;
 #endif
   }
-
+  
   //выделим эту область и очистим ее
   if ((base=(char *)malloc(maxadr-minadr))==0){		//не выделяеться память под ельф
 #ifndef wintel
@@ -375,7 +375,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 #ifdef wintel
     if (fseek(fin,phdrs[n].p_offset,SEEK_SET)!=0) return -6;	//не сикается динамический сегмент
 #endif
-
+    
     //ARM
 #ifndef wintel
     if (lseek(fin, phdrs[n].p_offset, S_SET, &iError, &iError)!=phdrs[n].p_offset)
@@ -415,7 +415,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
       cout << "dyn seg: off="<<hex<<phdrs[n].p_offset<<", sz="<<phdrs[n].p_filesz<<endl;
       if (fread(reloc,phdrs[n].p_filesz,1,fin)!=1) {mfree(reloc); return -8;} //не читается динамический сегмент
 #endif
-
+      
       //ARM
 #ifndef wintel
       if (fread(fin, reloc, phdrs[n].p_filesz, &iError)!=phdrs[n].p_filesz)
@@ -443,7 +443,7 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
       cout<<"dyn[DT_REL]="<<dyn[DT_REL]<<", dyn[DT_RELA]="<<dyn[DT_RELA]<<endl;
       cout<<"dyn[DT_RELSZ]="<<dyn[DT_RELSZ]<<", dyn[DT_RELASZ]="<<dyn[DT_RELASZ]<<endl;
 #endif
-
+      
       m=0;
       //выполним релокацию REL
       if (dyn[DT_RELSZ]!=0) {
@@ -453,37 +453,46 @@ long elfload(char *filename, void *param1, void *param2, void *param3){
 	    <<" , sym_idx="<<ELF32_R_SYM(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)
               <<" , rel_type="<<dec<<(int) ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)<<endl;
 #endif
-	  switch(ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info)){
-
-	  case R_ARM_NONE: break; // пустой релокейшен
-
-          case R_ARM_ABS32:
+          Elf32_Word ri=ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info);
+          if (ri!=R_ARM_RBASE)
+          {
+            if (ri==R_ARM_RABS32)
+            {
+              *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset))+=(long)base-minadr;
+            }
+            else
+              switch(ri){
+                
+              case R_ARM_NONE: break; // пустой релокейшен
+              
+              case R_ARM_ABS32:
 #ifdef wintel
-            cout << "base="<<hex<<(long)base<< endl;
-            cout << "of="<<hex<<((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr<<endl;
+                cout << "base="<<hex<<(long)base<< endl;
+                cout << "of="<<hex<<((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr<<endl;
 #endif
-	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base;
-            break;
-
-          case R_ARM_RELATIVE: // вообще говоря не minadr а начало сегмента содержащего символ
-	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base-minadr;
-            break; // ignore
-
-	  case R_ARM_RABS32:
-	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset))+=(long)base-minadr;
-            break;
-
-	  case R_ARM_RBASE: break;
-	  default: 	//неизвестный тип релокации
+                *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base;
+                break;
+                
+              case R_ARM_RELATIVE: // вообще говоря не minadr а начало сегмента содержащего символ
+                *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base-minadr;
+                break; // ignore
+                
+                //	  case R_ARM_RABS32:
+                //	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset))+=(long)base-minadr;
+                //            break;
+                
+                //              case R_ARM_RBASE: break;
+              default: 	//неизвестный тип релокации
 #ifdef wintel
-            cout << "Invalid reloc type: " <<dec<<(unsigned)ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info) << endl;
+                cout << "Invalid reloc type: " <<dec<<(unsigned)ELF32_R_TYPE(((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_info) << endl;
 #else
-	    fclose(fin, &iError);
+                fclose(fin, &iError);
 #endif
-	    mfree(base);
-	    mfree(reloc);
-	    return -13;
-	  }
+                mfree(base);
+                mfree(reloc);
+                return -13;
+              }
+          }
 	  m++;
 	}
       }
@@ -530,7 +539,7 @@ int main(int argc, char* argv[]){
     cout << "no .elf specified"<<endl;
     return -1;
   }
-
+  
   cout << elfload(argv[1],0,0,0);
   return 1;
 }
@@ -618,8 +627,8 @@ __arm void MyIDLECSMonClose(void *data)
   extern BXR1(void *, void (*)(void *));
   KillGBSproc(HELPER_CEPID);
   BXR1(data,OldOnClose);
-//  OldOnClose(data);
-//  asm("NOP\n");
+  //  OldOnClose(data);
+  //  asm("NOP\n");
 }
 
 __arm void LoadDaemons(int dummy, char *path)
@@ -641,54 +650,47 @@ __arm void LoadDaemons(int dummy, char *path)
   }
   FindClose(&de,&err);
 }
-    
-               
-               
+
 __arm void MyIDLECSMonCreate(void *data)
 {
-#ifdef NEWSGOLD
-#ifdef ELKA
-  static const int smallicons[2]={0x3D6,0};
-  static const int bigicons[2]={0x41B,0};
-#else
-  static const int smallicons[2]={0x3F5,0};
-  static const int bigicons[2]={0x439,0};
-#endif
-#else
   static const int smallicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_small.png",0};
   static const int bigicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_big.png",0};
-#endif
-
+  
+#ifdef NEWSGOLD
   static const REGEXPLEXT elf_reg=
   {
     "elf",
     0x55,
-    //   0x59C1200,
-#ifdef NEWSGOLD
-0x59D08FF,
-#else
-0x57807FF,
-#endif
-//    0x5431F04,
-smallicons,
-bigicons,
-#ifdef NEWSGOLD
-//   0xBB,
-0x109, //LGP "Открыть"
-0x197, //LGP "Опции"
-//   0x7FFFC112,
-0x7FFFC0FB,
-#endif
-(void *)elfloader_onload,
-0
+    0,
+    8, //Каталог Misc
+    0x59D,
+    smallicons,
+    bigicons,
+    (int)"Open",    //LGP "Открыть"
+    (int)"AltOpen", //LGP "Опции"
+    LGP_DOIT_PIC,
+    (void *)elfloader_onload,
+    0
   };
+#else
+  static const REGEXPLEXT elf_reg=
+  {
+    "elf",
+    0x55,
+    0x57807FF,
+    smallicons,
+    bigicons,
+    (void *)elfloader_onload,
+    0
+  };
+#endif
   CreateHELPER_PROC();
   RegExplorerExt(&elf_reg);
   SUBPROC((void *)LoadDaemons,0,DEFAULT_DISK ":\\ZBin\\Daemons\\");
   extern BXR1(void *, void (*)(void *));
   BXR1(data,OldOnCreate);
-//  OldOnCreate(data);
-//  asm("NOP\n");
+  //  OldOnCreate(data);
+  //  asm("NOP\n");
 }
 
 const char wintranslation[128]=
@@ -750,8 +752,8 @@ __arm void ESI(char *s, WSHDR *ws)
 
 /*int toupper(int c)
 {
-  if ((c>='a')&&(c<='z')) c+='A'-'a';
-  return(c);
+if ((c>='a')&&(c<='z')) c+='A'-'a';
+return(c);
 }*/
 
 //static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
@@ -856,12 +858,12 @@ __thumb MyShowMSG(int p1, int p2)
 #ifdef ELKA
   if (p2!=0x1DD1)
 #else
-  if (p2!=(0x1DCC+5))
+    if (p2!=(0x1DCC+5))
 #endif    
-  {
-    OldShowMsg(p1,p2);
-    return;
-  }
+    {
+      OldShowMsg(p1,p2);
+      return;
+    }
   asm("MOVS R0,R6\n");
   DoUnknownFileType((WSHDR *)p1);
 }
