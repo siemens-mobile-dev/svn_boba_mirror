@@ -110,8 +110,12 @@ PATCH_EXT:
 //MAINCODE:A0975D34 10 B5                       PUSH    {R4,LR}
 //MAINCODE:A0975D36 04 1C                       ADD     R4, R0, #0
 //MAINCODE:A0975D38 B1 F0 F2 EC                 BLX     sub_A0A27720
-	LDR	R1,=J_PIT
+	LDR	R1,JJ_PIT
 	BX	R1
+        
+        RSEG	PATCH_GET_PITJ:DATA(2)
+JJ_PIT	DC32	J_PIT
+        
              
 ; ----------------------------------------------       
 	RSEG	PIT_PNG_EXTENSION:CODE(2)
