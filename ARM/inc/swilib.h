@@ -220,11 +220,13 @@ typedef struct
 #else
   const char *ext;
   int unical_id;
-  int unk1;	//0x57807FF
+  signed char enabled_options;
+  unsigned char obex_path_id;   
+  unsigned short menu_flag;
   const int *icon1;
-  const int *icon2;
+  const int *icon2; //skip on reg
   void *proc;
-  int zero;
+  void *altproc;
 #endif
 }REGEXPLEXT;
 
@@ -520,6 +522,7 @@ typedef struct
 #endif
 
 //Menu flags and screen displace
+#ifdef NEWSGOLD
 #ifdef ELKA
 #define MENU_FLAG3 3
 #define MENU_FLAG2 0x5A2
@@ -531,6 +534,13 @@ typedef struct
 #define YDISP (0)
 #define YFSIZE (11)
 #endif
+#else
+#define MENU_FLAG3 3
+#define MENU_FLAG2 0x578
+#define YDISP (0)
+#define YFSIZE (11)
+#endif
+
 
 typedef struct
 {
