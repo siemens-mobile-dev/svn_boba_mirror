@@ -128,6 +128,7 @@ J_PIT:
 	MOV	R0,R4
 	LDR	R12,PITgetN
 	BLX	R12
+        CMP	R0,R4
 	LDR	R12,PITret
 	BX	R12
 

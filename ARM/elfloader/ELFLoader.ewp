@@ -132,7 +132,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>14</version>
+        <version>13</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -153,23 +153,23 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -271,7 +271,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -279,7 +279,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>$FILE_BNAME$.r79</state>
+          <state></state>
         </option>
         <option>
           <name>CCLangSelect</name>
@@ -341,12 +341,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>$TOOLKIT_DIR$\INC\</state>
-        </option>
-        <option>
-          <name>CCInlineThreshold</name>
-          <version>0</version>
-          <state>1</state>
+          <state>###Uninitialized###</state>
         </option>
       </data>
     </settings>
@@ -955,13 +950,12 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>14</version>
+        <version>13</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -977,23 +971,23 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -1021,7 +1015,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimization</name>
@@ -1031,7 +1025,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1111111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -1095,7 +1089,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -1103,7 +1097,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>$FILE_BNAME$.r79</state>
+          <state></state>
         </option>
         <option>
           <name>CCLangSelect</name>
@@ -1115,7 +1109,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
@@ -1165,12 +1159,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>$TOOLKIT_DIR$\INC\</state>
-        </option>
-        <option>
-          <name>CCInlineThreshold</name>
-          <version>0</version>
-          <state>1</state>
+          <state>###Uninitialized###</state>
         </option>
       </data>
     </settings>
@@ -1779,7 +1768,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>14</version>
+        <version>13</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1800,23 +1789,23 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -1844,7 +1833,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimization</name>
@@ -1854,7 +1843,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1111111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -1918,7 +1907,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -1938,7 +1927,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
@@ -1989,11 +1978,6 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
-        </option>
-        <option>
-          <name>CCInlineThreshold</name>
-          <version>0</version>
-          <state>1</state>
         </option>
       </data>
     </settings>
@@ -2602,14 +2586,12 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>14</version>
+        <version>13</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>NEWSGOLD</state>
-          <state>ELKA</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -2625,23 +2607,23 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -2669,7 +2651,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimization</name>
@@ -2679,7 +2661,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1111111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -2743,7 +2725,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -2751,7 +2733,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>$FILE_BNAME$.r79</state>
+          <state></state>
         </option>
         <option>
           <name>CCLangSelect</name>
@@ -2763,7 +2745,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
@@ -2813,12 +2795,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>$TOOLKIT_DIR$\INC\</state>
-        </option>
-        <option>
-          <name>CCInlineThreshold</name>
-          <version>0</version>
-          <state>1</state>
+          <state>###Uninitialized###</state>
         </option>
       </data>
     </settings>
@@ -3315,681 +3292,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\png.c</name>
-    <configuration>
-      <name>Release</name>
-      <settings>
-        <name>ICCARM</name>
-        <data>
-          <version>14</version>
-          <wantNonLocal>0</wantNonLocal>
-          <debug>0</debug>
-          <option>
-            <name>CCDefines</name>
-            <state>NDEBUG</state>
-            <state>NEWSGOLD</state>
-          </option>
-          <option>
-            <name>CCPreprocFile</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCPreprocComments</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCPreprocLine</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCListCFile</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListCMnemonics</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListCMessages</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListAssFile</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListAssSource</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCEnableRemarks</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCDiagSuppress</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagRemark</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagWarning</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagError</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCObjPrefix</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptSizeSpeed</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptimization</name>
-            <version>0</version>
-            <state>3</state>
-          </option>
-          <option>
-            <name>CCAllowList</name>
-            <version>1</version>
-            <state>1011111</state>
-          </option>
-          <option>
-            <name>CCObjUseModuleName</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCObjModuleName</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDebugInfo</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>IProcessorMode</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IEndianMode</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IProcessor</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IStackAlign</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IInterwork</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IExtraOptionsCheck</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>IExtraOptions</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCLangConformance</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCSignedPlainChar</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCRequirePrototypes</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCMultibyteSupport</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCDiagWarnAreErr</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCCompilerRuntimeInfo</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IFpuProcessor</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>OutputFile</name>
-            <state>$FILE_BNAME$.r79</state>
-          </option>
-          <option>
-            <name>CCLangSelect</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCLibConfigHeader</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptSizeSpeedSlave</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptimizationSlave</name>
-            <version>0</version>
-            <state>3</state>
-          </option>
-          <option>
-            <name>CCCodeFunctions</name>
-            <state>PIT_PNG_EXTENSION</state>
-          </option>
-          <option>
-            <name>CCData</name>
-            <state>DATA</state>
-          </option>
-          <option>
-            <name>PreInclude</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CompilerMisraRules</name>
-            <version>0</version>
-            <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
-          </option>
-          <option>
-            <name>CompilerMisraOverride</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleTypeOverride</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleType</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleTypeCmdlineProducer</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCIncludePath2</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCStdIncCheck</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCStdIncludePath</name>
-            <state>$TOOLKIT_DIR$\INC\</state>
-          </option>
-          <option>
-            <name>CCInlineThreshold</name>
-            <version>0</version>
-            <state>1</state>
-          </option>
-        </data>
-      </settings>
-    </configuration>
-    <configuration>
-      <name>Release SGOLD</name>
-      <settings>
-        <name>ICCARM</name>
-        <data>
-          <version>14</version>
-          <wantNonLocal>0</wantNonLocal>
-          <debug>0</debug>
-          <option>
-            <name>CCDefines</name>
-            <state>NDEBUG</state>
-          </option>
-          <option>
-            <name>CCPreprocFile</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCPreprocComments</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCPreprocLine</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCListCFile</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListCMnemonics</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListCMessages</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListAssFile</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListAssSource</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCEnableRemarks</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCDiagSuppress</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagRemark</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagWarning</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagError</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCObjPrefix</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptSizeSpeed</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptimization</name>
-            <version>0</version>
-            <state>3</state>
-          </option>
-          <option>
-            <name>CCAllowList</name>
-            <version>1</version>
-            <state>1011111</state>
-          </option>
-          <option>
-            <name>CCObjUseModuleName</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCObjModuleName</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDebugInfo</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>IProcessorMode</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IEndianMode</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IProcessor</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IStackAlign</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IInterwork</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IExtraOptionsCheck</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>IExtraOptions</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCLangConformance</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCSignedPlainChar</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCRequirePrototypes</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCMultibyteSupport</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCDiagWarnAreErr</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCCompilerRuntimeInfo</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IFpuProcessor</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>OutputFile</name>
-            <state>$FILE_BNAME$.r79</state>
-          </option>
-          <option>
-            <name>CCLangSelect</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCLibConfigHeader</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptSizeSpeedSlave</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptimizationSlave</name>
-            <version>0</version>
-            <state>3</state>
-          </option>
-          <option>
-            <name>CCCodeFunctions</name>
-            <state>PIT_PNG_EXTENSION</state>
-          </option>
-          <option>
-            <name>CCData</name>
-            <state>DATA</state>
-          </option>
-          <option>
-            <name>PreInclude</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CompilerMisraRules</name>
-            <version>0</version>
-            <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
-          </option>
-          <option>
-            <name>CompilerMisraOverride</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleTypeOverride</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleType</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleTypeCmdlineProducer</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCIncludePath2</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCStdIncCheck</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCStdIncludePath</name>
-            <state>$TOOLKIT_DIR$\INC\</state>
-          </option>
-          <option>
-            <name>CCInlineThreshold</name>
-            <version>0</version>
-            <state>1</state>
-          </option>
-        </data>
-      </settings>
-    </configuration>
-    <configuration>
-      <name>Release_ELKA</name>
-      <settings>
-        <name>ICCARM</name>
-        <data>
-          <version>14</version>
-          <wantNonLocal>0</wantNonLocal>
-          <debug>0</debug>
-          <option>
-            <name>CCDefines</name>
-            <state>NDEBUG</state>
-            <state>NEWSGOLD</state>
-            <state>ELKA</state>
-          </option>
-          <option>
-            <name>CCPreprocFile</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCPreprocComments</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCPreprocLine</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCListCFile</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListCMnemonics</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListCMessages</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListAssFile</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCListAssSource</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCEnableRemarks</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCDiagSuppress</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagRemark</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagWarning</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDiagError</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCObjPrefix</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptSizeSpeed</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptimization</name>
-            <version>0</version>
-            <state>3</state>
-          </option>
-          <option>
-            <name>CCAllowList</name>
-            <version>1</version>
-            <state>1011111</state>
-          </option>
-          <option>
-            <name>CCObjUseModuleName</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCObjModuleName</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCDebugInfo</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>IProcessorMode</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IEndianMode</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IProcessor</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IStackAlign</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IInterwork</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IExtraOptionsCheck</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>IExtraOptions</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCLangConformance</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCSignedPlainChar</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCRequirePrototypes</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCMultibyteSupport</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCDiagWarnAreErr</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCCompilerRuntimeInfo</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>IFpuProcessor</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>OutputFile</name>
-            <state>$FILE_BNAME$.r79</state>
-          </option>
-          <option>
-            <name>CCLangSelect</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCLibConfigHeader</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptSizeSpeedSlave</name>
-            <state>1</state>
-          </option>
-          <option>
-            <name>CCOptimizationSlave</name>
-            <version>0</version>
-            <state>3</state>
-          </option>
-          <option>
-            <name>CCCodeFunctions</name>
-            <state>PIT_PNG_EXTENSION</state>
-          </option>
-          <option>
-            <name>CCData</name>
-            <state>DATA</state>
-          </option>
-          <option>
-            <name>PreInclude</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CompilerMisraRules</name>
-            <version>0</version>
-            <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
-          </option>
-          <option>
-            <name>CompilerMisraOverride</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleTypeOverride</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleType</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCModuleTypeCmdlineProducer</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCIncludePath2</name>
-            <state></state>
-          </option>
-          <option>
-            <name>CCStdIncCheck</name>
-            <state>0</state>
-          </option>
-          <option>
-            <name>CCStdIncludePath</name>
-            <state>$TOOLKIT_DIR$\INC\</state>
-          </option>
-          <option>
-            <name>CCInlineThreshold</name>
-            <version>0</version>
-            <state>1</state>
-          </option>
-        </data>
-      </settings>
-    </configuration>
   </file>
   <file>
     <name>$PROJ_DIR$\rets.asm</name>
