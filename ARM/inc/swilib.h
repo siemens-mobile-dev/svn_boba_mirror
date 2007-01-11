@@ -56,6 +56,7 @@ typedef int jmp_buf[11];
 #define MIDDLE_FONT 5
 #define LGP_NULL 0x7FFFFFFF
 #define SET_SOFT_KEY_N 0
+#define LGP_DOIT_PIC 0x7FFFC0FB
 
 #else
 
@@ -72,6 +73,8 @@ typedef int jmp_buf[11];
 #define SMALL_FONT 7
 #define LGP_NULL 0x7FFF
 #define SET_SOFT_KEY_N 1
+#define LGP_DOIT_PIC 0x7FFFC0FB
+
 #endif
 
 #define NAMECSM_MAGIC1 ((void *(*)(int))0x55AACCCC)
@@ -430,7 +433,7 @@ typedef struct
   int n_items; //Number of items
 }MENU_DESC;
 
-
+#pragma pack(1)
 typedef struct{
 #ifdef NEWSGOLD
   char unk0[40];
@@ -455,6 +458,7 @@ typedef struct{
   char file_name[271];
 #endif
 }DIR_ENTRY;
+#pragma pack()
 
 typedef struct
 {
