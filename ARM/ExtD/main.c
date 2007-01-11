@@ -95,7 +95,7 @@ REGEXPLEXT reg=
   NULL,
   (int)"Open",    //LGP "Открыть"
   (int)"AltOpen", //LGP "Опции"
-  0x7FFFC0FB,
+  LGP_DOIT_PIC,
   (void *)do_ext,
   (void *)do_alternate
 };
@@ -123,7 +123,7 @@ REGEXPLEXT reg0=
   NULL,
   (int)"Open",    //LGP "Открыть"
   (int)"AltOpen", //LGP "Опции"
-  0x7FFFC0FB,
+  LGP_DOIT_PIC,
   (void *)do_ext,
   (void *)do_alternate
 };
