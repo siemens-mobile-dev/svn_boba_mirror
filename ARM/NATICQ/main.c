@@ -403,11 +403,11 @@ CLIST *AddContact(unsigned int uin, char *name)
 int DNR_ID=0;
 int DNR_TRIES=3;
 
-//const char NATICQ_host[]="cbsie.dyndns.info";
-//const unsigned int NATICQ_PORT = 5050;
+const char NATICQ_host[]="cbsie.dyndns.info";
+const unsigned int NATICQ_PORT = 5050;
 
-const char NATICQ_host[]="kibab.no-ip.info";
-const unsigned int NATICQ_PORT = 5193;
+//const char NATICQ_host[]="kibab.no-ip.info";
+//const unsigned int NATICQ_PORT = 5193;
 
 
 void create_connect(void)
