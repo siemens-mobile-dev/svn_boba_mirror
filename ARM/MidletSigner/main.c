@@ -711,11 +711,6 @@ MENU_DESC options_menu_STRUCT=
   4 //n
 };
 
-
-
-
-  
-
 int CreateOptionsMenu()
 {
   char jar_f[256];
@@ -1053,7 +1048,7 @@ SOFTKEY_DESC edit_sk[]=
 {
   {0x0018,0x0000,(int)"Options"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB edit_skt=
@@ -1077,7 +1072,11 @@ INPUTDIA_DESC ed1_desc=
   101,
   0,
   0,
+#ifdef NEWSGOLD
+  0
+#else
   0x40000000
+#endif
 };
 
 int CreateMainMenu(void)
@@ -1182,13 +1181,13 @@ void UpdateCSMname(void)
 
 int main()
 {
-  LockSched();
   InitConfig();
   S_ICONS[0]=(int)JAR_ICON;
   S_ICONS[1]=(int)FOLDER_ICON;
   S_ICONS[2]=0;
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
+  LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();
 }
