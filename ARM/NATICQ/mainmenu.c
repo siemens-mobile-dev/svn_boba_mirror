@@ -38,14 +38,14 @@ int icon[]={0x3DB,0};
 int about_icon[]={0x4DB,0};
 int dummy_icon[] = {0x50E,0};
 
-HEADER_DESC menuhdr={0,0,131,21,icon,(int)"Тест меню",0x7FFFFFFF};
+HEADER_DESC menuhdr={0,0,131,21,NULL,(int)"Меню",0x7FFFFFFF};
 
 int mmenusoftkeys[]={0,1,2};
 
 MENUITEM_DESC menuitems[2]=
 {
-  {dummy_icon,(int)"Статус...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {about_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Статус...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *menuprocs[3]={(void *)DispStatusChangeMenu, (void *) AboutDlg};
@@ -76,7 +76,9 @@ MENU_DESC tmenu=
 
 void ShowMainMenu()
 {
-  menuitems[0].icon = &S_ICONS[CurrentStatus];
+  menuitems[0].icon = S_ICONS+CurrentStatus;
+  menuitems[1].icon = S_ICONS+IS_UNKNOWN;
+  menuhdr.icon= S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
   MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,2,0,0);
 }

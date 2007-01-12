@@ -19,35 +19,35 @@ __root const CFG_HDR cfghdr2_0={CFG_CBOX,"Log status changes",0,2};
 __root const int LOG_STATCH = 0;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 
-__root const CFG_HDR cfghdr3={CFG_UINT,"Offline icon",0,32767};
-__root const unsigned int ICON0=774;//0x162;
+__root const CFG_HDR cfghdr3={CFG_STR_UTF8,"Offline icon",0,63};
+__root const char ICON0[64]="4:\\ZBin\\NatICQ\\img\\2.png";
 
-__root const CFG_HDR cfghdr4={CFG_UINT,"Invisible icon",0,32767};
-__root const unsigned int ICON1=0x232;
+__root const CFG_HDR cfghdr4={CFG_STR_UTF8,"Invisible icon",0,63};
+__root const char ICON1[64]="4:\\ZBin\\NatICQ\\img\\8.png";
 
-__root const CFG_HDR cfghdr5={CFG_UINT,"Away icon",0,32767};
-__root const unsigned int ICON2=0x22F;
+__root const CFG_HDR cfghdr5={CFG_STR_UTF8,"Away icon",0,63};
+__root const char ICON2[64]="4:\\ZBin\\NatICQ\\img\\3.png";
 
-__root const CFG_HDR cfghdr6={CFG_UINT,"N/A icon",0,32767};
-__root const unsigned int ICON3=0x17A;
+__root const CFG_HDR cfghdr6={CFG_STR_UTF8,"N/A icon",0,63};
+__root const char ICON3[64]="4:\\ZBin\\NatICQ\\img\\4.png";
 
-__root const CFG_HDR cfghdr7={CFG_UINT,"Occupied icon",0,32767};
-__root const unsigned int ICON4=0x195;
+__root const CFG_HDR cfghdr7={CFG_STR_UTF8,"Occupied icon",0,63};
+__root const char ICON4[64]="4:\\ZBin\\NatICQ\\img\\5.png";
 
-__root const CFG_HDR cfghdr8={CFG_UINT,"DND icon",0,32767};
-__root const unsigned int ICON5=0x231;
+__root const CFG_HDR cfghdr8={CFG_STR_UTF8,"DND icon",0,63};
+__root const char ICON5[64]="4:\\ZBin\\NatICQ\\img\\6.png";
 
-__root const CFG_HDR cfghdr9={CFG_UINT,"FFC icon",0,32767};
-__root const unsigned int ICON6=0x18C;
+__root const CFG_HDR cfghdr9={CFG_STR_UTF8,"FFC icon",0,63};
+__root const char ICON6[64]="4:\\ZBin\\NatICQ\\img\\7.png";
 
-__root const CFG_HDR cfghdr10={CFG_UINT,"Online icon",0,32767};
-__root const unsigned int ICON7=0x22C;
+__root const CFG_HDR cfghdr10={CFG_STR_UTF8,"Online icon",0,63};
+__root const char ICON7[64]="4:\\ZBin\\NatICQ\\img\\1.png";
 
-__root const CFG_HDR cfghdr11={CFG_UINT,"Message icon",0,32767};
-__root const unsigned int ICON8=0x24C;
+__root const CFG_HDR cfghdr11={CFG_STR_UTF8,"Message icon",0,63};
+__root const char ICON8[64]="4:\\ZBin\\NatICQ\\img\\9.png";
 
-__root const CFG_HDR cfghdr12={CFG_UINT,"Unknown state icon",0,32767};
-__root const unsigned int ICON9=0x185;
+__root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Unknown state icon",0,63};
+__root const char ICON9[64]="4:\\ZBin\\NatICQ\\img\\10.png";
 
 __root const CFG_HDR cfghdr13={CFG_UINT,"Idle icon X-pos",0,1000};
 __root const unsigned int IDLEICON_X=0;

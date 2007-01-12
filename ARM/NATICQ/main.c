@@ -24,26 +24,25 @@ char Is_Vibra_Enabled = 1;
 int S_ICONS[11];
 
 #define EOP -10
-int CurrentStatus;
+int CurrentStatus=IS_ONLINE;
 
 WSHDR *ews;
 
 extern const unsigned int UIN;
 extern const char PASS[];
-extern const unsigned int ICON0;
-extern const unsigned int ICON1;
-extern const unsigned int ICON2;
-extern const unsigned int ICON3;
-extern const unsigned int ICON4;
-extern const unsigned int ICON5;
-extern const unsigned int ICON6;
-extern const unsigned int ICON7;
-extern const unsigned int ICON8;
-extern const unsigned int ICON9;
+extern const char ICON0[];
+extern const char ICON1[];
+extern const char ICON2[];
+extern const char ICON3[];
+extern const char ICON4[];
+extern const char ICON5[];
+extern const char ICON6[];
+extern const char ICON7[];
+extern const char ICON8[];
+extern const char ICON9[];
 
 extern const unsigned int IDLEICON_X;
 extern const unsigned int IDLEICON_Y;
-
 
 const char percent_t[]="%t";
 const char empty_str[]="";
@@ -134,7 +133,7 @@ CLIST *edcontact;
 
 //MUTEX contactlist_mtx;
 
-HEADER_DESC contactlist_menuhdr={0,0,NULL,NULL,NULL,(int)"Contacts...",LGP_NULL};
+HEADER_DESC contactlist_menuhdr={0,0,0,0,NULL,(int)"Contacts...",LGP_NULL};
 int menusoftkeys[]={0,1,2};
 SOFTKEY_DESC menu_sk[]=
 {
@@ -931,8 +930,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         if (idata)
         {
           int icn;
-	  //          void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
-	  //          DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
+	            void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+	            DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
           if (total_unread)
             icn=IS_MSG;
           else
@@ -942,14 +941,15 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             case 0:
               icn=IS_OFFLINE; break;
             case 3:
-              icn=IS_ONLINE; break;
+              icn=CurrentStatus; //IS_ONLINE;
+	      break;
             default:
               icn=IS_UNKNOWN; break;
             }
           }
-          DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
-			   GetPaletteAdrByColorIndex(0),
-			   GetPaletteAdrByColorIndex(20));
+//          DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
+//			   GetPaletteAdrByColorIndex(0),
+//			   GetPaletteAdrByColorIndex(20));
           DrawImg(IDLEICON_X+2,IDLEICON_Y+2,S_ICONS[icn]);
         }
       }
@@ -1135,16 +1135,16 @@ int main()
   
   InitConfig();
   
-  S_ICONS[0]=ICON0;
-  S_ICONS[1]=ICON1;
-  S_ICONS[2]=ICON2;
-  S_ICONS[3]=ICON3;
-  S_ICONS[4]=ICON4;
-  S_ICONS[5]=ICON5;
-  S_ICONS[6]=ICON7;
-  S_ICONS[7]=ICON6;
-  S_ICONS[8]=ICON8;
-  S_ICONS[9]=ICON9;
+  S_ICONS[0]=(int)ICON0;
+  S_ICONS[1]=(int)ICON1;
+  S_ICONS[2]=(int)ICON2;
+  S_ICONS[3]=(int)ICON3;
+  S_ICONS[4]=(int)ICON4;
+  S_ICONS[5]=(int)ICON5;
+  S_ICONS[6]=(int)ICON7;
+  S_ICONS[7]=(int)ICON6;
+  S_ICONS[8]=(int)ICON8;
+  S_ICONS[9]=(int)ICON9;
   
   if (!UIN)
   {

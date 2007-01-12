@@ -73,17 +73,15 @@ void Ch_Invisible()
 
 #define STATUSES_NUM 3
 
-int st_ch_dummy_icon[] = {0x50E,0};
-
-HEADER_DESC st_menuhdr={0,0,131,21,st_ch_dummy_icon,(int)"Выбор статуса",0x7FFFFFFF};
+HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)"Выбор статуса",0x7FFFFFFF};
 
 int st_menusoftkeys[]={0,1,2};
 
 MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
-  {st_ch_dummy_icon,(int)"Он-лайн",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {st_ch_dummy_icon,(int)"Занят",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {st_ch_dummy_icon,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Он-лайн",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Занят",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *st_menuprocs[STATUSES_NUM]={(void *)Ch_Online, (void *)Ch_Busy , (void *)Ch_Invisible};
@@ -115,8 +113,10 @@ MENU_DESC st_tmenu=
 
 void DispStatusChangeMenu()
 {
-  st_menuitems[0].icon = &S_ICONS[IS_ONLINE];
-  st_menuitems[1].icon = &S_ICONS[IS_DND];  
+  st_menuitems[0].icon = S_ICONS+IS_ONLINE;
+  st_menuitems[1].icon = S_ICONS+IS_DND;  
+  st_menuitems[2].icon = S_ICONS+IS_INVISIBLE;  
+  st_menuhdr.icon=S_ICONS+CurrentStatus;
   patch_header(&st_menuhdr);
   StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,0,STATUSES_NUM,0,0);
 }
