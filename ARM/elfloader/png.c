@@ -36,7 +36,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   png_structp png_ptr=NULL;
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
-
+  
   if ((f=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
   pp=malloc(sizeof(struct PP));
   pp->row=NULL;
@@ -100,28 +100,52 @@ __arm IMGHDR* create_imghdr(const char* fname)
   rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   
   pp->row=malloc(rowbytes);
-  pp->img=malloc(width*height);
-  
-  for (unsigned int y = 0; y<height; y++)
+  pp->img_h=img_hc=malloc(sizeof(IMGHDR));
+#ifdef NEWSGOLD
   {
-    png_read_row(png_ptr, (png_bytep)pp->row, NULL);
-    for (unsigned int x = 0; x<width; x++)
+    unsigned short *iimg=(unsigned short *)(pp->img=malloc(width*height*2));
+    for (unsigned int y = 0; y<height; y++)
     {
-      if (!pp->row[x*4+3])
-        pp->img[x+y*width]=0xC0;
-      else
+      png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+      for (unsigned int x = 0; x<width; x++)
       {
-	char c=(pp->row[x*4+0] & 0xE0);
-	c|=((pp->row[x*4+1]>>3)&0x1C);
-	c|=((pp->row[x*4+2]>>6)&0x3);
-        pp->img[x+y*width]=c; //(row[x*4+0] & 0xE0)|((row[x*4+1]>>3)&0x1C)|((row[x*4+2]>>6)&0x3);
+	if (!pp->row[x*4+3])
+	  *iimg++=0xE000;
+	else
+	{
+	  unsigned int c=((pp->row[x*4+0]<<8)&0xF800);
+	  c|=((pp->row[x*4+1]<<3)&0x7E0);
+	  c|=((pp->row[x*4+2]>>3)&0x1F);
+	  *iimg++=c;
+	}
       }
     }
   }
-  pp->img_h=img_hc=malloc(sizeof(IMGHDR));
+  pp->img_h->bpnum=8;
+#else
+  {
+    unsigned char *iimg=(unsigned short *)(pp->img=malloc(width*height));
+    for (unsigned int y = 0; y<height; y++)
+    {
+      png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+      for (unsigned int x = 0; x<width; x++)
+      {
+	if (!pp->row[x*4+3])
+	  *iimg++=0xC0;
+	else
+	{
+	  char c=(pp->row[x*4+0] & 0xE0);
+	  c|=((pp->row[x*4+1]>>3)&0x1C);
+	  c|=((pp->row[x*4+2]>>6)&0x3);
+	  *iimg++=c;
+	}
+      }
+    }
+  }
+  pp->img_h->bpnum=5;
+#endif
   pp->img_h->w=width;
   pp->img_h->h=height;
-  pp->img_h->bpnum=5;
   //pp->img_h->zero=0;
   pp->img_h->bitmap=pp->img;
   
