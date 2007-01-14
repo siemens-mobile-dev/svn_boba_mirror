@@ -1,3 +1,6 @@
+/*
+  Интерфейс и функции смены своего статуса
+*/
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
 #include "NatICQ.h"
@@ -54,24 +57,45 @@ void Change_Status(char status)
 
     GeneralFunc_flag1(StatChange_Menu_ID,1);    
 }
-
+///////////////////////////////////////////////////////////////////////////////
+// Пока так, ждём динамическую менюшку с радиобаттонами... :)
 void Ch_Online()
 {
   Change_Status(IS_ONLINE);
 }
 
-void Ch_Busy()
+void Ch_Away()
+{
+  Change_Status(IS_AWAY);
+}
+
+void Ch_NA()
+{
+  Change_Status(IS_NA);
+}
+
+void Ch_Ocuppied()
+{
+  Change_Status(IS_OCCUPIED);
+}
+
+void Ch_DND()
 {
   Change_Status(IS_DND);
+}
+
+void Ch_FFC()
+{
+  Change_Status(IS_FFC);
 }
 
 void Ch_Invisible()
 {
   Change_Status(IS_INVISIBLE);
 }
+///////////////////////////////////////////////////////////////////////////////
 
-
-#define STATUSES_NUM 3
+#define STATUSES_NUM 7
 
 HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)"Выбор статуса",0x7FFFFFFF};
 
@@ -80,11 +104,23 @@ int st_menusoftkeys[]={0,1,2};
 MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
   {NULL,(int)"Он-лайн",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Отсутствую",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Недоступен",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},  
+  {NULL,(int)"DND",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Занят",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Готов болтать",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *st_menuprocs[STATUSES_NUM]={(void *)Ch_Online, (void *)Ch_Busy , (void *)Ch_Invisible};
+void *st_menuprocs[STATUSES_NUM]={
+                                  (void *)Ch_Online,
+                                  (void *)Ch_Away,
+                                  (void *)Ch_NA,
+                                  (void *)Ch_DND,                                  
+                                  (void *)Ch_Ocuppied,
+                                  (void *)Ch_FFC ,
+                                  (void *)Ch_Invisible
+                                 };
 
 SOFTKEY_DESC st_menu_sk[]=
 {
@@ -114,8 +150,12 @@ MENU_DESC st_tmenu=
 void DispStatusChangeMenu()
 {
   st_menuitems[0].icon = S_ICONS+IS_ONLINE;
-  st_menuitems[1].icon = S_ICONS+IS_DND;  
-  st_menuitems[2].icon = S_ICONS+IS_INVISIBLE;  
+  st_menuitems[1].icon = S_ICONS+IS_AWAY;  
+  st_menuitems[2].icon = S_ICONS+IS_NA;  
+  st_menuitems[3].icon = S_ICONS+IS_DND;  
+  st_menuitems[4].icon = S_ICONS+IS_OCCUPIED;  
+  st_menuitems[5].icon = S_ICONS+IS_FFC;  
+  st_menuitems[6].icon = S_ICONS+IS_INVISIBLE;    
   st_menuhdr.icon=S_ICONS+CurrentStatus;
   patch_header(&st_menuhdr);
   StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,0,STATUSES_NUM,0,0);
