@@ -103,11 +103,13 @@ REGEXPLEXT reg=
 {
   NULL,
   0x55,
-  0x57807FF, 
+  0,
+  7,
+  0x578, 
   NULL,
   NULL,
   (void *)do_ext,
-  0
+  (void *)do_alternate
 };
 #endif
 
@@ -131,11 +133,13 @@ REGEXPLEXT reg0=
 {
   empty_str,
   0,
-  0x57807FF, 
+  0,
+  7,
+  0x578, 
   NULL,
   NULL,
   (void *)do_ext,
-  0
+  (void *)do_alternate
 };
 #endif
 
