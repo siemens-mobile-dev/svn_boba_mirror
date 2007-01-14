@@ -124,7 +124,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   pp->img_h->bpnum=8;
 #else
   {
-    unsigned char *iimg=(unsigned short *)(pp->img=malloc(width*height));
+    unsigned char *iimg=(unsigned char *)(pp->img=malloc(width*height));
     for (unsigned int y = 0; y<height; y++)
     {
       png_read_row(png_ptr, (png_bytep)pp->row, NULL);

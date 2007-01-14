@@ -677,7 +677,9 @@ __arm void MyIDLECSMonCreate(void *data)
   {
     "elf",
     0x55,
-    0x57807FF,
+    0xFF,
+    7,
+    0x578,
     smallicons,
     bigicons,
     (void *)elfloader_onload,
