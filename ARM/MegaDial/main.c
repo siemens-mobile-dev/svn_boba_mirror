@@ -1,9 +1,15 @@
 #include "..\inc\swilib.h"
 
-#define MAX_RECORDS 5000
 
+#ifdef NEWSGOLD
+#define MAX_RECORDS 5000
 #define LEVEL1_RN	(41*41)
 #define LEVEL2_RN	(41)
+#else 
+#define MAX_RECORDS 1024
+#define LEVEL1_RN	(31)
+#endif
+
 
 #define wslen(ARG) (ARG->wsbody[0])
 
@@ -73,12 +79,12 @@ int CompareStrT9(WSHDR *ws, WSHDR *ss)
 
   //Таблица ключей для поиска текста
   static const char key[256]=
-    "11111111111111111111111111111111"
+    "11111111111111111111111111111111"   
       "10001**0***0000*012345678900***0"
 	"0222333444555666777788899991*110"
 	  "122233344455566677778889999111*1"
 	    "11111111111111111111111111111111"
-	      "11111111111111111111111111111111"
+	      "11111111311111111111111131111111"
 		"22223333444455566677778888899999"
 		  "22223333444455566677778888899999";
 
@@ -101,6 +107,8 @@ int CompareStrT9(WSHDR *ws, WSHDR *ss)
     {
       //Преобразуем в код кнопки
       if ((c>=0x410)&&(c<0x450)) c-=0x350;
+      if ((c==0x401)) c=0xA8;
+      if ((c==0x451)) c=0xB8;
       c&=0xFF;
       c=key[c];
       if (c==ss->wsbody[spos])
@@ -127,13 +135,17 @@ void ConstructList(void)
 
   AB_UNPRES ur;
   void *buffer;
-
+  
 #pragma pack(1)
-  struct
-  {
+  struct {
+#ifdef NEWSGOLD
     long dummy1;
     short dummy2;
     char bitmap[MAX_RECORDS/8];
+#else
+    long dummy1;
+    char bitmap[MAX_RECORDS/8];    
+#endif    
   } ABmain;
 #pragma pack()
 
@@ -161,20 +173,33 @@ void ConstructList(void)
 	{
 	  if (ABmain.bitmap[rec>>3]&(0x80>>(rec&7)))
 	  {
+
+            #ifdef NEWSGOLD
 	    //Запись есть в битмапе
-	    unsigned int rl1;
+            unsigned int rl1;
 	    unsigned int rl2;
 	    unsigned int rl3;
 	    rl1=rec/LEVEL1_RN;
 	    rl2=(rec%LEVEL1_RN)/LEVEL2_RN;
 	    rl3=rec%LEVEL2_RN;
 	    snprintf(recname,128,"0:\\System\\apo\\addr\\data\\%02d\\%02d\\%02d",rl1,rl2,rl3);
+            #else
+	    unsigned int rl1=rec/LEVEL1_RN;
+	    unsigned int r12=rec%LEVEL1_RN;
+	    snprintf(recname,128,"0:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);            
+            #endif             
 	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,0,&ul))!=-1)
 	    {
 	      zeromem(&ur,sizeof(ur));
-	      fsz=fread(fin,buffer,65536,&ul);
+              fsz=lseek(fin,0,S_END,&ul,&ul);
+              lseek(fin,0,S_SET,&ul,&ul);
+  	      fread(fin,buffer,fsz,&ul);
 	      fclose(fin,&ul);
+              #ifdef NEWSGOLD
 	      UnpackABentry(&ur,((char *)buffer+8),fsz,0x28);
+              #else
+              UnpackABentry(&ur,((char *)buffer+4),fsz-4,0x28);
+              #endif
 	      int i=0;
 	      zeromem(&contact,sizeof(contact));
 	      while(i<ur.number_of_records)
@@ -185,13 +210,35 @@ void ConstructList(void)
 		  switch(GetTypeOfAB_UNPRES_ITEM(r->item_type))
 		  {
 		  case 0x05:
-		    if (r->item_type==0x81)
+                    #ifdef NEWSGOLD
+                    if (r->item_type==0x81)
+                    #else
+                    if (r->item_type==0x23||r->item_type==0x24)
+                    #endif   
 		    {
+                      #ifdef NEWSGOLD
 		      if (r->data)
 		      {
 			wstrcpy(contact.name=AllocWS(50),(WSHDR *)(r->data));
 			*((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
 		      }
+                      #else
+                      if (r->data)
+		      { 
+                        if (!contact.name)
+                        {
+			 wstrcpy(contact.name=AllocWS(50),(WSHDR *)(r->data));
+			 *((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
+                        }
+                        else
+                        {
+                         wsAppendChar(contact.name,',');
+                         wsAppendChar(contact.name,' ');
+                         wstrcat(contact.name,(WSHDR *)(r->data));
+                         *((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
+                        }
+		      }
+                      #endif 
 		    }
 		    break;
 		  case 0x01:
@@ -201,7 +248,11 @@ void ConstructList(void)
 		      int j;
 		      int c;
 		      WSHDR *ws;
+                      #ifdef NEWSGOLD
 		      n-=0x62;
+                      #else
+                      n-=0x2A;
+                      #endif 
 		      if (n<4)
 		      {
 			if (p)
@@ -328,12 +379,12 @@ void my_ed_redraw(void *data)
       if (!cl) break;
       if (i!=cp)
       {
-	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),5,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
       }
       else
       {
 	DrawRoundedFrame(2,65+(i*17),129,65+17+(i*17),0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),5,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       }
       cl=(CLIST *)cl->next;
       i++;
@@ -347,7 +398,7 @@ void ChangeRC(GUI *gui)
   static const RECT rc={6,40,126,100};
   if (e_ws)
   {
-    if (e_ws->wsbody[0]>12) return;
+    if (wslen(e_ws)>12) return;
   }
   if (!gui) return;
   char *p=(char *)gui;
@@ -413,13 +464,13 @@ int gotomenu_onkey(GUI *data, GUI_MSG *msg)
 
 MENUITEM_DESC gotomenu_ITEMS[9]=
 {
-  {NULL,(int)dstr[0],0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)dstr[1],0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)dstr[2],0x7FFFFFFF,0,NULL,0,0x59D},
-  {NULL,(int)dstr[3],0x7FFFFFFF,0,NULL,0,0x59D},
+  {NULL,(int)dstr[0],LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)dstr[1],LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)dstr[2],LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)dstr[3],LGP_NULL,0,NULL,0,MENU_FLAG2},
 };
 
-HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",0x7FFFFFFF};
+HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
 
 MENU_DESC gotomenu_STRUCT=
 {
@@ -500,7 +551,11 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   }
   else
   {
+    #ifdef NEWSGOLD
     if ((key>='0'&&key<='9')||(key=='*')||(key=='#')||(key==RIGHT_SOFT))
+    #else
+    if ((key>='0'&&key<='9')||(key=='*')||(key=='#')||(key==LEFT_SOFT))
+    #endif  
     {
       if (m==KEY_DOWN)
       {
