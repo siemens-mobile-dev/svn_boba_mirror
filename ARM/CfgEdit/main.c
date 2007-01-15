@@ -264,6 +264,7 @@ void SaveConfig(void)
     fwrite(f,cfg,size_cfg,&ul);
     fclose(f,&ul);
   }
+  GBS_SendMessage(MMI_CEPID, MSG_RECONFIGURE_REQ);
 }
 
 void maincsm_onclose(CSM_RAM *csm)

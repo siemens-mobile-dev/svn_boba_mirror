@@ -44,6 +44,7 @@ typedef int jmp_buf[11];
 #ifdef NEWSGOLD
 
 #define MSG_HELPER_TRANSLATOR 0xDEAE
+#define MSG_RECONFIGURE_REQ 0xDEAF
 
 #define MSG_GUI_DESTROYED 0x640E
 #define MSG_IDLETMR_EXPIRED 0x6401
@@ -61,6 +62,7 @@ typedef int jmp_buf[11];
 #else
 
 #define MSG_HELPER_TRANSLATOR 0x3F0
+#define MSG_RECONFIGURE_REQ 0x3F1
 
 #define MSG_GUI_DESTROYED 0x98
 #define MSG_IDLETMR_EXPIRED 0x95
