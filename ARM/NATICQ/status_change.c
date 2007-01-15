@@ -42,17 +42,7 @@ void Change_Status(char status)
     p->pkt.type=T_MY_STATUS_CH; // Тип пакета: изменение статуса
     p->pkt.data_len=1;          // Длина пакета: 1 байт
     memcpy(p->data, &status, 1);
-/* 
-    // Пока нихера не работает всё равно, пусть шлёт сообщение мне :)
-    int l;
-    char s[30];
-    sprintf(s, "Превед! Cтатус: %d",status);
-    p=malloc(sizeof(PKT)+(l=strlen(s))+1);
-    strcpy(p->data, s);
-    p->pkt.uin=145555736;               // Никому; поле нужно проигнорировать на сервере
-    p->pkt.type=T_SENDMSG; // Тип пакета: изменение статуса
-    p->pkt.data_len=l;          // Длина пакета: 1 байт
-*/
+
     SUBPROC((void *)SendAnswer,0,p);
 
     GeneralFunc_flag1(StatChange_Menu_ID,1);    
@@ -92,6 +82,21 @@ void Ch_FFC()
 void Ch_Invisible()
 {
   Change_Status(IS_INVISIBLE);
+}
+
+unsigned short GetStatusIndexInMenu(unsigned short status)
+{
+  switch(status)
+  {
+  case IS_ONLINE: {return 0;}
+  case IS_AWAY: {return 1;}
+  case IS_NA: {return 2;}
+  case IS_DND: {return 3;}
+  case IS_OCCUPIED: {return 4;}
+  case IS_FFC: {return 5;}
+  case IS_INVISIBLE: {return 6;}
+  }
+  return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -158,5 +163,5 @@ void DispStatusChangeMenu()
   st_menuitems[6].icon = S_ICONS+IS_INVISIBLE;    
   st_menuhdr.icon=S_ICONS+CurrentStatus;
   patch_header(&st_menuhdr);
-  StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,0,STATUSES_NUM,0,0);
+  StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,GetStatusIndexInMenu(CurrentStatus),STATUSES_NUM,0,0);
 }

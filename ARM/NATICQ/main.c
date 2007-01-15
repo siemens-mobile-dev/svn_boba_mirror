@@ -203,14 +203,6 @@ int GetIconIndex(CLIST *t)
     else
     {
       if (s==0xFFFF) return(IS_OFFLINE);
-/*
-      if (s & 0x0020) return(IS_FFC);
-      if (s & 0x0001) return(IS_AWAY);
-      if (s & 0x0004) return(IS_NA);
-      if (s & 0x0010) return(IS_OCCUPIED);
-      if (s & 0x0002) return(IS_FFC);
-      if (s & 0x0100) return(IS_INVISIBLE);
-*/
       if (s & 0x0020) return(IS_FFC);
       if (s & 0x0001) return(IS_AWAY);
       if (s & 0x0005) return(IS_NA);
@@ -218,7 +210,6 @@ int GetIconIndex(CLIST *t)
       if (s & 0x0013) return(IS_DND);      
       if (s & 0x0002) return(IS_FFC);
       if (s & 0x0100) return(IS_INVISIBLE);
-      
     }
   }
   else

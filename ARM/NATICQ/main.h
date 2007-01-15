@@ -19,6 +19,7 @@ void SendAnswer(int dummy, TPKT *p);
 #define IS_MSG 8
 #define IS_UNKNOWN 9
 
+
 // Константы операций (взаимодействие с сервером шлюза)
 #define T_REQLOGIN 1
 #define T_SENDMSG 2
