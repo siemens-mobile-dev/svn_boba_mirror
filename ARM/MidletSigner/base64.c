@@ -2,7 +2,6 @@
 #include "base64.h"
 
 
-static char *_sf_b64_buf = NULL;
 static size_t _sf_b64_len = 0;
 static unsigned char _sf_uc_ib[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/==";
@@ -65,5 +64,5 @@ base64_encode(const void *data, int *size)
 
   _sf_b64_len = (ou - output);
   if(size) *size = _sf_b64_len; 
-  return (_sf_b64_buf = output);
+  return (output);
 }

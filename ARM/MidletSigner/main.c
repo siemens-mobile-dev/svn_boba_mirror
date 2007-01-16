@@ -43,11 +43,13 @@ volatile FLIST *fltop;
 WSHDR* ews;
 WSHDR* jar_file;
 int S_ICONS[3];
+
 #ifdef NEWSGOLD
   const char folder[129]="0:\\Applications\\";  
 #else
   const char folder[129]="0:\\Java\\jam\\";    
 #endif
+  
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -101,8 +103,10 @@ void zcfree(int unk, void* ptr)
 #define CANT_FIND_MANIFEST 10
 #define CANT_CREATE_JAD 11
 #define BAD_KEY_FILE 12
+#define SIZE_OF_JAD_NULL 13
+#define FILE_WAS_NOT_SIGNED 14
 
-const char* errors[13]=
+const char* errors[15]=
 {  
   "Done!",
   "Can't open *.jad!",
@@ -116,7 +120,9 @@ const char* errors[13]=
   "Can't open *.jar!",
   "Can't find MANIFEST.MF!",
   "Can't create *.jad!",
-  "Bad *.key file!"
+  "Bad *.key file!",
+  "Size of jad file is NULL!",
+  "File was not signed!"
 };
 
 void ErrMsg(int num)
@@ -158,9 +164,8 @@ char * ReadCertificate(int* size)
   if (!fsize)
     return 0;
   lseek(f,0,S_SET,&err,&err);
-  cert=malloc(fsize+1);
+  cert=malloc(fsize);
   fread(f,cert,fsize,&err);
-  cert[fsize]=0;
   fclose(f,&err);
   return (cert); 
 }
@@ -219,13 +224,10 @@ int SignHash(char * hash,char*sign)
   char buf[128];
   sprintf(buf,"%s%s",WORKFOLDER,KEY_FILE);
   if (get_file_size(buf)!=596)
-  {
-  L_BAD_KEY:
-    ErrMsg(BAD_KEY_FILE);
     return(-1);
-  }
+
   if ((f=fopen(buf,A_ReadOnly+A_BIN,P_READ,&err))==-1)
-    goto L_BAD_KEY;
+    return(-1);
   
   RSA *rsa;
   
@@ -286,10 +288,8 @@ int is_file_signed(char*jad, int size)
   
   if ((f=fopen(jad,A_ReadOnly+A_BIN,P_READ,&err))==-1)
     return 1;
-  buf=malloc(size+3);
-  buf[size]=0x0D;
-  buf[size+1]=0x0A;   // Добавим на всякий случай конец строки в конец файла
-  buf[size+2]=0;
+  buf=malloc(size+1);
+  buf[size]=0;
   fread(f,buf,size,&err);
   fclose(f,&err);
   
@@ -310,8 +310,9 @@ L_SIGNED:
   return (1);
 }
   
-int signfile(char * jar)
+void sign_jad()
 {
+  char jar[256];
   char * base64cert;
   char * base64hash;
   char *cert;
@@ -321,51 +322,55 @@ int signfile(char * jar)
   char* signature;
   char*p;
   int size;
+  int err_n;
   
-  
+  ws_2str(jar_file,jar,255);
   if (!(p=strstr(jar,".jar")))
   {
-    ErrMsg(BAD_JAR);
-    return (-1);
+    err_n=BAD_JAR;
+    goto L_ERR;
   }
   strcpy(jad_name,jar);
   strcpy(jad_name+(p-jar),".jad");
   
   if ((size=get_file_size(jad_name))==-1)
   {
-    ErrMsg(CANT_OPEN_JAD);
-    return (-1);
+    err_n=CANT_OPEN_JAD;
+    goto L_ERR;
   }
   
   if (is_file_signed(jad_name,size))
   {
-    ErrMsg(FILE_ALREADY_SIGNED);
-    return (-1);
+    err_n=FILE_ALREADY_SIGNED;
+    goto L_ERR;
   }
     
   
   if (!(cert=ReadCertificate(&size)))
   {
-    ErrMsg(CANT_READ_CERT);
-    return (-2);
+    err_n=CANT_READ_CERT;
+    goto L_ERR;
   }
   
   base64cert=base64_encode(cert,&size);
   mfree(cert);
   if(!base64cert)
-    return (-3);
+  {
+    err_n=CANT_READ_CERT;
+    goto L_ERR;
+  }
   
   if (CreateSHA1Hash(jar,sha1jar))
   {
-    ErrMsg(CANT_CREATE_HASH);
     mfree(base64cert);
-    return (-4);
+    err_n=CANT_CREATE_HASH;
+    goto L_ERR;
   }
   
   if (SignHash(sha1jar,rsa_sha1))
   {
-    ErrMsg(CANT_SIGN_HASH);
-    return (-5);
+    err_n=CANT_SIGN_HASH;
+    goto L_ERR;
   }
     
   size=128;
@@ -374,15 +379,19 @@ int signfile(char * jar)
   signature=malloc(0x2000);
   sprintf(signature,"%s %s\r\n%s %s\r\n%s %s",midlet_cert,base64cert,midlet_jar_rsa,base64hash,midlet_permissions,"javax.microedition.midlet.MIDlet.platformRequest");
   
-  if (FREAD==1)
-    strcat(signature,",com.siemens.mp.io.File.read");
-  else if (FREAD==2)
+  if (FREAD>0)
+  {
     strcat(signature,",javax.microedition.io.Connector.file.read");
+    if (FREAD==1)
+      strcat(signature,",com.siemens.mp.io.File.read");
+  }
   
-  if (FWRITE==1)
-    strcat(signature,",com.siemens.mp.io.File.readwrite");
-  else if (FWRITE==2)
+  if (FWRITE>0)
+  {
     strcat(signature,",javax.microedition.io.Connector.file.write");
+    if (FWRITE==1)
+      strcat(signature,",com.siemens.mp.io.File.readwrite");
+  }
   
   if (INTERNET==1)
   {
@@ -434,27 +443,20 @@ int signfile(char * jar)
   
   if ((f=fopen(jad_name,A_WriteOnly+A_BIN+A_Append,P_WRITE,&err))==-1)
   {
-    mfree(signature);
-    mfree(base64cert);
-    mfree(base64hash);
-    ErrMsg(CANT_APPEND);
-    return (-6);
+    err_n=CANT_APPEND;
+    goto L_ERR_FREE;
   }
   fwrite(f,signature,strlen(signature),&err);
   fclose(f,&err);
-  ErrMsg(DONE);
-  
+  err_n=DONE;
+L_ERR_FREE:  
   mfree(signature);
   mfree(base64cert);
   mfree(base64hash);
-  return 0;
-}
-
-void sign_jad()
-{
-  char fname[256];
-  ws_2str(jar_file,fname,255);
-  signfile(fname);
+  
+L_ERR:  
+  GeneralFuncF1(1);
+  ErrMsg(err_n);
 }
 
 int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomprLen)
@@ -485,9 +487,9 @@ char* find_manifest_mf(const char* jar, unsigned int fsize)
   int f;
   unsigned int err;
   char* buf;
-  CENTRAL_ZIP c_zip;
-  LOCAL_ZIP l_zip;
-  EXTRA_FIELD ex_field;
+  CENTRAL_ZIP* c_zip;
+  LOCAL_ZIP* l_zip;
+  EXTRA_FIELD* ex_field;
   char* fname;
   
   unsigned int compr_size,uncompr_size,offset;
@@ -503,8 +505,8 @@ char* find_manifest_mf(const char* jar, unsigned int fsize)
   {
     if (buf[n]==0x50 && buf[n+1]==0x4b && buf[n+2]==0x01 && buf[n+3]==0x02)
     {
-      memcpy(&c_zip,buf+n,sizeof(CENTRAL_ZIP));
-      int len=c_zip.fname_len;
+      c_zip=(CENTRAL_ZIP*)(buf+n);
+      int len=c_zip->fname_len;
       fname=malloc(len+1);
       strncpy(fname,buf+n+sizeof(CENTRAL_ZIP),len);
       fname[len]=0;
@@ -512,18 +514,18 @@ char* find_manifest_mf(const char* jar, unsigned int fsize)
       mfree(fname);
       if (compr_data)
       {
-        compr_size=c_zip.compr_size;
-        uncompr_size=c_zip.uncompr_size;
-        offset=c_zip.relative_offset;
-        memcpy(&l_zip,buf+offset,sizeof(LOCAL_ZIP));
-        compr_data=malloc(compr_size);
-        offset+=sizeof(LOCAL_ZIP)+l_zip.fname_len;
-        int ex_len=l_zip.extra_field_len;
+        compr_size=c_zip->compr_size;
+        uncompr_size=c_zip->uncompr_size;
+        offset=c_zip->relative_offset;
+        l_zip=(LOCAL_ZIP*)(buf+offset);
+        offset+=sizeof(LOCAL_ZIP)+l_zip->fname_len;
+        int ex_len=l_zip->extra_field_len;
         if(ex_len)
         {
-          memcpy(&ex_field,buf+offset,sizeof(EXTRA_FIELD));
-          offset+=ex_field.data_size+ex_len+2;
+          ex_field=(EXTRA_FIELD*)(buf+offset);
+          offset+=ex_field->data_size+ex_len+2;
         }
+        compr_data=malloc(compr_size);
         memcpy(compr_data,buf+offset,compr_size);
         mfree(buf);
         uncompr_data=malloc(uncompr_size+1);
@@ -546,54 +548,58 @@ void generate_jad()
   int fsize;
   char* p;
   char* manifest;
+  int err_n;
+  char* jad;
   
   unsigned int err;
   ws_2str(jar_file,jar_f,255);
   
   if ((p=strstr(jar_f,".jar"))==NULL)
   {
-    ErrMsg(BAD_JAR);
-    return;
+    err_n=BAD_JAR;
+    goto L_ERR;
   }
   strcpy(jad_f,jar_f);
   strcpy(jad_f+(p-jar_f),".jad");
   
   if ((f=fopen(jad_f,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
   {
-    ErrMsg(JAD_ALREDY_EXISTS);
     fclose(f,&err);
-    return;
+    err_n=JAD_ALREDY_EXISTS;
+    goto L_ERR;
   }
   
   if ((fsize=get_file_size(jar_f))==-1)
   {
-    ErrMsg(CANT_OPEN_JAR);
-    return;
+    err_n=CANT_OPEN_JAR;
+    goto L_ERR;
   }  
-  
-  
+    
   if (!(manifest=find_manifest_mf(jar_f,fsize)))
   {
-    ErrMsg(CANT_FIND_MANIFEST);
-    return;
+    err_n=CANT_FIND_MANIFEST;
+    goto L_ERR;
   }
   
-  char* jad=malloc(strlen(manifest)+512);
+  jad=malloc(strlen(manifest)+512);
   sprintf(jad,"MIDlet-Jar-Size: %u\r\nMIDlet-Jar-URL: %s\r\n",fsize,jar_f);
   strcat(jad,manifest);
   mfree(manifest);
   
   if ((f=fopen(jad_f,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err))==-1)
   {
-    ErrMsg(CANT_CREATE_JAD);
     mfree(jad);
-    return;    
+    err_n=CANT_CREATE_JAD;
+    goto L_ERR;
   }
   
   fwrite(f,jad,strlen(jad),&err);
   fclose(f,&err);
   mfree(jad);
-  ErrMsg(DONE);
+  err_n=DONE;
+L_ERR:
+  GeneralFuncF1(1);
+  ErrMsg(err_n);
 }
 
 void remove_sign_from_jad()
@@ -607,23 +613,24 @@ void remove_sign_from_jad()
   unsigned int fsize,fs;
   char* buf;
   ws_2str(jar_file,fname,255);
+  int err_n;
   
   if ((p=strstr(fname,".jar"))==NULL)
   {
-    ErrMsg(BAD_JAR);
-    return;
+    err_n=BAD_JAR;
+    goto L_ERR;
   }
   strcpy(p,".jad");
   if ((f=fopen(fname,A_ReadWrite+A_BIN,P_READ,&err))==-1)
   {
-    ErrMsg(CANT_OPEN_JAD);
-    return;
+    err_n=CANT_OPEN_JAD;
+    goto L_ERR;
   }
   fs=fsize=lseek(f,0,S_END,&err,&err);
   if (!fsize)
   {
-    ShowMSG(1,(int)"size of *.jad file is NULL!");
-    return;
+    err_n=SIZE_OF_JAD_NULL;
+    goto L_ERR;
   }
   lseek(f,0,S_SET,&err,&err);
   buf=malloc(fsize+1);
@@ -644,7 +651,6 @@ void remove_sign_from_jad()
     fsize-=end-first;
   }
     
-  
   if ((first=strstr(buf,midlet_permissions)))
   {
     end=strstr(first,eol)+2;
@@ -655,16 +661,19 @@ void remove_sign_from_jad()
   
   if(fs==fsize)
   {
-    ShowMSG(1,(int)"File was not signed!");
     mfree(buf);
-    return;
+    err_n=FILE_WAS_NOT_SIGNED;
+    goto L_ERR;
   }
   
   f=fopen(fname,A_ReadWrite+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
   fwrite(f,buf,fsize,&err);
   fclose(f,&err); 
-  ErrMsg(DONE);
   mfree(buf);
+  err_n=DONE;
+L_ERR:
+  GeneralFuncF1(1);
+  ErrMsg(err_n);
 }
 
 void options_back()
@@ -689,10 +698,10 @@ HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",LGP_NULL};
 
 MENUITEM_DESC options_menu_ITEMS[4]=
 {
-  {NULL,(int)"Sign",               LGP_NULL, 0, NULL, 3, 0x578},
-  {NULL,(int)"Generate jad",       LGP_NULL, 0, NULL, 3, 0x578},
-  {NULL,(int)"Remove signature",   LGP_NULL, 0, NULL, 3, 0x578},
-  {NULL,(int)"Back",               LGP_NULL, 0, NULL, 3, 0x578},
+  {NULL,(int)"Sign",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Generate jad",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Remove signature",   LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Back",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
 };
 
 void *options_menu_HNDLS[4]=
@@ -721,7 +730,7 @@ int CreateOptionsMenu()
   ws_2str(jar_file,jar_f,255);
   if (get_file_size(jar_f)==-1)
   {
-    ShowMSG(1,(int)"*jar file not found!");
+    ErrMsg(BAD_JAR);
     return (0);
   }
   options_menuhdr.rc.x=3;
@@ -792,6 +801,7 @@ void FindFiles(const char *path)
   DIR_ENTRY de;
   unsigned int err;
   char name[256];
+  char * ext;
   strcpy(name,path);
   strcat(name,"*");
   if (FindFirstFile(&de,name,&err))
@@ -808,9 +818,10 @@ void FindFiles(const char *path)
       }
       else
       {
-        if(strstr(name,".jar"))
+        if((ext=strrchr(name,'.')))
         {
-          fl=Fill_FLIST(fl,name,de.file_name,0);
+          if(!strncmp(ext+1,"jar",3))
+            fl=Fill_FLIST(fl,name,de.file_name,0);
         }
       }
     }
@@ -996,6 +1007,18 @@ void remake_filelist(void)
   }
 }
 
+SOFTKEY_DESC edit_sk[]=
+{
+  {0x0018,0x0000,(int)"Options"},
+  {0x0001,0x0000,(int)"Close"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB edit_skt=
+{
+  edit_sk,0
+};  
+
 
 void ed1_ghook(GUI *data, int cmd)
 {
@@ -1003,6 +1026,8 @@ void ed1_ghook(GUI *data, int cmd)
   int i;
   if (cmd==7)
   {
+    SetSoftKey(data,&edit_sk[0],0);
+    SetSoftKey(data,&edit_sk[1],1);
     i=EDIT_GetFocus(data);
     ExtractEditControl(data,i,&ec);
     switch(i)
@@ -1048,17 +1073,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   //1: close
 }
 
-SOFTKEY_DESC edit_sk[]=
-{
-  {0x0018,0x0000,(int)"Options"},
-  {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)LGP_DOIT_PIC}
-};
 
-SOFTKEYSTAB edit_skt=
-{
-  edit_sk,0
-};  
   
 HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)"Midlet Sign",LGP_NULL};
 
