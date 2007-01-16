@@ -888,6 +888,9 @@ __swi __arm int *GetGPRSTrafficPointer();
 //arm
 //pattern=??,??,??,E5,1E,FF,2F,E1,20,00,A0,E3,??,??,??,EA
 
+#pragma swi_number=0x074
+__swi __arm void* GetFunctionPointer(char * _shortcut);
+
 #pragma swi_number=124
 __swi __arm unsigned int SetVibration(unsigned int power);
 //thumb
