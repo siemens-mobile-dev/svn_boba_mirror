@@ -43,7 +43,11 @@ volatile FLIST *fltop;
 WSHDR* ews;
 WSHDR* jar_file;
 int S_ICONS[3];
-const char folder[129]="0:\\Java\\jam\\";  
+#ifdef NEWSGOLD
+  const char folder[129]="0:\\Applications\\";  
+#else
+  const char folder[129]="0:\\Java\\jam\\";    
+#endif
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 extern void kill_data(void *p, void (*func_p)(void *));
