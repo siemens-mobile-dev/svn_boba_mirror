@@ -53,7 +53,39 @@ WSHDR *ws1;
 unsigned char hhh;
 char cop;
 
-DrwImg(IMGHDR *img, int x, int y, int *pen, int *brush)
+void RereadSettings()
+{
+    InitConfig();
+
+  //========================
+  uiUpdateTime = (262 * cfgUpTime) / 10;
+  uiWidth  = (cfgW < MIN_WIDTH)  ? MIN_WIDTH  : cfgW;
+  uiHeight = (cfgH < MIN_HEIGHT) ? MIN_HEIGHT : cfgH;
+
+  img1_bmp = malloc(2 * uiWidth * uiHeight);
+  zeromem(img1_bmp, 2 * uiWidth * uiHeight);
+
+  img1.w = uiWidth;
+  img1.h = uiHeight;
+  img1.bpnum = 8;
+//  img1.zero = 0;
+  img1.bitmap = (char*) img1_bmp;
+
+  loads = malloc(uiWidth);
+  zeromem(loads, uiWidth);
+
+  clocks = malloc(uiWidth);
+  zeromem(clocks, uiWidth);
+}
+
+void FreeMem()
+{
+  mfree(img1_bmp);
+  mfree(loads);
+  mfree(clocks);
+}
+
+DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 {
   RECT rc;
   DRWOBJ drwobj;
@@ -94,6 +126,13 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   int csm_result;
   unsigned char fShow;
 
+  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  {
+    ShowMSG(1,(int)"RECONFIGURE!");
+    FreeMem();
+    RereadSettings();
+  }
+  
 	//Накапливаем значения
   if (msg->msg == 0xDEAD)
   {
@@ -173,29 +212,8 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 
 int main(void)
 {
-  hhh=0;
-  InitConfig();
 
-  //========================
-  uiUpdateTime = (262 * cfgUpTime) / 10;
-  uiWidth  = (cfgW < MIN_WIDTH)  ? MIN_WIDTH  : cfgW;
-  uiHeight = (cfgH < MIN_HEIGHT) ? MIN_HEIGHT : cfgH;
-
-  img1_bmp = malloc(2 * uiWidth * uiHeight);
-  zeromem(img1_bmp, 2 * uiWidth * uiHeight);
-
-  img1.w = uiWidth;
-  img1.h = uiHeight;
-  img1.bpnum = 8;
-  img1.zero = 0;
-  img1.bitmap = (char*) img1_bmp;
-
-  loads = malloc(uiWidth);
-  zeromem(loads, uiWidth);
-
-  clocks = malloc(uiWidth);
-  zeromem(clocks, uiWidth);
-  //========================
+  RereadSettings();
 
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
