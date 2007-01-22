@@ -43,22 +43,31 @@ typedef int jmp_buf[11];
 
 #ifdef NEWSGOLD
 
+#ifdef ELKA
+#define DISPLACE_OF_EDGUI 0x90
+#define DISPLACE_OF_EDGUI_ID 0x4C
+#define DISPLACE_OF_IDLEGUI_ID 0x2C
+#define DISPLACE_OF_IDLECANVAS 0x20
+
+#else
+#define DISPLACE_OF_EDGUI 0x88
+#define DISPLACE_OF_EDGUI_ID 0x4C
+#define DISPLACE_OF_IDLEGUI_ID 0x2C
+#define DISPLACE_OF_IDLECANVAS 0x18
+
+#endif
+
 #define MSG_HELPER_TRANSLATOR 0xDEAE
 #define MSG_RECONFIGURE_REQ 0xDEAF
 
 #define MSG_GUI_DESTROYED 0x640E
 #define MSG_IDLETMR_EXPIRED 0x6401
 #define MMI_CEPID 0x4209
-#define DISPLACE_OF_EDGUI 0x88
-#define DISPLACE_OF_EDGUI_ID 0x4C
-#define DISPLACE_OF_IDLEGUI_ID 0x2C
-#define DISPLACE_OF_IDLECANVAS 0x18
 #define SMALL_FONT 11
 #define MIDDLE_FONT 5
 #define LGP_NULL 0x7FFFFFFF
 #define SET_SOFT_KEY_N 0
 #define LGP_DOIT_PIC 0x7FFFC0FB
-
 #else
 
 #define MSG_HELPER_TRANSLATOR 0x3F0
@@ -1065,6 +1074,10 @@ __swi __arm  RAMNET * RamNet();
 __swi	__arm	 unsigned int *RamMPlayer_CtrlCode();
 //thumb
 //pattern= &(F8,B5,01,27,0D,1C,04,1C,08,1C,??,??,??,??,??,??,80,88,31,88,88,42+0E) + 4
+
+#pragma swi_number 0x80F1
+__swi __arm void *BuildCanvas(void);
+
 
 #pragma swi_number=0x0100
 __swi __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
