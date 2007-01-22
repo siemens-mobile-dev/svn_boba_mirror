@@ -128,7 +128,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
-    ShowMSG(1,(int)"RECONFIGURE!");
+    ShowMSG(1,(int)"Config updated!");
     FreeMem();
     RereadSettings();
   }
@@ -138,7 +138,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   {
     LockSched();
     loads[hhh]  = uiHeight * msg->submess / 100;
+#ifdef ELKA
+    clocks[hhh]=104;
+#else
     clocks[hhh] = GetCPUClock()/* / 26*/;
+#endif
     UnlockSched();
     hhh++;
     if (hhh >= uiWidth)
@@ -159,8 +163,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   case 1:
     fShow = IsUnlocked();
     break;
-  case 3:
+  default:
     fShow = 1;
+    break;
   }
 
   if (IsGuiOnTop(idlegui_id) && fShow) //Если IdleGui на самом верху
@@ -168,10 +173,15 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     GUI *igui = GetTopGUI();
     if (igui) //И он существует
     {
+#ifdef ELKA
+      {
+        void *canvasdata = BuildCanvas();
+#else
       void *idata = GetDataOfItemByID(igui, 2);
       if (idata)
       {
         void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+#endif
         DrawCanvas(canvasdata, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, 1);
         //рисуем нашу требуху
         int h = hhh;
@@ -190,7 +200,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         }
         DrwImg((IMGHDR *)&img1, cfgX, cfgY, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
         if (!cop && cfgStTxt)
-          DrawString(ws1, 0, cfgY-14, ScreenW()-1, ScreenH()-1, SMALL_FONT, 0x20,
+          DrawString(ws1, 0, cfgY-(YFSIZE+3), ScreenW()-1, ScreenH()-1, SMALL_FONT, 0x20,
                      GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
@@ -225,7 +235,7 @@ int main(void)
   icsm->constr=&icsmd;
   UnlockSched();
   ws1=AllocWS(100);
-  wsprintf(ws1,"%t","CPUMon by BoBa, Rst7");
+  wsprintf(ws1,"%t","CPUMon (C)BoBa,Rst7");
   GBS_StartTimerProc(&mytmr,START_DELAY,TimerProc);
   return 0;
 }
