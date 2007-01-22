@@ -341,7 +341,7 @@
 
 070C: 0xA0979B39 ; 1C3: __thumb void SetMenuItemCount(void *gui,int n);
 0710: 0xA0979AA1 ; 1C4: __thumb void SetCursorToMenuItem(void *gui,int n);
-
+0714: 0xA0A275A4 ; 1C5: __arm int GetFontYSIZE(int font);
 #pragma disable old_equal_ff
 +0
 
