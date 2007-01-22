@@ -1,4 +1,6 @@
-#include "E:\ARM\swilib.h"
+#include "..\inc\swilib.h"
+
+extern void kill_data(void *p, void (*func_p)(void *));
 
 const int minus11=-11;
 
@@ -38,11 +40,10 @@ const IMGHDR img1=
   128,
   128,
   5,
-  0,
   (char *)img1_bmp
 };
 
-DrwImg(IMGHDR *img, int x, int y, int *pen, int *brush)
+DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 {
   RECT rc;
   DRWOBJ drwobj;
@@ -56,7 +57,7 @@ void method0(MAIN_GUI *data)
 {
   int i;
   int c;
-  DrawFrameInNativeMenu(0,0,131,175,0,0,0,
+  DrawRoundedFrame(0,0,131,175,0,0,0,
 			GetPaletteAdrByColorIndex(0),
 			GetPaletteAdrByColorIndex(20));
   c=data->i1;
@@ -126,7 +127,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
 
 void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
-  mfree_adr(data);
+  kill_data(data, mfree_adr);
 }
 
 int method8(void){return(0);}
@@ -163,40 +164,70 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->gui_id=CreateGUI(main_gui);
 }
 
-void maincsm_onclose(CSM_RAM *csm)
+void ELF_KILLER(void)
 {
   extern void *ELF_BEGIN;
-  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)ELF_KILLER);
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
-  if ((msg->msg==0x640E)&&((int)msg->data0==csm->gui_id))
+  if ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))
   {
     csm->csm.state=-3;
   }
   return(1);
 }
 
-const CSM_DESC maincsm=
+unsigned short maincsm_name_body[140];
+
+const struct
 {
-  maincsm_onmessage,
-  maincsm_oncreate,
-  0,
-  0,
-  0,
-  0,
-  maincsm_onclose,
-  sizeof(MAIN_CSM),
-  1,
-  &minus11
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+    maincsm_onmessage,
+    maincsm_oncreate,
+#ifdef NEWSGOLD
+0,
+0,
+0,
+0,
+#endif
+maincsm_onclose,
+sizeof(MAIN_CSM),
+1,
+&minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
 };
+
+void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"TCSM");
+}
 
 int main()
 {
   char dummy[sizeof(MAIN_CSM)];
-  CreateCSM(&maincsm,dummy,0);
+  UpdateCSMname();
+  LockSched();
+  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  UnlockSched();
   return 0;
 }
 
@@ -215,34 +246,34 @@ void menup2(void)
 
 int icon[]={0x58,0};
 
-HEADER_DESC menuhdr={0,0,131,21,icon,(int)"Заголовок меню",0x7FFFFFFF};
-int menusoftkeys[]={0,1,2};
-MENUITEM_DESC menuitems[2]=
+const HEADER_DESC menuhdr={0,0,131,21,icon,(int)"Заголовок меню",LGP_NULL};
+const int menusoftkeys[]={0,1,2};
+const MENUITEM_DESC menuitems[2]=
 {
-  {NULL,(int)"Пункт 1",0x7FFFFFFF,0,NULL/*menusoftkeys*/,0,0x59D},
-  {NULL,(int)"Пункт 2",0x7FFFFFFF,0,NULL/*menusoftkeys*/,0,0x59D},
+  {NULL,(int)"Пункт 1",LGP_NULL,0,NULL/*menusoftkeys*/,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Пункт 2",LGP_NULL,0,NULL/*menusoftkeys*/,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *menuprocs[2]={(void *)menup1,(void *)menup2};
 
-SOFTKEY_DESC menu_sk[]=
+const SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Лев"},
   {0x0001,0x0000,(int)"Прав"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB menu_skt=
+const SOFTKEYSTAB menu_skt=
 {
-  menu_sk,0
+  (SOFTKEY_DESC *)menu_sk,0
 };
 
-MENU_DESC tmenu=
+const MENU_DESC tmenu=
 {
   8,NULL,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  1,
+  0,
   NULL,
   menuitems,
   menuprocs,

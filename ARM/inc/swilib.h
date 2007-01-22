@@ -428,11 +428,11 @@ typedef struct
   void *proc1;
   void *global_hook_proc; //GUI * gui, int cmd
   void *proc3;
-  int *softkeys; //{6,0x22,0x1D}, mb default for all items, if item.softkeys==NULL
-  SOFTKEYSTAB *softkeystab;
+  const int *softkeys; //{6,0x22,0x1D}, mb default for all items, if item.softkeys==NULL
+  const SOFTKEYSTAB *softkeystab;
   int flags2; //2
   void *itemproc; //Called when draw item
-  MENUITEM_DESC * items; //Table of items desc;
+  const MENUITEM_DESC * items; //Table of items desc;
   void ** procs; //Table of procs when item selected
   int n_items; //Number of items
 }MENU_DESC;
@@ -1467,7 +1467,7 @@ __swi	__arm	void SetPropTo_Obj5(DRWOBJ *, RECT *, int zero, IMGHDR *Image);
 //pattern=??,B5,??,1C,??,20,??,70,??,70,??,1C,??,1C,??,25,??,30,??,22,??,70,??,??,??,??,??,20,??,61,??,76,??,76,??,76,??,61,??,1C,??,BD
 
 #pragma swi_number=0x0152
-__swi	__arm	int CreateMenu(int is_small,int zero1,MENU_DESC *menu,HEADER_DESC *hdr,int zero2,int n_items,int zero4,int zero5);
+__swi	__arm	int CreateMenu(int is_small,int zero1,const MENU_DESC *menu, const HEADER_DESC *hdr,int zero2,int n_items,int zero4,int zero5);
 //thumb
 //pattern=??,B5,??,B0,??,1C,??,AA,??,1C,??,1C,??,CA,??,91,??,21,??,9F,??,91,??,92,??,1C,??,1C,??,90,??,1C,??,97,??,??,??,??,??,B0,??,BD
 
