@@ -155,7 +155,7 @@
 0164: 0xA0FB9108   ; 59: memcpy(void *dest,const void *source,int cnt)
 ;168:              ; 5A: KeypressOn
 ;16C:              ; 5B: KeypressOff
-;170:              ; 5C: GetCPUClock()
+0170: 0xA06243B0   ;  5C: GetCPUClock()
 0174: 0xA06F8427   ; 5D: GetCPULoad()
 ;178:              ; 5E: GetMMIMemUsed
 ;17C:              ; 5F: int GetFreeRamAvail()
@@ -445,9 +445,9 @@
 05A8: 0xA0A233D1   ; 16A: StoreEditControl(void *guidata,int n,EDITCONTROL *)
 05AC: 0xA056D618   ; 16B: unlink(const char *cFileName,unsigned int *errornumber)
 05B0: 0xA056DE28   ; 16C: str2ws(WSHDR *ws,char *str,unsigned int size)
-;5B4:              ; 16D: UnpackABentry(AB_UNPRES *,void *abentry,int filesz,int flag)
-;5B8:              ; 16E: FreeUnpackABentry(AB_UNPRES *, void *mfree_adr)
-;5BC:              ; 16F: GetTypeOfAB_UNPRES_ITEM(int)
+05B4: 0xA0987FF1             ; 16D: UnpackABentry(AB_UNPRES *,void *abentry,int filesz,int flag)
+05B8: 0xA08F2B49             ; 16E: FreeUnpackABentry(AB_UNPRES *, void *mfree_adr)
+05BC: 0xA08F264D             ; 16F: GetTypeOfAB_UNPRES_ITEM(int)
 
 05C0: 0xA092D831   ; 170: MakeVoiceCall(char *number,int _0x10, int _0x20C0)
 ;5C4:              ; 171: SUBPROC(void *,...)
