@@ -542,7 +542,7 @@
 0708: 0xA0E7B5C3 ; 1C2: __thumb BIGNUM *BN_bin2bn(const char *s,int len,BIGNUM *ret);
 070C: 0xA09577C9 ; 1C3: __thumb void SetMenuItemCount(void *gui,int n);
 0710: 0xA0957731 ; 1C4: __thumb void SetCursorToMenuItem(void *gui,int n);
-;714:              ; 1C5: 
+0714: 0xA0A38E38 ; 1C5: __arm int GetFontYSIZE(int font);
 ;718:              ; 1C6: 
 ;71C:              ; 1C7: 
 ;720:              ; 1C8: 
