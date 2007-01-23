@@ -413,7 +413,7 @@ typedef struct
   int lgp_id_small;
   int lgp_id_large;
   int zero;
-  int *softkeys; //{6,0x22,0x1D}
+  const int *softkeys; //{6,0x22,0x1D}
   int flag1; //0
   int flag2; //0x59D
 }MENUITEM_DESC;
@@ -427,7 +427,7 @@ typedef struct
 
 typedef struct
 {
-  SOFTKEY_DESC *desc;
+  const SOFTKEY_DESC *desc;
   int n;
 }SOFTKEYSTAB;
 
@@ -538,18 +538,15 @@ typedef struct
 #define MENU_FLAG3 3
 #define MENU_FLAG2 0x5A2
 #define YDISP (24)
-#define YFSIZE (23)
 #else
 #define MENU_FLAG3 3
 #define MENU_FLAG2 0x59D
 #define YDISP (0)
-#define YFSIZE (11)
 #endif
 #else
 #define MENU_FLAG3 3
 #define MENU_FLAG2 0x578
 #define YDISP (0)
-#define YFSIZE (11)
 #endif
 
 
