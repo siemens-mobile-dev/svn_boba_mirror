@@ -1,5 +1,5 @@
 ;ELFpack v2.0 (C)2006 by Rst7/CBSIE, BoBa
-;Release 11.01.2007
+;Release 23.01.2007
 ;ELKAsw41
 ;Также бибилиотека для патчей
 ;
@@ -420,19 +420,19 @@
 0548: 0xA0955057   ; 152: CreateMenu(int is_small,int zero1,MENU_DESC *menu,HEADER_DESC *hdr,int zero2,int n_items,int zero4,int zero5)
 054C: 0xA0091259   ; 153: GBS_RecActDstMessage(GBS_MSG *)
 0550: 0xA0096141   ; 154: KillGBSproc(int cepid)
-0554: 0xA00E4C28   ; 155: png_create_read_struct(png_const_charp user_png_ver, png_voidp error_ptr, png_error_ptr error_fn, png_error_ptr warn_fn)
-0558: 0xA00E3650   ; 156: png_create_info_struct(png_structp png_ptr)
-055C: 0xA00E614C   ; 157: png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr)
-0560: 0xA00E3454   ; 158: png_set_sig_bytes(png_structp png_ptr,int num_bytes)
-0564: 0xA00E4EA8   ; 159: png_read_info(png_structp png_ptr, png_infop info_ptr)
-0568: 0xA00E43E0   ; 15A: png_get_IHDR(png_structp png_ptr,png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method)
-056C: 0xA0116294   ; 15B: png_malloc(png_structp png_ptr, png_uint_32 size)
-0570: 0xA00E5A28   ; 15C: png_read_image(png_structp png_ptr, png_bytepp image)
-0574: 0xA00E5A88   ; 15D: png_read_end(png_structp png_ptr, png_infop info_ptr)
-0578: 0xA00E614C   ; 15E: png_destroy_read_struct_2(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr)
-057C: 0xA00E3FFC   ; 15F: png_get_rowbytes(png_structp png_ptr,png_infop info_ptr)
+0554: 0xA0132AC5 ; 155: __thumb png_structp png_create_read_struct(png_const_charp user_png_ver, png_voidp error_ptr, png_error_ptr error_fn, png_error_ptr warn_fn);
+0558: 0xA0131E81 ; 156: __thumb png_infop png_create_info_struct(png_structp png_ptr);
+055C: 0xA0133939 ; 157: __thumb void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
+0560: 0xA0131D55 ; 158: __thumb void png_set_sig_bytes(png_structp png_ptr,int num_bytes);
+0564: 0xA0132C03 ; 159: __thumb void png_read_info(png_structp png_ptr, png_infop info_ptr);
+0568: 0xA01324DD ; 15A: __thumb png_uint_32 png_get_IHDR(png_structp png_ptr,png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
+056C: 0xA0132883 ; 15B: __thumb png_voidp png_malloc(png_structp png_ptr, png_uint_32 size);
+0570: 0xA01334F3 ; 15C: __thumb void png_read_image(png_structp png_ptr, png_bytepp image);
+0574: 0xA0133535 ; 15D: __thumb void png_read_end(png_structp png_ptr, png_infop info_ptr);
+0578: 0xA0132179 ; 15E: __thumb png_voidp png_get_io_ptr(png_structp png_ptr);
+057C: 0xA01323F3 ; 15F: __thumb png_uint_32 png_get_rowbytes(png_structp png_ptr,png_infop info_ptr);
 
-0580: 0xA00E54BC   ; 160: png_read_row(png_structp png_ptr,png_bytep row,png_bytep dsp_row)
+0580: 0xA013308B ; 160: __thumb png_read_row(png_structp png_ptr,png_bytep row,png_bytep dsp_row);
 0584: 0xA00E3B90   ; 161: png_init_io(png_structp png_ptr, int fp)
 0588: 0xA1236AA4   ; 162: setjmp(jmp_buf jmpbuf)
 058C: 0xA0A1D37F   ; 163: AllocEQueue(void *malloc_a, void *mfree_a)
@@ -508,18 +508,18 @@
 ;694:              ; 1A5: void RegisterCepIdForCurProfile(unsigned int cep_id,int profile_num,unsigned int unk)
 0698: 0xA00978A5   ; 1A6: int IsTimerProc(GBSTMR *)
 069C: 0xA0932939   ; 1A7: char* Get_CC_NC()
-06A0: 0xA00E4900   ; 1A8: png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn)
-06A4: 0xA00E6474   ; 1A9: void png_set_read_fn(png_structp png_ptr, png_voidp io_ptr, png_rw_ptr read_data_fn)
-06A8: 0xA00E546C   ; 1AA: void png_read_update_info(png_structp png_ptr,void *info_ptr)
-06AC: 0xA00E6DBC   ; 1AB: void png_set_palette_to_rgb(png_structp png_ptr)
-06B0: 0xA00E3FE4   ; 1AC: png_uint_32 png_get_valid(png_structp png_ptr,png_infop info_ptr, png_uint_32 flag)
-06B4: 0xA00E6DBC   ; 1AD: void png_set_tRNS_to_alpha(png_structp png_ptr)
-06B8: 0xA00EB98C   ; 1AE: void png_set_filler(png_structp png_ptr,png_uint_32 filler, int flags)
-06BC: 0xA00E65F0   ; 1AF: void png_set_strip_16(png_structp png_ptr)
 
-06C0: 0xA00EB918   ; 1B0: void png_set_packing(png_structp png_ptr)
-06C4: 0xA00E6DFC   ; 1B1: void png_set_gray_to_rgb(png_structp png_ptr)
-06C8: 0xA00E3508   ; 1B2: int png_check_sig(png_bytep sig, int num)
+06A0: 0xA0132989 ; 1A8: __thumb png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
+06A4: 0xA01339DB ; 1A9: __thumb void png_set_read_fn(png_structp png_ptr, png_voidp io_ptr, png_rw_ptr read_data_fn);
+06A8: 0xA0133053 ; 1AA: __thumb void png_read_update_info(png_structp png_ptr,void *info_ptr);
+06AC: 0xA0133AF5 ; 1AB: __thumb void png_set_palette_to_rgb(png_structp png_ptr);
+06B0: 0xA01323E1 ; 1AC: __thumb png_uint_32 png_get_valid(png_structp png_ptr,png_infop info_ptr, png_uint_32 flag);
+06B4: 0xA0133AF5 ; 1AD: __thumb void png_set_tRNS_to_alpha(png_structp png_ptr);
+06B8: 0xA0135601 ; 1AE: __thumb void png_set_filler(png_structp png_ptr,png_uint_32 filler, int flags);
+06BC: 0xA0133AD9 ; 1AF: __thumb void png_set_strip_16(png_structp png_ptr);
+06C0: 0xA0135597 ; 1B0: __thumb void png_set_packing(png_structp png_ptr);
+06C4: 0xA0133B2D ; 1B1: __thumb void png_set_gray_to_rgb(png_structp png_ptr);
+06C8: 0xA0131DB5 ; 1B2: __thumb int png_check_sig(png_bytep sig, int num);
 06CC: 0xA0A14CAF   ; 1B3: void DrawLine(int x,int y,int x2,int y2,int type,char *pen)
 06D0: 0xA0A12C53   ; 1B4: void DrawRectangle(int x,int y,int x2,int y2,int flags,char *pen,char *brush)
 06D4: 0x00000002 ; 81B5: int isnewSGold(void);
