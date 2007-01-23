@@ -10,7 +10,6 @@
 #define LEVEL1_RN	(31)
 #endif
 
-
 #define wslen(ARG) (ARG->wsbody[0])
 
 CSM_DESC icsmd;
@@ -363,8 +362,9 @@ void my_ed_redraw(void *data)
 
   if (e_ws->wsbody[0]<13) //Ее длина <13
   {
+    int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(MIDDLE_FONT)+1)*5-5;
 
-    DrawRoundedFrame(1,63,130,152,0,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(7));
+    DrawRoundedFrame(1,y,ScreenW()-2,ScreenH()-SoftkeyH()-2,0,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(7));
 
     if (i<0) cp=curpos; else cp=2;
     while(i>0)
@@ -376,15 +376,16 @@ void my_ed_redraw(void *data)
     i=0;
     do
     {
+      int dy=i*(GetFontYSIZE(MIDDLE_FONT)+1)+y;
       if (!cl) break;
       if (i!=cp)
       {
-	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+	DrawString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(MIDDLE_FONT),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
       }
       else
       {
-	DrawRoundedFrame(2,65+(i*17),129,65+17+(i*17),0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-	DrawString(cl->name,3,67+(i*17),128,67+13+(i*17),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	DrawRoundedFrame(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(MIDDLE_FONT),0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
+	DrawString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(MIDDLE_FONT),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       }
       cl=(CLIST *)cl->next;
       i++;
@@ -395,7 +396,11 @@ void my_ed_redraw(void *data)
 
 void ChangeRC(GUI *gui)
 {
+#ifdef ELKA
+  static const RECT rc={6,80,126,140};
+#else
   static const RECT rc={6,40,126,100};
+#endif
   if (e_ws)
   {
     if (wslen(e_ws)>12) return;
@@ -431,16 +436,16 @@ void goto_4(void)
   MakeVoiceCall(dstr[3],0x10,0x20C0);
 }
 
-int menusoftkeys[]={0,1,2};
+const int menusoftkeys[]={0,1,2};
 
-SOFTKEY_DESC menu_sk[]=
+const SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Back"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB menu_skt=
+const SOFTKEYSTAB menu_skt=
 {
   menu_sk,0
 };
@@ -462,15 +467,15 @@ int gotomenu_onkey(GUI *data, GUI_MSG *msg)
   return(0);
 }
 
-MENUITEM_DESC gotomenu_ITEMS[9]=
+const MENUITEM_DESC gotomenu_ITEMS[9]=
 {
-  {NULL,(int)dstr[0],LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)dstr[1],LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)dstr[2],LGP_NULL,0,NULL,0,MENU_FLAG2},
-  {NULL,(int)dstr[3],LGP_NULL,0,NULL,0,MENU_FLAG2},
+  {NULL,(int)dstr[0],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)dstr[1],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)dstr[2],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)dstr[3],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
+const HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
 
 MENU_DESC gotomenu_STRUCT=
 {
@@ -519,6 +524,13 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     if (!i) goto L_OLDKEY;
     //Количество номеров больше 1, рисуем меню
     gotomenu_STRUCT.n_items=i;
+    {
+      HEADER_DESC *head=(HEADER_DESC *)&gotomenu_HDR;
+      head->rc.x=0;
+      head->rc.y=YDISP;
+      head->rc.x2=ScreenW()-1;
+      head->rc.y2=HeaderH()+YDISP;
+    }
     CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,i,0,0);
     return(0);
   }
