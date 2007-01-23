@@ -97,8 +97,8 @@ typedef struct
 
 const int minus11=-11;
 
-const char bmpDiskAccess[12]={0xFC,0x86,0xB3,0xA9,0xB1,0xA9,0x81,0xFF,0,0,0,0};
-const IMGHDR imgDiskAccess = {8,12,0x1,(char *)bmpDiskAccess};
+const char bmpDiskAccess[12]={0xFC,0x86,0xB3,0xA9,0xB1,0xA9,0x81,0xFF};
+const IMGHDR imgDiskAccess = {8,8,0x1,(char *)bmpDiskAccess};
 
 //Указатель блока в верхнем стеке
 int u_disk; //Дисковый указатель верхнего стека (в блоках по STKSZ50)
@@ -1068,6 +1068,7 @@ void DrawScreen(void)
   
   if (disk_access)
   {
+    DrawRoundedFrame(0,YDISP+8,8,GetFontYSIZE(SMALL_FONT)+YDISP-1,0,0,0,paper,paper);
     DrwImg((IMGHDR *)&imgDiskAccess,0,YDISP,ink,paper);
     if (draw_mode==2)
     {
@@ -1083,8 +1084,8 @@ void DrawScreen(void)
     {
       wsprintf(upinfo_ws,"Line %u...",curline);
     L_W1:
-      DrawRoundedFrame(8,YDISP,scr_w-1,YFSIZE+YDISP,0,0,0,paper,paper);
-      DrawString(upinfo_ws,8,YDISP,scr_w-1,YFSIZE+YDISP,SMALL_FONT,2,ink,paper);
+      DrawRoundedFrame(8,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP-1,0,0,0,paper,paper);
+      DrawString(upinfo_ws,8,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP-1,SMALL_FONT,2,ink,paper);
       goto L_WELLCOME2;
     }
     if (draw_mode==255) goto L_WELLCOME;
@@ -1185,8 +1186,8 @@ void DrawScreen(void)
       //Процесс перехода на строку
       {
 	wsprintf(upinfo_ws,"Goto line %u...",curline);
-	DrawRoundedFrame(0,YDISP,scr_w-1,YFSIZE+YDISP,0,0,0,paper,paper);
-	DrawString(upinfo_ws,0,YDISP,scr_w-1,YFSIZE+YDISP,SMALL_FONT,2,ink,paper);
+	DrawRoundedFrame(0,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP,0,0,0,paper,paper);
+	DrawString(upinfo_ws,0,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP,SMALL_FONT,2,ink,paper);
 	goto L_WELLCOME2;
       }
       //return;
@@ -1197,13 +1198,13 @@ void DrawScreen(void)
     case 255:
       //Экран приветствия
     L_WELLCOME:
-      DrawRoundedFrame(0,YDISP,scr_w-1,YFSIZE+YDISP,0,0,0,paper,paper);
+      DrawRoundedFrame(0,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP-1,0,0,0,paper,paper);
       draw_mode=1;
     L_WELLCOME2:
-      DrawRoundedFrame(0,YFSIZE+1+YDISP,scr_w-1,scr_h-1,0,0,0,paper,paper);
+      DrawRoundedFrame(0,GetFontYSIZE(SMALL_FONT)+YDISP,scr_w-1,scr_h-1,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
       wsprintf(info_ws,"Text viewer/editor\nversion 1.6\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
-      DrawString(info_ws,0,YFSIZE+9+YDISP,scr_w-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
+      DrawString(info_ws,0,GetFontYSIZE(SMALL_FONT)+9+YDISP,scr_w-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
       return;
     case 0:
       //Курсор
