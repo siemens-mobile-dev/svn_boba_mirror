@@ -2576,7 +2576,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.40A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -3004,7 +3004,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\MegaDial.elf \MMCard\MegaDial.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release_ELKA\Exe\MegaDial.elf \MMCard\ZBin\Daemons\MegaDial.elf</postbuild>
       </data>
     </settings>
     <settings>

@@ -1,5 +1,10 @@
 #include "..\inc\swilib.h"
 
+#ifdef ELKA
+#define MAX_ESTR_LEN 9
+#else
+#define MAX_ESTR_LEN 13
+#endif
 
 #ifdef NEWSGOLD
 #define MAX_RECORDS 5000
@@ -163,9 +168,10 @@ void ConstructList(void)
   zeromem(&contact,sizeof(contact));
   if ((buffer=malloc(65536)))
   {
-    if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,0,&ul))!=-1)
+    zeromem(&ABmain,sizeof(ABmain));
+    if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
     {
-      if (fread(fin,&ABmain,sizeof(ABmain),&ul)==sizeof(ABmain))
+      if (fread(fin,&ABmain,sizeof(ABmain),&ul)>=194)
       {
 	fclose(fin,&ul);
 	do
@@ -187,7 +193,7 @@ void ConstructList(void)
 	    unsigned int r12=rec%LEVEL1_RN;
 	    snprintf(recname,128,"0:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);            
             #endif             
-	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
 	    {
 	      zeromem(&ur,sizeof(ur));
               fsz=lseek(fin,0,S_END,&ul,&ul);
@@ -360,7 +366,7 @@ void my_ed_redraw(void *data)
 
   if (!e_ws) return;
 
-  if (e_ws->wsbody[0]<13) //Ее длина <13
+  if (e_ws->wsbody[0]<MAX_ESTR_LEN) //Ее длина <MAX_ESTR_LEN
   {
     int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(MIDDLE_FONT)+1)*5-5;
 
@@ -397,13 +403,13 @@ void my_ed_redraw(void *data)
 void ChangeRC(GUI *gui)
 {
 #ifdef ELKA
-  static const RECT rc={6,80,126,140};
+  static const RECT rc={6,80,234,140};
 #else
   static const RECT rc={6,40,126,100};
 #endif
   if (e_ws)
   {
-    if (wslen(e_ws)>12) return;
+    if (wslen(e_ws)>=MAX_ESTR_LEN) return;
   }
   if (!gui) return;
   char *p=(char *)gui;
@@ -610,7 +616,7 @@ void my_ed_ghook(GUI *gui, int cmd)
     EDITCONTROL ec;
     ExtractEditControl(gui,1,&ec);
     //Новая строка поиска
-    if ((e_ws=ec.pWS)->wsbody[0]<13) //Ее длина <13
+    if ((e_ws=ec.pWS)->wsbody[0]<MAX_ESTR_LEN) //Ее длина <MAX_ESTR_LEN
     {
       if (hook_state==3)
       {
