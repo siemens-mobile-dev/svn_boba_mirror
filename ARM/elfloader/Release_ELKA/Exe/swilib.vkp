@@ -1,5 +1,5 @@
 ;ELFpack v2.0 (C)2006 by Rst7/CBSIE, BoBa
-;Release 23.01.2007
+;Release 24.01.2007
 ;ELKAsw41
 ;Также бибилиотека для патчей
 ;
@@ -170,7 +170,7 @@
 ;19C:              ; 67: IsDirectCallActive
 ;1A0:              ; 68: GetScreenSaverRAM
 01A4: 0xA00976FF   ; 69: LockSched(void)
-01A8: 0xA00976FF   ; 6A: UnlockSched(void)
+01A8: 0xA009777B   ; 6A: UnlockSched(void)
 01AC: 0xA056D2AC   ; 6B: FindFirstFile(DIR_ENTRY *DIRENTRY,char *mask,unsigned int *ErrorNumber)
 01B0: 0xA056D32C   ; 6C: FindNextFile(DIR_ENTRY *DIRENTRY,unsigned int *ErrorNumber)
 01B4: 0xA056D1F4   ; 6D: FindClose(DIR_ENTRY *DIRENTRY,unsigned int *ErrorNumber)
@@ -405,7 +405,7 @@
 0510: 0xA0097B1B   ; 144: GBS_StopTimer(GBSTMR *tmr)
 0514: 0xA009618B   ; 145: GBS_GetCurCepid(void)
 0518: 0xA00976FF   ; 146: LockSched_2(void)
-051C: 0xA00976FF   ; 147: UnlockSched_2(void)
+051C: 0xA009777B   ; 147: UnlockSched_2(void)
 0520: 0xA09554F3   ; 148: ShowMSG(int flag, int lgp_id)
 0524: 0xA0950DF5   ; 149: SetPropTo_Obj1(DRWOBJ *drwobj,void *rect,int rect_flag,WSHDR *wshdr,int font,int text_flag)
 0528: 0xA094F015   ; 14A: FreeDrawObject_subobj(DRWOBJ *drwobj)
