@@ -570,17 +570,17 @@ typedef struct
 
 typedef struct{
 #ifdef NEWSGOLD
-  short field_0;
+  short NrOfFlds;
   short number_of_records;
-  short field_4;
+  short NrAllocFlds;
   short field_6;
-  short field_8;
+  short NrJ;
   char field_A;
   char field_B;
   AB_UNPRES_ITEM *record_list;
-  char field_10;
+  char EntTp;
   char field_11;
-  short field_12;
+  short EntId;
   int field_14;
   int field_18;
 #else
