@@ -446,7 +446,7 @@
 05AC: 0xA056D618   ; 16B: unlink(const char *cFileName,unsigned int *errornumber)
 05B0: 0xA056DE28   ; 16C: str2ws(WSHDR *ws,char *str,unsigned int size)
 05B4: 0xA0987FF1             ; 16D: UnpackABentry(AB_UNPRES *,void *abentry,int filesz,int flag)
-05B8: 0xA08F2B49             ; 16E: FreeUnpackABentry(AB_UNPRES *, void *mfree_adr)
+05B8: 0xA08F1CFF             ; 16E: FreeUnpackABentry(AB_UNPRES *, void *mfree_adr)
 05BC: 0xA08F264D             ; 16F: GetTypeOfAB_UNPRES_ITEM(int)
 
 05C0: 0xA092D831   ; 170: MakeVoiceCall(char *number,int _0x10, int _0x20C0)
