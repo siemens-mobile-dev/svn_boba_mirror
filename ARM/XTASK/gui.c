@@ -1,6 +1,36 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
+#pragma inline
+void patch_header(const HEADER_DESC* headc)
+{
+  HEADER_DESC *head=(HEADER_DESC *)headc;
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
+}
+
+#pragma inline
+void patch_input(const INPUTDIA_DESC* inpc)
+{
+  INPUTDIA_DESC *inp=(INPUTDIA_DESC *)inpc;
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+
+#pragma inline
+void patch_rect(const RECT*rcc,int x,int y, int x2, int y2)
+{
+  RECT *rc=(RECT *)rcc;
+  rc->x=x;
+  rc->y=y;
+  rc->x2=x2;
+  rc->y2=y2;
+}
+
 extern int mode;
 extern CSM_RAM *under_idle;
 
@@ -191,10 +221,10 @@ void SwapCSMS(int no_no_gui)
   while(ucsm->prev!=selcsm);
   if (no_no_gui) return; //
   //Теперь рисуем "Нет GUI" на всякий случай
-  DrawRoundedFrame(0,0,131,175,0,0,0,
+  DrawRoundedFrame(0,0+YDISP,ScreenW()-1,ScreenH()-1,0,0,0,
 			GetPaletteAdrByColorIndex(0),
 			GetPaletteAdrByColorIndex(20));
-  DrawString(ws_nogui,3,70,128,172,1,2,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
+  DrawString(ws_nogui,3,70,ScreenW()-4,ScreenH()-4,1,2,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
 }
 
 
@@ -214,13 +244,13 @@ void method0(MAIN_GUI *data)
     return;
   }
 
-  DrawRoundedFrame(0,0,131,175,0,0,0,
+  DrawRoundedFrame(0,0+YDISP,ScreenW()-1,ScreenH()-1,0,0,0,
 			GetPaletteAdrByColorIndex(0),
 			GetPaletteAdrByColorIndex(20));
-  wsprintf(data->ws1,"XTask v1.4\n(C)2006 by Rst7/CBSIE\n\n%t%d",
+  wsprintf(data->ws1,"XTask v1.5\n(C)2007 Rst7/CBSIE\n\n%t%d",
 	   "Сейчас диалогов: ",
 	   GetNumberOfDialogs());
-  DrawString(data->ws1,3,3,128,51,11,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,3+YDISP,ScreenW()-4,3+YDISP+4*GetFontYSIZE(SMALL_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 
   nl=nltop;
   i=0;
@@ -254,8 +284,11 @@ void method0(MAIN_GUI *data)
     pos--;
   }
   i=0;
+  int ddy=GetFontYSIZE(SMALL_FONT);
+  int y=3+YDISP+4*ddy+5;
   do
   {
+    int dy=y+i*(ddy+2);
     if (nl)
     {
       if (nl->name)
@@ -263,20 +296,24 @@ void method0(MAIN_GUI *data)
 	if (i==vcur)
 	{
 	  selcsm=nl->p;
-	  DrawRoundedFrame(3,55+14*i,128,58+11+14*i,0,0,0,
+	  DrawRoundedFrame(3,dy-2,ScreenW()-4,dy+1+ddy,0,0,0,
 			GetPaletteAdrByColorIndex(0),
 			GetPaletteAdrByColorIndex(3));
 	}
-	DrawString(nl->name,5,57+14*i,126,57+11+14*i,11,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	DrawString(nl->name,5,dy,ScreenW()-6,dy+ddy,SMALL_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       }
       nl=nl->next;
     }
     i++;
   }
   while(i<5);
+  int scr_w=ScreenW();
+  int scr_h=ScreenH();
 
-  wsprintf(data->ws2,percent_t," Idle           Назад");
-  DrawString(data->ws2,3,157,128,172,5,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  wsprintf(data->ws2,percent_t,"Назад");
+  DrawString(data->ws2,scr_w>>1,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w-4,scr_h-4,MIDDLE_FONT,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  wsprintf(data->ws2,percent_t,"Idle");
+  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w>>1,scr_h-4,MIDDLE_FONT,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -370,16 +407,16 @@ int RunBM(int bm)
   return(0);
 }
 
-HEADER_DESC bm_menuhdr={0,0,131,21,NULL,(int)"Bookmarks...",0x7FFFFFFF};
-int menusoftkeys[]={0,1,2};
-SOFTKEY_DESC menu_sk[]=
+const HEADER_DESC bm_menuhdr={0,0,131,21,NULL,(int)"Bookmarks...",LGP_NULL};
+const int menusoftkeys[]={0,1,2};
+const SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Options"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB menu_skt=
+const SOFTKEYSTAB menu_skt=
 {
   menu_sk,0
 };
@@ -388,7 +425,7 @@ void bm_menu_ghook(void *data, int cmd){}
 int bm_menu_onkey(void *data, GUI_MSG *msg);
 void bm_menu_iconhndl(void *data, int curitem, int *unk);
 
-MENU_DESC bm_menu=
+const MENU_DESC bm_menu=
 {
   8,(void *)bm_menu_onkey,(void*)bm_menu_ghook,NULL,
   menusoftkeys,
@@ -455,6 +492,7 @@ void bm_menu_iconhndl(void *data, int curitem, int *unk)
 
 void ShowBMmenu(void)
 {
+  patch_header(&bm_menuhdr);
   CreateMenu(0,0,&bm_menu,&bm_menuhdr,0,9,0,0);
 }
 
@@ -526,6 +564,7 @@ void maincsm_oncreate(CSM_RAM *data)
   MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
   MAIN_CSM*csm=(MAIN_CSM*)data;
   zeromem(main_gui,sizeof(MAIN_GUI));
+  patch_rect(&Canvas,0,YDISP,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas);
   main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods;

@@ -88,7 +88,11 @@ int my_keyhook(int submsg, int msg)
       return(2);
     }
   }
+#ifdef ELKA
+  if (submsg!=POC_BUTTON) return(0);
+#else
   if (submsg!=INTERNET_BUTTON) return(0);
+#endif
   if (mode==-1)
   {
     if (msg==KEY_UP)
