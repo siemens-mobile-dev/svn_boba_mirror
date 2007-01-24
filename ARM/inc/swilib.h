@@ -349,7 +349,11 @@ typedef struct
 #define LEFT_BUTTON     0x3D
 #define RIGHT_BUTTON    0x3E
 #define ENTER_BUTTON	0x1A
+#ifdef ELKA
+#define POC_BUTTON 0x15
+#else
 #define INTERNET_BUTTON 0x11
+#endif
 #define PLAY_BUTTON	0x15
 #define CAMERA_BUTTON	0x14
 #else
