@@ -11,6 +11,7 @@ CSM_RAM *under_idle;
 
 extern const int RED_BUT_MODE;
 extern const int ENA_LONG_PRESS;
+extern const int ENA_LOCK;
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -115,7 +116,9 @@ int my_keyhook(int submsg, int msg)
       break;
     }
     {
+      if (IsUnlocked()||ENA_LOCK)
       do_gui(0);
+      else mode=0;
     }
     break;
   case LONG_PRESS:
