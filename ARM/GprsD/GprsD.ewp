@@ -132,7 +132,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -342,6 +342,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -925,7 +930,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.40A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -950,12 +955,13 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1160,6 +1166,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1648,12 +1659,13 @@
       <settings>
         <name>ICCARM</name>
         <data>
-          <version>13</version>
+          <version>14</version>
           <wantNonLocal>0</wantNonLocal>
           <debug>0</debug>
           <option>
             <name>CCDefines</name>
             <state>NDEBUG</state>
+            <state>NEWSGOLD</state>
           </option>
           <option>
             <name>CCPreprocFile</name>
@@ -1858,6 +1870,11 @@
           <option>
             <name>CCStdIncludePath</name>
             <state>$TOOLKIT_DIR$\INC\</state>
+          </option>
+          <option>
+            <name>CCInlineThreshold</name>
+            <version>0</version>
+            <state>1</state>
           </option>
         </data>
       </settings>
