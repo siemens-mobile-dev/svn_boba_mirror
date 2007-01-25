@@ -278,7 +278,7 @@ void create_contactlist_menu(void)
     i++;
   }
   if (!i) return; //Нечего создавать
-  patch_rect(&contactlist_menuhdr.rc,0,0,ScreenW()-1,HeaderH());
+  patch_rect(&contactlist_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 }
 
@@ -767,15 +767,15 @@ void method0(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,
+  DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
   wsprintf(data->ws1,"State: %d, RXstate: %d\n%t",connect_state,RXstate,logmsg);
-  DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,"Exit");
-  DrawString(data->ws2,(scr_w>>2)*3,scr_h-4-14,scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,(scr_w>>1),scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,cltop?"CList":empty_str);
-  DrawString(data->ws2,3,scr_h-4-14,(scr_w>>2),scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w>>1,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -927,32 +927,44 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       GUI *igui=GetTopGUI();
       if (igui) //И он существует
       {
-        void *idata=GetDataOfItemByID(igui,2);
-        if (idata)
-        {
-          int icn;
-	            void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
-	            DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
-          if (total_unread)
-            icn=IS_MSG;
-          else
-          {
-            switch(connect_state)
-            {
-            case 0:
-              icn=IS_OFFLINE; break;
-            case 3:
-              icn=CurrentStatus; //IS_ONLINE;
+#ifdef ELKA
+	//	{
+	void *canvasdata = BuildCanvas();
+#else
+	void *idata = GetDataOfItemByID(igui, 2);
+	if (idata)
+	{
+	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+#endif
+	  int icn;
+#ifdef ELKA
+	  DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
+#else
+	  DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+26,IDLEICON_Y+26,1);
+#endif
+	  if (total_unread)
+	    icn=IS_MSG;
+	  else
+	  {
+	    switch(connect_state)
+	    {
+	    case 0:
+	      icn=IS_OFFLINE; break;
+	    case 3:
+	      icn=CurrentStatus; //IS_ONLINE;
 	      break;
-            default:
-              icn=IS_UNKNOWN; break;
-            }
-          }
-//          DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
-//			   GetPaletteAdrByColorIndex(0),
-//			   GetPaletteAdrByColorIndex(20));
-          DrawImg(IDLEICON_X+2,IDLEICON_Y+2,S_ICONS[icn]);
-        }
+	    default:
+	      icn=IS_UNKNOWN; break;
+	    }
+	  }
+	  //          DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
+	  //			   GetPaletteAdrByColorIndex(0),
+	  //			   GetPaletteAdrByColorIndex(20));
+	  DrawImg(IDLEICON_X+2,IDLEICON_Y+2,S_ICONS[icn]);
+#ifdef ELKA
+#else
+	}
+#endif
       }
     }
   }
@@ -967,8 +979,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       contactlist_menu_id=0;
       if (request_remake_clmenu)
       {
-        request_remake_clmenu=0;
-        create_contactlist_menu();
+	request_remake_clmenu=0;
+	create_contactlist_menu();
       }
     }
     if ((int)msg->data0==edchat_id)
@@ -976,9 +988,9 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       edchat_id=0;
       if (request_remake_edchat)
       {
-        void CreateEditChat(CLIST *t);
-        request_remake_edchat=0;
-        CreateEditChat(edcontact);
+	void CreateEditChat(CLIST *t);
+	request_remake_edchat=0;
+	CreateEditChat(edcontact);
       }
     }
   }
@@ -1007,81 +1019,81 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       //Если наш сокет
       if ((((unsigned int)msg->data0)>>28)==0xA)
       {
-        //Принят пакет
-        ProcessPacket((TPKT *)msg->data0);
-        return(0);
+	//Принят пакет
+	ProcessPacket((TPKT *)msg->data0);
+	return(0);
       }
       switch((int)msg->data0)
       {
       case ENIP_SOCK_CONNECTED:
-        if (connect_state==1)
-        {
-          vibra_count=2;
-          start_vibra();
-          //Соединение установленно, посылаем пакет login
-          strcpy(logmsg,"Try to login...");
-          TXbuf.pkt.uin=UIN;
-          TXbuf.pkt.type=T_REQLOGIN;
-          strcpy(TXbuf.data,PASS);
-          SUBPROC((void *)send_login);
-          if (!FindContactByUin(UIN)) AddContact(UIN,"Loopback");
-          REDRAW();
-        }
-        else
-        {
-          ShowMSG(1,(int)"Illegal message ENIP_SOCK_CONNECTED!");
-        }
-        break;
+	if (connect_state==1)
+	{
+	  vibra_count=2;
+	  start_vibra();
+	  //Соединение установленно, посылаем пакет login
+	  strcpy(logmsg,"Try to login...");
+	  TXbuf.pkt.uin=UIN;
+	  TXbuf.pkt.type=T_REQLOGIN;
+	  strcpy(TXbuf.data,PASS);
+	  SUBPROC((void *)send_login);
+	  if (!FindContactByUin(UIN)) AddContact(UIN,"Loopback");
+	  REDRAW();
+	}
+	else
+	{
+	  ShowMSG(1,(int)"Illegal message ENIP_SOCK_CONNECTED!");
+	}
+	break;
       case ENIP_SOCK_DATA_READ:
-        if (connect_state>=2)
-        {
-          //Если посылали send
-          SUBPROC((void *)get_answer);
-          //          REDRAW();
-        }
-        else
-        {
-          ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
-        }
-        break;
+	if (connect_state>=2)
+	{
+	  //Если посылали send
+	  SUBPROC((void *)get_answer);
+	  //          REDRAW();
+	}
+	else
+	{
+	  ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
+	}
+	break;
       case ENIP_SOCK_REMOTE_CLOSED:
-        //Закрыт со стороны сервера
-        if (connect_state) SUBPROC((void *)end_socket);
-        break;
+	//Закрыт со стороны сервера
+	if (connect_state) SUBPROC((void *)end_socket);
+	break;
       case ENIP_SOCK_CLOSED:
-        //        strcpy(logmsg,"No connection");
-        if (edchat_id)
-        {
-          request_remake_edchat=0;
-          if (IsGuiOnTop(edchat_id))
-          {
-            GeneralFunc_flag1(edchat_id,1);
-          }
-          else
-          {
-            request_close_edchat=1;
-          }
-        }
-        if (contactlist_menu_id)
-        {
-          request_remake_clmenu=0;
-          if (IsGuiOnTop(contactlist_menu_id))
-          {
-            GeneralFunc_flag1(contactlist_menu_id,1);
-          }
-          else
-          {
-            request_close_clmenu=1;
-          }
-        }
-        FillAllOffline();
-        connect_state=0;
-        sock=-1;
-        vibra_count=4;
-        start_vibra();
-        REDRAW();
-        GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
-        break;
+	//        strcpy(logmsg,"No connection");
+	if (edchat_id)
+	{
+	  request_remake_edchat=0;
+	  if (IsGuiOnTop(edchat_id))
+	  {
+	    GeneralFunc_flag1(edchat_id,1);
+	  }
+	  else
+	  {
+	    request_close_edchat=1;
+	  }
+	}
+	if (contactlist_menu_id)
+	{
+	  request_remake_clmenu=0;
+	  if (IsGuiOnTop(contactlist_menu_id))
+	  {
+	    GeneralFunc_flag1(contactlist_menu_id,1);
+	  }
+	  else
+	  {
+	    request_close_clmenu=1;
+	  }
+	}
+	FillAllOffline();
+	connect_state=0;
+	sock=-1;
+	vibra_count=4;
+	start_vibra();
+	REDRAW();
+	GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+	break;
       }
     }
   }
@@ -1394,35 +1406,35 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     if ((l>='0')&&(l<='9'))
     {
       if (EDIT_GetFocus(data)!=edchat_answeritem)
-        EDIT_SetFocus(data,edchat_answeritem);
+	EDIT_SetFocus(data,edchat_answeritem);
     }
     if (l==GREEN_BUTTON)
     {
       if (connect_state==3)
       {
-        if ((t=edcontact))
-        {
-          if ((s=t->answer))
-          {
-            if (strlen(s))
-            {
-              p=malloc(sizeof(PKT)+(l=strlen(s))+1);
-              p->pkt.uin=t->uin;
-              p->pkt.type=T_SENDMSG;
-              p->pkt.data_len=l;
-              strcpy(p->data,s);
-              AddStringToLog(t,0x01,p->data,I_str);
-              SUBPROC((void *)SendAnswer,0,p);
-              mfree(s);
-              t->answer=0;
-              request_remake_edchat=1;
-              EDIT_SetFocus(data,edchat_answeritem);
-              CutWSTR(ews,0);
-              EDIT_SetTextToFocused(data,ews);
-              return(1);
-            }
-          }
-        }
+	if ((t=edcontact))
+	{
+	  if ((s=t->answer))
+	  {
+	    if (strlen(s))
+	    {
+	      p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+	      p->pkt.uin=t->uin;
+	      p->pkt.type=T_SENDMSG;
+	      p->pkt.data_len=l;
+	      strcpy(p->data,s);
+	      AddStringToLog(t,0x01,p->data,I_str);
+	      SUBPROC((void *)SendAnswer,0,p);
+	      mfree(s);
+	      t->answer=0;
+	      request_remake_edchat=1;
+	      EDIT_SetFocus(data,edchat_answeritem);
+	      CutWSTR(ews,0);
+	      EDIT_SetTextToFocused(data,ews);
+	      return(1);
+	    }
+	  }
+	}
       }
     }
   }
@@ -1555,9 +1567,9 @@ void CreateEditChat(CLIST *t)
   edchat_toitem++;
   edchat_answeritem=edchat_toitem;
   
-//  int scr_w=ScreenW();
-//  int scr_h=ScreenH();
-//  int head_h=HeaderH();
+  //  int scr_w=ScreenW();
+  //  int scr_h=ScreenH();
+  //  int head_h=HeaderH();
   
   patch_header(&edchat_hdr);
   patch_input(&edchat_desc);
@@ -1672,12 +1684,12 @@ void ecmenu_ghook(void *data, int cmd)
 
 MENUITEM_DESC ecmenu_ITEMS[6]=
 {
-  {NULL,(int)"Get short info",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Add/rename",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Send Auth Req",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Send Auth Grant",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Open logfile",LGP_NULL,0,NULL,0,0x59D},
-  {NULL,(int)"Clear log",LGP_NULL,0,NULL,0,0x59D}
+  {NULL,(int)"Get short info" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Add/rename"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Send Auth Req"  ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Send Auth Grant",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Open logfile"   ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Clear log"      ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
 void *ecmenu_HNDLS[6]=
@@ -1699,7 +1711,7 @@ MENU_DESC ecmenu_STRUCT=
   8,NULL,(void *)ecmenu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
-  1,
+  0,
   NULL,
   ecmenu_ITEMS,
   ecmenu_HNDLS,
@@ -1824,8 +1836,8 @@ void AskNickAndAddContact(void)
   wsprintf(ews,percent_t,edcontact->name);
   ConstructEditControl(&ec,3,0x40,ews,63);
   AddEditControlToEditQend(eq,&ec,ma);
-//  int scr_w=ScreenW();
-//  int head_h=HeaderH();
+  //  int scr_w=ScreenW();
+  //  int head_h=HeaderH();
   patch_header(&anac_hdr);
   patch_input(&anac_desc);
   CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,0);

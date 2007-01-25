@@ -102,7 +102,7 @@ unsigned short GetStatusIndexInMenu(unsigned short status)
 
 #define STATUSES_NUM 7
 
-HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)"Выбор статуса",0x7FFFFFFF};
+HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)"Выбор статуса",LGP_NULL};
 
 int st_menusoftkeys[]={0,1,2};
 
