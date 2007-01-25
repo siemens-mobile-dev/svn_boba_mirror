@@ -200,7 +200,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         }
         DrwImg((IMGHDR *)&img1, cfgX, cfgY, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
         if (!cop && cfgStTxt)
-          DrawString(ws1, 0, cfgY-(YFSIZE+3), ScreenW()-1, ScreenH()-1, SMALL_FONT, 0x20,
+          DrawString(ws1, 0, cfgY-(GetFontYSIZE(SMALL_FONT)+3), ScreenW()-1, ScreenH()-1, SMALL_FONT, 0x20,
                      GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
