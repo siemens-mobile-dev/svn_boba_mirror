@@ -193,6 +193,7 @@ char *find_eol(char *s)
 int main()
 {
   char *s;
+  int c;
   int f;
   unsigned int ul;
   unsigned int size_cfg;
@@ -211,18 +212,22 @@ int main()
     {
       s[fread(f,s,size_cfg,&ul)]=0;
       //Теперь файл загружен
-      while(s=strchr(s,'%'))
+      while((c=*s)) //Пока не конец файла
       {
-	//Пока встречаются ключевые слова
-	if (!*(++s)) break; //Неожиданный конец строки
-        if (*s=='%')
+	if ((c==10)||(c==13))
+	{
+	  s++;
+	  continue; //Конец строки, опять с начала строки
+	}
+        if (c==';')
         {
+	  //Комментарий
           s=find_eol(s);
           continue;
         }
-	if (!strncmp(s,"EXT:",4))
+	if (c=='[')
 	{
-	  s+=4;
+	  s++;
           p=es=realloc(es,(ES_num+1)*sizeof(ES));
           p+=ES_num;
 	  p->ext=s;
@@ -233,9 +238,14 @@ int main()
           p->zero_small=0;
           p->zero_large=0;
 	  ES_num++;
-          s=find_eol(s); if (*s) {*s++=0; continue;} else break;
+	  while((c=*s)!=']')
+	  {
+	    if (c<32) goto LERROR; //Найден символ с кодом меньше 32 в расширении
+	    s++;
+	  }
+          *s++=0; s=find_eol(s); continue;
 	}
-	if (!strncmp(s,"RUN:",4))
+	if (!strncmp(s,"RUN=",4))
 	{
 	  s+=4;
 	  if (p)
@@ -248,7 +258,7 @@ int main()
 	  }
           s=find_eol(s); if (*s) {*s++=0; continue;} else break;
 	}
-	if (!strncmp(s,"SMALL:",6))
+	if (!strncmp(s,"SMALL=",6))
 	{
 	  s+=6;
 	  if (p)
@@ -261,7 +271,7 @@ int main()
 	  }
           s=find_eol(s); if (*s) {*s++=0; continue;} else break;
 	}
-	if (!strncmp(s,"BIG:",4))
+	if (!strncmp(s,"BIG=",4))
 	{
 	  s+=4;
 	  if (p)
@@ -274,7 +284,7 @@ int main()
 	  }
           s=find_eol(s); if (*s) {*s++=0; continue;} else break;
 	}
-	if (!strncmp(s,"ALTRUN:",7))
+	if (!strncmp(s,"ALTRUN=",7))
 	{
 	  s+=7;
 	  if (p)
@@ -287,6 +297,9 @@ int main()
 	  }
           s=find_eol(s); if (*s) {*s++=0; continue;} else break;
 	}
+      LERROR:
+	ShowMSG(1,(int)"ExtD: Parse error!");	
+	break;
       }
       i=0;
       p=es;
