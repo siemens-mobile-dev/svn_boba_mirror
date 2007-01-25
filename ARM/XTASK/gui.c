@@ -296,11 +296,11 @@ void method0(MAIN_GUI *data)
 	if (i==vcur)
 	{
 	  selcsm=nl->p;
-	  DrawRoundedFrame(3,dy-2,ScreenW()-4,dy+1+ddy,0,0,0,
+	  DrawRoundedFrame(3,dy-2,ScreenW()-4,dy+ddy,0,0,0,
 			GetPaletteAdrByColorIndex(0),
 			GetPaletteAdrByColorIndex(3));
 	}
-	DrawString(nl->name,5,dy,ScreenW()-6,dy+ddy,SMALL_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	DrawString(nl->name,5,dy,ScreenW()-6,dy+ddy-1,SMALL_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       }
       nl=nl->next;
     }
