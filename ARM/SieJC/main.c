@@ -32,10 +32,10 @@
 */
 
 // ============= Учетные данные ============= 
-const char NATICQ_HOST[] = "jabber.ru";
-const unsigned int NATICQ_PORT = 5222;
-const char USERNAME[] = "________";   // ВВЕСТИ СВОИ ДАННЫЕ!!!!
-const char PASSWORD[] = "________";   
+extern const char JABBER_HOST[];
+extern const unsigned int JABBER_PORT;
+extern const char USERNAME[];   // ВВЕСТИ СВОИ ДАННЫЕ!!!!
+extern const char PASSWORD[];   
 const char RESOURCE[] = "Exp_SNJ";
 const char VERSION_NAME[]= "Sie natJabber by Kibab";
 const char VERSION_VERS[] = "0.1";
@@ -383,7 +383,7 @@ void create_connect(void)
   snprintf(logmsg,255,"Send DNR...");
   REDRAW();
   *socklasterr()=0;
-  int err=async_gethostbyname(NATICQ_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
+  int err=async_gethostbyname(JABBER_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
   if (err)
   {
     if ((err==0xC9)||(err==0xD6))
@@ -412,7 +412,7 @@ void create_connect(void)
       if (sock!=-1)
       {
 	sa.family=1;
-	sa.port=htons(NATICQ_PORT);
+	sa.port=htons(JABBER_PORT);
 	sa.ip=p_res[3][0][0];
 	//    sa.ip=htonl(IP_ADDR(82,207,89,182));
 	if (connect(sock,&sa,sizeof(sa))!=-1)
@@ -629,7 +629,7 @@ void Send_Welcome_Packet()
   connect_state = 2;
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en'>";
   char* buf=malloc(256);  
-  sprintf(buf,streamheader,NATICQ_HOST);
+  sprintf(buf,streamheader,JABBER_HOST);
   SendAnswer(buf);
   mfree(buf);
   strcpy(logmsg,"Send Welcome");
@@ -662,7 +662,7 @@ char rost_id[] = "rost_2iup";
 */
 void Send_Auth()
 {
-  sprintf(My_JID, "%s@%s",USERNAME, NATICQ_HOST);
+  sprintf(My_JID, "%s@%s",USERNAME, JABBER_HOST);
   sprintf(My_JID_full,"%s/%s",My_JID, RESOURCE);
   char* payload = malloc(256);
   sprintf(payload,"<username>%s</username>\n<password>%s</password>\n<resource>%s</resource>",USERNAME, PASSWORD, RESOURCE);
@@ -1044,7 +1044,12 @@ int main()
 {
   char dummy[sizeof(MAIN_CSM)];
   
-//  InitConfig();
+  InitConfig();
+  if(!strlen(USERNAME))
+  {
+    ShowMSG(1,(int)"Введите логин/пароль!");
+    return 0;
+  }
   UpdateCSMname();
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);

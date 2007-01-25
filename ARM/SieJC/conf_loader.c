@@ -47,8 +47,8 @@ int LoadConfigData(const char *fname)
 
 void InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\NATICQ.bcfg")<0)
+  if (LoadConfigData("4:\\ZBin\\etc\\SieJC.bcfg")<0)
   {
-    LoadConfigData("0:\\ZBin\\etc\\NATICQ.bcfg");
+    LoadConfigData("0:\\ZBin\\etc\\SieJC.bcfg");
   }
 }
