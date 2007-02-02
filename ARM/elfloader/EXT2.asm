@@ -111,60 +111,76 @@ I_R5R7
 #endif	
 
 #else
+        ARM 
+        RSEG    PATCH_GET_EXT:CODE:ROOT
+        BL      J_GET_EXT
+        
+        ARM 
+        RSEG    PATCH_GET_REGEXT1:CODE:ROOT
+        BL      J_REGEXT1
+        
+        ARM 
+        RSEG    PATCH_GET_REGEXT2:CODE:ROOT
+        BL      J_REGEXT2
+        
         ARM
-        RSEG    PATCH_EXT2_R2R3:CODE:ROOT
-        LDR     R12, =R2R3
-        BLX     R12
-
-        ARM
-        RSEG    PATCH_EXT2_R8R10:CODE:ROOT
-        
-        LDR     R12, =R8R10
-        BLX     R12
-        
-        
-	RSEG	PATCH_EXT2_IMPL:CODE:ROOT
-        EXTERN	EXT2_REALLOC
-        ARM
-        
-        LDR     LR, [SP,#0x1C]
-        STMFD   SP!,{R0-R3,LR}
-        ADD     LR, PC, #4
-        LDR     PC, J_EXT2_REALLOC
-J_EXT2_REALLOC  
-        DC32    EXT2_REALLOC
-        MOV     R8, #0
-        STR     R8, [R0]
-        MOV     R7, R0
-        LDMFD   SP!,{R0-R3,LR}
-
-	     
-             
-        RSEG	PATCH_EXT2_IMPL_2:CODE:ROOT
-        ARM
-        NOP
-	NOP
-        
-
 	RSEG	CODE:CODE:NOROOT
-        EXTERN	GET_EXT2_AREA
-R2R3
-        ADD     LR, LR, #4
-        STMFD   SP!,{R0,LR}
-	BL	GET_EXT2_AREA
-        MOV     R3, R0
-        ADD     R2, R0, #4
-        MOV     R1, #0
-	LDMFD   SP!,{R0,PC}
+        EXTERN  EXT2_AREA
+        EXTERN  GetBigIcon
+        EXTERN  RegFile
+
         
-R8R10
-        ADD     LR, LR, #4 
-        STMFD   SP!,{R0-R3,LR}
-	BL	GET_EXT2_AREA
-        MOV     R10, R0 
-        ADD     R8, R0, #4
-        MOV     R5, #0
-	LDMFD   SP!,{R0-R3,PC}
+J_GET_EXT
+        LDR     R7, =EXT2_AREA
+        LDR     R7, [R7]
+        MOV     R8, #0x24
+        MLA     R7, R8, R5, R7
+        BX      LR
+
+J_REGEXT1
+        LDR     R12, =EXT2_AREA
+        LDR     R12, [R12]        
+        MOV     R2, #0x24
+        MLA     R12, R2, R1, R12
+        BX      LR
+        
+J_REGEXT2
+        LDR     R0, =EXT2_AREA
+        LDR     R0, [R0]
+        MOV     R2, #0x24
+        MLA     R0, R2, R1, R0
+        BX      LR        
+        
+J_GET_BIG
+        MOV     R1, R8
+        B       GetBigIcon
+        
+J_REG_FILE
+        LDR     R5, [R4, #0x10]
+        STR     R5, [SP, #0x10]
+        B       RegFile
+
+        ARM
+	RSEG	REG_FILE:CODE:ROOT
+        EXTERN  RegFile
+        
+        LDR     PC, =RegFile
+        
+        ARM
+        RSEG    PATCH_BIG_ICON:CODE:ROOT
+        
+        BL      J_GET_BIG
+        
+        ARM
+        RSEG    PATCH_REGEXPL:CODE:ROOT
+        
+        BL      J_REG_FILE
+        
+
+
+
+        
+        
 
 
 #endif

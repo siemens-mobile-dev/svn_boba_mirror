@@ -79,6 +79,10 @@ PITgetN:
 	PUBLIC	PITret
 PITret:
 	DCD	0xA0CB75BC+1
+        
+        PUBLIC	KEYBret
+KEYBret:
+	DCD	0xA0CB602E+1        
 #endif
 
 	END

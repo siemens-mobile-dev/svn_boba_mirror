@@ -956,6 +956,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1097,7 +1098,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.r79</state>
         </option>
         <option>
           <name>CCLangSelect</name>
@@ -1159,7 +1160,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\INC\</state>
         </option>
       </data>
     </settings>
@@ -1549,7 +1550,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>ELFLoader.elf</state>
+          <state>ELFLoader_IAR_old.elf</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -1789,11 +1790,11 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMessages</name>
@@ -1801,7 +1802,7 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -2139,11 +2140,11 @@
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AExtraOptionsV2</name>
-          <state></state>
+          <state>-j</state>
         </option>
       </data>
     </settings>
@@ -2165,7 +2166,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>$PROJ_DIR$\..\!bin\elf2vkp $PROJ_DIR$\Release_SGOLD\exe\elfloader.elf $PROJ_DIR$\elfloader.vkp $PROJ_DIR$\..\!ff\cx70_56.bin</postbuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
@@ -2363,11 +2364,11 @@
         </option>
         <option>
           <name>XExtraOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>ELFLoader_IAR_old.elf</state>
+          <state>ELFLoader.elf</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -2733,7 +2734,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.r79</state>
         </option>
         <option>
           <name>CCLangSelect</name>
@@ -2795,7 +2796,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\INC\</state>
         </option>
       </data>
     </settings>
@@ -3186,7 +3187,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>ELFLoader.elf</state>
+          <state>ELFLoader_IAR_old.elf</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -3289,6 +3290,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\IMB.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\keyhook.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\png.c</name>

@@ -571,6 +571,7 @@ extern void(*OldTxtOpen)(WSHDR*, WSHDR*);
 #else
 //#define HELPER_CEPID 0x4331
 #define HELPER_CEPID 0x4407
+__no_init void *KEY_TOP;
 #endif
 #define MSG_HELPER_RUN 0x0001
 
@@ -768,24 +769,32 @@ __arm void DoUnknownFileType(WSHDR *filename)
   FreeWS(wsmime);
 }
 
+typedef struct
+{
+  int zero;
+  unsigned const int *icon1;
+  int unical_id;
+  char obex_path_id;
+  char unk;
+  unsigned short menu_flag;
+  char enabled_options;
+  char not_used[3];
+  WSHDR* ext;
+  void *proc;
+  void *altproc;
+  unsigned const int *icon2;
+}REGEXPLEXT_ARM_NEW;
+
+
 __no_init int *EXT2_AREA;
 #ifdef ELKA
 __no_init int EXT2_CNT @ "REGEXPL_CNT";
 #endif
+#ifndef NEWSGOLD
+__no_init int EXT2_CNT @ "REGEXPL_CNT";
+#endif
 
-#ifndef NEWSGOLD 
-__arm int *GET_EXT2_AREA(void)
-{
-  int *p=EXT2_AREA;
-  if (p)
-  {
-    return(p);
-  }
-  p=malloc(4);
-  *p=0;
-  return (EXT2_AREA=p);
-}
-#else
+#ifdef NEWSGOLD 
 #ifdef ELKA
 #else
 __arm int *GET_EXT2_TABLE(void)
@@ -802,6 +811,7 @@ __arm int *GET_EXT2_TABLE(void)
 #endif
 #endif  
 
+#ifdef NEWSGOLD 
 #ifdef ELKA
 __arm int *EXT2_REALLOC(void)
 {
@@ -829,20 +839,12 @@ __arm int *EXT2_REALLOC(void)
 __arm int *EXT2_REALLOC(void)
 {
   int size;
-#ifdef NEWSGOLD 
   size=sizeof(REGEXPLEXT);
-#else
-  size=0x20;
-#endif  
   int *p;
   int *p2;
   int n;
   LockSched();
-#ifdef NEWSGOLD 
   n=*(p=EXT2_AREA);
-#else
-  n=*(p=GET_EXT2_AREA());
-#endif    
   p2=malloc((n+1)*size+4);
   memcpy(p2,p,n*size+4);
   *p2=n+1;
@@ -853,6 +855,93 @@ __arm int *EXT2_REALLOC(void)
   return (p2);
 }
 #endif
+#else
+__arm void *EXT2_REALLOC(void)
+{
+  int size;
+  size=sizeof(REGEXPLEXT_ARM_NEW);
+  int *p;
+  int *p2;
+  int n;
+  LockSched();
+  n=EXT2_CNT;
+  p=EXT2_AREA;
+  p2=malloc((n+1)*size);
+  zeromem(p2,(n+1)*size);
+  if (p) 
+  {    
+    memcpy(p2,p,n*size);
+    mfree(p);
+  }
+  EXT2_CNT=n+1;
+  EXT2_AREA=p2;
+  p2+=(n*(size/sizeof(int)));
+  UnlockSched();
+  return (p2);
+}
+
+
+__arm void RegFile(WSHDR*ext,int unical_id,int menu_flag,unsigned int* icon1,int obex_path_id,int enabled_options,void *proc1,void *proc2,unsigned int *icon2)
+{
+  REGEXPLEXT_ARM_NEW* reg;
+  unsigned int * icon2new;
+  reg=EXT2_REALLOC();
+  LockSched();
+  reg->zero=0;
+  reg->icon1=icon1;
+  reg->unical_id=unical_id;
+  reg->obex_path_id=obex_path_id;
+  reg->menu_flag=menu_flag;
+  reg->enabled_options=enabled_options;
+  reg->ext=ext;
+  reg->proc=proc1;
+  reg->altproc=proc2;
+   
+  icon2new=malloc(sizeof(int)*2);
+  if ((*icon1>>28)==0xA)
+    icon2new[0]=*icon2;
+  else
+    icon2new[0]=*icon1+1;
+  icon2new[1]=0;
+  reg->icon2=icon2new;
+  UnlockSched();
+}
+
+__arm int GetBigIcon(const int icon, int uid)
+{
+  int num=EXT2_CNT;
+  REGEXPLEXT_ARM_NEW* reg=(REGEXPLEXT_ARM_NEW*)EXT2_AREA;
+  for (int i=0;i!=num;i++)
+  {
+    if (reg[i].unical_id==uid)
+      return (*(reg[i].icon2));
+  }
+  return (icon+1);
+}
+__arm void UnregExplExt_impl(REGEXPLEXT const * reg_orig)
+{
+  char ext[16];
+  REGEXPLEXT_ARM_NEW *p2;
+  REGEXPLEXT_ARM_NEW *reg=(REGEXPLEXT_ARM_NEW*)EXT2_AREA;
+  for (int i=0;i!=EXT2_CNT;i++)
+  {
+    if (reg_orig->unical_id!=reg[i].unical_id) continue;
+    ws_2str(reg[i].ext,ext,16);
+    if (strcmp(ext,reg_orig->ext)) continue;
+    EXT2_CNT--;
+    FreeWS(reg[i].ext);
+    mfree((void*)reg[i].icon2);
+    while (i!=EXT2_CNT)
+    {
+      memcpy(&p2[i],&reg[i+1],sizeof(REGEXPLEXT_ARM_NEW));
+      i++;
+    }
+    return;  
+  }
+}
+#endif
+
+
 
 #ifdef NEWSGOLD
 __thumb MyShowMSG(int p1, int p2)
@@ -894,6 +983,8 @@ __root static const int NEW_ONCLOSE @ "PATCH_ONCLOSE" = (int)MyIDLECSMonClose;
 
 #ifdef NEWSGOLD
 __root static const int NEW_SHOWMSG @ "PATCH_SHOWMSG_BLF" = (int)MyShowMSG;
+#else
+__root static const int SWILIB_FUNC095 @ "SWILIB_FUNC095" = (int)UnregExplExt_impl;
 #endif
 
 __root static const int SWILIB_FUNC171 @ "SWILIB_FUNC171" = (int)SUBPROC_impl;
