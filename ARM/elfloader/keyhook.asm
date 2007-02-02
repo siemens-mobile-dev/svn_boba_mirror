@@ -109,8 +109,8 @@ _for:
 	LDR	R2, [R4, #4]
 	CMP	R2, #0
 	BEQ     NORMAL_EXIT
-        MOV     R0, R5
-        MOV     R1, R6
+        MOV     R0, R5  // kbd submsg
+        MOV     R1, R6  // kbd msg
 	BLX     R2
 	CMP	R0, #0
 	BEQ     _for

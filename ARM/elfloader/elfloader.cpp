@@ -907,10 +907,11 @@ __arm void RegFile(WSHDR*ext,int unical_id,int menu_flag,unsigned int* icon1,int
   UnlockSched();
 }
 
-__arm int GetBigIcon(const int icon, int uid)
+__arm int GetBigIcon(const unsigned int icon, int uid)
 {
   int num=EXT2_CNT;
   REGEXPLEXT_ARM_NEW* reg=(REGEXPLEXT_ARM_NEW*)EXT2_AREA;
+  if ((icon>>28)!=0xA) return (icon+1);
   for (int i=0;i!=num;i++)
   {
     if (reg[i].unical_id==uid)
@@ -921,21 +922,16 @@ __arm int GetBigIcon(const int icon, int uid)
 __arm void UnregExplExt_impl(REGEXPLEXT const * reg_orig)
 {
   char ext[16];
-  REGEXPLEXT_ARM_NEW *p2;
   REGEXPLEXT_ARM_NEW *reg=(REGEXPLEXT_ARM_NEW*)EXT2_AREA;
   for (int i=0;i!=EXT2_CNT;i++)
   {
     if (reg_orig->unical_id!=reg[i].unical_id) continue;
     ws_2str(reg[i].ext,ext,16);
     if (strcmp(ext,reg_orig->ext)) continue;
-    EXT2_CNT--;
     FreeWS(reg[i].ext);
     mfree((void*)reg[i].icon2);
-    while (i!=EXT2_CNT)
-    {
-      memcpy(&p2[i],&reg[i+1],sizeof(REGEXPLEXT_ARM_NEW));
-      i++;
-    }
+    EXT2_CNT--;
+    memcpy(&reg[i],&reg[i+1],sizeof(REGEXPLEXT_ARM_NEW)*(EXT2_CNT-i));
     return;  
   }
 }
