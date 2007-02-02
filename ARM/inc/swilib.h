@@ -241,6 +241,8 @@ typedef struct
 #endif
 }REGEXPLEXT;
 
+
+
 #ifdef NEWSGOLD
 typedef struct
 {
@@ -760,16 +762,6 @@ __swi __arm int sprintf(char *buf, const char *str, ...);
 //thumb
 //pattern=??,B4,??,B5,??,B0,??,90,??,48,??,A9,??,91,??,44,??,90,??,48,??,44,??,90,??,AD,??,1C,??,AB,??,AA,??,99,??,??,??,??,??,1C,??,1C,??,20,??,??,??,??,??,1C,??,B0,??,BC,??,BC,??,B0,??,47
 
-#pragma swi_number=0x21
-__swi __arm int GetImgHeight(short picture);
-//thumb
-//pattern=80,B5,??,??,??,F?,00,28,00,D1,80,BD,40,78,80,BD
-
-#pragma swi_number=0x22
-__swi __arm int GetImgWidth(short picture);
-//thumb
-//pattern=80,B5,??,??,??,F?,00,28,00,D1,80,BD,00,78,80,BD
-
 #pragma swi_number=23
 __swi	__arm	char * strcat (char *,const char *);
 //thumb
@@ -804,6 +796,16 @@ __swi	__arm	void  wsAppendChar (void *WSHDR,int wchar);
 __swi	__arm IMGHDR *GetPITaddr(int num);
 //thumb
 //pattern=??,B5,04,1C,??,??,??,??,A0,42,??,D9
+
+#pragma swi_number=33
+__swi __arm int GetImgHeight(int picture);
+//thumb
+//pattern=80,B5,??,??,??,F?,00,28,00,D1,80,BD,40,78,80,BD
+
+#pragma swi_number=34
+__swi __arm int GetImgWidth(int picture);
+//thumb
+//pattern=80,B5,??,??,??,F?,00,28,00,D1,80,BD,00,78,80,BD
 
 #pragma swi_number=35
 __swi __arm void DrawImg(unsigned int x, unsigned int y, unsigned int picture);
