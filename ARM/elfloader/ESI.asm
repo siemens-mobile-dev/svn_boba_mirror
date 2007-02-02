@@ -73,9 +73,8 @@ J_PIT:
 ESI_PATCH:
 	MOV	R3,R0,LSR #28
 	CMP	R3,#0x0A
-        BNE     DO_LGP
-	BL 	ESI
-	LDMFD	SP!,{R4,PC}
+        LDMEQFD SP!,{R4,LR}
+        BEQ     ESI 
 DO_LGP:
         LDR	R3,ESIOld
 	MOV	R4,R1
@@ -85,24 +84,39 @@ DO_LGP:
 	BX	R3
         
 ; ==============================================       
- 	RSEG	PATCH_PROPERTY_WINDOW:CODE:ROOT
+ 	RSEG	PATCH_PROPERTY1:CODE:ROOT
 	CODE32
 
-
-        ADD     LR, PC, #4
-        LDR     PC, =PATCH_EXT
+        BL      PropertyHook
+        
+        RSEG	PATCH_PROPERTY2:CODE:ROOT
+	CODE32
+        
+        BL      PropHandler
         
 ; ----------------------------------------------   
         RSEG	CODE:CODE:NOROOT
 	CODE32
         EXTERN  PropertyPatch
 
-PATCH_EXT:
-        STMFD   SP!,{R1-R3, LR}
-        LDR     R2, [SP, #0x20+0xC4+20]
-        CMP     R2, #0xA0000000
-        BLCC    PropertyPatch
-        LDMFD   SP!,{R5-R7, PC}
+PropertyHook:
+        MOV     R0, R4
+        MOV     R4, #1
+        STR     R4, [R0, #0x18]
+        BX      LR
+        
+PropHandler:
+        LDR     R0, [R5, #0x18]
+        CMP     R0, #0
+        LDMIA   R2, {R0-R2}
+        BXEQ    LR
+        BL      PropertyPatch
+        MOV     R0, #0
+        STR     R0, [R5, #0x18]
+        ADD     SP, SP, #0x234
+        LDMFD   SP!, {R4-R7,PC}
+
+        
         
 ; ==============================================               
 	THUMB

@@ -956,7 +956,7 @@ __thumb MyShowMSG(int p1, int p2)
 }
 #else
 
-__arm int PropertyPatch(WSHDR *unk_foldername, WSHDR *unk_filename)
+__arm void PropertyPatch(WSHDR *unk_foldername, WSHDR *unk_filename)
 {
   WSHDR *ws;
   ws=AllocWS(255);
@@ -965,7 +965,6 @@ __arm int PropertyPatch(WSHDR *unk_foldername, WSHDR *unk_filename)
   wstrcat (ws,unk_filename);
   DoUnknownFileType(ws);
   FreeWS(ws);
-  return 0;
 }
 
 #endif

@@ -124,6 +124,22 @@ I_R5R7
         BL      J_REGEXT2
         
         ARM
+	RSEG	REG_FILE:CODE:ROOT
+        EXTERN  RegFile
+        
+        LDR     PC, =RegFile
+        
+        ARM
+        RSEG    PATCH_BIG_ICON:CODE:ROOT
+        
+        BL      J_GET_BIG
+        
+        ARM
+        RSEG    PATCH_REGEXPL:CODE:ROOT
+        
+        BL      J_REG_FILE
+        
+        ARM
 	RSEG	CODE:CODE:NOROOT
         EXTERN  EXT2_AREA
         EXTERN  GetBigIcon
@@ -160,21 +176,7 @@ J_REG_FILE
         STR     R5, [SP, #0x10]
         B       RegFile
 
-        ARM
-	RSEG	REG_FILE:CODE:ROOT
-        EXTERN  RegFile
-        
-        LDR     PC, =RegFile
-        
-        ARM
-        RSEG    PATCH_BIG_ICON:CODE:ROOT
-        
-        BL      J_GET_BIG
-        
-        ARM
-        RSEG    PATCH_REGEXPL:CODE:ROOT
-        
-        BL      J_REG_FILE
+
         
 
 
