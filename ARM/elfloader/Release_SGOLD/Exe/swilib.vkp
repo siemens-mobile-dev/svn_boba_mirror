@@ -293,7 +293,7 @@
 0600: 0xA0CECB7B ; 180: __thumb int EDIT_GetItemNumInFocusedComboBox(void *gui);
 0604: 0xA0CECAE5 ; 181: __thumb void EDIT_SetTextToFocused(void *gui,WSHDR *ws);
 0608: 0xA0CECB21 ; 182: __thumb int EDIT_GetFocus(void *gui);
-060C: 0xA0CECB3F ; 183: __thumb int EDIT_GetUnFocus(void *gui);
+060C: 0xA0CECB2B ; 183: __thumb int EDIT_GetUnFocus(void *gui);
 0610: 0xA0C8F76F ; 184: __thumb void ConstructComboBox(EDITCONTROL *EditControl,int type,int attr,WSHDR*,int maxlen,int unk_zero,int num_of_items,int start_item);
 0614: 0xA082769C ; 185: __arm int GBS_WaitForMsg(const int *msg_list, int msgs_num, GBS_MSG*, int timeout);
 0618: 0xA1262219 ; 186: __thumb int RegisterCepidForSocketWork(REGSOCKCEPID_DATA *);
@@ -375,6 +375,16 @@
 070C: 0xA0C93D1F ; 1C3: __thumb void SetMenuItemCount(void *gui,int n);
 0710: 0xA0C93C97 ; 1C4: __thumb void SetCursorToMenuItem(void *gui,int n);
 0714: 0xA0CB73EF ; 1C5: __thumb int GetFontYSIZE(int font);
+
+0718: 0xA0CECB0D ; 1C6: __thumb void EDIT_ExtractFocusedControl(void *gui,EDITCONTROL *ec);
+071C: 0xA0CECB17 ; 1C7: __thumb int EDIT_StoreControlToFocused(void *gui,EDITCONTROL *ec);
+0720: 0xA0C9029D ; 1C8: __thumb EDITC_OPTIONS *PrepareEditCOptions(EDITC_OPTIONS *ec_options);
+0724: 0xA0C8F3C3 ; 1C9: __thumb void SetInvertToEditCOptions(EDITC_OPTIONS *ec_options, int invert);
+0728: 0xA0C8F3B7 ; 1CA: __thumb void SetFontToEditCOptions(EDITC_OPTIONS *ec_options, int font);
+072C: 0xA0C8F3AB ; 1CB: __thumb void SetAlignToEditCOptions(EDITC_OPTIONS *ec_options, int align);
+0730: 0xA0C8F395 ; 1CC: __thumb void SetPenColorToEditCOptions(EDITC_OPTIONS *ec_options, int pen);
+0734: 0xA0C8F37D ; 1CD: __thumb void SetBrushColorToEditCOptions(EDITC_OPTIONS *ec_options, int brush);
+0738: 0xA0C8F465 ; 1CE: __thumb void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_options);
 #pragma disable old_equal_ff
 +0
 
