@@ -542,15 +542,15 @@
 070C: 0xA09577C9 ; 1C3: __thumb void SetMenuItemCount(void *gui,int n);
 0710: 0xA0957731 ; 1C4: __thumb void SetCursorToMenuItem(void *gui,int n);
 0714: 0xA0A38E38 ; 1C5: __arm int GetFontYSIZE(int font);
-;718:              ; 1C6: 
-;71C:              ; 1C7: 
-;720:              ; 1C8: 
-;724:              ; 1C9: 
-;728:              ; 1CA: 
-;72C:              ; 1CB: 
-;730:              ; 1CC: 
-;734:              ; 1CD: 
-;738:              ; 1CE: 
+0718: 0xA0A23251 ; 1C6: __thumb void EDIT_ExtractFocusedControl(void *gui,EDITCONTROL *ec);
+071C: 0xA0A2325D ; 1C7: __thumb int EDIT_StoreControlToFocused(void *gui,EDITCONTROL *ec);
+0720: 0xA0A1D6D1 ; 1C8: __thumb EDITC_OPTIONS *PrepareEditCOptions(EDITC_OPTIONS *ec_options);
+0724: 0xA0A1C757 ; 1C9: __thumb void SetInvertToEditCOptions(EDITC_OPTIONS *ec_options, int invert);
+0728: 0xA0A1C74B ; 1CA: __thumb void SetFontToEditCOptions(EDITC_OPTIONS *ec_options, int font);
+072C: 0xA0A1C73F ; 1CB: __thumb void SetAlignToEditCOptions(EDITC_OPTIONS *ec_options, int align);
+0730: 0xA0A1C729 ; 1CC: __thumb void SetPenColorToEditCOptions(EDITC_OPTIONS *ec_options, int pen);
+0734: 0xA0A1C711 ; 1CD: __thumb void SetBrushColorToEditCOptions(EDITC_OPTIONS *ec_options, int brush);
+0738: 0xA0A1C7F9 ; 1CE: __thumb void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_options);
 ;73C:              ; 1CF: 
 
 ;740:              ; 1D0: 

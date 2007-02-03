@@ -324,6 +324,16 @@
 070C: 0xA0979B39 ; 1C3: __thumb void SetMenuItemCount(void *gui,int n);
 0710: 0xA0979AA1 ; 1C4: __thumb void SetCursorToMenuItem(void *gui,int n);
 0714: 0xA0A275A4 ; 1C5: __arm int GetFontYSIZE(int font);
+0718: 0xA0A11E7D ; 1C6: __thumb void EDIT_ExtractFocusedControl(void *gui,EDITCONTROL *ec);
+071C: 0xA0A11E89 ; 1C7: __thumb int EDIT_StoreControlToFocused(void *gui,EDITCONTROL *ec);
+0720: 0xA0A0C309 ; 1C8: __thumb EDITC_OPTIONS *PrepareEditCOptions(EDITC_OPTIONS *ec_options);
+0724: 0xA0A0B38F ; 1C9: __thumb void SetInvertToEditCOptions(EDITC_OPTIONS *ec_options, int invert);
+0728: 0xA0A0B383 ; 1CA: __thumb void SetFontToEditCOptions(EDITC_OPTIONS *ec_options, int font);
+072C: 0xA0A0B377 ; 1CB: __thumb void SetAlignToEditCOptions(EDITC_OPTIONS *ec_options, int align);
+0730: 0xA0A0B361 ; 1CC: __thumb void SetPenColorToEditCOptions(EDITC_OPTIONS *ec_options, int pen);
+0734: 0xA0A0B349 ; 1CD: __thumb void SetBrushColorToEditCOptions(EDITC_OPTIONS *ec_options, int brush);
+0738: 0xA0A0B431 ; 1CE: __thumb void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_options);
+
 #pragma disable old_equal_ff
 +0
 
