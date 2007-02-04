@@ -19,6 +19,7 @@ __root const CFG_HDR cfghdr2_0={CFG_CBOX,"Log status changes",0,2};
 __root const int LOG_STATCH = 0;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 
+#ifdef NEWSGOLD
 __root const CFG_HDR cfghdr3={CFG_STR_UTF8,"Offline icon",0,63};
 __root const char ICON0[64]="4:\\ZBin\\NatICQ\\img\\2.png";
 
@@ -48,10 +49,44 @@ __root const char ICON8[64]="4:\\ZBin\\NatICQ\\img\\9.png";
 
 __root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Unknown state icon",0,63};
 __root const char ICON9[64]="4:\\ZBin\\NatICQ\\img\\10.png";
+#else
+__root const CFG_HDR cfghdr3={CFG_STR_UTF8,"Offline icon",0,63};
+__root const char ICON0[64]="0:\\ZBin\\NatICQ\\img\\offline.png";
+
+__root const CFG_HDR cfghdr4={CFG_STR_UTF8,"Invisible icon",0,63};
+__root const char ICON1[64]="0:\\ZBin\\NatICQ\\img\\invisible.png";
+
+__root const CFG_HDR cfghdr5={CFG_STR_UTF8,"Away icon",0,63};
+__root const char ICON2[64]="0:\\ZBin\\NatICQ\\img\\away.png";
+
+__root const CFG_HDR cfghdr6={CFG_STR_UTF8,"N/A icon",0,63};
+__root const char ICON3[64]="0:\\ZBin\\NatICQ\\img\\na.png";
+
+__root const CFG_HDR cfghdr7={CFG_STR_UTF8,"Occupied icon",0,63};
+__root const char ICON4[64]="0:\\ZBin\\NatICQ\\img\\occupied.png";
+
+__root const CFG_HDR cfghdr8={CFG_STR_UTF8,"DND icon",0,63};
+__root const char ICON5[64]="0:\\ZBin\\NatICQ\\img\\dnd.png";
+
+__root const CFG_HDR cfghdr9={CFG_STR_UTF8,"FFC icon",0,63};
+__root const char ICON6[64]="0:\\ZBin\\NatICQ\\img\\ffc.png";
+
+__root const CFG_HDR cfghdr10={CFG_STR_UTF8,"Online icon",0,63};
+__root const char ICON7[64]="0:\\ZBin\\NatICQ\\img\\online.png";
+
+__root const CFG_HDR cfghdr11={CFG_STR_UTF8,"Message icon",0,63};
+__root const char ICON8[64]="0:\\ZBin\\NatICQ\\img\\message.png";
+
+__root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Unknown state icon",0,63};
+__root const char ICON9[64]="0:\\ZBin\\NatICQ\\img\\unlnown.png";
+#endif
 
 __root const CFG_HDR cfghdr13={CFG_UINT,"Idle icon X-pos",0,1000};
 __root const unsigned int IDLEICON_X=0;
 
 __root const CFG_HDR cfghdr14={CFG_UINT,"Idle icon Y-pos",0,1000};
 __root const unsigned int IDLEICON_Y=50;
+
+__root const CFG_HDR cfghdr15={CFG_UINT,"FontSize",0,6};
+__root const unsigned int ED_FONT_SIZE=1;
 

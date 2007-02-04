@@ -44,6 +44,8 @@ extern const char ICON9[];
 extern const unsigned int IDLEICON_X;
 extern const unsigned int IDLEICON_Y;
 
+extern const unsigned int ED_FONT_SIZE;
+
 const char percent_t[]="%t";
 const char empty_str[]="";
 const char I_str[]="I";
@@ -252,16 +254,16 @@ CLIST *FindContactByNS(int *i, int si)
 CLIST *FindContactByN(int i)
 {
   CLIST *t;
-  t=FindContactByNS(&i,8); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,7); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,6); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,5); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,4); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,3); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,2); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,1); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,0); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,9); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_MSG); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_FFC); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_ONLINE); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_DND); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_OCCUPIED); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_NA); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_AWAY); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_INVISIBLE); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_OFFLINE); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_UNKNOWN); if ((!i)&&(t)) return(t);
   return t;
 }
 
@@ -1514,8 +1516,10 @@ void CreateEditChat(CLIST *t)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
+  EDITC_OPTIONS ec_options;
   int j;
   char hdr[128];
+  int type;
   
   char *s=t->log;
   
@@ -1532,13 +1536,17 @@ void CreateEditChat(CLIST *t)
   
   if (s) while(*s)
   {
-    s++; //Пропуск типа
+    type=*s++;    //Пропуск типа
     j=0;
     while((hdr[j]=*s++)!='\n') j++;
     hdr[j]=0;
     //    wsprintf(ews,percent_t,hdr);
     ascii2ws(ews,hdr);
-    ConstructEditControl(&ec,1,0x40,ews,strlen(hdr));
+    ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
+    PrepareEditCOptions(&ec_options);
+    type==1?SetPenColorToEditCOptions(&ec_options,3):SetPenColorToEditCOptions(&ec_options,2);
+    SetFontToEditCOptions(&ec_options,2);
+    CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     edchat_toitem++;
     j=0;
@@ -1550,19 +1558,25 @@ void CreateEditChat(CLIST *t)
     msg_buf[j]=0;
     //    wsprintf(ews,percent_t,msg_buf);
     ascii2ws(ews,msg_buf);
-    ConstructEditControl(&ec,3,0x40,ews,strlen(msg_buf));
+    ConstructEditControl(&ec,3,0x40,ews,ews->wsbody[0]);
+    PrepareEditCOptions(&ec_options);
+    SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+    CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     edchat_toitem++;
   }
   if (t->isunread) total_unread--;
   t->isunread=0;
   wsprintf(ews,"-------");
-  ConstructEditControl(&ec,1,0x40,ews,wstrlen(ews));
+  ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
   //  wsprintf(ews,percent_t,t->answer?t->answer:empty_str);
   ascii2ws(ews,t->answer?t->answer:empty_str);
   ConstructEditControl(&ec,3,0x00,ews,1024);
+  PrepareEditCOptions(&ec_options);
+  SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+  CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
   edchat_answeritem=edchat_toitem;
