@@ -1,5 +1,5 @@
-;ELFpack v2.0 (C)2007 by Rst7/CBSIE, BoBa
-;Release 31.01.2007
+;ELFpack v2.0+ (C)2007 by Rst7/CBSIE, BoBa
+;Release 04.02.2007
 ;CX70v56
 ;Также библиотека для патчей
 ;
@@ -89,11 +89,9 @@
 0130: 0xA0BA0CE1 ; 04C: __thumb GetMissedCallsCount
 0134: 0xA0828294 ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
 
-
-0138: 0xA0C92317 ; 04E: __thumb void MsgBoxError(int flag, int LgpId);
-013C: 0xA0C92327 ; 04F: __thumb void MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
-0140: 0xA0C923CF ; 050: __thumb void MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
-
+0138: 0xA0C92317 ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA0C92327 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0140: 0xA0C923CF ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 
 0170: 0xA11A59F4 ; 05C: __arm unsigned char GetCPUClock();
 0174: 0xA0918D0F ; 05D: __thumb unsigned char GetCPULoad();
@@ -135,7 +133,7 @@
 02D4: 0xA08257CF ; 0B5: __thumb char GetWeek(TDate*);
 02D8: 0xA08D1999 ; 0B6: __thumb char GetProfile();
 02DC: 0xA08D1867 ; 0B7: __thumb char SetProfile(char);
-02E0: 0xA16EEDD0 ; 0B8: __arm int dwMODdw(int denom,int number);
+02E0: 0xA16EEDD0 ; 0B8: __arm int sdiv(int denom,int number);
 02E8: 0xA0820FA4 ; 0BA: __arm void *realloc(void *ptr, int size);
 02EC: 0xA16EEDB8 ; 0BB: __arm void *memset(void *s, int c, int n);
 02F0: 0xA0837018 ; 0BC: __arm int divide(int divisor, int dividend);
@@ -146,8 +144,6 @@
 0328: 0xA86CD2D4 ; 80CA: __arm RAMNET * RamNet();
 
 0380: 0xA869CA6C ; 80E0: __arm void * RamScreenBuffer();
-
-
 0400: 0xA0827B04 ; 100: GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
 0404: 0xA0826AA0 ; 101: GBS_ReciveMessage(GBS_MSG *);
 0408: 0xA08271A0 ; 102: GBS_AcceptMessage(void);
@@ -339,7 +335,7 @@
 0690: 0xA0CD1134 ; 1A4: __arm int GetDisconnectTime(void);
 0694: 0xA08CAF03 ; 1A5: __thumb void RegisterCepIdForCurProfile(unsigned int cep_id,int profile_num,unsigned int unk);
 0698: 0xA08283A0 ; 1A6: __arm int IsTimerProc(GBSTMR *);
-;069C: 0x ;1A7 __thumb char* Get_CC_NC();
+069C: 0xA0B83F47 ; 1A7: __thumb char *Get_CC_NC();
 06A0: 0xA15EC9DD ; 1A8: __thumb png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
 06A4: 0xA15ED9EF ; 1A9: __thumb void png_set_read_fn(png_structp png_ptr, png_voidp io_ptr, png_rw_ptr read_data_fn);
 06A8: 0xA15ED0A7 ; 1AA: __thumb void png_read_update_info(png_structp png_ptr,void *info_ptr);

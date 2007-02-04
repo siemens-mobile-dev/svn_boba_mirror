@@ -2562,7 +2562,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.40A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -2593,6 +2593,8 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>NEWSGOLD</state>
+          <state>ELKA</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -3277,6 +3279,9 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\additional.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\elfloader.cpp</name>
   </file>
   <file>
@@ -3290,9 +3295,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\IMB.asm</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\keyhook.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\png.c</name>
