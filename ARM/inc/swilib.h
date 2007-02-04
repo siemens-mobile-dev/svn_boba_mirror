@@ -546,13 +546,53 @@ typedef struct
   char brush[4];
 }EDITC_OPTIONS;
 
+#pragma pack(2)
 typedef struct
 {
-  char dummy[10];
+  char type;
+  char unk2[3];
+  int flag;
+  char zero_cbox;
+  char unk5;
   EDITC_OPTIONS ed_options;
-  char dummy1[16];
+  short maxlen;
+  short num_of_items_cbox;
+  short start_item_cbox;
+  short unk9;
+  short unk10;
+  short unk11;
+  int unk12;
   WSHDR *pWS;
 }EDITCONTROL;
+#pragma pack()
+
+//EditControlTypes
+#define ECT_READ_ONLY 0
+#define ECT_HEADER 1
+#define ECT_NUMBER_TYPING 2
+#define ECT_NORMAL_TEXT 3
+#define ECT_CURSOR_STAY 4
+#define ECT_FIXED_STR_NUM 5
+#define ECT_NORMAL_NUM 6
+#define ECT_COMBO_BOX 7
+#define ECT_READ_ONLY_SELECTED 8
+#define ECT_CALENDAR 10
+#define ECT_TIME 11
+
+//EditControlFlags
+
+#define ECF_NORMAL_STR 0
+#define ECF_SKIP 4
+#define ECF_ONLY_APPEND 8
+#define ECF_PASSW 0x10
+#define ECF_DELSTR 0x20
+#define ECF_APPEND_EOL 0x40
+#define ECF_SET_CURSOR_END 0x80
+#define ECF_DISABLE_NUM 0x100
+
+#define ECF_ONLY_FIRST_LAST_SYMB 0x200
+#define ECF_REMOVE_FIRST_LAST 0x400
+
 
 
 
