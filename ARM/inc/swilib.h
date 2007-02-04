@@ -241,7 +241,21 @@ typedef struct
 #endif
 }REGEXPLEXT;
 
-
+typedef struct
+{
+  int zero;
+  unsigned const int *icon1;
+  int unical_id;
+  char obex_path_id;
+  char unk;
+  unsigned short menu_flag;
+  char enabled_options;
+  char not_used[3];
+  WSHDR* ext;
+  void *proc;
+  void *altproc;
+  unsigned const int *icon2;
+}REGEXPLEXT_ARM_NEW;
 
 #ifdef NEWSGOLD
 typedef struct
@@ -869,7 +883,6 @@ __swi __arm void ShowDialog_YesNo(int flag,int LgpID,void CallBackProc(int));
 //thumb
 //pattern=
 
-
 #pragma swi_number=92
 __swi __arm unsigned char GetCPUClock();
 //arm
@@ -887,7 +900,6 @@ __swi __arm unsigned char GetCPULoad();
 __swi __arm int GetFreeRamAvail();
 //arm
 //pattern=04,E0,2D,E5,??,??,??,E5,??,??,??,EB,??,??,??,E5,??,20,91,E5,??,10,91,E5,01,10,42,E0,01,00,80,E0,20,00,40,E2,04,F0,9D,E4
-
 
 #pragma swi_number=107
 __swi	__arm	int  FindFirstFile (DIR_ENTRY *DIRENTRY,char *mask,unsigned int *ErrorNumber);
@@ -914,7 +926,7 @@ __swi __arm int *GetGPRSTrafficPointer();
 //arm
 //pattern=??,??,??,E5,1E,FF,2F,E1,20,00,A0,E3,??,??,??,EA
 
-#pragma swi_number=0x074
+#pragma swi_number=116
 __swi __arm void* GetFunctionPointer(char * _shortcut);
 
 #pragma swi_number=124
@@ -1026,7 +1038,7 @@ __swi __arm char SetProfile(char);
 //pattern=??,B5,??,1C,??,??,??,??,??,??,??,??,??,??,??,1C,??,20,??,??,??,??,??,42,??,D0,??,20,??,??,??,??,??,42,??,D0,??,22,??,21,??,1C,??,??,??,??,??,??,??,1C,??,??,??,??,??,1C,??,1C,??,??,??,??,??,22,??,21,??,1C,??,??,??,??,??,??,??,BD
 
 #pragma swi_number=184
-__swi __arm int dwMODdw(int denom,int number);
+__swi __arm int sdiv(int denom,int number);
 //arm
 //pattern=80,24,10,E2,00,00,60,42,41,30,32,E0,00,10,61,22,A1,C1,70,E0
 
@@ -1061,7 +1073,7 @@ __swi __arm void *memset(void *s, int c, int n);
 //pattern=FF,30,01,E2,02,10,A0,E1,03,24,83,E1,02,28,82,E1,??,??,??,EA,78,47
 
 #pragma swi_number=188
-__swi __arm int divide(int divisor, int dividend);
+__swi __arm int udiv(unsigned int denom,unsigned int number);
 //arm
 //pattern=00,20,A0,E3,A1,C1,70,E0,20,00,00,3A,21,C4,70,E0,0F,00,00,3A,00,04,A0,E1,FF,24,82,E3,21,C2,70,E0,17,00,00,3A,21,C4,70,E0,09,00,00,3A,00,04,A0,E1,FF,28,82,E3,21,C4,70,E0,00,04,A0,21,FF,2C,82,23,21,C2,70,E0,0E,00,00,3A,00,C0,70,E2,??,??,??,2A,20,04,A0,21,A1,C3,70,E0,80,13,41,20,02,20,A2,E0,21,C3,70,E0,00,13,41,20,02,20,A2,E0,A1,C2,70,E0,80,12,41,20,02,20,A2,E0,21,C2,70,E0,00,12,41,20,02,20,A2,E0,A1,C1,70,E0,80,11,41,20,02,20,A2,E0,21,C1,70,E0,00,11,41,20,02,20,A2,E0,A1,C0,70,E0,80,10,41,20,02,20,A2,E0,01,C0,70,E0,00,10,41,20,02,20,B2,E0,E5,FF,FF,2A,02,00,A0,E1,1E,FF,2F,E1
 
@@ -1076,9 +1088,6 @@ __swi __arm  char GetAkkuCapacity();
 //arm
 //pattern=??,??,??,E5,??,??,??,E1,1E,FF,2F,E1,08,40,2D,E9,03,10,A0,E3,00,00,A0,E3,??,??,??,EB,C8,0E,50,E3,00,00,A0,93,01,00,A0,83,08,80,BD,E8
 
-#pragma swi_number=0x80E0
-__swi __arm void * RamScreenBuffer();
-
 #pragma swi_number=0x80C8
 __swi __arm unsigned short *RamCap();
 //thumb
@@ -1087,6 +1096,9 @@ __swi __arm unsigned short *RamCap();
 __swi __arm  RAMNET * RamNet();
 //thumb
 
+#pragma swi_number=0x80E0
+__swi __arm void * RamScreenBuffer();
+
 #pragma swi_number=0x80E1
 __swi	__arm	 unsigned int *RamMPlayer_CtrlCode();
 //thumb
@@ -1094,7 +1106,6 @@ __swi	__arm	 unsigned int *RamMPlayer_CtrlCode();
 
 #pragma swi_number=0x80F1
 __swi __arm void *BuildCanvas(void);
-
 
 #pragma swi_number=0x0100
 __swi __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
@@ -2018,6 +2029,9 @@ __swi __arm void *LIB_TOP(void);
 #pragma swi_number=0x81BB
 __swi __arm void *DATA_N_SFB(void);
 
+//===========================================
+//openssl_lib
+//===========================================
 
 #pragma swi_number=0x1BC
 __swi __arm void SHA1_Init(SHA_CTX *c);
@@ -2054,6 +2068,8 @@ __swi __arm BIGNUM *BN_bin2bn(const char *s,int len,BIGNUM *ret);
 //thumb
 //pattern=??,B5,??,1C,??,1C,??,1C,??,D1,??,??,??,??,??,1C,??,D0,??,25,??,2E,??,D1,??,20,??,60,??,E0
 
+//===========================================
+//===========================================
 
 #pragma swi_number=0x1C3
 __swi __arm void SetMenuItemCount(void *gui,int n);
