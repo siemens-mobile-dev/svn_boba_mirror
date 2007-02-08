@@ -1,0 +1,80 @@
+##############################################################################
+#                                                                            #
+# IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION    22/Dec/2006  21:00:20 #
+# Copyright 1999-2005 IAR Systems. All rights reserved.                      #
+#                                                                            #
+#    Cpu mode        =  interwork                                            #
+#    Endian          =  little                                               #
+#    Stack alignment =  4                                                    #
+#    Source file     =  D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\co #
+#                       nfig_data.c                                          #
+#    Command line    =  D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\co #
+#                       nfig_data.c -lC D:\MOBILE\ELFS\SVN_82_207_89_182\ARM #
+#                       \USSD_Balance\Release\List\ -la                      #
+#                       D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\Re #
+#                       lease\List\ -o D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\ #
+#                       USSD_Balance\Release\Obj\ -s9 --no_unroll            #
+#                       --cpu_mode arm --endian little --cpu ARM7TDMI        #
+#                       --stack_align 4 --interwork -e --fpu None --segment  #
+#                       code=CONFIG --segment data=CONFIG -I                 #
+#                       D:\MOBILE\ELFS\IAR\Iar\ARM\INC\                      #
+#    List file       =  D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\Re #
+#                       lease\List\config_data.lst                           #
+#    Object file     =  D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\Re #
+#                       lease\Obj\config_data.r79                            #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\config_data.c
+      1          #include "..\inc\cfg_items.h"
+      2          #include "..\inc\swilib.h"
+      3          
+      4          //Конфигурация
+
+   \                                 In segment CONFIG_C, align 4, align-sorted, root
+      5          __root const CFG_HDR cfghdr0={CFG_STR_WIN1251,"USSD string",0,63};
+   \                     cfghdr0:
+   \   00000000   04000000           DC32 4
+   \   00000004   555353442073       DC8 "USSD string"
+   \              7472696E6700
+   \   00000010   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              000000000000
+   \              0000        
+   \   00000024   000000003F00       DC32 0, 63
+   \              0000        
+
+   \                                 In segment CONFIG_C, align 4, align-sorted, root
+      6          __root const char ussd_str[64]="*100#";
+   \                     ussd_str:
+   \   00000000   2A3130302300       DC8 "*100#"
+   \   00000006   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   00000016   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   00000026   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              000000000000
+   \              00000000    
+   \   00000036   000000000000       DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              00000000    
+      7          
+      8          
+
+
+   Segment part sizes:
+
+     Function/Label Bytes
+     -------------- -----
+     cfghdr0          44
+     ussd_str         64
+
+ 
+ 108 bytes in segment CONFIG_C
+ 
+ 108 bytes of CONST memory
+
+Errors: none
+Warnings: none

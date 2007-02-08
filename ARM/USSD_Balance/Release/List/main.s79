@@ -1,0 +1,490 @@
+//////////////////////////////////////////////////////////////////////////////
+//                                                                           /
+// IAR ARM ANSI C/C++ Compiler V4.40A/W32 EVALUATION   23/Dec/2006  11:14:02 /
+// Copyright 1999-2005 IAR Systems. All rights reserved.                     /
+//                                                                           /
+//    Cpu mode        =  interwork                                           /
+//    Endian          =  little                                              /
+//    Stack alignment =  4                                                   /
+//    Source file     =  D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\m /
+//                       ain.c                                               /
+//    Command line    =  D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\m /
+//                       ain.c -lC D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD /
+//                       _Balance\Release\List\ -la                          /
+//                       D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\R /
+//                       elease\List\ -o D:\MOBILE\ELFS\SVN_82_207_89_182\AR /
+//                       M\USSD_Balance\Release\Obj\ -s9 --no_unroll         /
+//                       --cpu_mode arm --endian little --cpu ARM7TDMI       /
+//                       --stack_align 4 --interwork -e --fpu None -I        /
+//                       D:\MOBILE\ELFS\IAR\Iar\ARM\INC\                     /
+//    List file       =  D:\MOBILE\ELFS\SVN_82_207_89_182\ARM\USSD_Balance\R /
+//                       elease\List\main.s79                                /
+//                                                                           /
+//                                                                           /
+//////////////////////////////////////////////////////////////////////////////
+
+        NAME main
+
+        RTMODEL "StackAlign4", "USED"
+        RTMODEL "__cpu_mode", "__pcs__interwork"
+        RTMODEL "__data_model", "absolute"
+        RTMODEL "__endian", "little"
+        RTMODEL "__rt_version", "6"
+
+        RSEG CSTACK:DATA:NOROOT(2)
+
+??DataTable0 EQU 0
+        MULTWEAK ??InitConfig??rA
+        MULTWEAK ??Killer??rT
+        MULTWEAK ??SendKeyPress??rT
+        MULTWEAK ??SwitchFromIdle??rT
+        MULTWEAK ??SwitchToIdle??rT
+        MULTWEAK ??TopCsmId??rT
+        MULTWEAK ??kill_data??rA
+        MULTWEAK ??main??rT
+        MULTWEAK ??swap_csms??rT
+        MULTWEAK ??timer_proc??rT
+        PUBWEAK ?init?tab?DATA_Z
+        PUBLIC Killer
+        FUNCTION Killer,0203H
+        LOCFRAME CSTACK, 4, STACK
+        PUBLIC SendKeyPress
+        FUNCTION SendKeyPress,0203H
+        LOCFRAME CSTACK, 12, STACK
+        PUBLIC SwitchFromIdle
+        FUNCTION SwitchFromIdle,0601H
+        PUBLIC SwitchToIdle
+        FUNCTION SwitchToIdle,0201H
+        LOCFRAME CSTACK, 4, STACK
+        PUBLIC TopCsmId
+        FUNCTION TopCsmId,0201H
+        PUBLIC idlecsm
+        PUBLIC main
+        FUNCTION main,0a03H
+        LOCFRAME CSTACK, 8, STACK
+        PUBLIC swap_csms
+        FUNCTION swap_csms,0203H
+        LOCFRAME CSTACK, 4, STACK
+        PUBLIC timer
+        PUBLIC timer_proc
+        FUNCTION timer_proc,0603H
+        LOCFRAME CSTACK, 8, STACK
+        PUBLIC under_idle
+        
+        CFI Names cfiNames0
+        CFI StackFrame CFA R13 HUGEDATA
+        CFI Resource R0:32, R1:32, R2:32, R3:32, R4:32, R5:32, R6:32, R7:32
+        CFI Resource R8:32, R9:32, R10:32, R11:32, R12:32, CPSR:32, R13:32
+        CFI Resource R14:32, SPSR:32
+        CFI VirtualResource ?RET:32
+        CFI EndNames cfiNames0
+        
+        CFI Common cfiCommon0 Using cfiNames0
+        CFI CodeAlign 2
+        CFI DataAlign 4
+        CFI ReturnAddress ?RET CODE
+        CFI CFA R13+0
+        CFI R0 Undefined
+        CFI R1 Undefined
+        CFI R2 Undefined
+        CFI R3 Undefined
+        CFI R4 SameValue
+        CFI R5 SameValue
+        CFI R6 SameValue
+        CFI R7 SameValue
+        CFI R8 SameValue
+        CFI R9 SameValue
+        CFI R10 SameValue
+        CFI R11 SameValue
+        CFI R12 Undefined
+        CFI CPSR SameValue
+        CFI R14 Undefined
+        CFI SPSR SameValue
+        CFI ?RET R14
+        CFI EndCommon cfiCommon0
+        
+        
+        CFI Common cfiCommon1 Using cfiNames0
+        CFI CodeAlign 4
+        CFI DataAlign 4
+        CFI ReturnAddress ?RET CODE
+        CFI CFA R13+0
+        CFI R0 Undefined
+        CFI R1 Undefined
+        CFI R2 Undefined
+        CFI R3 Undefined
+        CFI R4 SameValue
+        CFI R5 SameValue
+        CFI R6 SameValue
+        CFI R7 SameValue
+        CFI R8 SameValue
+        CFI R9 SameValue
+        CFI R10 SameValue
+        CFI R11 SameValue
+        CFI R12 Undefined
+        CFI CPSR SameValue
+        CFI R14 Undefined
+        CFI SPSR SameValue
+        CFI ?RET R14
+        CFI EndCommon cfiCommon1
+        
+InitConfig          SYMBOL "InitConfig"
+kill_data           SYMBOL "kill_data"
+??InitConfig??rA    SYMBOL "??rA", InitConfig
+Killer              SYMBOL "Killer"
+??Killer??rT        SYMBOL "??rT", Killer
+SendKeyPress        SYMBOL "SendKeyPress"
+??SendKeyPress??rT  SYMBOL "??rT", SendKeyPress
+SwitchFromIdle      SYMBOL "SwitchFromIdle"
+??SwitchFromIdle??rT SYMBOL "??rT", SwitchFromIdle
+SwitchToIdle        SYMBOL "SwitchToIdle"
+??SwitchToIdle??rT  SYMBOL "??rT", SwitchToIdle
+TopCsmId            SYMBOL "TopCsmId"
+??TopCsmId??rT      SYMBOL "??rT", TopCsmId
+??kill_data??rA     SYMBOL "??rA", kill_data
+main                SYMBOL "main"
+??main??rT          SYMBOL "??rT", main
+swap_csms           SYMBOL "swap_csms"
+??swap_csms??rT     SYMBOL "??rT", swap_csms
+timer_proc          SYMBOL "timer_proc"
+??timer_proc??rT    SYMBOL "??rT", timer_proc
+
+        EXTERN ELF_BEGIN
+        EXTERN InitConfig
+        FUNCTION InitConfig,0200H
+        EXTERN kill_data
+        FUNCTION kill_data,0202H
+        EXTERN ussd_str
+
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock0 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??Killer??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock0
+        REQUIRE Killer
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock1 Using cfiCommon1
+        CFI Function Killer
+        ARM
+Killer:
+        PUSH     {LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI CFA R13+4
+        SWI      +32789
+        MOV      R1,R0
+        LDR      R0,??Killer_0    ;; ELF_BEGIN
+        _BLF     kill_data,??kill_data??rA
+        POP      {LR}
+        CFI ?RET R14
+        CFI CFA R13+0
+        BX       LR               ;; return
+        DATA
+??Killer_0:
+        DC32     ELF_BEGIN
+        CFI EndBlock cfiBlock1
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock2 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??SendKeyPress??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock2
+        REQUIRE SendKeyPress
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock3 Using cfiCommon1
+        CFI Function SendKeyPress
+        ARM
+SendKeyPress:
+        PUSH     {R4,R5,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R5 Frame(CFA, -8)
+        CFI R4 Frame(CFA, -12)
+        CFI CFA R13+12
+        MOV      R4,R0
+        MOV      R5,#+9
+        ORR      R5,R5,#0x4200
+        MOV      R2,R4
+        MOV      R1,#+147
+        ORR      R1,R1,#0x100
+        MOV      R0,R5
+        SWI      +256
+        MOV      R2,R4
+        MOV      R1,#+404
+        MOV      R0,R5
+        SWI      +256
+        POP      {R4,R5,LR}
+        CFI R4 SameValue
+        CFI R5 SameValue
+        CFI ?RET R14
+        CFI CFA R13+0
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock3
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock4 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??swap_csms??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock4
+        REQUIRE swap_csms
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock5 Using cfiCommon1
+        CFI Function swap_csms
+        ARM
+swap_csms:
+        PUSH     {R4}
+        CFI R4 Frame(CFA, -4)
+        CFI CFA R13+4
+        CMP      R0,R1
+        BEQ      ??swap_csms_0
+        LDR      R2,[R0, #+4]
+        LDR      R3,[R0, #+0]
+        LDR      R12,[R1, #+0]
+        LDR      R4,[R1, #+4]
+        STR      R4,[R0, #+4]
+        STR      R12,[R0, #+0]
+        STR      R2,[R1, #+4]
+        STR      R3,[R1, #+0]
+??swap_csms_0:
+        POP      {R4}
+        CFI R4 SameValue
+        CFI CFA R13+0
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock5
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock6 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??TopCsmId??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock6
+        REQUIRE TopCsmId
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock7 Using cfiCommon1
+        CFI Function TopCsmId
+        ARM
+TopCsmId:
+        LDR      R0,??DataTable1  ;; under_idle
+        LDR      R0,[R0, #+0]
+        LDR      R1,[R0, #+0]
+        CMP      R1,#+0
+        BXEQ     LR
+??TopCsmId_0:
+        LDR      R0,[R0, #+0]
+        LDR      R1,[R0, #+0]
+        CMP      R1,#+0
+        BNE      ??TopCsmId_0
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock7
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock8 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??SwitchToIdle??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock8
+        REQUIRE SwitchToIdle
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock9 Using cfiCommon1
+        CFI Function SwitchToIdle
+        ARM
+SwitchToIdle:
+        PUSH     {LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI CFA R13+4
+        BL       TopCsmId
+        LDR      R1,??SwitchToIdle_0  ;; under_idle + 4
+        LDR      R1,[R1, #+0]
+        BL       swap_csms
+        POP      {LR}
+        CFI ?RET R14
+        CFI CFA R13+0
+        BX       LR               ;; return
+        DATA
+??SwitchToIdle_0:
+        DC32     under_idle + 4
+        CFI EndBlock cfiBlock9
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock10 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??SwitchFromIdle??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock10
+        REQUIRE SwitchFromIdle
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock11 Using cfiCommon1
+        CFI Function SwitchFromIdle
+        ARM
+SwitchFromIdle:
+        BX       LR               ;; return
+        CFI EndBlock cfiBlock11
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock12 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??timer_proc??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock12
+        REQUIRE timer_proc
+
+        RSEG DATA_Z:DATA:SORT:NOROOT(2)
+under_idle:
+        DS8 4
+idlecsm:
+        DS8 4
+timer:
+        DS8 16
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock13 Using cfiCommon1
+        CFI Function timer_proc
+        ARM
+timer_proc:
+        PUSH     {R4,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R4 Frame(CFA, -8)
+        CFI CFA R13+8
+        MOV      R0,#+42
+        BL       SendKeyPress
+        LDR      R4,??timer_proc_0  ;; ussd_str
+        B        ??timer_proc_1
+??timer_proc_2:
+        LDRB     R0,[R4], #+1
+        BL       SendKeyPress
+??timer_proc_1:
+        LDRB     R0,[R4, #+0]
+        CMP      R0,#+0
+        BNE      ??timer_proc_2
+        MOV      R0,#+11
+        BL       SendKeyPress
+        LDR      R2,??timer_proc_0+0x4  ;; SwitchFromIdle
+        MOV      R1,#+260
+        LDR      R0,??timer_proc_0+0x8  ;; under_idle + 8
+        SWI      +77
+        BL       Killer
+        POP      {R4,LR}
+        CFI R4 SameValue
+        CFI ?RET R14
+        CFI CFA R13+0
+        BX       LR               ;; return
+        DATA
+??timer_proc_0:
+        DC32     ussd_str
+        DC32     SwitchFromIdle
+        DC32     under_idle + 8
+        CFI EndBlock cfiBlock13
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock14 Using cfiCommon0
+        CFI NoFunction
+        THUMB
+??main??rT:
+        BX       PC
+        Nop      
+        CFI EndBlock cfiBlock14
+        REQUIRE main
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock15 Using cfiCommon1
+        CFI Function main
+        ARM
+main:
+        PUSH     {R4,LR}
+        CFI ?RET Frame(CFA, -4)
+        CFI R4 Frame(CFA, -8)
+        CFI CFA R13+8
+        _BLF     InitConfig,??InitConfig??rA
+        SWI      +33030
+        LDR      R4,??DataTable1  ;; under_idle
+        LDR      R0,[R0, #+4]
+        SWI      +264
+        STR      R0,[R4, #+4]
+        SWI      +33030
+        LDR      R0,[R0, #+4]
+        SWI      +264
+        LDR      R0,[R0, #+4]
+        STR      R0,[R4, #+0]
+        BL       SwitchToIdle
+        LDR      R2,??main_0      ;; timer_proc
+        MOV      R1,#+260
+        ADD      R0,R4,#+8
+        SWI      +77
+        MOV      R0,#+0
+        POP      {R4,LR}
+        CFI R4 SameValue
+        CFI ?RET R14
+        CFI CFA R13+0
+        BX       LR               ;; return
+        DATA
+??main_0:
+        DC32     timer_proc
+        CFI EndBlock cfiBlock15
+
+        RSEG CODE:CODE:NOROOT(2)
+        DATA
+??DataTable1:
+        DC32     under_idle
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock16 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??kill_data??rA:
+        LDR      R12,??Subroutine8_0  ;; kill_data
+        BX       R12
+        DATA
+??Subroutine8_0:
+        DC32     kill_data
+        CFI EndBlock cfiBlock16
+
+        RSEG CODE:CODE:NOROOT(2)
+        CFI Block cfiBlock17 Using cfiCommon1
+        CFI NoFunction
+        ARM
+??InitConfig??rA:
+        LDR      R12,??Subroutine9_0  ;; InitConfig
+        BX       R12
+        DATA
+??Subroutine9_0:
+        DC32     InitConfig
+        CFI EndBlock cfiBlock17
+
+        RSEG INITTAB:CODE:ROOT(2)
+        DATA
+?init?tab?DATA_Z:
+        DCD      sfe(DATA_Z) - sfb(DATA_Z), sfb(DATA_Z), sfb(DATA_Z)
+
+        END
+// 
+// 452 bytes in segment CODE
+//  24 bytes in segment DATA_Z
+//  12 bytes in segment INITTAB
+// 
+// 396 bytes of CODE memory (+ 68 bytes shared)
+//  24 bytes of DATA memory
+//
+//Errors: none
+//Warnings: none

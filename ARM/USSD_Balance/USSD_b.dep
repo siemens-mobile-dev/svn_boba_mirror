@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <configuration>
+    <name>Release</name>
+    <outputs>
+      <file>$PROJ_DIR$\menu.h</file>
+      <file>$PROJ_DIR$\Release\List\image.lst</file>
+      <file>$PROJ_DIR$\Release\List\image.s79</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\newfunc.h</file>
+      <file>$PROJ_DIR$\..\..\!_inc\png.h</file>
+      <file>$PROJ_DIR$\Release\Obj\utils.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\menu.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\newfunc.r79</file>
+      <file>$PROJ_DIR$\..\..\!_inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\menu.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
+      <file>$PROJ_DIR$\Release\List\utils.lst</file>
+      <file>$PROJ_DIR$\..\..\!_inc\zlib.h</file>
+      <file>$PROJ_DIR$\Release\Obj\newfunc.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\hex.pbi</file>
+      <file>$PROJ_DIR$\..\..\!_inc\swilib.h</file>
+      <file>$PROJ_DIR$\Release\List\main.s79</file>
+      <file>$PROJ_DIR$\Release\Exe\smenud.elf</file>
+      <file>$PROJ_DIR$\Release\List\menu.lst</file>
+      <file>$PROJ_DIR$\image.c</file>
+      <file>$PROJ_DIR$\Release\Exe\hook.elf</file>
+      <file>$PROJ_DIR$\Release\Obj\image.r79</file>
+      <file>$PROJ_DIR$\Release\List\config_data.s79</file>
+      <file>$PROJ_DIR$\Release\Obj\menu_loader.pbi</file>
+      <file>$PROJ_DIR$\Release\Exe\USSD_b.elf</file>
+      <file>$PROJ_DIR$\Release\List\USSD_b.map</file>
+      <file>$PROJ_DIR$\Release\Obj\menu_loader.r79</file>
+      <file>$PROJ_DIR$\menu_loader.h</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\Release\List\menu_loader.s79</file>
+      <file>$PROJ_DIR$\Release\Exe\CallsList.elf</file>
+      <file>$PROJ_DIR$\Release\Obj\hex.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\CallsList.pbd</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\Release\List\utils.s79</file>
+      <file>$PROJ_DIR$\menu_loader.c</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\hex.h</file>
+      <file>$PROJ_DIR$\image.h</file>
+      <file>$PROJ_DIR$\hex.c</file>
+      <file>$PROJ_DIR$\Release\List\hex.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\utils.r79</file>
+      <file>$PROJ_DIR$\..\inc\cfg_items.h</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\image.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.pbi</file>
+      <file>$PROJ_DIR$\Release\List\menu_loader.lst</file>
+      <file>$PROJ_DIR$\conf_loader.h</file>
+      <file>$PROJ_DIR$\Release\Obj\USSD_b.pbd</file>
+      <file>$PROJ_DIR$\Release\List\conf_loader.s79</file>
+      <file>$PROJ_DIR$\menu.c</file>
+      <file>$PROJ_DIR$\Release\List\conf_loader.lst</file>
+      <file>$PROJ_DIR$\Release\List\hex.s79</file>
+      <file>$TOOLKIT_DIR$\LIB\dl4tpainl8n.r79</file>
+      <file>$PROJ_DIR$\Release\List\menu.s79</file>
+      <file>$PROJ_DIR$\Release\List\newfunc.s79</file>
+      <file>$PROJ_DIR$\Release\List\newfunc.lst</file>
+      <file>$PROJ_DIR$\utils.c</file>
+      <file>$PROJ_DIR$\..\..\!_inc\pngconf.h</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\utils.h</file>
+      <file>$PROJ_DIR$\newfunc.c</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\config_data.c</file>
+      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\conf_loader.c</file>
+    </outputs>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 28 29</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\smenud.elf</name>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 32 50 11 49 15</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\image.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25 2 1</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 51</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 44 43 19 5 13 9 65 67</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\hook.elf</name>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 32 50 11 49 15 10</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\USSD_b.elf</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 32 50 11 49 15</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\CallsList.elf</name>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 32 49 15 60</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Obj\CallsList.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 52 42 18 51 3 7 27 14 6</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\menu_loader.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 30 33 53</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 27</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0 19 5 13 9 65 44 4 31 67</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\hex.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 35 59 46</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 18</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 19 5 13 9 65 44</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Obj\USSD_b.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 52 42 3</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\menu.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 10 61 22</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 7</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 19 5 13 9 65 44 43 0 4 31</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\utils.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 47 39 12</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 6</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 67 19 5 13 9 65</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\newfunc.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 8 62 63</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 14</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 4 19 5 13 9 65</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\config_data.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 11 26 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 42</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 48 69 66 38 37 16</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 48 69 66 38 37 16</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 49</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 20 41</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 3</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 69 66 38 37 16 48 54</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 69 66 38 37 16 48 54</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\conf_loader.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 50 56 58</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 52</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 69 66 38 37 16 48 54</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 69 66 38 37 16 48 54</file>
+        </tool>
+      </inputs>
+    </file>
+  </configuration>
+  <configuration>
+    <name>Release NEW</name>
+    <outputs>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release NEW\Obj\func.r79</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release NEW\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\Release NEW\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release NEW\Obj\CallsList.pbd</file>
+      <file>$PROJ_DIR$\Release NEW\Exe\CallsList.elf</file>
+      <file>$TOOLKIT_DIR$\LIB\dl4tpainl8n.r79</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+    </outputs>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 8</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release NEW\Obj\CallsList.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 4</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release NEW\Exe\CallsList.elf</name>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 2 1 6 9</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 1</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 6</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 4</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 11 10 5 3 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 11 10 5 3 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
+  </configuration>
+</project>
+
+
