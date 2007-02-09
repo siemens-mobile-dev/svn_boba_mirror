@@ -487,18 +487,67 @@ SUBPROC((void *)get_answer);
   }
 }*/
 
+char* XMLBuffer;
+unsigned int XMLBufferCurPos = 0; // Позиция в кольцевом буфере
+unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
+unsigned int processed_pos   = 0; // До какого места обработали
+
+
+void get_buf_part(char* inp_buffer, unsigned int req_len)
+{
+  int xz = dwMODdw(XML_BUFFER_SIZE,processed_pos);
+  unsigned int virt_processed_len = processed_pos - processed_pos * xz;
+
+  if(req_len+virt_processed_len < XML_BUFFER_SIZE)
+  {
+    memcpy(inp_buffer, XMLBuffer+virt_processed_len, req_len); //(!!!!!)
+  }
+  else
+  {
+    memcpy(inp_buffer, XMLBuffer+virt_processed_len, (XML_BUFFER_SIZE-virt_processed_len));
+    memcpy(inp_buffer + req_len - (XML_BUFFER_SIZE-virt_processed_len), XMLBuffer, req_len - (XML_BUFFER_SIZE-virt_processed_len));
+  }
+}
+
 void get_answer(void)
 {
-//int i=RXstate;
-char* buf = malloc(512);
-zeromem(buf,512);
-int rec_bytes = 0;
-rec_bytes = recv(sock, buf, 512, 0);
-char *mess = malloc(10);
-sprintf(mess,"RECV:%d",rec_bytes);
-Log(mess, buf);
-mfree(buf);
-mfree(mess);
+  char* buf = malloc(REC_BUFFER_SIZE);    // Будем скромнее ;)
+  zeromem(buf,REC_BUFFER_SIZE);           // Зануляем
+  int rec_bytes = 0;          // Не торопимся :)
+  rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
+  char *mess = malloc(10);
+  sprintf(mess,"RECV:%d",rec_bytes);
+  Log(mess, buf);
+  
+  // Запись в буфер
+  if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
+  {
+    memcpy(XMLBuffer+XMLBufferCurPos, buf, rec_bytes);
+    XMLBufferCurPos+=rec_bytes;
+  }
+  else // Запись переходит границы буфера
+  {
+    // Определяем байт, до которого содержимое буфера приёма помещается без переноса
+    // в XML-буфер
+    unsigned int max_byte = (XML_BUFFER_SIZE-XMLBufferCurPos);
+    memcpy(XMLBuffer+XMLBufferCurPos, buf, XML_BUFFER_SIZE-XMLBufferCurPos);
+    memcpy(XMLBuffer, buf+max_byte, rec_bytes - max_byte);
+    XMLBufferCurPos=rec_bytes - max_byte;
+  }
+  
+  virt_buffer_len = virt_buffer_len + rec_bytes;  // Виртуальная длина потока увеличилась
+  
+  if(rec_bytes<REC_BUFFER_SIZE)   // Приняли меньше размера буфера приёма - наверняка конец передачи
+  {
+    char* tmp_str = malloc(65536);
+    get_buf_part(tmp_str, virt_buffer_len - processed_pos);
+    Log_XMLStream(tmp_str, virt_buffer_len - processed_pos);
+    //Log_XMLStream(XMLBuffer, XML_BUFFER_SIZE);
+    processed_pos = virt_buffer_len;
+    mfree(tmp_str);
+  }  
+  mfree(buf);
+  mfree(mess);
 /*
   void *p;
   int j;
@@ -866,6 +915,8 @@ void maincsm_oncreate(CSM_RAM *data)
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
   SUBPROC((void *)create_connect);
+  XMLBuffer = malloc(XML_BUFFER_SIZE);
+  zeromem(XMLBuffer, XML_BUFFER_SIZE);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
@@ -878,6 +929,7 @@ void maincsm_onclose(CSM_RAM *csm)
   FreeCLIST();
   mfree(msg_buf);
   FreeWS(ews);
+  mfree(XMLBuffer);
   //  MutexDestroy(&contactlist_mtx);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ElfKiller);

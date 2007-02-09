@@ -7,6 +7,9 @@
 //void patch_header(HEADER_DESC* head);
 //void patch_input(INPUTDIA_DESC* inp);
 
+#define XML_BUFFER_SIZE 64*1024 // Размер буфера в килобабах
+#define REC_BUFFER_SIZE 512 // Размер буфера приёма в байтах
+
 // Константы статусов
 #define IS_OFFLINE 0
 #define IS_INVISIBLE 1
