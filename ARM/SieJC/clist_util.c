@@ -247,7 +247,6 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
 {
   TRESOURCE* cont = CList_FindContactByJID(jid);
   if(!cont)return;
-  ShowMSG(1,(int)"Found OK");
   cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   mess->mess = malloc(strlen(mtext)+1);
