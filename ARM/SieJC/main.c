@@ -751,6 +751,7 @@ if(!strcmp(gres,iqtype)) // Iq type = result
   if(!strcmp(id,auth_id))   // Авторизация
   {
     Jabber_state = JS_AUTH_OK;
+    CList_AddContact(My_JID, "(Me)", SUB_BOTH,0);
     Send_Roster_Query();
     Send_Presence();
   }
@@ -797,7 +798,7 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
 void Process_Presence_Change(XMLNode* node)
 {
   char* from = XML_Get_Attr_Value("from",node->attr);
-  ShowMSG(1,(int)from);
+  //ShowMSG(1,(int)from);
   // ВРЕМЕННО
   char status = 0;
   char* msg=NULL;
@@ -822,7 +823,7 @@ void Process_Decoded_XML(XMLNode* node)
         if(strlen(m)<511) strcpy(logmsg,m);
         mfree(m);
         
-        //CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
+        CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
       }
     }
 //----------------
@@ -993,6 +994,15 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
           ShowMSG(1,(int)"Ы :(");
         break;
       }
+    case '7':
+      {    
+        char xz[]="ki12@jabber.ru/Qw7";
+        char msg[]=":)";
+        CList_AddMessage(xz, MSG_CHAT, msg);
+        break;
+      }  
+    
+    
     case DOWN_BUTTON:
     case '8':
       {

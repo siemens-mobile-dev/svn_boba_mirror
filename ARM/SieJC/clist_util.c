@@ -216,7 +216,7 @@ TRESOURCE* CList_FindContactByJID(char* jid)
   while(ClEx)
   {
 //    if(!strcmp(jid, ClEx->JID))return ClEx;
-    if(strstr(ClEx->JID,jid))
+    if(strstr(jid,ClEx->JID))
     {
       TRESOURCE* ResEx=ClEx->res_list;
       while(ResEx)
@@ -230,11 +230,24 @@ TRESOURCE* CList_FindContactByJID(char* jid)
   return NULL;
 }
 
+// Получить дескриптор контакта по JID
+CLIST* CList_FindJIDByJIDAndRID(char* jid)
+{
+  CLIST* ClEx = cltop;
+  while(ClEx)
+  {
+    if(strstr(jid,ClEx->JID)) return ClEx;
+    ClEx = ClEx->next;
+  }
+  return NULL;
+}
+
 // Добавить сообщение в список сообщений контакта
 void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
 {
   TRESOURCE* cont = CList_FindContactByJID(jid);
   if(!cont)return;
+  ShowMSG(1,(int)"Found OK");
   cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   mess->mess = malloc(strlen(mtext)+1);
@@ -254,8 +267,8 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   TDate now_date;
   GetDateTime(&now_date,&now_time);
   char datestr[127];
-  sprintf(datestr, "%02d:%02d %02d-%02d\r\n",now_time.hour,now_time.min,now_date.day,now_date.month);
-  //Add2History(cont, datestr,mtext);
+  sprintf(datestr, "%s: %02d:%02d %02d-%02d\r\n",jid,now_time.hour,now_time.min,now_date.day,now_date.month);
+  Add2History(CList_FindJIDByJIDAndRID(jid), datestr,mtext);
 }
 
 /*

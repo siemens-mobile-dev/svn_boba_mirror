@@ -73,7 +73,7 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   strcat(buffer, header);
   strcat(buffer, message);
   strcpy(fullname, "4:\\SieJC_history");
-  sprintf(fullname,"%s\\%u.txt", fullname, CListEx->JID);
+  sprintf(fullname,"%s\\%s.txt", fullname, CListEx->JID);
   
   // Открываем файл на дозапись и создаём в случае неудачи
   hFile = fopen(fullname,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
