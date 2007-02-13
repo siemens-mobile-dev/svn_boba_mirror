@@ -4,7 +4,9 @@
 #include "history.h"
 #include "conf_loader.h"
 #include "main.h"
-
+#include "clist_util.h"
+#include "xml_parser.h"
+#include "jabber.h"
 
 /*
 ============== Нативный Jabber-клиент ==============
@@ -12,34 +14,40 @@
 1. Вход в сеть
 2. Сообщение об этом контакт-листу :)
 3. Процедуры низкого уровня: посылка iq, логина, своего присутствия
-4. Запись потока данных к/от сервера (файд 4:\jlog.txt)
+4. Запись потока данных к/от сервера (файл 4:\jlog.txt)
+5. Запись разобранных порций XML-потока (файл 4:\xml_packet.txt)
 
 Управление: логиниться к серверу клиент будет автоматически,
 изменение учётных данных - в константах ниже.
-Далее, после посылки приветствия:
-нажатие на:
+
+Горячие клавиши:
 1 - приводит к посылке авторизации,
 2 - посылке запроса на ростер,
 3 - посылке своего присутсвия
-0 - дисконнект (после этого нужно опять слать Welcome)
+0 - дисконнект
 
 Что нужно сделать в первую очередь:
- - Написать XML-парсер, чтобы мог вызывать функции.
+ - Написать контакт-лист!
 =====================================================
 (c) Kibab
-(r) Rst7, AD
+(r) Rst7, AD, MasterMind
 
 */
 
 // ============= Учетные данные ============= 
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
-extern const char USERNAME[];   // ВВЕСТИ СВОИ ДАННЫЕ!!!!
+extern const char USERNAME[];  
 extern const char PASSWORD[];   
-const char RESOURCE[] = "Exp_SNJ";
-const char VERSION_NAME[]= "Sie natJabber by Kibab";
+const char RESOURCE[] = "SieJC";
+const char VERSION_NAME[]= "Sie natJabber Client";
 const char VERSION_VERS[] = "0.1";
 
+#ifdef NEWSGOLD
+const char OS[] = "NewSGOLD_ELF-Platform";
+#else
+const char OS[] = "SGOLD_ELF-Platform";
+#endif
 
 // Пока желательно оставить так
 #define LOG_ALL
@@ -48,12 +56,9 @@ const char VERSION_VERS[] = "0.1";
 
 char Is_Vibra_Enabled = 1;
 
-#define EOP -10
-
-
 const char percent_t[]="%t";
 const char empty_str[]="";
-const char I_str[]="I";
+//const char I_str[]="I";
 
 WSHDR *ews;
 
@@ -70,14 +75,18 @@ typedef struct
   WSHDR *ws2;
   int i1;
 }MAIN_GUI;
-int RXstate=EOP; //-sizeof(RXpkt)..-1 - receive header, 0..RXpkt.data_len - receive data
 
 char *msg_buf;
-TPKT RXbuf;
-TPKT TXbuf;
-char logmsg[256];
+char logmsg[512];
+
+JABBER_STATE Jabber_state = JS_NOT_CONNECTED;
 
 int connect_state=0;
+/*
+0 = OffLine
+1 = Socket Connected
+2 = нормальный режим работы, получен ответ от сервера
+*/
 
 int sock=-1;
 
@@ -123,8 +132,6 @@ void patch_input(INPUTDIA_DESC* inp)
   inp->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 //===============================================================================================
-
-volatile CLIST *cltop;
 
 volatile int contactlist_menu_id;
 volatile int request_close_clmenu;
@@ -176,34 +183,7 @@ GBSTMR tmr_ping;
 
 char My_JID[128];
 char My_JID_full[128];
-
-//Уничтожить список
-void FreeCLIST(void)
-{
-  CLIST *cl=(CLIST*)cltop;
-  cltop=0;
-  while(cl)
-  {
-    CLIST *p;
-    if (cl->log) mfree(cl->log);
-    if (cl->answer) mfree(cl->answer);
-    p=cl;
-    cl=(CLIST*)(cl->next);
-    mfree(p);
-  }
-}
-
-//Прописать всех в offline
-void FillAllOffline(void)
-{
-  CLIST *cl=(CLIST*)cltop;
-  while(cl)
-  {
-    cl->state=0xFFFF;
-    cl=(CLIST*)(cl->next);
-  }
-}
-
+/*
 int GetIconIndex(CLIST *t)
 {
   unsigned short s;
@@ -230,23 +210,7 @@ int GetIconIndex(CLIST *t)
   }
   return(IS_ONLINE);
 }
-
-void create_contactlist_menu(void)
-{
-  CLIST *t;
-  int i;
-  
-  t=(CLIST *)cltop;
-  i=0;
-  while(t)
-  {
-    t=t->next;
-    i++;
-  }
-  if (!i) return; //Нечего создавать
-  patch_rect(&contactlist_menuhdr.rc,0,0,ScreenW()-1,HeaderH());
-  contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
-}
+*/
 
 int need_jump_to_top_cl;
 
@@ -315,28 +279,9 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
 */
 }
 
-void remake_clmenu(void)
-{
-  if (contactlist_menu_id)
-  {
-    request_remake_clmenu=1;
-    if (IsGuiOnTop(contactlist_menu_id))
-    {
-      GeneralFunc_flag1(contactlist_menu_id,1);
-    }
-    else
-    {
-      request_close_clmenu=1;
-    }
-  }
-  else
-  {
-    create_contactlist_menu();
-  }
-}
-
 CLIST *AddContact(unsigned int uin, char *name)
 {
+/*
   CLIST *p=malloc(sizeof(CLIST));
   CLIST *t;
   CLIST *pr;
@@ -365,6 +310,8 @@ CLIST *AddContact(unsigned int uin, char *name)
   }
   //  GBS_StartTimerProc(&tmr_contactlist_update,1000,remake_clmenu);
   return(p);
+*/  
+return NULL;
 }
 
 //===============================================================================================
@@ -417,7 +364,6 @@ void create_connect(void)
 	//    sa.ip=htonl(IP_ADDR(82,207,89,182));
 	if (connect(sock,&sa,sizeof(sa))!=-1)
 	{
-	  ShowMSG(1,(int)"OK!");
           connect_state=1;
 	  REDRAW();
 	}
@@ -450,22 +396,6 @@ void create_connect(void)
   }
 }
 
-void do_ping(void)
-{
-  static PKT pingp;
-//  pingp.uin=UIN;
-  pingp.type=0;
-  pingp.data_len=0;
-  send(sock,&pingp,sizeof(PKT),0);
-}
-
-
-void call_ping(void)
-{
-  if (connect_state>2) SUBPROC((void *)do_ping);
-  GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
-}
-
 void end_socket(void)
 {
   if (sock>=0)
@@ -493,31 +423,39 @@ unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
 unsigned int processed_pos   = 0; // До какого места обработали
 
 
+
 void get_buf_part(char* inp_buffer, unsigned int req_len)
 {
-  int xz = dwMODdw(XML_BUFFER_SIZE,processed_pos);
-  unsigned int virt_processed_len = processed_pos - processed_pos * xz;
+  // Посчитаем, где в буфере находится текущая позиция обработанных данных
+  int xz = sdiv(XML_BUFFER_SIZE,processed_pos);
+  unsigned int virt_processed_len = processed_pos - XML_BUFFER_SIZE * xz;
 
   if(req_len+virt_processed_len < XML_BUFFER_SIZE)
   {
-    memcpy(inp_buffer, XMLBuffer+virt_processed_len, req_len); //(!!!!!)
+    memcpy(inp_buffer, XMLBuffer+virt_processed_len, req_len);
   }
   else
   {
     memcpy(inp_buffer, XMLBuffer+virt_processed_len, (XML_BUFFER_SIZE-virt_processed_len));
-    memcpy(inp_buffer + req_len - (XML_BUFFER_SIZE-virt_processed_len), XMLBuffer, req_len - (XML_BUFFER_SIZE-virt_processed_len));
+    memcpy(inp_buffer + (XML_BUFFER_SIZE-virt_processed_len), XMLBuffer, req_len - (XML_BUFFER_SIZE-virt_processed_len));
   }
 }
 
+/*
+Прием данных из сокета в контексте HELPER
+По окончании приёма законченной порции данных
+она направляется в MMI для вскрытия :)
+*/
 void get_answer(void)
 {
-  char* buf = malloc(REC_BUFFER_SIZE);    // Будем скромнее ;)
+  char* buf = malloc(REC_BUFFER_SIZE);    // Выделяем буфер под приём
   zeromem(buf,REC_BUFFER_SIZE);           // Зануляем
   int rec_bytes = 0;          // Не торопимся :)
   rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
   char *mess = malloc(10);
   sprintf(mess,"RECV:%d",rec_bytes);
   Log(mess, buf);
+  mfree(mess);
   
   // Запись в буфер
   if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
@@ -530,7 +468,7 @@ void get_answer(void)
     // Определяем байт, до которого содержимое буфера приёма помещается без переноса
     // в XML-буфер
     unsigned int max_byte = (XML_BUFFER_SIZE-XMLBufferCurPos);
-    memcpy(XMLBuffer+XMLBufferCurPos, buf, XML_BUFFER_SIZE-XMLBufferCurPos);
+    memcpy(XMLBuffer+XMLBufferCurPos, buf, max_byte);
     memcpy(XMLBuffer, buf+max_byte, rec_bytes - max_byte);
     XMLBufferCurPos=rec_bytes - max_byte;
   }
@@ -539,93 +477,22 @@ void get_answer(void)
   
   if(rec_bytes<REC_BUFFER_SIZE)   // Приняли меньше размера буфера приёма - наверняка конец передачи
   {
-    char* tmp_str = malloc(65536);
-    get_buf_part(tmp_str, virt_buffer_len - processed_pos);
-    Log_XMLStream(tmp_str, virt_buffer_len - processed_pos);
-    //Log_XMLStream(XMLBuffer, XML_BUFFER_SIZE);
+    int bytecount = virt_buffer_len - processed_pos;
+    
+    // НАДО ОСВОБОДИТЬ В MMI!
+    IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
+    tmp_buffer->xml_buffer = malloc(bytecount);          // Буфер в структуре
+    tmp_buffer->buf_size = bytecount;
+    get_buf_part(tmp_buffer->xml_buffer, bytecount);
+#ifdef LOG_ALL    
+//    Log_XMLStream(tmp_buffer->xml_buffer, bytecount);
+#endif
     processed_pos = virt_buffer_len;
-    mfree(tmp_str);
+
+    // Посылаем в MMI сообщение с буфером
+    GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
   }  
   mfree(buf);
-  mfree(mess);
-/*
-  void *p;
-  int j;
-  if (connect_state<2) return;
-  if (i==EOP) return;
-  if (i<0)
-  {
-    j=recv(sock,RXbuf.data+i,-i,0);
-    if (j>0) i+=j;
-    if (i==0)
-    {
-      if (RXbuf.pkt.data_len==0) goto LPKT;
-    }
-  }
-  else
-  {
-    if (RXbuf.pkt.data_len>16383)
-    {
-      snprintf(logmsg,255,"Bad packet");
-      end_socket();
-      RXstate=EOP;
-      return;
-    }
-    j=recv(sock,RXbuf.data+i,RXbuf.pkt.data_len-i,0);
-    if (j>0) i+=j;
-  LPKT:
-    if (i==RXbuf.pkt.data_len)
-    {
-      //Пакет удачно принят, можно разбирать...
-      RXbuf.data[RXbuf.pkt.data_len]=0; //Конец строки
-      switch(RXbuf.pkt.type)
-      {
-      case T_LOGIN:
-        //Удачно залогинились
-        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
-        snprintf(logmsg,255,"%s",RXbuf.data);
-        connect_state=3;
-        REDRAW();
-        break;
-      case T_CLENTRY:
-        j=i+sizeof(PKT)+1;
-        p=malloc(j);
-        memcpy(p,&RXbuf,j);
-        GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-        //snprintf(logmsg,255,"CL: %s",RXbuf.data);
-        break;
-      case T_STATUSCHANGE:
-        j=i+sizeof(PKT);
-        p=malloc(j);
-        memcpy(p,&RXbuf,j);
-        snprintf(logmsg,255,"SC%d: %04X",RXbuf.pkt.uin,*((unsigned short *)(RXbuf.data)));
-        GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-        break;
-      case T_ERROR:
-        snprintf(logmsg,255,"ERR: %s",RXbuf.data);
-        REDRAW();
-        break;
-      case T_RECVMSG:
-        j=i+sizeof(PKT)+1;
-        p=malloc(j);
-        memcpy(p,&RXbuf,j);
-        snprintf(logmsg,255,"MSG%d: %s",RXbuf.pkt.uin,RXbuf.data);
-        GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-        REDRAW();
-        break;
-      case T_SSLRESP:
-        LockSched();
-        ShowMSG(1,(int)RXbuf.data);
-        UnlockSched();
-        break;
-      }
-      i=-(int)sizeof(PKT); //А может еще есть данные
-    }
-  }
-  RXstate=i;
-  //  GBS_StartTimerProc(&tmr_dorecv,3000,dorecv);
-  //  REDRAW();
-*/  
 }
 
 void SendAnswer(char *str)
@@ -647,7 +514,7 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
   char* xmlq=malloc(1024);
   char *xmlq2=malloc(1024);
   char s_to[40];
-  sprintf(xmlq, "<iq type='%s' id='%s'", type, id);
+  sprintf(xmlq, "<iq type='%s' id='%s' from='%s'", type, id, My_JID_full);
   if(to)
   {
     sprintf(s_to, " to='%s'", to);
@@ -675,7 +542,6 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
 */
 void Send_Welcome_Packet()
 {
-  connect_state = 2;
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en'>";
   char* buf=malloc(256);  
   sprintf(buf,streamheader,JABBER_HOST);
@@ -702,8 +568,8 @@ void Send_Disconnect()
 }
 
 // Эти константы надо будет заменить на динамические
-char auth_id[] = "auth_422iup";
-char rost_id[] = "rost_2iup";
+char auth_id[] = "SieJC_auth_req";
+char rost_id[] = "SieJC_rost_req";
 
 /*
   Авторизация на Jabber-сервере
@@ -715,16 +581,44 @@ void Send_Auth()
   sprintf(My_JID_full,"%s/%s",My_JID, RESOURCE);
   char* payload = malloc(256);
   sprintf(payload,"<username>%s</username>\n<password>%s</password>\n<resource>%s</resource>",USERNAME, PASSWORD, RESOURCE);
-  SendIq(NULL, "set", auth_id, "jabber:iq:auth", payload);  
+  SendIq(NULL, "set", auth_id, IQ_AUTH, payload);  
   strcpy(logmsg,"Send auth");
 #ifdef LOG_ALL
   Log("USER->", logmsg);
 #endif 
 }
 
+void Send_VReq()
+{
+/*
+<iq type='to' id='SieJC_VR' to='rengenius@jabber.ru/Miranda_Work'>
+<query xmlns='jabber:iq:version'/>
+</iq>
+*/
+/*
+  name: iq = 
+  attributes: 
+  from - rengenius@jabber.ru/Miranda_Work
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - en
+  type - get
+
+    name: query = 
+    attributes: 
+    xmlns - jabber:iq:version
+*/
+  char to[]="mastermind@jabber.org/Psi";
+  char typ[]="get";
+  char iqid[]="SieJC_VR";
+  char iq_v[]=IQ_VERSION;
+  SendIq(to, typ, iqid, iq_v, NULL);
+  return;
+}
+
+
 /*
   Послать своё присутствие (в частности, после этого на нас вываливаются 
-  присутствия остальных, а мы появляемся в ресурсах своего контакта
+  присутствия остальных, а мы появляемся в ресурсах своего контакта)
 */
 
 void Send_Presence()
@@ -768,57 +662,277 @@ void stop_vibra(void)
   }
 }
 
-ProcessPacket(TPKT *p)
+
+void Report_VersionInfo(char* id, char *to)
 {
-// Обработка пакетов в контексте MMI... По идее тут всё самое интересное
-// в плане разбора сообщений от сервера. Но тип в заголовке функции фиктивен
-// и должен быть изменён!
-  mfree(p);
+/*
+    name: iq = 
+  attributes: 
+  from - rengenius@jabber.ru/Miranda_Work
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - en
+  type - get
+
+    name: query = 
+    attributes: 
+    xmlns - jabber:iq:version
+
+<query xmlns='jabber:iq:version'><name>Psi</name><version>0.10</version><os>Windows XP</os></query>
+*/
+  char answer[100];
+  sprintf(answer, "<name>%s</name><version>%s</version><os>%s</os>", VERSION_NAME, VERSION_VERS, OS);
+  SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
+}
+
+JABBER_SUBSCRIPTION GetSubscrType(char* subs)
+{
+  if(!subs)return SUB_NONE;
+  if(!strcmp(subs,"none"))return SUB_NONE;
+  if(!strcmp(subs,"both"))return SUB_BOTH;
+  if(!strcmp(subs,"to"))return SUB_TO;
+  if(!strcmp(subs,"from"))return SUB_FROM;
+  return SUB_NONE;  
+}
+
+void FillRoster(XMLNode* items)
+{
+  XMLNode* rostEx = items;
+  while(rostEx)
+  {
+    
+    JABBER_SUBSCRIPTION r_subscr=GetSubscrType(XML_Get_Attr_Value("subscription",rostEx->attr));
+
+    CList_AddContact(XML_Get_Attr_Value("jid",rostEx->attr),
+                          XML_Get_Attr_Value("name",rostEx->attr),
+                          r_subscr,
+                          0
+                          );
+    
+   rostEx=rostEx->next;
+  }
+}
+
+/*
+ Обработка входящих Iq-запросов
+*/
+void Process_Iq_Request(XMLNode* nodeEx)
+{
+  char* iqtype = NULL;
+  char* id = NULL;
+  char *from = NULL;
+  char gget[]=IQTYPE_GET;
+  char gres[]=IQTYPE_RES;
+  char gerr[]=IQTYPE_ERR;
+  const char iq_version[]=IQ_VERSION;
+
+  iqtype = XML_Get_Attr_Value("type",nodeEx->attr);
+  from = XML_Get_Attr_Value("from",nodeEx->attr);
+  id = XML_Get_Attr_Value("id",nodeEx->attr);
+  
+// Проверяем наличие обязательных атрибутов
+if(!iqtype || !id) return;
+
+if(!strcmp(gget,iqtype)) // Iq type = get
+{
+  XMLNode* query;
+  if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
+  char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+  if(!q_type)return;
+  // Тут мы знаем XMLNS поступившего запроса
+  if(!strcmp(q_type,iq_version))
+  {
+    // jabber:iq:version
+    if(from) Report_VersionInfo(id, from);
+  }
+}
+
+if(!strcmp(gres,iqtype)) // Iq type = result
+{
+  if(!strcmp(id,auth_id))   // Авторизация
+  {
+    Jabber_state = JS_AUTH_OK;
+    Send_Roster_Query();
+    Send_Presence();
+  }
+  
+  if(!strcmp(id,rost_id))   // Запрос ростера
+  {
+    XMLNode* query;
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+    if(!q_type)return;
+    if(!strcmp(q_type,IQ_ROSTER))
+    {
+      // jabber:iq:roster
+      FillRoster(query->subnode);
+    }    
+  }
+  
+  
+  
+}
+
+if(!strcmp(gerr,iqtype)) // Iq type = error
+{
+
+  // Анализируем ошибку
+  XMLNode* error = XML_Get_Child_Node_By_Name(nodeEx, "error");
+  if(!error)return;
+  char* errcode = XML_Get_Attr_Value("code", error->attr);
+  if(errcode)sprintf(logmsg,"ERR:%s",errcode);
+
+  if(!strcmp(id,auth_id))
+  {
+    Jabber_state = JS_AUTH_ERROR;
+    strcat(logmsg,"\nAuth error!");
+  }
+  
+}
+
+}
+
+/*
+Презенсы :)
+*/
+void Process_Presence_Change(XMLNode* node)
+{
+  char* from = XML_Get_Attr_Value("from",node->attr);
+  ShowMSG(1,(int)from);
+  // ВРЕМЕННО
+  char status = 0;
+  char* msg=NULL;
+  CList_AddResourceWithPresence(from, status, msg);
+}
+
+
+void Process_Decoded_XML(XMLNode* node)
+{
+  XMLNode* nodeEx = node;
+  while(nodeEx)
+  {
+//----------------
+    if(!strcmp(nodeEx->name,"message"))
+    {
+      XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");
+      if(msgnode)
+      {
+        char* m = malloc(100+strlen(msgnode->value));
+        sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
+        ShowMSG(1,(int)m);
+        if(strlen(m)<511) strcpy(logmsg,m);
+        mfree(m);
+        
+        //CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
+      }
+    }
+//----------------
+//----------------
+    if(!strcmp(nodeEx->name,"iq"))
+    {
+      Process_Iq_Request(nodeEx);
+    }
+
+    if(!strcmp(nodeEx->name,"stream:stream"))
+    {
+      connect_state = 2;
+      Jabber_state = JS_CONNECTED_STATE;
+      Send_Auth();
+    }   
+//----------------
+
+//----------------
+    if(!strcmp(nodeEx->name,"presence"))
+    {
+      Process_Presence_Change(nodeEx);
+    }
+//----------------
+    
+    if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
+    nodeEx = nodeEx->next;
+  }
+}
+
+
+void Process_XML_Packet(IPC_BUFFER* xmlbuf)
+{
+  // Сюда попадаем, если от транслятора принят указатель на порцию данных   
+  XMLNode *data=XMLDecode(xmlbuf->xml_buffer,xmlbuf->buf_size);
+  if(data)
+  {
+#ifdef LOG_ALL
+    SaveTree(data);
+#endif
+    Process_Decoded_XML(data);
+    DestroyTree(data);
+  }
+  // Освобождаем память :)
+    mfree(xmlbuf->xml_buffer);
+    mfree(xmlbuf);    
+    REDRAW();
 }
 
 
 //===============================================================================================
 // Всякий стафф с GUI
-void method0(MAIN_GUI *data)
+void onRedraw(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  
+  int font_color, bgr_color;
+  if(connect_state<2)
+  {
+    font_color=0;
+    bgr_color = 20;
+  }
+  if(connect_state==2)
+  {
+    font_color=1;
+    bgr_color = 13;
+  }
+
+  if(Jabber_state==JS_AUTH_ERROR)
+  {
+    font_color = 7;
+    bgr_color  = 2;
+  }  
   DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(20));
-  wsprintf(data->ws1,"State: %d, RXstate: %d\n%t",connect_state,RXstate,logmsg);
-  DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws2,(scr_w>>2)*3,scr_h-4-14,scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws2,3,scr_h-4-14,(scr_w>>2),scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+		   GetPaletteAdrByColorIndex(bgr_color));
+  wsprintf(data->ws1,"CS: %d RECV: %d\n%t",connect_state,virt_buffer_len,logmsg);
+  DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,(scr_w>>2)*3,scr_h-4-14,scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,3,scr_h-4-14,(scr_w>>2),scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+  CList_RedrawCList();
 }
 
-void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
+void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
   data->ws1=AllocWS(256);
   data->ws2=AllocWS(256);
   data->gui.state=1;
 }
 
-void method2(MAIN_GUI *data, void (*mfree_adr)(void *))
+void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   FreeWS(data->ws1);
   FreeWS(data->ws2);
   data->gui.state=0;
 }
 
-void method3(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
+void onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
   DisableIDLETMR();
   data->gui.state=2;
 }
 
-void method4(MAIN_GUI *data, void (*mfree_adr)(void *))
+void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   if (data->gui.state!=2) return;
   data->gui.state=1;
 }
 
-int method5(MAIN_GUI *data, GUI_MSG *msg)
+int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   DirectRedrawGUI();
   if (msg->gbsmsg->msg==KEY_DOWN)
@@ -826,7 +940,6 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case LEFT_SOFT:
-      if (cltop) create_contactlist_menu();
       //      if (cltop) remake_clmenu();
       break;
     case RIGHT_SOFT:
@@ -843,18 +956,58 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       {
         Send_Auth();
         break;
-      }
-    case '2':
-      {
-        Send_Roster_Query();
-        break;
-      }      
+      }    
     case '3':
       {
         Send_Presence();
         break;
       }      
+    case '4':
+      {
+        CList_RedrawCList();
+        break;
+      }
 
+    case '5':
+      {
+        extern unsigned int NContacts;
+        int q;
+        q=NContacts+1;
+        char expjid[10];
+        sprintf(expjid,"ki1%d@jabber.ru",q);
+        CList_AddContact(expjid, "Kibab",SUB_BOTH,0);
+        break;
+      }
+    case '6':
+      {
+        extern unsigned int NContacts;
+        int q;
+        q=NContacts+1;
+        char expjid[50];
+        sprintf(expjid,"ki12@jabber.ru/Qw%d",q);
+        if(CList_AddResourceWithPresence(expjid, 0, "Busy"))
+        {
+          ShowMSG(1,(int)"Ы");
+        }
+        else
+          ShowMSG(1,(int)"Ы :(");
+        break;
+      }
+    case DOWN_BUTTON:
+    case '8':
+      {
+        CList_MoveCursorDown();
+        break;
+      }
+
+    case UP_BUTTON:
+    case '2':
+      {
+        CList_MoveCursorUp();
+        break;
+      }
+
+      
     case '0':
       {
         Send_Disconnect();
@@ -869,10 +1022,10 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     }
     
   }
-  //  method0(data);
+  //  onRedraw(data);
   return(0);
 }
-//void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
+//void onDestroy(MAIN_GUI *data, void (*mfree_adr)(void *))
 //{
 //  mfree_adr(data);
 //}
@@ -882,14 +1035,14 @@ int method8(void){return(0);}
 int method9(void){return(0);}
 
 const void * const gui_methods[11]={
-  (void *)method0,	//Redraw
-  (void *)method1,	//Create
-  (void *)method2,	//Close
-  (void *)method3,	//Focus
-  (void *)method4,	//Unfocus
-  (void *)method5,	//OnKey
+  (void *)onRedraw,	//Redraw
+  (void *)onCreate,	//Create
+  (void *)onClose,	//Close
+  (void *)onFocus,	//Focus
+  (void *)onUnfocus,	//Unfocus
+  (void *)onKey,	//OnKey
   0,
-  (void *)kill_data, //method7,	//Destroy
+  (void *)kill_data, //onDestroy,	//Destroy
   (void *)method8,
   (void *)method9,
   0
@@ -926,7 +1079,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
-  FreeCLIST();
+  CList_Destroy();
   mfree(msg_buf);
   FreeWS(ews);
   mfree(XMLBuffer);
@@ -961,7 +1114,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       if (request_remake_clmenu)
       {
         request_remake_clmenu=0;
-        create_contactlist_menu();
       }
     }
     if ((int)msg->data0==edchat_id)
@@ -983,10 +1135,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       is_gprs_online=0;
       return(1);
     case LMAN_CONNECT_CNF:
-      vibra_count=3;
-      start_vibra();
       is_gprs_online=1;
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
       return(1);
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
@@ -1000,8 +1150,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       //Если наш сокет
       if ((((unsigned int)msg->data0)>>28)==0xA)
       {
-        //Принят пакет
-        //////ProcessPacket((TPKT *)msg->data0);
+        //Пакет XML-данных готов к обработке и передаётся на обработку в MMI
+        Process_XML_Packet((IPC_BUFFER*)msg->data0);
         return(0);
       }
       switch((int)msg->data0)
@@ -1009,8 +1159,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_CONNECTED:
         if (connect_state==1)
         {
-          vibra_count=2;
-          start_vibra();
           //Соединение установлено, посылаем пакет Welcome
           Send_Welcome_Packet();
           REDRAW();
@@ -1021,7 +1169,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
         break;
       case ENIP_SOCK_DATA_READ:
-        if (connect_state>=2)
+        if (connect_state>=1)
         {
           //Если посылали Welcome, передаём на принятие в контекст HELPER
           SUBPROC((void *)get_answer);
@@ -1038,11 +1186,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_CLOSED:
         //        strcpy(logmsg,"No connection");
         connect_state=0;
+        Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
         vibra_count=4;
         start_vibra();
         REDRAW();
-        GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+        //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
         break;
       }
     }
@@ -1100,6 +1249,7 @@ int main()
   if(!strlen(USERNAME))
   {
     ShowMSG(1,(int)"Введите логин/пароль!");
+    ShowMSG(1,(int)USERNAME);
     return 0;
   }
   UpdateCSMname();
@@ -1327,9 +1477,10 @@ void ExtractAnswer(WSHDR *ws)
 
 int edchat_onkey(GUI *data, GUI_MSG *msg)
 {
+/*
   //-1 - do redraw
   CLIST *t;
-  TPKT *p;
+//  TPKT *p;
   char *s;
   int l;
   if (msg->keys==0xFFF)
@@ -1352,13 +1503,14 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
       {
         if ((t=edcontact))
         {
-          if ((s=t->answer))
+//          if ((s=t->answer))
+          if (1)
           {
             if (strlen(s))
             {
               p=malloc(sizeof(PKT)+(l=strlen(s))+1);
               p->pkt.uin=t->uin;
-              p->pkt.type=T_SENDMSG;
+//              p->pkt.type=T_SENDMSG;
               p->pkt.data_len=l;
               strcpy(p->data,s);
 //              AddStringToLog(t,0x01,p->data,I_str);
@@ -1378,6 +1530,8 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   }
   return(0); //Do standart keys
   //1: close
+*/
+return 0;
 }
 
 void edchat_ghook(GUI *data, int cmd)
@@ -1411,10 +1565,10 @@ void edchat_ghook(GUI *data, int cmd)
     ExtractAnswer(ec.pWS);
     if (edcontact)
     {
-      if ((s=edcontact->answer)) mfree(s);
+      //if ((s=edcontact->answer)) mfree(s);
       s=malloc(strlen(msg_buf)+1);
       strcpy(s,msg_buf);
-      edcontact->answer=s;
+//      edcontact->answer=s;
     }
   }
 }

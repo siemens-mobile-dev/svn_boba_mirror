@@ -60,7 +60,6 @@ void Log_XMLStream(char* logstr, int size)
 
 void Add2History(CLIST *CListEx, char *header, char *message)
 {
-/*
   volatile int hFile;
   unsigned int io_error = 0;
   char *fullname = malloc(128);
@@ -73,8 +72,8 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   strcpy(buffer, delim);
   strcat(buffer, header);
   strcat(buffer, message);
-  strcpy(fullname, HIST_PATH);
-  sprintf(fullname,"%s\\%u.txt", fullname, CListEx->uin);
+  strcpy(fullname, "4:\\SieJC_history");
+  sprintf(fullname,"%s\\%u.txt", fullname, CListEx->JID);
   
   // Открываем файл на дозапись и создаём в случае неудачи
   hFile = fopen(fullname,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
@@ -90,13 +89,13 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   else
   {
     char *q=malloc(41);
-    sprintf(q, "Ошибка I/O  #%u", io_error);
+    sprintf(q, "Ошибка I/O #%u при записи истории", io_error);
     ShowMSG(1,(int)q); 
     mfree(q);
   }
   mfree(fullname);
   mfree(buffer);
-*/
+
 }
 
 /*

@@ -1,0 +1,699 @@
+name: stream:stream = 
+attributes: 
+version - 1.0
+xmlns - jabber:client
+xmlns:stream - http://etherx.jabber.org/streams
+id - 1492767367
+from - jabber.ru
+xml:lang - en
+
+  name: iq = 
+  attributes: 
+  type - result
+  id - auth_422iup
+
+  name: iq = 
+  attributes: 
+  from - kibab612@jabber.ru/Exp_SNJ
+  to - kibab612@jabber.ru/Exp_SNJ
+  id - rost_2iup
+  type - result
+
+    name: query = 
+    attributes: 
+    xmlns - jabber:iq:roster
+
+      name: item = 
+      attributes: 
+      subscription - none
+      name - X-Ray
+      jid - x_ray@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - БомбусМод
+      jid - bombus_mod@rss.jabber.ru
+
+        name: group = RSS
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - kobra4ka2007
+      jid - kobra4ka2007@jabber.ru
+
+        name: group = General
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - mrim.jabber.ru
+      jid - mrim.jabber.ru
+
+        name: group = General
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Снежа
+      jid - snezhka1703@jabber.ru
+
+        name: group = General
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - MasterMind
+      jid - mastermind@jabber.org
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - perk11
+      jid - perk11@perk11.info
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - DOMr
+      jid - domr@domr.net
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - himtosh
+      jid - himtosh@himtosh.info
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Киско
+      jid - киско@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - ghazan
+      jid - ghazan@jabber.ru
+
+        name: group = Miranda IM
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Фэйт
+      jid - faith_healer@jabber.ru
+
+        name: group = Miranda IM
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Spider13
+      jid - spider13@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - zombiek
+      jid - zombiek@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - himtosh
+      jid - himtosh@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Swift
+      jid - mifistofel@gmail.com
+
+        name: group = МИФИ
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Лена К
+      jid - helenkud@gmail.com
+
+        name: group = МИФИ
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - X-ray
+      jid - rengenius@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Мышко
+      jid - grizly1@jabber.ru
+
+        name: group = МИФИ
+
+      name: item = 
+      attributes: 
+      subscription - none
+      name - X-ray
+      jid - x_ray@jabber.ru/Miranda_home
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - alkaba
+      jid - alkaba@jabber.cz
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Ushastiy
+      jid - ugar89%list.ru@mrim.jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Бор
+      jid - bor@rss.jabber.ru
+
+        name: group = RSS
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Ushastiy
+      jid - ushastiy@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - MRA Support
+      jid - support%corp.mail.ru@mrim.jabber.ru
+
+        name: group = General
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Майка
+      jid - night_delusion%bk.ru@mrim.jabber.ru
+
+        name: group = Семья
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - x75v100
+      jid - x75v100@rss.jabber.ru
+
+        name: group = RSS
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Tasha
+      jid - tasha@xmpp.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Стас Седов
+      jid - ssedov@jabber.ru
+
+        name: group = МИФИ
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - patchdbsulci
+      jid - patchdbsulci@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Женя
+      jid - jenka-karamelka%mail.ru@mrim.jabber.ru
+
+        name: group = Работа
+
+      name: item = 
+      attributes: 
+      ask - subscribe
+      subscription - none
+      name - Tasha
+      jid - tasha@xmpp.ru/Psi
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - to
+      name - Борман
+      jid - borman99@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Отец
+      jid - xamen%mail.ru@mrim.jabber.ru
+
+        name: group = Семья
+
+      name: item = 
+      attributes: 
+      ask - subscribe
+      subscription - from
+      name - a_c_
+      jid - a_cond%mail.ru@mrim.jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Tasha
+      jid - tasha@jabbus.org
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - S75v47
+      jid - s75v47@rss.jabber.ru
+
+        name: group = RSS
+
+      name: item = 
+      attributes: 
+      subscription - both
+      jid - a_c@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - JAM
+      jid - jam_89%mail.ru@mrim.jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - ad
+      jid - ad@xmpp.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - Pavel81
+      jid - pavel81@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - bank!
+      jid - bank!@jabber.kiev.ua
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      subscription - both
+      name - DOMr
+      jid - domr@jabber.ru
+
+        name: group = SC
+
+      name: item = 
+      attributes: 
+      ask - subscribe
+      subscription - none
+      jid - x_ray@jabber.ru/Bombus
+
+        name: group = SC
+
+  name: presence = 
+
+  attributes: 
+  from - ad@xmpp.ru/Psi(Home)
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - ru-RU
+
+    name: show = away
+
+    name: status = на работе
+
+    name: priority = 5
+
+    name: c = 
+    attributes: 
+    xmlns - http://jabber.org/protocol/caps
+    node - http://psi-im.org/caps
+    ver - 0.11-dev-rev8
+    ext - cs ep-notify html
+
+  name: presence = 
+
+  attributes: 
+  from - ad@xmpp.ru/601461027117134683140545
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - ru-RU
+
+    name: show = dnd
+
+    name: status = Can&apos;t chat.  Gotta work.
+
+    name: priority = 4
+
+    name: c = 
+    attributes: 
+    xmlns - http://jabber.org/protocol/caps
+    node - http://psi-im.org/caps
+    ver - 0.11-dev-rev8
+    ext - cs ep-notify html
+
+  name: presence = 
+  attributes: 
+  from - kibab612@jabber.ru/Miranda_Work
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - en
+
+    name: priority = 0
+
+    name: show = away
+
+    name: status = Отсутствую с 21:50 12.02.2007, буду позже.
+Если меня ОЧЕНЬ долго нету - значит, уехал с работы ;)  
+Не пишите на этот ресурс! 
+
+  name: presence = 
+  attributes: 
+  from - borman99@jabber.ru/Bombus
+  to - kibab612@jabber.ru/Exp_SNJ
+
+  name: presence = 
+  attributes: 
+  from - kibab612@jabber.ru/Miranda_Home
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - en
+
+    name: priority = 100
+
+    name: show = away
+
+    name: status = Отсутствую с 11:03, буду позже.
+
+  name: presence = 
+  attributes: 
+  from - kibab612@jabber.ru/JAJC_Home
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: priority = 3
+
+    name: show = away
+
+    name: status = Away
+
+  name: presence = 
+  attributes: 
+  from - rengenius@jabber.ru/Miranda_Work
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - en
+
+    name: priority = 100
+
+    name: show = xa
+
+    name: status = 10:25: Ну нет меня сейчас, нет...
+
+  name: presence = 
+  attributes: 
+  from - bombus_mod@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: status = I&apos;m here!
+
+  name: presence = 
+  attributes: 
+  from - himtosh@himtosh.info/Psi
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: priority = 5
+
+  name: presence = 
+  attributes: 
+  from - tasha@jabbus.org/BombusMod
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: show = dnd
+
+  name: presence = 
+  attributes: 
+  from - bor@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: status = I&apos;m here!
+
+  name: presence = 
+  attributes: 
+  from - s75v47@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: status = I&apos;m here!
+
+  name: presence = 
+  attributes: 
+  from - perk11@perk11.info/BombusMod
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: show = away
+
+    name: priority = 102
+
+    name: status = Auto away since 06:40(GMT+3)
+
+  name: presence = 
+  attributes: 
+  from - pavel81@jabber.ru/Работа
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: show = dnd
+
+    name: status = Can&apos;t chat! Gotta work!
+
+  name: presence = 
+  attributes: 
+  from - x75v100@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: status = I&apos;m here!
+
+  name: iq = 
+  attributes: 
+  from - kibab612@jabber.ru/Miranda_Work
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - en
+  type - get
+
+    name: query = 
+    attributes: 
+    xmlns - jabber:iq:version
+
+  name: iq = 
+  attributes: 
+  from - rengenius@jabber.ru/Miranda_Work
+  to - kibab612@jabber.ru/Exp_SNJ
+  xml:lang - en
+  type - get
+
+    name: query = 
+    attributes: 
+    xmlns - jabber:iq:version
+
+  name: presence = 
+  attributes: 
+  from - mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  id - 16225461
+
+  name: message = 
+  attributes: 
+  from - mrim.jabber.ru
+  to - Kibab612@jabber.ru
+  id - 16225462
+  type - error
+
+    name: body =  
+
+    name: subject = Ошибка соединения
+
+    name: error = 
+    attributes: 
+    code - 409
+    type - cancel
+
+      name: conflict = 
+      attributes: 
+      xmlns - urn:ietf:params:xml:ns:xmpp-stanzas
+
+      name: text = Другое соединие установлено от вашего имени
+      attributes: 
+      xmlns - urn:ietf:params:xml:ns:xmpp-stanzas
+      xml:lang - ru-RU
+
+  name: presence = 
+  attributes: 
+  from - bombus_mod@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+  name: presence = 
+  attributes: 
+  from - bor@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+  name: presence = 
+  attributes: 
+  from - s75v47@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+  name: presence = 
+  attributes: 
+  from - x75v100@rss.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+
+  name: presence = 
+
+  attributes: 
+  from - mastermind@jabber.org/Psi
+  to - kibab612@jabber.ru/Exp_SNJ
+
+    name: priority = 5
+
+  name: presence = 
+  attributes: 
+  from - xamen%mail.ru@mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  type - unavailable
+  id - 16225473
+
+  name: presence = 
+  attributes: 
+  from - a_cond%mail.ru@mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  type - unavailable
+  id - 16225475
+
+  name: presence = 
+  attributes: 
+  from - jam_89%mail.ru@mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  id - 16225477
+
+  name: presence = 
+  attributes: 
+  from - support%corp.mail.ru@mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  id - 16225479
+
+  name: presence = 
+  attributes: 
+  from - night_delusion%bk.ru@mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  type - unavailable
+  id - 16225481
+
+  name: presence = 
+  attributes: 
+  from - jenka-karamelka%mail.ru@mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  id - 16225483
+
+    name: show = away
+
+  name: presence = 
+  attributes: 
+  from - ugar89%list.ru@mrim.jabber.ru
+  to - kibab612@jabber.ru/Exp_SNJ
+  type - unavailable
+  id - 16225485
+
+  name: message = 
+  attributes: 
+  from - mrim.jabber.ru
+  to - kibab612@jabber.ru
+  type - headline
+  id - 16225486
+
+    name: subject = У вас есть непрочитанные письма
+
+    name: body = Непрочитанных писем: 3
+Всего писем: 34
+
+    name: x = 
+    attributes: 
+    xmlns - jabber:x:oob
+
+      name: url = http://win.mail.ru/cgi-bin/auth?Login=kibab612@mail.ru&amp;agent=1171355795R592514666
+
+      name: desc = Просмотреть
+
+  name: message = 
+  attributes: 
+  from - Kibab612@jabber.ru/JAJC_Home
+  to - Kibab612@jabber.ru/Exp_SNJ
+  type - chat
+
+    name: body = Simple message
+
+  name: message = 
+  attributes: 
+  from - Kibab612@jabber.ru/JAJC_Home
+  to - Kibab612@jabber.ru/Exp_SNJ
+  type - chat
+
+    name: body = Тупое сообщение
+

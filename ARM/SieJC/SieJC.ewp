@@ -2472,6 +2472,12 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\clist_util.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\clist_util.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\conf_loader.c</name>
   </file>
   <file>
@@ -2711,10 +2717,22 @@
     <name>$PROJ_DIR$\history.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\jabber.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\xml_parser.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\xml_parser.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\xml_use.txt</name>
   </file>
 </project>
 
