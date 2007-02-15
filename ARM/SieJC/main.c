@@ -495,7 +495,7 @@ void get_answer(void)
   mfree(buf);
 }
 
-void SendAnswer(char *str)
+void __SendAnswer(int dummy,char *str)
 {
   int i = strlen(str);
   send(sock,str,i,0);
@@ -503,6 +503,11 @@ void SendAnswer(char *str)
   Log("SEND",str);
 #endif
   //mfree(str);
+}
+
+void SendAnswer(char *str)
+{
+__SendAnswer(0,str);
 }
 
 
@@ -547,7 +552,9 @@ void Send_Welcome_Packet()
   sprintf(buf,streamheader,JABBER_HOST);
   SendAnswer(buf);
   mfree(buf);
+  LockSched();
   strcpy(logmsg,"Send Welcome");
+  UnlockSched();
 #ifdef LOG_ALL
   Log("CONN",logmsg);
 #endif 
@@ -582,7 +589,9 @@ void Send_Auth()
   char* payload = malloc(256);
   sprintf(payload,"<username>%s</username>\n<password>%s</password>\n<resource>%s</resource>",USERNAME, PASSWORD, RESOURCE);
   SendIq(NULL, "set", auth_id, IQ_AUTH, payload);  
+  LockSched();
   strcpy(logmsg,"Send auth");
+  UnlockSched();
 #ifdef LOG_ALL
   Log("USER->", logmsg);
 #endif 
@@ -624,7 +633,7 @@ void Send_VReq()
 void Send_Presence()
 {
   char presence[]="<presence><priority>100</priority><status></status></presence>";
-  SendAnswer(presence);
+  SUBPROC((void*)SendAnswer,presence);
   strcpy(logmsg,"Send presence");
 #ifdef LOG_ALL
   Log("USER->", logmsg);
@@ -637,7 +646,9 @@ void Send_Presence()
 void Send_Roster_Query()
 {
   SendIq(NULL, "get", rost_id, "jabber:iq:roster", NULL); 
+  LockSched();
   strcpy(logmsg,"Send roster Q");
+  UnlockSched();
 #ifdef LOG_ALL
   Log("USER->", logmsg);
 #endif  
@@ -742,7 +753,8 @@ if(!strcmp(gget,iqtype)) // Iq type = get
   if(!strcmp(q_type,iq_version))
   {
     // jabber:iq:version
-    if(from) Report_VersionInfo(id, from);
+//    if(from) Report_VersionInfo(id, from);
+     if(from) SUBPROC((void*)Report_VersionInfo,id, from);
   }
 }
 
@@ -752,8 +764,8 @@ if(!strcmp(gres,iqtype)) // Iq type = result
   {
     Jabber_state = JS_AUTH_OK;
     CList_AddContact(My_JID, "(Me)", SUB_BOTH,0);
-    Send_Roster_Query();
-    Send_Presence();
+    SUBPROC((void*)Send_Roster_Query);
+    //Send_Presence();
   }
   
   if(!strcmp(id,rost_id))   // Запрос ростера
@@ -820,7 +832,6 @@ void Process_Decoded_XML(XMLNode* node)
         char* m = malloc(100+strlen(msgnode->value));
         sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
         ShowMSG(1,(int)m);
-        if(strlen(m)<511) strcpy(logmsg,m);
         mfree(m);
         
         CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
@@ -837,7 +848,7 @@ void Process_Decoded_XML(XMLNode* node)
     {
       connect_state = 2;
       Jabber_state = JS_CONNECTED_STATE;
-      Send_Auth();
+      SUBPROC((void*)Send_Auth);
     }   
 //----------------
 
@@ -848,7 +859,8 @@ void Process_Decoded_XML(XMLNode* node)
     }
 //----------------
     
-    if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
+    // Походу этого не надо
+    //if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
     nodeEx = nodeEx->next;
   }
 }
@@ -857,7 +869,9 @@ void Process_Decoded_XML(XMLNode* node)
 void Process_XML_Packet(IPC_BUFFER* xmlbuf)
 {
   // Сюда попадаем, если от транслятора принят указатель на порцию данных   
+  LockSched();
   XMLNode *data=XMLDecode(xmlbuf->xml_buffer,xmlbuf->buf_size);
+  UnlockSched();
   if(data)
   {
 #ifdef LOG_ALL
@@ -869,7 +883,7 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);    
-    REDRAW();
+//    REDRAW();
 }
 
 
@@ -900,11 +914,11 @@ void onRedraw(MAIN_GUI *data)
   DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(bgr_color));
+  LockSched();
   wsprintf(data->ws1,"CS: %d RECV: %d\n%t",connect_state,virt_buffer_len,logmsg);
+  UnlockSched();
   DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws2,(scr_w>>2)*3,scr_h-4-14,scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws2,3,scr_h-4-14,(scr_w>>2),scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-  CList_RedrawCList();
+  //CList_RedrawCList();
 }
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -935,7 +949,7 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
-  DirectRedrawGUI();
+  //DirectRedrawGUI();
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     switch(msg->gbsmsg->submess)
@@ -986,12 +1000,8 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         q=NContacts+1;
         char expjid[50];
         sprintf(expjid,"ki12@jabber.ru/Qw%d",q);
-        if(CList_AddResourceWithPresence(expjid, 0, "Busy"))
-        {
-          ShowMSG(1,(int)"Ы");
-        }
-        else
-          ShowMSG(1,(int)"Ы :(");
+        if(!CList_AddResourceWithPresence(expjid, 0, "Busy"))
+          ShowMSG(1,(int)"Нет контакта для связи с ресурсом");
         break;
       }
     case '7':
@@ -1029,8 +1039,12 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         Is_Vibra_Enabled = !(Is_Vibra_Enabled);
         break;
       }
-    }
-    
+    case '9':
+      {
+        REDRAW();
+        break;
+      }    
+    }    
   }
   //  onRedraw(data);
   return(0);
@@ -1170,7 +1184,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         if (connect_state==1)
         {
           //Соединение установлено, посылаем пакет Welcome
-          Send_Welcome_Packet();
+          SUBPROC((void*)Send_Welcome_Packet);
           REDRAW();
         }
         else

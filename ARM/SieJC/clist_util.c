@@ -4,7 +4,7 @@
 #include "clist_util.h"
 #include "history.h"
 
-CLIST* cltop;
+CLIST* cltop = NULL;
 
 unsigned int NContacts = 0;
 unsigned int Active_page = 1;
@@ -15,12 +15,13 @@ extern char logmsg[512];
 
 void CList_RedrawCList()
 {
-  sprintf(logmsg, "P=%d;C=%d;ND=%d",Active_page, CursorPos,N_cont_disp);
+  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,NContacts,N_cont_disp);
   // Определяем, скока контактов поместится на странице списка
   int font_y = GetFontYSIZE(CLIST_FONT)*2 +2;
   int scr_w=ScreenW();
-  N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1);
-  if(!cltop)return;  
+  N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1)-1;
+  if(!cltop)return; 
+  LockSched(); 
   // Определяем количество страниц списка контактов
   int pages_number = sdiv(NContacts, N_cont_disp);
   if(N_cont_disp*pages_number<NContacts){pages_number++;};
@@ -42,6 +43,7 @@ void CList_RedrawCList()
         if(i>(Active_page-1)*N_cont_disp)
         {
           if(i==CursorPos){cur[0]='>';}else{cur[0]=' ';}
+          ///wsprintf(out_ws,"%s TEST %d", cur, i);
           wsprintf(out_ws,"%s %d %s", cur, resEx->has_unread_msg, resEx->name);
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
           if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=CLIST_F_COLOR_1;}
@@ -49,11 +51,13 @@ void CList_RedrawCList()
         }
         i++;
         resEx = resEx->next;
+        if(i>Active_page*N_cont_disp)break;
       }
     }
     ClEx = ClEx->next;
     if(i>Active_page*N_cont_disp)break;
   }
+  UnlockSched();
   FreeWS(out_ws);
 }
 
@@ -94,6 +98,7 @@ void KillResourceList(TRESOURCE* res_list)
 TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
 {
   CLIST* ClEx = cltop;
+  LockSched();
   while(ClEx)
   {
     
@@ -137,10 +142,16 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
       NContacts++;
       ResEx->next=NULL;
+      CursorPos = 1;
+      Active_page=1;
+      UnlockSched();
       return ResEx;
     }
     ClEx = ClEx->next;
-  }  
+  }
+CursorPos = 1;
+Active_page=1;
+UnlockSched();  
 return NULL;
 };
 
@@ -169,19 +180,8 @@ CLIST* CList_AddContact(char* jid,
   strcpy(Cont_Ex->JID, jid);
   Cont_Ex->subscription = subscription;
   Cont_Ex->group = group;
- 
-  if(!cltop)
-  {
-    cltop = Cont_Ex;
-  }
-  else
-  {
-    CLIST* tmp=cltop;
-    while(tmp->next){tmp=tmp->next;}
-    tmp->next=Cont_Ex;
-  }
   Cont_Ex->next=NULL;
-  
+   
   TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
   ResEx->log=NULL;
   ResEx->status=0;
@@ -196,7 +196,23 @@ CLIST* CList_AddContact(char* jid,
 //  strcat(ResEx->full_name, ResEx->name);
   Cont_Ex->res_list=ResEx;
   Cont_Ex->ResourceCount=1;
+
+  LockSched();
+  if(!cltop)
+  {
+    cltop = Cont_Ex;
+  }
+  else
+  {
+    CLIST* tmp=cltop;
+    while(tmp->next){tmp=tmp->next;}
+    tmp->next=Cont_Ex;
+  }
+
   NContacts++;
+  UnlockSched();
+  CursorPos = 1;
+  Active_page=1;
   return Cont_Ex;
 }
 

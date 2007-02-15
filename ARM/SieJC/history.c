@@ -23,8 +23,10 @@ void Log(char* module, char* logstr)
   else
   {
     char* q=malloc(41);
-    sprintf(q, "Ошибка I/O  #%u", io_error);
+    sprintf(q, "Log:[%s] I/O Err #%u", module, io_error);
+    LockSched();
     ShowMSG(1,(int)q); 
+    UnlockSched();
     mfree(q);
   }
   mfree(buffer);
@@ -48,8 +50,10 @@ void Log_XMLStream(char* logstr, int size)
   else
   {
     char* q=malloc(41);
-    sprintf(q, "Ошибка I/O  #%u", io_error);
+    sprintf(q, "Log_XMLStream: I/O Err  #%u", io_error);
+    LockSched();
     ShowMSG(1,(int)q); 
+    UnlockSched();
     mfree(q);
   } 
 }
