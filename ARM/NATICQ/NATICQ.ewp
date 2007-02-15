@@ -3310,7 +3310,7 @@
           <debug>0</debug>
           <option>
             <name>CCDefines</name>
-            <state></state>
+            <state>NEWSGOLD</state>
           </option>
           <option>
             <name>CCPreprocFile</name>
@@ -3758,7 +3758,8 @@
           <debug>0</debug>
           <option>
             <name>CCDefines</name>
-            <state></state>
+            <state>NEWSGOLD</state>
+            <state>ELKA</state>
           </option>
           <option>
             <name>CCPreprocFile</name>

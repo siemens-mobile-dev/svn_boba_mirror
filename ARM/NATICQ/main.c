@@ -41,6 +41,20 @@ extern const char ICON7[];
 extern const char ICON8[];
 extern const char ICON9[];
 
+void setup_ICONS(void)
+{
+  S_ICONS[0]=(int)ICON0;
+  S_ICONS[1]=(int)ICON1;
+  S_ICONS[2]=(int)ICON2;
+  S_ICONS[3]=(int)ICON3;
+  S_ICONS[4]=(int)ICON4;
+  S_ICONS[5]=(int)ICON5;
+  S_ICONS[6]=(int)ICON7;
+  S_ICONS[7]=(int)ICON6;
+  S_ICONS[8]=(int)ICON8;
+  S_ICONS[9]=(int)ICON9;
+}
+
 extern const unsigned int IDLEICON_X;
 extern const unsigned int IDLEICON_Y;
 
@@ -308,6 +322,8 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 {
   CLIST *t;
   int i;
+  if (request_remake_edchat) return -1;
+  if (request_close_edchat) return -1;
   if (msg->keys==0x18)
   {
     //    GeneralFunc_F1(1);
@@ -775,9 +791,9 @@ void method0(MAIN_GUI *data)
   wsprintf(data->ws1,"State: %d, RXstate: %d\n%t",connect_state,RXstate,logmsg);
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,"Exit");
-  DrawString(data->ws2,(scr_w>>1),scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,(scr_w>>1),scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w-4,scr_h-4,MIDDLE_FONT,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,cltop?"CList":empty_str);
-  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w>>1,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w>>1,scr_h-4,MIDDLE_FONT,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -970,6 +986,11 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       }
     }
   }
+  if (msg->msg==MSG_RECONFIGURE_REQ)
+  {
+    InitConfig();
+    setup_ICONS();
+  }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)
@@ -1149,18 +1170,8 @@ int main()
   char dummy[sizeof(MAIN_CSM)];
   
   InitConfig();
-  
-  S_ICONS[0]=(int)ICON0;
-  S_ICONS[1]=(int)ICON1;
-  S_ICONS[2]=(int)ICON2;
-  S_ICONS[3]=(int)ICON3;
-  S_ICONS[4]=(int)ICON4;
-  S_ICONS[5]=(int)ICON5;
-  S_ICONS[6]=(int)ICON7;
-  S_ICONS[7]=(int)ICON6;
-  S_ICONS[8]=(int)ICON8;
-  S_ICONS[9]=(int)ICON9;
-  
+  setup_ICONS();
+
   if (!UIN)
   {
     LockSched();
@@ -1494,7 +1505,7 @@ INPUTDIA_DESC edchat_desc=
   0,
   &menu_skt,
   {0,NULL,NULL,NULL},
-  4,
+  SMALL_FONT,
   100,
   101,
   0,
@@ -1569,6 +1580,9 @@ void CreateEditChat(CLIST *t)
   t->isunread=0;
   wsprintf(ews,"-------");
   ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
+  PrepareEditCOptions(&ec_options);
+  SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+  CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
   //  wsprintf(ews,percent_t,t->answer?t->answer:empty_str);
@@ -1587,6 +1601,7 @@ void CreateEditChat(CLIST *t)
   
   patch_header(&edchat_hdr);
   patch_input(&edchat_desc);
+//  edchat_desc.font=ED_FONT_SIZE;
   edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,0);
 }
 
