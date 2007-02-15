@@ -26,14 +26,9 @@
                           char group
                           );
 
-// Поменять статус у контакта 
-  void CList_Ch_Status(char* jid,
-                       unsigned short status,
-                       char* status_msg
-                       );
 
 // Получить дескриптор контакта по JID
-  TRESOURCE* CList_FindContactByJID(char* jid);
+  //TRESOURCE* CList_FindContactByJID(char* jid);
 
 // Добавить сообщение в список сообщений контакта
   void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext);

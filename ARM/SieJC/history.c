@@ -93,8 +93,10 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   else
   {
     char *q=malloc(41);
+    LockSched();
     sprintf(q, "Ошибка I/O #%u при записи истории", io_error);
     ShowMSG(1,(int)q); 
+    UnlockSched();
     mfree(q);
   }
   mfree(fullname);

@@ -50,7 +50,7 @@ const char OS[] = "SGOLD_ELF-Platform";
 #endif
 
 // Пока желательно оставить так
-#define LOG_ALL
+//#define LOG_ALL
 
 #define TMR_SECOND 216
 
@@ -279,40 +279,6 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
 */
 }
 
-CLIST *AddContact(unsigned int uin, char *name)
-{
-/*
-  CLIST *p=malloc(sizeof(CLIST));
-  CLIST *t;
-  CLIST *pr;
-  zeromem(p,sizeof(CLIST));
-  p->uin=uin;
-  strncpy(p->name,name,sizeof(p->name)-1);
-  p->state=0xFFFF;
-  t=(CLIST *)cltop;
-  if (t)
-  {
-    //Не первый
-    pr=(CLIST *)&cltop;
-    while(strcmp(t->name,p->name)<0)
-    {
-      pr=t;
-      t=t->next;
-      if (!t) break;
-    }
-    p->next=t;
-    pr->next=p;
-  }
-  else
-  {
-    //Первый
-    cltop=p;
-  }
-  //  GBS_StartTimerProc(&tmr_contactlist_update,1000,remake_clmenu);
-  return(p);
-*/  
-return NULL;
-}
 
 //===============================================================================================
 int DNR_ID=0;
@@ -454,7 +420,9 @@ void get_answer(void)
   rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
   char *mess = malloc(10);
   sprintf(mess,"RECV:%d",rec_bytes);
+#ifdef LOG_ALL  
   Log(mess, buf);
+#endif
   mfree(mess);
   
   // Запись в буфер
@@ -473,7 +441,9 @@ void get_answer(void)
     XMLBufferCurPos=rec_bytes - max_byte;
   }
   
+  LockSched();
   virt_buffer_len = virt_buffer_len + rec_bytes;  // Виртуальная длина потока увеличилась
+  UnlockSched();
   
   if(rec_bytes<REC_BUFFER_SIZE)   // Приняли меньше размера буфера приёма - наверняка конец передачи
   {
@@ -484,9 +454,6 @@ void get_answer(void)
     tmp_buffer->xml_buffer = malloc(bytecount);          // Буфер в структуре
     tmp_buffer->buf_size = bytecount;
     get_buf_part(tmp_buffer->xml_buffer, bytecount);
-#ifdef LOG_ALL    
-//    Log_XMLStream(tmp_buffer->xml_buffer, bytecount);
-#endif
     processed_pos = virt_buffer_len;
 
     // Посылаем в MMI сообщение с буфером
@@ -545,6 +512,7 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
   Послать приветствие, на него сервер высылает ответный stream.
   После этого можно общаться с сервером
 */
+// Context:HELPER
 void Send_Welcome_Packet()
 {
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en'>";
@@ -629,12 +597,14 @@ void Send_VReq()
   Послать своё присутствие (в частности, после этого на нас вываливаются 
   присутствия остальных, а мы появляемся в ресурсах своего контакта)
 */
-
+// Context: HELPER
 void Send_Presence()
 {
   char presence[]="<presence><priority>100</priority><status></status></presence>";
-  SUBPROC((void*)SendAnswer,presence);
+  SendAnswer(presence);
+  LockSched();
   strcpy(logmsg,"Send presence");
+  UnlockSched();
 #ifdef LOG_ALL
   Log("USER->", logmsg);
 #endif 
@@ -643,6 +613,7 @@ void Send_Presence()
 /*
   Послать запрос ростера
 */
+// Context: HELPER
 void Send_Roster_Query()
 {
   SendIq(NULL, "get", rost_id, "jabber:iq:roster", NULL); 
@@ -674,6 +645,7 @@ void stop_vibra(void)
 }
 
 
+// Context: HELPER
 void Report_VersionInfo(char* id, char *to)
 {
 /*
@@ -831,6 +803,7 @@ void Process_Decoded_XML(XMLNode* node)
       {
         char* m = malloc(100+strlen(msgnode->value));
         sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
+        
         ShowMSG(1,(int)m);
         mfree(m);
         
@@ -918,7 +891,7 @@ void onRedraw(MAIN_GUI *data)
   wsprintf(data->ws1,"CS: %d RECV: %d\n%t",connect_state,virt_buffer_len,logmsg);
   UnlockSched();
   DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-  //CList_RedrawCList();
+  CList_RedrawCList();
 }
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -974,7 +947,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }    
     case '3':
       {
-        Send_Presence();
+        SUBPROC((void*)Send_Presence);
         break;
       }      
     case '4':
@@ -998,15 +971,16 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         extern unsigned int NContacts;
         int q;
         q=NContacts+1;
-        char expjid[50];
-        sprintf(expjid,"ki12@jabber.ru/Qw%d",q);
+//        char expjid[50];
+//        sprintf(expjid,"ki12@jabber.ru/Qw%d",q);
+        char expjid[]="ki12@jabber.ru/Qw";
         if(!CList_AddResourceWithPresence(expjid, 0, "Busy"))
           ShowMSG(1,(int)"Нет контакта для связи с ресурсом");
         break;
       }
     case '7':
       {    
-        char xz[]="ki12@jabber.ru/Qw7";
+        char xz[]="ki12@jabber.ru/Qw";
         char msg[]=":)";
         CList_AddMessage(xz, MSG_CHAT, msg);
         break;
