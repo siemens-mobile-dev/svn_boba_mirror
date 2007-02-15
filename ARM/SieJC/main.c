@@ -600,7 +600,7 @@ void Send_VReq()
 // Context: HELPER
 void Send_Presence()
 {
-  char presence[]="<presence><priority>100</priority><status></status></presence>";
+  char presence[]="<presence><priority>-100</priority><status></status></presence>";
   SendAnswer(presence);
   LockSched();
   strcpy(logmsg,"Send presence");
@@ -856,7 +856,7 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);    
-//    REDRAW();
+    REDRAW();
 }
 
 
