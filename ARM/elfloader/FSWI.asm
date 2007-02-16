@@ -3,6 +3,7 @@
 
         EXTERN  SWILIB
 	EXTERN	pLIB_TOP
+	EXTERN	FUNC_ABORT
 	RSEG	FSWI_PATCH1:CODE:ROOT
 	CODE32
 
@@ -45,7 +46,11 @@ arm_mode
 	LDMEQFD	SP!,{LR}^		; в LR_usr, он будет использован вызываемой функцией
 	LDR	R12,[R1,R3,LSL#2]	; Берем адрес функции
 	STRNE	R12,[SP,#4]		; пишем адрес в R0(стек)
-	STREQ	R2,[SP,#0x14]		; Пишем адрес джампера для возврата в стеке (PC)
+	BNE	exit
+	CMP	R12,#0xFFFFFFFF
+	LDREQ	R2,=FUNC_ABORT
+	STREQ	R0,[SP,#4]
+	STR	R2,[SP,#0x14]		; Пишем адрес джампера для возврата в стеке (PC)
 exit:
 	LDMFD	SP!,{R0}
 	MSR	SPSR_cf,R0
@@ -56,7 +61,6 @@ arm_jumper:
 thumb_jumper:
 	BX	R12
 	CODE32
-
 ;
 ; Собственно библиотека
 ;

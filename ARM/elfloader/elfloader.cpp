@@ -970,6 +970,17 @@ __arm void PropertyPatch(WSHDR *unk_foldername, WSHDR *unk_filename)
 
 #endif
 
+__arm void FUNC_ABORT(int f)
+{
+  char s[32];
+  extern void StoreErrInfoAndAbort(int code,const char *module_name,int type,int unk3);
+  extern void StoreErrString(const char *);
+  sprintf(s,"%d",f);
+  StoreErrString(s);
+  loopback2();
+  StoreErrInfoAndAbort(0xFFFF,"\1\1No function in lib\xA1",2,2);
+}
+
 
 //Патчи
 #pragma diag_suppress=Pe177

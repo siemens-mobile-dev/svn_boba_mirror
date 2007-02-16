@@ -56,7 +56,14 @@ PITgetN:
 	PUBLIC	PITret
 PITret:
 	DCD	0xA0975D3E+1
-	
+
+defadr	MACRO	a,b
+	PUBLIC	a
+a	EQU	b
+	ENDM
+	defadr	StoreErrInfoAndAbort,0xA01CD2E8
+	defadr	StoreErrString,0xA01CD1B4
+
 #endif
 #else
 	
