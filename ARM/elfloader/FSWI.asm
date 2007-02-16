@@ -2,6 +2,7 @@
 ;
 
         EXTERN  SWILIB
+	EXTERN	pLIB_TOP
 	RSEG	FSWI_PATCH1:CODE:ROOT
 	CODE32
 
@@ -32,7 +33,10 @@ main:
 	ADD	LR,LR,#1		; Устанавливаем бит 0, если тумба
 	ADR	R2,thumb_jumper		; Берем адрес джампера
 arm_mode
-	LDR	R1,=Library		; Указатель на таблицу адресов
+	LDR	R1,=pLIB_TOP		; Указатель на таблицу адресов
+	LDR	R1,[R1]
+	CMP	R1,#0
+	LDREQ	R1,=Library
 	BIC	R3,R0,#0x8000
         CMP	R3,#4096
         BHI	exit
@@ -57,12 +61,7 @@ thumb_jumper:
 ; Собственно библиотека
 ;
 	RSEG    LIBR:DATA(2)
+	PUBLIC	Library
 Library:
-
-
-	RSEG	DATA_N:DATA(2)
-	PUBLIC	LIB_TOP
-LIB_TOP:
-	DS32	1
 
 	END     ;main

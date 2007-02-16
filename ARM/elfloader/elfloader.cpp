@@ -652,6 +652,73 @@ __arm void LoadDaemons(int dummy, char *path)
   FindClose(&de,&err);
 }
 
+__no_init void *(*pLIB_TOP)[];
+extern void *Library[];
+
+int get_file_size(const char * fname)
+{
+  FSTATS fs;
+  unsigned int err;
+  if (GetFileStats(fname,&fs,&err)==-1) return (-1);
+  else return (fs.size);
+}
+
+__arm void LoadLibrary(void)
+{
+  void *(*lt)[]=pLIB_TOP;
+#define LIB_EMPTY ((void *)-1L)
+  unsigned int ul;
+  int sz;
+  int f;
+  static const char fn[]="4:\\Zbin\\swi.blib";
+  if (lt)
+  {
+    pLIB_TOP=NULL;
+    mfree(lt);
+    lt=NULL;
+  }
+  if ((sz=get_file_size(fn))==-1) return;
+  if (sz!=16384)
+  {
+    ShowMSG(1,(int)"Illegal library size!");
+    return;
+  }
+  f=fopen(fn,A_ReadOnly+A_BIN, P_READ, &ul);
+  if (f==-1) return;
+  lt=malloc(16384);
+  if (fread(f,lt,sz,&ul)!=sz)
+  {
+    fclose(f,&ul);
+    ShowMSG(1,(int)"Can't read library!");
+  LERR:
+    mfree(lt);
+    return;
+  }
+  fclose(f,&ul);
+  f=0;
+  do
+  {
+    if (((*lt)[f]!=LIB_EMPTY)&&(Library[f]!=LIB_EMPTY))
+    {
+      if ((*lt)[f]!=Library[f])
+      {
+	char s[50];
+	sprintf(s,"Function %d conflict!",f);
+	ShowMSG(1,(int)s);
+	goto LERR;
+      }
+    }
+    if ((*lt)[f]==LIB_EMPTY)
+    {
+      (*lt)[f]=Library[f];
+    }
+    f++;
+  }
+  while(f<4096);
+  pLIB_TOP=lt;
+#undef LIB_EMPTY
+}
+
 __arm void MyIDLECSMonCreate(void *data)
 {
   static const int smallicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_small.png",0};
@@ -688,6 +755,7 @@ __arm void MyIDLECSMonCreate(void *data)
   };
 #endif
   CreateHELPER_PROC();
+  LoadLibrary();
   RegExplorerExt(&elf_reg);
   SUBPROC((void *)LoadDaemons,0,DEFAULT_DISK ":\\ZBin\\Daemons\\");
   extern BXR1(void *, void (*)(void *));
@@ -772,9 +840,6 @@ __arm void DoUnknownFileType(WSHDR *filename)
   ExecuteFile(filename,wsmime,0);
   FreeWS(wsmime);
 }
-
-
-
 
 __no_init int *EXT2_AREA;
 #ifdef ELKA
