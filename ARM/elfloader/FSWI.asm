@@ -17,7 +17,7 @@
 main_jumper:
 	DC32	main
 
-	RSEG	FSWI_CODE:CODE
+	RSEG	CODE:CODE
 	CODE32
 nullsub:
 	BX	LR

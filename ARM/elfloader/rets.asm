@@ -10,7 +10,7 @@
 
 
 
-        RSEG	RET_ADRS:CODE
+        RSEG	CODE:CODE
         
 #ifdef NEWSGOLD
 #ifdef	ELKA

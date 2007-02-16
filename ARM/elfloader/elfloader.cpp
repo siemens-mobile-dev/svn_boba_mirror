@@ -575,7 +575,7 @@ extern void(*OldTxtOpen)(WSHDR*, WSHDR*);
 #endif
 #define MSG_HELPER_RUN 0x0001
 
-__arm void proc_HELPER(void) @ "HELPER_PROC"
+__arm void proc_HELPER(void)
 {
   GBS_MSG msg;
   if (GBS_RecActDstMessage(&msg))
@@ -594,13 +594,13 @@ __arm void proc_HELPER(void) @ "HELPER_PROC"
   }
 }
 
-__arm void CreateHELPER_PROC(void) @ "HELPER_PROC"
+__arm void CreateHELPER_PROC(void)
 {
-  static const char name[] @ "HELPER_PROC_DATA" ="HELPER";
+  static const char name[]="HELPER";
   CreateGBSproc(HELPER_CEPID, name, proc_HELPER, 0x80, 0);
 }
 
-__arm void REDRAW_impl(void) @"HELPER_PROC"
+__arm void REDRAW_impl(void)
 {
   LockSched();
 #ifdef NEWSGOLD
@@ -612,12 +612,12 @@ __arm void REDRAW_impl(void) @"HELPER_PROC"
   UnlockSched();
 }
 
-__arm void SUBPROC_impl(void *f, int p2, void *p1) @ "HELPER_PROC"
+__arm void SUBPROC_impl(void *f, int p2, void *p1)
 {
   GBS_SendMessage(HELPER_CEPID,MSG_HELPER_RUN,p2,f,p1);
 }
 
-__thumb void SEQKILLER_impl(void *data, void(*next_in_seq)(void *), void *data_to_kill) @ "HELPER_PROC"
+__thumb void SEQKILLER_impl(void *data, void(*next_in_seq)(void *), void *data_to_kill)
 {
   next_in_seq(data);
   mfree(data_to_kill);
@@ -662,7 +662,7 @@ __arm void MyIDLECSMonCreate(void *data)
   {
     "elf",
     0x55,
-    0,
+    0xFF,
     8, //Каталог Misc
     0x59D,
     smallicons,
