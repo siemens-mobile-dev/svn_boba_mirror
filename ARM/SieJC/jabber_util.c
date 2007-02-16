@@ -87,7 +87,7 @@ void Send_Disconnect()
 #endif 
 }
 
-// Эти константы надо будет заменить на динамические
+// Константы Iq-запросов авторизации и ростера
 char auth_id[] = "SieJC_auth_req";
 char rost_id[] = "SieJC_rost_req";
 
@@ -113,7 +113,7 @@ void Send_Auth()
 
 void Send_VReq()
 {
-  char to[]="mastermind@jabber.org/Psi";
+  char to[]="kibab612@jabber.ru/Miranda_Home";
   char typ[]="get";
   char iqid[]="SieJC_VR";
   char iq_v[]=IQ_VERSION;
@@ -145,7 +145,7 @@ void Send_Presence()
 // Context: HELPER
 void Send_Roster_Query()
 {
-  SendIq(NULL, "get", rost_id, IQ_ROSTER, NULL); 
+  SendIq(NULL, IQTYPE_GET, rost_id, IQ_ROSTER, NULL); 
   LockSched();
   strcpy(logmsg,"Send roster Q");
   UnlockSched();
@@ -283,7 +283,7 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
   char* errcode = XML_Get_Attr_Value("code", error->attr);
   Jabber_state = JS_ERROR;
   if(errcode)sprintf(logmsg,"ERR:%s",errcode);
-
+  ShowMSG(1,(int)logmsg);
   if(!strcmp(id,auth_id))
   {
     Jabber_state = JS_AUTH_ERROR;
@@ -303,6 +303,7 @@ void Process_Presence_Change(XMLNode* node)
   // ВРЕМЕННО, потом надо заменить на код!
   char status = 0;
   char* msg=NULL;
+  if(!from)return;
   CList_AddResourceWithPresence(from, status, msg);
 }
 
@@ -322,3 +323,54 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
   }  
 }
+
+/*
+char* convUTF8_to_ANSI(char *UTF8_str)
+{
+  // Рассматривая строку UTF8 как обычную, определяем её длину
+  int st_len = strlen(UTF8_str);
+
+  // Выделяем память - на всякий случай дохера
+  int lastchar = 0;
+  char* tmp_out = malloc(st_len*3);
+  
+  int chr, chr2, chr3;
+  for(int i=0;i<st_len;i++)
+  {
+  chr = (int)(UTF8_str+i) && 0xFF;
+//	if( chr == 0xFF ) break; // end of stream // Походу этого не нужно
+	
+	if (chr<0x80)
+        {
+          *(tmp_out+lastchar)=chr;
+          lastchar++;
+          goto L_END_CYCLE;
+        }
+	if (chr<0xc0)
+        {
+          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");
+          return NULL;
+        }
+	
+        chr = (int)(UTF8_str+i+1) && 0xFF;
+        if (chr2==0xff) return -1;
+        if (chr2<0x80) throw new IOException("Bad UTF-8 Encoding encountered");
+	
+	if (chr<0xe0) {
+	    // cx, dx 
+	    return ((chr & 0x1f)<<6) | (chr2 &0x3f);
+	}
+	if (chr<0xf0) {
+	    // cx, dx 
+	    int chr3= chRead() &0xff;
+	    if (chr3==0xff) return -1;
+	    if (chr3<0x80) throw new IOException("Bad UTF-8 Encoding encountered");
+	    else return ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
+	}
+	
+	//System.out.print((char)j);
+	return -1;
+  L_END_CYCLE:
+  }
+}
+*/

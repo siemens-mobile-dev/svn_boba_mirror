@@ -2717,6 +2717,9 @@
     <name>$PROJ_DIR$\history.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\history.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\jabber.h</name>
   </file>
   <file>

@@ -232,18 +232,6 @@ void end_socket(void)
   }
 }
 
-/*
-GBSTMR tmr_dorecv;
-
-void dorecv(void)
-{
-void get_answer(void);
-if (connect_state>1)
-{
-SUBPROC((void *)get_answer);
-  }
-}*/
-
 char* XMLBuffer;
 unsigned int XMLBufferCurPos = 0; // Позиция в кольцевом буфере
 unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
@@ -279,12 +267,11 @@ void get_answer(void)
   zeromem(buf,REC_BUFFER_SIZE);           // Зануляем
   int rec_bytes = 0;          // Не торопимся :)
   rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
-  char *mess = malloc(10);
-  sprintf(mess,"RECV:%d",rec_bytes);
 #ifdef LOG_ALL  
+  char mess[15];
+  sprintf(mess,"RECV:%d",rec_bytes);
   Log(mess, buf);
 #endif
-  mfree(mess);
   
   // Запись в буфер
   if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
@@ -302,17 +289,18 @@ void get_answer(void)
     XMLBufferCurPos=rec_bytes - max_byte;
   }
   
-  LockSched();
   virt_buffer_len = virt_buffer_len + rec_bytes;  // Виртуальная длина потока увеличилась
-  UnlockSched();
   
-  if(rec_bytes<REC_BUFFER_SIZE)   // Приняли меньше размера буфера приёма - наверняка конец передачи
+  char lastchar = *(buf + rec_bytes - 1);
+  
+  if((rec_bytes<REC_BUFFER_SIZE)&&(lastchar=='>'))   // Приняли меньше размера буфера приёма - наверняка конец передачи
   {
     int bytecount = virt_buffer_len - processed_pos;
     
     // НАДО ОСВОБОДИТЬ В MMI!
     IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
     tmp_buffer->xml_buffer = malloc(bytecount);          // Буфер в структуре
+    zeromem(tmp_buffer->xml_buffer, bytecount);
     tmp_buffer->buf_size = bytecount;
     get_buf_part(tmp_buffer->xml_buffer, bytecount);
     processed_pos = virt_buffer_len;
@@ -323,22 +311,14 @@ void get_answer(void)
   mfree(buf);
 }
 
-void __SendAnswer(int dummy,char *str)
+void SendAnswer(char *str)
 {
   int i = strlen(str);
   send(sock,str,i,0);
 #ifdef LOG_ALL
   Log("SEND",str);
 #endif
-  //mfree(str);
 }
-
-void SendAnswer(char *str)
-{
-__SendAnswer(0,str);
-}
-
-
 
 
 void Process_Decoded_XML(XMLNode* node)
@@ -378,6 +358,13 @@ void Process_Decoded_XML(XMLNode* node)
   }
 }
 
+void __log(char* buffer, int size)
+{
+  char mess[20];
+  sprintf(mess,"RECV:%d",size);
+  Log(mess,buffer);
+  mfree(buffer);
+}
 
 void Process_XML_Packet(IPC_BUFFER* xmlbuf)
 {
@@ -387,12 +374,17 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   UnlockSched();
   if(data)
   {
-#ifdef LOG_ALL
+//#ifdef LOG_ALL
     SaveTree(data);
-#endif
+//#endif
     Process_Decoded_XML(data);
     DestroyTree(data);
   }
+    char* tmp_buf=malloc(xmlbuf->buf_size+1);
+    zeromem(tmp_buf,xmlbuf->buf_size+1);
+    memcpy(tmp_buf,xmlbuf->xml_buffer,xmlbuf->buf_size);
+    SUBPROC((void*)__log,tmp_buf, xmlbuf->buf_size);
+
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);    
@@ -403,7 +395,7 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
 //===============================================================================================
 // Всякий стафф с GUI
 void onRedraw(MAIN_GUI *data)
-{
+{ 
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   
@@ -427,11 +419,14 @@ void onRedraw(MAIN_GUI *data)
   DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(bgr_color));
+  
+  CList_RedrawCList();
+  
   LockSched();
   wsprintf(data->ws1,"CS: %d RECV: %d\n%t",connect_state,virt_buffer_len,logmsg);
   UnlockSched();
   DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-  CList_RedrawCList();
+  DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 }
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -458,6 +453,38 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   if (data->gui.state!=2) return;
   data->gui.state=1;
+}
+
+void Test_UTF()
+{
+  volatile int hFile;
+  unsigned int io_error = 0;
+  // Открываем файл на дозапись и создаём в случае неудачи
+  hFile = fopen("4:\\test.txt",A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
+  if(io_error)
+  {
+   ShowMSG(1,(int)"IO Error in fopen"); 
+   return;
+  }
+  int len = lseek(hFile,0,S_END, &io_error, &io_error);
+  lseek(hFile,0,0,&io_error, &io_error);
+  char* buf = malloc(len);
+  zeromem(buf,len);
+  fread(hFile,buf,len, &io_error);
+  if(!io_error)
+  {
+    ShowMSG(1,(int)buf);
+    WSHDR* ws = AllocWS(256);
+    str_2ws(ws, buf, len);
+    wstrcpy();
+    FreeWS(ws);    
+  }
+  else
+  {
+    ShowMSG(1,(int)"IO Error in fread");
+  }
+  fclose(hFile, &io_error);
+  mfree(buf);
 }
 
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
@@ -493,13 +520,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '5':
       {
-        extern unsigned int NContacts;
-        int q;
-        q=NContacts+1;
-        char expjid[10];
-        sprintf(expjid,"ki1%d@jabber.ru",q);
-        CList_AddContact(expjid, "Kibab",SUB_BOTH,0);
-        break;
+        Test_UTF();
       }
     
     case DOWN_BUTTON:
@@ -581,6 +602,12 @@ void maincsm_oncreate(CSM_RAM *data)
   SUBPROC((void *)create_connect);
   XMLBuffer = malloc(XML_BUFFER_SIZE);
   zeromem(XMLBuffer, XML_BUFFER_SIZE);
+  
+  //void* Process_XML_Packet_ADR = (void*)Process_XML_Packet;
+  //void* Process_Decoded_XML_ADR = (void*) Process_Decoded_XML;
+  //char msg[60];
+  //sprintf(msg,"@Process_XML_Packet=0x%X\r\n@Process_Decoded_XML=0x%X",Process_XML_Packet_ADR, Process_Decoded_XML_ADR);
+  //Log("SYSTEM", msg);
 }
 
 void maincsm_onclose(CSM_RAM *csm)

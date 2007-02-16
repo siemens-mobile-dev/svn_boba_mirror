@@ -10,7 +10,8 @@ void Log(char* module, char* logstr)
   volatile int hFile;
   unsigned int io_error = 0;
   char fullname[] ="4:\\jlog.txt";
-  char* buffer = malloc(4096);
+  char* buffer = malloc(65536);
+  zeromem(buffer,65536);
   sprintf(buffer,"[%s]: %s\r\n",module, logstr);
   int buf_len = strlen(buffer);
   // Открываем файл на дозапись и создаём в случае неудачи
@@ -32,7 +33,6 @@ void Log(char* module, char* logstr)
   mfree(buffer);
   
 }
-
 
 // Логгер потока для удобства отдельно
 void Log_XMLStream(char* logstr, int size)
