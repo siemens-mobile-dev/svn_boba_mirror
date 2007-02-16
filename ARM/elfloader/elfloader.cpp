@@ -670,7 +670,7 @@ __arm void LoadLibrary(void)
   unsigned int ul;
   int sz;
   int f;
-  static const char fn[]="4:\\Zbin\\swi.blib";
+  static const char fn[]=DEFAULT_DISK":\\Zbin\\swi.blib";
   if (lt)
   {
     pLIB_TOP=NULL;
@@ -845,9 +845,6 @@ __no_init int *EXT2_AREA;
 #ifdef ELKA
 __no_init int EXT2_CNT @ "REGEXPL_CNT";
 #endif
-#ifndef NEWSGOLD
-__no_init int EXT2_CNT @ "REGEXPL_CNT";
-#endif
 
 #ifdef NEWSGOLD 
 #ifdef ELKA
@@ -911,6 +908,8 @@ __arm int *EXT2_REALLOC(void)
 }
 #endif
 #else
+__no_init int EXT2_CNT @ "REGEXPL_CNT";
+
 __arm void *EXT2_REALLOC(void)
 {
   int size;

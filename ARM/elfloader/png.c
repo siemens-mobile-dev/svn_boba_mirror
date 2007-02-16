@@ -223,6 +223,10 @@ __arm void print10(char *s, unsigned int v)
     v=div10(v,10,s++);
   }
   *s++=v+'0';
+  *s++='.';
+  *s++='p';
+  *s++='n';
+  *s++='g';
   *s='\0';
 }
 
@@ -245,7 +249,6 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   {
     char*next=strcpy_tolow(fname,DEFAULT_FOLDER);
     print10(next,pic);
-    strcat(fname,".png");
   }
   LockSched();
   pl=(PNGLIST *)(&pltop);

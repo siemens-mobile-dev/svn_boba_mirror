@@ -8,7 +8,10 @@
 	DCD	pLIB_TOP
 	DCD	SFE(DATA_N)
 
-
+defadr	MACRO	a,b
+	PUBLIC	a
+a	EQU	b
+	ENDM
 
         RSEG	CODE:CODE
         
@@ -57,10 +60,7 @@ PITgetN:
 PITret:
 	DCD	0xA0975D3E+1
 
-defadr	MACRO	a,b
-	PUBLIC	a
-a	EQU	b
-	ENDM
+
 	defadr	StoreErrInfoAndAbort,0xA01CD2E8
 	defadr	StoreErrString,0xA01CD1B4
 
@@ -89,7 +89,19 @@ PITret:
         
         PUBLIC	KEYBret
 KEYBret:
-	DCD	0xA0CB602E+1        
+	DCD	0xA0CB602E+1  
+        
+	PUBLIC	FReadOld
+FReadOld:
+	DCD	0xA113B364
+        
+        PUBLIC	FWriteOld
+FWriteOld:
+	DCD	0xA113B44C       
+        
+        defadr	StoreErrInfoAndAbort,0xA113BE98
+	defadr	StoreErrString,0xA113BCBC
+
 #endif
 
 	END

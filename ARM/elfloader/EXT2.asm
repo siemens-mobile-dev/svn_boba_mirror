@@ -133,8 +133,8 @@ I_R5R7
         
         ARM
         RSEG    PATCH_BIG_ICON:CODE:ROOT
-        
-        BL      J_GET_BIG
+        EXTERN  GetBigIcon
+        BL      GetBigIcon
         
         ARM
         RSEG    PATCH_REGEXPL:CODE:ROOT
@@ -144,7 +144,6 @@ I_R5R7
         ARM
 	RSEG	CODE:CODE:NOROOT
         EXTERN  EXT2_AREA
-        EXTERN  GetBigIcon
         EXTERN  RegFile
 
         
@@ -169,22 +168,13 @@ J_REGEXT2
         MLA     R0, R2, R1, R0
         BX      LR        
         
-J_GET_BIG
-        MOV     R1, R8
-        B       GetBigIcon
-        
+       
 J_REG_FILE
         LDR     R5, [R4, #0x10]
         STR     R5, [SP, #0x10]
         B       RegFile
-
-
         
-
-
-
-        
-        
+     
 
 
 #endif

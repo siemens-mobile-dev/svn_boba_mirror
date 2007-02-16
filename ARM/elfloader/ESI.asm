@@ -78,7 +78,8 @@ ESI_PATCH:
         LDMEQFD SP!,{R4,LR}
         BEQ     ESI 
 DO_LGP:
-        LDR	R3,ESIOld
+        LDR	R3,=ESIOld
+        LDR     R3, [R3]
 	MOV	R4,R1
 	MOV	R1,R2
 	LDR	R2,=0x2710
@@ -134,7 +135,7 @@ JJ_PIT	DC32	J_PIT
         
              
 ; ----------------------------------------------       
-	RSEG	PIT_PNG_EXTENSION:CODE(2)
+	RSEG	CODE:CODE(2)
 	EXTERN	PITgetN
 	EXTERN	PatchGetPIT
 	EXTERN	PITret
@@ -146,10 +147,12 @@ J_PIT:
         CMP     R0, #0
 	LDMNEFD	SP!,{R4,PC}
 	MOV	R0,R4
-	LDR	R12,PITgetN
+	LDR	R12,=PITgetN
+        LDR     R12, [R12]
 	BLX	R12
         CMP	R0,R4
-	LDR	R12,PITret
+	LDR	R12,=PITret
+        LDR     R12, [R12]
 	BX	R12
         
 ; ================================================

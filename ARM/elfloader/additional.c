@@ -36,16 +36,14 @@ __arm void RegFile(WSHDR*ext,int unical_id,int menu_flag,unsigned int* icon1,int
 
 __arm int GetBigIcon(const unsigned int icon, int uid)
 {
-  int num=EXT2_CNT;
-  REGEXPLEXT_ARM_NEW* reg=(REGEXPLEXT_ARM_NEW*)EXT2_AREA;
+  asm("mov r1, r8");
+  REGEXPLEXT_ARM_NEW* reg;
   if ((icon>>28)!=0xA) return (icon+1);
-  for (int i=0;i!=num;i++)
-  {
-    if (reg[i].unical_id==uid)
-      return (*(reg[i].icon2));
-  }
-  return (icon+1);
+  reg=get_regextpnt_by_uid(uid);
+  if (!reg) return (0);
+  return (*(reg->icon2));
 }
+
 __arm void UnregExplExt_impl(REGEXPLEXT const * reg_orig)
 {
   char ext[16];
@@ -53,7 +51,7 @@ __arm void UnregExplExt_impl(REGEXPLEXT const * reg_orig)
   for (int i=0;i!=EXT2_CNT;i++)
   {
     if (reg_orig->unical_id!=reg[i].unical_id) continue;
-    ws_2str(reg[i].ext,ext,16);
+    ws_2str(reg[i].ext,ext,15);
     if (strcmp(ext,reg_orig->ext)) continue;
     FreeWS(reg[i].ext);
     mfree((void*)reg[i].icon2);
@@ -132,7 +130,6 @@ __arm void RemoveKeybMsgHook_impl(int (*proc)(int submsg,int msg))
 }
 
 extern void(*SendKeybMsg)(int msg, int submsg);
-extern BXR2(int, int, void(*)(int,int));
 
 
 int PatchKeybMsg(int msg, int submsg)
@@ -146,10 +143,47 @@ int PatchKeybMsg(int msg, int submsg)
   return (0);
 }
 
+// ========================================= fread/fwrite ===========================================
+extern int (*FReadOld)(int FileHandler, void *cBuffer, int iByteCount, unsigned int *ErrorNumber);
+extern unsigned int(*FWriteOld)(int FileHandler, char * cBuffer, int iByteCount, unsigned int *ErrorNumber);
+
+int fread32(int fh, void *buf, int len, unsigned int *err)
+{
+  int clen;
+  int rlen;
+  int total=0;
+  while(len)
+  {
+    clen=len>=0x400?0x400:len;
+    total+=(rlen=FReadOld(fh, buf, clen, err));
+    if (rlen!=clen) break;
+    buf=(char *)buf+rlen;
+    len-=clen;
+  }
+  return(total);
+}
+
+
+unsigned int fwrite32(int fh, void *buf, int len, unsigned int *err)
+{
+  int clen;
+  unsigned int wlen;
+  int total=0;
+  while(len)
+  {
+    clen=len>=0x400?0x400:len;
+    total+=(wlen=FWriteOld(fh, buf, clen, err));
+    if (wlen!=clen) break;
+    buf=(char *)buf+wlen;
+    len-=clen;
+  }
+  return(total);
+}
 
 #pragma diag_suppress=Pe177
+__root static const int SWILIB_FUNC00B @ "SWILIB_FUNC00B" = (int)fread32;
+__root static const int SWILIB_FUNC00C @ "SWILIB_FUNC00C" = (int)fwrite32;
 __root static const int SWILIB_FUNC095 @ "SWILIB_FUNC095" = (int)UnregExplExt_impl;
-
 __root static const int SWILIB_FUNC12B @ "SWILIB_FUNC12B_12D" = (int)AddKeybMsgHook_impl;
 __root static const int SWILIB_FUNC12C @ "SWILIB_FUNC12B_12D" = (int)AddKeybMsgHook_end_impl;
 __root static const int SWILIB_FUNC12D @ "SWILIB_FUNC12B_12D" = (int)RemoveKeybMsgHook_impl;

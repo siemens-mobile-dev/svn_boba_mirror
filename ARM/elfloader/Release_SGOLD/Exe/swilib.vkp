@@ -58,8 +58,8 @@
 0018: 0xA11502A4 ; 006: __arm int GetAkku(int param1,int param2);
 0020: 0xA1151138 ; 008: __arm long SetIllumination(unsigned char dev,unsigned long param1,unsigned short bright,unsigned long delay);
 0028: 0xA113B324 ; 00A: __arm int fopen(const char * cFileName, unsigned int iFileFlags, unsigned int iFileMode, unsigned int *ErrorNumber);
-002C: 0xA0FD9401 ; 00B: __arm int fread(int FileHandler, void *cBuffer, int iByteCount, unsigned int *ErrorNumber);
-0030: 0xA0FD9451 ; 00C: __arm unsigned int fwrite(int FileHandler, char * cBuffer, int iByteCount, unsigned int *ErrorNumber);
+;002C: 0x ; 00B: __arm int fread(int FileHandler, void *cBuffer, int iByteCount, unsigned int *ErrorNumber);
+;0030: 0x ; 00C: __arm unsigned int fwrite(int FileHandler, char * cBuffer, int iByteCount, unsigned int *ErrorNumber);
 0034: 0xA113B278 ; 00D: __arm void fclose(int FileHandler, unsigned int *ErrorNumber);
 003C: 0xA113B2D8 ; 00F: __arm unsigned int lseek(int FileHandler, unsigned int offset, unsigned int origin, unsigned int *ErrorNumber, unsigned int *ErrorNumber2);
 0040: 0xA113B108 ; 010: __arm int mkdir(const char * cFileName, unsigned int *ErrorNumber);
@@ -354,6 +354,7 @@
 06D8: 0xA12652EF ; 1B6: __thumb int async_gethostbyname(const char *host_name,int ****DNR_RES,int *DNR_ID);
 06DC: 0xA126A4A1 ; 1B7: __thumb unsigned int str2ip(const char *);
 
+
 ;Handmaded function
 ;06E0: 0x ; 81B8: __adr void *EXT_TOP(void);
 ;06E4: 0x ; 81B9: __adr void *PNG_TOP(void);
@@ -381,27 +382,10 @@
 0730: 0xA0C8F395 ; 1CC: __thumb void SetPenColorToEditCOptions(EDITC_OPTIONS *ec_options, int pen);
 0734: 0xA0C8F37D ; 1CD: __thumb void SetBrushColorToEditCOptions(EDITC_OPTIONS *ec_options, int brush);
 0738: 0xA0C8F465 ; 1CE: __thumb void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_options);
+073C: 0xA0951D24 ; 1CF: __arm REGEXPLEXT_ARM_NEW *get_regextpnt_by_uid(int uid);
+0740: 0xA0951EA4 ; 1D0: __arm int GetExtUid_ws(WSHDR * ext);
+
 #pragma disable old_equal_ff
 +0
-
-;FREAD32,FWRITE32
-#pragma enable old_equal_ff
-;FREAD
-0x00FD9400: FBB51500002403E00199AD1B08180190
-0x00FD9410: 002D0FD00948854201DB461E00E02E00
-0x00FD9420: 0098074F029B01993F683200B8472418
-0x00FD9430: B042E9D0200003B0F0BDC04601400000
-0x00FD9440: F094FDA0
-;FWRITE
-0x00FD9450: FBB51500002403E00199AD1B08180190
-0x00FD9460: 002D0FD00948854201DB461E00E02E00
-0x00FD9470: 0098074F029B01993F683200B8472418
-0x00FD9480: B042E9D0200003B0F0BDC04601400000
-0x00FD9490: F494FDA0
-;RET_ADRS
-0x00FD94F0: 64B313A14CB413A1
-#pragma disable old_equal_ff
-
-
 
 ;locale=Russian_Russia.1251
