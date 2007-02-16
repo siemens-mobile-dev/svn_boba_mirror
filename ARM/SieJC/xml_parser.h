@@ -1,5 +1,5 @@
 #ifndef _XML_PARSER_
-  #define _XML_PARSER
+  #define _XML_PARSER_
 
 typedef struct{
   void *next;
@@ -16,6 +16,33 @@ typedef struct{
   char *value;
 } XMLNode;
 
+// Декодировать поток
+void* XMLDecode(char *buf, int size);
+
+// Сохранить дерево в файл (для отладки)
+void SaveTree(XMLNode *tree);
+
+// Уничтожить дерево
+void DestroyTree(XMLNode *tree);
+
+/*
+  Получить значение атрибута по его имени
+IN: char* req_attr_name - название атрибута
+    XMLAttr* attr_list  - список атрибутов тега
+OUT: значение атрибута или NULL
+*/
+char* XML_Get_Attr_Value(char* req_attr_name, XMLAttr* attr_list);
+
+
+/*
+  Получить дочерний узел из списка дочерних узлов по его имени
+IN: XMLNode* node         - родительский узел
+    char* req_node_name   - имя требуемого узла
+OUT: дочерний узел или NULL
+*/
+XMLNode* XML_Get_Child_Node_By_Name(XMLNode* node, char* req_node_name);
+
+////////////////////////////////////////////////////////////////////////////////
 
 #define MS_BEGIN 1						///< Начало парсинга
 #define MS_BEGINTAG 2					///< Начался тег
@@ -36,10 +63,4 @@ typedef struct{
 #define TS_EMPTY 4						///< Сам и закрывается
 #define TS_DECLARATION 5					///< Декларация, что это XML. Парсер аттрибуты игнорирует
 
-void* XMLDecode(char *buf, int size);
-void SaveTree(XMLNode *tree);
-void DestroyTree(XMLNode *tree);
-
-char* XML_Get_Attr_Value(char* req_attr_name, XMLAttr* attr_list);
-XMLNode* XML_Get_Child_Node_By_Name(XMLNode* node, char* req_node_name);
 #endif

@@ -1,3 +1,8 @@
+/*
+    SieNatJabber Project
+    Константы, множества протокола XMPP
+
+*/
 #ifndef _JABBER_H_
   #define _JABBER_H_
 // Error code
@@ -18,6 +23,8 @@
 #define JABBER_ERROR_SERVICE_UNAVAILABLE	503
 #define JABBER_ERROR_REMOTE_SERVER_TIMEOUT	504
 
+
+
 #define IQTYPE_GET "get"
 #define IQTYPE_SET "set"
 #define IQTYPE_RES "result"
@@ -26,5 +33,31 @@
 #define IQ_AUTH    "jabber:iq:auth"
 #define IQ_VERSION "jabber:iq:version"
 #define IQ_ROSTER  "jabber:iq:roster"
+
+/*
+From Miranda Jabber_list.h:
+*/
+
+typedef enum {
+	SUB_NONE,
+	SUB_TO,
+	SUB_FROM,
+	SUB_BOTH
+} JABBER_SUBSCRIPTION;
+
+typedef enum {
+	AFFILIATION_NONE,
+	AFFILIATION_OUTCAST,
+	AFFILIATION_MEMBER,
+	AFFILIATION_ADMIN,
+	AFFILIATION_OWNER
+} JABBER_GC_AFFILIATION;
+
+typedef enum {
+	ROLE_NONE,
+	ROLE_VISITOR,
+	ROLE_PARTICIPANT,
+	ROLE_MODERATOR
+} JABBER_GC_ROLE;
 
 #endif

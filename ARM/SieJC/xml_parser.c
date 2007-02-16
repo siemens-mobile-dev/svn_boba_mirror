@@ -91,7 +91,7 @@ void SaveTree(XMLNode *tree){
 #else
   const char savepath[]="0:\\xml_packet.txt";
 #endif
-  f=fopen(savepath, A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul);
+  f=fopen(savepath, A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
   SaveBranch(XMLTree);
   fclose(f,&ul);
 }

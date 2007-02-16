@@ -2,6 +2,7 @@
 #include "main.h"
 #include "jabber.h"
 #include "clist_util.h"
+#include "jabber_util.h"
 #include "history.h"
 
 CLIST* cltop = NULL;
@@ -44,7 +45,14 @@ void CList_RedrawCList()
         {
           if(i==CursorPos){cur[0]='>';}else{cur[0]=' ';}
           //wsprintf(out_ws,"%s TEST %d", cur, i);
-          wsprintf(out_ws,"%s %d %s", cur, resEx->has_unread_msg, resEx->name);
+          if(resEx->name)
+          {
+            wsprintf(out_ws,"%s %d %s/%s", cur, resEx->has_unread_msg, ClEx->name, resEx->name);
+          }
+          else
+          {
+            wsprintf(out_ws,"%s %d %s", cur, resEx->has_unread_msg, ClEx->name);
+          }
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
           if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=CLIST_F_COLOR_1;}
           DrawString(out_ws,3,start_y,scr_w-4,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
@@ -88,7 +96,7 @@ void KillResourceList(TRESOURCE* res_list)
   while(cl)
   {
     TRESOURCE *p;
-    mfree(cl->name);
+    if(cl->name)mfree(cl->name);
     mfree(cl->full_name);
     if(cl->status_msg)mfree(cl->status_msg);
     if(cl->log)KillMsgList(cl->log);
@@ -138,7 +146,7 @@ TRESOURCE* CList_IsResourceInList(char* jid)
 }
 
 // Поменять статус у контакта 
-void CList_Ch_Status(char* jid,
+void CList_Ch_Status(TRESOURCE* resource,
                        char status,
                        char* status_msg
                        )
@@ -150,7 +158,14 @@ void CList_Ch_Status(char* jid,
 TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
 {
   TRESOURCE* qq = CList_IsResourceInList(jid);
-  if(qq)return qq;
+  
+  // Если такой ресурс уже есть, его не добавляем. 
+  // Нужно ему статус поменять.
+  if(qq)
+  {
+    CList_Ch_Status(qq, status, status_msg);
+    return qq;
+  }
   CLIST* ClEx = cltop;
   LockSched();
   while(ClEx)
@@ -159,11 +174,12 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
     if(strstr(jid,ClEx->JID))
     {
       TRESOURCE* ResEx=malloc(sizeof(TRESOURCE));//ClEx->res_list;
-      ResEx->name = malloc(strlen(jid)+1);
+      char *resname_ptr=Get_Resource_Name_By_FullJID(jid);
+      ResEx->name = malloc(strlen(resname_ptr)+1);
 //      strcpy(ResEx->name, "(dummy)");
       ResEx->full_name = malloc(strlen(jid)+1);
       strcpy(ResEx->full_name, jid);
-      strcpy(ResEx->name, jid);
+      strcpy(ResEx->name, resname_ptr);
       if(status_msg)
       {
         ResEx->status_msg = malloc(strlen(status_msg)+1);
@@ -180,7 +196,14 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       ResEx->log = NULL;
       
       // Удаляем псевдоресурс, если он есть
-      if(ClEx->res_list->virtual==1){KillResourceList(ClEx->res_list);ClEx->ResourceCount=0;NContacts--;ClEx->res_list=NULL;}    
+      if(ClEx->res_list->virtual==1)
+      {
+        KillResourceList(ClEx->res_list);
+        ClEx->ResourceCount=0;
+        NContacts--;
+        ClEx->res_list=NULL;
+      }    
+      
       TRESOURCE* existing_res=ClEx->res_list;
       
       if(!existing_res)
@@ -207,7 +230,7 @@ CursorPos = 1;
 Active_page=1;
 UnlockSched();  
 return NULL;
-};
+}
 
 
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
@@ -243,9 +266,8 @@ CLIST* CList_AddContact(char* jid,
   ResEx->status_msg=NULL;
   ResEx->has_unread_msg=0;
   ResEx->virtual=1; // По этому признаку потом его убъём
-  ResEx->name = malloc(strlen(Cont_Ex->name)+1);
+  ResEx->name = NULL;
   ResEx->full_name = malloc(strlen(jid)+1);
-  strcpy(ResEx->name, Cont_Ex->name);
   strcpy(ResEx->full_name, jid);
 //  strcat(ResEx->full_name, "/");
 //  strcat(ResEx->full_name, ResEx->name);
@@ -275,12 +297,20 @@ CLIST* CList_AddContact(char* jid,
 // Добавить сообщение в список сообщений контакта
 void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
 {
+  TTime now_time;
+  TDate now_date;
+  GetDateTime(&now_date,&now_time);
+  char datestr[127];
+  sprintf(datestr, "%s: %02d:%02d %02d-%02d\r\n",jid,now_time.hour,now_time.min,now_date.day,now_date.month);
+
+  
   CLIST* contEx = CList_FindContactByJID(jid);
   if(!contEx)
   {
 //    LockSched();
 //    ShowMSG(1,(int)"No contact for message found!");
-//    UnlockSched();   
+//    UnlockSched();
+    Log("MESS_LOST",mtext);
     return;
   }
   TRESOURCE* cont = CList_IsResourceInList(jid);
@@ -290,6 +320,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
 //    LockSched();
 //    ShowMSG(1,(int)"Message added to default resource!");
 //    UnlockSched();
+    Add2History(contEx, datestr,mtext);
     contEx->res_list->has_unread_msg++;
     return;
   }
@@ -315,11 +346,6 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   }
   mess->next=NULL;
   UnlockSched();
-  TTime now_time;
-  TDate now_date;
-  GetDateTime(&now_date,&now_time);
-  char datestr[127];
-  sprintf(datestr, "%s: %02d:%02d %02d-%02d\r\n",jid,now_time.hour,now_time.min,now_date.day,now_date.month);
   Add2History(CList_FindContactByJID(jid), datestr,mtext);
 }
 
@@ -370,10 +396,13 @@ void CList_MoveCursorUp()
   if(CursorPos==1)
   {
     CursorPos=NContacts;
-    Active_page=sdiv(NContacts, N_cont_disp)+1;
+    Active_page = sdiv(N_cont_disp, NContacts)+1;
   }
-  else CursorPos--;
-  if(CursorPos<=(Active_page-1)*N_cont_disp){Active_page--;}
+  else
+  {
+    CursorPos--;
+    if(CursorPos<=(Active_page-1)*N_cont_disp){Active_page--;}
+  }
   REDRAW();
 };
 void CList_MoveCursorDown()

@@ -1,6 +1,12 @@
 #ifndef _MAIN_H_
   #define _MAIN_H_
 
+#include "jabber.h"
+
+
+// Пока желательно оставить так
+//#define LOG_ALL
+
 #ifdef NEWSGOLD
 #define DEFAULT_DISC '4'
 #else
@@ -9,7 +15,7 @@
 
 // Общие функции модуля MAIN.C
 
-#define XML_BUFFER_SIZE 64*1024 // Размер буфера в килобабах
+#define XML_BUFFER_SIZE 64*1024 // Размер буфера в байтах
 #define REC_BUFFER_SIZE 512 // Размер буфера приёма в байтах
 
 typedef struct
@@ -18,40 +24,31 @@ typedef struct
   char* xml_buffer;
 } IPC_BUFFER;
 
+
+typedef struct
+{
+  CSM_RAM csm;
+  int gui_id;
+}MAIN_CSM;
+
+typedef struct
+{
+  GUI gui;
+  WSHDR *ws1;
+  WSHDR *ws2;
+  int i1;
+}MAIN_GUI;
+
 typedef enum
 {
   JS_NOT_CONNECTED, 
   JS_CONNECTED_STATE, 
   JS_AUTH_OK, 
   JS_AUTH_ERROR, 
-  JS_ONLINE
+  JS_ONLINE,
+  JS_ERROR
 } JABBER_STATE;
 
-/*
-From Miranda Jabber_list.h:
-*/
-
-typedef enum {
-	SUB_NONE,
-	SUB_TO,
-	SUB_FROM,
-	SUB_BOTH
-} JABBER_SUBSCRIPTION;
-
-typedef enum {
-	AFFILIATION_NONE,
-	AFFILIATION_OUTCAST,
-	AFFILIATION_MEMBER,
-	AFFILIATION_ADMIN,
-	AFFILIATION_OWNER
-} JABBER_GC_AFFILIATION;
-
-typedef enum {
-	ROLE_NONE,
-	ROLE_VISITOR,
-	ROLE_PARTICIPANT,
-	ROLE_MODERATOR
-} JABBER_GC_ROLE;
 ////////////////////////////////
 typedef enum
 {
@@ -89,5 +86,8 @@ typedef struct
   char group;
   void *next;
 } CLIST;
+
+
+void SendAnswer(char *str);
 
 #endif

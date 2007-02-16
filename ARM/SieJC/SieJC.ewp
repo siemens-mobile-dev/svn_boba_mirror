@@ -2720,6 +2720,12 @@
     <name>$PROJ_DIR$\jabber.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\jabber_util.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\jabber_util.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
@@ -2730,9 +2736,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\xml_parser.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\xml_use.txt</name>
   </file>
 </project>
 
