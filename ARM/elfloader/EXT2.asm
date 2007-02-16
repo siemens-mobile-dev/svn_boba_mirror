@@ -2,6 +2,8 @@
 ; //Extend file extention
 ;
 #ifdef NEWSGOLD
+	RSEG	PATCH_ENABLE_ALTOPEN:DATA:ROOT(1)
+	DCW	0x2800
 
 #ifdef	ELKA
 	ARM

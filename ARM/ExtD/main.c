@@ -88,7 +88,7 @@ REGEXPLEXT reg=
 {
   NULL,
   0x55,
-  0,
+  0xFF,
   8, //Каталог Misc
   0x59D,
   NULL,
@@ -118,7 +118,7 @@ REGEXPLEXT reg0=
 {
   empty_str,
   0,
-  0,
+  0xFF,
   8, //Каталог Misc
   0x59D,
   NULL,
