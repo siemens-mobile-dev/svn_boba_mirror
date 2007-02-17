@@ -2735,6 +2735,12 @@
     <name>$PROJ_DIR$\main.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\message_list.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\message_list.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\xml_parser.c</name>
   </file>
   <file>

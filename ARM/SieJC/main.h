@@ -59,7 +59,7 @@ typedef enum
 
 typedef struct
 {
-  char mtype;
+  MESS_TYPE mtype;
   char* mess;
   void *next; 
 }LOG_MESSAGE;

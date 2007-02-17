@@ -35,6 +35,8 @@
 
   TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg);
 
+  TRESOURCE* CList_GetActiveContact();
+  
 // ”ничтожить список контактов  
   void CList_Destroy();
 

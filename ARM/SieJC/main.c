@@ -4,6 +4,7 @@
 #include "conf_loader.h"
 #include "main.h"
 #include "clist_util.h"
+#include "message_list.h"
 #include "xml_parser.h"
 #include "jabber.h"
 #include "jabber_util.h"
@@ -476,6 +477,19 @@ void DisplayQuitQuery()
   ShowDialog_YesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);  
 }
 
+void Debug_Add_Cont_Mess()
+{
+      CList_AddContact("kibab612@jabber.ru",
+                          "Kibab",
+                          SUB_BOTH,
+                          0
+                          );
+      
+      CList_AddMessage("kibab612@jabber.ru", MSG_CHAT, "Привет!");
+      
+}
+
+
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
@@ -485,6 +499,13 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   {
     switch(msg->gbsmsg->submess)
     {
+    
+    case ENTER_BUTTON:
+      {
+        Display_Message_List(CList_GetActiveContact());
+        break;
+      }
+    
     case LEFT_SOFT:
       //      if (cltop) remake_clmenu();
       break;
@@ -506,7 +527,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }      
     case '4':
       {
-        CList_RedrawCList();
+        Debug_Add_Cont_Mess();
         break;
       }
     
@@ -741,6 +762,7 @@ void UpdateCSMname(void)
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SieJC",ws);
   FreeWS(ws);
 }
+
 
 
 int main()

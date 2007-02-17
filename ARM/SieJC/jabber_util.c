@@ -158,6 +158,35 @@ void Send_Roster_Query()
 #endif  
 }
 
+unsigned int m_num=0;
+
+// Context: HELPER
+void SendMessage(char* jid, char* body)
+{
+/*
+  <message to='romeo@montague.net' id='message22'>
+      <body>Art thou not Romeo, and a Montague?</body>
+      <x xmlns='jabber:x:event'>
+        <offline/>
+        <delivered/>
+        <displayed/>
+        <composing/>
+      </x>
+    </message>
+*/
+  // ¬ќќЅў≈, по-хорошему, надо преобразовывать жиды в UTF8, ибо есть
+  // подонки с русскими жидами
+  //WSHDR* ws_jid=AllocWS(1024);
+  //str_2ws(ws_jid,jid, strlen(jid));
+  char mes_template[]="<message to='%s' id='SieJC_%d'><body>%w</body></message>";
+  char* msg_buf = malloc(2048);
+  sprintf(msg_buf, mes_template, jid, m_num, body);
+  mfree(body);
+  SendAnswer(msg_buf);
+  mfree(msg_buf);
+  m_num++;
+}
+
 // Context: HELPER
 void Report_VersionInfo(char* id, char *to)
 {

@@ -12,8 +12,15 @@ unsigned int Active_page = 1;
 unsigned int N_cont_disp=0;
 unsigned int CursorPos = 1;
 
+TRESOURCE* ActiveContact = NULL;
+
 extern char logmsg[512];
 extern const unsigned short PRES_COLORS[PRES_COUNT];
+
+TRESOURCE* CList_GetActiveContact()
+{
+  return ActiveContact;
+}
 
 void CList_RedrawCList()
 {
@@ -44,7 +51,11 @@ void CList_RedrawCList()
       {
         if(i>(Active_page-1)*N_cont_disp)
         {
-          if(i==CursorPos){cur[0]='>';}else{cur[0]=' ';}
+          if(i==CursorPos)
+          {
+            cur[0]='>';
+            ActiveContact = resEx;
+          }else{cur[0]=' ';}
           //wsprintf(out_ws,"%s TEST %d", cur, i);
           if(resEx->name)
           {
@@ -189,7 +200,6 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       TRESOURCE* ResEx=malloc(sizeof(TRESOURCE));//ClEx->res_list;
       char *resname_ptr=Get_Resource_Name_By_FullJID(jid);
       ResEx->name = malloc(strlen(resname_ptr)+1);
-//      strcpy(ResEx->name, "(dummy)");
       ResEx->full_name = malloc(strlen(jid)+1);
       strcpy(ResEx->full_name, jid);
       strcpy(ResEx->name, resname_ptr);
@@ -320,31 +330,22 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   CLIST* contEx = CList_FindContactByJID(jid);
   if(!contEx)
   {
-//    LockSched();
-//    ShowMSG(1,(int)"No contact for message found!");
-//    UnlockSched();
     Log("MESS_LOST",mtext);
     return;
   }
   TRESOURCE* cont = CList_IsResourceInList(jid);
   if(!cont)
   {
-    // У контакта нет ресурсов или такого ресурса нет. В общую кучу добавим.
-//    LockSched();
-//    ShowMSG(1,(int)"Message added to default resource!");
-//    UnlockSched();
-    Add2History(contEx, datestr,mtext);
-    contEx->res_list->has_unread_msg++;
-    return;
+    // У контакта нет ресурсов или такого ресурса нет. Добавляем на первый же.
+    // Такая ситуация, скорее всего, возникает, если у контакта ресурсов не 
+    // бывает в принципе (MRIM)
+    cont=contEx->res_list;
   }
-  
-//  LockSched();
-//  ShowMSG(1,(int)"Resource for message found OK!");
-//  UnlockSched();
   
   cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   mess->mess = malloc(strlen(mtext)+1);
+  strcpy(mess->mess, mtext);
   mess->mtype=mtype;
   LockSched();
   if(!cont->log)

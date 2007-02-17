@@ -83,4 +83,6 @@ IN:
 OUT:  результирующий буфер. 
 */
 void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact);
+
+void SendMessage(char* jid, char* body);
 #endif
