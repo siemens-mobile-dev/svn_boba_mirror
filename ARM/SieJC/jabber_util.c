@@ -327,7 +327,93 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   }  
 }
 
+/*
+  Преобразование буфера данных из кодировки UTF-8 в ANSI
+IN:
+  - tmp_out: куда положить результат. Буфер уже должен существовать
+             и в нем должно быть достаточно места
+  - UTF8_str: откуда брать данные для преобразования
+  - size: сколько длина буфера для преобразования (UTF8_str)
+  - fact - куда положить итоговый размер данных в буфере
 
+OUT:  результирующий буфер. 
+*/
+void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact)
+{
+  // Рассматривая строку UTF8 как обычную, определяем её длину
+  if(!UTF8_str)return NULL;
+  int st_len = size;
+
+  // Выделяем память - на всякий случай столько же. Это предельный случай,
+  // когда весь поступивший буфер - на русском языке. Реально будет, скорее всего,
+  // занято меньше, посему в конце сделаем realloc
+  int lastchar = 0;
+  int dummy;
+  //char* tmp_out =dest_buffer;// malloc(st_len); // для 0x00 место не резервируем, нах его
+  char chr, chr2, chr3;
+  for(int i=0;i<st_len;i++)
+  {
+  chr = (*(UTF8_str+i));
+
+	if (chr<0x80)
+        {
+          *(tmp_out+lastchar)=chr;
+          lastchar++;
+          goto L_END_CYCLE;
+        }
+	if (chr<0xc0)
+        {
+          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr<0xC0)");
+          mfree(tmp_out);
+          return NULL;
+        }
+	
+        chr2 = *(UTF8_str+i+1);
+
+        if (chr2<0x80)
+        {
+          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");          
+          mfree(tmp_out);
+          return NULL;
+        }
+	
+	if (chr<0xe0) {
+	    // cx, dx 
+	    char test1 = (chr & 0x1f)<<6;
+            char test2 = chr2 & 0x3f;
+            *(tmp_out+lastchar)= test1 | test2 + 127 + 0x31;
+            i++;
+            lastchar++;
+            goto L_END_CYCLE;
+	}
+	if (chr<0xf0) {
+	    // cx, dx 
+	    chr3= *(UTF8_str+i+2);
+
+	    if (chr3<0x80)
+            {
+              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");          
+              mfree(tmp_out);
+              return NULL;
+            }              
+	    else
+            {
+              *(tmp_out+lastchar) =  ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
+              i=i+2;
+            }
+	}
+
+  L_END_CYCLE:
+    dummy++;
+  }
+  tmp_out = realloc(tmp_out,lastchar);
+  *fact = lastchar;
+  return tmp_out;
+}
+
+
+/*
+// Строковый вариант
 char* convUTF8_to_ANSI(char *UTF8_str)
 {
   // Рассматривая строку UTF8 как обычную, определяем её длину
@@ -399,3 +485,4 @@ char* convUTF8_to_ANSI(char *UTF8_str)
   tmp_out = realloc(tmp_out,st_len+1);
   return tmp_out;
 }
+*/

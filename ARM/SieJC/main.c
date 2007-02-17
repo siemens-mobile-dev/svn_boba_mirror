@@ -302,10 +302,18 @@ void get_answer(void)
     
     // ÍÀÄÎ ÎÑÂÎÁÎÄÈÒÜ Â MMI!
     IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Ñàìà ñòğóêòóğà
+    
     tmp_buffer->xml_buffer = malloc(bytecount);          // Áóôåğ â ñòğóêòóğå
-    zeromem(tmp_buffer->xml_buffer, bytecount);
-    tmp_buffer->buf_size = bytecount;
     get_buf_part(tmp_buffer->xml_buffer, bytecount);
+
+    // Áëî÷íîå êîíâåğòèğîâàíèå UTF8->ANSI
+    char* conv_buf=malloc(bytecount);
+    int conv_size;
+    conv_buf = convUTF8_to_ANSI(conv_buf,tmp_buffer->xml_buffer, bytecount, &conv_size);
+    mfree(tmp_buffer->xml_buffer);
+    tmp_buffer->buf_size = conv_size;
+    tmp_buffer->xml_buffer = conv_buf;
+
     processed_pos = virt_buffer_len;
 
     // Ïîñûëàåì â MMI ñîîáùåíèå ñ áóôåğîì
@@ -461,41 +469,6 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 
 void Test_UTF()
 {
-  volatile int hFile;
-  unsigned int io_error = 0;
-  // Îòêğûâàåì ôàéë íà äîçàïèñü è ñîçäà¸ì â ñëó÷àå íåóäà÷è
-  hFile = fopen("4:\\test.txt",A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
-  if(io_error)
-  {
-   ShowMSG(1,(int)"IO Error in fopen"); 
-   return;
-  }
-  int len = lseek(hFile,0,S_END, &io_error, &io_error);
-  lseek(hFile,0,0,&io_error, &io_error);
-  char* buf = malloc(len);
-  zeromem(buf,len);
-  fread(hFile,buf,len, &io_error);
-  if(!io_error)
-  {
-    //ShowMSG(1,(int)buf);
-    //WSHDR* ws = AllocWS(256);
-    int xz = strlen(buf);
-    char m[20];
-    sprintf(m,"L=%d", xz);
-    //ShowMSG(1,(int)m);
-    char* ex = convUTF8_to_ANSI(buf);
-    ShowMSG(1,(int)ex);
-    mfree(ex);
-    //str_2ws(ws, buf, len);
-    //DrawString(ws,3,13,131,175,SMALL_FONT,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));   
-    //FreeWS(ws);
-  }
-  else
-  {
-    ShowMSG(1,(int)"IO Error in fread");
-  }
-  fclose(hFile, &io_error);
-  mfree(buf);
 }
 
 void QuitCallbackProc(int decision)
@@ -656,7 +629,10 @@ void do_reconnect(void)
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
- 
+  if(Quit_Required)
+  {
+    csm->csm.state=-3;
+  }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)

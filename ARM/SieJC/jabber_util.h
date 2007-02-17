@@ -62,7 +62,20 @@ void Process_Presence_Change(XMLNode* node);
 */
 void Process_Incoming_Message(XMLNode* nodeEx);
 
+// kibab612@jabber.ru/SieJC  => SieJC
 char* Get_Resource_Name_By_FullJID(char* full_jid);
 
-char* convUTF8_to_ANSI(char *UTF8_str);
+
+/*
+  Преобразование буфера данных из кодировки UTF-8 в ANSI
+IN:
+  - tmp_out: куда положить результат. Буфер уже должен существовать
+             и в нем должно быть достаточно места
+  - UTF8_str: откуда брать данные для преобразования
+  - size: сколько длина буфера для преобразования (UTF8_str)
+  - fact - куда положить итоговый размер данных в буфере
+
+OUT:  результирующий буфер. 
+*/
+void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact);
 #endif
