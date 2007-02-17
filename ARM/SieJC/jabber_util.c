@@ -3,6 +3,7 @@
 #include "history.h"
 #include "main.h"
 #include "clist_util.h"
+#include "jabber_util.h"
 #include "xml_parser.h"
 #include "jabber.h"
 
@@ -186,16 +187,18 @@ void FillRoster(XMLNode* items)
 {
   XMLNode* rostEx = items;
   int i=0;
+  char* name;
   while(rostEx)
   {
     
     JABBER_SUBSCRIPTION r_subscr=GetSubscrType(XML_Get_Attr_Value("subscription",rostEx->attr));
-
+    name = XML_Get_Attr_Value("name",rostEx->attr);//convUTF8_to_ANSI(XML_Get_Attr_Value("name",rostEx->attr));
     CList_AddContact(XML_Get_Attr_Value("jid",rostEx->attr),
-                          XML_Get_Attr_Value("name",rostEx->attr),
+                          name,
                           r_subscr,
                           0
                           );
+   //if(name)mfree(name);
     
    rostEx=rostEx->next;
    i++;
@@ -324,22 +327,23 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   }  
 }
 
-/*
+
 char* convUTF8_to_ANSI(char *UTF8_str)
 {
   // Рассматривая строку UTF8 как обычную, определяем её длину
+  if(!UTF8_str)return NULL;
   int st_len = strlen(UTF8_str);
 
   // Выделяем память - на всякий случай дохера
   int lastchar = 0;
-  char* tmp_out = malloc(st_len*3);
-  
-  int chr, chr2, chr3;
+  int dummy;
+  char* tmp_out = malloc(st_len+1);
+  zeromem(tmp_out,st_len+1);
+  char chr, chr2, chr3;
   for(int i=0;i<st_len;i++)
   {
-  chr = (int)(UTF8_str+i) && 0xFF;
-//	if( chr == 0xFF ) break; // end of stream // Походу этого не нужно
-	
+  chr = (*(UTF8_str+i));
+
 	if (chr<0x80)
         {
           *(tmp_out+lastchar)=chr;
@@ -348,29 +352,50 @@ char* convUTF8_to_ANSI(char *UTF8_str)
         }
 	if (chr<0xc0)
         {
-          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");
+          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr<0xC0)");
+          mfree(tmp_out);
           return NULL;
         }
 	
-        chr = (int)(UTF8_str+i+1) && 0xFF;
-        if (chr2==0xff) return -1;
-        if (chr2<0x80) throw new IOException("Bad UTF-8 Encoding encountered");
+        chr2 = *(UTF8_str+i+1);
+
+        if (chr2<0x80)
+        {
+          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");          
+          mfree(tmp_out);
+          return NULL;
+        }
 	
 	if (chr<0xe0) {
 	    // cx, dx 
-	    return ((chr & 0x1f)<<6) | (chr2 &0x3f);
+	    char test1 = (chr & 0x1f)<<6;
+            char test2 = chr2 & 0x3f;
+            *(tmp_out+lastchar)= test1 | test2 + 127 + 0x31;
+            i++;
+            lastchar++;
+            goto L_END_CYCLE;
 	}
 	if (chr<0xf0) {
 	    // cx, dx 
-	    int chr3= chRead() &0xff;
-	    if (chr3==0xff) return -1;
-	    if (chr3<0x80) throw new IOException("Bad UTF-8 Encoding encountered");
-	    else return ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
+	    chr3= *(UTF8_str+i+2);
+
+	    if (chr3<0x80)
+            {
+              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");          
+              mfree(tmp_out);
+              return NULL;
+            }              
+	    else
+            {
+              *(tmp_out+lastchar) =  ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
+              i=i+2;
+            }
 	}
-	
-	//System.out.print((char)j);
-	return -1;
+
   L_END_CYCLE:
+    dummy++;
   }
+  st_len = strlen(tmp_out);
+  tmp_out = realloc(tmp_out,st_len+1);
+  return tmp_out;
 }
-*/

@@ -64,4 +64,5 @@ void Process_Incoming_Message(XMLNode* nodeEx);
 
 char* Get_Resource_Name_By_FullJID(char* full_jid);
 
+char* convUTF8_to_ANSI(char *UTF8_str);
 #endif

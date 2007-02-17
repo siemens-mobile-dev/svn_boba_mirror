@@ -64,6 +64,9 @@ char logmsg[512];
 
 JABBER_STATE Jabber_state = JS_NOT_CONNECTED;
 
+// Флаг необходимости завершить работу
+char Quit_Required = 0;
+
 int connect_state=0;
 /*
 0 = OffLine
@@ -375,16 +378,17 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   if(data)
   {
 //#ifdef LOG_ALL
-    SaveTree(data);
+//    SaveTree(data);
 //#endif
     Process_Decoded_XML(data);
     DestroyTree(data);
   }
+/*  
     char* tmp_buf=malloc(xmlbuf->buf_size+1);
     zeromem(tmp_buf,xmlbuf->buf_size+1);
     memcpy(tmp_buf,xmlbuf->xml_buffer,xmlbuf->buf_size);
     SUBPROC((void*)__log,tmp_buf, xmlbuf->buf_size);
-
+*/
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);    
@@ -473,10 +477,18 @@ void Test_UTF()
   fread(hFile,buf,len, &io_error);
   if(!io_error)
   {
-    ShowMSG(1,(int)buf);
-    WSHDR* ws = AllocWS(256);
-    str_2ws(ws, buf, len);
-    FreeWS(ws);    
+    //ShowMSG(1,(int)buf);
+    //WSHDR* ws = AllocWS(256);
+    int xz = strlen(buf);
+    char m[20];
+    sprintf(m,"L=%d", xz);
+    //ShowMSG(1,(int)m);
+    char* ex = convUTF8_to_ANSI(buf);
+    ShowMSG(1,(int)ex);
+    mfree(ex);
+    //str_2ws(ws, buf, len);
+    //DrawString(ws,3,13,131,175,SMALL_FONT,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));   
+    //FreeWS(ws);
   }
   else
   {
@@ -486,8 +498,20 @@ void Test_UTF()
   mfree(buf);
 }
 
+void QuitCallbackProc(int decision)
+{
+  if(!decision)Quit_Required = 1;
+}
+
+void DisplayQuitQuery()
+{
+  ShowDialog_YesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);  
+}
+
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
+  if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+
   //DirectRedrawGUI();
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
@@ -497,7 +521,8 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       //      if (cltop) remake_clmenu();
       break;
     case RIGHT_SOFT:
-      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      DisplayQuitQuery();
+      //return(1);
     case GREEN_BUTTON:
       if ((connect_state==0)&&(sock==-1))
       {
@@ -558,10 +583,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   //  onRedraw(data);
   return(0);
 }
-//void onDestroy(MAIN_GUI *data, void (*mfree_adr)(void *))
-//{
-//  mfree_adr(data);
-//}
 
 int method8(void){return(0);}
 
@@ -596,28 +617,29 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
-  //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
-  SUBPROC((void *)create_connect);
   XMLBuffer = malloc(XML_BUFFER_SIZE);
   zeromem(XMLBuffer, XML_BUFFER_SIZE);
+ 
+  SUBPROC((void *)create_connect);
   
-  //void* Process_XML_Packet_ADR = (void*)Process_XML_Packet;
-  //void* Process_Decoded_XML_ADR = (void*) Process_Decoded_XML;
-  //char msg[60];
-  //sprintf(msg,"@Process_XML_Packet=0x%X\r\n@Process_Decoded_XML=0x%X",Process_XML_Packet_ADR, Process_Decoded_XML_ADR);
-  //Log("SYSTEM", msg);
+  // Определим адреса некоторых процедур, на случай,
+  // если клиент будет падать - там могут быть аборты...
+  void* Process_XML_Packet_ADR = (void*)Process_XML_Packet;
+  void* Process_Decoded_XML_ADR = (void*) Process_Decoded_XML;
+  char msg[80];
+  sprintf(msg,"@Process_XML_Packet=0x%X, @Process_Decoded_XML=0x%X\r\n",Process_XML_Packet_ADR, Process_Decoded_XML_ADR);
+  Log("SYSTEM", msg);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-  //  GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
   CList_Destroy();
   mfree(XMLBuffer);
-  //  MutexDestroy(&contactlist_mtx);
+
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ElfKiller);
 }
@@ -633,7 +655,6 @@ void do_reconnect(void)
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
-  //  char ss[100];
   MAIN_CSM *csm=(MAIN_CSM*)data;
  
   if (msg->msg==MSG_GUI_DESTROYED)
@@ -652,7 +673,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       return(1);
     case LMAN_CONNECT_CNF:
       is_gprs_online=1;
-      //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
       return(1);
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
@@ -666,7 +686,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       //Если наш сокет
       if ((((unsigned int)msg->data0)>>28)==0xA)
       {
-        //Пакет XML-данных готов к обработке и передаётся на обработку в MMI
+        //Пакет XML-данных готов к обработке и передаётся на обработку в контексте MMI
         Process_XML_Packet((IPC_BUFFER*)msg->data0);
         return(0);
       }

@@ -114,7 +114,7 @@ CLIST* CList_FindContactByJID(char* jid)
   CLIST* ClEx = cltop;
   while(ClEx)
   {
-    if(strstr(jid,ClEx->JID))
+    if(strstr(jid,ClEx->JID)==jid)
     {
       UnlockSched();
       return ClEx;
@@ -171,7 +171,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
   while(ClEx)
   {
     
-    if(strstr(jid,ClEx->JID))
+    if(strstr(jid,ClEx->JID)==jid) // Ага, именно так, ибо это соответствует началу строки!
     {
       TRESOURCE* ResEx=malloc(sizeof(TRESOURCE));//ClEx->res_list;
       char *resname_ptr=Get_Resource_Name_By_FullJID(jid);
