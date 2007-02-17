@@ -476,7 +476,6 @@ void Test_UTF()
     ShowMSG(1,(int)buf);
     WSHDR* ws = AllocWS(256);
     str_2ws(ws, buf, len);
-    wstrcpy();
     FreeWS(ws);    
   }
   else

@@ -194,11 +194,13 @@ void *XMLDecode(char *buf, int size){
  zeromem(Text,size);
  MSState = MS_BEGIN;
  TagState = TS_INDEFINITE;
-// char c;
+ char sh_str[2]=".\0";
  int i = 0;
 
 	while ((i<size)){
             char c = *(buf+i);
+            sh_str[0]=c;
+            
 	    switch (MSState){
 		case MS_BEGIN:
 			if (c == '<'){
@@ -215,11 +217,11 @@ void *XMLDecode(char *buf, int size){
 			if (IsLit (c)){
 				MSState = MS_TAGNAME;
 				TagState = TS_NORMAL;
-                                strcpy(TagName,&c);
+                                strcpy(TagName,sh_str);
                                 //memcpy(TagName,&c,1);
-                                char q[20];
-                                int l = strlen(&c);
-                                sprintf(q,"l(%s)=%d",TagName,l);
+                                //char q[20];
+                                //int l = strlen(&c);
+                                //sprintf(q,"l(%s)=%d",TagName,l);
                                 //ShowMSG(1,(int)q);
                                 
 			}else if (IsSpace(c)){
@@ -241,7 +243,7 @@ void *XMLDecode(char *buf, int size){
 		case MS_MIDDLETAG:
 			if (IsLit (c)){
 				MSState = MS_TAGNAME;
-				strcpy(TagName,&c);
+				strcpy(TagName,sh_str);
 			}else if (!IsSpace (c)){
 				Finish();
 				return XMLTree;//0;
@@ -251,7 +253,7 @@ void *XMLDecode(char *buf, int size){
 
 		case MS_TAGNAME:
 			if (InName (c)){
-				strcat(TagName,&c);
+				strcat(TagName,sh_str);
 			}else if (IsSpace(c)){
 				MSState = MS_ENDTAGNAME;
 			}else if (c == '/'){
@@ -270,7 +272,7 @@ void *XMLDecode(char *buf, int size){
 		case MS_ENDTAGNAME:
 			if (IsLit (c)){
 				MSState = MS_ATTRIBNAME;
-				strcpy(AttrName,&c);
+				strcpy(AttrName,sh_str);
 			}else if (c == '/'){
 				MSState = MS_ENDTAG;
 				TagState = TS_EMPTY;
@@ -286,7 +288,7 @@ void *XMLDecode(char *buf, int size){
 
 		case MS_ATTRIBNAME:
 			if (InName(c)){
-				strcat(AttrName,&c);
+				strcat(AttrName,sh_str);
 			}else if (c == '='){
 				MSState = MS_ENDEQUALLY;
 			}else if (IsSpace(c)){
@@ -324,7 +326,7 @@ void *XMLDecode(char *buf, int size){
 				MSState = MS_ENDTAGNAME;
 				EndAttr();
 			}else{
-				strcat(AttrValue,&c);
+				strcat(AttrValue,sh_str);
 			}
 			break;
 
@@ -350,7 +352,7 @@ void *XMLDecode(char *buf, int size){
                           MSState = MS_BEGINTAG;
                           TagState = TS_INDEFINITE;
 			}else{
-                          if((TagState == TS_NORMAL)) strcat(Text,&c);
+                          if((TagState == TS_NORMAL)) strcat(Text,sh_str);
                         }
 			break;
 		}
