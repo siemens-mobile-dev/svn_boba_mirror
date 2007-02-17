@@ -21,6 +21,9 @@ extern char logmsg[];
 
 extern JABBER_STATE Jabber_state;
 
+const char* PRESENCES[PRES_COUNT] = {"online", "unavailable", "error", "chat", "away", "xa", "dnd", "invisible"};
+const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        22,             14,     16,     3,      18,   2,      20};
+
 
 /*
   Посылка стандартного Jabber Iq
@@ -303,10 +306,30 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
 void Process_Presence_Change(XMLNode* node)
 {
   char* from = XML_Get_Attr_Value("from",node->attr);
-  // ВРЕМЕННО, потом надо заменить на код!
-  char status = 0;
-  char* msg=NULL;
   if(!from)return;
+  
+  char status;
+  char* msg=NULL;
+  char* pr_type = XML_Get_Attr_Value("type",node->attr);
+  if(pr_type)
+  {
+    status = GetPresenceIndex(pr_type);    
+  }
+  else
+  {
+    XMLNode* status_node = XML_Get_Child_Node_By_Name(node,"show");
+    if(!status_node)
+    {
+      status = PRESENCE_ONLINE;
+    }
+    else
+    {
+      status = GetPresenceIndex(status_node->value);    
+    }
+    
+    XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"show");
+    if(statusmsg_node)msg = statusmsg_node->value;
+  }  
   CList_AddResourceWithPresence(from, status, msg);
 }
 
@@ -326,6 +349,20 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
   }  
 }
+
+/*
+Получить внутренний номер данного типа присутствия по строке с присутсвием
+*/
+unsigned short GetPresenceIndex(char* presence_str)
+{
+  if(!presence_str)return 0;
+  for(int i=0;i<PRES_COUNT;i++)
+  {
+    if(!strcmp(presence_str, PRESENCES[i]))return i;
+  }
+  return 0;
+}
+
 
 /*
   Преобразование буфера данных из кодировки UTF-8 в ANSI

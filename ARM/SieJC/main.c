@@ -29,7 +29,6 @@
 Что нужно сделать в первую очередь:
  - Избавиться от падений клиента
  - Придумать, как обращаться с контактами не из списка контактов
- - Обработка смены статуса
  - Чтение сообщений
  - Написание и отсылка сообщений
 =====================================================
@@ -45,7 +44,7 @@ extern const char USERNAME[];
 extern const char PASSWORD[];   
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Sie natJabber Client";
-const char VERSION_VERS[] = "0.1";
+const char VERSION_VERS[] = "0.2";
 
 #ifdef NEWSGOLD
 const char OS[] = "NewSGOLD_ELF-Platform";
@@ -467,10 +466,6 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
-void Test_UTF()
-{
-}
-
 void QuitCallbackProc(int decision)
 {
   if(!decision)Quit_Required = 1;
@@ -513,11 +508,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       {
         CList_RedrawCList();
         break;
-      }
-
-    case '5':
-      {
-        Test_UTF();
       }
     
     case DOWN_BUTTON:

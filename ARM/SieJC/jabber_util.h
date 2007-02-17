@@ -10,6 +10,7 @@
 
 #include "xml_parser.h"
 
+#define PRES_COUNT 8
 /*
   Посылка стандартного Jabber Iq
 */
@@ -65,6 +66,10 @@ void Process_Incoming_Message(XMLNode* nodeEx);
 // kibab612@jabber.ru/SieJC  => SieJC
 char* Get_Resource_Name_By_FullJID(char* full_jid);
 
+/*
+Получить внутренний номер данного типа присутствия по строке с присутсвием
+*/
+unsigned short GetPresenceIndex(char* presence_str);
 
 /*
   Преобразование буфера данных из кодировки UTF-8 в ANSI

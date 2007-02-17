@@ -13,6 +13,7 @@ unsigned int N_cont_disp=0;
 unsigned int CursorPos = 1;
 
 extern char logmsg[512];
+extern const unsigned short PRES_COLORS[PRES_COUNT];
 
 void CList_RedrawCList()
 {
@@ -54,7 +55,7 @@ void CList_RedrawCList()
             wsprintf(out_ws,"%s %d %s", cur, resEx->has_unread_msg, ClEx->name);
           }
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
-          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=CLIST_F_COLOR_1;}
+          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=PRES_COLORS[resEx->status];}
           DrawString(out_ws,3,start_y,scr_w-4,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
         }
         i++;
@@ -151,7 +152,19 @@ void CList_Ch_Status(TRESOURCE* resource,
                        char* status_msg
                        )
 {
-  
+  LockSched();
+  if(resource->status_msg)
+  {
+    mfree(resource->status_msg);
+    resource->status_msg = NULL;
+  }
+  if(status_msg)
+  {
+    resource->status_msg = malloc(strlen(status_msg)+1);
+    strcpy(resource->status_msg, status_msg);
+  }
+  resource->status = status;
+  UnlockSched();
 }
 
 
@@ -262,7 +275,7 @@ CLIST* CList_AddContact(char* jid,
   TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
   ResEx->log=NULL;
   ResEx->next=NULL;
-  ResEx->status=0;
+  ResEx->status=PRESENCE_OFFLINE;
   ResEx->status_msg=NULL;
   ResEx->has_unread_msg=0;
   ResEx->virtual=1; // По этому признаку потом его убъём

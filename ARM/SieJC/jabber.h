@@ -60,4 +60,12 @@ typedef enum {
 	ROLE_MODERATOR
 } JABBER_GC_ROLE;
 
+////////////////////
+#define PRESENCE_ONLINE 0
+#define PRESENCE_CHAT 3
+#define PRESENCE_AWAY 4
+#define PRESENCE_XA 5
+#define PRESENCE_DND 6
+#define PRESENCE_OFFLINE 1
+#define PRESENCE_INVISIBLE 7
 #endif
