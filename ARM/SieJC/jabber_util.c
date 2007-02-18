@@ -4,8 +4,10 @@
 #include "main.h"
 #include "clist_util.h"
 #include "jabber_util.h"
+#include "string_util.h"
 #include "xml_parser.h"
 #include "jabber.h"
+
 
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];  
@@ -126,12 +128,21 @@ void Send_VReq()
 /*
   Послать своё присутствие (в частности, после этого на нас вываливаются 
   присутствия остальных, а мы появляемся в ресурсах своего контакта)
+
+Параметр message НЕ ДОЛЖЕН уничтожаться в вызывающем контексте!
 */
 // Context: HELPER
-void Send_Presence()
+void Send_Presence(short priority, char status, char* message)
 {
-  char presence[]="<presence><priority>-100</priority><status></status></presence>";
+  extern char My_Presence;
+  My_Presence = status;
+  char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status></presence>";
+  char* presence = malloc(1024);
+  snprintf(presence,1024,presence_template, priority, PRESENCES[status], message);
   SendAnswer(presence);
+  //Log("STATUS", presence);
+  mfree(presence);
+  mfree(message);
   LockSched();
   strcpy(logmsg,"Send presence");
   UnlockSched();
@@ -151,6 +162,34 @@ void Send_Roster_Query()
 
 unsigned int m_num=0;
 
+char* Correct_UTF8_String(char* utf8_jid)
+{
+  int l = strlen(utf8_jid);
+  int j=0;
+  for(int i=0; i<l;i++)
+  {
+    if(utf8_jid[i]!=0x1F)
+    {
+      utf8_jid[j]=utf8_jid[i];
+      j++;      
+    }
+  }
+  utf8_jid[j]='\0';
+  utf8_jid = realloc(utf8_jid, j+1);
+  return utf8_jid;
+}
+
+char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
+{
+  WSHDR* ws_str = AllocWS(maxlen*2);
+  ascii2ws(ws_str, ansi_str);
+  char* utf8_str = malloc(maxlen*2);
+  ws_2str(ws_str, utf8_str, maxlen*2);
+  FreeWS(ws_str);
+  utf8_str = Correct_UTF8_String(utf8_str);
+  return utf8_str;
+}
+
 // Context: HELPER
 void SendMessage(char* jid, char* body)
 {
@@ -167,38 +206,33 @@ void SendMessage(char* jid, char* body)
 */
   
   // Извратимся с JID 
-  char IsNonLatin=0; // Нет латинских символов
-  int jlen=strlen(jid);
-  for(int i=0;i<jlen;i++)
-  {
-    if(*(jid+i)>127)IsNonLatin=1;
-  }
+//  char IsNonLatin=0; // Нет латинских символов
+//  int jlen=strlen(jid);
+//  for(int i=0;i<jlen;i++)
+//  {
+//    if(*(jid+i)>127)IsNonLatin=1;
+//  }
   
-  if(IsNonLatin)
-  {
-    LockSched();
-    ShowMSG(0,(int)"Отправка сообщения контакту с русским JID невозможна!");
-    UnlockSched();
-    mfree(body);
-    return;
-  }
+  WSHDR* ws_jid = AllocWS(128);
+  ascii2ws(ws_jid, jid);
+  char* utf8_jid = malloc(132);
+  ws_2str(ws_jid, utf8_jid, 132);
+  FreeWS(ws_jid);
+
+  utf8_jid = Correct_UTF8_String(utf8_jid);
+  
   char first_sym=*body;
-  char* real_body;
-  if(first_sym==0x1F)
-  {
-    real_body = body +1;    
-  }
-  else
-  {
-    real_body=body;
-  }
+  char* real_body = first_sym==0x1F ?  body +1 : body;
   char mes_template[]="<message to='%s' id='SieJC_%d' type='chat'><body>%s</body></message>";
   char* msg_buf = malloc(2048);
-  sprintf(msg_buf, mes_template, jid, m_num, real_body);
+  sprintf(msg_buf, mes_template, /*jid*/utf8_jid, m_num, real_body);
   mfree(body);
+  mfree(utf8_jid);
+#ifdef LOG_ALL
   LockSched();
   Log("MESS_OUT", msg_buf);
   UnlockSched();
+#endif
   SendAnswer(msg_buf);
   mfree(msg_buf);
   m_num++;
@@ -232,10 +266,32 @@ char* Get_Resource_Name_By_FullJID(char* full_jid)
   return res_name;
 }
 
+//Context: HELPER
+void Send_Initial_Presence_Helper()
+{
+  char ansi_msg[]="Тута я :)!";
+  char *message = ANSI2UTF8(ansi_msg, strlen(ansi_msg));
+  Send_Presence(16, PRESENCE_ONLINE, message);
+}
+
+// пока это вместо всего:)))))
+//Context: HELPER
+void Send_Away_Presence_Helper()
+{
+  TTime now_time;
+  TDate now_date;
+  GetDateTime(&now_date,&now_time);
+  char away_msg_template[]="Отсутствую с %02d:%02d, буду позже.";
+  snprintf(away_msg_template,strlen(away_msg_template), away_msg_template, now_time.hour,now_time.min);
+  char *message = ANSI2UTF8(away_msg_template, strlen(away_msg_template));
+  Send_Presence(-16, PRESENCE_AWAY, message);
+}
+
+
 // Для вызова таймером
 void Send_Presence_MMIStub()
 {
-  SUBPROC((void*)Send_Presence);
+  SUBPROC((void*)Send_Initial_Presence_Helper);
 }
 
 
@@ -419,164 +475,3 @@ unsigned short GetPresenceIndex(char* presence_str)
   }
   return 0;
 }
-
-
-/*
-  Преобразование буфера данных из кодировки UTF-8 в ANSI
-IN:
-  - tmp_out: куда положить результат. Буфер уже должен существовать
-             и в нем должно быть достаточно места
-  - UTF8_str: откуда брать данные для преобразования
-  - size: сколько длина буфера для преобразования (UTF8_str)
-  - fact - куда положить итоговый размер данных в буфере
-
-OUT:  результирующий буфер. 
-*/
-void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact)
-{
-  // Рассматривая строку UTF8 как обычную, определяем её длину
-  if(!UTF8_str)return NULL;
-  int st_len = size;
-
-  // Выделяем память - на всякий случай столько же. Это предельный случай,
-  // когда весь поступивший буфер - на русском языке. Реально будет, скорее всего,
-  // занято меньше, посему в конце сделаем realloc
-  int lastchar = 0;
-  int dummy;
-  //char* tmp_out =dest_buffer;// malloc(st_len); // для 0x00 место не резервируем, нах его
-  char chr, chr2, chr3;
-  for(int i=0;i<st_len;i++)
-  {
-  chr = (*(UTF8_str+i));
-
-	if (chr<0x80)
-        {
-          *(tmp_out+lastchar)=chr;
-          lastchar++;
-          goto L_END_CYCLE;
-        }
-	if (chr<0xc0)
-        {
-          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr<0xC0)");
-          mfree(tmp_out);
-          return NULL;
-        }
-	
-        chr2 = *(UTF8_str+i+1);
-
-        if (chr2<0x80)
-        {
-          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");          
-          mfree(tmp_out);
-          return NULL;
-        }
-	
-	if (chr<0xe0) {
-	    // cx, dx 
-	    char test1 = (chr & 0x1f)<<6;
-            char test2 = chr2 & 0x3f;
-            *(tmp_out+lastchar)= test1 | test2 + 127 + 0x31;
-            i++;
-            lastchar++;
-            goto L_END_CYCLE;
-	}
-	if (chr<0xf0) {
-	    // cx, dx 
-	    chr3= *(UTF8_str+i+2);
-
-	    if (chr3<0x80)
-            {
-              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");          
-              mfree(tmp_out);
-              return NULL;
-            }              
-	    else
-            {
-              *(tmp_out+lastchar) =  ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
-              i=i+2;
-            }
-	}
-
-  L_END_CYCLE:
-    dummy++;
-  }
-  tmp_out = realloc(tmp_out,lastchar);
-  *fact = lastchar;
-  return tmp_out;
-}
-
-
-
-// Строковый вариант
-char* convUTF8_to_ANSI_STR(char *UTF8_str)
-{
-  // Рассматривая строку UTF8 как обычную, определяем её длину
-  if(!UTF8_str)return NULL;
-  int st_len = strlen(UTF8_str);
-
-  // Выделяем память - на всякий случай дохера
-  int lastchar = 0;
-  int dummy;
-  char* tmp_out = malloc(st_len+1);
-  zeromem(tmp_out,st_len+1);
-  char chr, chr2, chr3;
-  for(int i=0;i<st_len;i++)
-  {
-  chr = (*(UTF8_str+i));
-
-	if (chr<0x80)
-        {
-          *(tmp_out+lastchar)=chr;
-          lastchar++;
-          goto L_END_CYCLE;
-        }
-	if (chr<0xc0)
-        {
-          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr<0xC0)");
-          mfree(tmp_out);
-          return NULL;
-        }
-	
-        chr2 = *(UTF8_str+i+1);
-
-        if (chr2<0x80)
-        {
-          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");          
-          mfree(tmp_out);
-          return NULL;
-        }
-	
-	if (chr<0xe0) {
-	    // cx, dx 
-	    char test1 = (chr & 0x1f)<<6;
-            char test2 = chr2 & 0x3f;
-            *(tmp_out+lastchar)= test1 | test2 + 127 + 0x31;
-            i++;
-            lastchar++;
-            goto L_END_CYCLE;
-	}
-	if (chr<0xf0) {
-	    // cx, dx 
-	    chr3= *(UTF8_str+i+2);
-
-	    if (chr3<0x80)
-            {
-              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");          
-              mfree(tmp_out);
-              return NULL;
-            }              
-	    else
-            {
-              *(tmp_out+lastchar) =  ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
-              i=i+2;
-            }
-	}
-
-  L_END_CYCLE:
-    dummy++;
-  }
-  st_len = strlen(tmp_out);
-  tmp_out = realloc(tmp_out,st_len+1);
-  return tmp_out;
-}
-

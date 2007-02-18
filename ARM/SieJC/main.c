@@ -7,34 +7,33 @@
 #include "message_list.h"
 #include "xml_parser.h"
 #include "jabber.h"
+#include "string_util.h"
 #include "jabber_util.h"
 
 /*
 ============== Нативный Jabber-клиент ==============
-Возможности текущей недо-версии ( :) ):
+Возможности текущей версии:
 1. Вход в сеть
 2. Сообщение об этом контакт-листу :)
 3. Процедуры низкого уровня: посылка iq, логина, своего присутствия
 4. Запись потока данных к/от сервера (файл 4:\jlog.txt)
 5. Запись разобранных порций XML-потока (файл 4:\xml_packet.txt)
+6. Приём сообщений
+7. Передача сообщений (только контактам с латинскими JID)
 
 Управление: логиниться к серверу клиент будет автоматически,
 изменение учётных данных - в константах ниже.
 
 Горячие клавиши:
-1 - приводит к посылке авторизации,
-2 - посылке запроса на ростер,
-3 - посылке своего присутсвия
-0 - дисконнект
+1/9 - перемещение в начало/конец списка контактов
+2/8 - вверх/вниз по списку
+0   - показать/спрятать оффлайн-пользователей
 
 Что нужно сделать в первую очередь:
- - Избавиться от падений клиента
  - Придумать, как обращаться с контактами не из списка контактов
- - Чтение сообщений
- - Написание и отсылка сообщений
-=====================================================
+ ====================================================
 (c) Kibab
-(r) Rst7, MasterMindб AD
+(r) Rst7, MasterMind, AD
 
 */
 
@@ -61,6 +60,7 @@ const char empty_str[]="";
 char logmsg[512];
 
 JABBER_STATE Jabber_state = JS_NOT_CONNECTED;
+char My_Presence = PRESENCE_OFFLINE;
 
 // Флаг необходимости завершить работу
 char Quit_Required = 0;
@@ -75,6 +75,7 @@ int connect_state=0;
 int sock=-1;
 
 volatile int is_gprs_online=1;
+
 
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
@@ -477,14 +478,23 @@ void DisplayQuitQuery()
 
 void Debug_Add_Cont_Mess()
 {
-      CList_AddContact("kibab612@jabber.ru",
-                          "Kibab",
-                          SUB_BOTH,
-                          0
-                          );
-      
-      CList_AddMessage("kibab612@jabber.ru", MSG_CHAT, "Привет!");
-      
+  volatile int hFile;
+  unsigned int io_error = 0;
+  hFile = fopen("4:\\test.txt",A_ReadWrite +A_Create+ A_Append + A_BIN,P_READ+P_WRITE, &io_error);
+  char* buffer = malloc(256);
+  if(!io_error)
+  {
+    fread(hFile, buffer, 30, &io_error);
+    ShowMSG(1,(int)buffer);
+    fclose(hFile, &io_error);
+  }
+  else
+  {
+    char q[20];
+    sprintf(q,"ERR %d",io_error);
+    ShowMSG(1,(int)q);
+  }
+  mfree(buffer);
 }
 
 
@@ -543,7 +553,21 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         Debug_Add_Cont_Mess();
         break;
       }
-    
+    case '5':
+      {
+        extern void Send_Initial_Presence_Helper();
+        extern void Send_Away_Presence_Helper();
+        if(My_Presence==PRESENCE_ONLINE)
+        {
+          SUBPROC((void*)Send_Away_Presence_Helper);
+        }
+        else
+        {
+          SUBPROC((void*)Send_Initial_Presence_Helper);
+        }
+        break;
+      }
+      
     case DOWN_BUTTON:
     case '8':
       {
@@ -621,7 +645,7 @@ void maincsm_oncreate(CSM_RAM *data)
   zeromem(XMLBuffer, XML_BUFFER_SIZE);
  
   SUBPROC((void *)create_connect);
-  
+#ifdef LOG_ALL  
   // Определим адреса некоторых процедур, на случай,
   // если клиент будет падать - там могут быть аборты...
   void* Process_XML_Packet_ADR = (void*)Process_XML_Packet;
@@ -629,6 +653,7 @@ void maincsm_oncreate(CSM_RAM *data)
   char msg[80];
   sprintf(msg,"@Process_XML_Packet=0x%X, @Process_Decoded_XML=0x%X\r\n",Process_XML_Packet_ADR, Process_Decoded_XML_ADR);
   Log("SYSTEM", msg);
+#endif
 }
 
 void maincsm_onclose(CSM_RAM *csm)

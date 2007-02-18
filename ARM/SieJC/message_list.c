@@ -4,6 +4,7 @@
 #include "history.h"
 #include "message_list.h"
 #include "jabber_util.h"
+#include "string_util.h"
 
 char MsgList_Quit_Required = 0;
 
@@ -286,14 +287,13 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       
       case UP_BUTTON:
         {
-          if(CurrentPage)CurrentPage--;
+          if(CurrentPage>1)CurrentPage--;
           REDRAW();
           break;         
         }
     case DOWN_BUTTON:
       {
-          //if(CurrentPage<MaxPages)CurrentPage++;
-        CurrentPage++;
+          if(CurrentPage<MaxPages)CurrentPage++;
           REDRAW();
           break;         
       }

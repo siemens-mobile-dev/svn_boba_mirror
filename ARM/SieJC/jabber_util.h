@@ -39,7 +39,7 @@ void Send_Auth();
   присутствия остальных, а мы появляемся в ресурсах своего контакта)
 */
 // Context: HELPER
-void Send_Presence();
+void Send_Presence(short priority, char status, char* message);
 
 /*
   Послать запрос ростера
@@ -71,20 +71,11 @@ char* Get_Resource_Name_By_FullJID(char* full_jid);
 */
 unsigned short GetPresenceIndex(char* presence_str);
 
-/*
-  Преобразование буфера данных из кодировки UTF-8 в ANSI
-IN:
-  - tmp_out: куда положить результат. Буфер уже должен существовать
-             и в нем должно быть достаточно места
-  - UTF8_str: откуда брать данные для преобразования
-  - size: сколько длина буфера для преобразования (UTF8_str)
-  - fact - куда положить итоговый размер данных в буфере
-
-OUT:  результирующий буфер. 
-*/
-void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact);
-
-char* convUTF8_to_ANSI_STR(char *UTF8_str);
-
 void SendMessage(char* jid, char* body);
+
+// UTF8 для джаббера
+char* Correct_UTF8_String(char* utf8_jid);
+
+// А это вообще чтобы всем было хорошо (с) Чеботарёв А.А.
+char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 #endif

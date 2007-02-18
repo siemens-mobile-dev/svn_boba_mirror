@@ -3,6 +3,7 @@
 #include "jabber.h"
 #include "clist_util.h"
 #include "jabber_util.h"
+#include "string_util.h"
 #include "history.h"
 
 CLIST* cltop = NULL;
@@ -21,6 +22,8 @@ TRESOURCE* ActiveContact = NULL;
 
 extern char logmsg[512];
 extern const unsigned short PRES_COLORS[PRES_COUNT];
+extern char My_Presence;
+extern const char* PRESENCES[PRES_COUNT];
 
 TRESOURCE* CList_GetActiveContact()
 {
@@ -86,9 +89,10 @@ void CList_RedrawCList()
   }
   UnlockSched();
 
-//  LockSched();
+  LockSched();
 //  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
-//  UnlockSched();
+  sprintf(logmsg, "Self=%s",PRESENCES[My_Presence]);
+  UnlockSched();
 
   FreeWS(out_ws);
 }
