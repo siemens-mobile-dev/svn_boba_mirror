@@ -218,12 +218,7 @@ void *XMLDecode(char *buf, int size){
 				MSState = MS_TAGNAME;
 				TagState = TS_NORMAL;
                                 strcpy(TagName,sh_str);
-                                //memcpy(TagName,&c,1);
-                                //char q[20];
-                                //int l = strlen(&c);
-                                //sprintf(q,"l(%s)=%d",TagName,l);
-                                //ShowMSG(1,(int)q);
-                                
+
 			}else if (IsSpace(c)){
 				MSState = MS_MIDDLETAG;
 				TagState = TS_NORMAL;

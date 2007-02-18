@@ -32,4 +32,6 @@ void Display_Message_List(TRESOURCE* ContEx);
 
 // Открыть окно написания нового сообщения
 void Init_Message(TRESOURCE* ContEx);
+
+void ParseMessagesIntoList(TRESOURCE* ContEx);
 #endif

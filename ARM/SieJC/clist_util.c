@@ -86,9 +86,9 @@ void CList_RedrawCList()
   }
   UnlockSched();
 
-  LockSched();
-  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
-  UnlockSched();
+//  LockSched();
+//  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
+//  UnlockSched();
 
   FreeWS(out_ws);
 }

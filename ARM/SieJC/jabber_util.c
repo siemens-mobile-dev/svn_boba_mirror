@@ -7,8 +7,7 @@
 #include "xml_parser.h"
 #include "jabber.h"
 
-extern const char JABBER_HOST[];
-extern const unsigned int JABBER_PORT;
+extern const char JABBER_SERVER[];
 extern const char USERNAME[];  
 extern const char PASSWORD[];
 extern const char RESOURCE[];
@@ -66,7 +65,7 @@ void Send_Welcome_Packet()
 {
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en'>";
   char* buf=malloc(256);  
-  sprintf(buf,streamheader,JABBER_HOST);
+  sprintf(buf,streamheader,JABBER_SERVER);
   SendAnswer(buf);
   mfree(buf);
   LockSched();
@@ -103,7 +102,7 @@ char rost_id[] = "SieJC_rost_req";
 //Context: HELPER
 void Send_Auth()
 {
-  sprintf(My_JID, "%s@%s",USERNAME, JABBER_HOST);
+  sprintf(My_JID, "%s@%s",USERNAME, JABBER_SERVER);
   sprintf(My_JID_full,"%s/%s",My_JID, RESOURCE);
   char* payload = malloc(256);
   sprintf(payload,"<username>%s</username>\n<password>%s</password>\n<resource>%s</resource>",USERNAME, PASSWORD, RESOURCE);
@@ -111,9 +110,6 @@ void Send_Auth()
   LockSched();
   strcpy(logmsg,"Send auth");
   UnlockSched();
-#ifdef LOG_ALL
-  Log("USER->", logmsg);
-#endif 
 }
 
 void Send_VReq()
@@ -139,9 +135,6 @@ void Send_Presence()
   LockSched();
   strcpy(logmsg,"Send presence");
   UnlockSched();
-#ifdef LOG_ALL
-  Log("USER->", logmsg);
-#endif 
 }
 
 /*
@@ -154,9 +147,6 @@ void Send_Roster_Query()
   LockSched();
   strcpy(logmsg,"Send roster Q");
   UnlockSched();
-#ifdef LOG_ALL
-  Log("USER->", logmsg);
-#endif  
 }
 
 unsigned int m_num=0;

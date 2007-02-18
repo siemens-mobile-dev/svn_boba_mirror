@@ -9,6 +9,7 @@ char MsgList_Quit_Required = 0;
 
 TRESOURCE* Resource_Ex = NULL;
 
+
 int Message_gui_ID;
 
 
@@ -158,34 +159,36 @@ unsigned int MessList_Count = 0;
 void KillDisp(DISP_MESSAGE* messtop)
 {
   DISP_MESSAGE* cl=messtop;
+  LockSched();
   messtop = NULL;
   while(cl)
   {
     DISP_MESSAGE *p;
-    mfree(cl->mess);
+    if(cl->mess)mfree(cl->mess);
     p=cl;
     cl=cl->next;
     mfree(p);
-  }     
+  }
+  MessList_Count = 0;
+  UnlockSched();  
 }
 
 //===============================================================================================
 
-char CurrentPage=0;
-char MaxPages=0;
+char CurrentPage=1;
+char lines_on_page;
+char MaxPages=1;
 // Обслуживание созданного GUI
 void mGUI_onRedraw(GUI *data)
 {
-
+  
+  KillDisp(MessagesList);
+  ParseMessagesIntoList(Resource_Ex);
+  
   Terminate = 0;
-  if(ws_eddata)
-  {
-    FreeWS(ws_eddata);
-    ws_eddata = NULL;
-  }
   // Расчёт количества строк на одной странице
   unsigned short FontSize = GetFontYSIZE(SMALL_FONT);
-  char lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
+  lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
   MaxPages = sdiv(lines_on_page,MessList_Count);
   // Заголовок окна
   DrawRoundedFrame(0,0,ScreenW()-1,FontSize*2+1,0,0,0,
@@ -207,9 +210,10 @@ void mGUI_onRedraw(GUI *data)
   int i = 0;
   while(ml)
   {
-    if((i_ctrl>=CurrentPage*lines_on_page) && (i_ctrl<(CurrentPage+1)*lines_on_page))
+    if((i_ctrl>=(CurrentPage-1)*lines_on_page) && (i_ctrl<CurrentPage*lines_on_page))
     {
       //str_2ws(ws_title,ml->mess,strlen(ml->mess));
+      
       str_2ws(ws_title,ml->mess,CHAR_ON_LINE);
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
 		   GetPaletteAdrByColorIndex(ml->mtype==MSG_ME ? MESSAGEWIN_MY_BGCOLOR : MESSAGEWIN_CH_BGCOLOR),
@@ -253,6 +257,12 @@ void mGUI_onUnfocus(GUI *data, void (*mfree_adr)(void *))
   data->state=1;
 }
 
+void DbgInfo()
+{
+  char q[200];
+  sprintf(q,"MCnt=%d; P=%d, MP=%d; LP=%d",MessList_Count,CurrentPage, MaxPages,lines_on_page);
+  ShowMSG(1,(int)q);
+}
 
 int mGUI_onKey(GUI *data, GUI_MSG *msg)
 {
@@ -268,6 +278,12 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         return 1;
       }
       
+    case LEFT_SOFT:
+      {
+        DbgInfo();
+        break;
+      }
+      
       case UP_BUTTON:
         {
           if(CurrentPage)CurrentPage--;
@@ -276,7 +292,8 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         }
     case DOWN_BUTTON:
       {
-          if(CurrentPage<MaxPages)CurrentPage++;
+          //if(CurrentPage<MaxPages)CurrentPage++;
+        CurrentPage++;
           REDRAW();
           break;         
       }
@@ -328,18 +345,18 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
 {
   MessList_Count = 0;
   MessagesList = NULL;
-  CurrentPage=0;
-  MaxPages=0;
+  MaxPages=1;
   if(!ContEx)return;
+
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
   int chars;
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;  
   if(!MessEx)return;
+  LockSched();
   // Цикл по всем сообщениям
   while(MessEx)
   {
-    if(!MessEx->mess)return;
     int l=strlen(MessEx->mess);
     cnt=0;
     while(l>0)
@@ -349,7 +366,6 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       Disp_Mess_Ex->mess = malloc(chars+1);
       zeromem(Disp_Mess_Ex->mess, chars+1);
       Disp_Mess_Ex->mtype = MessEx->mtype;
-      //strcpy(Disp_Mess_Ex->mess, MessEx->mess);
       strncpy(Disp_Mess_Ex->mess, MessEx->mess + cnt*CHAR_ON_LINE, chars);
       if(!MessagesList){MessagesList =Disp_Mess_Ex;tmp=Disp_Mess_Ex;tmp->next=NULL;}
       else
@@ -364,6 +380,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     }
     MessEx = MessEx->next;
   }
+  UnlockSched();
 }
 
 
@@ -372,8 +389,8 @@ void Display_Message_List(TRESOURCE* ContEx)
 {
   if(!ContEx)return;
   Resource_Ex = ContEx;
-  ParseMessagesIntoList(ContEx);
-  
+  ParseMessagesIntoList(Resource_Ex);
+  CurrentPage=1;
   GUI *mess_gui=malloc(sizeof(GUI));
   zeromem(mess_gui, sizeof(GUI));
   patch_rect((RECT*)&mCanvas,0,0,ScreenW()-1,ScreenH()-1);

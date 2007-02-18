@@ -42,9 +42,8 @@
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];  
-extern const char PASSWORD[];   
 const char RESOURCE[] = "SieJC";
-const char VERSION_NAME[]= "Sie natJabber Client";
+const char VERSION_NAME[]= "Siemens Native Jabber Client";
 const char VERSION_VERS[] = "0.3";
 const char CMP_DATE[] = __DATE__;
 
@@ -270,11 +269,6 @@ void get_answer(void)
   zeromem(buf,REC_BUFFER_SIZE);           // Зануляем
   int rec_bytes = 0;          // Не торопимся :)
   rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
-#ifdef LOG_ALL  
-  char mess[15];
-  sprintf(mess,"RECV:%d",rec_bytes);
-  Log(mess, buf);
-#endif
   
   // Запись в буфер
   if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
@@ -326,9 +320,6 @@ void SendAnswer(char *str)
 {
   int i = strlen(str);
   send(sock,str,i,0);
-#ifdef LOG_ALL
-  Log("SEND",str);
-#endif
 }
 
 
@@ -390,18 +381,20 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   UnlockSched();
   if(data)
   {
-//#ifdef LOG_ALL
-//    SaveTree(data);
-//#endif
+#ifdef LOG_ALL
+    SaveTree(data);
+#endif
     Process_Decoded_XML(data);
     DestroyTree(data);
   }
-  
+
+#ifdef LOG_ALL  
     char* tmp_buf=malloc(xmlbuf->buf_size+1);
     zeromem(tmp_buf,xmlbuf->buf_size+1);
     memcpy(tmp_buf,xmlbuf->xml_buffer,xmlbuf->buf_size);
     SUBPROC((void*)__log,tmp_buf, xmlbuf->buf_size);
-
+#endif
+    
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);    
@@ -786,17 +779,29 @@ void UpdateCSMname(void)
   FreeWS(ws);
 }
 
+// Проверка, что платформа для компиляции выбрана правильно
 
+unsigned short IsGoodPlatform()
+{ 
+#ifdef NEWSGOLD  
+  return  (AddrLibrary()==0xA0074000);
+#else
+  return  (AddrLibrary()!=0xA0074000);
+#endif    
+}
 
 int main()
 {
+  if(!IsGoodPlatform())
+  {
+    ShowMSG(1,(int)"Target platform mismatch!!");
+    return 0;
+  }
   char dummy[sizeof(MAIN_CSM)];
-  
   InitConfig();
   if(!strlen(USERNAME))
   {
     ShowMSG(1,(int)"Введите логин/пароль!");
-    ShowMSG(1,(int)USERNAME);
     return 0;
   }
   UpdateCSMname();
