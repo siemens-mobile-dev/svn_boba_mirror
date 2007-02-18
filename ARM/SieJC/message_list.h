@@ -16,8 +16,6 @@
 #define MESSAGEWIN_MY_BGCOLOR 10
 #define MESSAGEWIN_CH_BGCOLOR 13
 
-// Количество символов на строке
-#define CHAR_ON_LINE 22
 
 // Нечто, что будет использоваться для вывода строк
 typedef struct

@@ -191,6 +191,7 @@ void mGUI_onRedraw(GUI *data)
   unsigned short FontSize = GetFontYSIZE(SMALL_FONT);
   lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
   MaxPages = sdiv(lines_on_page,MessList_Count);
+  if(lines_on_page*MaxPages<MessList_Count)MaxPages++;
   // Заголовок окна
   DrawRoundedFrame(0,0,ScreenW()-1,FontSize*2+1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),

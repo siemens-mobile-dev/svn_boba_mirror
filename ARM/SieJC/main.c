@@ -323,7 +323,11 @@ void SendAnswer(char *str)
   send(sock,str,i,0);
 }
 
-
+/*
+    Рекурсивная функция декодирования XML-потока
+    Впрочем, рекурсия походу тут не нужна.
+    Поэтому пока убираю.
+*/
 void Process_Decoded_XML(XMLNode* node)
 {
   XMLNode* nodeEx = node;
@@ -361,7 +365,7 @@ void Process_Decoded_XML(XMLNode* node)
     }
 //----------------
     
-    if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
+    //if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
     nodeEx = nodeEx->next;
   }
 }
@@ -542,12 +546,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         CList_MoveCursorHome();
         break;
       }      
-      
-    case '3':
-      {
-        SUBPROC((void*)Send_Presence);
-        break;
-      }      
+    
     case '4':
       {
         Debug_Add_Cont_Mess();

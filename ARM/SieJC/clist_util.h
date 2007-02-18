@@ -10,6 +10,9 @@
 
 #include "main.h"
 
+// Количество символов на строке
+#define CHAR_ON_LINE 22
+
 #define CLIST_FONT SMALL_FONT   // Шрифт контакт-листа
 #define CLIST_Y1 26
 // Начало вывода контакт-листа
