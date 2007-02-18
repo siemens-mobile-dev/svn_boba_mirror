@@ -45,7 +45,8 @@ extern const char USERNAME[];
 extern const char PASSWORD[];   
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Sie natJabber Client";
-const char VERSION_VERS[] = "0.2";
+const char VERSION_VERS[] = "0.3";
+const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
 const char OS[] = "NewSGOLD_ELF-Platform";
@@ -53,8 +54,6 @@ const char OS[] = "NewSGOLD_ELF-Platform";
 const char OS[] = "SGOLD_ELF-Platform";
 #endif
 
-
-#define TMR_SECOND 216
 
 char Is_Vibra_Enabled = 1;
 
@@ -78,6 +77,7 @@ int sock=-1;
 
 volatile int is_gprs_online=1;
 
+GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
 
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -356,7 +356,12 @@ void Process_Decoded_XML(XMLNode* node)
       SUBPROC((void*)Send_Auth);
     }   
 //----------------
-
+    if(!strcmp(nodeEx->name,"stream:error"))
+    {
+      connect_state = 0;
+      Jabber_state = JS_ERROR;
+      sprintf(logmsg, "Ошибка XML-потока");
+    } 
 //----------------
     if(!strcmp(nodeEx->name,"presence"))
     {
@@ -391,12 +396,12 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
     Process_Decoded_XML(data);
     DestroyTree(data);
   }
-/*  
+  
     char* tmp_buf=malloc(xmlbuf->buf_size+1);
     zeromem(tmp_buf,xmlbuf->buf_size+1);
     memcpy(tmp_buf,xmlbuf->xml_buffer,xmlbuf->buf_size);
     SUBPROC((void*)__log,tmp_buf, xmlbuf->buf_size);
-*/
+
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);    
@@ -510,8 +515,10 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       //      if (cltop) remake_clmenu();
       break;
     case RIGHT_SOFT:
-      DisplayQuitQuery();
-      //return(1);
+      {
+        DisplayQuitQuery();
+        break;
+      }
     case GREEN_BUTTON:
       if ((connect_state==0)&&(sock==-1))
       {
@@ -519,7 +526,20 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 	DNR_TRIES=3;
         SUBPROC((void *)create_connect);
       }
+      
+      if(connect_state==2)
+      {
+        Init_Message(CList_GetActiveContact());                        
+      }
+      
       break;
+
+    case '1':
+      {
+        CList_MoveCursorHome();
+        break;
+      }      
+      
     case '3':
       {
         SUBPROC((void*)Send_Presence);
@@ -545,10 +565,17 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         break;
       }
 
+
+    case '9':
+      {
+        CList_MoveCursorEnd();
+        break;
+      }        
       
     case '0':
       {
-        SUBPROC((void*)Send_Disconnect);
+        
+        CList_ToggleOfflineDisplay();
         break;
       }        
       
@@ -557,11 +584,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         Is_Vibra_Enabled = !(Is_Vibra_Enabled);
         break;
       }
-    case '9':
-      {
-        REDRAW();
-        break;
-      }    
     }    
   }
   //  onRedraw(data);
@@ -619,6 +641,7 @@ void maincsm_oncreate(CSM_RAM *data)
 void maincsm_onclose(CSM_RAM *csm)
 {
   GBS_DelTimer(&tmr_vibra);
+  GBS_DelTimer(&TMR_Send_Presence);
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
   CList_Destroy();

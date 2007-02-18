@@ -7,10 +7,15 @@
 
 CLIST* cltop = NULL;
 
-unsigned int NContacts = 0;
-unsigned int Active_page = 1;
-unsigned int N_cont_disp=0;
-unsigned int CursorPos = 1;
+
+char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
+
+unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
+unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться 
+
+unsigned int Active_page = 1;     // Текущая активная страница списка
+unsigned int N_cont_disp=0;       // Сколько контактов на странице
+unsigned int CursorPos = 1;       // Текущая позиция курсора
 
 TRESOURCE* ActiveContact = NULL;
 
@@ -31,9 +36,10 @@ void CList_RedrawCList()
   if(!cltop)return; 
    
   LockSched(); 
+  N_Disp_Contacts = Display_Offline? NContacts : CList_GetNumberOfOnlineUsers();
   // Определяем количество страниц списка контактов
-  int pages_number = sdiv(N_cont_disp, NContacts);
-  if(N_cont_disp*pages_number<NContacts){pages_number++;};
+  int pages_number = sdiv(N_cont_disp, N_Disp_Contacts);
+  if(N_cont_disp*pages_number<N_Disp_Contacts){pages_number++;};
   
   CLIST* ClEx = cltop;
   WSHDR* out_ws = AllocWS(256);
@@ -49,7 +55,8 @@ void CList_RedrawCList()
       resEx = ClEx->res_list;
       while(resEx)
       {
-        if(i>(Active_page-1)*N_cont_disp)
+        
+        if((i>(Active_page-1)*N_cont_disp) && (Display_Offline  |  resEx->status!=PRESENCE_OFFLINE))
         {
           if(i==CursorPos)
           {
@@ -69,7 +76,7 @@ void CList_RedrawCList()
           if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=PRES_COLORS[resEx->status];}
           DrawString(out_ws,3,start_y,scr_w-4,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
         }
-        i++;
+        if(Display_Offline  |  resEx->status!=PRESENCE_OFFLINE)i++;
         resEx = resEx->next;
         if(i>Active_page*N_cont_disp)break;
       }
@@ -80,10 +87,35 @@ void CList_RedrawCList()
   UnlockSched();
 
   LockSched();
-  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,NContacts,N_cont_disp);
+  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
   UnlockSched();
 
   FreeWS(out_ws);
+}
+
+unsigned int CList_GetNumberOfOnlineUsers()
+{
+  unsigned int Online=0;
+  CLIST* ClEx;
+  TRESOURCE* ResEx;
+  if(!(ClEx = cltop))return 0;
+  while(ClEx)
+  {
+    ResEx = ClEx->res_list;
+    while(ResEx)
+    {
+      if(ResEx->status!=PRESENCE_OFFLINE)Online++;
+      ResEx=ResEx->next;
+    }
+    ClEx = ClEx->next;
+  }
+  return Online;
+}
+
+void CList_ToggleOfflineDisplay()
+{
+  Display_Offline = !Display_Offline;
+  REDRAW();
 }
 
 // Убить список сообщений
@@ -324,7 +356,15 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   TDate now_date;
   GetDateTime(&now_date,&now_time);
   char datestr[127];
-  sprintf(datestr, "%s: %02d:%02d %02d-%02d\r\n",jid,now_time.hour,now_time.min,now_date.day,now_date.month);
+  if(mtype==MSG_ME)
+  {
+    extern char My_JID[128];
+    sprintf(datestr, "%s: %02d:%02d %02d-%02d\r\n",My_JID,now_time.hour,now_time.min,now_date.day,now_date.month);
+  }
+  else
+  {
+    sprintf(datestr, "%s: %02d:%02d %02d-%02d\r\n",jid,now_time.hour,now_time.min,now_date.day,now_date.month);
+  }
 
   
   CLIST* contEx = CList_FindContactByJID(jid);
@@ -341,8 +381,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     // бывает в принципе (MRIM)
     cont=contEx->res_list;
   }
-  
-  cont->has_unread_msg++;
+  if(mtype!=MSG_ME)cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   mess->mess = malloc(strlen(mtext)+1);
   strcpy(mess->mess, mtext);
@@ -406,11 +445,11 @@ void CList_Destroy()
 // Управление курсором
 void CList_MoveCursorUp()
 {
-  if(!NContacts)return;
+  if(!N_Disp_Contacts)return;
   if(CursorPos==1)
   {
-    CursorPos=NContacts;
-    Active_page = sdiv(N_cont_disp, NContacts)+1;
+    CursorPos=N_Disp_Contacts;
+    Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
   }
   else
   {
@@ -421,12 +460,25 @@ void CList_MoveCursorUp()
 };
 void CList_MoveCursorDown()
 {
-  if(!NContacts)return;
+  if(!N_Disp_Contacts)return;
   CursorPos++;
-  if(CursorPos>NContacts){CursorPos=1;Active_page=1;}
+  if(CursorPos>N_Disp_Contacts){CursorPos=1;Active_page=1;}
   if(Active_page*N_cont_disp<CursorPos){Active_page++;}
   REDRAW();
 };
 
-void CList_MoveCursorHome(){};
-void CList_MoveCursorEnd(){};
+void CList_MoveCursorHome()
+{
+  if(!N_Disp_Contacts)return;
+  CursorPos =1;
+  Active_page = 1;
+  REDRAW();  
+};
+void CList_MoveCursorEnd()
+{
+  if(!N_Disp_Contacts)return;
+  CursorPos = N_Disp_Contacts;
+  Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
+  REDRAW();  
+
+};

@@ -13,6 +13,8 @@
 #define DEFAULT_DISC '0'
 #endif
 
+#define TMR_SECOND 216
+
 // Общие функции модуля MAIN.C
 
 #define XML_BUFFER_SIZE 64*1024 // Размер буфера в байтах

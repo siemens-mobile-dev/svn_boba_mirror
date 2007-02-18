@@ -40,6 +40,12 @@
 // Уничтожить список контактов  
   void CList_Destroy();
 
+// Изменить режим отображения контактов оффлайн
+  void CList_ToggleOfflineDisplay();
+
+// Получить число онлайн-юзверей
+  unsigned int CList_GetNumberOfOnlineUsers();
+  
 // Управление курсором
   void CList_MoveCursorUp();
   void CList_MoveCursorDown();

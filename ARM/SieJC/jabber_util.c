@@ -12,6 +12,7 @@ extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];  
 extern const char PASSWORD[];
 extern const char RESOURCE[];
+extern const char CMP_DATE[];
 extern const char VERSION_NAME[];
 extern const char VERSION_VERS[];
 extern const char OS[];
@@ -174,14 +175,40 @@ void SendMessage(char* jid, char* body)
       </x>
     </message>
 */
-  // ВООБЩЕ, по-хорошему, надо преобразовывать жиды в UTF8, ибо есть
-  // подонки с русскими жидами
-  //WSHDR* ws_jid=AllocWS(1024);
-  //str_2ws(ws_jid,jid, strlen(jid));
-  char mes_template[]="<message to='%s' id='SieJC_%d'><body>%w</body></message>";
+  
+  // Извратимся с JID 
+  char IsNonLatin=0; // Нет латинских символов
+  int jlen=strlen(jid);
+  for(int i=0;i<jlen;i++)
+  {
+    if(*(jid+i)>127)IsNonLatin=1;
+  }
+  
+  if(IsNonLatin)
+  {
+    LockSched();
+    ShowMSG(0,(int)"Отправка сообщения контакту с русским JID невозможна!");
+    UnlockSched();
+    mfree(body);
+    return;
+  }
+  char first_sym=*body;
+  char* real_body;
+  if(first_sym==0x1F)
+  {
+    real_body = body +1;    
+  }
+  else
+  {
+    real_body=body;
+  }
+  char mes_template[]="<message to='%s' id='SieJC_%d' type='chat'><body>%s</body></message>";
   char* msg_buf = malloc(2048);
-  sprintf(msg_buf, mes_template, jid, m_num, body);
+  sprintf(msg_buf, mes_template, jid, m_num, real_body);
   mfree(body);
+  LockSched();
+  Log("MESS_OUT", msg_buf);
+  UnlockSched();
   SendAnswer(msg_buf);
   mfree(msg_buf);
   m_num++;
@@ -190,9 +217,9 @@ void SendMessage(char* jid, char* body)
 // Context: HELPER
 void Report_VersionInfo(char* id, char *to)
 {
-  char answer[100];
+  char answer[200];
  
-  sprintf(answer, "<name>%s</name><version>%s</version><os>%s</os>", VERSION_NAME, VERSION_VERS, OS);
+  sprintf(answer, "<name>%s</name><version>%s (compile date: %s)</version><os>%s</os>", VERSION_NAME, VERSION_VERS, CMP_DATE, OS);
   SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
 
   mfree(id);
@@ -215,6 +242,13 @@ char* Get_Resource_Name_By_FullJID(char* full_jid)
   return res_name;
 }
 
+// Для вызова таймером
+void Send_Presence_MMIStub()
+{
+  SUBPROC((void*)Send_Presence);
+}
+
+
 void FillRoster(XMLNode* items)
 {
   XMLNode* rostEx = items;
@@ -235,6 +269,10 @@ void FillRoster(XMLNode* items)
    rostEx=rostEx->next;
    i++;
   }
+  
+  // Через секунду запросим презенсы
+  extern GBSTMR TMR_Send_Presence;
+  GBS_StartTimerProc(&TMR_Send_Presence, TMR_SECOND*1, Send_Presence_MMIStub);
 }
 
 /*
@@ -478,9 +516,9 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
 }
 
 
-/*
+
 // Строковый вариант
-char* convUTF8_to_ANSI(char *UTF8_str)
+char* convUTF8_to_ANSI_STR(char *UTF8_str)
 {
   // Рассматривая строку UTF8 как обычную, определяем её длину
   if(!UTF8_str)return NULL;
@@ -551,4 +589,4 @@ char* convUTF8_to_ANSI(char *UTF8_str)
   tmp_out = realloc(tmp_out,st_len+1);
   return tmp_out;
 }
-*/
+

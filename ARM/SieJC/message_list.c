@@ -7,7 +7,7 @@
 
 char MsgList_Quit_Required = 0;
 
-TRESOURCE* Resource_Ex;
+TRESOURCE* Resource_Ex = NULL;
 
 int Message_gui_ID;
 
@@ -30,7 +30,7 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 
 
-WSHDR* ws_eddata;
+WSHDR* ws_eddata = NULL;
 int Terminate=0;
 //---------------------------------------------------------------------------
 // Test edit dialog
@@ -79,7 +79,20 @@ void inp_ghook(GUI *gui, int cmd)
    ExtractEditControl(gui,1,&ec);    
    wstrcpy(ws_eddata,ec.pWS);
    ws_2str(ws_eddata, xz, 2048);
-   CList_AddMessage(Resource_Ex->full_name, MSG_ME, xz);
+   char* real_body;
+   char first_sym=*xz;
+   if(first_sym==0x1F)
+  {
+    real_body = xz +1;    
+  }
+  else
+  {
+    real_body=xz;
+  }
+   char* hist = convUTF8_to_ANSI_STR(real_body);
+   CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
+   mfree(hist);
+
    SUBPROC((void*)SendMessage,Resource_Ex->full_name, xz);
    Terminate = 0;
  }
@@ -91,7 +104,7 @@ SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Выбор"},
   {0x0001,0x0000,(int)"Назад"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt=
@@ -145,6 +158,7 @@ unsigned int MessList_Count = 0;
 void KillDisp(DISP_MESSAGE* messtop)
 {
   DISP_MESSAGE* cl=messtop;
+  messtop = NULL;
   while(cl)
   {
     DISP_MESSAGE *p;
@@ -162,23 +176,30 @@ char MaxPages=0;
 // Обслуживание созданного GUI
 void mGUI_onRedraw(GUI *data)
 {
+
   Terminate = 0;
+  if(ws_eddata)
+  {
+    FreeWS(ws_eddata);
+    ws_eddata = NULL;
+  }
   // Расчёт количества строк на одной странице
   unsigned short FontSize = GetFontYSIZE(SMALL_FONT);
   char lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
   MaxPages = sdiv(lines_on_page,MessList_Count);
   // Заголовок окна
-  DrawRoundedFrame(0,0,ScreenW()-1,FontSize+1,0,0,0,
+  DrawRoundedFrame(0,0,ScreenW()-1,FontSize*2+1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_BGCOLOR));
   
   DrawRoundedFrame(0,FontSize+2,ScreenW()-1,ScreenH()-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(MESSAGEWIN_BGCOLOR));
-    
+
   // Делаем типо название окошка... :)
   WSHDR* ws_title = AllocWS(256);
   str_2ws(ws_title, Resource_Ex->full_name,strlen(Resource_Ex->full_name));
+
   DrawString(ws_title,1,1,ScreenW()-1,FontSize+1,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));  
   
   DISP_MESSAGE* ml = MessagesList;
@@ -188,7 +209,8 @@ void mGUI_onRedraw(GUI *data)
   {
     if((i_ctrl>=CurrentPage*lines_on_page) && (i_ctrl<(CurrentPage+1)*lines_on_page))
     {
-      str_2ws(ws_title,ml->mess,strlen(ml->mess));
+      //str_2ws(ws_title,ml->mess,strlen(ml->mess));
+      str_2ws(ws_title,ml->mess,CHAR_ON_LINE);
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
 		   GetPaletteAdrByColorIndex(ml->mtype==MSG_ME ? MESSAGEWIN_MY_BGCOLOR : MESSAGEWIN_CH_BGCOLOR),
 		   GetPaletteAdrByColorIndex(ml->mtype==MSG_ME ? MESSAGEWIN_MY_BGCOLOR : MESSAGEWIN_CH_BGCOLOR));
@@ -200,16 +222,23 @@ void mGUI_onRedraw(GUI *data)
     i_ctrl++;
   }  
   FreeWS(ws_title);
+  Resource_Ex->has_unread_msg =0; // Непрочитанных сообщений больше нет
 }
 
 void mGUI_onCreate(GUI *data, void *(*malloc_adr)(int))
 {
   data->state=1;
+  MsgList_Quit_Required=0;
 }
 
 void mGUI_onClose(GUI *data, void (*mfree_adr)(void *))
 {
   KillDisp(MessagesList);
+  if(ws_eddata)
+  {
+    FreeWS(ws_eddata);
+    ws_eddata = NULL;
+  }  
   data->state=0;
 }
 
@@ -297,6 +326,10 @@ const RECT mCanvas={0,0,0,0};
 
 void ParseMessagesIntoList(TRESOURCE* ContEx)
 {
+  MessList_Count = 0;
+  MessagesList = NULL;
+  CurrentPage=0;
+  MaxPages=0;
   if(!ContEx)return;
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
@@ -306,6 +339,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   // Цикл по всем сообщениям
   while(MessEx)
   {
+    if(!MessEx->mess)return;
     int l=strlen(MessEx->mess);
     cnt=0;
     while(l>0)
@@ -338,6 +372,8 @@ void Display_Message_List(TRESOURCE* ContEx)
 {
   if(!ContEx)return;
   Resource_Ex = ContEx;
+  ParseMessagesIntoList(ContEx);
+  
   GUI *mess_gui=malloc(sizeof(GUI));
   zeromem(mess_gui, sizeof(GUI));
   patch_rect((RECT*)&mCanvas,0,0,ScreenW()-1,ScreenH()-1);
@@ -346,6 +382,4 @@ void Display_Message_List(TRESOURCE* ContEx)
   mess_gui->methods=(void *)mgui_methods;
   mess_gui->item_ll.data_mfree=(void (*)(void *))mfree_adr();
   Message_gui_ID = CreateGUI(mess_gui);
-  
-  ParseMessagesIntoList(ContEx);
 }
