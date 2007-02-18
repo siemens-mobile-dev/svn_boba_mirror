@@ -519,8 +519,10 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }
     
     case LEFT_SOFT:
-      //      if (cltop) remake_clmenu();
-      break;
+      {
+        CList_Display_Popup_Info(CList_GetActiveContact());
+        break;
+      }
     case RIGHT_SOFT:
       {
         DisplayQuitQuery();
@@ -547,11 +549,11 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         break;
       }      
     
-    case '4':
-      {
-        Debug_Add_Cont_Mess();
-        break;
-      }
+//    case '4':
+//      {
+//        Debug_Add_Cont_Mess();
+//        break;
+//      }
     case '5':
       {
         extern void Send_Initial_Presence_Helper();

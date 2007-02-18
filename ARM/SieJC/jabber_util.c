@@ -440,7 +440,7 @@ void Process_Presence_Change(XMLNode* node)
       status = GetPresenceIndex(status_node->value);    
     }
     
-    XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"show");
+    XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"status");
     if(statusmsg_node)msg = statusmsg_node->value;
   }  
   CList_AddResourceWithPresence(from, status, msg);

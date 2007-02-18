@@ -450,6 +450,22 @@ void CList_Destroy()
   UnlockSched();
 }
 
+
+// Отображение всякого спама про контакт
+void CList_Display_Popup_Info(TRESOURCE* ResEx)
+{
+  if(!ResEx)return;
+  char msg_ex[]="JID: %s\nСтатус:%s";
+  char* msg = malloc(1024);
+  if(ResEx->status_msg)
+  {
+    ShowMSG(0,(int)ResEx->status_msg);
+  }
+  snprintf(msg,1024,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
+  ShowMSG(0, (int)msg);
+  mfree(msg);
+}
+
 // Управление курсором
 void CList_MoveCursorUp()
 {
@@ -466,6 +482,7 @@ void CList_MoveCursorUp()
   }
   REDRAW();
 };
+
 void CList_MoveCursorDown()
 {
   if(!N_Disp_Contacts)return;
@@ -482,11 +499,11 @@ void CList_MoveCursorHome()
   Active_page = 1;
   REDRAW();  
 };
+
 void CList_MoveCursorEnd()
 {
   if(!N_Disp_Contacts)return;
   CursorPos = N_Disp_Contacts;
   Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
   REDRAW();  
-
 };

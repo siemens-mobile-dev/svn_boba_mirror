@@ -48,6 +48,8 @@
 
 // Получить число онлайн-юзверей
   unsigned int CList_GetNumberOfOnlineUsers();
+
+void CList_Display_Popup_Info(TRESOURCE* ResEx);
   
 // Управление курсором
   void CList_MoveCursorUp();
