@@ -1147,6 +1147,10 @@ __swi	__arm	 unsigned int *RamMPlayer_CtrlCode();
 #pragma swi_number=0x80F1
 __swi __arm void *BuildCanvas(void);
 
+#pragma swi_number=0x80FF
+__swi __arm unsigned int AddrLibrary();
+
+
 #pragma swi_number=0x0100
 __swi __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
 //arm
