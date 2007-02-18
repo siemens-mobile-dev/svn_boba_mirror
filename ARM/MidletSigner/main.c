@@ -4,6 +4,7 @@
 #include "objects.h"
 #include "zipstruct.h"
 
+#define wslen(ws) ws->wsbody[0]
 extern void InitConfig();
 extern const char WORKFOLDER[];
 extern const char DER_FILE[];
@@ -35,12 +36,30 @@ typedef struct
   int is_dir;
 }FLIST;
 
+#pragma pack(1)
+typedef struct
+{
+#ifdef NEWSGOLD
+  char signature[0x3C];
+#else
+  char signature[0x23];
+#endif
+  char cert_num;
+}SBP_FILE_SIG;
+#pragma pack()
+
+typedef struct
+{
+  void *next;
+  char *issuer;
+  char *hash;
+}SBP_LIST;
+
 int filelist_menu_id;
 volatile int request_remake_filelist;
 volatile int request_close_filelist;
-int options_menu_id;
+int is_manufacturer_patched();
 volatile FLIST *fltop;
-WSHDR* ews;
 WSHDR* jar_file;
 int S_ICONS[3];
 
@@ -49,9 +68,14 @@ int S_ICONS[3];
 #else
   const char folder[129]="0:\\Java\\jam\\";    
 #endif
+
+const char manufacturer_sbp[]="2:\\Policy\\manufacturer.sbp";
+const char certificate_store[]="2:\\Certificate store\\";
+
+const char delimeter[]={2};
   
 const int minus11=-11;
-unsigned short maincsm_name_body[140];
+unsigned short maincsm_name_body[20];
 extern void kill_data(void *p, void (*func_p)(void *));
 extern char * base64_encode(const void *data, int *size);
 
@@ -60,23 +84,26 @@ const char midlet_jar_rsa[]="MIDlet-Jar-RSA-SHA1:";
 const char midlet_permissions[]="MIDlet-Permissions:";
 const char eol[]="\r\n";
 
+//===============================================================================================
+// ELKA Compatibility
 #pragma inline
-void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
+void patch_header(HEADER_DESC* head)
 {
-  inp->rc.x=x;
-  inp->rc.y=y;
-  inp->rc.x2=x2;
-  inp->rc.y2=y2;
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
 }
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp)
+{
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+//===============================================================================================
 
-#pragma inline
-void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
-{
-  head->rc.x=x;
-  head->rc.y=y;
-  head->rc.x2=x2;
-  head->rc.y2=y2;
-}
 void ed1_locret(void){}
 
 void* zcalloc(int unk,size_t nelem, size_t elsize)
@@ -89,6 +116,29 @@ void zcfree(int unk, void* ptr)
   mfree(ptr);
 }
 
+
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
+
+int strncmp_nocase(const char *s1,const char *s2,unsigned int n)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))&&(--n)) if (!c) break;
+  return(i);
+}
 
 #define DONE 0
 #define CANT_OPEN_JAD 1
@@ -105,8 +155,15 @@ void zcfree(int unk, void* ptr)
 #define BAD_KEY_FILE 12
 #define SIZE_OF_JAD_NULL 13
 #define FILE_WAS_NOT_SIGNED 14
+#define CANT_OPEN_SFILE 15
+#define CANT_OPEN_DFILE 16
+#define CANT_OPEN_MANUFACTURER 17
+#define CANT_WRITE_MANUFACTURER 18
+#define MANUF_ALR_PATCHED 19
+#define MANUF_PATCHED_UNCORR 20
+#define MANUF_NOT_PATCHED 21
 
-const char* errors[15]=
+const char* errors[22]=
 {  
   "Done!",
   "Can't open *.jad!",
@@ -122,8 +179,22 @@ const char* errors[15]=
   "Can't create *.jad!",
   "Bad *.key file!",
   "Size of jad file is NULL!",
-  "File was not signed!"
+  "File was not signed!",
+  "Can't open source cert!",
+  "Can't write dest cert!",
+  "Can't open manufacturer.sbp!",
+  "Can't write manufacturer.sbp!",
+  "Manufacturer already patched!",
+  "Manufacturer patched uncorrectly!",
+  "Manufacturer not patched!"
 };
+
+int split_lines(char *dest,const char *str1,const char *str2)
+{
+  strcpy(dest,str1);
+  strcat(dest,str2);
+  return (strlen(dest));
+}
 
 void ErrMsg(int num)
 {
@@ -146,17 +217,17 @@ int get_file_size(char* fname)
   return (fs.size);
 } 
 
-char * ReadCertificate(int* size)
+char *ReadCertificate(int* size)
 {
   char fname[256];
   int f;
   unsigned int err;
   unsigned int fsize;
   char* cert;
-  sprintf(fname,"2:\\Certificate store\\%s",DER_FILE);
+  split_lines(fname,certificate_store,DER_FILE);
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err))==-1)
   {
-    sprintf(fname,"%s%s",WORKFOLDER,DER_FILE);
+    split_lines(fname,WORKFOLDER,DER_FILE);
     if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err))==-1)
       return 0;
   }
@@ -169,27 +240,31 @@ char * ReadCertificate(int* size)
   fclose(f,&err);
   return (cert); 
 }
-  
-int CreateSHA1Hash(const char* file,char * hash)
+
+void CreateSHA1Hash(char *hash, char *data, unsigned int n)
 {
   SHA_CTX ctx;
+  SHA1_Init(&ctx);
+  SHA1_Update(&ctx, data, n);
+  SHA1_Final(hash,&ctx);
+}  
+
+int CreateSHA1HashFile(const char* file,char * hash)
+{
   int f;
   unsigned int err;
   unsigned int fsize;
   char* jar_data;
   if ((f=fopen(file,A_ReadOnly+A_BIN,P_READ,&err))==-1)
-    return (-1);
+    return (f);
   fsize=lseek(f,0,S_END,&err,&err);
   if (!fsize)
     return (-2);
   lseek(f,0,S_SET,&err,&err);
-  jar_data=malloc(fsize+1);
+  jar_data=malloc(fsize);
   fread(f,jar_data,fsize,&err);
-  jar_data[fsize]=0;
   fclose(f,&err);
-  SHA1_Init(&ctx);
-  SHA1_Update(&ctx, jar_data, fsize);
-  SHA1_Final(hash,&ctx);
+  CreateSHA1Hash(hash,jar_data,fsize);
   mfree(jar_data);
   return (0);
 }
@@ -198,7 +273,8 @@ int CreateSHA1Hash(const char* file,char * hash)
 #pragma optimize=z 9
 BIGNUM *BN_bin2bn_mod(int f,unsigned int len,BIGNUM *ret)
 {
-  char*s=malloc(len);
+  BIGNUM *ret2;
+  char *s=malloc(len);
   unsigned int err;
   fread(f,s,len,&err);
   unsigned int ch;
@@ -209,11 +285,10 @@ BIGNUM *BN_bin2bn_mod(int f,unsigned int len,BIGNUM *ret)
     s[i]=s[len-i-1];
     s[len-i-1]=ch;
   }
+  ret2=BN_bin2bn(s,len,ret);
   mfree(s);
-  return (BN_bin2bn(s,len,ret));
+  return (ret2);
 }
-
-
 
 int SignHash(char * hash,char*sign)
 {
@@ -222,7 +297,7 @@ int SignHash(char * hash,char*sign)
   unsigned int err;
   unsigned int rsa_sha1_len=1024;
   char buf[128];
-  sprintf(buf,"%s%s",WORKFOLDER,KEY_FILE);
+  split_lines(buf,WORKFOLDER,KEY_FILE);
   if (get_file_size(buf)!=596)
     return(-1);
 
@@ -275,7 +350,6 @@ int SignHash(char * hash,char*sign)
 L_BN_ERROR:
   RSA_free(rsa);
   return(-3);
-  
 }
   
 
@@ -324,32 +398,48 @@ void sign_jad()
   int size;
   int err_n;
   
+  err_n=is_manufacturer_patched();
+  if (err_n!=MANUF_ALR_PATCHED)
+  {
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
+  }
+
+  
   ws_2str(jar_file,jar,255);
   if (!(p=strstr(jar,".jar")))
   {
     err_n=BAD_JAR;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
   }
   strcpy(jad_name,jar);
   strcpy(jad_name+(p-jar),".jad");
   
-  if ((size=get_file_size(jad_name))==-1)
+  if ((size=get_file_size(jad_name))<=0)
   {
     err_n=CANT_OPEN_JAD;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
   }
   
   if (is_file_signed(jad_name,size))
   {
     err_n=FILE_ALREADY_SIGNED;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
   }
-    
   
   if (!(cert=ReadCertificate(&size)))
   {
     err_n=CANT_READ_CERT;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
   }
   
   base64cert=base64_encode(cert,&size);
@@ -357,20 +447,28 @@ void sign_jad()
   if(!base64cert)
   {
     err_n=CANT_READ_CERT;
-    goto L_ERR;
+    mfree(base64cert);
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
   }
   
-  if (CreateSHA1Hash(jar,sha1jar))
+  if (CreateSHA1HashFile(jar,sha1jar))
   {
-    mfree(base64cert);
     err_n=CANT_CREATE_HASH;
-    goto L_ERR;
+    mfree(base64cert);
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
   }
   
   if (SignHash(sha1jar,rsa_sha1))
   {
     err_n=CANT_SIGN_HASH;
-    goto L_ERR;
+    mfree(base64cert);
+    GeneralFuncF1(1);
+    ErrMsg(err_n);
+    return;
   }
     
   size=128;
@@ -378,6 +476,8 @@ void sign_jad()
   
   signature=malloc(0x2000);
   sprintf(signature,"%s %s\r\n%s %s\r\n%s %s",midlet_cert,base64cert,midlet_jar_rsa,base64hash,midlet_permissions,"javax.microedition.midlet.MIDlet.platformRequest");
+  mfree(base64cert);
+  mfree(base64hash);
   
   if (FREAD>0)
   {
@@ -441,7 +541,7 @@ void sign_jad()
   int f;
   unsigned int err;
   
-  if ((f=fopen(jad_name,A_WriteOnly+A_BIN+A_Append,P_WRITE,&err))==-1)
+  if ((f=fopen(jad_name,A_WriteOnly+A_BIN+A_Append,P_WRITE,&err))<0)
   {
     err_n=CANT_APPEND;
     goto L_ERR_FREE;
@@ -451,35 +551,32 @@ void sign_jad()
   err_n=DONE;
 L_ERR_FREE:  
   mfree(signature);
-  mfree(base64cert);
-  mfree(base64hash);
-  
-L_ERR:  
   GeneralFuncF1(1);
   ErrMsg(err_n);
 }
 
 int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomprLen)
 {
-    int err;
-    z_stream d_stream;
-    d_stream.zalloc = (alloc_func)zcalloc;
-    d_stream.zfree = (free_func)zcfree;
-    d_stream.opaque = (voidpf)0;
-    d_stream.next_in  = (Byte*)compr;
-    d_stream.avail_in = (uInt)comprLen;
-    err = inflateInit2(&d_stream,-MAX_WBITS);
-     if(err!=Z_OK){ 
-   unerr:
+  int err;
+  z_stream d_stream;
+  d_stream.zalloc = (alloc_func)zcalloc;
+  d_stream.zfree = (free_func)zcfree;
+  d_stream.opaque = (voidpf)0;
+  d_stream.next_in  = (Byte*)compr;
+  d_stream.avail_in = (uInt)comprLen;
+  err = inflateInit2(&d_stream,-MAX_WBITS);
+  if(err!=Z_OK)
+  {
+    unerr:
       return err;
-    }
-    d_stream.next_out = (Byte*)uncompr;
-    d_stream.avail_out = (uInt)uncomprLen;
-    err = inflate(&d_stream, 2);
-    if(err<0) goto unerr;
-    err = inflateEnd(&d_stream);
-    if(err<0) goto unerr;
-    return 0;
+  }
+  d_stream.next_out = (Byte*)uncompr;
+  d_stream.avail_out = (uInt)uncomprLen;
+  err = inflate(&d_stream, 2);
+  if(err<0) goto unerr;
+  err = inflateEnd(&d_stream);
+  if(err<0) goto unerr;
+  return 0;
 }
 
 char* find_manifest_mf(const char* jar, unsigned int fsize)
@@ -496,7 +593,7 @@ char* find_manifest_mf(const char* jar, unsigned int fsize)
   char* compr_data;
   char* uncompr_data;
   
-  if((f=fopen(jar,A_ReadOnly+A_BIN,P_READ,&err))==-1)
+  if((f=fopen(jar,A_ReadOnly+A_BIN,P_READ,&err))<0)
     return (0);
   buf=malloc(fsize+1);
   fread(f,buf,fsize,&err);
@@ -548,7 +645,6 @@ void generate_jad()
   int fsize;
   char* p;
   char* manifest;
-  int err_n;
   char* jad;
   
   unsigned int err;
@@ -556,29 +652,33 @@ void generate_jad()
   
   if ((p=strstr(jar_f,".jar"))==NULL)
   {
-    err_n=BAD_JAR;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(BAD_JAR);
+    return;
   }
   strcpy(jad_f,jar_f);
   strcpy(jad_f+(p-jar_f),".jad");
   
-  if ((f=fopen(jad_f,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+  if ((f=fopen(jad_f,A_ReadOnly+A_BIN,P_READ,&err))>=0)
   {
     fclose(f,&err);
-    err_n=JAD_ALREDY_EXISTS;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(JAD_ALREDY_EXISTS);
+    return;
   }
   
   if ((fsize=get_file_size(jar_f))==-1)
   {
-    err_n=CANT_OPEN_JAR;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(CANT_OPEN_JAR);
+    return;
   }  
     
   if (!(manifest=find_manifest_mf(jar_f,fsize)))
   {
-    err_n=CANT_FIND_MANIFEST;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(CANT_FIND_MANIFEST);
+    return;
   }
   
   jad=malloc(strlen(manifest)+512);
@@ -586,20 +686,19 @@ void generate_jad()
   strcat(jad,manifest);
   mfree(manifest);
   
-  if ((f=fopen(jad_f,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err))==-1)
+  if ((f=fopen(jad_f,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err))<0)
   {
     mfree(jad);
-    err_n=CANT_CREATE_JAD;
-    goto L_ERR;
+    GeneralFuncF1(1);
+    ErrMsg(CANT_CREATE_JAD);
+    return;
   }
   
   fwrite(f,jad,strlen(jad),&err);
   fclose(f,&err);
   mfree(jad);
-  err_n=DONE;
-L_ERR:
   GeneralFuncF1(1);
-  ErrMsg(err_n);
+  ErrMsg(DONE);
 }
 
 void remove_sign_from_jad()
@@ -621,7 +720,7 @@ void remove_sign_from_jad()
     goto L_ERR;
   }
   strcpy(p,".jad");
-  if ((f=fopen(fname,A_ReadWrite+A_BIN,P_READ,&err))==-1)
+  if ((f=fopen(fname,A_ReadWrite+A_BIN,P_READ,&err))<0)
   {
     err_n=CANT_OPEN_JAD;
     goto L_ERR;
@@ -676,6 +775,353 @@ L_ERR:
   ErrMsg(err_n);
 }
 
+#define BUF_SIZE 128
+void copy_certificate()
+{
+  char sname[128];
+  char dname[128];
+  char buf[BUF_SIZE];
+  int rlen;
+  unsigned int fsize;
+  int sh,dh;
+  unsigned int serr,derr;
+  split_lines(sname,WORKFOLDER,DER_FILE);
+  if((sh=fopen(sname,A_ReadOnly+A_BIN,P_READ,&serr))<0)
+  {
+    GeneralFuncF1(1);
+    ErrMsg(CANT_OPEN_SFILE);
+    return;
+  }
+  fsize=lseek(sh,0,S_END,&serr,&serr);
+  lseek(sh,0,S_SET,&serr,&serr);
+  split_lines(dname,certificate_store,DER_FILE);
+  if ((dh=fopen(dname,A_WriteOnly+A_Create+A_Truncate+A_BIN,P_WRITE,&derr))<0)
+  {
+    fclose(sh,&serr);
+    GeneralFuncF1(1);
+    ErrMsg(CANT_OPEN_DFILE);
+    return;
+  }
+  while (fsize)
+  {
+    rlen=fsize<BUF_SIZE?fsize:BUF_SIZE;
+    fread(sh,buf,rlen,&serr);
+    fwrite(dh,buf,rlen,&derr);
+    fsize-=rlen;
+  }
+  fclose(sh,&serr);
+  fclose(dh,&derr);
+  GeneralFuncF1(1);
+  ErrMsg(DONE);  
+}
+
+void free_sbp_list(SBP_LIST *sbp_top)
+{
+  SBP_LIST *prev;
+  while (sbp_top)
+  {
+    prev=sbp_top;
+    mfree(sbp_top->issuer);
+    mfree(sbp_top->hash);
+    sbp_top=sbp_top->next;
+    mfree(prev);
+  }
+}
+
+
+void create_sha1_cert(char *hash)
+{
+  int f;
+  unsigned int err;
+  char der_file[128];  
+  int size;
+  char buf[8];
+  char *new_data;
+  split_lines(der_file,certificate_store,DER_FILE);
+  if ((f=fopen(der_file,A_ReadOnly+A_BIN,P_READ,&err))<0)
+  {
+    return;
+  }
+  fread(f,buf,8,&err);
+  size=buf[6]*256+buf[7]+4;
+  new_data=malloc(size);
+  lseek(f,4,S_SET,&err,&err);
+  fread(f,new_data,size,&err);
+  fclose(f,&err);
+  CreateSHA1Hash(hash,new_data,size);
+  mfree(new_data);  
+}
+  
+  
+int verify_hash(char *hash)
+{
+  char new_hash[20];
+  create_sha1_cert(new_hash);
+  return ((memcmp(hash,new_hash,20))?MANUF_PATCHED_UNCORR:MANUF_ALR_PATCHED);  
+}
+
+int is_manufacturer_patched()
+{
+  int f;
+  unsigned int err;
+  int num;
+  int len;
+  SBP_FILE_SIG sbp_sig;
+  char *issuer;
+  char hash[20];
+  int ret=0;
+  if ((f=fopen(manufacturer_sbp,A_ReadOnly+A_BIN,P_READ,&err))<0)
+  {
+    return (CANT_OPEN_MANUFACTURER);  
+  }
+  fread(f,&sbp_sig,sizeof(SBP_FILE_SIG),&err);
+  num=sbp_sig.cert_num;
+  
+  while(num)
+  {
+    fread(f,&len,sizeof(int),&err);
+    issuer=malloc(len+1);
+    issuer[len]=0;
+    fread(f,issuer,len,&err);
+    lseek(f,1,S_CUR,&err,&err);
+    char *s=issuer;
+    while((s=strchr(s,'=')))
+    {
+      s++;
+      ret=strncmp_nocase(s,DER_FILE,strlen(DER_FILE)-4);
+      if (!ret)
+      {
+        mfree(issuer);
+        fread(f,hash,20,&err);
+        fclose(f,&err);
+        return (verify_hash(hash));
+      }
+    }
+    mfree(issuer);
+    lseek(f,20,S_CUR,&err,&err);
+    num--;
+  }
+  fclose(f,&err);
+  return (MANUF_NOT_PATCHED);
+}
+
+void remove_record_sbp()
+{
+  SBP_LIST *sbp_top=0; 
+  SBP_LIST *sbp_list; 
+  SBP_LIST *sbp_prev; 
+  SBP_FILE_SIG sbp_sig;
+  int fsize;
+  int curpos;
+  char *oldbuf;
+  int oldsize;
+  int num;
+  int len;
+  int f;
+  unsigned int err;
+  char *issuer;
+  char *hash;
+  num=is_manufacturer_patched();
+  if (num!=MANUF_ALR_PATCHED&&num!=MANUF_PATCHED_UNCORR)
+  {
+    GeneralFuncF1(1);
+    ErrMsg(num);
+    return;
+  }
+  if ((f=fopen(manufacturer_sbp,A_ReadOnly+A_BIN,P_READ,&err))<0)
+  {
+    GeneralFuncF1(1);
+    ErrMsg(CANT_OPEN_MANUFACTURER);
+    return;  
+  }
+  fsize=lseek(f,0,S_END,&err,&err);
+  lseek(f,0,S_SET,&err,&err);
+  fread(f,&sbp_sig,sizeof(SBP_FILE_SIG),&err);
+  num=sbp_sig.cert_num;
+  while(num)
+  {
+    fread(f,&len,sizeof(int),&err);
+    issuer=malloc(len+1);
+    issuer[len]=0;
+    fread(f,issuer,len,&err);
+    lseek(f,1,S_CUR,&err,&err);
+    hash=malloc(20);
+    fread(f,hash,20,&err);
+    char *s=issuer;
+    while((s=strchr(s,'=')))
+    {
+      s++;
+      if (!strncmp_nocase(s,DER_FILE,strlen(DER_FILE)-4))
+        break;
+    }
+    if (!s)  // Не нашли имя файла сертификита в мануфактурере
+    {
+      sbp_prev=malloc(sizeof(SBP_LIST));
+      sbp_list=sbp_top?(sbp_list->next=sbp_prev):(sbp_top=sbp_prev);
+      sbp_list->issuer=issuer;
+      sbp_list->hash=hash;   
+      sbp_list->next=0;
+    }
+    else  // Нашли - очишаем память и не заносим в список
+    {
+      mfree(issuer);
+      mfree(hash);
+    }
+    num--;
+  }
+  curpos=lseek(f,0,S_CUR,&err,&err);  // проверяем не в конце ли мы стоим
+  oldsize=fsize-curpos;               // если не в конце то выделим память и запишем туда остаток
+  if(oldsize)                   
+  {
+    oldbuf=malloc(oldsize);
+    fread(f,oldbuf,oldsize,&err);
+  }
+  fclose(f,&err);
+  
+  if ((f=fopen(manufacturer_sbp,A_WriteOnly+A_Truncate+A_BIN,P_WRITE,&err))==-1)
+  {
+    free_sbp_list(sbp_top);
+    GeneralFuncF1(1);
+    ErrMsg(CANT_WRITE_MANUFACTURER);
+    return;  
+  } 
+  num=0;
+  sbp_list=sbp_top;
+  while(sbp_list)
+  {
+    num++;
+    sbp_list=sbp_list->next;
+  }
+  sbp_list=sbp_top;
+  sbp_sig.cert_num=num;
+  fwrite(f,&sbp_sig,sizeof(SBP_FILE_SIG),&err);
+  while(sbp_list)
+  {
+    len=strlen(sbp_list->issuer);
+    fwrite(f,&len,sizeof(int),&err);
+    fwrite(f,sbp_list->issuer,len,&err);
+    fwrite(f,delimeter,1,&err);
+    fwrite(f,sbp_list->hash,20,&err);
+    mfree(sbp_list->issuer);
+    mfree(sbp_list->hash);
+    sbp_prev=sbp_list;
+    sbp_list=sbp_list->next;
+    mfree(sbp_prev);
+  }
+  if (oldsize)
+  {
+    fwrite(f,oldbuf,oldsize,&err);
+    mfree(oldbuf);
+  }
+  fclose(f,&err);
+  GeneralFuncF1(1);
+  ErrMsg(DONE);  
+}
+
+void store_record_sbp()
+{
+  int ret;
+  int f;
+  unsigned int err;
+  SBP_LIST *sbp_top=0; 
+  SBP_LIST *sbp_list; 
+  SBP_LIST *sbp_prev; 
+  SBP_FILE_SIG sbp_sig;
+  int fsize;
+  int curpos;
+  char *oldbuf;
+  int oldsize;
+  int len;
+  int num;
+  int clen;
+  char *issuer;
+  char *hash;
+  char my_issuer[64];
+  char der_file[32];
+  char my_hash[20];
+  if ((ret=is_manufacturer_patched())!=MANUF_NOT_PATCHED)
+  {
+    GeneralFuncF1(1);
+    ErrMsg(ret);
+    return;   
+  }
+  if ((f=fopen(manufacturer_sbp,A_ReadOnly+A_BIN,P_READ,&err))<0)
+  {
+    GeneralFuncF1(1);
+    ErrMsg(CANT_OPEN_MANUFACTURER);
+    return;  
+  } 
+  fsize=lseek(f,0,S_END,&err,&err);
+  lseek(f,0,S_SET,&err,&err);
+  fread(f,&sbp_sig,sizeof(SBP_FILE_SIG),&err);
+  clen=num=sbp_sig.cert_num;
+  while(clen)
+  {
+    fread(f,&len,sizeof(int),&err);
+    issuer=malloc(len+1);
+    fread(f,issuer,len,&err);
+    issuer[len]=0;
+    lseek(f,1,S_CUR,&err,&err);
+    hash=malloc(20);
+    fread(f,hash,20,&err);
+    sbp_prev=malloc(sizeof(SBP_LIST));
+    sbp_list=sbp_top?(sbp_list->next=sbp_prev):(sbp_top=sbp_prev);
+    sbp_list->issuer=issuer;
+    sbp_list->hash=hash;   
+    sbp_list->next=0;    
+    clen--;
+  }
+  curpos=lseek(f,0,S_CUR,&err,&err);  // проверяем не в конце ли мы стоим
+  oldsize=fsize-curpos;               // если не в конце то выделим память и запишем туда остаток
+  if(oldsize)                   
+  {
+    oldbuf=malloc(oldsize);
+    fread(f,oldbuf,oldsize,&err);
+  }
+  fclose(f,&err);
+
+  if ((f=fopen(manufacturer_sbp,A_WriteOnly+A_Truncate+A_BIN,P_WRITE,&err))<0)
+  {
+    free_sbp_list(sbp_top);
+    GeneralFuncF1(1);
+    ErrMsg(CANT_WRITE_MANUFACTURER);
+    return;  
+  } 
+  sbp_list=sbp_top;
+  sbp_sig.cert_num=num+1;
+  fwrite(f,&sbp_sig,sizeof(SBP_FILE_SIG),&err);
+  while(sbp_list)
+  {
+    len=strlen(sbp_list->issuer);
+    fwrite(f,&len,sizeof(int),&err);
+    fwrite(f,sbp_list->issuer,len,&err);
+    fwrite(f,delimeter,1,&err);
+    fwrite(f,sbp_list->hash,20,&err);
+    mfree(sbp_list->issuer);
+    mfree(sbp_list->hash);
+    sbp_prev=sbp_list;
+    sbp_list=sbp_list->next;
+    mfree(sbp_prev);
+  }
+  len=strlen(DER_FILE);
+  strncpy(der_file,DER_FILE,len-4);
+  der_file[len-4]=0;
+  len=snprintf(my_issuer,63,"CN=%s,O=www.Siemens-Club.org,C=SU",der_file);
+  fwrite(f,&len,sizeof(int),&err);
+  fwrite(f,my_issuer,len,&err);
+  fwrite(f,delimeter,1,&err);
+  create_sha1_cert(my_hash);
+  fwrite(f,my_hash,20,&err);
+  if (oldsize)
+  {
+    fwrite(f,oldbuf,oldsize,&err);
+    mfree(oldbuf);
+  }
+  fclose(f,&err);
+  GeneralFuncF1(1);
+  ErrMsg(DONE);
+}
+
 void options_back()
 {
   GeneralFuncF1(1);
@@ -696,19 +1142,25 @@ SOFTKEYSTAB options_menu_skt=
 
 HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",LGP_NULL};
 
-MENUITEM_DESC options_menu_ITEMS[4]=
+MENUITEM_DESC options_menu_ITEMS[7]=
 {
-  {NULL,(int)"Sign",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Generate jad",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Remove signature",   LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Back",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Sign",                       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Generate jad",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Remove signature",           LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Copy Certificate to Config", LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Remove record from .sbp",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Store record to .sbp",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Back",                       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
 };
 
-void *options_menu_HNDLS[4]=
+void *options_menu_HNDLS[7]=
 {
   (void *)sign_jad,
   (void *)generate_jad,
   (void *)remove_sign_from_jad,
+  (void *)copy_certificate,
+  (void *)remove_record_sbp,
+  (void *)store_record_sbp,
   (void *)options_back,
 };
 
@@ -717,44 +1169,56 @@ MENU_DESC options_menu_STRUCT=
   0,(void *)NULL,(void*)NULL,NULL,
   options_softkeys,
   &options_menu_skt,
-  8,
+  0x200+0x10,
   NULL,
   options_menu_ITEMS,   //Items
   options_menu_HNDLS,   //Procs
-  4 //n
+  7 //n
 };
+
+//flags 2:
+//1 - with pics
+//2 - don't show menu?
+//4 
+//0x10 - do scroll items
+//0x40 - without scrollbar
+//0x100 - do right align
+//0x200 - with enum 
+//0x400 - without delimeter
+
+
+
+#pragma inline
+void patch_header_small(HEADER_DESC* head)
+{
+  head->rc.x=3;
+  head->rc.y=YDISP+0x18;
+  head->rc.x2=ScreenW()-3-1;
+  head->rc.y2=YDISP+0x18+0x13;
+}
 
 int CreateOptionsMenu()
 {
-  char jar_f[256];
-  ws_2str(jar_file,jar_f,255);
-  if (get_file_size(jar_f)==-1)
-  {
-    ErrMsg(BAD_JAR);
-    return (0);
-  }
-  options_menuhdr.rc.x=3;
-  options_menuhdr.rc.y=0x18;
-  options_menuhdr.rc.x2=ScreenW()-6;
-  options_menuhdr.rc.y2=0x18+0x13;
-  
-  return (options_menu_id=CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,4,0,0)); 
+  patch_header_small((HEADER_DESC*)(&options_menuhdr));
+  return (CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,7,0,0)); 
 }
 
 
 void Free_FLIST(void)
 {
+  LockSched();
   FLIST*fl=(FLIST*)fltop;
+  fltop=0;
+  UnlockSched();
   FLIST*fl_prev;
   while(fl)
   {
-    FreeWS(fl->fullname);
-    FreeWS(fl->filename);
-    fl_prev=fl->next;
-    mfree(fl);
-    fl=fl_prev;
+    fl_prev=fl;
+    fl=fl->next;
+    FreeWS(fl_prev->fullname);
+    FreeWS(fl_prev->filename);
+    mfree(fl_prev);
   }
-  fltop=0;
 }
 
 
@@ -765,7 +1229,10 @@ FLIST* Fill_FLIST(FLIST*fl,char* full_name, char* file_name,int is_dir)
   WSHDR *ws; 
   
   if (ftop)
-    fl=fl->next=malloc(sizeof(FLIST));
+  {
+    fl->next=malloc(sizeof(FLIST));
+    fl=fl->next;
+  }
   else 
     fltop=fl=malloc(sizeof(FLIST));
   len=strlen(file_name);
@@ -820,7 +1287,7 @@ void FindFiles(const char *path)
       {
         if((ext=strrchr(name,'.')))
         {
-          if(!strncmp(ext+1,"jar",3))
+          if(!strncmp_nocase(ext+1,"jar",3))
             fl=Fill_FLIST(fl,name,de.file_name,0);
         }
       }
@@ -881,7 +1348,7 @@ MENU_DESC filelist_STRUCT=
   8,(void *)filelist_menu_onkey,(void*)filelist_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
-  0x11,
+  1+0x10,
   (void *)filelist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
@@ -920,11 +1387,11 @@ void create_menu_folder(void)
     i++;
   }
   if (!i) return; //Нечего создавать
-  filelist_HDR.rc.x2=ScreenW();
-  filelist_HDR.rc.y2=HeaderH();
+  patch_header(&filelist_HDR);
   strncpy(header,folder,24);
   filelist_menu_id=CreateMenu(0,0,&filelist_STRUCT,&filelist_HDR,0,i,0,0);
 }
+
 void remake_filelist();
 void create_view(int n)
 { 
@@ -932,9 +1399,7 @@ void create_view(int n)
   fl=FindFLISTtByN(n);
   if (fl->is_dir)
   {
-    char fname[256];
-    ws_2str(fl->fullname,fname,wstrlen(fl->fullname));
-    strcpy((char*)folder,fname);
+    ws_2str(fl->fullname,(char*)(&folder),128);
     remake_filelist();
   }
   else
@@ -953,7 +1418,7 @@ void filelist_menu_iconhndl(void *data, int curitem, int *unk)
   t=FindFLISTtByN(curitem);
   if (t)
   {
-    ws=AllocMenuWS(data,wstrlen(t->filename));
+    ws=AllocMenuWS(data,wslen(t->filename));
     wstrcpy(ws,t->filename);
   }
   else
@@ -1022,22 +1487,19 @@ SOFTKEYSTAB edit_skt=
 
 void ed1_ghook(GUI *data, int cmd)
 {
-  EDITCONTROL ec;
   int i;
   if (cmd==7)
   {
     SetSoftKey(data,&edit_sk[0],0);
     SetSoftKey(data,&edit_sk[1],1);
     i=EDIT_GetFocus(data);
-    ExtractEditControl(data,i,&ec);
     switch(i)
     {
     case 2:
-      wstrcpy(ews,jar_file);
-      EDIT_SetTextToFocused(data,ews);  
+      EDIT_SetTextToFocused(data,jar_file);  
     }
   }
-  if (cmd==0x0A)
+  else if (cmd==0x0A)
   {
     DisableIDLETMR();
   }
@@ -1048,7 +1510,6 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
   int i;
   int l;
-  EDITCONTROL ec;
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     l=msg->gbsmsg->submess;
@@ -1056,7 +1517,6 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
     {
     case ENTER_BUTTON:
       i=EDIT_GetFocus(data);
-      ExtractEditControl(data,i,&ec);
       switch(i)
       {
       case 2:
@@ -1103,23 +1563,23 @@ int CreateMainMenu(void)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
-  int scr_w,head_h;
+  WSHDR *head;
+  
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-
-  wsprintf(ews,"%t:","Jar file");
-  ConstructEditControl(&ec,1,0x40,ews,256);
+  head=AllocWS(50);
+  wsprintf(head,"%t:","Jar file");
+  ConstructEditControl(&ec,1,0x40,head,wslen(head));
   AddEditControlToEditQend(eq,&ec,ma);
   
-  wsprintf(jar_file,folder);
-  ConstructEditControl(&ec,9,0x40,jar_file,256);
+  str_2ws(jar_file,folder,255);  
+  ConstructEditControl(&ec,8,0x40,jar_file,255);
   AddEditControlToEditQend(eq,&ec,ma); 
  
-  scr_w=ScreenW();
-  head_h=HeaderH();
-  patch_header(&ed1_hdr,0,0,scr_w-1,head_h);
-  patch_input(&ed1_desc,0,head_h+1,scr_w-1,ScreenH()-SoftkeyH()-1);
-  return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
+  patch_header(&ed1_hdr);
+  patch_input(&ed1_desc);
+  FreeWS(head);
+  return (CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0));
 }
 
 
@@ -1127,7 +1587,6 @@ int CreateMainMenu(void)
 void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
-  ews=AllocWS(256);
   jar_file=AllocWS(256);
   csm->gui_id=CreateMainMenu();
 }
@@ -1135,7 +1594,6 @@ void maincsm_oncreate(CSM_RAM *data)
 void maincsm_onclose(CSM_RAM *csm)
 {
   Free_FLIST();
-  FreeWS(ews);
   FreeWS(jar_file);
   SUBPROC((void *)ElfKiller);
 }
@@ -1189,7 +1647,7 @@ const struct
     NAMECSM_MAGIC1,
     NAMECSM_MAGIC2,
     0x0,
-    139
+    19
   }
 };
 
@@ -1204,9 +1662,9 @@ int main()
   S_ICONS[0]=(int)JAR_ICON;
   S_ICONS[1]=(int)FOLDER_ICON;
   S_ICONS[2]=0;
-  char dummy[sizeof(MAIN_CSM)];
+  MAIN_CSM csm;
   UpdateCSMname();
   LockSched();
-  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CreateCSM(&MAINCSM.maincsm,&csm,0);
   UnlockSched();
 }
