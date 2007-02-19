@@ -108,6 +108,17 @@ void CList_RedrawCList()
           
           DrawString(out_ws,1,start_y+1,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
 
+
+// Экспериментально: отрисовка картинок статусов: только ELFLoader 2.0 и выше
+#ifdef USE_PNG_EXT
+          char* path_to_pic = malloc(128);
+          strcpy(path_to_pic, PATH_TO_PIC);
+          if(resEx->has_unread_msg){strcat(path_to_pic, "message");}
+          else{strcat(path_to_pic, PRESENCES[resEx->status]);}
+          strcat(path_to_pic, ".png");
+          DrawImg(1, start_y, (int)path_to_pic);
+          mfree(path_to_pic);
+#endif                    
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
         }
         if(Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg)i++;

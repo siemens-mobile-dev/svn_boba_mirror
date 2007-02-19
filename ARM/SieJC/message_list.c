@@ -81,11 +81,12 @@ void inp_ghook(GUI *gui, int cmd)
    ExtractEditControl(gui,1,&ec);    
    wstrcpy(ws_eddata,ec.pWS);
    ws_2str(ws_eddata, body, MAX_MSG_LEN); // WS из эдитконтрола => UTF-8
-   char m[100];
-   sprintf(m,"WL=%d, L=%d", wstrlen(ws_eddata), strlen(body));
-   ShowMSG(1,(int)m);
+   //char m[100];
+   //sprintf(m,"WL=%d, L=%d", wstrlen(ws_eddata), strlen(body));
+   //ShowMSG(1,(int)m);
    char* hist = convUTF8_to_ANSI_STR(body);
-   CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
+   char* real_hist = *hist == 0x1F ? hist+1 : hist; 
+   CList_AddMessage(Resource_Ex->full_name, MSG_ME, real_hist);
    mfree(hist);
 
    SUBPROC((void*)SendMessage,Resource_Ex->full_name, body);

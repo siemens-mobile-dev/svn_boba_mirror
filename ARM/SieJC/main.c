@@ -125,12 +125,13 @@ char My_JID[128];
 char My_JID_full[128];
 
 
-void start_vibra(void)
+void start_vibra(int lvibra_count)
 {
+  vibra_count = lvibra_count;
   void stop_vibra(void);
   if(Is_Vibra_Enabled)
   {
-    SetVibration(100);
+    SetVibration(VIBRA_POWER);
     GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
   }  
 }
@@ -759,8 +760,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         connect_state=0;
         Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
-        vibra_count=4;
-        start_vibra();
+        start_vibra(4);
         REDRAW();
         //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
         break;

@@ -9,6 +9,10 @@
 
 #define HAS_MMCARD    // Есть ли флешка у телефона. При включении этой опции
                       // запись логов будет идти на флеш-карту, что быстрее.
+#define VIBRA_POWER 10 // Сила вибры для событий разного рода
+
+#define USE_PNG_EXT   // Использовать ли расширение PNG для картинок (ELFLoader >2.0)
+#define PATH_TO_PIC "4:\\ZBin\\SieJC\\img\\"
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifdef HAS_MMCARD
@@ -96,4 +100,5 @@ typedef struct
 
 void SendAnswer(char *str);
 
+void start_vibra(int lvibra_count);
 #endif

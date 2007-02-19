@@ -461,6 +461,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     ShowMSG(1,(int)m);
     mfree(m);
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
+    start_vibra(1);
   }  
 }
 
