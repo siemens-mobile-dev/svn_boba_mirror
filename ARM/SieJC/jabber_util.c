@@ -23,7 +23,7 @@ extern char logmsg[];
 extern JABBER_STATE Jabber_state;
 
 const char* PRESENCES[PRES_COUNT] = {"online", "unavailable", "error", "chat", "away", "xa", "dnd", "invisible"};
-const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        22,             14,     16,     3,      18,   2,      20};
+const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        21,             14,     16,     3,      18,   2,      20}; //цвет оффлайнов изменил
 
 
 /*
@@ -211,7 +211,7 @@ void SendMessage(char* jid, char* body)
       </x>
     </message>
 */
-  
+ 
   // Извратимся с JID 
 //  char IsNonLatin=0; // Нет латинских символов
 //  int jlen=strlen(jid);

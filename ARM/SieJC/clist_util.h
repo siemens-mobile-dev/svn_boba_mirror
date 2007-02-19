@@ -11,11 +11,13 @@
 #include "main.h"
 
 // Количество символов на строке
-#define CHAR_ON_LINE 22
+#define CHAR_ON_LINE 20           // ad: цвет оффлайнеров
 
-#define CLIST_FONT SMALL_FONT   // Шрифт контакт-листа
-#define CLIST_Y1 26
-// Начало вывода контакт-листа
+#define CURSOR 13                 // ad: цвет курсора
+
+#define CLIST_FONT SMALL_FONT     // Шрифт контакт-листа
+#define CLIST_Y1 20               // ad: меньше сделал (26->20) вроде 
+
 #define CLIST_F_COLOR_0 1         // Цвет шрифта 
 #define CLIST_F_COLOR_1 15         // Цвет шрифта (есть сообщения)
 

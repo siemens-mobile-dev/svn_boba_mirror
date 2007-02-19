@@ -11,6 +11,8 @@ CLIST* cltop = NULL;
 
 char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
 
+char lineColor = 0;               // ad: цвет текущей строчки
+
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
 unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться 
 
@@ -32,7 +34,7 @@ extern JABBER_STATE Jabber_state;
 void CList_RedrawCList()
 {
   // Определяем, скока контактов поместится на странице списка
-  int font_y = GetFontYSIZE(CLIST_FONT)*2 +2;
+  int font_y = GetFontYSIZE(CLIST_FONT)+2; // ad: думаю что нужно сделать чтобы была 1 строка... пусть контакт вылетает за пределы экрана
   int scr_w=ScreenW();
   N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1)-1;
   if(!cltop)return; 
@@ -50,6 +52,9 @@ void CList_RedrawCList()
   int fcolor;
   char cur[2]=">\0";
   TRESOURCE* resEx;
+
+  char Alternation = 1;             // ad: состояние чередования
+
   while(ClEx)
   {
     if(ClEx->ResourceCount)
@@ -62,21 +67,30 @@ void CList_RedrawCList()
         {
           if(i==CursorPos)
           {
-            cur[0]='>';
+            cur[0]='»';
+            lineColor=CURSOR;
             ActiveContact = resEx;
-          }else{cur[0]=' ';}
-          //wsprintf(out_ws,"%s TEST %d", cur, i);
-          if(resEx->name)
-          {
-            wsprintf(out_ws,"%s %d %s/%s", cur, resEx->has_unread_msg, ClEx->name, resEx->name);
+          } else{ 
+            cur[0]=' ';
+            lineColor=(Alternation==1)? 0 : 22;
           }
-          else
-          {
-            wsprintf(out_ws,"%s%d %s", cur, resEx->has_unread_msg, ClEx->name);
+          //wsprintf(out_ws,"%s TE rfST %d", cur, i);
+          if(resEx->name) {
+            wsprintf(out_ws,"%s %d %s/%s", cur, resEx->has_unread_msg, ClEx->name, resEx->name);
+          } else {
+            wsprintf(out_ws,"%s %d %s", cur, resEx->has_unread_msg, ClEx->name);
           }
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
+          
           if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=PRES_COLORS[resEx->status];}
-          DrawString(out_ws,1,start_y,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
+
+          DrawRoundedFrame(0,start_y,scr_w-1,start_y+font_y,0,0,0,
+		   GetPaletteAdrByColorIndex(lineColor),  //ad: рисуем с чередованием... для наглядности
+		   GetPaletteAdrByColorIndex(lineColor)); //ad: не очень понял значение второго атрибута, просто повторю
+          
+          DrawString(out_ws,1,start_y+1,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
+
+          Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
         }
         if(Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg)i++;
         resEx = resEx->next;

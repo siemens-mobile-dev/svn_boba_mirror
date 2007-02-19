@@ -475,6 +475,7 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
+
 void QuitCallbackProc(int decision)
 {
   if(!decision)Quit_Required = 1;

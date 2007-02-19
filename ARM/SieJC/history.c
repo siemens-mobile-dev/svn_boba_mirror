@@ -8,7 +8,7 @@ void Log(char* module, char* logstr)
 {
   volatile int hFile;
   unsigned int io_error = 0;
-  char fullname[] ="4:\\jlog.txt";
+  char fullname[] ="0:\\jlog.txt"; //ad: поменял путь 4 -> 0 ну нету на эсэльке 4 диска! 
   fullname[0] = DEFAULT_DISC;
   char* buffer = malloc(65536);
   zeromem(buffer,65536);
@@ -39,7 +39,7 @@ void Log_XMLStream(char* logstr, int size)
 {
   volatile int hFile;
   unsigned int io_error = 0;
-  char fullname[] ="4:\\test.xml";
+  char fullname[] ="0:\\test.xml"; //ad: поменял путь 4 -> 0 ну нету на эсэльке 4 диска! 
   fullname[0] = DEFAULT_DISC;
   // Открываем файл (режим перезаписи)
   hFile = fopen(fullname,A_ReadWrite +A_Create+ A_Append + A_BIN,P_READ+P_WRITE, &io_error);
