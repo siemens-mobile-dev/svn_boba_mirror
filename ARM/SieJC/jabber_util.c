@@ -186,12 +186,13 @@ char* Correct_UTF8_String(char* utf8_str)
   return utf8_str;
 }
 
+
 char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
 {
-  WSHDR* ws_str = AllocWS(maxlen*2);
+  WSHDR* ws_str = AllocWS(maxlen);
   ascii2ws(ws_str, ansi_str);
-  char* utf8_str = malloc(maxlen*2);
-  ws_2str(ws_str, utf8_str, maxlen*2);
+  char* utf8_str = malloc(maxlen*2+1);
+  ws_2str(ws_str, utf8_str, maxlen);
   FreeWS(ws_str);
   utf8_str = Correct_UTF8_String(utf8_str);
   return utf8_str;
@@ -219,18 +220,12 @@ void SendMessage(char* jid, char* body)
 //  {
 //    if(*(jid+i)>127)IsNonLatin=1;
 //  }
-  
-  WSHDR* ws_jid = AllocWS(128);
-  ascii2ws(ws_jid, jid);
-  char* utf8_jid = malloc(132);
-  ws_2str(ws_jid, utf8_jid, 132);
-  FreeWS(ws_jid);
 
-  utf8_jid = Correct_UTF8_String(utf8_jid);
+  char* utf8_jid = ANSI2UTF8(jid, 128);
   
   body = Correct_UTF8_String(body);
   char mes_template[]="<message to='%s' id='SieJC_%d' type='chat'><body>%s</body></message>";
-  char* msg_buf = malloc(2048);
+  char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   sprintf(msg_buf, mes_template, utf8_jid, m_num, body);
   mfree(body);
   mfree(utf8_jid);

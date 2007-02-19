@@ -55,6 +55,9 @@ void CList_RedrawCList()
 
   char Alternation = 1;             // ad: состояние чередования
 
+  WSHDR* ClEx_name = AllocWS(128);
+  WSHDR* ResEx_name = AllocWS(128);
+  
   while(ClEx)
   {
     if(ClEx->ResourceCount)
@@ -75,17 +78,32 @@ void CList_RedrawCList()
             lineColor=(Alternation==1)? 0 : 22;
           }
           //wsprintf(out_ws,"%s TE rfST %d", cur, i);
+          ascii2ws(ClEx_name, ClEx->name);
+          if(resEx->name)
+          {
+            ascii2ws(ResEx_name,resEx->name);
+            wsprintf(out_ws,"%s %d %w/%w", cur, resEx->has_unread_msg, ClEx_name, ResEx_name);
+          }
+          else
+          {
+            wsprintf(out_ws,"%s %d %w", cur, resEx->has_unread_msg, ClEx_name);            
+          }
+/*          
+          // Сие без поддержки нормального вывода в отстуствие патча. Нах.
           if(resEx->name) {
             wsprintf(out_ws,"%s %d %s/%s", cur, resEx->has_unread_msg, ClEx->name, resEx->name);
           } else {
             wsprintf(out_ws,"%s %d %s", cur, resEx->has_unread_msg, ClEx->name);
           }
+*/
+          
+                    
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
           
           if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=PRES_COLORS[resEx->status];}
 
           DrawRoundedFrame(0,start_y,scr_w-1,start_y+font_y,0,0,0,
-		   GetPaletteAdrByColorIndex(lineColor),  //ad: рисуем с чередованием... для наглядности
+		   GetPaletteAdrByColorIndex(15),  //ad: рисуем с чередованием... для наглядности
 		   GetPaletteAdrByColorIndex(lineColor)); //ad: не очень понял значение второго атрибута, просто повторю
           
           DrawString(out_ws,1,start_y+1,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
@@ -106,7 +124,8 @@ void CList_RedrawCList()
 //  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
   if(Jabber_state==JS_ONLINE)sprintf(logmsg, "Self=%s",PRESENCES[My_Presence]);
   UnlockSched();
-
+  FreeWS(ClEx_name);
+  FreeWS(ResEx_name);
   FreeWS(out_ws);
 }
 

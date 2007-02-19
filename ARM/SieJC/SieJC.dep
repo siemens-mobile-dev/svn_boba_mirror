@@ -5,64 +5,111 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\mainmenu.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\history.pbi</file>
+      <file>$PROJ_DIR$\..\inc\cfg_items.h</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\status_change.r79</file>
       <file>$PROJ_DIR$\SieJC.h</file>
       <file>$PROJ_DIR$\Debug\Obj\mainmenu.r79</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\..\inc\cfg_items.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\history.pbi</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\main.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
-      <file>$PROJ_DIR$\Debug\Exe\NATICQ.d79</file>
-      <file>$PROJ_DIR$\Debug\Obj\config_data.r79</file>
-      <file>$PROJ_DIR$\..\inc\bn.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\SieJC.pbd</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\history.r79</file>
+      <file>$PROJ_DIR$\..\inc\crypto.h</file>
       <file>$PROJ_DIR$\..\inc\sha.h</file>
       <file>$PROJ_DIR$\mainmenu.h</file>
       <file>$PROJ_DIR$\Debug\Obj\conf_loader.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\status_change.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\conf_loader.r79</file>
-      <file>$PROJ_DIR$\Debug\Obj\status_change.pbi</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\history.r79</file>
-      <file>$PROJ_DIR$\..\inc\crypto.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\mainmenu.pbi</file>
+      <file>$PROJ_DIR$\..\inc\rsa.h</file>
+      <file>$PROJ_DIR$\mainmenu.c</file>
       <file>$PROJ_DIR$\naticq.h</file>
       <file>$PROJ_DIR$\status_change.c</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Debug\Exe\SieJC.d79</file>
+      <file>$PROJ_DIR$\Debug\Obj\conf_loader.r79</file>
+      <file>$PROJ_DIR$\status_change.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\NATICQ.pbd</file>
       <file>$PROJ_DIR$\conf_loader.c</file>
       <file>$PROJ_DIR$\conf_loader.h</file>
       <file>$PROJ_DIR$\config_data.c</file>
       <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\history.c</file>
       <file>$PROJ_DIR$\history.h</file>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
-      <file>$PROJ_DIR$\status_change.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\NATICQ.pbd</file>
-      <file>$PROJ_DIR$\..\inc\rsa.h</file>
-      <file>$PROJ_DIR$\mainmenu.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\SieJC.pbd</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\config_data.pbi</file>
-      <file>$PROJ_DIR$\Debug\Exe\SieJC.d79</file>
+      <file>$PROJ_DIR$\..\inc\bn.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\status_change.pbi</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Debug\Exe\NATICQ.d79</file>
+      <file>$PROJ_DIR$\Debug\Obj\config_data.r79</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 9</file>
+          <file> 38</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 13</file>
+          <file> 34</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 3 21 38 6 32 35 12 23 14 4 1 31 27 8</file>
+          <file> 2 36 10 37 22 18 33 13 14 1 5 32 28 8</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Obj\SieJC.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 0 34</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\mainmenu.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 6</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 2 36 10 37 22 18 33 13 14 1 20 32 15 8 28 25</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\status_change.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 4</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 35</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 2 36 10 37 22 18 33 13 14 1 20 8 25</file>
         </tool>
       </inputs>
     </file>
@@ -71,26 +118,16 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 40 10</file>
+          <file> 23 39</file>
         </tool>
       </outputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\status_change.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 18</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 20</file>
-        </tool>
-      </outputs>
+      <name>$PROJ_DIR$\Debug\Obj\NATICQ.pbd</name>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 3 21 38 6 32 35 12 23 14 4 24 8 33</file>
+          <name>BILINK</name>
+          <file> 16 11 0 34 17 35</file>
         </tool>
       </inputs>
     </file>
@@ -99,7 +136,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 19</file>
+          <file> 24</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -109,7 +146,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 3 21 38 6 32 35 12 23 14 4 27</file>
+          <file> 2 36 10 37 22 18 33 13 14 1 28</file>
         </tool>
       </inputs>
     </file>
@@ -118,17 +155,17 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 11</file>
+          <file> 40</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 39</file>
+          <file> 11</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 4</file>
+          <file> 1</file>
         </tool>
       </inputs>
     </file>
@@ -137,7 +174,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 17</file>
+          <file> 3</file>
         </tool>
       </outputs>
     </file>
@@ -146,35 +183,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 22</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 5</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 3 21 38 6 32 35 12 23 14 31</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Obj\NATICQ.pbd</name>
-      <inputs>
-        <tool>
-          <name>BILINK</name>
-          <file> 16 39 5 13 0 20</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\mainmenu.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 2</file>
+          <file> 12</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -184,16 +193,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 3 21 38 6 32 35 12 23 14 4 24 31 15 8 27 33</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Obj\SieJC.pbd</name>
-      <inputs>
-        <tool>
-          <name>BILINK</name>
-          <file> 5 13</file>
+          <file> 2 36 10 37 22 18 33 13 14 32</file>
         </tool>
       </inputs>
     </file>
@@ -205,340 +205,18 @@
   <configuration>
     <name>Release</name>
     <outputs>
-      <file>$PROJ_DIR$\Release\Obj\string_util.pbi</file>
-      <file>$PROJ_DIR$\Release\List\string_util.i</file>
-      <file>$PROJ_DIR$\Release\Obj\jabber_util.pbi</file>
-      <file>$PROJ_DIR$\Release\List\clist_util.lst</file>
-      <file>$PROJ_DIR$\Release\List\string_util.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\SieJC.pbd</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
       <file>$PROJ_DIR$\..\inc\cfg_items.h</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Release\List\main.i</file>
-      <file>$PROJ_DIR$\Release\Obj\clist_util.r79</file>
-      <file>$PROJ_DIR$\Release\List\history.lst</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
-      <file>$PROJ_DIR$\Release\Exe\SieJC.elf</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
-      <file>$PROJ_DIR$\jabber_util.c</file>
-      <file>$PROJ_DIR$\jabber.h</file>
-      <file>$PROJ_DIR$\jabber_util.h</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\main.h</file>
-      <file>$PROJ_DIR$\message_list.c</file>
-      <file>$PROJ_DIR$\message_list.h</file>
-      <file>$PROJ_DIR$\string_util.c</file>
-      <file>$PROJ_DIR$\string_util.h</file>
-      <file>$PROJ_DIR$\xml_parser.c</file>
-      <file>$PROJ_DIR$\xml_parser.h</file>
-      <file>$PROJ_DIR$\..\inc\bn.h</file>
-      <file>$PROJ_DIR$\..\inc\sha.h</file>
-      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$PROJ_DIR$\Release\List\message_list.lst</file>
+      <file>$TOOLKIT_DIR$\lib\dl5tpainl8n.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\history.pbi</file>
       <file>$PROJ_DIR$\Release\Obj\xml_parser.pbi</file>
       <file>$PROJ_DIR$\Release\List\message_list.i</file>
       <file>$PROJ_DIR$\Release\List\conf_loader.i</file>
-      <file>$PROJ_DIR$\Release\Obj\string_util.r79</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
-      <file>$PROJ_DIR$\..\inc\crypto.h</file>
-      <file>$PROJ_DIR$\Release\List\xml_parser.lst</file>
-      <file>$PROJ_DIR$\Release\List\message_list.lst</file>
-      <file>$PROJ_DIR$\conf_loader.c</file>
-      <file>$PROJ_DIR$\conf_loader.h</file>
-      <file>$PROJ_DIR$\config_data.c</file>
-      <file>$PROJ_DIR$\func.asm</file>
-      <file>$PROJ_DIR$\history.c</file>
-      <file>$PROJ_DIR$\history.h</file>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
-      <file>$TOOLKIT_DIR$\lib\dl5tpainl8n.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\history.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\message_list.r79</file>
-      <file>$PROJ_DIR$\..\inc\rsa.h</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\Release\Obj\history.r79</file>
-      <file>$PROJ_DIR$\Release\List\conf_loader.lst</file>
-      <file>$PROJ_DIR$\Release\List\clist_util.i</file>
-      <file>$PROJ_DIR$\Release\Obj\clist_util.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\conf_loader.pbi</file>
-      <file>$PROJ_DIR$\Release\List\config_data.i</file>
-      <file>$PROJ_DIR$\Release\List\jabber_util.i</file>
-      <file>$PROJ_DIR$\Release\List\jabber_util.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\message_list.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\conf_loader.r79</file>
-      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\Release\List\xml_parser.i</file>
-      <file>$PROJ_DIR$\Release\List\main.lst</file>
       <file>$PROJ_DIR$\Release\Obj\xml_parser.r79</file>
       <file>$PROJ_DIR$\Release\List\config_data.lst</file>
-      <file>$PROJ_DIR$\Release\Obj\jabber_util.r79</file>
-      <file>$PROJ_DIR$\Release\List\history.i</file>
-      <file>$PROJ_DIR$\clist_util.c</file>
-      <file>$PROJ_DIR$\clist_util.h</file>
-    </outputs>
-    <file>
-      <name>$PROJ_DIR$\Release\Obj\SieJC.pbd</name>
-      <inputs>
-        <tool>
-          <name>BILINK</name>
-          <file> 53 54 14 45 2 61 59 0 29</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Release\Exe\SieJC.elf</name>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 8 10 60 58 46 50 66 28 47 32 64 44</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jabber_util.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 66 56 57</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 2</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 42 19 16 69 17 25 23</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 42 19 16 69 17 25 23</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 28 9 63</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 61</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 7 42 19 16 38 69 21 25 23 17</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 7 42 19 16 38 69 21 25 23 17</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\message_list.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 47 30 36</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 59</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 19 16 69 42 21 17 25 23</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 19 16 69 42 21 17 25 23</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\string_util.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 32 1 4</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 0</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 23</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 23</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\xml_parser.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 64 62 35</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 29</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 19 16 25</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 19 16 25</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 13</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\conf_loader.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 60 31 51</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 54</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 7 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 7 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\config_data.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 58 55 65</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 14</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 7</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 7</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\func.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 46</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\history.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 50 67 11</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 45</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 42 19 16</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 42 19 16</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\clist_util.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 10 52 3</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 53</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 6 33 49 12 43 48 26 34 27 19 16 69 17 25 23 42</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6 33 49 12 43 48 26 34 27 19 16 69 17 25 23 42</file>
-        </tool>
-      </inputs>
-    </file>
-  </configuration>
-  <configuration>
-    <name>Release_SGOLD</name>
-    <outputs>
-      <file>$PROJ_DIR$\SieJC.h</file>
-      <file>$PROJ_DIR$\..\inc\swilib.h</file>
-      <file>$PROJ_DIR$\..\inc\cfg_items.h</file>
-      <file>$PROJ_DIR$\test.xcl</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\conf_loader.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\jabber_util.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\xml_parser.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\message_list.lst</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\message_list.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\main.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\history.lst</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\string_util.pbi</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\history.pbi</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\config_data.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\jabber_util.i</file>
-      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release\List\jabber_util.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
       <file>$PROJ_DIR$\jabber_util.c</file>
       <file>$PROJ_DIR$\jabber.h</file>
       <file>$PROJ_DIR$\jabber_util.h</file>
@@ -550,48 +228,51 @@
       <file>$PROJ_DIR$\string_util.h</file>
       <file>$PROJ_DIR$\xml_parser.c</file>
       <file>$PROJ_DIR$\xml_parser.h</file>
-      <file>$PROJ_DIR$\..\inc\bn.h</file>
-      <file>$PROJ_DIR$\..\inc\sha.h</file>
-      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
       <file>$PROJ_DIR$\..\inc\crypto.h</file>
+      <file>$PROJ_DIR$\..\inc\sha.h</file>
+      <file>$PROJ_DIR$\Release\Obj\string_util.pbi</file>
+      <file>$PROJ_DIR$\Release\List\string_util.i</file>
+      <file>$PROJ_DIR$\Release\Obj\jabber_util.pbi</file>
+      <file>$PROJ_DIR$\..\inc\rsa.h</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\jabber_util.r79</file>
+      <file>$PROJ_DIR$\Release\List\history.i</file>
+      <file>$PROJ_DIR$\Release\Obj\SieJC.pbd</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\Release\List\main.i</file>
+      <file>$PROJ_DIR$\Release\List\config_data.i</file>
+      <file>$PROJ_DIR$\Release\List\jabber_util.i</file>
       <file>$PROJ_DIR$\conf_loader.c</file>
       <file>$PROJ_DIR$\conf_loader.h</file>
       <file>$PROJ_DIR$\config_data.c</file>
       <file>$PROJ_DIR$\func.asm</file>
       <file>$PROJ_DIR$\history.c</file>
       <file>$PROJ_DIR$\history.h</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\string_util.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\SieJC.pbd</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\conf_loader.lst</file>
-      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\string_util.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\xml_parser.lst</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\clist_util.pbi</file>
-      <file>$TOOLKIT_DIR$\lib\dl5tpainl8n.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\clist_util.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\jabber_util.lst</file>
-      <file>$PROJ_DIR$\..\inc\rsa.h</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\config_data.lst</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\conf_loader.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\xml_parser.pbi</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\jabber_util.pbi</file>
-      <file>$PROJ_DIR$\..\inc\zlib.h</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Exe\SieJC.elf</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\message_list.pbi</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\xml_parser.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\history.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\config_data.pbi</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\clist_util.lst</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\history.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\string_util.lst</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\main.lst</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\func.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\message_list.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\config_data.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\List\clist_util.i</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\main.r79</file>
-      <file>$PROJ_DIR$\Release_SGOLD\Obj\conf_loader.pbi</file>
+      <file>$PROJ_DIR$\..\inc\bn.h</file>
+      <file>$PROJ_DIR$\Release\Obj\clist_util.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.pbi</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release\Obj\string_util.r79</file>
+      <file>$PROJ_DIR$\Release\List\xml_parser.lst</file>
+      <file>$PROJ_DIR$\Release\List\xml_parser.i</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\message_list.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\message_list.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\history.r79</file>
+      <file>$PROJ_DIR$\Release\List\clist_util.lst</file>
+      <file>$PROJ_DIR$\Release\List\string_util.lst</file>
+      <file>$PROJ_DIR$\Release\List\conf_loader.lst</file>
+      <file>$PROJ_DIR$\Release\List\clist_util.i</file>
+      <file>$PROJ_DIR$\Release\Obj\clist_util.r79</file>
+      <file>$PROJ_DIR$\Release\List\history.lst</file>
+      <file>$PROJ_DIR$\Release\Exe\SieJC.elf</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
       <file>$PROJ_DIR$\clist_util.c</file>
       <file>$PROJ_DIR$\clist_util.h</file>
     </outputs>
@@ -600,21 +281,21 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 5 14 47</file>
+          <file> 31 37 10</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 52</file>
+          <file> 28</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 0 36 20 17 70 18 26 24</file>
+          <file> 1 47 23 48 30 29 44 24 25 43 16 13 69 14 22 20</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 0 36 20 17 70 18 26 24</file>
+          <file> 1 47 23 48 30 29 44 24 25 43 16 13 69 14 22 20</file>
         </tool>
       </inputs>
     </file>
@@ -623,30 +304,7 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 67 9 62</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 46</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 2 36 20 17 32 70 22 26 24 18</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 2 36 20 17 32 70 22 26 24 18</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\message_list.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 8 64 7</file>
+          <file> 67 35 52</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -656,11 +314,34 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 20 17 70 36 22 18 26 24</file>
+          <file> 1 47 23 48 30 29 44 24 25 0 43 16 13 39 69 18 22 20 14</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 20 17 70 36 22 18 26 24</file>
+          <file> 1 47 23 48 30 29 44 24 25 0 43 16 13 39 69 18 22 20 14</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\message_list.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 6 2</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 53</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 47 23 48 30 29 44 24 25 16 13 69 43 18 14 22 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 47 23 48 30 29 44 24 25 16 13 69 43 18 14 22 20</file>
         </tool>
       </inputs>
     </file>
@@ -669,7 +350,266 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 37 41 61</file>
+          <file> 49 27 60</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 26</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 47 23 48 30 29 44 24 25 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 47 23 48 30 29 44 24 25 20</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\xml_parser.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 8 51 50</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 47 23 48 30 29 44 24 25 16 13 22</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 47 23 48 30 29 44 24 25 16 13 22</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Obj\SieJC.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 45 46 66 4 28 55 53 26 5</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 65</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\conf_loader.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 54 7 61</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 46</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 47 23 48 30 29 44 24 25 0 39</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 47 23 48 30 29 44 24 25 0 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\config_data.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 11 36 9</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 66</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 56</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\history.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 58 32 64</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 4</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 47 23 48 30 29 44 24 25 43 16 13</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 47 23 48 30 29 44 24 25 43 16 13</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\SieJC.elf</name>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 34 63 54 11 56 58 31 67 57 49 8 3</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\clist_util.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 63 62 59</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 45</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 47 23 48 30 29 44 24 25 16 13 69 14 22 20 43</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 47 23 48 30 29 44 24 25 16 13 69 14 22 20 43</file>
+        </tool>
+      </inputs>
+    </file>
+  </configuration>
+  <configuration>
+    <name>Release_SGOLD</name>
+    <outputs>
+      <file>$PROJ_DIR$\..\inc\cfg_items.h</file>
+      <file>$PROJ_DIR$\..\inc\swilib.h</file>
+      <file>$TOOLKIT_DIR$\lib\dl5tpainl8n.r79</file>
+      <file>$PROJ_DIR$\SieJC.h</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\jabber_util.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\string_util.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\SieJC.pbd</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\conf_loader.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\config_data.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\conf_loader.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\xml_parser.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\jabber_util.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\clist_util.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\jabber_util.lst</file>
+      <file>$PROJ_DIR$\jabber_util.c</file>
+      <file>$PROJ_DIR$\jabber.h</file>
+      <file>$PROJ_DIR$\jabber_util.h</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\main.h</file>
+      <file>$PROJ_DIR$\message_list.c</file>
+      <file>$PROJ_DIR$\message_list.h</file>
+      <file>$PROJ_DIR$\string_util.c</file>
+      <file>$PROJ_DIR$\string_util.h</file>
+      <file>$PROJ_DIR$\xml_parser.c</file>
+      <file>$PROJ_DIR$\xml_parser.h</file>
+      <file>$PROJ_DIR$\..\inc\zlib.h</file>
+      <file>$PROJ_DIR$\..\inc\crypto.h</file>
+      <file>$PROJ_DIR$\..\inc\sha.h</file>
+      <file>$PROJ_DIR$\..\inc\rsa.h</file>
+      <file>$PROJ_DIR$\..\inc\pngconf.h</file>
+      <file>$PROJ_DIR$\test.xcl</file>
+      <file>$PROJ_DIR$\conf_loader.c</file>
+      <file>$PROJ_DIR$\conf_loader.h</file>
+      <file>$PROJ_DIR$\config_data.c</file>
+      <file>$PROJ_DIR$\func.asm</file>
+      <file>$PROJ_DIR$\history.c</file>
+      <file>$PROJ_DIR$\history.h</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\string_util.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\main.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\func.r79</file>
+      <file>$PROJ_DIR$\..\inc\bn.h</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\message_list.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\config_data.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\clist_util.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Exe\SieJC.elf</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\message_list.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\xml_parser.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\history.i</file>
+      <file>$PROJ_DIR$\..\inc\png.h</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\history.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\string_util.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\history.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\config_data.r79</file>
+      <file>$PROJ_DIR$\..\inc\zconf.h</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\conf_loader.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\jabber_util.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\xml_parser.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\message_list.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\message_list.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\main.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\clist_util.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\history.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\conf_loader.pbi</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\string_util.i</file>
+      <file>$PROJ_DIR$\Release_SGOLD\List\xml_parser.lst</file>
+      <file>$PROJ_DIR$\Release_SGOLD\Obj\clist_util.pbi</file>
+      <file>$PROJ_DIR$\clist_util.c</file>
+      <file>$PROJ_DIR$\clist_util.h</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\Release_SGOLD\Obj\SieJC.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 68 65 61 52 11 13 46 51 10</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jabber_util.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 56 4 14</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -679,20 +619,66 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 24</file>
+          <file> 1 49 26 54 30 29 41 27 28 3 37 19 16 70 17 25 23</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 24</file>
+          <file> 1 49 26 54 30 29 41 27 28 3 37 19 16 70 17 25 23</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\xml_parser.c</name>
+      <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 56 6 42</file>
+          <file> 64 60 39</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 13</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 49 26 54 30 29 41 27 28 0 37 19 16 33 70 21 25 23 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 49 26 54 30 29 41 27 28 0 37 19 16 33 70 21 25 23 17</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\message_list.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 59 42 58</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 46</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 49 26 54 30 29 41 27 28 19 16 70 37 21 17 25 23</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 49 26 54 30 29 41 27 28 19 16 70 37 21 17 25 23</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\string_util.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 5 66 38</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -702,11 +688,34 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 20 17 26</file>
+          <file> 1 49 26 54 30 29 41 27 28 23</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 20 17 26</file>
+          <file> 1 49 26 54 30 29 41 27 28 23</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\xml_parser.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 47 57 67</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 10</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 49 26 54 30 29 41 27 28 19 16 25</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 49 26 54 30 29 41 27 28 19 16 25</file>
         </tool>
       </inputs>
     </file>
@@ -715,7 +724,7 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 54</file>
+          <file> 45</file>
         </tool>
       </outputs>
     </file>
@@ -724,7 +733,94 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 50 4 39</file>
+          <file> 9 55 7</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 65</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 49 26 54 30 29 41 27 28 0 33</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 49 26 54 30 29 41 27 28 0 33</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\config_data.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 53 43 8</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 61</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 40</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\history.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 63 48 50</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 52</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 49 26 54 30 29 41 27 28 3 37 19 16</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 49 26 54 30 29 41 27 28 3 37 19 16</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release_SGOLD\Exe\SieJC.elf</name>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 31 12 9 53 40 63 56 64 59 5 47 2</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\clist_util.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 12 44 62</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -734,107 +830,11 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 2 32</file>
+          <file> 1 49 26 54 30 29 41 27 28 19 16 70 17 25 23 37</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 2 32</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\config_data.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 13 65 49</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 58</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 2</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 2</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\func.asm</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 63</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\history.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 60 57 10</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 12</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 0 36 20 17</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 0 36 20 17</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Release_SGOLD\Obj\SieJC.pbd</name>
-      <inputs>
-        <tool>
-          <name>BILINK</name>
-          <file> 43 68 58 12 52 46 55 11 51</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Release_SGOLD\Exe\SieJC.elf</name>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 3 45 50 13 63 60 5 67 8 37 56 44</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\clist_util.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 45 66 59</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 43</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 1 29 53 15 40 48 27 30 28 20 17 70 18 26 24 36</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 1 29 53 15 40 48 27 30 28 20 17 70 18 26 24 36</file>
+          <file> 1 49 26 54 30 29 41 27 28 19 16 70 17 25 23 37</file>
         </tool>
       </inputs>
     </file>

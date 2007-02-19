@@ -21,7 +21,7 @@
 typedef struct
 {
   MESS_TYPE mtype;
-  char* mess;
+  WSHDR* mess;
   void* next;
 }DISP_MESSAGE;
 

@@ -10,6 +10,8 @@
 
 #include "xml_parser.h"
 
+#define MAX_MSG_LEN 4096
+
 #define PRES_COUNT 8
 /*
   Посылка стандартного Jabber Iq

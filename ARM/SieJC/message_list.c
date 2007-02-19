@@ -76,26 +76,19 @@ void inp_ghook(GUI *gui, int cmd)
  
   if(Terminate) 
  {
-   char* xz=malloc(2048);
-   zeromem(xz, 2048);    
+   char* body=malloc(MAX_MSG_LEN*2);  // UTF
+   zeromem(body, MAX_MSG_LEN*2);    
    ExtractEditControl(gui,1,&ec);    
    wstrcpy(ws_eddata,ec.pWS);
-   ws_2str(ws_eddata, xz, 2048);
-   char* real_body;
-   char first_sym=*xz;
-   if(first_sym==0x1F)
-  {
-    real_body = xz +1;    
-  }
-  else
-  {
-    real_body=xz;
-  }
-   char* hist = convUTF8_to_ANSI_STR(real_body);
+   ws_2str(ws_eddata, body, MAX_MSG_LEN); // WS из эдитконтрола => UTF-8
+   char m[100];
+   sprintf(m,"WL=%d, L=%d", wstrlen(ws_eddata), strlen(body));
+   ShowMSG(1,(int)m);
+   char* hist = convUTF8_to_ANSI_STR(body);
    CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
    mfree(hist);
 
-   SUBPROC((void*)SendMessage,Resource_Ex->full_name, xz);
+   SUBPROC((void*)SendMessage,Resource_Ex->full_name, body);
    Terminate = 0;
  }
 }
@@ -141,13 +134,13 @@ void Init_Message(TRESOURCE* ContEx)
   Resource_Ex = ContEx;
   patch_header(&inp_hdr);
   patch_input(&inp_desc);
-  ws_eddata = AllocWS(1024);
+  ws_eddata = AllocWS(MAX_MSG_LEN);
   EDITCONTROL ec;
   void *ma=malloc_adr();
   void *eq;
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  ConstructEditControl(&ec,3,0x40,ws_eddata,1024);
+  ConstructEditControl(&ec,3,0x40,ws_eddata,MAX_MSG_LEN);
   AddEditControlToEditQend(eq,&ec,ma);
   CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,/*ws_eddata*/0);  
 }
@@ -203,7 +196,8 @@ void mGUI_onRedraw(GUI *data)
 
   // Делаем типо название окошка... :)
   WSHDR* ws_title = AllocWS(256);
-  str_2ws(ws_title, Resource_Ex->full_name,strlen(Resource_Ex->full_name));
+  //str_2ws(ws_title, Resource_Ex->full_name,strlen(Resource_Ex->full_name));
+  ascii2ws(ws_title, Resource_Ex->full_name);
 
   DrawString(ws_title,1,1,ScreenW()-1,FontSize+1,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));  
   
@@ -216,12 +210,14 @@ void mGUI_onRedraw(GUI *data)
     {
       //str_2ws(ws_title,ml->mess,strlen(ml->mess));
       
-      str_2ws(ws_title,ml->mess,CHAR_ON_LINE);
+      //str_2ws(ws_title,ml->mess,CHAR_ON_LINE);
+      
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
 		   GetPaletteAdrByColorIndex(ml->mtype==MSG_ME ? MESSAGEWIN_MY_BGCOLOR : MESSAGEWIN_CH_BGCOLOR),
 		   GetPaletteAdrByColorIndex(ml->mtype==MSG_ME ? MESSAGEWIN_MY_BGCOLOR : MESSAGEWIN_CH_BGCOLOR));
     
-      DrawString(ws_title,1,20+i*FontSize,ScreenW()-1,20+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      
+      //DrawString(ws_title,1,20+i*FontSize,ScreenW()-1,20+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      
+      DrawString(ml->mess,1,20+i*FontSize,ScreenW()-1,20+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      
       i++;
     }
     ml = ml->next;
@@ -355,6 +351,9 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;  
   if(!MessEx)return;
   LockSched();
+
+  char* msg_buf = malloc(CHAR_ON_LINE+1);
+
   // Цикл по всем сообщениям
   while(MessEx)
   {
@@ -364,10 +363,13 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     {
       Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
       chars = l>CHAR_ON_LINE ? CHAR_ON_LINE : l;
-      Disp_Mess_Ex->mess = malloc(chars+1);
-      zeromem(Disp_Mess_Ex->mess, chars+1);
+      Disp_Mess_Ex->mess = AllocWS(chars);
+      //Disp_Mess_Ex->mess = malloc(chars+1);
+      //zeromem(Disp_Mess_Ex->mess, chars+1);
+      //strncpy(Disp_Mess_Ex->mess, MessEx->mess + cnt*CHAR_ON_LINE, chars);
+      strncpy(msg_buf, MessEx->mess + cnt*CHAR_ON_LINE, chars);
+      ascii2ws(Disp_Mess_Ex->mess, msg_buf);
       Disp_Mess_Ex->mtype = MessEx->mtype;
-      strncpy(Disp_Mess_Ex->mess, MessEx->mess + cnt*CHAR_ON_LINE, chars);
       if(!MessagesList){MessagesList =Disp_Mess_Ex;tmp=Disp_Mess_Ex;tmp->next=NULL;}
       else
       {
@@ -381,6 +383,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     }
     MessEx = MessEx->next;
   }
+  mfree(msg_buf);
   UnlockSched();
 }
 
