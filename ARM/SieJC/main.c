@@ -41,6 +41,7 @@
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];  
+extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";
 const char VERSION_VERS[] = "0.3";
@@ -156,43 +157,68 @@ void create_connect(void)
   SOCK_ADDR sa;
   //Устанавливаем соединение
   connect_state=0;
+  int can_connect=0;
   GBS_DelTimer(&reconnect_tmr);
   DNR_ID=0;
-  snprintf(logmsg,255,"Send DNR...");
-  REDRAW();
-  *socklasterr()=0;
-  int err=async_gethostbyname(JABBER_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
-  if (err)
+  if(!IS_IP)
   {
-    if ((err==0xC9)||(err==0xD6))
+    snprintf(logmsg,255,"Send DNR...");
+    REDRAW();
+    *socklasterr()=0;
+    int err=async_gethostbyname(JABBER_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
+    if (err)
     {
-      if (DNR_ID)
-      {
-	return; //Ждем готовности DNR
-      }
-    }
-    else
-    {
-      snprintf(logmsg,255,"DNR ERROR %d!",err);
-      REDRAW();
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
-      return;
-    }
+     if ((err==0xC9)||(err==0xD6))
+     {
+       if (DNR_ID)
+       {
+  	return; //Ждем готовности DNR
+       }
+     }
+     else
+     {
+       snprintf(logmsg,255,"DNR ERROR %d!",err);
+       REDRAW();
+       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+       return;
+     }
+   }
+   if(p_res) 
+   {
+     if(p_res[3])
+     {
+        snprintf(logmsg,255,"DNR Ok, connecting...");
+        REDRAW(); 
+        DNR_TRIES=0;
+        sa.ip=p_res[3][0][0];
+        can_connect = 1;
+     }
+   }
+   else
+   {
+    DNR_TRIES--;
+    LockSched();
+    ShowMSG(1,(int)"Host not found!");
+    UnlockSched();
+    return;
+  } 
+  }// Если DNS
+  else
+  {
+      snprintf(logmsg,255,"Using IP address...");
+      can_connect = 1;
+      sa.ip = str2ip(JABBER_HOST);
+      REDRAW(); 
   }
-  if (p_res)
+  
+  
+  if(can_connect)
   {
-    if (p_res[3])
+    sock=socket(1,1,0);
+    if (sock!=-1)
     {
-      snprintf(logmsg,255,"DNR Ok, connecting...");
-      REDRAW();
-      DNR_TRIES=0;
-      sock=socket(1,1,0);
-      if (sock!=-1)
-      {
-	sa.family=1;
+        sa.family=1;
 	sa.port=htons(JABBER_PORT);
-	sa.ip=p_res[3][0][0];
-	//    sa.ip=htonl(IP_ADDR(82,207,89,182));
 	if (connect(sock,&sa,sizeof(sa))!=-1)
 	{
           connect_state=1;
@@ -217,14 +243,6 @@ void create_connect(void)
 	GPRS_OnOff(0,1);
       }
     }	
-  }
-  else
-  {
-    DNR_TRIES--;
-    LockSched();
-    ShowMSG(1,(int)"Host not found!");
-    UnlockSched();
-  }
 }
 
 void end_socket(void)
