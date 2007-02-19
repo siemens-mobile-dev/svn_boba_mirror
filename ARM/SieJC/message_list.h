@@ -15,6 +15,8 @@
 
 #define MESSAGEWIN_MY_BGCOLOR 10
 #define MESSAGEWIN_CH_BGCOLOR 13
+#define MESSAGEWIN_SYS_BGCOLOR 0
+#define MESSAGEWIN_STATUS_BGCOLOR 0
 
 
 // Ќечто, что будет использоватьс€ дл€ вывода строк

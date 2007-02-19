@@ -205,6 +205,7 @@ void mGUI_onRedraw(GUI *data)
   DISP_MESSAGE* ml = MessagesList;
   int i_ctrl=0;
   int i = 0;
+  char MsgBgClolor;
   while(ml)
   {
     if((i_ctrl>=(CurrentPage-1)*lines_on_page) && (i_ctrl<CurrentPage*lines_on_page))
@@ -212,10 +213,16 @@ void mGUI_onRedraw(GUI *data)
       //str_2ws(ws_title,ml->mess,strlen(ml->mess));
       
       //str_2ws(ws_title,ml->mess,CHAR_ON_LINE);
-      
+      switch(ml->mtype)
+      {
+      case MSG_ME:{MsgBgClolor=MESSAGEWIN_MY_BGCOLOR;break;}        
+      case MSG_CHAT:{MsgBgClolor=MESSAGEWIN_CH_BGCOLOR;break;}              
+      case MSG_SYSTEM:{MsgBgClolor=MESSAGEWIN_SYS_BGCOLOR;break;}                    
+      case MSG_STATUS:{MsgBgClolor=MESSAGEWIN_STATUS_BGCOLOR;break;}                    
+      }
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
-		   GetPaletteAdrByColorIndex(ml->mtype==MSG_ME ? MESSAGEWIN_MY_BGCOLOR : MESSAGEWIN_CH_BGCOLOR),
-		   GetPaletteAdrByColorIndex(ml->mtype==MSG_ME ? MESSAGEWIN_MY_BGCOLOR : MESSAGEWIN_CH_BGCOLOR));
+		   GetPaletteAdrByColorIndex(MsgBgClolor),
+		   GetPaletteAdrByColorIndex(MsgBgClolor));
     
       //DrawString(ws_title,1,20+i*FontSize,ScreenW()-1,20+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      
       DrawString(ml->mess,1,20+i*FontSize,ScreenW()-1,20+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      

@@ -410,9 +410,9 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   UnlockSched();
   if(data)
   {
-//#ifdef LOG_ALL
+#ifdef LOG_ALL
     SaveTree(data);
-//#endif
+#endif
     Process_Decoded_XML(data);
     DestroyTree(data);
   }

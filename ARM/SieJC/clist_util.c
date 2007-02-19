@@ -112,7 +112,7 @@ void CList_RedrawCList()
 
 // Ёкспериментально: отрисовка картинок статусов: только ELFLoader 2.0 и выше
 #ifdef USE_PNG_EXT
-          char* path_to_pic = malloc(128);
+          char path_to_pic[128];
           strcpy(path_to_pic, PATH_TO_PIC);
           // ≈сли у нас нет подписки
           if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
@@ -149,8 +149,8 @@ void CList_RedrawCList()
           }
         L_DONE:
           strcat(path_to_pic, ".png");
+          path_to_pic[0]=DEFAULT_DISC;
           DrawImg(1, start_y, (int)path_to_pic);
-          mfree(path_to_pic);
 #endif                    
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
         }
@@ -257,9 +257,13 @@ CLIST* CList_FindContactByJID(char* jid)
 
 // ƒобавл€ет в список контактов системное сообщение
 // ѕолезно, когда происход€т действи€ с подпиской
-void CList_AddSystemMessage(char* jid, char status)
+void CList_AddSystemMessage(char* jid, char status, char* status_msg)
 {
-  if(status<PRESENCE_INVISIBLE)return;
+  if(status<PRESENCE_INVISIBLE)
+  {
+    if(!status_msg)return;
+    CList_AddMessage(jid, MSG_STATUS, status_msg);
+  }
   if(status == PRESENCE_UNSUBSCRIBED)
   {
     CList_AddMessage(jid, MSG_SYSTEM, "јвторизаци€ отозвана");
@@ -310,7 +314,7 @@ void CList_Ch_Status(TRESOURCE* resource,
   }
   resource->status = status;
   UnlockSched();
-  CList_AddSystemMessage(resource->full_name, status);
+  CList_AddSystemMessage(resource->full_name, status, status_msg);
 }
 
 
@@ -388,7 +392,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       CursorPos = 1;
       Active_page=1;
       UnlockSched();
-      CList_AddSystemMessage(ResEx->full_name, status);
+      CList_AddSystemMessage(ResEx->full_name, status, ResEx->status_msg);
       return ResEx;
     }
     ClEx = ClEx->next;
@@ -523,7 +527,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     // бывает в принципе (MRIM)
     cont=contEx->res_list;
   }
-  if(mtype!=MSG_ME)cont->has_unread_msg++;
+  if(mtype!=MSG_ME && mtype!=MSG_STATUS)cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   mess->mess = malloc(strlen(mtext)+1);
   strcpy(mess->mess, mtext);

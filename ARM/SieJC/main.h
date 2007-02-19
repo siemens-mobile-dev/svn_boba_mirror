@@ -65,7 +65,8 @@ typedef enum
   MSG_ME,     // от меня контакту
   MSG_CHAT,   // от контакта ко мне
   MSG_GCHAT,   // конференция
-  MSG_SYSTEM  // всякого рода сервисные сообщения
+  MSG_SYSTEM,  // всякого рода сервисные сообщения
+  MSG_STATUS   // Статусные сообщения
 } MESS_TYPE;
 
 typedef struct
