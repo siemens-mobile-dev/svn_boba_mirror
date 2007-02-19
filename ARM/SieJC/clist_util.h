@@ -24,16 +24,26 @@
 // Отрисовать список контактов
   void CList_RedrawCList();
 
+// Получить дескриптор контакта по FullJID (JID вместе с ресурсом)
+  CLIST* CList_FindContactByJID(char* jid);
+
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
   CLIST* CList_AddContact(char* jid,
                           char* name,
                           JABBER_SUBSCRIPTION subscription,
+                          char wants_subscription,
                           char group
                           );
 
+// Изменить параметры контакта (получена подписка и пр)
 
-// Получить дескриптор контакта по JID
-  //TRESOURCE* CList_FindContactByJID(char* jid);
+  void CList_ChangeContactParams(CLIST* Cont_Ex,
+                          char* name,
+                          JABBER_SUBSCRIPTION subscription,
+                          char wants_subscription,
+                          char group);
+  
+
 
 // Добавить сообщение в список сообщений контакта
   void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext);

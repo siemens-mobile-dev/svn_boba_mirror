@@ -448,6 +448,15 @@ void onRedraw(MAIN_GUI *data)
   UnlockSched();
   DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
   DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+#ifdef USE_PNG_EXT 
+  if(connect_state<2)
+  {
+    char logo_path[128];
+    strcpy(logo_path, PATH_TO_PIC);
+    strcat(logo_path,"SieJC_logo.png");
+    DrawImg(0,70,(int)logo_path);
+  }
+#endif
 }
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))

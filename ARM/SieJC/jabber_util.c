@@ -34,11 +34,21 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
 {
   char* xmlq=malloc(1024);
   char *xmlq2=malloc(1024);
-  char s_to[40];
-  sprintf(xmlq, "<iq type='%s' id='%s' from='%s'", type, id, My_JID_full);
+  char s_to[128];
+  char s_id[40];
+  if(id)
+  {
+    snprintf(s_id,40,"id='%s'", id);
+  }
+  else
+  {
+    strcpy(s_id, "");
+  }
+  sprintf(xmlq, "<iq type='%s' %s from='%s'", type, s_id, My_JID_full);
   if(to)
   {
-    sprintf(s_to, " to='%s'", to);
+    to =  ANSI2UTF8(to, 128);
+    snprintf(s_to, 128, " to='%s'", to);
     strcat(xmlq, s_to);
   }
   if(payload)
@@ -139,7 +149,6 @@ void Send_Presence(short priority, char status, char* message)
   char* presence = malloc(1024);
   snprintf(presence,1024,presence_template, priority, PRESENCES[status], message);
   SendAnswer(presence);
-  Log("STATUS", presence);
   mfree(presence);
   mfree(message);
   LockSched();
@@ -229,11 +238,11 @@ void SendMessage(char* jid, char* body)
   sprintf(msg_buf, mes_template, utf8_jid, m_num, body);
   mfree(body);
   mfree(utf8_jid);
-//#ifdef LOG_ALL
+#ifdef LOG_ALL
   LockSched();
   Log("MESS_OUT", msg_buf);
   UnlockSched();
-//#endif
+#endif
   SendAnswer(msg_buf);
   mfree(msg_buf);
   m_num++;
@@ -242,8 +251,7 @@ void SendMessage(char* jid, char* body)
 // Context: HELPER
 void Report_VersionInfo(char* id, char *to)
 {
-  char answer[200];
- 
+  char answer[200];  
   sprintf(answer, "<name>%s</name><version>%s (compile date: %s)</version><os>%s</os>", VERSION_NAME, VERSION_VERS, CMP_DATE, OS);
   SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
 
@@ -295,20 +303,65 @@ void Send_Presence_MMIStub()
   SUBPROC((void*)Send_Initial_Presence_Helper);
 }
 
+// Изменяет имя контакта в ростере
+void ChangeRoster(XMLNode* items)
+{
+  XMLNode* rostEx = items;
+  CLIST* Cont_Ex;
+  char *name;
+  char* w_subscr;
+  char aname[]="jid";  // Затрахали Tool Internal Error
+  char asub[]="subscribe";
+  char aask[]="ask";
+  char* jid;
+  char w_subscr_flag;
+  while(rostEx)
+  {
+    jid = XML_Get_Attr_Value(aname,rostEx->attr);
+    JABBER_SUBSCRIPTION r_subscr=GetSubscrType(XML_Get_Attr_Value("subscription",rostEx->attr));
+    name = XML_Get_Attr_Value("name",rostEx->attr);
+    w_subscr = XML_Get_Attr_Value(aask,rostEx->attr);
+    if(w_subscr)
+    {
+      w_subscr_flag = !strcmp(w_subscr, asub) ? 1: 0;
+    }
+    else
+    {
+      w_subscr_flag = 0;
+    }
+    Cont_Ex = CList_FindContactByJID(jid);
+    if(Cont_Ex)
+    {
+      CList_ChangeContactParams(Cont_Ex,name,r_subscr, w_subscr_flag,0);
+    }
+    rostEx=rostEx->next;
+  }
+}
 
 void FillRoster(XMLNode* items)
 {
   XMLNode* rostEx = items;
   int i=0;
   char* name;
+  char* w_subscr;
+  char w_subscr_flag;
   while(rostEx)
   {
-    
     JABBER_SUBSCRIPTION r_subscr=GetSubscrType(XML_Get_Attr_Value("subscription",rostEx->attr));
-    name = XML_Get_Attr_Value("name",rostEx->attr);//convUTF8_to_ANSI(XML_Get_Attr_Value("name",rostEx->attr));
+    name = XML_Get_Attr_Value("name",rostEx->attr);//convUTF8_to_ANSI(XML_Get_Attr_Value("name",rostEx->attr));  
+    w_subscr = XML_Get_Attr_Value("ask",rostEx->attr);
+    if(w_subscr)
+    {
+      w_subscr_flag = !strcmp(w_subscr, "subscribe") ? 1: 0;
+    }
+    else
+    {
+      w_subscr_flag = 0;
+    }
     CList_AddContact(XML_Get_Attr_Value("jid",rostEx->attr),
                           name,
                           r_subscr,
+                          w_subscr_flag,
                           0
                           );
    //if(name)mfree(name);
@@ -316,7 +369,6 @@ void FillRoster(XMLNode* items)
    rostEx=rostEx->next;
    i++;
   }
-  
   // Через секунду запросим презенсы
   extern GBSTMR TMR_Send_Presence;
   GBS_StartTimerProc(&TMR_Send_Presence, TMR_SECOND*1, Send_Presence_MMIStub);
@@ -333,6 +385,7 @@ void Process_Iq_Request(XMLNode* nodeEx)
   char gget[]=IQTYPE_GET;
   char gres[]=IQTYPE_RES;
   char gerr[]=IQTYPE_ERR;
+  char gset[]=IQTYPE_SET;
   const char iq_version[]=IQ_VERSION;
 
   iqtype = XML_Get_Attr_Value("type",nodeEx->attr);
@@ -340,7 +393,7 @@ void Process_Iq_Request(XMLNode* nodeEx)
   id = XML_Get_Attr_Value("id",nodeEx->attr);
   
 // Проверяем наличие обязательных атрибутов
-if(!iqtype || !id) return;
+if(!iqtype) return;
 
 if(!strcmp(gget,iqtype)) // Iq type = get
 {
@@ -356,8 +409,12 @@ if(!strcmp(gget,iqtype)) // Iq type = get
     {
         // Создаем переменные, чтобы в них записать данные 
         // и безопасно уничтожить в HELPER
-        char* loc_id=malloc(strlen(id)+1);
-        strcpy(loc_id,id);        
+      char* loc_id = NULL;
+      if(id)
+        {
+          loc_id=malloc(strlen(id)+1);
+          strcpy(loc_id,id);
+        }
         char* loc_from=malloc(strlen(from)+1);
         strcpy(loc_from,from);
         SUBPROC((void*)Report_VersionInfo,loc_id, loc_from);
@@ -372,9 +429,8 @@ if(!strcmp(gres,iqtype))
   if(!strcmp(id,auth_id))   // Авторизация
   {
     Jabber_state = JS_AUTH_OK;
-    CList_AddContact(My_JID, "(Me)", SUB_BOTH,0);
+    CList_AddContact(My_JID, "(Me)", SUB_BOTH,0,0);
     SUBPROC((void*)Send_Roster_Query);
-    //Send_Presence();
   }
   
   if(!strcmp(id,rost_id))   // Запрос ростера
@@ -389,10 +445,23 @@ if(!strcmp(gres,iqtype))
       FillRoster(query->subnode);
     }    
   }
-  
-  
-  
 }
+
+// Обработка  Iq type = set
+if(!strcmp(gset,iqtype)) 
+{
+    XMLNode* query;
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+    if(!q_type)return;
+    
+    if(!strcmp(q_type,IQ_ROSTER))
+    {
+      // jabber:iq:roster
+      ChangeRoster(query->subnode);
+    }   
+}
+
 
 if(!strcmp(gerr,iqtype)) // Iq type = error
 {

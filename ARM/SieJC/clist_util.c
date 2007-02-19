@@ -106,6 +106,7 @@ void CList_RedrawCList()
 		   GetPaletteAdrByColorIndex(15),  //ad: рисуем с чередованием... для наглядности
 		   GetPaletteAdrByColorIndex(lineColor)); //ad: не очень понял значение второго атрибута, просто повторю
           
+          CutWSTR(out_ws, CHAR_ON_LINE);
           DrawString(out_ws,1,start_y+1,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
 
 
@@ -113,8 +114,20 @@ void CList_RedrawCList()
 #ifdef USE_PNG_EXT
           char* path_to_pic = malloc(128);
           strcpy(path_to_pic, PATH_TO_PIC);
+          // Если у нас нет подписки
+          if((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))
+          {
+            strcat(path_to_pic, "noauth");
+            goto L_DONE;
+          }
+          if(ClEx->wants_subscription)
+          {
+            strcat(path_to_pic, "ask");
+            goto L_DONE;
+          }          
           if(resEx->has_unread_msg){strcat(path_to_pic, "message");}
           else{strcat(path_to_pic, PRESENCES[resEx->status]);}
+        L_DONE:
           strcat(path_to_pic, ".png");
           DrawImg(1, start_y, (int)path_to_pic);
           mfree(path_to_pic);
@@ -341,13 +354,43 @@ return NULL;
 }
 
 
+void CList_ChangeContactParams(CLIST* Cont_Ex,
+                          char* name,
+                          JABBER_SUBSCRIPTION subscription,
+                          char wants_subscription,
+                          char group)
+{
+
+  if(!Cont_Ex)return;
+  if(Cont_Ex->name)mfree(Cont_Ex->name);
+  // Имя может быть не заполнено
+  if(name)
+  {
+    Cont_Ex->name = malloc(strlen(name)+1);
+    strcpy(Cont_Ex->name, name);
+  }
+  else
+  {
+    Cont_Ex->name = malloc(strlen(Cont_Ex->JID)+1);
+    strcpy(Cont_Ex->name, Cont_Ex->JID);
+  }
+  Cont_Ex->subscription = subscription;
+  Cont_Ex->wants_subscription = wants_subscription;
+  Cont_Ex->group = group;
+
+}
+  
+
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
 CLIST* CList_AddContact(char* jid,
                           char* name,
                           JABBER_SUBSCRIPTION subscription,
+                          char wants_subscription,
                           char group)
 {
-  CLIST* Cont_Ex = malloc(sizeof(CLIST));
+  
+  
+  CLIST* Cont_Ex = malloc(sizeof(CLIST));      // Нет такого контакта
 
   // Имя может быть не заполнено
   if(name)
@@ -364,6 +407,7 @@ CLIST* CList_AddContact(char* jid,
   Cont_Ex->JID = malloc(strlen(jid)+1);
   strcpy(Cont_Ex->JID, jid);
   Cont_Ex->subscription = subscription;
+  Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
   Cont_Ex->next=NULL;
    
