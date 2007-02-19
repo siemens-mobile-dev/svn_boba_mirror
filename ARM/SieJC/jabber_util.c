@@ -22,8 +22,9 @@ extern char logmsg[];
 
 extern JABBER_STATE Jabber_state;
 
-const char* PRESENCES[PRES_COUNT] = {"online", "unavailable", "error", "chat", "away", "xa", "dnd", "invisible"};
-const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        21,             14,     16,     3,      18,   2,      20}; //цвет оффлайнов изменил
+const char* PRESENCES[PRES_COUNT] = {"online", "unavailable", "error", "chat", "away", "xa", "dnd", "invisible",
+                                      "subscribe", "subscribed", "unsubscribe", "unsubscribed"};
+const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        21,             14,     16,     3,      18,   2,      20, 21,21,21,21}; //цвет оффлайнов изменил
 
 
 /*
@@ -266,12 +267,14 @@ JABBER_SUBSCRIPTION GetSubscrType(char* subs)
   if(!strcmp(subs,"both"))return SUB_BOTH;
   if(!strcmp(subs,"to"))return SUB_TO;
   if(!strcmp(subs,"from"))return SUB_FROM;
+  
   return SUB_NONE;  
 }
 
 char* Get_Resource_Name_By_FullJID(char* full_jid)
 {
-  char* res_name = (char*)(strstr(full_jid, "/") +1);
+  char* pre_res = strstr(full_jid, "/");
+  char* res_name = pre_res==NULL ? NULL : pre_res +1;
   return res_name;
 }
 

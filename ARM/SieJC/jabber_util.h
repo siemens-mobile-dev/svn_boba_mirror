@@ -13,7 +13,7 @@
 //#define MAX_MSG_LEN 4096
 #define MAX_MSG_LEN 128 // Ага! Мало? Мне тоже мало! Позже пофиксим...
 
-#define PRES_COUNT 8
+#define PRES_COUNT 12
 /*
   Посылка стандартного Jabber Iq
 */

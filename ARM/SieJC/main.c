@@ -57,7 +57,7 @@ const char OS[] = "SGOLD_ELF-Platform";
 char Is_Vibra_Enabled = 1;
 
 const char percent_t[]="%t";
-const char empty_str[]="";
+char empty_str[]="";
 char logmsg[512];
 
 JABBER_STATE Jabber_state = JS_NOT_CONNECTED;
@@ -410,9 +410,9 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   UnlockSched();
   if(data)
   {
-#ifdef LOG_ALL
+//#ifdef LOG_ALL
     SaveTree(data);
-#endif
+//#endif
     Process_Decoded_XML(data);
     DestroyTree(data);
   }

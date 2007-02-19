@@ -115,7 +115,7 @@ void CList_RedrawCList()
           char* path_to_pic = malloc(128);
           strcpy(path_to_pic, PATH_TO_PIC);
           // Если у нас нет подписки
-          if((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))
+          if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
           {
             strcat(path_to_pic, "noauth");
             goto L_DONE;
@@ -125,8 +125,28 @@ void CList_RedrawCList()
             strcat(path_to_pic, "ask");
             goto L_DONE;
           }          
-          if(resEx->has_unread_msg){strcat(path_to_pic, "message");}
-          else{strcat(path_to_pic, PRESENCES[resEx->status]);}
+          if(resEx->has_unread_msg)
+          {
+            if(resEx->status<PRESENCE_INVISIBLE)
+            {
+              strcat(path_to_pic, "message");
+            }
+            else
+            {
+              strcat(path_to_pic, "system");              
+            }
+          }
+          else
+          {
+            if(resEx->status<PRESENCE_INVISIBLE)
+            {
+              strcat(path_to_pic, PRESENCES[resEx->status]);
+            }
+            else
+            {
+              strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]);
+            }
+          }
         L_DONE:
           strcat(path_to_pic, ".png");
           DrawImg(1, start_y, (int)path_to_pic);
@@ -235,6 +255,21 @@ CLIST* CList_FindContactByJID(char* jid)
   return NULL;
 }
 
+// Добавляет в список контактов системное сообщение
+// Полезно, когда происходят действия с подпиской
+void CList_AddSystemMessage(char* jid, char status)
+{
+  if(status<PRESENCE_INVISIBLE)return;
+  if(status == PRESENCE_UNSUBSCRIBED)
+  {
+    CList_AddMessage(jid, MSG_SYSTEM, "Авторизация отозвана");
+  }
+  if(status==PRESENCE_SUBSCRIBED)
+  {
+    CList_AddMessage(jid, MSG_SYSTEM, "Авторизация получена");    
+  }
+}
+
 // Узнать, есть ли уже такой ресурс у контакта, по FullJID
 TRESOURCE* CList_IsResourceInList(char* jid)
 {
@@ -255,6 +290,7 @@ TRESOURCE* CList_IsResourceInList(char* jid)
   return NULL;
 }
 
+
 // Поменять статус у контакта 
 void CList_Ch_Status(TRESOURCE* resource,
                        char status,
@@ -274,6 +310,7 @@ void CList_Ch_Status(TRESOURCE* resource,
   }
   resource->status = status;
   UnlockSched();
+  CList_AddSystemMessage(resource->full_name, status);
 }
 
 
@@ -297,10 +334,18 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
     {
       TRESOURCE* ResEx=malloc(sizeof(TRESOURCE));//ClEx->res_list;
       char *resname_ptr=Get_Resource_Name_By_FullJID(jid);
-      ResEx->name = malloc(strlen(resname_ptr)+1);
+      if(resname_ptr)
+      {
+        ResEx->name = malloc(strlen(resname_ptr)+1);
+        strcpy(ResEx->name, resname_ptr);
+      }
+      else
+      {
+        ResEx->name = NULL;
+      }
       ResEx->full_name = malloc(strlen(jid)+1);
       strcpy(ResEx->full_name, jid);
-      strcpy(ResEx->name, resname_ptr);
+      
       if(status_msg)
       {
         ResEx->status_msg = malloc(strlen(status_msg)+1);
@@ -317,7 +362,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       ResEx->log = NULL;
       
       // Удаляем псевдоресурс, если он есть
-      if(ClEx->res_list->virtual==1)
+      if(ClEx->res_list->virtual==1 && ClEx->res_list->has_unread_msg==0)
       {
         KillResourceList(ClEx->res_list);
         ClEx->ResourceCount=0;
@@ -343,6 +388,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       CursorPos = 1;
       Active_page=1;
       UnlockSched();
+      CList_AddSystemMessage(ResEx->full_name, status);
       return ResEx;
     }
     ClEx = ClEx->next;
@@ -352,7 +398,6 @@ Active_page=1;
 UnlockSched();  
 return NULL;
 }
-
 
 void CList_ChangeContactParams(CLIST* Cont_Ex,
                           char* name,
@@ -377,7 +422,6 @@ void CList_ChangeContactParams(CLIST* Cont_Ex,
   Cont_Ex->subscription = subscription;
   Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
-
 }
   
 
@@ -425,7 +469,7 @@ CLIST* CList_AddContact(char* jid,
 //  strcat(ResEx->full_name, ResEx->name);
   Cont_Ex->res_list=ResEx;
   Cont_Ex->ResourceCount=1;
-
+  
   LockSched();
   if(!cltop)
   {
@@ -442,6 +486,7 @@ CLIST* CList_AddContact(char* jid,
   UnlockSched();
   CursorPos = 1;
   Active_page=1;
+  //CList_AddSystemMessage(Cont_Ex->res_list->full_name, status);
   return Cont_Ex;
 }
 

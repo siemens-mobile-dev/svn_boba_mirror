@@ -34,10 +34,6 @@
 #define IQ_VERSION "jabber:iq:version"
 #define IQ_ROSTER  "jabber:iq:roster"
 
-/*
-From Miranda Jabber_list.h:
-*/
-
 typedef enum {
 	SUB_NONE,
 	SUB_TO,
@@ -68,4 +64,8 @@ typedef enum {
 #define PRESENCE_DND 6
 #define PRESENCE_OFFLINE 1
 #define PRESENCE_INVISIBLE 7
+#define PRESENCE_SUBSCRIBE 8
+#define PRESENCE_SUBSCRIBED 9
+#define PRESENCE_UNSUBSCRIBE 10
+#define PRESENCE_UNSUBSCRIBED 11
 #endif
