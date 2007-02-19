@@ -5,7 +5,7 @@
 
 
 // Пока желательно оставить так
-//#define LOG_ALL
+#define LOG_ALL
 
 #ifdef NEWSGOLD
 #define DEFAULT_DISC '4'

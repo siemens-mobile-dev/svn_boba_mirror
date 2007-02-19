@@ -1,5 +1,4 @@
 #include "../inc/swilib.h"
-#include "SieJC.h"
 #include "history.h"
 #include "main.h"
 #include "clist_util.h"
@@ -140,7 +139,7 @@ void Send_Presence(short priority, char status, char* message)
   char* presence = malloc(1024);
   snprintf(presence,1024,presence_template, priority, PRESENCES[status], message);
   SendAnswer(presence);
-  //Log("STATUS", presence);
+  Log("STATUS", presence);
   mfree(presence);
   mfree(message);
   LockSched();
@@ -162,21 +161,29 @@ void Send_Roster_Query()
 
 unsigned int m_num=0;
 
-char* Correct_UTF8_String(char* utf8_jid)
+/*
+  ќбеспечивает преобразование кривого UTF-8 —именса в UTF-8 дл€ Jabber
+*/
+char* Correct_UTF8_String(char* utf8_str)
 {
-  int l = strlen(utf8_jid);
+  int l = strlen(utf8_str)*2;
+  // ^ так нельз€ делать цикл, строка на самом длиннее, чем strlen
   int j=0;
-  for(int i=0; i<l;i++)
+  int i=0;
+  char character = *utf8_str;
+  while(character!='\0')
   {
-    if(utf8_jid[i]!=0x1F)
+    if(character!=0x1F)
     {
-      utf8_jid[j]=utf8_jid[i];
+      utf8_str[j]=character;
       j++;      
     }
+    i++;
+    character = *(utf8_str+i);
   }
-  utf8_jid[j]='\0';
-  utf8_jid = realloc(utf8_jid, j+1);
-  return utf8_jid;
+  utf8_str[j]='\0';
+  utf8_str = realloc(utf8_str, j+1);
+  return utf8_str;
 }
 
 char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
@@ -221,18 +228,17 @@ void SendMessage(char* jid, char* body)
 
   utf8_jid = Correct_UTF8_String(utf8_jid);
   
-  char first_sym=*body;
-  char* real_body = first_sym==0x1F ?  body +1 : body;
+  body = Correct_UTF8_String(body);
   char mes_template[]="<message to='%s' id='SieJC_%d' type='chat'><body>%s</body></message>";
   char* msg_buf = malloc(2048);
-  sprintf(msg_buf, mes_template, /*jid*/utf8_jid, m_num, real_body);
+  sprintf(msg_buf, mes_template, utf8_jid, m_num, body);
   mfree(body);
   mfree(utf8_jid);
-#ifdef LOG_ALL
+//#ifdef LOG_ALL
   LockSched();
   Log("MESS_OUT", msg_buf);
   UnlockSched();
-#endif
+//#endif
   SendAnswer(msg_buf);
   mfree(msg_buf);
   m_num++;

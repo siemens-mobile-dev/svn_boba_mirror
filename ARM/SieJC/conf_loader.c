@@ -45,10 +45,14 @@ int LoadConfigData(const char *fname)
   return(result);
 }
 
-void InitConfig()
+void InitConfig(char* fname)
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\SieJC.bcfg")<0)
+  if(!fname)
   {
-    LoadConfigData("0:\\ZBin\\etc\\SieJC.bcfg");
+    if (LoadConfigData("4:\\ZBin\\etc\\SieJC.bcfg")<0)
+    {
+      LoadConfigData("0:\\ZBin\\etc\\SieJC.bcfg");
+    }
   }
+  else LoadConfigData(fname);
 }

@@ -24,6 +24,7 @@ extern char logmsg[512];
 extern const unsigned short PRES_COLORS[PRES_COUNT];
 extern char My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
+extern JABBER_STATE Jabber_state;
 
 /*
     Единственная процедура, которая занимается отрисовкой контакт-листа
@@ -89,7 +90,7 @@ void CList_RedrawCList()
 
   LockSched();
 //  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
-  sprintf(logmsg, "Self=%s",PRESENCES[My_Presence]);
+  if(Jabber_state==JS_ONLINE)sprintf(logmsg, "Self=%s",PRESENCES[My_Presence]);
   UnlockSched();
 
   FreeWS(out_ws);

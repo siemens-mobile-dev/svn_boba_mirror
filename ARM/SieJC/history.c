@@ -1,5 +1,4 @@
 #include "../inc/swilib.h"
-#include "SieJC.h"
 #include "history.h"
 
 extern const char HIST_PATH[256];

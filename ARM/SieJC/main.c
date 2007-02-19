@@ -320,6 +320,9 @@ void get_answer(void)
 void SendAnswer(char *str)
 {
   int i = strlen(str);
+#ifdef LOG_ALL
+//  Log("OUT->", str);
+#endif  
   send(sock,str,i,0);
 }
 
@@ -356,7 +359,9 @@ void Process_Decoded_XML(XMLNode* node)
     {
       connect_state = 0;
       Jabber_state = JS_ERROR;
-      sprintf(logmsg, "Ошибка XML-потока");
+      char err[]="Ошибка XML-потока";
+      ShowDialog_Error(1,(int)err);
+      sprintf(logmsg, err);
     } 
 //----------------
     if(!strcmp(nodeEx->name,"presence"))
@@ -816,7 +821,7 @@ unsigned short IsGoodPlatform()
 #endif    
 }
 
-int main()
+int main(char *exename, char *fname)
 {
   if(!IsGoodPlatform())
   {
@@ -824,7 +829,7 @@ int main()
     return 0;
   }
   char dummy[sizeof(MAIN_CSM)];
-  InitConfig();
+  InitConfig(fname);
   if(!strlen(USERNAME))
   {
     ShowMSG(1,(int)"Введите логин/пароль!");

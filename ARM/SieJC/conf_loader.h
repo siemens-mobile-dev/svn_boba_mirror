@@ -7,6 +7,6 @@
   #define _CONFLOADER_H_
 
 // Вызвать обязательно перед обращением к переменным конфигурации
-void InitConfig();
+void InitConfig(char* fname);
 
 #endif
