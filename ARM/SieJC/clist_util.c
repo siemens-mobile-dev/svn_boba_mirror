@@ -556,18 +556,19 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   }
   if(mtype!=MSG_ME && mtype!=MSG_STATUS)cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
+  char timestamp[]="[%02d:%02d] ";
+  snprintf(timestamp, 12, timestamp, now_time.hour, now_time.min);
   if(mtype==MSG_GCHAT)
   {
     char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
-    mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+2+1);
-    strcpy(mess->mess, conf_nickname);
+    mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+2+1);
+    strcpy(mess->mess, timestamp);
+    strcat(mess->mess, conf_nickname);
     strcat(mess->mess, ": ");
     strcat(mess->mess, mtext);
   }
   else
   {
-    char timestamp[]="[%02d:%02d] ";
-    snprintf(timestamp, 12, timestamp, now_time.hour, now_time.min);
     mess->mess = malloc(strlen(mtext)+strlen(timestamp)+1);
     strcpy(mess->mess, timestamp);
     strcat(mess->mess, mtext);
