@@ -1,5 +1,7 @@
 #include "..\inc\swilib.h"
 
+static const char percent_t[]="%t";
+
 int icon[]={0x58,0};
 const int minus11=-11;
 
@@ -7,7 +9,7 @@ SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Лев"},
   {0x0001,0x0000,(int)"Прав"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt=
@@ -27,6 +29,21 @@ void ed1_locret(void){}
 
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
+  EDITCONTROL ec;
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    if (msg->gbsmsg->submess==GREEN_BUTTON)
+    {
+      EDIT_RemoveEditControl(data,1,&ec);
+      PrepareEditControl(&ec);
+      wsprintf(ews,percent_t,"Добавленное поле");
+      ConstructEditControl(&ec,3,0x40,ews,256);
+      EDIT_InsertEditControl(data,10,&ec);
+      EDIT_SetFocus(data,10);
+      EDIT_SetCursorPos(data,3);
+      return(-1);
+    }
+  }
   //-1 - do redraw
   return(0); //Do standart keys
   //1: close
@@ -64,7 +81,7 @@ void ed1_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Редактор",0x7FFFFFFF};
+HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Редактор",LGP_NULL};
 
 INPUTDIA_DESC ed1_desc=
 {
@@ -90,8 +107,7 @@ INPUTDIA_DESC ed1_desc=
 
 //  0x00000002 - ReadOnly
 //  0x00000004 - Не двигается курсор
-//  0x40000000 - Поменять местами софт-кнопки
-  0
+  0x40000000 // Поменять местами софт-кнопки
 };
 
 int create_ed(void)
@@ -107,15 +123,15 @@ int create_ed(void)
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"%t","Обычная строка:");
+  wsprintf(ews,percent_t,"Обычная строка:");
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"%t","Превед!");
+  wsprintf(ews,percent_t,"Превед!");
   ConstructEditControl(&ec,3,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"%t","Строка с номером телефона:");
+  wsprintf(ews,percent_t,"Строка с номером телефона:");
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -123,7 +139,7 @@ int create_ed(void)
   ConstructEditControl(&ec,2,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"%t","Число (фикс. кол. цифр):");
+  wsprintf(ews,percent_t,"Число (фикс. кол. цифр):");
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -131,7 +147,7 @@ int create_ed(void)
   ConstructEditControl(&ec,5,0x40,ews,5);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"%t","Число (произв. кол. цифр):");
+  wsprintf(ews,percent_t,"Число (произв. кол. цифр):");
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -139,7 +155,7 @@ int create_ed(void)
   ConstructEditControl(&ec,6,0x40,ews,5);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"%t","ComboBox:");
+  wsprintf(ews,percent_t,"ComboBox:");
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -156,8 +172,8 @@ void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-//  csm->gui_id=create_ed();
-  csm->gui_id=create_menu();
+  csm->gui_id=create_ed();
+//  csm->gui_id=create_menu();
 }
 
 void Killer(void)

@@ -595,7 +595,9 @@ typedef struct
 
 
 
-
+/*
+!!!! DELETED !!!!
+!!!! Use EDIT_GetCursorPos & EDIT_SetCursorPos
 #ifdef NEWSGOLD
 #ifdef ELKA
 #define EDIT_CURSOR_POS(DATA) (((int ****)DATA)[0x90/4][0x8C/4][0x28/4][0x38/4])
@@ -605,7 +607,7 @@ typedef struct
 #else
 #define EDIT_CURSOR_POS(DATA) (((short ****)DATA)[0x50/4][0x4C/4][0x28/4][0x30/2])
 #endif
-
+*/
 //Menu flags and screen displace
 #ifdef NEWSGOLD
 #ifdef ELKA
@@ -2198,3 +2200,22 @@ __swi __arm int GetExtUid_ws(WSHDR * ext);
 //arm
 //pattern=??,??,??,E9,??,??,??,E2,??,??,??,E1,??,??,??,E3,??,??,??,0A,??,??,??,E1,??,??,??,??,??,??,??,E3,??,??,??,0A,??,??,??,E3,??,??,??,E1,??,??,??,E2
 
+#pragma swi_number=0x1D1
+__swi __arm void EDIT_RemoveEditControl(void *gui,int n,EDITCONTROL *);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1D2
+__swi __arm void EDIT_InsertEditControl(void *gui,int n,EDITCONTROL *);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1D3
+__swi __arm int EDIT_GetCursorPos(void *gui);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1D4
+__swi __arm void EDIT_SetCursorPos(void *gui, int pos);
+//thumb
+//pattern=

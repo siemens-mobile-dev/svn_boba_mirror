@@ -82,8 +82,12 @@
 00C8: 0xA0280D20 ; 032: __arm void PlaySound(long param1, long param2, long param3, long tone, long param5);
 00F0: 0xA025137C ; 03C: __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned int *ErrorNumber);
 010C: 0xA09007BB ; 043: __thumb int IsUnlocked(void);
+0128: 0xA027952C   ;  4A: PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int CepId, int zero1, int zero2)
 0130: 0xA09B4959 ; 04C: GetMissedCallsCount
 0134: 0xA0093278 ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
+0138: 0xA09778C9   ;  4E: int MsgBoxError(int flag, int LgpId)
+013C: 0xA09778D9   ;  4F: int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int))
+0140: 0xA0977943   ;  50: int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int))
 0170: 0xA01CF82C ; 05C: __arm char GetCPUClock();
 0174: 0xA0331C37 ; 05D: __thumb char GetCPULoad();
 017C: 0xA0094BE8 ; 05F: __arm int GetFreeRamAvail();
@@ -123,6 +127,7 @@
 02F0: 0xA0FC585C ; 0BC: __arm int divide(int divisor, int dividend);
 02F4: 0xA0FC5920 ; 0BD: __arm int DivBy10(int divident);
 0318: 0xA01A6B40 ; 0C6: __arm char GetAkkuCapacity();
+03FC: 0xA0074000 ; 0FF: unsigned int AddrLibrary();
 0400: 0xA0092A94 ; 100: __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
 0404: 0xA0091950 ; 101: __arm int GBS_ReciveMessage(GBS_MSG *);
 0408: 0xA009209C ; 102: __arm void GBS_AcceptMessage(void);
@@ -335,6 +340,11 @@
 0738: 0xA0A0B431 ; 1CE: __thumb void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_options);
 073C: 0xA04D46CE ; 1CF: __arm REGEXPLEXT *get_regextpnt_by_uid(int uid);
 0740: 0xA04D4587 ; 1D0: __thumb int GetExtUid_ws(WSHDR * ext);
+0744: 0xA0A1201D ; 1D1: __thumb void EDIT_RemoveEditControl(void *gui,int n,EDITCONTROL *);
+0748: 0xA0A12029 ; 1D2:	__thumb void EDIT_InsertEditControl(void *gui,int n,EDITCONTROL *);
+074C: 0xA0A11EC5 ; 1D3: __thumb int EDIT_GetCursorPos(void *gui);
+0750: 0xA0A11ED1 ; 1D4: __thumb void EDIT_SetCursorPos(void *gui, int pos);
+
 
 #pragma disable old_equal_ff
 +0
