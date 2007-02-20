@@ -169,7 +169,8 @@ http://www.cs.umd.edu/projects/hpsl/chaos/ResearchAreas/ic/dist/InterComm-1.5.ta
 */
 #define EZXML_BUFSIZE 1024
 /* converts a UTF-16 string to UTF-8, returns a new string the must be freed or NULL if no conversion was needed*/
-char *ezxml_to_utf8(char **s, size_t *len)
+//char *ezxml_to_utf8(char **s, size_t *len) - оригинальный заголовок
+char *utf16_to_utf8(char **s, size_t *len)
 {
     char *u;
     size_t l = 0, sl, max = *len;
@@ -179,7 +180,7 @@ char *ezxml_to_utf8(char **s, size_t *len)
     if (be == -1) return NULL; /* not UTF-16*/
 
     u = malloc(max); zeromem(u, max);
-//    for (sl = 0; sl < *len - 1; sl += 2) {      // ¬торой фикс: 
+    //    for (sl = 2; sl < *len - 1; sl += 2) {      // ¬торой фикс: у нас строка на 2 байта больше 
         for (sl = 2; sl <= *len ; sl += 2) {
       c = (be) ? ((long)(*s)[sl] << 8) | (*s)[sl + 1] : /* big-endian*/
 	((long)(*s)[sl + 1] << 8) | (*s)[sl];  /* little-endian*/
@@ -200,7 +201,47 @@ char *ezxml_to_utf8(char **s, size_t *len)
     }
 
     //return *s = realloc(u, *len = l);
-    return u = realloc(u, *len = l);
+    *len = l;
+    u = realloc(u, l+1);    // Ќе убиваем исходную WSHDR!
+    return u;
+}
+
+
+/*
+  ќбеспечивает преобразование кривого UTF-8 —именса в UTF-8 дл€ Jabber
+*/
+char* Correct_UTF8_String(char* utf8_str)
+{
+  int l = strlen(utf8_str)*2;
+  // ^ так нельз€ делать цикл, строка на самом длиннее, чем strlen
+  int j=0;
+  int i=0;
+  char character = *utf8_str;
+  while(character!='\0')
+  {
+    if(character!=0x1F)
+    {
+      utf8_str[j]=character;
+      j++;      
+    }
+    i++;
+    character = *(utf8_str+i);
+  }
+  utf8_str[j]='\0';
+  utf8_str = realloc(utf8_str, j+1);
+  return utf8_str;
+}
+
+
+char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
+{
+  WSHDR* ws_str = AllocWS(maxlen);
+  ascii2ws(ws_str, ansi_str);
+  char* utf8_str = malloc(maxlen*2+1);
+  ws_2str(ws_str, utf8_str, maxlen*2);
+  FreeWS(ws_str);
+  utf8_str = Correct_UTF8_String(utf8_str);
+  return utf8_str;
 }
 
 

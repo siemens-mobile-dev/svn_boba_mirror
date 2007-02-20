@@ -171,42 +171,6 @@ void Send_Roster_Query()
 
 unsigned int m_num=0;
 
-/*
-  ќбеспечивает преобразование кривого UTF-8 —именса в UTF-8 дл€ Jabber
-*/
-char* Correct_UTF8_String(char* utf8_str)
-{
-  int l = strlen(utf8_str)*2;
-  // ^ так нельз€ делать цикл, строка на самом длиннее, чем strlen
-  int j=0;
-  int i=0;
-  char character = *utf8_str;
-  while(character!='\0')
-  {
-    if(character!=0x1F)
-    {
-      utf8_str[j]=character;
-      j++;      
-    }
-    i++;
-    character = *(utf8_str+i);
-  }
-  utf8_str[j]='\0';
-  utf8_str = realloc(utf8_str, j+1);
-  return utf8_str;
-}
-
-
-char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
-{
-  WSHDR* ws_str = AllocWS(maxlen);
-  ascii2ws(ws_str, ansi_str);
-  char* utf8_str = malloc(maxlen*2+1);
-  ws_2str(ws_str, utf8_str, maxlen*2);
-  FreeWS(ws_str);
-  utf8_str = Correct_UTF8_String(utf8_str);
-  return utf8_str;
-}
 
 // Context: HELPER
 void SendMessage(char* jid, IPC_MESSAGE_S *mess)
@@ -256,7 +220,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 void Report_VersionInfo(char* id, char *to)
 {
   char answer[200];  
-  sprintf(answer, "<name>%s</name><version>%s (compile date: %s)</version><os>%s</os>", VERSION_NAME, VERSION_VERS, CMP_DATE, OS);
+  sprintf(answer, "<name>%s</name><version>%s (%s)</version><os>%s</os>", VERSION_NAME, VERSION_VERS, CMP_DATE, OS);
   SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
 
   mfree(id);

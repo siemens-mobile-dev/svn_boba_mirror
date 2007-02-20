@@ -18,6 +18,12 @@ char* convUTF8_to_ANSI_STR(char *UTF8_str);
 
 void ascii2ws(WSHDR *ws, const char *s);
 
-char *ezxml_to_utf8(char **s, size_t *len);
+// Функция из интернета. UTF16->UTF8
+char *utf16_to_utf8(char **s, size_t *len);
 
+// UTF8 для джаббера
+char* Correct_UTF8_String(char* utf8_jid);
+
+// А это вообще чтобы всем было хорошо (с) Чеботарёв А.А.
+char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 #endif

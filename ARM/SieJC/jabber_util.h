@@ -84,10 +84,4 @@ typedef struct
 // Context: HELPER
 void SendMessage(char* jid, IPC_MESSAGE_S *mess);
 
-
-// UTF8 для джаббера
-char* Correct_UTF8_String(char* utf8_jid);
-
-// А это вообще чтобы всем было хорошо (с) Чеботарёв А.А.
-char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 #endif

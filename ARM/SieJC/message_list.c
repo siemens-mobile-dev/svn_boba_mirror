@@ -84,9 +84,9 @@ void inp_ghook(GUI *gui, int cmd)
    size_t xz = wstrlen(ws_eddata)*2;
    if(xz)
    {
-    char* body =  ezxml_to_utf8((char**)ws_eddata,&xz);
+    char* body =  utf16_to_utf8((char**)ws_eddata,&xz);
     body[xz]='\0';
-    Log("EXP_STR", body);
+    //Log("EXP_STR", body);
 //    char m[100];
 //    sprintf(m,"Редактор: %d, Резалт: %d", wstrlen(ws_eddata), xz);
 //    ShowMSG(1,(int)m);
