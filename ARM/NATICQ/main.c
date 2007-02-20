@@ -143,6 +143,7 @@ volatile int vibra_count;
 volatile int edchat_id;
 volatile int request_remake_edchat;
 volatile int request_close_edchat;
+volatile int request_addec_edchat;
 volatile int edchat_toitem;
 volatile int edchat_answeritem;
 CLIST *edcontact;
@@ -661,6 +662,7 @@ void AddStringToLog(CLIST *t, char code, char *s, const char *name)
   snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
   ns=malloc(strlen(t->log)+strlen(hs)+strlen(s)+1);
   strcpy(ns,t->log);
+  t->last_log=ns+strlen(ns);
   strcat(ns,hs);
   strcat(ns,s);
   mfree(t->log);
@@ -753,15 +755,19 @@ ProcessPacket(TPKT *p)
       {
         if (edcontact->isunread)
         {
+	  //	  request_addec_edchat=1;
+	  RefreshGUI();
+	  /*
           request_remake_edchat=1;
           if (IsGuiOnTop(edchat_id))
           {
-            GeneralFunc_flag1(edchat_id,1);
-          }
+	  GeneralFunc_flag1(edchat_id,1);
+	}
           else
           {
-            request_close_edchat=1;
-          }
+	  request_close_edchat=1;
+	}
+	  */
         }
       }
       else
@@ -1171,7 +1177,7 @@ int main()
   
   InitConfig();
   setup_ICONS();
-
+  
   if (!UIN)
   {
     LockSched();
@@ -1440,11 +1446,12 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	      SUBPROC((void *)SendAnswer,0,p);
 	      mfree(s);
 	      t->answer=0;
-	      request_remake_edchat=1;
+//	      request_remake_edchat=1;
 	      EDIT_SetFocus(data,edchat_answeritem);
 	      CutWSTR(ews,0);
 	      EDIT_SetTextToFocused(data,ews);
-	      return(1);
+	      RefreshGUI();
+	      return(-1);
 	    }
 	  }
 	}
@@ -1460,7 +1467,12 @@ void edchat_ghook(GUI *data, int cmd)
   static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Menu"};
   //  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
   char *s;
+  int type;
+  int j;
+  char hdr[128];
   EDITCONTROL ec;
+  EDITC_OPTIONS ec_options;
+  CLIST *t=edcontact;
   if (cmd==3)
   {
     //    EDIT_CURSOR_POS(data)=0x7FFF;
@@ -1472,6 +1484,50 @@ void edchat_ghook(GUI *data, int cmd)
     {
       request_close_edchat=0;
       GeneralFunc_flag1(edchat_id,1);
+      return;
+    }
+    if (t->isunread)
+    {
+      s=t->last_log;
+      if (s)
+      {
+	while(*s)
+	{
+	  type=*s++;    //Пропуск типа
+	  j=0;
+	  while((hdr[j]=*s++)!='\n') j++;
+	  hdr[j]=0;
+	  //    wsprintf(ews,percent_t,hdr);
+	  ascii2ws(ews,hdr);
+	  ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
+	  PrepareEditCOptions(&ec_options);
+	  type==1?SetPenColorToEditCOptions(&ec_options,3):SetPenColorToEditCOptions(&ec_options,2);
+	  SetFontToEditCOptions(&ec_options,2);
+	  CopyOptionsToEditControl(&ec,&ec_options);
+	  //AddEditControlToEditQend(eq,&ec,ma);
+	  EDIT_InsertEditControl(data,edchat_answeritem-1,&ec);
+	  edchat_answeritem++;
+	  j=0;
+	  while((msg_buf[j]=*s)>3) {if (msg_buf[j]!=10) j++; s++;}
+	  if (j)
+	  {
+	    while(msg_buf[j-1]==13) j--;
+	  }
+	  msg_buf[j]=0;
+	  //    wsprintf(ews,percent_t,msg_buf);
+	  ascii2ws(ews,msg_buf);
+	  ConstructEditControl(&ec,3,0x40,ews,ews->wsbody[0]);
+	  PrepareEditCOptions(&ec_options);
+	  SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+	  CopyOptionsToEditControl(&ec,&ec_options);
+	  //AddEditControlToEditQend(eq,&ec,ma);
+	  EDIT_InsertEditControl(data,edchat_answeritem-1,&ec);
+	  edchat_answeritem++;
+	}
+      }
+      total_unread--;
+      t->isunread=0;
+      EDIT_SetFocus(data,edchat_answeritem);
     }
   }
   if (cmd==7)
@@ -1484,12 +1540,12 @@ void edchat_ghook(GUI *data, int cmd)
     }
     ExtractEditControl(data,edchat_answeritem,&ec);
     ExtractAnswer(ec.pWS);
-    if (edcontact)
+    if (t)
     {
-      if ((s=edcontact->answer)) mfree(s);
+      if ((s=t->answer)) mfree(s);
       s=malloc(strlen(msg_buf)+1);
       strcpy(s,msg_buf);
-      edcontact->answer=s;
+      t->answer=s;
     }
   }
 }
@@ -1601,7 +1657,7 @@ void CreateEditChat(CLIST *t)
   
   patch_header(&edchat_hdr);
   patch_input(&edchat_desc);
-//  edchat_desc.font=ED_FONT_SIZE;
+  //  edchat_desc.font=ED_FONT_SIZE;
   edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,0);
 }
 

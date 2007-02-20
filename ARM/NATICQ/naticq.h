@@ -13,6 +13,7 @@ typedef struct
   int isunread;
   char *log;
   char *answer;
+  char *last_log;
 }CLIST;
 
 typedef struct
