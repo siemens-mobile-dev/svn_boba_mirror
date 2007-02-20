@@ -11,7 +11,7 @@
 #include "main.h"
 
 // Количество символов на строке
-#define CHAR_ON_LINE 20           // ad: цвет оффлайнеров
+#define CHAR_ON_LINE 22
 
 #define CURSOR 13                 // ad: цвет курсора
 

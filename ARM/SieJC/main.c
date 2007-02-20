@@ -44,7 +44,7 @@ extern const char USERNAME[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";
-const char VERSION_VERS[] = "0.3";
+const char VERSION_VERS[] = "0.4";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD

@@ -202,7 +202,7 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
   WSHDR* ws_str = AllocWS(maxlen);
   ascii2ws(ws_str, ansi_str);
   char* utf8_str = malloc(maxlen*2+1);
-  ws_2str(ws_str, utf8_str, maxlen);
+  ws_2str(ws_str, utf8_str, maxlen*2);
   FreeWS(ws_str);
   utf8_str = Correct_UTF8_String(utf8_str);
   return utf8_str;
@@ -281,9 +281,10 @@ char* Get_Resource_Name_By_FullJID(char* full_jid)
 //Context: HELPER
 void Send_Initial_Presence_Helper()
 {
-  char ansi_msg[]="Тута я :)!";
+  char ansi_msg[]="Online";
   char *message = ANSI2UTF8(ansi_msg, strlen(ansi_msg));
   Send_Presence(16, PRESENCE_ONLINE, message);
+  Jabber_state = JS_ONLINE;
 }
 
 // пока это вместо всего:)))))
@@ -294,7 +295,7 @@ void Send_Away_Presence_Helper()
   TDate now_date;
   GetDateTime(&now_date,&now_time);
   char away_msg_template[]="Отсутствую с %02d:%02d, буду позже.";
-  snprintf(away_msg_template,strlen(away_msg_template), away_msg_template, now_time.hour,now_time.min);
+  snprintf(away_msg_template,strlen(away_msg_template), away_msg_template, now_time.hour,now_time.min); 
   char *message = ANSI2UTF8(away_msg_template, strlen(away_msg_template));
   Send_Presence(-16, PRESENCE_AWAY, message);
 }

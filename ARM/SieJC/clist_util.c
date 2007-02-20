@@ -167,6 +167,7 @@ void CList_RedrawCList()
   LockSched();
 //  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
   if(Jabber_state==JS_ONLINE)sprintf(logmsg, "Self=%s",PRESENCES[My_Presence]);
+//  sprintf(logmsg, "Jabber=%d",Jabber_state);
   UnlockSched();
   FreeWS(ClEx_name);
   FreeWS(ResEx_name);
