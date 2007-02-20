@@ -60,14 +60,26 @@ typedef enum
 } JABBER_STATE;
 
 ////////////////////////////////
+// Кой-какие типы сообщений из http://www.xmpp.org/rfcs/rfc3921.html и + свои
 typedef enum
 {
+  MSG_NORMAL, // типа "нормал", по дефолту, See RFC
   MSG_ME,     // от меня контакту
   MSG_CHAT,   // от контакта ко мне
   MSG_GCHAT,   // конференция
   MSG_SYSTEM,  // всякого рода сервисные сообщения
   MSG_STATUS   // Статусные сообщения
 } MESS_TYPE;
+
+
+// Типы узлов в списке контактов
+typedef enum
+{   
+  T_NORMAL,       // Обычный (просто ресурс)
+  T_VIRTUAL,      // Создаётся при создании контакта, для удаления
+  T_CONF_ROOT,    // Корень конференции (место доставки публичных сообщений)
+  T_CONF_NODE     // Участник конференции (отображаем только "ресурс" жида) 
+}RES_TYPE;
 
 typedef struct
 {
@@ -80,10 +92,11 @@ typedef struct
 {
   char* name;
   char* full_name;
-  char virtual;
+  RES_TYPE entry_type;
   char status;
   char* status_msg;
   unsigned int has_unread_msg;
+  unsigned int total_msg_count;
   LOG_MESSAGE* log;
   void* next;
 } TRESOURCE;
@@ -96,7 +109,7 @@ typedef struct
   char* name;
   JABBER_SUBSCRIPTION subscription;
   char wants_subscription;
-  char group;
+  char group;     // >128 -> конференции 
   void *next;
 } CLIST;
 

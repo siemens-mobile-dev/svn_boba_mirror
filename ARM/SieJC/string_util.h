@@ -18,4 +18,6 @@ char* convUTF8_to_ANSI_STR(char *UTF8_str);
 
 void ascii2ws(WSHDR *ws, const char *s);
 
+char *ezxml_to_utf8(char **s, size_t *len);
+
 #endif

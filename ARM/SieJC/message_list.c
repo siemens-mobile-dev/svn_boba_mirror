@@ -58,6 +58,7 @@ void inp_redraw(void *data)
 {
 }
 
+
 void inp_ghook(GUI *gui, int cmd)
 {
   static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Меню"};
@@ -76,20 +77,34 @@ void inp_ghook(GUI *gui, int cmd)
  
   if(Terminate) 
  {
-   char* body=malloc(MAX_MSG_LEN*2);  // UTF
-   zeromem(body, MAX_MSG_LEN*2);    
+   //char* body=malloc(MAX_MSG_LEN*2);  // UTF
+   ///zeromem(body, MAX_MSG_LEN*2);    
    ExtractEditControl(gui,1,&ec);    
    wstrcpy(ws_eddata,ec.pWS);
-   ws_2str(ws_eddata, body, MAX_MSG_LEN); // WS из эдитконтрола => UTF-8
-   //char m[100];
-   //sprintf(m,"WL=%d, L=%d", wstrlen(ws_eddata), strlen(body));
-   //ShowMSG(1,(int)m);
-   char* hist = convUTF8_to_ANSI_STR(body);
-   char* real_hist = *hist == 0x1F ? hist+1 : hist; 
-   CList_AddMessage(Resource_Ex->full_name, MSG_ME, real_hist);
-   mfree(hist);
-
-   SUBPROC((void*)SendMessage,Resource_Ex->full_name, body);
+   size_t xz = wstrlen(ws_eddata)*2;
+   if(xz)
+   {
+    char* body =  ezxml_to_utf8((char**)ws_eddata,&xz);
+    body[xz]='\0';
+    Log("EXP_STR", body);
+//    char m[100];
+//    sprintf(m,"Редактор: %d, Резалт: %d", wstrlen(ws_eddata), xz);
+//    ShowMSG(1,(int)m);
+   char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
+   if(!is_gchat)
+   {
+     char* hist = convUTF8_to_ANSI_STR(body);
+     CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
+     mfree(hist);
+   }
+   IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
+   mess->IsGroupChat = is_gchat;
+   mess->body = body;
+   SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);  
+   //mfree(mess->body);
+   //mfree(mess);
+   }
+   else ShowDialog_Error(1,(int)"Нельзя послать пустое сообщение");
    Terminate = 0;
  }
 }
@@ -149,6 +164,8 @@ void Init_Message(TRESOURCE* ContEx)
 // Корень списка
 DISP_MESSAGE* MessagesList = NULL;
 unsigned int MessList_Count = 0;
+unsigned int OLD_MessList_Count = 0;
+
 
 // Убить список сообщений
 void KillDisp(DISP_MESSAGE* messtop)
@@ -165,6 +182,7 @@ void KillDisp(DISP_MESSAGE* messtop)
     mfree(p);
   }
   MessList_Count = 0;
+  OLD_MessList_Count = 0;
   UnlockSched();  
 }
 
@@ -173,19 +191,30 @@ void KillDisp(DISP_MESSAGE* messtop)
 char CurrentPage=1;
 char lines_on_page;
 char MaxPages=1;
+unsigned short FontSize;
 // Обслуживание созданного GUI
+
+// Всякие посторонние расчёты :)
+void Calc_Pages_Data()
+{
+  MaxPages = sdiv(lines_on_page,MessList_Count);
+  if(lines_on_page*MaxPages<MessList_Count)MaxPages++;
+}
+
 void mGUI_onRedraw(GUI *data)
 {
   
-  KillDisp(MessagesList);
-  ParseMessagesIntoList(Resource_Ex);
+  if(Resource_Ex->total_msg_count!=OLD_MessList_Count)
+  {
+    //KillDisp(MessagesList);
+    ParseMessagesIntoList(Resource_Ex);
+    OLD_MessList_Count = Resource_Ex->total_msg_count;
+  }
   
   Terminate = 0;
   // Расчёт количества строк на одной странице
-  unsigned short FontSize = GetFontYSIZE(SMALL_FONT);
-  lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
-  MaxPages = sdiv(lines_on_page,MessList_Count);
-  if(lines_on_page*MaxPages<MessList_Count)MaxPages++;
+  
+  Calc_Pages_Data();
   // Заголовок окна
   DrawRoundedFrame(0,0,ScreenW()-1,FontSize*2+1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
@@ -217,8 +246,10 @@ void mGUI_onRedraw(GUI *data)
       {
       case MSG_ME:{MsgBgClolor=MESSAGEWIN_MY_BGCOLOR;break;}        
       case MSG_CHAT:{MsgBgClolor=MESSAGEWIN_CH_BGCOLOR;break;}              
+      case MSG_GCHAT:{MsgBgClolor=MESSAGEWIN_GHAT_BGCOLOR;break;}                          
       case MSG_SYSTEM:{MsgBgClolor=MESSAGEWIN_SYS_BGCOLOR;break;}                    
-      case MSG_STATUS:{MsgBgClolor=MESSAGEWIN_STATUS_BGCOLOR;break;}                    
+      case MSG_STATUS:{MsgBgClolor=MESSAGEWIN_STATUS_BGCOLOR;break;}                          
+      
       }
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
 		   GetPaletteAdrByColorIndex(MsgBgClolor),
@@ -266,7 +297,7 @@ void mGUI_onUnfocus(GUI *data, void (*mfree_adr)(void *))
 void DbgInfo()
 {
   char q[200];
-  sprintf(q,"MCnt=%d; P=%d, MP=%d; LP=%d",MessList_Count,CurrentPage, MaxPages,lines_on_page);
+  sprintf(q,"MCnt=%d; CP=%d, MP=%d",MessList_Count,CurrentPage, MaxPages);
   ShowMSG(1,(int)q);
 }
 
@@ -348,11 +379,8 @@ const RECT mCanvas={0,0,0,0};
 
 void ParseMessagesIntoList(TRESOURCE* ContEx)
 {
-  MessList_Count = 0;
-  MessagesList = NULL;
-  MaxPages=1;
   if(!ContEx)return;
-
+  int parsed_counter = 0; // Сколько уже было обработано (=OLD_MessList_Count)
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
   int chars;
@@ -365,6 +393,8 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   // Цикл по всем сообщениям
   while(MessEx)
   {
+    if(parsed_counter>=OLD_MessList_Count)
+    {
     int l=strlen(MessEx->mess);
     cnt=0;
     while(l>0)
@@ -378,18 +408,24 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       strncpy(msg_buf, MessEx->mess + cnt*CHAR_ON_LINE, chars);
       ascii2ws(Disp_Mess_Ex->mess, msg_buf);
       Disp_Mess_Ex->mtype = MessEx->mtype;
-      if(!MessagesList){MessagesList =Disp_Mess_Ex;tmp=Disp_Mess_Ex;tmp->next=NULL;}
+      if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
       else
       {
-        tmp->next = Disp_Mess_Ex;
-        tmp = Disp_Mess_Ex;
-        tmp->next=NULL;
+        tmp= MessagesList;
+        while(tmp->next)
+        {
+          tmp = tmp->next;
+        }
+          tmp->next = Disp_Mess_Ex;
+          Disp_Mess_Ex->next=NULL;
       }
       l-=CHAR_ON_LINE;
       MessList_Count++;
       cnt++;
     }
+    }
     MessEx = MessEx->next;
+    parsed_counter++;
   }
   mfree(msg_buf);
   UnlockSched();
@@ -400,9 +436,19 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
 void Display_Message_List(TRESOURCE* ContEx)
 {
   if(!ContEx)return;
+// Инициализация
+  OLD_MessList_Count = 0;
+  MessagesList = NULL;
+  MessList_Count = 0;
   Resource_Ex = ContEx;
+  FontSize = GetFontYSIZE(SMALL_FONT);
+  lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
   ParseMessagesIntoList(Resource_Ex);
-  CurrentPage=1;
+  Calc_Pages_Data();
+  CurrentPage = MaxPages;
+  OLD_MessList_Count = Resource_Ex->total_msg_count;
+
+// Замутим гуй
   GUI *mess_gui=malloc(sizeof(GUI));
   zeromem(mess_gui, sizeof(GUI));
   patch_rect((RECT*)&mCanvas,0,0,ScreenW()-1,ScreenH()-1);

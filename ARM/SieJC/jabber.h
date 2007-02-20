@@ -34,6 +34,13 @@
 #define IQ_VERSION "jabber:iq:version"
 #define IQ_ROSTER  "jabber:iq:roster"
 
+#define MSGSTR_CHAT "chat"
+#define MSGSTR_GCHAT "groupchat"
+#define MSGSTR_NORMAL "normal"
+// Not implemented in SieJC yet
+//error
+//headline
+
 typedef enum {
 	SUB_NONE,
 	SUB_TO,

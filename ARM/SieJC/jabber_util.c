@@ -209,7 +209,7 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
 }
 
 // Context: HELPER
-void SendMessage(char* jid, char* body)
+void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 {
 /*
   <message to='romeo@montague.net' id='message22'>
@@ -232,12 +232,15 @@ void SendMessage(char* jid, char* body)
 //  }
 
   char* utf8_jid = ANSI2UTF8(jid, 128);
-  
-  body = Correct_UTF8_String(body);
-  char mes_template[]="<message to='%s' id='SieJC_%d' type='chat'><body>%s</body></message>";
+  //mess->body = Correct_UTF8_String(mess->body);
+  char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
-  sprintf(msg_buf, mes_template, utf8_jid, m_num, body);
-  mfree(body);
+  if(mess->IsGroupChat)
+  {
+     sprintf(msg_buf, mes_template, utf8_jid, m_num, MSGSTR_GCHAT, mess->body);
+  }else sprintf(msg_buf, mes_template, utf8_jid, m_num, MSGSTR_CHAT, mess->body);
+  mfree(mess->body);
+  mfree(mess);
   mfree(utf8_jid);
 #ifdef LOG_ALL
   LockSched();
@@ -520,6 +523,16 @@ void Process_Presence_Change(XMLNode* node)
   CList_AddResourceWithPresence(from, status, msg);
 }
 
+MESS_TYPE Get_Message_Type(char* mess_type_str)
+{
+  char m_chat[]=MSGSTR_CHAT;
+  char m_gchat[]=MSGSTR_GCHAT;
+  if(!mess_type_str)return MSG_NORMAL;
+  if(!strcmp(mess_type_str,m_chat ))return MSG_CHAT;
+  if(!strcmp(mess_type_str,m_gchat ))return MSG_GCHAT;
+  return MSG_NORMAL;
+}
+
 /*
 Входящие сообщения
 */
@@ -529,11 +542,17 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   if(msgnode)
   if(msgnode->value)
   {
-    char* m = malloc(100+strlen(msgnode->value));
-    sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
-    ShowMSG(1,(int)m);
-    mfree(m);
-    CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), MSG_CHAT, msgnode->value);
+    MESS_TYPE msgtype = Get_Message_Type(XML_Get_Attr_Value("type",nodeEx->attr));
+    
+    // Не показываем попапы для групчата, ибо достаёт трындец как
+    if(msgtype!=MSG_GCHAT)
+    {
+      char* m = malloc(100+strlen(msgnode->value));
+      sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
+      ShowMSG(1,(int)m);
+      mfree(m);
+    }
+    CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
     start_vibra(1);
   }  
 }

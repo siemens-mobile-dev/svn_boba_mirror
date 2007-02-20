@@ -44,7 +44,7 @@ extern const char USERNAME[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";
-const char VERSION_VERS[] = "0.4";
+const char VERSION_VERS[] = "0.5";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -516,6 +516,7 @@ void DisplayQuitQuery()
 
 void Debug_Add_Cont_Mess()
 {
+/*
   volatile int hFile;
   unsigned int io_error = 0;
   hFile = fopen("4:\\test.txt",A_ReadWrite +A_Create+ A_Append + A_BIN,P_READ+P_WRITE, &io_error);
@@ -533,6 +534,16 @@ void Debug_Add_Cont_Mess()
     ShowMSG(1,(int)q);
   }
   mfree(buffer);
+*/
+//CList_AddContact("siepatchdb@conference.jabber.ru","SiepatchDB", SUB_BOTH, 0, 129);
+char room[]= "siepatchdb@conference.jabber.ru";
+char magic_ex[]="<presence from='%s' to='%s/%s_SieJC'><x xmlns='http://jabber.org/protocol/muc'/></presence>";
+char* magic = malloc(1024);
+sprintf(magic,magic_ex, USERNAME, room,USERNAME);
+CList_AddContact(room,room, SUB_BOTH, 0, 129);
+//char magic[]="<presence from='kibab612@jabber.ru/SieJC' to='siejc@conference.jabber.ru/Invertor'><x xmlns='http://jabber.org/protocol/muc'/></presence>"; 
+SendAnswer(magic);
+mfree(magic);
 }
 
 
@@ -583,11 +594,11 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         break;
       }      
     
-//    case '4':
-//      {
-//        Debug_Add_Cont_Mess();
-//        break;
-//      }
+    case '4':
+      {
+        SUBPROC((void*)Debug_Add_Cont_Mess);
+        break;
+      }
     case '5':
       {
         extern void Send_Initial_Presence_Helper();

@@ -79,10 +79,15 @@ void CList_RedrawCList()
           }
           //wsprintf(out_ws,"%s TE rfST %d", cur, i);
           ascii2ws(ClEx_name, ClEx->name);
+          
           if(resEx->name)
           {
             ascii2ws(ResEx_name,resEx->name);
-            wsprintf(out_ws,"%s %d %w/%w", cur, resEx->has_unread_msg, ClEx_name, ResEx_name);
+            if(ClEx->group & 0x80)
+            {
+              wsprintf(out_ws,"%s %d  %w", cur, resEx->has_unread_msg, ResEx_name);
+            }
+            else wsprintf(out_ws,"%s %d %w/%w", cur, resEx->has_unread_msg, ClEx_name, ResEx_name);
           }
           else
           {
@@ -114,42 +119,52 @@ void CList_RedrawCList()
 #ifdef USE_PNG_EXT
           char path_to_pic[128];
           strcpy(path_to_pic, PATH_TO_PIC);
-          // Если у нас нет подписки
+          
+          // Если это конференция
+          if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
+          
+          // Если у нас нет подписки и у контакта нет непрочитанных сообщений
           if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
           {
-            strcat(path_to_pic, "noauth");
+            strcat(path_to_pic, "noauth"); // иконка "нет авторизации"
             goto L_DONE;
           }
+          
+          // Если стоит флаг запроса подписки
           if(ClEx->wants_subscription)
           {
             strcat(path_to_pic, "ask");
             goto L_DONE;
           }          
+          
+          // Если у нормального контакта есть непрочитанные сообщения
           if(resEx->has_unread_msg)
           {
+            // Если у него к тому же и статус адекватный
             if(resEx->status<PRESENCE_INVISIBLE)
             {
               strcat(path_to_pic, "message");
             }
             else
             {
-              strcat(path_to_pic, "system");              
+              strcat(path_to_pic, "system");      // А иначе он что-то замутил с подпиской  
             }
           }
           else
           {
-            if(resEx->status<PRESENCE_INVISIBLE)
+            // Если же непрочитанных сообщений нет
+            if(resEx->status<PRESENCE_INVISIBLE) // Если адекватный статус
             {
               strcat(path_to_pic, PRESENCES[resEx->status]);
             }
             else
             {
-              strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]);
+              strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]); // Иначе типа оффлайн
             }
           }
         L_DONE:
           strcat(path_to_pic, ".png");
-          path_to_pic[0]=DEFAULT_DISC;
+          path_to_pic[0]=DEFAULT_DISC;    // Коррекция диска
           DrawImg(1, start_y, (int)path_to_pic);
 #endif                    
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
@@ -362,12 +377,13 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
             
       ResEx->status = status;
-      ResEx->virtual = 0;
+      ResEx->entry_type = T_NORMAL;
       ResEx->has_unread_msg=0;
+      ResEx->total_msg_count=0;
       ResEx->log = NULL;
       
       // Удаляем псевдоресурс, если он есть
-      if(ClEx->res_list->virtual==1 && ClEx->res_list->has_unread_msg==0)
+      if(ClEx->res_list->entry_type==T_VIRTUAL && ClEx->res_list->has_unread_msg==0)
       {
         KillResourceList(ClEx->res_list);
         ClEx->ResourceCount=0;
@@ -463,10 +479,20 @@ CLIST* CList_AddContact(char* jid,
   TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
   ResEx->log=NULL;
   ResEx->next=NULL;
-  ResEx->status=PRESENCE_OFFLINE;
   ResEx->status_msg=NULL;
   ResEx->has_unread_msg=0;
-  ResEx->virtual=1; // По этому признаку потом его убъём
+  ResEx->total_msg_count=0;
+  if(group & 0x80)
+  {
+    ResEx->entry_type=T_CONF_ROOT; // Корень конференции
+    ResEx->status=PRESENCE_ONLINE;
+    ShowMSG(1,(int)"Conference created OK");
+  }
+  else
+  {
+    ResEx->entry_type=T_VIRTUAL; // По этому признаку потом его убъём
+    ResEx->status=PRESENCE_OFFLINE;
+  }
   ResEx->name = NULL;
   ResEx->full_name = malloc(strlen(jid)+1);
   strcpy(ResEx->full_name, jid);
@@ -520,7 +546,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     Log("MESS_LOST",mtext);
     return;
   }
-  TRESOURCE* cont = CList_IsResourceInList(jid);
+  TRESOURCE* cont = (contEx->group & 0x80 && mtype==MSG_GCHAT) ? contEx->res_list : CList_IsResourceInList(jid);
   if(!cont)
   {
     // У контакта нет ресурсов или такого ресурса нет. Добавляем на первый же.
@@ -530,8 +556,22 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   }
   if(mtype!=MSG_ME && mtype!=MSG_STATUS)cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
-  mess->mess = malloc(strlen(mtext)+1);
-  strcpy(mess->mess, mtext);
+  if(mtype==MSG_GCHAT)
+  {
+    char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
+    mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+2+1);
+    strcpy(mess->mess, conf_nickname);
+    strcat(mess->mess, ": ");
+    strcat(mess->mess, mtext);
+  }
+  else
+  {
+    char timestamp[]="[%02d:%02d] ";
+    snprintf(timestamp, 12, timestamp, now_time.hour, now_time.min);
+    mess->mess = malloc(strlen(mtext)+strlen(timestamp)+1);
+    strcpy(mess->mess, timestamp);
+    strcat(mess->mess, mtext);
+  }
   mess->mtype=mtype;
   LockSched();
   if(!cont->log)
@@ -544,6 +584,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     while(tmp->next){tmp=tmp->next;}
     tmp->next=mess;
   }
+  cont->total_msg_count++;
   mess->next=NULL;
   UnlockSched();
   Add2History(CList_FindContactByJID(jid), datestr,mtext);

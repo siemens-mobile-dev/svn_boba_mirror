@@ -160,6 +160,51 @@ char* convUTF8_to_ANSI_STR(char *UTF8_str)
 }
 
 
+
+/*
+Следующая функция взята из файла:
+http://www.cs.umd.edu/projects/hpsl/chaos/ResearchAreas/ic/dist/InterComm-1.5.tar.gz/InterComm/src/ezxml/ezxml.c
+
+В функции отключена проверка на UNICODE LE / BE, ибо в Сименсе используется только LE
+*/
+#define EZXML_BUFSIZE 1024
+/* converts a UTF-16 string to UTF-8, returns a new string the must be freed or NULL if no conversion was needed*/
+char *ezxml_to_utf8(char **s, size_t *len)
+{
+    char *u;
+    size_t l = 0, sl, max = *len;
+    long c, c2;
+    int b, be = 0;//be = (**s == '\xFE') ? 1 : (**s == '\xFF') ? 0 : -1; - отключение проверки!!!
+
+    if (be == -1) return NULL; /* not UTF-16*/
+
+    u = malloc(max); zeromem(u, max);
+//    for (sl = 0; sl < *len - 1; sl += 2) {      // Второй фикс: 
+        for (sl = 2; sl <= *len ; sl += 2) {
+      c = (be) ? ((long)(*s)[sl] << 8) | (*s)[sl + 1] : /* big-endian*/
+	((long)(*s)[sl + 1] << 8) | (*s)[sl];  /* little-endian*/
+      if (c >= 0xD800 && c <= 0xDFFF && (sl += 2) < *len - 1) { /* high-half*/
+	c2 = (be) ? ((long)(*s)[sl] << 8) | (*s)[sl + 1] : /* big-endian*/
+	  ((long)(*s)[sl + 1] << 8) | (*s)[sl];  /* little-endian*/
+            c = (((c & 0x3FF) << 10) | (c2 & 0x3FF)) + 0x10000;
+        }
+
+        while (l + 6 > max) u = realloc(u, max += EZXML_BUFSIZE);
+        if (c < 0x80) u[l++] = c; /* US-ASCII subset*/
+        else { /* multi-byte UTF-8 sequence*/
+	  for (b = 0, c2 = c; c2; c2 /= 2) b++; /* bits in c*/
+	  b = (b - 2) / 5; /* bytes in payload;*/
+	  u[l++] = (0xFF << (7 - b)) | (c >> (6 * b)); /*head*/
+	  while (b) u[l++] = 0x80 | ((c >> (6 * --b)) & 0x3F); /* payload*/
+        }
+    }
+
+    //return *s = realloc(u, *len = l);
+    return u = realloc(u, *len = l);
+}
+
+
+
 // From NatICQ
 
 typedef struct

@@ -10,8 +10,8 @@
 
 #include "xml_parser.h"
 
-//#define MAX_MSG_LEN 4096
-#define MAX_MSG_LEN 128 // Ага! Мало? Мне тоже мало! Позже пофиксим...
+#define MAX_MSG_LEN 4096
+//#define MAX_MSG_LEN 128 // Ага! Мало? Мне тоже мало! Позже пофиксим...
 
 #define PRES_COUNT 12
 /*
@@ -74,7 +74,16 @@ char* Get_Resource_Name_By_FullJID(char* full_jid);
 */
 unsigned short GetPresenceIndex(char* presence_str);
 
-void SendMessage(char* jid, char* body);
+
+typedef struct
+{
+  char IsGroupChat;
+  char* body;  
+}IPC_MESSAGE_S;
+
+// Context: HELPER
+void SendMessage(char* jid, IPC_MESSAGE_S *mess);
+
 
 // UTF8 для джаббера
 char* Correct_UTF8_String(char* utf8_jid);
