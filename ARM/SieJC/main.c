@@ -462,10 +462,15 @@ void onRedraw(MAIN_GUI *data)
   CList_RedrawCList();
   
   LockSched();
-  wsprintf(data->ws1,"CS: %d RECV: %d\n%t",connect_state,virt_buffer_len,logmsg);
+
+  if (CList_GetUnreadMessages()>0) {
+    wsprintf(data->ws1,"%d(%d/%d) RECV: %d",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+  } else {
+    wsprintf(data->ws1,"(%d/%d) RECV: %d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+  }
   UnlockSched();
   DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+  //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 #ifdef USE_PNG_EXT 
   if(connect_state<2)
   {
@@ -645,6 +650,11 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
     case '*':
       {
         Is_Vibra_Enabled = !(Is_Vibra_Enabled);
+        break;
+      }
+    case '#': //решеткой бегаем между непрочитанными
+      {
+        nextUnread();
         break;
       }
     }    

@@ -12,6 +12,7 @@ CLIST* cltop = NULL;
 char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
 
 char lineColor = 0;               // ad: цвет текущей строчки
+char borderColor = 0;               // ad: цвет ободка текущей строчки
 
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
 unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться 
@@ -40,7 +41,7 @@ void CList_RedrawCList()
   if(!cltop)return; 
    
   LockSched(); 
-  N_Disp_Contacts = Display_Offline? NContacts : CList_GetNumberOfOnlineUsers();
+  N_Disp_Contacts = Display_Offline? CList_GetNumberOfUsers() : CList_GetNumberOfOnlineUsers();
   // Определяем количество страниц списка контактов
   int pages_number = sdiv(N_cont_disp, N_Disp_Contacts);
   if(N_cont_disp*pages_number<N_Disp_Contacts){pages_number++;};
@@ -50,7 +51,7 @@ void CList_RedrawCList()
   int i=1;
   int start_y;
   int fcolor;
-  char cur[2]=">\0";
+//  char cur[2]=">\0";
   TRESOURCE* resEx;
 
   char Alternation = 1;             // ad: состояние чередования
@@ -70,12 +71,13 @@ void CList_RedrawCList()
         {
           if(i==CursorPos)
           {
-            cur[0]='»';
+//            cur[0]='»';
             lineColor=CURSOR;
+            borderColor=CURSOR_BORDER; //бортик курсора
             ActiveContact = resEx;
           } else{ 
-            cur[0]=' ';
-            lineColor=(Alternation==1)? 0 : 22;
+//            cur[0]=' ';
+            borderColor=lineColor=(Alternation==1)? 0 : 22;
           }
           //wsprintf(out_ws,"%s TE rfST %d", cur, i);
           ascii2ws(ClEx_name, ClEx->name);
@@ -85,13 +87,13 @@ void CList_RedrawCList()
             ascii2ws(ResEx_name,resEx->name);
             if(ClEx->group & 0x80)
             {
-              wsprintf(out_ws,"%s %d  %w", cur, resEx->has_unread_msg, ResEx_name);
+              wsprintf(out_ws,"%w", ResEx_name); //другой вид, имхо удобнее
             }
-            else wsprintf(out_ws,"%s %d %w/%w", cur, resEx->has_unread_msg, ClEx_name, ResEx_name);
+            else wsprintf(out_ws,"%w/%w", ClEx_name, ResEx_name); //другой вид, имхо удобнее
           }
           else
           {
-            wsprintf(out_ws,"%s %d %w", cur, resEx->has_unread_msg, ClEx_name);            
+            wsprintf(out_ws,"%w", ClEx_name);  //другой вид, имхо удобнее       
           }
 /*          
           // Сие без поддержки нормального вывода в отстуствие патча. Нах.
@@ -107,12 +109,12 @@ void CList_RedrawCList()
           
           if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=PRES_COLORS[resEx->status];}
 
-          DrawRoundedFrame(0,start_y,scr_w-1,start_y+font_y,0,0,0,
-		   GetPaletteAdrByColorIndex(15),  //ad: рисуем с чередованием... для наглядности
-		   GetPaletteAdrByColorIndex(lineColor)); //ad: не очень понял значение второго атрибута, просто повторю
+          DrawRoundedFrame(0,start_y+1,scr_w-1,start_y+font_y,0,0,0,
+		   GetPaletteAdrByColorIndex(borderColor),  //ad: ободок
+		   GetPaletteAdrByColorIndex(lineColor));   //ad: рисуем с чередованием... для наглядности
           
           CutWSTR(out_ws, CHAR_ON_LINE);
-          DrawString(out_ws,1,start_y+1,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
+          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
 
 
 // Экспериментально: отрисовка картинок статусов: только ELFLoader 2.0 и выше
@@ -166,6 +168,44 @@ void CList_RedrawCList()
           strcat(path_to_pic, ".png");
           path_to_pic[0]=DEFAULT_DISC;    // Коррекция диска
           DrawImg(1, start_y, (int)path_to_pic);
+#else 
+          int is_pic;
+          // Если у нас нет подписки
+          if((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE)){
+            is_pic=0x185; //noauth
+          } else if(ClEx->wants_subscription){
+            is_pic=0x185;//ask
+          } else if(resEx->has_unread_msg){
+            is_pic=0x24C;
+          } else{
+            switch ((int)resEx->status) { //надо еще конфу добавить
+              case 0: //online
+                is_pic=0x22C;
+                break;
+              case 1: //unavailable
+                is_pic=0x306;
+                break;
+              case 2: //error
+                is_pic=0x185;
+                break;
+              case 3: //chat
+                is_pic=0x18C;
+                break;
+              case 4: //away
+                is_pic=0x22F; //пофиксил
+                break;
+              case 5: //xa
+                is_pic=0x17A;
+                break;
+              case 6: //dnd
+                is_pic=0x231;
+                break;
+              case 7: //invisible
+                is_pic=0x306;
+                break;
+            }
+          }
+          DrawImg(0, start_y, is_pic);
 #endif                    
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
         }
@@ -212,6 +252,11 @@ unsigned int CList_GetNumberOfOnlineUsers()
     ClEx = ClEx->next;
   }
   return Online;
+}
+
+unsigned int CList_GetNumberOfUsers() //количество контактов
+{
+  return NContacts;
 }
 
 void CList_ToggleOfflineDisplay()
@@ -528,7 +573,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   TTime now_time;
   TDate now_date;
   GetDateTime(&now_date,&now_time);
-  char datestr[127];
+  char datestr[512];
   if(mtype==MSG_ME)
   {
     extern char My_JID[128];
@@ -646,6 +691,95 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
   ShowMSG(0, (int)msg);
   mfree(msg);
 }
+
+// бегаем по контактам с сообщениями
+void nextUnread()
+{
+  if (CList_GetUnreadMessages()==0) return; //выйдем если нет непрочитанных
+  CLIST* ClEx;
+  TRESOURCE* ResEx;
+  if(!(ClEx = cltop))return;
+LockSched();
+  while(ClEx) //идем по списку контактов
+    {
+      ResEx = ClEx->res_list;
+      while(ResEx) //идем по списку ресурсов
+      {
+          if(ResEx->has_unread_msg) { //если есть непрочитанное
+            if (CList_GetActiveContact()!=ResEx) { //если мы не стоим на этом контакте
+              //нужна еще какая-то проверка, я что-то не учитываю, поэтому иногда ведет себя странно...
+              MoveCursorTo(ResEx);
+              break;
+            }
+          }
+        ResEx=ResEx->next; //следующий ресурс
+      }
+      ClEx = ClEx->next; //следующий контакт
+    }
+UnlockSched();  
+}
+
+unsigned int CList_GetUnreadMessages() //количество непрочитанных сообщений
+{
+  unsigned int unread=0;
+  CLIST* ClEx;
+  TRESOURCE* ResEx;
+  if(!(ClEx = cltop))return 0;
+  while(ClEx)
+  {
+    ResEx = ClEx->res_list;
+    while(ResEx)
+    {
+      if(ResEx->has_unread_msg) {
+        unread+=ResEx->has_unread_msg;
+      }
+      ResEx=ResEx->next;
+    }
+    ClEx = ClEx->next;
+  }
+  return unread;
+};
+
+
+// Ставим курсор на нужный ресурс
+void MoveCursorTo(TRESOURCE* NewResEx)
+{
+  if(!NewResEx)return;
+  
+  CLIST* ClEx;
+  TRESOURCE* ResEx;
+  if(!(ClEx = cltop))return;
+  
+  int pos=0;
+  while(ClEx)
+  {
+    ResEx = ClEx->res_list;
+    while(ResEx)
+    {
+      if(ResEx==NewResEx) {
+        //ставим курсор на клиента
+        CursorPos=pos+1;
+        //тут надо бы еще проверит на какой мы странице.. а то вдруг не там и курсор проебется :-D
+        // сначала считаем на какой странице должен быть курсор
+        if (CursorPos>N_cont_disp) {
+          Active_page = sdiv(N_cont_disp, CursorPos)+1;
+        } else {
+          Active_page=1;
+        }               
+        REDRAW();
+        break;
+      }
+      if (Display_Offline) {
+        pos++;
+      } else if (ResEx->status!=PRESENCE_OFFLINE) {
+        pos++;
+      }
+      ResEx=ResEx->next;
+    }
+    ClEx = ClEx->next;
+  }
+};
+
 
 // Управление курсором
 void CList_MoveCursorUp()

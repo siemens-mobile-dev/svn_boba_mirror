@@ -10,16 +10,18 @@
 
 #include "main.h"
 
-// Количество символов на строке
 #define CHAR_ON_LINE 22
 
-#define CURSOR 13                 // ad: цвет курсора
+#define CURSOR 6                 // ad: цвет курсора
+
+#define CURSOR_BORDER 20         // ad: цвет ободка курсора
 
 #define CLIST_FONT SMALL_FONT     // Шрифт контакт-листа
-#define CLIST_Y1 20               // ad: меньше сделал (26->20) вроде 
+
+#define CLIST_Y1 5               // ad: меньше сделал (26->5) 
 
 #define CLIST_F_COLOR_0 1         // Цвет шрифта 
-#define CLIST_F_COLOR_1 15         // Цвет шрифта (есть сообщения)
+#define CLIST_F_COLOR_1 15        // Цвет шрифта (есть сообщения)
 
 // Отрисовать список контактов
   void CList_RedrawCList();
@@ -60,6 +62,18 @@
 
 // Получить число онлайн-юзверей
   unsigned int CList_GetNumberOfOnlineUsers();
+  
+// Получить число юзверей
+  unsigned int CList_GetNumberOfUsers();
+  
+// Получить число непрочитанных
+  unsigned int CList_GetUnreadMessages();
+  
+// переход на следующий контакт с непрочитанным сообщением
+  void nextUnread();
+  
+// ставим курсор на нужный ресурс(для автофокуса тоже пригодится)
+  void MoveCursorTo(TRESOURCE* NewResEx);
 
 void CList_Display_Popup_Info(TRESOURCE* ResEx);
   
