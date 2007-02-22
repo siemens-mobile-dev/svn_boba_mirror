@@ -407,13 +407,12 @@ char GetSpecialSym(char *mask_begin, int *out_ofs)
   int i=0;
   int replen;
   char rep_ex[10];
-  zeromem(rep_ex,10);
   if(*mask_begin!='&')return *(mask_begin);
   for(i=0;i<Repl_chars_count;i++)
   {
     replen = strlen(Repl_chars[i].mask);  // Определяем длину очередной маски
+    zeromem(rep_ex,10);
     strncpy(rep_ex,mask_begin,replen);    // Копируем строку такой длины с текущей позиции
-    ShowMSG(1,(int)rep_ex);
     if(!strcmp(rep_ex,Repl_chars[i].mask))// Если совпало с очередной маской
     {
       *out_ofs+=replen-1;                   // Увеличиваем обработанную длину на длину маски
@@ -460,27 +459,24 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       }
       if(symb==0x13 || cnt>=CHAR_ON_LINE || symb==0x0) // Перенос строки
       {
-      
-//        ShowMSG(1,(int)"0x13 || i>20");
         Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
-      Disp_Mess_Ex->mess = AllocWS(cnt);
-      ShowMSG(1,(int)msg_buf);
-      ascii2ws(Disp_Mess_Ex->mess, msg_buf);
-      zeromem(msg_buf,CHAR_ON_LINE+1);
-      Disp_Mess_Ex->mtype = MessEx->mtype;
-      if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
-      else
-      {
-        tmp= MessagesList;
-        while(tmp->next)
+        Disp_Mess_Ex->mess = AllocWS(cnt);
+        ascii2ws(Disp_Mess_Ex->mess, msg_buf);
+        zeromem(msg_buf,CHAR_ON_LINE+1);
+        Disp_Mess_Ex->mtype = MessEx->mtype;
+        if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
+        else
         {
-          tmp = tmp->next;
-        }
+          tmp= MessagesList;
+          while(tmp->next)
+          {
+            tmp = tmp->next;
+          }
           tmp->next = Disp_Mess_Ex;
           Disp_Mess_Ex->next=NULL;
-      }
-      cnt=0;
-      MessList_Count++;
+        }
+        cnt=0;
+        MessList_Count++;
       }
     }
     
