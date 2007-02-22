@@ -18,6 +18,8 @@ void SendAnswer(int dummy, TPKT *p);
 #define IS_FFC 7
 #define IS_MSG 8
 #define IS_UNKNOWN 9
+#define IS_ANY 0xFFFFFFFF
+#define IS_FILTER_T9KEY 0xFFFFFFFE
 
 
 // Константы операций (взаимодействие с сервером шлюза)

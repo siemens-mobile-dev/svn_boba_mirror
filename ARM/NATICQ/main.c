@@ -150,7 +150,11 @@ CLIST *edcontact;
 
 //MUTEX contactlist_mtx;
 
-HEADER_DESC contactlist_menuhdr={0,0,0,0,NULL,(int)"Contacts...",LGP_NULL};
+char clm_hdr_text[48];
+const char def_clm_hdr_text[]="Contacts...";
+const char key_clm_hdr_text[]="T9 Key: ";
+
+HEADER_DESC contactlist_menuhdr={0,0,0,0,NULL,(int)clm_hdr_text,LGP_NULL};
 int menusoftkeys[]={0,1,2};
 SOFTKEY_DESC menu_sk[]=
 {
@@ -159,9 +163,25 @@ SOFTKEY_DESC menu_sk[]=
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
+char clmenu_sk_r[16];
+const char def_clmenu_sk_r[]="Close";
+const char key_clmenu_sk_r[]="<C";
+
+SOFTKEY_DESC clmenu_sk[]=
+{
+  {0x0018,0x0000,(int)"Options"},
+  {0x0001,0x0000,(int)clmenu_sk_r},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
 SOFTKEYSTAB menu_skt=
 {
   menu_sk,0
+};
+
+SOFTKEYSTAB clmenu_skt=
+{
+  clmenu_sk,0
 };
 
 void contactlist_menu_ghook(void *data, int cmd);
@@ -172,7 +192,7 @@ MENU_DESC contactlist_menu=
 {
   8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
   menusoftkeys,
-  &menu_skt,
+  &clmenu_skt,
   0x11,
   (void *)contactlist_menu_iconhndl,
   NULL,   //Items
@@ -249,22 +269,91 @@ CLIST *FindContactByUin(unsigned int uin)
   return(t);
 }
 
+//Ключи для поиска по T9
+static const char table_T9Key[256]=
+    "11111111111111111111111111111111"   
+      "10001**0***0000*012345678900***0"
+	"0222333444555666777788899991*110"
+	  "122233344455566677778889999111*1"
+	    "11111111111111111111111111111111"
+	      "11111111311111111111111131111111"
+		"22223333444455566677778888899999"
+		  "22223333444455566677778888899999";
+
+char ContactT9Key[32];
+
 CLIST *FindContactByNS(int *i, int si)
 {
   CLIST *t;
   t=(CLIST *)cltop;
+  char *s;
+  char *d;
+  int c;
   while(t)
   {
-    if (GetIconIndex(t)==si)
+    if ((si==IS_ANY)||(GetIconIndex(t)==si))
     {
+      s=ContactT9Key;
+      d=t->name;
+      while(c=*s++)
+      {
+	if (c!=table_T9Key[*d++]) goto L_NOT9;
+      }
       if (!(*i)) return(t);
       (*i)--;
     }
+    L_NOT9:
     t=t->next;
   }
   return(t);
 }
 
+void UpdateCLheader(void)
+{
+  if (strlen(ContactT9Key))
+  {
+    strcpy(clm_hdr_text,key_clm_hdr_text);
+    strcat(clm_hdr_text,ContactT9Key);
+    strcpy(clmenu_sk_r,key_clmenu_sk_r);
+  }
+  else 
+  {
+    strcpy(clm_hdr_text,def_clm_hdr_text);
+    strcpy(clmenu_sk_r,def_clmenu_sk_r);
+  }
+}
+
+void ClearContactT9Key(void)
+{
+  zeromem(ContactT9Key,sizeof(ContactT9Key));
+}
+
+void AddContactT9Key(int chr)
+{
+  int l=strlen(ContactT9Key);
+  if (l<(sizeof(ContactT9Key)-1))
+  {
+    ContactT9Key[l]=chr;
+  }
+}
+
+void BackSpaceContactT9(void)
+{
+  int l=strlen(ContactT9Key);
+  if (l)
+  {
+    l--;
+    ContactT9Key[l]=0;
+  }
+}
+
+int CountContacts(void)
+{
+  int l=-1;
+  FindContactByNS(&l,IS_ANY);
+  l=-1-l;
+  return l;
+}
 
 CLIST *FindContactByN(int i)
 {
@@ -284,17 +373,11 @@ CLIST *FindContactByN(int i)
 
 void create_contactlist_menu(void)
 {
-  CLIST *t;
   int i;
-  
-  t=(CLIST *)cltop;
-  i=0;
-  while(t)
-  {
-    t=t->next;
-    i++;
-  }
-  if (!i) return; //Нечего создавать
+//  ClearContactT9Key();
+  i=CountContacts();
+//  if (!i) return;
+  UpdateCLheader();
   patch_rect(&contactlist_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 }
@@ -337,9 +420,37 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     void CreateEditChat(CLIST *t);
     i=GetCurMenuItem(data);
     t=FindContactByN(i);
-    if (t) CreateEditChat(t);
+    if (t) 
+    {
+      if (strlen(ContactT9Key))
+      {
+	request_close_clmenu=1;
+	request_remake_clmenu=1;
+	ClearContactT9Key();
+      }
+      CreateEditChat(t);
+    }
     //    GeneralFunc_F1(1);
     return(-1);
+  }
+  if (msg->keys==1)
+  {
+    if (strlen(ContactT9Key))
+    {
+      BackSpaceContactT9();
+    L_RECOUNT:
+      request_remake_clmenu=1;
+      return(1);
+    }
+  }
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    i=msg->gbsmsg->submess;
+    if (((i>='0')&&(i<='9'))||(i=='#')||(i=='*'))
+    {
+      AddContactT9Key(i);
+      goto L_RECOUNT;
+    }
   }
   return(0);
 }
@@ -386,6 +497,23 @@ void remake_clmenu(void)
   }
 }
 
+int strcmp_nocase(const char *s,const char *d)
+{
+  int cs;
+  int ds;
+  do
+  {
+    cs=*s++;
+    if (cs&0x40) cs&=0xDF;
+    ds=*d++;
+    if (ds&0x40) ds&=0xDF;
+    cs-=ds;
+    if (cs) break;
+  }
+  while(ds);
+  return(cs);
+}
+
 CLIST *AddContact(unsigned int uin, char *name)
 {
   CLIST *p=malloc(sizeof(CLIST));
@@ -400,7 +528,7 @@ CLIST *AddContact(unsigned int uin, char *name)
   {
     //Не первый
     pr=(CLIST *)&cltop;
-    while(strcmp(t->name,p->name)<0)
+    while(strcmp_nocase(t->name,p->name)<0)
     {
       pr=t;
       t=t->next;
@@ -791,6 +919,7 @@ void method0(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  if (request_remake_clmenu) return;
   DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
