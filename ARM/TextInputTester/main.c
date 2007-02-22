@@ -1,5 +1,6 @@
 #include "..\inc\swilib.h"
 
+
 static const char percent_t[]="%t";
 
 int icon[]={0x58,0};
@@ -172,8 +173,8 @@ void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-  csm->gui_id=create_ed();
-//  csm->gui_id=create_menu();
+//  csm->gui_id=create_ed();
+  csm->gui_id=create_menu();
 }
 
 void Killer(void)
@@ -263,7 +264,9 @@ const int S_ICONS[]={0x162,0x232,0x22F,0x17A,0x195,0x231,0x185,0x22C,
 0x0 //Конец списка
 };
 
-HEADER_DESC contactlist_menuhdr={0,0,131,21,NULL,(int)"Contacts...",0x7FFFFFFF};
+char hdrtxt[32];
+
+HEADER_DESC contactlist_menuhdr={0,0,131,21,NULL,(int)hdrtxt,LGP_NULL};
 int menusoftkeys[]={0,1,2};
 /*SOFTKEY_DESC menu_sk[]=
 {
@@ -296,6 +299,7 @@ MENU_DESC contactlist_menu=
 int create_menu(void)
 {
   int i=256;
+//  wsprintf(ews,percent_t,"Медвед!");
   return(CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0));
 }
 
@@ -315,6 +319,19 @@ void contactlist_menu_ghook(void *data, int cmd)
 
 int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 {
+  int c;
+  int l;
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    c=msg->gbsmsg->submess;
+    if ((c>='0')&&(c<='9'))
+    {
+      l=strlen(hdrtxt);
+      if (l<31) hdrtxt[l]=c;
+      RefreshGUI();
+      return(-1);
+    }
+  }
   if (msg->keys==0x18)
   {
 //    GeneralFunc_F1(1);
