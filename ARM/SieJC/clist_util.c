@@ -302,10 +302,15 @@ void KillResourceList(TRESOURCE* res_list)
 CLIST* CList_FindContactByJID(char* jid)
 {
   LockSched();
+  // Преобразуем жид в нижний регистр
+  char lc_jid[128];
+  strcpy(lc_jid, jid);
+  str2lower(lc_jid);
+//  ShowMSG(1,(int)lc_lid);
   CLIST* ClEx = cltop;
   while(ClEx)
   {
-    if(strstr(jid,ClEx->JID)==jid)
+    if(strstr(lc_jid,ClEx->JID)==lc_jid)
     {
       UnlockSched();
       return ClEx;

@@ -618,7 +618,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         }
         break;
       }
-      
     case DOWN_BUTTON:
     case '8':
       {

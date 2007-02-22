@@ -84,6 +84,18 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
   return tmp_out;
 }
 
+// Преобразование в нижний регистр
+char* str2lower(char *st)
+{
+  unsigned int len = strlen(st);
+  for(int i=0;i<len;i++)
+  {
+    char sym = *(st+i);
+    char *cc = st+i;
+    *cc= sym>='A' && sym<='Z' ? sym + ('a' - 'A') : sym >= 'А' && sym <= 'Я'? sym + ('а' - 'А') : sym;
+  }
+  return st;
+}
 
 
 // Строковый вариант
