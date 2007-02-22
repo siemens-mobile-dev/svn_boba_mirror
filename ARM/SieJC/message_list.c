@@ -377,25 +377,114 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 
 const RECT mCanvas={0,0,0,0};
 
+/////////////////////////////////////////// Разный стафф для замены спецсимволов
+
+// Структура, описывающая, что на что менять
+typedef struct
+{
+  char mask[7];
+  char replace;
+}REPL_ARRAY;
+
+// Сами замены и их количество
+const int Repl_chars_count = 5;
+REPL_ARRAY Repl_chars[] = {"&apos;\0",0x27,
+                           "&quot;\0",'"',
+                           "&lt;\0\0\0", '<',
+                           "&gt;\0\0\0", '>',
+                           "&amp;\0\0", '&',                   
+};
+
+/*
+    Получить спецсимвол по его маске
+IN: mask_begin - строка символов
+    out_ofs - число, к которому прибавится длина обработанной последовательности
+OUT: out_ofs - смещение в строке, откуда начинаются необработанные данные
+    <return> - спецсимвол
+*/
+char GetSpecialSym(char *mask_begin, int *out_ofs)
+{
+  int i=0;
+  int replen;
+  char rep_ex[10];
+  zeromem(rep_ex,10);
+  if(*mask_begin!='&')return *(mask_begin);
+  for(i=0;i<Repl_chars_count;i++)
+  {
+    replen = strlen(Repl_chars[i].mask);  // Определяем длину очередной маски
+    strncpy(rep_ex,mask_begin,replen);    // Копируем строку такой длины с текущей позиции
+    ShowMSG(1,(int)rep_ex);
+    if(!strcmp(rep_ex,Repl_chars[i].mask))// Если совпало с очередной маской
+    {
+      *out_ofs+=replen-1;                   // Увеличиваем обработанную длину на длину маски
+      return Repl_chars[i].replace;       // Возвращаем символ для замены
+    }
+  }
+  return *(mask_begin);       //  Масок не нашлось, возвращаем как есть
+}
+
+// Получить связанную структуру DISP_MESSAGE для отображения на экране
 void ParseMessagesIntoList(TRESOURCE* ContEx)
 {
   if(!ContEx)return;
   int parsed_counter = 0; // Сколько уже было обработано (=OLD_MessList_Count)
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
-  int chars;
+//  int chars;
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;  
   if(!MessEx)return;
   LockSched();
 
-  char* msg_buf = malloc(CHAR_ON_LINE+1);
-
+  char* msg_buf = malloc(CHAR_ON_LINE+2);
+  zeromem(msg_buf,CHAR_ON_LINE+2);
   // Цикл по всем сообщениям
   while(MessEx)
   {
+    
     if(parsed_counter>=OLD_MessList_Count)
     {
     int l=strlen(MessEx->mess);
+    
+    int i=0;
+    char symb;
+    cnt=0;
+    for(i=0;i<=l;i++)
+    {
+      symb = GetSpecialSym(MessEx->mess+i,&i);
+      //symb = *(MessEx->mess+i);
+
+      if(symb!=0x13 && symb!=0x0 && cnt<CHAR_ON_LINE)
+      {
+        *(msg_buf + cnt) = symb;
+        cnt++;
+      }
+      if(symb==0x13 || cnt>=CHAR_ON_LINE || symb==0x0) // Перенос строки
+      {
+      
+//        ShowMSG(1,(int)"0x13 || i>20");
+        Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
+      Disp_Mess_Ex->mess = AllocWS(cnt);
+      ShowMSG(1,(int)msg_buf);
+      ascii2ws(Disp_Mess_Ex->mess, msg_buf);
+      zeromem(msg_buf,CHAR_ON_LINE+1);
+      Disp_Mess_Ex->mtype = MessEx->mtype;
+      if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
+      else
+      {
+        tmp= MessagesList;
+        while(tmp->next)
+        {
+          tmp = tmp->next;
+        }
+          tmp->next = Disp_Mess_Ex;
+          Disp_Mess_Ex->next=NULL;
+      }
+      cnt=0;
+      MessList_Count++;
+      }
+    }
+    
+/*
     cnt=0;
     while(l>0)
     {
@@ -423,6 +512,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       MessList_Count++;
       cnt++;
     }
+*/    
     }
     MessEx = MessEx->next;
     parsed_counter++;
