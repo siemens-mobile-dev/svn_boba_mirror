@@ -42,7 +42,7 @@ void Send_Auth();
   присутствия остальных, а мы появляемся в ресурсах своего контакта)
 */
 // Context: HELPER
-void Send_Presence(short priority, char status, char* message);
+void Send_Presence(PRESENCE_INFO *pr_info);
 
 /*
   Послать запрос ростера
@@ -81,7 +81,18 @@ typedef struct
   char* body;  
 }IPC_MESSAGE_S;
 
+typedef struct
+{
+  char* room_nick;
+  char* room_name;
+  char* pass;
+  int mess_num;
+}MUC_ENTER_PARAM;
+
 // Context: HELPER
 void SendMessage(char* jid, IPC_MESSAGE_S *mess);
 
+// Уничтожить список комнат  
+void MUCList_Destroy();
+void Enter_Conference(char *room, char *roomnick);
 #endif

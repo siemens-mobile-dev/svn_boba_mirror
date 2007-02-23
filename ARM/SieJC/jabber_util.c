@@ -20,12 +20,14 @@ extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
 
+MUC_ITEM*  muctop=NULL;
+
 extern JABBER_STATE Jabber_state;
-
-const char* PRESENCES[PRES_COUNT] = {"online", "unavailable", "error", "chat", "away", "xa", "dnd", "invisible",
+//const char* PRESENCES[PRES_COUNT] = {"online", "unavailable", "error", "chat", "away", "xa", "dnd", "invisible",
+const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "invisible", "unavailable", "error",
                                       "subscribe", "subscribed", "unsubscribe", "unsubscribed"};
-const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        21,             14,     16,     3,      18,   2,      20, 21,21,21,21}; //цвет оффлайнов изменил
-
+//const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        21,             14,     16,     3,      18,   2,      20, 21,21,21,21}; //цвет оффлайнов изменил
+const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        16,             3,     18,     2,      20,   21,      20, 21,21,21,21}; //цвет оффлайнов изменил
 
 /*
   Посылка стандартного Jabber Iq
@@ -142,16 +144,46 @@ void Send_VReq()
 Параметр message НЕ ДОЛЖЕН уничтожаться в вызывающем контексте!
 */
 // Context: HELPER
-void Send_Presence(short priority, char status, char* message)
+void Send_Presence(PRESENCE_INFO *pr_info/*short priority, char status, char* message*/)
 {
   extern char My_Presence;
-  My_Presence = status;
-  char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status></presence>";
+  My_Presence = pr_info->status;
+  
   char* presence = malloc(1024);
-  snprintf(presence,1024,presence_template, priority, PRESENCES[status], message);
+  if(pr_info->message)
+  {
+    char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status></presence>";
+    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message);
+  }
+  else
+  {
+    char presence_template[]="<presence><priority>%d</priority><show>%s</show></presence>";
+    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status]);   
+  }
   SendAnswer(presence);
+  
+// MUC support
+  MUC_ITEM* m_ex = muctop;
+  while(m_ex)
+  {
+    if(pr_info->message)
+    {
+      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><status>%s</status></presence>";
+      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], pr_info->message);
+    }
+    else
+    {
+      char presence_template[]="<presence from='%s' to='%s'><show>%s</show></presence>";
+      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status]);
+    }
+    Log("MUC_PR",presence);
+    SendAnswer(presence);
+    m_ex=m_ex->next;
+  };  
+  
   mfree(presence);
-  mfree(message);
+  if(pr_info->message)mfree(pr_info->message);
+  mfree(pr_info);
   LockSched();
   strcpy(logmsg,"Send presence");
   UnlockSched();
@@ -250,7 +282,11 @@ void Send_Initial_Presence_Helper()
 {
   char ansi_msg[]="Online";
   char *message = ANSI2UTF8(ansi_msg, strlen(ansi_msg));
-  Send_Presence(16, PRESENCE_ONLINE, message);
+  PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+  pr_info->priority = 16;
+  pr_info->status=PRESENCE_ONLINE;
+  pr_info->message=message;
+  Send_Presence(pr_info);
   Jabber_state = JS_ONLINE;
 }
 
@@ -264,8 +300,74 @@ void Send_Away_Presence_Helper()
   char away_msg_template[]="Отсутствую с %02d:%02d, буду позже.";
   snprintf(away_msg_template,strlen(away_msg_template), away_msg_template, now_time.hour,now_time.min); 
   char *message = ANSI2UTF8(away_msg_template, strlen(away_msg_template));
-  Send_Presence(-16, PRESENCE_AWAY, message);
+  PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+  pr_info->priority = -16;
+  pr_info->status=PRESENCE_AWAY;
+  pr_info->message=message;  
+  Send_Presence(pr_info);
 }
+
+
+//Context: HELPER
+void _enterconference(MUC_ENTER_PARAM *param)
+{
+  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'/><history maxstanzas='%02d'/></presence>";
+  char* magic = malloc(1024);
+  sprintf(magic,magic_ex, My_JID_full, param->room_name,param->room_nick, param->mess_num);
+  SendAnswer(magic);
+  mfree(magic);
+  mfree(param->room_nick);
+  mfree(param->room_name);
+  if(param->pass)mfree(param->pass);
+  mfree(param);
+}
+
+
+// Входит в конференцию
+void Enter_Conference(char *room, char *roomnick)
+{
+  MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
+  par->room_nick =ANSI2UTF8(roomnick, strlen(roomnick)*2);
+  par->room_name = ANSI2UTF8(room, strlen(room)*2);
+  par->pass=NULL;
+  par->mess_num=20;
+  SUBPROC((void*)_enterconference, par);
+  CList_AddContact(room,room, SUB_BOTH, 0, 129);
+  MUC_ITEM* mi = malloc(sizeof(MUC_ITEM));
+  mi->conf_jid = malloc(strlen(par->room_name)*2+strlen(par->room_nick)*2+2);
+  sprintf(mi->conf_jid, "%s/%s", par->room_name, par->room_nick);
+  mi->next=NULL;
+  MUC_ITEM* m_ex = muctop;
+  if(muctop)
+  {
+    while(m_ex->next){m_ex=m_ex->next;};
+    m_ex->next = mi;
+  }
+  else
+  {
+    muctop = mi;
+  }
+}
+
+
+// Уничтожить список комнат  
+void MUCList_Destroy()
+{
+  LockSched();
+  MUC_ITEM* cl=muctop;
+  muctop=NULL;
+  while(cl)
+  {
+    MUC_ITEM *p;
+    mfree(cl->conf_jid);
+    p=cl;
+    cl=(MUC_ITEM*)(cl->next);
+    mfree(p);
+    p=NULL;
+  }  
+  UnlockSched();
+}
+
 
 
 // Для вызова таймером

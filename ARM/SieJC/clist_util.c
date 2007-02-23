@@ -9,7 +9,6 @@
 
 CLIST* cltop = NULL;
 
-
 char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
 
 char lineColor = 0;               // ad: цвет текущей строчки

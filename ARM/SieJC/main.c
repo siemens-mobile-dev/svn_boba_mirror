@@ -10,7 +10,7 @@
 #include "string_util.h"
 #include "jabber_util.h"
 #include "roster_icons.h"
-
+#include "mainmenu.h"
 /*
 ============== Нативный Jabber-клиент ==============
 Возможности текущей версии:
@@ -45,7 +45,7 @@ extern const char USERNAME[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";
-const char VERSION_VERS[] = "0.6";
+const char VERSION_VERS[] = "0.7 23-Feb Edition";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -539,34 +539,11 @@ void DisplayQuitQuery()
 
 void Debug_Add_Cont_Mess()
 {
-/*
-  volatile int hFile;
-  unsigned int io_error = 0;
-  hFile = fopen("4:\\test.txt",A_ReadWrite +A_Create+ A_Append + A_BIN,P_READ+P_WRITE, &io_error);
-  char* buffer = malloc(256);
-  if(!io_error)
-  {
-    fread(hFile, buffer, 30, &io_error);
-    ShowMSG(1,(int)buffer);
-    fclose(hFile, &io_error);
-  }
-  else
-  {
-    char q[20];
-    sprintf(q,"ERR %d",io_error);
-    ShowMSG(1,(int)q);
-  }
-  mfree(buffer);
-*/
-//CList_AddContact("siepatchdb@conference.jabber.ru","SiepatchDB", SUB_BOTH, 0, 129);
-char room[]= "siepatchdb@conference.jabber.ru";
-char magic_ex[]="<presence from='%s' to='%s/%s_SieJC'><x xmlns='http://jabber.org/protocol/muc'/></presence>";
-char* magic = malloc(1024);
-sprintf(magic,magic_ex, USERNAME, room,USERNAME);
-CList_AddContact(room,room, SUB_BOTH, 0, 129);
-//char magic[]="<presence from='kibab612@jabber.ru/SieJC' to='siejc@conference.jabber.ru/Invertor'><x xmlns='http://jabber.org/protocol/muc'/></presence>"; 
-SendAnswer(magic);
-mfree(magic);
+  char room[]= "siepatchdb@conference.jabber.ru";
+  char nick_t[]="%s_SieJC";
+  char nick[100];
+  sprintf(nick, nick_t, My_JID);
+  Enter_Conference(room, nick);
 }
 
 
@@ -624,6 +601,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }
     case '5':
       {
+/*
         extern void Send_Initial_Presence_Helper();
         extern void Send_Away_Presence_Helper();
         if(My_Presence==PRESENCE_ONLINE)
@@ -634,6 +612,8 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         {
           SUBPROC((void*)Send_Initial_Presence_Helper);
         }
+*/
+        MM_Show();
         break;
       }
     case DOWN_BUTTON:
@@ -736,6 +716,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
   CList_Destroy();
+  MUCList_Destroy();
   mfree(XMLBuffer);
 
   SUBPROC((void *)end_socket);

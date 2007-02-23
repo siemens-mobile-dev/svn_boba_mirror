@@ -121,6 +121,14 @@ typedef struct
   void* next;
 }MUC_ITEM;
 
+// ƒл€ задани€ своих параметров присутсви€ в сети
+typedef struct
+{
+  short priority;
+  char status;
+  char* message;
+}PRESENCE_INFO;
+
 void SendAnswer(char *str);
 
 void start_vibra(int lvibra_count);
