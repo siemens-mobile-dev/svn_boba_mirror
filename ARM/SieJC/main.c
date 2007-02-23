@@ -9,6 +9,7 @@
 #include "jabber.h"
 #include "string_util.h"
 #include "jabber_util.h"
+#include "roster_icons.h"
 
 /*
 ============== Ќативный Jabber-клиент ==============
@@ -464,12 +465,29 @@ void onRedraw(MAIN_GUI *data)
   LockSched();
 
   if (CList_GetUnreadMessages()>0) {
-    wsprintf(data->ws1,"%d(%d/%d) RECV: %d",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+    wsprintf(data->ws1,"%d(%d/%d) IN:%d",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
   } else {
-    wsprintf(data->ws1,"(%d/%d) RECV: %d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+    wsprintf(data->ws1,"(%d/%d) IN:%d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
   }
   UnlockSched();
-  DrawString(data->ws1,3,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+  
+  //рисуем селф-иконку
+#ifdef USE_PNG_EXT
+char mypic[128];
+
+  if (CList_GetUnreadMessages()>0)
+      Roster_DrawIcon(1, 1, (int) Roster_getIconByStatus(mypic,50)); //иконка сообщени€
+  else 
+    Roster_DrawIcon(1, 1, (int) Roster_getIconByStatus(mypic, My_Presence));
+
+#else
+  if (CList_GetUnreadMessages()>0)
+      Roster_DrawIcon(1, 1, Roater_getIconByStatus(50)); //иконка сообщени€
+  else 
+    Roster_DrawIcon(1, 1, Roater_getIconByStatus(My_Presence));
+#endif  
+  DrawString(data->ws1,16,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 #ifdef USE_PNG_EXT 
   if(connect_state<2)
@@ -883,6 +901,11 @@ int main(char *exename, char *fname)
     ShowMSG(1,(int)"¬ведите логин/пароль!");
     return 0;
   }
+  
+#ifdef USE_PNG_EXT
+void Roster_fillIcons(); //замен€ем картинки на png
+#endif
+
   UpdateCSMname();
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);

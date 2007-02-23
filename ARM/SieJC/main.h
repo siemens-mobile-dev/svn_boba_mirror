@@ -114,6 +114,13 @@ typedef struct
 } CLIST;
 
 
+// Для списка конференций
+typedef struct
+{
+  char* conf_jid;
+  void* next;
+}MUC_ITEM;
+
 void SendAnswer(char *str);
 
 void start_vibra(int lvibra_count);

@@ -4,6 +4,7 @@
 #include "clist_util.h"
 #include "jabber_util.h"
 #include "string_util.h"
+#include "roster_icons.h"
 #include "history.h"
 
 CLIST* cltop = NULL;
@@ -37,6 +38,11 @@ void CList_RedrawCList()
   // Определяем, скока контактов поместится на странице списка
   int font_y = GetFontYSIZE(CLIST_FONT)+2; // ad: думаю что нужно сделать чтобы была 1 строка... пусть контакт вылетает за пределы экрана
   int scr_w=ScreenW();
+#ifdef USE_PNG_EXT
+  char path_to_pic[128];
+#else
+  int icon_num=0;
+#endif
   N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1)-1;
   if(!cltop)return; 
    
@@ -51,7 +57,6 @@ void CList_RedrawCList()
   int i=1;
   int start_y;
   int fcolor;
-//  char cur[2]=">\0";
   TRESOURCE* resEx;
 
   char Alternation = 1;             // ad: состояние чередования
@@ -71,15 +76,12 @@ void CList_RedrawCList()
         {
           if(i==CursorPos)
           {
-//            cur[0]='»';
             lineColor=CURSOR;
             borderColor=CURSOR_BORDER; //бортик курсора
             ActiveContact = resEx;
           } else{ 
-//            cur[0]=' ';
             borderColor=lineColor=(Alternation==1)? 0 : 22;
           }
-          //wsprintf(out_ws,"%s TE rfST %d", cur, i);
           ascii2ws(ClEx_name, ClEx->name);
           
           if(resEx->name)
@@ -95,15 +97,7 @@ void CList_RedrawCList()
           {
             wsprintf(out_ws,"%w", ClEx_name);  //другой вид, имхо удобнее       
           }
-/*          
-          // Сие без поддержки нормального вывода в отстуствие патча. Нах.
-          if(resEx->name) {
-            wsprintf(out_ws,"%s %d %s/%s", cur, resEx->has_unread_msg, ClEx->name, resEx->name);
-          } else {
-            wsprintf(out_ws,"%s %d %s", cur, resEx->has_unread_msg, ClEx->name);
-          }
-*/
-          
+         
                     
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
           
@@ -116,97 +110,16 @@ void CList_RedrawCList()
           CutWSTR(out_ws, CHAR_ON_LINE);
           DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
 
-
-// Экспериментально: отрисовка картинок статусов: только ELFLoader 2.0 и выше
-#ifdef USE_PNG_EXT
-          char path_to_pic[128];
-          strcpy(path_to_pic, PATH_TO_PIC);
-          
-          // Если это конференция
-          if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
-          
-          // Если у нас нет подписки и у контакта нет непрочитанных сообщений
-          if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
-          {
-            strcat(path_to_pic, "noauth"); // иконка "нет авторизации"
-            goto L_DONE;
-          }
-          
-          // Если стоит флаг запроса подписки
-          if(ClEx->wants_subscription)
-          {
-            strcat(path_to_pic, "ask");
-            goto L_DONE;
-          }          
-          
-          // Если у нормального контакта есть непрочитанные сообщения
-          if(resEx->has_unread_msg)
-          {
-            // Если у него к тому же и статус адекватный
-            if(resEx->status<PRESENCE_INVISIBLE)
-            {
-              strcat(path_to_pic, "message");
-            }
-            else
-            {
-              strcat(path_to_pic, "system");      // А иначе он что-то замутил с подпиской  
-            }
-          }
-          else
-          {
-            // Если же непрочитанных сообщений нет
-            if(resEx->status<PRESENCE_INVISIBLE) // Если адекватный статус
-            {
-              strcat(path_to_pic, PRESENCES[resEx->status]);
-            }
-            else
-            {
-              strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]); // Иначе типа оффлайн
-            }
-          }
-        L_DONE:
-          strcat(path_to_pic, ".png");
-          path_to_pic[0]=DEFAULT_DISC;    // Коррекция диска
-          DrawImg(1, start_y, (int)path_to_pic);
-#else 
-          int is_pic;
-          // Если у нас нет подписки
-          if((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE)){
-            is_pic=0x185; //noauth
-          } else if(ClEx->wants_subscription){
-            is_pic=0x185;//ask
-          } else if(resEx->has_unread_msg){
-            is_pic=0x24C;
-          } else{
-            switch ((int)resEx->status) { //надо еще конфу добавить
-              case 0: //online
-                is_pic=0x22C;
-                break;
-              case 1: //unavailable
-                is_pic=0x306;
-                break;
-              case 2: //error
-                is_pic=0x185;
-                break;
-              case 3: //chat
-                is_pic=0x18C;
-                break;
-              case 4: //away
-                is_pic=0x22F; //пофиксил
-                break;
-              case 5: //xa
-                is_pic=0x17A;
-                break;
-              case 6: //dnd
-                is_pic=0x231;
-                break;
-              case 7: //invisible
-                is_pic=0x306;
-                break;
-            }
-          }
-          DrawImg(0, start_y, is_pic);
-#endif                    
+#ifdef USE_PNG_EXT          
+          Roster_getIcon(path_to_pic, ClEx, resEx);
+          Roster_DrawIcon(1, start_y, (int)path_to_pic);   
+#else
+          if (CList_GetUnreadMessages()>0)
+            Roster_DrawIcon(1, start_y, Roater_getIconByStatus(50)) ; //иконка сообщения
+        else 
+          icon_num=Roster_getIcon(ClEx, resEx);
+          Roster_DrawIcon(1, start_y, icon_num);     
+#endif          
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
         }
         if(Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg)i++;
@@ -217,9 +130,7 @@ void CList_RedrawCList()
     ClEx = ClEx->next;
     if(i>Active_page*N_cont_disp)break;
   }
-  UnlockSched();
 
-  LockSched();
 //  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
   if(Jabber_state==JS_ONLINE)sprintf(logmsg, "Self=%s",PRESENCES[My_Presence]);
 //  sprintf(logmsg, "Jabber=%d",Jabber_state);
@@ -793,7 +704,11 @@ void CList_MoveCursorUp()
   if(CursorPos==1)
   {
     CursorPos=N_Disp_Contacts;
-    Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
+    if (N_cont_disp==N_Disp_Contacts) {
+      Active_page = 1; 
+    } else {
+      Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
+    }
   }
   else
   {

@@ -6,7 +6,7 @@
   #define _MESSAGE_LIST_H_
 
 // Смещение, начиная с которого рисовать хистори
-#define HIST_DISP_OFS 20
+#define HIST_DISP_OFS 14
 
 // Цвета. Много цветов :)
 //общий фон

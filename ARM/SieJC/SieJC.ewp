@@ -2965,6 +2965,12 @@
     <name>$PROJ_DIR$\message_list.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\roster_icons.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\roster_icons.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\string_util.c</name>
   </file>
   <file>
