@@ -836,6 +836,17 @@ void ask_my_info(void)
   SUBPROC((void *)SendAnswer,0,p);*/
 }
 
+void set_my_status(void)
+{
+    TPKT *p;
+    p=malloc(sizeof(PKT)+1);
+    p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
+    p->pkt.type=T_MY_STATUS_CH; // Тип пакета: изменение статуса
+    p->pkt.data_len=1;          // Длина пакета: 1 байт
+    memcpy(p->data, &CurrentStatus, 1);
+    SUBPROC((void *)SendAnswer,0,p);
+}
+
 ProcessPacket(TPKT *p)
 {
   CLIST *t;
@@ -859,6 +870,7 @@ ProcessPacket(TPKT *p)
     {
       vibra_count=1;
       start_vibra();
+      set_my_status();
       ask_my_info();
       remake_clmenu();
     }
@@ -1139,6 +1151,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       {
 	request_remake_clmenu=0;
 	create_contactlist_menu();
+	if (request_remake_edchat) goto L_CREC;
       }
     }
     if ((int)msg->data0==edchat_id)
@@ -1146,9 +1159,13 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       edchat_id=0;
       if (request_remake_edchat)
       {
-	void CreateEditChat(CLIST *t);
-	request_remake_edchat=0;
-	CreateEditChat(edcontact);
+	if (!request_remake_clmenu)
+	{
+	  void CreateEditChat(CLIST *t);
+	L_CREC:
+	  request_remake_edchat=0;
+	  CreateEditChat(edcontact);
+	}
       }
     }
   }
