@@ -333,7 +333,7 @@ const HEADER_DESC bm_menuhdr={0,0,131,21,NULL,(int)"Bookmarks...",LGP_NULL};
 const int menusoftkeys[]={0,1,2};
 const SOFTKEY_DESC menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Options"},
+  {0x0018,0x0000,(int)"Config"},
   {0x0001,0x0000,(int)"Close"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
@@ -366,8 +366,15 @@ int bm_menu_onkey(void *data, GUI_MSG *msg)
   if (msg->keys==0x18)
   {
     //    GeneralFunc_F1(1);
-    ShowMSG(1,(int)"Under construction!");
-    return(-1);
+//    ShowMSG(1,(int)"Under construction!");
+    extern const char *successed_config_filename;
+    WSHDR *ws;
+    ws=AllocWS(150);
+    str_2ws(ws,successed_config_filename,128);
+    ExecuteFile(ws,0,0);
+    FreeWS(ws);
+    GeneralFunc_flag1(((MAIN_CSM*)FindCSMbyID(my_csm_id))->gui_id,1);
+    return(1);
   }
   if (msg->keys==0x3D)
   {
