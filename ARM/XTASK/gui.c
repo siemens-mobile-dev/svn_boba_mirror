@@ -1,6 +1,10 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
+extern void kill_data(void *p, void (*func_p)(void *));
+
+char mmenu_hdr_txt[32];
+
 #pragma inline
 void patch_header(const HEADER_DESC* headc)
 {
@@ -63,18 +67,7 @@ typedef struct
   int gui_id;
 }MAIN_CSM;
 
-typedef struct
-{
-  GUI gui;
-  WSHDR *ws1;
-  WSHDR *ws2;
-  //  int i1;
-}MAIN_GUI;
-
 int my_csm_id;
-
-int cursor;
-void * volatile selcsm;
 
 typedef struct
 {
@@ -148,9 +141,12 @@ char *find_name(CSM_RAM *csm)
 int GetNumberOfDialogs(void)
 {
   int count=0;
+  int c;
+  int i;
   CSM_RAM *icsm=under_idle->next; //Начало карусели
   ClearNL();
   WSHDR *ws;
+  char ss[64];
 
   void *ircsm=FindCSMbyID(CSM_root()->idle_id);
 
@@ -172,7 +168,7 @@ int GetNumberOfDialogs(void)
 	char *s;
 	if((tws->ws_malloc==NAMECSM_MAGIC1)&&(tws->ws_mfree==NAMECSM_MAGIC2))
 	{
-	  ws=AllocWS(40);
+	  ws=AllocWS(64);
 	  wstrcpy(ws,tws);
 	  AddNL(ws);
 	  nltop->p=icsm;
@@ -183,8 +179,14 @@ int GetNumberOfDialogs(void)
 	  s=find_name(icsm);
 	  if (strncmp(s,"!SKIP!",6))
 	  {
-	    ws=AllocWS(40);
-	    wsprintf(ws,percent_t,s);
+	    ws=AllocWS(64);
+	    i=0;
+	    while((c=*s++)>=' ')
+	    {
+	      if (i<(sizeof(ss)-1)) ss[i++]=c;
+	    }
+	    ss[i]=0;
+	    wsprintf(ws,percent_t,ss);
 	    AddNL(ws);
 	    nltop->p=icsm;
 	    count++;
@@ -194,15 +196,17 @@ int GetNumberOfDialogs(void)
     }
   }
   while((icsm=icsm->next));
+  sprintf(mmenu_hdr_txt,"XTask2.0: %d dialogs",count);
   return(count);
 }
 
-void SwapCSMS(int no_no_gui)
+void SwapCSMS(int no_no_gui, void *selcsm)
 {
   CSM_RAM *icsm; //Нижний CSM
   CSM_RAM *ucsm; //Верхний CSM
   CSM_RAM *wcsm; //Перемещаемый CSM
   extern WSHDR *ws_nogui;
+  static const char my_color[]={0x00,0x00,0x00,0x32};
 
   if (GetNumberOfDialogs()<2) return; //Нечего сворачивать
   if (!selcsm) return;
@@ -222,137 +226,55 @@ void SwapCSMS(int no_no_gui)
   if (no_no_gui) return; //
   //Теперь рисуем "Нет GUI" на всякий случай
   DrawRoundedFrame(0,0+YDISP,ScreenW()-1,ScreenH()-1,0,0,0,
-			GetPaletteAdrByColorIndex(0),
-			GetPaletteAdrByColorIndex(20));
-  DrawString(ws_nogui,3,70,ScreenW()-4,ScreenH()-4,1,2,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
+			my_color,
+			my_color);
+
+//  DrawRoundedFrame(0,0+YDISP,ScreenW()-1,ScreenH()-1,0,0,0,
+//			GetPaletteAdrByColorIndex(0),
+//			GetPaletteAdrByColorIndex(20));
+//  DrawString(ws_nogui,3,70,ScreenW()-4,ScreenH()-4,1,2,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
 }
 
-
-void method0(MAIN_GUI *data)
+NAMELIST *get_nlitem(int curitem)
 {
-  int i;
-  int pos;
-  int vcur;
   NAMELIST *nl;
-
-  if (do_idle)
-  {
-    selcsm=FindCSMbyID(CSM_root()->idle_id);
-    SwapCSMS(1);
-    GeneralFuncF1(1);
-    do_idle=0;
-    return;
-  }
-
-  DrawRoundedFrame(0,0+YDISP,ScreenW()-1,ScreenH()-1,0,0,0,
-			GetPaletteAdrByColorIndex(0),
-			GetPaletteAdrByColorIndex(20));
-  wsprintf(data->ws1,"XTask v1.5\n(C)2007 Rst7/CBSIE\n\n%t%d",
-	   "Сейчас диалогов: ",
-	   GetNumberOfDialogs());
-  DrawString(data->ws1,3,3+YDISP,ScreenW()-4,3+YDISP+4*GetFontYSIZE(SMALL_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-
   nl=nltop;
-  i=0;
+  int i=0;
   while(nl)
   {
+    if (i==curitem) break;
     i++;
     nl=nl->next;
   }
-  if (i)
+  return(nl);
+}
+
+
+void mm_menu_iconhndl(void *data, int curitem, int *unk)
+{
+  NAMELIST *nl;
+  WSHDR *ws;
+  void *item=AllocMenuItem(data);
+  nl=get_nlitem(curitem);
+  if (nl)
   {
-    if (cursor>=i) cursor=i-1;
-  }
-  else cursor=0;
-  nl=nltop;
-  if (cursor<2)
-  {
-    pos=0;
-    vcur=cursor;
+    if (nl->name)
+    {
+      ws=AllocMenuWS(data,wstrlen(nl->name));
+      wstrcpy(ws,nl->name);
+    }
+    else
+    {
+      ws=AllocMenuWS(data,16);
+      wsprintf(ws,"no name???");
+    }
   }
   else
   {
-    pos=cursor-2;
-    vcur=2;
+    ws=AllocMenuWS(data,16);
+    wsprintf(ws,"error!!!");
   }
-  while(pos)
-  {
-    if (nl)
-    {
-      nl=nl->next;
-    }
-    pos--;
-  }
-  i=0;
-  int ddy=GetFontYSIZE(SMALL_FONT);
-  int y=3+YDISP+4*ddy+5;
-  do
-  {
-    int dy=y+i*(ddy+2);
-    if (nl)
-    {
-      if (nl->name)
-      {
-	if (i==vcur)
-	{
-	  selcsm=nl->p;
-	  DrawRoundedFrame(3,dy-2,ScreenW()-4,dy+ddy,0,0,0,
-			GetPaletteAdrByColorIndex(0),
-			GetPaletteAdrByColorIndex(3));
-	}
-	DrawString(nl->name,5,dy,ScreenW()-6,dy+ddy-1,SMALL_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-      }
-      nl=nl->next;
-    }
-    i++;
-  }
-  while(i<5);
-  int scr_w=ScreenW();
-  int scr_h=ScreenH();
-
-  wsprintf(data->ws2,percent_t,"Назад");
-  DrawString(data->ws2,scr_w>>1,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w-4,scr_h-4,MIDDLE_FONT,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t,"Idle");
-  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w>>1,scr_h-4,MIDDLE_FONT,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-}
-
-void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
-{
-  int f;
-  int sz=0;
-  unsigned int ul;
-  extern const char csmlist_fname[128];
-
-  data->ws1=AllocWS(256);
-  data->ws2=AllocWS(256);
-  if ((f=fopen(csmlist_fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
-  {
-    sz=fread(f,csm_text,32767,&ul);
-    fclose(f,&ul);
-  }
-  if (sz>0) csm_text[sz]=0;
-  cursor=1; //На следующий
-  selcsm=0;
-  data->gui.state=1;
-}
-
-void method2(MAIN_GUI *data, void (*mfree_adr)(void *))
-{
-  ClearNL();
-  FreeWS(data->ws1);
-  FreeWS(data->ws2);
-  data->gui.state=0;
-}
-
-void method3(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
-{
-  data->gui.state=2;
-}
-
-void method4(MAIN_GUI *data, void (*mfree_adr)(void *))
-{
-  if (data->gui.state!=2) return;
-  data->gui.state=1;
+  SetMenuItemText(data,item,ws,curitem);
 }
 
 const char *bm_name(int bm)
@@ -430,7 +352,7 @@ const MENU_DESC bm_menu=
   8,(void *)bm_menu_onkey,(void*)bm_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
-  0,//0x11,
+  0x10,//0x11,
   (void *)bm_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
@@ -496,7 +418,7 @@ void ShowBMmenu(void)
   CreateMenu(0,0,&bm_menu,&bm_menuhdr,0,9,0,0);
 }
 
-int method5(MAIN_GUI *data, GUI_MSG *msg)
+int mm_menu_onkey(void *data, GUI_MSG *msg)
 {
   int i;
   if (msg->gbsmsg->msg==KEY_DOWN)
@@ -506,37 +428,97 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       if (i=='0')
       {
         ShowBMmenu();
-        return(0);
+        return(-1);
       }
       if ((i>='1')&&(i<='9'))
       {
-        return RunBM(i-'1');
+        if (RunBM(i-'1')) return 1;
+	return(-1);
       }
     }
     switch(i)
     {
     case LEFT_SOFT:
-      selcsm=FindCSMbyID(CSM_root()->idle_id);
+      SwapCSMS(0,FindCSMbyID(CSM_root()->idle_id));
+      return(1);
     case ENTER_BUTTON:
-      SwapCSMS(0);
+      SwapCSMS(0,get_nlitem(GetCurMenuItem(data))->p);
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
-    case UP_BUTTON:
-      if (cursor) cursor--;
-      break;
-    case DOWN_BUTTON:
-      cursor++;
-      break;
     }
   }
-  DirectRedrawGUI();
   return(0);
 }
 
-void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
+const HEADER_DESC mm_menuhdr={0,0,131,21,NULL,(int)mmenu_hdr_txt,LGP_NULL};
+const SOFTKEY_DESC mm_menu_sk[]=
 {
-  extern void kill_data(void *p, void (*func_p)(void *));
-  kill_data(data,mfree_adr);
+  {0x0018,0x0000,(int)"Idle"},
+  {0x0001,0x0000,(int)"Back"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+const SOFTKEYSTAB mm_menu_skt=
+{
+  mm_menu_sk,0
+};
+
+void mm_menu_ghook(void *data, int cmd){}
+
+const MENU_DESC mm_menu=
+{
+  8,(void *)mm_menu_onkey,(void*)mm_menu_ghook,NULL,
+  menusoftkeys,
+  &mm_menu_skt,
+  0x10,//0x11,
+  (void *)mm_menu_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0   //n
+};
+
+
+typedef struct
+{
+  GUI gui;
+}DUMMY_GUI;
+
+void method0(DUMMY_GUI *data)
+{
+  SwapCSMS(1,FindCSMbyID(CSM_root()->idle_id));
+  do_idle=0;
+  GeneralFuncF1(1);
+}
+
+void method1(DUMMY_GUI *data, void *(*malloc_adr)(int))
+{
+  data->gui.state=1;
+}
+
+void method2(DUMMY_GUI *data, void (*mfree_adr)(void *))
+{
+  data->gui.state=0;
+}
+
+void method3(DUMMY_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
+{
+  data->gui.state=2;
+}
+
+void method4(DUMMY_GUI *data, void (*mfree_adr)(void *))
+{
+  if (data->gui.state!=2) return;
+  data->gui.state=1;
+}
+
+int method5(DUMMY_GUI *data, GUI_MSG *msg)
+{
+  return(0);
+}
+
+void method7(DUMMY_GUI *data, void (*mfree_adr)(void *))
+{
+  kill_data(data, mfree_adr);
 }
 
 int method8(void){return(0);}
@@ -561,23 +543,42 @@ const RECT Canvas={0,0,131,175};
 
 void maincsm_oncreate(CSM_RAM *data)
 {
-  MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
-  MAIN_CSM*csm=(MAIN_CSM*)data;
-  zeromem(main_gui,sizeof(MAIN_GUI));
-  patch_rect(&Canvas,0,YDISP,ScreenW()-1,ScreenH()-1);
-  main_gui->gui.canvas=(void *)(&Canvas);
-  main_gui->gui.flag30=2;
-  main_gui->gui.methods=(void *)gui_methods;
-  main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
+  MAIN_CSM *csm=(MAIN_CSM *)data;
   csm->csm.state=0;
   csm->csm.unk1=0;
-  csm->gui_id=CreateGUI(main_gui);
+  if (do_idle)
+  {
+    DUMMY_GUI *main_gui=malloc(sizeof(DUMMY_GUI));
+    zeromem(main_gui,sizeof(DUMMY_GUI));
+    main_gui->gui.canvas=(void *)(&Canvas);
+    main_gui->gui.flag30=2;
+    main_gui->gui.methods=(void *)gui_methods;
+    main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
+    patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
+    csm->gui_id=CreateGUI(main_gui);
+  }
+  else
+  {
+    int f;
+    int sz=0;
+    unsigned int ul;
+    extern const char csmlist_fname[128];
+    if ((f=fopen(csmlist_fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+    {
+      sz=fread(f,csm_text,32767,&ul);
+      fclose(f,&ul);
+    }
+    if (sz>=0) csm_text[sz]=0;
+    patch_header(&mm_menuhdr);
+    csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,1,GetNumberOfDialogs(),0,0);
+  }
 }
 
 void maincsm_onclose(CSM_RAM *csm)
 {
   //  extern void *ELF_BEGIN;
   //  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
+  ClearNL();
   mode=0;
 }
 
