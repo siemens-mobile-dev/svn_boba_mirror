@@ -3,6 +3,7 @@
 #include "roster_icons.h"
 #include "mainmenu.h"
 #include "status_change.h"
+#include "MUC_Enter_UI.h"
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
@@ -58,7 +59,7 @@ MENUITEM_DESC menuitems[N_ITEMS]=
   {about_icon,(int)"Ξα ύλότε...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[N_ITEMS]={(void *)Dummy, (void *)DispStatusChangeMenu, (void *)Dummy, (void *) AboutDlg};
+void *menuprocs[N_ITEMS]={(void *)Dummy, (void *)DispStatusChangeMenu, (void *)Disp_MUC_Enter_Dialog, (void *) AboutDlg};
 
 SOFTKEY_DESC mmenu_sk[]=
 {
@@ -83,15 +84,22 @@ MENU_DESC tmenu=
   menuprocs,
   N_ITEMS
 };
-
-int S_ICONS[1];
+extern const char PATH_TO_PIC[256];
+int S_ICONS[2];
 char mypic[128];
+char confpic[128];
 void MM_Show()
 {
 #ifdef USE_PNG_EXT
   Roster_getIconByStatus(mypic, My_Presence);
   S_ICONS[0]=(int)mypic;
   menuitems[1].icon = S_ICONS;
+  
+  strcpy(confpic, PATH_TO_PIC);
+  strcat(confpic,"conference");
+  strcat(confpic,".png");  
+  S_ICONS[1]=(int)confpic;
+  menuitems[2].icon = S_ICONS+1;
 #else
   menuitems[1].icon = Roster_getIconByStatus(My_Presence);
 #endif  

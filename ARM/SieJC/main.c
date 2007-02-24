@@ -54,7 +54,7 @@ extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";
-const char VERSION_VERS[] = "0.75";
+const char VERSION_VERS[] = "0.8";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -560,8 +560,12 @@ void Enter_SiepatchDB()
   char nick_t[]="%s_SieJC";
   char nick[100];
   sprintf(nick, nick_t, USERNAME);
-  Enter_Conference(room, nick);
-
+  
+  char *room_nick =ANSI2UTF8(nick, strlen(nick)*2);
+  char* room_name = ANSI2UTF8(room, strlen(room)*2);
+  Enter_Conference(room, nick, 20);
+  mfree(room_nick);
+  mfree(room_name);
 }
 
 void Dump_PhoneInfo()
@@ -582,6 +586,25 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
 
   //DirectRedrawGUI();
+  if(msg->gbsmsg->msg==LONG_PRESS)
+  {
+    switch(msg->gbsmsg->submess)
+    {  
+    case DOWN_BUTTON:
+    case '8':
+      {
+        CList_MoveCursorDown();
+        break;
+      }
+
+    case UP_BUTTON:
+    case '2':
+      {
+        CList_MoveCursorUp();
+        break;
+      }
+    }
+  }
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     switch(msg->gbsmsg->submess)
@@ -595,7 +618,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
     
     case LEFT_SOFT:
       {
-        CList_Display_Popup_Info(CList_GetActiveContact());
+        MM_Show();
         break;
       }
     case RIGHT_SOFT:
@@ -631,24 +654,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }
     case '5':
       {
-/*
-        extern void Send_Initial_Presence_Helper();
-        extern void Send_Away_Presence_Helper();
-        if(My_Presence==PRESENCE_ONLINE)
-        {
-          SUBPROC((void*)Send_Away_Presence_Helper);
-        }
-        else
-        {
-          SUBPROC((void*)Send_Initial_Presence_Helper);
-        }
-*/
-        MM_Show();
-        break;
-      }
-    case '6':
-      {
-        Dump_PhoneInfo();
+        CList_Display_Popup_Info(CList_GetActiveContact());
         break;
       }
 
@@ -898,9 +904,9 @@ void UpdateCSMname(void)
 unsigned short IsGoodPlatform()
 { 
 #ifdef NEWSGOLD  
-  return  (AddrLibrary()==0xA0074000);
+  return  isnewSGold();
 #else
-  return  (AddrLibrary()!=0xA0074000);
+  return  !isnewSGold();
 #endif    
 }
 

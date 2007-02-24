@@ -75,7 +75,7 @@ SOFTKEY_DESC st_menu_sk[]=
 
 SOFTKEYSTAB st_menu_skt=
 {
-  st_menu_sk,0
+  st_menu_sk,3
 };
 
 WSHDR* ews;
@@ -85,7 +85,7 @@ char Selected_Status=0;
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
-  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->gbsmsg->submess==LEFT_SOFT)
+  if(msg->gbsmsg->submess==GREEN_BUTTON)
   {
     sTerminate = 1;
     return 1;
@@ -97,28 +97,25 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 void ed1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
+/*  
   if (cmd==7)
   {
     //OnRun
     ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
     wstrcpy(ews,ec.pWS);
   }
-  if(cmd==0x0A)
+*/  
+  if(cmd==0x0A)   // Фокусирование
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
-  if (cmd==0x0D)
-  {
-     ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
-     //wstrcpy(ews,ec.pWS);
-     EDIT_SetTextToFocused(data,ews);
-  }
-  
-    if(sTerminate) 
+
+
+  if(sTerminate || cmd==9)  // cmd==9 - нажатие на левую софт-кнопку "ОК"
  {
-     //char q[10];
-     //sprintf(q,"N=%d",EDIT_GetFocus(data));
-     //ShowMSG(1,(int)q); 
+//     char q[10];
+//     sprintf(q,"N=%d",cmd);
+//     ShowMSG(1,(int)q); 
    sTerminate=0;
    ExtractEditControl(data,2,&ec);    
    wstrcpy(ews,ec.pWS);

@@ -306,17 +306,24 @@ void _enterconference(MUC_ENTER_PARAM *param)
 
 
 // Входит в конференцию
-void Enter_Conference(char *room, char *roomnick)
+// Все имена в UTF-8 :)
+void Enter_Conference(char *room, char *roomnick, char N_messages)
 {
   // Добавляем контакт конференции в ростер
   CList_AddContact(room,room, SUB_BOTH, 0, 129);
   
   // Готовим структуру для передачи в HELPER
   MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
-  par->room_nick =ANSI2UTF8(roomnick, strlen(roomnick)*2);
-  par->room_name = ANSI2UTF8(room, strlen(room)*2);
+//  par->room_nick =ANSI2UTF8(roomnick, strlen(roomnick)*2);
+//  par->room_name = ANSI2UTF8(room, strlen(room)*2);
+
+  par->room_nick =malloc(strlen(roomnick)*2);
+  par->room_name = malloc(strlen(room)*2);
+  strcpy(par->room_nick, roomnick);
+  strcpy(par->room_name, room);  
+  
   par->pass=NULL;
-  par->mess_num=20;
+  par->mess_num=N_messages;
   SUBPROC((void*)_enterconference, par);
   
   // Регистрируем конференцию в списке конференций

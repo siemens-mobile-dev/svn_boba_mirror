@@ -26,7 +26,6 @@ unsigned int invisible=0x306;
 extern const char* PRESENCES[PRES_COUNT];
 extern const char PATH_TO_PIC[256];
 
-
 #ifdef USE_PNG_EXT
 char* Roster_getIconByStatus(char* path_to_pic, char status) //вернет путь к картинке картинке по статусу
 {

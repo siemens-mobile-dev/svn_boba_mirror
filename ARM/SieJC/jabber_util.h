@@ -96,5 +96,5 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess);
 void MUCList_Destroy();
 
 // Войти в конференцию
-void Enter_Conference(char *room, char *roomnick);
+void Enter_Conference(char *room, char *roomnick, char N_messages);
 #endif
