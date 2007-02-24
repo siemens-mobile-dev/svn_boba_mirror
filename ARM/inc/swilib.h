@@ -405,6 +405,20 @@ typedef struct
 #define LINE_DOTTED 1
 #define LINE_DOTTED2 2
 
+// Phone info IDs
+#define PI_BASE_INFO1   0 // mch_x75idbi14
+#define PI_BASE_INFO2   1 // m75i14#main_1.0_V79.27.1
+#define PI_BASE_INFO3   2 // M_x75plat_MP_main_1.0
+#define PI_BASE_INFO4   3 // M_minosemea_TH
+#define PI_BUILD        4 // OFFICIAL
+#define PI_DATETIME1	5	// Какие-то две даты
+#define PI_DATETIME2    6
+#define PI_SW_NUMBER    7 // Версия прошивки
+#define PI_VENDOR       8 // = SIEMENS :)
+#define PI_MODEL        9 // модель телефона
+#define PI_LG           10 // = LangPack
+#define PI_T9           11 // = T9
+
 typedef struct
 {
 #ifdef ELKA
@@ -2219,3 +2233,8 @@ __swi __arm int EDIT_GetCursorPos(void *gui);
 __swi __arm void EDIT_SetCursorPos(void *gui, int pos);
 //thumb
 //pattern=
+
+#pragma swi_number=0x1D5
+__swi __arm char *Get_Phone_Info(int InfoIndex);
+//arm
+//pattern=??,??,??,E3,??,??,??,95,??,??,??,95,??,??,??,90,??,??,??,95,??,??,??,82,??,??,??,E1
