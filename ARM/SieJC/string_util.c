@@ -22,7 +22,6 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
   // занято меньше, посему в конце сделаем realloc
   int lastchar = 0;
   int dummy;
-  //char* tmp_out =dest_buffer;// malloc(st_len); // для 0x00 место не резервируем, нах его
   char chr, chr2, chr3;
   for(int i=0;i<st_len;i++)
   {

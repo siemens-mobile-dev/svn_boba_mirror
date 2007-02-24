@@ -96,7 +96,6 @@ void Send_Welcome_Packet()
 // Context:HELPER
 void Send_Disconnect()
 {
-//  connect_state = 0;
   char streamend[]="</stream:stream>";
   SendAnswer(streamend);
   strcpy(logmsg,"Send Disconnect");
@@ -176,7 +175,6 @@ void Send_Presence(PRESENCE_INFO *pr_info/*short priority, char status, char* me
       char presence_template[]="<presence from='%s' to='%s'><show>%s</show></presence>";
       snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status]);
     }
-    Log("MUC_PR",presence);
     SendAnswer(presence);
     m_ex=m_ex->next;
   };  
@@ -252,7 +250,9 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 void Report_VersionInfo(char* id, char *to)
 {
   char answer[200];  
-  sprintf(answer, "<name>%s</name><version>%s (%s)</version><os>%s</os>", VERSION_NAME, VERSION_VERS, CMP_DATE, OS);
+  char *ph_model = Get_Phone_Info(PI_MODEL);
+  char *ph_sw = Get_Phone_Info(PI_SW_NUMBER);
+  sprintf(answer, "<name>%s</name><version>%s (%s)</version><os>SIE-%s/%s %s</os>", VERSION_NAME, VERSION_VERS, CMP_DATE, ph_model, ph_sw, OS);
   SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
 
   mfree(id);
@@ -290,24 +290,6 @@ void Send_Initial_Presence_Helper()
   Jabber_state = JS_ONLINE;
 }
 
-// пока это вместо всего:)))))
-//Context: HELPER
-void Send_Away_Presence_Helper()
-{
-  TTime now_time;
-  TDate now_date;
-  GetDateTime(&now_date,&now_time);
-  char away_msg_template[]="Отсутствую с %02d:%02d, буду позже.";
-  snprintf(away_msg_template,strlen(away_msg_template), away_msg_template, now_time.hour,now_time.min); 
-  char *message = ANSI2UTF8(away_msg_template, strlen(away_msg_template));
-  PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-  pr_info->priority = -16;
-  pr_info->status=PRESENCE_AWAY;
-  pr_info->message=message;  
-  Send_Presence(pr_info);
-}
-
-
 //Context: HELPER
 void _enterconference(MUC_ENTER_PARAM *param)
 {
@@ -326,13 +308,18 @@ void _enterconference(MUC_ENTER_PARAM *param)
 // Входит в конференцию
 void Enter_Conference(char *room, char *roomnick)
 {
+  // Добавляем контакт конференции в ростер
+  CList_AddContact(room,room, SUB_BOTH, 0, 129);
+  
+  // Готовим структуру для передачи в HELPER
   MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
   par->room_nick =ANSI2UTF8(roomnick, strlen(roomnick)*2);
   par->room_name = ANSI2UTF8(room, strlen(room)*2);
   par->pass=NULL;
   par->mess_num=20;
   SUBPROC((void*)_enterconference, par);
-  CList_AddContact(room,room, SUB_BOTH, 0, 129);
+  
+  // Регистрируем конференцию в списке конференций
   MUC_ITEM* mi = malloc(sizeof(MUC_ITEM));
   mi->conf_jid = malloc(strlen(par->room_name)*2+strlen(par->room_nick)*2+2);
   sprintf(mi->conf_jid, "%s/%s", par->room_name, par->room_nick);
@@ -421,7 +408,7 @@ void FillRoster(XMLNode* items)
   while(rostEx)
   {
     JABBER_SUBSCRIPTION r_subscr=GetSubscrType(XML_Get_Attr_Value("subscription",rostEx->attr));
-    name = XML_Get_Attr_Value("name",rostEx->attr);//convUTF8_to_ANSI(XML_Get_Attr_Value("name",rostEx->attr));  
+    name = XML_Get_Attr_Value("name",rostEx->attr); 
     w_subscr = XML_Get_Attr_Value("ask",rostEx->attr);
     if(w_subscr)
     {

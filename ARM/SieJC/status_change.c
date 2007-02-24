@@ -38,60 +38,6 @@ void Change_Status(char status)
     //CurrentStatus = status;
     GeneralFunc_flag1(StatChange_Menu_ID,1);    
 }
-///////////////////////////////////////////////////////////////////////////////
-// Пока так, ждём динамическую менюшку с радиобаттонами... :)
-/*
-void Ch_Online()
-{
-  Change_Status(IS_ONLINE);
-}
-
-void Ch_Away()
-{
-  Change_Status(IS_AWAY);
-}
-
-void Ch_NA()
-{
-  Change_Status(IS_NA);
-}
-
-void Ch_Ocuppied()
-{
-  Change_Status(IS_OCCUPIED);
-}
-
-void Ch_DND()
-{
-  Change_Status(IS_DND);
-}
-
-void Ch_FFC()
-{
-  Change_Status(IS_FFC);
-}
-
-void Ch_Invisible()
-{
-  Change_Status(IS_INVISIBLE);
-}
-
-unsigned short GetStatusIndexInMenu(unsigned short status)
-{
-  switch(status)
-  {
-  case IS_ONLINE: {return 0;}
-  case IS_AWAY: {return 1;}
-  case IS_NA: {return 2;}
-  case IS_DND: {return 3;}
-  case IS_OCCUPIED: {return 4;}
-  case IS_FFC: {return 5;}
-  case IS_INVISIBLE: {return 6;}
-  }
-  return 0;
-}
-*/
-///////////////////////////////////////////////////////////////////////////////
 
 #define STATUSES_NUM 6
 
@@ -110,7 +56,7 @@ MENUITEM_DESC st_menuitems[STATUSES_NUM]=
   {NULL,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void dummy(){};
+void dummy(void){};
 void *st_menuprocs[STATUSES_NUM]={
                                   (void *)dummy,
                                   (void *)dummy,
@@ -136,11 +82,10 @@ WSHDR* ews;
 char sTerminate=0;
 char Selected_Status=0;
 
-void ed1_locret(void){}
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
-  if(msg->gbsmsg->submess==GREEN_BUTTON)
+  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->gbsmsg->submess==LEFT_SOFT)
   {
     sTerminate = 1;
     return 1;
@@ -158,6 +103,10 @@ void ed1_ghook(GUI *data, int cmd)
     ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
     wstrcpy(ews,ec.pWS);
   }
+  if(cmd==0x0A)
+  {
+     DisableIDLETMR();   // Отключаем таймер выхода по таймауту
+  }
   if (cmd==0x0D)
   {
      ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
@@ -167,8 +116,11 @@ void ed1_ghook(GUI *data, int cmd)
   
     if(sTerminate) 
  {
+     //char q[10];
+     //sprintf(q,"N=%d",EDIT_GetFocus(data));
+     //ShowMSG(1,(int)q); 
    sTerminate=0;
-   ExtractEditControl(data,EDIT_GetFocus(data),&ec);    
+   ExtractEditControl(data,2,&ec);    
    wstrcpy(ews,ec.pWS);
    size_t xz = wstrlen(ews)*2;
    char* body;
@@ -178,9 +130,13 @@ void ed1_ghook(GUI *data, int cmd)
       body[xz]='\0';
    }
    else body = NULL;
-    //ShowMSG(1,(int)body);
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority = Selected_Status==PRESENCE_ONLINE || Selected_Status==PRESENCE_CHAT? 16: -16 ;
+    extern long  strtol (const char *nptr,char **endptr,int base);
+    ExtractEditControl(data,4,&ec);    // = priority
+    wstrcpy(ews,ec.pWS);
+    char ss[10];
+    ws_2str(ews,ss,15);
+    pr_info->priority = strtol (ss,0,10);
     pr_info->status=Selected_Status;
     pr_info->message=body;  
     SUBPROC((void*)Send_Presence,pr_info);
@@ -195,7 +151,7 @@ INPUTDIA_DESC ed1_desc=
   1,
   ed1_onkey,
   ed1_ghook,
-  (void *)ed1_locret,
+  (void *)dummy,
   0,
   &st_menu_skt,
   {0,22,131,153},
@@ -221,6 +177,7 @@ INPUTDIA_DESC ed1_desc=
 void Disp_AddSettings_Dialog()
 {
   void *ma=malloc_adr();
+  extern const char percent_t[];
   void *eq;
   EDITCONTROL ec;
   ews=AllocWS(256);
@@ -228,13 +185,21 @@ void Disp_AddSettings_Dialog()
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
-  wsprintf(ews,"%t","Введите текст статуса:");
+  wsprintf(ews,percent_t,"Введите текст статуса:");
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
   wsprintf(ews,"");
   ConstructEditControl(&ec,3,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);  
+
+  wsprintf(ews,percent_t,"Приоритет:");
+  ConstructEditControl(&ec,1,0x40,ews,256);
+  AddEditControlToEditQend(eq,&ec,ma);  
+
+  wsprintf(ews,"0");
+  ConstructEditControl(&ec,5,0x40,ews,2);
+  AddEditControlToEditQend(eq,&ec,ma);
   
   patch_input(&ed1_desc);
   patch_header(&ed1_hdr);

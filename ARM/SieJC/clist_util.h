@@ -84,4 +84,7 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx);
   void CList_MoveCursorHome();
   void CList_MoveCursorEnd();
   
+// Убить список сообщений
+void KillMsgList(LOG_MESSAGE* messtop);
+
 #endif

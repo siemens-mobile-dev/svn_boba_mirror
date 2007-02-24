@@ -17,18 +17,26 @@
 1. Вход в сеть
 2. Сообщение об этом контакт-листу :)
 3. Процедуры низкого уровня: посылка iq, логина, своего присутствия
-4. Запись потока данных к/от сервера (файл 4:\jlog.txt)
-5. Запись разобранных порций XML-потока (файл 4:\xml_packet.txt)
+4. Запись потока данных к/от сервера (файл jlog.txt)
+5. Запись разобранных порций XML-потока (файл xml_packet.txt)
 6. Приём сообщений
-7. Передача сообщений (только контактам с латинскими JID)
+7. Передача сообщений
+8. Кход в конференцию (siepatchdb@conference.jabber.ru, для остального надо писать UI)
+9. Смена своего статуса
 
 Управление: логиниться к серверу клиент будет автоматически,
-изменение учётных данных - в константах ниже.
+изменение учётных данных - в конфигруационном файле.
 
 Горячие клавиши:
 1/9 - перемещение в начало/конец списка контактов
 2/8 - вверх/вниз по списку
 0   - показать/спрятать оффлайн-пользователей
+# - следующее непрочитанное сообщение
+Зелёная кнопка - написать сообщение
+
+Экран сообщений:
+0 - очистка списка сообщений контакта
+Зелёная кнопка - написать сообщение
 
 Что нужно сделать в первую очередь:
  - Придумать, как обращаться с контактами не из списка контактов
@@ -42,10 +50,11 @@
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];  
+extern const char PATH_TO_PIC[];  
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";
-const char VERSION_VERS[] = "0.7 23-Feb Edition";
+const char VERSION_VERS[] = "0.75";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -378,6 +387,7 @@ void Process_Decoded_XML(XMLNode* node)
     if(!strcmp(nodeEx->name,"stream:error"))
     {
       connect_state = 0;
+      REDRAW();
       Jabber_state = JS_ERROR;
       char err[]="Ошибка XML-потока";
       ShowDialog_Error(1,(int)err);
@@ -488,6 +498,12 @@ char mypic[128];
 #endif  
   DrawString(data->ws1,16,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 
+  if(connect_state<2)
+  {
+    wsprintf(data->ws1,"%t", logmsg);
+    DrawString(data->ws1,1,15,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+  }
+  
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 #ifdef USE_PNG_EXT 
   if(connect_state<2)
@@ -537,13 +553,27 @@ void DisplayQuitQuery()
   ShowDialog_YesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);  
 }
 
-void Debug_Add_Cont_Mess()
+void Enter_SiepatchDB()
 {
+
   char room[]= "siepatchdb@conference.jabber.ru";
   char nick_t[]="%s_SieJC";
   char nick[100];
-  sprintf(nick, nick_t, My_JID);
+  sprintf(nick, nick_t, USERNAME);
   Enter_Conference(room, nick);
+
+}
+
+void Dump_PhoneInfo()
+{
+  char *xz;
+  char out[100];
+  for(int i=0; i<0x0C;i++)
+  {
+    xz = Get_Phone_Info(i);
+    sprintf(out,"%02X: %s", i, xz);
+    Log("IDENT", out);
+  }  
 }
 
 
@@ -596,7 +626,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
     
     case '4':
       {
-        SUBPROC((void*)Debug_Add_Cont_Mess);
+        Enter_SiepatchDB();
         break;
       }
     case '5':
@@ -616,6 +646,12 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         MM_Show();
         break;
       }
+    case '6':
+      {
+        Dump_PhoneInfo();
+        break;
+      }
+
     case DOWN_BUTTON:
     case '8':
       {

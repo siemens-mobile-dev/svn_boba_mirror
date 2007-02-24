@@ -74,11 +74,14 @@ void inp_ghook(GUI *gui, int cmd)
     ExtractEditControl(gui,1,&ec);    
     wstrcpy(ws_eddata,ec.pWS);
   }
- 
+  
+  if(cmd==0xA)
+  {
+    DisableIDLETMR();   // Отключаем таймер выхода по таймауту
+  }
+  
   if(Terminate) 
  {
-   //char* body=malloc(MAX_MSG_LEN*2);  // UTF
-   ///zeromem(body, MAX_MSG_LEN*2);    
    ExtractEditControl(gui,1,&ec);    
    wstrcpy(ws_eddata,ec.pWS);
    size_t xz = wstrlen(ws_eddata)*2;
@@ -86,10 +89,6 @@ void inp_ghook(GUI *gui, int cmd)
    {
     char* body =  utf16_to_utf8((char**)ws_eddata,&xz);
     body[xz]='\0';
-    //Log("EXP_STR", body);
-//    char m[100];
-//    sprintf(m,"Редактор: %d, Резалт: %d", wstrlen(ws_eddata), xz);
-//    ShowMSG(1,(int)m);
    char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
    if(!is_gchat)
    {
@@ -101,8 +100,6 @@ void inp_ghook(GUI *gui, int cmd)
    mess->IsGroupChat = is_gchat;
    mess->body = body;
    SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);  
-   //mfree(mess->body);
-   //mfree(mess);
    }
    else ShowDialog_Error(1,(int)"Нельзя послать пустое сообщение");
    Terminate = 0;
@@ -285,6 +282,7 @@ void mGUI_onClose(GUI *data, void (*mfree_adr)(void *))
 
 void mGUI_onFocus(GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
+  DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   data->state=2;
 }
 
@@ -310,6 +308,17 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
   {
     switch(msg->gbsmsg->submess)
     {
+      case '0':
+      {
+        // Убить список сообщений
+        //KillDisp(MessagesList);
+        KillMsgList(Resource_Ex->log);
+        Resource_Ex->log = NULL;
+        Resource_Ex->has_unread_msg=0;
+        Resource_Ex->total_msg_count=0;
+        return 1;
+      }
+      
       case RIGHT_SOFT:
       {
         return 1;
@@ -317,7 +326,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       
     case LEFT_SOFT:
       {
-        DbgInfo();
+        //DbgInfo();
         break;
       }
       
@@ -429,6 +438,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int parsed_counter = 0; // Сколько уже было обработано (=OLD_MessList_Count)
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
+  char IsCaret = 0; // Является ли символ переносом строки
 //  int chars;
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;  
   if(!MessEx)return;
@@ -451,13 +461,13 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     {
       symb = GetSpecialSym(MessEx->mess+i,&i);
       //symb = *(MessEx->mess+i);
-
-      if(symb!=0x13 && symb!=0x0 && cnt<CHAR_ON_LINE)
+      IsCaret = symb==0x0A || symb==0x0D || symb==0xA0 ? 1 : 0;
+      if(!IsCaret && symb!=0x0 && cnt<CHAR_ON_LINE)
       {
         *(msg_buf + cnt) = symb;
         cnt++;
       }
-      if(symb==0x13 || cnt>=CHAR_ON_LINE || symb==0x0) // Перенос строки
+      if(IsCaret || cnt>=CHAR_ON_LINE || symb==0x0) // Перенос строки
       {
         Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
         Disp_Mess_Ex->mess = AllocWS(cnt);

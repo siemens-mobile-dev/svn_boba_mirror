@@ -24,14 +24,13 @@ unsigned int dnd=0x231;
 unsigned int invisible=0x306;
 
 extern const char* PRESENCES[PRES_COUNT];
-
+extern const char PATH_TO_PIC[256];
 
 
 #ifdef USE_PNG_EXT
 char* Roster_getIconByStatus(char* path_to_pic, char status) //вернет путь к картинке картинке по статусу
 {
   strcpy(path_to_pic, PATH_TO_PIC);
-  path_to_pic[0]=DEFAULT_DISC;    // Коррекция диска
 
   // Если непрочитанных сообщений нет
   if(status<PRESENCE_INVISIBLE) // Если адекватный статус
@@ -149,7 +148,6 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
           }
         L_DONE:
           strcat(path_to_pic, ".png");
-          path_to_pic[0]=DEFAULT_DISC;    // Коррекция диска
 
 }
 #else

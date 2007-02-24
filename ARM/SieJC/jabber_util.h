@@ -94,5 +94,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess);
 
 // Уничтожить список комнат  
 void MUCList_Destroy();
+
+// Войти в конференцию
 void Enter_Conference(char *room, char *roomnick);
 #endif

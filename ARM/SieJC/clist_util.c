@@ -179,6 +179,7 @@ void CList_ToggleOfflineDisplay()
 void KillMsgList(LOG_MESSAGE* messtop)
 {
   LOG_MESSAGE* cl=messtop;
+  messtop=NULL;
   while(cl)
   {
     LOG_MESSAGE *p;
@@ -488,7 +489,8 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   TTime now_time;
   TDate now_date;
   GetDateTime(&now_date,&now_time);
-  char datestr[512];
+  char datestr[200];
+  char IsMe = strstr(mtext,"/me ")==mtext ? 1 : 0; // ‘лаг наличи€ /me
   if(mtype==MSG_ME)
   {
     extern char My_JID[128];
@@ -514,6 +516,9 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     // бывает в принципе (MRIM)
     cont=contEx->res_list;
   }
+  
+  if(!cont->total_msg_count && mtype==MSG_STATUS)return;  // Ќе записываем статусные сообщени€, если нет беседы
+  
   if(mtype!=MSG_ME && mtype!=MSG_STATUS)cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   char timestamp[]="[%02d:%02d] ";
@@ -523,9 +528,18 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
     mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+2+1);
     strcpy(mess->mess, timestamp);
-    strcat(mess->mess, conf_nickname);
-    strcat(mess->mess, ": ");
-    strcat(mess->mess, mtext);
+    if(IsMe)
+    {
+      strcat(mess->mess, "*");
+      strcat(mess->mess, conf_nickname);
+      strcat(mess->mess, mtext+3);  // пропуск /me
+    }
+    else
+    {
+      strcat(mess->mess, conf_nickname);
+      strcat(mess->mess, ": ");
+      strcat(mess->mess, mtext);
+    }
   }
   else
   {
