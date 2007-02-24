@@ -928,7 +928,7 @@ ProcessPacket(TPKT *p)
     break;
   case T_SRV_ACK:
   case T_CLIENT_ACK:
-    DrawRoundedFrame(HeaderH()-8,YDISP+HeaderH()-8,HeaderH()-1,YDISP+HeaderH()-1,0,0,0,
+    DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(p->pkt.type==T_SRV_ACK?3:4));
     break;
