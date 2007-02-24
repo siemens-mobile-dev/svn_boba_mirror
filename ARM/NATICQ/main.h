@@ -36,7 +36,9 @@ void SendAnswer(int dummy, TPKT *p);
 #define T_SSLRESP 13
 #define T_AUTHGRANT 14
 #define T_MY_STATUS_CH 15   // Изменение моего статуса
-
-
+//Сервер (аол) получил сообщение
+#define T_SRV_ACK 16
+//Клиент получил сообщение
+#define T_CLIENT_ACK 17
 
 #endif

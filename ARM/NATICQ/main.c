@@ -271,14 +271,14 @@ CLIST *FindContactByUin(unsigned int uin)
 
 //Ключи для поиска по T9
 static const char table_T9Key[256]=
-    "11111111111111111111111111111111"   
-      "10001**0***0000*012345678900***0"
-	"0222333444555666777788899991*110"
-	  "122233344455566677778889999111*1"
-	    "11111111111111111111111111111111"
-	      "11111111311111111111111131111111"
-		"22223333444455566677778888899999"
-		  "22223333444455566677778888899999";
+"11111111111111111111111111111111"   
+"10001**0***0000*012345678900***0"
+"0222333444555666777788899991*110"
+"122233344455566677778889999111*1"
+"11111111111111111111111111111111"
+"11111111311111111111111131111111"
+"22223333444455566677778888899999"
+"22223333444455566677778888899999";
 
 char ContactT9Key[32];
 
@@ -302,7 +302,7 @@ CLIST *FindContactByNS(int *i, int si)
       if (!(*i)) return(t);
       (*i)--;
     }
-    L_NOT9:
+  L_NOT9:
     t=t->next;
   }
   return(t);
@@ -374,9 +374,9 @@ CLIST *FindContactByN(int i)
 void create_contactlist_menu(void)
 {
   int i;
-//  ClearContactT9Key();
+  //  ClearContactT9Key();
   i=CountContacts();
-//  if (!i) return;
+  //  if (!i) return;
   UpdateCLheader();
   patch_rect(&contactlist_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
@@ -750,6 +750,12 @@ void get_answer(void)
         ShowMSG(1,(int)RXbuf.data);
         UnlockSched();
         break;
+      case T_SRV_ACK:
+      case T_CLIENT_ACK:
+	p=malloc(sizeof(PKT));
+	memcpy(p,&RXbuf,sizeof(PKT));
+	GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	break;
       }
       i=-(int)sizeof(PKT); //А может еще есть данные
     }
@@ -838,13 +844,13 @@ void ask_my_info(void)
 
 void set_my_status(void)
 {
-    TPKT *p;
-    p=malloc(sizeof(PKT)+1);
-    p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
-    p->pkt.type=T_MY_STATUS_CH; // Тип пакета: изменение статуса
-    p->pkt.data_len=1;          // Длина пакета: 1 байт
-    memcpy(p->data, &CurrentStatus, 1);
-    SUBPROC((void *)SendAnswer,0,p);
+  TPKT *p;
+  p=malloc(sizeof(PKT)+1);
+  p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
+  p->pkt.type=T_MY_STATUS_CH; // Тип пакета: изменение статуса
+  p->pkt.data_len=1;          // Длина пакета: 1 байт
+  memcpy(p->data, &CurrentStatus, 1);
+  SUBPROC((void *)SendAnswer,0,p);
 }
 
 ProcessPacket(TPKT *p)
@@ -886,41 +892,46 @@ ProcessPacket(TPKT *p)
     break;
   case T_RECVMSG:
     t=FindContactByUin(p->pkt.uin);
-    if (t)
+    if (!t)
     {
-      vibra_count=1;
-      start_vibra();
-      AddStringToLog(t,0x02,p->data,t->name);
-      if (edchat_id)
+      sprintf(s,"%d",p->pkt.uin);
+      AddContact(p->pkt.uin,s);    
+      t=FindContactByUin(p->pkt.uin);
+    }
+    vibra_count=1;
+    start_vibra();
+    AddStringToLog(t,0x02,p->data,t->name);
+    if (edchat_id)
+    {
+      if (edcontact->isunread)
       {
-        if (edcontact->isunread)
-        {
-	  //	  request_addec_edchat=1;
-	  RefreshGUI();
-	  /*
-          request_remake_edchat=1;
-          if (IsGuiOnTop(edchat_id))
-          {
-	  GeneralFunc_flag1(edchat_id,1);
-	}
-          else
-          {
-	  request_close_edchat=1;
-	}
-	  */
-        }
+	//	  request_addec_edchat=1;
+	RefreshGUI();
+	/*
+	request_remake_edchat=1;
+	if (IsGuiOnTop(edchat_id))
+	{
+	GeneralFunc_flag1(edchat_id,1);
       }
-      else
-      {
-	if (contactlist_menu_id) need_jump_to_top_cl=1;
-        if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
+          else
+	{
+	request_close_edchat=1;
+      }
+	*/
       }
     }
     else
     {
-      sprintf(s,"%d",p->pkt.uin);
-      AddContact(p->pkt.uin,s);
+      if (contactlist_menu_id) need_jump_to_top_cl=1;
+      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     }
+    break;
+  case T_SRV_ACK:
+  case T_CLIENT_ACK:
+    DrawRoundedFrame(HeaderH()-8,YDISP+HeaderH()-8,HeaderH()-1,YDISP+HeaderH()-1,0,0,0,
+		   GetPaletteAdrByColorIndex(0),
+		   GetPaletteAdrByColorIndex(p->pkt.type==T_SRV_ACK?3:4));
+    break;
   }
   mfree(p);
 }
@@ -1592,7 +1603,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	      SUBPROC((void *)SendAnswer,0,p);
 	      mfree(s);
 	      t->answer=0;
-//	      request_remake_edchat=1;
+	      //	      request_remake_edchat=1;
 	      EDIT_SetFocus(data,edchat_answeritem);
 	      CutWSTR(ews,0);
 	      EDIT_SetTextToFocused(data,ews);
