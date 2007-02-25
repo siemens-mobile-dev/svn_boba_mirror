@@ -389,7 +389,9 @@
 0748: 0xA0CECC7D ; 1D2: __thumb void EDIT_InsertEditControl(void *gui,int n,EDITCONTROL *);
 074C: 0xA0CECB5D ; 1D3: __thumb int EDIT_GetCursorPos(void *gui);
 0750: 0xA0CECB67 ; 1D4: __thumb void EDIT_SetCursorPos(void *gui, int pos);
-
+0754: 0xA1162DD8 ; 1D5: __arm char *Get_Phone_Info(int InfoIndex);
+0758: 0xA15EDB25 ; 1D6: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+075C: 0xA15EE8EB ; 1D7: __thumb void png_set_invert_mono(png_structp png_ptr);
 #pragma disable old_equal_ff
 +0
 

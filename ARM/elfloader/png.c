@@ -86,14 +86,19 @@ __arm IMGHDR* create_imghdr(const char* fname)
   if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_palette_to_rgb(png_ptr);
   
-  if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+  if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     png_set_gray_to_rgb(png_ptr);
+  
+  if (color_type == PNG_COLOR_TYPE_GRAY)
+    png_set_gray_1_2_4_to_8(png_ptr);  
   
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(png_ptr);
   
-  png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
-  
+  if (color_type != PNG_COLOR_TYPE_GRAY)
+    png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
+  else 
+    png_set_invert_mono(png_ptr);
   
   png_read_update_info(png_ptr, info_ptr);
   
@@ -101,6 +106,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   
   pp->row=malloc(rowbytes);
   pp->img_h=img_hc=malloc(sizeof(IMGHDR));
+  if (color_type != PNG_COLOR_TYPE_GRAY)
 #ifdef NEWSGOLD
   {
     unsigned short *iimg=(unsigned short *)(pp->img=malloc(width*height*2));
@@ -120,8 +126,8 @@ __arm IMGHDR* create_imghdr(const char* fname)
 	}
       }
     }
+    pp->img_h->bpnum=8;
   }
-  pp->img_h->bpnum=8;
 #else
   {
     unsigned char *iimg=(unsigned char *)(pp->img=malloc(width*height));
@@ -141,9 +147,27 @@ __arm IMGHDR* create_imghdr(const char* fname)
 	}
       }
     }
+    pp->img_h->bpnum=5;
   }
-  pp->img_h->bpnum=5;
 #endif
+  else
+  {
+    int rowc_w=width%8?width/8+1:width/8;
+    int size=height*rowc_w;
+    unsigned char *iimg=(unsigned char *)(pp->img=malloc(size));
+    zeromem(iimg,size);
+    for (unsigned int y = 0; y<height; y++)
+    {
+      png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+      for (unsigned int x = 0; x<width; x++)
+      {
+        if (pp->row[x])
+          iimg[x/8]=iimg[x/8]|(1<<(7-x%8));
+      }
+      iimg+=rowc_w;
+    }
+    pp->img_h->bpnum=1;
+  } 
   pp->img_h->w=width;
   pp->img_h->h=height;
   //pp->img_h->zero=0;
