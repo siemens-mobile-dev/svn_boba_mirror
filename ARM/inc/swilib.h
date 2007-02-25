@@ -2194,7 +2194,6 @@ __swi __arm void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_opti
 //thumb
 //pattern=??,B5,0E,22,0A,30,??,??,??,??,??,BD
 
-//(c) Aru55
 #ifdef NEWSGOLD
 #pragma swi_number=0x1CF
 __swi __arm REGEXPLEXT *get_regextpnt_by_uid(int uid);
