@@ -2237,3 +2237,14 @@ __swi __arm void EDIT_SetCursorPos(void *gui, int pos);
 __swi __arm char *Get_Phone_Info(int InfoIndex);
 //arm
 //pattern=??,??,??,E3,??,??,??,95,??,??,??,95,??,??,??,90,??,??,??,95,??,??,??,82,??,??,??,E1
+
+#pragma swi_number=0x1D6
+__swi __arm void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+//thumb
+//pattern=80,30,01,6B,01,22,12,03,11,43,01,63,70,47
+
+#pragma swi_number=0x1D7
+__swi __arm void png_set_invert_mono(png_structp png_ptr);
+//thumb
+//pattern=80,30,01,6B,20,22,11,43,01,63,70,47
+
