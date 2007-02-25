@@ -1513,7 +1513,7 @@ extern PNG_EXPORT(void,png_set_expand_gray_1_2_4_to_8) PNGARG((png_structp
 //extern PNG_EXPORT(void,png_set_tRNS_to_alpha) PNGARG((png_structp png_ptr));
 #if defined(PNG_1_0_X) || defined (PNG_1_2_X)
 /* Deprecated */
-extern PNG_EXPORT(void,png_set_gray_1_2_4_to_8) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(void,png_set_gray_1_2_4_to_8) PNGARG((png_structp png_ptr));
 #endif
 #endif
 
@@ -1599,7 +1599,7 @@ extern PNG_EXPORT(int,png_set_interlace_handling) PNGARG((png_structp png_ptr));
 
 #if defined(PNG_READ_INVERT_SUPPORTED) || defined(PNG_WRITE_INVERT_SUPPORTED)
 /* Invert monochrome files */
-extern PNG_EXPORT(void,png_set_invert_mono) PNGARG((png_structp png_ptr));
+//extern PNG_EXPORT(void,png_set_invert_mono) PNGARG((png_structp png_ptr));
 #endif
 
 #if defined(PNG_READ_BACKGROUND_SUPPORTED)
