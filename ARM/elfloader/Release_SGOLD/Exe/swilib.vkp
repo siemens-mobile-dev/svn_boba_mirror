@@ -385,6 +385,11 @@
 073C: 0xA0951D24 ; 1CF: __arm REGEXPLEXT_ARM_NEW *get_regextpnt_by_uid(int uid);
 0740: 0xA0951EA4 ; 1D0: __arm int GetExtUid_ws(WSHDR * ext);
 
+0744: 0xA0CECC73 ; 1D1: __thumb void EDIT_RemoveEditControl(void *gui,int n,EDITCONTROL *);
+0748: 0xA0CECC7D ; 1D2: __thumb void EDIT_InsertEditControl(void *gui,int n,EDITCONTROL *);
+074C: 0xA0CECB5D ; 1D3: __thumb int EDIT_GetCursorPos(void *gui);
+0750: 0xA0CECB67 ; 1D4: __thumb void EDIT_SetCursorPos(void *gui, int pos);
+
 #pragma disable old_equal_ff
 +0
 
