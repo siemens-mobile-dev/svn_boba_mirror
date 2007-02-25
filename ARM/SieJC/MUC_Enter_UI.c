@@ -119,9 +119,12 @@ void med1_ghook(GUI *data, int cmd)
       mfree(user_name);
       mfree(conf_name);
     }
-    
-    FreeWS(mews);
    }
+  
+    if(cmd==0x03)     // onDestroy
+  {
+    FreeWS(mews);
+  }
 }
 
 extern void dummy(void);

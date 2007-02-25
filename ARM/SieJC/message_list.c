@@ -104,6 +104,8 @@ void inp_ghook(GUI *gui, int cmd)
    else ShowDialog_Error(1,(int)"Нельзя послать пустое сообщение");
    Terminate = 0;
  }
+ 
+ 
 }
 
 void inp_locret(void){}
@@ -155,7 +157,7 @@ void Init_Message(TRESOURCE* ContEx)
   eq=AllocEQueue(ma,mfree_adr());
   ConstructEditControl(&ec,3,0x40,ws_eddata,MAX_MSG_LEN);
   AddEditControlToEditQend(eq,&ec,ma);
-  CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,/*ws_eddata*/0);  
+  CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,0);  
 }
 
 // Корень списка
@@ -173,7 +175,7 @@ void KillDisp(DISP_MESSAGE* messtop)
   while(cl)
   {
     DISP_MESSAGE *p;
-    if(cl->mess)mfree(cl->mess);
+    if(cl->mess)FreeWS(cl->mess);
     p=cl;
     cl=cl->next;
     mfree(p);
@@ -353,7 +355,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
 }
 
 
-int mGUI_onDestroy(void){return(0);}
+extern void kill_data(void *p, void (*func_p)(void *));
 
 // ГУЙ
 int mGUI_method8(void){return(0);}
@@ -368,7 +370,7 @@ const void * const mgui_methods[11]={
   (void *)mGUI_onUnfocus,	//Unfocus
   (void *)mGUI_onKey,	//OnKey
   0,
-  (void *)mGUI_onDestroy, //onDestroy,	//Destroy
+  (void *)kill_data, //onDestroy,	//Destroy
   (void *)mGUI_method8,
   (void *)mGUI_method9,
   0
@@ -488,37 +490,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
         cnt=0;
         MessList_Count++;
       }
-    }
-    
-/*
-    cnt=0;
-    while(l>0)
-    {
-      Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
-      chars = l>CHAR_ON_LINE ? CHAR_ON_LINE : l;
-      Disp_Mess_Ex->mess = AllocWS(chars);
-      //Disp_Mess_Ex->mess = malloc(chars+1);
-      //zeromem(Disp_Mess_Ex->mess, chars+1);
-      //strncpy(Disp_Mess_Ex->mess, MessEx->mess + cnt*CHAR_ON_LINE, chars);
-      strncpy(msg_buf, MessEx->mess + cnt*CHAR_ON_LINE, chars);
-      ascii2ws(Disp_Mess_Ex->mess, msg_buf);
-      Disp_Mess_Ex->mtype = MessEx->mtype;
-      if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
-      else
-      {
-        tmp= MessagesList;
-        while(tmp->next)
-        {
-          tmp = tmp->next;
-        }
-          tmp->next = Disp_Mess_Ex;
-          Disp_Mess_Ex->next=NULL;
-      }
-      l-=CHAR_ON_LINE;
-      MessList_Count++;
-      cnt++;
-    }
-*/    
+    }  
     }
     MessEx = MessEx->next;
     parsed_counter++;

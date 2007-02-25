@@ -109,9 +109,8 @@ void ed1_ghook(GUI *data, int cmd)
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
-
-
-  if(sTerminate || cmd==9)  // cmd==9 - нажатие на левую софт-кнопку "ОК"
+  
+  if(sTerminate)  // cmd==9 - нажатие на левую софт-кнопку "ОК"
  {
 //     char q[10];
 //     sprintf(q,"N=%d",cmd);
@@ -137,8 +136,12 @@ void ed1_ghook(GUI *data, int cmd)
     pr_info->status=Selected_Status;
     pr_info->message=body;  
     SUBPROC((void*)Send_Presence,pr_info);
-    FreeWS(ews);
    }
+  
+  if(cmd==0x03)     // onDestroy
+  {
+    FreeWS(ews);
+  }
 }
 
 HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Статус",0x7FFFFFFF};
@@ -175,6 +178,7 @@ void Disp_AddSettings_Dialog()
 {
   void *ma=malloc_adr();
   extern const char percent_t[];
+  sTerminate =0;
   void *eq;
   EDITCONTROL ec;
   ews=AllocWS(256);
@@ -241,7 +245,6 @@ void DispStatusChangeMenu()
   st_menuhdr.icon=S_ICONS+CurrentStatus;
 */
   patch_header(&st_menuhdr);
-  sTerminate =0;
   Selected_Status = 0;
   StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,0,STATUSES_NUM,0,0);
 }
