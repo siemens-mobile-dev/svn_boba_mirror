@@ -54,7 +54,7 @@ extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";
-const char VERSION_VERS[] = "0.8";
+const char VERSION_VERS[] = "0.9";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -560,6 +560,7 @@ void Enter_SiepatchDB()
   char nick_t[]="%s_SieJC";
   char nick[100];
   sprintf(nick, nick_t, USERNAME);
+//  char nick[]="Kibab_exp";
   
   char *room_nick =ANSI2UTF8(nick, strlen(nick)*2);
   char* room_name = ANSI2UTF8(room, strlen(room)*2);

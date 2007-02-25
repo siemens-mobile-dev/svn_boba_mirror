@@ -27,6 +27,7 @@ extern const char* PRESENCES[PRES_COUNT];
 extern const char PATH_TO_PIC[256];
 
 #ifdef USE_PNG_EXT
+
 char* Roster_getIconByStatus(char* path_to_pic, char status) //вернет путь к картинке картинке по статусу
 {
   strcpy(path_to_pic, PATH_TO_PIC);
@@ -124,7 +125,7 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
           if(resEx->has_unread_msg)
           {
             // Если у него к тому же и статус адекватный
-            if(resEx->status<PRESENCE_INVISIBLE)
+            if(resEx->status<=PRESENCE_INVISIBLE)
             {
               strcat(path_to_pic, "message");
             }
@@ -136,7 +137,7 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
           else
           {
             // Если же непрочитанных сообщений нет
-            if(resEx->status<PRESENCE_INVISIBLE) // Если адекватный статус
+            if(resEx->status<=PRESENCE_ERROR) // Если адекватный статус
             {
               strcat(path_to_pic, PRESENCES[resEx->status]);
             }
@@ -169,7 +170,7 @@ unsigned int img_num=0;
           if(resEx->has_unread_msg)
           {
             // Если у него к тому же и статус адекватный
-            if(resEx->status<PRESENCE_INVISIBLE)
+            if(resEx->status<=PRESENCE_OFFLINE)
               img_num=message;
             else
               img_num=system;      // А иначе он что-то замутил с подпиской  

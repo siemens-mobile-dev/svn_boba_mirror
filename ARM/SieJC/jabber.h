@@ -23,7 +23,11 @@
 #define JABBER_ERROR_SERVICE_UNAVAILABLE	503
 #define JABBER_ERROR_REMOTE_SERVER_TIMEOUT	504
 
+#define MUCST_BANNED  "301"
+#define MUCST_R_BAN  "%s was BANNED! "
 
+#define MUCST_KICKED  "307"
+#define MUCST_R_KICK  "%s was kicked! "
 
 #define IQTYPE_GET "get"
 #define IQTYPE_SET "set"
@@ -40,6 +44,10 @@
 // Not implemented in SieJC yet
 //error
 //headline
+
+#define XMLNS_MUC "http://jabber.org/protocol/muc"
+#define XMLNS_MUC_USER "http://jabber.org/protocol/muc#user"
+
 
 typedef enum {
 	SUB_NONE,
@@ -69,8 +77,9 @@ typedef enum {
 #define PRESENCE_AWAY 2
 #define PRESENCE_XA 3
 #define PRESENCE_DND 4
-#define PRESENCE_OFFLINE 6
 #define PRESENCE_INVISIBLE 5
+#define PRESENCE_OFFLINE 6
+#define PRESENCE_ERROR 7
 #define PRESENCE_SUBSCRIBE 8
 #define PRESENCE_SUBSCRIBED 9
 #define PRESENCE_UNSUBSCRIBE 10

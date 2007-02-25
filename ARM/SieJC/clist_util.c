@@ -86,11 +86,11 @@ void CList_RedrawCList()
           if(resEx->name)
           {
             ascii2ws(ResEx_name,resEx->name);
-            if(ClEx->group & 0x80)
+            if(resEx->entry_type==T_CONF_NODE)
             {
-              wsprintf(out_ws,"%w", ResEx_name); //другой вид, имхо удобнее
+              wsprintf(out_ws,"%w", ResEx_name); // это участник конференции
             }
-            else wsprintf(out_ws,"%w/%w", ClEx_name, ResEx_name); //другой вид, имхо удобнее
+            else wsprintf(out_ws,"%w/%w", ClEx_name, ResEx_name); //Это просто ресурс
           }
           else
           {
@@ -236,7 +236,7 @@ CLIST* CList_FindContactByJID(char* jid)
 // Полезно, когда происходят действия с подпиской
 void CList_AddSystemMessage(char* jid, char status, char* status_msg)
 {
-  if(status<PRESENCE_INVISIBLE)
+  if(status<=PRESENCE_ERROR)
   {
     if(!status_msg)return;
     CList_AddMessage(jid, MSG_STATUS, status_msg);
@@ -338,7 +338,8 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
             
       ResEx->status = status;
-      ResEx->entry_type = T_NORMAL;
+      if(ClEx->res_list->entry_type!=T_CONF_ROOT){ ResEx->entry_type = T_NORMAL;}
+      else{ResEx->entry_type = T_CONF_NODE;}
       ResEx->has_unread_msg=0;
       ResEx->total_msg_count=0;
       ResEx->log = NULL;
@@ -517,7 +518,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     cont=contEx->res_list;
   }
   
-  if(!cont->total_msg_count && mtype==MSG_STATUS)return;  // Не записываем статусные сообщения, если нет беседы
+  if(!cont->total_msg_count && mtype==MSG_STATUS && cont->entry_type!=T_CONF_ROOT)return;  // Не записываем статусные сообщения, если нет беседы
   
   if(mtype!=MSG_ME && mtype!=MSG_STATUS)cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));

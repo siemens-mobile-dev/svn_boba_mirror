@@ -85,7 +85,7 @@ char Selected_Status=0;
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
-  if(msg->gbsmsg->submess==GREEN_BUTTON)
+  if(msg->gbsmsg->submess==GREEN_BUTTON  || msg->keys==0x18)
   {
     sTerminate = 1;
     return 1;
@@ -97,14 +97,14 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 void ed1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
-/*  
+  static SOFTKEY_DESC stchsk={0x0018, 0x0000,(int)"OK"};
+  
   if (cmd==7)
   {
     //OnRun
-    ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
-    wstrcpy(ews,ec.pWS);
+    SetSoftKey(data,&stchsk,0);
   }
-*/  
+  
   if(cmd==0x0A)   // Фокусирование
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту

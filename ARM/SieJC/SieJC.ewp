@@ -2989,6 +2989,9 @@
     <name>$PROJ_DIR$\MUC_Enter_UI.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\revision.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\roster_icons.c</name>
   </file>
   <file>

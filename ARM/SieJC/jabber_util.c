@@ -343,6 +343,12 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
   }
 }
 
+// Выходит из конференции
+void Leave_Conference(char* room)
+{
+  ShowMSG(1,(int)(room));
+}
+
 
 // Уничтожить список комнат  
 void MUCList_Destroy()
@@ -580,6 +586,91 @@ void Process_Presence_Change(XMLNode* node)
     XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"status");
     if(statusmsg_node)msg = statusmsg_node->value;
   }  
+  
+   // Предусматриваем случай, что послано нам что-то от конференции. Это важно.
+    XMLNode* x_node = XML_Get_Child_Node_By_Name(node,"x");
+    if(x_node)
+    {
+    if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC)) // Послано от конференции 
+    {
+      // Получаем дочерний узел error (ибо нацелены на обработку именно ошибок)
+      XMLNode* err_node = XML_Get_Child_Node_By_Name(node,"error");
+      if(err_node)  // Есть ошибка!
+      {
+        // Хочу текст ошибки
+        XMLNode* err_desc = XML_Get_Child_Node_By_Name(err_node,"text");
+        if(err_desc->value)msg = err_desc->value;
+        ShowDialog_Error(1,(int)err_desc->value);
+      }
+      
+    }
+
+// Иар заебал
+char loc_actor[]="actor";
+char loc_jid[]="jid";
+char loc_reason[]="reason";
+static char r[128];       // Статик, чтобы не убило её при завершении процедуры
+
+    if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC_USER)) // Послано от конференции в пользователя
+    {
+      
+      // Получим экземпляр конфы, в которой всё происходит
+      CLIST* Conference = CList_FindContactByJID(from);
+      char* nick = Get_Resource_Name_By_FullJID(from);
+      
+      // Тут можно обрабатывать события входа/выхода в конфу
+      // Ибо сообщается, кто вошёл (модер ли, админ...)
+      XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
+      if(status==PRESENCE_ONLINE) // Вход
+      {
+        char* affiliation = XML_Get_Attr_Value("affiliation", item->attr);
+        char* role =  XML_Get_Attr_Value("role", item->attr);
+        sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
+        CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
+      }
+      
+
+      if(status==PRESENCE_OFFLINE) // Выход
+      {
+        sprintf(r, "%s left MUC", nick);
+        CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
+      }
+      
+      
+      // Получаем дочерний узел статуса
+      XMLNode* sstatus = XML_Get_Child_Node_By_Name(x_node,"status");
+      if(sstatus)  // Есть статус!
+      {
+        // Получаем код статуса
+        char* st_code=XML_Get_Attr_Value("code", sstatus->attr);
+        sprintf(r,"%s - [Unknown action]",nick);
+        // Разные коды статусов - разное варенье:)
+        if(!strcmp(st_code, MUCST_KICKED)) sprintf(r, MUCST_R_KICK,nick); // Сообщение о кике
+        if(!strcmp(st_code, MUCST_BANNED)) sprintf(r, MUCST_R_BAN, nick); // Сообщение о бане
+        //sprintf(r,r,nick);
+        XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
+        if(item)
+        {
+          XMLNode* actor = XML_Get_Child_Node_By_Name(item,loc_actor); // Вдруг сервис был настолько любезен, что соообщил исполнителя
+          if(actor)strcat(r, XML_Get_Attr_Value(loc_jid, actor->attr));
+
+          XMLNode* reason = XML_Get_Child_Node_By_Name(item,loc_reason); // А вдруг нам даже сказали, за что?
+          if(reason)
+          {
+            strcat(r, "; Reason: ");
+            strcat(r, reason->value);
+          }
+                    
+          
+        }
+        ShowDialog_Error(1,(int)r);
+        CList_AddSystemMessage(Conference->JID,status, r);
+        msg = r;
+      }
+      
+    }    
+    
+    }  
   CList_AddResourceWithPresence(from, status, msg);
 }
 

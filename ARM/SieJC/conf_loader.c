@@ -50,7 +50,7 @@ void InitConfig(char* fname)
 #ifdef NEWSGOLD
   if(!fname)
 #else
-  if(fname<=0)
+  if(LoadConfigData(fname)<0)
 #endif
   {
     if (LoadConfigData("4:\\ZBin\\etc\\SieJC.bcfg")<0)
@@ -58,5 +58,9 @@ void InitConfig(char* fname)
       LoadConfigData("0:\\ZBin\\etc\\SieJC.bcfg");
     }
   }
+  #ifdef NEWSGOLD
   else LoadConfigData(fname);
+
+#endif
+  
 }

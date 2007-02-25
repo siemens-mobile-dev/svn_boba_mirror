@@ -32,7 +32,7 @@ SOFTKEY_DESC m_menu_sk[]=
 
 SOFTKEYSTAB m_menu_skt=
 {
-  m_menu_sk,3
+  m_menu_sk,0
 };
 
 WSHDR* mews;
@@ -41,31 +41,38 @@ char mTerminate=0;
 int med1_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
-  if(msg->gbsmsg->submess==GREEN_BUTTON)
+  //1: close
+  
+  // Если зелёная кнопка либо нажата кнопка, которую мы повесили в cmd=7
+  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->keys==0x18)
   {
     mTerminate = 1;
     return 1;
   }
   return 0;
-  //1: close
 }
 
 void med1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
-/*  
+  static SOFTKEY_DESC mmmmsk={0x0018, 0x0000,(int)"OK"};
+ 
   if (cmd==7)
   {
     //OnRun
-    ExtractEditControl(data,EDIT_GetFocus(data)-1,&ec);
-    wstrcpy(ews,ec.pWS);
+    SetSoftKey(data,&mmmmsk,0);
   }
-*/  
+  
   if(cmd==0x0A)   // Фокусирование
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
 
+  if(cmd==0x18)   // Фокусирование
+  {
+     ShowMSG(1,(int)"Ы");
+  }
+  
 
   if(mTerminate )//|| cmd==9)  // cmd==9 - нажатие на левую софт-кнопку "ОК"
  {

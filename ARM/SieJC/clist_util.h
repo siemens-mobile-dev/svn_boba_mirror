@@ -50,6 +50,9 @@
 // ƒобавить сообщение в список сообщений контакта
   void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext);
 
+// ƒобавить системное сообщение
+  void CList_AddSystemMessage(char* jid, char status, char* status_msg);
+
   TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg);
 
   TRESOURCE* CList_GetActiveContact();

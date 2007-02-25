@@ -69,7 +69,6 @@ void inp_ghook(GUI *gui, int cmd)
   }
   if (cmd==7)
   {
-//    curpos=EDIT_CURSOR_POS(gui);
     SetSoftKey(gui,&sk,0);    
     ExtractEditControl(gui,1,&ec);    
     wstrcpy(ws_eddata,ec.pWS);
