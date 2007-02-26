@@ -65,8 +65,7 @@ const char empty_str[]="";
 const char I_str[]="I";
 
 //=============================Проигрывание звука=======================
-char Is_Sounds_Enabled = 1;
-unsigned int WasLogin=0;
+unsigned int Is_Sounds_Enabled = 1;
 
 extern const char sndStartup[];
 extern const char sndSrvMsg[];
@@ -75,11 +74,6 @@ extern const char sndMsg[];
 extern const char sndMsgSent[];
 extern const unsigned int sndVolume;
 
-extern int GetParamPlayFile();
-
-WSHDR* sndPath;
-WSHDR* sndFName;
-
 typedef struct{
   unsigned int unk1;
   unsigned int unk2;
@@ -87,63 +81,31 @@ typedef struct{
   unsigned int volume;
 } SFO;
 
-SFO unk1;
+SFO _sfo1;
 
-void Play(void)
+void Play(const char *fname)
 {
-  if (!IsCalling()){
+  WSHDR* sndPath=AllocWS(128);
+  WSHDR* sndFName=AllocWS(128);
+  char s[128];
+  const char *p=strrchr(fname,'\\')+1;
+  str_2ws(sndFName,p,128);
+  strncpy(s,fname,p-fname);
+  str_2ws(sndPath,s,128);
+  if ((!IsCalling())&&Is_Sounds_Enabled)
+  {
     #ifdef NEWSGOLD
-      PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &unk1);
+      PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
     #else
-      if (GetParamPlayFile()==0x40) PlayFile(0xC, sndPath, sndFName, 0, 0x4204, 0x51, &unk1);
-      if (GetParamPlayFile()==0x3C) PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &unk1);
+      if (GetParamPlayFile()==0x40) PlayFile(0xC, sndPath, sndFName, 0, 0x4204, 0x51, &_sfo1);
+      if (GetParamPlayFile()==0x3C) PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
     #endif
   }
+  FreeWS(sndPath);
+  FreeWS(sndFName);
 }
 
 //===================================================================
-
-char * GetFileDir(const char *fname)
-{
-  //char *xz = fname;
-  char *xz;
-  xz=(char*)fname;
-  
-  
-  // Сначала ищем первый справа слеш
-  int len = strlen(xz);
-
-  int i;
-  char sym;
-  for(i=0;i<len;i++)
-  {
-    sym = xz[len-i-1];
-    if(sym=='\\')
-    {
-      break;
-    }
-  }
-
-  len = len-i;
-  char *res = malloc(len+1);
-  for(i=0;i<len;i++)
-  {
-    res[i]=xz[i];
-  }
-  res[len]=0x00;
-  //ShowMSG(1,(int)res);
-  return res;
-}
-
-//===================================================================
-
-char * GetFileName(const char *fname)
-{
-  char *res = strrchr(fname,'\\')+1;
-  return res;
-}
-//===================================================================
-
 
 typedef struct
 {
@@ -795,15 +757,7 @@ void get_answer(void)
       {
       case T_LOGIN:
         //Удачно залогинились
-        if ((Is_Sounds_Enabled)&&(!WasLogin))//Звук
-          {
-            wsprintf(sndPath, GetFileDir(sndStartup));  
-            wsprintf(sndFName, GetFileName(sndStartup)); 
-            SUBPROC((void*)Play);
-            
-            WasLogin=!WasLogin;
-          }        
-        
+	Play(sndStartup);
         GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
         snprintf(logmsg,255,"%s",RXbuf.data);
         connect_state=3;
@@ -979,20 +933,14 @@ ProcessPacket(TPKT *p)
       LogStatusChange(t);
       if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
       
-      if ((Is_Sounds_Enabled)&&(t->state==0)&&(WasLogin))//Звук
-        {
-          wsprintf(sndPath, GetFileDir(sndGlobal));  
-          wsprintf(sndFName, GetFileName(sndGlobal));  
-          SUBPROC((void*)Play);
-        }  
-      
-      if ((Is_Sounds_Enabled)&&(t->state==0xFFFF)&&(WasLogin))//Звук
-        {
-          wsprintf(sndPath, GetFileDir(sndSrvMsg));  
-          wsprintf(sndFName, GetFileName(sndSrvMsg));  
-          SUBPROC((void*)Play);
-        }      
-      
+      if (t->state==0)//Звук
+      {
+	Play(sndGlobal);
+      }  
+      if (t->state==0xFFFF)//Звук
+      {
+	Play(sndSrvMsg);
+      }      
     }
     break;
   case T_RECVMSG:
@@ -1005,14 +953,7 @@ ProcessPacket(TPKT *p)
     }
     vibra_count=1;
     start_vibra();
-    
-    if (Is_Sounds_Enabled)//Звук
-      {
-        wsprintf(sndPath, GetFileDir(sndMsg));  
-        wsprintf(sndFName, GetFileName(sndMsg));  
-        SUBPROC((void*)Play);
-      }    
-    
+    Play(sndMsg);
     AddStringToLog(t,0x02,p->data,t->name);
     if (edchat_id)
     {
@@ -1040,6 +981,7 @@ ProcessPacket(TPKT *p)
     }
     break;
   case T_SRV_ACK:
+    Play(sndMsgSent);
   case T_CLIENT_ACK:
     DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
@@ -1121,16 +1063,18 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }*/
     case '*'://тут поменял
       {
-        Is_Vibra_Enabled = !(Is_Vibra_Enabled);
-        if (!Is_Vibra_Enabled) ShowMSG(1, (int)"Vibrа disabled!");
-           else ShowMSG(1, (int)"Vibro enabled!");
+        if (!(Is_Vibra_Enabled = !(Is_Vibra_Enabled)))
+	  ShowMSG(1, (int)"Vibrа disabled!");
+	else
+	  ShowMSG(1, (int)"Vibro enabled!");
         break;
       }      
     case '5':
       {
-        Is_Sounds_Enabled = !(Is_Sounds_Enabled);
-        if (!Is_Sounds_Enabled) ShowMSG(1, (int)"Sounds disabled!");
-           else ShowMSG(1, (int)"Sounds enabled!");
+        if (!(Is_Sounds_Enabled = !(Is_Sounds_Enabled)))
+	  ShowMSG(1, (int)"Sounds disabled!");
+	else
+	  ShowMSG(1, (int)"Sounds enabled!");
         break;
       }//      
     case '#':
@@ -1203,8 +1147,6 @@ void maincsm_onclose(CSM_RAM *csm)
   FreeCLIST();
   mfree(msg_buf);
   FreeWS(ews);
-  FreeWS(sndPath);//Звук
-  FreeWS(sndFName);//Звук
   //  MutexDestroy(&contactlist_mtx);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ElfKiller);
@@ -1242,11 +1184,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
 	  int icn;
-/*#ifdef ELKA
-	  DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+14,IDLEICON_Y+14,1);
-#else
-	  DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+26,IDLEICON_Y+26,1);
-#endif*/
 	  if (total_unread)
 	    icn=IS_MSG;
 	  else
@@ -1467,13 +1404,10 @@ int main()
   setup_ICONS();
   
   //Звук
-  sndPath=AllocWS(128);
-  sndFName=AllocWS(128);
-  
-  unk1.unk1=1;
-  unk1.unk2=0;
-  unk1.unk3=0;
-  unk1.volume=sndVolume;  
+  _sfo1.unk1=1;
+  _sfo1.unk2=0;
+  _sfo1.unk3=0;
+  _sfo1.volume=sndVolume;  
   //  
   
   if (!UIN)
@@ -1735,13 +1669,6 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	  {
 	    if (strlen(s))
 	    {
-              if (Is_Sounds_Enabled)//Звук
-                {
-                  wsprintf(sndPath, GetFileDir(sndMsgSent));  
-                  wsprintf(sndFName, GetFileName(sndMsgSent));  
-                  SUBPROC((void*)Play);
-                }              
-              
 	      p=malloc(sizeof(PKT)+(l=strlen(s))+1);
 	      p->pkt.uin=t->uin;
 	      p->pkt.type=T_SENDMSG;

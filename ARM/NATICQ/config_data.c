@@ -13,10 +13,10 @@ __root const CFG_HDR cfghdr1_2={CFG_UINT,"Port",0,65535};
 __root const unsigned int NATICQ_PORT=5050;
 
 #ifdef NEWSGOLD
-__root const CFG_HDR cfghdr2={CFG_STR_WIN1251,"History path",0,63};
+__root const CFG_HDR cfghdr2={CFG_STR_UTF8,"History path",0,63};
 __root const char HIST_PATH[64]="4:\\ZBin\\NatICQ\\history";
 #else
-__root const CFG_HDR cfghdr2={CFG_STR_WIN1251,"History path",0,63};
+__root const CFG_HDR cfghdr2={CFG_STR_UTF8,"History path",0,63};
 __root const char HIST_PATH[64]="0:\\ZBin\\NatICQ\\history";
 #endif
 

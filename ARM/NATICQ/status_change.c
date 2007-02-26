@@ -139,9 +139,17 @@ SOFTKEYSTAB st_menu_skt=
   st_menu_sk,0
 };
 
+void stmenu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+}
+
 MENU_DESC st_tmenu=
 {
-  8,NULL,NULL,NULL,
+  8,NULL,(void *)stmenu_ghook,NULL,
   st_menusoftkeys,
   &st_menu_skt,
   1,//MENU_FLAG,

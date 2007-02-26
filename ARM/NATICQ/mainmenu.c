@@ -35,14 +35,14 @@ extern  int S_ICONS[11];
 //void AboutDlg(){};
 void AboutDlg()
 {
-  ShowMSG(2, (int)"NATICQ               (c) by Rst7/CBSIE Shadow");
+  ShowMSG(2, (int)"NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow");
 }
 
-int icon[]={0x3DB,0};
-int about_icon[]={0x4DB,0};
-int dummy_icon[] = {0x50E,0};
+int icon[]={0,0};
+int about_icon[]={0,0};
+int dummy_icon[] = {0,0};
 
-HEADER_DESC menuhdr={0,0,131,21,NULL,(int)"Μενώ",0x7FFFFFFF};
+HEADER_DESC menuhdr={0,0,131,21,NULL,(int)"Μενώ",LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
@@ -66,9 +66,19 @@ SOFTKEYSTAB mmenu_skt=
   mmenu_sk,0
 };
 
+void tmenu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    menuitems[0].icon = S_ICONS+CurrentStatus;
+    DisableIDLETMR();
+  }
+}
+
+
 MENU_DESC tmenu=
 {
-  8,NULL,NULL,NULL,
+  8,NULL,(void *)tmenu_ghook,NULL,
   mmenusoftkeys,
   &mmenu_skt,
   1,//MENU_FLAG,
