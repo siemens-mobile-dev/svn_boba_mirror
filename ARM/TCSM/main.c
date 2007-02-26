@@ -43,6 +43,45 @@ const IMGHDR img1=
   (char *)img1_bmp
 };
 
+void Log(int dummy, char *txt)
+{
+  unsigned int ul;
+  int f=fopen("4:\\log",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
+  if (f!=-1)
+  {
+    fwrite(f,txt,strlen(txt),&ul);
+    fclose(f,&ul);
+  }
+  mfree(txt);
+}
+
+void Play(const char *fname)
+{
+  PLAYFILE_OPT _sfo1;
+  WSHDR* sndPath=AllocWS(128);
+  WSHDR* sndFName=AllocWS(128);
+  char s[128];
+  int i;
+  const char *p=strrchr(fname,'\\')+1;
+  str_2ws(sndFName,p,128);
+  strncpy(s,fname,p-fname);
+  str_2ws(sndPath,s,128);
+//  if ((!IsCalling())&&Is_Sounds_Enabled)
+  {
+    char *s=malloc(100);
+    zeromem(&_sfo1,sizeof(PLAYFILE_OPT));
+    _sfo1.repeat_num=1;
+    _sfo1.time_between_play=0;
+    _sfo1.play_first=0;
+    _sfo1.volume=6;
+    i=PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
+    sprintf(s,"%08X\r\n",i);
+    SUBPROC((void *)Log,0,s);
+  }
+  FreeWS(sndPath);
+  FreeWS(sndFName);
+}
+
 DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 {
   RECT rc;
@@ -103,13 +142,19 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
   DirectRedrawGUI();
   wsprintf(data->ws2,"MSG:%08X %08X",msg->gbsmsg->msg,msg->gbsmsg->submess);
   DrawString(data->ws2,5,45,131,55,11,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-
+  
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     switch(msg->gbsmsg->submess)
     {
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+    case '5':
+      Play("4:\\ZBin\\NatICQ\\Sounds\\sndStartup.wav");
+      break;
+    case '6':
+      Play("4:\\ZBin\\NatICQ\\Sounds\\sndSrvMsg.wav");
+      break;
     case '8':
       {
 	void TestMenu(void);
@@ -178,6 +223,12 @@ void maincsm_onclose(CSM_RAM *csm)
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  if (msg->msg==0x167)
+  {
+    char *s=malloc(100);
+    sprintf(s,"%08X %08X %08X\r\n",msg->submess,msg->data0,msg->data1);
+    SUBPROC((void *)Log,0,s);
+  }
   if ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))
   {
     csm->csm.state=-3;
