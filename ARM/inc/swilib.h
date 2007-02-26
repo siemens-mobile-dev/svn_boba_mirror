@@ -748,6 +748,20 @@ typedef struct
 
 #define IP_ADDR(A,B,C,D) (((unsigned long)A<<24)|((unsigned long)B<<16)|((unsigned long)C<<8)|((unsigned long)D<<0))
 
+typedef struct
+{
+  unsigned short repeat_num;  //0 - non limited
+  unsigned short unk;
+  int time_between_play;
+  int play_first; // 0 - play all
+  int volume;
+  int unk5;
+  int unk6;
+  int unk7;
+  int unk8;
+  int unk9;
+}PLAYFILE_OPT;
+
 #pragma diag_suppress=Ta035
 
 #pragma swi_number=0
@@ -929,7 +943,7 @@ __swi __arm int IsUnlocked(void);
 //pattern=??,48,??,B5,??,68,??,28,??,D0,??,??,??,FF,??,28,??,D1,??,20,??,BD,??,20,??,BD
 
 #pragma swi_number=0x4A
-__swi __arm short PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int CepId, int zero1, void *sfo);
+__swi __arm short PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int CepId, int Msg, const PLAYFILE_OPT *sfo);
 
 #pragma swi_number=77
 __swi __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
