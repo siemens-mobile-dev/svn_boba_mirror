@@ -48,6 +48,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
 
   if (msg->keys==0x18)
   {
+    ShowMSG(1,(int)"/part для выхода из конфы :)");
     return(-1); //do redraw
   }
   return(0); //Do standart keys
@@ -61,7 +62,7 @@ void inp_redraw(void *data)
 
 void inp_ghook(GUI *gui, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Меню"};
+  static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Помощь"};
   EDITCONTROL ec;
   if (cmd==2)
   {
@@ -102,6 +103,7 @@ void inp_ghook(GUI *gui, int cmd)
    {
      CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
      Leave_Conference(room->JID);
+     CList_MakeAllResourcesOFFLINE(room);
      Terminate = 0;
      mfree(body);
      ShowMSG(1,(int)"Выход из MUC выполнен");     

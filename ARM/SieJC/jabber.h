@@ -26,6 +26,9 @@
 #define MUCST_BANNED  "301"
 #define MUCST_R_BAN  "%s was BANNED! "
 
+#define MUCST_CHNICK  "303"
+#define MUCST_R_CHNICK  "%s is now known as %s"
+
 #define MUCST_KICKED  "307"
 #define MUCST_R_KICK  "%s was kicked! "
 

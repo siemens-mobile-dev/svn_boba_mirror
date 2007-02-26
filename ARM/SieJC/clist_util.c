@@ -295,6 +295,23 @@ void CList_Ch_Status(TRESOURCE* resource,
 }
 
 
+// Делаем оффлайнами все ресурсы заданного контакта. Useful для конференций.
+void CList_MakeAllResourcesOFFLINE(CLIST* ClEx)
+{
+  if(!ClEx)return;
+  TRESOURCE* ResEx = ClEx->res_list;
+  
+  while(ResEx)
+  {
+     CList_Ch_Status(ResEx,
+                       PRESENCE_OFFLINE,
+                       NULL
+                       );
+    ResEx = ResEx->next;
+  }
+}
+
+
 TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
 {
   TRESOURCE* qq = CList_IsResourceInList(jid);
@@ -417,7 +434,7 @@ CLIST* CList_AddContact(char* jid,
 {
   
   
-  CLIST* Cont_Ex = malloc(sizeof(CLIST));      // Нет такого контакта
+  CLIST* Cont_Ex = malloc(sizeof(CLIST));
 
   // Имя может быть не заполнено
   if(name)

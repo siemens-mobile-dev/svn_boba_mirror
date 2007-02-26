@@ -55,7 +55,11 @@
 
   TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg);
 
+// Получить контакт, на котором стоит курсор
   TRESOURCE* CList_GetActiveContact();
+
+// Делаем оффлайнами все ресурсы заданного контакта. Useful для конференций.
+  void CList_MakeAllResourcesOFFLINE(CLIST* ClEx); 
   
 // Уничтожить список контактов  
   void CList_Destroy();

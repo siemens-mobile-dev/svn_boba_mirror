@@ -634,6 +634,7 @@ void Process_Presence_Change(XMLNode* node)
     {
     if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC)) // Послано от конференции 
     {
+      CLIST* Conference = CList_FindContactByJID(from);
       // Получаем дочерний узел error (ибо нацелены на обработку именно ошибок)
       XMLNode* err_node = XML_Get_Child_Node_By_Name(node,"error");
       if(err_node)  // Есть ошибка!
@@ -642,6 +643,7 @@ void Process_Presence_Change(XMLNode* node)
         XMLNode* err_desc = XML_Get_Child_Node_By_Name(err_node,"text");
         if(err_desc->value)msg = err_desc->value;
         ShowDialog_Error(1,(int)err_desc->value);
+        CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, err_desc->value);
       }
       
     }
@@ -688,6 +690,7 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
         // Разные коды статусов - разное варенье:)
         if(!strcmp(st_code, MUCST_KICKED)) sprintf(r, MUCST_R_KICK,nick); // Сообщение о кике
         if(!strcmp(st_code, MUCST_BANNED)) sprintf(r, MUCST_R_BAN, nick); // Сообщение о бане
+        if(!strcmp(st_code, MUCST_CHNICK)) sprintf(r, MUCST_R_CHNICK, nick,  XML_Get_Attr_Value("nick", item->attr)); // Сообщение о смене ника
         //sprintf(r,r,nick);
         XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
         if(item)
