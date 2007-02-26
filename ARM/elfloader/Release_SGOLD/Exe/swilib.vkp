@@ -80,6 +80,7 @@
 0088: 0xA0CB76F9 ; 022: __thumb int GetImgWidth(int picture);
 008C: 0xA1715CA9 ; 023: __thumb void DrawImg(unsigned char x, unsigned char y, short picture);
 0094: 0xA1715C83 ; 025: __thumb void DrawCanvas(void *data, int x1, int y1, int x2, int y2, int flag_one);
+0098: 0xA0CAE6E9 ; 026: __thumb void DrawImgBW(unsigned int x, unsigned int y, unsigned int picture, char *pen, char *brush);
 00A8: 0xA115203C ; 02A: __arm int *GetEELiteBlockAddress(short blocknum);
 00C8: 0xA096E590 ; 032: __arm void PlaySound(long param1, long param2, long param3, long tone, long param5);
 
@@ -99,6 +100,7 @@
 01AC: 0xA113B05C ; 06B: __arm int  FindFirstFile (DIR_ENTRY *DIRENTRY,char *mask,unsigned int *ErrorNumber);
 01B0: 0xA113B098 ; 06C: __arm int  FindNextFile (DIR_ENTRY *DIRENTRY,unsigned int *ErrorNumber);
 01B4: 0xA113AFE4 ; 06D: __arm int  FindClose (DIR_ENTRY *DIRENTRY,unsigned int *ErrorNumber);
+01B8: 0xA1259553 ; 06E: __thumb int IsCalling(void);
 01BC: 0xA1719DFB ; 06F: __arm void RefreshGPRSTraffic();
 01C0: 0xA1719E19 ; 070: __arm int *GetGPRSTrafficPointer();
 01D0: 0xA08F0857 ; 074: __thumb void* GetFunctionPointer(char * _shortcut);
