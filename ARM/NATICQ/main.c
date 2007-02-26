@@ -81,7 +81,7 @@ typedef struct{
   unsigned int volume;
 } SFO;
 
-SFO _sfo1;
+PLAYFILE_OPT _sfo1;
 
 void Play(const char *fname)
 {
@@ -97,8 +97,7 @@ void Play(const char *fname)
     #ifdef NEWSGOLD
       PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
     #else
-      if (GetParamPlayFile()==0x40) PlayFile(0xC, sndPath, sndFName, 0, 0x4204, 0x51, &_sfo1);
-      if (GetParamPlayFile()==0x3C) PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
+      PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
     #endif
   }
   FreeWS(sndPath);
@@ -1134,6 +1133,12 @@ void maincsm_oncreate(CSM_RAM *data)
   msg_buf=malloc(16384);
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
+  //Звук
+  _sfo1.repeat_num=1;
+  _sfo1.time_between_play=0;
+  _sfo1.play_first=0;
+  _sfo1.volume=sndVolume;  
+  //  
   SUBPROC((void *)create_connect);
 }
 
@@ -1402,13 +1407,6 @@ int main()
   
   InitConfig();
   setup_ICONS();
-  
-  //Звук
-  _sfo1.unk1=1;
-  _sfo1.unk2=0;
-  _sfo1.unk3=0;
-  _sfo1.volume=sndVolume;  
-  //  
   
   if (!UIN)
   {
