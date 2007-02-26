@@ -76,8 +76,11 @@
 006C: 0xA0FC5F51 ; 01B: __thumb unsigned int strlen(char *);
 0070: 0xA01F5BCD ; 01C: __thumb void  wsAppendChar (void *WSHDR,int wchar);
 0078: 0xA0975D35 ; 01E: __thumb IMGHDR *GetPITaddr(int num);
+0084: 0xA0975E5F   ;  21: int GetImgHeight(short picture)
+0088: 0xA0975E6F   ;  22: int GetImgWidth(short picture)
 008C: 0xA029B7E1 ; 023: __thumb void DrawImg(unsigned char x, unsigned char y, short picture);
 0094: 0xA029ACDB ; 025: __thumb void DrawCanvas(void *data, int x1, int y1, int x2, int y2, int flag_one);
+0098: 0xA0A0206D   ;  26: DrawImgBW
 00A8: 0xA01E4190 ; 02A: __arm int *GetEELiteBlockAddress(short blocknum);
 00C8: 0xA0280D20 ; 032: __arm void PlaySound(long param1, long param2, long param3, long tone, long param5);
 00F0: 0xA025137C ; 03C: __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned int *ErrorNumber);
@@ -94,6 +97,7 @@
 01AC: 0xA0250D4C ; 06B: __arm int FindFirstFile (void *DIRENTRY,char *mask,int *ErrorNumber);
 01B0: 0xA0250DCC ; 06C: __arm int FindNextFile (void *DIRENTRY,int *ErrorNumber);
 01B4: 0xA0250C94 ; 06D: __arm int FindClose (void *DIRENTRY,int *ErrorNumber);
+01B8: 0xA0D08D3D ; 06E: __thumb int IsCalling(void)
 01BC: 0xA0951CA8 ; 06F: __arm void RefreshGPRSTraffic();
 01C0: 0xA0951CD8 ; 070: __arm int *GetGPRSTrafficPointer();
 01F0: 0xA01AF22B ; 07C: __thumb unsigned SetVibration(unsigned int power);
