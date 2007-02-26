@@ -94,7 +94,7 @@ void Play(const char *fname)
     _sfo1.time_between_play=0;
     _sfo1.play_first=0;
     _sfo1.volume=sndVolume;
-    PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
+    PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
   }
   FreeWS(sndPath);
   FreeWS(sndFName);

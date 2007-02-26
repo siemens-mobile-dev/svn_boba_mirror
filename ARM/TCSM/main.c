@@ -74,7 +74,7 @@ void Play(const char *fname)
     _sfo1.time_between_play=0;
     _sfo1.play_first=0;
     _sfo1.volume=6;
-    i=PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
+    i=PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
     sprintf(s,"%08X\r\n",i);
     SUBPROC((void *)Log,0,s);
   }
@@ -223,7 +223,7 @@ void maincsm_onclose(CSM_RAM *csm)
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
-  if (msg->msg==0x167)
+  if (msg->msg==MSG_PLAYFILE_REPORT)
   {
     char *s=malloc(100);
     sprintf(s,"%08X %08X %08X\r\n",msg->submess,msg->data0,msg->data1);
