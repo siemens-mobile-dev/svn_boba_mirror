@@ -74,17 +74,12 @@ extern const char sndMsg[];
 extern const char sndMsgSent[];
 extern const unsigned int sndVolume;
 
-typedef struct{
-  unsigned int unk1;
-  unsigned int unk2;
-  unsigned int unk3;
-  unsigned int volume;
-} SFO;
 
-PLAYFILE_OPT _sfo1;
+
 
 void Play(const char *fname)
 {
+  PLAYFILE_OPT _sfo1;
   WSHDR* sndPath=AllocWS(128);
   WSHDR* sndFName=AllocWS(128);
   char s[128];
@@ -94,11 +89,12 @@ void Play(const char *fname)
   str_2ws(sndPath,s,128);
   if ((!IsCalling())&&Is_Sounds_Enabled)
   {
-    #ifdef NEWSGOLD
-      PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
-    #else
-      PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
-    #endif
+    zeromem(&_sfo1,sizeof(PLAYFILE_OPT));
+    _sfo1.repeat_num=1;
+    _sfo1.time_between_play=0;
+    _sfo1.play_first=0;
+    _sfo1.volume=sndVolume;
+    PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), 0x167, &_sfo1);
   }
   FreeWS(sndPath);
   FreeWS(sndFName);
@@ -1133,12 +1129,6 @@ void maincsm_oncreate(CSM_RAM *data)
   msg_buf=malloc(16384);
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
-  //Звук
-  _sfo1.repeat_num=1;
-  _sfo1.time_between_play=0;
-  _sfo1.play_first=0;
-  _sfo1.volume=sndVolume;  
-  //  
   SUBPROC((void *)create_connect);
 }
 
