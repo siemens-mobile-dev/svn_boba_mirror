@@ -109,7 +109,6 @@ typedef struct
 typedef struct
 {
   char* conf_jid; //UTF-8
-//  char* conf_name;
   void* next;
 }MUC_ITEM;
 

@@ -89,11 +89,23 @@ void inp_ghook(GUI *gui, int cmd)
     char* body =  utf16_to_utf8((char**)ws_eddata,&xz);
     body[xz]='\0';
    char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
+   char part_str[]="/part";
+   
    if(!is_gchat)
    {
      char* hist = convUTF8_to_ANSI_STR(body);
      CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
      mfree(hist);
+   }
+   else
+   if(strstr(body, part_str)==body)  // Ключ в начале
+   {
+     CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
+     Leave_Conference(room->JID);
+     Terminate = 0;
+     mfree(body);
+     ShowMSG(1,(int)"Выход из MUC выполнен");     
+     return;
    }
    IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
    mess->IsGroupChat = is_gchat;

@@ -343,10 +343,51 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
   }
 }
 
+void _leaveconference(char *conf_jid)
+{
+  char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'/>";
+  char *my_jid =ANSI2UTF8(My_JID_full, strlen(My_JID_full)*2);
+  char* pr=malloc(1024);
+  sprintf(pr, pr_templ,my_jid,conf_jid);
+  mfree(my_jid);  
+  mfree(conf_jid);
+  SendAnswer(pr);
+  mfree(pr);
+}
+
 // Выходит из конференции
+// Имя комнаты в ANSI
 void Leave_Conference(char* room)
 {
-  ShowMSG(1,(int)(room));
+  char* utf8_room=ANSI2UTF8(room, strlen(room)*2);
+  // Ищем экземпляр контакта в списке для конференций
+  MUC_ITEM* m_ex = muctop;
+  while(m_ex)
+  {
+    if(strstr(m_ex->conf_jid, utf8_room))
+    {
+      char* cj = malloc(strlen(m_ex->conf_jid)*2+1);
+      strcpy(cj, m_ex->conf_jid);
+      SUBPROC((void*)_leaveconference, cj);
+      break;
+    }
+    m_ex = m_ex->next;
+  }
+
+  MUC_ITEM* m_ex2 = muctop;
+  while(m_ex2)
+  {
+    if(m_ex2->next==m_ex)
+    {
+      m_ex2->next = m_ex->next;   // Выбиваем из цепочки
+      mfree(m_ex->conf_jid);// не нужно, уничтожим в SUBPROC
+      mfree(m_ex);
+      break;
+    }
+    m_ex2 = m_ex2->next;
+  }  
+  
+mfree(utf8_room);    
 }
 
 
