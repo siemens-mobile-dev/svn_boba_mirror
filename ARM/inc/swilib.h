@@ -748,8 +748,8 @@ typedef struct
 
 #define IP_ADDR(A,B,C,D) (((unsigned long)A<<24)|((unsigned long)B<<16)|((unsigned long)C<<8)|((unsigned long)D<<0))
 
-typedef struct
-{
+typedef struct{
+#ifdef NEWSGOLD
   unsigned short repeat_num;  //0 - non limited
   unsigned short unk;
   int time_between_play;
@@ -760,6 +760,15 @@ typedef struct
   int unk7;
   int unk8;
   int unk9;
+#else
+  unsigned short repeat_num;  //0 - non limited
+  unsigned short unk;
+  int time_between_play;
+  int play_first; // 0 - play all
+  int volume;
+  int unk5;
+  int unk6;
+#endif  
 }PLAYFILE_OPT;
 
 #pragma diag_suppress=Ta035
@@ -944,6 +953,8 @@ __swi __arm int IsUnlocked(void);
 
 #pragma swi_number=0x4A
 __swi __arm short PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int CepId, int Msg, const PLAYFILE_OPT *sfo);
+//thumb
+//pattern_SGOLD=??,??,??,E9,??,??,??,E2,3C,??,??,E5,??,??,??,E5,??,??,??,E1,??,??,??,E1,??,??,??,E1,??,??,??,E3,??,??,??,DA,??,??,??,E3,??,??,??,AA,??,??,??,E3,??,??,??,0A,??,??,??,E1,??,??,??,??,??,??,??,E3,??,??,??,13,??,??,??,0A
 
 #pragma swi_number=77
 __swi __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
