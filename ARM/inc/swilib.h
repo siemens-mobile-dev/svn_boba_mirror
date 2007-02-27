@@ -74,7 +74,7 @@ typedef int jmp_buf[11];
 #define MSG_HELPER_TRANSLATOR 0x3F0
 #define MSG_RECONFIGURE_REQ 0x3F1
 
-#define MSG_PLAYFILE_REPORT 0x167
+
 #define MSG_GUI_DESTROYED 0x98
 #define MSG_IDLETMR_EXPIRED 0x95
 #define MMI_CEPID 0x4209
@@ -87,6 +87,12 @@ typedef int jmp_buf[11];
 #define LGP_NULL 0x7FFF
 #define SET_SOFT_KEY_N 1
 #define LGP_DOIT_PIC 0x7FFFC0FB
+
+#ifdef X75
+#define MSG_PLAYFILE_REPORT 0x174
+#else
+#define MSG_PLAYFILE_REPORT 0x167
+#endif
 
 #endif
 
@@ -763,6 +769,17 @@ typedef struct{
   int unk8;
   int unk9;
 #else
+#ifdef X75
+  unsigned short repeat_num;  //0 - non limited
+  unsigned short unk;
+  int time_between_play;
+  int play_first; // 0 - play all
+  int unk4;     //0x80000000
+  int unk5;     //1
+  int unk6;     //0
+  int unk7;
+  int volume;
+#else
   unsigned short repeat_num;  //0 - non limited
   unsigned short unk;
   int time_between_play;
@@ -770,6 +787,7 @@ typedef struct{
   int volume;
   int unk5;
   int unk6;
+#endif
 #endif  
 }PLAYFILE_OPT;
 
@@ -953,8 +971,13 @@ __swi __arm int IsUnlocked(void);
 //thumb
 //pattern=??,48,??,B5,??,68,??,28,??,D0,??,??,??,FF,??,28,??,D1,??,20,??,BD,??,20,??,BD
 
+
 #pragma swi_number=0x4A
+#ifdef X75
+__swi __arm short PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int zero, int CepId, int Msg, const PLAYFILE_OPT *sfo);
+#else
 __swi __arm short PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int CepId, int Msg, const PLAYFILE_OPT *sfo);
+#endif
 //arm
 //pattern_SGOLD=??,??,??,E9,??,??,??,E2,3C,??,??,E5,??,??,??,E5,??,??,??,E1,??,??,??,E1,??,??,??,E1,??,??,??,E3,??,??,??,DA,??,??,??,E3,??,??,??,AA,??,??,??,E3,??,??,??,0A,??,??,??,E1,??,??,??,??,??,??,??,E3,??,??,??,13,??,??,??,0A
 
