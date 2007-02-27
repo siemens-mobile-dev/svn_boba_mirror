@@ -1607,7 +1607,7 @@ __swi	__arm	void SetPropTo_Obj5(DRWOBJ *, RECT *, int zero, IMGHDR *Image);
 //pattern=??,B5,??,1C,??,20,??,70,??,70,??,1C,??,1C,??,25,??,30,??,22,??,70,??,??,??,??,??,20,??,61,??,76,??,76,??,76,??,61,??,1C,??,BD
 
 #pragma swi_number=0x0152
-__swi	__arm	int CreateMenu(int is_small,int zero1,const MENU_DESC *menu, const HEADER_DESC *hdr,int zero2,int n_items,int zero4,int zero5);
+__swi	__arm	int CreateMenu(int is_small,int zero1,const MENU_DESC *menu, const HEADER_DESC *hdr,int zero2,int n_items,int zero4,int *to_remove);
 //thumb
 //pattern=??,B5,??,B0,??,1C,??,AA,??,1C,??,1C,??,CA,??,91,??,21,??,9F,??,91,??,92,??,1C,??,1C,??,90,??,1C,??,97,??,??,??,??,??,B0,??,BD
 
@@ -2287,3 +2287,12 @@ __swi __arm void png_set_invert_mono(png_structp png_ptr);
 //thumb
 //pattern=80,30,01,6B,20,22,11,43,01,63,70,47
 
+#pragma swi_number=0x1D8
+__swi __arm int EDIT_IsMarkModeActive(void *gui);
+//thumb
+//pattern=
+
+#pragma swi_number=0x1D9
+__swi __arm int EDIT_GetMarkedText(void *gui,WSHDR *dest);
+//thumb
+//pattern=
