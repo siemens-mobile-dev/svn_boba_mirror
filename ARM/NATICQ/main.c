@@ -1648,8 +1648,8 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   int l;
   if (msg->keys==0xFFF)
   {
-    void ec_menu(void);
-    ec_menu();
+    void ec_menu(GUI *data, GUI_MSG *msg);
+    ec_menu(data,msg);
     return(-1);
   }
   if (msg->gbsmsg->msg==KEY_DOWN)
@@ -1895,6 +1895,38 @@ void CreateEditChat(CLIST *t)
 }
 
 //-----------------------------------------------------------------------------
+#define EC_MNU_MAX 7
+GUI *q_data;
+
+void Quote(void)
+{
+  EDITCONTROL ec;
+  EDITCONTROL ec_ed;
+  WSHDR *ed_ws;
+  WSHDR *ec_ws;
+  int q_n=EDIT_GetFocus(q_data);
+  ExtractEditControl(q_data,q_n,&ec);
+  ExtractEditControl(q_data,edchat_answeritem,&ec_ed);
+  ed_ws=AllocWS(ec.pWS->wsbody[0]+ec_ed.pWS->wsbody[0]+3);
+  
+  ec_ws=AllocWS(ec.pWS->wsbody[0]);
+  if (EDIT_IsMarkModeActive(q_data))
+  {
+    EDIT_GetMarkedText(q_data,ec_ws);
+  }
+  else
+  {
+    wstrcpy(ec_ws,ec.pWS);
+  }
+  wsprintf(ed_ws,"%w> %w\n",ec_ed.pWS,ec_ws);
+  FreeWS(ec_ws);
+  CutWSTR(ed_ws,ec_ed.maxlen);
+  EDIT_SetFocus(q_data,edchat_answeritem);
+  EDIT_SetTextToFocused(q_data,ed_ws);
+  FreeWS(ed_ws);
+  GeneralFuncF1(1);
+}
+
 void GetShortInfo(void)
 {
   TPKT *p;
@@ -2000,8 +2032,10 @@ void ecmenu_ghook(void *data, int cmd)
   }
 }
 
-MENUITEM_DESC ecmenu_ITEMS[6]=
+int to_remove[EC_MNU_MAX+1];
+MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
 {
+  {NULL,(int)"Quote"          ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Get short info" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Add/rename"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Send Auth Req"  ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -2010,8 +2044,9 @@ MENUITEM_DESC ecmenu_ITEMS[6]=
   {NULL,(int)"Clear log"      ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
-void *ecmenu_HNDLS[6]=
+void *ecmenu_HNDLS[EC_MNU_MAX]=
 {
+  (void *)Quote,
   (void *)GetShortInfo,
   (void *)AddCurContact,
   (void *)SendAuthReq,
@@ -2033,10 +2068,10 @@ MENU_DESC ecmenu_STRUCT=
   NULL,
   ecmenu_ITEMS,
   ecmenu_HNDLS,
-  6
+  EC_MNU_MAX
 };
 
-void ec_menu(void)
+void ec_menu(GUI *data, GUI_MSG *msg)
 {
   CLIST *t;
   if ((t=edcontact))
@@ -2050,7 +2085,17 @@ void ec_menu(void)
       sprintf(ecm_contactname,"%u",t->uin);
     }
     patch_header(&ecmenu_HDR);
-    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,6,0,0);
+    if (EDIT_GetFocus(data)==edchat_answeritem)
+    {
+      to_remove[0]=1;
+      to_remove[1]=0;
+    }
+    else
+    {
+      q_data=data;
+      to_remove[0]=0;
+    }      
+    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,0,to_remove);
   }
 }
 
