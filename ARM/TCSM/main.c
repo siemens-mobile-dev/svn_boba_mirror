@@ -74,7 +74,14 @@ void Play(const char *fname)
     _sfo1.time_between_play=0;
     _sfo1.play_first=0;
     _sfo1.volume=6;
+#ifdef NEWSGOLD
+    _sfo1.unk6=1;
+    _sfo1.unk7=1;
+    _sfo1.unk9=2;
+    i=PlayFile(0x10, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
+#else
     i=PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
+#endif
     sprintf(s,"%08X\r\n",i);
     SUBPROC((void *)Log,0,s);
   }
@@ -153,7 +160,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       Play("4:\\ZBin\\NatICQ\\Sounds\\sndStartup.wav");
       break;
     case '6':
-      Play("4:\\ZBin\\NatICQ\\Sounds\\sndSrvMsg.wav");
+      Play("4:\\ZBin\\NatICQ\\Sounds\\sndMsgSent.wav");
       break;
     case '8':
       {
