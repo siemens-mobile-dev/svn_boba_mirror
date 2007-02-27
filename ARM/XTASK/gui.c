@@ -605,10 +605,12 @@ const CSM_DESC maincsm=
 {
   maincsm_onmessage,
   maincsm_oncreate,
+#ifdef NEWSGOLD
   0,
   0,
   0,
   0,
+#else
   maincsm_onclose,
   sizeof(MAIN_CSM),
   1,
