@@ -100,7 +100,14 @@ void Play(const char *fname)
     _sfo1.unk9=2;
     PlayFile(0x10, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
 #else
+#ifdef X75
+    _sfo1.unk4=0x80000000;
+    _sfo1.unk5=1;
+    PlayFile(0xC, sndPath, sndFName, 0,GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
+#else
+    _sfo1.unk5=1;
     PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
+#endif
 #endif
   }
   FreeWS(sndPath);
