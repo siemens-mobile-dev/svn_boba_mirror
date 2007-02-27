@@ -1169,6 +1169,8 @@ void do_reconnect(void)
   }
 }
 
+void *q_data;
+
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   //  char ss[100];
@@ -1243,6 +1245,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     }
     if ((int)msg->data0==edchat_id)
     {
+      q_data=NULL;
       edchat_id=0;
       if (request_remake_edchat)
       {
@@ -1896,7 +1899,6 @@ void CreateEditChat(CLIST *t)
 
 //-----------------------------------------------------------------------------
 #define EC_MNU_MAX 7
-GUI *q_data;
 
 void Quote(void)
 {
@@ -1904,6 +1906,7 @@ void Quote(void)
   EDITCONTROL ec_ed;
   WSHDR *ed_ws;
   WSHDR *ec_ws;
+  if (!q_data) return;
   int q_n=EDIT_GetFocus(q_data);
   ExtractEditControl(q_data,q_n,&ec);
   ExtractEditControl(q_data,edchat_answeritem,&ec_ed);
