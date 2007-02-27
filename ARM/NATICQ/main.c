@@ -94,7 +94,14 @@ void Play(const char *fname)
     _sfo1.time_between_play=0;
     _sfo1.play_first=0;
     _sfo1.volume=sndVolume;
+#ifdef NEWSGOLD
+    _sfo1.unk6=1;
+    _sfo1.unk7=1;
+    _sfo1.unk9=2;
+    PlayFile(0x10, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
+#else
     PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
+#endif
   }
   FreeWS(sndPath);
   FreeWS(sndFName);
@@ -978,9 +985,15 @@ ProcessPacket(TPKT *p)
   case T_SRV_ACK:
     Play(sndMsgSent);
   case T_CLIENT_ACK:
-    DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
-		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(p->pkt.type==T_SRV_ACK?3:4));
+    if (
+	IsGuiOnTop(contactlist_menu_id)||
+	IsGuiOnTop(edchat_id)
+       )
+    {
+      DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
+		       GetPaletteAdrByColorIndex(0),
+		       GetPaletteAdrByColorIndex(p->pkt.type==T_SRV_ACK?3:4));
+    }
     break;
   }
   mfree(p);
