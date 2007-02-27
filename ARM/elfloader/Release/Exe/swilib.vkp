@@ -351,7 +351,8 @@
 0754: 0xA01DDB54 ; 1D5: __arm char *Get_Phone_Info(int InfoIndex);
 0758: 0xA01376E5 ; 1D6: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
 075C: 0xA0139253 ; 1D7: __thumb void png_set_invert_mono(png_structp png_ptr);
-
+0760: 0xA0A11F25 ; 1D8: __thumb int EDIT_IsMarkModeActive(void *gui);
+0764: 0xA0A11F3D ; 1D9: __thumb int EDIT_GetMarkedText(void *gui,WSHDR *dest);
 
 #pragma disable old_equal_ff
 +0
