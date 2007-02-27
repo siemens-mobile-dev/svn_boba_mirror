@@ -35,13 +35,17 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   {
     if (msg->gbsmsg->submess==GREEN_BUTTON)
     {
-      EDIT_RemoveEditControl(data,1,&ec);
+/*      EDIT_RemoveEditControl(data,1,&ec);
       PrepareEditControl(&ec);
       wsprintf(ews,percent_t,"Добавленное поле");
       ConstructEditControl(&ec,3,0x40,ews,256);
       EDIT_InsertEditControl(data,10,&ec);
       EDIT_SetFocus(data,10);
-      EDIT_SetCursorPos(data,3);
+      EDIT_SetCursorPos(data,3);*/
+      ExtractEditControl(data,EDIT_GetFocus(data),&ec);
+      wstrcpy(ews,ec.pWS);
+      wsAppendChar(ews,0xE12B);
+      EDIT_SetTextToFocused(data,ews);      
       return(-1);
     }
   }
@@ -173,8 +177,8 @@ void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-//  csm->gui_id=create_ed();
-  csm->gui_id=create_menu();
+  csm->gui_id=create_ed();
+//  csm->gui_id=create_menu();
 }
 
 void Killer(void)
