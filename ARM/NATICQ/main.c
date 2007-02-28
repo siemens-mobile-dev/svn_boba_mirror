@@ -797,6 +797,7 @@ void get_answer(void)
         snprintf(logmsg,255,"MSG%d: %s",RXbuf.pkt.uin,RXbuf.data);
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         REDRAW();
+	Play(sndMsg);
         break;
       case T_SSLRESP:
         LockSched();
@@ -804,6 +805,7 @@ void get_answer(void)
         UnlockSched();
         break;
       case T_SRV_ACK:
+	Play(sndMsgSent);
       case T_CLIENT_ACK:
 	p=malloc(sizeof(PKT));
 	memcpy(p,&RXbuf,sizeof(PKT));
@@ -962,7 +964,6 @@ ProcessPacket(TPKT *p)
     }
     vibra_count=1;
     start_vibra();
-    Play(sndMsg);
     AddStringToLog(t,0x02,p->data,t->name);
     if (edchat_id)
     {
@@ -990,7 +991,6 @@ ProcessPacket(TPKT *p)
     }
     break;
   case T_SRV_ACK:
-    Play(sndMsgSent);
   case T_CLIENT_ACK:
     if (
 	IsGuiOnTop(contactlist_menu_id)||
