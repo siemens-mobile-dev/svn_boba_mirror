@@ -774,11 +774,11 @@ typedef struct{
   unsigned short unk;
   int time_between_play;
   int play_first; // 0 - play all
+  int volume;
   int unk4;     //0x80000000
   int unk5;     //1
   int unk6;     //0
   int unk7;
-  int volume;
 #else
   unsigned short repeat_num;  //0 - non limited
   unsigned short unk;
