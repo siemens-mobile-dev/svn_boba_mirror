@@ -50,10 +50,12 @@ J_PIT:
         CMP     R0, #0
 	LDMNEFD	SP!,{R4,PC}
 	MOV	R0,R4
-	LDR	R12,PITgetN
+	LDR	R12,=PITgetN
+        LDR     R12, [R12]
 	BLX	R12
 	CMP	R0,R4
-        LDR	R12,PITret
+        LDR	R12,=PITret
+        LDR     R12, [R12]
 	BX	R12
 #else
         THUMB
