@@ -1,5 +1,23 @@
 #include "..\inc\swilib.h"
 
+#pragma inline
+void patch_header(HEADER_DESC* head)
+{
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
+}
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp)
+{
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+
+
 #ifdef ELKA
 #define MAX_ESTR_LEN 9
 #else
@@ -422,25 +440,6 @@ void ChangeRC(GUI *gui)
   if (m[0]) memcpy(m[0],&rc,sizeof(rc));
 }
 
-void goto_1(void)
-{
-  MakeVoiceCall(dstr[0],0x10,0x20C0);
-}
-
-void goto_2(void)
-{
-  MakeVoiceCall(dstr[1],0x10,0x20C0);
-}
-
-void goto_3(void)
-{
-  MakeVoiceCall(dstr[2],0x10,0x20C0);
-}
-
-void goto_4(void)
-{
-  MakeVoiceCall(dstr[3],0x10,0x20C0);
-}
 
 const int menusoftkeys[]={0,1,2};
 
@@ -455,6 +454,111 @@ const SOFTKEYSTAB menu_skt=
 {
   menu_sk,0
 };
+
+int is_sms_need=0;
+WSHDR *ews;
+const char *snum;
+
+void edsms_locret(void){}
+
+int edsms_onkey(GUI *data, GUI_MSG *msg)
+{
+  EDITCONTROL ec;
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    if (msg->gbsmsg->submess==GREEN_BUTTON)
+    {
+      ExtractEditControl(data,2,&ec);
+      WSHDR *sw=AllocWS(ec.pWS->wsbody[0]);
+      wstrcpy(sw,ec.pWS);
+      SendSMS(sw,snum,0x4209,MSG_SMS_RX-1,6);
+      return(1);
+    }
+  }
+  //-1 - do redraw
+  return(0); //Do standart keys
+  //1: close
+}
+
+void edsms_ghook(GUI *data, int cmd)
+{
+}
+
+HEADER_DESC edsms_hdr={0,0,131,21,NULL,(int)"Write SMS",LGP_NULL};
+
+INPUTDIA_DESC edsms_desc=
+{
+  1,
+  edsms_onkey,
+  edsms_ghook,
+  (void *)edsms_locret,
+  0,
+  &menu_skt,
+  {0,22,131,153},
+  4,
+  100,
+  101,
+  0,
+
+//  0x00000001 - Выровнять по правому краю
+//  0x00000002 - Выровнять по центру
+//  0x00000004 - Инверсия знакомест
+//  0x00000008 - UnderLine
+//  0x00000020 - Не переносить слова
+//  0x00000200 - bold
+  0,
+
+//  0x00000002 - ReadOnly
+//  0x00000004 - Не двигается курсор
+  0x40000000 // Поменять местами софт-кнопки
+};
+
+void VoiceOrSMS(const char *num)
+{
+  if (!is_sms_need)
+  {
+    MakeVoiceCall(num,0x10,0x20C0);
+  }
+  else
+  {
+    void *ma=malloc_adr();
+    void *eq;
+    EDITCONTROL ec;
+    snum=num;
+    PrepareEditControl(&ec);
+    eq=AllocEQueue(ma,mfree_adr());
+    wsprintf(ews,"SMS to %s:",num);
+    ConstructEditControl(&ec,1,0x40,ews,64);
+    AddEditControlToEditQend(eq,&ec,ma);
+    //wsprintf(ews,percent_t,"");
+    CutWSTR(ews,0);
+    ConstructEditControl(&ec,3,0x40,ews,1024);
+    AddEditControlToEditQend(eq,&ec,ma);
+    patch_header(&edsms_hdr);
+    patch_input(&edsms_desc);
+    CreateInputTextDialog(&edsms_desc,&edsms_hdr,eq,1,0);
+  }
+}
+
+void goto_1(void)
+{
+  VoiceOrSMS(dstr[0]);
+}
+
+void goto_2(void)
+{
+  VoiceOrSMS(dstr[1]);
+}
+
+void goto_3(void)
+{
+  VoiceOrSMS(dstr[2]);
+}
+
+void goto_4(void)
+{
+  VoiceOrSMS(dstr[3]);
+}
 
 void *gotomenu_HNDLS[4]=
 {
@@ -503,8 +607,19 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   int i=0;
 
   CLIST *cl=(CLIST *)cltop;
-
-  if (key==GREEN_BUTTON)
+  
+  is_sms_need=0;
+  if ((key==RIGHT_BUTTON)&&(m==KEY_DOWN))
+  {
+    EDITCONTROL ec;
+    ExtractEditControl(gui,1,&ec);
+    if (ec.pWS->wsbody[0]==EDIT_GetCursorPos(gui)-1)
+    {
+//      ShowMSG(1,(int)"Try to write SMS!");
+      is_sms_need=1;
+    }
+  }
+  if (key==GREEN_BUTTON||is_sms_need)
   {
     if (!cl) goto L_OLDKEY;
     while(i!=curpos)
@@ -524,7 +639,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     while(r<4);
     if (i==1)
     {
-      MakeVoiceCall(dstr[0],0x10,0x20C0);
+      VoiceOrSMS(dstr[0]);
       return(1); //Закрыть нах
     }
     if (!i) goto L_OLDKEY;
@@ -544,7 +659,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   {
     //Не обрабатываем редактором вверх/вниз
     msg->keys=0;
-    if (m==KEY_DOWN)
+    if ((m==KEY_DOWN)||(m==LONG_PRESS))
     {
       if (key==UP_BUTTON)
       {
@@ -675,6 +790,7 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
+  FreeWS(ews);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 
@@ -689,5 +805,6 @@ int main(void)
   icsmd.onMessage=MyIDLECSM_onMessage;
   icsm->constr=&icsmd;
   UnlockSched();
+  ews=AllocWS(1024);
   return 0;
 }
