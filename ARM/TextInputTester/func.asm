@@ -14,6 +14,7 @@ a	EQU	b
 kill_data
 	BX	R1
 
+	defadr	XSendSMS,0xA0534491
 
 	END
 	

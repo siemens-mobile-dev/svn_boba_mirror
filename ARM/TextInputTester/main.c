@@ -1,5 +1,17 @@
 #include "..\inc\swilib.h"
 
+void Log(int dummy, char *txt)
+{
+  unsigned int ul;
+  int f=fopen("4:\\log",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
+  if (f!=-1)
+  {
+    fwrite(f,txt,strlen(txt),&ul);
+    fclose(f,&ul);
+  }
+  mfree(txt);
+}
+
 
 static const char percent_t[]="%t";
 
@@ -42,10 +54,16 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
       EDIT_InsertEditControl(data,10,&ec);
       EDIT_SetFocus(data,10);
       EDIT_SetCursorPos(data,3);*/
-      ExtractEditControl(data,EDIT_GetFocus(data),&ec);
+/*      ExtractEditControl(data,EDIT_GetFocus(data),&ec);
       wstrcpy(ews,ec.pWS);
       wsAppendChar(ews,0xE12B);
-      EDIT_SetTextToFocused(data,ews);      
+      EDIT_SetTextToFocused(data,ews);      */
+      ExtractEditControl(data,3,&ec);
+      WSHDR *sw=AllocWS(ec.pWS->wsbody[0]);
+      wstrcpy(sw,ec.pWS);
+//      SendSMS(ews,"+380636038122",0x4209,MSG_SMS_RX-1,2); //С редактированием
+//      SendSMS(ews,"+380636038122",0x4209,MSG_SMS_RX-1,6); //Сразу в бой с окошком
+      SendSMS(sw,"+380636038122",0x4209,MSG_SMS_RX-1,6);
       return(-1);
     }
   }
@@ -132,7 +150,7 @@ int create_ed(void)
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,percent_t,"Превед!");
+  wsprintf(ews,percent_t,"Медвед!!!");
   ConstructEditControl(&ec,3,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -211,6 +229,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	csm->csm.state=-3;
       }
     }
+  }
+  if ((msg->msg==MSG_SMS_RX)||(msg->msg==(MSG_SMS_RX-1)))
+  {
+    char *s=malloc(100);
+    sprintf(s,"%08X %08X %08X %08X\r\n",msg->msg,msg->submess,msg->data0,msg->data1);
+    SUBPROC((void *)Log,0,s);
   }
   return(1);
 }
