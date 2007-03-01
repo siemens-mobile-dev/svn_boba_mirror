@@ -129,20 +129,21 @@ void Send_Auth()
 
 
 //Context: HELPER
-void _sendversionrequest(char *utf8_dest_jid) // UTF8
+void _sendversionrequest(char *dest_jid)
 {
   char typ[]=IQTYPE_GET;
   char iq_v[]=IQ_VERSION;
 
-  SendIq(utf8_dest_jid, typ, vreq_id, iq_v, NULL);
-  mfree(utf8_dest_jid);
+  SendIq(dest_jid, typ, vreq_id, iq_v, NULL);
+  mfree(dest_jid);
 }
 
 // Послать запрос о версии пользователю с указанным JID
 // JID указываем в ANSI-кодировке
 void Send_Version_Request(char *dest_jid) 
 {
-  char *to=ANSI2UTF8(dest_jid,128);
+  char *to=malloc(128);
+  strcpy(to, dest_jid);
   SUBPROC((void*)_sendversionrequest,to);
 }
 

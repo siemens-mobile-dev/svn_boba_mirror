@@ -137,9 +137,10 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       ShowDialog_Error(1,(int)"Действие неизвестно или не поддерживается");
     }
   }
+  return 1;
 }  
 //  Req_Close_Cont_Menu = 1;
-  return 1;
+return 0;
 }
 
 void InitMenuArray()
