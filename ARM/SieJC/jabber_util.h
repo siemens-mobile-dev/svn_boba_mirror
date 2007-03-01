@@ -13,6 +13,15 @@
 #define MAX_MSG_LEN 4096
 
 #define PRES_COUNT 12
+
+typedef enum
+{
+  ADM_KICK,             // Кик 
+  ADM_BAN,              // Бан
+  ADM_VOICE_REMOVE,     // Лишить голоса
+  ADM_VOICE_GRANT       // Предоставить голос
+}MUC_ADMIN;
+
 /*
   Посылка стандартного Jabber Iq
 */
@@ -77,6 +86,13 @@ char* Get_Resource_Name_By_FullJID(char* full_jid);
 */
 unsigned short GetPresenceIndex(char* presence_str);
 
+/*
+Получить внутренний номер данного типа роли/полномочий по строке с присутсвием
+*/
+unsigned short GetAffRoleIndex(char* str);
+
+// Исполнение административных команд
+void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* reason);
 
 typedef struct
 {

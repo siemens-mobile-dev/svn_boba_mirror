@@ -68,13 +68,7 @@ void med1_ghook(GUI *data, int cmd)
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
 
-  if(cmd==0x18)   // Фокусирование
-  {
-     ShowMSG(1,(int)"Ы");
-  }
-  
-
-  if(mTerminate )//|| cmd==9)  // cmd==9 - нажатие на левую софт-кнопку "ОК"
+  if(mTerminate)
  {
 //     char q[10];
 //     sprintf(q,"N=%d",cmd);

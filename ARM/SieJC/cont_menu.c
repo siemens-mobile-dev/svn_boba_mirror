@@ -101,7 +101,7 @@ void contact_menu_ghook(void *data, int cmd)
 int contact_menu_onkey(void *data, GUI_MSG *msg)
 {
   int i=GetCurMenuItem(data);
-
+  MUC_ADMIN admin_cmd;
 if(msg->keys==0x18 || msg->keys==0x3D)  
 {
   switch(Menu_Contents[i])
@@ -113,18 +113,16 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       CList_MakeAllResourcesOFFLINE(room);      
       break;
     }
-/*
   case MI_CONF_KICK_THIS: 
-    {
-      strcpy(test_str,"Кик");
-      break;
-    }    
   case MI_CONF_BAN_THIS: 
     {
-      strcpy(test_str,"Бан");
+      CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
+      char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
+      if(Menu_Contents[i]==MI_CONF_KICK_THIS)admin_cmd=ADM_KICK;
+      if(Menu_Contents[i]==MI_CONF_BAN_THIS)admin_cmd=ADM_BAN;
+      MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
       break;
     }    
-*/
   case MI_QUERY_VERSION: 
     {
       
@@ -166,9 +164,10 @@ void contact_menu_iconhndl(void *data, int curitem, int *unk)
   {
   case MI_CONF_LEAVE: 
     {
-      strcpy(test_str,"Покинуть MUC");
+      strcpy(test_str,"Покинуть");
       break;
-    }
+    } 
+    
   case MI_CONF_KICK_THIS: 
     {
       strcpy(test_str,"Кик");
@@ -178,7 +177,7 @@ void contact_menu_iconhndl(void *data, int curitem, int *unk)
     {
       strcpy(test_str,"Бан");
       break;
-    }    
+    }  
   case MI_QUERY_VERSION: 
     {
       strcpy(test_str,"Версия клиента");
@@ -229,6 +228,7 @@ void Disp_Contact_Menu()
   }
 
   if(Act_contact->entry_type==T_CONF_NODE)
+//  if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
   {
     Menu_Contents[n_items++]=MI_CONF_KICK_THIS;
     Menu_Contents[n_items++]=MI_CONF_BAN_THIS;    

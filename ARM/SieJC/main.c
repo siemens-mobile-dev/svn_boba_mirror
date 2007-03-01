@@ -54,7 +54,7 @@ extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "0.9.2";
+const char VERSION_VERS[] = "0.9.3";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD

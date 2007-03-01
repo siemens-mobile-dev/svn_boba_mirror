@@ -49,8 +49,8 @@
 //headline
 
 #define XMLNS_MUC "http://jabber.org/protocol/muc"
-#define XMLNS_MUC_USER "http://jabber.org/protocol/muc#user"
-
+#define XMLNS_MUC_USER  "http://jabber.org/protocol/muc#user"
+#define XMLNS_MUC_ADMIN "http://jabber.org/protocol/muc#admin"
 
 typedef enum {
 	SUB_NONE,

@@ -423,7 +423,19 @@ void CList_ChangeContactParams(CLIST* Cont_Ex,
   Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
 }
-  
+
+// Пишет роли контакта в конфе в структуру
+void CList_MUC_SetRole(char* jid, CONF_PRIV priv)
+{
+  TRESOURCE* ResEx = CList_IsResourceInList(jid);
+  if(!ResEx)
+  {
+    return;
+  }
+  if(ResEx->entry_type!=T_CONF_NODE)return;
+  ResEx->muc_privs.aff=priv.aff;
+  ResEx->muc_privs.role=priv.role;
+}
 
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
 CLIST* CList_AddContact(char* jid,
@@ -433,7 +445,7 @@ CLIST* CList_AddContact(char* jid,
                           char group)
 {
   
-  
+  str2lower(jid);
   CLIST* Cont_Ex = malloc(sizeof(CLIST));
 
   // Имя может быть не заполнено

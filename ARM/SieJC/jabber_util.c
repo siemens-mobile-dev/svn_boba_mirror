@@ -29,6 +29,12 @@ const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "inv
 //const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        21,             14,     16,     3,      18,   2,      20, 21,21,21,21}; //цвет оффлайнов изменил
 const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        16,             3,     18,     2,      20,   21,      20, 21,21,21,21}; //цвет оффлайнов изменил
 
+#define AFFS_CNT 5
+#define ROLS_CNT 4
+
+const char* JABBER_AFFS[] = {"none", "outcast", "member", "admin", "owner"};
+const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
+
 /*
   Посылка стандартного Jabber Iq
 */
@@ -66,6 +72,7 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
   }
   sprintf(xmlq2, xmlq, xmlns, payload);
   SendAnswer(xmlq2);
+//  Log("IQ_OUT", xmlq2);
   mfree(xmlq2);
   mfree(xmlq);
 }
@@ -644,9 +651,9 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
   XMLNode* error = XML_Get_Child_Node_By_Name(nodeEx, "error");
   if(!error)return;
   char* errcode = XML_Get_Attr_Value("code", error->attr);
-  Jabber_state = JS_ERROR;
+//  Jabber_state = JS_ERROR;
   if(errcode)sprintf(logmsg,"ERR:%s",errcode);
-  ShowMSG(1,(int)logmsg);
+  ShowDialog_Error(1,(int)logmsg);
   if(!strcmp(id,auth_id))
   {
     Jabber_state = JS_AUTH_ERROR;
@@ -662,6 +669,7 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
 */
 void Process_Presence_Change(XMLNode* node)
 {
+  CONF_PRIV priv;
   char* from = XML_Get_Attr_Value("from",node->attr);
   if(!from)return;
   
@@ -707,7 +715,6 @@ void Process_Presence_Change(XMLNode* node)
       }
       
     }
-
 // Иар заебал
 char loc_actor[]="actor";
 char loc_jid[]="jid";
@@ -719,6 +726,10 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
       
       // Получим экземпляр конфы, в которой всё происходит
       CLIST* Conference = CList_FindContactByJID(from);
+      if(!Conference)
+      {
+        return;
+      }
       char* nick = Get_Resource_Name_By_FullJID(from);
       
       // Тут можно обрабатывать события входа/выхода в конфу
@@ -726,16 +737,23 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
       XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
       if(status==PRESENCE_ONLINE) // Вход
       {
+        TRESOURCE* ResEx = CList_IsResourceInList(from);
         char* affiliation = XML_Get_Attr_Value("affiliation", item->attr);
         char* role =  XML_Get_Attr_Value("role", item->attr);
-        sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
+        if(ResEx)
+        {
+          sprintf(r, "%s теперь %s и %s", nick, affiliation, role);
+        }
+        else sprintf(r, "%s присоединился как %s и %s", nick, affiliation, role);
+        priv.aff = (JABBER_GC_AFFILIATION)GetAffRoleIndex(affiliation);
+        priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role);        
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
       
 
       if(status==PRESENCE_OFFLINE) // Выход
       {
-        sprintf(r, "%s left MUC", nick);
+        sprintf(r, "%s вышел", nick);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
       }
       
@@ -776,6 +794,7 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
     
     }  
   CList_AddResourceWithPresence(from, status, msg);
+  CList_MUC_SetRole(from, priv);
 }
 
 MESS_TYPE Get_Message_Type(char* mess_type_str)
@@ -786,6 +805,57 @@ MESS_TYPE Get_Message_Type(char* mess_type_str)
   if(!strcmp(mess_type_str,m_chat ))return MSG_CHAT;
   if(!strcmp(mess_type_str,m_gchat ))return MSG_GCHAT;
   return MSG_NORMAL;
+}
+
+//Context: HELPER
+void _mucadmincmd(char* room, char* iq_payload)
+{
+  //char* to, char* type, char* id, char* xmlns, char* payload
+  char admin_iqid[]="SieJC_adm";
+  char iqtypeset[]=IQTYPE_SET;
+  SendIq(room, iqtypeset, admin_iqid, XMLNS_MUC_ADMIN, iq_payload);
+  mfree(iq_payload);
+  mfree(room);
+}
+
+// Исполнение административных команд
+void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* reason)
+{
+  char* payload = malloc(1024);
+  char payload_tpl[]="<item nick='%s' %s='%s'><reason>%s</reason></item>";
+  char* utf8_roomname= ANSI2UTF8(room_name, 128);
+  char* utf8_roomjid= ANSI2UTF8(room_jid, 128);
+  char it[20];
+  char val[20];
+  char aff[]="affiliation";
+  char role[]="role";
+/*
+const char* JABBER_AFFS[] = {"none", "outcast", "member", "admin", "owner"};
+const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
+*/
+  switch(cmd)
+  {
+  case ADM_KICK:
+    {
+      strcpy(it,role);
+      strcpy(val,JABBER_ROLS[ROLE_NONE]);
+      break;
+    }
+  case ADM_BAN:
+    {
+      strcpy(it,aff);
+      strcpy(val,JABBER_AFFS[AFFILIATION_NONE]);
+      break;
+    }
+    
+  }
+  
+  snprintf(payload, 1023, payload_tpl, utf8_roomjid, it, val, reason);
+//  ShowMSG(1,(int)payload);
+  SUBPROC((void*)_mucadmincmd, utf8_roomname, payload);
+//  mfree(payload);
+//  mfree(utf8_roomname);
+  mfree(utf8_roomjid);
 }
 
 /*
@@ -822,5 +892,24 @@ unsigned short GetPresenceIndex(char* presence_str)
   {
     if(!strcmp(presence_str, PRESENCES[i]))return i;
   }
+  return 0;
+}
+
+/*
+Получить внутренний номер данного типа роли/полномочий по строке с присутсвием
+*/
+unsigned short GetAffRoleIndex(char* str)
+{
+  if(!str)return 0;
+  int i;
+  for(i=0;i<AFFS_CNT;i++)
+  {
+    if(!strcmp(str, JABBER_AFFS[i]))return i;
+  }
+  for(i=0;i<ROLS_CNT;i++)
+  {
+    if(!strcmp(str, JABBER_ROLS[i]))return i;
+  }
+
   return 0;
 }

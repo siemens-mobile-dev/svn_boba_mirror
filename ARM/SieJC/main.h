@@ -81,15 +81,22 @@ typedef struct
 
 typedef struct
 {
-  char* name;
-  char* full_name;
-  RES_TYPE entry_type;
-  char status;
-  char* status_msg;
-  unsigned int has_unread_msg;
-  unsigned int total_msg_count;
-  LOG_MESSAGE* log;
-  void* next;
+  JABBER_GC_AFFILIATION aff;
+  JABBER_GC_ROLE role;
+}CONF_PRIV;
+
+typedef struct
+{
+  char* name;                   // Отображаемое имя ресурса
+  char* full_name;              // Полный JID (jid/resource)
+  RES_TYPE entry_type;          // Тип записи (см. RES_TYPE)
+  char status;                  // Статус
+  char* status_msg;             // Статусное сообщение
+  unsigned int has_unread_msg;  // Есть ли непрочитанные и сколько
+  unsigned int total_msg_count; // Общее количество сообщений
+  LOG_MESSAGE* log;             // Начало лога сообщений
+  CONF_PRIV muc_privs;          // Тут для конференционных контактов - про роли
+  void* next;                   // Следующий экземпляр
 } TRESOURCE;
 
 typedef struct

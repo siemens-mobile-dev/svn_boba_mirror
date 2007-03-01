@@ -29,6 +29,9 @@
 // Получить дескриптор контакта по FullJID (JID вместе с ресурсом)
   CLIST* CList_FindContactByJID(char* jid);
 
+// Узнать, есть ли уже такой ресурс у контакта, по FullJID
+  TRESOURCE* CList_IsResourceInList(char* jid);
+
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
   CLIST* CList_AddContact(char* jid,
                           char* name,
@@ -45,7 +48,8 @@
                           char wants_subscription,
                           char group);
   
-
+// Пишет роли контакта в конфе в структуру
+  void CList_MUC_SetRole(char* jid, CONF_PRIV priv);
 
 // Добавить сообщение в список сообщений контакта
   void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext);
