@@ -614,8 +614,15 @@ void create_connect(void)
   //Устанавливаем соединение
   connect_state=0;
   GBS_DelTimer(&reconnect_tmr);
+  if (!IsGPRSEnabled())
+  {
+    is_gprs_online=0;
+    strcpy(logmsg,"Waiting for GPRS up...");
+    REDRAW();
+    return;
+  }
   DNR_ID=0;
-  snprintf(logmsg,255,"Send DNR...");
+  strcpy(logmsg,"Send DNR...");
   REDRAW();
   *socklasterr()=0;
   int err=async_gethostbyname(NATICQ_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
@@ -640,7 +647,7 @@ void create_connect(void)
   {
     if (p_res[3])
     {
-      snprintf(logmsg,255,"DNR Ok, connecting...");
+      strcpy(logmsg,"DNR Ok, connecting...");
       REDRAW();
       DNR_TRIES=0;
       sock=socket(1,1,0);
@@ -750,7 +757,7 @@ void get_answer(void)
   {
     if (RXbuf.pkt.data_len>16383)
     {
-      snprintf(logmsg,255,"Bad packet");
+      strcpy(logmsg,"Bad packet");
       end_socket();
       RXstate=EOP;
       return;
@@ -1081,7 +1088,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
         if (!(Is_Vibra_Enabled = !(Is_Vibra_Enabled)))
 	  ShowMSG(1, (int)"Vibrа disabled!");
 	else
-	  ShowMSG(1, (int)"Vibro enabled!");
+	  ShowMSG(1, (int)"Vibra enabled!");
         break;
       }      
     case '5':
@@ -1277,7 +1284,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       vibra_count=3;
       start_vibra();
       is_gprs_online=1;
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      strcpy(logmsg,"GPRS up, wait 10 sec...");
+      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
       return(1);
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
