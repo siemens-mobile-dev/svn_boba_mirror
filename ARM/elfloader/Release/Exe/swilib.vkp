@@ -353,6 +353,8 @@
 075C: 0xA0139253 ; 1D7: __thumb void png_set_invert_mono(png_structp png_ptr);
 0760: 0xA0A11F25 ; 1D8: __thumb int EDIT_IsMarkModeActive(void *gui);
 0764: 0xA0A11F3D ; 1D9: __thumb int EDIT_GetMarkedText(void *gui,WSHDR *dest);
+0768: 0xA04E6F11 ; 1DA: __thumb void SendSMS(WSHDR *ws,const char *num,int cepid,int msg,int flag);
+076C: 0xA8E87CFC ; 81DB: __arm PDU *IncommingPDU(void);
 
 #pragma disable old_equal_ff
 +0
