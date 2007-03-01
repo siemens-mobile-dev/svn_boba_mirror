@@ -104,9 +104,10 @@ void Send_Disconnect()
 #endif 
 }
 
-// Константы Iq-запросов авторизации и ростера
+// Константы Iq-запросов
 char auth_id[] = "SieJC_auth_req";
 char rost_id[] = "SieJC_rost_req";
+char vreq_id[] = "SieJC_vers_req";
 
 /*
   Авторизация на Jabber-сервере
@@ -125,14 +126,24 @@ void Send_Auth()
   UnlockSched();
 }
 
-void Send_VReq()
+
+
+//Context: HELPER
+void _sendversionrequest(char *utf8_dest_jid) // UTF8
 {
-  char to[]="kibab612@jabber.ru/Miranda_Home";
-  char typ[]="get";
-  char iqid[]="SieJC_VR";
+  char typ[]=IQTYPE_GET;
   char iq_v[]=IQ_VERSION;
-  SendIq(to, typ, iqid, iq_v, NULL);
-  return;
+
+  SendIq(utf8_dest_jid, typ, vreq_id, iq_v, NULL);
+  mfree(utf8_dest_jid);
+}
+
+// Послать запрос о версии пользователю с указанным JID
+// JID указываем в ANSI-кодировке
+void Send_Version_Request(char *dest_jid) 
+{
+  char *to=ANSI2UTF8(dest_jid,128);
+  SUBPROC((void*)_sendversionrequest,to);
 }
 
 
@@ -293,7 +304,7 @@ void Send_Initial_Presence_Helper()
 //Context: HELPER
 void _enterconference(MUC_ENTER_PARAM *param)
 {
-  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'/><history maxstanzas='%02d'/></presence>";
+  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'/><history maxstanzas='%d'/></presence>";
   char* magic = malloc(1024);
   sprintf(magic,magic_ex, My_JID_full, param->room_name,param->room_nick, param->mess_num);
   SendAnswer(magic);
@@ -310,7 +321,15 @@ void _enterconference(MUC_ENTER_PARAM *param)
 void Enter_Conference(char *room, char *roomnick, char N_messages)
 {
   // Добавляем контакт конференции в ростер
-  CList_AddContact(room,room, SUB_BOTH, 0, 129);
+  CLIST* Conference = CList_FindContactByJID(room);
+  if(!Conference)
+  {
+    CList_AddContact(room,room, SUB_BOTH, 0, 129);
+  }
+  else
+  {
+    Conference->res_list->status=PRESENCE_ONLINE;
+  }
   
   // Готовим структуру для передачи в HELPER
   MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
@@ -343,6 +362,8 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
   }
 }
 
+
+//Context: HELPER
 void _leaveconference(char *conf_jid)
 {
   char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'/>";
@@ -375,19 +396,25 @@ void Leave_Conference(char* room)
   }
 
   MUC_ITEM* m_ex2 = muctop;
+  if(muctop==m_ex)
+  {
+    mfree(m_ex->conf_jid);
+    muctop=m_ex->next;
+    mfree(m_ex);
+  }
   while(m_ex2)
   {
     if(m_ex2->next==m_ex)
     {
       m_ex2->next = m_ex->next;   // Выбиваем из цепочки
-      mfree(m_ex->conf_jid);// не нужно, уничтожим в SUBPROC
+      mfree(m_ex->conf_jid);
       mfree(m_ex);
       break;
     }
     m_ex2 = m_ex2->next;
   }  
-  
-mfree(utf8_room);    
+  mfree(utf8_room); 
+  ShowMSG(1,(int)"Выход из MUC выполнен"); 
 }
 
 
@@ -559,6 +586,38 @@ if(!strcmp(gres,iqtype))
       FillRoster(query->subnode);
     }    
   }
+  
+  if(!strcmp(id,vreq_id))   // Запрос версии (ответ)
+  {
+    XMLNode* query;
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+    if(!q_type)return;
+    if(!strcmp(q_type,IQ_VERSION))
+    {
+      char no_os[]="(нет данных)";
+      char* vers_os_str;
+      XMLNode *cl_name=XML_Get_Child_Node_By_Name(query, "name");
+      XMLNode *cl_version=XML_Get_Child_Node_By_Name(query, "version");
+      XMLNode *cl_os=XML_Get_Child_Node_By_Name(query, "os");
+      if(cl_os)
+      {
+        vers_os_str = cl_os->value;
+      }
+      else
+      {
+        vers_os_str=no_os;
+      }
+      //Формируем сообщение
+      char *reply=malloc(512);
+      snprintf(reply, 512,"Версия клиента:\nИмя:%s\nВерсия:%s\nОС:%s",cl_name->value, cl_version->value, vers_os_str);
+      CList_AddMessage(from, MSG_SYSTEM, reply);      
+      ShowMSG(1,(int)reply);
+      mfree(reply);
+    }    
+    
+  }  
+
 }
 
 // Обработка  Iq type = set

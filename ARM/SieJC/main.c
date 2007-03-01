@@ -21,7 +21,7 @@
 5. Запись разобранных порций XML-потока (файл xml_packet.txt)
 6. Приём сообщений
 7. Передача сообщений
-8. Кход в конференцию (siepatchdb@conference.jabber.ru, для остального надо писать UI)
+8. Вход в конференцию
 9. Смена своего статуса
 
 Управление: логиниться к серверу клиент будет автоматически,
@@ -53,8 +53,8 @@ extern const char USERNAME[];
 extern const char PATH_TO_PIC[];  
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
-const char VERSION_NAME[]= "Siemens Native Jabber Client";
-const char VERSION_VERS[] = "0.9.1";
+const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
+const char VERSION_VERS[] = "0.9.2";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD

@@ -105,8 +105,7 @@ void inp_ghook(GUI *gui, int cmd)
      Leave_Conference(room->JID);
      CList_MakeAllResourcesOFFLINE(room);
      Terminate = 0;
-     mfree(body);
-     ShowMSG(1,(int)"Выход из MUC выполнен");     
+     mfree(body);    
      return;
    }
    IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));

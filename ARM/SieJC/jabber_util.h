@@ -11,7 +11,6 @@
 #include "xml_parser.h"
 
 #define MAX_MSG_LEN 4096
-//#define MAX_MSG_LEN 128 // Ага! Мало? Мне тоже мало! Позже пофиксим...
 
 #define PRES_COUNT 12
 /*
@@ -43,6 +42,10 @@ void Send_Auth();
 */
 // Context: HELPER
 void Send_Presence(PRESENCE_INFO *pr_info);
+
+// Послать запрос о версии пользователю с указанным JID
+// JID указываем в ANSI-кодировке
+void Send_Version_Request(char *dest_jid);
 
 /*
   Послать запрос ростера

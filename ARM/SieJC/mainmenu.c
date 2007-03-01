@@ -4,6 +4,7 @@
 #include "mainmenu.h"
 #include "status_change.h"
 #include "MUC_Enter_UI.h"
+#include "cont_menu.h"
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
@@ -47,7 +48,7 @@ int icon[]={0x3DB,0};
 int about_icon[]={0x4DB,0};
 int dummy_icon[] = {0x50E,0};
 
-HEADER_DESC menuhdr={0,0,131,21,NULL,(int)"Μενώ",0x7FFFFFFF};
+HEADER_DESC menuhdr={0,0,131,21,NULL,(int)"Μενώ",LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
@@ -59,7 +60,7 @@ MENUITEM_DESC menuitems[N_ITEMS]=
   {about_icon,(int)"Ξα ύλότε...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[N_ITEMS]={(void *)Dummy, (void *)DispStatusChangeMenu, (void *)Disp_MUC_Enter_Dialog, (void *) AboutDlg};
+void *menuprocs[N_ITEMS]={(void *)Disp_Contact_Menu, (void *)DispStatusChangeMenu, (void *)Disp_MUC_Enter_Dialog, (void *) AboutDlg};
 
 SOFTKEY_DESC mmenu_sk[]=
 {
