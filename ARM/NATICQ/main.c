@@ -84,9 +84,10 @@ void Play(const char *fname)
   WSHDR* sndFName=AllocWS(128);
   char s[128];
   const char *p=strrchr(fname,'\\')+1;
-  str_2ws(sndFName,p,128);
-  strncpy(s,fname,p-fname);
-  str_2ws(sndPath,s,128);
+  str_2ws(sndFName,p,strlen(p));
+  strncpy(s,fname,strlen(fname)-strlen(p));
+  s[strlen(fname)-strlen(p)]=0x00;
+  str_2ws(sndPath,s,strlen(fname)-strlen(p));
   if ((!IsCalling())&&Is_Sounds_Enabled)
   {
     zeromem(&_sfo1,sizeof(PLAYFILE_OPT));
