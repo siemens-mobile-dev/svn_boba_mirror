@@ -397,6 +397,9 @@
 0760: 0xA0CECBA3 ; 1D8: __thumb int EDIT_IsMarkModeActive(void *gui);
 0764: 0xA0CECBB7 ; 1D9: __thumb int EDIT_GetMarkedText(void *gui,WSHDR *dest);
 
+0768: 0xA0A6F473 ; 1DA: __thumb void SendSMS(WSHDR *ws,const char *num,int cepid,int msg,int flag);
+076C: 0xA87CBC00 ; 81DB: __arm PDU *IncommingPDU(void);
+
 #pragma disable old_equal_ff
 +0
 
