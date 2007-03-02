@@ -1,7 +1,9 @@
 #include "..\inc\swilib.h"
 #define number 8
 
-
+#ifdef NEWSGOLD
+#define PNG_16_SUPPORT
+#endif
 
 void* xmalloc(int x,int n)
 {
@@ -87,18 +89,17 @@ __arm IMGHDR* create_imghdr(const char* fname)
     png_set_palette_to_rgb(png_ptr);
   
   if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-    png_set_gray_to_rgb(png_ptr);
-  
-  if (color_type == PNG_COLOR_TYPE_GRAY)
-    png_set_gray_1_2_4_to_8(png_ptr);  
-  
+    
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(png_ptr);
   
   if (color_type != PNG_COLOR_TYPE_GRAY)
     png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
   else 
+  {
+    png_set_gray_to_rgb(png_ptr);
     png_set_invert_mono(png_ptr);
+  }
   
   png_read_update_info(png_ptr, info_ptr);
   
@@ -107,7 +108,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   pp->row=malloc(rowbytes);
   pp->img_h=img_hc=malloc(sizeof(IMGHDR));
   if (color_type != PNG_COLOR_TYPE_GRAY)
-#ifdef NEWSGOLD
+#ifdef PNG_16_SUPPORT
   {
     unsigned short *iimg=(unsigned short *)(pp->img=malloc(width*height*2));
     for (unsigned int y = 0; y<height; y++)
@@ -152,7 +153,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
 #endif
   else
   {
-    int rowc_w=width%8?width/8+1:width/8;
+    int rowc_w=width&7?(width>>3)+1:width>>3;
     int size=height*rowc_w;
     unsigned char *iimg=(unsigned char *)(pp->img=malloc(size));
     zeromem(iimg,size);
@@ -162,7 +163,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
       for (unsigned int x = 0; x<width; x++)
       {
         if (pp->row[x])
-          iimg[x/8]=iimg[x/8]|(1<<(7-x%8));
+          iimg[x>>3]|=(0x80>>(x&7));
       }
       iimg+=rowc_w;
     }
