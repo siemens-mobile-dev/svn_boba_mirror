@@ -48,16 +48,16 @@ int mmenusoftkeys[]={0,1,2};
 
 MENUITEM_DESC menuitems[2]=
 {
-  {NULL,(int)"Статус...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Status",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"About",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *menuprocs[3]={(void *)DispStatusChangeMenu, (void *) AboutDlg};
 
 SOFTKEY_DESC mmenu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)"Select"},
+  {0x0001,0x0000,(int)"Back"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 

@@ -29,23 +29,14 @@ void patch_input(INPUTDIA_DESC* inp)
 
 
 extern int CurrentStatus;
+extern void set_my_status(void);
 extern  int S_ICONS[11];
-
-int StatChange_Menu_ID;
 
 void Change_Status(char status)
 {
     CurrentStatus = status;
-    TPKT *p;
-    p=malloc(sizeof(PKT)+1);
-    p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
-    p->pkt.type=T_MY_STATUS_CH; // Тип пакета: изменение статуса
-    p->pkt.data_len=1;          // Длина пакета: 1 байт
-    memcpy(p->data, &status, 1);
-
-    SUBPROC((void *)SendAnswer,0,p);
-
-    GeneralFunc_flag1(StatChange_Menu_ID,1);    
+    set_my_status();
+    GeneralFuncF1(1); 
 }
 ///////////////////////////////////////////////////////////////////////////////
 // Пока так, ждём динамическую менюшку с радиобаттонами... :)
@@ -84,7 +75,7 @@ void Ch_Invisible()
   Change_Status(IS_INVISIBLE);
 }
 
-unsigned short GetStatusIndexInMenu(unsigned short status)
+unsigned int GetStatusIndexInMenu(unsigned int status)
 {
   switch(status)
   {
@@ -102,19 +93,19 @@ unsigned short GetStatusIndexInMenu(unsigned short status)
 
 #define STATUSES_NUM 7
 
-HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)"Выбор статуса",LGP_NULL};
+HEADER_DESC st_menuhdr={0,0,0,0,NULL,(int)"Change Status",LGP_NULL};
 
 int st_menusoftkeys[]={0,1,2};
 
 MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
-  {NULL,(int)"Он-лайн",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Отсутствую",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Недоступен",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},  
-  {NULL,(int)"DND",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Занят",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Готов болтать",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Online",        LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Away",          LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Not Available", LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},  
+  {NULL,(int)"Do Not Disturb",LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Occupied",      LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Free For Chat", LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Invisible",     LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
 };
 
 void *st_menuprocs[STATUSES_NUM]={
@@ -129,8 +120,8 @@ void *st_menuprocs[STATUSES_NUM]={
 
 SOFTKEY_DESC st_menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)"Select"},
+  {0x0001,0x0000,(int)"Back"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -171,5 +162,5 @@ void DispStatusChangeMenu()
   st_menuitems[6].icon = S_ICONS+IS_INVISIBLE;    
   st_menuhdr.icon=S_ICONS+CurrentStatus;
   patch_header(&st_menuhdr);
-  StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,GetStatusIndexInMenu(CurrentStatus),STATUSES_NUM,0,0);
+  CreateMenu(0,0,&st_tmenu,&st_menuhdr,GetStatusIndexInMenu(CurrentStatus),STATUSES_NUM,0,0);
 }

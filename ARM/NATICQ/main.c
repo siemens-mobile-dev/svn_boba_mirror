@@ -75,21 +75,20 @@ extern const char sndMsgSent[];
 extern const unsigned int sndVolume;
 
 
-
-
 void Play(const char *fname)
 {
-  PLAYFILE_OPT _sfo1;
-  WSHDR* sndPath=AllocWS(128);
-  WSHDR* sndFName=AllocWS(128);
-  char s[128];
-  const char *p=strrchr(fname,'\\')+1;
-  str_2ws(sndFName,p,strlen(p));
-  strncpy(s,fname,strlen(fname)-strlen(p));
-  s[strlen(fname)-strlen(p)]=0x00;
-  str_2ws(sndPath,s,strlen(fname)-strlen(p));
   if ((!IsCalling())&&Is_Sounds_Enabled)
   {
+    PLAYFILE_OPT _sfo1;
+    WSHDR* sndPath=AllocWS(128);
+    WSHDR* sndFName=AllocWS(128);
+    char s[128];
+    const char *p=strrchr(fname,'\\')+1;
+    str_2ws(sndFName,p,128);
+    strncpy(s,fname,p-fname);
+    s[p-fname]='\0';
+    str_2ws(sndPath,s,128);
+    
     zeromem(&_sfo1,sizeof(PLAYFILE_OPT));
     _sfo1.repeat_num=1;
     _sfo1.time_between_play=0;
@@ -110,9 +109,9 @@ void Play(const char *fname)
     PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
 #endif
 #endif
+    FreeWS(sndPath);
+    FreeWS(sndFName);
   }
-  FreeWS(sndPath);
-  FreeWS(sndFName);
 }
 
 //===================================================================
@@ -907,12 +906,13 @@ void ask_my_info(void)
 
 void set_my_status(void)
 {
+  char status=CurrentStatus;
   TPKT *p;
   p=malloc(sizeof(PKT)+1);
   p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
   p->pkt.type=T_MY_STATUS_CH; // Тип пакета: изменение статуса
   p->pkt.data_len=1;          // Длина пакета: 1 байт
-  memcpy(p->data, &CurrentStatus, 1);
+  memcpy(p->data, &status, 1);
   SUBPROC((void *)SendAnswer,0,p);
 }
 
@@ -1915,30 +1915,34 @@ void CreateEditChat(CLIST *t)
 
 //-----------------------------------------------------------------------------
 #define EC_MNU_MAX 7
-
+  
 void Quote(void)
 {
   EDITCONTROL ec;
   EDITCONTROL ec_ed;
   WSHDR *ed_ws;
-  WSHDR *ec_ws;
   if (!q_data) return;
   int q_n=EDIT_GetFocus(q_data);
   ExtractEditControl(q_data,q_n,&ec);
   ExtractEditControl(q_data,edchat_answeritem,&ec_ed);
-  ed_ws=AllocWS(ec.pWS->wsbody[0]+ec_ed.pWS->wsbody[0]+3);
-  
-  ec_ws=AllocWS(ec.pWS->wsbody[0]);
+  ed_ws=AllocWS(ec_ed.maxlen);
   if (EDIT_IsMarkModeActive(q_data))
   {
-    EDIT_GetMarkedText(q_data,ec_ws);
+    EDIT_GetMarkedText(q_data,ed_ws);
   }
   else
   {
-    wstrcpy(ec_ws,ec.pWS);
+    wstrcpy(ed_ws,ec.pWS);
   }
-  wsprintf(ed_ws,"%w> %w\n",ec_ed.pWS,ec_ws);
-  FreeWS(ec_ws);
+  int ed_pos=0;
+  do
+  {
+    ed_pos++;
+    wsInsertChar(ed_ws,'>',ed_pos++);
+    wsInsertChar(ed_ws,' ',ed_pos);
+  }
+  while((ed_pos=wstrchr(ed_ws,ed_pos,'\r'))!=0xFFFF);
+  wsAppendChar(ed_ws,'\r');
   CutWSTR(ed_ws,ec_ed.maxlen);
   EDIT_SetFocus(q_data,edchat_answeritem);
   EDIT_SetTextToFocused(q_data,ed_ws);
