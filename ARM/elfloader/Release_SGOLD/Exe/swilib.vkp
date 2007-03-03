@@ -74,7 +74,7 @@
 0068: 0xA16EF459 ; 01A: __thumb char * strcpy (char *dest,const char *source);
 006C: 0xA16EF4D9 ; 01B: __thumb unsigned int strlen(char *);
 0070: 0xA0C8D245 ; 01C: __thumb void  wsAppendChar (void *WSHDR,int wchar);
-
+0074: 0xA0C8D1F9 ; 01D: __thumb int wsInsertChar(void *WSHDR,int wchar, int pos);
 0078: 0xA0CB75B5 ; 01E: __thumb IMGHDR *GetPITaddr(int num);
 0084: 0xA0CB76E9 ; 021: __thumb int GetImgHeight(int picture);
 0088: 0xA0CB76F9 ; 022: __thumb int GetImgWidth(int picture);
@@ -399,6 +399,8 @@
 
 0768: 0xA0A6F473 ; 1DA: __thumb void SendSMS(WSHDR *ws,const char *num,int cepid,int msg,int flag);
 076C: 0xA87CBC00 ; 81DB: __arm PDU *IncommingPDU(void);
+0770: 0xA0C8CCA5 ; 1DC: __thumb short wstrchr(WSHDR *ws,unsigned int start_pos,unsigned int wchar);
+0774: 0xA0C8CCC7 ; 1DD: __thumb short wstrrchr(WSHDR *ws,unsigned int max_pos,unsigned int wchar);
 
 #pragma disable old_equal_ff
 +0
