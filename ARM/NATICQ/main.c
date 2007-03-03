@@ -1418,9 +1418,7 @@ sizeof(MAIN_CSM),
 
 void UpdateCSMname(void)
 {
-  WSHDR *ws=AllocWS(256);
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"NATICQ",ws);
-  FreeWS(ws);
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"NATICQ");
 }
 
 
@@ -1922,6 +1920,7 @@ void Quote(void)
   EDITCONTROL ec;
   EDITCONTROL ec_ed;
   WSHDR *ed_ws;
+  WSHDR *ws;
   if (!q_data) return;
   int q_n=EDIT_GetFocus(q_data);
   ExtractEditControl(q_data,q_n,&ec);
@@ -1944,10 +1943,14 @@ void Quote(void)
   }
   while((ed_pos=wstrchr(ed_ws,ed_pos,'\r'))!=0xFFFF);
   wsAppendChar(ed_ws,'\r');
-  CutWSTR(ed_ws,ec_ed.maxlen);
-  EDIT_SetFocus(q_data,edchat_answeritem);
-  EDIT_SetTextToFocused(q_data,ed_ws);
+  ws=AllocWS(ec_ed.pWS->wsbody[0]+ed_ws->wsbody[0]);
+  wstrcpy(ws,ec_ed.pWS); 
+  wstrcat(ws,ed_ws);
   FreeWS(ed_ws);
+  CutWSTR(ws,ec_ed.maxlen);
+  EDIT_SetFocus(q_data,edchat_answeritem);
+  EDIT_SetTextToFocused(q_data,ws);
+  FreeWS(ws);
   GeneralFuncF1(1);
 }
 
