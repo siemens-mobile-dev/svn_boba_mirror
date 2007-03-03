@@ -20,9 +20,13 @@ __root const CFG_HDR cfghdr2={CFG_STR_UTF8,"History path",0,63};
 __root const char HIST_PATH[64]="0:\\ZBin\\NatICQ\\history";
 #endif
 
+__root const CFG_HDR cfghdr2_1={CFG_CBOX,"Enable logs",0,2};
+__root const int LOG_ALL = 1;
+__root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
+
 __root const CFG_HDR cfghdr2_0={CFG_CBOX,"Log status changes",0,2};
 __root const int LOG_STATCH = 0;
-__root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
+__root const CFG_CBOX_ITEM cfgcbox1_1[2]={"No","Yes"};
 
 #ifdef NEWSGOLD
 __root const CFG_HDR cfghdr3={CFG_STR_UTF8,"Offline icon",0,63};
@@ -119,6 +123,9 @@ __root const char sndMsgSent[64]="0:\\ZBin\\NatICQ\\Sounds\\sndMsgSent.wav";
 __root const CFG_HDR cfghdr18={CFG_UINT,"sndVolume",0,6};
 __root const unsigned int sndVolume=6;
 
+__root const CFG_HDR cfghdr18_1={CFG_UINT,"Vibra power",0,100};
+__root const unsigned int vibraPower=100;
+
 __root const CFG_HDR cfghdr19={CFG_UINT,"Idle icon X-pos",0,1000};
 __root const unsigned int IDLEICON_X=0;
 
@@ -127,3 +134,4 @@ __root const unsigned int IDLEICON_Y=50;
 
 __root const CFG_HDR cfghdr21={CFG_UINT,"FontSize",0,6};
 __root const unsigned int ED_FONT_SIZE=1;
+

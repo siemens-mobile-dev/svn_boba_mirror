@@ -3,7 +3,7 @@
 #include "history.h"
 
 extern const char HIST_PATH[64];
-
+extern const int LOG_ALL;
 /*
   Добавлет строку в историю контакта CLIST
 */
@@ -11,8 +11,10 @@ void Add2History(CLIST *CListEx, char *header, char *message)
 {
   volatile int hFile;
   unsigned int io_error = 0;
+  const char delim[] = "\r\n----------\r\n";
+  
+  if (!LOG_ALL) return;
   char *fullname = malloc(128);
-  char delim[] = "\r\n----------\r\n";
   unsigned int delim_len = strlen(delim);
   unsigned int hdr_len = strlen(header);
   unsigned int msg_len = strlen(message);
@@ -42,8 +44,8 @@ void Add2History(CLIST *CListEx, char *header, char *message)
     ShowMSG(1,(int)q); 
     mfree(q);
   }
-  mfree(fullname);
   mfree(buffer);
+  mfree(fullname);
 }
 
 void GetStatusById(char *buffer, int id)

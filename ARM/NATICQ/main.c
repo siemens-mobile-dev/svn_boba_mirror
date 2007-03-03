@@ -878,7 +878,8 @@ void start_vibra(void)
   void stop_vibra(void);
   if((Is_Vibra_Enabled)&&(!IsCalling()))
   {
-    SetVibration(100);
+    extern const unsigned int vibraPower;
+    SetVibration(vibraPower);
     GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
   }  
 }
