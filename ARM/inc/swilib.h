@@ -603,7 +603,6 @@ typedef struct
 #define ECT_TIME 11
 
 //EditControlFlags
-
 #define ECF_NORMAL_STR 0
 #define ECF_SKIP 4
 #define ECF_ONLY_APPEND 8
@@ -2350,3 +2349,8 @@ __swi __arm short wstrchr(WSHDR *ws,unsigned int start_pos,unsigned int wchar);
 __swi __arm short wstrrchr(WSHDR *ws,unsigned int max_pos,unsigned int wchar);
 //thumb
 //pattern=??,B5,??,E0,??,68,??,00,??,5B,??,42,??,D1,??,1C,??,BD,??,39,??,04,??,0C,??,29,??,D1,??,48,??,BD
+
+#pragma swi_number=0x1DE
+__swi __arm int EDIT_SetTextToEditControl(void *gui,int n,WSHDR *ws);
+//thumb
+//pattern=
