@@ -235,15 +235,6 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
       </x>
     </message>
 */
- 
-  // Извратимся с JID 
-//  char IsNonLatin=0; // Нет латинских символов
-//  int jlen=strlen(jid);
-//  for(int i=0;i<jlen;i++)
-//  {
-//    if(*(jid+i)>127)IsNonLatin=1;
-//  }
-
   char* utf8_jid = ANSI2UTF8(jid, 128);
   //mess->body = Correct_UTF8_String(mess->body);
   char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body></message>";
@@ -518,9 +509,6 @@ void FillRoster(XMLNode* items)
    rostEx=rostEx->next;
    i++;
   }
-  // Через секунду запросим презенсы
-  extern GBSTMR TMR_Send_Presence;
-  GBS_StartTimerProc(&TMR_Send_Presence, TMR_SECOND*1, Send_Presence_MMIStub);
 }
 
 /*
@@ -558,6 +546,7 @@ if(!strcmp(gget,iqtype)) // Iq type = get
     {
         // Создаем переменные, чтобы в них записать данные 
         // и безопасно уничтожить в HELPER
+
       char* loc_id = NULL;
       if(id)
         {
@@ -567,6 +556,7 @@ if(!strcmp(gget,iqtype)) // Iq type = get
         char* loc_from=malloc(strlen(from)+1);
         strcpy(loc_from,from);
         SUBPROC((void*)Report_VersionInfo,loc_id, loc_from);
+     
     }
   }
 }
@@ -592,6 +582,9 @@ if(!strcmp(gres,iqtype))
     {
       // jabber:iq:roster
       FillRoster(query->subnode);
+        // Через секунду запросим презенсы
+      extern GBSTMR TMR_Send_Presence;
+      GBS_StartTimerProc(&TMR_Send_Presence, TMR_SECOND*1, Send_Presence_MMIStub);
     }    
   }
   
@@ -670,6 +663,7 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
 void Process_Presence_Change(XMLNode* node)
 {
   CONF_PRIV priv;
+  char Req_Set_Role=0;
   char* from = XML_Get_Attr_Value("from",node->attr);
   if(!from)return;
   
@@ -735,18 +729,38 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
       // Тут можно обрабатывать события входа/выхода в конфу
       // Ибо сообщается, кто вошёл (модер ли, админ...)
       XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
-      if(status==PRESENCE_ONLINE) // Вход
+      if(status!=PRESENCE_OFFLINE) // Вход с любым статусом
       {
         TRESOURCE* ResEx = CList_IsResourceInList(from);
         char* affiliation = XML_Get_Attr_Value("affiliation", item->attr);
         char* role =  XML_Get_Attr_Value("role", item->attr);
+        priv.aff = (JABBER_GC_AFFILIATION)GetAffRoleIndex(affiliation);
+        priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role); 
+        
         if(ResEx)
         {
-          sprintf(r, "%s теперь %s и %s", nick, affiliation, role);
+          if(!(ResEx->muc_privs.aff==priv.aff && ResEx->muc_privs.role==priv.role))
+          {
+            sprintf(r, "%s теперь %s и %s [%d->%d, %d->%d]", nick, affiliation, role, ResEx->muc_privs.aff, priv.aff, ResEx->muc_privs.role, priv.role);
+            Req_Set_Role = 1;
+          }
+          else
+          {
+            if(msg)
+            {
+              sprintf(r, "%s сменил статус на %s (%s)", nick, PRESENCES[status], msg);
+            }
+            else
+            {
+              sprintf(r, "%s сменил статус на %s", nick, PRESENCES[status]);
+            }
+          }
         }
-        else sprintf(r, "%s присоединился как %s и %s", nick, affiliation, role);
-        priv.aff = (JABBER_GC_AFFILIATION)GetAffRoleIndex(affiliation);
-        priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role);        
+        else
+        {
+          sprintf(r, "%s присоединился как %s и %s", nick, affiliation, role);      
+          Req_Set_Role = 1;
+        }
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
       
@@ -794,7 +808,7 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
     
     }  
   CList_AddResourceWithPresence(from, status, msg);
-  CList_MUC_SetRole(from, priv);
+  if(Req_Set_Role) CList_MUC_SetRole(from, priv);
 }
 
 MESS_TYPE Get_Message_Type(char* mess_type_str)
@@ -829,10 +843,6 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
   char val[20];
   char aff[]="affiliation";
   char role[]="role";
-/*
-const char* JABBER_AFFS[] = {"none", "outcast", "member", "admin", "owner"};
-const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
-*/
   switch(cmd)
   {
   case ADM_KICK:
@@ -841,10 +851,23 @@ const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
       strcpy(val,JABBER_ROLS[ROLE_NONE]);
       break;
     }
+  case ADM_VOICE_REMOVE:
+    {
+      strcpy(it,role);
+      strcpy(val,JABBER_ROLS[ROLE_VISITOR]);
+      break;
+    }    
+  case ADM_VOICE_GRANT:
+    {
+      strcpy(it,role);
+      strcpy(val,JABBER_ROLS[ROLE_PARTICIPANT]);
+      break;
+    }    
+
   case ADM_BAN:
     {
       strcpy(it,aff);
-      strcpy(val,JABBER_AFFS[AFFILIATION_NONE]);
+      strcpy(val,JABBER_AFFS[AFFILIATION_OUTCAST]);
       break;
     }
     
@@ -853,8 +876,6 @@ const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
   snprintf(payload, 1023, payload_tpl, utf8_roomjid, it, val, reason);
 //  ShowMSG(1,(int)payload);
   SUBPROC((void*)_mucadmincmd, utf8_roomname, payload);
-//  mfree(payload);
-//  mfree(utf8_roomname);
   mfree(utf8_roomjid);
 }
 
@@ -878,7 +899,9 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       mfree(m);
     }
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
-    start_vibra(1);
+    extern volatile int vibra_count;
+    vibra_count=1;
+    start_vibra();
   }  
 }
 

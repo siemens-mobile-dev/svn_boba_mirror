@@ -54,7 +54,7 @@ extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.3";
+const char VERSION_VERS[] = "0.9.4";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -90,6 +90,10 @@ volatile int is_gprs_online=1;
 
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
+#ifndef NEWSGOLD
+  GBSTMR redraw_tmr;
+#define Redraw_Time TMR_SECOND*5
+#endif
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -136,9 +140,8 @@ char My_JID[128];
 char My_JID_full[128];
 
 
-void start_vibra(int lvibra_count)
+void start_vibra()
 {
-  vibra_count = lvibra_count;
   void stop_vibra(void);
   if(Is_Vibra_Enabled)
   {
@@ -371,12 +374,11 @@ void Process_Decoded_XML(XMLNode* node)
       Process_Incoming_Message(nodeEx);
     }
 //----------------
-//----------------
     if(!strcmp(nodeEx->name,"iq"))
     {
       Process_Iq_Request(nodeEx);
     }
-
+//----------------
     if(!strcmp(nodeEx->name,"stream:stream"))
     {
       connect_state = 2;
@@ -438,7 +440,10 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);    
+#ifdef NEWSGOLD
     REDRAW();
+#else
+#endif    
 }
 
 
@@ -581,11 +586,30 @@ void Dump_PhoneInfo()
   }  
 }
 
+#ifndef NEWSGOLD
+volatile char IsRedrawTimerStarted=0;
+
+void SGOLD_RedrawProc()
+{
+  DirectRedrawGUI();
+  extern void SGOLD_RedrawProc(void);
+  GBS_StartTimerProc(&redraw_tmr, Redraw_Time, SGOLD_RedrawProc);
+}
+
+void SGOLD_RedrawProc_Starter()
+{
+  if(IsRedrawTimerStarted)return;
+  IsRedrawTimerStarted=1;
+  SGOLD_RedrawProc();//GBS_StartTimerProc(&redraw_tmr, Redraw_Time, (void*)SGOLD_RedrawProc);
+}
+#endif
 
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
-
+#ifndef NEWSGOLD
+  SGOLD_RedrawProc_Starter();
+#endif
   //DirectRedrawGUI();
   if(msg->gbsmsg->msg==LONG_PRESS)
   {
@@ -756,6 +780,9 @@ void maincsm_onclose(CSM_RAM *csm)
 {
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&TMR_Send_Presence);
+#ifndef NEWSGOLD
+  GBS_DelTimer(&redraw_tmr);
+#endif  
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
   CList_Destroy();
@@ -849,7 +876,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         connect_state=0;
         Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
-        start_vibra(4);
+        vibra_count=4;
+        start_vibra();
         REDRAW();
         //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
         break;

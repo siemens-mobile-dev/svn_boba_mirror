@@ -10,7 +10,7 @@
 
 #include "main.h"
 
-#define CHAR_ON_LINE 22
+#define CHAR_ON_LINE 20
 
 #define CURSOR 6                 // ad: цвет курсора
 

@@ -435,6 +435,7 @@ void CList_MUC_SetRole(char* jid, CONF_PRIV priv)
   if(ResEx->entry_type!=T_CONF_NODE)return;
   ResEx->muc_privs.aff=priv.aff;
   ResEx->muc_privs.role=priv.role;
+  //ShowMSG(1,(int)"Found OK");
 }
 
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
@@ -642,12 +643,21 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
   if(!ResEx)return;
   char msg_ex[]="JID: %s\nСтатус:%s";
   char* msg = malloc(1024);
+  extern const char* JABBER_AFFS[];
+  extern const char* JABBER_ROLS[];
   if(ResEx->status_msg)
   {
     ShowMSG(0,(int)ResEx->status_msg);
   }
   snprintf(msg,1024,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
   ShowMSG(0, (int)msg);
+
+  if(ResEx->entry_type==T_CONF_NODE)
+  {
+    snprintf(msg,1024,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);
+    ShowMSG(0, (int)msg);
+  }
+
   mfree(msg);
 }
 

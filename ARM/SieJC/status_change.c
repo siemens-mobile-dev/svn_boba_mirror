@@ -102,7 +102,11 @@ void ed1_ghook(GUI *data, int cmd)
   if (cmd==7)
   {
     //OnRun
+#ifdef NEWSGOLD    
     SetSoftKey(data,&stchsk,0);
+#else
+    SetSoftKey(data,&stchsk,2);
+#endif     
   }
   
   if(cmd==0x0A)   // Фокусирование

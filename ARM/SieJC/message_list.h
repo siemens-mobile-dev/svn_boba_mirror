@@ -20,7 +20,8 @@
 #define MESSAGEWIN_MY_BGCOLOR 0
 //входящие
 #define MESSAGEWIN_CH_BGCOLOR 22
-#define MESSAGEWIN_GHAT_BGCOLOR 13
+#define MESSAGEWIN_GHAT_BGCOLOR_1 13
+#define MESSAGEWIN_GHAT_BGCOLOR_2 10
 #define MESSAGEWIN_SYS_BGCOLOR 0
 #define MESSAGEWIN_STATUS_BGCOLOR 0
 
@@ -56,6 +57,7 @@
 typedef struct
 {
   MESS_TYPE mtype;
+  unsigned short log_mess_number;
   WSHDR* mess;
   void* next;
 }DISP_MESSAGE;

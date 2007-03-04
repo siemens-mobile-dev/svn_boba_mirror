@@ -129,5 +129,5 @@ typedef struct
 
 void SendAnswer(char *str);
 
-void start_vibra(int lvibra_count);
+void start_vibra();
 #endif

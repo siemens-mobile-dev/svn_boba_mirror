@@ -70,7 +70,11 @@ void inp_ghook(GUI *gui, int cmd)
   }
   if (cmd==7)
   {
+#ifdef NEWSGOLD
     SetSoftKey(gui,&sk,0);    
+#else
+    SetSoftKey(gui,&sk,2);
+#endif   
     ExtractEditControl(gui,1,&ec);    
     wstrcpy(ws_eddata,ec.pWS);
   }
@@ -256,11 +260,14 @@ void mGUI_onRedraw(GUI *data)
       switch(ml->mtype)
       {
       case MSG_ME:{MsgBgClolor=MESSAGEWIN_MY_BGCOLOR;break;}        
-      case MSG_CHAT:{MsgBgClolor=MESSAGEWIN_CH_BGCOLOR;break;}              
-      case MSG_GCHAT:{MsgBgClolor=MESSAGEWIN_GHAT_BGCOLOR;break;}                          
+      case MSG_CHAT:{MsgBgClolor=MESSAGEWIN_CH_BGCOLOR;break;}                                        
       case MSG_SYSTEM:{MsgBgClolor=MESSAGEWIN_SYS_BGCOLOR;break;}                    
-      case MSG_STATUS:{MsgBgClolor=MESSAGEWIN_STATUS_BGCOLOR;break;}                          
-      
+      case MSG_STATUS:{MsgBgClolor=MESSAGEWIN_STATUS_BGCOLOR;break;}                             
+      case MSG_GCHAT:
+        {
+          MsgBgClolor=ml->log_mess_number %2==0? MESSAGEWIN_GHAT_BGCOLOR_1 : MESSAGEWIN_GHAT_BGCOLOR_2;
+          break;
+        }
       }
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
 		   GetPaletteAdrByColorIndex(MsgBgClolor),
@@ -488,6 +495,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
         ascii2ws(Disp_Mess_Ex->mess, msg_buf);
         zeromem(msg_buf,CHAR_ON_LINE+1);
         Disp_Mess_Ex->mtype = MessEx->mtype;
+        Disp_Mess_Ex->log_mess_number=parsed_counter;
         if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
         else
         {

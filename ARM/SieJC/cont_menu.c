@@ -40,7 +40,9 @@ int cmdummy_icon[] = {0x50E,0};
 #define MI_CONF_LEAVE       1
 #define MI_CONF_KICK_THIS   2
 #define MI_CONF_BAN_THIS    3
-#define MI_QUERY_VERSION    4
+#define MI_CONF_VREJ_THIS   4
+#define MI_CONF_VGR_THIS    5
+#define MI_QUERY_VERSION    6
 
 char Menu_Contents[MAX_ITEMS-1];
 
@@ -114,12 +116,16 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       break;
     }
   case MI_CONF_KICK_THIS: 
-  case MI_CONF_BAN_THIS: 
+  case MI_CONF_BAN_THIS:
+  case MI_CONF_VREJ_THIS:  
+  case MI_CONF_VGR_THIS:
     {
       CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
       char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
       if(Menu_Contents[i]==MI_CONF_KICK_THIS)admin_cmd=ADM_KICK;
       if(Menu_Contents[i]==MI_CONF_BAN_THIS)admin_cmd=ADM_BAN;
+      if(Menu_Contents[i]==MI_CONF_VREJ_THIS)admin_cmd=ADM_VOICE_REMOVE;
+      if(Menu_Contents[i]==MI_CONF_VGR_THIS)admin_cmd=ADM_VOICE_GRANT;
       MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
       break;
     }    
@@ -178,11 +184,22 @@ void contact_menu_iconhndl(void *data, int curitem, int *unk)
       strcpy(test_str,"Бан");
       break;
     }  
+  case MI_CONF_VREJ_THIS: 
+    {
+      strcpy(test_str,"Отнять голос");
+      break;
+    }  
+  case MI_CONF_VGR_THIS: 
+    {
+      strcpy(test_str,"Дать голос");
+      break;
+    }  
+    
   case MI_QUERY_VERSION: 
     {
       strcpy(test_str,"Версия клиента");
       break;
-    }   
+    }    
   }
   //ShowMSG(1,(int)test_str);
   ws=AllocMenuWS(data,strlen(test_str));
@@ -228,11 +245,18 @@ void Disp_Contact_Menu()
   }
 
   if(Act_contact->entry_type==T_CONF_NODE)
-//  if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
   {
-    Menu_Contents[n_items++]=MI_CONF_KICK_THIS;
-    Menu_Contents[n_items++]=MI_CONF_BAN_THIS;    
-  }   
+    if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
+    {
+      Menu_Contents[n_items++]=MI_CONF_KICK_THIS;
+      Menu_Contents[n_items++]=MI_CONF_BAN_THIS;    
+      if(Act_contact->muc_privs.role==ROLE_VISITOR)
+      {
+        Menu_Contents[n_items++]=MI_CONF_VGR_THIS;
+      }
+      else Menu_Contents[n_items++]=MI_CONF_VREJ_THIS;
+    }
+  }
   
   if(Act_contact->entry_type!=T_CONF_ROOT)
   {
