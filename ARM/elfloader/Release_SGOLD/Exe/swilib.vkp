@@ -401,6 +401,7 @@
 076C: 0xA87CBC00 ; 81DB: __arm PDU *IncommingPDU(void);
 0770: 0xA0C8CCA5 ; 1DC: __thumb short wstrchr(WSHDR *ws,unsigned int start_pos,unsigned int wchar);
 0774: 0xA0C8CCC7 ; 1DD: __thumb short wstrrchr(WSHDR *ws,unsigned int max_pos,unsigned int wchar);
+0778: 0xA0CECC43 ; 1DE: __thumb int EDIT_SetTextToEditControl(void *gui,int n,WSHDR *ws);
 
 #pragma disable old_equal_ff
 +0
