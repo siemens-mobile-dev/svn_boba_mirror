@@ -58,6 +58,10 @@ void setup_ICONS(void)
 extern const unsigned int IDLEICON_X;
 extern const unsigned int IDLEICON_Y;
 
+extern const unsigned int I_COLOR;
+extern const unsigned int TO_COLOR;
+extern const char SMILE_FILE[];
+
 extern const unsigned int ED_FONT_SIZE;
 
 const char percent_t[]="%t";
@@ -74,6 +78,142 @@ extern const char sndMsg[];
 extern const char sndMsgSent[];
 extern const unsigned int sndVolume;
 
+typedef struct
+{
+  void *next;
+  unsigned int uni_smile;
+  char text[16];
+}S_SMILES;
+
+S_SMILES *s_top=0;
+
+void FreeSmiles()
+{
+  S_SMILES *s_smile=(S_SMILES *)s_top;
+  s_top=0;
+  while(s_smile)
+  {
+    S_SMILES *s;
+    s=s_smile;
+    s_smile=(S_SMILES *)(s_smile->next);
+    mfree(s);
+  }
+}
+
+char *find_eol(char *s)
+{
+  int c;
+  s--;
+  do
+  {
+    s++;
+    c=*s;
+  }
+  while((c)&&(c!=10)&&(c!=13));
+  return s;
+}
+
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
+void InitSmiles()
+{
+  int f;
+  int c;
+  unsigned int err;
+  int fsize;
+  FSTATS stat;
+  S_SMILES *s_bot=0;
+  char *buf, *s_buf;
+  FreeSmiles();
+  char num[16];
+  char name[16];
+  int n_pic;
+  if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
+    return;
+  
+  if ((fsize=stat.size)<=0)
+    return;
+
+  if ((f=fopen(SMILE_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1)
+    return;
+  
+  s_buf=buf=malloc(fsize+1);
+  buf[fread(f,buf,fsize,&err)]=0;
+  fclose(f,&err);
+  while ((c=*buf))
+  {
+    if ((c==10)||(c==13)) 
+    {
+      buf++;
+      continue;
+    }
+    if (*buf=='0' && ((*(buf+1))=='x' || ((*(buf+1))=='X')))
+    {
+      int l=0;
+      while ((*buf) && (*buf!=':'))
+      {
+        num[l++]=*buf++;
+      }
+      num[l]=0;
+      n_pic=strtoul(num,0,0x10);
+    }
+    else break;
+    while (*buf!=10 && *buf!=13 && *buf!=0)
+    {
+      buf++;
+      S_SMILES *si;
+      int i=0;
+      while (buf[i]!=0&&buf [i]!=','&&buf [i]!=10&&buf[i]!=13)
+      {
+        name[i]=buf[i];
+        i++;
+      }
+      name[i]=0;
+      si=malloc(sizeof(S_SMILES));
+      si->uni_smile=n_pic;
+      si->next=0;
+      strcpy(si->text,name);
+      if (s_bot)
+      {
+        //Не первый
+        s_bot->next=si;
+        s_bot=si;        
+      }
+      else
+      {
+        //Первый
+        s_top=si;
+        s_bot=si; 
+      }       
+      buf+=i;
+    }
+  }
+  mfree(s_buf); 
+}
+
+S_SMILES *FindUnicodeSmile(char *str)
+{
+  S_SMILES *sl=(S_SMILES *)s_top;
+  while(sl)
+  {
+    if (!strncmp(str,sl->text,strlen(sl->text)))
+      return sl;
+    sl=sl->next;
+  }
+  return 0;
+}
+  
+S_SMILES *FindSmileById(int n)
+{
+  int i=0;
+  S_SMILES *sl=(S_SMILES *)s_top;
+  while(sl && i!=n)
+  {
+    sl=sl->next;
+    i++;
+  }
+  return sl;
+}
 
 void Play(const char *fname)
 {
@@ -129,6 +269,9 @@ typedef struct
   WSHDR *ws2;
   int i1;
 }MAIN_GUI;
+
+
+
 int RXstate=EOP; //-sizeof(RXpkt)..-1 - receive header, 0..RXpkt.data_len - receive data
 
 char *msg_buf;
@@ -188,6 +331,9 @@ volatile CLIST *cltop;
 volatile int contactlist_menu_id;
 volatile int request_close_clmenu;
 volatile int request_remake_clmenu;
+
+volatile int ec_menu_id;
+volatile int request_close_ec_menu;
 
 GBSTMR tmr_vibra;
 volatile int vibra_count;
@@ -1169,6 +1315,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
   FreeCLIST();
+  FreeSmiles();
   mfree(msg_buf);
   FreeWS(ews);
   //  MutexDestroy(&contactlist_mtx);
@@ -1428,6 +1575,7 @@ int main()
   
   InitConfig();
   setup_ICONS();
+  InitSmiles();
   
   if (!UIN)
   {
@@ -1713,6 +1861,31 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   //1: close
 }
 
+
+void ParseAnswer(WSHDR *ws, char *s)
+{
+  S_SMILES *t;
+  int wchar;
+  CutWSTR(ws,0);
+  while(*s)
+  {
+    t=FindUnicodeSmile(s);
+    if (t)
+    {
+      wchar=t->uni_smile;
+      s+=strlen(t->text);
+    }
+    else
+    {
+      wchar=char8to16(*s++);
+    }
+    wsAppendChar(ws,wchar);
+  }
+}
+    
+
+  
+
 void edchat_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Menu"};
@@ -1752,7 +1925,7 @@ void edchat_ghook(GUI *data, int cmd)
 	  ascii2ws(ews,hdr);
 	  ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
 	  PrepareEditCOptions(&ec_options);
-	  type==1?SetPenColorToEditCOptions(&ec_options,3):SetPenColorToEditCOptions(&ec_options,2);
+	  SetPenColorToEditCOptions(&ec_options,type==1?I_COLOR:TO_COLOR);
 	  SetFontToEditCOptions(&ec_options,2);
 	  CopyOptionsToEditControl(&ec,&ec_options);
 	  //AddEditControlToEditQend(eq,&ec,ma);
@@ -1766,7 +1939,7 @@ void edchat_ghook(GUI *data, int cmd)
 	  }
 	  msg_buf[j]=0;
 	  //    wsprintf(ews,percent_t,msg_buf);
-	  ascii2ws(ews,msg_buf);
+	  ParseAnswer(ews,msg_buf);
 	  ConstructEditControl(&ec,3,0x40,ews,ews->wsbody[0]);
 	  PrepareEditCOptions(&ec_options);
 	  SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -1862,7 +2035,7 @@ void CreateEditChat(CLIST *t)
     ascii2ws(ews,hdr);
     ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
-    type==1?SetPenColorToEditCOptions(&ec_options,3):SetPenColorToEditCOptions(&ec_options,2);
+    SetPenColorToEditCOptions(&ec_options,type==1?I_COLOR:TO_COLOR);
     SetFontToEditCOptions(&ec_options,2);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
@@ -1875,7 +2048,7 @@ void CreateEditChat(CLIST *t)
     }
     msg_buf[j]=0;
     //    wsprintf(ews,percent_t,msg_buf);
-    ascii2ws(ews,msg_buf);
+    ParseAnswer(ews,msg_buf);
     ConstructEditControl(&ec,3,0x40,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -1913,7 +2086,7 @@ void CreateEditChat(CLIST *t)
 }
 
 //-----------------------------------------------------------------------------
-#define EC_MNU_MAX 7
+#define EC_MNU_MAX 8
   
 void Quote(void)
 {
@@ -1953,6 +2126,7 @@ void Quote(void)
   FreeWS(ws);
   GeneralFuncF1(1);
 }
+
 
 void GetShortInfo(void)
 {
@@ -2056,6 +2230,11 @@ void ecmenu_ghook(void *data, int cmd)
   if (cmd==0x0A)
   {
     DisableIDLETMR();
+    if (request_close_ec_menu)
+    {
+      request_close_ec_menu=0;
+      GeneralFunc_flag1(ec_menu_id,1);
+    }
   }
 }
 
@@ -2063,6 +2242,7 @@ int to_remove[EC_MNU_MAX+1];
 MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
 {
   {NULL,(int)"Quote"          ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Add smile"      ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Get short info" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Add/rename"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Send Auth Req"  ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -2071,9 +2251,11 @@ MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
   {NULL,(int)"Clear log"      ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
+void AddSmile(void);
 void *ecmenu_HNDLS[EC_MNU_MAX]=
 {
   (void *)Quote,
+  (void *)AddSmile,
   (void *)GetShortInfo,
   (void *)AddCurContact,
   (void *)SendAuthReq,
@@ -2111,7 +2293,7 @@ void ec_menu(GUI *data, GUI_MSG *msg)
     {
       sprintf(ecm_contactname,"%u",t->uin);
     }
-    patch_header(&ecmenu_HDR);
+    q_data=data;
     if (EDIT_GetFocus(data)==edchat_answeritem)
     {
       to_remove[0]=1;
@@ -2119,10 +2301,11 @@ void ec_menu(GUI *data, GUI_MSG *msg)
     }
     else
     {
-      q_data=data;
-      to_remove[0]=0;
+      to_remove[0]=1;
+      to_remove[1]=1;
     }      
-    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,0,to_remove);
+    patch_header(&ecmenu_HDR);
+    ec_menu_id=CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,0,to_remove);
   }
 }
 
@@ -2231,5 +2414,148 @@ void AskNickAndAddContact(void)
   patch_header(&anac_hdr);
   patch_input(&anac_desc);
   CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,0);
+  FreeWS(ews);
+}
+
+int cur_smile;
+
+void as_locret(void){}
+
+int as_onkey(GUI *data, GUI_MSG *msg)
+{
+  if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
+  {
+    switch(msg->gbsmsg->submess)
+    {
+    case LEFT_BUTTON:
+      cur_smile--;   
+      return (-1);
+      
+    case RIGHT_BUTTON:
+      cur_smile++;  
+      return (-1);
+    }
+  }
+  if (msg->keys==0xFFF)
+  {
+    S_SMILES *t;
+    WSHDR *ed_ws;
+    EDITCONTROL ec;
+    if (!q_data) return(0);
+    t=FindSmileById(cur_smile);
+    if (!t) return (0);
+    int q_n=EDIT_GetFocus(q_data);
+    ExtractEditControl(q_data,edchat_answeritem,&ec);
+    ed_ws=AllocWS(ec.pWS->wsbody[0]+strlen(t->text));
+    wsprintf(ed_ws,"%w%s",ec.pWS,t->text);
+    EDIT_SetFocus(q_data,edchat_answeritem);
+    EDIT_SetTextToFocused(q_data,ed_ws);
+    FreeWS(ed_ws);
+    request_close_ec_menu=1;
+    return (1);
+  }
+  return(0);
+}
+void as_ghook(GUI *data, int cmd)
+{
+  static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)"Paste it!"};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&ask,SET_SOFT_KEY_N);
+    S_SMILES *t=(S_SMILES *)s_top;
+    if (t)
+    {
+      if (cur_smile<0)
+      {
+        cur_smile=0;
+        while(t->next)
+        {
+          t=t->next;
+          cur_smile++;
+        }
+      }
+      else
+      {
+        t=FindSmileById(cur_smile);
+        if (!t)
+        {
+          t=FindSmileById(0);
+          cur_smile=0;
+          
+        }
+      }
+      WSHDR *ws=AllocWS(32);
+      wsprintf(ws,"Smile: %u %s", cur_smile, t->text);  
+      EDIT_SetTextToEditControl(data,1,ws);
+      
+      CutWSTR(ws,0);
+      wsAppendChar(ws,t->uni_smile);
+      EDIT_SetTextToEditControl(data,2,ws);
+      FreeWS(ws);
+    }    
+  }
+}
+
+HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)"Add Smiles",LGP_NULL};
+
+INPUTDIA_DESC as_desc=
+{
+  1,
+  as_onkey,
+  as_ghook,
+  (void *)as_locret,
+  0,
+  &menu_skt,
+  {0,NULL,NULL,NULL},
+  4,
+  100,
+  101,
+  2,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+void AddSmile(void)
+{
+  S_SMILES *t;
+  cur_smile=0;
+  t=FindSmileById(cur_smile);
+  if (!t)
+  {
+    ShowMSG(1,(int)"Can't find smiles!");
+    return;
+  }
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  WSHDR *ews=AllocWS(32);
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  
+  wsprintf(ews,"Smile: %u %s", cur_smile, t->text);  
+  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,32);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  CutWSTR(ews,0);
+  wsAppendChar(ews,t->uni_smile);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1);
+  AddEditControlToEditQend(eq,&ec,ma);  
+  
+  patch_header(&as_hdr);
+  patch_input(&as_desc);
+  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,0);
   FreeWS(ews);
 }

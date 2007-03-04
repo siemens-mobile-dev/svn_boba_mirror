@@ -132,6 +132,15 @@ __root const unsigned int IDLEICON_X=0;
 __root const CFG_HDR cfghdr20={CFG_UINT,"Idle icon Y-pos",0,1000};
 __root const unsigned int IDLEICON_Y=50;
 
-__root const CFG_HDR cfghdr21={CFG_UINT,"FontSize",0,6};
+__root const CFG_HDR cfghdr21={CFG_UINT,"I string color",0,1000};
+__root const unsigned int I_COLOR=3;
+
+__root const CFG_HDR cfghdr22={CFG_UINT,"You string color",0,1000};
+__root const unsigned int TO_COLOR=2;
+
+__root const CFG_HDR cfghdr23={CFG_STR_UTF8,"Smiles File",0,63};
+__root const char SMILE_FILE[64]="0:\\ZBin\\NatICQ\\smiles.cfg";
+
+__root const CFG_HDR cfghdr24={CFG_UINT,"FontSize",0,6};
 __root const unsigned int ED_FONT_SIZE=1;
 
