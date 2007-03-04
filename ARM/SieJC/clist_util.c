@@ -7,12 +7,35 @@
 #include "roster_icons.h"
 #include "history.h"
 
+#ifdef STD_PALETTE
+#define CURSOR 6                 // ad: цвет курсора
+
+#define CURSOR_BORDER 20         // ad: цвет ободка курсора
+
+#define CLIST_F_COLOR_0 1         // Цвет шрифта 
+#define CLIST_F_COLOR_1 15        // Цвет шрифта (есть сообщения)
+#define CONTACT_BG_0 0
+#define CONTACT_BG_1 22
+#else 
+const RGBA CURSOR = {80, 80, 255, 100};
+const RGBA CURSOR_BORDER = {200, 200, 200, 100};
+const RGBA CLIST_F_COLOR_0 = {0, 0, 0, 100};
+const RGBA CLIST_F_COLOR_1 = {0, 0, 170, 100};
+const RGBA CONTACT_BG_0 = {255, 255, 255, 100};
+const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
+#endif
+
 CLIST* cltop = NULL;
 
 char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
 
+#ifdef STD_PALETTE
 char lineColor = 0;               // ad: цвет текущей строчки
 char borderColor = 0;               // ad: цвет ободка текущей строчки
+#else 
+RGBA lineColor = {0, 0, 0, 0};               
+RGBA borderColor = {0, 0, 0, 0};            
+#endif
 
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
 unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться 
@@ -24,7 +47,11 @@ unsigned int CursorPos = 1;       // Текущая позиция курсора
 TRESOURCE* ActiveContact = NULL;
 
 extern char logmsg[512];
+#ifdef STD_PALETTE
 extern const unsigned short PRES_COLORS[PRES_COUNT];
+#else
+extern const RGBA PRES_COLORS[PRES_COUNT];
+#endif
 extern char My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
 extern JABBER_STATE Jabber_state;
@@ -55,7 +82,11 @@ void CList_RedrawCList()
   WSHDR* out_ws = AllocWS(256);
   int i=1;
   int start_y;
+#ifdef STD_PALETTE
   int fcolor;
+#else
+  RGBA fcolor;
+#endif
   TRESOURCE* resEx;
 
   char Alternation = 1;             // ad: состояние чередования
@@ -79,8 +110,9 @@ void CList_RedrawCList()
             borderColor=CURSOR_BORDER; //бортик курсора
             ActiveContact = resEx;
           } else{ 
-            borderColor=lineColor=(Alternation==1)? 0 : 22;
+            borderColor=lineColor=(Alternation==1)? CONTACT_BG_0 : CONTACT_BG_1;
           }
+          
           ascii2ws(ClEx_name, ClEx->name);
           
           if(resEx->name)
@@ -100,14 +132,15 @@ void CList_RedrawCList()
                     
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
           
-          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=PRES_COLORS[resEx->status];}
+          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}
+          else {fcolor=PRES_COLORS[resEx->status];}
 
           DrawRoundedFrame(0,start_y+1,scr_w-1,start_y+font_y,0,0,0,
-		   GetPaletteAdrByColorIndex(borderColor),  //ad: ободок
-		   GetPaletteAdrByColorIndex(lineColor));   //ad: рисуем с чередованием... для наглядности
+		   color(borderColor),  //ad: ободок
+		   color(lineColor));   //ad: рисуем с чередованием... для наглядности
           
           CutWSTR(out_ws, CHAR_ON_LINE);
-          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
+          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,SMALL_FONT,0,color(fcolor),0);
 
 #ifdef USE_PNG_EXT          
           Roster_getIcon(path_to_pic, ClEx, resEx);

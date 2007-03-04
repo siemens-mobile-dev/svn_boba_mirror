@@ -333,13 +333,16 @@ void get_answer(void)
     tmp_buffer->xml_buffer = malloc(bytecount);          // Буфер в структуре
     get_buf_part(tmp_buffer->xml_buffer, bytecount);
 
+//    tmp_buffer->buf_size = bytecount;      
     // Блочное конвертирование UTF8->ANSI
+
     char* conv_buf=malloc(bytecount);
     int conv_size;
     conv_buf = convUTF8_to_ANSI(conv_buf,tmp_buffer->xml_buffer, bytecount, &conv_size);
     mfree(tmp_buffer->xml_buffer);
     tmp_buffer->buf_size = conv_size;
     tmp_buffer->xml_buffer = conv_buf;
+    
 
     processed_pos = virt_buffer_len;
 
@@ -872,7 +875,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         if (connect_state) SUBPROC((void *)end_socket);
         break;
       case ENIP_SOCK_CLOSED:
-        //        strcpy(logmsg,"No connection");
         connect_state=0;
         Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
@@ -953,11 +955,6 @@ int main(char *exename, char *fname)
     ShowMSG(1,(int)"Введите логин/пароль!");
     return 0;
   }
-  
-#ifdef USE_PNG_EXT
-void Roster_fillIcons(); //заменяем картинки на png
-#endif
-
   UpdateCSMname();
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);

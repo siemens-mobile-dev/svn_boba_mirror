@@ -12,16 +12,28 @@
 
 #define CHAR_ON_LINE 20
 
-#define CURSOR 6                 // ad: цвет курсора
-
-#define CURSOR_BORDER 20         // ad: цвет ободка курсора
-
 #define CLIST_FONT SMALL_FONT     // Ўрифт контакт-листа
 
 #define CLIST_Y1 5               // ad: меньше сделал (26->5) 
 
+/* ACHTUNG
+#ifdef STD_PALETTE
+#define CURSOR 6                 // ad: цвет курсора
+
+#define CURSOR_BORDER 20         // ad: цвет ободка курсора
+
 #define CLIST_F_COLOR_0 1         // ÷вет шрифта 
 #define CLIST_F_COLOR_1 15        // ÷вет шрифта (есть сообщени€)
+#define CONTACT_BG_0 0
+#define CONTACT_BG_1 22
+#else 
+const RGBA CURSOR = {80, 80, 255, 100};
+const RGBA CURSOR_BORDER = {200, 200, 200, 100};
+const RGBA CLIST_F_COLOR_0 = {0, 0, 0, 100};
+const RGBA CLIST_F_COLOR_1 = {0, 0, 170, 100};
+const RGBA CONTACT_BG_0 = {255, 255, 255, 100};
+const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
+#endif*/
 
 // ќтрисовать список контактов
   void CList_RedrawCList();

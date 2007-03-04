@@ -24,6 +24,9 @@ char* str2lower(char *st);
 // Функция из интернета. UTF16->UTF8
 char *utf16_to_utf8(char **s, size_t *len);
 
+// Функция из интернета. UTF8->UTF16
+int utf8_to_utf16(char *utf8, int cc, char *unicode16);
+
 // UTF8 для джаббера
 char* Correct_UTF8_String(char* utf8_jid);
 

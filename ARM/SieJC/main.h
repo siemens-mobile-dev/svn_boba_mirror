@@ -10,6 +10,7 @@
 #define VIBRA_POWER 10 // Сила вибры для событий разного рода
 
 #define USE_PNG_EXT   // Использовать ли расширение PNG для картинок (ELFLoader >2.0)
+//#define STD_PALETTE
 ////////////////////////////////////////////////////////////////////////////////
 
 #define TMR_SECOND 216
@@ -18,6 +19,12 @@
 
 #define XML_BUFFER_SIZE 64*1024 // Размер буфера в байтах
 #define REC_BUFFER_SIZE 512 // Размер буфера приёма в байтах
+
+#ifdef STD_PALETTE
+#define color(x) GetPaletteAdrByColorIndex(x)
+#else
+#define color(x) (char *)(&(x))
+#endif
 
 typedef struct
 {
@@ -126,6 +133,14 @@ typedef struct
   char status;
   char* message;
 }PRESENCE_INFO;
+
+typedef struct 
+{
+  char r;
+  char g;
+  char b;
+  char a;
+}RGBA;
 
 void SendAnswer(char *str);
 

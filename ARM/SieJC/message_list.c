@@ -273,7 +273,6 @@ void mGUI_onRedraw(GUI *data)
 		   GetPaletteAdrByColorIndex(MsgBgClolor),
 		   GetPaletteAdrByColorIndex(MsgBgClolor));
     
-      //DrawString(ws_title,1,20+i*FontSize,ScreenW()-1,20+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      
       DrawString(ml->mess,1,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      
       i++;
     }

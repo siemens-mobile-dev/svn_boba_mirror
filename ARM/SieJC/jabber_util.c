@@ -2,6 +2,7 @@
 #include "history.h"
 #include "main.h"
 #include "clist_util.h"
+#include "revision.h"
 #include "jabber_util.h"
 #include "string_util.h"
 #include "xml_parser.h"
@@ -23,11 +24,27 @@ extern char logmsg[];
 MUC_ITEM*  muctop=NULL;
 
 extern JABBER_STATE Jabber_state;
-//const char* PRESENCES[PRES_COUNT] = {"online", "unavailable", "error", "chat", "away", "xa", "dnd", "invisible",
 const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "invisible", "unavailable", "error",
                                       "subscribe", "subscribed", "unsubscribe", "unsubscribed"};
-//const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        21,             14,     16,     3,      18,   2,      20, 21,21,21,21}; //цвет оффлайнов изменил
+#ifdef STD_PALETTE
 const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        16,             3,     18,     2,      20,   21,      20, 21,21,21,21}; //цвет оффлайнов изменил
+#else
+const RGBA PRES_COLORS[PRES_COUNT] =
+{
+  {  0,   0, 127, 100},
+  {  0, 255,   0, 100},
+  {  0,   0, 255, 100},
+  {  0, 127,   0, 100},
+  {255,   0,   0, 100},
+  {127, 127, 127, 100},
+  {170, 170, 170, 100},
+  {127, 127, 127, 100},
+  {170, 170, 170, 100},
+  {170, 170, 170, 100},
+  {170, 170, 170, 100},
+  {170, 170, 170, 100}
+};
+#endif
 
 #define AFFS_CNT 5
 #define ROLS_CNT 4
@@ -159,10 +176,9 @@ void Send_Version_Request(char *dest_jid)
   Послать своё присутствие (в частности, после этого на нас вываливаются 
   присутствия остальных, а мы появляемся в ресурсах своего контакта)
 
-Параметр message НЕ ДОЛЖЕН уничтожаться в вызывающем контексте!
 */
 // Context: HELPER
-void Send_Presence(PRESENCE_INFO *pr_info/*short priority, char status, char* message*/)
+void Send_Presence(PRESENCE_INFO *pr_info)
 {
   extern char My_Presence;
   My_Presence = pr_info->status;
@@ -262,7 +278,7 @@ void Report_VersionInfo(char* id, char *to)
   char answer[200];  
   char *ph_model = Get_Phone_Info(PI_MODEL);
   char *ph_sw = Get_Phone_Info(PI_SW_NUMBER);
-  sprintf(answer, "<name>%s</name><version>%s (%s)</version><os>SIE-%s/%s %s</os>", VERSION_NAME, VERSION_VERS, CMP_DATE, ph_model, ph_sw, OS);
+  sprintf(answer, "<name>%s</name><version>%s-r%d (%s)</version><os>SIE-%s/%s %s</os>", VERSION_NAME, VERSION_VERS, __SVN_REVISION__, CMP_DATE, ph_model, ph_sw, OS);
   SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
 
   mfree(id);
@@ -739,6 +755,8 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
         
         if(ResEx)
         {
+        if(ResEx->status!=PRESENCE_OFFLINE)
+        {
           if(!(ResEx->muc_privs.aff==priv.aff && ResEx->muc_privs.role==priv.role))
           {
             sprintf(r, "%s теперь %s и %s [%d->%d, %d->%d]", nick, affiliation, role, ResEx->muc_privs.aff, priv.aff, ResEx->muc_privs.role, priv.role);
@@ -761,6 +779,13 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
           sprintf(r, "%s присоединился как %s и %s", nick, affiliation, role);      
           Req_Set_Role = 1;
         }
+        
+        }
+        else
+        {
+          sprintf(r, "%s присоединился как %s и %s", nick, affiliation, role);      
+          Req_Set_Role = 1;
+        }
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
       
@@ -769,6 +794,8 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
       {
         sprintf(r, "%s вышел", nick);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
+        priv.role = ROLE_NONE;
+        Req_Set_Role = 1; 
       }
       
       
@@ -893,7 +920,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     // Не показываем попапы для групчата, ибо достаёт трындец как
     if(msgtype!=MSG_GCHAT)
     {
-      char* m = malloc(100+strlen(msgnode->value));
+      char* m = malloc(128+5+strlen(msgnode->value));
       sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
       ShowMSG(1,(int)m);
       mfree(m);
