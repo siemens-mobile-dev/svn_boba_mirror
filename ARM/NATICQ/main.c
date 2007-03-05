@@ -113,7 +113,6 @@ char *find_eol(char *s)
   return s;
 }
 
-extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
 void InitSmiles()
 {

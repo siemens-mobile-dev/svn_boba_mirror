@@ -3,6 +3,11 @@
 
 // Общие функции модуля MAIN.C
 void SendAnswer(int dummy, TPKT *p);
+void ascii2ws(WSHDR *ws, const char *s);
+
+extern int connect_state;
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
 
 //void patch_header(HEADER_DESC* head);
 //void patch_input(INPUTDIA_DESC* inp);
