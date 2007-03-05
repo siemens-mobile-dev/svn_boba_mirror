@@ -1120,6 +1120,7 @@ ProcessPacket(TPKT *p)
     vibra_count=1;
     start_vibra();
     AddStringToLog(t,0x02,p->data,t->name);
+    if (contactlist_menu_id) need_jump_to_top_cl=1;
     if (edchat_id)
     {
       if (edcontact->isunread)
@@ -1141,7 +1142,6 @@ ProcessPacket(TPKT *p)
     }
     else
     {
-      if (contactlist_menu_id) need_jump_to_top_cl=1;
       if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     }
     break;
