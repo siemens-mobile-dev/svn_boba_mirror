@@ -8,6 +8,7 @@
 // Смещение, начиная с которого рисовать хистори
 #define HIST_DISP_OFS 14
 
+/* ACHTUNG!
 // Цвета. Много цветов :)
 //общий фон
 #define MESSAGEWIN_BGCOLOR 0
@@ -24,7 +25,7 @@
 #define MESSAGEWIN_GHAT_BGCOLOR_2 10
 #define MESSAGEWIN_SYS_BGCOLOR 0
 #define MESSAGEWIN_STATUS_BGCOLOR 0
-
+*/
 
 /*
 0 - белый

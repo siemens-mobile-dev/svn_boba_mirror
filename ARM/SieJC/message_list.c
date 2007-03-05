@@ -6,6 +6,45 @@
 #include "jabber_util.h"
 #include "string_util.h"
 
+//-------------Цвета. Много цветов :)
+
+#ifdef STD_PALETTE
+
+//общий фон
+#define MESSAGEWIN_BGCOLOR 0
+//заголовок
+#define MESSAGEWIN_TITLE_BGCOLOR 21
+//цвет шрифта
+#define MESSAGEWIN_TITLE_FONT 1
+#define MESSAGEWIN_CHAT_FONT 1
+
+//исходящие
+#define MESSAGEWIN_MY_BGCOLOR 0
+//входящие
+#define MESSAGEWIN_CH_BGCOLOR 22
+#define MESSAGEWIN_GCHAT_BGCOLOR_1 13
+#define MESSAGEWIN_GCHAT_BGCOLOR_2 10
+#define MESSAGEWIN_SYS_BGCOLOR 0
+#define MESSAGEWIN_STATUS_BGCOLOR 0
+
+#else
+
+RGBA MESSAGEWIN_BGCOLOR =         {255, 255, 255, 100};
+RGBA MESSAGEWIN_TITLE_BGCOLOR =   {  0,   0, 255, 100};
+RGBA MESSAGEWIN_TITLE_FONT =      {255, 255, 255, 100};
+RGBA MESSAGEWIN_MY_BGCOLOR =      {233, 255, 233, 100};
+RGBA MESSAGEWIN_CH_BGCOLOR =      {233, 233, 233, 100};
+RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 =  {255, 255, 255, 100};
+RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 =  {233, 233, 233, 100};
+RGBA MESSAGEWIN_SYS_BGCOLOR =     {255, 233, 233, 100};
+RGBA MESSAGEWIN_STATUS_BGCOLOR =  {233, 233, 255, 100};
+RGBA MESSAGEWIN_CHAT_FONT =       {  0,   0,   0, 100};
+  
+#endif
+
+//------------------
+
+
 char MsgList_Quit_Required = 0;
 
 TRESOURCE* Resource_Ex = NULL;
@@ -232,24 +271,28 @@ void mGUI_onRedraw(GUI *data)
   Calc_Pages_Data();
   // Заголовок окна
   DrawRoundedFrame(0,0,ScreenW()-1,FontSize*2+1,0,0,0,
-		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_BGCOLOR));
+		   0,
+		   color(MESSAGEWIN_TITLE_BGCOLOR));
   
   DrawRoundedFrame(0,FontSize+2,ScreenW()-1,ScreenH()-1,0,0,0,
-		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(MESSAGEWIN_BGCOLOR));
+		   0,
+		   color(MESSAGEWIN_BGCOLOR));
 
   // Делаем типо название окошка... :)
   WSHDR* ws_title = AllocWS(256);
   //str_2ws(ws_title, Resource_Ex->full_name,strlen(Resource_Ex->full_name));
   ascii2ws(ws_title, Resource_Ex->full_name);
 
-  DrawString(ws_title,1,1,ScreenW()-1,FontSize+1,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));  
+  DrawString(ws_title,1,1,ScreenW()-1,FontSize+1,SMALL_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);  
   
   DISP_MESSAGE* ml = MessagesList;
   int i_ctrl=0;
   int i = 0;
-  char MsgBgClolor;
+#ifdef STD_PALETTE
+  char MsgBgColor;
+#else 
+  RGBA MsgBgColor;
+#endif
   while(ml)
   {
     if((i_ctrl>=(CurrentPage-1)*lines_on_page) && (i_ctrl<CurrentPage*lines_on_page))
@@ -259,21 +302,21 @@ void mGUI_onRedraw(GUI *data)
       //str_2ws(ws_title,ml->mess,CHAR_ON_LINE);
       switch(ml->mtype)
       {
-      case MSG_ME:{MsgBgClolor=MESSAGEWIN_MY_BGCOLOR;break;}        
-      case MSG_CHAT:{MsgBgClolor=MESSAGEWIN_CH_BGCOLOR;break;}                                        
-      case MSG_SYSTEM:{MsgBgClolor=MESSAGEWIN_SYS_BGCOLOR;break;}                    
-      case MSG_STATUS:{MsgBgClolor=MESSAGEWIN_STATUS_BGCOLOR;break;}                             
+      case MSG_ME:{MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;}        
+      case MSG_CHAT:{MsgBgColor=MESSAGEWIN_CH_BGCOLOR;break;}                                        
+      case MSG_SYSTEM:{MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;}                    
+      case MSG_STATUS:{MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;}                             
       case MSG_GCHAT:
         {
-          MsgBgClolor=ml->log_mess_number %2==0? MESSAGEWIN_GHAT_BGCOLOR_1 : MESSAGEWIN_GHAT_BGCOLOR_2;
+          MsgBgColor=ml->log_mess_number %2==0? MESSAGEWIN_GCHAT_BGCOLOR_1 : MESSAGEWIN_GCHAT_BGCOLOR_2;
           break;
         }
       }
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
-		   GetPaletteAdrByColorIndex(MsgBgClolor),
-		   GetPaletteAdrByColorIndex(MsgBgClolor));
+		   color(MsgBgColor),
+		   color(MsgBgColor));
     
-      DrawString(ml->mess,1,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,SMALL_FONT,0,GetPaletteAdrByColorIndex(MESSAGEWIN_TITLE_FONT),GetPaletteAdrByColorIndex(23));      
+      DrawString(ml->mess,1,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
       i++;
     }
     ml = ml->next;
