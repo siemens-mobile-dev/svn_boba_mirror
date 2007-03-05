@@ -215,6 +215,18 @@ S_SMILES *FindSmileById(int n)
   return sl;
 }
 
+S_SMILES *FindSmileByUni(int wchar)
+{
+  S_SMILES *sl=(S_SMILES *)s_top;
+  while(sl)
+  {
+    if (sl->uni_smile == wchar) return (sl);
+    sl=sl->next;
+  }
+  return (0);
+}
+  
+
 void Play(const char *fname)
 {
   if ((!IsCalling())&&Is_Sounds_Enabled)
@@ -331,9 +343,6 @@ volatile CLIST *cltop;
 volatile int contactlist_menu_id;
 volatile int request_close_clmenu;
 volatile int request_remake_clmenu;
-
-volatile int ec_menu_id;
-volatile int request_close_ec_menu;
 
 GBSTMR tmr_vibra;
 volatile int vibra_count;
@@ -1790,6 +1799,7 @@ void edchat_locret(void){}
 
 void ExtractAnswer(WSHDR *ws)
 {
+  S_SMILES *t;
   int i=0;
   int c;
   do
@@ -1797,8 +1807,30 @@ void ExtractAnswer(WSHDR *ws)
     if (i>=ws->wsbody[0]) break;
     c=ws->wsbody[i+1];
     if (c==10) c=13;
-    msg_buf[i]=char16to8(c);
-    i++;
+    if (c>=0xE100)
+    {
+      t=FindSmileByUni(c);
+      if (t)
+      {
+        int w;
+        char *s=t->text;
+        while ((w=*s++) && i<16383)
+        {
+          msg_buf[i]=w;
+          i++;
+        }
+      }
+      else 
+      {
+        msg_buf[i]=char16to8(c);
+        i++;
+      }
+    }
+    else
+    {
+      msg_buf[i]=char16to8(c);
+      i++;
+    }          
   }
   while(i<16383);
   msg_buf[i]=0;
@@ -2141,8 +2173,6 @@ void GetShortInfo(void)
     AddStringToLog(t,0x01,"Request info...",I_str);
     SUBPROC((void *)SendAnswer,0,p);
   }
-  request_close_edchat=1;
-  request_remake_edchat=1;
   GeneralFuncF1(1);
 }
 
@@ -2169,8 +2199,6 @@ void SendAuthReq(void)
     AddStringToLog(t,0x01,p->data,I_str);
     SUBPROC((void *)SendAnswer,0,p);
   }
-  request_close_edchat=1;
-  request_remake_edchat=1;
   GeneralFuncF1(1);
 }
 
@@ -2190,8 +2218,6 @@ void SendAuthGrant(void)
     AddStringToLog(t,0x01,p->data,I_str);
     SUBPROC((void *)SendAnswer,0,p);
   }
-  request_close_edchat=1;
-  request_remake_edchat=1;
   GeneralFuncF1(1);
 }
 
@@ -2218,8 +2244,14 @@ void ClearLog(void)
     {
       mfree(t->log);
       t->log=NULL;
-      request_close_edchat=1;
-      request_remake_edchat=1;
+      if (edchat_answeritem>=2  && q_data)
+      {
+        while(edchat_answeritem!=2)
+        {
+          EDIT_RemoveEditControl(q_data,1);
+          edchat_answeritem--;
+        }
+      }
     }
     GeneralFuncF1(1);
   }
@@ -2230,11 +2262,6 @@ void ecmenu_ghook(void *data, int cmd)
   if (cmd==0x0A)
   {
     DisableIDLETMR();
-    if (request_close_ec_menu)
-    {
-      request_close_ec_menu=0;
-      GeneralFunc_flag1(ec_menu_id,1);
-    }
   }
 }
 
@@ -2305,7 +2332,7 @@ void ec_menu(GUI *data, GUI_MSG *msg)
       to_remove[1]=1;
     }      
     patch_header(&ecmenu_HDR);
-    ec_menu_id=CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,0,to_remove);
+    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,0,to_remove);
   }
 }
 
@@ -2344,8 +2371,6 @@ int anac_onkey(GUI *data, GUI_MSG *msg)
 	  strcpy(p->data,s);
 	  AddStringToLog(t,0x01,"Add contact...",I_str);
 	  SUBPROC((void *)SendAnswer,0,p);
-	  request_close_edchat=1;
-	  request_remake_edchat=1;
 	  return(1);
 	}
       }
@@ -2444,14 +2469,13 @@ int as_onkey(GUI *data, GUI_MSG *msg)
     if (!q_data) return(0);
     t=FindSmileById(cur_smile);
     if (!t) return (0);
-    int q_n=EDIT_GetFocus(q_data);
     ExtractEditControl(q_data,edchat_answeritem,&ec);
-    ed_ws=AllocWS(ec.pWS->wsbody[0]+strlen(t->text));
-    wsprintf(ed_ws,"%w%s",ec.pWS,t->text);
+    ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
+    wstrcpy(ed_ws,ec.pWS);
+    wsAppendChar(ed_ws,t->uni_smile);
     EDIT_SetFocus(q_data,edchat_answeritem);
     EDIT_SetTextToFocused(q_data,ed_ws);
     FreeWS(ed_ws);
-    request_close_ec_menu=1;
     return (1);
   }
   return(0);
@@ -2485,7 +2509,6 @@ void as_ghook(GUI *data, int cmd)
         {
           t=FindSmileById(0);
           cur_smile=0;
-          
         }
       }
       WSHDR *ws=AllocWS(32);
@@ -2558,4 +2581,5 @@ void AddSmile(void)
   patch_input(&as_desc);
   CreateInputTextDialog(&as_desc,&as_hdr,eq,1,0);
   FreeWS(ews);
+  GeneralFuncF1(1);
 }
