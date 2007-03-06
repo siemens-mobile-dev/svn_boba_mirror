@@ -219,5 +219,5 @@ void ShowMainMenu()
   menuitems[3].icon = S_ICONS+IS_UNKNOWN;
   menuhdr.icon= S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,3,0,0);
+  MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,4,0,0);
 }

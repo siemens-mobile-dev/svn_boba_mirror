@@ -1397,6 +1397,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     InitConfig();
     setup_ICONS();
+    InitSmiles();
   }
   if (msg->msg==MSG_GUI_DESTROYED)
   {

@@ -11,20 +11,12 @@ void Add2History(CLIST *CListEx, char *header, char *message)
 {
   volatile int hFile;
   unsigned int io_error = 0;
+  char error[36];
   const char delim[] = "\r\n----------\r\n";
   
   if (!LOG_ALL) return;
-  char *fullname = malloc(128);
-  unsigned int delim_len = strlen(delim);
-  unsigned int hdr_len = strlen(header);
-  unsigned int msg_len = strlen(message);
-  unsigned int buf_len = delim_len+hdr_len+msg_len+1;
-  char *buffer = malloc(buf_len);
-  strcpy(buffer, delim);
-  strcat(buffer, header);
-  strcat(buffer, message);
-  strcpy(fullname, HIST_PATH);
-  sprintf(fullname,"%s\\%u.txt", fullname, CListEx->uin);
+  char fullname[128];
+  snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, CListEx->uin);
   
   // Открываем файл на дозапись и создаём в случае неудачи
   hFile = fopen(fullname,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
@@ -34,18 +26,16 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   }
   if(!io_error)
   {
-    fwrite(hFile, buffer, buf_len-1, &io_error);
+    fwrite(hFile, delim, sizeof(delim)-1, &io_error);
+    fwrite(hFile, header, strlen(header), &io_error);
+    fwrite(hFile, message, strlen(message), &io_error);
     fclose(hFile, &io_error);
   }
   else
   {
-    char *q=malloc(41);
-    sprintf(q, "Ошибка I/O  #%u", io_error);
-    ShowMSG(1,(int)q); 
-    mfree(q);
+    snprintf(error,35, "Ошибка I/O  #%u", io_error);
+    ShowMSG(1,(int)error); 
   }
-  mfree(buffer);
-  mfree(fullname);
 }
 
 void GetStatusById(char *buffer, int id)
@@ -76,22 +66,18 @@ void LogStatusChange(CLIST *CListEx)
   if(strlen(CListEx->log)==0){return;}
   char hdr[] = "(System message)";
   char msg[] = "%s меняет статус на %s\r\n";
-  char *message = malloc(100);
-  char *nickname = malloc(60);
+  char message[100];
+  char nickname[64];
+  char status[20];
   if(CListEx->name)
   {
     strcpy(nickname, CListEx->name);
   }
   else
   {
-    sprintf(nickname, "%u", CListEx->uin);
+    snprintf(nickname,63, "%u", CListEx->uin);
   }
-  char *status = malloc(20);
   GetStatusById(status, CListEx->state);
   sprintf(message, msg, nickname, status);
   Add2History(CListEx, hdr, message);
-//  ShowMSG(1,(int)message);
-  mfree(status);
-  mfree(nickname);
-  mfree(message);
 }
