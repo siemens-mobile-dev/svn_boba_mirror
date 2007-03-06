@@ -483,6 +483,11 @@ typedef struct
   const int *softkeys; //{6,0x22,0x1D}, mb default for all items, if item.softkeys==NULL
   const SOFTKEYSTAB *softkeystab;
   int flags2; //2
+//  0x00000001 //Icons presens
+//  0x00000010 //Enable scroll text
+//  0x00000040 //Disable scrollbar
+//  0x00000100 //Right align
+//  0x00000400 //Disable breakline
   void *itemproc; //Called when draw item
   const MENUITEM_DESC * items; //Table of items desc;
   void ** procs; //Table of procs when item selected
@@ -794,7 +799,7 @@ typedef struct{
 
 typedef struct
 {
- char data[0xB0];
+ char data[0xB2];
 }PDU;
 
 #pragma diag_suppress=Ta035
