@@ -137,6 +137,17 @@ void AddContactMenu(void)
   GeneralFuncF1(1);
 }
   
+void EditConfig(void)
+{
+  extern const char *successed_config_filename;
+  WSHDR *ws;
+  ws=AllocWS(150);
+  str_2ws(ws,successed_config_filename,128);
+  ExecuteFile(ws,0,0);
+  FreeWS(ws);
+  GeneralFuncF1(1);
+}
+
 
 //void AboutDlg(){};
 void AboutDlg()
@@ -152,17 +163,19 @@ HEADER_DESC menuhdr={0,0,0,0,NULL,(int)"Menu",LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
-MENUITEM_DESC menuitems[3]=
+MENUITEM_DESC menuitems[4]=
 {
   {NULL,(int)"Status",        LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Add Contact",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Edit config",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"About",         LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[3]=
+void *menuprocs[4]=
 {
   (void *)DispStatusChangeMenu,
   (void *)AddContactMenu,
+  (void *)EditConfig,
   (void *)AboutDlg
 };
 
@@ -197,13 +210,13 @@ MENU_DESC tmenu=
   NULL,
   menuitems,
   menuprocs,
-  3
+  4
 };
 
 void ShowMainMenu()
 {
   menuitems[0].icon = S_ICONS+CurrentStatus;
-  menuitems[2].icon = S_ICONS+IS_UNKNOWN;
+  menuitems[3].icon = S_ICONS+IS_UNKNOWN;
   menuhdr.icon= S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
   MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,3,0,0);
