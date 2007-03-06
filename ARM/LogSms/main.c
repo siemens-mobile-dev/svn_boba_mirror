@@ -26,8 +26,9 @@ char *UnpackSMS(const PDU *sms)
   int c1;
   int c2;
   unsigned int is_udhl;
-  p+=2; //Пропускаем 0x11,0x11
-  p++; //Пропускаем тип
+  if ((*p++)!=0x11) return NULL;
+  if ((*p++)!=0x11) return NULL;
+  if (!(*p++)) return NULL;
   c=*p++; //Пропускаем SCA
   p+=c;
   is_udhl=*p&0x40;
