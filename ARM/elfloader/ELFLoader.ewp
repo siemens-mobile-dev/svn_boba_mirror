@@ -3714,11 +3714,11 @@
           </option>
           <option>
             <name>CCCodeFunctions</name>
-            <state>PIT_PNG_EXTENSION</state>
+            <state></state>
           </option>
           <option>
             <name>CCData</name>
-            <state>DATA</state>
+            <state></state>
           </option>
           <option>
             <name>PreInclude</name>

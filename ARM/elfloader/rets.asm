@@ -38,6 +38,9 @@ PITgetN:
 PITret:
 	DCD	0xA095393C+1
 
+	defadr	StoreErrInfoAndAbort,0xA04D2304
+	defadr	StoreErrString,0xA04D21D0
+
 #else
 
 	PUBLIC	OldOnClose
