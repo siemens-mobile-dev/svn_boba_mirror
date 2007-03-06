@@ -610,7 +610,7 @@ const CSM_DESC maincsm=
   0,
   0,
   0,
-#else
+#endif
   maincsm_onclose,
   sizeof(MAIN_CSM),
   1,
