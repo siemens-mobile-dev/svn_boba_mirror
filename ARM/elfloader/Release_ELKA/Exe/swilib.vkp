@@ -563,8 +563,12 @@
 076C: 0xA8F4EEB4   ; 81DB: __arm PDU *IncommingPDU(void);
 0770: 0xA04FF65F   ; 1DC: __thumb short wstrchr(WSHDR *ws,unsigned int start_pos,unsigned int wchar);
 0774: 0xA04FF681   ; 1DD: __thumb short wstrrchr(WSHDR *ws,unsigned int max_pos,unsigned int wchar);
-;778:              ; 1DE: 
-;77C:              ; 1DF: 
+0778: 0xA0A233B9 ; 1DE: __thumb int EDIT_SetTextToEditControl(void *gui,int n,WSHDR *ws);
+077C: 0xA0A23467 ; 1DF: __thumb void *EDIT_GetUserPointer(void *gui);
+0780: 0xA095CFE7 ; 1E0: __thumb void *MenuGetUserPointer(void *gui);
+
+0788: 0xA0500231 ; 1E2: __thumb int ws_2utf8(WSHDR *ws, char *utf8_str);
+078C: 0xA05002E9 ; 1E3: __thumb int utf8_2ws(WSHDR *ws,char *utf8_str, unsigned int maxLen);
 
 ;780:              ; 1E0: 
 ;784:              ; 1E1: 

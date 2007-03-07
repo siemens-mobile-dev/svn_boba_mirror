@@ -2363,12 +2363,18 @@ __swi __arm int EDIT_SetTextToEditControl(void *gui,int n,WSHDR *ws);
 #pragma swi_number=0x1DF
 __swi __arm void *EDIT_GetUserPointer(void *gui);
 //thumb
-//pattern=C0,6C,70,47
+//pattern=80,30,40,68,70,47,80,B5
+//thumb
+//pattern_ELKA=80,30,C0,68,70,47,80,B5
+//thumb
+//pattern_SGOLD=C0,6C,70,47,80,B5
 
 #pragma swi_number=0x1E0
 __swi __arm void *MenuGetUserPointer(void *gui);
 //thumb
-//pattern=40,6B,70,47
+//pattern=80,6B,70,47,80,B5
+//thumb
+//pattern_SGOLD=40,6B,70,47,80,B5
 
 #pragma swi_number=0x1E2
 __swi __arm int ws_2utf8(WSHDR *ws, char *utf8_str);
