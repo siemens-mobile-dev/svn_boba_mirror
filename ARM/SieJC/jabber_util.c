@@ -73,7 +73,6 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
   sprintf(xmlq, "<iq type='%s' %s from='%s'", type, s_id, My_JID_full);
   if(to)
   {
-    to =  ANSI2UTF8(to, 128);
     snprintf(s_to, 128, " to='%s'", to);
     strcat(xmlq, s_to);
   }
@@ -163,7 +162,6 @@ void _sendversionrequest(char *dest_jid)
 }
 
 // Послать запрос о версии пользователю с указанным JID
-// JID указываем в ANSI-кодировке
 void Send_Version_Request(char *dest_jid) 
 {
   char *to=malloc(128);
@@ -251,17 +249,18 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
       </x>
     </message>
 */
-  char* utf8_jid = ANSI2UTF8(jid, 128);
+  char* _jid=malloc(128);
+  strcpy(_jid, jid);
   //mess->body = Correct_UTF8_String(mess->body);
   char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   if(mess->IsGroupChat)
   {
-     sprintf(msg_buf, mes_template, utf8_jid, m_num, MSGSTR_GCHAT, mess->body);
-  }else sprintf(msg_buf, mes_template, utf8_jid, m_num, MSGSTR_CHAT, mess->body);
+     sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_GCHAT, mess->body);
+  }else sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_CHAT, mess->body);
   mfree(mess->body);
   mfree(mess);
-  mfree(utf8_jid);
+  mfree(_jid);
 #ifdef LOG_ALL
   LockSched();
   Log("MESS_OUT", msg_buf);
@@ -382,25 +381,21 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
 void _leaveconference(char *conf_jid)
 {
   char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'/>";
-  char *my_jid =ANSI2UTF8(My_JID_full, strlen(My_JID_full)*2);
   char* pr=malloc(1024);
-  sprintf(pr, pr_templ,my_jid,conf_jid);
-  mfree(my_jid);  
+  sprintf(pr, pr_templ,My_JID_full,conf_jid);
   mfree(conf_jid);
   SendAnswer(pr);
   mfree(pr);
 }
 
 // Выходит из конференции
-// Имя комнаты в ANSI
 void Leave_Conference(char* room)
 {
-  char* utf8_room=ANSI2UTF8(room, strlen(room)*2);
   // Ищем экземпляр контакта в списке для конференций
   MUC_ITEM* m_ex = muctop;
   while(m_ex)
   {
-    if(strstr(m_ex->conf_jid, utf8_room))
+    if(strstr(m_ex->conf_jid, room))
     {
       char* cj = malloc(strlen(m_ex->conf_jid)*2+1);
       strcpy(cj, m_ex->conf_jid);
@@ -428,7 +423,6 @@ void Leave_Conference(char* room)
     }
     m_ex2 = m_ex2->next;
   }  
-  mfree(utf8_room); 
   ShowMSG(1,(int)"Выход из MUC выполнен"); 
 }
 
@@ -612,7 +606,7 @@ if(!strcmp(gres,iqtype))
     if(!q_type)return;
     if(!strcmp(q_type,IQ_VERSION))
     {
-      char no_os[]="(нет данных)";
+      char no_os[]="(no data)";
       char* vers_os_str;
       XMLNode *cl_name=XML_Get_Child_Node_By_Name(query, "name");
       XMLNode *cl_version=XML_Get_Child_Node_By_Name(query, "version");
@@ -627,7 +621,7 @@ if(!strcmp(gres,iqtype))
       }
       //Формируем сообщение
       char *reply=malloc(512);
-      snprintf(reply, 512,"Версия клиента:\nИмя:%s\nВерсия:%s\nОС:%s",cl_name->value, cl_version->value, vers_os_str);
+      snprintf(reply, 512,"Version Info:\nName:%s\nVersion:%s\nOS:%s",cl_name->value, cl_version->value, vers_os_str);
       CList_AddMessage(from, MSG_SYSTEM, reply);      
       ShowMSG(1,(int)reply);
       mfree(reply);
@@ -759,40 +753,41 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
         {
           if(!(ResEx->muc_privs.aff==priv.aff && ResEx->muc_privs.role==priv.role))
           {
-            sprintf(r, "%s теперь %s и %s [%d->%d, %d->%d]", nick, affiliation, role, ResEx->muc_privs.aff, priv.aff, ResEx->muc_privs.role, priv.role);
+            sprintf(r, "%s is now %s and %s [%d->%d, %d->%d]", nick, affiliation, role, ResEx->muc_privs.aff, priv.aff, ResEx->muc_privs.role, priv.role);
             Req_Set_Role = 1;
           }
           else
           {
             if(msg)
             {
-              sprintf(r, "%s сменил статус на %s (%s)", nick, PRESENCES[status], msg);
+              sprintf(r, "%s changed status to %s (%s)", nick, PRESENCES[status], msg);
             }
             else
             {
-              sprintf(r, "%s сменил статус на %s", nick, PRESENCES[status]);
+              sprintf(r, "%s changed status to %s", nick, PRESENCES[status]);
             }
           }
         }
         else
         {
-          sprintf(r, "%s присоединился как %s и %s", nick, affiliation, role);      
+          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);      
           Req_Set_Role = 1;
         }
         
         }
         else
         {
-          sprintf(r, "%s присоединился как %s и %s", nick, affiliation, role);      
+          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);      
           Req_Set_Role = 1;
         }
+        
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
       
 
       if(status==PRESENCE_OFFLINE) // Выход
       {
-        sprintf(r, "%s вышел", nick);
+        sprintf(r, "%s left us :(", nick);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
         priv.role = ROLE_NONE;
         Req_Set_Role = 1; 

@@ -127,19 +127,25 @@ void inp_ghook(GUI *gui, int cmd)
  {
    ExtractEditControl(gui,1,&ec);    
    wstrcpy(ws_eddata,ec.pWS);
-   size_t xz = wstrlen(ws_eddata)*2;
-   if(xz)
+   //size_t xz = wstrlen(ws_eddata)*2;
+   if(wstrlen(ws_eddata))
    {
-    char* body =  utf16_to_utf8((char**)ws_eddata,&xz);
-    body[xz]='\0';
+    //char* body =  utf16_to_utf8((char**)ws_eddata,&xz);
+    //body[xz]='\0';
+     int res_len;
+     char* body = malloc(wstrlen(ws_eddata)*2+1);
+     ws_2utf8(ws_eddata, body, &res_len, wstrlen(ws_eddata)*2+1);
+     body = realloc(body, res_len+1);
+     body[res_len+1]='\0';
    char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
    char part_str[]="/part";
    
    if(!is_gchat)
    {
-     char* hist = convUTF8_to_ANSI_STR(body);
-     CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
-     mfree(hist);
+     //char* hist = convUTF8_to_ANSI_STR(body);
+     //CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
+     //mfree(hist);
+     CList_AddMessage(Resource_Ex->full_name, MSG_ME, body);
    }
    else
    if(strstr(body, part_str)==body)  // Ключ в начале
@@ -154,13 +160,18 @@ void inp_ghook(GUI *gui, int cmd)
    IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
    mess->IsGroupChat = is_gchat;
    mess->body = body;
-   SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);  
+   SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);
+   REDRAW();
    }
    else ShowDialog_Error(1,(int)"Нельзя послать пустое сообщение");
    Terminate = 0;
  }
  
- 
+  if(cmd==0x03)     // onDestroy
+  {
+    FreeWS(ws_eddata);
+    ws_eddata = NULL;
+  } 
 }
 
 void inp_locret(void){}
@@ -194,7 +205,7 @@ INPUTDIA_DESC inp_desc=
   0x40000000
 };
 
-HEADER_DESC inp_hdr={0,0,131,21,NULL,(int)"Новое...",0x7FFFFFFF};
+HEADER_DESC inp_hdr={0,0,0,0,NULL,(int)"Новое...",LGP_NULL};
 
 
 
@@ -227,6 +238,7 @@ void KillDisp(DISP_MESSAGE* messtop)
   DISP_MESSAGE* cl=messtop;
   LockSched();
   messtop = NULL;
+  int cnt=0;
   while(cl)
   {
     DISP_MESSAGE *p;
@@ -234,10 +246,11 @@ void KillDisp(DISP_MESSAGE* messtop)
     p=cl;
     cl=cl->next;
     mfree(p);
+    cnt++;
   }
   MessList_Count = 0;
   OLD_MessList_Count = 0;
-  UnlockSched();  
+  UnlockSched();
 }
 
 //===============================================================================================
@@ -316,7 +329,7 @@ void mGUI_onRedraw(GUI *data)
 		   color(MsgBgColor),
 		   color(MsgBgColor));
     
-      DrawString(ml->mess,1,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
+      DrawString(ml->mess,1,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize*2,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
       i++;
     }
     ml = ml->next;
@@ -335,11 +348,6 @@ void mGUI_onCreate(GUI *data, void *(*malloc_adr)(int))
 void mGUI_onClose(GUI *data, void (*mfree_adr)(void *))
 {
   KillDisp(MessagesList);
-  if(ws_eddata)
-  {
-    FreeWS(ws_eddata);
-    ws_eddata = NULL;
-  }  
   data->state=0;
 }
 
@@ -358,8 +366,8 @@ void mGUI_onUnfocus(GUI *data, void (*mfree_adr)(void *))
 void DbgInfo()
 {
   char q[200];
-  sprintf(q,"MCnt=%d; CP=%d, MP=%d",MessList_Count,CurrentPage, MaxPages);
-  ShowMSG(1,(int)q);
+  sprintf(q,"Messlist_cnt=%d; OLD=%d, MP=%d",MessList_Count,OLD_MessList_Count);
+  ShowMSG(2,(int)q);
 }
 
 int mGUI_onKey(GUI *data, GUI_MSG *msg)
@@ -389,7 +397,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       
     case LEFT_SOFT:
       {
-        //DbgInfo();
+        DbgInfo();
         break;
       }
       
@@ -507,35 +515,47 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   if(!MessEx)return;
   LockSched();
 
-  char* msg_buf = malloc(CHAR_ON_LINE+2);
-  zeromem(msg_buf,CHAR_ON_LINE+2);
+  WSHDR *temp_ws_1=NULL;
+  WSHDR *temp_ws_2=NULL;
+  
   // Цикл по всем сообщениям
   while(MessEx)
   {
     
     if(parsed_counter>=OLD_MessList_Count)
     {
-    int l=strlen(MessEx->mess);
-    
+      temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
+      utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
+      temp_ws_2 = AllocWS(CHAR_ON_LINE);
+      int l=wstrlen(temp_ws_1);
+      
+        //char q[40];
+        //sprintf(q,"UTF_len=%d, WSTR_len=%d", strlen(MessEx->mess),l);
+        //ShowMSG(2,(int)q);
+      
     int i=0;
-    char symb;
+    unsigned short *wschar;
+    unsigned short symb;
     cnt=0;
-    for(i=0;i<=l;i++)
+    for(i=1;i<=l;i++)
     {
-      symb = GetSpecialSym(MessEx->mess+i,&i);
-      //symb = *(MessEx->mess+i);
-      IsCaret = symb==0x0A || symb==0x0D || symb==0xA0 ? 1 : 0;
+      //if(MessEx->mess+i=='\0')break;
+      //symb = GetSpecialSym(MessEx->mess+i,&i);
+      wschar = temp_ws_1->wsbody+i;
+      symb = *wschar;
+      IsCaret = symb==0x000A || symb==0x000D || symb==0x00A0 ? 1 : 0;
       if(!IsCaret && symb!=0x0 && cnt<CHAR_ON_LINE)
       {
-        *(msg_buf + cnt) = symb;
+        //*(msg_buf + cnt) = symb;
+        wsAppendChar(temp_ws_2, symb);
         cnt++;
       }
-      if(IsCaret || cnt>=CHAR_ON_LINE || symb==0x0) // Перенос строки
+      if(IsCaret || cnt>=CHAR_ON_LINE || i==l) // Перенос строки
       {
         Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
         Disp_Mess_Ex->mess = AllocWS(cnt);
-        ascii2ws(Disp_Mess_Ex->mess, msg_buf);
-        zeromem(msg_buf,CHAR_ON_LINE+1);
+        wstrcpy(Disp_Mess_Ex->mess, temp_ws_2);
+        CutWSTR(temp_ws_2, 0);
         Disp_Mess_Ex->mtype = MessEx->mtype;
         Disp_Mess_Ex->log_mess_number=parsed_counter;
         if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
@@ -552,12 +572,14 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
         cnt=0;
         MessList_Count++;
       }
-    }  
+    }
+    FreeWS(temp_ws_1);
+    FreeWS(temp_ws_2);
     }
     MessEx = MessEx->next;
     parsed_counter++;
   }
-  mfree(msg_buf);
+//  mfree(msg_buf);
   UnlockSched();
 }
 

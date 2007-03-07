@@ -117,6 +117,6 @@ void MUCList_Destroy();
 // Войти в конференцию
 void Enter_Conference(char *room, char *roomnick, char N_messages);
 
-// Выйти из конференции, имя в ANSI
+// Выйти из конференции
 void Leave_Conference(char* room);
 #endif

@@ -360,7 +360,7 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
   char* utf8_str = malloc(maxlen*2+1);
   ws_2str(ws_str, utf8_str, maxlen*2);
   FreeWS(ws_str);
-  utf8_str = Correct_UTF8_String(utf8_str);
+  //utf8_str = Correct_UTF8_String(utf8_str);
   return utf8_str;
 }
 

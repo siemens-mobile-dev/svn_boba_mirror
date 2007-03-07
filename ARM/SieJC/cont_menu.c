@@ -239,6 +239,13 @@ void Disp_Contact_Menu()
   TRESOURCE *Act_contact = CList_GetActiveContact();
 // Теперь определяем, какие пункты у нас будут, и сколько
   if(!Act_contact)return;
+
+  
+  if(Act_contact->entry_type!=T_CONF_ROOT)
+  {
+    Menu_Contents[n_items++]=MI_QUERY_VERSION;
+  } 
+  
   if(Act_contact->entry_type==T_CONF_ROOT)
   {
     Menu_Contents[n_items++]=MI_CONF_LEAVE;
@@ -257,11 +264,7 @@ void Disp_Contact_Menu()
       else Menu_Contents[n_items++]=MI_CONF_VREJ_THIS;
     }
   }
-  
-  if(Act_contact->entry_type!=T_CONF_ROOT)
-  {
-    Menu_Contents[n_items++]=MI_QUERY_VERSION;
-  }  
+   
   if(n_items+1)
   {
     patch_rect(&contact_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);

@@ -68,6 +68,8 @@ const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
 
 // Добавить системное сообщение
   void CList_AddSystemMessage(char* jid, char status, char* status_msg);
+// Оно же, но принимает ANSI-строку. Полезно в отдельных случаях :)
+  void CList_AddSystemMessageA(char* jid, char status, char* ansi_status_msg);
 
   TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg);
 

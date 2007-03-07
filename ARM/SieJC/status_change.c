@@ -148,7 +148,7 @@ void ed1_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Статус",0x7FFFFFFF};
+HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Статус",LGP_NULL};
 
 INPUTDIA_DESC ed1_desc=
 {

@@ -113,11 +113,13 @@ void CList_RedrawCList()
             borderColor=lineColor=(Alternation==1)? CONTACT_BG_0 : CONTACT_BG_1;
           }
           
-          ascii2ws(ClEx_name, ClEx->name);
+          //ascii2ws(ClEx_name, ClEx->name);
+          utf8_2ws(ClEx_name, ClEx->name, 128);
           
           if(resEx->name)
           {
             ascii2ws(ResEx_name,resEx->name);
+            utf8_2ws(ResEx_name,resEx->name, 128);
             if(resEx->entry_type==T_CONF_NODE)
             {
               wsprintf(out_ws,"%w", ResEx_name); // это участник конференции
@@ -276,12 +278,19 @@ void CList_AddSystemMessage(char* jid, char status, char* status_msg)
   }
   if(status == PRESENCE_UNSUBSCRIBED)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, "Авторизация отозвана");
+    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was removed!");
   }
   if(status==PRESENCE_SUBSCRIBED)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, "Авторизация получена");    
+    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was granted");    
   }
+}
+
+void CList_AddSystemMessageA(char* jid, char status, char* ansi_status_msg)
+{
+  char *utf8_msg=ANSI2UTF8(ansi_status_msg, 512);
+  CList_AddSystemMessage(jid, status, utf8_msg);
+  mfree(utf8_msg);
 }
 
 // Узнать, есть ли уже такой ресурс у контакта, по FullJID
@@ -611,6 +620,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     strcpy(mess->mess, timestamp);
     strcat(mess->mess, mtext);
   }
+  
   mess->mtype=mtype;
   LockSched();
   if(!cont->log)
@@ -626,7 +636,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   cont->total_msg_count++;
   mess->next=NULL;
   UnlockSched();
-  Add2History(CList_FindContactByJID(jid), datestr,mtext);
+  //Add2History(CList_FindContactByJID(jid), datestr,mtext);
 }
 
 /*
@@ -674,17 +684,20 @@ void CList_Destroy()
 void CList_Display_Popup_Info(TRESOURCE* ResEx)
 {
   if(!ResEx)return;
-  char msg_ex[]="JID: %s\nСтатус:%s";
-  char* msg = malloc(1024);
+  char msg_ex[]="JID: %s\nStatus:%s";
+  char* msg = malloc(200);
   extern const char* JABBER_AFFS[];
   extern const char* JABBER_ROLS[];
   if(ResEx->status_msg)
   {
+    char *ansi_statusmsg = convUTF8_to_ANSI_STR(ResEx->status_msg);
     ShowMSG(0,(int)ResEx->status_msg);
+    mfree(ansi_statusmsg);
   }
-  snprintf(msg,1024,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
-  ShowMSG(0, (int)msg);
-
+  snprintf(msg,200,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
+  char *ansi_msg=convUTF8_to_ANSI_STR(msg);
+  ShowMSG(0, (int)ansi_msg);
+  mfree(ansi_msg);
   if(ResEx->entry_type==T_CONF_NODE)
   {
     snprintf(msg,1024,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);

@@ -54,7 +54,7 @@ extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.4";
+const char VERSION_VERS[] = "0.9.5-dev";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -333,7 +333,8 @@ void get_answer(void)
     tmp_buffer->xml_buffer = malloc(bytecount);          // Буфер в структуре
     get_buf_part(tmp_buffer->xml_buffer, bytecount);
 
-//    tmp_buffer->buf_size = bytecount;      
+    tmp_buffer->buf_size = bytecount;      
+/*
     // Блочное конвертирование UTF8->ANSI
 
     char* conv_buf=malloc(bytecount);
@@ -342,7 +343,7 @@ void get_answer(void)
     mfree(tmp_buffer->xml_buffer);
     tmp_buffer->buf_size = conv_size;
     tmp_buffer->xml_buffer = conv_buf;
-    
+*/    
 
     processed_pos = virt_buffer_len;
 
