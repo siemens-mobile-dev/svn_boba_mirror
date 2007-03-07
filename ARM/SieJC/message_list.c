@@ -397,7 +397,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       
     case LEFT_SOFT:
       {
-        DbgInfo();
+        //DbgInfo();
         break;
       }
       

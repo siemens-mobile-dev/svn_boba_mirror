@@ -858,9 +858,9 @@ void _mucadmincmd(char* room, char* iq_payload)
 void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* reason)
 {
   char* payload = malloc(1024);
+  char *_room_name = malloc(strlen(room_name)+1);
+  strcpy(_room_name, room_name);
   char payload_tpl[]="<item nick='%s' %s='%s'><reason>%s</reason></item>";
-  char* utf8_roomname= ANSI2UTF8(room_name, 128);
-  char* utf8_roomjid= ANSI2UTF8(room_jid, 128);
   char it[20];
   char val[20];
   char aff[]="affiliation";
@@ -895,10 +895,9 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
     
   }
   
-  snprintf(payload, 1023, payload_tpl, utf8_roomjid, it, val, reason);
+  snprintf(payload, 1023, payload_tpl, room_jid, it, val, reason);
 //  ShowMSG(1,(int)payload);
-  SUBPROC((void*)_mucadmincmd, utf8_roomname, payload);
-  mfree(utf8_roomjid);
+  SUBPROC((void*)_mucadmincmd, _room_name, payload);
 }
 
 /*
@@ -917,8 +916,10 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     {
       char* m = malloc(128+5+strlen(msgnode->value));
       sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
-      ShowMSG(1,(int)m);
+      char *ansi_m=convUTF8_to_ANSI_STR(m);
+      ShowMSG(1,(int)ansi_m);
       mfree(m);
+      mfree(ansi_m);
     }
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
     extern volatile int vibra_count;

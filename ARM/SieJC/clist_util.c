@@ -397,6 +397,8 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
             
       ResEx->status = status;
+      ResEx->muc_privs.aff = AFFILIATION_NONE;
+      ResEx->muc_privs.role=  ROLE_NONE; 
       if(ClEx->res_list->entry_type!=T_CONF_ROOT){ ResEx->entry_type = T_NORMAL;}
       else{ResEx->entry_type = T_CONF_NODE;}
       ResEx->has_unread_msg=0;

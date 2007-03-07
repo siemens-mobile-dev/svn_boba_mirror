@@ -85,7 +85,7 @@ MENU_DESC tmenu=
   menuprocs,
   N_ITEMS
 };
-extern const char PATH_TO_PIC[256];
+extern const char PATH_TO_PIC[128];
 int S_ICONS[2];
 char mypic[128];
 char confpic[128];

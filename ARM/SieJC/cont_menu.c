@@ -32,10 +32,8 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 }
 //==============================================================================
 
-int cmS_ICONS[1];
-int cmdummy_icon[] = {0x50E,0};
 
-#define MAX_ITEMS 8
+#define MAX_ITEMS 8       // Максимальное количество пунктов меню 
 
 #define MI_CONF_LEAVE       1
 #define MI_CONF_KICK_THIS   2
@@ -45,6 +43,7 @@ int cmdummy_icon[] = {0x50E,0};
 #define MI_QUERY_VERSION    6
 
 char Menu_Contents[MAX_ITEMS-1];
+int cmS_ICONS[MAX_ITEMS+1];
 
 
 int Contact_MenuID;
@@ -160,7 +159,7 @@ void InitMenuArray()
 */
 void contact_menu_iconhndl(void *data, int curitem, int *unk)
 {
-  cmS_ICONS[0]=(int)cmdummy_icon;
+//  cmS_ICONS[0]=(int)cmdummy_icon;
   WSHDR *ws;
   extern const char percent_t[];
   char test_str[48];
@@ -207,7 +206,7 @@ void contact_menu_iconhndl(void *data, int curitem, int *unk)
   
   SetMenuItemIconArray(data,item,cmS_ICONS);
   SetMenuItemText(data,item,ws,curitem);
-  SetMenuItemIcon(data,curitem,0);  // 0 = индекс иконки
+  SetMenuItemIcon(data,curitem,Menu_Contents[curitem]);  // 0 = индекс иконки
   /*
   CLIST *t;
   WSHDR *ws;
@@ -230,12 +229,47 @@ void contact_menu_iconhndl(void *data, int curitem, int *unk)
 */  
 };
 
+/*
+#define MI_CONF_LEAVE       1
+#define MI_CONF_KICK_THIS   2
+#define MI_CONF_BAN_THIS    3
+#define MI_CONF_VREJ_THIS   4
+#define MI_CONF_VGR_THIS    5
+#define MI_QUERY_VERSION    6
+*/
+extern const char PATH_TO_PIC[128];
+
+char ICON_CONF_LEAVE[128];// = {(int)PATH_TO_PIC"menu_muc_leave.png",0};
+char ICON_CONF_KICK_THIS[128];
+char ICON_CONF_BAN_THIS[128];
+char ICON_CONF_VREJ_THIS[128];
+char ICON_CONF_VGR_THIS[128];
+char ICON_QUERY_VERSION[128];
+
+void Init_Icon_array()
+{
+  strcpy(ICON_CONF_LEAVE, PATH_TO_PIC);strcat(ICON_CONF_LEAVE, "menu_muc_leave.png");
+  strcpy(ICON_CONF_KICK_THIS, PATH_TO_PIC);strcat(ICON_CONF_KICK_THIS, "menu_kick.png");
+  strcpy(ICON_CONF_BAN_THIS, PATH_TO_PIC);strcat(ICON_CONF_BAN_THIS, "menu_ban.png");
+  strcpy(ICON_CONF_VREJ_THIS, PATH_TO_PIC);strcat(ICON_CONF_VREJ_THIS, "menu_no_icon.png");
+  strcpy(ICON_CONF_VGR_THIS, PATH_TO_PIC);strcat(ICON_CONF_VGR_THIS, "menu_no_icon.png");
+  strcpy(ICON_QUERY_VERSION, PATH_TO_PIC);strcat(ICON_QUERY_VERSION, "menu_version.png");  
+  
+  for(int i=0;i<=MAX_ITEMS;i++)cmS_ICONS[i]=0;
+  cmS_ICONS[MI_CONF_LEAVE]=(int)ICON_CONF_LEAVE;  
+  cmS_ICONS[MI_CONF_KICK_THIS]=(int)ICON_CONF_KICK_THIS;    
+  cmS_ICONS[MI_CONF_BAN_THIS]=(int)ICON_CONF_BAN_THIS;    
+  cmS_ICONS[MI_CONF_VREJ_THIS]=(int)ICON_CONF_VREJ_THIS;    
+  cmS_ICONS[MI_CONF_VGR_THIS]=(int)ICON_CONF_VGR_THIS;    
+  cmS_ICONS[MI_QUERY_VERSION]=(int)ICON_QUERY_VERSION;    
+  
+}
 
 void Disp_Contact_Menu()
 {
   int n_items=0;
   InitMenuArray();
-  
+  Init_Icon_array();
   TRESOURCE *Act_contact = CList_GetActiveContact();
 // Теперь определяем, какие пункты у нас будут, и сколько
   if(!Act_contact)return;
