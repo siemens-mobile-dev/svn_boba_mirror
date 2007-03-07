@@ -1753,7 +1753,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.40A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1992,7 +1992,7 @@
         <option>
           <name>CCInlineThreshold</name>
           <version>0</version>
-          <state>1</state>
+          <state>4</state>
         </option>
       </data>
     </settings>
@@ -2180,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>"obexcopy.exe" $PROJ_DIR$\Release\Exe\NATICQ.elf \MMCard\NATICQ.elf</postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\NATICQ.elf \Data\Zbin\NatICQ\NATICQ.elf</postbuild>
       </data>
     </settings>
     <settings>

@@ -1340,7 +1340,7 @@ void do_reconnect(void)
   }
 }
 
-void *q_data;
+
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
@@ -1417,7 +1417,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     }
     if ((int)msg->data0==edchat_id)
     {
-      q_data=NULL;
       edchat_id=0;
       if (request_remake_edchat)
       {
@@ -2120,20 +2119,24 @@ void CreateEditChat(CLIST *t)
 //-----------------------------------------------------------------------------
 #define EC_MNU_MAX 8
   
-void Quote(void)
+void Quote(GUI *data, void *dummy)
 {
+  void *ed_chat_gui;
+  int q_n;
   EDITCONTROL ec;
   EDITCONTROL ec_ed;
   WSHDR *ed_ws;
   WSHDR *ws;
-  if (!q_data) return;
-  int q_n=EDIT_GetFocus(q_data);
-  ExtractEditControl(q_data,q_n,&ec);
-  ExtractEditControl(q_data,edchat_answeritem,&ec_ed);
+  
+  ed_chat_gui=MenuGetUserPointer(data);
+  if (!ed_chat_gui) return;
+  q_n=EDIT_GetFocus(ed_chat_gui);
+  ExtractEditControl(ed_chat_gui,q_n,&ec);
+  ExtractEditControl(ed_chat_gui,edchat_answeritem,&ec_ed);
   ed_ws=AllocWS(ec_ed.maxlen);
-  if (EDIT_IsMarkModeActive(q_data))
+  if (EDIT_IsMarkModeActive(ed_chat_gui))
   {
-    EDIT_GetMarkedText(q_data,ed_ws);
+    EDIT_GetMarkedText(ed_chat_gui,ed_ws);
   }
   else
   {
@@ -2153,8 +2156,8 @@ void Quote(void)
   wstrcat(ws,ed_ws);
   FreeWS(ed_ws);
   CutWSTR(ws,ec_ed.maxlen);
-  EDIT_SetFocus(q_data,edchat_answeritem);
-  EDIT_SetTextToFocused(q_data,ws);
+  EDIT_SetFocus(ed_chat_gui,edchat_answeritem);
+  EDIT_SetTextToFocused(ed_chat_gui,ws);
   FreeWS(ws);
   GeneralFuncF1(1);
 }
@@ -2235,20 +2238,22 @@ void OpenLogfile(void)
   GeneralFuncF1(1);
 }
 
-void ClearLog(void)
+void ClearLog(GUI *data, void *dummy)
 {
+  void *ed_chat_gui;
   CLIST *t;
   if ((t=edcontact))
   {
     if (t->log)
     {
+      ed_chat_gui=MenuGetUserPointer(data);
       mfree(t->log);
       t->log=NULL;
-      if (edchat_answeritem>=2  && q_data)
+      if (edchat_answeritem>=2  && ed_chat_gui)
       {
         while(edchat_answeritem!=2)
         {
-          EDIT_RemoveEditControl(q_data,1);
+          EDIT_RemoveEditControl(ed_chat_gui,1);
           edchat_answeritem--;
         }
       }
@@ -2278,7 +2283,7 @@ MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
   {NULL,(int)"Clear log"      ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
-void AddSmile(void);
+extern void AddSmile(void *data, void *dummy);
 void *ecmenu_HNDLS[EC_MNU_MAX]=
 {
   (void *)Quote,
@@ -2320,7 +2325,6 @@ void ec_menu(GUI *data, GUI_MSG *msg)
     {
       sprintf(ecm_contactname,"%u",t->uin);
     }
-    q_data=data;
     if (EDIT_GetFocus(data)==edchat_answeritem)
     {
       to_remove[0]=1;
@@ -2332,7 +2336,8 @@ void ec_menu(GUI *data, GUI_MSG *msg)
       to_remove[1]=1;
     }      
     patch_header(&ecmenu_HDR);
-    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,0,to_remove);
+    
+    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,data,to_remove);
   }
 }
 
@@ -2466,6 +2471,7 @@ int as_onkey(GUI *data, GUI_MSG *msg)
     S_SMILES *t;
     WSHDR *ed_ws;
     EDITCONTROL ec;
+    void *q_data=EDIT_GetUserPointer(data);
     if (!q_data) return(0);
     t=FindSmileById(cur_smile);
     if (!t) return (0);
@@ -2551,7 +2557,9 @@ INPUTDIA_DESC as_desc=
   0x40000000
 };
 
-void AddSmile(void)
+
+
+void AddSmile(void *data, void *dummy)
 {
   S_SMILES *t;
   cur_smile=0;
@@ -2563,6 +2571,7 @@ void AddSmile(void)
   }
   void *ma=malloc_adr();
   void *eq;
+  void *ed_chat_gui=MenuGetUserPointer(data);
   EDITCONTROL ec;
   WSHDR *ews=AllocWS(32);
   PrepareEditControl(&ec);
@@ -2579,7 +2588,8 @@ void AddSmile(void)
   
   patch_header(&as_hdr);
   patch_input(&as_desc);
-  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,0);
+  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_chat_gui);
   FreeWS(ews);
   GeneralFuncF1(1);
 }
+
