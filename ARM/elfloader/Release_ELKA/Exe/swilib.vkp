@@ -566,7 +566,7 @@
 0778: 0xA0A233B9 ; 1DE: __thumb int EDIT_SetTextToEditControl(void *gui,int n,WSHDR *ws);
 077C: 0xA0A23467 ; 1DF: __thumb void *EDIT_GetUserPointer(void *gui);
 0780: 0xA095CFE7 ; 1E0: __thumb void *MenuGetUserPointer(void *gui);
-
+0784: 0xA08FFA61 ; 1E1: __thumb int GetSymbolWidth(int wchar,int font)
 0788: 0xA0500231 ; 1E2: __thumb int ws_2utf8(WSHDR *ws, char *utf8_str);
 078C: 0xA05002E9 ; 1E3: __thumb int utf8_2ws(WSHDR *ws,char *utf8_str, unsigned int maxLen);
 
