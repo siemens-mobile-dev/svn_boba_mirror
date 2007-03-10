@@ -48,7 +48,7 @@ void savetext(void)
     DiskErrorMsg(4);
     goto LERR1;
   }
-  sf=fopen(stkfile,A_ReadOnly+A_BIN,0,&ul); //Файл верхнего стека
+  sf=fopen(stkfile,A_ReadOnly+A_BIN,P_READ,&ul); //Файл верхнего стека
   if (f==-1)
   {
     DiskErrorMsg(3);

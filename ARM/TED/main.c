@@ -1502,10 +1502,10 @@ void ed_inp_ghook(GUI *data, int cmd)
   {
     if (!editmode)
     {
-      EDIT_CURSOR_POS(data)=curpos+1;
+      EDIT_SetCursorPos(data,curpos+1);
       editmode=0xFFFFFFFF;
     }
-    ecp=EDIT_CURSOR_POS(data);
+    ecp=EDIT_GetCursorPos(data);
     ecp--;
     while(ecp>curpos) doCurRight();
     while(ecp<curpos) doCurLeft();

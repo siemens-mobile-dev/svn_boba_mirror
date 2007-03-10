@@ -2180,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\TED.elf \MMCard\ZBin\TED\TED.elf</postbuild>
+        <postbuild>obexcopy.exe $EXE_DIR$\TED.elf \Data\ZBin\TED\TED.elf</postbuild>
       </data>
     </settings>
     <settings>
