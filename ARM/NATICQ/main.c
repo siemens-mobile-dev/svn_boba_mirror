@@ -1799,12 +1799,15 @@ void edchat_locret(void){}
 void ExtractAnswer(WSHDR *ws)
 {
   S_SMILES *t;
-  int i=0;
   int c;
+  int scur=0;
+  int wcur=0;
+  unsigned short *wsbody=ws->wsbody;
+  int wslen=wsbody[0];
   do
   {
-    if (i>=ws->wsbody[0]) break;
-    c=ws->wsbody[i+1];
+    if (wcur>=wslen) break;
+    c=wsbody[wcur+1];
     if (c==10) c=13;
     if (c>=0xE100)
     {
@@ -1813,26 +1816,27 @@ void ExtractAnswer(WSHDR *ws)
       {
         int w;
         char *s=t->text;
-        while ((w=*s++) && i<16383)
+        while ((w=*s++) && scur<16383)
         {
-          msg_buf[i]=w;
-          i++;
+          msg_buf[scur]=w;
+          scur++;
         }
       }
       else 
       {
-        msg_buf[i]=char16to8(c);
-        i++;
+        msg_buf[scur]=char16to8(c);
+        scur++;
       }
     }
     else
     {
-      msg_buf[i]=char16to8(c);
-      i++;
-    }          
+      msg_buf[scur]=char16to8(c);
+      scur++;
+    }
+    wcur++;
   }
-  while(i<16383);
-  msg_buf[i]=0;
+  while(scur<16383);
+  msg_buf[scur]=0;
   return;
 }
 
@@ -2270,7 +2274,6 @@ void ecmenu_ghook(void *data, int cmd)
   }
 }
 
-int to_remove[EC_MNU_MAX+1];
 MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
 {
   {NULL,(int)"Quote"          ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -2315,6 +2318,7 @@ MENU_DESC ecmenu_STRUCT=
 void ec_menu(GUI *data, GUI_MSG *msg)
 {
   CLIST *t;
+  int to_remove[EC_MNU_MAX+1];
   if ((t=edcontact))
   {
     if (t->name)
@@ -2336,7 +2340,6 @@ void ec_menu(GUI *data, GUI_MSG *msg)
       to_remove[1]=1;
     }      
     patch_header(&ecmenu_HDR);
-    
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,data,to_remove);
   }
 }
@@ -2471,21 +2474,26 @@ int as_onkey(GUI *data, GUI_MSG *msg)
     S_SMILES *t;
     WSHDR *ed_ws;
     EDITCONTROL ec;
-    void *q_data=EDIT_GetUserPointer(data);
+    int pos;
+    void *q_data;
+    
+    q_data=EDIT_GetUserPointer(data);
     if (!q_data) return(0);
     t=FindSmileById(cur_smile);
     if (!t) return (0);
     ExtractEditControl(q_data,edchat_answeritem,&ec);
     ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
     wstrcpy(ed_ws,ec.pWS);
-    wsAppendChar(ed_ws,t->uni_smile);
-    EDIT_SetFocus(q_data,edchat_answeritem);
-    EDIT_SetTextToFocused(q_data,ed_ws);
+    pos=EDIT_GetCursorPos(q_data);
+    wsInsertChar(ed_ws,t->uni_smile,pos);
+    EDIT_SetTextToEditControl(q_data,edchat_answeritem,ed_ws);
+    EDIT_SetCursorPos(q_data,pos+1);
     FreeWS(ed_ws);
     return (1);
   }
   return(0);
 }
+
 void as_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)"Paste it!"};
