@@ -251,7 +251,6 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 */
   char* _jid=malloc(128);
   strcpy(_jid, jid);
-  //mess->body = Correct_UTF8_String(mess->body);
   char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   if(mess->IsGroupChat)

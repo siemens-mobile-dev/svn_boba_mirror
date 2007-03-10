@@ -2937,6 +2937,12 @@
       <name>$PROJ_DIR$\history.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\md5.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\md5.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\string_util.c</name>
     </file>
     <file>

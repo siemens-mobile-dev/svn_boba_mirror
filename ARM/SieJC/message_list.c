@@ -136,15 +136,12 @@ void inp_ghook(GUI *gui, int cmd)
      char* body = malloc(wstrlen(ws_eddata)*2+1);
      ws_2utf8(ws_eddata, body, &res_len, wstrlen(ws_eddata)*2+1);
      body = realloc(body, res_len+1);
-     body[res_len+1]='\0';
+     body[res_len]='\0';
    char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
    char part_str[]="/part";
    
    if(!is_gchat)
    {
-     //char* hist = convUTF8_to_ANSI_STR(body);
-     //CList_AddMessage(Resource_Ex->full_name, MSG_ME, hist);
-     //mfree(hist);
      CList_AddMessage(Resource_Ex->full_name, MSG_ME, body);
    }
    else
@@ -310,9 +307,7 @@ void mGUI_onRedraw(GUI *data)
   {
     if((i_ctrl>=(CurrentPage-1)*lines_on_page) && (i_ctrl<CurrentPage*lines_on_page))
     {
-      //str_2ws(ws_title,ml->mess,strlen(ml->mess));
-      
-      //str_2ws(ws_title,ml->mess,CHAR_ON_LINE);
+
       switch(ml->mtype)
       {
       case MSG_ME:{MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;}        
@@ -366,7 +361,7 @@ void mGUI_onUnfocus(GUI *data, void (*mfree_adr)(void *))
 void DbgInfo()
 {
   char q[200];
-  sprintf(q,"Messlist_cnt=%d; OLD=%d, MP=%d",MessList_Count,OLD_MessList_Count);
+  sprintf(q,"Messlist_cnt=%d; OLD=%d",MessList_Count,OLD_MessList_Count);
   ShowMSG(2,(int)q);
 }
 

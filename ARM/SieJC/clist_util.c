@@ -693,7 +693,7 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
   if(ResEx->status_msg)
   {
     char *ansi_statusmsg = convUTF8_to_ANSI_STR(ResEx->status_msg);
-    ShowMSG(0,(int)ResEx->status_msg);
+    ShowMSG(0,(int)ansi_statusmsg);
     mfree(ansi_statusmsg);
   }
   snprintf(msg,200,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
