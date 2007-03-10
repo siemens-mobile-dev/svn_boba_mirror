@@ -81,6 +81,11 @@ __arm IMGHDR* create_imghdr(const char* fname)
   
   png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, 0, 0, 0);
   
+  if (bit_depth < 8) png_set_gray_1_2_4_to_8(png_ptr);
+    
+  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+    png_set_tRNS_to_alpha(png_ptr); 
+  
   if (bit_depth == 16) png_set_strip_16(png_ptr);
   
   if (bit_depth < 8) png_set_packing(png_ptr);
@@ -89,17 +94,12 @@ __arm IMGHDR* create_imghdr(const char* fname)
     png_set_palette_to_rgb(png_ptr);
   
   if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-    
-  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-    png_set_tRNS_to_alpha(png_ptr);
-  
-  if (color_type != PNG_COLOR_TYPE_GRAY)
-    png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
-  else 
-  {
     png_set_gray_to_rgb(png_ptr);
-    png_set_invert_mono(png_ptr);
-  }
+    
+  if (color_type == PNG_COLOR_TYPE_RGB)
+    png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
+  
+  if (color_type == PNG_COLOR_TYPE_GRAY)  png_set_invert_mono(png_ptr);
   
   png_read_update_info(png_ptr, info_ptr);
   
@@ -341,7 +341,3 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   while(pl); //Пока есть элементы, освобождаем их
   return(cur->img);
 }
-
-
-
-
