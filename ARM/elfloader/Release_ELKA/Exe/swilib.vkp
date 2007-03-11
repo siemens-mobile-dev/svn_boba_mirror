@@ -570,11 +570,7 @@
 0788: 0xA0500231 ; 1E2: __thumb int ws_2utf8(WSHDR *ws, char *utf8_str);
 078C: 0xA05002E9 ; 1E3: __thumb int utf8_2ws(WSHDR *ws,char *utf8_str, unsigned int maxLen);
 
-;780:              ; 1E0: 
-;784:              ; 1E1: 
-;788:              ; 1E2: 
-;78C:              ; 1E3: 
-;790:              ; 1E4: 
+0790: 0xA0954357 ; 1E4: __thumb int GetPicNByUnicodeSymbol(int wchar);
 ;794:              ; 1E5: 
 ;798:              ; 1E6: 
 ;79C:              ; 1E7: 
