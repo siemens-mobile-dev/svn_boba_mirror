@@ -2321,6 +2321,7 @@ void ec_menu(GUI *data, GUI_MSG *msg)
 {
   CLIST *t;
   int to_remove[EC_MNU_MAX+1];
+  int remove=0;
   if ((t=edcontact))
   {
     if (t->name)
@@ -2333,15 +2334,24 @@ void ec_menu(GUI *data, GUI_MSG *msg)
     }
     if (EDIT_GetFocus(data)==edchat_answeritem)
     {
-      to_remove[0]=1;
-      to_remove[1]=0;
+      to_remove[++remove]=0;
     }
     else
     {
-      to_remove[0]=1;
-      to_remove[1]=1;
-    }      
+      to_remove[++remove]=1;
+    }  
+    
+    if (edchat_answeritem<=2) to_remove[++remove]=7;
+    if (!edcontact || connect_state!=3)
+    {
+      to_remove[++remove]=2;
+      to_remove[++remove]=3;
+      to_remove[++remove]=4;
+      to_remove[++remove]=5;
+    }
+      
     patch_header(&ecmenu_HDR);
+    to_remove[0]=remove;
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,data,to_remove);
   }
 }
