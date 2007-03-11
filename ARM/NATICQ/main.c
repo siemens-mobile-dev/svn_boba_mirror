@@ -1917,9 +1917,6 @@ void ParseAnswer(WSHDR *ws, char *s)
     wsAppendChar(ws,wchar);
   }
 }
-    
-
-  
 
 void edchat_ghook(GUI *data, int cmd)
 {
@@ -2006,6 +2003,11 @@ void edchat_ghook(GUI *data, int cmd)
       strcpy(s,msg_buf);
       t->answer=s;
     }
+  }
+  if (cmd==0x0C)
+  {
+    j=EDIT_GetFocus(data);
+    if ((EDIT_GetUnFocus(data)<j)&&(j!=edchat_answeritem)) EDIT_SetCursorPos(data,1);
   }
 }
 
