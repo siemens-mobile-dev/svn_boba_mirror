@@ -51,6 +51,14 @@ typedef enum
 {
   JS_NOT_CONNECTED, 
   JS_CONNECTED_STATE, 
+  JS_ZLIB_INIT_ACK,           // ќжидание подтверждени€ юзани€ ZLib
+  JS_ZLIB_STREAM_INIT_ACK,    // ќжидание ответного ZLib-потока
+  JS_SASL_NEGOTIATION,        // ќбмен приветстви€ми SASL
+  JS_SASL_NEG_ANS_WAIT,       // ќжидание ответа от сервера на посланный SASL
+  JS_SASL_AUTH_ACK,           // ќжидание <success/> после ответа на rspauth
+  JS_SASL_NEW_STREAM_ACK,     // ќжидание инициализации нового потока
+  JS_SASL_RESBIND_ACK,        // ќжидание прив€зки ресурса
+  JS_SASL_SESS_INIT_ACK,      // ќжидание инициализации сессии
   JS_AUTH_OK, 
   JS_AUTH_ERROR, 
   JS_ONLINE,

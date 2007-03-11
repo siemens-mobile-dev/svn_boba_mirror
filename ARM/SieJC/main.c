@@ -1,5 +1,6 @@
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
+#include "..\inc\zlib.h"
 #include "history.h"
 #include "conf_loader.h"
 #include "main.h"
@@ -52,9 +53,11 @@ extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];  
 extern const char PATH_TO_PIC[];  
 extern const int IS_IP;
+extern const int USE_SASL; 
+extern const int USE_ZLIB; 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.5-dev";
+const char VERSION_VERS[] = "0.9.6-SASL";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -65,6 +68,7 @@ const char OS[] = "SGOLD_ELF-Platform";
 
 
 char Is_Vibra_Enabled = 1;
+char Is_Compression_Enabled = 0;
 
 const char percent_t[]="%t";
 char empty_str[]="";
@@ -268,9 +272,45 @@ void end_socket(void)
 }
 
 char* XMLBuffer;
+char *Decompr_Buffer;
 unsigned int XMLBufferCurPos = 0; // Позиция в кольцевом буфере
 unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
 unsigned int processed_pos   = 0; // До какого места обработали
+
+
+void* zcalloc(int unk,size_t nelem, size_t elsize)
+{
+  return (malloc(nelem*elsize));
+}
+
+void zcfree(int unk, void* ptr)
+{
+  mfree(ptr);
+}
+
+int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomprLen)
+{
+  int err;
+  z_stream d_stream;
+  d_stream.zalloc = (alloc_func)zcalloc;
+  d_stream.zfree = (free_func)zcfree;
+  d_stream.opaque = (voidpf)0;
+  d_stream.next_in  = (Byte*)compr;
+  d_stream.avail_in = (uInt)comprLen;
+  err = inflateInit2(&d_stream,-MAX_WBITS);
+  if(err!=Z_OK)
+  {
+    unerr:
+      return err;
+  }
+  d_stream.next_out = (Byte*)uncompr;
+  d_stream.avail_out = (uInt)uncomprLen;
+  err = inflate(&d_stream, Z_NO_FLUSH);
+  if(err<0) goto unerr;
+  err = inflateEnd(&d_stream);
+  if(err<0) goto unerr;
+  return 0;
+}
 
 
 
@@ -302,6 +342,8 @@ void get_answer(void)
   zeromem(buf,REC_BUFFER_SIZE);           // Зануляем
   int rec_bytes = 0;          // Не торопимся :)
   rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
+ 
+  Log("RECV",buf);
   
   // Запись в буфер
   if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
@@ -320,6 +362,30 @@ void get_answer(void)
   }
   
   virt_buffer_len = virt_buffer_len + rec_bytes;  // Виртуальная длина потока увеличилась
+
+  
+  if(Is_Compression_Enabled)
+  {
+    if((rec_bytes<REC_BUFFER_SIZE))
+    {
+    // unzip(compr_data,compr_size,uncompr_data,uncompr_size);
+    int bytecount = virt_buffer_len - processed_pos;
+    char *compressed_data = malloc(bytecount); 
+    get_buf_part(compressed_data, bytecount);
+    
+    IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
+    Decompr_Buffer = malloc(10240); // Пока 10К
+    zeromem(Decompr_Buffer, 10240);
+    unzip(compressed_data,bytecount,Decompr_Buffer,10240);
+    mfree(compressed_data);
+    processed_pos = virt_buffer_len;
+    tmp_buffer->xml_buffer = Decompr_Buffer;
+    Log("UZIP",Decompr_Buffer);
+    //GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
+    }
+  }
+  else
+  {  
   
   char lastchar = *(buf + rec_bytes - 1);
   
@@ -350,28 +416,161 @@ void get_answer(void)
     // Посылаем в MMI сообщение с буфером
     GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
   }  
+  }
   mfree(buf);
 }
 
+/*
+public void write(byte[] b, int off, int len) throws IOException {
+		if (bufferUse + len <= buf.length) {// buffer nam staci len ho
+			// zkopirujeme
+			for (int i = 0; i < len; i++) {
+				buf[bufferUse + i] = b[off + i];
+			}
+			bufferUse += len;
+		} else {
+			// nestaci buffer zapiseme maximalne 64tis byte a pak jdeme dale
+			int rLen = bufferUse + len;
+			boolean wasBigger = false;
+			if (rLen > 65536) {
+				rLen = 65536;
+				wasBigger = true;
+			}
+			writeBlockHeader(rLen);
+			ous.write(buf, 0, bufferUse);
+			ous.write(b, off, rLen - bufferUse);
+			bufferUse = 0;
+			if (wasBigger) {// nemohly jsme zapsat cely block
+				write(b, off + rLen, len - rLen);// kolotoc se opakuje
+			} else {
+				// jsme li ti co zapsaly posledni data
+				ous.flush();
+			}
+		}
+
+
+writeBlockHeader(len):
+
+ous.write(0);
+		ous.write(len);
+		ous.write(len >> 8);
+		len = ~len;
+		ous.write(len);
+		ous.write(len >> 8);
+*/
+
 void SendAnswer(char *str)
 {
-  int i = strlen(str);
-#ifdef LOG_ALL
-//  Log("OUT->", str);
-#endif  
-  send(sock,str,i,0);
+  unsigned int block_len= strlen(str);
+//#ifdef LOG_ALL
+  Log("OUT->", str);
+//#endif  
+
+if(!Is_Compression_Enabled)
+{
+  send(sock,str,block_len,0);
 }
+else
+{
+  // Эмуляция компрессии ;)
+  // Пишем заголовок "блока"
+  unsigned int _0 = 0;
+  unsigned int out_data = block_len;
+  send(sock,&_0,1,0);
+  send(sock,&out_data,1,0);
+  out_data = block_len >> 8;
+  send(sock,&out_data,1,0);
+  out_data = ~block_len;
+  send(sock,&out_data,1,0);
+  out_data = out_data >> 8;
+  send(sock,&out_data,1,0);
+  // Записали, пишем сам блок
+  send(sock,str,block_len,0);
+}
+}
+
+char Support_Compression = 0;
+char Support_MD5_Auth = 0;
+char Support_Resource_Binding = 0;
+
+void Analyze_Stream_Features(XMLNode *nodeEx)
+{
+  strcat(logmsg, "\nGetting features...");
+  XMLNode *Compr_feature = XML_Get_Child_Node_By_Name(nodeEx, "compression");
+  if(Compr_feature)
+  {
+    Support_Compression = 1;
+    strcat(logmsg, "\nCompression:  +");
+  }
+  
+  XMLNode *Res_Binding_feature = XML_Get_Child_Node_By_Name(nodeEx, "bind");
+  if(Res_Binding_feature)
+  {
+    Support_Resource_Binding = 1;
+    strcat(logmsg, "\nResBind:       +");
+  }
+  
+  XMLNode *Auth_Methods = XML_Get_Child_Node_By_Name(nodeEx, "mechanisms");
+  if(Auth_Methods)
+  {
+    XMLNode *Ch_Node=XML_Get_Child_Node_By_Name(Auth_Methods, "mechanism");
+    while(Ch_Node)
+    {
+      if(!strcmp(Ch_Node->value, "DIGEST-MD5"))
+      {
+        Support_MD5_Auth = 1;
+        strcat(logmsg, "\nDIGEST-MD5:  +");
+      }
+      Ch_Node = Ch_Node->next;  
+    }
+  }
+  REDRAW();   
+}
+
 
 /*
     Рекурсивная функция декодирования XML-потока
-    Впрочем, рекурсия походу тут не нужна.
-    Поэтому пока убираю.
 */
 void Process_Decoded_XML(XMLNode* node)
 {
   XMLNode* nodeEx = node;
   while(nodeEx)
   {
+
+//----------------    
+    if(!strcmp(nodeEx->name,"stream:features")) 
+    {
+      Analyze_Stream_Features(nodeEx);
+      if(USE_ZLIB && Support_Compression && Jabber_state == JS_NOT_CONNECTED)Compression_Ask();
+      if(Support_MD5_Auth && Jabber_state == JS_NOT_CONNECTED)SUBPROC((void*)Use_Md5_Auth_Report);
+      if(Support_Resource_Binding && Jabber_state == JS_SASL_NEW_STREAM_ACK)SASL_Bind_Resource();
+    }
+
+//----------------        
+  
+    if(!strcmp(nodeEx->name,"compressed") && Jabber_state == JS_ZLIB_INIT_ACK)
+    {
+      Compression_Init_Stream();
+    }
+    
+//----------------
+    if(!strcmp(nodeEx->name,"success")&& Jabber_state == JS_SASL_AUTH_ACK)
+    {
+      SASL_Open_New_Stream();
+    }    
+    
+//----------------
+    if(!strcmp(nodeEx->name,"challenge")&& Jabber_state == JS_SASL_NEG_ANS_WAIT)
+    {
+      Process_Auth_Answer(nodeEx->value);
+    }    
+//----------------    
+    if(!strcmp(nodeEx->name,"challenge")&& Jabber_state == JS_SASL_NEGOTIATION)
+    {
+      Decode_Challenge(nodeEx->value);
+      Send_Login_Packet();
+    }
+
 //----------------
     if(!strcmp(nodeEx->name,"message"))
     {
@@ -386,8 +585,12 @@ void Process_Decoded_XML(XMLNode* node)
     if(!strcmp(nodeEx->name,"stream:stream"))
     {
       connect_state = 2;
-      Jabber_state = JS_CONNECTED_STATE;
-      SUBPROC((void*)Send_Auth);
+      // Если не используем SASL-авторизацию, можно послать пакет авторизации
+      if(!USE_SASL)
+      {
+        Jabber_state = JS_CONNECTED_STATE;
+        SUBPROC((void*)Send_Auth);
+      }
     }   
 //----------------
     if(!strcmp(nodeEx->name,"stream:error"))
@@ -427,9 +630,9 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   UnlockSched();
   if(data)
   {
-#ifdef LOG_ALL
+//#ifdef LOG_ALL
     SaveTree(data);
-#endif
+//#endif
     Process_Decoded_XML(data);
     DestroyTree(data);
   }
@@ -507,7 +710,7 @@ char mypic[128];
 #endif  
   DrawString(data->ws1,16,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 
-  if(connect_state<2)
+  if(Jabber_state!=JS_ONLINE)
   {
     wsprintf(data->ws1,"%t", logmsg);
     DrawString(data->ws1,1,15,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
@@ -734,7 +937,12 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       {
         Test_MD5();
         break;
-      }      
+      }  
+    case '7':
+      {
+        SUBPROC((void*)Send_Roster_Query);
+        break;
+      } 
       
     case DOWN_BUTTON:
     case '8':
@@ -840,6 +1048,7 @@ void maincsm_onclose(CSM_RAM *csm)
   SetVibration(0);
   CList_Destroy();
   MUCList_Destroy();
+  Destroy_SASL_Ctx();
   mfree(XMLBuffer);
 
   SUBPROC((void *)end_socket);
@@ -991,6 +1200,12 @@ unsigned short IsGoodPlatform()
 #endif    
 }
 
+Check_Settings_Cleverness()
+{
+  if(!USE_SASL && USE_ZLIB)ShowMSG(0,(int)"ZLib не работает без SASL!");
+  if(USE_ZLIB)ShowMSG(0,(int)"ZLib пока не реализована!");  
+}
+
 int main(char *exename, char *fname)
 {
   if(!IsGoodPlatform())
@@ -1006,6 +1221,9 @@ int main(char *exename, char *fname)
     return 0;
   }
   UpdateCSMname();
+  
+  Check_Settings_Cleverness();
+  
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();

@@ -2474,6 +2474,12 @@
   <group>
     <name>Utility</name>
     <file>
+      <name>$PROJ_DIR$\base64.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\base64.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\conf_loader.c</name>
     </file>
     <file>
