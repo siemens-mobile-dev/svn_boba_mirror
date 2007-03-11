@@ -472,6 +472,12 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 }
 void ed1_ghook(GUI *data, int cmd)
 {
+  int j;
+  if (cmd==0x0C)
+  {
+    j=EDIT_GetFocus(data);
+    if (EDIT_GetUnFocus(data)<j) EDIT_SetCursorPos(data,1);
+  }
 }
 INPUTDIA_DESC ed1_desc=
 {
