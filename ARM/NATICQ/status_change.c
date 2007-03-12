@@ -35,7 +35,7 @@ extern  int S_ICONS[11];
 
 void Change_Status(char status)
 {
-    CurrentStatus = status;
+    CurrentStatus=status;
     set_my_status();
     GeneralFuncF1(1); 
 }
@@ -94,7 +94,7 @@ unsigned int GetStatusIndexInMenu(unsigned int status)
 
 #define STATUSES_NUM 7
 
-HEADER_DESC st_menuhdr={0,0,0,0,NULL,(int)"Change Status",LGP_NULL};
+HEADER_DESC st_menuhdr={0,0,0,0,NULL,(int)LG_CHGSTATUS,LGP_NULL};
 
 int st_menusoftkeys[]={0,1,2};
 

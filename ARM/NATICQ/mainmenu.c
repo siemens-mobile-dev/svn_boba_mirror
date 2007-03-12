@@ -6,6 +6,7 @@
 #include "main.h"
 #include "conf_loader.h"
 #include "status_change.h"
+#include "language.h"
 
 //==============================================================================
 // ELKA Compatibility
@@ -43,7 +44,7 @@ int ac_onkey(GUI *data, GUI_MSG *msg)
   int key=msg->gbsmsg->submess;
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
-    if(key=='*' || key=='#') return (-1);
+    if(key=='*'||key=='#') return (-1);
   }
   if (msg->keys==0xFFF)
   {
@@ -76,7 +77,7 @@ int ac_onkey(GUI *data, GUI_MSG *msg)
        
 void ac_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Add!"};
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_ADD};
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -87,7 +88,7 @@ void ac_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC ac_hdr={0,0,NULL,NULL,NULL,(int)"Add Contact",LGP_NULL};
+HEADER_DESC ac_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDCNT,LGP_NULL};
 
 
 INPUTDIA_DESC ac_desc=
@@ -125,7 +126,7 @@ void AddContactMenu(void)
   WSHDR *ews=AllocWS(256);
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  ascii2ws(ews,"Please enter uin:");
+  ascii2ws(ews, LG_ENTERUIN);
   ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
   ConstructEditControl(&ec,ECT_NORMAL_NUM,0x40,0,9);
@@ -159,16 +160,16 @@ int icon[]={0,0};
 int about_icon[]={0,0};
 int dummy_icon[] = {0,0};
 
-HEADER_DESC menuhdr={0,0,0,0,NULL,(int)"Menu",LGP_NULL};
+HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
 MENUITEM_DESC menuitems[4]=
 {
-  {NULL,(int)"Status",        LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Add Contact",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Edit config",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"About",         LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_MNUSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_MNUADDCONT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_MNUEDCFG,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *menuprocs[4]=
@@ -181,8 +182,8 @@ void *menuprocs[4]=
 
 SOFTKEY_DESC mmenu_sk[]=
 {
-  {0x0018,0x0000,(int)"Select"},
-  {0x0001,0x0000,(int)"Back"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -195,7 +196,7 @@ void tmenu_ghook(void *data, int cmd)
 {
   if (cmd==0x0A)
   {
-    menuitems[0].icon = S_ICONS+CurrentStatus;
+    menuitems[0].icon=S_ICONS+CurrentStatus;
     DisableIDLETMR();
   }
 }
@@ -215,9 +216,9 @@ MENU_DESC tmenu=
 
 void ShowMainMenu()
 {
-  menuitems[0].icon = S_ICONS+CurrentStatus;
-  menuitems[3].icon = S_ICONS+IS_UNKNOWN;
-  menuhdr.icon= S_ICONS+IS_ONLINE;
+  menuitems[0].icon=S_ICONS+CurrentStatus;
+  menuitems[3].icon=S_ICONS+IS_UNKNOWN;
+  menuhdr.icon=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,4,0,0);
+  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,4,0,0);
 }
