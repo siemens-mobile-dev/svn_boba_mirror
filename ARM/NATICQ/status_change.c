@@ -6,6 +6,7 @@
 #include "NatICQ.h"
 #include "main.h"
 #include "status_change.h"
+#include "language.h"
 
 //===============================================================================================
 // ELKA Compatibility
@@ -20,10 +21,10 @@ void patch_header(HEADER_DESC* head)
 #pragma inline
 void patch_input(INPUTDIA_DESC* inp)
 {
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+  inp->rc.x = 0;
+  inp->rc.y = HeaderH() + 1 + YDISP;
+  inp->rc.x2=ScreenW() - 1;
+  inp->rc.y2=ScreenH() - SoftkeyH() - 1;
 }
 //===============================================================================================
 
@@ -99,13 +100,13 @@ int st_menusoftkeys[]={0,1,2};
 
 MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
-  {NULL,(int)"Online",        LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Away",          LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Not Available", LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},  
-  {NULL,(int)"Do Not Disturb",LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Occupied",      LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Free For Chat", LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Invisible",     LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STONLINE, LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STAWAY,   LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STNA,     LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},  
+  {NULL,(int)LG_STDND,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STOCCUP,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STFFC,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STINVIS,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
 };
 
 void *st_menuprocs[STATUSES_NUM]={
@@ -120,8 +121,8 @@ void *st_menuprocs[STATUSES_NUM]={
 
 SOFTKEY_DESC st_menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Select"},
-  {0x0001,0x0000,(int)"Back"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 

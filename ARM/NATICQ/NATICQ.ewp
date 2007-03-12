@@ -5028,6 +5028,9 @@
     <name>$PROJ_DIR$\history.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\language.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
