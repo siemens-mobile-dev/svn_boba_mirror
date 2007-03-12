@@ -638,7 +638,10 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   cont->total_msg_count++;
   mess->next=NULL;
   UnlockSched();
-  //Add2History(CList_FindContactByJID(jid), datestr,mtext);
+  
+  char *ansi_text = convUTF8_to_ANSI_STR(mtext);  
+  Add2History(CList_FindContactByJID(jid), datestr,ansi_text);
+  mfree(ansi_text);
 }
 
 /*

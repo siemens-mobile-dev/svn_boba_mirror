@@ -57,7 +57,7 @@ extern const int USE_SASL;
 extern const int USE_ZLIB; 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.6-SASL";
+const char VERSION_VERS[] = "0.9.7-dev-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -288,26 +288,32 @@ void zcfree(int unk, void* ptr)
   mfree(ptr);
 }
 
+z_stream d_stream;
+char ZLib_Stream_Init=0;
+
 int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomprLen)
 {
   int err;
-  z_stream d_stream;
-  d_stream.zalloc = (alloc_func)zcalloc;
-  d_stream.zfree = (free_func)zcfree;
-  d_stream.opaque = (voidpf)0;
+  if(!ZLib_Stream_Init)
+  {
+    ZLib_Stream_Init=1;
+    d_stream.zalloc = (alloc_func)zcalloc;
+    d_stream.zfree = (free_func)zcfree;
+    d_stream.opaque = (voidpf)0;
+    err = inflateInit2(&d_stream,MAX_WBITS/*-MAX_WBITS*/);
+    if(err!=Z_OK)
+    {
+      unerr:
+      return err;
+    }
+  }
   d_stream.next_in  = (Byte*)compr;
   d_stream.avail_in = (uInt)comprLen;
-  err = inflateInit2(&d_stream,-MAX_WBITS);
-  if(err!=Z_OK)
-  {
-    unerr:
-      return err;
-  }
   d_stream.next_out = (Byte*)uncompr;
   d_stream.avail_out = (uInt)uncomprLen;
   err = inflate(&d_stream, Z_NO_FLUSH);
   if(err<0) goto unerr;
-  err = inflateEnd(&d_stream);
+  //err = inflateEnd(&d_stream);
   if(err<0) goto unerr;
   return 0;
 }
@@ -343,7 +349,7 @@ void get_answer(void)
   int rec_bytes = 0;          // Не торопимся :)
   rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
  
-  Log("RECV",buf);
+  //Log("RECV",buf);
   
   // Запись в буфер
   if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
@@ -376,12 +382,23 @@ void get_answer(void)
     IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
     Decompr_Buffer = malloc(10240); // Пока 10К
     zeromem(Decompr_Buffer, 10240);
-    unzip(compressed_data,bytecount,Decompr_Buffer,10240);
+    int err=unzip(compressed_data,bytecount,Decompr_Buffer,10240);
+    if(err!=0)
+    {
+      char q[20];
+      sprintf(q,"ZLib ERROR %d",err);
+      LockSched();
+      ShowMSG(1,(int)q);
+      UnlockSched();
+      inflateEnd(&d_stream);
+      ZLib_Stream_Init = 0;
+    }
     mfree(compressed_data);
     processed_pos = virt_buffer_len;
     tmp_buffer->xml_buffer = Decompr_Buffer;
+    tmp_buffer->buf_size = strlen(Decompr_Buffer);
     Log("UZIP",Decompr_Buffer);
-    //GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
+    GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
     }
   }
   else
@@ -542,7 +559,7 @@ void Process_Decoded_XML(XMLNode* node)
     {
       Analyze_Stream_Features(nodeEx);
       if(USE_ZLIB && Support_Compression && Jabber_state == JS_NOT_CONNECTED)Compression_Ask();
-      if(Support_MD5_Auth && Jabber_state == JS_NOT_CONNECTED)SUBPROC((void*)Use_Md5_Auth_Report);
+      if(Support_MD5_Auth && (Jabber_state == JS_NOT_CONNECTED || Jabber_state==JS_ZLIB_STREAM_INIT_ACK))SUBPROC((void*)Use_Md5_Auth_Report);
       if(Support_Resource_Binding && Jabber_state == JS_SASL_NEW_STREAM_ACK)SASL_Bind_Resource();
     }
 
@@ -1050,7 +1067,11 @@ void maincsm_onclose(CSM_RAM *csm)
   MUCList_Destroy();
   Destroy_SASL_Ctx();
   mfree(XMLBuffer);
-
+  
+  if(ZLib_Stream_Init)
+  {
+    inflateEnd(&d_stream);
+  }
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ElfKiller);
 }
@@ -1203,7 +1224,6 @@ unsigned short IsGoodPlatform()
 Check_Settings_Cleverness()
 {
   if(!USE_SASL && USE_ZLIB)ShowMSG(0,(int)"ZLib не работает без SASL!");
-  if(USE_ZLIB)ShowMSG(0,(int)"ZLib пока не реализована!");  
 }
 
 int main(char *exename, char *fname)
