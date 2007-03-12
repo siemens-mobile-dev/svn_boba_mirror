@@ -397,7 +397,7 @@ void get_answer(void)
     processed_pos = virt_buffer_len;
     tmp_buffer->xml_buffer = Decompr_Buffer;
     tmp_buffer->buf_size = strlen(Decompr_Buffer);
-    Log("UZIP",Decompr_Buffer);
+    //Log("UZIP",Decompr_Buffer);
     GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
     }
   }
@@ -648,7 +648,7 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   if(data)
   {
 //#ifdef LOG_ALL
-    SaveTree(data);
+//    SaveTree(data);
 //#endif
     Process_Decoded_XML(data);
     DestroyTree(data);

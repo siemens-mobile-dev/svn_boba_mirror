@@ -1032,8 +1032,8 @@ void Use_Md5_Auth_Report()
 // Открываем новый поток к серверу по окончании авторизации
 void SASL_Open_New_Stream()
 {
-  SUBPROC((void*)Send_Welcome_Packet_SASL);
   Jabber_state = JS_SASL_NEW_STREAM_ACK;
+  SUBPROC((void*)Send_Welcome_Packet_SASL);
 }
 
 // Выполняем Resource Binding
@@ -1049,8 +1049,8 @@ static char bind_tpl[]="<iq type='set' id='SieJC_bind_req'>"
                   "<resource>SieJC</resource>"
                   "</bind>"
                   "</iq>";
-  SUBPROC((void*)SendAnswer, bind_tpl);
-  Jabber_state = JS_SASL_RESBIND_ACK;  
+  Jabber_state = JS_SASL_RESBIND_ACK; 
+  SUBPROC((void*)SendAnswer, bind_tpl); 
 }
 
 // Инициализация сессии     
@@ -1063,8 +1063,8 @@ static char sess_init_tpl[]="<iq type='set' id='SieJC_sess_req'>"
                   "<session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>"
                   "</iq>";  
 
-  SUBPROC((void*)SendAnswer, sess_init_tpl);
-  Jabber_state = JS_SASL_SESS_INIT_ACK;   
+  Jabber_state = JS_SASL_SESS_INIT_ACK; 
+  SUBPROC((void*)SendAnswer, sess_init_tpl);  
 }
 
 void Decode_Challenge(char *challenge)
@@ -1107,8 +1107,8 @@ void Process_Auth_Answer(char *challenge)
   base64_decode(challenge, decoded_challenge);
   SASL_Auth_data.rsp_auth   = Get_Param_Value(decoded_challenge, "rspauth",0);
   mfree(decoded_challenge);
-  SUBPROC((void*)SendAnswer,ans);
   Jabber_state = JS_SASL_AUTH_ACK;
+  SUBPROC((void*)SendAnswer,ans);
 }
 
 
@@ -1187,8 +1187,8 @@ void Send_Login_Packet()
   char *resp_full = malloc(1024);
   zeromem(resp_full, 1024);
   snprintf(resp_full, 1023, resp_full_tpl, Result_Resp);
-  SUBPROC((void*)_sendandfree, resp_full);
   Jabber_state=JS_SASL_NEG_ANS_WAIT;  
+  SUBPROC((void*)_sendandfree, resp_full);
   mfree(Result_Resp);
   mfree(Response_STR);
   mfree(digest_uri);
@@ -1226,8 +1226,8 @@ void Compression_Send_Header()
 
 void Send_New_stream()
 {
-  SUBPROC((void*)Send_Welcome_Packet);
   Jabber_state = JS_ZLIB_STREAM_INIT_ACK;
+  SUBPROC((void*)Send_Welcome_Packet);
 }
 
 GBSTMR Newstream;
