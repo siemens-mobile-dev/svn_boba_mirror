@@ -674,10 +674,14 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
   t=FindContactByN(curitem);
   if (t)
   {
-    ws=AllocMenuWS(data,strlen(t->name)+1);
+    ws=AllocMenuWS(data,strlen(t->name)+2);
     wsprintf(ws,percent_t,t->name);
     if (t->isactive)
-      wsInsertChar(ws,0xE120,1);
+    {
+//      wsInsertChar(ws,0xE120,1);
+      wsInsertChar(ws,0x0002,1);
+      wsInsertChar(ws,0xE008,1);
+    }
   }
   else
   {
