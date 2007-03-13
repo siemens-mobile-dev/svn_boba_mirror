@@ -1,8 +1,10 @@
 #ifndef _LANGUAGE_H_
 #define _LANGUAGE_H_
-#define RUSSIAN
 
-#ifdef RUSSIAN
+#define LANG RU
+
+#ifdef LANG
+#if LANG == RU
 
 #define LG_CLTITLE "Контакты..."
 #define LG_CLT9INP "Ввод T9: "
@@ -41,8 +43,8 @@
 //================================
 #define LG_MNUSTATUS  "Статус"
 #define LG_MNUADDCONT "Добавить контакт"
-#define	LG_MNUVIBRA "Режим вибры"
-#define LG_MNUSOUND "Режим звука"
+#define	LG_MNUVIBRA   "Режим вибры"
+#define LG_MNUSOUND   "Режим звука"
 #define LG_MNUEDCFG   "Настройки"
 #define LG_MNUABOUT   "Об эльфе"
 //--------------
@@ -97,6 +99,8 @@
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
 #define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
+
+#endif
 
 #else
 
