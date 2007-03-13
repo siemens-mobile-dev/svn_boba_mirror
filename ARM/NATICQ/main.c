@@ -228,7 +228,49 @@ S_SMILES *FindSmileByUni(int wchar)
   }
   return (0);
 }
-
+//by RM{
+/*
+int SmileCountByUni(int wchar)
+{
+  S_SMILES *sl=(S_SMILES *)s_top;
+  int i=0;
+  while(sl)
+  {
+    if (sl->uni_smile == wchar)
+    	i++;
+	sl=sl->next;
+  }
+  return (i);
+}
+*//*
+int SmilePosInCurrUni(int ID)
+{
+	S_SMILES *sl=(S_SMILES *)s_top;
+	int i=0,j=0;
+	int curr_uni=FindSmileById(ID)->uni_smile;
+	while(sl && sl->uni_smile==curr_uni)
+	{
+		sl=sl->next;
+		j++;
+	}
+	while(sl && j++!=ID)
+		i++;
+	return (i);
+}
+*//*
+int TotalSmilesCount(void)
+{
+	S_SMILES *sl=(S_SMILES *)s_top;
+	int i=0;
+	while(sl)
+	{
+		i++;
+		sl=sl->next;
+	}
+	return (i);
+}
+*/
+//}
 //===================================================================
 
 void Play(const char *fname)
@@ -2494,6 +2536,7 @@ void AskNickAndAddContact(void)
 }
 
 int cur_smile;
+int cur_sm_uni;
 
 void as_locret(void){}
 
@@ -2501,16 +2544,21 @@ int as_onkey(GUI *data,GUI_MSG *msg)
 {
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
-    switch(msg->gbsmsg->submess)
+    S_SMILES *sm;
+	//int tot_sm=TotalSmilesCount();
+	switch(msg->gbsmsg->submess)
     {
     case LEFT_BUTTON:
-      cur_smile--;   
+		while((sm=FindSmileById(--cur_smile))->uni_smile==cur_sm_uni);
+		//cur_smile-=(SmilePosInCurrUni(cur_smile));
+		cur_sm_uni=sm->uni_smile;
       return(-1);
       
     case RIGHT_BUTTON:
-      cur_smile++;  
+		while((sm=FindSmileById(++cur_smile))->uni_smile==cur_sm_uni);
+		cur_sm_uni=sm->uni_smile;
       return(-1);
-    }
+	}
   }
   if (msg->keys==0xFFF)
   {
@@ -2569,6 +2617,7 @@ void as_ghook(GUI *data, int cmd)
           cur_smile=0;
         }
       }
+	  cur_sm_uni=FindSmileById(cur_smile)->uni_smile;
       WSHDR *ws=AllocWS(32);
       wsprintf(ws,LG_SMLDESC,cur_smile,t->text);  
       EDIT_SetTextToEditControl(data,1,ws);
