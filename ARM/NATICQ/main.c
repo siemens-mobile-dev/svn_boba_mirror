@@ -9,6 +9,9 @@
 
 #define TMR_SECOND 216
 
+//По 10 секунд
+#define ACTIVE_TIME 360
+
 // Строковые описания статусов
 
 const char S_OFFLINE[]="Offline";
@@ -133,7 +136,7 @@ void InitSmiles()
   
   if ((fsize=stat.size)<=0)
     return;
-
+  
   if ((f=fopen(SMILE_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1)
     return;
   
@@ -202,7 +205,7 @@ S_SMILES *FindUnicodeSmile(char *str)
   }
   return 0;
 }
-  
+
 S_SMILES *FindSmileById(int n)
 {
   int i=0;
@@ -225,7 +228,7 @@ S_SMILES *FindSmileByUni(int wchar)
   }
   return (0);
 }
-  
+
 
 void Play(const char *fname)
 {
@@ -309,6 +312,7 @@ void ElfKiller(void)
 
 int total_unread;
 
+//===============================================================================================
 #pragma inline
 void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 {
@@ -318,8 +322,6 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
   rc->y2=y2;
 }
 
-//===============================================================================================
-// ELKA Compatibility
 #pragma inline
 void patch_header(HEADER_DESC* head)
 {
@@ -344,6 +346,7 @@ volatile int contactlist_menu_id;
 volatile int request_close_clmenu;
 volatile int request_remake_clmenu;
 
+GBSTMR tmr_active;
 GBSTMR tmr_vibra;
 volatile int vibra_count;
 
@@ -671,8 +674,10 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
   t=FindContactByN(curitem);
   if (t)
   {
-    ws=AllocMenuWS(data,strlen(t->name));
+    ws=AllocMenuWS(data,strlen(t->name)+1);
     wsprintf(ws,percent_t,t->name);
+    if (t->isactive)
+      wsInsertChar(ws,0xE120,1);
   }
   else
   {
@@ -787,7 +792,7 @@ void create_connect(void)
     {
       if (DNR_ID)
       {
-		return; //Ждем готовности DNR
+	return; //Ждем готовности DNR
       }
     }
     else
@@ -928,7 +933,7 @@ void get_answer(void)
       {
       case T_LOGIN:
         //Удачно залогинились
-		Play(sndStartup);
+	Play(sndStartup);
         GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
         snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
         connect_state=3;
@@ -959,7 +964,7 @@ void get_answer(void)
         snprintf(logmsg,255,LG_GRRECVMSG,RXbuf.pkt.uin,RXbuf.data);
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         REDRAW();
-		Play(sndMsg);
+	Play(sndMsg);
         break;
       case T_SSLRESP:
         LockSched();
@@ -967,12 +972,12 @@ void get_answer(void)
         UnlockSched();
         break;
       case T_SRV_ACK:
-		Play(sndMsgSent);
+	Play(sndMsgSent);
       case T_CLIENT_ACK:
-		p=malloc(sizeof(PKT));
-		memcpy(p,&RXbuf,sizeof(PKT));
-		GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-		break;
+	p=malloc(sizeof(PKT));
+	memcpy(p,&RXbuf,sizeof(PKT));
+	GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	break;
       }
       i=-(int)sizeof(PKT); //А может еще есть данные
     }
@@ -1110,11 +1115,11 @@ ProcessPacket(TPKT *p)
       
       if (t->state==0)//Звук
       {
-		Play(sndGlobal);
+	Play(sndGlobal);
       }  
       if (t->state==0xFFFF)//Звук
       {
-		Play(sndSrvMsg);
+	Play(sndSrvMsg);
       }      
     }
     break;
@@ -1126,6 +1131,7 @@ ProcessPacket(TPKT *p)
       AddContact(p->pkt.uin,s);    
       t=FindContactByUin(p->pkt.uin);
     }
+    t->isactive=ACTIVE_TIME;
     vibra_count=1;
     start_vibra();
     AddStringToLog(t,0x02,p->data,t->name);
@@ -1158,8 +1164,8 @@ ProcessPacket(TPKT *p)
   case T_CLIENT_ACK:
     if (
 	IsGuiOnTop(contactlist_menu_id)||
-	IsGuiOnTop(edchat_id)
-       )
+	  IsGuiOnTop(edchat_id)
+	    )
     {
       DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
 		       GetPaletteAdrByColorIndex(0),
@@ -1170,6 +1176,16 @@ ProcessPacket(TPKT *p)
   mfree(p);
 }
 
+void process_active_timer(void)
+{
+  CLIST *t=(CLIST *)cltop;
+  while(t)
+  {
+    if (t->isactive) t->isactive--;
+    t=(CLIST *)(t->next);
+  }
+  GBS_StartTimerProc(&tmr_active,TMR_SECOND*10,process_active_timer);
+}
 
 //===============================================================================================
 void method0(MAIN_GUI *data)
@@ -1177,19 +1193,19 @@ void method0(MAIN_GUI *data)
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   if (request_remake_clmenu)
-	  return;
+    return;
   DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,logmsg);
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),
-			 SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	     SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,LG_GRSKEYEXIT);
   DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(MIDDLE_FONT),
-			 scr_w-4,scr_h-4,MIDDLE_FONT,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	     scr_w-4,scr_h-4,MIDDLE_FONT,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,cltop?LG_GRSKEYCLIST:empty_str);
   DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),
-			 scr_w>>1,scr_h-4,MIDDLE_FONT,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	     scr_w>>1,scr_h-4,MIDDLE_FONT,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data,void *(*malloc_adr)(int))
@@ -1215,7 +1231,7 @@ void method3(MAIN_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
 void method4(MAIN_GUI *data,void (*mfree_adr)(void *))
 {
   if (data->gui.state!=2)
-	  return;
+    return;
   data->gui.state=1;
 }
 
@@ -1236,27 +1252,27 @@ int method5(MAIN_GUI *data,GUI_MSG *msg)
       if ((connect_state==0)&&(sock==-1))
       {
         GBS_DelTimer(&reconnect_tmr);
-		DNR_TRIES=3;
+	DNR_TRIES=3;
         SUBPROC((void *)create_connect);
       }
       break;
-    /*case '*':
+      /*case '*':
       {
-        Is_Vibra_Enabled = !(Is_Vibra_Enabled);
-        break;
-      }*/
+      Is_Vibra_Enabled = !(Is_Vibra_Enabled);
+      break;
+    }*/
     case '*'://тут поменял
-      	if (!(Is_Vibra_Enabled=!(Is_Vibra_Enabled)))
-	  		ShowMSG(1,(int)LG_MSGVIBRADIS);
-		else
-	  		ShowMSG(1,(int)LG_MSGVIBRAENA);
-        break;     
+      if (!(Is_Vibra_Enabled=!(Is_Vibra_Enabled)))
+	ShowMSG(1,(int)LG_MSGVIBRADIS);
+      else
+	ShowMSG(1,(int)LG_MSGVIBRAENA);
+      break;     
     case '5':
-        if (!(Is_Sounds_Enabled=!(Is_Sounds_Enabled)))
-	  		ShowMSG(1,(int)LG_MSGSNDDIS);
-		else
-	  		ShowMSG(1,(int)LG_MSGSNDENA);
-        break;//      
+      if (!(Is_Sounds_Enabled=!(Is_Sounds_Enabled)))
+	ShowMSG(1,(int)LG_MSGSNDDIS);
+      else
+	ShowMSG(1,(int)LG_MSGSNDENA);
+      break;//      
     case '#':
       GPRS_OnOff(0,1);
       break;
@@ -1315,11 +1331,13 @@ void maincsm_oncreate(CSM_RAM *data)
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
   SUBPROC((void *)create_connect);
+  GBS_StartTimerProc(&tmr_active,TMR_SECOND*10,process_active_timer);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
 {
   //  GBS_DelTimer(&tmr_dorecv);
+  GBS_DelTimer(&tmr_active);
   GBS_DelTimer(&tmr_ping);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
@@ -1385,7 +1403,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  //Тут трохи поменял
 	  // by Rainmaker: Рисуем канву только для иконки и выводим в своих координатах
           DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+GetImgWidth((int)S_ICONS[icn])-1,
-					 IDLEICON_Y+GetImgHeight((int)S_ICONS[icn])-1,1);          
+		     IDLEICON_Y+GetImgHeight((int)S_ICONS[icn])-1,1);          
 	  //          DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
 	  //			   GetPaletteAdrByColorIndex(0),
 	  //			   GetPaletteAdrByColorIndex(20));
@@ -1451,7 +1469,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
       {
-		if (DNR_TRIES) SUBPROC((void *)create_connect);
+	if (DNR_TRIES) SUBPROC((void *)create_connect);
       }
       return(1);
     }
@@ -1460,79 +1478,79 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       //Если наш сокет
       if ((((unsigned int)msg->data0)>>28)==0xA)
       {
-		//Принят пакет
-		ProcessPacket((TPKT *)msg->data0);
-		return(0);
+	//Принят пакет
+	ProcessPacket((TPKT *)msg->data0);
+	return(0);
       }
       switch((int)msg->data0)
       {
       case ENIP_SOCK_CONNECTED:
-		if (connect_state==1)
-		{
-	  		vibra_count=2;
-	  		start_vibra();
-	  		//Соединение установленно, посылаем пакет login
-	  		strcpy(logmsg, LG_GRTRYLOGIN);
-	  		TXbuf.pkt.uin=UIN;
-	  		TXbuf.pkt.type=T_REQLOGIN;
-	  		strcpy(TXbuf.data,PASS);
-	  		SUBPROC((void *)send_login);
-	  		if (!FindContactByUin(UIN))
-				AddContact(UIN, LG_CLLOOPBACK);
-	  		REDRAW();
-		}
-		else
-		{
-	  		ShowMSG(1,(int)LG_MSGILLEGMSGCON);
-		}
-		break;
-     case ENIP_SOCK_DATA_READ:
-		if (connect_state>=2)
-		{
-	  		//Если посылали send
-	  		SUBPROC((void *)get_answer);
-	  		//REDRAW();
-		}
-		else
-		{
-	  		ShowMSG(1,(int)LG_MSGILLEGMSGREA);
-		}
-		break;
-    case ENIP_SOCK_REMOTE_CLOSED:
-		//Закрыт со стороны сервера
-		if (connect_state)
-			SUBPROC((void *)end_socket);
-		break;
-    case ENIP_SOCK_CLOSED:
-		//strcpy(logmsg, "No connection");
-		if (edchat_id)
-		{
-	  		request_remake_edchat=0;
-	  		if (IsGuiOnTop(edchat_id))
-	  		{
-	    		GeneralFunc_flag1(edchat_id,1);
-	  		}
-	  		else
-	  		{
-	    		request_close_edchat=1;
-	  		}
-		}
-		if (contactlist_menu_id)
-		{
-	  		request_remake_clmenu=0;
-	  		if (IsGuiOnTop(contactlist_menu_id))
-	  			GeneralFunc_flag1(contactlist_menu_id,1);
-	  		else
-	  			request_close_clmenu=1;
-		}
-		FillAllOffline();
-		connect_state=0;
-		sock=-1;
-		vibra_count=4;
-		start_vibra();
-		REDRAW();
-		GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
-		break;
+	if (connect_state==1)
+	{
+	  vibra_count=2;
+	  start_vibra();
+	  //Соединение установленно, посылаем пакет login
+	  strcpy(logmsg, LG_GRTRYLOGIN);
+	  TXbuf.pkt.uin=UIN;
+	  TXbuf.pkt.type=T_REQLOGIN;
+	  strcpy(TXbuf.data,PASS);
+	  SUBPROC((void *)send_login);
+	  if (!FindContactByUin(UIN))
+	    AddContact(UIN, LG_CLLOOPBACK);
+	  REDRAW();
+	}
+	else
+	{
+	  ShowMSG(1,(int)LG_MSGILLEGMSGCON);
+	}
+	break;
+      case ENIP_SOCK_DATA_READ:
+	if (connect_state>=2)
+	{
+	  //Если посылали send
+	  SUBPROC((void *)get_answer);
+	  //REDRAW();
+	}
+	else
+	{
+	  ShowMSG(1,(int)LG_MSGILLEGMSGREA);
+	}
+	break;
+      case ENIP_SOCK_REMOTE_CLOSED:
+	//Закрыт со стороны сервера
+	if (connect_state)
+	  SUBPROC((void *)end_socket);
+	break;
+      case ENIP_SOCK_CLOSED:
+	//strcpy(logmsg, "No connection");
+	if (edchat_id)
+	{
+	  request_remake_edchat=0;
+	  if (IsGuiOnTop(edchat_id))
+	  {
+	    GeneralFunc_flag1(edchat_id,1);
+	  }
+	  else
+	  {
+	    request_close_edchat=1;
+	  }
+	}
+	if (contactlist_menu_id)
+	{
+	  request_remake_clmenu=0;
+	  if (IsGuiOnTop(contactlist_menu_id))
+	    GeneralFunc_flag1(contactlist_menu_id,1);
+	  else
+	    request_close_clmenu=1;
+	}
+	FillAllOffline();
+	connect_state=0;
+	sock=-1;
+	vibra_count=4;
+	start_vibra();
+	REDRAW();
+	GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+	break;
       }
     }
   }
@@ -1842,6 +1860,20 @@ void ExtractAnswer(WSHDR *ws)
   return;
 }
 
+CLIST *FindNextActiveContact(CLIST *t)
+{
+  while(t=(CLIST *)(t->next))
+  {
+    if (t->isactive) return t;
+  }
+  t=(CLIST *)(&cltop);
+  while(t=(CLIST *)(t->next))
+  {
+    if (t->isactive) return t;
+  }
+  return NULL;
+}
+
 int edchat_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
@@ -1863,6 +1895,24 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
       if (EDIT_GetFocus(data)!=edchat_answeritem)
 	EDIT_SetFocus(data,edchat_answeritem);
     }
+    if (l==RIGHT_BUTTON)
+    {
+      if (EDIT_GetFocus(data)==edchat_answeritem)
+      {
+	EDITCONTROL ec;
+	ExtractEditControl(data,edchat_answeritem,&ec);
+	if (ec.pWS->wsbody[0]==(EDIT_GetCursorPos(data)-1))
+	{
+	  t=FindNextActiveContact(edcontact);
+	  if (t)
+	  {
+	    edcontact=t;
+	    request_remake_edchat=1;
+	    return(1);
+	  }
+	}
+      }
+    }
     if (l==GREEN_BUTTON)
     {
       if (connect_state==3)
@@ -1873,6 +1923,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	  {
 	    if (strlen(s))
 	    {
+	      t->isactive=ACTIVE_TIME;
 	      p=malloc(sizeof(PKT)+(l=strlen(s))+1);
 	      p->pkt.uin=t->uin;
 	      p->pkt.type=T_SENDMSG;
@@ -1954,7 +2005,7 @@ void edchat_ghook(GUI *data, int cmd)
 	  type=*s++;    //Пропуск типа
 	  j=0;
 	  while((hdr[j]=*s++)!='\n')
-		  j++;
+	    j++;
 	  hdr[j]=0;
 	  //    wsprintf(ews,percent_t,hdr);
 	  ascii2ws(ews,hdr);
@@ -1969,14 +2020,14 @@ void edchat_ghook(GUI *data, int cmd)
 	  j=0;
 	  while((msg_buf[j]=*s)>3)
 	  {
-		  if (msg_buf[j]!=10)
-			  j++;
-		  s++;
+	    if (msg_buf[j]!=10)
+	      j++;
+	    s++;
 	  }
 	  if (j)
 	  {
 	    while(msg_buf[j-1]==13)
-			j--;
+	      j--;
 	  }
 	  msg_buf[j]=0;
 	  //    wsprintf(ews,percent_t,msg_buf);
@@ -2008,7 +2059,7 @@ void edchat_ghook(GUI *data, int cmd)
     if (t)
     {
       if ((s=t->answer))
-		  mfree(s);
+	mfree(s);
       s=malloc(strlen(msg_buf)+1);
       strcpy(s,msg_buf);
       t->answer=s;
@@ -2018,7 +2069,7 @@ void edchat_ghook(GUI *data, int cmd)
   {
     j=EDIT_GetFocus(data);
     if ((EDIT_GetUnFocus(data)<j)&&(j!=edchat_answeritem))
-		EDIT_SetCursorPos(data,1);
+      EDIT_SetCursorPos(data,1);
   }
 }
 
@@ -2135,7 +2186,7 @@ void CreateEditChat(CLIST *t)
 
 //-----------------------------------------------------------------------------
 #define EC_MNU_MAX 8
-  
+
 void Quote(GUI *data,void *dummy)
 {
   void *ed_chat_gui;
@@ -2360,7 +2411,7 @@ void ec_menu(GUI *data,GUI_MSG *msg)
       to_remove[++remove]=4;
       to_remove[++remove]=5;
     }
-      
+    
     patch_header(&ecmenu_HDR);
     to_remove[0]=remove;
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,data,to_remove);
@@ -2502,7 +2553,7 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     
     q_data=EDIT_GetUserPointer(data);
     if (!q_data)
-		return(0);
+      return(0);
     t=FindSmileById(cur_smile);
     if (!t) return (0);
     ExtractEditControl(q_data,edchat_answeritem,&ec);

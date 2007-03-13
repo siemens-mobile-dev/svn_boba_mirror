@@ -16,7 +16,7 @@
 #define LG_MENU    "Меню"
 #define LG_OPTIONS "Опции"
 #define LG_CLOSE   "Закрыть"
-#define LG_CLEAR   "< C"
+#define LG_CLEAR   "<C"
 #define LG_DOIT    "Выполнить"
 #define LG_PASTESM "Вставить"
 //-------------

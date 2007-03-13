@@ -14,6 +14,7 @@ typedef struct
   char *log;
   char *answer;
   char *last_log;
+  int isactive;
 }CLIST;
 
 typedef struct
