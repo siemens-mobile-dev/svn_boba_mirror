@@ -46,4 +46,7 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 //Клиент получил сообщение
 #define T_CLIENT_ACK 17
 
+#define T_ECHO 18
+#define T_ECHORET 19
+
 #endif
