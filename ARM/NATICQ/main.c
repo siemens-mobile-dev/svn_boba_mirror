@@ -229,6 +229,7 @@ S_SMILES *FindSmileByUni(int wchar)
   return (0);
 }
 
+//===================================================================
 
 void Play(const char *fname)
 {
@@ -267,6 +268,45 @@ void Play(const char *fname)
     FreeWS(sndPath);
     FreeWS(sndFName);
   }
+}
+
+GBSTMR tmr_vibra;
+volatile int vibra_count;
+
+void start_vibra(void)
+{
+  void stop_vibra(void);
+  if((Is_Vibra_Enabled)&&(!IsCalling()))
+  {
+    extern const unsigned int vibraPower;
+    SetVibration(vibraPower);
+    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
+  }  
+}
+
+void stop_vibra(void)
+{
+  SetVibration(0);
+  if (--vibra_count)
+  {
+    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
+  }
+}
+
+void ChangeVibra(void)
+{
+  if (!(Is_Vibra_Enabled=!(Is_Vibra_Enabled)))
+    ShowMSG(1,(int)LG_MSGVIBRADIS);
+  else
+    ShowMSG(1,(int)LG_MSGVIBRAENA);
+}
+
+void ChangeSound(void)
+{
+  if (!(Is_Sounds_Enabled=!(Is_Sounds_Enabled)))
+    ShowMSG(1,(int)LG_MSGSNDDIS);
+  else
+    ShowMSG(1,(int)LG_MSGSNDENA);
 }
 
 //===================================================================
@@ -347,8 +387,6 @@ volatile int request_close_clmenu;
 volatile int request_remake_clmenu;
 
 GBSTMR tmr_active;
-GBSTMR tmr_vibra;
-volatile int vibra_count;
 
 volatile int edchat_id;
 volatile int request_remake_edchat;
@@ -889,18 +927,6 @@ void end_socket(void)
   }
 }
 
-/*
-GBSTMR tmr_dorecv;
-
-void dorecv(void)
-{
-void get_answer(void);
-if (connect_state>1)
-{
-SUBPROC((void *)get_answer);
-  }
-}*/
-
 void get_answer(void)
 {
   void *p;
@@ -991,17 +1017,6 @@ void get_answer(void)
   //  REDRAW();
 }
 
-void SendPreved(void)
-{
-  int l;
-  strcpy(TXbuf.data,"Превед!");
-  l=strlen(TXbuf.data);
-  TXbuf.pkt.type=T_SENDMSG;
-  TXbuf.pkt.uin=223642069;
-  TXbuf.pkt.data_len=l;
-  send(sock,&TXbuf,sizeof(PKT)+l,0);
-}
-
 void AddStringToLog(CLIST *t, char code, char *s, const char *name)
 {
   char hs[128];
@@ -1035,26 +1050,6 @@ void SendAnswer(int dummy, TPKT *p)
 {
   send(sock,p,sizeof(PKT)+p->pkt.data_len,0);
   mfree(p);
-}
-
-void start_vibra(void)
-{
-  void stop_vibra(void);
-  if((Is_Vibra_Enabled)&&(!IsCalling()))
-  {
-    extern const unsigned int vibraPower;
-    SetVibration(vibraPower);
-    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
-  }  
-}
-
-void stop_vibra(void)
-{
-  SetVibration(0);
-  if (--vibra_count)
-  {
-    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
-  }
 }
 
 void ask_my_info(void)
@@ -1260,42 +1255,10 @@ int method5(MAIN_GUI *data,GUI_MSG *msg)
         SUBPROC((void *)create_connect);
       }
       break;
-      /*case '*':
-      {
-      Is_Vibra_Enabled = !(Is_Vibra_Enabled);
-      break;
-    }*/
-    case '*'://тут поменял
-      if (!(Is_Vibra_Enabled=!(Is_Vibra_Enabled)))
-	ShowMSG(1,(int)LG_MSGVIBRADIS);
-      else
-	ShowMSG(1,(int)LG_MSGVIBRAENA);
-      break;     
-    case '5':
-      if (!(Is_Sounds_Enabled=!(Is_Sounds_Enabled)))
-	ShowMSG(1,(int)LG_MSGSNDDIS);
-      else
-	ShowMSG(1,(int)LG_MSGSNDENA);
-      break;//      
-    case '#':
-      GPRS_OnOff(0,1);
-      break;
-      /*    case '0':
-      if (connect_state==3)
-      {
-      SUBPROC((void *)SendPreved);
     }
-      break;*/
-    }
-    
   }
-  //  method0(data);
   return(0);
 }
-//void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
-//{
-//  mfree_adr(data);
-//}
 
 int method8(void){return(0);}
 
@@ -1884,21 +1847,15 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   CLIST *t;
   TPKT *p;
   char *s;
-  int l;
+  int l=msg->gbsmsg->submess;
   if (msg->keys==0xFFF)
   {
     void ec_menu(GUI *data, GUI_MSG *msg);
     ec_menu(data,msg);
     return(-1);
   }
-  if (msg->gbsmsg->msg==KEY_DOWN)
+  if (msg->gbsmsg->msg==LONG_PRESS)
   {
-    l=msg->gbsmsg->submess;
-    if ((l>='0')&&(l<='9'))
-    {
-      if (EDIT_GetFocus(data)!=edchat_answeritem)
-	EDIT_SetFocus(data,edchat_answeritem);
-    }
     if (l==RIGHT_BUTTON)
     {
       if (EDIT_GetFocus(data)==edchat_answeritem)
@@ -1916,6 +1873,14 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	  }
 	}
       }
+    }
+  }
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    if ((l>='0')&&(l<='9'))
+    {
+      if (EDIT_GetFocus(data)!=edchat_answeritem)
+	EDIT_SetFocus(data,edchat_answeritem);
     }
     if (l==GREEN_BUTTON)
     {

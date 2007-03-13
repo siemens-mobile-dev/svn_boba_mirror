@@ -41,6 +41,8 @@
 //================================
 #define LG_MNUSTATUS  "Статус"
 #define LG_MNUADDCONT "Добавить контакт"
+#define	LG_MNUVIBRA "Режим вибры"
+#define LG_MNUSOUND "Режим звука"
 #define LG_MNUEDCFG   "Настройки"
 #define LG_MNUABOUT   "Об эльфе"
 //--------------
@@ -136,6 +138,8 @@
 
 #define LG_MNUSTATUS  "Status"
 #define LG_MNUADDCONT "Add Contact"
+#define	LG_MNUVIBRA   "Vibra mode"
+#define LG_MNUSOUND   "Sound mode"
 #define LG_MNUEDCFG   "Edit config"
 #define LG_MNUABOUT   "About"
 

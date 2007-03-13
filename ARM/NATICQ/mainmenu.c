@@ -156,6 +156,9 @@ void AboutDlg()
   ShowMSG(2, (int)"NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow");
 }
 
+extern void ChangeVibra(void);
+extern void ChangeSound(void);
+
 int icon[]={0,0};
 int about_icon[]={0,0};
 int dummy_icon[] = {0,0};
@@ -164,18 +167,22 @@ HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
-MENUITEM_DESC menuitems[4]=
+MENUITEM_DESC menuitems[6]=
 {
   {NULL,(int)LG_MNUSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)LG_MNUADDCONT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_MNUVIBRA,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_MNUSOUND,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)LG_MNUEDCFG,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[4]=
+void *menuprocs[6]=
 {
   (void *)DispStatusChangeMenu,
   (void *)AddContactMenu,
+  (void *)ChangeVibra,
+  (void *)ChangeSound,
   (void *)EditConfig,
   (void *)AboutDlg
 };
@@ -211,14 +218,14 @@ MENU_DESC tmenu=
   NULL,
   menuitems,
   menuprocs,
-  4
+  6
 };
 
 void ShowMainMenu()
 {
   menuitems[0].icon=S_ICONS+CurrentStatus;
-  menuitems[3].icon=S_ICONS+IS_UNKNOWN;
+  menuitems[5].icon=S_ICONS+IS_UNKNOWN;
   menuhdr.icon=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,4,0,0);
+  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,6,0,0);
 }
