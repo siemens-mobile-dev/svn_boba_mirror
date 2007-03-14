@@ -189,6 +189,7 @@ void InitSmiles()
       strcpy(si->text,name);
       si->key=*((unsigned long *)name);
       si->mask=~(0xFFFFFFFFUL<<(8*strlen(name)));
+      si->key&=si->mask;
       if (s_bot)
       {
         //Не первый
