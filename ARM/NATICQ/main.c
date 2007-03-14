@@ -23,7 +23,9 @@ const char S_DND[]="DND";
 const char S_ONLINE[]="Online";
 const char S_FFC[]="FFC";
 
-char Is_Vibra_Enabled = 1;
+int IsActiveUp=0;
+
+int Is_Vibra_Enabled = 1;
 
 int S_ICONS[11];
 
@@ -86,8 +88,17 @@ typedef struct
 {
   void *next;
   unsigned int uni_smile;
+  unsigned int key; //Для быстрой проверки
+  unsigned int mask;
   char text[16];
 }S_SMILES;
+
+#pragma pack(1)
+typedef struct
+{
+  unsigned long l;
+}ULONG_BA;
+#pragma pack()
 
 S_SMILES *s_top=0;
 
@@ -176,6 +187,8 @@ void InitSmiles()
       si->uni_smile=n_pic;
       si->next=0;
       strcpy(si->text,name);
+      si->key=*((unsigned long *)name);
+      si->mask=~(0xFFFFFFFFUL<<(8*strlen(name)));
       if (s_bot)
       {
         //Не первый
@@ -194,13 +207,18 @@ void InitSmiles()
   mfree(s_buf); 
 }
 
+#pragma inline
 S_SMILES *FindUnicodeSmile(char *str)
 {
   S_SMILES *sl=(S_SMILES *)s_top;
+  ULONG_BA v;
+  v=*((ULONG_BA *)str);
   while(sl)
   {
-    if (!strncmp(str,sl->text,strlen(sl->text)))
-      return sl;
+    if ((v.l&sl->mask)==sl->key)
+    {
+      if (!strncmp(str,sl->text,strlen(sl->text))) return sl;
+    }
     sl=sl->next;
   }
   return 0;
@@ -572,7 +590,7 @@ static const char table_T9Key[256]=
 
 char ContactT9Key[32];
 
-CLIST *FindContactByNS(int *i, int si)
+CLIST *FindContactByNS(int *i, int si, int act_flag)
 {
   CLIST *t;
   t=(CLIST *)cltop;
@@ -581,6 +599,11 @@ CLIST *FindContactByNS(int *i, int si)
   int c;
   while(t)
   {
+    if (act_flag<2)
+    {
+      if ((act_flag)&&(!t->isactive)) goto L_NOT9;
+      if ((!act_flag)&&(t->isactive)) goto L_NOT9;
+    }
     if ((si==IS_ANY)||(GetIconIndex(t)==si))
     {
       s=ContactT9Key;
@@ -640,7 +663,7 @@ void BackSpaceContactT9(void)
 int CountContacts(void)
 {
   int l=-1;
-  FindContactByNS(&l,IS_ANY);
+  FindContactByNS(&l,IS_ANY,2);
   l=-1-l;
   return l;
 }
@@ -648,16 +671,23 @@ int CountContacts(void)
 CLIST *FindContactByN(int i)
 {
   CLIST *t;
-  t=FindContactByNS(&i,IS_MSG); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_FFC); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_ONLINE); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_DND); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_OCCUPIED); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_NA); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_AWAY); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_INVISIBLE); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_OFFLINE); if ((!i)&&(t)) return(t);
-  t=FindContactByNS(&i,IS_UNKNOWN); if ((!i)&&(t)) return(t);
+  int f=IsActiveUp;
+  if (f)
+  {
+    t=FindContactByNS(&i,IS_ANY,1); if ((!i)&&(t)) return (t);
+    f=0;
+  }
+  else f=2;
+  t=FindContactByNS(&i,IS_MSG,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_FFC,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_ONLINE,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_DND,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_OCCUPIED,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_NA,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_AWAY,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_INVISIBLE,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_OFFLINE,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_UNKNOWN,f); if ((!i)&&(t)) return(t);
   return t;
 }
 
@@ -740,6 +770,11 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     {
       AddContactT9Key(i);
       goto L_RECOUNT;
+    }
+    if (i==GREEN_BUTTON) 
+    {
+      IsActiveUp=!IsActiveUp;
+      RefreshGUI();
     }
   }
   return(0);
@@ -1033,6 +1068,15 @@ void get_answer(void)
         j=i+sizeof(PKT)+1;
         p=malloc(j);
         memcpy(p,&RXbuf,j);
+	{
+	  char *s=p;
+	  int c;
+	  while((c=*s))
+	  {
+	    if (c<3) *s=' ';
+	    s++;
+	  }
+	}
         snprintf(logmsg,255,LG_GRRECVMSG,RXbuf.pkt.uin,RXbuf.data);
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         REDRAW();
@@ -1182,7 +1226,7 @@ ProcessPacket(TPKT *p)
       if (edcontact->isunread)
       {
 	//	  request_addec_edchat=1;
-	RefreshGUI();
+	if (IsGuiOnTop(edchat_id)) RefreshGUI();
 	/*
 	request_remake_edchat=1;
 	if (IsGuiOnTop(edchat_id))
