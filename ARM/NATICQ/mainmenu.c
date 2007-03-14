@@ -153,7 +153,7 @@ void EditConfig(void)
 //void AboutDlg(){};
 void AboutDlg()
 {
-  ShowMSG(2, (int)"NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow");
+  ShowMSG(2, (int)LG_COPYRIGHT);
 }
 
 extern void ChangeVibra(void);

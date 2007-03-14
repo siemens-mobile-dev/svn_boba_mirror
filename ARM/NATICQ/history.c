@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "naticq.h"
 #include "history.h"
+#include "language.h"
 
 extern const char HIST_PATH[64];
 extern const int LOG_ALL;
@@ -33,7 +34,7 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   }
   else
   {
-    snprintf(error,35, "Ошибка I/O  #%u", io_error);
+    snprintf(error,35, LG_HISTIOERR, io_error);
     ShowMSG(1,(int)error); 
   }
 }

@@ -1,10 +1,12 @@
 #ifndef _LANGUAGE_H_
 #define _LANGUAGE_H_
 
-#define LANG RU
+//Оставляем только один дефайн иначе будет кака
+#define LANG_RU
+//#define LANG_UA
+//#define LANG_EN
 
-#ifdef LANG
-#if LANG == RU
+#ifdef LANG_RU
 
 #define LG_CLTITLE "Контакты..."
 #define LG_CLT9INP "Ввод T9: "
@@ -84,6 +86,10 @@
 
 //=================================
 
+#define LG_HISTIOERR "Ошибка I/O  #%u"
+
+//=================================
+
 #define LG_GRSTATESTRING "State: %d, RXstate: %d\n%t"
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
@@ -100,9 +106,115 @@
 #define LG_GRRECVMSG     "MSG%d: %s"
 #define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
 
+#define LG_COPYRIGHT     "NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow"
+
 #endif
 
-#else
+#ifdef LANG_UA
+
+#define LG_CLTITLE "Контакти..."
+#define LG_CLT9INP "Ввід T9: "
+
+#define LG_CLERROR "помилка"
+
+#define LG_CLLOOPBACK "Loopback"
+
+//===============================
+
+#define LG_MENU    "Меню"
+#define LG_OPTIONS "Опції"
+#define LG_CLOSE   "Закрити"
+#define LG_CLEAR   "<C"
+#define LG_DOIT    "Виконати"
+#define LG_PASTESM "Вставити"
+//-------------
+#define LG_SELECT  "Вибір"
+#define LG_BACK    "Назад"
+//--------------
+#define LG_ADD      "Додати"
+#define LG_ADDCNT   "Додати контакт"
+#define LG_ENTERUIN "Введіть UIN:"
+//--------------
+#define LG_ADDREN  "Додати/ім'я"
+#define LG_SETNICK "Set nickname of %u as:" //Какого-то эти строки будучи написаны
+#define LG_SMLDESC "Smile: %u %s"           //на русском отображаются крякозябликами
+#define LG_ADDSMIL "Вставити смайлик"
+
+//===============================
+
+#define LG_ADDCONT "Додати контакт..."
+#define LG_AUTHREQ   "Авторизуйте мене..."
+#define LG_AUTHGRANT "Вас авторизовано"
+
+//================================
+#define LG_MNUSTATUS  "Статус"
+#define LG_MNUADDCONT "Додати контакт"
+#define	LG_MNUVIBRA   "Режим вібри"
+#define LG_MNUSOUND   "Режим звуків"
+#define LG_MNUEDCFG   "Параметри"
+#define LG_MNUABOUT   "Про ельфа"
+//--------------
+#define LG_MNUQUOTE    "Цитувати"
+#define LG_MNUADDSML   "Вставити смайл"
+#define LG_MNUSHINFO   "Отримати інфо"
+#define LG_MNUADDREN   "Додати/ім'я"
+#define LG_MNUSAUTHREQ "Запит авториз."
+#define LG_MNUSAUTHGRT "Авторизувати"
+#define LG_MNUOPENLOG  "Відкрити історію"
+#define LG_MNUCLEARCHT "Очистити чат"
+
+//================================
+#define LG_CHGSTATUS "Змінити статус"
+
+#define LG_STONLINE "В мережі"
+#define LG_STAWAY   "Відійшов"
+#define LG_STNA     "Недоступний"
+#define LG_STDND    "Не турбувати"
+#define LG_STOCCUP  "Зайнятий"
+#define LG_STFFC    "Вільний для чату"
+#define LG_STINVIS  "Невидимий"
+
+//================================
+
+#define LG_MSGILLEGMSGCON "Невірне повідомлення ENIP_SOCK_CONNECTED!"
+#define LG_MSGILLEGMSGREA "Невірне повідомлення ENIP_DATA_READ"
+#define LG_MSGCANTCONN    "Неможливо підключитись!"
+#define LG_MSGCANTCRSC    "Неможливо створити сокет, перезапуск GPRS!"
+#define LG_MSGHOSTNFND    "Сервер не знайдено!"
+#define LG_MSGVIBRADIS    "Вібру вимкнено!"
+#define LG_MSGVIBRAENA    "Вібру увімкнено!"
+#define LG_MSGSNDDIS      "Звуки вимкнено!"
+#define LG_MSGSNDENA      "Звуки увімкнено!"
+#define LG_MSGNOUINPASS   "Введіть UIN/пароль!"
+#define LG_MSGSMILNOTFND  "Смайли не знайдено!"
+
+//=================================
+
+#define LG_HISTIOERR "Помилка I/O  #%u"
+
+//=================================
+
+#define LG_GRSTATESTRING "State: %d, RXstate: %d\n%t"
+#define LG_GRSKEYEXIT    "Exit"
+#define LG_GRSKEYCLIST   "CList"
+
+#define LG_GRTRYLOGIN    "Try to login..."
+#define LG_GRWAITFORGPRS "Waiting for GPRS up..."
+#define LG_GRSENDDNR     "Send DNR..."
+#define LG_GRDNRERROR    "DNR ERROR %d!"
+#define LG_GRDNROK       "DNR Ok, connecting..."
+#define LG_GRBADPACKET   "Bad packet"
+#define LG_GRLOGINMSG    "%s"
+#define LG_GRSTATUSCHNG  "SC%d: %04X"
+#define LG_GRERROR       "ERR: %s"
+#define LG_GRRECVMSG     "MSG%d: %s"
+#define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
+
+#define LG_COPYRIGHT     "NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow"
+
+#endif
+
+#ifdef LANG_EN
 
 #define LG_CLTITLE "Contacts..."
 #define LG_CLT9INP "T9 Key: "
@@ -184,6 +296,10 @@
 
 //=================================
 
+#define LG_HISTIOERR "I/O Error #%u"
+
+//=================================
+
 #define LG_GRSTATESTRING "State: %d, RXstate: %d\n%t"
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
@@ -199,6 +315,8 @@
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
 #define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
+
+#define LG_COPYRIGHT     "NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow"
 
 #endif
 
