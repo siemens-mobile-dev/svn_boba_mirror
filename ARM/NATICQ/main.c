@@ -2033,6 +2033,7 @@ void edchat_ghook(GUI *data, int cmd)
   int type;
   int j;
   char hdr[128];
+  int c;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
   CLIST *t=edcontact;
@@ -2072,9 +2073,9 @@ void edchat_ghook(GUI *data, int cmd)
 	  EDIT_InsertEditControl(data,edchat_answeritem-1,&ec);
 	  edchat_answeritem++;
 	  j=0;
-	  while((msg_buf[j]=*s)>3)
+	  while((c=msg_buf[j]=*s)>2)
 	  {
-	    if (msg_buf[j]!=10)
+	    if (c!=10)
 	      j++;
 	    s++;
 	  }
