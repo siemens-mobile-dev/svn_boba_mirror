@@ -207,23 +207,6 @@ void InitSmiles()
   mfree(s_buf); 
 }
 
-#pragma inline
-S_SMILES *FindUnicodeSmile(char *str)
-{
-  S_SMILES *sl=(S_SMILES *)s_top;
-  ULONG_BA v;
-  v=*((ULONG_BA *)str);
-  while(sl)
-  {
-    if ((v.l&sl->mask)==sl->key)
-    {
-      if (!strncmp(str,sl->text,strlen(sl->text))) return sl;
-    }
-    sl=sl->next;
-  }
-  return 0;
-}
-
 S_SMILES *FindSmileById(int n)
 {
   int i=0;
@@ -1827,6 +1810,7 @@ const unsigned short dos2unicode[128]=
   0x00B0,0x2022,0x00B7,0x0076,0x2116,0x00A4,0x00A6,0x00A0
 };
 
+#pragma inline
 unsigned int char8to16(int c)
 {
   if (c>=128)
@@ -2008,19 +1992,33 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 void ParseAnswer(WSHDR *ws, char *s)
 {
   S_SMILES *t;
-  int wchar;
+  S_SMILES *t_root=(S_SMILES *)s_top;
+  unsigned int wchar;
+  unsigned int ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
   CutWSTR(ws,0);
-  while(*s)
+  while(wchar=*s)
   {
-    t=FindUnicodeSmile(s);
+    t=t_root;
+    while(t)
+    {
+      if ((ulb&t->mask)==t->key)
+      {
+	if (!strncmp(s,t->text,strlen(t->text))) break;
+      }
+      t=t->next;
+    }
     if (t)
     {
       wchar=t->uni_smile;
       s+=strlen(t->text);
+      ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
     }
     else
     {
-      wchar=char8to16(*s++);
+      wchar=char8to16(wchar);
+      s++;
+      ulb>>=8;
+      ulb+=s[3]<<24;
     }
     wsAppendChar(ws,wchar);
   }
