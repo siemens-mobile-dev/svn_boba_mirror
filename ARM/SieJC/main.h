@@ -10,7 +10,6 @@
 #define VIBRA_POWER 10 // Сила вибры для событий разного рода
 
 #define USE_PNG_EXT   // Использовать ли расширение PNG для картинок (ELFLoader >2.0)
-//#define STD_PALETTE
 ////////////////////////////////////////////////////////////////////////////////
 
 #define TMR_SECOND 216
@@ -19,12 +18,6 @@
 
 #define XML_BUFFER_SIZE 64*1024 // Размер буфера в байтах
 #define REC_BUFFER_SIZE 512 // Размер буфера приёма в байтах
-
-#ifdef STD_PALETTE
-#define color(x) GetPaletteAdrByColorIndex(x)
-#else
-#define color(x) (char *)(&(x))
-#endif
 
 typedef struct
 {
@@ -51,14 +44,6 @@ typedef enum
 {
   JS_NOT_CONNECTED, 
   JS_CONNECTED_STATE, 
-  JS_ZLIB_INIT_ACK,           // Ожидание подтверждения юзания ZLib
-  JS_ZLIB_STREAM_INIT_ACK,    // Ожидание ответного ZLib-потока
-  JS_SASL_NEGOTIATION,        // Обмен приветствиями SASL
-  JS_SASL_NEG_ANS_WAIT,       // Ожидание ответа от сервера на посланный SASL
-  JS_SASL_AUTH_ACK,           // Ожидание <success/> после ответа на rspauth
-  JS_SASL_NEW_STREAM_ACK,     // Ожидание инициализации нового потока
-  JS_SASL_RESBIND_ACK,        // Ожидание привязки ресурса
-  JS_SASL_SESS_INIT_ACK,      // Ожидание инициализации сессии
   JS_AUTH_OK, 
   JS_AUTH_ERROR, 
   JS_ONLINE,
@@ -141,14 +126,6 @@ typedef struct
   char status;
   char* message;
 }PRESENCE_INFO;
-
-typedef struct 
-{
-  char r;
-  char g;
-  char b;
-  char a;
-}RGBA;
 
 void SendAnswer(char *str);
 

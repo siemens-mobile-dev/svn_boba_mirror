@@ -12,28 +12,16 @@
 
 #define CHAR_ON_LINE 20
 
-#define CLIST_FONT SMALL_FONT     // Шрифт контакт-листа
-
-#define CLIST_Y1 5               // ad: меньше сделал (26->5) 
-
-/* ACHTUNG
-#ifdef STD_PALETTE
 #define CURSOR 6                 // ad: цвет курсора
 
 #define CURSOR_BORDER 20         // ad: цвет ободка курсора
 
+#define CLIST_FONT SMALL_FONT     // Шрифт контакт-листа
+
+#define CLIST_Y1 5               // ad: меньше сделал (26->5) 
+
 #define CLIST_F_COLOR_0 1         // Цвет шрифта 
 #define CLIST_F_COLOR_1 15        // Цвет шрифта (есть сообщения)
-#define CONTACT_BG_0 0
-#define CONTACT_BG_1 22
-#else 
-const RGBA CURSOR = {80, 80, 255, 100};
-const RGBA CURSOR_BORDER = {200, 200, 200, 100};
-const RGBA CLIST_F_COLOR_0 = {0, 0, 0, 100};
-const RGBA CLIST_F_COLOR_1 = {0, 0, 170, 100};
-const RGBA CONTACT_BG_0 = {255, 255, 255, 100};
-const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
-#endif*/
 
 // Отрисовать список контактов
   void CList_RedrawCList();
@@ -68,8 +56,6 @@ const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
 
 // Добавить системное сообщение
   void CList_AddSystemMessage(char* jid, char status, char* status_msg);
-// Оно же, но принимает ANSI-строку. Полезно в отдельных случаях :)
-  void CList_AddSystemMessageA(char* jid, char status, char* ansi_status_msg);
 
   TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg);
 

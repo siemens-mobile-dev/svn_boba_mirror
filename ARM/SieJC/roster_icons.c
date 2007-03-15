@@ -24,7 +24,7 @@ unsigned int dnd=0x231;
 unsigned int invisible=0x306;
 
 extern const char* PRESENCES[PRES_COUNT];
-extern const char PATH_TO_PIC[128];
+extern const char PATH_TO_PIC[256];
 
 #ifdef USE_PNG_EXT
 

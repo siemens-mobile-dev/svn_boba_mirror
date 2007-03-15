@@ -34,8 +34,6 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload);
 // Context:HELPER
 void Send_Welcome_Packet();
 
-void Send_Welcome_Packet_SASL();
-
 /*
   Послать дисконнект
 */
@@ -119,19 +117,6 @@ void MUCList_Destroy();
 // Войти в конференцию
 void Enter_Conference(char *room, char *roomnick, char N_messages);
 
-// Выйти из конференции
+// Выйти из конференции, имя в ANSI
 void Leave_Conference(char* room);
-
-///////////////////
-void Use_Md5_Auth_Report();
-void Decode_Challenge(char *challenge);
-void Destroy_SASL_Ctx();
-void Send_Login_Packet();
-void Process_Auth_Answer(char *challenge);
-void SASL_Open_New_Stream();
-void SASL_Bind_Resource();
-void SASL_Init_Session();
-////
-void Compression_Ask();
-void Compression_Init_Stream();
 #endif

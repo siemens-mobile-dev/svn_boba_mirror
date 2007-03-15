@@ -1,6 +1,6 @@
 #include "..\inc\cfg_items.h"
 //Конфигурация
-__root const CFG_HDR cfghdr0={CFG_STR_UTF8,"Login",0,31};
+__root const CFG_HDR cfghdr0={CFG_STR_WIN1251,"Login",0,31};
 __root const char USERNAME[32]="";
 
 __root const CFG_HDR cfghdr1={CFG_STR_PASS,"Password",0,31};
@@ -27,13 +27,3 @@ __root const char PATH_TO_PIC[128]="4:\\ZBin\\SieJC\\img\\";
 
 __root const CFG_HDR cfghdr7={CFG_STR_WIN1251,"Default disc",0,127};
 __root const char DEFAULT_DISC[128]="4";
-
-__root const CFG_HDR cfghdr8={CFG_CBOX,"Auth type",0,2};
-__root const int USE_SASL = 0;
-__root const CFG_CBOX_ITEM cfgcbox2[2]={"Simple","SASL"};
-
-__root const CFG_HDR cfghdr9={CFG_CBOX,"ZLib usage",0,2};
-__root const int USE_ZLIB = 0;
-__root const CFG_CBOX_ITEM cfgcbox3[2]={"No","Yes"};
-
-// EOL, EOF

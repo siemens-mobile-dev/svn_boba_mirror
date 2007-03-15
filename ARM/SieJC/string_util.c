@@ -1,43 +1,5 @@
 #include "../inc/swilib.h"
 #include "string_util.h"
-
-/* Вернуть значение параметра по имени параметра из строки вида:
- nonce="2444323444",qop="auth",charset=utf-8,algorithm=md5-sess
-
-IN: ch - строка
-    req - имя требуемого параметра
-    cut_quotes - обрезать ли кавычки, если параметр в кавычках
-OUT: Искомое значение; нужно освободить память!
-*/ 
-char *Get_Param_Value(char *ch, char *req, char cut_quotes)
-{
-//  char ch[]="nonce=\"2444323444\",qop=\"auth\",charset=utf-8,algorithm=md5-sess";
-//  char req[]="qop";
-  char *n_displace = strstr(ch, req);     // начало строки с именем параметра
-  char *eq=n_displace + strlen(req);
-  if(!(eq[0]=='='))return NULL;
-  eq+=1;
-  char *zpt= strchr(n_displace,',');
-  if(!zpt)zpt=ch+strlen(ch);
-  int len;
-  char *val;
-  if(cut_quotes)
-  {
-    len=zpt-eq-2;
-    val=malloc(len+1);
-    for(int i=0;i<len;i++) val[i]=*(eq+i+1);    
-  }
-  else
-  {
-    len=zpt-eq;
-    val=malloc(len+1);
-    for(int i=0;i<len;i++) val[i]=*(eq+i);
-  }
-  val[len]=0x0;
-  return val;
-}
-
-
 /*
   Преобразование буфера данных из кодировки UTF-8 в ANSI
 IN:
@@ -398,7 +360,7 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
   char* utf8_str = malloc(maxlen*2+1);
   ws_2str(ws_str, utf8_str, maxlen*2);
   FreeWS(ws_str);
-  //utf8_str = Correct_UTF8_String(utf8_str);
+  utf8_str = Correct_UTF8_String(utf8_str);
   return utf8_str;
 }
 

@@ -32,7 +32,4 @@ char* Correct_UTF8_String(char* utf8_jid);
 
 // А это вообще чтобы всем было хорошо (с) Чеботарёв А.А.
 char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
-
-// Получить значение по параметру (см. описание в теле файла)
-char *Get_Param_Value(char *ch, char *req, char cut_quotes);
 #endif

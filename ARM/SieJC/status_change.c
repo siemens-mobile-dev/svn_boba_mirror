@@ -122,7 +122,6 @@ void ed1_ghook(GUI *data, int cmd)
    sTerminate=0;
    ExtractEditControl(data,2,&ec);    
    wstrcpy(ews,ec.pWS);
-/*
    size_t xz = wstrlen(ews)*2;
    char* body;
    if(xz)
@@ -131,17 +130,6 @@ void ed1_ghook(GUI *data, int cmd)
       body[xz]='\0';
    }
    else body = NULL;
-*/
-     char* body;
-     if(wstrlen(ews))
-     {
-       int res_len;
-       body = malloc(wstrlen(ews)*2+1);
-       ws_2utf8(ews, body, &res_len, wstrlen(ews)*2+1);
-       body = realloc(body, res_len+1);
-       body[res_len]='\0';
-     }else body = NULL;
-     
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
     extern long  strtol (const char *nptr,char **endptr,int base);
     ExtractEditControl(data,4,&ec);    // = priority
@@ -160,7 +148,7 @@ void ed1_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Статус",LGP_NULL};
+HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Статус",0x7FFFFFFF};
 
 INPUTDIA_DESC ed1_desc=
 {

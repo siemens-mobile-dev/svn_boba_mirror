@@ -2474,12 +2474,6 @@
   <group>
     <name>Utility</name>
     <file>
-      <name>$PROJ_DIR$\base64.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\base64.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\conf_loader.c</name>
     </file>
     <file>
@@ -2941,12 +2935,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\history.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\md5.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\md5.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\string_util.c</name>
