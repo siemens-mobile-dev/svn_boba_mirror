@@ -1054,6 +1054,7 @@ void get_answer(void)
         memcpy(p,&RXbuf,j);
 	{
 	  char *s=p;
+	  s+=sizeof(PKT);
 	  int c;
 	  while((c=*s))
 	  {
