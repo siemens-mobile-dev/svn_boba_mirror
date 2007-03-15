@@ -134,7 +134,7 @@ void med1_ghook(GUI *data, int cmd)
 
 extern void dummy(void);
 
-HEADER_DESC med1_hdr={0,0,131,21,NULL,(int)"¬ход в MUC",0x7FFFFFFF};
+HEADER_DESC med1_hdr={0,0,131,21,NULL,(int)"¬ход в MUC",LGP_NULL};
 
 INPUTDIA_DESC med1_desc=
 {

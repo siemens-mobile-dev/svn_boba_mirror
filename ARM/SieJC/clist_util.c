@@ -7,12 +7,35 @@
 #include "roster_icons.h"
 #include "history.h"
 
+#ifdef STD_PALETTE
+#define CURSOR 6                 // ad: цвет курсора
+
+#define CURSOR_BORDER 20         // ad: цвет ободка курсора
+
+#define CLIST_F_COLOR_0 1         // Цвет шрифта 
+#define CLIST_F_COLOR_1 15        // Цвет шрифта (есть сообщения)
+#define CONTACT_BG_0 0
+#define CONTACT_BG_1 22
+#else 
+const RGBA CURSOR = {80, 80, 255, 100};
+const RGBA CURSOR_BORDER = {200, 200, 200, 100};
+const RGBA CLIST_F_COLOR_0 = {0, 0, 0, 100};
+const RGBA CLIST_F_COLOR_1 = {0, 0, 170, 100};
+const RGBA CONTACT_BG_0 = {255, 255, 255, 100};
+const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
+#endif
+
 CLIST* cltop = NULL;
 
 char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
 
+#ifdef STD_PALETTE
 char lineColor = 0;               // ad: цвет текущей строчки
 char borderColor = 0;               // ad: цвет ободка текущей строчки
+#else 
+RGBA lineColor = {0, 0, 0, 0};               
+RGBA borderColor = {0, 0, 0, 0};            
+#endif
 
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
 unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться 
@@ -24,7 +47,11 @@ unsigned int CursorPos = 1;       // Текущая позиция курсора
 TRESOURCE* ActiveContact = NULL;
 
 extern char logmsg[512];
+#ifdef STD_PALETTE
 extern const unsigned short PRES_COLORS[PRES_COUNT];
+#else
+extern const RGBA PRES_COLORS[PRES_COUNT];
+#endif
 extern char My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
 extern JABBER_STATE Jabber_state;
@@ -55,7 +82,11 @@ void CList_RedrawCList()
   WSHDR* out_ws = AllocWS(256);
   int i=1;
   int start_y;
+#ifdef STD_PALETTE
   int fcolor;
+#else
+  RGBA fcolor;
+#endif
   TRESOURCE* resEx;
 
   char Alternation = 1;             // ad: состояние чередования
@@ -79,14 +110,16 @@ void CList_RedrawCList()
             borderColor=CURSOR_BORDER; //бортик курсора
             ActiveContact = resEx;
           } else{ 
-            borderColor=lineColor=(Alternation==1)? 0 : 22;
+            borderColor=lineColor=(Alternation==1)? CONTACT_BG_0 : CONTACT_BG_1;
           }
           
-          ascii2ws(ClEx_name, ClEx->name);
+          //ascii2ws(ClEx_name, ClEx->name);
+          utf8_2ws(ClEx_name, ClEx->name, 128);
           
           if(resEx->name)
           {
             ascii2ws(ResEx_name,resEx->name);
+            utf8_2ws(ResEx_name,resEx->name, 128);
             if(resEx->entry_type==T_CONF_NODE)
             {
               wsprintf(out_ws,"%w", ResEx_name); // это участник конференции
@@ -101,14 +134,15 @@ void CList_RedrawCList()
                     
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
           
-          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}else{fcolor=PRES_COLORS[resEx->status];}
+          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}
+          else {fcolor=PRES_COLORS[resEx->status];}
 
           DrawRoundedFrame(0,start_y+1,scr_w-1,start_y+font_y,0,0,0,
-		   GetPaletteAdrByColorIndex(borderColor),  //ad: ободок
-		   GetPaletteAdrByColorIndex(lineColor));   //ad: рисуем с чередованием... для наглядности
+		   color(borderColor),  //ad: ободок
+		   color(lineColor));   //ad: рисуем с чередованием... для наглядности
           
           CutWSTR(out_ws, CHAR_ON_LINE);
-          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,SMALL_FONT,0,GetPaletteAdrByColorIndex(fcolor),GetPaletteAdrByColorIndex(23));
+          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,SMALL_FONT,0,color(fcolor),0);
 
 #ifdef USE_PNG_EXT          
           Roster_getIcon(path_to_pic, ClEx, resEx);
@@ -244,12 +278,19 @@ void CList_AddSystemMessage(char* jid, char status, char* status_msg)
   }
   if(status == PRESENCE_UNSUBSCRIBED)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, "Авторизация отозвана");
+    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was removed!");
   }
   if(status==PRESENCE_SUBSCRIBED)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, "Авторизация получена");    
+    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was granted");    
   }
+}
+
+void CList_AddSystemMessageA(char* jid, char status, char* ansi_status_msg)
+{
+  char *utf8_msg=ANSI2UTF8(ansi_status_msg, 512);
+  CList_AddSystemMessage(jid, status, utf8_msg);
+  mfree(utf8_msg);
 }
 
 // Узнать, есть ли уже такой ресурс у контакта, по FullJID
@@ -356,6 +397,8 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
             
       ResEx->status = status;
+      ResEx->muc_privs.aff = AFFILIATION_NONE;
+      ResEx->muc_privs.role=  ROLE_NONE; 
       if(ClEx->res_list->entry_type!=T_CONF_ROOT){ ResEx->entry_type = T_NORMAL;}
       else{ResEx->entry_type = T_CONF_NODE;}
       ResEx->has_unread_msg=0;
@@ -579,6 +622,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     strcpy(mess->mess, timestamp);
     strcat(mess->mess, mtext);
   }
+  
   mess->mtype=mtype;
   LockSched();
   if(!cont->log)
@@ -594,7 +638,10 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   cont->total_msg_count++;
   mess->next=NULL;
   UnlockSched();
-  Add2History(CList_FindContactByJID(jid), datestr,mtext);
+  
+  char *ansi_text = convUTF8_to_ANSI_STR(mtext);  
+  Add2History(CList_FindContactByJID(jid), datestr,ansi_text);
+  mfree(ansi_text);
 }
 
 /*
@@ -642,17 +689,20 @@ void CList_Destroy()
 void CList_Display_Popup_Info(TRESOURCE* ResEx)
 {
   if(!ResEx)return;
-  char msg_ex[]="JID: %s\nСтатус:%s";
-  char* msg = malloc(1024);
+  char msg_ex[]="JID: %s\nStatus:%s";
+  char* msg = malloc(200);
   extern const char* JABBER_AFFS[];
   extern const char* JABBER_ROLS[];
   if(ResEx->status_msg)
   {
-    ShowMSG(0,(int)ResEx->status_msg);
+    char *ansi_statusmsg = convUTF8_to_ANSI_STR(ResEx->status_msg);
+    ShowMSG(0,(int)ansi_statusmsg);
+    mfree(ansi_statusmsg);
   }
-  snprintf(msg,1024,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
-  ShowMSG(0, (int)msg);
-
+  snprintf(msg,200,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
+  char *ansi_msg=convUTF8_to_ANSI_STR(msg);
+  ShowMSG(0, (int)ansi_msg);
+  mfree(ansi_msg);
   if(ResEx->entry_type==T_CONF_NODE)
   {
     snprintf(msg,1024,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);
