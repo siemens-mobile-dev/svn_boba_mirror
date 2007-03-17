@@ -34,6 +34,7 @@ RGBA MESSAGEWIN_TITLE_BGCOLOR =   {  0,   0, 255, 100};
 RGBA MESSAGEWIN_TITLE_FONT =      {255, 255, 255, 100};
 RGBA MESSAGEWIN_MY_BGCOLOR =      {233, 255, 233, 100};
 RGBA MESSAGEWIN_CH_BGCOLOR =      {233, 233, 233, 100};
+RGBA MESSAGEWIN_CURSOR_BGCOLOR =  {0xFF, 0xFF, 0x00, 0x64};
 RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 =  {255, 255, 255, 100};
 RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 =  {233, 233, 233, 100};
 RGBA MESSAGEWIN_SYS_BGCOLOR =     {255, 233, 233, 100};
@@ -207,12 +208,16 @@ HEADER_DESC inp_hdr={0,0,0,0,NULL,(int)"Новое...",LGP_NULL};
 
 
 // Открыть окно написания нового сообщения
-void Init_Message(TRESOURCE* ContEx)
+void Init_Message(TRESOURCE* ContEx, char *init_text)
 {
   Resource_Ex = ContEx;
   patch_header(&inp_hdr);
   patch_input(&inp_desc);
   ws_eddata = AllocWS(MAX_MSG_LEN);
+  if(init_text)
+  {
+    utf8_2ws(ws_eddata, init_text, strlen(init_text)*2);    
+  }
   EDITCONTROL ec;
   void *ma=malloc_adr();
   void *eq;
@@ -222,11 +227,11 @@ void Init_Message(TRESOURCE* ContEx)
   AddEditControlToEditQend(eq,&ec,ma);
   CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,0);  
 }
-
-// Корень списка
-DISP_MESSAGE* MessagesList = NULL;
-unsigned int MessList_Count = 0;
-unsigned int OLD_MessList_Count = 0;
+////////////////////////////////////////////////////////////////////////////////
+DISP_MESSAGE* MessagesList = NULL;      // Корень списка
+unsigned int DispMessList_Count = 0;        // Количество сообщений
+unsigned int OLD_MessList_Count = 0;    // Отпарсенное количество сообщений
+unsigned int Cursor_Pos = 0;            // Позиция курсора в списке
 
 
 // Убить список сообщений
@@ -245,7 +250,7 @@ void KillDisp(DISP_MESSAGE* messtop)
     mfree(p);
     cnt++;
   }
-  MessList_Count = 0;
+  DispMessList_Count = 0;
   OLD_MessList_Count = 0;
   UnlockSched();
 }
@@ -253,6 +258,8 @@ void KillDisp(DISP_MESSAGE* messtop)
 //===============================================================================================
 
 char CurrentPage=1;
+char CurrentMessage = 0;
+char CurrentMessage_Lines = 0;
 char lines_on_page;
 char MaxPages=1;
 unsigned short FontSize;
@@ -261,8 +268,36 @@ unsigned short FontSize;
 // Всякие посторонние расчёты :)
 void Calc_Pages_Data()
 {
-  MaxPages = sdiv(lines_on_page,MessList_Count);
-  if(lines_on_page*MaxPages<MessList_Count)MaxPages++;
+  MaxPages = sdiv(lines_on_page,DispMessList_Count);
+  if(lines_on_page*MaxPages<DispMessList_Count)MaxPages++;
+}
+
+// Всякие посторонние расчёты :)
+void Calc_Pages_Data_1()
+{
+  if((Cursor_Pos-1-(CurrentMessage_Lines)<=(CurrentPage-1)*lines_on_page) && CurrentPage>1)
+    {
+      CurrentPage--;
+      Cursor_Pos--;
+      //ShowMSG(1,(int)"Q");
+      return;
+    }
+  else
+  {
+    //char q[20];
+    //sprintf(q,"Cur=%d > %d", Cursor_Pos-1-(CurrentMessage_Lines), (CurrentPage-1)*lines_on_page);
+    //ShowMSG(1,(int)q);
+  }
+}
+
+
+void Calc_Pages_Data_2()
+{
+  if(Cursor_Pos+1>CurrentPage*lines_on_page)
+  {
+    CurrentPage++;
+    Cursor_Pos++;
+  }
 }
 
 void mGUI_onRedraw(GUI *data)
@@ -297,6 +332,7 @@ void mGUI_onRedraw(GUI *data)
   
   DISP_MESSAGE* ml = MessagesList;
   int i_ctrl=0;
+
   int i = 0;
 #ifdef STD_PALETTE
   char MsgBgColor;
@@ -313,13 +349,20 @@ void mGUI_onRedraw(GUI *data)
       case MSG_ME:{MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;}        
       case MSG_CHAT:{MsgBgColor=MESSAGEWIN_CH_BGCOLOR;break;}                                        
       case MSG_SYSTEM:{MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;}                    
-      case MSG_STATUS:{MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;}                             
+      case MSG_STATUS:{MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;}                            
       case MSG_GCHAT:
         {
           MsgBgColor=ml->log_mess_number %2==0? MESSAGEWIN_GCHAT_BGCOLOR_1 : MESSAGEWIN_GCHAT_BGCOLOR_2;
           break;
         }
       }
+      if(CurrentMessage==ml->log_mess_number)
+      { 
+         MsgBgColor = MESSAGEWIN_CURSOR_BGCOLOR;
+         Cursor_Pos = i_ctrl+1;                    // Обновляем позицию курсора
+         CurrentMessage_Lines++;
+      }
+      
       DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
 		   color(MsgBgColor),
 		   color(MsgBgColor));
@@ -332,6 +375,7 @@ void mGUI_onRedraw(GUI *data)
   }  
   FreeWS(ws_title);
   Resource_Ex->has_unread_msg =0; // Непрочитанных сообщений больше нет
+
 }
 
 void mGUI_onCreate(GUI *data, void *(*malloc_adr)(int))
@@ -361,7 +405,7 @@ void mGUI_onUnfocus(GUI *data, void (*mfree_adr)(void *))
 void DbgInfo()
 {
   char q[200];
-  sprintf(q,"Messlist_cnt=%d; OLD=%d",MessList_Count,OLD_MessList_Count);
+  sprintf(q,"Messlist_cnt=%d\nCurMessage=%d\nLines=%d\nCursor=%d, CurPage=%d",DispMessList_Count, CurrentMessage, CurrentMessage_Lines,Cursor_Pos, CurrentPage);
   ShowMSG(2,(int)q);
 }
 
@@ -392,25 +436,48 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       
     case LEFT_SOFT:
       {
-        //DbgInfo();
+        DbgInfo();
+        break;
+      }
+   
+    case ENTER_BUTTON:
+      {
+        int i;
+        char *init_txt = NULL;
+        LOG_MESSAGE* log =Resource_Ex->log;
+        for(i=0;i<Resource_Ex->total_msg_count;i++)
+        {
+          if(i+1==CurrentMessage)
+          {
+            init_txt = log->mess;
+            break;
+          }
+          log = log->next;
+        }
+        
+        if(log)Init_Message(Resource_Ex, init_txt);
         break;
       }
       
       case UP_BUTTON:
         {
-          if(CurrentPage>1)CurrentPage--;
+          CurrentMessage_Lines = 0;
+          if(CurrentMessage>1)CurrentMessage--;
+          Calc_Pages_Data_1();
           REDRAW();
           break;         
         }
     case DOWN_BUTTON:
       {
-          if(CurrentPage<MaxPages)CurrentPage++;
+          CurrentMessage_Lines = 0;
+          if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
+          Calc_Pages_Data_2();
           REDRAW();
           break;         
       }
     case GREEN_BUTTON:
       {
-        Init_Message(Resource_Ex);
+        Init_Message(Resource_Ex, NULL);
         break;
       }
     }    
@@ -552,7 +619,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
         wstrcpy(Disp_Mess_Ex->mess, temp_ws_2);
         CutWSTR(temp_ws_2, 0);
         Disp_Mess_Ex->mtype = MessEx->mtype;
-        Disp_Mess_Ex->log_mess_number=parsed_counter;
+        Disp_Mess_Ex->log_mess_number=parsed_counter+1;
         if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
         else
         {
@@ -565,7 +632,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
           Disp_Mess_Ex->next=NULL;
         }
         cnt=0;
-        MessList_Count++;
+        DispMessList_Count++;
       }
     }
     FreeWS(temp_ws_1);
@@ -586,7 +653,7 @@ void Display_Message_List(TRESOURCE* ContEx)
 // Инициализация
   OLD_MessList_Count = 0;
   MessagesList = NULL;
-  MessList_Count = 0;
+  DispMessList_Count = 0;
   Resource_Ex = ContEx;
   FontSize = GetFontYSIZE(SMALL_FONT);
   lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
@@ -594,7 +661,9 @@ void Display_Message_List(TRESOURCE* ContEx)
   Calc_Pages_Data();
   CurrentPage = MaxPages;
   OLD_MessList_Count = Resource_Ex->total_msg_count;
-
+  Cursor_Pos = DispMessList_Count;
+  CurrentMessage = OLD_MessList_Count;
+  
 // Замутим гуй
   GUI *mess_gui=malloc(sizeof(GUI));
   zeromem(mess_gui, sizeof(GUI));

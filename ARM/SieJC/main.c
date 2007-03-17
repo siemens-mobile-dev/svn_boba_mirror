@@ -57,7 +57,7 @@ extern const int USE_SASL;
 extern const int USE_ZLIB; 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "0.9.8-Z";
+const char VERSION_VERS[] = "0.9.9-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -386,7 +386,7 @@ void get_answer(void)
       if(err!=0)
       {
         char q[20];
-        sprintf(q,"ZLib ERROR %d",err);
+        sprintf(q,"Œ¯Ë·Í‡ ZLib: %d",err);
         LockSched();
         ShowMSG(1,(int)q);
         UnlockSched();
@@ -912,7 +912,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       
       if(connect_state==2)
       {
-        Init_Message(CList_GetActiveContact());                        
+        Init_Message(CList_GetActiveContact(), NULL);                        
       }
       
       break;

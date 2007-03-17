@@ -67,7 +67,7 @@ typedef struct
 void Display_Message_List(TRESOURCE* ContEx);
 
 // Открыть окно написания нового сообщения
-void Init_Message(TRESOURCE* ContEx);
+void Init_Message(TRESOURCE* ContEx, char *init_text);
 
 void ParseMessagesIntoList(TRESOURCE* ContEx);
 #endif
