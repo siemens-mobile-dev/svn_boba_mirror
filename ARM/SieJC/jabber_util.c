@@ -1021,7 +1021,7 @@ unsigned short GetAffRoleIndex(char* str)
     Ниже функции авторизации для SASL-метода
 */
 
-// Сообщить серверу об использовании аунтитификации MD5-IDGEST
+// Сообщить серверу об использовании аунтитификации MD5-DIGEST
 //Context:HELPER
 void Use_Md5_Auth_Report()
 {
@@ -1194,6 +1194,18 @@ void Send_Login_Packet()
   mfree(User_Realm_Pass);
 }
 
+// Обработка ошибок SASL
+void SASL_Process_Error(XMLNode *nodeEx)
+{
+  Jabber_state=JS_ERROR; 
+  XMLNode *err = nodeEx->subnode;
+  if(err)
+  {
+    strcpy(logmsg, "SASL error!\n");
+    strcat(logmsg, err->name);  // Не юзер-френдли
+    if(!strcmp(err->name, SASLERR_NOTAUTH))strcat(logmsg, "\nBad password");
+  }
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 // Запрос компрессии у сервера
@@ -1240,6 +1252,5 @@ void Compression_Init_Stream()
   extern char Is_Compression_Enabled;
   Is_Compression_Enabled = 1;
   SUBPROC((void*)Send_New_stream);
-  //GBS_StartTimerProc(&Newstream, 1000, Send_New_stream);
 }
 // EOL,EOF

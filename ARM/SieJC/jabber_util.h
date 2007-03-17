@@ -131,6 +131,7 @@ void Process_Auth_Answer(char *challenge);
 void SASL_Open_New_Stream();
 void SASL_Bind_Resource();
 void SASL_Init_Session();
+void SASL_Process_Error(XMLNode *nodeEx);
 ////
 void Compression_Ask();
 void Compression_Init_Stream();

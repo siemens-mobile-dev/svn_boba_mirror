@@ -87,4 +87,25 @@ typedef enum {
 #define PRESENCE_SUBSCRIBED 9
 #define PRESENCE_UNSUBSCRIBE 10
 #define PRESENCE_UNSUBSCRIBED 11
+
+// SASL errors
+/*
+The following SASL-related error conditions are defined: 
+
+<aborted/> -- The receiving entity acknowledges an <abort/> element sent by the initiating entity; sent in reply to the <abort/> element. 
+<incorrect-encoding/> -- The data provided by the initiating entity could not be processed because the [BASE64] encoding is incorrect (e.g., because the encoding does not adhere to the definition in Section 3 of [BASE64]); sent in reply to a <response/> element or an <auth/> element with initial response data. 
+<invalid-authzid/> -- The authzid provided by the initiating entity is invalid, either because it is incorrectly formatted or because the initiating entity does not have permissions to authorize that ID; sent in reply to a <response/> element or an <auth/> element with initial response data. 
+<invalid-mechanism/> -- The initiating entity did not provide a mechanism or requested a mechanism that is not supported by the receiving entity; sent in reply to an <auth/> element. 
+<mechanism-too-weak/> -- The mechanism requested by the initiating entity is weaker than server policy permits for that initiating entity; sent in reply to a <response/> element or an <auth/> element with initial response data. 
+<not-authorized/> -- The authentication failed because the initiating entity did not provide valid credentials (this includes but is not limited to the case of an unknown username); sent in reply to a <response/> element or an <auth/> element with initial response data. 
+<temporary-auth-failure/> -- The authentication failed because of a temporary error condition within the receiving entity; sent in reply to an <auth/> element or <response/> element.
+*/
+
+#define SASLERR_ABORTED   "aborted"
+#define SASLERR_BAD_ENC   "incorrect-encoding"
+#define SASLERR_AUTHZID   "invalid-authzid"
+#define SASLERR_MECH      "invalid-mechanism"
+#define SASLERR_MECHWEAK  "mechanism-too-weak"
+#define SASLERR_NOTAUTH   "not-authorized"
+#define SASLERR_TEMPFAIL  "temporary-auth-failure"
 #endif

@@ -57,11 +57,15 @@ extern const int USE_SASL;
 extern const int USE_ZLIB; 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.7-dev-Z";
+const char VERSION_VERS[] = "0.9.8-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
-const char OS[] = "NewSGOLD_ELF-Platform";
+#ifdef ELKA
+  const char OS[] = "NewSGOLD_ELKA_ELF-Platform";
+#else
+  const char OS[] = "NewSGOLD_ELF-Platform";
+#endif
 #else
 const char OS[] = "SGOLD_ELF-Platform";
 #endif
@@ -276,8 +280,10 @@ char *Decompr_Buffer;
 unsigned int XMLBufferCurPos = 0; // Позиция в кольцевом буфере
 unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
 unsigned int processed_pos   = 0; // До какого места обработали
-
-
+z_stream d_stream;                // Поток для ZLib
+char ZLib_Stream_Init=0;          // Признак того, что инициализирован поток сжатия
+unsigned int out_bytes_count = 0; // Количество отправленных данных
+// Функции-заглушки для ZLib
 void* zcalloc(int unk,size_t nelem, size_t elsize)
 {
   return (malloc(nelem*elsize));
@@ -288,9 +294,8 @@ void zcfree(int unk, void* ptr)
   mfree(ptr);
 }
 
-z_stream d_stream;
-char ZLib_Stream_Init=0;
-
+// Распаковщик потока
+// Код с некоторыми изменениями взят из MidletSigner
 int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomprLen)
 {
   int err;
@@ -312,8 +317,6 @@ int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomp
   d_stream.next_out = (Byte*)uncompr;
   d_stream.avail_out = (uInt)uncomprLen;
   err = inflate(&d_stream, Z_NO_FLUSH);
-  if(err<0) goto unerr;
-  //err = inflateEnd(&d_stream);
   if(err<0) goto unerr;
   return 0;
 }
@@ -342,15 +345,14 @@ void get_buf_part(char* inp_buffer, unsigned int req_len)
 По окончании приёма законченной порции данных
 она направляется в MMI для вскрытия :)
 */
+//Context:HELPER
 void get_answer(void)
 {
   char* buf = malloc(REC_BUFFER_SIZE);    // Выделяем буфер под приём
   zeromem(buf,REC_BUFFER_SIZE);           // Зануляем
   int rec_bytes = 0;          // Не торопимся :)
   rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
- 
-  //Log("RECV",buf);
-  
+
   // Запись в буфер
   if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
   {
@@ -370,35 +372,36 @@ void get_answer(void)
   virt_buffer_len = virt_buffer_len + rec_bytes;  // Виртуальная длина потока увеличилась
 
   
-  if(Is_Compression_Enabled)
+  if(Is_Compression_Enabled)// Если включена компрессия...
   {
-    if((rec_bytes<REC_BUFFER_SIZE))
+    if((rec_bytes<REC_BUFFER_SIZE)) // Если принят конец пакета...
     {
-    // unzip(compr_data,compr_size,uncompr_data,uncompr_size);
-    int bytecount = virt_buffer_len - processed_pos;
-    char *compressed_data = malloc(bytecount); 
-    get_buf_part(compressed_data, bytecount);
+      int bytecount = virt_buffer_len - processed_pos;
+      char *compressed_data = malloc(bytecount); 
+      get_buf_part(compressed_data, bytecount); // Получаем из буфера сжатые данные
+      Decompr_Buffer = malloc(UNP_BUFFER_SIZE); // Выделяем память под распаковку
+      zeromem(Decompr_Buffer, UNP_BUFFER_SIZE);
+      // Распаковываем данные. 
+      int err=unzip(compressed_data,bytecount,Decompr_Buffer,UNP_BUFFER_SIZE);
+      if(err!=0)
+      {
+        char q[20];
+        sprintf(q,"ZLib ERROR %d",err);
+        LockSched();
+        ShowMSG(1,(int)q);
+        UnlockSched();
+        inflateEnd(&d_stream);
+        ZLib_Stream_Init = 0;
+      }
+      mfree(compressed_data);
+      processed_pos = virt_buffer_len;
     
-    IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
-    Decompr_Buffer = malloc(UNP_BUFFER_SIZE); // Пока 10К
-    zeromem(Decompr_Buffer, UNP_BUFFER_SIZE);
-    int err=unzip(compressed_data,bytecount,Decompr_Buffer,UNP_BUFFER_SIZE);
-    if(err!=0)
-    {
-      char q[20];
-      sprintf(q,"ZLib ERROR %d",err);
-      LockSched();
-      ShowMSG(1,(int)q);
-      UnlockSched();
-      inflateEnd(&d_stream);
-      ZLib_Stream_Init = 0;
-    }
-    mfree(compressed_data);
-    processed_pos = virt_buffer_len;
-    tmp_buffer->xml_buffer = Decompr_Buffer;
-    tmp_buffer->buf_size = strlen(Decompr_Buffer);
-    //Log("UZIP",Decompr_Buffer);
-    GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
+      // Готовимся к передаче данных в MMI
+      IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
+      tmp_buffer->xml_buffer = Decompr_Buffer;
+      tmp_buffer->buf_size = strlen(Decompr_Buffer);
+      //Log("UZIP",Decompr_Buffer);
+      GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
     }
   }
   else
@@ -479,9 +482,10 @@ ous.write(0);
 void SendAnswer(char *str)
 {
   unsigned int block_len= strlen(str);
-#ifdef LOG_ALL
-  Log("OUT->", str);
-#endif  
+  out_bytes_count += block_len;
+//#ifdef LOG_ALL
+//  Log("OUT->", str);
+//#endif  
 
 if(!Is_Compression_Enabled)
 {
@@ -501,6 +505,7 @@ else
   send(sock,&out_data,1,0);
   out_data = out_data >> 8;
   send(sock,&out_data,1,0);
+  out_bytes_count +=5;
   // Записали, пишем сам блок
   send(sock,str,block_len,0);
 }
@@ -575,6 +580,12 @@ void Process_Decoded_XML(XMLNode* node)
     {
       SASL_Open_New_Stream();
     }    
+
+//----------------
+    if(!strcmp(nodeEx->name,"failure")&& Jabber_state < JS_AUTH_OK)
+    {
+      SASL_Process_Error(nodeEx);
+    }    
     
 //----------------
     if(!strcmp(nodeEx->name,"challenge")&& Jabber_state == JS_SASL_NEG_ANS_WAIT)
@@ -608,6 +619,12 @@ void Process_Decoded_XML(XMLNode* node)
         Jabber_state = JS_CONNECTED_STATE;
         SUBPROC((void*)Send_Auth);
       }
+      else
+        if(nodeEx->subnode)
+        {
+          Process_Decoded_XML(nodeEx->subnode);
+          return;
+        }
     }   
 //----------------
     if(!strcmp(nodeEx->name,"stream:error"))
@@ -645,21 +662,24 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   LockSched();
   XMLNode *data=XMLDecode(xmlbuf->xml_buffer,xmlbuf->buf_size);
   UnlockSched();
-  if(data)
-  {
-//#ifdef LOG_ALL
-//    SaveTree(data);
-//#endif
-    Process_Decoded_XML(data);
-    DestroyTree(data);
-  }
 
-#ifdef LOG_ALL  
+// Сюда было бы логичнее переставить блок записи, ибо тогда в логе будет идти
+// сначала принятый пакет, а потом предпринятые действия
+#ifdef LOG_IN_DATA  
     char* tmp_buf=malloc(xmlbuf->buf_size+1);
     zeromem(tmp_buf,xmlbuf->buf_size+1);
     memcpy(tmp_buf,xmlbuf->xml_buffer,xmlbuf->buf_size);
     SUBPROC((void*)__log,tmp_buf, xmlbuf->buf_size);
 #endif
+
+  if(data)
+  {
+#ifdef LOG_XML_TREE
+    SaveTree(data);
+#endif
+    Process_Decoded_XML(data);
+    DestroyTree(data);
+  }
     
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
@@ -810,47 +830,11 @@ void Dump_PhoneInfo()
   }  
 }
 
-void Test_MD5()
+void Disp_State()
 {
-/*
-#include "md5.h"
-      static const char *const test[7*2] = {
-	"", "d41d8cd98f00b204e9800998ecf8427e",
-	"a", "0cc175b9c0f1b6a831c399e269772661",
-	"abc", "900150983cd24fb0d6963f7d28e17f72",
-	"message digest", "f96b697d7cb7938d525a2f31aaf161d0",
-	"abcdefghijklmnopqrstuvwxyz", "c3fcd3d76192e4007dfb496cca67e13b",
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-				"d174ab98d277d9f5a5611c2c9f419d9f",
-	"12345678901234567890123456789012345678901234567890123456789012345678901234567890", "57edf4a22be3c955ac49da2e2107b67a"
-    };
-    int i;
-    int status = 0;
-
-    for (i = 0; i < 7*2; i += 2) {
-	md5_state_t state;
-	md5_byte_t digest[16];
-	char hex_output[16*2 + 1];
-	int di;
-
-	md5_init(&state);
-	md5_append(&state, (const md5_byte_t *)test[i], strlen(test[i]));
-	md5_finish(&state, digest);
-	for (di = 0; di < 16; ++di)
-	    sprintf(hex_output + di * 2, "%02x", digest[di]);
-	if (strcmp(hex_output, test[i + 1]))
-        {
-          ShowDialog_Error(1,(int)"Internal error");
-//	    sprintf(msg, "MD5 (\"%s\") = ", test[i]);
-//	    puts(hex_output);
-//	    printf("**** ERROR, should be: %s\n", test[i + 1]);
-	    status = 1;
-	}
-    }
-    if (status == 0)
-	ShowMSG(1,(int)"md5 self-test completed successfully.");
-//    return status;
-*/
+  char q[40];
+  sprintf(q,"Jabber_state=%d\nOut bytes: %d", Jabber_state, out_bytes_count);
+  ShowMSG(0,(int)q);
 }
 
 #ifndef NEWSGOLD
@@ -952,12 +936,13 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '6':
       {
-        Test_MD5();
+        Disp_State();
         break;
       }  
     case '7':
       {
-        SUBPROC((void*)Send_Roster_Query);
+        //SUBPROC((void*)SASL_Bind_Resource);
+        SASL_Bind_Resource();
         break;
       } 
       
