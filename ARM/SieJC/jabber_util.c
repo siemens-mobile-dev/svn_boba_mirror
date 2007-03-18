@@ -453,11 +453,12 @@ void Leave_Conference(char* room)
   }
 
   MUC_ITEM* m_ex2 = muctop;
-  if(muctop==m_ex)
+  if(muctop==m_ex && muctop!=NULL)
   {
     mfree(m_ex->conf_jid);
     muctop=m_ex->next;
     mfree(m_ex);
+    muctop = NULL;
   }
   while(m_ex2)
   {

@@ -941,8 +941,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }  
     case '7':
       {
-        //SUBPROC((void*)SASL_Bind_Resource);
-        SASL_Bind_Resource();
         break;
       } 
       
