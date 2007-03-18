@@ -29,4 +29,14 @@ typedef struct
   PKT pkt;
   char data[16384];
 }TPKT;
+
+#ifdef NEWSGOLD
+#define CBOX_CHECKED 0xE110
+#define CBOX_UNCHECKED 0xE111
+#else
+#define CBOX_CHECKED 0xE10B
+#define CBOX_UNCHECKED 0xE10C
+#endif
+
+
 #endif

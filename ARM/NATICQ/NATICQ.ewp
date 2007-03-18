@@ -1992,7 +1992,7 @@
         <option>
           <name>CCInlineThreshold</name>
           <version>0</version>
-          <state>4</state>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -2180,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>"obexcopy.exe" $EXE_DIR$\NATICQ.elf \Data\Zbin\NatICQ\NATICQ.elf</postbuild>
+        <postbuild>obexcopy.exe $EXE_DIR$\NATICQ.elf \Data\Zbin\NatICQ\NATICQ.elf</postbuild>
       </data>
     </settings>
     <settings>

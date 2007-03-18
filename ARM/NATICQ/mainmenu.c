@@ -137,7 +137,23 @@ void AddContactMenu(void)
   FreeWS(ews);
   GeneralFuncF1(1);
 }
+
+extern int Is_Vibra_Enabled;
+extern unsigned int Is_Sounds_Enabled; 
+
+
+void ChangeVibraMode(void)
+{
+  Is_Vibra_Enabled=!(Is_Vibra_Enabled);
+  RefreshGUI();
+}
   
+void ChangeSoundMode(void)
+{
+  Is_Sounds_Enabled=!(Is_Sounds_Enabled);
+  RefreshGUI();
+}
+
 void EditConfig(void)
 {
   extern const char *successed_config_filename;
@@ -156,12 +172,10 @@ void AboutDlg()
   ShowMSG(2, (int)LG_COPYRIGHT);
 }
 
-extern void ChangeVibra(void);
-extern void ChangeSound(void);
 
-int icon[]={0,0};
-int about_icon[]={0,0};
-int dummy_icon[] = {0,0};
+
+int icon_array[2];
+
 
 HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
@@ -169,20 +183,20 @@ int mmenusoftkeys[]={0,1,2};
 
 MENUITEM_DESC menuitems[6]=
 {
-  {NULL,(int)LG_MNUSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUADDCONT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUVIBRA,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUSOUND,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUEDCFG,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,    (int)LG_MNUSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,       (int)LG_MNUADDCONT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {icon_array, (int)LG_MNUVIBRA,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {icon_array, (int)LG_MNUSOUND,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,       (int)LG_MNUEDCFG,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,    (int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *menuprocs[6]=
 {
   (void *)DispStatusChangeMenu,
   (void *)AddContactMenu,
-  (void *)ChangeVibra,
-  (void *)ChangeSound,
+  (void *)ChangeVibraMode,
+  (void *)ChangeSoundMode,
   (void *)EditConfig,
   (void *)AboutDlg
 };
@@ -203,10 +217,32 @@ void tmenu_ghook(void *data, int cmd)
 {
   if (cmd==0x0A)
   {
-    menuitems[0].icon=S_ICONS+CurrentStatus;
     DisableIDLETMR();
   }
 }
+
+void menuitemhandler(void *data, int curitem, int *unk)
+{
+  switch(curitem)
+  {
+  case 0:
+    SetMenuItemIcon(data,curitem,CurrentStatus);
+    break;
+    
+  case 2:
+    SetMenuItemIcon(data,curitem,Is_Vibra_Enabled?0:1);
+    break;
+    
+  case 3:
+    SetMenuItemIcon(data,curitem,Is_Sounds_Enabled?0:1);
+    break;
+    
+  case 5:
+    SetMenuItemIcon(data,curitem,IS_UNKNOWN);
+    break;
+  }
+}
+    
 
 
 MENU_DESC tmenu=
@@ -215,7 +251,7 @@ MENU_DESC tmenu=
   mmenusoftkeys,
   &mmenu_skt,
   1,//MENU_FLAG,
-  NULL,
+  (void*)menuitemhandler,
   menuitems,
   menuprocs,
   6
@@ -223,8 +259,8 @@ MENU_DESC tmenu=
 
 void ShowMainMenu()
 {
-  menuitems[0].icon=S_ICONS+CurrentStatus;
-  menuitems[5].icon=S_ICONS+IS_UNKNOWN;
+  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   menuhdr.icon=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
   MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,6,0,0);
