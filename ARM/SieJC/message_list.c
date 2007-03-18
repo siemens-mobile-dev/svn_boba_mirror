@@ -278,7 +278,7 @@ void Calc_Pages_Data_1()
   if((Cursor_Pos-1-(CurrentMessage_Lines)<=(CurrentPage-1)*lines_on_page) && CurrentPage>1)
     {
       CurrentPage--;
-      Cursor_Pos--;
+      //Cursor_Pos--;
       //ShowMSG(1,(int)"Q");
       return;
     }
@@ -296,7 +296,7 @@ void Calc_Pages_Data_2()
   if(Cursor_Pos+1>CurrentPage*lines_on_page)
   {
     CurrentPage++;
-    Cursor_Pos++;
+    //Cursor_Pos++;
   }
 }
 
@@ -331,7 +331,7 @@ void mGUI_onRedraw(GUI *data)
   DrawString(ws_title,1,1,ScreenW()-1,FontSize+1,SMALL_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);  
   
   DISP_MESSAGE* ml = MessagesList;
-  int i_ctrl=0;
+  int i_ctrl=1;
 
   int i = 0;
 #ifdef STD_PALETTE
@@ -339,9 +339,10 @@ void mGUI_onRedraw(GUI *data)
 #else 
   RGBA MsgBgColor;
 #endif
+  CurrentMessage_Lines = 0;
   while(ml)
   {
-    if((i_ctrl>=(CurrentPage-1)*lines_on_page) && (i_ctrl<CurrentPage*lines_on_page))
+    if((i_ctrl>(CurrentPage-1)*lines_on_page) && (i_ctrl<=CurrentPage*lines_on_page))
     {
 
       switch(ml->mtype)
@@ -354,12 +355,18 @@ void mGUI_onRedraw(GUI *data)
         {
           MsgBgColor=ml->log_mess_number %2==0? MESSAGEWIN_GCHAT_BGCOLOR_1 : MESSAGEWIN_GCHAT_BGCOLOR_2;
           break;
-        }
+        }      
       }
       if(CurrentMessage==ml->log_mess_number)
+      {
+        Cursor_Pos=i_ctrl;        
+      }
+      if(Cursor_Pos==i_ctrl)
       { 
          MsgBgColor = MESSAGEWIN_CURSOR_BGCOLOR;
-         Cursor_Pos = i_ctrl+1;                    // Обновляем позицию курсора
+         DISP_MESSAGE *mln = ml->next;
+         if(mln)
+          if(CurrentMessage==mln->log_mess_number) Cursor_Pos++;                    // Обновляем позицию курсора
          CurrentMessage_Lines++;
       }
       
@@ -402,6 +409,19 @@ void mGUI_onUnfocus(GUI *data, void (*mfree_adr)(void *))
   data->state=1;
 }
 
+LOG_MESSAGE *GetCurMessage()
+{
+  unsigned int i=0;
+  LOG_MESSAGE* log =Resource_Ex->log;
+  while(log)
+  {
+    i++;
+    if(i==CurrentMessage)break;
+    log = log->next;
+  }
+  return log;
+}
+
 void DbgInfo()
 {
   char q[200];
@@ -442,20 +462,19 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
    
     case ENTER_BUTTON:
       {
-        int i;
-        char *init_txt = NULL;
-        LOG_MESSAGE* log =Resource_Ex->log;
-        for(i=0;i<Resource_Ex->total_msg_count;i++)
+        LOG_MESSAGE* log =GetCurMessage();
+        if(log)
         {
-          if(i+1==CurrentMessage)
-          {
-            init_txt = log->mess;
-            break;
-          }
-          log = log->next;
+          unsigned int l = strlen(log->mess);
+          char *init_text = malloc(l+3+1);
+          init_text[0] = '>';
+          init_text[1] = '>';
+          strcat(init_text+2, log->mess);
+          init_text[2+ l] = '\n';
+          init_text[3+ l] = '\0';
+          Init_Message(Resource_Ex, init_text);
+          mfree(init_text);
         }
-        
-        if(log)Init_Message(Resource_Ex, init_txt);
         break;
       }
       
@@ -463,6 +482,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         {
           Calc_Pages_Data_1();
           CurrentMessage_Lines = 0;
+          if(Cursor_Pos>1)Cursor_Pos--;
           if(CurrentMessage>1)CurrentMessage--;
           REDRAW();
           break;         
@@ -470,11 +490,31 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
     case DOWN_BUTTON:
       {
           CurrentMessage_Lines = 0;
+          if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
           if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
           Calc_Pages_Data_2();
           REDRAW();
           break;         
       }
+      
+    case RIGHT_BUTTON:
+      {
+        LOG_MESSAGE *msg = GetCurMessage();
+        if(msg)
+        if(msg->mtype==MSG_GCHAT)
+        {
+          unsigned int au_nick_len = strlen(msg->muc_author);
+          char *init_text = malloc(au_nick_len+3);
+          strcpy(init_text, msg->muc_author);
+          init_text[au_nick_len]=':';
+          init_text[au_nick_len+1]=' ';
+          init_text[au_nick_len+2]='\0';
+          Init_Message(Resource_Ex, init_text);
+          mfree(init_text);
+        }
+        break;
+      }
+      
     case GREEN_BUTTON:
       {
         Init_Message(Resource_Ex, NULL);

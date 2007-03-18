@@ -219,6 +219,7 @@ void KillMsgList(LOG_MESSAGE* messtop)
   {
     LOG_MESSAGE *p;
     mfree(cl->mess);
+    if(cl->muc_author)mfree(cl->muc_author);
     p=cl;
     cl=cl->next;
     mfree(p);
@@ -553,7 +554,6 @@ CLIST* CList_AddContact(char* jid,
   UnlockSched();
   CursorPos = 1;
   Active_page=1;
-  //CList_AddSystemMessage(Cont_Ex->res_list->full_name, status);
   return Cont_Ex;
 }
 
@@ -602,6 +602,8 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   {
     char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
     mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+2+1);
+    mess->muc_author = malloc(strlen(conf_nickname)+1);
+    strcpy(mess->muc_author, conf_nickname);
     strcpy(mess->mess, timestamp);
     if(IsMe)
     {
@@ -621,6 +623,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     mess->mess = malloc(strlen(mtext)+strlen(timestamp)+1);
     strcpy(mess->mess, timestamp);
     strcat(mess->mess, mtext);
+    mess->muc_author = NULL;
   }
   
   mess->mtype=mtype;

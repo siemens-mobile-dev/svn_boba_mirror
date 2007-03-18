@@ -96,7 +96,8 @@ typedef enum
 typedef struct
 {
   MESS_TYPE mtype;
-  char* mess;
+  char *muc_author;// Имеет смысл использовать только в конференциях
+  char *mess;
   void *next; 
 }LOG_MESSAGE;
 
