@@ -1,4 +1,6 @@
 #include "..\inc\swilib.h"
+#include <csetjmp>
+
 #define number 8
 
 #ifdef NEWSGOLD
@@ -63,7 +65,6 @@ __arm IMGHDR* create_imghdr(const char* fname)
     fclose(f, &err);
     return NULL;
   }
-  
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
@@ -96,7 +97,7 @@ __arm IMGHDR* create_imghdr(const char* fname)
   if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     png_set_gray_to_rgb(png_ptr);
     
-  if (color_type == PNG_COLOR_TYPE_RGB)
+  if (color_type != PNG_COLOR_TYPE_GRAY)
     png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
   
   if (color_type == PNG_COLOR_TYPE_GRAY)  png_set_invert_mono(png_ptr);

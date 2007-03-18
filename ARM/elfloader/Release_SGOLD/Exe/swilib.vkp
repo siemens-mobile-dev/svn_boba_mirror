@@ -86,7 +86,7 @@
 
 00F0: 0xA113B3A4 ; 03C: __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned int *ErrorNumber);
 010C: 0xA0CB677B ; 043: __arm int IsUnlocked(void);
-0128: 0xA0966BEC ; 04A: __arm void PlayFile(int _C,WSHDR* folder,WSHDR* filename,int cepid, int _167);
+0128: 0xA0966BEC ; 04A: __arm short PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int CepId, int Msg, const PLAYFILE_OPT *sfo);
 0130: 0xA0BA0CE1 ; 04C: __thumb GetMissedCallsCount
 0134: 0xA0828294 ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
 
@@ -146,14 +146,14 @@
 0328: 0xA86CD2D4 ; 80CA: __arm RAMNET * RamNet();
 
 0380: 0xA869CA6C ; 80E0: __arm void * RamScreenBuffer();
-0400: 0xA0827B04 ; 100: GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
-0404: 0xA0826AA0 ; 101: GBS_ReciveMessage(GBS_MSG *);
-0408: 0xA08271A0 ; 102: GBS_AcceptMessage(void);
-040C: 0xA0826EC8 ; 103: GBS_ClearMessage(void);
-0410: 0xA0827098 ; 104: GBS_PendMessage(GBS_MSG *);
-0414: 0xA0827F74 ; 105: CreateGBSproc(int cepid, const char *name, void (*onMsg)(void), int prio, int unk_zero);
+0400: 0xA0827B04 ; 100: __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
+0404: 0xA0826AA0 ; 101: __arm int GBS_ReciveMessage(GBS_MSG *);
+0408: 0xA08271A0 ; 102: __arm void GBS_AcceptMessage(void);
+040C: 0xA0826EC8 ; 103: __arm void GBS_ClearMessage(void);
+0410: 0xA0827098 ; 104: __arm void GBS_PendMessage(GBS_MSG *);
+0414: 0xA0827F74 ; 105: __arm void CreateGBSproc(int cepid, const char *name, void (*onMsg)(void), int prio, int unk_zero);
 0418: 0xA868ABC4 ; 8106: CSMROOT *CSM_root();
-041C: 0xA0C8EE3B ; 107: CreateCSM(const CSM_DESC*,void *,int);
+041C: 0xA0C8EE3B ; 107: __thumb int CreateCSM(const CSM_DESC*,void *,int);
 0420: 0xA0C8EE4D ; 108: CSM_RAM * FindCSMbyID (int id);
 0424: 0xA0C8EEF7 ; 109: __thumb void DoIDLE(void);
 0428: 0x00000000 ; 10A: __unknown void *GetConfig(unsigned int id); //BoBaPack
@@ -235,7 +235,7 @@
 053C: 0xA0CB97E9 ; 14F: __thumb void *GetDataOfItemByID(GUI *gui,int id);
 0540: 0xA0CAD13F ; 150: __thumb void DrawRoundedFrame(int x1,int y1,int x2,int y2,int x_round,int y_round,int flags,int *pen,int *brush);
 0544: 0xA0CAE6BF ; 151: __thumb void SetPropTo_Obj5(DRWOBJ *, RECT *, int zero, IMGHDR *Image);
-0548: 0xA0C91EB1 ; 152: __thumb int CreateMenu(int is_small,int zero1,MENU_DESC *menu,HEADER_DESC *hdr,int zero2,int n_items,int zero4,int zero5);
+0548: 0xA0C91EB1 ; 152: __thumb int CreateMenu(int is_small,int zero1,const MENU_DESC *menu, const HEADER_DESC *hdr,int zero2,int n_items,void *user_pointer,int *to_remove);
 054C: 0xA0826964 ; 153: __arm int GBS_RecActDstMessage(GBS_MSG *);
 0550: 0xA0824380 ; 154: __arm void KillGBSproc(int cepid);
 
@@ -258,7 +258,7 @@
 0590: 0xA0C8F429 ; 164: __thumb EDITCONTROL *PrepareEditControl(EDITCONTROL *);
 0594: 0xA0C8F737 ; 165: __thumb void ConstructEditControl(EDITCONTROL *EditControl,int type,int flag,WSHDR *ws,int maxlen);
 0598: 0xA0C900E5 ; 166: __thumb void AddEditControlToEditQend(void *EditQ,EDITCONTROL *EditControl,void *malloc_a);
-059C: 0xA0CB3CFD ; 167: __thumb int CreateInputTextDialog(const INPUTDIA_DESC *input_desc, const HEADER_DESC *header_desc,void *editq,int do_mfree,WSHDR *);
+059C: 0xA0CB3CFD ; 167: __thumb int CreateInputTextDialog(const INPUTDIA_DESC *input_desc, const HEADER_DESC *header_desc,void *editq,int do_mfree,void *user_pointer);
 
 05A0: 0xA0CECCA9 ; 168: __thumb void SetSoftKey(void *gui,SOFTKEY_DESC *,int n);
 05A4: 0xA0CECC4D ; 169: __thumb int ExtractEditControl(void *guidata,int n,EDITCONTROL *);

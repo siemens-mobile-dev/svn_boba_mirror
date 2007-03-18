@@ -1754,7 +1754,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.40A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1800,11 +1800,11 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMessages</name>
@@ -1812,7 +1812,7 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
