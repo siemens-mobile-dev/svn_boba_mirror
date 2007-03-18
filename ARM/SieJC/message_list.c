@@ -467,6 +467,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         {
           unsigned int l = strlen(log->mess);
           char *init_text = malloc(l+3+1);
+          zeromem(init_text,l+3+1);
           init_text[0] = '>';
           init_text[1] = '>';
           strcat(init_text+2, log->mess);
@@ -505,6 +506,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         {
           unsigned int au_nick_len = strlen(msg->muc_author);
           char *init_text = malloc(au_nick_len+3);
+          zeromem(init_text, au_nick_len+3);
           strcpy(init_text, msg->muc_author);
           init_text[au_nick_len]=':';
           init_text[au_nick_len+1]=' ';
