@@ -470,7 +470,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
           zeromem(init_text,l+3+1);
           init_text[0] = '>';
           init_text[1] = '>';
-          strcat(init_text+2, log->mess);
+          strcat(init_text, log->mess);
           init_text[2+ l] = '\n';
           init_text[3+ l] = '\0';
           Init_Message(Resource_Ex, init_text);
