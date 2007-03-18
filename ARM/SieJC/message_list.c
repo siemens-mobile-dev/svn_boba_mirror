@@ -216,7 +216,7 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   ws_eddata = AllocWS(MAX_MSG_LEN);
   if(init_text)
   {
-    utf8_2ws(ws_eddata, init_text, strlen(init_text)*2);    
+    utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);    
   }
   EDITCONTROL ec;
   void *ma=malloc_adr();
@@ -461,9 +461,9 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       
       case UP_BUTTON:
         {
+          Calc_Pages_Data_1();
           CurrentMessage_Lines = 0;
           if(CurrentMessage>1)CurrentMessage--;
-          Calc_Pages_Data_1();
           REDRAW();
           break;         
         }
