@@ -1870,6 +1870,76 @@ CLIST *FindNextActiveContact(CLIST *t)
   return NULL;
 }
 
+CLIST *FindPrevActiveContact(CLIST *t)
+{
+  CLIST *cl;
+  CLIST *cl_active=NULL;
+  cl=(CLIST *)(&cltop);
+  
+  
+  while(cl=cl->next)
+  {
+    if (cl==t)
+    {
+      if (cl_active==NULL) break;
+      else return (cl_active);
+    }
+    else
+    {
+      if (cl->isactive) cl_active=cl;
+    }
+  }
+  while(t)
+  {
+    if (t->isactive) cl_active=t;
+    t=t->next;
+  }
+  return cl_active;
+}
+
+
+
+void ed_options_handler(USR_MENU_ITEM *item)
+{
+  CLIST *t;
+  if (item->type==0)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      ascii2ws(item->ws,"Next active");
+      break;
+    case 1:
+      ascii2ws(item->ws,"Prev active");
+      break;
+    }
+  }
+  if (item->type==1)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      t=FindNextActiveContact(edcontact);
+      if (t && t!=edcontact)
+      {
+        edcontact=t;
+        request_remake_edchat=1;
+      }
+      GeneralFunc_flag1(edchat_id,1);
+      break;
+    case 1:
+      t=FindPrevActiveContact(edcontact);
+      if (t && t!=edcontact)
+      {
+        edcontact=t;
+        request_remake_edchat=1;
+      }
+      GeneralFunc_flag1(edchat_id,1);
+      break;
+    }
+  } 
+}
+
 int edchat_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
@@ -1895,7 +1965,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	if (ec.pWS->wsbody[0]==(EDIT_GetCursorPos(data)-1))
 	{
 	  t=FindNextActiveContact(edcontact);
-	  if (t)
+	  if (t && t!=edcontact)
 	  {
 	    edcontact=t;
 	    request_remake_edchat=1;
@@ -1942,6 +2012,11 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	  }
 	}
       }
+    }
+    if (l==ENTER_BUTTON)
+    {
+      EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,0,2);
+      return (-1);
     }
   }
   return(0); //Do standart keys
