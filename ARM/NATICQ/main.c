@@ -230,49 +230,7 @@ S_SMILES *FindSmileByUni(int wchar)
   }
   return (0);
 }
-//by RM{
-/*
-int SmileCountByUni(int wchar)
-{
-  S_SMILES *sl=(S_SMILES *)s_top;
-  int i=0;
-  while(sl)
-  {
-    if (sl->uni_smile == wchar)
-    	i++;
-	sl=sl->next;
-  }
-  return (i);
-}
-*//*
-int SmilePosInCurrUni(int ID)
-{
-	S_SMILES *sl=(S_SMILES *)s_top;
-	int i=0,j=0;
-	int curr_uni=FindSmileById(ID)->uni_smile;
-	while(sl && sl->uni_smile==curr_uni)
-	{
-		sl=sl->next;
-		j++;
-	}
-	while(sl && j++!=ID)
-		i++;
-	return (i);
-}
-*//*
-int TotalSmilesCount(void)
-{
-	S_SMILES *sl=(S_SMILES *)s_top;
-	int i=0;
-	while(sl)
-	{
-		i++;
-		sl=sl->next;
-	}
-	return (i);
-}
-*/
-//}
+
 //===================================================================
 
 void Play(const char *fname)
@@ -436,7 +394,6 @@ volatile int edchat_id;
 volatile int request_remake_edchat;
 volatile int request_close_edchat;
 volatile int request_addec_edchat;
-volatile int edchat_toitem;
 volatile int edchat_answeritem;
 CLIST *edcontact;
 
@@ -1926,6 +1883,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     ec_menu(data,msg);
     return(-1);
   }
+  if (msg->keys==0xFF0)  return (1);
   if (msg->gbsmsg->msg==LONG_PRESS)
   {
     if (l==RIGHT_BUTTON)
@@ -2029,6 +1987,7 @@ void ParseAnswer(WSHDR *ws, char *s)
 void edchat_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_MENU};
+  static SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
   //  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
   char *s;
   int type;
@@ -2038,6 +1997,10 @@ void edchat_ghook(GUI *data, int cmd)
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
   CLIST *t=edcontact;
+  if (cmd==2)
+  {
+    EDIT_SetFocus(data,edchat_answeritem);    
+  }
   if (cmd==3)
   {
     //    EDIT_CURSOR_POS(data)=0x7FFF;
@@ -2105,13 +2068,10 @@ void edchat_ghook(GUI *data, int cmd)
   if (cmd==7)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
-    if (edchat_toitem)
-    {
-      EDIT_SetFocus(data,edchat_toitem);
-      edchat_toitem=0;
-    }
     ExtractEditControl(data,edchat_answeritem,&ec);
     ExtractAnswer(ec.pWS);
+    if (ec.pWS->wsbody[0]==0)
+      SetSoftKey(data,&sk_cancel,SET_SOFT_KEY_N==0?1:0);
     if (t)
     {
       if ((s=t->answer))
@@ -2172,7 +2132,7 @@ void CreateEditChat(CLIST *t)
   //  if (!s) return;
   
   edcontact=t;
-  edchat_toitem=0;
+  int edchat_toitem=0;
   
   edchat_hdr.lgp_id=(int)t->name;
   edchat_hdr.icon=(int *)S_ICONS+GetIconIndex(t);
@@ -2220,7 +2180,7 @@ void CreateEditChat(CLIST *t)
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
-  //  wsprintf(ews,percent_t,t->answer?t->answer:empty_str);
+  
   ascii2ws(ews,t->answer?t->answer:empty_str);
   ConstructEditControl(&ec,3,0x00,ews,1024);
   PrepareEditCOptions(&ec_options);
