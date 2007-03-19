@@ -566,6 +566,14 @@ typedef struct
 
 typedef struct
 {
+  char type;
+  void *unk;
+  unsigned short cur_item;
+  WSHDR *ws;  
+}USR_MENU_ITEM;
+
+typedef struct
+{
   unsigned short invert;
   unsigned short bitmask;
   char font;
@@ -2398,3 +2406,8 @@ __swi __arm int GetPicNByUnicodeSymbol(int wchar);
 //thumb
 //pattern=??,06,??,B5,??,09,??,1C,??,3A,??,0E,??,3A,??,4E,??,4D,??,4C,??,4B,??,D1,??,29,??,D2,??,00,??,E0
 //pattern=??,B5,??,06,??,09,??,1C,??,3A,??,0E,??,3A,??,4E,??,4D,??,4C,??,4B,??,D1,??,29,??,D2,??,00,??,E0
+
+#pragma swi_number=0x1E5
+__swi __arm int EDIT_OpenOptionMenuWithUserItems(void *gui, void (*itemhandler)(USR_MENU_ITEM *item), int zero, int to_add);
+//thumb
+//pattern=
