@@ -26,22 +26,24 @@ GBSTMR mytmr;
 
 
 // ----------------------------------------------------------------------------
-
+void InitInfoData(void);
 void TimerProc(void)
 {
+  InitInfoData();
   GBS_SendMessage(MMI_CEPID,ELF_ID);
   GBS_StartTimerProc(&mytmr,UPDATE_TIME,TimerProc);
 }
 
+#pragma inline
 int get_string_width(WSHDR *ws, int font)
 {
   int width=0;
-  int count=0;
-  int len=ws->wsbody[0];
-  while(count!=len)
+  unsigned short *body=ws->wsbody;
+  int len=body[0];
+  while(len)
   {
-    width+=GetSymbolWidth(ws->wsbody[count+1],font);
-    count++;
+    width+=GetSymbolWidth(body[len],font);
+    len--;
   }
   return (width);
 }
@@ -114,17 +116,8 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     InitConfig();
-    ShowMSG(1,(int)"Config updated!");
   }
-  
-  if (msg->msg==ELF_ID)
-  {
-    InitInfoData();
-    csm_result = 0;    
-  }
-  else 
-    csm_result=old_icsm_onMessage(data,msg);
-
+  csm_result=(msg->msg==ELF_ID)?0:old_icsm_onMessage(data,msg);
   if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
   {
     GUI *igui=GetTopGUI();
@@ -181,7 +174,6 @@ int main(void)
   {
     InfoData[i].ws=AllocWS(10);
   }    
-  InitInfoData();
   GBS_StartTimerProc(&mytmr,UPDATE_TIME*10,TimerProc);
   return 0;
 }
