@@ -159,7 +159,8 @@ int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
       if (++data->y_pos >ScreenH()-1)
         data->y_pos=ScreenH()-1;
       break;      
-      
+    
+	case RIGHT_SOFT:
     case RED_BUTTON:
       return (1);
     }
@@ -311,14 +312,15 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
     case '4':
       if (--data->current_column<0)
         data->current_column=3;
-      break;
-      
+      break;  
     case RIGHT_BUTTON:
     case '6':
       if (++data->current_column>3)
         data->current_column=0;
       break;
-    case RED_BUTTON:
+    
+	case RIGHT_SOFT:
+	case RED_BUTTON:
       return (1);
       
     case DOWN_BUTTON:
