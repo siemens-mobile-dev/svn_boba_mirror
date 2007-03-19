@@ -3,7 +3,7 @@
 #include "TextInfo.h"
 
 #define UPDATE_TIME (1*262)
-#define ELF_ID 0x3EE
+#define ELF_ID 0x1EF
 
 CSM_DESC icsmd;
 
@@ -31,7 +31,7 @@ void TimerProc(void)
 {
   InitInfoData();
   GBS_SendMessage(MMI_CEPID,ELF_ID);
-  GBS_StartTimerProc(&mytmr,UPDATE_TIME,TimerProc);
+  GBS_StartTimerProc(&mytmr,REFRESH*UPDATE_TIME/10,TimerProc);
 }
 
 #pragma inline
@@ -60,15 +60,16 @@ void FillInfoData(TInfo *Info,int x_start,int y_start, int font,const char *colo
   
 int wsprintf_bytes(WSHDR *ws, unsigned int bytes)
 {
-  char *str;
-  if (bytes<=1024)
-    str="b";
-  else 
-  {
-    bytes>>=10;
-    str="Kb";
-  }
-  return (wsprintf(ws,"%u%s",bytes,str));  
+	//char *str;
+	if (bytes<=1024)
+		return (wsprintf(ws,BYTES_FMT,bytes,BYTES_SG));
+	 //str=BYTES_SG;
+	else 
+	{
+		bytes>>=10;
+		return (wsprintf(ws,BYTES_FMT,bytes,KBYTES_SG));
+		//str=KBYTES_SG;
+	}  
 }
 
 void InitInfoData(void)
@@ -78,23 +79,23 @@ void InitInfoData(void)
   
   net_data=RamNet();
   c=(net_data->ch_number>=255)?'=':'-';
-  wsprintf(InfoData[0].ws,"%c%ddb",c,net_data->power);
+  wsprintf(InfoData[0].ws,NET_FMT,c,net_data->power);
   FillInfoData(&InfoData[0],NET_X,NET_Y,NET_FONT,NET_COLORS);
   
   c=GetAkku(1,3)-0xAAA+15;
-  wsprintf(InfoData[1].ws,"%d,%d°C",c/10,c%10);
+  wsprintf(InfoData[1].ws,TEMP_FMT,c/10,c%10);
   FillInfoData(&InfoData[1],TEMP_X,TEMP_Y,TEMP_FONT,TEMP_COLORS);
 
   c=GetAkku(0,9);
-  wsprintf(InfoData[2].ws,"%d,%02dV",c/1000,(c%1000)/10);
+  wsprintf(InfoData[2].ws,VOLT_FMT,c/1000,(c%1000)/10);
   FillInfoData(&InfoData[2],VOLT_X,VOLT_Y,VOLT_FONT,VOLT_COLORS);
   
   c=*RamCap();
-  wsprintf(InfoData[3].ws,"%02d%%",c);
+  wsprintf(InfoData[3].ws,CAP_FMT,c);
   FillInfoData(&InfoData[3],ACCU_X,ACCU_Y,ACCU_FONT,ACCU_COLORS);
  
   c=GetCPULoad();
-  wsprintf(InfoData[4].ws,"%02d%%",c);
+  wsprintf(InfoData[4].ws,CPU_FMT,c);
   FillInfoData(&InfoData[4],CPU_X,CPU_Y,CPU_FONT,CPU_COLORS);
 
   RefreshGPRSTraffic();
@@ -170,10 +171,10 @@ int main(void)
   icsm->constr=&icsmd;
   UnlockSched();
   InitConfig();
-  for (int i=0;i!=7; i++)
+  for (int i=0;i<7; i++)
   {
     InfoData[i].ws=AllocWS(10);
   }    
-  GBS_StartTimerProc(&mytmr,UPDATE_TIME*10,TimerProc);
+  GBS_StartTimerProc(&mytmr,(REFRESH*UPDATE_TIME/10)*30,TimerProc);
   return 0;
 }

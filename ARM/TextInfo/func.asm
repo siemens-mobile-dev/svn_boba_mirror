@@ -7,9 +7,10 @@ ELF_BEGIN
 	CODE32
 kill_data
 	BX	R1
-        PUBLIC  seqkill
+	
+	PUBLIC seqkill
 seqkill
-        BX      R3
+    BX      R3
 
 
 defadr	MACRO	a,b
@@ -17,9 +18,11 @@ defadr	MACRO	a,b
 a	EQU	b
 	ENDM
 
-;        defadr  GBS_WaitForMsg,0xA00925C4
-;        defadr  RegisterCepidForSocketWork,0xA09915E5
-;        defadr  RequestLMANConnect,0xA09926F5
+//        defadr  GBS_WaitForMsg,0xA00925C4
+//        defadr  RegisterCepidForSocketWork,0xA09915E5
+//        defadr  RequestLMANConnect,0xA09926F5
+//        defadr  RefreshGUI,0xA097851D
+//        defadr  EDIT_SetFocus,0xA0A118D9
 
 	END
 	
