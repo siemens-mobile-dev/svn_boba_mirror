@@ -31,8 +31,8 @@ typedef struct
 }TPKT;
 
 #ifdef NEWSGOLD
-#define CBOX_CHECKED 0xE110
-#define CBOX_UNCHECKED 0xE111
+#define CBOX_CHECKED 0xE116
+#define CBOX_UNCHECKED 0xE117
 #else
 #define CBOX_CHECKED 0xE10B
 #define CBOX_UNCHECKED 0xE10C
