@@ -33,49 +33,14 @@ extern int CurrentStatus;
 extern void set_my_status(void);
 extern  int S_ICONS[11];
 
+#pragma inline
 void Change_Status(char status)
 {
-    CurrentStatus=status;
-    set_my_status();
-    GeneralFuncF1(1); 
+  CurrentStatus=status;
+  set_my_status();
 }
 ///////////////////////////////////////////////////////////////////////////////
-// Пока так, ждём динамическую менюшку с радиобаттонами... :)
-void Ch_Online()
-{
-  Change_Status(IS_ONLINE);
-}
-
-void Ch_Away()
-{
-  Change_Status(IS_AWAY);
-}
-
-void Ch_NA()
-{
-  Change_Status(IS_NA);
-}
-
-void Ch_Ocuppied()
-{
-  Change_Status(IS_OCCUPIED);
-}
-
-void Ch_DND()
-{
-  Change_Status(IS_DND);
-}
-
-void Ch_FFC()
-{
-  Change_Status(IS_FFC);
-}
-
-void Ch_Invisible()
-{
-  Change_Status(IS_INVISIBLE);
-}
-
+#pragma inline
 unsigned int GetStatusIndexInMenu(unsigned int status)
 {
   switch(status)
@@ -90,6 +55,49 @@ unsigned int GetStatusIndexInMenu(unsigned int status)
   }
   return 0;
 }
+
+#pragma inline 
+unsigned int GetStatusInMenuByPos(int pos)
+{
+  switch(pos)
+  {
+  case 0:
+    return IS_ONLINE;
+  case 1:
+    return IS_AWAY;
+  case 2:
+    return IS_NA;
+  case 3:
+    return IS_DND;
+  case 4:
+    return IS_OCCUPIED;
+  case 5:
+    return IS_FFC;
+  case 6:
+    return IS_INVISIBLE;
+  }
+  return IS_UNKNOWN;
+}
+  
+  
+
+void st_icons_set(void *data, int curitem, int *unk)
+{
+  SetMenuItemIcon(data,curitem,GetStatusInMenuByPos(curitem));
+}
+
+int st_onkey(void *data, GUI_MSG *msg)
+{
+  int i;
+  if (msg->keys==0x18 || msg->keys==0x3D)
+  {
+    i=GetCurMenuItem(data);
+    Change_Status(GetStatusInMenuByPos(i));
+    return (1);
+  }
+  return (0);
+}
+    
 ///////////////////////////////////////////////////////////////////////////////
 
 #define STATUSES_NUM 7
@@ -100,24 +108,14 @@ int st_menusoftkeys[]={0,1,2};
 
 MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
-  {NULL,(int)LG_STONLINE, LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STAWAY,   LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STNA,     LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},  
-  {NULL,(int)LG_STDND,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STOCCUP,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STFFC,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STINVIS,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,(int)LG_STONLINE, LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,(int)LG_STAWAY,   LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,(int)LG_STNA,     LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},  
+  {S_ICONS,(int)LG_STDND,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,(int)LG_STOCCUP,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,(int)LG_STFFC,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS,(int)LG_STINVIS,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
 };
-
-void *st_menuprocs[STATUSES_NUM]={
-                                  (void *)Ch_Online,
-                                  (void *)Ch_Away,
-                                  (void *)Ch_NA,
-                                  (void *)Ch_DND,                                  
-                                  (void *)Ch_Ocuppied,
-                                  (void *)Ch_FFC ,
-                                  (void *)Ch_Invisible
-                                 };
 
 SOFTKEY_DESC st_menu_sk[]=
 {
@@ -141,26 +139,19 @@ void stmenu_ghook(void *data, int cmd)
 
 MENU_DESC st_tmenu=
 {
-  8,NULL,(void *)stmenu_ghook,NULL,
+  8,(void *)st_onkey,(void *)stmenu_ghook,NULL,
   st_menusoftkeys,
   &st_menu_skt,
   1,//MENU_FLAG,
-  NULL,
+  (void*)st_icons_set,
   st_menuitems,
-  st_menuprocs,
+  NULL,
   STATUSES_NUM
 };
 
 
 void DispStatusChangeMenu()
 {
-  st_menuitems[0].icon = S_ICONS+IS_ONLINE;
-  st_menuitems[1].icon = S_ICONS+IS_AWAY;  
-  st_menuitems[2].icon = S_ICONS+IS_NA;  
-  st_menuitems[3].icon = S_ICONS+IS_DND;  
-  st_menuitems[4].icon = S_ICONS+IS_OCCUPIED;  
-  st_menuitems[5].icon = S_ICONS+IS_FFC;  
-  st_menuitems[6].icon = S_ICONS+IS_INVISIBLE;    
   st_menuhdr.icon=S_ICONS+CurrentStatus;
   patch_header(&st_menuhdr);
   CreateMenu(0,0,&st_tmenu,&st_menuhdr,GetStatusIndexInMenu(CurrentStatus),STATUSES_NUM,0,0);
