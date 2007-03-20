@@ -10,6 +10,7 @@ CSM_DESC icsmd;
 WSHDR *ws;
 
 typedef struct{
+  int enabled;
   RECT rc;
   WSHDR *ws;
   char pen[4];
@@ -48,8 +49,9 @@ int get_string_width(WSHDR *ws, int font)
   return (width);
 }
 
-void FillInfoData(TInfo *Info,int x_start,int y_start, int font,const char *color)
+void FillInfoData(TInfo *Info,int enabled,int x_start,int y_start, int font,const char *color)
 {
+  Info->enabled=enabled;
   Info->rc.x=x_start;
   Info->rc.y=y_start;
   Info->rc.x2=x_start+get_string_width(Info->ws,font);
@@ -77,35 +79,36 @@ void InitInfoData(void)
   RAMNET *net_data;
   int c;
   
-  net_data=RamNet();
+  net_data=NET_ENA?RamNet():0;
   c=(net_data->ch_number>=255)?'=':'-';
   wsprintf(InfoData[0].ws,NET_FMT,c,net_data->power);
-  FillInfoData(&InfoData[0],NET_X,NET_Y,NET_FONT,NET_COLORS);
+  FillInfoData(&InfoData[0],NET_ENA,NET_X,NET_Y,NET_FONT,NET_COLORS);
   
-  c=GetAkku(1,3)-0xAAA+15;
+  c=TEMP_ENA?(GetAkku(1,3)-0xAAA+15):0;
   wsprintf(InfoData[1].ws,TEMP_FMT,c/10,c%10);
-  FillInfoData(&InfoData[1],TEMP_X,TEMP_Y,TEMP_FONT,TEMP_COLORS);
+  FillInfoData(&InfoData[1],TEMP_ENA,TEMP_X,TEMP_Y,TEMP_FONT,TEMP_COLORS);
 
-  c=GetAkku(0,9);
+  c=VOLT_ENA?GetAkku(0,9):0;
   wsprintf(InfoData[2].ws,VOLT_FMT,c/1000,(c%1000)/10);
-  FillInfoData(&InfoData[2],VOLT_X,VOLT_Y,VOLT_FONT,VOLT_COLORS);
+  FillInfoData(&InfoData[2],VOLT_ENA,VOLT_X,VOLT_Y,VOLT_FONT,VOLT_COLORS);
   
-  c=*RamCap();
+  c=CAP_ENA?(*RamCap()):0;
   wsprintf(InfoData[3].ws,CAP_FMT,c);
-  FillInfoData(&InfoData[3],ACCU_X,ACCU_Y,ACCU_FONT,ACCU_COLORS);
+  FillInfoData(&InfoData[3],CAP_ENA,ACCU_X,ACCU_Y,ACCU_FONT,ACCU_COLORS);
  
-  c=GetCPULoad();
+  c=CPU_ENA?GetCPULoad():0;
   wsprintf(InfoData[4].ws,CPU_FMT,c);
-  FillInfoData(&InfoData[4],CPU_X,CPU_Y,CPU_FONT,CPU_COLORS);
+  FillInfoData(&InfoData[4],CPU_ENA,CPU_X,CPU_Y,CPU_FONT,CPU_COLORS);
 
-  RefreshGPRSTraffic();
-  c=*GetGPRSTrafficPointer();
+  if (GPRS_ENA)
+  	RefreshGPRSTraffic();
+  c=GPRS_ENA?(*GetGPRSTrafficPointer()):0;
   wsprintf_bytes(InfoData[5].ws,c);
-  FillInfoData(&InfoData[5],GPRS_X,GPRS_Y,GPRS_FONT,GPRS_COLORS);
+  FillInfoData(&InfoData[5],GPRS_ENA,GPRS_X,GPRS_Y,GPRS_FONT,GPRS_COLORS);
   
-  c=GetFreeRamAvail();
+  c=RAM_ENA?GetFreeRamAvail():0;
   wsprintf_bytes(InfoData[6].ws,c);
-  FillInfoData(&InfoData[6],RAM_X,RAM_Y,RAM_FONT,RAM_COLORS);  
+  FillInfoData(&InfoData[6],RAM_ENA,RAM_X,RAM_Y,RAM_FONT,RAM_COLORS);  
 }
   
 // ----------------------------------------------------------------------------
@@ -135,7 +138,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 #endif
         for (int i=0; i!=7; i++)
         {
-          DrawCanvas(canvasdata, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, 1);
+          if (!InfoData[i].enabled)
+			  continue;
+		  DrawCanvas(canvasdata, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, 1);
           DrawString(InfoData[i].ws, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, InfoData[i].font,
                      0,InfoData[i].pen, GetPaletteAdrByColorIndex(23));         
         }            
