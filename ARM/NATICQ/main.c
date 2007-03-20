@@ -1898,7 +1898,7 @@ CLIST *FindPrevActiveContact(CLIST *t)
 }
 
 
-
+void CreateEditChat(CLIST *t);
 void ed_options_handler(USR_MENU_ITEM *item)
 {
   CLIST *t;
@@ -1922,19 +1922,17 @@ void ed_options_handler(USR_MENU_ITEM *item)
       t=FindNextActiveContact(edcontact);
       if (t && t!=edcontact)
       {
-        edcontact=t;
-        request_remake_edchat=1;
-      }
-      GeneralFunc_flag1(edchat_id,1);
+        GeneralFunc_flag1(edchat_id,1);
+        CreateEditChat(t);
+      }      
       break;
     case 1:
       t=FindPrevActiveContact(edcontact);
       if (t && t!=edcontact)
       {
-        edcontact=t;
-        request_remake_edchat=1;
+        GeneralFunc_flag1(edchat_id,1);
+        CreateEditChat(t);
       }
-      GeneralFunc_flag1(edchat_id,1);
       break;
     }
   } 
@@ -1967,8 +1965,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	  t=FindNextActiveContact(edcontact);
 	  if (t && t!=edcontact)
 	  {
-	    edcontact=t;
-	    request_remake_edchat=1;
+	    CreateEditChat(t);
 	    return(1);
 	  }
 	}
@@ -2015,8 +2012,12 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     }
     if (l==ENTER_BUTTON)
     {
-      EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,0,2);
-      return (-1);
+      t=FindNextActiveContact(edcontact);
+      if (t!=edcontact)
+      {
+        EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,0,2);
+        return (-1);
+      }
     }
   }
   return(0); //Do standart keys
