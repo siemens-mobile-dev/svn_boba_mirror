@@ -4,8 +4,17 @@
 // Общие функции модуля MAIN.C
 void SendAnswer(int dummy, TPKT *p);
 void ascii2ws(WSHDR *ws, const char *s);
+void CreateEditChat(CLIST *t);
 
 extern int connect_state;
+
+typedef struct
+{
+  CLIST *ed_contact;
+  GUI *ed_chatgui;
+  int ed_answer;
+}EDCHAT_STRUCT;
+
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
 

@@ -391,10 +391,8 @@ volatile int request_remake_clmenu;
 GBSTMR tmr_active;
 
 volatile int edchat_id;
-volatile int request_remake_edchat;
 volatile int request_close_edchat;
 volatile int request_addec_edchat;
-volatile int edchat_answeritem;
 CLIST *edcontact;
 
 //MUTEX contactlist_mtx;
@@ -667,7 +665,6 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 {
   CLIST *t;
   int i;
-  if (request_remake_edchat) return -1;
   if (request_close_edchat) return -1;
   if (msg->keys==0x18)
   {
@@ -678,7 +675,6 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
   }
   if (msg->keys==0x3D)
   {
-    void CreateEditChat(CLIST *t);
     i=GetCurMenuItem(data);
     t=FindContactByN(i);
     if (t) 
@@ -1429,22 +1425,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       {
 	request_remake_clmenu=0;
 	create_contactlist_menu();
-	if (request_remake_edchat) goto L_CREC;
       }
     }
     if ((int)msg->data0==edchat_id)
     {
       edchat_id=0;
-      if (request_remake_edchat)
-      {
-	if (!request_remake_clmenu)
-	{
-	  void CreateEditChat(CLIST *t);
-	L_CREC:
-	  request_remake_edchat=0;
-	  CreateEditChat(edcontact);
-	}
-      }
     }
   }
   if (msg->msg==MSG_HELPER_TRANSLATOR)
@@ -1520,15 +1505,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	//strcpy(logmsg, "No connection");
 	if (edchat_id)
 	{
-	  request_remake_edchat=0;
 	  if (IsGuiOnTop(edchat_id))
-	  {
 	    GeneralFunc_flag1(edchat_id,1);
-	  }
 	  else
-	  {
 	    request_close_edchat=1;
-	  }
 	}
 	if (contactlist_menu_id)
 	{
@@ -1898,9 +1878,9 @@ CLIST *FindPrevActiveContact(CLIST *t)
 }
 
 
-void CreateEditChat(CLIST *t);
 void ed_options_handler(USR_MENU_ITEM *item)
 {
+  EDCHAT_STRUCT *ed_struct=item->user_pointer;
   CLIST *t;
   if (item->type==0)
   {
@@ -1919,16 +1899,16 @@ void ed_options_handler(USR_MENU_ITEM *item)
     switch(item->cur_item)
     {
     case 0:
-      t=FindNextActiveContact(edcontact);
-      if (t && t!=edcontact)
+      t=FindNextActiveContact(ed_struct->ed_contact);
+      if (t && t!=ed_struct->ed_contact)
       {
         GeneralFunc_flag1(edchat_id,1);
         CreateEditChat(t);
       }      
       break;
     case 1:
-      t=FindPrevActiveContact(edcontact);
-      if (t && t!=edcontact)
+      t=FindPrevActiveContact(ed_struct->ed_contact);
+      if (t && t!=ed_struct->ed_contact)
       {
         GeneralFunc_flag1(edchat_id,1);
         CreateEditChat(t);
@@ -1945,10 +1925,12 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   TPKT *p;
   char *s;
   int l=msg->gbsmsg->submess;
+  EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+  
   if (msg->keys==0xFFF)
   {
-    void ec_menu(GUI *data, GUI_MSG *msg);
-    ec_menu(data,msg);
+    void ec_menu(EDCHAT_STRUCT *);
+    ec_menu(ed_struct);
     return(-1);
   }
   if (msg->keys==0xFF0)  return (1);
@@ -1956,14 +1938,14 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   {
     if (l==RIGHT_BUTTON)
     {
-      if (EDIT_GetFocus(data)==edchat_answeritem)
+      if (EDIT_GetFocus(data)==ed_struct->ed_answer)
       {
 	EDITCONTROL ec;
-	ExtractEditControl(data,edchat_answeritem,&ec);
+	ExtractEditControl(data,ed_struct->ed_answer,&ec);
 	if (ec.pWS->wsbody[0]==(EDIT_GetCursorPos(data)-1))
 	{
-	  t=FindNextActiveContact(edcontact);
-	  if (t && t!=edcontact)
+	  t=FindNextActiveContact(ed_struct->ed_contact);
+	  if (t && t!=ed_struct->ed_contact)
 	  {
 	    CreateEditChat(t);
 	    return(1);
@@ -1976,14 +1958,14 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   {
     if ((l>='0')&&(l<='9'))
     {
-      if (EDIT_GetFocus(data)!=edchat_answeritem)
-	EDIT_SetFocus(data,edchat_answeritem);
+      if (EDIT_GetFocus(data)!=ed_struct->ed_answer)
+	EDIT_SetFocus(data,ed_struct->ed_answer);
     }
     if (l==GREEN_BUTTON)
     {
       if (connect_state==3)
       {
-	if ((t=edcontact))
+	if ((t=ed_struct->ed_contact))
 	{
 	  if ((s=t->answer))
 	  {
@@ -2000,7 +1982,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	      mfree(s);
 	      t->answer=0;
 	      //	      request_remake_edchat=1;
-	      EDIT_SetFocus(data,edchat_answeritem);
+	      EDIT_SetFocus(data,ed_struct->ed_answer);
 	      CutWSTR(ews,0);
 	      EDIT_SetTextToFocused(data,ews);
 	      RefreshGUI();
@@ -2012,10 +1994,10 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     }
     if (l==ENTER_BUTTON)
     {
-      t=FindNextActiveContact(edcontact);
-      if ((t!=edcontact) && t)
+      t=FindNextActiveContact(ed_struct->ed_contact);
+      if ((t!=ed_struct->ed_contact) && t)
       {
-        EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,0,2);
+        EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,2);
         return (-1);
       }
     }
@@ -2072,13 +2054,15 @@ void edchat_ghook(GUI *data, int cmd)
   int c;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
-  CLIST *t=edcontact;
+  EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
   if (cmd==2)
   {
-    EDIT_SetFocus(data,edchat_answeritem);    
+    ed_struct->ed_chatgui=data;
+    EDIT_SetFocus(data,ed_struct->ed_answer);    
   }
   if (cmd==3)
   {
+    mfree(ed_struct);
     //    EDIT_CURSOR_POS(data)=0x7FFF;
   }
   if (cmd==0x0A)
@@ -2090,9 +2074,9 @@ void edchat_ghook(GUI *data, int cmd)
       GeneralFunc_flag1(edchat_id,1);
       return;
     }
-    if (t->isunread)
+    if (ed_struct->ed_contact->isunread)
     {
-      s=t->last_log;
+      s=ed_struct->ed_contact->last_log;
       if (s)
       {
 	while(*s)
@@ -2110,8 +2094,8 @@ void edchat_ghook(GUI *data, int cmd)
 	  SetFontToEditCOptions(&ec_options,2);
 	  CopyOptionsToEditControl(&ec,&ec_options);
 	  //AddEditControlToEditQend(eq,&ec,ma);
-	  EDIT_InsertEditControl(data,edchat_answeritem-1,&ec);
-	  edchat_answeritem++;
+	  EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
+	  ed_struct->ed_answer++;
 	  j=0;
 	  while((c=msg_buf[j]=*s)>2)
 	  {
@@ -2132,35 +2116,35 @@ void edchat_ghook(GUI *data, int cmd)
 	  SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
 	  CopyOptionsToEditControl(&ec,&ec_options);
 	  //AddEditControlToEditQend(eq,&ec,ma);
-	  EDIT_InsertEditControl(data,edchat_answeritem-1,&ec);
-	  edchat_answeritem++;
+	  EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
+	  ed_struct->ed_answer++;
 	}
       }
       total_unread--;
-      t->isunread=0;
-      EDIT_SetFocus(data,edchat_answeritem);
+      ed_struct->ed_contact->isunread=0;
+      EDIT_SetFocus(data,ed_struct->ed_answer);
     }
   }
   if (cmd==7)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
-    ExtractEditControl(data,edchat_answeritem,&ec);
+    ExtractEditControl(data,ed_struct->ed_answer,&ec);
     ExtractAnswer(ec.pWS);
     if (ec.pWS->wsbody[0]==0)
       SetSoftKey(data,&sk_cancel,SET_SOFT_KEY_N==0?1:0);
-    if (t)
+    if (ed_struct->ed_contact)
     {
-      if ((s=t->answer))
+      if ((s=ed_struct->ed_contact->answer))
 	mfree(s);
       s=malloc(strlen(msg_buf)+1);
       strcpy(s,msg_buf);
-      t->answer=s;
+      ed_struct->ed_contact->answer=s;
     }
   }
   if (cmd==0x0C)
   {
     j=EDIT_GetFocus(data);
-    if ((EDIT_GetUnFocus(data)<j)&&(j!=edchat_answeritem))
+    if ((EDIT_GetUnFocus(data)<j)&&(j!=ed_struct->ed_answer))
       EDIT_SetCursorPos(data,1);
   }
 }
@@ -2206,7 +2190,7 @@ void CreateEditChat(CLIST *t)
   char *s=t->log;
   
   //  if (!s) return;
-  
+
   edcontact=t;
   int edchat_toitem=0;
   
@@ -2264,8 +2248,11 @@ void CreateEditChat(CLIST *t)
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
-  edchat_answeritem=edchat_toitem;
   
+  EDCHAT_STRUCT *ed_struct=malloc(sizeof(EDCHAT_STRUCT));
+  ed_struct->ed_contact=t;
+  ed_struct->ed_answer=edchat_toitem;
+ 
   //  int scr_w=ScreenW();
   //  int scr_h=ScreenH();
   //  int head_h=HeaderH();
@@ -2273,30 +2260,30 @@ void CreateEditChat(CLIST *t)
   patch_header(&edchat_hdr);
   patch_input(&edchat_desc);
   //  edchat_desc.font=ED_FONT_SIZE;
-  edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,0);
+  edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,ed_struct);
 }
 
 //-----------------------------------------------------------------------------
 #define EC_MNU_MAX 8
 
-void Quote(GUI *data,void *dummy)
+void Quote(GUI *data)
 {
-  void *ed_chat_gui;
   int q_n;
   EDITCONTROL ec;
   EDITCONTROL ec_ed;
   WSHDR *ed_ws;
   WSHDR *ws;
   
-  ed_chat_gui=MenuGetUserPointer(data);
-  if (!ed_chat_gui) return;
-  q_n=EDIT_GetFocus(ed_chat_gui);
-  ExtractEditControl(ed_chat_gui,q_n,&ec);
-  ExtractEditControl(ed_chat_gui,edchat_answeritem,&ec_ed);
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+
+  q_n=EDIT_GetFocus(ed_struct->ed_chatgui);
+  ExtractEditControl(ed_struct->ed_chatgui,q_n,&ec);
+  ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec_ed);
   ed_ws=AllocWS(ec_ed.maxlen);
-  if (EDIT_IsMarkModeActive(ed_chat_gui))
+  if (EDIT_IsMarkModeActive(ed_struct->ed_chatgui))
   {
-    EDIT_GetMarkedText(ed_chat_gui,ed_ws);
+    EDIT_GetMarkedText(ed_struct->ed_chatgui,ed_ws);
   }
   else
   {
@@ -2316,18 +2303,21 @@ void Quote(GUI *data,void *dummy)
   wstrcat(ws,ed_ws);
   FreeWS(ed_ws);
   CutWSTR(ws,ec_ed.maxlen);
-  EDIT_SetFocus(ed_chat_gui,edchat_answeritem);
-  EDIT_SetTextToFocused(ed_chat_gui,ws);
+  EDIT_SetFocus(ed_struct->ed_chatgui,ed_struct->ed_answer);
+  EDIT_SetTextToFocused(ed_struct->ed_chatgui,ws);
   FreeWS(ws);
   GeneralFuncF1(1);
 }
 
 
-void GetShortInfo(void)
+void GetShortInfo(GUI *data)
 {
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+  
   TPKT *p;
   CLIST *t;
-  if ((t=edcontact)&&(connect_state==3))
+  if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
     p=malloc(sizeof(PKT));
     p->pkt.uin=t->uin;
@@ -2339,20 +2329,26 @@ void GetShortInfo(void)
   GeneralFuncF1(1);
 }
 
-void AddCurContact(void)
+void AskNickAndAddContact(EDCHAT_STRUCT *);
+void AddCurContact(GUI *data)
 {
-  void AskNickAndAddContact(void);
-  if ((edcontact)&&(connect_state==3)) AskNickAndAddContact();
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+
+  if ((ed_struct->ed_contact)&&(connect_state==3)) AskNickAndAddContact(ed_struct);
   GeneralFuncF1(1);
 }
 
-void SendAuthReq(void)
+void SendAuthReq(GUI *data)
 {
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+  
   TPKT *p;
   CLIST *t;
   int l;
   const char s[]=LG_AUTHREQ;
-  if ((t=edcontact)&&(connect_state==3))
+  if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
     p=malloc(sizeof(PKT)+(l=strlen(s))+1);
     p->pkt.uin=t->uin;
@@ -2365,13 +2361,16 @@ void SendAuthReq(void)
   GeneralFuncF1(1);
 }
 
-void SendAuthGrant(void)
+void SendAuthGrant(GUI *data)
 {
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+  
   TPKT *p;
   CLIST *t;
   int l;
   const char s[]=LG_AUTHGRANT;
-  if ((t=edcontact)&&(connect_state==3))
+  if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
     p=malloc(sizeof(PKT)+(l=strlen(s))+1);
     p->pkt.uin=t->uin;
@@ -2384,12 +2383,15 @@ void SendAuthGrant(void)
   GeneralFuncF1(1);
 }
 
-void OpenLogfile(void)
+void OpenLogfile(GUI *data)
 {
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+  
   extern const char HIST_PATH[64];
   CLIST *t;
   WSHDR *ws=AllocWS(256);
-  if ((t=edcontact))
+  if ((t=ed_struct->ed_contact))
   {
     wsprintf(ws,"%s\\%u.txt",HIST_PATH,t->uin);
     ExecuteFile(ws,NULL,NULL);
@@ -2400,21 +2402,22 @@ void OpenLogfile(void)
 
 void ClearLog(GUI *data,void *dummy)
 {
-  void *ed_chat_gui;
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+  
   CLIST *t;
-  if ((t=edcontact))
+  if ((t=ed_struct->ed_contact))
   {
     if (t->log)
     {
-      ed_chat_gui=MenuGetUserPointer(data);
       mfree(t->log);
       t->log=NULL;
-      if (edchat_answeritem>=2&&ed_chat_gui)
+      if (ed_struct->ed_answer>=2&&ed_struct->ed_chatgui)
       {
-        while(edchat_answeritem!=2)
+        while(ed_struct->ed_answer!=2)
         {
-          EDIT_RemoveEditControl(ed_chat_gui,1);
-          edchat_answeritem--;
+          EDIT_RemoveEditControl(ed_struct->ed_chatgui,1);
+          ed_struct->ed_answer--;
         }
       }
     }
@@ -2442,7 +2445,7 @@ MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
   {NULL,(int)LG_MNUCLEARCHT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
-extern void AddSmile(void *data, void *dummy);
+extern void AddSmile(GUI *data);
 void *ecmenu_HNDLS[EC_MNU_MAX]=
 {
   (void *)Quote,
@@ -2471,12 +2474,12 @@ MENU_DESC ecmenu_STRUCT=
   EC_MNU_MAX
 };
 
-void ec_menu(GUI *data,GUI_MSG *msg)
+void ec_menu(EDCHAT_STRUCT *ed_struct)
 {
   CLIST *t;
   int to_remove[EC_MNU_MAX+1];
   int remove=0;
-  if ((t=edcontact))
+  if ((t=ed_struct->ed_contact))
   {
     if (t->name)
     {
@@ -2486,7 +2489,7 @@ void ec_menu(GUI *data,GUI_MSG *msg)
     {
       sprintf(ecm_contactname,"%u",t->uin);
     }
-    if (EDIT_GetFocus(data)==edchat_answeritem)
+    if (EDIT_GetFocus(ed_struct->ed_chatgui)==ed_struct->ed_answer)
     {
       to_remove[++remove]=0;
     }
@@ -2495,8 +2498,8 @@ void ec_menu(GUI *data,GUI_MSG *msg)
       to_remove[++remove]=1;
     }  
     
-    if (edchat_answeritem<=2) to_remove[++remove]=7;
-    if (!edcontact || connect_state!=3)
+    if (ed_struct->ed_answer<=2) to_remove[++remove]=7;
+    if (!ed_struct->ed_contact || connect_state!=3)
     {
       to_remove[++remove]=2;
       to_remove[++remove]=3;
@@ -2506,7 +2509,7 @@ void ec_menu(GUI *data,GUI_MSG *msg)
     
     patch_header(&ecmenu_HDR);
     to_remove[0]=remove;
-    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,data,to_remove);
+    CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,ed_struct,to_remove);
   }
 }
 
@@ -2514,6 +2517,8 @@ void anac_locret(void){}
 
 int anac_onkey(GUI *data, GUI_MSG *msg)
 {
+  EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+  
   CLIST *t;
   TPKT *p;
   int l;
@@ -2524,7 +2529,7 @@ int anac_onkey(GUI *data, GUI_MSG *msg)
   {
     if (connect_state==3)
     {
-      if ((t=edcontact))
+      if ((t=ed_struct->ed_contact))
       {
 	ExtractEditControl(data,2,&ec);
 	l=0;
@@ -2594,7 +2599,7 @@ INPUTDIA_DESC anac_desc=
   0x40000000
 };
 
-void AskNickAndAddContact(void)
+void AskNickAndAddContact(EDCHAT_STRUCT *ed_struct)
 {
   void *ma=malloc_adr();
   void *eq;
@@ -2602,17 +2607,17 @@ void AskNickAndAddContact(void)
   WSHDR *ews=AllocWS(256);
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  wsprintf(ews,LG_SETNICK,edcontact->uin);
+  wsprintf(ews,LG_SETNICK,ed_struct->ed_contact->uin);
   ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
-  wsprintf(ews,percent_t,edcontact->name);
+  wsprintf(ews,percent_t,ed_struct->ed_contact->name);
   ConstructEditControl(&ec,3,0x40,ews,63);
   AddEditControlToEditQend(eq,&ec,ma);
   //  int scr_w=ScreenW();
   //  int head_h=HeaderH();
   patch_header(&anac_hdr);
   patch_input(&anac_desc);
-  CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,0);
+  CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,ed_struct);
   FreeWS(ews);
 }
 
@@ -2623,6 +2628,7 @@ void as_locret(void){}
 
 int as_onkey(GUI *data,GUI_MSG *msg)
 {
+  EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
     S_SMILES *sm, *t;
@@ -2682,20 +2688,17 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     WSHDR *ed_ws;
     EDITCONTROL ec;
     int pos;
-    void *q_data;
     
-    q_data=EDIT_GetUserPointer(data);
-    if (!q_data)
-      return(0);
     t=FindSmileById(cur_smile);
     if (!t) return (0);
-    ExtractEditControl(q_data,edchat_answeritem,&ec);
+    
+    ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
     ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
     wstrcpy(ed_ws,ec.pWS);
-    pos=EDIT_GetCursorPos(q_data);
+    pos=EDIT_GetCursorPos(ed_struct->ed_chatgui);
     wsInsertChar(ed_ws,t->uni_smile,pos);
-    EDIT_SetTextToEditControl(q_data,edchat_answeritem,ed_ws);
-    EDIT_SetCursorPos(q_data,pos+1);
+    EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
+    EDIT_SetCursorPos(ed_struct->ed_chatgui,pos+1);
     FreeWS(ed_ws);
     return (1);
   }
@@ -2775,8 +2778,9 @@ INPUTDIA_DESC as_desc=
 
 
 
-void AddSmile(void *data, void *dummy)
+void AddSmile(GUI *data)
 {
+  EDCHAT_STRUCT *ed_struct=MenuGetUserPointer(data);
   S_SMILES *t;
   cur_smile=0;
   t=FindSmileById(cur_smile);
@@ -2787,7 +2791,6 @@ void AddSmile(void *data, void *dummy)
   }
   void *ma=malloc_adr();
   void *eq;
-  void *ed_chat_gui=MenuGetUserPointer(data);
   EDITCONTROL ec;
   WSHDR *ews=AllocWS(32);
   PrepareEditControl(&ec);
@@ -2804,7 +2807,7 @@ void AddSmile(void *data, void *dummy)
   
   patch_header(&as_hdr);
   patch_input(&as_desc);
-  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_chat_gui);
+  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_struct);
   FreeWS(ews);
   GeneralFuncF1(1);
 }
