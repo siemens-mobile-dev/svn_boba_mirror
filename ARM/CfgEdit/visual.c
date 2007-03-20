@@ -101,62 +101,68 @@ void method4_1(MAIN_GUI_1 *data, void (*mfree_adr)(void *))
   if (data->gui.state!=2) return;
   data->gui.state=1;
 }
-
+/*
+#define MIN_STEP 1
+#define MAX_STEP 8
+*/
+int cstep=1;
 int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
 {
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
-    switch(msg->gbsmsg->submess)
+    if (msg->gbsmsg->msg==LONG_PRESS)
+		cstep=5;
+	switch(msg->gbsmsg->submess)
     {
     case '1':
-      if (--data->x_pos<0)
+      if ((data->x_pos-=cstep)<0)
         data->x_pos=0;
-      if (--data->y_pos <0)
+      if ((data->y_pos-=cstep)<0)
         data->y_pos=0;
       break;
       
     case '2':
     case UP_BUTTON:
-      if (--data->y_pos <0)
+      if ((data->y_pos-=cstep)<0)
         data->y_pos=0;
       break;
       
     case '3':
-      if (++data->x_pos >ScreenW()-1)
+      if ((data->x_pos+=cstep)>ScreenW()-1)
         data->x_pos=ScreenW()-1;
-      if (--data->y_pos <0)
+      if ((data->y_pos-=cstep)<0)
         data->y_pos=0;
       break;
      
     case '4':
     case LEFT_BUTTON:
-      if (--data->x_pos<0)
+      if ((data->x_pos-=cstep)<0)
         data->x_pos=0;
       break;
       
     case '6':
     case RIGHT_BUTTON:
-      if (++data->x_pos >ScreenW()-1)
+      if ((data->x_pos+=cstep)>ScreenW()-1)
         data->x_pos=ScreenW()-1;
       break;
       
     case '7': 
-      if (--data->x_pos<0)
+      if ((data->x_pos-=cstep)<0)
         data->x_pos=0;      
-      if (++data->y_pos >ScreenH()-1)
+      if ((data->y_pos+=cstep)>ScreenH()-1)
         data->y_pos=ScreenH()-1;
       break;
       
     case '8':
     case DOWN_BUTTON:
-      if (++data->y_pos >ScreenH()-1)
+      if ((data->y_pos+=cstep)>ScreenH()-1)
         data->y_pos=ScreenH()-1;
       break;
       
     case '9': 
-      if (++data->x_pos >ScreenW()-1)
+      if ((data->x_pos+=cstep)>ScreenW()-1)
         data->x_pos=ScreenW()-1;
-      if (++data->y_pos >ScreenH()-1)
+      if ((data->y_pos+=cstep)>ScreenH()-1)
         data->y_pos=ScreenH()-1;
       break;      
     
@@ -165,6 +171,8 @@ int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
       return (1);
     }
   }
+  if (msg->gbsmsg->msg==KEY_UP)
+	  cstep=1;
   DirectRedrawGUI();
   return(0);
 }
@@ -279,10 +287,13 @@ void method4_2(MAIN_GUI_2 *data, void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
+//int colstep=1;
 int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
 {
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
+	if (msg->gbsmsg->msg==LONG_PRESS)  
+		cstep=8;
     switch(msg->gbsmsg->submess)
     {
     case UP_BUTTON:
@@ -290,19 +301,19 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
       switch(data->current_column)
       {
       case 0:
-        if (++data->r>0xFF)
+        if ((data->r+=cstep)>0xFF)
           data->r=0;
         break;
       case 1:
-        if (++data->g>0xFF)
+        if ((data->g+=cstep)>0xFF)
           data->g=0;
         break;
       case 2:
-        if (++data->b>0xFF)
+        if ((data->b+=cstep)>0xFF)
           data->b=0;
         break;
       case 3:
-        if (++data->a>0x64)
+		  if ((data->a+=(cstep==8?cstep/2:cstep))>0x64)
           data->a=0;
         break;
       }
@@ -328,25 +339,27 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
       switch(data->current_column)
       {
       case 0:
-        if (--data->r<0)
+        if ((data->r-=cstep)<0)
           data->r=0xFF;
         break;
       case 1:
-        if (--data->g<0)
+        if ((data->g-=cstep)<0)
           data->g=0xFF;
         break;
       case 2:
-        if (--data->b<0)
+        if ((data->b-=cstep)<0)
           data->b=0xFF;
         break;
       case 3:
-        if (--data->a<0)
+		if ((data->a-=(cstep==8?cstep/2:cstep))<0)
           data->a=0x64;
         break;
       }
       break;
     }
   }
+  if (msg->gbsmsg->msg==KEY_UP)
+	  cstep=1;
   DirectRedrawGUI();
   return(0);
 }
