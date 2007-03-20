@@ -2013,7 +2013,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     if (l==ENTER_BUTTON)
     {
       t=FindNextActiveContact(edcontact);
-      if (t!=edcontact)
+      if ((t!=edcontact) && t)
       {
         EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,0,2);
         return (-1);
