@@ -2,8 +2,8 @@
 #define _LANGUAGE_H_
 
 //Оставляем только один дефайн иначе будет кака
-#define LANG_RU
-//#define LANG_UA
+//#define LANG_RU
+#define LANG_UA
 //#define LANG_EN
 
 #ifdef LANG_RU
@@ -58,6 +58,9 @@
 #define LG_MNUSAUTHGRT "Авторизовать"
 #define LG_MNUOPENLOG  "Открыть историю"
 #define LG_MNUCLEARCHT "Очистить чат"
+
+#define LG_MNUEDNEXTACT "Следующий чат"
+#define LG_MNUEDPREVACT "Предыдущий чат"
 
 //================================
 #define LG_CHGSTATUS "Сменить статус"
@@ -162,6 +165,9 @@
 #define LG_MNUSAUTHGRT "Авторизувати"
 #define LG_MNUOPENLOG  "Відкрити історію"
 #define LG_MNUCLEARCHT "Очистити чат"
+
+#define LG_MNUEDNEXTACT "Наступний чат"
+#define LG_MNUEDPREVACT "Попередній чат"
 
 //================================
 #define LG_CHGSTATUS "Змінити статус"
@@ -268,6 +274,9 @@
 #define LG_MNUSAUTHGRT "Send Auth Grant"
 #define LG_MNUOPENLOG  "Open logfile"
 #define LG_MNUCLEARCHT "Clear log"
+
+#define LG_MNUEDNEXTACT "Next active"
+#define LG_MNUEDPREVACT "Prev. active"
 
 //================================
 #define LG_CHGSTATUS "Change Status"

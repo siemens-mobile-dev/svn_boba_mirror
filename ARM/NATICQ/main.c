@@ -1907,10 +1907,10 @@ void ed_options_handler(USR_MENU_ITEM *item)
     switch(item->cur_item)
     {
     case 0:
-      ascii2ws(item->ws,"Next active");
+      ascii2ws(item->ws,LG_MNUEDNEXTACT);
       break;
     case 1:
-      ascii2ws(item->ws,"Prev active");
+      ascii2ws(item->ws,LG_MNUEDPREVACT);
       break;
     }
   }
