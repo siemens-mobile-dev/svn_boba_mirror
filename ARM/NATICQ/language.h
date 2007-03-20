@@ -2,8 +2,8 @@
 #define _LANGUAGE_H_
 
 //Оставляем только один дефайн иначе будет кака
-//#define LANG_RU
-#define LANG_UA
+#define LANG_RU
+//#define LANG_UA
 //#define LANG_EN
 
 #ifdef LANG_RU
