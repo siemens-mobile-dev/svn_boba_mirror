@@ -1,5 +1,5 @@
 ;ELFpack v2.2 (C)2007 by Rst7/CBSIE, BoBa, Kren
-;Release 6.03.2007
+;Release 20.03.2007
 ;S75sw40
 ;Также бибилиотека для патчей
 ;
@@ -366,6 +366,7 @@
 0788: 0xA01F6015 ; 1E2: __thumb int ws_2utf8(WSHDR *ws, char *utf8_str);
 078C: 0xA01F60CD ; 1E3: __thumb int utf8_2ws(WSHDR *ws,char *utf8_str, unsigned int maxLen);
 0790: 0xA097674F ; 1E4: __thumb int GetPicNByUnicodeSymbol(int wchar);
+0794: 0xA0A12145 ; 1E5: __thumb int EDIT_OpenOptionMenuWithUserItems(void *gui, void (*itemhandler)(USR_MENU_ITEM *item), int zero, int to_add);
 #pragma disable old_equal_ff
 +0
 
