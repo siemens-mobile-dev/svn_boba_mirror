@@ -119,7 +119,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   int csm_result;
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
-    InitConfig();
+	  extern const char *successed_config_filename;
+      if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+      {
+    	InitConfig();
+  	  }
   }
   csm_result=(msg->msg==ELF_ID)?0:old_icsm_onMessage(data,msg);
   if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
@@ -180,6 +184,6 @@ int main(void)
   {
     InfoData[i].ws=AllocWS(10);
   }    
-  GBS_StartTimerProc(&mytmr,(REFRESH*UPDATE_TIME/10)*30,TimerProc);
+  GBS_StartTimerProc(&mytmr,(REFRESH*UPDATE_TIME/10)*10,TimerProc);
   return 0;
 }
