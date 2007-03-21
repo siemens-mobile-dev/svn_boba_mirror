@@ -94,8 +94,12 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	int csm_result;
 	if(msg->msg == MSG_RECONFIGURE_REQ) 
 	{
-		//ShowMSG(3, (int)"Reconfigure!");
-		UpdateConfig();
+		extern const char *successed_config_filename;
+		if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+		{
+			ShowMSG(1,(int)"DiskMon config updated!");
+			UpdateConfig();
+		}		
 	}
 	csm_result = old_icsm_onMessage(data,msg);
 
