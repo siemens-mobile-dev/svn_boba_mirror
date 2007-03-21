@@ -264,7 +264,7 @@ void SaveConfig(void)
     fwrite(f,cfg,size_cfg,&ul);
     fclose(f,&ul);
   }
-  GBS_SendMessage(MMI_CEPID, MSG_RECONFIGURE_REQ);
+  GBS_SendMessage(MMI_CEPID, MSG_RECONFIGURE_REQ,0,cfg_name);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
@@ -282,8 +282,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     if ((int)msg->data0==csm->gui_id)
     {
       if ((int)msg->data1==1) SaveConfig();
-      csm->csm.state=-3;
+      csm->gui_id=0;
     }
+  }
+  if ((msg->msg==MSG_RECONFIGURE_REQ)&&(cfg_name==(char *)msg->data0))
+  {
+    csm->csm.state=-3;
   }
   return(1);
 }
