@@ -246,6 +246,8 @@ void maincsm_oncreate(CSM_RAM *data)
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
   csm->gui_id=create_ed();
+  csm->csm.state=0;
+  csm->csm.unk1=0;
 }
 
 void Killer(void)
@@ -281,7 +283,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     if ((int)msg->data0==csm->gui_id)
     {
-      if ((int)msg->data1==1) SaveConfig();
+      if ((int)msg->data1==1)
+	SaveConfig();
+      else 
+	csm->csm.state=-3;
       csm->gui_id=0;
     }
   }
