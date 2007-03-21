@@ -128,6 +128,7 @@ int main(void)
 	CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
 	memcpy(&icsmd, icsm->constr, sizeof(icsmd));
 	old_icsm_onMessage = icsmd.onMessage;
+	old_icsm_onClose=icsmd.onClose;
 	icsmd.onMessage = MyIDLECSM_onMessage;
 	icsmd.onClose=MyIDLECSM_onClose;
 	icsm->constr = &icsmd;
