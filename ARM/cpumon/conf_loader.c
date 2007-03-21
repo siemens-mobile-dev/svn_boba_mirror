@@ -2,6 +2,8 @@
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 
+const char *successed_config_filename="";
+
 #pragma segment="CONFIG_C"
 int LoadConfigData(const char *fname)
 {
@@ -42,6 +44,7 @@ int LoadConfigData(const char *fname)
       result=-1;
   }
   mfree(buf);
+  if (result>=0) successed_config_filename=fname;
   return(result);
 }
 

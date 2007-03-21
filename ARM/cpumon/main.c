@@ -1,6 +1,12 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
+#ifdef NEWSGOLD
+#define myMSG 0xDEAD
+#else
+#define myMSG
+#endif
+
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 
 #define MIN_WIDTH 30
@@ -97,11 +103,6 @@ DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 
 void TimerProc(void)
 {
-  if (!getCpuUsedTime_if_ena())
-  {
-    StartCpuUsageCount();
-  }
-  GBS_SendMessage(MMI_CEPID, 0xDEAD, GetCPULoad());
   GBS_StartTimerProc(&mytmr, (uiUpdateTime > MIN_UPTIME) ? uiUpdateTime : MIN_UPTIME, TimerProc);
 }
 
@@ -128,29 +129,35 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
-    ShowMSG(1,(int)"Config updated!");
-    FreeMem();
-    RereadSettings();
+    extern const char *successed_config_filename;
+    if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"CPUMon config updated!");
+      FreeMem();
+      RereadSettings();
+    }
   }
-  
-	//Накапливаем значения
-  if (msg->msg == 0xDEAD)
+  //Накапливаем значения
+  if (msg->msg == myMSG)
   {
-    LockSched();
-    loads[hhh]  = uiHeight * msg->submess / 100;
+    if (!getCpuUsedTime_if_ena())
+    {
+      StartCpuUsageCount();
+    }
+    loads[hhh]  = uiHeight * GetCPULoad() / 100;
 #ifdef ELKA
     clocks[hhh]=104;
 #else
     clocks[hhh] = GetCPUClock()/* / 26*/;
 #endif
-    UnlockSched();
     hhh++;
     if (hhh >= uiWidth)
     {
       hhh = 0;
       cop = 1;
     }
-    csm_result = 0;
+    GBS_StartTimer(&mytmr,(uiUpdateTime > MIN_UPTIME) ? uiUpdateTime : MIN_UPTIME, myMSG,0,MMI_CEPID);
+    csm_result = 1;
   }
   else
     csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
@@ -224,7 +231,6 @@ int main(void)
 {
 
   RereadSettings();
-
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
@@ -236,6 +242,6 @@ int main(void)
   UnlockSched();
   ws1=AllocWS(100);
   wsprintf(ws1,"%t","CPUMon (C)BoBa,Rst7");
-  GBS_StartTimerProc(&mytmr,START_DELAY,TimerProc);
+  GBS_SendMessage(MMI_CEPID, myMSG);
   return 0;
 }
