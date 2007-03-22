@@ -13,7 +13,7 @@ void (*old_icsm_onClose)(CSM_RAM*);
 #ifdef NEWSGOLD
 char binary_profile[0x204];
 extern const int ENA_GPRSD;
-NAP_PARAM_CONT *nap_container;
+//NAP_PARAM_CONT *nap_container;
 #define DEFAULT_DISK "4"
 #else
 #define LINKMANAGER 0x40DD
@@ -40,6 +40,7 @@ void do_connect(void)
 {
   REGSOCKCEPID_DATA rsc;
   LMAN_DATA lmd;
+  NAP_PARAM_CONT nap_container;
   NAP_PARAM_CONT *nc;
   // Проверим, включён ли GPRS. Если нет - дальнейшие извращения бесмысленны
   if(!IsGPRSEnabled())
@@ -61,7 +62,8 @@ void do_connect(void)
   rsc._0xFFFF=0xFFFF;
   rsc._0x0000=0x0000;
   RegisterCepidForSocketWork(&rsc);
-  nap_container=nc=malloc(sizeof(NAP_PARAM_CONT));
+  //nap_container=nc=malloc(sizeof(NAP_PARAM_CONT));
+  nc=&nap_container;
   nc->len=sizeof(NAP_PARAM_CONT);
   nc->ctx_napdef=&(nc->napdef);
   nc->zero=0;
@@ -92,7 +94,7 @@ void do_connect(void)
 
 void LogWriter(const char *s)
 {
-  TTime t;
+/*  TTime t;
   TDate d;
   char ss[100];
   unsigned int ul;
@@ -106,7 +108,7 @@ void LogWriter(const char *s)
     fwrite(f,s,strlen(s),&ul);
     fwrite(f,"\r\n",2,&ul);
     fclose(f,&ul);
-  }
+  }*/
 }
 
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
@@ -158,6 +160,7 @@ int main()
   icsmd.onClose=MyIDLECSM_onClose;
   icsm->constr=&icsmd;
   UnlockSched();
+  InitConfig();
   SUBPROC((void*)do_connect);
   return 0;
 }

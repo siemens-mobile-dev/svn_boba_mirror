@@ -759,7 +759,7 @@ typedef struct
 
 typedef struct
 {
-  char zero;
+  int zero;
   void *native_profile;
   char _1;
   char _4;
