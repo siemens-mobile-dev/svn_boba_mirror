@@ -33,25 +33,20 @@ extern const unsigned int cfgY;
 extern const unsigned int vibra_count;
 extern const unsigned int vibra_power;
 
-extern const int use_GetLen;
 extern const unsigned int dop_delay; 
 
 // Глобальные переменные
 unsigned int found_full_empty[3]={0,0,0}; //0-found, 1-full, 3-empty
 unsigned int levels_up[9]   ={0,0,0,0,0,0,0,0};//0-10,...,8-90
 unsigned int levels_down[10]={0,0,0,0,0,0,0,0,0};//0-5,...,9-90
-unsigned int flag=0;
+unsigned int flag=0, flag1=0;
 unsigned int vibra_count1;
 
 char pic_path[];
 
 //=============================Проигрывание звука===============================
-int PLAY_ID;
-int ENA_PLAY=1;
-
-int Play(const char *fpath, const char *fname)
+void Play(const char *fpath, const char *fname)
 {
-      int i;
       WSHDR* sndPath=AllocWS(128);
       WSHDR* sndFName=AllocWS(128);
 
@@ -70,21 +65,20 @@ int Play(const char *fpath, const char *fname)
         _sfo1.unk6=1;
         _sfo1.unk7=1;
         _sfo1.unk9=2;
-        i=PlayFile(0x10, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
+        PlayFile(0x10, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
       #else
           #ifdef X75
             _sfo1.unk4=0x80000000;
             _sfo1.unk5=1;
-            i=PlayFile(0xC, sndPath, sndFName, 0, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
+            PlayFile(0xC, sndPath, sndFName, 0, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
           #else
             _sfo1.unk5=1;
-            i=PlayFile(0xC, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
+            PlayFile(0xC, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
           #endif
       #endif 
 
       FreeWS(sndPath);
       FreeWS(sndFName);
-      return (i);
 }
 
 //==============================================================================
@@ -154,87 +148,27 @@ void RereadSettings(void) //Считывание конфига
 //Уровни
 void SayPercent(void)
 {
-  switch (use_GetLen)  
-  {
-    case 0:
-      if (ENA_PLAY==1) Play(folder_path, "percent.wav");
-        else
-          GBS_StartTimerProc(&level_tmr, 1, SayPercent); 
-    break;
- 
-    case 1:
-      Play(folder_path, "percent.wav");
-    break;
-  }  
+  Play(folder_path, "percent.wav");
 }
 
 void SayLevel(void)
 {
   char level[6];
-  switch (use_GetLen)  
-  {
-    case 0:
-      if (ENA_PLAY==1) 
-        {
-          sprintf(level, "%d.wav", *RamCap());
-          PLAY_ID=Play(folder_path, level);
-          ENA_PLAY=0;
-          SayPercent();
-        }
-      else
-        GBS_StartTimerProc(&level_tmr, 1, SayLevel); 
-    break;
- 
-    case 1:
-        sprintf(level, "%d.wav", *RamCap());
-        PLAY_ID=Play(folder_path, level);
-        GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, level),SayPercent);
-    break;
-  }  
+  sprintf(level, "%d.wav", *RamCap());
+  Play(folder_path, level);
+  GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, level),SayPercent);
 }
 
 void SayUp(void)
 {
-  switch (use_GetLen)  
-  {
-    case 0:
-      if (ENA_PLAY==1) 
-        {
-          PLAY_ID=Play(folder_path, "up.wav");
-          ENA_PLAY=0;
-          SayLevel();
-        }
-      else
-        GBS_StartTimerProc(&level_tmr, 1, SayUp);    
-    break;
- 
-    case 1:
-      PLAY_ID=Play(folder_path, "up.wav");
-      GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, "up.wav"),SayLevel);
-    break;
-  }  
+  Play(folder_path, "up.wav");
+  GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, "up.wav"),SayLevel);
 }
 
 void SayDown(void)
 {
-  switch (use_GetLen)  
-  {
-    case 0:
-      if (ENA_PLAY==1) 
-        {  
-          PLAY_ID=Play(folder_path, "down.wav");
-          ENA_PLAY=0;
-          SayLevel();
-        }  
-      else
-        GBS_StartTimerProc(&level_tmr, 1, SayDown);    
-    break;
- 
-    case 1:
-      PLAY_ID=Play(folder_path, "down.wav");
-      GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, "down.wav"),SayLevel);
-    break;
-  }  
+  Play(folder_path, "down.wav");
+  GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, "down.wav"),SayLevel);
 }
 
 GBSTMR temp_tmr;
@@ -251,6 +185,12 @@ void SayTemp(void)
   if (flag==1) GBS_StartTimerProc(&temp_tmr, warn_interr*216, SayTemp);
 }
 // ----------------------------------------------------------------------------
+
+void Delay(void)
+{
+  flag1=1;
+  //found_full_empty[0]=1;
+}
 
 void Check(void)
 {
@@ -280,8 +220,7 @@ void Check(void)
         case 0:
           if (found_full_empty[0]||found_full_empty[1]) 
             {
-              PLAY_ID=Play(folder_path, "out.wav");
-              ENA_PLAY=0;
+              Play(folder_path, "out.wav");
           
               found_full_empty[0]=0;
               found_full_empty[1]=0;
@@ -335,8 +274,7 @@ void Check(void)
           if ((!found_full_empty[2])&&(cap_akku==0))
             {//0% Говорить в любом случае
               found_full_empty[2]=1;
-              PLAY_ID=Play(folder_path, "0.wav");
-              ENA_PLAY=0;
+              Play(folder_path, "0.wav");
             }
         break;
         
@@ -344,8 +282,9 @@ void Check(void)
           if (!found_full_empty[0])
             {// Найден источник
 
-              ENA_PLAY=0;          
-              PLAY_ID=Play(folder_path, "found.wav");
+              Play(folder_path, "found.wav");
+              flag1=0;
+              GBS_StartTimerProc(&level_tmr,(int)GetWavkaLength((char*)folder_path, "found.wav")+216,Delay);
               
               found_full_empty[0]=1;
               
@@ -358,7 +297,7 @@ void Check(void)
               
             }// Найден источник
           
-          if ((found_full_empty[0])&&(say_levels_up))
+          if ((found_full_empty[0])&&(say_levels_up)&&(flag1))
             {//Говорить промежуточные уровни зарядки
               switch (cap_akku)
               {
@@ -398,8 +337,7 @@ void Check(void)
             {// Энергия восстановлена
               found_full_empty[1]=1;
 
-              ENA_PLAY=0;          
-              PLAY_ID=Play(folder_path, "full.wav");
+              Play(folder_path, "full.wav");
           
               //Обнуление флагов
               found_full_empty[0]=0;
@@ -436,7 +374,7 @@ void Check(void)
 }
 
 // ----------------------------------------------------------------------------
-
+#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
@@ -448,29 +386,14 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     RereadSettings();
   }
   
-  switch (use_GetLen)  
-  {
-    case 0:
-      if (msg->msg==MSG_PLAYFILE_REPORT)
-      {
-        if ((msg->submess>>16)==PLAY_ID) 
-          if (((msg->submess&0xFFFF)==7)||((msg->submess&0xFFFF)==5))
-            {
-              if (ENA_PLAY==0) ENA_PLAY=1;
-            }
-      } 
-    break;
- 
-    case 1:
-    break;
-  }  
-    
-  if (IsGuiOnTop(((int *)FindCSMbyID(CSM_root()->idle_id))[DISPLACE_OF_IDLEGUI_ID/4])&&(show_icon)&&(!IsScreenSaver())) //Если IdleGui на самом верху
+  
+  if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
     {
       GUI *igui=GetTopGUI();
       if (igui) //И он существует
       {
 #ifdef ELKA
+
 	void *canvasdata = BuildCanvas();
 #else
 	void *idata = GetDataOfItemByID(igui, 2);

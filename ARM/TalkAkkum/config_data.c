@@ -1,7 +1,13 @@
 #include "..\inc\cfg_items.h"
 
+#ifdef NEWSGOLD
+#define DEFAULT_DISK "4"
+#else
+#define DEFAULT_DISK "0"
+#endif 
+
 __root const CFG_HDR cfghdr0={CFG_STR_UTF8,"Путь к звукам",0,127};
-__root const char folder_path[128]="0:\\ZBin\\TalkAkkum\\";
+__root const char folder_path[128]=DEFAULT_DISK ":\\ZBin\\sndElfs\\TalkAkkum\\";
 
 __root const CFG_HDR cfghdr1={CFG_UINT,"Громкость",0,6};
 __root const unsigned int volume=6;
@@ -43,15 +49,9 @@ __root const CFG_HDR cfghdr12={CFG_CBOX,"Показывать иконку",0,2};
 __root const int show_icon=1;
 __root const CFG_CBOX_ITEM cfgcbox4[2]={"Нет","Да"};
 
-__root const CFG_HDR cfghdr13 = {CFG_UINT, "X позиция", 0, 1000};
-__root const unsigned int cfgX = 0;
+__root const CFG_HDR cfghdr13={CFG_COORDINATES,"Позиция иконки",0,0};
+__root const unsigned int cfgX=0;
+__root const unsigned int cfgY=55; 
 
-__root const CFG_HDR cfghdr14 = {CFG_UINT, "Y позиция", 0, 1000};
-__root const unsigned int cfgY = 55;
-
-__root const CFG_HDR cfghdr15={CFG_CBOX,"Исп. ф-ю опр. длит.",0,2};
-__root const int use_GetLen=0;
-__root const CFG_CBOX_ITEM cfgcbox5[2]={"Нет","Да"};
-
-__root const CFG_HDR cfghdr16 = {CFG_UINT, "Доп. пауза (тиков)", 0, 100};
+__root const CFG_HDR cfghdr14 = {CFG_UINT, "Доп. пауза (тиков)", 0, 100};
 __root const unsigned int dop_delay = 50; 
