@@ -49,9 +49,8 @@ int get_string_width(WSHDR *ws, int font)
   return (width);
 }
 
-void FillInfoData(TInfo *Info,int enabled,int x_start,int y_start, int font,const char *color)
-{
-  Info->enabled=enabled;
+void FillInfoData(TInfo *Info,int x_start,int y_start, int font,const char *color)
+{  
   Info->rc.x=x_start;
   Info->rc.y=y_start;
   Info->rc.x2=x_start+get_string_width(Info->ws,font);
@@ -79,36 +78,91 @@ void InitInfoData(void)
   RAMNET *net_data;
   int c;
   
-  net_data=NET_ENA?RamNet():0;
-  c=(net_data->ch_number>=255)?'=':'-';
-  wsprintf(InfoData[0].ws,NET_FMT,c,net_data->power);
-  FillInfoData(&InfoData[0],NET_ENA,NET_X,NET_Y,NET_FONT,NET_COLORS);
+  if(NET_ENA)
+  {
+    InfoData[0].enabled=1;
+    net_data=RamNet();
+    c=(net_data->ch_number>=255)?'=':'-';
+    wsprintf(InfoData[0].ws,NET_FMT,c,net_data->power);
+    FillInfoData(&InfoData[0],NET_X,NET_Y,NET_FONT,NET_COLORS);
+  }
+  else
+  {
+    InfoData[0].enabled=0;
+  }
   
-  c=TEMP_ENA?(GetAkku(1,3)-0xAAA+15):0;
-  wsprintf(InfoData[1].ws,TEMP_FMT,c/10,c%10);
-  FillInfoData(&InfoData[1],TEMP_ENA,TEMP_X,TEMP_Y,TEMP_FONT,TEMP_COLORS);
-
-  c=VOLT_ENA?GetAkku(0,9):0;
-  wsprintf(InfoData[2].ws,VOLT_FMT,c/1000,(c%1000)/10);
-  FillInfoData(&InfoData[2],VOLT_ENA,VOLT_X,VOLT_Y,VOLT_FONT,VOLT_COLORS);
+  if (TEMP_ENA)
+  {
+    InfoData[1].enabled=1;
+    c=GetAkku(1,3)-0xAAA+15;
+    wsprintf(InfoData[1].ws,TEMP_FMT,c/10,c%10);
+    FillInfoData(&InfoData[1],TEMP_X,TEMP_Y,TEMP_FONT,TEMP_COLORS);
+  }
+  else
+  {
+    InfoData[1].enabled=0;
+  }
   
-  c=CAP_ENA?(*RamCap()):0;
-  wsprintf(InfoData[3].ws,CAP_FMT,c);
-  FillInfoData(&InfoData[3],CAP_ENA,ACCU_X,ACCU_Y,ACCU_FONT,ACCU_COLORS);
- 
-  c=CPU_ENA?GetCPULoad():0;
-  wsprintf(InfoData[4].ws,CPU_FMT,c);
-  FillInfoData(&InfoData[4],CPU_ENA,CPU_X,CPU_Y,CPU_FONT,CPU_COLORS);
+  if (VOLT_ENA)
+  {
+    InfoData[2].enabled=1;
+    c=GetAkku(0,9);
+    wsprintf(InfoData[2].ws,VOLT_FMT,c/1000,(c%1000)/10);
+    FillInfoData(&InfoData[2],VOLT_X,VOLT_Y,VOLT_FONT,VOLT_COLORS);
+  }
+  else
+  {
+    InfoData[2].enabled=0;
+  }
+  
+  if (CAP_ENA)
+  {
+    InfoData[3].enabled=1;
+    c=*RamCap();
+    wsprintf(InfoData[3].ws,CAP_FMT,c);
+    FillInfoData(&InfoData[3],ACCU_X,ACCU_Y,ACCU_FONT,ACCU_COLORS);
+  }
+  else
+  {
+    InfoData[3].enabled=0;
+  }
+  
+  if (CPU_ENA)
+  {
+    InfoData[4].enabled=1;
+    c=GetCPULoad();
+    wsprintf(InfoData[4].ws,CPU_FMT,c);
+    FillInfoData(&InfoData[4],CPU_X,CPU_Y,CPU_FONT,CPU_COLORS);
+  }
+  else
+  {
+    InfoData[4].enabled=0;
+  }
 
   if (GPRS_ENA)
-  	RefreshGPRSTraffic();
-  c=GPRS_ENA?(*GetGPRSTrafficPointer()):0;
-  wsprintf_bytes(InfoData[5].ws,c);
-  FillInfoData(&InfoData[5],GPRS_ENA,GPRS_X,GPRS_Y,GPRS_FONT,GPRS_COLORS);
+  {
+    InfoData[5].enabled=1;
+    RefreshGPRSTraffic();
+    c=*GetGPRSTrafficPointer();
+    wsprintf_bytes(InfoData[5].ws,c);
+    FillInfoData(&InfoData[5],GPRS_X,GPRS_Y,GPRS_FONT,GPRS_COLORS);
+  }
+  else
+  {
+    InfoData[5].enabled=0;
+  }
   
-  c=RAM_ENA?GetFreeRamAvail():0;
-  wsprintf_bytes(InfoData[6].ws,c);
-  FillInfoData(&InfoData[6],RAM_ENA,RAM_X,RAM_Y,RAM_FONT,RAM_COLORS);  
+  if (RAM_ENA)
+  {
+    InfoData[6].enabled=1;
+    c=GetFreeRamAvail();
+    wsprintf_bytes(InfoData[6].ws,c);
+    FillInfoData(&InfoData[6],RAM_X,RAM_Y,RAM_FONT,RAM_COLORS);  
+  }
+  else
+  {
+    InfoData[6].enabled=0;
+  }
 }
   
 // ----------------------------------------------------------------------------
@@ -119,11 +173,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   int csm_result;
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
-	  extern const char *successed_config_filename;
-      if (strcmp(successed_config_filename,(char *)msg->data0)==0)
-      {
-    	InitConfig();
-  	  }
+    extern const char *successed_config_filename;
+    if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+    {
+      InitConfig();
+    }
   }
   csm_result=(msg->msg==ELF_ID)?0:old_icsm_onMessage(data,msg);
   if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
@@ -144,7 +198,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         {
           if (!InfoData[i].enabled)
 			  continue;
-		  DrawCanvas(canvasdata, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, 1);
+          DrawCanvas(canvasdata, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, 1);
           DrawString(InfoData[i].ws, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, InfoData[i].font,
                      0,InfoData[i].pen, GetPaletteAdrByColorIndex(23));         
         }            
@@ -182,8 +236,8 @@ int main(void)
   InitConfig();
   for (int i=0;i<7; i++)
   {
-    InfoData[i].ws=AllocWS(10);
+    InfoData[i].ws=AllocWS(20);
   }    
-  GBS_StartTimerProc(&mytmr,(REFRESH*UPDATE_TIME/10)*10,TimerProc);
+  GBS_StartTimerProc(&mytmr,UPDATE_TIME*10,TimerProc);
   return 0;
 }
