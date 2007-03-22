@@ -1,6 +1,5 @@
 #include "..\inc\swilib.h"
 
-char testcolor[4];
 char colors[4][4]={{0xFF,0,0,0x64},{0,0xFF,0,0x64},{0,0,0xFF,0x64},{0xC6,0xAA,0xAF,0x32}};
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
@@ -14,15 +13,13 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
   rc->y2=y2;
 }
 
-
 typedef struct
 {
   GUI gui;
   WSHDR*ws1;
   int x_pos;
   int y_pos;
-  unsigned int* x_pos_1;
-  unsigned int* y_pos_1;  
+  unsigned int* xy_pos;
 }MAIN_GUI_1;
 
 typedef struct
@@ -35,6 +32,7 @@ typedef struct
   int a;
   char* color;
   int current_column;
+  char testcolor[4];
 }MAIN_GUI_2;
 
 const char Pointer[5]={0x27,0x27,0xFF,0x27,0x27};
@@ -85,8 +83,6 @@ void method1_1(MAIN_GUI_1 *data, void *(*malloc_adr)(int))
 
 void method2_1(MAIN_GUI_1 *data, void (*mfree_adr)(void *))
 {
-  *data->x_pos_1=data->x_pos;
-  *data->y_pos_1=data->y_pos;
   FreeWS(data->ws1);
   data->gui.state=0;
 }
@@ -164,10 +160,15 @@ int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
         data->x_pos=ScreenW()-1;
       if ((data->y_pos+=cstep)>ScreenH()-1)
         data->y_pos=ScreenH()-1;
-      break;      
-    
-	case RIGHT_SOFT:
+      break;    
+      
+    case RIGHT_SOFT:
     case RED_BUTTON:
+      return (1);
+      
+    case ENTER_BUTTON:
+      data->xy_pos[0]=data->x_pos;
+      data->xy_pos[1]=data->y_pos;
       return (1);
     }
   }
@@ -203,14 +204,13 @@ const void * const gui_methods_1[11]={
 
 const RECT Canvas_1={0,0,0,0};
 
-void EditCoordinates(unsigned int*x, unsigned int* y)
+void EditCoordinates(unsigned int*xy)
 {
   MAIN_GUI_1 *main_gui=malloc(sizeof(MAIN_GUI_1));
   zeromem(main_gui,sizeof(MAIN_GUI_1));
-  main_gui->x_pos=*x;
-  main_gui->y_pos=*y;
-  main_gui->x_pos_1=x;
-  main_gui->y_pos_1=y;
+  main_gui->xy_pos=xy;
+  main_gui->x_pos=xy[0];
+  main_gui->y_pos=xy[1];
   patch_rect((RECT*)&Canvas_1,0,0,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas_1);
   main_gui->gui.flag30=2;
@@ -258,8 +258,8 @@ void method0_2(MAIN_GUI_2 *data)
     }
     DrawLine(start_column,y_line,start_column+column_width,y_line,0,GetPaletteAdrByColorIndex(1));
   }
-  setColor(data->r,data->g,data->b,data->a,testcolor);
-  DrawRoundedFrame(scr_w-17,1,scr_w-2,16,2,2,0,GetPaletteAdrByColorIndex(1),testcolor);
+  setColor(data->r,data->g,data->b,data->a,data->testcolor);
+  DrawRoundedFrame(scr_w-17,1,scr_w-2,16,2,2,0,GetPaletteAdrByColorIndex(1),data->testcolor);
 
 }
 
@@ -271,7 +271,6 @@ void method1_2(MAIN_GUI_2 *data, void *(*malloc_adr)(int))
 
 void method2_2(MAIN_GUI_2 *data, void (*mfree_adr)(void *))
 {
-  setColor(data->r,data->g,data->b,data->a,data->color);
   FreeWS(data->ws1);
   data->gui.state=0;
 }
@@ -313,7 +312,7 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
           data->b=0;
         break;
       case 3:
-		  if ((data->a+=(cstep==8?cstep/2:cstep))>0x64)
+        if ((data->a+=(cstep==8?cstep/2:cstep))>0x64)
           data->a=0;
         break;
       }
@@ -329,9 +328,9 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
       if (++data->current_column>3)
         data->current_column=0;
       break;
-    
-	case RIGHT_SOFT:
-	case RED_BUTTON:
+      
+    case RIGHT_SOFT:
+    case RED_BUTTON:
       return (1);
       
     case DOWN_BUTTON:
@@ -356,6 +355,10 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
         break;
       }
       break;
+      
+    case ENTER_BUTTON:
+      setColor(data->r,data->g,data->b,data->a,data->color);
+      return (1);
     }
   }
   if (msg->gbsmsg->msg==KEY_UP)
@@ -396,10 +399,10 @@ void EditColors(char*color)
 {
   MAIN_GUI_2 *main_gui=malloc(sizeof(MAIN_GUI_2));
   zeromem(main_gui,sizeof(MAIN_GUI_2));
-  main_gui->r=*((char *)color);
-  main_gui->g=*((char *)color+1);
-  main_gui->b=*((char *)color+2);
-  main_gui->a=*((char *)color+3);
+  main_gui->r=color[0];
+  main_gui->g=color[1];
+  main_gui->b=color[2];
+  main_gui->a=color[3];
   main_gui->color=color;
   patch_rect((RECT*)&Canvas_2,0,0,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas_2);

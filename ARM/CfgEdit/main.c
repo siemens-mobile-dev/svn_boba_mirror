@@ -2,7 +2,7 @@
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
-extern void EditCoordinates(unsigned int*x, unsigned int* y);
+extern void EditCoordinates(unsigned int*xy);
 extern void EditColors(char*color);
 #pragma inline
 void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
@@ -89,7 +89,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
         switch(hp->type)
         {
         case CFG_COORDINATES:
-          EditCoordinates(((unsigned int *)(hp+1)),((unsigned int *)(hp+1)+1));
+          EditCoordinates((unsigned int *)(hp+1));
           break;
         case CFG_COLOR:
           EditColors((char *)(hp+1));
@@ -114,7 +114,7 @@ void ed1_ghook(GUI *data, int cmd)
   int j;
   int vi;
   unsigned int vui;
-  unsigned int vui2;
+  int pos;
   char ss[16];
   char *p;
 
@@ -136,20 +136,24 @@ void ed1_ghook(GUI *data, int cmd)
       switch(hp->type)
       {
       case CFG_UINT:
+        pos=EDIT_GetCursorPos(data);
         vui=strtoul(ss,0,10);
         if (vui<hp->min) vui=hp->min;
         if (vui>hp->max) vui=hp->max;
         *((unsigned int *)(hp+1))=vui;
         wsprintf(ews,_percent_u,vui);
         EDIT_SetTextToFocused(data,ews);
+        EDIT_SetCursorPos(data,pos);
         break;
       case CFG_INT:
+        pos=EDIT_GetCursorPos(data);
         vi=strtol(ss,0,10);
         if (vi<(int)hp->min) vi=(int)hp->min;
         if (vi>(int)hp->max) vi=(int)hp->max;
         *((int *)(hp+1))=vi;
         wsprintf(ews,_percent_d,vi);
         EDIT_SetTextToFocused(data,ews);
+        EDIT_SetCursorPos(data,pos);
         break;
       case CFG_STR_UTF8:
         ws_2str(ews,(char *)(hp+1),hp->max);
@@ -170,9 +174,7 @@ void ed1_ghook(GUI *data, int cmd)
          *((int *)(hp+1))=EDIT_GetItemNumInFocusedComboBox(data)-1;
          break;
       case CFG_COORDINATES:
-        vui=*((int *)(hp+1));
-        vui2=*((int *)(hp+1)+1);
-        wsprintf(ews,"%d,%d",vui,vui2);
+        wsprintf(ews,"%d,%d",*((int *)(hp+1)),*((int *)(hp+1)+1));
         EDIT_SetTextToFocused(data,ews);
         break;
       case CFG_COLOR:
