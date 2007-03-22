@@ -14,6 +14,7 @@ void InitConfig();
 void FillProfile(char *profile);
 
 //  онстанты смещений данных в бинарном профиле
+#define coIntName   0x00   // внутреннее им€ профил€
 #define coName      0x35   // им€ профил€
 #define coAPN_name  0x58   // расположение имени точки доступа
 #define coLogin     0x1AD  // имени пользовател€ точки доступа

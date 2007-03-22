@@ -5,8 +5,11 @@ __root const CFG_HDR cfghdr0={CFG_CBOX,"Enable GprsD",0,2};
 __root const int ENA_GPRSD = 0;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 
+__root const CFG_HDR cfghdr6={CFG_STR_WIN1251,"NAP internal name (as in wbxml)",0,19};
+__root const char cfgINTNAME[20]="GPRS-0";
+
 __root const CFG_HDR cfghdr5={CFG_STR_WIN1251,"NAP name (as in phone)",0,19};
-__root const char cfgNAME[20]="GPRS-01";
+__root const char cfgNAME[20]="umc";
 
 __root const CFG_HDR cfghdr1={CFG_STR_WIN1251,"APN",0,19};
 //__root const char cfgAPN[20]="internet.mts.ru";
