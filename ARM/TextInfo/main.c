@@ -2,8 +2,8 @@
 #include "conf_loader.h"
 #include "TextInfo.h"
 
-#define UPDATE_TIME (1*262)
-#define ELF_ID 0x1EF
+#define TMR_SECOND 216
+#define ELF_ID 0x3EE
 
 CSM_DESC icsmd;
 
@@ -32,7 +32,7 @@ void TimerProc(void)
 {
   InitInfoData();
   GBS_SendMessage(MMI_CEPID,ELF_ID);
-  GBS_StartTimerProc(&mytmr,REFRESH*UPDATE_TIME/10,TimerProc);
+  GBS_StartTimerProc(&mytmr,REFRESH*TMR_SECOND/10,TimerProc);
 }
 
 #pragma inline
@@ -168,14 +168,30 @@ void InitInfoData(void)
 // ----------------------------------------------------------------------------
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+#pragma inline
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
+
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
-    if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
+      ShowMSG(1,(int)"TextInfo config updated!");
       InitConfig();
     }
   }
@@ -238,6 +254,6 @@ int main(void)
   {
     InfoData[i].ws=AllocWS(20);
   }    
-  GBS_StartTimerProc(&mytmr,UPDATE_TIME*10,TimerProc);
+  GBS_StartTimerProc(&mytmr,TMR_SECOND*10,TimerProc);
   return 0;
 }
