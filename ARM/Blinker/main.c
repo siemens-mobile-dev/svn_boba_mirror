@@ -70,9 +70,7 @@ void LightOff()
 
 void Check(void)
 {
-	if (IsUnlocked() && cfgLockOnly)
-		GBS_StartTimerProc(&mytmr, cfgInterval, Check);
-	else
+	if (!(IsUnlocked() && cfgLockOnly))
 	{
 		if ((count = GetMissedEventCount(cfgEvents)) > 0
 			&& (cfgDispl || cfgKbd || 
@@ -86,6 +84,7 @@ void Check(void)
 			if (count > cfgMaxEv)
 				count = cfgMaxEv;
 			LightOn();
+			return;
 		}
 	}
 	if (++cycl_cnt > CFGUPD_INTV)
@@ -93,10 +92,12 @@ void Check(void)
 		InitConfig();
 		cycl_cnt = 0;
 	}
+	GBS_StartTimerProc(&mytmr, cfgInterval, Check);
 }
 
 int main(void)
 {
+	ShowMSG(1, (int)"Blinker started!");
 	InitConfig();
 	Check();
 	return 0;
