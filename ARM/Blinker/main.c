@@ -2,98 +2,102 @@
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 
-// Импорт переменных
-extern const int bl_key;
-extern const int bl_dis;
-extern const int use_vib;
-extern const int play_snd;
-extern const int only_loc;
-extern const unsigned int vibra_pow;
-extern const unsigned int blink_delay;
-extern const unsigned int check_each;
-extern const unsigned int blink_light;
-extern const int check;
+#define TICK 216
+#define IN_TICKS(sec) (sec * TICK)
 
-int count;
+#define CFGUPD_INTV 5
+
+// Импорт переменных
+extern const int cfgEvents;
+extern const unsigned int cfgMaxEv;
+extern const unsigned int cfgInterval;
+extern const int cfgLockOnly;
+extern const unsigned int cfgPeriod;
+extern const unsigned int cfgBright;
+
+extern const int cfgKbd;
+extern const int cfgDispl;
+#ifndef NEWSGOLD
+extern const int cfgDyn;
+#else
+extern const int cfgLighter;
+#endif
+
+int count = 0;
+int cycl_cnt = 0;
 
 GBSTMR mytmr;
 
-void LightOff();
+void LightOff(void);
 void Check(void);
 
 //SetIllumination(unsigned char dev,unsigned long param1,unsigned short bright,unsigned long delay);
 //0 - дисплей, 1 - клавиатура, 2 - динамический свет (x65)
 void LightOn()
 {
-  if (bl_key)
-    SetIllumination(1,1,blink_light,0);   
-  if (bl_dis)
-    SetIllumination(0,1,blink_light,0);   
-  if (use_vib)
-    SetVibration(vibra_pow);    
-  GBS_StartTimerProc(&mytmr,blink_delay,LightOff);
+	if (cfgDispl)
+		SetIllumination(0, 1, cfgBright, 0);
+	if (cfgKbd)
+		SetIllumination(1, 1, cfgBright, 0);   
+#ifndef NEWSGOLD
+	if (cfgDyn)
+		SetIllumination(2, 1, cfgBright, 0);
+#else
+	if (cfgLighter)
+		SetIllumination(4, 1, cfgBright, 0);
+#endif
+	GBS_StartTimerProc(&mytmr, IN_TICKS(cfgPeriod) / 20, LightOff);
 }
 
 void LightOff()
 {
-  if (bl_key)
-    SetIllumination(1,1,0,0);   
-  if (bl_dis)
-    SetIllumination(0,1,0,0);   
-  if (use_vib)
-    SetVibration(0);    
-  count--;
-  if (count>0)
-  {
-    GBS_StartTimerProc(&mytmr,blink_delay,LightOn);
-  }
-  else
-  {
-    GBS_StartTimerProc(&mytmr,check_each,Check);    
-  }
+	if (cfgDispl)
+		SetIllumination(0, 1, 0, 0);
+	if (cfgKbd)
+		SetIllumination(1, 1, 0, 0);   
+#ifndef NEWSGOLD
+	if (cfgDyn)
+		SetIllumination(2, 1, 0, 0);
+#else
+	if (cfgLighter)
+		SetIllumination(4, 1, 0, 0);
+#endif
+	if (--count)
+		GBS_StartTimerProc(&mytmr, IN_TICKS(cfgPeriod) / 20, LightOn);
+	else
+		GBS_StartTimerProc(&mytmr, IN_TICKS(cfgInterval), Check); 
 }
 
 void Check(void)
 {
-  int missed_cnt=0;
-  if ((!IsUnlocked() && only_loc)||(!only_loc))
-  {
-    if (check==0 || check==2)
-      missed_cnt=GetMissedCallsCount();
-    if ((check==1 || check==2) && HasNewSMS())
-      missed_cnt++;
-  }
-  if (missed_cnt>0)
-  {
-    if (play_snd)
-    {
-/*      int one=1;
-      WSHDR *ews, *ews1;
-      ews=AllocWS(256);
-      ews1=AllocWS(256);
-      wsprintf(ews, "%t", "0:\\Sounds");       
-      wsprintf(ews1, "%t", "notify.wav");       
-      PlayFile(0xc, ews, ews1, 0, 167, &one);
-      FreeWS(ews);
-      FreeWS(ews1);*/
-      PlaySound(0, 0, 0, 60, 0);
-
-    }
-    if (bl_key || bl_dis || use_vib)
-    {
-      count=missed_cnt;
-      if (count>3)
-        count=3;
-      LightOn();
-    }
-  }
-  else
-    GBS_StartTimerProc(&mytmr,check_each,Check);
+	if (IsUnlocked() && cfgLockOnly)
+		GBS_StartTimerProc(&mytmr, cfgInterval, Check);
+	else
+	{
+		if ((count = GetMissedEventCount(cfgEvents)) > 0
+			&& (cfgDispl || cfgKbd || 
+#ifndef NEWSGOLD
+				cfgDyn)
+#else
+				cfgLighter)
+#endif
+			)
+		{
+			if (count > cfgMaxEv)
+				count = cfgMaxEv;
+			LightOn();
+		}
+	}
+	if (++cycl_cnt > CFGUPD_INTV)
+	{
+		InitConfig();
+		cycl_cnt = 0;
+	}
 }
 
 int main(void)
 {
-  InitConfig();
-  Check();
-  return 0;
+	InitConfig();
+	Check();
+	return 0;
 }
