@@ -386,13 +386,12 @@ volatile CLIST *cltop;
 
 volatile int contactlist_menu_id;
 volatile int request_close_clmenu;
-volatile int request_remake_clmenu;
+volatile int request_recount_clmenu;
 
 GBSTMR tmr_active;
 
 volatile int edchat_id;
 volatile int request_close_edchat;
-volatile int request_addec_edchat;
 CLIST *edcontact;
 
 //MUTEX contactlist_mtx;
@@ -645,6 +644,7 @@ int need_jump_to_top_cl;
 
 void contactlist_menu_ghook(void *data, int cmd)
 {
+  int i;
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -658,6 +658,15 @@ void contactlist_menu_ghook(void *data, int cmd)
       request_close_clmenu=0;
       GeneralFunc_flag1(contactlist_menu_id,1);
     }
+    if (request_recount_clmenu)
+    {
+      request_recount_clmenu=0;
+      i=CountContacts();
+      Menu_SetItemCountDyn(data,i);
+      SetCursorToMenuItem(data,0);
+      UpdateCLheader();
+      RefreshGUI();
+    }      
   }
 }
 
@@ -681,9 +690,8 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     {
       if (strlen(ContactT9Key))
       {
-	request_close_clmenu=1;
-	request_remake_clmenu=1;
 	ClearContactT9Key();
+        request_recount_clmenu=1;
       }
       CreateEditChat(t);
     }
@@ -695,9 +703,9 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (strlen(ContactT9Key))
     {
       BackSpaceContactT9();
-    L_RECOUNT:
-      request_remake_clmenu=1;
-      return(1);
+      request_recount_clmenu=1;
+      RefreshGUI();
+      return(-1);
     }
   }
   if (msg->gbsmsg->msg==KEY_DOWN)
@@ -706,7 +714,9 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (((i>='0')&&(i<='9'))||(i=='#')||(i=='*'))
     {
       AddContactT9Key(i);
-      goto L_RECOUNT;
+      request_recount_clmenu=1;
+      RefreshGUI();
+      return(-1);
     }
     if (i==GREEN_BUTTON) 
     {
@@ -745,25 +755,6 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
   SetMenuItemIcon(data, curitem, GetIconIndex(t));
 }
 
-void remake_clmenu(void)
-{
-  if (contactlist_menu_id)
-  {
-    request_remake_clmenu = 1;
-    if (IsGuiOnTop(contactlist_menu_id))
-    {
-      GeneralFunc_flag1(contactlist_menu_id, 1);
-    }
-    else
-    {
-      request_close_clmenu = 1;
-    }
-  }
-  else
-  {
-    create_contactlist_menu();
-  }
-}
 
 int strcmp_nocase(const char *s, const char *d)
 {
@@ -1125,7 +1116,13 @@ ProcessPacket(TPKT *p)
       start_vibra();
       set_my_status();
       ask_my_info();
-      remake_clmenu();
+      if (contactlist_menu_id)
+      {
+        request_recount_clmenu=1;
+        if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
+      }
+      else
+        create_contactlist_menu();
     }
     break;
   case T_STATUSCHANGE:
@@ -1215,8 +1212,6 @@ void method0(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  if (request_remake_clmenu)
-    return;
   DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
@@ -1426,11 +1421,6 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     if ((int)msg->data0==contactlist_menu_id)
     {
       contactlist_menu_id=0;
-      if (request_remake_clmenu)
-      {
-	request_remake_clmenu=0;
-	create_contactlist_menu();
-      }
     }
     if ((int)msg->data0==edchat_id)
     {
@@ -1517,7 +1507,6 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
 	if (contactlist_menu_id)
 	{
-	  request_remake_clmenu=0;
 	  if (IsGuiOnTop(contactlist_menu_id))
 	    GeneralFunc_flag1(contactlist_menu_id,1);
 	  else
