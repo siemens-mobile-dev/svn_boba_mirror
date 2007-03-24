@@ -22,6 +22,10 @@ unsigned int uiWidth, uiHeight;
 unsigned int playercsmid=0;
 void *playercsmadr=NULL;
 
+GBSTMR mytmr;
+int showstate=0;
+volatile int readytochangestate=0;
+
 const char msg_pa[]="Player active!";
 const char percent_t[]="%t";
 
@@ -32,6 +36,12 @@ void RereadSettings()
   //========================
   uiWidth  = cfgW-1;
   uiHeight = cfgH-1;
+}
+
+void tmrproc_readychange(void)
+{
+  readytochangestate=1;
+  GBS_StartTimerProc(&mytmr,3*216,tmrproc_readychange);
 }
 
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
@@ -46,24 +56,69 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       RereadSettings();
     }
   }
-  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
   if (playercsmid)
   {
     //Проверяем, есть ли плейер
-    WSHDR **csmp=(WSHDR **)FindCSMbyID(playercsmid);
+    CSM_RAM *csmp=FindCSMbyID(playercsmid);
     if (csmp)
     {
-      WSHDR *fn=csmp[0x2C/4];
+      WSHDR *fn=((WSHDR **)csmp)[0x2C/4];
       if (!fn) goto L_ACTIVE;
       if (!fn->wsbody) goto L_ACTIVE;
       if (fn->wsbody[0])
       {
-	wstrcpy(ws1,fn);
+	if (readytochangestate)
+	{
+	  readytochangestate=0;
+	  if (showstate)
+	  {
+	    WSHDR **wws=((WSHDR ***)csmp)[(0x170/4)]-1;
+	    if (wws)
+	    {
+	      WSHDR *tws;
+	      while(1)
+	      {
+		if (showstate>4) goto ZEROSTATE;
+		if (!(tws=wws[showstate++])) continue;
+		if (!tws->wsbody) continue;
+		if (tws->wsbody[0]) break;
+	      }
+	      wstrcpy(ws1,tws);
+	      {
+		//Патчим строку на предмет win1251
+		int i=1;
+		int c;
+		while(i<=ws1->wsbody[0])
+		{
+		  c=ws1->wsbody[i];
+		  if (c==0xA8) c=0x401;
+		  if (c==0xAA) c=0x404;
+		  if (c==0xAF) c=0x407;
+		  if (c==0xB8) c=0x451;
+		  if (c==0xBA) c=0x454;
+		  if (c==0xBF) c=0x457;
+		  if ((c>=0xC0)&&(c<0x100)) c+=0x350;
+		  ws1->wsbody[i++]=c;
+		}
+	      }
+	    }
+	    else
+	      goto ZEROSTATE;
+	  }
+	  else
+	  {
+	  ZEROSTATE:
+	    showstate=0;
+	    wstrcpy(ws1,fn);
+	    showstate++;
+	  }
+	}
       }
       else
       {
       L_ACTIVE:
 	wsprintf(ws1,percent_t,msg_pa);
+	showstate=0;
       }
     }
     else
@@ -84,8 +139,10 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     {
       playercsmid=p->id;
       wsprintf(ws1,percent_t,msg_pa);
+      showstate=0;
     }
   }
+  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
   if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
   {
     GUI *igui = GetTopGUI();
@@ -93,16 +150,16 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     {
 #ifdef ELKA
       {
-        void *canvasdata = BuildCanvas();
+	void *canvasdata = BuildCanvas();
 #else
-      void *idata = GetDataOfItemByID(igui, 2);
-      if (idata)
-      {
-        void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+	void *idata = GetDataOfItemByID(igui, 2);
+	if (idata)
+	{
+	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
-        DrawCanvas(canvasdata, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, 1);
-        DrawString(ws1, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, SMALL_FONT, 0x20,
-                     GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
+	  DrawCanvas(canvasdata, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, 1);
+	  DrawString(ws1, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, SMALL_FONT, 0x20,
+		     GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
   }
@@ -113,6 +170,7 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
+  GBS_DelTimer(&mytmr);
   FreeWS(ws1);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
@@ -131,5 +189,6 @@ int main(void)
   UnlockSched();
   ws1=AllocWS(128);
   wsprintf(ws1,"%t","LastFMD(C)Rst7");
+  GBS_StartTimerProc(&mytmr,3*216,tmrproc_readychange);
   return 0;
 }
