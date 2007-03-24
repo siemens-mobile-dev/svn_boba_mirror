@@ -718,7 +718,7 @@ __arm void LoadLibrary(void)
   pLIB_TOP=lt;
 #undef LIB_EMPTY
 }
-
+extern void InitPngBitMap(void);
 __arm void MyIDLECSMonCreate(void *data)
 {
   static const int smallicons[2]={(int)DEFAULT_DISK ":\\ZBin\\img\\elf_small.png",0};
@@ -756,6 +756,7 @@ __arm void MyIDLECSMonCreate(void *data)
 #endif
   CreateHELPER_PROC();
   LoadLibrary();
+  InitPngBitMap();
   RegExplorerExt(&elf_reg);
   SUBPROC((void *)LoadDaemons,0,DEFAULT_DISK ":\\ZBin\\Daemons\\");
   extern BXR1(void *, void (*)(void *));

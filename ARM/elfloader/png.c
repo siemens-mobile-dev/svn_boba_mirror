@@ -1,5 +1,4 @@
 #include "..\inc\swilib.h"
-#include <csetjmp>
 
 #define number 8
 
@@ -200,6 +199,7 @@ typedef struct
 }PNGLIST;
 
 volatile __no_init PNGLIST * pltop;
+volatile __no_init char *bitmap;
 
 #pragma inline
 int tolower(int C)
@@ -273,8 +273,32 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   }
   else
   {
-    char*next=strcpy_tolow(fname,DEFAULT_FOLDER);
-    print10(next,pic);
+    if (bitmap)
+    {
+      if (bitmap[pic>>2]&((unsigned int)0x80>>((pic&3)<<1)))  // Есть запись в битмапе
+      {
+        if (bitmap[pic>>2]&((unsigned int)0x40>>((pic&3)<<1)))  
+        {
+          char*next=strcpy_tolow(fname,DEFAULT_FOLDER); // Картинка вроде как есть на диске
+          print10(next,pic);
+        } 
+        else return(0);                                // Картинки нет - выходим
+      }
+      else 
+      {
+        bitmap[pic>>2]|=(unsigned int)0x80>>((pic&3)<<1);       // Записи нет, ставим флаг что есть
+        char*next=strcpy_tolow(fname,DEFAULT_FOLDER);
+        print10(next,pic);
+        img=create_imghdr(fname);                 // Пробуем создать
+        if (img)
+        {
+          bitmap[pic>>2]|=(unsigned int)0x40>>((pic&3)<<1);    
+          goto L_PIC_FOUNDED;
+        }
+        else  return (0);
+      }
+    }
+    else return(0);
   }
   LockSched();
   pl=(PNGLIST *)(&pltop);
@@ -300,6 +324,7 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   //Ничего не нашли, теперь пробуем добавить
   img=create_imghdr(fname);
   //if (!img) return (0); //Нечего добавлять
+L_PIC_FOUNDED:  
   cur=malloc(sizeof(PNGLIST)); //Создаем элемент списка
   cur->pngname=malloc(strlen(fname)+1);
   strcpy(cur->pngname,fname);
@@ -341,4 +366,13 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   }
   while(pl); //Пока есть элементы, освобождаем их
   return(cur->img);
+}
+
+void InitPngBitMap(void)
+{
+  if (!bitmap)
+  {
+    bitmap=malloc(0x10000/8*2);
+  }
+  memset((void*)bitmap,0,0x10000/8*2);
 }
