@@ -571,8 +571,8 @@
 078C: 0xA05002E9 ; 1E3: __thumb int utf8_2ws(WSHDR *ws,char *utf8_str, unsigned int maxLen);
 
 0790: 0xA0954357 ; 1E4: __thumb int GetPicNByUnicodeSymbol(int wchar);
-;794:              ; 1E5: 
-;798:              ; 1E6: 
+0794: 0xA0A23519 ; 1E5: __thumb int EDIT_OpenOptionMenuWithUserItems(void *gui, void (*itemhandler)(USR_MENU_ITEM *item), int zero, int to_add);
+0798: 0xA0959D0D ; 1E6: __thumb void Menu_SetItemCountDyn(void *gui, int n);
 ;79C:              ; 1E7: 
 ;7A0:              ; 1E8: 
 ;7A4:              ; 1E9: 

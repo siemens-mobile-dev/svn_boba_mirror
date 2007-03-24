@@ -367,6 +367,7 @@
 078C: 0xA01F60CD ; 1E3: __thumb int utf8_2ws(WSHDR *ws,char *utf8_str, unsigned int maxLen);
 0790: 0xA097674F ; 1E4: __thumb int GetPicNByUnicodeSymbol(int wchar);
 0794: 0xA0A12145 ; 1E5: __thumb int EDIT_OpenOptionMenuWithUserItems(void *gui, void (*itemhandler)(USR_MENU_ITEM *item), int zero, int to_add);
+0798: 0xA097C065 ; 1E6: __thumb void Menu_SetItemCountDyn(void *gui, int n);
 #pragma disable old_equal_ff
 +0
 
