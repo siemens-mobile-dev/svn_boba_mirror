@@ -1,6 +1,70 @@
 #include "../inc/swilib.h"
 #include "string_util.h"
 
+/////////////////////////////////////////// Разный стафф для замены спецсимволов
+
+// Структура, описывающая, что на что менять
+typedef struct
+{
+  char mask[7];
+  char replace;
+}REPL_ARRAY;
+
+// Сами замены и их количество
+const int Repl_chars_count = 5;
+REPL_ARRAY Repl_chars[] = {"&apos;\0",0x27,
+                           "&quot;\0",'"',
+                           "&lt;\0\0\0", '<',
+                           "&gt;\0\0\0", '>',
+                           "&amp;\0\0", '&',                   
+};
+
+/*
+    Получить спецсимвол по его маске
+IN: mask_begin - строка символов
+    out_ofs - число, к которому прибавится длина обработанной последовательности
+OUT: out_ofs - смещение в строке, откуда начинаются необработанные данные
+    <return> - спецсимвол
+*/
+char GetSpecialSym(char *mask_begin, int *out_ofs)
+{
+  int i=0;
+  int replen;
+  char rep_ex[10];
+  if(*mask_begin!='&')return *(mask_begin);
+  for(i=0;i<Repl_chars_count;i++)
+  {
+    replen = strlen(Repl_chars[i].mask);  // Определяем длину очередной маски
+    zeromem(rep_ex,10);
+    strncpy(rep_ex,mask_begin,replen);    // Копируем строку такой длины с текущей позиции
+    if(!strcmp(rep_ex,Repl_chars[i].mask))// Если совпало с очередной маской
+    {
+      *out_ofs+=replen-1;                   // Увеличиваем обработанную длину на длину маски
+      return Repl_chars[i].replace;       // Возвращаем символ для замены
+    }
+  }
+  return *(mask_begin);       //  Масок не нашлось, возвращаем как есть
+}
+
+
+char *Replace_Special_Syms(char *unrep_str)
+{
+  unsigned int unrep_len=strlen(unrep_str);
+  char *rep_buffer = malloc(unrep_len+1);
+  zeromem(rep_buffer, unrep_len+1);
+  char tmp=0;
+  unsigned int rpl_c=0;
+  for(int j=0;j<unrep_len;j++)
+  {
+    tmp = *(unrep_str+j);
+    tmp = GetSpecialSym(unrep_str+j,&j);
+    //ShowMSG(1,(int)"fnd");
+    rep_buffer[rpl_c++]=tmp;
+  }
+  rep_buffer = realloc(rep_buffer,rpl_c+1);
+  return rep_buffer;
+}
+
 /* Вернуть значение параметра по имени параметра из строки вида:
  nonce="2444323444",qop="auth",charset=utf-8,algorithm=md5-sess
 

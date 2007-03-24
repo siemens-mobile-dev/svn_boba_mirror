@@ -32,6 +32,9 @@
 #define color(x) (char *)(&(x))
 #endif
 
+#define SCR_START YDISP
+
+
 typedef struct
 {
   int buf_size;
@@ -159,5 +162,5 @@ typedef struct
 
 void SendAnswer(char *str);
 
-void start_vibra();
+void Vibrate(int Req_Vibra_Count);
 #endif

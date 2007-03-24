@@ -11,13 +11,13 @@ unsigned int conference=0x18C;
 unsigned int noauth=0x185;
 unsigned int ask=0x185;
 
-unsigned int message=0x24C;
+unsigned int message=0x24C;//0x22E;
 unsigned int system=0x24C;
 
-unsigned int online=0x22C;
+unsigned int online=0x22C;//0x22D;
 unsigned int unavailable=0x306;
 unsigned int error=0x185;
-unsigned int chat=0x18C;
+unsigned int chat=0x18C;//0x22B;
 unsigned int away=0x22F;
 unsigned int xa=0x17A;
 unsigned int dnd=0x231;
@@ -52,43 +52,37 @@ char* Roster_getIconByStatus(char* path_to_pic, char status) //вернет путь к кар
 #else
 int Roster_getIconByStatus(char status) //вернет номер картинки по статусу
 {
-  unsigned int img_num=0;
-  
+  int img_num=0;
+
   switch (status) {
-    case 0:
+    case PRESENCE_ONLINE:
       img_num=online;
       break;
-    case 1:
+    case PRESENCE_OFFLINE:
       img_num=unavailable;
       break;
-    case 2:
-      img_num=error;
-      break;
-    case 3:
+    //case PRESENCE_ERROR: //что-то нужно придумать
+    //  img_num=error;
+    //  break;
+    case PRESENCE_CHAT:
       img_num=chat;
       break;
-    case 4:
+    case PRESENCE_AWAY:
       img_num=away;
       break;
-    case 5:
+    case PRESENCE_XA:
       img_num=xa;
       break;
-    case 6:
+    case PRESENCE_DND:
       img_num=dnd;
       break;
-    case 7:
+    case PRESENCE_INVISIBLE:
       img_num=invisible;
       break;
-    case 8:
+    case PRESENCE_UNSUBSCRIBED:
       img_num=noauth;
       break;
-    case 9:
-      img_num=ask;
-      break;
-    case 10:
-      img_num=noauth;
-      break;
-    case 11:
+    case PRESENCE_SUBSCRIBE:
       img_num=ask;
       break;
     case 50: // иконка сообшения, не уверен что хорошо её сюда пихать, но пусть пока будет

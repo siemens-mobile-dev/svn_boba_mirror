@@ -1,5 +1,6 @@
 #include "..\inc\swilib.h"
 #include "main.h"
+#include "string_util.h"
 #include "xml_parser.h"
 
 int IsSpace (char c){
@@ -131,8 +132,10 @@ void EndAttr(void){
   tmp2->name=malloc(strlen(AttrName)+1);
   strcpy(tmp2->name,AttrName);
   if(strlen(AttrValue)>0){
-   tmp2->param=malloc(strlen(AttrValue)+1);
-   strcpy(tmp2->param,AttrValue);
+    char *newattrval = Replace_Special_Syms(AttrValue);
+   tmp2->param=malloc(strlen(newattrval)+1);
+   strcpy(tmp2->param,newattrval);
+   mfree(newattrval);
   }
   if(!curattr){
     attribs=tmp2;
@@ -340,8 +343,9 @@ void *XMLDecode(char *buf, int size){
 
 			if (c == '<'){
                           if(strlen(Text)>0){
-                            tmp->value=malloc(strlen(Text)+1);
-                            strcpy(tmp->value,Text);
+                            //tmp->value=malloc(strlen(Text)+1);
+                            //strcpy(tmp->value,Text);
+                            tmp->value = Replace_Special_Syms(Text);
                           }
                           strcpy(Text,"");
                           MSState = MS_BEGINTAG;

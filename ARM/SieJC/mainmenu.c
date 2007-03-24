@@ -102,7 +102,8 @@ void MM_Show()
   S_ICONS[1]=(int)confpic;
   menuitems[2].icon = S_ICONS+1;
 #else
-  menuitems[1].icon = Roster_getIconByStatus(My_Presence);
+  S_ICONS[0]=Roster_getIconByStatus(My_Presence);
+  menuitems[1].icon = S_ICONS;
 #endif  
   patch_header(&menuhdr);
   MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,N_ITEMS,0,0);

@@ -148,12 +148,14 @@ void CList_RedrawCList()
           Roster_getIcon(path_to_pic, ClEx, resEx);
           Roster_DrawIcon(1, start_y, (int)path_to_pic);   
 #else
-          if (CList_GetUnreadMessages()>0)
-            Roster_DrawIcon(1, start_y, Roater_getIconByStatus(50)) ; //иконка сообщения
-        else 
-          icon_num=Roster_getIcon(ClEx, resEx);
-          Roster_DrawIcon(1, start_y, icon_num);     
+          if (resEx->has_unread_msg)
+            icon_num=Roster_getIconByStatus(50); //иконка сообщения
+         else 
+           icon_num=Roster_getIcon(ClEx, resEx);
+  
+           Roster_DrawIcon(1, start_y, icon_num) ; //иконка сообщения
 #endif          
+
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
         }
         if(Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg)i++;

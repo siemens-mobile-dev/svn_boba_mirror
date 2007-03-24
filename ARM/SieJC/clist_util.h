@@ -14,8 +14,7 @@
 
 #define CLIST_FONT SMALL_FONT     // Ўрифт контакт-листа
 
-#define CLIST_Y1 5               // ad: меньше сделал (26->5) 
-
+#define CLIST_Y1 5 + SCR_START               // ad: меньше сделал (26->5) 
 /* ACHTUNG
 #ifdef STD_PALETTE
 #define CURSOR 6                 // ad: цвет курсора

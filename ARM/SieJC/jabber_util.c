@@ -980,8 +980,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     }
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
     extern volatile int vibra_count;
-    vibra_count=1;
-    start_vibra();
+    Vibrate(1);
   }  
 }
 

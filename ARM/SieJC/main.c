@@ -55,9 +55,13 @@ extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 extern const int USE_SASL; 
 extern const int USE_ZLIB; 
+
+extern const unsigned int IDLE_ICON_X; 
+extern const unsigned int IDLE_ICON_Y; 
+
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.9-Z";
+const char VERSION_VERS[] = "0.9.9_1-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -142,32 +146,38 @@ void patch_input(INPUTDIA_DESC* inp)
 //===============================================================================================
 
 GBSTMR tmr_vibra;
-volatile int vibra_count;
+volatile int Vibra_Count;
 
-char My_JID[128];
-char My_JID_full[128];
-
-
-void start_vibra()
+void _start_vibra()
 {
-  void stop_vibra(void);
+  void _stop_vibra(void);
   if(Is_Vibra_Enabled)
   {
     SetVibration(VIBRA_POWER);
-    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
+    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,_stop_vibra);
   }  
 }
 
-void stop_vibra(void)
+void _stop_vibra(void)
 {
   SetVibration(0);
-  if (--vibra_count)
+  if (--Vibra_Count)
   {
-    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
+    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,_start_vibra);
   }
 }
 
+void Vibrate(int Req_Vibra_Count)
+{
+  if(Vibra_Count)return;
+  Vibra_Count = Req_Vibra_Count;
+  _start_vibra();
+}
+
 //===============================================================================================
+char My_JID[128];
+char My_JID_full[128];
+
 int DNR_ID=0;
 int DNR_TRIES=3;
 
@@ -316,7 +326,7 @@ int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomp
   d_stream.avail_in = (uInt)comprLen;
   d_stream.next_out = (Byte*)uncompr;
   d_stream.avail_out = (uInt)uncomprLen;
-  err = inflate(&d_stream, Z_NO_FLUSH);
+  err = inflate(&d_stream, /*Z_NO_FLUSH*/Z_SYNC_FLUSH);
   if(err<0) goto unerr;
   return 0;
 }
@@ -715,7 +725,7 @@ void onRedraw(MAIN_GUI *data)
     font_color = 7;
     bgr_color  = 2;
   }  
-  DrawRoundedFrame(0,0,scr_w-1,scr_h-1,0,0,0,
+  DrawRoundedFrame(0,SCR_START,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(bgr_color));
   
@@ -735,22 +745,25 @@ void onRedraw(MAIN_GUI *data)
 char mypic[128];
 
   if (CList_GetUnreadMessages()>0)
-      Roster_DrawIcon(1, 1, (int) Roster_getIconByStatus(mypic,50)); //иконка сообщения
+      Roster_DrawIcon(1, SCR_START+1, (int) Roster_getIconByStatus(mypic,50)); //иконка сообщения
   else 
-    Roster_DrawIcon(1, 1, (int) Roster_getIconByStatus(mypic, My_Presence));
+    Roster_DrawIcon(1, SCR_START+1, (int) Roster_getIconByStatus(mypic, My_Presence));
 
 #else
+  int img_num=0;
   if (CList_GetUnreadMessages()>0)
-      Roster_DrawIcon(1, 1, Roater_getIconByStatus(50)); //иконка сообщения
+    img_num=Roster_getIconByStatus(50); //иконка сообщения
   else 
-    Roster_DrawIcon(1, 1, Roater_getIconByStatus(My_Presence));
+    img_num=Roster_getIconByStatus(My_Presence);
+
+  Roster_DrawIcon(1, SCR_START+1, img_num); //иконка сообщения
 #endif  
-  DrawString(data->ws1,16,3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,16,SCR_START+3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 
   if(Jabber_state!=JS_ONLINE)
   {
     wsprintf(data->ws1,"%t", logmsg);
-    DrawString(data->ws1,1,15,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+    DrawString(data->ws1,1,SCR_START+15,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
   }
   
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
@@ -835,6 +848,13 @@ void Disp_State()
   char q[40];
   sprintf(q,"Jabber_state=%d\nOut bytes: %d", Jabber_state, out_bytes_count);
   ShowMSG(0,(int)q);
+  
+  const char xz[]="<<смотрит &quot;Мастер и Маргарита&quot;>>";
+  char *xzx=malloc(strlen(xz)+1);
+  strcpy(xzx,xz);
+  char *x=Replace_Special_Syms(xzx);
+  ShowMSG(0,(int)x);
+  mfree(x);
 }
 
 #ifndef NEWSGOLD
@@ -910,7 +930,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         SUBPROC((void *)create_connect);
       }
       
-      if(connect_state==2)
+      if(connect_state==2 && Jabber_state==JS_ONLINE)
       {
         Init_Message(CList_GetActiveContact(), NULL);                        
       }
@@ -1071,6 +1091,42 @@ void do_reconnect(void)
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  {
+
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+    if (IsGuiOnTop(idlegui_id))
+    {
+      GUI *igui=GetTopGUI();
+      if (igui)
+      {
+	void *idata=GetDataOfItemByID(igui,2);
+	if (idata)
+	{
+	  void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+
+#ifdef USE_PNG_EXT
+char mypic[128];
+
+  if (CList_GetUnreadMessages()>0)
+     Roster_getIconByStatus(mypic,50); //иконка сообщения
+  else 
+    Roster_getIconByStatus(mypic, My_Presence);
+          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);          
+	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,(int)mypic);
+#else          
+          int mypic=0;
+          if (CList_GetUnreadMessages()>0)
+            mypic=Roster_getIconByStatus(50); //иконка сообщения
+          else 
+            mypic=Roster_getIconByStatus(My_Presence);
+          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);          
+	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);          
+#endif
+	}
+      }
+    } 
+  }
   if(Quit_Required)
   {
     csm->csm.state=-3;
@@ -1141,8 +1197,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         connect_state=0;
         Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
-        vibra_count=4;
-        start_vibra();
+        Vibrate(4);
         REDRAW();
         //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
         break;
@@ -1223,12 +1278,10 @@ int main(char *exename, char *fname)
     ShowMSG(1,(int)"Введите логин/пароль!");
     return 0;
   }
-  UpdateCSMname();
-  
-  Check_Settings_Cleverness();
-  
+  UpdateCSMname(); 
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();
+  Check_Settings_Cleverness();  
   return 0;
 }
