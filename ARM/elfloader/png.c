@@ -256,56 +256,16 @@ __arm void print10(char *s, unsigned int v)
   *s='\0';
 }
 
-
-__arm IMGHDR* PatchGetPIT(unsigned int pic)
+__arm IMGHDR *find_png_in_cache(char *png_name)
 {
-  IMGHDR * img;
-  unsigned int i;
-  char fname[256];
-  
   PNGLIST *pl;
   PNGLIST *pl_prev;
-  PNGLIST *cur;
-  
-  if ((pic>>28)==0xA)
-  {
-    strcpy_tolow(fname,(char*)pic);
-  }
-  else
-  {
-    if (bitmap)
-    {
-      if (bitmap[pic>>2]&((unsigned int)0x80>>((pic&3)<<1)))  // Есть запись в битмапе
-      {
-        if (bitmap[pic>>2]&((unsigned int)0x40>>((pic&3)<<1)))  
-        {
-          char*next=strcpy_tolow(fname,DEFAULT_FOLDER); // Картинка вроде как есть на диске
-          print10(next,pic);
-        } 
-        else return(0);                                // Картинки нет - выходим
-      }
-      else 
-      {
-        bitmap[pic>>2]|=(unsigned int)0x80>>((pic&3)<<1);       // Записи нет, ставим флаг что есть
-        char*next=strcpy_tolow(fname,DEFAULT_FOLDER);
-        print10(next,pic);
-        img=create_imghdr(fname);                 // Пробуем создать
-        if (img)
-        {
-          bitmap[pic>>2]|=(unsigned int)0x40>>((pic&3)<<1);    
-          goto L_PIC_FOUNDED;
-        }
-        else  return (0);
-      }
-    }
-    else return(0);
-  }
   LockSched();
   pl=(PNGLIST *)(&pltop);
   pl_prev=NULL;  
   while((pl=pl->next))
   {
-    if (!strcmp(pl->pngname,fname))
+    if (!strcmp(pl->pngname,png_name))
     {
       //Найден, переносим в начало и выходим
       if (pl_prev)
@@ -321,10 +281,66 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
     pl_prev=pl; //Текущий обработанный - теперь предыдущий
   }
   UnlockSched();
+  return (0);
+}
+
+__arm IMGHDR* PatchGetPIT(unsigned int pic)
+{
+  IMGHDR * img;
+  unsigned int i;
+  char fname[256];
+  
+  PNGLIST *pl;
+  PNGLIST *pl_prev;
+  PNGLIST *cur;
+  
+  if ((pic>>28)==0xA)
+  {
+    strcpy_tolow(fname,(char*)pic);
+    img=find_png_in_cache(fname);
+    if (img) return (img);
+    img=create_imghdr(fname);
+  }
+  else
+  {
+    if (bitmap && (pic<65536))
+    {
+      if (bitmap[pic>>2]&((unsigned int)0x80>>((pic&3)<<1)))  // Есть запись в битмапе
+      {
+        if (bitmap[pic>>2]&((unsigned int)0x40>>((pic&3)<<1)))  
+        {
+          char *next=strcpy_tolow(fname,DEFAULT_FOLDER); // Картинка вроде как есть на диске
+          print10(next,pic);
+          img=find_png_in_cache(fname);
+          if (img) return (img);
+          img=create_imghdr(fname);          
+        } 
+        else return(0);                                // Картинки нет - выходим
+      }
+      else 
+      {
+        bitmap[pic>>2]|=(unsigned int)0x80>>((pic&3)<<1);       // Записи нет, ставим флаг что есть
+        char *next=strcpy_tolow(fname,DEFAULT_FOLDER);
+        print10(next,pic);
+        img=find_png_in_cache(fname);
+        if (img)
+        {
+          bitmap[pic>>2]|=(unsigned int)0x40>>((pic&3)<<1);    
+          return (img);
+        }        
+        img=create_imghdr(fname);                 // Пробуем создать
+        if (img)
+        {
+          bitmap[pic>>2]|=(unsigned int)0x40>>((pic&3)<<1);   
+        }
+        else  return (0);
+      }
+    }
+    else return(0);
+  }
   //Ничего не нашли, теперь пробуем добавить
-  img=create_imghdr(fname);
+  
   //if (!img) return (0); //Нечего добавлять
-L_PIC_FOUNDED:  
   cur=malloc(sizeof(PNGLIST)); //Создаем элемент списка
   cur->pngname=malloc(strlen(fname)+1);
   strcpy(cur->pngname,fname);
