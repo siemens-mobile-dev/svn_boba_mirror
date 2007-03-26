@@ -1728,12 +1728,12 @@ __swi __arm png_uint_32 png_get_rowbytes(png_structp png_ptr,png_infop info_ptr)
 //pattern=00,28,??,D0,00,29,??,D0,C8,68,70,47,00,20,70,47
 
 #pragma swi_number=0x0160
-__swi __arm png_read_row(png_structp png_ptr,png_bytep row,png_bytep dsp_row);
+__swi __arm void png_read_row(png_structp png_ptr,png_bytep row,png_bytep dsp_row);
 //thumb
 //pattern=??,B5,04,1C,??,??,??,??,05,22,??,??,??,??,??,??,??,??,1C,22,47,31
 
 #pragma swi_number=0x0161
-__swi __arm png_init_io(png_structp png_ptr, int fp);
+__swi __arm void png_init_io(png_structp png_ptr, int fp);
 //arm
 //pattern=94,10,80,e5,1e,ff,2f,e1
 

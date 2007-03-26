@@ -74,6 +74,12 @@ const char percent_t[]="%t";
 const char empty_str[]="";
 const char I_str[]="I";
 
+//Подсветка
+extern const unsigned int ILL_DISP_RECV;
+extern const unsigned int ILL_KEYS_RECV;
+extern const unsigned int ILL_DISP_SEND;
+extern const unsigned int ILL_KEYS_SEND;
+
 //=============================Проигрывание звука=======================
 unsigned int Is_Sounds_Enabled = 1;
 
@@ -1015,6 +1021,9 @@ void get_answer(void)
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         REDRAW();
 	Play(sndMsg);
+//пока заккоментил, надо разбираться как тушить...
+//	SetIllumination(0,1,ILL_DISP_RECV,0);
+//	SetIllumination(1,1,ILL_KEYS_RECV,0);
         break;
       case T_SSLRESP:
         LockSched();
@@ -1023,6 +1032,8 @@ void get_answer(void)
         break;
       case T_SRV_ACK:
 	Play(sndMsgSent);
+	SetIllumination(0,1,ILL_DISP_SEND,0);
+	SetIllumination(1,1,ILL_KEYS_SEND,0);
       case T_CLIENT_ACK:
 	p=malloc(sizeof(PKT));
 	memcpy(p,&RXbuf,sizeof(PKT));

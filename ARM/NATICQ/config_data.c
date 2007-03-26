@@ -98,3 +98,17 @@ __root const char SMILE_FILE[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles.cfg";
 
 __root const CFG_HDR cfghdr24={CFG_UINT,"FontSize",0,6};
 __root const unsigned int ED_FONT_SIZE=1;
+
+//Подсветка
+__root const CFG_HDR cfghdr25={CFG_INT,"Display on Recv",0,100};
+__root const unsigned int ILL_DISP_RECV=30;
+
+__root const CFG_HDR cfghdr26={CFG_INT,"Keys on Recv",0,100};
+__root const unsigned int ILL_KEYS_RECV=10;
+
+__root const CFG_HDR cfghdr27={CFG_INT,"Display on Send",0,100};
+__root const unsigned int ILL_DISP_SEND=10;
+
+__root const CFG_HDR cfghdr28={CFG_INT,"Keys on Send",0,100};
+__root const unsigned int ILL_KEYS_SEND=0;
+
