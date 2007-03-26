@@ -198,8 +198,12 @@ typedef struct
   IMGHDR * img;
 }PNGLIST;
 
-volatile __no_init PNGLIST * pltop;
-volatile __no_init char *bitmap;
+volatile __no_init struct
+{
+  PNGLIST * pltop;
+  char *bitmap;
+};  
+//volatile __no_init 
 
 #pragma inline
 int tolower(int C)
@@ -293,7 +297,9 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   PNGLIST *pl;
   PNGLIST *pl_prev;
   PNGLIST *cur;
-  
+  unsigned int mask80;
+  unsigned int mask40;
+  char *bp;
   if ((pic>>28)==0xA)
   {
     strcpy_tolow(fname,(char*)pic);
@@ -305,9 +311,11 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   {
     if (bitmap && (pic<65536))
     {
-      if (bitmap[pic>>2]&((unsigned int)0x80>>((pic&3)<<1)))  // Есть запись в битмапе
+      mask40=(mask80=0x80UL>>((pic&3)<<1))>>1;
+      bp=bitmap+(pic>>2);
+      if ((i=*bp)&mask80)  // Есть запись в битмапе
       {
-        if (bitmap[pic>>2]&((unsigned int)0x40>>((pic&3)<<1)))  
+        if (i&mask40)  
         {
           char *next=strcpy_tolow(fname,DEFAULT_FOLDER); // Картинка вроде как есть на диске
           print10(next,pic);
@@ -319,19 +327,25 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
       }
       else 
       {
-        bitmap[pic>>2]|=(unsigned int)0x80>>((pic&3)<<1);       // Записи нет, ставим флаг что есть
+	LockSched();
+	*bp|=mask80; // Записи нет, ставим флаг что есть
+	UnlockSched();
         char *next=strcpy_tolow(fname,DEFAULT_FOLDER);
         print10(next,pic);
         img=find_png_in_cache(fname);
         if (img)
         {
-          bitmap[pic>>2]|=(unsigned int)0x40>>((pic&3)<<1);    
+	  LockSched();
+	  *bp|=mask40;
+	  UnlockSched();
           return (img);
-        }        
+        }
         img=create_imghdr(fname);                 // Пробуем создать
         if (img)
         {
-          bitmap[pic>>2]|=(unsigned int)0x40>>((pic&3)<<1);   
+	  LockSched();
+	  *bp|=mask40;
+	  UnlockSched();
         }
         else  return (0);
       }
