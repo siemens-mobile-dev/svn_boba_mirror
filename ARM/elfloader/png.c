@@ -398,11 +398,11 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   return(cur->img);
 }
 
-void InitPngBitMap(void)
+__arm void InitPngBitMap(void)
 {
   if (!bitmap)
   {
     bitmap=malloc(0x10000/8*2);
   }
-  memset((void*)bitmap,0,0x10000/8*2);
+  zeromem((void*)bitmap,0x10000/8*2);
 }

@@ -111,6 +111,7 @@ __arm int AddKeybMsgHook_end_impl(int (*proc)(int submsg,int msg))
 
 extern BXR1(void *, void (*)(void *));
 
+
 __arm void RemoveKeybMsgHook_impl(int (*proc)(int submsg,int msg))
 {
   PLIST *ptop=(PLIST*)(&KEY_TOP);
@@ -122,7 +123,7 @@ __arm void RemoveKeybMsgHook_impl(int (*proc)(int submsg,int msg))
       LockSched();
       prev->next=ptop->next;
       UnlockSched();
-      BXR1(ptop,ptop->mfree);
+      ptop->mfree(ptop);
       return;
     }
     prev=ptop;
