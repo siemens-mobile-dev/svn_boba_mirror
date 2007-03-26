@@ -585,7 +585,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     Log("MESS_LOST",mtext);
     return;
   }
-  TRESOURCE* cont = (contEx->group & 0x80 && mtype==MSG_GCHAT) ? contEx->res_list : CList_IsResourceInList(jid);
+  TRESOURCE* cont = (contEx->group & 0x80 && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT)) ? contEx->res_list : CList_IsResourceInList(jid);
   if(!cont)
   {
     // У контакта нет ресурсов или такого ресурса нет. Добавляем на первый же.
@@ -600,9 +600,16 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   char timestamp[]="[%02d:%02d] ";
   snprintf(timestamp, 12, timestamp, now_time.hour, now_time.min);
-  if(mtype==MSG_GCHAT)
+  switch(mtype)
+  {
+  case MSG_GCHAT:
   {
     char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
+    if(!conf_nickname)
+    {
+      extern const char _empty[];
+      conf_nickname=(char*)&_empty;
+    }
     mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+2+1);
     mess->muc_author = malloc(strlen(conf_nickname)+1);
     strcpy(mess->muc_author, conf_nickname);
@@ -619,15 +626,29 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
       strcat(mess->mess, ": ");
       strcat(mess->mess, mtext);
     }
+    break;
   }
-  else
+  case MSG_SUBJECT:
+    {
+      char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
+      char subj_set_to[] = " has set the subject: ";
+      mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+strlen(subj_set_to)+1);
+      mess->muc_author = malloc(strlen(conf_nickname)+1);
+      strcpy(mess->muc_author, conf_nickname);
+      strcpy(mess->mess, timestamp);
+      strcat(mess->mess, conf_nickname);
+      strcat(mess->mess, subj_set_to);
+      strcat(mess->mess, mtext);
+      break;      
+    }
+  default:
   {
     mess->mess = malloc(strlen(mtext)+strlen(timestamp)+1);
     strcpy(mess->mess, timestamp);
     strcat(mess->mess, mtext);
     mess->muc_author = NULL;
   }
-  
+  }
   mess->mtype=mtype;
   LockSched();
   if(!cont->log)
@@ -644,9 +665,13 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   mess->next=NULL;
   UnlockSched();
   
-  char *ansi_text = convUTF8_to_ANSI_STR(mtext);  
-  Add2History(CList_FindContactByJID(jid), datestr,ansi_text);
-  mfree(ansi_text);
+  extern const int WRITE_HISTORY, WRITE_MUC_HISTORY;
+  if((WRITE_HISTORY && !(mtype==MSG_GCHAT || mtype==MSG_SUBJECT)) || (WRITE_MUC_HISTORY && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT)))
+  {
+    char *ansi_text = convUTF8_to_ANSI_STR(mtext);  
+    Add2History(CList_FindContactByJID(jid), datestr,ansi_text);
+    mfree(ansi_text);
+  }
 }
 
 /*

@@ -315,11 +315,11 @@ void mGUI_onRedraw(GUI *data)
   
   Calc_Pages_Data();
   // Заголовок окна
-  DrawRoundedFrame(0,0,ScreenW()-1,FontSize*2+1,0,0,0,
+  DrawRoundedFrame(0,SCR_START,ScreenW()-1,SCR_START+FontSize*2+1,0,0,0,
 		   0,
 		   color(MESSAGEWIN_TITLE_BGCOLOR));
   
-  DrawRoundedFrame(0,FontSize+2,ScreenW()-1,ScreenH()-1,0,0,0,
+  DrawRoundedFrame(0,SCR_START+FontSize+2,ScreenW()-1,ScreenH()-1,0,0,0,
 		   0,
 		   color(MESSAGEWIN_BGCOLOR));
 
@@ -328,7 +328,7 @@ void mGUI_onRedraw(GUI *data)
   //str_2ws(ws_title, Resource_Ex->full_name,strlen(Resource_Ex->full_name));
   ascii2ws(ws_title, Resource_Ex->full_name);
 
-  DrawString(ws_title,1,1,ScreenW()-1,FontSize+1,SMALL_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);  
+  DrawString(ws_title,1,SCR_START+1,ScreenW()-1,SCR_START+FontSize+1,SMALL_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);  
   
   DISP_MESSAGE* ml = MessagesList;
   int i_ctrl=1;
@@ -370,11 +370,11 @@ void mGUI_onRedraw(GUI *data)
          CurrentMessage_Lines++;
       }
       
-      DrawRoundedFrame(0,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
+      DrawRoundedFrame(0,SCR_START+HIST_DISP_OFS+i*FontSize,ScreenW()-1,SCR_START+HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
 		   color(MsgBgColor),
 		   color(MsgBgColor));
     
-      DrawString(ml->mess,1,HIST_DISP_OFS+i*FontSize,ScreenW()-1,HIST_DISP_OFS+(i+1)*FontSize*2,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
+      DrawString(ml->mess,1,SCR_START+HIST_DISP_OFS+i*FontSize,ScreenW()-1,SCR_START+HIST_DISP_OFS+(i+1)*FontSize*2,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
       i++;
     }
     ml = ml->next;

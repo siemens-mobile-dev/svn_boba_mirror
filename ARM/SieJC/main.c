@@ -61,7 +61,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.9_1-Z";
+const char VERSION_VERS[] = "0.9.9_2-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -79,6 +79,7 @@ char Is_Vibra_Enabled = 1;
 char Is_Compression_Enabled = 0;
 
 const char percent_t[]="%t";
+const char _empty[]="";
 char empty_str[]="";
 char logmsg[512];
 
@@ -169,6 +170,7 @@ void _stop_vibra(void)
 
 void Vibrate(int Req_Vibra_Count)
 {
+  if(!Is_Vibra_Enabled)Vibra_Count=0;
   if(Vibra_Count)return;
   Vibra_Count = Req_Vibra_Count;
   _start_vibra();
@@ -410,7 +412,6 @@ void get_answer(void)
       IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
       tmp_buffer->xml_buffer = Decompr_Buffer;
       tmp_buffer->buf_size = strlen(Decompr_Buffer);
-      //Log("UZIP",Decompr_Buffer);
       GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
     }
   }
@@ -848,13 +849,6 @@ void Disp_State()
   char q[40];
   sprintf(q,"Jabber_state=%d\nOut bytes: %d", Jabber_state, out_bytes_count);
   ShowMSG(0,(int)q);
-  
-  const char xz[]="<<смотрит &quot;Мастер и Маргарита&quot;>>";
-  char *xzx=malloc(strlen(xz)+1);
-  strcpy(xzx,xz);
-  char *x=Replace_Special_Syms(xzx);
-  ShowMSG(0,(int)x);
-  mfree(x);
 }
 
 #ifndef NEWSGOLD

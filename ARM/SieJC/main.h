@@ -23,7 +23,7 @@
 // Общие функции модуля MAIN.C
 
 #define XML_BUFFER_SIZE 64*1024 // Размер буфера в байтах
-#define REC_BUFFER_SIZE 512 // Размер буфера приёма в байтах
+#define REC_BUFFER_SIZE 1024 // Размер буфера приёма в байтах
 #define UNP_BUFFER_SIZE 100*1024 // Размер буфера распаковки в байтах
 
 #ifdef STD_PALETTE
@@ -83,7 +83,8 @@ typedef enum
   MSG_CHAT,   // от контакта ко мне
   MSG_GCHAT,   // конференция
   MSG_SYSTEM,  // всякого рода сервисные сообщения
-  MSG_STATUS   // Статусные сообщения
+  MSG_STATUS,   // Статусные сообщения
+  MSG_SUBJECT   // Тема конференции 
 } MESS_TYPE;
 
 

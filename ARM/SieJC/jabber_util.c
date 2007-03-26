@@ -365,7 +365,7 @@ void Send_Initial_Presence_Helper()
 //Context: HELPER
 void _enterconference(MUC_ENTER_PARAM *param)
 {
-  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'/><history maxstanzas='%d'/></presence>";
+  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'><history maxstanzas='%d'/></x></presence>";
   char* magic = malloc(1024);
   sprintf(magic,magic_ex, My_JID_full, param->room_name,param->room_nick, param->mess_num);
   SendAnswer(magic);
@@ -962,7 +962,13 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
 */
 void Process_Incoming_Message(XMLNode* nodeEx)
 {
+  char Is_subj=0;
   XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");
+  if(!msgnode)
+  {
+    msgnode = XML_Get_Child_Node_By_Name(nodeEx,"subject");
+    Is_subj = 1;
+  }  
   if(msgnode)
   if(msgnode->value)
   {
@@ -977,6 +983,10 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       ShowMSG(1,(int)ansi_m);
       mfree(m);
       mfree(ansi_m);
+    }
+    if(Is_subj)
+    {
+      msgtype = MSG_SUBJECT;
     }
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
     extern volatile int vibra_count;

@@ -19,6 +19,14 @@ __root const CFG_CBOX_ITEM cfgcbox1[2]={"Host name","IP address"};
 __root const CFG_HDR cfghdr4={CFG_UINT,"Port",0,65535};
 __root const unsigned int JABBER_PORT=5222;
 
+__root const CFG_HDR cfghdr4346={CFG_CBOX,"History",0,2};
+__root const int WRITE_HISTORY = 0;
+__root const CFG_CBOX_ITEM cfgcbox1435[2]={"Disabled","Enabled"};
+
+__root const CFG_HDR cfghdr357835={CFG_CBOX,"MUC history",0,2};
+__root const int WRITE_MUC_HISTORY = 0;
+__root const CFG_CBOX_ITEM cfgcbox36546[2]={"Disabled","Enabled"};
+
 __root const CFG_HDR cfghdr5={CFG_STR_UTF8,"History path",0,127};
 __root const char HIST_PATH[128]="4:\\ZBin\\SieJC\\history\\";
 
