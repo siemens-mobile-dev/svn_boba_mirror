@@ -57,6 +57,9 @@ typedef int jmp_buf[11];
 
 #endif
 
+#define DISPLACE_OF_INCOMMINGGUI 0x34
+#define MSG_INCOMMING_CALL 0x6000
+
 #define MSG_HELPER_TRANSLATOR 0xDEAE
 #define MSG_RECONFIGURE_REQ 0xDEAF
 
@@ -184,9 +187,15 @@ typedef struct{
 } CSM_DESC;
 
 typedef struct{
+  int id;
+  int unk;
+  LLQ csm;
+} CSMQ;
+
+typedef struct{
   int under_idle_id;
   int idle_id;
-  void *csm_q;
+  CSMQ *csm_q;
 } CSMROOT;
 
 typedef struct{
