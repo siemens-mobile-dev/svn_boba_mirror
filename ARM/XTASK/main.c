@@ -3,6 +3,7 @@
 #include "conf_loader.h"
 
 CSM_DESC icsmd;
+int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
 
 WSHDR *ws_nogui;
@@ -127,6 +128,31 @@ int my_keyhook(int submsg, int msg)
   return(2);
 }
 
+volatile int callhide_mode=0;
+
+int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+{
+  int csm_result;
+  int icgui_id;
+  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
+  icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
+  if (!icgui_id) callhide_mode=0;
+  if (msg->msg==MSG_INCOMMING_CALL)
+  {
+    callhide_mode=1;
+  }
+  if (callhide_mode)
+  {
+    if (IsGuiOnTop(icgui_id))
+    {
+      extern void RotateCSMs(CSM_RAM *ucsm, void *selcsm);
+      RotateCSMs(CSM_root()->csm_q->csm.last,FindCSMbyID(CSM_root()->idle_id));
+      callhide_mode=0;
+    }
+  }
+  return csm_result;  
+}
+
 void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
@@ -154,7 +180,9 @@ void main(void)
       CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
       memcpy(&icsmd,icsm->constr,sizeof(icsmd));
       old_icsm_onClose=icsmd.onClose;
+      old_icsm_onMessage=icsmd.onMessage;
       icsmd.onClose=MyIDLECSM_onClose;
+      icsmd.onMessage=MyIDLECSM_onMessage;
       icsm->constr=&icsmd;
     }
     ws_nogui=AllocWS(256);

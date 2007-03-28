@@ -200,20 +200,16 @@ int GetNumberOfDialogs(void)
   return(count);
 }
 
-void SwapCSMS(int no_no_gui, void *selcsm)
+void RotateCSMs(CSM_RAM *ucsm, void *selcsm)
 {
   CSM_RAM *icsm; //Нижний CSM
-  CSM_RAM *ucsm; //Верхний CSM
+  //CSM_RAM *ucsm; //Верхний CSM
   CSM_RAM *wcsm; //Перемещаемый CSM
-  extern WSHDR *ws_nogui;
-  static const char my_color[]={0x00,0x00,0x00,0x32};
-
-  if (GetNumberOfDialogs()<2) return; //Нечего сворачивать
   if (!selcsm) return;
   do
   {
     icsm=under_idle;
-    ucsm=FindCSMbyID(my_csm_id);
+//    ucsm=FindCSMbyID(my_csm_id);
     wcsm=(CSM_RAM *)ucsm->prev; //Получаем перемещаемый CSM
     ((CSM_RAM *)(wcsm->prev))->next=ucsm; //CSM перед перемещаемым теперь указывает на верхний CSM
     ucsm->prev=wcsm->prev; //prev верхнего CSM указывает на CSM перед перемещаемым
@@ -223,6 +219,17 @@ void SwapCSMS(int no_no_gui, void *selcsm)
     wcsm->prev=icsm;
   }
   while(ucsm->prev!=selcsm);
+  return;
+}
+
+void SwapCSMs(int no_no_gui, void *selcsm)
+{
+  extern WSHDR *ws_nogui;
+  static const char my_color[]={0x00,0x00,0x00,0x32};
+
+  if (GetNumberOfDialogs()<2) return; //Нечего сворачивать
+  if (!selcsm) return;
+  RotateCSMs(FindCSMbyID(my_csm_id),selcsm);
   if (no_no_gui) return; //
   //Теперь рисуем "Нет GUI" на всякий случай
   DrawRoundedFrame(0,0+YDISP,ScreenW()-1,ScreenH()-1,0,0,0,
@@ -446,10 +453,10 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
     switch(i)
     {
     case LEFT_SOFT:
-      SwapCSMS(0,FindCSMbyID(CSM_root()->idle_id));
+      SwapCSMs(0,FindCSMbyID(CSM_root()->idle_id));
       return(1);
     case ENTER_BUTTON:
-      SwapCSMS(0,get_nlitem(GetCurMenuItem(data))->p);
+      SwapCSMs(0,get_nlitem(GetCurMenuItem(data))->p);
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     }
@@ -492,7 +499,7 @@ typedef struct
 
 void method0(DUMMY_GUI *data)
 {
-  SwapCSMS(1,FindCSMbyID(CSM_root()->idle_id));
+  SwapCSMs(1,FindCSMbyID(CSM_root()->idle_id));
   do_idle=0;
   GeneralFuncF1(1);
 }
