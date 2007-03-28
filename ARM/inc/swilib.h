@@ -75,6 +75,10 @@ typedef int jmp_buf[11];
 #define LGP_DOIT_PIC 0x7FFFC0FB
 #else
 
+
+#define DISPLACE_OF_INCOMMINGGUI 0x30
+#define MSG_INCOMMING_CALL 0x6F
+
 #define MSG_HELPER_TRANSLATOR 0x3F0
 #define MSG_RECONFIGURE_REQ 0x3F1
 
@@ -1662,7 +1666,7 @@ __swi	__arm	void SetPropTo_Obj5(DRWOBJ *, RECT *, int zero, IMGHDR *Image);
 //pattern=??,B5,??,1C,??,20,??,70,??,70,??,1C,??,1C,??,25,??,30,??,22,??,70,??,??,??,??,??,20,??,61,??,76,??,76,??,76,??,61,??,1C,??,BD
 
 #pragma swi_number=0x0152
-__swi	__arm	int CreateMenu(int is_small,int zero1,const MENU_DESC *menu, const HEADER_DESC *hdr,int zero2,int n_items,void *user_pointer,int *to_remove);
+__swi	__arm	int CreateMenu(int is_small,int zero1,const MENU_DESC *menu, const HEADER_DESC *hdr,int start_item,int n_items,void *user_pointer,int *to_remove);
 //thumb
 //pattern=??,B5,??,B0,??,1C,??,AA,??,1C,??,1C,??,CA,??,91,??,21,??,9F,??,91,??,92,??,1C,??,1C,??,90,??,1C,??,97,??,??,??,??,??,B0,??,BD
 
