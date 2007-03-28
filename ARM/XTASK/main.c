@@ -37,6 +37,7 @@ int mode_red;
 
 int my_keyhook(int submsg, int msg)
 {
+#ifdef NEWSGOLD  
   void *icsm=FindCSMbyID(CSM_root()->idle_id);
   if ((submsg==RED_BUTTON)&&(RED_BUT_MODE))
   {
@@ -90,6 +91,7 @@ int my_keyhook(int submsg, int msg)
       return(2);
     }
   }
+
 #ifdef ELKA
   if (submsg!=POC_BUTTON) return(0);
 #else
@@ -126,6 +128,35 @@ int my_keyhook(int submsg, int msg)
     if (ENA_LONG_PRESS) mode=1;
   }
   return(2);
+#else
+  if (mode==-1) return (0);
+  {
+    if (msg==KEY_UP)
+    {
+      mode=0;
+      return (0);
+    }
+    if (msg==KEY_DOWN)
+    {
+      switch (submsg)
+      {
+      case '*':
+        mode=1;
+        return (0);
+        
+      case '#':
+        if (mode==1)
+        {
+          if (IsUnlocked()||ENA_LOCK)
+            do_gui(0);
+          else mode=0;
+        }
+        else return (0);
+      }
+    }
+  }
+  return (0);
+#endif
 }
 
 volatile int callhide_mode=0;
