@@ -146,6 +146,8 @@
 0328: 0xA86CD2D4 ; 80CA: __arm RAMNET * RamNet();
 
 0380: 0xA869CA6C ; 80E0: __arm void * RamScreenBuffer();
+03C4: 0xA171C92F ; 80F1: __arm void *BuildCanvas(void);
+
 0400: 0xA0827B04 ; 100: __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
 0404: 0xA0826AA0 ; 101: __arm int GBS_ReciveMessage(GBS_MSG *);
 0408: 0xA08271A0 ; 102: __arm void GBS_AcceptMessage(void);
