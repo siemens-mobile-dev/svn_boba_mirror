@@ -222,37 +222,17 @@ char* strcpy_tolow(char *s1,const char *s2)
   return s1;
 }
 
-__arm unsigned int div10(unsigned int v, unsigned int divisor, char *s)
-{
-  unsigned int c='0';
-  while(v>=divisor)
-  {
-    v-=divisor;
-    c++;
-  }
-  *s=c;
-  return v;
-}
-
 __arm void print10(char *s, unsigned int v)
 {
-  if (v>=10)
+  unsigned int buf=0;
+  
+  while(v>=10)
   {
-    if (v>=100)
-    {
-      if (v>=1000)
-      {
-	if (v>=10000)
-	{
-	  v=div10(v,10000,s++);
-	}
-	v=div10(v,1000,s++);
-      }
-      v=div10(v,100,s++);
-    }
-    v=div10(v,10,s++);
+    buf=(buf<<4)|(v%10);
+    v/=10;
   }
   *s++=v+'0';
+  while(buf) {*s++=(buf&0x0F)+'0'; buf>>=4;}
   *s++='.';
   *s++='p';
   *s++='n';
