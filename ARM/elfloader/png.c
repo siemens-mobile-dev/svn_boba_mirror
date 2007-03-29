@@ -224,7 +224,7 @@ char* strcpy_tolow(char *s1,const char *s2)
 
 __arm void print10(char *s, unsigned int v)
 {
-  unsigned int buf=0xFFFFFFFF;
+  unsigned int buf=0xF;
   while(v>=10)
   {
     buf=(buf<<4)|(v%10);

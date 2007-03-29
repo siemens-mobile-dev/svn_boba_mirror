@@ -74,16 +74,14 @@ __no_init void *KEY_TOP;
 
 __arm int AddKeybMsgHook_impl(int (*proc)(int submsg,int msg))
 {
-  void *_mfree_adr;
   if (proc==NULL) return (0);
   PLIST *ptop=(PLIST*)&KEY_TOP;
   PLIST *plist=malloc(sizeof(PLIST));
   if (plist==NULL) return (0);
   LockSched();
-  _mfree_adr=mfree_adr();
   plist->next=0;
   plist->proc=proc;
-  plist->mfree=(void(*)(void*))_mfree_adr;
+  plist->mfree=(void(*)(void*))mfree_adr();
   while(ptop->next)
     ptop=ptop->next;
   ptop->next=plist;
@@ -96,14 +94,12 @@ __arm int AddKeybMsgHook_end_impl(int (*proc)(int submsg,int msg))
 {
   if (proc==NULL) return (0);
   PLIST *ptop=KEY_TOP;
-  void *_mfree_adr;
   PLIST *plist=malloc(sizeof(PLIST));
   if (plist==NULL) return (0);
   LockSched();
-  _mfree_adr=mfree_adr();
   plist->next=ptop;
   plist->proc=proc;
-  plist->mfree=(void(*)(void*))_mfree_adr;
+  plist->mfree=(void(*)(void*))mfree_adr();
   KEY_TOP=plist;
   UnlockSched();
   return (1);
@@ -130,18 +126,23 @@ __arm void RemoveKeybMsgHook_impl(int (*proc)(int submsg,int msg))
   }
 }
 
-extern void(*SendKeybMsg)(int msg, int submsg);
 
-
-int PatchKeybMsg(int msg, int submsg)
+int PatchKeybMsg(int submsg, int msg)
 {
   PLIST *ptop=(PLIST*)(&KEY_TOP);
+  int result;
+  int mode=0;
   while ((ptop=ptop->next))
   {
-    if (!ptop->proc) return (0);
-    if (ptop->proc(submsg,msg)!=0) return (1);
+    if (!ptop->proc) continue;
+    result=ptop->proc(submsg,msg);
+    if (result==0) continue;
+    if (result==1) {mode=1;  continue;}
+    if (result==2) return (2);
+    if (result!=3) continue;
+    return (mode==1?2:0);
   }
-  return (0);
+  return (mode);
 }
 
 // ========================================= fread/fwrite ===========================================

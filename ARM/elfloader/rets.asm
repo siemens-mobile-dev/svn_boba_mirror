@@ -92,7 +92,11 @@ PITret:
         
         PUBLIC	KEYBret
 KEYBret:
-	DCD	0xA0CB602E+1  
+	DCD	0xA0CACD02+1  
+        
+        PUBLIC	KEYBfunc
+KEYBfunc:
+	DCD	0xA0CB8F60+1          
         
 	PUBLIC	FReadOld
 FReadOld:

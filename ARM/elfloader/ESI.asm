@@ -192,21 +192,28 @@ JJ_KEYB DC32    J_KEYB
         RSEG    CODE:CODE:NOROOT
         CODE16
         EXTERN  PatchKeybMsg
+        EXTERN  KEYBfunc
         EXTERN  KEYBret
 J_KEYB: 
-        PUSH    {R3-R7,LR}
-        ADD     R6, R0, #0
-        ADD     R5, R1, #0
+        LDR     R0, [R6,#4]
+        LDRH    R1, [R6,#2]
         BL      PatchKeybMsg
+        CMP     R0, #2
+        BEQ     EXIT
+        
+        ADD     R1, R6, #0
+        LDR     R0, [R5,#0x2C]
+        LDR     R2, =KEYBfunc
+        LDR     R2, [R2, #0]
+        BLX     R2
         CMP     R0, #0
-        BEQ     NORMAL_MODE
-        MOV     R5, #0
-NORMAL_MODE:
-        MOV     R4, #0
-        MOV     R7, #0
-        LDR     R2, =KEYBret
-        LDR     R2, [R2]
-        BX      R2
+        BNE     EXIT
+        
+        LDR     R0, =KEYBret
+        LDR     R0, [R0, #0]
+        BX      R0
+        
+EXIT:   POP     {R3-R7,PC}
 
 #endif
 
