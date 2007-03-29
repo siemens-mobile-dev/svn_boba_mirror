@@ -577,7 +577,7 @@ void maincsm_oncreate(CSM_RAM *data)
     int sz=0;
     unsigned int ul;
     extern const char csmlist_fname[128];
-    if ((f=fopen(csmlist_fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+    if ((f=fopen(csmlist_fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
     {
       sz=fread(f,csm_text,32767,&ul);
       fclose(f,&ul);

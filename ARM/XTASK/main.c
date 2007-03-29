@@ -2,6 +2,8 @@
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 
+//#define USE_ONE_KEY
+
 CSM_DESC icsmd;
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
@@ -37,7 +39,7 @@ int mode_red;
 
 int my_keyhook(int submsg, int msg)
 {
-#ifdef NEWSGOLD  
+#ifdef NEWSGOLD
   void *icsm=FindCSMbyID(CSM_root()->idle_id);
   if ((submsg==RED_BUTTON)&&(RED_BUT_MODE))
   {
@@ -91,7 +93,9 @@ int my_keyhook(int submsg, int msg)
       return(2);
     }
   }
-
+#endif
+  
+#ifdef USE_ONE_KEY
 #ifdef ELKA
   if (submsg!=POC_BUTTON) return(0);
 #else
@@ -161,6 +165,21 @@ int my_keyhook(int submsg, int msg)
 
 volatile int callhide_mode=0;
 
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
+
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
@@ -168,6 +187,16 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
   icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
   if (!icgui_id) callhide_mode=0;
+  
+  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  {
+    extern const char *successed_config_filename;
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"XTask config updated!");
+      InitConfig();
+    }
+  }
   if (msg->msg==MSG_INCOMMING_CALL)
   {
     callhide_mode=1;
