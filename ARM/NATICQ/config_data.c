@@ -98,11 +98,12 @@ __root const unsigned int vibraPower=100;
 
 __root const CFG_HDR cfghdr_m40={CFG_LEVEL,"",0,0};
 
-__root const CFG_HDR cfghdr19={CFG_UINT,"Idle icon X-pos",0,1000};
+__root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
 __root const unsigned int IDLEICON_X=0;
-
-__root const CFG_HDR cfghdr20={CFG_UINT,"Idle icon Y-pos",0,1000};
 __root const unsigned int IDLEICON_Y=50;
+
+//Fonts
+__root const CFG_HDR cfghdr_m51={CFG_LEVEL,"Font setup",1,0};
 
 __root const CFG_HDR cfghdr21={CFG_UINT,"My string color",0,1000};
 __root const unsigned int I_COLOR=3;
@@ -112,8 +113,11 @@ __root const unsigned int TO_COLOR=2;
 
 __root const CFG_HDR cfghdr24={CFG_UINT,"FontSize",0,6};
 __root const unsigned int ED_FONT_SIZE=1;
+__root const CFG_HDR cfghdr_m50={CFG_LEVEL,"",0,0};
 
 //Подсветка
+__root const CFG_HDR cfghdr_m61={CFG_LEVEL,"Illumination setup",1,0};
+
 __root const CFG_HDR cfghdr25={CFG_INT,"Display on Recv",0,100};
 __root const unsigned int ILL_DISP_RECV=30;
 
@@ -125,4 +129,4 @@ __root const unsigned int ILL_DISP_SEND=10;
 
 __root const CFG_HDR cfghdr28={CFG_INT,"Keys on Send",0,100};
 __root const unsigned int ILL_KEYS_SEND=0;
-
+__root const CFG_HDR cfghdr_m60={CFG_LEVEL,"",0,0};
