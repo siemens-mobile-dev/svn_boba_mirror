@@ -23,6 +23,9 @@ void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
 }
 #include "..\inc\cfg_items.h"
 
+unsigned int level=0;
+CFG_HDR *levelstack[16];
+
 int icon[]={0x58,0};
 const int minus11=-11;
 
@@ -33,7 +36,7 @@ char *cfg;
 //Длинна файла конфигурации
 int size_cfg;
 
-CFG_HDR *cfg_h[256];
+CFG_HDR *cfg_h[512];
 int total_items;
 
 SOFTKEY_DESC menu_sk[]=
@@ -76,16 +79,16 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     l=msg->gbsmsg->submess;
-    if (l==LEFT_SOFT||l==ENTER_BUTTON)
+    i=EDIT_GetFocus(data);
+    ExtractEditControl(data,i,&ec);
+    if ((i>1)&&(i&1))
     {
-      i=EDIT_GetFocus(data);
-      ExtractEditControl(data,i,&ec);
-      if ((i>1)&&(i&1))
+      n=(i-3)>>1; //Индекс элемента в массиве cfg_h
+      hp=cfg_h[n];
+      wstrcpy(ews,ec.pWS);
+      ws_2str(ews,ss,15);
+      if (l==LEFT_SOFT||l==ENTER_BUTTON)
       {
-        n=(i-3)>>1; //Индекс элемента в массиве cfg_h
-        hp=cfg_h[n];
-        wstrcpy(ews,ec.pWS);
-        ws_2str(ews,ss,15);
         switch(hp->type)
         {
         case CFG_COORDINATES:
@@ -94,6 +97,11 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
         case CFG_COLOR:
           EditColors((char *)(hp+1));
           break;
+	case CFG_LEVEL:
+	  level++;
+	  levelstack[level]=hp;
+	  level++;
+	  return 1;
         default:
           return(0);
         }
@@ -181,7 +189,6 @@ void ed1_ghook(GUI *data, int cmd)
         wsprintf(ews,"%02X,%02X,%02X,%02X",*((char *)(hp+1)),*((char *)(hp+1)+1),*((char *)(hp+1)+2),*((char *)(hp+1)+3));
         EDIT_SetTextToFocused(data,ews);        
         break;
-         
       default:
         break;
       }
@@ -285,6 +292,13 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     if ((int)msg->data0==csm->gui_id)
     {
+      if (level)
+      {
+	levelstack[level]=NULL;
+	level--;
+	csm->gui_id=create_ed();
+	return 1;
+      }
       if ((int)msg->data1==1)
 	SaveConfig();
       else 
@@ -548,6 +562,9 @@ int create_ed(void)
   CFG_HDR *hp;
 
   int i;
+  unsigned int curlev=0;
+  CFG_HDR *parent=NULL;
+  CFG_HDR *parents[16];
 
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
@@ -555,6 +572,7 @@ int create_ed(void)
   //Имя конфигурации
   ConstructEditControl(&ec,1,0x40,(WSHDR *)(&MAINCSM.maincsm_name),256);
   AddEditControlToEditQend(eq,&ec,ma); //EditControl 1
+  parents[0]=NULL;
 
   total_items=0;
   while(n>=sizeof(CFG_HDR))
@@ -563,8 +581,31 @@ int create_ed(void)
     cfg_h[total_items]=hp;
     //Добавляем заголовок итема
     wsprintf(ews,"%t:",hp->name);
-    ConstructEditControl(&ec,1,0x40,ews,256);
-    AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+2
+    if (hp->type==CFG_LEVEL)
+    {
+      if (hp->min)
+      {
+        if ((curlev==level)&&(parent==levelstack[level]))
+	{
+	  ConstructEditControl(&ec,1,0x00,ews,256);
+	  AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+2
+	}
+      }
+      else
+	if (curlev)
+	{
+	  parent=parents[curlev];
+	  curlev--;
+	}
+    }
+    else
+    {
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,1,0x40,ews,256);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+2
+      }
+    }
     n-=sizeof(CFG_HDR);
     p+=sizeof(CFG_HDR);
     switch(hp->type)
@@ -581,32 +622,44 @@ int create_ed(void)
         goto L_ENDCONSTR;
       }
       wsprintf(ews,_percent_u,*((unsigned int *)p));
-      ConstructEditControl(&ec,6,0x40,ews,10);
-      AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,6,0x40,ews,10);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      }
       p+=4;
       break;
     case CFG_INT:
       n-=4;
       if (n<0) goto L_ERRCONSTR;
       wsprintf(ews,_percent_d,*((int *)p));
-      ConstructEditControl(&ec,6,0x40,ews,10);
-      AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,6,0x40,ews,10);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      }
       p+=4;
       break;
     case CFG_STR_UTF8:
       n-=(hp->max+1+3)&(~3);
       if (n<0) goto L_ERRCONSTR;
       str_2ws(ews,p,hp->max);
-      ConstructEditControl(&ec,3,0x40,ews,hp->max);
-      AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,3,0x40,ews,hp->max);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      }
       p+=(hp->max+1+3)&(~3);
       break;
     case CFG_STR_WIN1251:
       n-=(hp->max+1+3)&(~3);
       if (n<0) goto L_ERRCONSTR;
       wsprintf(ews,_percent_t,p);
-      ConstructEditControl(&ec,3,0x40,ews,hp->max);
-      AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,3,0x40,ews,hp->max);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      }
       p+=(hp->max+1+3)&(~3);
       break;
     case CFG_CBOX:
@@ -619,43 +672,73 @@ int create_ed(void)
         goto L_ERRCONSTR1;
       }
       wsprintf(ews,_percent_t,((CFG_CBOX_ITEM*)(p+4))+i);
-      ConstructComboBox(&ec,7,0x40,ews,32,0,hp->max,i+1);
-      AddEditControlToEditQend(eq,&ec,ma);
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructComboBox(&ec,7,0x40,ews,32,0,hp->max,i+1);
+	AddEditControlToEditQend(eq,&ec,ma);
+      }
       p+=hp->max*sizeof(CFG_CBOX_ITEM)+4;
       break;
     case CFG_STR_PASS:
       n-=(hp->max+1+3)&(~3);
       if (n<0) goto L_ERRCONSTR;
       wsprintf(ews,_percent_t,p);
-      ConstructEditControl(&ec,3,0x50,ews,hp->max);
-      AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,3,0x50,ews,hp->max);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      }
       p+=(hp->max+1+3)&(~3);
       break;
     case CFG_COORDINATES:
       n-=8;
       if (n<0) goto L_ERRCONSTR;
       wsprintf(ews,"%d,%d",*((int *)p),*((int *)p+1));
-      ConstructEditControl(&ec,9,0x40,ews,10);
-      AddEditControlToEditQend(eq,&ec,ma); 
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,9,0x40,ews,10);
+	AddEditControlToEditQend(eq,&ec,ma); 
+      }
       p+=8;
       break;
     case CFG_COLOR:
       n-=4;
       if (n<0) goto L_ERRCONSTR;
       wsprintf(ews,"%02X,%02X,%02X,%02X",*((char *)p),*((char *)p+1),*((char *)p+2),*((char *)p+3));
-      ConstructEditControl(&ec,9,0x40,ews,12);
-      AddEditControlToEditQend(eq,&ec,ma);            
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,9,0x40,ews,12);
+	AddEditControlToEditQend(eq,&ec,ma);           
+      }
       p+=4;
       break;
-      
-      
+    case CFG_LEVEL:
+      if (n<0) goto L_ERRCONSTR;
+      wsprintf(ews,_percent_t,"Enter");
+      if (hp->min)
+      {
+	if ((curlev==level)&&(parent==levelstack[level]))
+	{
+	  EDITC_OPTIONS ec_options;
+	  ConstructEditControl(&ec,8,0x40,ews,256);
+	  SetPenColorToEditCOptions(&ec_options,2);
+	  SetFontToEditCOptions(&ec_options,1);
+	  CopyOptionsToEditControl(&ec,&ec_options);
+	  AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+	  total_items++;
+	}
+	curlev++;
+	parents[curlev]=parent;
+	parent=hp;
+      }
+      continue;
     default:
       wsprintf(ews,"Unsupported item %d",hp->type);
       ConstructEditControl(&ec,1,0x40,ews,256);
       AddEditControlToEditQend(eq,&ec,ma);
       goto L_ENDCONSTR;
     }
-    total_items++;
+    if ((curlev==level)&&(parent==levelstack[level])) total_items++;
   }
 L_ENDCONSTR:
   scr_w=ScreenW();

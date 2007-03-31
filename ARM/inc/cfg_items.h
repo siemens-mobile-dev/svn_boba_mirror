@@ -6,6 +6,10 @@
 #define CFG_STR_PASS 6
 #define CFG_COORDINATES 7
 #define CFG_COLOR 8
+//Level
+//min<>0 - start tag (name used)
+//min=0 - end tag
+#define CFG_LEVEL 9
 
 typedef struct
 {
