@@ -13,6 +13,8 @@ __root const unsigned int UIN=0;
 __root const CFG_HDR cfghdr1={CFG_STR_PASS,"Password",0,8};
 __root const char PASS[9]="";
 
+__root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Hosts and paths",1,0};
+
 __root const CFG_HDR cfghdr1_1={CFG_STR_WIN1251,"Host",0,127};
 __root const char NATICQ_HOST[128]="cbsie.dyndns.info";
 
@@ -22,6 +24,11 @@ __root const unsigned int NATICQ_PORT=5050;
 __root const CFG_HDR cfghdr2={CFG_STR_UTF8,"History path",0,63};
 __root const char HIST_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\history";
 
+__root const CFG_HDR cfghdr23={CFG_STR_UTF8,"Smiles File",0,63};
+__root const char SMILE_FILE[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles.cfg";
+
+__root const CFG_HDR cfghdr_m10={CFG_LEVEL,"",0,0};
+
 __root const CFG_HDR cfghdr2_1={CFG_CBOX,"Enable logs",0,2};
 __root const int LOG_ALL = 1;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
@@ -29,6 +36,8 @@ __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 __root const CFG_HDR cfghdr2_0={CFG_CBOX,"Log status changes",0,2};
 __root const int LOG_STATCH = 0;
 __root const CFG_CBOX_ITEM cfgcbox1_1[2]={"No","Yes"};
+
+__root const CFG_HDR cfghdr_m21={CFG_LEVEL,"Icons setup",1,0};
 
 __root const CFG_HDR cfghdr3={CFG_STR_UTF8,"Offline icon",0,63};
 __root const char ICON0[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\offline.png";
@@ -60,6 +69,9 @@ __root const char ICON8[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\message.png";
 __root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Unknown state icon",0,63};
 __root const char ICON9[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\unknown.png";
 
+__root const CFG_HDR cfghdr_m20={CFG_LEVEL,"",0,0};
+__root const CFG_HDR cfghdr_m31={CFG_LEVEL,"Sounds setup",1,0};
+
 __root const CFG_HDR cfghdr13={CFG_STR_UTF8,"snd Startup",0,63};
 __root const char sndStartup[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\Sounds\\sndStartup.wav";
 
@@ -75,11 +87,16 @@ __root const char sndMsg[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\Sounds\\sndMsg.wav";
 __root const CFG_HDR cfghdr17={CFG_STR_UTF8,"snd MsgSent",0,63};
 __root const char sndMsgSent[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\Sounds\\sndMsgSent.wav";
 
+__root const CFG_HDR cfghdr_m30={CFG_LEVEL,"",0,0};
+__root const CFG_HDR cfghdr_m41={CFG_LEVEL,"Notify power",1,0};
+
 __root const CFG_HDR cfghdr18={CFG_UINT,"sndVolume",0,6};
 __root const unsigned int sndVolume=6;
 
 __root const CFG_HDR cfghdr18_1={CFG_UINT,"Vibra power",0,100};
 __root const unsigned int vibraPower=100;
+
+__root const CFG_HDR cfghdr_m40={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr19={CFG_UINT,"Idle icon X-pos",0,1000};
 __root const unsigned int IDLEICON_X=0;
@@ -92,9 +109,6 @@ __root const unsigned int I_COLOR=3;
 
 __root const CFG_HDR cfghdr22={CFG_UINT,"Your string color",0,1000};
 __root const unsigned int TO_COLOR=2;
-
-__root const CFG_HDR cfghdr23={CFG_STR_UTF8,"Smiles File",0,63};
-__root const char SMILE_FILE[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles.cfg";
 
 __root const CFG_HDR cfghdr24={CFG_UINT,"FontSize",0,6};
 __root const unsigned int ED_FONT_SIZE=1;
