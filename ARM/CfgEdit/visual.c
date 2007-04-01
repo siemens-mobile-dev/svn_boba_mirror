@@ -72,7 +72,7 @@ void method0_1(MAIN_GUI_1 *data)
   }
   wsprintf(data->ws1,"%u,%u",data->x_pos,data->y_pos);
   DrwImg((IMGHDR *)&imgPointer,data->x_pos-2,data->y_pos-2,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws1,3,scr_h-11,scr_w-4,scr_h-1,SMALL_FONT,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,scr_h-GetFontYSIZE(SMALL_FONT)-1,scr_w-4,scr_h-1,SMALL_FONT,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
 }
 
 void method1_1(MAIN_GUI_1 *data, void *(*malloc_adr)(int))
