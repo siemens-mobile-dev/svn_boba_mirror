@@ -2,7 +2,9 @@
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 
-//#define USE_ONE_KEY
+#ifdef NEWSGOLD
+#define USE_ONE_KEY
+#endif
 
 CSM_DESC icsmd;
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
@@ -138,8 +140,7 @@ int my_keyhook(int submsg, int msg)
     if (msg==KEY_UP)
     {
       mode=0;
-      return (0);
-    }
+      return (0)    }
     if (msg==KEY_DOWN)
     {
       switch (submsg)
