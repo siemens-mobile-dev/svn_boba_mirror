@@ -471,7 +471,26 @@ char *get_content_encoding(ML_VIEW *ml_list)
   return (ml_list->content_encoding=content_encoding);
 }
 //----------------------------------------------------------------------------------------------
+
+typedef struct{
+  void *next;
+  int content_type;
+  int transfer_encoding;
+  int charset;
+  int offset;
+  int size;
+  char ct[128];
+  char te[128];
+}MAIL_PART;
+
+typedef struct{
+  MAIL_PART *top;
+  char *eml;
+  int ec_end;
+}MAIL_VIEW;
+  
 HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)"Просмотр",LGP_NULL};
+
 
 void ed1_locret(void){}
 
@@ -482,6 +501,25 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 void ed1_ghook(GUI *data, int cmd)
 {
   int j;
+  MAIL_VIEW *view_list;
+  MAIL_PART *m, *prev;
+  if (cmd==3)
+  {
+    view_list=EDIT_GetUserPointer(data);
+    if (view_list)
+    {
+      m=view_list->top;
+      while(m)
+      {
+        prev=m;
+        m=m->next;
+        mfree(prev);
+      }
+      mfree(view_list->eml);
+      mfree(view_list);
+      
+    }
+  }
   if (cmd==0x0C)
   {
     j=EDIT_GetFocus(data);
@@ -505,16 +543,6 @@ INPUTDIA_DESC ed1_desc=
   0
 };
 
-typedef struct{
-  void *next;
-  int content_type;
-  int transfer_encoding;
-  int charset;
-  int offset;
-  int size;
-  char ct[128];
-  char te[128];
-}MAIL_PART;
 
 enum {MULTIPART, APPLICATION, TEXT};
 int get_ctype_index(char *str)
@@ -630,10 +658,11 @@ extern void iso885952win(char*d,char *s);
 const char default_ctype[]="Content-Type: text/plain; charset=\"windows-1251\"";
 const char default_transfere[]="Content-Transfer-Encoding: 8bit";
 
-void ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, WSHDR *headers)
+MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
 {
   WSHDR *ws;
   MAIL_PART *top=0, *bot, *prev;
+  MAIL_VIEW *view_list;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
   char *content_type, *content_encoding;
@@ -641,43 +670,36 @@ void ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, WSHDR *headers)
   unsigned int err;
   char fname[128];
   char *eml, *end_header;
-  int size, eml_size;
+  int size;
   
   
   top=malloc(sizeof(MAIL_PART));
   bot=top;
   top->next=0;
   top->offset=0;
-
+  
   content_type=get_content_type(ml_list);
-  if (!content_type) top->content_type=TEXT;
-  else
-  {
-    top->content_type=get_ctype_index(content_type);
-  } 
+  strcpy(top->ct,content_type?content_type:default_ctype);
+  top->content_type=get_ctype_index(content_type);
   
   content_encoding=get_content_encoding(ml_list);
-  if (!content_encoding) top->transfer_encoding=BIT8;
-  else
-  {
-    top->transfer_encoding=get_ctencoding_index(content_encoding);
-  }   
-  
-  strcpy(top->ct,content_type?content_type:default_ctype);
   strcpy(top->te,content_encoding?content_encoding:default_transfere);
+  top->transfer_encoding=get_ctencoding_index(content_encoding);
+  
   snprintf(fname,127,"%s%s.eml",EML_PATH,ml_list->uidl);
   f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err);
   if (f==-1)
   {
     mfree(top);
-    return;
+    return (0);
   }
+  
   size=get_fsize(f);
   if (!size)
   {
     fclose(f, &err);
     mfree(top);
-    return;
+    return (0);
   }
   eml=malloc(size+1);
   fread(f, eml, size, &err);
@@ -688,7 +710,7 @@ void ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, WSHDR *headers)
   {
     mfree(eml);
     mfree(top);
-    return;
+    return (0);
   }
   strcpy(eml,end_header+4);
   size=strlen(eml);
@@ -739,7 +761,7 @@ void ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, WSHDR *headers)
       case KOI8_R:
         koi2win(buf, buf);
         break;
-        
+   
       case ISO_8859_5:
         iso885952win(buf, buf);
         break;
@@ -804,24 +826,45 @@ void ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, WSHDR *headers)
         else strcpy(prev->te,default_transfere);
         prev->transfer_encoding=get_ctencoding_index(prev->te);
         p=b_end;
-        
       }      
+    case APPLICATION:
+      p=bot->ct;
+      p=strstr_nocase(p,"name=");
+      if (!p) break;
+      p+=5;
+      if (*p=='\"')
+      {
+        while(*p=='\"') p++;
+      }
+      for (i=0; (c=p[i])!='\"';i++)
+      {
+        fname[i]=c;
+      }
+      fname[i]=0;
+      
+      ws=AllocWS(strlen(fname));
+      ascii2ws(ws, fname);
+      PrepareEditControl(&ec);
+      ConstructEditControl(&ec,8,0x40,ws,ws->wsbody[0]);
+      PrepareEditCOptions(&ec_options);
+      SetFontToEditCOptions(&ec_options,1);
+      CopyOptionsToEditControl(&ec,&ec_options);
+      AddEditControlToEditQend(eq,&ec,ma); 
+      FreeWS(ws);
     }
     bot=bot->next;
   }
-  bot=top;
-  while(bot)
-  {
-    prev=bot;
-    bot=bot->next;
-    mfree(prev);
-  }
-  mfree(eml);
+  
+  view_list=malloc(sizeof(MAIL_VIEW));
+  view_list->top=top;
+  view_list->eml=eml;
+  return (view_list);
 }
   
 
 int create_view(ML_VIEW *ml_list)
 {
+  MAIL_VIEW *view_list;
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
@@ -904,11 +947,11 @@ int create_view(ML_VIEW *ml_list)
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);  
   
-  ParseMailBody(eq,ml_list,ma,headers);    
+  view_list=ParseMailBody(eq,ml_list,ma);    
   FreeWS(headers);
   patch_header(&ed1_hdr);
   patch_input(&ed1_desc);  
-  return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
+  return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,view_list);
 }  
   
 //----------------------------------------------------------------------------------------------
@@ -1055,7 +1098,7 @@ void create_options_menu(ML_VIEW *i)
 
 // ----------------------------------------------------------------------------------
 
-HEADER_DESC maillist_menuhdr={0,0,131,21,NULL,(int)"Входящие",LGP_NULL};
+HEADER_DESC maillist_menuhdr={0,0,0,0,NULL,(int)"Входящие",LGP_NULL};
 
 
 int maillist_menu_onkey(void *data, GUI_MSG *msg)
@@ -1195,7 +1238,10 @@ void Options(void)
   FreeWS(ws);
 }
 
-void About(){}
+void About()
+{
+  ShowMSG(2, (int)"MailClient v0.1\n(C) by Kren\nRst7/CBSIE");
+}
 
 void Exit(void)
 {

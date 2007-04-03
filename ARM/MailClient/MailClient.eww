@@ -7,7 +7,19 @@
   <project>
     <path>$WS_DIR$\MailViewer\MailViewer.ewp</path>
   </project>
-  <batchBuild/>
+  <batchBuild>
+    <batchDefinition>
+      <name>Batch</name>
+      <member>
+        <project>MailDaemon</project>
+        <configuration>Release</configuration>
+      </member>
+      <member>
+        <project>MailViewer</project>
+        <configuration>Release</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
 </workspace>
 
 
