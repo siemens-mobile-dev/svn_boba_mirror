@@ -294,7 +294,7 @@ void send_del_mes(int i)
 }
 
 void send_quit()
-{send_str("QUIT");}
+{send_str("QUIT\r\n");}
 
 
 int resp_ok(char *buf)

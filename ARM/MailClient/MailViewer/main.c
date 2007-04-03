@@ -1075,7 +1075,14 @@ int maillist_menu_onkey(void *data, GUI_MSG *msg)
     return(-1);
     
   case 0x3D:
-    mail_cur->is_read=1;
+    if (mail_cur->state==M_FULL_LOADED)
+    {
+      if(!mail_cur->is_read)
+      {
+        mail_cur->is_read=1;
+        SUBPROC((void *)write_mail_DB);
+      }
+    }
     view_mail_id=create_view(mail_cur);
     return(-1);
   } 
@@ -1163,6 +1170,7 @@ void CreateMailList(void)
   int mails_num=get_mlist_N();
   if (mails_num)
   {
+    patch_header(&maillist_menuhdr);
     maillist_menu_id=CreateMenu(0,0,&maillist_menu,&maillist_menuhdr,0,mails_num,0,0);
   }
   else ShowMSG(1,(int)"Nothing loaded!");
@@ -1187,6 +1195,8 @@ void Options(void)
   FreeWS(ws);
 }
 
+void About(){}
+
 void Exit(void)
 {
   GeneralFuncF1(1);
@@ -1195,19 +1205,21 @@ void Exit(void)
 HEADER_DESC mainmenu_HDR={0,0,0,0,NULL,(int)"MailViewer",LGP_NULL};
 
 
-MENUITEM_DESC mainmenu_ITEMS[4]=
+MENUITEM_DESC mainmenu_ITEMS[5]=
 {
   {NULL,(int)"Входящие",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Исходящие",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Настройки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Об эльфе",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Выход",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *mainmenu_HNDLS[6]=
+void *mainmenu_HNDLS[5]=
 {
   (void *)Incoming,
   (void *)Outgoing,
   (void *)Options,
+  (void *)About,
   (void *)Exit,
 };
 
@@ -1221,16 +1233,15 @@ MENU_DESC mainmenu_STRUCT=
   NULL,
   mainmenu_ITEMS,   //Items
   mainmenu_HNDLS,   //Procs
-  4   //n
+  5   //n
 };
 
 // ------------------------  Creating CSM -------------------------------- //
 void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
-  mainmenu_HDR.rc.x2=ScreenW();
-  mainmenu_HDR.rc.y2=HeaderH();
-  csm->gui_id=main_menu_id=CreateMenu(0,0,&mainmenu_STRUCT,&mainmenu_HDR,0,4,0,0);
+  patch_header(&mainmenu_HDR);
+  csm->gui_id=main_menu_id=CreateMenu(0,0,&mainmenu_STRUCT,&mainmenu_HDR,0,5,0,0);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
@@ -1258,7 +1269,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       options_menu_id=0;
       if ((int)msg->data1==2)
       {
-        write_mail_DB();
+        SUBPROC((void *)write_mail_DB);
       }   
     }
   }
