@@ -14,6 +14,7 @@ extern const int DEFAULT_ACTION;
 extern const int IF_DEL_AUX;
 extern const char POP3_ADRESS[];
 extern const unsigned int POP3_PORT;
+extern const char SAVE_AS_FOLDER[];
 extern void InitConfig();
 extern void kill_data(void *p, void (*func_p)(void *));
 

@@ -30,16 +30,22 @@ char * base64_decode(const char *str, size_t *size)
   unsigned int pr[6];
   int n;
   int doit;
+  size_t _sf_b64_len;
+  const char *s;
+  int len;
   
   if(str == NULL)
     str = "";
-  ou = output = malloc((size?*size:strlen(str)) + 1);
+  
+  s=str;
+  len=size?*size:strlen(str);
+  ou = output = malloc(len+1);
   if(output == NULL)
-    /* ENOMEM? */
     return NULL;
   
   if(size)
     *size = 0;
+  
   
   doit = 1;
   
@@ -48,6 +54,11 @@ char * base64_decode(const char *str, size_t *size)
     n = 0;
     while(n < 4)
     {
+      if ((str-s)>=len)
+      {
+        doit=0;
+        break;
+      }
       unsigned int ch;
       ch = _sf_uc_bi[*(unsigned char *)str];
       if(ch < B64_UNUSED)
@@ -81,8 +92,12 @@ char * base64_decode(const char *str, size_t *size)
   }
   while(doit);
   
+  _sf_b64_len = (ou - output);
+  if(size)
+    *size = _sf_b64_len;
+  
   *ou = '\0';	/* NUL-terminate */
-  return (realloc(output,strlen(output)+1));
+  return (realloc(output,_sf_b64_len+1));
 }
 
 

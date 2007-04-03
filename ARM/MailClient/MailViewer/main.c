@@ -24,8 +24,9 @@ void patch_input(INPUTDIA_DESC* inp)
 #define wslen(ws) ws->wsbody[0]
 //===============================================================================================
 int S_ICONS[8];
-char empty_str[]="";
-
+const char empty_str[]="";
+const char eol[]="\r\n";
+const char d_eol[]="\r\n\r\n";
 // ------------------------------- Defines ----------------------------------------
 
 const char wintranslation[128]=
@@ -246,7 +247,7 @@ int InitMailDB()
   {
     strcat(fname,"\\");
   }
-  strcat(fname,"mails.db");
+  strcat(fname,mailer_db_name);
   FreeMailDB();
   if ((f=fopen(fname,A_BIN+A_ReadOnly,P_READ,&err))==-1)
   {
@@ -291,7 +292,7 @@ void write_mail_DB()
   ML_VIEW *ml_list=(ML_VIEW *)&mails;
   MAIL_DB mail_db;
   strcpy(fname,EML_PATH);
-  strcat(fname,"mails.db");
+  strcat(fname,mailer_db_name);
   if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))==-1)
     return;
   while((ml_list=ml_list->next))
@@ -326,19 +327,6 @@ int get_mlist_N()
   while ((ml_cur=ml_cur->next))
     i++;
   return i;
-}
-
-char *find_eol(char *s)
-{
-  int c;
-  s--;
-  do
-  {
-    s++;
-    c=*s;
-  }
-  while((c)&&(c!=10)&&(c!=13));
-  return s;
 }
 
 int get_fsize(int f)
@@ -380,7 +368,7 @@ void InitHeaders()
     fread(f,buf,fsize,&err);
     fclose(f,&err);
     buf[fsize]=0;
-    _eol=strstr(buf,"\r\n\r\n");
+    _eol=strstr(buf,d_eol);
     if (_eol)
     {
       *_eol=0;
@@ -401,20 +389,20 @@ char *get_string_from_header(ML_VIEW *ml_list, char *str)
   if (!ml_list) return (0);
   if (ml_list->header)
   {
+    len=strlen(str);
     p=ml_list->header;
     p-=2;
     do
     {
       p+=2;
-      end=strstr(p,"\r\n");
-      len=strlen(str);
+      end=strstr(p,eol);
       if (!strncmp_nocase(p, str,len))
       {
         if (end)
         {
           subject=malloc((end-p)+1);
-          strncpy(subject,p+len,end-(p+len));
-          subject[end-(p+len)]=0;
+          strncpy(subject,p,end-p);
+          subject[end-p]=0;
         }
         else 
         {
@@ -471,7 +459,6 @@ char *get_content_encoding(ML_VIEW *ml_list)
   return (ml_list->content_encoding=content_encoding);
 }
 //----------------------------------------------------------------------------------------------
-
 typedef struct{
   void *next;
   int content_type;
@@ -479,25 +466,210 @@ typedef struct{
   int charset;
   int offset;
   int size;
-  char ct[128];
-  char te[128];
+  char ct[256];
+  char te[256];
+  int ec_n;
 }MAIL_PART;
 
 typedef struct{
   MAIL_PART *top;
   char *eml;
-  int ec_end;
 }MAIL_VIEW;
+
+char *strstr_nocase(const char *s1, const char *s2);
+extern char * base64_decode(const char *str, size_t *size);
+extern char * quoted_printable_decode(const char *str, size_t *size);
+extern void koi2win(char*d,char *s);
+extern void iso885952win(char*d,char *s);
+
+enum {BIT8, BASE64, QPRINTABLE, BIT7};
+enum {MULTIPART, APPLICATION, TEXT};
+
+void saveas_locret(void){}
+
+
+int saveas_onkey(GUI *data, GUI_MSG *msg)
+{
+  MAIL_VIEW *mail_view;
+  MAIL_PART *mail;
+  int f;
+  unsigned int err;
+  EDITCONTROL ec;
+  char *p, *decoded;
+  size_t size;
+  char fname[128];
+  mail_view=EDIT_GetUserPointer(data);
+  if (msg->keys==0xFFF)
+  {
+    if (!mail_view)
+    {
+      ShowMSG(1,(int)"Can't save attach!");
+      return (1);
+    }
+    mail=mail_view->top;
+    p=mail_view->eml+mail->offset;
+    size=mail->size;
+    if (mail->transfer_encoding!=BASE64)
+    {
+      ShowMSG(1,(int)"Unknown encoding!");
+      return (1);
+    } 
+    decoded=base64_decode(p, &size);
+    if (!decoded) 
+    {
+      ShowMSG(1,(int)"Can't decode attach!");
+      return (1);
+    } 
+    ExtractEditControl(data,2,&ec);
+    ws_2str(ec.pWS,fname,128);
+    if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Truncate+A_Create, P_WRITE, &err))==-1)
+    {
+      mfree(decoded);
+      ShowMSG(1,(int)"Can't create file!");
+      return (1);
+    }
+    fwrite(f, decoded, size, &err);
+    mfree(decoded);
+    fclose(f, &err);
+    ShowMSG(1,(int)"Succesfully saved!");
+    return(1);
+  }
+  return(0); //Do standart keys
+  //1: close
+}
+
+void saveas_ghook(GUI *data, int cmd)
+{
+  MAIL_VIEW *mail_view;
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Save!"};
+  mail_view=EDIT_GetUserPointer(data);
+  if (cmd==3)
+  {
+    mfree(mail_view);
+  }
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+}
+
+
+HEADER_DESC saveas_hdr={0,0,0,0,NULL,(int)"Сохранение",LGP_NULL};
+
+INPUTDIA_DESC saveas_desc =
+{
+  1,
+  saveas_onkey,
+  saveas_ghook,
+  (void *)saveas_locret,
+  0,
+  &menu_skt,
+  {0,NULL,NULL,NULL},
+  SMALL_FONT,
+  100,
+  101,
+  0,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+
+
+
+
+
+void create_save_as_dialog(MAIL_PART *top, char *eml)
+{
+  void *ma=malloc_adr();
+  void *eq;  
+  char *p;
+  int c, i;
+  char fname[256];
+  EDITCONTROL ec;
+  MAIL_VIEW *mail_view;
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  WSHDR *ews=AllocWS(128);
+  wsprintf(ews,"%t","Path Save File:");  
+  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,wslen(ews));
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  p=top->ct;
+  p=strstr_nocase(p,"name=");
+  p+=5;
+  while(*p=='\"') p++;
+  for (i=0; (c=p[i])!='\"';i++)
+  {
+    fname[i]=c;
+  }
+  fname[i]=0;
+  p=unmime_header(fname);
+  wsprintf(ews,"%s%t",SAVE_AS_FOLDER,p);
+  mfree(p);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,128);
+  AddEditControlToEditQend(eq,&ec,ma);  
+    
+  
+  mail_view=malloc(sizeof(MAIL_VIEW));
+  mail_view->top=top;
+  mail_view->eml=eml;
+  patch_header(&saveas_hdr);
+  patch_input(&saveas_desc);
+  FreeWS(ews);
+  CreateInputTextDialog(&saveas_desc,&saveas_hdr,eq,1,mail_view);  
+}
+
   
 HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)"Просмотр",LGP_NULL};
-
 
 void ed1_locret(void){}
 
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
+  int l;
+  int i;
+  MAIL_VIEW *view_list;
+  MAIL_PART *top;
+  view_list=EDIT_GetUserPointer(data);
+  if (!view_list) return (0);
+  if (!view_list->eml) return (0);
+  
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    l=msg->gbsmsg->submess;
+    if (l==LEFT_SOFT||l==ENTER_BUTTON)
+    {
+      i=EDIT_GetFocus(data);
+      top=view_list->top;
+      while(top)
+      {
+        if (top->ec_n==i)
+        {
+          if (top->content_type==APPLICATION) break;
+        }
+        top=top->next;
+      }
+      if (!top) return (0);
+      create_save_as_dialog(top, view_list->eml);
+      return (-1);
+    }
+  }
   return(0); 
 }
+
 void ed1_ghook(GUI *data, int cmd)
 {
   int j;
@@ -517,7 +689,6 @@ void ed1_ghook(GUI *data, int cmd)
       }
       mfree(view_list->eml);
       mfree(view_list);
-      
     }
   }
   if (cmd==0x0C)
@@ -544,44 +715,49 @@ INPUTDIA_DESC ed1_desc=
 };
 
 
-enum {MULTIPART, APPLICATION, TEXT};
+
+
 int get_ctype_index(char *str)
 {
-  if (*str==' ')
+  char *p;
+  p=strstr_nocase(str, "Content-Type:");
+  if (p)
   {
-    while (*str==' ') str++;
+    p+=13;
+    while(*p==' ') p++;
+    if (!strncmp_nocase(p,"multipart",9))
+      return MULTIPART;
+    
+    if (!strncmp_nocase(p,"application",11))
+      return APPLICATION; 
+    
+    if (!strncmp_nocase(p,"text",4))
+      return TEXT;
   }
-  if (!strncmp_nocase(str,"multipart",9))
-    return MULTIPART;
-  
-  if (!strncmp_nocase(str,"application",11))
-    return APPLICATION; 
-  
-  if (!strncmp_nocase(str,"text",4))
-    return TEXT;
-  
   return TEXT;
 }
 
-enum {BIT8, BASE64, QPRINTABLE, BIT7};
+
 int get_ctencoding_index(char *str)
 {
-  if (*str==' ')
+  char *p;
+  p=strstr_nocase(str, "Content-Transfer-Encoding:");
+  if (p)
   {
-    while (*str==' ') str++;
+    p+=26;
+    while(*p==' ') p++;
+    if (!strncmp_nocase(p,"8bit",4))
+      return BIT8;
+    
+    if (!strncmp_nocase(p,"base64",6))
+      return BASE64; 
+    
+    if (!strncmp_nocase(p,"quoted-printable",16))
+      return QPRINTABLE;
+    
+    if (!strncmp_nocase(p,"7bit",4))
+      return BIT8;
   }
-  if (!strncmp_nocase(str,"8bit",4))
-    return BIT8;
-  
-  if (!strncmp_nocase(str,"base64",6))
-    return BASE64; 
-  
-  if (!strncmp_nocase(str,"quoted-printable",16))
-    return QPRINTABLE;
-  
-  if (!strncmp_nocase(str,"7bit",4))
-    return BIT8;
-  
   return BIT8;
 }
 
@@ -658,7 +834,7 @@ extern void iso885952win(char*d,char *s);
 const char default_ctype[]="Content-Type: text/plain; charset=\"windows-1251\"";
 const char default_transfere[]="Content-Transfer-Encoding: 8bit";
 
-MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
+MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
 {
   WSHDR *ws;
   MAIL_PART *top=0, *bot, *prev;
@@ -672,11 +848,11 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   char *eml, *end_header;
   int size;
   
-  
   top=malloc(sizeof(MAIL_PART));
   bot=top;
   top->next=0;
   top->offset=0;
+  top->ec_n=-1;
   
   content_type=get_content_type(ml_list);
   strcpy(top->ct,content_type?content_type:default_ctype);
@@ -705,7 +881,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   fread(f, eml, size, &err);
   fclose(f, &err);
   eml[size]=0;
-  end_header=strstr(eml, "\r\n\r\n");
+  end_header=strstr(eml, d_eol);
   if (!end_header || (end_header+4)==(eml+size))
   {
     mfree(eml);
@@ -770,11 +946,13 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       ascii2ws(ws, buf);
         
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec,3,0x40,ws,ws->wsbody[0]);
+      ConstructEditControl(&ec,3,0x40,ws,wslen(ws));
       PrepareEditCOptions(&ec_options);
       SetFontToEditCOptions(&ec_options,1);
       CopyOptionsToEditControl(&ec,&ec_options);
       AddEditControlToEditQend(eq,&ec,ma); 
+      ed_toitem++;
+      bot->ec_n=ed_toitem;
       FreeWS(ws);
       mfree(buf);
       break;
@@ -799,21 +977,25 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       {
         p+=i;
         if (!strncmp(p,"--\r\n",4)) break;
+
+        buf=strstr(p,d_eol);
+        buf+=4;
+        
+        b_end=strstr_nocase(p,boundary);
+        if (!b_end)  continue;
+        
         prev=bot;
         while(prev->next) prev=prev->next;
         prev=prev->next=malloc(sizeof(MAIL_PART));
         prev->next=0;
-        buf=strstr(p,"\r\n\r\n");
-        buf+=4;
+        prev->ec_n=-1;
         prev->offset=buf-eml;
-        
-        b_end=strstr_nocase(p,boundary);
         prev->size=b_end-buf;
         
         content_type=strstr_nocase(p,"content-type:");
         if (content_type && content_type<buf)
         {
-          cstrcpy(prev->ct,content_type+13);          
+          cstrcpy(prev->ct,content_type);          
         }
         else strcpy(prev->ct,default_ctype);
         prev->content_type=get_ctype_index(prev->ct);
@@ -821,7 +1003,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         content_encoding=strstr_nocase(p,"Content-Transfer-Encoding:");
         if (content_encoding && content_encoding<buf)
         {
-          cstrcpy(prev->te,content_encoding+26);          
+          cstrcpy(prev->te,content_encoding);          
         }
         else strcpy(prev->te,default_transfere);
         prev->transfer_encoding=get_ctencoding_index(prev->te);
@@ -841,20 +1023,23 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         fname[i]=c;
       }
       fname[i]=0;
+      p=unmime_header(fname);
       
-      ws=AllocWS(strlen(fname));
-      ascii2ws(ws, fname);
+      ws=AllocWS(strlen(p));
+      ascii2ws(ws, p);
+      mfree(p);
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec,8,0x40,ws,ws->wsbody[0]);
+      ConstructEditControl(&ec,8,0x40,ws,wslen(ws));
       PrepareEditCOptions(&ec_options);
       SetFontToEditCOptions(&ec_options,1);
       CopyOptionsToEditControl(&ec,&ec_options);
       AddEditControlToEditQend(eq,&ec,ma); 
+      ed_toitem++;
+      bot->ec_n=ed_toitem;
       FreeWS(ws);
     }
     bot=bot->next;
   }
-  
   view_list=malloc(sizeof(MAIL_VIEW));
   view_list->top=top;
   view_list->eml=eml;
@@ -867,6 +1052,7 @@ int create_view(ML_VIEW *ml_list)
   MAIL_VIEW *view_list;
   void *ma=malloc_adr();
   void *eq;
+  int ed_toitem=0;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
   char *from, *to, *subject;
@@ -878,76 +1064,86 @@ int create_view(ML_VIEW *ml_list)
   from=get_from(ml_list);
   if (from)
   {
-    if (*from==' ') from++;
+    from=strchr(from, ':')+1;
+    while (*from==' ') from++;
     ws=AllocWS(strlen(from));
     ascii2ws(ws,from);
     ascii2ws(headers,"From:");
     
-    ConstructEditControl(&ec,1,0x40,headers,headers->wsbody[0]);
+    ConstructEditControl(&ec,1,0x40,headers,wslen(headers));
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,1);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
+    ed_toitem++;
     
-    ConstructEditControl(&ec,3,0x40,ws,ws->wsbody[0]);
+    ConstructEditControl(&ec,3,0x40,ws,wslen(ws));
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,1);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma); 
+    ed_toitem++;
     FreeWS(ws);
   }
   
   to=get_to(ml_list);
   if (to)
   {
-    if (*to==' ') to++;
+    to=strchr(to, ':')+1;
+    while (*to==' ') to++;
     ws=AllocWS(strlen(to));
     ascii2ws(ws,to);
     ascii2ws(headers,"To:");
     
-    ConstructEditControl(&ec,1,0x40,headers,headers->wsbody[0]);
+    ConstructEditControl(&ec,1,0x40,headers,wslen(headers));
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,1);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
+    ed_toitem++;
     
-    ConstructEditControl(&ec,3,0x40,ws,ws->wsbody[0]);
+    ConstructEditControl(&ec,3,0x40,ws,wslen(ws));
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,1);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma); 
+    ed_toitem++;
     FreeWS(ws);
   }
   
   subject=get_subject(ml_list);
   if (subject)
   {
-    if (*subject==' ') subject++;
+    subject=strchr(subject, ':')+1;
+    while (*subject==' ') subject++;
     ws=AllocWS(strlen(subject));
     ascii2ws(ws,subject);
     ascii2ws(headers,"Subject:");
     
-    ConstructEditControl(&ec,1,0x40,headers,headers->wsbody[0]);
+    ConstructEditControl(&ec,1,0x40,headers,wslen(headers));
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,1);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
+    ed_toitem++;
     
-    ConstructEditControl(&ec,3,0x40,ws,ws->wsbody[0]);
+    ConstructEditControl(&ec,3,0x40,ws,wslen(ws));
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,1);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma); 
+    ed_toitem++;
     FreeWS(ws);
   }
   ascii2ws(headers,"---------------------");
-  ConstructEditControl(&ec,1,0x40,headers,headers->wsbody[0]);
+  ConstructEditControl(&ec,1,0x40,headers,wslen(headers));
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,1);
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);  
+  ed_toitem++;
   
-  view_list=ParseMailBody(eq,ml_list,ma);    
+  view_list=ParseMailBody(eq,ml_list,ma,ed_toitem);    
   FreeWS(headers);
   patch_header(&ed1_hdr);
   patch_input(&ed1_desc);  
@@ -1153,17 +1349,19 @@ void maillist_menu_iconhndl(void *data, int curitem, int *unk)
   mail_cur=find_mlist_ByID(curitem);
   if (!mail_cur) return;
   void *item=AllocMenuItem(data);
-  
   subject=get_subject(mail_cur);
+
   if (subject)
   {
+    subject=strchr(subject,':')+1;
+    while(*subject==' ') subject++;
     ws=AllocMenuWS(data,strlen(subject));
-    wsprintf(ws,"%t",subject);
+    wsprintf(ws,_percent_t,subject);
   }
   else    
   {
     ws=AllocMenuWS(data,10);
-    wsprintf(ws,"%t","Ошибка");
+    wsprintf(ws,_percent_t,"Ошибка");
   }
   SetMenuItemIconArray(data,item,S_ICONS);
   SetMenuItemText(data,item,ws,curitem);

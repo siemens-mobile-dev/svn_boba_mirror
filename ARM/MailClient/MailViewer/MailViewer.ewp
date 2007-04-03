@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy $EXE_DIR$\$PROJ_FNAME$.elf \Data\Zbin\$PROJ_FNAME$.elf</postbuild>
+        <postbuild>obexcopy $EXE_DIR$\$PROJ_FNAME$.elf \Data\Zbin\EMailClient\$PROJ_FNAME$.elf</postbuild>
       </data>
     </settings>
     <settings>
