@@ -1,4 +1,5 @@
 #include "..\..\inc\swilib.h"
+#include "..\conf_loader.h"
 #include "..\mailclient.h"
 
 #define TMR_SECOND 216
@@ -780,6 +781,15 @@ const RECT Canvas={0,0,0,0};
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  
+  if (msg->msg==MSG_RECONFIGURE_REQ)
+  {
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"MailDaemon config updated!");
+      InitConfig();
+    }
+  }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)
@@ -870,6 +880,7 @@ void maincsm_oncreate(CSM_RAM *data)
 
 void maincsm_onclose(CSM_RAM *csm)
 {
+  GBS_DelTimer(&reconnect_tmr);
   if (recived_line)
   {
     mfree(recived_line); 

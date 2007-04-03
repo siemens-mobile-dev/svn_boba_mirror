@@ -696,6 +696,10 @@ void ed1_ghook(GUI *data, int cmd)
     j=EDIT_GetFocus(data);
     if (EDIT_GetUnFocus(data)<j) EDIT_SetCursorPos(data,1);
   }
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }    
 }
 INPUTDIA_DESC ed1_desc=
 {
@@ -733,6 +737,9 @@ int get_ctype_index(char *str)
     
     if (!strncmp_nocase(p,"text",4))
       return TEXT;
+    
+    if (!strncmp_nocase(p,"image",5))
+      return APPLICATION; 
   }
   return TEXT;
 }
@@ -1494,10 +1501,29 @@ void maincsm_onclose(CSM_RAM *csm)
   SUBPROC((void *)ElfKiller);
 }
 
+void ReInitConfig(void)
+{
+  InitConfig();
+  S_ICONS[0]=(int)I_UNREAD;
+  S_ICONS[1]=(int)I_READ;
+  S_ICONS[2]=(int)I_HEADER;
+  S_ICONS[3]=(int)I_HEADER_ATT;
+  S_ICONS[4]=(int)I_MES_ATT;
+  S_ICONS[5]=(int)I_MES_DOWN;
+  S_ICONS[6]=(int)I_MES_DEL;  
+}
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  if (msg->msg==MSG_RECONFIGURE_REQ)
+  {
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"MailViewer config updated!");
+      ReInitConfig();
+    }
+  }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)
@@ -1561,16 +1587,7 @@ void UpdateCSMname(void)
 int main()
 {
   MAIN_CSM main_csm;
-  InitConfig();
-  
-  S_ICONS[0]=(int)I_UNREAD;
-  S_ICONS[1]=(int)I_READ;
-  S_ICONS[2]=(int)I_HEADER;
-  S_ICONS[3]=(int)I_HEADER_ATT;
-  S_ICONS[4]=(int)I_MES_ATT;
-  S_ICONS[5]=(int)I_MES_DOWN;
-  S_ICONS[6]=(int)I_MES_DEL;
-
+  ReInitConfig();
   LockSched();
   UpdateCSMname();
   CreateCSM(&MAINCSM.maincsm,&main_csm,0);
