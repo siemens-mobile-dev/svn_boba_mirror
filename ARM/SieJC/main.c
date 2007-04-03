@@ -12,6 +12,7 @@
 #include "jabber_util.h"
 #include "roster_icons.h"
 #include "mainmenu.h"
+#include "serial_dbg.h"
 /*
 ============== Нативный Jabber-клиент ==============
 Возможности текущей версии:
@@ -61,7 +62,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "0.9.9_2-Z";
+const char VERSION_VERS[] = "1.0.0-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -170,7 +171,11 @@ void _stop_vibra(void)
 
 void Vibrate(int Req_Vibra_Count)
 {
-  if(!Is_Vibra_Enabled)Vibra_Count=0;
+  if(!Is_Vibra_Enabled)
+  {
+    Vibra_Count=0;
+    return;
+  }
   if(Vibra_Count)return;
   Vibra_Count = Req_Vibra_Count;
   _start_vibra();
@@ -663,7 +668,11 @@ void __log(char* buffer, int size)
 {
   char mess[20];
   sprintf(mess,"RECV:%d",size);
+#ifdef LOG_TO_COM_PORT
+  tx_str(buffer);
+#else
   Log(mess,buffer);
+#endif  
   mfree(buffer);
 }
 
@@ -683,6 +692,7 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
     SUBPROC((void*)__log,tmp_buf, xmlbuf->buf_size);
 #endif
 
+    
   if(data)
   {
 #ifdef LOG_XML_TREE
@@ -844,6 +854,13 @@ void Dump_PhoneInfo()
   }  
 }
 
+
+void TEST()
+{
+  tx_str((char*)USERNAME);
+}
+
+
 void Disp_State()
 {
   char q[40];
@@ -955,6 +972,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }  
     case '7':
       {
+        TEST();
         break;
       } 
       

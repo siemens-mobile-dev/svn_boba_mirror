@@ -36,10 +36,8 @@ __root const char PATH_TO_PIC[128]="4:\\ZBin\\SieJC\\img\\";
 __root const CFG_HDR cfghdr7={CFG_STR_WIN1251,"Default disc",0,127};
 __root const char DEFAULT_DISC[128]="4";
 
-__root const CFG_HDR cfghdr455={CFG_UINT,"Idle Icon X",0,240};
+__root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
 __root const unsigned int IDLE_ICON_X=0;
-
-__root const CFG_HDR cfghdr3453={CFG_UINT,"Idle Icon Y",0,320};
 __root const unsigned int IDLE_ICON_Y=50;
 
 __root const CFG_HDR cfghdr8={CFG_CBOX,"Auth type",0,2};

@@ -255,6 +255,18 @@ CLIST* CList_FindContactByJID(char* jid)
   char lc_jid[128];
   strcpy(lc_jid, jid);
   str2lower(lc_jid);
+#ifdef LOG_TO_COM_PORT
+  
+#include "serial_dbg.h"
+  char xz[256];
+  char crlf_t[]="\r\n\r\n";
+  zeromem(xz,256);
+   strcpy(xz, crlf_t);
+   strcat(xz, lc_jid);
+   strcat(xz, crlf_t);
+  
+  tx_str(xz);
+#endif  
 //  ShowMSG(1,(int)lc_lid);
   CLIST* ClEx = cltop;
   while(ClEx)

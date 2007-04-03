@@ -192,6 +192,27 @@ char* str2lower(char *st)
   for(int i=0;i<len;i++)
   {
     char sym = *(st+i);
+    if(sym<0x80)
+    {
+      if(st[i]>='A' && st[i]<='Z') st[i] += ('a' - 'A');
+      continue;
+    }
+    if(sym<0xe0)
+    {
+      i++;
+      if(st[i] >= 0x90 && st[i]<=0xAF) st[i]+= (0xB0 - 0x90);
+    }
+  }
+  return st;
+}
+
+
+char* str2lower_ANSI(char *st)
+{
+  unsigned int len = strlen(st);
+  for(int i=0;i<len;i++)
+  {
+    char sym = *(st+i);
     char *cc = st+i;
     *cc= sym>='A' && sym<='Z' ? sym + ('a' - 'A') : sym >= 'À' && sym <= 'ß'? sym + ('à' - 'À') : sym;
   }

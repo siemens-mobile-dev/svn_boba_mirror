@@ -3296,6 +3296,21 @@
     </settings>
   </configuration>
   <group>
+    <name>Serial_Debug</name>
+    <file>
+      <name>$PROJ_DIR$\..\SerialLib\serial.asm</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\SerialLib\serial.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\serial_dbg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\serial_dbg.h</name>
+    </file>
+  </group>
+  <group>
     <name>Utility</name>
     <file>
       <name>$PROJ_DIR$\base64.c</name>
