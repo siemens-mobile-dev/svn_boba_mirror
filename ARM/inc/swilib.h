@@ -1242,6 +1242,11 @@ __swi __arm  char GetAkkuCapacity();
 //arm
 //pattern=??,??,??,E5,??,??,??,E1,1E,FF,2F,E1,08,40,2D,E9,03,10,A0,E3,00,00,A0,E3,??,??,??,EB,C8,0E,50,E3,00,00,A0,93,01,00,A0,83,08,80,BD,E8
 
+#pragma swi_number=0x088
+__swi	__arm char GetAccessoryType(void);
+//arm
+//pattern=??,??,??,E5,??,??,??,E5,??,??,??,E3,??,??,??,01,??,??,??,E5,2E,??,??,E3,2D,??,??,13,??,??,??,0A,??,??,??,E1
+
 #pragma swi_number=0x80C8
 __swi __arm unsigned short *RamCap();
 //thumb
@@ -1263,7 +1268,6 @@ __swi __arm void *BuildCanvas(void);
 
 #pragma swi_number=0x80FF
 __swi __arm unsigned int AddrLibrary();
-
 
 #pragma swi_number=0x0100
 __swi __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
