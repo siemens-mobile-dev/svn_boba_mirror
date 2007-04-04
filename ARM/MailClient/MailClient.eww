@@ -19,6 +19,17 @@
         <configuration>Release</configuration>
       </member>
     </batchDefinition>
+    <batchDefinition>
+      <name>Batch NEWSGOLD</name>
+      <member>
+        <project>MailDaemon</project>
+        <configuration>Release_NEWSGOLD</configuration>
+      </member>
+      <member>
+        <project>MailViewer</project>
+        <configuration>Release_NEWSGOLD</configuration>
+      </member>
+    </batchDefinition>
   </batchBuild>
 </workspace>
 
