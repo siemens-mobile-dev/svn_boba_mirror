@@ -379,13 +379,65 @@ void InitHeaders()
     ml_cur->header=dec_str;
   }
 }
+
+
+#pragma inline 
+size_t cstrlen(const char *s)
+{
+  const char *sc;
+  for (sc = s; *sc != '\0' &&  *sc != '\r' &&  *sc != '\n' ; ++sc);
+  return (sc - s);
+}
+
+#pragma inline 
+char *strchr_nocase(const char *s, int c)
+{ 
+  int ch = toupper(c);
+  
+  for (; toupper(*s) != ch; ++s)
+  if (*s == '\0')
+    return (0);
+  return ((char *)s);
+}
+
+#pragma inline 
+char *strstr_nocase(const char *s1, const char *s2)
+{  
+  if (*s2 == '\0')
+    return ((char *)s1);
+  
+  for (; (s1 = strchr_nocase(s1, *s2)) != 0; ++s1)
+  {    
+    const char *sc1, *sc2;
     
+    for (sc1 = s1, sc2 = s2; ; )
+    if (*++sc2 == '\0')
+      return ((char *)s1);
+    else if (toupper(*++sc1) != toupper(*sc2))
+      break;
+  }
+  return (0);
+}
+
+char *cstrcpy(char *s1, const char *s2)
+{
+  char *s = s1;
+  int c=*s2++;
+  while(c!=0 && c!='\r' && c!='\n')
+  {
+    *s++=c;
+    c=*s2++;
+  }
+  *s=0;
+  return (s1);
+}
+
 char *get_string_from_header(ML_VIEW *ml_list, char *str)
 {
   char *p;
   char *end;
   char *subject;
-  int len;
+  int len, prev_len, c_len;
   if (!ml_list) return (0);
   if (ml_list->header)
   {
@@ -398,16 +450,19 @@ char *get_string_from_header(ML_VIEW *ml_list, char *str)
       end=strstr(p,eol);
       if (!strncmp_nocase(p, str,len))
       {
-        if (end)
+        len=cstrlen(p);
+        subject=malloc(len+1);
+        cstrcpy(subject,p);
+        p+=len;
+        while(*p!=0 && (*(p+2)=='\t' || *(p+2)==' '))
         {
-          subject=malloc((end-p)+1);
-          strncpy(subject,p,end-p);
-          subject[end-p]=0;
-        }
-        else 
-        {
-          subject=malloc(strlen(p)+1);
-          strcpy(subject,p);
+          p+=2;
+          prev_len=len;
+          c_len=cstrlen(p);
+          len+=c_len;
+          subject=realloc(subject,len+1);
+          cstrcpy(subject+prev_len,p);
+          p+=c_len;
         }
         return (subject);
       }
@@ -457,6 +512,69 @@ char *get_content_encoding(ML_VIEW *ml_list)
   if (ml_list->content_encoding) return ml_list->content_encoding;
   content_encoding=get_string_from_header(ml_list, "content-transfer-encoding:");
   return (ml_list->content_encoding=content_encoding);
+}
+
+char *get_from_multipartheader(char *begin_h, char *end_h, char *str)
+{
+  char *p, *s;
+  char *end;
+  int len, prev_len, c_len;
+  if (!end_h) return (0);
+  if (begin_h)
+  {
+    len=strlen(str);
+    p=begin_h;
+    p-=2;
+    do
+    {
+      p+=2;
+      end=strstr(p,eol);
+      if (!strncmp_nocase(p, str,len))
+      {
+        len=cstrlen(p);
+        s=malloc(len+1);
+        cstrcpy(s,p);
+        p+=len;
+        while(*p!=0 && (*(p+2)=='\t' || *(p+2)==' '))
+        {
+          p+=2;
+          prev_len=len;
+          c_len=cstrlen(p);
+          len+=c_len;
+          s=realloc(s,len+1);
+          cstrcpy(s+prev_len,p);
+          p+=c_len;
+        }
+        return (s);
+      }
+      if (!end) return (0);
+      p=end;
+    }
+    while(*p && p<end_h );
+  }
+  return 0;
+}
+
+// Требуется для boundary= , name= , charset= 
+int get_param_from_string(char *str, char *param, char *to, int maxlen)  // Выдеяет из строки вида charset="koi8-r" или charset=koi8-r подстроку и копирует ее в строку назначения
+{
+  int c, i, d;
+  char *p;
+  p=strstr_nocase(str, param);
+  if (!p) return (0);
+  p+=strlen(param);
+  if (*p=='\"')
+  {
+    c='\"';
+    p+=1;
+  }
+  else c=' ';
+  for (i=0; i<maxlen && (d=p[i])!=c; i++)
+  {
+    to[i]=d;
+  }
+  to[i]=0;
+  return (i);
 }
 //----------------------------------------------------------------------------------------------
 typedef struct{
@@ -509,12 +627,20 @@ int saveas_onkey(GUI *data, GUI_MSG *msg)
     mail=mail_view->top;
     p=mail_view->eml+mail->offset;
     size=mail->size;
-    if (mail->transfer_encoding!=BASE64)
+    switch(mail->transfer_encoding)
     {
+    case BASE64:
+      decoded=base64_decode(p, &size);
+      break;
+      
+    case QPRINTABLE:
+      decoded=quoted_printable_decode(p, &size);
+      break;
+      
+    default:
       ShowMSG(1,(int)"Unknown encoding!");
       return (1);
     } 
-    decoded=base64_decode(p, &size);
     if (!decoded) 
     {
       ShowMSG(1,(int)"Can't decode attach!");
@@ -586,38 +712,30 @@ INPUTDIA_DESC saveas_desc =
   0x40000000
 };
 
-
-
-
-
-
 void create_save_as_dialog(MAIL_PART *top, char *eml)
 {
   void *ma=malloc_adr();
   void *eq;  
   char *p;
-  int c, i;
   char fname[256];
   EDITCONTROL ec;
   MAIL_VIEW *mail_view;
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   WSHDR *ews=AllocWS(128);
+  WSHDR *filename;
   wsprintf(ews,"%t","Path Save File:");  
   ConstructEditControl(&ec,ECT_HEADER,0x40,ews,wslen(ews));
   AddEditControlToEditQend(eq,&ec,ma);
   
   p=top->ct;
-  p=strstr_nocase(p,"name=");
-  p+=5;
-  while(*p=='\"') p++;
-  for (i=0; (c=p[i])!='\"';i++)
-  {
-    fname[i]=c;
-  }
-  fname[i]=0;
+  get_param_from_string(p, "name=", fname, 255);
   p=unmime_header(fname);
-  wsprintf(ews,"%s%t",SAVE_AS_FOLDER,p);
+  filename=AllocWS(strlen(p));
+  ascii2ws(filename, p);
+  str_2ws(ews, SAVE_AS_FOLDER, 127);
+  wstrcat(ews, filename);
+  FreeWS(filename);
   mfree(p);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,128);
   AddEditControlToEditQend(eq,&ec,ma);  
@@ -720,7 +838,6 @@ INPUTDIA_DESC ed1_desc=
 
 
 
-
 int get_ctype_index(char *str)
 {
   char *p;
@@ -774,65 +891,15 @@ int get_charset(char *charset)
   if (!strncmp_nocase(charset,"windows-1251",12))
     return WIN_1251;
   
-  if (!strncmp_nocase(charset,"\"windows-1251\"",14))
-    return WIN_1251;
-    
   if (!strncmp_nocase(charset,"koi8-r",6))
     return KOI8_R; 
   
-  if (!strncmp_nocase(charset,"\"koi8-r\"",8))
-    return KOI8_R; 
-    
   if (!strncmp_nocase(charset,"ISO-8859-5",10))
-    return ISO_8859_5;
-  
-  if (!strncmp_nocase(charset,"\"ISO-8859-5\"",12))
     return ISO_8859_5;
   
   return WIN_1251;
 }
-#pragma inline 
-char *strchr_nocase(const char *s, int c) /* Copied from strchr.c */
-{ 
-  int ch = toupper(c);
-  
-  for (; toupper(*s) != ch; ++s)
-  if (*s == '\0')
-    return (0);
-  return ((char *)s);
-}
 
-#pragma inline 
-char *strstr_nocase(const char *s1, const char *s2) /* Copied from strstr.c */
-{  
-  if (*s2 == '\0')
-    return ((char *)s1);
-  
-  for (; (s1 = strchr_nocase(s1, *s2)) != 0; ++s1)
-  {    
-    const char *sc1, *sc2;
-    
-    for (sc1 = s1, sc2 = s2; ; )
-    if (*++sc2 == '\0')
-      return ((char *)s1);
-    else if (toupper(*++sc1) != toupper(*sc2))
-      break;
-  }
-  return (0);
-}
-
-char *cstrcpy(char *s1, const char *s2)
-{
-  char *s = s1;
-  int c=*s2++;
-  while(c!=0 && c!='\r' && c!='\n')
-  {
-    *s++=c;
-    c=*s2++;
-  }
-  *s=0;
-  return (s1);
-}
 extern char * base64_decode(const char *str, size_t *size);
 extern char * quoted_printable_decode(const char *str, size_t *size);
 extern void koi2win(char*d,char *s);
@@ -901,19 +968,17 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
   eml=realloc(eml, size+1);
   while(bot)
   {
-    char boundary[32];
     size_t buf_size;
     char *p, *buf, *b_end;
-    int c, i;
+    int i;
     switch(bot->content_type)
     {
     case TEXT:
       p=bot->ct;
-      p=strstr_nocase(p,"charset=");
-
-      if (p)
+      i=get_param_from_string(p, "charset=", fname, 127);
+      if (i)
       {
-        bot->charset=get_charset(p+8);
+        bot->charset=get_charset(fname);
       }
       else bot->charset=WIN_1251;
       switch(bot->transfer_encoding)
@@ -921,8 +986,8 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
       default:
       case BIT8:
         buf=malloc(bot->size+1);
-        strncpy(buf,eml+bot->offset,size);
-        buf[size]=0;
+        strncpy(buf,eml+bot->offset,bot->size);
+        buf[bot->size]=0;
         break;
          
       case BASE64:
@@ -940,7 +1005,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
       case WIN_1251:
       default:
         break;
-        
+   
       case KOI8_R:
         koi2win(buf, buf);
         break;
@@ -965,30 +1030,22 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
       break;
       
     case MULTIPART:
-      p=ml_list->header;
-      if (!p) break;
-      p=strstr_nocase(p,"boundary=");
-      if (!p) break;
-      p+=9;
-      if (*p=='\"')
-      {
-        while(*p=='\"') p++;
-      }
-      for (i=0; (c=p[i])!='\"';i++)
-      {
-        boundary[i]=c;
-      }
-      boundary[i]=0;
-      p=strstr_nocase(eml,boundary);
+      p=bot->ct;
+      i=get_param_from_string(p, "boundary=", fname,127);
+      if (!i) break;
+      p=strstr_nocase(eml,fname);
       while(p)
       {
         p+=i;
         if (!strncmp(p,"--\r\n",4)) break;
+        
+        p=strstr(p,eol);
+        p+=2;
 
         buf=strstr(p,d_eol);
         buf+=4;
         
-        b_end=strstr_nocase(p,boundary);
+        b_end=strstr_nocase(p,fname);
         if (!b_end)  continue;
         
         prev=bot;
@@ -999,37 +1056,30 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
         prev->offset=buf-eml;
         prev->size=b_end-buf;
         
-        content_type=strstr_nocase(p,"content-type:");
-        if (content_type && content_type<buf)
+        content_type=get_from_multipartheader(p,buf,"content-type:");
+        if (content_type)
         {
-          cstrcpy(prev->ct,content_type);          
+          strcpy(prev->ct,content_type);  
+          mfree(content_type);
         }
         else strcpy(prev->ct,default_ctype);
-        prev->content_type=get_ctype_index(prev->ct);
         
-        content_encoding=strstr_nocase(p,"Content-Transfer-Encoding:");
-        if (content_encoding && content_encoding<buf)
+        content_encoding=get_from_multipartheader(p,buf,"Content-Transfer-Encoding:");
+        if (content_encoding)
         {
-          cstrcpy(prev->te,content_encoding);          
+          cstrcpy(prev->te,content_encoding);     
+          mfree(content_encoding);
         }
         else strcpy(prev->te,default_transfere);
+        
+        prev->content_type=get_ctype_index(prev->ct);
         prev->transfer_encoding=get_ctencoding_index(prev->te);
         p=b_end;
       }      
     case APPLICATION:
       p=bot->ct;
-      p=strstr_nocase(p,"name=");
-      if (!p) break;
-      p+=5;
-      if (*p=='\"')
-      {
-        while(*p=='\"') p++;
-      }
-      for (i=0; (c=p[i])!='\"';i++)
-      {
-        fname[i]=c;
-      }
-      fname[i]=0;
+      i=get_param_from_string(p,"name=",fname,127);
+      if (i<=0) break;
       p=unmime_header(fname);
       
       ws=AllocWS(strlen(p));
@@ -1052,7 +1102,6 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
   view_list->eml=eml;
   return (view_list);
 }
-  
 
 int create_view(ML_VIEW *ml_list)
 {
