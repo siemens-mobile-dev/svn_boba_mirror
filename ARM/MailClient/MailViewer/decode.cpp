@@ -264,7 +264,7 @@ void iso885952win(char*d,char *s)
   *d=c;
 }
 
-int get_type_encoding(char *charset)
+int get_charset(char *charset)
 {
   if (!strncmp_nocase(charset,"windows-1251",12))
     return WIN_1251;
@@ -367,7 +367,7 @@ char *unmime_header(const char *encoded_str)
       p = eword_end_p + 2;
       continue;
     }
-    switch(get_type_encoding(charset))
+    switch(get_charset(charset))
     {
     case WIN_1251:
       strcat(outbuf, decoded_text);

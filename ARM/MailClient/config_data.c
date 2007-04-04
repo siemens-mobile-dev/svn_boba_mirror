@@ -32,11 +32,15 @@ __root const CFG_HDR cfghdr6={CFG_CBOX,"Action if mail del from server:",0,2};
 __root const int IF_DEL_AUX = 0;
 __root const CFG_CBOX_ITEM cfgcbox2[2]={"Delete From Phone","Nothing"};
 
+__root const CFG_HDR cfghdr61={CFG_CBOX,"Delete from serv after loading:",0,2};
+__root const int DEL_AFTER_LOAD = 0;
+__root const CFG_CBOX_ITEM cfgcbox3[2]={"No","Yes"};
+
 __root const CFG_HDR cfghdr7={CFG_STR_UTF8,"Icon Message Unreaded",3,63};
-__root const char I_UNREAD[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\message_unread.png";
+__root const char I_UNREAD[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_unread.png";
 
 __root const CFG_HDR cfghdr8={CFG_STR_UTF8,"Icon Message readed",3,63};
-__root const char I_READ[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\message_read.png";
+__root const char I_READ[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_read.png";
 
 __root const CFG_HDR cfghdr9={CFG_STR_UTF8,"Icon Only Header",3,63};
 __root const char I_HEADER[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\only_head.png";
@@ -44,12 +48,15 @@ __root const char I_HEADER[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\only_hea
 __root const CFG_HDR cfghdr10={CFG_STR_UTF8,"Icon Header with attach",3,63};
 __root const char I_HEADER_ATT[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\only_head_att.png";
 
-__root const CFG_HDR cfghdr11={CFG_STR_UTF8,"Message with attach",3,63};
-__root const char I_MES_ATT[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_with_att.png";
+__root const CFG_HDR cfghdr11={CFG_STR_UTF8,"Icon Message unread with att",3,63};
+__root const char I_MES_UNREAD_ATT[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_unread_att.png";
 
-__root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Icon Message for download",3,63};
+__root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Icon Message read with att",3,63};
+__root const char I_MES_READ_ATT[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_read_att.png";
+
+__root const CFG_HDR cfghdr13={CFG_STR_UTF8,"Icon Message for download",3,63};
 __root const char I_MES_DOWN[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_for_download.png";
 
-__root const CFG_HDR cfghdr13={CFG_STR_UTF8,"Icon Message for delete",3,63};
+__root const CFG_HDR cfghdr14={CFG_STR_UTF8,"Icon Message for delete",3,63};
 __root const char I_MES_DEL[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_for_delete.png";
 

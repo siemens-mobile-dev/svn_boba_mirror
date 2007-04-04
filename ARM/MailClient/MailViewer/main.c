@@ -886,20 +886,8 @@ int get_ctencoding_index(char *str)
 }
 
 enum {WIN_1251, KOI8_R, ISO_8859_5};
-int get_charset(char *charset)
-{
-  if (!strncmp_nocase(charset,"windows-1251",12))
-    return WIN_1251;
-  
-  if (!strncmp_nocase(charset,"koi8-r",6))
-    return KOI8_R; 
-  
-  if (!strncmp_nocase(charset,"ISO-8859-5",10))
-    return ISO_8859_5;
-  
-  return WIN_1251;
-}
 
+extern int get_charset(char *charset);
 extern char * base64_decode(const char *str, size_t *size);
 extern char * quoted_printable_decode(const char *str, size_t *size);
 extern void koi2win(char*d,char *s);
@@ -1205,7 +1193,7 @@ int create_view(ML_VIEW *ml_list)
   patch_input(&ed1_desc);  
   return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,view_list);
 }  
-  
+
 //----------------------------------------------------------------------------------------------
       
 int GetIconIndex(ML_VIEW *m_list)
@@ -1221,9 +1209,9 @@ int GetIconIndex(ML_VIEW *m_list)
   case M_HEADERS_LOADED:
     return 2;
   case M_LOAD_FULL:
-    return 5;
-  case M_DELETE:
     return 6;
+  case M_DELETE:
+    return 7;
   }
   return 0;
 }
@@ -1557,9 +1545,10 @@ void ReInitConfig(void)
   S_ICONS[1]=(int)I_READ;
   S_ICONS[2]=(int)I_HEADER;
   S_ICONS[3]=(int)I_HEADER_ATT;
-  S_ICONS[4]=(int)I_MES_ATT;
-  S_ICONS[5]=(int)I_MES_DOWN;
-  S_ICONS[6]=(int)I_MES_DEL;  
+  S_ICONS[4]=(int)I_MES_UNREAD_ATT;
+  S_ICONS[5]=(int)I_MES_READ_ATT;
+  S_ICONS[6]=(int)I_MES_DOWN;
+  S_ICONS[7]=(int)I_MES_DEL;  
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)

@@ -15,13 +15,15 @@ extern const int IF_DEL_AUX;
 extern const char POP3_ADRESS[];
 extern const unsigned int POP3_PORT;
 extern const char SAVE_AS_FOLDER[];
+extern const int DEL_AFTER_LOAD;
 extern void kill_data(void *p, void (*func_p)(void *));
 
 extern const char I_UNREAD[];
 extern const char I_READ[];
 extern const char I_HEADER[];
 extern const char I_HEADER_ATT[];
-extern const char I_MES_ATT[];
+extern const char I_MES_UNREAD_ATT[];
+extern const char I_MES_READ_ATT[];
 extern const char I_MES_DOWN[];
 extern const char I_MES_DEL[];
 
