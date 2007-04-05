@@ -92,22 +92,21 @@ void Alert(void)
 	}
 }
 
-int patch(int param)
+void patch(void)
 {
 	char *ValidIMSIs = GetStrFromFile(IMSI_FILE);
 	char *CurrIMSI = BCD2Str(RAM_IMSI(), 9);
 	int IsValidIMSI = (ValidIMSIs && CurrIMSI) ? (int)strstr(ValidIMSIs, CurrIMSI) : 0L;
-	if (*RamPressedKey ()== '*')
+	if (*RamPressedKey()== '*')
 	{
-		ShowMSG(1, (int)"<<*>> pressed. Security disabled!");
-		return (-1);
+		ShowMSG(1, (int)"«*» pressed. Security disabled!");
+		return;
 	}
 	if (IsValidIMSI)
 	{
 		ShowMSG(1, (int)"IMSI is valid. Security disabled!");
-		return (-2);
+		return;
 	}
 	Alert();
-	return (0);
 }
 

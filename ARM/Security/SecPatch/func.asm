@@ -9,13 +9,18 @@
         RTMODEL "__endian", "little"
         RTMODEL "__rt_version", "6"
 */;===================================
-	RSEG CODE:CODE:NOROOT(2)
-	
+	RSEG PATCH_CODE:CODE:NOROOT(2)
 	EXTERN patch
 	CODE16
-		RSEG N3PT:CODE:ROOT(1)
-	
+call_patch
 	BLX patch
+	MOV R0, #0
+	STRB    R0, [R7,#2]
+	BX LR ;N3PT+4
+
+	RSEG N3PT:CODE:ROOT(1)
+n3pt	
+	BL call_patch
 
 	END
 	
