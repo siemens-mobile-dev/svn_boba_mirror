@@ -1255,7 +1255,7 @@ __swi __arm unsigned short *RamCap();
 __swi __arm  RAMNET * RamNet();
 //thumb
 
-#pragma swi_number=0xDF
+#pragma swi_number=0x80DF
 __swi __arm char *RamPressedKey();
 
 #pragma swi_number=0x80E0
