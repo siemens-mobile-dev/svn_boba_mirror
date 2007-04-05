@@ -15,6 +15,7 @@ typedef struct
   char *answer;
   char *last_log;
   int isactive;
+  int msg_count;
 }CLIST;
 
 typedef struct

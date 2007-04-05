@@ -12,6 +12,9 @@
 //По 10 секунд
 #define ACTIVE_TIME 360
 
+//Максимальное количество сообщений в логе-1
+#define MAXLOGMSG (20)
+
 // Строковые описания статусов
 
 const char S_OFFLINE[]="Offline";
@@ -1055,6 +1058,9 @@ void AddStringToLog(CLIST *t, char code, char *s, const char *name)
   TDate d;
   char *ns;
   GetDateTime(&d,&tt);
+  char *lp;
+  int c;
+  int i;
   
   if (!t->log)
   {
@@ -1066,14 +1072,30 @@ void AddStringToLog(CLIST *t, char code, char *s, const char *name)
   Add2History(t, hs, s); // Запись хистори
   
   snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
-  ns=malloc(strlen(t->log)+strlen(hs)+strlen(s)+1);
-  strcpy(ns,t->log);
+  lp=t->log;
+  i=0;
+  while(t->msg_count>MAXLOGMSG)
+  {
+    i++;
+    while((c=*(++lp))>2);
+    if (!c)
+    {
+      lp=t->log; //Чего-то не срослось (неожиданно нашли конец лога)
+      if (!*(t->log)) i=0; //Если нет сообщений вообще
+      t->msg_count=i; //Пересчитанное количество сообщений
+      break;
+    }
+    t->msg_count--;
+  }
+  ns=malloc(strlen(lp)+strlen(hs)+strlen(s)+1);
+  strcpy(ns,lp);
   t->last_log=ns+strlen(ns);
   strcat(ns,hs);
   strcat(ns,s);
   mfree(t->log);
   t->log=ns;
   if (!t->isunread) total_unread++;
+  t->msg_count++;
   t->isunread=1;
 }
 
@@ -2088,6 +2110,12 @@ void edchat_ghook(GUI *data, int cmd)
       s=ed_struct->ed_contact->last_log;
       if (s)
       {
+	j=(ed_struct->ed_contact->msg_count*2); //Ожидаемый ed_answer
+	while(j<ed_struct->ed_answer)
+	{
+          EDIT_RemoveEditControl(ed_struct->ed_chatgui,1);
+          ed_struct->ed_answer--;
+	}
 	while(*s)
 	{
 	  type=*s++;    //Пропуск типа
@@ -2421,6 +2449,7 @@ void ClearLog(GUI *data,void *dummy)
     {
       mfree(t->log);
       t->log=NULL;
+      t->msg_count=0;
       if (ed_struct->ed_answer>=2&&ed_struct->ed_chatgui)
       {
         while(ed_struct->ed_answer!=2)
