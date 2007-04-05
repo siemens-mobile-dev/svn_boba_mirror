@@ -7,7 +7,7 @@
 #endif
 
 __root const CFG_HDR cfghdr0={CFG_STR_WIN1251,"Login",0,63};
-__root const char MAIL_LOGIN[64]="aru55@km.ru";
+__root const char MAIL_LOGIN[64]="";
 
 __root const CFG_HDR cfghdr1={CFG_STR_PASS,"Password",0,31};
 __root const char MAIL_PASS[32]="";

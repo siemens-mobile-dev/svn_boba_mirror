@@ -75,8 +75,8 @@ typedef struct
 {
   void *next;
   char *uidl;
-  unsigned short state;
-  unsigned short is_read;
+  unsigned int state;
+  unsigned int is_read;
   unsigned int mail_size;
   int num_in_list;
 }ML_DAEMON;
@@ -85,8 +85,9 @@ typedef struct
 {
   void *next;
   char *uidl;
-  unsigned short state;
-  unsigned short is_read;
+  unsigned int state;
+  unsigned int is_read;
+  unsigned int is_attach;
   unsigned int mail_size;
   char *header;
   char *subject;

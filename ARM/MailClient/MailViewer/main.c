@@ -342,6 +342,11 @@ int get_fsize(int f)
 
 const char eml_not_found[]="Error! File not found!";
 
+char *get_content_type(ML_VIEW *ml_list);
+int get_ctype_index(char *str);
+enum {MULTIPART, APPLICATION, TEXT};
+
+
 void InitHeaders()
 {
   int f;
@@ -350,6 +355,7 @@ void InitHeaders()
   char *buf, *dec_str;
   int fsize;
   char *_eol;
+  char *content_type;
   ML_VIEW *ml_cur=(ML_VIEW *)&mails;
   while((ml_cur=ml_cur->next))
   {
@@ -377,8 +383,20 @@ void InitHeaders()
     dec_str=unmime_header(buf);
     mfree(buf);
     ml_cur->header=dec_str;
+    
+    content_type=get_content_type(ml_cur);  // Проверим наличие аттачей
+    if (content_type)
+    {
+      int l;
+      l=get_ctype_index(content_type);
+      if (l==APPLICATION || l==MULTIPART)
+      {
+        ml_cur->is_attach=1;
+      }
+    } 
   }
 }
+
 
 
 #pragma inline 
@@ -601,7 +619,6 @@ extern void koi2win(char*d,char *s);
 extern void iso885952win(char*d,char *s);
 
 enum {BIT8, BASE64, QPRINTABLE, BIT7};
-enum {MULTIPART, APPLICATION, TEXT};
 
 void saveas_locret(void){}
 
@@ -1204,10 +1221,12 @@ int GetIconIndex(ML_VIEW *m_list)
   {
   case M_FULL_LOADED:
     if (m_list->is_read)
-      return 1;
-    else return 0;
+      return (m_list->is_attach?5:1);
+    else
+      return (m_list->is_attach?4:0);
+    
   case M_HEADERS_LOADED:
-    return 2;
+    return (m_list->is_attach?3:2);
   case M_LOAD_FULL:
     return 6;
   case M_DELETE:

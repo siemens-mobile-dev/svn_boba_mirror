@@ -159,7 +159,7 @@ void write_mail_DB()
   while((ml_list=ml_list->next))
   {
     mail_db.magic=MDB_MAGIC;
-    (ml_list->uidl)?(mail_db.uidl_len=strlen(ml_list->uidl)):(mail_db.uidl_len=0);
+    mail_db.uidl_len=ml_list->uidl?strlen(ml_list->uidl):0;
     mail_db.state=ml_list->state;
     mail_db.is_read=ml_list->is_read;
     mail_db.mail_size=ml_list->mail_size;
@@ -464,6 +464,16 @@ void process_line(char *rec_line)
           fclose(fhandler,&err);
           mes_rec=0;
           write_mail_DB();
+          if (pop_state==POP_RECEIVE_MESSAGE)
+          {
+            if (DEL_AFTER_LOAD)
+            {
+              send_del_mes(cur_ml->num_in_list);
+              pop_state=POP_DELETE_MESSAGE;
+              REDRAW();
+              return;
+            }
+          }    
           pop_state=POP_PROCESS_LIST;
           REDRAW();
         }
@@ -517,11 +527,6 @@ void process_line(char *rec_line)
     return;
   }
 }
-
-
-
-
-
 
 #define BUF_SIZE 1024
 void get_answer(void)
@@ -923,7 +928,7 @@ const struct
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"Mail Client");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"MailDaemon");
 }
 
 int main(char *exename, char *fname)
