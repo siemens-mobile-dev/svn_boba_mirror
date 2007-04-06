@@ -315,9 +315,14 @@ TRESOURCE* CList_IsResourceInList(char* jid)
   if(!ClEx)return NULL;
   LockSched();
   TRESOURCE* ResEx = ClEx->res_list;
+  char lc_jid[128], lc_fname[128];
+  strcpy(lc_jid, jid);
+  str2lower(lc_jid);
   while(ResEx)
   {
-    if(!strcmp(ResEx->full_name, jid))
+    strcpy(lc_fname, ResEx->full_name);
+    str2lower(lc_fname);
+    if(!strcmp(lc_fname, lc_jid))
     {
       UnlockSched();
       return ResEx;
