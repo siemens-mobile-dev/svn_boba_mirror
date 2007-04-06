@@ -374,6 +374,21 @@ void Check(void)
 }
 
 // ----------------------------------------------------------------------------
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+#pragma inline
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
+
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
@@ -383,7 +398,12 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   
   if(msg->msg == MSG_RECONFIGURE_REQ) // Перечитывание конфига по сообщению
   {
-    RereadSettings();
+    extern const char *successed_config_filename;
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"TalkAkkum config updated!");
+      RereadSettings();
+    }
   }
   
   
