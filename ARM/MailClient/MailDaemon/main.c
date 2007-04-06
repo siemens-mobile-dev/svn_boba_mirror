@@ -242,7 +242,7 @@ void remove_cur_from_list()
   
 void do_losted_mes()
 {
-  if (IF_DEL_AUX==NULL) remove_cur_from_list();
+  if (IF_DEL_AUX==0 || cur_ml->state==M_DELETE) remove_cur_from_list();
 }  
 
 void send_str(char* str)

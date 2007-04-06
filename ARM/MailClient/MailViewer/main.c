@@ -261,6 +261,7 @@ int InitMailDB()
     ml_cur->next=0;
     ml_cur->state=mail_db.state;
     ml_cur->is_read=mail_db.is_read;
+    ml_cur->is_attach=0;
     ml_cur->mail_size=mail_db.mail_size;
     if (mail_db.uidl_len)
     {
