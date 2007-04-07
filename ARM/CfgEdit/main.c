@@ -121,6 +121,7 @@ void ed1_ghook(GUI *data, int cmd)
   int n;
   int j;
   int vi;
+  int utf8conv_res_len;
   unsigned int vui;
   int pos;
   char ss[16];
@@ -166,6 +167,12 @@ void ed1_ghook(GUI *data, int cmd)
       case CFG_STR_UTF8:
         ws_2str(ews,(char *)(hp+1),hp->max);
         break;
+
+      case CFG_UTF8_STRING:
+        // ws_2utf8( WSHDR *from, char *to , int *result_length, int max_len);
+        ws_2utf8(ews,(char *)(hp+1),&utf8conv_res_len,hp->max);
+        break;        
+        
       case CFG_STR_PASS:
       case CFG_STR_WIN1251:
         j=0;
@@ -662,6 +669,19 @@ int create_ed(void)
       }
       p+=(hp->max+1+3)&(~3);
       break;
+
+    case CFG_UTF8_STRING:
+      n-=(hp->max+1+3)&(~3);
+      if (n<0) goto L_ERRCONSTR;
+      utf8_2ws(ews,p,hp->max);
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,3,0x40,ews,hp->max);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      }
+      p+=(hp->max+1+3)&(~3);
+      break;      
+      
     case CFG_CBOX:
       n-=hp->max*sizeof(CFG_CBOX_ITEM)+4;
       if (n<0) goto L_ERRCONSTR;

@@ -11,6 +11,8 @@
 //min=0 - end tag
 #define CFG_LEVEL 9
 
+#define CFG_UTF8_STRING 10
+
 typedef struct
 {
   int type;
