@@ -12,7 +12,7 @@
 #include "jabber_util.h"
 #include "roster_icons.h"
 #include "mainmenu.h"
-#include "serial_dbg.h"
+//#include "serial_dbg.h"
 /*
 ============== Нативный Jabber-клиент ==============
 Возможности текущей версии:
