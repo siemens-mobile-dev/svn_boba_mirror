@@ -68,6 +68,36 @@ unsigned int char16to8(unsigned int c);
 
 void ed1_locret(void){}
 
+extern void open_select_file_gui(void *ed_gui, int type);
+
+void on_utf8ec(USR_MENU_ITEM *item)
+{
+  if (item->type==0)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      wsprintf(item->ws,_percent_t,"SelectFolder");
+      break;
+    case 1:
+      wsprintf(item->ws,_percent_t,"SelectFile");
+      break;
+    }
+  }
+  if (item->type==1)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      open_select_file_gui(item->user_pointer, 0);
+      break;
+    case 1:
+      open_select_file_gui(item->user_pointer, 1);
+      break;
+    }
+  }   
+}
+
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
@@ -89,6 +119,14 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
       ws_2str(ews,ss,15);
       if (l==LEFT_SOFT||l==ENTER_BUTTON)
       {
+        if (l==ENTER_BUTTON)
+        {
+          if (hp->type==CFG_STR_UTF8)
+          {
+            EDIT_OpenOptionMenuWithUserItems(data,on_utf8ec,data,2);
+            return (-1);
+          }
+        }
         switch(hp->type)
         {
         case CFG_COORDINATES:
