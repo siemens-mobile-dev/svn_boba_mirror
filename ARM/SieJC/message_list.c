@@ -6,6 +6,8 @@
 #include "jabber_util.h"
 #include "string_util.h"
 
+
+#define MAX_SYMBOL_WIDTH 8    // Максимальная ширина символа
 //-------------Цвета. Много цветов :)
 
 #ifdef STD_PALETTE
@@ -569,6 +571,8 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int parsed_counter = 0; // Сколько уже было обработано (=OLD_MessList_Count)
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
+  int Scr_width = ScreenW();
+  int Curr_width=MAX_SYMBOL_WIDTH;
   char IsCaret = 0; // Является ли символ переносом строки
 //  int chars;
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;  
@@ -586,7 +590,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     {
       temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
       utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
-      temp_ws_2 = AllocWS(CHAR_ON_LINE);
+      temp_ws_2 = AllocWS(CHAR_ON_LINE*2);
       int l=wstrlen(temp_ws_1);
       
         //char q[40];
@@ -604,13 +608,14 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       wschar = temp_ws_1->wsbody+i;
       symb = *wschar;
       IsCaret = symb==0x000A || symb==0x000D || symb==0x00A0 ? 1 : 0;
-      if(!IsCaret && symb!=0x0 && cnt<CHAR_ON_LINE)
+      if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width<= Scr_width))
       {
         //*(msg_buf + cnt) = symb;
         wsAppendChar(temp_ws_2, symb);
+        Curr_width=Curr_width+GetSymbolWidth(symb,SMALL_FONT);
         cnt++;
       }
-      if(IsCaret || cnt>=CHAR_ON_LINE || i==l) // Перенос строки
+      if(IsCaret || (/*cnt>=CHAR_ON_LINE || */Curr_width>Scr_width) || i==l) // Перенос строки
       {
         Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
         Disp_Mess_Ex->mess = AllocWS(cnt);
@@ -631,6 +636,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
         }
         cnt=0;
         DispMessList_Count++;
+        Curr_width = MAX_SYMBOL_WIDTH;
       }
     }
     FreeWS(temp_ws_1);
@@ -639,7 +645,6 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     MessEx = MessEx->next;
     parsed_counter++;
   }
-//  mfree(msg_buf);
   UnlockSched();
 }
 
