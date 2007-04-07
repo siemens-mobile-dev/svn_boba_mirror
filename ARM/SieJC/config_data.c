@@ -1,6 +1,6 @@
 #include "..\inc\cfg_items.h"
 //Конфигурация
-__root const CFG_HDR cfghdr0={CFG_STR_UTF8,"Login",0,31};
+__root const CFG_HDR cfghdr0={CFG_UTF8_STRING,"Login",0,31};
 __root const char USERNAME[32]="";
 
 __root const CFG_HDR cfghdr1={CFG_STR_PASS,"Password",0,31};
@@ -26,6 +26,12 @@ __root const CFG_CBOX_ITEM cfgcbox1435[2]={"Disabled","Enabled"};
 __root const CFG_HDR cfghdr357835={CFG_CBOX,"MUC history",0,2};
 __root const int WRITE_MUC_HISTORY = 0;
 __root const CFG_CBOX_ITEM cfgcbox36546[2]={"Disabled","Enabled"};
+
+__root const CFG_HDR cfghdr5o39={CFG_UTF8_STRING,"Default MUC:",0,63};
+__root const char DEFAULT_MUC[64]="siepatchdb@conference.jabber.ru";
+
+__root const CFG_HDR cfghdr5o3ioh9={CFG_UTF8_STRING,"Default MUC nick:",0,63};
+__root const char DEFAULT_MUC_NICK[64]="";
 
 __root const CFG_HDR cfghdr5={CFG_STR_UTF8,"History path",0,127};
 __root const char HIST_PATH[128]="4:\\ZBin\\SieJC\\history\\";

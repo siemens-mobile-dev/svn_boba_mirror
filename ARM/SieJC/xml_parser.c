@@ -379,7 +379,8 @@ char* XML_Get_Attr_Value(char* req_attr_name, XMLAttr* attr_list)
   XMLAttr* attr_Ex = attr_list;
   while(attr_Ex)
   {
-    if(!strcmp(req_attr_name, attr_Ex->name)) return attr_Ex->param;
+    if(attr_Ex->name)
+      if(!strcmp(req_attr_name, attr_Ex->name)) return attr_Ex->param;
     attr_Ex = attr_Ex->next;
   }
   return NULL;
@@ -396,7 +397,8 @@ XMLNode* XML_Get_Child_Node_By_Name(XMLNode* node, char* req_node_name)
   XMLNode* nodeEx = node->subnode;
   while(nodeEx)
   {
-    if(!strcmp(req_node_name, nodeEx->name)) return nodeEx;
+    if(nodeEx->name)
+      if(!strcmp(req_node_name, nodeEx->name)) return nodeEx;
     nodeEx = nodeEx->next;
   }
   return NULL;

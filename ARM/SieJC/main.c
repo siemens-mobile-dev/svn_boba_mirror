@@ -62,7 +62,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "1.1.1-Z";
+const char VERSION_VERS[] = "1.1.2-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -855,12 +855,6 @@ void Dump_PhoneInfo()
 }
 
 
-void TEST()
-{
-  tx_str((char*)USERNAME);
-}
-
-
 void Disp_State()
 {
   char q[40];
@@ -972,7 +966,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }  
     case '7':
       {
-        TEST();
         break;
       } 
       

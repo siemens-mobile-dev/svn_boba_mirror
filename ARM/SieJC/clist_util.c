@@ -252,26 +252,14 @@ CLIST* CList_FindContactByJID(char* jid)
 {
   LockSched();
   // ѕреобразуем жид в нижний регистр
-  char lc_jid[128];
-  strcpy(lc_jid, jid);
-  str2lower(lc_jid);
-#ifdef LOG_TO_COM_PORT
-  
-#include "serial_dbg.h"
-  char xz[256];
-  char crlf_t[]="\r\n\r\n";
-  zeromem(xz,256);
-   strcpy(xz, crlf_t);
-   strcat(xz, lc_jid);
-   strcat(xz, crlf_t);
-  
-  tx_str(xz);
-#endif  
-//  ShowMSG(1,(int)lc_lid);
+//  char lc_jid[128];
+//  strcpy(lc_jid, jid);
+//  str2lower(lc_jid);
   CLIST* ClEx = cltop;
   while(ClEx)
   {
-    if(strstr(lc_jid,ClEx->JID)==lc_jid)
+//    if(strstr(lc_jid,ClEx->JID)==lc_jid)
+    if(stristr(jid,ClEx->JID)==jid)
     {
       UnlockSched();
       return ClEx;
@@ -315,14 +303,9 @@ TRESOURCE* CList_IsResourceInList(char* jid)
   if(!ClEx)return NULL;
   LockSched();
   TRESOURCE* ResEx = ClEx->res_list;
-  char lc_jid[128], lc_fname[128];
-  strcpy(lc_jid, jid);
-  str2lower(lc_jid);
   while(ResEx)
   {
-    strcpy(lc_fname, ResEx->full_name);
-    str2lower(lc_fname);
-    if(!strcmp(lc_fname, lc_jid))
+    if(!stricmp(ResEx->full_name, jid))
     {
       UnlockSched();
       return ResEx;
@@ -390,7 +373,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
   while(ClEx)
   {
     
-    if(strstr(jid,ClEx->JID)==jid) // јга, именно так, ибо это соответствует началу строки!
+    if(stristr(jid,ClEx->JID)==jid) // јга, именно так, ибо это соответствует началу строки!
     {
       TRESOURCE* ResEx=malloc(sizeof(TRESOURCE));//ClEx->res_list;
       char *resname_ptr=Get_Resource_Name_By_FullJID(jid);

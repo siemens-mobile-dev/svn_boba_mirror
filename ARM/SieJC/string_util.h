@@ -37,4 +37,10 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 char *Get_Param_Value(char *ch, char *req, char cut_quotes);
 
 char *Replace_Special_Syms(char *unrep_str);
+
+// Аналог strstr, но без чувствительности к регистру
+char *stristr(char *haystack, char *needle);
+
+// Аналог strcmp, но без чувствительности к регистру
+int stricmp(char *str1, char *str2);
 #endif

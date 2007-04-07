@@ -326,7 +326,8 @@ void mGUI_onRedraw(GUI *data)
   // Делаем типо название окошка... :)
   WSHDR* ws_title = AllocWS(256);
   //str_2ws(ws_title, Resource_Ex->full_name,strlen(Resource_Ex->full_name));
-  ascii2ws(ws_title, Resource_Ex->full_name);
+  //ascii2ws(ws_title, Resource_Ex->full_name);
+  utf8_2ws(ws_title, Resource_Ex->full_name, 256);
 
   DrawString(ws_title,1,SCR_START+1,ScreenW()-1,SCR_START+FontSize+1,SMALL_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);  
   

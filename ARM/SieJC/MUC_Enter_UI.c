@@ -169,6 +169,9 @@ void Disp_MUC_Enter_Dialog()
   void *ma=malloc_adr();
   extern const char percent_t[];
   extern const char USERNAME[32];
+  extern const char DEFAULT_MUC[64];
+  extern const char DEFAULT_MUC_NICK[64];
+  
   void *eq;
   EDITCONTROL ec;
   mews=AllocWS(256);
@@ -180,7 +183,7 @@ void Disp_MUC_Enter_Dialog()
   ConstructEditControl(&ec,1,0x40,mews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(mews,"@conference.jabber.ru");
+  utf8_2ws(mews, (char*)DEFAULT_MUC, 64);
   ConstructEditControl(&ec,3,0x40,mews,128);      //2
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -188,7 +191,15 @@ void Disp_MUC_Enter_Dialog()
   ConstructEditControl(&ec,1,0x40,mews,256);
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,percent_t,USERNAME);
+  if(strlen(DEFAULT_MUC_NICK))
+  {
+    //wsprintf(mews,"%s",DEFAULT_MUC_NICK);
+    utf8_2ws(mews, (char*)DEFAULT_MUC_NICK, 64);
+  }
+  else
+  {
+    wsprintf(mews,percent_t,USERNAME);
+  }
   ConstructEditControl(&ec,3,0x40,mews,80);     // 4
   AddEditControlToEditQend(eq,&ec,ma);  
   
