@@ -10,14 +10,7 @@ ELF_BEGIN
 kill_data
 	BX	R1
         
-/*	RSEG	CODE:CODE
-	PUBLIC	get_top_pl
-	CODE32
-get_top_pl
-	LDR     R0, =0xA8D7AC70 //0xA86894C0
-        LDR     R0, [R0,#0] 
-        BX      LR
-*/        
+
 
 defadr	MACRO	a,b
 	PUBLIC	a

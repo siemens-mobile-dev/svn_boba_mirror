@@ -1,5 +1,5 @@
 #include "..\inc\swilib.h"
-extern char* itoa(int value, char* string, int radix);
+
 typedef struct
 {
   void *next;
@@ -7,7 +7,12 @@ typedef struct
   IMGHDR * img;
 }PNGLIST;
 
-PNGLIST*get_top_pl(void);
+typedef struct
+{
+  PNGLIST *top;
+  char *bitmap;
+}A_pltop;
+
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -33,33 +38,37 @@ void ElfKiller(void)
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
-
-
-
-#define CACHE_PNG 50
-
 int get_number_of_png()
 {
-  PNGLIST *pl=*((PNGLIST **)PNG_TOP());
+  A_pltop *pltop=PNG_TOP();
   int i=0;
-  while (pl)
+  if (pltop)
   {
-    pl=pl->next;
-    i++;
+    PNGLIST *pl=pltop->top;
+    while (pl)
+    {
+      pl=pl->next;
+      i++;
+    }
   }
   return (i);
 }
 
 PNGLIST* find_pic_by_n(int n)
 {
-  PNGLIST *pl=*((PNGLIST **)PNG_TOP());
-  int i=0;
-  while(i!=n)
+  A_pltop *pltop=PNG_TOP();
+  if (pltop)
   {
-    pl=pl->next;
-    i++;
+    int i=0;
+    PNGLIST *pl=pltop->top;
+    while(i!=n && pl)
+    {
+      pl=pl->next;
+      i++;
+    }
+    return (pl);
   }
-  return (pl);
+  else return (0);
 }
 
 void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
@@ -72,21 +81,88 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
   DrawObject(&drwobj);
 }
 
+void clear_cache()
+{
+  A_pltop *pltop=PNG_TOP();
+  LockSched();
+  PNGLIST *pl=pltop->top;
+  PNGLIST *pl_prev;
+  pltop->top=0;
+  while(pl)
+  {
+    pl_prev=pl;
+    pl=pl->next;
+    mfree(pl_prev->pngname);
+    if(pl_prev->img)
+    {
+      mfree(pl_prev->img->bitmap);
+      mfree(pl_prev->img);
+    }
+    mfree(pl_prev);
+  }
+  show_pic=0;
+  UnlockSched();
+  REDRAW();
+}
+
+void clear_bitmap()
+{
+  A_pltop *pltop=PNG_TOP();  
+  if (pltop)
+  {
+    char *bitmap=pltop->bitmap;
+    if (bitmap)
+    {
+      zeromem(bitmap,0x10000/8*2);
+    }
+  }
+}
+  
+unsigned int total_size()
+{
+  unsigned int n=0;
+  A_pltop *pltop=PNG_TOP();
+  PNGLIST *pl=pltop->top;
+  while (pl)
+  {
+    n+=sizeof(PNGLIST);
+    n+=(strlen(pl->pngname)+1);
+    if(pl->img)
+    {
+      n+=sizeof(IMGHDR);
+      switch (pl->img->bpnum)
+      {
+      case 1:
+        n+=((pl->img->w>>3)*pl->img->h);
+        break;
+        
+      case 5:
+        n+=(pl->img->w*pl->img->h);
+        break;
+        
+      case 8:
+        n+=(2*pl->img->w*pl->img->h);
+        break;
+      }
+    }
+    pl=pl->next;
+  }
+  return (n);
+}
+
 
 void OnRedraw(MAIN_GUI *data)
-{ 
+{
   int x=ScreenW();
   int y=ScreenH();
   PNGLIST* current;
-  LockSched();
-  int num=get_number_of_png(); 
-  UnlockSched();
   DrawRoundedFrame(0,0,x-1,y-1,0,0,0,
-		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(20));
+                   GetPaletteAdrByColorIndex(0),
+                   GetPaletteAdrByColorIndex(20));
+  int num=get_number_of_png(); 
   wsprintf(data->ws1,"Opened:%u",num);
   DrawString(data->ws1,3,3,74,15,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  
+    
   if (!show_pic)
     wsprintf(data->ws1,"Top Pic");
   else
@@ -94,46 +170,49 @@ void OnRedraw(MAIN_GUI *data)
     if (show_pic<0) show_pic=num-1;
     if (show_pic>num-1) show_pic=0;
     wsprintf(data->ws1,"Cache %u",show_pic);
-  }    
+  }
   DrawString(data->ws1,75,3,x-4,15,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  LockSched(); 
   current=find_pic_by_n(show_pic);
-  UnlockSched();
-  wsprintf(data->ws1,"%s",current->pngname);
-  DrawString(data->ws1,3,16,x-4,28,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
-  
-  DrawRoundedFrame(1,29,x-2,y-2,0,0,0,
-		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(20));
+
   int width=x-2-1;
   int height=y-2-29;
-  if (current->img)
+  if (current)
   {
-    if (current->img->w>=width)
-      width=0;
-    else width=(width-current->img->w)/2;
+    wsprintf(data->ws1,"%s",current->pngname);
+    DrawString(data->ws1,3,16,x-4,28,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
+    DrawRoundedFrame(1,29,x-2,y-2,0,0,0,
+                     GetPaletteAdrByColorIndex(0),
+                     GetPaletteAdrByColorIndex(20));
     
-    if (current->img->h>=height)
-      height=0;
-    else height=29+(height-current->img->h)/2; 
-    
-    DrwImg(current->img,width,height,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+    if (current->img)
+    {
+      
+      if (current->img->w>=width)
+        width=0;
+      
+      else width=(width-current->img->w)/2;
+      
+      if (current->img->h>=height)
+        height=0;
+      
+      else height=29+(height-current->img->h)/2; 
+      DrwImg(current->img,width,height,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+    }      
   }
- 
+  wsprintf(data->ws1,"%u",total_size());
+  DrawString(data->ws1,0,y-GetFontYSIZE(SMALL_FONT)-1,x-1,y-1,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
 }
 
 
 void OnCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
   data->ws1=AllocWS(256);
-  data->ws2=AllocWS(256);
   data->gui.state=1;
 }
 
 void OnClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   FreeWS(data->ws1);
-  FreeWS(data->ws2);
   data->gui.state=0;
 }
 
@@ -161,10 +240,18 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg)
     case '0':
       show_pic=0;
       break;
+    case '1':
+      clear_cache();
+      break;
+    case '2':
+      clear_bitmap();
+      break;
     case LEFT_BUTTON:
+    case '4':
       show_pic--;
       break;
     case RIGHT_BUTTON:
+    case '6':
       show_pic++;
       break;
       
