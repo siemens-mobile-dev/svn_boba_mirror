@@ -354,6 +354,9 @@ int connect_state=0;
 
 int sock=-1;
 
+volatile int sendq_l=0; //Длинна очереди для send
+volatile void *sendq_p=NULL; //указатель очереди
+
 volatile int is_gprs_online=1;
 
 GBSTMR reconnect_tmr;
@@ -915,29 +918,11 @@ void create_connect(void)
   }
 }
 
-void send_login(void)
+void ClearSendQ(void)
 {
-  int l=strlen(TXbuf.data);
-  TXbuf.pkt.data_len=l;
-  send(sock,&TXbuf,sizeof(PKT)+l, 0);
-  RXstate=-(int)sizeof(PKT);
-  connect_state=2;
-}
-
-void do_ping(void)
-{
-  static PKT pingp;
-  pingp.uin=UIN;
-  pingp.type=0;
-  pingp.data_len=0;
-  send(sock,&pingp,sizeof(PKT),0);
-}
-
-
-void call_ping(void)
-{
-  if (connect_state>2) SUBPROC((void *)do_ping);
-  GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
+  mfree((void *)sendq_p);
+  sendq_p=NULL;
+  sendq_l=NULL;
 }
 
 void end_socket(void)
@@ -947,6 +932,89 @@ void end_socket(void)
     shutdown(sock,2);
     closesocket(sock);
   }
+}
+
+void SendAnswer(int dummy, TPKT *p)
+{
+  int i;
+  int j;
+  if (connect_state<2)
+  {
+    mfree(p);
+    return;
+  }
+  if (p)
+  {
+    j=sizeof(PKT)+p->pkt.data_len; //Размер пакета
+    //Проверяем, не надо ли добавить в очередь
+    if (sendq_p)
+    {
+      //Есть очередь, добавляем в нее
+      sendq_p=realloc((void *)sendq_p,sendq_l+j);
+      memcpy((char *)sendq_p+sendq_l,p,j);
+      mfree(p);
+      sendq_l+=j;
+      return;
+    }
+    sendq_p=p;
+    sendq_l=j;
+  }
+  //Отправляем уже существующее в очереди
+  while((i=sendq_l)!=0)
+  {
+    if (i>0x400) i=0x400;
+    j=send(sock,(void *)sendq_p,i,0);
+    snprintf(logmsg,255,"send res %d",j);
+    REDRAW();
+    if (j<0)
+    {
+      j=*socklasterr();
+      if ((j==0xC9)||(j==0xD6))
+      {
+	//Передали что хотели
+	j=i;
+      }
+      else
+      {
+	//Ошибка
+	LockSched();
+	ShowMSG(1,(int)"Send error!");
+	UnlockSched();
+	end_socket();
+	return;
+      }
+    }
+    memcpy((void *)sendq_p,(char *)sendq_p+j,sendq_l-=j); //Удалили переданное
+    if (j<i)
+    {
+      //Передали меньше чем заказывали
+      return; //Ждем сообщения ENIP_BUFFER_FREE1
+    }
+  }
+  mfree((void *)sendq_p);
+  sendq_p=NULL;
+}
+
+void send_login(int dummy, TPKT *p)
+{
+  connect_state=2;
+  SendAnswer(dummy,p);
+  RXstate=-(int)sizeof(PKT);
+}
+
+void do_ping(void)
+{
+  TPKT *pingp=malloc(sizeof(PKT));
+  pingp->pkt.uin=UIN;
+  pingp->pkt.type=0;
+  pingp->pkt.data_len=0;
+  SendAnswer(0,pingp);
+}
+
+void call_ping(void)
+{
+  if (connect_state>2) SUBPROC((void *)do_ping);
+  GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
 }
 
 void get_answer(void)
@@ -1169,21 +1237,6 @@ void AddMsgToChat(void *data)
   total_unread--;
   ed_struct->ed_contact->isunread=0;
   EDIT_SetFocus(data,ed_struct->ed_answer);
-}
-
-void SendAnswer(int dummy, TPKT *p)
-{
-  int i;
-  int j=sizeof(PKT)+p->pkt.data_len;
-  i=send(sock,p,j,0);
-  if (i!=j)
-  {
-    snprintf(logmsg,255,"Send result %d!",i);
-    LockSched();
-    ShowMSG(1,(int)logmsg);
-    UnlockSched();
-  }
-  mfree(p);
 }
 
 void ask_my_info(void)
@@ -1437,6 +1490,7 @@ void maincsm_onclose(CSM_RAM *csm)
   FreeWS(ews);
   //  MutexDestroy(&contactlist_mtx);
   SUBPROC((void *)end_socket);
+  SUBPROC((void *)ClearSendQ);
   SUBPROC((void *)ElfKiller);
 }
 
@@ -1569,12 +1623,16 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  start_vibra();
 	  //Соединение установленно, посылаем пакет login
 	  strcpy(logmsg, LG_GRTRYLOGIN);
-	  TXbuf.pkt.uin=UIN;
-	  TXbuf.pkt.type=T_REQLOGIN;
-	  strcpy(TXbuf.data,PASS);
-	  SUBPROC((void *)send_login);
-	  if (!FindContactByUin(UIN))
-	    AddContact(UIN, LG_CLLOOPBACK);
+	  {
+	    int i=strlen(PASS);
+	    TPKT *p=malloc(sizeof(PKT)+i);
+	    p->pkt.uin=UIN;
+	    p->pkt.type=T_REQLOGIN;
+	    p->pkt.data_len=i;
+	    memcpy(p->data,PASS,i);
+	    SUBPROC((void *)send_login,0,p);
+	  }
+	  if (!FindContactByUin(UIN)) AddContact(UIN, LG_CLLOOPBACK);
 	  REDRAW();
 	}
 	else
@@ -1595,10 +1653,20 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
 	break;
       case ENIP_BUFFER_FREE:
-	ShowMSG(1,(int)"ENIP_BUFFER_FREE");
+	snprintf(logmsg,255,"ENIP_BUFFER_FREE");
+	REDRAW();
 	break;
       case ENIP_BUFFER_FREE1:
-	ShowMSG(1,(int)"ENIP_BUFFER_FREE1");
+	if (!sendq_p)
+	{
+	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
+	  SUBPROC((void *)end_socket);
+	}
+	else
+	{
+	  //Досылаем очередь
+	  SUBPROC((void *)SendAnswer,0,0);
+	}
 	break;
       case ENIP_SOCK_REMOTE_CLOSED:
 	//Закрыт со стороны сервера
@@ -1626,7 +1694,12 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	sock=-1;
 	vibra_count=4;
 	start_vibra();
+	if (sendq_p)
+	{
+	  snprintf(logmsg,255,"Disconnected, %d bytes not sended!",sendq_l);
+	}
 	REDRAW();
+	SUBPROC((void *)ClearSendQ);
 	GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
 	break;
       }
@@ -2162,7 +2235,7 @@ void edchat_ghook(GUI *data, int cmd)
   }
   if (cmd==3)
   {
-    edgui_data=NULL;
+    if (edgui_data==data) edgui_data=NULL;
     mfree(ed_struct);
   }
   if (cmd==0x0A)
