@@ -40,6 +40,9 @@ int toupper(int c)
 
 char *recived_line;
 
+volatile int sendq_l=0;
+volatile void *sendq_p=NULL;
+
 int strcmp_nocase(const char *s1,const char *s2)
 {
   int i;
@@ -245,9 +248,70 @@ void do_losted_mes()
   if (IF_DEL_AUX==0 || cur_ml->state==M_DELETE) remove_cur_from_list();
 }  
 
+void end_socket();
+
+void ClearSendQ(void)
+{
+  mfree((void *)sendq_p);
+  sendq_p=NULL;
+  sendq_l=0;
+}
+
 void send_str(char* str)
 {
-  send(sock,str,strlen(str),0);
+  int j;
+  int i;
+  if (str)
+  {
+    j=strlen(str);
+    // Проверяем не надо ли добавить в очередь
+    if (sendq_p)
+    {
+      // Если есть то добавляем в нее
+      sendq_p=realloc((void *)sendq_p, sendq_l+j);
+      memcpy((char *)sendq_p+sendq_l,str,j);
+      sendq_l+=j;
+      return;     
+    }
+    sendq_p=malloc(j);
+    strncpy((void *)sendq_p,str,j);
+    sendq_l=j;
+  }
+  // отправляем уже существующие в очереди
+  while((i=sendq_l)!=0)
+  {
+    i=i>0x400?0x400:i;
+    j=send(sock,(void *)sendq_p,i,0);
+    snprintf(logmsg,255,"send res %d",j);
+    REDRAW();
+    if (j<0)
+    {
+      j=*socklasterr();
+      if ((j==0xC9) || (j==0xD6))
+      {
+        // Передали что хотели
+        strcpy(logmsg,"Send delayed...");
+        return;
+      }
+      else
+      {
+        // Ошибка 
+        LockSched();
+        ShowMSG(1,(int)"send error!");
+        UnlockSched();
+        end_socket();
+        return;
+      }
+    }
+    memcpy((void *)sendq_p,(char *)sendq_p+j,sendq_l-=j);
+    if (j<1)
+    {
+      // передали меньше чем заказывали
+      return;
+    }
+  }
+  mfree((void *)sendq_p);
+  sendq_p=NULL;
 }
 
 void send_login()
@@ -304,7 +368,7 @@ int resp_ok(char *buf)
   return (0);
 }
 
-void end_socket();
+
 
 
 
@@ -691,8 +755,8 @@ void end_socket(void)
 
 void OnRedraw(MAIN_GUI *data)
 { 
-  int scr_w=ScreenW();
-  int scr_h=ScreenH();
+  unsigned int scr_w=ScreenW();
+  unsigned int scr_h=ScreenH();
   DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
@@ -704,8 +768,6 @@ void OnRedraw(MAIN_GUI *data)
 
   wsprintf(data->ws1,percent_t,connect_state<=0?"Mails":empty_str);
   DrawString(data->ws1,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w>>1,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  
-  
 }
 
 
@@ -851,6 +913,36 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	  ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
 	}
 	break;
+        
+      case ENIP_BUFFER_FREE:
+        if (!sendq_p)
+        {
+          ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE!");
+          SUBPROC((void *)end_socket);
+        }
+        else
+        {
+          //Досылаем очередь
+          snprintf(logmsg,255,"ENIP_BUFFER_FREE");
+          REDRAW();
+          SUBPROC((void *)send_str,0);
+        }
+        break;
+        
+      case ENIP_BUFFER_FREE1:
+        if (!sendq_p)
+        {
+          ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
+          SUBPROC((void *)end_socket);
+        }
+        else
+        {
+          // Досылаем очередь
+          SUBPROC((void *)send_str,0);
+        }
+        break;
+          
+        
       case ENIP_SOCK_REMOTE_CLOSED:
 	//Закрыт со стороны сервера
 	if (connect_state) SUBPROC((void *)end_socket);
@@ -859,7 +951,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_CLOSED:
 	connect_state=0;
 	sock=-1;
+        if (sendq_p)
+        {
+          snprintf(logmsg,255,"Disconnected, %d bytes not sended!", sendq_l);
+        }
 	REDRAW();
+        SUBPROC((void *)ClearSendQ);
 	break;
       }
     }
@@ -893,6 +990,7 @@ void maincsm_onclose(CSM_RAM *csm)
   }
   FreeMailDB();
   SUBPROC((void *)end_socket);
+  SUBPROC((void *)ClearSendQ);
   SUBPROC((void *)ElfKiller);
 }
 
