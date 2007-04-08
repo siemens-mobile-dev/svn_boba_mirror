@@ -4025,6 +4025,12 @@
     </file>
   </group>
   <file>
+    <name>$PROJ_DIR$\bookmarks.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\bookmarks.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\clist_util.c</name>
   </file>
   <file>

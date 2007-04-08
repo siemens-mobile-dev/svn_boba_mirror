@@ -12,7 +12,7 @@
 #include "jabber_util.h"
 #include "roster_icons.h"
 #include "mainmenu.h"
-//#include "serial_dbg.h"
+#include "serial_dbg.h"
 /*
 ============== Нативный Jabber-клиент ==============
 Возможности текущей версии:
@@ -62,7 +62,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "1.1.2-Z";
+const char VERSION_VERS[] = "1.1.3-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -880,6 +880,14 @@ void SGOLD_RedrawProc_Starter()
 }
 #endif
 
+//Context:HELPER
+void Test_bm()
+{
+  static char priv_id[]="SieJC_priv_req";
+  static char bm[]="<storage xmlns='storage:bookmarks'/>";
+  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);    
+}
+
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
@@ -964,8 +972,10 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         Disp_State();
         break;
       }  
+      
     case '7':
       {
+        SUBPROC((void*)Test_bm);
         break;
       } 
       
@@ -1073,6 +1083,7 @@ void maincsm_onclose(CSM_RAM *csm)
   SetVibration(0);
   CList_Destroy();
   MUCList_Destroy();
+  KillBMList();
   Destroy_SASL_Ctx();
   mfree(XMLBuffer);
   

@@ -110,6 +110,16 @@ typedef struct
   int mess_num;
 }MUC_ENTER_PARAM;
 
+
+typedef struct
+{
+  char *mucname;
+  char *nick;
+  char *pass;
+  char a_join;
+  void *next;
+}BM_ITEM;
+
 // Context: HELPER
 void SendMessage(char* jid, IPC_MESSAGE_S *mess);
 
@@ -122,6 +132,8 @@ void Enter_Conference(char *room, char *roomnick, char N_messages);
 // Выйти из конференции
 void Leave_Conference(char* room);
 
+// Уничтожить список закладок
+void KillBMList();
 ///////////////////
 void Use_Md5_Auth_Report();
 void Decode_Challenge(char *challenge);

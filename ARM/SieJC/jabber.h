@@ -40,6 +40,7 @@
 #define IQ_AUTH    "jabber:iq:auth"
 #define IQ_VERSION "jabber:iq:version"
 #define IQ_ROSTER  "jabber:iq:roster"
+#define IQ_PRIVATE "jabber:iq:private"
 
 #define MSGSTR_CHAT "chat"
 #define MSGSTR_GCHAT "groupchat"
@@ -51,7 +52,7 @@
 #define XMLNS_MUC "http://jabber.org/protocol/muc"
 #define XMLNS_MUC_USER  "http://jabber.org/protocol/muc#user"
 #define XMLNS_MUC_ADMIN "http://jabber.org/protocol/muc#admin"
-
+#define XMLNS_BOOKMARKS "storage:bookmarks"
 typedef enum {
 	SUB_NONE,
 	SUB_TO,

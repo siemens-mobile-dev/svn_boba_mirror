@@ -9,6 +9,8 @@
 #include "base64.h"
 #include "md5.h"
 #include "jabber.h"
+#include "bookmarks.h"
+#include "serial_dbg.h"
 
 
 extern const char JABBER_SERVER[];
@@ -25,7 +27,8 @@ extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
 
-MUC_ITEM*  muctop=NULL;
+MUC_ITEM*  muctop = NULL;
+BM_ITEM *BM_ROOT  = NULL; 
 
 extern JABBER_STATE Jabber_state;
 const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "invisible", "unavailable", "error",
@@ -179,6 +182,7 @@ void Send_Disconnect()
 char auth_id[] = "SieJC_auth_req";
 char rost_id[] = "SieJC_rost_req";
 char vreq_id[] = "SieJC_vers_req";
+char priv_id[] = "SieJC_priv_req";
 
 /*
   Авторизация на Jabber-сервере
@@ -569,6 +573,103 @@ void FillRoster(XMLNode* items)
   }
 }
 
+
+void KillBMList()
+{
+  LockSched();
+  BM_ITEM* cl=BM_ROOT;
+  BM_ROOT=NULL;
+  while(cl)
+  {
+    BM_ITEM *p;
+    mfree(cl->mucname);
+    mfree(cl->nick);
+    if(cl->pass)mfree(cl->pass);
+    p=cl;
+    cl=(BM_ITEM*)(cl->next);
+    mfree(p);
+    p=NULL;
+  }  
+  UnlockSched();
+  
+  tx_str("BM Storage destroyed!\r\n");
+}
+/*
+<storage xmlns='storage:bookmarks'>
+  <conference jid='siepatchdb@conference.jabber.ru' name='siepatchdb@conference.jabber.ru' autojoin='1'>
+    <nick>РљРѕС€РєРѕ</nick>
+    <password/>
+  </conference>
+
+  <conference jid='bombusmod@conference.jabber.ru' name='bombusmod@conference.jabber.ru'>
+    <nick>Kibab</nick>
+  </conference>
+
+  <conference jid='cx75planet@conference.jabber.ru' name='cx75planet@conference.jabber.ru'>
+    <nick>Kibab</nick>
+  </conference>
+</storage>
+*/
+void Process_Bookmarks_Storage(XMLNode* nodeEx)
+{
+  KillBMList();
+  XMLNode *elem = nodeEx->subnode;
+  XMLNode *tmpnode;
+  char muc[]="conference";
+  char jid[]="jid";
+  char *n_name = NULL;
+  char *c_name=NULL;
+  char *c_nick=NULL;
+  char *c_pass=NULL;
+  
+  while(elem)  
+  {
+    n_name = elem->name;
+    if(!n_name)return;
+    if(!strcmp(n_name, muc))  // Элемент конференции
+    {
+      c_name = XML_Get_Attr_Value(jid,elem->attr);
+      tmpnode = XML_Get_Child_Node_By_Name(elem, "nick");
+      if(!tmpnode)return;
+      c_nick = tmpnode->value;
+      if(!c_nick)return;
+      tmpnode = XML_Get_Child_Node_By_Name(elem, "password");
+      if(tmpnode)
+      {
+        c_pass = tmpnode->value;
+      }
+      
+      // Создаём очередной элемент списка
+      BM_ITEM *bmitem = malloc(sizeof(BM_ITEM));
+      bmitem->mucname = malloc(strlen(c_name)+1);
+      strcpy(bmitem->mucname, c_name);
+      
+      bmitem->nick = malloc(strlen(c_nick)+1);
+      strcpy(bmitem->nick, c_nick);
+      
+      if(c_pass)
+      {
+        bmitem->pass = malloc(strlen(c_pass)+1);        
+        strcpy(bmitem->pass, c_pass);
+      }
+      else bmitem->pass = NULL;
+      bmitem->next = NULL;
+      
+      BM_ITEM *tmp=BM_ROOT;
+      if(tmp)
+        while(tmp->next)tmp = tmp->next;
+      if(tmp)
+      {
+        tmp->next = bmitem;
+      }
+      else BM_ROOT = bmitem;
+    }
+    elem = elem->next;
+  }
+  
+  Disp_BM_Menu();
+}
+
 /*
  Обработка входящих Iq-запросов
 */
@@ -684,7 +785,24 @@ if(!strcmp(gres,iqtype))
       mfree(reply);
     }    
     
-  }  
+  }
+
+
+  if(!strcmp(id,priv_id))
+  {
+    XMLNode* query;
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+    if(!q_type)return;
+    if(!strcmp(q_type,IQ_PRIVATE))
+    {
+      XMLNode *bm = XML_Get_Child_Node_By_Name(query, "storage");
+      if(!bm)return;
+      char *xmlns = XML_Get_Attr_Value("xmlns", bm->attr);
+      if(!xmlns)return;
+      if(!strcmp(xmlns, XMLNS_BOOKMARKS))Process_Bookmarks_Storage(bm);
+    }
+  }
 
 }
 

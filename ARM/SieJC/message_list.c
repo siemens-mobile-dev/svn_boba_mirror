@@ -611,14 +611,14 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       symb = *wschar;
       IsCaret = symb==0x000A || symb==0x000D || symb==0x00A0 ? 1 : 0;
       sym_width = GetSymbolWidth(symb,SMALL_FONT);
-      if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width + sym_width < Scr_width -2))
+      if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width + sym_width < Scr_width -4))
       {
         //*(msg_buf + cnt) = symb;
-        Curr_width+=sym_width;      
+        Curr_width+=sym_width;
         wsAppendChar(temp_ws_2, symb);
         cnt++;
       }
-      if(IsCaret || (/*cnt>=CHAR_ON_LINE || */Curr_width + sym_width>=Scr_width -2) || i==l) // Перенос строки
+      if(IsCaret || (/*cnt>=CHAR_ON_LINE || */Curr_width + sym_width>=Scr_width -4) || i==l) // Перенос строки
       {
         Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
         Disp_Mess_Ex->mess = AllocWS(cnt);
