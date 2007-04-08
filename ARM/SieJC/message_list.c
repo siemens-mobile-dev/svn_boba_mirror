@@ -5,9 +5,10 @@
 #include "message_list.h"
 #include "jabber_util.h"
 #include "string_util.h"
+#include "serial_dbg.h"
 
 
-#define MAX_SYMBOL_WIDTH 8    // Максимальная ширина символа
+#define MSG_START_X 1    //X-координата начала рисования строки сообщения
 //-------------Цвета. Много цветов :)
 
 #ifdef STD_PALETTE
@@ -377,7 +378,7 @@ void mGUI_onRedraw(GUI *data)
 		   color(MsgBgColor),
 		   color(MsgBgColor));
     
-      DrawString(ml->mess,1,SCR_START+HIST_DISP_OFS+i*FontSize,ScreenW()-1,SCR_START+HIST_DISP_OFS+(i+1)*FontSize*2,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
+      DrawString(ml->mess,MSG_START_X,SCR_START+HIST_DISP_OFS+i*FontSize,ScreenW()-1,SCR_START+HIST_DISP_OFS+(i+1)*FontSize*2,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
       i++;
     }
     ml = ml->next;
@@ -571,8 +572,9 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int parsed_counter = 0; // Сколько уже было обработано (=OLD_MessList_Count)
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
-  int Scr_width = ScreenW();
-  int Curr_width=MAX_SYMBOL_WIDTH;
+  int Scr_width = ScreenW() - MSG_START_X;
+  int Curr_width=0;
+  int sym_width;
   char IsCaret = 0; // Является ли символ переносом строки
 //  int chars;
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;  
@@ -608,14 +610,15 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       wschar = temp_ws_1->wsbody+i;
       symb = *wschar;
       IsCaret = symb==0x000A || symb==0x000D || symb==0x00A0 ? 1 : 0;
-      if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width<= Scr_width))
+      sym_width = GetSymbolWidth(symb,SMALL_FONT);
+      if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width + sym_width < Scr_width -2))
       {
         //*(msg_buf + cnt) = symb;
+        Curr_width+=sym_width;      
         wsAppendChar(temp_ws_2, symb);
-        Curr_width=Curr_width+GetSymbolWidth(symb,SMALL_FONT);
         cnt++;
       }
-      if(IsCaret || (/*cnt>=CHAR_ON_LINE || */Curr_width>Scr_width) || i==l) // Перенос строки
+      if(IsCaret || (/*cnt>=CHAR_ON_LINE || */Curr_width + sym_width>=Scr_width -2) || i==l) // Перенос строки
       {
         Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
         Disp_Mess_Ex->mess = AllocWS(cnt);
@@ -636,7 +639,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
         }
         cnt=0;
         DispMessList_Count++;
-        Curr_width = MAX_SYMBOL_WIDTH;
+        Curr_width = 0;
       }
     }
     FreeWS(temp_ws_1);
