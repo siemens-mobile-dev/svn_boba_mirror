@@ -972,7 +972,8 @@ void SendAnswer(int dummy, TPKT *p)
       if ((j==0xC9)||(j==0xD6))
       {
 	//Передали что хотели
-	j=i;
+	strcpy(logmsg,"Send delayed...");
+	return; //Видимо, надо ждать сообщения ENIP_BUFFER_FREE
       }
       else
       {
@@ -1653,8 +1654,18 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
 	break;
       case ENIP_BUFFER_FREE:
-	snprintf(logmsg,255,"ENIP_BUFFER_FREE");
-	REDRAW();
+	if (!sendq_p)
+	{
+	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
+	  SUBPROC((void *)end_socket);
+	}
+	else
+	{
+	  //Досылаем очередь
+	  snprintf(logmsg,255,"ENIP_BUFFER_FREE");
+	  REDRAW();
+	  SUBPROC((void *)SendAnswer,0,0);
+	}
 	break;
       case ENIP_BUFFER_FREE1:
 	if (!sendq_p)
