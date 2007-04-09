@@ -88,6 +88,7 @@ void clear_cache()
   PNGLIST *pl=pltop->top;
   PNGLIST *pl_prev;
   pltop->top=0;
+  UnlockSched();
   while(pl)
   {
     pl_prev=pl;
@@ -101,7 +102,6 @@ void clear_cache()
     mfree(pl_prev);
   }
   show_pic=0;
-  UnlockSched();
   REDRAW();
 }
 
@@ -110,11 +110,13 @@ void clear_bitmap()
   A_pltop *pltop=PNG_TOP();  
   if (pltop)
   {
+    LockSched();
     char *bitmap=pltop->bitmap;
     if (bitmap)
     {
       zeromem(bitmap,0x10000/8*2);
     }
+    UnlockSched();
   }
 }
   
