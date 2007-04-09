@@ -26,8 +26,8 @@ __root const char folder_path[128]=DEFAULT_DISK ":\\ZBin\\sndElfs\\TalkAkkum\\";
 __root const CFG_HDR cfghdr1={CFG_UINT,"Громкость",0,6};
 __root const unsigned int volume=6;
 
-__root const CFG_HDR cfghdr14 = {CFG_UINT, "Доп. пауза (тиков)", 0, 100};
-__root const unsigned int dop_delay = 50; 
+//__root const CFG_HDR cfghdr14 = {CFG_UINT, "Доп. пауза (тиков)", 0, 100};
+//__root const unsigned int dop_delay = 50; 
 
 __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"",0,0};
 //---------------------------------------------------------------------------------------
@@ -79,8 +79,3 @@ __root const unsigned int cfgY=55;
 
 __root const CFG_HDR cfghdr_m40={CFG_LEVEL,"",0,0};
 //---------------------------------------------------------------------------------------
-
-/*__root const CFG_HDR cfghdr15={CFG_CBOX,"Исп. ф-ю опр. длит.",0,2};
-__root const int use_GetLen=0;
-__root const CFG_CBOX_ITEM cfgcbox5[2]={"Нет","Да"};
-*/

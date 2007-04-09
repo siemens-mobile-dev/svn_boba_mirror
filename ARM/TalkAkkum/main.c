@@ -1,6 +1,7 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
+#include "TalkAkkum.h"
 
 #define UPDATE_TIME (1*216)
 
@@ -10,41 +11,25 @@ int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
 
 GBSTMR update_tmr;
-GBSTMR level_tmr;
-GBSTMR mytmr;
-
-extern const char folder_path[128];
-extern const int say_levels_up;
-extern const int say_levels_down;
-extern const unsigned int begin_from;
-
-extern const unsigned int from_h;
-extern const unsigned int to_h;
-extern const unsigned int volume;
-
-extern const int warn_temp;
-extern const unsigned int warn_temp_value;
-extern const unsigned int warn_interr;
-
-extern const int show_icon;
-extern const unsigned int cfgX;
-extern const unsigned int cfgY;
-
-extern const unsigned int vibra_count;
-extern const unsigned int vibra_power;
-
-extern const unsigned int dop_delay; 
 
 // Глобальные переменные
 unsigned int found_full_empty[3]={0,0,0}; //0-found, 1-full, 3-empty
 unsigned int levels_up[9]   ={0,0,0,0,0,0,0,0};//0-10,...,8-90
 unsigned int levels_down[10]={0,0,0,0,0,0,0,0,0};//0-5,...,9-90
-unsigned int flag=0, flag1=0;
+unsigned int flag=0;
 unsigned int vibra_count1;
 
 char pic_path[];
 
 //=============================Проигрывание звука===============================
+int PLAY_ID;
+unsigned int NEXT_PLAY_FUNK=0, ENA_SAY_LEVELS=1;
+/*
+0 - ничего
+1 - SayLevel
+2 - SayPercent
+*/
+
 void Play(const char *fpath, const char *fname)
 {
       WSHDR* sndPath=AllocWS(128);
@@ -65,15 +50,15 @@ void Play(const char *fpath, const char *fname)
         _sfo1.unk6=1;
         _sfo1.unk7=1;
         _sfo1.unk9=2;
-        PlayFile(0x10, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
+        PLAY_ID=PlayFile(0x10, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
       #else
           #ifdef X75
             _sfo1.unk4=0x80000000;
             _sfo1.unk5=1;
-            PlayFile(0xC, sndPath, sndFName, 0, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
+            PLAY_ID=PlayFile(0xC, sndPath, sndFName, 0, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
           #else
             _sfo1.unk5=1;
-            PlayFile(0xC, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
+            PLAY_ID=PlayFile(0xC, sndPath, sndFName, MMI_CEPID, MSG_PLAYFILE_REPORT, &_sfo1);
           #endif
       #endif 
 
@@ -104,36 +89,6 @@ void stop_vibra(void)
 
 //==============================================================================
 
-//============Проверка длительности вавки без переменного битрэйда==============
-
-double GetWavkaLength(char *fpath, char *fname) //тиков
-{
-  int f;
-  unsigned int ul;
-  
-  int DataLength;//4
-  int BytePerSec;//28  
-  
-  char ffn[128];
-  strcpy(ffn, fpath);
-  strcat(ffn, fname);
-  if ((f=fopen(ffn,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
-  {
-    lseek(f,4,S_SET,&ul,&ul);
-    fread(f,&DataLength,sizeof(DataLength),&ul);
-    
-    lseek(f,28,S_SET,&ul,&ul);
-    fread(f,&BytePerSec,sizeof(BytePerSec),&ul);
-    
-    fclose(f,&ul);
-    
-    return (((((double)DataLength/(double)BytePerSec)*(double)1000)*0.216)+dop_delay);
-  }
-    else
-      return 0;
-}
-//============================================================================== 
-
 void RereadSettings(void) //Считывание конфига
 {
    LockSched();
@@ -149,6 +104,7 @@ void RereadSettings(void) //Считывание конфига
 void SayPercent(void)
 {
   Play(folder_path, "percent.wav");
+  NEXT_PLAY_FUNK=0;
 }
 
 void SayLevel(void)
@@ -156,19 +112,19 @@ void SayLevel(void)
   char level[6];
   sprintf(level, "%d.wav", *RamCap());
   Play(folder_path, level);
-  GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, level),SayPercent);
+  NEXT_PLAY_FUNK=2;
 }
 
 void SayUp(void)
 {
   Play(folder_path, "up.wav");
-  GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, "up.wav"),SayLevel);
+  NEXT_PLAY_FUNK=1;
 }
 
 void SayDown(void)
 {
   Play(folder_path, "down.wav");
-  GBS_StartTimerProc(&mytmr,(int)GetWavkaLength((char*)folder_path, "down.wav"),SayLevel);
+  NEXT_PLAY_FUNK=1;
 }
 
 GBSTMR temp_tmr;
@@ -185,12 +141,6 @@ void SayTemp(void)
   if (flag==1) GBS_StartTimerProc(&temp_tmr, warn_interr*216, SayTemp);
 }
 // ----------------------------------------------------------------------------
-
-void Delay(void)
-{
-  flag1=1;
-  //found_full_empty[0]=1;
-}
 
 void Check(void)
 {
@@ -221,6 +171,8 @@ void Check(void)
           if (found_full_empty[0]||found_full_empty[1]) 
             {
               Play(folder_path, "out.wav");
+              ENA_SAY_LEVELS=0;
+              NEXT_PLAY_FUNK=0;              
           
               found_full_empty[0]=0;
               found_full_empty[1]=0;
@@ -229,7 +181,7 @@ void Check(void)
               for (i=0; i<=8; i++) {levels_up[i]=0;}              
             }
           
-          if ((say_levels_down)&&(cap_akku<=begin_from))
+          if ((say_levels_down)&&(cap_akku<=begin_from)&&(ENA_SAY_LEVELS))
             {//Говорить промежуточные уовни разрядки
               //unsigned int levels_down[10]={0,0,0,0,0,0,0,0,0};//0-5,...,9-90
               switch (cap_akku)
@@ -283,8 +235,8 @@ void Check(void)
             {// Найден источник
 
               Play(folder_path, "found.wav");
-              flag1=0;
-              GBS_StartTimerProc(&level_tmr,(int)GetWavkaLength((char*)folder_path, "found.wav")+216,Delay);
+              ENA_SAY_LEVELS=0;
+              NEXT_PLAY_FUNK=0;
               
               found_full_empty[0]=1;
               
@@ -297,7 +249,7 @@ void Check(void)
               
             }// Найден источник
           
-          if ((found_full_empty[0])&&(say_levels_up)&&(flag1))
+          if ((found_full_empty[0])&&(say_levels_up)&&(ENA_SAY_LEVELS))
             {//Говорить промежуточные уровни зарядки
               switch (cap_akku)
               {
@@ -405,9 +357,32 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       RereadSettings();
     }
   }
+
+  if (msg->msg==MSG_PLAYFILE_REPORT)
+    {
+      if ((msg->submess>>16)==PLAY_ID) 
+        if (((msg->submess&0xFFFF)==7)||((msg->submess&0xFFFF)==5)) //5 - файл отсутствует
+          {
+            switch (NEXT_PLAY_FUNK)
+              {
+                case 0:
+                  ENA_SAY_LEVELS=1;
+                break;
   
+                case 1:
+                  ENA_SAY_LEVELS=0;
+                  SayLevel();
+                break;
+
+                case 2:
+                  ENA_SAY_LEVELS=0;
+                  SayPercent();
+                break;
+              }
+          }
+    }  
   
-  if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
+  if ((IsGuiOnTop(idlegui_id))&&(show_icon)&&(!IsScreenSaver())) //Если IdleGui на самом верху
     {
       GUI *igui=GetTopGUI();
       if (igui) //И он существует
@@ -437,11 +412,9 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
-  GBS_DelTimer(&level_tmr);
   GBS_DelTimer(&update_tmr);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&temp_tmr);
-  GBS_DelTimer(&mytmr);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 
