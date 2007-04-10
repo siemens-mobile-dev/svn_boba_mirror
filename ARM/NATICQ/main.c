@@ -1656,7 +1656,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       case ENIP_BUFFER_FREE:
 	if (!sendq_p)
 	{
-	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
+	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE!");
 	  SUBPROC((void *)end_socket);
 	}
 	else
