@@ -305,7 +305,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Login(Status: LongWord = S_ONLINE; BirthDay: Boolean = False);
+    procedure Login(Status: LongWord = S_ONLINE+S_DCDISABLED+S_ALLOWDAUTH; BirthDay: Boolean = False); //by BoBa, hide IP
     procedure RequestOfflineMessages; // *yegor
     procedure LogOff;
     procedure RegisterNewUIN(const Password: String);
@@ -366,7 +366,7 @@ type
     property Status: LongWord read FStatus write SetStatus;
     property LoggedIn: Boolean read FLoggedIn;
   published
-    property DisableDirectConnections: Boolean read FUseDirect write FUseDirect default False;
+    property DisableDirectConnections: Boolean read FUseDirect write FUseDirect default True; //by BoBa, hide IP
     property ProxyType: TProxyType read FProxyType write FProxyType default P_NONE;
     property ProxyHost: String read FProxyHost write FProxyHost;
     property ProxyPort: Word read FProxyPort write FProxyPort;
@@ -996,7 +996,7 @@ Begin
 End;
 
 {Logins to server.}
-procedure TICQClient.Login(Status: LongWord = S_ONLINE; BirthDay: Boolean = False);
+procedure TICQClient.Login(Status: LongWord = S_ONLINE+S_DCDISABLED+S_ALLOWDAUTH; BirthDay: Boolean = False);
 begin
   if FDirect <> nil then
   begin

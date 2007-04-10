@@ -14,15 +14,20 @@ const
 
   //Online statuses
   S_ONLINE      = $00000000;    //Online
-  S_INVISIBLE   = $00000100;    //Invisible
   S_AWAY        = $00000001;    //Away
+  S_DND         = $00000002;    // added by eraser 8.7.03
+  S_NA          = $00000004;    // added by eraser 8.7.03
 //  S_NA          = $00000005;    //N/A
-  S_NA        = $00000004;    // added by eraser 8.7.03
+  S_OCCUPIED    = $00000010;    // added by eraser 8.7.03
 //  S_OCCUPIED    = $00000011;    //Occupied
-  S_OCCUPIED  = $00000010;    // added by eraser 8.7.03
 //  S_DND         = $00000013;    //Do Not Disturb
-  S_DND       = $00000002;    // added by eraser 8.7.03
   S_FFC         = $00000020;    //Free For Chat
+  S_INVISIBLE   = $00000100;    //Invisible
+  S_EAT         = $00002000;    // added by BoBa 10.04.2007
+  S_EVIL        = $00003000;    // added by BoBa 10.04.2007
+  S_DECLINE     = $00004000;    // added by BoBa 10.04.2007
+  S_HOME        = $00005000;    // added by BoBa 10.04.2007
+  S_WORK        = $00006000;    // added by BoBa 10.04.2007
   S_OFFLINE     = $FFFFFFFF;    //The user is offline. / Set status to offline
 
   SF_BIRTH      = $00080000;    //Birtday
@@ -31,6 +36,7 @@ const
   S_SHOWIP      = $00020000;    //show ip (for older clients), IP edit removed in ICQ2000a+ :)
   S_WEBAWARE    = $00030000;    //do not show status from the www
   S_ALLOWDCONN  = $00000000;    //allow direct connection with everyone
+  S_DCDISABLED  = $01000000;    //added by BoBa 10.04.2007
   S_ALLOWDAUTH  = $10000000;    //allow direct connection upon authorization
   S_ALLOWDLIST  = $20000000;    //allow direct connection with users in contact list
 
@@ -1560,7 +1566,7 @@ begin
   //{$R+}
   PktInt(@lpkt, Port, 4);                       //This is the port to connect with when making client to client connections.
   if ProxyType = P_NONE then
-    PktInt(@lpkt, $04, 1)                       //01 = Firewall (or HTTPS proxy); 02 = SOCKS4/5 proxy; 04 = 'normal' connection
+    PktInt(@lpkt,{ $04 Commented by BoBa, hide IP} 0, 1)                       //01 = Firewall (or HTTPS proxy); 02 = SOCKS4/5 proxy; 04 = 'normal' connection
   else if (ProxyType = P_SOCKS4) or (ProxyType = P_SOCKS5) then
     PktInt(@lpkt, $02, 1);
   PktInt(@lpkt, ICQ_PROTOCOL_VER, 2);                      //The highest client to client protocol version this client uses.
