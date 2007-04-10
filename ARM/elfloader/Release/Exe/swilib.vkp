@@ -105,7 +105,7 @@
 01F0: 0xA01AF22B ; 07C: __thumb unsigned SetVibration(unsigned int power);
 0200: 0xA05E212D ; 080: __thumb void ShowCallList(int list, int zero);
 0210: 0xA0251040 ; 084: __arm int GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber);
-0220: 0xA022F664 ; 088: __arm char GetAccessoryType(void);
+0220: 0xA022D874 ; 088: __arm char GetAccessoryType(void);
 0228: 0xA0250C24 ; 08A: __arm int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber);
 022C: 0xA02514D8 ; 08B: __arm int GetTotalFlexSpace(int DriveNum, unsigned int *ErrorNumber);
 0230: 0xA04D48A9 ; 08C: __thumb void RegExplorerExt(REGEXPLEXT *);
