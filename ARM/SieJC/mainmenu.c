@@ -3,6 +3,7 @@
 #include "roster_icons.h"
 #include "mainmenu.h"
 #include "status_change.h"
+#include "jabber_util.h"
 #include "MUC_Enter_UI.h"
 #include "cont_menu.h"
 //==============================================================================
@@ -25,7 +26,7 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 4
+#define N_ITEMS 5
 
 int MainMenu_ID;
 
@@ -57,10 +58,17 @@ MENUITEM_DESC menuitems[N_ITEMS]=
   {dummy_icon,(int)"Контакт",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {dummy_icon,(int)"Статус",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {dummy_icon,(int)"Конференция",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {dummy_icon,(int)"Закладки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},  
   {about_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[N_ITEMS]={(void *)Disp_Contact_Menu, (void *)DispStatusChangeMenu, (void *)Disp_MUC_Enter_Dialog, (void *) AboutDlg};
+void *menuprocs[N_ITEMS]={
+                          (void *)Disp_Contact_Menu,
+                          (void *)DispStatusChangeMenu,
+                          (void *)Disp_MUC_Enter_Dialog,
+                          (void *)Get_Bookmarks_List,
+                          (void *) AboutDlg
+                         };
 
 SOFTKEY_DESC mmenu_sk[]=
 {
@@ -85,10 +93,11 @@ MENU_DESC tmenu=
   menuprocs,
   N_ITEMS
 };
-extern const char PATH_TO_PIC[128];
+extern const char PATH_TO_PIC[128], png_t[];
 int S_ICONS[2];
 char mypic[128];
 char confpic[128];
+extern const char conference_t[];
 void MM_Show()
 {
 #ifdef USE_PNG_EXT
@@ -97,8 +106,8 @@ void MM_Show()
   menuitems[1].icon = S_ICONS;
   
   strcpy(confpic, PATH_TO_PIC);
-  strcat(confpic,"conference");
-  strcat(confpic,".png");  
+  strcat(confpic,conference_t);
+  strcat(confpic,png_t);  
   S_ICONS[1]=(int)confpic;
   menuitems[2].icon = S_ICONS+1;
 #else

@@ -132,6 +132,9 @@ void Enter_Conference(char *room, char *roomnick, char N_messages);
 // Выйти из конференции
 void Leave_Conference(char* room);
 
+// Получить список закладок
+void Get_Bookmarks_List();
+
 // Уничтожить список закладок
 void KillBMList();
 ///////////////////

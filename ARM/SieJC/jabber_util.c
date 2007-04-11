@@ -591,9 +591,9 @@ void KillBMList()
     p=NULL;
   }  
   UnlockSched();
-  
-  tx_str("BM Storage destroyed!\r\n");
 }
+
+
 /*
 <storage xmlns='storage:bookmarks'>
   <conference jid='siepatchdb@conference.jabber.ru' name='siepatchdb@conference.jabber.ru' autojoin='1'>
@@ -612,10 +612,9 @@ void KillBMList()
 */
 void Process_Bookmarks_Storage(XMLNode* nodeEx)
 {
-  KillBMList();
   XMLNode *elem = nodeEx->subnode;
   XMLNode *tmpnode;
-  char muc[]="conference";
+  extern const char conference_t[];
   char jid[]="jid";
   char *n_name = NULL;
   char *c_name=NULL;
@@ -626,7 +625,7 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
   {
     n_name = elem->name;
     if(!n_name)return;
-    if(!strcmp(n_name, muc))  // Элемент конференции
+    if(!strcmp(n_name, conference_t))  // Элемент конференции
     {
       c_name = XML_Get_Attr_Value(jid,elem->attr);
       tmpnode = XML_Get_Child_Node_By_Name(elem, "nick");
@@ -668,6 +667,19 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
   }
   
   Disp_BM_Menu();
+}
+
+//Context:HELPER
+void _getbookmarkslist()
+{
+  static char priv_id[]="SieJC_priv_req";
+  static char bm[]="<storage xmlns='storage:bookmarks'/>";
+  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);
+}
+
+void Get_Bookmarks_List()
+{
+  SUBPROC((void*)_getbookmarkslist);
 }
 
 /*

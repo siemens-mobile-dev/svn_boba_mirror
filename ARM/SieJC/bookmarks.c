@@ -1,7 +1,7 @@
 #include "../inc/swilib.h"
 #include "main.h"
 #include "jabber_util.h"
-#include "serial_dbg.h"
+//#include "serial_dbg.h"
 
 
 //===============================================================================================
@@ -38,7 +38,7 @@ int Req_Close_BM_Menu=0;
 extern BM_ITEM *BM_ROOT;
 
 const char bmmenu_header[]="Меню закладок";
-extern int menusoftkeys[];
+int bmmenusoftkeys[]={0,1,2};
 HEADER_DESC bm_menuhdr={0,0,0,0,NULL,(int)bmmenu_header,LGP_NULL};
 SOFTKEY_DESC bmmenu_sk[]=
 {
@@ -60,7 +60,7 @@ void bm_menu_iconhndl(void *data, int curitem, int *unk);
 MENU_DESC bm_menu=
 {
   8,(void *)bm_menu_onkey,(void*)bm_menu_ghook,NULL,
-  menusoftkeys,
+  bmmenusoftkeys,
   &bmmenu_skt,
   0x11,
   (void *)bm_menu_iconhndl,
@@ -118,10 +118,10 @@ char ICON_MUC[128];
 void bm_menu_iconhndl(void *data, int curitem, int *unk)
 {
   WSHDR *ws;
-  extern const char percent_t[];
+  extern const char percent_t[], empty_t[];
   char test_str[48];
   void *item=AllocMenuItem(data);
-  strcpy(test_str,"(ошибка)");
+  strcpy(test_str,empty_t);
   char s=0;
   BM_ITEM *it = BM_ROOT;
   while(s!=curitem && it)

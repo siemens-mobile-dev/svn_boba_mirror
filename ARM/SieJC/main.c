@@ -80,8 +80,9 @@ char Is_Vibra_Enabled = 1;
 char Is_Compression_Enabled = 0;
 
 const char percent_t[]="%t";
-const char _empty[]="";
-char empty_str[]="";
+const char empty_t[]="";
+const char png_t[]=".png";
+const char conference_t[]="conference";
 char logmsg[512];
 
 JABBER_STATE Jabber_state = JS_NOT_CONNECTED;
@@ -880,14 +881,6 @@ void SGOLD_RedrawProc_Starter()
 }
 #endif
 
-//Context:HELPER
-void Test_bm()
-{
-  static char priv_id[]="SieJC_priv_req";
-  static char bm[]="<storage xmlns='storage:bookmarks'/>";
-  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);    
-}
-
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
@@ -975,7 +968,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       
     case '7':
       {
-        SUBPROC((void*)Test_bm);
         break;
       } 
       

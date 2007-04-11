@@ -607,8 +607,8 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
     if(!conf_nickname)
     {
-      extern const char _empty[];
-      conf_nickname=(char*)&_empty;
+      extern const char empty_t[];
+      conf_nickname=(char*)&empty_t;
     }
     mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+2+1);
     mess->muc_author = malloc(strlen(conf_nickname)+1);

@@ -46,7 +46,8 @@ char* Roster_getIconByStatus(char* path_to_pic, char status) //вернет путь к кар
     {
       strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]); // Иначе типа оффлайн
     }
-  strcat(path_to_pic, ".png");
+  extern const char png_t[];
+  strcat(path_to_pic,png_t);
   return path_to_pic;
 }
 #else
