@@ -7,6 +7,7 @@
 #include "conf_loader.h"
 #include "status_change.h"
 #include "language.h"
+#include "revision.h"
 
 //==============================================================================
 // ELKA Compatibility
@@ -169,10 +170,10 @@ void EditConfig(void)
 //void AboutDlg(){};
 void AboutDlg()
 {
-  ShowMSG(2, (int)LG_COPYRIGHT);
+  char s[256];
+  snprintf(s,255,LG_COPYRIGHT,__SVN_REVISION__);
+  ShowMSG(2, (int)s);
 }
-
-
 
 int icon_array[2];
 

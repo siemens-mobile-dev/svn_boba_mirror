@@ -1,6 +1,8 @@
 #ifndef _LANGUAGE_H_
 #define _LANGUAGE_H_
 
+#define LG_COPYRIGHT     "NATICQ v1.1\nRevision %d\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow"
+
 //Оставляем только один дефайн иначе будет кака
 #define LANG_RU
 //#define LANG_UA
@@ -108,8 +110,6 @@
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
 #define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
-
-#define LG_COPYRIGHT     "NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow"
 
 #endif
 
@@ -324,8 +324,6 @@
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
 #define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
-
-#define LG_COPYRIGHT     "NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow"
 
 #endif
 
