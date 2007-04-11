@@ -62,7 +62,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "1.1.3-Z";
+const char VERSION_VERS[] = "1.2.1-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -81,8 +81,9 @@ char Is_Compression_Enabled = 0;
 
 const char percent_t[]="%t";
 const char empty_t[]="";
-const char png_t[]=".png";
 const char conference_t[]="conference";
+const char png_t[]=".png";
+char empty_str[]="";
 char logmsg[512];
 
 JABBER_STATE Jabber_state = JS_NOT_CONNECTED;
@@ -881,6 +882,14 @@ void SGOLD_RedrawProc_Starter()
 }
 #endif
 
+//Context:HELPER
+void Test_bm()
+{
+  static char priv_id[]="SieJC_priv_req";
+  static char bm[]="<storage xmlns='storage:bookmarks'/>";
+  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);    
+}
+
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
@@ -968,6 +977,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       
     case '7':
       {
+        SUBPROC((void*)Test_bm);
         break;
       } 
       

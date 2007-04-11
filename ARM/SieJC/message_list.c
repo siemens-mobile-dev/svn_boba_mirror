@@ -572,7 +572,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int parsed_counter = 0; // Сколько уже было обработано (=OLD_MessList_Count)
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
-  int Scr_width = ScreenW() - MSG_START_X;
+  int Scr_width = ScreenW() - 2 -1;    // В какую область уложить строку
   int Curr_width=0;
   int sym_width;
   char IsCaret = 0; // Является ли символ переносом строки
@@ -605,20 +605,17 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     cnt=0;
     for(i=1;i<=l;i++)
     {
-      //if(MessEx->mess+i=='\0')break;
-      //symb = GetSpecialSym(MessEx->mess+i,&i);
       wschar = temp_ws_1->wsbody+i;
       symb = *wschar;
       IsCaret = symb==0x000A || symb==0x000D || symb==0x00A0 ? 1 : 0;
       sym_width = GetSymbolWidth(symb,SMALL_FONT);
-      if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width + sym_width < Scr_width -4))
+      if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width + sym_width <= Scr_width))
       {
-        //*(msg_buf + cnt) = symb;
         Curr_width+=sym_width;
         wsAppendChar(temp_ws_2, symb);
         cnt++;
       }
-      if(IsCaret || (/*cnt>=CHAR_ON_LINE || */Curr_width + sym_width>=Scr_width -4) || i==l) // Перенос строки
+      if(IsCaret || (Curr_width + sym_width>Scr_width) || i==l) // Перенос строки
       {
         Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
         Disp_Mess_Ex->mess = AllocWS(cnt);

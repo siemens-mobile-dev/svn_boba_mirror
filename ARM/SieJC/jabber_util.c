@@ -674,12 +674,18 @@ void _getbookmarkslist()
 {
   static char priv_id[]="SieJC_priv_req";
   static char bm[]="<storage xmlns='storage:bookmarks'/>";
-  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);
+  char gget[]=IQTYPE_GET;
+  char iqv[]=IQ_PRIVATE;
+  SendIq(NULL, gget, priv_id, iqv, bm);
 }
 
 void Get_Bookmarks_List()
 {
-  SUBPROC((void*)_getbookmarkslist);
+  if(!BM_ROOT)
+  {
+    SUBPROC((void*)_getbookmarkslist);
+  }
+  else Disp_BM_Menu();
 }
 
 /*

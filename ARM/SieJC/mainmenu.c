@@ -110,6 +110,7 @@ void MM_Show()
   strcat(confpic,png_t);  
   S_ICONS[1]=(int)confpic;
   menuitems[2].icon = S_ICONS+1;
+  menuitems[3].icon = S_ICONS+1;  
 #else
   S_ICONS[0]=Roster_getIconByStatus(My_Presence);
   menuitems[1].icon = S_ICONS;
