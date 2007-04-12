@@ -15,60 +15,6 @@ a	EQU	b
 
         RSEG	CODE:CODE
         
-#ifdef NEWSGOLD
-#ifdef	ELKA
-
-	PUBLIC	OldOnClose
-OldOnClose:
-	DCD	0xA066E5D6+1
-	
-	PUBLIC	OldOnCreate
-OldOnCreate:
-	DCD	0xA066E374+1
-	
-	PUBLIC	OldShowMsg
-OldShowMsg:
-	DCD	0xA09554F2+1
-
-	PUBLIC	PITgetN
-PITgetN:
-	DCD	0xA0A38D44
-	
-	PUBLIC	PITret
-PITret:
-	DCD	0xA095393C+1
-
-	defadr	StoreErrInfoAndAbort,0xA04D2304
-	defadr	StoreErrString,0xA04D21D0
-
-#else
-
-	PUBLIC	OldOnClose
-OldOnClose:
-	DCD	0xA02FCD7A+1
-	
-	PUBLIC	OldOnCreate
-OldOnCreate:
-	DCD	0xA02FCB52+1
-	
-	PUBLIC	OldShowMsg
-OldShowMsg:
-	DCD	0xA097789E+1
-	
-	PUBLIC	PITgetN
-PITgetN:
-	DCD	0xA0A27720
-	
-	PUBLIC	PITret
-PITret:
-	DCD	0xA0975D3E+1
-
-
-	defadr	StoreErrInfoAndAbort,0xA01CD2E8
-	defadr	StoreErrString,0xA01CD1B4
-
-#endif
-#else
 	
 	PUBLIC	OldOnClose
 OldOnClose:
@@ -108,7 +54,5 @@ FWriteOld:
         
         defadr	StoreErrInfoAndAbort,0xA113BE98
 	defadr	StoreErrString,0xA113BCBC
-
-#endif
 
 	END
