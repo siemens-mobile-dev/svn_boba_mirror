@@ -325,5 +325,12 @@
 0798: 0xA097C065 ; 1E6: __thumb void Menu_SetItemCountDyn(void *gui, int n);
 079C: 0xA0AD917C ; 1E7: __arm char *GetLastJavaApplication()
 07A0: 0xA09FD168 ; 1E8: __arm int IsNoJava()
+;07A4: 0x00000000 ; 1E9: __arm IMGHDR* create_imghdr(const char *fname, int type);
+07A8: 0xA0976403 ; 1EA: __thumb int GetMaxDynIcon(void);
+07B0: 0xA0976407 ; 1EC: __thumb void FreeDynIcon(int picture);
+07B4: 0xA0976567 ; 1ED: __thumb int IsDynIconBusy(int picture);
+07BC: 0xA0976469 ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap);
+07D4: 0xA0FC59D5 ; 1F5: __thumb int sscanf(const char *, const char *, ...);
+07D8: 0xA09765B3 ; 1F6: __thumb IMGHDR* GetPitAdrBy0xE200Symbol(int uni_symbol);
 #pragma disable old_equal_ff
 +0
