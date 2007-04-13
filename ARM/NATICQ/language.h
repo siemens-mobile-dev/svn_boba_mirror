@@ -50,6 +50,7 @@
 #define	LG_MNUVIBRA   "Режим вибры"
 #define LG_MNUSOUND   "Режим звука"
 #define LG_MNUEDCFG   "Настройки"
+#define LG_MNUPING    "Пинг"
 #define LG_MNUABOUT   "Об эльфе"
 //--------------
 #define LG_MNUQUOTE    "Цитировать"
@@ -155,6 +156,7 @@
 #define	LG_MNUVIBRA   "Режим вібри"
 #define LG_MNUSOUND   "Режим звуків"
 #define LG_MNUEDCFG   "Параметри"
+#define LG_MNUPING    "Пiнг"
 #define LG_MNUABOUT   "Про ельфа"
 //--------------
 #define LG_MNUQUOTE    "Цитувати"
@@ -263,6 +265,7 @@
 #define	LG_MNUVIBRA   "Vibra mode"
 #define LG_MNUSOUND   "Sound mode"
 #define LG_MNUEDCFG   "Edit config"
+#define LG_MNUPING    "Ping"
 #define LG_MNUABOUT   "About"
 
 //-------------

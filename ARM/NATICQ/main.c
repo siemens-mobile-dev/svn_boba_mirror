@@ -1114,6 +1114,24 @@ void get_answer(void)
 	memcpy(p,&RXbuf,sizeof(PKT));
 	GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	break;
+      case T_ECHORET:
+	{
+	  TDate d;
+	  TTime t;
+	  TTime *pt=(TTime *)(RXbuf.data);
+	  int s1;
+	  int s2;
+	  GetDateTime(&d,&t);
+	  s1=t.hour*3600+t.min*60+t.param;
+	  s2=pt->hour*3600+pt->min*60+pt->param;
+	  s1-=s2;
+	  if (s1<0) s1+=86400;
+	  snprintf(logmsg,255,"Ping %d-%d seconds!",s1,s1+1);
+	  LockSched();
+	  ShowMSG(1,(int)logmsg);
+	  UnlockSched();
+	}
+	break;
       }
       i=-(int)sizeof(PKT); //А может еще есть данные
     }

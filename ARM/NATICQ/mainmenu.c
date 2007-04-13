@@ -166,6 +166,19 @@ void EditConfig(void)
   GeneralFuncF1(1);
 }
 
+void PingToServer(void)
+{
+  TPKT *p;
+  TDate d;
+  TTime t;
+  GetDateTime(&d,&t);
+  p=malloc(sizeof(PKT)+sizeof(TTime));
+  memcpy(p->data,&t,sizeof(TTime));
+  p->pkt.uin=0;
+  p->pkt.type=T_ECHO;
+  p->pkt.data_len=sizeof(TDate)+sizeof(TTime);
+  SUBPROC((void *)SendAnswer,0,p);
+}
 
 //void AboutDlg(){};
 void AboutDlg()
@@ -182,24 +195,26 @@ HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
-MENUITEM_DESC menuitems[6]=
+MENUITEM_DESC menuitems[7]=
 {
   {S_ICONS,    (int)LG_MNUSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,       (int)LG_MNUADDCONT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {icon_array, (int)LG_MNUVIBRA,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {icon_array, (int)LG_MNUSOUND,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,       (int)LG_MNUEDCFG,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,       (int)LG_MNUPING ,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {S_ICONS,    (int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[6]=
+void *menuprocs[7]=
 {
   (void *)DispStatusChangeMenu,
   (void *)AddContactMenu,
   (void *)ChangeVibraMode,
   (void *)ChangeSoundMode,
   (void *)EditConfig,
-  (void *)AboutDlg
+  (void *)PingToServer,
+  (void *)AboutDlg,
 };
 
 SOFTKEY_DESC mmenu_sk[]=
@@ -238,7 +253,7 @@ void menuitemhandler(void *data, int curitem, int *unk)
     SetMenuItemIcon(data,curitem,Is_Sounds_Enabled?0:1);
     break;
     
-  case 5:
+  case 6:
     SetMenuItemIcon(data,curitem,IS_UNKNOWN);
     break;
   }
@@ -255,7 +270,7 @@ MENU_DESC tmenu=
   (void*)menuitemhandler,
   menuitems,
   menuprocs,
-  6
+  7
 };
 
 void ShowMainMenu()
@@ -264,5 +279,5 @@ void ShowMainMenu()
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   menuhdr.icon=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,6,0,0);
+  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,7,0,0);
 }
