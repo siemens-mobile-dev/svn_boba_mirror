@@ -2,9 +2,16 @@
 
 #define number 8
 
+
+#define PNG_16 0
+#define PNG_8 1
+
 #ifdef NEWSGOLD
-#define PNG_16_SUPPORT
+#define DEFAULT_COLOR PNG_16
+#else
+#define DEFAULT_COLOR PNG_8
 #endif
+
 
 void* xmalloc(int x,int n)
 {
@@ -24,7 +31,7 @@ __arm void read_data_fn(png_structp png_ptr, png_bytep data, png_size_t length)
   fread(*f, data, length, &err);
 }
 
-__arm IMGHDR* create_imghdr(const char* fname)
+__arm IMGHDR* create_imghdr(const char *fname, int type)
 {
   int f;
   char buf[number];
@@ -108,49 +115,50 @@ __arm IMGHDR* create_imghdr(const char* fname)
   pp->row=malloc(rowbytes);
   pp->img_h=img_hc=malloc(sizeof(IMGHDR));
   if (color_type != PNG_COLOR_TYPE_GRAY)
-#ifdef PNG_16_SUPPORT
   {
-    unsigned short *iimg=(unsigned short *)(pp->img=malloc(width*height*2));
-    for (unsigned int y = 0; y<height; y++)
+    if (type==PNG_16)
     {
-      png_read_row(png_ptr, (png_bytep)pp->row, NULL);
-      for (unsigned int x = 0; x<width; x++)
+      unsigned short *iimg=(unsigned short *)(pp->img=malloc(width*height*2));
+      for (unsigned int y = 0; y<height; y++)
       {
-	if (!pp->row[x*4+3])
-	  *iimg++=0xE000;
-	else
-	{
-	  unsigned int c=((pp->row[x*4+0]<<8)&0xF800);
-	  c|=((pp->row[x*4+1]<<3)&0x7E0);
-	  c|=((pp->row[x*4+2]>>3)&0x1F);
-	  *iimg++=c;
+        png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+        for (unsigned int x = 0; x<width; x++)
+        {
+          if (!pp->row[x*4+3])
+            *iimg++=0xE000;
+          else
+          {
+            unsigned int c=((pp->row[x*4+0]<<8)&0xF800);
+            c|=((pp->row[x*4+1]<<3)&0x7E0);
+            c|=((pp->row[x*4+2]>>3)&0x1F);
+            *iimg++=c;
+          }
 	}
       }
+      pp->img_h->bpnum=8;
     }
-    pp->img_h->bpnum=8;
-  }
-#else
-  {
-    unsigned char *iimg=(unsigned char *)(pp->img=malloc(width*height));
-    for (unsigned int y = 0; y<height; y++)
+    if (type==PNG_8)
     {
-      png_read_row(png_ptr, (png_bytep)pp->row, NULL);
-      for (unsigned int x = 0; x<width; x++)
+      unsigned char *iimg=(unsigned char *)(pp->img=malloc(width*height));
+      for (unsigned int y = 0; y<height; y++)
       {
-	if (!pp->row[x*4+3])
-	  *iimg++=0xC0;
-	else
-	{
-	  char c=(pp->row[x*4+0] & 0xE0);
-	  c|=((pp->row[x*4+1]>>3)&0x1C);
-	  c|=((pp->row[x*4+2]>>6)&0x3);
-	  *iimg++=c;
-	}
+        png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+        for (unsigned int x = 0; x<width; x++)
+        {
+          if (!pp->row[x*4+3])
+            *iimg++=0xC0;
+          else
+          {
+            char c=(pp->row[x*4+0] & 0xE0);
+            c|=((pp->row[x*4+1]>>3)&0x1C);
+            c|=((pp->row[x*4+2]>>6)&0x3);
+            *iimg++=c;
+          }
+        }
       }
+      pp->img_h->bpnum=5;
     }
-    pp->img_h->bpnum=5;
   }
-#endif
   else
   {
     int rowc_w=width&7?(width>>3)+1:width>>3;
@@ -284,11 +292,11 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
     strcpy_tolow(fname,(char*)pic);
     img=find_png_in_cache(fname);
     if (img) return (img);
-    img=create_imghdr(fname);
+    img=create_imghdr(fname,DEFAULT_COLOR);
   }
   else
   {
-    if (bitmap && (pic<65536))
+    if (bitmap && (pic<20000))
     {
       mask40=(mask80=0x80UL>>((pic&3)<<1))>>1;
       bp=bitmap+(pic>>2);
@@ -300,7 +308,7 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
           print10(next,pic);
           img=find_png_in_cache(fname);
           if (img) return (img);
-          img=create_imghdr(fname);          
+          img=create_imghdr(fname,DEFAULT_COLOR);          
         } 
         else return(0);                                // Картинки нет - выходим
       }
@@ -319,7 +327,7 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
 	  UnlockSched();
           return (img);
         }
-        img=create_imghdr(fname);                 // Пробуем создать
+        img=create_imghdr(fname,DEFAULT_COLOR);                 // Пробуем создать
         if (img)
         {
 	  LockSched();
@@ -381,7 +389,11 @@ __arm void InitPngBitMap(void)
 {
   if (!bitmap)
   {
-    bitmap=malloc(0x10000/8*2);
+    bitmap=malloc(20000/8*2);
   }
-  zeromem((void*)bitmap,0x10000/8*2);
+  zeromem((void*)bitmap,20000/8*2);
 }
+
+#pragma diag_suppress=Pe177
+__root static const int SWILIB_FUNC1E9 @ "SWILIB_FUNC1E9" = (int)create_imghdr;
+#pragma diag_default=Pe177
