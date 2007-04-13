@@ -22,8 +22,6 @@ typedef struct
 {
   GUI gui;
   WSHDR *ws1;
-  WSHDR *ws2;
-  int i1;
 }MAIN_GUI;
 
 typedef struct
@@ -86,11 +84,11 @@ void clear_cache()
   A_pltop *pltop=PNG_TOP();
   LockSched();
   PNGLIST *pl=pltop->top;
-  PNGLIST *pl_prev;
   pltop->top=0;
   UnlockSched();
   while(pl)
   {
+    PNGLIST *pl_prev;
     pl_prev=pl;
     pl=pl->next;
     mfree(pl_prev->pngname);
@@ -114,7 +112,7 @@ void clear_bitmap()
     char *bitmap=pltop->bitmap;
     if (bitmap)
     {
-      zeromem(bitmap,0x10000/8*2);
+      zeromem(bitmap,20000/8*2);
     }
     UnlockSched();
   }
@@ -123,6 +121,7 @@ void clear_bitmap()
 unsigned int total_size()
 {
   unsigned int n=0;
+  unsigned int img_w, img_h;
   A_pltop *pltop=PNG_TOP();
   PNGLIST *pl=pltop->top;
   while (pl)
@@ -131,19 +130,21 @@ unsigned int total_size()
     n+=(strlen(pl->pngname)+1);
     if(pl->img)
     {
+      img_w=pl->img->w;
+      img_h=pl->img->h;
       n+=sizeof(IMGHDR);
       switch (pl->img->bpnum)
       {
       case 1:
-        n+=((pl->img->w>>3)*pl->img->h);
+        n+=((img_w&7?((img_w>>3)+1):(img_w>>3))*img_h);
         break;
         
       case 5:
-        n+=(pl->img->w*pl->img->h);
+        n+=(img_w*img_h);
         break;
         
       case 8:
-        n+=(2*pl->img->w*pl->img->h);
+        n+=(2*img_w*img_h);
         break;
       }
     }
@@ -161,16 +162,16 @@ void OnRedraw(MAIN_GUI *data)
   DrawRoundedFrame(0,0,x-1,y-1,0,0,0,
                    GetPaletteAdrByColorIndex(0),
                    GetPaletteAdrByColorIndex(20));
-  int num=get_number_of_png(); 
-  wsprintf(data->ws1,"Opened:%u",num);
+
+  wsprintf(data->ws1,"Opened:%u",get_number_of_png());
   DrawString(data->ws1,3,3,74,15,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
     
   if (!show_pic)
     wsprintf(data->ws1,"Top Pic");
   else
   {
-    if (show_pic<0) show_pic=num-1;
-    if (show_pic>num-1) show_pic=0;
+    if (show_pic<0) show_pic=(get_number_of_png()-1);
+    if (show_pic>(get_number_of_png()-1)) show_pic=0;
     wsprintf(data->ws1,"Cache %u",show_pic);
   }
   DrawString(data->ws1,75,3,x-4,15,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
@@ -188,21 +189,13 @@ void OnRedraw(MAIN_GUI *data)
     
     if (current->img)
     {
-      
-      if (current->img->w>=width)
-        width=0;
-      
-      else width=(width-current->img->w)/2;
-      
-      if (current->img->h>=height)
-        height=0;
-      
-      else height=29+(height-current->img->h)/2; 
+      width=(current->img->w>=width)?0:(width-current->img->w)/2;
+      height=(current->img->h>=height)?0:29+(height-current->img->h)/2; 
       DrwImg(current->img,width,height,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
     }      
   }
-  wsprintf(data->ws1,"%u",total_size());
-  DrawString(data->ws1,0,y-GetFontYSIZE(SMALL_FONT)-1,x-1,y-1,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
+  wsprintf(data->ws1,"%u B",total_size());
+  DrawString(data->ws1,2,y-GetFontYSIZE(SMALL_FONT)-1,x-1,y-1,SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
 }
 
 
@@ -248,6 +241,11 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg)
     case '2':
       clear_bitmap();
       break;
+    case '3':
+      clear_cache();
+      clear_bitmap();
+      break;
+      
     case LEFT_BUTTON:
     case '4':
       show_pic--;
