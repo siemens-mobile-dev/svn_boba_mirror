@@ -65,10 +65,16 @@ int connect_state=0;
 int pop_state=0;
 
 //Писем в ящике
-int in_pop3=0;
+volatile int in_pop3;
+volatile int pop3_recv;
+volatile int pop3_del;
+
 
 //Флаг для больших сообщений
 int mes_rec=0;
+
+volatile int total_recv;
+volatile int total_send;
 
 GBSTMR reconnect_tmr;
 volatile int is_gprs_online=1;
@@ -282,6 +288,7 @@ void send_str(char* str)
   {
     i=i>0x400?0x400:i;
     j=send(sock,(void *)sendq_p,i,0);
+    total_send+=j;
     snprintf(logmsg,255,"send res %d",j);
     REDRAW();
     if (j<0)
@@ -304,7 +311,7 @@ void send_str(char* str)
       }
     }
     memcpy((void *)sendq_p,(char *)sendq_p+j,sendq_l-=j);
-    if (j<1)
+    if (j<i)
     {
       // передали меньше чем заказывали
       return;
@@ -528,6 +535,7 @@ void process_line(char *rec_line)
           fclose(fhandler,&err);
           mes_rec=0;
           write_mail_DB();
+          pop3_recv++;
           if (pop_state==POP_RECEIVE_MESSAGE)
           {
             if (DEL_AFTER_LOAD)
@@ -550,6 +558,7 @@ void process_line(char *rec_line)
         end_connect("Can't delete!");
         return;
       }
+      pop3_del++;
       pop_state=POP_PROCESS_LIST;
       REDRAW();
     }
@@ -603,6 +612,7 @@ void get_answer(void)
   i=recv(sock,msg_buf,BUF_SIZE-1,0);
   if (i>0)
   {
+    total_recv+=i;
     d=recived_line;
     if (d)
     {
@@ -695,6 +705,11 @@ void create_connect(void)
 
     L_CONNECT:
       sock=socket(1,1,0);
+      total_recv=0;
+      total_send=0;
+      in_pop3=0;
+      pop3_recv=0;
+      pop3_del=0;
       if (sock!=-1)
       {
 	sa.family=1;
@@ -761,8 +776,11 @@ void OnRedraw(MAIN_GUI *data)
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
   wsprintf(data->ws1,"State: %d POPState: %d\n%t\n%t",connect_state,pop_state,c_states[pop_state],logmsg);
-  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(SMALL_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 
+  wsprintf(data->ws1,"send/recv bytes: %u/%u\nReceived: %u/%u\nDeleted: %u",total_send,total_recv,pop3_recv,in_pop3,pop3_del);
+  DrawString(data->ws1,3,60+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  
   wsprintf(data->ws1,percent_t,"Exit");
   DrawString(data->ws1,(scr_w>>1),scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 
