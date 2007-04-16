@@ -136,11 +136,18 @@ int PatchKeybMsg(int submsg, int msg)
   {
     if (!ptop->proc) continue;
     result=ptop->proc(submsg,msg);
-    if (result==0) continue;
-    if (result==1) {mode=1;  continue;}
-    if (result==2) return (2);
-    if (result!=3) continue;
-    return (mode==1?2:0);
+    switch(result)
+    {
+    case 0:
+      continue;
+    case 1:
+      mode=1;
+      continue;
+    case 2:
+      return (2);
+    case 3:
+      return (mode==1?2:0);
+    }
   }
   return (mode);
 }
