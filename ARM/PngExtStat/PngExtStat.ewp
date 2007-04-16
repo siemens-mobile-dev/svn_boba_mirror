@@ -1843,7 +1843,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptimization</name>
@@ -1937,7 +1937,7 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
@@ -1992,7 +1992,7 @@
         <option>
           <name>CCInlineThreshold</name>
           <version>0</version>
-          <state>1</state>
+          <state>0</state>
         </option>
       </data>
     </settings>

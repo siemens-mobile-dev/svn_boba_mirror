@@ -13,6 +13,24 @@ typedef struct
   char *bitmap;
 }A_pltop;
 
+
+#pragma inline
+void patch_header(HEADER_DESC* head)
+{
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
+}
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp)
+{
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -154,6 +172,109 @@ unsigned int total_size()
 }
 
 
+int menusoftkeys[]={0,1,2};
+SOFTKEY_DESC menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Options"},
+  {0x0001,0x0000,(int)"Close"},
+  {0x003D,0x0000,(int)"+"}
+};
+
+SOFTKEYSTAB menu_skt=
+{
+  menu_sk,0
+};
+
+void test_locret(void){}
+
+
+int test_onkey(GUI *data, GUI_MSG *msg)
+{
+  EDITCONTROL ec;
+  char str[128];
+  if (msg->keys==0xFFF)
+  {
+    ExtractEditControl(data,2,&ec);
+    ws_2str(ec.pWS,str,127);
+    GetPITaddr((int)str);
+    return (1);
+  }
+  return(0); //Do standart keys
+  //1: close
+}
+
+void test_ghook(GUI *data, int cmd)
+{
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Test"};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==2)
+  {
+    EDIT_SetFocus(data,2);
+    EDIT_SetCursorPos(data,2);
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+}
+
+HEADER_DESC test_hdr={0,0,0,0,NULL,(int)"Test",LGP_NULL};
+
+INPUTDIA_DESC test_desc =
+{
+  1,
+  test_onkey,
+  test_ghook,
+  (void *)test_locret,
+  0,
+  &menu_skt,
+  {0,0,0,0},
+  SMALL_FONT,
+  100,
+  101,
+  0,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+
+void create_test_pic(void)
+{
+  void *ma=malloc_adr();
+  void *eq;  
+
+  EDITCONTROL ec;
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  WSHDR *ews=AllocWS(128);
+  wsprintf(ews,"%t","Path File:");  
+  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,ews->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  str_2ws(ews,"0:\\.png",127);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,128);
+  AddEditControlToEditQend(eq,&ec,ma);  
+    
+  patch_header(&test_hdr);
+  patch_input(&test_desc);
+  FreeWS(ews);
+  CreateInputTextDialog(&test_desc,&test_hdr,eq,1,0);    
+  
+}
+
+
 void OnRedraw(MAIN_GUI *data)
 {
   int x=ScreenW();
@@ -255,6 +376,9 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg)
       show_pic++;
       break;
       
+    case '7':
+      create_test_pic();
+      break;
       
     }
   }
