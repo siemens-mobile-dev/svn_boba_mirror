@@ -61,7 +61,8 @@ J_PIT:
         THUMB
         RSEG    PATCH_NO_BROWSE_TXT:CODE:ROOT(1)
         EXTERN  OldTxtReg
-        B       0xA0BE4CC4+1
+        NOP
+        NOP
         
 ; ==============================================   
 	RSEG	PATCH_ESI:CODE:ROOT

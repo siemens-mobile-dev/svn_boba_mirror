@@ -26,9 +26,9 @@ void xmfree(int x,void* ptr)
 __arm void read_data_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 {
   unsigned int err;
-  int* f;
-  f=png_get_io_ptr(png_ptr);
-  fread(*f, data, length, &err);
+  int f;
+  f=(int)png_get_io_ptr(png_ptr);
+  fread(f, data, length, &err);
 }
 
 __arm IMGHDR* create_imghdr(const char *fname, int type)
@@ -41,17 +41,16 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
     char *row;
     char *img;
     IMGHDR * img_h;
-  } *pp;
+  } pp;
   IMGHDR * img_hc;
   png_structp png_ptr=NULL;
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
   
   if ((f=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
-  pp=malloc(sizeof(struct PP));
-  pp->row=NULL;
-  pp->img=NULL;
-  pp->img_h=NULL;
+  pp.row=NULL;
+  pp.img=NULL;
+  pp.img_h=NULL;
   
   if (fread(f, &buf, number, &err)!=number) goto L_CLOSE_FILE;
   if  (!png_check_sig((png_bytep)buf,number)) goto  L_CLOSE_FILE;
@@ -63,13 +62,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-  L_CLOSE_FILE:
-    mfree(pp->row);
-    mfree(pp->img);
-    mfree(pp->img_h);
-    mfree(pp);
-    fclose(f, &err);
-    return NULL;
+    goto L_CLOSE_FILE;
   }
   if (setjmp(png_jmpbuf(png_ptr)))
   {
@@ -77,7 +70,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
     goto L_CLOSE_FILE;
   }
   
-  png_set_read_fn(png_ptr, &f, read_data_fn);
+  png_set_read_fn(png_ptr, (void *)f, read_data_fn);
   
   png_set_sig_bytes(png_ptr, number);
   
@@ -106,87 +99,95 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   if (color_type != PNG_COLOR_TYPE_GRAY)
     png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
   
-  if (color_type == PNG_COLOR_TYPE_GRAY)  png_set_invert_mono(png_ptr);
+  if (color_type == PNG_COLOR_TYPE_GRAY)
+    png_set_invert_mono(png_ptr);
   
   png_read_update_info(png_ptr, info_ptr);
   
   rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   
-  pp->row=malloc(rowbytes);
-  pp->img_h=img_hc=malloc(sizeof(IMGHDR));
+  pp.row=malloc(rowbytes);
+  pp.img_h=img_hc=malloc(sizeof(IMGHDR));
   if (color_type != PNG_COLOR_TYPE_GRAY)
   {
     if (type==PNG_16)
     {
-      unsigned short *iimg=(unsigned short *)(pp->img=malloc(width*height*2));
+      unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*2));
       for (unsigned int y = 0; y<height; y++)
       {
-        png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
         for (unsigned int x = 0; x<width; x++)
         {
-          if (!pp->row[x*4+3])
+          if (pp.row[x*4+3]!=0xFF)
             *iimg++=0xE000;
           else
           {
-            unsigned int c=((pp->row[x*4+0]<<8)&0xF800);
-            c|=((pp->row[x*4+1]<<3)&0x7E0);
-            c|=((pp->row[x*4+2]>>3)&0x1F);
+            unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
+            c|=((pp.row[x*4+1]<<3)&0x7E0);
+            c|=((pp.row[x*4+2]>>3)&0x1F);
             *iimg++=c;
           }
 	}
       }
-      pp->img_h->bpnum=8;
+      pp.img_h->bpnum=8;
     }
     if (type==PNG_8)
     {
-      unsigned char *iimg=(unsigned char *)(pp->img=malloc(width*height));
+      unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
       for (unsigned int y = 0; y<height; y++)
       {
-        png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
         for (unsigned int x = 0; x<width; x++)
         {
-          if (!pp->row[x*4+3])
+          if (pp.row[x*4+3]!=0xFF)
             *iimg++=0xC0;
           else
           {
-            char c=(pp->row[x*4+0] & 0xE0);
-            c|=((pp->row[x*4+1]>>3)&0x1C);
-            c|=((pp->row[x*4+2]>>6)&0x3);
+            unsigned char c=(pp.row[x*4+0] & 0xE0);
+            c|=((pp.row[x*4+1]>>3)&0x1C);
+            c|=((pp.row[x*4+2]>>6)&0x3);
             *iimg++=c;
           }
         }
       }
-      pp->img_h->bpnum=5;
+      pp.img_h->bpnum=5;
     }
   }
   else
   {
     int rowc_w=width&7?(width>>3)+1:width>>3;
     int size=height*rowc_w;
-    unsigned char *iimg=(unsigned char *)(pp->img=malloc(size));
+    unsigned char *iimg=(unsigned char *)(pp.img=malloc(size));
     zeromem(iimg,size);
     for (unsigned int y = 0; y<height; y++)
     {
-      png_read_row(png_ptr, (png_bytep)pp->row, NULL);
+      png_read_row(png_ptr, (png_bytep)pp.row, NULL);
       for (unsigned int x = 0; x<width; x++)
       {
-        if (pp->row[x])
+        if (pp.row[x])
           iimg[x>>3]|=(0x80>>(x&7));
       }
       iimg+=rowc_w;
     }
-    pp->img_h->bpnum=1;
+    pp.img_h->bpnum=1;
   } 
-  pp->img_h->w=width;
-  pp->img_h->h=height;
+  pp.img_h->w=width;
+  pp.img_h->h=height;
   //pp->img_h->zero=0;
-  pp->img_h->bitmap=pp->img;
-  
+  pp.img_h->bitmap=pp.img;
   
   png_read_end(png_ptr, info_ptr);
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-  mfree(pp->row);
-  mfree(pp);
+  if (!pp.img)
+  {
+  L_CLOSE_FILE:
+    mfree(pp.row);
+    mfree(pp.img);
+    mfree(pp.img_h);
+    fclose(f, &err);
+    return NULL;
+  }
+  mfree(pp.row);
   fclose(f, &err);
   return (img_hc);
 }
