@@ -40,6 +40,7 @@ typedef struct
   int x_pos;
   int y_pos;
   unsigned int* xy_pos;
+  int cstep;
 }MAIN_GUI_1;
 
 typedef struct
@@ -53,6 +54,7 @@ typedef struct
   char* color;
   int current_column;
   char testcolor[4];
+  int cstep;
 }MAIN_GUI_2;
 
 const char Pointer[5]={0x27,0x27,0xFF,0x27,0x27};
@@ -121,79 +123,86 @@ void method4_1(MAIN_GUI_1 *data, void (*mfree_adr)(void *))
 #define MIN_STEP 1
 #define MAX_STEP 8
 */
-int cstep=1;
+
 int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
 {
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
+    if (msg->gbsmsg->msg==KEY_DOWN)
+    {
+       switch(msg->gbsmsg->submess)
+       {
+       case RIGHT_SOFT:
+       case RED_BUTTON:
+         return (1);
+         
+       case ENTER_BUTTON:
+         data->xy_pos[0]=data->x_pos;
+         data->xy_pos[1]=data->y_pos;
+         return (1);
+       }
+    }
     if (msg->gbsmsg->msg==LONG_PRESS)
-		cstep=5;
-	switch(msg->gbsmsg->submess)
+      data->cstep=5;
+    
+    switch(msg->gbsmsg->submess)
     {
     case '1':
-      if ((data->x_pos-=cstep)<0)
+      if ((data->x_pos-=data->cstep)<0)
         data->x_pos=0;
-      if ((data->y_pos-=cstep)<0)
+      if ((data->y_pos-=data->cstep)<0)
         data->y_pos=0;
       break;
       
     case '2':
     case UP_BUTTON:
-      if ((data->y_pos-=cstep)<0)
+      if ((data->y_pos-=data->cstep)<0)
         data->y_pos=0;
       break;
       
     case '3':
-      if ((data->x_pos+=cstep)>ScreenW()-1)
+      if ((data->x_pos+=data->cstep)>ScreenW()-1)
         data->x_pos=ScreenW()-1;
-      if ((data->y_pos-=cstep)<0)
+      if ((data->y_pos-=data->cstep)<0)
         data->y_pos=0;
       break;
      
     case '4':
     case LEFT_BUTTON:
-      if ((data->x_pos-=cstep)<0)
+      if ((data->x_pos-=data->cstep)<0)
         data->x_pos=0;
       break;
       
     case '6':
     case RIGHT_BUTTON:
-      if ((data->x_pos+=cstep)>ScreenW()-1)
+      if ((data->x_pos+=data->cstep)>ScreenW()-1)
         data->x_pos=ScreenW()-1;
       break;
       
     case '7': 
-      if ((data->x_pos-=cstep)<0)
+      if ((data->x_pos-=data->cstep)<0)
         data->x_pos=0;      
-      if ((data->y_pos+=cstep)>ScreenH()-1)
+      if ((data->y_pos+=data->cstep)>ScreenH()-1)
         data->y_pos=ScreenH()-1;
       break;
       
     case '8':
     case DOWN_BUTTON:
-      if ((data->y_pos+=cstep)>ScreenH()-1)
+      if ((data->y_pos+=data->cstep)>ScreenH()-1)
         data->y_pos=ScreenH()-1;
       break;
       
     case '9': 
-      if ((data->x_pos+=cstep)>ScreenW()-1)
+      if ((data->x_pos+=data->cstep)>ScreenW()-1)
         data->x_pos=ScreenW()-1;
-      if ((data->y_pos+=cstep)>ScreenH()-1)
+      if ((data->y_pos+=data->cstep)>ScreenH()-1)
         data->y_pos=ScreenH()-1;
-      break;    
-      
-    case RIGHT_SOFT:
-    case RED_BUTTON:
-      return (1);
-      
-    case ENTER_BUTTON:
-      data->xy_pos[0]=data->x_pos;
-      data->xy_pos[1]=data->y_pos;
-      return (1);
+      break; 
     }
   }
   if (msg->gbsmsg->msg==KEY_UP)
-	  cstep=1;
+    data->cstep=1;
+  
   DirectRedrawGUI();
   return(0);
 }
@@ -306,13 +315,26 @@ void method4_2(MAIN_GUI_2 *data, void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
-//int colstep=1;
 int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
 {
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
-	if (msg->gbsmsg->msg==LONG_PRESS)  
-		cstep=8;
+    if (msg->gbsmsg->msg==KEY_DOWN)
+    {
+       switch(msg->gbsmsg->submess)
+       {
+       case RIGHT_SOFT:
+       case RED_BUTTON:
+         return (1);
+         
+       case ENTER_BUTTON:
+         setColor(data->r,data->g,data->b,data->a,data->color);
+         return (1);
+       }
+    }
+    if (msg->gbsmsg->msg==LONG_PRESS)  
+      data->cstep=8;
+
     switch(msg->gbsmsg->submess)
     {
     case UP_BUTTON:
@@ -320,19 +342,19 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
       switch(data->current_column)
       {
       case 0:
-        if ((data->r+=cstep)>0xFF)
+        if ((data->r+=data->cstep)>0xFF)
           data->r=0;
         break;
       case 1:
-        if ((data->g+=cstep)>0xFF)
+        if ((data->g+=data->cstep)>0xFF)
           data->g=0;
         break;
       case 2:
-        if ((data->b+=cstep)>0xFF)
+        if ((data->b+=data->cstep)>0xFF)
           data->b=0;
         break;
       case 3:
-        if ((data->a+=(cstep==8?cstep/2:cstep))>0x64)
+        if ((data->a+=(data->cstep==8?data->cstep>>1:data->cstep))>0x64)
           data->a=0;
         break;
       }
@@ -349,40 +371,32 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
         data->current_column=0;
       break;
       
-    case RIGHT_SOFT:
-    case RED_BUTTON:
-      return (1);
-      
     case DOWN_BUTTON:
     case '8':
       switch(data->current_column)
       {
       case 0:
-        if ((data->r-=cstep)<0)
+        if ((data->r-=data->cstep)<0)
           data->r=0xFF;
         break;
       case 1:
-        if ((data->g-=cstep)<0)
+        if ((data->g-=data->cstep)<0)
           data->g=0xFF;
         break;
       case 2:
-        if ((data->b-=cstep)<0)
+        if ((data->b-=data->cstep)<0)
           data->b=0xFF;
         break;
       case 3:
-		if ((data->a-=(cstep==8?cstep/2:cstep))<0)
+        if ((data->a-=(data->cstep==8?data->cstep>>1:data->cstep))<0)
           data->a=0x64;
         break;
       }
       break;
-      
-    case ENTER_BUTTON:
-      setColor(data->r,data->g,data->b,data->a,data->color);
-      return (1);
     }
   }
   if (msg->gbsmsg->msg==KEY_UP)
-	  cstep=1;
+    data->cstep=1;
   DirectRedrawGUI();
   return(0);
 }
@@ -473,12 +487,8 @@ const char back[]="..";
 int GetFListN()
 {
   int i=0;
-  FLIST *fl=(FLIST*)fltop;
-  while(fl)
-  {
-    fl=fl->next;
-    i++;
-  }
+  FLIST *fl=(FLIST*)&fltop;
+  while((fl=fl->next)) i++;
   return (i);
 }
 
@@ -670,6 +680,7 @@ int filelist_menu_onkey(void *data, GUI_MSG *msg)
           CreateRootMenu();
         }         
         Menu_SetItemCountDyn(data,GetFListN());
+        SetCursorToMenuItem(data, 0);
         RefreshGUI();
       }
       else
@@ -778,6 +789,7 @@ void open_select_file_gui(void *ed_gui, int type)
 {
   EDITCONTROL ec;
   FVIEW *fview;
+  char *s;
   fview=malloc(sizeof(FVIEW));
   fview->gui=ed_gui;
   fview->type=type;
@@ -789,6 +801,8 @@ void open_select_file_gui(void *ed_gui, int type)
   else
   {
     ws_2str(ec.pWS,header,127);
+    s=strrchr(header, '\\');
+    if (s) *(s+1)=0;
     int len=strlen(header);
     header[len>127?127:len]=0;
     FindFiles(header,type);

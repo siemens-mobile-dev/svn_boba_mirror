@@ -1,4 +1,5 @@
 #include "..\inc\swilib.h"
+#include "..\inc\cfg_items.h"
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
@@ -21,7 +22,16 @@ void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
   head->rc.x2=x2;
   head->rc.y2=y2+YDISP;
 }
-#include "..\inc\cfg_items.h"
+
+
+#ifdef NEWSGOLD
+#define CBOX_CHECKED 0xE116
+#define CBOX_UNCHECKED 0xE117
+#else
+#define CBOX_CHECKED 0xE10B
+#define CBOX_UNCHECKED 0xE10C
+#endif
+
 
 unsigned int level=0;
 CFG_HDR *levelstack[16];
@@ -140,6 +150,10 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 	  levelstack[level]=hp;
 	  level++;
 	  return 1;
+        case CFG_CHECKBOX:
+          *((int *)(hp+1))=!*((int *)(hp+1));
+          break;
+          
         default:
           return(0);
         }
@@ -233,6 +247,11 @@ void ed1_ghook(GUI *data, int cmd)
       case CFG_COLOR:
         wsprintf(ews,"%02X,%02X,%02X,%02X",*((char *)(hp+1)),*((char *)(hp+1)+1),*((char *)(hp+1)+2),*((char *)(hp+1)+3));
         EDIT_SetTextToFocused(data,ews);        
+        break;
+      case CFG_CHECKBOX:
+        CutWSTR(ews,0);
+        wsAppendChar(ews, *((int *)(hp+1))?CBOX_CHECKED:CBOX_UNCHECKED);
+        EDIT_SetTextToFocused(data,ews);
         break;
       default:
         break;
@@ -647,7 +666,14 @@ int create_ed(void)
     {
       if ((curlev==level)&&(parent==levelstack[level]))
       {
-	ConstructEditControl(&ec,1,0x40,ews,256);
+        if (hp->type!=CFG_CHECKBOX)
+        {
+          ConstructEditControl(&ec,1,0x40,ews,256);
+        }
+        else 
+        {
+          ConstructEditControl(&ec,1,0x00,ews,256);
+        }
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+2
       }
     }
@@ -790,6 +816,18 @@ int create_ed(void)
 	parent=hp;
       }
       continue;
+    case CFG_CHECKBOX:
+      n-=4;
+      if (n<0) goto L_ERRCONSTR;
+      CutWSTR(ews,0);
+      wsAppendChar(ews, *((int *)p)?CBOX_CHECKED:CBOX_UNCHECKED);
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+	ConstructEditControl(&ec,9,0x40,ews,1);
+	AddEditControlToEditQend(eq,&ec,ma);           
+      }
+      p+=4;
+      break;
     default:
       wsprintf(ews,"Unsupported item %d",hp->type);
       ConstructEditControl(&ec,1,0x40,ews,256);
