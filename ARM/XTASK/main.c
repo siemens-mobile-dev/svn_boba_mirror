@@ -36,8 +36,11 @@ int mode;
 
 // 0 - no press
 // 1 - long press REDBUT
-
 int mode_red;
+
+// 0 - no press
+// 1 - long press ENTER_BUTTON
+int mode_enter;
 
 int my_keyhook(int submsg, int msg)
 {
@@ -135,32 +138,41 @@ int my_keyhook(int submsg, int msg)
   }
   return(2);
 #else
+  if (submsg!=ENTER_BUTTON) return(0);
   if (mode==-1) return (0);
+  switch(msg)
   {
-    if (msg==KEY_UP)
+  case KEY_DOWN:
+    if (mode_enter==2)
     {
-      mode=0;
-      return (0)    }
-    if (msg==KEY_DOWN)
-    {
-      switch (submsg)
-      {
-      case '*':
-        mode=1;
-        return (0);
-        
-      case '#':
-        if (mode==1)
-        {
-          if (IsUnlocked()||ENA_LOCK)
-            do_gui(0);
-          else mode=0;
-        }
-        else return (0);
-      }
+      GBS_SendMessage(MMI_CEPID,KEY_UP,ENTER_BUTTON);
+      return (0);
     }
+    mode_enter=0;
+    return (2);
+    
+  case KEY_UP:
+    if (mode_enter==0)
+    {
+      mode_enter=2;
+      GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
+      return (2);
+    }
+    if (mode_enter==2)
+    {
+      mode_enter=0;
+      return (0);
+    }
+    mode_enter=0;
+    return (2);      
+
+  case LONG_PRESS:
+    mode_enter=1;
+    if (IsUnlocked()||ENA_LOCK)
+      do_gui(0);
+    else mode=0;
   }
-  return (0);
+  return(2);
 #endif
 }
 

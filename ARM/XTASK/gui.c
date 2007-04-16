@@ -69,6 +69,21 @@ typedef struct
 
 int my_csm_id;
 
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+
+int strncmp_nocase(const char *s1,const char *s2,unsigned int n)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))&&(--n)) if (!c) break;
+  return(i);
+}
+
 typedef struct
 {
   void *next;
@@ -178,7 +193,7 @@ int GetNumberOfDialogs(void)
 	{
 	  s=find_name(icsm);
 #ifdef NEWSGOLD
-	  if (!strncmp(s,"Java",4))
+	  if (!strncmp_nocase(s,"Java",4))
 	  {
 	    typedef struct
 	    {
@@ -222,6 +237,35 @@ int GetNumberOfDialogs(void)
 	    }
 	    goto L_ADD;
 	  }
+#else
+          if (!strncmp_nocase(s,"Java",4))
+	  {
+	    typedef struct
+	    {
+	      CSM_RAM csm;
+	      int bearer;
+	      int gui_id;
+	      int gui_id2;
+	    }JAVAINTERFACE_CSM;
+	    int i=((JAVAINTERFACE_CSM *)icsm)->bearer;
+	    ws=AllocWS(64);
+	    switch(i)
+	    {
+	    case 1:
+	      wsprintf(ws,"Browser");
+	      break;
+	    case 0xF:
+              wsprintf(ws,"User Java");
+	      break;
+            case 0x11:
+              wsprintf(ws,"Java");
+	      break; 
+            default:
+              wsprintf(ws,"Unknown %d bearer",i);
+              break;
+	    }
+	    goto L_ADD;
+	  }
 #endif
 	  if (strncmp(s,"!SKIP!",6))
 	  {
@@ -233,9 +277,7 @@ int GetNumberOfDialogs(void)
 	    }
 	    ss[i]=0;
 	    wsprintf(ws,percent_t,ss);
-#ifdef NEWSGOLD
 	  L_ADD:
-#endif
 	    AddNL(ws);
 	    nltop->p=icsm;
 	    count++;
@@ -321,7 +363,7 @@ void mm_menu_iconhndl(void *data, int curitem, int *unk)
   {
     if (nl->name)
     {
-      ws=AllocMenuWS(data,wstrlen(nl->name));
+      ws=AllocMenuWS(data,nl->name->wsbody[0]);
       wstrcpy(ws,nl->name);
     }
     else
