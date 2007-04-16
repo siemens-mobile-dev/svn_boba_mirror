@@ -177,6 +177,52 @@ int GetNumberOfDialogs(void)
 	else
 	{
 	  s=find_name(icsm);
+#ifdef NEWSGOLD
+	  if (!strncmp(s,"Java",4))
+	  {
+	    typedef struct
+	    {
+	      CSM_RAM csm;
+	      int unk1;
+	      int bearer;
+	      int gui_id;
+	      int unk2;
+	      int param_R1;
+	      int param_ZERO;
+	    }JAVAINTERFACE_CSM;
+	    int i=((JAVAINTERFACE_CSM *)icsm)->bearer;
+	    int j=((JAVAINTERFACE_CSM *)icsm)->param_R1;
+	    if (i==2) continue;
+	    ws=AllocWS(64);
+	    switch(i)
+	    {
+	    case 1:
+	      wsprintf(ws,"Browser",j);
+	      break;
+	    case 2:
+	      wsprintf(ws,"Jam %d",j);
+	      break;
+	    case 3:
+	      switch(j)
+	      {
+	      case 2:
+		wsprintf(ws,"Phone Java");
+		break;
+	      case 3:
+		wsprintf(ws,"User Java");
+		break;
+	      default:
+		wsprintf(ws,"Unknown Java (%d)",j);
+		break;
+	      }
+	      break;
+	    default:
+	      wsprintf(ws,"Unknown %d(%d) bearer",i,j);
+	      break;
+	    }
+	    goto L_ADD;
+	  }
+#endif
 	  if (strncmp(s,"!SKIP!",6))
 	  {
 	    ws=AllocWS(64);
@@ -187,6 +233,9 @@ int GetNumberOfDialogs(void)
 	    }
 	    ss[i]=0;
 	    wsprintf(ws,percent_t,ss);
+#ifdef NEWSGOLD
+	  L_ADD:
+#endif
 	    AddNL(ws);
 	    nltop->p=icsm;
 	    count++;
@@ -196,7 +245,12 @@ int GetNumberOfDialogs(void)
     }
   }
   while((icsm=icsm->next));
-  sprintf(mmenu_hdr_txt,"XTask2.0: %d dialogs",count);
+  {
+//    char *s=GetLastJavaApplication();
+//    if (s) sprintf(mmenu_hdr_txt,"%s",s);
+//    else 
+      sprintf(mmenu_hdr_txt,"XTask2.0: %d dialogs",count);
+  }
   return(count);
 }
 
