@@ -28,13 +28,12 @@ __root const CFG_HDR cfghdr5={CFG_CBOX,"Load",0,2};
 __root const int DEFAULT_ACTION = 0;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"Only Headers","Headers+Text"};
 
-__root const CFG_HDR cfghdr6={CFG_CBOX,"Action if mail del from server:",0,2};
+__root const CFG_HDR cfghdr6={CFG_CBOX,"Action if mail del from server",0,2};
 __root const int IF_DEL_AUX = 0;
 __root const CFG_CBOX_ITEM cfgcbox2[2]={"Delete From Phone","Nothing"};
 
-__root const CFG_HDR cfghdr61={CFG_CBOX,"Delete from serv after loading:",0,2};
+__root const CFG_HDR cfghdr61={CFG_CHECKBOX,"Delete from serv after loading",0,0};
 __root const int DEL_AFTER_LOAD = 0;
-__root const CFG_CBOX_ITEM cfgcbox3[2]={"No","Yes"};
 
 __root const CFG_HDR cfghdr7={CFG_STR_UTF8,"Icon Message Unreaded",3,63};
 __root const char I_UNREAD[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_unread.png";

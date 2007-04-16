@@ -439,6 +439,12 @@ void process_line(char *rec_line)
       return;
     }
     in_pop3=strtoul(strchr(rec_line,' ')+1,0,10);
+    if (!in_pop3)
+    {
+      pop_state=0;
+      end_connect("Mailbox is empty");
+      return;
+    }
     send_get_uidl_list();
     pop_state=POP_GET_UIDL_LIST;
     REDRAW();
@@ -613,6 +619,7 @@ void get_answer(void)
   if (i>0)
   {
     total_recv+=i;
+    REDRAW();
     d=recived_line;
     if (d)
     {
