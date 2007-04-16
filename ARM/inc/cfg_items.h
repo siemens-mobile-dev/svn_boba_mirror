@@ -12,6 +12,7 @@
 #define CFG_LEVEL 9
 
 #define CFG_UTF8_STRING 10
+#define CFG_CHECKBOX 11
 
 typedef struct
 {
