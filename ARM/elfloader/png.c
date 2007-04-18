@@ -3,14 +3,20 @@
 #define number 8
 
 
-#define PNG_16 0
+
+
 #define PNG_8 1
+#define PNG_16 2
 
 #ifdef NEWSGOLD
 #define DEFAULT_COLOR PNG_16
 #else
 #define DEFAULT_COLOR PNG_8
 #endif
+
+
+const char Pointer[1]={0xFF};
+const IMGHDR empty_img = {0,0,0x1,(char *)Pointer};
 
 
 void* xmalloc(int x,int n)
@@ -47,6 +53,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
   
+  if (type==NULL)  type=DEFAULT_COLOR;
   if ((f=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
   pp.row=NULL;
   pp.img=NULL;
@@ -110,52 +117,58 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   pp.img_h=img_hc=malloc(sizeof(IMGHDR));
   if (color_type != PNG_COLOR_TYPE_GRAY)
   {
-    if (type==PNG_16)
+    switch (type)
     {
-      unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*2));
-      for (unsigned int y = 0; y<height; y++)
+    case PNG_16:
       {
-        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-        for (unsigned int x = 0; x<width; x++)
+        unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*2));
+        for (unsigned int y = 0; y<height; y++)
         {
-          if (pp.row[x*4+3]!=0xFF)
-            *iimg++=0xE000;
-          else
+          png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+          for (unsigned int x = 0; x<width; x++)
           {
-            unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
-            c|=((pp.row[x*4+1]<<3)&0x7E0);
-            c|=((pp.row[x*4+2]>>3)&0x1F);
-            *iimg++=c;
+            if (pp.row[x*4+3]!=0xFF)
+              *iimg++=0xE000;
+            else
+            {
+              unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
+              c|=((pp.row[x*4+1]<<3)&0x7E0);
+              c|=((pp.row[x*4+2]>>3)&0x1F);
+              *iimg++=c;
+            }
           }
 	}
+        pp.img_h->bpnum=8;
+        break;
       }
-      pp.img_h->bpnum=8;
-    }
-    if (type==PNG_8)
-    {
-      unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
-      for (unsigned int y = 0; y<height; y++)
+      
+    case PNG_8:
       {
-        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-        for (unsigned int x = 0; x<width; x++)
+        unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
+        for (unsigned int y = 0; y<height; y++)
         {
-          if (pp.row[x*4+3]!=0xFF)
-            *iimg++=0xC0;
-          else
+          png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+          for (unsigned int x = 0; x<width; x++)
           {
-            unsigned char c=(pp.row[x*4+0] & 0xE0);
-            c|=((pp.row[x*4+1]>>3)&0x1C);
-            c|=((pp.row[x*4+2]>>6)&0x3);
-            *iimg++=c;
+            if (pp.row[x*4+3]!=0xFF)
+              *iimg++=0xC0;
+            else
+            {
+              unsigned char c=(pp.row[x*4+0] & 0xE0);
+              c|=((pp.row[x*4+1]>>3)&0x1C);
+              c|=((pp.row[x*4+2]>>6)&0x3);
+              *iimg++=c;
+            }
           }
-        }
+	}
+        pp.img_h->bpnum=5;
+        break;
       }
-      pp.img_h->bpnum=5;
     }
   }
   else
   {
-    int rowc_w=width&7?(width>>3)+1:width>>3;
+    int rowc_w=(width+7)>>3;
     int size=height*rowc_w;
     unsigned char *iimg=(unsigned char *)(pp.img=malloc(size));
     zeromem(iimg,size);
@@ -293,7 +306,8 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
     strcpy_tolow(fname,(char*)pic);
     img=find_png_in_cache(fname);
     if (img) return (img);
-    img=create_imghdr(fname,DEFAULT_COLOR);
+    img=create_imghdr(fname,0);
+    if (!img) return ((IMGHDR *)&empty_img);
   }
   else
   {
@@ -309,7 +323,7 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
           print10(next,pic);
           img=find_png_in_cache(fname);
           if (img) return (img);
-          img=create_imghdr(fname,DEFAULT_COLOR);          
+          img=create_imghdr(fname,0);          
         } 
         else return(0);                                // Картинки нет - выходим
       }
@@ -328,7 +342,7 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
 	  UnlockSched();
           return (img);
         }
-        img=create_imghdr(fname,DEFAULT_COLOR);                 // Пробуем создать
+        img=create_imghdr(fname,0);                 // Пробуем создать
         if (img)
         {
 	  LockSched();
