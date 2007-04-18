@@ -72,7 +72,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	  readytochangestate=0;
 	  if (showstate)
 	  {
+#ifdef ELKA
+	    WSHDR **wws=((WSHDR ***)csmp)[(0x18C/4)]-1;
+#else
 	    WSHDR **wws=((WSHDR ***)csmp)[(0x170/4)]-1;
+#endif
 	    if (wws)
 	    {
 	      WSHDR *tws;
