@@ -3,9 +3,9 @@
 #include "conf_loader.h"
 
 // Импорт переменных
-extern const char cfgINTNAME[20];
+extern const char cfgINTNAME[40];
 extern const char cfgNAME[20];
-extern const char cfgAPN[20];
+extern const char cfgAPN[30];
 extern const int ENA_GPRSD;
 extern const char cfgUSER[20];
 extern const char cfgPASS[20];

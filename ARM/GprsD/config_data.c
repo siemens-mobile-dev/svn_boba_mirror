@@ -11,9 +11,9 @@ __root const char cfgINTNAME[40]="GPRS-0";
 __root const CFG_HDR cfghdr5={CFG_STR_WIN1251,"NAP name (as in phone)",0,19};
 __root const char cfgNAME[20]="umc";
 
-__root const CFG_HDR cfghdr1={CFG_STR_WIN1251,"APN",0,19};
+__root const CFG_HDR cfghdr1={CFG_STR_WIN1251,"APN",0,29};
 //__root const char cfgAPN[20]="internet.mts.ru";
-__root const char cfgAPN[20]="www.umc.ua";
+__root const char cfgAPN[30]="www.umc.ua";
 
 __root const CFG_HDR cfghdr2={CFG_STR_WIN1251,"Username",0,19};
 //__root const char cfgUSER[20]="mts";
