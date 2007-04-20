@@ -1249,6 +1249,7 @@ __swi __arm  char GetAkkuCapacity();
 //arm
 //pattern=??,??,??,E5,??,??,??,E1,1E,FF,2F,E1,08,40,2D,E9,03,10,A0,E3,00,00,A0,E3,??,??,??,EB,C8,0E,50,E3,00,00,A0,93,01,00,A0,83,08,80,BD,E8
 
+
 #pragma swi_number=0x088
 __swi	__arm char GetAccessoryType(void);
 //arm
@@ -1261,6 +1262,13 @@ __swi __arm unsigned short *RamCap();
 #pragma swi_number=0x80CA
 __swi __arm  RAMNET * RamNet();
 //thumb
+
+#pragma swi_number=0x80CC 
+__swi __arm char * RamMissedCalls(); 
+
+#pragma swi_number=0x80CD 
+__swi __arm char * RamMissedSMS();
+
 
 #pragma swi_number=0x80DF
 __swi __arm char *RamPressedKey();
