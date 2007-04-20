@@ -23,7 +23,6 @@ void get_answer(void)
     d_stream.avail_in = (uInt)i;
     do
     {
-      i*=2; //Ожидаемый размер буфера i*2 байт - прогноз на распаковку ;)
       d_stream.next_out = (Byte*)((Rstream_p=realloc(Rstream_p,Rstream_n+i+1))+Rstream_n); //Новый размер собираемого пакета
       d_stream.avail_out = (uInt)i;
       err = inflate(&d_stream, /*Z_NO_FLUSH*/Z_SYNC_FLUSH);
