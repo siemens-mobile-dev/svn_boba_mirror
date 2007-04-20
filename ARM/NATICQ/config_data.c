@@ -27,6 +27,9 @@ __root const char HIST_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\history";
 __root const CFG_HDR cfghdr23={CFG_STR_UTF8,"Smiles File",0,63};
 __root const char SMILE_FILE[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles.cfg";
 
+__root const CFG_HDR cfghdr34={CFG_INT,"Smiles pre-cache",0,32}; //pre-cache smiles by BoBa 19.04.2007
+__root const unsigned int SMILE_PRECACHE=16;
+
 __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr2_1={CFG_CBOX,"Enable logs",0,2};
@@ -115,7 +118,7 @@ __root const CFG_HDR cfghdr24={CFG_UINT,"FontSize",0,6};
 __root const unsigned int ED_FONT_SIZE=1;
 __root const CFG_HDR cfghdr_m50={CFG_LEVEL,"",0,0};
 
-//Подсветка
+//Illumination by BoBa 19.04.2007
 __root const CFG_HDR cfghdr_m61={CFG_LEVEL,"Illumination setup",1,0};
 
 __root const CFG_HDR cfghdr25={CFG_INT,"Display on Recv",0,100};
@@ -124,9 +127,25 @@ __root const unsigned int ILL_DISP_RECV=30;
 __root const CFG_HDR cfghdr26={CFG_INT,"Keys on Recv",0,100};
 __root const unsigned int ILL_KEYS_RECV=10;
 
-__root const CFG_HDR cfghdr27={CFG_INT,"Display on Send",0,100};
+__root const CFG_HDR cfghdr27={CFG_INT,"Timeout on Recv",0,60};
+__root const unsigned int ILL_RECV_TMR=10;
+
+__root const CFG_HDR cfghdr28={CFG_INT,"Fade on Recv",0,1000};
+__root const unsigned int ILL_RECV_FADE=256;
+
+__root const CFG_HDR cfghdr29={CFG_INT,"Display on Send",0,100};
 __root const unsigned int ILL_DISP_SEND=10;
 
-__root const CFG_HDR cfghdr28={CFG_INT,"Keys on Send",0,100};
+__root const CFG_HDR cfghdr30={CFG_INT,"Keys on Send",0,100};
 __root const unsigned int ILL_KEYS_SEND=0;
+
+__root const CFG_HDR cfghdr31={CFG_INT,"Timeout on Send",0,60};
+__root const unsigned int ILL_SEND_TMR=5;
+
+__root const CFG_HDR cfghdr32={CFG_INT,"Fade on Send",0,1000};
+__root const unsigned int ILL_SEND_FADE=900;
+
+__root const CFG_HDR cfghdr33={CFG_INT,"Fade on Off",0,1000};
+__root const unsigned int ILL_OFF_FADE=900;
+
 __root const CFG_HDR cfghdr_m60={CFG_LEVEL,"",0,0};

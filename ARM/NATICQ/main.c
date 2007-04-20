@@ -77,11 +77,32 @@ const char percent_t[]="%t";
 const char empty_str[]="";
 const char I_str[]="I";
 
-//Подсветка
+//Illumination by BoBa 19.04.2007
+///////////
 extern const unsigned int ILL_DISP_RECV;
 extern const unsigned int ILL_KEYS_RECV;
 extern const unsigned int ILL_DISP_SEND;
 extern const unsigned int ILL_KEYS_SEND;
+extern const unsigned int ILL_SEND_TMR;
+extern const unsigned int ILL_SEND_FADE;
+extern const unsigned int ILL_RECV_TMR;
+extern const unsigned int ILL_RECV_FADE;
+extern const unsigned int ILL_OFF_FADE;
+
+GBSTMR tmr_illumination;
+
+void IlluminationOff(){
+ SetIllumination(0,1,0,ILL_OFF_FADE);
+ SetIllumination(1,1,0,ILL_OFF_FADE);
+}
+
+void IlluminationOn(const int disp, const int key, const int tmr, const int fade){
+ GBS_DelTimer(&tmr_illumination);
+ SetIllumination(0,1,disp,fade);
+ SetIllumination(1,1,key,fade);
+ GBS_StartTimerProc(&tmr_illumination,tmr*216,IlluminationOff);
+}
+///////////
 
 //=============================Проигрывание звука=======================
 unsigned int Is_Sounds_Enabled = 1;
@@ -1096,9 +1117,6 @@ void get_answer(void)
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         REDRAW();
 	Play(sndMsg);
-//пока заккоментил, надо разбираться как тушить...
-//	SetIllumination(0,1,ILL_DISP_RECV,0);
-//	SetIllumination(1,1,ILL_KEYS_RECV,0);
         break;
       case T_SSLRESP:
         LockSched();
@@ -1107,8 +1125,6 @@ void get_answer(void)
         break;
       case T_SRV_ACK:
 	Play(sndMsgSent);
-	SetIllumination(0,1,ILL_DISP_SEND,0);
-	SetIllumination(1,1,ILL_KEYS_SEND,0);
       case T_CLIENT_ACK:
 	p=malloc(sizeof(PKT));
 	memcpy(p,&RXbuf,sizeof(PKT));
@@ -1344,6 +1360,7 @@ ProcessPacket(TPKT *p)
     t->isactive=ACTIVE_TIME;
     vibra_count=1;
     start_vibra();
+    IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
     AddStringToLog(t,0x02,p->data,t->name);
     if (contactlist_menu_id) need_jump_to_top_cl=1;
     if (edchat_id)
@@ -1356,6 +1373,7 @@ ProcessPacket(TPKT *p)
     }
     break;
   case T_SRV_ACK:
+    IlluminationOn(ILL_DISP_SEND,ILL_KEYS_SEND,ILL_SEND_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
   case T_CLIENT_ACK:
     if (
 	IsGuiOnTop(contactlist_menu_id)||
@@ -1502,6 +1520,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_ping);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
+  GBS_DelTimer(&tmr_illumination);
   SetVibration(0);
   FreeCLIST();
   FreeSmiles();
@@ -2126,6 +2145,7 @@ void ed_options_handler(USR_MENU_ITEM *item)
 int edchat_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
+  GBS_DelTimer(&tmr_illumination);
   CLIST *t;
   TPKT *p;
   char *s;
@@ -2837,6 +2857,9 @@ int as_onkey(GUI *data,GUI_MSG *msg)
       }
       if (!sm) cur_smile=0;
       return(-1);
+    
+    case GREEN_BUTTON: //insert smile by GREEN_BUTTON by BoBa 19.04.2007
+      msg->keys=0xFFF;
     }
   }
   if (msg->keys==0xFFF)
@@ -2949,7 +2972,7 @@ void AddSmile(GUI *data)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
-  WSHDR *ews=AllocWS(32);
+  WSHDR *ews=AllocWS(64);
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
@@ -2960,8 +2983,28 @@ void AddSmile(GUI *data)
   CutWSTR(ews,0);
   wsAppendChar(ews,t->uni_smile);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1);
-  AddEditControlToEditQend(eq,&ec,ma);  
-  
+  AddEditControlToEditQend(eq,&ec,ma);
+
+//pre-cache smiles by BoBa 19.04.2007
+/////////////  
+  extern const unsigned int SMILE_PRECACHE;
+  CutWSTR(ews,0);
+  S_SMILES *sm;
+  int n=0,m=0;
+  while (n<SMILE_PRECACHE){
+   t=FindSmileById(m);
+   wsAppendChar(ews,t->uni_smile);
+   sm=t;
+   while(sm && (t->uni_smile==sm->uni_smile)){
+    sm=sm->next;
+    m++;
+   }
+   n++;
+  }
+  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,64);
+  AddEditControlToEditQend(eq,&ec,ma);
+////////////
+
   patch_header(&as_hdr);
   patch_input(&as_desc);
   CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_struct);
