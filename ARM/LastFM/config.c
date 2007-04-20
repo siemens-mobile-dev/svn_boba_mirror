@@ -34,3 +34,8 @@ __root const CFG_CBOX_ITEM cfgcbox1[2]={"-","+"};
 __root const CFG_HDR cfghdr7 = {CFG_UINT, "TimeZone value", 0, 12};
 __root const unsigned int TIMEZONE = 2;
 
+__root const CFG_HDR cfghdr8={CFG_UTF8_STRING,"Username",0,31};
+__root const char USERNAME[32]="";
+
+__root const CFG_HDR cfghdr9={CFG_STR_PASS,"Password",0,31};
+__root const char PASSWORD[32]="";

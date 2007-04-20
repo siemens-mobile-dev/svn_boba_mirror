@@ -1,6 +1,8 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
+#include "inet.h"
+
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
@@ -41,6 +43,9 @@ extern const char TEMP_FILE[];
 
 extern const int TIMEZONESIGN;
 extern const unsigned int TIMEZONE;
+
+extern const char USERNAME[];
+extern const char PASSWORD[];
 
 unsigned int uiWidth, uiHeight;
 
@@ -328,6 +333,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       showstate=0;
     }
   }
+  ParseSocketMsg(msg);
   csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
   if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
   {
@@ -354,7 +360,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 
 void FreeAll(void)
 {
+  extern GBSTMR reconnect_tmr;
   GBS_DelTimer(&mytmr);
+  GBS_DelTimer(&reconnect_tmr);
+  ClearSendQ();
+  ClearRecvQ();
   FreeWS(ws1);
   FreeWS(player_file);
   FreeSONG(cursong);
