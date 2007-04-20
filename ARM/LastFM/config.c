@@ -23,3 +23,14 @@ __root const unsigned int cfgH = 24;
 
 __root const CFG_HDR cfghdr4 = {CFG_STR_WIN1251,"Mediaplayer CSM addr",1,8};
 __root const char CSMADR[9]="A068A8D4";
+
+__root const CFG_HDR cfghdr5 = {CFG_STR_UTF8,"Temp file",0,127};
+__root const char TEMP_FILE[128]="4:\\ZBin\\LastFMcache.tmp";
+
+__root const CFG_HDR cfghdr6 = {CFG_CBOX,"TimeZone sign",0,2};
+__root const int TIMEZONESIGN = 1;
+__root const CFG_CBOX_ITEM cfgcbox1[2]={"-","+"};
+
+__root const CFG_HDR cfghdr7 = {CFG_UINT, "TimeZone value", 0, 12};
+__root const unsigned int TIMEZONE = 2;
+
