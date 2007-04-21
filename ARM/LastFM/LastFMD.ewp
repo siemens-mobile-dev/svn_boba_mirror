@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\LastFMD.elf \MMCard\ZBin\Daemons\LastFMD.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\LastFMD.elf \MMCard\LastFMD.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -1886,6 +1886,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\urlwork.c</name>
   </file>
 </project>
 

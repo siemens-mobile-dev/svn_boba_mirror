@@ -2,6 +2,7 @@
 #include "conf_loader.h"
 
 #include "inet.h"
+#include "urlwork.h"
 
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
@@ -83,30 +84,6 @@ void FreeSONG(TSONG *song)
     FreeWS(song->album);
     mfree(song);
   }
-}
-
-void urlescape(char *out, const char *source)
-{
-  const char * h = "0123456789abcdef";
-  int c;
-  int i=0;
-  while((c =*source++)!=0)
-  {
-    if ('a' <= c && c <= 'z'
-	|| 'A' <= c && c <= 'Z'
-	  || '0' <= c && c <= '9'
-	    || c == '-' || c == '_' || c == '.')
-      out[i++]= c;
-    else 
-      if( c == ' ' )
-	out[i++]= '+';
-      else {
-	out[i++]= '%';
-	out[i++]= h[c >> 4];
-	out[i++]= h[c & 0x0f];
-      }
-  }
-  out[i]=0;
 }
 
 //Все сказали спасибо моему прибору,
@@ -381,6 +358,12 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 int main(void)
 {
   RereadSettings();
+  if ((!strlen(USERNAME))||(!strlen(PASSWORD)))
+  {
+    LockSched();
+    ShowMSG(1,(int)"Please setup login data!");
+    UnlockSched();
+  }
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
@@ -393,5 +376,6 @@ int main(void)
   ws1=AllocWS(128);
   wsprintf(ws1,"%t","LastFMD(C)Rst7");
   GBS_StartTimerProc(&mytmr,3*216,tmrproc_readychange);
+  StartINET();
   return 0;
 }
