@@ -1269,6 +1269,8 @@ __swi __arm char * RamMissedCalls();
 #pragma swi_number=0x80CD 
 __swi __arm char * RamMissedSMS();
 
+#pragma swi_number=0x80D4 
+__swi __arm char * RamMissedMessage();
 
 #pragma swi_number=0x80DF
 __swi __arm char *RamPressedKey();
