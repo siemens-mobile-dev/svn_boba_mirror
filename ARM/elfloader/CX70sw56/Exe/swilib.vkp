@@ -404,7 +404,7 @@
 07A0: 0xA0CD8DF8 ; 1E8: __arm int IsNoJava();
 
 ;Handmaded function
-;07A4: 0x ; 1E9: __arm IMGHDR *create_imghdr(const char *fname, int type);
+;07A4: 0x ; 1E9: __arm IMGHDR *CreateIMGHDRFromPngFile(const char *fname, int type);
 
 07A8: 0xA0CB7BCF ; 1EA: __thumb int GetMaxDynIcon(void);
 07AC: 0xA868BA96 ; 1EB: __arm char *RAM_IMSI(void);
@@ -413,6 +413,12 @@
 07BC: 0xA0CB7BD3 ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap);
 07D4: 0xA16EEF5D ; 1F5: __thumb int sscanf(const char *, const char *, ...);
 07D8: 0xA0CB7C9B ; 1F6: __thumb IMGHDR* GetPitAdrBy0xE200Symbol(int uni_symbol);
+07F0: 0xA0C8EF3F ; 1FC: __thumb void CloseCSM(int id);
+
+0804: 0xA0CAE7CF ; 201: __thumb void SetProp2ImageOrCanvas(DRWOBJ *, RECT *, int zero, IMGHDR *Image, int bleed_x, int bleed_y);
+0808: 0xA0D1EAB3 ; 202: __thumb void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, int flag, char *pen, char *brush);
+080C: 0xA0CAFBCF ; 203: __thumb void SetPixel(int x,int y,char *color);
+0810: 0xA0CE2D6F ; 204: __thumb void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush);
 #pragma disable old_equal_ff
 +0
 
