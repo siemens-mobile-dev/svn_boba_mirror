@@ -446,7 +446,10 @@ const SOFTKEYSTAB menu_skt=
   menu_sk,0
 };
 
-void bm_menu_ghook(void *data, int cmd){}
+void bm_menu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A) DisableIDLETMR();
+}
 int bm_menu_onkey(void *data, GUI_MSG *msg);
 void bm_menu_iconhndl(void *data, int curitem, int *unk);
 
@@ -548,9 +551,13 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
     }
     switch(i)
     {
+    case '#':
+      i=((CSM_RAM *)(get_nlitem(GetCurMenuItem(data))->p))->id;
+      if (i!=CSM_root()->idle_id) CloseCSM(i);
+      return 0;
     case LEFT_SOFT:
       SwapCSMs(0,FindCSMbyID(CSM_root()->idle_id));
-      return(1);
+      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case ENTER_BUTTON:
       SwapCSMs(0,get_nlitem(GetCurMenuItem(data))->p);
     case RIGHT_SOFT:
@@ -573,7 +580,18 @@ const SOFTKEYSTAB mm_menu_skt=
   mm_menu_sk,0
 };
 
-void mm_menu_ghook(void *data, int cmd){}
+void mm_menu_ghook(void *data, int cmd)
+{
+  if (cmd==9)
+  {
+    ClearNL();
+  }
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+    Menu_SetItemCountDyn(data,GetNumberOfDialogs());
+  }
+}
 
 const MENU_DESC mm_menu=
 {
@@ -699,6 +717,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     csm->csm.state=-3;
   }
+  if (msg->msg==MSG_CSM_DESTROYED) RefreshGUI();
   return(1);
 }
 
