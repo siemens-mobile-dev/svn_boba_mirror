@@ -330,7 +330,14 @@
 07B0: 0xA0976407 ; 1EC: __thumb void FreeDynIcon(int picture);
 07B4: 0xA0976567 ; 1ED: __thumb int IsDynIconBusy(int picture);
 07BC: 0xA0976469 ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap);
+07CC: 0xA00A8954 ; 1F3: __arm unsigned int GetSessionAge(void);
 07D4: 0xA0FC59D5 ; 1F5: __thumb int sscanf(const char *, const char *, ...);
 07D8: 0xA09765B3 ; 1F6: __thumb IMGHDR* GetPitAdrBy0xE200Symbol(int uni_symbol);
+07F0: 0xA096FB53 ; 1FC: __thumb void CloseCSM(int id);
+0804: 0xA0A02169 ; 201: __thumb void SetProp2ImageOrCanvas(DRWOBJ *, RECT *, int zero, IMGHDR *Image, int bleed_x, int bleed_y);
+0808: 0xA0A0812B ; 202: __thumb void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, int flag, char *pen, char *brush);
+080C: 0xA0A0380F ; 203: __thumb void SetPixel(int x,int y,char *color);
+0810: 0xA0A00827 ; 204: __thumb void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush);
+
 #pragma disable old_equal_ff
 +0
