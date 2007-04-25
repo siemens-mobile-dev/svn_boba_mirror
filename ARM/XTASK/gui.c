@@ -92,7 +92,6 @@ typedef struct
 } NAMELIST;
 
 NAMELIST * volatile nltop;
-NAMELIST * volatile nlbot;
 
 char csm_text[32768];
 
@@ -103,7 +102,6 @@ void ClearNL(void)
   LockSched();
   NAMELIST *nl=nltop;
   nltop=0;
-  nlbot=0;
   UnlockSched();
   while(nl)
   {
@@ -122,7 +120,7 @@ void AddNL(WSHDR *ws)
   LockSched();
   if (!nltop)
   {
-    nlbot=nltop=nnl;
+    nltop=nnl;
   }
   else
   {
@@ -164,7 +162,7 @@ int GetNumberOfDialogs(void)
   char ss[64];
 
   void *ircsm=FindCSMbyID(CSM_root()->idle_id);
-
+  ClearNL();
   do
   {
     if (icsm==ircsm)
@@ -582,6 +580,7 @@ const SOFTKEYSTAB mm_menu_skt=
 
 void mm_menu_ghook(void *data, int cmd)
 {
+  int i,j;
   if (cmd==9)
   {
     ClearNL();
@@ -589,7 +588,9 @@ void mm_menu_ghook(void *data, int cmd)
   if (cmd==0x0A)
   {
     DisableIDLETMR();
-    Menu_SetItemCountDyn(data,GetNumberOfDialogs());
+    i=GetCurMenuItem(data);
+    Menu_SetItemCountDyn(data,j=GetNumberOfDialogs());
+    if (i>=j) SetCursorToMenuItem(data,j-1);
   }
 }
 
