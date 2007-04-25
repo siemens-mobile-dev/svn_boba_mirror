@@ -62,7 +62,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "1.3.0-Z";
+const char VERSION_VERS[] = "1.3.1-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -497,36 +497,101 @@ ous.write(0);
 		ous.write(len >> 8);
 */
 
+int sendq_l=0; //Длинна очереди для send
+char *sendq_p=NULL; //указатель очереди
+
+void ClearSendQ(void)
+{
+  mfree(sendq_p);
+  sendq_p=NULL;
+  sendq_l=NULL;
+}
+
+//Буферизированая посылка в сокет, c последующим освобождением указателя
+void bsend(int len, void *p)
+{
+  int i;
+  int j;
+  if (connect_state<1) return;
+  if (p)
+  {
+    //Проверяем, не надо ли добавить в очередь
+    if (sendq_p)
+    {
+      //Есть очередь, добавляем в нее
+      memcpy((sendq_p=realloc(sendq_p,sendq_l+len))+sendq_l,p,len);
+      //mfree(p);
+      sendq_l+=len;
+      return;
+    }
+    //Создаем очередь передачи
+    memcpy(sendq_p=malloc(len),p,sendq_l=len);
+  }
+  //Отправляем уже существующее в очереди
+  while((i=sendq_l)!=0)
+  {
+    if (i>0x400) i=0x400;
+    j=send(sock,sendq_p,i,0);
+    if (j<0)
+    {
+      j=*socklasterr();
+      if ((j==0xC9)||(j==0xD6))
+      {
+	return; //Видимо, надо ждать сообщения ENIP_BUFFER_FREE
+      }
+      else
+      {
+	//Ошибка
+	LockSched();
+	ShowMSG(1,(int)"Send error!");
+	UnlockSched();
+	end_socket();
+	return;
+      }
+    }
+    memcpy(sendq_p,sendq_p+j,sendq_l-=j); //Удалили переданное
+    if (j<i)
+    {
+      //Передали меньше чем заказывали
+      return; //Ждем сообщения ENIP_BUFFER_FREE1
+    }
+  }
+  mfree(sendq_p);
+  sendq_p=NULL;
+}
+
 void SendAnswer(char *str)
 {
   unsigned int block_len= strlen(str);
   out_bytes_count += block_len;
-//#ifdef LOG_ALL
-//  Log("OUT->", str);
-//#endif  
-
-if(!Is_Compression_Enabled)
-{
-  send(sock,str,block_len,0);
-}
-else
-{
-  // Эмуляция компрессии ;)
-  // Пишем заголовок "блока"
-  unsigned int _0 = 0;
-  unsigned int out_data = block_len;
-  send(sock,&_0,1,0);
-  send(sock,&out_data,1,0);
-  out_data = block_len >> 8;
-  send(sock,&out_data,1,0);
-  out_data = ~block_len;
-  send(sock,&out_data,1,0);
-  out_data = out_data >> 8;
-  send(sock,&out_data,1,0);
-  out_bytes_count +=5;
-  // Записали, пишем сам блок
-  send(sock,str,block_len,0);
-}
+  //#ifdef LOG_ALL
+  //  Log("OUT->", str);
+  //#endif  
+  
+  if(!Is_Compression_Enabled)
+  {
+    bsend(block_len,str);
+  }
+  else
+  {
+    // Эмуляция компрессии ;)
+    // Пишем заголовок "блока"
+#pragma pack(1)
+    struct
+    {
+      char zero;
+      unsigned short len;
+      unsigned short notlen;
+    };
+#pragma pack()
+    zero=0;
+    len=block_len;
+    notlen=~block_len;
+    bsend(5,&zero);
+    out_bytes_count+=5;
+    // Записали, пишем сам блок
+    bsend(block_len,str);
+  }
 }
 
 char Support_Compression = 0;
@@ -1094,6 +1159,7 @@ void maincsm_onclose(CSM_RAM *csm)
     inflateEnd(&d_stream);
   }
   SUBPROC((void *)end_socket);
+  SUBPROC((void *)ClearSendQ);
   SUBPROC((void *)ElfKiller);
 }
 
@@ -1207,11 +1273,36 @@ char mypic[128];
           ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
         }
         break;
+      case ENIP_BUFFER_FREE:
+	if (!sendq_p)
+	{
+	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE!");
+	  SUBPROC((void *)end_socket);
+	}
+	else
+	{
+	  //Досылаем очередь
+	  SUBPROC((void *)bsend,0,0);
+	}
+	break;
+      case ENIP_BUFFER_FREE1:
+	if (!sendq_p)
+	{
+	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
+	  SUBPROC((void *)end_socket);
+	}
+	else
+	{
+	  //Досылаем очередь
+	  SUBPROC((void *)bsend,0,0);
+	}
+	break;
       case ENIP_SOCK_REMOTE_CLOSED:
         //Закрыт со стороны сервера
         if (connect_state) SUBPROC((void *)end_socket);
         break;
       case ENIP_SOCK_CLOSED:
+	SUBPROC((void *)ClearSendQ);
         connect_state=0;
         Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
