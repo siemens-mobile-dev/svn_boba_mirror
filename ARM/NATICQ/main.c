@@ -117,10 +117,17 @@ extern const unsigned int sndVolume;
 typedef struct
 {
   void *next;
-  unsigned int uni_smile;
   unsigned int key; //Для быстрой проверки
   unsigned int mask;
   char text[16];
+}STXT_SMILES;
+
+typedef struct
+{
+  void *next;
+  unsigned int uni_smile;
+  STXT_SMILES *lines; //Список строк
+  STXT_SMILES *botlines;
 }S_SMILES;
 
 #pragma pack(1)
@@ -132,14 +139,29 @@ typedef struct
 
 S_SMILES *s_top=0;
 
+volatile unsigned int total_smiles=0;
+
 void FreeSmiles()
 {
-  S_SMILES *s_smile=(S_SMILES *)s_top;
+  S_SMILES *s_smile;
+  STXT_SMILES *n;
+  STXT_SMILES *st;
+  LockSched();
+  s_smile=(S_SMILES *)s_top;
   s_top=0;
+  total_smiles=0;
+  UnlockSched();
   while(s_smile)
   {
     S_SMILES *s;
     s=s_smile;
+    st=s->lines;
+    while(st)
+    {
+      n=st->next;
+      mfree(st);
+      st=n;
+    }
     s_smile=(S_SMILES *)(s_smile->next);
     mfree(s);
   }
@@ -167,6 +189,8 @@ void InitSmiles()
   int fsize;
   FSTATS stat;
   S_SMILES *s_bot=0;
+  S_SMILES *si;
+  STXT_SMILES *st;
   char *buf, *s_buf;
   FreeSmiles();
   char num[16];
@@ -202,10 +226,27 @@ void InitSmiles()
       n_pic=strtoul(num,0,0x10);
     }
     else break;
+    si=malloc(sizeof(S_SMILES));
+    si->next=NULL;
+    si->lines=NULL;
+    si->botlines=NULL;
+    si->uni_smile=n_pic;
+    if (s_bot)
+    {
+      //Не первый
+      s_bot->next=si;
+      s_bot=si;        
+    }
+    else
+    {
+      //Первый
+      s_top=si;
+      s_bot=si; 
+    }       
+    total_smiles++;
     while (*buf!=10 && *buf!=13 && *buf!=0)
     {
       buf++;
-      S_SMILES *si;
       int i=0;
       while (buf[i]!=0&&buf [i]!=','&&buf [i]!=10&&buf[i]!=13)
       {
@@ -213,25 +254,22 @@ void InitSmiles()
         i++;
       }
       name[i]=0;
-      si=malloc(sizeof(S_SMILES));
-      si->uni_smile=n_pic;
-      si->next=0;
-      strcpy(si->text,name);
-      si->key=*((unsigned long *)name);
-      si->mask=~(0xFFFFFFFFUL<<(8*strlen(name)));
-      si->key&=si->mask;
-      if (s_bot)
+      st=malloc(sizeof(STXT_SMILES));
+      strcpy(st->text,name);
+      st->next=NULL;
+      st->key=*((unsigned long *)name);
+      st->mask=~(0xFFFFFFFFUL<<(8*strlen(name)));
+      st->key&=st->mask;
+      if (si->botlines)
       {
-        //Не первый
-        s_bot->next=si;
-        s_bot=si;        
+	si->botlines->next=st;
+	si->botlines=st;
       }
       else
       {
-        //Первый
-        s_top=si;
-        s_bot=si; 
-      }       
+	si->lines=st;
+	si->botlines=st;
+      }
       buf+=i;
     }
   }
@@ -1523,10 +1561,11 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_illumination);
   SetVibration(0);
   FreeCLIST();
-  FreeSmiles();
+//  FreeSmiles();
   mfree(msg_buf);
   FreeWS(ews);
   //  MutexDestroy(&contactlist_mtx);
+  SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
   SUBPROC((void *)ElfKiller);
@@ -2035,12 +2074,16 @@ void ExtractAnswer(WSHDR *ws)
       if (t)
       {
         int w;
-        char *s=t->text;
-        while ((w=*s++) && scur<16383)
-        {
-          msg_buf[scur]=w;
-          scur++;
-        }
+        char *s;
+	if (t->lines)
+	{
+	  s=t->lines->text;
+	  while ((w=*s++) && scur<16383)
+	  {
+	    msg_buf[scur]=w;
+	    scur++;
+	  }
+	}
       }
       else 
       {
@@ -2236,6 +2279,7 @@ void ParseAnswer(WSHDR *ws, char *s)
 {
   S_SMILES *t;
   S_SMILES *t_root=(S_SMILES *)s_top;
+  STXT_SMILES *st;
   unsigned int wchar;
   unsigned int ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
   CutWSTR(ws,0);
@@ -2244,16 +2288,22 @@ void ParseAnswer(WSHDR *ws, char *s)
     t=t_root;
     while(t)
     {
-      if ((ulb&t->mask)==t->key)
+      st=t->lines;
+      while(st)
       {
-	if (!strncmp(s,t->text,strlen(t->text))) break;
+	if ((ulb&st->mask)==st->key)
+	{
+	  if (!strncmp(s,st->text,strlen(st->text))) goto L1;
+	}
+	st=st->next;
       }
       t=t->next;
     }
+  L1:
     if (t)
     {
       wchar=t->uni_smile;
-      s+=strlen(t->text);
+      s+=strlen(st->text);
       ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
     }
     else
@@ -2808,56 +2858,16 @@ int as_onkey(GUI *data,GUI_MSG *msg)
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
-    S_SMILES *sm, *t;
-    t=FindSmileById(cur_smile);
+//    S_SMILES *sm, *t;
+//    t=FindSmileById(cur_smile);
     switch(msg->gbsmsg->submess)
     {
     case LEFT_BUTTON:
-      while((sm=FindSmileById(cur_smile)))
-      {
-        if(sm->uni_smile!=t->uni_smile)
-        {
-          cur_smile=0;
-          t=(S_SMILES *)s_top;
-          while(t->uni_smile!=sm->uni_smile)
-          {
-            t=t->next;
-            cur_smile++;
-          }   
-          return (-1);          
-        }
-        cur_smile--;
-      }
-      if(!sm)
-      {
-        sm=(S_SMILES *)s_top;
-        if (sm)
-        {
-          while(sm->next)
-          {
-            sm=sm->next;
-          }
-          cur_smile=0;
-          t=(S_SMILES *)s_top;
-          while(t->uni_smile!=sm->uni_smile)
-          {
-            t=t->next;
-            cur_smile++;
-          }
-        }
-      }        
+      if (!FindSmileById(--cur_smile)) cur_smile=total_smiles-1;
       return(-1);
-      
     case RIGHT_BUTTON:
-      sm=t;
-      while(sm && (t->uni_smile==sm->uni_smile))
-      {
-        cur_smile++;
-        sm=sm->next;
-      }
-      if (!sm) cur_smile=0;
+      if (!FindSmileById(++cur_smile)) cur_smile=0;
       return(-1);
-    
     case GREEN_BUTTON: //insert smile by GREEN_BUTTON by BoBa 19.04.2007
       msg->keys=0xFFF;
     }
@@ -2885,33 +2895,36 @@ int as_onkey(GUI *data,GUI_MSG *msg)
   return(0);
 }
 
-//pre-cache smiles by BoBa 22.04.2007
-/////////////
-void precache(int dummy, GUI *gui){
- extern const unsigned int SMILE_PRECACHE;
- WSHDR *ews=AllocWS(64);
- S_SMILES *sm,*t;
- int n=0,m=0;
- while (n<SMILE_PRECACHE){
-  t=FindSmileById(m);
-  wsAppendChar(ews,t->uni_smile);
-  EDIT_SetTextToEditControl(gui,3,ews);
-  REDRAW();
-  sm=t;
-  while(sm && (t->uni_smile==sm->uni_smile)){
-   sm=sm->next;
-   m++;
+void precache(int cursmile)
+{
+  extern const unsigned int SMILE_PRECACHE;
+  S_SMILES *t;
+  int i;
+  int n=1;
+  while(n<(SMILE_PRECACHE>>1))
+  {
+    i=cursmile+n;
+    while(i>=total_smiles) i-=total_smiles;
+    if (i!=cursmile)
+    {
+      t=FindSmileById(i);
+      if (t) GetPITaddr(GetPicNByUnicodeSymbol(t->uni_smile));
+    }
+    i=cursmile-n;
+    while(i<0) i+=total_smiles;
+    if (i!=cursmile)
+    {
+      t=FindSmileById(i);
+      if (t) GetPITaddr(GetPicNByUnicodeSymbol(t->uni_smile));
+    }
+    n++;
   }
-  n++;
- }
- FreeWS(ews);
 }
-//////////////
 
 void as_ghook(GUI *data, int cmd)
 {
-  if (cmd==1){ SUBPROC((void *)precache,0,data); } //pre-cache smiles by BoBa 22.04.2007
   static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
+  const char *s;
   if (cmd == 0x0A)
   {
     DisableIDLETMR();
@@ -2922,32 +2935,22 @@ void as_ghook(GUI *data, int cmd)
     S_SMILES *t=(S_SMILES *)s_top;
     if (t)
     {
-      if (cur_smile<0)
+      if (!(t=FindSmileById(cur_smile)))
       {
-        cur_smile=0;
-        while(t->next)
-        {
-          t=t->next;
-          cur_smile++;
-        }
-      }
-      else
-      {
-        t=FindSmileById(cur_smile);
-        if (!t)
-        {
-          t=FindSmileById(0);
-          cur_smile=0;
-        }
+	t=FindSmileById(0);
+	cur_smile=0;
       }
       WSHDR *ws=AllocWS(32);
-      wsprintf(ws,LG_SMLDESC,cur_smile,t->text);  
+      s=NULL;
+      if (t->lines) s=t->lines->text;
+      if (!s) s="Error!";
+      wsprintf(ws,LG_SMLDESC,cur_smile,s);  
       EDIT_SetTextToEditControl(data,1,ws);
-      
       CutWSTR(ws,0);
       wsAppendChar(ws,t->uni_smile);
       EDIT_SetTextToEditControl(data,2,ws);
       FreeWS(ws);
+      SUBPROC((void *)precache,cur_smile);      
     }    
   }
 }
@@ -2988,9 +2991,11 @@ void AddSmile(GUI *data)
   t=FindSmileById(cur_smile);
   if (!t)
   {
+  L1:
     ShowMSG(1,(int)LG_MSGSMILNOTFND);
     return;
   }
+  if (!t->lines) goto L1;
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
@@ -2998,7 +3003,7 @@ void AddSmile(GUI *data)
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
-  wsprintf(ews,LG_SMLDESC,cur_smile,t->text);  
+  wsprintf(ews,LG_SMLDESC,cur_smile,t->lines->text);  
   ConstructEditControl(&ec,ECT_HEADER,0x40,ews,32);
   AddEditControlToEditQend(eq,&ec,ma);
   
@@ -3009,9 +3014,9 @@ void AddSmile(GUI *data)
 
 //pre-cache smiles by BoBa 19.04.2007
 /////////////  
-  CutWSTR(ews,0);
-  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,64);
-  AddEditControlToEditQend(eq,&ec,ma);
+//  CutWSTR(ews,0);
+//  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,64);
+//  AddEditControlToEditQend(eq,&ec,ma);
 ////////////
 
   patch_header(&as_hdr);
