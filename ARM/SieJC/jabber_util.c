@@ -916,7 +916,8 @@ void Process_Presence_Change(XMLNode* node)
 char loc_actor[]="actor";
 char loc_jid[]="jid";
 char loc_reason[]="reason";
-static char r[128];       // Статик, чтобы не убило её при завершении процедуры
+#define MAX_STATUS_LEN 512
+static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении процедуры
 
     if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC_USER)) // Послано от конференции в пользователя
     {
@@ -953,7 +954,7 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
           {
             if(msg)
             {
-              sprintf(r, "%s changed status to %s (%s)", nick, PRESENCES[status], msg);
+              snprintf(r, MAX_STATUS_LEN, "%s changed status to %s (%s)", nick, PRESENCES[status], msg);
             }
             else
             {
@@ -1009,7 +1010,8 @@ static char r[128];       // Статик, чтобы не убило её при завершении процедуры
           if(reason)
           {
             strcat(r, "; Reason: ");
-            strcat(r, reason->value);
+            int l = strlen(r);
+            if(MAX_STATUS_LEN-l-1>0)strncat(r, reason->value, MAX_STATUS_LEN-l-1);
           }
                     
           
