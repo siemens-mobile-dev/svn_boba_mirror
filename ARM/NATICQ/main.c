@@ -2885,8 +2885,32 @@ int as_onkey(GUI *data,GUI_MSG *msg)
   return(0);
 }
 
+//pre-cache smiles by BoBa 22.04.2007
+/////////////
+void precache(int dummy, GUI *gui){
+ extern const unsigned int SMILE_PRECACHE;
+ WSHDR *ews=AllocWS(64);
+ S_SMILES *sm,*t;
+ int n=0,m=0;
+ while (n<SMILE_PRECACHE){
+  t=FindSmileById(m);
+  wsAppendChar(ews,t->uni_smile);
+  EDIT_SetTextToEditControl(gui,3,ews);
+  REDRAW();
+  sm=t;
+  while(sm && (t->uni_smile==sm->uni_smile)){
+   sm=sm->next;
+   m++;
+  }
+  n++;
+ }
+ FreeWS(ews);
+}
+//////////////
+
 void as_ghook(GUI *data, int cmd)
 {
+  if (cmd==1){ SUBPROC((void *)precache,0,data); } //pre-cache smiles by BoBa 22.04.2007
   static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
   if (cmd == 0x0A)
   {
@@ -2956,8 +2980,6 @@ INPUTDIA_DESC as_desc=
   0x40000000
 };
 
-
-
 void AddSmile(GUI *data)
 {
   EDCHAT_STRUCT *ed_struct=MenuGetUserPointer(data);
@@ -2987,20 +3009,7 @@ void AddSmile(GUI *data)
 
 //pre-cache smiles by BoBa 19.04.2007
 /////////////  
-  extern const unsigned int SMILE_PRECACHE;
   CutWSTR(ews,0);
-  S_SMILES *sm;
-  int n=0,m=0;
-  while (n<SMILE_PRECACHE){
-   t=FindSmileById(m);
-   wsAppendChar(ews,t->uni_smile);
-   sm=t;
-   while(sm && (t->uni_smile==sm->uni_smile)){
-    sm=sm->next;
-    m++;
-   }
-   n++;
-  }
   ConstructEditControl(&ec,ECT_HEADER,0x40,ews,64);
   AddEditControlToEditQend(eq,&ec,ma);
 ////////////
