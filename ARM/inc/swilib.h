@@ -119,8 +119,8 @@ typedef struct{
 typedef struct{
   unsigned char hour;
   unsigned char min;
-  unsigned char param;
-  unsigned long param2;
+  unsigned char sec;
+  unsigned long millisec;
 } TTime;
 
 typedef struct{
