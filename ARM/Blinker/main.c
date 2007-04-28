@@ -68,6 +68,9 @@ void LightOff()
 		GBS_StartTimerProc(&mytmr, IN_TICKS(cfgInterval), Check); 
 }
 
+#pragma swi_number=0x9E
+__swi __arm GetMissedEventCount(unsigned int Event);
+
 void Check(void)
 {
 	if (!(IsUnlocked() && cfgLockOnly))
@@ -92,7 +95,7 @@ void Check(void)
 		InitConfig();
 		cycl_cnt = 0;
 	}
-	GBS_StartTimerProc(&mytmr, cfgInterval, Check);
+	GBS_StartTimerProc(&mytmr, IN_TICKS(cfgInterval), Check);
 }
 
 int main(void)
