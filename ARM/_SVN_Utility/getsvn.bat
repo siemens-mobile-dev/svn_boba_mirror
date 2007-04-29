@@ -1,1 +1,0 @@
-"c:\Program Files\svn-win32-1.3.2\bin\svn.exe" info svn://cbsie.dyndns.info/ARM/SieJC | getsvn
