@@ -1,0 +1,57 @@
+#ifndef _TEXTINFO_H_
+  #define _TEXTINFO_H_
+
+extern const int NET_ENA;
+extern const unsigned int NET_X;
+extern const unsigned int NET_Y;
+extern const char NET_COLORS[];
+extern const unsigned int NET_FONT;
+extern const char NET_FMT[16];
+
+extern const int TEMP_ENA;
+extern const unsigned int TEMP_X;
+extern const unsigned int TEMP_Y;
+extern const char TEMP_COLORS[];
+extern const unsigned int TEMP_FONT;
+extern const char TEMP_FMT[16];
+
+extern const int VOLT_ENA;
+extern const unsigned int VOLT_X;
+extern const unsigned int VOLT_Y;
+extern const char VOLT_COLORS[];
+extern const unsigned int VOLT_FONT;
+extern const char VOLT_FMT[16];
+
+extern const int CAP_ENA;
+extern const unsigned int ACCU_X;
+extern const unsigned int ACCU_Y;
+extern const char ACCU_COLORS[];
+extern const unsigned int ACCU_FONT;
+extern const char CAP_FMT[16];
+
+extern const int GPRS_ENA;
+extern const unsigned int GPRS_X;
+extern const unsigned int GPRS_Y;
+extern const char GPRS_COLORS[];
+extern const unsigned int GPRS_FONT;
+
+extern const int RAM_ENA;
+extern const unsigned int RAM_X;
+extern const unsigned int RAM_Y;
+extern const char RAM_COLORS[];
+extern const unsigned int RAM_FONT;
+
+extern const int CPU_ENA;
+extern const unsigned int CPU_X;
+extern const unsigned int CPU_Y;
+extern const char CPU_COLORS[];
+extern const unsigned int CPU_FONT;
+extern const char CPU_FMT[16];
+
+extern const char BYTES_FMT[16];
+extern const char BYTES_SG[8];
+extern const char KBYTES_SG[8];
+
+extern const unsigned int REFRESH;
+
+#endif

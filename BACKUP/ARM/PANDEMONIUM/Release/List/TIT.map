@@ -1,0 +1,373 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.59Z/386                                         #
+#                                                                              #
+#           Link time     =  01/Jan/2007  19:00:57                             #
+#           Target CPU    =  ARM                                               #
+#           List file     =  c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\ #
+#                            Release\List\TIT.map                              #
+#           Output file 1 =  c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\ #
+#                            Release\Exe\TIT.elf                               #
+#                            Format: elf, variant: -ynpra                      #
+#           Command line  =  c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\ #
+#                            Release\Obj\func.r79                              #
+#                            c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\ #
+#                            Release\Obj\main.r79                              #
+#                            -o                                                #
+#                            c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\ #
+#                            Release\Exe\TIT.elf                               #
+#                            -Felf -l                                          #
+#                            c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\ #
+#                            Release\List\TIT.map                              #
+#                            -xms -f                                           #
+#                            c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM/ #
+#                            test.xcl                                          #
+#                            (-carm -V(CODE)CODE_AREA,12                       #
+#                            -V(DATA)DATA_AREA,12                              #
+#                            -Z(CODE_AREA)ELFBEGIN,DATA_ID,START,CODE,DATA_C,I #
+#                            NITTAB,DATA_Z,DATA_N,MYSEG=0-FFFFFFFF             #
+#                            -Z(DATA_AREA)DATA_I=0-FFFFFFFF) -ynpra -s main    #
+#                                                                              #
+#                        Copyright 1987-2006 IAR Systems. All rights reserved. #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : CODE_AREA 00000218  Relocatable, from module : main
+
+
+
+
+                ****************************************
+                *                                      *
+                *            RUNTIME MODEL             *
+                *                                      *
+                ****************************************
+
+  StackAlign4  = USED
+  __cpu_mode   = __pcs__interwork
+  __data_model = absolute
+  __endian     = little
+  __rt_version = 6
+
+
+
+                ****************************************
+                *                                      *
+                *              MODULE MAP              *
+                *                                      *
+                ****************************************
+
+
+  DEFINED ABSOLUTE ENTRIES
+    *************************************************************************
+
+  DEFINED ABSOLUTE ENTRIES
+    *************************************************************************
+
+  FILE NAME : c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\Release\Obj\func.r79
+  PROGRAM MODULE, NAME : func
+
+  SEGMENTS IN THE MODULE
+  ======================
+ELFBEGIN
+  Relative segment, address: CODE_AREA 00000000, align: 0
+  Segment part 0. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ELF_BEGIN               00000000        Killer (main)
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000000BC - 000000BF (0x4 bytes), align: 2
+  Segment part 1. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           kill_data               000000BC        Killer (main)
+
+    *************************************************************************
+
+  FILE NAME : c:\MOBILE\ELFS\SVN_82_207_89_182\ARM\PANDEMONIUM\Release\Obj\main.r79
+  PROGRAM MODULE, NAME : main
+
+  SEGMENTS IN THE MODULE
+  ======================
+DATA_I
+  Relative segment, address: DATA_AREA 00000000 - 00000017 (0x18 bytes), align: 2
+  Segment part 18.            Intra module refs:   Segment part 21
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menu_sk                 00000000 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 00000018 - 0000001F (0x8 bytes), align: 2
+  Segment part 20.            Intra module refs:   Segment part 23
+                                                   Segment part 27
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menu_skt                00000018 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000000C0 - 000000C3 (0x4 bytes), align: 2
+  Segment part 31.            Intra module refs:   Segment part 23
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ed1_locret              000000C0 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000000C4 - 000000CB (0x8 bytes), align: 2
+  Segment part 33.            Intra module refs:   Segment part 23
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ed1_onkey               000000C4 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000000CC - 0000016F (0xa4 bytes), align: 2
+  Segment part 35.            Intra module refs:   Segment part 23
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ed1_ghook               000000CC 
+               stack 1 = 00000000 ( 00000038 )
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 00000020 - 0000006F (0x50 bytes), align: 2
+  Segment part 22.            Intra module refs:   Segment part 44
+                                                   ed1_ghook
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ed1_desc                00000020 
+           ed1_hdr                 0000005C 
+           ews                     00000058 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000170 - 00000193 (0x24 bytes), align: 2
+  Segment part 39.            Intra module refs:   MAINCSM
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           maincsm_oncreate        00000170 
+               stack 1 = 00000000 ( 00000008 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000194 - 000001AF (0x1c bytes), align: 2
+  Segment part 41.            Intra module refs:   maincsm_onclose
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           Killer                  00000194 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000001B0 - 000001CF (0x20 bytes), align: 2
+  Segment part 43.            Intra module refs:   MAINCSM
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           maincsm_onclose         000001B0 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000001D0 - 000001D3 (0x4 bytes), align: 2
+  Segment part 44.            Intra module refs:   maincsm_onclose
+                                                   maincsm_oncreate
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000001D4 - 000001FB (0x28 bytes), align: 2
+  Segment part 46.            Intra module refs:   MAINCSM
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           maincsm_onmessage       000001D4 
+    -------------------------------------------------------------------------
+DATA_Z
+  Relative segment, address: CODE_AREA 0000040C - 00000523 (0x118 bytes), align: 2
+  Segment part 24.            Intra module refs:   MAINCSM
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           maincsm_name_body       0000040C 
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 0000033C - 00000347 (0xc bytes), align: 2
+  Segment part 2.             Intra module refs:   Segment part 27
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000348 - 00000383 (0x3c bytes), align: 2
+  Segment part 6.             Intra module refs:   UpdateCSMname
+                                                   main
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           MAINCSM                 00000358 
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000384 - 00000387 (0x4 bytes), align: 2
+  Segment part 8.             Intra module refs:   Segment part 19
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000388 - 0000038F (0x8 bytes), align: 2
+  Segment part 9.             Intra module refs:   Segment part 19
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 000003F0 - 000003F1 (0x2 bytes), align: 0
+  Segment part 10.            Intra module refs:   Segment part 19
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 00000390 - 0000039B (0xc bytes), align: 2
+  Segment part 11.            Intra module refs:   Segment part 23
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 0000039C - 000003AF (0x14 bytes), align: 2
+  Segment part 12.            Intra module refs:   contactlist_menu_onkey
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 000003B0 - 000003BF (0x10 bytes), align: 2
+  Segment part 13.            Intra module refs:   ed1_ghook
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 000003C0 - 000003C3 (0x4 bytes), align: 2
+  Segment part 17.            Intra module refs:   MAINCSM
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           minus11                 000003C0 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000001FC - 00000217 (0x1c bytes), align: 2
+  Segment part 48.            Intra module refs:   main
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           UpdateCSMname           000001FC 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000218 - 0000024B (0x34 bytes), align: 2
+  Segment part 50.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           main                    00000218        Absolute parts (?ABS_ENTRY_MOD)
+               stack 1 = 00000000 ( 00000030 )
+    -------------------------------------------------------------------------
+DATA_C
+  Relative segment, address: CODE_AREA 000003C4 - 000003EF (0x2c bytes), align: 2
+  Segment part 25.            Intra module refs:   contactlist_menu_iconhndl
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           S_ICONS                 000003C4 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 00000070 - 000000AF (0x40 bytes), align: 2
+  Segment part 26.            Intra module refs:   create_menu
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           contactlist_menu        00000084 
+           contactlist_menuhdr     00000070 
+    -------------------------------------------------------------------------
+DATA_I
+  Relative segment, address: DATA_AREA 000000B0 - 000000BB (0xc bytes), align: 2
+  Segment part 28.            Intra module refs:   Segment part 27
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           menusoftkeys            000000B0 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 0000024C - 0000028B (0x40 bytes), align: 2
+  Segment part 52.            Intra module refs:   maincsm_oncreate
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           create_menu             0000024C 
+               stack 1 = 00000000 ( 00000014 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 0000028C - 000002FB (0x70 bytes), align: 2
+  Segment part 54.            Intra module refs:   Segment part 27
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           contactlist_menu_iconhndl
+                                   0000028C 
+               stack 1 = 00000000 ( 00000014 )
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 000002FC - 000002FF (0x4 bytes), align: 2
+  Segment part 56.            Intra module refs:   Segment part 27
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           contactlist_menu_ghook
+                                   000002FC 
+    -------------------------------------------------------------------------
+CODE
+  Relative segment, address: CODE_AREA 00000300 - 0000033B (0x3c bytes), align: 2
+  Segment part 58.            Intra module refs:   Segment part 27
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           contactlist_menu_onkey
+                                   00000300 
+               stack 1 = 00000000 ( 00000004 )
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 00000000 - 00000017 (0x18 bytes), align: 2
+  Segment part 19.            Intra module refs:   menu_sk
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 00000018 - 0000001F (0x8 bytes), align: 2
+  Segment part 21.            Intra module refs:   menu_skt
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 00000020 - 0000006F (0x50 bytes), align: 2
+  Segment part 23.            Intra module refs:   Segment part 22
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 00000070 - 000000AF (0x40 bytes), align: 2
+  Segment part 27.            Intra module refs:   Segment part 26
+    -------------------------------------------------------------------------
+DATA_ID
+  Relative segment, address: CODE_AREA 000000B0 - 000000BB (0xc bytes), align: 2
+  Segment part 29.            Intra module refs:   menusoftkeys
+    -------------------------------------------------------------------------
+INITTAB
+  Relative segment, address: CODE_AREA 000003F4 - 000003FF (0xc bytes), align: 2
+  Segment part 60. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ?init?tab?DATA_Z        000003F4 
+    -------------------------------------------------------------------------
+INITTAB
+  Relative segment, address: CODE_AREA 00000400 - 0000040B (0xc bytes), align: 2
+  Segment part 62. ROOT.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           ?init?tab?DATA_I        00000400 
+
+
+
+
+                ****************************************
+                *                                      *
+                *      SEGMENTS IN ADDRESS ORDER       *
+                *                                      *
+                ****************************************
+
+
+SEGMENT              SPACE    START ADDRESS   END ADDRESS     SIZE  TYPE  ALIGN
+=======              =====    =============   ===========     ====  ====  =====
+ELFBEGIN             CODE_AREA           00000000                     rel    0
+DATA_ID              CODE_AREA      00000000 - 000000BB          BC   rel    2
+START                CODE_AREA           000000BC                     dse    0
+CODE                 CODE_AREA      000000BC - 0000033B         280   rel    2
+DATA_C               CODE_AREA      0000033C - 000003F1          B6   rel    2
+INITTAB              CODE_AREA      000003F4 - 0000040B          18   rel    2
+DATA_Z               CODE_AREA      0000040C - 00000523         118   rel    2
+DATA_I               DATA_AREA      00000000 - 000000BB          BC   rel    2
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+ 1 314 bytes of CODE memory
+   188 bytes of DATA memory
+
+Errors: none
+Warnings: none
+

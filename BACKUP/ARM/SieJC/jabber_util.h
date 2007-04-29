@@ -1,0 +1,153 @@
+/*
+    SieNatJabber Project
+    Функции работы с контакт-листом
+
+    Специфический для джаббера разбор XML
+*/
+
+#ifndef _JABBER_UTIL_H_
+  #define _JABBER_UTIL_H_
+
+#include "xml_parser.h"
+
+#define MAX_MSG_LEN 4096
+
+#define PRES_COUNT 12
+
+typedef enum
+{
+  ADM_KICK,             // Кик 
+  ADM_BAN,              // Бан
+  ADM_VOICE_REMOVE,     // Лишить голоса
+  ADM_VOICE_GRANT       // Предоставить голос
+}MUC_ADMIN;
+
+/*
+  Посылка стандартного Jabber Iq
+*/
+void SendIq(char* to, char* type, char* id, char* xmlns, char* payload);
+
+/*
+  Послать приветствие, на него сервер высылает ответный stream.
+  После этого можно общаться с сервером
+*/
+// Context:HELPER
+void Send_Welcome_Packet();
+
+void Send_Welcome_Packet_SASL();
+
+/*
+  Послать дисконнект
+*/
+void Send_Disconnect();
+
+/*
+  Авторизация на Jabber-сервере
+  Самая тупая, без извращений.
+*/
+void Send_Auth();
+
+/*
+  Послать своё присутствие (в частности, после этого на нас вываливаются 
+  присутствия остальных, а мы появляемся в ресурсах своего контакта)
+*/
+// Context: HELPER
+void Send_Presence(PRESENCE_INFO *pr_info);
+
+// Послать запрос о версии пользователю с указанным JID
+// JID указываем в ANSI-кодировке
+void Send_Version_Request(char *dest_jid);
+
+/*
+  Послать запрос ростера
+*/
+// Context: HELPER
+void Send_Roster_Query();
+
+/*
+ Обработка входящих Iq-запросов
+*/
+void Process_Iq_Request(XMLNode* nodeEx);
+
+
+/*
+Презенсы :)
+*/
+void Process_Presence_Change(XMLNode* node);
+
+/*
+Входящие сообщения
+*/
+void Process_Incoming_Message(XMLNode* nodeEx);
+
+// kibab612@jabber.ru/SieJC  => SieJC
+char* Get_Resource_Name_By_FullJID(char* full_jid);
+
+/*
+Получить внутренний номер данного типа присутствия по строке с присутсвием
+*/
+unsigned short GetPresenceIndex(char* presence_str);
+
+/*
+Получить внутренний номер данного типа роли/полномочий по строке с присутсвием
+*/
+unsigned short GetAffRoleIndex(char* str);
+
+// Исполнение административных команд
+void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* reason);
+
+typedef struct
+{
+  char IsGroupChat;
+  char* body;  
+}IPC_MESSAGE_S;
+
+typedef struct
+{
+  char* room_nick;
+  char* room_name;
+  char* pass;
+  int mess_num;
+}MUC_ENTER_PARAM;
+
+
+typedef struct
+{
+  char *mucname;
+  char *nick;
+  char *pass;
+  char a_join;
+  void *next;
+}BM_ITEM;
+
+// Context: HELPER
+void SendMessage(char* jid, IPC_MESSAGE_S *mess);
+
+// Уничтожить список комнат  
+void MUCList_Destroy();
+
+// Войти в конференцию
+void Enter_Conference(char *room, char *roomnick, char N_messages);
+
+// Выйти из конференции
+void Leave_Conference(char* room);
+
+// Получить список закладок
+void Get_Bookmarks_List();
+
+// Уничтожить список закладок
+void KillBMList();
+///////////////////
+void Use_Md5_Auth_Report();
+void Decode_Challenge(char *challenge);
+void Destroy_SASL_Ctx();
+void Send_Login_Packet();
+void Process_Auth_Answer(char *challenge);
+void SASL_Open_New_Stream();
+void SASL_Bind_Resource();
+void SASL_Init_Session();
+void SASL_Process_Error(XMLNode *nodeEx);
+////
+void Compression_Ask();
+void Compression_Init_Stream();
+#endif
