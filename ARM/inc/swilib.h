@@ -500,10 +500,24 @@ typedef struct
   const SOFTKEYSTAB *softkeystab;
   int flags2; //2
 //  0x00000001 //Icons presens
+//  0x00000002 //
+//  0x00000008 //
 //  0x00000010 //Enable scroll text
+//  0x00000020 //
 //  0x00000040 //Disable scrollbar
+//  0x00000080 //Enable "big letters" check
 //  0x00000100 //Right align
+//  0x00000200 //
 //  0x00000400 //Disable breakline
+//  0x00000800
+//  0x00001000
+//  0x00004000
+//  0x00008000 //
+//  0x00010000 //Enable search???
+//  0x40000000
+//  0x80000000
+
+
   void *itemproc; //Called when draw item
   const MENUITEM_DESC * items; //Table of items desc;
   void ** procs; //Table of procs when item selected
@@ -2545,4 +2559,23 @@ __swi __arm void SetPixel(int x,int y,char *color);
 __swi __arm void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush);
 //thumb
 //pattern=??,B5,??,B0,??,9D,??,20,??,90,??,2D,??,9C,??,9E,??,9F,??,D0,??,20,??,30,??,42,??,DC
+
+#pragma swi_number=0x205
+__swi __arm void SetProp2Square_v1(void);
+//thumb
+//pattern=??,B5,04,1C,04,20,06,9D,20,70
+
+#pragma swi_number=0x206
+__swi __arm void srand(unsigned int seed);
+//thumb
+//pattern=30,B4,??,4A,17,21,11,60,36,21
+
+#pragma swi_number=0x207
+__swi __arm DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
+//thumb
+//pattern=??,B5,??,B0,??,9C,??,9D,??,9F,??,1C,??,D0,??,68,??,28,??,D1,??,A0,??,??,??,??,??,4C,??,1C,??,20,??,??,??,??,??,28,??,D0,??,DF,??,22,??,1C,??,20,??,4B,??,E0,??,DF,??,22,??,1C,??,20,??,4B,??,E0,??,2D,??,DB,??,??,??,??,??,42,??,DC,??,A0
+
+
+
+
 
