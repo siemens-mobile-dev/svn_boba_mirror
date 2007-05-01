@@ -70,8 +70,6 @@ typedef int jmp_buf[11];
 #define MSG_GUI_DESTROYED 0x640E
 #define MSG_IDLETMR_EXPIRED 0x6401
 #define MMI_CEPID 0x4209
-#define SMALL_FONT 11
-#define MIDDLE_FONT 5
 #define LGP_NULL 0x7FFFFFFF
 #define SET_SOFT_KEY_N 0
 #define LGP_DOIT_PIC 0x7FFFC0FB
@@ -93,8 +91,6 @@ typedef int jmp_buf[11];
 #define DISPLACE_OF_EDGUI_ID 0x4C
 #define DISPLACE_OF_IDLEGUI_ID 0x28
 #define DISPLACE_OF_IDLECANVAS 0x14
-#define MIDDLE_FONT 3
-#define SMALL_FONT 7
 #define LGP_NULL 0x7FFF
 #define SET_SOFT_KEY_N 1
 #define LGP_DOIT_PIC 0x7FFFC0FB
@@ -429,6 +425,59 @@ typedef struct
 
 #define LINE_DOTTED 1
 #define LINE_DOTTED2 2
+
+//Fonts
+
+#ifdef NEWSGOLD
+
+#define FONT_LARGE 0
+#define FONT_LARGE_BOLD 1
+#define FONT_LARGE_ITALIC 2
+#define FONT_LARGE_ITALIC_BOLD 3
+#define FONT_MEDIUM 4
+#define FONT_MEDIUM_BOLD 5
+#define FONT_MEDIUM_ITALIC 6
+#define FONT_MEDIUM_ITALIC_BOLD 7
+#define FONT_NUMERIC_SMALL 8
+#define FONT_NUMERIC_SMALL_BOLD 9
+#define FONT_NUMERIC_XSMALL 10
+#define FONT_SMALL 11
+#define FONT_SMALL_BOLD 12
+#define FONT_SMALL_ITALIC 13
+#define FONT_SMALL_ITALIC_BOLD 14
+#define FONT_NUMERIC_LARGE 15
+#define FONT_NUMERIC_MEDIUM 16
+
+#define SMALL_FONT 11
+#define MIDDLE_FONT 5
+
+#else
+
+//SGOLD. Так как изначально курсивные шрифты отсутствуют, они заменены на соответствующие обычные.
+//SGOLD. As there are initially no italic fonts in SGOLD series, they were replaced with corresponding regular fonts.
+
+#define FONT_LARGE 0
+#define FONT_LARGE_BOLD 1
+#define FONT_LARGE_ITALIC 0
+#define FONT_LARGE_ITALIC_BOLD 1
+#define FONT_MEDIUM 2
+#define FONT_MEDIUM_BOLD 3
+#define FONT_MEDIUM_ITALIC 2
+#define FONT_MEDIUM_ITALIC_BOLD 3
+#define FONT_NUMERIC_SMALL 4
+#define FONT_NUMERIC_SMALL_BOLD 5
+#define FONT_NUMERIC_XSMALL 6
+#define FONT_SMALL 7
+#define FONT_SMALL_BOLD 8
+#define FONT_SMALL_ITALIC 7
+#define FONT_SMALL_ITALIC_BOLD 8
+#define FONT_NUMERIC_LARGE 9
+#define FONT_NUMERIC_MEDIUM 10
+
+#define MIDDLE_FONT 3
+#define SMALL_FONT 7
+
+#endif //#ifdef NEWSGOLD
 
 // Phone info IDs
 #define PI_BASE_INFO1   0 // mch_x75idbi14
