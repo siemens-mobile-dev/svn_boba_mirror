@@ -198,19 +198,19 @@ void InitSmiles()
   int n_pic;
   if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
     return;
-  
+
   if ((fsize=stat.size)<=0)
     return;
-  
+
   if ((f=fopen(SMILE_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1)
     return;
-  
+
   s_buf=buf=malloc(fsize+1);
   buf[fread(f,buf,fsize,&err)]=0;
   fclose(f,&err);
   while ((c=*buf))
   {
-    if ((c==10)||(c==13)) 
+    if ((c==10)||(c==13))
     {
       buf++;
       continue;
@@ -235,14 +235,14 @@ void InitSmiles()
     {
       //Не первый
       s_bot->next=si;
-      s_bot=si;        
+      s_bot=si;
     }
     else
     {
       //Первый
       s_top=si;
-      s_bot=si; 
-    }       
+      s_bot=si;
+    }
     total_smiles++;
     while (*buf!=10 && *buf!=13 && *buf!=0)
     {
@@ -273,7 +273,7 @@ void InitSmiles()
       buf+=i;
     }
   }
-  mfree(s_buf); 
+  mfree(s_buf);
 }
 
 S_SMILES *FindSmileById(int n)
@@ -318,7 +318,7 @@ void Play(const char *fname)
       strncpy(s,fname,p-fname);
       s[p-fname]='\0';
       str_2ws(sndPath,s,128);
-      
+
       zeromem(&_sfo1,sizeof(PLAYFILE_OPT));
       _sfo1.repeat_num=1;
       _sfo1.time_between_play=0;
@@ -356,7 +356,7 @@ void start_vibra(void)
     extern const unsigned int vibraPower;
     SetVibration(vibraPower);
     GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
-  }  
+  }
 }
 
 void stop_vibra(void)
@@ -569,7 +569,7 @@ int GetIconIndex(CLIST *t)
       if (s & 0x0001) return(IS_AWAY);
       if (s & 0x0005) return(IS_NA);
       if (s & 0x0011) return(IS_OCCUPIED);
-      if (s & 0x0013) return(IS_DND);      
+      if (s & 0x0013) return(IS_DND);
       if (s & 0x0002) return(IS_FFC);
       if (s & 0x0100) return(IS_INVISIBLE);
     }
@@ -596,7 +596,7 @@ CLIST *FindContactByUin(unsigned int uin)
 
 //Ключи для поиска по T9
 static const char table_T9Key[256]=
-"11111111111111111111111111111111"   
+"11111111111111111111111111111111"
 "10001**0***0000*012345678900***0"
 "0222333444555666777788899991*110"
 "122233344455566677778889999111*1"
@@ -646,7 +646,7 @@ void UpdateCLheader(void)
     strcat(clm_hdr_text,ContactT9Key);
     strcpy(clmenu_sk_r,key_clmenu_sk_r);
   }
-  else 
+  else
   {
     strcpy(clm_hdr_text,def_clm_hdr_text);
     strcpy(clmenu_sk_r,def_clmenu_sk_r);
@@ -727,7 +727,7 @@ void contactlist_menu_ghook(void *data, int cmd)
   if (cmd==0x0A)
   {
     DisableIDLETMR();
-    if (need_jump_to_top_cl) 
+    if (need_jump_to_top_cl)
     {
       SetCursorToMenuItem(data,0);
       need_jump_to_top_cl=0;
@@ -745,7 +745,7 @@ void contactlist_menu_ghook(void *data, int cmd)
       SetCursorToMenuItem(data,0);
       UpdateCLheader();
       RefreshGUI();
-    }      
+    }
   }
 }
 
@@ -765,7 +765,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
   {
     i=GetCurMenuItem(data);
     t=FindContactByN(i);
-    if (t) 
+    if (t)
     {
       if (strlen(ContactT9Key))
       {
@@ -797,7 +797,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
       RefreshGUI();
       return(-1);
     }
-    if (i==GREEN_BUTTON) 
+    if (i==GREEN_BUTTON)
     {
       IsActiveUp=!IsActiveUp;
       RefreshGUI();
@@ -811,7 +811,7 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
   CLIST *t;
   WSHDR *ws;
   void *item=AllocMenuItem(data);
-  
+
   t=FindContactByN(curitem);
   if (t)
   {
@@ -1176,8 +1176,8 @@ void get_answer(void)
 	  int s1;
 	  int s2;
 	  GetDateTime(&d,&t);
-	  s1=t.hour*3600+t.min*60+t.param;
-	  s2=pt->hour*3600+pt->min*60+pt->param;
+	  s1=t.hour*3600+t.min*60+t.sec;
+	  s2=pt->hour*3600+pt->min*60+pt->sec;
 	  s1-=s2;
 	  if (s1<0) s1+=86400;
 	  snprintf(logmsg,255,"Ping %d-%d seconds!",s1,s1+1);
@@ -1205,16 +1205,16 @@ void AddStringToLog(CLIST *t, char code, char *s, const char *name)
   char *lp;
   int c;
   int i;
-  
+
   if (!t->log)
   {
     *(t->log=malloc(1))=0;
   }
   hs[127]=0;
-  
+
   snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\r\n",code,tt.hour,tt.min,d.day,d.month,name);
   Add2History(t, hs, s); // Запись хистори
-  
+
   snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
   lp=t->log;
   i=0;
@@ -1376,15 +1376,15 @@ ProcessPacket(TPKT *p)
       t->state=*((unsigned short *)(p->data));
       LogStatusChange(t);
       if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
-      
+
       if (t->state==0)//Звук
       {
 	Play(sndGlobal);
-      }  
+      }
       if (t->state==0xFFFF)//Звук
       {
 	Play(sndSrvMsg);
-      }      
+      }
     }
     break;
   case T_RECVMSG:
@@ -1392,7 +1392,7 @@ ProcessPacket(TPKT *p)
     if (!t)
     {
       sprintf(s,"%d",p->pkt.uin);
-      AddContact(p->pkt.uin,s);    
+      AddContact(p->pkt.uin,s);
       t=FindContactByUin(p->pkt.uin);
     }
     t->isactive=ACTIVE_TIME;
@@ -1623,7 +1623,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  //Тут трохи поменял
 	  // by Rainmaker: Рисуем канву только для иконки и выводим в своих координатах
           DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+GetImgWidth((int)S_ICONS[icn])-1,
-		     IDLEICON_Y+GetImgHeight((int)S_ICONS[icn])-1,1);          
+		     IDLEICON_Y+GetImgHeight((int)S_ICONS[icn])-1,1);
 	  //          DrawRoundedFrame(IDLEICON_X,IDLEICON_Y,IDLEICON_X+17,IDLEICON_Y+17,0,0,0,
 	  //			   GetPaletteAdrByColorIndex(0),
 	  //			   GetPaletteAdrByColorIndex(20));
@@ -1838,11 +1838,11 @@ void UpdateCSMname(void)
 int main()
 {
   char dummy[sizeof(MAIN_CSM)];
-  
+
   InitConfig();
   setup_ICONS();
   InitSmiles();
-  
+
   if (!UIN)
   {
     LockSched();
@@ -2085,7 +2085,7 @@ void ExtractAnswer(WSHDR *ws)
 	  }
 	}
       }
-      else 
+      else
       {
         msg_buf[scur]=char16to8(c);
         scur++;
@@ -2122,8 +2122,8 @@ CLIST *FindPrevActiveContact(CLIST *t)
   CLIST *cl;
   CLIST *cl_active=NULL;
   cl=(CLIST *)(&cltop);
-  
-  
+
+
   while(cl=cl->next)
   {
     if (cl==t)
@@ -2171,7 +2171,7 @@ void ed_options_handler(USR_MENU_ITEM *item)
       {
         GeneralFunc_flag1(edchat_id,1);
         CreateEditChat(t);
-      }      
+      }
       break;
     case 1:
       t=FindPrevActiveContact(ed_struct->ed_contact);
@@ -2182,7 +2182,7 @@ void ed_options_handler(USR_MENU_ITEM *item)
       }
       break;
     }
-  } 
+  }
 }
 
 int edchat_onkey(GUI *data, GUI_MSG *msg)
@@ -2194,7 +2194,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   char *s;
   int l=msg->gbsmsg->submess;
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
-  
+
   if (msg->keys==0xFFF)
   {
     void ec_menu(EDCHAT_STRUCT *);
@@ -2330,7 +2330,7 @@ void edchat_ghook(GUI *data, int cmd)
   {
     ed_struct->ed_chatgui=data;
     edgui_data=data;
-    EDIT_SetFocus(data,ed_struct->ed_answer);    
+    EDIT_SetFocus(data,ed_struct->ed_answer);
   }
   if (cmd==3)
   {
@@ -2408,20 +2408,20 @@ void CreateEditChat(CLIST *t)
   int j;
   char hdr[128];
   int type;
-  
+
   char *s=t->log;
-  
+
   //  if (!s) return;
 
   edcontact=t;
   int edchat_toitem=0;
-  
+
   edchat_hdr.lgp_id=(int)t->name;
   edchat_hdr.icon=(int *)S_ICONS+GetIconIndex(t);
-  
+
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  
+
   if (s) while(*s)
   {
     type=*s++;    //Пропуск типа
@@ -2462,7 +2462,7 @@ void CreateEditChat(CLIST *t)
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
-  
+
   ascii2ws(ews,t->answer?t->answer:empty_str);
   ConstructEditControl(&ec,3,0x00,ews,1024);
   PrepareEditCOptions(&ec_options);
@@ -2470,15 +2470,15 @@ void CreateEditChat(CLIST *t)
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
-  
+
   EDCHAT_STRUCT *ed_struct=malloc(sizeof(EDCHAT_STRUCT));
   ed_struct->ed_contact=t;
   ed_struct->ed_answer=edchat_toitem;
- 
+
   //  int scr_w=ScreenW();
   //  int scr_h=ScreenH();
   //  int head_h=HeaderH();
-  
+
   patch_header(&edchat_hdr);
   patch_input(&edchat_desc);
   //  edchat_desc.font=ED_FONT_SIZE;
@@ -2495,7 +2495,7 @@ void Quote(GUI *data)
   EDITCONTROL ec_ed;
   WSHDR *ed_ws;
   WSHDR *ws;
-  
+
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
 
@@ -2521,7 +2521,7 @@ void Quote(GUI *data)
   while((ed_pos=wstrchr(ed_ws,ed_pos,'\r'))!=0xFFFF);
   wsAppendChar(ed_ws,'\r');
   ws=AllocWS(ec_ed.pWS->wsbody[0]+ed_ws->wsbody[0]);
-  wstrcpy(ws,ec_ed.pWS); 
+  wstrcpy(ws,ec_ed.pWS);
   wstrcat(ws,ed_ws);
   FreeWS(ed_ws);
   CutWSTR(ws,ec_ed.maxlen);
@@ -2536,7 +2536,7 @@ void GetShortInfo(GUI *data)
 {
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
-  
+
   TPKT *p;
   CLIST *t;
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
@@ -2566,7 +2566,7 @@ void SendAuthReq(GUI *data)
 {
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
-  
+
   TPKT *p;
   CLIST *t;
   int l;
@@ -2589,7 +2589,7 @@ void SendAuthGrant(GUI *data)
 {
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
-  
+
   TPKT *p;
   CLIST *t;
   int l;
@@ -2612,7 +2612,7 @@ void OpenLogfile(GUI *data)
 {
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
-  
+
   extern const char HIST_PATH[64];
   CLIST *t;
   WSHDR *ws=AllocWS(256);
@@ -2629,7 +2629,7 @@ void ClearLog(GUI *data,void *dummy)
 {
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
-  
+
   CLIST *t;
   if ((t=ed_struct->ed_contact))
   {
@@ -2722,8 +2722,8 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
     else
     {
       to_remove[++remove]=1;
-    }  
-    
+    }
+
     if (ed_struct->ed_answer<=2) to_remove[++remove]=7;
     if (!ed_struct->ed_contact || connect_state!=3)
     {
@@ -2732,7 +2732,7 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
       to_remove[++remove]=4;
       to_remove[++remove]=5;
     }
-    
+
     patch_header(&ecmenu_HDR);
     to_remove[0]=remove;
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,ed_struct,to_remove);
@@ -2744,7 +2744,7 @@ void anac_locret(void){}
 int anac_onkey(GUI *data, GUI_MSG *msg)
 {
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
-  
+
   CLIST *t;
   TPKT *p;
   int l;
@@ -2878,10 +2878,10 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     WSHDR *ed_ws;
     EDITCONTROL ec;
     int pos;
-    
+
     t=FindSmileById(cur_smile);
     if (!t) return (0);
-    
+
     ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
     ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
     wstrcpy(ed_ws,ec.pWS);
@@ -2944,14 +2944,14 @@ void as_ghook(GUI *data, int cmd)
       s=NULL;
       if (t->lines) s=t->lines->text;
       if (!s) s="Error!";
-      wsprintf(ws,LG_SMLDESC,cur_smile,s);  
+      wsprintf(ws,LG_SMLDESC,cur_smile,s);
       EDIT_SetTextToEditControl(data,1,ws);
       CutWSTR(ws,0);
       wsAppendChar(ws,t->uni_smile);
       EDIT_SetTextToEditControl(data,2,ws);
       FreeWS(ws);
-      SUBPROC((void *)precache,cur_smile);      
-    }    
+      SUBPROC((void *)precache,cur_smile);
+    }
   }
 }
 
@@ -3002,18 +3002,18 @@ void AddSmile(GUI *data)
   WSHDR *ews=AllocWS(64);
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  
-  wsprintf(ews,LG_SMLDESC,cur_smile,t->lines->text);  
+
+  wsprintf(ews,LG_SMLDESC,cur_smile,t->lines->text);
   ConstructEditControl(&ec,ECT_HEADER,0x40,ews,32);
   AddEditControlToEditQend(eq,&ec,ma);
-  
+
   CutWSTR(ews,0);
   wsAppendChar(ews,t->uni_smile);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1);
   AddEditControlToEditQend(eq,&ec,ma);
 
 //pre-cache smiles by BoBa 19.04.2007
-/////////////  
+/////////////
 //  CutWSTR(ews,0);
 //  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,64);
 //  AddEditControlToEditQend(eq,&ec,ma);
