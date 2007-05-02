@@ -432,29 +432,6 @@ typedef struct
 
 #ifdef ELKA
 
-#define FONT_LARGE 0
-#define FONT_LARGE_BOLD 1
-#define FONT_LARGE_ITALIC 2
-#define FONT_LARGE_ITALIC_BOLD 3
-#define FONT_MEDIUM 4
-#define FONT_MEDIUM_BOLD 5
-#define FONT_MEDIUM_ITALIC 6
-#define FONT_MEDIUM_ITALIC_BOLD 7
-#define FONT_NUMERIC_SMALL 8
-#define FONT_NUMERIC_SMALL_BOLD 9
-#define FONT_NUMERIC_XSMALL 10
-#define FONT_SMALL 11
-#define FONT_SMALL_BOLD 12
-#define FONT_SMALL_ITALIC 13
-#define FONT_SMALL_ITALIC_BOLD 14
-#define FONT_NUMERIC_LARGE 15
-#define FONT_NUMERIC_MEDIUM 16
-
-#define SMALL_FONT 11
-#define MIDDLE_FONT 4
-
-#else //#ifdef ELKA
-
 // E/EL71. Специальных символьных шрифтов нет, заменены на обычные.
 // E/EL71. There are no numeric fonts, they are replaced with regular.
 
@@ -477,6 +454,29 @@ typedef struct
 #define FONT_NUMERIC_MEDIUM 4
 
 #define SMALL_FONT 8
+#define MIDDLE_FONT 4
+
+#else //#ifdef ELKA
+
+#define FONT_LARGE 0
+#define FONT_LARGE_BOLD 1
+#define FONT_LARGE_ITALIC 2
+#define FONT_LARGE_ITALIC_BOLD 3
+#define FONT_MEDIUM 4
+#define FONT_MEDIUM_BOLD 5
+#define FONT_MEDIUM_ITALIC 6
+#define FONT_MEDIUM_ITALIC_BOLD 7
+#define FONT_NUMERIC_SMALL 8
+#define FONT_NUMERIC_SMALL_BOLD 9
+#define FONT_NUMERIC_XSMALL 10
+#define FONT_SMALL 11
+#define FONT_SMALL_BOLD 12
+#define FONT_SMALL_ITALIC 13
+#define FONT_SMALL_ITALIC_BOLD 14
+#define FONT_NUMERIC_LARGE 15
+#define FONT_NUMERIC_MEDIUM 16
+
+#define SMALL_FONT 11
 #define MIDDLE_FONT 4
 
 #endif //#ifdef ELKA
