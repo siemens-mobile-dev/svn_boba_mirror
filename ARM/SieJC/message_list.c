@@ -38,13 +38,17 @@ RGBA MESSAGEWIN_TITLE_FONT =      {255, 255, 255, 100};
 RGBA MESSAGEWIN_MY_BGCOLOR =      {233, 255, 233, 100};
 RGBA MESSAGEWIN_CH_BGCOLOR =      {233, 233, 233, 100};
 RGBA MESSAGEWIN_CURSOR_BGCOLOR =  {0xFF, 0xFF, 0x00, 0x64};
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 =  {255, 255, 255, 100};
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 =  {233, 233, 233, 100};
+RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 = {255, 255, 255, 100};
+RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 = {233, 233, 233, 100};
 RGBA MESSAGEWIN_SYS_BGCOLOR =     {255, 233, 233, 100};
 RGBA MESSAGEWIN_STATUS_BGCOLOR =  {233, 233, 255, 100};
 RGBA MESSAGEWIN_CHAT_FONT =       {  0,   0,   0, 100};
-  
+
 #endif
+
+#define MESSAGEWIN_FONT FONT_SMALL
+
+
 
 //------------------
 
@@ -114,22 +118,22 @@ void inp_ghook(GUI *gui, int cmd)
   if (cmd==7)
   {
 #ifdef NEWSGOLD
-    SetSoftKey(gui,&sk,0);    
+    SetSoftKey(gui,&sk,0);
 #else
     SetSoftKey(gui,&sk,2);
-#endif   
-    ExtractEditControl(gui,1,&ec);    
+#endif
+    ExtractEditControl(gui,1,&ec);
     wstrcpy(ws_eddata,ec.pWS);
   }
-  
+
   if(cmd==0xA)
   {
     DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
-  
-  if(Terminate) 
+
+  if(Terminate)
  {
-   ExtractEditControl(gui,1,&ec);    
+   ExtractEditControl(gui,1,&ec);
    wstrcpy(ws_eddata,ec.pWS);
    //size_t xz = wstrlen(ws_eddata)*2;
    if(wstrlen(ws_eddata))
@@ -143,7 +147,7 @@ void inp_ghook(GUI *gui, int cmd)
      body[res_len]='\0';
    char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
    char part_str[]="/part";
-   
+
    if(!is_gchat)
    {
      CList_AddMessage(Resource_Ex->full_name, MSG_ME, body);
@@ -155,7 +159,7 @@ void inp_ghook(GUI *gui, int cmd)
      Leave_Conference(room->JID);
      CList_MakeAllResourcesOFFLINE(room);
      Terminate = 0;
-     mfree(body);    
+     mfree(body);
      return;
    }
    IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
@@ -167,12 +171,12 @@ void inp_ghook(GUI *gui, int cmd)
    else ShowDialog_Error(1,(int)"Нельзя послать пустое сообщение");
    Terminate = 0;
  }
- 
+
   if(cmd==0x03)     // onDestroy
   {
     FreeWS(ws_eddata);
     ws_eddata = NULL;
-  } 
+  }
 }
 
 void inp_locret(void){}
@@ -219,7 +223,7 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   ws_eddata = AllocWS(MAX_MSG_LEN);
   if(init_text)
   {
-    utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);    
+    utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
   }
   EDITCONTROL ec;
   void *ma=malloc_adr();
@@ -228,7 +232,7 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   eq=AllocEQueue(ma,mfree_adr());
   ConstructEditControl(&ec,3,0x40,ws_eddata,MAX_MSG_LEN);
   AddEditControlToEditQend(eq,&ec,ma);
-  CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,0);  
+  CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,0);
 }
 ////////////////////////////////////////////////////////////////////////////////
 DISP_MESSAGE* MessagesList = NULL;      // Корень списка
@@ -305,23 +309,23 @@ void Calc_Pages_Data_2()
 
 void mGUI_onRedraw(GUI *data)
 {
-  
+
   if(Resource_Ex->total_msg_count!=OLD_MessList_Count)
   {
     //KillDisp(MessagesList);
     ParseMessagesIntoList(Resource_Ex);
     OLD_MessList_Count = Resource_Ex->total_msg_count;
   }
-  
+
   Terminate = 0;
   // Расчёт количества строк на одной странице
-  
+
   Calc_Pages_Data();
   // Заголовок окна
   DrawRoundedFrame(0,SCR_START,ScreenW()-1,SCR_START+FontSize*2+1,0,0,0,
 		   0,
 		   color(MESSAGEWIN_TITLE_BGCOLOR));
-  
+
   DrawRoundedFrame(0,SCR_START+FontSize+2,ScreenW()-1,ScreenH()-1,0,0,0,
 		   0,
 		   color(MESSAGEWIN_BGCOLOR));
@@ -332,15 +336,15 @@ void mGUI_onRedraw(GUI *data)
   //ascii2ws(ws_title, Resource_Ex->full_name);
   utf8_2ws(ws_title, Resource_Ex->full_name, 256);
 
-  DrawString(ws_title,1,SCR_START+1,ScreenW()-1,SCR_START+FontSize+1,SMALL_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);  
-  
+  DrawString(ws_title,1,SCR_START+1,ScreenW()-1,SCR_START+FontSize+1,MESSAGEWIN_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);
+
   DISP_MESSAGE* ml = MessagesList;
   int i_ctrl=1;
 
   int i = 0;
 #ifdef STD_PALETTE
   char MsgBgColor;
-#else 
+#else
   RGBA MsgBgColor;
 #endif
   CurrentMessage_Lines = 0;
@@ -351,39 +355,39 @@ void mGUI_onRedraw(GUI *data)
 
       switch(ml->mtype)
       {
-      case MSG_ME:{MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;}        
-      case MSG_CHAT:{MsgBgColor=MESSAGEWIN_CH_BGCOLOR;break;}                                        
-      case MSG_SYSTEM:{MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;}                    
-      case MSG_STATUS:{MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;}                            
+      case MSG_ME:{MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;}
+      case MSG_CHAT:{MsgBgColor=MESSAGEWIN_CH_BGCOLOR;break;}
+      case MSG_SYSTEM:{MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;}
+      case MSG_STATUS:{MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;}
       case MSG_GCHAT:
         {
           MsgBgColor=ml->log_mess_number %2==0? MESSAGEWIN_GCHAT_BGCOLOR_1 : MESSAGEWIN_GCHAT_BGCOLOR_2;
           break;
-        }      
+        }
       }
       if(CurrentMessage==ml->log_mess_number)
       {
-        Cursor_Pos=i_ctrl;        
+        Cursor_Pos=i_ctrl;
       }
       if(Cursor_Pos==i_ctrl)
-      { 
+      {
          MsgBgColor = MESSAGEWIN_CURSOR_BGCOLOR;
          DISP_MESSAGE *mln = ml->next;
          if(mln)
           if(CurrentMessage==mln->log_mess_number) Cursor_Pos++;                    // Обновляем позицию курсора
          CurrentMessage_Lines++;
       }
-      
-      DrawRoundedFrame(0,SCR_START+HIST_DISP_OFS+i*FontSize,ScreenW()-1,SCR_START+HIST_DISP_OFS+(i+1)*FontSize,0,0,0,
+
+      DrawRoundedFrame(0,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize,0,0,0,
 		   color(MsgBgColor),
 		   color(MsgBgColor));
-    
-      DrawString(ml->mess,MSG_START_X,SCR_START+HIST_DISP_OFS+i*FontSize,ScreenW()-1,SCR_START+HIST_DISP_OFS+(i+1)*FontSize*2,SMALL_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);      
+
+      DrawString(ml->mess,MSG_START_X,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize*2,MESSAGEWIN_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);
       i++;
     }
     ml = ml->next;
     i_ctrl++;
-  }  
+  }
   FreeWS(ws_title);
   Resource_Ex->has_unread_msg =0; // Непрочитанных сообщений больше нет
 
@@ -452,18 +456,18 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         Resource_Ex->total_msg_count=0;
         return 1;
       }
-      
+
       case RIGHT_SOFT:
       {
         return 1;
       }
-      
+
     case LEFT_SOFT:
       {
         DbgInfo();
         break;
       }
-   
+
     case ENTER_BUTTON:
       {
         LOG_MESSAGE* log =GetCurMessage();
@@ -482,7 +486,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         }
         break;
       }
-      
+
       case UP_BUTTON:
         {
           Calc_Pages_Data_1();
@@ -490,7 +494,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
           if(Cursor_Pos>1)Cursor_Pos--;
           if(CurrentMessage>1)CurrentMessage--;
           REDRAW();
-          break;         
+          break;
         }
     case DOWN_BUTTON:
       {
@@ -499,9 +503,9 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
           if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
           Calc_Pages_Data_2();
           REDRAW();
-          break;         
+          break;
       }
-      
+
     case RIGHT_BUTTON:
       {
         LOG_MESSAGE *msg = GetCurMessage();
@@ -520,13 +524,13 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         }
         break;
       }
-      
+
     case GREEN_BUTTON:
       {
         Init_Message(Resource_Ex, NULL);
         break;
       }
-    }    
+    }
   }
   return(0);
 }
@@ -577,28 +581,29 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int sym_width;
   char IsCaret = 0; // Является ли символ переносом строки
 //  int chars;
-  DISP_MESSAGE* Disp_Mess_Ex, *tmp;  
+  DISP_MESSAGE* Disp_Mess_Ex, *tmp;
   if(!MessEx)return;
   LockSched();
 
   WSHDR *temp_ws_1=NULL;
   WSHDR *temp_ws_2=NULL;
-  
+
   // Цикл по всем сообщениям
   while(MessEx)
   {
-    
+
     if(parsed_counter>=OLD_MessList_Count)
     {
       temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
       utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
-      temp_ws_2 = AllocWS(CHAR_ON_LINE*2);
+      //temp_ws_2 = AllocWS(CHAR_ON_LINE*2); WTF?
+      temp_ws_2 = AllocWS(200); //ИМХО, так лучше
       int l=wstrlen(temp_ws_1);
-      
+
         //char q[40];
         //sprintf(q,"UTF_len=%d, WSTR_len=%d", strlen(MessEx->mess),l);
         //ShowMSG(2,(int)q);
-      
+
     int i=0;
     unsigned short *wschar;
     unsigned short symb;
@@ -608,7 +613,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       wschar = temp_ws_1->wsbody+i;
       symb = *wschar;
       IsCaret = symb==0x000A || symb==0x000D || symb==0x00A0 ? 1 : 0;
-      sym_width = GetSymbolWidth(symb,SMALL_FONT);
+      sym_width = GetSymbolWidth(symb,MESSAGEWIN_FONT);
       if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width + sym_width <= Scr_width))
       {
         Curr_width+=sym_width;
@@ -658,7 +663,7 @@ void Display_Message_List(TRESOURCE* ContEx)
   MessagesList = NULL;
   DispMessList_Count = 0;
   Resource_Ex = ContEx;
-  FontSize = GetFontYSIZE(SMALL_FONT);
+  FontSize = GetFontYSIZE(MESSAGEWIN_FONT);
   lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
   ParseMessagesIntoList(Resource_Ex);
   Calc_Pages_Data();
@@ -666,7 +671,7 @@ void Display_Message_List(TRESOURCE* ContEx)
   OLD_MessList_Count = Resource_Ex->total_msg_count;
   Cursor_Pos = DispMessList_Count;
   CurrentMessage = OLD_MessList_Count;
-  
+
 // Замутим гуй
   GUI *mess_gui=malloc(sizeof(GUI));
   zeromem(mess_gui, sizeof(GUI));

@@ -48,17 +48,17 @@
 
 */
 
-// ============= Учетные данные ============= 
+// ============= Учетные данные =============
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
-extern const char USERNAME[];  
-extern const char PATH_TO_PIC[];  
+extern const char USERNAME[];
+extern const char PATH_TO_PIC[];
 extern const int IS_IP;
-extern const int USE_SASL; 
-extern const int USE_ZLIB; 
+extern const int USE_SASL;
+extern const int USE_ZLIB;
 
-extern const unsigned int IDLE_ICON_X; 
-extern const unsigned int IDLE_ICON_Y; 
+extern const unsigned int IDLE_ICON_X;
+extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
@@ -111,6 +111,17 @@ GBSTMR reconnect_tmr;
 #define Redraw_Time TMR_SECOND*5
 #endif
 
+//=============Некоторые цвета====================
+
+  RGBA MAINBG_NOT_CONNECTED = {50, 50, 50, 100};
+  RGBA MAINBG_CONNECTED = {50, 50, 255, 100};
+  RGBA MAINBG_ERROR = {255, 0, 0, 100};
+  RGBA MAINFONT_NOT_CONNECTED = {255, 255, 255, 100};
+  RGBA MAINFONT_CONNECTED = {255, 255, 255, 100};
+  RGBA MAINFONT_ERROR = {255, 255, 255, 100};
+
+//================================================
+
 extern void kill_data(void *p, void (*func_p)(void *));
 
 void ElfKiller(void)
@@ -159,7 +170,7 @@ void _start_vibra()
   {
     SetVibration(VIBRA_POWER);
     GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,_stop_vibra);
-  }  
+  }
 }
 
 void _stop_vibra(void)
@@ -223,12 +234,12 @@ void create_connect(void)
        return;
      }
    }
-   if(p_res) 
+   if(p_res)
    {
      if(p_res[3])
      {
         snprintf(logmsg,255,"DNR Ok, connecting...");
-        REDRAW(); 
+        REDRAW();
         DNR_TRIES=0;
         sa.ip=p_res[3][0][0];
         can_connect = 1;
@@ -241,17 +252,17 @@ void create_connect(void)
     ShowMSG(1,(int)"Host not found!");
     UnlockSched();
     return;
-  } 
+  }
   }// Если DNS
   else
   {
       snprintf(logmsg,255,"Using IP address...");
       can_connect = 1;
       sa.ip = str2ip(JABBER_HOST);
-      REDRAW(); 
+      REDRAW();
   }
-  
-  
+
+
   if(can_connect)
   {
     sock=socket(1,1,0);
@@ -387,20 +398,20 @@ void get_answer(void)
     memcpy(XMLBuffer, buf+max_byte, rec_bytes - max_byte);
     XMLBufferCurPos=rec_bytes - max_byte;
   }
-  
+
   virt_buffer_len = virt_buffer_len + rec_bytes;  // Виртуальная длина потока увеличилась
 
-  
+
   if(Is_Compression_Enabled)// Если включена компрессия...
   {
     if((rec_bytes<REC_BUFFER_SIZE)) // Если принят конец пакета...
     {
       int bytecount = virt_buffer_len - processed_pos;
-      char *compressed_data = malloc(bytecount); 
+      char *compressed_data = malloc(bytecount);
       get_buf_part(compressed_data, bytecount); // Получаем из буфера сжатые данные
       Decompr_Buffer = malloc(UNP_BUFFER_SIZE); // Выделяем память под распаковку
       zeromem(Decompr_Buffer, UNP_BUFFER_SIZE);
-      // Распаковываем данные. 
+      // Распаковываем данные.
       int err=unzip(compressed_data,bytecount,Decompr_Buffer,UNP_BUFFER_SIZE);
       if(err!=0)
       {
@@ -414,7 +425,7 @@ void get_answer(void)
       }
       mfree(compressed_data);
       processed_pos = virt_buffer_len;
-    
+
       // Готовимся к передаче данных в MMI
       IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
       tmp_buffer->xml_buffer = Decompr_Buffer;
@@ -423,21 +434,21 @@ void get_answer(void)
     }
   }
   else
-  {  
-  
+  {
+
   char lastchar = *(buf + rec_bytes - 1);
-  
+
   if((rec_bytes<REC_BUFFER_SIZE)&&(lastchar=='>'))   // Приняли меньше размера буфера приёма - наверняка конец передачи
   {
     int bytecount = virt_buffer_len - processed_pos;
-    
+
     // НАДО ОСВОБОДИТЬ В MMI!
     IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
-    
+
     tmp_buffer->xml_buffer = malloc(bytecount);          // Буфер в структуре
     get_buf_part(tmp_buffer->xml_buffer, bytecount);
 
-    tmp_buffer->buf_size = bytecount;      
+    tmp_buffer->buf_size = bytecount;
 /*
     // Блочное конвертирование UTF8->ANSI
 
@@ -447,13 +458,13 @@ void get_answer(void)
     mfree(tmp_buffer->xml_buffer);
     tmp_buffer->buf_size = conv_size;
     tmp_buffer->xml_buffer = conv_buf;
-*/    
+*/
 
     processed_pos = virt_buffer_len;
 
     // Посылаем в MMI сообщение с буфером
     GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
-  }  
+  }
   }
   mfree(buf);
 }
@@ -566,8 +577,8 @@ void SendAnswer(char *str)
   out_bytes_count += block_len;
   //#ifdef LOG_ALL
   //  Log("OUT->", str);
-  //#endif  
-  
+  //#endif
+
   if(!Is_Compression_Enabled)
   {
     bsend(block_len,str);
@@ -607,14 +618,14 @@ void Analyze_Stream_Features(XMLNode *nodeEx)
     Support_Compression = 1;
     strcat(logmsg, "\nCompression:  +");
   }
-  
+
   XMLNode *Res_Binding_feature = XML_Get_Child_Node_By_Name(nodeEx, "bind");
   if(Res_Binding_feature)
   {
     Support_Resource_Binding = 1;
     strcat(logmsg, "\nResBind:       +");
   }
-  
+
   XMLNode *Auth_Methods = XML_Get_Child_Node_By_Name(nodeEx, "mechanisms");
   if(Auth_Methods)
   {
@@ -626,10 +637,10 @@ void Analyze_Stream_Features(XMLNode *nodeEx)
         Support_MD5_Auth = 1;
         strcat(logmsg, "\nDIGEST-MD5:  +");
       }
-      Ch_Node = Ch_Node->next;  
+      Ch_Node = Ch_Node->next;
     }
   }
-  REDRAW();   
+  REDRAW();
 }
 
 
@@ -642,8 +653,8 @@ void Process_Decoded_XML(XMLNode* node)
   while(nodeEx)
   {
 
-//----------------    
-    if(!strcmp(nodeEx->name,"stream:features")) 
+//----------------
+    if(!strcmp(nodeEx->name,"stream:features"))
     {
       Analyze_Stream_Features(nodeEx);
       if(USE_ZLIB && Support_Compression && Jabber_state == JS_NOT_CONNECTED)Compression_Ask();
@@ -651,31 +662,31 @@ void Process_Decoded_XML(XMLNode* node)
       if(Support_Resource_Binding && Jabber_state == JS_SASL_NEW_STREAM_ACK)SASL_Bind_Resource();
     }
 
-//----------------        
-  
+//----------------
+
     if(!strcmp(nodeEx->name,"compressed") && Jabber_state == JS_ZLIB_INIT_ACK)
     {
       Compression_Init_Stream();
     }
-    
+
 //----------------
     if(!strcmp(nodeEx->name,"success")&& Jabber_state == JS_SASL_AUTH_ACK)
     {
       SASL_Open_New_Stream();
-    }    
+    }
 
 //----------------
     if(!strcmp(nodeEx->name,"failure")&& Jabber_state < JS_AUTH_OK)
     {
       SASL_Process_Error(nodeEx);
-    }    
-    
+    }
+
 //----------------
     if(!strcmp(nodeEx->name,"challenge")&& Jabber_state == JS_SASL_NEG_ANS_WAIT)
     {
       Process_Auth_Answer(nodeEx->value);
-    }    
-//----------------    
+    }
+//----------------
     if(!strcmp(nodeEx->name,"challenge")&& Jabber_state == JS_SASL_NEGOTIATION)
     {
       Decode_Challenge(nodeEx->value);
@@ -708,7 +719,7 @@ void Process_Decoded_XML(XMLNode* node)
           Process_Decoded_XML(nodeEx->subnode);
           return;
         }
-    }   
+    }
 //----------------
     if(!strcmp(nodeEx->name,"stream:error"))
     {
@@ -718,14 +729,14 @@ void Process_Decoded_XML(XMLNode* node)
       char err[]="Ошибка XML-потока";
       ShowDialog_Error(1,(int)err);
       sprintf(logmsg, err);
-    } 
+    }
 //----------------
     if(!strcmp(nodeEx->name,"presence"))
     {
       Process_Presence_Change(nodeEx);
     }
 //----------------
-    
+
     //if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
     nodeEx = nodeEx->next;
   }
@@ -739,27 +750,27 @@ void __log(char* buffer, int size)
   tx_str(buffer);
 #else
   Log(mess,buffer);
-#endif  
+#endif
   mfree(buffer);
 }
 
 void Process_XML_Packet(IPC_BUFFER* xmlbuf)
 {
-  // Сюда попадаем, если от транслятора принят указатель на порцию данных   
+  // Сюда попадаем, если от транслятора принят указатель на порцию данных
   LockSched();
   XMLNode *data=XMLDecode(xmlbuf->xml_buffer,xmlbuf->buf_size);
   UnlockSched();
 
 // Сюда было бы логичнее переставить блок записи, ибо тогда в логе будет идти
 // сначала принятый пакет, а потом предпринятые действия
-#ifdef LOG_IN_DATA  
+#ifdef LOG_IN_DATA
     char* tmp_buf=malloc(xmlbuf->buf_size+1);
     zeromem(tmp_buf,xmlbuf->buf_size+1);
     memcpy(tmp_buf,xmlbuf->xml_buffer,xmlbuf->buf_size);
     SUBPROC((void*)__log,tmp_buf, xmlbuf->buf_size);
 #endif
 
-    
+
   if(data)
   {
 #ifdef LOG_XML_TREE
@@ -768,47 +779,47 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
     Process_Decoded_XML(data);
     DestroyTree(data);
   }
-    
+
   // Освобождаем память :)
     mfree(xmlbuf->xml_buffer);
-    mfree(xmlbuf);    
+    mfree(xmlbuf);
 #ifdef NEWSGOLD
     REDRAW();
 #else
-#endif    
+#endif
 }
 
 
 //===============================================================================================
 // Всякий стафф с GUI
 void onRedraw(MAIN_GUI *data)
-{ 
+{
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  
-  int font_color, bgr_color;
+
+  RGBA font_color, bgr_color;
   if(connect_state<2)
   {
-    font_color=0;
-    bgr_color = 20;
+    font_color= MAINFONT_NOT_CONNECTED;
+    bgr_color = MAINBG_NOT_CONNECTED;
   }
   if(connect_state==2)
   {
-    font_color=1;
-    bgr_color = 13;
+    font_color = MAINFONT_CONNECTED;
+    bgr_color = MAINBG_CONNECTED;
   }
 
   if(Jabber_state==JS_AUTH_ERROR || Jabber_state==JS_ERROR)
   {
-    font_color = 7;
-    bgr_color  = 2;
-  }  
+    font_color = MAINFONT_ERROR;
+    bgr_color  = MAINBG_ERROR;
+  }
   DrawRoundedFrame(0,SCR_START,scr_w-1,scr_h-1,0,0,0,
-		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(bgr_color));
-  
+		   0,
+		   color(bgr_color));
+
   CList_RedrawCList();
-  
+
   LockSched();
 
   if (CList_GetUnreadMessages()>0) {
@@ -817,35 +828,35 @@ void onRedraw(MAIN_GUI *data)
     wsprintf(data->ws1,"(%d/%d) IN:%d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
   }
   UnlockSched();
-  
+
   //рисуем селф-иконку
 #ifdef USE_PNG_EXT
 char mypic[128];
 
   if (CList_GetUnreadMessages()>0)
-      Roster_DrawIcon(1, SCR_START+1, (int) Roster_getIconByStatus(mypic,50)); //иконка сообщения
-  else 
+    Roster_DrawIcon(1, SCR_START+1, (int) Roster_getIconByStatus(mypic,50)); //иконка сообщения
+  else
     Roster_DrawIcon(1, SCR_START+1, (int) Roster_getIconByStatus(mypic, My_Presence));
 
 #else
   int img_num=0;
   if (CList_GetUnreadMessages()>0)
     img_num=Roster_getIconByStatus(50); //иконка сообщения
-  else 
+  else
     img_num=Roster_getIconByStatus(My_Presence);
 
   Roster_DrawIcon(1, SCR_START+1, img_num); //иконка сообщения
-#endif  
-  DrawString(data->ws1,16,SCR_START+3,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+#endif
+  DrawString(data->ws1,16,SCR_START+3,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
 
   if(Jabber_state!=JS_ONLINE)
   {
     wsprintf(data->ws1,"%t", logmsg);
-    DrawString(data->ws1,1,SCR_START+15,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+    DrawString(data->ws1,1,SCR_START+3+GetFontYSIZE(FONT_SMALL)+2,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
   }
-  
+
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-#ifdef USE_PNG_EXT 
+#ifdef USE_PNG_EXT
   if(connect_state<2)
   {
     char logo_path[128];
@@ -890,7 +901,7 @@ void QuitCallbackProc(int decision)
 
 void DisplayQuitQuery()
 {
-  ShowDialog_YesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);  
+  ShowDialog_YesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);
 }
 
 void Enter_SiepatchDB()
@@ -901,7 +912,7 @@ void Enter_SiepatchDB()
   char nick[100];
   sprintf(nick, nick_t, USERNAME);
 //  char nick[]="Kibab_exp";
-  
+
   char *room_nick =ANSI2UTF8(nick, strlen(nick)*2);
   char* room_name = ANSI2UTF8(room, strlen(room)*2);
   Enter_Conference(room, nick, 20);
@@ -918,7 +929,7 @@ void Dump_PhoneInfo()
     xz = Get_Phone_Info(i);
     sprintf(out,"%02X: %s", i, xz);
     Log("IDENT", out);
-  }  
+  }
 }
 
 
@@ -952,7 +963,7 @@ void Test_bm()
 {
   static char priv_id[]="SieJC_priv_req";
   static char bm[]="<storage xmlns='storage:bookmarks'/>";
-  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);    
+  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);
 }
 
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
@@ -965,7 +976,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   if(msg->gbsmsg->msg==LONG_PRESS)
   {
     switch(msg->gbsmsg->submess)
-    {  
+    {
     case DOWN_BUTTON:
     case '8':
       {
@@ -985,13 +996,13 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   {
     switch(msg->gbsmsg->submess)
     {
-    
+
     case ENTER_BUTTON:
       {
         Display_Message_List(CList_GetActiveContact());
         break;
       }
-    
+
     case LEFT_SOFT:
       {
         MM_Show();
@@ -1009,20 +1020,20 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 	DNR_TRIES=3;
         SUBPROC((void *)create_connect);
       }
-      
+
       if(connect_state==2 && Jabber_state==JS_ONLINE)
       {
-        Init_Message(CList_GetActiveContact(), NULL);                        
+        Init_Message(CList_GetActiveContact(), NULL);
       }
-      
+
       break;
 
     case '1':
       {
         CList_MoveCursorHome();
         break;
-      }      
-    
+      }
+
     case '4':
       {
         Enter_SiepatchDB();
@@ -1038,14 +1049,14 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       {
         Disp_State();
         break;
-      }  
-      
+      }
+
     case '7':
       {
         SUBPROC((void*)Test_bm);
         break;
-      } 
-      
+      }
+
     case DOWN_BUTTON:
     case '8':
       {
@@ -1065,15 +1076,15 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       {
         CList_MoveCursorEnd();
         break;
-      }        
-      
+      }
+
     case '0':
       {
-        
+
         CList_ToggleOfflineDisplay();
         break;
-      }        
-      
+      }
+
     case '*':
       {
         Is_Vibra_Enabled = !(Is_Vibra_Enabled);
@@ -1084,7 +1095,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         nextUnread();
         break;
       }
-    }    
+    }
   }
   //  onRedraw(data);
   return(0);
@@ -1126,9 +1137,9 @@ void maincsm_oncreate(CSM_RAM *data)
   DNR_TRIES=3;
   XMLBuffer = malloc(XML_BUFFER_SIZE);
   zeromem(XMLBuffer, XML_BUFFER_SIZE);
- 
+
   SUBPROC((void *)create_connect);
-#ifdef LOG_ALL  
+#ifdef LOG_ALL
   // Определим адреса некоторых процедур, на случай,
   // если клиент будет падать - там могут быть аборты...
   void* Process_XML_Packet_ADR = (void*)Process_XML_Packet;
@@ -1145,7 +1156,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&TMR_Send_Presence);
 #ifndef NEWSGOLD
   GBS_DelTimer(&redraw_tmr);
-#endif  
+#endif
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
   CList_Destroy();
@@ -1153,7 +1164,7 @@ void maincsm_onclose(CSM_RAM *csm)
   KillBMList();
   Destroy_SASL_Ctx();
   mfree(XMLBuffer);
-  
+
   if(ZLib_Stream_Init)
   {
     inflateEnd(&d_stream);
@@ -1194,22 +1205,22 @@ char mypic[128];
 
   if (CList_GetUnreadMessages()>0)
      Roster_getIconByStatus(mypic,50); //иконка сообщения
-  else 
+  else
     Roster_getIconByStatus(mypic, My_Presence);
-          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);          
+          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);
 	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,(int)mypic);
-#else          
+#else
           int mypic=0;
           if (CList_GetUnreadMessages()>0)
             mypic=Roster_getIconByStatus(50); //иконка сообщения
-          else 
+          else
             mypic=Roster_getIconByStatus(My_Presence);
-          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);          
-	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);          
+          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);
+	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
 #endif
 	}
       }
-    } 
+    }
   }
   if(Quit_Required)
   {
@@ -1360,12 +1371,12 @@ void UpdateCSMname(void)
 // Проверка, что платформа для компиляции выбрана правильно
 
 unsigned short IsGoodPlatform()
-{ 
-#ifdef NEWSGOLD  
+{
+#ifdef NEWSGOLD
   return  isnewSGold();
 #else
   return  !isnewSGold();
-#endif    
+#endif
 }
 
 Check_Settings_Cleverness()
@@ -1387,10 +1398,10 @@ int main(char *exename, char *fname)
     ShowMSG(1,(int)"Введите логин/пароль!");
     return 0;
   }
-  UpdateCSMname(); 
+  UpdateCSMname();
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();
-  Check_Settings_Cleverness();  
+  Check_Settings_Cleverness();
   return 0;
 }

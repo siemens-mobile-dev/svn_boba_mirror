@@ -12,12 +12,12 @@
 
 #define CURSOR_BORDER 20         // ad: цвет ободка курсора
 
-#define CLIST_F_COLOR_0 1         // Цвет шрифта 
+#define CLIST_F_COLOR_0 1         // Цвет шрифта
 #define CLIST_F_COLOR_1 15        // Цвет шрифта (есть сообщения)
 #define CONTACT_BG_0 0
 #define CONTACT_BG_1 22
-#else 
-const RGBA CURSOR = {80, 80, 255, 100};
+#else
+const RGBA CURSOR = {120, 120, 255, 100};
 const RGBA CURSOR_BORDER = {200, 200, 200, 100};
 const RGBA CLIST_F_COLOR_0 = {0, 0, 0, 100};
 const RGBA CLIST_F_COLOR_1 = {0, 0, 170, 100};
@@ -32,13 +32,13 @@ char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
 #ifdef STD_PALETTE
 char lineColor = 0;               // ad: цвет текущей строчки
 char borderColor = 0;               // ad: цвет ободка текущей строчки
-#else 
-RGBA lineColor = {0, 0, 0, 0};               
-RGBA borderColor = {0, 0, 0, 0};            
+#else
+RGBA lineColor = {0, 0, 0, 0};
+RGBA borderColor = {0, 0, 0, 0};
 #endif
 
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
-unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться 
+unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться
 
 unsigned int Active_page = 1;     // Текущая активная страница списка
 unsigned int N_cont_disp=0;       // Сколько контактов на странице
@@ -57,7 +57,7 @@ extern const char* PRESENCES[PRES_COUNT];
 extern JABBER_STATE Jabber_state;
 
 /*
-    Единственная процедура, которая занимается отрисовкой контакт-листа
+Единственная процедура, которая занимается отрисовкой контакт-листа
 */
 void CList_RedrawCList()
 {
@@ -69,15 +69,15 @@ void CList_RedrawCList()
 #else
   int icon_num=0;
 #endif
-  N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1)-1;
-  if(!cltop)return; 
-   
-  LockSched(); 
+  N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1-SCR_START)-1;
+  if(!cltop)return;
+
+  LockSched();
   N_Disp_Contacts = Display_Offline? CList_GetNumberOfUsers() : CList_GetNumberOfOnlineUsers();
   // Определяем количество страниц списка контактов
   int pages_number = sdiv(N_cont_disp, N_Disp_Contacts);
   if(N_cont_disp*pages_number<N_Disp_Contacts){pages_number++;};
-  
+
   CLIST* ClEx = cltop;
   WSHDR* out_ws = AllocWS(256);
   int i=1;
@@ -93,7 +93,7 @@ void CList_RedrawCList()
 
   WSHDR* ClEx_name = AllocWS(128);
   WSHDR* ResEx_name = AllocWS(128);
-  
+
   while(ClEx)
   {
     if(ClEx->ResourceCount)
@@ -101,7 +101,7 @@ void CList_RedrawCList()
       resEx = ClEx->res_list;
       while(resEx)
       {
-        
+
         if((i>(Active_page-1)*N_cont_disp) && (Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg ))
         {
           if(i==CursorPos)
@@ -109,13 +109,13 @@ void CList_RedrawCList()
             lineColor=CURSOR;
             borderColor=CURSOR_BORDER; //бортик курсора
             ActiveContact = resEx;
-          } else{ 
+          } else{
             borderColor=lineColor=(Alternation==1)? CONTACT_BG_0 : CONTACT_BG_1;
           }
-          
+
           //ascii2ws(ClEx_name, ClEx->name);
           utf8_2ws(ClEx_name, ClEx->name, 128);
-          
+
           if(resEx->name)
           {
             ascii2ws(ResEx_name,resEx->name);
@@ -128,35 +128,35 @@ void CList_RedrawCList()
           }
           else
           {
-            wsprintf(out_ws,"%w", ClEx_name);  //другой вид, имхо удобнее       
+            wsprintf(out_ws,"%w", ClEx_name);  //другой вид, имхо удобнее
           }
-         
-                    
+
+
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
-          
+
           if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}
           else {fcolor=PRES_COLORS[resEx->status];}
 
           DrawRoundedFrame(0,start_y+1,scr_w-1,start_y+font_y,0,0,0,
-		   color(borderColor),  //ad: ободок
-		   color(lineColor));   //ad: рисуем с чередованием... для наглядности
-          
-          CutWSTR(out_ws, CHAR_ON_LINE);
-          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,SMALL_FONT,0,color(fcolor),0);
+                           color(borderColor),  //ad: ободок
+                           color(lineColor));   //ad: рисуем с чередованием... для наглядности
 
-#ifdef USE_PNG_EXT          
+          CutWSTR(out_ws, CHAR_ON_LINE);
+          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0);
+
+#ifdef USE_PNG_EXT
           Roster_getIcon(path_to_pic, ClEx, resEx);
-          Roster_DrawIcon(1, start_y, (int)path_to_pic);   
+          Roster_DrawIcon(1, start_y, (int)path_to_pic);
 #else
           if (resEx->has_unread_msg)
             icon_num=Roster_getIconByStatus(50); //иконка сообщения
-         else 
-           icon_num=Roster_getIcon(ClEx, resEx);
-  
-           Roster_DrawIcon(1, start_y, icon_num) ; //иконка сообщения
-#endif          
+          else
+            icon_num=Roster_getIcon(ClEx, resEx);
 
-          Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование          
+          Roster_DrawIcon(1, start_y, icon_num) ; //иконка сообщения
+#endif
+
+          Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование
         }
         if(Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg)i++;
         resEx = resEx->next;
@@ -167,9 +167,9 @@ void CList_RedrawCList()
     if(i>Active_page*N_cont_disp)break;
   }
 
-//  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
+  //  sprintf(logmsg, "P=%d;C=%d;N=%d;ND=%d",Active_page, CursorPos,N_Disp_Contacts,N_cont_disp);
   if(Jabber_state==JS_ONLINE)sprintf(logmsg, "Self=%s",PRESENCES[My_Presence]);
-//  sprintf(logmsg, "Jabber=%d",Jabber_state);
+  //  sprintf(logmsg, "Jabber=%d",Jabber_state);
   UnlockSched();
   FreeWS(ClEx_name);
   FreeWS(ResEx_name);
@@ -225,7 +225,7 @@ void KillMsgList(LOG_MESSAGE* messtop)
     p=cl;
     cl=cl->next;
     mfree(p);
-  }     
+  }
 }
 
 
@@ -244,7 +244,7 @@ void KillResourceList(TRESOURCE* res_list)
     cl=cl->next;
     mfree(p);
     p=NULL;
-  }     
+  }
 }
 
 // Получить дескриптор контакта по FullJID (JID вместе с ресурсом)
@@ -252,13 +252,13 @@ CLIST* CList_FindContactByJID(char* jid)
 {
   LockSched();
   // Преобразуем жид в нижний регистр
-//  char lc_jid[128];
-//  strcpy(lc_jid, jid);
-//  str2lower(lc_jid);
+  //  char lc_jid[128];
+  //  strcpy(lc_jid, jid);
+  //  str2lower(lc_jid);
   CLIST* ClEx = cltop;
   while(ClEx)
   {
-//    if(strstr(lc_jid,ClEx->JID)==lc_jid)
+    //    if(strstr(lc_jid,ClEx->JID)==lc_jid)
     if(stristr(jid,ClEx->JID)==jid)
     {
       UnlockSched();
@@ -285,7 +285,7 @@ void CList_AddSystemMessage(char* jid, char status, char* status_msg)
   }
   if(status==PRESENCE_SUBSCRIBED)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was granted");    
+    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was granted");
   }
 }
 
@@ -317,10 +317,10 @@ TRESOURCE* CList_IsResourceInList(char* jid)
 }
 
 
-// Поменять статус у контакта 
+// Поменять статус у контакта
 void CList_Ch_Status(TRESOURCE* resource,
-                       char status,
-                       char* status_msg
+                     char status,
+                     char* status_msg
                        )
 {
   LockSched();
@@ -345,13 +345,13 @@ void CList_MakeAllResourcesOFFLINE(CLIST* ClEx)
 {
   if(!ClEx)return;
   TRESOURCE* ResEx = ClEx->res_list;
-  
+
   while(ResEx)
   {
-     CList_Ch_Status(ResEx,
-                       PRESENCE_OFFLINE,
-                       NULL
-                       );
+    CList_Ch_Status(ResEx,
+                    PRESENCE_OFFLINE,
+                    NULL
+                      );
     ResEx = ResEx->next;
   }
 }
@@ -360,8 +360,8 @@ void CList_MakeAllResourcesOFFLINE(CLIST* ClEx)
 TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
 {
   TRESOURCE* qq = CList_IsResourceInList(jid);
-  
-  // Если такой ресурс уже есть, его не добавляем. 
+
+  // Если такой ресурс уже есть, его не добавляем.
   // Нужно ему статус поменять.
   if(qq)
   {
@@ -372,7 +372,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
   LockSched();
   while(ClEx)
   {
-    
+
     if(stristr(jid,ClEx->JID)==jid) // Ага, именно так, ибо это соответствует началу строки!
     {
       TRESOURCE* ResEx=malloc(sizeof(TRESOURCE));//ClEx->res_list;
@@ -388,7 +388,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
       ResEx->full_name = malloc(strlen(jid)+1);
       strcpy(ResEx->full_name, jid);
-      
+
       if(status_msg)
       {
         ResEx->status_msg = malloc(strlen(status_msg)+1);
@@ -398,16 +398,16 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       {
         ResEx->status_msg = NULL;
       }
-            
+
       ResEx->status = status;
       ResEx->muc_privs.aff = AFFILIATION_NONE;
-      ResEx->muc_privs.role=  ROLE_NONE; 
+      ResEx->muc_privs.role=  ROLE_NONE;
       if(ClEx->res_list->entry_type!=T_CONF_ROOT){ ResEx->entry_type = T_NORMAL;}
       else{ResEx->entry_type = T_CONF_NODE;}
       ResEx->has_unread_msg=0;
       ResEx->total_msg_count=0;
       ResEx->log = NULL;
-      
+
       // Удаляем псевдоресурс, если он есть
       if(ClEx->res_list->entry_type==T_VIRTUAL && ClEx->res_list->has_unread_msg==0)
       {
@@ -415,10 +415,10 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
         ClEx->ResourceCount=0;
         NContacts--;
         ClEx->res_list=NULL;
-      }    
-      
+      }
+
       TRESOURCE* existing_res=ClEx->res_list;
-      
+
       if(!existing_res)
       {
         ClEx->res_list = ResEx;
@@ -440,17 +440,17 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
     }
     ClEx = ClEx->next;
   }
-CursorPos = 1;
-Active_page=1;
-UnlockSched();  
-return NULL;
+  CursorPos = 1;
+  Active_page=1;
+  UnlockSched();
+  return NULL;
 }
 
 void CList_ChangeContactParams(CLIST* Cont_Ex,
-                          char* name,
-                          JABBER_SUBSCRIPTION subscription,
-                          char wants_subscription,
-                          char group)
+                               char* name,
+                               JABBER_SUBSCRIPTION subscription,
+                               char wants_subscription,
+                               char group)
 {
 
   if(!Cont_Ex)return;
@@ -487,12 +487,12 @@ void CList_MUC_SetRole(char* jid, CONF_PRIV priv)
 
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
 CLIST* CList_AddContact(char* jid,
-                          char* name,
-                          JABBER_SUBSCRIPTION subscription,
-                          char wants_subscription,
-                          char group)
+                        char* name,
+                        JABBER_SUBSCRIPTION subscription,
+                        char wants_subscription,
+                        char group)
 {
-  
+
   str2lower(jid);
   CLIST* Cont_Ex = malloc(sizeof(CLIST));
 
@@ -514,7 +514,7 @@ CLIST* CList_AddContact(char* jid,
   Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
   Cont_Ex->next=NULL;
-   
+
   TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
   ResEx->log=NULL;
   ResEx->next=NULL;
@@ -535,11 +535,11 @@ CLIST* CList_AddContact(char* jid,
   ResEx->name = NULL;
   ResEx->full_name = malloc(strlen(jid)+1);
   strcpy(ResEx->full_name, jid);
-//  strcat(ResEx->full_name, "/");
-//  strcat(ResEx->full_name, ResEx->name);
+  //  strcat(ResEx->full_name, "/");
+  //  strcat(ResEx->full_name, ResEx->name);
   Cont_Ex->res_list=ResEx;
   Cont_Ex->ResourceCount=1;
-  
+
   LockSched();
   if(!cltop)
   {
@@ -578,7 +578,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     sprintf(datestr, "%s: %02d:%02d %02d-%02d\r\n",jid,now_time.hour,now_time.min,now_date.day,now_date.month);
   }
 
-  
+
   CLIST* contEx = CList_FindContactByJID(jid);
   if(!contEx)
   {
@@ -589,13 +589,13 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   if(!cont)
   {
     // У контакта нет ресурсов или такого ресурса нет. Добавляем на первый же.
-    // Такая ситуация, скорее всего, возникает, если у контакта ресурсов не 
+    // Такая ситуация, скорее всего, возникает, если у контакта ресурсов не
     // бывает в принципе (MRIM)
     cont=contEx->res_list;
   }
-  
+
   if(!cont->total_msg_count && mtype==MSG_STATUS && cont->entry_type!=T_CONF_ROOT)return;  // Не записываем статусные сообщения, если нет беседы
-  
+
   if(mtype!=MSG_ME && mtype!=MSG_STATUS)cont->has_unread_msg++;
   LOG_MESSAGE* mess = malloc(sizeof(LOG_MESSAGE));
   char timestamp[]="[%02d:%02d] ";
@@ -603,31 +603,31 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   switch(mtype)
   {
   case MSG_GCHAT:
-  {
-    char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
-    if(!conf_nickname)
     {
-      extern const char empty_t[];
-      conf_nickname=(char*)&empty_t;
+      char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
+      if(!conf_nickname)
+      {
+        extern const char empty_t[];
+        conf_nickname=(char*)&empty_t;
+      }
+      mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+2+1);
+      mess->muc_author = malloc(strlen(conf_nickname)+1);
+      strcpy(mess->muc_author, conf_nickname);
+      strcpy(mess->mess, timestamp);
+      if(IsMe)
+      {
+        strcat(mess->mess, "*");
+        strcat(mess->mess, conf_nickname);
+        strcat(mess->mess, mtext+3);  // пропуск /me
+      }
+      else
+      {
+        strcat(mess->mess, conf_nickname);
+        strcat(mess->mess, ": ");
+        strcat(mess->mess, mtext);
+      }
+      break;
     }
-    mess->mess = malloc(strlen(mtext)+strlen(conf_nickname)+strlen(timestamp)+2+1);
-    mess->muc_author = malloc(strlen(conf_nickname)+1);
-    strcpy(mess->muc_author, conf_nickname);
-    strcpy(mess->mess, timestamp);
-    if(IsMe)
-    {
-      strcat(mess->mess, "*");
-      strcat(mess->mess, conf_nickname);
-      strcat(mess->mess, mtext+3);  // пропуск /me
-    }
-    else
-    {
-      strcat(mess->mess, conf_nickname);
-      strcat(mess->mess, ": ");
-      strcat(mess->mess, mtext);
-    }
-    break;
-  }
   case MSG_SUBJECT:
     {
       char* conf_nickname = Get_Resource_Name_By_FullJID(jid);
@@ -639,15 +639,15 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
       strcat(mess->mess, conf_nickname);
       strcat(mess->mess, subj_set_to);
       strcat(mess->mess, mtext);
-      break;      
+      break;
     }
   default:
-  {
-    mess->mess = malloc(strlen(mtext)+strlen(timestamp)+1);
-    strcpy(mess->mess, timestamp);
-    strcat(mess->mess, mtext);
-    mess->muc_author = NULL;
-  }
+    {
+      mess->mess = malloc(strlen(mtext)+strlen(timestamp)+1);
+      strcpy(mess->mess, timestamp);
+      strcat(mess->mess, mtext);
+      mess->muc_author = NULL;
+    }
   }
   mess->mtype=mtype;
   LockSched();
@@ -664,11 +664,11 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   cont->total_msg_count++;
   mess->next=NULL;
   UnlockSched();
-  
+
   extern const int WRITE_HISTORY, WRITE_MUC_HISTORY;
   if((WRITE_HISTORY && !(mtype==MSG_GCHAT || mtype==MSG_SUBJECT)) || (WRITE_MUC_HISTORY && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT)))
   {
-    char *ansi_text = convUTF8_to_ANSI_STR(mtext);  
+    char *ansi_text = convUTF8_to_ANSI_STR(mtext);
     Add2History(CList_FindContactByJID(jid), datestr,ansi_text);
     mfree(ansi_text);
   }
@@ -678,22 +678,22 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
 //Уничтожить список
 void FreeCLIST(void)
 {
-  CLIST *cl=(CLIST*)cltop;
-  cltop=0;
-  while(cl)
-  {
-    CLIST *p;
+CLIST *cl=(CLIST*)cltop;
+cltop=0;
+while(cl)
+{
+CLIST *p;
 //    if (cl->log) mfree(cl->log);
 //    if (cl->answer) mfree(cl->answer);
-    p=cl;
-    cl=(CLIST*)(cl->next);
-    mfree(p);
+p=cl;
+cl=(CLIST*)(cl->next);
+mfree(p);
   }
 }
 
 */
 
-// Уничтожить список контактов  
+// Уничтожить список контактов
 void CList_Destroy()
 {
   LockSched();
@@ -710,7 +710,7 @@ void CList_Destroy()
     cl=(CLIST*)(cl->next);
     mfree(p);
     p=NULL;
-  }  
+  }
   UnlockSched();
 }
 
@@ -749,24 +749,24 @@ void nextUnread()
   CLIST* ClEx;
   TRESOURCE* ResEx;
   if(!(ClEx = cltop))return;
-LockSched();
+  LockSched();
   while(ClEx) //идем по списку контактов
+  {
+    ResEx = ClEx->res_list;
+    while(ResEx) //идем по списку ресурсов
     {
-      ResEx = ClEx->res_list;
-      while(ResEx) //идем по списку ресурсов
-      {
-          if(ResEx->has_unread_msg) { //если есть непрочитанное
-            if (CList_GetActiveContact()!=ResEx) { //если мы не стоим на этом контакте
-              //нужна еще какая-то проверка, я что-то не учитываю, поэтому иногда ведет себя странно...
-              MoveCursorTo(ResEx);
-              break;
-            }
-          }
-        ResEx=ResEx->next; //следующий ресурс
+      if(ResEx->has_unread_msg) { //если есть непрочитанное
+        if (CList_GetActiveContact()!=ResEx) { //если мы не стоим на этом контакте
+          //нужна еще какая-то проверка, я что-то не учитываю, поэтому иногда ведет себя странно...
+          MoveCursorTo(ResEx);
+          break;
+        }
       }
-      ClEx = ClEx->next; //следующий контакт
+      ResEx=ResEx->next; //следующий ресурс
     }
-UnlockSched();  
+    ClEx = ClEx->next; //следующий контакт
+  }
+  UnlockSched();
 }
 
 unsigned int CList_GetUnreadMessages() //количество непрочитанных сообщений
@@ -795,11 +795,11 @@ unsigned int CList_GetUnreadMessages() //количество непрочитанных сообщений
 void MoveCursorTo(TRESOURCE* NewResEx)
 {
   if(!NewResEx)return;
-  
+
   CLIST* ClEx;
   TRESOURCE* ResEx;
   if(!(ClEx = cltop))return;
-  
+
   int pos=0;
   while(ClEx)
   {
@@ -815,7 +815,7 @@ void MoveCursorTo(TRESOURCE* NewResEx)
           Active_page = sdiv(N_cont_disp, CursorPos)+1;
         } else {
           Active_page=1;
-        }               
+        }
         REDRAW();
         break;
       }
@@ -839,7 +839,7 @@ void CList_MoveCursorUp()
   {
     CursorPos=N_Disp_Contacts;
     if (N_cont_disp==N_Disp_Contacts) {
-      Active_page = 1; 
+      Active_page = 1;
     } else {
       Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
     }
@@ -866,7 +866,7 @@ void CList_MoveCursorHome()
   if(!N_Disp_Contacts)return;
   CursorPos =1;
   Active_page = 1;
-  REDRAW();  
+  REDRAW();
 };
 
 void CList_MoveCursorEnd()
@@ -874,5 +874,5 @@ void CList_MoveCursorEnd()
   if(!N_Disp_Contacts)return;
   CursorPos = N_Disp_Contacts;
   Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
-  REDRAW();  
+  REDRAW();
 };

@@ -12,20 +12,20 @@
 
 #define CHAR_ON_LINE 20
 
-#define CLIST_FONT SMALL_FONT     // Шрифт контакт-листа
+#define CLIST_FONT FONT_SMALL     // Шрифт контакт-листа
 
-#define CLIST_Y1 5 + SCR_START               // ad: меньше сделал (26->5) 
+#define CLIST_Y1 5 + SCR_START               // ad: меньше сделал (26->5)
 /* ACHTUNG
 #ifdef STD_PALETTE
 #define CURSOR 6                 // ad: цвет курсора
 
 #define CURSOR_BORDER 20         // ad: цвет ободка курсора
 
-#define CLIST_F_COLOR_0 1         // Цвет шрифта 
+#define CLIST_F_COLOR_0 1         // Цвет шрифта
 #define CLIST_F_COLOR_1 15        // Цвет шрифта (есть сообщения)
 #define CONTACT_BG_0 0
 #define CONTACT_BG_1 22
-#else 
+#else
 const RGBA CURSOR = {80, 80, 255, 100};
 const RGBA CURSOR_BORDER = {200, 200, 200, 100};
 const RGBA CLIST_F_COLOR_0 = {0, 0, 0, 100};
@@ -58,7 +58,7 @@ const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
                           JABBER_SUBSCRIPTION subscription,
                           char wants_subscription,
                           char group);
-  
+
 // Пишет роли контакта в конфе в структуру
   void CList_MUC_SetRole(char* jid, CONF_PRIV priv);
 
@@ -76,9 +76,9 @@ const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
   TRESOURCE* CList_GetActiveContact();
 
 // Делаем оффлайнами все ресурсы заданного контакта. Useful для конференций.
-  void CList_MakeAllResourcesOFFLINE(CLIST* ClEx); 
-  
-// Уничтожить список контактов  
+  void CList_MakeAllResourcesOFFLINE(CLIST* ClEx);
+
+// Уничтожить список контактов
   void CList_Destroy();
 
 // Изменить режим отображения контактов оффлайн
@@ -86,28 +86,28 @@ const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
 
 // Получить число онлайн-юзверей
   unsigned int CList_GetNumberOfOnlineUsers();
-  
+
 // Получить число юзверей
   unsigned int CList_GetNumberOfUsers();
-  
+
 // Получить число непрочитанных
   unsigned int CList_GetUnreadMessages();
-  
+
 // переход на следующий контакт с непрочитанным сообщением
   void nextUnread();
-  
+
 // ставим курсор на нужный ресурс(для автофокуса тоже пригодится)
   void MoveCursorTo(TRESOURCE* NewResEx);
 
 void CList_Display_Popup_Info(TRESOURCE* ResEx);
-  
+
 // Управление курсором
   void CList_MoveCursorUp();
   void CList_MoveCursorDown();
 
   void CList_MoveCursorHome();
   void CList_MoveCursorEnd();
-  
+
 // Убить список сообщений
 void KillMsgList(LOG_MESSAGE* messtop);
 
