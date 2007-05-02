@@ -430,6 +430,8 @@ typedef struct
 
 #ifdef NEWSGOLD
 
+#ifdef ELKA
+
 #define FONT_LARGE 0
 #define FONT_LARGE_BOLD 1
 #define FONT_LARGE_ITALIC 2
@@ -449,12 +451,40 @@ typedef struct
 #define FONT_NUMERIC_MEDIUM 16
 
 #define SMALL_FONT 11
-#define MIDDLE_FONT 5
+#define MIDDLE_FONT 4
 
-#else
+#else //#ifdef ELKA
 
-//SGOLD. Так как изначально курсивные шрифты отсутствуют, они заменены на соответствующие обычные.
-//SGOLD. As there are initially no italic fonts in SGOLD series, they were replaced with corresponding regular fonts.
+// E/EL71. Специальных символьных шрифтов нет, заменены на обычные.
+// E/EL71. There are no numeric fonts, they are replaced with regular.
+
+#define FONT_LARGE 0
+#define FONT_LARGE_BOLD 1
+#define FONT_LARGE_ITALIC 2
+#define FONT_LARGE_ITALIC_BOLD 3
+#define FONT_MEDIUM 4
+#define FONT_MEDIUM_BOLD 5
+#define FONT_MEDIUM_ITALIC 6
+#define FONT_MEDIUM_ITALIC_BOLD 7
+#define FONT_NUMERIC_SMALL 8
+#define FONT_NUMERIC_SMALL_BOLD 9
+#define FONT_NUMERIC_XSMALL 8
+#define FONT_SMALL 8
+#define FONT_SMALL_BOLD 9
+#define FONT_SMALL_ITALIC 10
+#define FONT_SMALL_ITALIC_BOLD 11
+#define FONT_NUMERIC_LARGE 0
+#define FONT_NUMERIC_MEDIUM 4
+
+#define SMALL_FONT 8
+#define MIDDLE_FONT 4
+
+#endif //#ifdef ELKA
+
+#else //#ifdef NEWSGOLD
+
+// SGOLD. Так как изначально курсивные шрифты отсутствуют, они заменены на соответствующие обычные.
+// SGOLD. As there are initially no italic fonts in SGOLD series, they were replaced with corresponding regular fonts.
 
 #define FONT_LARGE 0
 #define FONT_LARGE_BOLD 1
