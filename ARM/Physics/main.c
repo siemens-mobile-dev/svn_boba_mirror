@@ -21,7 +21,6 @@ void patch_input(INPUTDIA_DESC* inp)
 
 #define wslen(ws) ws->wsbody[0]
 //===============================================================================================
-const char _percent_t[]="%t";
 
 volatile int main_menu_id;
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -129,9 +128,7 @@ typedef struct
 
 typedef struct
 {
-  void *next;
-  int icon;
-  IMGHDR * img;
+  DYNPNGICONLIST dpl;
   char *fname;
   int uni_n;
 }DYNPNGILIST_MY;
@@ -152,13 +149,6 @@ SOFTKEYSTAB menu_skt=
 };
 
 
-void FreeIMGHDR(IMGHDR *img)
-{
-  mfree(img->bitmap);
-  mfree(img);
-}
-
-
 void ed1_locret(void){}
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
@@ -175,8 +165,9 @@ void ed1_ghook(GUI *data, int cmd)
     {
       DYNPNGILIST_MY *d;
       d=t;
-      t=t->next;
-      FreeIMGHDR(d->img);
+      t=t->dpl.next;
+      mfree(d->dpl.img->bitmap);
+      mfree(d->dpl.img);
       mfree(d->fname);
       mfree(d);
     }    
@@ -226,31 +217,26 @@ INPUTDIA_DESC ed1_desc =
 
 int AddPicIfNotExist(DYNPNGILIST_MY **top, char *fname)
 {
-  DYNPNGILIST_MY *t;
+  DYNPNGILIST_MY *t, *p;
   IMGHDR *img;
   int n=0;
-  t=*top;
-  while(t)
+  t=(DYNPNGILIST_MY *)top;
+  while((p=t->dpl.next))
   {
+    t=p;
     if (!strcmp_nocase(t->fname, fname)) return t->uni_n;
-    t=t->next;
+    n++;
   }
   // Не нашли в кэше, пробуем добавить
   img=CreateIMGHDRFromPngFile(fname,0);
   if (!img) return (-1);
   // Получилось создать картинку
-  t=(DYNPNGILIST_MY *)top;
-  while (t->next)
-  {
-    t=t->next;
-    n++;
-  }
   n+=FIRST_UCS2_BITMAP;
-  t=t->next=malloc(sizeof(DYNPNGILIST_MY));
+  t=t->dpl.next=malloc(sizeof(DYNPNGILIST_MY));
   t->uni_n=n;
-  t->next=0;
-  t->icon=GetPicNByUnicodeSymbol(n);
-  t->img=img;
+  t->dpl.next=0;
+  t->dpl.icon=GetPicNByUnicodeSymbol(n);
+  t->dpl.img=img;
   t->fname=malloc(strlen(fname)+1);
   strcpy(t->fname,fname);
   return (t->uni_n);
@@ -271,7 +257,7 @@ int create_ed(char *l_fname)
   unsigned int c;
   int pic_n;
   DYNPNGILIST_MY *top=0;
-  WSHDR *ews=AllocWS(1024);
+  WSHDR *ews=AllocWS(512);
 
   strcpy(fname, g_fname);
   strcat(fname, l_fname);
@@ -501,28 +487,20 @@ int main_menu_onkey(void *data, GUI_MSG *msg)
 
 void main_menu_iconhndl(void *data, int curitem, void *user_pointer)
 {
-  MMENU *s;
   WSHDR *ws;
+  char *s;
   MMENU *top=user_pointer;
-  s=top;
   void *item=AllocMenuItem(data);
   int i=0;
-  while(s)
+  while(top)
   {
     if (i==curitem) break;
-    s=s->next;
+    top=top->next;
     i++;
   }
-  if (!s)
-  {
-    ws=AllocMenuWS(data,10);
-    wsprintf(ws,_percent_t,"Ошибка");
-  }
-  else    
-  {
-    ws=AllocMenuWS(data,strlen(s->name));
-    wsprintf(ws,_percent_t,s->name);
-  }
+  s=top?top->name:"Ошибка";
+  ws=AllocMenuWS(data,strlen(s));
+  ascii2ws(ws,s);
   SetMenuItemText(data,item,ws,curitem);
 }
 
@@ -579,7 +557,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 }
 
 const int minus11=-11;
-unsigned short maincsm_name_body[140];
+unsigned short maincsm_name_body[20];
 
 const struct
 {
@@ -606,14 +584,14 @@ sizeof(MAIN_CSM),
     NAMECSM_MAGIC1,
     NAMECSM_MAGIC2,
     0x0,
-    139
+    19
   }
 };
 
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "Physics");
+  ascii2ws((WSHDR *)(&MAINCSM.maincsm_name), "Physics");
 }
 
 int main(char *filename)
