@@ -419,6 +419,9 @@
 0808: 0xA0D1EAB3 ; 202: __thumb void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, int flag, char *pen, char *brush);
 080C: 0xA0CAFBCF ; 203: __thumb void SetPixel(int x,int y,char *color);
 0810: 0xA0CE2D6F ; 204: __thumb void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush);
+0814: 0xA0CACFC9 ; 205: __thumb void SetProp2Square_v1(void);
+0818: 0xA16EEB39 ; 206: __thumb void srand(unsigned int seed);
+081C: 0xA0CE6507 ; 207: __thumb void DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
 #pragma disable old_equal_ff
 +0
 
