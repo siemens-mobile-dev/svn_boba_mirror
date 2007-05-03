@@ -1,5 +1,6 @@
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
+#include "../inc/pnglist.h"
 #include "NatICQ.h"
 #include "history.h"
 #include "conf_loader.h"
@@ -49,6 +50,7 @@ extern const char ICON6[];
 extern const char ICON7[];
 extern const char ICON8[];
 extern const char ICON9[];
+extern const char SMILE_PATH[];
 
 void setup_ICONS(void)
 {
@@ -76,6 +78,8 @@ extern const unsigned int ED_FONT_SIZE;
 const char percent_t[]="%t";
 const char empty_str[]="";
 const char I_str[]="I";
+
+char logmsg[256];
 
 //Illumination by BoBa 19.04.2007
 ///////////
@@ -141,11 +145,15 @@ S_SMILES *s_top=0;
 
 volatile unsigned int total_smiles=0;
 
+DYNPNGICONLIST *SmilesImgList;
+
 void FreeSmiles()
 {
   S_SMILES *s_smile;
   STXT_SMILES *n;
   STXT_SMILES *st;
+  DYNPNGICONLIST *d;
+  DYNPNGICONLIST *nd;
   LockSched();
   s_smile=(S_SMILES *)s_top;
   s_top=0;
@@ -165,6 +173,19 @@ void FreeSmiles()
     s_smile=(S_SMILES *)(s_smile->next);
     mfree(s);
   }
+  d=SmilesImgList;
+  SmilesImgList=0;
+  while(d)
+  {
+    if (d->img)
+    {
+      mfree(d->img->bitmap);
+      mfree(d->img);
+    }
+    nd=d->next;
+    mfree(d);
+    d=nd;
+  }
 }
 
 char *find_eol(char *s)
@@ -183,6 +204,7 @@ char *find_eol(char *s)
 
 void InitSmiles()
 {
+  DYNPNGICONLIST *dp;
   int f;
   int c;
   unsigned int err;
@@ -192,10 +214,10 @@ void InitSmiles()
   S_SMILES *si;
   STXT_SMILES *st;
   char *buf, *s_buf;
+  char fn[128];
   FreeSmiles();
-  char num[16];
   char name[16];
-  int n_pic;
+  int n_pic=FIRST_UCS2_BITMAP;
   if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
     return;
 
@@ -208,24 +230,46 @@ void InitSmiles()
   s_buf=buf=malloc(fsize+1);
   buf[fread(f,buf,fsize,&err)]=0;
   fclose(f,&err);
+  //f=fopen("4:\\smiles.cfg",A_ReadWrite+A_BIN+A_Create+A_Append,P_READ+P_WRITE,&err);
   while ((c=*buf))
   {
+    char *p;
     if ((c==10)||(c==13))
     {
       buf++;
       continue;
     }
-    if (*buf=='0'&&((*(buf+1))=='x'||((*(buf+1))=='X')))
+    p=strchr(buf,':');
+    if (!p) break;
+    zeromem(fn,128);
+    strcpy(fn,SMILE_PATH);
+    strcat(fn,"\\");
+    c=p-buf;
+    if (c>(127-strlen(fn))) break;
+    strncpy(fn+strlen(fn),buf,c);
+    snprintf(logmsg,255,"Process file %s...",fn);
+    REDRAW();
+    buf=p;
+    dp=malloc(sizeof(DYNPNGICONLIST));
+    zeromem(dp,sizeof(DYNPNGICONLIST));
+    dp->icon=GetPicNByUnicodeSymbol(n_pic);
+    dp->img=CreateIMGHDRFromPngFile(fn,0);
+    LockSched();
+    if (SmilesImgList)
     {
-      int l=0;
-      while ((*buf)&&(*buf!=':'))
-      {
-        num[l++]=*buf++;
-      }
-      num[l]=0;
-      n_pic=strtoul(num,0,0x10);
+      dp->next=SmilesImgList;
     }
-    else break;
+    SmilesImgList=dp;
+    UnlockSched();
+/*    {
+      char s[50];
+      int i=0;
+      sprintf(s,"%d.png:",GetPicNByUnicodeSymbol(n_pic));
+      fwrite(f,s,strlen(s),&err);
+      while(buf[i]>31) i++;
+      fwrite(f,buf,i,&err);
+      fwrite(f,"\r\n",2,&err);
+    }*/
     si=malloc(sizeof(S_SMILES));
     si->next=NULL;
     si->lines=NULL;
@@ -243,6 +287,7 @@ void InitSmiles()
       s_top=si;
       s_bot=si;
     }
+    n_pic++;
     total_smiles++;
     while (*buf!=10 && *buf!=13 && *buf!=0)
     {
@@ -273,6 +318,7 @@ void InitSmiles()
       buf+=i;
     }
   }
+  //fclose(f,&err);
   mfree(s_buf);
 }
 
@@ -407,7 +453,6 @@ int RXstate=EOP; //-sizeof(RXpkt)..-1 - receive header, 0..RXpkt.data_len - rece
 char *msg_buf;
 TPKT RXbuf;
 TPKT TXbuf;
-char logmsg[256];
 
 int connect_state=0;
 
@@ -1547,6 +1592,7 @@ void maincsm_oncreate(CSM_RAM *data)
   msg_buf=malloc(16384);
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
+  SUBPROC((void *)InitSmiles);
   SUBPROC((void *)create_connect);
   GBS_StartTimerProc(&tmr_active,TMR_SECOND*10,process_active_timer);
 }
@@ -1643,7 +1689,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       ShowMSG(1,(int)"NatICQ config updated!");
       InitConfig();
       setup_ICONS();
-      InitSmiles();
+//      InitSmiles();
     }
   }
   if (msg->msg==MSG_GUI_DESTROYED)
@@ -1841,7 +1887,7 @@ int main()
 
   InitConfig();
   setup_ICONS();
-  InitSmiles();
+//  InitSmiles();
 
   if (!UIN)
   {
@@ -2326,6 +2372,11 @@ void edchat_ghook(GUI *data, int cmd)
   int j;
   EDITCONTROL ec;
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+  PNGTOP_DESC *pltop=PNG_TOP();
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
   if (cmd==2)
   {
     ed_struct->ed_chatgui=data;
@@ -2339,6 +2390,7 @@ void edchat_ghook(GUI *data, int cmd)
   }
   if (cmd==0x0A)
   {
+    pltop->dyn_pltop=SmilesImgList;
     DisableIDLETMR();
     if (request_close_edchat)
     {
@@ -2850,8 +2902,6 @@ void AskNickAndAddContact(EDCHAT_STRUCT *ed_struct)
 
 int cur_smile;
 
-volatile int precache_busy=0;
-
 void as_locret(void){}
 
 int as_onkey(GUI *data,GUI_MSG *msg)
@@ -2864,11 +2914,9 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case LEFT_BUTTON:
-      if (precache_busy) return -1;
       if (!FindSmileById(--cur_smile)) cur_smile=total_smiles-1;
       return(-1);
     case RIGHT_BUTTON:
-      if (precache_busy) return -1;
       if (!FindSmileById(++cur_smile)) cur_smile=0;
       return(-1);
     case GREEN_BUTTON: //insert smile by GREEN_BUTTON by BoBa 19.04.2007
@@ -2898,39 +2946,18 @@ int as_onkey(GUI *data,GUI_MSG *msg)
   return(0);
 }
 
-void precache(int cursmile)
-{
-  extern const unsigned int SMILE_PRECACHE;
-  S_SMILES *t;
-  int i;
-  int n=1;
-  while(n<(SMILE_PRECACHE>>1))
-  {
-    i=cursmile+n;
-    while(i>=total_smiles) i-=total_smiles;
-    if (i!=cursmile)
-    {
-      t=FindSmileById(i);
-      if (t) GetPITaddr(GetPicNByUnicodeSymbol(t->uni_smile));
-    }
-    i=cursmile-n;
-    while(i<0) i+=total_smiles;
-    if (i!=cursmile)
-    {
-      t=FindSmileById(i);
-      if (t) GetPITaddr(GetPicNByUnicodeSymbol(t->uni_smile));
-    }
-    n++;
-  }
-  precache_busy=0;
-}
-
 void as_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
   const char *s;
+  PNGTOP_DESC *pltop=PNG_TOP();
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
   if (cmd == 0x0A)
   {
+    pltop->dyn_pltop=SmilesImgList;
     DisableIDLETMR();
   }
   if (cmd == 7)
@@ -2954,11 +2981,6 @@ void as_ghook(GUI *data, int cmd)
       wsAppendChar(ws,t->uni_smile);
       EDIT_SetTextToEditControl(data,2,ws);
       FreeWS(ws);
-      if (!precache_busy) 
-      {
-	precache_busy=1;
-	SUBPROC((void *)precache,cur_smile);
-      }
     }
   }
 }

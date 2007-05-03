@@ -27,6 +27,9 @@ __root const char HIST_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\history";
 __root const CFG_HDR cfghdr23={CFG_STR_UTF8,"Smiles File",0,63};
 __root const char SMILE_FILE[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles.cfg";
 
+__root const CFG_HDR cfghdr233={CFG_STR_UTF8,"Smiles .png path",0,63};
+__root const char SMILE_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles";
+
 __root const CFG_HDR cfghdr34={CFG_INT,"Smiles pre-cache",0,32}; //pre-cache smiles by BoBa 19.04.2007
 __root const unsigned int SMILE_PRECACHE=16;
 
