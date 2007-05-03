@@ -1277,7 +1277,7 @@ void AddMsgToChat(void *data)
 	j++;
       hdr[j]=0;
       ascii2ws(ews,hdr);
-      ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
+      ConstructEditControl(&ec,1,ECF_APPEND_EOL,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
       SetPenColorToEditCOptions(&ec_options,type==1?I_COLOR:TO_COLOR);
       SetFontToEditCOptions(&ec_options,2);
@@ -1299,7 +1299,7 @@ void AddMsgToChat(void *data)
       }
       msg_buf[j]=0;
       ParseAnswer(ews,msg_buf);
-      ConstructEditControl(&ec,3,0x40,ews,ews->wsbody[0]);
+      ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
       SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
       CopyOptionsToEditControl(&ec,&ec_options);
@@ -1447,14 +1447,14 @@ void method0(MAIN_GUI *data)
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,logmsg);
-  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),
-	     SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,LG_GRSKEYEXIT);
-  DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(MIDDLE_FONT),
-	     scr_w-4,scr_h-4,MIDDLE_FONT,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+	     scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,cltop?LG_GRSKEYCLIST:empty_str);
-  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),
-	     scr_w>>1,scr_h-4,MIDDLE_FONT,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+	     scr_w>>1,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data,void *(*malloc_adr)(int))
@@ -2382,7 +2382,7 @@ INPUTDIA_DESC edchat_desc =
   0,
   &menu_skt,
   {0,NULL,NULL,NULL},
-  SMALL_FONT,
+  FONT_SMALL,
   100,
   101,
   0,
@@ -2430,7 +2430,7 @@ void CreateEditChat(CLIST *t)
     hdr[j]=0;
     //    wsprintf(ews,percent_t,hdr);
     ascii2ws(ews,hdr);
-    ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
+    ConstructEditControl(&ec,1,ECF_APPEND_EOL,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
     SetPenColorToEditCOptions(&ec_options,type==1?I_COLOR:TO_COLOR);
     SetFontToEditCOptions(&ec_options,2);
@@ -2446,7 +2446,7 @@ void CreateEditChat(CLIST *t)
     msg_buf[j]=0;
     //    wsprintf(ews,percent_t,msg_buf);
     ParseAnswer(ews,msg_buf);
-    ConstructEditControl(&ec,3,0x40,ews,ews->wsbody[0]);
+    ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
     CopyOptionsToEditControl(&ec,&ec_options);
@@ -2850,6 +2850,7 @@ void AskNickAndAddContact(EDCHAT_STRUCT *ed_struct)
 
 int cur_smile;
 
+volatile int precache_busy=0;
 
 void as_locret(void){}
 
@@ -2863,9 +2864,11 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case LEFT_BUTTON:
+      if (precache_busy) return -1;
       if (!FindSmileById(--cur_smile)) cur_smile=total_smiles-1;
       return(-1);
     case RIGHT_BUTTON:
+      if (precache_busy) return -1;
       if (!FindSmileById(++cur_smile)) cur_smile=0;
       return(-1);
     case GREEN_BUTTON: //insert smile by GREEN_BUTTON by BoBa 19.04.2007
@@ -2919,6 +2922,7 @@ void precache(int cursmile)
     }
     n++;
   }
+  precache_busy=0;
 }
 
 void as_ghook(GUI *data, int cmd)
@@ -2950,7 +2954,11 @@ void as_ghook(GUI *data, int cmd)
       wsAppendChar(ws,t->uni_smile);
       EDIT_SetTextToEditControl(data,2,ws);
       FreeWS(ws);
-      SUBPROC((void *)precache,cur_smile);
+      if (!precache_busy) 
+      {
+	precache_busy=1;
+	SUBPROC((void *)precache,cur_smile);
+      }
     }
   }
 }
