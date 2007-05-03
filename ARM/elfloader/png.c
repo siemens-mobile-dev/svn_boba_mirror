@@ -1,9 +1,9 @@
 #include "..\inc\swilib.h"
+#include "..\inc\pnglist.h"
+
+#define ALPHA_THRESHOLD (128)
 
 #define number 8
-
-
-
 
 #define PNG_8 1
 #define PNG_16 2
@@ -14,10 +14,8 @@
 #define DEFAULT_COLOR PNG_8
 #endif
 
-
 const char Pointer[1]={0xFF};
 const IMGHDR empty_img = {0,0,0x1,(char *)Pointer};
-
 
 void* xmalloc(int x,int n)
 {
@@ -53,7 +51,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
   
-  if (type==NULL)  type=DEFAULT_COLOR;
+  if (type==0)  type=DEFAULT_COLOR;
   if ((f=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
   pp.row=NULL;
   pp.img=NULL;
@@ -127,7 +125,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
           png_read_row(png_ptr, (png_bytep)pp.row, NULL);
           for (unsigned int x = 0; x<width; x++)
           {
-            if (pp.row[x*4+3]!=0xFF)
+            if (pp.row[x*4+3]<ALPHA_THRESHOLD)
               *iimg++=0xE000;
             else
             {
@@ -150,7 +148,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
           png_read_row(png_ptr, (png_bytep)pp.row, NULL);
           for (unsigned int x = 0; x<width; x++)
           {
-            if (pp.row[x*4+3]!=0xFF)
+            if (pp.row[x*4+3]<ALPHA_THRESHOLD)
               *iimg++=0xC0;
             else
             {
@@ -213,19 +211,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
 #endif
 #define CACHE_PNG 50
 
-typedef struct
-{
-  void *next;
-  char *pngname;
-  IMGHDR * img;
-}PNGLIST;
-
-volatile __no_init struct
-{
-  PNGLIST * pltop;
-  char *bitmap;
-};  
-//volatile __no_init 
+volatile __no_init PNGTOP_DESC pngtop; 
 
 #pragma inline
 int tolower(int C)
@@ -266,7 +252,7 @@ __arm IMGHDR *find_png_in_cache(char *png_name)
   PNGLIST *pl;
   PNGLIST *pl_prev;
   LockSched();
-  pl=(PNGLIST *)(&pltop);
+  pl=(PNGLIST *)(&(pngtop.pltop));
   pl_prev=NULL;  
   while((pl=pl->next))
   {
@@ -277,8 +263,8 @@ __arm IMGHDR *find_png_in_cache(char *png_name)
       {
 	//Только если не в самом начале
 	pl_prev->next=pl->next; //Удалили из найденого места
-	pl->next=(PNGLIST *)pltop; //Следующий - весь список
-	pltop=pl; //А первый в списке - найденый
+	pl->next=(PNGLIST *)(pngtop.pltop); //Следующий - весь список
+	pngtop.pltop=pl; //А первый в списке - найденый
       }
       UnlockSched();
       return(pl->img);
@@ -311,10 +297,30 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   }
   else
   {
-    if (bitmap && (pic<20000))
+    //Ищем в списке динамических иконок
+    {
+      DYNPNGICONLIST *dynp;
+      LockSched();
+      dynp=pngtop.dyn_pltop;
+      while(dynp)
+      {
+	if (dynp->icon==pic)
+	{
+	  IMGHDR *i=dynp->img;
+	  if (i)
+	  {
+	    UnlockSched();
+	    return(i);
+	  }	  
+	}
+	dynp=dynp->next;
+      }
+      UnlockSched();
+    }
+    if ((pngtop.bitmap) && (pic<20000))
     {
       mask40=(mask80=0x80UL>>((pic&3)<<1))>>1;
-      bp=bitmap+(pic>>2);
+      bp=pngtop.bitmap+(pic>>2);
       if ((i=*bp)&mask80)  // Есть запись в битмапе
       {
         if (i&mask40)  
@@ -363,10 +369,10 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
   cur->img=img;
   i=0; //Это количество элементов в списке
   LockSched();
-  cur->next=(PNGLIST *)pltop; //Следующий - весь список
-  pltop=cur; //Первый в списке - новый элемент
+  cur->next=(PNGLIST *)(pngtop.pltop); //Следующий - весь список
+  pngtop.pltop=cur; //Первый в списке - новый элемент
   //Теперь подрезаем конец
-  pl=(PNGLIST *)(&pltop);
+  pl=(PNGLIST *)(&(pngtop.pltop));
   do
   {
     pl_prev=pl;
@@ -402,11 +408,11 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
 
 __arm void InitPngBitMap(void)
 {
-  if (!bitmap)
+  if (!pngtop.bitmap)
   {
-    bitmap=malloc(20000/8*2);
+    pngtop.bitmap=malloc(20000/8*2);
   }
-  zeromem((void*)bitmap,20000/8*2);
+  zeromem((void*)(pngtop.bitmap),20000/8*2);
 }
 
 #pragma diag_suppress=Pe177
