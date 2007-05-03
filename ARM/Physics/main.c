@@ -1,5 +1,5 @@
 #include "../inc/swilib.h"
-
+#include "../inc/pnglist.h"
 //===============================================================================================
 // ELKA Compatibility
 #pragma inline
@@ -130,10 +130,11 @@ typedef struct
 typedef struct
 {
   void *next;
-  int pic_n;
-  IMGHDR *img;
-  char name[116];
-}PNG_CH;
+  int icon;
+  IMGHDR * img;
+  char *fname;
+  int uni_n;
+}DYNPNGILIST_MY;
 
 char m_header[];
 
@@ -166,21 +167,27 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 
 void ed1_ghook(GUI *data, int cmd)
 {
-  PNG_CH *t=EDIT_GetUserPointer(data);
+  DYNPNGILIST_MY *t=EDIT_GetUserPointer(data);
+  PNGTOP_DESC *pltop=PNG_TOP();
   if (cmd==3)
   {
     while (t)
     {
-      PNG_CH *d;
+      DYNPNGILIST_MY *d;
       d=t;
-      FreeDynIcon(20000+d->pic_n);
-      FreeIMGHDR(d->img);
       t=t->next;
+      FreeIMGHDR(d->img);
+      mfree(d->fname);
       mfree(d);
     }    
   }
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
   if (cmd==0x0A)
   {
+    pltop->dyn_pltop=(DYNPNGICONLIST *)t;
     DisableIDLETMR();
   }
 }
@@ -198,7 +205,7 @@ INPUTDIA_DESC ed1_desc =
   0,
   &menu_skt,
   {0,0,0,0},
-  SMALL_FONT,
+  FONT_SMALL,
   100,
   101,
   0,
@@ -217,46 +224,36 @@ INPUTDIA_DESC ed1_desc =
 
 
 
-int AddPicIfNotExist(PNG_CH **top, char *fname)
+int AddPicIfNotExist(DYNPNGILIST_MY **top, char *fname)
 {
-  PNG_CH *t;
+  DYNPNGILIST_MY *t;
   IMGHDR *img;
-  int d=0, n=0;
-  int max_pic;
+  int n=0;
   t=*top;
   while(t)
   {
-    if (!strcmp_nocase(t->name, fname)) return t->pic_n;
+    if (!strcmp_nocase(t->fname, fname)) return t->uni_n;
     t=t->next;
   }
   // Не нашли в кэше, пробуем добавить
-  img=CreateIMGHDRFromPngFile(fname,1);
+  img=CreateIMGHDRFromPngFile(fname,0);
   if (!img) return (-1);
   // Получилось создать картинку
-  max_pic=GetMaxDynIcon();
-  while(n<max_pic)
-  {
-    if (!IsDynIconBusy(n+20000)) break;
-    n++;
-  }
-  if (n>=max_pic)
-  {
-    FreeIMGHDR(img);
-    return (-1);
-  }
-  t=(PNG_CH *)top;
+  t=(DYNPNGILIST_MY *)top;
   while (t->next)
   {
     t=t->next;
-    d++;
+    n++;
   }
-  t=t->next=malloc(sizeof(PNG_CH));
+  n+=FIRST_UCS2_BITMAP;
+  t=t->next=malloc(sizeof(DYNPNGILIST_MY));
+  t->uni_n=n;
   t->next=0;
-  t->pic_n=n;
+  t->icon=GetPicNByUnicodeSymbol(n);
   t->img=img;
-  strcpy(t->name,fname);
-  SetDynIcon(n+20000,img,0);
-  return (t->pic_n);
+  t->fname=malloc(strlen(fname)+1);
+  strcpy(t->fname,fname);
+  return (t->uni_n);
 }
 
 
@@ -273,11 +270,9 @@ int create_ed(char *l_fname)
   unsigned int fsize;
   unsigned int c;
   int pic_n;
-  PNG_CH *top=0;
-  WSHDR *ews=AllocWS(512);
+  DYNPNGILIST_MY *top=0;
+  WSHDR *ews=AllocWS(1024);
 
-
-  
   strcpy(fname, g_fname);
   strcat(fname, l_fname);
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err))==-1) return (0);
@@ -322,9 +317,7 @@ int create_ed(char *l_fname)
       d=strrchr(fname,'\\');
       while(*s!='&')
       {
-        if (*s=='/') *d='\\';
-        else  *d=*s;
-        d++;
+        *d++=(*s=='/')?'\\':*s;
         s++;
       }
       *d=0;
@@ -332,7 +325,7 @@ int create_ed(char *l_fname)
       if (pic_n!=-1)
       {
         CutWSTR(ews,0);
-        wsAppendChar(ews,pic_n+0xE200);
+        wsAppendChar(ews,pic_n);
         ConstructEditControl(&ec,0,0x40,ews,wslen(ews));
         AddEditControlToEditQend(eq,&ec,ma);
       }
@@ -353,6 +346,7 @@ int create_ed(char *l_fname)
     }
     while(*s=='&' || *s=='\r' || *s=='\n') s++;
   }
+  
   FreeWS(ews);
   mfree(buf);
 
