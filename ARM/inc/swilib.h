@@ -453,8 +453,8 @@ typedef struct
 #define FONT_NUMERIC_LARGE 0
 #define FONT_NUMERIC_MEDIUM 4
 
-#define SMALL_FONT 8
-#define MIDDLE_FONT 4
+//#define SMALL_FONT 8
+//#define MIDDLE_FONT 4
 
 #else //#ifdef ELKA
 
@@ -476,8 +476,8 @@ typedef struct
 #define FONT_NUMERIC_LARGE 15
 #define FONT_NUMERIC_MEDIUM 16
 
-#define SMALL_FONT 11
-#define MIDDLE_FONT 4
+//#define SMALL_FONT 11
+//#define MIDDLE_FONT 4
 
 #endif //#ifdef ELKA
 
@@ -504,8 +504,8 @@ typedef struct
 #define FONT_NUMERIC_LARGE 9
 #define FONT_NUMERIC_MEDIUM 10
 
-#define MIDDLE_FONT 3
-#define SMALL_FONT 7
+//#define MIDDLE_FONT 3
+//#define SMALL_FONT 7
 
 #endif //#ifdef NEWSGOLD
 
