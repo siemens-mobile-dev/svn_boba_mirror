@@ -523,6 +523,13 @@ typedef struct
 #define PI_LG           10 // = LangPack
 #define PI_T9           11 // = T9
 
+
+#ifdef NEWSGOLD
+#define FIRST_UCS2_BITMAP 0xE12A
+#else
+#define FIRST_UCS2_BITMAP 0xE137
+#endif
+
 typedef struct
 {
 #ifdef ELKA
