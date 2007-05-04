@@ -280,7 +280,7 @@ void send_str(char* str)
       return;     
     }
     sendq_p=malloc(j);
-    strncpy((void *)sendq_p,str,j);
+    memcpy((char *)sendq_p,str,j);
     sendq_l=j;
   }
   // отправляем уже существующие в очереди
@@ -378,6 +378,7 @@ int resp_ok(char *buf)
 
 
 
+int fhandler=-1;
 
 void end_connect(char *err)
 {
@@ -390,9 +391,14 @@ void end_connect(char *err)
     mfree(recived_line);
     recived_line=0;
   }
+  if (fhandler!=-1)
+  {
+    unsigned int err;
+    fclose(fhandler,&err);
+  }
 }
   
-int fhandler;
+
 void process_line(char *rec_line)
 {
   unsigned int err;
@@ -539,6 +545,7 @@ void process_line(char *rec_line)
         {
           cur_ml->state=(pop_state==POP_RECEIVE_HEADERS)?M_HEADERS_LOADED:M_FULL_LOADED;
           fclose(fhandler,&err);
+          fhandler=-1;
           mes_rec=0;
           write_mail_DB();
           pop3_recv++;
@@ -783,16 +790,16 @@ void OnRedraw(MAIN_GUI *data)
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
   wsprintf(data->ws1,"State: %d POPState: %d\n%t\n%t",connect_state,pop_state,c_states[pop_state],logmsg);
-  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 
   wsprintf(data->ws1,"send/recv bytes: %u/%u\nReceived: %u/%u\nDeleted: %u",total_send,total_recv,pop3_recv,in_pop3,pop3_del);
-  DrawString(data->ws1,3,60+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(MIDDLE_FONT),SMALL_FONT,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,60+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   
   wsprintf(data->ws1,percent_t,"Exit");
-  DrawString(data->ws1,(scr_w>>1),scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w-4,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,(scr_w>>1),scr_h-4-GetFontYSIZE(FONT_MEDIUM),scr_w-4,scr_h-4,FONT_MEDIUM,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 
   wsprintf(data->ws1,percent_t,connect_state<=0?"Mails":empty_str);
-  DrawString(data->ws1,3,scr_h-4-GetFontYSIZE(MIDDLE_FONT),scr_w>>1,scr_h-4,MIDDLE_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM),scr_w>>1,scr_h-4,FONT_MEDIUM,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 
@@ -963,6 +970,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         else
         {
           // Досылаем очередь
+          snprintf(logmsg,255,"ENIP_BUFFER_FREE1");
+          REDRAW();
           SUBPROC((void *)send_str,0);
         }
         break;

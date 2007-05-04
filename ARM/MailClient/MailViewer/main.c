@@ -713,7 +713,7 @@ INPUTDIA_DESC saveas_desc =
   0,
   &menu_skt,
   {0,NULL,NULL,NULL},
-  SMALL_FONT,
+  FONT_SMALL,
   100,
   101,
   0,
