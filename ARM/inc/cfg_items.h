@@ -13,6 +13,10 @@
 
 #define CFG_UTF8_STRING 10
 #define CFG_CHECKBOX 11
+#define CFG_TIME 12   
+//TTime
+#define CFG_DATE 13  
+//TDate
 
 typedef struct
 {
