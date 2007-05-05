@@ -94,7 +94,7 @@ void method0_1(MAIN_GUI_1 *data)
   }
   wsprintf(data->ws1,"%u,%u",data->x_pos,data->y_pos);
   DrwImg((IMGHDR *)&imgPointer,data->x_pos-2,data->y_pos-2,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws1,3,scr_h-GetFontYSIZE(SMALL_FONT)-1,scr_w-4,scr_h-1,SMALL_FONT,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
 }
 
 void method1_1(MAIN_GUI_1 *data, void *(*malloc_adr)(int))
@@ -259,7 +259,7 @@ void method0_2(MAIN_GUI_2 *data)
   int start_column;
   int y_line;
   wsprintf(data->ws1,"%02X,%02X,%02X,%02X",data->r,data->g,data->b,data->a);
-  DrawString(data->ws1,1,1,scr_w-20,12,SMALL_FONT,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,1,1,scr_w-20,12,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
   
   for (int i=0;i!=4;i++)
   {

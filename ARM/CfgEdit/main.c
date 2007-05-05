@@ -33,6 +33,7 @@ void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
 #endif
 
 
+
 unsigned int level=0;
 CFG_HDR *levelstack[16];
 
@@ -178,6 +179,8 @@ void ed1_ghook(GUI *data, int cmd)
   int pos;
   char ss[16];
   char *p;
+  TTime tt;
+  TDate dd;
 
   CFG_HDR *hp;
   if (cmd==2)
@@ -253,6 +256,14 @@ void ed1_ghook(GUI *data, int cmd)
         wsAppendChar(ews, *((int *)(hp+1))?CBOX_CHECKED:CBOX_UNCHECKED);
         EDIT_SetTextToFocused(data,ews);
         break;
+      case CFG_TIME:
+        EDIT_GetTime(data,i,&tt);
+        memcpy((char *)(hp+1),&tt,sizeof(TTime));
+        break;
+      case CFG_DATE:
+        EDIT_GetDate(data,i,&dd);
+        memcpy((char *)(hp+1),&dd,sizeof(TDate));
+        break;  
       default:
         break;
       }
@@ -828,6 +839,32 @@ int create_ed(void)
       }
       p+=4;
       break;
+    case CFG_TIME:
+      n-=sizeof(TTime);
+      if (n<0) goto L_ERRCONSTR;
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+        TTime *tt=(TTime *)p;
+	ConstructEditControl(&ec,ECT_TIME,0x40,0,0);
+        ConstructEditTime(&ec,tt);
+	AddEditControlToEditQend(eq,&ec,ma);  
+      }
+      p+=sizeof(TTime);
+      break;
+      
+    case CFG_DATE:
+      n-=sizeof(TDate);
+      if (n<0) goto L_ERRCONSTR;
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+        TDate *dd=(TDate *)p;
+	ConstructEditControl(&ec,ECT_CALENDAR,0x40,0,0);
+        ConstructEditDate(&ec,dd);
+	AddEditControlToEditQend(eq,&ec,ma);  
+      }
+      p+=sizeof(TDate);
+      break;
+      
     default:
       wsprintf(ews,"Unsupported item %d",hp->type);
       ConstructEditControl(&ec,1,0x40,ews,256);
