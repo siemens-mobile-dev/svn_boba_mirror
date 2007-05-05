@@ -676,7 +676,16 @@ typedef struct
   int _100;
   int _101;
   int zero2;
+//  0x00000001 - Выровнять по правому краю
+//  0x00000002 - Выровнять по центру
+//  0x00000004 - Инверсия знакомест
+//  0x00000008 - UnderLine
+//  0x00000020 - Не переносить слова
+//  0x00000200 - bold
   int zero3;
+//  0x00000002 - ReadOnly
+//  0x00000004 - Не двигается курсор
+//  0x40000000 - Поменять местами софт-кнопки
   int _0x40000000;
 }INPUTDIA_DESC;
 
@@ -734,15 +743,15 @@ typedef struct
 //EditControlFlags
 #define ECF_NORMAL_STR 0
 #define ECF_SKIP 4
-#define ECF_ONLY_APPEND 8
+#define ECF_INVISIBLE_CURSOR 8
 #define ECF_PASSW 0x10
 #define ECF_DELSTR 0x20
 #define ECF_APPEND_EOL 0x40
 #define ECF_SET_CURSOR_END 0x80
-#define ECF_DISABLE_NUM 0x100
 
-#define ECF_ONLY_FIRST_LAST_SYMB 0x200
-#define ECF_REMOVE_FIRST_LAST 0x400
+#define ECF_DISABLE_NUM 0x100
+#define ECF_DISABLE_SMALL_LETTERS 0x200
+#define ECF_DISABLE_BIG_LETTERS 0x400
 
 #define ECF_DISABLE_T9 0x2000
 #define ECF_DEFAULT_ITAP 0x4000
@@ -2665,7 +2674,13 @@ __swi __arm DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,
 //thumb
 //pattern=??,B5,??,B0,??,9C,??,9D,??,9F,??,1C,??,D0,??,68,??,28,??,D1,??,A0,??,??,??,??,??,4C,??,1C,??,20,??,??,??,??,??,28,??,D0,??,DF,??,22,??,1C,??,20,??,4B,??,E0,??,DF,??,22,??,1C,??,20,??,4B,??,E0,??,2D,??,DB,??,??,??,??,??,42,??,DC,??,A0
 
+#pragma swi_number=0x208
+__swi __arm int Get_WS_width(WSHDR *ws, int font);
+//thumb
+//pattern_SGOLD=??,B5,D3,B0,00,20,00,26,52,96
 
-
-
+#pragma swi_number=0x209
+__swi __arm void *FindGUIbyId(int id, CSM_RAM **csm);
+//thumb
+//pattern_SGOLD=0A,1C,01,1C,??,??,80,B5,80,68,_blf(70,B5,0E,1C,00,21,15,1C,00,28),80,BD
 
