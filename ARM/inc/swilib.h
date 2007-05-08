@@ -82,6 +82,7 @@ typedef int jmp_buf[11];
 #define MSG_HELPER_TRANSLATOR 0x3F0
 #define MSG_RECONFIGURE_REQ 0x3F1
 
+#define MSG_SMS_RX 0xC2
 #define MSG_CSM_DESTROYED 0x93
 #define MSG_CSM_DESTROY_NOTIFY 0x92
 #define MSG_GUI_DESTROYED 0x98
