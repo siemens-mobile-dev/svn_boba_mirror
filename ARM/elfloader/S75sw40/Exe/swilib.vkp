@@ -341,6 +341,14 @@
 0814: 0xA0A01979 ; 205: __thumb void SetProp2Square_v1(void);
 0818: 0xA0FC5491 ; 206: __thumb void srand(unsigned int seed);
 081C: 0xA0A07A1F ; 207: __thumb DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
+0820: 0xA08FFA7F ; 208: __thumb int Get_WS_width(WSHDR *ws, int font);
+0824: 0xA096FA91 ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
+0828: 0xA0A11F79 ; 20A: __thumb void EDIT_SetDate(void *gui,int n,TDate *dd);
+082C: 0xA0A11F91 ; 20B: __thumb void EDIT_SetTime(void *gui,int n,TTime *tt);
+0830: 0xA0A11FA9 ; 20C: __thumb void EDIT_GetDate(void *gui,int n,TDate *dd);
+0834: 0xA0A11FC1 ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt);
+0838: 0xA0A0B6BF ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
+083C: 0xA0A0B5A5 ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
 
 #pragma disable old_equal_ff
 +0
