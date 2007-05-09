@@ -1,5 +1,10 @@
 #include "..\inc\swilib.h"
 
+GBSTMR tmr_scroll;
+
+#define TMR_SECOND 216
+
+
 #pragma inline
 void patch_header(HEADER_DESC* head)
 {
@@ -61,12 +66,31 @@ typedef struct
   void *next;
   WSHDR *name;
   WSHDR *num[4];
+  WSHDR *icons;
 }CLIST;
 
 volatile CLIST *cltop; //Начало
 volatile CLIST *clbot; //Конец
 
 char dstr[4][40];
+
+int menu_icons[8];
+int utf_symbs[4];
+
+#define USR_WIRE 0xE106
+#define USR_MOBILE 0xE107
+#define WORK_WIRE 0xE108
+#define WORK_FAX 0xE109
+#define USR_FAX 0xE10A
+#define WORK_MOBILE 0xE10E
+
+void InitIcons(void)
+{
+  menu_icons[0]=GetPicNByUnicodeSymbol(utf_symbs[0]=USR_WIRE); //12345
+  menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); //093
+  menu_icons[4]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE); //651
+  menu_icons[6]=GetPicNByUnicodeSymbol(utf_symbs[3]=WORK_MOBILE); //884
+}
 
 //Уничтожить список
 void FreeCLIST(void)
@@ -84,6 +108,7 @@ void FreeCLIST(void)
     FreeWS(cl->num[1]);
     FreeWS(cl->num[2]);
     FreeWS(cl->num[3]);
+    FreeWS(cl->icons);
     p=cl;
     cl=(CLIST*)(cl->next);
     mfree(p);
@@ -308,6 +333,15 @@ void ConstructList(void)
 		FreeWS(contact.num[2]);
 		FreeWS(contact.num[3]);
 	      }
+	      else
+	      {
+		//Добавляем иконки телефонов
+		contact.icons=AllocWS(10);
+		if (contact.num[0]) wsAppendChar(contact.icons,utf_symbs[0]);
+		if (contact.num[1]) wsAppendChar(contact.icons,utf_symbs[1]);
+		if (contact.num[2]) wsAppendChar(contact.icons,utf_symbs[2]);
+		if (contact.num[3]) wsAppendChar(contact.icons,utf_symbs[3]);
+	      }
 	      FreeUnpackABentry(&ur,mfree_adr());
 	      if (hook_state!=5) goto L_STOP;
 	      LockSched();
@@ -372,6 +406,35 @@ void ConstructList(void)
 #pragma optimize=no_inline
 void f_dummy(void){}
 
+volatile int scroll_disp;
+volatile int max_scroll_disp;
+
+void scroll_timer_proc(void)
+{
+  int i=max_scroll_disp;
+  if (i)
+  {
+    if (scroll_disp>=i)
+    {
+      scroll_disp=0;
+      GBS_StartTimerProc(&tmr_scroll,TMR_SECOND,scroll_timer_proc);
+    }
+    else
+    {
+      scroll_disp++;
+      GBS_StartTimerProc(&tmr_scroll,scroll_disp!=i?TMR_SECOND>>3:TMR_SECOND,scroll_timer_proc);
+    }
+    REDRAW();
+  }
+}
+
+void DisableScroll(void)
+{
+  GBS_DelTimer(&tmr_scroll);
+  max_scroll_disp=0;
+  scroll_disp=0;
+}
+
 void my_ed_redraw(void *data)
 {
   //  WSHDR *ews=(WSHDR*)e_ws;
@@ -386,7 +449,7 @@ void my_ed_redraw(void *data)
 
   if (e_ws->wsbody[0]<MAX_ESTR_LEN) //Ее длина <MAX_ESTR_LEN
   {
-    int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(MIDDLE_FONT)+1)*5-5;
+    int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(FONT_MEDIUM)+1)*5-5;
 
     DrawRoundedFrame(1,y,ScreenW()-2,ScreenH()-SoftkeyH()-2,0,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(7));
 
@@ -400,16 +463,34 @@ void my_ed_redraw(void *data)
     i=0;
     do
     {
-      int dy=i*(GetFontYSIZE(MIDDLE_FONT)+1)+y;
+      int dy=i*(GetFontYSIZE(FONT_MEDIUM)+1)+y;
       if (!cl) break;
       if (i!=cp)
       {
-	DrawString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(MIDDLE_FONT),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+	DrawScrollString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(FONT_MEDIUM),1,FONT_MEDIUM,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
       }
       else
       {
-	DrawRoundedFrame(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(MIDDLE_FONT),0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-	DrawString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(MIDDLE_FONT),MIDDLE_FONT,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	int icons_size=Get_WS_width(cl->icons,FONT_MEDIUM_BOLD);
+	{
+	  int i=Get_WS_width(cl->name,FONT_MEDIUM_BOLD);
+	  i-=(ScreenW()-7-icons_size);
+	  if (i<0)
+	  {
+	    DisableScroll();
+	  }
+	  else
+	  {
+	    if (!max_scroll_disp)
+	    {
+	      GBS_StartTimerProc(&tmr_scroll,TMR_SECOND,scroll_timer_proc);
+	    }
+	    max_scroll_disp=i;
+	  }
+	}
+	DrawRoundedFrame(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
+	DrawScrollString(cl->name,3,dy+4,ScreenW()-5-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	DrawString(cl->icons,ScreenW()-4-icons_size,dy+4,ScreenW()-5,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       }
       cl=(CLIST *)cl->next;
       i++;
@@ -579,10 +660,10 @@ int gotomenu_onkey(GUI *data, GUI_MSG *msg)
 
 const MENUITEM_DESC gotomenu_ITEMS[9]=
 {
-  {NULL,(int)dstr[0],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)dstr[1],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)dstr[2],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)dstr[3],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons+0,(int)dstr[0],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons+2,(int)dstr[1],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons+4,(int)dstr[2],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons+6,(int)dstr[3],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 const HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
@@ -592,7 +673,7 @@ MENU_DESC gotomenu_STRUCT=
   8,(void *)gotomenu_onkey,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  0,
+  1,
   NULL,
   gotomenu_ITEMS,
   gotomenu_HNDLS,
@@ -621,6 +702,9 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   }
   if (key==GREEN_BUTTON||is_sms_need)
   {
+    int to_remove[5];
+    int remove=0;
+    DisableScroll();
     if (!cl) goto L_OLDKEY;
     while(i!=curpos)
     {
@@ -633,18 +717,22 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     r=0;
     do
     {
-      if (cl->num[r]) {ws_2str(cl->num[r],dstr[i],39);i++;}
+      if (cl->num[r]) {ws_2str(cl->num[r],dstr[r],39);i=r;}
+      else
+      {
+	to_remove[++remove]=r;
+      }
       r++;
     }
     while(r<4);
-    if (i==1)
+    to_remove[0]=remove;
+    if (remove==3) //Только один номер
     {
-      VoiceOrSMS(dstr[0]);
+      VoiceOrSMS(dstr[i]);
       return(1); //Закрыть нах
     }
-    if (!i) goto L_OLDKEY;
+    if (remove==4) goto L_OLDKEY; //Нет вообще телефонов
     //Количество номеров больше 1, рисуем меню
-    gotomenu_STRUCT.n_items=i;
     {
       HEADER_DESC *head=(HEADER_DESC *)&gotomenu_HDR;
       head->rc.x=0;
@@ -652,7 +740,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
       head->rc.x2=ScreenW()-1;
       head->rc.y2=HeaderH()+YDISP;
     }
-    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,i,0,0);
+    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,4,0,to_remove);
     return(0);
   }
   if ((key==UP_BUTTON)||(key==DOWN_BUTTON))
@@ -753,6 +841,7 @@ void DoSplices(GUI *gui)
   my_ed.onKey=my_ed_onkey;
   my_ed.global_hook_proc=my_ed_ghook;
   gui->definition=&my_ed;
+  scroll_disp=0;
 }
 
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
@@ -767,6 +856,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       hook_state=0;
       e_ws=0;
       FreeCLIST();
+      DisableScroll();
     }
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
@@ -806,5 +896,6 @@ int main(void)
   icsm->constr=&icsmd;
   UnlockSched();
   ews=AllocWS(1024);
+  InitIcons();
   return 0;
 }
