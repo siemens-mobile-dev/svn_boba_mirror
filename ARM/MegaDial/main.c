@@ -250,6 +250,7 @@ void ConstructList(void)
               #endif
 	      int i=0;
 	      zeromem(&contact,sizeof(contact));
+	      contact.icons=AllocWS(10);
 	      while(i<ur.number_of_records)
 	      {
 		AB_UNPRES_ITEM *r=ur.record_list+i;
@@ -306,6 +307,8 @@ void ConstructList(void)
 			if (p)
 			{
 			  ws=contact.num[n]=AllocWS(50);
+			  //Добавляем иконки телефонов
+			  wsAppendChar(contact.icons,utf_symbs[n]);
 			  j=0;
 			  if (p->format==0x91) wsAppendChar(ws,'+');
 			  while(j<p->data_size)
@@ -332,15 +335,7 @@ void ConstructList(void)
 		FreeWS(contact.num[1]);
 		FreeWS(contact.num[2]);
 		FreeWS(contact.num[3]);
-	      }
-	      else
-	      {
-		//Добавляем иконки телефонов
-		contact.icons=AllocWS(10);
-		if (contact.num[0]) wsAppendChar(contact.icons,utf_symbs[0]);
-		if (contact.num[1]) wsAppendChar(contact.icons,utf_symbs[1]);
-		if (contact.num[2]) wsAppendChar(contact.icons,utf_symbs[2]);
-		if (contact.num[3]) wsAppendChar(contact.icons,utf_symbs[3]);
+		FreeWS(contact.icons);
 	      }
 	      FreeUnpackABentry(&ur,mfree_adr());
 	      if (hook_state!=5) goto L_STOP;
@@ -396,6 +391,7 @@ void ConstructList(void)
     FreeWS(contact.num[1]);
     FreeWS(contact.num[2]);
     FreeWS(contact.num[3]);
+    FreeWS(contact.icons);
   }
   LockSched();
   if (hook_state==5) hook_state=2; else FreeCLIST();
