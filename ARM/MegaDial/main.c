@@ -267,7 +267,7 @@ void ConstructList(void)
                       #ifdef NEWSGOLD
 		      if (r->data)
 		      {
-			wstrcpy(contact.name=AllocWS(50),(WSHDR *)(r->data));
+			wstrcpy(contact.name=AllocWS(150),(WSHDR *)(r->data));
 			*((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
 		      }
                       #else
@@ -275,7 +275,7 @@ void ConstructList(void)
 		      { 
                         if (!contact.name)
                         {
-			 wstrcpy(contact.name=AllocWS(50),(WSHDR *)(r->data));
+			 wstrcpy(contact.name=AllocWS(150),(WSHDR *)(r->data));
 			 *((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
                         }
                         else
@@ -749,6 +749,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     msg->keys=0;
     if ((m==KEY_DOWN)||(m==LONG_PRESS))
     {
+      DisableScroll();
       if (key==UP_BUTTON)
       {
 	if (curpos) curpos--;
@@ -780,6 +781,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     {
       if (m==KEY_DOWN)
       {
+	DisableScroll();
 	if (hook_state>=2) //Возможно изменение строки ввода, требуется поиск
 	{
 	  hook_state=3;
