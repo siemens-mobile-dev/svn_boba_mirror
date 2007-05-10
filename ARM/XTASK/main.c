@@ -193,6 +193,14 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
+#define TMR_SECOND 216
+GBSTMR vibra_tmr;
+
+void vibra_tmr_proc(void)
+{
+  SetVibration(0);
+}
+
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
@@ -209,6 +217,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       ShowMSG(1,(int)"XTask config updated!");
       InitConfig();
     }
+  }
+  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2))
+  {
+    SetVibration(100);
+    GBS_StartTimerProc(&vibra_tmr,TMR_SECOND,vibra_tmr_proc);
   }
   if (msg->msg==MSG_INCOMMING_CALL)
   {
