@@ -17,6 +17,7 @@ extern const unsigned int POP3_PORT;
 extern const char SAVE_AS_FOLDER[];
 extern const int DEL_AFTER_LOAD;
 extern void kill_data(void *p, void (*func_p)(void *));
+extern const char SMSFORWARD[];
 
 extern const char I_UNREAD[];
 extern const char I_READ[];
@@ -46,19 +47,17 @@ extern const char I_MES_DEL[];
 
 #define MDB_MAGIC 0x01024244
 
-const char *c_states[]=
-{
-  "Disconnected",
-  "Verificating user",
-  "Verificating pass",
-  "Get stat",
-  "Create UIDL list",
-  "Create list",  
-  "Process List",
-  "Receive Headers",
-  "Receive Mail",   
-  "Delete Mail"
-};
+
+
+//IPC messages
+
+#define IPC_PING 0
+#define IPC_CHECK_MAILBOX 1
+#define IPC_CHANGE_STATE 2
+//states:
+//1 - elf turn on
+//2 - elf turn off
+#define IPC_LOADING_FINISHED 3
 
 #pragma pack(1)
 typedef struct
@@ -96,4 +95,16 @@ typedef struct
   char *content_type;
   char *content_encoding;
 }ML_VIEW;
+
+typedef struct
+{
+  int connect_state;
+  int pop_state;
+  int in_pop3;
+  int pop3_recv;
+  int pop3_del;
+  int total_recv;
+  int total_send;
+  char log[256];
+}POP_STAT;
 #endif

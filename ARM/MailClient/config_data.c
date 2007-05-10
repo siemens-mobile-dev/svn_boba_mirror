@@ -35,6 +35,9 @@ __root const CFG_CBOX_ITEM cfgcbox2[2]={"Delete From Phone","Nothing"};
 __root const CFG_HDR cfghdr61={CFG_CHECKBOX,"Delete from serv after loading",0,0};
 __root const int DEL_AFTER_LOAD = 0;
 
+__root const CFG_HDR cfghdr62={CFG_STR_WIN1251,"Number SMS Forward",0,31};
+__root const char SMSFORWARD[32]="684";
+
 __root const CFG_HDR cfghdr7={CFG_STR_UTF8,"Icon Message Unreaded",3,63};
 __root const char I_UNREAD[64]=DEFAULT_DISK ":\\ZBin\\EMailClient\\img\\mes_unread.png";
 

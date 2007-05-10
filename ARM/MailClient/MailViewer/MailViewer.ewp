@@ -2934,6 +2934,9 @@
   <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\statscreen.c</name>
+  </file>
 </project>
 
 
