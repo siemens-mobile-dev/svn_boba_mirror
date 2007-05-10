@@ -64,6 +64,7 @@ typedef int jmp_buf[11];
 
 #define MSG_HELPER_TRANSLATOR 0xDEAE
 #define MSG_RECONFIGURE_REQ 0xDEAF
+#define MSG_IPC 0xDEB0
 
 #define MSG_SMS_RX 0x5803
 #define MSG_PLAYFILE_REPORT 0x70BC
@@ -83,6 +84,7 @@ typedef int jmp_buf[11];
 
 #define MSG_HELPER_TRANSLATOR 0x3F0
 #define MSG_RECONFIGURE_REQ 0x3F1
+#define MSG_IPC 0x3F2
 
 #define MSG_SMS_RX 0xC2
 #define MSG_CSM_DESTROYED 0x93
@@ -948,6 +950,13 @@ typedef struct
 {
  char data[0xB2];
 }PDU;
+
+typedef struct
+{
+  const char *name_to;
+  const char *name_from;
+  void *data;
+}IPC_REQ;
 
 #pragma diag_suppress=Ta035
 
