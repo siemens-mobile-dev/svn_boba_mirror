@@ -1,6 +1,17 @@
 #include "..\inc\swilib.h"
+#include "conf_loader.h"
 
 GBSTMR tmr_scroll;
+
+extern const int ENA_VIBRA;
+extern const unsigned int vibraPower;
+extern const char COLOR_MENU_BK[4];
+extern const char COLOR_MENU_BRD[4];
+extern const char COLOR_NOTSELECTED[4];
+extern const char COLOR_SELECTED[4];
+extern const char COLOR_SELECTED_BG[4];
+extern const char COLOR_SELECTED_BRD[4];
+extern const char COLOR_SEARCH_MARK[4];
 
 #define TMR_SECOND 216
 
@@ -118,11 +129,18 @@ void FreeCLIST(void)
 //-----------------------------------------------------
 //Поиск подстроки в строке по методу Т9
 //-----------------------------------------------------
-int CompareStrT9(WSHDR *ws, WSHDR *ss)
+unsigned int us_reverse(unsigned int v)
+{
+  return((v>>8)|((v&0xFF)<<8));
+}
+
+int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
 {
   int spos=1;
   int wpos=1;
   int c;
+  
+  int first_pos=-1;
 
   //Таблица ключей для поиска текста
   static const char key[256]=
@@ -160,10 +178,27 @@ int CompareStrT9(WSHDR *ws, WSHDR *ss)
       c=key[c];
       if (c==ss->wsbody[spos])
       {
+	if (first_pos<0) first_pos=wpos;
 	spos++;
-	if (spos>wslen(ss)) return(1); //Все совпало
+	if (spos>wslen(ss))
+	{
+	  if (need_insert_color&&(first_pos>0))
+	  {
+	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_NOTSELECTED)[1]),wpos+1);
+	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_NOTSELECTED)[0]),wpos+1);
+	    wsInsertChar(ws,0xE006,wpos+1);
+	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_SEARCH_MARK)[1]),first_pos);
+	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_SEARCH_MARK)[0]),first_pos);
+	    wsInsertChar(ws,0xE006,first_pos);
+	  }
+	  return(1); //Все совпало
+	}
       }
-      else spos=0; //Ищем новое слово
+      else 
+      {
+	first_pos=-1;
+	spos=0; //Ищем новое слово
+      }
     }
     wpos++;
   }
@@ -269,7 +304,7 @@ void ConstructList(void)
 		      if (r->data)
 		      {
 			wstrcpy(contact.name=AllocWS(150),(WSHDR *)(r->data));
-			*((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
+			*((int *)(&contact.next))|=CompareStrT9(contact.name,sws,0);
 		      }
                       #else
                       if (r->data)
@@ -277,14 +312,14 @@ void ConstructList(void)
                         if (!contact.name)
                         {
 			 wstrcpy(contact.name=AllocWS(150),(WSHDR *)(r->data));
-			 *((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
+			 *((int *)(&contact.next))|=CompareStrT9(contact.name,sws,0);
                         }
                         else
                         {
                          wsAppendChar(contact.name,',');
                          wsAppendChar(contact.name,' ');
                          wstrcat(contact.name,(WSHDR *)(r->data));
-                         *((int *)(&contact.next))|=CompareStrT9(contact.name,sws);
+                         *((int *)(&contact.next))|=CompareStrT9(contact.name,sws,0);
                         }
 		      }
                       #endif 
@@ -319,7 +354,7 @@ void ConstructList(void)
 			    if (c!=0x0F) wsAppendChar(ws,c+'0'); else break;
 			    j++;
 			  }
-			  *((int *)(&contact.next))|=CompareStrT9(ws,sws);
+			  *((int *)(&contact.next))|=CompareStrT9(ws,sws,0);
 			}
 		      }
 		      break;
@@ -438,6 +473,8 @@ void my_ed_redraw(void *data)
   int cp;
   CLIST *cl=(CLIST *)cltop;
   old_ed_redraw(data);
+  
+  WSHDR *prws=AllocWS(256);
 
   if (!cl) return;
 
@@ -447,7 +484,7 @@ void my_ed_redraw(void *data)
   {
     int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(FONT_MEDIUM)+1)*5-5;
 
-    DrawRoundedFrame(1,y,ScreenW()-2,ScreenH()-SoftkeyH()-2,0,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(7));
+    DrawRoundedFrame(1,y,ScreenW()-2,ScreenH()-SoftkeyH()-2,0,0,0,COLOR_MENU_BRD,COLOR_MENU_BK);
 
     if (i<0) cp=curpos; else cp=2;
     while(i>0)
@@ -463,7 +500,10 @@ void my_ed_redraw(void *data)
       if (!cl) break;
       if (i!=cp)
       {
-	DrawScrollString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(FONT_MEDIUM),1,FONT_MEDIUM,0x80,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+	wstrcpy(prws,cl->name);
+	if (e_ws) CompareStrT9(prws,(WSHDR *)e_ws,1);
+	DrawString(prws,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(FONT_MEDIUM),FONT_MEDIUM,0x80,COLOR_NOTSELECTED,GetPaletteAdrByColorIndex(23));
+	//DrawScrollString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(FONT_MEDIUM),1,FONT_MEDIUM,0x80,COLOR_NOTSELECTED,GetPaletteAdrByColorIndex(23));
       }
       else
       {
@@ -484,15 +524,16 @@ void my_ed_redraw(void *data)
 	    max_scroll_disp=i;
 	  }
 	}
-	DrawRoundedFrame(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-	DrawScrollString(cl->name,3,dy+4,ScreenW()-5-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-	DrawString(cl->icons,ScreenW()-4-icons_size,dy+4,ScreenW()-5,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,0x80,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+	DrawRoundedFrame(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0,0,0,COLOR_SELECTED_BRD,COLOR_SELECTED_BG);
+	DrawScrollString(cl->name,3,dy+4,ScreenW()-5-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
+	DrawString(cl->icons,ScreenW()-4-icons_size,dy+4,ScreenW()-5,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
       }
       cl=(CLIST *)cl->next;
       i++;
     }
     while(i<5);
   }
+  FreeWS(prws);
 }
 
 void ChangeRC(GUI *gui)
@@ -842,6 +883,28 @@ void DoSplices(GUI *gui)
   scroll_disp=0;
 }
 
+GBSTMR vibra_tmr;
+
+void vibra_tmr_proc(void)
+{
+  SetVibration(0);
+}
+
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
+
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
 #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
@@ -856,6 +919,20 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       FreeCLIST();
       DisableScroll();
     }
+  }
+  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  {
+    extern const char *successed_config_filename;
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"MegaDial config updated!");
+      InitConfig();
+    }
+  }
+  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2)&&(ENA_VIBRA))
+  {
+    SetVibration(vibraPower);
+    GBS_StartTimerProc(&vibra_tmr,TMR_SECOND,vibra_tmr_proc);
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
   if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху
@@ -884,6 +961,7 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 
 int main(void)
 {
+  InitConfig();
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
