@@ -1,33 +1,3 @@
-;ELFpack v2.2 (C)2007 by Rst7/CBSIE, BoBa
-;Release 06.04.2007
-;M75v25
-
-;чтобы успешно использовать эльфов необходимо и достаточно установить ELFpack
-
-;Инструкция: ставим ELFPack, льем на телефон эльфа, идем кардэксплорером до него тыкаемся и наслаждаемся...
-
-;Загрузка всех .elf-файлов из каталога 0:\ZBin\Daemons
-;Загрузка необходимых .elf файлов при выборе файла с произвольным расширением
-;Обрабатывается при помощи ExtD.elf - необходим в каталоге 0:\ZBin\Daemons
-;по файлу 0:\ZBin\etc\extension.cfg. Формат файла описан в etc\extension.cfg
-
-;Для упрощения формирования структуры каталогов разархивируйте в корень Data архив
-;Data.zip с сохранением путей.
-
-;Расширение таблицы регистрации расширений файлов
-
-;Расширение PIT при помощи .png файлов
-;Обрабатываются файлы из каталога 0:\ZBin\img\ с именами %d.png
-;для замены штатных картинок или из эльфов - указатель на строку
-;с именем файла вместо ID (аналогично ESI). Картинки кешируются для ускорения последующего доступа к ним. чтобы посмотреть,
-;какие картинки находятся в кеше, а какие нет, используйте утилиту PngExtStat (в каталоге utilities).
-;Замена штатных картинок прошивки производится записью оных в каталог 0:\ZBin\img и последующей перезагрузкой.
-
-;Загрузка библиотеки функций из файла 0:\ZBin\swi.blib
-;Файл должен иметь размер 16384 байт (16 КБ), при загрузке файла используемая библиотека будет пополнена  функциями из blib.
-;При отсутствии требуемой эльфами функции в библиотеке телефон выключается, в (S)Exit пишется номер отсутствующей функции.
-
-
 +0FD4000
 #pragma enable old_equal_ff
 0000: 0xA0002070   ; 000: __arm void loopback0();
@@ -51,7 +21,7 @@
 0040: 0xA07CB820   ; 010: __arm int mkdir(const char * cFileName, unsigned int *ErrorNumber);
 0044: 0xA0FCF201   ; 011: OpenReadCloseFile
 0048: 0xA07CB73C   ; 012: __arm int GetFileAttrib(const char *cFileName, unsigned char *cAttribute, unsigned int *ErrorNumber)
-004C: 0xA07CB8F0   ; 013: __arm int SetFileAttrib(const char *cFileName, unsigned char cAttribute, unsigned int *ErrorNumber)
+004C: 0xA07CB8B8   ; 013: __arm int SetFileAttrib(const char *cFileName, unsigned char cAttribute, unsigned int *ErrorNumber)
 0050: 0xA0203C24   ; 014: __arm void *malloc(unsigned int size)
 0054: 0xA0203C8C   ; 015: __arm void mfree(void *)
 0058: 0xA0EF1B55   ; 016: __thumb int sprintf(char *buf, char *str, ...)
@@ -111,7 +81,7 @@
 0130: 0xA0558375   ; 04C: __thumb GetMissedCallsCount
 0134: 0xA020AF00   ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr())
 0138: 0xA07C2C77   ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
-013C: 0xA07C2C87   ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+013C: 0xA07C2CE5   ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
 0140: 0xA07C2CEF   ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 0144: 0xA0B417B1   ; 051: GetNetAccessMode
 0148: 0xA081BF80   ; 052: GetIlluminationDataTable
@@ -120,7 +90,7 @@
 0154: 0xA03269A1   ; 055: SwitchVibraOnOff
 0158: 0xA0FCF421   ; 056: PlayVibra
 015C: 0xA020B00C   ; 057: IsCallAfterTimerStillRunning
-0160: 0xA0005D18   ; 058: ClearMemory
+0160: 0xA0219F1C   ; 058: ClearMemory
 0164: 0xA0EF2D20   ; 059: memcpy
 0168: 0xA07FF8F3   ; 05A: KeypressOn
 016C: 0xA07FFA21   ; 05B: KeypressOff
@@ -564,7 +534,14 @@
 0814: 0xA07F60D5 ; 205: __thumb void SetProp2Square_v1(void);
 0818: 0xA0EF2BFD ; 206: __thumb void srand(unsigned int seed);
 081C: 0xA089B3BF ; 207: __thumb DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
-
+0820: 0xA07FC5F5 ; 208: __thumb int Get_WS_width(WSHDR *ws, int font);
+0824: 0xA07BEC3B ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
+0828: 0xA08A1ADF ; 20A: __thumb void EDIT_SetDate(void *gui,int n,TDate *dd);
+082C: 0xA08A1AF3 ; 20B: __thumb void EDIT_SetTime(void *gui,int n,TTime *tt);
+0830: 0xA08A1B07 ; 20C: __thumb void EDIT_GetDate(void *gui,int n,TDate *dd);
+0834: 0xA08A1B1B ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt);
+0838: 0xA07BF689 ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
+083C: 0xA07BF56F ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
 #pragma disable old_equal_ff
 +0
 
