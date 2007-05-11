@@ -1647,7 +1647,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           break;
           
         case IPC_CHECK_MAILBOX:
-          switch (ipc->data==0)
+          switch ((int)(ipc->data))
           {
           case 0:
             if (!stat_gui_id)

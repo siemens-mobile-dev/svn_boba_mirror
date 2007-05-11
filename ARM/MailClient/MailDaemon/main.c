@@ -663,6 +663,12 @@ void create_connect(void)
   //Устанавливаем соединение
   pop_stat.connect_state=0;
   GBS_DelTimer(&reconnect_tmr);
+  if (!IsGPRSEnabled())
+  {
+    is_gprs_online=0;
+    snprintf(pop_stat.log,255,"Wait for GPRS up!");
+    return;
+  }
   DNR_ID=0;
   strcpy(ip_adr,POP3_ADRESS);
   end_ip=strrchr(ip_adr,':');
@@ -880,17 +886,17 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     {
     case LMAN_DISCONNECT_IND:
       is_gprs_online=0;
-      return(1);
+      goto L_OLD;
     case LMAN_CONNECT_CNF:
       is_gprs_online=1;
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
-      return(1);
+      goto L_OLD;
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
       {
 	if (DNR_TRIES) SUBPROC((void *)create_connect);
       }
-      return(1);
+      goto L_OLD;
     }
     if ((int)msg->data1==sock)
     {
@@ -973,6 +979,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
+L_OLD:
   csm_result = old_icsm_onMessage(data, msg);
   return(csm_result);
 }
