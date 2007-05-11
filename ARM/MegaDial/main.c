@@ -46,10 +46,21 @@ void patch_input(INPUTDIA_DESC* inp)
 #define LEVEL2_RN	(41)
 #else 
 #define MAX_RECORDS 1024
-#define LEVEL1_RN	(31)
+#define LEVEL1_RN	(0x20)
 #endif
 
 #define wslen(ARG) (ARG->wsbody[0])
+
+#ifdef NEWSGOLD
+#else 
+#define LAST_NAME 0x23
+#define FIRST_NAME 0x24
+#define PHONE_NUMBER 0x2D
+#define PHONE_OFFICE 0x2A
+#define PHONE_MOBILE 0x2C
+#define PHONE_FAX 0x2B
+#define PHONE_FAX2 0x5E
+#endif
 
 CSM_DESC icsmd;
 
@@ -76,15 +87,18 @@ typedef struct
 {
   void *next;
   WSHDR *name;
-  WSHDR *num[4];
+  WSHDR *num[5];
   WSHDR *icons;
 }CLIST;
 
 volatile CLIST *cltop; //Начало
 volatile CLIST *clbot; //Конец
 
-char dstr[4][40];
+char dstr[5][40];
 
+
+
+#ifdef NEWSGOLD
 int menu_icons[8];
 int utf_symbs[4];
 
@@ -98,10 +112,30 @@ int utf_symbs[4];
 void InitIcons(void)
 {
   menu_icons[0]=GetPicNByUnicodeSymbol(utf_symbs[0]=USR_WIRE); //12345
-  menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); //093
-  menu_icons[4]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE); //651
-  menu_icons[6]=GetPicNByUnicodeSymbol(utf_symbs[3]=WORK_MOBILE); //884
+  menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); //093
+  menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE); //651
+  menu_icons[3]=GetPicNByUnicodeSymbol(utf_symbs[3]=WORK_MOBILE); //884
 }
+
+#else
+int menu_icons[5];
+int utf_symbs[5];
+
+#define USR_WIRE 0xE100
+#define WORK_WIRE 0xE102
+#define USR_MOBILE 0xE101
+#define USR_FAX1 0xE103
+#define USR_FAX2 0xE104
+
+void InitIcons(void)
+{
+  menu_icons[0]=GetPicNByUnicodeSymbol(utf_symbs[0]=USR_WIRE); 
+  menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); 
+  menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE); 
+  menu_icons[3]=GetPicNByUnicodeSymbol(utf_symbs[3]=USR_FAX1);
+  menu_icons[4]=GetPicNByUnicodeSymbol(utf_symbs[4]=USR_FAX2);
+}
+#endif
 
 //Уничтожить список
 void FreeCLIST(void)
@@ -119,6 +153,7 @@ void FreeCLIST(void)
     FreeWS(cl->num[1]);
     FreeWS(cl->num[2]);
     FreeWS(cl->num[3]);
+    FreeWS(cl->num[4]);
     FreeWS(cl->icons);
     p=cl;
     cl=(CLIST*)(cl->next);
@@ -231,7 +266,7 @@ void ConstructList(void)
   } ABmain;
 #pragma pack()
 
-  int rec=0;
+  unsigned int rec=0;
   int fsz;
   int total=0;
   CLIST contact;
@@ -249,7 +284,7 @@ void ConstructList(void)
     zeromem(&ABmain,sizeof(ABmain));
     if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
     {
-      if (fread(fin,&ABmain,sizeof(ABmain),&ul)>=194)
+      if (fread(fin,&ABmain,sizeof(ABmain),&ul)==sizeof(ABmain))
       {
 	fclose(fin,&ul);
 	do
@@ -273,7 +308,7 @@ void ConstructList(void)
             #endif             
 	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
 	    {
-	      zeromem(&ur,sizeof(ur));
+	      zeromem(&ur,sizeof(AB_UNPRES));
               fsz=lseek(fin,0,S_END,&ul,&ul);
               lseek(fin,0,S_SET,&ul,&ul);
   	      fread(fin,buffer,fsz,&ul);
@@ -297,7 +332,7 @@ void ConstructList(void)
                     #ifdef NEWSGOLD
                     if (r->item_type==0x81)
                     #else
-                    if (r->item_type==0x23||r->item_type==0x24)
+                    if (r->item_type==LAST_NAME||r->item_type==FIRST_NAME)
                     #endif   
 		    {
                       #ifdef NEWSGOLD
@@ -330,29 +365,49 @@ void ConstructList(void)
 		      PKT_NUM *p=(PKT_NUM*)r->data;
 		      unsigned int n=r->item_type;
 		      int j;
-		      int c;
+		      unsigned int c;
 		      WSHDR *ws;
                       #ifdef NEWSGOLD
 		      n-=0x62;
+                      if (n<4)
                       #else
-                      n-=0x2A;
+                      switch(r->item_type)
+                      {
+                      case PHONE_NUMBER:
+                        n=0;    break;      
+                      case PHONE_OFFICE:
+                        n=1;    break;
+                      case PHONE_MOBILE:
+                        n=2;    break;
+                      case PHONE_FAX:
+                        n=3;    break;
+                      case PHONE_FAX2:
+                        n=4;    break;
+                      default:
+                        continue;
+                      }
                       #endif 
-		      if (n<4)
 		      {
 			if (p)
 			{
+                          unsigned int c1;
+                          int m;
 			  ws=contact.num[n]=AllocWS(50);
 			  //Добавляем иконки телефонов
 			  wsAppendChar(contact.icons,utf_symbs[n]);
 			  j=0;
+                          m=0;
 			  if (p->format==0x91) wsAppendChar(ws,'+');
 			  while(j<p->data_size)
 			  {
-			    c=(p->data[j])&0x0F;
-			    if (c!=0x0F) wsAppendChar(ws,c+'0'); else break;
-			    c=(p->data[j]>>4)&0x0F;
-			    if (c!=0x0F) wsAppendChar(ws,c+'0'); else break;
-			    j++;
+                            if (m&1) {c1=c>>4; j++;}
+                            else c1=(c=p->data[j])&0x0F;
+			    if (c1==0x0F) break;
+                            
+                            if (c1==0xA) wsAppendChar(ws,'*');
+                            else if (c1==0xB) wsAppendChar(ws,'#');
+                            else wsAppendChar(ws,c1+'0');
+			    m++;
 			  }
 			  *((int *)(&contact.next))|=CompareStrT9(ws,sws,0);
 			}
@@ -370,6 +425,7 @@ void ConstructList(void)
 		FreeWS(contact.num[1]);
 		FreeWS(contact.num[2]);
 		FreeWS(contact.num[3]);
+                FreeWS(contact.num[4]);
 		FreeWS(contact.icons);
 	      }
 	      FreeUnpackABentry(&ur,mfree_adr());
@@ -426,6 +482,7 @@ void ConstructList(void)
     FreeWS(contact.num[1]);
     FreeWS(contact.num[2]);
     FreeWS(contact.num[3]);
+    FreeWS(contact.num[4]);
     FreeWS(contact.icons);
   }
   LockSched();
@@ -589,7 +646,7 @@ int edsms_onkey(GUI *data, GUI_MSG *msg)
       ExtractEditControl(data,2,&ec);
       WSHDR *sw=AllocWS(ec.pWS->wsbody[0]);
       wstrcpy(sw,ec.pWS);
-      SendSMS(sw,snum,0x4209,MSG_SMS_RX-1,6);
+      SendSMS(sw,snum,MMI_CEPID,MSG_SMS_RX-1,6);
       return(1);
     }
   }
@@ -678,12 +735,17 @@ void goto_4(void)
   VoiceOrSMS(dstr[3]);
 }
 
-void *gotomenu_HNDLS[4]=
+void goto_5(void)
+{
+  VoiceOrSMS(dstr[4]);
+}
+void *gotomenu_HNDLS[5]=
 {
   (void *)goto_1,
   (void *)goto_2,
   (void *)goto_3,
-  (void *)goto_4
+  (void *)goto_4,
+  (void *)goto_5
 };
 
 int gotomenu_onkey(GUI *data, GUI_MSG *msg)
@@ -695,12 +757,18 @@ int gotomenu_onkey(GUI *data, GUI_MSG *msg)
   return(0);
 }
 
-const MENUITEM_DESC gotomenu_ITEMS[9]=
+void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
 {
-  {menu_icons+0,(int)dstr[0],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {menu_icons+2,(int)dstr[1],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {menu_icons+4,(int)dstr[2],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {menu_icons+6,(int)dstr[3],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  SetMenuItemIcon(data,curitem,curitem);
+}
+
+const MENUITEM_DESC gotomenu_ITEMS[5]=
+{
+  {menu_icons,(int)dstr[0],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons,(int)dstr[1],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons,(int)dstr[2],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons,(int)dstr[3],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {menu_icons,(int)dstr[4],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 const HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
@@ -710,11 +778,11 @@ MENU_DESC gotomenu_STRUCT=
   8,(void *)gotomenu_onkey,NULL,NULL,
   menusoftkeys,
   &menu_skt,
-  1,
-  NULL,
+  1|0x10,
+  (void *)gotomenu_itemhandler,
   gotomenu_ITEMS,
   gotomenu_HNDLS,
-  4
+  5
 };
 
 int my_ed_onkey(GUI *gui, GUI_MSG *msg)
@@ -739,7 +807,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   }
   if (key==GREEN_BUTTON||is_sms_need)
   {
-    int to_remove[5];
+    int to_remove[6];
     int remove=0;
     DisableScroll();
     if (!cl) goto L_OLDKEY;
@@ -761,14 +829,14 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
       }
       r++;
     }
-    while(r<4);
+    while(r<5);
     to_remove[0]=remove;
-    if (remove==3) //Только один номер
+    if (remove==4) //Только один номер
     {
       VoiceOrSMS(dstr[i]);
       return(1); //Закрыть нах
     }
-    if (remove==4) goto L_OLDKEY; //Нет вообще телефонов
+    if (remove==5) goto L_OLDKEY; //Нет вообще телефонов
     //Количество номеров больше 1, рисуем меню
     {
       HEADER_DESC *head=(HEADER_DESC *)&gotomenu_HDR;
@@ -777,7 +845,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
       head->rc.x2=ScreenW()-1;
       head->rc.y2=HeaderH()+YDISP;
     }
-    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,4,0,to_remove);
+    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,5,cl,to_remove);
     return(0);
   }
   if ((key==UP_BUTTON)||(key==DOWN_BUTTON))
@@ -929,7 +997,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       InitConfig();
     }
   }
+  #ifdef NEWSGOLD
   if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2)&&(ENA_VIBRA))
+  #else
+  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==0)&&(ENA_VIBRA))
+  #endif   
   {
     SetVibration(vibraPower);
     GBS_StartTimerProc(&vibra_tmr,TMR_SECOND,vibra_tmr_proc);
