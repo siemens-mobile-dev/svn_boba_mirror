@@ -1207,7 +1207,7 @@ char mypic[128];
      Roster_getIconByStatus(mypic,50); //иконка сообщения
   else
     Roster_getIconByStatus(mypic, My_Presence);
-          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);
+          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth((int)mypic)-1,IDLE_ICON_Y+GetImgHeight((int)mypic)-1,1);
 	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,(int)mypic);
 #else
           int mypic=0;
@@ -1215,7 +1215,7 @@ char mypic[128];
             mypic=Roster_getIconByStatus(50); //иконка сообщения
           else
             mypic=Roster_getIconByStatus(My_Presence);
-          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,15,64,1);
+          DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
 	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
 #endif
 	}
