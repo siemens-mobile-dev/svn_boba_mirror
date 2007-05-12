@@ -169,7 +169,7 @@ void inp_ghook(GUI *gui, int cmd)
    SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);
    REDRAW();
    }
-   else ShowDialog_Error(1,(int)"Нельзя послать пустое сообщение");
+   else MsgBoxError(1,(int)"Нельзя послать пустое сообщение");
    Terminate = 0;
  }
 

@@ -727,7 +727,7 @@ void Process_Decoded_XML(XMLNode* node)
       REDRAW();
       Jabber_state = JS_ERROR;
       char err[]="Ошибка XML-потока";
-      ShowDialog_Error(1,(int)err);
+      MsgBoxError(1,(int)err);
       sprintf(logmsg, err);
     }
 //----------------
@@ -901,7 +901,7 @@ void QuitCallbackProc(int decision)
 
 void DisplayQuitQuery()
 {
-  ShowDialog_YesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);
+  MsgBoxYesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);
 }
 
 void Enter_SiepatchDB()

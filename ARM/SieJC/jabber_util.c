@@ -849,7 +849,7 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
   char* errcode = XML_Get_Attr_Value("code", error->attr);
 //  Jabber_state = JS_ERROR;
   if(errcode)sprintf(logmsg,"ERR:%s",errcode);
-  ShowDialog_Error(1,(int)logmsg);
+  MsgBoxError(1,(int)logmsg);
   if(!strcmp(id,auth_id))
   {
     Jabber_state = JS_AUTH_ERROR;
@@ -907,7 +907,7 @@ void Process_Presence_Change(XMLNode* node)
         // Хочу текст ошибки
         XMLNode* err_desc = XML_Get_Child_Node_By_Name(err_node,"text");
         if(err_desc->value)msg = err_desc->value;
-        ShowDialog_Error(1,(int)err_desc->value);
+        MsgBoxError(1,(int)err_desc->value);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, err_desc->value);
       }
       
@@ -1016,7 +1016,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
                     
           
         }
-        ShowDialog_Error(1,(int)r);
+        MsgBoxError(1,(int)r);
         CList_AddSystemMessage(Conference->JID,status, r);
         msg = r;
       }

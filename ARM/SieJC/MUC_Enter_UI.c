@@ -92,7 +92,7 @@ void med1_ghook(GUI *data, int cmd)
       param_ok = 1;
       if(conf_name[0]=='@')
       {
-        ShowDialog_Error(1,(int)"Имя конфы не заполнено!");
+        MsgBoxError(1,(int)"Имя конфы не заполнено!");
         param_ok=0;
       }
    }

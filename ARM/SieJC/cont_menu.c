@@ -137,7 +137,7 @@ if(msg->keys==0x18 || msg->keys==0x3D)
 
   default:
     {
-      ShowDialog_Error(1,(int)"Действие неизвестно или не поддерживается");
+      MsgBoxError(1,(int)"Действие неизвестно или не поддерживается");
     }
   }
   return 1;
@@ -306,6 +306,6 @@ void Disp_Contact_Menu()
   }
   else
   {
-    ShowDialog_Error(1,(int)"Нет поддерживаемых действий");
+    MsgBoxError(1,(int)"Нет поддерживаемых действий");
   }
 }
