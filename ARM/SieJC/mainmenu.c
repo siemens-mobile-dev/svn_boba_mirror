@@ -34,7 +34,7 @@ extern char My_Presence;
 
 void AboutDlg()
 {
-  ShowMSG(1,(int)"Siemens natJabber Client\n(c)Kibab, Ad");  
+  ShowMSG(0,(int)"Siemens natJabber Client\n(c)Kibab, Ad, Borman99");  
 };
 
 
