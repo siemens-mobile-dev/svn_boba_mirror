@@ -97,11 +97,10 @@ volatile CLIST *clbot; //Конец
 char dstr[5][40];
 
 
+int menu_icons[5];
+int utf_symbs[5];
 
 #ifdef NEWSGOLD
-int menu_icons[8];
-int utf_symbs[4];
-
 #define USR_WIRE 0xE106
 #define USR_MOBILE 0xE107
 #define WORK_WIRE 0xE108
@@ -118,9 +117,6 @@ void InitIcons(void)
 }
 
 #else
-int menu_icons[5];
-int utf_symbs[5];
-
 #define USR_WIRE 0xE100
 #define WORK_WIRE 0xE102
 #define USR_MOBILE 0xE101
@@ -289,7 +285,11 @@ void ConstructList(void)
 	fclose(fin,&ul);
 	do
 	{
+          #ifdef NEWSGOLD
 	  if (ABmain.bitmap[rec>>3]&(0x80>>(rec&7)))
+          #else
+          if (ABmain.bitmap[rec>>3]&(1<<(rec&7)))
+          #endif   
 	  {
 
             #ifdef NEWSGOLD
@@ -632,13 +632,14 @@ const SOFTKEYSTAB menu_skt=
 
 int is_sms_need=0;
 WSHDR *ews;
-const char *snum;
+
 
 void edsms_locret(void){}
 
 int edsms_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
+  const char *snum=EDIT_GetUserPointer(data);
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     if (msg->gbsmsg->submess==GREEN_BUTTON)
@@ -692,14 +693,17 @@ void VoiceOrSMS(const char *num)
 {
   if (!is_sms_need)
   {
+    #ifdef NEWSGOLD
     MakeVoiceCall(num,0x10,0x20C0);
+    #else
+    MakeVoiceCall(num,0x10,0x2FFF);
+    #endif
   }
   else
   {
     void *ma=malloc_adr();
     void *eq;
     EDITCONTROL ec;
-    snum=num;
     PrepareEditControl(&ec);
     eq=AllocEQueue(ma,mfree_adr());
     wsprintf(ews,"SMS to %s:",num);
@@ -711,79 +715,89 @@ void VoiceOrSMS(const char *num)
     AddEditControlToEditQend(eq,&ec,ma);
     patch_header(&edsms_hdr);
     patch_input(&edsms_desc);
-    CreateInputTextDialog(&edsms_desc,&edsms_hdr,eq,1,0);
+    CreateInputTextDialog(&edsms_desc,&edsms_hdr,eq,1,(void *)num);
   }
 }
 
-void goto_1(void)
+typedef struct
 {
-  VoiceOrSMS(dstr[0]);
-}
+  void *next;
+  int index;
+}NUMLIST;
 
-void goto_2(void)
+#pragma inline
+void FreeNumList(NUMLIST *top)
 {
-  VoiceOrSMS(dstr[1]);
+  while(top)
+  {
+    NUMLIST *nl=top;
+    top=top->next;
+    mfree(nl);
+  }  
 }
-
-void goto_3(void)
-{
-  VoiceOrSMS(dstr[2]);
-}
-
-void goto_4(void)
-{
-  VoiceOrSMS(dstr[3]);
-}
-
-void goto_5(void)
-{
-  VoiceOrSMS(dstr[4]);
-}
-void *gotomenu_HNDLS[5]=
-{
-  (void *)goto_1,
-  (void *)goto_2,
-  (void *)goto_3,
-  (void *)goto_4,
-  (void *)goto_5
-};
 
 int gotomenu_onkey(GUI *data, GUI_MSG *msg)
 {
+  int i;
+  NUMLIST *nltop=MenuGetUserPointer(data);
   if ((msg->gbsmsg->msg==KEY_DOWN)&&(msg->gbsmsg->submess==GREEN_BUTTON))
   {
     msg->keys=0x18;
   }
+  if (msg->keys==0x18 || msg->keys==0x3D)
+  {
+    i=GetCurMenuItem(data);
+    for(int d=0; d!=i && nltop; d++) nltop=nltop->next;
+    if (nltop)
+    {
+      VoiceOrSMS(dstr[nltop->index]);
+      return (0);
+    }
+  }
   return(0);
 }
 
+void gotomenu_ghook(GUI *data, int cmd)
+{
+  NUMLIST *nltop=MenuGetUserPointer(data);
+  if(cmd==3)
+  {
+    FreeNumList(nltop);
+  }
+}
+    
+
 void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
 {
-  SetMenuItemIcon(data,curitem,curitem);
+  WSHDR *ws;
+  NUMLIST *nltop=user_pointer;
+  void *item=AllocMenuItem(data);
+  for(int d=0; d!=curitem && nltop; d++) nltop=nltop->next;
+  if (nltop)
+  {
+    ws=AllocMenuWS(data,strlen(dstr[nltop->index]));
+    str_2ws(ws,dstr[nltop->index],39);
+    SetMenuItemIconArray(data, item, menu_icons);
+    SetMenuItemText(data, item, ws, curitem);
+    SetMenuItemIcon(data,curitem,nltop->index);
+  }
 }
-
-const MENUITEM_DESC gotomenu_ITEMS[5]=
-{
-  {menu_icons,(int)dstr[0],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {menu_icons,(int)dstr[1],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {menu_icons,(int)dstr[2],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {menu_icons,(int)dstr[3],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {menu_icons,(int)dstr[4],LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-};
 
 const HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
 
 MENU_DESC gotomenu_STRUCT=
 {
-  8,(void *)gotomenu_onkey,NULL,NULL,
+  8,(void *)gotomenu_onkey,(void *)gotomenu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   1|0x10,
   (void *)gotomenu_itemhandler,
-  gotomenu_ITEMS,
-  gotomenu_HNDLS,
-  5
+  NULL,
+  NULL,
+  0
 };
+
+
 
 int my_ed_onkey(GUI *gui, GUI_MSG *msg)
 {
@@ -791,8 +805,11 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   int m=msg->gbsmsg->msg;
   int r;
   int i=0;
-
+  int n=0;
+  
+  NUMLIST *nltop=0, *nlbot;
   CLIST *cl=(CLIST *)cltop;
+  nlbot=(NUMLIST *)&nltop;
   
   is_sms_need=0;
   if ((key==RIGHT_BUTTON)&&(m==KEY_DOWN))
@@ -807,8 +824,6 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   }
   if (key==GREEN_BUTTON||is_sms_need)
   {
-    int to_remove[6];
-    int remove=0;
     DisableScroll();
     if (!cl) goto L_OLDKEY;
     while(i!=curpos)
@@ -818,34 +833,30 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
       if (!cl) goto L_OLDKEY;
     }
     //Теперь cl указывает на вход
-    i=0;
     r=0;
     do
     {
-      if (cl->num[r]) {ws_2str(cl->num[r],dstr[r],39);i=r;}
-      else
+      if (cl->num[r])
       {
-	to_remove[++remove]=r;
+        nlbot=nlbot->next=malloc(sizeof(NUMLIST));
+        nlbot->next=0;
+        nlbot->index=r;
+        ws_2str(cl->num[r],dstr[r],39);
+        n++;
       }
       r++;
     }
     while(r<5);
-    to_remove[0]=remove;
-    if (remove==4) //Только один номер
+    if (n==1) //Только один номер
     {
-      VoiceOrSMS(dstr[i]);
+      VoiceOrSMS(dstr[nltop->index]);
+      FreeNumList(nltop);
       return(1); //Закрыть нах
     }
-    if (remove==5) goto L_OLDKEY; //Нет вообще телефонов
+    if (n==0) goto L_OLDKEY; //Нет вообще телефонов
     //Количество номеров больше 1, рисуем меню
-    {
-      HEADER_DESC *head=(HEADER_DESC *)&gotomenu_HDR;
-      head->rc.x=0;
-      head->rc.y=YDISP;
-      head->rc.x2=ScreenW()-1;
-      head->rc.y2=HeaderH()+YDISP;
-    }
-    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,5,cl,to_remove);
+    patch_header((HEADER_DESC *)&gotomenu_HDR);
+    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,n,nltop,0);
     return(0);
   }
   if ((key==UP_BUTTON)||(key==DOWN_BUTTON))
