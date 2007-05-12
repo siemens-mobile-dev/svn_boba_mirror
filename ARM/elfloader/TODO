@@ -9,3 +9,8 @@ version 2.3 TODO:
 2.2. Дополнительная очередь (read-only) из элементов {void *next;int pic_n;IMG_HDR *imgh;}
 ...
 X.Y.Z. Тут может быть ваше пожелание
+
+0xFF.0xFF.1. открытие TXT и unknown файлов разными обработчиками  
+
+
+
