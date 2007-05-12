@@ -567,7 +567,16 @@
 0818: 0xA154A495   ; 206: __thumb void srand(unsigned int seed);
 081C: 0xA1167EE7   ; 207: __thumb void DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
 
+0820: 0xA114D177 ; 208: __thumb int Get_WS_width(WSHDR *ws, int font);
+0824: 0xA1137E99 ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
 
+0828: 0xA116E5C9   ; 20A: __thumb void EDIT_SetDate(void *gui,int n,TDate *dd);
+082C: 0xA116E5DD   ; 20B: __thumb void EDIT_SetTime(void *gui,int n,TTime *tt);
+0830: 0xA116E5F1   ; 20C: __thumb void EDIT_GetDate(void *gui,int n,TDate *dd);
+0834: 0xA116E605   ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt);
+
+0838: 0xA1138709 ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
+083C: 0xA11385EF ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
