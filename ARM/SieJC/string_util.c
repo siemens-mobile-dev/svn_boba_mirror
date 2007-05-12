@@ -16,7 +16,7 @@ REPL_ARRAY Repl_chars[] = {"&apos;\0",0x27,
                            "&quot;\0",'"',
                            "&lt;\0\0\0", '<',
                            "&gt;\0\0\0", '>',
-                           "&amp;\0\0", '&',                   
+                           "&amp;\0\0", '&',
 };
 
 /*
@@ -46,6 +46,13 @@ char GetSpecialSym(char *mask_begin, int *out_ofs)
   return *(mask_begin);       //  ћасок не нашлось, возвращаем как есть
 }
 
+int GetSpecialSymMaskN(char sym)
+{
+  for(int i=0; i<Repl_chars_count; i++)
+    if(Repl_chars[i].replace==sym)
+      return i;
+  return -1;
+}
 
 char *Replace_Special_Syms(char *unrep_str)
 {
@@ -65,6 +72,35 @@ char *Replace_Special_Syms(char *unrep_str)
   return rep_buffer;
 }
 
+char *Mask_Special_Syms(char *unrep_str)
+{
+  unsigned int unrep_len = strlen(unrep_str);
+  unsigned int rep_buffer_size = unrep_len*2+1;
+  char *rep_buffer = malloc(rep_buffer_size);
+  unsigned int c_pos = 0;
+  for(int i=0; i<unrep_len; i++)
+  {
+    int n=GetSpecialSymMaskN(unrep_str[i]);
+    if(n!=-1)
+    {
+      strcpy(rep_buffer+c_pos, Repl_chars[n].mask);
+      c_pos += strlen(Repl_chars[n].mask);
+    }
+    else
+    {
+      rep_buffer[c_pos++] = unrep_str[i];
+    }
+    if (c_pos+10>rep_buffer_size)
+    {
+      rep_buffer_size *= 2;
+      rep_buffer = realloc(rep_buffer, rep_buffer_size);
+    }
+  }
+  rep_buffer[c_pos] = '\0';
+  rep_buffer = realloc(rep_buffer, c_pos+1);
+  return rep_buffer;
+}
+
 /* ¬ернуть значение параметра по имени параметра из строки вида:
  nonce="2444323444",qop="auth",charset=utf-8,algorithm=md5-sess
 
@@ -72,7 +108,7 @@ IN: ch - строка
     req - им€ требуемого параметра
     cut_quotes - обрезать ли кавычки, если параметр в кавычках
 OUT: »скомое значение; нужно освободить пам€ть!
-*/ 
+*/
 char *Get_Param_Value(char *ch, char *req, char cut_quotes)
 {
 //  char ch[]="nonce=\"2444323444\",qop=\"auth\",charset=utf-8,algorithm=md5-sess";
@@ -89,7 +125,7 @@ char *Get_Param_Value(char *ch, char *req, char cut_quotes)
   {
     len=zpt-eq-2;
     val=malloc(len+1);
-    for(int i=0;i<len;i++) val[i]=*(eq+i+1);    
+    for(int i=0;i<len;i++) val[i]=*(eq+i+1);
   }
   else
   {
@@ -111,7 +147,7 @@ IN:
   - size: сколько длина буфера дл€ преобразовани€ (UTF8_str)
   - fact - куда положить итоговый размер данных в буфере
 
-OUT:  результирующий буфер. 
+OUT:  результирующий буфер.
 */
 void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact)
 {
@@ -146,13 +182,13 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
 
         if (chr2<0x80)
         {
-          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");          
+          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");
           mfree(tmp_out);
           return NULL;
         }
 	
 	if (chr<0xe0) {
-	    // cx, dx 
+	    // cx, dx
 	    char test1 = (chr & 0x1f)<<6;
             char test2 = chr2 & 0x3f;
             *(tmp_out+lastchar)= test1 | test2 + 127 + 0x31;
@@ -161,15 +197,15 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
             goto L_END_CYCLE;
 	}
 	if (chr<0xf0) {
-	    // cx, dx 
+	    // cx, dx
 	    chr3= *(UTF8_str+i+2);
 
 	    if (chr3<0x80)
             {
-              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");          
+              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");
               mfree(tmp_out);
               return NULL;
-            }              
+            }
 	    else
             {
               *(tmp_out+lastchar) =  ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
@@ -211,9 +247,9 @@ char *stristr(char *haystack, char *needle)
 {
   if(!haystack || !needle)return NULL;
   char *i_haystack = malloc(strlen(haystack)+1);
-  char *i_needle = malloc(strlen(needle)+1);  
+  char *i_needle = malloc(strlen(needle)+1);
   strcpy(i_haystack, haystack);
-  strcpy(i_needle, needle);  
+  strcpy(i_needle, needle);
   str2lower(i_haystack);
   str2lower(i_needle);
   // —равниваем уже строки в нижнем регистре и считаем смещение
@@ -222,7 +258,7 @@ char *stristr(char *haystack, char *needle)
   mfree(i_needle);
   if(!q)  // «начит, нет подстроки
   {
-    return NULL; 
+    return NULL;
   }
   int delta = q - i_haystack;
   return haystack + delta;  // ≈сть подстрока, очевидно, по тому же смещению
@@ -233,9 +269,9 @@ int stricmp(char *str1, char *str2)
 {
   if(!str1 || !str2)return NULL;
   char *i_str1 = malloc(strlen(str1)+1);
-  char *i_str2 = malloc(strlen(str2)+1);  
+  char *i_str2 = malloc(strlen(str2)+1);
   strcpy(i_str1, str1);
-  strcpy(i_str2, str2);  
+  strcpy(i_str2, str2);
   str2lower(i_str1);
   str2lower(i_str2);
   // —равниваем уже строки в нижнем регистре
@@ -292,13 +328,13 @@ char* convUTF8_to_ANSI_STR(char *UTF8_str)
 
         if (chr2<0x80)
         {
-          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");          
+          ShowMSG(1,(int)"Bad UTF-8 Encoding encountered (chr2<0x80)");
           mfree(tmp_out);
           return NULL;
         }
 	
 	if (chr<0xe0) {
-	    // cx, dx 
+	    // cx, dx
 	    char test1 = (chr & 0x1f)<<6;
             char test2 = chr2 & 0x3f;
             *(tmp_out+lastchar)= test1 | test2 + 127 + 0x31;
@@ -307,15 +343,15 @@ char* convUTF8_to_ANSI_STR(char *UTF8_str)
             goto L_END_CYCLE;
 	}
 	if (chr<0xf0) {
-	    // cx, dx 
+	    // cx, dx
 	    chr3= *(UTF8_str+i+2);
 
 	    if (chr3<0x80)
             {
-              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");          
+              ShowMSG(1,(int)"Bad UTF-8 Encoding encountered");
               mfree(tmp_out);
               return NULL;
-            }              
+            }
 	    else
             {
               *(tmp_out+lastchar) =  ((chr & 0x0f)<<12) | ((chr2 &0x3f) <<6) | (chr3 &0x3f);
@@ -461,7 +497,7 @@ char *utf16_to_utf8(char **s, size_t *len)
     if (be == -1) return NULL; /* not UTF-16*/
 
     u = malloc(max); zeromem(u, max);
-    //    for (sl = 2; sl < *len - 1; sl += 2) {      // ¬торой фикс: у нас строка на 2 байта больше 
+    //    for (sl = 2; sl < *len - 1; sl += 2) {      // ¬торой фикс: у нас строка на 2 байта больше
         for (sl = 2; sl <= *len ; sl += 2) {
       c = (be) ? ((long)(*s)[sl] << 8) | (*s)[sl + 1] : /* big-endian*/
 	((long)(*s)[sl + 1] << 8) | (*s)[sl];  /* little-endian*/
@@ -503,7 +539,7 @@ char* Correct_UTF8_String(char* utf8_str)
     if(character!=0x1F)
     {
       utf8_str[j]=character;
-      j++;      
+      j++;
     }
     i++;
     character = *(utf8_str+i);

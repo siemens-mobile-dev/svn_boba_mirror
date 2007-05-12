@@ -60,8 +60,8 @@ typedef struct
 
 typedef enum
 {
-  JS_NOT_CONNECTED, 
-  JS_CONNECTED_STATE, 
+  JS_NOT_CONNECTED,
+  JS_CONNECTED_STATE,
   JS_ZLIB_INIT_ACK,           // Ожидание подтверждения юзания ZLib
   JS_ZLIB_STREAM_INIT_ACK,    // Ожидание ответного ZLib-потока
   JS_SASL_NEGOTIATION,        // Обмен приветствиями SASL
@@ -70,8 +70,8 @@ typedef enum
   JS_SASL_NEW_STREAM_ACK,     // Ожидание инициализации нового потока
   JS_SASL_RESBIND_ACK,        // Ожидание привязки ресурса
   JS_SASL_SESS_INIT_ACK,      // Ожидание инициализации сессии
-  JS_AUTH_OK, 
-  JS_AUTH_ERROR, 
+  JS_AUTH_OK,
+  JS_AUTH_ERROR,
   JS_ONLINE,
   JS_ERROR
 } JABBER_STATE;
@@ -86,17 +86,17 @@ typedef enum
   MSG_GCHAT,   // конференция
   MSG_SYSTEM,  // всякого рода сервисные сообщения
   MSG_STATUS,   // Статусные сообщения
-  MSG_SUBJECT   // Тема конференции 
+  MSG_SUBJECT   // Тема конференции
 } MESS_TYPE;
 
 
 // Типы узлов в списке контактов
 typedef enum
-{   
+{
   T_NORMAL,       // Обычный (просто ресурс)
   T_VIRTUAL,      // Создаётся при создании контакта, для удаления
   T_CONF_ROOT,    // Корень конференции (место доставки публичных сообщений)
-  T_CONF_NODE     // Участник конференции (отображаем только "ресурс" жида) 
+  T_CONF_NODE     // Участник конференции (отображаем только "ресурс" жида)
 }RES_TYPE;
 
 typedef struct
@@ -104,7 +104,7 @@ typedef struct
   MESS_TYPE mtype;
   char *muc_author;// Имеет смысл использовать только в конференциях
   char *mess;
-  void *next; 
+  void *next;
 }LOG_MESSAGE;
 
 typedef struct
@@ -135,7 +135,7 @@ typedef struct
   char* name;
   JABBER_SUBSCRIPTION subscription;
   char wants_subscription;
-  char group;     // >128 -> конференции 
+  char group;     // >128 -> конференции
   void *next;
 } CLIST;
 
@@ -155,7 +155,7 @@ typedef struct
   char* message;
 }PRESENCE_INFO;
 
-typedef struct 
+typedef struct
 {
   char r;
   char g;

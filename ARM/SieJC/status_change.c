@@ -36,7 +36,7 @@ int StatChange_Menu_ID;
 void Change_Status(char status)
 {
     //CurrentStatus = status;
-    GeneralFunc_flag1(StatChange_Menu_ID,1);    
+    GeneralFunc_flag1(StatChange_Menu_ID,1);
 }
 
 #define STATUSES_NUM 6
@@ -50,7 +50,7 @@ MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
   {NULL,(int)"Онлайн",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Готов болтать",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Отсутствую",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},  
+  {NULL,(int)"Отсутствую",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Недоступен",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Занят",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -61,7 +61,7 @@ void *st_menuprocs[STATUSES_NUM]={
                                   (void *)dummy,
                                   (void *)dummy,
                                   (void *)dummy,
-                                  (void *)dummy,                                  
+                                  (void *)dummy,
                                   (void *)dummy,
                                   (void *)dummy
                                  };
@@ -98,29 +98,29 @@ void ed1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
   static SOFTKEY_DESC stchsk={0x0018, 0x0000,(int)"OK"};
-  
+
   if (cmd==7)
   {
     //OnRun
-#ifdef NEWSGOLD    
+#ifdef NEWSGOLD
     SetSoftKey(data,&stchsk,0);
 #else
     SetSoftKey(data,&stchsk,2);
-#endif     
+#endif
   }
-  
+
   if(cmd==0x0A)   // Фокусирование
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
-  
+
   if(sTerminate)  // cmd==9 - нажатие на левую софт-кнопку "ОК"
  {
 //     char q[10];
 //     sprintf(q,"N=%d",cmd);
-//     ShowMSG(1,(int)q); 
+//     ShowMSG(1,(int)q);
    sTerminate=0;
-   ExtractEditControl(data,2,&ec);    
+   ExtractEditControl(data,2,&ec);
    wstrcpy(ews,ec.pWS);
 /*
    size_t xz = wstrlen(ews)*2;
@@ -141,7 +141,7 @@ void ed1_ghook(GUI *data, int cmd)
        body = realloc(body, res_len+1);
        body[res_len]='\0';
      }else body = NULL;
-     
+
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
     extern long  strtol (const char *nptr,char **endptr,int base);
     ExtractEditControl(data,4,&ec);    // = priority
@@ -150,10 +150,11 @@ void ed1_ghook(GUI *data, int cmd)
     ws_2str(ews,ss,15);
     pr_info->priority = strtol (ss,0,10);
     pr_info->status=Selected_Status;
-    pr_info->message=body;  
+    pr_info->message=Mask_Special_Syms(body);
+    mfree(body);
     SUBPROC((void*)Send_Presence,pr_info);
    }
-  
+
   if(cmd==0x03)     // onDestroy
   {
     FreeWS(ews);
@@ -198,26 +199,26 @@ void Disp_AddSettings_Dialog()
   void *eq;
   EDITCONTROL ec;
   ews=AllocWS(256);
-  
+
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  
+
   wsprintf(ews,percent_t,"Введите текст статуса:");
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
   wsprintf(ews,"");
   ConstructEditControl(&ec,3,0x40,ews,256);
-  AddEditControlToEditQend(eq,&ec,ma);  
+  AddEditControlToEditQend(eq,&ec,ma);
 
   wsprintf(ews,percent_t,"Приоритет:");
   ConstructEditControl(&ec,1,0x40,ews,256);
-  AddEditControlToEditQend(eq,&ec,ma);  
+  AddEditControlToEditQend(eq,&ec,ma);
 
   wsprintf(ews,"0");
   ConstructEditControl(&ec,5,0x40,ews,2);
   AddEditControlToEditQend(eq,&ec,ma);
-  
+
   patch_input(&ed1_desc);
   patch_header(&ed1_hdr);
   CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
@@ -226,7 +227,7 @@ void Disp_AddSettings_Dialog()
 int menu_onKey(void *data, GUI_MSG *msg)
 {
   if (msg->keys==0x3D)
-  {    
+  {
     int i=GetCurMenuItem(data);
     Selected_Status=i;
     Disp_AddSettings_Dialog();
@@ -252,12 +253,12 @@ void DispStatusChangeMenu()
 {
   /*
   st_menuitems[0].icon = S_ICONS+IS_ONLINE;
-  st_menuitems[1].icon = S_ICONS+IS_AWAY;  
-  st_menuitems[2].icon = S_ICONS+IS_NA;  
-  st_menuitems[3].icon = S_ICONS+IS_DND;  
-  st_menuitems[4].icon = S_ICONS+IS_OCCUPIED;  
-  st_menuitems[5].icon = S_ICONS+IS_FFC;  
-  st_menuitems[6].icon = S_ICONS+IS_INVISIBLE;    
+  st_menuitems[1].icon = S_ICONS+IS_AWAY;
+  st_menuitems[2].icon = S_ICONS+IS_NA;
+  st_menuitems[3].icon = S_ICONS+IS_DND;
+  st_menuitems[4].icon = S_ICONS+IS_OCCUPIED;
+  st_menuitems[5].icon = S_ICONS+IS_FFC;
+  st_menuitems[6].icon = S_ICONS+IS_INVISIBLE;
   st_menuhdr.icon=S_ICONS+CurrentStatus;
 */
   patch_header(&st_menuhdr);

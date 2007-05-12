@@ -164,7 +164,8 @@ void inp_ghook(GUI *gui, int cmd)
    }
    IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
    mess->IsGroupChat = is_gchat;
-   mess->body = body;
+   mess->body = Mask_Special_Syms(body);
+   mfree(body);
    SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);
    REDRAW();
    }
