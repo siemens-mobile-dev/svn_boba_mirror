@@ -63,7 +63,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "1.4.5-Z";
+const char VERSION_VERS[] = "1.5-DEV-RECVPIPE-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -353,7 +353,131 @@ int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomp
 }
 
 
+#define NEW_RECV_PIPE
 
+
+#ifdef NEW_RECV_PIPE
+
+//Context:HELPER
+char *Rstream_p; //Указатель на собираемый пакет
+int Rstream_n; //Количество байт
+
+void get_answer(void)
+{
+  char rb[1024];
+  int i=recv(sock,rb,sizeof(rb),0);
+  int j;
+  int err;
+  char *p;
+  int c;
+  if (i<0)
+  {
+    end_socket();
+    return;
+  }
+  if (i==0) return;
+  if (Is_Compression_Enabled)
+  {
+    
+    
+  if(!ZLib_Stream_Init)
+  {
+    ZLib_Stream_Init=1;
+    d_stream.zalloc = (alloc_func)zcalloc;
+    d_stream.zfree = (free_func)zcfree;
+    d_stream.opaque = (voidpf)0;
+    err = inflateInit2(&d_stream,MAX_WBITS/*-MAX_WBITS*/);
+    if(err!=Z_OK)
+    {
+      tx_str("ZLib init error");
+      return;
+    }
+  }
+    
+    tx_str("\r\nDecompressing...\r\n");
+    //Используем ZLib для переноса данных в собираемый пакет
+    d_stream.next_in  = (Byte*)rb;
+    d_stream.avail_in = (uInt)i;
+    do
+    {
+      d_stream.next_out = (Byte*)((Rstream_p=realloc(Rstream_p,Rstream_n+i+1))+Rstream_n); //Новый размер собираемого пакета
+      d_stream.avail_out = (uInt)i;
+      err = inflate(&d_stream, /*Z_NO_FLUSH*/Z_SYNC_FLUSH);
+      switch (err)
+      {
+      case Z_NEED_DICT:
+	//ret = Z_DATA_ERROR;     /* and fall through */
+      case Z_DATA_ERROR:
+      case Z_MEM_ERROR:
+	//(void)inflateEnd(&strm);
+        tx_str("ZLib error!");
+	end_socket();
+	return;
+      }
+      Rstream_n+=(i-d_stream.avail_out);
+      tx_str("Decompress OK\r\n");
+    }
+    while(d_stream.avail_out==0);
+    
+  }
+  else
+  {
+    memcpy((Rstream_p=realloc(Rstream_p,Rstream_n+i+1))+Rstream_n,rb,i);
+    Rstream_n+=i;
+  }
+  //Теперь считаем теги
+  Rstream_p[Rstream_n]=0; //Ограничим строку \0 для упрощения
+
+  i=0; //Баланс тегов
+  j=0; //Баланс скобок
+  p=Rstream_p;
+  while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих
+  p=Rstream_p;
+  while((p=strstr(p,"<stream:stream"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих
+  
+  p=Rstream_p;
+  int r = strlen(Rstream_p);
+  tx_str(Rstream_p);
+  char q[40];
+  sprintf(q,"LEN=%d\r\nTagsB: %d\r\nBrackB: %d\r\n",r,i,j);
+  tx_str(q);
+  
+  while((c=*p++))
+  {
+    if (c=='<')
+    {
+      j++;
+      if (*p!='/') i++; else i--;
+    }
+    
+    if(c=='>' && (char) *(p-2) == '/')
+    {
+      i--;
+      goto L_END;
+    }
+    
+    if (c=='>')
+    {
+    L_END:
+      j--;
+      if ((!i)&&(!j))
+      {
+	tx_str("\r\nSENT TO FUTHER PROCESS!!!\r\n");
+        //Сошелся баланс, отдаем на обработку
+	int bytecount=p-Rstream_p;
+	IPC_BUFFER* tmp_buffer=malloc(sizeof(IPC_BUFFER)); // Сама структура
+	memcpy(tmp_buffer->xml_buffer=malloc(bytecount),Rstream_p,tmp_buffer->buf_size=bytecount); // Буфер в структуре
+	memcpy(p=Rstream_p,Rstream_p+bytecount,(Rstream_n-=bytecount)+1); //Обработаные в начало и заодно \0
+	GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock); //Обработаем готовый блок
+      }
+    }
+  }
+  tx_str("After processing:\r\n");
+  sprintf(q,"TagsB: %d\r\nBrackB: %d\r\n",i,j);
+  tx_str(q);
+}
+
+#else
 void get_buf_part(char* inp_buffer, unsigned int req_len)
 {
   // Посчитаем, где в буфере находится текущая позиция обработанных данных
@@ -469,7 +593,7 @@ void get_answer(void)
   }
   mfree(buf);
 }
-
+#endif
 /*
 public void write(byte[] b, int off, int len) throws IOException {
 		if (bufferUse + len <= buf.length) {// buffer nam staci len ho
@@ -574,6 +698,9 @@ void bsend(int len, void *p)
 
 void SendAnswer(char *str)
 {
+  tx_str("\r\nSending:\r\n");
+  tx_str(str);
+  tx_str("\r\n");  
   unsigned int block_len= strlen(str);
   out_bytes_count += block_len;
   //#ifdef LOG_ALL
@@ -921,19 +1048,6 @@ void Enter_SiepatchDB()
   mfree(room_name);
 }
 
-void Dump_PhoneInfo()
-{
-  char *xz;
-  char out[100];
-  for(int i=0; i<0x0C;i++)
-  {
-    xz = Get_Phone_Info(i);
-    sprintf(out,"%02X: %s", i, xz);
-    Log("IDENT", out);
-  }
-}
-
-
 void Disp_State()
 {
   char q[40];
@@ -958,14 +1072,6 @@ void SGOLD_RedrawProc_Starter()
   SGOLD_RedrawProc();//GBS_StartTimerProc(&redraw_tmr, Redraw_Time, (void*)SGOLD_RedrawProc);
 }
 #endif
-
-//Context:HELPER
-void Test_bm()
-{
-  static char priv_id[]="SieJC_priv_req";
-  static char bm[]="<storage xmlns='storage:bookmarks'/>";
-  SendIq(NULL, IQTYPE_GET, priv_id, IQ_PRIVATE, bm);
-}
 
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
@@ -1054,7 +1160,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '7':
       {
-        SUBPROC((void*)Test_bm);
         break;
       }
 

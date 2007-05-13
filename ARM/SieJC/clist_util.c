@@ -4,6 +4,7 @@
 #include "clist_util.h"
 #include "jabber_util.h"
 #include "string_util.h"
+#include "groups_util.h"
 #include "roster_icons.h"
 #include "history.h"
 
@@ -734,13 +735,15 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
   ShowMSG(0, (int)ansi_msg);
   mfree(ansi_msg);
   
+  // Получаем и отображаем группу контакта
   CLIST* ClEx = CList_FindContactByJID(ResEx->full_name);
-#include "groups_util.h"
-  //tx_str(ResEx->full_name);
-  //tx_str(ClEx->jid);
-  char *ansi_gname = convUTF8_to_ANSI_STR(GetGroupNameByID(ClEx->group));
-  ShowMSG(0, (int)ansi_gname);
-  mfree(ansi_gname);
+  char *gr_name = GetGroupNameByID(ClEx->group);
+  if(gr_name)
+  {
+    char *ansi_gname = convUTF8_to_ANSI_STR(gr_name);
+    ShowMSG(0, (int)ansi_gname);
+    mfree(ansi_gname);
+  }
   
   if(ResEx->entry_type==T_CONF_NODE)
   {
