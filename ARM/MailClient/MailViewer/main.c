@@ -1512,10 +1512,13 @@ void CreateMailList(void)
 
 void Incoming(void)
 {
-  if (pop_stat->connect_state!=0)
+  if (pop_stat && daemon_present!=-1)
   {
-    ShowMSG(1,(int)"Can't do it now!");
-    return;
+    if (pop_stat->connect_state!=0)
+    {
+      ShowMSG(1,(int)"Can't do it now!");
+      return;
+    }
   }
   CreateMailList();
 }

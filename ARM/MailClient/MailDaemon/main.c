@@ -390,7 +390,6 @@ void end_connect(char *err)
 void process_line(char *rec_line)
 {
   unsigned int err;
-  char fname[128];
   switch(pop_stat.pop_state)
   {
   case POP_GREETING:
@@ -508,6 +507,7 @@ void process_line(char *rec_line)
     {
       if (!mes_rec)
       {
+        char fname[128];
         if (resp_ok(rec_line))
         {
           end_connect(rec_line);
@@ -663,6 +663,7 @@ void create_connect(void)
   //Устанавливаем соединение
   pop_stat.connect_state=0;
   GBS_DelTimer(&reconnect_tmr);
+  ClearSendQ();
   if (!IsGPRSEnabled())
   {
     is_gprs_online=0;
@@ -780,26 +781,30 @@ void end_socket(void)
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
 
-int numbercmp(const char *s1, const char *s2)
+int numbercmp(const char *num, const char *numlist)
 {
-  const char *s21=s2;
+  const char *num2=num;
   int i;
   int c,d;
   for (;;) 
   {
-    i=(c=*s1++)-(d=*s2++);
-    if (!i)
+    c=*num++;
+    d=*numlist++;
+    if(d==',') d=0;
+    i=c-d;
+    if (!i) 
     {
-      if (!c) break; else continue;
+      if (!c) break;
+      else continue;
     }
-    if (d==0 && c==',') return (0);
-    if (i)
-    {
-      if (c!=',') break; else s2=s21;
-    }
+    numlist=strchr(numlist,',');
+    if (!numlist) break;
+    numlist++;
+    num=num2;
   }
   return(i);
 }
+
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
