@@ -43,8 +43,7 @@ typedef struct
   int y_pos;
   int x2_pos;
   int y2_pos;
-  RECT *rc;
-  unsigned int* xy_pos;
+  void *rect_or_xy;
   int cstep;
 }RECT_GUI;
 
@@ -96,7 +95,8 @@ void method0_rect(RECT_GUI *data)
   
   if (data->is_rect_needed)
   {
-    DrawRoundedFrame(data->rc->x,data->rc->y,data->rc->x2,data->rc->y2,
+    RECT *rc=data->rect_or_xy;
+    DrawRoundedFrame(rc->x,rc->y,rc->x2,rc->y2,
                      0,0,0,colors[3],GetPaletteAdrByColorIndex(23)); // Предыдущий рект
     if (data->is_first_set)
     {
@@ -173,6 +173,7 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
        case ENTER_BUTTON:
          if (data->is_rect_needed)
          {
+           RECT *rc=data->rect_or_xy;
            if (!data->is_first_set)
            {
              data->x2_pos=data->x_pos;
@@ -181,17 +182,18 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
            }
            else
            {
-             data->rc->x=data->x2_pos;
-             data->rc->y=data->y2_pos;
-             data->rc->x2=data->x_pos;
-             data->rc->y2=data->y_pos;
+             rc->x=data->x2_pos;
+             rc->y=data->y2_pos;
+             rc->x2=data->x_pos;
+             rc->y2=data->y_pos;
              return (1);
            }
          }
          else
          {
-           data->xy_pos[0]=data->x_pos;
-           data->xy_pos[1]=data->y_pos;
+           unsigned int *xy_pos=data->rect_or_xy;
+           xy_pos[0]=data->x_pos;
+           xy_pos[1]=data->y_pos;
            return (1);
          }
        }
@@ -287,27 +289,25 @@ const void * const gui_methods_rect[11]={
 
 const RECT Canvas_1={0,0,0,0};
 
-void EditCoordinates(unsigned int *xy, int is_rect)
+void EditCoordinates(void *rect_or_xy, int is_rect)
 {
-  RECT *rc;
   RECT_GUI *rect_gui=malloc(sizeof(RECT_GUI));
   zeromem(rect_gui,sizeof(RECT_GUI));
+  rect_gui->rect_or_xy=rect_or_xy;
+  rect_gui->is_rect_needed=is_rect;
   if (!is_rect)
   {
-    rect_gui->xy_pos=xy;
+    unsigned int *xy=rect_or_xy;
     rect_gui->x_pos=xy[0];
-    rect_gui->y_pos=xy[1];
-    rect_gui->is_rect_needed=0;
+    rect_gui->y_pos=xy[1];   
   }
   else
   {
-    rc=(RECT *)xy;
-    rect_gui->rc=(RECT *)xy;
+    RECT *rc=rect_or_xy;
     rect_gui->x_pos=rc->x;
     rect_gui->y_pos=rc->y;
     rect_gui->x2_pos=rc->x2;
     rect_gui->y2_pos=rc->y2;
-    rect_gui->is_rect_needed=1;
   }
   patch_rect((RECT*)&Canvas_1,0,0,ScreenW()-1,ScreenH()-1);
   rect_gui->gui.canvas=(void *)(&Canvas_1);

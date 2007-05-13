@@ -3,7 +3,7 @@
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
-extern void EditCoordinates(unsigned int *xy, int is_rect);
+void EditCoordinates(void *rect_or_xy, int is_rect);
 extern void EditColors(char*color);
 #pragma inline
 void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
