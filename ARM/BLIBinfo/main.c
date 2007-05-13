@@ -1,9 +1,15 @@
 #include "..\inc\swilib.h"
 
+#ifdef NEWSGOLD
+#define DEFAULT_DISK "4"
+#else
+#define DEFAULT_DISK "0"
+#endif
+
 void Log(int dummy, char *txt)
 {
   unsigned int ul;
-  int f=fopen("4:\\BLIB.log",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
+  int f=fopen(DEFAULT_DISK":\\BLIB.log",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
   if (f!=-1)
   {
     fwrite(f,txt,strlen(txt),&ul);
@@ -166,10 +172,12 @@ const struct
   {
   maincsm_onmessage,
   maincsm_oncreate,
+#ifdef NEWSGOLD
   0,
   0,
   0,
   0,
+#endif
   maincsm_onclose,
   sizeof(MAIN_CSM),
   1,
