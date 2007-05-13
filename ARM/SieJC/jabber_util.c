@@ -14,21 +14,21 @@
 
 
 extern const char JABBER_SERVER[];
-extern const char USERNAME[];  
+extern const char USERNAME[];
 extern const char PASSWORD[];
 extern const char RESOURCE[];
 extern const char CMP_DATE[];
 extern const char VERSION_NAME[];
 extern const char VERSION_VERS[];
 extern const char OS[];
-extern const int USE_SASL; 
-extern const int USE_ZLIB; 
+extern const int USE_SASL;
+extern const int USE_ZLIB;
 extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
 
 MUC_ITEM*  muctop = NULL;
-BM_ITEM *BM_ROOT  = NULL; 
+BM_ITEM *BM_ROOT  = NULL;
 
 extern JABBER_STATE Jabber_state;
 const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "invisible", "unavailable", "error",
@@ -62,7 +62,7 @@ const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
 typedef struct
 {
   char *nonce;
-  char *cnonce; 
+  char *cnonce;
   char *qop;
   char *rsp_auth;
 }SASL_AUTH_DATA;
@@ -73,7 +73,7 @@ SASL_AUTH_DATA SASL_Auth_data = {NULL, NULL, NULL, NULL};
 void Destroy_SASL_Ctx()
 {
   if(SASL_Auth_data.nonce)mfree(SASL_Auth_data.nonce);
-  if(SASL_Auth_data.cnonce)mfree(SASL_Auth_data.cnonce);  
+  if(SASL_Auth_data.cnonce)mfree(SASL_Auth_data.cnonce);
   if(SASL_Auth_data.qop)mfree(SASL_Auth_data.qop);
   if(SASL_Auth_data.rsp_auth)mfree(SASL_Auth_data.rsp_auth);
 }
@@ -135,7 +135,7 @@ void Send_Welcome_Packet()
   }
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n"
     "<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en'>";
-  char* buf=malloc(256);  
+  char* buf=malloc(256);
   sprintf(buf,streamheader,JABBER_SERVER);
   SendAnswer(buf);
   mfree(buf);
@@ -144,14 +144,14 @@ void Send_Welcome_Packet()
   UnlockSched();
 #ifdef LOG_ALL
   Log("CONN",logmsg);
-#endif 
+#endif
 }
 
 void Send_Welcome_Packet_SASL()
 {
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n"
     "<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en' version='1.0'>";
-  char* buf=malloc(256);  
+  char* buf=malloc(256);
   sprintf(buf,streamheader,JABBER_SERVER);
   SendAnswer(buf);
   mfree(buf);
@@ -160,7 +160,7 @@ void Send_Welcome_Packet_SASL()
   UnlockSched();
 #ifdef LOG_ALL
   Log("CONN",logmsg);
-#endif 
+#endif
 }
 
 
@@ -175,7 +175,7 @@ void Send_Disconnect()
   strcpy(logmsg,"Send Disconnect");
 #ifdef LOG_ALL
   Log("CONN",logmsg);
-#endif 
+#endif
 }
 
 // Константы Iq-запросов
@@ -195,7 +195,7 @@ void Send_Auth()
   sprintf(My_JID_full,"%s/%s",My_JID, RESOURCE);
   char* payload = malloc(256);
   sprintf(payload,"<username>%s</username>\n<password>%s</password>\n<resource>%s</resource>",USERNAME, PASSWORD, RESOURCE);
-  SendIq(NULL, "set", auth_id, IQ_AUTH, payload);  
+  SendIq(NULL, "set", auth_id, IQ_AUTH, payload);
   LockSched();
   strcpy(logmsg,"Send auth");
   UnlockSched();
@@ -214,7 +214,7 @@ void _sendversionrequest(char *dest_jid)
 }
 
 // Послать запрос о версии пользователю с указанным JID
-void Send_Version_Request(char *dest_jid) 
+void Send_Version_Request(char *dest_jid)
 {
   char *to=malloc(128);
   strcpy(to, dest_jid);
@@ -223,7 +223,7 @@ void Send_Version_Request(char *dest_jid)
 
 
 /*
-  Послать своё присутствие (в частности, после этого на нас вываливаются 
+  Послать своё присутствие (в частности, после этого на нас вываливаются
   присутствия остальных, а мы появляемся в ресурсах своего контакта)
 
 */
@@ -232,7 +232,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
 {
   extern char My_Presence;
   My_Presence = pr_info->status;
-  
+
   char* presence = malloc(1024);
   if(pr_info->message)
   {
@@ -242,10 +242,10 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   else
   {
     char presence_template[]="<presence><priority>%d</priority><show>%s</show></presence>";
-    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status]);   
+    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status]);
   }
   SendAnswer(presence);
-  
+
 // MUC support
   MUC_ITEM* m_ex = muctop;
   while(m_ex)
@@ -262,8 +262,8 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     }
     SendAnswer(presence);
     m_ex=m_ex->next;
-  };  
-  
+  };
+
   mfree(presence);
   if(pr_info->message)mfree(pr_info->message);
   mfree(pr_info);
@@ -278,7 +278,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
 // Context: HELPER
 void Send_Roster_Query()
 {
-  SendIq(NULL, IQTYPE_GET, rost_id, IQ_ROSTER, NULL); 
+  SendIq(NULL, IQTYPE_GET, rost_id, IQ_ROSTER, NULL);
   LockSched();
   strcpy(logmsg,"Send roster Q");
   UnlockSched();
@@ -325,7 +325,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 // Context: HELPER
 void Report_VersionInfo(char* id, char *to)
 {
-  char answer[200];  
+  char answer[200];
   char *ph_model = Get_Phone_Info(PI_MODEL);
   char *ph_sw = Get_Phone_Info(PI_SW_NUMBER);
   sprintf(answer, "<name>%s</name><version>%s-r%d (%s)</version><os>SIE-%s/%s %s</os>", VERSION_NAME, VERSION_VERS, __SVN_REVISION__, CMP_DATE, ph_model, ph_sw, OS);
@@ -342,8 +342,8 @@ JABBER_SUBSCRIPTION GetSubscrType(char* subs)
   if(!strcmp(subs,"both"))return SUB_BOTH;
   if(!strcmp(subs,"to"))return SUB_TO;
   if(!strcmp(subs,"from"))return SUB_FROM;
-  
-  return SUB_NONE;  
+
+  return SUB_NONE;
 }
 
 char* Get_Resource_Name_By_FullJID(char* full_jid)
@@ -395,7 +395,7 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
   {
     Conference->res_list->status=PRESENCE_ONLINE;
   }
-  
+
   // Готовим структуру для передачи в HELPER
   MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
 //  par->room_nick =ANSI2UTF8(roomnick, strlen(roomnick)*2);
@@ -404,12 +404,12 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
   par->room_nick =malloc(strlen(roomnick)*2);
   par->room_name = malloc(strlen(room)*2);
   strcpy(par->room_nick, roomnick);
-  strcpy(par->room_name, room);  
-  
+  strcpy(par->room_name, room);
+
   par->pass=NULL;
   par->mess_num=N_messages;
   SUBPROC((void*)_enterconference, par);
-  
+
   // Регистрируем конференцию в списке конференций
   MUC_ITEM* mi = malloc(sizeof(MUC_ITEM));
   mi->conf_jid = malloc(strlen(par->room_name)*2+strlen(par->room_nick)*2+2);
@@ -474,12 +474,12 @@ void Leave_Conference(char* room)
       break;
     }
     m_ex2 = m_ex2->next;
-  }  
-  ShowMSG(1,(int)"Выход из MUC выполнен"); 
+  }
+  ShowMSG(1,(int)"Выход из MUC выполнен");
 }
 
 
-// Уничтожить список комнат  
+// Уничтожить список комнат
 void MUCList_Destroy()
 {
   LockSched();
@@ -493,7 +493,7 @@ void MUCList_Destroy()
     cl=(MUC_ITEM*)(cl->next);
     mfree(p);
     p=NULL;
-  }  
+  }
   UnlockSched();
 }
 
@@ -550,7 +550,7 @@ void FillRoster(XMLNode* items)
   while(rostEx)
   {
     JABBER_SUBSCRIPTION r_subscr=GetSubscrType(XML_Get_Attr_Value("subscription",rostEx->attr));
-    name = XML_Get_Attr_Value("name",rostEx->attr); 
+    name = XML_Get_Attr_Value("name",rostEx->attr);
     w_subscr = XML_Get_Attr_Value("ask",rostEx->attr);
     if(w_subscr)
     {
@@ -567,7 +567,7 @@ void FillRoster(XMLNode* items)
                           0
                           );
    //if(name)mfree(name);
-    
+
    rostEx=rostEx->next;
    i++;
   }
@@ -589,7 +589,7 @@ void KillBMList()
     cl=(BM_ITEM*)(cl->next);
     mfree(p);
     p=NULL;
-  }  
+  }
   UnlockSched();
 }
 
@@ -620,8 +620,8 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
   char *c_name=NULL;
   char *c_nick=NULL;
   char *c_pass=NULL;
-  
-  while(elem)  
+
+  while(elem)
   {
     n_name = elem->name;
     if(!n_name)return;
@@ -637,23 +637,23 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
       {
         c_pass = tmpnode->value;
       }
-      
+
       // Создаём очередной элемент списка
       BM_ITEM *bmitem = malloc(sizeof(BM_ITEM));
       bmitem->mucname = malloc(strlen(c_name)+1);
       strcpy(bmitem->mucname, c_name);
-      
+
       bmitem->nick = malloc(strlen(c_nick)+1);
       strcpy(bmitem->nick, c_nick);
-      
+
       if(c_pass)
       {
-        bmitem->pass = malloc(strlen(c_pass)+1);        
+        bmitem->pass = malloc(strlen(c_pass)+1);
         strcpy(bmitem->pass, c_pass);
       }
       else bmitem->pass = NULL;
       bmitem->next = NULL;
-      
+
       BM_ITEM *tmp=BM_ROOT;
       if(tmp)
         while(tmp->next)tmp = tmp->next;
@@ -665,7 +665,7 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
     }
     elem = elem->next;
   }
-  
+
   Disp_BM_Menu();
 }
 
@@ -705,7 +705,7 @@ void Process_Iq_Request(XMLNode* nodeEx)
   iqtype = XML_Get_Attr_Value("type",nodeEx->attr);
   from = XML_Get_Attr_Value("from",nodeEx->attr);
   id = XML_Get_Attr_Value("id",nodeEx->attr);
-  
+
 // Проверяем наличие обязательных атрибутов
 if(!iqtype) return;
 
@@ -718,10 +718,10 @@ if(!strcmp(gget,iqtype)) // Iq type = get
   // Тут мы знаем XMLNS поступившего запроса
   if(!strcmp(q_type,iq_version))
   {
-    // jabber:iq:version 
+    // jabber:iq:version
     if(from)
     {
-        // Создаем переменные, чтобы в них записать данные 
+        // Создаем переменные, чтобы в них записать данные
         // и безопасно уничтожить в HELPER
 
       char* loc_id = NULL;
@@ -733,14 +733,14 @@ if(!strcmp(gget,iqtype)) // Iq type = get
         char* loc_from=malloc(strlen(from)+1);
         strcpy(loc_from,from);
         SUBPROC((void*)Report_VersionInfo,loc_id, loc_from);
-     
+
     }
   }
 }
 
 
 // Обработка  Iq type = result
-if(!strcmp(gres,iqtype)) 
+if(!strcmp(gres,iqtype))
 {
   char bind_id[]="SieJC_bind_req";
   char sess_id[]="SieJC_sess_req";
@@ -750,18 +750,18 @@ if(!strcmp(gres,iqtype))
     Jabber_state = JS_SASL_SESS_INIT_ACK;
     SASL_Init_Session();
   }
-  
+
   if(!strcmp(id,auth_id) || !strcmp(id, sess_id))   // Авторизация либо конец инициализации сессии
   {
     Jabber_state = JS_AUTH_OK;
     CList_AddContact(My_JID, "(Me)", SUB_BOTH,0,0);
     SUBPROC((void*)Send_Roster_Query);
   }
-  
+
   if(!strcmp(id,rost_id))   // Запрос ростера
   {
     XMLNode* query;
-    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
     char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
     if(!q_type)return;
     if(!strcmp(q_type,IQ_ROSTER))
@@ -771,13 +771,13 @@ if(!strcmp(gres,iqtype))
         // Через секунду запросим презенсы
       extern GBSTMR TMR_Send_Presence;
       GBS_StartTimerProc(&TMR_Send_Presence, TMR_SECOND*1, Send_Presence_MMIStub);
-    }    
+    }
   }
-  
+
   if(!strcmp(id,vreq_id))   // Запрос версии (ответ)
   {
     XMLNode* query;
-    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
     char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
     if(!q_type)return;
     if(!strcmp(q_type,IQ_VERSION))
@@ -798,18 +798,18 @@ if(!strcmp(gres,iqtype))
       //Формируем сообщение
       char *reply=malloc(512);
       snprintf(reply, 512,"Version Info:\nName:%s\nVersion:%s\nOS:%s",cl_name->value, cl_version->value, vers_os_str);
-      CList_AddMessage(from, MSG_SYSTEM, reply);      
+      CList_AddMessage(from, MSG_SYSTEM, reply);
       ShowMSG(1,(int)reply);
       mfree(reply);
-    }    
-    
+    }
+
   }
 
 
   if(!strcmp(id,priv_id))
   {
     XMLNode* query;
-    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
     char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
     if(!q_type)return;
     if(!strcmp(q_type,IQ_PRIVATE))
@@ -825,18 +825,18 @@ if(!strcmp(gres,iqtype))
 }
 
 // Обработка  Iq type = set
-if(!strcmp(gset,iqtype)) 
+if(!strcmp(gset,iqtype))
 {
     XMLNode* query;
-    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;    
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
     char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
     if(!q_type)return;
-    
+
     if(!strcmp(q_type,IQ_ROSTER))
     {
       // jabber:iq:roster
       ChangeRoster(query->subnode);
-    }   
+    }
 }
 
 
@@ -855,7 +855,7 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
     Jabber_state = JS_AUTH_ERROR;
     strcat(logmsg,"\nAuth error!");
   }
-  
+
 }
 
 }
@@ -869,13 +869,13 @@ void Process_Presence_Change(XMLNode* node)
   char Req_Set_Role=0;
   char* from = XML_Get_Attr_Value("from",node->attr);
   if(!from)return;
-  
+
   char status;
   char* msg=NULL;
   char* pr_type = XML_Get_Attr_Value("type",node->attr);
   if(pr_type)
   {
-    status = GetPresenceIndex(pr_type);    
+    status = GetPresenceIndex(pr_type);
   }
   else
   {
@@ -886,18 +886,18 @@ void Process_Presence_Change(XMLNode* node)
     }
     else
     {
-      status = GetPresenceIndex(status_node->value);    
+      status = GetPresenceIndex(status_node->value);
     }
-    
+
     XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"status");
     if(statusmsg_node)msg = statusmsg_node->value;
-  }  
-  
+  }
+
    // Предусматриваем случай, что послано нам что-то от конференции. Это важно.
     XMLNode* x_node = XML_Get_Child_Node_By_Name(node,"x");
     if(x_node)
     {
-    if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC)) // Послано от конференции 
+    if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC)) // Послано от конференции
     {
       CLIST* Conference = CList_FindContactByJID(from);
       // Получаем дочерний узел error (ибо нацелены на обработку именно ошибок)
@@ -910,7 +910,7 @@ void Process_Presence_Change(XMLNode* node)
         MsgBoxError(1,(int)err_desc->value);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, err_desc->value);
       }
-      
+
     }
 // Иар заебал
 char loc_actor[]="actor";
@@ -921,7 +921,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
 
     if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC_USER)) // Послано от конференции в пользователя
     {
-      
+
       // Получим экземпляр конфы, в которой всё происходит
       CLIST* Conference = CList_FindContactByJID(from);
       if(!Conference)
@@ -929,7 +929,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         return;
       }
       char* nick = Get_Resource_Name_By_FullJID(from);
-      
+
       // Тут можно обрабатывать события входа/выхода в конфу
       // Ибо сообщается, кто вошёл (модер ли, админ...)
       XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
@@ -939,8 +939,8 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         char* affiliation = XML_Get_Attr_Value("affiliation", item->attr);
         char* role =  XML_Get_Attr_Value("role", item->attr);
         priv.aff = (JABBER_GC_AFFILIATION)GetAffRoleIndex(affiliation);
-        priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role); 
-        
+        priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role);
+
         if(ResEx)
         {
         if(ResEx->status!=PRESENCE_OFFLINE)
@@ -964,30 +964,30 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         }
         else
         {
-          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);      
+          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
           Req_Set_Role = 1;
         }
-        
+
         }
         else
         {
-          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);      
+          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
           Req_Set_Role = 1;
         }
-        
+
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
-      
+
 
       if(status==PRESENCE_OFFLINE) // Выход
       {
         sprintf(r, "%s left us :(", nick);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
         priv.role = ROLE_NONE;
-        Req_Set_Role = 1; 
+        Req_Set_Role = 1;
       }
-      
-      
+
+
       // Получаем дочерний узел статуса
       XMLNode* sstatus = XML_Get_Child_Node_By_Name(x_node,"status");
       if(sstatus)  // Есть статус!
@@ -1013,17 +1013,19 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
             int l = strlen(r);
             if(MAX_STATUS_LEN-l-1>0)strncat(r, reason->value, MAX_STATUS_LEN-l-1);
           }
-                    
-          
+
+
         }
-        MsgBoxError(1,(int)r);
+        char *ansi_r = convUTF8_to_ANSI_STR(r);
+        MsgBoxError(1,(int)ansi_r);
+        mfree(ansi_r);
         CList_AddSystemMessage(Conference->JID,status, r);
         msg = r;
       }
-      
-    }    
-    
-    }  
+
+    }
+
+    }
   CList_AddResourceWithPresence(from, status, msg);
   if(Req_Set_Role) CList_MUC_SetRole(from, priv);
 }
@@ -1073,13 +1075,13 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
       strcpy(it,role);
       strcpy(val,JABBER_ROLS[ROLE_VISITOR]);
       break;
-    }    
+    }
   case ADM_VOICE_GRANT:
     {
       strcpy(it,role);
       strcpy(val,JABBER_ROLS[ROLE_PARTICIPANT]);
       break;
-    }    
+    }
 
   case ADM_BAN:
     {
@@ -1087,9 +1089,9 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
       strcpy(val,JABBER_AFFS[AFFILIATION_OUTCAST]);
       break;
     }
-    
+
   }
-  
+
   snprintf(payload, 1023, payload_tpl, room_jid, it, val, reason);
 //  ShowMSG(1,(int)payload);
   SUBPROC((void*)_mucadmincmd, _room_name, payload);
@@ -1106,12 +1108,12 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   {
     msgnode = XML_Get_Child_Node_By_Name(nodeEx,"subject");
     Is_subj = 1;
-  }  
+  }
   if(msgnode)
   if(msgnode->value)
   {
     MESS_TYPE msgtype = Get_Message_Type(XML_Get_Attr_Value("type",nodeEx->attr));
-    
+
     // Не показываем попапы для групчата, ибо достаёт трындец как
     if(msgtype!=MSG_GCHAT)
     {
@@ -1129,7 +1131,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
     extern volatile int vibra_count;
     Vibrate(1);
-  }  
+  }
 }
 
 /*
@@ -1190,7 +1192,7 @@ void SASL_Bind_Resource()
 {
   sprintf(My_JID, "%s@%s",USERNAME, JABBER_SERVER);
   sprintf(My_JID_full,"%s/%s",My_JID, RESOURCE);
-  
+
   sprintf(logmsg, "Resource binding");
   REDRAW();
 static char bind_tpl[]="<iq type='set' id='SieJC_bind_req'>"
@@ -1198,11 +1200,11 @@ static char bind_tpl[]="<iq type='set' id='SieJC_bind_req'>"
                   "<resource>SieJC</resource>"
                   "</bind>"
                   "</iq>";
-  Jabber_state = JS_SASL_RESBIND_ACK; 
-  SUBPROC((void*)SendAnswer, bind_tpl); 
+  Jabber_state = JS_SASL_RESBIND_ACK;
+  SUBPROC((void*)SendAnswer, bind_tpl);
 }
 
-// Инициализация сессии     
+// Инициализация сессии
 void SASL_Init_Session()
 {
   sprintf(logmsg, "Session Init");
@@ -1210,10 +1212,10 @@ void SASL_Init_Session()
 
 static char sess_init_tpl[]="<iq type='set' id='SieJC_sess_req'>"
                   "<session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>"
-                  "</iq>";  
+                  "</iq>";
 
-  Jabber_state = JS_SASL_SESS_INIT_ACK; 
-  SUBPROC((void*)SendAnswer, sess_init_tpl);  
+  Jabber_state = JS_SASL_SESS_INIT_ACK;
+  SUBPROC((void*)SendAnswer, sess_init_tpl);
 }
 
 void Decode_Challenge(char *challenge)
@@ -1222,14 +1224,14 @@ void Decode_Challenge(char *challenge)
   base64_decode(challenge, decoded_challenge);
   SASL_Auth_data.nonce = Get_Param_Value(decoded_challenge, "nonce",1);
   SASL_Auth_data.qop   = Get_Param_Value(decoded_challenge, "qop",1);
-  
+
 //SASL_Auth_data.nonce = malloc(128);strcpy(SASL_Auth_data.nonce,"455564019");
 //SASL_Auth_data.qop = malloc(128);strcpy(SASL_Auth_data.qop,"auth");
 
   mfree(decoded_challenge);
   char *cnonce= malloc(60);
   strcpy(cnonce, "7425da72aliuf242765");
-  SASL_Auth_data.cnonce = cnonce; 
+  SASL_Auth_data.cnonce = cnonce;
 }
 
 void mkhex(md5_byte_t digest[16], char *hex_output)
@@ -1268,20 +1270,20 @@ void Send_Login_Packet()
   char _00000001[]="00000001";
   char hex_output[16*2 + 1];
   char A1_HEX[16*2 + 1];
-  char A2_HEX[16*2 + 1];  
-  char R_HEX[16*2 + 1];    
+  char A2_HEX[16*2 + 1];
+  char R_HEX[16*2 + 1];
 
   char *digest_uri = malloc(128);
   char realm[]="";
-  char *User_Realm_Pass = malloc(256);  
+  char *User_Realm_Pass = malloc(256);
   zeromem(digest_uri, 128);
   snprintf(digest_uri, 127, "AUTHENTICATE:xmpp/%s", JABBER_SERVER);
 
   md5_init(&state);
   md5_append(&state, (const md5_byte_t *)USERNAME, strlen(USERNAME));
-  md5_append(&state, (const md5_byte_t *)colon_t,1);  
+  md5_append(&state, (const md5_byte_t *)colon_t,1);
   md5_append(&state, (const md5_byte_t *)realm, strlen(realm));
-  md5_append(&state, (const md5_byte_t *)colon_t,1); 
+  md5_append(&state, (const md5_byte_t *)colon_t,1);
   md5_append(&state, (const md5_byte_t *)PASSWORD, strlen(PASSWORD));
   md5_finish(&state, digest);
   mkhex(digest, hex_output);
@@ -1289,30 +1291,30 @@ void Send_Login_Packet()
   md5_init(&state);
   md5_append(&state, (const md5_byte_t *)digest, 16);      // (MD5(user:realm:pass)
   md5_append(&state, (const md5_byte_t *)colon_t,1);            // :
-  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.nonce,strlen(SASL_Auth_data.nonce));  
+  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.nonce,strlen(SASL_Auth_data.nonce));
   md5_append(&state, (const md5_byte_t *)colon_t,1);            // :
-  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.cnonce,strlen(SASL_Auth_data.cnonce));  
+  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.cnonce,strlen(SASL_Auth_data.cnonce));
   md5_finish(&state, A1);
   mkhex(A1, A1_HEX);
-  
+
   md5_init(&state);
   md5_append(&state, (const md5_byte_t *)digest_uri, strlen(digest_uri));
   md5_finish(&state, A2);
   mkhex(A2, A2_HEX);
- 
+
   md5_init(&state);
   md5_append(&state, (const md5_byte_t *)A1_HEX, strlen(A1_HEX));
-  md5_append(&state, (const md5_byte_t *)colon_t,1);  
+  md5_append(&state, (const md5_byte_t *)colon_t,1);
   md5_append(&state, (const md5_byte_t *)SASL_Auth_data.nonce,strlen(SASL_Auth_data.nonce));
   md5_append(&state, (const md5_byte_t *)colon_t,1);
   md5_append(&state, (const md5_byte_t *)_00000001, strlen(_00000001));
   md5_append(&state, (const md5_byte_t *)colon_t,1);
-  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.cnonce,strlen(SASL_Auth_data.cnonce));  
+  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.cnonce,strlen(SASL_Auth_data.cnonce));
   md5_append(&state, (const md5_byte_t *)colon_t,1);
-  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.qop,strlen(SASL_Auth_data.qop));    
-  md5_append(&state, (const md5_byte_t *)colon_t,1);  
+  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.qop,strlen(SASL_Auth_data.qop));
+  md5_append(&state, (const md5_byte_t *)colon_t,1);
   md5_append(&state, (const md5_byte_t *)A2_HEX, strlen(A2_HEX));
-  md5_finish(&state, Response);  
+  md5_finish(&state, Response);
   mkhex(Response, R_HEX);
 
   char *Response_STR = malloc(1024);
@@ -1334,7 +1336,7 @@ void Send_Login_Packet()
   char *resp_full = malloc(1024);
   zeromem(resp_full, 1024);
   snprintf(resp_full, 1023, resp_full_tpl, Result_Resp);
-  Jabber_state=JS_SASL_NEG_ANS_WAIT;  
+  Jabber_state=JS_SASL_NEG_ANS_WAIT;
   SUBPROC((void*)_sendandfree, resp_full);
   mfree(Result_Resp);
   mfree(Response_STR);
@@ -1345,7 +1347,7 @@ void Send_Login_Packet()
 // Обработка ошибок SASL
 void SASL_Process_Error(XMLNode *nodeEx)
 {
-  Jabber_state=JS_ERROR; 
+  Jabber_state=JS_ERROR;
   XMLNode *err = nodeEx->subnode;
   if(err)
   {
