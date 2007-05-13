@@ -162,10 +162,9 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
            if (data->is_first_set)
            {
              data->is_first_set=0;
+             break;
            }
-           else return (1);
          }
-         else return (1);
          
        case RED_BUTTON:
          return (1);
