@@ -4046,6 +4046,12 @@
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\groups_util.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\groups_util.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\jabber.h</name>
   </file>
   <file>

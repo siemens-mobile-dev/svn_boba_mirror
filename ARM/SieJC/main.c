@@ -10,6 +10,7 @@
 #include "jabber.h"
 #include "string_util.h"
 #include "jabber_util.h"
+#include "groups_util.h"
 #include "roster_icons.h"
 #include "mainmenu.h"
 #include "serial_dbg.h"
@@ -62,7 +63,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "1.4-Z";
+const char VERSION_VERS[] = "1.4.5-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD
@@ -1162,6 +1163,7 @@ void maincsm_onclose(CSM_RAM *csm)
   CList_Destroy();
   MUCList_Destroy();
   KillBMList();
+  KillGroupsList();
   Destroy_SASL_Ctx();
   mfree(XMLBuffer);
 

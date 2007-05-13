@@ -733,6 +733,15 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
   char *ansi_msg=convUTF8_to_ANSI_STR(msg);
   ShowMSG(0, (int)ansi_msg);
   mfree(ansi_msg);
+  
+  CLIST* ClEx = CList_FindContactByJID(ResEx->full_name);
+#include "groups_util.h"
+  //tx_str(ResEx->full_name);
+  //tx_str(ClEx->jid);
+  char *ansi_gname = convUTF8_to_ANSI_STR(GetGroupNameByID(ClEx->group));
+  ShowMSG(0, (int)ansi_gname);
+  mfree(ansi_gname);
+  
   if(ResEx->entry_type==T_CONF_NODE)
   {
     snprintf(msg,1024,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);

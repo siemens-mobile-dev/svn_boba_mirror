@@ -11,6 +11,7 @@
 #include "jabber.h"
 #include "bookmarks.h"
 #include "serial_dbg.h"
+#include "groups_util.h"
 
 
 extern const char JABBER_SERVER[];
@@ -27,8 +28,9 @@ extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
 
-MUC_ITEM*  muctop = NULL;
+MUC_ITEM *muctop = NULL;
 BM_ITEM *BM_ROOT  = NULL;
+
 
 extern JABBER_STATE Jabber_state;
 const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "invisible", "unavailable", "error",
@@ -560,11 +562,17 @@ void FillRoster(XMLNode* items)
     {
       w_subscr_flag = 0;
     }
+    // Получаем группу контакта, заносим в список групп
+    XMLNode *group = XML_Get_Child_Node_By_Name(rostEx, "group");
+    int gr_id;
+    if(group)
+      if(!(gr_id = GetGroupID(group->value)))gr_id = AddGroup(group->value);
+    
     CList_AddContact(XML_Get_Attr_Value("jid",rostEx->attr),
                           name,
                           r_subscr,
                           w_subscr_flag,
-                          0
+                          gr_id
                           );
    //if(name)mfree(name);
 

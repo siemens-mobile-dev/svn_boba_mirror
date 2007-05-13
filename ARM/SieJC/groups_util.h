@@ -1,0 +1,28 @@
+/*
+    SieNatJabber Project
+    Функции работы с контакт-листом
+
+    Специфический для джаббера разбор XML
+*/
+
+#ifndef _GROUPS_UTIL_H_
+  #define _GROUPS_UTIL_H_
+
+typedef struct
+{
+  char *name;
+  void *next;
+}GR_ITEM;
+
+// Добавляем группу в список. Возвращает номер созданной группы начиная с 1
+int AddGroup(char *gr_name);
+
+// Уничтожить список групп
+void KillGroupsList();
+
+// Возвращает ID группы с именем gr_name или 0, если такой нет
+int GetGroupID(char *gr_name);
+
+// Возвращает имя группы с ID = gr_id или NULL, если такой нет
+char* GetGroupNameByID(int gr_id);
+#endif
