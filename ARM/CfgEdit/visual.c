@@ -36,12 +36,17 @@ void patch_input(INPUTDIA_DESC* inp)
 typedef struct
 {
   GUI gui;
-  WSHDR*ws1;
+  WSHDR *ws1;
+  int is_rect_needed;
+  int is_first_set;
   int x_pos;
   int y_pos;
+  int x2_pos;
+  int y2_pos;
+  RECT *rc;
   unsigned int* xy_pos;
   int cstep;
-}MAIN_GUI_1;
+}RECT_GUI;
 
 typedef struct
 {
@@ -70,51 +75,70 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
   DrawObject(&drwobj);
 }
 
-
-void DrawWhiteScreen(void)
+void method0_rect(RECT_GUI *data)
 {
   DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,
                    GetPaletteAdrByColorIndex(0),
                    GetPaletteAdrByColorIndex(0));
-}  
-
-void method0_1(MAIN_GUI_1 *data)
-{
-  DrawWhiteScreen();
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  
+  // Нарисуем сетку
   for (int y_0=0; y_0< scr_h;y_0+=10)
   {
     DrawLine(0,y_0,scr_w-1,y_0,1,colors[3]);
-  }
-  
+  }  
   for (int x_0=0; x_0<scr_w;x_0+=10)
   {
     DrawLine(x_0,0,x_0, scr_h-1,1,colors[3]);
   }
-  wsprintf(data->ws1,"%u,%u",data->x_pos,data->y_pos);
+  
+  
+  if (data->is_rect_needed)
+  {
+    DrawRoundedFrame(data->rc->x,data->rc->y,data->rc->x2,data->rc->y2,
+                     0,0,0,colors[3],GetPaletteAdrByColorIndex(23)); // Предыдущий рект
+    if (data->is_first_set)
+    {
+      DrawRoundedFrame(data->x2_pos,data->y2_pos,data->x_pos,data->y_pos,
+                     0,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+      wsprintf(data->ws1,"%u,%u,%u,%u",data->x2_pos,data->y2_pos,data->x_pos,data->y_pos); 
+    }
+    else
+    {
+      wsprintf(data->ws1,"%u,%u,%u,%u",data->x_pos,data->y_pos,data->x2_pos,data->y2_pos);
+    }
+    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+  }
+  else
+  {
+    wsprintf(data->ws1,"%u,%u",data->x_pos,data->y_pos);
+    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+  }
+  
+  //Текущая позиция
   DrwImg((IMGHDR *)&imgPointer,data->x_pos-2,data->y_pos-2,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
-  DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
 }
 
-void method1_1(MAIN_GUI_1 *data, void *(*malloc_adr)(int))
+
+void method1_rect(RECT_GUI *data, void *(*malloc_adr)(int))
 {
   data->ws1=AllocWS(256);
   data->gui.state=1;
 }
 
-void method2_1(MAIN_GUI_1 *data, void (*mfree_adr)(void *))
+void method2_rect(RECT_GUI *data, void (*mfree_adr)(void *))
 {
   FreeWS(data->ws1);
   data->gui.state=0;
 }
 
-void method3_1(MAIN_GUI_1 *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
+void method3_rect(RECT_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
   data->gui.state=2;
 }
 
-void method4_1(MAIN_GUI_1 *data, void (*mfree_adr)(void *))
+void method4_rect(RECT_GUI *data, void (*mfree_adr)(void *))
 {
   if (data->gui.state!=2) return;
   data->gui.state=1;
@@ -124,7 +148,7 @@ void method4_1(MAIN_GUI_1 *data, void (*mfree_adr)(void *))
 #define MAX_STEP 8
 */
 
-int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
+int method5_rect(RECT_GUI *data, GUI_MSG *msg)
 {
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
@@ -133,13 +157,43 @@ int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
        switch(msg->gbsmsg->submess)
        {
        case RIGHT_SOFT:
+         if (data->is_rect_needed)
+         {
+           if (data->is_first_set)
+           {
+             data->is_first_set=0;
+           }
+           else return (1);
+         }
+         else return (1);
+         
        case RED_BUTTON:
          return (1);
          
        case ENTER_BUTTON:
-         data->xy_pos[0]=data->x_pos;
-         data->xy_pos[1]=data->y_pos;
-         return (1);
+         if (data->is_rect_needed)
+         {
+           if (!data->is_first_set)
+           {
+             data->x2_pos=data->x_pos;
+             data->y2_pos=data->y_pos;
+             data->is_first_set=1;
+           }
+           else
+           {
+             data->rc->x=data->x2_pos;
+             data->rc->y=data->y2_pos;
+             data->rc->x2=data->x_pos;
+             data->rc->y2=data->y_pos;
+             return (1);
+           }
+         }
+         else
+         {
+           data->xy_pos[0]=data->x_pos;
+           data->xy_pos[1]=data->y_pos;
+           return (1);
+         }
        }
     }
     if (msg->gbsmsg->msg==LONG_PRESS)
@@ -207,51 +261,68 @@ int method5_1(MAIN_GUI_1 *data, GUI_MSG *msg)
   return(0);
 }
 
-void method7_1(MAIN_GUI_1 *data, void (*mfree_adr)(void *))
+void method7_rect(RECT_GUI *data, void (*mfree_adr)(void *))
 {
   extern void kill_data(void *p, void (*func_p)(void *));
   kill_data(data,mfree_adr);
 }
 
-int method8_1(void){return(0);}
+int method8_rect(void){return(0);}
 
-int method9_1(void){return(0);}
+int method9_rect(void){return(0);}
 
-const void * const gui_methods_1[11]={
-  (void *)method0_1,	//Redraw
-  (void *)method1_1,	//Create
-  (void *)method2_1,	//Close
-  (void *)method3_1,	//Focus
-  (void *)method4_1,	//Unfocus
-  (void *)method5_1,	//OnKey
+const void * const gui_methods_rect[11]={
+  (void *)method0_rect,	//Redraw
+  (void *)method1_rect,	//Create
+  (void *)method2_rect,	//Close
+  (void *)method3_rect,	//Focus
+  (void *)method4_rect,	//Unfocus
+  (void *)method5_rect,	//OnKey
   0,
-  (void *)method7_1,	//Destroy
-  (void *)method8_1,
-  (void *)method9_1,
+  (void *)method7_rect,	//Destroy
+  (void *)method8_rect,
+  (void *)method9_rect,
   0
 };
 
 const RECT Canvas_1={0,0,0,0};
 
-void EditCoordinates(unsigned int*xy)
+void EditCoordinates(unsigned int *xy, int is_rect)
 {
-  MAIN_GUI_1 *main_gui=malloc(sizeof(MAIN_GUI_1));
-  zeromem(main_gui,sizeof(MAIN_GUI_1));
-  main_gui->xy_pos=xy;
-  main_gui->x_pos=xy[0];
-  main_gui->y_pos=xy[1];
+  RECT *rc;
+  RECT_GUI *rect_gui=malloc(sizeof(RECT_GUI));
+  zeromem(rect_gui,sizeof(RECT_GUI));
+  if (!is_rect)
+  {
+    rect_gui->xy_pos=xy;
+    rect_gui->x_pos=xy[0];
+    rect_gui->y_pos=xy[1];
+    rect_gui->is_rect_needed=0;
+  }
+  else
+  {
+    rc=(RECT *)xy;
+    rect_gui->rc=(RECT *)xy;
+    rect_gui->x_pos=rc->x;
+    rect_gui->y_pos=rc->y;
+    rect_gui->x2_pos=rc->x2;
+    rect_gui->y2_pos=rc->y2;
+    rect_gui->is_rect_needed=1;
+  }
   patch_rect((RECT*)&Canvas_1,0,0,ScreenW()-1,ScreenH()-1);
-  main_gui->gui.canvas=(void *)(&Canvas_1);
-  main_gui->gui.flag30=2;
-  main_gui->gui.methods=(void *)gui_methods_1;
-  main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
-  CreateGUI(main_gui);
+  rect_gui->gui.canvas=(void *)(&Canvas_1);
+  rect_gui->gui.flag30=2;
+  rect_gui->gui.methods=(void *)gui_methods_rect;
+  rect_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
+  CreateGUI(rect_gui);
 }
 
 
 void method0_2(MAIN_GUI_2 *data)
 {
-  DrawWhiteScreen();
+  DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,
+                   GetPaletteAdrByColorIndex(0),
+                   GetPaletteAdrByColorIndex(0));
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   int column_height=scr_h-35;

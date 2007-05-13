@@ -3,7 +3,7 @@
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
-extern void EditCoordinates(unsigned int*xy);
+extern void EditCoordinates(unsigned int *xy, int is_rect);
 extern void EditColors(char*color);
 #pragma inline
 void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
@@ -141,7 +141,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
         switch(hp->type)
         {
         case CFG_COORDINATES:
-          EditCoordinates((unsigned int *)(hp+1));
+          EditCoordinates((unsigned int *)(hp+1),0);
           break;
         case CFG_COLOR:
           EditColors((char *)(hp+1));
@@ -154,6 +154,10 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
         case CFG_CHECKBOX:
           *((int *)(hp+1))=!*((int *)(hp+1));
           break;
+          
+        case CFG_RECT:
+          EditCoordinates((unsigned int *)(hp+1),1);
+          break;          
           
         default:
           return(0);
@@ -264,8 +268,15 @@ void ed1_ghook(GUI *data, int cmd)
         EDIT_GetDate(data,i,&dd);
         memcpy((char *)(hp+1),&dd,sizeof(TDate));
         break;  
-      default:
+      case CFG_RECT:
+        {
+          RECT *rc=(RECT *)(hp+1);
+          wsprintf(ews,"RECT:%03d;%03d;%03d;%03d;",rc->x,rc->y,rc->x2,rc->y2);
+          EDIT_SetTextToFocused(data,ews);    
+        }
         break;
+      default:
+        break;      
       }
     }
   }
@@ -863,6 +874,22 @@ int create_ed(void)
 	AddEditControlToEditQend(eq,&ec,ma);  
       }
       p+=sizeof(TDate);
+      break;
+      
+    case CFG_RECT:
+      n-=sizeof(RECT);
+      if (n<0) goto L_ERRCONSTR;
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+        EDITC_OPTIONS ec_options;
+        RECT *rc=(RECT *)p;
+        wsprintf(ews,"RECT:%03d;%03d;%03d;%03d;",rc->x,rc->y,rc->x2,rc->y2);
+	ConstructEditControl(&ec,9,0x40,ews,ews->wsbody[0]);
+        SetFontToEditCOptions(&ec_options,1);
+	CopyOptionsToEditControl(&ec,&ec_options);
+	AddEditControlToEditQend(eq,&ec,ma);  
+      }
+      p+=sizeof(RECT);
       break;
       
     default:
