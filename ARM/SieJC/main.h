@@ -24,10 +24,6 @@
 
 // Общие функции модуля MAIN.C
 
-#define XML_BUFFER_SIZE 64*1024 // Размер буфера в байтах
-#define REC_BUFFER_SIZE 1024 // Размер буфера приёма в байтах
-#define UNP_BUFFER_SIZE 100*1024 // Размер буфера распаковки в байтах
-
 #ifdef STD_PALETTE
 #define color(x) GetPaletteAdrByColorIndex(x)
 #else

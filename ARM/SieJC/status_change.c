@@ -150,7 +150,7 @@ void ed1_ghook(GUI *data, int cmd)
     ws_2str(ews,ss,15);
     pr_info->priority = strtol (ss,0,10);
     pr_info->status=Selected_Status;
-    pr_info->message=Mask_Special_Syms(body);
+    pr_info->message=  body==NULL ? NULL : Mask_Special_Syms(body);
     mfree(body);
     SUBPROC((void*)Send_Presence,pr_info);
    }

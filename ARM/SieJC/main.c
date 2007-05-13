@@ -306,11 +306,7 @@ void end_socket(void)
   }
 }
 
-char* XMLBuffer;
-char *Decompr_Buffer;
-unsigned int XMLBufferCurPos = 0; // Позиция в кольцевом буфере
 unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
-unsigned int processed_pos   = 0; // До какого места обработали
 z_stream d_stream;                // Поток для ZLib
 char ZLib_Stream_Init=0;          // Признак того, что инициализирован поток сжатия
 unsigned int out_bytes_count = 0; // Количество отправленных данных
@@ -352,12 +348,6 @@ int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomp
   return 0;
 }
 
-
-#define NEW_RECV_PIPE
-
-
-#ifdef NEW_RECV_PIPE
-
 //Context:HELPER
 char *Rstream_p; //Указатель на собираемый пакет
 int Rstream_n; //Количество байт
@@ -376,6 +366,9 @@ void get_answer(void)
     return;
   }
   if (i==0) return;
+  
+  virt_buffer_len = virt_buffer_len + i;  // Виртуальная длина потока увеличилась
+  
   if (Is_Compression_Enabled)
   {
     
@@ -389,12 +382,10 @@ void get_answer(void)
     err = inflateInit2(&d_stream,MAX_WBITS/*-MAX_WBITS*/);
     if(err!=Z_OK)
     {
-      tx_str("ZLib init error");
       return;
     }
   }
-    
-    tx_str("\r\nDecompressing...\r\n");
+
     //Используем ZLib для переноса данных в собираемый пакет
     d_stream.next_in  = (Byte*)rb;
     d_stream.avail_in = (uInt)i;
@@ -410,12 +401,10 @@ void get_answer(void)
       case Z_DATA_ERROR:
       case Z_MEM_ERROR:
 	//(void)inflateEnd(&strm);
-        tx_str("ZLib error!");
 	end_socket();
 	return;
       }
       Rstream_n+=(i-d_stream.avail_out);
-      tx_str("Decompress OK\r\n");
     }
     while(d_stream.avail_out==0);
     
@@ -431,16 +420,11 @@ void get_answer(void)
   i=0; //Баланс тегов
   j=0; //Баланс скобок
   p=Rstream_p;
-  while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих
+  while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} //Костыль - пропуск заголовков xml, для них нет закрывающих
   p=Rstream_p;
   while((p=strstr(p,"<stream:stream"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих
   
   p=Rstream_p;
-  int r = strlen(Rstream_p);
-  tx_str(Rstream_p);
-  char q[40];
-  sprintf(q,"LEN=%d\r\nTagsB: %d\r\nBrackB: %d\r\n",r,i,j);
-  tx_str(q);
   
   while((c=*p++))
   {
@@ -462,7 +446,6 @@ void get_answer(void)
       j--;
       if ((!i)&&(!j))
       {
-	tx_str("\r\nSENT TO FUTHER PROCESS!!!\r\n");
         //Сошелся баланс, отдаем на обработку
 	int bytecount=p-Rstream_p;
 	IPC_BUFFER* tmp_buffer=malloc(sizeof(IPC_BUFFER)); // Сама структура
@@ -472,166 +455,7 @@ void get_answer(void)
       }
     }
   }
-  tx_str("After processing:\r\n");
-  sprintf(q,"TagsB: %d\r\nBrackB: %d\r\n",i,j);
-  tx_str(q);
 }
-
-#else
-void get_buf_part(char* inp_buffer, unsigned int req_len)
-{
-  // Посчитаем, где в буфере находится текущая позиция обработанных данных
-  int xz = sdiv(XML_BUFFER_SIZE,processed_pos);
-  unsigned int virt_processed_len = processed_pos - XML_BUFFER_SIZE * xz;
-
-  if(req_len+virt_processed_len < XML_BUFFER_SIZE)
-  {
-    memcpy(inp_buffer, XMLBuffer+virt_processed_len, req_len);
-  }
-  else
-  {
-    memcpy(inp_buffer, XMLBuffer+virt_processed_len, (XML_BUFFER_SIZE-virt_processed_len));
-    memcpy(inp_buffer + (XML_BUFFER_SIZE-virt_processed_len), XMLBuffer, req_len - (XML_BUFFER_SIZE-virt_processed_len));
-  }
-}
-
-/*
-Прием данных из сокета в контексте HELPER
-По окончании приёма законченной порции данных
-она направляется в MMI для вскрытия :)
-*/
-//Context:HELPER
-void get_answer(void)
-{
-  char* buf = malloc(REC_BUFFER_SIZE);    // Выделяем буфер под приём
-  zeromem(buf,REC_BUFFER_SIZE);           // Зануляем
-  int rec_bytes = 0;          // Не торопимся :)
-  rec_bytes = recv(sock, buf, REC_BUFFER_SIZE, 0);
-
-  // Запись в буфер
-  if(XMLBufferCurPos+rec_bytes < XML_BUFFER_SIZE) // Если пишем где-то в буфере
-  {
-    memcpy(XMLBuffer+XMLBufferCurPos, buf, rec_bytes);
-    XMLBufferCurPos+=rec_bytes;
-  }
-  else // Запись переходит границы буфера
-  {
-    // Определяем байт, до которого содержимое буфера приёма помещается без переноса
-    // в XML-буфер
-    unsigned int max_byte = (XML_BUFFER_SIZE-XMLBufferCurPos);
-    memcpy(XMLBuffer+XMLBufferCurPos, buf, max_byte);
-    memcpy(XMLBuffer, buf+max_byte, rec_bytes - max_byte);
-    XMLBufferCurPos=rec_bytes - max_byte;
-  }
-
-  virt_buffer_len = virt_buffer_len + rec_bytes;  // Виртуальная длина потока увеличилась
-
-
-  if(Is_Compression_Enabled)// Если включена компрессия...
-  {
-    if((rec_bytes<REC_BUFFER_SIZE)) // Если принят конец пакета...
-    {
-      int bytecount = virt_buffer_len - processed_pos;
-      char *compressed_data = malloc(bytecount);
-      get_buf_part(compressed_data, bytecount); // Получаем из буфера сжатые данные
-      Decompr_Buffer = malloc(UNP_BUFFER_SIZE); // Выделяем память под распаковку
-      zeromem(Decompr_Buffer, UNP_BUFFER_SIZE);
-      // Распаковываем данные.
-      int err=unzip(compressed_data,bytecount,Decompr_Buffer,UNP_BUFFER_SIZE);
-      if(err!=0)
-      {
-        char q[20];
-        sprintf(q,"Ошибка ZLib: %d",err);
-        LockSched();
-        ShowMSG(1,(int)q);
-        UnlockSched();
-        inflateEnd(&d_stream);
-        ZLib_Stream_Init = 0;
-      }
-      mfree(compressed_data);
-      processed_pos = virt_buffer_len;
-
-      // Готовимся к передаче данных в MMI
-      IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
-      tmp_buffer->xml_buffer = Decompr_Buffer;
-      tmp_buffer->buf_size = strlen(Decompr_Buffer);
-      GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
-    }
-  }
-  else
-  {
-
-  char lastchar = *(buf + rec_bytes - 1);
-
-  if((rec_bytes<REC_BUFFER_SIZE)&&(lastchar=='>'))   // Приняли меньше размера буфера приёма - наверняка конец передачи
-  {
-    int bytecount = virt_buffer_len - processed_pos;
-
-    // НАДО ОСВОБОДИТЬ В MMI!
-    IPC_BUFFER* tmp_buffer = malloc(sizeof(IPC_BUFFER)); // Сама структура
-
-    tmp_buffer->xml_buffer = malloc(bytecount);          // Буфер в структуре
-    get_buf_part(tmp_buffer->xml_buffer, bytecount);
-
-    tmp_buffer->buf_size = bytecount;
-/*
-    // Блочное конвертирование UTF8->ANSI
-
-    char* conv_buf=malloc(bytecount);
-    int conv_size;
-    conv_buf = convUTF8_to_ANSI(conv_buf,tmp_buffer->xml_buffer, bytecount, &conv_size);
-    mfree(tmp_buffer->xml_buffer);
-    tmp_buffer->buf_size = conv_size;
-    tmp_buffer->xml_buffer = conv_buf;
-*/
-
-    processed_pos = virt_buffer_len;
-
-    // Посылаем в MMI сообщение с буфером
-    GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,tmp_buffer,sock);
-  }
-  }
-  mfree(buf);
-}
-#endif
-/*
-public void write(byte[] b, int off, int len) throws IOException {
-		if (bufferUse + len <= buf.length) {// buffer nam staci len ho
-			// zkopirujeme
-			for (int i = 0; i < len; i++) {
-				buf[bufferUse + i] = b[off + i];
-			}
-			bufferUse += len;
-		} else {
-			// nestaci buffer zapiseme maximalne 64tis byte a pak jdeme dale
-			int rLen = bufferUse + len;
-			boolean wasBigger = false;
-			if (rLen > 65536) {
-				rLen = 65536;
-				wasBigger = true;
-			}
-			writeBlockHeader(rLen);
-			ous.write(buf, 0, bufferUse);
-			ous.write(b, off, rLen - bufferUse);
-			bufferUse = 0;
-			if (wasBigger) {// nemohly jsme zapsat cely block
-				write(b, off + rLen, len - rLen);// kolotoc se opakuje
-			} else {
-				// jsme li ti co zapsaly posledni data
-				ous.flush();
-			}
-		}
-
-
-writeBlockHeader(len):
-
-ous.write(0);
-		ous.write(len);
-		ous.write(len >> 8);
-		len = ~len;
-		ous.write(len);
-		ous.write(len >> 8);
-*/
 
 int sendq_l=0; //Длинна очереди для send
 char *sendq_p=NULL; //указатель очереди
@@ -698,9 +522,6 @@ void bsend(int len, void *p)
 
 void SendAnswer(char *str)
 {
-  tx_str("\r\nSending:\r\n");
-  tx_str(str);
-  tx_str("\r\n");  
   unsigned int block_len= strlen(str);
   out_bytes_count += block_len;
   //#ifdef LOG_ALL
@@ -1160,6 +981,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '7':
       {
+        
         break;
       }
 
@@ -1241,8 +1063,6 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
   DNR_TRIES=3;
-  XMLBuffer = malloc(XML_BUFFER_SIZE);
-  zeromem(XMLBuffer, XML_BUFFER_SIZE);
 
   SUBPROC((void *)create_connect);
 #ifdef LOG_ALL
@@ -1265,12 +1085,12 @@ void maincsm_onclose(CSM_RAM *csm)
 #endif
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
+
   CList_Destroy();
   MUCList_Destroy();
   KillBMList();
   KillGroupsList();
   Destroy_SASL_Ctx();
-  mfree(XMLBuffer);
 
   if(ZLib_Stream_Init)
   {
@@ -1421,6 +1241,11 @@ char mypic[128];
         break;
       case ENIP_SOCK_CLOSED:
 	SUBPROC((void *)ClearSendQ);
+        if(ZLib_Stream_Init)
+        {
+          ZLib_Stream_Init = 0;
+          inflateEnd(&d_stream);
+        }
         connect_state=0;
         Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
