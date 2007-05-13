@@ -17,6 +17,8 @@
 //TTime
 #define CFG_DATE 13  
 //TDate
+#define CFG_RECT 14  
+//RECT
 
 typedef struct
 {
