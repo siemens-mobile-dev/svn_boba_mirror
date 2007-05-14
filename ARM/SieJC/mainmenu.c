@@ -26,7 +26,10 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 5
+#define N_ITEMS 7
+
+extern int Is_Sounds_Enabled;
+extern int Is_Vibra_Enabled;
 
 int MainMenu_ID;
 
@@ -53,12 +56,28 @@ HEADER_DESC menuhdr={0,0,131,21,NULL,(int)"Меню",LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
+int icon_array[2];
+
+void ChangeVibraMode(void)
+{
+  Is_Vibra_Enabled=!(Is_Vibra_Enabled);
+  RefreshGUI();
+}
+  
+void ChangeSoundMode(void)
+{
+  Is_Sounds_Enabled=!(Is_Sounds_Enabled);
+  RefreshGUI();
+}
+
 MENUITEM_DESC menuitems[N_ITEMS]=
 {
   {dummy_icon,(int)"Контакт",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {dummy_icon,(int)"Статус",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {dummy_icon,(int)"Конференция",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {dummy_icon,(int)"Закладки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},  
+  {icon_array,(int)"Режим вибры",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {icon_array,(int)"Режим звука",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {about_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
@@ -67,7 +86,9 @@ void *menuprocs[N_ITEMS]={
                           (void *)DispStatusChangeMenu,
                           (void *)Disp_MUC_Enter_Dialog,
                           (void *)Get_Bookmarks_List,
-                          (void *) AboutDlg
+                          (void *)ChangeVibraMode,
+                          (void *)ChangeSoundMode,
+                          (void *)AboutDlg
                          };
 
 SOFTKEY_DESC mmenu_sk[]=
@@ -82,13 +103,27 @@ SOFTKEYSTAB mmenu_skt=
   mmenu_sk,0
 };
 
+void menuitemhandler(void *data, int curitem, int *unk)
+{
+  switch(curitem)
+  {
+  case 4:
+    SetMenuItemIcon(data,curitem,Is_Vibra_Enabled?0:1);
+    break;
+    
+  case 5:
+    SetMenuItemIcon(data,curitem,Is_Sounds_Enabled?0:1);
+    break;
+  }
+}
+
 MENU_DESC tmenu=
 {
   8,NULL,NULL,NULL,
   mmenusoftkeys,
   &mmenu_skt,
   1,
-  NULL,
+  (void*)menuitemhandler,
   menuitems,
   menuprocs,
   N_ITEMS
@@ -115,6 +150,10 @@ void MM_Show()
   S_ICONS[0]=Roster_getIconByStatus(My_Presence);
   menuitems[1].icon = S_ICONS;
 #endif  
+  
+  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+  
   patch_header(&menuhdr);
   MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,N_ITEMS,0,0);
 }
