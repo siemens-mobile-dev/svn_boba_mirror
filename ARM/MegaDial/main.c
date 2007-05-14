@@ -114,6 +114,7 @@ void InitIcons(void)
   menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); //093
   menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE); //651
   menu_icons[3]=GetPicNByUnicodeSymbol(utf_symbs[3]=WORK_MOBILE); //884
+  menu_icons[4]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_FAX);
 }
 
 #else
@@ -280,7 +281,11 @@ void ConstructList(void)
     zeromem(&ABmain,sizeof(ABmain));
     if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
     {
+#ifdef ELKA
+      if (fread(fin,&ABmain,sizeof(ABmain),&ul)>=194)
+#else
       if (fread(fin,&ABmain,sizeof(ABmain),&ul)==sizeof(ABmain))
+#endif
       {
 	fclose(fin,&ul);
 	do
