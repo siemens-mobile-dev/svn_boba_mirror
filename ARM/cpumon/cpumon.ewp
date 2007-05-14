@@ -2933,6 +2933,12 @@
   <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\strlib.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\strlib.h</name>
+  </file>
 </project>
 
 

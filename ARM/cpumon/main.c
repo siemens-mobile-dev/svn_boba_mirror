@@ -1,5 +1,6 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
+#include "strlib.h"
 
 #ifdef NEWSGOLD
 #define myMSG 0xDEAD
@@ -122,6 +123,8 @@ unsigned int ClocksColour(unsigned int clock)
   }
 }
 
+
+
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
@@ -130,7 +133,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
-    if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+    if (stricmp((char*)successed_config_filename,(char *)msg->data0)==0)
     {
       ShowMSG(1,(int)"CPUMon config updated!");
       FreeMem();
@@ -207,7 +210,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         }
         DrwImg((IMGHDR *)&img1, cfgX, cfgY, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
         if (!cop && cfgStTxt)
-          DrawString(ws1, 0, cfgY-(GetFontYSIZE(SMALL_FONT)+3), ScreenW()-1, ScreenH()-1, SMALL_FONT, 0x20,
+          DrawString(ws1, 0, cfgY-(GetFontYSIZE(FONT_SMALL)+3), ScreenW()-1, ScreenH()-1, FONT_SMALL, 0x20,
                      GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
