@@ -12,16 +12,16 @@ int LoadConfigData(const char *fname)
   char *buf;
   int result=0;
   void *cfg;
+  unsigned int rlen;
 
-  extern const CFG_HDR cfghdr0; //first var in CONFIG
-  cfg=(void*)&cfghdr0;
-
-  unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
+  cfg=(char *)__segment_begin("CONFIG_C");
+  unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
 
   if (!(buf=malloc(len))) return -1;
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
-    if (fread(f,buf,len,&ul)==len)
+    rlen=fread(f,buf,len,&ul);
+    if ((rlen==lseek(f,0,S_END,&ul,&ul)) && rlen==len)
     {
       memcpy(cfg,buf,len);
       fclose(f,&ul);

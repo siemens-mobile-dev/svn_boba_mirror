@@ -49,6 +49,8 @@ void patch_input(INPUTDIA_DESC* inp)
 #define LEVEL1_RN	(0x20)
 #endif
 
+#define NUMBERS_MAX 5
+
 #define wslen(ARG) (ARG->wsbody[0])
 
 #ifdef NEWSGOLD
@@ -87,18 +89,18 @@ typedef struct
 {
   void *next;
   WSHDR *name;
-  WSHDR *num[5];
+  WSHDR *num[NUMBERS_MAX];
   WSHDR *icons;
 }CLIST;
 
 volatile CLIST *cltop; //Начало
 volatile CLIST *clbot; //Конец
 
-char dstr[5][40];
+char dstr[NUMBERS_MAX][40];
 
 
-int menu_icons[5];
-int utf_symbs[5];
+int menu_icons[NUMBERS_MAX];
+int utf_symbs[NUMBERS_MAX];
 
 #ifdef NEWSGOLD
 #define USR_WIRE 0xE106
@@ -114,7 +116,7 @@ void InitIcons(void)
   menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); //093
   menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE); //651
   menu_icons[3]=GetPicNByUnicodeSymbol(utf_symbs[3]=WORK_MOBILE); //884
-  menu_icons[4]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_FAX);
+  menu_icons[4]=GetPicNByUnicodeSymbol(utf_symbs[4]=USR_FAX);
 }
 
 #else
@@ -146,11 +148,7 @@ void FreeCLIST(void)
   {
     CLIST *p;
     FreeWS(cl->name);
-    FreeWS(cl->num[0]);
-    FreeWS(cl->num[1]);
-    FreeWS(cl->num[2]);
-    FreeWS(cl->num[3]);
-    FreeWS(cl->num[4]);
+    for(int i=0;i<NUMBERS_MAX;i++) FreeWS(cl->num[i]);
     FreeWS(cl->icons);
     p=cl;
     cl=(CLIST*)(cl->next);
@@ -296,7 +294,6 @@ void ConstructList(void)
           if (ABmain.bitmap[rec>>3]&(1<<(rec&7)))
           #endif   
 	  {
-
             #ifdef NEWSGOLD
 	    //Запись есть в битмапе
             unsigned int rl1;
@@ -325,7 +322,7 @@ void ConstructList(void)
               #endif
 	      int i=0;
 	      zeromem(&contact,sizeof(contact));
-	      contact.icons=AllocWS(10);
+	      contact.icons=AllocWS(NUMBERS_MAX);
 	      while(i<ur.number_of_records)
 	      {
 		AB_UNPRES_ITEM *r=ur.record_list+i;
@@ -409,9 +406,12 @@ void ConstructList(void)
                             else c1=(c=p->data[j])&0x0F;
 			    if (c1==0x0F) break;
                             
-                            if (c1==0xA) wsAppendChar(ws,'*');
-                            else if (c1==0xB) wsAppendChar(ws,'#');
-                            else wsAppendChar(ws,c1+'0');
+                            if (c1==0xA) c1='*';
+                            else if (c1==0xB) c1='#';
+                            else if (c1==0xC) c1='+';
+                            else if (c1==0xD) c1='?';
+                            else c1+='0';
+                            wsAppendChar(ws,c1);
 			    m++;
 			  }
 			  *((int *)(&contact.next))|=CompareStrT9(ws,sws,0);
@@ -426,11 +426,7 @@ void ConstructList(void)
 	      if (!contact.next)
 	      {
 		FreeWS(contact.name);
-		FreeWS(contact.num[0]);
-		FreeWS(contact.num[1]);
-		FreeWS(contact.num[2]);
-		FreeWS(contact.num[3]);
-                FreeWS(contact.num[4]);
+		for(int i=0;i<NUMBERS_MAX;i++) FreeWS(contact.num[i]);
 		FreeWS(contact.icons);
 	      }
 	      FreeUnpackABentry(&ur,mfree_adr());
@@ -483,16 +479,13 @@ void ConstructList(void)
   if (contact.next)
   {
     FreeWS(contact.name);
-    FreeWS(contact.num[0]);
-    FreeWS(contact.num[1]);
-    FreeWS(contact.num[2]);
-    FreeWS(contact.num[3]);
-    FreeWS(contact.num[4]);
+    for(int i=0;i<NUMBERS_MAX;i++) FreeWS(contact.num[i]);
     FreeWS(contact.icons);
   }
   LockSched();
   if (hook_state==5) hook_state=2; else FreeCLIST();
   UnlockSched();
+  REDRAW();
   FreeWS(sws);
 }
 
@@ -665,7 +658,7 @@ void edsms_ghook(GUI *data, int cmd)
 {
 }
 
-HEADER_DESC edsms_hdr={0,0,131,21,NULL,(int)"Write SMS",LGP_NULL};
+HEADER_DESC edsms_hdr={0,0,0,0,NULL,(int)"Write SMS",LGP_NULL};
 
 INPUTDIA_DESC edsms_desc=
 {
@@ -675,7 +668,7 @@ INPUTDIA_DESC edsms_desc=
   (void *)edsms_locret,
   0,
   &menu_skt,
-  {0,22,131,153},
+  {0,0,0,0},
   4,
   100,
   101,
@@ -730,17 +723,6 @@ typedef struct
   int index;
 }NUMLIST;
 
-#pragma inline
-void FreeNumList(NUMLIST *top)
-{
-  while(top)
-  {
-    NUMLIST *nl=top;
-    top=top->next;
-    mfree(nl);
-  }  
-}
-
 int gotomenu_onkey(GUI *data, GUI_MSG *msg)
 {
   int i;
@@ -767,7 +749,12 @@ void gotomenu_ghook(GUI *data, int cmd)
   NUMLIST *nltop=MenuGetUserPointer(data);
   if(cmd==3)
   {
-    FreeNumList(nltop);
+    while(nltop)
+    {
+      NUMLIST *nl=nltop;
+      nltop=nltop->next;
+      mfree(nl);
+    }
   }
 }
     
@@ -780,7 +767,7 @@ void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
   for(int d=0; d!=curitem && nltop; d++) nltop=nltop->next;
   if (nltop)
   {
-    ws=AllocMenuWS(data,strlen(dstr[nltop->index]));
+    ws=AllocMenuWS(data,40);
     str_2ws(ws,dstr[nltop->index],39);
     SetMenuItemIconArray(data, item, menu_icons);
     SetMenuItemText(data, item, ws, curitem);
@@ -851,11 +838,11 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
       }
       r++;
     }
-    while(r<5);
+    while(r<NUMBERS_MAX);
     if (n==1) //Только один номер
     {
       VoiceOrSMS(dstr[nltop->index]);
-      FreeNumList(nltop);
+      mfree(nltop);
       return(1); //Закрыть нах
     }
     if (n==0) goto L_OLDKEY; //Нет вообще телефонов
@@ -906,7 +893,6 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
 	if (hook_state>=2) //Возможно изменение строки ввода, требуется поиск
 	{
 	  hook_state=3;
-	  FreeCLIST();
 	}
       }
     }
