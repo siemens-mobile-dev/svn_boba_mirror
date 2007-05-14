@@ -24,7 +24,7 @@ void patch_input(INPUTDIA_DESC* inp)
 
 volatile int main_menu_id;
 extern void kill_data(void *p, void (*func_p)(void *));
-char g_fname[128];
+char g_fname[32];
 typedef struct
 {
   CSM_RAM csm;
@@ -133,7 +133,7 @@ typedef struct
   int uni_n;
 }DYNPNGILIST_MY;
 
-char m_header[];
+char m_header[32];
 
 int menusoftkeys[]={0,1,2};
 SOFTKEY_DESC menu_sk[]=
@@ -210,7 +210,7 @@ INPUTDIA_DESC ed1_desc =
   //  0x00000002 - ReadOnly
   //  0x00000004 - Не двигается курсор
   //  0x40000000 - Поменять местами софт-кнопки
-  0x40000000
+  0x40000000 | 0x2
 };
 
 
@@ -239,7 +239,7 @@ int AddPicIfNotExist(DYNPNGILIST_MY **top, char *fname)
   t->dpl.img=img;
   t->fname=malloc(strlen(fname)+1);
   strcpy(t->fname,fname);
-  return (t->uni_n);
+  return (n);
 }
 
 
@@ -249,7 +249,6 @@ int create_ed(char *l_fname)
   void *eq;
   EDITCONTROL ec;
   char fname[128];
-  char temp[512];
   int f;
   unsigned int err;
   char *buf, *s, *d;
@@ -282,14 +281,15 @@ int create_ed(char *l_fname)
   {
     if(*(s+1)=='~')
     {
+      int i=0;
       s+=2;
       d=ed_header;
-      while(*s!='&')
+      while((c=*s++)!='&' && i<(sizeof(ed_header)-1))
       {
-        *d++=*s++;
+        *d++=c;
+        i++;
       }
       *d=0;
-      s++;
     }
   }
   while(*s=='\r' || *s=='\n') s++;
@@ -301,10 +301,9 @@ int create_ed(char *l_fname)
     case 'p':
       strcpy(fname,g_fname);
       d=strrchr(fname,'\\');
-      while(*s!='&')
+      while((c=*s++)!='&')
       {
-        *d++=(*s=='/')?'\\':*s;
-        s++;
+        *d++=(c=='/')?'\\':c;
       }
       *d=0;
       pic_n=AddPicIfNotExist(&top,fname);
@@ -312,23 +311,20 @@ int create_ed(char *l_fname)
       {
         CutWSTR(ews,0);
         wsAppendChar(ews,pic_n);
-        ConstructEditControl(&ec,0,0x40,ews,wslen(ews));
+        ConstructEditControl(&ec,3,0x40,ews,wslen(ews));
         AddEditControlToEditQend(eq,&ec,ma);
       }
       break;
         
     case 't':
-      d=temp;
-      while(*s!='&')
+      CutWSTR(ews,0);
+      while((c=*s++)!='&')
       {
-        *d++=*s++;
+        wsAppendChar(ews,char8to16(c));
       }
-      *d=0;
-      ascii2ws(ews,temp);
-      ConstructEditControl(&ec,0,0x40,ews,wslen(ews));
+      ConstructEditControl(&ec,3,0x40,ews,wslen(ews));
       AddEditControlToEditQend(eq,&ec,ma);
       break;
-      
     }
     while(*s=='&' || *s=='\r' || *s=='\n') s++;
   }
@@ -348,10 +344,10 @@ MMENU *ParseMenuFile(char *file)
   MMENU *bot=(MMENU *)(&top);
   int f;
   char name[256];
-  char header[64];
   char *buf, *s, *d;
   int c;
   int fsize;
+  int i;
   unsigned int err;
   strcpy(name,g_fname);
   strcat(name,file);
@@ -374,37 +370,44 @@ MMENU *ParseMenuFile(char *file)
     switch(c)
     {
     case '\r':
-      break;
-      
     case '\n':
       break;
       
     case 'H':
-      d=header;
-      while(*s!='\r' && *s!='\n' && *s!='\0')
+      d=m_header;
+      i=0;
+      LockSched();
+      while(*s!='\r' && *s!='\n' && *s && i<(sizeof(m_header)-1))  
       {
         *d++=*s++;
+        i++;
       }
       *d=0;
-      strcpy(m_header,header);
+      UnlockSched();
       break;
       
     case 'M':
     case 'E':
       bot=bot->next=malloc(sizeof(MMENU));
       bot->type=(c=='M')?1:2;
-      while(*s==' ') *s++;
+      while(*s==' ') s++;  // Пропускаем пробелы
+      
       d=bot->file;
-      while(*s!=' ' && *s!='\0')
+      i=0;
+      while(*s!=' ' && *s && i<(sizeof(bot->file)-1))
       {
         *d++=*s++;
+        i++;
       }
       *d=0;      
-      while(*s==' ') *s++;
+      while(*s==' ') s++;  // Пропускаем пробелы
+      
       d=bot->name;
-      while(*s!='\r' && *s!='\n' && *s!='\0')
+      i=0;
+      while(*s!='\r' && *s!='\n' && *s && i<(sizeof(bot->name)-1))
       {
         *d++=*s++;
+        i++;
       }
       *d=0;        
       bot->next=0;
@@ -419,15 +422,14 @@ MMENU *ParseMenuFile(char *file)
 }
 
 
-char m_header[128];
+
 HEADER_DESC mainmenu_HDR={0,0,0,0,NULL,(int)m_header,LGP_NULL};
 
 
 
 void main_menu_ghook(void *data, int cmd)
 {
-  MMENU *top;
-  top=MenuGetUserPointer(data);
+  MMENU *top=MenuGetUserPointer(data);
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -455,25 +457,20 @@ int main_menu_onkey(void *data, GUI_MSG *msg)
   if (msg->keys==0x18 || msg->keys==0x3D)
   {
     i=GetCurMenuItem(data);
-    while(top)
-    {
-      if (d==i) break;
-      top=top->next;
-      d++;
-    }
+    while(top && d!=i)  {top=top->next; d++;}
     if (!top) return (-1);
     switch (top->type)
     {
     case 1:
       s=t=ParseMenuFile(top->file);
-      i=0;
+      d=0;
       while(s)
       {
-        i++;
+        d++;
         s=s->next;
       }  
       patch_header(&mainmenu_HDR);
-      CreateMenu(0,0,&mainmenu_STRUCT,&mainmenu_HDR,0,i,t,0);
+      CreateMenu(0,0,&mainmenu_STRUCT,&mainmenu_HDR,0,d,t,0);
       break;
       
     case 2:
@@ -492,12 +489,7 @@ void main_menu_iconhndl(void *data, int curitem, void *user_pointer)
   MMENU *top=user_pointer;
   void *item=AllocMenuItem(data);
   int i=0;
-  while(top)
-  {
-    if (i==curitem) break;
-    top=top->next;
-    i++;
-  }
+  while(top && i!=curitem) {top=top->next; i++;}
   s=top?top->name:"Ошибка";
   ws=AllocMenuWS(data,strlen(s));
   ascii2ws(ws,s);
@@ -513,8 +505,8 @@ MENU_DESC mainmenu_STRUCT=
   &menu_skt,
   0x10,
   (void *)main_menu_iconhndl,
-  0,   //Items
-  0,   //Procs
+  NULL,   //Items
+  NULL,   //Procs
   0   //n
 };
 
@@ -533,7 +525,6 @@ void maincsm_oncreate(CSM_RAM *data)
     i++;
     s=s->next;
   }    
-  strcpy(m_header,"Физика");
   patch_header(&mainmenu_HDR);
   csm->gui_id=main_menu_id=CreateMenu(0,0,&mainmenu_STRUCT,&mainmenu_HDR,0,i,top,0);
 }

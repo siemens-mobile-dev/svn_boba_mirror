@@ -960,7 +960,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1227,7 +1227,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state></state>
+          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>AList</name>
