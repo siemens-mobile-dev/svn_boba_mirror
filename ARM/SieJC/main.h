@@ -152,6 +152,14 @@ typedef struct
   char a;
 }RGBA;
 
+#ifdef NEWSGOLD
+#define CBOX_CHECKED 0xE116
+#define CBOX_UNCHECKED 0xE117
+#else
+#define CBOX_CHECKED 0xE10B
+#define CBOX_UNCHECKED 0xE10C
+#endif
+
 void SendAnswer(char *str);
 
 void Vibrate(int Req_Vibra_Count);
