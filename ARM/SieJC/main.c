@@ -310,6 +310,9 @@ unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
 z_stream d_stream;                // Поток для ZLib
 char ZLib_Stream_Init=0;          // Признак того, что инициализирован поток сжатия
 unsigned int out_bytes_count = 0; // Количество отправленных данных
+char *Rstream_p;                  // Указатель на собираемый пакет
+int Rstream_n;                    // Количество байт
+
 // Функции-заглушки для ZLib
 void* zcalloc(int unk,size_t nelem, size_t elsize)
 {
@@ -321,37 +324,7 @@ void zcfree(int unk, void* ptr)
   mfree(ptr);
 }
 
-// Распаковщик потока
-// Код с некоторыми изменениями взят из MidletSigner
-int unzip(char *compr, unsigned int comprLen, char *uncompr, unsigned int uncomprLen)
-{
-  int err;
-  if(!ZLib_Stream_Init)
-  {
-    ZLib_Stream_Init=1;
-    d_stream.zalloc = (alloc_func)zcalloc;
-    d_stream.zfree = (free_func)zcfree;
-    d_stream.opaque = (voidpf)0;
-    err = inflateInit2(&d_stream,MAX_WBITS/*-MAX_WBITS*/);
-    if(err!=Z_OK)
-    {
-      unerr:
-      return err;
-    }
-  }
-  d_stream.next_in  = (Byte*)compr;
-  d_stream.avail_in = (uInt)comprLen;
-  d_stream.next_out = (Byte*)uncompr;
-  d_stream.avail_out = (uInt)uncomprLen;
-  err = inflate(&d_stream, /*Z_NO_FLUSH*/Z_SYNC_FLUSH);
-  if(err<0) goto unerr;
-  return 0;
-}
-
 //Context:HELPER
-char *Rstream_p; //Указатель на собираемый пакет
-int Rstream_n; //Количество байт
-
 void get_answer(void)
 {
   char rb[1024];
@@ -422,7 +395,7 @@ void get_answer(void)
   p=Rstream_p;
   while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} //Костыль - пропуск заголовков xml, для них нет закрывающих
   p=Rstream_p;
-  while((p=strstr(p,"<stream:stream"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих
+  while((p=strstr(p,"<stream:stream"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих (fuckin' XMPP)
   
   p=Rstream_p;
   
@@ -434,6 +407,7 @@ void get_answer(void)
       if (*p!='/') i++; else i--;
     }
     
+    // Поправка на короткие теги: <tag/>
     if(c=='>' && (char) *(p-2) == '/')
     {
       i--;
@@ -457,8 +431,8 @@ void get_answer(void)
   }
 }
 
-int sendq_l=0; //Длинна очереди для send
-char *sendq_p=NULL; //указатель очереди
+int sendq_l=0;        // Длинна очереди для send
+char *sendq_p=NULL;   // указатель очереди
 
 void ClearSendQ(void)
 {
@@ -871,8 +845,8 @@ void Enter_SiepatchDB()
 
 void Disp_State()
 {
-  char q[40];
-  sprintf(q,"Jabber_state=%d\nOut bytes: %d", Jabber_state, out_bytes_count);
+  char q[80];
+  sprintf(q,"Jabber_state=%d\nOut bytes: %d\nSend query len: %d", Jabber_state, out_bytes_count, sendq_l);
   ShowMSG(0,(int)q);
 }
 

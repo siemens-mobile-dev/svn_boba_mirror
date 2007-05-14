@@ -8,19 +8,35 @@
 #include "roster_icons.h"
 #include "history.h"
 
-const RGBA CURSOR =           {120, 120, 255, 100};         // Цвет курсора
-const RGBA CURSOR_BORDER =    {200, 200, 200, 100};         // Цвет ободка курсора
-const RGBA CLIST_F_COLOR_0 =  {  0,   0,   0, 100};               // Цвет шрифта
-const RGBA CLIST_F_COLOR_1 =  {  0,   0, 170, 100};             // Цвет шрифта (есть сообщения)
-const RGBA CONTACT_BG_0 =     {255, 255, 255, 100};         // Чередование: цвет фона 1
-const RGBA CONTACT_BG_1 =     {225, 225, 225, 100};         // Чередование: цвет фона 2
+#ifdef STD_PALETTE
+#define CURSOR 6                 // ad: цвет курсора
+
+#define CURSOR_BORDER 20         // ad: цвет ободка курсора
+
+#define CLIST_F_COLOR_0 1         // Цвет шрифта
+#define CLIST_F_COLOR_1 15        // Цвет шрифта (есть сообщения)
+#define CONTACT_BG_0 0
+#define CONTACT_BG_1 22
+#else
+const RGBA CURSOR = {120, 120, 255, 100};
+const RGBA CURSOR_BORDER = {200, 200, 200, 100};
+const RGBA CLIST_F_COLOR_0 = {0, 0, 0, 100};
+const RGBA CLIST_F_COLOR_1 = {0, 0, 170, 100};
+const RGBA CONTACT_BG_0 = {255, 255, 255, 100};
+const RGBA CONTACT_BG_1 = {220, 220, 220, 100};
+#endif
 
 CLIST* cltop = NULL;
 
 char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
 
-RGBA lineColor = {0, 0, 0, 0};    // Цвет текущей строчки
-RGBA borderColor = {0, 0, 0, 0};  // Цвет ободка текущей строчки
+#ifdef STD_PALETTE
+char lineColor = 0;               // ad: цвет текущей строчки
+char borderColor = 0;               // ad: цвет ободка текущей строчки
+#else
+RGBA lineColor = {0, 0, 0, 0};
+RGBA borderColor = {0, 0, 0, 0};
+#endif
 
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
 unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться
@@ -32,7 +48,11 @@ unsigned int CursorPos = 1;       // Текущая позиция курсора
 TRESOURCE* ActiveContact = NULL;
 
 extern char logmsg[512];
+#ifdef STD_PALETTE
+extern const unsigned short PRES_COLORS[PRES_COUNT];
+#else
 extern const RGBA PRES_COLORS[PRES_COUNT];
+#endif
 extern char My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
 extern JABBER_STATE Jabber_state;
@@ -63,7 +83,11 @@ void CList_RedrawCList()
   WSHDR* out_ws = AllocWS(256);
   int i=1;
   int start_y;
+#ifdef STD_PALETTE
+  int fcolor;
+#else
   RGBA fcolor;
+#endif
   TRESOURCE* resEx;
 
   char Alternation = 1;             // ad: состояние чередования
@@ -710,7 +734,7 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
   char *ansi_msg=convUTF8_to_ANSI_STR(msg);
   ShowMSG(0, (int)ansi_msg);
   mfree(ansi_msg);
-
+  
   // Получаем и отображаем группу контакта
   CLIST* ClEx = CList_FindContactByJID(ResEx->full_name);
   char *gr_name = GetGroupNameByID(ClEx->group);
@@ -720,7 +744,7 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
     ShowMSG(0, (int)ansi_gname);
     mfree(ansi_gname);
   }
-
+  
   if(ResEx->entry_type==T_CONF_NODE)
   {
     snprintf(msg,1024,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);

@@ -46,7 +46,7 @@ int AddGroup(char *gr_name)
     GR_ITEM *tmp = GR_ROOT;
     while(tmp->next){tmp=tmp->next;i++;}
     tmp->next = g_ex;
-    return i++;
+    return ++i;
   }
 }
 

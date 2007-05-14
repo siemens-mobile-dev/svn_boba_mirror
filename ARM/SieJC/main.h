@@ -21,7 +21,6 @@
 #define TMR_SECOND 216
 
 // Общие функции модуля MAIN.C
-
 #define color(x) (char *)(&(x))
 
 #define SCR_START YDISP
@@ -50,8 +49,8 @@ typedef struct
 
 typedef enum
 {
-  JS_NOT_CONNECTED,
-  JS_CONNECTED_STATE,
+  JS_NOT_CONNECTED,           // нет соединения, нет сокета
+  JS_CONNECTED_STATE,         // получен stream:stream
   JS_ZLIB_INIT_ACK,           // Ожидание подтверждения юзания ZLib
   JS_ZLIB_STREAM_INIT_ACK,    // Ожидание ответного ZLib-потока
   JS_SASL_NEGOTIATION,        // Обмен приветствиями SASL
@@ -60,10 +59,10 @@ typedef enum
   JS_SASL_NEW_STREAM_ACK,     // Ожидание инициализации нового потока
   JS_SASL_RESBIND_ACK,        // Ожидание привязки ресурса
   JS_SASL_SESS_INIT_ACK,      // Ожидание инициализации сессии
-  JS_AUTH_OK,
-  JS_AUTH_ERROR,
-  JS_ONLINE,
-  JS_ERROR
+  JS_AUTH_OK,                 // Не-SASL: получена авторизация
+  JS_AUTH_ERROR,              // Ошибка авторизациии
+  JS_ONLINE,                  // Рабочее состояние при установленном подключении
+  JS_ERROR                    // Общий дестрой
 } JABBER_STATE;
 
 ////////////////////////////////

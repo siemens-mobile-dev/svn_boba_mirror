@@ -41,8 +41,10 @@ char *Replace_Special_Syms(char *unrep_str);
 char *Mask_Special_Syms(char *unrep_str);
 
 // Аналог strstr, но без чувствительности к регистру
-char *stristr(char *haystack, char *needle);
+//char *stristr(char *haystack, char *needle);
+char *stristr(const char *s, const char *find);
 
 // Аналог strcmp, но без чувствительности к регистру
-int stricmp(char *str1, char *str2);
+//int stricmp(char *str1, char *str2);
+int stricmp(const char *s, const char *d);
 #endif

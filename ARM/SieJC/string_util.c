@@ -242,6 +242,86 @@ char* str2lower(char *st)
   return st;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma inline
+int tolower(int C)
+{
+//  if ((C>='A' && C<='Z')) C-='A'-'a';
+    if(C<0x80)
+    {
+      if(C>='A' && C<='Z') C += ('a' - 'A');
+      return C;
+    }
+      if(C >= 0x90 && C<=0xAF) C+= (0xB0 - 0x90);
+  return(C);
+}
+
+
+// Аналог strcmp, но без чувствительности к регистру
+int stricmp(const char *s, const char *d)
+{
+  int cs;
+  int ds;
+  do
+  {
+    cs=tolower(*s++);
+    ds=tolower(*d++);
+    cs-=ds;
+    if (cs) break;
+  }
+  while(ds);
+  return(cs);
+}
+
+int strnicmp(const char *s1, const char *s2, size_t len)
+{
+	/* Yes, Virginia, it had better be unsigned */
+	unsigned int c1, c2;
+
+	c1 = 0;	c2 = 0;
+	if (len) {
+		do {
+			c1 = *s1; c2 = *s2;
+			s1++; s2++;
+			if (!c1)
+				break;
+			if (!c2)
+				break;
+			if (c1 == c2)
+				continue;
+			c1 = tolower(c1);
+			c2 = tolower(c2);
+			if (c1 != c2)
+				break;
+		} while (--len);
+	}
+	return c1 - c2;
+}
+
+// Аналог strstr, но без чувствительности к регистру
+/*
+ * Find the first occurrence of find in s.
+ */
+char *stristr(const char *s, const char *find)
+{
+    char c, sc;
+    size_t len;
+
+    if ((c = tolower((unsigned char)(*find++))) != 0) {
+        len = strlen(find);
+        do {
+            do {
+                if ((sc = tolower((unsigned char)(*s++))) == 0)
+                    return (NULL);
+            } while (sc != c);
+        } while (strnicmp(s, find, len) != 0);
+        s--;
+    }
+    return ((char *)s);
+}
+////////////////////////////////////////////////////////////////////////////////
+
+/*
 // Аналог strstr, но без чувствительности к регистру
 char *stristr(char *haystack, char *needle)
 {
@@ -280,7 +360,7 @@ int stricmp(char *str1, char *str2)
   mfree(i_str2);
   return res;
 }
-
+*/
 char* str2lower_ANSI(char *st)
 {
   unsigned int len = strlen(st);
