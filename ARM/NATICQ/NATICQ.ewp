@@ -5043,6 +5043,9 @@
     <name>$PROJ_DIR$\mainmenu.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\revision.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\status_change.c</name>
   </file>
   <file>
