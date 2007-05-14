@@ -16,19 +16,13 @@
 #define VIBRA_POWER 10 // Сила вибры для событий разного рода
 
 #define USE_PNG_EXT   // Использовать ли расширение PNG для картинок (ELFLoader >2.0)
-
-//#define STD_PALETTE // Использовать ли стандартную палитру (иначе RGBA)
 ////////////////////////////////////////////////////////////////////////////////
 
 #define TMR_SECOND 216
 
 // Общие функции модуля MAIN.C
 
-#ifdef STD_PALETTE
-#define color(x) GetPaletteAdrByColorIndex(x)
-#else
 #define color(x) (char *)(&(x))
-#endif
 
 #define SCR_START YDISP
 

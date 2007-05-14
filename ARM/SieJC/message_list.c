@@ -9,42 +9,21 @@
 
 
 #define MSG_START_X 1    //X-координата начала рисовани€ строки сообщени€
+
+
 //-------------÷вета. ћного цветов :)
 
-#ifdef STD_PALETTE
-
-//общий фон
-#define MESSAGEWIN_BGCOLOR 0
-//заголовок
-#define MESSAGEWIN_TITLE_BGCOLOR 21
-//цвет шрифта
-#define MESSAGEWIN_TITLE_FONT 1
-#define MESSAGEWIN_CHAT_FONT 1
-
-//исход€щие
-#define MESSAGEWIN_MY_BGCOLOR 0
-//вход€щие
-#define MESSAGEWIN_CH_BGCOLOR 22
-#define MESSAGEWIN_GCHAT_BGCOLOR_1 13
-#define MESSAGEWIN_GCHAT_BGCOLOR_2 10
-#define MESSAGEWIN_SYS_BGCOLOR 0
-#define MESSAGEWIN_STATUS_BGCOLOR 0
-
-#else
-
-RGBA MESSAGEWIN_BGCOLOR =         {255, 255, 255, 100};
-RGBA MESSAGEWIN_TITLE_BGCOLOR =   {  0,   0, 255, 100};
-RGBA MESSAGEWIN_TITLE_FONT =      {255, 255, 255, 100};
-RGBA MESSAGEWIN_MY_BGCOLOR =      {233, 255, 233, 100};
-RGBA MESSAGEWIN_CH_BGCOLOR =      {233, 233, 233, 100};
-RGBA MESSAGEWIN_CURSOR_BGCOLOR =  {0xFF, 0xFF, 0x00, 0x64};
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 = {255, 255, 255, 100};
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 = {233, 233, 233, 100};
-RGBA MESSAGEWIN_SYS_BGCOLOR =     {255, 233, 233, 100};
-RGBA MESSAGEWIN_STATUS_BGCOLOR =  {233, 233, 255, 100};
-RGBA MESSAGEWIN_CHAT_FONT =       {  0,   0,   0, 100};
-
-#endif
+RGBA MESSAGEWIN_BGCOLOR =         {255, 255, 255, 100}; // ќбщий фон
+RGBA MESSAGEWIN_TITLE_BGCOLOR =   {  0,   0, 255, 100}; // ‘он заголовка
+RGBA MESSAGEWIN_TITLE_FONT =      {255, 255, 255, 100}; // ÷вет шрифта заголовка
+RGBA MESSAGEWIN_MY_BGCOLOR =      {200, 215, 255, 100}; // ÷вет фона исход€щих сообщений
+RGBA MESSAGEWIN_CH_BGCOLOR =      {233, 233, 233, 100}; // ÷вет фона приватных сообщений
+RGBA MESSAGEWIN_CURSOR_BGCOLOR =  {255, 255,   0, 100}; // ÷вет фона курсора
+RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 = {255, 255, 255, 100}; // „ередование: ÷вет фона сообщений конференции 1
+RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 = {233, 233, 233, 100}; // „ередование: ÷вет фона сообщений конференции 2
+RGBA MESSAGEWIN_SYS_BGCOLOR =     {115, 170, 240, 100}; // ÷вет фона сообщений уведомлений
+RGBA MESSAGEWIN_STATUS_BGCOLOR =  {155, 255, 180, 100}; // ÷вет фона сообщений смены статуса
+RGBA MESSAGEWIN_CHAT_FONT =       {  0,   0,   0, 100}; // ÷вет шрифта сообщений
 
 #define MESSAGEWIN_FONT FONT_SMALL
 
@@ -343,11 +322,7 @@ void mGUI_onRedraw(GUI *data)
   int i_ctrl=1;
 
   int i = 0;
-#ifdef STD_PALETTE
-  char MsgBgColor;
-#else
   RGBA MsgBgColor;
-#endif
   CurrentMessage_Lines = 0;
   while(ml)
   {
@@ -529,6 +504,30 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
     case GREEN_BUTTON:
       {
         Init_Message(Resource_Ex, NULL);
+        break;
+      }
+    }
+  }
+  if (msg->gbsmsg->msg==LONG_PRESS)
+  {
+    switch (msg->gbsmsg->submess)
+    {
+    case UP_BUTTON:
+      {
+        Calc_Pages_Data_1();
+        CurrentMessage_Lines = 0;
+        if(Cursor_Pos>1)Cursor_Pos--;
+        if(CurrentMessage>1)CurrentMessage--;
+        REDRAW();
+        break;
+      }
+    case DOWN_BUTTON:
+      {
+        CurrentMessage_Lines = 0;
+        if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
+        if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
+        Calc_Pages_Data_2();
+        REDRAW();
         break;
       }
     }
