@@ -3,12 +3,6 @@
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
-#ifdef NEWSGOLD
-#define DEFAULT_DISK "4"
-#else
-#define DEFAULT_DISK "0"
-#endif
-
 CSM_DESC icsmd;
 void (*old_icsm_onClose)(CSM_RAM*);
 
@@ -175,7 +169,7 @@ void Killer(void)
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
-static const char extfile[]=DEFAULT_DISK ":\\ZBin\\etc\\extension.cfg";
+static const char extfile[]="?:\\ZBin\\etc\\extension.cfg";
 
 char *find_eol(char *s)
 {
@@ -190,7 +184,7 @@ char *find_eol(char *s)
   return s;
 }
 
-int main()
+int main(const char *exename)
 {
   char *s;
   int c;
@@ -202,6 +196,8 @@ int main()
   
   uni_large=empty_str;
   uni_small=empty_str;
+  
+  ((char *)extfile)[0]=exename[0];
   
   if ((f=fopen(extfile,A_ReadOnly,0,&ul))!=-1)
   {
