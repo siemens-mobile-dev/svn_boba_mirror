@@ -10,9 +10,6 @@ const char DEFAULT_FOLDER[]=":\\ZBin\\img\\";
 
 #define number 8
 
-#define PNG_8 1
-#define PNG_16 2
-
 const char Pointer[1]={0xFF};
 const IMGHDR empty_img = {0,0,0x1,(char *)Pointer};
 
@@ -50,7 +47,6 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
   
-  if (type==0)  type=DEFAULT_COLOR+1;
   if ((f=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
   pp.row=NULL;
   pp.img=NULL;
@@ -85,6 +81,13 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   
   png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, 0, 0, 0);
   
+  if (type==0)
+  {
+    if (color_type == PNG_COLOR_TYPE_GRAY) 
+      type=PNG_1;
+    else type=DEFAULT_COLOR+1;
+  }
+  
   if (bit_depth < 8) png_set_gray_1_2_4_to_8(png_ptr);
     
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
@@ -97,90 +100,85 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_palette_to_rgb(png_ptr);
   
-  if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+  if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA || color_type == PNG_COLOR_TYPE_GRAY)
     png_set_gray_to_rgb(png_ptr);
-    
-  if (color_type != PNG_COLOR_TYPE_GRAY)
-    png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
   
-  if (color_type == PNG_COLOR_TYPE_GRAY)
-    png_set_invert_mono(png_ptr);
-  
+  png_set_filler(png_ptr,0xFF,PNG_FILLER_AFTER);
   png_read_update_info(png_ptr, info_ptr);
   
   rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   
   pp.row=malloc(rowbytes);
   pp.img_h=img_hc=malloc(sizeof(IMGHDR));
-  if (color_type != PNG_COLOR_TYPE_GRAY)
+  
+  switch (type)
   {
-    switch (type)
+  case PNG_16:
     {
-    case PNG_16:
+      unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*2));
+      for (unsigned int y = 0; y<height; y++)
       {
-        unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*2));
-        for (unsigned int y = 0; y<height; y++)
+        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+        for (unsigned int x = 0; x<width; x++)
         {
-          png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-          for (unsigned int x = 0; x<width; x++)
+          if (pp.row[x*4+3]<ALPHA_THRESHOLD)
+            *iimg++=0xE000;
+          else
           {
-            if (pp.row[x*4+3]<ALPHA_THRESHOLD)
-              *iimg++=0xE000;
-            else
-            {
-              unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
-              c|=((pp.row[x*4+1]<<3)&0x7E0);
-              c|=((pp.row[x*4+2]>>3)&0x1F);
-              *iimg++=c;
-            }
+            unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
+            c|=((pp.row[x*4+1]<<3)&0x7E0);
+            c|=((pp.row[x*4+2]>>3)&0x1F);
+            *iimg++=c;
           }
-	}
-        pp.img_h->bpnum=8;
-        break;
+        }
       }
-      
-    case PNG_8:
+      pp.img_h->bpnum=8;
+      break;
+    }
+    
+  case PNG_8:
+    {
+      unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
+      for (unsigned int y = 0; y<height; y++)
       {
-        unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
-        for (unsigned int y = 0; y<height; y++)
+        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+        for (unsigned int x = 0; x<width; x++)
         {
-          png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-          for (unsigned int x = 0; x<width; x++)
+          if (pp.row[x*4+3]<ALPHA_THRESHOLD)
+            *iimg++=0xC0;
+          else
           {
-            if (pp.row[x*4+3]<ALPHA_THRESHOLD)
-              *iimg++=0xC0;
-            else
-            {
-              unsigned char c=(pp.row[x*4+0] & 0xE0);
-              c|=((pp.row[x*4+1]>>3)&0x1C);
-              c|=((pp.row[x*4+2]>>6)&0x3);
-              *iimg++=c;
-            }
+            unsigned char c=(pp.row[x*4+0] & 0xE0);
+            c|=((pp.row[x*4+1]>>3)&0x1C);
+            c|=((pp.row[x*4+2]>>6)&0x3);
+            *iimg++=c;
           }
-	}
-        pp.img_h->bpnum=5;
-        break;
+        }
       }
+      pp.img_h->bpnum=5;
+      break;
+    }
+    
+  case PNG_1:
+    {
+      int rowc_w=(width+7)>>3;
+      int size=height*rowc_w;
+      unsigned char *iimg=(unsigned char *)(pp.img=malloc(size));
+      zeromem(iimg,size);
+      for (unsigned int y = 0; y<height; y++)
+      {
+        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+        for (unsigned int x = 0; x<width; x++)
+        {
+          if (!pp.row[x*4+0] && !pp.row[x*4+1] && !pp.row[x*4+2])
+            iimg[x>>3]|=(0x80>>(x&7));
+        }
+        iimg+=rowc_w;
+      }
+      pp.img_h->bpnum=1;
+      break;
     }
   }
-  else
-  {
-    int rowc_w=(width+7)>>3;
-    int size=height*rowc_w;
-    unsigned char *iimg=(unsigned char *)(pp.img=malloc(size));
-    zeromem(iimg,size);
-    for (unsigned int y = 0; y<height; y++)
-    {
-      png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-      for (unsigned int x = 0; x<width; x++)
-      {
-        if (pp.row[x])
-          iimg[x>>3]|=(0x80>>(x&7));
-      }
-      iimg+=rowc_w;
-    }
-    pp.img_h->bpnum=1;
-  } 
   pp.img_h->w=width;
   pp.img_h->h=height;
   //pp->img_h->zero=0;

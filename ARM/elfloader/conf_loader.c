@@ -2,7 +2,15 @@
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 
+
+#ifdef NEWSGOLD
+#define DEFAULT_DISK 4
+#else
+#define DEFAULT_DISK 0
+#endif
+
 __no_init const char *successed_config_filename;
+__no_init unsigned int DEFAULT_DISK_N;
 
 #pragma segment="CONFIG_DATA_ID"
 #pragma segment="CONFIG_DATA_I"
@@ -44,7 +52,11 @@ __arm int LoadConfigData(const char *fname)
     else
       result=-1;
   }
-  if (result>=0) successed_config_filename=fname;
+  if (result>=0)
+  {
+    DEFAULT_DISK_N=*fname-'0';
+    successed_config_filename=fname;
+  }
   return(result);
 }
 
@@ -52,6 +64,7 @@ void InitConfig()
 {
   if (LoadConfigData("4:\\ZBin\\etc\\ElfPack.bcfg")<0)
   {
-    LoadConfigData("0:\\ZBin\\etc\\ElfPack.bcfg");
+    if (LoadConfigData("0:\\ZBin\\etc\\ElfPack.bcfg")<0)
+      DEFAULT_DISK_N=DEFAULT_DISK;
   }
 }
