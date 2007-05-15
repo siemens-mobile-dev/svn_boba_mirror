@@ -14266,7 +14266,6 @@
           <option>
             <name>CCDefines</name>
             <state>NDEBUG</state>
-            <state>NEWSGOLD</state>
           </option>
           <option>
             <name>CCPreprocFile</name>
@@ -14491,7 +14490,6 @@
           <option>
             <name>CCDefines</name>
             <state>NDEBUG</state>
-            <state>NEWSGOLD</state>
           </option>
           <option>
             <name>CCPreprocFile</name>
