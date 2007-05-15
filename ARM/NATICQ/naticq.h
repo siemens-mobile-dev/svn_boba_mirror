@@ -3,11 +3,13 @@
 /*
   Типы данных, общие для всех модулей проекта
 */
-
 typedef struct
 {
   void *next;
+  void *prev;
+  unsigned int isgroup;
   unsigned int uin;
+  unsigned int group;
   char name[64];
   unsigned short state;
   int isunread;

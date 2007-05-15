@@ -31,7 +31,7 @@ void patch_input(INPUTDIA_DESC* inp)
 int MainMenu_ID;
 
 extern int CurrentStatus;
-extern  int S_ICONS[11];
+extern  int S_ICONS[13];
 extern SOFTKEYSTAB menu_skt;
 
 void ac_locret(void){}

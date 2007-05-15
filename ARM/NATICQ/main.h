@@ -32,6 +32,7 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define IS_FFC 7
 #define IS_MSG 8
 #define IS_UNKNOWN 9
+#define IS_GROUP 10
 #define IS_ANY 0xFFFFFFFF
 #define IS_FILTER_T9KEY 0xFFFFFFFE
 
@@ -57,5 +58,8 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
 #define T_ECHO 18
 #define T_ECHORET 19
+
+#define T_GROUPID 20
+#define T_GROUPFOLLOW 21
 
 #endif
