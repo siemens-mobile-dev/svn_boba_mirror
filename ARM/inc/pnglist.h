@@ -18,3 +18,7 @@ typedef struct
   char *bitmap;
   DYNPNGICONLIST *dyn_pltop;
 }PNGTOP_DESC;  
+
+#define PNG_8 1
+#define PNG_16 2
+#define PNG_1 3
