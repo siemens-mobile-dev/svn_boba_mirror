@@ -1,18 +1,17 @@
 #include "..\inc\swilib.h"
 #include "..\inc\pnglist.h"
 
-#define ALPHA_THRESHOLD (128)
+extern unsigned int DEFAULT_COLOR;
+extern unsigned int ALPHA_THRESHOLD;
+extern unsigned int CACHE_PNG;
+extern unsigned int DEFAULT_DISK_N;
+
+const char DEFAULT_FOLDER[]=":\\ZBin\\img\\";
 
 #define number 8
 
 #define PNG_8 1
 #define PNG_16 2
-
-#ifdef NEWSGOLD
-#define DEFAULT_COLOR PNG_16
-#else
-#define DEFAULT_COLOR PNG_8
-#endif
 
 const char Pointer[1]={0xFF};
 const IMGHDR empty_img = {0,0,0x1,(char *)Pointer};
@@ -51,7 +50,7 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
   
-  if (type==0)  type=DEFAULT_COLOR;
+  if (type==0)  type=DEFAULT_COLOR+1;
   if ((f=fopen(fname, A_ReadOnly+A_BIN, P_READ, &err))==-1) return 0;
   pp.row=NULL;
   pp.img=NULL;
@@ -203,14 +202,6 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   return (img_hc);
 }
 
-
-#ifdef NEWSGOLD
-#define DEFAULT_FOLDER "4:\\ZBin\\img\\"
-#else
-#define DEFAULT_FOLDER "0:\\ZBin\\img\\"
-#endif
-#define CACHE_PNG 50
-
 volatile __no_init PNGTOP_DESC pngtop; 
 
 #pragma inline
@@ -325,7 +316,8 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
       {
         if (i&mask40)  
         {
-          char *next=strcpy_tolow(fname,DEFAULT_FOLDER); // Картинка вроде как есть на диске
+          char *next=strcpy_tolow(fname+1,DEFAULT_FOLDER); // Картинка вроде как есть на диске
+	  *fname=DEFAULT_DISK_N+'0';
           print10(next,pic);
           img=find_png_in_cache(fname);
           if (img) return (img);
@@ -338,7 +330,8 @@ __arm IMGHDR* PatchGetPIT(unsigned int pic)
 	LockSched();
 	*bp|=mask80; // Записи нет, ставим флаг что есть
 	UnlockSched();
-        char *next=strcpy_tolow(fname,DEFAULT_FOLDER);
+        char *next=strcpy_tolow(fname+1,DEFAULT_FOLDER);
+	*fname=DEFAULT_DISK_N+'0';
         print10(next,pic);
         img=find_png_in_cache(fname);
         if (img)
