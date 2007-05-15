@@ -1129,14 +1129,22 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
       char *ansi_m=convUTF8_to_ANSI_STR(m);
       ShowMSG(1,(int)ansi_m);
+      extern const char sndPM[];
+      SUBPROC((void *)Play,sndPM);
       mfree(m);
       mfree(ansi_m);
     }
+      else
+        {
+          extern const char sndConf[];
+          SUBPROC((void *)Play,sndConf);          
+        }
     if(Is_subj)
     {
       msgtype = MSG_SUBJECT;
     }
     CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
+    
     extern volatile int vibra_count;
     Vibrate(1);
   }

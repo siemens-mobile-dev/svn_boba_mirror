@@ -163,4 +163,6 @@ typedef struct
 void SendAnswer(char *str);
 
 void Vibrate(int Req_Vibra_Count);
+
+void Play(const char *fname);
 #endif

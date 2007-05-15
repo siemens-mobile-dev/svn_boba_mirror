@@ -90,6 +90,8 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
   if(msg->gbsmsg->submess==GREEN_BUTTON)
   {
     Terminate = 1;
+    extern const char sndMsgSend[];
+    Play(sndMsgSend);    
     return 1;
   }
 

@@ -165,7 +165,8 @@ void patch_input(INPUTDIA_DESC* inp)
 
 
 //===================================================================
-/*
+extern const unsigned int sndVolume;
+
 void Play(const char *fname)
 {
   if ((!IsCalling())&&Is_Sounds_Enabled)
@@ -209,7 +210,7 @@ void Play(const char *fname)
     }
   }
 }
-*/
+
 //===================================================================
 
 GBSTMR tmr_vibra;
@@ -243,7 +244,7 @@ void Vibrate(int Req_Vibra_Count)
   }
   if(Vibra_Count)return;
   Vibra_Count = Req_Vibra_Count;
-  _start_vibra();
+  if (!IsCalling()) _start_vibra();
 }
 
 //===============================================================================================

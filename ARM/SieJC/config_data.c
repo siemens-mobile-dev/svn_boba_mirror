@@ -54,4 +54,20 @@ __root const CFG_HDR cfghdr9={CFG_CBOX,"ZLib usage",0,2};
 __root const int USE_ZLIB = 0;
 __root const CFG_CBOX_ITEM cfgcbox3[2]={"No","Yes"};
 
+__root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Sounds setup",1,0};
+
+__root const CFG_HDR cfghdr1_1={CFG_UINT,"sndVolume",0,6};
+__root const unsigned int sndVolume=6;
+
+__root const CFG_HDR cfghdr1_2={CFG_STR_UTF8,"Sound Msg Send",0,63};
+__root const char sndMsgSend[64]="4:\\ZBin\\SieJC\\Sounds\\send.mp3";
+
+__root const CFG_HDR cfghdr1_3={CFG_STR_UTF8,"Sound Msg Conf",0,63};
+__root const char sndConf[64]="4:\\ZBin\\SieJC\\Sounds\\conf.mp3";
+
+__root const CFG_HDR cfghdr1_4={CFG_STR_UTF8,"Sound Msg PM",0,63};
+__root const char sndPM[64]="4:\\ZBin\\SieJC\\Sounds\\message.mp3";
+
+__root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Hosts and paths",0,0};
+
 // EOL, EOF
