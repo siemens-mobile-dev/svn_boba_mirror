@@ -35,25 +35,22 @@ BM_ITEM *BM_ROOT  = NULL;
 extern JABBER_STATE Jabber_state;
 const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "invisible", "unavailable", "error",
                                       "subscribe", "subscribed", "unsubscribe", "unsubscribed"};
-#ifdef STD_PALETTE
-const unsigned short PRES_COLORS[PRES_COUNT]  = {15,        16,             3,     18,     2,      20,   21,      20, 21,21,21,21}; //цвет оффлайнов изменил
-#else
+
 const RGBA PRES_COLORS[PRES_COUNT] =
 {
-  {  0,   0, 127, 100},
-  {  0, 255,   0, 100},
-  {  0,   0, 255, 100},
-  {  0, 127,   0, 100},
-  {255,   0,   0, 100},
-  {127, 127, 127, 100},
-  {170, 170, 170, 100},
-  {127, 127, 127, 100},
-  {170, 170, 170, 100},
-  {170, 170, 170, 100},
-  {170, 170, 170, 100},
-  {170, 170, 170, 100}
+  {  0,   0, 127, 100},   // Online
+  {  0, 255,   0, 100},   // Chat
+  {  0,   0, 255, 100},   // Away
+  {  0, 127,   0, 100},   // XA
+  {255,   0,   0, 100},   // DND
+  {127, 127, 127, 100},   // Invisible
+  {170, 170, 170, 100},   // Offline
+  {127, 127, 127, 100},   // Error
+  {170, 170, 170, 100},   // Subscribe
+  {170, 170, 170, 100},   // Subscribed
+  {170, 170, 170, 100},   // Unsubscribe
+  {170, 170, 170, 100}    // Unsubscribed
 };
-#endif
 
 #define AFFS_CNT 5
 #define ROLS_CNT 4
@@ -567,7 +564,7 @@ void FillRoster(XMLNode* items)
     int gr_id;
     if(group)
       if(!(gr_id = GetGroupID(group->value)))gr_id = AddGroup(group->value);
-    
+
     CList_AddContact(XML_Get_Attr_Value("jid",rostEx->attr),
                           name,
                           r_subscr,

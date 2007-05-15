@@ -21,6 +21,7 @@
 #define TMR_SECOND 216
 
 // Общие функции модуля MAIN.C
+
 #define color(x) (char *)(&(x))
 
 #define SCR_START YDISP

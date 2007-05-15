@@ -392,13 +392,13 @@ void get_answer(void)
     return;
   }
   if (i==0) return;
-  
+
   virt_buffer_len = virt_buffer_len + i;  // Виртуальная длина потока увеличилась
-  
+
   if (Is_Compression_Enabled)
   {
-    
-    
+
+
   if(!ZLib_Stream_Init)
   {
     ZLib_Stream_Init=1;
@@ -433,7 +433,7 @@ void get_answer(void)
       Rstream_n+=(i-d_stream.avail_out);
     }
     while(d_stream.avail_out==0);
-    
+
   }
   else
   {
@@ -449,9 +449,9 @@ void get_answer(void)
   while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} //Костыль - пропуск заголовков xml, для них нет закрывающих
   p=Rstream_p;
   while((p=strstr(p,"<stream:stream"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих (fuckin' XMPP)
-  
+
   p=Rstream_p;
-  
+
   while((c=*p++))
   {
     if (c=='<')
@@ -459,14 +459,14 @@ void get_answer(void)
       j++;
       if (*p!='/') i++; else i--;
     }
-    
+
     // Поправка на короткие теги: <tag/>
     if(c=='>' && (char) *(p-2) == '/')
     {
       i--;
       goto L_END;
     }
-    
+
     if (c=='>')
     {
     L_END:
@@ -768,6 +768,22 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
 
 //===============================================================================================
 // Всякий стафф с GUI
+
+RECT ConnPopupRC;
+RECT ConnLogRC;
+RECT ConnHeaderRC;
+
+void InitConnPopup()
+{
+
+}
+
+void DrawConnect()
+{
+
+}
+
+
 void onRedraw(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
@@ -1008,7 +1024,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '7':
       {
-        
+
         break;
       }
 
