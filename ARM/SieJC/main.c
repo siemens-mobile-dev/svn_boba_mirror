@@ -77,7 +77,8 @@ const char OS[] = "SGOLD_ELF-Platform";
 #endif
 
 
-int Is_Sounds_Enabled = 1;
+extern const int Default_Sounds_State;
+int Is_Sounds_Enabled;
 int Is_Vibra_Enabled = 1;
 
 char Is_Compression_Enabled = 0;
@@ -1351,6 +1352,7 @@ int main(char *exename, char *fname)
   }
   char dummy[sizeof(MAIN_CSM)];
   InitConfig(fname);
+  Is_Sounds_Enabled = Default_Sounds_State;
   if(!strlen(USERNAME))
   {
     ShowMSG(1,(int)"¬ведите логин/пароль!");
