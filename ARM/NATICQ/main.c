@@ -33,6 +33,7 @@ int Is_Vibra_Enabled;
 unsigned int Is_Sounds_Enabled;
 
 int S_ICONS[14];
+int SS_ICONS[2*14];
 
 #define EOP -10
 int CurrentStatus;
@@ -55,18 +56,18 @@ extern const char SMILE_PATH[];
 
 void setup_ICONS(void)
 {
-  S_ICONS[0]=(int)ICON0;
-  S_ICONS[1]=(int)ICON1;
-  S_ICONS[2]=(int)ICON2;
-  S_ICONS[3]=(int)ICON3;
-  S_ICONS[4]=(int)ICON4;
-  S_ICONS[5]=(int)ICON5;
-  S_ICONS[6]=(int)ICON7;
-  S_ICONS[7]=(int)ICON6;
-  S_ICONS[8]=(int)ICON8;
-  S_ICONS[9]=(int)ICON9;
-  S_ICONS[10]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
-  S_ICONS[11]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+  SS_ICONS[0*2]=S_ICONS[0]=(int)ICON0;
+  SS_ICONS[1*2]=S_ICONS[1]=(int)ICON1;
+  SS_ICONS[2*2]=S_ICONS[2]=(int)ICON2;
+  SS_ICONS[3*2]=S_ICONS[3]=(int)ICON3;
+  SS_ICONS[4*2]=S_ICONS[4]=(int)ICON4;
+  SS_ICONS[5*2]=S_ICONS[5]=(int)ICON5;
+  SS_ICONS[6*2]=S_ICONS[6]=(int)ICON7;
+  SS_ICONS[7*2]=S_ICONS[7]=(int)ICON6;
+  SS_ICONS[8*2]=S_ICONS[8]=(int)ICON8;
+  SS_ICONS[9*2]=S_ICONS[9]=(int)ICON9;
+  SS_ICONS[10*2]=S_ICONS[10]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  SS_ICONS[11*2]=S_ICONS[11]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
 }
 
 extern const unsigned int IDLEICON_X;
@@ -567,7 +568,7 @@ MENU_DESC contactlist_menu=
   8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
   menusoftkeys,
   &clmenu_skt,
-  0x11,
+  0x11, //+0x400
   (void *)contactlist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
@@ -728,8 +729,8 @@ CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
     }
     if ((si==IS_ANY)||(GetIconIndex(t)==si))
     {
-      if ((!t->isgroup)&&(t->group==grp_id)&&(grp_dis)) goto L_NOT9;
       s=ContactT9Key;
+      if ((!t->isgroup)&&(t->group==grp_id)&&(grp_dis)&&(!(*s))) goto L_NOT9;
       d=t->name;
       while(c=*s++)
       {
@@ -891,6 +892,8 @@ void create_contactlist_menu(void)
 
 void contactlist_menu_ghook(void *data, int cmd)
 {
+//  extern __thumb void Menu_SetItemCountDyn2(void *gui, int n);
+
   int i;
   int j;
 /*  if (cmd==0x09)
@@ -919,9 +922,9 @@ void contactlist_menu_ghook(void *data, int cmd)
       }
       i=CountContacts();
       if (j>=i) j=i-1;
-      SetCursorToMenuItem(data,0);
-      Menu_SetItemCountDyn(data,CountContacts());
+//      SetCursorToMenuItem(data,0);
       SetCursorToMenuItem(data,j);
+      Menu_SetItemCountDyn(data,i);
       UpdateCLheader();
       request_recount_clmenu=NULL;
 //      RefreshGUI();
@@ -1022,14 +1025,14 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
     ws=AllocMenuWS(data,10);
     wsprintf(ws, LG_CLERROR);
   }
-  SetMenuItemIconArray(data, item, S_ICONS);
-  SetMenuItemText(data, item, ws, curitem);
   icon=GetIconIndex(t);
   if (icon==IS_GROUP)
   {
     if (t->state) icon++; //Модификация иконки группы
   }
-  SetMenuItemIcon(data, curitem, icon);
+  SetMenuItemIconArray(data, item, SS_ICONS+icon*2);
+  SetMenuItemText(data, item, ws, curitem);
+//  SetMenuItemIcon(data, curitem, icon);
 }
 
 CLIST *AddContactOrGroup(CLIST *p)
