@@ -74,7 +74,7 @@ const char _percent_u[]="%u";
 const char _percent_d[]="%d";
 const char _percent_t[]="%t";
 
-int create_ed(void);
+int create_ed(CFG_HDR *);
 unsigned int char16to8(unsigned int c);
 
 void ed1_locret(void){}
@@ -108,6 +108,7 @@ void on_utf8ec(USR_MENU_ITEM *item)
     }
   }   
 }
+
 
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
@@ -187,8 +188,10 @@ void ed1_ghook(GUI *data, int cmd)
   TDate dd;
 
   CFG_HDR *hp;
+  int need_to_jump=(int)EDIT_GetUserPointer(data);
   if (cmd==2)
   {
+    EDIT_SetFocus(data,need_to_jump);
     //Create
   }
   if (cmd==7)
@@ -340,7 +343,7 @@ void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-  csm->gui_id=create_ed();
+  csm->gui_id=create_ed(0);
   csm->csm.state=0;
   csm->csm.unk1=0;
 }
@@ -374,15 +377,17 @@ void maincsm_onclose(CSM_RAM *csm)
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  CFG_HDR *hp;
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)
     {
       if (level)
       {
-	levelstack[level]=NULL;
+	hp=levelstack[level];
+        levelstack[level]=NULL;
 	level--;
-	csm->gui_id=create_ed();
+	csm->gui_id=create_ed(hp);
 	return 1;
       }
       if ((int)msg->data1==1)
@@ -636,7 +641,7 @@ int main(const char *elf_name, const char *fname)
   return 0;
 }
 
-int create_ed(void)
+int create_ed(CFG_HDR *need_to_focus)
 {
   void *ma=malloc_adr();
   void *eq;
@@ -646,6 +651,7 @@ int create_ed(void)
   char *p=cfg;
   int n=size_cfg;
   CFG_HDR *hp;
+  int need_to_jump=3;
 
   int i;
   unsigned int curlev=0;
@@ -825,12 +831,14 @@ int create_ed(void)
       {
 	if ((curlev==level)&&(parent==levelstack[level]))
 	{
+          int n_edit;
 	  EDITC_OPTIONS ec_options;
 	  ConstructEditControl(&ec,8,0x40,ews,256);
 	  SetPenColorToEditCOptions(&ec_options,2);
 	  SetFontToEditCOptions(&ec_options,1);
 	  CopyOptionsToEditControl(&ec,&ec_options);
-	  AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+	  n_edit=AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+          if (need_to_focus==hp)  need_to_jump=n_edit;
 	  total_items++;
 	}
 	curlev++;
@@ -905,5 +913,5 @@ L_ENDCONSTR:
   head_h=HeaderH();
   patch_header(&ed1_hdr,0,0,scr_w-1,head_h);
   patch_input(&ed1_desc,0,head_h+1,scr_w-1,ScreenH()-SoftkeyH()-1);
-  return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
+  return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,(void *)need_to_jump);
 }
