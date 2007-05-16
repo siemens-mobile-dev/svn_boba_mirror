@@ -29,12 +29,13 @@ const char S_FFC[]="FFC";
 
 int IsActiveUp=0;
 
-int Is_Vibra_Enabled = 1;
+int Is_Vibra_Enabled;
+unsigned int Is_Sounds_Enabled;
 
 int S_ICONS[14];
 
 #define EOP -10
-int CurrentStatus=IS_ONLINE;
+int CurrentStatus;
 
 WSHDR *ews;
 
@@ -111,8 +112,6 @@ void IlluminationOn(const int disp, const int key, const int tmr, const int fade
 ///////////
 
 //=============================Проигрывание звука=======================
-unsigned int Is_Sounds_Enabled = 1;
-
 extern const char sndStartup[];
 extern const char sndSrvMsg[];
 extern const char sndGlobal[];
@@ -2088,7 +2087,17 @@ int main()
   char dummy[sizeof(MAIN_CSM)];
 
   InitConfig();
+    
+  extern const int DEF_VIBRA_STATUS;
+  extern const int DEF_SOUNDS_STATUS;
+  extern const int MY_DEF_STATUS;
+  
+  Is_Vibra_Enabled=DEF_VIBRA_STATUS;
+  Is_Sounds_Enabled=DEF_SOUNDS_STATUS;
+  CurrentStatus=MY_DEF_STATUS+1;
+  
   setup_ICONS();
+  
 //  InitSmiles();
 
   if (!UIN)

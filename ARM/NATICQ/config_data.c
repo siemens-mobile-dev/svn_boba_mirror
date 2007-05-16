@@ -1,4 +1,5 @@
 #include "..\inc\cfg_items.h"
+#include "language.h"
 //Конфигурация
 
 #ifdef NEWSGOLD
@@ -152,3 +153,18 @@ __root const CFG_HDR cfghdr33={CFG_INT,"Fade on Off",0,1000};
 __root const unsigned int ILL_OFF_FADE=900;
 
 __root const CFG_HDR cfghdr_m60={CFG_LEVEL,"",0,0};
+
+
+__root const CFG_HDR cfghdr_m71={CFG_LEVEL,"Default status",1,0};
+
+__root const CFG_HDR cfghdr7_1={CFG_CHECKBOX,"Default Vibra Status",0,2};
+__root const int DEF_VIBRA_STATUS=1;
+
+__root const CFG_HDR cfghdr7_2={CFG_CHECKBOX,"Default Sounds Status",0,2};
+__root const int DEF_SOUNDS_STATUS=1;
+
+__root const CFG_HDR cfghdr7_3={CFG_CBOX,"My Default Status",0,7};
+__root const int MY_DEF_STATUS = 5;
+__root const CFG_CBOX_ITEM cfgcbox7_1[7]={LG_STINVIS,LG_STAWAY,LG_STNA,LG_STOCCUP,LG_STDND,LG_STONLINE,LG_STFFC};
+
+__root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};
