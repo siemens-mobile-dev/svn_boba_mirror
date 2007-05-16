@@ -16,7 +16,7 @@
 #define LG_CLERROR "ошибка"
 
 #define LG_CLLOOPBACK "Loopback"
-
+#define LG_GROUPNOTINLIST "Не в списке"
 //===============================
 
 #define LG_MENU    "Меню"
@@ -122,6 +122,7 @@
 #define LG_CLERROR "помилка"
 
 #define LG_CLLOOPBACK "Loopback"
+#define LG_GROUPNOTINLIST "Нема в списку"
 
 //===============================
 
@@ -230,6 +231,7 @@
 #define LG_CLERROR "error"
 
 #define LG_CLLOOPBACK "Loopback"
+#define LG_GROUPNOTINLIST "Not in list"
 
 //===============================
 

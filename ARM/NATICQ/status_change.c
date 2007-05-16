@@ -31,7 +31,7 @@ void patch_input(INPUTDIA_DESC* inp)
 
 extern int CurrentStatus;
 extern void set_my_status(void);
-extern  int S_ICONS[13];
+extern  int S_ICONS[14];
 
 #pragma inline
 void Change_Status(char status)

@@ -31,7 +31,7 @@ int IsActiveUp=0;
 
 int Is_Vibra_Enabled = 1;
 
-int S_ICONS[13];
+int S_ICONS[14];
 
 #define EOP -10
 int CurrentStatus=IS_ONLINE;
@@ -511,7 +511,8 @@ volatile unsigned int GROUP_CACHE; //Текущая группа для добавления
 
 volatile int contactlist_menu_id;
 volatile int request_close_clmenu;
-volatile int request_recount_clmenu;
+CLIST *request_recount_clmenu;
+CLIST *request_goto_clmenu;
 
 GBSTMR tmr_active;
 
@@ -705,7 +706,7 @@ int CompareContacts(CLIST *t, CLIST *p)
   return(strcmp_nocase(t->name,p->name));
 }
 
-CLIST *FindContactByNS(int *i, int si, int act_flag)
+CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
 {
   CLIST *t;
   t=(CLIST *)cltop;
@@ -735,6 +736,7 @@ CLIST *FindContactByNS(int *i, int si, int act_flag)
       {
 	if (c!=table_T9Key[*d++]) goto L_NOT9;
       }
+      if (search_contact==t) return t; //Нашли контакт по адресу
       if (!(*i)) return(t);
       (*i)--;
     }
@@ -786,7 +788,7 @@ void BackSpaceContactT9(void)
 int CountContacts(void)
 {
   int l=-1;
-  FindContactByNS(&l,IS_ANY,2);
+  FindContactByNS(&l,IS_ANY,2,NULL);
   l=-1-l;
   return l;
 }
@@ -797,7 +799,7 @@ CLIST *FindContactByN(int i)
   int f=IsActiveUp;
   if (f)
   {
-    t=FindContactByNS(&i,IS_ANY,1); if ((!i)&&(t)) return (t);
+    t=FindContactByNS(&i,IS_ANY,1,NULL); if ((!i)&&(t)) return (t);
     f=0;
   }
   else f=2;
@@ -811,8 +813,33 @@ CLIST *FindContactByN(int i)
   t=FindContactByNS(&i,IS_INVISIBLE,f); if ((!i)&&(t)) return(t);
   t=FindContactByNS(&i,IS_OFFLINE,f); if ((!i)&&(t)) return(t);
   t=FindContactByNS(&i,IS_UNKNOWN,f); if ((!i)&&(t)) return(t);*/
-  t=FindContactByNS(&i,IS_ANY,f);
+  t=FindContactByNS(&i,IS_ANY,f,NULL);
   return t;
+}
+
+int FindContactByContact(CLIST *p)
+{
+  int l=-1;
+//  CLIST *t;
+  int f=IsActiveUp;
+  if (f)
+  {
+    if (FindContactByNS(&l,IS_ANY,1,p)) return -1-l;
+    f=0;
+  }
+  else f=2;
+/*  t=FindContactByNS(&i,IS_MSG,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_FFC,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_ONLINE,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_DND,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_OCCUPIED,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_NA,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_AWAY,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_INVISIBLE,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_OFFLINE,f); if ((!i)&&(t)) return(t);
+  t=FindContactByNS(&i,IS_UNKNOWN,f); if ((!i)&&(t)) return(t);*/
+  FindContactByNS(&l,IS_ANY,f,p);
+  return -1-l;
 }
 
 void SwapContacts(CLIST *first, CLIST *second)
@@ -861,19 +888,21 @@ void create_contactlist_menu(void)
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 }
 
-int need_jump_to_top_cl;
+//int need_jump_to_top_cl;
 
 void contactlist_menu_ghook(void *data, int cmd)
 {
   int i;
+  int j;
+/*  if (cmd==0x09)
+  {
+    if (request_recount_clmenu)
+    {
+    }
+  }*/
   if (cmd==0x0A)
   {
     DisableIDLETMR();
-    if (need_jump_to_top_cl)
-    {
-      SetCursorToMenuItem(data,0);
-      need_jump_to_top_cl=0;
-    }
     if (request_close_clmenu)
     {
       request_close_clmenu=0;
@@ -881,12 +910,22 @@ void contactlist_menu_ghook(void *data, int cmd)
     }
     if (request_recount_clmenu)
     {
-      request_recount_clmenu=0;
+      if ((int)request_recount_clmenu==-1)
+      {
+	j=0;
+      }
+      else
+      {
+	j=FindContactByContact(request_recount_clmenu);
+      }
       i=CountContacts();
-      Menu_SetItemCountDyn(data,i);
+      if (j>=i) j=i-1;
       SetCursorToMenuItem(data,0);
+      Menu_SetItemCountDyn(data,CountContacts());
+      SetCursorToMenuItem(data,j);
       UpdateCLheader();
-      RefreshGUI();
+      request_recount_clmenu=NULL;
+//      RefreshGUI();
     }
   }
 }
@@ -895,6 +934,8 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 {
   CLIST *t;
   int i;
+  i=GetCurMenuItem(data);
+  t=FindContactByN(i);
   if (request_close_edchat) return -1;
   if (msg->keys==0x18)
   {
@@ -905,21 +946,21 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
   }
   if (msg->keys==0x3D)
   {
-    i=GetCurMenuItem(data);
-    t=FindContactByN(i);
     if (t)
     {
       if (t->isgroup)
       {
-	t->state^=0xFFFF;
-	request_recount_clmenu=1;
+	if ((t->state^=0xFFFF))
+	  request_recount_clmenu=t; //(void *)-1; //Если закрыли группу - на верх
+	else
+	  request_recount_clmenu=t; //Если открыли, то на старое место
 	RefreshGUI();
 	return(-1);
       }
       if (strlen(ContactT9Key))
       {
 	ClearContactT9Key();
-        request_recount_clmenu=1;
+        request_recount_clmenu=(void *)-1;
       }
       CreateEditChat(t);
     }
@@ -931,24 +972,26 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (strlen(ContactT9Key))
     {
       BackSpaceContactT9();
-      request_recount_clmenu=1;
+      request_recount_clmenu=(void *)-1;
       RefreshGUI();
       return(-1);
     }
   }
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
-    i=msg->gbsmsg->submess;
-    if (((i>='0')&&(i<='9'))||(i=='#')||(i=='*'))
+    int key=msg->gbsmsg->submess;
+    if (((key>='0')&&(key<='9'))||(key=='#')||(key=='*'))
     {
-      AddContactT9Key(i);
-      request_recount_clmenu=1;
+      AddContactT9Key(key);
+      request_recount_clmenu=(void *)-1;
       RefreshGUI();
       return(-1);
     }
-    if (i==GREEN_BUTTON)
+    if (key==GREEN_BUTTON)
     {
       IsActiveUp=!IsActiveUp;
+      SetCursorToMenuItem(data,0);
+//      request_goto_clmenu=t;
       RefreshGUI();
       return(-1);
     }
@@ -1282,7 +1325,6 @@ void get_answer(void)
         GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
         snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
         connect_state=3;
-	GROUP_CACHE=0;
         REDRAW();
         break;
       case T_GROUPID:
@@ -1519,6 +1561,7 @@ ProcessPacket(TPKT *p)
       {
 	//        t->state=0xFFFF;
         strncpy(t->name,p->data,63);
+	t->group=GROUP_CACHE;
 	ChangeContactPos(t);
       }
       else
@@ -1529,12 +1572,13 @@ ProcessPacket(TPKT *p)
     else
     {
       vibra_count=1;
+      GROUP_CACHE=0;
       start_vibra();
       set_my_status();
       ask_my_info();
       if (contactlist_menu_id)
       {
-        request_recount_clmenu=1;
+        request_recount_clmenu=(void *)-1;
         if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
       }
       else
@@ -1579,16 +1623,15 @@ ProcessPacket(TPKT *p)
     if (!t)
     {
       sprintf(s,"%d",p->pkt.uin);
-      AddContact(p->pkt.uin,s);
-      t=FindContactByUin(p->pkt.uin);
+      t=AddContact(p->pkt.uin,s);
     }
     t->isactive=ACTIVE_TIME;
-    ChangeContactPos(t);
+//    ChangeContactPos(t);
     vibra_count=1;
     start_vibra();
     IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
     AddStringToLog(t,0x02,p->data,t->name);
-    if (contactlist_menu_id) need_jump_to_top_cl=1;
+    if (contactlist_menu_id) request_recount_clmenu=t;
     //Разворачиваем группу, в которой пришло сообщение
     {
       CLIST *g=FindGroupByID(t->group);
@@ -1597,7 +1640,6 @@ ProcessPacket(TPKT *p)
 	if (g->state)
 	{
 	  g->state=0;
-	  if (contactlist_menu_id) request_recount_clmenu=1;
 	}
       }
     }
@@ -1634,7 +1676,7 @@ void process_active_timer(void)
   {
     if (t->isactive)
     {
-//      if ((--t->isactive)==0) ChangeContactPos(t);
+      t->isactive--;
     }
     t=(CLIST *)(t->next);
   }
@@ -1913,6 +1955,8 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	    memcpy(p->data,PASS,i);
 	    SUBPROC((void *)send_login,0,p);
 	  }
+	  GROUP_CACHE=0;
+	  if (!FindGroupByID(0)) AddGroup(0,LG_GROUPNOTINLIST);
 	  if (!FindContactByUin(UIN)) AddContact(UIN, LG_CLLOOPBACK);
 	  REDRAW();
 	}
