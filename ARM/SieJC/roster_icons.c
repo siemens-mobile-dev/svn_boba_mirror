@@ -178,7 +178,7 @@ unsigned int img_num=0;
 }
 #endif
 
-void Roster_DrawIcon(char x, char y,int img_num)
+void Roster_DrawIcon(unsigned short x, unsigned short y, unsigned int img_num)
 {
   DrawImg(x, y, img_num);
 }

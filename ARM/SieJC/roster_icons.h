@@ -5,7 +5,7 @@
 
 
 // рисуем картинку с номером по заданным координатам
-  void Roster_DrawIcon(char x, char y, int img_num);
+void Roster_DrawIcon(unsigned short x, unsigned short y, unsigned int img_num);
 
 // получаем номер картинки
 #ifdef USE_PNG_EXT

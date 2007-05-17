@@ -63,7 +63,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "1.5-DEV-RECVPIPE-Z";
+const char VERSION_VERS[] = "1.5.5-Z";
 const char CMP_DATE[] = __DATE__;
 
 #ifdef NEWSGOLD

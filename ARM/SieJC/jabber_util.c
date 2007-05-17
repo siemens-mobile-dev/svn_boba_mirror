@@ -563,7 +563,10 @@ void FillRoster(XMLNode* items)
     XMLNode *group = XML_Get_Child_Node_By_Name(rostEx, "group");
     int gr_id;
     if(group)
+    {
       if(!(gr_id = GetGroupID(group->value)))gr_id = AddGroup(group->value);
+    }
+    else gr_id = 0;
 
     CList_AddContact(XML_Get_Attr_Value("jid",rostEx->attr),
                           name,
