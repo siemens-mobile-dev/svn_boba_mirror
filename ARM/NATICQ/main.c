@@ -1003,39 +1003,64 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
   return(0);
 }
 
+void GetOnTotalContact(int group_id,int *_online, int *_total)
+{
+  CLIST *t;
+  t=(CLIST *)&cltop;
+  int online=0,total=0;
+  while((t=t->next))
+  {
+    if(t->group==group_id && !t->isgroup)
+    {
+      total++;
+      if (t->state!=0xFFFF) online++;
+    }
+  }
+  *_total=total;
+  *_online=online;
+}
+
 void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
 {
   CLIST *t;
   WSHDR *ws;
   void *item=AllocMenuItem(data);
   int icon;
-
+  WSHDR ws1, *ws2;
+  unsigned short num[128];
+  ws2=CreateLocalWS(&ws1,num,128);
   t=FindContactByN(curitem);
   if (t)
   {
-    ws=AllocMenuWS(data,strlen(t->name)+2);
-    wsprintf(ws,percent_t,t->name);
-    if (t->isactive)
+    icon=GetIconIndex(t);
+    if (icon!=IS_GROUP)
     {
-//      wsInsertChar(ws,0xE120,1);
-      wsInsertChar(ws,0x0002,1);
-      wsInsertChar(ws,0xE008,1);
+      wsprintf(ws2,percent_t,t->name);
+      if (t->isactive)
+      {
+        wsInsertChar(ws2,0x0002,1);
+        wsInsertChar(ws2,0xE008,1);
+      }
+    }
+    else
+    {
+      int online,total;
+      GetOnTotalContact(t->group,&online,&total);
+      wsprintf(ws2,"%t%c%c(%d/%d)",t->name,0xE01D,0xE012,online,total);
+      if (t->state) icon++; //Модификация иконки группы
     }
   }
   else
   {
-    ws=AllocMenuWS(data,10);
-    wsprintf(ws, LG_CLERROR);
+    wsprintf(ws2, LG_CLERROR);
   }
-  icon=GetIconIndex(t);
-  if (icon==IS_GROUP)
-  {
-    if (t->state) icon++; //Модификация иконки группы
-  }
-  SetMenuItemIconArray(data, item, SS_ICONS+icon*2);
+  ws=AllocMenuWS(data,ws2->wsbody[0]);
+  wstrcpy(ws,ws2);
+  SetMenuItemIconArray(data, item, SS_ICONS);
   SetMenuItemText(data, item, ws, curitem);
-//  SetMenuItemIcon(data, curitem, icon);
+  SetMenuItemIcon(data, curitem, icon*2);
 }
+
 
 CLIST *AddContactOrGroup(CLIST *p)
 {
