@@ -289,7 +289,7 @@ void ed1_ghook(GUI *data, int cmd)
         p=(char *)(hp+1);
         while(j<hp->max)
         {
-          if (j>ews->wsbody[0]) break;
+          if (j>=ews->wsbody[0]) break;
           *p++=char16to8(ews->wsbody[j+1]);
           j++;
         }
