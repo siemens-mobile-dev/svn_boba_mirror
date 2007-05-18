@@ -52,6 +52,8 @@ extern const char ICON6[];
 extern const char ICON7[];
 extern const char ICON8[];
 extern const char ICON9[];
+extern const char ICON10[];
+extern const char ICON11[];
 extern const char SMILE_PATH[];
 
 void setup_ICONS(void)
@@ -66,8 +68,8 @@ void setup_ICONS(void)
   SS_ICONS[7*2]=S_ICONS[7]=(int)ICON6;
   SS_ICONS[8*2]=S_ICONS[8]=(int)ICON8;
   SS_ICONS[9*2]=S_ICONS[9]=(int)ICON9;
-  SS_ICONS[10*2]=S_ICONS[10]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
-  SS_ICONS[11*2]=S_ICONS[11]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+  SS_ICONS[10*2]=S_ICONS[10]=(int)ICON10;
+  SS_ICONS[11*2]=S_ICONS[11]=(int)ICON11;
 }
 
 extern const unsigned int IDLEICON_X;
@@ -695,11 +697,11 @@ int CompareContacts(CLIST *t, CLIST *p)
   {
     return(c);
   }*/
-  if ((c=t->group-p->group))
+  if ((c=p->group-t->group))
   {
     return(c);
   }
-  if ((c=GetIconIndex(t)-GetIconIndex(p)))
+  if ((c=GetIconIndex(p)-GetIconIndex(t)))
   {
     return(c);
   }
@@ -859,7 +861,7 @@ void ChangeContactPos(CLIST *p)
   if ((t=p->prev))
   {
     //Проверяем, не надо ли всплывать
-    while(CompareContacts(t,p)<0)
+    while(CompareContacts(t,p)>0)
     {
       //Всплываем вверх списка
       SwapContacts(t,p);
@@ -869,7 +871,7 @@ void ChangeContactPos(CLIST *p)
   if ((t=p->next))
   {
     //Проверяем, не надо ли углубляться
-    while(CompareContacts(p,t)<0)
+    while(CompareContacts(p,t)>0)
     {
       SwapContacts(p,t);
       if (!(t=p->next)) return; //Углубились нах ;)
@@ -1043,7 +1045,7 @@ CLIST *AddContactOrGroup(CLIST *p)
   if (t)
   {
     //Не первый
-    while(CompareContacts(t,p)>0)
+    while(CompareContacts(t,p)<0)
     {
       if (!(pr=t->next))
       {

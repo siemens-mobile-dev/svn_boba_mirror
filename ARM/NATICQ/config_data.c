@@ -76,6 +76,12 @@ __root const char ICON8[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\message.png";
 __root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Unknown state icon",0,63};
 __root const char ICON9[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\unknown.png";
 
+__root const CFG_HDR cfghdr12_0={CFG_STR_UTF8,"Group ON icon",0,63};
+__root const char ICON10[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\groupon.png";
+
+__root const CFG_HDR cfghdr12_1={CFG_STR_UTF8,"Group OFF icon",0,63};
+__root const char ICON11[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\groupoff.png";
+
 __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_m31={CFG_LEVEL,"Sounds setup",1,0};
 
