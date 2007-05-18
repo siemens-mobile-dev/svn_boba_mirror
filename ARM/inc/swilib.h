@@ -762,6 +762,9 @@ typedef struct
 #define ECF_DISABLE_T9 0x2000
 #define ECF_DEFAULT_ITAP 0x4000
 #define ECF_DEFAULT_DIGIT 0x8000
+
+#define ECF_DISABLE_MINUS 0x20000  // Also disable #
+#define ECF_DISABLE_POINT 0x40000  // Also disable *
 #define ECF_MARKED 0x2000000
 #define ECF_GRAY 0x4000000
 

@@ -21,4 +21,9 @@ typedef struct
 
 #define PNG_8 1
 #define PNG_16 2
-#define PNG_1 3
+
+#ifdef NEWSGOLD
+#define PNG_24 3
+#endif
+
+#define PNG_1 0xFF
