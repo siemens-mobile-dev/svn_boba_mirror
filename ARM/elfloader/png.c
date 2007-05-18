@@ -111,72 +111,91 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
   pp.row=malloc(rowbytes);
   pp.img_h=img_hc=malloc(sizeof(IMGHDR));
   
-  switch (type)
+  if (type==PNG_1)
   {
-  case PNG_16:
+    int rowc_w=(width+7)>>3;
+    int size=height*rowc_w;
+    unsigned char *iimg=(unsigned char *)(pp.img=malloc(size));
+    zeromem(iimg,size);
+    for (unsigned int y = 0; y<height; y++)
     {
-      unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*2));
-      for (unsigned int y = 0; y<height; y++)
+      png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+      for (unsigned int x = 0; x<width; x++)
       {
-        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-        for (unsigned int x = 0; x<width; x++)
+        if (!pp.row[x*4+0] && !pp.row[x*4+1] && !pp.row[x*4+2])
+          iimg[x>>3]|=(0x80>>(x&7));
+      }
+      iimg+=rowc_w;
+    }
+    pp.img_h->bpnum=1;
+  }
+  else
+  {
+    switch (type)
+    {
+    case PNG_8:
+      {
+        unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
+        for (unsigned int y = 0; y<height; y++)
         {
-          if (pp.row[x*4+3]<ALPHA_THRESHOLD)
-            *iimg++=0xE000;
-          else
+          png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+          for (unsigned int x = 0; x<width; x++)
           {
-            unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
-            c|=((pp.row[x*4+1]<<3)&0x7E0);
-            c|=((pp.row[x*4+2]>>3)&0x1F);
-            *iimg++=c;
+            if (pp.row[x*4+3]<ALPHA_THRESHOLD)
+              *iimg++=0xC0;
+            else
+            {
+              unsigned char c=(pp.row[x*4+0] & 0xE0);
+              c|=((pp.row[x*4+1]>>3)&0x1C);
+              c|=((pp.row[x*4+2]>>6)&0x3);
+              *iimg++=c;
+            }
           }
         }
+        pp.img_h->bpnum=5;
+        break;
       }
-      pp.img_h->bpnum=8;
-      break;
-    }
-    
-  case PNG_8:
-    {
-      unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
-      for (unsigned int y = 0; y<height; y++)
+    case PNG_16:
       {
-        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-        for (unsigned int x = 0; x<width; x++)
+        unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*2));
+        for (unsigned int y = 0; y<height; y++)
         {
-          if (pp.row[x*4+3]<ALPHA_THRESHOLD)
-            *iimg++=0xC0;
-          else
+          png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+          for (unsigned int x = 0; x<width; x++)
           {
-            unsigned char c=(pp.row[x*4+0] & 0xE0);
-            c|=((pp.row[x*4+1]>>3)&0x1C);
-            c|=((pp.row[x*4+2]>>6)&0x3);
-            *iimg++=c;
+            if (pp.row[x*4+3]<ALPHA_THRESHOLD)
+              *iimg++=0xE000;
+            else
+            {
+              unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
+              c|=((pp.row[x*4+1]<<3)&0x7E0);
+              c|=((pp.row[x*4+2]>>3)&0x1F);
+              *iimg++=c;
+            }
           }
         }
+        pp.img_h->bpnum=8;
+        break;
       }
-      pp.img_h->bpnum=5;
-      break;
-    }
-    
-  case PNG_1:
-    {
-      int rowc_w=(width+7)>>3;
-      int size=height*rowc_w;
-      unsigned char *iimg=(unsigned char *)(pp.img=malloc(size));
-      zeromem(iimg,size);
-      for (unsigned int y = 0; y<height; y++)
+#ifdef NEWSGOLD
+    case PNG_24:
       {
-        png_read_row(png_ptr, (png_bytep)pp.row, NULL);
-        for (unsigned int x = 0; x<width; x++)
+        unsigned char *iimg=(unsigned char *)(pp.img=malloc((width*height)<<2));
+        for (unsigned int y = 0; y<height; y++)
         {
-          if (!pp.row[x*4+0] && !pp.row[x*4+1] && !pp.row[x*4+2])
-            iimg[x>>3]|=(0x80>>(x&7));
+          png_read_row(png_ptr, (png_bytep)pp.row, NULL);
+          for (unsigned int x = 0; x<width; x++)
+          {
+            *iimg++=pp.row[x*4+0];
+            *iimg++=pp.row[x*4+1];
+            *iimg++=pp.row[x*4+2];
+            *iimg++=(pp.row[x*4+3]*100)/0xFF;
+          }
         }
-        iimg+=rowc_w;
+        pp.img_h->bpnum=0xA;
+        break;
       }
-      pp.img_h->bpnum=1;
-      break;
+#endif
     }
   }
   pp.img_h->w=width;
