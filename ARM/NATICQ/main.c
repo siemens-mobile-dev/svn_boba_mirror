@@ -33,7 +33,6 @@ int Is_Vibra_Enabled;
 unsigned int Is_Sounds_Enabled;
 
 int S_ICONS[14];
-int SS_ICONS[2*14];
 
 #define EOP -10
 int CurrentStatus;
@@ -58,18 +57,18 @@ extern const char SMILE_PATH[];
 
 void setup_ICONS(void)
 {
-  SS_ICONS[0*2]=S_ICONS[0]=(int)ICON0;
-  SS_ICONS[1*2]=S_ICONS[1]=(int)ICON1;
-  SS_ICONS[2*2]=S_ICONS[2]=(int)ICON2;
-  SS_ICONS[3*2]=S_ICONS[3]=(int)ICON3;
-  SS_ICONS[4*2]=S_ICONS[4]=(int)ICON4;
-  SS_ICONS[5*2]=S_ICONS[5]=(int)ICON5;
-  SS_ICONS[6*2]=S_ICONS[6]=(int)ICON7;
-  SS_ICONS[7*2]=S_ICONS[7]=(int)ICON6;
-  SS_ICONS[8*2]=S_ICONS[8]=(int)ICON8;
-  SS_ICONS[9*2]=S_ICONS[9]=(int)ICON9;
-  SS_ICONS[10*2]=S_ICONS[10]=(int)ICON10;
-  SS_ICONS[11*2]=S_ICONS[11]=(int)ICON11;
+  S_ICONS[0]=(int)ICON0;
+  S_ICONS[1]=(int)ICON1;
+  S_ICONS[2]=(int)ICON2;
+  S_ICONS[3]=(int)ICON3;
+  S_ICONS[4]=(int)ICON4;
+  S_ICONS[5]=(int)ICON5;
+  S_ICONS[6]=(int)ICON7;
+  S_ICONS[7]=(int)ICON6;
+  S_ICONS[8]=(int)ICON8;
+  S_ICONS[9]=(int)ICON9;
+  S_ICONS[10]=(int)ICON10;
+  S_ICONS[11]=(int)ICON11;
 }
 
 extern const unsigned int IDLEICON_X;
@@ -1056,9 +1055,9 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
   }
   ws=AllocMenuWS(data,ws2->wsbody[0]);
   wstrcpy(ws,ws2);
-  SetMenuItemIconArray(data, item, SS_ICONS);
+  SetMenuItemIconArray(data, item, S_ICONS+icon);
   SetMenuItemText(data, item, ws, curitem);
-  SetMenuItemIcon(data, curitem, icon*2);
+  //SetMenuItemIcon(data, curitem, icon*2);
 }
 
 
