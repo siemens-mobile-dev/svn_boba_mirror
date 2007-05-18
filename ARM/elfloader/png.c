@@ -186,10 +186,15 @@ __arm IMGHDR* create_imghdr(const char *fname, int type)
           png_read_row(png_ptr, (png_bytep)pp.row, NULL);
           for (unsigned int x = 0; x<width; x++)
           {
-            *iimg++=pp.row[x*4+0];
-            *iimg++=pp.row[x*4+1];
+	    unsigned int c;
             *iimg++=pp.row[x*4+2];
-            *iimg++=(pp.row[x*4+3]*100)/0xFF;
+            *iimg++=pp.row[x*4+1];
+            *iimg++=pp.row[x*4+0];
+	    c=pp.row[x*4+3];
+//	    if (c>=128) c++;
+//	    c*=100;
+//	    c>>=8;
+            *iimg++=c;//(pp.row[x*4+3]*100)/0xFF;
           }
         }
         pp.img_h->bpnum=0xA;
