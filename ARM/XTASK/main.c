@@ -45,6 +45,7 @@ int mode_red;
 
 // 0 - no press
 // 1 - long press ENTER_BUTTON
+// 2 - disable KEY_UP process
 int mode_enter;
 
 int my_keyhook(int submsg, int msg)
@@ -53,17 +54,17 @@ int my_keyhook(int submsg, int msg)
   void *icsm=FindCSMbyID(CSM_root()->idle_id);
   if ((submsg==RED_BUTTON)&&(RED_BUT_MODE))
   {
-    if (IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4]))
+    if (CSM_root()->csm_q->csm.last==icsm) //(IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4]))
     {
       if (msg==KEY_UP)
       {
-	if (mode_red)
+	if (mode_red!=2)
 	{
 	  mode_red=0;
 	  return(2);
 	}
       }
-      mode_red=0;
+      mode_red=2; //Ложим на отпускания
     }
     else
     {
@@ -77,13 +78,13 @@ int my_keyhook(int submsg, int msg)
       }
       if (msg==KEY_UP)
       {
-	if (mode_red==1)
+	if (mode_red)
 	{
 	  mode_red=0; //Release after longpress
 	  return(0);
 	}
+	else
 	//Release after short press
-	if (mode==0)
 	{
           if (RED_BUT_MODE==1)
           {
