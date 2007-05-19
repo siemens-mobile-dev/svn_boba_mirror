@@ -136,7 +136,13 @@ int my_keyhook(int submsg, int msg)
     {
       if (IsUnlocked()||ENA_LOCK)
       {
-	if (!my_csm_id) do_gui(0);
+	if (!my_csm_id)
+	{
+	  mode=-1;
+	  do_gui(0);
+	}
+	else
+	  mode=0;
       }
       else mode=0;
     }
@@ -178,7 +184,10 @@ int my_keyhook(int submsg, int msg)
     mode_enter=1;
     if (IsUnlocked()||ENA_LOCK)
     {
-      if (!my_csm_id) do_gui(0);
+      if (!my_csm_id)
+	do_gui(0);
+      else
+	mode=0;
     }
     else mode=0;
   }
@@ -255,6 +264,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       RotateCSMs(CSM_root()->csm_q->csm.last,FindCSMbyID(CSM_root()->idle_id));
       callhide_mode=0;
     }
+  }
+  if ((msg->msg==MSG_CSM_DESTROYED)&&((int)msg->data0==my_csm_id))
+  {
+    my_csm_id=0;
+    mode=0;
   }
   return csm_result;  
 }

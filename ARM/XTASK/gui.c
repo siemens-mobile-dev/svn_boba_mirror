@@ -35,7 +35,7 @@ void patch_rect(const RECT*rcc,int x,int y, int x2, int y2)
   rc->y2=y2;
 }
 
-extern int mode;
+//extern int mode;
 extern CSM_RAM *under_idle;
 
 extern const char BM1NAME[32];
@@ -710,8 +710,7 @@ void maincsm_onclose(CSM_RAM *csm)
   //  extern void *ELF_BEGIN;
   //  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
   ClearNL();
-  mode=0;
-  my_csm_id=0;
+//  mode=0;
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
@@ -749,7 +748,7 @@ void do_gui(int _do_idle)
   do_idle=_do_idle;
   InitConfig();
   my_csm_id=CreateCSM(&maincsm,dummy,0);
-  mode=-1;
+//  mode=-1;
 }
 
 void method0_1(DUMMY_GUI *data)
