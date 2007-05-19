@@ -64,6 +64,8 @@ void Send_Version_Request(char *dest_jid);
 // Context: HELPER
 void Send_Roster_Query();
 
+void _sendandfree(char *str);
+
 /*
  Обработка входящих Iq-запросов
 */

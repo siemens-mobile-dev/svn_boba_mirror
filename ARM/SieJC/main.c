@@ -604,7 +604,16 @@ void Process_Decoded_XML(XMLNode* node)
     {
       Analyze_Stream_Features(nodeEx);
       if(USE_ZLIB && Support_Compression && Jabber_state == JS_NOT_CONNECTED)Compression_Ask();
-      if(Support_MD5_Auth && (Jabber_state == JS_NOT_CONNECTED || Jabber_state==JS_ZLIB_STREAM_INIT_ACK))SUBPROC((void*)Use_Md5_Auth_Report);
+      if(Jabber_state == JS_NOT_CONNECTED || Jabber_state==JS_ZLIB_STREAM_INIT_ACK)
+      if(Support_MD5_Auth)
+      {
+        SUBPROC((void*)Use_Md5_Auth_Report);
+      }
+      else
+      {
+        strcat(logmsg, "\nERROR:  No supported auth methods!");                
+      }
+      
       if(Support_Resource_Binding && Jabber_state == JS_SASL_NEW_STREAM_ACK)SASL_Bind_Resource();
     }
 
@@ -1028,7 +1037,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '*':
       {
-        //ChangeVibra();
+        Is_Vibra_Enabled=!(Is_Vibra_Enabled);
         break;
       }
     case '#': //решеткой бегаем между непрочитанными

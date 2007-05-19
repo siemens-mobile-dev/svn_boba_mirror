@@ -697,6 +697,35 @@ void Get_Bookmarks_List()
 }
 
 /*
+<iq from='siepatchdb@conference.jabber.ru/Adder' to='kibab612@jabber.ru/SieJC' id='stoat_173' type='get'>
+  <query xmlns='jabber:iq:time'/>
+</iq>
+*/
+
+/*
+  <iq to='sender' type='error'>
+  <error type='cancel'>
+    <feature-not-implemented xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+  </error>
+  </iq>
+*/
+
+
+void Send_Feature_Not_Implemented(char *to, char *id)
+{
+  if(!to || !id)return;
+  char err_tpl[]="<iq to='%s' id='%s' type='error'>"
+                 "<error type='cancel'>"
+                    "<feature-not-implemented xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>"
+                  "</error>"
+                 "</iq>";
+  char *m=malloc(1024);
+  zeromem(m,1024);
+  snprintf(m,1023,err_tpl,to,id);
+  SUBPROC((void*)_sendandfree,m);
+}
+
+/*
  Обработка входящих Iq-запросов
 */
 void Process_Iq_Request(XMLNode* nodeEx)
@@ -741,9 +770,12 @@ if(!strcmp(gget,iqtype)) // Iq type = get
         char* loc_from=malloc(strlen(from)+1);
         strcpy(loc_from,from);
         SUBPROC((void*)Report_VersionInfo,loc_id, loc_from);
-
+        return;
     }
   }
+  
+  // Ни один обработчик не подошёл, отправляем ошибку.
+  Send_Feature_Not_Implemented(from, id);
 }
 
 
@@ -757,6 +789,7 @@ if(!strcmp(gres,iqtype))
   {
     Jabber_state = JS_SASL_SESS_INIT_ACK;
     SASL_Init_Session();
+    return;
   }
 
   if(!strcmp(id,auth_id) || !strcmp(id, sess_id))   // Авторизация либо конец инициализации сессии
@@ -764,6 +797,7 @@ if(!strcmp(gres,iqtype))
     Jabber_state = JS_AUTH_OK;
     CList_AddContact(My_JID, "(Me)", SUB_BOTH,0,0);
     SUBPROC((void*)Send_Roster_Query);
+    return;
   }
 
   if(!strcmp(id,rost_id))   // Запрос ростера
@@ -779,6 +813,7 @@ if(!strcmp(gres,iqtype))
         // Через секунду запросим презенсы
       extern GBSTMR TMR_Send_Presence;
       GBS_StartTimerProc(&TMR_Send_Presence, TMR_SECOND*1, Send_Presence_MMIStub);
+      return;
     }
   }
 
@@ -809,6 +844,7 @@ if(!strcmp(gres,iqtype))
       CList_AddMessage(from, MSG_SYSTEM, reply);
       ShowMSG(1,(int)reply);
       mfree(reply);
+      return;
     }
 
   }
@@ -827,6 +863,7 @@ if(!strcmp(gres,iqtype))
       char *xmlns = XML_Get_Attr_Value("xmlns", bm->attr);
       if(!xmlns)return;
       if(!strcmp(xmlns, XMLNS_BOOKMARKS))Process_Bookmarks_Storage(bm);
+      return;
     }
   }
 
@@ -844,6 +881,7 @@ if(!strcmp(gset,iqtype))
     {
       // jabber:iq:roster
       ChangeRoster(query->subnode);
+      return;
     }
 }
 

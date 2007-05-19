@@ -39,7 +39,7 @@ void AboutDlg()
 {
   ShowMSG(0,(int)"Siemens natJabber Client\n(c)Kibab, Ad, Borman99");  
 };
-
+ 
 
 void Dummy()
 {
