@@ -134,22 +134,6 @@ void Enter_Conference(char *room, char *roomnick, char N_messages);
 // Выйти из конференции
 void Leave_Conference(char* room);
 
-// Получить список закладок
-void Get_Bookmarks_List();
-
-// Уничтожить список закладок
-void KillBMList();
 ///////////////////
-void Use_Md5_Auth_Report();
-void Decode_Challenge(char *challenge);
-void Destroy_SASL_Ctx();
-void Send_Login_Packet();
-void Process_Auth_Answer(char *challenge);
-void SASL_Open_New_Stream();
-void SASL_Bind_Resource();
-void SASL_Init_Session();
-void SASL_Process_Error(XMLNode *nodeEx);
-////
-void Compression_Ask();
-void Compression_Init_Stream();
+
 #endif

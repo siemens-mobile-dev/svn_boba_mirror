@@ -3,6 +3,7 @@
 #include "roster_icons.h"
 #include "mainmenu.h"
 #include "status_change.h"
+#include "bookmarks.h"
 #include "jabber_util.h"
 #include "MUC_Enter_UI.h"
 #include "cont_menu.h"

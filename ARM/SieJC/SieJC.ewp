@@ -5047,6 +5047,9 @@
       </configuration>
     </file>
     <file>
+      <name>$PROJ_DIR$\func.asm</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\history.c</name>
     </file>
     <file>
@@ -5072,6 +5075,12 @@
     </file>
   </group>
   <file>
+    <name>$PROJ_DIR$\adv_login.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\adv_login.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\bookmarks.c</name>
   </file>
   <file>
@@ -5088,9 +5097,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\cont_menu.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\groups_util.c</name>

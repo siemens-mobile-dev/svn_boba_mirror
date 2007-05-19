@@ -32,6 +32,10 @@
 #define MUCST_KICKED  "307"
 #define MUCST_R_KICK  "%s was kicked! "
 
+#define MUCST_KICKED_MEMB_ONLY  "322"
+#define MUCST_R_KICK_MEMB_ONLY  "%s was kicked, because room became member-only!"
+
+
 #define IQTYPE_GET "get"
 #define IQTYPE_SET "set"
 #define IQTYPE_RES "result"

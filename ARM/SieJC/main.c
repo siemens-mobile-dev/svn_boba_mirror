@@ -7,6 +7,8 @@
 #include "clist_util.h"
 #include "message_list.h"
 #include "xml_parser.h"
+#include "bookmarks.h"
+#include "adv_login.h"
 #include "jabber.h"
 #include "string_util.h"
 #include "jabber_util.h"
