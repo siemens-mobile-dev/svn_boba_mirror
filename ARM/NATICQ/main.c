@@ -1586,6 +1586,14 @@ void set_my_status(void)
   SUBPROC((void *)SendAnswer,0,p);
 }
 
+void to_develop(void)
+{
+  gipc.name_to=ipc_xtask_name;
+  gipc.name_from=ipc_my_name;
+  gipc.data=(void *)maincsm_id;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);  
+}
+
 ProcessPacket(TPKT *p)
 {
   CLIST *t;
@@ -1689,13 +1697,22 @@ ProcessPacket(TPKT *p)
     {
       if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     }
-    if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id)
+    
+    extern const int DEVELOP_IF;
+    switch (DEVELOP_IF)
     {
-      gipc.name_to=ipc_xtask_name;
-      gipc.name_from=ipc_my_name;
-      gipc.data=(void *)maincsm_id;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);
+      case 0:
+        if ((((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id)) to_develop();
+      break;
+      case 1:
+        if ((((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id)&&(IsUnlocked())) to_develop();
+      break;
+      case 2:
+      break;
     }
+      
+      
+
     break;
   case T_SRV_ACK:
     IlluminationOn(ILL_DISP_SEND,ILL_KEYS_SEND,ILL_SEND_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007

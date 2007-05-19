@@ -44,6 +44,10 @@ __root const CFG_HDR cfghdr2_0={CFG_CBOX,"Log status changes",0,2};
 __root const int LOG_STATCH = 0;
 __root const CFG_CBOX_ITEM cfgcbox1_1[2]={"No","Yes"};
 
+__root const CFG_HDR cfghdr15_0={CFG_CBOX,"To develop",0,3};
+__root const int DEVELOP_IF = 0;
+__root const CFG_CBOX_ITEM cfgcbox15_1[3]={"Allways", "If Kbd Unlock","Never"};
+
 __root const CFG_HDR cfghdr_m21={CFG_LEVEL,"Icons setup",1,0};
 
 __root const CFG_HDR cfghdr3={CFG_STR_UTF8,"Offline icon",0,63};
