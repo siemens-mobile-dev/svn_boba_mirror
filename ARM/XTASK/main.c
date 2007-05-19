@@ -1,6 +1,7 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
+#include "..\inc\xtask_ipc.h"
 
 #ifdef NEWSGOLD
 #define USE_ONE_KEY
@@ -17,6 +18,10 @@ CSM_RAM *under_idle;
 extern const int RED_BUT_MODE;
 extern const int ENA_LONG_PRESS;
 extern const int ENA_LOCK;
+
+extern int my_csm_id;
+
+extern void show_csm(int csmid);
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -86,7 +91,7 @@ int my_keyhook(int submsg, int msg)
           }
           else
           {
-            do_gui(1);
+            if (!my_csm_id) do_gui(1);
           }
 	}
       }
@@ -129,7 +134,9 @@ int my_keyhook(int submsg, int msg)
     }
     {
       if (IsUnlocked()||ENA_LOCK)
-      do_gui(0);
+      {
+	if (!my_csm_id) do_gui(0);
+      }
       else mode=0;
     }
     break;
@@ -169,7 +176,9 @@ int my_keyhook(int submsg, int msg)
   case LONG_PRESS:
     mode_enter=1;
     if (IsUnlocked()||ENA_LOCK)
-      do_gui(0);
+    {
+      if (!my_csm_id) do_gui(0);
+    }
     else mode=0;
   }
   return(2);
@@ -193,6 +202,8 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
+const char my_ipc_name[]=IPC_XTASK_NAME;
+
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
@@ -210,8 +221,29 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       InitConfig();
     }
   }
+  //IPC
+  if (msg->msg==MSG_IPC)
+  {
+    IPC_REQ *ipc;
+    if ((ipc=(IPC_REQ*)msg->data0))
+    {
+      if (strcmp(ipc->name_to,my_ipc_name)==0)
+      {
+	switch (msg->submess)
+	{
+	case IPC_XTASK_SHOW_CSM:
+	  if (!my_csm_id) show_csm((int)(ipc->data));
+	  break;
+	case IPC_XTASK_IDLE:
+	  do_gui(1);
+	  break;
+	}
+      }
+    }
+  }
   if (msg->msg==MSG_INCOMMING_CALL)
   {
+    if (my_csm_id) CloseCSM(my_csm_id);
     callhide_mode=1;
   }
   if (callhide_mode)
