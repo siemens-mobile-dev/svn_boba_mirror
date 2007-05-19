@@ -7,8 +7,17 @@
 #include "mainmenu.h"
 #include "main.h"
 #include "language.h"
+#include "../inc/xtask_ipc.h"
 
 #define TMR_SECOND 216
+
+//IPC
+#define IPC_CHECK_DOUBLERUN 1
+const char ipc_my_name[32]="NatICQ";
+const char ipc_xtask_name[]=IPC_XTASK_NAME;
+IPC_REQ gipc;
+
+int maincsm_id;
 
 //По 10 секунд
 #define ACTIVE_TIME 360
@@ -81,6 +90,7 @@ extern const char SMILE_FILE[];
 extern const unsigned int ED_FONT_SIZE;
 
 const char percent_t[]="%t";
+const char percent_d[]="%t";
 const char empty_str[]="";
 const char I_str[]="I";
 
@@ -1650,7 +1660,7 @@ ProcessPacket(TPKT *p)
     t=FindContactByUin(p->pkt.uin);
     if (!t)
     {
-      sprintf(s,"%d",p->pkt.uin);
+      sprintf(s,percent_d,p->pkt.uin);
       t=AddContact(p->pkt.uin,s);
     }
     t->isactive=ACTIVE_TIME;
@@ -1678,6 +1688,13 @@ ProcessPacket(TPKT *p)
     else
     {
       if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
+    }
+    if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id)
+    {
+      gipc.name_to=ipc_xtask_name;
+      gipc.name_from=ipc_my_name;
+      gipc.data=(void *)maincsm_id;
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);
     }
     break;
   case T_SRV_ACK:
@@ -1820,9 +1837,14 @@ void maincsm_oncreate(CSM_RAM *data)
   msg_buf=malloc(16384);
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
-  SUBPROC((void *)InitSmiles);
-  SUBPROC((void *)create_connect);
+//  SUBPROC((void *)InitSmiles);
+//  SUBPROC((void *)create_connect);
   GBS_StartTimerProc(&tmr_active,TMR_SECOND*10,process_active_timer);
+  sprintf((char *)ipc_my_name+6,percent_d,UIN);
+  gipc.name_to=ipc_my_name;
+  gipc.name_from=ipc_my_name;
+  gipc.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
@@ -1854,13 +1876,46 @@ void do_reconnect(void)
   }
 }
 
-
+void CheckDoubleRun(void)
+{
+  if ((int)(gipc.data)>1)
+  {
+    LockSched();
+    CloseCSM(maincsm_id);
+    ShowMSG(1,(int)LG_ALREADY_STARTED);
+    UnlockSched();
+  }
+  else
+  {
+    InitSmiles();
+    create_connect();
+  }
+}
 
 int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 {
   //  char ss[100];
   MAIN_CSM *csm=(MAIN_CSM*)data;
   {
+    //IPC
+    if (msg->msg==MSG_IPC)
+    {
+      IPC_REQ *ipc;
+      if ((ipc=(IPC_REQ*)msg->data0))
+      {
+	if (strcmp_nocase(ipc->name_to,ipc_my_name)==0)
+	{
+	  switch (msg->submess)
+	  {
+	  case IPC_CHECK_DOUBLERUN:
+	    ipc->data=(void *)((int)(ipc->data)+1);
+	    //Если приняли свое собственное сообщение, значит запускаем чекер
+	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)CheckDoubleRun);
+	    break;
+	  }
+	}
+      }
+    }
     //Нарисуем иконочку моего статуса
 #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
     CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
@@ -2107,7 +2162,7 @@ sizeof(MAIN_CSM),
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "NATICQ");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "NATICQ: %d",UIN);
 }
 
 
@@ -2138,7 +2193,7 @@ int main()
   }
   UpdateCSMname();
   LockSched();
-  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();
   return 0;
 }

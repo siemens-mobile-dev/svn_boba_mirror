@@ -10,6 +10,8 @@
 
 #ifdef LANG_RU
 
+#define LG_ALREADY_STARTED "Уже запущена!"
+
 #define LG_CLTITLE "Контакты..."
 #define LG_CLT9INP "Ввод T9: "
 
@@ -115,6 +117,8 @@
 #endif
 
 #ifdef LANG_UA
+
+#define LG_ALREADY_STARTED "Вже працює!"
 
 #define LG_CLTITLE "Контакти..."
 #define LG_CLT9INP "Ввід T9: "
@@ -225,6 +229,7 @@
 
 #ifdef LANG_EN
 
+#define LG_ALREADY_STARTED "Already started!"
 #define LG_CLTITLE "Contacts..."
 #define LG_CLT9INP "T9 Key: "
 
