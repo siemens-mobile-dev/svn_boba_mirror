@@ -745,17 +745,27 @@ const CSM_DESC maincsm=
 void do_gui(int _do_idle)
 {
   char dummy[sizeof(MAIN_CSM)];
-  do_idle=_do_idle;
   InitConfig();
-  my_csm_id=CreateCSM(&maincsm,dummy,0);
+  LockSched();
+  if (!my_csm_id)
+  {
+    do_idle=_do_idle;
+    my_csm_id=CreateCSM(&maincsm,dummy,0);
+  }
+  UnlockSched();
 //  mode=-1;
 }
 
 void method0_1(DUMMY_GUI *data)
 {
-  RotateCSMs(CSM_root()->csm_q->csm.last,FindCSMbyID(data->show_csm));  
+  RotateCSMs(FindCSMbyID(my_csm_id),FindCSMbyID(data->show_csm));
   GeneralFuncF1(1);
 }
+
+/*int method5_0(DUMMY_GUI *data,GUI_MSG *msg)
+{
+//  return(0);
+}*/
 
 const void * const gui_methods_1[11]={
   (void *)method0_1,	//Redraw
@@ -806,6 +816,11 @@ const CSM_DESC showcsm=
 void show_csm(int csmid)
 {
   char dummy[sizeof(MAIN_CSM)];
-  ((MAIN_CSM *)dummy)->show_csm=csmid;
-  my_csm_id=CreateCSM(&showcsm,dummy,0);
+  LockSched();
+  if (!my_csm_id)
+  {
+    ((MAIN_CSM *)dummy)->show_csm=csmid;
+    my_csm_id=CreateCSM(&showcsm,dummy,0);
+  }
+  UnlockSched();
 }

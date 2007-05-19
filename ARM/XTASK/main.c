@@ -92,7 +92,7 @@ int my_keyhook(int submsg, int msg)
           }
           else
           {
-            if (!my_csm_id) do_gui(1);
+            do_gui(1);
           }
 	}
       }
@@ -141,8 +141,6 @@ int my_keyhook(int submsg, int msg)
 	  mode=-1;
 	  do_gui(0);
 	}
-	else
-	  mode=0;
       }
       else mode=0;
     }
@@ -185,9 +183,10 @@ int my_keyhook(int submsg, int msg)
     if (IsUnlocked()||ENA_LOCK)
     {
       if (!my_csm_id)
+      {
+	mode=-1;
 	do_gui(0);
-      else
-	mode=0;
+      }
     }
     else mode=0;
   }
@@ -242,10 +241,10 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	switch (msg->submess)
 	{
 	case IPC_XTASK_SHOW_CSM:
-	  if (!my_csm_id) show_csm((int)(ipc->data));
+	  SUBPROC((void *)show_csm,ipc->data);
 	  break;
 	case IPC_XTASK_IDLE:
-	  do_gui(1);
+	  SUBPROC((void *)do_gui,1);
 	  break;
 	}
       }
