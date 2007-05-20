@@ -344,17 +344,37 @@ void _enterconference(MUC_ENTER_PARAM *param)
 // Все имена в UTF-8 :)
 void Enter_Conference(char *room, char *roomnick, char N_messages)
 {
-  // Добавляем контакт конференции в ростер
-  CLIST* Conference = CList_FindContactByJID(room);
-  if(!Conference)
-  {
-    CList_AddContact(room,room, SUB_BOTH, 0, 129);
-  }
-  else
-  {
-    Conference->res_list->status=PRESENCE_ONLINE;
-  }
 
+  // Смотрим, есть ли такая конфа в списке конференций
+  // Если есть, тогда мы должны просто поменять ник в ней
+  char IsAlreadyInList = 0;
+  MUC_ITEM* m_ex = muctop;
+  if(muctop)
+  {
+    while(m_ex)
+    {
+      if(stristr(m_ex->conf_jid, room)==m_ex->conf_jid)
+      {
+        IsAlreadyInList=1;
+        break;
+      }
+      m_ex=m_ex->next;
+    };
+  }
+  
+  if(!IsAlreadyInList)
+  {
+    // Добавляем контакт конференции в ростер
+    CLIST* Conference = CList_FindContactByJID(room);
+    if(!Conference)
+    {
+      CList_AddContact(room,room, SUB_BOTH, 0, 129);
+    }
+    else  // Конфа могла остаться от предыдущего входа/выхода
+    {
+      Conference->res_list->status=PRESENCE_ONLINE;
+    }
+  }
   // Готовим структуру для передачи в HELPER
   MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
 //  par->room_nick =ANSI2UTF8(roomnick, strlen(roomnick)*2);
@@ -366,23 +386,37 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
   strcpy(par->room_name, room);
 
   par->pass=NULL;
-  par->mess_num=N_messages;
+  if(!IsAlreadyInList)
+  {
+    par->mess_num=N_messages;
+  }
+  else par->mess_num=0;   // Нах еще раз запрашивать историю
   SUBPROC((void*)_enterconference, par);
 
-  // Регистрируем конференцию в списке конференций
-  MUC_ITEM* mi = malloc(sizeof(MUC_ITEM));
-  mi->conf_jid = malloc(strlen(par->room_name)*2+strlen(par->room_nick)*2+2);
-  sprintf(mi->conf_jid, "%s/%s", par->room_name, par->room_nick);
-  mi->next=NULL;
-  MUC_ITEM* m_ex = muctop;
-  if(muctop)
+  if(!IsAlreadyInList)
   {
-    while(m_ex->next){m_ex=m_ex->next;};
-    m_ex->next = mi;
+    // Регистрируем конференцию в списке конференций
+    MUC_ITEM* mi = malloc(sizeof(MUC_ITEM));
+    mi->conf_jid = malloc(strlen(par->room_name)*2+strlen(par->room_nick)*2+2);
+    sprintf(mi->conf_jid, "%s/%s", par->room_name, par->room_nick);
+    mi->next=NULL;
+    m_ex = muctop;
+    if(muctop)
+    {
+      while(m_ex->next){m_ex=m_ex->next;};
+      m_ex->next = mi;
+    }
+    else
+    {
+      muctop = mi;
+    }
   }
   else
   {
-    muctop = mi;
+    // m_ex - текущий элемент
+    int len = strlen(par->room_name)+strlen(par->room_nick)+2;
+    m_ex->conf_jid = realloc(m_ex->conf_jid, len);
+    snprintf(m_ex->conf_jid, len, "%s/%s", par->room_name, par->room_nick);
   }
 }
 

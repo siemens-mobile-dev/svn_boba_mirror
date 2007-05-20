@@ -4120,6 +4120,9 @@
   </configuration>
   <group>
     <name>Serial_Debug</name>
+    <excluded>
+      <configuration>Release_SGOLD</configuration>
+    </excluded>
     <file>
       <name>$PROJ_DIR$\..\SerialLib\serial.asm</name>
     </file>
