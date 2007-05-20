@@ -198,7 +198,7 @@ typedef struct{
 
 typedef struct{
   int id;
-  int unk;
+  CSM_RAM *current_msg_processing_csm;
   LLQ csm;
 } CSMQ;
 

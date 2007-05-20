@@ -32,7 +32,7 @@ void ElfKiller(void)
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
-extern void do_gui(int);
+extern void do_gui(int, int);
 
 // -1 - XTask GUI present
 // 0 - XTask GUI absent
@@ -92,7 +92,7 @@ int my_keyhook(int submsg, int msg)
           }
           else
           {
-            do_gui(1);
+            do_gui(1,0);
           }
 	}
       }
@@ -112,8 +112,12 @@ int my_keyhook(int submsg, int msg)
 #else
   if (submsg!=INTERNET_BUTTON) return(0);
 #endif
-  if (mode==-1)
+  if (my_csm_id)
   {
+    if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
+    {
+      CloseCSM(my_csm_id);
+    }
     if (msg==KEY_UP)
     {
       GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
@@ -125,33 +129,25 @@ int my_keyhook(int submsg, int msg)
   case KEY_DOWN:
     break;
   case KEY_UP:
-    if (mode==1)
+    if (IsUnlocked()||ENA_LOCK)
     {
-      mode=0;
-      //RemoveKeybMsgHook((void *)my_keyhook);
-      //ShowMSG(1,(int)"XTask отлючен!");
-      //SUBPROC((void *)ElfKiller);
-      break;
-    }
-    {
-      if (IsUnlocked()||ENA_LOCK)
-      {
-	if (!my_csm_id)
-	{
-	  mode=-1;
-	  do_gui(0);
-	}
-      }
-      else mode=0;
+      do_gui(0,0);
     }
     break;
   case LONG_PRESS:
-    if (ENA_LONG_PRESS) mode=1;
+    break;
   }
   return(2);
 #else
   if (submsg!=ENTER_BUTTON) return(0);
-  if (mode==-1) return (0);
+  if (my_csm_id)
+  {
+    if ((CSM_RAM *)(CSM_root()->csm_q->csm.last)->id!=my_csm_id)
+    {
+      CloseCSM(my_csm_id);
+    }
+    return(0);
+  }
   switch(msg)
   {
   case KEY_DOWN:
@@ -162,7 +158,6 @@ int my_keyhook(int submsg, int msg)
     }
     mode_enter=0;
     return (2);
-    
   case KEY_UP:
     if (mode_enter==0)
     {
@@ -177,18 +172,14 @@ int my_keyhook(int submsg, int msg)
     }
     mode_enter=0;
     return (2);      
-
   case LONG_PRESS:
     mode_enter=1;
     if (IsUnlocked()||ENA_LOCK)
     {
-      if (!my_csm_id)
-      {
-	mode=-1;
-	do_gui(0);
-      }
+      do_gui(0,0);
     }
-    else mode=0;
+    mode=0;
+    break;
   }
   return(2);
 #endif
@@ -217,6 +208,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
   int icgui_id;
+  
   csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
   icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
   if (!icgui_id) callhide_mode=0;
@@ -241,10 +233,10 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	switch (msg->submess)
 	{
 	case IPC_XTASK_SHOW_CSM:
-	  SUBPROC((void *)show_csm,ipc->data);
+	  if (!IsCalling()) do_gui(1,(int)(ipc->data));
 	  break;
 	case IPC_XTASK_IDLE:
-	  SUBPROC((void *)do_gui,1);
+	  if (!IsCalling()) do_gui(1,0);
 	  break;
 	}
       }
@@ -252,7 +244,6 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   if (msg->msg==MSG_INCOMMING_CALL)
   {
-    if (my_csm_id) CloseCSM(my_csm_id);
     callhide_mode=1;
   }
   if (callhide_mode)
@@ -263,11 +254,6 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       RotateCSMs(CSM_root()->csm_q->csm.last,FindCSMbyID(CSM_root()->idle_id));
       callhide_mode=0;
     }
-  }
-  if ((msg->msg==MSG_CSM_DESTROYED)&&((int)msg->data0==my_csm_id))
-  {
-    my_csm_id=0;
-    mode=0;
   }
   return csm_result;  
 }

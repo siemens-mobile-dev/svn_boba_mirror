@@ -57,8 +57,6 @@ extern const char BM8FILE[128];
 extern const char BM9NAME[32];
 extern const char BM9FILE[128];
 
-volatile int do_idle;
-
 const CSM_DESC maincsm;
 
 typedef struct
@@ -66,6 +64,7 @@ typedef struct
   CSM_RAM csm;
   int gui_id;
   int show_csm;
+  int do_idle;
 }MAIN_CSM;
 
 int my_csm_id;
@@ -616,8 +615,14 @@ typedef struct
 
 void method0(DUMMY_GUI *data)
 {
-  SwapCSMs(1,FindCSMbyID(CSM_root()->idle_id));
-  do_idle=0;
+  if (data->show_csm)
+  {
+    RotateCSMs(FindCSMbyID(my_csm_id),FindCSMbyID(data->show_csm));
+  }
+  else
+  {
+    SwapCSMs(1,FindCSMbyID(CSM_root()->idle_id));
+  }
   GeneralFuncF1(1);
 }
 
@@ -677,7 +682,7 @@ void maincsm_oncreate(CSM_RAM *data)
   MAIN_CSM *csm=(MAIN_CSM *)data;
   csm->csm.state=0;
   csm->csm.unk1=0;
-  if (do_idle)
+  if (csm->do_idle)
   {
     DUMMY_GUI *main_gui=malloc(sizeof(DUMMY_GUI));
     zeromem(main_gui,sizeof(DUMMY_GUI));
@@ -686,6 +691,7 @@ void maincsm_oncreate(CSM_RAM *data)
     main_gui->gui.methods=(void *)gui_methods;
     main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
     patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
+    main_gui->show_csm=csm->show_csm;
     csm->gui_id=CreateGUI(main_gui);
   }
   else
@@ -707,20 +713,21 @@ void maincsm_oncreate(CSM_RAM *data)
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-  //  extern void *ELF_BEGIN;
-  //  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
   ClearNL();
-//  mode=0;
+  my_csm_id=0;
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
-  if ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))
+  if (
+      ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))||
+	(msg->msg==MSG_INCOMMING_CALL)
+	)
   {
     csm->csm.state=-3;
   }
-  if (msg->msg==MSG_CSM_DESTROYED) RefreshGUI();
+  if ((msg->msg==MSG_CSM_DESTROYED)&&(!csm->show_csm)) RefreshGUI();
   return(1);
 }
 
@@ -742,85 +749,21 @@ const CSM_DESC maincsm=
   &minus11
 };
 
-void do_gui(int _do_idle)
+void do_gui(int _do_idle, int show_csm)
 {
   char dummy[sizeof(MAIN_CSM)];
+  ((MAIN_CSM *)dummy)->do_idle=_do_idle;
+  ((MAIN_CSM *)dummy)->show_csm=show_csm;
   InitConfig();
-  LockSched();
+//  if (my_csm_id) CloseCSM(my_csm_id);
   if (!my_csm_id)
   {
-    do_idle=_do_idle;
-    my_csm_id=CreateCSM(&maincsm,dummy,0);
+//    CSM_RAM **p;
+//    CSM_RAM *save;
+//    p=&(CSM_root()->csm_q->current_msg_processing_csm);
+//    save=*p;
+//    *p=NULL;
+    my_csm_id=CreateCSM(&maincsm,dummy,2);
+//    *p=save;
   }
-  UnlockSched();
-//  mode=-1;
-}
-
-void method0_1(DUMMY_GUI *data)
-{
-  RotateCSMs(FindCSMbyID(my_csm_id),FindCSMbyID(data->show_csm));
-  GeneralFuncF1(1);
-}
-
-/*int method5_0(DUMMY_GUI *data,GUI_MSG *msg)
-{
-//  return(0);
-}*/
-
-const void * const gui_methods_1[11]={
-  (void *)method0_1,	//Redraw
-  (void *)method1,	//Create
-  (void *)method2,	//Close
-  (void *)method3,	//Focus
-  (void *)method4,	//Unfocus
-  (void *)method5,	//OnKey
-  0,
-  (void *)method7,	//Destroy
-  (void *)method8,
-  (void *)method9,
-  0
-};
-
-void showcsm_oncreate(CSM_RAM *data)
-{
-  MAIN_CSM *csm=(MAIN_CSM *)data;
-  csm->csm.state=0;
-  csm->csm.unk1=0;
-  DUMMY_GUI *main_gui=malloc(sizeof(DUMMY_GUI));
-  zeromem(main_gui,sizeof(DUMMY_GUI));
-  main_gui->gui.canvas=(void *)(&Canvas);
-  main_gui->gui.flag30=2;
-  main_gui->gui.methods=(void *)gui_methods_1;
-  main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
-  patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
-  main_gui->show_csm=csm->show_csm;
-  csm->gui_id=CreateGUI(main_gui);
-}
-
-const CSM_DESC showcsm=
-{
-  maincsm_onmessage,
-  showcsm_oncreate,
-#ifdef NEWSGOLD
-  0,
-  0,
-  0,
-  0,
-#endif
-  maincsm_onclose,
-  sizeof(MAIN_CSM),
-  1,
-  &minus11
-};
-
-void show_csm(int csmid)
-{
-  char dummy[sizeof(MAIN_CSM)];
-  LockSched();
-  if (!my_csm_id)
-  {
-    ((MAIN_CSM *)dummy)->show_csm=csmid;
-    my_csm_id=CreateCSM(&showcsm,dummy,0);
-  }
-  UnlockSched();
 }
