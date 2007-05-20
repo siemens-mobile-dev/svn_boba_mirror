@@ -90,7 +90,7 @@ extern const char SMILE_FILE[];
 extern const unsigned int ED_FONT_SIZE;
 
 const char percent_t[]="%t";
-const char percent_d[]="%t";
+const char percent_d[]="%d";
 const char empty_str[]="";
 const char I_str[]="I";
 
