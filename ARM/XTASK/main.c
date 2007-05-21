@@ -142,7 +142,7 @@ int my_keyhook(int submsg, int msg)
   if (submsg!=ENTER_BUTTON) return(0);
   if (my_csm_id)
   {
-    if ((CSM_RAM *)(CSM_root()->csm_q->csm.last)->id!=my_csm_id)
+    if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
     {
       CloseCSM(my_csm_id);
     }
