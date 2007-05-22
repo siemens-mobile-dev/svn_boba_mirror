@@ -54,7 +54,7 @@ int my_keyhook(int submsg, int msg)
   void *icsm=FindCSMbyID(CSM_root()->idle_id);
   if ((submsg==RED_BUTTON)&&(RED_BUT_MODE))
   {
-    if (CSM_root()->csm_q->csm.last==icsm) //(IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4]))
+    if ((CSM_root()->csm_q->csm.last==icsm)||(IsCalling())) //(IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4]))
     {
       if (msg==KEY_UP)
       {
