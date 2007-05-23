@@ -705,12 +705,12 @@ typedef struct
 
 typedef struct
 {
-  unsigned short invert;
+  unsigned short invert;  // |1
   unsigned short bitmask;
-  char font;
-  char align;
-  char pen[4];
-  char brush[4];
+  char font;              // |2
+  char align;             // |4
+  char pen[4];            // |8
+  char brush[4];          // |0x10
 }EDITC_OPTIONS;
 
 #pragma pack(2)
@@ -719,7 +719,7 @@ typedef struct
   char type;
   char unk2[3];
   int flag;
-  char zero_cbox;
+  char zero_cbox;  // if text input field: lang 0 - default, 2 - english
   char unk5;
   EDITC_OPTIONS ed_options;
   short maxlen;
@@ -759,12 +759,15 @@ typedef struct
 #define ECF_DISABLE_SMALL_LETTERS 0x200
 #define ECF_DISABLE_BIG_LETTERS 0x400
 
+#define ECF_DEFAULT_BIG_LETTER 0x1000
 #define ECF_DISABLE_T9 0x2000
 #define ECF_DEFAULT_ITAP 0x4000
 #define ECF_DEFAULT_DIGIT 0x8000
 
+#define ECF_DISABLE_EOLCHAR 0x10000  // In chartable
 #define ECF_DISABLE_MINUS 0x20000  // Also disable #
 #define ECF_DISABLE_POINT 0x40000  // Also disable *
+#define ECF_LONGDIEZ_EQ_QUESTION 0x80000
 #define ECF_MARKED 0x2000000
 #define ECF_GRAY 0x4000000
 
