@@ -522,8 +522,8 @@ volatile unsigned int GROUP_CACHE; //Текущая группа для добавления
 
 volatile int contactlist_menu_id;
 volatile int request_close_clmenu;
-CLIST *request_recount_clmenu;
-CLIST *request_goto_clmenu;
+//CLIST *request_recount_clmenu;
+//CLIST *request_goto_clmenu;
 
 GBSTMR tmr_active;
 
@@ -601,17 +601,6 @@ void FreeCLIST(void)
     p=cl;
     cl=(CLIST*)(cl->next);
     mfree(p);
-  }
-}
-
-//Прописать всех в offline
-void FillAllOffline(void)
-{
-  CLIST *cl=(CLIST*)cltop;
-  while(cl)
-  {
-    cl->state=0xFFFF;
-    cl=(CLIST*)(cl->next);
   }
 }
 
@@ -888,6 +877,24 @@ void ChangeContactPos(CLIST *p)
   }
 }
 
+//Прописать всех в offline
+void FillAllOffline(void)
+{
+  CLIST *cl=(CLIST*)cltop;
+  while(cl)
+  {
+    if (cl->state!=0xFFFF)
+    {
+      CLIST *p=cl;
+      p->state=0xFFFF;
+      cl=cl->next;
+      ChangeContactPos(p);
+      continue;
+    }
+    cl=(CLIST*)(cl->next);
+  }
+}
+
 void create_contactlist_menu(void)
 {
   int i;
@@ -903,16 +910,6 @@ void create_contactlist_menu(void)
 
 void contactlist_menu_ghook(void *data, int cmd)
 {
-//  extern __thumb void Menu_SetItemCountDyn2(void *gui, int n);
-
-  int i;
-  int j;
-/*  if (cmd==0x09)
-  {
-    if (request_recount_clmenu)
-    {
-    }
-  }*/
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -921,26 +918,29 @@ void contactlist_menu_ghook(void *data, int cmd)
       request_close_clmenu=0;
       GeneralFunc_flag1(contactlist_menu_id,1);
     }
-    if (request_recount_clmenu)
-    {
-      if ((int)request_recount_clmenu==-1)
-      {
-	j=0;
-      }
-      else
-      {
-	j=FindContactByContact(request_recount_clmenu);
-      }
-      i=CountContacts();
-      if (j>=i) j=i-1;
-//      SetCursorToMenuItem(data,0);
-      SetCursorToMenuItem(data,j);
-      Menu_SetItemCountDyn(data,i);
-      UpdateCLheader();
-      request_recount_clmenu=NULL;
-//      RefreshGUI();
-    }
   }
+}
+
+void RecountMenu(CLIST *req)
+{
+  int i;
+  int j;
+  void *data;
+  UpdateCLheader();
+  if (!contactlist_menu_id) return; //Нечего считать
+  data=FindGUIbyId(contactlist_menu_id,NULL);
+  if (req==NULL)
+  {
+    j=0;
+  }
+  else
+  {
+    j=FindContactByContact(req);
+  }
+  i=CountContacts();
+  if (j>=i) j=i-1;
+  SetCursorToMenuItem(data,j);
+  Menu_SetItemCountDyn(data,i);
 }
 
 int contactlist_menu_onkey(void *data, GUI_MSG *msg)
@@ -963,17 +963,14 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     {
       if (t->isgroup)
       {
-	if ((t->state^=0xFFFF))
-	  request_recount_clmenu=t; //(void *)-1; //Если закрыли группу - на верх
-	else
-	  request_recount_clmenu=t; //Если открыли, то на старое место
-	RefreshGUI();
+	t->state^=0xFFFF;
+	RecountMenu(t);
 	return(-1);
       }
       if (strlen(ContactT9Key))
       {
 	ClearContactT9Key();
-        request_recount_clmenu=(void *)-1;
+	RecountMenu(NULL);
       }
       CreateEditChat(t);
     }
@@ -985,8 +982,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (strlen(ContactT9Key))
     {
       BackSpaceContactT9();
-      request_recount_clmenu=(void *)-1;
-      RefreshGUI();
+      RecountMenu(NULL);
       return(-1);
     }
   }
@@ -996,15 +992,13 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (((key>='0')&&(key<='9'))||(key=='#')||(key=='*'))
     {
       AddContactT9Key(key);
-      request_recount_clmenu=(void *)-1;
-      RefreshGUI();
+      RecountMenu(NULL);
       return(-1);
     }
     if (key==GREEN_BUTTON)
     {
       IsActiveUp=!IsActiveUp;
       SetCursorToMenuItem(data,0);
-//      request_goto_clmenu=t;
       RefreshGUI();
       return(-1);
     }
@@ -1609,10 +1603,11 @@ ProcessPacket(TPKT *p)
         strncpy(t->name,p->data,63);
 	t->group=GROUP_CACHE;
 	ChangeContactPos(t);
+	RecountMenu(t);
       }
       else
       {
-        AddContact(p->pkt.uin,p->data);
+        RecountMenu(AddContact(p->pkt.uin,p->data));
       }
     }
     else
@@ -1624,8 +1619,7 @@ ProcessPacket(TPKT *p)
       ask_my_info();
       if (contactlist_menu_id)
       {
-        request_recount_clmenu=(void *)-1;
-        if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
+	RecountMenu(NULL);
       }
       else
         create_contactlist_menu();
@@ -1636,10 +1630,11 @@ ProcessPacket(TPKT *p)
     {
       strncpy(t->name,p->data,63);
       ChangeContactPos(t);
+      RecountMenu(t);
     }
     else
     {
-      AddGroup(p->pkt.uin,p->data);
+      RecountMenu(AddGroup(p->pkt.uin,p->data));
     }
     break;
   case T_GROUPFOLLOW:
@@ -1677,7 +1672,6 @@ ProcessPacket(TPKT *p)
     start_vibra();
     IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
     AddStringToLog(t,0x02,p->data,t->name);
-    if (contactlist_menu_id) request_recount_clmenu=t;
     //Разворачиваем группу, в которой пришло сообщение
     {
       CLIST *g=FindGroupByID(t->group);
@@ -1693,11 +1687,10 @@ ProcessPacket(TPKT *p)
     {
       AddMsgToChat(edgui_data);
     }
-    else
+    RecountMenu(t);
     {
       if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     }
-    
     extern const int DEVELOP_IF;
     switch (DEVELOP_IF)
     {
