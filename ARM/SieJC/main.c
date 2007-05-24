@@ -613,9 +613,9 @@ void Process_Decoded_XML(XMLNode* node)
       }
       else
       {
-        strcat(logmsg, "\nERROR:  No supported auth methods!");                
+        strcat(logmsg, "\nERROR:  No supported auth methods!");
       }
-      
+
       if(Support_Resource_Binding && Jabber_state == JS_SASL_NEW_STREAM_ACK)SASL_Bind_Resource();
     }
 
@@ -807,9 +807,11 @@ void onRedraw(MAIN_GUI *data)
 char mypic[128];
 
   if (CList_GetUnreadMessages()>0)
-    Roster_DrawIcon(1, SCR_START+1, (int) Roster_getIconByStatus(mypic,50)); //иконка сообщения
+    Roster_getIconByStatus(mypic,50); //иконка сообщения
   else
-    Roster_DrawIcon(1, SCR_START+1, (int) Roster_getIconByStatus(mypic, My_Presence));
+    Roster_getIconByStatus(mypic, My_Presence);
+  Roster_DrawIcon(1, SCR_START+1, (int)mypic);
+  DrawString(data->ws1,Roster_getIconWidth(mypic)+2,SCR_START+3,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
 
 #else
   int img_num=0;
@@ -819,8 +821,8 @@ char mypic[128];
     img_num=Roster_getIconByStatus(My_Presence);
 
   Roster_DrawIcon(1, SCR_START+1, img_num); //иконка сообщения
+  DrawString(data->ws1,Roster_getIconWidth(img_num)+2,SCR_START+3,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
 #endif
-  DrawString(data->ws1,16,SCR_START+3,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
 
   if(Jabber_state!=JS_ONLINE)
   {

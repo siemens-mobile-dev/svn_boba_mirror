@@ -55,126 +55,126 @@ int Roster_getIconByStatus(char status) //вернет номер картинки по статусу
   int img_num=0;
 
   switch (status) {
-    case PRESENCE_ONLINE:
-      img_num=online;
-      break;
-    case PRESENCE_OFFLINE:
-      img_num=unavailable;
-      break;
+  case PRESENCE_ONLINE:
+    img_num=online;
+    break;
+  case PRESENCE_OFFLINE:
+    img_num=unavailable;
+    break;
     //case PRESENCE_ERROR: //что-то нужно придумать
     //  img_num=error;
     //  break;
-    case PRESENCE_CHAT:
-      img_num=chat;
-      break;
-    case PRESENCE_AWAY:
-      img_num=away;
-      break;
-    case PRESENCE_XA:
-      img_num=xa;
-      break;
-    case PRESENCE_DND:
-      img_num=dnd;
-      break;
-    case PRESENCE_INVISIBLE:
-      img_num=invisible;
-      break;
-    case PRESENCE_UNSUBSCRIBED:
-      img_num=noauth;
-      break;
-    case PRESENCE_SUBSCRIBE:
-      img_num=ask;
-      break;
-    case 50: // иконка сообшения, не уверен что хорошо её сюда пихать, но пусть пока будет
-      img_num=message;
-      break;
+  case PRESENCE_CHAT:
+    img_num=chat;
+    break;
+  case PRESENCE_AWAY:
+    img_num=away;
+    break;
+  case PRESENCE_XA:
+    img_num=xa;
+    break;
+  case PRESENCE_DND:
+    img_num=dnd;
+    break;
+  case PRESENCE_INVISIBLE:
+    img_num=invisible;
+    break;
+  case PRESENCE_UNSUBSCRIBED:
+    img_num=noauth;
+    break;
+  case PRESENCE_SUBSCRIBE:
+    img_num=ask;
+    break;
+  case 50: // иконка сообшения, не уверен что хорошо её сюда пихать, но пусть пока будет
+    img_num=message;
+    break;
   }
   return img_num;
 }
 #endif
 
 #ifdef USE_PNG_EXT
-void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx) 
+void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
 {
-          strcpy(path_to_pic, PATH_TO_PIC);
-          
-          // Если это конференция
-          if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
-          
-          // Если у нас нет подписки и у контакта нет непрочитанных сообщений
-          if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
-          {
-            strcat(path_to_pic, "noauth"); // иконка "нет авторизации"
-            goto L_DONE;
-          }
-          
-          // Если стоит флаг запроса подписки
-          if(ClEx->wants_subscription)
-          {
-            strcat(path_to_pic, "ask");
-            goto L_DONE;
-          }          
-          
-          // Если у нормального контакта есть непрочитанные сообщения
-          if(resEx->has_unread_msg)
-          {
-            // Если у него к тому же и статус адекватный
-            if(resEx->status<=PRESENCE_INVISIBLE)
-            {
-              strcat(path_to_pic, "message");
-            }
-            else
-            {
-              strcat(path_to_pic, "system");      // А иначе он что-то замутил с подпиской  
-            }
-          }
-          else
-          {
-            // Если же непрочитанных сообщений нет
-            if(resEx->status<=PRESENCE_ERROR) // Если адекватный статус
-            {
-              strcat(path_to_pic, PRESENCES[resEx->status]);
-            }
-            else
-            {
-              strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]); // Иначе типа оффлайн
-            }
-          }
-        L_DONE:
-          strcat(path_to_pic, ".png");
+  strcpy(path_to_pic, PATH_TO_PIC);
+
+  // Если это конференция
+  if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
+
+  // Если у нас нет подписки и у контакта нет непрочитанных сообщений
+  if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
+  {
+    strcat(path_to_pic, "noauth"); // иконка "нет авторизации"
+    goto L_DONE;
+  }
+
+  // Если стоит флаг запроса подписки
+  if(ClEx->wants_subscription)
+  {
+    strcat(path_to_pic, "ask");
+    goto L_DONE;
+  }
+
+  // Если у нормального контакта есть непрочитанные сообщения
+  if(resEx->has_unread_msg)
+  {
+    // Если у него к тому же и статус адекватный
+    if(resEx->status<=PRESENCE_INVISIBLE)
+    {
+      strcat(path_to_pic, "message");
+    }
+    else
+    {
+      strcat(path_to_pic, "system");      // А иначе он что-то замутил с подпиской
+    }
+  }
+  else
+  {
+    // Если же непрочитанных сообщений нет
+    if(resEx->status<=PRESENCE_ERROR) // Если адекватный статус
+    {
+      strcat(path_to_pic, PRESENCES[resEx->status]);
+    }
+    else
+    {
+      strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]); // Иначе типа оффлайн
+    }
+  }
+L_DONE:
+  strcat(path_to_pic, ".png");
 
 }
 #else
 int Roster_getIcon(CLIST* ClEx, TRESOURCE* resEx) {
-unsigned int img_num=0;
+  unsigned int img_num=0;
 
-          // Если это конференция
-          if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg)
-            img_num=conference;
-          
-          // Если у нас нет подписки и у контакта нет непрочитанных сообщений
-          if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
-            img_num=noauth;
-          
-          // Если стоит флаг запроса подписки
-          if(ClEx->wants_subscription)
-            img_num=ask;  
-          
-          // Если у нормального контакта есть непрочитанные сообщения
-          if(resEx->has_unread_msg)
-          {
-            // Если у него к тому же и статус адекватный
-            if(resEx->status<=PRESENCE_OFFLINE)
-              img_num=message;
-            else
-              img_num=system;      // А иначе он что-то замутил с подпиской  
-          }
-          else
-          {
-            // Если же непрочитанных сообщений нет   
-            img_num=Roster_getIconByStatus(resEx->status);
-          }
-    return img_num;
+  // Если это конференция
+  if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg)
+    img_num=conference;
+
+  // Если у нас нет подписки и у контакта нет непрочитанных сообщений
+  if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
+    img_num=noauth;
+
+  // Если стоит флаг запроса подписки
+  if(ClEx->wants_subscription)
+    img_num=ask;
+
+  // Если у нормального контакта есть непрочитанные сообщения
+  if(resEx->has_unread_msg)
+  {
+    // Если у него к тому же и статус адекватный
+    if(resEx->status<=PRESENCE_OFFLINE)
+      img_num=message;
+    else
+      img_num=system;      // А иначе он что-то замутил с подпиской
+  }
+  else
+  {
+    // Если же непрочитанных сообщений нет
+    img_num=Roster_getIconByStatus(resEx->status);
+  }
+  return img_num;
 }
 #endif
 
@@ -182,4 +182,13 @@ void Roster_DrawIcon(unsigned short x, unsigned short y, unsigned int img_num)
 {
   DrawImg(x, y, img_num);
 }
-  
+
+int Roster_getIconWidth(char *path_to_pic)
+{
+  return GetImgWidth((int)path_to_pic);
+}
+
+int Roster_getIconHeight(char *path_to_pic)
+{
+  return GetImgHeight((int)path_to_pic);
+}

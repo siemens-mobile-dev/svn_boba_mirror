@@ -119,11 +119,12 @@ void CList_RedrawCList()
                            color(lineColor));   //ad: рисуем с чередованием... для наглядности
 
           CutWSTR(out_ws, CHAR_ON_LINE);
-          DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0);
+          //DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0); // Перенесено дальше иконки
 
 #ifdef USE_PNG_EXT
           Roster_getIcon(path_to_pic, ClEx, resEx);
           Roster_DrawIcon(1, start_y, (int)path_to_pic);
+          DrawString(out_ws,Roster_getIconWidth(path_to_pic)+2,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0);
 #else
           if (resEx->has_unread_msg)
             icon_num=Roster_getIconByStatus(50); //иконка сообщения
@@ -131,6 +132,7 @@ void CList_RedrawCList()
             icon_num=Roster_getIcon(ClEx, resEx);
 
           Roster_DrawIcon(1, start_y, icon_num) ; //иконка сообщения
+          DrawString(out_ws,Roster_getIconWidth(icon_num)+2,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0);
 #endif
 
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование

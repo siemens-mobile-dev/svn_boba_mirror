@@ -12,7 +12,7 @@
 #ifdef NEWSGOLD
 //#define LOG_TO_COM_PORT // Ћог данных в ком-порт (по DCA-510) - “ќЋ№ ќ NEWSGOLD
 #endif
-#define LOG_IN_DATA     // ¬ключить запись обрабатываемой порции данных
+//#define LOG_IN_DATA     // ¬ключить запись обрабатываемой порции данных
 
 #define VIBRA_POWER 10 // —ила вибры дл€ событий разного рода
 
