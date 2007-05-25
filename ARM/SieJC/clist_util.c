@@ -63,6 +63,7 @@ void CList_RedrawCList()
   WSHDR* out_ws = AllocWS(256);
   int i=1;
   int start_y;
+
   RGBA fcolor;
   TRESOURCE* resEx;
 
@@ -123,7 +124,7 @@ void CList_RedrawCList()
 
 #ifdef USE_PNG_EXT
           Roster_getIcon(path_to_pic, ClEx, resEx);
-          Roster_DrawIcon(1, start_y, (int)path_to_pic);
+          Roster_DrawIcon(1, start_y+((font_y-Roster_getIconHeight(path_to_pic))>>1), (int)path_to_pic);
           DrawString(out_ws,Roster_getIconWidth(path_to_pic)+2,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0);
 #else
           if (resEx->has_unread_msg)

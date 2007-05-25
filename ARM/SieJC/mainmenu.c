@@ -27,7 +27,7 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 7
+#define N_ITEMS 8
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
@@ -38,13 +38,13 @@ extern char My_Presence;
 
 void AboutDlg()
 {
-  ShowMSG(0,(int)"Siemens natJabber Client\n(c)Kibab, Ad, Borman99");  
+  ShowMSG(0,(int)"Siemens natJabber Client\n(c)Kibab, Ad, Borman99");
 };
- 
+
 
 void Dummy()
 {
-  ShowMSG(1,(int)"Раздел в разработке :)");  
+  ShowMSG(1,(int)"Раздел в разработке :)");
 };
 
 
@@ -64,11 +64,16 @@ void ChangeVibraMode(void)
   Is_Vibra_Enabled=!(Is_Vibra_Enabled);
   RefreshGUI();
 }
-  
+
 void ChangeSoundMode(void)
 {
   Is_Sounds_Enabled=!(Is_Sounds_Enabled);
   RefreshGUI();
+}
+
+void Exit_SieJC()
+{
+  QuitCallbackProc(0);
 }
 
 MENUITEM_DESC menuitems[N_ITEMS]=
@@ -76,10 +81,11 @@ MENUITEM_DESC menuitems[N_ITEMS]=
   {dummy_icon,(int)"Контакт",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {dummy_icon,(int)"Статус",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {dummy_icon,(int)"Конференция",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {dummy_icon,(int)"Закладки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},  
+  {dummy_icon,(int)"Закладки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {icon_array,(int)"Режим вибры",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {icon_array,(int)"Режим звука",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {about_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {dummy_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {dummy_icon,(int)"Выход",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void *menuprocs[N_ITEMS]={
@@ -89,7 +95,8 @@ void *menuprocs[N_ITEMS]={
                           (void *)Get_Bookmarks_List,
                           (void *)ChangeVibraMode,
                           (void *)ChangeSoundMode,
-                          (void *)AboutDlg
+                          (void *)AboutDlg,
+                          (void *)Exit_SieJC
                          };
 
 SOFTKEY_DESC mmenu_sk[]=
@@ -111,7 +118,7 @@ void menuitemhandler(void *data, int curitem, int *unk)
   case 4:
     SetMenuItemIcon(data,curitem,Is_Vibra_Enabled?0:1);
     break;
-    
+
   case 5:
     SetMenuItemIcon(data,curitem,Is_Sounds_Enabled?0:1);
     break;
@@ -130,31 +137,74 @@ MENU_DESC tmenu=
   N_ITEMS
 };
 extern const char PATH_TO_PIC[128], png_t[];
-int S_ICONS[2];
+int S_ICONS[N_ITEMS];
 char mypic[128];
 char confpic[128];
+char exitpic[128];
+char infopic[128];
+char aboutpic[128];
 extern const char conference_t[];
+const char exit_t[] = "exit";
+const char info_t[] = "info";
+const char about_t[] = "about";
+
 void MM_Show()
 {
 #ifdef USE_PNG_EXT
+  // Контакт
+  strcpy(infopic, PATH_TO_PIC);
+  strcat(infopic,info_t);
+  strcat(infopic,png_t);
+  S_ICONS[0] = (int)infopic;
+
+  // Статус
   Roster_getIconByStatus(mypic, My_Presence);
-  S_ICONS[0]=(int)mypic;
-  menuitems[1].icon = S_ICONS;
-  
+  S_ICONS[1] = (int)mypic;
+
+  //Конференция...
   strcpy(confpic, PATH_TO_PIC);
   strcat(confpic,conference_t);
-  strcat(confpic,png_t);  
-  S_ICONS[1]=(int)confpic;
-  menuitems[2].icon = S_ICONS+1;
-  menuitems[3].icon = S_ICONS+1;  
+  strcat(confpic,png_t);
+  S_ICONS[2] = (int)confpic;
+
+  // Закладки
+  S_ICONS[3] = (int)confpic;
+
+  // Режим вибры
+  // S_ICONS[4]
+
+  // Режим звука
+  // S_ICONS[5]
+
+
+  // Об эльфе...
+  strcpy(aboutpic, PATH_TO_PIC);
+  strcat(aboutpic,about_t);
+  strcat(aboutpic,png_t);
+  S_ICONS[6] = (int)aboutpic;
+
+  // Выход
+  strcpy(exitpic, PATH_TO_PIC);
+  strcat(exitpic,exit_t);
+  strcat(exitpic,png_t);
+  S_ICONS[7] = (int)exitpic;
+
+  menuitems[0].icon = S_ICONS+0;
+  menuitems[1].icon = S_ICONS+1;
+  menuitems[2].icon = S_ICONS+2;
+  menuitems[3].icon = S_ICONS+3;
+  menuitems[6].icon = S_ICONS+6;
+  menuitems[7].icon = S_ICONS+7;
+
+
 #else
-  S_ICONS[0]=Roster_getIconByStatus(My_Presence);
+  S_ICONS[0] = Roster_getIconByStatus(My_Presence);
   menuitems[1].icon = S_ICONS;
-#endif  
-  
-  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
-  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
-  
+#endif
+
+  icon_array[0] = GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  icon_array[1] = GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+
   patch_header(&menuhdr);
   MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,N_ITEMS,0,0);
 }
