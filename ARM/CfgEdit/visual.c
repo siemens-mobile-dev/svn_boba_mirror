@@ -1,6 +1,9 @@
 #include "..\inc\swilib.h"
 
 char colors[4][4]={{0xFF,0,0,0x64},{0,0xFF,0,0x64},{0,0,0xFF,0x64},{0xC6,0xAA,0xAF,0x32}};
+char black[4]={0x00,0x00,0x00,0x64};
+char white[4]={0xFF,0xFF,0xFF,0x64};
+char transparent[4]={0x00,0x00,0x00,0x00};
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
@@ -76,12 +79,10 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 
 void method0_rect(RECT_GUI *data)
 {
-  DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,
-                   GetPaletteAdrByColorIndex(0),
-                   GetPaletteAdrByColorIndex(0));
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   
+  DrawRectangle(0,0,scr_w-1,scr_h-1,0,white,white);
   // Нарисуем сетку
   for (int y_0=0; y_0< scr_h;y_0+=10)
   {
@@ -97,27 +98,27 @@ void method0_rect(RECT_GUI *data)
   {
     RECT *rc=data->rect_or_xy;
     DrawRoundedFrame(rc->x,rc->y,rc->x2,rc->y2,
-                     0,0,0,colors[3],GetPaletteAdrByColorIndex(23)); // Предыдущий рект
+                     0,0,0,colors[3],transparent); // Предыдущий рект
     if (data->is_first_set)
     {
       DrawRoundedFrame(data->x2_pos,data->y2_pos,data->x_pos,data->y_pos,
-                     0,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+                     0,0,0,black,transparent);
       wsprintf(data->ws1,"%u,%u,%u,%u",data->x2_pos,data->y2_pos,data->x_pos,data->y_pos); 
     }
     else
     {
       wsprintf(data->ws1,"%u,%u,%u,%u",data->x_pos,data->y_pos,data->x2_pos,data->y2_pos);
     }
-    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
   }
   else
   {
     wsprintf(data->ws1,"%u,%u",data->x_pos,data->y_pos);
-    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
   }
   
   //Текущая позиция
-  DrwImg((IMGHDR *)&imgPointer,data->x_pos-2,data->y_pos-2,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+  DrwImg((IMGHDR *)&imgPointer,data->x_pos-2,data->y_pos-2,black,transparent);
 }
 
 
@@ -319,27 +320,26 @@ void EditCoordinates(void *rect_or_xy, int is_rect)
 
 void method0_2(MAIN_GUI_2 *data)
 {
-  DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,
-                   GetPaletteAdrByColorIndex(0),
-                   GetPaletteAdrByColorIndex(0));
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  DrawRectangle(0,0,scr_w-1,scr_h-1,0,white,white);
+
   int column_height=scr_h-35;
   int column_width=scr_w/9;
   int start_column;
   int y_line;
   wsprintf(data->ws1,"%02X,%02X,%02X,%02X",data->r,data->g,data->b,data->a);
-  DrawString(data->ws1,1,1,scr_w-20,12,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,1,1,scr_w-20,12,FONT_SMALL,1,black,transparent);
   
   for (int i=0;i!=4;i++)
   {
     start_column=column_width+2*i*column_width;
     if (data->current_column==i)
       DrawRectangle(start_column-2,20-2,start_column+column_width+2,20+column_height+2,
-                    0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+                    0,black,white);
 
     DrawRectangle(start_column,20,start_column+column_width,20+column_height,
-                  0,GetPaletteAdrByColorIndex(1),colors[i]);
+                  0,black,colors[i]);
     switch(i)
     {
     case 0:
@@ -355,10 +355,10 @@ void method0_2(MAIN_GUI_2 *data)
       y_line=20+column_height-(data->a*column_height)/0x64;
       break;
     }
-    DrawLine(start_column,y_line,start_column+column_width,y_line,0,GetPaletteAdrByColorIndex(1));
+    DrawLine(start_column,y_line,start_column+column_width,y_line,0,black);
   }
   setColor(data->r,data->g,data->b,data->a,data->testcolor);
-  DrawRoundedFrame(scr_w-17,1,scr_w-2,16,2,2,0,GetPaletteAdrByColorIndex(1),data->testcolor);
+  DrawRoundedFrame(scr_w-17,1,scr_w-2,16,2,2,0,black,data->testcolor);
 
 }
 
@@ -387,6 +387,7 @@ void method4_2(MAIN_GUI_2 *data, void (*mfree_adr)(void *))
 
 int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
 {
+  int n;
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
     if (msg->gbsmsg->msg==KEY_DOWN)
@@ -424,7 +425,7 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
           data->b=0;
         break;
       case 3:
-        if ((data->a+=(data->cstep==8?data->cstep>>1:data->cstep))>0x64)
+        if ((data->a+=((n=data->cstep)==8?n>>1:n))>0x64)
           data->a=0;
         break;
       }
@@ -458,7 +459,7 @@ int method5_2(MAIN_GUI_2 *data, GUI_MSG *msg)
           data->b=0xFF;
         break;
       case 3:
-        if ((data->a-=(data->cstep==8?data->cstep>>1:data->cstep))<0)
+        if ((data->a-=((n=data->cstep)==8?n>>1:n))<0)
           data->a=0x64;
         break;
       }
@@ -792,20 +793,22 @@ void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
   FLIST *fl;
   WSHDR *ws;
   void *item=AllocMenuItem(data);
+  int len;
   fl=FindFLISTtByN(curitem);
   if (fl)
   {
+    len=strlen(fl->name);
+    ws=AllocMenuWS(data,len+4);
+    
     if (fl->is_folder)
     {
-      ws=AllocMenuWS(data,strlen(fl->name)+2);
-      str_2ws(ws,fl->name,128);
+      str_2ws(ws,fl->name,len);
       wsInsertChar(ws,0x0002,1);
       wsInsertChar(ws,0xE008,1);
     }
     else
     {
-      ws=AllocMenuWS(data,strlen(fl->name));
-      str_2ws(ws,fl->name,128);
+      str_2ws(ws,fl->name,len);
     }
   }
   else

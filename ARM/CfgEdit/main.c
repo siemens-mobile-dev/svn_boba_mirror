@@ -176,6 +176,14 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   int l;
   int i;
   int n;
+  if (msg->keys==0xFFF)  // OK
+  {
+    return (1);    
+  }
+  if (msg->keys==0xFFE)  // Back
+  {
+    return (0xFF);
+  }
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     l=msg->gbsmsg->submess;
@@ -228,7 +236,9 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 
 void ed1_ghook(GUI *data, int cmd)
 {
-//  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
+  static SOFTKEY_DESC ok={0x0FFF,0x0000,(int)"OK"};
+  static SOFTKEY_DESC back={0x0FFE,0x0000,(int)"Back"};
+  static SOFTKEY_DESC close={0x0FFE,0x0000,(int)"Close"};
   EDITCONTROL ec;
   int i;
   int n;
@@ -264,6 +274,7 @@ void ed1_ghook(GUI *data, int cmd)
       hp=cfg_h[n];
       wstrcpy(ews,ec.pWS);
       ws_2str(ews,ss,15);
+      int need_set_sk=0;
       switch(hp->type)
       {
       case CFG_UINT:
@@ -296,20 +307,24 @@ void ed1_ghook(GUI *data, int cmd)
         *p=0;
         break;
       case CFG_CBOX:
-         *((int *)(hp+1))=EDIT_GetItemNumInFocusedComboBox(data)-1;
-         break;
+        *((int *)(hp+1))=EDIT_GetItemNumInFocusedComboBox(data)-1;
+        break;
+         
       case CFG_COORDINATES:
         wsprintf(ews,"%d,%d",*((int *)(hp+1)),*((int *)(hp+1)+1));
         EDIT_SetTextToFocused(data,ews);
+        need_set_sk=1;
         break;
       case CFG_COLOR:
         wsprintf(ews,"%02X,%02X,%02X,%02X",*((char *)(hp+1)),*((char *)(hp+1)+1),*((char *)(hp+1)+2),*((char *)(hp+1)+3));
-        EDIT_SetTextToFocused(data,ews);        
+        EDIT_SetTextToFocused(data,ews);  
+        need_set_sk=1;
         break;
       case CFG_CHECKBOX:
         CutWSTR(ews,0);
         wsAppendChar(ews, *((int *)(hp+1))?CBOX_CHECKED:CBOX_UNCHECKED);
         EDIT_SetTextToFocused(data,ews);
+        need_set_sk=1;
         break;
       case CFG_TIME:
         EDIT_GetTime(data,i,&tt);
@@ -325,9 +340,20 @@ void ed1_ghook(GUI *data, int cmd)
           wsprintf(ews,"RECT:%03d;%03d;%03d;%03d;",rc->x,rc->y,rc->x2,rc->y2);
           EDIT_SetTextToFocused(data,ews);    
         }
+        need_set_sk=1;
         break;
+      case CFG_LEVEL:
+        need_set_sk=1;
+        break;
+        
       default:
         break;      
+      }
+      if (need_set_sk)
+      {
+        need_set_sk=0;
+        SetSoftKey(data,&ok,SET_SOFT_KEY_N);
+        SetSoftKey(data,level?&back:&close,!SET_SOFT_KEY_N);
       }
     }
   }
@@ -801,12 +827,13 @@ int create_ed(CFG_HDR *need_to_focus)
       if (n<0) goto L_ERRCONSTR;
       if ((curlev==level)&&(parent==levelstack[level]))
       {
-        int k;
+        int k1,k2;
         unsigned int min,max;
         wsprintf(ews,_percent_d,*((int *)p));
-        min=(k=hp->min)>=0?k:(-k)*10;
-        max=(k=hp->max)>=0?k:(-k)*10;
+        min=(k1=hp->min)>=0?k1:(-k1)*10;
+        max=(k2=hp->max)>=0?k2:(-k2)*10;
 	ConstructEditControl(&ec,ECT_NORMAL_NUM,ECF_APPEND_EOL|ECF_DISABLE_POINT,ews,getnumwidth(min>max?min:max));
+        if (k1>=0 && k2>=0) ec.flag|=ECF_DISABLE_MINUS;
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       }
       p+=sizeof(int);
