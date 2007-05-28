@@ -123,7 +123,7 @@
 0130: 0xA0558375   ; 04C: __thumb GetMissedCallsCount
 0134: 0xA020AF00   ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr())
 
-0138: 0xA07C2C77   ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+0138: 0xA07C2C87   ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
 013C: 0xA07C2CE5   ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
 0140: 0xA07C2CEF   ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 
@@ -290,7 +290,7 @@
 0388: 0xA8501438   ; 0E2: RamKeyBuffer
 038C: 0xA851BBB8   ; 0E3: RamProfileNum
 0390: 0xA8000350   ; 0E4: FreeRAM
-0394: 0x0000130C   ; 0E5: LP_MonthsShort
+0394: 0x0000130D   ; 0E5: LP_MonthsShort
 ;
 0398: 0x000004EA   ; 0E6: Pic_Big0
 039C: 0x00000542   ; 0E7: Pic_Little0
