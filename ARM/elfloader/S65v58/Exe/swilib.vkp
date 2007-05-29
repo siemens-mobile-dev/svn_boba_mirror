@@ -123,9 +123,9 @@
 12C: 0xA0C7E9F4   ; f075: StartMidlet
 130: 0xA0B8DE75   ; f076: GetMissedCallsCount
 0134: 0xA0828294   ; 4D: GBS_StartTimerProc(void *htimer, long ms, void ptr())
-0138: 0xA1143E6F ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
-013C: 0xA1143E7F ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
-0140: 0xA1143F27 ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
+0138: 0xA1143E7F ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA1143EDD ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0140: 0xA1143EE7 ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 144: 0xA136D5B5   ; f081: GetNetAccessMode
 148: 0xA1241448   ; f082: GetIlluminationDataTable
 14C: 0xA166A4C1   ; f083: memcmp
