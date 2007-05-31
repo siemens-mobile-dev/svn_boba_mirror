@@ -30,8 +30,22 @@ unsigned int NEXT_PLAY_FUNK=0, ENA_SAY_LEVELS=1;
 2 - SayPercent
 */
 
+int IsMediaActive(void)
+{
+  char s[40];
+  sprintf(s,RamMediaIsPlaying());
+#ifdef NEWSGOLD
+  if (s[0]==1) return 1;
+#else
+  if (s[0]==2) return 1;// для SGOLD s[0]!=2    
+#endif 
+  return 0;
+}
+
 void Play(const char *fpath, const char *fname)
 {
+  if (!IsMediaActive())
+    {
       WSHDR* sndPath=AllocWS(128);
       WSHDR* sndFName=AllocWS(128);
 
@@ -64,6 +78,7 @@ void Play(const char *fpath, const char *fname)
 
       FreeWS(sndPath);
       FreeWS(sndFName);
+    }
 }
 
 //==============================================================================

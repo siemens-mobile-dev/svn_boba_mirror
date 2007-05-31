@@ -244,13 +244,28 @@ void SayHourDig()
           }
 }
 
+int IsMediaActive(void)
+{
+  char s[40];
+  sprintf(s,RamMediaIsPlaying());
+#ifdef NEWSGOLD
+  if (s[0]==1) return 1;
+#else
+  if (s[0]==2) return 1;// для SGOLD s[0]!=2    
+#endif 
+  return 0;
+}
+
 void SayTime(void)
 {
   start_vibra();
   vibra_count1=vibra_count;
   
-        Play(folder_path, "x.wav"); 
-        NEXT_PLAY_FUNK=1;
+  if (!IsMediaActive()) Play(folder_path, "x.wav"); 
+  
+  if (PLAY_PARAM) NEXT_PLAY_FUNK=1;
+    else
+      NEXT_PLAY_FUNK=0;
 }
 
 //++++++++++++++++++++++++++++++/*Проговаривание времени*/+++++++++++++++++++++++++++++++++
@@ -328,11 +343,13 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
   if (msg->msg==MSG_PLAYFILE_REPORT)
     {
       if ((msg->submess>>16)==PLAY_ID) 
+      { 
         if (((msg->submess&0xFFFF)==7)||((msg->submess&0xFFFF)==5))
           {
             switch (NEXT_PLAY_FUNK)
               {
                 case 0:
+                  PLAY_ID=0;
                 break;
   
                 case 1:
@@ -356,6 +373,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
                 break;
               }
           }
+      }
+        else
+          PLAY_ID=0;
     }  
   
   if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
