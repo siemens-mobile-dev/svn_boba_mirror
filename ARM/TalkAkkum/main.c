@@ -44,8 +44,6 @@ int IsMediaActive(void)
 
 void Play(const char *fpath, const char *fname)
 {
-  if (!IsMediaActive())
-    {
       WSHDR* sndPath=AllocWS(128);
       WSHDR* sndFName=AllocWS(128);
 
@@ -78,7 +76,6 @@ void Play(const char *fpath, const char *fname)
 
       FreeWS(sndPath);
       FreeWS(sndFName);
-    }
 }
 
 //==============================================================================
@@ -132,13 +129,13 @@ void SayLevel(void)
 
 void SayUp(void)
 {
-  Play(folder_path, "up.wav");
+  if (!IsMediaActive()) Play(folder_path, "up.wav");
   NEXT_PLAY_FUNK=1;
 }
 
 void SayDown(void)
 {
-  Play(folder_path, "down.wav");
+  if (!IsMediaActive()) Play(folder_path, "down.wav");
   NEXT_PLAY_FUNK=1;
 }
 
@@ -147,7 +144,7 @@ void SayTemp(void)
 {
   if (!IsCalling())
     {
-      Play(folder_path, "temp.wav");
+      if (!IsMediaActive()) Play(folder_path, "temp.wav");
   
       vibra_count1=vibra_count;
       start_vibra();
@@ -185,7 +182,7 @@ void Check(void)
         case 0:
           if (found_full_empty[0]||found_full_empty[1]) 
             {
-              Play(folder_path, "out.wav");
+              if (!IsMediaActive()) Play(folder_path, "out.wav");
               ENA_SAY_LEVELS=0;
               NEXT_PLAY_FUNK=0;              
           
@@ -249,7 +246,7 @@ void Check(void)
           if (!found_full_empty[0])
             {// Найден источник
 
-              Play(folder_path, "found.wav");
+              if (!IsMediaActive()) Play(folder_path, "found.wav");
               ENA_SAY_LEVELS=0;
               NEXT_PLAY_FUNK=0;
               
@@ -304,7 +301,7 @@ void Check(void)
             {// Энергия восстановлена
               found_full_empty[1]=1;
 
-              Play(folder_path, "full.wav");
+              if (!IsMediaActive()) Play(folder_path, "full.wav");
           
               //Обнуление флагов
               found_full_empty[0]=0;
