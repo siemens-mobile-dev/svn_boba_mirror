@@ -261,11 +261,22 @@ void SayTime(void)
   start_vibra();
   vibra_count1=vibra_count;
   
-  if (!IsMediaActive()) Play(folder_path, "x.wav"); 
-  
-  if (PLAY_PARAM) NEXT_PLAY_FUNK=1;
-    else
-      NEXT_PLAY_FUNK=0;
+  if (!IsMediaActive())   
+    if (PLAY_PARAM) 
+      {
+        Play(folder_path, "x.wav");
+        NEXT_PLAY_FUNK=1;
+      }
+      else
+        {
+          char s[128];
+          const char *p=strrchr(kurant_path,'\\')+1;
+          strncpy(s,kurant_path,p-kurant_path);
+          s[p-kurant_path]='\0';
+          
+          Play(s, p);
+          NEXT_PLAY_FUNK=0;
+        }
 }
 
 //++++++++++++++++++++++++++++++/*Проговаривание времени*/+++++++++++++++++++++++++++++++++

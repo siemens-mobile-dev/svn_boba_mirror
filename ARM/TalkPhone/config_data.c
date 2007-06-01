@@ -47,6 +47,9 @@ __root const CFG_HDR cfghdr2_3={CFG_CBOX,"Воспроизводить",0,2};
 __root const int PLAY_PARAM=1;
 __root const CFG_CBOX_ITEM cfgcbox3[2]={"Куранты","Всё"};
 
+__root const CFG_HDR cfghdr2_4={CFG_STR_UTF8,"Путь к звуку курантов",0,127};
+__root const char kurant_path[128]=DEFAULT_DISK ":\\ZBin\\sndElfs\\TalkPhone\\x.wav";
+
 __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"",0,0};
 
 //---------------------------------------------------------------------------------------
