@@ -535,7 +535,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>$PROJ_DIR$\postbuild.cmd $PROJ_DIR$ $EXE_DIR$</postbuild>
       </data>
     </settings>
     <settings>
@@ -547,21 +547,21 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ELFLoader.hex</state>
+          <state>ELFLoader.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>16</state>
         </option>
         <option>
           <name>FormatVariant</name>
           <version>7</version>
-          <state>2</state>
+          <state>16</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -676,7 +676,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
@@ -729,7 +729,7 @@
         </option>
         <option>
           <name>GenerateExtraOutput</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XExtraOutOverride</name>
@@ -10874,11 +10874,11 @@
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -11247,7 +11247,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>$PROJ_DIR$\postbuild.cmd $PROJ_DIR$ $EXE_DIR$</postbuild>
       </data>
     </settings>
     <settings>
@@ -11263,17 +11263,17 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ELFLoader.a79</state>
+          <state>ELFLoader.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>16</state>
         </option>
         <option>
           <name>FormatVariant</name>
           <version>7</version>
-          <state>2</state>
+          <state>16</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -11388,7 +11388,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
@@ -11441,7 +11441,7 @@
         </option>
         <option>
           <name>GenerateExtraOutput</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XExtraOutOverride</name>
@@ -12520,11 +12520,11 @@
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -12893,7 +12893,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>$PROJ_DIR$\postbuild.cmd $PROJ_DIR$ $EXE_DIR$</postbuild>
       </data>
     </settings>
     <settings>
@@ -12909,17 +12909,17 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ELFLoader.a79</state>
+          <state>ELFLoader.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>16</state>
         </option>
         <option>
           <name>FormatVariant</name>
           <version>7</version>
-          <state>2</state>
+          <state>16</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -13034,7 +13034,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
@@ -13087,7 +13087,7 @@
         </option>
         <option>
           <name>GenerateExtraOutput</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XExtraOutOverride</name>
