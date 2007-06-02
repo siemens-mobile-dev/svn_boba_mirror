@@ -10424,7 +10424,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>$PROJ_DIR$\postbuild.cmd $PROJ_DIR$ $EXE_DIR$</postbuild>
       </data>
     </settings>
     <settings>
