@@ -883,7 +883,8 @@ void FillAllOffline(void)
   CLIST *cl=(CLIST*)cltop;
   while(cl)
   {
-    if (cl->state!=0xFFFF)
+    if ((cl->state!=0xFFFF)&&
+	(!cl->isgroup))			//by BoBa 2.05.2007
     {
       CLIST *p=cl;
       p->state=0xFFFF;
