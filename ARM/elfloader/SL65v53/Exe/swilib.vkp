@@ -4,7 +4,7 @@
 
 ;Library
 
-;29.05.2007
+;31.05.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -90,18 +90,10 @@
 012C: 0xA0C3C5A8   ; 4B: StartMidlet
 0130: 0xA0B487DD   ; 4C: GetMissedCallsCount
 0134: 0xA0828294   ; 4D: CallAfterTimer(void *htimer, long ms, void ptr())
+0138: 0xA113BD07   ; 4E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA113BD65   ; 4F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
 
-
-0138: 0xA113BD07   ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
-013C: 0xA113BD65   ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
-0140: 0xA113BD6F   ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
-
-;0138: 0xA113BCF7   ; 4E: ShowMsgInR1_3
-;013C: 0xA113BD07   ; 4F: ShowMsgInR1_4
-
-;0140: 0xA113BD6F   ; 50: ShowMsgInR1_7
-
-
+0140: 0xA113BD6F   ; 50: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 0144: 0xA133945D   ; 51: GetNetAccessMode
 0148: 0xA122E264   ; 52: GetIlluminationDataTable
 014C: 0xA154A0ED   ; 53: memcmp(void *m1,void *m2,int n)
@@ -543,17 +535,29 @@
 0790: 0xA113A92D   ; 1E4: __thumb int GetPicNByUnicodeSymbol(int wchar);
 0794: 0xA116E749   ; 1E5: __thumb int EDIT_OpenOptionMenuWithUserItems(void *gui, void (*itemhandler)(USR_MENU_ITEM *item), int zero, int to_add);
 0798: 0xA113F54F   ; 1E6: __thumb void Menu_SetItemCountDyn(void *gui, int n);
+079C: 0xA11B4E94   ; 1E7: __arm char *GetLastJavaApplication();
+07A0: 0xA0C3BEFC   ; 1E8: __arm int IsNoJava();
+;7A4: 0x   ; 1E9: __arm IMGHDR *CreateIMGHDRFromPngFile(const char *fname, int type);
+07A8: 0xA1151E83   ; 1EA: __arm int GetMaxDynIcon(void);
 07AC: 0xA868B6FE   ; 1EB: __arm char *RAM_IMSI(void);
+07B0: 0xA1151EF7   ; 1EC: __arm void FreeDynIcon(int picture);
+07B4: 0xA1151F23   ; 1ED: __arm int IsDynIconBusy(int picture);
+;7B8: 0xA1151E87   ; 1EF: 
+07BC: 0xA1151E87   ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap);
 
-07B0: 0xA1151EF7 ; 1EC: __thumb void FreeDynIcon(int picture);
-07B4: 0xA1151F23 ; 1ED: __thumb int IsDynIconBusy(int picture);
-07BC: 0xA1151E87 ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap);
-07D4: 0xA154A90D ; 1F5: __thumb int sscanf(const char *, const char *, ...);
-07D8: 0xA1151F4F ; 1F6: __thumb IMGHDR* GetPitAdrBy0xE200Symbol(int uni_symbol);
-
-;07E8:0000000000   ; 1FA: char *RamVolumeStep()
+07C0: 0xA093C53C   ; 1F0: filecopy
+07C4: 0xA093E428   ; 1F1: filecopy_op_announce
+07C8: 0xA123CEA0   ; 1F2: devmenu_config_IsCheckboxOff
+07CC: 0xA0837C68   ; 1F3: GetSessionAge
+;7A4: 0x           ; 1F4
+07D4: 0xA154A90D   ; 1F5: __arm int sscanf(const char *, const char *, ...);
+07D8: 0xA1151F4F   ; 1F6: __arm IMGHDR* GetPitAdrBy0xE200Symbol(int uni_symbol);
+;7DC: 0x           ; 1F7: 
+;7E0:              ; 1F8: __arm int GetPlayStatus(void);
+;7E4:              ; 1F9: void SendMP_cmd(cmd,substract)
+;7E8: 0000000000   ; 1FA: char *RamVolumeStep()
 07EC: 0xA86C39A8   ; 1FB: char *RamMediaIsPlaying()
-07F0: 0xA1137F57 ; 1FC: __thumb void CloseCSM(int id);
+07F0: 0xA1137F57   ; 1FC: __thumb void CloseCSM(int id);
 ;7F4: 0000000000   ; 1FD: char IsNumberTyping()
 
 07FC: 0xA1148A73   ; 201: __thumb void SetProp2ImageOrCanvas(DRWOBJ *, RECT *, int zero, IMGHDR *Image, int bleed_x, int bleed_y)
@@ -563,17 +567,17 @@
 0814: 0xA114726D   ; 205: __thumb void SetProp2Square_v1(void);
 0818: 0xA154A495   ; 206: __thumb void srand(unsigned int seed);
 081C: 0xA1167EE7   ; 207: __thumb void DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
-
-0820: 0xA114D177 ; 208: __thumb int Get_WS_width(WSHDR *ws, int font);
-0824: 0xA1137E99 ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
-
+0820: 0xA114D177   ; 208: Get_WS_width(*ws, font)
+0824: 0xA1137E99   ; 209: __arm void *FindGUIbyId(int id, CSM_RAM **csm);
 0828: 0xA116E5C9   ; 20A: __thumb void EDIT_SetDate(void *gui,int n,TDate *dd);
 082C: 0xA116E5DD   ; 20B: __thumb void EDIT_SetTime(void *gui,int n,TTime *tt);
 0830: 0xA116E5F1   ; 20C: __thumb void EDIT_GetDate(void *gui,int n,TDate *dd);
 0834: 0xA116E605   ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt);
+0838: 0xA1138709   ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
+083C: 0xA11385EF   ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
 
-0838: 0xA1138709 ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
-083C: 0xA11385EF ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
+0840: 0xA113C4F1   ; 210: int GetCurGuiID(void)
+0844: 0x000000A1   ; 211: GBS_Cmd_4209_RefreshScreensaver
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
