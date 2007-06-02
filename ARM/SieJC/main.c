@@ -35,9 +35,10 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "1.6.1-Z";
+const char VERSION_VERS[] = "1.6.5-Z";
 const char CMP_DATE[] = __DATE__;
-
+#define TMR_SECOND 216
+const unsigned long PING_INTERVAL = 5*60*TMR_SECOND; // 5 минут
 #ifdef NEWSGOLD
 #ifdef ELKA
   const char OS[] = "NewSGOLD_ELKA_ELF-Platform";
@@ -82,6 +83,7 @@ volatile int is_gprs_online=1;
 
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
+GBSTMR Ping_Timer;
 #ifndef NEWSGOLD
   GBSTMR redraw_tmr;
 #define Redraw_Time TMR_SECOND*5
@@ -553,6 +555,16 @@ void SendAnswer(char *str)
   }
 }
 
+void SendPing()
+{
+  //ShowMSG(1,(int)"Ping:)");
+  GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
+  if(Jabber_state!=JS_ONLINE)return;
+  if(sendq_l)return;
+  static char ping_str[]=" ";
+  SUBPROC((void*)SendAnswer,ping_str);
+}
+
 char Support_Compression = 0;
 char Support_MD5_Auth = 0;
 char Support_Resource_Binding = 0;
@@ -697,6 +709,7 @@ void Process_Decoded_XML(XMLNode* node)
     //if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
     nodeEx = nodeEx->next;
   }
+  
 }
 
 void __log(char* buffer, int size)
@@ -1091,6 +1104,7 @@ void maincsm_oncreate(CSM_RAM *data)
   DNR_TRIES=3;
 
   SUBPROC((void *)create_connect);
+  GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
 #ifdef LOG_ALL
   // Определим адреса некоторых процедур, на случай,
   // если клиент будет падать - там могут быть аборты...
@@ -1105,6 +1119,7 @@ void maincsm_oncreate(CSM_RAM *data)
 void maincsm_onclose(CSM_RAM *csm)
 {
   GBS_DelTimer(&tmr_vibra);
+  GBS_DelTimer(&Ping_Timer);
   GBS_DelTimer(&TMR_Send_Presence);
 #ifndef NEWSGOLD
   GBS_DelTimer(&redraw_tmr);
