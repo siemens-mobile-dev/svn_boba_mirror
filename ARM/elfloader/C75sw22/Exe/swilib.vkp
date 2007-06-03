@@ -103,11 +103,16 @@
 012C: 0xA083340C   ; 4B: StartMidlet
 0130: 0xA0511F19   ; 4C: GetMissedCallsCount
 0134: 0xA020AF00   ; 4D: CallAfterTimer
-0138: 0xA07779FB   ; 4E: ShowMsgInR1_3
-013C: 0xA0777A0B   ; 4F: ShowMsgInR1_4
+;0138: 0xA07779FB   ; 4E: ShowMsgInR1_3
+;013C: 0xA0777A0B   ; 4F: ShowMsgInR1_4
 
 ;0140: 0xA0777AB3   ; 50: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
-0140: 0xA0777A73   ; 50: ShowMsgInR1_7
+;0140: 0xA0777A73   ; 50: ShowMsgInR1_7
+
+0138: 0xA0777A0B ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA0777A69 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0140: 0xA0777A73 ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
+
 0144: 0xA0A9BE19   ; 51: GetNetAccessMode
 0148: 0xA07CB904   ; 52: GetIlluminationDataTable
 014C: 0xA0E4F02D   ; 53: memcmp(void *m1,void *m2,int n)
@@ -595,6 +600,13 @@
 081C: 0xA084077F ; 207: __thumb void DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
 0820: 0xA07AC6AD ; 208: __thumb int Get_WS_width(WSHDR *ws, int font);
 0824: 0xA0773A3F ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
+
+0828: 0xA0846E9F ; 20A: __thumb void EDIT_SetDate(void *gui,int n,TDate *dd);
+082C: 0xA0846EB3 ; 20B: __thumb void EDIT_SetTime(void *gui,int n,TTime *tt);
+0830: 0xA0846EC7 ; 20C: __thumb void EDIT_GetDate(void *gui,int n,TDate *dd);
+0834: 0xA0846EDB ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt);
+0838: 0xA077440D ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
+083C: 0xA07742F3 ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
 #pragma disable old_equal_ff
 +0
 
