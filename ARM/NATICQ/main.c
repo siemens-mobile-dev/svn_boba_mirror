@@ -1552,10 +1552,13 @@ void AddMsgToChat(void *data)
       ed_struct->ed_answer++;
     }
   }
-  total_unread--;
+  if (IsGuiOnTop(edchat_id)) 
+    total_unread--;
+  else
+    ed_struct->requested_decrement_total_unread++;
   ed_struct->ed_contact->isunread=0;
   ChangeContactPos(ed_struct->ed_contact);
-  EDIT_SetFocus(data,ed_struct->ed_answer);
+//  EDIT_SetFocus(data,ed_struct->ed_answer);
 }
 
 void ask_my_info(void)
@@ -1935,15 +1938,15 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       GUI *igui=GetTopGUI();
       if (igui) //И он существует
       {
-#ifdef ELKA
+//#ifdef ELKA
 	//	{
 	void *canvasdata=BuildCanvas();
-#else
-	void *idata=GetDataOfItemByID(igui,2);
-	if (idata)
-	{
-	  void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
-#endif
+//#else
+//	void *idata=GetDataOfItemByID(igui,2);
+//	if (idata)
+//	{
+//	  void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+//#endif
 	  int icn;
 	  if (total_unread)
 	    icn=IS_MSG;
@@ -1968,10 +1971,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  //			   GetPaletteAdrByColorIndex(0),
 	  //			   GetPaletteAdrByColorIndex(20));
 	  DrawImg(IDLEICON_X,IDLEICON_Y,S_ICONS[icn]);
-#ifdef ELKA
-#else
-	}
-#endif
+//#ifdef ELKA
+//#else
+//	}
+//#endif
       }
     }
   }
@@ -2698,6 +2701,8 @@ void edchat_ghook(GUI *data, int cmd)
   {
     pltop->dyn_pltop=SmilesImgList;
     DisableIDLETMR();
+    total_unread-=ed_struct->requested_decrement_total_unread;
+    ed_struct->requested_decrement_total_unread=0;
     if (request_close_edchat)
     {
       request_close_edchat=0;
@@ -2833,6 +2838,7 @@ void CreateEditChat(CLIST *t)
   EDCHAT_STRUCT *ed_struct=malloc(sizeof(EDCHAT_STRUCT));
   ed_struct->ed_contact=t;
   ed_struct->ed_answer=edchat_toitem;
+  ed_struct->requested_decrement_total_unread=0;
 
   //  int scr_w=ScreenW();
   //  int scr_h=ScreenH();

@@ -13,6 +13,7 @@ typedef struct
   CLIST *ed_contact;
   GUI *ed_chatgui;
   int ed_answer;
+  int requested_decrement_total_unread;
 }EDCHAT_STRUCT;
 
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
