@@ -41,6 +41,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 #define MI_CONF_VREJ_THIS   4
 #define MI_CONF_VGR_THIS    5
 #define MI_QUERY_VERSION    6
+#define MI_LOGIN_LOGOUT     7
 
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
@@ -135,6 +136,23 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       break;
     }       
 
+  case MI_LOGIN_LOGOUT: 
+    {
+      
+      char *pres_str = malloc(256);
+      TRESOURCE *Transport = CList_GetActiveContact();
+      if(Transport->status==PRESENCE_OFFLINE)
+      {
+        snprintf(pres_str,255,"<presence to='%s'/>", Transport->full_name);
+      }
+      else
+      {
+        snprintf(pres_str,255,"<presence to='%s' type='unavailable'/>", Transport->full_name);
+      }
+      SUBPROC((void*)_sendandfree,pres_str);        
+      break;
+    }     
+    
   default:
     {
       MsgBoxError(1,(int)"Действие неизвестно или не поддерживается");
@@ -165,6 +183,9 @@ void contact_menu_iconhndl(void *data, int curitem, int *unk)
   char test_str[48];
   void *item=AllocMenuItem(data);
   strcpy(test_str,"(ошибка)");
+  
+  TRESOURCE *Act_contact = CList_GetActiveContact();
+  
   switch(Menu_Contents[curitem])
   {
   case MI_CONF_LEAVE: 
@@ -199,6 +220,18 @@ void contact_menu_iconhndl(void *data, int curitem, int *unk)
       strcpy(test_str,"Версия клиента");
       break;
     }    
+  case MI_LOGIN_LOGOUT: 
+    {
+      if(Act_contact->status==PRESENCE_OFFLINE)
+      {
+        strcpy(test_str,"Включить");
+      }
+      else
+      {
+        strcpy(test_str,"Отключить");
+      }
+      break;
+    }      
   }
   //ShowMSG(1,(int)test_str);
   ws=AllocMenuWS(data,strlen(test_str));
@@ -245,15 +278,25 @@ char ICON_CONF_BAN_THIS[128];
 char ICON_CONF_VREJ_THIS[128];
 char ICON_CONF_VGR_THIS[128];
 char ICON_QUERY_VERSION[128];
+char ICON_LOGIN_LOGOUT[128];
 
 void Init_Icon_array()
 {
+  TRESOURCE *Act_contact = CList_GetActiveContact();
+  
   strcpy(ICON_CONF_LEAVE, PATH_TO_PIC);strcat(ICON_CONF_LEAVE, "menu_muc_leave.png");
   strcpy(ICON_CONF_KICK_THIS, PATH_TO_PIC);strcat(ICON_CONF_KICK_THIS, "menu_kick.png");
   strcpy(ICON_CONF_BAN_THIS, PATH_TO_PIC);strcat(ICON_CONF_BAN_THIS, "menu_ban.png");
   strcpy(ICON_CONF_VREJ_THIS, PATH_TO_PIC);strcat(ICON_CONF_VREJ_THIS, "menu_no_icon.png");
   strcpy(ICON_CONF_VGR_THIS, PATH_TO_PIC);strcat(ICON_CONF_VGR_THIS, "menu_no_icon.png");
   strcpy(ICON_QUERY_VERSION, PATH_TO_PIC);strcat(ICON_QUERY_VERSION, "menu_version.png");  
+  strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
+  if(Act_contact->entry_type==T_TRANSPORT)
+  if(Act_contact->status==PRESENCE_OFFLINE)
+  {
+    strcat(ICON_LOGIN_LOGOUT, "menu_version.png");
+  }
+  else strcat(ICON_LOGIN_LOGOUT, "menu_no_icon.png");
   
   for(int i=0;i<=MAX_ITEMS;i++)cmS_ICONS[i]=0;
   cmS_ICONS[MI_CONF_LEAVE]=(int)ICON_CONF_LEAVE;  
@@ -262,6 +305,7 @@ void Init_Icon_array()
   cmS_ICONS[MI_CONF_VREJ_THIS]=(int)ICON_CONF_VREJ_THIS;    
   cmS_ICONS[MI_CONF_VGR_THIS]=(int)ICON_CONF_VGR_THIS;    
   cmS_ICONS[MI_QUERY_VERSION]=(int)ICON_QUERY_VERSION;    
+  cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT; 
   
 }
 
@@ -273,12 +317,16 @@ void Disp_Contact_Menu()
   TRESOURCE *Act_contact = CList_GetActiveContact();
 // Теперь определяем, какие пункты у нас будут, и сколько
   if(!Act_contact)return;
-
   
   if(Act_contact->entry_type!=T_CONF_ROOT)
   {
     Menu_Contents[n_items++]=MI_QUERY_VERSION;
   } 
+
+  if(Act_contact->entry_type==T_TRANSPORT)
+  {
+    Menu_Contents[n_items++]=MI_LOGIN_LOGOUT;
+  }
   
   if(Act_contact->entry_type==T_CONF_ROOT)
   {

@@ -510,6 +510,10 @@ CLIST* CList_AddContact(char* jid,
   else
   {
     ResEx->entry_type=T_VIRTUAL; // По этому признаку потом его убъём
+    if(!strchr(jid, '@'))
+    {
+      ResEx->entry_type=T_TRANSPORT; // Транспортный агент
+    } 
     ResEx->status=PRESENCE_OFFLINE;
   }
   ResEx->name = NULL;
@@ -562,8 +566,15 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   CLIST* contEx = CList_FindContactByJID(jid);
   if(!contEx)
   {
-    Log("MESS_LOST",mtext);
-    return;
+    // Фикс - добавляем контакт в ростер, временно
+    unsigned short jidlen = ((int)strchr(jid, '/') - (int)jid);
+    char *qjid = malloc(jidlen+1);
+    strncpy(qjid, jid, jidlen);
+    qjid[jidlen]=0x0;
+    ShowMSG(1,(int)qjid);
+    contEx = CList_AddContact(qjid, qjid, SUB_NONE, 0, 0);
+    mfree(qjid);
+    CList_AddResourceWithPresence(jid, PRESENCE_OFFLINE, NULL);
   }
   TRESOURCE* cont = (contEx->group & 0x80 && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT)) ? contEx->res_list : CList_IsResourceInList(jid);
   if(!cont)
@@ -729,7 +740,10 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
     snprintf(msg,1024,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);
     ShowMSG(0, (int)msg);
   }
-
+  if(ResEx->entry_type==T_TRANSPORT)
+  {
+    ShowMSG(0, (int)"This is Jabber transport");
+  }
   mfree(msg);
 }
 
