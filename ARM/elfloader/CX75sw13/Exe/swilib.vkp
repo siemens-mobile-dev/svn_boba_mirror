@@ -567,7 +567,12 @@
 0834: 0xA08A09DB ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt);
 0838: 0xA07BEAE5 ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
 083C: 0xA07BE9CB ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
-
+;
+0848: 0xA03D8D50 ; 212: __arm int CardExplGetCurItem(void *csm);
+084C: 0xA0352B10 ; 213: __arm void CardExplGetFName(void *csm, int cur_item, WSHDR *dest);
+0850: 0xA07BC07D ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
+0854: 0xA07BC10D ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to);
+0858: 0xA07BB6A9 ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...);
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------

@@ -578,6 +578,12 @@
 
 0840: 0xA113C4F1   ; 210: int GetCurGuiID(void)
 0844: 0x000000A1   ; 211: GBS_Cmd_4209_RefreshScreensaver
+;
+0848: 0xA099C3DC ; 212: __arm int CardExplGetCurItem(void *csm);
+084C: 0xA0968240 ; 213: __arm void CardExplGetFName(void *csm, int cur_item, WSHDR *dest);
+0850: 0xA0BFCE7D ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
+0854: 0xA0BFCF0D ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to);
+0858: 0xA0BFC4C1 ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...);
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);

@@ -608,6 +608,12 @@
 0834: 0xA117966D   ; 20D: void EDIT_GetTime(void *gui,int n,TTime *tt)
 0838: 0xA1140881   ; 20E: int ConstructEditTime(EDITCONTROL *EditControl,TTime *time)
 083C: 0xA1140767   ; 20F: int ConstructEditDate(EDITCONTROL *EditControl,TDate *date)
+;
+0848: 0xA09BCE28 ; 212: __arm int CardExplGetCurItem(void *csm);
+084C: 0xA0982808 ; 213: __arm void CardExplGetFName(void *csm, int cur_item, WSHDR *dest);
+0850: 0xA0C30E89 ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
+0854: 0xA0C30F19 ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to);
+0858: 0xA0C304CD ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...);
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver
@@ -628,7 +634,7 @@
 //0xA1577897 ;  __thumb png_set_packing
 //0xA1576BB9 ;  __thumb png_set_gray_to_rgb
 //0xA15754CB ;  __thumb png_get_rowbytes
-+0
+
 
 0FD4800: 0xA0FC7301   ; 800: Run ScreenShooter on function 200: ScreenSho
 
