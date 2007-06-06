@@ -737,7 +737,7 @@ __arm void MyIDLECSMonCreate(void *data)
     0x55,
     0xFF,
     8, //Каталог Misc
-    0x59D,
+    MENU_FLAG2,
     smallicons,
     bigicons,
     (int)"Open",    //LGP "Открыть"
@@ -753,7 +753,7 @@ __arm void MyIDLECSMonCreate(void *data)
     0x55,
     0xFF,
     7,
-    0x578,
+    MENU_FLAG2,
     smallicons,
     bigicons,
     (void *)elfloader_onload,
@@ -821,8 +821,14 @@ __arm void DoUnknownFileType(WSHDR *filename)
   FreeWS(wsmime);
 }
 
+#ifdef NEWSGOLD 
 __no_init int *EXT2_AREA;
 #ifdef ELKA
+__no_init int EXT2_CNT @ "REGEXPL_CNT";
+#endif
+
+#else
+__no_init TREGEXPLEXT *EXT2_AREA;
 __no_init int EXT2_CNT @ "REGEXPL_CNT";
 #endif
 
@@ -888,30 +894,24 @@ __arm int *EXT2_REALLOC(void)
 }
 #endif
 #else
-__no_init int EXT2_CNT @ "REGEXPL_CNT";
-
-__arm void *EXT2_REALLOC(void)
+__arm TREGEXPLEXT *EXT2_REALLOC(void)
 {
-  int size;
-  size=sizeof(REGEXPLEXT_ARM_NEW);
-  int *p;
-  int *p2;
+  TREGEXPLEXT *p,*p2;
   int n;
   LockSched();
   n=EXT2_CNT;
   p=EXT2_AREA;
-  p2=malloc((n+1)*size);
-  zeromem(p2,(n+1)*size);
+  p2=malloc((n+1)*sizeof(TREGEXPLEXT));
+  zeromem(p2,(n+1)*sizeof(TREGEXPLEXT));
   if (p) 
   {    
-    memcpy(p2,p,n*size);
+    memcpy(p2,p,n*sizeof(TREGEXPLEXT));
     mfree(p);
   }
   EXT2_CNT=n+1;
   EXT2_AREA=p2;
-  p2+=(n*(size/sizeof(int)));
   UnlockSched();
-  return (p2);
+  return (p2+n);
 }
 
 

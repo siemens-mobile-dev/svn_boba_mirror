@@ -21,7 +21,7 @@ __arm int LoadConfigData(const char *fname)
   int result=0;
   void *cfg;
   void *cfg_init;
-  unsigned int rlen;
+  unsigned int rlen, end;
 
   cfg=(void *)__segment_begin("CONFIG_DATA_I");
   cfg_init=(void *)__segment_begin("CONFIG_DATA_ID");
@@ -30,15 +30,9 @@ __arm int LoadConfigData(const char *fname)
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     rlen=fread(f,cfg,len,&ul);
-    if ((rlen==lseek(f,0,S_END,&ul,&ul)) && rlen==len)
-    {
-      fclose(f,&ul);
-    }
-    else
-    {
-      fclose(f,&ul);
-      goto L_SAVENEWCFG;
-    }
+    end=lseek(f,0,S_END,&ul,&ul);
+    fclose(f,&ul);
+    if (rlen!=end || rlen!=len)  goto L_SAVENEWCFG;
   }
   else
   {

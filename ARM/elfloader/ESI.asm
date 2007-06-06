@@ -159,27 +159,7 @@ J_PIT:
 	BX	R12
         
 ; ================================================
-/*        THUMB
-	RSEG	PATCH_KEYB_KEY_DOWN:CODE:ROOT(1)
-        BLX     J_PATCH
-        RSEG	PATCH_KEYB_KEY_UP:CODE:ROOT(1)
-	BLX     J_PATCH
-        RSEG	PATCH_KEYB_KEY_LONG:CODE:ROOT(1)
-	BLX     J_PATCH
-        
-	RSEG	PATCH_KEYB_MSGJ:CODE:NOROOT(2)
-        ARM
-        EXTERN  PatchKeybMsg
-        
-J_PATCH        
-	LDR     PC, =PatchKeybMsg
-        
-        
--Z(CODE)PATCH_KEYB_KEY_DOWN=A0CB60D6-A0CB60D9
--Z(CODE)PATCH_KEYB_KEY_UP=A0CB61AC-A0CB61AF
--Z(CODE)PATCH_KEYB_KEY_LONG=A0CB64C6-A0CB64C9
--Z(CODE)PATCH_KEYB_MSGJ=A0CB74A0-A0CB74A7
-*/
+
         THUMB 
         RSEG    PATCH_KEYB_MSG:CODE:ROOT(1)
         LDR     R2, JJ_KEYB
@@ -215,6 +195,13 @@ J_KEYB:
         BX      R0
         
 EXIT:   POP     {R3-R7,PC}
+
+
+        RSEG    PATCH_CARD_EXPL:CODE:ROOT
+        CODE32
+        EXTERN  CreateCardExplMenu
+        BL      CreateCardExplMenu
+
 
 #endif
 

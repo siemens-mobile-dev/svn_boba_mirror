@@ -1,8 +1,8 @@
 #include "..\inc\swilib.h"
 
 #ifndef NEWSGOLD
-extern void *EXT2_REALLOC(void);
-extern int *EXT2_AREA;
+extern TREGEXPLEXT *EXT2_REALLOC(void);
+extern TREGEXPLEXT *EXT2_AREA;
 extern int EXT2_CNT;
 
 // В этот файл включены некоторые функции которых нет в прошивке для SGOLD
@@ -10,8 +10,8 @@ extern int EXT2_CNT;
 // ========================================== Reg Files =============================================
 __arm void RegFile(WSHDR*ext,int unical_id,int menu_flag,unsigned int* icon1,int obex_path_id,int enabled_options,void *proc1,void *proc2,unsigned int *icon2)
 {
-  REGEXPLEXT_ARM_NEW* reg;
-  unsigned int * icon2new;
+  TREGEXPLEXT *reg;
+  unsigned int *icon2new;
   reg=EXT2_REALLOC();
   LockSched();
   reg->zero=0;
@@ -25,10 +25,7 @@ __arm void RegFile(WSHDR*ext,int unical_id,int menu_flag,unsigned int* icon1,int
   reg->altproc=proc2;
    
   icon2new=malloc(sizeof(int)*2);
-  if ((*icon1>>28)==0xA)
-    icon2new[0]=*icon2;
-  else
-    icon2new[0]=*icon1+1;
+  icon2new[0]=*icon1>>28==0xA?*icon2:*icon1+1;
   icon2new[1]=0;
   reg->icon2=icon2new;
   UnlockSched();
@@ -37,7 +34,7 @@ __arm void RegFile(WSHDR*ext,int unical_id,int menu_flag,unsigned int* icon1,int
 __arm int GetBigIcon(const unsigned int icon, int uid)
 {
   asm("mov r1, r8");
-  REGEXPLEXT_ARM_NEW* reg;
+  TREGEXPLEXT *reg;
   if ((icon>>28)!=0xA) return (icon+1);
   reg=get_regextpnt_by_uid(uid);
   if (!reg) return (0);
@@ -47,17 +44,21 @@ __arm int GetBigIcon(const unsigned int icon, int uid)
 __arm void UnregExplExt_impl(REGEXPLEXT const * reg_orig)
 {
   char ext[16];
-  REGEXPLEXT_ARM_NEW *reg=(REGEXPLEXT_ARM_NEW*)EXT2_AREA;
+  TREGEXPLEXT *reg=(TREGEXPLEXT*)EXT2_AREA;
   for (int i=0;i!=EXT2_CNT;i++)
   {
-    if (reg_orig->unical_id!=reg[i].unical_id) continue;
-    ws_2str(reg[i].ext,ext,15);
-    if (strcmp(ext,reg_orig->ext)) continue;
-    FreeWS(reg[i].ext);
-    mfree((void*)reg[i].icon2);
-    EXT2_CNT--;
-    memcpy(&reg[i],&reg[i+1],sizeof(REGEXPLEXT_ARM_NEW)*(EXT2_CNT-i));
-    return;  
+    if (reg_orig->unical_id==reg[i].unical_id)
+    {
+      ws_2str(reg[i].ext,ext,15);
+      if (!strcmp(ext,reg_orig->ext))
+      {
+        FreeWS(reg[i].ext);
+        mfree((void*)reg[i].icon2);
+        EXT2_CNT--;
+        memcpy(&reg[i],&reg[i+1],sizeof(TREGEXPLEXT)*(EXT2_CNT-i));
+        return;
+      }
+    }
   }
 }
 
@@ -189,6 +190,140 @@ unsigned int fwrite32(int fh, void *buf, int len, unsigned int *err)
   return(total);
 }
 
+#define DISPLACE_OF_PARAM 0xFC
+
+__no_init MENU_DESC cardexplorer;
+__no_init void (*CEXPL_oldghook)(void *, int);
+
+extern int CardExplGetCurItem(void *csm);
+extern void CardExplGetFName(void *csm, int cur_item, WSHDR *dest);
+extern void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
+
+__arm TREGEXPLEXT *GetRegExtPntByFullName(CSM_RAM *cardexpl_csm,WSHDR *dest)
+{
+  WSHDR extension, *ext;
+  unsigned short d_ext[16];
+  TREGEXPLEXT *file;
+  int pos;
+  
+  ext=CreateLocalWS(&extension,d_ext,16);
+  CardExplGetFName(cardexpl_csm,CardExplGetCurItem(cardexpl_csm),dest);
+  if ((pos=wstrrchr(dest,dest->wsbody[0],'.'))!=0xFFFF)
+  {
+    wstrcpybypos(ext,dest,pos+1,dest->wsbody[0]-pos);
+    file=get_regextpnt_by_uid(GetExtUid_ws(ext));
+    return file;
+  }
+  return NULL;
+}
+
+
+__arm void OpenWith_Handle(void *menugui)
+{
+  WSHDR destfname, *dest;
+  unsigned short d_fname[128];
+  CSM_RAM *cardexpl_csm;
+  TREGEXPLEXT *file;
+  
+  cardexpl_csm=CSM_root()->csm_q->csm.last;
+  if (cardexpl_csm)
+  {
+    dest=CreateLocalWS(&destfname,d_fname,128);
+    file=GetRegExtPntByFullName(cardexpl_csm,dest);
+    if (file)
+    {
+      if(file->altproc)
+      {
+        void (*altproc)(WSHDR *, WSHDR *, int);
+        altproc=(void(*)(WSHDR *,WSHDR*,int))file->altproc;
+        altproc(dest,file->ext,(int)cardexpl_csm+(int)DISPLACE_OF_PARAM);
+      }
+    }
+  }
+}
+
+void CardExplorer_ghook(void *data, int cmd)
+{
+  if (CEXPL_oldghook)
+    CEXPL_oldghook(data, cmd);
+  
+  if (cmd==2)
+  {
+    
+  }
+  if (cmd==3)
+  {
+    void *remove;
+    remove=cardexplorer.procs;
+    cardexplorer.procs=NULL;
+    mfree(remove);
+    
+    remove=(void*)cardexplorer.items;
+    cardexplorer.items=NULL;
+    mfree(remove);
+  }
+}
+
+__arm int IsFileWithAltOpen(void)
+{
+  WSHDR destfname, *dest;
+  unsigned short d_fname[128];
+  CSM_RAM *cardexpl_csm;
+  TREGEXPLEXT *file;
+  
+  cardexpl_csm=CSM_root()->csm_q->csm.last;
+  if (cardexpl_csm)
+  {
+    dest=CreateLocalWS(&destfname,d_fname,128);
+    file=GetRegExtPntByFullName(cardexpl_csm,dest);
+    if (file)
+    {
+      if(file->altproc) return (1);
+    }
+  }
+  return (0);
+}
+
+const MENUITEM_DESC OpenWith_Item={NULL,(int)"Открыть с помощью",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2};
+
+__arm int CreateCardExplMenu(int is_small,int zero1,const MENU_DESC *menu, const HEADER_DESC *hdr,int zero2,int n_items,void *user_pointer,int *to_remove)
+{
+  int rem=0;
+  int to_remnew[0x50];
+  memcpy(&cardexplorer,menu,sizeof(MENU_DESC));
+  if (to_remove)
+  {
+    int max_rem=to_remove[0];
+    while(rem!=max_rem)
+    {
+      rem++;
+      to_remnew[rem]=to_remove[rem]+1;
+    }
+  }
+  if (!IsFileWithAltOpen())
+  {
+    rem++;
+    to_remnew[rem]=0;
+  }
+  to_remnew[0]=rem;
+  
+  cardexplorer.procs=malloc((menu->n_items+1)*sizeof(void *));
+  cardexplorer.items=malloc((menu->n_items+1)*sizeof(MENUITEM_DESC));
+  
+  memcpy(cardexplorer.procs+1,menu->procs,menu->n_items*sizeof(void *));
+  memcpy((MENUITEM_DESC *)cardexplorer.items+1,menu->items,menu->n_items*sizeof(MENUITEM_DESC));
+  
+  memcpy((MENUITEM_DESC *)cardexplorer.items,&OpenWith_Item,sizeof(MENUITEM_DESC));
+  cardexplorer.procs[0]=(void *)OpenWith_Handle;
+  
+  CEXPL_oldghook=(void (*)(void*, int))menu->global_hook_proc;
+  cardexplorer.n_items=menu->n_items+1;
+  cardexplorer.global_hook_proc=(void *)CardExplorer_ghook;
+  cardexplorer.flags2|=0x10;
+  
+  return CreateMenu(is_small,zero1,&cardexplorer,hdr,zero2,n_items+1,user_pointer,to_remnew);
+}
+
 #pragma diag_suppress=Pe177
 __root static const int SWILIB_FUNC00B @ "SWILIB_FUNC00B" = (int)fread32;
 __root static const int SWILIB_FUNC00C @ "SWILIB_FUNC00C" = (int)fwrite32;
@@ -197,4 +332,7 @@ __root static const int SWILIB_FUNC12B @ "SWILIB_FUNC12B_12D" = (int)AddKeybMsgH
 __root static const int SWILIB_FUNC12C @ "SWILIB_FUNC12B_12D" = (int)AddKeybMsgHook_end_impl;
 __root static const int SWILIB_FUNC12D @ "SWILIB_FUNC12B_12D" = (int)RemoveKeybMsgHook_impl;
 #pragma diag_default=Pe177
+
+
+
 #endif
