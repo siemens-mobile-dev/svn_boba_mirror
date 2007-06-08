@@ -737,7 +737,7 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
 
   if(ResEx->entry_type==T_CONF_NODE)
   {
-    snprintf(msg,1024,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);
+    snprintf(msg,200,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);
     ShowMSG(0, (int)msg);
   }
   if(ResEx->entry_type==T_TRANSPORT)

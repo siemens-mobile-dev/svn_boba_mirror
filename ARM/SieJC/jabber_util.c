@@ -940,6 +940,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         sprintf(r, "%s left us :(", nick);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
         priv.role = ROLE_NONE;
+        priv.aff  = AFFILIATION_NONE;
         Req_Set_Role = 1;
       }
 
