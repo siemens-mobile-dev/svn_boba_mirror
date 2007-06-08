@@ -7,6 +7,9 @@
 #define DEFAULT_DISK_CFG "0"
 #endif
 
+////////////////////////////////////////////////////////////////////////////////
+__root const CFG_HDR cfghdr_CONNECT_LEVEL={CFG_LEVEL,"Connection setup",1,0};
+
 __root const CFG_HDR cfghdr0={CFG_UTF8_STRING,"Login",0,31};
 __root const char USERNAME[32]="";
 
@@ -25,6 +28,17 @@ __root const CFG_CBOX_ITEM cfgcbox1[2]={"Host name","IP address"};
 
 __root const CFG_HDR cfghdr4={CFG_UINT,"Port",0,65535};
 __root const unsigned int JABBER_PORT=5222;
+
+__root const CFG_HDR cfghdr8={CFG_CBOX,"Auth type",0,2};
+__root const int USE_SASL = 0;
+__root const CFG_CBOX_ITEM cfgcbox2[2]={"Simple","SASL"};
+
+__root const CFG_HDR cfghdr9={CFG_CBOX,"ZLib usage",0,2};
+__root const int USE_ZLIB = 0;
+__root const CFG_CBOX_ITEM cfgcbox3[2]={"No","Yes"};
+
+__root const CFG_HDR cfghdr_CONNECT_LEVEL_END={CFG_LEVEL,"",0,0};
+////////////////////////////////////////////////////////////////////////////////
 
 __root const CFG_HDR cfghdr4346={CFG_CBOX,"History",0,2};
 __root const int WRITE_HISTORY = 0;
@@ -53,15 +67,12 @@ __root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
 __root const unsigned int IDLE_ICON_X=0;
 __root const unsigned int IDLE_ICON_Y=50;
 
-__root const CFG_HDR cfghdr8={CFG_CBOX,"Auth type",0,2};
-__root const int USE_SASL = 0;
-__root const CFG_CBOX_ITEM cfgcbox2[2]={"Simple","SASL"};
+__root const CFG_HDR cfghdr4353={CFG_CHECKBOX,"Composing Events",0,2};
+__root const int COMPOSING_EVENTS=1;
 
-__root const CFG_HDR cfghdr9={CFG_CBOX,"ZLib usage",0,2};
-__root const int USE_ZLIB = 0;
-__root const CFG_CBOX_ITEM cfgcbox3[2]={"No","Yes"};
-
-__root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Sounds setup",1,0};
+// Настройка звуков
+////////////////////////////////////////////////////////////////////////////////
+__root const CFG_HDR cfghdr_SOUNDS_SETUP={CFG_LEVEL,"Sounds setup",1,0};
 
 __root const CFG_HDR cfghdr1_1={CFG_CHECKBOX,"Default Sounds State",0,2};
 __root const int Default_Sounds_State=1;
@@ -77,7 +88,7 @@ __root const char sndConf[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\conf.wav
 
 __root const CFG_HDR cfghdr1_5={CFG_STR_UTF8,"Sound Msg PM",0,63};
 __root const char sndPM[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\message.wav";
-
-__root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Hosts and paths",0,0};
+////////////////////////////////////////////////////////////////////////////////
+__root const CFG_HDR cfghdr_SOUNDS_SETUP_END={CFG_LEVEL,"",0,0};
 
 // EOL, EOF

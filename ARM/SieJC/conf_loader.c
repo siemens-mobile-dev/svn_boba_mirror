@@ -11,8 +11,8 @@ int LoadConfigData(const char *fname)
   int result=0;
   void *cfg;
 
-  extern const CFG_HDR cfghdr0; //first var in CONFIG
-  cfg=(void*)&cfghdr0;
+  extern const CFG_HDR cfghdr_CONNECT_LEVEL; //first var in CONFIG
+  cfg=(void*)&cfghdr_CONNECT_LEVEL;
 
   unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
 

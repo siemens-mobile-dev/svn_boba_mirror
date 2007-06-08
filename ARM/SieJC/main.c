@@ -35,7 +35,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "1.7.0-Z";
+const char VERSION_VERS[] = "1.7.5-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 5*60*TMR_SECOND; // 5 ÏËÌÛÚ

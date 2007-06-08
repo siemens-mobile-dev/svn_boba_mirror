@@ -125,6 +125,12 @@ typedef struct
 // Context: HELPER
 void SendMessage(char* jid, IPC_MESSAGE_S *mess);
 
+// Context: HELPER
+void SendComposing(char* jid);
+
+// Context: HELPER
+void CancelComposing(char* jid);
+
 // ”ничтожить список комнат  
 void MUCList_Destroy();
 

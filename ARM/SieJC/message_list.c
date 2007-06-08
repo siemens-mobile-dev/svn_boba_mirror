@@ -87,6 +87,7 @@ void inp_redraw(void *data)
 {
 }
 
+char Mess_was_sent = 0;
 
 void inp_ghook(GUI *gui, int cmd)
 {
@@ -140,6 +141,7 @@ void inp_ghook(GUI *gui, int cmd)
      Leave_Conference(room->JID);
      CList_MakeAllResourcesOFFLINE(room);
      Terminate = 0;
+     Mess_was_sent = 1;
      mfree(body);
      return;
    }
@@ -149,6 +151,7 @@ void inp_ghook(GUI *gui, int cmd)
    mfree(body);
    SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);
    REDRAW();
+   Mess_was_sent = 1;
    }
    else MsgBoxError(1,(int)"Нельзя послать пустое сообщение");
    Terminate = 0;
@@ -158,6 +161,9 @@ void inp_ghook(GUI *gui, int cmd)
   {
     FreeWS(ws_eddata);
     ws_eddata = NULL;
+    //Send composing CANCELATION
+    if(!Mess_was_sent)SUBPROC((void*)CancelComposing,Resource_Ex->full_name);
+    Mess_was_sent = 0;
   }
 }
 
@@ -200,6 +206,10 @@ HEADER_DESC inp_hdr={0,0,0,0,NULL,(int)"Новое...",LGP_NULL};
 void Init_Message(TRESOURCE* ContEx, char *init_text)
 {
   Resource_Ex = ContEx;
+  
+  //Send composing
+  SUBPROC((void*)SendComposing,Resource_Ex->full_name);
+  
   patch_header(&inp_hdr);
   patch_input(&inp_desc);
   ws_eddata = AllocWS(MAX_MSG_LEN);

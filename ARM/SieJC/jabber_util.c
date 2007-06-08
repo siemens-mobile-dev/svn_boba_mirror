@@ -262,7 +262,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 */
   char* _jid=malloc(128);
   strcpy(_jid, jid);
-  char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body></message>";
+  char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body><x xmlns='jabber:x:event'></x></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   if(mess->IsGroupChat)
   {
@@ -276,6 +276,37 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
   Log("MESS_OUT", msg_buf);
   UnlockSched();
 #endif
+  SendAnswer(msg_buf);
+  mfree(msg_buf);
+  m_num++;
+}
+
+extern const int COMPOSING_EVENTS;
+ // Context: HELPER
+void SendComposing(char* jid)
+{
+  if(!COMPOSING_EVENTS)return;
+  char* _jid=malloc(128);
+  strcpy(_jid, jid);
+  char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><composing/><id>SieJC_%d</id></x></message>";
+  char* msg_buf = malloc(MAX_MSG_LEN*2+200);
+  sprintf(msg_buf, mes_template, _jid, m_num, m_num);
+  mfree(_jid);
+  SendAnswer(msg_buf);
+  mfree(msg_buf);
+  m_num++;
+}
+
+ // Context: HELPER
+void CancelComposing(char* jid)
+{
+  if(!COMPOSING_EVENTS)return;
+  char* _jid=malloc(128);
+  strcpy(_jid, jid);
+  char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><id>SieJC_%d</id></x></message>";
+  char* msg_buf = malloc(MAX_MSG_LEN*2+200);
+  sprintf(msg_buf, mes_template, _jid, m_num-1, m_num-1);
+  mfree(_jid);
   SendAnswer(msg_buf);
   mfree(msg_buf);
   m_num++;
