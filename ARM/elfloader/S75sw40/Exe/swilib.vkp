@@ -43,9 +43,9 @@
 0128: 0xA027952C   ;  4A: PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int CepId, int zero1, int zero2)
 0130: 0xA09B4959 ; 04C: GetMissedCallsCount
 0134: 0xA0093278 ; 04D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
-0138: 0xA09778C9   ;  4E: int MsgBoxError(int flag, int LgpId)
-013C: 0xA09778D9   ;  4F: int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int))
-0140: 0xA0977943   ;  50: int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int))
+0138: 0xA09778BB ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA0977939 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0140: 0xA0977943 ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 0170: 0xA01CF82C ; 05C: __arm char GetCPUClock();
 0174: 0xA0331C37 ; 05D: __thumb char GetCPULoad();
 017C: 0xA0094BE8 ; 05F: __arm int GetFreeRamAvail();
