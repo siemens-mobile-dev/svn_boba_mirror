@@ -2876,4 +2876,12 @@ __swi __arm void *AllocMLMenuItem(void *data);
 //thumb
 //pattern_SGOLD=??,B5,??,1C,_blf(F8,B5,06,1C,05,1C,C0,36,31,6A,48,20,88,47),??,1C,C0,6B,FF,21
 
+#pragma swi_number=0x21A
+__swi __arm int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
+//thumb
+//pattern=
 
+#pragma swi_number=0x21B
+__swi __arm void EDIT_RemoveTextInvert(void *gui);
+//thumb
+//pattern=
