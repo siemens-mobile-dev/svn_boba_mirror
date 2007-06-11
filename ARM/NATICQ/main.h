@@ -29,11 +29,17 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define IS_NA 3
 #define IS_OCCUPIED 4
 #define IS_DND 5
-#define IS_ONLINE 6
-#define IS_FFC 7
-#define IS_MSG 8
-#define IS_UNKNOWN 9
-#define IS_GROUP 10
+#define IS_DEPRESSION 6
+#define IS_EVIL 7
+#define IS_HOME 8
+#define IS_LUNCH 9
+#define IS_WORK 10
+#define IS_ONLINE 11
+#define IS_FFC 12
+#define IS_MSG 13
+#define IS_UNKNOWN 14
+#define IS_GROUP 15
+//#define IS_GROUPOFF 16
 #define IS_ANY 0xFFFFFFFF
 #define IS_FILTER_T9KEY 0xFFFFFFFE
 

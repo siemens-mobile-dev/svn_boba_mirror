@@ -12,6 +12,7 @@ int LoadConfigData(const char *fname)
   char *buf;
   int result=0;
   void *cfg;
+  unsigned int rlen, end;
 
   extern const CFG_HDR cfghdr0; //first var in CONFIG
   cfg=(void*)&cfghdr0;
@@ -21,16 +22,11 @@ int LoadConfigData(const char *fname)
   if (!(buf=malloc(len))) return -1;
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
-    if (fread(f,buf,len,&ul)==len)
-    {
-      memcpy(cfg,buf,len);
-      fclose(f,&ul);
-    }
-    else
-    {
-      fclose(f,&ul);
-      goto L_SAVENEWCFG;
-    }
+    rlen=fread(f,buf,len,&ul);
+    end=lseek(f,0,S_END,&ul,&ul);
+    fclose(f,&ul);
+    if (rlen!=end || rlen!=len)  goto L_SAVENEWCFG;
+    memcpy(cfg,buf,len);
   }
   else
   {

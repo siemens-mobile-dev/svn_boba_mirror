@@ -12,31 +12,29 @@
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
-void patch_header(HEADER_DESC* head)
+void patch_header(const HEADER_DESC* head)
 {
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
+  ((HEADER_DESC*)head)->rc.x=0;
+  ((HEADER_DESC*)head)->rc.y=YDISP;
+  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP;
 }
 #pragma inline
-void patch_input(INPUTDIA_DESC* inp)
+void patch_input(const INPUTDIA_DESC* inp)
 {
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+  ((INPUTDIA_DESC*)inp)->rc.x=0;
+  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
+  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
+  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 //==============================================================================
 int MainMenu_ID;
 
 extern int CurrentStatus;
-extern  int S_ICONS[14];
-extern SOFTKEYSTAB menu_skt;
+extern  int S_ICONS[];
+extern const SOFTKEYSTAB menu_skt;
 
 void ac_locret(void){}
-
-
 
 int ac_onkey(GUI *data, GUI_MSG *msg)
 {
@@ -89,10 +87,10 @@ void ac_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC ac_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDCNT,LGP_NULL};
+static const HEADER_DESC ac_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDCNT,LGP_NULL};
 
 
-INPUTDIA_DESC ac_desc=
+static const INPUTDIA_DESC ac_desc=
 {
   1,
   ac_onkey,
@@ -188,14 +186,22 @@ void AboutDlg()
   ShowMSG(2, (int)s);
 }
 
-int icon_array[2];
+static const HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
+static const int mmenusoftkeys[]={0,1,2};
 
-HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
+static const char * const menutexts[7]=
+{
+  LG_MNUSTATUS,
+  LG_MNUADDCONT,
+  LG_MNUVIBRA,
+  LG_MNUSOUND,
+  LG_MNUEDCFG,
+  LG_MNUPING,
+  LG_MNUABOUT
+};
 
-int mmenusoftkeys[]={0,1,2};
-
-MENUITEM_DESC menuitems[7]=
+/*MENUITEM_DESC menuitems[7]=
 {
   {S_ICONS,    (int)LG_MNUSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,       (int)LG_MNUADDCONT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -204,9 +210,9 @@ MENUITEM_DESC menuitems[7]=
   {NULL,       (int)LG_MNUEDCFG,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,       (int)LG_MNUPING ,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {S_ICONS,    (int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-};
+};*/
 
-void *menuprocs[7]=
+static const void *menuprocs[7]=
 {
   (void *)DispStatusChangeMenu,
   (void *)AddContactMenu,
@@ -217,14 +223,14 @@ void *menuprocs[7]=
   (void *)AboutDlg,
 };
 
-SOFTKEY_DESC mmenu_sk[]=
+static const SOFTKEY_DESC mmenu_sk[]=
 {
   {0x0018,0x0000,(int)LG_SELECT},
   {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB mmenu_skt=
+static const SOFTKEYSTAB mmenu_skt=
 {
   mmenu_sk,0
 };
@@ -239,45 +245,56 @@ void tmenu_ghook(void *data, int cmd)
 
 void menuitemhandler(void *data, int curitem, int *unk)
 {
+  WSHDR *ws;
+  void *item=AllocMenuItem(data);
+  extern const char percent_t[];
+  ws=AllocMenuWS(data,strlen(menutexts[curitem]));
+  wsprintf(ws,percent_t,menutexts[curitem]);
   switch(curitem)
   {
   case 0:
-    SetMenuItemIcon(data,curitem,CurrentStatus);
+    SetMenuItemIconArray(data,item,S_ICONS+CurrentStatus);
     break;
-    
   case 2:
-    SetMenuItemIcon(data,curitem,Is_Vibra_Enabled?0:1);
+    SetMenuItemIconArray(data,item,S_ICONS+(Is_Vibra_Enabled?IS_GROUP+1:IS_GROUP));
     break;
-    
   case 3:
-    SetMenuItemIcon(data,curitem,Is_Sounds_Enabled?0:1);
+    SetMenuItemIconArray(data,item,S_ICONS+(Is_Sounds_Enabled?IS_GROUP+1:IS_GROUP));
     break;
-    
   case 6:
-    SetMenuItemIcon(data,curitem,IS_UNKNOWN);
+    SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);
     break;
   }
+  SetMenuItemText(data, item, ws, curitem);
 }
-    
 
-
-MENU_DESC tmenu=
+int tmenu_keyhook(void *data, GUI_MSG *msg)
 {
-  8,NULL,(void *)tmenu_ghook,NULL,
+  if ((msg->keys==0x18)||(msg->keys==0x3D))
+  {
+    ((void (*)(void))(menuprocs[GetCurMenuItem(data)]))();
+  }
+  return(0);
+}
+
+
+static const MENU_DESC tmenu=
+{
+  8,(void*)tmenu_keyhook,(void *)tmenu_ghook,NULL,
   mmenusoftkeys,
   &mmenu_skt,
-  1,//MENU_FLAG,
+  0x11,//MENU_FLAG,
   (void*)menuitemhandler,
-  menuitems,
-  menuprocs,
+  NULL,//menuitems,
+  NULL,//menuprocs,
   7
 };
 
 void ShowMainMenu()
 {
-  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
-  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
-  menuhdr.icon=S_ICONS+IS_ONLINE;
+//  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+//  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+  *((int **)(&menuhdr.icon))=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
   MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,7,0,0);
 }

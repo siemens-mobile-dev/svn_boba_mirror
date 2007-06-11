@@ -77,6 +77,11 @@
 #define LG_STOCCUP  "Занят"
 #define LG_STFFC    "Готов болтать"
 #define LG_STINVIS  "Невидимый"
+#define LG_STDEPRESSION "Депрессия"
+#define LG_STEVIL "Злой"
+#define LG_STHOME "Дома"
+#define LG_STLUNCH "Жру"
+#define LG_STWORK "На работе"
 
 //================================
 

@@ -31,8 +31,8 @@ __root const char SMILE_FILE[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles.cfg";
 __root const CFG_HDR cfghdr233={CFG_STR_UTF8,"Smiles .png path",0,63};
 __root const char SMILE_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles";
 
-__root const CFG_HDR cfghdr34={CFG_INT,"Smiles pre-cache",0,32}; //pre-cache smiles by BoBa 19.04.2007
-__root const unsigned int SMILE_PRECACHE=16;
+__root const CFG_HDR cfghdr234={CFG_STR_UTF8,"Images .png path",0,63};
+__root const char ICON_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img";
 
 __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"",0,0};
 
@@ -48,45 +48,6 @@ __root const CFG_HDR cfghdr15_0={CFG_CBOX,"To develop",0,3};
 __root const int DEVELOP_IF = 0;
 __root const CFG_CBOX_ITEM cfgcbox15_1[3]={"Allways", "If Kbd Unlock","Never"};
 
-__root const CFG_HDR cfghdr_m21={CFG_LEVEL,"Icons setup",1,0};
-
-__root const CFG_HDR cfghdr3={CFG_STR_UTF8,"Offline icon",0,63};
-__root const char ICON0[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\offline.png";
-
-__root const CFG_HDR cfghdr4={CFG_STR_UTF8,"Invisible icon",0,63};
-__root const char ICON1[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\invisible.png";
-
-__root const CFG_HDR cfghdr5={CFG_STR_UTF8,"Away icon",0,63};
-__root const char ICON2[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\away.png";
-
-__root const CFG_HDR cfghdr6={CFG_STR_UTF8,"N/A icon",0,63};
-__root const char ICON3[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\na.png";
-
-__root const CFG_HDR cfghdr7={CFG_STR_UTF8,"Occupied icon",0,63};
-__root const char ICON4[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\occupied.png";
-
-__root const CFG_HDR cfghdr8={CFG_STR_UTF8,"DND icon",0,63};
-__root const char ICON5[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\dnd.png";
-
-__root const CFG_HDR cfghdr9={CFG_STR_UTF8,"FFC icon",0,63};
-__root const char ICON6[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\ffc.png";
-
-__root const CFG_HDR cfghdr10={CFG_STR_UTF8,"Online icon",0,63};
-__root const char ICON7[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\online.png";
-
-__root const CFG_HDR cfghdr11={CFG_STR_UTF8,"Message icon",0,63};
-__root const char ICON8[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\message.png";
-
-__root const CFG_HDR cfghdr12={CFG_STR_UTF8,"Unknown state icon",0,63};
-__root const char ICON9[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\unknown.png";
-
-__root const CFG_HDR cfghdr12_0={CFG_STR_UTF8,"Group ON icon",0,63};
-__root const char ICON10[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\groupon.png";
-
-__root const CFG_HDR cfghdr12_1={CFG_STR_UTF8,"Group OFF icon",0,63};
-__root const char ICON11[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\groupoff.png";
-
-__root const CFG_HDR cfghdr_m20={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_m31={CFG_LEVEL,"Sounds setup",1,0};
 
 __root const CFG_HDR cfghdr13={CFG_STR_UTF8,"snd Startup",0,63};
@@ -108,7 +69,7 @@ __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_m41={CFG_LEVEL,"Notify power",1,0};
 
 __root const CFG_HDR cfghdr18={CFG_UINT,"sndVolume",0,6};
-__root const unsigned int sndVolume=6;
+__root const unsigned int sndVolume=3;
 
 __root const CFG_HDR cfghdr18_1={CFG_UINT,"Vibra power",0,100};
 __root const unsigned int vibraPower=100;
@@ -136,7 +97,7 @@ __root const CFG_HDR cfghdr_m50={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_m61={CFG_LEVEL,"Illumination setup",1,0};
 
 __root const CFG_HDR cfghdr25={CFG_INT,"Display on Recv",0,100};
-__root const unsigned int ILL_DISP_RECV=30;
+__root const unsigned int ILL_DISP_RECV=10;
 
 __root const CFG_HDR cfghdr26={CFG_INT,"Keys on Recv",0,100};
 __root const unsigned int ILL_KEYS_RECV=10;
@@ -157,10 +118,10 @@ __root const CFG_HDR cfghdr31={CFG_INT,"Timeout on Send",0,60};
 __root const unsigned int ILL_SEND_TMR=5;
 
 __root const CFG_HDR cfghdr32={CFG_INT,"Fade on Send",0,1000};
-__root const unsigned int ILL_SEND_FADE=900;
+__root const unsigned int ILL_SEND_FADE=256;
 
 __root const CFG_HDR cfghdr33={CFG_INT,"Fade on Off",0,1000};
-__root const unsigned int ILL_OFF_FADE=900;
+__root const unsigned int ILL_OFF_FADE=256;
 
 __root const CFG_HDR cfghdr_m60={CFG_LEVEL,"",0,0};
 
@@ -173,8 +134,21 @@ __root const int DEF_VIBRA_STATUS=1;
 __root const CFG_HDR cfghdr7_2={CFG_CHECKBOX,"Default Sounds Status",0,2};
 __root const int DEF_SOUNDS_STATUS=1;
 
-__root const CFG_HDR cfghdr7_3={CFG_CBOX,"My Default Status",0,7};
-__root const int MY_DEF_STATUS = 5;
-__root const CFG_CBOX_ITEM cfgcbox7_1[7]={LG_STINVIS,LG_STAWAY,LG_STNA,LG_STOCCUP,LG_STDND,LG_STONLINE,LG_STFFC};
+__root const CFG_HDR cfghdr7_3={CFG_CBOX,"My Default Status",0,12};
+__root const int MY_DEF_STATUS = 10;
+__root const CFG_CBOX_ITEM cfgcbox7_1[12]={
+  LG_STINVIS,
+  LG_STAWAY,
+  LG_STNA,
+  LG_STOCCUP,
+  LG_STDND,
+  LG_STDEPRESSION,
+  LG_STEVIL,
+  LG_STHOME,
+  LG_STLUNCH,
+  LG_STWORK,
+  LG_STONLINE,
+  LG_STFFC
+};
 
 __root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};

@@ -41,7 +41,7 @@ int IsActiveUp=0;
 int Is_Vibra_Enabled;
 unsigned int Is_Sounds_Enabled;
 
-int S_ICONS[14];
+int S_ICONS[18];
 
 #define EOP -10
 int CurrentStatus;
@@ -50,34 +50,65 @@ WSHDR *ews;
 
 extern const unsigned int UIN;
 extern const char PASS[];
-extern const char ICON0[];
-extern const char ICON1[];
-extern const char ICON2[];
-extern const char ICON3[];
-extern const char ICON4[];
-extern const char ICON5[];
-extern const char ICON6[];
-extern const char ICON7[];
-extern const char ICON8[];
-extern const char ICON9[];
-extern const char ICON10[];
-extern const char ICON11[];
+
+static const char * const icons_names[17]=
+{
+  "offline.png",
+  "invisible.png",
+  "away.png",
+  "na.png",
+  "occupied.png",
+  "dnd.png",
+  "depression.png",
+  "evil.png",
+  "home.png",
+  "lunch.png",
+  "work.png",
+  "online.png",
+  "ffc.png",
+  "message.png",
+  "unknown.png",
+  "groupon.png",
+  "groupoff.png"
+};
+
 extern const char SMILE_PATH[];
+extern const char ICON_PATH[];
+
+char *MakeGlobalString(const char *first, int breakchar, const char *last)
+{
+  int l;
+  char *p;
+  p=malloc((l=strlen(first))+strlen(last)+2);
+  strcpy(p,first);
+  p[l++]=breakchar;
+  strcpy(p+l,last);
+  return p;
+}
 
 void setup_ICONS(void)
 {
-  S_ICONS[0]=(int)ICON0;
-  S_ICONS[1]=(int)ICON1;
-  S_ICONS[2]=(int)ICON2;
-  S_ICONS[3]=(int)ICON3;
-  S_ICONS[4]=(int)ICON4;
-  S_ICONS[5]=(int)ICON5;
-  S_ICONS[6]=(int)ICON7;
-  S_ICONS[7]=(int)ICON6;
-  S_ICONS[8]=(int)ICON8;
-  S_ICONS[9]=(int)ICON9;
-  S_ICONS[10]=(int)ICON10;
-  S_ICONS[11]=(int)ICON11;
+  int i=0;
+  do
+  {
+    if (!S_ICONS[i]) S_ICONS[i]=(int)MakeGlobalString(ICON_PATH,'\\',icons_names[i]);
+    i++;
+  }
+  while(i<17);
+  return;
+}
+
+void free_ICONS(void)
+{
+  int i=0;
+  do
+  {
+    mfree((void*)S_ICONS[i]);
+    S_ICONS[i]=0;
+    i++;
+  }
+  while(i<17);
+  return;
 }
 
 extern const unsigned int IDLEICON_X;
@@ -499,20 +530,20 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 }
 
 #pragma inline
-void patch_header(HEADER_DESC* head)
+void patch_header(const HEADER_DESC* head)
 {
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
+  ((HEADER_DESC*)head)->rc.x=0;
+  ((HEADER_DESC*)head)->rc.y=YDISP;
+  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP;
 }
 #pragma inline
-void patch_input(INPUTDIA_DESC* inp)
+void patch_input(const INPUTDIA_DESC* inp)
 {
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+  ((INPUTDIA_DESC*)inp)->rc.x=0;
+  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
+  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
+  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 //===============================================================================================
 
@@ -537,12 +568,12 @@ void *edgui_data;
 //MUTEX contactlist_mtx;
 
 char clm_hdr_text[48];
-const char def_clm_hdr_text[] = LG_CLTITLE;
-const char key_clm_hdr_text[] = LG_CLT9INP;
+static const char def_clm_hdr_text[] = LG_CLTITLE;
+static const char key_clm_hdr_text[] = LG_CLT9INP;
 
-HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, NULL, (int)clm_hdr_text, LGP_NULL};
-int menusoftkeys[] = {0,1,2};
-SOFTKEY_DESC menu_sk[] =
+static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, NULL, (int)clm_hdr_text, LGP_NULL};
+static const int menusoftkeys[] = {0,1,2};
+static const SOFTKEY_DESC menu_sk[] =
 {
   {0x0018, 0x0000, (int)LG_OPTIONS},
   {0x0001, 0x0000, (int)LG_CLOSE},
@@ -550,22 +581,22 @@ SOFTKEY_DESC menu_sk[] =
 };
 
 char clmenu_sk_r[16];
-const char def_clmenu_sk_r[] = LG_CLOSE;
-const char key_clmenu_sk_r[] = LG_CLEAR;
+static const char def_clmenu_sk_r[] = LG_CLOSE;
+static const char key_clmenu_sk_r[] = LG_CLEAR;
 
-SOFTKEY_DESC clmenu_sk[]=
+static const SOFTKEY_DESC clmenu_sk[]=
 {
   {0x0018, 0x0000, (int)LG_OPTIONS},
   {0x0001, 0x0000, (int)clmenu_sk_r},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB menu_skt =
+const SOFTKEYSTAB menu_skt =
 {
   menu_sk, 0
 };
 
-SOFTKEYSTAB clmenu_skt =
+static const SOFTKEYSTAB clmenu_skt =
 {
   clmenu_sk, 0
 };
@@ -574,7 +605,7 @@ void contactlist_menu_ghook(void *data, int cmd);
 int contactlist_menu_onkey(void *data, GUI_MSG *msg);
 void contactlist_menu_iconhndl(void *data, int curitem, int *unk);
 
-MENU_DESC contactlist_menu=
+static const MENU_DESC contactlist_menu=
 {
   8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
   menusoftkeys,
@@ -616,6 +647,11 @@ int GetIconIndex(CLIST *t)
     else
     {
       if (s==0xFFFF) return(IS_OFFLINE);
+      if ((s&0xF000)==0x2000) return (IS_LUNCH);
+      if ((s&0xF000)==0x3000) return (IS_EVIL);
+      if ((s&0xF000)==0x4000) return (IS_DEPRESSION);
+      if ((s&0xF000)==0x5000) return (IS_HOME);
+      if ((s&0xF000)==0x6000) return (IS_WORK);
       if (s & 0x0020) return(IS_FFC);
       if (s & 0x0001) return(IS_AWAY);
       if (s & 0x0005) return(IS_NA);
@@ -903,7 +939,7 @@ void create_contactlist_menu(void)
   i=CountContacts();
   //  if (!i) return;
   UpdateCLheader();
-  patch_rect(&contactlist_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
+  patch_rect((RECT *)(&contactlist_menuhdr.rc),0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 }
 
@@ -1871,6 +1907,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_illumination);
   SetVibration(0);
   FreeCLIST();
+  free_ICONS();
 //  FreeSmiles();
   mfree(msg_buf);
   FreeWS(ews);
@@ -1985,6 +2022,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     {
       ShowMSG(1,(int)"NatICQ config updated!");
       InitConfig();
+      free_ICONS();
       setup_ICONS();
 //      InitSmiles();
     }
@@ -2674,8 +2712,8 @@ void ParseAnswer(WSHDR *ws, char *s)
 
 void edchat_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_MENU};
-  static SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
+  static const SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_MENU};
+  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
   //  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
   char *s;
   int j;
@@ -2734,9 +2772,9 @@ void edchat_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC edchat_hdr={0,0,NULL,NULL,NULL,0,LGP_NULL};
+static const HEADER_DESC edchat_hdr={0,0,NULL,NULL,NULL,0,LGP_NULL};
 
-INPUTDIA_DESC edchat_desc =
+static const INPUTDIA_DESC edchat_desc =
 {
   1,
   edchat_onkey,
@@ -2779,8 +2817,8 @@ void CreateEditChat(CLIST *t)
   edcontact=t;
   int edchat_toitem=0;
 
-  edchat_hdr.lgp_id=(int)t->name;
-  edchat_hdr.icon=(int *)S_ICONS+GetIconIndex(t);
+  *((int *)(&edchat_hdr.lgp_id))=(int)t->name;
+  *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+GetIconIndex(t);
 
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
@@ -2990,7 +3028,7 @@ void OpenLogfile(GUI *data)
   GeneralFuncF1(1);
 }
 
-void ClearLog(GUI *data,void *dummy)
+void ClearLog(GUI *data/*,void *dummy*/)
 {
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
@@ -3024,7 +3062,7 @@ void ecmenu_ghook(void *data, int cmd)
   }
 }
 
-MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
+static const MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
 {
   {NULL,(int)LG_MNUQUOTE,    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)LG_MNUADDSML,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -3037,23 +3075,23 @@ MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
 };
 
 extern void AddSmile(GUI *data);
-void *ecmenu_HNDLS[EC_MNU_MAX]=
+static const MENUPROCS_DESC ecmenu_HNDLS[EC_MNU_MAX]=
 {
-  (void *)Quote,
-  (void *)AddSmile,
-  (void *)GetShortInfo,
-  (void *)AddCurContact,
-  (void *)SendAuthReq,
-  (void *)SendAuthGrant,
-  (void *)OpenLogfile,
-  (void *)ClearLog,
+  Quote,
+  AddSmile,
+  GetShortInfo,
+  AddCurContact,
+  SendAuthReq,
+  SendAuthGrant,
+  OpenLogfile,
+  ClearLog,
 };
 
 char ecm_contactname[64];
 
-HEADER_DESC ecmenu_HDR={0,0,NULL,NULL,NULL,(int)ecm_contactname,LGP_NULL};
+static const HEADER_DESC ecmenu_HDR={0,0,NULL,NULL,NULL,(int)ecm_contactname,LGP_NULL};
 
-MENU_DESC ecmenu_STRUCT=
+static const MENU_DESC ecmenu_STRUCT=
 {
   8,NULL,(void *)ecmenu_ghook,NULL,
   menusoftkeys,
@@ -3152,7 +3190,7 @@ int anac_onkey(GUI *data, GUI_MSG *msg)
 
 void anac_ghook(GUI *data,int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_DOIT};
+  static const SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_DOIT};
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -3163,9 +3201,9 @@ void anac_ghook(GUI *data,int cmd)
   }
 }
 
-HEADER_DESC anac_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDREN,LGP_NULL};
+static const HEADER_DESC anac_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDREN,LGP_NULL};
 
-INPUTDIA_DESC anac_desc=
+static const INPUTDIA_DESC anac_desc=
 {
   1,
   anac_onkey,
@@ -3261,7 +3299,7 @@ int as_onkey(GUI *data,GUI_MSG *msg)
 
 void as_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
+  static const SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
   const char *s;
   PNGTOP_DESC *pltop=PNG_TOP();
   if (cmd==9)
@@ -3298,9 +3336,9 @@ void as_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDSMIL,LGP_NULL};
+static const HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDSMIL,LGP_NULL};
 
-INPUTDIA_DESC as_desc=
+static const INPUTDIA_DESC as_desc=
 {
   1,
   as_onkey,
