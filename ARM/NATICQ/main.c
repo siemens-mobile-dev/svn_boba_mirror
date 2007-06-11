@@ -3350,8 +3350,6 @@ void AskNickAndAddContact(EDCHAT_STRUCT *ed_struct)
   FreeWS(ews);
 }
 
-int cur_smile;
-
 void as_locret(void){}
 
 int as_onkey(GUI *data,GUI_MSG *msg)
@@ -3359,35 +3357,28 @@ int as_onkey(GUI *data,GUI_MSG *msg)
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
   {
-//    S_SMILES *sm, *t;
-//    t=FindSmileById(cur_smile);
     switch(msg->gbsmsg->submess)
     {
-    case LEFT_BUTTON:
-      if (!FindSmileById(--cur_smile)) cur_smile=total_smiles-1;
-      return(-1);
-    case RIGHT_BUTTON:
-      if (!FindSmileById(++cur_smile)) cur_smile=0;
-      return(-1);
     case GREEN_BUTTON: //insert smile by GREEN_BUTTON by BoBa 19.04.2007
+    case ENTER_BUTTON:
       msg->keys=0xFFF;
     }
   }
   if (msg->keys==0xFFF)
   {
-    S_SMILES *t;
+    int uni_smile;
     WSHDR *ed_ws;
     EDITCONTROL ec;
     int pos;
-
-    t=FindSmileById(cur_smile);
-    if (!t) return (0);
-
+    pos=EDIT_GetCursorPos(data);
+    EDIT_ExtractFocusedControl(data,&ec);
+    uni_smile=ec.pWS->wsbody[pos];
+    
     ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
     ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
     wstrcpy(ed_ws,ec.pWS);
     pos=EDIT_GetCursorPos(ed_struct->ed_chatgui);
-    wsInsertChar(ed_ws,t->uni_smile,pos);
+    wsInsertChar(ed_ws,uni_smile,pos);
     EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
     EDIT_SetCursorPos(ed_struct->ed_chatgui,pos+1);
     FreeWS(ed_ws);
@@ -3398,8 +3389,7 @@ int as_onkey(GUI *data,GUI_MSG *msg)
 
 void as_ghook(GUI *data, int cmd)
 {
-  static const SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
-  const char *s;
+  static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
   PNGTOP_DESC *pltop=PNG_TOP();
   if (cmd==9)
   {
@@ -3412,32 +3402,19 @@ void as_ghook(GUI *data, int cmd)
   }
   if (cmd == 7)
   {
+    EDITCONTROL ec;
+    int pos;
+    
     SetSoftKey(data,&ask,SET_SOFT_KEY_N);
-    S_SMILES *t=(S_SMILES *)s_top;
-    if (t)
-    {
-      if (!(t=FindSmileById(cur_smile)))
-      {
-	t=FindSmileById(0);
-	cur_smile=0;
-      }
-      WSHDR *ws=AllocWS(32);
-      s=NULL;
-      if (t->lines) s=t->lines->text;
-      if (!s) s="Error!";
-      wsprintf(ws,LG_SMLDESC,cur_smile,s);
-      EDIT_SetTextToEditControl(data,1,ws);
-      CutWSTR(ws,0);
-      wsAppendChar(ws,t->uni_smile);
-      EDIT_SetTextToEditControl(data,2,ws);
-      FreeWS(ws);
-    }
+    EDIT_ExtractFocusedControl(data,&ec);
+    pos=EDIT_GetCursorPos(data);
+    EDIT_SetTextInvert(data,pos,1);
   }
 }
 
-static const HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDSMIL,LGP_NULL};
+HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDSMIL,LGP_NULL};
 
-static const INPUTDIA_DESC as_desc=
+INPUTDIA_DESC as_desc=
 {
   1,
   as_onkey,
@@ -3466,31 +3443,29 @@ static const INPUTDIA_DESC as_desc=
 void AddSmile(GUI *data)
 {
   EDCHAT_STRUCT *ed_struct=MenuGetUserPointer(data);
-  S_SMILES *t;
-  cur_smile=0;
-  t=FindSmileById(cur_smile);
-  if (!t)
-  {
-  L1:
-    ShowMSG(1,(int)LG_MSGSMILNOTFND);
-    return;
-  }
-  if (!t->lines) goto L1;
+  S_SMILES *smiles,*st;
+  WSHDR *ws1;
+  int n;
+  
+  st=smiles=(S_SMILES *)&s_top;
+  n=0;
+  while((st=st->next)) n++;
+  if (!n) return;
+  ws1=AllocWS(n);
+  
+  st=smiles;
+  while((st=st->next)) wsAppendChar(ws1,st->uni_smile);
+
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
-  WSHDR *ews=AllocWS(64);
+  
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
 
-  wsprintf(ews,LG_SMLDESC,cur_smile,t->lines->text);
-  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,32);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ws1,ws1->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  CutWSTR(ews,0);
-  wsAppendChar(ews,t->uni_smile);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1);
-  AddEditControlToEditQend(eq,&ec,ma);
 
 //pre-cache smiles by BoBa 19.04.2007
 /////////////
@@ -3502,7 +3477,6 @@ void AddSmile(GUI *data)
   patch_header(&as_hdr);
   patch_input(&as_desc);
   CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_struct);
-  FreeWS(ews);
+  FreeWS(ws1);
   GeneralFuncF1(1);
 }
-
