@@ -190,13 +190,15 @@ int create_ed(void)
 }
 
 int create_menu(void);
+int create_menu2(void);
 
 void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-  csm->gui_id=create_ed();
+//  csm->gui_id=create_ed();
 //  csm->gui_id=create_menu();
+  csm->gui_id=create_menu2();
 }
 
 void Killer(void)
@@ -372,4 +374,69 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     return(-1);
   }
   return(0);
+}
+
+
+int menu2_onkey(void *data, GUI_MSG *msg)
+{
+  if (msg->keys==0x3D)
+  {
+//    GeneralFunc_F1(1);
+    return(-1);
+  }
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    int c=msg->gbsmsg->submess;
+    if ((c>='0')&&(c<='9'))
+    {
+      Menu_SetItemCountDyn(data,c-'0');
+      return(-1);
+    }
+  }
+  return(0);
+}
+
+void menu2_ghook(void *data, int cmd)
+{
+}
+
+/*
+extern int CreateMultiLinesMenu(int dummy,int dummy2,const ML_MENU_DESC *,const HEADER_DESC *,int to_item,int n);
+extern void SetMLMenuItemText(void *data,void *item,WSHDR *ws1,WSHDR *ws2,int unk0or1,int n);
+extern void *AllocMLMenuItem(void *data);
+*/
+
+void menu2_iconhndl(void *data, int curitem, int *unk)
+{
+  void *item=AllocMLMenuItem(data);
+  WSHDR *ws1=AllocMenuWS(data,30);
+  WSHDR *ws2=AllocMenuWS(data,30);
+  wsprintf(ws1,"Line 1 %d zzzz1234zzzz56789",curitem);
+  wsprintf(ws2,"Line 2 %d zzzz\n",curitem);
+  wsAppendChar(ws2,0xE116);
+  wsAppendChar(ws2,0xE117);
+  SetMenuItemIconArray(data,item,S_ICONS+(curitem&7));
+  SetMLMenuItemText(data, item, ws1, ws2, 0 , curitem);
+}
+
+static const ML_MENU_DESC menu2=
+{
+  8,
+  menu2_onkey,
+  menu2_ghook,
+  NULL,
+  menusoftkeys,
+  &menu_skt,
+  0x11,
+  menu2_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0,   //n
+  2
+};
+
+int create_menu2(void)
+{
+  wsprintf(ews,percent_t,"Μενώ2!");
+  return(CreateMultiLinesMenu(0,0,&menu2,&contactlist_menuhdr,0,10));
 }
