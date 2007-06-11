@@ -14,6 +14,7 @@ typedef struct
   GUI *ed_chatgui;
   int ed_answer;
   int requested_decrement_total_unread;
+  int loaded_templates;
 }EDCHAT_STRUCT;
 
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);

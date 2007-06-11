@@ -475,6 +475,76 @@ void ChangeSound(void)
 }
 
 //===================================================================
+//Templates
+char *templates_chars; //Собственно файл
+char **templates_lines; //Массив указателей на строки
+
+void FreeTemplates(void)
+{
+  if (templates_lines) mfree(templates_lines);
+  if (templates_chars) mfree(templates_chars);
+  templates_lines=NULL;
+  templates_chars=NULL;
+}
+
+extern const char TEMPLATES_PATH[];
+
+int LoadTemplates(unsigned int uin)
+{
+  FSTATS stat;
+  char fn[256];
+  int f;
+  unsigned int ul;
+  int i;
+  int fsize;
+  char *p;
+  char *pp;
+  int c;
+  FreeTemplates();
+  strcpy(fn,TEMPLATES_PATH);
+  i=strlen(fn);
+  sprintf(fn+i,"\\%d.txt",uin);
+  if (GetFileStats(fn,&stat,&ul)==-1) goto L1;
+  if ((fsize=stat.size)<=0) goto L1;
+  if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1)
+  {
+  L1:
+    strcpy(fn+i,"\\0.txt");
+    if (GetFileStats(fn,&stat,&ul)==-1) return 0;
+    if ((fsize=stat.size)<=0) return 0;
+    f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul);
+  }
+  if (f==-1) return 0;
+  p=templates_chars=malloc(fsize+1);
+  p[fread(f,p,fsize,&ul)]=0;
+  fclose(f,&ul);
+  i=0;
+  pp=p;
+  for(;;)
+  {
+    c=*p;
+    if (c<32)
+    {
+      if (pp&&(pp!=p))
+      {
+	templates_lines=realloc(templates_lines,(i+1)*sizeof(char *));
+	templates_lines[i++]=pp;
+      }
+      pp=NULL;
+      if (!c) break;
+      *p=0;
+    }
+    else
+    {
+      if (pp==NULL) pp=p;
+    }
+    p++;
+  }
+  return i;
+}
+
+
+//===================================================================
 
 typedef struct
 {
@@ -1906,6 +1976,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&reconnect_tmr);
   GBS_DelTimer(&tmr_illumination);
   SetVibration(0);
+  FreeTemplates();
   FreeCLIST();
   free_ICONS();
 //  FreeSmiles();
@@ -2542,9 +2613,10 @@ void ed_options_handler(USR_MENU_ITEM *item)
 {
   EDCHAT_STRUCT *ed_struct=item->user_pointer;
   CLIST *t;
+  int i=item->cur_item;
   if (item->type==0)
   {
-    switch(item->cur_item)
+    switch(i)
     {
     case 0:
       ascii2ws(item->ws,LG_MNUEDNEXTACT);
@@ -2552,11 +2624,15 @@ void ed_options_handler(USR_MENU_ITEM *item)
     case 1:
       ascii2ws(item->ws,LG_MNUEDPREVACT);
       break;
+    default:
+      i-=2;
+      if (i<ed_struct->loaded_templates) ascii2ws(item->ws,templates_lines[i]);
+      break;
     }
   }
   if (item->type==1)
   {
-    switch(item->cur_item)
+    switch(i)
     {
     case 0:
       t=FindNextActiveContact(ed_struct->ed_contact);
@@ -2572,6 +2648,28 @@ void ed_options_handler(USR_MENU_ITEM *item)
       {
         GeneralFunc_flag1(edchat_id,1);
         CreateEditChat(t);
+      }
+      break;
+    default:
+      i-=2;
+      if (i<ed_struct->loaded_templates)
+      {
+	EDITCONTROL ec;
+	WSHDR *ed_ws;
+	int c;
+	int pos;
+	char *p=templates_lines[i];
+	ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
+	ed_ws=AllocWS(ec.pWS->wsbody[0]+strlen(p));
+	wstrcpy(ed_ws,ec.pWS);
+	pos=EDIT_GetCursorPos(ed_struct->ed_chatgui);
+	while(c=*p++)
+	{
+	  wsInsertChar(ed_ws,char8to16(c),pos++);
+	}
+	EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
+	EDIT_SetCursorPos(ed_struct->ed_chatgui,pos);
+	FreeWS(ed_ws);
       }
       break;
     }
@@ -2655,10 +2753,11 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     }
     if (l==ENTER_BUTTON)
     {
-      t=FindNextActiveContact(ed_struct->ed_contact);
-      if ((t!=ed_struct->ed_contact) && t)
+//      t=FindNextActiveContact(ed_struct->ed_contact);
+//      if ((t!=ed_struct->ed_contact) && t)
       {
-        EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,2);
+	int i=ed_struct->loaded_templates=LoadTemplates(ed_struct->ed_contact->uin);
+        EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,i+2);
         return (-1);
       }
     }
