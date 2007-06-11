@@ -631,6 +631,12 @@
 0850: 0xA07BCBB1 ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
 0854: 0xA07BCC41 ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to);
 0858: 0xA07BC1DD ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...);
+;
+085C: 0xA05D71D9 ; 217: __thumb int CreateMultiLinesMenu(int dummy,int dummy2,const ML_MENU_DESC *,const HEADER_DESC *,int to_item,int n);
+0860: 0xA08AA0A3 ; 218: __thumb void SetMLMenuItemText(void *data,void *item,WSHDR *ws1,WSHDR *ws2,int n);
+0864: 0xA08AA35B ; 219: __thumb void *AllocMLMenuItem(void *data);
+0868: 0xA08A1BE7 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
+086C: 0xA08A1BF1 ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 #pragma disable old_equal_ff
 +0
 

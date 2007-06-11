@@ -584,6 +584,12 @@
 0850: 0xA0BFCE7D ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
 0854: 0xA0BFCF0D ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to);
 0858: 0xA0BFC4C1 ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...);
+;
+085C: 0xA0ABED75 ; 217: __thumb int CreateMultiLinesMenu(int dummy,int dummy2,const ML_MENU_DESC *,const HEADER_DESC *,int to_item,int n);
+0860: 0xA1176A53 ; 218: __thumb void SetMLMenuItemText(void *data,void *item,WSHDR *ws1,WSHDR *ws2,int n);
+0864: 0xA1176D0B ; 219: __thumb void *AllocMLMenuItem(void *data);
+0868: 0xA116E6D1 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
+086C: 0xA116E6DB ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
