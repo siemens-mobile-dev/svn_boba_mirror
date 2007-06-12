@@ -450,7 +450,7 @@ static const SOFTKEYSTAB clmenu_skt =
 
 void contactlist_menu_ghook(void *data, int cmd);
 int contactlist_menu_onkey(void *data, GUI_MSG *msg);
-void contactlist_menu_iconhndl(void *data, int curitem, int *unk);
+void contactlist_menu_iconhndl(void *data, int curitem, void *unk);
 
 #ifdef USE_MLMENU
 static const ML_MENU_DESC contactlist_menu=
@@ -926,24 +926,27 @@ void GetOnTotalContact(int group_id,int *_online, int *_total)
   *_online=online;
 }
 
-void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
+void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 {
   CLIST *t;
-  WSHDR *ws;
 #ifdef USE_MLMENU
   void *item=AllocMLMenuItem(data);
 #else
   void *item=AllocMenuItem(data);
 #endif
   int icon;
-  WSHDR ws1, *ws2;
+  
+  WSHDR *ws2;
 #ifdef USE_MLMENU
-  WSHDR *ws3;
+  WSHDR *ws4;
 #endif
+  WSHDR ws1loc, *ws1;
   unsigned short num[128];
-  ws2=CreateLocalWS(&ws1,num,128);
+  ws1=CreateLocalWS(&ws1loc,num,128);
 #ifdef USE_MLMENU
-  ws3=AllocMenuWS(data,20);
+  WSHDR ws3loc, *ws3;
+  unsigned short num3[128];
+  ws3=CreateLocalWS(&ws3loc,num3,128);
 #endif
   t=FindContactByN(curitem);
   if (t)
@@ -951,11 +954,11 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
     icon=GetIconIndex(t);
     if (icon!=IS_GROUP)
     {
-      wsprintf(ws2,percent_t,t->name);
+      wsprintf(ws1,percent_t,t->name);
       if (t->isactive)
       {
-        wsInsertChar(ws2,0x0002,1);
-        wsInsertChar(ws2,0xE008,1);
+        wsInsertChar(ws1,0x0002,1);
+        wsInsertChar(ws1,0xE008,1);
       }
 #ifdef USE_MLMENU
       wsprintf(ws3,percent_d,t->uin);
@@ -966,25 +969,28 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
       int online,total;
       GetOnTotalContact(t->group,&online,&total);
 #ifdef USE_MLMENU
-      wsprintf(ws2,percent_t,t->name);
+      wsprintf(ws1,percent_t,t->name);
       wsprintf(ws3,"(%d/%d)",online,total);
 #else
-      wsprintf(ws2,"%t%c%c(%d/%d)",t->name,0xE01D,0xE012,online,total);
+      wsprintf(ws1,"%t%c%c(%d/%d)",t->name,0xE01D,0xE012,online,total);
 #endif
       if (t->state) icon++; //Модификация иконки группы
     }
   }
   else
   {
-    wsprintf(ws2, LG_CLERROR);
+    wsprintf(ws1, LG_CLERROR);
   }
-  ws=AllocMenuWS(data,ws2->wsbody[0]);
-  wstrcpy(ws,ws2);
+  ws2=AllocMenuWS(data,ws1->wsbody[0]);
+  wstrcpy(ws2,ws1);
+  
   SetMenuItemIconArray(data, item, S_ICONS+icon);
 #ifdef USE_MLMENU
-  SetMLMenuItemText(data, item, ws, ws3, curitem);
+  ws4=AllocMenuWS(data,ws3->wsbody[0]);
+  wstrcpy(ws4,ws3);
+  SetMLMenuItemText(data, item, ws2, ws4, curitem);
 #else
-  SetMenuItemText(data, item, ws, curitem);
+  SetMenuItemText(data, item, ws2, curitem);
 #endif
   //SetMenuItemIcon(data, curitem, icon*2);
 }
@@ -1676,7 +1682,7 @@ void method0(MAIN_GUI *data)
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,logmsg);
   if (total_smiles)
   {
-    wstrcatprintf(data->ws1," + Loaded %d smiles",total_smiles);
+    wstrcatprintf(data->ws1,"\n+ Loaded %d smiles",total_smiles);
   }
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
