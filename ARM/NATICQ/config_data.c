@@ -51,6 +51,10 @@ __root const CFG_HDR cfghdr15_0={CFG_CBOX,"To develop",0,3};
 __root const int DEVELOP_IF = 0;
 __root const CFG_CBOX_ITEM cfgcbox15_1[3]={"Allways", "If Kbd Unlock","Never"};
 
+__root const CFG_HDR cfghdr16_0={CFG_CBOX,"Sort CList",0,2};
+__root const int SORT_CLIST = 0;
+__root const CFG_CBOX_ITEM cfgcbox8_1[2]={"By Name","By Status"};
+
 __root const CFG_HDR cfghdr_m31={CFG_LEVEL,"Sounds setup",1,0};
 
 __root const CFG_HDR cfghdr13={CFG_STR_UTF8,"snd Startup",0,63};
@@ -155,3 +159,4 @@ __root const CFG_CBOX_ITEM cfgcbox7_1[12]={
 };
 
 __root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};
+
