@@ -8,11 +8,12 @@
 #include "main.h"
 #include "language.h"
 #include "../inc/xtask_ipc.h"
+#include "smiles.h"
+#include "naticq_ipc.h"
 
 #define TMR_SECOND 216
 
 //IPC
-#define IPC_CHECK_DOUBLERUN 1
 const char ipc_my_name[32]="NatICQ";
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
@@ -72,7 +73,6 @@ static const char * const icons_names[17]=
   "groupoff.png"
 };
 
-extern const char SMILE_PATH[];
 extern const char ICON_PATH[];
 
 char *MakeGlobalString(const char *first, int breakchar, const char *last)
@@ -116,7 +116,6 @@ extern const unsigned int IDLEICON_Y;
 
 extern const unsigned int I_COLOR;
 extern const unsigned int TO_COLOR;
-extern const char SMILE_FILE[];
 
 extern const unsigned int ED_FONT_SIZE;
 
@@ -154,6 +153,10 @@ void IlluminationOn(const int disp, const int key, const int tmr, const int fade
 }
 ///////////
 
+//===================================================================
+extern S_SMILES *s_top;
+extern DYNPNGICONLIST *SmilesImgList;
+
 //=============================Проигрывание звука=======================
 extern const char sndStartup[];
 extern const char sndSrvMsg[];
@@ -162,234 +165,6 @@ extern const char sndMsg[];
 extern const char sndMsgSent[];
 extern const unsigned int sndVolume;
 
-typedef struct
-{
-  void *next;
-  unsigned int key; //Для быстрой проверки
-  unsigned int mask;
-  char text[16];
-}STXT_SMILES;
-
-typedef struct
-{
-  void *next;
-  unsigned int uni_smile;
-  STXT_SMILES *lines; //Список строк
-  STXT_SMILES *botlines;
-}S_SMILES;
-
-#pragma pack(1)
-typedef struct
-{
-  unsigned long l;
-}ULONG_BA;
-#pragma pack()
-
-S_SMILES *s_top=0;
-
-volatile unsigned int total_smiles=0;
-
-DYNPNGICONLIST *SmilesImgList;
-
-void FreeSmiles()
-{
-  S_SMILES *s_smile;
-  STXT_SMILES *n;
-  STXT_SMILES *st;
-  DYNPNGICONLIST *d;
-  DYNPNGICONLIST *nd;
-  LockSched();
-  s_smile=(S_SMILES *)s_top;
-  s_top=0;
-  total_smiles=0;
-  UnlockSched();
-  while(s_smile)
-  {
-    S_SMILES *s;
-    s=s_smile;
-    st=s->lines;
-    while(st)
-    {
-      n=st->next;
-      mfree(st);
-      st=n;
-    }
-    s_smile=(S_SMILES *)(s_smile->next);
-    mfree(s);
-  }
-  d=SmilesImgList;
-  SmilesImgList=0;
-  while(d)
-  {
-    if (d->img)
-    {
-      mfree(d->img->bitmap);
-      mfree(d->img);
-    }
-    nd=d->next;
-    mfree(d);
-    d=nd;
-  }
-}
-
-char *find_eol(char *s)
-{
-  int c;
-  s--;
-  do
-  {
-    s++;
-    c=*s;
-  }
-  while((c)&&(c!=10)&&(c!=13));
-  return s;
-}
-
-
-void InitSmiles()
-{
-  DYNPNGICONLIST *dp;
-  int f;
-  int c;
-  unsigned int err;
-  int fsize;
-  FSTATS stat;
-  S_SMILES *s_bot=0;
-  S_SMILES *si;
-  STXT_SMILES *st;
-  char *buf, *s_buf;
-  char fn[128];
-  FreeSmiles();
-  char name[16];
-  int n_pic=FIRST_UCS2_BITMAP;
-  if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
-    return;
-
-  if ((fsize=stat.size)<=0)
-    return;
-
-  if ((f=fopen(SMILE_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1)
-    return;
-
-  s_buf=buf=malloc(fsize+1);
-  buf[fread(f,buf,fsize,&err)]=0;
-  fclose(f,&err);
-  //f=fopen("4:\\smiles.cfg",A_ReadWrite+A_BIN+A_Create+A_Append,P_READ+P_WRITE,&err);
-  while ((c=*buf))
-  {
-    char *p;
-    if ((c==10)||(c==13))
-    {
-      buf++;
-      continue;
-    }
-    p=strchr(buf,':');
-    if (!p) break;
-    zeromem(fn,128);
-    strcpy(fn,SMILE_PATH);
-    strcat(fn,"\\");
-    c=p-buf;
-    if (c>(127-strlen(fn))) break;
-    strncpy(fn+strlen(fn),buf,c);
-    snprintf(logmsg,255,"Process file %s...",fn);
-    REDRAW();
-    buf=p;
-    dp=malloc(sizeof(DYNPNGICONLIST));
-    zeromem(dp,sizeof(DYNPNGICONLIST));
-    dp->icon=GetPicNByUnicodeSymbol(n_pic);
-    dp->img=CreateIMGHDRFromPngFile(fn,0);
-    LockSched();
-    if (SmilesImgList)
-    {
-      dp->next=SmilesImgList;
-    }
-    SmilesImgList=dp;
-    UnlockSched();
-/*    {
-      char s[50];
-      int i=0;
-      sprintf(s,"%d.png:",GetPicNByUnicodeSymbol(n_pic));
-      fwrite(f,s,strlen(s),&err);
-      while(buf[i]>31) i++;
-      fwrite(f,buf,i,&err);
-      fwrite(f,"\r\n",2,&err);
-    }*/
-    si=malloc(sizeof(S_SMILES));
-    si->next=NULL;
-    si->lines=NULL;
-    si->botlines=NULL;
-    si->uni_smile=n_pic;
-    if (s_bot)
-    {
-      //Не первый
-      s_bot->next=si;
-      s_bot=si;
-    }
-    else
-    {
-      //Первый
-      s_top=si;
-      s_bot=si;
-    }
-    n_pic++;
-    total_smiles++;
-    while (*buf!=10 && *buf!=13 && *buf!=0)
-    {
-      buf++;
-      int i=0;
-      while (buf[i]!=0&&buf [i]!=','&&buf [i]!=10&&buf[i]!=13)
-      {
-        name[i]=buf[i];
-        i++;
-      }
-      name[i]=0;
-      st=malloc(sizeof(STXT_SMILES));
-      strcpy(st->text,name);
-      st->next=NULL;
-      st->key=*((unsigned long *)name);
-      st->mask=~(0xFFFFFFFFUL<<(8*strlen(name)));
-      st->key&=st->mask;
-      if (si->botlines)
-      {
-	si->botlines->next=st;
-	si->botlines=st;
-      }
-      else
-      {
-	si->lines=st;
-	si->botlines=st;
-      }
-      buf+=i;
-    }
-  }
-  //fclose(f,&err);
-  mfree(s_buf);
-}
-
-S_SMILES *FindSmileById(int n)
-{
-  int i=0;
-  S_SMILES *sl=(S_SMILES *)s_top;
-  while(sl && i!=n)
-  {
-    sl=sl->next;
-    i++;
-  }
-  return sl;
-}
-
-S_SMILES *FindSmileByUni(int wchar)
-{
-  S_SMILES *sl=(S_SMILES *)s_top;
-  while(sl)
-  {
-    if (sl->uni_smile == wchar) return (sl);
-    sl=sl->next;
-  }
-  return (0);
-}
-
-//===================================================================
 
 void Play(const char *fname)
 {
@@ -1813,9 +1588,6 @@ ProcessPacket(TPKT *p)
       case 2:
       break;
     }
-      
-      
-
     break;
   case T_SRV_ACK:
     IlluminationOn(ILL_DISP_SEND,ILL_KEYS_SEND,ILL_SEND_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
@@ -1849,6 +1621,8 @@ void process_active_timer(void)
 }
 
 //===============================================================================================
+extern volatile int total_smiles;
+
 void method0(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
@@ -1857,6 +1631,10 @@ void method0(MAIN_GUI *data)
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,logmsg);
+  if (total_smiles)
+  {
+    wstrcatprintf(data->ws1," + Loaded %d smiles",total_smiles);
+  }
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,LG_GRSKEYEXIT);
@@ -2033,6 +1811,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	    ipc->data=(void *)((int)(ipc->data)+1);
 	    //Если приняли свое собственное сообщение, значит запускаем чекер
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)CheckDoubleRun);
+	    break;
+	  case IPC_SMILE_PROCESSED:
+	    //Только собственные смайлы ;)
+	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextSmile);
+	    REDRAW();
 	    break;
 	  }
 	}
