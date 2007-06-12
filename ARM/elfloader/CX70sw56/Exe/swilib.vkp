@@ -115,8 +115,8 @@
 029C: 0xA1719C0D ; 0A7: __thumb char IsGPRSEnabled();
 02A0: 0xA127AC91 ; 0A8: char IsGPRSConnected();
 
-02A4: 0xA0CB69FB ; 0A9: __thumb void KbdLock();
-02E4: 0xA0CB6D85 ; 0B9: __thumb void KbdUnlock();
+02A4: 0xA0CB6D85 ; 0A9: __thumb void KbdLock();
+02E4: 0xA0CB69FB ; 0B9: __thumb void KbdUnlock();
 
 02AC: 0xA0002070 ; 0AB: __arm void loopback171();
 02D0: 0xA0B9063B ; 0B4: __thumb void GetDateTime(TDate *, TTime *);
