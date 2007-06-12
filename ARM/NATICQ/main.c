@@ -11,6 +11,8 @@
 #include "smiles.h"
 #include "naticq_ipc.h"
 
+#define USE_MLMENU
+
 #define TMR_SECOND 216
 
 //IPC
@@ -450,6 +452,20 @@ void contactlist_menu_ghook(void *data, int cmd);
 int contactlist_menu_onkey(void *data, GUI_MSG *msg);
 void contactlist_menu_iconhndl(void *data, int curitem, int *unk);
 
+#ifdef USE_MLMENU
+static const ML_MENU_DESC contactlist_menu=
+{
+  8,contactlist_menu_onkey,contactlist_menu_ghook,NULL,
+  menusoftkeys,
+  &clmenu_skt,
+  0x11, //+0x400
+  contactlist_menu_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0,   //n
+  1 //Добавочных строк  
+};
+#else
 static const MENU_DESC contactlist_menu=
 {
   8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
@@ -461,6 +477,7 @@ static const MENU_DESC contactlist_menu=
   NULL,   //Procs
   0   //n
 };
+#endif
 
 GBSTMR tmr_ping;
 
@@ -785,7 +802,11 @@ void create_contactlist_menu(void)
   //  if (!i) return;
   UpdateCLheader();
   patch_rect((RECT *)(&contactlist_menuhdr.rc),0,YDISP,ScreenW()-1,HeaderH()+YDISP);
+#ifdef USE_MLMENU
+  contactlist_menu_id=CreateMultiLinesMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i);
+#else
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
+#endif
 }
 
 //int need_jump_to_top_cl;
@@ -909,11 +930,21 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
 {
   CLIST *t;
   WSHDR *ws;
+#ifdef USE_MLMENU
+  void *item=AllocMLMenuItem(data);
+#else
   void *item=AllocMenuItem(data);
+#endif
   int icon;
   WSHDR ws1, *ws2;
+#ifdef USE_MLMENU
+  WSHDR *ws3;
+#endif
   unsigned short num[128];
   ws2=CreateLocalWS(&ws1,num,128);
+#ifdef USE_MLMENU
+  ws3=AllocMenuWS(data,20);
+#endif
   t=FindContactByN(curitem);
   if (t)
   {
@@ -926,12 +957,20 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
         wsInsertChar(ws2,0x0002,1);
         wsInsertChar(ws2,0xE008,1);
       }
+#ifdef USE_MLMENU
+      wsprintf(ws3,percent_d,t->uin);
+#endif
     }
     else
     {
       int online,total;
       GetOnTotalContact(t->group,&online,&total);
+#ifdef USE_MLMENU
+      wsprintf(ws2,percent_t,t->name);
+      wsprintf(ws3,"(%d/%d)",online,total);
+#else
       wsprintf(ws2,"%t%c%c(%d/%d)",t->name,0xE01D,0xE012,online,total);
+#endif
       if (t->state) icon++; //Модификация иконки группы
     }
   }
@@ -942,7 +981,11 @@ void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
   ws=AllocMenuWS(data,ws2->wsbody[0]);
   wstrcpy(ws,ws2);
   SetMenuItemIconArray(data, item, S_ICONS+icon);
+#ifdef USE_MLMENU
+  SetMLMenuItemText(data, item, ws, ws3, curitem);
+#else
   SetMenuItemText(data, item, ws, curitem);
+#endif
   //SetMenuItemIcon(data, curitem, icon*2);
 }
 
