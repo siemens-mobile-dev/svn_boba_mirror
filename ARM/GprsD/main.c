@@ -5,10 +5,10 @@
 
 CSM_DESC icsmd;
 
+int OldGPRSstatus=0; //0 - offline, 1 - connecting, 2 - connected
 
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
-
 
 #ifdef NEWSGOLD
 char binary_profile[0x204];
@@ -26,15 +26,6 @@ extern const int ENA_GPRSD;
 Del by Kibab - бинарные профили конфигурируются
 */
 
-
-
-GBSTMR mytmr;
-void reconnect(void)
-{
-  void do_connect(void);
-  SUBPROC((void *)do_connect);
-}
-
 #ifdef NEWSGOLD
 void do_connect(void)
 {
@@ -45,18 +36,14 @@ void do_connect(void)
   // Проверим, включён ли GPRS. Если нет - дальнейшие извращения бесмысленны
   if(!IsGPRSEnabled())
   {
-    GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
+    OldGPRSstatus=0;
     return;
   }
-  
-  // Перечитываем конфиг, дабы проверить, не откючены ли мы
-  InitConfig();
+  OldGPRSstatus=1;
   if(!ENA_GPRSD)
   {
-    GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
     return; // Если не разрешён коннект, выходим
   }
-
   //Устанавливаем соединение
   rsc._0x0080=0x0080;
   rsc._0xFFFF=0xFFFF;
@@ -116,11 +103,22 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   int csm_result;
   char s[100];
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
+
+  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  {
+    extern char config_name[];
+    if (strcmp(config_name,(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"GprsD config updated!");
+      InitConfig();
+    }
+  }
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
     int m=(int)msg->data0;
     if (m==LMAN_CONNECT_CNF)
     {
+      OldGPRSstatus=2;
       strcpy(s,"Session started!");
       LogWriter(s);
       ShowMSG(1,(int)s);
@@ -134,10 +132,16 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
           strcpy(s,"Can't start session!");
         LogWriter(s);
         ShowMSG(1,(int)s);
-        GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
+	OldGPRSstatus=0;
       }
     }
   }
+  if ((!OldGPRSstatus)&&IsGPRSEnabled())
+  {
+    //Включили жопорез
+    SUBPROC((void*)do_connect);
+  }
+  if (!IsGPRSEnabled()) OldGPRSstatus=0;
   return(csm_result);
 }
 
@@ -145,7 +149,6 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
-  GBS_DelTimer(&mytmr);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 

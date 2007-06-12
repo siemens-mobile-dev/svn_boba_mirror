@@ -149,9 +149,10 @@ char get_net_id(char *buf)
 // Инициализация конфигурации
 // Надо вызвать в начале работы для загрузки конфигурации
 // Поиск конфиг-файла согласно стандарту
+char config_name[128];
+
 void InitConfig()
 {
-  char config_name[128];
   char buf[10];
   if(!get_net_id((char*)&buf))
   {
