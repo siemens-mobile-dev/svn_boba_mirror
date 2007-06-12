@@ -1046,7 +1046,7 @@ void DrawInfo(void)
   wsprintf(info_ws,"Time:\n%02d:%02d\n"
 	   "Current line %lu\nTotal lines %lu\n\nCurrent file:\n%w",
 	   t.hour,t.min,curline,total_line,e_ws);
-  DrawString(info_ws,3,3+YDISP,scr_w-4,scr_h-4,SMALL_FONT,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(info_ws,3,3+YDISP,scr_w-4,scr_h-4,FONT_SMALL,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 //=============================================================================
@@ -1068,7 +1068,7 @@ void DrawScreen(void)
   
   if (disk_access)
   {
-    DrawRoundedFrame(0,YDISP+8,8,GetFontYSIZE(SMALL_FONT)+YDISP-1,0,0,0,paper,paper);
+    DrawRoundedFrame(0,YDISP+8,8,GetFontYSIZE(FONT_SMALL)+YDISP-1,0,0,0,paper,paper);
     DrwImg((IMGHDR *)&imgDiskAccess,0,YDISP,ink,paper);
     if (draw_mode==2)
     {
@@ -1084,8 +1084,8 @@ void DrawScreen(void)
     {
       wsprintf(upinfo_ws,"Line %u...",curline);
     L_W1:
-      DrawRoundedFrame(8,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP-1,0,0,0,paper,paper);
-      DrawString(upinfo_ws,8,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP-1,SMALL_FONT,2,ink,paper);
+      DrawRoundedFrame(8,YDISP,scr_w-1,GetFontYSIZE(FONT_SMALL)+YDISP-1,0,0,0,paper,paper);
+      DrawString(upinfo_ws,8,YDISP,scr_w-1,GetFontYSIZE(FONT_SMALL)+YDISP-1,FONT_SMALL,2,ink,paper);
       goto L_WELLCOME2;
     }
     if (draw_mode==255) goto L_WELLCOME;
@@ -1186,8 +1186,8 @@ void DrawScreen(void)
       //Процесс перехода на строку
       {
 	wsprintf(upinfo_ws,"Goto line %u...",curline);
-	DrawRoundedFrame(0,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP,0,0,0,paper,paper);
-	DrawString(upinfo_ws,0,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP,SMALL_FONT,2,ink,paper);
+	DrawRoundedFrame(0,YDISP,scr_w-1,GetFontYSIZE(FONT_SMALL)+YDISP,0,0,0,paper,paper);
+	DrawString(upinfo_ws,0,YDISP,scr_w-1,GetFontYSIZE(FONT_SMALL)+YDISP,FONT_SMALL,2,ink,paper);
 	goto L_WELLCOME2;
       }
       //return;
@@ -1198,13 +1198,13 @@ void DrawScreen(void)
     case 255:
       //Экран приветствия
     L_WELLCOME:
-      DrawRoundedFrame(0,YDISP,scr_w-1,GetFontYSIZE(SMALL_FONT)+YDISP-1,0,0,0,paper,paper);
+      DrawRoundedFrame(0,YDISP,scr_w-1,GetFontYSIZE(FONT_SMALL)+YDISP-1,0,0,0,paper,paper);
       draw_mode=1;
     L_WELLCOME2:
-      DrawRoundedFrame(0,GetFontYSIZE(SMALL_FONT)+YDISP,scr_w-1,scr_h-1,0,0,0,paper,paper);
+      DrawRoundedFrame(0,GetFontYSIZE(FONT_SMALL)+YDISP,scr_w-1,scr_h-1,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
       wsprintf(info_ws,"Text viewer/editor\nversion 1.6\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
-      DrawString(info_ws,0,GetFontYSIZE(SMALL_FONT)+9+YDISP,scr_w-1,ScreenH()-1,SMALL_FONT,2,ink,paper);
+      DrawString(info_ws,0,GetFontYSIZE(FONT_SMALL)+9+YDISP,scr_w-1,ScreenH()-1,FONT_SMALL,2,ink,paper);
       return;
     case 0:
       //Курсор
@@ -1384,8 +1384,7 @@ void clearclipb(void)
   GeneralFuncF1(1);
 }
 
-
-void *edmenu_HNDLS[8]=
+void* edmenu_HNDLS[8]=
 {
   (void *)insline,
   (void *)delline,
@@ -1419,7 +1418,7 @@ MENU_DESC edmenu_STRUCT=
   0,
   NULL,
   edmenu_ITEMS,
-  edmenu_HNDLS,
+  (MENUPROCS_DESC*)&edmenu_HNDLS,
   8
 };
 
@@ -2002,7 +2001,7 @@ MENU_DESC loadmenu_STRUCT=
   0,
   NULL,
   loadmenu_ITEMS,
-  loadmenu_HNDLS,
+  (MENUPROCS_DESC*)&loadmenu_HNDLS,
   8
 };
 
@@ -2196,7 +2195,7 @@ MENU_DESC gotomenu_STRUCT=
   0,
   NULL,
   gotomenu_ITEMS,
-  gotomenu_HNDLS,
+  (MENUPROCS_DESC*)&gotomenu_HNDLS,
   9
 };
 
@@ -2260,7 +2259,7 @@ MENU_DESC bookmenu_STRUCT=
   0,
   NULL,
   bookmenu_ITEMS,
-  bookmenu_HNDLS,
+  (MENUPROCS_DESC*)&bookmenu_HNDLS,
   4
 };
 
@@ -2302,7 +2301,7 @@ MENU_DESC softmenu_STRUCT=
   0,
   NULL,
   softmenu_ITEMS,
-  softmenu_HNDLS,
+  (MENUPROCS_DESC*)&softmenu_HNDLS,
   3
 };
 
@@ -2713,7 +2712,7 @@ int main(char *exename, char *fname)
     LoadConfigData("0:\\ZBin\\etc\\TED.bcfg");
   }
   GetDateTime(&d,&t);
-  snprintf(stkfile,sizeof(stkfile),"%s%d_%d_%d_%d_%d_%d.tmp",ted_path,d.year,d.month,d.day,t.hour,t.min,t.param);
+  snprintf(stkfile,sizeof(stkfile),"%s%d_%d_%d_%d_%d_%d.tmp",ted_path,d.year,d.month,d.day,t.hour,t.min,t.sec);
   if (fname)
   {
     if (strlen(fname)<128)
