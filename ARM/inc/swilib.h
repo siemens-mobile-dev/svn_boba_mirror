@@ -627,7 +627,7 @@ typedef struct
   const int *softkeys; //{6,0x22,0x1D}, mb default for all items, if item.softkeys==NULL
   const SOFTKEYSTAB *softkeystab;
   int flags2; //2
-  void (*itemproc)(void *, int, int *); //Called when draw item
+  void (*itemproc)(void *, int, void *); //Called when draw item
   const MENUITEM_DESC *items; //Table of items desc;
   const MENUPROCS_DESC *procs;//  void ** procs; //Table of procs when item selected
   int n_items; //Number of items
