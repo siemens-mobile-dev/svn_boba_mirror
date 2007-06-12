@@ -919,6 +919,23 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
       return(-1);
     }
   }
+  if (msg->gbsmsg->msg==LONG_PRESS)
+  {
+    if (msg->gbsmsg->submess=='#')
+    {
+      ClearContactT9Key();
+      RecountMenu(NULL);
+      gipc.name_to=ipc_xtask_name;
+      gipc.name_from=ipc_my_name;
+      gipc.data=0;
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
+      if (IsUnlocked())
+      {
+        KbdLock();
+      }
+      return(-1);
+    }    
+  }
   return(0);
 }
 
