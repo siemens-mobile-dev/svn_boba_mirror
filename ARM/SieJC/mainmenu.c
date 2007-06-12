@@ -7,6 +7,7 @@
 #include "jabber_util.h"
 #include "MUC_Enter_UI.h"
 #include "cont_menu.h"
+#include "revision.h"
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
@@ -36,9 +37,17 @@ int MainMenu_ID;
 
 extern char My_Presence;
 
-void AboutDlg()
+extern const char VERSION_VERS[];
+
+
+void AboutDlg(GUI *data)
 {
-  ShowMSG(0,(int)"Siemens natJabber Client\n(c)Kibab, Ad, Borman99");
+  char msg_tpl[]="Siemens natJabber Client\n(c)Kibab, Ad, Borman99\n%s r%d\nCompiled %s";
+  int l;
+  char *msg = malloc(l=strlen(msg_tpl)+20+1);
+  snprintf(msg,l,msg_tpl, VERSION_VERS, __SVN_REVISION__, __DATE__);
+  ShowMSG(0,(int)msg);
+  mfree(msg);
 };
 
 
@@ -59,19 +68,19 @@ int mmenusoftkeys[]={0,1,2};
 
 int icon_array[2];
 
-void ChangeVibraMode(void)
+void ChangeVibraMode(GUI *data)
 {
   Is_Vibra_Enabled=!(Is_Vibra_Enabled);
   RefreshGUI();
 }
 
-void ChangeSoundMode(void)
+void ChangeSoundMode(GUI *data)
 {
   Is_Sounds_Enabled=!(Is_Sounds_Enabled);
   RefreshGUI();
 }
 
-void Exit_SieJC()
+void Exit_SieJC(GUI *data)
 {
   QuitCallbackProc(0);
 }
@@ -88,15 +97,15 @@ MENUITEM_DESC menuitems[N_ITEMS]=
   {dummy_icon,(int)"Выход",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[N_ITEMS]={
-                          (void *)Disp_Contact_Menu,
-                          (void *)DispStatusChangeMenu,
-                          (void *)Disp_MUC_Enter_Dialog,
-                          (void *)Get_Bookmarks_List,
-                          (void *)ChangeVibraMode,
-                          (void *)ChangeSoundMode,
-                          (void *)AboutDlg,
-                          (void *)Exit_SieJC
+MENUPROCS_DESC menuprocs[N_ITEMS]={
+                          Disp_Contact_Menu,
+                          DispStatusChangeMenu,
+                          Disp_MUC_Enter_Dialog,
+                          Get_Bookmarks_List,
+                          ChangeVibraMode,
+                          ChangeSoundMode,
+                          AboutDlg,
+                          Exit_SieJC
                          };
 
 SOFTKEY_DESC mmenu_sk[]=

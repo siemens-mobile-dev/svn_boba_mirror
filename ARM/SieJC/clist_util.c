@@ -50,11 +50,7 @@ void CList_RedrawCList()
 #else
   int icon_num=0;
 #endif
-#ifdef ELKA
-  N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1-SCR_START)-2;
-#else
   N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1-SCR_START)-1;
-#endif
   if(!cltop)return;
 
   LockSched();
@@ -517,7 +513,7 @@ CLIST* CList_AddContact(char* jid,
     if(!strchr(jid, '@'))
     {
       ResEx->entry_type=T_TRANSPORT; // Транспортный агент
-    }
+    } 
     ResEx->status=PRESENCE_OFFLINE;
   }
   ResEx->name = NULL;

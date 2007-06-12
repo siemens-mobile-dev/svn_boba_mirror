@@ -56,14 +56,14 @@ MENUITEM_DESC st_menuitems[STATUSES_NUM]=
   {NULL,(int)"»Ì‚ËÁ",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void dummy(void){};
-void *st_menuprocs[STATUSES_NUM]={
-                                  (void *)dummy,
-                                  (void *)dummy,
-                                  (void *)dummy,
-                                  (void *)dummy,
-                                  (void *)dummy,
-                                  (void *)dummy
+void dummy(GUI *data){};
+const MENUPROCS_DESC st_menuprocs[STATUSES_NUM]={
+                                  dummy,
+                                  dummy,
+                                  dummy,
+                                  dummy,
+                                  dummy,
+                                  dummy
                                  };
 
 SOFTKEY_DESC st_menu_sk[]=
