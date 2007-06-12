@@ -17,7 +17,7 @@ void patch_header(const HEADER_DESC* head)
   ((HEADER_DESC*)head)->rc.x=0;
   ((HEADER_DESC*)head)->rc.y=YDISP;
   ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
-  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()-1+YDISP;
 }
 #pragma inline
 void patch_input(const INPUTDIA_DESC* inp)

@@ -382,7 +382,7 @@ void patch_header(const HEADER_DESC* head)
   ((HEADER_DESC*)head)->rc.x=0;
   ((HEADER_DESC*)head)->rc.y=YDISP;
   ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
-  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP-1;
 }
 #pragma inline
 void patch_input(const INPUTDIA_DESC* inp)
@@ -801,7 +801,7 @@ void create_contactlist_menu(void)
   i=CountContacts();
   //  if (!i) return;
   UpdateCLheader();
-  patch_rect((RECT *)(&contactlist_menuhdr.rc),0,YDISP,ScreenW()-1,HeaderH()+YDISP);
+  patch_header(&contactlist_menuhdr);
 #ifdef USE_MLMENU
   contactlist_menu_id=CreateMultiLinesMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i);
 #else
