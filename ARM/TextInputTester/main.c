@@ -416,7 +416,7 @@ void menu2_iconhndl(void *data, int curitem, int *unk)
   wsAppendChar(ws2,0xE116);
   wsAppendChar(ws2,0xE117);
   SetMenuItemIconArray(data,item,S_ICONS+(curitem&7));
-  SetMLMenuItemText(data, item, ws1, ws2, 0 , curitem);
+  SetMLMenuItemText(data, item, ws1, ws2, curitem);
 }
 
 static const ML_MENU_DESC menu2=
