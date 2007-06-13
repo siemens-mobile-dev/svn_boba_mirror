@@ -223,7 +223,9 @@
 0298: 0xA02C9C5D   ; 0A6: ResetGPRSTraffic
 029C: 0xA02C9AA9   ; 0A7: __thumb char IsGPRSEnabled();
 02A0: 0xA0AECB35   ; 0A8: char IsGPRSConnected();
-02A4: 0xA080069B   ; 0A9: __thumb void KbdLock();
+;
+02A4: 0xA080069B ; 0A9: __thumb void KbdLock();
+02E4: 0xA08002FF ; 0B9: __thumb void KbdUnlock();
 ;
 02A8: 0xA080092D   ; 0AA: __thumb char *GetCurrentLocale()
 02AC: 0xA0002070   ; 0AB: __arm void loopback171();
@@ -241,7 +243,6 @@
 02D8: 0xA02BF4B1   ; 0B6: __thumb char GetProfile()
 02DC: 0xA02BF35F   ; 0B7: __thumb char SetProfile(char)
 02E0: 0xA0EF2E94   ; 0B8: __arm int dwMODdw(int denom,int number);
-02E4: 0xA08002FF   ; 0B9: __thumb void KbdUnlock();
 02E8: 0xA0203C30   ; 0BA: __arm void *realloc(void *ptr, int size);
 02EC: 0xA0EF2E7C   ; 0BB: __arm void *memset(void *s, int c, int n);
 02F0: 0xA0219FE8   ; 0BC: __arm int divide(int divisor, int dividend);

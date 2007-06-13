@@ -223,7 +223,7 @@
 0298: 0xA02C9C59   ; 0A6: ResetGPRSTraffic
 029C: 0xA02C9AA5   ; 0A7: IsGPRSEnabled
 02A0: 0xA0AED489   ; 0A8: IsGPRSConnected
-02A4: 0xA0800E73   ; 0A9: KbdLock
+02A4: 0xA080120F   ; 0A9: KbdLock
 ;
 02A8: 0xA08014A1   ; 0AA: char *GetCurrentLocale()
 2AC: 0xA0002070   ; f171: SWI_AB
@@ -241,7 +241,7 @@
 2D8: 0xA02BF4AD   ; f182: GetProfile
 2DC: 0xA02BF35B   ; f183: SetProfile
 2E0: 0xA0EF4BD8   ; f184: dwMODdw
-2E4: 0xA080120F   ; f185: KbdUnlock
+2E4: 0xA0800E73   ; f185: KbdUnlock
 02E8: 0xA0203C30   ; 0BA: void *realloc(void *ptr, int size)
 02EC: 0xA0EF4BC0   ; 0BB: void *memset(void *s, int c, int n)
 02F0: 0xA0219FE8   ; 0BC: int divide(int divisor, int dividend)
