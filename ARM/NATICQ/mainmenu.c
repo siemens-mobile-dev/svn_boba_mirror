@@ -254,6 +254,8 @@ void tmenu_ghook(void *data, int cmd)
   }
 }
 
+static int icon_array[3];
+
 void menuitemhandler(void *data, int curitem, int *unk)
 {
   WSHDR *ws;
@@ -267,13 +269,13 @@ void menuitemhandler(void *data, int curitem, int *unk)
     SetMenuItemIconArray(data,item,S_ICONS+CurrentStatus);
     break;
   case 2:
-    SetMenuItemIconArray(data,item,S_ICONS+(Is_Vibra_Enabled?IS_GROUP+1:IS_GROUP));
+    SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
     break;
   case 3:
-    SetMenuItemIconArray(data,item,S_ICONS+(Is_Sounds_Enabled?IS_GROUP+1:IS_GROUP));
+    SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
     break;
   case 4:
-    SetMenuItemIconArray(data,item,S_ICONS+(Is_Show_Offline?IS_GROUP+1:IS_GROUP));
+    SetMenuItemIconArray(data,item,icon_array+(Is_Show_Offline?0:1));
     break;
   case 7:
     SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);
@@ -308,8 +310,8 @@ static const MENU_DESC tmenu=
 
 void ShowMainMenu()
 {
-//  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
-//  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   *((int **)(&menuhdr.icon))=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
   MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,8,0,0);
