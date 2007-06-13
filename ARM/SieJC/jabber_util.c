@@ -589,7 +589,10 @@ void FillRoster(XMLNode* items)
     int gr_id;
     if(group)
     {
-      if(!(gr_id = GetGroupID(group->value)))gr_id = AddGroup(group->value);
+      if(!(gr_id = GetGroupID(group->value)))
+      {
+        gr_id = AddGroup(group->value);
+      }
     }
     else gr_id = 0;
 
@@ -604,6 +607,59 @@ void FillRoster(XMLNode* items)
    rostEx=rostEx->next;
    i++;
   }
+  
+  // Получение ростера закончено. Размечаем группы
+  extern GR_ITEM *GR_ROOT;
+  extern CLIST* cltop;
+  extern unsigned int NContacts;
+  GR_ITEM *tmp_gpointer=GR_ROOT;
+  CLIST *tmp_cpointer=cltop;
+  int cur_gid=-1, this_grid;   // Текущий обрабатываемый GID
+  
+ 
+  // Цикл по всем контактам
+  while(tmp_cpointer->next)
+  {
+    this_grid = ((CLIST*)tmp_cpointer->next)->group;
+    // Получаем текущую группу
+    if(cur_gid!=this_grid)  
+    {
+      tmp_gpointer = GetGroupByID(this_grid);
+      cur_gid = this_grid;
+      // Создаём псевдоконтакт, вставляем его
+      CLIST *gr_pscontact = malloc(sizeof(CLIST));
+      gr_pscontact->name = malloc(strlen(tmp_gpointer->name)+1);
+      gr_pscontact->JID = malloc(strlen(tmp_gpointer->name)+1);
+      strcpy(gr_pscontact->name, tmp_gpointer->name);
+      strcpy(gr_pscontact->JID, tmp_gpointer->name);
+      gr_pscontact->subscription = SUB_BOTH;
+      gr_pscontact->wants_subscription = 0;
+      gr_pscontact->group = cur_gid;
+      gr_pscontact->IsVisible = 1;
+      gr_pscontact->ResourceCount=1;
+      gr_pscontact->next=tmp_cpointer->next;  // Вставляем между текущим и следующим
+      tmp_cpointer->next = gr_pscontact;
+      
+      // Cоздаём ещё и псевдоресурс
+      TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
+      ResEx->log=NULL;
+      ResEx->next=NULL;
+      ResEx->status_msg=NULL;
+      ResEx->status = PRESENCE_ONLINE;
+      ResEx->has_unread_msg=0;
+      ResEx->total_msg_count=0;
+      ResEx->entry_type=T_GROUP;
+      ResEx->name = NULL;
+      ResEx->full_name = malloc(strlen(tmp_gpointer->name)+1);
+      strcpy(ResEx->full_name, tmp_gpointer->name);
+      // Коннектим ресурс к группе
+      gr_pscontact->res_list = ResEx;
+      NContacts++;
+      tmp_cpointer = tmp_cpointer->next;
+    }
+    tmp_cpointer = tmp_cpointer->next;
+  }
+
 }
 
 /*

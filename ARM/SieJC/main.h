@@ -88,7 +88,8 @@ typedef enum
   T_VIRTUAL,      // Создаётся при создании контакта, для удаления
   T_CONF_ROOT,    // Корень конференции (место доставки публичных сообщений)
   T_CONF_NODE,    // Участник конференции (отображаем только "ресурс" жида)
-  T_TRANSPORT     // Транспортный агент
+  T_TRANSPORT,    // Транспортный агент
+  T_GROUP         // Группа
 }RES_TYPE;
 
 typedef struct
@@ -122,6 +123,7 @@ typedef struct
 typedef struct
 {
   char* JID;
+  char IsVisible;             // Показывать ли в списке (связано с группами)
   int ResourceCount;
   TRESOURCE* res_list;
   char* name;

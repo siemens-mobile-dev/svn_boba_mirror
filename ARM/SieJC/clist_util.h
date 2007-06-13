@@ -19,6 +19,9 @@
 // Отрисовать список контактов
   void CList_RedrawCList();
 
+// Переключить видиимость для группы
+void CList_ToggleVisibilityForGroup(int GID);
+
 // Получить дескриптор контакта по FullJID (JID вместе с ресурсом)
   CLIST* CList_FindContactByJID(char* jid);
 

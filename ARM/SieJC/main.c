@@ -35,7 +35,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // ÍÅ ÌÅÍßÒÜ!
-const char VERSION_VERS[] = "1.7.6-Z";
+const char VERSION_VERS[] = "1.8.5-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 5*60*TMR_SECOND; // 5 ìèíóò
@@ -966,7 +966,17 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case ENTER_BUTTON:
       {
-        Display_Message_List(CList_GetActiveContact());
+        CLIST *ActiveContact = CList_FindContactByJID(CList_GetActiveContact()->full_name);
+        if(ActiveContact->res_list->entry_type!=T_GROUP)
+        {
+          Display_Message_List(CList_GetActiveContact());
+        }
+        else
+        {
+          //ActiveContact->IsVisible = ActiveContact->IsVisible==1?0:1;
+          CList_ToggleVisibilityForGroup(ActiveContact->group);
+          REDRAW();
+        }
         break;
       }
 
@@ -1102,7 +1112,8 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
   DNR_TRIES=3;
-
+  InitGroupsList();
+  
   SUBPROC((void *)create_connect);
   GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
 #ifdef LOG_ALL

@@ -68,6 +68,7 @@ void CList_RedrawCList()
   TRESOURCE* resEx;
 
   char Alternation = 1;             // ad: состояние чередования
+  char Is_Right_Vis_Mode = 0;       // Допустимо ли показывать с точки зрения свернутости групп
 
   WSHDR* ClEx_name = AllocWS(128);
   WSHDR* ResEx_name = AllocWS(128);
@@ -80,7 +81,8 @@ void CList_RedrawCList()
       while(resEx)
       {
 
-        if((i>(Active_page-1)*N_cont_disp) && (Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg ))
+        Is_Right_Vis_Mode = (resEx->entry_type!=T_GROUP && ClEx->IsVisible==1) || resEx->entry_type==T_GROUP ;
+        if((i>(Active_page-1)*N_cont_disp) && ((Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg) && Is_Right_Vis_Mode))
         {
           if(i==CursorPos)
           {
@@ -138,7 +140,7 @@ void CList_RedrawCList()
 
           Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование
         }
-        if(Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg)i++;
+        if((Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg) && Is_Right_Vis_Mode) i++;
         resEx = resEx->next;
         if(i>Active_page*N_cont_disp)break;
       }
@@ -173,7 +175,7 @@ unsigned int CList_GetNumberOfOnlineUsers()
     ResEx = ClEx->res_list;
     while(ResEx)
     {
-      if(ResEx->status!=PRESENCE_OFFLINE)Online++;
+      if(ResEx->status!=PRESENCE_OFFLINE && (ClEx->IsVisible==1 || ResEx->entry_type==T_GROUP))Online++;
       ResEx=ResEx->next;
     }
     ClEx = ClEx->next;
@@ -336,6 +338,25 @@ void CList_MakeAllResourcesOFFLINE(CLIST* ClEx)
   }
 }
 
+void CList_ToggleVisibilityForGroup(int GID)
+{
+  CLIST* ClEx = cltop;
+  while(ClEx)
+  {
+    if(ClEx->group==GID)
+    {
+      if(ClEx->IsVisible)
+      {
+        ClEx->IsVisible=0;        
+      }
+      else
+      {
+        ClEx->IsVisible=1;   
+      }
+    }
+    ClEx = ClEx->next;
+  }
+}
 
 TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
 {
@@ -493,6 +514,7 @@ CLIST* CList_AddContact(char* jid,
   Cont_Ex->subscription = subscription;
   Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
+  Cont_Ex->IsVisible = 1;
   Cont_Ex->next=NULL;
 
   TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
@@ -531,9 +553,15 @@ CLIST* CList_AddContact(char* jid,
   }
   else
   {
-    CLIST* tmp=cltop;
-    while(tmp->next){tmp=tmp->next;}
+    CLIST* tmp=cltop; // А на самом деле наверху списка у нас селф-контакт ;)
+    while(tmp->next)
+    {
+      tmp=tmp->next;
+      if(tmp->group==group)break;
+    }
+    CLIST *after_tmp = tmp->next;
     tmp->next=Cont_Ex;
+    Cont_Ex->next =after_tmp; 
   }
 
   NContacts++;
