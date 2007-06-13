@@ -1,5 +1,5 @@
-;ELFpack v2.2 (C)2007 by Rst7/CBSIE, BoBa
-;Release 06.04.2007
+;ELFpack v2.3 (C)2007 by Rst7/CBSIE, BoBa, Kren
+;Release 03.05.2007
 ;CX75sw13
 
 ;чтобы успешно использовать эльфов необходимо и достаточно установить ELFpack
@@ -32,8 +32,6 @@
 
 ;В папке ZBin\NatICQ - клиент нативной аси. Там же картинки статусов и звуки. Картинки смайлов уже размещены в ZBin\img.
 ;В папке ZBin\EMailClient - Почтовый клиент. Картинки прилагаются. Состоит из двух частей - собственно клиента и приложения для скачивания почты с сервера (MailDaemon). В дальнейшем оно действительно будет демоном.
-
-
 
 
 +0FD4000
@@ -120,10 +118,10 @@
 012C: 0xA088D214   ;  4B: __arm void StartMidlet(char *midlet)
 0130: 0xA05573B1   ;  4C: __thumb GetMissedCallsCount
 0134: 0xA020AE5C   ;  4D: __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr())
-0138: 0xA07C20E3   ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
-013C: 0xA07C2141   ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0138: 0xA07C20E3   ;  4E: __thumb int MsgBoxError(int flag, int LgpId)
+013C: 0xA07C2141   ;  4F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int))
 
-0140: 0xA07C214B   ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
+0140: 0xA07C214B   ;  50: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int))
 0144: 0xA0B3F6A5   ;  51: __thumb GetNetAccessMode
 0148: 0xA081B0E8   ;  52: __arm char *GetIlluminationDataTable()
 014C: 0xA0EF1EAD   ;  53: __thumb int memcmp_2(void *m1,void *m2,int n)
@@ -142,7 +140,7 @@
 
 0180: 0xA03268EB   ;  60: __thumb void ShowMainMenu()
 0184: 0xA032AE0F   ;  61: __thumb void ShowNativeMenu()
-;188:              ;  62: --__unknown SetVibraStatus
+;188:              ;  62: __unknown SetVibraStatus
 018C: 0xA02C92CB   ;  63: __thumb MS_Wallpaper_Flush
 0190: 0xA07C2B51   ;  64: __thumb TriggerUpdate
 0194: 0xA0833035   ;  65: __thumb void EndCall()
@@ -176,18 +174,18 @@
 
 0200: 0xA058A071   ;  80: __thumb void int ShowCallList(int list, int zero)
 0204: 0xA0EF2608   ;  81: __arm int HexToDec(int hex)
-;208:              ;  82: --__unknown GetCurrentTrackFilename
+;208:              ;  82: __unknown GetCurrentTrackFilename
 020C: 0xA02DCFC0   ;  83: __arm GetPathOfFoundFile
 0210: 0xA07CAD50   ;  84: __arm int GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber)
 0214: 0xA0208941   ;  85: __thumb StrCmpNoCase
 0218: 0xA07C9360   ;  86: __arm ReadEEPROMData
 021C: 0xA07C94A4   ;  87: __arm WriteEEPROMData
-;220:              ;  88: --__unknown GetAccessoryType
-;224:              ;  89: --__unknown GetLangMesIntoWS
+;220:              ;  88: __unknown GetAccessoryType
+;224:              ;  89: __unknown GetLangMesIntoWS
 0228: 0xA07CAAEC   ;  8A: __arm int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber)
 022C: 0xA07CB0B0   ;  8B: __arm int GetTotalFlexSpace(int DriveNum, unsigned int *ErrorNumber)
 0230: 0xA02A0F40   ;  8C: __thumb void RegExplorerExt(REGEXPLEXT *)
-;234:              ;  8D: --__unknown GetProfileName
+;234:              ;  8D: __unknown GetProfileName
 0238: 0xA07CACB0   ;  8E: __arm int fmove(char *SourceFileName, char * DestFileName, unsigned int *ErrorNumber)
 023C: 0xA07CACE8   ;  8F: __arm int rmdir(char *cDirectory, unsigned int *ErrorNumber)
 
@@ -197,13 +195,13 @@
 024C: 0xA0A97E18   ;  93: __arm void RebootPhone()
 0250: 0xA02A1004   ;  94: __arm int ExecuteFile (WSHDR *filepath, WSHDR *mimetype)
 ;254:              ;  95: EP __arm int UnRegExplorerExt(REGEXPLEXT const *)
-;258:              ;  96: --__unknown GetWavLenByContent
+;258:              ;  96: __unknown GetWavLenByContent
 025C: 0x00000000   ;  97: API CreatePath
 0260: 0x00000000   ;  98: API void PlaySoundVibra(char SndNum, char VibraPower, unsigned int VibraDuration, char VibraIfOff)
 0264: 0xA02F4988   ;  99: __arm int PlayMelodyInMem(char Unk_0x11,void *MelAddr,int MelSize,int unk2_0xFFFF,int Unk3_0,int Unk4_0)
 0268: 0xA0825310   ;  9A: __arm int ChangeVolume(unsigned char Volume)
 026C: 0xA876392C   ;  9B: RamAudioParamsAddr
-;270:              ;  9C: --__unknown CloseScreensaver
+;270:              ;  9C: __unknown CloseScreensaver
 0274: 0xA097BF0D   ;  9D: __thumb int GetMissedEventsPtr()
 0278: 0x00000000   ;  9E: API int GetMissedEventCount(unsigned int Event)
 027C: 0xA07F5293   ;  9F: __thumb void DrawRectangle_2(int x,int y,int x2,int y2,int flags,int *pen,int *brush)
@@ -230,7 +228,7 @@
 02C8: 0xA0FC3E29   ;  B2: API GetBuildCanvas
 02CC: 0xA0FCF301   ;  B3: API Seconds2iTime
 02D0: 0xA07D801B   ;  B4: __thumb void GetDateTime(TDate *, TTime *)
-02D4: 0xA02BF391   ;  B5: __thumb char GetWeek(TDate*)
+02D4: 0xA0208397   ;  B5: __thumb char GetWeek(TDate*)
 02D8: 0xA02BF391   ;  B6: __thumb char GetProfile()
 02DC: 0xA02BF23F   ;  B7: __thumb char SetProfile(char)
 02E0: 0xA0EF24EC   ;  B8: __arm int sdiv(int denom,int number)
@@ -251,7 +249,7 @@
 0318: 0xA0A83E20   ;  C6: __arm char GetAkkuCapacity()
 031C: 0x00000000   ;  C7: __arm void CallLibFunByNumber(int num)
 0320: 0xA850D364   ;  C8: __arm unsigned short *RamCap()
-0324: 0xA850D366   ;  C9: RamLS
+0324: 0xA850D366   ;  C9: __arm RamLS
 0328: 0xA851A9D0   ;  CA: __arm RAMNET * RamNet()
 034C: 0xA84CB4F4   ;  D3: RamStby
 0364: 0xA851734C   ;  D9: RamShutdownMode
@@ -260,7 +258,7 @@
 037C: 0xA84FF800   ;  DF: RamPressedKey
 
 0380: 0xA84E8CA8   ;  E0: __arm void * RamScreenBuffer()
-;384:              ;  E1: __unknown unsigned int RamMPlayer_CtrlCode()
+;384:              ;  E1: __unknown RamMPlayer_CtrlCode()
 0388: 0xA85014DC   ;  E2: RamKeyBuffer
 038C: 0xA851BC5C   ;  E3: RamProfileNum
 0390: 0xA8000000   ;  E4: FreeRAM
@@ -536,7 +534,7 @@
 07AC: 0xA84CA866   ; 1EB: __arm char *RAM_IMSI()
 07B0: 0xA0800703   ; 1EC: __thumb void FreeDynIcon(int picture)
 07B4: 0xA080072F   ; 1ED: __thumb int IsDynIconBusy(int picture)
-;7B8:              ; 1EE: --__unknown ProgressCalculate(int current, int total)
+;7B8:              ; 1EE: __unknown ProgressCalculate(int current, int total)
 07BC: 0xA0800693   ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap)
 
 07C0: 0xA02DE4E5   ; 1F0: __thumb filecopy
@@ -546,8 +544,15 @@
 07D0: 0xA84CAC0C   ; 1F4: __arm char *RamServiceProviderName()
 07D4: 0xA0EF2679   ; 1F5: __thumb int sscanf(const char *, const char *, ...)
 07D8: 0xA080075B   ; 1F6: __thumb IMGHDR* GetPitAdrBy0xE200Symbol(int uni_symbol)
+;7DC:              ; 1F7: API __unknown long GetFileSize(char *Filename)
+;7E0:              ; 1F8: __unknown int GetPlayStatus(void)
+;7E4:              ; 1F9: API __unknown void SendMP_cmd(cmd,substract)
+;7E8:              ; 1FA: __unknown char *RamVolumeStep()
 07EC: 0xA85176EC   ; 1FB: __arm char *RamMediaIsPlaying()
 07F0: 0xA07BE2C1   ; 1FC: __thumb void CloseCSM(int id)
+;7F4:              ; 1FD: __unknown RamCurrentArtist
+;7F8:              ; 1FE: __unknown char *RamLighterPower()
+;7FC:              ; 1FF: __unknown void MEDIA_PLAYLAST()
 
 0800: 0xA0FC7301   ; 200: API __thumb void ScreenShoot()
 0804: 0xA07F6A57   ; 201: __thumb void SetProp2ImageOrCanvas(DRWOBJ *, RECT *, int zero, IMGHDR *Image, int bleed_x, int bleed_y)
@@ -557,29 +562,31 @@
 0814: 0xA07F5251   ; 205: __thumb void SetProp2Square_v1(void)
 0818: 0xA0EF2255   ; 206: __thumb void srand(unsigned int seed)
 081C: 0xA089A287   ; 207: __thumb DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush)
+0820: 0xA07FB771   ; 208: __thumb int Get_WS_width(WSHDR *ws, int font)
+0824: 0xA07BE117   ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm)
+0828: 0xA08A099F   ; 20A: __thumb void EDIT_SetDate(void *gui,int n,TDate *dd)
+082C: 0xA08A09B3   ; 20B: __thumb void EDIT_SetTime(void *gui,int n,TTime *tt)
+0830: 0xA08A09C7   ; 20C: __thumb void EDIT_GetDate(void *gui,int n,TDate *dd)
+0834: 0xA08A09DB   ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt)
+0838: 0xA07BEAE5   ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time)
+083C: 0xA07BE9CB   ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date)
 
-0820: 0xA07FB771 ; 208: __thumb int Get_WS_width(WSHDR *ws, int font);
-0824: 0xA07BE117 ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
-
-0828: 0xA08A099F ; 20A: __thumb void EDIT_SetDate(void *gui,int n,TDate *dd);
-082C: 0xA08A09B3 ; 20B: __thumb void EDIT_SetTime(void *gui,int n,TTime *tt);
-0830: 0xA08A09C7 ; 20C: __thumb void EDIT_GetDate(void *gui,int n,TDate *dd);
-0834: 0xA08A09DB ; 20D: __thumb void EDIT_GetTime(void *gui,int n,TTime *tt);
-0838: 0xA07BEAE5 ; 20E: __thumb int ConstructEditTime(EDITCONTROL *EditControl,TTime *time);
-083C: 0xA07BE9CB ; 20F: __thumb int ConstructEditDate(EDITCONTROL *EditControl,TDate *date);
-;
-0848: 0xA03D8D50 ; 212: __arm int CardExplGetCurItem(void *csm);
-084C: 0xA0352B10 ; 213: __arm void CardExplGetFName(void *csm, int cur_item, WSHDR *dest);
-0850: 0xA07BC07D ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
-0854: 0xA07BC10D ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to);
-0858: 0xA07BB6A9 ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...);
-;
-085C: 0xA05D6BE1 ; 217: __thumb int CreateMultiLinesMenu(int dummy,int dummy2,const ML_MENU_DESC *,const HEADER_DESC *,int to_item,int n);
-0860: 0xA08A8F3B ; 218: __thumb void SetMLMenuItemText(void *data,void *item,WSHDR *ws1,WSHDR *ws2,int n);
-0864: 0xA08A91F3 ; 219: __thumb void *AllocMLMenuItem(void *data);
-0868: 0xA08A0AA7 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
-086C: 0xA08A0AB1 ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
+;840:              ; 210: __thumb int GetCurGuiID(void)
+0844: 0x000000A1   ; 211: __adr int GBS_Cmd_4209_RefreshScreensaver()
+0848: 0xA03D8D50   ; 212: __arm int CardExplGetCurItem(void *csm)
+084C: 0xA0352B10   ; 213: __arm void CardExplGetFName(void *csm, int cur_item, WSHDR *dest)
+0850: 0xA07BC07D   ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len)
+0854: 0xA07BC10D   ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to)
+0858: 0xA07BB6A9   ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...)
+085C: 0xA05D6BE1   ; 217: __thumb int CreateMultiLinesMenu(int dummy,int dummy2,const ML_MENU_DESC *,const HEADER_DESC *,int to_item,int n)
+0860: 0xA08A8F3B   ; 218: __thumb void SetMLMenuItemText(void *data,void *item,WSHDR *ws1,WSHDR *ws2,int n)
+0864: 0xA08A91F3   ; 219: __thumb void *AllocMLMenuItem(void *data)
+0868: 0xA08A0AA7   ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len)
+086C: 0xA08A0AB1   ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui)
 #pragma disable old_equal_ff
 +0
-;------------------------- end -------------------------
 
+
+
+
+;locale=Russian_Russia.1251
