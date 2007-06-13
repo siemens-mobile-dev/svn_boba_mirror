@@ -41,5 +41,6 @@ typedef struct
 #define CBOX_UNCHECKED 0xE10C
 #endif
 
+#define TOTAL_ICONS 18
 
 #endif

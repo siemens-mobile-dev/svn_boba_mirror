@@ -156,7 +156,9 @@ void ChangeSoundMode(void)
 
 void ChangeShowOfflineMode(void)
 {
+  void RecountMenu(CLIST *req);
   Is_Show_Offline=!(Is_Show_Offline);
+  RecountMenu(NULL);
   RefreshGUI();
 }
 
@@ -276,6 +278,8 @@ void menuitemhandler(void *data, int curitem, int *unk)
   case 7:
     SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);
     break;
+  default:
+    SetMenuItemIconArray(data,item,S_ICONS+IS_NULLICON);
   }
   SetMenuItemText(data, item, ws, curitem);
 }
@@ -308,5 +312,5 @@ void ShowMainMenu()
 //  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   *((int **)(&menuhdr.icon))=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,7,0,0);
+  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,8,0,0);
 }

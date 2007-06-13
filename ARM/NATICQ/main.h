@@ -41,6 +41,7 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define IS_UNKNOWN 14
 #define IS_GROUP 15
 //#define IS_GROUPOFF 16
+#define IS_NULLICON 17
 #define IS_ANY 0xFFFFFFFF
 #define IS_FILTER_T9KEY 0xFFFFFFFE
 
