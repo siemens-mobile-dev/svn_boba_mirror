@@ -254,7 +254,7 @@ void CardExplorer_ghook(void *data, int cmd)
   if (cmd==3)
   {
     void *remove;
-    remove=cardexplorer.procs;
+    remove=(void *)(cardexplorer.procs);
     cardexplorer.procs=NULL;
     mfree(remove);
     
@@ -310,11 +310,11 @@ __arm int CreateCardExplMenu(int is_small,int zero1,const MENU_DESC *menu, const
   cardexplorer.procs=malloc((menu->n_items+1)*sizeof(void *));
   cardexplorer.items=malloc((menu->n_items+1)*sizeof(MENUITEM_DESC));
   
-  memcpy(cardexplorer.procs+1,menu->procs,menu->n_items*sizeof(void *));
+  memcpy((void *)(cardexplorer.procs+1),menu->procs,menu->n_items*sizeof(void *));
   memcpy((MENUITEM_DESC *)cardexplorer.items+1,menu->items,menu->n_items*sizeof(MENUITEM_DESC));
   
   memcpy((MENUITEM_DESC *)cardexplorer.items,&OpenWith_Item,sizeof(MENUITEM_DESC));
-  cardexplorer.procs[0]=(void *)OpenWith_Handle;
+  *((void **)(cardexplorer.procs))=(void *)OpenWith_Handle;
   
   CEXPL_oldghook=(void (*)(void*, int))menu->global_hook_proc;
   cardexplorer.n_items=menu->n_items+1;
