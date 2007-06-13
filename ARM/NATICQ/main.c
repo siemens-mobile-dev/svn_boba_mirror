@@ -3288,6 +3288,10 @@ void as_ghook(GUI *data, int cmd)
     pos=EDIT_GetCursorPos(data);
     EDIT_SetTextInvert(data,pos,1);
   }
+  if (cmd==0x0C)
+  {
+    EDIT_SetCursorPos(data,1);
+  } 
 }
 
 HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDSMIL,LGP_NULL};
