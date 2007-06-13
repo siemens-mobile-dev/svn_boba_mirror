@@ -50,7 +50,11 @@ void CList_RedrawCList()
 #else
   int icon_num=0;
 #endif
+#ifdef ELKA
+  N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1-SCR_START)-2;
+#else
   N_cont_disp = sdiv(font_y,ScreenH()-CLIST_Y1-SCR_START)-1;
+#endif
   if(!cltop)return;
 
   LockSched();
@@ -347,11 +351,11 @@ void CList_ToggleVisibilityForGroup(int GID)
     {
       if(ClEx->IsVisible)
       {
-        ClEx->IsVisible=0;        
+        ClEx->IsVisible=0;
       }
       else
       {
-        ClEx->IsVisible=1;   
+        ClEx->IsVisible=1;
       }
     }
     ClEx = ClEx->next;
@@ -535,7 +539,7 @@ CLIST* CList_AddContact(char* jid,
     if(!strchr(jid, '@'))
     {
       ResEx->entry_type=T_TRANSPORT; // Транспортный агент
-    } 
+    }
     ResEx->status=PRESENCE_OFFLINE;
   }
   ResEx->name = NULL;
@@ -561,7 +565,7 @@ CLIST* CList_AddContact(char* jid,
     }
     CLIST *after_tmp = tmp->next;
     tmp->next=Cont_Ex;
-    Cont_Ex->next =after_tmp; 
+    Cont_Ex->next =after_tmp;
   }
 
   NContacts++;
