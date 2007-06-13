@@ -43,6 +43,7 @@ int IsActiveUp=0;
 
 int Is_Vibra_Enabled;
 unsigned int Is_Sounds_Enabled;
+int Is_Show_Offline;
 
 int S_ICONS[18];
 
@@ -642,6 +643,11 @@ CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
     {
       s=ContactT9Key;
       if ((!t->isgroup)&&(t->group==grp_id)&&(grp_dis)&&(!(*s))) goto L_NOT9;
+
+      if (!Is_Show_Offline) // by Seklth 13.06.2007
+        if ((!t->isgroup)&&(!t->isactive)&&(t->state==0xFFFF)&&(!(*s))) 
+          if (!t->isunread) goto L_NOT9;
+
       d=t->name;
       while(c=*s++)
       {
@@ -2160,9 +2166,11 @@ int main()
   extern const int DEF_VIBRA_STATUS;
   extern const int DEF_SOUNDS_STATUS;
   extern const int MY_DEF_STATUS;
+  extern const int DEF_SHOWOFF_STATUS;
   
   Is_Vibra_Enabled=DEF_VIBRA_STATUS;
   Is_Sounds_Enabled=DEF_SOUNDS_STATUS;
+  Is_Show_Offline=DEF_SHOWOFF_STATUS;
   CurrentStatus=MY_DEF_STATUS+1;
   
   setup_ICONS();

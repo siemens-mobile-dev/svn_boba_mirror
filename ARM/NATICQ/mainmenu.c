@@ -139,6 +139,7 @@ void AddContactMenu(void)
 
 extern int Is_Vibra_Enabled;
 extern unsigned int Is_Sounds_Enabled; 
+extern int Is_Show_Offline;
 
 
 void ChangeVibraMode(void)
@@ -150,6 +151,12 @@ void ChangeVibraMode(void)
 void ChangeSoundMode(void)
 {
   Is_Sounds_Enabled=!(Is_Sounds_Enabled);
+  RefreshGUI();
+}
+
+void ChangeShowOfflineMode(void)
+{
+  Is_Show_Offline=!(Is_Show_Offline);
   RefreshGUI();
 }
 
@@ -190,12 +197,13 @@ static const HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
 static const int mmenusoftkeys[]={0,1,2};
 
-static const char * const menutexts[7]=
+static const char * const menutexts[8]=
 {
   LG_MNUSTATUS,
   LG_MNUADDCONT,
   LG_MNUVIBRA,
   LG_MNUSOUND,
+  LG_MNUSHOWOFF,
   LG_MNUEDCFG,
   LG_MNUPING,
   LG_MNUABOUT
@@ -212,12 +220,13 @@ static const char * const menutexts[7]=
   {S_ICONS,    (int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };*/
 
-static const void *menuprocs[7]=
+static const void *menuprocs[8]=
 {
   (void *)DispStatusChangeMenu,
   (void *)AddContactMenu,
   (void *)ChangeVibraMode,
   (void *)ChangeSoundMode,
+  (void *)ChangeShowOfflineMode,
   (void *)EditConfig,
   (void *)PingToServer,
   (void *)AboutDlg,
@@ -261,7 +270,10 @@ void menuitemhandler(void *data, int curitem, int *unk)
   case 3:
     SetMenuItemIconArray(data,item,S_ICONS+(Is_Sounds_Enabled?IS_GROUP+1:IS_GROUP));
     break;
-  case 6:
+  case 4:
+    SetMenuItemIconArray(data,item,S_ICONS+(Is_Show_Offline?IS_GROUP+1:IS_GROUP));
+    break;
+  case 7:
     SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);
     break;
   }
@@ -287,7 +299,7 @@ static const MENU_DESC tmenu=
   (void*)menuitemhandler,
   NULL,//menuitems,
   NULL,//menuprocs,
-  7
+  8
 };
 
 void ShowMainMenu()

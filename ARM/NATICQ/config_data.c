@@ -158,5 +158,7 @@ __root const CFG_CBOX_ITEM cfgcbox7_1[12]={
   LG_STFFC
 };
 
-__root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};
+__root const CFG_HDR cfghdr7_4={CFG_CHECKBOX,"Default Show Offline Status",0,2};
+__root const int DEF_SHOWOFF_STATUS=0;
 
+__root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};
