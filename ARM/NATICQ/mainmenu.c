@@ -40,11 +40,6 @@ int ac_onkey(GUI *data, GUI_MSG *msg)
 {
   TPKT *p;
   char num[10];
-  int key=msg->gbsmsg->submess;
-  if (msg->gbsmsg->msg==KEY_DOWN)
-  {
-    if(key=='*'||key=='#') return (-1);
-  }
   if (msg->keys==0xFFF)
   {
     if (connect_state==3)
@@ -128,7 +123,7 @@ void AddContactMenu(void)
   ascii2ws(ews, LG_ENTERUIN);
   ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
-  ConstructEditControl(&ec,ECT_NORMAL_NUM,0x40,0,9);
+  ConstructEditControl(&ec,ECT_NORMAL_NUM,ECF_APPEND_EOL|ECF_DISABLE_MINUS|ECF_DISABLE_POINT,0,9);
   AddEditControlToEditQend(eq,&ec,ma);
   patch_header(&ac_hdr);
   patch_input(&ac_desc);
@@ -176,14 +171,11 @@ void EditConfig(void)
 void PingToServer(void)
 {
   TPKT *p;
-  TDate d;
-  TTime t;
-  GetDateTime(&d,&t);
   p=malloc(sizeof(PKT)+sizeof(TTime));
-  memcpy(p->data,&t,sizeof(TTime));
+  GetDateTime(NULL,(TTime *)p->data);
   p->pkt.uin=0;
   p->pkt.type=T_ECHO;
-  p->pkt.data_len=sizeof(TDate)+sizeof(TTime);
+  p->pkt.data_len=sizeof(TTime);
   SUBPROC((void *)SendAnswer,0,p);
 }
 

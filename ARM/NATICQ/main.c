@@ -958,7 +958,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
   return(0);
 }
 
-void GetOnTotalContact(int group_id,int *_online, int *_total)
+void GetOnTotalContact(int group_id,int *_onlinetotal)
 {
   CLIST *t;
   t=(CLIST *)&cltop;
@@ -971,9 +971,10 @@ void GetOnTotalContact(int group_id,int *_online, int *_total)
       if (t->state!=0xFFFF) online++;
     }
   }
-  *_total=total;
-  *_online=online;
+  _onlinetotal[0]=online;
+  _onlinetotal[1]=total;
 }
+
 
 void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 {
@@ -1019,13 +1020,13 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
     }
     else
     {
-      int online,total;
-      GetOnTotalContact(t->group,&online,&total);
+      int onlinetotal[2];
+      GetOnTotalContact(t->group,onlinetotal);
 #ifdef USE_MLMENU
       wsprintf(ws1,percent_t,t->name);
-      wsprintf(ws3,"(%d/%d)",online,total);
+      wsprintf(ws3,"(%d/%d)",onlinetotal[0],onlinetotal[1]);
 #else
-      wsprintf(ws1,"%t%c%c(%d/%d)",t->name,0xE01D,0xE012,online,total);
+      wsprintf(ws1,"%t%c%c(%d/%d)",t->name,0xE01D,0xE012,onlinetotal[0],onlinetotal[1]);
 #endif
       if (t->state) icon++; //Модификация иконки группы
     }
@@ -2561,18 +2562,28 @@ void ed_options_handler(USR_MENU_ITEM *item)
 	EDITCONTROL ec;
 	WSHDR *ed_ws;
 	int c;
-	int pos;
 	char *p=templates_lines[i];
 	ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
 	ed_ws=AllocWS(ec.pWS->wsbody[0]+strlen(p));
 	wstrcpy(ed_ws,ec.pWS);
-	pos=EDIT_GetCursorPos(ed_struct->ed_chatgui);
-	while(c=*p++)
-	{
-	  wsInsertChar(ed_ws,char8to16(c),pos++);
-	}
-	EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
-	EDIT_SetCursorPos(ed_struct->ed_chatgui,pos);
+        if (EDIT_GetFocus(ed_struct->ed_chatgui)==ed_struct->ed_answer)
+        {
+          int pos=EDIT_GetCursorPos(ed_struct->ed_chatgui);
+          while(c=*p++)
+          {
+            wsInsertChar(ed_ws,char8to16(c),pos++);
+          }
+          EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
+          EDIT_SetCursorPos(ed_struct->ed_chatgui,pos);
+        }
+        else
+        {
+          while(c=*p++)
+          {
+            wsAppendChar(ed_ws,char8to16(c));
+          }
+          EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
+        }
 	FreeWS(ed_ws);
       }
       break;
@@ -3317,7 +3328,7 @@ void as_ghook(GUI *data, int cmd)
   if (cmd==0x0C)
   {
     EDIT_SetCursorPos(data,1);
-  } 
+  }
 }
 
 HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDSMIL,LGP_NULL};
