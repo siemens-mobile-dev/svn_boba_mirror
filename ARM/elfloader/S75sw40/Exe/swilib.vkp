@@ -87,6 +87,7 @@
 02F0: 0xA0FC585C ; 0BC: __arm int divide(int divisor, int dividend);
 02F4: 0xA0FC5920 ; 0BD: __arm int DivBy10(int divident);
 0318: 0xA01A6B40 ; 0C6: __arm char GetAkkuCapacity();
+0328: 0xA8E2EC9E ; 0CA: __swi __arm  RAMNET * RamNet();
 03C4: 0xA02FEAE1   ;  80F1: void *BuildCanvas()
 03FC: 0xA0074000 ; 0FF: unsigned int AddrLibrary();
 0400: 0xA0092A94 ; 100: __arm void GBS_SendMessage(int cepid_to, int msg, ...); //int submess, void *data1, void *data2
