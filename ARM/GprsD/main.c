@@ -1,7 +1,7 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
-#define RECONNECT_TIME (216*30)
+#define RECONNECT_TIME (216*120)
 
 CSM_DESC icsmd;
 
@@ -25,6 +25,13 @@ extern const int ENA_GPRSD;
 /*
 Del by Kibab - бинарные профили конфигурируются
 */
+
+GBSTMR mytmr;
+void reconnect(void)
+{
+  void do_connect(void);
+  SUBPROC((void *)do_connect);
+}
 
 #ifdef NEWSGOLD
 void do_connect(void)
@@ -132,16 +139,29 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
           strcpy(s,"Can't start session!");
         LogWriter(s);
         ShowMSG(1,(int)s);
-	OldGPRSstatus=0;
+	if (m==LMAN_CONNECT_REJ_IND)
+	{
+	  //Если не удалось стартовать сессию, то пробуем еще раз по таймеру
+	  GBS_StartTimerProc(&mytmr,RECONNECT_TIME,reconnect);
+	}
+	else
+	{
+	  OldGPRSstatus=0;
+	}
       }
     }
   }
   if ((!OldGPRSstatus)&&IsGPRSEnabled())
   {
     //Включили жопорез
+    GBS_DelTimer(&mytmr);
     SUBPROC((void*)do_connect);
   }
-  if (!IsGPRSEnabled()) OldGPRSstatus=0;
+  if (!IsGPRSEnabled()) 
+  {
+    GBS_DelTimer(&mytmr);
+    OldGPRSstatus=0;
+  }
   return(csm_result);
 }
 
@@ -149,6 +169,7 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
+  GBS_DelTimer(&mytmr);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 
