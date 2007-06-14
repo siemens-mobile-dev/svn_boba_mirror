@@ -34,7 +34,10 @@ __root const char SMILE_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles";
 __root const CFG_HDR cfghdr234={CFG_STR_UTF8,"Images .png path",0,63};
 __root const char ICON_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img";
 
-__root const CFG_HDR cfghdr235={CFG_STR_UTF8,"Templates path",0,63};
+__root const CFG_HDR cfghdr235={CFG_STR_UTF8,"XStatus .png path",0,63};
+__root const char XSTATUSES_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\ximg";
+
+__root const CFG_HDR cfghdr236={CFG_STR_UTF8,"Templates path",0,63};
 __root const char TEMPLATES_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\templates";
 
 __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"",0,0};

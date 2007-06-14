@@ -12,6 +12,7 @@ typedef struct
   unsigned int group;
   char name[64];
   unsigned short state;
+  unsigned short xstate;
   int isunread;
   char *log;
   char *answer;

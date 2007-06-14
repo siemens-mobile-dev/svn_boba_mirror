@@ -14,17 +14,13 @@ typedef struct
   STXT_SMILES *botlines;
 }S_SMILES;
 
-/*#pragma pack(1)
-typedef struct
-{
-  unsigned long l;
-}ULONG_BA;
-#pragma pack()*/
-
-
 void FreeSmiles(void);
 void InitSmiles(void);
 void ProcessNextSmile(void);
+
+void FreeXStatusesImg(void);
+void InitXStatusesImg(void);
+void ProcessNextXStatImg(void);
 
 S_SMILES *FindSmileById(int n);
 S_SMILES *FindSmileByUni(int wchar);

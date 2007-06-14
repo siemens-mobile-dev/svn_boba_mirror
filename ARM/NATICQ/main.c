@@ -11,6 +11,11 @@
 #include "smiles.h"
 #include "naticq_ipc.h"
 
+extern volatile int total_smiles;
+extern volatile int total_xstatuses;
+extern volatile int xstatuses_load;
+
+
 #define USE_MLMENU
 
 #define TMR_SECOND 216
@@ -160,6 +165,7 @@ void IlluminationOn(const int disp, const int key, const int tmr, const int fade
 //===================================================================
 extern S_SMILES *s_top;
 extern DYNPNGICONLIST *SmilesImgList;
+extern DYNPNGICONLIST *XStatusesImgList;
 
 //=============================Проигрывание звука=======================
 extern const char sndStartup[];
@@ -833,8 +839,14 @@ void create_contactlist_menu(void)
 
 void contactlist_menu_ghook(void *data, int cmd)
 {
+  PNGTOP_DESC *pltop=PNG_TOP();
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
   if (cmd==0x0A)
   {
+    pltop->dyn_pltop=XStatusesImgList;
     DisableIDLETMR();
     if (request_close_clmenu)
     {
@@ -999,6 +1011,10 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
       }
 #ifdef USE_MLMENU
       wsprintf(ws3,percent_d,t->uin);
+      if ((t->xstate<total_xstatuses)&&(t->xstate))
+      {
+	wsInsertChar(ws3,FIRST_UCS2_BITMAP+t->xstate-1,1);
+      }
 #endif
     }
     else
@@ -1617,6 +1633,7 @@ ProcessPacket(TPKT *p)
     {
       int i=t->state;
       CLIST *oldt=NULL;
+      t->xstate=p->data[2];
       if (contactlist_menu_id)
       {
 	oldt=FindContactByN(GetCurMenuItem(FindGUIbyId(contactlist_menu_id,NULL)));
@@ -1714,8 +1731,6 @@ void process_active_timer(void)
 }
 
 //===============================================================================================
-extern volatile int total_smiles;
-
 void method0(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
@@ -1727,6 +1742,10 @@ void method0(MAIN_GUI *data)
   if (total_smiles)
   {
     wstrcatprintf(data->ws1,"\n+ Loaded %d smiles",total_smiles);
+  }
+  if (xstatuses_load)
+  {
+    wstrcatprintf(data->ws1,"\n+ Loaded %d xstatus images",total_xstatuses);
   }
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
@@ -1855,6 +1874,7 @@ void maincsm_onclose(CSM_RAM *csm)
   FreeWS(ews);
   //  MutexDestroy(&contactlist_mtx);
   SUBPROC((void *)FreeSmiles);
+  SUBPROC((void *)FreeXStatusesImg);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
   SUBPROC((void *)ElfKiller);
@@ -1880,7 +1900,8 @@ void CheckDoubleRun(void)
   }
   else
   {
-    InitSmiles();
+    InitXStatusesImg();
+    //InitSmiles(); Это вызовется из InitXStatusesImg
     create_connect();
   }
 }
@@ -1908,6 +1929,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  case IPC_SMILE_PROCESSED:
 	    //Только собственные смайлы ;)
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextSmile);
+	    REDRAW();
+	    break;
+	  case IPC_XSTATUSIMG_PROCESSED:
+	    //Только собственные иксстатусы ;)
+	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextXStatImg);
 	    REDRAW();
 	    break;
 	  }
