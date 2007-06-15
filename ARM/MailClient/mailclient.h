@@ -4,6 +4,8 @@
   Типы данных, общие для всех модулей проекта
 */
 
+#define wslen(ws) ws->wsbody[0]
+
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
@@ -11,6 +13,7 @@ extern const char MAIL_LOGIN[];
 extern const char MAIL_PASS[];
 extern const char EML_PATH[];
 extern const int DEFAULT_ACTION;
+extern const unsigned int LOAD_IF_LESS;
 extern const int IF_DEL_AUX;
 extern const char POP3_ADRESS[];
 extern const unsigned int POP3_PORT;
@@ -33,6 +36,7 @@ extern const char I_MES_DEL[];
 #define M_HEADERS_LOADED 2
 #define M_FULL_LOADED 3
 #define M_DELETE 4
+#define M_IS_BIG_LETTER 0xFFFFFFFF
 
 #define POP_GREETING 0
 #define POP_VER_LOGIN 1
@@ -46,18 +50,20 @@ extern const char I_MES_DEL[];
 #define POP_DELETE_MESSAGE 9
 
 #define MDB_MAGIC 0x01024244
+#define MDB_NAME "mails.db"
 
-
-
+#define IPC_DAEMON_NAME "MailDaemon"
+#define IPC_VIEWER_NAME "MailViewer"
 //IPC messages
 
-#define IPC_PING 0
-#define IPC_CHECK_MAILBOX 1
-#define IPC_CHANGE_STATE 2
-//states:
-//1 - elf turn on
-//2 - elf turn off
-#define IPC_LOADING_FINISHED 3
+#define IPC_LOGON 0
+#define IPC_LOGOFF 1
+
+#define IPC_STAT 2
+#define IPC_CHECK_MAILBOX 3
+#define IPC_LOADING_FINISHED 4
+#define IPC_STOP_CHECKING 5
+#define IPC_CHECK_DOUBLERUN 6
 
 #pragma pack(1)
 typedef struct

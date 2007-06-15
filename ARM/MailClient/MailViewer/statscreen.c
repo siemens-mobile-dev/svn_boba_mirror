@@ -5,10 +5,7 @@
 #pragma inline
 void patch_rect(RECT* rc)
 {
-  rc->x=0;
-  rc->y=YDISP;
-  rc->x2=ScreenW()-1;
-  rc->y2=ScreenH()-1;
+  StoreXYXYtoRECT(rc,0,YDISP,ScreenW()-1,ScreenH()-1);
 }
 
 const char *c_states[]=
@@ -29,7 +26,8 @@ extern POP_STAT *pop_stat;
 extern volatile int daemon_present;
 extern volatile int options_menu_id;
 extern void ascii2ws(WSHDR *ws, const char *s);
-extern void check_mailbox(void);
+extern void send_req_checkmailbox(void);
+extern void send_req_stopcheck(void);
 
 volatile int stat_gui_id;
 typedef struct
@@ -46,7 +44,7 @@ void method0(MAIN_GUI *data)
   DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));
-  if (daemon_present==-1 || pop_stat==NULL)
+  if (daemon_present==-1)
   {
     ascii2ws(data->ws1,"Daemon not runned!");
     DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
@@ -61,12 +59,12 @@ void method0(MAIN_GUI *data)
              pop_stat->pop3_recv,pop_stat->in_pop3,pop_stat->pop3_del);
     DrawString(data->ws1,3,60+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
   }
+   
+  ascii2ws(data->ws1,"Stop");
+  DrawString(data->ws1,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM),(scr_w>>1)-1,scr_h-4,FONT_MEDIUM,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   
-  if (pop_stat->connect_state==0)
-  {
-    ascii2ws(data->ws1,"Close");
-    DrawString(data->ws1,(scr_w>>1),scr_h-4-GetFontYSIZE(FONT_MEDIUM),scr_w-4,scr_h-4,FONT_MEDIUM,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  }
+  ascii2ws(data->ws1,"Close");
+  DrawString(data->ws1,(scr_w>>1),scr_h-4-GetFontYSIZE(FONT_MEDIUM),scr_w-4,scr_h-4,FONT_MEDIUM,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
 void method1(MAIN_GUI *data,void *(*malloc_adr)(int))
@@ -101,12 +99,18 @@ int method5(MAIN_GUI *data,GUI_MSG *msg)
   {
     switch(msg->gbsmsg->submess)
     {
+    case LEFT_SOFT:
+      send_req_stopcheck();
+      break;
+      
     case RIGHT_SOFT:
-      if (pop_stat->connect_state==0)
+      if (pop_stat->connect_state==0 || daemon_present==-1)
         return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      return (3);
+      
       
     case GREEN_BUTTON:
-      check_mailbox();
+      send_req_checkmailbox();
       break;
     }
   }
@@ -133,7 +137,7 @@ const void * const gui_methods[11]={
 
 const RECT Canvas={0,0,0,0};
 
-void create_gui(void)
+int create_gui()
 {
   MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
   zeromem(main_gui,sizeof(MAIN_GUI));
@@ -144,4 +148,5 @@ void create_gui(void)
   main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   stat_gui_id=CreateGUI(main_gui);
   if (options_menu_id) GeneralFunc_flag1(options_menu_id,1);
+  return stat_gui_id;
 }

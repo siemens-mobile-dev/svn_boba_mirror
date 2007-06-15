@@ -4,28 +4,13 @@
 
 #define TMR_SECOND 216
 
-const char ipc_my_name[]="MailDaemon";
-const char ipc_viewer_name[]="MailViewer";
+const char mailer_db_name[]=MDB_NAME;
+
+const char ipc_viewer_name[]=IPC_VIEWER_NAME;
+const char ipc_my_name[]=IPC_DAEMON_NAME;
 
 volatile int viewer_present=-1; //Активен ли вьювер
 
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-
-#pragma inline
-void patch_rect(RECT* rc)
-{
-  rc->x=0;
-  rc->y=YDISP;
-  rc->x2=ScreenW()-1;
-  rc->y2=ScreenH()-1;
-}
 
 #pragma inline
 int is_digit(int c)
@@ -77,10 +62,10 @@ ML_DAEMON *cur_ml;
 
 int sock=-1;
 
+#pragma segment="ELFBEGIN"
 void ElfKiller(void)
 {
-  extern void *ELF_BEGIN;
-  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+  kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
 }
 
 void FreeMailDB()
@@ -106,32 +91,30 @@ void InitMailDB()
   ML_DAEMON *ml_cur=(ML_DAEMON *)&mails;
   unsigned int err;
   strcpy(fname,EML_PATH);
-  strcat(fname,"mails.db");
+  strcat(fname,mailer_db_name);
   FreeMailDB();
-  if ((f=fopen(fname,A_BIN+A_ReadOnly,P_READ,&err))==-1)
+  if ((f=fopen(fname,A_BIN+A_ReadOnly,P_READ,&err))!=-1)
   {
-    mails=0;
-    return;
-  }
-  while (fread(f,&mail_db,sizeof(MAIL_DB),&err)==sizeof(MAIL_DB))
-  {
-    if(mail_db.magic!=MDB_MAGIC) break;
-    ml_cur=ml_cur->next=malloc(sizeof(ML_DAEMON));
-    ml_cur->next=0;
-    ml_cur->state=mail_db.state;
-    ml_cur->is_read=mail_db.is_read;
-    ml_cur->mail_size=mail_db.mail_size;
-    if (mail_db.uidl_len)
+    while (fread(f,&mail_db,sizeof(MAIL_DB),&err)==sizeof(MAIL_DB))
     {
-      uidl=malloc(mail_db.uidl_len+1);
-      uidl[mail_db.uidl_len]=0;
-      fread(f,uidl,mail_db.uidl_len,&err);
-      ml_cur->uidl=uidl;
+      if(mail_db.magic!=MDB_MAGIC) break;
+      ml_cur=ml_cur->next=malloc(sizeof(ML_DAEMON));
+      ml_cur->next=0;
+      ml_cur->state=mail_db.state;
+      ml_cur->is_read=mail_db.is_read;
+      ml_cur->mail_size=mail_db.mail_size;
+      if (mail_db.uidl_len)
+      {
+        uidl=malloc(mail_db.uidl_len+1);
+        uidl[mail_db.uidl_len]=0;
+        fread(f,uidl,mail_db.uidl_len,&err);
+        ml_cur->uidl=uidl;
+      }
+      else ml_cur->uidl=0;
+      ml_cur->num_in_list=-1;
     }
-    else ml_cur->uidl=0;
-    ml_cur->num_in_list=-1;
+    fclose(f,&err);
   }
-  fclose(f,&err);
 }
 
 void write_mail_DB()
@@ -142,20 +125,21 @@ void write_mail_DB()
   ML_DAEMON *ml_list=(ML_DAEMON *)&mails;
   MAIL_DB mail_db;
   strcpy(fname,EML_PATH);
-  strcat(fname,"mails.db");
-  if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))==-1)
-    return;
-  while((ml_list=ml_list->next))
+  strcat(fname,mailer_db_name);
+  if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
   {
-    mail_db.magic=MDB_MAGIC;
-    mail_db.uidl_len=ml_list->uidl?strlen(ml_list->uidl):0;
-    mail_db.state=ml_list->state;
-    mail_db.is_read=ml_list->is_read;
-    mail_db.mail_size=ml_list->mail_size;
-    fwrite(f,&mail_db,sizeof(MAIL_DB),&err);
-    if (mail_db.uidl_len) fwrite(f,ml_list->uidl,mail_db.uidl_len,&err);
+    while((ml_list=ml_list->next))
+    {
+      mail_db.magic=MDB_MAGIC;
+      mail_db.uidl_len=ml_list->uidl?strlen(ml_list->uidl):0;
+      mail_db.state=ml_list->state;
+      mail_db.is_read=ml_list->is_read;
+      mail_db.mail_size=ml_list->mail_size;
+      fwrite(f,&mail_db,sizeof(MAIL_DB),&err);
+      if (mail_db.uidl_len) fwrite(f,ml_list->uidl,mail_db.uidl_len,&err);
+    }
+    fclose(f,&err);
   }
-  fclose(f,&err);
 }
 
 void add_uidl_if_exist(char *recv_line)
@@ -182,7 +166,11 @@ void add_uidl_if_exist(char *recv_line)
   ml_cur->next=0;
   ml_cur->uidl=malloc(strlen(recv_line)+1);
   strcpy(ml_cur->uidl,recv_line);
-  ml_cur->state=DEFAULT_ACTION;
+  if (DEFAULT_ACTION==1 && LOAD_IF_LESS)
+  {
+    ml_cur->state=M_IS_BIG_LETTER;
+  }
+  else ml_cur->state=DEFAULT_ACTION;
   ml_cur->is_read=0;
   ml_cur->mail_size=0;
 }
@@ -200,6 +188,10 @@ void set_mes_size(char *recv_line)
     if (ml_list->num_in_list==num_in_list)
     {
       ml_list->mail_size=mes_size;
+      if (ml_list->state==M_IS_BIG_LETTER)
+      {
+        ml_list->state=mes_size>LOAD_IF_LESS?M_LOAD_HEADER:M_LOAD_FULL;
+      }
       return;
     }
     ml_list=ml_list->next;
@@ -353,8 +345,6 @@ int resp_ok(char *buf)
   if (strncmp(buf,"+OK",3)) return -1;
   return (0);
 }
-
-
 
 
 int fhandler=-1;
@@ -818,15 +808,31 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   if (msg->msg==MSG_IPC)  // Пришло сообщение, возможно от вьювера
   { 
-    IPC_REQ *ipc;
+    IPC_REQ *ipc, *ipc_stat;
     if ((ipc=(IPC_REQ*)msg->data0))
     {
       if (strcmp(ipc->name_to,ipc_my_name)==0)
       {
         switch (msg->submess)
         {
-        case IPC_PING:
+        case IPC_LOGON:
           viewer_present=0;
+          if ((int)ipc->data==0)
+          {
+            ipc->name_to=ipc->name_from; 
+            ipc->name_from=ipc_my_name;
+            ipc->data=(void *)1;
+            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,ipc);
+          }
+          ipc_stat=malloc(sizeof(IPC_REQ));
+          ipc_stat->name_to=ipc_viewer_name;
+          ipc_stat->name_from=ipc_my_name;
+          ipc_stat->data=&pop_stat;
+          GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_STAT,ipc_stat);
+          break;
+          
+        case IPC_LOGOFF:
+          viewer_present=-1;   // Вьювер вышел
           break;
           
         case IPC_CHECK_MAILBOX:
@@ -837,29 +843,17 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
             GBS_DelTimer(&reconnect_tmr);
             DNR_TRIES=3;
             SUBPROC((void *)create_connect);
-            ipc->data=(void *)0;
+            ipc->data=(void *)1;
           }
           else
-            ipc->data=(void *)1;
+            ipc->data=(void *)0;
           GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_MAILBOX,ipc);
           break;
           
-        case IPC_CHANGE_STATE:
-          switch((int)ipc->data)
-          {
-          case 1:               
-            viewer_present=0;      // Вьювер запущен после демона, отправляем пинг и указатель на статистику
-            ipc->name_to=ipc->name_from;
-            ipc->name_from=ipc_my_name;
-            ipc->data=(void *)&pop_stat;
-            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_PING,ipc);
-            break;
-            
-          case 2:     
-            viewer_present=-1;   // Вьювер вышел 
-            break;
-          }
-          break;          
+        case IPC_STOP_CHECKING:
+          mfree(ipc);
+          SUBPROC((void *)end_connect,"Manually stopped");
+          break;
         }
       }
     }
@@ -879,7 +873,6 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
             GBS_DelTimer(&reconnect_tmr);
             DNR_TRIES=3;
             SUBPROC((void *)create_connect);
-            return (0);
           }
         }
       }
@@ -891,17 +884,17 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     {
     case LMAN_DISCONNECT_IND:
       is_gprs_online=0;
-      goto L_OLD;
+      break;
     case LMAN_CONNECT_CNF:
       is_gprs_online=1;
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
-      goto L_OLD;
+      break;
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
       {
 	if (DNR_TRIES) SUBPROC((void *)create_connect);
       }
-      goto L_OLD;
+      break;
     }
     if ((int)msg->data1==sock)
     {
@@ -984,15 +977,14 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
-L_OLD:
   csm_result = old_icsm_onMessage(data, msg);
   return(csm_result);
 }
 
+#pragma segment="ELFBEGIN"
 void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
   GBS_DelTimer(&reconnect_tmr);
   if (recived_line)
   {
@@ -1002,7 +994,7 @@ void MyIDLECSM_onClose(CSM_RAM *data)
   FreeMailDB();
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  seqkill(data,old_icsm_onClose,__segment_begin("ELFBEGIN"),SEQKILLER_ADR());
 }
 
 IPC_REQ gipc;
@@ -1025,8 +1017,8 @@ int main(char *exename, char *fname)
   
   gipc.name_to=ipc_viewer_name;
   gipc.name_from=ipc_my_name;
-  gipc.data=(void *)1;
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHANGE_STATE,&gipc);
+  gipc.data=(void *)0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,&gipc);
   
   return (0);
 }

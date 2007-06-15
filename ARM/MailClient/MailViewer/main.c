@@ -2,30 +2,31 @@
 #include "..\conf_loader.h"
 #include "..\mailclient.h"
 
-const char ipc_daemon_name[]="MailDaemon";
-const char ipc_my_name[]="MailViewer";
+const char ipc_daemon_name[]=IPC_DAEMON_NAME;
+const char ipc_my_name[]=IPC_VIEWER_NAME;
 
-extern void create_gui(void);
-//===============================================================================================
+extern int create_gui();
+//==============================================================================
 // ELKA Compatibility
 #pragma inline
-void patch_header(HEADER_DESC* head)
+void patch_header(const HEADER_DESC* head)
 {
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
+  ((HEADER_DESC*)head)->rc.x=0;
+  ((HEADER_DESC*)head)->rc.y=YDISP;
+  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()-1+YDISP;
 }
 #pragma inline
-void patch_input(INPUTDIA_DESC* inp)
+void patch_input(const INPUTDIA_DESC* inp)
 {
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+  ((INPUTDIA_DESC*)inp)->rc.x=0;
+  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
+  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
+  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
 }
+//==============================================================================
 
-#define wslen(ws) ws->wsbody[0]
+
 //===============================================================================================
 int S_ICONS[8];
 const char empty_str[]="";
@@ -138,7 +139,7 @@ void dos2ws(WSHDR *ws, const char *s)
 // --------------------------------------------------------------------------------
 extern char *unmime_header(const char *encoded_str);
 // --------------------------------------------------------------------------------
-const char mailer_db_name[]="mails.db";
+const char mailer_db_name[]=MDB_NAME;
 const char _percent_t[]="%t";
 
 // --------------------------------------------------------------------------------
@@ -147,6 +148,7 @@ volatile int maillist_menu_id;
 volatile int options_menu_id;
 volatile int view_mail_id;
 volatile int request_recount_mailmenu;
+volatile int maincsm_id;
 // -------------------------- Global Variables -------------------------------------
 typedef struct
 {
@@ -154,10 +156,10 @@ typedef struct
   int gui_id;
 }MAIN_CSM;
 
+#pragma segment="ELFBEGIN"
 void ElfKiller(void)
 {
-  extern void *ELF_BEGIN;
-  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+  kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
 }
 //-----------------------------------------------------------------------------------
 volatile int daemon_present=-1; //Активен ли демон
@@ -244,45 +246,39 @@ int InitMailDB()
   ML_VIEW *ml_cur=(ML_VIEW *)&mails;
   unsigned int err;
   strcpy(fname,EML_PATH);
-  if (fname[strlen(fname)-1]!='\\')
   {
-    strcat(fname,"\\");
+    int len=strlen(fname);
+    if (fname[len-1]!='\\')
+    {
+      fname[len-1]='\\';
+      fname[len]=0;
+    }
   }
   strcat(fname,mailer_db_name);
   FreeMailDB();
-  if ((f=fopen(fname,A_BIN+A_ReadOnly,P_READ,&err))==-1)
+  if ((f=fopen(fname,A_BIN+A_ReadOnly,P_READ,&err))!=-1)
   {
-    mails=0;
-    return(n);
-  }
-  while (fread(f,&mail_db,sizeof(MAIL_DB),&err)==sizeof(MAIL_DB))
-  {
-    if(mail_db.magic!=MDB_MAGIC) break;
-    ml_cur=ml_cur->next=malloc(sizeof(ML_VIEW));
-    ml_cur->next=0;
-    ml_cur->state=mail_db.state;
-    ml_cur->is_read=mail_db.is_read;
-    ml_cur->is_attach=0;
-    ml_cur->mail_size=mail_db.mail_size;
-    if (mail_db.uidl_len)
+    while (fread(f,&mail_db,sizeof(MAIL_DB),&err)==sizeof(MAIL_DB))
     {
-      uidl=malloc(mail_db.uidl_len+1);
-      uidl[mail_db.uidl_len]=0;
-      fread(f,uidl,mail_db.uidl_len,&err);
-      ml_cur->uidl=uidl;
+      if(mail_db.magic!=MDB_MAGIC) break;
+      ml_cur=ml_cur->next=malloc(sizeof(ML_VIEW));
+      zeromem(ml_cur,sizeof(ML_VIEW));
+      ml_cur->state=mail_db.state;
+      ml_cur->is_read=mail_db.is_read;
+      ml_cur->mail_size=mail_db.mail_size;
+      if (mail_db.uidl_len)
+      {
+        uidl=malloc(mail_db.uidl_len+1);
+        uidl[mail_db.uidl_len]=0;
+        fread(f,uidl,mail_db.uidl_len,&err);
+        ml_cur->uidl=uidl;
+      }
+      else ml_cur->uidl=0;
+      n++;
     }
-    else ml_cur->uidl=0;
-    ml_cur->subject=0;
-    ml_cur->header=0;
-    ml_cur->from=0;
-    ml_cur->to=0;
-    ml_cur->content_type=0;
-    ml_cur->content_encoding=0;
-    ml_cur->content_type=0;
-    n++;
+    fclose(f,&err);
+    InitHeaders();
   }
-  fclose(f,&err);
-  InitHeaders();
   return (n);
 }
 
@@ -295,19 +291,20 @@ void write_mail_DB()
   MAIL_DB mail_db;
   strcpy(fname,EML_PATH);
   strcat(fname,mailer_db_name);
-  if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))==-1)
-    return;
-  while((ml_list=ml_list->next))
+  if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
   {
-    mail_db.magic=MDB_MAGIC;
-    mail_db.uidl_len=(ml_list->uidl)?strlen(ml_list->uidl):NULL;
-    mail_db.state=ml_list->state;
-    mail_db.is_read=ml_list->is_read;
-    mail_db.mail_size=ml_list->mail_size;
-    fwrite(f,&mail_db,sizeof(MAIL_DB),&err);
-    if (mail_db.uidl_len) fwrite(f,ml_list->uidl,mail_db.uidl_len,&err);
+    while((ml_list=ml_list->next))
+    {
+      mail_db.magic=MDB_MAGIC;
+      mail_db.uidl_len=(ml_list->uidl)?strlen(ml_list->uidl):NULL;
+      mail_db.state=ml_list->state;
+      mail_db.is_read=ml_list->is_read;
+      mail_db.mail_size=ml_list->mail_size;
+      fwrite(f,&mail_db,sizeof(MAIL_DB),&err);
+      if (mail_db.uidl_len) fwrite(f,ml_list->uidl,mail_db.uidl_len,&err);
+    }
+    fclose(f,&err);
   }
-  fclose(f,&err);
 }
 
 ML_VIEW *find_mlist_ByID(int id)
@@ -326,8 +323,7 @@ int get_mlist_N()
 {
   ML_VIEW *ml_cur=(ML_VIEW *)(&mails);
   int i=0;
-  while ((ml_cur=ml_cur->next))
-    i++;
+  while ((ml_cur=ml_cur->next)) i++;
   return i;
 }
 
@@ -811,11 +807,10 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 void ed1_ghook(GUI *data, int cmd)
 {
   int j;
-  MAIL_VIEW *view_list;
+  MAIL_VIEW *view_list=EDIT_GetUserPointer(data);
   MAIL_PART *m, *prev;
   if (cmd==3)
   {
-    view_list=EDIT_GetUserPointer(data);
     if (view_list)
     {
       m=view_list->top;
@@ -837,8 +832,9 @@ void ed1_ghook(GUI *data, int cmd)
   if (cmd==0x0A)
   {
     DisableIDLETMR();
-  }    
+  }
 }
+
 INPUTDIA_DESC ed1_desc=
 {
   1,
@@ -916,7 +912,7 @@ extern void iso885952win(char*d,char *s);
 const char default_ctype[]="Content-Type: text/plain; charset=\"windows-1251\"";
 const char default_transfere[]="Content-Transfer-Encoding: 8bit";
 
-MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
+MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
 {
   WSHDR *ws;
   MAIL_PART *top=0, *bot, *prev;
@@ -928,7 +924,8 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
   char fname[128];
   char *eml, *end_header;
   int size;
-  
+  int ed_toitem;
+    
   top=malloc(sizeof(MAIL_PART));
   bot=top;
   top->next=0;
@@ -1027,8 +1024,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
       PrepareEditControl(&ec);
       ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
       SetFontToEditCOptions(&ec.ed_options,1);
-      AddEditControlToEditQend(eq,&ec,ma); 
-      ed_toitem++;
+      ed_toitem=AddEditControlToEditQend(eq,&ec,ma); 
       bot->ec_n=ed_toitem;
       FreeWS(ws);
       mfree(buf);
@@ -1036,7 +1032,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
       
     case MULTIPART:
       p=bot->ct;
-      i=get_param_from_string(p, "boundary=", fname,127);
+      i=get_param_from_string(p,"boundary=",fname,127);
       if (!i) break;
       p=strstr_nocase(eml,fname);
       while(p)
@@ -1093,8 +1089,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma, int ed_toitem)
       PrepareEditControl(&ec);
       ConstructEditControl(&ec,ECT_READ_ONLY_SELECTED,ECF_APPEND_EOL,ws,wslen(ws));
       SetFontToEditCOptions(&ec.ed_options,1);
-      AddEditControlToEditQend(eq,&ec,ma); 
-      ed_toitem++;
+      ed_toitem=AddEditControlToEditQend(eq,&ec,ma); 
       bot->ec_n=ed_toitem;
       FreeWS(ws);
     }
@@ -1111,7 +1106,6 @@ int create_view(ML_VIEW *ml_list)
   MAIL_VIEW *view_list;
   void *ma=malloc_adr();
   void *eq;
-  int ed_toitem=0;
   EDITCONTROL ec;
   WSHDR *ws, *headers;
   char *from, *to, *subject;
@@ -1131,12 +1125,10 @@ int create_view(ML_VIEW *ml_list)
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma);
-    ed_toitem++;
     
     ConstructEditControl(&ec,3,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
-    ed_toitem++;
     FreeWS(ws);
   }
   
@@ -1152,12 +1144,10 @@ int create_view(ML_VIEW *ml_list)
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma);
-    ed_toitem++;
     
     ConstructEditControl(&ec,3,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
-    ed_toitem++;
     FreeWS(ws);
   }
   
@@ -1173,21 +1163,18 @@ int create_view(ML_VIEW *ml_list)
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma);
-    ed_toitem++;
     
     ConstructEditControl(&ec,3,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
-    ed_toitem++;
     FreeWS(ws);
   }
   ascii2ws(headers,"---------------------");
   ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
   SetFontToEditCOptions(&ec.ed_options,1);
   AddEditControlToEditQend(eq,&ec,ma);  
-  ed_toitem++;
   
-  view_list=ParseMailBody(eq,ml_list,ma,ed_toitem);    
+  view_list=ParseMailBody(eq,ml_list,ma);    
   FreeWS(headers);
   patch_header(&ed1_hdr);
   patch_input(&ed1_desc);  
@@ -1220,7 +1207,7 @@ int GetIconIndex(ML_VIEW *m_list)
 
 // ---------------------------------------------------------------------------------
 
-void check_mailbox(void)
+void send_req_checkmailbox(void)
 {
   if (daemon_present!=-1)
   {
@@ -1232,6 +1219,24 @@ void check_mailbox(void)
   }  
 }
 
+void send_req_stopcheck(void)
+{
+  if (daemon_present!=-1)
+  {
+    IPC_REQ *ipc=malloc(sizeof(IPC_REQ));
+    ipc->name_to=ipc_daemon_name;
+    ipc->name_from=ipc_my_name;
+    ipc->data=0;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_STOP_CHECKING,ipc);
+  }    
+}
+
+
+void check_mailbox(GUI *data)
+{
+  send_req_checkmailbox();
+}
+
 void set_state_for_all(int state)
 {
   ML_VIEW *mail_cur=(ML_VIEW *)&mails;
@@ -1241,38 +1246,38 @@ void set_state_for_all(int state)
   }
 }
 
-void set_state_download(void *gui)
+void set_state_download(GUI *data)
 {
   ML_VIEW *cur_menu;
-  cur_menu=MenuGetUserPointer(gui);
+  cur_menu=MenuGetUserPointer(data);
   cur_menu->state=M_LOAD_FULL;
   GeneralFuncF1(2);
 }
 
-void set_state_delete(void *gui)
+void set_state_delete(GUI *data)
 {
   ML_VIEW *cur_menu;
-  cur_menu=MenuGetUserPointer(gui);
+  cur_menu=MenuGetUserPointer(data);
   cur_menu->state=M_DELETE;
   GeneralFuncF1(2);
 }
 
-void set_state_download_all()
+void set_state_download_all(GUI *data)
 {
   set_state_for_all(M_LOAD_FULL);
   GeneralFuncF1(2);
 }
 
-void set_state_delete_all()
+void set_state_delete_all(GUI *data)
 {
   set_state_for_all(M_DELETE);
   GeneralFuncF1(2);
 }
 
-void delete_record(void *gui)
-{ 
+void delete_record(GUI *data)
+{
   ML_VIEW *cur_menu;
-  cur_menu=MenuGetUserPointer(gui);
+  cur_menu=MenuGetUserPointer(data);
   ML_VIEW *mail_cur=(ML_VIEW *)&mails;
   ML_VIEW *ml_prev=mail_cur;
   while((mail_cur=mail_cur->next))
@@ -1298,7 +1303,7 @@ void delete_record(void *gui)
     
   
 
-void back()
+void back(GUI *data)
 {
   GeneralFuncF1(1);
 }
@@ -1318,15 +1323,15 @@ MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
   {NULL,(int)"Назад",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
 };
 
-void *options_menu_HNDLS[OPTIONS_ITEMS_N]=
+const MENUPROCS_DESC options_menu_HNDLS[OPTIONS_ITEMS_N]=
 {
-  (void *)check_mailbox,
-  (void *)set_state_download,
-  (void *)set_state_delete,
-  (void *)set_state_delete_all,
-  (void *)delete_record,
-  (void *)set_state_download_all,
-  (void *)back,  
+  check_mailbox,
+  set_state_download,
+  set_state_delete,
+  set_state_delete_all,
+  delete_record,
+  set_state_download_all,
+  back,  
 };
 
 MENU_DESC options_menu_STRUCT=
@@ -1510,39 +1515,43 @@ void CreateMailList(void)
   maillist_menu_id=CreateMenu(0,0,&maillist_menu,&maillist_menuhdr,0,0,0,0);
 }
 
-void Incoming(void)
+void Incoming(GUI *data)
 {
+  CreateMailList();
   if (pop_stat && daemon_present!=-1)
   {
     if (pop_stat->connect_state!=0)
     {
-      ShowMSG(1,(int)"Can't do it now!");
-      return;
+      create_gui();
     }
   }
-  CreateMailList();
 }
 
-void Outgoing(void)
+void Outgoing(GUI *data)
 {
 }
 
 
-void Options(void)
+void Options(GUI *data)
 {
-  WSHDR* ws;
-  ws=AllocWS(128);
-  str_2ws(ws,successed_config_filename,128);
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
+  WSHDR *ws1, ws1loc;
+  unsigned short ws1num[128];
+  ws1=CreateLocalWS(&ws1loc,ws1num,128);
+  str_2ws(ws1,successed_config_filename,128);
+  ExecuteFile(ws1,0,0);
 }
 
-void About()
+void StatScr(GUI *data)
+{
+  create_gui();
+}
+
+void About(GUI *data)
 {
   ShowMSG(2, (int)"MailClient v0.1\n(C) by Kren\nRst7/CBSIE");
 }
 
-void Exit(void)
+void Exit(GUI *data)
 {
   GeneralFuncF1(1);
 }
@@ -1560,14 +1569,14 @@ MENUITEM_DESC mainmenu_ITEMS[6]=
   {NULL,(int)"Выход",     LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *mainmenu_HNDLS[6]=
+const MENUPROCS_DESC  mainmenu_HNDLS[6]=
 {
-  (void *)Incoming,
-  (void *)Outgoing,
-  (void *)Options,
-  (void *)create_gui,
-  (void *)About,
-  (void *)Exit,
+  Incoming,
+  Outgoing,
+  Options,
+  StatScr,
+  About,
+  Exit,
 };
 
 
@@ -1590,12 +1599,12 @@ void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   patch_header(&mainmenu_HDR);
-  
-  gipc.name_to=ipc_daemon_name;
+
+  gipc.name_to=ipc_my_name;
   gipc.name_from=ipc_my_name;
-  gipc.data=(void *)1;
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHANGE_STATE,&gipc);
-  
+  gipc.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
+
   csm->gui_id=main_menu_id=CreateMenu(0,0,&mainmenu_STRUCT,&mainmenu_HDR,0,6,0,0);
 }
 
@@ -1603,8 +1612,9 @@ void maincsm_onclose(CSM_RAM *csm)
 {
   gipc.name_to=ipc_daemon_name;
   gipc.name_from=ipc_my_name;
-  gipc.data=(void *)2;
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHANGE_STATE,&gipc);
+  gipc.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGOFF,&gipc);
+  
   FreeMailDB();
   SUBPROC((void *)ElfKiller);
 }
@@ -1623,6 +1633,24 @@ void ReInitConfig(void)
 }
 
 extern volatile int stat_gui_id;
+
+void CheckDoubleRun(void)
+{
+  if ((int)(gipc.data)>1)
+  {
+    LockSched();
+    CloseCSM(maincsm_id);
+    ShowMSG(1,(int)"MailViewer already started!");
+    UnlockSched();
+  }
+  else
+  {
+    gipc.name_to=ipc_daemon_name;
+    gipc.name_from=ipc_my_name;
+    gipc.data=0;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,&gipc);
+  }
+}
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
@@ -1644,53 +1672,55 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       {
         switch (msg->submess)
         {
-        case IPC_PING:
-          pop_stat=(POP_STAT *)ipc->data;  // Вместе с пингом приняли статистику
+        case IPC_LOGON:
           daemon_present=0;
+          if ((int)ipc->data==0) // Если запущен при старте, иначе это был ответ
+          {
+            ipc->name_to=ipc->name_from;
+            ipc->name_from=ipc_my_name;
+            ipc->data=(void *)1;
+            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,ipc);
+          }
+          break;
+          
+        case IPC_LOGOFF:
+          daemon_present=-1;   // Демон вышел
+          pop_stat=NULL;
+          break;
+          
+        case IPC_STAT:
+          pop_stat=ipc->data;
+          mfree(ipc);
           break;
           
         case IPC_CHECK_MAILBOX:
           switch ((int)(ipc->data))
           {
-          case 0:
+          case 1:
             if (!stat_gui_id)
               create_gui();
             break;
             
-          case 1:
+          case 0:
             ShowMSG(1,(int)"Can't connect!");
             break;
           }
           mfree(ipc);
           break;
           
-        case IPC_CHANGE_STATE:
-          switch((int)ipc->data)
-          {
-          case 1:       // Демон запущен после вьювера, отправляем ответный пинг
-            daemon_present=0;
-            ipc->name_to=ipc->name_from;
-            ipc->name_from=ipc_my_name;
-            ipc->data=0;
-            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_PING,ipc);
-            break;
-            
-          case 2:      // Демон вышел :)
-            pop_stat=NULL;
-            daemon_present=-1;
-            break;
-          }
-          break;  
-          
+         
         case IPC_LOADING_FINISHED:
           if (maillist_menu_id && stat_gui_id)
           {
-            GeneralFunc_flag1(stat_gui_id,1);
-            InitMailDB();
-            request_recount_mailmenu=1;
-            if (IsGuiOnTop(maillist_menu_id)) RefreshGUI();
+            GeneralFunc_flag1(stat_gui_id,2);
           }
           mfree(ipc);
+          break;
+          
+        case IPC_CHECK_DOUBLERUN:
+          ipc->data=(void *)((int)(ipc->data)+1);
+          //Если приняли свое собственное сообщение, значит запускаем чекер
+          if (ipc->name_from==ipc_my_name) SUBPROC((void *)CheckDoubleRun);
           break;
         }
       }
@@ -1717,12 +1747,20 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     if ((int)msg->data0==stat_gui_id)
     {
       stat_gui_id=0;
-      if (maillist_menu_id)
+      if ((int)msg->data1==2)
       {
-        InitMailDB();
-        request_recount_mailmenu=1;
-        if (IsGuiOnTop(maillist_menu_id)) RefreshGUI();
-      }        
+        if (maillist_menu_id)
+        {
+          InitMailDB();
+          request_recount_mailmenu=1;
+          if (IsGuiOnTop(maillist_menu_id)) RefreshGUI();
+        }
+      }
+      if ((int)msg->data1==3)
+      {
+        if (maillist_menu_id)
+          GeneralFunc_flag1(maillist_menu_id,1);
+      }
     }
   }
   return(1);
@@ -1774,6 +1812,6 @@ int main()
   ReInitConfig();
   LockSched();
   UpdateCSMname();
-  CreateCSM(&MAINCSM.maincsm,&main_csm,0);
+  maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
   UnlockSched();
 }

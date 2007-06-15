@@ -28,6 +28,9 @@ __root const CFG_HDR cfghdr5={CFG_CBOX,"Load",0,2};
 __root const int DEFAULT_ACTION = 0;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"Only Headers","Headers+Text"};
 
+__root const CFG_HDR cfghdr51={CFG_UINT,"Load if size less then",0,0xFFFFFFFF};
+__root const unsigned int LOAD_IF_LESS = 0;
+
 __root const CFG_HDR cfghdr6={CFG_CBOX,"Action if mail del from server",0,2};
 __root const int IF_DEL_AUX = 0;
 __root const CFG_CBOX_ITEM cfgcbox2[2]={"Delete From Phone","Nothing"};
