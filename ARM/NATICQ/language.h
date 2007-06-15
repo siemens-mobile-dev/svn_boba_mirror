@@ -200,6 +200,12 @@
 #define LG_STFFC    "Вільний для чату"
 #define LG_STINVIS  "Невидимий"
 
+#define LG_STDEPRESSION "Депресія"
+#define LG_STEVIL "Злий"
+#define LG_STHOME "Вдома"
+#define LG_STLUNCH "Їм"
+#define LG_STWORK "На роботі"
+
 //================================
 
 #define LG_MSGILLEGMSGCON "Невірне повідомлення ENIP_SOCK_CONNECTED!"
@@ -235,8 +241,6 @@
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
 #define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
-
-#define LG_COPYRIGHT     "NATICQ v1.0\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow"
 
 #endif
 
