@@ -260,6 +260,9 @@ void menuitemhandler(void *data, int curitem, int *unk)
   case 0:
     SetMenuItemIconArray(data,item,S_ICONS+CurrentStatus);
     break;
+  case 1:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_ADDCONTACT);
+    break;
   case 2:
     SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
     break;
@@ -268,6 +271,12 @@ void menuitemhandler(void *data, int curitem, int *unk)
     break;
   case 4:
     SetMenuItemIconArray(data,item,icon_array+(Is_Show_Offline?0:1));
+    break;
+  case 5:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_SETTINGS);
+    break;
+  case 6:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_PING);
     break;
   case 7:
     SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);

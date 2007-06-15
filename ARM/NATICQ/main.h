@@ -23,6 +23,19 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 //void patch_header(HEADER_DESC* head);
 //void patch_input(INPUTDIA_DESC* inp);
 
+enum ISTATUS {IS_OFFLINE,IS_INVISIBLE,IS_AWAY,IS_NA,IS_OCCUPIED,IS_DND,IS_DEPRESSION,IS_EVIL,IS_HOME,IS_LUNCH,
+IS_WORK,IS_ONLINE,IS_FFC,IS_MSG,IS_UNKNOWN,IS_GROUP,IS_GROUPOFF,IS_NULLICON,
+//
+ICON_ADDCONTACT,
+ICON_HEAD,
+ICON_LOGO,
+ICON_PING,
+ICON_SETTINGS,
+TOTAL_ICONS,
+//
+IS_ANY=0xFFFFFFFF,IS_FILTER_T9KEY=0xFFFFFFFE};
+
+/*
 // Константы статусов
 #define IS_OFFLINE 0
 #define IS_INVISIBLE 1
@@ -44,6 +57,7 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define IS_NULLICON 17
 #define IS_ANY 0xFFFFFFFF
 #define IS_FILTER_T9KEY 0xFFFFFFFE
+*/
 
 
 // Константы операций (взаимодействие с сервером шлюза)

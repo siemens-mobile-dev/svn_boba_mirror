@@ -50,7 +50,7 @@ int Is_Vibra_Enabled;
 unsigned int Is_Sounds_Enabled;
 int Is_Show_Offline;
 
-int S_ICONS[18];
+int S_ICONS[TOTAL_ICONS+1];
 
 #define EOP -10
 int CurrentStatus;
@@ -79,7 +79,12 @@ static const char * const icons_names[TOTAL_ICONS]=
   "unknown.png",
   "groupon.png",
   "groupoff.png",
-  "null.png"
+  "null.png",
+  "addcont.png",
+  "head.png",
+  "logo.png",
+  "ping.png",
+  "settings.png"
 };
 
 extern const char ICON_PATH[];
@@ -426,7 +431,7 @@ char clm_hdr_text[48];
 static const char def_clm_hdr_text[] = LG_CLTITLE;
 static const char key_clm_hdr_text[] = LG_CLT9INP;
 
-static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, NULL, (int)clm_hdr_text, LGP_NULL};
+static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, S_ICONS+ICON_HEAD, (int)clm_hdr_text, LGP_NULL};
 static const int menusoftkeys[] = {0,1,2};
 static const SOFTKEY_DESC menu_sk[] =
 {
@@ -1736,9 +1741,14 @@ void method0(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
+/*  DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
-		   GetPaletteAdrByColorIndex(20));
+		   GetPaletteAdrByColorIndex(20));*/
+
+  DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,
+		   GetPaletteAdrByColorIndex(1),
+		   GetPaletteAdrByColorIndex(1));
+  DrawImg(0,0,S_ICONS[ICON_LOGO]);
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,logmsg);
   if (total_smiles)
   {
@@ -1838,7 +1848,7 @@ void maincsm_oncreate(CSM_RAM *data)
   zeromem(main_gui,sizeof(MAIN_GUI));
   patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas);
-  main_gui->gui.flag30=2;
+//  main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods;
   main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   csm->csm.state=0;
