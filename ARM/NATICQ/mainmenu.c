@@ -12,7 +12,7 @@
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
-void patch_header(const HEADER_DESC* head)
+static void patch_header(const HEADER_DESC* head)
 {
   ((HEADER_DESC*)head)->rc.x=0;
   ((HEADER_DESC*)head)->rc.y=YDISP;
@@ -20,7 +20,7 @@ void patch_header(const HEADER_DESC* head)
   ((HEADER_DESC*)head)->rc.y2=HeaderH()-1+YDISP;
 }
 #pragma inline
-void patch_input(const INPUTDIA_DESC* inp)
+static void patch_input(const INPUTDIA_DESC* inp)
 {
   ((INPUTDIA_DESC*)inp)->rc.x=0;
   ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
@@ -31,12 +31,14 @@ void patch_input(const INPUTDIA_DESC* inp)
 int MainMenu_ID;
 
 extern int CurrentStatus;
+extern int CurrentXStatus;
+extern int *XStatusesIconArray;
 extern  int S_ICONS[];
 extern const SOFTKEYSTAB menu_skt;
 
-void ac_locret(void){}
+static void ac_locret(void){}
 
-int ac_onkey(GUI *data, GUI_MSG *msg)
+static int ac_onkey(GUI *data, GUI_MSG *msg)
 {
   TPKT *p;
   char num[10];
@@ -69,7 +71,7 @@ int ac_onkey(GUI *data, GUI_MSG *msg)
   return(0);
 }
        
-void ac_ghook(GUI *data, int cmd)
+static void ac_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_ADD};
   if (cmd==0x0A)
@@ -112,7 +114,7 @@ static const INPUTDIA_DESC ac_desc=
 };
 
 
-void AddContactMenu(void)
+static void AddContactMenu(void)
 {
   void *ma=malloc_adr();
   void *eq;
@@ -137,19 +139,19 @@ extern unsigned int Is_Sounds_Enabled;
 extern int Is_Show_Offline;
 
 
-void ChangeVibraMode(void)
+static void ChangeVibraMode(void)
 {
   Is_Vibra_Enabled=!(Is_Vibra_Enabled);
   RefreshGUI();
 }
   
-void ChangeSoundMode(void)
+static void ChangeSoundMode(void)
 {
   Is_Sounds_Enabled=!(Is_Sounds_Enabled);
   RefreshGUI();
 }
 
-void ChangeShowOfflineMode(void)
+static void ChangeShowOfflineMode(void)
 {
   void RecountMenu(CLIST *req);
   Is_Show_Offline=!(Is_Show_Offline);
@@ -157,7 +159,7 @@ void ChangeShowOfflineMode(void)
   RefreshGUI();
 }
 
-void EditConfig(void)
+static void EditConfig(void)
 {
   extern const char *successed_config_filename;
   WSHDR *ws;
@@ -168,7 +170,7 @@ void EditConfig(void)
   GeneralFuncF1(1);
 }
 
-void PingToServer(void)
+static void PingToServer(void)
 {
   TPKT *p;
   p=malloc(sizeof(PKT)+sizeof(TTime));
@@ -179,8 +181,7 @@ void PingToServer(void)
   SUBPROC((void *)SendAnswer,0,p);
 }
 
-//void AboutDlg(){};
-void AboutDlg()
+static void AboutDlg()
 {
   char s[256];
   snprintf(s,255,LG_COPYRIGHT,__SVN_REVISION__);
@@ -191,9 +192,10 @@ static const HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
 static const int mmenusoftkeys[]={0,1,2};
 
-static const char * const menutexts[8]=
+static const char * const menutexts[9]=
 {
   LG_MNUSTATUS,
+  LG_MNUXSTATUS,
   LG_MNUADDCONT,
   LG_MNUVIBRA,
   LG_MNUSOUND,
@@ -214,9 +216,10 @@ static const char * const menutexts[8]=
   {S_ICONS,    (int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };*/
 
-static const void *menuprocs[8]=
+static const void *menuprocs[9]=
 {
   (void *)DispStatusChangeMenu,
+  (void *)DispXStatusChangeMenu,
   (void *)AddContactMenu,
   (void *)ChangeVibraMode,
   (void *)ChangeSoundMode,
@@ -248,7 +251,7 @@ void tmenu_ghook(void *data, int cmd)
 
 static int icon_array[3];
 
-void menuitemhandler(void *data, int curitem, int *unk)
+static void menuitemhandler(void *data, int curitem, int *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
@@ -261,33 +264,34 @@ void menuitemhandler(void *data, int curitem, int *unk)
     SetMenuItemIconArray(data,item,S_ICONS+CurrentStatus);
     break;
   case 1:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_ADDCONTACT);
+    SetMenuItemIconArray(data,item,XStatusesIconArray+CurrentXStatus);
     break;
   case 2:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_ADDCONTACT);
     break;
   case 3:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
+    SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
     break;
   case 4:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Show_Offline?0:1));
+    SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
     break;
   case 5:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_SETTINGS);
+    SetMenuItemIconArray(data,item,icon_array+(Is_Show_Offline?0:1));
     break;
   case 6:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_PING);
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_SETTINGS);
     break;
   case 7:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_PING);
+    break;
+  case 8:
     SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);
     break;
-  default:
-    SetMenuItemIconArray(data,item,S_ICONS+IS_NULLICON);
   }
   SetMenuItemText(data, item, ws, curitem);
 }
 
-int tmenu_keyhook(void *data, GUI_MSG *msg)
+static int tmenu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
@@ -306,7 +310,7 @@ static const MENU_DESC tmenu=
   (void*)menuitemhandler,
   NULL,//menuitems,
   NULL,//menuprocs,
-  8
+  9
 };
 
 void ShowMainMenu()
@@ -315,5 +319,5 @@ void ShowMainMenu()
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   *((int **)(&menuhdr.icon))=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,8,0,0);
+  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,9,0,0);
 }

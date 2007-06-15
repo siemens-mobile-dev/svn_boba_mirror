@@ -3,6 +3,7 @@
 */
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
+#include "../inc/pnglist.h"
 #include "NatICQ.h"
 #include "main.h"
 #include "status_change.h"
@@ -11,7 +12,7 @@
 //===============================================================================================
 // ELKA Compatibility
 #pragma inline
-void patch_header(const HEADER_DESC* head)
+static void patch_header(const HEADER_DESC* head)
 {
   ((HEADER_DESC *)head)->rc.x=0;
   ((HEADER_DESC *)head)->rc.y=YDISP;
@@ -30,18 +31,26 @@ void patch_input(const INPUTDIA_DESC* inp)
 
 
 extern int CurrentStatus;
-extern void set_my_status(void);
+extern int CurrentXStatus;
 extern  int S_ICONS[];
 
 #pragma inline
-void Change_Status(char status)
+static void Change_Status(int status)
 {
   CurrentStatus=status;
   set_my_status();
 }
+
+#pragma inline
+static void Change_XStatus(int xstatus)
+{
+  CurrentXStatus=xstatus;
+  set_my_xstatus();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 #pragma inline
-unsigned int GetStatusIndexInMenu(unsigned int status)
+static unsigned int GetStatusIndexInMenu(unsigned int status)
 {
   switch(status)
   {
@@ -62,7 +71,7 @@ unsigned int GetStatusIndexInMenu(unsigned int status)
 }
 
 #pragma inline 
-unsigned int GetStatusInMenuByPos(int pos)
+static unsigned int GetStatusInMenuByPos(int pos)
 {
   switch(pos)
   {
@@ -94,7 +103,7 @@ unsigned int GetStatusInMenuByPos(int pos)
   return IS_UNKNOWN;
 }
 
-int st_onkey(void *data, GUI_MSG *msg)
+static int st_onkey(void *data, GUI_MSG *msg)
 {
   int i;
   if (msg->keys==0x18 || msg->keys==0x3D)
@@ -141,17 +150,6 @@ static const HEADER_DESC st_menuhdr={0,0,0,0,NULL,(int)LG_CHGSTATUS,LGP_NULL};
 
 static const int st_menusoftkeys[]={0,1,2};
 
-/*MENUITEM_DESC st_menuitems[STATUSES_NUM]=
-{
-  {S_ICONS,(int)LG_STONLINE, LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS,(int)LG_STAWAY,   LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS,(int)LG_STNA,     LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},  
-  {S_ICONS,(int)LG_STDND,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS,(int)LG_STOCCUP,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS,(int)LG_STFFC,    LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS,(int)LG_STINVIS,  LGP_NULL, 0, NULL, MENU_FLAG3,MENU_FLAG2},
-};*/
-
 static const SOFTKEY_DESC st_menu_sk[]=
 {
   {0x0018,0x0000,(int)LG_SELECT},
@@ -164,7 +162,7 @@ static const SOFTKEYSTAB st_menu_skt=
   st_menu_sk,0
 };
 
-void stmenu_ghook(void *data, int cmd)
+static void stmenu_ghook(void *data, int cmd)
 {
   if (cmd==0x0A)
   {
@@ -190,4 +188,102 @@ void DispStatusChangeMenu()
   *((int **)(&st_menuhdr.icon))=S_ICONS+CurrentStatus;
   patch_header(&st_menuhdr);
   CreateMenu(0,0,&st_tmenu,&st_menuhdr,GetStatusIndexInMenu(CurrentStatus),STATUSES_NUM,0,0);
+}
+
+//--------------------------------
+// XStatuses
+//--------------------------------
+extern DYNPNGICONLIST *XStatusesImgList;
+extern int *XStatusesIconArray;
+extern volatile int total_xstatuses;
+
+
+static void EditXStatus(int xstatus)
+{
+}
+
+static int xst_onkey(void *data, GUI_MSG *msg)
+{
+  int i;
+  i=GetCurMenuItem(data);
+  if (msg->keys==0x18)
+  {
+    EditXStatus(i);
+    return(1);
+  }
+  if (msg->keys==0x3D)
+  {
+    Change_XStatus(i);
+    return(1);
+  }
+  return (0);
+}
+
+static void xst_ghook(void *data, int cmd)
+{
+  PNGTOP_DESC *pltop=PNG_TOP();
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
+  if (cmd==0x0A)
+  {
+    pltop->dyn_pltop=XStatusesImgList;
+    DisableIDLETMR();
+  }
+}
+
+static void xst_itemh(void *data, int curitem, void *unk)
+{
+  void *item=AllocMLMenuItem(data);
+  WSHDR ws1loc, *ws1, *ws2;
+  unsigned short num[128];
+  WSHDR ws3loc, *ws3, *ws4;
+  unsigned short num3[128];
+  ws1=CreateLocalWS(&ws1loc,num,128);
+  ws3=CreateLocalWS(&ws3loc,num3,128);
+
+  wsprintf(ws1,"Short XS %d",curitem);
+  wsprintf(ws3,"Large XS %d",curitem);
+  ws2=AllocMenuWS(data,ws1->wsbody[0]);
+
+  wstrcpy(ws2,ws1);
+  ws4=AllocMenuWS(data,ws3->wsbody[0]);
+  wstrcpy(ws4,ws3);
+  SetMenuItemIconArray(data, item, XStatusesIconArray+curitem);
+  SetMLMenuItemText(data, item, ws2, ws4, curitem);
+}
+
+static const SOFTKEY_DESC xst_menu_sk[]=
+{
+  {0x0018,0x0000,(int)LG_TEXT},
+  {0x0001,0x0000,(int)LG_BACK},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+static const SOFTKEYSTAB xst_menu_skt=
+{
+  xst_menu_sk,0
+};
+
+static const HEADER_DESC xst_menuhdr={0,0,0,0,NULL,(int)LG_CHGXSTATUS,LGP_NULL};
+
+static const ML_MENU_DESC xst_menu=
+{
+  8,xst_onkey,xst_ghook,NULL,
+  st_menusoftkeys,
+  &xst_menu_skt,
+  0x11,
+  xst_itemh,
+  NULL,
+  NULL,
+  0,
+  1
+};
+
+void DispXStatusChangeMenu(void)
+{
+  patch_header(&xst_menuhdr);
+  *((int **)(&xst_menuhdr.icon))=XStatusesIconArray+CurrentXStatus;
+  CreateMultiLinesMenu(0,0,&xst_menu,&xst_menuhdr,0,total_xstatuses);
 }

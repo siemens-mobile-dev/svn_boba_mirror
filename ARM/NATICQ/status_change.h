@@ -4,4 +4,7 @@
 // Показать меню смены статуса
 void DispStatusChangeMenu();
 
+// Показать меню смены XStatus'а
+void DispXStatusChangeMenu(void);
+
 #endif

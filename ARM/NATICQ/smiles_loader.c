@@ -2,11 +2,14 @@
 #include "../inc/pnglist.h"
 #include "naticq_ipc.h"
 #include "smiles.h"
+#include "naticq.h"
 
 S_SMILES *s_top=0;
 
 DYNPNGICONLIST *SmilesImgList;
 DYNPNGICONLIST *XStatusesImgList;
+
+int *XStatusesIconArray;
 
 volatile int total_smiles;
 volatile int total_xstatuses;
@@ -16,6 +19,7 @@ extern const char SMILE_FILE[];
 extern const char SMILE_PATH[];
 extern const char XSTATUSES_PATH[];
 extern const char ipc_my_name[32];
+extern  int S_ICONS[];
 
 static IPC_REQ gipc;
 static char *p_buf;
@@ -231,6 +235,8 @@ void FreeXStatusesImg(void)
   d=XStatusesImgList;
   XStatusesImgList=0;
   UnlockSched();
+  mfree(XStatusesIconArray);
+  XStatusesIconArray=NULL;
   while(d)
   {
     if (d->img)
@@ -247,7 +253,7 @@ void FreeXStatusesImg(void)
 void InitXStatusesImg(void)
 {
   FreeXStatusesImg();
-  total_xstatuses=1;
+  *(XStatusesIconArray=malloc((total_xstatuses=1)*sizeof(int)))=S_ICONS[IS_NULLICON];
   xstatuses_load=1;
   n_pic=FIRST_UCS2_BITMAP;
   gipc.name_to=ipc_my_name;
@@ -262,6 +268,7 @@ void ProcessNextXStatImg(void)
   DYNPNGICONLIST *dp;
   unsigned int err;
   FSTATS stat;
+  int i;
   
   strcpy(fn,XSTATUSES_PATH);
   sprintf(fn+strlen(fn),"\\%d.png",total_xstatuses);
@@ -271,7 +278,7 @@ void ProcessNextXStatImg(void)
     {
       dp=malloc(sizeof(DYNPNGICONLIST));
       zeromem(dp,sizeof(DYNPNGICONLIST));
-      dp->icon=GetPicNByUnicodeSymbol(n_pic);
+      dp->icon=i=GetPicNByUnicodeSymbol(n_pic);
       dp->img=CreateIMGHDRFromPngFile(fn,0);
       LockSched();
       if (XStatusesImgList)
@@ -281,6 +288,8 @@ void ProcessNextXStatImg(void)
       XStatusesImgList=dp;
       UnlockSched();
       total_xstatuses++;
+      XStatusesIconArray=realloc(XStatusesIconArray,(total_xstatuses*sizeof(int)));
+      *(XStatusesIconArray+(total_xstatuses-1))=i;
       n_pic++;
       gipc.name_to=ipc_my_name;
       gipc.name_from=ipc_my_name;

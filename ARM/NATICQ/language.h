@@ -29,6 +29,7 @@
 #define LG_PASTESM "Вставить"
 //-------------
 #define LG_SELECT  "Выбор"
+#define	LG_TEXT    "Текст"
 #define LG_BACK    "Назад"
 //--------------
 #define LG_ADD      "Добавить"
@@ -48,6 +49,7 @@
 
 //================================
 #define LG_MNUSTATUS  "Статус"
+#define LG_MNUXSTATUS "X-Статус"
 #define LG_MNUADDCONT "Добавить контакт"
 #define LG_MNUVIBRA   "Режим вибры"
 #define LG_MNUSOUND   "Режим звука"
@@ -70,6 +72,7 @@
 
 //================================
 #define LG_CHGSTATUS "Сменить статус"
+#define LG_CHGXSTATUS "Сменить X-статус"
 
 #define LG_STONLINE "В сети"
 #define LG_STAWAY   "Отошёл"
@@ -144,6 +147,7 @@
 #define LG_PASTESM "Вставити"
 //-------------
 #define LG_SELECT  "Вибір"
+#define	LG_TEXT    "Текст"
 #define LG_BACK    "Назад"
 //--------------
 #define LG_ADD      "Додати"
@@ -163,6 +167,7 @@
 
 //================================
 #define LG_MNUSTATUS  "Статус"
+#define LG_MNUXSTATUS "X-Статус"
 #define LG_MNUADDCONT "Додати контакт"
 #define LG_MNUVIBRA   "Режим вібри"
 #define LG_MNUSOUND   "Режим звуків"
@@ -185,6 +190,7 @@
 
 //================================
 #define LG_CHGSTATUS "Змінити статус"
+#define LG_CHGXSTATUS "Змінити X-статус"
 
 #define LG_STONLINE "В мережі"
 #define LG_STAWAY   "Відійшов"
@@ -259,6 +265,7 @@
 #define LG_ENTERUIN "Please enter uin:"
 //--------------
 #define LG_SELECT  "Select"
+#define	LG_TEXT    "Text"
 #define LG_BACK    "Back"
 //--------------
 #define LG_ADDREN  "Add/Rename"
@@ -275,6 +282,7 @@
 //================================
 
 #define LG_MNUSTATUS  "Status"
+#define LG_MNUXSTATUS "X-Status"
 #define LG_MNUADDCONT "Add Contact"
 #define LG_MNUVIBRA   "Vibra mode"
 #define LG_MNUSOUND   "Sound mode"
@@ -298,6 +306,7 @@
 
 //================================
 #define LG_CHGSTATUS "Change Status"
+#define LG_CHGXSTATUS "Change X-Status"
 
 #define LG_STONLINE "Online"
 #define LG_STAWAY   "Away"

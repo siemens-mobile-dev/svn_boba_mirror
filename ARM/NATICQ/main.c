@@ -54,6 +54,7 @@ int S_ICONS[TOTAL_ICONS+1];
 
 #define EOP -10
 int CurrentStatus;
+int CurrentXStatus;
 
 WSHDR *ews;
 
@@ -1573,6 +1574,17 @@ void set_my_status(void)
   SUBPROC((void *)SendAnswer,0,p);
 }
 
+void set_my_xstatus(void)
+{
+  TPKT *p;
+  p=malloc(sizeof(PKT)+1);
+  p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
+  p->pkt.type=T_MY_XSTATUS_CH; // Тип пакета: изменение статуса
+  p->pkt.data_len=1;          // Длина пакета: 1 байт
+  p->data[0]=CurrentXStatus;
+  SUBPROC((void *)SendAnswer,0,p);
+}
+
 void to_develop(void)
 {
   gipc.name_to=ipc_xtask_name;
@@ -1609,6 +1621,7 @@ ProcessPacket(TPKT *p)
       GROUP_CACHE=0;
       start_vibra();
       set_my_status();
+      set_my_xstatus();
       ask_my_info();
       if (contactlist_menu_id)
       {
@@ -2217,6 +2230,7 @@ int main()
   Is_Sounds_Enabled=DEF_SOUNDS_STATUS;
   Is_Show_Offline=DEF_SHOWOFF_STATUS;
   CurrentStatus=MY_DEF_STATUS+1;
+  CurrentXStatus=0;
   
   setup_ICONS();
   
