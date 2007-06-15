@@ -1020,7 +1020,7 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
       wsprintf(ws3,percent_d,t->uin);
       if ((t->xstate<total_xstatuses)&&(t->xstate))
       {
-	wsInsertChar(ws3,FIRST_UCS2_BITMAP+t->xstate-1,1);
+	wsInsertChar(ws3,FIRST_UCS2_BITMAP+t->xstate,1);
       }
 #endif
     }
