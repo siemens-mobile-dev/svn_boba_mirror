@@ -253,7 +253,8 @@ void FreeXStatusesImg(void)
 void InitXStatusesImg(void)
 {
   FreeXStatusesImg();
-  *(XStatusesIconArray=malloc((total_xstatuses=1)*sizeof(int)))=S_ICONS[IS_NULLICON];
+  total_xstatuses=0;
+  *(XStatusesIconArray=malloc(sizeof(int)))=S_ICONS[IS_NULLICON];
   xstatuses_load=1;
   n_pic=FIRST_UCS2_BITMAP;
   gipc.name_to=ipc_my_name;
