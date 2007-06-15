@@ -1,5 +1,6 @@
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
+#include "../inc/pnglist.h"
 #include "NatICQ.h"
 #include "history.h"
 #include "mainmenu.h"
@@ -32,6 +33,7 @@ int MainMenu_ID;
 
 extern int CurrentStatus;
 extern int CurrentXStatus;
+extern DYNPNGICONLIST *XStatusesImgList;
 extern int *XStatusesIconArray;
 extern  int S_ICONS[];
 extern const SOFTKEYSTAB menu_skt;
@@ -243,8 +245,14 @@ static const SOFTKEYSTAB mmenu_skt=
 
 void tmenu_ghook(void *data, int cmd)
 {
+  PNGTOP_DESC *pltop=PNG_TOP();
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
   if (cmd==0x0A)
   {
+    pltop->dyn_pltop=XStatusesImgList;
     DisableIDLETMR();
   }
 }
