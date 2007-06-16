@@ -362,6 +362,20 @@ void CList_ToggleVisibilityForGroup(int GID)
   }
 }
 
+int CList_GetVisibilityForGroup(int GID)
+{
+  CLIST* ClEx = cltop;
+  while(ClEx)
+  {
+    if(ClEx->group==GID&&(CList_isGroup(ClEx)))
+    {
+      return ClEx->IsVisible;
+    }
+    ClEx = ClEx->next;
+  }
+  return 0; //Вообще-то, сюда мы попадать не должны, это чтобы иар заткнулся
+}
+
 TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
 {
   TRESOURCE* qq = CList_IsResourceInList(jid);
@@ -795,6 +809,8 @@ void nextUnread()
       if(ResEx->has_unread_msg) { //если есть непрочитанное
         if (CList_GetActiveContact()!=ResEx) { //если мы не стоим на этом контакте
           //нужна еще какая-то проверка, я что-то не учитываю, поэтому иногда ведет себя странно...
+          if(!CList_GetVisibilityForGroup(ClEx->group)) //если группа контакта свернута, надо ее развернуть, иначе плохо будет
+            CList_ToggleVisibilityForGroup(ClEx->group);
           MoveCursorTo(ResEx);
           break;
         }
@@ -840,6 +856,14 @@ void MoveCursorTo(TRESOURCE* NewResEx)
   int pos=0;
   while(ClEx)
   {
+    while(CList_isGroup(ClEx)&&(ClEx->IsVisible==0)) //Перескакиваем через свернутую группу, иначе промахнемся
+    {
+      char c_group = ClEx->group;
+      while(ClEx->group==c_group)
+        ClEx = ClEx->next;
+      pos++;
+    }
+
     ResEx = ClEx->res_list;
     while(ResEx)
     {
@@ -913,3 +937,12 @@ void CList_MoveCursorEnd()
   Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
   REDRAW();
 };
+
+int CList_isGroup(CLIST *cont)
+{
+  if(cont->ResourceCount==0) return 0;
+  if(cont->res_list->entry_type==T_GROUP) return 1;
+  return 0;
+}
+
+

@@ -70,7 +70,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
   {
     Terminate = 1;
     extern const char sndMsgSend[];
-    Play(sndMsgSend);    
+    Play(sndMsgSend);
     return 1;
   }
 
@@ -324,8 +324,6 @@ void mGUI_onRedraw(GUI *data)
 
   // Делаем типо название окошка... :)
   WSHDR* ws_title = AllocWS(256);
-  //str_2ws(ws_title, Resource_Ex->full_name,strlen(Resource_Ex->full_name));
-  //ascii2ws(ws_title, Resource_Ex->full_name);
   utf8_2ws(ws_title, Resource_Ex->full_name, 256);
 
   DrawString(ws_title,1,SCR_START+1,ScreenW()-1,SCR_START+FontSize+1,MESSAGEWIN_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);
@@ -343,10 +341,10 @@ void mGUI_onRedraw(GUI *data)
 
       switch(ml->mtype)
       {
-      case MSG_ME:{MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;}
-      case MSG_CHAT:{MsgBgColor=MESSAGEWIN_CH_BGCOLOR;break;}
-      case MSG_SYSTEM:{MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;}
-      case MSG_STATUS:{MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;}
+      case MSG_ME:      {MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;}
+      case MSG_CHAT:    {MsgBgColor=MESSAGEWIN_CH_BGCOLOR;break;}
+      case MSG_SYSTEM:  {MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;}
+      case MSG_STATUS:  {MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;}
       case MSG_GCHAT:
         {
           MsgBgColor=ml->log_mess_number %2==0? MESSAGEWIN_GCHAT_BGCOLOR_1 : MESSAGEWIN_GCHAT_BGCOLOR_2;

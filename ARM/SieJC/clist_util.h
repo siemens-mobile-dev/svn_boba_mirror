@@ -19,8 +19,10 @@
 // Отрисовать список контактов
   void CList_RedrawCList();
 
-// Переключить видиимость для группы
-void CList_ToggleVisibilityForGroup(int GID);
+// Переключить видимость для группы
+  void CList_ToggleVisibilityForGroup(int GID);
+// Получить состояние видимости группы
+  int CList_GetVisibilityForGroup(int GID);
 
 // Получить дескриптор контакта по FullJID (JID вместе с ресурсом)
   CLIST* CList_FindContactByJID(char* jid);
@@ -84,7 +86,11 @@ void CList_ToggleVisibilityForGroup(int GID);
 // ставим курсор на нужный ресурс(для автофокуса тоже пригодится)
   void MoveCursorTo(TRESOURCE* NewResEx);
 
-void CList_Display_Popup_Info(TRESOURCE* ResEx);
+// Проверить, является ли контакт псевдоконтактом группы
+  int CList_isGroup(CLIST *cont);
+
+// Показать информацию о ресурсе во всплывающем окне
+  void CList_Display_Popup_Info(TRESOURCE* ResEx);
 
 // Управление курсором
   void CList_MoveCursorUp();
@@ -94,6 +100,6 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx);
   void CList_MoveCursorEnd();
 
 // Убить список сообщений
-void KillMsgList(LOG_MESSAGE* messtop);
+  void KillMsgList(LOG_MESSAGE* messtop);
 
 #endif
