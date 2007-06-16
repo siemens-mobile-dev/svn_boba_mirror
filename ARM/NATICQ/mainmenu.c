@@ -289,7 +289,7 @@ void tmenu_ghook(void *data, int cmd)
   }
 }
 
-static int icon_array[3];
+static int icon_array[2];
 
 static void menuitemhandler(void *data, int curitem, int *unk)
 {
@@ -353,7 +353,7 @@ static const MENU_DESC tmenu=
   (void*)menuitemhandler,
   NULL,//menuitems,
   NULL,//menuprocs,
-  9
+  10
 };
 
 void ShowMainMenu()
@@ -362,5 +362,5 @@ void ShowMainMenu()
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   *((int **)(&menuhdr.icon))=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,9,0,0);
+  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,10,0,0);
 }
