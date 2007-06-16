@@ -164,4 +164,7 @@ __root const CFG_CBOX_ITEM cfgcbox7_1[12]={
 __root const CFG_HDR cfghdr7_4={CFG_CHECKBOX,"Default Show Offline Status",0,2};
 __root const int DEF_SHOWOFF_STATUS=0;
 
+__root const CFG_HDR cfghdr7_5={CFG_CHECKBOX,"Default Show Groups",0,2};
+__root const int DEF_SHOW_GROUPS=1;
+
 __root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};

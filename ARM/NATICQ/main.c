@@ -49,6 +49,7 @@ int IsActiveUp=0;
 int Is_Vibra_Enabled;
 unsigned int Is_Sounds_Enabled;
 int Is_Show_Offline;
+int Is_Show_Groups;
 
 int S_ICONS[TOTAL_ICONS+1];
 
@@ -655,10 +656,12 @@ CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
     if ((si==IS_ANY)||(GetIconIndex(t)==si))
     {
       s=ContactT9Key;
+      if ((!Is_Show_Groups)&&(t->isgroup)) goto L_NOT9;
+      
       if ((!t->isgroup)&&(t->group==grp_id)&&(grp_dis)&&(!(*s))) goto L_NOT9;
       
       if (!Is_Show_Offline) // by Seklth 13.06.2007
-        if ((!t->isgroup)&&(!t->isactive)&&(t->state==0xFFFF)&&(!(*s))) 
+        if ((!t->isgroup)&&(!t->isactive)&&(t->state==0xFFFF)&&(t->uin!=UIN)&&(!(*s))) 
           if (!t->isunread) goto L_NOT9;
       
       d=t->name;
@@ -1088,6 +1091,7 @@ CLIST *AddContactOrGroup(CLIST *p)
     //Первый
     cltop=p;
   }
+  if ((!Is_Show_Groups)&&(p->isgroup)) p->state=0;//Открыть группу
   return(p);
 }
 
@@ -2225,10 +2229,12 @@ int main()
   extern const int DEF_SOUNDS_STATUS;
   extern const int MY_DEF_STATUS;
   extern const int DEF_SHOWOFF_STATUS;
+  extern const int DEF_SHOW_GROUPS;
   
   Is_Vibra_Enabled=DEF_VIBRA_STATUS;
   Is_Sounds_Enabled=DEF_SOUNDS_STATUS;
   Is_Show_Offline=DEF_SHOWOFF_STATUS;
+  Is_Show_Groups=DEF_SHOW_GROUPS;
   CurrentStatus=MY_DEF_STATUS+1;
   CurrentXStatus=0;
   

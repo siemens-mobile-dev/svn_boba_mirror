@@ -139,6 +139,7 @@ static void AddContactMenu(void)
 extern int Is_Vibra_Enabled;
 extern unsigned int Is_Sounds_Enabled; 
 extern int Is_Show_Offline;
+extern int Is_Show_Groups;
 
 
 static void ChangeVibraMode(void)
@@ -157,6 +158,35 @@ static void ChangeShowOfflineMode(void)
 {
   void RecountMenu(CLIST *req);
   Is_Show_Offline=!(Is_Show_Offline);
+  RecountMenu(NULL);
+  RefreshGUI();
+}
+
+static void ChangeShowGroupsMode(void)
+{
+  void RecountMenu(CLIST *req);
+  Is_Show_Groups=!(Is_Show_Groups);
+  
+  extern volatile CLIST *cltop;
+  CLIST *t;
+  t=(CLIST *)cltop;
+  
+  if (!Is_Show_Groups)
+    {//Открываем группы
+      while(t)
+        {
+          if (t->isgroup) t->state=0;
+          t=t->next;
+        }      
+    }
+      else
+    {//Закрываем группы
+      while(t)
+        {
+          if (t->isgroup) t->state=0xFFFF;
+          t=t->next;
+        }      
+    }        
   RecountMenu(NULL);
   RefreshGUI();
 }
@@ -194,7 +224,7 @@ static const HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
 static const int mmenusoftkeys[]={0,1,2};
 
-static const char * const menutexts[9]=
+static const char * const menutexts[10]=
 {
   LG_MNUSTATUS,
   LG_MNUXSTATUS,
@@ -202,6 +232,7 @@ static const char * const menutexts[9]=
   LG_MNUVIBRA,
   LG_MNUSOUND,
   LG_MNUSHOWOFF,
+  LG_MNUSHOWGROUP,
   LG_MNUEDCFG,
   LG_MNUPING,
   LG_MNUABOUT
@@ -218,7 +249,7 @@ static const char * const menutexts[9]=
   {S_ICONS,    (int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };*/
 
-static const void *menuprocs[9]=
+static const void *menuprocs[10]=
 {
   (void *)DispStatusChangeMenu,
   (void *)DispXStatusChangeMenu,
@@ -226,6 +257,7 @@ static const void *menuprocs[9]=
   (void *)ChangeVibraMode,
   (void *)ChangeSoundMode,
   (void *)ChangeShowOfflineMode,
+  (void *)ChangeShowGroupsMode,
   (void *)EditConfig,
   (void *)PingToServer,
   (void *)AboutDlg,
@@ -287,12 +319,15 @@ static void menuitemhandler(void *data, int curitem, int *unk)
     SetMenuItemIconArray(data,item,icon_array+(Is_Show_Offline?0:1));
     break;
   case 6:
+    SetMenuItemIconArray(data,item,icon_array+(Is_Show_Groups?0:1));
+    break;    
+  case 7:
     SetMenuItemIconArray(data,item,S_ICONS+ICON_SETTINGS);
     break;
-  case 7:
+  case 8:
     SetMenuItemIconArray(data,item,S_ICONS+ICON_PING);
     break;
-  case 8:
+  case 9:
     SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);
     break;
   }
