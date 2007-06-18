@@ -1748,7 +1748,7 @@ void process_active_timer(void)
       SUBPROC((void *)do_ping);
     }
   }
-  tmr_gipc.name_to=ipc_xtask_name;
+  tmr_gipc.name_to=ipc_my_name;
   tmr_gipc.name_from=ipc_my_name;
   tmr_gipc.data=NULL;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_TENSECONDS,&tmr_gipc);  
@@ -1965,6 +1965,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	    //Только собственные иксстатусы ;)
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextXStatImg);
 	    REDRAW();
+	    break;
 	  case IPC_TENSECONDS:
 	    //Только свое сообщение
 	    if (ipc->name_from==ipc_my_name)
