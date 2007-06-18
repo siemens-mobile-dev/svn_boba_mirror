@@ -494,7 +494,8 @@ static const MENU_DESC contactlist_menu=
 };
 #endif
 
-GBSTMR tmr_ping;
+//GBSTMR tmr_ping;
+int tenseconds_to_ping;
 
 //Уничтожить список
 void FreeCLIST(void)
@@ -1091,7 +1092,6 @@ CLIST *AddContactOrGroup(CLIST *p)
     //Первый
     cltop=p;
   }
-  if ((!Is_Show_Groups)&&(p->isgroup)) p->state=0;//Открыть группу
   return(p);
 }
 
@@ -1115,7 +1115,9 @@ CLIST *AddGroup(unsigned int grp, char *name)
   p->group=grp;
   p->isgroup=1;
   strncpy(p->name,name,sizeof(p->name)-1);
-  p->state=0xFFFF;
+  if (!Is_Show_Groups) p->state=0;//Открыть группу
+  else
+    p->state=0xFFFF;
   return AddContactOrGroup(p);
 }
 
@@ -1285,6 +1287,7 @@ void SendAnswer(int dummy, TPKT *p)
       //Передали меньше чем заказывали
       return; //Ждем сообщения ENIP_BUFFER_FREE1
     }
+    tenseconds_to_ping=0; //Чего-то послали, можно начинать отсчет времени до пинга заново
   }
   mfree((void *)sendq_p);
   sendq_p=NULL;
@@ -1304,12 +1307,6 @@ void do_ping(void)
   pingp->pkt.type=0;
   pingp->pkt.data_len=0;
   SendAnswer(0,pingp);
-}
-
-void call_ping(void)
-{
-  if (connect_state>2) SUBPROC((void *)do_ping);
-  GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
 }
 
 void get_answer(void)
@@ -1349,7 +1346,7 @@ void get_answer(void)
       case T_LOGIN:
         //Удачно залогинились
 	Play(sndStartup);
-        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
+//        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
         snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
         connect_state=3;
         REDRAW();
@@ -1739,17 +1736,22 @@ ProcessPacket(TPKT *p)
   mfree(p);
 }
 
+
+IPC_REQ tmr_gipc;
 void process_active_timer(void)
 {
-  CLIST *t=(CLIST *)cltop;
-  while(t)
+  if (connect_state>2)
   {
-    if (t->isactive)
+    if (++tenseconds_to_ping>12)
     {
-      t->isactive--;
+      tenseconds_to_ping=0;
+      SUBPROC((void *)do_ping);
     }
-    t=(CLIST *)(t->next);
   }
+  tmr_gipc.name_to=ipc_xtask_name;
+  tmr_gipc.name_from=ipc_my_name;
+  tmr_gipc.data=NULL;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_TENSECONDS,&tmr_gipc);  
   GBS_StartTimerProc(&tmr_active,TMR_SECOND*10,process_active_timer);
 }
 
@@ -1889,7 +1891,7 @@ void maincsm_onclose(CSM_RAM *csm)
 {
   //  GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_active);
-  GBS_DelTimer(&tmr_ping);
+//  GBS_DelTimer(&tmr_ping);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
   GBS_DelTimer(&tmr_illumination);
@@ -1963,6 +1965,30 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	    //Только собственные иксстатусы ;)
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextXStatImg);
 	    REDRAW();
+	  case IPC_TENSECONDS:
+	    //Только свое сообщение
+	    if (ipc->name_from==ipc_my_name)
+	    {
+	      CLIST *t=(CLIST *)cltop;
+	      int f=0;
+	      while(t)
+	      {
+		if (t->isactive)
+		{
+		  if (!(--(t->isactive))) f=1; //Если дошли до 0 хотя бы один раз - надо перерисовать меню
+		}
+		t=(CLIST *)(t->next);
+	      }
+	      if (f) 
+	      {
+		CLIST *oldt=NULL;
+		if (contactlist_menu_id)
+		{
+		  oldt=FindContactByN(GetCurMenuItem(FindGUIbyId(contactlist_menu_id,NULL)));
+		}
+		RecountMenu(oldt);
+	      }
+	    }
 	    break;
 	  }
 	}
@@ -2146,7 +2172,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	break;
       case ENIP_SOCK_CLOSED:
 	//strcpy(logmsg, "No connection");
-	if (edchat_id)
+/*	if (edchat_id)
 	{
 	  if (IsGuiOnTop(edchat_id))
 	    GeneralFunc_flag1(edchat_id,1);
@@ -2160,7 +2186,9 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  else
 	    request_close_clmenu=1;
 	}
+	*/
 	FillAllOffline();
+	RecountMenu(NULL);
 	connect_state=0;
 	sock=-1;
 	vibra_count=4;
