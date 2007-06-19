@@ -2783,8 +2783,31 @@ void ParseAnswer(WSHDR *ws, char *s)
   }
 }
 
+static const HEADER_DESC edchat_hdr={0,0,NULL,NULL,NULL,0,LGP_NULL};
+
+void (*old_ed_redraw)(void *data);
+void my_ed_redraw(void *data)
+{
+  void *edchat_gui;
+  EDCHAT_STRUCT *ed_struct;
+  if (old_ed_redraw) old_ed_redraw(data);
+  edchat_gui=FindGUIbyId(edchat_id,NULL);
+  if (edchat_gui)
+  {
+    ed_struct=EDIT_GetUserPointer(edchat_gui);
+    if (ed_struct)
+    {
+      int icon, width;
+      icon=*(S_ICONS+GetIconIndex(ed_struct->ed_contact));
+      ((HEADER_DESC *)&edchat_hdr)->rc.x2=ScreenW()-1-(width=GetImgWidth(icon));
+      DrawImg(ScreenW()-1-width,1,icon);
+    }
+  }  
+}
+
 void edchat_ghook(GUI *data, int cmd)
 {
+  
   static const SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_MENU};
   static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
   //  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
@@ -2802,6 +2825,22 @@ void edchat_ghook(GUI *data, int cmd)
     ed_struct->ed_chatgui=data;
     edgui_data=data;
     EDIT_SetFocus(data,ed_struct->ed_answer);
+
+#ifdef NEWSGOLD
+#else
+    static void *methods[16];
+    void **m=GetDataOfItemByID(data,4);
+    if (m)
+    {
+      if (m[1])
+      {
+        memcpy(methods,m[1],sizeof(methods));
+        old_ed_redraw=(void (*)(void *))(methods[0]);
+        methods[0]=(void *)my_ed_redraw;
+        m[1]=methods;
+      }      
+    }
+#endif
   }
   if (cmd==3)
   {
@@ -2845,7 +2884,7 @@ void edchat_ghook(GUI *data, int cmd)
   }
 }
 
-static const HEADER_DESC edchat_hdr={0,0,NULL,NULL,NULL,0,LGP_NULL};
+
 
 static const INPUTDIA_DESC edchat_desc =
 {
