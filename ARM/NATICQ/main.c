@@ -364,6 +364,9 @@ int connect_state=0;
 
 int sock=-1;
 
+volatile unsigned long TOTALRECEIVED;
+volatile unsigned long TOTALSENDED;
+
 volatile int sendq_l=0; //Длинна очереди для send
 volatile void *sendq_p=NULL; //указатель очереди
 
@@ -1243,6 +1246,8 @@ void create_connect(void)
 	if (connect(sock,&sa,sizeof(sa))!=-1)
 	{
 	  connect_state=1;
+	  TOTALRECEIVED=0;
+	  TOTALSENDED=0;
 	  REDRAW();
 	}
 	else
@@ -1302,6 +1307,7 @@ void SendAnswer(int dummy, TPKT *p)
   if (p)
   {
     j=sizeof(PKT)+p->pkt.data_len; //Размер пакета
+    TOTALSENDED+=j;
     //Проверяем, не надо ли добавить в очередь
     if (sendq_p)
     {
@@ -1369,6 +1375,15 @@ void do_ping(void)
   SendAnswer(0,pingp);
 }
 
+void SendMSGACK(int i)
+{
+  TPKT *ackp=malloc(sizeof(PKT));
+  ackp->pkt.uin=i;
+  ackp->pkt.type=T_MSGACK;
+  ackp->pkt.data_len=0;
+  SendAnswer(0,ackp);
+}
+
 void get_answer(void)
 {
   void *p;
@@ -1399,6 +1414,7 @@ void get_answer(void)
   LPKT:
     if (i==RXbuf.pkt.data_len)
     {
+      TOTALRECEIVED+=(i+8);
       //Пакет удачно принят, можно разбирать...
       RXbuf.data[RXbuf.pkt.data_len]=0; //Конец строки
       switch(RXbuf.pkt.type)
@@ -1447,6 +1463,7 @@ void get_answer(void)
 	  }
 	}
         snprintf(logmsg,255,LG_GRRECVMSG,RXbuf.pkt.uin,RXbuf.data);
+	SendMSGACK(TOTALRECEIVED);
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
         REDRAW();
 	Play(sndMsg);

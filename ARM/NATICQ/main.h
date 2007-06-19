@@ -54,4 +54,7 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
 #define T_MY_XSTATUS_CH 22
 
+//Мой ответ Чемберлену (подтверждение доставки)
+#define T_MSGACK 23
+
 #endif
