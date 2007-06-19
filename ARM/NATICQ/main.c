@@ -497,6 +497,66 @@ static const MENU_DESC contactlist_menu=
 //GBSTMR tmr_ping;
 int tenseconds_to_ping;
 
+LOGQ *NewLOGQ(const char *s)
+{
+  LOGQ *p=malloc(sizeof(LOGQ)+1+strlen(s));
+  zeromem(p,sizeof(LOGQ));
+  strcpy(p->text,s);
+  return p;
+}
+
+LOGQ *LastLOGQ(LOGQ **pp)
+{
+  LOGQ *q=*pp;
+  if (q)
+  {
+    while(q->next) q=q->next;
+  }
+  return(q);
+}
+
+//Уничтожить лог
+void FreeLOGQ(LOGQ **pp)
+{
+  LOGQ *p=*pp;
+  *pp=NULL; //Сразу обрежем
+  while(p)
+  {
+    LOGQ *np=p->next;
+    mfree(p);
+    p=np;
+  }
+}
+
+//Удалить элемент из лога
+void RemoveLOGQ(LOGQ **queue, LOGQ *p)
+{
+  LOGQ *q=(LOGQ *)queue;
+  LOGQ *qp;
+  while(qp=q->next)
+  {
+    if (qp==p)
+    {
+      q->next=p->next;
+      break;
+    }
+    q=qp;
+  }
+  mfree(p); //Если элемент вообще не в логе
+}
+
+//Добавить элемент в лог
+int AddLOGQ(LOGQ **queue, LOGQ *p)
+{
+  LOGQ *q=(LOGQ *)queue;
+  LOGQ *qp;
+  int i=0;
+  while(qp=q->next) {q=qp;i++;}
+  p->next=NULL;
+  q->next=p;
+  return(i+1); //Теперь всего в логе элементов
+}
+
 //Уничтожить список
 void FreeCLIST(void)
 {
@@ -505,7 +565,7 @@ void FreeCLIST(void)
   while(cl)
   {
     CLIST *p;
-    if (cl->log) mfree(cl->log);
+    if (cl->log) FreeLOGQ(&cl->log);
     if (cl->answer) mfree(cl->answer);
     p=cl;
     cl=(CLIST*)(cl->next);
@@ -1430,74 +1490,53 @@ void get_answer(void)
   //  REDRAW();
 }
 
-void AddStringToLog(CLIST *t, char code, char *s, const char *name)
+void AddStringToLog(CLIST *t, int code, char *s, const char *name)
 {
   char hs[128];
   TTime tt;
   TDate d;
-  char *ns;
   GetDateTime(&d,&tt);
-  char *lp;
-  int c;
   int i;
   
-  if (!t->log)
-  {
-    *(t->log=malloc(1))=0;
-  }
-  hs[127]=0;
-  
-  snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\r\n",code,tt.hour,tt.min,d.day,d.month,name);
-  Add2History(t, hs, s); // Запись хистори
-  
-  snprintf(hs,127,"%c%02d:%02d %02d-%02d %s:\n",code,tt.hour,tt.min,d.day,d.month,name);
-  lp=t->log;
-  i=0;
   while(t->msg_count>MAXLOGMSG)
   {
-    i++;
-    while((c=*(++lp))>2);
-    if (!c)
-    {
-      lp=t->log; //Чего-то не срослось (неожиданно нашли конец лога)
-      if (!*(t->log)) i=0; //Если нет сообщений вообще
-      t->msg_count=i; //Пересчитанное количество сообщений
-      break;
-    }
     t->msg_count--;
   }
-  ns=malloc(strlen(lp)+strlen(hs)+strlen(s)+1);
-  strcpy(ns,lp);
-  t->last_log=ns+strlen(ns);
-  strcat(ns,hs);
-  strcat(ns,s);
-  mfree(t->log);
-  t->log=ns;
+  snprintf(hs,127,"%02d:%02d %02d-%02d %s:\r\n",tt.hour,tt.min,d.day,d.month,name);
+  Add2History(t, hs, s); // Запись хистори
+  LOGQ *p=NewLOGQ(s);
+  snprintf(p->hdr,79,"%02d:%02d %02d-%02d %s:",tt.hour,tt.min,d.day,d.month,name);
+  p->type=code;
+  i=AddLOGQ(&t->log,p);
+  while(i>MAXLOGMSG)
+  {
+    RemoveLOGQ(&t->log,t->log);
+    i--;
+  }
+  t->msg_count=i;
+  t->last_log=p;
   if (!t->isunread) total_unread++;
   t->msg_count++;
   t->isunread=1;
   ChangeContactPos(t);
 }
 
-void ParseAnswer(WSHDR *ws, char *s);
+void ParseAnswer(WSHDR *ws, const char *s);
 
 //Добавление итемов в чат при получении нового сообщения
 void AddMsgToChat(void *data)
 {
-  char *s;
-  int j;
-  int type;
-  char hdr[128];
-  int c;
+  LOGQ *p;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
   EDCHAT_STRUCT *ed_struct;
+  int j;
   if (!data) return;
   ed_struct=EDIT_GetUserPointer(data);
   if (!ed_struct) return;
   if (!ed_struct->ed_contact->isunread) return;
-  s=ed_struct->ed_contact->last_log;
-  if (s)
+  p=ed_struct->ed_contact->last_log;
+  if (p)
   {
     j=(ed_struct->ed_contact->msg_count*2); //Ожидаемый ed_answer
     while(j<ed_struct->ed_answer)
@@ -1505,42 +1544,25 @@ void AddMsgToChat(void *data)
       EDIT_RemoveEditControl(ed_struct->ed_chatgui,1);
       ed_struct->ed_answer--;
     }
-    while(*s)
+    while(p)
     {
-      type=*s++;    //Пропуск типа
-      j=0;
-      while((hdr[j]=*s++)!='\n')
-	j++;
-      hdr[j]=0;
-      ascii2ws(ews,hdr);
+      ascii2ws(ews,p->hdr);
       ConstructEditControl(&ec,1,ECF_APPEND_EOL,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
-      SetPenColorToEditCOptions(&ec_options,type==1?I_COLOR:TO_COLOR);
+      SetPenColorToEditCOptions(&ec_options,p->type==1?I_COLOR:TO_COLOR);
       SetFontToEditCOptions(&ec_options,2);
       CopyOptionsToEditControl(&ec,&ec_options);
       //AddEditControlToEditQend(eq,&ec,ma);
       EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
       ed_struct->ed_answer++;
-      j=0;
-      while((c=msg_buf[j]=*s)>2)
-      {
-	if (c!=10)
-	  j++;
-	s++;
-      }
-      if (j)
-      {
-	while(msg_buf[j-1]==13)
-	  j--;
-      }
-      msg_buf[j]=0;
-      ParseAnswer(ews,msg_buf);
+      ParseAnswer(ews,p->text);
       ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
       SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
       CopyOptionsToEditControl(&ec,&ec_options);
       EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
       ed_struct->ed_answer++;
+      p=p->next;
     }
   }
   if (IsGuiOnTop(edchat_id)) 
@@ -2656,7 +2678,6 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   GBS_DelTimer(&tmr_illumination);
   CLIST *t;
   TPKT *p;
-  char *s;
   int l=msg->gbsmsg->submess;
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
   
@@ -2700,8 +2721,10 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
       {
 	if ((t=ed_struct->ed_contact))
 	{
-	  if ((s=t->answer))
+	  LOGQ *lp=t->answer;
+	  if (lp)
 	  {
+	    char *s=lp->text;
 	    if (strlen(s))
 	    {
 	      t->isactive=ACTIVE_TIME;
@@ -2712,8 +2735,8 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	      strcpy(p->data,s);
 	      AddStringToLog(t,0x01,p->data,I_str);
 	      SUBPROC((void *)SendAnswer,0,p);
-	      mfree(s);
-	      t->answer=0;
+	      mfree(t->answer);
+	      t->answer=NULL;
 	      //        request_remake_edchat=1;
 	      EDIT_SetFocus(data,ed_struct->ed_answer);
 	      CutWSTR(ews,0);
@@ -2741,7 +2764,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 }
 
 
-void ParseAnswer(WSHDR *ws, char *s)
+void ParseAnswer(WSHDR *ws, const char *s)
 {
   S_SMILES *t;
   S_SMILES *t_root=(S_SMILES *)s_top;
@@ -2811,7 +2834,6 @@ void edchat_ghook(GUI *data, int cmd)
   static const SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_MENU};
   static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
   //  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
-  char *s;
   int j;
   EDITCONTROL ec;
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
@@ -2869,11 +2891,8 @@ void edchat_ghook(GUI *data, int cmd)
       SetSoftKey(data,&sk_cancel,SET_SOFT_KEY_N==0?1:0);
     if (ed_struct->ed_contact)
     {
-      if ((s=ed_struct->ed_contact->answer))
-	mfree(s);
-      s=malloc(strlen(msg_buf)+1);
-      strcpy(s,msg_buf);
-      ed_struct->ed_contact->answer=s;
+      mfree(ed_struct->ed_contact->answer);
+      ed_struct->ed_contact->answer=NewLOGQ(msg_buf);
     }
   }
   if (cmd==0x0C)
@@ -2918,13 +2937,8 @@ void CreateEditChat(CLIST *t)
   void *eq;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
-  int j;
-  char hdr[128];
-  int type;
   
-  char *s=t->log;
-  
-  //  if (!s) return;
+  LOGQ *lp=t->log;
   
   edcontact=t;
   int edchat_toitem=0;
@@ -2935,36 +2949,25 @@ void CreateEditChat(CLIST *t)
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
-  if (s) while(*s)
+  while(lp)
   {
-    type=*s++;    //Пропуск типа
-    j=0;
-    while((hdr[j]=*s++)!='\n') j++;
-    hdr[j]=0;
-    //    wsprintf(ews,percent_t,hdr);
-    ascii2ws(ews,hdr);
+    ascii2ws(ews,lp->hdr);
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
-    SetPenColorToEditCOptions(&ec_options,type==1?I_COLOR:TO_COLOR);
+    SetPenColorToEditCOptions(&ec_options,lp->type==1?I_COLOR:TO_COLOR);
     SetFontToEditCOptions(&ec_options,2);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     edchat_toitem++;
-    j=0;
-    while((msg_buf[j]=*s)>3) {if (msg_buf[j]!=10) j++; s++;}
-    if (j)
-    {
-      while(msg_buf[j-1]==13) j--;
-    }
-    msg_buf[j]=0;
     //    wsprintf(ews,percent_t,msg_buf);
-    ParseAnswer(ews,msg_buf);
+    ParseAnswer(ews,lp->text);
     ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     edchat_toitem++;
+    lp=lp->next;
   }
   if (t->isunread) total_unread--;
   t->isunread=0;
@@ -2977,7 +2980,7 @@ void CreateEditChat(CLIST *t)
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
   
-  ascii2ws(ews,t->answer?t->answer:empty_str);
+  ParseAnswer(ews,t->answer?t->answer->text:empty_str);
   ConstructEditControl(&ec,3,0x00,ews,1024);
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -3150,8 +3153,7 @@ void ClearLog(GUI *data/*,void *dummy*/)
   {
     if (t->log)
     {
-      mfree(t->log);
-      t->log=NULL;
+      FreeLOGQ(&t->log);
       t->msg_count=0;
       if (ed_struct->ed_answer>=2&&ed_struct->ed_chatgui)
       {

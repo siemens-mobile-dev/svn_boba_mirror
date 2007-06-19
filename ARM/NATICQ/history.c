@@ -64,7 +64,6 @@ void LogStatusChange(CLIST *CListEx)
   if(!LOG_STATCH){return;}
   if(CListEx->state>7){return;}
   if(CListEx->log==NULL){return;}
-  if(strlen(CListEx->log)==0){return;}
   char hdr[] = "(System message)";
   char msg[] = "%s меняет статус на %s\r\n";
   char message[100];

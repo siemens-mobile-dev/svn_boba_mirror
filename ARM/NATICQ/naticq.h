@@ -3,6 +3,17 @@
 /*
   Типы данных, общие для всех модулей проекта
 */
+
+typedef struct
+{
+  void *next;
+  int acked;
+  unsigned long ID;
+  int type;
+  char hdr[80]; //Заголовок
+  char text[];
+}LOGQ;
+
 typedef struct
 {
   void *next;
@@ -14,9 +25,9 @@ typedef struct
   unsigned short state;
   unsigned short xstate;
   int isunread;
-  char *log;
-  char *answer;
-  char *last_log;
+  LOGQ *log;
+  LOGQ *answer;
+  LOGQ *last_log;
   int isactive;
   int msg_count;
 }CLIST;
