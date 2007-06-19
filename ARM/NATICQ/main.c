@@ -1725,7 +1725,23 @@ ProcessPacket(TPKT *p)
     vibra_count=1;
     start_vibra();
     IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
+    if (t->name[0]=='#')
+    {
+      //Если это конференция, патчим имя
+      char *s=strchr(p->data,'>');
+      //Если нашли символ > и после него пробел и ник короче 16 символов
+      if (s)
+      {
+	if ((s[1]==' ')&&((s-p->data)<16))
+	{
+	  *s=0; //Режем строку
+	  AddStringToLog(t,0x02,s+2,p->data); //Добавляем имя из текста сообщения
+	  goto L1;
+	}
+      }
+    }
     AddStringToLog(t,0x02,p->data,t->name);
+    L1:
     //Разворачиваем группу, в которой пришло сообщение
     {
       CLIST *g=FindGroupByID(t->group);
