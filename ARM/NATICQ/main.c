@@ -2805,6 +2805,7 @@ void ParseAnswer(WSHDR *ws, const char *s)
   unsigned int wchar;
   unsigned int ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
   CutWSTR(ws,0);
+  int i;
   while(wchar=*s)
   {
     t=t_root;
@@ -2835,7 +2836,13 @@ void ParseAnswer(WSHDR *ws, const char *s)
       ulb>>=8;
       ulb+=s[3]<<24;
     }
-    wsAppendChar(ws,wchar);
+    if (wchar!=10) wsAppendChar(ws,wchar);
+  }
+  i=ws->wsbody[0];
+  while(i>1)
+  {
+    if (ws->wsbody[i--]!=13) break;
+    ws->wsbody[0]=i;
   }
 }
 
