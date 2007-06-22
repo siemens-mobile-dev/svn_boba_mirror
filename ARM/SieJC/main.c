@@ -92,11 +92,11 @@ GBSTMR Ping_Timer;
 //=============Некоторые цвета====================
 
   RGBA MAINBG_NOT_CONNECTED = {50, 50, 50, 100};
-  RGBA MAINBG_CONNECTED = {50, 50, 255, 100};
+  RGBA MAINBG_CONNECTED = {255, 255, 255, 100};
   RGBA MAINBG_ERROR = {255, 0, 0, 100};
-  RGBA MAINFONT_NOT_CONNECTED = {255, 255, 255, 100};
-  RGBA MAINFONT_CONNECTED = {255, 255, 255, 100};
-  RGBA MAINFONT_ERROR = {255, 255, 255, 100};
+  RGBA MAINFONT_NOT_CONNECTED = {200, 200, 200, 100};
+  RGBA MAINFONT_CONNECTED = {100, 100, 100, 100};
+  RGBA MAINFONT_ERROR = {255, 0, 0, 100};
 
 //================================================
 
@@ -845,6 +845,7 @@ char mypic[128];
 
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 #ifdef USE_PNG_EXT
+/*
   if(connect_state<2)
   {
     char logo_path[128];
@@ -852,6 +853,7 @@ char mypic[128];
     strcat(logo_path,"SieJC_logo.png");
     DrawImg(0,70,(int)logo_path);
   }
+*/
 #endif
 }
 

@@ -46,6 +46,8 @@
 #define IQ_ROSTER  "jabber:iq:roster"
 #define IQ_PRIVATE "jabber:iq:private"
 
+#define DISCO_INFO "http://jabber.org/protocol/disco#info"
+
 #define MSGSTR_CHAT "chat"
 #define MSGSTR_GCHAT "groupchat"
 #define MSGSTR_NORMAL "normal"

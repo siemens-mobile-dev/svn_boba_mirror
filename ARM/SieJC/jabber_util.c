@@ -191,17 +191,18 @@ void Send_Presence(PRESENCE_INFO *pr_info)
 {
   extern char My_Presence;
   My_Presence = pr_info->status;
-
+//<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
+  
   char* presence = malloc(1024);
   if(pr_info->message)
   {
-    char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status></presence>";
-    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message);
+    char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>"; //по идее для инвиз/оффлайн не надо отправлять инфо
+    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
   }
   else
   {
-    char presence_template[]="<presence><priority>%d</priority><show>%s</show></presence>";
-    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status]);
+    char presence_template[]="<presence><priority>%d</priority><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
+    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
   }
   SendAnswer(presence);
 
@@ -211,13 +212,13 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   {
     if(pr_info->message)
     {
-      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><status>%s</status></presence>";
-      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], pr_info->message);
+      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
     }
     else
     {
-      char presence_template[]="<presence from='%s' to='%s'><show>%s</show></presence>";
-      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status]);
+      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
     }
     SendAnswer(presence);
     m_ex=m_ex->next;
@@ -320,6 +321,17 @@ void Report_VersionInfo(char* id, char *to)
   char *ph_sw = Get_Phone_Info(PI_SW_NUMBER);
   sprintf(answer, "<name>%s</name><version>%s-r%d (%s)</version><os>SIE-%s/%s %s</os>", VERSION_NAME, VERSION_VERS, __SVN_REVISION__, CMP_DATE, ph_model, ph_sw, OS);
   SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
+
+  mfree(id);
+  mfree(to);
+}
+
+// Context: HELPER
+void Report_DiscoInfo(char* id, char *to)
+{
+  char answer[200];
+  sprintf(answer, "<identity category='client' type='mobile'/><feature var='%s'/><feature var='%s'/><feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC);
+  SendIq(to, IQTYPE_RES, id, DISCO_INFO, answer);
 
   mfree(id);
   mfree(to);
@@ -704,6 +716,7 @@ void Process_Iq_Request(XMLNode* nodeEx)
   char gerr[]=IQTYPE_ERR;
   char gset[]=IQTYPE_SET;
   const char iq_version[]=IQ_VERSION;
+  const char disco_info[]=DISCO_INFO;
 
   iqtype = XML_Get_Attr_Value("type",nodeEx->attr);
   from = XML_Get_Attr_Value("from",nodeEx->attr);
@@ -736,6 +749,28 @@ if(!strcmp(gget,iqtype)) // Iq type = get
         char* loc_from=malloc(strlen(from)+1);
         strcpy(loc_from,from);
         SUBPROC((void*)Report_VersionInfo,loc_id, loc_from);
+        return;
+    }
+  }
+  
+  //entity caps
+  if(!strcmp(q_type,disco_info))
+  {
+    // http://jabber.org/protocol/disco#info
+    if(from)
+    {
+        // Создаем переменные, чтобы в них записать данные
+        // и безопасно уничтожить в HELPER
+
+      char* loc_id = NULL;
+      if(id)
+        {
+          loc_id=malloc(strlen(id)+1);
+          strcpy(loc_id,id);
+        }
+        char* loc_from=malloc(strlen(from)+1);
+        strcpy(loc_from,from);
+        SUBPROC((void*)Report_DiscoInfo,loc_id, loc_from);
         return;
     }
   }
