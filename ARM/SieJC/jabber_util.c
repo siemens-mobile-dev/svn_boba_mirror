@@ -194,15 +194,23 @@ void Send_Presence(PRESENCE_INFO *pr_info)
 //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
   
   char* presence = malloc(1024);
-  if(pr_info->message)
+  if(pr_info->status!=PRESENCE_INVISIBLE)
   {
-    char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>"; //по идее для инвиз/оффлайн не надо отправлять инфо
-    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+    if(pr_info->message)
+    {
+      char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>"; //по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+    }
+    else
+    {
+      char presence_template[]="<presence><priority>%d</priority><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+    }
   }
   else
   {
-    char presence_template[]="<presence><priority>%d</priority><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-    snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+      char presence_template[]="<presence type='invisible'/>";
+      strcpy(presence,presence_template);
   }
   SendAnswer(presence);
 
@@ -498,7 +506,6 @@ void Leave_Conference(char* room)
     mfree(m_ex->conf_jid);
     muctop=m_ex->next;
     mfree(m_ex);
-    muctop = NULL;
   }
   while(m_ex2)
   {

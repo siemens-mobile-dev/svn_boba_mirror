@@ -35,10 +35,10 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Ќ≈ ћ≈Ќя“№!
-const char VERSION_VERS[] = "1.8.5-Z";
+const char VERSION_VERS[] = "1.9.0-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
-const unsigned long PING_INTERVAL = 5*60*TMR_SECOND; // 5 минут
+const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
 #ifdef NEWSGOLD
 #ifdef ELKA
   const char OS[] = "NewSGOLD_ELKA_ELF-Platform";
