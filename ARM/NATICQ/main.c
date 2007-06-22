@@ -426,6 +426,7 @@ volatile int edchat_id;
 CLIST *edcontact;
 void *edgui_data;
 
+static int prev_clmenu_itemcount;
 
 char clm_hdr_text[48];
 static const char def_clm_hdr_text[] = LG_CLTITLE;
@@ -872,6 +873,7 @@ void create_contactlist_menu(void)
 {
   int i;
   i=CountContacts();
+  prev_clmenu_itemcount=i;
   UpdateCLheader();
   patch_header(&contactlist_menuhdr);
 #ifdef USE_MLMENU
@@ -892,11 +894,6 @@ void contactlist_menu_ghook(void *data, int cmd)
   {
     pltop->dyn_pltop=XStatusesImgList;
     DisableIDLETMR();
-/*    if (request_close_clmenu)
-    {
-      request_close_clmenu=0;
-      GeneralFunc_flag1(contactlist_menu_id,1);
-    }*/
   }
 }
 
@@ -919,8 +916,13 @@ void RecountMenu(CLIST *req)
   i=CountContacts();
   if (j>=i) j=i-1;
   if (j<0) j=0;
-  Menu_SetItemCountDyn(data,i);
+  if (i!=prev_clmenu_itemcount)
+  {
+    prev_clmenu_itemcount=i;
+    Menu_SetItemCountDyn(data,i);
+  }
   SetCursorToMenuItem(data,j);
+  if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
 }
 
 int contactlist_menu_onkey(void *data, GUI_MSG *msg)
@@ -1636,7 +1638,6 @@ ProcessPacket(TPKT *p)
       else
         create_contactlist_menu();
     }
-    if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     break;
   case T_GROUPID:
     if (t=FindGroupByID(GROUP_CACHE=p->pkt.uin))
@@ -1649,7 +1650,6 @@ ProcessPacket(TPKT *p)
     {
       RecountMenu(AddGroup(p->pkt.uin,p->data));
     }
-    if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     break;
   case T_GROUPFOLLOW:
     GROUP_CACHE=p->pkt.uin;
@@ -1669,8 +1669,6 @@ ProcessPacket(TPKT *p)
       LogStatusChange(t);
       ChangeContactPos(t);
       RecountMenu(oldt);
-      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
-      
       if ((t->state!=0xFFFF)&&(i==0xFFFF))//Звук
       {
 	Play(sndGlobal);
@@ -1726,7 +1724,6 @@ ProcessPacket(TPKT *p)
       AddMsgToChat(edgui_data);
     }
     RecountMenu(t);
-    if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
     extern const int DEVELOP_IF;
     switch (DEVELOP_IF)
     {
@@ -2009,7 +2006,6 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 		  oldt=FindContactByN(GetCurMenuItem(FindGUIbyId(contactlist_menu_id,NULL)));
 		}
 		RecountMenu(oldt);
-		if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
 	      }
 	    }
 	    break;
@@ -2086,6 +2082,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     if ((int)msg->data0==contactlist_menu_id)
     {
       contactlist_menu_id=0;
+      prev_clmenu_itemcount=0;
     }
     if ((int)msg->data0==edchat_id)
     {
@@ -2195,24 +2192,8 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	break;
       case ENIP_SOCK_CLOSED:
 	//strcpy(logmsg, "No connection");
-/*	if (edchat_id)
-	{
-	  if (IsGuiOnTop(edchat_id))
-	    GeneralFunc_flag1(edchat_id,1);
-	  else
-	    request_close_edchat=1;
-	}
-	if (contactlist_menu_id)
-	{
-	  if (IsGuiOnTop(contactlist_menu_id))
-	    GeneralFunc_flag1(contactlist_menu_id,1);
-	  else
-	    request_close_clmenu=1;
-	}
-	*/
 	FillAllOffline();
 	RecountMenu(NULL);
-	if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
 	connect_state=0;
 	sock=-1;
 	vibra_count=4;
