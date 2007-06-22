@@ -202,6 +202,13 @@ static void EditConfig(void)
   GeneralFuncF1(1);
 }
 
+static void Disconnect(void)
+{
+  extern void end_socket(void);
+  SUBPROC((void*)end_socket);
+  GeneralFuncF1(1);
+}
+
 static void PingToServer(void)
 {
   TPKT *p;
@@ -224,7 +231,7 @@ static const HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
 
 static const int mmenusoftkeys[]={0,1,2};
 
-static const char * const menutexts[10]=
+static const char * const menutexts[11]=
 {
   LG_MNUSTATUS,
   LG_MNUXSTATUS,
@@ -234,6 +241,7 @@ static const char * const menutexts[10]=
   LG_MNUSHOWOFF,
   LG_MNUSHOWGROUP,
   LG_MNUEDCFG,
+  LG_MNUDISCONNECT,
   LG_MNUPING,
   LG_MNUABOUT
 };
@@ -249,7 +257,7 @@ static const char * const menutexts[10]=
   {S_ICONS,    (int)LG_MNUABOUT,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };*/
 
-static const void *menuprocs[10]=
+static const void *menuprocs[11]=
 {
   (void *)DispStatusChangeMenu,
   (void *)DispXStatusChangeMenu,
@@ -259,6 +267,7 @@ static const void *menuprocs[10]=
   (void *)ChangeShowOfflineMode,
   (void *)ChangeShowGroupsMode,
   (void *)EditConfig,
+  (void *)Disconnect,
   (void *)PingToServer,
   (void *)AboutDlg,
 };
@@ -325,9 +334,12 @@ static void menuitemhandler(void *data, int curitem, int *unk)
     SetMenuItemIconArray(data,item,S_ICONS+ICON_SETTINGS);
     break;
   case 8:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_PING);
+    SetMenuItemIconArray(data,item,S_ICONS+IS_OFFLINE);
     break;
   case 9:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_PING);
+    break;
+  case 10:
     SetMenuItemIconArray(data,item,S_ICONS+IS_UNKNOWN);
     break;
   }
@@ -353,7 +365,7 @@ static const MENU_DESC tmenu=
   (void*)menuitemhandler,
   NULL,//menuitems,
   NULL,//menuprocs,
-  10
+  11
 };
 
 void ShowMainMenu()
@@ -362,5 +374,5 @@ void ShowMainMenu()
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   *((int **)(&menuhdr.icon))=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
-  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,10,0,0);
+  MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,11,0,0);
 }

@@ -56,6 +56,7 @@
 #define LG_MNUSHOWOFF "Офф. контакты"
 #define LG_MNUSHOWGROUP "Группы"
 #define LG_MNUEDCFG   "Настройки"
+#define LG_MNUDISCONNECT "Оборвать связь"
 #define LG_MNUPING    "Пинг"
 #define LG_MNUABOUT   "Об эльфе"
 //--------------
@@ -175,6 +176,7 @@
 #define LG_MNUSHOWOFF "Офф. контакты"
 #define LG_MNUSHOWGROUP "Групи"
 #define LG_MNUEDCFG   "Параметри"
+#define LG_MNUDISCONNECT "Розiрвати зв'язок"
 #define LG_MNUPING    "Пiнг"
 #define LG_MNUABOUT   "Про ельфа"
 //--------------
@@ -295,6 +297,7 @@
 #define LG_MNUSHOWOFF "Off. contacts"
 #define LG_MNUSHOWGROUP "Groups"
 #define LG_MNUEDCFG   "Edit config"
+#define LG_MNUDISCONNECT "Disconnect"
 #define LG_MNUPING    "Ping"
 #define LG_MNUABOUT   "About"
 
