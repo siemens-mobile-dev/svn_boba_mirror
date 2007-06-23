@@ -91,12 +91,12 @@ GBSTMR Ping_Timer;
 
 //=============Некоторые цвета====================
 
-  RGBA MAINBG_NOT_CONNECTED = {50, 50, 50, 100};
-  RGBA MAINBG_CONNECTED = {255, 255, 255, 100};
-  RGBA MAINBG_ERROR = {255, 0, 0, 100};
-  RGBA MAINFONT_NOT_CONNECTED = {200, 200, 200, 100};
-  RGBA MAINFONT_CONNECTED = {100, 100, 100, 100};
-  RGBA MAINFONT_ERROR = {255, 0, 0, 100};
+  RGBA MAINBG_NOT_CONNECTED =     {50,  50,  50, 100};
+  RGBA MAINBG_CONNECTED =         {255, 255, 255, 100};
+  RGBA MAINBG_ERROR =             {255,   0,   0, 100};
+  RGBA MAINFONT_NOT_CONNECTED =   {200, 200, 200, 100};
+  RGBA MAINFONT_CONNECTED =       {100, 100, 100, 100};
+  RGBA MAINFONT_ERROR =           {255,   0,   0, 100};
 
 //================================================
 
@@ -709,7 +709,7 @@ void Process_Decoded_XML(XMLNode* node)
     //if(nodeEx->subnode) Process_Decoded_XML(nodeEx->subnode);
     nodeEx = nodeEx->next;
   }
-  
+
 }
 
 void __log(char* buffer, int size)
@@ -1115,7 +1115,7 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->gui_id=CreateGUI(main_gui);
   DNR_TRIES=3;
   InitGroupsList();
-  
+
   SUBPROC((void *)create_connect);
   GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
 #ifdef LOG_ALL

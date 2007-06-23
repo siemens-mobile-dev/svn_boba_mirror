@@ -10,8 +10,8 @@
 
 const RGBA CURSOR =           {120, 120, 255, 100};         // Цвет курсора
 const RGBA CURSOR_BORDER =    {200, 200, 200, 100};         // Цвет ободка курсора
-const RGBA CLIST_F_COLOR_0 =  {  0,   0,   0, 100};               // Цвет шрифта
-const RGBA CLIST_F_COLOR_1 =  {  0,   0, 170, 100};             // Цвет шрифта (есть сообщения)
+const RGBA CLIST_F_COLOR_0 =  {  0,   0,   0, 100};         // Цвет шрифта
+const RGBA CLIST_F_COLOR_1 =  {  0,   0, 170, 100};         // Цвет шрифта (есть сообщения)
 const RGBA CONTACT_BG_0 =     {255, 255, 255, 100};         // Чередование: цвет фона 1
 const RGBA CONTACT_BG_1 =     {225, 225, 225, 100};         // Чередование: цвет фона 2
 
@@ -373,7 +373,7 @@ int CList_GetVisibilityForGroup(int GID)
     }
     ClEx = ClEx->next;
   }
-  return 0; //Вообще-то, сюда мы попадать не должны, это чтобы иар заткнулся
+  return 1; //Такая группа не найдена. Такого вообще-то не должно быть, но для конференций это именно так.
 }
 
 TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
