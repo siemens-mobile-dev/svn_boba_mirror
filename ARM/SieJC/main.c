@@ -1174,12 +1174,17 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     if (IsGuiOnTop(idlegui_id))
     {
       GUI *igui=GetTopGUI();
-      if (igui)
+      if (igui) //И он существует
       {
-	void *idata=GetDataOfItemByID(igui,2);
-	if (idata)
-	{
-	  void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+	#ifdef ELKA
+	  {
+	void *canvasdata=BuildCanvas();
+	#else
+	  void *idata=GetDataOfItemByID(igui,2);
+	  if (idata)
+	  {
+	    void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+	#endif
 
 #ifdef USE_PNG_EXT
 char mypic[128];
@@ -1199,6 +1204,10 @@ char mypic[128];
           DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
 	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
 #endif
+	#ifdef ELKA
+	#else
+	  }
+	#endif
 	}
       }
     }
