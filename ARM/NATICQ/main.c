@@ -167,6 +167,8 @@ void IlluminationOn(const int disp, const int key, const int tmr, const int fade
   SetIllumination(1,1,key,fade);
   GBS_StartTimerProc(&tmr_illumination,tmr*216,IlluminationOff);
 }
+
+volatile int slienthide=0;    //by BoBa 25.06.07
 ///////////
 
 //===================================================================
@@ -892,6 +894,7 @@ void contactlist_menu_ghook(void *data, int cmd)
   }
   if (cmd==0x0A)
   {
+    slienthide=0;
     pltop->dyn_pltop=XStatusesImgList;
     DisableIDLETMR();
   }
@@ -995,6 +998,15 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
         KbdLock();
       }
       return(-1);
+    }    
+    if (msg->gbsmsg->submess=='*'){
+      slienthide=1;
+      ClearContactT9Key();
+      RecountMenu(NULL);
+      gipc.name_to=ipc_xtask_name;
+      gipc.name_from=ipc_my_name;
+      gipc.data=0;
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
     }    
   }
   return(0);
@@ -1595,6 +1607,7 @@ void set_my_xstatus(void)
 
 void to_develop(void)
 {
+  if (slienthide) return;
   gipc.name_to=ipc_xtask_name;
   gipc.name_from=ipc_my_name;
   gipc.data=(void *)maincsm_id;
@@ -2829,6 +2842,7 @@ void edchat_ghook(GUI *data, int cmd)
   PNGTOP_DESC *pltop=PNG_TOP();
   if (cmd==9)
   {
+    GBS_DelTimer(&tmr_illumination);          //by BoBa 25.06.07
     pltop->dyn_pltop=NULL;
   }
   if (cmd==2)
