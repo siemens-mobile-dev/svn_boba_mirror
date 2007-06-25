@@ -1000,9 +1000,9 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
       return(-1);
     }    
     if (msg->gbsmsg->submess=='*'){
-      slienthide=1;
       ClearContactT9Key();
       RecountMenu(NULL);
+      slienthide=1;
       gipc.name_to=ipc_xtask_name;
       gipc.name_from=ipc_my_name;
       gipc.data=0;
