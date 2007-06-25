@@ -1204,10 +1204,10 @@ char mypic[128];
           DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
 	  DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
 #endif
-	#ifdef ELKA
-	#else
-	  }
-	#endif
+	//#ifdef ELKA
+	//#else
+	  //}
+	//#endif
 	}
       }
     }
