@@ -1507,11 +1507,12 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name)
   i=AddLOGQ(&t->log,p);
   while(i>MAXLOGMSG)
   {
+    if (t->log==t->last_log) t->last_log=t->last_log->next;
     RemoveLOGQ(&t->log,t->log);
     i--;
   }
   t->msg_count=i;
-  t->last_log=p;
+  if (!t->last_log) t->last_log=p;
   if (!t->isunread) total_unread++;
   t->msg_count++;
   t->isunread=1;
@@ -1519,6 +1520,8 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name)
 }
 
 void ParseAnswer(WSHDR *ws, const char *s);
+
+int time_to_stop_t9;
 
 //Добавление итемов в чат при получении нового сообщения
 void AddMsgToChat(void *data)
@@ -1562,6 +1565,7 @@ void AddMsgToChat(void *data)
       p=p->next;
     }
   }
+  ed_struct->ed_contact->last_log=NULL;
   if (IsGuiOnTop(edchat_id)) 
     total_unread--;
   else
@@ -1734,7 +1738,24 @@ ProcessPacket(TPKT *p)
     }
     if (edchat_id)
     {
-      AddMsgToChat(FindGUIbyId(edchat_id,NULL));
+      void *data=FindGUIbyId(edchat_id,NULL);
+      {
+	EDCHAT_STRUCT *ed_struct;
+	ed_struct=EDIT_GetUserPointer(data);
+	if (ed_struct) 
+	{
+	  if (ed_struct->ed_contact==t)
+	  {
+	    if (EDIT_IsBusy(data))
+	    {
+	      t->req_add=1;
+	      time_to_stop_t9=3;
+	    }
+	    else
+	      AddMsgToChat(data);
+	  }
+	}
+      }
     }
     RecountMenu(t);
     extern const int DEVELOP_IF;
@@ -2019,6 +2040,13 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 		  oldt=FindContactByN(GetCurMenuItem(FindGUIbyId(contactlist_menu_id,NULL)));
 		}
 		RecountMenu(oldt);
+	      }
+	      if (time_to_stop_t9)
+	      {
+		if (!(--time_to_stop_t9))
+		{
+		  if (IsGuiOnTop(edchat_id)) RefreshGUI();
+		}
 	      }
 	    }
 	    break;
@@ -2899,6 +2927,16 @@ void edchat_ghook(GUI *data, int cmd)
       mfree(ed_struct->ed_contact->answer);
       ed_struct->ed_contact->answer=NewLOGQ(msg_buf);
     }
+    if (!EDIT_IsBusy(data))
+    {
+      time_to_stop_t9=0;
+      if (ed_struct->ed_contact->req_add)
+      {
+	ed_struct->ed_contact->req_add=0;
+	AddMsgToChat(data);
+	RecountMenu(ed_struct->ed_contact);
+      }
+    }
   }
   if (cmd==0x0C)
   {
@@ -2997,6 +3035,8 @@ void CreateEditChat(CLIST *t)
   ed_struct->ed_contact=t;
   ed_struct->ed_answer=edchat_toitem;
   ed_struct->requested_decrement_total_unread=0;
+  t->req_add=0;
+  t->last_log=NULL;
   
   //  int scr_w=ScreenW();
   //  int scr_h=ScreenH();

@@ -25,6 +25,7 @@ typedef struct
   unsigned short state;
   unsigned short xstate;
   int isunread;
+  int req_add;
   LOGQ *log;
   LOGQ *answer;
   LOGQ *last_log;
