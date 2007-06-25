@@ -63,7 +63,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
       wstrcpy(sw,ec.pWS);
 //      SendSMS(ews,"+380636038122",0x4209,MSG_SMS_RX-1,2); //С редактированием
 //      SendSMS(ews,"+380636038122",0x4209,MSG_SMS_RX-1,6); //Сразу в бой с окошком
-      SendSMS(sw,"+380636038122",0x4209,MSG_SMS_RX-1,6);
+//      SendSMS(sw,"+380636038122",0x4209,MSG_SMS_RX-1,6);
       return(-1);
     }
   }
@@ -71,6 +71,25 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   return(0); //Do standart keys
   //1: close
 }
+
+GBSTMR mytmr;
+
+void *edit_data;
+
+void TestTimerProc(void)
+{
+  WSHDR ws1loc, *ws1;
+  unsigned short num[128];
+  ws1=CreateLocalWS(&ws1loc,num,128);
+  if (edit_data)
+  {
+    wsprintf(ws1,"%08x",EDIT_IsBusy(edit_data));
+    DrawString(ws1,20,0,100,22,
+	     FONT_SMALL,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+  }
+  GBS_StartTimerProc(&mytmr,216/4,TestTimerProc);
+}
+
 
 void ed1_ghook(GUI *data, int cmd)
 {
@@ -80,6 +99,13 @@ void ed1_ghook(GUI *data, int cmd)
   if (cmd==2)
   {
     //Create
+    edit_data=data;
+    GBS_StartTimerProc(&mytmr,216/4,TestTimerProc);
+  }
+  if (cmd==3)
+  {
+    edit_data=NULL;
+    GBS_DelTimer(&mytmr);
   }
   if (cmd==7)
   {
@@ -196,9 +222,9 @@ void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-//  csm->gui_id=create_ed();
+  csm->gui_id=create_ed();
 //  csm->gui_id=create_menu();
-  csm->gui_id=create_menu2();
+//  csm->gui_id=create_menu2();
 }
 
 void Killer(void)
@@ -406,7 +432,7 @@ extern void SetMLMenuItemText(void *data,void *item,WSHDR *ws1,WSHDR *ws2,int un
 extern void *AllocMLMenuItem(void *data);
 */
 
-void menu2_iconhndl(void *data, int curitem, int *unk)
+void menu2_iconhndl(void *data, int curitem, void *unk)
 {
   void *item=AllocMLMenuItem(data);
   WSHDR *ws1=AllocMenuWS(data,30);

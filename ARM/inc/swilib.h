@@ -2889,3 +2889,8 @@ __swi __arm void EDIT_RemoveTextInvert(void *gui);
 //pattern=
 //thumb
 //pattern_SGOLD=??,B5,??,6D,{??,B5,??,6C,{??,B5,??,6A,{00,21,70,30,01,71,70,47},??,BD},??,BD},??,BD+1
+
+#pragma swi_number=0x21C
+__swi __arm int EDIT_IsBusy(void *gui);
+//thumb
+//pattern=??,B5,??,30,??,68,{??,B5,??,30,??,68,{00,68,40,05,C0,0F,70,47},??,BD},??,BD+1

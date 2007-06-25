@@ -18,5 +18,6 @@ kill_data
 //	defadr	CreateMultiLinesMenu,0xA0613E7C+1
 //	defadr	SetMLMenuItemText,0xA0980366+1
 //	defadr	AllocMLMenuItem,0xA09806A6+1
+
 	END
 	
