@@ -3168,6 +3168,7 @@ void ClearLog(GUI *data/*,void *dummy*/)
       }
     }
     t->isactive=0;		//by BoBa  18.06.07
+    RecountMenu(t);
     GeneralFuncF1(1);
   }
 }
