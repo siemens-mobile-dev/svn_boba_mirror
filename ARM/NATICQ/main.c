@@ -425,8 +425,8 @@ GBSTMR tmr_active;
 volatile int edchat_id;
 
 //Применяется для добавления сообщений
-CLIST *edcontact;
-void *edgui_data;
+//CLIST *edcontact;
+//void *edgui_data;
 
 static int prev_clmenu_itemcount;
 
@@ -1734,7 +1734,7 @@ ProcessPacket(TPKT *p)
     }
     if (edchat_id)
     {
-      AddMsgToChat(edgui_data);
+      AddMsgToChat(FindGUIbyId(edchat_id,NULL));
     }
     RecountMenu(t);
     extern const int DEVELOP_IF;
@@ -2737,6 +2737,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	      CutWSTR(ews,0);
 	      EDIT_SetTextToFocused(data,ews);
 	      AddMsgToChat(data);
+	      RecountMenu(t);
 	      return(-1);
 	    }
 	  }
@@ -2848,7 +2849,7 @@ void edchat_ghook(GUI *data, int cmd)
   if (cmd==2)
   {
     ed_struct->ed_chatgui=data;
-    edgui_data=data;
+//    edgui_data=data;
     EDIT_SetFocus(data,ed_struct->ed_answer);
 
 #ifdef NEWSGOLD
@@ -2869,7 +2870,8 @@ void edchat_ghook(GUI *data, int cmd)
   }
   if (cmd==3)
   {
-    if (edgui_data==data) edgui_data=NULL;
+//    if (edgui_data==data) edgui_data=NULL;
+    RecountMenu(ed_struct->ed_contact);
     mfree(ed_struct);
   }
   if (cmd==0x0A)
@@ -2943,7 +2945,7 @@ void CreateEditChat(CLIST *t)
   
   LOGQ *lp=t->log;
   
-  edcontact=t;
+//  edcontact=t;
   int edchat_toitem=0;
   
   *((int *)(&edchat_hdr.lgp_id))=(int)t->name;
@@ -3068,6 +3070,7 @@ void GetShortInfo(GUI *data)
     p->pkt.data_len=0;
     AddStringToLog(t, 0x01, "Request info...", I_str);
     AddMsgToChat(ed_struct->ed_chatgui);
+    RecountMenu(t);
     SUBPROC((void *)SendAnswer,0,p);
   }
   GeneralFuncF1(1);
@@ -3101,6 +3104,7 @@ void SendAuthReq(GUI *data)
     strcpy(p->data,s);
     AddStringToLog(t,0x01,p->data,I_str);
     AddMsgToChat(ed_struct->ed_chatgui);
+    RecountMenu(t);
     SUBPROC((void *)SendAnswer,0,p);
   }
   GeneralFuncF1(1);
@@ -3124,6 +3128,7 @@ void SendAuthGrant(GUI *data)
     strcpy(p->data,s);
     AddStringToLog(t,0x01,p->data,I_str);
     AddMsgToChat(ed_struct->ed_chatgui);
+    RecountMenu(t);
     SUBPROC((void *)SendAnswer,0,p);
   }
   GeneralFuncF1(1);
@@ -3298,6 +3303,7 @@ int anac_onkey(GUI *data, GUI_MSG *msg)
 	  strcpy(p->data,s);
 	  AddStringToLog(t, 0x01, LG_ADDCONT, I_str);
 	  AddMsgToChat(ed_struct->ed_chatgui);
+	  RecountMenu(t);
 	  SUBPROC((void *)SendAnswer,0,p);
 	  return(1);
 	}
