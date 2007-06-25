@@ -457,7 +457,7 @@
 0600: 0xA0846E31 ; 180: __thumb int EDIT_GetItemNumInFocusedComboBox(void *gui);
 0604: 0xA0846D91 ; 181: __thumb void EDIT_SetTextToFocused(void *gui,WSHDR *ws);
 0608: 0xA0846DCD ; 182: __thumb int EDIT_GetFocus(void *gui);
-060C: 0xA0846DEB ; 183: __thumb int EDIT_GetUnFocus(void *gui);
+060C: 0xA0846DD7 ; 183: __thumb int EDIT_GetUnFocus(void *gui);
 0610: 0xA077448B ; 184: __thumb void ConstructComboBox(EDITCONTROL *EditControl,int type,int attr,WSHDR*,int maxlen,int unk_zero,int num_of_items,int start_item);
 
 0614: 0xA020A308 ; 185: __arm int GBS_WaitForMsg(const int *msg_list, int msgs_num, GBS_MSG*, int timeout);
