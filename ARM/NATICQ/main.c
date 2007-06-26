@@ -15,7 +15,6 @@ extern volatile int total_smiles;
 extern volatile int total_xstatuses;
 extern volatile int xstatuses_load;
 
-
 #define USE_MLMENU
 
 #define TMR_SECOND 216
@@ -168,7 +167,8 @@ void IlluminationOn(const int disp, const int key, const int tmr, const int fade
   GBS_StartTimerProc(&tmr_illumination,tmr*216,IlluminationOff);
 }
 
-volatile int slienthide=0;    //by BoBa 25.06.07
+volatile int slienthide;    //by BoBa 25.06.07
+volatile int slientsend;
 ///////////
 
 //===================================================================
@@ -1454,7 +1454,7 @@ void get_answer(void)
         UnlockSched();
         break;
       case T_SRV_ACK:
-	Play(sndMsgSent);
+	if (!slientsend) Play(sndMsgSent);
       case T_CLIENT_ACK:
 	p=malloc(sizeof(PKT));
 	memcpy(p,&RXbuf,sizeof(PKT));
@@ -1772,16 +1772,17 @@ ProcessPacket(TPKT *p)
     }
     break;
   case T_SRV_ACK:
-    IlluminationOn(ILL_DISP_SEND,ILL_KEYS_SEND,ILL_SEND_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
+    if (!slientsend) IlluminationOn(ILL_DISP_SEND,ILL_KEYS_SEND,ILL_SEND_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
   case T_CLIENT_ACK:
-    if (
+    if ((
 	IsGuiOnTop(contactlist_menu_id)||
 	  IsGuiOnTop(edchat_id)
-	    )
+	    )&&(!slientsend))
     {
       DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
 		       GetPaletteAdrByColorIndex(0),
 		       GetPaletteAdrByColorIndex(p->pkt.type==T_SRV_ACK?3:4));
+    if (p->pkt.type==T_CLIENT_ACK) slientsend=0;
     }
     break;
   }
@@ -1823,11 +1824,11 @@ void method0(MAIN_GUI *data)
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,logmsg);
   if (total_smiles)
   {
-    wstrcatprintf(data->ws1,"\n+ Loaded %d smiles",total_smiles);
+    wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
   }
   if (xstatuses_load)
   {
-    wstrcatprintf(data->ws1,"\n+ Loaded %d xstatus images",total_xstatuses);
+    wstrcatprintf(data->ws1,"\nLoaded %d xstatus",total_xstatuses);
   }
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
@@ -2050,6 +2051,16 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	      }
 	    }
 	    break;
+     	  case IPC_SENDMSG: ;                                   //IPC_SENDMSG by BoBa 26.06.07
+            int l=strlen(((IPCMsg *)(ipc->data))->msg);
+            TPKT *msg=malloc(sizeof(PKT)+l);
+            msg->pkt.uin=((IPCMsg *)(ipc->data))->uin;
+            msg->pkt.type=T_SENDMSG;
+            msg->pkt.data_len=l;
+            memcpy(msg->data,((IPCMsg *)(ipc->data))->msg,l);
+            slientsend=1;
+            SendAnswer(0,msg);
+            break;
 	  }
 	}
       }

@@ -285,5 +285,5 @@ void DispXStatusChangeMenu(void)
 {
   patch_header(&xst_menuhdr);
   *((int **)(&xst_menuhdr.icon))=XStatusesIconArray+CurrentXStatus;
-  CreateMultiLinesMenu(0,0,&xst_menu,&xst_menuhdr,0,total_xstatuses);
+  CreateMultiLinesMenu(0,0,&xst_menu,&xst_menuhdr,CurrentXStatus,total_xstatuses);
 }
