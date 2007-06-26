@@ -35,7 +35,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // ÍÅ ÌÅÍßÒÜ!
-const char VERSION_VERS[] = "1.9.0-Z";
+const char VERSION_VERS[] = "1.9.2-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ìèíóòû
@@ -845,7 +845,7 @@ char mypic[128];
 
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 #ifdef USE_PNG_EXT
-/*
+
   if(connect_state<2)
   {
     char logo_path[128];
@@ -853,7 +853,7 @@ char mypic[128];
     strcat(logo_path,"SieJC_logo.png");
     DrawImg(0,70,(int)logo_path);
   }
-*/
+
 #endif
 }
 

@@ -100,6 +100,29 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
 
   // Если это конференция
   if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
+
+  // Если это члены конференции и они живы
+  if(resEx->entry_type == T_CONF_NODE && !resEx->has_unread_msg && resEx->status<=PRESENCE_INVISIBLE)
+  {
+    if(resEx->status==PRESENCE_ONLINE)
+    {
+      if(resEx->muc_privs.role==ROLE_VISITOR)strcat(path_to_pic, "vis_");
+      if(resEx->muc_privs.role==ROLE_PARTICIPANT && resEx->muc_privs.aff==AFFILIATION_NONE)strcat(path_to_pic, "part_");
+      if(resEx->muc_privs.role==ROLE_MODERATOR)strcat(path_to_pic, "admin_");
+    }
+    else
+    { // Если статус не онлайн, а другой
+      if(resEx->muc_privs.role==ROLE_MODERATOR)
+      {
+        strcat(path_to_pic, "admin_");
+      }
+      else if(resEx->muc_privs.aff==AFFILIATION_NONE) strcat(path_to_pic, "vis_part_");
+    }
+
+    strcat(path_to_pic, PRESENCES[resEx->status]); 
+    goto L_DONE;
+  }
+
   
   // Если это группа
   if(resEx->entry_type == T_GROUP)
