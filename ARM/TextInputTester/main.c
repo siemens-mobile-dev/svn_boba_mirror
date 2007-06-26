@@ -278,10 +278,12 @@ const struct
   {
   maincsm_onmessage,
   maincsm_oncreate,
+#ifdef NEWSGOLD
   0,
   0,
   0,
   0,
+#endif
   maincsm_onclose,
   sizeof(MAIN_CSM),
   1,
