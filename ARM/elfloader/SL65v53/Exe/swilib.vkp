@@ -590,6 +590,7 @@
 0864: 0xA1176D0B ; 219: __thumb void *AllocMLMenuItem(void *data);
 0868: 0xA116E6D1 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
 086C: 0xA116E6DB ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
+0870: 0xA116E717   ; 21C: __thumb int EDIT_IsBusy(void *gui);
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
