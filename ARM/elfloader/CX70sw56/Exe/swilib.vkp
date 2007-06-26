@@ -443,6 +443,7 @@
 0864: 0xA0CF1B4B ; 219: __thumb void *AllocMLMenuItem(void *data);
 0868: 0xA0CECCF1 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
 086C: 0xA0CECCFB ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
+0870: 0xA0CECD37 ; 21C: __thumb int EDIT_IsBusy(void *gui);
 #pragma disable old_equal_ff
 +0
 
