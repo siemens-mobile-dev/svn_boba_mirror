@@ -5059,6 +5059,9 @@
       <name>$PROJ_DIR$\history.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\item_info.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\md5.c</name>
     </file>
     <file>
@@ -5106,6 +5109,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\groups_util.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\item_info.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\jabber.h</name>

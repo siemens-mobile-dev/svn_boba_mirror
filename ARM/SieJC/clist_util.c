@@ -7,6 +7,7 @@
 #include "groups_util.h"
 #include "roster_icons.h"
 #include "history.h"
+#include "item_info.h"
 
 const RGBA CURSOR =           {120, 120, 255, 100};         // ÷вет курсора
 const RGBA CURSOR_BORDER =    {200, 200, 200, 100};         // ÷вет ободка курсора
@@ -756,6 +757,8 @@ void CList_Destroy()
 void CList_Display_Popup_Info(TRESOURCE* ResEx)
 {
   if(!ResEx)return;
+  Disp_Info(ResEx);
+/*
   char msg_ex[]="JID: %s\nStatus:%s";
   char* msg = malloc(200);
   extern const char* JABBER_AFFS[];
@@ -791,6 +794,7 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
     ShowMSG(0, (int)"This is Jabber transport");
   }
   mfree(msg);
+*/  
 }
 
 // бегаем по контактам с сообщени€ми

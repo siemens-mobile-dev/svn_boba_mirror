@@ -35,7 +35,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // ÍÅ ÌÅÍßÒÜ!
-const char VERSION_VERS[] = "1.9.2-Z";
+const char VERSION_VERS[] = "1.9.3-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ìèíóòû
@@ -57,6 +57,7 @@ int Is_Vibra_Enabled = 1;
 char Is_Compression_Enabled = 0;
 
 const char percent_t[]="%t";
+const char percent_s[]="%s";
 const char empty_t[]="";
 const char conference_t[]="conference";
 const char png_t[]=".png";
@@ -120,7 +121,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 }
 
 
-#pragma inline
+//#pragma inline
 void patch_header(HEADER_DESC* head)
 {
   head->rc.x=0;
@@ -128,7 +129,7 @@ void patch_header(HEADER_DESC* head)
   head->rc.x2=ScreenW()-1;
   head->rc.y2=HeaderH()+YDISP;
 }
-#pragma inline
+//#pragma inline
 void patch_input(INPUTDIA_DESC* inp)
 {
   inp->rc.x=0;
@@ -1032,7 +1033,12 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '7':
       {
-
+        char xz[] = "Test";
+        char xz_jid[] = "test@j.ru";
+        char xz_jid_full[] = "test@j.ru/QQQ";
+        char xz_status_msg[]="Fucking with GPRS";
+        CList_AddContact(xz,xz_jid, SUB_BOTH, 0, 0);
+        CList_AddResourceWithPresence(xz_jid_full, PRESENCE_CHAT, xz_status_msg);
         break;
       }
 
