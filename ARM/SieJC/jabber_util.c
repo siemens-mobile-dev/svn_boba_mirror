@@ -919,7 +919,14 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
 */
 void Process_Presence_Change(XMLNode* node)
 {
-  CONF_PRIV priv;
+  // Иар заебал
+char loc_actor[]="actor";
+char loc_jid[]="jid";
+char loc_reason[]="reason";
+char loc_xmlns[]="xmlns";
+char loc_x[]="x";
+  
+  CONF_DATA priv;
   char Req_Set_Role=0;
   char* from = XML_Get_Attr_Value("from",node->attr);
   if(!from)return;
@@ -948,10 +955,9 @@ void Process_Presence_Change(XMLNode* node)
   }
 
    // Предусматриваем случай, что послано нам что-то от конференции. Это важно.
-    XMLNode* x_node = XML_Get_Child_Node_By_Name(node,"x");
-    if(x_node)
-    {
-    if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC)) // Послано от конференции
+   XMLNode *x_node;
+
+    if(x_node = XML_Get_Child_Node_By_Name_And_Attr(node,loc_x, loc_xmlns, XMLNS_MUC)) // Послано от конференции
     {
       CLIST* Conference = CList_FindContactByJID(from);
       // Получаем дочерний узел error (ибо нацелены на обработку именно ошибок)
@@ -964,16 +970,13 @@ void Process_Presence_Change(XMLNode* node)
         MsgBoxError(1,(int)err_desc->value);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, err_desc->value);
       }
-
     }
-// Иар заебал
-char loc_actor[]="actor";
-char loc_jid[]="jid";
-char loc_reason[]="reason";
+
+
 #define MAX_STATUS_LEN 512
 static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении процедуры
 
-    if(!strcmp(XML_Get_Attr_Value("xmlns", x_node->attr), XMLNS_MUC_USER)) // Послано от конференции в пользователя
+    if(x_node = XML_Get_Child_Node_By_Name_And_Attr(node,loc_x, loc_xmlns, XMLNS_MUC_USER)) // Послано от конференции в пользователя
     {
 
       // Получим экземпляр конфы, в которой всё происходит
@@ -992,9 +995,16 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         TRESOURCE* ResEx = CList_IsResourceInList(from);
         char* affiliation = XML_Get_Attr_Value("affiliation", item->attr);
         char* role =  XML_Get_Attr_Value("role", item->attr);
+        //char *real_jid = XML_Get_Attr_Value(loc_jid, item->attr);
         priv.aff = (JABBER_GC_AFFILIATION)GetAffRoleIndex(affiliation);
         priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role);
-
+        
+        /*if(real_jid)
+        {
+          ResEx->muc_privs.real_jid = malloc(strlen(real_jid)+1);
+          strcpy(ResEx->muc_privs.real_jid, real_jid);          
+        }
+        */
         if(ResEx)
         {
         if(ResEx->status!=PRESENCE_OFFLINE)
@@ -1056,6 +1066,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         if(!strcmp(st_code, MUCST_KICKED_MEMB_ONLY)) sprintf(r, MUCST_R_KICK_MEMB_ONLY, nick); // Сообщение о кике из мембер-онли румы
         if(!strcmp(st_code, MUCST_CHNICK)) sprintf(r, MUCST_R_CHNICK, nick,  XML_Get_Attr_Value("nick", item->attr)); // Сообщение о смене ника
         //sprintf(r,r,nick);
+        
         XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
         if(item)
         {
@@ -1081,7 +1092,6 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
 
     }
 
-    }
   CList_AddResourceWithPresence(from, status, msg);
   if(Req_Set_Role) CList_MUC_SetRole(from, priv);
 }

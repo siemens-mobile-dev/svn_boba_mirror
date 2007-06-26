@@ -42,6 +42,16 @@ OUT: дочерний узел или NULL
 */
 XMLNode* XML_Get_Child_Node_By_Name(XMLNode* node, char* req_node_name);
 
+/*
+  Получить дочерний узел из списка дочерних узлов по его имени,
+  при условии, что существует заданный атрибут с заданным значением
+IN: XMLNode* node         - родительский узел
+    char* req_node_name   - имя требуемого узла
+    char* req_attr_name   - имя атрибута
+    char* req_attr_velue  - значение атрибута
+OUT: дочерний узел или NULL
+*/
+XMLNode* XML_Get_Child_Node_By_Name_And_Attr(XMLNode* node, char* req_node_name, char* req_attr_name, char* req_attr_velue);
 ////////////////////////////////////////////////////////////////////////////////
 
 #define MS_BEGIN 1						///< Начало парсинга

@@ -150,6 +150,17 @@ void Disp_Info(TRESOURCE* ResEx)
   
   if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_CONF_NODE)
   {
+
+    if(ResEx->muc_privs.real_jid)
+    {
+      wsprintf(ws_info,percent_t,"Реальный JID:");
+      ConstructEditControl(&ec,1,0x40,ws_info,256);
+      AddEditControlToEditQend(eq,&ec,ma);
+      wsprintf(ws_info,percent_s,ResEx->muc_privs.real_jid);
+      ConstructEditControl(&ec,3,0x40,ws_info,600);
+      AddEditControlToEditQend(eq,&ec,ma);
+    }
+
     // Статус и сообщение статуса
     wsprintf(ws_info,percent_t,"Статус:");
     ConstructEditControl(&ec,1,0x40,ws_info,256);

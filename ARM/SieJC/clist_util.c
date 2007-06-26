@@ -227,6 +227,7 @@ void KillResourceList(TRESOURCE* res_list)
     mfree(cl->full_name);
     if(cl->status_msg)mfree(cl->status_msg);
     if(cl->log)KillMsgList(cl->log);
+    //if(cl->muc_privs.real_jid)mfree(cl->muc_privs.real_jid);
     p=cl;
     cl=cl->next;
     mfree(p);
@@ -422,6 +423,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       ResEx->status = status;
       ResEx->muc_privs.aff = AFFILIATION_NONE;
       ResEx->muc_privs.role=  ROLE_NONE;
+      ResEx->muc_privs.real_jid =  NULL;
       if(ClEx->res_list->entry_type!=T_CONF_ROOT){ ResEx->entry_type = T_NORMAL;}
       else{ResEx->entry_type = T_CONF_NODE;}
       ResEx->has_unread_msg=0;
@@ -492,7 +494,7 @@ void CList_ChangeContactParams(CLIST* Cont_Ex,
 }
 
 // Пишет роли контакта в конфе в структуру
-void CList_MUC_SetRole(char* jid, CONF_PRIV priv)
+void CList_MUC_SetRole(char* jid, CONF_DATA priv)
 {
   TRESOURCE* ResEx = CList_IsResourceInList(jid);
   if(!ResEx)
@@ -502,7 +504,6 @@ void CList_MUC_SetRole(char* jid, CONF_PRIV priv)
   if(ResEx->entry_type!=T_CONF_NODE)return;
   ResEx->muc_privs.aff=priv.aff;
   ResEx->muc_privs.role=priv.role;
-  //ShowMSG(1,(int)"Found OK");
 }
 
 // Добавить к листу контакт. Возвращает структуру созданного контакта.
@@ -540,6 +541,7 @@ CLIST* CList_AddContact(char* jid,
   ResEx->log=NULL;
   ResEx->next=NULL;
   ResEx->status_msg=NULL;
+  ResEx->muc_privs.real_jid =  NULL;
   ResEx->has_unread_msg=0;
   ResEx->total_msg_count=0;
   if(group & 0x80)

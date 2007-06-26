@@ -12,7 +12,7 @@
 #ifdef NEWSGOLD
 //#define LOG_TO_COM_PORT // Лог данных в ком-порт (по DCA-510) - ТОЛЬКО NEWSGOLD
 #endif
-#define LOG_IN_DATA     // Включить запись обрабатываемой порции данных
+//#define LOG_IN_DATA     // Включить запись обрабатываемой порции данных
 
 #define VIBRA_POWER 10 // Сила вибры для событий разного рода
 
@@ -104,7 +104,8 @@ typedef struct
 {
   JABBER_GC_AFFILIATION aff;
   JABBER_GC_ROLE role;
-}CONF_PRIV;
+  char *real_jid;
+}CONF_DATA;
 
 typedef struct
 {
@@ -116,7 +117,7 @@ typedef struct
   unsigned int has_unread_msg;  // Есть ли непрочитанные и сколько
   unsigned int total_msg_count; // Общее количество сообщений
   LOG_MESSAGE* log;             // Начало лога сообщений
-  CONF_PRIV muc_privs;          // Тут для конференционных контактов - про роли
+  CONF_DATA muc_privs;          // Тут для конференционных контактов - про роли и риал-жид
   void* next;                   // Следующий экземпляр
 } TRESOURCE;
 

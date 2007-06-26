@@ -47,7 +47,7 @@
                           char group);
 
 // Пишет роли контакта в конфе в структуру
-  void CList_MUC_SetRole(char* jid, CONF_PRIV priv);
+  void CList_MUC_SetRole(char* jid, CONF_DATA priv);
 
 // Добавить сообщение в список сообщений контакта
   void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext);
