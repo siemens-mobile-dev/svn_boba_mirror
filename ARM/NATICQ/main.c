@@ -2059,7 +2059,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
             msg->pkt.data_len=l;
             memcpy(msg->data,((IPCMsg *)(ipc->data))->msg,l);
             slientsend=1;
-            SendAnswer(0,msg);
+            SUBPROC((void *)SendAnswer,0,msg);
             break;
 	  }
 	}
@@ -2313,6 +2313,7 @@ int main()
   extern const int DEF_VIBRA_STATUS;
   extern const int DEF_SOUNDS_STATUS;
   extern const int MY_DEF_STATUS;
+  extern const unsigned int MY_DEF_XSTATUS;
   extern const int DEF_SHOWOFF_STATUS;
   extern const int DEF_SHOW_GROUPS;
   
@@ -2321,7 +2322,7 @@ int main()
   Is_Show_Offline=DEF_SHOWOFF_STATUS;
   Is_Show_Groups=DEF_SHOW_GROUPS;
   CurrentStatus=MY_DEF_STATUS+1;
-  CurrentXStatus=0;
+  CurrentXStatus=MY_DEF_XSTATUS;
   
   setup_ICONS();
   
