@@ -5,6 +5,7 @@ GBSTMR tmr_scroll;
 
 extern const int ENA_VIBRA;
 extern const unsigned int vibraPower;
+extern const unsigned int vibraDuration;
 extern const char COLOR_MENU_BK[4];
 extern const char COLOR_MENU_BRD[4];
 extern const char COLOR_NOTSELECTED[4];
@@ -1006,7 +1007,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   #endif   
   {
     SetVibration(vibraPower);
-    GBS_StartTimerProc(&vibra_tmr,TMR_SECOND,vibra_tmr_proc);
+    GBS_StartTimerProc(&vibra_tmr,vibraDuration*216/1000,vibra_tmr_proc);
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
   if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху

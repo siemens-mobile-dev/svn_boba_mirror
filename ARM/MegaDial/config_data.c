@@ -27,6 +27,7 @@ __root const CFG_HDR cfghdr7={CFG_CHECKBOX,"Use vibra",0,0};
 __root const int ENA_VIBRA = 0;
 
 __root const CFG_HDR cfghdr8={CFG_UINT,"Vibra power",0,100};
-__root const unsigned int vibraPower=100;
+__root const unsigned int vibraPower=20;
 
-
+__root const CFG_HDR cfghdr9={CFG_UINT,"Vibra duration (ms)",0,100};
+__root const unsigned int vibraDuration=50;
