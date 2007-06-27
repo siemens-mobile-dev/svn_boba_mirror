@@ -1940,8 +1940,36 @@ void maincsm_oncreate(CSM_RAM *data)
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
 }
 
+extern const int MY_DEF_STATUS;
+extern const unsigned int MY_DEF_XSTATUS;
+extern const int DEF_VIBRA_STATUS;
+extern const int DEF_SOUNDS_STATUS;
+extern const int DEF_SHOWOFF_STATUS;
+extern const int DEF_SHOW_GROUPS;
+
 void maincsm_onclose(CSM_RAM *csm)
 {
+  memcpy((void *)&DEF_VIBRA_STATUS,&Is_Vibra_Enabled,sizeof(DEF_VIBRA_STATUS));
+  memcpy((void *)&DEF_SOUNDS_STATUS,&Is_Sounds_Enabled,sizeof(DEF_SOUNDS_STATUS));
+  memcpy((void *)&DEF_SHOWOFF_STATUS,&Is_Show_Offline,sizeof(DEF_SHOWOFF_STATUS));
+  memcpy((void *)&DEF_SHOW_GROUPS,&Is_Show_Groups,sizeof(DEF_SHOW_GROUPS));
+  int cs=CurrentStatus-1;
+  memcpy((void *)&MY_DEF_STATUS,&cs,sizeof(MY_DEF_STATUS));
+  memcpy((void *)&MY_DEF_XSTATUS,&CurrentXStatus,sizeof(MY_DEF_XSTATUS));
+
+  #pragma segment="CONFIG_C"
+  unsigned int ul;
+  int f;
+  extern const CFG_HDR cfghdr0; //first var in CONFIG
+  void *cfg=(void*)&cfghdr0;
+  unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
+
+  if ((f=fopen("4:\\ZBin\\etc\\NATICQ.bcfg",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))==-1){
+   f=fopen("0:\\ZBin\\etc\\NATICQ.bcfg",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul);
+  }
+  fwrite(f,cfg,len,&ul);
+  fclose(f,&ul);
+
   //  GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_active);
 //  GBS_DelTimer(&tmr_ping);
@@ -2309,13 +2337,6 @@ int main()
   char dummy[sizeof(MAIN_CSM)];
   
   InitConfig();
-  
-  extern const int DEF_VIBRA_STATUS;
-  extern const int DEF_SOUNDS_STATUS;
-  extern const int MY_DEF_STATUS;
-  extern const unsigned int MY_DEF_XSTATUS;
-  extern const int DEF_SHOWOFF_STATUS;
-  extern const int DEF_SHOW_GROUPS;
   
   Is_Vibra_Enabled=DEF_VIBRA_STATUS;
   Is_Sounds_Enabled=DEF_SOUNDS_STATUS;
@@ -3547,15 +3568,6 @@ void AddSmile(GUI *data)
   
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ws1,ws1->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
-  
-  
-  //pre-cache smiles by BoBa 19.04.2007
-  /////////////
-  //  CutWSTR(ews,0);
-  //  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,64);
-  //  AddEditControlToEditQend(eq,&ec,ma);
-  ////////////
-  
   patch_header(&as_hdr);
   patch_input(&as_desc);
   CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_struct);
