@@ -1782,8 +1782,8 @@ ProcessPacket(TPKT *p)
       DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
 		       GetPaletteAdrByColorIndex(0),
 		       GetPaletteAdrByColorIndex(p->pkt.type==T_SRV_ACK?3:4));
-    if (p->pkt.type==T_CLIENT_ACK) slientsend=0;
     }
+    if (p->pkt.type==T_CLIENT_ACK) slientsend=0;
     break;
   }
   mfree(p);
