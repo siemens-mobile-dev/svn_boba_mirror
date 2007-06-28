@@ -133,7 +133,8 @@ void Disp_Info(TRESOURCE* ResEx)
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     
-    wsprintf(ws_info,percent_s,ClEx->JID);
+    //wsprintf(ws_info,percent_s,ClEx->JID);
+    utf8_2ws(ws_info, ClEx->JID, 128);
     ConstructEditControl(&ec,3,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
@@ -142,7 +143,8 @@ void Disp_Info(TRESOURCE* ResEx)
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     
-    wsprintf(ws_info,percent_s,ResEx->name);
+    //wsprintf(ws_info,percent_s,ResEx->name);
+    utf8_2ws(ws_info, ResEx->name, 128);
     ConstructEditControl(&ec,3,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
      
@@ -156,7 +158,9 @@ void Disp_Info(TRESOURCE* ResEx)
       wsprintf(ws_info,percent_t,"׀ואכüםûי JID:");
       ConstructEditControl(&ec,1,0x40,ws_info,256);
       AddEditControlToEditQend(eq,&ec,ma);
-      wsprintf(ws_info,percent_s,ResEx->muc_privs.real_jid);
+      
+      //wsprintf(ws_info,percent_s,ResEx->muc_privs.real_jid);
+      utf8_2ws(ws_info, ResEx->muc_privs.real_jid, 128);
       ConstructEditControl(&ec,3,0x40,ws_info,600);
       AddEditControlToEditQend(eq,&ec,ma);
     }
