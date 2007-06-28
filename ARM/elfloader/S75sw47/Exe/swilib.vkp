@@ -2,10 +2,10 @@
 ;Библиотека функций
 ;Functions Library
 ;(c) avkiev
-;Version: 070612
+;Version: 070621
 ;PatchID: 5624
 ;Details: http://patches.siemens-club.org/patches/details.php5?id=5624
-;!к патчу прикреплён файл, http://patches.kibab.com/cnt.php5?d=s75v47&f=Functions_library.zip
+;!до латки долучений файл, http://patches.kibab.com/cnt.php5?d=s75v47&f=Functions_library.zip
 
 /*
 !ДЛЯ РАБОТЫ ЭТОГО ПАТЧА НЕОБХОДИМО УСТАНОВИТЬ ПОДРЕЗКУ КУЧИ!
@@ -13,6 +13,15 @@
 
 Файл swi.blib, прикреплённый к Библиотеке в архиве, должен обновляться вместе с библиотекой и содержать её копию в BLIB-формате! Этот файл можно будет использовать для обновления Библиотеки в отсутствии кабеля для установки патча. Следует положить blib-файл в 4:\ZBin\SWI.blib
 
+21.06.07:
++ 00E0: 0xA053791F   ;  38: int Registry_GetHMIKeyID(char *Keyword)
++ 00E4: 0xA0537531   ;  39: Registry_SetResourcePath(int HMIKeyID, int Prio, WSHDR *Path)
++ 00E8: 0xA05354C3   ;  3A: Registry_DeleteResourcePath(int HMIKeyID, int Prio)
++ 00F8: 0xA0536FBD   ;  3E: Registry_GetResourcePathFromLevel(int HMIKeyID, int Prio, int *HMIKeyID, WSHDR *Path)
+18.06.07:
++ 00DC: 0xA027CA78   ;  37: void Ringtones_SetState(unsigned char state)
+15.06.07:
++ 00B0: 0xA01E5394   ;  2C: getEEFullBlockSizeVersion(int block, void *buf1, void *buf2)
 12.06.07:
 +214: wstrcpybypos
 +215: wsRemoveChars
@@ -38,21 +47,6 @@
 17.05.07
 + 0214: 0xA026FD79   ;  85: StrCmpNoCase
 + 0844: 0x000061E8   ; 211: GBS_Cmd_4209_RefreshScreensaver
-10.05.07
-+SetProp2Square_v1(void);
-+srand(unsigned int seed);
-+DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
-+Get_WS_width(*ws, font)
-+FindGUIbyId(int id, CSM_RAM **csm);
-+ConstructEditTime(EDITCONTROL *EditControl,TTime *time)
-+EDIT_SetDate(void *gui,int n,TDate *dd)
-+EDIT_SetTime(void *gui,int n,TTime *tt)
-+EDIT_GetDate(void *gui,int n,TDate *dd)
-+EDIT_GetTime(void *gui,int n,TTime *tt)
-+ConstructEditDate(EDITCONTROL *EditControl,TDate *date)
-+GetCurGuiID(void)
-02.05.07
-* 0520: 0xA097723F   ; 148 e
 */
 +0074000
 #pragma enable old_equal_ff
@@ -65,7 +59,7 @@
 0018: 0xA01ABEC8   ;   6: int GetAkku(int param1,int param2)
 001C: 0xA006F061   ;   7: GetLP
 0020: 0xA01B642C   ;   8: long SetIllumination(unsigned char dev,unsigned long param1,unsigned short bright,unsigned long delay)
-0024: 0xA0234760   ;   9: SwitchPhoneOff
+0024: 0xA0234760   ;   9: void SwitchPhoneOff()
 0028: 0xA025307C   ;   A: int fopen(const char *cFileName, unsigned int iFileFlags, unsigned int iFileMode, unsigned int *ErrorNumber)
 002C: 0xA025313C   ;   B: int fread(int FileHandler, void *cBuffer, int iByteCount, unsigned int *ErrorNumber)
 0030: 0xA025326C   ;   C: unsigned int fwrite(int FileHandler, void const *cBuffer, int iByteCount, unsigned int *ErrorNumber)
@@ -102,7 +96,7 @@
 ;0A4:              ;  29:
 00A8: 0xA01E5CB4   ;  2A: int *GetEELiteBlockAddress(short blocknum)
 ;0AC:              ;  2B:
-;0B0:              ;  2C:
+00B0: 0xA01E5394   ;  2C: getEEFullBlockSizeVersion(int block, void *buf1, void *buf2)
 ;0B4:              ;  2D:
 ;0B8:              ;  2E:
 ;0BC:              ;  2F:
@@ -113,30 +107,30 @@
 00CC: 0xA0279680   ;  33: PlaySound2
 00D0: 0xA0B3732C   ;  34: PlaySoundLoop
 ;0D4:              ;  35: AlarmClockRing
-;0D8:              ;  36:
-;0DC:              ;  37:
-;0E0:              ;  38:
-;0E4:              ;  39:
-;0E8:              ;  3A:
+;0D8:              ;  36: void SLI_SetState(unsigned char state)
+00DC: 0xA027CA78   ;  37: void Ringtones_SetState(unsigned char state)
+00E0: 0xA053791F   ;  38: int Registry_GetHMIKeyID(char *Keyword)
+00E4: 0xA0537531   ;  39: Registry_SetResourcePath(int HMIKeyID, int Prio, WSHDR *Path)
+00E8: 0xA05354C3   ;  3A: Registry_DeleteResourcePath(int HMIKeyID, int Prio)
 00EC: 0xA0FC3AB9   ;  3B: MemChr
 00F0: 0xA025317C   ;  3C: int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned int *ErrorNumber)
 ;0F4:              ;  3D: editOrNewTXTModule
-;0F8:              ;  3E:
+00F8: 0xA0536FBD   ;  3E: Registry_GetResourcePathFromLevel(int HMIKeyID, int Prio, int *HMIKeyID, WSHDR *Path)
 00FC: 0xA0970A1D   ;  3F: char *GetPaletteAdrByColorIndex_2(int ColorIndex)
 
 0100: 0xA028B719   ;  40: GetVibraStatus
 0104: 0xA08FC087   ;  41: GetProvider
-;108:              ;  42: IsScreenSaver
+;108:              ;  42: int IsScreenSaver()
 010C: 0xA0903FE3   ;  43: int IsUnlocked(void)
 ;110:              ;  44: TempLightOn
 0114: 0xA006F241   ;  45: GetWavLen
-;118:              ;  46: HasNewSMS
+;118:              ;  46: int HasNewSMS()
 ;11C:              ;  47: HasFlashSMS
 ;120:              ;  48: ReadNewSMS
 ;124:              ;  49: ReadFlashSMS
 0128: 0xA027B4B0   ;  4A: short PlayFile(int flags, WSHDR *foldername, WSHDR *filename, int zero, int CepId, int Msg, const PLAYFILE_OPT *sfo)
 012C: 0xA0AA7CEC   ;  4B: StartMidlet
-0130: 0xA09B434D   ;  4C: GetMissedCallsCount
+0130: 0xA09B434D   ;  4C: int GetMissedCallsCount()
 0134: 0xA0093278   ;  4D: void GBS_StartTimerProc(void *htimer, long ms, void ptr())
 0138: 0xA097723F   ;  4E: __thumb int MsgBoxError(int flag, int LgpId);
 013C: 0xA09772BD   ;  4F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
@@ -212,7 +206,7 @@
 0240: 0xA02531F4   ;  90: int truncate(int FileHandler, int length, int *errornumber)
 0244: 0xA0252C0C   ;  91: int isdir(const char *cDirectory, unsigned int *ErrorNumber)
 0248: 0xA09EA270   ;  92: void *calloc(size_t nelem, size_t elsize)
-024C: 0xA023476C   ;  93: RebootPhone
+024C: 0xA023476C   ;  93: void RebootPhone()
 0250: 0xA04D428D   ;  94: int ExecuteFile(WSHDR *filepath, WSHDR *mimetype)
 0254: 0xA04D41CF   ;  95: int UnRegExplorerExt(REGEXPLEXT const *)
 0258: 0xA02A6CAB   ;  96: GetWavLenByContent
@@ -269,7 +263,7 @@
 0318: 0xA01A8614   ;  C6: char GetAkkuCapacity()
 ;31C:              ;  C7: SWI_C7
 0320: 0xA8D036D6   ;  C8: unsigned short *RamCap()
-0324: 0xA8D036FA   ;  C9: RamLS
+0324: 0xA8D036FA   ;  C9: unsigned short *RamLS()
 0328: 0xA8E2ED02   ;  CA: RAMNET *RamNet()
 032C: 0xA8D78BE4   ;  CB: RamRingtoneStatus
 0330: 0xA8DE9710   ;  CC: char *RamMissedCalls()
@@ -438,7 +432,7 @@
 0594: 0xA0A0B499   ; 165: void ConstructEditControl(EDITCONTROL *EditControl,int type,int flag,WSHDR *ws,int maxlen)
 0598: 0xA0A0BEE7   ; 166: int AddEditControlToEditQend(void *EditQ,EDITCONTROL *EditControl,void *malloc_a)
 059C: 0xA0A08B11   ; 167: int CreateInputTextDialog(const INPUTDIA_DESC *input_desc, const HEADER_DESC *header_desc,void *editq,int do_mfree,void *user_pointer)
-05A0: 0xA0A11DEF   ; 168: void SetSoftKey(void *gui,SOFTKEY_DESC *,int n)
+05A0: 0xA0A11DEF   ; 168: void SetSoftKey(void *gui,const SOFTKEY_DESC *,int n)
 05A4: 0xA0A11D85   ; 169: int ExtractEditControl(void *guidata,int n,EDITCONTROL *)
 05A8: 0xA0A11D91   ; 16A: int StoreEditControl(void *guidata,int n,EDITCONTROL *)
 05AC: 0xA0252EB8   ; 16B: int unlink(const char *cFileName,unsigned int *errornumber)
@@ -609,7 +603,7 @@
 0810: 0xA0A005BB   ; 204: void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush)
 0814: 0xA0A0170D   ; 205: SetProp2Square_v1
 0818: 0xA0FC3E5D   ; 206: void srand(unsigned int seed)
-081C: 0xA0A077B3   ; 207: DrawScrollString(WSHDR *WSHDR, int x1, int y1, int x2, int y2, int xdisp, int font, int text_attribute, const char *Pen,const char *Brush)
+081C: 0xA0A077B3   ; 207: void DrawScrollString(WSHDR *WSHDR, int x1, int y1, int x2, int y2, int xdisp, int font, int text_attribute, const char *Pen,const char *Brush)
 0820: 0xA09032A7   ; 208: int Get_WS_width(WSHDR *ws, int font)
 0824: 0xA096F415   ; 209: void *FindGUIbyId(int id, CSM_RAM **csm)
 0828: 0xA0A11D0D   ; 20A: void EDIT_SetDate(void *gui,int n,TDate *dd)
@@ -621,7 +615,8 @@
 
 0840: 0xA0977BB1   ; 210: int GetCurGuiID(void)
 0844: 0x000061E8   ; 211: GBS_Cmd_4209_RefreshScreensaver
-
+;848:              ; 212: int CardExplGetCurItem(void *csm)
+;84C:              ; 213: void CardExplGetFName(void *csm, int cur_item, WSHDR *dest)
 0850: 0xA01F775D   ; 214: __thumb void wstrcpybypos(WSHDR *dest,WSHDR *src,int from,int len);
 0854: 0xA01F77ED   ; 215: __thumb void wsRemoveChars(WSHDR *ws,int from,int to);
 0858: 0xA096833F   ; 216: __thumb void wstrcarprintf(WSHDR *,const char *format,...);
@@ -630,7 +625,11 @@
 0864: 0xA098002B   ; 219: __thumb void *AllocMLMenuItem(void *data);
 0868: 0xA0A11E45   ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
 086C: 0xA0A11E51   ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
+0870: 0xA0A11E8D   ; 21C: __thumb int EDIT_IsBusy(void *gui);
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------
 
+
+
+;locale=Ukrainian_Ukraine.1251
