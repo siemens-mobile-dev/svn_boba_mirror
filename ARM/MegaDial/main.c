@@ -371,8 +371,11 @@ void ConstructList(void)
 		      unsigned int c;
 		      WSHDR *ws;
                       #ifdef NEWSGOLD
-		      n-=0x62;
-                      if (n<4)
+		      if (n!=106)
+			n-=0x62;
+		      else
+			n=4;
+                      if (n<5)
                       #else
                       switch(r->item_type)
                       {
@@ -692,11 +695,11 @@ void VoiceOrSMS(const char *num)
 {
   if (!is_sms_need)
   {
-    #ifdef NEWSGOLD
-    MakeVoiceCall(num,0x10,0x20C0);
-    #else
+//    #ifdef NEWSGOLD
+//    MakeVoiceCall(num,0x10,0x20C0);
+//    #else
     MakeVoiceCall(num,0x10,0x2FFF);
-    #endif
+//    #endif
   }
   else
   {
