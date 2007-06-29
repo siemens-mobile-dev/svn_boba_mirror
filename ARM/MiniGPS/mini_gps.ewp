@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\XTask.elf \MMCard\ZBin\Daemons\XTask.elf</postbuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
@@ -1369,11 +1369,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>mini_gps.elf</state>
+          <state>mini_gps_newsgold.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1559,7 +1559,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>XTask.a79</state>
+          <state>mini_gps.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -2181,7 +2181,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release_ELKA\Exe\XTask.elf \MMCard\ZBin\Daemons\XTask.elf</postbuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
@@ -2193,11 +2193,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>mini_gps.elf</state>
+          <state>mini_gps_elka.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2263,7 +2263,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>E:\ARM\XTASK\test.xcl</state>
+          <state>$PROJ_DIR$\test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2383,7 +2383,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>XTask.a79</state>
+          <state>mini_gps.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -3016,7 +3016,7 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
@@ -3206,7 +3206,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>XTask.a79</state>
+          <state>mini_gps.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>

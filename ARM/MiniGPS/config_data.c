@@ -17,7 +17,7 @@ __root const CFG_HDR cfghdr5={CFG_UINT,"text attribute",0,15};
 __root const int cfgtext_attribute=3;
 
 __root const CFG_HDR cfghdr6={CFG_STR_UTF8,"gps dir",3,127};
-__root const char gps_dir[128]="0:\\Misc\\gps";
+__root const char gps_dir[128]="0:\\Misc\\gps\\";
 
-__root const CFG_HDR cfghdr7={CFG_STR_UTF8,"default action",3,127};
-__root const char drun[32]="0";
+__root const CFG_HDR cfghdr7={CFG_STR_UTF8,"default action",0,3};
+__root const char drun[4]="0";

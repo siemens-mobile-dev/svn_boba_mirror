@@ -33,12 +33,12 @@ void Savenew()
   unsigned int errcode;
   volatile int hFile = -1;
   RAMNET Res = GetNetParams();
-  sprintf(filename,"%s\\%u\\%u-%u.tmo",gps_dir,Res.lac,Res.ci,Res.lac);
+  sprintf(filename,"%s%u\\%u-%u.tmo",gps_dir,Res.lac,Res.ci,Res.lac);
   hFile = fopen(filename,A_WriteOnly+A_Create,P_WRITE,&errcode);
   if(hFile==-1)
   {
     char *dir=malloc(128);
-    sprintf(dir,"%s\\%u",gps_dir,Res.lac);
+    sprintf(dir,"%s%u",gps_dir,Res.lac);
     mkdir(dir, &errcode);
     mfree(dir);
     hFile = fopen(filename,A_WriteOnly+A_Create,P_WRITE,&errcode);
@@ -66,7 +66,7 @@ void load_name()
   unsigned int errcode;
   volatile int hFile=-1;
   RAMNET Res=GetNetParams();
-  sprintf(filename,"%s\\%u\\%u-%u.tmo",gps_dir,Res.lac,Res.ci,Res.lac);
+  sprintf(filename,"%s%u\\%u-%u.tmo",gps_dir,Res.lac,Res.ci,Res.lac);
   hFile = fopen(filename,A_ReadOnly,P_READ,&errcode);
   if(hFile==-1)
   {
@@ -156,7 +156,8 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
             void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
             DrawCanvas(canvasdata,cfgx,cfgy,cfgx+Get_WS_width(corr_name,cfgfont),cfgy+GetFontYSIZE(cfgfont),1);
-            DrawString(corr_name,cfgx,cfgy,cfgx+Get_WS_width(corr_name,cfgfont),cfgy+GetFontYSIZE(cfgfont),
+            //DrawString(corr_name,cfgx,cfgy,cfgx+Get_WS_width(corr_name,cfgfont),cfgy+GetFontYSIZE(cfgfont), //не пашут текст атрибуты :(
+            DrawString(corr_name,cfgx,cfgy,ScreenW(),ScreenH(),// а так пашут :)
                        cfgfont,cfgtext_attribute,cfgcolor,cfgcvcolor);
           }
       }
