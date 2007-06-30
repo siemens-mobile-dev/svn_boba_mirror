@@ -67,6 +67,19 @@ typedef int jmp_buf[11];
 #define MSG_IPC 0xDEB0
 
 #define MSG_SMS_RX 0x5803
+
+#define MSG_USSD_RX 0x60E2
+typedef struct{
+  int pid_from;
+  int msg; //MSG_USSD_RX
+  void *pkt;
+  char unk1;
+  char encoding_type;
+  char pkt_length;
+  char unk2;
+  void *data1;
+} GBS_USSD_MSG;
+
 #define MSG_PLAYFILE_REPORT 0x70BC
 #define MSG_CSM_DESTROYED 0x6400
 #define MSG_CSM_DESTROY_NOTIFY 0x6402
@@ -2894,3 +2907,9 @@ __swi __arm void EDIT_RemoveTextInvert(void *gui);
 __swi __arm int EDIT_IsBusy(void *gui);
 //thumb
 //pattern=??,B5,??,30,??,68,{??,B5,??,30,??,68,{00,68,40,05,C0,0F,70,47},??,BD},??,BD+1
+
+#pragma swi_number=0x21D
+__swi __arm int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type);
+//thumb
+//pattern=??,B5,??,1C,??,4A,??,1C,??,49,??,92,??,1C,??,91,??,1C,??,??,??,??,??,BD
+
