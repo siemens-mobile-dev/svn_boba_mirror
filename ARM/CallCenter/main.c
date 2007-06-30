@@ -1,7 +1,13 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
+#include "ussd_process.h"
 
-GBSTMR tmr_scroll;
+#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
+
+static GBSTMR tmr_scroll;
+
+extern int CurrentCASH[CASH_SIZE];
+extern int MaxCASH[CASH_SIZE];
 
 extern const int ENA_VIBRA;
 extern const unsigned int vibraPower;
@@ -18,22 +24,21 @@ extern const char COLOR_SEARCH_MARK[4];
 
 
 #pragma inline
-void patch_header(HEADER_DESC* head)
+static void patch_header(const HEADER_DESC* head)
 {
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
+  ((HEADER_DESC*)head)->rc.x=0;
+  ((HEADER_DESC*)head)->rc.y=YDISP;
+  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()-1+YDISP;
 }
 #pragma inline
-void patch_input(INPUTDIA_DESC* inp)
+static void patch_input(const INPUTDIA_DESC* inp)
 {
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+  ((INPUTDIA_DESC*)inp)->rc.x=0;
+  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
+  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
+  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
 }
-
 
 #ifdef ELKA
 #define MAX_ESTR_LEN 9
@@ -65,14 +70,14 @@ void patch_input(INPUTDIA_DESC* inp)
 #define PHONE_FAX2 0x5E
 #endif
 
-CSM_DESC icsmd;
+static CSM_DESC icsmd;
 
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
+static int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+static void (*old_icsm_onClose)(CSM_RAM*);
 
-int (*old_ed_onkey)(GUI *gui, GUI_MSG *msg);
-void (*old_ed_ghook)(GUI *gui, int cmd);
-void (*old_ed_redraw)(void *data);
+static int (*old_ed_onkey)(GUI *gui, GUI_MSG *msg);
+static void (*old_ed_ghook)(GUI *gui, int cmd);
+static void (*old_ed_redraw)(void *data);
 
 //0 - ждем появления диалога
 //1 - диалог появился, зацепились, ждем зацепления за onRedraw
@@ -80,11 +85,11 @@ void (*old_ed_redraw)(void *data);
 //3 - запрос поиска
 //4 - отправлен запрос
 //5 - производится поиск
-volatile int hook_state=0;
+static volatile int hook_state=0;
 
-volatile WSHDR *e_ws;
+static volatile WSHDR *e_ws;
 
-volatile int curpos; //Позиция курсора в списке
+static volatile int curpos; //Позиция курсора в списке
 
 typedef struct
 {
@@ -94,14 +99,12 @@ typedef struct
   WSHDR *icons;
 }CLIST;
 
-volatile CLIST *cltop; //Начало
-volatile CLIST *clbot; //Конец
+static volatile CLIST *cltop; //Начало
 
-char dstr[NUMBERS_MAX][40];
+static char dstr[NUMBERS_MAX][40];
 
-
-int menu_icons[NUMBERS_MAX];
-int utf_symbs[NUMBERS_MAX];
+static int menu_icons[NUMBERS_MAX];
+static int utf_symbs[NUMBERS_MAX];
 
 #ifdef NEWSGOLD
 #define USR_WIRE 0xE106
@@ -111,7 +114,7 @@ int utf_symbs[NUMBERS_MAX];
 #define USR_FAX 0xE10A
 #define WORK_MOBILE 0xE10E
 
-void InitIcons(void)
+static void InitIcons(void)
 {
   menu_icons[0]=GetPicNByUnicodeSymbol(utf_symbs[0]=USR_WIRE); //12345
   menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); //093
@@ -127,7 +130,7 @@ void InitIcons(void)
 #define USR_FAX1 0xE103
 #define USR_FAX2 0xE104
 
-void InitIcons(void)
+static void InitIcons(void)
 {
   menu_icons[0]=GetPicNByUnicodeSymbol(utf_symbs[0]=USR_WIRE); 
   menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); 
@@ -138,12 +141,11 @@ void InitIcons(void)
 #endif
 
 //Уничтожить список
-void FreeCLIST(void)
+static void FreeCLIST(void)
 {
   LockSched();
   CLIST *cl=(CLIST*)cltop;
   cltop=0;
-  clbot=0;
   UnlockSched();
   while(cl)
   {
@@ -160,12 +162,12 @@ void FreeCLIST(void)
 //-----------------------------------------------------
 //Поиск подстроки в строке по методу Т9
 //-----------------------------------------------------
-unsigned int us_reverse(unsigned int v)
+static unsigned int us_reverse(unsigned int v)
 {
   return((v>>8)|((v&0xFF)<<8));
 }
 
-int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
+static int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
 {
   int spos=1;
   int wpos=1;
@@ -237,10 +239,26 @@ int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
   return(0);
 }
 
+//сравнение длинных строк
+int wstrcmp(WSHDR *ws1, WSHDR *ws2)
+{
+  int l1=wslen(ws1);
+  int l2=wslen(ws2);
+  int pos=1;
+  int c;
+  while((pos<=l1)&&(pos<=l2))
+  {
+    c=ws1->wsbody[pos]-ws2->wsbody[pos];
+    if (c) return c;
+    pos++;
+  }
+  return(l1-l2);
+}
+
 //=====================================================
 // Конструктор списка
 //=====================================================
-void ConstructList(void)
+static void ConstructList(void)
 {
   int fin;
   unsigned int ul;
@@ -264,7 +282,6 @@ void ConstructList(void)
 
   unsigned int rec=0;
   int fsz;
-  int total=0;
   CLIST contact;
 
   WSHDR *sws=AllocWS(50);
@@ -439,31 +456,42 @@ void ConstructList(void)
 	      if ((hook_state==5)&&(contact.next))
 	      {
 		//Добавляем в список
+		int n=0;
 		CLIST *p=malloc(sizeof(contact));
-		CLIST *b=(CLIST *)clbot;
+		CLIST *t;
+		CLIST *b=(CLIST *)(&cltop);
 		contact.next=0;
 		memcpy(p,&contact,sizeof(contact));
-		if (b)
+		for(;;)
 		{
-		  //Не первый
-		  b->next=p;
-		  clbot=p;
-		}
-		else
-		{
-		  //Первый
-		  cltop=p;
-		  clbot=p;
+		  if (t=b->next)
+		  {
+		    //Есть следующие
+		    if (wstrcmp(contact.name,t->name)<0)
+		    {
+		      //Следующий больше вставляемого, втыкаем сдесь
+		      p->next=t;
+		      b->next=p;
+		      break;
+		    }
+		    b=t; //Следующий
+		    n++; //Номер добавляемого, для расчета, нужен ли REDRAW
+		  }
+		  else
+		  {
+		    //Больше нет никого
+		    b->next=p;
+		    break;
+		  }
 		}
 		if (curpos<2)
 		{
-		  if (total<5) REDRAW();
+		  if (n<5) REDRAW();
 		}
 		else
 		{
-		  if ((unsigned int)(total-(curpos-2))<5) REDRAW();
+		  if ((unsigned int)(n-(curpos-2))<5) REDRAW();
 		}
-		total++;
 	      }
 	      UnlockSched();
 	    }
@@ -493,13 +521,10 @@ void ConstructList(void)
   FreeWS(sws);
 }
 
-#pragma optimize=no_inline
-void f_dummy(void){}
+static volatile int scroll_disp;
+static volatile int max_scroll_disp;
 
-volatile int scroll_disp;
-volatile int max_scroll_disp;
-
-void scroll_timer_proc(void)
+static void scroll_timer_proc(void)
 {
   int i=max_scroll_disp;
   if (i)
@@ -518,14 +543,14 @@ void scroll_timer_proc(void)
   }
 }
 
-void DisableScroll(void)
+static void DisableScroll(void)
 {
   GBS_DelTimer(&tmr_scroll);
   max_scroll_disp=0;
   scroll_disp=0;
 }
 
-void my_ed_redraw(void *data)
+static void my_ed_redraw(void *data)
 {
   //  WSHDR *ews=(WSHDR*)e_ws;
   int i=curpos-2;
@@ -543,7 +568,7 @@ void my_ed_redraw(void *data)
   {
     int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(FONT_MEDIUM)+1)*5-5;
 
-    DrawRoundedFrame(1,y,ScreenW()-2,ScreenH()-SoftkeyH()-2,0,0,0,COLOR_MENU_BRD,COLOR_MENU_BK);
+    DrawRectangle/*DrawRoundedFrame*/(1,y,ScreenW()-2,ScreenH()-SoftkeyH()-2,0/*,0,0*/,COLOR_MENU_BRD,COLOR_MENU_BK);
 
     if (i<0) cp=curpos; else cp=2;
     while(i>0)
@@ -583,7 +608,7 @@ void my_ed_redraw(void *data)
 	    max_scroll_disp=i;
 	  }
 	}
-	DrawRoundedFrame(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0,0,0,COLOR_SELECTED_BRD,COLOR_SELECTED_BG);
+	DrawRectangle/*DrawRoundedFrame*/(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0/*,0,0*/,COLOR_SELECTED_BRD,COLOR_SELECTED_BG);
 	DrawScrollString(cl->name,3,dy+4,ScreenW()-5-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
 	DrawString(cl->icons,ScreenW()-4-icons_size,dy+4,ScreenW()-5,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
       }
@@ -595,7 +620,7 @@ void my_ed_redraw(void *data)
   FreeWS(prws);
 }
 
-void ChangeRC(GUI *gui)
+static void ChangeRC(GUI *gui)
 {
 #ifdef ELKA
   static const RECT rc={6,80,234,140};
@@ -618,27 +643,27 @@ void ChangeRC(GUI *gui)
 }
 
 
-const int menusoftkeys[]={0,1,2};
+static const int menusoftkeys[]={0,1,2};
 
-const SOFTKEY_DESC menu_sk[]=
+static const SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Back"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-const SOFTKEYSTAB menu_skt=
+static const SOFTKEYSTAB menu_skt=
 {
   menu_sk,0
 };
 
-int is_sms_need=0;
-WSHDR *ews;
+static int is_sms_need=0;
+static WSHDR *ews;
+//static WSHDR *dbg_ws;
 
+static void edsms_locret(void){}
 
-void edsms_locret(void){}
-
-int edsms_onkey(GUI *data, GUI_MSG *msg)
+static int edsms_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
   const char *snum=EDIT_GetUserPointer(data);
@@ -658,13 +683,13 @@ int edsms_onkey(GUI *data, GUI_MSG *msg)
   //1: close
 }
 
-void edsms_ghook(GUI *data, int cmd)
+static void edsms_ghook(GUI *data, int cmd)
 {
 }
 
-HEADER_DESC edsms_hdr={0,0,0,0,NULL,(int)"Write SMS",LGP_NULL};
+static const HEADER_DESC edsms_hdr={0,0,0,0,NULL,(int)"Write SMS",LGP_NULL};
 
-INPUTDIA_DESC edsms_desc=
+static const INPUTDIA_DESC edsms_desc=
 {
   1,
   edsms_onkey,
@@ -691,7 +716,7 @@ INPUTDIA_DESC edsms_desc=
   0x40000000 // Поменять местами софт-кнопки
 };
 
-void VoiceOrSMS(const char *num)
+static void VoiceOrSMS(const char *num)
 {
   if (!is_sms_need)
   {
@@ -727,7 +752,7 @@ typedef struct
   int index;
 }NUMLIST;
 
-int gotomenu_onkey(GUI *data, GUI_MSG *msg)
+static int gotomenu_onkey(void *data, GUI_MSG *msg)
 {
   int i;
   NUMLIST *nltop=MenuGetUserPointer(data);
@@ -748,7 +773,7 @@ int gotomenu_onkey(GUI *data, GUI_MSG *msg)
   return(0);
 }
 
-void gotomenu_ghook(GUI *data, int cmd)
+static void gotomenu_ghook(void *data, int cmd)
 {
   NUMLIST *nltop=MenuGetUserPointer(data);
   if(cmd==3)
@@ -763,7 +788,7 @@ void gotomenu_ghook(GUI *data, int cmd)
 }
     
 
-void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
+static void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
 {
   WSHDR *ws;
   NUMLIST *nltop=user_pointer;
@@ -773,29 +798,27 @@ void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
   {
     ws=AllocMenuWS(data,40);
     str_2ws(ws,dstr[nltop->index],39);
-    SetMenuItemIconArray(data, item, menu_icons);
+    SetMenuItemIconArray(data, item, menu_icons+nltop->index);
     SetMenuItemText(data, item, ws, curitem);
-    SetMenuItemIcon(data,curitem,nltop->index);
+//    SetMenuItemIcon(data,curitem,nltop->index);
   }
 }
 
-const HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
+static const HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP_NULL};
 
-MENU_DESC gotomenu_STRUCT=
+static const MENU_DESC gotomenu_STRUCT=
 {
-  8,(void *)gotomenu_onkey,(void *)gotomenu_ghook,NULL,
+  8,gotomenu_onkey,gotomenu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   1|0x10,
-  (void *)gotomenu_itemhandler,
+  gotomenu_itemhandler,
   NULL,
   NULL,
   0
 };
 
-
-
-int my_ed_onkey(GUI *gui, GUI_MSG *msg)
+static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
 {
   int key=msg->gbsmsg->submess;
   int m=msg->gbsmsg->msg;
@@ -907,7 +930,7 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   return(r);
 }
 
-void my_ed_ghook(GUI *gui, int cmd)
+static void my_ed_ghook(GUI *gui, int cmd)
 {
   static void *methods[16];
   void **m=GetDataOfItemByID(gui,4);
@@ -945,7 +968,7 @@ void my_ed_ghook(GUI *gui, int cmd)
   ChangeRC(gui);
 }
 
-void DoSplices(GUI *gui)
+static void DoSplices(GUI *gui)
 {
   static INPUTDIA_DESC my_ed;
   memcpy(&my_ed,gui->definition,sizeof(INPUTDIA_DESC));
@@ -957,15 +980,15 @@ void DoSplices(GUI *gui)
   scroll_disp=0;
 }
 
-GBSTMR vibra_tmr;
+static GBSTMR vibra_tmr;
 
-void vibra_tmr_proc(void)
+static void vibra_tmr_proc(void)
 {
   SetVibration(0);
 }
 
 #pragma inline=forced
-int toupper(int c)
+static int toupper(int c)
 {
   if ((c>='a')&&(c<='z')) c+='A'-'a';
   return(c);
@@ -979,11 +1002,26 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+static void DrawMyProgress(int y, int cur, int max, const char *color)
+{
+  int s=cur*127/max;
+  DrawRectangle(1,y,130,y+6,0,"\xFF\xFF\xFF\xFF","\0\0\0\0");
+  DrawRectangle(2,y+1,s+2,y+5,0,color,color);
+}
+
+static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
 #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
   int csm_result;
-
+  
+  if (msg->msg==MSG_USSD_RX)
+  {
+    if (ProcessUSSD(data,(GBS_USSD_MSG *)msg)) return 0; //Обработанно
+  }
+  if (msg->msg==MSG_END_CALL)
+  {
+    SendCashReq();
+  }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==edialgui_id)
@@ -1001,6 +1039,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     {
       ShowMSG(1,(int)"CallCenter config updated!");
       InitConfig();
+      LoadCash();
     }
   }
   #ifdef NEWSGOLD
@@ -1013,6 +1052,19 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     GBS_StartTimerProc(&vibra_tmr,vibraDuration*216/1000,vibra_tmr_proc);
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
+  if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
+  {
+    GUI *igui = GetTopGUI();
+    if (igui) //И он существует
+    {
+      void *canvasdata = BuildCanvas();
+      DrawCanvas(canvasdata, 1, 95, 130, 95+8*4-1, 1);
+      DrawMyProgress(95+0*8,CurrentCASH[0],MaxCASH[0],"\xFF\x00\x00\x64");
+      DrawMyProgress(95+1*8,CurrentCASH[1],MaxCASH[1],"\x00\xFF\x00\x64");
+      DrawMyProgress(95+2*8,CurrentCASH[2],MaxCASH[2],"\x00\xFF\xFF\x64");
+      DrawMyProgress(95+3*8,CurrentCASH[3],MaxCASH[3],"\xFF\xFF\x00\x64");
+    }
+  }
   if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху
   {
     GUI *igui=GetTopGUI();
@@ -1029,17 +1081,25 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   return(csm_result);
 }
 
-void MyIDLECSM_onClose(CSM_RAM *data)
+void CallCenter_Destructor(void)
+{
+  EndUSSDtimer();
+//  FreeWS(dbg_ws);
+  FreeWS(ews);
+}
+
+static void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
-  FreeWS(ews);
+  CallCenter_Destructor();
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 
 int main(void)
 {
   InitConfig();
+  LoadCash();
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
@@ -1050,6 +1110,7 @@ int main(void)
   icsm->constr=&icsmd;
   UnlockSched();
   ews=AllocWS(1024);
+//  dbg_ws=AllocWS(256);
   InitIcons();
   return 0;
 }

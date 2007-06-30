@@ -2,7 +2,31 @@
 #include "..\inc\swilib.h"
 //Конфигурация
 
-__root const CFG_HDR cfghdr0={CFG_COLOR,"Color Menu background",0,0};
+__root const CFG_HDR cfghdr0={CFG_STR_WIN1251,"Number for Cash Request",0,31};
+__root const char CASHREQNUM[32]="*111#";
+
+__root const CFG_HDR cfghdr01={CFG_CHECKBOX,"Enable Cash Trace",0,0};
+__root const int ENA_CASHTRACE = 1;
+
+__root const CFG_HDR cfghdr02={CFG_STR_WIN1251,"Cash pattern 0",0,31};
+__root const char CashPat0[32]="Vash balans ";
+
+__root const CFG_HDR cfghdr03={CFG_STR_WIN1251,"Cash pattern 1",0,31};
+__root const char CashPat1[32]="Vash bonus ";
+
+__root const CFG_HDR cfghdr04={CFG_STR_WIN1251,"Cash pattern 2",0,31};
+__root const char CashPat2[32]="dodatkovo ";
+
+__root const CFG_HDR cfghdr05={CFG_STR_WIN1251,"Cash pattern 3",0,31};
+__root const char CashPat3[32]=". "; //Неудачно, потом будем думать
+
+__root const CFG_HDR cfghdr06 = {CFG_STR_UTF8,"Temp file",0,127};
+__root const char cashTEMP_FILE[128]="4:\\ZBin\\CallCenter_cash.tmp";
+
+__root const CFG_HDR cfghdr07 = {CFG_STR_UTF8,"Temp file",0,127};
+__root const char cashLOG_FILE[128]="4:\\ZBin\\CallCenter_cash.log";
+
+__root const CFG_HDR cfghdr00={CFG_COLOR,"Color Menu background",0,0};
 __root const char COLOR_MENU_BK[4]={0xFF,0xFF,0x0,0x64};
 
 __root const CFG_HDR cfghdr1={CFG_COLOR,"Color Menu border",0,0};
