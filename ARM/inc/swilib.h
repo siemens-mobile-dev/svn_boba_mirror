@@ -51,6 +51,7 @@ typedef int jmp_buf[11];
 
 #else
 #define DISPLACE_OF_EDGUI 0x88
+#define DISPLACE_OF_USSDREQGUI_ID 0x44
 #define DISPLACE_OF_EDGUI_ID 0x4C
 #define DISPLACE_OF_IDLEGUI_ID 0x2C
 #define DISPLACE_OF_IDLECANVAS 0x18
@@ -600,8 +601,8 @@ typedef void (__interwork *MENUPROCS_DESC)(GUI *);
 typedef struct
 {
   int flag; //0,8 etc
-  void *proc1;
-  void *global_hook_proc; //GUI * gui, int cmd
+  int (*onkey)(void *, GUI_MSG *);
+  void (*ghook)(void *, int ); //GUI * gui, int cmd
   void *proc3;
   const int *softkeys; //{6,0x22,0x1D}, mb default for all items, if item.softkeys==NULL
   const SOFTKEYSTAB *softkeystab;
@@ -624,8 +625,7 @@ typedef struct
 //  0x40000000
 //  0x80000000
 
-
-  void *itemproc; //Called when draw item
+  void (*itemproc)(void *, int, void *); //Called when draw item
   const MENUITEM_DESC *items; //Table of items desc;
   const MENUPROCS_DESC *procs;//  void ** procs; //Table of procs when item selected
   int n_items; //Number of items
