@@ -120,7 +120,7 @@ SOFTKEYSTAB mmenu_skt=
   mmenu_sk,0
 };
 
-void menuitemhandler(void *data, int curitem, int *unk)
+void menuitemhandler(void *data, int curitem, void *unk)
 {
   switch(curitem)
   {
@@ -140,7 +140,7 @@ MENU_DESC tmenu=
   mmenusoftkeys,
   &mmenu_skt,
   1,
-  (void*)menuitemhandler,
+  menuitemhandler,
   menuitems,
   menuprocs,
   N_ITEMS

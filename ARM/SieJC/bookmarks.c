@@ -154,15 +154,15 @@ SOFTKEYSTAB bmmenu_skt=
 
 void bm_menu_ghook(void *data, int cmd);
 int bm_menu_onkey(void *data, GUI_MSG *msg);
-void bm_menu_iconhndl(void *data, int curitem, int *unk);
+void bm_menu_iconhndl(void *data, int curitem, void *unk);
 
 MENU_DESC bm_menu=
 {
-  8,(void *)bm_menu_onkey,(void*)bm_menu_ghook,NULL,
+  8,bm_menu_onkey,bm_menu_ghook,NULL,
   bmmenusoftkeys,
   &bmmenu_skt,
   0x11,
-  (void *)bm_menu_iconhndl,
+  bm_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -214,7 +214,7 @@ char ICON_MUC[128];
   Обработчик появления пунктов динамического меню
   Тут мы сами создаём каждый пункт, указывая для него иконку и текст.
 */
-void bm_menu_iconhndl(void *data, int curitem, int *unk)
+void bm_menu_iconhndl(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   extern const char percent_t[], empty_t[];

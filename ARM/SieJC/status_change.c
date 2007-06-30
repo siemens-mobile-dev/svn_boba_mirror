@@ -237,7 +237,7 @@ int menu_onKey(void *data, GUI_MSG *msg)
 
 MENU_DESC st_tmenu=
 {
-  8,(void*)menu_onKey,NULL,NULL,
+  8,menu_onKey,NULL,NULL,
   st_menusoftkeys,
   &st_menu_skt,
   1,//MENU_FLAG,

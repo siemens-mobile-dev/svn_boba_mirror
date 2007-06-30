@@ -67,15 +67,15 @@ SOFTKEYSTAB clmenu_skt=
 
 void contact_menu_ghook(void *data, int cmd);
 int contact_menu_onkey(void *data, GUI_MSG *msg);
-void contact_menu_iconhndl(void *data, int curitem, int *unk);
+void contact_menu_iconhndl(void *data, int curitem, void *unk);
 
 MENU_DESC contact_menu=
 {
-  8,(void *)contact_menu_onkey,(void*)contact_menu_ghook,NULL,
+  8,contact_menu_onkey,contact_menu_ghook,NULL,
   menusoftkeys,
   &clmenu_skt,
   0x11,
-  (void *)contact_menu_iconhndl,
+  contact_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -175,7 +175,7 @@ void InitMenuArray()
   При создании мы опираемся на данные массива Menu_Contents, в котором описано,
   какие пункты и в каком порядке необходимо создать. 
 */
-void contact_menu_iconhndl(void *data, int curitem, int *unk)
+void contact_menu_iconhndl(void *data, int curitem, void *unk)
 {
 //  cmS_ICONS[0]=(int)cmdummy_icon;
   WSHDR *ws;
