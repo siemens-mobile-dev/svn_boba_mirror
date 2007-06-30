@@ -1,5 +1,12 @@
 #include "../inc/swilib.h"
 #include "ussd_process.h"
+#include "../inc/xtask_ipc.h"
+
+//IPC
+//const char ipc_my_name[32]="CallCenter";
+//const char ipc_xtask_name[]=IPC_XTASK_NAME;
+//IPC_REQ gipc;
+
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 
@@ -142,9 +149,20 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
 
 static void ussd_send(void)
 {
-  ussdreq_sended=1;
-  MakeVoiceCall(CASHREQNUM,0x10,0x2FFF);
-  GBS_StartTimerProc(&ussd_tmr,216*30,ussd_timeout);
+//  gipc.name_to=ipc_xtask_name;
+//  gipc.name_from=ipc_my_name;
+//  gipc.data=0;
+//  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
+  if (IsGuiOnTop(((int *)FindCSMbyID(CSM_root()->idle_id))[DISPLACE_OF_IDLEGUI_ID/4]))
+  {
+    ussdreq_sended=1;
+    MakeVoiceCall(CASHREQNUM,0x10,0x2FFF);
+    GBS_StartTimerProc(&ussd_tmr,216*30,ussd_timeout);
+  }
+  else
+  {
+    SendCashReq();
+  }
 }
 
 void SendCashReq(void)

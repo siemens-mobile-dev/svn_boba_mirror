@@ -208,10 +208,12 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
   int icgui_id;
-  int ocgui_id;
+//  int ocgui_id;
+  int idlegui_id;
   
   csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
   icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
+  idlegui_id=((int *)data)[DISPLACE_OF_IDLEGUI_ID/4];
 //  ocgui_id=((int *)data)[DISPLACE_OF_OUTGOINGGUI/4];
   if (!icgui_id) callhide_mode=0;
 //  if (!ocgui_id) callhide_mode=0;
@@ -236,7 +238,13 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	switch (msg->submess)
 	{
 	case IPC_XTASK_SHOW_CSM:
-	  if (!IsCalling()) do_gui(1,(int)(ipc->data));
+	  if (!IsCalling())
+	  {
+	    if ((CSM_root()->csm_q->csm.last!=data)||IsGuiOnTop(idlegui_id))
+	    {
+	      do_gui(1,(int)(ipc->data));
+	    }
+	  }
 	  break;
 	case IPC_XTASK_IDLE:
 	  if (!IsCalling()) do_gui(1,0);
