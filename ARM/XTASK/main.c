@@ -208,10 +208,13 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   int csm_result;
   int icgui_id;
+  int ocgui_id;
   
   csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
   icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
+//  ocgui_id=((int *)data)[DISPLACE_OF_OUTGOINGGUI/4];
   if (!icgui_id) callhide_mode=0;
+//  if (!ocgui_id) callhide_mode=0;
   
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
@@ -246,9 +249,15 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   {
     callhide_mode=1;
   }
+//  #ifdef NEWSGOLD
+//  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==0)&&((int)msg->data0==3)) callhide_mode=1;
+//  #else
+  //if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==0)&&((int)msg->data0==0)) callhide_mode=1;
+//    Говно!!!! Лечить!!!
+//  #endif   
   if (callhide_mode)
   {
-    if (IsGuiOnTop(icgui_id))
+    if ((IsGuiOnTop(icgui_id))/*||(IsGuiOnTop(ocgui_id))*/)
     {
       extern void RotateCSMs(CSM_RAM *ucsm, void *selcsm);
       RotateCSMs(CSM_root()->csm_q->csm.last,FindCSMbyID(CSM_root()->idle_id));

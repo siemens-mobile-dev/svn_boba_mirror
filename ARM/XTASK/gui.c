@@ -351,7 +351,7 @@ NAMELIST *get_nlitem(int curitem)
 }
 
 
-void mm_menu_iconhndl(void *data, int curitem, int *unk)
+void mm_menu_iconhndl(void *data, int curitem, void *unk)
 {
   NAMELIST *nl;
   WSHDR *ws;
@@ -449,15 +449,15 @@ void bm_menu_ghook(void *data, int cmd)
   if (cmd==0x0A) DisableIDLETMR();
 }
 int bm_menu_onkey(void *data, GUI_MSG *msg);
-void bm_menu_iconhndl(void *data, int curitem, int *unk);
+void bm_menu_iconhndl(void *data, int curitem, void *unk);
 
 const MENU_DESC bm_menu=
 {
-  8,(void *)bm_menu_onkey,(void*)bm_menu_ghook,NULL,
+  8,bm_menu_onkey,bm_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0x10,//0x11,
-  (void *)bm_menu_iconhndl,
+  bm_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -493,7 +493,7 @@ int bm_menu_onkey(void *data, GUI_MSG *msg)
 }
 
 
-void bm_menu_iconhndl(void *data, int curitem, int *unk)
+void bm_menu_iconhndl(void *data, int curitem, void *unk)
 {
   const char *s;
   WSHDR *ws;
@@ -596,11 +596,11 @@ void mm_menu_ghook(void *data, int cmd)
 
 const MENU_DESC mm_menu=
 {
-  8,(void *)mm_menu_onkey,(void*)mm_menu_ghook,NULL,
+  8,mm_menu_onkey,mm_menu_ghook,NULL,
   menusoftkeys,
   &mm_menu_skt,
   0x10,//0x11,
-  (void *)mm_menu_iconhndl,
+  mm_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
