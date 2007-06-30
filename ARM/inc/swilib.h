@@ -59,6 +59,7 @@ typedef int jmp_buf[11];
 #endif
 
 #define DISPLACE_OF_INCOMMINGGUI 0x34
+#define DISPLACE_OF_OUTGOINGGUI 0x30
 #define MSG_INCOMMING_CALL 0x6000
 #define MSG_STATE_OF_CALL 0x6009
 #define MSG_END_CALL 0x600B
