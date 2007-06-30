@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>MegaDial.d79</state>
+          <state>CallCenter.d79</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\MegaDial.elf \MMCard\ZBin\Daemons\MegaDial.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\CallCenter.elf \MMCard\ZBin\Daemons\CallCenter.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -1373,7 +1373,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>MegaDial.elf</state>
+          <state>CallCenter.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1559,7 +1559,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>MegaDial.a79</state>
+          <state>CallCenter.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -2180,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $EXE_DIR$\MegaDial.elf \Data\ZBin\Daemons\MegaDial.elf</postbuild>
+        <postbuild>obexcopy.exe $EXE_DIR$\CallCenter.elf \Data\ZBin\Daemons\CallCenter.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -2196,7 +2196,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>MegaDial.elf</state>
+          <state>CallCenter.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2382,7 +2382,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>MegaDial.a79</state>
+          <state>CallCenter.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -3004,7 +3004,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release_ELKA\Exe\MegaDial.elf \MMCard\ZBin\Daemons\MegaDial.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release_ELKA\Exe\CallCenter.elf \MMCard\ZBin\Daemons\CallCenter.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -3020,7 +3020,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>MegaDial.elf</state>
+          <state>CallCenter.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -3206,7 +3206,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>MegaDial.a79</state>
+          <state>CallCenter.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>

@@ -999,7 +999,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     extern const char *successed_config_filename;
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
-      ShowMSG(1,(int)"MegaDial config updated!");
+      ShowMSG(1,(int)"CallCenter config updated!");
       InitConfig();
     }
   }

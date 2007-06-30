@@ -50,8 +50,8 @@ int LoadConfigData(const char *fname)
 
 void InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\MegaDial.bcfg")<0)
+  if (LoadConfigData("4:\\ZBin\\etc\\CallCenter.bcfg")<0)
   {
-    LoadConfigData("0:\\ZBin\\etc\\MegaDial.bcfg");
+    LoadConfigData("0:\\ZBin\\etc\\CallCenter.bcfg");
   }
 }
