@@ -843,8 +843,9 @@ char mypic[128];
     wsprintf(data->ws1,"%t", logmsg);
     DrawString(data->ws1,1,SCR_START+3+GetFontYSIZE(FONT_SMALL)+2,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
   }
-
+ 
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
+/*
 #ifdef USE_PNG_EXT
 
   if(connect_state<2)
@@ -854,8 +855,9 @@ char mypic[128];
     strcat(logo_path,"SieJC_logo.png");
     DrawImg(0,70,(int)logo_path);
   }
-
 #endif
+  
+  */
 }
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -1033,12 +1035,14 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '7':
       {
+        /*
         char xz[] = "Test";
         char xz_jid[] = "test@j.ru";
         char xz_jid_full[] = "test@j.ru/QQQ";
         char xz_status_msg[]="Fucking with GPRS";
         CList_AddContact(xz,xz_jid, SUB_BOTH, 0, 0);
         CList_AddResourceWithPresence(xz_jid_full, PRESENCE_CHAT, xz_status_msg);
+        */
         break;
       }
 

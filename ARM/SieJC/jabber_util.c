@@ -664,6 +664,7 @@ void FillRoster(XMLNode* items)
       ResEx->log=NULL;
       ResEx->next=NULL;
       ResEx->status_msg=NULL;
+      ResEx->muc_privs.real_jid=NULL;
       ResEx->status = PRESENCE_ONLINE;
       ResEx->has_unread_msg=0;
       ResEx->total_msg_count=0;
@@ -928,6 +929,7 @@ char loc_x[]="x";
   
   CONF_DATA priv;
   char Req_Set_Role=0;
+  char *real_jid = NULL;
   char* from = XML_Get_Attr_Value("from",node->attr);
   if(!from)return;
 
@@ -995,18 +997,13 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         TRESOURCE* ResEx = CList_IsResourceInList(from);
         char* affiliation = XML_Get_Attr_Value("affiliation", item->attr);
         char* role =  XML_Get_Attr_Value("role", item->attr);
-        //char *real_jid = XML_Get_Attr_Value(loc_jid, item->attr);
+        real_jid = XML_Get_Attr_Value(loc_jid, item->attr);
         priv.aff = (JABBER_GC_AFFILIATION)GetAffRoleIndex(affiliation);
         priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role);
-        
-        /*if(real_jid)
-        {
-          ResEx->muc_privs.real_jid = malloc(strlen(real_jid)+1);
-          strcpy(ResEx->muc_privs.real_jid, real_jid);          
-        }
-        */
+               
         if(ResEx)
         {
+
         if(ResEx->status!=PRESENCE_OFFLINE)
         {
           if(!(ResEx->muc_privs.aff==priv.aff && ResEx->muc_privs.role==priv.role))
@@ -1092,8 +1089,13 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
 
     }
 
-  CList_AddResourceWithPresence(from, status, msg);
+  TRESOURCE *ResEx = CList_AddResourceWithPresence(from, status, msg);
   if(Req_Set_Role) CList_MUC_SetRole(from, priv);
+  if(real_jid)
+  {
+    ResEx->muc_privs.real_jid = malloc(strlen(real_jid)+1);
+    strcpy(ResEx->muc_privs.real_jid, real_jid);          
+  }
 }
 
 MESS_TYPE Get_Message_Type(char* mess_type_str)

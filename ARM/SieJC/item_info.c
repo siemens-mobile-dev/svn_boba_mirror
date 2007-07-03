@@ -114,7 +114,7 @@ void Disp_Info(TRESOURCE* ResEx)
   T_CONF_ROOT,    //  орень конференции (место доставки публичных сообщений)
   T_CONF_NODE,    // ”частник конференции (отображаем только "ресурс" жида)
   T_TRANSPORT,    // “ранспортный агент
-  T_GROUP   
+  T_GROUP         // Ёлемент "группа"
   */  
   if(ResEx->entry_type==T_NORMAL)wsprintf(ws_info,percent_t,"Ёлемент ростера");
   if(ResEx->entry_type==T_VIRTUAL)wsprintf(ws_info,percent_t,"ќффлайн или контакт из транспорта");
@@ -125,25 +125,27 @@ void Disp_Info(TRESOURCE* ResEx)
   
   ConstructEditControl(&ec,1,0x40,ws_info,256);  
   AddEditControlToEditQend(eq,&ec,ma);
-  
-  if(ResEx->entry_type==T_NORMAL)
-  {
+
+  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_VIRTUAL)
+  {  
     // JID 
     wsprintf(ws_info,percent_t,"JID:");
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-    
-    //wsprintf(ws_info,percent_s,ClEx->JID);
+
     utf8_2ws(ws_info, ClEx->JID, 128);
     ConstructEditControl(&ec,3,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
+  }
 
+    
+  if(ResEx->entry_type==T_NORMAL)
+  {  
     // –есурс
     wsprintf(ws_info,percent_t,"–есурс:");
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     
-    //wsprintf(ws_info,percent_s,ResEx->name);
     utf8_2ws(ws_info, ResEx->name, 128);
     ConstructEditControl(&ec,3,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
@@ -159,7 +161,6 @@ void Disp_Info(TRESOURCE* ResEx)
       ConstructEditControl(&ec,1,0x40,ws_info,256);
       AddEditControlToEditQend(eq,&ec,ma);
       
-      //wsprintf(ws_info,percent_s,ResEx->muc_privs.real_jid);
       utf8_2ws(ws_info, ResEx->muc_privs.real_jid, 128);
       ConstructEditControl(&ec,3,0x40,ws_info,600);
       AddEditControlToEditQend(eq,&ec,ma);

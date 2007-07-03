@@ -227,7 +227,7 @@ void KillResourceList(TRESOURCE* res_list)
     mfree(cl->full_name);
     if(cl->status_msg)mfree(cl->status_msg);
     if(cl->log)KillMsgList(cl->log);
-    //if(cl->muc_privs.real_jid)mfree(cl->muc_privs.real_jid);
+    if(cl->muc_privs.real_jid)mfree(cl->muc_privs.real_jid);
     p=cl;
     cl=cl->next;
     mfree(p);
