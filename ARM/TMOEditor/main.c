@@ -1,4 +1,5 @@
 #include "..\inc\swilib.h"
+#include "..\inc\gpslogger_ipc.h"
 #include "conf_loader.h"
 
 const int minus11=-11; // стремная константа
@@ -14,6 +15,24 @@ unsigned int MAINGUI_ID = 0;
 
 WSHDR *ws_eddata;     // хранилище списка файлов
 char filename[128];     // глобальная переменная для имени файла
+
+#pragma inline
+void patch_header(HEADER_DESC* head)
+{
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
+}
+#pragma inline
+void patch_input(INPUTDIA_DESC* inp)
+{
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+
 
 
 RAMNET GetNetParams()
@@ -158,6 +177,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     csm->csm.state=-3;
   }
+  if ((msg->msg==MSG_RECONFIGURE_REQ))
+  {
+    ShowMSG(1,(int)"Reconfigure!");
+  }  
   return(1);
 }
 
@@ -246,7 +269,25 @@ void GetCurFileName()
   sprintf(filename,"%s\\%u\\%u-%u.tmo",minigps_path,Res.lac,Res.ci,Res.lac);  
 }
 
-int SaveText(void)
+// Посылка IPC-сообщения об изменении файла
+char IPC_me[]="TMOEditor";
+char IPC_to[]="GPSLogger";
+
+IPC_REQ IPC_TMO_Upd;
+GPSL_IPC_MSG_UPD_TMO TMO_Upd_Message;
+
+void Send_Update_Notify(unsigned short ci, unsigned short lac)
+{
+  IPC_TMO_Upd.name_to = IPC_to;
+  IPC_TMO_Upd.name_from = IPC_me;
+  TMO_Upd_Message.msg_version=1;
+  TMO_Upd_Message.cid=ci;
+  TMO_Upd_Message.lac=lac;
+  IPC_TMO_Upd.data = &TMO_Upd_Message;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_GPSL_UPD_TMO,&IPC_TMO_Upd);  
+}
+
+int SaveText()
 {
   unsigned int errcode;
   volatile int hFile = -1;
@@ -294,18 +335,24 @@ int SaveText(void)
     fwrite(hFile,&crc,2,&errcode);
     fclose(hFile,&errcode);
     //ShowMSG(1,(int)"Сохранено"); // ибо потом выход НАХ
+    Send_Update_Notify(Res.ci, Res.lac);
     return 1;
 }
 
-void menup2(void)  // Покинуть редактор (вызов из меню)
+void _SaveText(GUI *data)
+{
+  SaveText();
+}
+
+void menup2(GUI *data)  // Покинуть редактор (вызов из меню)
 {
   Terminate =1 ;
   GeneralFuncF1(1);
 }
 
-void AboutDlg(void)
+void AboutDlg(GUI *data)
 {
-  char *str = "TMO-редактор v3.0(0xC604)\r\n(c) 2006 Kibab\r\n(r) Rst7/CBSIE";
+  char *str = "TMO-редактор v4.0(0xC604)\r\n(c) 2006 Kibab\r\n(r) Rst7/CBSIE";
   ShowMSG(2,(int)str);
 /*
   unsigned short* RamCH  = RamNet();   // 648
@@ -321,16 +368,16 @@ int about_icon[]={0x4DB,0};
 int exit_icon[] = {0x315,0};
 int save_icon[] = {0x50E,0};
 
-HEADER_DESC menuhdr={0,0,131,21,icon,(int)"Меню редактора",0x7FFFFFFF};
+HEADER_DESC menuhdr={0,0,131,21,icon,(int)"Меню редактора",LGP_NULL};
 int menusoftkeys[]={0,1,2};
 MENUITEM_DESC menuitems[3]=
 {
-  {save_icon,(int)"Сохранить",0x7FFFFFFF,0,NULL/*menusoftkeys*/,0,0x59D},
-  {exit_icon,(int)"Выход",0x7FFFFFFF,0,NULL/*menusoftkeys*/,0,0x59D},
-  {about_icon,(int)"Об эльфе...",0x7FFFFFFF,0,NULL/*menusoftkeys*/,0,0x59D},
+  {save_icon,(int)"Сохранить",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {exit_icon,(int)"Выход",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {about_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[3]={(void *)SaveText,(void *)menup2, (void *) AboutDlg};
+MENUPROCS_DESC menuprocs[3]={_SaveText,menup2,AboutDlg};
 
 SOFTKEY_DESC menu_sk[]=
 {
@@ -379,6 +426,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
 
   if (msg->keys==0x18)
   {
+    patch_header(&menuhdr);
     CreateMenu(0,0,&tmenu,&menuhdr,0,3,0,0);
 //    EDIT_CURSOR_POS(data)=3;
     return(-1); //do redraw
@@ -406,7 +454,7 @@ void inp_ghook(GUI *gui, int cmd)
   }
   if (cmd==7)
   {
-    curpos=EDIT_CURSOR_POS(gui);
+//    curpos=EDIT_CURSOR_POS(gui);
     SetSoftKey(gui,&sk,0);    
     ExtractEditControl(gui,1,&ec);    
     wstrcpy(ws_eddata,ec.pWS);
@@ -437,7 +485,7 @@ INPUTDIA_DESC inp_desc=
   0x40000000
 };
 
-HEADER_DESC inp_hdr={0,0,131,21,/*icon*/NULL,(int)"TMOEdit",0x7FFFFFFF};
+HEADER_DESC inp_hdr={0,0,131,21,/*icon*/NULL,(int)"TMOEdit",LGP_NULL};
 
 void LaunchEditor(void)
 {
@@ -474,7 +522,7 @@ void LaunchEditor(void)
 
     if(errcode)
     {
-      wsprintf(ws_eddata,"%t %u","Ошибка I/O", errcode);          
+      wsprintf(ws_eddata,"%t %u (файл %s)","Ошибка I/O", errcode, filename);          
       filePassed = 0;
     }
     else
@@ -488,7 +536,7 @@ void LaunchEditor(void)
   else
   {
     wsprintf(ws_eddata,"%t","0 ");
-    sprintf(filename,"\\<Новый>");
+    sprintf(filename,"\\<New>");
   } 
   UpdateCSMname();
   EDITCONTROL ec;
@@ -496,5 +544,7 @@ void LaunchEditor(void)
   eq=AllocEQueue(ma,mfree_adr());
   ConstructEditControl(&ec,3,0x40,ws_eddata,256);
   AddEditControlToEditQend(eq,&ec,ma);
+  patch_header(&inp_hdr);
+  patch_input(&inp_desc);
   CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,/*ws_eddata*/0);
 }
