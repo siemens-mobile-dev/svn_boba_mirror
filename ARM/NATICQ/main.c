@@ -1949,13 +1949,12 @@ extern const int DEF_SHOW_GROUPS;
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-  memcpy((void *)&DEF_VIBRA_STATUS,&Is_Vibra_Enabled,sizeof(DEF_VIBRA_STATUS));
-  memcpy((void *)&DEF_SOUNDS_STATUS,&Is_Sounds_Enabled,sizeof(DEF_SOUNDS_STATUS));
-  memcpy((void *)&DEF_SHOWOFF_STATUS,&Is_Show_Offline,sizeof(DEF_SHOWOFF_STATUS));
-  memcpy((void *)&DEF_SHOW_GROUPS,&Is_Show_Groups,sizeof(DEF_SHOW_GROUPS));
-  int cs=CurrentStatus-1;
-  memcpy((void *)&MY_DEF_STATUS,&cs,sizeof(MY_DEF_STATUS));
-  memcpy((void *)&MY_DEF_XSTATUS,&CurrentXStatus,sizeof(MY_DEF_XSTATUS));
+  *((int *)&DEF_VIBRA_STATUS)=Is_Vibra_Enabled;
+  *((int *)&DEF_SOUNDS_STATUS)=Is_Sounds_Enabled;
+  *((int *)&DEF_SHOWOFF_STATUS)=Is_Show_Offline;
+  *((int *)&DEF_SHOW_GROUPS)=Is_Show_Groups;
+  *((int *)&MY_DEF_STATUS)=CurrentStatus-1;
+  *((int *)&MY_DEF_XSTATUS)=CurrentXStatus;
 
   #pragma segment="CONFIG_C"
   unsigned int ul;
