@@ -681,8 +681,8 @@ int CompareContacts(CLIST *t, CLIST *p)
   switch (SORT_CLIST)
   {
   case 0: // by name
-    if ((ip>IS_OFFLINE)&&(ip<IS_GROUP)&&
-	(it>IS_OFFLINE)&&(it<IS_GROUP)) break;
+    if ((ip>IS_OFFLINE)&&(ip<IS_MSG)&&
+	(it>IS_OFFLINE)&&(it<IS_MSG)) break;
   case 1: // by status
     if ((c=ip-it))
     {
