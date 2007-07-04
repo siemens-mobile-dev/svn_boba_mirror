@@ -4,15 +4,15 @@
 
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 
-static const char progress_colors[CASH_SIZE][4]={{0xFF,0x00,0x00,0x32},
+static const char progress_colors[MAX_CASH_SIZE][4]={{0xFF,0x00,0x00,0x32},
                                                  {0x00,0xFF,0x00,0x32},
                                                  {0x00,0xFF,0xFF,0x32},
                                                  {0xFF,0xFF,0x00,0x32}};
 
 static GBSTMR tmr_scroll;
 
-extern int CurrentCASH[CASH_SIZE];
-extern int MaxCASH[CASH_SIZE];
+extern int CurrentCASH[MAX_CASH_SIZE];
+extern int MaxCASH[MAX_CASH_SIZE];
 
 extern const int ENA_VIBRA;
 extern const unsigned int vibraPower;
@@ -1063,12 +1063,13 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     GUI *igui = GetTopGUI();
     if (igui) //И он существует
     {
+      extern int CASH_SIZE;               //by BoBa 4.07.07
       void *canvasdata = BuildCanvas();
-      DrawCanvas(canvasdata, 1, 95, 130, 95+8*4-1, 1);
-      int n=0; //Номер                        //by BoBa 4.07.07
+      DrawCanvas(canvasdata, 1, IDLE_Y, 130, IDLE_Y+8*CASH_SIZE-1, 1);
       extern const char * const patterns[];
+      int n=0; //Номер                        
       do {
-       if (!*patterns[n]) break; //Больше паттернов нет
+//       if (!*patterns[n]) break; //Больше паттернов нет
        DrawMyProgress(IDLE_Y+n*8,CurrentCASH[n],MaxCASH[n],progress_colors[n]);
 //       DrawMyProgress(95+0*8,CurrentCASH[1],MaxCASH[1],"\xFF\x00\x00\x64");
 //       DrawMyProgress(95+1*8,CurrentCASH[1],MaxCASH[1],"\x00\xFF\x00\x64");

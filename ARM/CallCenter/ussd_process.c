@@ -7,6 +7,7 @@
 //const char ipc_xtask_name[]=IPC_XTASK_NAME;
 //IPC_REQ gipc;
 
+int CASH_SIZE=MAX_CASH_SIZE;
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 
@@ -15,8 +16,8 @@ extern const int ENA_CASHTRACE;
 extern const char cashTEMP_FILE[];
 extern const char cashLOG_FILE[];
 
-int MaxCASH[CASH_SIZE];
-int CurrentCASH[CASH_SIZE];
+int MaxCASH[MAX_CASH_SIZE];
+int CurrentCASH[MAX_CASH_SIZE];
 
 static GBSTMR ussd_tmr;
 
@@ -72,7 +73,7 @@ extern const char CashPat2[];
 extern const char CashPat3[];
 
 //static 
-const char * const patterns[CASH_SIZE]=
+const char * const patterns[MAX_CASH_SIZE]=
 {
   CashPat0,
   CashPat1,
@@ -203,4 +204,9 @@ void LoadCash(void)
     memcpy(MaxCASH,CurrentCASH,sizeof(MaxCASH));
     SaveCash();
   }
+  CASH_SIZE=0; //Номер                        
+  do {
+   if (!*patterns[CASH_SIZE]) break; //Больше паттернов нет
+   CASH_SIZE++;
+  } while(CASH_SIZE<MAX_CASH_SIZE);
 }  
