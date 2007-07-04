@@ -41,11 +41,13 @@ static void SaveCash(void)
   int f=fopen(cashTEMP_FILE,A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f!=-1)
   {
+    fwrite(f,CurrentCASH,sizeof(CurrentCASH),&ul);      //by BoBa 4.07.07
     fwrite(f,MaxCASH,sizeof(MaxCASH),&ul);
     fclose(f,&ul);
   }
 }
 
+/*
 static void CheckPay(void)
 {
   int i=0;
@@ -62,13 +64,15 @@ static void CheckPay(void)
   while(i<CASH_SIZE);
   if (f) SaveCash();
 }
+*/
 
 extern const char CashPat0[];
 extern const char CashPat1[];
 extern const char CashPat2[];
 extern const char CashPat3[];
 
-static const char * const patterns[CASH_SIZE]=
+//static 
+const char * const patterns[CASH_SIZE]=
 {
   CashPat0,
   CashPat1,
@@ -81,6 +85,7 @@ static void FindCash(const char *s)
   int n=0; //Номер
   const char *pat;
   int i;
+  int f=0;
   char *ep;
   do
   {
@@ -96,11 +101,15 @@ static void FindCash(const char *s)
       i+=strtol(s,&ep,10);
       s=ep;
     }
+    if (i>CurrentCASH[n]){     //by BoBa 4.07.07
+      MaxCASH[n]=i;
+      f=1;
+    }
     CurrentCASH[n]=i;
     n++;
   }
   while(n<CASH_SIZE);
-  CheckPay();
+  if (f) SaveCash();
 }
 
 static void ussd_timeout(void)
@@ -185,6 +194,7 @@ void LoadCash(void)
   int f=fopen(cashTEMP_FILE,A_ReadOnly+A_BIN,P_READ,&ul);
   if (f!=-1)
   {
+    s=fread(f,CurrentCASH,sizeof(CurrentCASH),&ul);     //by BoBa 4.07.07
     s=fread(f,MaxCASH,sizeof(MaxCASH),&ul);
     fclose(f,&ul);
   }

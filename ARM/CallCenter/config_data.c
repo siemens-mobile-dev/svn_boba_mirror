@@ -26,6 +26,10 @@ __root const char cashTEMP_FILE[128]="4:\\ZBin\\CallCenter_cash.tmp";
 __root const CFG_HDR cfghdr07 = {CFG_STR_UTF8,"Temp file",0,127};
 __root const char cashLOG_FILE[128]="4:\\ZBin\\CallCenter_cash.log";
 
+__root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
+__root const unsigned int IDLE_X=0;
+__root const unsigned int IDLE_Y=95;
+
 __root const CFG_HDR cfghdr00={CFG_COLOR,"Color Menu background",0,0};
 __root const char COLOR_MENU_BK[4]={0xFF,0xFF,0x0,0x64};
 
