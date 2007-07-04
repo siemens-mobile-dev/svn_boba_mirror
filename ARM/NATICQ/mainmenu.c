@@ -300,7 +300,7 @@ void tmenu_ghook(void *data, int cmd)
 
 static int icon_array[2];
 
-static void menuitemhandler(void *data, int curitem, int *unk)
+static void menuitemhandler(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
@@ -358,11 +358,11 @@ static int tmenu_keyhook(void *data, GUI_MSG *msg)
 
 static const MENU_DESC tmenu=
 {
-  8,(void*)tmenu_keyhook,(void *)tmenu_ghook,NULL,
+  8,tmenu_keyhook,tmenu_ghook,NULL,
   mmenusoftkeys,
   &mmenu_skt,
   0x11,//MENU_FLAG,
-  (void*)menuitemhandler,
+  menuitemhandler,
   NULL,//menuitems,
   NULL,//menuprocs,
   11

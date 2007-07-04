@@ -3290,7 +3290,7 @@ static const HEADER_DESC ecmenu_HDR={0,0,NULL,NULL,NULL,(int)ecm_contactname,LGP
 
 static const MENU_DESC ecmenu_STRUCT=
 {
-  8,NULL,(void *)ecmenu_ghook,NULL,
+  8,NULL,ecmenu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0,

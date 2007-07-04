@@ -135,7 +135,7 @@ static const char * const menutexts[STATUSES_NUM]=
   LG_STWORK
 };
 
-void st_icons_set(void *data, int curitem, int *unk)
+void st_icons_set(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
@@ -172,11 +172,11 @@ static void stmenu_ghook(void *data, int cmd)
 
 static const MENU_DESC st_tmenu=
 {
-  8,(void *)st_onkey,(void *)stmenu_ghook,NULL,
+  8,st_onkey,stmenu_ghook,NULL,
   st_menusoftkeys,
   &st_menu_skt,
   0x11,//MENU_FLAG,
-  (void*)st_icons_set,
+  st_icons_set,
   NULL,//st_menuitems,
   NULL,
   STATUSES_NUM
