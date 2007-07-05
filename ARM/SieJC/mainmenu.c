@@ -122,7 +122,6 @@ SOFTKEYSTAB mmenu_skt=
 
 void menuitemhandler(void *data, int curitem, void *unk)
 {
-  return;
   switch(curitem)
   {
   case 4:
@@ -153,14 +152,11 @@ char confpic[128];
 char exitpic[128];
 char infopic[128];
 char aboutpic[128];
-char cb_on_pic[128];
-char cb_off_pic[128];
 extern const char conference_t[];
 const char exit_t[] = "exit";
 const char info_t[] = "info";
 const char about_t[] = "about";
-const char cb_on_t[] = "cb_on";
-const char cb_off_t[] = "cb_off";
+
 
 void MM_Show()
 {
@@ -216,14 +212,8 @@ void MM_Show()
   menuitems[1].icon = S_ICONS;
 #endif
 
-  strcpy(cb_on_pic, PATH_TO_PIC);
-  strcat(cb_on_pic,cb_on_t);
-  strcat(cb_on_pic,png_t);
-  strcpy(cb_off_pic, PATH_TO_PIC);
-  strcat(cb_off_pic,cb_off_t);
-  strcat(cb_off_pic,png_t);
-  icon_array[0] = (int)cb_on_pic;  //GetPicNByUnicodeSymbol(CBOX_CHECKED);
-  icon_array[1] = (int)cb_off_pic; //GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
 
   patch_header(&menuhdr);
   MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,N_ITEMS,0,0);
