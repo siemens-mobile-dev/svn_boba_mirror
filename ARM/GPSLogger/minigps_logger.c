@@ -2,11 +2,14 @@
 #include "minigps_logger.h"
 
 // Путь к БД
-extern const char MGPS_DB[128];
+extern const          char MGPS_DB[128];
+extern const          char LOGFILE[128];
+extern const unsigned int CACHE_SIZE;
+extern const          int LOG_UNKNOWN_CELLS;
 
-const char LOGFILE[128] = "0:\\Misc\\GPS\\gpslog.txt";
+const char Unk_t[]="<no name>";
 
-#define CACHE_SIZE 10
+#define CACHE_SIZE_MAX 10
 
 // Строковый вариант конверсии UTF-8 -> ANSI (Win-2151)
 // Взято из SieJC
@@ -125,7 +128,7 @@ typedef struct
 }RAMNET_CACHE_ENTRY;
 
 // Сам кеш и указатель на последний элемент
-RAMNET_CACHE_ENTRY Ramnet_Cache[CACHE_SIZE];
+RAMNET_CACHE_ENTRY Ramnet_Cache[CACHE_SIZE_MAX];
 char Cache_p = 0;
 
 // Инициализировать кеш
@@ -217,6 +220,7 @@ char *Get_Current_Location(char *action)
   hFile = fopen(filename,A_ReadOnly+A_BIN,P_READ,&errcode);
   if(hFile==-1)
   {
+    if(LOG_UNKNOWN_CELLS)WriteLog(Res.ci,Res.lac,(char*)&Unk_t); 
     return NULL;
   }
   // Файло открыто, читаем файло

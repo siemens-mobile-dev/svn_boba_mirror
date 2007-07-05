@@ -11,9 +11,14 @@ void (*old_icsm_onClose)(CSM_RAM*);
 
 WSHDR *Out_WS;
 GBSTMR mytmr;
-#define ELF_ID 0xC607
+#ifdef NEWSGOLD
+  #define ELF_ID 0xC607
+#else
+  #define ELF_ID 0xC67
+#endif
 #define UPDATE_TIME 216
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
+#define color(x) (char *)(&(x))
 
 // Импорт переменных из конфига
 extern const          int Req_Clear_Cache;
@@ -21,7 +26,9 @@ extern const unsigned int TXT_X;
 extern const unsigned int TXT_Y;
 extern const unsigned int TXT_FONT;
 extern const          int CENTER_TEXT;
-extern const unsigned int TXT_COLOR;
+extern const          char TXT_COLOR[];
+extern const unsigned int TXT_ATTR;
+
 
 void TimerProc()
 {
@@ -99,15 +106,21 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     return old_icsm_onMessage(data,msg);
   }
 
-  if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
+  if(IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
   {
     GUI *igui=GetTopGUI();
     if (igui) //И он существует
     {
+      void *canvasdata;
+
+#ifdef ELKA
+      {
+#else      
       void *idata;
       idata=GetDataOfItemByID(igui,2);
       if (idata)
       {
+#endif
         char *xz;
         char action;
         xz= Get_Current_Location(&action);
@@ -115,19 +128,19 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         utf8_2ws(Out_WS, xz, 35);
         mfree(xz);
         int len;
-        len = Get_String_Width(Out_WS);
+        len = Get_WS_width(Out_WS, TXT_FONT);     //Get_String_Width(Out_WS);
         if(CENTER_TEXT)
         {
           x_pos = sdiv(2, ScreenW() - len);
         }else x_pos = TXT_X;
        
 #ifdef ELKA
-	void *canvasdata=BuildCanvas();
+	canvasdata=BuildCanvas();
 #else
-        void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+        canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
 #endif      
         DrawCanvas(canvasdata,x_pos,TXT_Y,x_pos + len ,TXT_Y + GetFontYSIZE(TXT_FONT),1);
-        DrawString(Out_WS,x_pos,TXT_Y,x_pos + len ,TXT_Y + GetFontYSIZE(TXT_FONT),TXT_FONT,0x20,GetPaletteAdrByColorIndex(TXT_COLOR),GetPaletteAdrByColorIndex(1));
+        DrawString(Out_WS,x_pos,TXT_Y,x_pos + len+1 ,TXT_Y + GetFontYSIZE(TXT_FONT)+1,TXT_FONT,TXT_ATTR,color(TXT_COLOR),GetPaletteAdrByColorIndex(1));
         if(action)DoAction(action);       
       }
     }
