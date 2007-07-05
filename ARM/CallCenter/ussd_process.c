@@ -7,7 +7,7 @@
 //const char ipc_xtask_name[]=IPC_XTASK_NAME;
 //IPC_REQ gipc;
 
-int CASH_SIZE=MAX_CASH_SIZE;
+int CASH_SIZE;
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 
@@ -36,7 +36,7 @@ static void WriteLog(int dummy, char *text)
   mfree(text);
 }
 
-static void SaveCash(void)
+void SaveCash(void)
 {
   unsigned int ul;
   int f=fopen(cashTEMP_FILE,A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul);
@@ -203,10 +203,9 @@ void LoadCash(void)
   {
     memcpy(MaxCASH,CurrentCASH,sizeof(MaxCASH));
     SaveCash();
-  }
-  CASH_SIZE=0; //Номер                        
-  do {
-   if (!*patterns[CASH_SIZE]) break; //Больше паттернов нет
+  }                    
+  CASH_SIZE=0;
+  while ((CASH_SIZE<MAX_CASH_SIZE)&&(*patterns[CASH_SIZE])) {
    CASH_SIZE++;
-  } while(CASH_SIZE<MAX_CASH_SIZE);
+  }
 }  

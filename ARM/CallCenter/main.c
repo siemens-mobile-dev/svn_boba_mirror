@@ -1098,6 +1098,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 
 void CallCenter_Destructor(void)
 {
+  SaveCash();
   EndUSSDtimer();
 //  FreeWS(dbg_ws);
   FreeWS(ews);
