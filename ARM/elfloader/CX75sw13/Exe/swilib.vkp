@@ -584,6 +584,7 @@
 0868: 0xA08A0AA7   ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len)
 086C: 0xA08A0AB1   ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA08A0AED   ; 21C: __thumb int EDIT_IsBusy(void *gui);
+0874: 0xA0505BDD ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
 #pragma disable old_equal_ff
 +0
 

@@ -591,6 +591,7 @@
 0868: 0xA116E6D1 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
 086C: 0xA116E6DB ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA116E717   ; 21C: __thumb int EDIT_IsBusy(void *gui);
+0874: 0xA0B15EB5 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);

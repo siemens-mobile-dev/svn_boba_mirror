@@ -621,6 +621,7 @@
 0868: 0xA1179739 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
 086C: 0xA1179743 ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA117977F   ; 21C: __thumb int EDIT_IsBusy(void *gui);
+0874: 0xA0B49CD1 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver
