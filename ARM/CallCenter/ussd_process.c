@@ -132,7 +132,7 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
   ws=AllocWS(256);
   len=msg->pkt_length;
   if (len>240) len=240;
-  GSMTXT_Decode(ws,msg->pkt,len,msg->encoding_type);
+  GSMTXT_Decode(ws,msg->pkt,len,msg->encoding_type,(void*(*)(int))malloc_adr(),(void(*)(void))mfree_adr());
   if ((len=ws->wsbody[0]))
   {
     zeromem(s=malloc(len+3),len+3);
