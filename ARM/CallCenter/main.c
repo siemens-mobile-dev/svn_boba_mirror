@@ -26,6 +26,9 @@ extern const char COLOR_SELECTED_BG[4];
 extern const char COLOR_SELECTED_BRD[4];
 extern const char COLOR_SEARCH_MARK[4];
 
+unsigned int prev_cc;
+unsigned int prev_nc;
+
 #define TMR_SECOND 216
 
 
@@ -1010,16 +1013,43 @@ int strcmp_nocase(const char *s1,const char *s2)
 
 static void DrawMyProgress(int y, int cur, int max, const char *color)
 {
-  int s=cur*127/max;
-  DrawRectangle(1,y,130,y+6,0,"\xFF\xFF\xFF\xFF","\0\0\0\0");
+  int s=cur*(ScreenW()-5)/max;
+  DrawRectangle(1,y,ScreenW()-2,y+6,0,"\xFF\xFF\xFF\xFF","\0\0\0\0");
   DrawRectangle(2,y+1,s+2,y+5,0,color,color);
+}
+
+unsigned int get_net_id()
+{
+  char *p=Get_CC_NC();
+  unsigned int cc, cc2, nc;
+  cc=*p;
+  cc2=*(p+1);
+  nc=*(p+2);
+  
+  cc=((cc&0x0F)<<4)|(cc>>4);
+  cc=(cc<<4)|(cc2&0x0F);
+  nc=((nc&0x0F)<<4)|(nc>>4);
+  return ((cc<<16)|nc);
 }
 
 static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
 #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
   int csm_result;
-  
+  {
+    unsigned int cc, nc;
+    cc=get_net_id();
+    nc=cc&0xFFFF;
+    cc>>=16;
+    if (cc!=prev_cc || nc !=prev_nc)
+    {
+      SaveCash();    // Сохраняеи текущий баланс
+      prev_cc=cc;
+      prev_nc=nc;
+      InitConfig();
+      LoadCash();
+    }
+  }
   if (msg->msg==MSG_USSD_RX)
   {
     if (ProcessUSSD(data,(GBS_USSD_MSG *)msg)) return 0; //Обработанно
@@ -1067,17 +1097,17 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       void *canvasdata = BuildCanvas();
       DrawCanvas(canvasdata, 1, IDLE_Y, 130, IDLE_Y+8*CASH_SIZE-1, 1);
       extern const char * const patterns[];
-      int n=0; //Номер                        
-      do {
-//       if (!*patterns[n]) break; //Больше паттернов нет
-       DrawMyProgress(IDLE_Y+n*8,CurrentCASH[n],MaxCASH[n],progress_colors[n]);
+      int n=0; //Номер      
+      while(n<CASH_SIZE)
+      {
+        //if (!*patterns[n]) break; //Больше паттернов нет
+        DrawMyProgress(IDLE_Y+n*8,CurrentCASH[n],MaxCASH[n],progress_colors[n]);
 //       DrawMyProgress(95+0*8,CurrentCASH[1],MaxCASH[1],"\xFF\x00\x00\x64");
 //       DrawMyProgress(95+1*8,CurrentCASH[1],MaxCASH[1],"\x00\xFF\x00\x64");
 //       DrawMyProgress(95+2*8,CurrentCASH[2],MaxCASH[2],"\x00\xFF\xFF\x64");
 //       DrawMyProgress(95+3*8,CurrentCASH[3],MaxCASH[3],"\xFF\xFF\x00\x64");
-       n++;
-      } while(n<CASH_SIZE);
-       
+        n++;
+      }
     }
   }
   if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху
@@ -1114,8 +1144,8 @@ static void MyIDLECSM_onClose(CSM_RAM *data)
 
 int main(void)
 {
-  InitConfig();
-  LoadCash();
+  //InitConfig();  Загружаем только когда изменится сеть с 0 на любую другую
+  //LoadCash();
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));

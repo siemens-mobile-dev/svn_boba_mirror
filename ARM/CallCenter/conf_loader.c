@@ -12,7 +12,7 @@ static int LoadConfigData(const char *fname)
   char *buf;
   int result=0;
   void *cfg;
-  unsigned int rlen;
+  unsigned int rlen, end;
 
   cfg=(char *)__segment_begin("CONFIG_C");
   unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
@@ -21,14 +21,14 @@ static int LoadConfigData(const char *fname)
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     rlen=fread(f,buf,len,&ul);
-    if ((rlen==lseek(f,0,S_END,&ul,&ul)) && rlen==len)
+    end=lseek(f,0,S_END,&ul,&ul);
+    fclose(f,&ul);
+    if (rlen==end && rlen==len)
     {
       memcpy(cfg,buf,len);
-      fclose(f,&ul);
     }
     else
     {
-      fclose(f,&ul);
       goto L_SAVENEWCFG;
     }
   }
@@ -48,45 +48,19 @@ static int LoadConfigData(const char *fname)
   return(result);
 }
 
-/*
-  Возвращает строку вида CC-NC - параметры текущей сети в буфере.
-  возвращает 0, Если сети не обнаружено:)
-*/
-static char get_net_id(char *buf)
-{
-  char *x = (char*)Get_CC_NC();
-  char *y = x+1;
-  char *z = x+2;
-  char cc_2 = *x;
-  char cc_1 = *y;
-  // Немного жёсткого секса с BCD...
-  if(cc_1>=0xF0){cc_1 = cc_1 && 0x0F>>4;}
-  cc_2 = (cc_2<<4) + (cc_2>>4);
-  char nc = *z;
-  nc = (nc>>4) + (nc<<4);
-  if((nc == 0xFF)&&(cc_2==0xFF))
-  {
-    return 0;
-  }
-  // ... и золотой ключик у нас в кармане )
-  snprintf(buf, 15, "%X%X-%02X", cc_2, cc_1, nc);
-  return 1;
-}
-
 
 // Инициализация конфигурации
 // Надо вызвать в начале работы для загрузки конфигурации
 // Поиск конфиг-файла согласно стандарту
 static char config_name[128];
 
+
 void InitConfig()
 {
-  char buf[16];
-  if(!get_net_id(buf))
-  {
-    return;
-  }
-  sprintf(config_name,"4:\\ZBin\\etc\\CallCenter_%s.bcfg", buf);
+  extern unsigned int prev_cc;
+  extern unsigned int prev_nc;
+  if (prev_cc==0xFFF && prev_nc==0xFF) return; // Если нет сети то ждем пока появится
+  sprintf(config_name,"4:\\ZBin\\etc\\CallCenter_%03X-%02X.bcfg",prev_cc,prev_nc);
   //ShowMSG(1,(int)config_name);
   if(LoadConfigData(config_name)<0)
   {

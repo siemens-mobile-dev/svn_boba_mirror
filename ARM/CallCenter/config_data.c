@@ -20,10 +20,10 @@ __root const char CashPat2[32]="dodatkovo ";
 __root const CFG_HDR cfghdr05={CFG_STR_WIN1251,"Cash pattern 3",0,31};
 __root const char CashPat3[32]=". "; //Неудачно, потом будем думать
 
-__root const CFG_HDR cfghdr06 = {CFG_STR_UTF8,"Temp file",0,127};
-__root const char cashTEMP_FILE[128]="4:\\ZBin\\CallCenter_cash.tmp";
+__root const CFG_HDR cfghdr06 = {CFG_STR_UTF8,"Temp file path",0,127};
+__root const char cashTEMP_PATH[128]="4:\\ZBin";
 
-__root const CFG_HDR cfghdr07 = {CFG_STR_UTF8,"Temp file",0,127};
+__root const CFG_HDR cfghdr07 = {CFG_STR_UTF8,"Log file",0,127};
 __root const char cashLOG_FILE[128]="4:\\ZBin\\CallCenter_cash.log";
 
 __root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};

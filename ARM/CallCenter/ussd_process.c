@@ -7,13 +7,14 @@
 //const char ipc_xtask_name[]=IPC_XTASK_NAME;
 //IPC_REQ gipc;
 
-int CASH_SIZE;
+int CASH_SIZE=0;
 
 extern long  strtol (const char *nptr,char **endptr,int base);
+char cashfname[128];
 
 extern const char CASHREQNUM[];
 extern const int ENA_CASHTRACE;
-extern const char cashTEMP_FILE[];
+extern const char cashTEMP_PATH[];
 extern const char cashLOG_FILE[];
 
 int MaxCASH[MAX_CASH_SIZE];
@@ -38,13 +39,16 @@ static void WriteLog(int dummy, char *text)
 
 void SaveCash(void)
 {
-  unsigned int ul;
-  int f=fopen(cashTEMP_FILE,A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul);
-  if (f!=-1)
+  int f;
+  unsigned int ul; 
+  if (*cashfname)
   {
-    fwrite(f,CurrentCASH,sizeof(CurrentCASH),&ul);      //by BoBa 4.07.07
-    fwrite(f,MaxCASH,sizeof(MaxCASH),&ul);
-    fclose(f,&ul);
+    if ((f=fopen(cashfname,A_ReadWrite+A_Create+A_BIN+A_Truncate,P_WRITE,&ul))!=-1)
+    {
+      fwrite(f,CurrentCASH,sizeof(CurrentCASH),&ul);      //by BoBa 4.07.07
+      fwrite(f,MaxCASH,sizeof(MaxCASH),&ul);
+      fclose(f,&ul);
+    }
   }
 }
 
@@ -88,7 +92,8 @@ static void FindCash(const char *s)
   int i;
   int f=0;
   char *ep;
-  do
+  //do
+  while(n<CASH_SIZE)
   {
     pat=patterns[n];
     if (!*pat) break; //Больше паттернов нет
@@ -96,11 +101,14 @@ static void FindCash(const char *s)
     s+=strlen(pat);
     i=strtol(s,&ep,10)*100;
     s=ep;
-    if ((*s=='.')&&(s[1]>='0')&&(s[1]<='9'))
+    if ((*s=='.')||(*s==','))
     {
-      s++;
-      i+=strtol(s,&ep,10);
-      s=ep;
+      if ((s[1]>='0')&&(s[1]<='9'))
+      {
+        s++;
+        i+=strtol(s,&ep,10);
+        s=ep;
+      }
     }
     if (i>CurrentCASH[n]){     //by BoBa 4.07.07
       MaxCASH[n]=i;
@@ -109,7 +117,7 @@ static void FindCash(const char *s)
     CurrentCASH[n]=i;
     n++;
   }
-  while(n<CASH_SIZE);
+  //while(n<CASH_SIZE);  Может быть ни одного пока идет поиск сети
   if (f) SaveCash();
 }
 
@@ -191,8 +199,16 @@ void EndUSSDtimer(void)
 void LoadCash(void)
 {
   unsigned int ul;
-  int s;
-  int f=fopen(cashTEMP_FILE,A_ReadOnly+A_BIN,P_READ,&ul);
+  int s=0;
+ 
+  CASH_SIZE=0;
+  
+  extern unsigned int prev_cc;
+  extern unsigned int prev_nc;
+  if (prev_cc==0xFFF && prev_nc==0xFF) return;  // нет сети, ждем пока сменится
+  
+  sprintf(cashfname,"%s\\CallCenter_cash_%03X-%02X.tmp",cashTEMP_PATH,prev_cc,prev_nc);
+  int f=fopen(cashfname,A_ReadOnly+A_BIN,P_READ,&ul);
   if (f!=-1)
   {
     s=fread(f,CurrentCASH,sizeof(CurrentCASH),&ul);     //by BoBa 4.07.07
@@ -204,7 +220,6 @@ void LoadCash(void)
     memcpy(MaxCASH,CurrentCASH,sizeof(MaxCASH));
     SaveCash();
   }                    
-  CASH_SIZE=0;
   while ((CASH_SIZE<MAX_CASH_SIZE)&&(*patterns[CASH_SIZE])) {
    CASH_SIZE++;
   }
