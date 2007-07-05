@@ -93,25 +93,42 @@ typedef struct{
 #define LGP_DOIT_PIC 0x7FFFC0FB
 #else
 
+#define DISPLACE_OF_EDGUI 0x50
+#define DISPLACE_OF_USSDREQGUI_ID 0x40
+#define DISPLACE_OF_EDGUI_ID 0x4C
+#define DISPLACE_OF_IDLEGUI_ID 0x28
+#define DISPLACE_OF_IDLECANVAS 0x14
+
 
 #define DISPLACE_OF_INCOMMINGGUI 0x30
+#define DISPLACE_OF_OUTGOINGGUI 0x2C
 #define MSG_INCOMMING_CALL 0x6F
-#define MSG_STATE_OF_CALL 0xB
+#define MSG_STATE_OF_CALL 0x0B
+#define MSG_END_CALL 0x0D
 
 #define MSG_HELPER_TRANSLATOR 0x3F0
 #define MSG_RECONFIGURE_REQ 0x3F1
 #define MSG_IPC 0x3F2
 
 #define MSG_SMS_RX 0xC2
+
+#define MSG_USSD_RX 0x42
+typedef struct{
+  short pid_from;
+  short msg; //MSG_USSD_RX
+  void *pkt;
+  char unk1;
+  char encoding_type;
+  char pkt_length;
+  char unk2;
+  void *data1;
+} GBS_USSD_MSG;
+
 #define MSG_CSM_DESTROYED 0x93
 #define MSG_CSM_DESTROY_NOTIFY 0x92
 #define MSG_GUI_DESTROYED 0x98
 #define MSG_IDLETMR_EXPIRED 0x95
 #define MMI_CEPID 0x4209
-#define DISPLACE_OF_EDGUI 0x50
-#define DISPLACE_OF_EDGUI_ID 0x4C
-#define DISPLACE_OF_IDLEGUI_ID 0x28
-#define DISPLACE_OF_IDLECANVAS 0x14
 #define LGP_NULL 0x7FFF
 #define SET_SOFT_KEY_N 1
 #define LGP_DOIT_PIC 0x7FFFC0FB
@@ -2910,7 +2927,7 @@ __swi __arm int EDIT_IsBusy(void *gui);
 //pattern=??,B5,??,30,??,68,{??,B5,??,30,??,68,{00,68,40,05,C0,0F,70,47},??,BD},??,BD+1
 
 #pragma swi_number=0x21D
-__swi __arm int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type);
+__swi __arm int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
 //thumb
-//pattern=??,B5,??,1C,??,4A,??,1C,??,49,??,92,??,1C,??,91,??,1C,??,??,??,??,??,BD
+//pattern=??,B5,??,1C,??,1C,??,1C,??,1C,??,AB,??,21,??,9D,??,71,??,21,??,91,??,A9,??,46
 
