@@ -2722,8 +2722,9 @@ __swi __arm int GetMaxDynIcon(void);
 //thumb
 //pattern=9C,20,70,47
 
-#pragma swi_number=0x1EB
+#pragma swi_number=0x81EB
 __swi __arm char *RAM_IMSI(void);
+//adr=
 
 #pragma swi_number=0x1EC
 __swi __arm void FreeDynIcon(int picture);
