@@ -11,6 +11,10 @@
 #include "smiles.h"
 #include "naticq_ipc.h"
 
+#ifndef NEWSGOLD
+#define SEND_TIMER
+#endif
+
 extern volatile int total_smiles;
 extern volatile int total_xstatuses;
 extern volatile int xstatuses_load;
@@ -1259,11 +1263,18 @@ void create_connect(void)
   }
 }
 
+#ifdef SEND_TIMER
+GBSTMR send_tmr;
+#endif
+
 void ClearSendQ(void)
 {
   mfree((void *)sendq_p);
   sendq_p=NULL;
   sendq_l=NULL;
+#ifdef SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
 }
 
 void end_socket(void)
@@ -1273,7 +1284,18 @@ void end_socket(void)
     shutdown(sock,2);
     closesocket(sock);
   }
+#ifdef SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
 }
+
+#ifdef SEND_TIMER
+static void resend(void)
+{
+  void SendAnswer(int dummy, TPKT *p);
+  SUBPROC((void*)SendAnswer,0,0);
+}
+#endif
 
 void SendAnswer(int dummy, TPKT *p)
 {
@@ -1331,6 +1353,9 @@ void SendAnswer(int dummy, TPKT *p)
     if (j<i)
     {
       //Передали меньше чем заказывали
+#ifdef SEND_TIMER
+      GBS_StartTimerProc(&send_tmr,216*5,resend);
+#endif
       return; //Ждем сообщения ENIP_BUFFER_FREE1
     }
     tenseconds_to_ping=0; //Чего-то послали, можно начинать отсчет времени до пинга заново
