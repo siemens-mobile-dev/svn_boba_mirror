@@ -85,19 +85,32 @@ void Exit_SieJC(GUI *data)
   QuitCallbackProc(0);
 }
 
-MENUITEM_DESC menuitems[N_ITEMS]=
+static const char * const menutexts[N_ITEMS]=
 {
-  {dummy_icon,(int)"Контакт",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {dummy_icon,(int)"Статус",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {dummy_icon,(int)"Конференция",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {dummy_icon,(int)"Закладки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {icon_array,(int)"Режим вибры",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {icon_array,(int)"Режим звука",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {dummy_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {dummy_icon,(int)"Выход",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  "Контакт",
+  "Статус",
+  "Конференция",
+  "Закладки",
+  "Режим вибры",
+  "Режим звука",
+  "Об эльфе...",
+  "Выход"
 };
 
-MENUPROCS_DESC menuprocs[N_ITEMS]={
+
+//MENUITEM_DESC menuitems[N_ITEMS]=
+//{
+//  {dummy_icon,(int)"Контакт",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//  {dummy_icon,(int)"Статус",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//  {dummy_icon,(int)"Конференция",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//  {dummy_icon,(int)"Закладки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//  {icon_array,(int)"Режим вибры",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//  {icon_array,(int)"Режим звука",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//  {dummy_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//  {dummy_icon,(int)"Выход",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+//};
+
+static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           Disp_Contact_Menu,
                           DispStatusChangeMenu,
                           Disp_MUC_Enter_Dialog,
@@ -108,45 +121,86 @@ MENUPROCS_DESC menuprocs[N_ITEMS]={
                           Exit_SieJC
                          };
 
-SOFTKEY_DESC mmenu_sk[]=
+static const SOFTKEY_DESC mmenu_sk[]=
 {
   {0x0018,0x0000,(int)"Выбор"},
   {0x0001,0x0000,(int)"Назад"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB mmenu_skt=
+static const SOFTKEYSTAB mmenu_skt=
 {
   mmenu_sk,0
 };
 
+int S_ICONS[N_ITEMS];
+
 void menuitemhandler(void *data, int curitem, void *unk)
 {
+  WSHDR *ws;
+  void *item=AllocMenuItem(data);
+  extern const char percent_t[];
+  ws=AllocMenuWS(data,strlen(menutexts[curitem]));
+  wsprintf(ws,percent_t,menutexts[curitem]);
   switch(curitem)
   {
+  case 0:
+    SetMenuItemIconArray(data,item,S_ICONS+0);
+    break;
+  case 1:
+    SetMenuItemIconArray(data,item,S_ICONS+1);
+    break;
+  case 2:
+    SetMenuItemIconArray(data,item,S_ICONS+2);
+    break;
+  case 3:
+    SetMenuItemIconArray(data,item,S_ICONS+3);
+    break;
   case 4:
-    SetMenuItemIcon(data,curitem,Is_Vibra_Enabled?0:1);
+    SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
     break;
-
   case 5:
-    SetMenuItemIcon(data,curitem,Is_Sounds_Enabled?0:1);
+    SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
     break;
+  case 6:
+    SetMenuItemIconArray(data,item,S_ICONS+6);
+    break;
+  case 7:
+    SetMenuItemIconArray(data,item,S_ICONS+7);
+    break;
+  }
+  SetMenuItemText(data, item, ws, curitem);
+}
+
+void mmenu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
   }
 }
 
-MENU_DESC tmenu=
+static int mmenu_keyhook(void *data, GUI_MSG *msg)
 {
-  8,NULL,NULL,NULL,
+  if ((msg->keys==0x18)||(msg->keys==0x3D))
+  {
+    ((void (*)(void))(menuprocs[GetCurMenuItem(data)]))();
+  }
+  return(0);
+}
+
+static const MENU_DESC tmenu=
+{
+  8,mmenu_keyhook,mmenu_ghook,NULL,
   mmenusoftkeys,
   &mmenu_skt,
   1,
   menuitemhandler,
-  menuitems,
-  menuprocs,
+  NULL, //menuitems,
+  NULL, //menuprocs,
   N_ITEMS
 };
 extern const char PATH_TO_PIC[128], png_t[];
-int S_ICONS[N_ITEMS];
 char mypic[128];
 char confpic[128];
 char exitpic[128];
@@ -199,17 +253,17 @@ void MM_Show()
   strcat(exitpic,png_t);
   S_ICONS[7] = (int)exitpic;
 
-  menuitems[0].icon = S_ICONS+0;
-  menuitems[1].icon = S_ICONS+1;
-  menuitems[2].icon = S_ICONS+2;
-  menuitems[3].icon = S_ICONS+3;
-  menuitems[6].icon = S_ICONS+6;
-  menuitems[7].icon = S_ICONS+7;
+//  menuitems[0].icon = S_ICONS+0;
+//  menuitems[1].icon = S_ICONS+1;
+//  menuitems[2].icon = S_ICONS+2;
+//  menuitems[3].icon = S_ICONS+3;
+//  menuitems[6].icon = S_ICONS+6;
+//  menuitems[7].icon = S_ICONS+7;
 
 
 #else
   S_ICONS[0] = Roster_getIconByStatus(My_Presence);
-  menuitems[1].icon = S_ICONS;
+//  menuitems[1].icon = S_ICONS;
 #endif
 
   icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
