@@ -132,6 +132,7 @@
 ;0318: 0x ; 0C6: __arm char GetAkkuCapacity();
 0320: 0xA86C0D30 ; 80C8: __arm unsigned short *RamCap();
 0328: 0xA86CD2D4 ; 80CA: __arm RAMNET * RamNet();
+0340: 0xA87124E4 ; D0: RamAccPoint
 
 0380: 0xA869CA6C ; 80E0: __arm void * RamScreenBuffer();
 03C4: 0xA171C92F ; 80F1: __arm void *BuildCanvas(void);

@@ -267,7 +267,7 @@
 334: 0xA841176C   ; f205: RamMissedSMS
 338: 0xA84D12c0   ; f206: RamDateTime
 33C: 0xA852662C   ; f207: RamAlarm
-340: 0xA85594EC   ; f208: RamAccPoint
+340: 0xA85594E4   ; f208: RamAccPoint
 344: 0xA84CB508   ; f209: RamScreensaver
 ;
 348: 0xA84D12E8   ; f210: RamAutoTime

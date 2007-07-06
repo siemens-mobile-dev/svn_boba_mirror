@@ -251,6 +251,7 @@
 0320: 0xA850D364   ;  C8: __arm unsigned short *RamCap()
 0324: 0xA850D366   ;  C9: __arm RamLS
 0328: 0xA851A9D0   ;  CA: __arm RAMNET * RamNet()
+0340: 0xA8559368   ;  D0: RamAccPoint
 034C: 0xA84CB4F4   ;  D3: RamStby
 0364: 0xA851734C   ;  D9: RamShutdownMode
 036C: 0xA84CB534   ;  DB: RamMainscreenAccuIcon

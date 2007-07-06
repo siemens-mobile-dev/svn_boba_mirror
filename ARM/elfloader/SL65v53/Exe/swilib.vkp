@@ -230,7 +230,7 @@
 
 0338: 0x00000000   ; CE: RamDateTime
 033C: 0xA86D2020   ; CF: RamAlarm
-0340: 0xA86FFE20   ; D0: RamAccPoint
+0340: 0xA86FFE14   ; D0: RamAccPoint
 0344: 0xA868C39C   ; D1: RamScreensaver
 0348: 0x00000000   ; D2: RamAutoTime
 034C: 0xA868C390   ; D3: RamStby

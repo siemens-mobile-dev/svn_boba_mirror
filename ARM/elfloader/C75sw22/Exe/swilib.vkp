@@ -255,7 +255,7 @@
 0338: 0xA87BA000   ; CE: RamDateTime
 033C: 0xA850D2F0   ; CF: RamAlarm
 
-0340: 0xA853BB14   ; D0: RamAccPoint
+0340: 0xA853BB0C   ; D0: RamAccPoint
 0344: 0xA84BFF1C   ; D1: RamScreensaver
 
 ;348:              ; D2: RamAutoTime
