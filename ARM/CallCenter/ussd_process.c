@@ -51,8 +51,11 @@ void SaveCash(void)
       fwrite(f,MaxCASH,sizeof(MaxCASH),&ul);
       fclose(f,&ul);
       GetFileAttrib(cashfname,&attrib,&ul);
-      attrib|=FA_HIDDEN;
-      SetFileAttrib(cashfname,attrib,&ul);
+      if (!(attrib&FA_HIDDEN))
+      {
+        attrib|=FA_HIDDEN;
+        SetFileAttrib(cashfname,attrib,&ul);
+      }
     }
   }
 }
@@ -201,23 +204,19 @@ void EndUSSDtimer(void)
   ussdreq_sended=0;
 }
 
-#pragma inline
-int hex2alpha(int c)
+void imsi2str(char *imsi, char *str)
 {
-  return (c<=9)?c+'0':c-0xA+'A';  
-}
-
-void hex2str(char *hex, char *str, int hexlen)
-{
-  unsigned int c, len;
-  len=0;
-  while(len<hexlen)
+  unsigned int c, c1;
+  int j, m;
+  m=0;
+  j=0;
+  while(j<IMSI_DATA_BYTE_LEN)
   {
-    c=*hex++;
-    *str++=hex2alpha(c>>4);
-    *str++=hex2alpha(c&0xF);
-    len++;
-  }  
+    if (m&1) {c1=c>>4; j++;}
+    else c1=(c=imsi[j])&0x0F;
+    *str++=c1+'0';
+    m++;
+  }
   *str=0;
 }
 
@@ -225,13 +224,13 @@ void LoadCash(void)
 {
   unsigned int ul;
   int s=0;
-  char imsi[IMSI_DATA_BYTE_LEN*2+1];
+  char imsi_str[IMSI_DATA_BYTE_LEN*2+1];
  
   CASH_SIZE=0;
   
   extern char cur_imsi[];
-  hex2str(cur_imsi,imsi,IMSI_DATA_BYTE_LEN);
-  sprintf(cashfname,"%s\\CallCenter_cash_%s.tmp",cashTEMP_PATH,imsi);
+  imsi2str(cur_imsi,imsi_str);
+  sprintf(cashfname,"%s\\CallCenter_cash_%s.tmp",cashTEMP_PATH,imsi_str);
   int f=fopen(cashfname,A_ReadOnly+A_BIN,P_READ,&ul);
   if (f!=-1)
   {
