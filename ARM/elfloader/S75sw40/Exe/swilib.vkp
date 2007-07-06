@@ -328,6 +328,7 @@
 07A0: 0xA09FD168 ; 1E8: __arm int IsNoJava()
 ;07A4: 0x00000000 ; 1E9: __arm IMGHDR* create_imghdr(const char *fname, int type);
 07A8: 0xA0976403 ; 1EA: __thumb int GetMaxDynIcon(void);
+07AC: 0xA8DCD262   ; 1EB: char *RAM_IMSI()
 07B0: 0xA0976407 ; 1EC: __thumb void FreeDynIcon(int picture);
 07B4: 0xA0976567 ; 1ED: __thumb int IsDynIconBusy(int picture);
 07BC: 0xA0976469 ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap);
@@ -361,7 +362,7 @@
 0868: 0xA0A120B1 ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
 086C: 0xA0A120BD ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA0A120F9 ; 21C: __thumb int EDIT_IsBusy(void *gui);
-0874: 0xA0953DAD ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type);
+0874: 0xA0953CF9 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
 
 #pragma disable old_equal_ff
 +0
