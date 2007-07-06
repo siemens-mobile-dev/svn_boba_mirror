@@ -8,6 +8,7 @@
 //IPC_REQ gipc;
 
 int CASH_SIZE=0;
+#define IMSI_DATA_BYTE_LEN  (9)
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 char cashfname[128];
@@ -41,6 +42,7 @@ void SaveCash(void)
 {
   int f;
   unsigned int ul; 
+  unsigned char attrib;
   if (*cashfname)
   {
     if ((f=fopen(cashfname,A_ReadWrite+A_Create+A_BIN+A_Truncate,P_WRITE,&ul))!=-1)
@@ -48,6 +50,9 @@ void SaveCash(void)
       fwrite(f,CurrentCASH,sizeof(CurrentCASH),&ul);      //by BoBa 4.07.07
       fwrite(f,MaxCASH,sizeof(MaxCASH),&ul);
       fclose(f,&ul);
+      GetFileAttrib(cashfname,&attrib,&ul);
+      attrib|=FA_HIDDEN;
+      SetFileAttrib(cashfname,attrib,&ul);
     }
   }
 }
@@ -196,18 +201,37 @@ void EndUSSDtimer(void)
   ussdreq_sended=0;
 }
 
+#pragma inline
+int hex2alpha(int c)
+{
+  return (c<=9)?c+'0':c-0xA+'A';  
+}
+
+void hex2str(char *hex, char *str, int hexlen)
+{
+  unsigned int c, len;
+  len=0;
+  while(len<hexlen)
+  {
+    c=*hex++;
+    *str++=hex2alpha(c>>4);
+    *str++=hex2alpha(c&0xF);
+    len++;
+  }  
+  *str=0;
+}
+
 void LoadCash(void)
 {
   unsigned int ul;
   int s=0;
+  char imsi[IMSI_DATA_BYTE_LEN*2+1];
  
   CASH_SIZE=0;
   
-  extern unsigned int prev_cc;
-  extern unsigned int prev_nc;
-  if (prev_cc==0xFFF && prev_nc==0xFF) return;  // нет сети, ждем пока сменится
-  
-  sprintf(cashfname,"%s\\CallCenter_cash_%03X-%02X.tmp",cashTEMP_PATH,prev_cc,prev_nc);
+  extern char cur_imsi[];
+  hex2str(cur_imsi,imsi,IMSI_DATA_BYTE_LEN);
+  sprintf(cashfname,"%s\\CallCenter_cash_%s.tmp",cashTEMP_PATH,imsi);
   int f=fopen(cashfname,A_ReadOnly+A_BIN,P_READ,&ul);
   if (f!=-1)
   {

@@ -26,11 +26,12 @@ extern const char COLOR_SELECTED_BG[4];
 extern const char COLOR_SELECTED_BRD[4];
 extern const char COLOR_SEARCH_MARK[4];
 
-unsigned int prev_cc;
-unsigned int prev_nc;
+
+
 
 #define TMR_SECOND 216
 
+#define IMSI_DATA_BYTE_LEN  (9)
 
 #pragma inline
 static void patch_header(const HEADER_DESC* head)
@@ -78,6 +79,8 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #define PHONE_FAX 0x2B
 #define PHONE_FAX2 0x5E
 #endif
+
+char cur_imsi[IMSI_DATA_BYTE_LEN];
 
 static CSM_DESC icsmd;
 
@@ -1018,34 +1021,16 @@ static void DrawMyProgress(int y, int cur, int max, const char *color)
   DrawRectangle(2,y+1,s+2,y+5,0,color,color);
 }
 
-unsigned int get_net_id()
-{
-  char *p=Get_CC_NC();
-  unsigned int cc, cc2, nc;
-  cc=*p;
-  cc2=*(p+1);
-  nc=*(p+2);
-  
-  cc=((cc&0x0F)<<4)|(cc>>4);
-  cc=(cc<<4)|(cc2&0x0F);
-  nc=((nc&0x0F)<<4)|(nc>>4);
-  return ((cc<<16)|nc);
-}
-
 static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
 #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
   int csm_result;
   {
-    unsigned int cc, nc;
-    cc=get_net_id();
-    nc=cc&0xFFFF;
-    cc>>=16;
-    if (cc!=prev_cc || nc !=prev_nc)
+    char *imsi=RAM_IMSI();
+    if (memcmp(imsi,cur_imsi,IMSI_DATA_BYTE_LEN))
     {
-      SaveCash();    // Сохраняеи текущий баланс
-      prev_cc=cc;
-      prev_nc=nc;
+      SaveCash();
+      memcpy(cur_imsi,imsi,IMSI_DATA_BYTE_LEN);
       InitConfig();
       LoadCash();
     }
@@ -1144,7 +1129,7 @@ static void MyIDLECSM_onClose(CSM_RAM *data)
 
 int main(void)
 {
-  //InitConfig();  Загружаем только когда изменится сеть с 0 на любую другую
+  //InitConfig();  Загружаем только когда изменится imsi с 0 на любую другую
   //LoadCash();
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);

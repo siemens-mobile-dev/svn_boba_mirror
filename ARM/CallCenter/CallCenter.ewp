@@ -1853,7 +1853,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1101101</state>
+          <state>1111101</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>

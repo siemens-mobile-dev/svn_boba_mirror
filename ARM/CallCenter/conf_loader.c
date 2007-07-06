@@ -48,6 +48,17 @@ static int LoadConfigData(const char *fname)
   return(result);
 }
 
+unsigned int GetCC_NCfromIMSI(char *imsi)
+{
+  unsigned int cc, cc2, nc;
+  cc=(*(imsi+1)>>4)<<8;
+  cc2=*(imsi+2);
+  cc2=((cc2&0x0F)<<4)|(cc2>>4);
+  cc|=cc2;
+  nc=*(imsi+3);
+  nc=((nc&0x0F)<<4)|(nc>>4);
+  return ((cc<<16)|nc);
+}
 
 // Инициализация конфигурации
 // Надо вызвать в начале работы для загрузки конфигурации
@@ -57,10 +68,14 @@ static char config_name[128];
 
 void InitConfig()
 {
-  extern unsigned int prev_cc;
-  extern unsigned int prev_nc;
-  if (prev_cc==0xFFF && prev_nc==0xFF) return; // Если нет сети то ждем пока появится
-  sprintf(config_name,"4:\\ZBin\\etc\\CallCenter_%03X-%02X.bcfg",prev_cc,prev_nc);
+  extern char cur_imsi[];
+  unsigned int cc;
+  unsigned int nc;
+  cc=GetCC_NCfromIMSI(cur_imsi);
+  nc=cc&0xFFFF;
+  cc>>=16;
+  if (cc==0xFFF && nc==0xFF) return; // Если нет сети то ждем пока появится
+  sprintf(config_name,"4:\\ZBin\\etc\\CallCenter_%03X-%02X.bcfg",cc,nc);
   //ShowMSG(1,(int)config_name);
   if(LoadConfigData(config_name)<0)
   {
