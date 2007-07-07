@@ -4,10 +4,6 @@
 
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 
-static const char progress_colors[MAX_CASH_SIZE][4]={{0xFF,0x00,0x00,0x32},
-                                                 {0x00,0xFF,0x00,0x32},
-                                                 {0x00,0xFF,0xFF,0x32},
-                                                 {0xFF,0xFF,0x00,0x32}};
 
 static GBSTMR tmr_scroll;
 
@@ -26,8 +22,18 @@ extern const char COLOR_SELECTED_BG[4];
 extern const char COLOR_SELECTED_BRD[4];
 extern const char COLOR_SEARCH_MARK[4];
 
+extern const char COLOR_CASHPB1[4];
+extern const char COLOR_CASHPB2[4];
+extern const char COLOR_CASHPB3[4];
+extern const char COLOR_CASHPB4[4];
 
-
+const char *progress_colors[MAX_CASH_SIZE]=
+{
+  COLOR_CASHPB1,
+  COLOR_CASHPB2,
+  COLOR_CASHPB3,
+  COLOR_CASHPB4
+};
 
 #define TMR_SECOND 216
 

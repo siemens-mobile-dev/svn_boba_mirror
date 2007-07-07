@@ -30,26 +30,42 @@ __root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
 __root const unsigned int IDLE_X=0;
 __root const unsigned int IDLE_Y=95;
 
-__root const CFG_HDR cfghdr00={CFG_COLOR,"Color Menu background",0,0};
-__root const char COLOR_MENU_BK[4]={0xFF,0xFF,0x0,0x64};
+__root const CFG_HDR cfghdr_m20={CFG_LEVEL,"Setup megadial colors",1,0};
+  __root const CFG_HDR cfghdr00={CFG_COLOR,"Color Menu background",0,0};
+  __root const char COLOR_MENU_BK[4]={0xFF,0xFF,0x0,0x64};
 
-__root const CFG_HDR cfghdr1={CFG_COLOR,"Color Menu border",0,0};
-__root const char COLOR_MENU_BRD[4]={0x0,0x0,0x0,0x64};
+  __root const CFG_HDR cfghdr1={CFG_COLOR,"Color Menu border",0,0};
+  __root const char COLOR_MENU_BRD[4]={0x0,0x0,0x0,0x64};
 
-__root const CFG_HDR cfghdr2={CFG_COLOR,"Color Not selected",0,0};
-__root const char COLOR_NOTSELECTED[4]={0x0,0x0,0x0,0x64};
+  __root const CFG_HDR cfghdr2={CFG_COLOR,"Color Not selected",0,0};
+  __root const char COLOR_NOTSELECTED[4]={0x0,0x0,0x0,0x64};
 
-__root const CFG_HDR cfghdr3={CFG_COLOR,"Color Selected",0,0};
-__root const char COLOR_SELECTED[4]={0xFF,0xFF,0xFF,0x64};
+  __root const CFG_HDR cfghdr3={CFG_COLOR,"Color Selected",0,0};
+  __root const char COLOR_SELECTED[4]={0xFF,0xFF,0xFF,0x64};
 
-__root const CFG_HDR cfghdr4={CFG_COLOR,"Color Selected background",0,0};
-__root const char COLOR_SELECTED_BG[4]={0x0,0x0,0xFF,0x64};
+  __root const CFG_HDR cfghdr4={CFG_COLOR,"Color Selected background",0,0};
+  __root const char COLOR_SELECTED_BG[4]={0x0,0x0,0xFF,0x64};
 
-__root const CFG_HDR cfghdr5={CFG_COLOR,"Color Selected border",0,0};
-__root const char COLOR_SELECTED_BRD[4]={0xFF,0xFF,0xFF,0x64};
+  __root const CFG_HDR cfghdr5={CFG_COLOR,"Color Selected border",0,0};
+  __root const char COLOR_SELECTED_BRD[4]={0xFF,0xFF,0xFF,0x64};
 
-__root const CFG_HDR cfghdr6={CFG_COLOR,"Color Search mark",0,0};
-__root const char COLOR_SEARCH_MARK[4]={0xFF,0x0,0x0,0x64};
+  __root const CFG_HDR cfghdr6={CFG_COLOR,"Color Search mark",0,0};
+  __root const char COLOR_SEARCH_MARK[4]={0xFF,0x0,0x0,0x64};
+__root const CFG_HDR cfghdr_m21={CFG_LEVEL,"",0,0};
+
+__root const CFG_HDR cfghdr_m22={CFG_LEVEL,"Setup Cash Progressbar colors",1,0};
+  __root const CFG_HDR cfghdr10={CFG_COLOR,"Cash Progressbar 1",0,0};
+  __root const char COLOR_CASHPB1[4]={0xFF,0x00,0x00,0x32};
+
+  __root const CFG_HDR cfghdr11={CFG_COLOR,"Cash Progressbar 2",0,0};
+  __root const char COLOR_CASHPB2[4]={0x00,0xFF,0x00,0x32};
+
+  __root const CFG_HDR cfghdr12={CFG_COLOR,"Cash Progressbar 3",0,0};
+  __root const char COLOR_CASHPB3[4]={0x00,0xFF,0xFF,0x32};
+
+  __root const CFG_HDR cfghdr13={CFG_COLOR,"Cash Progressbar 4",0,0};
+  __root const char COLOR_CASHPB4[4]={0xFF,0xFF,0x00,0x32};
+__root const CFG_HDR cfghdr_m23={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr7={CFG_CHECKBOX,"Use vibra",0,0};
 __root const int ENA_VIBRA = 1;
