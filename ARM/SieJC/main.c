@@ -47,6 +47,7 @@ const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
 #endif
 #else
 const char OS[] = "SGOLD_ELF-Platform";
+#define SEND_TIMER
 #endif
 
 
@@ -325,6 +326,11 @@ void create_connect(void)
     }	
 }
 
+#ifdef SEND_TIMER
+GBSTMR send_tmr;
+#endif
+
+
 void end_socket(void)
 {
   if (sock>=0)
@@ -332,6 +338,9 @@ void end_socket(void)
     shutdown(sock,2);
     closesocket(sock);
   }
+#ifdef SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
 }
 
 unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
@@ -467,7 +476,18 @@ void ClearSendQ(void)
   mfree(sendq_p);
   sendq_p=NULL;
   sendq_l=NULL;
+#ifdef SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
 }
+
+#ifdef SEND_TIMER
+static void resend(void)
+{
+  void bsend(int len, void *p);
+  SUBPROC((void*)bsend,0,0);
+}
+#endif
 
 //Буферизированая посылка в сокет, c последующим освобождением указателя
 void bsend(int len, void *p)
@@ -515,6 +535,9 @@ void bsend(int len, void *p)
     if (j<i)
     {
       //Передали меньше чем заказывали
+#ifdef SEND_TIMER
+      GBS_StartTimerProc(&send_tmr,216*5,resend);
+#endif
       return; //Ждем сообщения ENIP_BUFFER_FREE1
     }
   }
