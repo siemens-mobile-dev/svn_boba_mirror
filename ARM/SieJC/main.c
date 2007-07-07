@@ -330,6 +330,12 @@ void create_connect(void)
 GBSTMR send_tmr;
 #endif
 
+static void POPUP(const char *msg)
+{
+  LockSched();
+  ShowMSG(1,(int)msg);
+  UnlockSched();
+}
 
 void end_socket(void)
 {
@@ -370,12 +376,7 @@ void get_answer(void)
   int err;
   char *p;
   int c;
-  if (i<0)
-  {
-    end_socket();
-    return;
-  }
-  if (i==0) return;
+  if (i<=0) return; //Сделаем, как в Натасе, по-простому; пускай нах при ошибке само закрывает
 
   virt_buffer_len = virt_buffer_len + i;  // Виртуальная длина потока увеличилась
 
@@ -411,6 +412,11 @@ void get_answer(void)
       case Z_DATA_ERROR:
       case Z_MEM_ERROR:
 	//(void)inflateEnd(&strm);
+	{
+	  char s[32];
+	  sprintf(s,"ZLib Err%d",err);
+	  POPUP(s);
+	}
 	end_socket();
 	return;
       }
