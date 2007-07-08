@@ -78,10 +78,10 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
   {
     EDITCONTROL ec;
     ExtractEditControl(gui,1,&ec);
-    wstrcpy(ws_eddata,ec.pWS);
     WSHDR *ws_me = AllocWS(10);
     utf8_2ws(ws_me, "/me ", 10);
-    wstrcat(ws_eddata, ws_me);
+    wstrcpy(ws_eddata, ws_me);
+    wstrcat(ws_eddata,ec.pWS);
     FreeWS(ws_me);
     EDIT_SetTextToEditControl(gui, 1, ws_eddata);
     return(-1); //do redraw
