@@ -77,6 +77,9 @@
 // Получить число юзверей
   unsigned int CList_GetNumberOfUsers();
 
+// Получить число юзверей, без скрытых контактов
+  unsigned int CList_GetNumberOfUsers_Visible();
+
 // Получить число непрочитанных
   unsigned int CList_GetUnreadMessages();
 

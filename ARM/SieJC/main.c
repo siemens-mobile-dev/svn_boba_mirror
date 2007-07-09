@@ -872,7 +872,7 @@ char mypic[128];
     wsprintf(data->ws1,"%t", logmsg);
     DrawString(data->ws1,1,SCR_START+3+GetFontYSIZE(FONT_SMALL)+2,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
   }
- 
+
   //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
 
 #ifdef USE_PNG_EXT
@@ -885,7 +885,7 @@ char mypic[128];
     DrawImg(0,70,(int)logo_path);
   }
 #endif
-  
+
 }
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -1031,7 +1031,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         SUBPROC((void *)create_connect);
       }
 
-      if(connect_state==2 && Jabber_state==JS_ONLINE)
+      if(connect_state==2 && Jabber_state==JS_ONLINE && CList_GetActiveContact()->entry_type!=T_GROUP)
       {
         Init_Message(CList_GetActiveContact(), NULL);
       }

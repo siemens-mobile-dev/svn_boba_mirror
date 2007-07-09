@@ -59,7 +59,7 @@ void CList_RedrawCList()
   if(!cltop)return;
 
   LockSched();
-  N_Disp_Contacts = Display_Offline? CList_GetNumberOfUsers() : CList_GetNumberOfOnlineUsers();
+  N_Disp_Contacts = Display_Offline? CList_GetNumberOfUsers_Visible() : CList_GetNumberOfOnlineUsers();
   // Определяем количество страниц списка контактов
   int pages_number = sdiv(N_cont_disp, N_Disp_Contacts);
   if(N_cont_disp*pages_number<N_Disp_Contacts){pages_number++;};
@@ -191,6 +191,36 @@ unsigned int CList_GetNumberOfOnlineUsers()
 unsigned int CList_GetNumberOfUsers() //количество контактов
 {
   return NContacts;
+}
+
+unsigned int CList_GetNumberOfUsers_Visible()
+{
+  unsigned int N_Cont = 0;
+  CLIST* ClEx;
+  TRESOURCE* ResEx;
+  if(!(ClEx = cltop)) return 0;
+
+  while(ClEx)
+  {
+    while((ClEx)&&CList_isGroup(ClEx)&&(ClEx->IsVisible==0)) //Перескакиваем через свернутую группу, иначе промахнемся
+    {
+      char c_group = ClEx->group;
+      while((ClEx)&&ClEx->group==c_group)
+        ClEx = ClEx->next;
+      N_Cont++;
+    }
+
+    if (!ClEx) return N_Cont;
+
+    ResEx = ClEx->res_list;
+    while(ResEx)
+    {
+      N_Cont++;
+      ResEx=ResEx->next;
+    }
+    ClEx = ClEx->next;
+  }
+  return N_Cont;
 }
 
 void CList_ToggleOfflineDisplay()
@@ -796,7 +826,7 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
     ShowMSG(0, (int)"This is Jabber transport");
   }
   mfree(msg);
-*/  
+*/
 }
 
 // бегаем по контактам с сообщениями
