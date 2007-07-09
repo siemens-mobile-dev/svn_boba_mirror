@@ -1087,11 +1087,9 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       extern int CASH_SIZE;               //by BoBa 4.07.07
       void *canvasdata = BuildCanvas();
       DrawCanvas(canvasdata, 1, IDLE_Y, 130, IDLE_Y+8*CASH_SIZE-1, 1);
-      extern const char * const patterns[];
       int n=0; //Номер      
       while(n<CASH_SIZE)
       {
-        //if (!*patterns[n]) break; //Больше паттернов нет
         DrawMyProgress(IDLE_Y+n*8,CurrentCASH[n],MaxCASH[n],progress_colors[n]);
 //       DrawMyProgress(95+0*8,CurrentCASH[1],MaxCASH[1],"\xFF\x00\x00\x64");
 //       DrawMyProgress(95+1*8,CurrentCASH[1],MaxCASH[1],"\x00\xFF\x00\x64");

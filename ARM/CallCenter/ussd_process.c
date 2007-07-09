@@ -84,8 +84,7 @@ extern const char CashPat1[];
 extern const char CashPat2[];
 extern const char CashPat3[];
 
-//static 
-const char * const patterns[MAX_CASH_SIZE]=
+static const char * const patterns[MAX_CASH_SIZE]=
 {
   CashPat0,
   CashPat1,
