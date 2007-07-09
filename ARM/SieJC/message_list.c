@@ -115,11 +115,11 @@ void inp_ghook(GUI *gui, int cmd)
   }
   if (cmd==7)
   {
-//#ifdef NEWSGOLD
+#ifdef NEWSGOLD
     SetSoftKey(gui,&sk,0);
-//#else
-//   SetSoftKey(gui,&sk,2);
-//#endif
+#else
+   SetSoftKey(gui,&sk,2);
+#endif
     ExtractEditControl(gui,1,&ec);
     wstrcpy(ws_eddata,ec.pWS);
   }
