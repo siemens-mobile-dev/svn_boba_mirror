@@ -67,7 +67,7 @@ int Terminate=0;
 EDITCONTROL ec_message;
 GUI *ed_message_gui;
 
-void DispPhrasesMenu();
+void DispCommandsMenu();
 
 int inp_onkey(GUI *gui, GUI_MSG *msg)
 {
@@ -92,7 +92,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
     EDIT_SetTextToEditControl(gui, 1, ws_eddata);
     return(-1); //do redraw*/
 
-    DispPhrasesMenu();
+    DispCommandsMenu();
   }
   return(0); //Do standart keys
 
@@ -714,11 +714,13 @@ void Display_Message_List(TRESOURCE* ContEx)
   mess_gui->item_ll.data_mfree=(void (*)(void *))mfree_adr();
   Message_gui_ID = CreateGUI(mess_gui);
 }
-//=================================== Меню комманд ===========================================
+//==============================================================================
+
+
 
 int Commands_Menu_ID;
 
-void Set_Phrase(void)
+void Set_Command(void)
 {
     GeneralFunc_flag1(Commands_Menu_ID,1);
 }
@@ -728,20 +730,6 @@ void Set_Phrase(void)
 HEADER_DESC cmd_menuhdr={0,0,131,21,NULL,(int)"Выбор команды",LGP_NULL};
 
 int cmd_menusoftkeys[]={0,1,2};
-
-MENUITEM_DESC cmd_menuitems[COMMANDS_NUM]=
-{
-  {NULL,(int)"/me",    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"ping",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"version",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"time",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"vcard",  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"seen",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"google", LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"/part",  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"wtf",    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"dfn=",   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-};
 
 void SetCmdToEditMessage(char *command)
 {
@@ -820,6 +808,20 @@ void Command_dfn(GUI *gui)
   GeneralFunc_flag1(Commands_Menu_ID,1);
 };
 
+static const char * const cmd_menutexts[COMMANDS_NUM]=
+{
+  "/me",
+  "ping",
+  "version",
+  "time",
+  "vcard",
+  "seen",
+  "google",
+  "/part",
+  "wtf",
+  "dfn="
+};
+
 const MENUPROCS_DESC cmd_menuprocs[COMMANDS_NUM]={
                                   Command_me,
                                   Command_ping,
@@ -845,13 +847,14 @@ SOFTKEYSTAB cmd_menu_skt=
   cmd_menu_sk,3
 };
 
-int cmd_menu_onKey(void *data, GUI_MSG *msg)
+void cmd_menuitemhandler(void *data, int curitem, void *unk)
 {
-  if (msg->gbsmsg->msg==KEY_UP || msg->gbsmsg->msg==KEY_DOWN)
-  {
-    RefreshGUI();
-  }  
-  return 0;
+  WSHDR *ws;
+  void *item=AllocMenuItem(data);
+  extern const char percent_t[];
+  ws=AllocMenuWS(data,strlen(cmd_menutexts[curitem]));
+  wsprintf(ws,percent_t,cmd_menutexts[curitem]);
+  SetMenuItemText(data, item, ws, curitem);
 }
 
 void cmd_menu_ghook(void *data, int cmd)
@@ -862,20 +865,29 @@ void cmd_menu_ghook(void *data, int cmd)
   }
 }
 
-MENU_DESC cmd_tmenu=
+static int cmd_menu_keyhook(void *data, GUI_MSG *msg)
 {
-  8,cmd_menu_onKey,cmd_menu_ghook,NULL,
+  if ((msg->keys==0x18)||(msg->keys==0x3D))
+  {
+    ((void (*)(void))(cmd_menuprocs[GetCurMenuItem(data)]))();
+  }
+  return(0);
+}
+
+static const MENU_DESC cmd_menu=
+{
+  0,cmd_menu_keyhook,cmd_menu_ghook,NULL,
   cmd_menusoftkeys,
   &cmd_menu_skt,
-  0x11,//MENU_FLAG,
-  NULL,
-  cmd_menuitems,
-  cmd_menuprocs,
+  8,
+  cmd_menuitemhandler,
+  NULL, //menuitems,
+  NULL, //menuprocs,
   COMMANDS_NUM
 };
 
-void DispPhrasesMenu()
+void DispCommandsMenu()
 {
   patch_header(&cmd_menuhdr);
-  Commands_Menu_ID = CreateMenu(0,0,&cmd_tmenu,&cmd_menuhdr,0,COMMANDS_NUM,0,0);
+  Commands_Menu_ID = CreateMenu(0,0,&cmd_menu,&cmd_menuhdr,0,COMMANDS_NUM,0,0);
 }
