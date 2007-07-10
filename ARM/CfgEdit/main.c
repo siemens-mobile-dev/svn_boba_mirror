@@ -635,7 +635,7 @@ void maincsm_oncreate(CSM_RAM *data)
   int find_cfg=1;
   if (*s>='0' && *s<='9' && *(s+1)==':')  // Наверное путь к bcfg :)
   {
-    if (LoadCfg(cfg_name))
+    if (LoadCfg(s))
     {
       UpdateCSMname(s);
       csm->gui_id=create_ed(0);
@@ -914,8 +914,8 @@ void ErrorMsg(const char *msg)
 int main(const char *elf_name, const char *fname)
 {
   MAIN_CSM main_csm;
-  zeromem(&main_csm,sizeof(MAIN_CSM));
   if (fname) strncpy(cfg_name,fname,255);
+  zeromem(&main_csm,sizeof(MAIN_CSM));
   UpdateCSMname(fname);
   LockSched();
   maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);

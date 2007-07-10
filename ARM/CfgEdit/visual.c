@@ -520,8 +520,8 @@ void EditColors(char*color)
 typedef struct
 {
   void *next;
-  char *fullname;
-  char *name;
+  char fullname[256];
+  char name[128];
   int is_folder;
 }FLIST;
 
@@ -533,7 +533,6 @@ typedef struct
 
 volatile FLIST *fltop;
 
-
 void Free_FLIST(void)
 {
   LockSched();
@@ -542,37 +541,15 @@ void Free_FLIST(void)
   UnlockSched();
   while(fl)
   {
-    FLIST *fl_prev;
-    fl_prev=fl;
+    FLIST *fl_prev=fl;
     fl=fl->next;
-    mfree(fl_prev->fullname);
-    mfree(fl_prev->name);
     mfree(fl_prev);
   }
 }
 
-#define IS_FOLDER 1
-#define IS_FILE 0
-
+enum TYPES {IS_BACK, IS_FOLDER, IS_FILE}; 
 const char back[]="..";             
-int GetFListN()
-{
-  int i=0;
-  FLIST *fl=(FLIST*)&fltop;
-  while((fl=fl->next)) i++;
-  return (i);
-}
 
-int GetFoldersLevel(char *name)
-{
-  int i=0;
-  char *s=name;
-  while(*s++)
-  {
-    if (*s=='\\' &&*(s+1)!=0) i++;    
-  }
-  return (i);
-}
 
 int strcmp_nocase(const char *s, const char *d)
 {
@@ -594,19 +571,15 @@ int strcmp_nocase(const char *s, const char *d)
 FLIST *AddToFList(const char* full_name, const char *name, int is_folder)
 {
   FLIST *fl;
-  FLIST *pr;
   FLIST *fn=malloc(sizeof(FLIST));
-  fn->fullname=malloc(strlen(full_name)+1);
   strcpy(fn->fullname,full_name);
-  
-  fn->name=malloc(strlen(name)+1);
   strcpy(fn->name,name);
-  
   fn->is_folder=is_folder;
   fn->next=0;
   fl=(FLIST *)fltop;
   if (fl)
   {
+    FLIST *pr;
     pr=(FLIST *)&fltop;
     while(strcmp_nocase(fl->name,fn->name)<0)
     {
@@ -621,65 +594,69 @@ FLIST *AddToFList(const char* full_name, const char *name, int is_folder)
   {
     fltop=fn;
   }
-  return (fn);  
+  return (fn);
 }
 
-void FindFiles(char *str, int type)  // type == 0 SelectFolder, type == 1 SelectFile
+int FindFiles(char *str, int type)  // type == 0 SelectFolder, type == 1 SelectFile
 {
   DIR_ENTRY de;
   unsigned int err;
-  int i, c;
-  char name[256]; 
-  char fname[128];
-
-  Free_FLIST();
-  strcpy(name,str);
-  strcat(name,"*");
+  char *rev,*s,*d;
+  int i, c, n=0;
+  char path[256];
+  char name[128];
   
-  i=GetFoldersLevel(str);
-  if (i==0)
+  strcpy(path,str);
+  Free_FLIST();
+  s=path;
+  d=name;
+  rev=0;
+  while((c=*s++))
   {
-    AddToFList("ROOT",back,IS_FOLDER);
+    *d++=c;
+    if (c=='\\') rev=d-1;
   }
+  if(rev==0)
+    AddToFList("ROOT",back,IS_BACK);
   else
   {
-    char *s=str;
-    char *d=fname;
-    for (int k=0; k!=i && *s; )
-    {
-      c=*s++;
-      *d++=c;
-      if (c=='\\')  k++;
-    }
-    *d=0;
-    AddToFList(fname,back,IS_FOLDER);
+    *rev=0;
+    AddToFList(name,back,IS_BACK);
   }
-
-  if (FindFirstFile(&de,name,&err))
+  n++;
+  
+  
+  i=strlen(path);
+  path[i++]='\\';
+  path[i++]='*';
+  path[i]='\0';
+  if (FindFirstFile(&de,path,&err))
   {
     do
     {
-      strcpy(name,de.folder_name);
-      strcat(name,"\\");
-      strcat(name,de.file_name);
+      i=strlen(de.folder_name);
+      strcpy(path,de.folder_name);
+      path[i++]='\\';
+      strcpy(path+i,de.file_name);
       if (de.file_attr&FA_DIRECTORY)
       {
-        strcpy(fname,"\\");
-        strcat(fname,de.file_name);
-        strcat(name,"\\");
-        AddToFList(name,fname,IS_FOLDER);
+        strcpy(name,de.file_name);
+        AddToFList(path,name,IS_FOLDER);
+        n++;
       }
       else
       {
         if (type!=0)
         {
-          AddToFList(name,de.file_name,IS_FILE);
+          AddToFList(path,de.file_name,IS_FILE);
+          n++;
         }
       }
     }
     while(FindNextFile(&de,&err));
   }
   FindClose(&de,&err);
+  return n;
 }
 
 
@@ -703,13 +680,11 @@ FLIST *FindFLISTtByNS(int *i, int si)
 FLIST *FindFLISTtByN(int n)
 {
   FLIST *fl;
+  fl=FindFLISTtByNS(&n,IS_BACK); if ((!n)&&(fl)) return(fl);
   fl=FindFLISTtByNS(&n,IS_FOLDER); if ((!n)&&(fl)) return(fl);
   fl=FindFLISTtByNS(&n,IS_FILE); if ((!n)&&(fl)) return(fl);
   return fl;
 }
-
-
-
 
 void SavePath(void *ed_gui, FLIST *fl)
 {
@@ -727,7 +702,7 @@ int filelist_menu_onkey(void *data, GUI_MSG *msg)
 {
   FVIEW *fview=MenuGetUserPointer(data);
   FLIST *fl;
-  int i;
+  int i, n;
   i=GetCurMenuItem(data);
   fl=FindFLISTtByN(i);
   
@@ -735,7 +710,7 @@ int filelist_menu_onkey(void *data, GUI_MSG *msg)
   {
     if (fl) 
     {
-      if (fl->is_folder==IS_FOLDER)
+      if (fl->is_folder==IS_FOLDER || fl->is_folder==IS_BACK)
       {
         int len;
         if (strcmp(fl->fullname,"ROOT"))
@@ -743,14 +718,14 @@ int filelist_menu_onkey(void *data, GUI_MSG *msg)
           strncpy(header,fl->fullname,127);
           len=strlen(fl->fullname);
           header[len>127?127:len]=0;
-          FindFiles(fl->fullname,fview->type);
+          n=FindFiles(fl->fullname,fview->type);
         }
         else
         {
-          void CreateRootMenu();
-          CreateRootMenu();
+          int CreateRootMenu();
+          n=CreateRootMenu();
         }         
-        Menu_SetItemCountDyn(data,GetFListN());
+        Menu_SetItemCountDyn(data,n);
         SetCursorToMenuItem(data, 0);
         RefreshGUI();
       }
@@ -767,7 +742,7 @@ int filelist_menu_onkey(void *data, GUI_MSG *msg)
   {
     if (fl)
     {
-      if (strcmp(fl->name,back))
+      if (fl->is_folder!=IS_BACK)
       {
         SavePath(fview->gui,fl);
         return (1);
@@ -786,6 +761,10 @@ void filelist_menu_ghook(void *data, int cmd)
     Free_FLIST();
     mfree(fview);    
   }
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
 }
 
 void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
@@ -799,12 +778,12 @@ void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
   {
     len=strlen(fl->name);
     ws=AllocMenuWS(data,len+4);
-    
-    if (fl->is_folder)
+    if (fl->is_folder==IS_BACK || fl->is_folder==IS_FOLDER)
     {
       str_2ws(ws,fl->name,len);
       wsInsertChar(ws,0x0002,1);
       wsInsertChar(ws,0xE008,1);
+      if (fl->is_folder==IS_FOLDER) wsInsertChar(ws,'\\',3);
     }
     else
     {
@@ -846,14 +825,27 @@ MENU_DESC filelist_STRUCT=
   0   //n
 };
 
-void CreateRootMenu()
+int CreateRootMenu()
 {
+  char path[32];
+  unsigned int err;
+  int n=0;
   Free_FLIST();
-  AddToFList("0:\\","0:\\",IS_FOLDER);
-  AddToFList("1:\\","1:\\",IS_FOLDER);
-  AddToFList("2:\\","2:\\",IS_FOLDER);
-  AddToFList("4:\\","4:\\",IS_FOLDER);
+  for (int i=0; i!=5; i++)
+  {
+    path[0]=i+'0';
+    path[1]=':';
+    path[2]='\\';
+    path[3]=0;
+    if (isdir(path,&err))
+    {
+      path[2]=0;
+      AddToFList(path,path,IS_BACK);
+      n++;
+    }
+  }
   strcpy(header,"Root");
+  return (n);
 }
 
 
@@ -862,23 +854,25 @@ void open_select_file_gui(void *ed_gui, int type)
   EDITCONTROL ec;
   FVIEW *fview;
   char *s;
+  int n;
+  
   fview=malloc(sizeof(FVIEW));
   fview->gui=ed_gui;
   fview->type=type;
   EDIT_ExtractFocusedControl(ed_gui,&ec);
   if (ec.pWS->wsbody[0]==0)
   {
-    CreateRootMenu();
+    n=CreateRootMenu();
   }
   else
   {
     ws_2str(ec.pWS,header,127);
     s=strrchr(header, '\\');
-    if (s) *(s+1)=0;
+    if (s) *s=0;
     int len=strlen(header);
     header[len>127?127:len]=0;
-    FindFiles(header,type);
+    n=FindFiles(header,type);
   }    
   patch_header(&filelist_HDR);
-  CreateMenu(0,0,&filelist_STRUCT,&filelist_HDR,0,GetFListN(),fview,0);
+  CreateMenu(0,0,&filelist_STRUCT,&filelist_HDR,0,n,fview,0);
 }
