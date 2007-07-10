@@ -9,7 +9,7 @@
 
 //Конфигурация
 
-//__root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0}; //ждем Лешу с выходом...
+__root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
  __root const CFG_HDR cfghdr0={CFG_STR_WIN1251,"Number for Cash Request",0,31};
  __root const char CASHREQNUM[32]="*#";
 
@@ -51,8 +51,7 @@
   __root const CFG_HDR cfghdr13={CFG_COLOR,"Cash Progressbar 4",0,0};
   __root const char COLOR_CASHPB4[4]={0xFF,0xFF,0x00,0x32};
  __root const CFG_HDR cfghdr_m13={CFG_LEVEL,"",0,0};
-
-//__root const CFG_HDR cfghdr_m11={CFG_LEVEL,"",0,0};
+__root const CFG_HDR cfghdr_m11={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"Setup Vibra at Call",1,0};
  __root const CFG_HDR cfghdr7={CFG_CHECKBOX,"Use vibra",0,0};
