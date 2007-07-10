@@ -85,16 +85,6 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
 
   if (msg->keys==0x18) //Левый софт
   {
-    /*EDITCONTROL ec;
-    ExtractEditControl(gui,1,&ec);
-    WSHDR *ws_me = AllocWS(10);
-    utf8_2ws(ws_me, "/me ", 10);
-    wstrcpy(ws_eddata, ws_me);
-    wstrcat(ws_eddata,ec.pWS);
-    FreeWS(ws_me);
-    EDIT_SetTextToEditControl(gui, 1, ws_eddata);
-    return(-1); //do redraw*/
-
     DispCommandsMenu();
   }
   return(0); //Do standart keys
@@ -109,7 +99,6 @@ char Mess_was_sent = 0;
 
 void inp_ghook(GUI *gui, int cmd)
 {
-  //static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"/me"};
   static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Команды"};
   EDITCONTROL ec;
   if (cmd==2)
@@ -779,11 +768,6 @@ int LoadCommands(void)
   return i;
 }
 
-void Set_Command(void)
-{
-    GeneralFunc_flag1(Commands_Menu_ID,1);
-}
-
 HEADER_DESC cmd_menuhdr={0,0,131,21,NULL,(int)"Выбор команды",LGP_NULL};
 
 int cmd_menusoftkeys[]={0,1,2};
@@ -840,13 +824,20 @@ static int cmd_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    int curitem=GetCurMenuItem(data);
-    SetCmdToEditMessage(commands_lines[curitem]);
+    if (cmd_num) SetCmdToEditMessage(commands_lines[GetCurMenuItem(data)]);
+       else
+         {
+           FreeCommands();
+           GeneralFunc_flag1(Commands_Menu_ID,1);           
+         }
   }
+  
+  if (msg->keys==0x01)
+  {
+    FreeCommands();
+  }  
   return(0);
 }
-
-
 
 static const MENU_DESC cmd_menu=
 {
