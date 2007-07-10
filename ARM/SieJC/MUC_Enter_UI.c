@@ -44,7 +44,11 @@ int med1_onkey(GUI *data, GUI_MSG *msg)
   //1: close
   
   // Если зелёная кнопка либо нажата кнопка, которую мы повесили в cmd=7
+#ifndef NEWSGOLD
+  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->gbsmsg->submess==RIGHT_SOFT || msg->keys==0x18)
+#else
   if(msg->gbsmsg->submess==GREEN_BUTTON || msg->keys==0x18)
+#endif
   {
     mTerminate = 1;
     return 1;

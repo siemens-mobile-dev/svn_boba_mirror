@@ -226,6 +226,8 @@ unsigned int CList_GetNumberOfUsers_Visible()
 void CList_ToggleOfflineDisplay()
 {
   Display_Offline = !Display_Offline;
+  if (CursorPos>CList_GetNumberOfOnlineUsers())
+  CursorPos=CList_GetNumberOfOnlineUsers();
   REDRAW();
 }
 

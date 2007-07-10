@@ -1018,6 +1018,9 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         MM_Show();
         break;
       }
+#ifndef NEWSGOLD
+    case RED_BUTTON:
+#endif
     case RIGHT_SOFT:
       {
         DisplayQuitQuery();

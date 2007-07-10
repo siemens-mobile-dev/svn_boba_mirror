@@ -71,8 +71,11 @@ void DispCommandsMenu();
 
 int inp_onkey(GUI *gui, GUI_MSG *msg)
 {
-
+#ifndef NEWSGOLD
+  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->gbsmsg->submess==RIGHT_SOFT)
+#else
   if(msg->gbsmsg->submess==GREEN_BUTTON)
+#endif
   {
     Terminate = 1;
     extern const char sndMsgSend[];
@@ -462,6 +465,9 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         return 1;
       }
 
+#ifndef NEWSGOLD
+    case RED_BUTTON:
+#endif
     case RIGHT_SOFT:
       {
         return 1;
@@ -511,7 +517,6 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         REDRAW();
         break;
       }
-
     case RIGHT_BUTTON:
       {
         LOG_MESSAGE *msg = GetCurMessage();
@@ -756,13 +761,13 @@ void Command_me(GUI *gui)
 
 void Command_ping(GUI *gui)
 {
-  SetCmdToEditMessage("ping");
+  SetCmdToEditMessage("ping ");
   GeneralFunc_flag1(Commands_Menu_ID,1);
 };
 
 void Command_version(GUI *gui)
 {
-  SetCmdToEditMessage("version");
+  SetCmdToEditMessage("version ");
   GeneralFunc_flag1(Commands_Menu_ID,1);
 };
 
@@ -792,7 +797,13 @@ void Command_google(GUI *gui)
 
 void Command_part(GUI *gui)
 {
-  SetCmdToEditMessage("/part");
+  void *data=FindGUIbyId(edmessage_id,NULL);
+  WSHDR *ws_me = AllocWS(6);
+  utf8_2ws(ws_me,"/part", 6);
+  wstrcpy(ws_eddata, ws_me);
+  FreeWS(ws_me);
+  EDIT_SetTextToEditControl(data, 1, ws_eddata);
+  EDIT_SetCursorPos(data,6);
   GeneralFunc_flag1(Commands_Menu_ID,1);
 };
 
@@ -804,7 +815,7 @@ void Command_wtf(GUI *gui)
 
 void Command_dfn(GUI *gui)
 {
-  SetCmdToEditMessage("dfn=");
+  SetCmdToEditMessage("dfn =");
   GeneralFunc_flag1(Commands_Menu_ID,1);
 };
 
@@ -819,7 +830,7 @@ static const char * const cmd_menutexts[COMMANDS_NUM]=
   "google",
   "/part",
   "wtf",
-  "dfn="
+  "dfn ="
 };
 
 const MENUPROCS_DESC cmd_menuprocs[COMMANDS_NUM]={
