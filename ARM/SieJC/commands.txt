@@ -1,0 +1,10 @@
+/me 
+ping 
+version 
+time 
+vcard 
+seen 
+google 
+/part
+wtf 
+dfn = 

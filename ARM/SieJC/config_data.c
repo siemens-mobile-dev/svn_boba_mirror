@@ -60,6 +60,9 @@ __root const char HIST_PATH[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\history\\";
 __root const CFG_HDR cfghdr6={CFG_STR_UTF8,"Pictures path",0,127};
 __root const char PATH_TO_PIC[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\img\\";
 
+__root const CFG_HDR cfghdr236={CFG_STR_UTF8,"Commands path",0,63};
+__root const char COMMANDS_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\commands.txt";
+
 __root const CFG_HDR cfghdr7={CFG_STR_WIN1251,"Default disc",0,127};
 __root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
 

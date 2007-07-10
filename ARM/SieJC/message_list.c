@@ -719,18 +719,70 @@ void Display_Message_List(TRESOURCE* ContEx)
   mess_gui->item_ll.data_mfree=(void (*)(void *))mfree_adr();
   Message_gui_ID = CreateGUI(mess_gui);
 }
-//==============================================================================
-
-
+//=================================== Команды ===========================================
 
 int Commands_Menu_ID;
+
+char **commands_lines; //Массив указателей на строки
+int cmd_num=0;
+
+void FreeCommands(void)
+{
+  if (commands_lines) mfree(commands_lines);
+  commands_lines=NULL;
+}
+
+extern const char COMMANDS_PATH[];
+
+int LoadCommands(void)
+{
+  FSTATS stat;
+  char fn[256];
+  int f;
+  unsigned int ul;
+  int i;
+  int fsize;
+  char *p;
+  char *pp;
+  int c;
+  FreeCommands();
+  strcpy(fn,COMMANDS_PATH);
+  if (GetFileStats(fn,&stat,&ul)==-1) return 0;
+  if ((fsize=stat.size)<=0) return 0;
+  if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return 0;
+
+  p=malloc(fsize+1);
+  p[fread(f,p,fsize,&ul)]=0;
+  fclose(f,&ul);
+  i=0;
+  pp=p;
+  for(;;)
+  {
+    c=*p;
+    if (c<32)
+    {
+      if (pp&&(pp!=p))
+      {
+	commands_lines=realloc(commands_lines,(i+1)*sizeof(char *));
+	commands_lines[i++]=pp;
+      }
+      pp=NULL;
+      if (!c) break;
+      *p=0;
+    }
+    else
+    {
+      if (pp==NULL) pp=p;
+    }
+    p++;
+  }
+  return i;
+}
 
 void Set_Command(void)
 {
     GeneralFunc_flag1(Commands_Menu_ID,1);
 }
-
-#define COMMANDS_NUM 10
 
 HEADER_DESC cmd_menuhdr={0,0,131,21,NULL,(int)"Выбор команды",LGP_NULL};
 
@@ -738,113 +790,21 @@ int cmd_menusoftkeys[]={0,1,2};
 
 void SetCmdToEditMessage(char *command)
 {
-  void *data;
-  data=FindGUIbyId(edmessage_id,NULL);
+  void *data=FindGUIbyId(edmessage_id,NULL);
   
   EDITCONTROL ec;
   ExtractEditControl(data,1,&ec);
   int pos=EDIT_GetCursorPos(data);
-  WSHDR *ws_me = AllocWS(10);
-  utf8_2ws(ws_me, command, 10);
+  WSHDR *ws_me = AllocWS(strlen(command));
+  utf8_2ws(ws_me, command, strlen(command));
   wstrcpy(ws_eddata, ws_me);
   wstrcat(ws_eddata,ec.pWS);
   FreeWS(ws_me);
   EDIT_SetTextToEditControl(data, 1, ws_eddata);
-  EDIT_SetCursorPos(data,pos + strlen(command));  
+  EDIT_SetCursorPos(data,pos + strlen(command)); 
+  FreeCommands();
+  GeneralFunc_flag1(Commands_Menu_ID,1);
 }
-
-void Command_me(GUI *gui)
-{
-  SetCmdToEditMessage("/me ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_ping(GUI *gui)
-{
-  SetCmdToEditMessage("ping ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_version(GUI *gui)
-{
-  SetCmdToEditMessage("version ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_time(GUI *gui)
-{
-  SetCmdToEditMessage("time ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_vcard(GUI *gui)
-{
-  SetCmdToEditMessage("vcard ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_seen(GUI *gui)
-{
-  SetCmdToEditMessage("seen ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_google(GUI *gui)
-{
-  SetCmdToEditMessage("google ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_part(GUI *gui)
-{
-  void *data=FindGUIbyId(edmessage_id,NULL);
-  WSHDR *ws_me = AllocWS(6);
-  utf8_2ws(ws_me,"/part", 6);
-  wstrcpy(ws_eddata, ws_me);
-  FreeWS(ws_me);
-  EDIT_SetTextToEditControl(data, 1, ws_eddata);
-  EDIT_SetCursorPos(data,6);
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_wtf(GUI *gui)
-{
-  SetCmdToEditMessage("wtf ");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-void Command_dfn(GUI *gui)
-{
-  SetCmdToEditMessage("dfn =");
-  GeneralFunc_flag1(Commands_Menu_ID,1);
-};
-
-static const char * const cmd_menutexts[COMMANDS_NUM]=
-{
-  "/me",
-  "ping",
-  "version",
-  "time",
-  "vcard",
-  "seen",
-  "google",
-  "/part",
-  "wtf",
-  "dfn ="
-};
-
-const MENUPROCS_DESC cmd_menuprocs[COMMANDS_NUM]={
-                                  Command_me,
-                                  Command_ping,
-                                  Command_version,
-                                  Command_time,
-                                  Command_vcard,
-                                  Command_seen,
-                                  Command_google,
-                                  Command_part,
-                                  Command_wtf,
-                                  Command_dfn,
-                                 };
 
 SOFTKEY_DESC cmd_menu_sk[]=
 {
@@ -863,8 +823,8 @@ void cmd_menuitemhandler(void *data, int curitem, void *unk)
   WSHDR *ws;
   void *item=AllocMenuItem(data);
   extern const char percent_t[];
-  ws=AllocMenuWS(data,strlen(cmd_menutexts[curitem]));
-  wsprintf(ws,percent_t,cmd_menutexts[curitem]);
+  ws=AllocMenuWS(data,strlen(commands_lines[curitem]));
+  wsprintf(ws,percent_t,commands_lines[curitem]);
   SetMenuItemText(data, item, ws, curitem);
 }
 
@@ -880,10 +840,13 @@ static int cmd_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    ((void (*)(void))(cmd_menuprocs[GetCurMenuItem(data)]))();
+    int curitem=GetCurMenuItem(data);
+    SetCmdToEditMessage(commands_lines[curitem]);
   }
   return(0);
 }
+
+
 
 static const MENU_DESC cmd_menu=
 {
@@ -894,11 +857,15 @@ static const MENU_DESC cmd_menu=
   cmd_menuitemhandler,
   NULL, //menuitems,
   NULL, //menuprocs,
-  COMMANDS_NUM
+  0
 };
 
 void DispCommandsMenu()
 {
+  cmd_num=LoadCommands();
   patch_header(&cmd_menuhdr);
-  Commands_Menu_ID = CreateMenu(0,0,&cmd_menu,&cmd_menuhdr,0,COMMANDS_NUM,0,0);
+  Commands_Menu_ID = CreateMenu(0,0,&cmd_menu,&cmd_menuhdr,0,cmd_num,0,0);
 }
+
+
+
