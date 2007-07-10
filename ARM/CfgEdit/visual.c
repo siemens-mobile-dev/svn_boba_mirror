@@ -834,14 +834,13 @@ SOFTKEYSTAB fmenu_skt=
 char header[128];
 HEADER_DESC filelist_HDR={0,0,0,0,NULL,(int)header,LGP_NULL};
 
-
 MENU_DESC filelist_STRUCT=
 {
-  8,(void *)filelist_menu_onkey,(void*)filelist_menu_ghook,NULL,
+  8,filelist_menu_onkey,filelist_menu_ghook,NULL,
   fmenusoftkeys,
   &fmenu_skt,
   0x10,
-  (void *)filelist_menu_iconhndl,
+  filelist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
