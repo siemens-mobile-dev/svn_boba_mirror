@@ -8,23 +8,33 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 void EditCoordinates(void *rect_or_xy, int is_rect);
 extern void EditColors(char*color);
 #pragma inline
-void patch_input(INPUTDIA_DESC* inp,int x,int y,int x2,int y2)
+//===============================================================================================
+#pragma inline
+void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 {
-  inp->rc.x=x;
-  inp->rc.y=y+YDISP;
-  inp->rc.x2=x2;
-  inp->rc.y2=y2;
+  rc->x=x;
+  rc->y=y;
+  rc->x2=x2;
+  rc->y2=y2;
 }
 
 #pragma inline
-void patch_header(HEADER_DESC* head,int x,int y,int x2,int y2)
+void patch_header(const HEADER_DESC* head)
 {
-  head->rc.x=x;
-  head->rc.y=y+YDISP;
-  head->rc.x2=x2;
-  head->rc.y2=y2+YDISP;
+  ((HEADER_DESC*)head)->rc.x=0;
+  ((HEADER_DESC*)head)->rc.y=YDISP;
+  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP-1;
 }
-
+#pragma inline
+void patch_input(const INPUTDIA_DESC* inp)
+{
+  ((INPUTDIA_DESC*)inp)->rc.x=0;
+  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
+  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
+  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+//===============================================================================================
 
 #ifdef NEWSGOLD
 #define CBOX_CHECKED 0xE116
@@ -70,11 +80,17 @@ typedef struct
 {
   CSM_RAM csm;
   int gui_id;
+  int sel_bcfg_id;
 }MAIN_CSM;
+
+int maincsm_id;
 
 const char _percent_u[]="%u";
 const char _percent_d[]="%d";
 const char _percent_t[]="%t";
+
+const char _mmc_etc_path[]="4:\\Zbin\\etc\\";
+const char _data_etc_path[]="0:\\Zbin\\etc\\";
 
 int create_ed(CFG_HDR *);
 unsigned int char16to8(unsigned int c);
@@ -94,7 +110,7 @@ int IsFieldCorrect(void *data, int ec_index)
   int result=0;
   int err;
   unsigned int vui;
-  unsigned int vi;
+  int vi;
   ExtractEditControl(data,ec_index,&ec);
   if ((ec_index>1)&&(ec_index&1))
   {
@@ -122,12 +138,12 @@ int IsFieldCorrect(void *data, int ec_index)
       
     case CFG_INT:
       vi=strtol(ss,0,10);
-      if (vi<hp->min || vi>hp->max || !ws1->wsbody[0] || (err=*_Geterrno())==ERANGE)
+      if (vi<(int)hp->min || vi>(int)hp->max || !ws1->wsbody[0] || (err=*_Geterrno())==ERANGE)
       {
-        if (vi<hp->min) {vi=hp->min; result=-1;}
-        if (vi>hp->max) {vi=hp->max; result=1;}
-        if (!ws1->wsbody[0]) {vi=hp->min; result=-1;}
-        if (err==ERANGE) {vui=hp->max; result=1;}
+        if (vi<(int)hp->min) {vi=(int)hp->min; result=-1;}
+        if (vi>(int)hp->max) {vi=(int)hp->max; result=1;}
+        if (!ws1->wsbody[0]) {vi=(int)hp->min; result=-1;}
+        if (err==ERANGE) {vi=(int)hp->max; result=1;}
         *((int *)(hp+1))=vi;
         wsprintf(ws1,_percent_d,vi);
         EDIT_SetTextToEditControl(data,ec_index,ws1);
@@ -422,11 +438,215 @@ INPUTDIA_DESC ed1_desc=
   0x40000000
 };
 
+
+void ErrorMsg(const char *msg);
+void UpdateCSMname(const char *fname);
+
+int LoadCfg(char *cfgname)
+{
+  int f;
+  unsigned int err;
+  FSTATS fstat;
+  if (cfgname!=cfg_name)  strncpy(cfg_name,cfgname,255);
+  int result=0;
+  
+  if (GetFileStats(cfgname,&fstat,&err)!=-1)
+  {
+    if ((f=fopen(cfgname,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+    {
+      size_cfg=fstat.size;
+      if (size_cfg<=0)
+      {
+        ErrorMsg("Zero lenght of .bcfg file!");
+      }
+      else
+      {
+        cfg=malloc((size_cfg+3)&(~3));
+        if (fread(f,cfg,size_cfg,&err)!=size_cfg)
+        {
+          ErrorMsg("Can't read .bcfg file!");
+          mfree(cfg);
+        }
+        else result=1;
+      }
+      fclose(f,&err);
+    }
+  } 
+  return result;
+}
+
+typedef struct
+{
+  void *next;
+  char cfgname[64];
+  char fullpath[128];
+}SEL_BCFG;
+
+
+int selbcfg_menu_onkey(void *gui, GUI_MSG *msg)
+{
+  SEL_BCFG *sbtop=MenuGetUserPointer(gui);
+  if (msg->keys==0x3D || msg->keys==0x18)
+  {
+    int i=GetCurMenuItem(gui);
+    for (int n=0; n!=i; n++) sbtop=sbtop->next;
+    if (sbtop)
+    {
+      MAIN_CSM *csm=(MAIN_CSM *)FindCSMbyID(maincsm_id);
+      if (LoadCfg(sbtop->fullpath))
+      {
+        UpdateCSMname(sbtop->fullpath);
+        csm->gui_id=create_ed(0);
+        return (1);
+      }
+    }
+  }
+  return (0);
+}
+
+void selbcfg_menu_ghook(void *gui, int cmd)
+{
+  SEL_BCFG *sbtop=MenuGetUserPointer(gui);
+  if (cmd==3)
+  {
+    while(sbtop)
+    {
+      SEL_BCFG *sb=sbtop;
+      sbtop=sbtop->next;
+      mfree(sb);
+    }    
+  }
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+}
+
+void selbcfg_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
+{
+  SEL_BCFG *sbtop=user_pointer;
+  WSHDR *ws;
+  int len;
+  for (int n=0; n!=cur_item; n++) sbtop=sbtop->next;
+  void *item=AllocMenuItem(gui);
+  if (sbtop)
+  {
+    len=strlen(sbtop->cfgname);
+    ws=AllocMenuWS(gui,len+4);
+    wsprintf(ws,_percent_t,sbtop->cfgname);
+  }
+  else
+  {
+    ws=AllocMenuWS(gui,10);
+    wsprintf(ws,_percent_t,"Ошибка");
+  }
+  SetMenuItemText(gui, item, ws, cur_item);
+}
+
+int selbcfg_softkeys[]={0,1,2};
+SOFTKEY_DESC selbcfg_sk[]=
+{
+  {0x0018,0x0000,(int)"Select"},
+  {0x0001,0x0000,(int)"Close"},
+  {0x003D,0x0000,(int)"+"}
+};
+
+SOFTKEYSTAB selbcfg_skt=
+{
+  selbcfg_sk,0
+};
+HEADER_DESC selbcfg_HDR={0,0,0,0,NULL,(int)"Select BCFG",LGP_NULL};
+
+
+MENU_DESC selbcfg_STRUCT=
+{
+  8,selbcfg_menu_onkey,selbcfg_menu_ghook,NULL,
+  selbcfg_softkeys,
+  &selbcfg_skt,
+  0x10,
+  selbcfg_menu_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0   //n
+};
+
+int CreateSelectBCFGMenu()
+{
+  unsigned int err;
+  DIR_ENTRY de;
+  const char *s;
+  SEL_BCFG *sbtop=0;
+  SEL_BCFG *sb;
+  int n_bcfg=0;
+  char str[128];
+  if (!isdir((s=_mmc_etc_path),&err))
+  {
+    s=_data_etc_path;
+  }
+  strcpy(str,s);
+  strcat(str,"*.bcfg");
+  if (FindFirstFile(&de,str,&err))
+  {
+    do
+    {
+      if (!(de.file_attr&FA_DIRECTORY))
+      {
+        extern int strcmp_nocase(const char *s, const char *d);
+        sb=malloc(sizeof(SEL_BCFG));
+        strcpy(sb->fullpath,s);
+        strcat(sb->fullpath,de.file_name);
+        strcpy(sb->cfgname,de.file_name);
+        sb->cfgname[strlen(de.file_name)-5]=0;
+        sb->next=0;
+        if (sbtop)
+        {
+          SEL_BCFG *sbr, *sbt;
+          sbr=(SEL_BCFG *)&sbtop;
+          sbt=sbtop;
+          while(strcmp_nocase(sbt->cfgname,sb->cfgname)<0)
+          {
+            sbr=sbt;
+            sbt=sbt->next;
+            if (!sbt) break;
+          }
+          sb->next=sbt;
+          sbr->next=sb;
+        }
+        else
+        {
+          sbtop=sb;
+        }
+        n_bcfg++;
+      }
+    }
+    while(FindNextFile(&de,&err));
+  }
+  FindClose(&de,&err);
+  patch_header(&selbcfg_HDR);
+  return CreateMenu(0,0,&selbcfg_STRUCT,&selbcfg_HDR,0,n_bcfg,sbtop,0);
+}
+
 void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
-  csm->gui_id=create_ed(0);
+  
+  char *s=cfg_name;
+  int find_cfg=1;
+  if (*s>='0' && *s<='9' && *(s+1)==':')  // Наверное путь к bcfg :)
+  {
+    if (LoadCfg(cfg_name))
+    {
+      UpdateCSMname(s);
+      csm->gui_id=create_ed(0);
+      find_cfg=0;
+    }
+  }
+  if (find_cfg)
+  {
+    UpdateCSMname("Select BCFG");
+    csm->sel_bcfg_id=CreateSelectBCFGMenu();    
+  }
   csm->csm.state=0;
   csm->csm.unk1=0;
 }
@@ -478,6 +698,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       else 
 	csm->csm.state=-3;
       csm->gui_id=0;
+    }
+    if ((int)msg->data0==csm->sel_bcfg_id)
+    {
+      if (csm->gui_id==0)
+        csm->csm.state=-3;
+      csm->sel_bcfg_id=0;
     }
   }
   if ((msg->msg==MSG_RECONFIGURE_REQ)&&(cfg_name==(char *)msg->data0))
@@ -685,41 +911,14 @@ void ErrorMsg(const char *msg)
   UnlockSched();
 }
 
-
 int main(const char *elf_name, const char *fname)
 {
-  char dummy[sizeof(MAIN_CSM)];
-  int f;
-  unsigned int ul;
-  strncpy(cfg_name,fname,255);
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
-  {
-    size_cfg=lseek(f,0,S_END,&ul,&ul);
-    lseek(f,0,S_SET,&ul,&ul);
-    if (size_cfg<=0)
-    {
-      ErrorMsg("Zero lenght of .bcfg file!");
-      fclose(f,&ul);
-      return 0;
-    }
-    cfg=malloc((size_cfg+3)&(~3));
-    if (fread(f,cfg,size_cfg,&ul)!=size_cfg)
-    {
-      ErrorMsg("Can't read .bcfg file!");
-      fclose(f,&ul);
-      mfree(cfg);
-      return 0;
-    }
-    fclose(f,&ul);
-  }
-  else
-  {
-    ErrorMsg("Can't open .bcfg file!");
-    return 0;
-  }
+  MAIN_CSM main_csm;
+  zeromem(&main_csm,sizeof(MAIN_CSM));
+  if (fname) strncpy(cfg_name,fname,255);
   UpdateCSMname(fname);
   LockSched();
-  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
   UnlockSched();
   return 0;
 }
@@ -740,8 +939,7 @@ int create_ed(CFG_HDR *need_to_focus)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
-  int scr_w,head_h;
-
+  
   char *p=cfg;
   int n=size_cfg;
   CFG_HDR *hp;
@@ -1011,9 +1209,7 @@ int create_ed(CFG_HDR *need_to_focus)
     if ((curlev==level)&&(parent==levelstack[level])) total_items++;
   }
 L_ENDCONSTR:
-  scr_w=ScreenW();
-  head_h=HeaderH();
-  patch_header(&ed1_hdr,0,0,scr_w-1,head_h);
-  patch_input(&ed1_desc,0,head_h+1,scr_w-1,ScreenH()-SoftkeyH()-1);
+  patch_header(&ed1_hdr);
+  patch_input(&ed1_desc);
   return CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,(void *)need_to_jump);
 }
