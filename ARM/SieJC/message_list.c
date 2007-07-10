@@ -71,11 +71,11 @@ void DispCommandsMenu();
 
 int inp_onkey(GUI *gui, GUI_MSG *msg)
 {
-#ifndef NEWSGOLD
-  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->gbsmsg->submess==RIGHT_SOFT)
-#else
+//#ifndef NEWSGOLD
+//  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->gbsmsg->submess==RIGHT_SOFT)
+//#else
   if(msg->gbsmsg->submess==GREEN_BUTTON)
-#endif
+//#endif
   {
     Terminate = 1;
     extern const char sndMsgSend[];
@@ -110,7 +110,7 @@ void inp_ghook(GUI *gui, int cmd)
 #ifdef NEWSGOLD
     SetSoftKey(gui,&sk,0);
 #else
-   SetSoftKey(gui,&sk,2);
+   SetSoftKey(gui,&sk,1);
 #endif
     ExtractEditControl(gui,1,&ec);
     wstrcpy(ws_eddata,ec.pWS);
