@@ -259,18 +259,23 @@ void create_test_pic(void)
   
 }
 
+int get_string_width(WSHDR *ws, int font)
+{
+  return (Get_WS_width(ws, font)+1);
+}
 
 void OnRedraw(MAIN_GUI *data)
 {
   int x=ScreenW();
   int y=ScreenH();
+  
   PNGLIST* current;
-  DrawRoundedFrame(0,0,x-1,y-1,0,0,0,
+  DrawRoundedFrame(0,YDISP+0,x-1,y-1,0,0,0,
                    GetPaletteAdrByColorIndex(0),
                    GetPaletteAdrByColorIndex(20));
 
   wsprintf(data->ws1,"Opened:%u",get_number_of_png());
-  DrawString(data->ws1,3,3,74,15,FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,3,YDISP+3,get_string_width(data->ws1, FONT_SMALL)+3,YDISP+GetFontYSIZE(FONT_SMALL),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
     
   if (!show_pic)
     wsprintf(data->ws1,"Top Pic");
@@ -280,16 +285,17 @@ void OnRedraw(MAIN_GUI *data)
     if (show_pic>(get_number_of_png()-1)) show_pic=0;
     wsprintf(data->ws1,"Cache %u",show_pic);
   }
-  DrawString(data->ws1,75,3,x-4,15,FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(data->ws1,x-4-get_string_width(data->ws1, FONT_SMALL),YDISP+3,x-4,YDISP+GetFontYSIZE(FONT_SMALL),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   current=find_pic_by_n(show_pic);
 
   int width=x-2-1;
-  int height=y-2-29;
+  int height=y-2-29+YDISP; 
+    
   if (current)
   {
     wsprintf(data->ws1,"%s",current->pngname);
-    DrawString(data->ws1,3,16,x-4,28,FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
-    DrawRoundedFrame(1,29,x-2,y-2,0,0,0,
+    DrawString(data->ws1,3,YDISP+GetFontYSIZE(FONT_SMALL),x-4,YDISP+GetFontYSIZE(FONT_SMALL)*2,FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
+    DrawRoundedFrame(1,YDISP+GetFontYSIZE(FONT_SMALL)*2+1,x-2,y-2,0,0,0,
                      GetPaletteAdrByColorIndex(0),
                      GetPaletteAdrByColorIndex(20));
     
