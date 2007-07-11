@@ -132,7 +132,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -342,6 +342,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -950,7 +955,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1160,6 +1165,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1639,7 +1649,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>elka</name>
+    <name>Release_ELKA</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1661,15 +1671,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>elka\Exe</state>
+          <state>Release_ELKA\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>elka\Obj</state>
+          <state>Release_ELKA\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>elka\List</state>
+          <state>Release_ELKA\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -1743,7 +1753,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.40A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1768,7 +1778,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1979,6 +1989,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>

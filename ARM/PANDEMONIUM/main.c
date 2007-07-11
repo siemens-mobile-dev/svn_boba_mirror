@@ -14,6 +14,19 @@ extern char path[128];
 #define mode_disabled  0
 #define mode_enanled   1
 
+//==============================================================================
+// ELKA Compatibility
+#pragma inline
+static void patch_header(const HEADER_DESC* head)
+{
+  ((HEADER_DESC*)head)->rc.x=0;
+  ((HEADER_DESC*)head)->rc.y=YDISP;
+  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
+  ((HEADER_DESC*)head)->rc.y2=HeaderH()-1+YDISP;
+}
+//==============================================================================
+
+
 char path[128]="4:\\zbin\\daemons";
 
 typedef struct
@@ -47,7 +60,7 @@ void new_redraw(void *data)
 wsprintf(ews,"total ~%dk",total/1024);
 unsigned int RED=0x640000FF;
 unsigned int BLACK=0x64000000;
-DrawString(ews,ScreenW()/2,2,ScreenW(),32,SMALL_FONT+1,TEXT_ALIGNMIDDLE,(char*)&RED,(char*)&BLACK);
+DrawString(ews,ScreenW()/2,YDISP+2,ScreenW(),YDISP+32,FONT_SMALL+1,TEXT_ALIGNMIDDLE,(char*)&RED,(char*)&BLACK);
 }
 
 typedef struct
@@ -73,9 +86,10 @@ void Killer(void)
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
+int SaveDaemonList();
 void maincsm_onclose(CSM_RAM *csm)
 {
-  if(!SaveDaemonList())
+  if(SaveDaemonList()) //ошибка
     ShowMSG(2,(int)"Error while saving daemons list!!");
   mfree(daemons);  
   SUBPROC((void *)Killer);
@@ -212,16 +226,18 @@ for(int i=0;i<ndaemons;i++)
  char a[256],b[256];  
  if(d->newmode!=d->oldmode)
    {
-   int err;  
+   unsigned int err;  
    sprintf(a,"%s%s.fakk",path,d->name);
    sprintf(b,"%s%s.elf",path,d->name);
    if(d->newmode==mode_disabled)
      fmove(b,a,&err);
    else
      fmove(a,b,&err);
+   if (err) return (err);
    };
  d++;  
  };
+return 0;
 };
 
 SOFTKEY_DESC menu_sk[]=
@@ -244,15 +260,15 @@ int menusoftkeys[]={0,1,2};
 
 void contactlist_menu_ghook(void *data, int cmd);
 int contactlist_menu_onkey(void *data, GUI_MSG *msg);
-void contactlist_menu_iconhndl(void *data, int curitem, int *unk);
+void contactlist_menu_iconhndl(void *data, int curitem, void *unk);
 
 MENU_DESC contactlist_menu=
 {
-  8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
+  8,contactlist_menu_onkey,contactlist_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0x11,
-  (void *)contactlist_menu_iconhndl,
+  contactlist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -260,10 +276,11 @@ MENU_DESC contactlist_menu=
 
 int create_menu(void)
 {
+  patch_header(&contactlist_menuhdr);
   return CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,ndaemons,0,0);
 }
 
-void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
+void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 {
   void *item=AllocMenuItem(data);
   WSHDR *ws=AllocMenuWS(data,20);
@@ -308,7 +325,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 
 int main()
 {
-  int err;
+  unsigned int err;
   if(!isdir(path,&err),&err)path[0]='0';
   strcat(path,"\\");
   
