@@ -316,9 +316,9 @@ __arm int CreateCardExplMenu(int is_small,int zero1,const MENU_DESC *menu, const
   memcpy((MENUITEM_DESC *)cardexplorer.items,&OpenWith_Item,sizeof(MENUITEM_DESC));
   *((void **)(cardexplorer.procs))=(void *)OpenWith_Handle;
   
-  CEXPL_oldghook=(void (*)(void*, int))menu->global_hook_proc;
+  CEXPL_oldghook=menu->ghook;
   cardexplorer.n_items=menu->n_items+1;
-  cardexplorer.global_hook_proc=(void *)CardExplorer_ghook;
+  cardexplorer.ghook=CardExplorer_ghook;
   cardexplorer.flags2|=0x10;
   
   return CreateMenu(is_small,zero1,&cardexplorer,hdr,zero2,n_items+1,user_pointer,to_remnew);

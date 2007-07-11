@@ -409,7 +409,7 @@
 ;07A4: 0x ; 1E9: __arm IMGHDR *CreateIMGHDRFromPngFile(const char *fname, int type);
 
 07A8: 0xA0CB7BCF ; 1EA: __thumb int GetMaxDynIcon(void);
-07AC: 0xA868BA96 ; 1EB: __arm char *RAM_IMSI(void);
+07AC: 0xA868BA96 ; 81EB: __arm char *RAM_IMSI(void);
 07B0: 0xA0CB7C43 ; 1EC: __thumb void FreeDynIcon(int picture);
 07B4: 0xA0CB7C6F ; 1ED: __thumb int IsDynIconBusy(int picture);
 07BC: 0xA0CB7BD3 ; 1EF: __thumb void SetDynIcon(int picture,IMGHDR *img,char *bitmap);
