@@ -29,7 +29,7 @@ __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
  __root const char CashPat3[32]=". "; //Неудачно, потом будем думать
 
  __root const CFG_HDR cfghdr06 = {CFG_STR_UTF8,"Temp file path",0,127};
- __root const char cashTEMP_PATH[128]=DEFAULT_DISK ":\\ZBin\\var";
+ __root const char cashTEMP_PATH[128]=DEFAULT_DISK ":\\ZBin\\var\\";
 
  __root const CFG_HDR cfghdr07 = {CFG_STR_UTF8,"Log file",0,127};
  __root const char cashLOG_FILE[128]=DEFAULT_DISK ":\\ZBin\\var\\CallCenter_cash.log";

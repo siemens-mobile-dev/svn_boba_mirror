@@ -229,7 +229,7 @@ void LoadCash(void)
   
   extern char cur_imsi[];
   imsi2str(cur_imsi,imsi_str);
-  sprintf(cashfname,"%s\\CallCenter_cash_%s.tmp",cashTEMP_PATH,imsi_str);
+  sprintf(cashfname,"%sCallCenter_cash_%s.tmp",cashTEMP_PATH,imsi_str);
   int f=fopen(cashfname,A_ReadOnly+A_BIN,P_READ,&ul);
   if (f!=-1)
   {
