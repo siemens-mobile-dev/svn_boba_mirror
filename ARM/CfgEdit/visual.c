@@ -520,9 +520,9 @@ void EditColors(char*color)
 typedef struct
 {
   void *next;
-  char fullname[256];
-  char name[128];
   int is_folder;
+  char *fullname;  
+  char *name;  
 }FLIST;
 
 typedef struct
@@ -570,8 +570,11 @@ int strcmp_nocase(const char *s, const char *d)
 
 FLIST *AddToFList(const char* full_name, const char *name, int is_folder)
 {
+  int l_fname, l_name;
   FLIST *fl;
-  FLIST *fn=malloc(sizeof(FLIST));
+  FLIST *fn=malloc(sizeof(FLIST)+(l_fname=strlen(full_name))+(l_name=strlen(name))+2);
+  fn->fullname=(char *)fn+sizeof(FLIST);
+  fn->name=(char *)fn+sizeof(FLIST)+l_fname+1;
   strcpy(fn->fullname,full_name);
   strcpy(fn->name,name);
   fn->is_folder=is_folder;
@@ -614,7 +617,7 @@ int FindFiles(char *str, int type)  // type == 0 SelectFolder, type == 1 SelectF
   while((c=*s++))
   {
     *d++=c;
-    if (c=='\\') rev=d-1;
+    if (c=='\\' && *s!='\0') rev=d;
   }
   if(rev==0)
     AddToFList("ROOT",back,IS_BACK);
@@ -627,7 +630,6 @@ int FindFiles(char *str, int type)  // type == 0 SelectFolder, type == 1 SelectF
   
   
   i=strlen(path);
-  path[i++]='\\';
   path[i++]='*';
   path[i]='\0';
   if (FindFirstFile(&de,path,&err))
@@ -640,7 +642,11 @@ int FindFiles(char *str, int type)  // type == 0 SelectFolder, type == 1 SelectF
       strcpy(path+i,de.file_name);
       if (de.file_attr&FA_DIRECTORY)
       {
-        strcpy(name,de.file_name);
+        i=strlen(path);
+        path[i++]='\\';
+        path[i]=0;
+        name[0]='\\';
+        strcpy(name+1,de.file_name);
         AddToFList(path,name,IS_FOLDER);
         n++;
       }
@@ -697,7 +703,7 @@ void SavePath(void *ed_gui, FLIST *fl)
 }
   
 
-char header[];
+char header[128];
 int filelist_menu_onkey(void *data, GUI_MSG *msg)
 {
   FVIEW *fview=MenuGetUserPointer(data);
@@ -715,9 +721,9 @@ int filelist_menu_onkey(void *data, GUI_MSG *msg)
         int len;
         if (strcmp(fl->fullname,"ROOT"))
         {
-          strncpy(header,fl->fullname,127);
+          strncpy(header,fl->fullname,sizeof(header)-1);
           len=strlen(fl->fullname);
-          header[len>127?127:len]=0;
+          header[len>sizeof(header)-1?sizeof(header)-1:len]=0;
           n=FindFiles(fl->fullname,fview->type);
         }
         else
@@ -783,7 +789,6 @@ void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
       str_2ws(ws,fl->name,len);
       wsInsertChar(ws,0x0002,1);
       wsInsertChar(ws,0xE008,1);
-      if (fl->is_folder==IS_FOLDER) wsInsertChar(ws,'\\',3);
     }
     else
     {
@@ -810,7 +815,7 @@ SOFTKEYSTAB fmenu_skt=
 {
   fmenu_sk,0
 };
-char header[128];
+
 HEADER_DESC filelist_HDR={0,0,0,0,NULL,(int)header,LGP_NULL};
 
 MENU_DESC filelist_STRUCT=
@@ -839,8 +844,7 @@ int CreateRootMenu()
     path[3]=0;
     if (isdir(path,&err))
     {
-      path[2]=0;
-      AddToFList(path,path,IS_BACK);
+      AddToFList(path,path,IS_FOLDER);
       n++;
     }
   }
@@ -853,25 +857,29 @@ void open_select_file_gui(void *ed_gui, int type)
 {
   EDITCONTROL ec;
   FVIEW *fview;
-  char *s;
-  int n;
+  char path[128];
+  char *s, *rev=0;
+  int n, c, len;
   
   fview=malloc(sizeof(FVIEW));
   fview->gui=ed_gui;
   fview->type=type;
   EDIT_ExtractFocusedControl(ed_gui,&ec);
-  if (ec.pWS->wsbody[0]==0)
+  ws_2str(ec.pWS,path,127);
+  s=path;
+  while((c=*s++))
   {
-    n=CreateRootMenu();
+    if (c=='\\' && *s!='\0') rev=s;  
   }
+  if (!rev)
+    n=CreateRootMenu();
   else
   {
-    ws_2str(ec.pWS,header,127);
-    s=strrchr(header, '\\');
-    if (s) *s=0;
-    int len=strlen(header);
-    header[len>127?127:len]=0;
-    n=FindFiles(header,type);
+    *rev=0;
+    strncpy(header,path,sizeof(header)-1);
+    len=strlen(path);
+    header[len>sizeof(header)-1?sizeof(header)-1:len]=0;
+    n=FindFiles(path,type);
   }    
   patch_header(&filelist_HDR);
   CreateMenu(0,0,&filelist_STRUCT,&filelist_HDR,0,n,fview,0);
