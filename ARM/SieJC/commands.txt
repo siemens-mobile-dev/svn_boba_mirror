@@ -4,7 +4,12 @@ version
 time 
 vcard 
 seen 
+idle 
+status 
+blogs 
 google 
-/part
+talkers 
+wz 
 wtf 
 dfn = 
+/part

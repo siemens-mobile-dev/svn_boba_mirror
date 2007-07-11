@@ -780,7 +780,8 @@ void SetCmdToEditMessage(char *command)
   ExtractEditControl(data,1,&ec);
   int pos=EDIT_GetCursorPos(data);
   WSHDR *ws_me = AllocWS(strlen(command));
-  utf8_2ws(ws_me, command, strlen(command));
+  //utf8_2ws(ws_me, command, strlen(command));
+  ascii2ws(ws_me,command);
   wstrcpy(ws_eddata, ws_me);
   wstrcat(ws_eddata,ec.pWS);
   FreeWS(ws_me);
@@ -808,7 +809,8 @@ void cmd_menuitemhandler(void *data, int curitem, void *unk)
   void *item=AllocMenuItem(data);
   extern const char percent_t[];
   ws=AllocMenuWS(data,strlen(commands_lines[curitem]));
-  wsprintf(ws,percent_t,commands_lines[curitem]);
+  //wsprintf(ws,percent_t,commands_lines[curitem]);
+  ascii2ws(ws,commands_lines[curitem]);
   SetMenuItemText(data, item, ws, curitem);
 }
 
