@@ -38,6 +38,7 @@ __root const int USE_ZLIB = 0;
 __root const CFG_CBOX_ITEM cfgcbox3[2]={"No","Yes"};
 
 __root const CFG_HDR cfghdr_CONNECT_LEVEL_END={CFG_LEVEL,"",0,0};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 __root const CFG_HDR cfghdr4346={CFG_CBOX,"History",0,2};
@@ -53,18 +54,6 @@ __root const char DEFAULT_MUC[64]="siepatchdb@conference.jabber.ru";
 
 __root const CFG_HDR cfghdr5o3ioh9={CFG_UTF8_STRING,"Default MUC nick:",0,63};
 __root const char DEFAULT_MUC_NICK[64]="";
-
-__root const CFG_HDR cfghdr5={CFG_STR_UTF8,"History path",0,127};
-__root const char HIST_PATH[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\history\\";
-
-__root const CFG_HDR cfghdr6={CFG_STR_UTF8,"Pictures path",0,127};
-__root const char PATH_TO_PIC[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\img\\";
-
-__root const CFG_HDR cfghdr236={CFG_STR_UTF8,"Commands path",0,63};
-__root const char COMMANDS_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\commands.txt";
-
-__root const CFG_HDR cfghdr7={CFG_STR_WIN1251,"Default disc",0,127};
-__root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
 
 __root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
 __root const unsigned int IDLE_ICON_X=0;
@@ -93,5 +82,26 @@ __root const CFG_HDR cfghdr1_5={CFG_STR_UTF8,"Sound Msg PM",0,63};
 __root const char sndPM[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\message.wav";
 ////////////////////////////////////////////////////////////////////////////////
 __root const CFG_HDR cfghdr_SOUNDS_SETUP_END={CFG_LEVEL,"",0,0};
+
+////////////////////////////// Пути ////////////////////////////////////////////
+
+__root const CFG_HDR cfghdr_PATHS_LEVEL={CFG_LEVEL,"Paths setup",1,0};
+
+__root const CFG_HDR cfghdr5={CFG_STR_UTF8,"History path",0,127};
+__root const char HIST_PATH[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\history\\";
+
+__root const CFG_HDR cfghdr6={CFG_STR_UTF8,"Pictures path",0,127};
+__root const char PATH_TO_PIC[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\img\\";
+
+__root const CFG_HDR cfghdr7={CFG_STR_UTF8,"Commands path",0,63};
+__root const char COMMANDS_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\\commands.txt";
+
+__root const CFG_HDR cfghdr17={CFG_STR_UTF8,"Messages path",0,63};
+__root const char MESSAGES_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\\Messages.txt";
+
+__root const CFG_HDR cfghdr27={CFG_STR_WIN1251,"Default disc",0,127};
+__root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
+
+__root const CFG_HDR cfghdr_PATHS_LEVEL_END={CFG_LEVEL,"",0,0};
 
 // EOL, EOF

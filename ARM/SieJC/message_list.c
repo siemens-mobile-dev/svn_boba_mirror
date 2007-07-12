@@ -67,7 +67,7 @@ int Terminate=0;
 EDITCONTROL ec_message;
 GUI *ed_message_gui;
 
-void DispCommandsMenu();
+void DispSelectMenu();
 
 int inp_onkey(GUI *gui, GUI_MSG *msg)
 {
@@ -85,7 +85,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
 
   if (msg->keys==0x18)
   {
-    DispCommandsMenu();
+    DispSelectMenu();
   }
 
   if (msg->keys==0x0FF0) //Левый софт СГОЛД
@@ -105,8 +105,10 @@ char Mess_was_sent = 0;
 
 void inp_ghook(GUI *gui, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Команды"};
+  static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Меню"};
+#ifndef NEWSGOLD
   static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
+#endif
   EDITCONTROL ec;
   if (cmd==2)
   {
@@ -717,9 +719,16 @@ void Display_Message_List(TRESOURCE* ContEx)
   mess_gui->item_ll.data_mfree=(void (*)(void *))mfree_adr();
   Message_gui_ID = CreateGUI(mess_gui);
 }
+
 //=================================== Команды ===========================================
 
 int Commands_Menu_ID;
+int Select_Menu_ID;
+
+int Mode;
+//0 - Команды
+//1 - Шаблоны сообщений
+//2 - Смайлы
 
 char **commands_lines; //Массив указателей на строки
 int cmd_num=0;
@@ -731,6 +740,7 @@ void FreeCommands(void)
 }
 
 extern const char COMMANDS_PATH[];
+extern const char MESSAGES_PATH[];
 
 int LoadCommands(void)
 {
@@ -744,7 +754,19 @@ int LoadCommands(void)
   char *pp;
   int c;
   FreeCommands();
-  strcpy(fn,COMMANDS_PATH);
+  
+  switch (Mode)
+  {
+    case 0:
+      strcpy(fn,COMMANDS_PATH);
+    break;
+    case 1:
+      strcpy(fn,MESSAGES_PATH);
+    break;
+    case 2:
+    break;    
+  }
+  //strcpy(fn,COMMANDS_PATH);
   if (GetFileStats(fn,&stat,&ul)==-1) return 0;
   if ((fsize=stat.size)<=0) return 0;
   if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return 0;
@@ -777,7 +799,25 @@ int LoadCommands(void)
   return i;
 }
 
-HEADER_DESC cmd_menuhdr={0,0,131,21,NULL,(int)"Выбор команды",LGP_NULL};
+
+char clm_hdr_text[48];
+void UpdateCommandsMenu_header(void)
+{
+  switch (Mode)
+  {
+    case 0:
+      strcpy(clm_hdr_text,"Выбор команды...");
+    break;
+    case 1:
+      strcpy(clm_hdr_text,"Выбор шаблона...");
+    break;
+    case 2:
+      strcpy(clm_hdr_text,"Выбор смайла...");
+    break;    
+  }
+}
+
+HEADER_DESC cmd_menuhdr={0,0,131,21,NULL,(int)clm_hdr_text,LGP_NULL};
 
 int cmd_menusoftkeys[]={0,1,2};
 
@@ -788,14 +828,39 @@ void SetCmdToEditMessage(char *command)
   EDITCONTROL ec;
   ExtractEditControl(data,1,&ec);
   int pos=EDIT_GetCursorPos(data);
-  WSHDR *ws_me = AllocWS(strlen(command));
+  WSHDR *ws_me = AllocWS(ec.pWS->wsbody[0]+strlen(command));
   //utf8_2ws(ws_me, command, strlen(command));
-  ascii2ws(ws_me,command);
-  wstrcpy(ws_eddata, ws_me);
-  wstrcat(ws_eddata,ec.pWS);
+  
+
+  
+  
+  switch (Mode)
+  {
+    case 0:
+      ascii2ws(ws_me,command);
+      wstrcpy(ws_eddata, ws_me);
+      wstrcat(ws_eddata,ec.pWS);
+      EDIT_SetTextToEditControl(data, 1, ws_eddata);
+      EDIT_SetCursorPos(data,pos + strlen(command));
+    break;
+   
+    case 1:
+    case 2:
+      {
+	int c;
+	char *p=command;
+	wstrcpy(ws_me,ec.pWS);
+
+        while(c=*p++)
+          {
+            wsInsertChar(ws_me,char8to16(c),pos++);
+          }
+        EDIT_SetTextToEditControl(data,1,ws_me);
+        EDIT_SetCursorPos(data,pos);
+      }
+    break;
+  } 
   FreeWS(ws_me);
-  EDIT_SetTextToEditControl(data, 1, ws_eddata);
-  EDIT_SetCursorPos(data,pos + strlen(command)); 
   FreeCommands();
   GeneralFunc_flag1(Commands_Menu_ID,1);
 }
@@ -803,7 +868,7 @@ void SetCmdToEditMessage(char *command)
 SOFTKEY_DESC cmd_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0001,0x0000,(int)"Отмена"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -846,6 +911,7 @@ static int cmd_menu_keyhook(void *data, GUI_MSG *msg)
   if (msg->keys==0x01)
   {
     FreeCommands();
+    GeneralFunc_flag1(Select_Menu_ID,1);
   }  
   return(0);
 }
@@ -862,12 +928,114 @@ static const MENU_DESC cmd_menu=
   0
 };
 
+HEADER_DESC cmd_menuhdr;
+
 void DispCommandsMenu()
 {
+  UpdateCommandsMenu_header();
   cmd_num=LoadCommands();
   patch_header(&cmd_menuhdr);
   Commands_Menu_ID = CreateMenu(0,0,&cmd_menu,&cmd_menuhdr,0,cmd_num,0,0);
 }
 
+//================================== Меню выбора ========================================
 
+#define SEL_MANU_ITEMS_NUM 3
 
+HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)"Выбор...",LGP_NULL};
+
+int sel_menusoftkeys[]={0,1,2};
+
+static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
+{
+  "Команды",
+  "Шаблоны сообщений",
+  "Смайлы"
+};
+/*
+void DispTemplatesMenu(){};
+void DispSmilesMenu(){};
+
+static const void *sel_menuprocs[SEL_MANU_ITEMS_NUM]=
+{
+  (void *)DispCommandsMenu,
+  (void *)DispTemplatesMenu,
+  (void *)DispSmilesMenu,
+};
+*/
+
+SOFTKEY_DESC sel_menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Выбор"},
+  {0x0001,0x0000,(int)"Назад"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB sel_menu_skt=
+{
+  cmd_menu_sk,3
+};
+
+void sel_menuitemhandler(void *data, int curitem, void *unk)
+{
+  WSHDR *ws;
+  void *item=AllocMenuItem(data);
+  extern const char percent_t[];
+  ws=AllocMenuWS(data,strlen(sel_menutexts[curitem]));
+  wsprintf(ws,percent_t,sel_menutexts[curitem]);
+  SetMenuItemText(data, item, ws, curitem);
+}
+
+void sel_menu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+}
+
+static int sel_menu_keyhook(void *data, GUI_MSG *msg)
+{
+  if ((msg->keys==0x18)||(msg->keys==0x3D))
+  {
+    //((void (*)(void))(sel_menuprocs[GetCurMenuItem(data)]))();
+    switch (GetCurMenuItem(data))
+    {
+      case 0:
+        Mode=0;
+      break;
+      case 1:
+        Mode=1;
+      break;
+      case 2:
+        Mode=0; //Пока что 0, в идеале 2
+      break;
+    }
+    DispCommandsMenu();  
+    GeneralFunc_flag1(Select_Menu_ID,1);
+  }
+  
+  /*if (msg->keys==0x01)
+  {
+    GeneralFunc_flag1(Select_Menu_ID,1);
+  }  */
+  return(0);
+}
+
+static const MENU_DESC sel_menu=
+{
+  0,sel_menu_keyhook,sel_menu_ghook,NULL,
+  sel_menusoftkeys,
+  &sel_menu_skt,
+  8,
+  sel_menuitemhandler,
+  NULL, //menuitems,
+  NULL, //menuprocs,
+  SEL_MANU_ITEMS_NUM
+};
+
+void DispSelectMenu()
+{
+  patch_header(&sel_menuhdr);
+  Select_Menu_ID = CreateMenu(0,0,&sel_menu,&sel_menuhdr,0,SEL_MANU_ITEMS_NUM,0,0);
+}

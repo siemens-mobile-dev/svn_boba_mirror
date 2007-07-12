@@ -108,7 +108,9 @@ void ed1_ghook(GUI *data, int cmd)
   { 
     ExtractEditControl(data,2,&ec);
     wstrcpy(ews,ec.pWS);
-    static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};    
+#ifndef NEWSGOLD
+  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
+#endif  
     //OnRun
 #ifdef NEWSGOLD
     SetSoftKey(data,&stchsk,0);

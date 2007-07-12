@@ -71,7 +71,9 @@ void med1_ghook(GUI *data, int cmd)
     //OnRun
     ExtractEditControl(data,2,&ec);    
     wstrcpy(mews,ec.pWS);    
-    static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
+#ifndef NEWSGOLD
+  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
+#endif
 #ifdef NEWSGOLD    
     SetSoftKey(data,&mmmmsk,0);
 #else

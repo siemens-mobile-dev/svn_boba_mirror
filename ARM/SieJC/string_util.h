@@ -18,6 +18,8 @@ char* convUTF8_to_ANSI_STR(char *UTF8_str);
 
 void ascii2ws(WSHDR *ws, const char *s);
 
+unsigned int char8to16(int c);
+
 // Преобразование в нижний регистр
 char* str2lower(char *st);
 
