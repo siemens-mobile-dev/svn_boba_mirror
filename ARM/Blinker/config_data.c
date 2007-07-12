@@ -1,8 +1,14 @@
 #include "..\inc\cfg_items.h"
 
+#ifdef NEWSGOLD
 __root const CFG_HDR cfghdr0 = {CFG_CBOX, "Check events", 0, 4};
 __root const int cfgEvents = 0;
 __root const CFG_CBOX_ITEM cfgcbox0[4] = {"All", "Calls", "SMS", "Other"};
+#else
+__root const CFG_HDR cfghdr0 = {CFG_CBOX, "Check events",0,3};
+__root const int cfgEvents=2;
+__root const CFG_CBOX_ITEM cfgcbox0[3]={"Calls","SMS", "Both"};
+#endif
 
 __root const CFG_HDR cfghdr9 = {CFG_UINT, "Max events", 0, 20};
 __root const unsigned int cfgMaxEv = 5;
@@ -38,3 +44,16 @@ __root const int cfgLighter = 1;
 __root const CFG_CBOX_ITEM cfgcbox5[2] = {"No", "Yes"};
 #endif
 
+__root const CFG_HDR cfghdr10={CFG_CBOX,"Use vibra",0,2};
+__root const int use_vib=1;
+__root const CFG_CBOX_ITEM cfgcbox6[2]={"No","Yes"};
+
+__root const CFG_HDR cfghdr11={CFG_UINT,"Vibra power",0,100};
+__root const unsigned int vibra_pow=50;
+
+__root const CFG_HDR cfghdr12={CFG_CBOX,"Use sound",0,2};
+__root const int use_snd=1;
+__root const CFG_CBOX_ITEM cfgcbox7[2]={"No","Yes"};
+
+__root const CFG_HDR cfghdr13={CFG_UINT,"Sound number",0,65535};
+__root const unsigned int sndNum=10;
