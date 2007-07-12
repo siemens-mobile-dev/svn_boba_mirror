@@ -90,6 +90,11 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
     sTerminate = 1;
     return 1;
   }
+ 
+  if (msg->keys==0x0FF0) //Ëåâûé ñîôò ÑÃÎËÄ
+  {
+    return(1);
+  }  
   return 0;
   //1: close
 }
@@ -100,12 +105,17 @@ void ed1_ghook(GUI *data, int cmd)
   static SOFTKEY_DESC stchsk={0x0018, 0x0000,(int)"OK"};
 
   if (cmd==7)
-  {
+  { 
+    ExtractEditControl(data,2,&ec);
+    wstrcpy(ews,ec.pWS);
+    static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Çàêðûòü"};    
     //OnRun
 #ifdef NEWSGOLD
     SetSoftKey(data,&stchsk,0);
 #else
-    SetSoftKey(data,&stchsk,2);
+    SetSoftKey(data,&stchsk,1);
+    if (ec.pWS->wsbody[0]==0)
+      SetSoftKey(data,&sk_cancel,SET_SOFT_KEY_N==0?1:0);    
 #endif
   }
 
@@ -120,8 +130,7 @@ void ed1_ghook(GUI *data, int cmd)
 //     sprintf(q,"N=%d",cmd);
 //     ShowMSG(1,(int)q);
    sTerminate=0;
-   ExtractEditControl(data,2,&ec);
-   wstrcpy(ews,ec.pWS);
+
 /*
    size_t xz = wstrlen(ews)*2;
    char* body;

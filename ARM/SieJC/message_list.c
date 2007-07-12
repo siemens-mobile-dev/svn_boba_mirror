@@ -83,10 +83,16 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
     return 1;
   }
 
-  if (msg->keys==0x18) //Левый софт
+  if (msg->keys==0x18)
   {
     DispCommandsMenu();
   }
+
+  if (msg->keys==0x0FF0) //Левый софт СГОЛД
+  {
+    return(1);
+  }
+
   return(0); //Do standart keys
 
 }
@@ -100,6 +106,7 @@ char Mess_was_sent = 0;
 void inp_ghook(GUI *gui, int cmd)
 {
   static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Команды"};
+  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
   EDITCONTROL ec;
   if (cmd==2)
   {
@@ -107,13 +114,15 @@ void inp_ghook(GUI *gui, int cmd)
   }
   if (cmd==7)
   {
+    ExtractEditControl(gui,1,&ec);
+    wstrcpy(ws_eddata,ec.pWS);    
 #ifdef NEWSGOLD
     SetSoftKey(gui,&sk,0);
 #else
    SetSoftKey(gui,&sk,1);
+   if (ec.pWS->wsbody[0]==0)
+      SetSoftKey(gui,&sk_cancel,SET_SOFT_KEY_N==0?1:0);   
 #endif
-    ExtractEditControl(gui,1,&ec);
-    wstrcpy(ws_eddata,ec.pWS);
   }
 
   if(cmd==0xA)

@@ -53,6 +53,11 @@ int med1_onkey(GUI *data, GUI_MSG *msg)
     mTerminate = 1;
     return 1;
   }
+  
+  if (msg->keys==0x0FF0) //Левый софт СГОЛД
+  {
+    return(1);
+  }  
   return 0;
 }
 
@@ -64,10 +69,15 @@ void med1_ghook(GUI *data, int cmd)
   if (cmd==7)
   {
     //OnRun
+    ExtractEditControl(data,2,&ec);    
+    wstrcpy(mews,ec.pWS);    
+    static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
 #ifdef NEWSGOLD    
     SetSoftKey(data,&mmmmsk,0);
 #else
-    SetSoftKey(data,&mmmmsk,2);    
+    SetSoftKey(data,&mmmmsk,1);
+    if (ec.pWS->wsbody[0]==0)
+      SetSoftKey(data,&sk_cancel,SET_SOFT_KEY_N==0?1:0);    
 #endif   
   }
   
@@ -85,8 +95,7 @@ void med1_ghook(GUI *data, int cmd)
    int param_ok=0;      // Флаг правильности всех параметров
    size_t st_len;
 // Имя конфы
-   ExtractEditControl(data,2,&ec);    
-   wstrcpy(mews,ec.pWS);
+
    st_len = wstrlen(mews)*2;
    char* conf_name;
    if(st_len)
