@@ -63,6 +63,28 @@ int Terminate=0;
 //---------------------------------------------------------------------------
 // Test edit dialog
 //---------------------------------------------------------------------------
+int edmessage_id;
+void menu_enter(USR_MENU_ITEM *item)
+{
+  if (item->type==0)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      wsprintf(item->ws,"%t","Закрыть диалог");
+      break;
+    }
+  }
+  if (item->type==1)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      GeneralFunc_flag1(edmessage_id, 1);
+      break;
+    }
+  }   
+}
 
 EDITCONTROL ec_message;
 GUI *ed_message_gui;
@@ -71,11 +93,7 @@ void DispSelectMenu();
 
 int inp_onkey(GUI *gui, GUI_MSG *msg)
 {
-//#ifndef NEWSGOLD
-//  if(msg->gbsmsg->submess==GREEN_BUTTON || msg->gbsmsg->submess==RIGHT_SOFT)
-//#else
   if(msg->gbsmsg->submess==GREEN_BUTTON)
-//#endif
   {
     Terminate = 1;
     extern const char sndMsgSend[];
@@ -94,6 +112,18 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
     return(1);
   }
 #endif
+
+#ifdef NEWSGOLD
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    if (msg->gbsmsg->submess==ENTER_BUTTON)
+    {
+      EDIT_OpenOptionMenuWithUserItems(gui,menu_enter,gui,1); 
+      return (-1);      
+    }
+  }
+#endif  
+  
   return(0); //Do standart keys
 
 }
@@ -223,8 +253,6 @@ HEADER_DESC inp_hdr={0,0,0,0,NULL,(int)"Новое...",LGP_NULL};
 
 
 // Открыть окно написания нового сообщения
-
-int edmessage_id;
 
 void Init_Message(TRESOURCE* ContEx, char *init_text)
 {
@@ -940,11 +968,11 @@ void DispCommandsMenu()
 }
 
 //================================== Меню выбора ========================================
-#ifdef NEWSGOLD
+/*#ifdef NEWSGOLD
   #define SEL_MANU_ITEMS_NUM 4
-#else
+#else*/
   #define SEL_MANU_ITEMS_NUM 3
-#endif
+/*#endif*/
 
 HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)"Выбор...",LGP_NULL};
 
@@ -955,9 +983,9 @@ static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
   "Команды",
   "Шаблоны сообщений",
   "Смайлы"
-  #ifdef NEWSGOLD
+  /*#ifdef NEWSGOLD
   , "Закрыть диалог"  
-  #endif
+  #endif*/
 };
 
 SOFTKEY_DESC sel_menu_sk[]=
@@ -994,7 +1022,7 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    #ifdef NEWSGOLD
+    /*#ifdef NEWSGOLD
     switch (GetCurMenuItem(data))
     {
     case 0: case 1: case 2:
@@ -1009,10 +1037,10 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
       }
     break;
     }
-    #else
+    #else*/
         Mode = GetCurMenuItem(data);
         DispCommandsMenu();    
-    #endif
+    /*#endif*/
       
     GeneralFunc_flag1(Select_Menu_ID,1);
   }

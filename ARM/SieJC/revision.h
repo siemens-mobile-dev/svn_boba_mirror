@@ -1,1 +1,1 @@
-#define __SVN_REVISION__ 1244
+#define __SVN_REVISION__ 1245
