@@ -88,6 +88,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   if(msg->gbsmsg->submess==GREEN_BUTTON  || msg->keys==0x18)
   {
     sTerminate = 1;
+    GeneralFunc_flag1(StatChange_Menu_ID,1);
     return 1;
   }
  
@@ -239,16 +240,50 @@ int menu_onKey(void *data, GUI_MSG *msg)
 {
   if (msg->keys==0x3D)
   {
-    int i=GetCurMenuItem(data);
-    Selected_Status=i;
+    Selected_Status=GetCurMenuItem(data);
     Disp_AddSettings_Dialog();
     return(-1);
-  }  return 0;
+  }  
+  
+  if (msg->keys==0x0018)
+  {
+    Selected_Status=GetCurMenuItem(data);
+    //Disp_AddSettings_Dialog();
+    //sTerminate = 1;
+    
+    sTerminate=0;
+    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+    pr_info->priority = '00';
+    pr_info->status=Selected_Status;
+    pr_info->message=NULL;
+    SUBPROC((void*)Send_Presence,pr_info);    
+    return 1;
+  }  
+  return 0;
+}
+
+void menu_gHook(void *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  
+ /* if(sTerminate)
+  {
+    sTerminate=0;
+
+    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+    pr_info->priority = '00';
+    pr_info->status=Selected_Status;
+    pr_info->message=NULL;
+    SUBPROC((void*)Send_Presence,pr_info);
+   }  */
 }
 
 MENU_DESC st_tmenu=
 {
-  8,menu_onKey,NULL,NULL,
+  8,menu_onKey,menu_gHook,NULL,
   st_menusoftkeys,
   &st_menu_skt,
   1,//MENU_FLAG,
