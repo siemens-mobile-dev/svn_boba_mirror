@@ -727,7 +727,7 @@ typedef struct
   int index;
 }NUMLIST;
 
-int gotomenu_onkey(GUI *data, GUI_MSG *msg)
+int gotomenu_onkey(void *data, GUI_MSG *msg)
 {
   int i;
   NUMLIST *nltop=MenuGetUserPointer(data);
@@ -748,7 +748,7 @@ int gotomenu_onkey(GUI *data, GUI_MSG *msg)
   return(0);
 }
 
-void gotomenu_ghook(GUI *data, int cmd)
+void gotomenu_ghook(void *data, int cmd)
 {
   NUMLIST *nltop=MenuGetUserPointer(data);
   if(cmd==3)
@@ -783,11 +783,11 @@ const HEADER_DESC gotomenu_HDR={0,0,131,21,/*icon*/0,(int)"Select number...",LGP
 
 MENU_DESC gotomenu_STRUCT=
 {
-  8,(void *)gotomenu_onkey,(void *)gotomenu_ghook,NULL,
+  8,gotomenu_onkey,gotomenu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   1|0x10,
-  (void *)gotomenu_itemhandler,
+  gotomenu_itemhandler,
   NULL,
   NULL,
   0
