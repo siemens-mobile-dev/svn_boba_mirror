@@ -87,12 +87,13 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
   {
     DispSelectMenu();
   }
-
+  
+#ifndef NEWSGOLD
   if (msg->keys==0x0FF0) //Левый софт СГОЛД
   {
     return(1);
   }
-
+#endif
   return(0); //Do standart keys
 
 }
@@ -939,8 +940,11 @@ void DispCommandsMenu()
 }
 
 //================================== Меню выбора ========================================
-
-#define SEL_MANU_ITEMS_NUM 3
+#ifdef NEWSGOLD
+  #define SEL_MANU_ITEMS_NUM 4
+#else
+  #define SEL_MANU_ITEMS_NUM 3
+#endif
 
 HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)"Выбор...",LGP_NULL};
 
@@ -951,18 +955,10 @@ static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
   "Команды",
   "Шаблоны сообщений",
   "Смайлы"
+  #ifdef NEWSGOLD
+  , "Закрыть диалог"  
+  #endif
 };
-/*
-void DispTemplatesMenu(){};
-void DispSmilesMenu(){};
-
-static const void *sel_menuprocs[SEL_MANU_ITEMS_NUM]=
-{
-  (void *)DispCommandsMenu,
-  (void *)DispTemplatesMenu,
-  (void *)DispSmilesMenu,
-};
-*/
 
 SOFTKEY_DESC sel_menu_sk[]=
 {
@@ -998,20 +994,26 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    //((void (*)(void))(sel_menuprocs[GetCurMenuItem(data)]))();
+    #ifdef NEWSGOLD
     switch (GetCurMenuItem(data))
     {
-      case 0:
-        Mode=0;
-      break;
-      case 1:
-        Mode=1;
-      break;
-      case 2:
-        Mode=0; //Пока что 0, в идеале 2
-      break;
+    case 0: case 1: case 2:
+      {
+        Mode = GetCurMenuItem(data);
+        DispCommandsMenu();
+      }
+    break;
+    case 3:
+      {
+        GeneralFunc_flag1(edmessage_id,1);
+      }
+    break;
     }
-    DispCommandsMenu();  
+    #else
+        Mode = GetCurMenuItem(data);
+        DispCommandsMenu();    
+    #endif
+      
     GeneralFunc_flag1(Select_Menu_ID,1);
   }
   
