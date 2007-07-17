@@ -384,7 +384,7 @@ L_SIGNED:
   return (1);
 }
   
-void sign_jad()
+void sign_jad(GUI *data)
 {
   char jar[256];
   char * base64cert;
@@ -637,7 +637,7 @@ char* find_manifest_mf(const char* jar, unsigned int fsize)
   return (0);
 }
 
-void generate_jad()
+void generate_jad(GUI *data)
 {
   char jar_f[256];
   char jad_f[256];
@@ -701,7 +701,7 @@ void generate_jad()
   ErrMsg(DONE);
 }
 
-void remove_sign_from_jad()
+void remove_sign_from_jad(GUI *data)
 {
   int f;
   unsigned int err;
@@ -776,7 +776,7 @@ L_ERR:
 }
 
 #define BUF_SIZE 128
-void copy_certificate()
+void copy_certificate(GUI *data)
 {
   char sname[128];
   char dname[128];
@@ -905,7 +905,7 @@ int is_manufacturer_patched()
   return (MANUF_NOT_PATCHED);
 }
 
-void remove_record_sbp()
+void remove_record_sbp(GUI *data)
 {
   SBP_LIST *sbp_top=0; 
   SBP_LIST *sbp_list; 
@@ -1018,7 +1018,7 @@ void remove_record_sbp()
   ErrMsg(DONE);  
 }
 
-void store_record_sbp()
+void store_record_sbp(GUI *data)
 {
   int ret;
   int f;
@@ -1122,7 +1122,7 @@ void store_record_sbp()
   ErrMsg(DONE);
 }
 
-void options_back()
+void options_back(GUI *data)
 {
   GeneralFuncF1(1);
 }
@@ -1153,20 +1153,20 @@ MENUITEM_DESC options_menu_ITEMS[7]=
   {NULL,(int)"Back",                       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
 };
 
-void *options_menu_HNDLS[7]=
+const MENUPROCS_DESC options_menu_HNDLS[7]=
 {
-  (void *)sign_jad,
-  (void *)generate_jad,
-  (void *)remove_sign_from_jad,
-  (void *)copy_certificate,
-  (void *)remove_record_sbp,
-  (void *)store_record_sbp,
-  (void *)options_back,
+  sign_jad,
+  generate_jad,
+  remove_sign_from_jad,
+  copy_certificate,
+  remove_record_sbp,
+  store_record_sbp,
+  options_back,
 };
 
-MENU_DESC options_menu_STRUCT=
+const MENU_DESC options_menu_STRUCT=
 {
-  0,(void *)NULL,(void*)NULL,NULL,
+  0,NULL,NULL,NULL,
   options_softkeys,
   &options_menu_skt,
   0x200+0x10,
@@ -1335,7 +1335,7 @@ SOFTKEYSTAB menu_skt=
 };
 
 
-void filelist_menu_iconhndl(void *data, int curitem, int *unk);
+void filelist_menu_iconhndl(void *data, int curitem, void *unk);
 int filelist_menu_onkey(void *data, GUI_MSG *msg);
 void filelist_menu_ghook(void *data, int cmd);
 
@@ -1345,11 +1345,11 @@ HEADER_DESC filelist_HDR={0,0,NULL,NULL,NULL,(int)header,LGP_NULL};
 
 MENU_DESC filelist_STRUCT=
 {
-  8,(void *)filelist_menu_onkey,(void*)filelist_menu_ghook,NULL,
+  8,filelist_menu_onkey,filelist_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   1+0x10,
-  (void *)filelist_menu_iconhndl,
+  filelist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -1409,7 +1409,7 @@ void create_view(int n)
   }
 }
   
-void filelist_menu_iconhndl(void *data, int curitem, int *unk)
+void filelist_menu_iconhndl(void *data, int curitem, void *unk)
 {
   FLIST *t;
   WSHDR *ws;
