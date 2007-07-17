@@ -1132,7 +1132,7 @@ SOFTKEY_DESC options_menu_sk[]=
 {
   {0x0018,0x0000,(int)""},
   {0x0001,0x0000,(int)"Select"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB options_menu_skt=
@@ -1192,9 +1192,17 @@ const MENU_DESC options_menu_STRUCT=
 void patch_header_small(HEADER_DESC* head)
 {
   head->rc.x=3;
+#ifndef ELKA
   head->rc.y=YDISP+0x18;
+#else
+  head->rc.y=YDISP+35;
+#endif
   head->rc.x2=ScreenW()-3-1;
+#ifndef ELKA
   head->rc.y2=YDISP+0x18+0x13;
+#else 
+    head->rc.y2=YDISP+35+34;
+#endif
 }
 
 int CreateOptionsMenu()
@@ -1326,7 +1334,7 @@ SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt=
@@ -1389,6 +1397,7 @@ void create_menu_folder(void)
   if (!i) return; //Нечего создавать
   patch_header(&filelist_HDR);
   strncpy(header,folder,24);
+  patch_header(&filelist_HDR);
   filelist_menu_id=CreateMenu(0,0,&filelist_STRUCT,&filelist_HDR,0,i,0,0);
 }
 
