@@ -1000,15 +1000,18 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
     case ENTER_BUTTON:
       {
         CLIST *ActiveContact = CList_FindContactByJID(CList_GetActiveContact()->full_name);
-        if(ActiveContact->res_list->entry_type!=T_GROUP)
+        if (ActiveContact)
         {
-          Display_Message_List(CList_GetActiveContact());
-        }
-        else
-        {
-          //ActiveContact->IsVisible = ActiveContact->IsVisible==1?0:1;
-          CList_ToggleVisibilityForGroup(ActiveContact->group);
-          REDRAW();
+          if(ActiveContact->res_list->entry_type!=T_GROUP)
+          {
+            Display_Message_List(CList_GetActiveContact());
+          }
+            else
+          {
+            //ActiveContact->IsVisible = ActiveContact->IsVisible==1?0:1;
+            CList_ToggleVisibilityForGroup(ActiveContact->group);
+            REDRAW();
+          }
         }
         break;
       }

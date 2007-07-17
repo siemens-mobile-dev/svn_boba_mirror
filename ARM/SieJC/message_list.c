@@ -546,6 +546,71 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         REDRAW();
         break;
       }
+    case '1'://в начало списка сообщений
+      {
+        CurrentMessage_Lines = 0;
+        Cursor_Pos=1;
+        CurrentMessage=1;
+        CurrentPage=1;
+        REDRAW();
+        break;
+      }
+    case '9'://в конец списка сообщений
+      {
+        CurrentMessage_Lines = 0;
+        Cursor_Pos=DispMessList_Count;
+        CurrentMessage=Resource_Ex->total_msg_count;
+        CurrentPage=MaxPages;
+        REDRAW();
+        break;
+      }  
+   /* case VOL_UP_BUTTON://страница вверх
+      {
+        if (CurrentPage>1) 
+        {
+          int cp=CurrentPage;
+          for(;;)
+          {
+            CurrentMessage_Lines = 0;
+            Cursor_Pos--;
+            CurrentMessage--;
+            Calc_Pages_Data_1();
+            if (CurrentPage+1==cp)
+            {
+              Cursor_Pos--;
+              CurrentMessage--;             
+              break;            
+            }
+          }
+
+          //CurrentPage--;
+          //Cursor_Pos-=lines_on_page;
+          //CurrentMessage-=lines_on_page;
+        }
+        REDRAW();
+        break;
+      }
+    case VOL_DOWN_BUTTON://страница вниз
+      {
+        if (CurrentPage<MaxPages) 
+        {
+          int cp=CurrentPage;
+          for(;;)
+          {
+            CurrentMessage_Lines = 0;
+            Cursor_Pos++;
+            CurrentMessage++;
+            Calc_Pages_Data_2();
+            if (CurrentPage-1==cp) break;
+          }
+          
+          //CurrentPage++;
+          //Cursor_Pos+=lines_on_page;
+          //CurrentMessage+=lines_on_page;
+        }
+        REDRAW();
+        break;
+      } */     
     case RIGHT_BUTTON:
       {
         LOG_MESSAGE *msg = GetCurMessage();
