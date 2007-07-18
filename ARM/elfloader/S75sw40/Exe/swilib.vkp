@@ -363,6 +363,8 @@
 086C: 0xA0A120BD ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA0A120F9 ; 21C: __thumb int EDIT_IsBusy(void *gui);
 0874: 0xA0953CF9 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
+0878: 0xA0978467 ; 21E: __thumb void FocusGUI(int id);
+087C: 0xA0978477 ; 21F: __thumb void UnfocusGUI(void);
 
 #pragma disable old_equal_ff
 +0
