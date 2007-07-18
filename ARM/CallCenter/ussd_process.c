@@ -118,7 +118,8 @@ static void FindCash(const char *s)
         s=ep;
       }
     }
-    if (i>CurrentCASH[n]){     //by BoBa 4.07.07
+    if (i>(CurrentCASH[n]+(MaxCASH[n]/100))) //Если новый больше чем текущий +1 процент от максимального
+    {     
       MaxCASH[n]=i;
       f=1;
     }
@@ -262,7 +263,8 @@ void LoadCash(void)
     memcpy(MaxCASH,CurrentCASH,sizeof(MaxCASH));
     SaveCash();
   }                    
-  while ((CASH_SIZE<MAX_CASH_SIZE)&&(*patterns[CASH_SIZE])) {
-   CASH_SIZE++;
+  while ((CASH_SIZE<MAX_CASH_SIZE)&&(*patterns[CASH_SIZE]))
+  {
+    CASH_SIZE++;
   }
 }  
