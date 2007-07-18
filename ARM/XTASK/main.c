@@ -7,6 +7,8 @@
 #define USE_ONE_KEY
 #endif
 
+volatile int SHOW_LOCK;
+
 CSM_DESC icsmd;
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
@@ -238,7 +240,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	switch (msg->submess)
 	{
 	case IPC_XTASK_SHOW_CSM:
-	  if (!IsCalling())
+	  if ((!IsCalling())&&(!SHOW_LOCK))
 	  {
 	    if ((CSM_root()->csm_q->csm.last!=data)||IsGuiOnTop(idlegui_id))
 	    {
@@ -247,7 +249,13 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	  }
 	  break;
 	case IPC_XTASK_IDLE:
-	  if (!IsCalling()) do_gui(1,0);
+	  if ((!IsCalling())/*&&(!SHOW_LOCK)*/) do_gui(1,0);
+	  break;
+	case IPC_XTASK_LOCK_SHOW:
+	  SHOW_LOCK++;
+	  break;
+	case IPC_XTASK_UNLOCK_SHOW:
+	  if (SHOW_LOCK) SHOW_LOCK--;
 	  break;
 	}
       }

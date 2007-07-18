@@ -3,9 +3,9 @@
 #include "../inc/xtask_ipc.h"
 
 //IPC
-//const char ipc_my_name[32]="CallCenter";
-//const char ipc_xtask_name[]=IPC_XTASK_NAME;
-//IPC_REQ gipc;
+const char ipc_my_name[32]="CallCenter";
+const char ipc_xtask_name[]=IPC_XTASK_NAME;
+IPC_REQ gipc;
 
 int CASH_SIZE=0;
 #define IMSI_DATA_BYTE_LEN  (9)
@@ -24,6 +24,7 @@ int CurrentCASH[MAX_CASH_SIZE];
 static GBSTMR ussd_tmr;
 
 static volatile int ussdreq_sended;
+static volatile int locked;
 
 static void WriteLog(int dummy, char *text)
 {
@@ -128,8 +129,29 @@ static void FindCash(const char *s)
   if (f) SaveCash();
 }
 
+static void _lock(void)
+{
+  if (locked) return;
+  gipc.name_to=ipc_xtask_name;
+  gipc.name_from=ipc_my_name;
+  gipc.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_LOCK_SHOW,&gipc);
+  locked=1;
+}
+
+static void _unlock(void)
+{
+  if (!locked) return;
+  gipc.name_to=ipc_xtask_name;
+  gipc.name_from=ipc_my_name;
+  gipc.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_UNLOCK_SHOW,&gipc);
+  locked=0;
+}
+
 static void ussd_timeout(void)
 {
+  _unlock();
   ussdreq_sended=0;
 }
 
@@ -174,10 +196,6 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
 
 static void ussd_send(void)
 {
-//  gipc.name_to=ipc_xtask_name;
-//  gipc.name_from=ipc_my_name;
-//  gipc.data=0;
-//  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
   if (IsGuiOnTop(((int *)FindCSMbyID(CSM_root()->idle_id))[DISPLACE_OF_IDLEGUI_ID/4]))
   {
     ussdreq_sended=1;
@@ -195,12 +213,14 @@ void SendCashReq(void)
   if (!ENA_CASHTRACE) return;
   if (ussdreq_sended) return; //Óזמ כועטל ;)
   GBS_StartTimerProc(&ussd_tmr,216*3,ussd_send);
+  _lock();
 }
 
 void EndUSSDtimer(void)
 {
   GBS_DelTimer(&ussd_tmr);
   ussdreq_sended=0;
+  _unlock();
 }
 
 void imsi2str(char *imsi, char *str)
