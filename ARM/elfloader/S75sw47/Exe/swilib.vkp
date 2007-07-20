@@ -13,6 +13,11 @@
 
 Файл swi.blib, прикреплённый к Библиотеке в архиве, должен обновляться вместе с библиотекой и содержать её копию в BLIB-формате! Этот файл можно будет использовать для обновления Библиотеки в отсутствии кабеля для установки патча. Следует положить blib-файл в 4:\ZBin\SWI.blib
 
+20.07.07:
++ 0874: 0xA0953659 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
++ 0878: 0xA0977DEB ; 21E: __thumb void FocusGUI(int id);
++ 087C: 0xA0977DFB ; 21F: __thumb void UnfocusGUI(void);
+
 21.06.07:
 + 00E0: 0xA053791F   ;  38: int Registry_GetHMIKeyID(char *Keyword)
 + 00E4: 0xA0537531   ;  39: Registry_SetResourcePath(int HMIKeyID, int Prio, WSHDR *Path)
@@ -626,6 +631,9 @@
 0868: 0xA0A11E45   ; 21A: __thumb int EDIT_SetTextInvert(void *gui,int cursor_pos,int len);
 086C: 0xA0A11E51   ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA0A11E8D   ; 21C: __thumb int EDIT_IsBusy(void *gui);
+0874: 0xA0953659 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
+0878: 0xA0977DEB ; 21E: __thumb void FocusGUI(int id);
+087C: 0xA0977DFB ; 21F: __thumb void UnfocusGUI(void);
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------
