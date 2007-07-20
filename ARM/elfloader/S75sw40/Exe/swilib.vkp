@@ -300,7 +300,7 @@
 0730: 0xA0A0B361 ; 1CC: __thumb void SetPenColorToEditCOptions(EDITC_OPTIONS *ec_options, int pen);
 0734: 0xA0A0B349 ; 1CD: __thumb void SetBrushColorToEditCOptions(EDITC_OPTIONS *ec_options, int brush);
 0738: 0xA0A0B431 ; 1CE: __thumb void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_options);
-073C: 0xA04D46CE ; 1CF: __arm REGEXPLEXT *get_regextpnt_by_uid(int uid);
+073C: 0xA04D46CF ; 1CF: __thumb REGEXPLEXT *get_regextpnt_by_uid(int uid);
 0740: 0xA04D4587 ; 1D0: __thumb int GetExtUid_ws(WSHDR * ext);
 0744: 0xA0A1201D ; 1D1: __thumb void EDIT_RemoveEditControl(void *gui,int n,EDITCONTROL *);
 0748: 0xA0A12029 ; 1D2:	__thumb void EDIT_InsertEditControl(void *gui,int n,EDITCONTROL *);
