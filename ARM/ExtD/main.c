@@ -191,6 +191,10 @@ int main(const char *exename)
   int f;
   unsigned int ul;
   unsigned int size_cfg;
+#ifdef NEWSGOLD
+  TREGEXPLEXT *oldrs;
+  WSHDR *xws;
+#endif
   ES *p=NULL;
   int i;
   
@@ -299,8 +303,27 @@ int main(const char *exename)
       }
       i=0;
       p=es;
+#ifdef NEWSGOLD
+      oldrs=malloc(sizeof(TREGEXPLEXT));
+      xws=AllocWS(256);
+#endif
       while(i<ES_num)
       {
+#ifdef NEWSGOLD
+	//Убираем уже зарегистрированное расширение
+	int id;
+	str_2ws(xws,p->ext,255);
+	id=GetExtUid_ws(xws);
+	if (id)
+	{
+	  TREGEXPLEXT *p=get_regextpnt_by_uid(id);
+	  if (p)
+	  {
+	    memcpy(oldrs,p,sizeof(TREGEXPLEXT));
+	    UnRegExplorerExt(oldrs);
+	  }
+	}
+#endif
 	reg.ext=p->ext;
 	reg.icon1=(int *)&(p->small_png);
 	reg.icon2=(int *)&(p->large_png);
@@ -309,6 +332,10 @@ int main(const char *exename)
 	i++;
 	p++;
       }
+#ifdef NEWSGOLD
+      FreeWS(xws);
+      mfree(oldrs);
+#endif
       if (ES_num>0)
       {
         reg0.icon1=(int *)&uni_small;
