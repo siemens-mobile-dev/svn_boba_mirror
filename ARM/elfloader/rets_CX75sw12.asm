@@ -19,11 +19,11 @@ a	EQU	b
 	
 	PUBLIC	OldOnClose
 OldOnClose:
-	DCD	0xA02A78F3+1
+	DCD	0xA02A78F2+1
 	
 	PUBLIC	OldOnCreate
 OldOnCreate:
-	DCD	0xA02A76B1+1
+	DCD	0xA02A76B0+1
         
 	PUBLIC	ESIOld
 ESIOld:
