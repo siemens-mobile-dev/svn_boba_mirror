@@ -1,5 +1,7 @@
 #include "..\inc\swilib.h"
+#ifdef NEWSGOLD
 #include "conf_loader.h"
+#endif
 
 #define RECONNECT_TIME (216*120)
 
@@ -110,7 +112,8 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   int csm_result;
   char s[100];
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
-
+  
+#ifdef NEWSGOLD
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern char config_name[];
@@ -120,6 +123,8 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       InitConfig();
     }
   }
+#endif
+  
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
     int m=(int)msg->data0;
@@ -184,7 +189,9 @@ int main()
   icsmd.onClose=MyIDLECSM_onClose;
   icsm->constr=&icsmd;
   UnlockSched();
+#ifdef NEWSGOLD  
   InitConfig();
+#endif  
   SUBPROC((void*)do_connect);
   return 0;
 }
