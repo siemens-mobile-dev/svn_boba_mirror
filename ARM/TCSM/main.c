@@ -292,12 +292,12 @@ int main()
 //---------------------------------------------------------------------------
 // Test menu
 //---------------------------------------------------------------------------
-void menup1(void)
+void menup1(GUI *data)
 {
       ShowMSG(1,(int)"Тестовое сообщение 1");
 }
 
-void menup2(void)
+void menup2(GUI *data)
 {
       ShowMSG(1,(int)"Тестовое сообщение 2");
 }
@@ -312,7 +312,10 @@ const MENUITEM_DESC menuitems[2]=
   {NULL,(int)"Пункт 2",LGP_NULL,0,NULL/*menusoftkeys*/,MENU_FLAG3,MENU_FLAG2},
 };
 
-void *menuprocs[2]={(void *)menup1,(void *)menup2};
+const MENUPROCS_DESC menuprocs[2]={
+  menup1,
+  menup2
+};
 
 const SOFTKEY_DESC menu_sk[]=
 {
