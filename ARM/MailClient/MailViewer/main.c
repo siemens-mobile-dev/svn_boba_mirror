@@ -1445,7 +1445,7 @@ void maillist_menu_ghook(void *data, int cmd)
   }
 }
 
-void maillist_menu_iconhndl(void *data, int curitem, int *unk)
+void maillist_menu_iconhndl(void *data, int curitem, void *unk)
 {
   ML_VIEW *mail_cur;
   WSHDR *ws;
@@ -1475,11 +1475,11 @@ void maillist_menu_iconhndl(void *data, int curitem, int *unk)
 
 MENU_DESC maillist_menu=
 {
-  8,(void *)maillist_menu_onkey,(void*)maillist_menu_ghook,NULL,
+  8,maillist_menu_onkey,maillist_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0x11,
-  (void *)maillist_menu_iconhndl,
+  maillist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -1582,7 +1582,7 @@ const MENUPROCS_DESC  mainmenu_HNDLS[6]=
 
 MENU_DESC mainmenu_STRUCT=
 {
-  8,(void *)main_menu_onkey,(void*)main_menu_ghook,NULL,
+  8,main_menu_onkey,main_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0x11,
