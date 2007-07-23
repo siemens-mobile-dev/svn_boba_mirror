@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "ussd_process.h"
 #include "../inc/xtask_ipc.h"
+#include "main.h"
 
 //IPC
 const char ipc_my_name[32]="CallCenter";
@@ -14,7 +15,6 @@ extern long  strtol (const char *nptr,char **endptr,int base);
 char cashfname[128];
 
 extern const char CASHREQNUM[];
-extern const int ENA_CASHTRACE;
 extern const char cashTEMP_PATH[];
 extern const char cashLOG_FILE[];
 
@@ -29,12 +29,16 @@ static volatile int locked;
 static void WriteLog(int dummy, char *text)
 {
   unsigned int ul;
+  extern const int ENA_CASHTRACELOG;
   if (!text) return;
-  int f=fopen(cashLOG_FILE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
-  if (f!=-1)
+  if (ENA_CASHTRACELOG)
   {
-    fwrite(f,text,strlen(text),&ul);
-    fclose(f,&ul);
+    int f=fopen(cashLOG_FILE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
+    if (f!=-1)
+    {
+      fwrite(f,text,strlen(text),&ul);
+      fclose(f,&ul);
+    }
   }
   mfree(text);
 }
@@ -100,22 +104,53 @@ static void FindCash(const char *s)
   int i;
   int f=0;
   char *ep;
+  const char *p;
+  const char *pval;
+  int c;
+  int cc;
   //do
   while(n<CASH_SIZE)
   {
-    pat=patterns[n];
-    if (!*pat) break; //Больше паттернов нет
-    if (!(s=strstr(s,pat))) break; //Что-то поломалось
-    s+=strlen(pat);
-    i=strtol(s,&ep,10)*100;
-    s=ep;
-    if ((*s=='.')||(*s==','))
+    if (!patterns[n]) break; //Больше паттернов нет
+  L_RESTARTPAT:
+    p=s; //Текущая позиция в строке
+    s++;
+    pval=NULL; //Число пока не нашли
+    pat=patterns[n]; //Начинаем с начала паттерна
+    while((c=*pat++,cc=*p)) //Пока не дошли до конца строки, в которой ищем
     {
-      if ((s[1]>='0')&&(s[1]<='9'))
+      if (c=='#') //А не число ли сейчас требуется
       {
-        s++;
-        i+=strtol(s,&ep,10);
-        s=ep;
+	//Проверяем на число
+	if ((cc<'0')||(cc>'9')) goto L_RESTARTPAT; //Первая цифра не число - рестарт поиска
+	pval=p; //Возможно число будет здесь
+	do
+	{
+	  cc=*++p; //Следующий символ
+	}
+	while(((cc>='0')&&(cc<='9'))||(cc=='.')||(cc==',')); //Пока это еще число
+      }
+      else
+      {
+	//Обычное сравнение
+	if (!c) break; //Дошли до конца паттерна, значит все совпало, выходим
+	//Сравниваем символы
+	if (cc!=c) goto L_RESTARTPAT; //Нет совпадения, рестартуем
+	p++;
+      }
+    }
+    if (c) break; //Не дошли до конца паттерна
+    if (!pval) break; //Не нашли число
+    s=p; //Поиск будем продолжать отсюда
+    i=strtol(pval,&ep,10)*100;
+    pval=ep;
+    if ((*pval=='.')||(*pval==','))
+    {
+      if ((pval[1]>='0')&&(pval[1]<='9'))
+      {
+        pval++;
+        i+=strtol(pval,&ep,10);
+        pval=ep;
       }
     }
     if (i>(CurrentCASH[n]+(MaxCASH[n]/100))) //Если новый больше чем текущий +1 процент от максимального
@@ -154,6 +189,7 @@ static void ussd_timeout(void)
 {
   _unlock();
   ussdreq_sended=0;
+  StartHoursTimer();
 }
 
 int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
@@ -164,7 +200,7 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
 
 #define ussdreqgui_id (((int *)data)[DISPLACE_OF_USSDREQGUI_ID/4])
   
-  if (!ENA_CASHTRACE) return 0;
+//  if (!ENA_CASHTRACE) return 0;
   if (!ussdreq_sended) return 0;
   EndUSSDtimer();
   ws=AllocWS(256);
@@ -192,6 +228,7 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
   FreeWS(ws);
   GeneralFunc_flag1(ussdreqgui_id,0);
   ussdreqgui_id=0;
+  StartHoursTimer();
   return 1;
 }
 
@@ -201,7 +238,7 @@ static void ussd_send(void)
   {
     ussdreq_sended=1;
     MakeVoiceCall(CASHREQNUM,0x10,0x2FFF);
-    GBS_StartTimerProc(&ussd_tmr,216*30,ussd_timeout);
+    GBS_StartTimerProc(&ussd_tmr,216*60,ussd_timeout);
   }
   else
   {
@@ -211,7 +248,6 @@ static void ussd_send(void)
 
 void SendCashReq(void)
 {
-  if (!ENA_CASHTRACE) return;
   if (ussdreq_sended) return; //Ужо летим ;)
   GBS_StartTimerProc(&ussd_tmr,216*3,ussd_send);
   _lock();

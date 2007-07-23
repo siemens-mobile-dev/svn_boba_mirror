@@ -13,20 +13,26 @@ __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
  __root const CFG_HDR cfghdr0={CFG_STR_WIN1251,"Number for Cash Request",0,31};
  __root const char CASHREQNUM[32]="*#";
 
+ __root const CFG_HDR cfghdr000={CFG_UINT,"Auto cash check, hours",0,24};
+ __root const unsigned int CHECK_HOURS=1;
+
  __root const CFG_HDR cfghdr01={CFG_CHECKBOX,"Enable Cash Trace",0,0};
  __root const int ENA_CASHTRACE = 1;
 
+ __root const CFG_HDR cfghdr08={CFG_CHECKBOX,"Enable Cash Trace logging",0,0};
+ __root const int ENA_CASHTRACELOG = 1;
+ 
  __root const CFG_HDR cfghdr02={CFG_STR_WIN1251,"Cash pattern 0",0,31};
- __root const char CashPat0[32]="Vash balans ";
+ __root const char CashPat0[32]="alans #hrn";
 
  __root const CFG_HDR cfghdr03={CFG_STR_WIN1251,"Cash pattern 1",0,31};
- __root const char CashPat1[32]="Vash bonus ";
+ __root const char CashPat1[32]="onus #hrn";
 
  __root const CFG_HDR cfghdr04={CFG_STR_WIN1251,"Cash pattern 2",0,31};
- __root const char CashPat2[32]="dodatkovo ";
+ __root const char CashPat2[32]="# hv";
 
  __root const CFG_HDR cfghdr05={CFG_STR_WIN1251,"Cash pattern 3",0,31};
- __root const char CashPat3[32]=". "; //Неудачно, потом будем думать
+ __root const char CashPat3[32]="# Kb GPRS";
 
  __root const CFG_HDR cfghdr06 = {CFG_STR_UTF8,"Temp file path",0,127};
  __root const char cashTEMP_PATH[128]=DEFAULT_DISK ":\\ZBin\\var\\";

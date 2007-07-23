@@ -1,6 +1,7 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 #include "ussd_process.h"
+#include "main.h"
 
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 
@@ -9,6 +10,9 @@ static GBSTMR tmr_scroll;
 
 extern int CurrentCASH[MAX_CASH_SIZE];
 extern int MaxCASH[MAX_CASH_SIZE];
+
+extern const int ENA_CASHTRACE;
+extern const unsigned int CHECK_HOURS;
 
 extern const int ENA_VIBRA;
 extern const unsigned int vibraPower;
@@ -87,6 +91,8 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #endif
 
 char cur_imsi[IMSI_DATA_BYTE_LEN];
+
+static GBSTMR hours_tmr;
 
 static CSM_DESC icsmd;
 
@@ -1027,6 +1033,19 @@ static void DrawMyProgress(int y, int cur, int max, const char *color)
   DrawRectangle(2,y+1,s+2,y+5,0,color,color);
 }
 
+static void HoursTimerProc(void)
+{
+  SendCashReq();
+}
+
+void StartHoursTimer(void)
+{
+  if (CHECK_HOURS)
+  {
+    GBS_StartTimerProc(&hours_tmr,216L*3600L*CHECK_HOURS,HoursTimerProc);
+  }
+}
+
 static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
 #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
@@ -1039,6 +1058,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       memcpy(cur_imsi,imsi,IMSI_DATA_BYTE_LEN);
       InitConfig();
       LoadCash();
+      StartHoursTimer();
     }
   }
   if (msg->msg==MSG_USSD_RX)
@@ -1047,7 +1067,11 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   if (msg->msg==MSG_END_CALL)
   {
-    SendCashReq();
+    if (ENA_CASHTRACE) 
+    {
+      GBS_DelTimer(&hours_tmr);
+      SendCashReq();
+    }
   }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
@@ -1067,6 +1091,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       ShowMSG(1,(int)"CallCenter config updated!");
       InitConfig();
       LoadCash();
+      StartHoursTimer();
     }
   }
   #ifdef NEWSGOLD
@@ -1117,6 +1142,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 
 void CallCenter_Destructor(void)
 {
+  GBS_DelTimer(&hours_tmr);
   SaveCash();
   EndUSSDtimer();
 //  FreeWS(dbg_ws);
