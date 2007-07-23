@@ -2263,7 +2263,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>E:\ARM\XTASK\test.xcl</state>
+          <state>$PROJ_DIR$\test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
