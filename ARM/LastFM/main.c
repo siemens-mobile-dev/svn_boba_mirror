@@ -34,11 +34,9 @@ typedef struct
 
 TSONG *cursong;
 
-extern const unsigned int cfgX;
-extern const unsigned int cfgY;
+extern const RECT cfgArea;
+extern const int cfgAlign;
 
-extern const unsigned int cfgW;
-extern const unsigned int cfgH;
 extern const char CSMADR[];
 extern const char TEMP_FILE[];
 
@@ -47,8 +45,6 @@ extern const unsigned int TIMEZONE;
 
 extern const char USERNAME[];
 extern const char PASSWORD[];
-
-unsigned int uiWidth, uiHeight;
 
 unsigned int playercsmid=0;
 void *playercsmadr=NULL;
@@ -64,9 +60,6 @@ void RereadSettings()
 {
   InitConfig();
   playercsmadr=(void *)strtoul(CSMADR,NULL,16);
-  //========================
-  uiWidth  = cfgW-1;
-  uiHeight = cfgH-1;
 }
 
 void tmrproc_readychange(void)
@@ -326,8 +319,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	{
 	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
-	  DrawCanvas(canvasdata, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, 1);
-	  DrawString(ws1, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, FONT_SMALL, 0x20 + 2, //Атрибут. Если выставлен 1-й бит (+2) то выравнивается по центру
+	  DrawCanvas(canvasdata, cfgArea.x, cfgArea.y, cfgArea.x2, cfgArea.y2, 1);
+	  DrawString(ws1, cfgArea.x, cfgArea.y, cfgArea.x2, cfgArea.y2, FONT_SMALL,
+                     0x20 + (1 << cfgAlign), //хитрожопый атрибут
 		     GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
