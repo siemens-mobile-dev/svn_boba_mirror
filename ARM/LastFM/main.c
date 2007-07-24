@@ -102,7 +102,7 @@ unsigned long TimeDate2Long(void)
   iday=iday+(dd.year>>2);
   if (dd.month>2||(dd.year&3)>0)
     iday++;
-  return(tt.param+60*(tt.min+60*(tt.hour+24* iday)));
+  return(tt.sec+60*(tt.min+60*(tt.hour+24* iday)));
 }
 
 // Печать даты и времени по количеству секунд с 01-01-2000 00:00
@@ -327,7 +327,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
 	  DrawCanvas(canvasdata, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, 1);
-	  DrawString(ws1, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, SMALL_FONT, 0x20,
+	  DrawString(ws1, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, FONT_SMALL, 0x20 + 2, //Атрибут. Если выставлен 1-й бит (+2) то выравнивается по центру
 		     GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
