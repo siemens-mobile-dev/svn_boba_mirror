@@ -1183,6 +1183,8 @@ void create_connect(void)
   SOCK_ADDR sa;
   //Устанавливаем соединение
   connect_state = 0;
+  int err;
+  unsigned int ip;
   GBS_DelTimer(&reconnect_tmr);
   if (!IsGPRSEnabled())
   {
@@ -1192,10 +1194,18 @@ void create_connect(void)
     return;
   }
   DNR_ID=0;
+  *socklasterr()=0;
+  ip=str2ip(NATICQ_HOST);
+  if (ip!=0xFFFFFFFF)  
+  {
+    sa.ip=ip;
+    strcpy(logmsg,"Connect by IP!");
+    REDRAW();
+    goto L_CONNECT;
+  }  
   strcpy(logmsg,LG_GRSENDDNR);
   REDRAW();
-  *socklasterr()=0;
-  int err=async_gethostbyname(NATICQ_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
+  err=async_gethostbyname(NATICQ_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
   if (err)
   {
     if ((err==0xC9)||(err==0xD6))
@@ -1220,12 +1230,13 @@ void create_connect(void)
       strcpy(logmsg,LG_GRDNROK);
       REDRAW();
       DNR_TRIES=0;
+      sa.ip=p_res[3][0][0];
+    L_CONNECT:
       sock=socket(1,1,0);
       if (sock!=-1)
       {
 	sa.family=1;
 	sa.port=htons(NATICQ_PORT);
-	sa.ip=p_res[3][0][0];
 	//    sa.ip=htonl(IP_ADDR(82,207,89,182));
 	if (connect(sock,&sa,sizeof(sa))!=-1)
 	{

@@ -194,7 +194,7 @@ void ProcessNextSmile(void)
       int i=0;
       while (buf[i]!=0&&buf [i]!=','&&buf [i]!=10&&buf[i]!=13)
       {
-        name[i]=buf[i];
+        if (i<(sizeof(name)-1)) name[i]=buf[i];
         i++;
       }
       name[i]=0;
