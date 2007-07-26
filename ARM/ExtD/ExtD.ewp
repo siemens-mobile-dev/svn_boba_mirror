@@ -2180,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy $PROJ_DIR$\Release\Exe\ExtD.elf Data\ZBin\Daemons\ExtD.elf</postbuild>
+        <postbuild>obexcopy $EXE_DIR$\ExtD.elf Data\ZBin\Daemons\ExtD.elf</postbuild>
       </data>
     </settings>
     <settings>

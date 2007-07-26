@@ -84,7 +84,7 @@ REGEXPLEXT reg=
   0x55,
   0xFF,
   8, //Каталог Misc
-  0x59D,
+  MENU_FLAG2,
   NULL,
   NULL,
   (int)"Open",    //LGP "Открыть"
@@ -99,7 +99,7 @@ REGEXPLEXT reg=
   0x55,
   0,
   7,
-  0x578, 
+  MENU_FLAG2, 
   NULL,
   NULL,
   (void *)do_ext,
@@ -114,7 +114,7 @@ REGEXPLEXT reg0=
   0,
   0xFF,
   8, //Каталог Misc
-  0x59D,
+  MENU_FLAG2,
   NULL,
   NULL,
   (int)"Open",    //LGP "Открыть"
@@ -125,11 +125,11 @@ REGEXPLEXT reg0=
 };
 #else
 {
-  empty_str,
-  0,
+  NULL,
+  0x7FFFFFFF,
   0,
   7,
-  0x578, 
+  MENU_FLAG2, 
   NULL,
   NULL,
   (void *)do_ext,
@@ -191,10 +191,10 @@ int main(const char *exename)
   int f;
   unsigned int ul;
   unsigned int size_cfg;
-#ifdef NEWSGOLD
-  TREGEXPLEXT *oldrs;
+
+  REGEXPLEXT *oldrs;
   WSHDR *xws;
-#endif
+
   ES *p=NULL;
   int i;
   
@@ -203,7 +203,7 @@ int main(const char *exename)
   
   ((char *)extfile)[0]=exename[0];
   
-  if ((f=fopen(extfile,A_ReadOnly,0,&ul))!=-1)
+  if ((f=fopen(extfile,A_ReadOnly,P_READ,&ul))!=-1)
   {
     size_cfg=lseek(f,0,S_END,&ul,&ul);
     lseek(f,0,S_SET,&ul,&ul);
@@ -303,27 +303,30 @@ int main(const char *exename)
       }
       i=0;
       p=es;
-#ifdef NEWSGOLD
-      oldrs=malloc(sizeof(TREGEXPLEXT));
+
+      oldrs=malloc(sizeof(REGEXPLEXT));
       xws=AllocWS(256);
-#endif
+
       while(i<ES_num)
       {
-#ifdef NEWSGOLD
 	//Убираем уже зарегистрированное расширение
 	int id;
 	str_2ws(xws,p->ext,255);
 	id=GetExtUid_ws(xws);
 	if (id)
 	{
-	  TREGEXPLEXT *p=get_regextpnt_by_uid(id);
+	  TREGEXPLEXT *pr=get_regextpnt_by_uid(id);
 	  if (p)
 	  {
-	    memcpy(oldrs,p,sizeof(TREGEXPLEXT));
+#ifdef NEWSGOLD
+            memcpy(oldrs,pr,sizeof(TREGEXPLEXT));
+#else
+            oldrs->ext=p->ext;
+            oldrs->unical_id=id;
+#endif
 	    UnRegExplorerExt(oldrs);
 	  }
 	}
-#endif
 	reg.ext=p->ext;
 	reg.icon1=(int *)&(p->small_png);
 	reg.icon2=(int *)&(p->large_png);
@@ -332,10 +335,9 @@ int main(const char *exename)
 	i++;
 	p++;
       }
-#ifdef NEWSGOLD
       FreeWS(xws);
       mfree(oldrs);
-#endif
+      
       if (ES_num>0)
       {
         reg0.icon1=(int *)&uni_small;
