@@ -1,17 +1,17 @@
+;ELFpack v2.3UAFIX (C)2007 by Rst7/CBSIE, BoBa, Kren
+;Release 26.07.2007
 ;S75v47
+
+;Много доделок/переделок, подробности в логе на SVN
+
 ;Библиотека функций
 ;Functions Library
-;(c) avkiev
-;Version: 070621
-;PatchID: 5624
-;Details: http://patches.siemens-club.org/patches/details.php5?id=5624
-;!до латки долучений файл, http://patches.kibab.com/cnt.php5?d=s75v47&f=Functions_library.zip
-
+;(c) кто попало ;)
 /*
-!ДЛЯ РАБОТЫ ЭТОГО ПАТЧА НЕОБХОДИМО УСТАНОВИТЬ ПОДРЕЗКУ КУЧИ!
-6822
+26.07.07: 
+Исправил наконец-то, сколько просил - ложили все ;)
+0520: 0xA097723F	;0xA0977231   ; 148: extern int ShowMSG(int flag, int lgp_id)
 
-Файл swi.blib, прикреплённый к Библиотеке в архиве, должен обновляться вместе с библиотекой и содержать её копию в BLIB-формате! Этот файл можно будет использовать для обновления Библиотеки в отсутствии кабеля для установки патча. Следует положить blib-файл в 4:\ZBin\SWI.blib
 
 20.07.07:
 + 0874: 0xA0953659 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
@@ -403,7 +403,7 @@
 0514: 0xA0099208   ; 145: int GBS_GetCurCepid(void)
 0518: 0xA009B180   ; 146: void LockSched(void)
 051C: 0xA009B26C   ; 147: void UnlockSched(void)
-0520: 0xA0977231   ; 148: extern int ShowMSG(int flag, int lgp_id)
+0520: 0xA097723F	;0xA0977231   ; 148: extern int ShowMSG(int flag, int lgp_id)
 0524: 0xA0972D35   ; 149: void SetPropToText(DRWOBJ *drwobj,void *rect,int rect_flag,WSHDR *wshdr,int font,int text_flag)
 0528: 0xA0970F69   ; 14A: void FreeDrawObject_subobj(DRWOBJ *drwobj)
 052C: 0xA0970ED3   ; 14B: void SetColor(DRWOBJ *drwobj, char *color1, char *color2)
