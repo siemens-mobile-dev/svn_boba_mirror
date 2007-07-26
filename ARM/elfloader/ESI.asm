@@ -57,13 +57,7 @@ J_PIT:
         LDR	R12,=PITret
         LDR     R12, [R12]
 	BX	R12
-#else
-        THUMB
-        RSEG    PATCH_NO_BROWSE_TXT:CODE:ROOT(1)
-        EXTERN  OldTxtReg
-        NOP
-        NOP
-        
+#else      
 ; ==============================================   
 	RSEG	PATCH_ESI:CODE:ROOT
 	CODE16
@@ -90,39 +84,28 @@ DO_LGP:
 	BX	R3
         
 ; ==============================================       
- 	RSEG	PATCH_PROPERTY1:CODE:ROOT
+ 	RSEG	PATCH_NO_UNK_EXT:CODE:ROOT
 	CODE32
 
-        BL      PropertyHook
-        
-        RSEG	PATCH_PROPERTY2:CODE:ROOT
-	CODE32
-        
-        BL      PropHandler
+        BL      NoUnknownExt
+
         
 ; ----------------------------------------------   
         RSEG	CODE:CODE:NOROOT
 	CODE32
-        EXTERN  PropertyPatch
 
-PropertyHook:
+NoUnknownExt:
+        MOVS    R0, R4
+        BXNE    LR
+        STMFD   SP!,{LR}
+        MOV     R4, #0x7FFFFFFF
         MOV     R0, R4
-        MOV     R4, #1
-        STR     R4, [R0, #0x18]
-        BX      LR
-        
-PropHandler:
-        LDR     R0, [R5, #0x18]
+        SWI     0x1CF
         CMP     R0, #0
-        LDMIA   R2, {R0-R2}
-        BXEQ    LR
-        BL      PropertyPatch
-        MOV     R0, #0
-        STR     R0, [R5, #0x18]
-        ADD     SP, SP, #0x234
-        LDMFD   SP!, {R4-R7,PC}
-
+        MOVNE   R0, R4
+        LDMFD   SP!,{PC}
         
+      
         
 ; ==============================================               
 	THUMB
@@ -195,13 +178,6 @@ J_KEYB:
         BX      R0
         
 EXIT:   POP     {R3-R7,PC}
-
-
-        RSEG    PATCH_CARD_EXPL:CODE:ROOT
-        CODE32
-        EXTERN  CreateCardExplMenu
-        BL      CreateCardExplMenu
-
 
 #endif
 
