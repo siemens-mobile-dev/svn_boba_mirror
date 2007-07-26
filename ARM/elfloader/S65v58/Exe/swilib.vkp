@@ -1,37 +1,6 @@
-;ELFpack v2.2 (C)2007 by Rst7/CBSIE, BoBa
-;Release 06.04.2007
-;S65sw58
-
-;чтобы успешно использовать эльфов необходимо и достаточно установить ELFpack
-
-;Инструкция: ставим ELFPack, льем на телефон эльфа, идем кардэксплорером до него тыкаемся и наслаждаемся...
-
-;Загрузка всех .elf-файлов из каталога 0:\ZBin\Daemons
-;Загрузка необходимых .elf файлов при выборе файла с произвольным расширением
-;Обрабатывается при помощи ExtD.elf - необходим в каталоге 0:\ZBin\Daemons
-;по файлу 0:\ZBin\etc\extension.cfg. Формат файла описан в etc\extension.cfg
-
-;Для упрощения формирования структуры каталогов разархивируйте в корень Data архив
-;Data.zip с сохранением путей.
-
-;Расширение таблицы регистрации расширений файлов
-
-;Расширение PIT при помощи .png файлов
-;Обрабатываются файлы из каталога 0:\ZBin\img\ с именами %d.png
-;для замены штатных картинок или из эльфов - указатель на строку
-;с именем файла вместо ID (аналогично ESI). Картинки кешируются для ускорения последующего доступа к ним. чтобы посмотреть,
-;какие картинки находятся в кеше, а какие нет, используйте утилиту PngExtStat (в каталоге utilities).
-;Замена штатных картинок прошивки производится записью оных в каталог 0:\ZBin\img и последующей перезагрузкой.
-
-;Загрузка библиотеки функций из файла 0:\ZBin\swi.blib
-;Файл должен иметь размер 16384 байт (16 КБ), при загрузке файла используемая библиотека будет пополнена  функциями из blib.
-;При отсутствии требуемой эльфами функции в библиотеке телефон выключается, в (S)Exit пишется номер отсутствующей функции.
-
-;В состав эльфпака вошёл обновлённый X-Task 2.0. Теперь он сворачивает эльфы при входящем звонке, больше не будет
-;досадных завершений в самый неподходящий момент.
-
-;В папке ZBin\NatICQ - клиент нативной аси. Там же картинки статусов и звуки. Картинки смайлов уже размещены в ZBin\img.
-;В папке ZBin\EMailClient - Почтовый клиент. Картинки прилагаются. Состоит из двух частей - собственно клиента и приложения для скачивания почты с сервера (MailDaemon). В дальнейшем оно действительно будет демоном.
+;ELFpack v2.3 (C)2007 by Rst7/CBSIE, BoBa
+;Release 20.07.2007
+;S65v58
 
 
 
@@ -49,8 +18,8 @@
 024: 0xA1263C38   ; f009: SwitchPhoneOff
 ;
 0028: 0xA122ECB0   ; 0A: fopen(const char * cFileName, unsigned int iFileFlags, unsigned int iFileMode, unsigned int *ErrorNumber)
-02C: 0xA0FD9401  ; f011: fread
-030: 0xA0FD9451  ; f012: fwrite
+;02C: 0xA0FD9401  ; f011: fread
+;030: 0xA0FD9451  ; f012: fwrite
 0034: 0xA122EC04   ; 0D: fclose(int FileHandler, unsigned int *ErrorNumber)
 038: 0xA122EC34   ; f014: fflush
 003C: 0xA122EC64   ; 0F: lseek(int FileHandler, unsigned int offset, unsigned int origin, unsigned int *ErrorNumber, unsigned int *ErrorNumber2)
@@ -622,6 +591,10 @@
 086C: 0xA1179743 ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA117977F   ; 21C: __thumb int EDIT_IsBusy(void *gui);
 0874: 0xA0B49CD1 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
+;
+0878: 0xA1144861 ; 21E: __thumb void FocusGUI(int id);
+087C: 0xA114486F ; 21F: __thumb void UnfocusGUI(void);
+
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver

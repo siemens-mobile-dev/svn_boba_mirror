@@ -1,10 +1,6 @@
-; SL65 v53 lg3 - Patch made by "Smelter" © avkiev
-; http://avkiev.kiev.ua/Siemens/Smelter/Smelter.htm
-;********************************************************************************
-
-;Library
-
-;31.05.2007
+;ELFpack v2.3 (C)2007 by Rst7/CBSIE, BoBa
+;Release 20.07.2007
+;sl65v53
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -592,6 +588,9 @@
 086C: 0xA116E6DB ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA116E717   ; 21C: __thumb int EDIT_IsBusy(void *gui);
 0874: 0xA0B15EB5 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
+;
+0878: 0xA113C6E9 ; 21E: __thumb void FocusGUI(int id);
+087C: 0xA113C6F7 ; 21F: __thumb void UnfocusGUI(void);
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);

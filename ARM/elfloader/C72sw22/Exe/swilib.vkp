@@ -1,5 +1,5 @@
-;ELFpack v2.2 (C)2007 by Rst7/CBSIE, BoBa
-;Release 06.04.2007
+;ELFpack v2.3 (C)2007 by Rst7/CBSIE, BoBa
+;Release 20.07.2007
 ;C72v22
 
 ;чтобы успешно использовать эльфов необходимо и достаточно установить ELFpack
@@ -609,5 +609,8 @@
 086C: 0xA1166179 ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA11661B5 ; 21C: __unknown int EDIT_IsBusy(void *gui);
 0874: 0xA0B8C061 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
+
+0878: 0xA0C9EC01 ; 21E: __thumb void FocusGUI(int id);
+087C: 0xA0C9EC1F ; 21F: __thumb void UnfocusGUI(void);
 #pragma disable old_equal_ff
 +0

@@ -1,22 +1,7 @@
+;ELFpack v2.3 (C)2007 by Rst7/CBSIE, BoBa
+;Release 20.07.2007
 ;C75v22
-;Большая Библиотека Функций
-;Big Function Library
-;(c) avkiev
-;(p) tick, MasterMind, inquis
-;Version: 070530
-;PatchID: 6977
-;Details: http://patches.kibab.com/patches/details.php5?id=6977
-/*
-30,05,07
-* 07F0: 0xA0773BE9 ; 1FC: __thumb void CloseCSM(int id);
-* 0824: 0xA0773A3F ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
-27.05.07
-+ 0814: 0xA07A618D ; 205: __thumb void SetProp2Square_v1(void);
-+ 0818: 0xA0E4F3D5 ; 206: __thumb void srand(unsigned int seed);
-+ 081C: 0xA084077F ; 207: __thumb void DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush);
-+ 0820: 0xA07AC6AD ; 208: __thumb int Get_WS_width(WSHDR *ws, int font);
-+ 0824: 0xA0773A3E ; 209: __thumb void *FindGUIbyId(int id, CSM_RAM **csm);
-*/
+
 +10E4000
 #pragma enable old_equal_ff
 0000: 0xA0002070   ; f000: SWI0
@@ -621,6 +606,9 @@
 086C: 0xA0846FB1 ; 21B: __thumb void EDIT_RemoveTextInvert(void *gui);
 0870: 0xA0846FED ; 21C: __thumb int EDIT_IsBusy(void *gui);
 0874: 0xA04D2209 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
+;
+0878: 0xA07785CD ; 21E: __thumb void FocusGUI(int id);
+087C: 0xA07785EB ; 21F: __thumb void UnfocusGUI(void);
 #pragma disable old_equal_ff
 +0
 
