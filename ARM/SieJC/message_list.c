@@ -307,11 +307,11 @@ void KillDisp(DISP_MESSAGE* messtop)
 
 //===============================================================================================
 
-char CurrentPage=1;
-char CurrentMessage = 0;
-char CurrentMessage_Lines = 0;
-char lines_on_page;
-char MaxPages=1;
+int CurrentPage=1;
+int CurrentMessage = 0;
+int CurrentMessage_Lines = 0;
+int lines_on_page;
+int MaxPages=1;
 unsigned short FontSize;
 // Обслуживание созданного GUI
 
