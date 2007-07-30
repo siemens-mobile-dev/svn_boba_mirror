@@ -7,4 +7,4 @@
 #endif
 
 __root const CFG_HDR cfghdr0={CFG_STR_UTF8,"Log file",0,127};
-__root const char LOGFILE[128]=DEFAULT_DISK ":\\ZBin\\Sms.log";
+__root const char LOGFILE[128]=DEFAULT_DISK ":\\ZBin\\var\\Sms.log";
