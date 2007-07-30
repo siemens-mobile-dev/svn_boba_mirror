@@ -30,12 +30,19 @@ static void WriteLog(int dummy, char *text)
 {
   unsigned int ul;
   extern const int ENA_CASHTRACELOG;
+  char std[64];
+  TTime t;
+  TDate d;
   if (!text) return;
   if (ENA_CASHTRACELOG)
   {
     int f=fopen(cashLOG_FILE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)
     {
+      GetDateTime(&d,&t);
+      sprintf(std,"%02d:%02d %02d-%02d-%04d: ",
+            t.hour,t.min,d.day,d.month,d.year);
+      fwrite(f,std,strlen(std),&ul);
       fwrite(f,text,strlen(text),&ul);
       fclose(f,&ul);
     }
