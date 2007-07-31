@@ -126,6 +126,7 @@ typedef struct
 static volatile CLIST *cltop; //Начало
 
 static char dstr[NUMBERS_MAX][40];
+static int dstr_index[NUMBERS_MAX+1];
 
 static int menu_icons[NUMBERS_MAX];
 static int utf_symbs[NUMBERS_MAX];
@@ -770,16 +771,10 @@ static void VoiceOrSMS(const char *num)
   }
 }
 
-typedef struct
-{
-  void *next;
-  int index;
-}NUMLIST;
 
 static int gotomenu_onkey(void *data, GUI_MSG *msg)
 {
   int i;
-  NUMLIST *nltop=MenuGetUserPointer(data);
   if ((msg->gbsmsg->msg==KEY_DOWN)&&(msg->gbsmsg->submess==GREEN_BUTTON))
   {
     msg->keys=0x18;
@@ -787,42 +782,23 @@ static int gotomenu_onkey(void *data, GUI_MSG *msg)
   if (msg->keys==0x18 || msg->keys==0x3D)
   {
     i=GetCurMenuItem(data);
-    for(int d=0; d!=i && nltop; d++) nltop=nltop->next;
-    if (nltop)
-    {
-      VoiceOrSMS(dstr[nltop->index]);
-      return (0);
-    }
+    if (i<dstr_index[0])
+      VoiceOrSMS(dstr[dstr_index[i+1]]);
   }
   return(0);
 }
 
-static void gotomenu_ghook(void *data, int cmd)
-{
-  NUMLIST *nltop=MenuGetUserPointer(data);
-  if(cmd==3)
-  {
-    while(nltop)
-    {
-      NUMLIST *nl=nltop;
-      nltop=nltop->next;
-      mfree(nl);
-    }
-  }
-}
-    
+static void gotomenu_ghook(void *data, int cmd){}   
 
 static void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
 {
   WSHDR *ws;
-  NUMLIST *nltop=user_pointer;
   void *item=AllocMenuItem(data);
-  for(int d=0; d!=curitem && nltop; d++) nltop=nltop->next;
-  if (nltop)
+  if (curitem<dstr_index[0])
   {
     ws=AllocMenuWS(data,40);
-    str_2ws(ws,dstr[nltop->index],39);
-    SetMenuItemIconArray(data, item, menu_icons+nltop->index);
+    str_2ws(ws,dstr[dstr_index[curitem+1]],39);
+    SetMenuItemIconArray(data, item, menu_icons+dstr_index[curitem+1]);
     SetMenuItemText(data, item, ws, curitem);
 //    SetMenuItemIcon(data,curitem,nltop->index);
   }
@@ -846,18 +822,16 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
 {
   int key=msg->gbsmsg->submess;
   int m=msg->gbsmsg->msg;
-  int r;
+  int r=0;
   int i=0;
-  int n=0;
+  int n,d;
   
-  NUMLIST *nltop=0, *nlbot;
+  EDITCONTROL ec;
   CLIST *cl=(CLIST *)cltop;
-  nlbot=(NUMLIST *)&nltop;
   
   is_sms_need=0;
   if ((key==RIGHT_BUTTON)&&(m==KEY_DOWN))
   {
-    EDITCONTROL ec;
     ExtractEditControl(gui,1,&ec);
     if (ec.pWS->wsbody[0]==EDIT_GetCursorPos(gui)-1)
     {
@@ -876,30 +850,28 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
       if (!cl) goto L_OLDKEY;
     }
     //Теперь cl указывает на вход
-    r=0;
+    d=0;
+    n=0;
     do
     {
-      if (cl->num[r])
+      if (cl->num[d])
       {
-        nlbot=nlbot->next=malloc(sizeof(NUMLIST));
-        nlbot->next=0;
-        nlbot->index=r;
-        ws_2str(cl->num[r],dstr[r],39);
-        n++;
+        ws_2str(cl->num[d],dstr[n],39);
+        dstr_index[++n]=d;
       }
-      r++;
+      d++;
     }
-    while(r<NUMBERS_MAX);
+    while(d<NUMBERS_MAX);
+    dstr_index[0]=n;
     if (n==1) //Только один номер
     {
-      VoiceOrSMS(dstr[nltop->index]);
-      mfree(nltop);
+      VoiceOrSMS(dstr[dstr_index[1]]);
       return(1); //Закрыть нах
     }
     if (n==0) goto L_OLDKEY; //Нет вообще телефонов
     //Количество номеров больше 1, рисуем меню
     patch_header((HEADER_DESC *)&gotomenu_HDR);
-    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,n,nltop,0);
+    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,n,0,0);
     return(0);
   }
   if ((key==UP_BUTTON)||(key==DOWN_BUTTON))
@@ -930,6 +902,15 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     }
     r=-1; //Перерисовать
   }
+#ifndef NEWSGOLD
+  else if (key==ENTER_BUTTON)
+  {
+    ExtractEditControl(gui,1,&ec);
+    char num[40];
+    ws_2str(ec.pWS,num,39);
+    MakeVoiceCall(num,0x10,0x2FFF);
+  }
+#endif
   else
   {
     #ifdef NEWSGOLD
@@ -1028,9 +1009,13 @@ int strcmp_nocase(const char *s1,const char *s2)
 
 static void DrawMyProgress(int y, int cur, int max, const char *color)
 {
+  WSHDR *ws=AllocWS(32);
   int s=cur*(ScreenW()-5)/max;
   DrawRectangle(1,y,ScreenW()-2,y+6,0,"\xFF\xFF\xFF\xFF","\0\0\0\0");
   DrawRectangle(2,y+1,s+2,y+5,0,color,color);
+  wsprintf(ws,"%u.%02u/%u.%02u",cur/100,cur%100,max/100,max%100);
+  DrawString(ws,3,y+1,ScreenW()-3,y+1+GetFontYSIZE(FONT_NUMERIC_XSMALL),FONT_NUMERIC_XSMALL,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  FreeWS(ws);
 }
 
 static void HoursTimerProc(void)
@@ -1042,7 +1027,7 @@ void StartHoursTimer(void)
 {
   if (CHECK_HOURS)
   {
-    GBS_StartTimerProc(&hours_tmr,216L*3600L*CHECK_HOURS,HoursTimerProc);
+    GBS_StartTimerProc(&hours_tmr,TMR_SECOND*3600L*CHECK_HOURS,HoursTimerProc);
   }
 }
 
@@ -1061,7 +1046,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       StartHoursTimer();
     }
   }
-  if (msg->msg==MSG_USSD_RX)
+  if (msg->msg==MSG_USSD_RX || msg->msg==MSG_AUTOUSSD_RX)
   {
     if (ProcessUSSD(data,(GBS_USSD_MSG *)msg)) return 0; //Обработанно
   }
@@ -1101,7 +1086,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   #endif   
   {
     SetVibration(vibraPower);
-    GBS_StartTimerProc(&vibra_tmr,vibraDuration*216/1000,vibra_tmr_proc);
+    GBS_StartTimerProc(&vibra_tmr,vibraDuration*TMR_SECOND/1000,vibra_tmr_proc);
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
   if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху

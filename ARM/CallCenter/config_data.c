@@ -18,6 +18,9 @@ __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
 
  __root const CFG_HDR cfghdr01={CFG_CHECKBOX,"Enable Cash Trace",0,0};
  __root const int ENA_CASHTRACE = 1;
+ 
+ __root const CFG_HDR cfghdr022={CFG_CHECKBOX,"Enable AutoCash Trace",0,0};
+ __root const int ENA_AUTOCASHTRACE = 0; 
 
  __root const CFG_HDR cfghdr08={CFG_CHECKBOX,"Enable Cash Trace logging",0,0};
  __root const int ENA_CASHTRACELOG = 1;

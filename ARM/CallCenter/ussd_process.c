@@ -104,7 +104,7 @@ static const char * const patterns[MAX_CASH_SIZE]=
   CashPat3
 };
 
-static void FindCash(const char *s)
+static int FindCash(const char *s)
 {
   int n=0; //Номер
   const char *pat;
@@ -170,6 +170,7 @@ static void FindCash(const char *s)
   }
   //while(n<CASH_SIZE);  Может быть ни одного пока идет поиск сети
   if (f) SaveCash();
+  return (n);
 }
 
 static void _lock(void)
@@ -204,12 +205,16 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
   WSHDR *ws;
   int len;
   char *s;
+  int i=0; 
 
 #define ussdreqgui_id (((int *)data)[DISPLACE_OF_USSDREQGUI_ID/4])
   
 //  if (!ENA_CASHTRACE) return 0;
-  if (!ussdreq_sended) return 0;
-  EndUSSDtimer();
+  if (msg->msg==MSG_USSD_RX)
+  {
+    if (!ussdreq_sended) return 0;
+    EndUSSDtimer();
+  }
   ws=AllocWS(256);
   len=msg->pkt_length;
   if (len>240) len=240;
@@ -227,15 +232,22 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
       else if (c>=0x80) c='?';
       s[len++]=c;
     }
-    FindCash(s);
+    i=FindCash(s);
     s[len++]=13;
     s[len++]=10;
     SUBPROC((void *)WriteLog,0,s);
   }
   FreeWS(ws);
-  GeneralFunc_flag1(ussdreqgui_id,0);
-  ussdreqgui_id=0;
+  if (ussdreqgui_id)
+  {
+    GeneralFunc_flag1(ussdreqgui_id,0);
+    ussdreqgui_id=0;
+  }
   StartHoursTimer();
+  if (msg->msg==MSG_AUTOUSSD_RX)
+  {
+    if (!i) return (0);
+  }
   return 1;
 }
 
@@ -294,6 +306,8 @@ void LoadCash(void)
   extern char cur_imsi[];
   imsi2str(cur_imsi,imsi_str);
   sprintf(cashfname,"%sCallCenter_cash_%s.tmp",cashTEMP_PATH,imsi_str);
+  zeromem(CurrentCASH,sizeof(CurrentCASH));
+  zeromem(MaxCASH,sizeof(MaxCASH));
   int f=fopen(cashfname,A_ReadOnly+A_BIN,P_READ,&ul);
   if (f!=-1)
   {
