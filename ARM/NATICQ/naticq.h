@@ -26,11 +26,14 @@ typedef struct
   unsigned short xstate;
   int isunread;
   int req_add;
+  int req_drawack;
   LOGQ *log;
   LOGQ *answer;
   LOGQ *last_log;
   int isactive;
   int msg_count;
+  char *xtitle;
+  char *xdesc;
 }CLIST;
 
 typedef struct

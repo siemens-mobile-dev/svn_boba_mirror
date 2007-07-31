@@ -57,4 +57,9 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 //Мой ответ Чемберлену (подтверждение доставки)
 #define T_MSGACK 23
 
+#define T_XTEXT_REQ 24
+#define T_XTEXT_ACK 25
+#define T_XTEXT_SET 26
+
+
 #endif
