@@ -72,6 +72,7 @@ typedef int jmp_buf[11];
 #define MSG_SMS_RX 0x5803
 
 #define MSG_USSD_RX 0x60E2
+#define MSG_AUTOUSSD_RX 0x60E5
 typedef struct{
   int pid_from;
   int msg; //MSG_USSD_RX
