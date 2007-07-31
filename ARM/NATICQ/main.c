@@ -1935,21 +1935,25 @@ ProcessPacket(TPKT *p)
     {
       q->acked=p->pkt.type==T_SRV_ACK?1:2;
       t=FindContactByUin(p->pkt.uin);
-      void *data=FindGUIbyId(edchat_id,NULL);
+      if (edchat_id)
       {
-	EDCHAT_STRUCT *ed_struct;
-	ed_struct=EDIT_GetUserPointer(data);
-	if (ed_struct) 
+	void *data=FindGUIbyId(edchat_id,NULL);
+	if (data)
 	{
-	  if (ed_struct->ed_contact==t)
+	  EDCHAT_STRUCT *ed_struct;
+	  ed_struct=EDIT_GetUserPointer(data);
+	  if (ed_struct) 
 	  {
-	    if (EDIT_IsBusy(data))
+	    if (ed_struct->ed_contact==t)
 	    {
-	      t->req_drawack=1;
-	      time_to_stop_t9=3;
+	      if (EDIT_IsBusy(data))
+	      {
+		t->req_drawack=1;
+		time_to_stop_t9=3;
+	      }
+	      else
+		DrawAck(data);
 	    }
-	    else
-	      DrawAck(data);
 	  }
 	}
       }
