@@ -114,6 +114,8 @@ typedef struct{
 #define MSG_SMS_RX 0xC2
 
 #define MSG_USSD_RX 0x42
+#define MSG_AUTOUSSD_RX 0x45
+
 typedef struct{
   short pid_from;
   short msg; //MSG_USSD_RX
