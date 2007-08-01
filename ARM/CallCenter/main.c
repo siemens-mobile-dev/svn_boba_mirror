@@ -782,8 +782,7 @@ static int gotomenu_onkey(void *data, GUI_MSG *msg)
   if (msg->keys==0x18 || msg->keys==0x3D)
   {
     i=GetCurMenuItem(data);
-    if (i<dstr_index[0])
-      VoiceOrSMS(dstr[dstr_index[i+1]]);
+    if (i<dstr_index[0]) VoiceOrSMS(dstr[i]);
   }
   return(0);
 }
@@ -797,7 +796,7 @@ static void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
   if (curitem<dstr_index[0])
   {
     ws=AllocMenuWS(data,40);
-    str_2ws(ws,dstr[dstr_index[curitem+1]],39);
+    str_2ws(ws,dstr[curitem],39);
     SetMenuItemIconArray(data, item, menu_icons+dstr_index[curitem+1]);
     SetMenuItemText(data, item, ws, curitem);
 //    SetMenuItemIcon(data,curitem,nltop->index);
@@ -865,7 +864,7 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     dstr_index[0]=n;
     if (n==1) //Только один номер
     {
-      VoiceOrSMS(dstr[dstr_index[1]]);
+      VoiceOrSMS(dstr[0]);
       return(1); //Закрыть нах
     }
     if (n==0) goto L_OLDKEY; //Нет вообще телефонов
