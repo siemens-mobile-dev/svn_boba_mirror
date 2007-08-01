@@ -565,8 +565,7 @@ int AddLOGQ(LOGQ **queue, LOGQ *p)
 
 void FreeXText(CLIST *t)
 {
-  if (t->xtitle) {mfree(t->xtitle);t->xtitle=NULL;}
-  if (t->xdesc) {mfree(t->xdesc);t->xdesc=NULL;}
+  if (t->xtext) {mfree(t->xtext);t->xtext=NULL;}
 }
 
 //Уничтожить список
@@ -579,8 +578,7 @@ void FreeCLIST(void)
     CLIST *p;
     if (cl->log) FreeLOGQ(&cl->log);
     if (cl->answer) mfree(cl->answer);
-    if (cl->xtitle) mfree(cl->xtitle);
-    if (cl->xdesc) mfree(cl->xdesc);
+    if (cl->xtext) mfree(cl->xtext);
     p=cl;
     cl=(CLIST*)(cl->next);
     mfree(p);
@@ -646,16 +644,21 @@ CLIST *FindGroupByID(unsigned int grp)
 
 LOGQ *FindContactLOGQByAck(TPKT *p)
 {
-  CLIST *t=FindContactByUin(p->pkt.uin);
+  CLIST *t;
+  LockSched();
+  t=FindContactByUin(p->pkt.uin);
+  UnlockSched();
   unsigned int id=*((unsigned short*)(p->data));
   LOGQ *q;
   if (!t) return NULL;
+  LockSched();
   q=t->log;
   while(q)
   {
     if (q->ID==id) break;
     q=q->next;
   }
+  UnlockSched();
   return q;
 }
 
@@ -1014,12 +1017,21 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (key==RIGHT_BUTTON)
     {
       //Послать запрос текста XStatus
-      TPKT *p;
-      p=malloc(sizeof(PKT));
-      p->pkt.uin=t->uin;
-      p->pkt.type=T_XTEXT_REQ;
-      p->pkt.data_len=0;
-      SUBPROC((void *)SendAnswer,0,p);
+      if (t)
+      {
+	if (!t->isgroup)
+	{
+	  TPKT *p;
+	  FreeXText(t);
+	  p=malloc(sizeof(PKT));
+	  p->pkt.uin=t->uin;
+	  p->pkt.type=T_XTEXT_REQ;
+	  p->pkt.data_len=0;
+	  SUBPROC((void *)SendAnswer,0,p);
+	  RefreshGUI();
+	  return(-1);
+	}
+      }
     }
   }
   if (msg->gbsmsg->msg==LONG_PRESS)
@@ -1090,6 +1102,7 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
   WSHDR ws3loc, *ws3;
   unsigned short num3[128];
   ws3=CreateLocalWS(&ws3loc,num3,128);
+  char s[64];
 #endif
   t=FindContactByN(curitem);
   if (t)
@@ -1104,8 +1117,15 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
         wsInsertChar(ws1,0xE008,1);
       }
 #ifdef USE_MLMENU
-      if (t->xtitle)
-	wsprintf(ws3,"%c%t",0xE012,t->xtitle);
+      if (t->xtext)
+      {
+	int i;
+	zeromem(s,64);
+	i=t->xtext[0];
+	if (i>63) i=63;
+	strncpy(s,t->xtext+1,i);
+	wsprintf(ws3,"%c%t",0xE012,s);
+      }
       else
 	wsprintf(ws3,percent_d,t->uin);
       if ((t->xstate<total_xstatuses)&&(t->xstate))
@@ -1766,7 +1786,7 @@ ProcessPacket(TPKT *p)
 {
   CLIST *t;
   LOGQ *q;
-  char s[64];
+  char s[256];
   switch(p->pkt.type)
   {
   case T_LOGIN:
@@ -1966,24 +1986,26 @@ ProcessPacket(TPKT *p)
       int i;
       int j;
       FreeXText(t);
-      if (i=p->data[0])
+      i=p->pkt.data_len;
+      memcpy(t->xtext=malloc(i),p->data,i);
+      zeromem(s,256);
+      strcpy(s,t->name);
+      strcat(s,":\n");
+      i=strlen(s);
+      j=p->data[0];
+      if (j>(255-i)) j=255-i;
+      strncpy(s+i,p->data+1,j);
+      i+=j;
+      if (i<255)
       {
-	strncpy(t->xtitle=malloc(i+1),p->data+1,i);
-	t->xtitle[i]=0;
+	s[i]='\n';
+	i++;
+	j=p->pkt.data_len-p->data[0]-1;
+	if (j>(255-i)) j=255-i;
+	strncpy(s+i,p->data+p->data[0]+1,j);
       }
-      if (i<p->pkt.data_len)
-      {
-	j=p->pkt.data_len-i;
-	if (j)
-	{
-	  strncpy(t->xdesc=malloc(j+1),p->data+1+i,j);
-	  t->xdesc[j]=0;
-	}
-      }
-      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
-      memcpy(p->data,p->data+1,i);
-      p->data[i]='\n';
-      ShowMSG(0,(int)(p->data));
+//      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
+      ShowMSG(0,(int)s);
     }
     break;
   }

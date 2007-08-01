@@ -32,8 +32,7 @@ typedef struct
   LOGQ *last_log;
   int isactive;
   int msg_count;
-  char *xtitle;
-  char *xdesc;
+  char *xtext;
 }CLIST;
 
 typedef struct
