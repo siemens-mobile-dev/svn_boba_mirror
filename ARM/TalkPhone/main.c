@@ -256,13 +256,15 @@ int IsMediaActive(void)
   return 0;
 }
 
-void SayTime(void)
+void SayTime(int param)
 {
+  //param==0 Куранты
+  //param==1 Всё
   start_vibra();
   vibra_count1=vibra_count;
   
   if (!IsMediaActive())   
-    if (PLAY_PARAM) 
+    if (param) 
       {
         Play(folder_path, "x.wav");
         NEXT_PLAY_FUNK=1;
@@ -292,12 +294,12 @@ void Check(void)
     {
       if ((keypad_lock==1)&&(!IsUnlocked())) // Только при заблокир.
         {
-          SUBPROC((void*)SayTime);
+          SUBPROC((void*)SayTime, PLAY_PARAM);
         }
       
       if (keypad_lock!=1) // Не имеет значения
         {
-          SUBPROC((void*)SayTime);
+          SUBPROC((void*)SayTime, PLAY_PARAM);
         }
       
       GBS_StartTimerProc(&UPDATE_TMR,262*60,Check);
@@ -434,7 +436,7 @@ int my_keyhook(int submsg, int msg)
       if ((submsg==CALL_BUTTON)&&(!IsUnlocked()))
         {  
           GetDateTime(&date,&CurTime);
-          SayTime();
+          SayTime(PLAY_PARAM_BTN_CALL);
         }
     }
   
