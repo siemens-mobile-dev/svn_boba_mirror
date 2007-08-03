@@ -1,8 +1,8 @@
-;ELFpack v2.3 (C)2007 by Rst7/CBSIE, BoBa
-;Release 20.07.2007
+;ELFpack v2.3UAFIX (C)2007 by Rst7/CBSIE, BoBa, Kren
+;Release 26.07.2007
 ;S65v58
 
-
+Library 03.08.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -594,7 +594,11 @@
 ;
 0878: 0xA1144861 ; 21E: __thumb void FocusGUI(int id);
 087C: 0xA114486F ; 21F: __thumb void UnfocusGUI(void);
-
+;
+0894: 0xA09615A4 ; 225: __arm int PlayMelody_ChangeVolume(int handle,int volume);
+0898: 0xA096197C ; 226: __arm int PlayMelody_StopPlayback(int handle);
+089C: 0xA0961A1C ; 227: __arm int PlayMelody_PausePlayback(int handle);
+08A0: 0xA0961A60 ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver
