@@ -54,3 +54,27 @@ typedef struct{
 #define M_SAE_AUDIO_EVENT_STOPPED 0x1F
 #define M_SAE_AUDIO_EVENT_PAUSED 0x20
 #define M_SAE_AUDIO_EVENT_RESUMED 0x21
+
+//volume flag (usually first paremeter in sound functions)
+#define VOLUME_CALLS 0
+#define VOLUME_SYSTEM 1
+#define VOLUME_WALKY_TALKY 2
+//#define VOLUME_SYSTEM 3
+#define VOLUME_MESSAGES 4
+//#define VOLUME_MESSAGES 5
+#define VOLUME_CB_SERVICES 6
+//#define VOLUME_SYSTEM 7
+//#define VOLUME_SYSTEM 8
+#define VOLUME_ALARM_CLOCK 9
+#define VOLUME_ORGANISER 0xA
+//#define VOLUME_SYSTEM 0xB
+#define VOLUME_APPLICATIONS 0xC
+//#define VOLUME_SYSTEM 0xD
+//#define VOLUME_SYSTEM 0xE
+//#define VOLUME_SYSTEM 0xF
+//#define VOLUME_SYSTEM 0x10
+//#define VOLUME_SYSTEM 0x11
+//#define VOLUME_SYSTEM 0x12
+//#define VOLUME_SYSTEM 0x13
+//#define VOLUME_SYSTEM 0x14
+//#define VOLUME_SYSTEM 0x15
