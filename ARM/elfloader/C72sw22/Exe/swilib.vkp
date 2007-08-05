@@ -249,7 +249,7 @@ Library 03.08.2007
 0388: 0xA845A094   ;  E2:  RamKeyBuffer
 038C: 0xA8473B80   ;  E3:  RamProfileNum
 0390: 0xA8000350   ;  E4:  FreeRAM
-;394:              ;  E5:  LP_MonthsShort
+0394: 0x0000130D   ; E5: LP_MonthsShort
 0398: 0x000004BF   ;  E6:  Pic_Big0
 039C: 0x0000047E   ;  E7:  Pic_Little0
 03A0: 0x000004CD   ;  E8:  Pic_Extra
