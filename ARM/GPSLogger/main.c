@@ -11,14 +11,10 @@ void (*old_icsm_onClose)(CSM_RAM*);
 
 WSHDR *Out_WS;
 GBSTMR mytmr;
-#ifdef NEWSGOLD
-  #define ELF_ID 0xC607
-#else
-  #define ELF_ID 0xC67
-#endif
+
 #define UPDATE_TIME 216
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
-#define color(x) (char *)(&(x))
+#define EDLEGUI_ID (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
+#define COLOR(x) (char *)(&(x))
 
 // Импорт переменных из конфига
 extern const          int Req_Clear_Cache;
@@ -32,7 +28,7 @@ extern const unsigned int TXT_ATTR;
 
 void TimerProc()
 {
-    GBS_SendMessage(MMI_CEPID,ELF_ID);
+    GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_GPSL_REFRESH);
     GBS_StartTimerProc(&mytmr,UPDATE_TIME,TimerProc);
 }
 
@@ -66,47 +62,12 @@ int Get_String_Width(WSHDR *str)
 char IPC_me[]="GPSLogger";
 
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+// Перерисовка экрана
+void RedrawScreen(CSM_RAM* data)
 {
   int x_pos;
-  GPSL_IPC_MSG_UPD_TMO *updmsg;
-
-  if(msg->msg == MSG_RECONFIGURE_REQ) 
-  {
-    extern const char *successed_config_filename;
-    if (stricmp((char*)successed_config_filename,(char *)msg->data0)==0)
-    {
-      UpdateSett();
-      ShowMSG(1,(int)"GPSLogger config updated!");
-    }
-  }
   
-  if(msg->msg == MSG_IPC) 
-  {
-    IPC_REQ *ipc;
-    if(ipc=(IPC_REQ*)msg->data0)
-    {
-      if(stricmp(ipc->name_to,IPC_me)==0)
-      {
-        switch(msg->submess)
-        {
-        case IPC_GPSL_UPD_TMO:
-          
-          updmsg = (GPSL_IPC_MSG_UPD_TMO*) ipc->data;
-          //ShowMSG(1,(int)"TMO update received");
-          Del_From_Cache(updmsg->cid, updmsg->lac);
-          break;
-        }
-      }
-    }
-  }
-  
-  if(msg->msg!=ELF_ID)
-  {
-    return old_icsm_onMessage(data,msg);
-  }
-
-  if(IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
+  if(IsGuiOnTop(EDLEGUI_ID)) //Если IdleGui на самом верху
   {
     GUI *igui=GetTopGUI();
     if (igui) //И он существует
@@ -124,7 +85,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         char *xz;
         char action;
         xz= Get_Current_Location(&action);
-        if(!xz)return 0;
+        if(!xz)return;
         utf8_2ws(Out_WS, xz, 35);
         mfree(xz);
         int len;
@@ -140,12 +101,53 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
 #endif      
         DrawCanvas(canvasdata,x_pos,TXT_Y,x_pos + len ,TXT_Y + GetFontYSIZE(TXT_FONT),1);
-        DrawString(Out_WS,x_pos,TXT_Y,x_pos + len+1 ,TXT_Y + GetFontYSIZE(TXT_FONT)+1,TXT_FONT,TXT_ATTR,color(TXT_COLOR),GetPaletteAdrByColorIndex(1));
+        DrawString(Out_WS,x_pos,TXT_Y,x_pos + len+1 ,TXT_Y + GetFontYSIZE(TXT_FONT)+1,TXT_FONT,TXT_ATTR,COLOR(TXT_COLOR),GetPaletteAdrByColorIndex(1));
         if(action)DoAction(action);       
       }
     }
+  }  
+}
+
+
+int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+{
+  GPSL_IPC_MSG_UPD_TMO *updmsg;
+
+  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  {
+    extern const char *successed_config_filename;
+    if (stricmp((char*)successed_config_filename,(char *)msg->data0)==0)
+    {
+      UpdateSett();
+      ShowMSG(1,(int)"GPSLogger config updated!");
+    }
   }
-  return(0);
+  
+  if(msg->msg == MSG_IPC) 
+  {
+    if(msg->submess==IPC_GPSL_REFRESH)
+    {
+      RedrawScreen(data);
+      return old_icsm_onMessage(data,msg);
+    }
+    IPC_REQ *ipc;
+    if(ipc=(IPC_REQ*)msg->data0)
+    {
+      if(stricmp(ipc->name_to,IPC_me)==0)
+      {
+        switch(msg->submess)
+        {
+        case IPC_GPSL_UPD_TMO:
+          
+          updmsg = (GPSL_IPC_MSG_UPD_TMO*) ipc->data;
+          //ShowMSG(1,(int)"TMO update received");
+          Del_From_Cache(updmsg->cid, updmsg->lac);
+          break;
+        }
+      }
+    }
+  }
+  return old_icsm_onMessage(data,msg);
 }
 
 
