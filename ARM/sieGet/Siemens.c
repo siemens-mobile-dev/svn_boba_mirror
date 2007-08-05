@@ -1,22 +1,28 @@
+/*
+  Проект SieGet Downloader
+                          */
 
 // Siemens.c
 // Интерфейс Сименса для эльфов
-// Изначально (c) Cbn
+// (c) Cbn
 // Доработано и дополнено Borman
+
+#include "..\inc\swilib.h"
 
 extern int onStart(char *exename, char *fname); // Старт приложения. Возвращает 0 (Ок) или 1 (выход).
 extern void onCreate(); // Создание диалога
 extern void onClose(); // Закрытие диалога
 extern void onExit(); // Выход
 extern void onFocus(); // Фокус ввода на диалоге
+extern void onUnFocus(); // Фокус ввода уходит с диалога
 extern void onRedraw(void); // Перерисовка экрана
-extern int onKey(unsigned char keycode, int pressed); // Нажатие клавиши. Возвращает 0 (Ок) или 1 (GeneralFunc->выход).
-extern void onSockEvent(int sock, int event); // Событие сокета
+extern int onKey(unsigned char keycode, int pressed); // Нажатие клавиши. Возвращает 0 (Ок) или 1 (GeneralFunc->выход) или -1 (Redraw).
+extern int onSockEvent(int sock, int event); // Событие сокета
+extern int onNameResolve(int DNR_ID); //Обработка результата DNR-запроса
 
-// В swilib.h комментируем // строку #define NEWSGOLD если не S75
-#include "..\inc\swilib.h"
+void UpdateCSMName(char *new_name);
 
-// Ниже читать уже не надо! :)
+// Типа реализация
 typedef struct
 {
   GUI gui;
@@ -31,14 +37,34 @@ typedef struct
   int gui_id;
 }MAIN_CSM;
 
-void method0(MAIN_GUI *data){  onRedraw();}
-void method1(MAIN_GUI *data, void *(*malloc_adr)(int)){  onCreate(); data->gui.state=1;}
-void method2(MAIN_GUI *data, void (*mfree_adr)(void *)){  data->gui.state=0;}
-void method3(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *)){  onFocus(); data->gui.state=2;}
-void method4(MAIN_GUI *data, void (*mfree_adr)(void *)){ if (data->gui.state!=2) return; data->gui.state=1;}
-int method5(MAIN_GUI *data, GUI_MSG *msg){
-  return onKey(msg->gbsmsg->submess, msg->gbsmsg->msg);}
-void method7(MAIN_GUI *data, void (*mfree_adr)(void *)){}//  mfree_adr(data);
+void method0(MAIN_GUI *data)// onRedraw
+{
+  onRedraw();
+}
+void method1(MAIN_GUI *data, void *(*malloc_adr)(int))// onCreate
+{
+  onCreate();
+  data->gui.state=1;
+}
+void method2(MAIN_GUI *data, void (*mfree_adr)(void *))// onClose
+{
+  data->gui.state=0;
+}
+void method3(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))// onFocus
+{
+  onFocus();
+  data->gui.state=2;
+}
+void method4(MAIN_GUI *data, void (*mfree_adr)(void *))// onUnFocus
+{
+  if (data->gui.state!=2) return;
+  data->gui.state=1;
+}
+int method5(MAIN_GUI *data, GUI_MSG *msg)// onKey
+{
+  return onKey(msg->gbsmsg->submess, msg->gbsmsg->msg);
+}
+void method7(MAIN_GUI *data, void (*mfree_adr)(void *)){}//  onDestroy
 int method8(void){return(0);} // Пустая ф-я
 int method9(void){return(0);} // Пустая ф-я
 
@@ -92,8 +118,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg){
 
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
-    onSockEvent((int)msg->data1, (int)msg->data0);
-    return(1);
+    if ((int)msg->data0==ENIP_DNR_HOST_BY_NAME)
+      return onNameResolve((int)msg->data1);
+    else
+      return onSockEvent((int)msg->data1, (int)msg->data0);
   }
 
   if ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))
@@ -132,6 +160,11 @@ sizeof(MAIN_CSM),
     139
   }
 };
+
+void UpdateCSMName(char *new_name)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "%t", new_name);
+}
 
 int main(char *exename, char *fname){
   char dummy[sizeof(MAIN_CSM)];

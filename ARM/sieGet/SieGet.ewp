@@ -2473,7 +2473,22 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\dns.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\dns.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\func.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\http.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\inet.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\inet.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
@@ -2482,13 +2497,13 @@
     <name>$PROJ_DIR$\main.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\netutils.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\netutils.h</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\Siemens.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\socket.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\socket.h</name>
   </file>
 </project>
 

@@ -1,7 +1,13 @@
-#include "..\inc\swilib.h"
-#include "netutils.h"
+/*
+  Проект SieGet Downloader
+                          */
 
+#include "..\inc\swilib.h"
+#include "socket.h"
+
+//Макрос чтобы писать меньше было, вызов обработчика ошибки
 #define SocketError(x, y) SUBPROC((void *)(x->onError), x, y)
+
 
 typedef struct _SOCKQ
 {
@@ -29,6 +35,7 @@ SOCKDATAHANDLER *GetSocketHandle(int sock)
   {
     if (tmp_sock->data->sock==sock)
       return tmp_sock->data;
+    tmp_sock = tmp_sock->next;
   }
   return 0;
 }
@@ -163,7 +170,7 @@ void SocketCreate(SOCKDATAHANDLER *sock)
 
 //---------------------------------------------------------------
 //Обработка сообщений, связанных с сокетом
-void onSockEvent(int sock, int event)
+int onSockEvent(int sock, int event)
 {
   SOCKDATAHANDLER *hndl;
   if (hndl = GetSocketHandle(sock))
@@ -171,29 +178,32 @@ void onSockEvent(int sock, int event)
     //Если наш сокет
     switch(event)
     {
-    case ENIP_SOCK_CONNECTED:
+    case ENIP_SOCK_CONNECTED: //Соединение через сокет установлено
       SUBPROC((void *)(hndl->onConnected), hndl);
       break;
 
-    case ENIP_SOCK_DATA_READ:
+    case ENIP_SOCK_DATA_READ: //Готовность данных к получению
       SUBPROC((void *)(hndl->onDataRead), hndl);
       break;
 
-    case ENIP_SOCK_REMOTE_CLOSED:
+    case ENIP_SOCK_REMOTE_CLOSED: //Соединение разорвано сервером
       SUBPROC((void *)(hndl->onRemoteClose), hndl);
       break;
 
-    case ENIP_SOCK_CLOSED:
+    case ENIP_SOCK_CLOSED: //Соединение разрвано клиентом
       SUBPROC((void*)(hndl->onClose), hndl);
       break;
 
-    case ENIP_BUFFER_FREE:
+    case ENIP_BUFFER_FREE: //Буфер отпраки пуст
       //To be implemented...
       break;
 
-    case ENIP_BUFFER_FREE1:
+    case ENIP_BUFFER_FREE1: //Буфер отпраки пуст (в чем разница? - хз)
       //To be implemented...
       break;
     }
+
+    return 0; //Сокет наш, мы его обработали
   }
+  return 1; //Сокет чужой, пропускаем сообщение дальше по очереди
 }

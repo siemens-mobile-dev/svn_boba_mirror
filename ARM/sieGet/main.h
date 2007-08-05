@@ -1,7 +1,12 @@
+/*
+  Проект SieGet Downloader
+                          */
+
+#ifndef _MAIN_H_
+#define _MAIN_H_
+
 #define color(x) (char *)(&(x))
 #define allpoints(a) a.x, a.y, a.x2, a.y2
-
-#include "netutils.h"
 
 typedef struct
 {
@@ -19,9 +24,4 @@ void onClose();
 void onExit();
 void onRedraw(void);
 
-void sock_onCreate(void* sockdata);
-void sock_onConnected(void* sockdata);
-void sock_onDataRead(void* sockdata);
-void sock_onClose(void* sockdata);
-void sock_onRemoteClose(void* sockdata);
-void sock_onError(void* sockdata, SOCK_ERROR err);
+#endif

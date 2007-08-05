@@ -1,5 +1,12 @@
-#ifndef _NETUTILS_H_
-#define _NETUTILS_H_
+/*
+  Проект SieGet Downloader
+                          */
+
+//socketapi.h
+//Высокоуровневый интерфейс обработки сокетов
+
+#ifndef _SOCKETAPI_H_
+#define _SOCKETAPI_H_
 
 typedef enum
 {
@@ -31,6 +38,7 @@ typedef struct
   socket_handle_func onClose;
   socket_handle_func onRemoteClose;
   socket_error_handle_func onError;
+  void *data; //Необязательное поле, нужно чтобы всякие доп.данные хранить
 } SOCKDATAHANDLER;
 
 void SocketConnect(SOCKDATAHANDLER *sock, int ip, short port);

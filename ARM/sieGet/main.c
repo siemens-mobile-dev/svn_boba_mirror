@@ -1,34 +1,44 @@
+/*
+  Проект SieGet Downloader
+                          */
+
 #include "..\inc\swilib.h"
 
 #include "main.h"
+#include "socket.h"
+#include "inet.h"
 
-const char req[] = "GET /wiki/HTTP HTTP/1.1\n"
-                   "Host: ru.wikipedia.org\n"
-                   "User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\n"
-                   "Connection: close\n\n";
+const char req[] = "HEAD / HTTP/1.1\r\n"
+                   "Host: www.r0.ru\r\n"
+                   "User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
+                   "Connection: close\r\n\r\n";
 
 extern RECT Canvas;
-
-int nrecv = 0;
-
-SOCKDATAHANDLER mysock =
-{
-  -1,
-  SOCK_UNDEF,
-  sock_onCreate,
-  sock_onDataRead,
-  sock_onConnected,
-  sock_onClose,
-  sock_onRemoteClose,
-  sock_onError
-};
+extern void UpdateCSMName(char *new_name);
 
 //------------------------------
 
-RGBA MAIN_BG = {0, 0, 0, 100};
+RGBA MAIN_BG =   {  0,   0,   0, 100};
 RGBA MAIN_TEXT = {255, 255, 255, 100};
 
 //-----------------------------
+
+int state = 0;
+char *buf;
+int bufsize;
+
+void RecvProc(int res, void *data, int size)
+{
+  if (res)
+  {
+    state = 1;
+    buf = data;
+    bufsize = size;
+  }
+  else
+    state = -1;
+  REDRAW();
+}
 
 void RenderString(RECT *rc, char *str, int font, int t_attr, char *Pen, char *Brush)
 {
@@ -48,12 +58,13 @@ void onFocus()
 
 int onStart(char *exename, char *fname)
 {
+  UpdateCSMName("SieGET");
   return 0;
 }
 
 void onCreate()
 {
-  SUBPROC((void *)SocketCreate, &mysock);
+  GetDataByReq((char *)req, IP_ADDR(81,19,70,3), 80, RecvProc);
 }
 
 void onClose()
@@ -67,9 +78,23 @@ void onExit()
 void onRedraw(void)
 {
   DrawRectangle(allpoints(Canvas), 0, 0, color(MAIN_BG));
-  char str[200];
-  sprintf(str, "socket state=%d, received %d", mysock.state, nrecv);
+  char *str;
+  switch(state)
+  {
+  case 0:
+    str = "waiting for result...";
+    break;
+  case 1:
+    str = malloc(bufsize+1);
+    memcpy(str, buf, bufsize);
+    str[bufsize] = 0;
+    break;
+  case -1:
+    str = "error";
+    break;
+  }
   RenderString(&Canvas, str, FONT_SMALL, 0, color(MAIN_TEXT), 0);
+  if (state==1) mfree(str);
 }
 
 
@@ -80,10 +105,12 @@ int onKey(unsigned char keycode, int pressed)
   case LONG_PRESS:
   case KEY_DOWN:
     switch(keycode){
+    case RIGHT_SOFT:
+      return 1;
     case RED_BUTTON:
       return 1;
     case RIGHT_BUTTON:
-      return 1;
+      break;
     case LEFT_BUTTON:
       break;
     case ENTER_BUTTON:
@@ -102,48 +129,5 @@ int onKey(unsigned char keycode, int pressed)
   return 0;
 }
 
-//--------------------------------------
 
-void sock_onCreate(void* sockdata)
-{
-  SocketConnect(sockdata, IP_ADDR(66,230,200,100), 80);
-  REDRAW();
-}
-
-void sock_onConnected(void* sockdata)
-{
-  SocketSend(sockdata, (char *)req, strlen(req));
-  REDRAW();
-}
-
-void sock_onDataRead(void* sockdata)
-{
-  char buf[1025];
-  int size = recv(((SOCKDATAHANDLER *)sockdata)->sock, buf, 1024, 0);
-  nrecv+=size;
-  unsigned int ul;
-  int f=fopen("4:\\http.data",A_ReadWrite+A_Create+A_Append,P_READ+P_WRITE,&ul);
-  if (f!=-1)
-  {
-    fwrite(f,buf,size,&ul);;
-    fclose(f,&ul);
-  }
-  REDRAW();
-}
-
-void sock_onClose(void* sockdata)
-{
-  SocketUnReg(sockdata);
-}
-
-void sock_onRemoteClose(void* sockdata)
-{
-  SocketClose(sockdata);
-  REDRAW();
-}
-
-void sock_onError(void* sockdata, SOCK_ERROR err)
-{
-
-}
 
