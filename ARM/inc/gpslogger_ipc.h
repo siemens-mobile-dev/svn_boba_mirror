@@ -4,6 +4,7 @@
 //IPC const for GPSLogger interface system
   #define IPC_GPSL_NAME "GPSLogger"
   #define IPC_GPSL_UPD_TMO 1
+  #define IPC_GPSL_REFRESH 2
 
 typedef struct
 {
