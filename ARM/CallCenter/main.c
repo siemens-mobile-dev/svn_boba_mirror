@@ -1009,7 +1009,7 @@ int strcmp_nocase(const char *s1,const char *s2)
 static void DrawMyProgress(int y, int cur, int max, const char *color)
 {
   WSHDR *ws=AllocWS(32);
-  int s=cur*(ScreenW()-5)/max;
+  int s=((long long)cur)*(ScreenW()-5)/max;
   DrawRectangle(1,y,ScreenW()-2,y+6,0,"\xFF\xFF\xFF\xFF","\0\0\0\0");
   DrawRectangle(2,y+1,s+2,y+5,0,color,color);
   wsprintf(ws,"%u.%02u/%u.%02u",cur/100,cur%100,max/100,max%100);
