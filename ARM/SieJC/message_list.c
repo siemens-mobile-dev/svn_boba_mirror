@@ -64,27 +64,6 @@ int Terminate=0;
 // Test edit dialog
 //---------------------------------------------------------------------------
 int edmessage_id;
-void menu_enter(USR_MENU_ITEM *item)
-{
-  if (item->type==0)
-  {
-    switch(item->cur_item)
-    {
-    case 0:
-      wsprintf(item->ws,"%t","Закрыть диалог");
-      break;
-    }
-  }
-  if (item->type==1)
-  {
-    switch(item->cur_item)
-    {
-    case 0:
-      GeneralFunc_flag1(edmessage_id, 1);
-      break;
-    }
-  }   
-}
 
 EDITCONTROL ec_message;
 GUI *ed_message_gui;
@@ -113,17 +92,6 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
   }
 #endif
 
-#ifdef NEWSGOLD
-  if (msg->gbsmsg->msg==KEY_DOWN)
-  {
-    if (msg->gbsmsg->submess==ENTER_BUTTON)
-    {
-      EDIT_OpenOptionMenuWithUserItems(gui,menu_enter,gui,1); 
-      return (-1);      
-    }
-  }
-#endif  
-  
   return(0); //Do standart keys
 
 }
@@ -1032,7 +1000,11 @@ void DispTemplatesMenu()
 }
 
 //================================== Меню выбора ========================================
+#ifdef NEWSGOLD
+#define SEL_MANU_ITEMS_NUM 4
+#else
 #define SEL_MANU_ITEMS_NUM 3
+#endif
 
 HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)"Выбор...",LGP_NULL};
 
@@ -1043,6 +1015,9 @@ static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
   "Команды",
   "Шаблоны сообщений",
   "Смайлы"
+#ifdef NEWSGOLD
+  , "Закрыть диалог"  
+#endif
 };
 
 SOFTKEY_DESC sel_menu_sk[]=
@@ -1079,9 +1054,16 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-        Mode = GetCurMenuItem(data);
-        DispTemplatesMenu();    
-      
+    Mode = GetCurMenuItem(data);
+    #ifdef NEWSGOLD
+      if (Mode==3)
+      {
+        GeneralFunc_flag1(edmessage_id, 1);
+        return(1);
+      }
+    #endif    
+    
+    DispTemplatesMenu();    
     GeneralFunc_flag1(Select_Menu_ID,1);
   }
   return(0);
