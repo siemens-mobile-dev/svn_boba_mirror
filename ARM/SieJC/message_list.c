@@ -816,7 +816,7 @@ void Display_Message_List(TRESOURCE* ContEx)
 
 //=================================== Команды ===========================================
 
-int Commands_Menu_ID;
+int Templates_Menu_ID;
 int Select_Menu_ID;
 
 int Mode;
@@ -825,9 +825,9 @@ int Mode;
 //2 - Смайлы
 
 char **commands_lines; //Массив указателей на строки
-int cmd_num=0;
+int tmpl_num=0;
 
-void FreeCommands(void)
+void FreeTemplates(void)
 {
   if (commands_lines) mfree(commands_lines);
   commands_lines=NULL;
@@ -835,8 +835,9 @@ void FreeCommands(void)
 
 extern const char COMMANDS_PATH[];
 extern const char MESSAGES_PATH[];
+extern const char SMILES_PATH[];
 
-int LoadCommands(void)
+int LoadTemplates(void)
 {
   FSTATS stat;
   char fn[256];
@@ -847,7 +848,7 @@ int LoadCommands(void)
   char *p;
   char *pp;
   int c;
-  FreeCommands();
+  FreeTemplates();
   
   switch (Mode)
   {
@@ -858,9 +859,10 @@ int LoadCommands(void)
       strcpy(fn,MESSAGES_PATH);
     break;
     case 2:
+      strcpy(fn,SMILES_PATH);
     break;    
   }
-  //strcpy(fn,COMMANDS_PATH);
+
   if (GetFileStats(fn,&stat,&ul)==-1) return 0;
   if ((fsize=stat.size)<=0) return 0;
   if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return 0;
@@ -895,7 +897,7 @@ int LoadCommands(void)
 
 
 char clm_hdr_text[48];
-void UpdateCommandsMenu_header(void)
+void UpdateTemplatesMenu_header(void)
 {
   switch (Mode)
   {
@@ -911,9 +913,9 @@ void UpdateCommandsMenu_header(void)
   }
 }
 
-HEADER_DESC cmd_menuhdr={0,0,131,21,NULL,(int)clm_hdr_text,LGP_NULL};
+HEADER_DESC tmpl_menuhdr={0,0,131,21,NULL,(int)clm_hdr_text,LGP_NULL};
 
-int cmd_menusoftkeys[]={0,1,2};
+int tmpl_menusoftkeys[]={0,1,2};
 
 void SetCmdToEditMessage(char *command)
 {
@@ -924,10 +926,7 @@ void SetCmdToEditMessage(char *command)
   int pos=EDIT_GetCursorPos(data);
   WSHDR *ws_me = AllocWS(ec.pWS->wsbody[0]+strlen(command));
   //utf8_2ws(ws_me, command, strlen(command));
-  
 
-  
-  
   switch (Mode)
   {
     case 0:
@@ -955,23 +954,23 @@ void SetCmdToEditMessage(char *command)
     break;
   } 
   FreeWS(ws_me);
-  FreeCommands();
-  GeneralFunc_flag1(Commands_Menu_ID,1);
+  FreeTemplates();
+  GeneralFunc_flag1(Templates_Menu_ID,1);
 }
 
-SOFTKEY_DESC cmd_menu_sk[]=
+SOFTKEY_DESC tmpl_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Выбор"},
   {0x0001,0x0000,(int)"Отмена"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB cmd_menu_skt=
+SOFTKEYSTAB tmpl_menu_skt=
 {
-  cmd_menu_sk,3
+  tmpl_menu_sk,3
 };
 
-void cmd_menuitemhandler(void *data, int curitem, void *unk)
+void tmpl_menuitemhandler(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
@@ -982,7 +981,7 @@ void cmd_menuitemhandler(void *data, int curitem, void *unk)
   SetMenuItemText(data, item, ws, curitem);
 }
 
-void cmd_menu_ghook(void *data, int cmd)
+void tmpl_menu_ghook(void *data, int cmd)
 {
   if (cmd==0x0A)
   {
@@ -990,54 +989,50 @@ void cmd_menu_ghook(void *data, int cmd)
   }
 }
 
-static int cmd_menu_keyhook(void *data, GUI_MSG *msg)
+static int tmpl_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    if (cmd_num) SetCmdToEditMessage(commands_lines[GetCurMenuItem(data)]);
+    if (tmpl_num) SetCmdToEditMessage(commands_lines[GetCurMenuItem(data)]);
        else
          {
-           FreeCommands();
-           GeneralFunc_flag1(Commands_Menu_ID,1);           
+           FreeTemplates();
+           GeneralFunc_flag1(Templates_Menu_ID,1);           
          }
   }
   
   if (msg->keys==0x01)
   {
-    FreeCommands();
+    FreeTemplates();
     GeneralFunc_flag1(Select_Menu_ID,1);
   }  
   return(0);
 }
 
-static const MENU_DESC cmd_menu=
+static const MENU_DESC tmpl_menu=
 {
-  0,cmd_menu_keyhook,cmd_menu_ghook,NULL,
-  cmd_menusoftkeys,
-  &cmd_menu_skt,
+  0,tmpl_menu_keyhook,tmpl_menu_ghook,NULL,
+  tmpl_menusoftkeys,
+  &tmpl_menu_skt,
   8,
-  cmd_menuitemhandler,
+  tmpl_menuitemhandler,
   NULL, //menuitems,
   NULL, //menuprocs,
   0
 };
 
-HEADER_DESC cmd_menuhdr;
+HEADER_DESC tmpl_menuhdr;
 
-void DispCommandsMenu()
+void DispTemplatesMenu()
 {
-  UpdateCommandsMenu_header();
-  cmd_num=LoadCommands();
-  patch_header(&cmd_menuhdr);
-  Commands_Menu_ID = CreateMenu(0,0,&cmd_menu,&cmd_menuhdr,0,cmd_num,0,0);
+  UpdateTemplatesMenu_header();
+  tmpl_num=LoadTemplates();
+  patch_header(&tmpl_menuhdr);
+  Templates_Menu_ID = CreateMenu(0,0,&tmpl_menu,&tmpl_menuhdr,0,tmpl_num,0,0);
 }
 
 //================================== Меню выбора ========================================
-/*#ifdef NEWSGOLD
-  #define SEL_MANU_ITEMS_NUM 4
-#else*/
-  #define SEL_MANU_ITEMS_NUM 3
-/*#endif*/
+#define SEL_MANU_ITEMS_NUM 3
 
 HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)"Выбор...",LGP_NULL};
 
@@ -1048,9 +1043,6 @@ static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
   "Команды",
   "Шаблоны сообщений",
   "Смайлы"
-  /*#ifdef NEWSGOLD
-  , "Закрыть диалог"  
-  #endif*/
 };
 
 SOFTKEY_DESC sel_menu_sk[]=
@@ -1062,7 +1054,7 @@ SOFTKEY_DESC sel_menu_sk[]=
 
 SOFTKEYSTAB sel_menu_skt=
 {
-  cmd_menu_sk,3
+  tmpl_menu_sk,3
 };
 
 void sel_menuitemhandler(void *data, int curitem, void *unk)
@@ -1087,33 +1079,11 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    /*#ifdef NEWSGOLD
-    switch (GetCurMenuItem(data))
-    {
-    case 0: case 1: case 2:
-      {
         Mode = GetCurMenuItem(data);
-        DispCommandsMenu();
-      }
-    break;
-    case 3:
-      {
-        GeneralFunc_flag1(edmessage_id,1);
-      }
-    break;
-    }
-    #else*/
-        Mode = GetCurMenuItem(data);
-        DispCommandsMenu();    
-    /*#endif*/
+        DispTemplatesMenu();    
       
     GeneralFunc_flag1(Select_Menu_ID,1);
   }
-  
-  /*if (msg->keys==0x01)
-  {
-    GeneralFunc_flag1(Select_Menu_ID,1);
-  }  */
   return(0);
 }
 
