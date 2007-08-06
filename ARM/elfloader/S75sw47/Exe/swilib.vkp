@@ -8,6 +8,9 @@
 ;Functions Library
 ;(c) кто попало ;)
 /*
+06.08.07:
++ 0108: 0xA0DF3693   ;  42: IsScreenSaver
+
 26.07.07: 
 Исправил наконец-то, сколько просил - ложили все ;)
 0520: 0xA097723F	;0xA0977231   ; 148: extern int ShowMSG(int flag, int lgp_id)
@@ -125,7 +128,7 @@
 
 0100: 0xA028B719   ;  40: GetVibraStatus
 0104: 0xA08FC087   ;  41: GetProvider
-;108:              ;  42: int IsScreenSaver()
+0108: 0xA0DF3693   ;  42: IsScreenSaver
 010C: 0xA0903FE3   ;  43: int IsUnlocked(void)
 ;110:              ;  44: TempLightOn
 0114: 0xA006F241   ;  45: GetWavLen
