@@ -366,5 +366,10 @@
 0878: 0xA0978467 ; 21E: __thumb void FocusGUI(int id);
 087C: 0xA0978477 ; 21F: __thumb void UnfocusGUI(void);
 
+0894: 0xA0279E48 ; 225: __arm int PlayMelody_ChangeVolume(int handle,int volume);
+0898: 0xA027A8B8 ; 226: __arm int PlayMelody_StopPlayback(int handle);
+089C: 0xA027A958 ; 227: __arm int PlayMelody_PausePlayback(int handle);
+08A0: 0xA027A988 ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
+
 #pragma disable old_equal_ff
 +0
