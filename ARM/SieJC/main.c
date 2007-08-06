@@ -16,6 +16,7 @@
 #include "roster_icons.h"
 #include "mainmenu.h"
 #include "serial_dbg.h"
+#include "../inc/xtask_ipc.h"
 /*
 (c) Kibab
 (r) Rst7, MasterMind, AD, Borman99
@@ -50,6 +51,10 @@ const char OS[] = "SGOLD_ELF-Platform";
 #define SEND_TIMER
 #endif
 
+//IPC
+const char ipc_my_name[]="SieJC";
+const char ipc_xtask_name[]=IPC_XTASK_NAME;
+IPC_REQ gipc;
 
 extern const int Default_Sounds_State;
 int Is_Sounds_Enabled;
@@ -990,6 +995,25 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         CList_MoveCursorUp();
         break;
       }
+    case '#':
+      {
+        gipc.name_to=ipc_xtask_name;
+        gipc.name_from=ipc_my_name;
+        gipc.data=0;
+        GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
+        if (IsUnlocked())
+        {
+          KbdLock();
+        }
+      return(-1);
+    }    
+    case '*':
+      {
+        gipc.name_to=ipc_xtask_name;
+        gipc.name_from=ipc_my_name;
+        gipc.data=0;
+        GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
+      }    
     }
   }
   if (msg->gbsmsg->msg==KEY_DOWN)
