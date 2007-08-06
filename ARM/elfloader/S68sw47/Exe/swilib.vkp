@@ -1,5 +1,5 @@
-;ELFpack v2.3 (C)2007 by Rst7/CBSIE, BoBa, Kren
-;Release 20.07.2007
+;ELFpack v2.3UAFIX (C)2007 by Rst7/CBSIE, BoBa, Kren
+;Release 26.07.2007
 ;S68v47
 
 +0074000
@@ -579,6 +579,12 @@
 0874: 0xA07D93FD   ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type);
 0878: 0xA07FDAF3   ; 21E: __thumb void FocusGUI(int id);
 087C: 0xA07FDB03   ; 21F: __thumb void UnfocusGUI(void);
+0884: 0xA0291EC4   ; 221: __arm SetCpuClockLow(2)
+0888: 0xA0291EAC   ; 222: __arm SetCpuClockTempHi(2)
+0894: 0xA02466F4   ; 225: __arm int PlayMelody_ChangeVolume(int handle,int volume);
+0898: 0xA0247164   ; 226: __arm int PlayMelody_StopPlayback(int handle);
+089C: 0xA0247204   ; 227: __arm int PlayMelody_PausePlayback(int handle);
+08A0: 0xA0247234   ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 
 
 #pragma disable old_equal_ff
