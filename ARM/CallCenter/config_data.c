@@ -59,6 +59,13 @@ __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
 
   __root const CFG_HDR cfghdr13={CFG_COLOR,"Cash Progressbar 4",0,0};
   __root const char COLOR_CASHPB4[4]={0xFF,0xFF,0x00,0x32};
+  
+  __root const CFG_HDR cfghdr14={CFG_COLOR,"Font Color",0,0};
+  __root const char COLOR_TEXTPB[4]={0xFF,0xFF,0xFF,0x64};
+  
+  __root const CFG_HDR cfghdr15={CFG_UINT,"Font Size",0,100};
+  __root const unsigned int TEXT_FONTSZ=FONT_NUMERIC_XSMALL;
+  
  __root const CFG_HDR cfghdr_m13={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_m11={CFG_LEVEL,"",0,0};
 

@@ -30,6 +30,8 @@ extern const char COLOR_CASHPB1[4];
 extern const char COLOR_CASHPB2[4];
 extern const char COLOR_CASHPB3[4];
 extern const char COLOR_CASHPB4[4];
+extern const char COLOR_TEXTPB[4];
+extern const unsigned int TEXT_FONTSZ;
 
 const char *progress_colors[MAX_CASH_SIZE]=
 {
@@ -1006,14 +1008,25 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-static void DrawMyProgress(int y, int cur, int max, const char *color)
+const char white[4]={0xFF,0xFF,0xFF,0x64};
+const char transparent[4]={0,0,0,0};
+static void DrawMyProgress(int y, int n)
 {
+  int start_y, end_y, font_size,scr_w,fill, cur, max;
   WSHDR *ws=AllocWS(32);
-  int s=((long long)cur)*(ScreenW()-5)/max;
-  DrawRectangle(1,y,ScreenW()-2,y+6,0,"\xFF\xFF\xFF\xFF","\0\0\0\0");
-  DrawRectangle(2,y+1,s+2,y+5,0,color,color);
+  scr_w=ScreenW();
+  cur=CurrentCASH[n];
+  max=MaxCASH[n];
+  fill=((long long)cur)*(scr_w-5)/max;
+  font_size=GetFontYSIZE(TEXT_FONTSZ)+1;
+  start_y=y+n*font_size;
+  end_y=y+(n+1)*font_size-1;
+  
+  DrawCanvas(BuildCanvas(), 1, start_y, scr_w-2, end_y, 1);
+  DrawRectangle(1,start_y,scr_w-2,end_y,0,white,transparent);
+  DrawRectangle(2,start_y+1,fill+2,end_y-1,0,progress_colors[n],progress_colors[n]);
   wsprintf(ws,"%u.%02u/%u.%02u",cur/100,cur%100,max/100,max%100);
-  DrawString(ws,3,y+1,ScreenW()-3,y+1+GetFontYSIZE(FONT_NUMERIC_XSMALL),FONT_NUMERIC_XSMALL,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  DrawString(ws,3,start_y+1,scr_w-4,end_y-1,TEXT_FONTSZ,TEXT_ALIGNMIDDLE,COLOR_TEXTPB,transparent);
   FreeWS(ws);
 }
 
@@ -1094,16 +1107,11 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     if (igui) //И он существует
     {
       extern int CASH_SIZE;               //by BoBa 4.07.07
-      void *canvasdata = BuildCanvas();
-      DrawCanvas(canvasdata, 1, IDLE_Y, 130, IDLE_Y+8*CASH_SIZE-1, 1);
+
       int n=0; //Номер      
       while(n<CASH_SIZE)
       {
-        DrawMyProgress(IDLE_Y+n*8,CurrentCASH[n],MaxCASH[n],progress_colors[n]);
-//       DrawMyProgress(95+0*8,CurrentCASH[1],MaxCASH[1],"\xFF\x00\x00\x64");
-//       DrawMyProgress(95+1*8,CurrentCASH[1],MaxCASH[1],"\x00\xFF\x00\x64");
-//       DrawMyProgress(95+2*8,CurrentCASH[2],MaxCASH[2],"\x00\xFF\xFF\x64");
-//       DrawMyProgress(95+3*8,CurrentCASH[3],MaxCASH[3],"\xFF\xFF\x00\x64");
+        DrawMyProgress(IDLE_Y,n);
         n++;
       }
     }
