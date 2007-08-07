@@ -3093,10 +3093,16 @@ void my_ed_redraw(void *data)
     ed_struct=EDIT_GetUserPointer(edchat_gui);
     if (ed_struct)
     {
+#ifndef	NEWSGOLD
       int icon, width;
       icon=*(S_ICONS+GetIconIndex(ed_struct->ed_contact));
       ((HEADER_DESC *)&edchat_hdr)->rc.x2=ScreenW()-1-(width=GetImgWidth(icon));
       DrawImg(ScreenW()-1-width,1,icon);
+#else
+      DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
+		       GetPaletteAdrByColorIndex(0),
+		       GetPaletteAdrByColorIndex(EDIT_IsBusy(edchat_gui)?3:4));
+#endif
     }
   }  
 }
@@ -3122,10 +3128,14 @@ void edchat_ghook(GUI *data, int cmd)
 //    edgui_data=data;
     EDIT_SetFocus(data,ed_struct->ed_answer);
 
-#ifdef NEWSGOLD
-#else
+//#ifdef NEWSGOLD
+//#else
     static void *methods[16];
+#ifdef NEWSGOLD
+    void **m=GetDataOfItemByID(data,2);
+#else
     void **m=GetDataOfItemByID(data,4);
+#endif
     if (m)
     {
       if (m[1])
@@ -3136,7 +3146,7 @@ void edchat_ghook(GUI *data, int cmd)
         m[1]=methods;
       }      
     }
-#endif
+//#endif
   }
   if (cmd==3)
   {
