@@ -29,6 +29,16 @@ const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 
 int maincsm_id;
+int maingui_id;
+
+void SMART_REDRAW(void)
+{
+  int f;
+  LockSched();
+  f=IsGuiOnTop(maingui_id);
+  UnlockSched();
+  if (f) REDRAW();
+}
 
 //По 10 секунд
 #define ACTIVE_TIME 360
@@ -1248,7 +1258,7 @@ void create_connect(void)
   {
     is_gprs_online=0;
     strcpy(logmsg,LG_GRWAITFORGPRS);
-    REDRAW();
+    SMART_REDRAW();
     return;
   }
   DNR_ID=0;
@@ -1258,11 +1268,11 @@ void create_connect(void)
   {
     sa.ip=ip;
     strcpy(logmsg,"Connect by IP!");
-    REDRAW();
+    SMART_REDRAW();
     goto L_CONNECT;
   }  
   strcpy(logmsg,LG_GRSENDDNR);
-  REDRAW();
+  SMART_REDRAW();
   err=async_gethostbyname(NATICQ_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
   if (err)
   {
@@ -1276,7 +1286,7 @@ void create_connect(void)
     else
     {
       snprintf(logmsg,255,LG_GRDNRERROR,err);
-      REDRAW();
+      SMART_REDRAW();
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
       return;
     }
@@ -1286,7 +1296,7 @@ void create_connect(void)
     if (p_res[3])
     {
       strcpy(logmsg,LG_GRDNROK);
-      REDRAW();
+      SMART_REDRAW();
       DNR_TRIES=0;
       sa.ip=p_res[3][0][0];
     L_CONNECT:
@@ -1301,7 +1311,7 @@ void create_connect(void)
 	  connect_state=1;
 	  TOTALRECEIVED=0;
 	  TOTALSENDED=0;
-	  REDRAW();
+	  SMART_REDRAW();
 	}
 	else
 	{
@@ -1398,7 +1408,7 @@ void SendAnswer(int dummy, TPKT *p)
     if (i>0x400) i=0x400;
     j=send(sock,(void *)sendq_p,i,0);
     snprintf(logmsg,255,"send res %d",j);
-    REDRAW();
+    SMART_REDRAW();
     if (j<0)
     {
       j=*socklasterr();
@@ -1504,7 +1514,7 @@ void get_answer(void)
 //        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
         snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
         connect_state=3;
-        REDRAW();
+        SMART_REDRAW();
         break;
       case T_XTEXT_ACK:
       case T_GROUPID:
@@ -1526,7 +1536,7 @@ void get_answer(void)
         break;
       case T_ERROR:
         snprintf(logmsg,255,LG_GRERROR,RXbuf.data);
-        REDRAW();
+        SMART_REDRAW();
         break;
       case T_RECVMSG:
         j=i+sizeof(PKT)+1;
@@ -1545,7 +1555,7 @@ void get_answer(void)
         snprintf(logmsg,255,LG_GRRECVMSG,RXbuf.pkt.uin,RXbuf.data);
 	SendMSGACK(TOTALRECEIVED);
         GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-        REDRAW();
+        SMART_REDRAW();
 	Play(sndMsg);
         break;
       case T_SSLRESP:
@@ -1584,7 +1594,7 @@ void get_answer(void)
   }
   RXstate=i;
   //  GBS_StartTimerProc(&tmr_dorecv,3000,dorecv);
-  //  REDRAW();
+  //  SMART_REDRAW();
 }
 
 void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int IDforACK)
@@ -1862,6 +1872,21 @@ ProcessPacket(TPKT *p)
 	Play(sndSrvMsg);
       }
     }
+    if (edchat_id)
+    {
+      void *data=FindGUIbyId(edchat_id,NULL);
+      {
+	EDCHAT_STRUCT *ed_struct;
+	ed_struct=EDIT_GetUserPointer(data);
+	if (ed_struct) 
+	{
+	  if (ed_struct->ed_contact==t)
+	  {
+	    DirectRedrawGUI_ID(edchat_id);
+	  }
+	}
+      }
+    }
     break;
   case T_RECVMSG:
     t=FindContactByUin(p->pkt.uin);
@@ -1919,7 +1944,10 @@ ProcessPacket(TPKT *p)
 	      time_to_stop_t9=3;
 	    }
 	    else
+	    {
 	      AddMsgToChat(data);
+	      DirectRedrawGUI_ID(edchat_id);
+	    }
 	  }
 	}
       }
@@ -2148,7 +2176,7 @@ void maincsm_oncreate(CSM_RAM *data)
   main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   csm->csm.state=0;
   csm->csm.unk1=0;
-  csm->gui_id=CreateGUI(main_gui);
+  maingui_id=csm->gui_id=CreateGUI(main_gui);
   ews=AllocWS(16384);
   msg_buf=malloc(16384);
   //  MutexCreate(&contactlist_mtx);
@@ -2262,12 +2290,12 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  case IPC_SMILE_PROCESSED:
 	    //Только собственные смайлы ;)
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextSmile);
-	    REDRAW();
+	    SMART_REDRAW();
 	    break;
 	  case IPC_XSTATUSIMG_PROCESSED:
 	    //Только собственные иксстатусы ;)
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextXStatImg);
-	    REDRAW();
+	    SMART_REDRAW();
 	    break;
 	  case IPC_TENSECONDS:
 	    //Только свое сообщение
@@ -2429,7 +2457,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  SENDMSGCOUNT=0; //Начинаем отсчет
 	  if (!FindGroupByID(0)) AddGroup(0,LG_GROUPNOTINLIST);
 	  if (!FindContactByUin(UIN)) AddContact(UIN, LG_CLLOOPBACK);
-	  REDRAW();
+	  SMART_REDRAW();
 	}
 	else
 	{
@@ -2441,7 +2469,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	{
 	  //Если посылали send
 	  SUBPROC((void *)get_answer);
-	  //REDRAW();
+	  //SMART_REDRAW();
 	}
 	else
 	{
@@ -2458,7 +2486,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	{
 	  //Досылаем очередь
 	  snprintf(logmsg,255,"ENIP_BUFFER_FREE");
-	  REDRAW();
+	  SMART_REDRAW();
 	  SUBPROC((void *)SendAnswer,0,0);
 	}
 	break;
@@ -2491,7 +2519,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	{
 	  snprintf(logmsg,255,"Disconnected, %d bytes not sended!",sendq_l);
 	}
-	REDRAW();
+	SMART_REDRAW();
 	SUBPROC((void *)ClearSendQ);
 	GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
 	break;
@@ -3093,15 +3121,18 @@ void my_ed_redraw(void *data)
     ed_struct=EDIT_GetUserPointer(edchat_gui);
     if (ed_struct)
     {
-#ifndef	NEWSGOLD
       int icon, width;
+#ifndef	NEWSGOLD
       icon=*(S_ICONS+GetIconIndex(ed_struct->ed_contact));
       ((HEADER_DESC *)&edchat_hdr)->rc.x2=ScreenW()-1-(width=GetImgWidth(icon));
       DrawImg(ScreenW()-1-width,1,icon);
 #else
-      DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
+      icon=*(S_ICONS+GetIconIndex(ed_struct->ed_contact));
+      width=GetImgWidth(icon);
+      DrawImg(2,((HeaderH()-width)>>1)+YDISP,icon);
+/*      DrawRoundedFrame(ScreenW()-8,YDISP,ScreenW()-1,YDISP+7,0,0,0,
 		       GetPaletteAdrByColorIndex(0),
-		       GetPaletteAdrByColorIndex(EDIT_IsBusy(edchat_gui)?3:4));
+		       GetPaletteAdrByColorIndex(EDIT_IsBusy(edchat_gui)?3:4));*/
 #endif
     }
   }  
@@ -3246,7 +3277,8 @@ void CreateEditChat(CLIST *t)
   int edchat_toitem=0;
   
   *((int *)(&edchat_hdr.lgp_id))=(int)t->name;
-  *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+GetIconIndex(t);
+//  *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+GetIconIndex(t);
+  *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+IS_NULLICON;
   
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
