@@ -6,8 +6,8 @@ extern const int say_levels_up;
 extern const int say_levels_down;
 extern const unsigned int begin_from;
 
-extern const unsigned int from_h;
-extern const unsigned int to_h;
+extern const TTime TimeFrom;
+extern const TTime TimeTo;
 extern const unsigned int volume;
 
 extern const int warn_temp;

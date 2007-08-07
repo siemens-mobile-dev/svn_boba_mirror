@@ -156,11 +156,13 @@ void SayTemp(void)
 
 void Check(void)
 {
-  TDate date;
-  TTime time;
+  TDate CurDate;
+  TTime CurTime;
   
-  GetDateTime(&date, &time);
-  if ((time.hour>=from_h)&&(time.hour<to_h)&&(!IsCalling()))
+  GetDateTime(&CurDate, &CurTime);
+   if (((CurTime.hour*60+CurTime.min)<=(TimeTo.hour*60+TimeTo.min))&&
+         ((CurTime.hour*60+CurTime.min)>=(TimeFrom.hour*60+TimeFrom.min))&&
+           (!IsCalling()))
     {
       unsigned int state, cap_akku;
       

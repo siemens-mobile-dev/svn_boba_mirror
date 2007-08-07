@@ -1,4 +1,5 @@
 #include "..\inc\cfg_items.h"
+#include "..\inc\swilib.h"
 
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
@@ -57,11 +58,11 @@ __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"",0,0};
 //---------------------------------------------------------------------------------------
 __root const CFG_HDR cfghdr_m31={CFG_LEVEL,"Настройки времени работы",1,0};
 
-__root const CFG_HDR cfghdr10={CFG_UINT,"Озвучивать с",0,23};
-__root const unsigned int from_h=8;
+__root const CFG_HDR cfghdr10={CFG_TIME,"Начиная с",0,0};
+__root const TTime TimeFrom={8,0};
 
-__root const CFG_HDR cfghdr11={CFG_UINT,"до, часов",0,23};
-__root const unsigned int to_h=22;
+__root const CFG_HDR cfghdr11={CFG_TIME,"Заканчивая",0,0};
+__root const TTime TimeTo={22,0};
 
 __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"",0,0};
 //---------------------------------------------------------------------------------------
