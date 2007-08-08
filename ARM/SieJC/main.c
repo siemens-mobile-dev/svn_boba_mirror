@@ -144,7 +144,17 @@ void patch_input(INPUTDIA_DESC* inp)
   inp->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 //===============================================================================================
+extern int Message_gui_ID;
+int maingui_id;
 
+void SMART_REDRAW(void)
+{
+  int f;
+  LockSched();
+  f=IsGuiOnTop(maingui_id)||IsGuiOnTop(Message_gui_ID);
+  UnlockSched();
+  if (f) REDRAW();
+}
 
 //===================================================================
 extern const unsigned int sndVolume;
@@ -249,7 +259,7 @@ void create_connect(void)
   if(!IS_IP)
   {
     snprintf(logmsg,255,"Send DNR...");
-    REDRAW();
+    SMART_REDRAW();
     *socklasterr()=0;
     int err=async_gethostbyname(JABBER_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
     if (err)
@@ -264,7 +274,7 @@ void create_connect(void)
      else
      {
        snprintf(logmsg,255,"DNR ERROR %d!",err);
-       REDRAW();
+       SMART_REDRAW();
        GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
        return;
      }
@@ -274,7 +284,7 @@ void create_connect(void)
      if(p_res[3])
      {
         snprintf(logmsg,255,"DNR Ok, connecting...");
-        REDRAW();
+        SMART_REDRAW();
         DNR_TRIES=0;
         sa.ip=p_res[3][0][0];
         can_connect = 1;
@@ -294,7 +304,7 @@ void create_connect(void)
       snprintf(logmsg,255,"Using IP address...");
       can_connect = 1;
       sa.ip = str2ip(JABBER_HOST);
-      REDRAW();
+      SMART_REDRAW();
   }
 
 
@@ -308,7 +318,7 @@ void create_connect(void)
 	if (connect(sock,&sa,sizeof(sa))!=-1)
 	{
           connect_state=1;
-	  REDRAW();
+	  SMART_REDRAW();
 	}
 	else
 	{
@@ -635,7 +645,7 @@ void Analyze_Stream_Features(XMLNode *nodeEx)
       Ch_Node = Ch_Node->next;
     }
   }
-  REDRAW();
+  SMART_REDRAW();
 }
 
 
@@ -728,7 +738,7 @@ void Process_Decoded_XML(XMLNode* node)
     if(!strcmp(nodeEx->name,"stream:error"))
     {
       connect_state = 0;
-      REDRAW();
+      SMART_REDRAW();
       Jabber_state = JS_ERROR;
       char err[]="Ошибка XML-потока";
       MsgBoxError(1,(int)err);
@@ -789,7 +799,7 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
     mfree(xmlbuf->xml_buffer);
     mfree(xmlbuf);
 #ifdef NEWSGOLD
-    REDRAW();
+    SMART_REDRAW();
 #else
 #endif
 }
@@ -1034,7 +1044,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
           {
             //ActiveContact->IsVisible = ActiveContact->IsVisible==1?0:1;
             CList_ToggleVisibilityForGroup(ActiveContact->group);
-            REDRAW();
+            SMART_REDRAW();
           }
         }
         break;
@@ -1153,7 +1163,7 @@ int method8(void){return(0);}
 int method9(void){return(0);}
 
 const void * const gui_methods[11]={
-  (void *)onRedraw,	//Redraw
+  (void *)onRedraw,	//SMART_REDRAW
   (void *)onCreate,	//Create
   (void *)onClose,	//Close
   (void *)onFocus,	//Focus
@@ -1180,7 +1190,7 @@ void maincsm_oncreate(CSM_RAM *data)
   main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   csm->csm.state=0;
   csm->csm.unk1=0;
-  csm->gui_id=CreateGUI(main_gui);
+  maingui_id=csm->gui_id=CreateGUI(main_gui);
   DNR_TRIES=3;
   InitGroupsList();
 
@@ -1286,10 +1296,12 @@ char mypic[128];
   }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
-    if ((int)msg->data0==csm->gui_id)
+    int id;
+    if ((id=((int)msg->data0))==csm->gui_id)
     {
       csm->csm.state=-3;
     }
+    if (id==Message_gui_ID) Message_gui_ID=0;
   }
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
@@ -1324,7 +1336,7 @@ char mypic[128];
         {
           //Соединение установлено, посылаем пакет Welcome
           SUBPROC((void*)Send_Welcome_Packet);
-          REDRAW();
+          SMART_REDRAW();
         }
         else
         {
@@ -1381,7 +1393,7 @@ char mypic[128];
         Jabber_state = JS_NOT_CONNECTED;
         sock=-1;
         Vibrate(4);
-        REDRAW();
+        SMART_REDRAW();
         //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
         break;
       }
