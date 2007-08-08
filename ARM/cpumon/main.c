@@ -1,12 +1,6 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
-#include "strlib.h"
 
-#ifdef NEWSGOLD
-#define myMSG 0xDEAD
-#else
-#define myMSG
-#endif
 
 #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
 
@@ -15,29 +9,23 @@
 #define MIN_UPTIME 1
 #define START_DELAY (20 * 216)
 
+#define MAX(a,b) (a)>(b)?(a):(b)
+
 #define CLOCK_26     26
 #define CLOCK_52     52
 #define CLOCK_104    104
+#define CLOCK_208    208
 
-#define RGB16(R, G, B) ((B & 0x1F) | ((G & 0x3F) << 5) | ((R & 0x1F) << 11))
+#define RGB16(R, G, B) (((B>>3)&0x1F) | ((G<<3)&0x7E0) | ((R<<8)&0xF800))
 
-extern const unsigned int cfgX;
-extern const unsigned int cfgY;
-
-extern const unsigned int cfgW;
-extern const unsigned int cfgH;
+extern const RECT position;
 
 extern const int cfgShowIn;
 extern const int cfgStTxt;
 extern const unsigned int cfgUpTime;
 
-extern const unsigned int cfgLoadR52;
-extern const unsigned int cfgLoadG52;
-extern const unsigned int cfgLoadB52;
-
-extern const unsigned int cfgLoadR104;
-extern const unsigned int cfgLoadG104;
-extern const unsigned int cfgLoadB104;
+extern const char cfgLoad104[4];
+extern const char cfgLoad52[4];
 
 unsigned int uiUpdateTime, uiWidth, uiHeight;
 
@@ -57,25 +45,42 @@ GBSTMR mytmr;
 
 WSHDR *ws1;
 
-unsigned char hhh;
-char cop;
+unsigned int hhh;
+int cop;
+
+
+const char ipc_my_name[]="CpuMon";
+#define IPC_UPDATE_STAT 1
+
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
 
 void RereadSettings()
 {
-    InitConfig();
-
-  //========================
-  uiUpdateTime = (262 * cfgUpTime) / 10;
-  uiWidth  = (cfgW < MIN_WIDTH)  ? MIN_WIDTH  : cfgW;
-  uiHeight = (cfgH < MIN_HEIGHT) ? MIN_HEIGHT : cfgH;
-
+  InitConfig();
+  
+ //========================
+  uiUpdateTime = MAX(((262*cfgUpTime)/ 10),MIN_UPTIME);
+  uiWidth  = MAX(position.x2-position.x,MIN_WIDTH);
+  uiHeight = MAX(position.y2-position.y,MIN_HEIGHT);
+  
   img1_bmp = malloc(2 * uiWidth * uiHeight);
   zeromem(img1_bmp, 2 * uiWidth * uiHeight);
-
   img1.w = uiWidth;
   img1.h = uiHeight;
   img1.bpnum = 8;
-//  img1.zero = 0;
   img1.bitmap = (char*) img1_bmp;
 
   loads = malloc(uiWidth);
@@ -88,8 +93,11 @@ void RereadSettings()
 void FreeMem()
 {
   mfree(img1_bmp);
+  img1_bmp=0;
   mfree(loads);
+  loads=0;
   mfree(clocks);
+  clocks=0;
 }
 
 DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
@@ -102,9 +110,16 @@ DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
   DrawObject(&drwobj);
 }
 
+
+const IPC_REQ gipc={
+  ipc_my_name,
+  ipc_my_name,
+  NULL
+};
+
 void TimerProc(void)
 {
-  GBS_StartTimerProc(&mytmr, (uiUpdateTime > MIN_UPTIME) ? uiUpdateTime : MIN_UPTIME, TimerProc);
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
 }
 
 
@@ -113,11 +128,11 @@ unsigned int ClocksColour(unsigned int clock)
   switch (clock)
   {
   case CLOCK_26:
-    return (/*RGB16(cfgLoadR, cfgLoadG, cfgLoadB)*/ 0xE000);
   case CLOCK_52:
-    return (RGB16(cfgLoadR52, cfgLoadG52, cfgLoadB52));
+    return (RGB16(cfgLoad52[0],cfgLoad52[1],cfgLoad52[2]));
   case CLOCK_104:
-    return (RGB16(cfgLoadR104, cfgLoadG104, cfgLoadB104));
+  case CLOCK_208:
+    return (RGB16(cfgLoad104[0], cfgLoad104[1], cfgLoad104[2]));
   default:
     return (/*RGB16(0, 0, 0)*/ 0xFFFF);
   }
@@ -127,43 +142,53 @@ unsigned int ClocksColour(unsigned int clock)
 
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
+  int csm_result=0;
   unsigned char fShow;
 
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
-    extern const char *successed_config_filename;
-    if (stricmp((char*)successed_config_filename,(char *)msg->data0)==0)
+    if (strcmp_nocase((char*)successed_config_filename,(char *)msg->data0)==0)
     {
       ShowMSG(1,(int)"CPUMon config updated!");
       FreeMem();
       RereadSettings();
     }
   }
-  //Накапливаем значения
-  if (msg->msg == myMSG)
+  if (msg->msg==MSG_IPC)
   {
-    if (!getCpuUsedTime_if_ena())
+    IPC_REQ *ipc;
+    if ((ipc=(IPC_REQ*)msg->data0))
     {
-      StartCpuUsageCount();
-    }
-    loads[hhh]  = uiHeight * GetCPULoad() / 100;
-#ifdef ELKA
-    clocks[hhh]=104;
-#else
-    clocks[hhh] = GetCPUClock()/* / 26*/;
+      if (strcmp_nocase(ipc->name_to,ipc_my_name)==0)
+      {
+        switch (msg->submess)
+        {
+        case IPC_UPDATE_STAT:
+          if (ipc->name_from==ipc_my_name) 
+          {
+            //Накапливаем значения
+#ifdef NEWSGOLD
+            if (!getCpuUsedTime_if_ena())
+            {
+              StartCpuUsageCount();
+            }
 #endif
-    hhh++;
-    if (hhh >= uiWidth)
-    {
-      hhh = 0;
-      cop = 1;
+            loads[hhh]  = uiHeight * GetCPULoad() / 100;
+            clocks[hhh] = GetCPUClock()/* / 26*/;
+            hhh++;
+            if (hhh >= uiWidth)
+            {
+              hhh = 0;
+              cop = 1;
+            }
+            csm_result = 1;
+            GBS_StartTimerProc(&mytmr, uiUpdateTime, TimerProc);
+          }
+        }
+      }
     }
-    GBS_StartTimer(&mytmr,(uiUpdateTime > MIN_UPTIME) ? uiUpdateTime : MIN_UPTIME, myMSG,0,MMI_CEPID);
-    csm_result = 1;
   }
-  else
-    csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
+  if (!csm_result)  csm_result=old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
 
   switch (cfgShowIn)
   {
@@ -192,7 +217,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       {
         void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
-        DrawCanvas(canvasdata, cfgX, cfgY, cfgX + uiWidth, cfgY + uiHeight, 1);
+        DrawCanvas(canvasdata, position.x, position.y, position.x+uiWidth, position.y+uiHeight, 1);
         //рисуем нашу требуху
         int h = hhh;
         for(unsigned int x = 0; x < uiWidth; x++)
@@ -208,9 +233,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
           if (h >= uiWidth)
             h = 0;
         }
-        DrwImg((IMGHDR *)&img1, cfgX, cfgY, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
+        DrwImg((IMGHDR *)&img1, position.x, position.y, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
         if (!cop && cfgStTxt)
-          DrawString(ws1, 0, cfgY-(GetFontYSIZE(FONT_SMALL)+3), ScreenW()-1, ScreenH()-1, FONT_SMALL, 0x20,
+          DrawString(ws1, 0, position.y-(GetFontYSIZE(FONT_SMALL)+3), ScreenW()-1, ScreenH()-1, FONT_SMALL, 0x20,
                      GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
@@ -223,16 +248,13 @@ void MyIDLECSM_onClose(CSM_RAM *data)
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
   GBS_DelTimer(&mytmr);
-  mfree(loads);
-  mfree(clocks);
-  mfree(img1_bmp);
+  FreeMem();
   FreeWS(ws1);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 
 int main(void)
 {
-
   RereadSettings();
   LockSched();
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
@@ -245,6 +267,6 @@ int main(void)
   UnlockSched();
   ws1=AllocWS(100);
   wsprintf(ws1,"%t","CPUMon (C)BoBa,Rst7");
-  GBS_SendMessage(MMI_CEPID, myMSG);
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
   return 0;
 }
