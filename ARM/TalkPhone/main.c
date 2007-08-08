@@ -1,4 +1,5 @@
 #include "..\inc\swilib.h"
+#include "..\inc\playsound.h"
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 #include "TalkPhone.h"
@@ -354,11 +355,12 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
   }
   
   if (msg->msg==MSG_PLAYFILE_REPORT)
+  {
+    GBS_PSOUND_MSG *pmsg=(GBS_PSOUND_MSG *)msg;
+    if (pmsg->handler==PLAY_ID)
     {
-      if ((msg->submess>>16)==PLAY_ID) 
-      { 
-        if (((msg->submess&0xFFFF)==7)||((msg->submess&0xFFFF)==5))
-          {
+      if (pmsg->cmd==M_SAE_PLAYBACK_ERROR || pmsg->cmd==M_SAE_PLAYBACK_DONE)
+      {
             switch (NEXT_PLAY_FUNK)
               {
                 case 0:
@@ -384,12 +386,13 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
                 case 5:
                   SayMinVoice();
                 break;
-              }
-          }
+        }
       }
+    }
         else
-          PLAY_ID=0;
-    }  
+          PLAY_ID=0;    
+  }
+
   
   if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
     {
