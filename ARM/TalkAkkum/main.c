@@ -1,5 +1,6 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
+#include "..\inc\playsound.h"
 #include "conf_loader.h"
 #include "TalkAkkum.h"
 
@@ -373,29 +374,31 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
 
   if (msg->msg==MSG_PLAYFILE_REPORT)
+  {
+    GBS_PSOUND_MSG *pmsg=(GBS_PSOUND_MSG *)msg;
+    if (pmsg->handler==PLAY_ID)
     {
-      if ((msg->submess>>16)==PLAY_ID) 
-        if (((msg->submess&0xFFFF)==7)||((msg->submess&0xFFFF)==5)) //5 - файл отсутствует
-          {
-            switch (NEXT_PLAY_FUNK)
-              {
-                case 0:
-                  ENA_SAY_LEVELS=1;
-                break;
-  
-                case 1:
-                  ENA_SAY_LEVELS=0;
-                  SayLevel();
-                break;
-
-                case 2:
-                  ENA_SAY_LEVELS=0;
-                  SayPercent();
-                break;
-              }
-          }
-    }  
-  
+      if (pmsg->cmd==M_SAE_PLAYBACK_ERROR || pmsg->cmd==M_SAE_PLAYBACK_DONE)
+      {
+        switch (NEXT_PLAY_FUNK)
+        {
+        case 0:
+          ENA_SAY_LEVELS=1;
+          break;
+          
+        case 1:
+          ENA_SAY_LEVELS=0;
+          SayLevel();
+          break;
+          
+        case 2:
+          ENA_SAY_LEVELS=0;
+          SayPercent();
+          break;
+        }
+      }
+    }
+  }
   if ((IsGuiOnTop(idlegui_id))&&(show_icon)&&(!IsScreenSaver())) //Если IdleGui на самом верху
     {
       GUI *igui=GetTopGUI();
