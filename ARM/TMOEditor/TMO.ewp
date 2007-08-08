@@ -3085,7 +3085,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>E:\IARProj\TMOEditor\tmo.xcl</state>
+          <state>$PROJ_DIR$\tmo.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>

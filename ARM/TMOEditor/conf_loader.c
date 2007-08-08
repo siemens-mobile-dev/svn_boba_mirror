@@ -2,19 +2,9 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 
-// Вернуть путь к базе GPS
-extern const char minigps_dir[128];
-char *getMiniGPSPath(char *buffer)
-{
-  strcpy(buffer, minigps_dir);
-  return buffer;
-}
-
-
+const char *successed_config_filename="";
 
 #pragma segment="CONFIG_C"
-
-// Загрузить конфигурационный файл по пути fname (взято из XTask)
 int LoadConfigData(const char *fname)
 {
   int f;
@@ -22,25 +12,20 @@ int LoadConfigData(const char *fname)
   char *buf;
   int result=0;
   void *cfg;
+  unsigned int rlen, end;
 
-  extern const CFG_HDR cfghdr0; //first var in CONFIG
-  cfg=(void*)&cfghdr0;
+  cfg=(char *)__segment_begin("CONFIG_C");
 
-  unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
+  unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
 
   if (!(buf=malloc(len))) return -1;
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
-    if (fread(f,buf,len,&ul)==len)
-    {
-      memcpy(cfg,buf,len);
-      fclose(f,&ul);
-    }
-    else
-    {
-      fclose(f,&ul);
-      goto L_SAVENEWCFG;
-    }
+    rlen=fread(f,buf,len,&ul);
+    end=lseek(f,0,S_END,&ul,&ul);
+    fclose(f,&ul);
+    if (rlen!=end || rlen!=len)  goto L_SAVENEWCFG;
+    memcpy(cfg,buf,len);
   }
   else
   {
@@ -54,11 +39,10 @@ int LoadConfigData(const char *fname)
       result=-1;
   }
   mfree(buf);
+  if (result>=0) successed_config_filename=fname;
   return(result);
 }
 
-// На экспорт - надо вызвать в начале работы для загрузки конфигурации
-// Поиск конфиг-файла согласно стандарту
 void InitConfig()
 {
   if(LoadConfigData("4:\\ZBin\\etc\\TMO.bcfg")<0)
