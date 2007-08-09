@@ -399,7 +399,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
-  if ((IsGuiOnTop(idlegui_id))&&(show_icon)&&(!IsScreenSaver())) //Если IdleGui на самом верху
+  if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
     {
       GUI *igui=GetTopGUI();
       if (igui) //И он существует
