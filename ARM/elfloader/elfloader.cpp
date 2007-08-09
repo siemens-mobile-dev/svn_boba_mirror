@@ -803,8 +803,15 @@ __arm void ESI(WSHDR *ws, int dummy, char *s)
 __arm void ESI(char *s, WSHDR *ws)
 #endif
 {
-  CutWSTR(ws,0); 
-  ascii2ws(s,ws);
+  if (((unsigned int)s>>28)==0xA) //Только строки из области RAM/FLASH
+  {
+    CutWSTR(ws,0); 
+    ascii2ws(s,ws);
+  }
+  else
+  {
+    wsprintf(ws,"|%d|",s);
+  }
 }
 
 /*int toupper(int c)
