@@ -17,10 +17,11 @@ WSHDR *ws_nogui;
 
 CSM_RAM *under_idle;
 
+extern const int ACTIVE_KEY;
+extern const int ACTIVE_KEY_STYLE;
 extern const int RED_BUT_MODE;
 extern const int ENA_LONG_PRESS;
 extern const int ENA_LOCK;
-
 extern int my_csm_id;
 
 extern void show_csm(int csmid);
@@ -107,84 +108,118 @@ int my_keyhook(int submsg, int msg)
     }
   }
 #endif
-  
-#ifdef USE_ONE_KEY
-#ifdef ELKA
-  if (submsg!=POC_BUTTON) return(0);
-#else
-  if (submsg!=INTERNET_BUTTON) return(0);
-#endif
-  if (my_csm_id)
-  {
-    if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
+  if (ACTIVE_KEY_STYLE==3){
+    if (submsg!=ENTER_BUTTON) return(0);
+    if (my_csm_id)
     {
-      CloseCSM(my_csm_id);
+      if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
+      {
+        CloseCSM(my_csm_id);
+      }
+      return(0);
     }
-    if (msg==KEY_UP)
+    switch(msg)
     {
-      GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
+    case KEY_DOWN:
+      if (mode_enter==2)
+      {
+      GBS_SendMessage(MMI_CEPID,KEY_UP,ENTER_BUTTON);
+      return (0);
+      }
+      mode_enter=0;
+      return (2);
+    case KEY_UP:
+      if (mode_enter==0)
+      {
+        mode_enter=2;
+        GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
+        return (2);
+      }
+      if (mode_enter==2)
+      {
+        mode_enter=0;
+        return (0);
+      }
+      mode_enter=0;
+      return (2);      
+    case LONG_PRESS:
+      mode_enter=1;
+      if (IsUnlocked()||ENA_LOCK)
+      {
+        do_gui(0,0);
+      }
+      mode=0;
+      break;
     }
     return(2);
   }
-  switch(msg)
-  {
-  case KEY_DOWN:
-    break;
-  case KEY_UP:
-    if (IsUnlocked()||ENA_LOCK)
+    // * + # implementation
+  if ((ACTIVE_KEY_STYLE==2) && !(my_csm_id)){
+    if (msg==KEY_UP)
     {
-      do_gui(0,0);
-    }
-    break;
-  case LONG_PRESS:
-    break;
-  }
-  return(2);
-#else
-  if (submsg!=ENTER_BUTTON) return(0);
-  if (my_csm_id)
-  {
-    if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
-    {
-      CloseCSM(my_csm_id);
-    }
-    return(0);
-  }
-  switch(msg)
-  {
-  case KEY_DOWN:
-    if (mode_enter==2)
-    {
-      GBS_SendMessage(MMI_CEPID,KEY_UP,ENTER_BUTTON);
+      mode=0;
       return (0);
     }
-    mode_enter=0;
-    return (2);
-  case KEY_UP:
-    if (mode_enter==0)
+    if (msg==KEY_DOWN)
     {
-      mode_enter=2;
-      GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
-      return (2);
+      switch (submsg)
+      {
+      case '*':
+        mode=1;
+        return (0);
+      case '#':
+        if (mode==1)
+        {
+          if (IsUnlocked()||ENA_LOCK)
+            do_gui(0,0);
+          else mode=0;
+        }
+        else return (0);
+      }
     }
-    if (mode_enter==2)
-    {
-      mode_enter=0;
-      return (0);
-    }
-    mode_enter=0;
-    return (2);      
-  case LONG_PRESS:
-    mode_enter=1;
-    if (IsUnlocked()||ENA_LOCK)
-    {
-      do_gui(0,0);
-    }
-    mode=0;
-    break;
+  };
+  if (ACTIVE_KEY_STYLE-2<0){
+    if (submsg!=ACTIVE_KEY) return(0);
+    else{
+       if (my_csm_id)
+        {
+         if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
+         {
+           CloseCSM(my_csm_id);
+         }
+         if (msg==KEY_UP)
+         {
+           GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
+         }
+         return(2);
+       }
+     switch(msg){
+     case KEY_DOWN:
+       mode=0;
+       break;
+     case KEY_UP:
+       if ((mode==1)&&(ACTIVE_KEY_STYLE==1))
+         {
+           if (IsUnlocked()||ENA_LOCK){
+           do_gui(0,0);
+           return(2);
+         }
+         break;
+         }
+       if ((mode==0)&&(ACTIVE_KEY_STYLE==0))
+       {
+         if (IsUnlocked()||ENA_LOCK){
+         do_gui(0,0);
+         return(2);
+         }
+         }
+         break;
+     case LONG_PRESS:
+         mode=1;
+         if (ACTIVE_KEY_STYLE==1) return(2); // „то бы длинное нажатие работало при активном режиме - на короткое нажатие кнопки
+     }
   }
-  return(2);
-#endif
+  }
 }
 
 volatile int callhide_mode=0;
