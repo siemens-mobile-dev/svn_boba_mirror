@@ -220,6 +220,7 @@ int my_keyhook(int submsg, int msg)
      }
   }
   }
+  return(0);
 }
 
 volatile int callhide_mode=0;
