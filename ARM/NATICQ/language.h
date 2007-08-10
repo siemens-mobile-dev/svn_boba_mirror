@@ -326,6 +326,12 @@
 #define LG_STFFC    "Free For Chat"
 #define LG_STINVIS  "Invisible"
 
+#define LG_STDEPRESSION "Depression"
+#define LG_STEVIL "Evil"
+#define LG_STHOME "Home"
+#define LG_STLUNCH "Lunch"
+#define LG_STWORK "Work"
+
 //================================
 
 #define LG_MSGILLEGMSGCON "Illegal message ENIP_SOCK_CONNECTED!"
