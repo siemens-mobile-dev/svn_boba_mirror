@@ -1,22 +1,16 @@
+#include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 
 __root const CFG_HDR cfghdr0 = {CFG_CBOX, "Show in", 0, 3};
 __root const int cfgShowIn = 0;
 __root const CFG_CBOX_ITEM cfgcbox1[3] = {"Both", "Lock", "Unlock"};
 
-__root const CFG_HDR cfghdr1={CFG_COORDINATES,"Position",0,0};
-__root const unsigned int cfgX=2;
-__root const unsigned int cfgY=67;
+__root const CFG_HDR cfghdr1={CFG_RECT, "Position Rect", 0, 0};
+__root const RECT cfgRect = {2, 67, 22, 101};
 
 __root const CFG_HDR cfghdr1_1 = {CFG_CBOX, "Orientation", 0, 2};
 __root const int cfgOrient = 1;
 __root const CFG_CBOX_ITEM cfgcbox2[2] = {"Horizontal", "Vertical"};
-
-__root const CFG_HDR cfghdr2 = {CFG_UINT, "Width", 0, 132};
-__root const int cfgWidth = 20;
-
-__root const CFG_HDR cfghdr3 = {CFG_UINT, "Height", 0, 176};
-__root const int cfgHeight = 34;
 
 __root const CFG_HDR cfghdr4 = {CFG_UINT, "Interval", 0, 10};
 __root const int cfgInterval = 3;

@@ -5,13 +5,8 @@
 
 extern const int cfgShowIn;
 
-extern const unsigned int cfgX;
-extern const unsigned int cfgY;
-
+extern const RECT cfgRect;
 extern const int cfgOrient;
-
-extern const int cfgWidth;
-extern const int cfgHeight;
 
 extern const int cfgInterval;
 
@@ -21,6 +16,24 @@ extern const char cfg0FillCol[4];
 extern const char cfg4FillCol[4];
 
 CSM_DESC icsmd;
+
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c >= 'a') && (c <= 'z'))
+    c += 'A' - 'a';
+  return(c);
+}
+
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i = (c = toupper(*s1++)) - toupper(*s2++))) 
+    if (!c)
+      break;
+  return(i);
+}
 
 void UpdateConfig()
 {
@@ -33,6 +46,8 @@ void UpdateConfig()
 void IdleExecute(void *CanvasData)
 {
 	unsigned int AcrossDim, WorH1, intr, flex_free, flex_total;
+        unsigned int Width, Height;
+        
 	unsigned char ratio0, ratio4;
 	///////
 	if ((cfgShowIn == 1 && IsUnlocked()) || (cfgShowIn == 2 && !IsUnlocked()))
@@ -46,34 +61,37 @@ void IdleExecute(void *CanvasData)
 	flex_total = GetTotalFlexSpace(4, &intr) >> 10;
 	ratio4 = 100 * (flex_total - flex_free) / flex_total;
 	
-	DrawCanvas(CanvasData, cfgX, cfgY, cfgX + cfgWidth - 1, cfgY + cfgHeight - 1, 1);
+	DrawCanvas(CanvasData, cfgRect.x, cfgRect.y, cfgRect.x2, cfgRect.y2, 1);
 	
-	AcrossDim = cfgOrient ? cfgWidth : cfgHeight;
+        Width  = cfgRect.x2 - cfgRect.x;
+        Height = cfgRect.y2 - cfgRect.y;
+        
+	AcrossDim = cfgOrient ? Width : Height;
 	intr = (AcrossDim - cfgInterval) % 2 ? cfgInterval + 1 : cfgInterval;
 	WorH1 = (AcrossDim - intr) / 2;
 	
 	if (!cfgOrient)
 	{
-		DrawRectangle(cfgX, cfgY, cfgX + cfgWidth - 1, cfgY + WorH1 - 1,
+		DrawRectangle(cfgRect.x, cfgRect.y, cfgRect.x2, cfgRect.y + WorH1 - 1,
 					  0, cfgBorderCol, cfgBGCol);
-		DrawRectangle(cfgX, cfgY + WorH1 + intr, cfgX + cfgWidth - 1, cfgY + cfgHeight - 1,
+		DrawRectangle(cfgRect.x, cfgRect.y + WorH1 + intr, cfgRect.x2, cfgRect.y2,
 					  0, cfgBorderCol, cfgBGCol);
 		
-		DrawRectangle(cfgX, cfgY, cfgX + cfgWidth * ratio0 / 100 - 1, cfgY + WorH1 - 1,
+		DrawRectangle(cfgRect.x, cfgRect.y, cfgRect.x + Width * ratio0 / 100 - 1, cfgRect.y + WorH1 - 1,
 					  0, cfgBorderCol, cfg0FillCol);
-		DrawRectangle(cfgX, cfgY + WorH1 + intr, cfgX + cfgWidth * ratio4 / 100 - 1, cfgY + cfgHeight - 1,
+		DrawRectangle(cfgRect.x, cfgRect.y + WorH1 + intr, cfgRect.x + Width * ratio4 / 100 - 1, cfgRect.y + Height - 1,
 					  0, cfgBorderCol, cfg4FillCol);
 	}
 	else
 	{
-		DrawRectangle(cfgX, cfgY, cfgX + WorH1 - 1, cfgY + cfgHeight - 1,
+		DrawRectangle(cfgRect.x, cfgRect.y, cfgRect.x + WorH1 - 1, cfgRect.y2,
 					  0, cfgBorderCol, cfgBGCol);
-		DrawRectangle(cfgX + WorH1 + intr, cfgY, cfgX + cfgWidth - 1, cfgY + cfgHeight - 1,
+		DrawRectangle(cfgRect.x + WorH1 + intr, cfgRect.y, cfgRect.x2, cfgRect.y2,
 					  0, cfgBorderCol, cfgBGCol);
 		
-		DrawRectangle(cfgX, cfgY + cfgHeight * (100 - ratio0) / 100 - 1, cfgX + WorH1 - 1, cfgY + cfgHeight - 1,
+		DrawRectangle(cfgRect.x, cfgRect.y + Height * (100 - ratio0) / 100 - 1, cfgRect.x + WorH1 - 1, cfgRect.y2,
 					  0, cfgBorderCol, cfg0FillCol);
-		DrawRectangle(cfgX + WorH1 + intr, cfgY + cfgHeight * (100 - ratio4) / 100 - 1, cfgX + cfgWidth - 1, cfgY + cfgHeight - 1,
+		DrawRectangle(cfgRect.x + WorH1 + intr, cfgRect.y + Height * (100 - ratio4) / 100 - 1, cfgRect.x2, cfgRect.y2,
 					  0, cfgBorderCol, cfg4FillCol);
 	}
 }
@@ -95,17 +113,17 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 	if(msg->msg == MSG_RECONFIGURE_REQ) 
 	{
 		extern const char *successed_config_filename;
-		if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+		if (strcmp_nocase(successed_config_filename, (char *)msg->data0) ==0)
 		{
-			//ShowMSG(1,(int)"DiskMon config updated!");
+			ShowMSG(1, (int)"DiskMon config updated!");
 			UpdateConfig();
 		}		
 	}
-	csm_result = old_icsm_onMessage(data,msg);
+	csm_result = old_icsm_onMessage(data, msg);
 
 	if (IsGuiOnTop(idlegui_id))
 	{
-		GUI *igui=GetTopGUI();
+		GUI *igui = GetTopGUI();
 		if (igui)
 		{
 #ifdef ELKA
