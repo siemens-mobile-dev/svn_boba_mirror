@@ -43,7 +43,6 @@ const char *progress_colors[MAX_CASH_SIZE]=
 
 #define TMR_SECOND 216
 
-#define IMSI_DATA_BYTE_LEN  (9)
 
 #pragma inline
 static void patch_header(const HEADER_DESC* head)
@@ -186,6 +185,30 @@ static void FreeCLIST(void)
   }
 }
 
+int char16to8(int c)
+{
+  if (c<0x400) return (c);
+  c-=0x400;
+  if (c<16)
+  {
+    if (c==1) c=0;  //big_yo
+    else if (c==4) c=2;  //big_ye
+    else if (c==6) c=10; //big_i
+    else return (c);
+  }
+  else if (c>79)
+  {
+    if (c==0x51) c=16; //small_yo
+    else if (c==0x54) c=18; //small_ye
+    else if (c==0x56) c=11; //small_i
+    else if (c==0x57) c=23; //small_yi
+    else return (c);
+  }
+  else c+=8;
+  c+=168;
+  return (c);
+}
+
 //-----------------------------------------------------
 //Поиск подстроки в строке по методу Т9
 //-----------------------------------------------------
@@ -204,7 +227,7 @@ static int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
 
   //Таблица ключей для поиска текста
   static const char key[256]=
-    "11111111111111111111111111111111"   
+    "11111111111111111111111111111111"
       "10001**0***0000*012345678900***0"
 	"0222333444555666777788899991*110"
 	  "122233344455566677778889999111*1"
@@ -231,9 +254,7 @@ static int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
     else
     {
       //Преобразуем в код кнопки
-      if ((c>=0x410)&&(c<0x450)) c-=0x350;
-      if ((c==0x401)) c=0xA8;
-      if ((c==0x451)) c=0xB8;
+      c=char16to8(c);
       c&=0xFF;
       c=key[c];
       if (c==ss->wsbody[spos])
@@ -267,16 +288,20 @@ static int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
 }
 
 //сравнение длинных строк
-int wstrcmp(WSHDR *ws1, WSHDR *ws2)
+int wstrcmp_nocase(WSHDR *ws1, WSHDR *ws2)
 {
   int l1=wslen(ws1);
   int l2=wslen(ws2);
   int pos=1;
-  int c;
+  int cs, ds;
   while((pos<=l1)&&(pos<=l2))
   {
-    c=ws1->wsbody[pos]-ws2->wsbody[pos];
-    if (c) return c;
+    cs=char16to8(ws1->wsbody[pos]);
+    if (cs&0x40) cs&=0xDF;
+    ds=char16to8(ws2->wsbody[pos]);
+    if (ds&0x40) ds&=0xDF;
+    cs-=ds;
+    if (cs) return cs;
     pos++;
   }
   return(l1-l2);
@@ -494,7 +519,7 @@ static void ConstructList(void)
 		  if (t=b->next)
 		  {
 		    //Есть следующие
-		    if (wstrcmp(contact.name,t->name)<0)
+		    if (wstrcmp_nocase(contact.name,t->name)<0)
 		    {
 		      //Следующий больше вставляемого, втыкаем сдесь
 		      p->next=t;
@@ -826,6 +851,7 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   int r=0;
   int i=0;
   int n,d;
+  int set_menu=0;
   
   EDITCONTROL ec;
   CLIST *cl=(CLIST *)cltop;
@@ -857,6 +883,7 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     {
       if (cl->num[d])
       {
+        if (d==2) set_menu=n;
         ws_2str(cl->num[d],dstr[n],39);
         dstr_index[++n]=d;
       }
@@ -872,7 +899,7 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     if (n==0) goto L_OLDKEY; //Нет вообще телефонов
     //Количество номеров больше 1, рисуем меню
     patch_header((HEADER_DESC *)&gotomenu_HDR);
-    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,0,n,0,0);
+    CreateMenu(0,0,&gotomenu_STRUCT,&gotomenu_HDR,set_menu,n,0,0);
     return(0);
   }
   if ((key==UP_BUTTON)||(key==DOWN_BUTTON))

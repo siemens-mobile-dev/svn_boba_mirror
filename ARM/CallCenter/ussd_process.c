@@ -9,7 +9,6 @@ const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 
 int CASH_SIZE=0;
-#define IMSI_DATA_BYTE_LEN  (9)
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 char cashfname[128];
@@ -115,10 +114,9 @@ static int FindCash(const char *s)
   const char *pval;
   int c;
   int cc;
-  //do
   while(n<CASH_SIZE)
   {
-    if (!patterns[n]) break; //Больше паттернов нет
+    //if (!patterns[n]) break; //Больше паттернов нет
   L_RESTARTPAT:
     p=s; //Текущая позиция в строке
     s++;
@@ -226,10 +224,8 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
     while(len<ws->wsbody[0])
     {
       int c=ws->wsbody[len+1];
+      c=char16to8(c);
       if (c<32) c='?';
-      if ((c>=0x410)&&(c<0x450))
-	c-=0x350;
-      else if (c>=0x80) c='?';
       s[len++]=c;
     }
     i=FindCash(s);
