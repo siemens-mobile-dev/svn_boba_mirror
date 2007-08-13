@@ -1023,6 +1023,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         gipc.name_from=ipc_my_name;
         gipc.data=0;
         GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
+        Is_Vibra_Enabled=!Is_Vibra_Enabled;
       }    
     }
   }
