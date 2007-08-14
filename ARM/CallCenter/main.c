@@ -92,6 +92,7 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #endif
 
 char cur_imsi[IMSI_DATA_BYTE_LEN];
+static volatile int is_pos_changed=0;
 
 static GBSTMR hours_tmr;
 
@@ -524,6 +525,7 @@ static void ConstructList(void)
 		      //Следующий больше вставляемого, втыкаем сдесь
 		      p->next=t;
 		      b->next=p;
+                      if (is_pos_changed && n<=curpos) curpos++;  // Отсаемся на выбранной позиции
 		      break;
 		    }
 		    b=t; //Следующий
@@ -908,6 +910,7 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     msg->keys=0;
     if ((m==KEY_DOWN)||(m==LONG_PRESS))
     {
+      is_pos_changed=1;
       DisableScroll();
       if (key==UP_BUTTON)
       {
@@ -949,6 +952,7 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     {
       if (m==KEY_DOWN)
       {
+        is_pos_changed=0;
 	DisableScroll();
 	if (hook_state>=2) //Возможно изменение строки ввода, требуется поиск
 	{
