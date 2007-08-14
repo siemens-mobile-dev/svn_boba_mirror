@@ -25,6 +25,7 @@ extern const char COLOR_SELECTED[4];
 extern const char COLOR_SELECTED_BG[4];
 extern const char COLOR_SELECTED_BRD[4];
 extern const char COLOR_SEARCH_MARK[4];
+extern const char COLOR_SCROLLBAR[4];
 
 extern const char COLOR_CASHPB1[4];
 extern const char COLOR_CASHPB2[4];
@@ -604,34 +605,47 @@ static void DisableScroll(void)
   scroll_disp=0;
 }
 
+const char clBlack[4]={0,0,0,100};
 static void my_ed_redraw(void *data)
 {
   //  WSHDR *ews=(WSHDR*)e_ws;
   int i=curpos-2;
   int cp;
-  CLIST *cl=(CLIST *)cltop;
+  int total_n;
+  int right_border, down_border;
+  CLIST *p=(CLIST *)cltop;
+  CLIST *cl;
   old_ed_redraw(data);
   
   WSHDR *prws=AllocWS(256);
 
-  if (!cl) return;
-
-  if (!e_ws) return;
-
-  if (e_ws->wsbody[0]<MAX_ESTR_LEN) //Ее длина <MAX_ESTR_LEN
+  if (p && e_ws && e_ws->wsbody[0]<MAX_ESTR_LEN) //Ее длина <MAX_ESTR_LEN
   {
     int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(FONT_MEDIUM)+1)*5-5;
+    down_border=ScreenH()-SoftkeyH()-2;
 
-    DrawRectangle/*DrawRoundedFrame*/(1,y,ScreenW()-2,ScreenH()-SoftkeyH()-2,0/*,0,0*/,COLOR_MENU_BRD,COLOR_MENU_BK);
+    DrawRectangle/*DrawRoundedFrame*/(1,y,ScreenW()-2,down_border,0/*,0,0*/,COLOR_MENU_BRD,COLOR_MENU_BK);
 
     if (i<0) cp=curpos; else cp=2;
-    while(i>0)
+    cl=p;
+    total_n=0;
+    while(p)
     {
-      if (!cl) break;
-      cl=(CLIST *)(cl->next);
-      i--;
+      if (total_n==i) cl=p;
+      p=(CLIST *)(p->next);
+      total_n++;
     }
     i=0;
+    if (total_n>5 && COLOR_SCROLLBAR[3])  //Прорисуем скроллбар
+    {
+      int start_y, y_width;
+      right_border=ScreenW()-6;
+      start_y=(y+2)+curpos*((down_border-2)-(y+2))/total_n;
+      y_width=((down_border-2)-(y+2))/total_n;
+      DrawLine(right_border+2,y+2,right_border+2,down_border-2,0,clBlack);
+      DrawRectangle(right_border+1,start_y,right_border+3,start_y+y_width+1,0,COLOR_SCROLLBAR,COLOR_SCROLLBAR);
+    }
+    else right_border=ScreenW()-3;
     do
     {
       int dy=i*(GetFontYSIZE(FONT_MEDIUM)+1)+y;
@@ -640,16 +654,16 @@ static void my_ed_redraw(void *data)
       {
 	wstrcpy(prws,cl->name);
 	if (e_ws) CompareStrT9(prws,(WSHDR *)e_ws,1);
-	DrawString(prws,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(FONT_MEDIUM),FONT_MEDIUM,0x80,COLOR_NOTSELECTED,GetPaletteAdrByColorIndex(23));
+	DrawString(prws,3,dy+4,right_border-1,dy+3+GetFontYSIZE(FONT_MEDIUM),FONT_MEDIUM,0x80,COLOR_NOTSELECTED,GetPaletteAdrByColorIndex(23));
 	//DrawScrollString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(FONT_MEDIUM),1,FONT_MEDIUM,0x80,COLOR_NOTSELECTED,GetPaletteAdrByColorIndex(23));
       }
       else
       {
 	int icons_size=Get_WS_width(cl->icons,FONT_MEDIUM_BOLD);
 	{
-	  int i=Get_WS_width(cl->name,FONT_MEDIUM_BOLD);
-	  i-=(ScreenW()-7-icons_size);
-	  if (i<0)
+	  int d=Get_WS_width(cl->name,FONT_MEDIUM_BOLD);
+	  d-=(right_border-4-icons_size);
+	  if (d<0)
 	  {
 	    DisableScroll();
 	  }
@@ -659,12 +673,12 @@ static void my_ed_redraw(void *data)
 	    {
 	      GBS_StartTimerProc(&tmr_scroll,TMR_SECOND,scroll_timer_proc);
 	    }
-	    max_scroll_disp=i;
+	    max_scroll_disp=d;
 	  }
 	}
-	DrawRectangle/*DrawRoundedFrame*/(2,dy+2,ScreenW()-3,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0/*,0,0*/,COLOR_SELECTED_BRD,COLOR_SELECTED_BG);
-	DrawScrollString(cl->name,3,dy+4,ScreenW()-5-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
-	DrawString(cl->icons,ScreenW()-4-icons_size,dy+4,ScreenW()-5,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
+	DrawRectangle(2,dy+2,right_border,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0,COLOR_SELECTED_BRD,COLOR_SELECTED_BG);
+	DrawScrollString(cl->name,3,dy+4,right_border-2-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
+	DrawString(cl->icons,right_border-1-icons_size,dy+4,right_border-2,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
       }
       cl=(CLIST *)cl->next;
       i++;

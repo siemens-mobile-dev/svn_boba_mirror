@@ -19,7 +19,7 @@ __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
  __root const CFG_HDR cfghdr01={CFG_CHECKBOX,"Enable Cash Trace",0,0};
  __root const int ENA_CASHTRACE = 1;
  
- __root const CFG_HDR cfghdr022={CFG_CHECKBOX,"Enable AutoCash Trace",0,0};
+ __root const CFG_HDR cfghdr022={CFG_CHECKBOX,"Enable Op USSD Trace",0,0};
  __root const int ENA_AUTOCASHTRACE = 0; 
 
  __root const CFG_HDR cfghdr08={CFG_CHECKBOX,"Enable Cash Trace logging",0,0};
@@ -101,4 +101,7 @@ __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"Setup MegaDial",1,0};
 
   __root const CFG_HDR cfghdr6={CFG_COLOR,"Color Search mark",0,0};
   __root const char COLOR_SEARCH_MARK[4]={0xFF,0x0,0x0,0x64};
+  
+  __root const CFG_HDR cfghdr66={CFG_COLOR,"Color ScrollBar",0,0};
+  __root const char COLOR_SCROLLBAR[4]={0x0,0x0,0x0,0x64};  
 __root const CFG_HDR cfghdr_m21={CFG_LEVEL,"",0,0};

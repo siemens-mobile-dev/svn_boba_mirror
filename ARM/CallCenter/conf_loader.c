@@ -23,14 +23,8 @@ static int LoadConfigData(const char *fname)
     rlen=fread(f,buf,len,&ul);
     end=lseek(f,0,S_END,&ul,&ul);
     fclose(f,&ul);
-    if (rlen==end && rlen==len)
-    {
-      memcpy(cfg,buf,len);
-    }
-    else
-    {
-      goto L_SAVENEWCFG;
-    }
+    if (rlen!=end || rlen!=len)  goto L_SAVENEWCFG;
+    memcpy(cfg,buf,len);
   }
   else
   {
