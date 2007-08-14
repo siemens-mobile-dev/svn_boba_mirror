@@ -6,9 +6,11 @@ extern char path[128];
 #ifdef NEWSGOLD
 #define CBOX_CHECKED 0xE116
 #define CBOX_UNCHECKED 0xE117
+#define DEFAULT_DISK "4"
 #else
 #define CBOX_CHECKED 0xE10B
 #define CBOX_UNCHECKED 0xE10C
+#define DEFAULT_DISK "0"
 #endif
 
 #define mode_disabled  0
@@ -27,7 +29,7 @@ static void patch_header(const HEADER_DESC* head)
 //==============================================================================
 
 
-char path[128]="4:\\zbin\\daemons";
+char path[128]=DEFAULT_DISK ":\\zbin\\daemons\\";
 
 typedef struct
 {
@@ -325,10 +327,11 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 
 int main()
 {
+  /*
   unsigned int err;
   if(!isdir(path,&err),&err)path[0]='0';
   strcat(path,"\\");
-  
+  */
   ews=AllocWS(128);
   
   daemons=malloc(sizeof(TDaemon)*64);
