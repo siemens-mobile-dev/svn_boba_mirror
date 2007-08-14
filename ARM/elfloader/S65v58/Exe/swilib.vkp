@@ -569,7 +569,7 @@ Library 03.08.2007
 0814: 0xA114F3D5   ; 205: SetProp2Square_v1
 0818: 0xA166A869   ; 206: void srand(unsigned int seed)
 081C: 0xA1172F4F   ; 207: DrawScrollString(WSHDR *WSHDR, int x1, int y1, int x2, int y2, int xdisp, int font, int text_attribute, const char *Pen,const char *Brush)
-0820: 0xA0AB1DB5   ; 208: int Get_WS_width(*ws, font)
+0820: 0xA11552D7   ; 208: int Get_WS_width(*ws, font)
 0824: 0xA1140011   ; 209: void *FindGUIbyId(int id, CSM_RAM **csm)
 0828: 0xA1179631   ; 20A: void EDIT_SetDate(void *gui,int n,TDate *dd)
 082C: 0xA1179645   ; 20B: void EDIT_SetTime(void *gui,int n,TTime *tt)
