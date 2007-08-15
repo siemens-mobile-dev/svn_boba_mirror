@@ -73,8 +73,8 @@ void RereadSettings()
   
  //========================
   uiUpdateTime = MAX(((262*cfgUpTime)/ 10),MIN_UPTIME);
-  uiWidth  = MAX(position.x2-position.x,MIN_WIDTH);
-  uiHeight = MAX(position.y2-position.y,MIN_HEIGHT);
+  uiWidth  = MAX(position.x2-position.x+1,MIN_WIDTH);
+  uiHeight = MAX(position.y2-position.y+1,MIN_HEIGHT);
   
   img1_bmp = malloc(2 * uiWidth * uiHeight);
   zeromem(img1_bmp, 2 * uiWidth * uiHeight);
@@ -217,7 +217,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       {
         void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
-        DrawCanvas(canvasdata, position.x, position.y, position.x+uiWidth, position.y+uiHeight, 1);
+        DrawCanvas(canvasdata, position.x, position.y, position.x2, position.y2, 1);
         //рисуем нашу требуху
         int h = hhh;
         for(unsigned int x = 0; x < uiWidth; x++)
