@@ -1,10 +1,12 @@
+#pragma pack(1)
 typedef struct
 {
   void *next;
   unsigned int key; //Для быстрой проверки
   unsigned int mask;
-  char text[16];
+  char text[1];
 }STXT_SMILES;
+#pragma pack()
 
 typedef struct
 {

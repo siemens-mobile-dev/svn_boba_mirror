@@ -129,7 +129,6 @@ void ProcessNextSmile(void)
 {  
   int c;
   char fn[128];
-  char name[16];
   DYNPNGICONLIST *dp;
   S_SMILES *si;
   STXT_SMILES *st;
@@ -192,17 +191,14 @@ void ProcessNextSmile(void)
     {
       buf++;
       int i=0;
-      while (buf[i]!=0&&buf [i]!=','&&buf [i]!=10&&buf[i]!=13)
-      {
-        if (i<(sizeof(name)-1)) name[i]=buf[i];
-        i++;
-      }
-      name[i]=0;
-      st=malloc(sizeof(STXT_SMILES));
-      strcpy(st->text,name);
+      while (buf[i]!=0&&buf [i]!=','&&buf [i]!=10&&buf[i]!=13)  i++;
+      st=malloc(sizeof(STXT_SMILES)+i);
+      strncpy(st->text,buf,i);
+      st->text[i]=0;
+      
       st->next=NULL;
-      st->key=*((unsigned long *)name);
-      st->mask=~(0xFFFFFFFFUL<<(8*strlen(name)));
+      st->key=*((unsigned long *)st->text);
+      st->mask=~(0xFFFFFFFFUL<<(8*i));
       st->key&=st->mask;
       if (si->botlines)
       {
