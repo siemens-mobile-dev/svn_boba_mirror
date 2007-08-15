@@ -203,15 +203,15 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	vd->parse_state=OMS_TAGI_STAGE3;
 	goto L_STAGE3_WANTED;
       case 'J':
-	_rshort(vd); //width
-	_rshort(vd); //height
-	AddPictureItem(vd,NULL);
+	vd->iw=_rshort(vd); //width
+	vd->ih=_rshort(vd); //height
+	AddPictureItemFrame(vd,vd->iw,vd->ih);
 	break;
       case 'K':
 	_rshort(vd); //width
 	_rshort(vd); //height
-	_rshort(vd); //index
-	AddPictureItem(vd,NULL);
+	i=_rshort(vd); //index
+	AddPictureItemIndex(vd,i);
 	break;
       case 'X':
 	vd->iw=_rbyte(vd); //width
@@ -323,14 +323,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGI_STAGE3:
       //i=vd->oms_wanted-vd->oms_pos; //Size of picture
-      AddPictureItem(vd,NULL);
+      AddPictureItem(vd,(void *)(vd->oms+vd->oms_pos));
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
     case OMS_TAGX_STAGE3:
       //i=vd->oms_wanted-vd->oms_pos; //Size of picture
-      AddPictureItem(vd,NULL);
+      AddPictureItemRGBA(vd,(void *)(vd->oms+vd->oms_pos),vd->iw,vd->ih);
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;

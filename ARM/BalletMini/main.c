@@ -6,6 +6,7 @@
 #include "local_ipc.h"
 #include "display_utils.h"
 
+
 extern void kill_data(void *p, void (*func_p)(void *));
 
 const int minus11=-11;
@@ -49,6 +50,23 @@ void FreeRawText(VIEWDATA *vd)
   vd->rawtext_size=0;
 }
 
+void FreeDynImgList(VIEWDATA *vd)
+{
+  OMS_DYNPNGLIST *dpl=vd->dynpng_list;
+  vd->dynpng_list=NULL;
+  while(dpl)
+  {
+    OMS_DYNPNGLIST *p=dpl;
+    dpl=dpl->dp.next;
+    if (p->dp.img)
+    {
+      mfree(p->dp.img->bitmap);
+      mfree(p->dp.img);
+    }
+    mfree(p);
+  }
+}
+
 void FreeViewData(VIEWDATA *vd)
 {
   if (vd->ws) FreeWS(vd->ws);
@@ -58,6 +76,7 @@ void FreeViewData(VIEWDATA *vd)
   mfree(vd->oms);
   mfree(vd->I_cache);
   mfree(vd->S_cache);
+  FreeDynImgList(vd); 
   mfree(vd);
 }
 
@@ -192,12 +211,16 @@ static void method2(VIEW_GUI *data,void (*mfree_adr)(void *))
 
 static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
 {
+  PNGTOP_DESC *pltop=PNG_TOP();
+  pltop->dyn_pltop=(DYNPNGICONLIST *)(data->vd->dynpng_list);
   DisableIDLETMR();
   data->gui.state=2;
 }
 
 static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
 {
+  PNGTOP_DESC *pltop=PNG_TOP();
+  pltop->dyn_pltop=NULL;
   if (data->gui.state!=2)
     return;
   data->gui.state=1;

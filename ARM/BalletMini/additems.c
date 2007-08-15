@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "view.h"
 #include "additems.h"
+#include "readpng.h"
 
 
 #ifdef NEWSGOLD
@@ -115,10 +116,112 @@ void AddPItem(VIEWDATA *vd)
   AddTextItem(vd,"\n ",2);
 }
 
+void AddPictureItemIndex(VIEWDATA *vd, int index)
+{
+  int w_char=0xE115;
+  OMS_DYNPNGLIST *dpl=vd->dynpng_list;
+  while(dpl)
+  {
+    if (dpl->index==index) 
+    {
+      w_char=dpl->w_char;
+      break;
+    }
+    dpl=dpl->dp.next;
+  }
+  RawInsertChar(vd,w_char);  
+}
+
+OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
+{
+  int wchar, i, index;
+  OMS_DYNPNGLIST *dpl;
+  OMS_DYNPNGLIST *odp=malloc(sizeof(OMS_DYNPNGLIST));
+  odp->dp.next=0;
+  odp->dp.img=img;
+  dpl=vd->dynpng_list;
+  if (!dpl)
+  {
+    odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_BITMAP));
+    odp->w_char=wchar;
+    if (is_index)  odp->index=0;
+    else odp->index=-1;
+    LockSched();
+    vd->dynpng_list=odp;
+    UnlockSched();
+    RefreshGUI();
+  }
+  else
+  {
+    i=0;
+    index=0;
+    OMS_DYNPNGLIST *d;
+    do
+    {
+      d=dpl;
+      if (dpl->index!=-1 && is_index) index++;
+      i++;
+    }
+    while((dpl=dpl->dp.next));
+    odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_BITMAP+i));
+    odp->w_char=wchar;
+    if (is_index)  odp->index=index;
+    else odp->index=-1;
+    LockSched();
+    d->dp.next=odp;
+    UnlockSched();
+  }
+  return odp;  
+}
+
 void AddPictureItem(VIEWDATA *vd, void *picture)
 {
+  int wchar=0xE115;
+  IMGHDR *img;
+  OMS_DYNPNGLIST *dpl;
+  if (picture)
+  {
+    img=read_pngimg(picture);
+    if (img)
+    {
+      dpl=AddToDPngQueue(vd, img, 1);
+      wchar=dpl->w_char;
+    }
+  }
   //Prepare Wide String
-  RawInsertChar(vd,0xE115);
+  RawInsertChar(vd,wchar);
+}
+
+void AddPictureItemRGBA(VIEWDATA *vd, void *picture, int width, int height)
+{
+  int wchar=0xE115;
+  IMGHDR *img;
+  OMS_DYNPNGLIST *dpl;
+  if (picture)
+  {
+    img=ConvertRGBAToRGB8(picture,width,height);
+    if (img)
+    {
+      dpl=AddToDPngQueue(vd, img, 0);
+      wchar=dpl->w_char;
+    }
+  }
+  //Prepare Wide String
+  RawInsertChar(vd,wchar);  
+}
+
+void AddPictureItemFrame(VIEWDATA *vd,int width,int height)
+{
+  int wchar=0xE115;
+  IMGHDR *img;
+  OMS_DYNPNGLIST *dpl;
+  img=CreateFrame(width,height,GetPaletteAdrByColorIndex(3));
+  if (img)
+  {
+    dpl=AddToDPngQueue(vd, img, 0);
+    wchar=dpl->w_char;
+  }
+  RawInsertChar(vd,wchar);  
 }
 
 void AddRadioButton(VIEWDATA *vd)

@@ -1,6 +1,16 @@
 #ifndef _VIEW_H_
   #define _VIEW_H_
 
+#include "../inc/pnglist.h"
+
+
+typedef struct
+{
+  DYNPNGICONLIST dp;
+  int w_char;
+  int index;
+}OMS_DYNPNGLIST;
+
 #pragma pack(push)
 #pragma pack(1)
 typedef struct
@@ -80,6 +90,8 @@ typedef struct
   unsigned int tag_o_count;
   //
   unsigned int ref_mode;
+  //
+  OMS_DYNPNGLIST *dynpng_list;
 }VIEWDATA;
 
 #endif

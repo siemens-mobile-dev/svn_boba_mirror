@@ -12,7 +12,13 @@ void AddBrItem(VIEWDATA *vd);
 
 void AddPItem(VIEWDATA *vd);
 
+void AddPictureItemIndex(VIEWDATA *vd, int index);
+
 void AddPictureItem(VIEWDATA *d, void *picture);
+
+void AddPictureItemRGBA(VIEWDATA *vd, void *picture, int width, int height);
+
+void AddPictureItemFrame(VIEWDATA *vd,int width,int height);
 
 void AddRadioButton(VIEWDATA *vd);
 
