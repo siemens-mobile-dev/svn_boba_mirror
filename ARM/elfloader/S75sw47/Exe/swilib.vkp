@@ -8,6 +8,16 @@
 ;Functions Library
 ;(c) кто попало ;)
 /*
+15.08.07:
++ 0314: 0xA02FE44B   ;  C5: char IsIdleUiOnTop()
++ 0884: 0xA01D12E0   ; 221: SetCpuClockLow(2)
++ 0888: 0xA01D12C8   ; 222: SetCpuClockTempHi(2)
++ 0894: 0xA027BDCC   ; 225: int PlayMelody_ChangeVolume(int handle,int volume)
++ 0898: 0xA027C83C   ; 226: int PlayMelody_StopPlayback(int handle)
++ 089C: 0xA027C8DC   ; 227: int PlayMelody_PausePlayback(int handle)
++ 08A0: 0xA027C90C   ; 228: int PlayMelody_ResumePlayBack(int handle)
+
+
 06.08.07:
 + 0108: 0xA0DF3693   ;  42: IsScreenSaver
 
@@ -267,7 +277,7 @@
 ;308:              ;  C2: GetAllPatchesByInject
 030C: 0xA006F091   ;  C3: ProcessFiles
 0310: 0xA0060C01   ;  C4: GetBuffer
-;314:              ;  C5:
+0314: 0xA02FE44B   ;  C5: char IsIdleUiOnTop()
 0318: 0xA01A8614   ;  C6: char GetAkkuCapacity()
 ;31C:              ;  C7: SWI_C7
 0320: 0xA8D036D6   ;  C8: unsigned short *RamCap()
@@ -637,10 +647,17 @@
 0874: 0xA0953659 ; 21D: __thumb int GSMTXT_Decode(WSHDR *dest,void *pkt,int len,int encoding_type, void *(*malloc_adr)(int), void (*mfree_adr)(void));
 0878: 0xA0977DEB ; 21E: __thumb void FocusGUI(int id);
 087C: 0xA0977DFB ; 21F: __thumb void UnfocusGUI(void);
+;880:              ; 220:
+0884: 0xA01D12E0   ; 221: SetCpuClockLow(2)
+0888: 0xA01D12C8   ; 222: SetCpuClockTempHi(2)
+0894: 0xA027BDCC   ; 225: int PlayMelody_ChangeVolume(int handle,int volume)
+0898: 0xA027C83C   ; 226: int PlayMelody_StopPlayback(int handle)
+089C: 0xA027C8DC   ; 227: int PlayMelody_PausePlayback(int handle)
+08A0: 0xA027C90C   ; 228: int PlayMelody_ResumePlayBack(int handle)
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------
 
 
 
-;locale=Ukrainian_Ukraine.1251
+;locale=Russian_Russia.1251
