@@ -390,8 +390,8 @@ static void UpdateCSMname(void)
 char *globalstr(const char *s)
 {
   int l=strlen(s);
-  char *d=malloc(l);
-  memcpy(d,s,l+1);
+  char *d=malloc(l+1);
+  memcpy(d,s,l);
   return d;
 }
 
