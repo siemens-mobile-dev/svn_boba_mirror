@@ -175,6 +175,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
     {
       lc=vd->lines_cache+vl;
       dc=0;
+      //ws->wsbody[++dc]=lc->bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL;
+      //ws->wsbody[++dc]=lc->underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE;
       if ((vl+1)<vd->lines_cache_size)
       {
 	len=(lc[1]).pos-(lc[0]).pos;
@@ -234,12 +236,23 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	sc++;
 	len--;
       }
-//      ws->wsbody[++dc]=lc->bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL;
-//      ws->wsbody[++dc]=lc->underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE;
       ws->wsbody[0]=dc;
-      y2=lc->pixheight+ypos-1;
+      y2=lc->pixheight+ypos;
       if (do_draw)
       {
+/*	if (do_draw==2)
+	{
+	  //Dump rawtext
+	  unsigned int ul;
+	  int f;
+	  char fn[128];
+	  sprintf(fn,"4:\\dump%d.raw",vl);
+	  if ((f=fopen(fn,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+	  {
+	    fwrite(f,ws->wsbody,ws->wsbody[0]*2,&ul);
+	    fclose(f,&ul);
+	  }
+	}*/
 	def_ink[0]=lc->ink1>>8;
 	def_ink[1]=lc->ink1;
 	def_ink[2]=lc->ink2>>8;
@@ -250,12 +263,12 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	def_paper[3]=lc->paper2;
 	DrawRectangle(0,ypos,scr_w,y2,
 		      RECT_FILL_WITH_PEN,def_paper,def_paper);
-	DrawString(ws,0,ypos,scr_w,lc->pixheight+ypos-1,
+	DrawString(ws,0,ypos,scr_w,y2,
 		   lc->bold?FONT_SMALL_BOLD:FONT_SMALL,TEXT_NOFORMAT
 		     +(lc->underline?TEXT_UNDERLINE:0)
 		       ,def_ink,def_paper);
       }
-      ypos+=lc->pixheight;
+      ypos=y2;
       vl++;
     }
     else

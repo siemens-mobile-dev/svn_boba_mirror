@@ -22,18 +22,8 @@ static void RawInsertChar(VIEWDATA *vd, int wchar)
 
 void AddNewStyle(VIEWDATA *vd)
 {
-//  if (vd->prev_bold!=vd->current_tag_s.bold)
-//  {
-    RawInsertChar(vd,vd->current_tag_s.bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL);
-//    vd->prev_bold=vd->current_tag_s.bold;
-//  }
-//  if (vd->prev_bold!=vd->current_tag_s.underline)
-//  {
-//    RawInsertChar(vd,vd->current_tag_s.underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE);
-//    vd->prev_underline=vd->current_tag_s.underline;
-//  }
-//  RawInsertChar(vd,vd->current_tag_s.center?0xE01F:0xE01E);
-//  RawInsertChar(vd,vd->current_tag_s.right?0xE01D:0xE01C);
+  RawInsertChar(vd,vd->current_tag_s.bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL);
+  RawInsertChar(vd,vd->current_tag_s.underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE);
   RawInsertChar(vd,UTF16_INK_RGBA);
   RawInsertChar(vd,(vd->current_tag_s.red<<11)+(vd->current_tag_s.green<<2));
   RawInsertChar(vd,(vd->current_tag_s.blue<<11)+100);
@@ -82,10 +72,6 @@ void AddEndRef(VIEWDATA *vd)
 void AddTextItem(VIEWDATA *vd, const char *text, int len)
 {
   int c;
-  if (vd->current_tag_s.underline)
-  {
-    RawInsertChar(vd,UTF16_ENA_UNDERLINE);
-  }
   while((len--)>0)
   {
     c=*text++;
@@ -112,10 +98,6 @@ void AddTextItem(VIEWDATA *vd, const char *text, int len)
 	}
       }
     RawInsertChar(vd,c);
-  }
-  if (vd->current_tag_s.underline)
-  {
-    RawInsertChar(vd,UTF16_DIS_UNDERLINE);
   }
 }
 

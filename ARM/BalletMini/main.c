@@ -7,6 +7,7 @@
 #include "display_utils.h"
 #include "string_works.h"
 #include "destructors.h"
+#include "siemens_unicode.h"
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -77,6 +78,30 @@ static void method0(VIEW_GUI *data)
 		  GetPaletteAdrByColorIndex(0),
 		  GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
+/*    {
+      WSHDR *ws=vd->ws;
+      int dc=0;
+      ws->wsbody[++dc]=0xE012;
+      ws->wsbody[++dc]=0xE006;
+      ws->wsbody[++dc]=0x0000;
+      ws->wsbody[++dc]=0x0064;
+      ws->wsbody[++dc]=0xE007;
+      ws->wsbody[++dc]=0xFFFF;
+      ws->wsbody[++dc]=0xFF64;
+//      ws->wsbody[++dc]=0xE005;
+      ws->wsbody[++dc]=0xE001;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0xE002;
+      ws->wsbody[++dc]=0xE001;
+//      ws->wsbody[++dc]='A';
+      ws->wsbody[0]=dc;
+	DrawString(ws,0,0,scr_w,20,
+		   FONT_SMALL,TEXT_NOFORMAT
+		       ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+    }*/
   }
 }
 
@@ -179,6 +204,17 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case GREEN_BUTTON:
+      {
+	//Dump rawtext
+	unsigned int ul;
+	int f;
+	if ((f=fopen("4:\\dumptext.raw",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+	{
+	  fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
+	  fclose(f,&ul);
+	}
+//	RenderPage(vd,2); //With dump
+      }
       break;
     }
   }
