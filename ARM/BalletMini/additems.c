@@ -12,6 +12,8 @@
 #define CBOX_UNCHECKED 0xE10C
 #endif
 
+#define DP_IS_FRAME (-2)
+#define DP_IS_NOINDEX (-1)
 #define RAWTEXTCHUNK (16384)
 
 static void RawInsertChar(VIEWDATA *vd, int wchar)
@@ -47,10 +49,10 @@ void AddNewStyle(VIEWDATA *vd)
 //  RawInsertChar(vd,vd->current_tag_s.center?0xE01F:0xE01E);
 //  RawInsertChar(vd,vd->current_tag_s.right?0xE01D:0xE01C);
   RawInsertChar(vd,0xE006);
-  RawInsertChar(vd,(vd->current_tag_s.red<<3)+(vd->current_tag_s.green<<10));
+  RawInsertChar(vd,(vd->current_tag_s.red<<11)+(vd->current_tag_s.green<<2));
   RawInsertChar(vd,(vd->current_tag_s.blue<<11)+100);
   RawInsertChar(vd,0xE007);
-  RawInsertChar(vd,(vd->current_tag_d.red<<3)+(vd->current_tag_d.green<<10));
+  RawInsertChar(vd,(vd->current_tag_d.red<<11)+(vd->current_tag_d.green<<2));
   RawInsertChar(vd,(vd->current_tag_d.blue<<11)+100);
 /*  SetPenColorToEditCOptions(&ec_options,1);
   ec_options->pen[0]=vd->current_tag_s.red;
@@ -132,6 +134,9 @@ void AddPictureItemIndex(VIEWDATA *vd, int index)
   RawInsertChar(vd,w_char);  
 }
 
+
+//is_index >= 0 использовать последний
+//is_index <0 - задать  принудительно
 OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
 {
   int wchar, i, index;
@@ -144,8 +149,8 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
   {
     odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_BITMAP));
     odp->w_char=wchar;
-    if (is_index)  odp->index=0;
-    else odp->index=-1;
+    if (is_index>=0)  odp->index=0;
+    else odp->index=is_index;
     LockSched();
     vd->dynpng_list=odp;
     UnlockSched();
@@ -159,14 +164,14 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
     do
     {
       d=dpl;
-      if (dpl->index!=-1 && is_index) index++;
+      if (is_index>=0 && d->index>=0) index++;
       i++;
     }
     while((dpl=dpl->dp.next));
     odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_BITMAP+i));
     odp->w_char=wchar;
-    if (is_index)  odp->index=index;
-    else odp->index=-1;
+    if (is_index>=0)  odp->index=index;
+    else odp->index=is_index;
     LockSched();
     d->dp.next=odp;
     UnlockSched();
@@ -184,7 +189,7 @@ void AddPictureItem(VIEWDATA *vd, void *picture)
     img=read_pngimg(picture);
     if (img)
     {
-      dpl=AddToDPngQueue(vd, img, 1);
+      dpl=AddToDPngQueue(vd, img, 0);
       wchar=dpl->w_char;
     }
   }
@@ -202,7 +207,7 @@ void AddPictureItemRGBA(VIEWDATA *vd, void *picture, int width, int height)
     img=ConvertRGBAToRGB8(picture,width,height);
     if (img)
     {
-      dpl=AddToDPngQueue(vd, img, 0);
+      dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
       wchar=dpl->w_char;
     }
   }
@@ -210,16 +215,39 @@ void AddPictureItemRGBA(VIEWDATA *vd, void *picture, int width, int height)
   RawInsertChar(vd,wchar);  
 }
 
+OMS_DYNPNGLIST *FindOmsFrameBySize(VIEWDATA *vd,int width,int height)
+{
+  IMGHDR *img;
+  OMS_DYNPNGLIST *dpl=vd->dynpng_list;
+  while(dpl)
+  {
+    if (dpl->index==DP_IS_FRAME)
+    {
+      if ((img=dpl->dp.img))
+      {
+        if (img->w==width && img->h==height) return (dpl);
+      }
+    }
+    dpl=dpl->dp.next;
+  }
+  return (dpl);
+}
+
 void AddPictureItemFrame(VIEWDATA *vd,int width,int height)
 {
   int wchar=0xE115;
   IMGHDR *img;
   OMS_DYNPNGLIST *dpl;
-  img=CreateFrame(width,height,GetPaletteAdrByColorIndex(3));
-  if (img)
+  dpl=FindOmsFrameBySize(vd,width,height);
+  if (dpl) wchar=dpl->w_char;
+  else
   {
-    dpl=AddToDPngQueue(vd, img, 0);
-    wchar=dpl->w_char;
+    img=CreateFrame(width,height,GetPaletteAdrByColorIndex(3));
+    if (img)
+    {
+      dpl=AddToDPngQueue(vd, img, DP_IS_FRAME);
+      wchar=dpl->w_char;
+    }
   }
   RawInsertChar(vd,wchar);  
 }

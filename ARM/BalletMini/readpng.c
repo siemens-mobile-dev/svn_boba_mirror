@@ -169,7 +169,7 @@ IMGHDR *CreateFrame(int width, int height, const char *color)
   img_hc->bpnum=5;
   img_hc->bitmap=iimg;
   
-  if (color[3]<32) color_c=0xC0;
+  if (color[3]<50) color_c=0xC0;
   else
   {
     unsigned char c=color[0]&0xE0;
