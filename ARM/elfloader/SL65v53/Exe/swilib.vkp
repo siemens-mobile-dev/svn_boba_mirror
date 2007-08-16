@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SL65v53
 
-Library 03.08.2007
+;Library 16.08.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -593,6 +593,11 @@ Library 03.08.2007
 ;
 0878: 0xA113C6E9 ; 21E: __thumb void FocusGUI(int id);
 087C: 0xA113C6F7 ; 21F: __thumb void UnfocusGUI(void);
+;
+0884: 0xA1275C64 ; 221: __arm void SetCpuClockLow(2);
+0888: 0xA1275C4C ; 222: __arm void SetCpuClockTempHi(2);
+;088C: 0x00000000 ; 223: __unknown IsMediaPlayerInBackground
+;0890: 0x00000000 ; 224: __unknown CloseMediaPlayer
 ;
 0894: 0xA094AAA0 ; 225: __arm int PlayMelody_ChangeVolume(int handle,int volume);
 0898: 0xA094AE78 ; 226: __arm int PlayMelody_StopPlayback(int handle);

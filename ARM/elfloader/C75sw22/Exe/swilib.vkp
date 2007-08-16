@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;C75v22
 
-Library 03.08.2007
+;Library 16.08.2007
 
 +10E4000
 #pragma enable old_equal_ff
@@ -611,6 +611,11 @@ Library 03.08.2007
 ;
 0878: 0xA07785CD ; 21E: __thumb void FocusGUI(int id);
 087C: 0xA07785EB ; 21F: __thumb void UnfocusGUI(void);
+;
+0884: 0xA0883EB4 ; 221: __arm void SetCpuClockLow(2);
+0888: 0xA0883E9C ; 222: __arm void SetCpuClockTempHi(2);
+;088C: 0x00000000 ; 223: __unknown IsMediaPlayerInBackground
+;0890: 0x00000000 ; 224: __unknown CloseMediaPlayer
 ;
 0894: 0xA02F74A8 ; 225: __arm int PlayMelody_ChangeVolume(int handle,int volume);
 0898: 0xA02F7880 ; 226: __arm int PlayMelody_StopPlayback(int handle);
