@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "view.h"
 #include "display_utils.h"
+#include "siemens_unicode.h"
 
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max_h)
 {
@@ -28,39 +29,36 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     case 0x0A:
     case 0x0D:
       return(pos);
-/*    case 0xE003:
-    case 0xE004:
-      continue;*/
-    case 0xE004:
+    case UTF16_DIS_INVERT:
       p->ref=0;
       continue;
-    case 0xE005:
+    case UTF16_ENA_INVERT:
       p->ref=1;
       continue;
-    case 0xE000:
+    case UTF16_DIS_UNDERLINE:
       p->underline=0;
       continue;
-    case 0xE001:
+    case UTF16_ENA_UNDERLINE:
       p->underline=1;
       continue;
-    case 0xE012:
+    case UTF16_FONT_SMALL:
       p->bold=0;
       continue;
-    case 0xE013:
+    case UTF16_FONT_SMALL_BOLD:
       p->bold=1;
       continue;
-    case 0xE006:
+    case UTF16_INK_RGBA:
       if (pos>(vd->rawtext_size-2)) goto LERR;
       p->ink1=vd->rawtext[pos++];
       p->ink2=vd->rawtext[pos++];
       continue;
-    case 0xE007:
+    case UTF16_PAPER_RGBA:
       if (pos>(vd->rawtext_size-2)) goto LERR;
       p->paper1=vd->rawtext[pos++];
       p->paper2=vd->rawtext[pos++];
       continue;
-    case 0xE008:
-    case 0xE009:
+    case UTF16_INK_INDEX:
+    case UTF16_PAPER_INDEX:
       pos++;
       if (pos>=vd->rawtext_size) goto LERR;
       continue;
@@ -184,11 +182,11 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       else
 	len=vd->rawtext_size-lc->pos;
       sc=lc->pos;
-      if (ena_ref) ws->wsbody[++dc]=0xE005;
+      if (ena_ref) ws->wsbody[++dc]=UTF16_ENA_INVERT;
       while(len&&(dc<32000))
       {
 	c=vd->rawtext[sc];
-	if (c==0xE005)
+	if (c==UTF16_ENA_INVERT)
 	{
 	  //Found begin of ref
 	  _ref=sc;
@@ -209,7 +207,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	  flag=1;
 	  ena_ref=1;
 	}
-	if (c==0xE004)
+	if (c==UTF16_DIS_INVERT)
 	{
 //	  if ((scr_h-ypos)>lc->pixheight)
 //	  {
@@ -236,6 +234,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	sc++;
 	len--;
       }
+//      ws->wsbody[++dc]=lc->bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL;
+//      ws->wsbody[++dc]=lc->underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE;
       ws->wsbody[0]=dc;
       y2=lc->pixheight+ypos-1;
       if (do_draw)

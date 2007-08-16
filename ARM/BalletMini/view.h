@@ -102,6 +102,9 @@ typedef struct
   TAG_S *S_cache;
   int S_cache_size;
   TAG_S current_tag_s;
+//  int prev_bold;
+//  int prev_underline;
+  
   TAG_D current_tag_d;
   //
   unsigned int iw;

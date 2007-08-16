@@ -3,15 +3,8 @@
 #include "additems.h"
 #include "readpng.h"
 #include "string_works.h"
+#include "siemens_unicode.h"
 
-
-#ifdef NEWSGOLD
-#define CBOX_CHECKED 0xE116
-#define CBOX_UNCHECKED 0xE117
-#else
-#define CBOX_CHECKED 0xE10B
-#define CBOX_UNCHECKED 0xE10C
-#endif
 
 #define DP_IS_FRAME (-2)
 #define DP_IS_NOINDEX (-1)
@@ -27,36 +20,24 @@ static void RawInsertChar(VIEWDATA *vd, int wchar)
   vd->rawtext[vd->rawtext_size++]=wchar;
 }
 
-//E000-underline off
-//E001-underline on
-
-//E002 - ?? on
-//E003 - ?? off
-
-//E004 - invert off
-//E005 - invert on
-
-//E006 - color RGB
-//E007 - paper RGB
-//E008 - color ID
-//E009 - paper ID
-
-//E012 - normal font
-//E013 - bold font
-
-//E01C/E01D - left/right align
-//E01E/E01F - center off/on
-
 void AddNewStyle(VIEWDATA *vd)
 {
-  RawInsertChar(vd,vd->current_tag_s.bold?0xE013:0xE012);
-  RawInsertChar(vd,vd->current_tag_s.underline?0xE001:0xE000);
+//  if (vd->prev_bold!=vd->current_tag_s.bold)
+//  {
+    RawInsertChar(vd,vd->current_tag_s.bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL);
+//    vd->prev_bold=vd->current_tag_s.bold;
+//  }
+//  if (vd->prev_bold!=vd->current_tag_s.underline)
+//  {
+//    RawInsertChar(vd,vd->current_tag_s.underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE);
+//    vd->prev_underline=vd->current_tag_s.underline;
+//  }
 //  RawInsertChar(vd,vd->current_tag_s.center?0xE01F:0xE01E);
 //  RawInsertChar(vd,vd->current_tag_s.right?0xE01D:0xE01C);
-  RawInsertChar(vd,0xE006);
+  RawInsertChar(vd,UTF16_INK_RGBA);
   RawInsertChar(vd,(vd->current_tag_s.red<<11)+(vd->current_tag_s.green<<2));
   RawInsertChar(vd,(vd->current_tag_s.blue<<11)+100);
-  RawInsertChar(vd,0xE007);
+  RawInsertChar(vd,UTF16_PAPER_RGBA);
   RawInsertChar(vd,(vd->current_tag_d.red<<11)+(vd->current_tag_d.green<<2));
   RawInsertChar(vd,(vd->current_tag_d.blue<<11)+100);
 }
@@ -64,13 +45,13 @@ void AddNewStyle(VIEWDATA *vd)
 void AddBeginRef(VIEWDATA *vd)
 {
   vd->work_ref.begin=vd->rawtext_size;
-  RawInsertChar(vd,0xE005);
+  RawInsertChar(vd,UTF16_ENA_INVERT);
 }
 
 void AddEndRef(VIEWDATA *vd)
 {
   REFCACHE *p=vd->ref_cache;
-  RawInsertChar(vd,0xE004);
+  RawInsertChar(vd,UTF16_DIS_INVERT);
   if (!p)
   {
     zeromem(p=malloc(sizeof(REFCACHE)),sizeof(REFCACHE));
@@ -101,6 +82,10 @@ void AddEndRef(VIEWDATA *vd)
 void AddTextItem(VIEWDATA *vd, const char *text, int len)
 {
   int c;
+  if (vd->current_tag_s.underline)
+  {
+    RawInsertChar(vd,UTF16_ENA_UNDERLINE);
+  }
   while((len--)>0)
   {
     c=*text++;
@@ -127,6 +112,10 @@ void AddTextItem(VIEWDATA *vd, const char *text, int len)
 	}
       }
     RawInsertChar(vd,c);
+  }
+  if (vd->current_tag_s.underline)
+  {
+    RawInsertChar(vd,UTF16_DIS_UNDERLINE);
   }
 }
 
