@@ -110,14 +110,14 @@
 0094: 0xA029CCEB   ;  25: void DrawCanvas(void *data, int x1, int y1, int x2, int y2, int flag_one)
 0098: 0xA0A01E01   ;  26: void DrawImgBW(unsigned int x, unsigned int y, unsigned int picture, char *pen, char *brush)
 009C: 0xA029CF11   ;  27: AddIconToIconbar
-;0A0:              ;  28:
+00A0: 0xA0FF2A18   ;  28: double fp_sint2fp(signed int i)
 ;0A4:              ;  29:
 00A8: 0xA01E5CB4   ;  2A: int *GetEELiteBlockAddress(short blocknum)
-;0AC:              ;  2B:
+00AC: 0xA0FF28B8   ;  2B: signed int fp_fp2sint(double f)
 00B0: 0xA01E5394   ;  2C: getEEFullBlockSizeVersion(int block, void *buf1, void *buf2)
-;0B4:              ;  2D:
-;0B8:              ;  2E:
-;0BC:              ;  2F:
+00B4: 0xA0FF1C78   ;  2D: double fp_add(double addend1, double addend2)
+00B8: 0xA0FF2BD8   ;  2E: double fp_mul(double factor1, double factor2)
+00BC: 0xA0FF228C   ;  2F: double fp_div(double divisor, double divident)
 
 ;0C0:              ;  30:
 00C4: 0xA0FC4A65   ;  31: char *strrchr_2(const char *s,int c)
@@ -165,9 +165,9 @@
 0164: 0xA0FC3FDC   ;  59: void *memcpy_2(void *dest,const void *source,int cnt)
 0168: 0xA09038AD   ;  5A: KeypressOn(int key)
 016C: 0xA09039BF   ;  5B: KeypressOff(int key)
-0170: 0xA01D1300   ;  5C: unsigned char GetCPUClock()
+0170: 0xA03323A5   ;  5C: unsigned char GetCPUClock()
 0174: 0xA03323DF   ;  5D: unsigned char GetCPULoad()
-;178:              ;  5E: GetMMIMemUsed
+0178: 0xA03323AD   ;  5E: GetMMIMemUsed
 017C: 0xA0094BE8   ;  5F: int GetFreeRamAvail()
 
 0180: 0xA032DFA1   ;  60: ShowMainMenu

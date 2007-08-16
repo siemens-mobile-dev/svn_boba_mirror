@@ -52,6 +52,36 @@ extern const char BYTES_FMT[16];
 extern const char BYTES_SG[8];
 extern const char KBYTES_SG[8];
 
+extern const int FLEX0_ENA;
+extern const int cfgMB0;
+extern const unsigned int FLEX0_X;
+extern const unsigned int FLEX0_Y;
+extern const char FLEX0_COLORS[];
+extern const unsigned int FLEX0_FONT;
+extern const char FLEX0_FMT[16];
+
+extern const int FLEX4_ENA;
+extern const int cfgMB4;
+extern const unsigned int FLEX4_X;
+extern const unsigned int FLEX4_Y;
+extern const char FLEX4_COLORS[];
+extern const unsigned int FLEX4_FONT;
+extern const char FLEX4_FMT[16];
+
+extern const int PER0_ENA;
+extern const unsigned int PER0_X;
+extern const unsigned int PER0_Y;
+extern const char PER0_COLORS[];
+extern const unsigned int PER0_FONT;
+extern const char PER0_FMT[16];
+
+extern const int PER4_ENA;
+extern const unsigned int PER4_X;
+extern const unsigned int PER4_Y;
+extern const char PER4_COLORS[];
+extern const unsigned int PER4_FONT;
+extern const char PER4_FMT[16];
+
 extern const unsigned int REFRESH;
 
 #endif

@@ -18,7 +18,7 @@ typedef struct{
   unsigned short type;
 } TInfo;
 
-TInfo InfoData[7];
+TInfo InfoData[11];
  
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
@@ -77,6 +77,8 @@ void InitInfoData(void)
 {
   RAMNET *net_data;
   int c;
+  int Free;
+  int Total;
   
   if(NET_ENA)
   {
@@ -163,6 +165,60 @@ void InitInfoData(void)
   {
     InfoData[6].enabled=0;
   }
+  if (FLEX0_ENA)
+  {
+    InfoData[7].enabled=1;
+    c=GetFreeFlexSpace(0,0) / 1024;
+    if (!cfgMB0) c=c;
+    else
+      c=c/1024;
+    wsprintf(InfoData[7].ws,FLEX0_FMT,c);
+    FillInfoData(&InfoData[7],FLEX0_X,FLEX0_Y,FLEX0_FONT,FLEX0_COLORS);
+  }
+  else
+  {
+    InfoData[7].enabled=0;
+  }
+  if (FLEX4_ENA)
+  {
+    InfoData[8].enabled=1;
+    c=GetFreeFlexSpace(4,0) / 1024;
+    if (!cfgMB4) c=c;
+      else
+        c=c/1024;
+    wsprintf(InfoData[8].ws,FLEX4_FMT,c);
+    FillInfoData(&InfoData[8],FLEX4_X,FLEX4_Y,FLEX4_FONT,FLEX4_COLORS);  
+  }
+  else
+  {
+    InfoData[8].enabled=0;
+  }
+  if (PER0_ENA)
+  {
+    InfoData[9].enabled=1;
+    Free=GetFreeFlexSpace(0,0);
+    Total=GetTotalFlexSpace(0,0);
+    c=100*Free/Total;
+    wsprintf(InfoData[9].ws,PER0_FMT,c);
+    FillInfoData(&InfoData[9],PER0_X,PER0_Y,PER0_FONT,PER0_COLORS);
+  }
+  else
+  {
+    InfoData[9].enabled=0;
+  }
+  if (PER4_ENA)
+  {
+    InfoData[10].enabled=1;
+    Free=GetFreeFlexSpace(4,0);
+    Total=GetTotalFlexSpace(4,0);
+    c=100*Free/Total;
+    wsprintf(InfoData[10].ws,PER4_FMT,c);
+    FillInfoData(&InfoData[10],PER4_X,PER4_Y,PER4_FONT,PER4_COLORS);
+  }
+  else
+  {
+    InfoData[10].enabled=0;
+  }
 }
   
 // ----------------------------------------------------------------------------
@@ -210,7 +266,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       {
         void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
-        for (int i=0; i!=7; i++)
+        for (int i=0; i!=11; i++)
         {
           if (!InfoData[i].enabled)
 			  continue;
@@ -229,7 +285,7 @@ void MyIDLECSM_onClose(CSM_RAM *data)
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
   GBS_DelTimer(&mytmr);
-  for (int i=0;i!=7; i++)
+  for (int i=0;i!=11; i++)
   {
     FreeWS(InfoData[i].ws);
   }    
@@ -250,7 +306,7 @@ int main(void)
   icsm->constr=&icsmd;
   UnlockSched();
   InitConfig();
-  for (int i=0;i<7; i++)
+  for (int i=0;i<11; i++)
   {
     InfoData[i].ws=AllocWS(20);
   }    

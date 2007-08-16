@@ -158,7 +158,7 @@ __root const char CPU_FMT[16]="%02d%%";
 
 __root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};
 
-//===========================================================================
+//------------------------------------------------------------------------------
 
 __root const CFG_HDR cfghdr_m81={CFG_LEVEL,"Traff string format setup",1,0};
 
@@ -172,3 +172,101 @@ __root const CFG_HDR cfghdr8_3={CFG_STR_WIN1251,"KiloBytes sign",0,7};
 __root const char KBYTES_SG[8]="KB";
 
 __root const CFG_HDR cfghdr_m80={CFG_LEVEL,"",0,0};
+//------------------------------------------------------------------------------
+__root const CFG_HDR cfghdr_m91={CFG_LEVEL,"Flex setup",1,0};
+//------------------------------------------------------------------------------
+__root const CFG_HDR cfghdr_m101={CFG_LEVEL,"Flex '0' setup",1,0};
+
+__root const CFG_HDR cfghdr9_1 = {CFG_CBOX, "Flex '0' display", 0, 2};
+__root const int FLEX0_ENA = 1;
+__root const CFG_CBOX_ITEM cfgcbox9[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr9_11 = {CFG_CBOX, "Show KB or MB", 0, 2};
+__root const int cfgMB0 = 0;
+__root const CFG_CBOX_ITEM cfgcbox9_1[2] = {"Show KB", "Show MB"};
+
+__root const CFG_HDR cfghdr9_5={CFG_STR_WIN1251,"Flex '0' string format",0,15};
+__root const char FLEX0_FMT[16]="%d Kb";
+
+__root const CFG_HDR cfghdr9_2={CFG_COORDINATES,"Flex '0' position",0,0};
+__root const unsigned int FLEX0_X=3;
+__root const unsigned int FLEX0_Y=95;
+
+__root const CFG_HDR cfghdr9_3={CFG_COLOR,"Flex '0' color",0,0};
+__root const char FLEX0_COLORS[4]={255,255,255,100};
+
+__root const CFG_HDR cfghdr9_4={CFG_UINT,"Flex '0' font",0,65535};
+__root const unsigned int FLEX0_FONT=11;
+
+__root const CFG_HDR cfghdr_m100={CFG_LEVEL,"",0,0};
+//------------------------------------------------------------------------------
+__root const CFG_HDR cfghdr_m111={CFG_LEVEL,"Flex '4' setup",1,0};
+
+__root const CFG_HDR cfghdr10_1 = {CFG_CBOX, "Flex '4' display", 0, 2};
+__root const int FLEX4_ENA = 1;
+__root const CFG_CBOX_ITEM cfgcbox10[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr10_11 = {CFG_CBOX, "Show KB or MB", 0, 2};
+__root const int cfgMB4 = 0;
+__root const CFG_CBOX_ITEM cfgcbox101[2] = {"Show KB", "Show MB"};
+
+__root const CFG_HDR cfghdr10_5={CFG_STR_WIN1251,"Flex '4' string format",0,15};
+__root const char FLEX4_FMT[16]="%d Kb";
+
+__root const CFG_HDR cfghdr10_2={CFG_COORDINATES,"Flex '4' position",0,0};
+__root const unsigned int FLEX4_X=3;
+__root const unsigned int FLEX4_Y=106;
+
+__root const CFG_HDR cfghdr10_3={CFG_COLOR,"Flex '4' color",0,0};
+__root const char FLEX4_COLORS[4]={255,255,255,100};
+
+__root const CFG_HDR cfghdr10_4={CFG_UINT,"Flex '4' font",0,65535};
+__root const unsigned int FLEX4_FONT=11;
+
+__root const CFG_HDR cfghdr_m110={CFG_LEVEL,"",0,0};
+//------------------------------------------------------------------------------
+__root const CFG_HDR cfghdr_m121={CFG_LEVEL,"Free % '0' setup",1,0};
+//------------------------------------------------------------------------------
+
+__root const CFG_HDR cfghdr11_1 = {CFG_CBOX, "Free % '0' display", 0, 2};
+__root const int PER0_ENA = 1;
+__root const CFG_CBOX_ITEM cfgcbox11[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr10_51={CFG_STR_WIN1251,"Free '0' string format",0,15};
+__root const char PER0_FMT[16]="%d%";
+
+__root const CFG_HDR cfghdr11_2={CFG_COORDINATES,"Free % '0' position",0,0};
+__root const unsigned int PER0_X=3;
+__root const unsigned int PER0_Y=118;
+
+__root const CFG_HDR cfghdr11_3={CFG_COLOR,"Free % '0' color",0,0};
+__root const char PER0_COLORS[4]={255,255,255,100};
+
+__root const CFG_HDR cfghdr11_4={CFG_UINT,"Free '0' font",0,65535};
+__root const unsigned int PER0_FONT=11;
+
+__root const CFG_HDR cfghdr_m120={CFG_LEVEL,"",0,0};
+//------------------------------------------------------------------------------
+__root const CFG_HDR cfghdr_m131={CFG_LEVEL,"Free % '4' setup",1,0};
+
+__root const CFG_HDR cfghdr12_1 = {CFG_CBOX, "Free % '4' display", 0, 2};
+__root const int PER4_ENA = 1;
+__root const CFG_CBOX_ITEM cfgcbox12[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr12_51={CFG_STR_WIN1251,"Free '4' string format",0,15};
+__root const char PER4_FMT[16]="%d%";
+
+__root const CFG_HDR cfghdr12_2={CFG_COORDINATES,"Free % '4' position",0,0};
+__root const unsigned int PER4_X=3;
+__root const unsigned int PER4_Y=131;
+
+__root const CFG_HDR cfghdr12_3={CFG_COLOR,"Free % '4' color",0,0};
+__root const char PER4_COLORS[4]={255,255,255,100};
+
+__root const CFG_HDR cfghdr12_4={CFG_UINT,"Free '4' font",0,65535};
+__root const unsigned int PER4_FONT=11;
+
+__root const CFG_HDR cfghdr_m130={CFG_LEVEL,"",0,0};
+//------------------------------------------------------------------------------
+__root const CFG_HDR cfghdr_m90={CFG_LEVEL,"",0,0};
+//------------------------------------------------------------------------------
