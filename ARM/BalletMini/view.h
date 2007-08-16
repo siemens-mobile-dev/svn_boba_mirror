@@ -3,7 +3,6 @@
 
 #include "../inc/pnglist.h"
 
-
 typedef struct
 {
   DYNPNGICONLIST dp;
@@ -54,6 +53,21 @@ typedef struct
   unsigned short bold:1, underline:1, ref:1;
 }LINECACHE;
 
+typedef struct
+{
+  void *next;
+  unsigned int begin;
+  unsigned int end;
+  int tag;
+  char *form_id1;
+  char *form_id2;
+  char *id;
+  char *value;
+  char *id2;
+  int group_id;
+  int checked;
+}REFCACHE;
+
 
 typedef struct
 {
@@ -63,13 +77,19 @@ typedef struct
   LINECACHE *lines_cache;
   unsigned int lines_cache_size;
 
-  unsigned int *ref_cache;
-  unsigned int ref_cache_size;
-  
   unsigned int view_pos;
   unsigned int view_line;
+  unsigned int displayed_lines;
   
   WSHDR *ws;
+  
+  unsigned int pos_cur_ref;
+  
+  unsigned int pos_first_ref;
+  unsigned int pos_last_ref;
+  unsigned int pos_prev_ref;
+  unsigned int pos_next_ref;
+  
   //
   char *oms;
   int oms_size;
@@ -77,8 +97,8 @@ typedef struct
   int oms_wanted;
   int parse_state;
   //
-  char **I_cache;
-  int I_cache_size;
+  int tag_l_count;
+  //
   TAG_S *S_cache;
   int S_cache_size;
   TAG_S current_tag_s;
@@ -92,6 +112,11 @@ typedef struct
   unsigned int ref_mode;
   //
   OMS_DYNPNGLIST *dynpng_list;
+  
+  //References
+  REFCACHE work_ref;
+  REFCACHE *ref_cache;
+  
 }VIEWDATA;
 
 #endif

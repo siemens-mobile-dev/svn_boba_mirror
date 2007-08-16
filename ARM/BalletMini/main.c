@@ -5,28 +5,12 @@
 #include "rect_patcher.h"
 #include "local_ipc.h"
 #include "display_utils.h"
-
+#include "string_works.h"
+#include "destructors.h"
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
 const int minus11=-11;
-
-int strcmp_nocase(const char *s, const char *d)
-{
-  int cs;
-  int ds;
-  do
-  {
-    cs=*s++;
-    if (cs&0x40) cs&=0xDF;
-    ds=*d++;
-    if (ds&0x40) ds&=0xDF;
-    cs-=ds;
-    if (cs) break;
-  }
-  while(ds);
-  return(cs);
-}
 
 const char ipc_my_name[32]=IPC_BALLETMINI_NAME;
 IPC_REQ gipc;
@@ -42,43 +26,6 @@ typedef struct
   CSM_RAM csm;
   int view_id;
 }MAIN_CSM;
-
-void FreeRawText(VIEWDATA *vd)
-{
-  mfree(vd->rawtext);
-  vd->rawtext=NULL;
-  vd->rawtext_size=0;
-}
-
-void FreeDynImgList(VIEWDATA *vd)
-{
-  OMS_DYNPNGLIST *dpl=vd->dynpng_list;
-  vd->dynpng_list=NULL;
-  while(dpl)
-  {
-    OMS_DYNPNGLIST *p=dpl;
-    dpl=dpl->dp.next;
-    if (p->dp.img)
-    {
-      mfree(p->dp.img->bitmap);
-      mfree(p->dp.img);
-    }
-    mfree(p);
-  }
-}
-
-void FreeViewData(VIEWDATA *vd)
-{
-  if (vd->ws) FreeWS(vd->ws);
-  mfree(vd->lines_cache);
-  mfree(vd->ref_cache);
-  mfree(vd->rawtext);
-  mfree(vd->oms);
-  mfree(vd->I_cache);
-  mfree(vd->S_cache);
-  FreeDynImgList(vd); 
-  mfree(vd);
-}
 
 static void StartGetFile(void)
 {
@@ -121,75 +68,16 @@ static void method0(VIEW_GUI *data)
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
-  int sc;
-  int dc;
-  VIEWDATA *vd=data->vd;
-  WSHDR *ws=vd->ws;
-  LINECACHE *lc;
-  unsigned int vl;
-  int ypos=YDISP;
-  unsigned int store_pos=vd->view_pos;
-  unsigned int store_line=vl=vd->view_line;
-  unsigned int len;
-  unsigned int y2;
   
-  char def_ink[4];
-  char def_paper[4];
+  VIEWDATA *vd=data->vd;
   
   if (data->gui.state==2)
   {
     DrawRectangle(0,YDISP,scr_w,scr_h,0,
 		  GetPaletteAdrByColorIndex(0),
 		  GetPaletteAdrByColorIndex(0));
-    while(ypos<scr_h)
-    {
-      if (LineDown(vd))
-      {
-	lc=vd->lines_cache+vl;
-	dc=0;
-//	ws->wsbody[++dc]=0xE006;
-//	ws->wsbody[++dc]=lc->ink1;
-//	ws->wsbody[++dc]=lc->ink2;
-	def_ink[0]=lc->ink1>>8;
-	def_ink[1]=lc->ink1;
-	def_ink[2]=lc->ink2>>8;
-	def_ink[3]=lc->ink2;
-//	ws->wsbody[++dc]=0xE007;
-//	ws->wsbody[++dc]=lc->paper1;
-//	ws->wsbody[++dc]=lc->paper2;
-	def_paper[0]=lc->paper1>>8;
-	def_paper[1]=lc->paper1;
-	def_paper[2]=lc->paper2>>8;
-	def_paper[3]=lc->paper2;
-//	ws->wsbody[++dc]=lc->bold?0xE013:0xE012;
-//	ws->wsbody[++dc]=lc->underline?0xE001:0xE002;
-	if ((vl+1)<vd->lines_cache_size)
-	{
-	  len=(lc[1]).pos-(lc[0]).pos;
-	}
-	else
-	  len=vd->rawtext_size-lc->pos;
-	sc=lc->pos;
-	while(len&&(dc<32000))
-	{
-	  ws->wsbody[++dc]=vd->rawtext[sc++];
-	  len--;
-	}
-	ws->wsbody[0]=dc;
-	y2=lc->pixheight+ypos-1;
-	DrawRectangle(0,ypos,scr_w,y2,
-	     RECT_FILL_WITH_PEN,def_paper,def_paper);
-	DrawString(ws,0,ypos,scr_w,lc->pixheight+ypos-1,
-		   lc->bold?FONT_SMALL_BOLD:FONT_SMALL,TEXT_NOFORMAT+(lc->underline?TEXT_UNDERLINE:0),def_ink,def_paper);
-	ypos+=lc->pixheight;
-	vl++;
-      }
-      else
-	break;
-    }
+    RenderPage(vd,1);
   }
-  vd->view_pos=store_pos;
-  vd->view_line=store_line;
 }
 
 static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
@@ -197,6 +85,7 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
   VIEWDATA *vd=malloc(sizeof(VIEWDATA));
   zeromem(vd,sizeof(VIEWDATA));
   vd->ws=AllocWS(32767);
+  vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
   data->gui.state=1;
@@ -230,15 +119,34 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 {
   VIEWDATA *vd=data->vd;
   int m=msg->gbsmsg->msg;
+//  REFCACHE *p;
+//  REFCACHE *q;
   if ((m==KEY_DOWN)||(m==LONG_PRESS))
   {
     switch(msg->gbsmsg->submess)
     {
     case UP_BUTTON:
-      LineUp(vd);
+//      if (!RenderPage(vd,1)) break;
+      //Check reference move
+      if (vd->pos_prev_ref!=0xFFFFFFFF)
+      {
+	vd->pos_cur_ref=vd->pos_prev_ref;
+      }
+      else
+      {
+	LineUp(vd);
+      }
       break;
     case DOWN_BUTTON:
-      LineDown(vd);
+      if (vd->pos_next_ref!=0xFFFFFFFF)
+      {
+	vd->pos_cur_ref=vd->pos_next_ref;
+      }
+      else
+      {
+	if (!RenderPage(vd,0)) break;
+	LineDown(vd);
+      }
       break;
     case LEFT_BUTTON:
       m=6;
@@ -247,14 +155,24 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	if (!LineUp(vd)) break;
       }
       while(--m);
+      RenderPage(vd,0);
+      if (vd->pos_first_ref!=0xFFFFFFFF)
+      {
+	vd->pos_cur_ref=vd->pos_first_ref;
+      }
       break;
     case RIGHT_BUTTON:
       m=6;
       do
       {
+	if (!RenderPage(vd,0)) break;
 	if (!LineDown(vd)) break;
       }
       while(--m);
+      if (vd->pos_last_ref!=0xFFFFFFFF)
+      {
+	vd->pos_cur_ref=vd->pos_last_ref;
+      }
       break;
     case LEFT_SOFT:
       break;
@@ -304,8 +222,7 @@ static void maincsm_oncreate(CSM_RAM *data)
 
 void FreeViewUrl(void)
 {
-  mfree(view_url);
-  view_url=NULL;
+  freegstr(&view_url);
 }
 
 static void KillAll(void)
@@ -408,14 +325,6 @@ static const struct
 static void UpdateCSMname(void)
 {
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"BM: %s",view_url);
-}
-
-char *globalstr(const char *s)
-{
-  int l=strlen(s)+1;
-  char *d=malloc(l);
-  memcpy(d,s,l);
-  return d;
 }
 
 int ParseInputFilename(const char *fn)

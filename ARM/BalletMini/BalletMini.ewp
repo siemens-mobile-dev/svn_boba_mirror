@@ -2475,6 +2475,9 @@
     <name>$PROJ_DIR$\additems.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\destructors.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\display_utils.c</name>
   </file>
   <file>
@@ -2488,6 +2491,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\readpng.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\string_works.c</name>
   </file>
 </project>
 
