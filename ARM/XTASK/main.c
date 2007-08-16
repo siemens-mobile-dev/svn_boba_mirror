@@ -198,7 +198,9 @@ int my_keyhook(int submsg, int msg)
        mode=0;
        break;
      case KEY_UP:
-       if ((mode==1)&&(ACTIVE_KEY_STYLE==1))
+       if (mode==1){
+         mode=0;
+         if ((ACTIVE_KEY_STYLE==1) || (ENA_LONG_PRESS==3))
          {
            if (IsUnlocked()||ENA_LOCK){
            do_gui(0,0);
@@ -206,6 +208,15 @@ int my_keyhook(int submsg, int msg)
          }
          break;
          }
+           else if (ENA_LONG_PRESS==2)
+           {
+             if (IsUnlocked()||ENA_LOCK){
+             do_gui(1,0);
+             return(2);
+           }
+           }
+         break;
+       }
        if ((mode==0)&&(ACTIVE_KEY_STYLE==0))
        {
          if (IsUnlocked()||ENA_LOCK){
@@ -216,7 +227,7 @@ int my_keyhook(int submsg, int msg)
          break;
      case LONG_PRESS:
          mode=1;
-         if (ACTIVE_KEY_STYLE==1) return(2); // „то бы длинное нажатие работало при активном режиме - на короткое нажатие кнопки
+         if (ACTIVE_KEY_STYLE==1){ if (ENA_LONG_PRESS) return(0); else return(2); }
      }
   }
   }
