@@ -40,12 +40,13 @@ static void StartGetFile(void)
     {
       while((i=fread(f,buf,sizeof(buf),&err))>0)
       {
-	gipc.name_to=ipc_my_name;
-	gipc.name_from=ipc_my_name;
-	gipc.data=malloc(i+4);
-	*((int *)gipc.data)=i;
-	memcpy(((char *)gipc.data)+4,buf,i);
-	GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,&gipc);
+	IPC_REQ *sipc=malloc(sizeof(IPC_REQ));
+	sipc->name_to=ipc_my_name;
+	sipc->name_from=ipc_my_name;
+	sipc->data=malloc(i+4);
+	*((int *)(sipc->data))=i;
+	memcpy(((char *)(sipc->data))+4,buf,i);
+	GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
       }
       fclose(f,&err);
     }
@@ -313,6 +314,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	      }
 	    }
 	    mfree(ipc->data);
+	    mfree(ipc);
 	  }
 	  break;
 	}
