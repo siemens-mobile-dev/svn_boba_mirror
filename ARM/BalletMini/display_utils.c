@@ -192,11 +192,11 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	{
 	  //Found begin of ref
 	  _ref=sc;
-	  if (vd->pos_first_ref==0xFFFFFFFF)
+/*	  if (vd->pos_first_ref==0xFFFFFFFF)
 	  {
 	    vd->pos_first_ref=sc;
 	    vd->pos_last_ref=sc;
-	  }
+	  }*/
 	  if (vd->pos_cur_ref!=sc)
 	  {
 	    if (flag==0) vd->pos_prev_ref=sc;

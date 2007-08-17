@@ -169,6 +169,10 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       else
       {
+	if (vd->pos_last_ref!=0xFFFFFFFF)
+	{
+	  vd->pos_cur_ref=vd->pos_last_ref;
+	}
 	if (!RenderPage(vd,0)) break;
 	LineDown(vd);
       }
