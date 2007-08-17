@@ -232,11 +232,35 @@ typedef struct{
   const int *states;
 } CSM_DESC;
 
+#ifdef NEWSGOLD
 typedef struct{
   int id;
   CSM_RAM *current_msg_processing_csm;
   LLQ csm;
+  LLQ cmd;
+  LLQ csm_background;
 } CSMQ;
+#else
+typedef struct{
+  int id;
+  CSM_RAM *current_msg_processing_csm;
+  LLQ csm;
+  LLQ cmd;
+} CSMQ;
+#endif
+
+typedef struct{
+  void *next;
+  void *prev;
+  int flag1;
+  int parent_id;
+  int prio;
+  int (*proc)(CSMQ *, void *);
+  CSMQ *csm_q;
+  int id;
+  int flag2;
+}MMICMD;
+
 
 typedef struct{
   int under_idle_id;
