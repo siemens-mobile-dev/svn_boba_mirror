@@ -250,6 +250,7 @@ typedef struct{
 #endif
 
 typedef struct{
+#ifdef NEWSGOLD
   void *next;
   void *prev;
   int flag1;
@@ -259,7 +260,17 @@ typedef struct{
   CSMQ *csm_q;
   int id;
   int flag2;
+#else
+  void *next;
+  void *prev;
+  char flag1;
+  int parent_id;
+  int (*proc)(CSMQ *, void *);
+  CSMQ *csm_q;
+  CSM_RAM *cmd_csm;
+#endif
 }MMICMD;
+
 
 
 typedef struct{
