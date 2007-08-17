@@ -493,6 +493,7 @@ void ShowBMmenu(void)
 
 int mm_menu_onkey(void *data, GUI_MSG *msg)
 {
+  MAIN_CSM *csm=MenuGetUserPointer(data);
   int i;
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
@@ -516,12 +517,13 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
       if (i!=CSM_root()->idle_id) CloseCSM(i);
       return 0;
     case LEFT_SOFT:
-      GeneralFuncF1(CSM_root()->idle_id);
-      return(0); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      csm->show_csm=CSM_root()->idle_id;
+      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case ENTER_BUTTON:
-      GeneralFuncF1(((CSM_RAM *)(get_nlitem(GetCurMenuItem(data))->p))->id);
+      csm->show_csm=((CSM_RAM *)(get_nlitem(GetCurMenuItem(data))->p))->id;
+      return(1);
     case RIGHT_SOFT:
-      return(0); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     }
   }
   return(0);
@@ -584,7 +586,7 @@ void maincsm_oncreate(CSM_RAM *data)
   }
   if (sz>=0) csm_text[sz]=0;
   patch_header(&mm_menuhdr);
-  csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,1,GetNumberOfDialogs(),0,0);
+  csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,1,GetNumberOfDialogs(),csm,0);
 }
 
 void maincsm_onclose(CSM_RAM *csm)
@@ -596,24 +598,25 @@ void maincsm_onclose(CSM_RAM *csm)
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
-  if (
-      ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))
-	)
+  if (msg->msg==MSG_GUI_DESTROYED)
   {
-    if ((int)msg->data1)
+    if ((int)msg->data0==csm->gui_id)
     {
-      gipc.name_to=ipc_xtask_name;
-      gipc.name_from=ipc_xtask_name;
-      gipc.data=msg->data1;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);
+      if (csm->show_csm!=-1)
+      {
+        gipc.name_to=ipc_xtask_name;
+        gipc.name_from=ipc_xtask_name;
+        gipc.data=(void *)csm->show_csm;
+        GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);
+      }
+      csm->csm.state=-3;
     }
-    csm->csm.state=-3;
+    if (csm->show_csm==-1) RefreshGUI();
   }
   if (msg->msg==MSG_INCOMMING_CALL)
   {
     csm->csm.state=-3;
   }
-  if ((msg->msg==MSG_CSM_DESTROYED)&&(!csm->show_csm)) RefreshGUI();
   return(1);
 }
 
@@ -637,10 +640,11 @@ const CSM_DESC maincsm=
 
 void ShowMenu(void)
 {
-  char dummy[sizeof(MAIN_CSM)];
+  MAIN_CSM main_csm;
   InitConfig();
   if (!my_csm_id)
   {
-    my_csm_id=CreateCSM(&maincsm,dummy,2);
+    main_csm.show_csm=-1;
+    my_csm_id=CreateCSM(&maincsm,&main_csm,2);
   }
 }
