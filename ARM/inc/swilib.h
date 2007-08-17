@@ -246,6 +246,12 @@ typedef struct{
   CSM_RAM *current_msg_processing_csm;
   LLQ csm;
   LLQ cmd;
+  int unk;
+  int unk1;
+  void *methods;
+  int unk2;
+  void *tmr;
+  short cepid;
 } CSMQ;
 #endif
 
