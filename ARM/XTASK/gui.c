@@ -300,6 +300,7 @@ void RotateCSMs(CSM_RAM *ucsm, void *selcsm)
   //CSM_RAM *ucsm; //Верхний CSM
   CSM_RAM *wcsm; //Перемещаемый CSM
   if (!selcsm) return;
+  if (ucsm==selcsm) return; //Нужный уже выше чем надо
   do
   {
     icsm=under_idle;
