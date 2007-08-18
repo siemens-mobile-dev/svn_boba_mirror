@@ -746,25 +746,6 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   }
 }
 
-/*
-//Уничтожить список
-void FreeCLIST(void)
-{
-CLIST *cl=(CLIST*)cltop;
-cltop=0;
-while(cl)
-{
-CLIST *p;
-//    if (cl->log) mfree(cl->log);
-//    if (cl->answer) mfree(cl->answer);
-p=cl;
-cl=(CLIST*)(cl->next);
-mfree(p);
-  }
-}
-
-*/
-
 // Уничтожить список контактов
 void CList_Destroy()
 {
@@ -792,43 +773,6 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
 {
   if(!ResEx)return;
   Disp_Info(ResEx);
-/*
-  char msg_ex[]="JID: %s\nStatus:%s";
-  char* msg = malloc(200);
-  extern const char* JABBER_AFFS[];
-  extern const char* JABBER_ROLS[];
-  if(ResEx->status_msg)
-  {
-    char *ansi_statusmsg = convUTF8_to_ANSI_STR(ResEx->status_msg);
-    ShowMSG(0,(int)ansi_statusmsg);
-    mfree(ansi_statusmsg);
-  }
-  snprintf(msg,200,msg_ex,ResEx->full_name, PRESENCES[ResEx->status]);
-  char *ansi_msg=convUTF8_to_ANSI_STR(msg);
-  ShowMSG(0, (int)ansi_msg);
-  mfree(ansi_msg);
-
-  // Получаем и отображаем группу контакта
-  CLIST* ClEx = CList_FindContactByJID(ResEx->full_name);
-  char *gr_name = GetGroupNameByID(ClEx->group);
-  if(gr_name)
-  {
-    char *ansi_gname = convUTF8_to_ANSI_STR(gr_name);
-    ShowMSG(0, (int)ansi_gname);
-    mfree(ansi_gname);
-  }
-
-  if(ResEx->entry_type==T_CONF_NODE)
-  {
-    snprintf(msg,200,"Aff:%s,\nRole:%s",JABBER_AFFS[ResEx->muc_privs.aff], JABBER_ROLS[ResEx->muc_privs.role]);
-    ShowMSG(0, (int)msg);
-  }
-  if(ResEx->entry_type==T_TRANSPORT)
-  {
-    ShowMSG(0, (int)"This is Jabber transport");
-  }
-  mfree(msg);
-*/
 }
 
 // бегаем по контактам с сообщениями

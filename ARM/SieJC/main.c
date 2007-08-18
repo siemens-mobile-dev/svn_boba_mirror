@@ -36,7 +36,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // ÍÅ ÌÅÍßÒÜ!
-const char VERSION_VERS[] = "2.0.0-Z";
+const char VERSION_VERS[] = "2.5.0-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ìèíóòû
@@ -117,7 +117,7 @@ void ElfKiller(void)
 //===============================================================================================
 // ELKA Compatibility
 
-#pragma inline
+//#pragma inline
 void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 {
   rc->x=x;

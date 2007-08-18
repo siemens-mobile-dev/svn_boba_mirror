@@ -60,11 +60,43 @@ void Log_XMLStream(char* logstr, int size)
 /*
   Добавлет строку в историю контакта CLIST
 */
+typedef struct
+{
+  char *fname;
+  char *buffer;
+  unsigned int txt_len;
+}HIST_RECORD_INFO;
 
-void Add2History(CLIST *CListEx, char *header, char *message)
+//Context:HELPER
+void _add2history(HIST_RECORD_INFO *info)
 {
   volatile int hFile;
   unsigned int io_error = 0;
+  // Открываем файл на дозапись и создаём в случае неудачи
+  hFile = fopen(info->fname,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
+  if(io_error==2) // нет файла
+  {
+    hFile = fopen(info->fname,A_ReadWrite+A_Create+ A_BIN,P_READ+P_WRITE, &io_error);
+  }
+  if(!io_error)
+  {
+    fwrite(hFile, info->buffer, info->txt_len-1, &io_error);
+    fclose(hFile, &io_error);
+  }
+  else
+  {
+    sprintf(q, "Ошибка I/O #%u при записи истории", io_error);
+    LockSched();
+    ShowMSG(1,(int)q); 
+    UnlockSched();
+  }
+  mfree(info->fname);
+  mfree(info->buffer);
+  mfree(info);  
+}
+
+void Add2History(CLIST *CListEx, char *header, char *message)
+{
   char *fullname = malloc(512);
   char delim[] = "\r\n----------\r\n";
   unsigned int delim_len = strlen(delim);
@@ -78,24 +110,12 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   strcpy(fullname, HIST_PATH);
   sprintf(fullname,"%s%s.txt", fullname, CListEx->JID);
   
-  // Открываем файл на дозапись и создаём в случае неудачи
-  hFile = fopen(fullname,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
-  if(io_error==2) // нет файла
-  {
-    hFile = fopen(fullname,A_ReadWrite+A_Create+ A_BIN,P_READ+P_WRITE, &io_error);
-  }
-  if(!io_error)
-  {
-    fwrite(hFile, buffer, buf_len-1, &io_error);
-    fclose(hFile, &io_error);
-  }
-  else
-  {
-    LockSched();
-    sprintf(q, "Ошибка I/O #%u при записи истории", io_error);
-    ShowMSG(1,(int)q); 
-    UnlockSched();
-  }
-  mfree(fullname);
-  mfree(buffer);
+  HIST_RECORD_INFO *info = malloc(sizeof(HIST_RECORD_INFO));
+  info->fname   =  fullname;
+  info->buffer  = buffer;
+  info->txt_len = buf_len;
+  
+  // Отправляем в хелпер
+  SUBPROC((void*)_add2history, info);
 }
+//EOL,EOF

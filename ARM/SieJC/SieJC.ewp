@@ -4119,6 +4119,21 @@
     </settings>
   </configuration>
   <group>
+    <name>Messaging</name>
+    <file>
+      <name>$PROJ_DIR$\message_cmds.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\message_cmds.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\message_list.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\message_list.h</name>
+    </file>
+  </group>
+  <group>
     <name>Serial_Debug</name>
     <excluded>
       <configuration>Release_SGOLD</configuration>
@@ -5068,6 +5083,9 @@
       <name>$PROJ_DIR$\md5.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\revision.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\string_util.c</name>
     </file>
     <file>
@@ -5080,18 +5098,36 @@
       <name>$PROJ_DIR$\xml_parser.h</name>
     </file>
   </group>
-  <file>
-    <name>$PROJ_DIR$\adv_login.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\adv_login.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\bookmarks.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\bookmarks.h</name>
-  </file>
+  <group>
+    <name>XMPP</name>
+    <file>
+      <name>$PROJ_DIR$\adv_login.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\adv_login.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\bookmarks.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\bookmarks.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jabber.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jabber_util.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jabber_util.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\MUC_Enter_UI.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\MUC_Enter_UI.h</name>
+    </file>
+  </group>
   <file>
     <name>$PROJ_DIR$\clist_util.c</name>
   </file>
@@ -5114,15 +5150,6 @@
     <name>$PROJ_DIR$\item_info.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\jabber.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\jabber_util.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\jabber_util.h</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
@@ -5130,21 +5157,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\mainmenu.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\message_list.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\message_list.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\MUC_Enter_UI.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\MUC_Enter_UI.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\revision.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\roster_icons.c</name>
