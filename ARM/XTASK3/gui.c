@@ -1,6 +1,8 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
+#include "rect_patcher.h"
 #include "..\inc\xtask_ipc.h"
+
 
 static const char ipc_xtask_name[]=IPC_XTASK_NAME;
 static IPC_REQ gipc;
@@ -8,36 +10,6 @@ static IPC_REQ gipc;
 extern void kill_data(void *p, void (*func_p)(void *));
 
 char mmenu_hdr_txt[32];
-
-#pragma inline
-void patch_header(const HEADER_DESC* headc)
-{
-  HEADER_DESC *head=(HEADER_DESC *)headc;
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-
-#pragma inline
-void patch_input(const INPUTDIA_DESC* inpc)
-{
-  INPUTDIA_DESC *inp=(INPUTDIA_DESC *)inpc;
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-
-#pragma inline
-void patch_rect(const RECT*rcc,int x,int y, int x2, int y2)
-{
-  RECT *rc=(RECT *)rcc;
-  rc->x=x;
-  rc->y=y;
-  rc->x2=x2;
-  rc->y2=y2;
-}
 
 //extern int mode;
 extern CSM_RAM *under_idle;
