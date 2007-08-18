@@ -1,7 +1,7 @@
 #include "../inc/swilib.h"
 #include "view.h"
 #include "additems.h"
-#include "readpng.h"
+#include "readimg.h"
 #include "string_works.h"
 #include "siemens_unicode.h"
 
@@ -179,8 +179,12 @@ void AddPictureItem(VIEWDATA *vd, void *picture)
   OMS_DYNPNGLIST *dpl;
   if (picture)
   {
-    img=read_pngimg(picture);
-    if (img)
+    if ((img=read_pngimg(picture)))
+    {
+      dpl=AddToDPngQueue(vd, img, 0);
+      wchar=dpl->w_char;
+    }
+    else  if ((img=read_jpgimg(picture)))
     {
       dpl=AddToDPngQueue(vd, img, 0);
       wchar=dpl->w_char;

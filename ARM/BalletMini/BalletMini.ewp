@@ -1732,24 +1732,24 @@
         <option>
           <name>GRuntimeLibSelect</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>RTDescription</name>
-          <state>Do not link with a runtime library.</state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.r79</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
@@ -2471,6 +2471,78 @@
       <data/>
     </settings>
   </configuration>
+  <group>
+    <name>jpeglib</name>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jcomapi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdapimin.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdapistd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdatasrc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdcoefct.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdcolor.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jddctmgr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdhuff.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdinput.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdmainct.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdmarker.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdmaster.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdmerge.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdphuff.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdpostct.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jdsample.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jerror.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jidctfst.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jidctint.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jidctred.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jmemansi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jmemmgr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jpeglib\jutils.c</name>
+    </file>
+  </group>
   <file>
     <name>$PROJ_DIR$\additems.c</name>
   </file>
@@ -2490,7 +2562,7 @@
     <name>$PROJ_DIR$\parse_oms.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\readpng.c</name>
+    <name>$PROJ_DIR$\readimg.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\string_works.c</name>
