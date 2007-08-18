@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;CX75v25
 
-;Library 16.08.2007
+;Library 18.08.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -605,6 +605,8 @@
 0898: 0xA02F522C ; 226: __arm int PlayMelody_StopPlayback(int handle);
 089C: 0xA02F52CC ; 227: __arm int PlayMelody_PausePlayback(int handle);
 08A0: 0xA02F5310 ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
+
+08A4: 0xA0EF5790 ; 229: __arm void longjmp(jmp_buf, int);
 #pragma disable old_equal_ff
 +0
 
