@@ -444,8 +444,8 @@
 
 0620: 0x00000084 ; 8188: __adr int ScreenW(void);
 0624: 0x000000B0 ; 8189: __adr int ScreenH(void);
-0628: 0x00000016 ; 818A: __adr int HeaderH(void);
-062C: 0x00000016 ; 818B: __adr int SoftkeyH(void);
+0628: 0x00000012 ; 818A: __adr int HeaderH(void);
+062C: 0x00000012 ; 818B: __adr int SoftkeyH(void);
 
 0630: 0xA020C520 ;18C: __arm void GBS_DelTimer(GBSTMR *);
 0634: 0xA0A1D7CC ;18D: __arm int available0(int sock);
