@@ -260,7 +260,38 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 //  int ocgui_id;
   int idlegui_id;
   
-  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
+#ifndef NEWSGOLD 
+  #define EXT_BUTTON 0x63  
+  if ((ACTIVE_KEY_STYLE!=2)&&(ACTIVE_KEY_STYLE!=3)) //не "* + #" и не "Enter Button"
+  {//чтоб можно было вызвать браузер при этих режимах
+    if (ACTIVE_KEY==EXT_BUTTON) //мнимая кнопка браузера
+    {
+      if (msg->msg==439) //вызван браузер
+      {
+        switch (msg->submess) 
+        {
+          case 1:
+            GBS_SendMessage(MMI_CEPID,LONG_PRESS,EXT_BUTTON);
+          break;
+          case 2:
+            GBS_SendMessage(MMI_CEPID,KEY_UP,EXT_BUTTON);
+          break;
+          default: ShowMSG(1,(int)"Вызов XTASK по кнопке браузера не работает!");
+        }
+      }
+        else //браузер не вызывался
+          goto L1;
+    }
+      else //кнопка вызова не является мнимой кнопкой вызова браузера
+        goto L1;
+  }
+    else
+      L1:
+         csm_result=old_icsm_onMessage(data,msg);
+#else    
+  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий    
+#endif
+
   icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
   idlegui_id=((int *)data)[DISPLACE_OF_IDLEGUI_ID/4];
 //  ocgui_id=((int *)data)[DISPLACE_OF_OUTGOINGGUI/4];
