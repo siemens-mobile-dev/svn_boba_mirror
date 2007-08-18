@@ -2187,7 +2187,7 @@ void maincsm_oncreate(CSM_RAM *data)
   sprintf((char *)ipc_my_name+6,percent_d,UIN);
   gipc.name_to=ipc_my_name;
   gipc.name_from=ipc_my_name;
-  gipc.data=0;
+  gipc.data=(void *)-1;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
 }
 
@@ -2206,7 +2206,10 @@ void maincsm_onclose(CSM_RAM *csm)
   *((int *)&DEF_SHOW_GROUPS)=Is_Show_Groups;
   *((int *)&MY_DEF_STATUS)=CurrentStatus-1;
   *((int *)&MY_DEF_XSTATUS)=CurrentXStatus;
-
+  
+  SaveConfigData(successed_config_filename);
+  
+/*
   #pragma segment="CONFIG_C"
   unsigned int ul;
   int f;
@@ -2219,6 +2222,7 @@ void maincsm_onclose(CSM_RAM *csm)
   }
   fwrite(f,cfg,len,&ul);
   fclose(f,&ul);
+*/
 
   //  GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_active);
@@ -2252,11 +2256,16 @@ void do_reconnect(void)
 
 void CheckDoubleRun(void)
 {
-  if ((int)(gipc.data)>1)
+  int csm_id;
+  if ((csm_id=(int)(gipc.data))!=-1)
   {
+    gipc.name_to=ipc_xtask_name;
+    gipc.name_from=ipc_my_name;
+    gipc.data=(void *)csm_id;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);  
     LockSched();
     CloseCSM(maincsm_id);
-    ShowMSG(1,(int)LG_ALREADY_STARTED);
+    //ShowMSG(1,(int)LG_ALREADY_STARTED);
     UnlockSched();
   }
   else
@@ -2283,9 +2292,9 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  switch (msg->submess)
 	  {
 	  case IPC_CHECK_DOUBLERUN:
-	    ipc->data=(void *)((int)(ipc->data)+1);
 	    //Если приняли свое собственное сообщение, значит запускаем чекер
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)CheckDoubleRun);
+            else ipc->data=(void *)maincsm_id;
 	    break;
 	  case IPC_SMILE_PROCESSED:
 	    //Только собственные смайлы ;)

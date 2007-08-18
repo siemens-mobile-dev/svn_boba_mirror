@@ -9,4 +9,7 @@
 // Вызвать обязательно перед обращением к переменным конфигурации
 void InitConfig();
 
+extern const char *successed_config_filename;
+int SaveConfigData(const char *fname);
+
 #endif
