@@ -234,6 +234,9 @@ int GetNumberOfDialogs(void)
             case 0x11:
               wsprintf(ws,"Java");
 	      break; 
+            case 18:
+              wsprintf(ws,"E-mail client");
+	      break; 
             default:
               wsprintf(ws,"Unknown %d bearer",i);
               break;
