@@ -422,6 +422,8 @@
 0898: 0xA09671EC ; 226: __arm int PlayMelody_StopPlayback(int handle);
 089C: 0xA096728C ; 227: __arm int PlayMelody_PausePlayback(int handle);
 08A0: 0xA09672D0 ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
+
+08A4: 0xA16EF988 ; 229: __arm void longjmp(jmp_buf, int);
 #pragma disable old_equal_ff
 +0
 
