@@ -268,7 +268,7 @@ int GetNumberOfDialogs(void)
 //    char *s=GetLastJavaApplication();
 //    if (s) sprintf(mmenu_hdr_txt,"%s",s);
 //    else 
-      sprintf(mmenu_hdr_txt,"XTask2.0: %d dialogs",count);
+      sprintf(mmenu_hdr_txt,"XTask3.0 : %d dialogs",count);
   }
   return(count);
 }

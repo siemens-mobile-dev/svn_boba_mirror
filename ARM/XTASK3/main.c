@@ -203,7 +203,7 @@ int my_keyhook(int submsg, int msg)
       {
       case KEY_DOWN:
 	mode=0;
-	break;
+        if (ACTIVE_KEY_STYLE==0) return(2); else return(0);
       case KEY_UP:
 	if (mode==1)
 	{
@@ -292,8 +292,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
           break;
           case 2:
             GBS_SendMessage(MMI_CEPID,KEY_UP,EXT_BUTTON);
-          break;
-          default: ShowMSG(1,(int)"Вызов XTASK по кнопке браузера не работает!");
+          break; // Никакого default!!!
         }
       }
         else //браузер не вызывался
