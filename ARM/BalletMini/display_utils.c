@@ -3,6 +3,7 @@
 #include "display_utils.h"
 #include "siemens_unicode.h"
 
+
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max_h)
 {
   int left=ScreenW();
@@ -137,6 +138,13 @@ int LineUp(VIEWDATA *vd)
     return 0;
 }
 
+#define MAX_COLORS_IN_LINE 32
+typedef struct {
+  char color[4];
+  int start_x;
+  int end_x;
+} COLOR_RC;
+
 int RenderPage(VIEWDATA *vd, int do_draw)
 {
   int scr_w=ScreenW()-1;
@@ -154,7 +162,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   unsigned int y2;
   
   char def_ink[4];
-  char def_paper[4];
+  COLOR_RC rc[MAX_COLORS_IN_LINE];
+  int cur_rc;
+  int ws_width;
   
   int c;
   int ena_ref=0;
@@ -175,6 +185,15 @@ int RenderPage(VIEWDATA *vd, int do_draw)
     {
       lc=vd->lines_cache+vl;
       dc=0;
+      ws_width=0;
+      cur_rc=1;
+      
+      rc[0].start_x=0;
+      rc[0].end_x=scr_w;
+      rc[0].color[0]=lc->paper1>>8;
+      rc[0].color[1]=lc->paper1;
+      rc[0].color[2]=lc->paper2>>8;
+      rc[0].color[3]=lc->paper2;
       //ws->wsbody[++dc]=lc->bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL;
       //ws->wsbody[++dc]=lc->underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE;
       if ((vl+1)<vd->lines_cache_size)
@@ -231,7 +250,26 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	  if (!ena_ref) goto L1;
 	  ena_ref=0;
 	}
+        if (c==UTF16_PAPER_RGBA)
+        {
+          if (cur_rc<MAX_COLORS_IN_LINE)
+          {
+            COLOR_RC *prev=rc+cur_rc-1;
+            rc[cur_rc].color[0]=vd->rawtext[sc+1]>>8;
+            rc[cur_rc].color[1]=vd->rawtext[sc+1];
+            rc[cur_rc].color[2]=vd->rawtext[sc+2]>>8;
+            rc[cur_rc].color[3]=vd->rawtext[sc+2];
+            if (memcmp((void *)rc[cur_rc].color,(void *)prev->color,4))  // Только если цвет не равен предыдущему (очередь объектов не резиновая ;))
+            {
+              prev->end_x=ws_width-1;
+              rc[cur_rc].start_x=ws_width;
+              rc[cur_rc].end_x=scr_w;
+              cur_rc++;
+            }
+          }
+        }         
 	ws->wsbody[++dc]=c;
+        ws_width+=GetSymbolWidth(c,lc->bold?FONT_SMALL_BOLD:FONT_SMALL);
       L1:
 	sc++;
 	len--;
@@ -240,12 +278,13 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       y2=lc->pixheight+ypos;
       if (do_draw)
       {
+	  
 /*	if (do_draw==2)
 	{
 	  //Dump rawtext
 	  unsigned int ul;
 	  int f;
-	  char fn[128];
+          char fn[128];
 	  sprintf(fn,"4:\\dump%d.raw",vl);
 	  if ((f=fopen(fn,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
 	  {
@@ -257,16 +296,15 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	def_ink[1]=lc->ink1;
 	def_ink[2]=lc->ink2>>8;
 	def_ink[3]=lc->ink2;
-	def_paper[0]=lc->paper1>>8;
-	def_paper[1]=lc->paper1;
-	def_paper[2]=lc->paper2>>8;
-	def_paper[3]=lc->paper2;
-	DrawRectangle(0,ypos,scr_w,y2,
-		      RECT_FILL_WITH_PEN,def_paper,def_paper);
+        for (int i=0; i!=cur_rc; i++) 
+        {
+          DrawRectangle(rc[i].start_x,ypos,rc[i].end_x,y2,
+		      RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
+        }
 	DrawString(ws,0,ypos,scr_w,y2,
 		   lc->bold?FONT_SMALL_BOLD:FONT_SMALL,TEXT_NOFORMAT
 		     +(lc->underline?TEXT_UNDERLINE:0)
-		       ,def_ink,def_paper);
+		       ,def_ink,GetPaletteAdrByColorIndex(23));
       }
       ypos=y2;
       vl++;

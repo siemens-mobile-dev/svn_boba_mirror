@@ -20,6 +20,8 @@ void AddPictureItemRGBA(VIEWDATA *vd, void *picture, int width, int height);
 
 void AddPictureItemFrame(VIEWDATA *vd,int width,int height);
 
+void AddPictureItemHr(VIEWDATA *vd);
+
 void AddRadioButton(VIEWDATA *vd);
 
 void AddCheckBoxItem(VIEWDATA *vd);

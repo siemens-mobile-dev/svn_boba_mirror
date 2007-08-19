@@ -34,7 +34,7 @@
  */
 
 #define MAX_COMPONENTS  10	/* maximum number of image components */
-
+#define size_t unsigned int
 
 /*
  * Basic data types.
@@ -360,5 +360,6 @@ typedef int boolean;
 #define FAST_FLOAT  double
 #endif
 #endif
+
 
 #endif /* JPEG_INTERNAL_OPTIONS */

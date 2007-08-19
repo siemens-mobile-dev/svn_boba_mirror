@@ -127,7 +127,7 @@ static void method2(VIEW_GUI *data,void (*mfree_adr)(void *))
 static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
 {
   PNGTOP_DESC *pltop=PNG_TOP();
-  pltop->dyn_pltop=(DYNPNGICONLIST *)(data->vd->dynpng_list);
+  pltop->dyn_pltop=&data->vd->dynpng_list->dp;
   DisableIDLETMR();
   data->gui.state=2;
 }

@@ -285,3 +285,34 @@ IMGHDR *CreateFrame(int width, int height, const char *color)
   }
   return (img_hc);  
 }
+
+IMGHDR *CreateDelimiter(int width, int height, const char *color)
+{
+  int color_c;
+  IMGHDR * img_hc=malloc(sizeof(IMGHDR));
+  char *iimg=malloc(width*height);
+  img_hc->w=width;
+  img_hc->h=height;
+  img_hc->bpnum=5;
+  img_hc->bitmap=iimg;
+  
+  if (color[3]<50) color_c=0xC0;
+  else
+  {
+    unsigned char c=color[0]&0xE0;
+    c|=color[1]&0x1C;
+    c|=color[2]&0x3;
+    color_c=c;
+  }
+  for (unsigned int y = 0; y<height; y++)
+  {
+    for (unsigned int x = 0; x<width; x++)
+    {
+      if (y==height>>1)
+        *iimg++=color_c;
+      else
+        *iimg++=0xC0;
+    }
+  }
+  return (img_hc);  
+}

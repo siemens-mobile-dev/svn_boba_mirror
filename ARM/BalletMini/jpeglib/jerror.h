@@ -230,7 +230,7 @@ JMESSAGE(JWRN_TOO_MUCH_DATA, "Application transferred too many scanlines")
    (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo)))
 #define ERREXITS(cinfo,code,str)  \
   ((cinfo)->err->msg_code = (code), \
-   strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
+   strncpy_a((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
    (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo)))
 
 #define MAKESTMT(stuff)		do { stuff } while (0)
@@ -286,7 +286,7 @@ JMESSAGE(JWRN_TOO_MUCH_DATA, "Application transferred too many scanlines")
 	   (*(cinfo)->err->emit_message) ((j_common_ptr) (cinfo), (lvl)); )
 #define TRACEMSS(cinfo,lvl,code,str)  \
   ((cinfo)->err->msg_code = (code), \
-   strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
+   strncpy_a((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
    (*(cinfo)->err->emit_message) ((j_common_ptr) (cinfo), (lvl)))
 
 #endif /* JERROR_H */

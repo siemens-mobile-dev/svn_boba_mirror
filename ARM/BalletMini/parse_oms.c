@@ -162,6 +162,9 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'P':
         vd->oms_wanted+=2;
         break;
+      case 'R':
+        vd->oms_wanted+=2;
+        break;        
       case 'E':
 	AddEndRef(vd);
         vd->ref_mode=0;
@@ -327,6 +330,10 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	vd->oms_wanted+=i;
 	vd->parse_state=OMS_TAGP_STAGE3;
 	goto L_STAGE3_WANTED;
+      case 'R':
+        i=_rshort(vd);
+        AddPictureItemHr(vd);
+        break;
       default:
 	//	vd->parse_state=OMS_STOP;
 	break;

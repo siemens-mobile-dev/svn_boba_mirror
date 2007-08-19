@@ -1853,7 +1853,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1001111</state>
+          <state>1011111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -2474,73 +2474,10 @@
   <group>
     <name>jpeglib</name>
     <file>
-      <name>$PROJ_DIR$\jpeglib\jcomapi.c</name>
+      <name>$PROJ_DIR$\jpeglib\jinclude.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\jpeglib\jdapimin.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdapistd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdatasrc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdcoefct.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdcolor.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jddctmgr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdhuff.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdinput.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdmainct.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdmarker.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdmaster.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdmerge.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdphuff.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdpostct.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jdsample.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jerror.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jidctfst.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jidctint.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jidctred.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jmemansi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jmemmgr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\jpeglib\jutils.c</name>
+      <name>$PROJ_DIR$\jpeglib\jpeglib.r79</name>
     </file>
   </group>
   <file>

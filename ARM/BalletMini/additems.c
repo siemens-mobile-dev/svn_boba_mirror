@@ -10,6 +10,10 @@
 #define DP_IS_NOINDEX (-1)
 #define RAWTEXTCHUNK (16384)
 
+unsigned int wchar_hr=0xFFFF;
+unsigned int wchar_radio_on=0xFFFF;
+unsigned int wchar_radio_off=0xFFFF;
+
 static void RawInsertChar(VIEWDATA *vd, int wchar)
 {
   if ((vd->rawtext_size%RAWTEXTCHUNK)==0)
@@ -108,7 +112,7 @@ void AddBrItem(VIEWDATA *vd)
 
 void AddPItem(VIEWDATA *vd)
 {
-  AddTextItem(vd,"\n ",2);
+  AddTextItem(vd," ",1);
 }
 
 void AddPictureItemIndex(VIEWDATA *vd, int index)
@@ -247,6 +251,24 @@ void AddPictureItemFrame(VIEWDATA *vd,int width,int height)
     }
   }
   RawInsertChar(vd,wchar);  
+}
+
+void AddPictureItemHr(VIEWDATA *vd)
+{
+  int wchar=0xE115;
+  IMGHDR *img;
+  OMS_DYNPNGLIST *dpl;
+  if (wchar_hr==0xFFFF)
+  {
+    img=CreateDelimiter(ScreenW()-5,3,GetPaletteAdrByColorIndex(1));
+    if (img)
+    {
+      dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
+      wchar_hr=wchar=dpl->w_char;
+    }
+  }
+  else wchar=wchar_hr;
+  RawInsertChar(vd,wchar);
 }
 
 void AddRadioButton(VIEWDATA *vd)
