@@ -8,35 +8,43 @@ extern const int LOG_ALL;
 /*
   Добавлет строку в историю контакта CLIST
 */
-void Add2History(CLIST *CListEx, char *header, char *message)
+
+
+static do_logwrite(unsigned int uin, char *text)
 {
   volatile int hFile;
   unsigned int io_error = 0;
   char error[36];
-  const char delim[] = "\r\n----------\r\n";
-  
-  if (!LOG_ALL) return;
   char fullname[128];
-  snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, CListEx->uin);
-  
+  snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, uin);
   // Открываем файл на дозапись и создаём в случае неудачи
-  hFile = fopen(fullname,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
-  if(io_error==2) // нет файла
+  hFile = fopen(fullname,A_ReadWrite + A_Create + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
+  if(hFile!=-1)
   {
-    hFile = fopen(fullname,A_ReadWrite+A_Create+ A_BIN,P_READ+P_WRITE, &io_error);
-  }
-  if(!io_error)
-  {
-    fwrite(hFile, delim, sizeof(delim)-1, &io_error);
-    fwrite(hFile, header, strlen(header), &io_error);
-    fwrite(hFile, message, strlen(message), &io_error);
+    fwrite(hFile, text, strlen(text), &io_error);
     fclose(hFile, &io_error);
   }
   else
   {
     snprintf(error,35, LG_HISTIOERR, io_error);
+    LockSched();
     ShowMSG(1,(int)error); 
+    UnlockSched();
   }
+  mfree(text);
+}
+
+void Add2History(CLIST *CListEx, char *header, char *message)
+{
+  static const char delim[] = "\r\n----------\r\n";
+  int len;
+  if (!LOG_ALL) return;
+  len=sizeof(delim)+strlen(header)+strlen(message);
+  char *text=malloc(len);
+  strcpy(text,delim);
+  strcat(text,header);
+  strcat(text,message);
+  SUBPROC((void*)do_logwrite,CListEx->uin,text);
 }
 
 void GetStatusById(char *buffer, int id)
