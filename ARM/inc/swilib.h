@@ -414,6 +414,18 @@ typedef struct
   GBS_MSG *gbsmsg;
 }GUI_MSG;
 
+
+//Keyhook return codes
+//Process key to next keyhook and to gui
+#define KEYHOOK_NEXT (0)
+//Process key only to next keyhook, not to gui
+#define KEYHOOK_NEXT_NOT2GUI (1)
+//Break process and exit without processing in gui
+#define KEYHOOK_BREAK (2)
+//Break process and exit with or not processing in gui (selected by prev values 0/1)
+#define KEYHOOK_ENDQ (3)
+
+
 //Constants
 //Attributes
 #define FA_READONLY 0x0001
