@@ -63,7 +63,7 @@ int my_keyhook(int submsg, int msg)
 	if (mode_red!=2)
 	{
 	  mode_red=0;
-	  return(2);
+	  return KEYHOOK_BREAK;
 	}
       }
       mode_red=2; //Ложим на отпускания
@@ -75,7 +75,7 @@ int my_keyhook(int submsg, int msg)
 	if (mode_red==1)
 	{
 	  mode_red=0;
-	  return(0); //Long press, continue with REDB PRESS
+	  return KEYHOOK_NEXT; //Long press, continue with REDB PRESS
 	}
       }
       if (msg==KEY_UP)
@@ -83,7 +83,7 @@ int my_keyhook(int submsg, int msg)
 	if (mode_red)
 	{
 	  mode_red=0; //Release after longpress
-	  return(0);
+	  return KEYHOOK_NEXT;
 	}
 	else
 	  //Release after short press
@@ -106,20 +106,20 @@ int my_keyhook(int submsg, int msg)
 	mode_red=1;
 	GBS_SendMessage(MMI_CEPID,KEY_DOWN,RED_BUTTON);
       }
-      return(2);
+      return KEYHOOK_BREAK;
     }
   }
 #endif
   if (ACTIVE_KEY_STYLE==3)
   {
-    if (submsg!=ENTER_BUTTON) return(0);
+    if (submsg!=ENTER_BUTTON) return KEYHOOK_NEXT;
     if (my_csm_id)
     {
       if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
       {
         CloseCSM(my_csm_id);
       }
-      return(0);
+      return KEYHOOK_NEXT;
     }
     switch(msg)
     {
@@ -127,24 +127,24 @@ int my_keyhook(int submsg, int msg)
       if (mode_enter==2)
       {
 	GBS_SendMessage(MMI_CEPID,KEY_UP,ENTER_BUTTON);
-	return (0);
+	return KEYHOOK_NEXT;
       }
       mode_enter=0;
-      return (2);
+      return KEYHOOK_BREAK;
     case KEY_UP:
       if (mode_enter==0)
       {
         mode_enter=2;
         GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
-        return (2);
+        return KEYHOOK_BREAK;
       }
       if (mode_enter==2)
       {
         mode_enter=0;
-        return (0);
+        return KEYHOOK_NEXT;
       }
       mode_enter=0;
-      return (2);      
+      return KEYHOOK_BREAK;      
     case LONG_PRESS:
       mode_enter=1;
       if (IsUnlocked()||ENA_LOCK)
@@ -154,7 +154,7 @@ int my_keyhook(int submsg, int msg)
       mode=0;
       break;
     }
-    return(2);
+    return KEYHOOK_BREAK;
   }
   // * + # implementation
   if ((ACTIVE_KEY_STYLE==2) && !(my_csm_id))
@@ -162,7 +162,7 @@ int my_keyhook(int submsg, int msg)
     if (msg==KEY_UP)
     {
       mode=0;
-      return (0);
+      return KEYHOOK_NEXT;
     }
     if (msg==KEY_DOWN)
     {
@@ -178,77 +178,76 @@ int my_keyhook(int submsg, int msg)
             ShowMenu();
           else mode=0;
         }
-        else return (0);
+        else return KEYHOOK_NEXT;
       }
     }
   }
-  if (ACTIVE_KEY_STYLE-2<0)
+  if (ACTIVE_KEY_STYLE<2)
   {
-    if (submsg!=ACTIVE_KEY) return(0);
-    else
+    if (submsg!=ACTIVE_KEY) return KEYHOOK_NEXT;
+    if (my_csm_id)
     {
-      if (my_csm_id)
+      if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
       {
-	if (((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=my_csm_id)
-	{
-	  CloseCSM(my_csm_id);
-	}
-	if (msg==KEY_UP)
-	{
-	  GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
-	}
-	return(2);
+	CloseCSM(my_csm_id);
       }
-      switch(msg)
+      if (msg==KEY_UP)
       {
-      case KEY_DOWN:
+	GBS_SendMessage(MMI_CEPID,KEY_DOWN,ENTER_BUTTON);
+      }
+      return KEYHOOK_BREAK;
+    }
+    switch(msg)
+    {
+    case KEY_DOWN:
+      mode=0;
+      if (ACTIVE_KEY_STYLE==0)
+	return KEYHOOK_BREAK;
+      else 
+	return KEYHOOK_NEXT;
+    case KEY_UP:
+      if (mode==1)
+      {
+	//Release after longpress
 	mode=0;
-        if (ACTIVE_KEY_STYLE==0) return(2); else return(0);
-      case KEY_UP:
-	if (mode==1)
+	if ((ACTIVE_KEY_STYLE==1) || (ENA_LONG_PRESS==3))
 	{
-	  mode=0;
-	  if ((ACTIVE_KEY_STYLE==1) || (ENA_LONG_PRESS==3))
-	  {
-	    if (IsUnlocked()||ENA_LOCK)
-	    {
-	      ShowMenu();
-	      return(2);
-	    }
-	    break;
-	  }
-	  else if (ENA_LONG_PRESS==2)
-	  {
-	    if (IsUnlocked()||ENA_LOCK)
-	    {
-	      CSMtoTop(CSM_root()->idle_id,-1);
-	      return(2);
-	    }
-	  }
-	  break;
-	}
-	if ((mode==0)&&(ACTIVE_KEY_STYLE==0))
-	{
+	  //Launch on LongPress or Extra on LP - Launch
 	  if (IsUnlocked()||ENA_LOCK)
 	  {
 	    ShowMenu();
-	    return(2);
 	  }
+	  return KEYHOOK_BREAK;
 	}
-	break;
-      case LONG_PRESS:
-	mode=1;
-	if (ACTIVE_KEY_STYLE==1)
+	if (ENA_LONG_PRESS==2)
 	{
-	  if (ENA_LONG_PRESS)
-	    return(0);
-	  else 
-	    return(2);
+	  CSMtoTop(CSM_root()->idle_id,-1);
+	  return KEYHOOK_BREAK;
 	}
+	if (ENA_LONG_PRESS==1) return KEYHOOK_BREAK;
+	break;
+      }
+      if (ACTIVE_KEY_STYLE==0)
+      {
+	if (IsUnlocked()||ENA_LOCK)
+	{
+	  ShowMenu();
+	}
+	return KEYHOOK_BREAK;
+      }
+      break;
+    case LONG_PRESS:
+      mode=1;
+      if (ACTIVE_KEY_STYLE==1)
+      {
+	if (ENA_LONG_PRESS)
+	  return KEYHOOK_NEXT;
+	else 
+	  return KEYHOOK_BREAK;
       }
     }
   }
-  return(0);
+  return KEYHOOK_NEXT;
 }
 
 volatile int callhide_mode=0;
@@ -278,7 +277,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   int idlegui_id;
   
 #ifndef NEWSGOLD 
-  #define EXT_BUTTON 0x63  
+#define EXT_BUTTON 0x63  
   if ((ACTIVE_KEY_STYLE!=2)&&(ACTIVE_KEY_STYLE!=3)) //не "* + #" и не "Enter Button"
   {//чтоб можно было вызвать браузер при этих режимах
     if (ACTIVE_KEY==EXT_BUTTON) //мнимая кнопка браузера
@@ -287,27 +286,27 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       {
         switch (msg->submess) 
         {
-          case 1:
-            GBS_SendMessage(MMI_CEPID,LONG_PRESS,EXT_BUTTON);
+	case 1:
+	  GBS_SendMessage(MMI_CEPID,LONG_PRESS,EXT_BUTTON);
           break;
-          case 2:
-            GBS_SendMessage(MMI_CEPID,KEY_UP,EXT_BUTTON);
+	case 2:
+	  GBS_SendMessage(MMI_CEPID,KEY_UP,EXT_BUTTON);
           break; // Никакого default!!!
         }
       }
-        else //браузер не вызывался
-          goto L1;
+      else //браузер не вызывался
+	goto L1;
     }
-      else //кнопка вызова не является мнимой кнопкой вызова браузера
-        goto L1;
+    else //кнопка вызова не является мнимой кнопкой вызова браузера
+      goto L1;
   }
-    else
-      L1:
-         csm_result=old_icsm_onMessage(data,msg);
+  else
+L1:
+  csm_result=old_icsm_onMessage(data,msg);
 #else    
   csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий    
 #endif
-
+  
   icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
   idlegui_id=((int *)data)[DISPLACE_OF_IDLEGUI_ID/4];
   //  ocgui_id=((int *)data)[DISPLACE_OF_OUTGOINGGUI/4];

@@ -1,11 +1,7 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 #include "rect_patcher.h"
-#include "..\inc\xtask_ipc.h"
-
-
-static const char ipc_xtask_name[]=IPC_XTASK_NAME;
-static IPC_REQ gipc;
+#include "swaper.h"
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -492,10 +488,10 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
       if (i!=CSM_root()->idle_id) CloseCSM(i);
       return 0;
     case LEFT_SOFT:
-      csm->show_csm=CSM_root()->idle_id;
+      CSMtoTop(CSM_root()->idle_id,-1);
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case ENTER_BUTTON:
-      csm->show_csm=((CSM_RAM *)(get_nlitem(GetCurMenuItem(data))->p))->id;
+      CSMtoTop(((CSM_RAM *)(get_nlitem(GetCurMenuItem(data))->p))->id,-1);
       return(1);
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
@@ -577,13 +573,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     if ((int)msg->data0==csm->gui_id)
     {
-      if (csm->show_csm!=-1)
-      {
-        gipc.name_to=ipc_xtask_name;
-        gipc.name_from=ipc_xtask_name;
-        gipc.data=(void *)csm->show_csm;
-        GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);
-      }
       csm->csm.state=-3;
     }
     if (csm->show_csm==-1) RefreshGUI();

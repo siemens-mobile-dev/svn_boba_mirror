@@ -15,7 +15,7 @@ static int do_CSMtoTop(CSMQ *csm_q, void *_cmd)
 #ifdef NEWSGOLD
   CSM_RAM *work_csm=FindCSM(csm_q,cmd->id);
 #else
-  CSM_RAM *work_csm=cmd->cmd_csm;
+  CSM_RAM *work_csm=FindCSM(csm_q,(int)(cmd->cmd_csm));
 #endif
   if (!work_csm) return 1;
   if (work_csm==bot_csm) return 1;
@@ -81,10 +81,9 @@ __thumb static void LLaddToEnd(LLQ *ll, void *data)
 //Top is under CSM with "top_id" - may be -1
 void CSMtoTop(int id, int top_id)
 {
-  CSM_RAM *wcsm;
   CSMQ *csm_q=CSM_root()->csm_q;
   MMICMD *cmd;
-  if (!(wcsm=FindCSMbyID(id))) return;
+  if (!FindCSMbyID(id)) return;
   if (id==top_id) return; //Нечего
   cmd=malloc(sizeof(MMICMD));
   cmd->csm_q=csm_q;
@@ -94,7 +93,7 @@ void CSMtoTop(int id, int top_id)
   cmd->prio=0;
   cmd->id=id;
 #else
-  cmd->cmd_csm=wcsm;
+  cmd->cmd_csm=(CSM_RAM*)id;
 #endif
   cmd->parent_id=top_id;
   cmd->proc=do_CSMtoTop;
