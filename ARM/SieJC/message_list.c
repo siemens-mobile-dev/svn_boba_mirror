@@ -764,7 +764,7 @@ void Display_Message_List(TRESOURCE* ContEx)
   DispMessList_Count = 0;
   Resource_Ex = ContEx;
   FontSize = GetFontYSIZE(MESSAGEWIN_FONT);
-  lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS);
+  lines_on_page = sdiv(FontSize, ScreenH() - HIST_DISP_OFS - YDISP);
   ParseMessagesIntoList(Resource_Ex);
   Calc_Pages_Data();
   CurrentPage = MaxPages;
