@@ -334,11 +334,11 @@ void mGUI_onRedraw(GUI *data)
 
   Calc_Pages_Data();
   // Заголовок окна
-  DrawRoundedFrame(0,SCR_START,ScreenW()-1,SCR_START+FontSize*2+1,0,0,0,
+  DrawRectangle(0,SCR_START,ScreenW()-1,SCR_START+FontSize*2+1,0,
                    0,
                    color(MESSAGEWIN_TITLE_BGCOLOR));
 
-  DrawRoundedFrame(0,SCR_START+FontSize+2,ScreenW()-1,ScreenH()-1,0,0,0,
+  DrawRectangle(0,SCR_START+FontSize+2,ScreenW()-1,ScreenH()-1,0,
                    0,
                    color(MESSAGEWIN_BGCOLOR));
 
@@ -384,7 +384,7 @@ void mGUI_onRedraw(GUI *data)
         CurrentMessage_Lines++;
       }
 
-      DrawRoundedFrame(0,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize,0,0,0,
+      DrawRectangle(0,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize,0,
                        color(MsgBgColor),
                        color(MsgBgColor));
 
@@ -676,10 +676,11 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int parsed_counter = 0; // Сколько уже было обработано (=OLD_MessList_Count)
   LOG_MESSAGE* MessEx= ContEx->log;
   int cnt=0;
-  int Scr_width = ScreenW() - 2 -1;    // В какую область уложить строку
+
+  // В какую область уложить строку (слева без MSG_START_X, справа без одного пикселя)
+  int Scr_width = ScreenW() - MSG_START_X - 1 ;    
+
   int Curr_width=0;
-  int sym_width;
-  char IsCaret = 0; // Является ли символ переносом строки
   //  int chars;
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;
   if(!MessEx)return;
@@ -712,16 +713,9 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       {
         wschar = temp_ws_1->wsbody+i;
         symb = *wschar;
-        IsCaret = symb==0x000A || symb==0x000D || symb==0x00A0 ? 1 : 0;
-        sym_width = GetSymbolWidth(symb,MESSAGEWIN_FONT);
-        if(!IsCaret && symb!=0x0 && (/*cnt<CHAR_ON_LINE ||*/ Curr_width + sym_width <= Scr_width))
-        {
-          Curr_width+=sym_width;
-          wsAppendChar(temp_ws_2, symb);
-          cnt++;
-        }
-        if(IsCaret || (Curr_width + sym_width>Scr_width) || i==l) // Перенос строки
-        {
+        if ((symb==0x000A) || (symb==0x000D) || (symb==0x00A0)) //Перевод строки
+	{
+	L_ADD:
           Disp_Mess_Ex = malloc(sizeof(DISP_MESSAGE));
           Disp_Mess_Ex->mess = AllocWS(cnt);
           wstrcpy(Disp_Mess_Ex->mess, temp_ws_2);
@@ -742,7 +736,20 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
           cnt=0;
           DispMessList_Count++;
           Curr_width = 0;
-        }
+	}
+	else
+	{
+	  Curr_width+=GetSymbolWidth(symb,MESSAGEWIN_FONT);
+	  if (Curr_width>Scr_width)
+	  {
+	    i--; //Повторить с текущим символом, сейчас не лезет
+	    goto L_ADD; //Добавить строку
+	  }
+	  wsAppendChar(temp_ws_2, symb);
+	  cnt++;
+	  if (i==l) goto L_ADD; //Последний символ, добавить и слинять ;)
+	  if (Curr_width==Scr_width) goto L_ADD; //Ровненько легли в строку, тоже добавить
+	}
       }
       FreeWS(temp_ws_1);
       FreeWS(temp_ws_2);
