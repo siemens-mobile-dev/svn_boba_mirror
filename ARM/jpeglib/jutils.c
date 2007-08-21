@@ -180,7 +180,7 @@ jzero_far (void FAR * target, size_t bytestozero)
 }
 
 
-__arm void zeromem_a (void * dest, int n)
+/*__arm void zeromem_a (void * dest, int n)
 {
   zeromem(dest,n);
 }
@@ -193,4 +193,4 @@ __arm void memcpy_a (void *dest,const void *source,int cnt)
 __arm int strncpy_a (char *dest,const char *source,int maxlen)
 {
   return strncpy(dest,source,maxlen);
-}
+}*/

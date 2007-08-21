@@ -55,9 +55,44 @@
 #define MEMCOPY(dest,src,size)	bcopy((const void *)(src), (void *)(dest), (size_t)(size))
 
 #else /* not BSD, assume ANSI/SysV string lib */
-__arm int strncpy_a (char *dest,const char *source,int maxlen);
-__arm void memcpy_a (void *dest,const void *source,int cnt);
-__arm void zeromem_a (void * dest, int n);
+//__arm int strncpy_a (char *dest,const char *source,int maxlen);
+//__arm void memcpy_a (void *dest,const void *source,int cnt);
+//__arm void zeromem_a (void * dest, int n);
+
+
+#pragma swi_number=199
+__swi void _thumb_swi0(void);
+
+#pragma swi_number=199
+__swi void _thumb_swi1(int,...);
+
+#pragma inline=forced
+void zeromem_a (void * dest, int n)
+{
+//  zeromem(dest,n);
+  _thumb_swi1((int)dest,n);
+  asm("DC16 0x011D");
+}
+
+#pragma inline=forced
+void memcpy_a (void *dest,const void *source,int cnt)
+{
+//  memcpy(dest,source,cnt);
+  _thumb_swi1((int)dest,source,cnt);
+  asm("DC16 0x011E");
+}
+
+#pragma diag_suppress=Pe940
+#pragma inline=forced
+int strncpy_a (char *dest,const char *source,int maxlen)
+{
+//  return strncpy(dest,source,maxlen);
+  _thumb_swi1((int)dest,source,maxlen);
+  asm("DC16 0x0116");
+}
+#pragma diag_default=Pe940
+
+
 #define MEMZERO(target,size)	zeromem_a((void *)(target), (size_t)(size))
 #define MEMCOPY(dest,src,size)	memcpy_a((void *)(dest), (const void *)(src), (size_t)(size))
 

@@ -844,7 +844,7 @@
         </option>
         <option>
           <name>GProcessorMode</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>ExePath</name>
@@ -922,11 +922,11 @@
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.h</state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tptinl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.r79</state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tptinl8n.r79</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
@@ -988,7 +988,7 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -1638,7 +1638,7 @@
         </option>
         <option>
           <name>XAROutput</name>
-          <state>d:\Siemens\svn\ARM\jpeglib\Release\Exe\jpeglib.r79</state>
+          <state>E:\ARM\jpeglib\Release\Exe\jpeglib.r79</state>
         </option>
       </data>
     </settings>
