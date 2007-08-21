@@ -73,7 +73,12 @@ void _add2history(HIST_RECORD_INFO *info)
   volatile int hFile;
   unsigned int io_error = 0;
   // Открываем файл на дозапись и создаём в случае неудачи
-  hFile = fopen(info->fname,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
+  WSHDR *filename_WS = AllocWS(256);
+  char *filename_utf8 = malloc(256);
+  utf8_2ws(filename_WS, info->fname, 256);  // Перевели UTF-8 в UTF-16
+  ws_2str(filename_WS, filename_utf8, 256); // Перевели UTF-16 в UTF-8 для файлов
+  hFile = fopen(filename_utf8,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
+  
   if(io_error==2) // нет файла
   {
     hFile = fopen(info->fname,A_ReadWrite+A_Create+ A_BIN,P_READ+P_WRITE, &io_error);
@@ -90,6 +95,8 @@ void _add2history(HIST_RECORD_INFO *info)
     ShowMSG(1,(int)q); 
     UnlockSched();
   }
+  FreeWS(filename_WS);
+  mfree(filename_utf8);
   mfree(info->fname);
   mfree(info->buffer);
   mfree(info);  

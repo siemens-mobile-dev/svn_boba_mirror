@@ -738,14 +738,15 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   UnlockSched();
 
   extern const int WRITE_HISTORY, WRITE_MUC_HISTORY;
-  if((WRITE_HISTORY && !(mtype==MSG_GCHAT || mtype==MSG_SUBJECT)) || (WRITE_MUC_HISTORY && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT)))
+
+ 
+  if((WRITE_HISTORY && !(cont->entry_type==T_CONF_ROOT)) || (WRITE_MUC_HISTORY && (cont->entry_type==T_CONF_ROOT)))
   {
     char *ansi_text = convUTF8_to_ANSI_STR(mtext);
     Add2History(CList_FindContactByJID(jid), datestr,ansi_text);
     mfree(ansi_text);
   }
 }
-
 // ”ничтожить список контактов
 void CList_Destroy()
 {
