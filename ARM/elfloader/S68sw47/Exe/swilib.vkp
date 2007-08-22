@@ -551,7 +551,6 @@
 0808: 0xA0881347   ; 202: void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, int flag, char *pen, char *brush)
 080C: 0xA087CA2B   ; 203: void SetPixel(int x,int y,char *color)
 0810: 0xA0879A43   ; 204: void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush)
-0810: 0xA0879A43   ; 204: void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush)
 0814: 0xA087AB95   ; 205: SetProp2Square_v1
 0818: 0xA0FBFDF1   ; 206: void srand(unsigned int seed)
 081C: 0xA0880C3B   ; 207: DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush)
