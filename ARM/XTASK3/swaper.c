@@ -57,6 +57,8 @@ static int do_CSMtoTop(CSMQ *csm_q, void *_cmd)
   {
     FocusGUI(gui[3]);
   }
+  //Сообщение об уничтожении несуществующего CSM, необходимо для правильной работы IdleCSM
+  GBS_SendMessage(MMI_CEPID,MSG_CSM_DESTROYED,0,30002,0);
   return 1;
 }
 
