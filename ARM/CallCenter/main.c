@@ -82,6 +82,11 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #define wslen(ARG) (ARG->wsbody[0])
 
 #ifdef NEWSGOLD
+#define LAST_NAME 0x23
+#define FIRST_NAME 0x24
+#define COMPANY_NAME 0x29
+#define POST_NAME 0x6F
+#define DISPLAY_NAME 0x60
 #else 
 #define LAST_NAME 0x23
 #define FIRST_NAME 0x24
@@ -404,18 +409,25 @@ static void ConstructList(void)
 		  {
 		  case 0x05:
                     #ifdef NEWSGOLD
-                    if (r->item_type==0x81)
+//                    if (r->item_type==0x81)
+                    if (
+			r->item_type==LAST_NAME||
+			r->item_type==FIRST_NAME||
+			r->item_type==COMPANY_NAME||
+			r->item_type==POST_NAME||
+			r->item_type==DISPLAY_NAME
+			  )
                     #else
                     if (r->item_type==LAST_NAME||r->item_type==FIRST_NAME)
                     #endif   
 		    {
-                      #ifdef NEWSGOLD
-		      if (r->data)
-		      {
-			wstrcpy(contact.name=AllocWS(150),(WSHDR *)(r->data));
-			*((int *)(&contact.next))|=CompareStrT9(contact.name,sws,0);
-		      }
-                      #else
+//                      #ifdef NEWSGOLD
+//		      if (r->data)
+//		      {
+//			wstrcpy(contact.name=AllocWS(150),(WSHDR *)(r->data));
+//			*((int *)(&contact.next))|=CompareStrT9(contact.name,sws,0);
+//		      }
+//                      #else
                       if (r->data)
 		      { 
                         if (!contact.name)
@@ -431,7 +443,7 @@ static void ConstructList(void)
                          *((int *)(&contact.next))|=CompareStrT9(contact.name,sws,0);
                         }
 		      }
-                      #endif 
+//                      #endif 
 		    }
 		    break;
 		  case 0x01:
