@@ -1100,6 +1100,8 @@ void StartHoursTimer(void)
   }
 }
 
+static volatile int is_voice_connected=0;
+
 static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
 #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
@@ -1123,9 +1125,13 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   {
     if (ENA_CASHTRACE) 
     {
-      GBS_DelTimer(&hours_tmr);
-      SendCashReq();
+      if (is_voice_connected)
+      {
+	GBS_DelTimer(&hours_tmr);
+	SendCashReq();
+      }
     }
+    is_voice_connected=0;
   }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
@@ -1154,6 +1160,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==0)&&(ENA_VIBRA))
   #endif   
   {
+    is_voice_connected=1;
     SetVibration(vibraPower);
     GBS_StartTimerProc(&vibra_tmr,vibraDuration*TMR_SECOND/1000,vibra_tmr_proc);
   }
