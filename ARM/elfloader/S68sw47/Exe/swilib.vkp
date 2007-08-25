@@ -85,10 +85,11 @@
 012C: 0xA0908C68   ; 4B: StartMidlet
 0130: 0xA082D7D5   ; 4C: GetMissedCallsCount
 0134: 0xA00931E8   ; 4D: CallAfterTimer(void *htimer, long ms, void ptr())
-0138: 0xA07FCF55   ; 4E: int MsgBoxError(int flag, int LgpId)
-013C: 0xA07FCF65   ; 4F: int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int))
 
-0140: 0xA07FCFCF   ; 50: int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int))
+0138: 0xA07FCF47 ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA07FCF65 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0140: 0xA07FCFCF ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
+
 0144: 0xA0B93043   ; 51: GetNetAccessMode
 0148: 0xA8D07E18    ; 52: GetIlluminationDataTable
 014C: 0xA000AE91   ; 53: memcmp(void *m1,void *m2,int n)
@@ -350,7 +351,7 @@
 0514: 0xA0098A74   ; 145: GBS_GetCurCepid(void)
 0518: 0xA009A9EC   ; 146: LockSched_2(void)
 051C: 0xA009AAD8   ; 147: UnlockSched_2(void)
-0520: 0xA07FCF39   ; 148: ShowMSG(int flag, int lgp_id)
+0520: 0xA07FCF47   ; 148: ShowMSG(int flag, int lgp_id)
 0524: 0xA07F8A3D   ; 149: SetPropTo_Obj1(DRWOBJ *drwobj,void *rect,int rect_flag,WSHDR *wshdr,int font,int text_flag)
 0528: 0xA07F6C71   ; 14A: FreeDrawObject_subobj(DRWOBJ *drwobj)
 052C: 0xA07F6BDB   ; 14B: SetColor(DRWOBJ *drwobj, int *color1, int *color2)
@@ -551,15 +552,16 @@
 0808: 0xA0881347   ; 202: void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, int flag, char *pen, char *brush)
 080C: 0xA087CA2B   ; 203: void SetPixel(int x,int y,char *color)
 0810: 0xA0879A43   ; 204: void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush)
+0810: 0xA0879A43   ; 204: void drawArc(int x1,int y1,int x2,int y2,int a1,int a2,int flag,char *pen,char *brush)
 0814: 0xA087AB95   ; 205: SetProp2Square_v1
 0818: 0xA0FBFDF1   ; 206: void srand(unsigned int seed)
 081C: 0xA0880C3B   ; 207: DrawScrollString(WSHDR *WSHDR,int x1,int y1,int x2,int y2,int xdisp,int font,int text_attribute,char *Pen,char *Brush)
 0820: 0xA07A630B   ; 208: Get_WS_width(*ws, font)
-824: 0xA07F511D   ; 209: void *FindGUIbyId(int id, CSM_RAM **csm)
-828: 0xA088B195   ; 20A: void EDIT_SetDate(void *gui,int n,TDate *dd)
-82C: 0xA088B1AD   ; 20B: void EDIT_SetTime(void *gui,int n,TTime *tt)
-830: 0xA088B1C5   ; 20C: void EDIT_GetDate(void *gui,int n,TDate *dd)
-834: 0xA088B1DD   ; 20D: void EDIT_GetTime(void *gui,int n,TTime *tt)
+0824: 0xA07F511D   ; 209: void *FindGUIbyId(int id, CSM_RAM **csm)
+0828: 0xA088B195   ; 20A: void EDIT_SetDate(void *gui,int n,TDate *dd)
+082C: 0xA088B1AD   ; 20B: void EDIT_SetTime(void *gui,int n,TTime *tt)
+0830: 0xA088B1C5   ; 20C: void EDIT_GetDate(void *gui,int n,TDate *dd)
+0834: 0xA088B1DD   ; 20D: void EDIT_GetTime(void *gui,int n,TTime *tt)
 0838: 0xA08848DB   ; 20E: int ConstructEditTime(EDITCONTROL *EditControl,TTime *time)
 083C: 0xA08847C1   ; 20F: int ConstructEditDate(EDITCONTROL *EditControl,TDate *date)
 0840: 0xA07FD8B9   ; 210: int GetCurGuiID(void)
@@ -586,10 +588,6 @@
 08A0: 0xA0247234   ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 ;
 08A4: 0xA0FC0D10 ; 229: __arm void longjmp(jmp_buf, int);
-
 #pragma disable old_equal_ff
 +0
-
-;********************************************************************************
-;------------------------- end -------------------------
 

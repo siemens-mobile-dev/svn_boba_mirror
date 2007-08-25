@@ -1301,7 +1301,7 @@ __swi __arm void GBS_StartTimerProc(void *htimer, long ms, void ptr());
 #pragma swi_number=0x4E
 __swi __arm int MsgBoxError(int flag, int LgpId);
 //thumb
-//pattern=??,4A,C3,07,00,D4,38,32,??,1C,00,21,78,E7
+//pattern=??,4A,70,32,??,07,??,D4,38,32,??,1C,??,21,??,E7
 //thumb
 //pattern_SGOLD=??,4A,C3,07,??,D4,38,3A,??,1C,??,21,??,E7
 //thumb
@@ -1946,6 +1946,12 @@ __swi	__arm	void UnlockSched(void);
 
 #pragma swi_number=0x0148
 __swi	__arm	extern int ShowMSG(int flag, int lgp_id);
+//thumb
+//pattern=??,4A,C3,07,00,D4,38,32,??,1C,00,21,78,E7
+//thumb
+//pattern_SGOLD=??,4A,??,07,??,D4,??,32,??,1C,??,21,??,E7
+//thumb
+//pattern_ELKA=??,4A,E0,32,??,07,??,D4,??,32,??,1C,??,21,68,E7
 
 #pragma swi_number=0x0149
 __swi	__arm	void SetPropTo_Obj1(DRWOBJ *drwobj,void *rect,int rect_flag,WSHDR *wshdr,int font,int text_flag);
