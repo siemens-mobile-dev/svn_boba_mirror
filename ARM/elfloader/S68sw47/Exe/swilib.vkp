@@ -86,8 +86,8 @@
 0130: 0xA082D7D5   ; 4C: GetMissedCallsCount
 0134: 0xA00931E8   ; 4D: CallAfterTimer(void *htimer, long ms, void ptr())
 
-0138: 0xA07FCF47 ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
-013C: 0xA07FCF65 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0138: 0xA07FCF65 ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA07FCFC5 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
 0140: 0xA07FCFCF ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 
 0144: 0xA0B93043   ; 51: GetNetAccessMode
