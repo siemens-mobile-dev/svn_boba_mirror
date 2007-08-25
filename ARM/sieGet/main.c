@@ -6,7 +6,7 @@
 
 #include "main.h"
 #include "socket.h"
-#include "inet.h"
+#include "dns.h"
 
 const char req[] = "HEAD / HTTP/1.1\r\n"
                    "Host: www.r0.ru\r\n"
@@ -23,23 +23,6 @@ RGBA MAIN_TEXT = {255, 255, 255, 100};
 
 //-----------------------------
 
-int state = 0;
-char *buf;
-int bufsize;
-
-void RecvProc(int res, void *data, int size)
-{
-  if (res)
-  {
-    state = 1;
-    buf = data;
-    bufsize = size;
-  }
-  else
-    state = -1;
-  REDRAW();
-}
-
 void RenderString(RECT *rc, char *str, int font, int t_attr, char *Pen, char *Brush)
 {
   int len = strlen(str);
@@ -50,6 +33,38 @@ void RenderString(RECT *rc, char *str, int font, int t_attr, char *Pen, char *Br
 }
 
 //------------------------------
+
+char log[1024] = "";
+
+void ResolveProc(void *_handler);
+
+DNRHANDLER DNRH =
+{
+  0,
+  3,
+  "r0.ru",
+  ResolveProc
+};
+
+void ResolveProc(void *_handler)
+{
+  char tmp[100];
+  DNRHANDLER *handler = (DNRHANDLER *)_handler;
+  switch (handler->result)
+  {
+  case DNR_RESULT_OK:
+    sprintf(tmp, "DNR OK\r\nIP addr for %s is %08X\r\n", handler->host, handler->value);
+    break;
+  case DNR_RESULT_ERROR:
+    sprintf(tmp, "DNR ERROR for %s is %d\r\n", handler->host, handler->value);
+    break;
+  case DNR_RESULT_OUT_OF_TRIES:
+    sprintf(tmp, "DNR ERROR for %s: [OUT OF TRIES]\r\n", handler->host);
+    break;
+  }
+  strcat(log, tmp);
+  REDRAW();
+}
 
 void onFocus()
 {
@@ -64,7 +79,7 @@ int onStart(char *exename, char *fname)
 
 void onCreate()
 {
-  GetDataByReq((char *)req, IP_ADDR(81,19,70,3), 80, RecvProc);
+  AddDNR(&DNRH);
 }
 
 void onClose()
@@ -78,23 +93,7 @@ void onExit()
 void onRedraw(void)
 {
   DrawRectangle(allpoints(Canvas), 0, 0, color(MAIN_BG));
-  char *str;
-  switch(state)
-  {
-  case 0:
-    str = "waiting for result...";
-    break;
-  case 1:
-    str = malloc(bufsize+1);
-    memcpy(str, buf, bufsize);
-    str[bufsize] = 0;
-    break;
-  case -1:
-    str = "error";
-    break;
-  }
-  RenderString(&Canvas, str, FONT_SMALL, 0, color(MAIN_TEXT), 0);
-  if (state==1) mfree(str);
+  RenderString(&Canvas, log, FONT_SMALL, 0, color(MAIN_TEXT), 0);
 }
 
 

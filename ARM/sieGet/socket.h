@@ -41,10 +41,19 @@ typedef struct
   void *data; //Необязательное поле, нужно чтобы всякие доп.данные хранить
 } SOCKDATAHANDLER;
 
+//Соединить сокет по ip и порту
+//ip должен иметь порядок байтов сети (htonl)
 void SocketConnect(SOCKDATAHANDLER *sock, int ip, short port);
-void SocketSend(SOCKDATAHANDLER *sock, char *data, int size);
-void SocketClose(SOCKDATAHANDLER *sock);
-void SocketCreate(SOCKDATAHANDLER *sock);
-void SocketUnReg(SOCKDATAHANDLER *sock);
 
+//Отправить данные
+void SocketSend(SOCKDATAHANDLER *sock, char *data, int size);
+
+//Закрыть сокет
+void SocketClose(SOCKDATAHANDLER *sock);
+
+//Создать сокет и поместить его в очередь обработки
+void SocketCreate(SOCKDATAHANDLER *sock);
+
+//Удалить сокет из обработки
+void SocketUnReg(SOCKDATAHANDLER *sock);
 #endif

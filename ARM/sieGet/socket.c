@@ -64,7 +64,7 @@ void SocketConnect(SOCKDATAHANDLER *sock, int ip, short port)
   SOCK_ADDR sa;
   sa.family=1;
   sa.port=htons(port);
-  sa.ip=htonl(ip);
+  sa.ip=ip;
   if (connect(sock->sock,&sa,sizeof(sa))==-1)
   {
     SocketError(sock, SOCK_ERROR_CONNECTING);

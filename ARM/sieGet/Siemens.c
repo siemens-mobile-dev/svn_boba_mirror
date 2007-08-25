@@ -18,7 +18,7 @@ extern void onUnFocus(); // Ôîêóñ ââîäà óõîäèò ñ äèàëîãà
 extern void onRedraw(void); // Ïåğåğèñîâêà ıêğàíà
 extern int onKey(unsigned char keycode, int pressed); // Íàæàòèå êëàâèøè. Âîçâğàùàåò 0 (Îê) èëè 1 (GeneralFunc->âûõîä) èëè -1 (Redraw).
 extern int onSockEvent(int sock, int event); // Ñîáûòèå ñîêåòà
-extern int onNameResolve(int DNR_ID); //Îáğàáîòêà ğåçóëüòàòà DNR-çàïğîñà
+extern int onDNREvent(int DNR_ID); //Îáğàáîòêà ğåçóëüòàòà DNR-çàïğîñà
 
 void UpdateCSMName(char *new_name);
 
@@ -119,7 +119,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg){
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
     if ((int)msg->data0==ENIP_DNR_HOST_BY_NAME)
-      return onNameResolve((int)msg->data1);
+      return onDNREvent((int)msg->data1);
     else
       return onSockEvent((int)msg->data1, (int)msg->data0);
   }
