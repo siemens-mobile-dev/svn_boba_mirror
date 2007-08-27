@@ -35,8 +35,8 @@ typedef struct
 {
   CSM_RAM csm;
   int gui_id;
-  int show_csm;
-  int do_idle;
+//  int show_csm;
+//  int do_idle;
 }MAIN_CSM;
 
 int my_csm_id;
@@ -61,6 +61,7 @@ typedef struct
   void *next;
   WSHDR *name;
   void *p;
+  int is_daemon;
 } NAMELIST;
 
 NAMELIST * volatile nltop;
@@ -84,11 +85,12 @@ void ClearNL(void)
   }
 }
 
-void AddNL(WSHDR *ws)
+void AddNL(WSHDR *ws, int is_daemon)
 {
   NAMELIST *nnl=malloc(sizeof(NAMELIST));
   nnl->name=ws;
   nnl->next=0;
+  nnl->is_daemon=is_daemon;
   LockSched();
   if (!nltop)
   {
@@ -128,20 +130,36 @@ int GetNumberOfDialogs(void)
   int count=0;
   int c;
   int i;
-  CSM_RAM *icsm=under_idle->next; //Начало карусели
-  ClearNL();
+  CSM_RAM *icsm;
   WSHDR *ws;
   char ss[64];
 
   void *ircsm=FindCSMbyID(CSM_root()->idle_id);
   ClearNL();
+
+  //Find new style daemons
+  icsm=((CSM_RAM *)(CSM_root()->csm_q->csm.first))->next; //Начало расположения CSM демонов
+  while(((unsigned int)icsm>>27)==0x15)
+  {
+    WSHDR *tws=(WSHDR *)(((char *)icsm->constr)+sizeof(CSM_DESC));
+    if((tws->ws_malloc==NAMECSM_MAGIC1)&&(tws->ws_mfree==NAMECSM_MAGIC2))
+    {
+      ws=AllocWS(64);
+      wstrcpy(ws,tws);
+      AddNL(ws,1);
+      nltop->p=icsm;
+      count++;
+    }
+    icsm=icsm->next;
+  }
+  icsm=under_idle->next; //Начало карусели
   do
   {
     if (icsm==ircsm)
     {
       ws=AllocWS(40);
       wsprintf(ws,"IDLE Screen");
-      AddNL(ws);
+      AddNL(ws,0);
       nltop->p=icsm;
       count++;
     }
@@ -155,7 +173,7 @@ int GetNumberOfDialogs(void)
 	{
 	  ws=AllocWS(64);
 	  wstrcpy(ws,tws);
-	  AddNL(ws);
+	  AddNL(ws,0);
 	  nltop->p=icsm;
 	  count++;
 	}
@@ -251,7 +269,7 @@ int GetNumberOfDialogs(void)
 	    ss[i]=0;
 	    wsprintf(ws,percent_t,ss);
 	  L_ADD:
-	    AddNL(ws);
+	    AddNL(ws,0);
 	    nltop->p=icsm;
 	    count++;
 	  }
@@ -260,12 +278,7 @@ int GetNumberOfDialogs(void)
     }
   }
   while((icsm=icsm->next));
-  {
-//    char *s=GetLastJavaApplication();
-//    if (s) sprintf(mmenu_hdr_txt,"%s",s);
-//    else 
-      sprintf(mmenu_hdr_txt,"XTask3.0 : %d dialogs",count);
-  }
+  sprintf(mmenu_hdr_txt,"XTask3.0 : %d dialogs",count);
   return(count);
 }
 
@@ -294,8 +307,13 @@ void mm_menu_iconhndl(void *data, int curitem, void *unk)
   {
     if (nl->name)
     {
-      ws=AllocMenuWS(data,nl->name->wsbody[0]);
+      ws=AllocMenuWS(data,nl->name->wsbody[0]+2);
       wstrcpy(ws,nl->name);
+      if (nl->is_daemon)
+      {
+        wsInsertChar(ws,0x0002,1);
+        wsInsertChar(ws,0xE008,1);
+      }
     }
     else
     {
@@ -465,6 +483,7 @@ void ShowBMmenu(void)
 int mm_menu_onkey(void *data, GUI_MSG *msg)
 {
   MAIN_CSM *csm=MenuGetUserPointer(data);
+  NAMELIST *nl=get_nlitem(GetCurMenuItem(data));
   int i;
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
@@ -484,14 +503,17 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
     switch(i)
     {
     case '#':
-      i=((CSM_RAM *)(get_nlitem(GetCurMenuItem(data))->p))->id;
+      i=((CSM_RAM *)(nl->p))->id;
       if (i!=CSM_root()->idle_id) CloseCSM(i);
       return 0;
     case LEFT_SOFT:
       CSMtoTop(CSM_root()->idle_id,-1);
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case ENTER_BUTTON:
-      CSMtoTop(((CSM_RAM *)(get_nlitem(GetCurMenuItem(data))->p))->id,-1);
+      if (!nl->is_daemon)
+      {
+	CSMtoTop(((CSM_RAM *)(nl->p))->id,-1);
+      }
       return(1);
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
@@ -569,13 +591,17 @@ void maincsm_onclose(CSM_RAM *csm)
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  if (msg->msg==MSG_CSM_DESTROYED)
+  {
+    RefreshGUI();
+  }
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)
     {
       csm->csm.state=-3;
     }
-    if (csm->show_csm==-1) RefreshGUI();
+    //if (csm->show_csm==-1) RefreshGUI();
   }
   if (msg->msg==MSG_INCOMMING_CALL)
   {
@@ -608,7 +634,7 @@ void ShowMenu(void)
   InitConfig();
   if (!my_csm_id)
   {
-    main_csm.show_csm=-1;
+//    main_csm.show_csm=-1;
     my_csm_id=CreateCSM(&maincsm,&main_csm,2);
   }
 }
