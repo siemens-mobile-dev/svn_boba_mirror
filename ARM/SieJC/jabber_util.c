@@ -1190,7 +1190,6 @@ RECV: <message
   char notif_tpl[]="<message to='%s'><x xmlns='jabber:x:event'><id>%s</id><delivered/></x></message>";
   char *ans = malloc(256);
   snprintf(ans,256,notif_tpl, to, mess_id);
-  ShowMSG(1,(int)ans);
   SUBPROC((void*)_sendandfree,ans);
 }
 

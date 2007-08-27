@@ -408,6 +408,9 @@ void get_answer(void)
     err = inflateInit2(&d_stream,MAX_WBITS/*-MAX_WBITS*/);
     if(err!=Z_OK)
     {
+	  char s[32];
+	  sprintf(s,"inflateInit2 err %d",err);
+	  POPUP(s);      
       return;
     }
   }
@@ -429,7 +432,7 @@ void get_answer(void)
 	//(void)inflateEnd(&strm);
 	{
 	  char s[32];
-	  sprintf(s,"ZLib Err%d",err);
+	  sprintf(s,"ZLib Err %d",err);
 	  POPUP(s);
 	}
 	end_socket();
@@ -494,7 +497,7 @@ char *sendq_p=NULL;   // указатель очереди
 
 void ClearSendQ(void)
 {
-  mfree(sendq_p);
+  if(sendq_p)mfree(sendq_p);
   sendq_p=NULL;
   sendq_l=NULL;
 #ifdef SEND_TIMER
@@ -1067,7 +1070,51 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
     case GREEN_BUTTON:
       if ((connect_state==0)&&(sock==-1))
       {
+        ClearSendQ();
+        GBS_DelTimer(&Ping_Timer);
+        GBS_DelTimer(&TMR_Send_Presence);
+#ifndef NEWSGOLD
+        GBS_DelTimer(&redraw_tmr);
+#endif
         GBS_DelTimer(&reconnect_tmr);
+        SetVibration(0);
+
+        extern TRESOURCE* ActiveContact;
+        ActiveContact = NULL;
+        extern unsigned int NContacts;
+        extern unsigned int N_Disp_Contacts;
+
+        extern unsigned int Active_page;
+        extern unsigned int N_cont_disp;
+        extern unsigned int CursorPos;
+        
+        NContacts = 0;
+        N_Disp_Contacts = 0;
+
+        Active_page = 1;
+        N_cont_disp=0;
+        CursorPos = 1;
+        
+        CList_Destroy();
+        virt_buffer_len = 0;
+        MUCList_Destroy();
+        KillBMList();
+        KillGroupsList();
+        Destroy_SASL_Ctx();
+
+        if(ZLib_Stream_Init)
+        {
+          ShowMSG(1,(int)"alldeleted");
+          inflateEnd(&d_stream);
+          zeromem(&d_stream, sizeof(z_stream));
+          virt_buffer_len = 0;
+          ZLib_Stream_Init=0;
+          Is_Compression_Enabled = 0;
+          out_bytes_count = 0; // Количество отправленных данных
+          Rstream_n = 0;             
+          Rstream_p = NULL;
+        }
+
 	DNR_TRIES=3;
         SUBPROC((void *)create_connect);
       }
@@ -1112,6 +1159,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         CList_AddContact(xz,xz_jid, SUB_BOTH, 0, 0);
         CList_AddResourceWithPresence(xz_jid_full, PRESENCE_CHAT, xz_status_msg);
         */
+        SUBPROC((void *)end_socket);
         break;
       }
 
@@ -1387,7 +1435,6 @@ char mypic[128];
 	SUBPROC((void *)ClearSendQ);
         if(ZLib_Stream_Init)
         {
-          ZLib_Stream_Init = 0;
           inflateEnd(&d_stream);
         }
         connect_state=0;

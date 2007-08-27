@@ -28,7 +28,7 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 8
+#define N_ITEMS 9
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
@@ -80,6 +80,17 @@ void ChangeSoundMode(GUI *data)
   RefreshGUI();
 }
 
+void OpenSettings(GUI *data)
+{
+  extern const char *successed_config_filename;
+  WSHDR *ws;
+  ws=AllocWS(150);
+  str_2ws(ws,successed_config_filename,128);
+  ExecuteFile(ws,0,0);
+  FreeWS(ws);
+  GeneralFuncF1(1);
+}
+
 void Exit_SieJC(GUI *data)
 {
   QuitCallbackProc(0);
@@ -93,6 +104,7 @@ static const char * const menutexts[N_ITEMS]=
   "Закладки",
   "Режим вибры",
   "Режим звука",
+  "Настройки",
   "Об эльфе...",
   "Выход"
 };
@@ -117,6 +129,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           Get_Bookmarks_List,
                           ChangeVibraMode,
                           ChangeSoundMode,
+                          OpenSettings,
                           AboutDlg,
                           Exit_SieJC
                          };
@@ -168,6 +181,9 @@ void menuitemhandler(void *data, int curitem, void *unk)
   case 7:
     SetMenuItemIconArray(data,item,S_ICONS+7);
     break;
+  case 8:
+    SetMenuItemIconArray(data,item,S_ICONS+8);
+    break;    
   }
   SetMenuItemText(data, item, ws, curitem);
 }
@@ -205,11 +221,13 @@ char mypic[128];
 char confpic[128];
 char exitpic[128];
 char infopic[128];
+char settpic[128];
 char aboutpic[128];
 extern const char conference_t[];
 const char exit_t[] = "exit";
 const char info_t[] = "info";
 const char about_t[] = "about";
+const char sett_t[] = "settings";
 
 
 void MM_Show()
@@ -240,18 +258,23 @@ void MM_Show()
   // Режим звука
   // S_ICONS[5]
 
+  // Настройки
+  strcpy(settpic, PATH_TO_PIC);
+  strcat(settpic,sett_t);
+  strcat(settpic,png_t);
+  S_ICONS[6] = (int)settpic;  
 
   // Об эльфе...
   strcpy(aboutpic, PATH_TO_PIC);
   strcat(aboutpic,about_t);
   strcat(aboutpic,png_t);
-  S_ICONS[6] = (int)aboutpic;
+  S_ICONS[7] = (int)aboutpic;
 
   // Выход
   strcpy(exitpic, PATH_TO_PIC);
   strcat(exitpic,exit_t);
   strcat(exitpic,png_t);
-  S_ICONS[7] = (int)exitpic;
+  S_ICONS[8] = (int)exitpic;
 
 //  menuitems[0].icon = S_ICONS+0;
 //  menuitems[1].icon = S_ICONS+1;

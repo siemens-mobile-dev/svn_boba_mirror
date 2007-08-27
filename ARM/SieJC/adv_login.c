@@ -42,6 +42,7 @@ void Destroy_SASL_Ctx()
   if(SASL_Auth_data.cnonce)mfree(SASL_Auth_data.cnonce);
   if(SASL_Auth_data.qop)mfree(SASL_Auth_data.qop);
   if(SASL_Auth_data.rsp_auth)mfree(SASL_Auth_data.rsp_auth);
+  zeromem(&SASL_Auth_data, sizeof(SASL_AUTH_DATA));
 }
 
 // Сообщить серверу об использовании аунтитификации MD5-DIGEST
