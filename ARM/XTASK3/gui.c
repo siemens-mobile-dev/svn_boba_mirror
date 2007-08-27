@@ -139,7 +139,7 @@ int GetNumberOfDialogs(void)
 
   //Find new style daemons
   icsm=((CSM_RAM *)(CSM_root()->csm_q->csm.first))->next; //Начало расположения CSM демонов
-  while(((unsigned int)icsm>>27)==0x15)
+  while(((unsigned int)(icsm->constr)>>27)==0x15)
   {
     WSHDR *tws=(WSHDR *)(((char *)icsm->constr)+sizeof(CSM_DESC));
     if((tws->ws_malloc==NAMECSM_MAGIC1)&&(tws->ws_mfree==NAMECSM_MAGIC2))
