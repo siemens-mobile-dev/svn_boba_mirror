@@ -6,10 +6,21 @@
 
 #define UPDATE_TIME (1*216)
 
-CSM_DESC icsmd;
+//CSM_DESC icsmd;
 
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
+//int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+//void (*old_icsm_onClose)(CSM_RAM*);
+
+extern void kill_data(void *p, void (*func_p)(void *));
+
+const int minus11=-11;
+
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
+
+int IDLECSM_ID=-1;
 
 GBSTMR update_tmr;
 
@@ -356,13 +367,11 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
-  
-  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
-  
+  CSM_RAM *icsm;
+
   if(msg->msg == MSG_RECONFIGURE_REQ) // Перечитывание конфига по сообщению
   {
     extern const char *successed_config_filename;
@@ -399,57 +408,105 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
-  if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
-    {
-      GUI *igui=GetTopGUI();
-      if (igui) //И он существует
+  if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
+  {  
+    if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
       {
+        GUI *igui=GetTopGUI();
+        if (igui) //И он существует
+        {
 #ifdef ELKA
 
-	void *canvasdata = BuildCanvas();
+	  void *canvasdata = BuildCanvas();
 #else
-	void *idata = GetDataOfItemByID(igui, 2);
-	if (idata)
-	{
-	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+	  void *idata = GetDataOfItemByID(igui, 2);
+	  if (idata)
+	  {
+	    void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
             DrawCanvas(canvasdata, cfgX, cfgY, cfgX + GetImgWidth((int)pic_path), cfgY + GetImgHeight((int)pic_path), 1);
 	    DrawImg(cfgX, cfgY, (int)pic_path);
 #ifdef ELKA
 #else
-	}
+	  }
 #endif
+        }
       }
-    }      
+  }
   
-  return(csm_result);
+  return(1);
 }
 
-void MyIDLECSM_onClose(CSM_RAM *data)
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+  GBS_StartTimerProc(&update_tmr,216*5,Check);
+}
+
+static void Killer(void)
+{
   extern void *ELF_BEGIN;
   GBS_DelTimer(&update_tmr);
   GBS_DelTimer(&tmr_vibra);
-  GBS_DelTimer(&temp_tmr);
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  GBS_DelTimer(&temp_tmr); 
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)Killer);
+}
+
+static unsigned short maincsm_name_body[140];
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"TalkAkkum");
+}
+
 
 int main(void)
 {
-  LockSched();
+  CSM_RAM *save_cmpc;
+  char dummy[sizeof(MAIN_CSM)];
   RereadSettings();
+  UpdateCSMname();
 
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onClose=MyIDLECSM_onClose;  
-  icsm->constr=&icsmd;
-  
-  GBS_StartTimerProc(&update_tmr,216*5,Check);
+  LockSched();
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
   UnlockSched();
+
   return 0;
 }
 

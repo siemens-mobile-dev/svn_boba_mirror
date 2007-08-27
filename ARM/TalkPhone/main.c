@@ -4,9 +4,21 @@
 #include "conf_loader.h"
 #include "TalkPhone.h"
 
-CSM_DESC icsmd;
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
+//CSM_DESC icsmd;
+//int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+//void (*old_icsm_onClose)(CSM_RAM*);
+
+extern void kill_data(void *p, void (*func_p)(void *));
+
+const int minus11=-11;
+
+
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
+
+int IDLECSM_ID=-1;
 
 unsigned int tmp;
 
@@ -337,12 +349,12 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
-int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
-
-  csm_result=old_icsm_onMessage(data, msg);     
+  //int csm_result;
+  //csm_result=old_icsm_onMessage(data, msg);     
+  CSM_RAM *icsm;
 
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
@@ -394,7 +406,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
   }
 
   
-  if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
+  if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
+  {
+    if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //Если IdleGui на самом верху
     {
       GUI *igui=GetTopGUI();
       if (igui) //И он существует
@@ -421,9 +435,10 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
 #endif
       }
     }
+  }
   
   
-  return(csm_result);
+  return(1);
 }
 
 int my_keyhook(int submsg, int msg)
@@ -446,39 +461,94 @@ int my_keyhook(int submsg, int msg)
   return 0;
 }
 
-void MyIDLECSM_onClose(CSM_RAM *data)
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+  Check();
+}
+
+static void Killer(void)
+{
   extern void *ELF_BEGIN;
   GBS_DelTimer(&UPDATE_TMR);
   GBS_DelTimer(&tmr_vibra);
-  RemoveKeybMsgHook((void *)my_keyhook);
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  RemoveKeybMsgHook((void *)my_keyhook);  
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)Killer);
+}
+
+static unsigned short maincsm_name_body[140];
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"TalkPhone");
 }
 
 int main(void)
 {
+  CSM_RAM *save_cmpc;
+  char dummy[sizeof(MAIN_CSM)];
   RereadSettings();
+  UpdateCSMname();
   
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onClose=MyIDLECSM_onClose;  
-  icsm->constr=&icsmd;  
+  
   
   #ifdef NEWSGOLD
     LockSched();
-      AddKeybMsgHook((void *)my_keyhook);
-    UnlockSched();  
+    save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+    CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+    CreateCSM(&MAINCSM.maincsm,dummy,0);
+    CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+    AddKeybMsgHook((void *)my_keyhook);
+    UnlockSched(); 
   #else
     LockSched();
-      if (!AddKeybMsgHook_end((void *)my_keyhook)) ShowMSG(1, (int) "TalkPhone. Невозможно зарегистрировать обработчик!"); 
+      if (!AddKeybMsgHook_end((void *)my_keyhook)) 
+      {
+        ShowMSG(1, (int) "TalkPhone. Невозможно зарегистрировать обработчик!"); 
+        SUBPROC((void *)Killer);
+      }
+      else
+      {
+        save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+        CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+        CreateCSM(&MAINCSM.maincsm,dummy,0);
+        CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+      }
     UnlockSched();  
   #endif
-  
-  Check();
   
   return 0;
 }
