@@ -7,6 +7,7 @@ extern void kill_data(void *p, void (*func_p)(void *));
 
 char mmenu_hdr_txt[32];
 
+int show_daemons;
 //extern int mode;
 extern CSM_RAM *under_idle;
 
@@ -138,19 +139,22 @@ int GetNumberOfDialogs(void)
   ClearNL();
 
   //Find new style daemons
-  icsm=((CSM_RAM *)(CSM_root()->csm_q->csm.first))->next; //Начало расположения CSM демонов
-  while(((unsigned int)(icsm->constr)>>27)==0x15)
+  if (show_daemons)
   {
-    WSHDR *tws=(WSHDR *)(((char *)icsm->constr)+sizeof(CSM_DESC));
-    if((tws->ws_malloc==NAMECSM_MAGIC1)&&(tws->ws_mfree==NAMECSM_MAGIC2))
+    icsm=((CSM_RAM *)(CSM_root()->csm_q->csm.first))->next; //Начало расположения CSM демонов
+    while(((unsigned int)(icsm->constr)>>27)==0x15)
     {
-      ws=AllocWS(64);
-      wstrcpy(ws,tws);
-      AddNL(ws,1);
-      nltop->p=icsm;
-      count++;
+      WSHDR *tws=(WSHDR *)(((char *)icsm->constr)+sizeof(CSM_DESC));
+      if((tws->ws_malloc==NAMECSM_MAGIC1)&&(tws->ws_mfree==NAMECSM_MAGIC2))
+      {
+        ws=AllocWS(64);
+        wstrcpy(ws,tws);
+        AddNL(ws,1);
+        nltop->p=icsm;
+        count++;
+      }
+      icsm=icsm->next;
     }
-    icsm=icsm->next;
   }
   icsm=under_idle->next; //Начало карусели
   do
@@ -506,6 +510,10 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
       i=((CSM_RAM *)(nl->p))->id;
       if (i!=CSM_root()->idle_id) CloseCSM(i);
       return 0;
+    case '*':
+      show_daemons=!show_daemons;
+      RefreshGUI();
+      return 0;      
     case LEFT_SOFT:
       CSMtoTop(CSM_root()->idle_id,-1);
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI

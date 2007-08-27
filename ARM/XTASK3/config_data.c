@@ -46,6 +46,10 @@ __root const CFG_HDR cfghdr22={CFG_CBOX,"Enable if keyboard locked",0,2};
 __root const int ENA_LOCK=1;
 __root const CFG_CBOX_ITEM cfgcbox22[2]={"No","Yes"};
 
+__root const CFG_HDR cfghdr33={CFG_CBOX,"Show NewStyleDaemons",0,2};
+__root const int SHOW_DAEMONS=1;
+__root const CFG_CBOX_ITEM cfgcbox33[2]={"No","Yes"};
+
 __root const CFG_HDR cfghdr4={CFG_STR_WIN1251,"Bookmark 1 name",1,31};
 __root const char BM1NAME[32]="";
 __root const CFG_HDR cfghdr5={CFG_STR_UTF8,"Bookmark 1 file",3,127};

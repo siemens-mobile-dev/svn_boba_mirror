@@ -391,6 +391,9 @@ void main(void)
 {
   mode=0;
   InitConfig();
+  extern const int SHOW_DAEMONS;
+  extern int show_daemons;
+  show_daemons=SHOW_DAEMONS;
   LockSched();
   if (!AddKeybMsgHook_end((void *)my_keyhook))
   {
