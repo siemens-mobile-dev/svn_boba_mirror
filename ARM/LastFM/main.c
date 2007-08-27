@@ -4,13 +4,24 @@
 #include "inet.h"
 #include "urlwork.h"
 
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
-CSM_DESC icsmd;
+//CSM_DESC icsmd;
+//int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+//void (*old_icsm_onClose)(CSM_RAM*);
 
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
+extern void kill_data(void *p, void (*func_p)(void *));
+
+const int minus11=-11;
+
+
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
+
+int IDLECSM_ID=-1;
 
 WSHDR *ws1;
 
@@ -142,40 +153,49 @@ void SaveLog(int dummy, TSONG *song)
 	  int i;
 	  fwrite(f,"&a[]=",5,&ul);
 	  ws_2utf8(song->artist,utf8,&i,255);
-	  fwrite(f,utf8,strlen(utf8),&ul);
+	  urlescape(buf,utf8);
+	  fwrite(f,buf,strlen(buf),&ul);
+
+  	  fwrite(f,"&t[]=",5,&ul);
+	  ws_2utf8(song->track,utf8,&i,255);
+	  urlescape(buf,utf8);
+	  fwrite(f,buf,strlen(buf),&ul);
 
 	  fwrite(f,"&b[]=",5,&ul);
 	  ws_2utf8(song->album,utf8,&i,255);
-	  fwrite(f,utf8,strlen(utf8),&ul);
+	  urlescape(buf,utf8);
+	  fwrite(f,buf,strlen(buf),&ul);
 
-	  fwrite(f,"&t[]=",5,&ul);
-	  ws_2utf8(song->track,utf8,&i,255);
-	  fwrite(f,utf8,strlen(utf8),&ul);
-	  
-	  fwrite(f,"&i[]=",5,&ul);
-	  PrintTimeDate(utf8,TIMEZONESIGN?song->timedate-3600*TIMEZONE:song->timedate+3600*TIMEZONE);
-	  fwrite(f,utf8,strlen(utf8),&ul);
-	  
+	  fwrite(f,"&m[]=",5,&ul);
+
 	  fwrite(f,"&l[]=",5,&ul);
 	  sprintf(utf8,"%d",song->length);
 	  fwrite(f,utf8,strlen(utf8),&ul);
+
+	  fwrite(f,"&i[]=",5,&ul);
+	  PrintTimeDate(utf8,TIMEZONESIGN?song->timedate-3600*TIMEZONE:song->timedate+3600*TIMEZONE);
+	  urlescape(buf,utf8);
+	  fwrite(f,buf,strlen(buf),&ul);
 	  
-	  fwrite(f,"&m[]=\r\n",7,&ul);
+	  fwrite(f,"\n",1,&ul);
+	  
 	  fclose(f,&ul);
 	}
       }
     }
   }
   FreeSONG(song);
+  StartINET();
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
+//  int csm_result;
+  CSM_RAM *icsm;
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
-    if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+    if (stricmp(successed_config_filename,(char *)msg->data0)==0)
     {
       ShowMSG(1,(int)"LastFMD config updated!");
       RereadSettings();
@@ -290,7 +310,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   else
   {
-    CSM_RAM *p=((void **)CSM_root()->csm_q)[2];
+    CSM_RAM *p=CSM_root()->csm_q->csm.first;
     while(p)
     {
       if (p->constr==playercsmadr) break;
@@ -304,36 +324,32 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     }
   }
   ParseSocketMsg(msg);
-  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
-  if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
+  if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
   {
-    GUI *igui = GetTopGUI();
-    if (igui) //И он существует
+    if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
     {
-#ifdef ELKA
+      GUI *igui = GetTopGUI();
+      if (igui) //И он существует
       {
-	void *canvasdata = BuildCanvas();
-#else
-	void *idata = GetDataOfItemByID(igui, 2);
-	if (idata)
 	{
-	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
-#endif
+	  void *canvasdata = BuildCanvas();
 	  DrawCanvas(canvasdata, cfgArea.x, cfgArea.y, cfgArea.x2, cfgArea.y2, 1);
 	  DrawString(ws1, cfgArea.x, cfgArea.y, cfgArea.x2, cfgArea.y2, FONT_SMALL,
-                     0x20 + (1 << cfgAlign), //хитрожопый атрибут
+		     0x20 + (1 << cfgAlign), //хитрожопый атрибут
 		     GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
+	}
       }
     }
   }
-  return(csm_result);
+  return(1);
 }
 
-void FreeAll(void)
+static void FreeAll(void)
 {
   extern GBSTMR reconnect_tmr;
   GBS_DelTimer(&mytmr);
   GBS_DelTimer(&reconnect_tmr);
+  end_socket();
   ClearSendQ();
   ClearRecvQ();
   FreeWS(ws1);
@@ -341,35 +357,83 @@ void FreeAll(void)
   FreeSONG(cursong);
 }
 
-void MyIDLECSM_onClose(CSM_RAM *data)
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
-  FreeAll();
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
-}
-
-int main(void)
-{
-  RereadSettings();
-  if ((!strlen(USERNAME))||(!strlen(PASSWORD)))
-  {
-    LockSched();
-    ShowMSG(1,(int)"Please setup login data!");
-    UnlockSched();
-  }
-  LockSched();
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  icsmd.onClose=MyIDLECSM_onClose;
-  icsm->constr=&icsmd;
-  UnlockSched();
   ws1=AllocWS(128);
   wsprintf(ws1,"%t","LastFMD(C)Rst7");
   GBS_StartTimerProc(&mytmr,3*216,tmrproc_readychange);
   StartINET();
+}
+
+
+static void Killer(void)
+{
+  extern void *ELF_BEGIN;
+  FreeAll();
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)Killer);
+}
+
+static unsigned short maincsm_name_body[140];
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"LastFMD");
+}
+
+int main(void)
+{
+  CSM_RAM *save_cmpc;
+  char dummy[sizeof(MAIN_CSM)];
+  RereadSettings();
+  UpdateCSMname();
+  if ((!strlen(USERNAME))||(!strlen(PASSWORD)))
+  {
+    LockSched();
+    ShowMSG(0,(int)"LastFMD: Please setup login data!");
+    UnlockSched();
+  }
+  else
+  {
+    LockSched();
+    save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+    CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+    CreateCSM(&MAINCSM.maincsm,dummy,0);
+    CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+    UnlockSched();
+  }
   return 0;
 }

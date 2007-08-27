@@ -5,24 +5,23 @@ void urlescape(char *out, const char *source)
 {
   const char * h = "0123456789abcdef";
   int c;
-  int i=0;
   while((c =*source++)!=0)
   {
     if ('a' <= c && c <= 'z'
 	|| 'A' <= c && c <= 'Z'
 	  || '0' <= c && c <= '9'
 	    || c == '-' || c == '_' || c == '.')
-      out[i++]= c;
+      *out++= c;
     else 
       if( c == ' ' )
-	out[i++]= '+';
+	*out++= '+';
       else {
-	out[i++]= '%';
-	out[i++]= h[c >> 4];
-	out[i++]= h[c & 0x0f];
+	*out++= '%';
+	*out++= h[c >> 4];
+	*out++= h[c & 0x0f];
       }
   }
-  out[i]=0;
+  *out=0;
 }
 
 void urlcat(char *out, const char *source)

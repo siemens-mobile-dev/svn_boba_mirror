@@ -1,6 +1,7 @@
 #include "..\inc\swilib.h"
 #include "inet.h"
 #include "urlwork.h"
+#include "md5.h"
 
 extern char *strtok(char *s1, const char *s2);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
@@ -13,34 +14,34 @@ GBSTMR reconnect_tmr;
 
 #define TMR_SECOND 216
 
-int enable_connect=0;
+static int enable_connect=0;
 
-int is_gprs_online=0;
+static int is_gprs_online=0;
 
-int is_handshaked=0;
+static int is_handshaked=0;
 
-int DNR_ID=0;
-int DNR_TRIES=3;
+static int DNR_ID=0;
+static int DNR_TRIES=3;
 
-int connect_state=0;
+static int connect_state=0;
 
-int sock=-1;
+static int sock=-1;
 
-int sendq_l=0; //Длинна очереди для send
-char *sendq_p=NULL; //указатель очереди
+static int sendq_l=0; //Длинна очереди для send
+static char *sendq_p=NULL; //указатель очереди
 
-int recvq_l=0;
-char *recvq_p=NULL;
+static int recvq_l=0;
+static char *recvq_p=NULL;
 
-const char HANDSHAKE_HOST[]="post.audioscrobbler.com";
-const int HANDSHAKE_PORT=80;
-char POST_HOST[256]="";
-unsigned short POST_PORT=0;
+static const char HANDSHAKE_HOST[]="post.audioscrobbler.com";
+static const int HANDSHAKE_PORT=80;
+static char POST_HOST[256]="";
+static unsigned short POST_PORT=0;
 
-char CHALLENGE[64]="";
-char POST_URL[256]="";
+static char CHALLENGE[64]="";
+static char POST_URL[256]="";
 
-void INETLOG(int do_mfree, char *s)
+static void INETLOG(int do_mfree, char *s)
 {
   unsigned int ul;
   int f=fopen("4:\\LastFM_INET.log",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
@@ -52,7 +53,7 @@ void INETLOG(int do_mfree, char *s)
   if (do_mfree) mfree(s);
 }
 
-void do_reconnect(void)
+static void do_reconnect(void)
 {
   void create_connect(void);
   SUBPROC((void*)INETLOG,0,"do_reconnect()\r\n");
@@ -63,7 +64,7 @@ void do_reconnect(void)
   }
 }
 
-void create_connect(void)
+static void create_connect(void)
 {
   int ***p_res=NULL;
   void do_reconnect(void);
@@ -171,7 +172,7 @@ void end_socket(void)
 }
 
 //Буферизированая посылка в сокет, c последующим освобождением указателя
-void bsend(int len, void *p)
+static void bsend(int len, void *p)
 {
   int i;
   int j;
@@ -227,21 +228,16 @@ void bsend(int len, void *p)
   sendq_p=NULL;
 }
 
-void get_answer(void)
+static void get_answer(void)
 {
   char rb[1024];
   int i=recv(sock,rb,sizeof(rb),0);
-  if (i<0)
-  {
-    end_socket();
-    return;
-  }
-  if (i==0) return;
+  if (i<=0) return;
   memcpy((recvq_p=realloc(recvq_p,recvq_l+i+1))+recvq_l,rb,i);
   recvq_l+=i;
 }
 
-void SendHandShake()
+static void SendHandShake()
 {
   char *hst=malloc(1024);
   strcpy(hst,"GET /?hs=true&p=1.1&c=tst&v=1.0&u=");
@@ -268,7 +264,7 @@ int stricmp(const char *s, const char *d)
   return(cs);
 }
 
-void ParseHandShake()
+static void ParseHandShake()
 {
   const char seps[] = " \n\r";
   char *s;
@@ -283,7 +279,15 @@ void ParseHandShake()
   s=malloc(recvq_l+1);
   strcpy(s,recvq_p);
   SUBPROC((void*)INETLOG,1,s);
-  response=strtok(recvq_p,seps);
+  response=strstr(recvq_p,"\r\n\r\n");
+  if (!response)
+  {
+    response=strtok(recvq_p,seps);
+  }
+  else
+  {
+    response=strtok(response,seps);
+  }
   if (stricmp("UPTODATE",response)!=0) return;
   strncpy(CHALLENGE,strtok(NULL,seps),63);
   submiturl=strtok(NULL,seps);
@@ -294,13 +298,176 @@ void ParseHandShake()
   is_handshaked=1;
 }
 
-void SendSubmit()
+static unsigned int STRIP_SIZE;
+
+static char SESSIONKEY[33];
+static char PROCESSED_PWD[33];
+
+void genSessionKey(void)
 {
+  md5_state_t md5state;
+  unsigned char md5pword[16];
+  char clear[256];
+  char *key=SESSIONKEY;
+  int j;
+  strcpy(clear,PROCESSED_PWD);
+  strcat(clear,CHALLENGE);
+  md5_init(&md5state);
+  md5_append(&md5state, (unsigned const char *)clear, (int)strlen(clear));
+  md5_finish(&md5state, md5pword);
+  memset(key,0,33);
+  for (j = 0;j < 16;j++)
+  {
+    char a[3];
+    sprintf(a, "%02x", md5pword[j]);
+    key[2*j] = a[0];
+    key[2*j+1] = a[1];
+  }
 }
+
+static void setPassword(const char *pass)
+{
+  char *tmp;
+  int j;
+  md5_state_t md5state;
+  unsigned char md5pword[16];
+  md5_init(&md5state);
+  md5_append(&md5state, (unsigned const char *)pass, (int)strlen(pass));
+  md5_finish(&md5state, md5pword);
+  if (!strlen(pass)) return;
+  tmp=PROCESSED_PWD;
+  memset(tmp,0,33);
+  for (j = 0;j < 16;j++)
+  {
+    char a[3];
+    sprintf(a, "%02x", md5pword[j]);
+    tmp[2*j] = a[0];
+    tmp[2*j+1] = a[1];
+  }
+  genSessionKey();
+}
+
+static int SendSubmit()
+{
+  char s2[32];
+
+  int f;
+  unsigned int err;
+  int fsize;
+  char *buf;
+  char *outp;
+  char *req;
+  FSTATS stat;
+  int c;
+
+  int sn=0;
+  char *PLOG;
+  char *SUBMIT_DATA;
+
+  setPassword(PASSWORD);
   
-void ParseSubmit()
+  if (GetFileStats(TEMP_FILE,&stat,&err)==-1)
+    return 0;
+
+  if ((fsize=stat.size)<=0)
+    return 0;
+ 
+  if ((f=fopen(TEMP_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1)
+  return 0;
+  
+  SUBMIT_DATA=outp=malloc(512+fsize);
+  buf=PLOG=malloc(fsize+1);
+  
+  buf[fread(f,buf,fsize,&err)]=0;
+  fclose(f,&err);
+  
+  strcpy(outp,"u=");
+  urlcat(outp,USERNAME);
+  strcat(outp,"&s=");
+  strcat(outp,SESSIONKEY);
+  outp+=strlen(outp);
+  //Теперь все прочитано в буфер
+  while(sn<1)
+  {
+    while((c=*buf++)>=32)
+    {
+      *outp++=c;
+      if (c=='[')
+      {
+	*outp++=sn+'0';
+      }
+    }
+    sn++;
+    if (!c) break;
+  }
+  *outp=0;
+  STRIP_SIZE=buf-PLOG;
+  mfree(PLOG);
+  
+  if (!sn)
+  {
+    mfree(SUBMIT_DATA);
+    return 0;
+  }
+  req=malloc(strlen(POST_URL)+strlen(POST_HOST)+1024);
+  strcpy(req,"POST /");
+  strcat(req,POST_URL);
+  strcat(req," HTTP/1.0\r\nHost: ");
+  strcat(req,POST_HOST);
+//  sprintf(req+strlen(req),":%d",POST_PORT);
+  strcat(req,"\r\nContent-Length: ");
+  sprintf(s2,"%d",strlen(SUBMIT_DATA));
+  strcat(req,s2);
+  strcat(req,"\r\nUser-Agent: Mozilla/5.0 (compatible; libscrobbler 2.0; tst 1.0)");
+  strcat(req,"\r\nContent-type: application/x-www-form-urlencoded\r\nAccept: */*\r\nConnection: Close\r\n\r\n");
+  SUBPROC((void*)INETLOG,0,req);
+  SUBPROC((void*)bsend,strlen(req),req);
+  SUBPROC((void*)INETLOG,0,SUBMIT_DATA);
+  SUBPROC((void*)bsend,strlen(SUBMIT_DATA),SUBMIT_DATA);
+  return 1;
+}
+
+static void StripLog()
+{
+  //Стрипаем файл лога
+  int f;
+  unsigned int err;
+  int fsize=0;
+  char *buf=NULL;
+  FSTATS stat;
+  if (GetFileStats(TEMP_FILE,&stat,&err)==-1) goto L_REWRITE;
+  if (stat.size<=0) goto L_REWRITE;
+  fsize=stat.size;
+  if ((f=fopen(TEMP_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto L_REWRITE;
+  buf=malloc(fsize);
+  fread(f,buf,fsize,&err);
+  fclose(f,&err);
+L_REWRITE:
+  f=fopen(TEMP_FILE,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&err);
+  if (f!=-1)
+  {
+    if (buf)
+    {
+      if ((fsize-=STRIP_SIZE)>0)
+      {
+	fwrite(f,buf+STRIP_SIZE,fsize,&err);
+      }
+    }
+    fclose(f,&err);
+  }
+  mfree(buf);
+  if (fsize>0)
+  {
+    enable_connect=1;
+    GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);    
+  }
+}
+
+static void ParseSubmit()
 {
   char *s;
+  char *response;
+  const char seps[] = " \n\r";
   if (!recvq_l)
   {
     SUBPROC((void*)INETLOG,0,"No bytes on submit recived!");
@@ -310,6 +477,19 @@ void ParseSubmit()
   s=malloc(recvq_l+1);
   strcpy(s,recvq_p);
   SUBPROC((void*)INETLOG,1,s);
+  response=strstr(recvq_p,"\r\n\r\n");
+  if (!response)
+  {
+    SUBPROC((void*)INETLOG,0,"Incorrect HTTP answer!");
+    return;
+  }
+  response+=4;
+  response=strtok(response,seps);
+  if (!stricmp("OK",response))
+  {
+    enable_connect=0;
+    SUBPROC((void*)StripLog);
+  }
 }
 
 int ParseSocketMsg(GBS_MSG *msg)
@@ -330,9 +510,9 @@ int ParseSocketMsg(GBS_MSG *msg)
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
       return(1);
     case ENIP_DNR_HOST_BY_NAME:
-      SUBPROC((void*)INETLOG,0,"ENIP_DNR_HOST_BY_NAME\r\n");
       if ((int)msg->data1==DNR_ID)
       {
+	SUBPROC((void*)INETLOG,0,"ENIP_DNR_HOST_BY_NAME\r\n");
 	if (DNR_TRIES) SUBPROC((void *)create_connect);
       }
       return(1);
@@ -356,7 +536,11 @@ int ParseSocketMsg(GBS_MSG *msg)
 	  //Соединение установленно, посылаем пакет login
 	  if (is_handshaked)
 	  {
-	    SendSubmit();
+	    if (!SendSubmit())
+	    {
+	      enable_connect=0;
+	      SUBPROC((void*)end_socket);
+	    }
 	  }
 	  else
 	  {
@@ -416,7 +600,7 @@ int ParseSocketMsg(GBS_MSG *msg)
 	if (is_handshaked)
 	{
 	  ParseSubmit();
-	  enable_connect=0;
+	  is_handshaked=0;
 	}
 	else
 	{
@@ -424,7 +608,7 @@ int ParseSocketMsg(GBS_MSG *msg)
 	}
 	SUBPROC((void *)ClearSendQ);
 	SUBPROC((void *)ClearRecvQ);
-	GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*(is_handshaked?1:120),do_reconnect);
+	if (enable_connect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*(is_handshaked?2:120),do_reconnect);
 	break;
       }
     }

@@ -1888,6 +1888,9 @@
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\md5.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\urlwork.c</name>
   </file>
 </project>
