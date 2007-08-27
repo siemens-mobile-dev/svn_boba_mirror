@@ -7,10 +7,17 @@
 
 #define CFGUPD_INTV 5
 
-CSM_DESC icsmd;
+extern void kill_data(void *p, void (*func_p)(void *));
 
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
+const int minus11=-11;
+
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
+
+int IDLECSM_ID=-1;
+
 
 // Импорт переменных
 extern const int cfgEvents;
@@ -136,11 +143,8 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
-
-  csm_result=old_icsm_onMessage(data,msg);
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
@@ -151,30 +155,76 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     }
   }  
 
-  return(csm_result);
+  return(1);
 }
 
-
-void MyIDLECSM_onClose(CSM_RAM *data)
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+
+}
+
+static void Killer(void)
+{
   extern void *ELF_BEGIN;
   GBS_DelTimer(&mytmr);
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)Killer);
+}
+
+static unsigned short maincsm_name_body[140];
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"Blinker");
 }
 
 int main(void)
 {
   //ShowMSG(1, (int)"Blinker started!");
-  InitConfig();
+  CSM_RAM *save_cmpc;
+  char dummy[sizeof(MAIN_CSM)];
+  InitConfig();  
+  UpdateCSMname();
 
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onClose=MyIDLECSM_onClose;  
-  icsm->constr=&icsmd;        
+  LockSched();
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+  UnlockSched();        
         
   Check();
   return 0;
