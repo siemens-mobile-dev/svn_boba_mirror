@@ -22,6 +22,8 @@ extern const char VERSION_VERS[];
 extern const char OS[];
 extern const int USE_SASL;
 extern const int USE_ZLIB;
+extern const int DELIVERY_EVENTS;
+extern const int DISPLAY_POPUPS;
 extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
@@ -337,8 +339,16 @@ void Report_VersionInfo(char* id, char *to)
 // Context: HELPER
 void Report_DiscoInfo(char* id, char *to)
 {
-  char answer[200];
-  sprintf(answer, "<identity category='client' type='mobile'/><feature var='%s'/><feature var='%s'/><feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC);
+  char answer[400];
+  sprintf(answer, "<identity category='client' type='mobile'/>"
+                    "<feature var='%s'/>"
+                    "<feature var='%s'/>"
+                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC);
+  if(DELIVERY_EVENTS)
+  {
+    char xevents_feature[]="<feature var='"JABBER_X_EVENT"'/>";
+    strcat(answer, xevents_feature);
+  }
   SendIq(to, IQTYPE_RES, id, DISCO_INFO, answer);
 
   mfree(id);
@@ -1165,12 +1175,58 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
   SUBPROC((void*)_mucadmincmd, _room_name, payload);
 }
 
+static void Report_Delivery(char *mess_id, char *to)
+{
+/*
+RECV: <message
+          from='romeo@montague.net/orchard'
+          to='juliet@capulet.com/balcony'>
+      <x xmlns='jabber:x:event'>
+        <delivered/>
+        <id>message22</id>
+      </x>
+    </message>  
+*/  
+  char notif_tpl[]="<message to='%s'><x xmlns='jabber:x:event'><id>%s</id><delivered/></x></message>";
+  char *ans = malloc(256);
+  snprintf(ans,256,notif_tpl, to, mess_id);
+  ShowMSG(1,(int)ans);
+  SUBPROC((void*)_sendandfree,ans);
+}
+
 /*
 Входящие сообщения
 */
 void Process_Incoming_Message(XMLNode* nodeEx)
 {
   char Is_subj=0;
+  char from[]="from";
+  char c_xmlns[]="xmlns";
+  char c_id[]="id";
+  
+  // Если включено обслуживание запросов о получении...
+  if(DELIVERY_EVENTS)
+  {
+    XMLNode* xnode = XML_Get_Child_Node_By_Name(nodeEx,"x");
+    if(xnode)
+    {
+      char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
+      if(xmlns)
+      if(!strcmp(xmlns,JABBER_X_EVENT))
+      {
+        // получили <x xmlns='jabber:x:event'>
+        // Проверяем <delivered/>, ибо не умеем ничего больше
+        XMLNode *delivery = XML_Get_Child_Node_By_Name(xnode,"delivered");
+        if(delivery)
+        {
+          // Получаем ID сообщения
+          char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
+          if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
+        }
+      }
+    }
+  }
+  
   XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");
   if(!msgnode)
   {
@@ -1185,14 +1241,17 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     // Не показываем попапы для групчата, ибо достаёт трындец как
     if(msgtype!=MSG_GCHAT)
     {
-      char* m = malloc(128+5+strlen(msgnode->value));
-      sprintf(m,"%s: %s", XML_Get_Attr_Value("from",nodeEx->attr), msgnode->value);
-      char *ansi_m=convUTF8_to_ANSI_STR(m);
-      ShowMSG(1,(int)ansi_m);
+      if(DISPLAY_POPUPS)
+      {
+        char* m = malloc(128+5+strlen(msgnode->value));
+        sprintf(m,"%s: %s", XML_Get_Attr_Value(from,nodeEx->attr), msgnode->value);
+        char *ansi_m=convUTF8_to_ANSI_STR(m);
+        ShowMSG(1,(int)ansi_m);
+        mfree(m);
+        mfree(ansi_m);
+      }
       extern const char sndPM[];
       SUBPROC((void *)Play,sndPM);
-      mfree(m);
-      mfree(ansi_m);
     }
       else
         {
@@ -1203,7 +1262,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     {
       msgtype = MSG_SUBJECT;
     }
-    CList_AddMessage(XML_Get_Attr_Value("from",nodeEx->attr), msgtype, msgnode->value);
+    CList_AddMessage(XML_Get_Attr_Value(from,nodeEx->attr), msgtype, msgnode->value);
     
     extern volatile int vibra_count;
     Vibrate(1);

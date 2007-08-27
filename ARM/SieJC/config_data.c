@@ -59,9 +59,14 @@ __root const CFG_HDR cfghdr11={CFG_COORDINATES,"Idle icon position",0,0};
 __root const unsigned int IDLE_ICON_X=0;
 __root const unsigned int IDLE_ICON_Y=50;
 
+__root const CFG_HDR cfghdr17657={CFG_CHECKBOX,"Display pop-ups",0,2};
+__root const int DISPLAY_POPUPS=1;
+
 __root const CFG_HDR cfghdr12={CFG_CHECKBOX,"Composing Events",0,2};
 __root const int COMPOSING_EVENTS=1;
 
+__root const CFG_HDR cfghdr15345={CFG_CHECKBOX,"Delivery Report if required",0,2};
+__root const int DELIVERY_EVENTS=1;
 // Настройка звуков
 ////////////////////////////////////////////////////////////////////////////////
 __root const CFG_HDR cfghdr_SOUNDS_SETUP={CFG_LEVEL,"Sounds setup",1,0};

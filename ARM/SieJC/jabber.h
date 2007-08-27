@@ -46,6 +46,8 @@
 #define IQ_ROSTER  "jabber:iq:roster"
 #define IQ_PRIVATE "jabber:iq:private"
 
+#define JABBER_X_EVENT "jabber:x:event"
+
 #define DISCO_INFO "http://jabber.org/protocol/disco#info"
 
 #define MSGSTR_CHAT "chat"
