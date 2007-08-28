@@ -3983,6 +3983,12 @@
     </configuration>
   </file>
   <file>
+    <name>$PROJ_DIR$\csm_work.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\csm_work.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>

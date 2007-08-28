@@ -3,6 +3,7 @@
 #include "minigps_logger.h"
 #include "actions.h"
 #include "conf_loader.h"
+#include "csm_work.h"
 
 CSM_DESC icsmd;
 
@@ -66,7 +67,11 @@ char IPC_me[]="GPSLogger";
 void RedrawScreen(CSM_RAM* data)
 {
   int x_pos;
-  
+  char *xz;
+  char action;
+  xz= Get_Current_Location(&action);
+  if(!xz)return;
+        
   if(IsGuiOnTop(EDLEGUI_ID)) //Если IdleGui на самом верху
   {
     GUI *igui=GetTopGUI();
@@ -82,12 +87,7 @@ void RedrawScreen(CSM_RAM* data)
       if (idata)
       {
 #endif
-        char *xz;
-        char action;
-        xz= Get_Current_Location(&action);
-        if(!xz)return;
         utf8_2ws(Out_WS, xz, 35);
-        mfree(xz);
         int len;
         len = Get_WS_width(Out_WS, TXT_FONT);     //Get_String_Width(Out_WS);
         if(CENTER_TEXT)
@@ -106,13 +106,13 @@ void RedrawScreen(CSM_RAM* data)
       }
     }
   }  
+  mfree(xz);
 }
 
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+int MyCSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
   GPSL_IPC_MSG_UPD_TMO *updmsg;
-
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
@@ -127,8 +127,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   {
     if(msg->submess==IPC_GPSL_REFRESH)
     {
-      RedrawScreen(data);
-      return old_icsm_onMessage(data,msg);
+      void *icsm=FindCSMbyID(CSM_root()->idle_id);
+      if (icsm) RedrawScreen(icsm);
+      return 1;
     }
     IPC_REQ *ipc;
     if(ipc=(IPC_REQ*)msg->data0)
@@ -147,18 +148,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
-  return old_icsm_onMessage(data,msg);
-}
-
-
-void MyIDLECSM_onClose(CSM_RAM *data)
-{
-  KillRamNetCache();
-  GBS_DelTimer(&mytmr);
-  FreeWS(Out_WS);
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  return(1);
 }
 
 int main(void)
@@ -166,19 +156,7 @@ int main(void)
   InitConfig();
   InitRamNetCache();
   Out_WS = AllocWS(256);
-  LockSched();
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  
-  old_icsm_onMessage=icsmd.onMessage;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onClose=MyIDLECSM_onClose;
-  
-  icsm->constr=&icsmd;
-
-  UnlockSched();
   GBS_StartTimerProc(&mytmr,UPDATE_TIME*10,TimerProc);
+  PatchCSMQueue();
   return 0;
 }

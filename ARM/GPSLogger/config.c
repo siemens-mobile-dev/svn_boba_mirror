@@ -8,6 +8,10 @@ __root const int Req_Clear_Cache=0;
 __root const CFG_HDR cfghdr1={CFG_CHECKBOX,"Log unknown cells",0,2};
 __root const int LOG_UNKNOWN_CELLS=0;
 
+
+////////////////////////////////////////////////////////////////////////////////
+__root const CFG_HDR cfghdr_TEXT_CFG_LEVEL_B={CFG_LEVEL,"Display configuration",1,0};
+
 //Координаты X, Y вывода надписи
 __root const CFG_HDR cfghdrioykh={CFG_COORDINATES,"Text position",0,0};
 __root const unsigned int TXT_X=50;
@@ -28,6 +32,26 @@ __root const char TXT_COLOR[4]={0xFF,0xFF,0,0x64};
 // Атрибуты текста
 __root const CFG_HDR cfghdrplkjhl = {CFG_UINT, "Txt attr", 0, 128};
 __root const unsigned int TXT_ATTR = 0x20;
+
+// Флаг показа неизвестных сот
+__root const CFG_HDR cfghdrere1={CFG_CHECKBOX,"Display unknown cells",0,2};
+__root const int DISP_UNKNOWN_CELLS=0;
+
+__root const CFG_HDR cfghdr_TEXT_CFG_LEVEL_E={CFG_LEVEL,"",0,0};
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+__root const CFG_HDR cfghdr_ACTIONS_CFG_LEVEL_B={CFG_LEVEL,"Actions configuration",1,0};
+
+// Вибрация
+__root const CFG_HDR cfghdr98789={CFG_UINT,"Vibra strength",0,100};
+__root const unsigned int VIBRA_POWER=10;
+
+__root const CFG_HDR cfghdr243={CFG_UINT,"Vibra count",1,5};
+__root const unsigned int VIBRA_COUNT=1;
+
+__root const CFG_HDR cfghdr_ACTIONS_CFG_LEVEL_E={CFG_LEVEL,"",0,0};
+////////////////////////////////////////////////////////////////////////////////
+
 
 // Размер кеша сот
 __root const CFG_HDR cfghdito89 = {CFG_UINT, "Cell cache size", 2, 10};

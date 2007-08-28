@@ -6,7 +6,7 @@ extern const          char MGPS_DB[128];
 extern const          char LOGFILE[128];
 extern const unsigned int CACHE_SIZE;
 extern const          int LOG_UNKNOWN_CELLS;
-
+extern const          int DISP_UNKNOWN_CELLS;
 const char Unk_t[]="<no name>";
 
 #define CACHE_SIZE_MAX 10
@@ -221,6 +221,12 @@ char *Get_Current_Location(char *action)
   if(hFile==-1)
   {
     if(LOG_UNKNOWN_CELLS)WriteLog(Res.ci,Res.lac,(char*)&Unk_t); 
+    if(DISP_UNKNOWN_CELLS)
+    {
+      res = malloc(20);
+      sprintf(res, "%d-%d", Res.ci,Res.lac);
+      return res;
+    }
     return NULL;
   }
   // Файло открыто, читаем файло
