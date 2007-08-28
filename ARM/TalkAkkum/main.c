@@ -4,12 +4,7 @@
 #include "conf_loader.h"
 #include "TalkAkkum.h"
 
-#define UPDATE_TIME (1*216)
-
-//CSM_DESC icsmd;
-
-//int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-//void (*old_icsm_onClose)(CSM_RAM*);
+#define TMR_SECOND 216
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -30,8 +25,6 @@ unsigned int levels_up[9]   ={0,0,0,0,0,0,0,0};//0-10,...,8-90
 unsigned int levels_down[10]={0,0,0,0,0,0,0,0,0};//0-5,...,9-90
 unsigned int flag=0;
 unsigned int vibra_count1;
-
-char pic_path[];
 
 //=============================ѕроигрывание звука===============================
 int PLAY_ID;
@@ -109,17 +102,6 @@ void stop_vibra(void)
   {
     GBS_StartTimerProc(&tmr_vibra, 50, start_vibra);
   }
-}
-
-//==============================================================================
-
-void RereadSettings(void) //—читывание конфига
-{
-   LockSched();
-    InitConfig();  
-    strcpy(pic_path, folder_path);
-    strcat(pic_path, "TalkAkkum.png");
-   UnlockSched();
 }
 
 //==============================================================================
@@ -311,7 +293,9 @@ void Check(void)
         break;
         
         case 3:
-          if (!found_full_empty[1])
+          {
+          if (!found_full_empty[0]) found_full_empty[0]=1;
+          if ((!found_full_empty[1])&&(found_full_empty[0]))
             {// Ёнерги€ восстановлена
               found_full_empty[1]=1;
 
@@ -323,7 +307,8 @@ void Check(void)
               
               unsigned int i;
               for (i=0; i<=9; i++) {levels_down[i]=0;}          
-            }// Ёнерги€ восстановлена          
+            }// Ёнерги€ восстановлена   
+          }
         break;  
       }
       
@@ -347,11 +332,24 @@ void Check(void)
             }
         }
        //   
-
-  GBS_StartTimerProc(&update_tmr,UPDATE_TIME,Check);
 }
 
 // ----------------------------------------------------------------------------
+
+const char ipc_my_name[]="TalkAkkum";
+#define IPC_UPDATE_STAT 1
+
+const IPC_REQ gipc={
+  ipc_my_name,
+  ipc_my_name,
+  NULL
+};
+
+void TimerProc(void)
+{
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
+}
+
 #pragma inline=forced
 int toupper(int c)
 {
@@ -371,17 +369,37 @@ int strcmp_nocase(const char *s1,const char *s2)
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
   CSM_RAM *icsm;
-
+  
   if(msg->msg == MSG_RECONFIGURE_REQ) // ѕеречитывание конфига по сообщению
   {
     extern const char *successed_config_filename;
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
+      InitConfig();
       ShowMSG(1,(int)"TalkAkkum config updated!");
-      RereadSettings();
     }
   }
 
+  if (msg->msg==MSG_IPC)
+  {
+    IPC_REQ *ipc;
+    if ((ipc=(IPC_REQ*)msg->data0))
+    {
+      if (strcmp_nocase(ipc->name_to,ipc_my_name)==0)
+      {
+        switch (msg->submess)
+        {
+        case IPC_UPDATE_STAT:
+          if (ipc->name_from==ipc_my_name) 
+          {
+            Check();
+            GBS_StartTimerProc(&update_tmr, TMR_SECOND*3, TimerProc);
+          }
+        }
+      }
+    }
+  }  
+  
   if (msg->msg==MSG_PLAYFILE_REPORT)
   {
     GBS_PSOUND_MSG *pmsg=(GBS_PSOUND_MSG *)msg;
@@ -408,6 +426,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
+  
   if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
   {  
     if ((IsGuiOnTop(idlegui_id))&&(show_icon)) //≈сли IdleGui на самом верху
@@ -424,6 +443,9 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 	  {
 	    void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
+            char pic_path[128];
+            strcpy(pic_path, folder_path);
+            strcat(pic_path, "TalkAkkum.png");            
             DrawCanvas(canvasdata, cfgX, cfgY, cfgX + GetImgWidth((int)pic_path), cfgY + GetImgHeight((int)pic_path), 1);
 	    DrawImg(cfgX, cfgY, (int)pic_path);
 #ifdef ELKA
@@ -432,14 +454,14 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 #endif
         }
       }
-  }
+  }    
   
   return(1);
 }
 
 static void maincsm_oncreate(CSM_RAM *data)
 {
-  GBS_StartTimerProc(&update_tmr,216*5,Check);
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
 }
 
 static void Killer(void)
@@ -492,12 +514,11 @@ static void UpdateCSMname(void)
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"TalkAkkum");
 }
 
-
 int main(void)
 {
   CSM_RAM *save_cmpc;
   char dummy[sizeof(MAIN_CSM)];
-  RereadSettings();
+  InitConfig();
   UpdateCSMname();
 
   LockSched();
@@ -509,4 +530,3 @@ int main(void)
 
   return 0;
 }
-

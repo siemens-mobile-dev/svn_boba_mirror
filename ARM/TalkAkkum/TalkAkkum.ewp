@@ -132,7 +132,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -342,6 +342,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -950,7 +955,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1160,6 +1165,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1768,7 +1778,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1979,6 +1989,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -2587,7 +2602,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>13</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -2797,6 +2812,11 @@
         <option>
           <name>CCStdIncludePath</name>
           <state>$TOOLKIT_DIR$\INC\</state>
+        </option>
+        <option>
+          <name>CCInlineThreshold</name>
+          <version>0</version>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -3285,7 +3305,7 @@
       <settings>
         <name>ICCARM</name>
         <data>
-          <version>13</version>
+          <version>14</version>
           <wantNonLocal>0</wantNonLocal>
           <debug>0</debug>
           <option>
@@ -3496,6 +3516,11 @@
             <name>CCStdIncludePath</name>
             <state>$TOOLKIT_DIR$\INC\</state>
           </option>
+          <option>
+            <name>CCInlineThreshold</name>
+            <version>0</version>
+            <state>1</state>
+          </option>
         </data>
       </settings>
     </configuration>
@@ -3504,7 +3529,7 @@
       <settings>
         <name>ICCARM</name>
         <data>
-          <version>13</version>
+          <version>14</version>
           <wantNonLocal>1</wantNonLocal>
           <debug>0</debug>
           <option>
@@ -3714,6 +3739,11 @@
           <option>
             <name>CCStdIncludePath</name>
             <state>$TOOLKIT_DIR$\INC\</state>
+          </option>
+          <option>
+            <name>CCInlineThreshold</name>
+            <version>0</version>
+            <state>1</state>
           </option>
         </data>
       </settings>
@@ -3723,7 +3753,7 @@
       <settings>
         <name>ICCARM</name>
         <data>
-          <version>13</version>
+          <version>14</version>
           <wantNonLocal>1</wantNonLocal>
           <debug>0</debug>
           <option>
@@ -3933,6 +3963,11 @@
           <option>
             <name>CCStdIncludePath</name>
             <state>$TOOLKIT_DIR$\INC\</state>
+          </option>
+          <option>
+            <name>CCInlineThreshold</name>
+            <version>0</version>
+            <state>1</state>
           </option>
         </data>
       </settings>
@@ -3942,7 +3977,7 @@
       <settings>
         <name>ICCARM</name>
         <data>
-          <version>13</version>
+          <version>14</version>
           <wantNonLocal>1</wantNonLocal>
           <debug>0</debug>
           <option>
@@ -4152,6 +4187,11 @@
           <option>
             <name>CCStdIncludePath</name>
             <state>$TOOLKIT_DIR$\INC\</state>
+          </option>
+          <option>
+            <name>CCInlineThreshold</name>
+            <version>0</version>
+            <state>1</state>
           </option>
         </data>
       </settings>
@@ -4162,6 +4202,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\TalkAkkum.h</name>
   </file>
 </project>
 

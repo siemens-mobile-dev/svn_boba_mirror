@@ -22,7 +22,7 @@ int IDLECSM_ID=-1;
 
 unsigned int tmp;
 
-char pic_path[];
+
 unsigned int vibra_count1;
 
 TTime CurTime;
@@ -83,14 +83,6 @@ void Play(const char *fpath, const char *fname)
 }
 
 //============================================================================== 
-void RereadSettings()
-{
-   LockSched();
-    InitConfig();  
-    strcpy(pic_path, folder_path);
-    strcat(pic_path, "TalkPhone.png");
-   UnlockSched();   
-}
 
 //++++++++++++++++++++++++++++++Проговаривание времени+++++++++++++++++++++++++++++++++
 
@@ -361,8 +353,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
     extern const char *successed_config_filename;
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
+      InitConfig();
       ShowMSG(1,(int)"TalkPhone config updated!");
-      RereadSettings();
     }
   }
   
@@ -422,6 +414,9 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 	{
 	  void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
+            char pic_path[128];
+            strcpy(pic_path, folder_path);
+            strcat(pic_path, "TalkPhone.png");
             FSTATS fstats;
             unsigned int err;
             if (GetFileStats(pic_path,&fstats,&err)!=-1)
@@ -520,7 +515,7 @@ int main(void)
 {
   CSM_RAM *save_cmpc;
   char dummy[sizeof(MAIN_CSM)];
-  RereadSettings();
+  InitConfig();
   UpdateCSMname();
   
   
