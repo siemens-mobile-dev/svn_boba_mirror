@@ -36,7 +36,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "2.8.0-Z";
+const char VERSION_VERS[] = "2.8.5-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
@@ -966,6 +966,69 @@ void Disp_State()
   ShowMSG(0,(int)q);
 }
 
+// Переподключение
+void Do_Reconnect()
+{
+  extern TRESOURCE* ActiveContact;
+  extern unsigned int NContacts;
+  extern unsigned int N_Disp_Contacts;
+  extern unsigned int Active_page;
+  extern unsigned int N_cont_disp;
+  extern unsigned int CursorPos;
+  
+  // Уничтожаем все объекты
+        ClearSendQ();
+        GBS_DelTimer(&Ping_Timer);
+        GBS_DelTimer(&TMR_Send_Presence);
+#ifndef NEWSGOLD
+        GBS_DelTimer(&redraw_tmr);
+#endif
+        GBS_DelTimer(&reconnect_tmr);
+        SetVibration(0);
+
+        // Ре-Инициализация контакт-листа
+/*        
+        ActiveContact = NULL;     
+        NContacts = 0;
+        N_Disp_Contacts = 0;
+        N_cont_disp=0;
+*/
+        Active_page = 1;
+        CursorPos = 1;
+
+        // Уничтожение списков CL, MUC, закладок, групп, очистка SASL
+        LockSched();
+//        CList_Destroy();
+//        KillGroupsList();
+        MUCList_Destroy();
+        KillBMList();
+        UnlockSched();
+        
+        virt_buffer_len = 0;
+        Destroy_SASL_Ctx();
+
+        // Ре-Инициализация сжатия
+        if(ZLib_Stream_Init)
+        {
+          inflateEnd(&d_stream);
+          zeromem(&d_stream, sizeof(z_stream));
+          virt_buffer_len = 0;
+          ZLib_Stream_Init=0;
+          Is_Compression_Enabled = 0;
+          out_bytes_count = 0; // Количество отправленных данных
+          Rstream_n = 0;             
+          Rstream_p = NULL;
+        }
+
+        // Создание головы списка
+        //InitGroupsList();
+        
+          
+	DNR_TRIES=3;
+        SUBPROC((void *)create_connect);
+}
+
+
 #ifndef NEWSGOLD
 volatile char IsRedrawTimerStarted=0;
 
@@ -1070,53 +1133,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
     case GREEN_BUTTON:
       if ((connect_state==0)&&(sock==-1))
       {
-        ClearSendQ();
-        GBS_DelTimer(&Ping_Timer);
-        GBS_DelTimer(&TMR_Send_Presence);
-#ifndef NEWSGOLD
-        GBS_DelTimer(&redraw_tmr);
-#endif
-        GBS_DelTimer(&reconnect_tmr);
-        SetVibration(0);
-
-        extern TRESOURCE* ActiveContact;
-        ActiveContact = NULL;
-        extern unsigned int NContacts;
-        extern unsigned int N_Disp_Contacts;
-
-        extern unsigned int Active_page;
-        extern unsigned int N_cont_disp;
-        extern unsigned int CursorPos;
-        
-        NContacts = 0;
-        N_Disp_Contacts = 0;
-
-        Active_page = 1;
-        N_cont_disp=0;
-        CursorPos = 1;
-        
-        CList_Destroy();
-        virt_buffer_len = 0;
-        MUCList_Destroy();
-        KillBMList();
-        KillGroupsList();
-        Destroy_SASL_Ctx();
-
-        if(ZLib_Stream_Init)
-        {
-          ShowMSG(1,(int)"alldeleted");
-          inflateEnd(&d_stream);
-          zeromem(&d_stream, sizeof(z_stream));
-          virt_buffer_len = 0;
-          ZLib_Stream_Init=0;
-          Is_Compression_Enabled = 0;
-          out_bytes_count = 0; // Количество отправленных данных
-          Rstream_n = 0;             
-          Rstream_p = NULL;
-        }
-
-	DNR_TRIES=3;
-        SUBPROC((void *)create_connect);
+        Do_Reconnect();
       }
 
       if(connect_state==2 && Jabber_state==JS_ONLINE && CList_GetActiveContact()->entry_type!=T_GROUP)
@@ -1442,7 +1459,7 @@ char mypic[128];
         sock=-1;
         Vibrate(4);
         SMART_REDRAW();
-        //GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+        GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,Do_Reconnect);
         break;
       }
     }

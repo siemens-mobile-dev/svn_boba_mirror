@@ -814,8 +814,12 @@ if(!strcmp(gres,iqtype))
   if(!strcmp(id,auth_id) || !strcmp(id, sess_id))   // јвторизаци€ либо конец инициализации сессии
   {
     Jabber_state = JS_AUTH_OK;
-    CList_AddContact(My_JID, "(Me)", SUB_BOTH,0,0);
-    SUBPROC((void*)Send_Roster_Query);
+    if(!cltop)
+    {
+      CList_AddContact(My_JID, "(Me)", SUB_BOTH,0,0);
+      SUBPROC((void*)Send_Roster_Query);
+    }
+    else Send_Presence_MMIStub();
     return;
   }
 
