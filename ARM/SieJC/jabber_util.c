@@ -28,6 +28,10 @@ extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
 
+extern GR_ITEM *GR_ROOT;
+extern CLIST* cltop;
+extern unsigned int NContacts;
+
 MUC_ITEM *muctop = NULL;
 
 extern JABBER_STATE Jabber_state;
@@ -638,9 +642,6 @@ void FillRoster(XMLNode* items)
   }
   
   // Получение ростера закончено. Размечаем группы
-  extern GR_ITEM *GR_ROOT;
-  extern CLIST* cltop;
-  extern unsigned int NContacts;
   GR_ITEM *tmp_gpointer=GR_ROOT;
   CLIST *tmp_cpointer=cltop;
   int cur_gid=-1, this_grid;   // Текущий обрабатываемый GID
