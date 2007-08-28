@@ -616,7 +616,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>..\test.xcl</state>
+          <state>$PROJ_DIR$\alarm_ring.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
