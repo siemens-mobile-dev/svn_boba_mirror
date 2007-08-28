@@ -3,6 +3,8 @@
 #include "urlwork.h"
 #include "md5.h"
 
+static const char _CRLF_[]="\r\n";
+
 extern char *strtok(char *s1, const char *s2);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
@@ -409,7 +411,7 @@ static int SendSubmit()
     mfree(SUBMIT_DATA);
     return 0;
   }
-  req=malloc(strlen(POST_URL)+strlen(POST_HOST)+1024);
+  req=malloc(strlen(POST_URL)+strlen(POST_HOST)+1024+strlen(SUBMIT_DATA));
   strcpy(req,"POST /");
   strcat(req,POST_URL);
   strcat(req," HTTP/1.1\r\nContent-type: application/x-www-form-urlencoded\r\nHost: ");
@@ -421,11 +423,13 @@ static int SendSubmit()
   strcat(req,s2);
 //  strcat(req,"\r\nAccept: */*\r\nConnection: Close\r\n\r\n");
   strcat(req,"\r\nCache-Control: no-cache\r\n\r\n");
+  strcat(req,SUBMIT_DATA);
+  mfree(SUBMIT_DATA);
   SUBPROC((void*)INETLOG,0,req);
   SUBPROC((void*)bsend,strlen(req),req);
-  SUBPROC((void*)INETLOG,0,SUBMIT_DATA);
-  SUBPROC((void*)bsend,strlen(SUBMIT_DATA),SUBMIT_DATA);
-  SUBPROC((void*)INETLOG,0,"\r\n");
+//  SUBPROC((void*)INETLOG,0,SUBMIT_DATA);
+//  SUBPROC((void*)bsend,strlen(SUBMIT_DATA),SUBMIT_DATA);
+  SUBPROC((void*)INETLOG,0,_CRLF_);
   return 1;
 }
 
@@ -460,8 +464,9 @@ L_REWRITE:
   mfree(buf);
   if (fsize>0)
   {
+    is_handshaked=1;
     enable_connect=1;
-    GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);    
+    GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*20,do_reconnect);    
   }
 }
 
@@ -469,7 +474,9 @@ static void ParseSubmit()
 {
   char *s;
   char *response;
+  char *body;
   const char seps[] = " \n\r";
+  int is_chunked=0;
   if (!recvq_l)
   {
     SUBPROC((void*)INETLOG,0,"No bytes on submit recived!");
@@ -479,15 +486,66 @@ static void ParseSubmit()
   s=malloc(recvq_l+1);
   strcpy(s,recvq_p);
   SUBPROC((void*)INETLOG,1,s);
-  response=strstr(recvq_p,"\r\n\r\n");
-  if (!response)
+  response=recvq_p;
+  body=strstr(response,"\r\n\r\n");
+  if (!body)
   {
+  L_ERR:
     SUBPROC((void*)INETLOG,0,"Incorrect HTTP answer!");
     return;
   }
-  response+=4;
-  response=strtok(response,seps);
-  if (!stricmp("OK",response))
+  *body=0;
+  body+=4;
+  while(response=strtok(response,_CRLF_))
+  {
+    if (stricmp(response,"Transfer-Encoding: chunked")==0) is_chunked=1;
+    response=NULL;
+  }
+  if (is_chunked)
+  {
+    //Убираем чанки
+    char *p=body;
+    char *last=recvq_p+recvq_l;
+    char *np;
+    int c;
+    while((c=*p)!='0')
+    {
+      if ((c>='0')&&(c<='9'))
+      {
+	c-='0';
+      }
+      else
+      {
+	if ((c>='A')&&(c<='F'))
+	{
+	  c-=('A'-10);
+	}
+	else
+	{
+	  if ((c>='a')&&(c<='f'))
+	  {
+	    c-=('a'-10);
+	  }
+	  else goto L_ERR;
+	}
+      }
+      np=strstr(p+1,_CRLF_);
+      if (!np) goto L_ERR;
+      np+=2;
+      memcpy(p,np,(last-np));
+      p+=c;
+      if (p>last) goto L_ERR;
+      np=strstr(p,_CRLF_);
+      if (!np) goto L_ERR;
+      np+=2;
+      memcpy(p,np,(last-np));
+    }
+    s=malloc(strlen(body)+1);
+    strcpy(s,body);
+    SUBPROC((void*)INETLOG,1,s);
+  }
+  body=strtok(body,seps);
+  if (!stricmp("OK",body))
   {
     enable_connect=0;
     SUBPROC((void*)StripLog);
