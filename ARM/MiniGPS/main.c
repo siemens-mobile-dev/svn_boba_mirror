@@ -1,10 +1,14 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
-CSM_DESC icsmd;
-void (*old_icsm_onClose)(CSM_RAM*);
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+extern void kill_data(void *p, void (*func_p)(void *));
+const int minus11=-11;
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
 
 extern const int cfgx;
 extern const int cfgy;
@@ -99,17 +103,7 @@ void load_name()
 void tmrproc()
 {
   load_name();
-  GBS_StartTimerProc(&mytmr,262*2,tmrproc);
-}
-
-void MyIDLECSM_onClose(CSM_RAM *data)
-{
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
-  GBS_StopTimer (&mytmr);
-  GBS_DelTimer(&mytmr);
-  FreeWS(corr_name);
+  GBS_StartTimerProc(&mytmr,216*2,tmrproc);
 }
 
 #pragma inline=forced
@@ -118,7 +112,6 @@ int toupper(int c)
   if ((c>='a')&&(c<='z')) c+='A'-'a';
   return(c);
 }
-
 int strcmp_nocase(const char *s1,const char *s2)
 {
   int i;
@@ -127,8 +120,9 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
+  CSM_RAM *icsm;
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
@@ -139,16 +133,16 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
     }
   }
   
-  int csm_result=old_icsm_onMessage(data, msg);
-  
-  if (IsGuiOnTop(idlegui_id))
+  if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
   {
-    GUI *igui=GetTopGUI();
-    if (igui&&IsUnlocked())
+    if (IsGuiOnTop(idlegui_id))
     {
-#ifdef ELKA
+      GUI *igui=GetTopGUI();
+      if (igui&&IsUnlocked())
       {
+#ifdef ELKA
         void *canvasdata = BuildCanvas();
+      {
 #else
         void *idata = GetDataOfItemByID(igui, 2);
         if (idata)
@@ -156,34 +150,88 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
             void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
             DrawCanvas(canvasdata,cfgx,cfgy,cfgx+Get_WS_width(corr_name,cfgfont),cfgy+GetFontYSIZE(cfgfont),1);
-            //DrawString(corr_name,cfgx,cfgy,cfgx+Get_WS_width(corr_name,cfgfont),cfgy+GetFontYSIZE(cfgfont), //не пашут текст атрибуты :(
-            DrawString(corr_name,cfgx,cfgy,ScreenW(),ScreenH(),// а так пашут :)
+            DrawString(corr_name,cfgx,cfgy,ScreenW(),ScreenH(),
                        cfgfont,cfgtext_attribute,cfgcolor,cfgcvcolor);
           }
       }
+    }
   }
-  return(csm_result);
+  return(1);
 }
+
+static void maincsm_oncreate(CSM_RAM *data)
+{  
+  corr_name=AllocWS(128);
+  GBS_StartTimerProc(&mytmr,216*2,tmrproc);
+}
+
+static void Killer(void)
+{
+  extern void *ELF_BEGIN;
+  GBS_DelTimer(&mytmr);
+  FreeWS(corr_name);
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)Killer);
+}
+
+static unsigned short maincsm_name_body[140];
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"MiniGPS");
+}	
 
 int main()
 {
+  CSM_RAM *save_cmpc;
+  char dummy[sizeof(MAIN_CSM)];
   InitConfig();
+  UpdateCSMname();
   
   unsigned int err;  
   if(!isdir(gps_dir,&err)){
     mkdir(gps_dir,&err);
   }
   
-  corr_name=AllocWS(128);
-  GBS_StartTimerProc(&mytmr,262*2,tmrproc);
-  
-      CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-      memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-      old_icsm_onMessage=icsmd.onMessage;
-      icsmd.onMessage=MyIDLECSM_onMessage;
-      old_icsm_onClose=icsmd.onClose;
-      icsmd.onClose=MyIDLECSM_onClose;
-      icsm->constr=&icsmd;
+  LockSched();
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+  UnlockSched();
       
   return 0;
 }
