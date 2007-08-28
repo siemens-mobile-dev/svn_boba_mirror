@@ -241,6 +241,26 @@ char iw[] = {
   176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191
 };
 
+/* cp1251 to Unicode table */
+static const unsigned short cp1251_ucs_table[] = {
+ 0x0402, 0x0403, 0x201a, 0x0453, 0x201e, 0x2026, 0x2020, 0x2021, 
+ 0x20ac, 0x2030, 0x0409, 0x2039, 0x040a, 0x040c, 0x040b, 0x040f, 
+ 0x0452, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014, 
+ 0x003f, 0x2122, 0x0459, 0x203a, 0x045a, 0x045c, 0x045b, 0x045f, 
+ 0x00a0, 0x040e, 0x045e, 0x0408, 0x00a4, 0x0490, 0x00a6, 0x00a7, 
+ 0x0401, 0x00a9, 0x0404, 0x00ab, 0x00ac, 0x00ad, 0x00ae, 0x0407, 
+ 0x00b0, 0x00b1, 0x0406, 0x0456, 0x0491, 0x00b5, 0x00b6, 0x00b7, 
+ 0x0451, 0x2116, 0x0454, 0x00bb, 0x0458, 0x0405, 0x0455, 0x0457, 
+ 0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415, 0x0416, 0x0417, 
+ 0x0418, 0x0419, 0x041a, 0x041b, 0x041c, 0x041d, 0x041e, 0x041f, 
+ 0x0420, 0x0421, 0x0422, 0x0423, 0x0424, 0x0425, 0x0426, 0x0427, 
+ 0x0428, 0x0429, 0x042a, 0x042b, 0x042c, 0x042d, 0x042e, 0x042f, 
+ 0x0430, 0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437, 
+ 0x0438, 0x0439, 0x043a, 0x043b, 0x043c, 0x043d, 0x043e, 0x043f, 
+ 0x0440, 0x0441, 0x0442, 0x0443, 0x0444, 0x0445, 0x0446, 0x0447, 
+ 0x0448, 0x0449, 0x044a, 0x044b, 0x044c, 0x044d, 0x044e, 0x044f
+}; 
+
 void koi2win(char*d,char *s)
 {
   int c;
@@ -292,6 +312,124 @@ void utf82win(char*d,const char *s)
   *d = 0;
 }
 
+char unicode2win(int code)
+{
+  for(unsigned char i = 0; i < 128; i++)
+   if (cp1251_ucs_table[i] == code) return 0x80 + i;
+  return 0;
+}
+
+void strreplace(char *s, char *r, char *w)
+{
+  //посчитаем сколько места надо под буфер
+  int n_r = strlen(r);
+  int n_w = strlen(w);
+  int d_ptr = 0;
+  char *next_br, *prev_br=s;
+  while(next_br = strstr(prev_br, r))
+  {
+    d_ptr += next_br - prev_br + n_w;
+    prev_br = next_br + n_r;
+  }
+  d_ptr += strlen(s) - (prev_br - s);
+
+  char *d = (char*) malloc(d_ptr+1);
+
+  //добавим после <br> переводы строк
+  d_ptr = 0;
+  prev_br = s;
+  while(next_br = strstr(prev_br, r))
+  {
+    memcpy(d+d_ptr, prev_br, next_br-prev_br);
+    d_ptr += next_br-prev_br;
+    memcpy(d+d_ptr, w, n_w);
+    d_ptr += n_w;
+    prev_br = next_br + n_r;
+  }
+
+  memcpy(d+d_ptr, prev_br, strlen(s) - (prev_br-s) - (d_ptr?n_r:0));
+  d_ptr += strlen(s) - (prev_br - s);
+  d[d_ptr] = 0;
+  
+  //вернём модифицированную строку в исходный буфер
+  strcpy(s,d);
+  mfree (d);
+
+}
+
+void strip_special(char *s)
+{
+  int n = strlen(s);
+
+  //сюда мы будем бросать кости
+  char *d = (char*) malloc(n+1);
+  char *buf = d;
+  for(int i = 0; i < n; i++)
+  {
+    if(s[i] == '&' && s[i+1] == '#')
+    {
+      int c = 0;
+      for(i+=2; s[i] != ';'; i++, c *= 10)
+        c += s[i] - 0x30;
+      if(c) c /= 10;
+      *d = unicode2win(c);
+      d++;
+    } else
+    if(s[i] == '&' && s[i+1] == 'n' &&
+                      s[i+2] == 'b' &&
+                      s[i+3] == 's' &&
+                      s[i+4] == 'p' &&
+                      s[i+5] == ';')
+    {
+      *d = ' ';
+      d++;
+      i += 5;
+    } else
+    if(s[i] == '&' && s[i+1] == 'q' &&
+                      s[i+2] == 'u' &&
+                      s[i+3] == 'o' &&
+                      s[i+4] == 't' &&
+                      s[i+5] == ';')
+    {
+      *d = '"';
+      d++;
+      i += 5;
+    } else
+    if(s[i] == '&' && s[i+1] == 'a' &&
+                      s[i+2] == 'm' &&
+                      s[i+3] == 'p' &&
+                      s[i+4] == ';')
+    {
+      *d = '&';
+      d++;
+      i += 5;
+    } else
+    if(s[i] == '&' && s[i+1] == 'l' &&
+                      s[i+2] == 't' &&
+                      s[i+3] == ';')
+    {
+      *d = '"';
+      d++;
+      i += 5;
+    } else
+    if(s[i] == '&' && s[i+1] == 'g' &&
+                      s[i+2] == 't' &&
+                      s[i+3] == ';')
+    {
+      *d = '"';
+      d++;
+      i += 5;
+    } else
+    {
+      *d = s[i];
+      d++;
+    }
+  }
+  *d = 0;
+  strcpy(s,buf);
+  mfree(buf);
+}
+
 void strip_html(char *s)
 {
   int b=-1, d_ptr = 0;
@@ -302,34 +440,16 @@ void strip_html(char *s)
     if(s[i] != '\n' && s[i] != '\r') s[j++] = s[i];
     if(!s[i+1]) s[j] = 0;
   }
-  
-  //посчитаем сколько места надо под буфер
-  d_ptr = 0;
-  char *next_br, *prev_br=s, *da = "\r\n";
-  while(next_br = strstr(prev_br,"<br>"))
-  {
-    d_ptr += next_br-prev_br;
-    d_ptr += 2;
-    prev_br = next_br+strlen("<br>");
-  }
 
-  char *d = (char*) malloc(d_ptr+1);
+  strreplace(s, "<br>", "\r\n");
+  strreplace(s, "<\\br>", "\r\n");
+  strreplace(s, "<BR>", "\r\n");
+  strreplace(s, "<\\BR>", "\r\n");
+  strreplace(s, "<p>", "\r\n");
+  strreplace(s, "<P>", "\r\n");
 
-  //добавим после <br> переводы строк
-  d_ptr = 0;
-  prev_br = s;
-  while(next_br = strstr(prev_br,"<br>"))
-  {
-    memcpy(d+d_ptr, prev_br, next_br-prev_br);
-    d_ptr += next_br-prev_br;
-    memcpy(d+d_ptr, da, 2);
-    d_ptr += 2;
-    prev_br = next_br+strlen("<br>");
-  }
-  d[d_ptr] = 0;
-  
-  //вернём модифицированную строку в исходный буфер
-  strcpy(s,d);
+  //сюда мы будем бросать кости
+  char *d = (char*) malloc(strlen(s)+1);
 
   //отфильтруем html - результат заведомо меньшей длины
   d_ptr = 0;
@@ -351,6 +471,7 @@ void strip_html(char *s)
   //вернём модифицированную строку в исходный буфер
   strcpy(s,d);
   mfree(d);
+  strip_special(s);
 }
 
 int get_charset(char *charset)

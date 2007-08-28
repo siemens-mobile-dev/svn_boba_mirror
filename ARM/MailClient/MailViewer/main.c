@@ -890,6 +890,9 @@ int get_ctype_index(char *str)
     
     if (!strncmp_nocase(p,"image",5))
       return APPLICATION; 
+
+    if (!strncmp_nocase(p,"message",5))
+      return APPLICATION; 
   }
   return TEXT;
 }
