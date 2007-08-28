@@ -412,18 +412,20 @@ static int SendSubmit()
   req=malloc(strlen(POST_URL)+strlen(POST_HOST)+1024);
   strcpy(req,"POST /");
   strcat(req,POST_URL);
-  strcat(req," HTTP/1.0\r\nHost: ");
+  strcat(req," HTTP/1.1\r\nContent-type: application/x-www-form-urlencoded\r\nHost: ");
   strcat(req,POST_HOST);
 //  sprintf(req+strlen(req),":%d",POST_PORT);
+  strcat(req,"\r\nUser-Agent: LastFMD_Sie_v0");
   strcat(req,"\r\nContent-Length: ");
   sprintf(s2,"%d",strlen(SUBMIT_DATA));
   strcat(req,s2);
-  strcat(req,"\r\nUser-Agent: Mozilla/5.0 (compatible; libscrobbler 2.0; tst 1.0)");
-  strcat(req,"\r\nContent-type: application/x-www-form-urlencoded\r\nAccept: */*\r\nConnection: Close\r\n\r\n");
+//  strcat(req,"\r\nAccept: */*\r\nConnection: Close\r\n\r\n");
+  strcat(req,"\r\nCache-Control: no-cache\r\n\r\n");
   SUBPROC((void*)INETLOG,0,req);
   SUBPROC((void*)bsend,strlen(req),req);
   SUBPROC((void*)INETLOG,0,SUBMIT_DATA);
   SUBPROC((void*)bsend,strlen(SUBMIT_DATA),SUBMIT_DATA);
+  SUBPROC((void*)INETLOG,0,"\r\n");
   return 1;
 }
 

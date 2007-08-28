@@ -10,12 +10,14 @@ void urlescape(char *out, const char *source)
     if ('a' <= c && c <= 'z'
 	|| 'A' <= c && c <= 'Z'
 	  || '0' <= c && c <= '9'
-	    || c == '-' || c == '_' || c == '.')
+	    /*|| c == '-' */|| c == '_' || c == '.'
+	      )
       *out++= c;
     else 
-      if( c == ' ' )
-	*out++= '+';
-      else {
+//      if( c == ' ' )
+//	*out++= '+';
+//      else 
+      {
 	*out++= '%';
 	*out++= h[c >> 4];
 	*out++= h[c & 0x0f];
