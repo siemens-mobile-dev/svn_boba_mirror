@@ -26,14 +26,9 @@ TDate date;
 TTime time;
 TDate week;
 
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-CSM_DESC icsmd;
-
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
 extern void kill_data(void *p, void (*func_p)(void *));
-
 const int minus11=-11;
-
 typedef struct
 {
   CSM_RAM csm;
@@ -226,32 +221,6 @@ void start_check(void)
   GBS_StartTimerProc(&mytmr,216*60,start_check);
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
-{
-  int csm_result=old_icsm_onMessage(data, msg);
-	
-  if (IsGuiOnTop(idlegui_id))
-  {
-    GUI *igui=GetTopGUI();
-    if (igui)
-    {
-      void *idata = GetDataOfItemByID(igui, 2);
-      if (idata)
-      {
-        if((IsUnlocked())&&(show_icon==1))
-        {
-          void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
-          DrawCanvas(canvasdata, X, Y, X + imgh, Y + imgh, 1);
-          DrawGPF(icon,X,Y);
-        }
-    }
-    
-  }
-  }
-  return(csm_result);
-}
-
-
 #pragma inline=forced
 int toupper(int c)
 {
@@ -269,6 +238,7 @@ int strcmp_nocase(const char *s1,const char *s2)
 
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
+  CSM_RAM *icsm;
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     if (strcmp_nocase("alarm",(char *)msg->data0)==0)
@@ -277,11 +247,35 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       load_settings();
     }
   }
+  
+  if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
+  {
+    if (IsGuiOnTop(idlegui_id))
+    {
+      GUI *igui=GetTopGUI();
+      if (igui)
+      {
+        void *idata = GetDataOfItemByID(igui, 2);
+        if (idata)
+        {
+          if((IsUnlocked())&&(show_icon==1))
+          {
+            void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+            DrawCanvas(canvasdata, X, Y, X + imgh, Y + imgh, 1);
+            DrawGPF(icon,X,Y);
+          }
+        }
+      }
+    }
+  }
 
   return(1);
 }
 
-static void maincsm_oncreate(CSM_RAM *data){}
+static void maincsm_oncreate(CSM_RAM *data)
+{
+  start_check();
+}
 
 static void Killer(void)
 {
@@ -336,23 +330,15 @@ int main(void)
   CSM_RAM *save_cmpc;
   char dummy[sizeof(MAIN_CSM)];
   load_settings();
-  UpdateCSMname();  
-  
+  UpdateCSMname();
+
   LockSched();
   save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
   CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
   UnlockSched();
-  
-  start_check();
-  
-    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-    memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-    old_icsm_onMessage=icsmd.onMessage;
-    icsmd.onMessage=MyIDLECSM_onMessage;
-    icsm->constr=&icsmd;
-    
+
   return 0;
 }
 
