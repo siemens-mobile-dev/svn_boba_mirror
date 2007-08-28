@@ -297,7 +297,7 @@ static void ParseHandShake()
   strncpy(POST_HOST,strtok(submiturl,":"),255);
   POST_PORT=strtoul(strtok(NULL,"/"),NULL,10);
   strncpy(POST_URL,strtok(NULL,""),255);
-  is_handshaked=1;
+  is_handshaked=3;
 }
 
 static unsigned int STRIP_SIZE;
@@ -417,7 +417,7 @@ static int SendSubmit()
   strcat(req," HTTP/1.1\r\nContent-type: application/x-www-form-urlencoded\r\nHost: ");
   strcat(req,POST_HOST);
 //  sprintf(req+strlen(req),":%d",POST_PORT);
-  strcat(req,"\r\nUser-Agent: LastFMD_Sie_v0");
+  strcat(req,"\r\nUser-Agent: Mozilla/5.0 (compatible; libscrobbler 2.0; tst 1.0)");
   strcat(req,"\r\nContent-Length: ");
   sprintf(s2,"%d",strlen(SUBMIT_DATA));
   strcat(req,s2);
@@ -464,7 +464,7 @@ L_REWRITE:
   mfree(buf);
   if (fsize>0)
   {
-    is_handshaked=1;
+    is_handshaked=3;
     enable_connect=1;
     GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*20,do_reconnect);    
   }
@@ -480,6 +480,7 @@ static void ParseSubmit()
   if (!recvq_l)
   {
     SUBPROC((void*)INETLOG,0,"No bytes on submit recived!");
+    is_handshaked--;
     return;
   }
   recvq_p[recvq_l]=0;
@@ -492,6 +493,7 @@ static void ParseSubmit()
   {
   L_ERR:
     SUBPROC((void*)INETLOG,0,"Incorrect HTTP answer!");
+    is_handshaked--;
     return;
   }
   *body=0;
@@ -660,7 +662,6 @@ int ParseSocketMsg(GBS_MSG *msg)
 	if (is_handshaked)
 	{
 	  ParseSubmit();
-	  is_handshaked=0;
 	}
 	else
 	{
