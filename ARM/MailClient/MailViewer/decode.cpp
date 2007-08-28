@@ -4,7 +4,7 @@
 
 extern int strncmp_nocase(const char *s1,const char *s2,unsigned int n);
 
-enum {WIN_1251, KOI8_R, ISO_8859_5};
+enum {WIN_1251, KOI8_R, ISO_8859_5, UTF_8};
 
 
 
@@ -124,11 +124,11 @@ char * quoted_printable_decode(const char *str, size_t *size)
 
   for(; *str && (str - d)<len; str++)
   {
-    if(*str == '_')
-    {
-      *s++ = ' ';
-      continue;
-    }
+    //if(*str == '_')
+    //{
+    //  *s++ = ' ';
+    //  continue;
+    //}
     if(*str == '=')
     {
       *s = '\0';
@@ -161,6 +161,7 @@ char * quoted_printable_decode(const char *str, size_t *size)
         
       case '\r':
       case '\n':
+        while(str[1] == '\n' || str[1] == '\r') str++;
         continue;
         
       default:
@@ -264,6 +265,94 @@ void iso885952win(char*d,char *s)
   *d=c;
 }
 
+void utf82win(char*d,const char *s)
+{
+  for (; *s; s+=2)
+  {
+    unsigned char ub = *s, lb = *(s+1);
+    if (ub == 208)
+      if (lb != 81)
+        {*d = lb + 48; d++;}
+      else
+        {*d = 'Ё'; d++;}
+
+    if (ub == 209)
+      if (lb != 91)
+        {*d = lb + 112; d++;}
+      else
+        {*d = 'ё'; d++;}
+
+    if ((ub != 208) && (ub != 209) && (lb != 91) && (lb != 81))
+    {
+      *d = ub;
+      d++;
+      s--;
+    }
+  }
+  *d = 0;
+}
+
+void strip_html(char *s)
+{
+  int b=-1, d_ptr = 0;
+
+  //уберём переводы строк
+  for(int i = 0, j = 0; s[i]; i++)
+  {
+    if(s[i] != '\n' && s[i] != '\r') s[j++] = s[i];
+    if(!s[i+1]) s[j] = 0;
+  }
+  
+  //посчитаем сколько места надо под буфер
+  d_ptr = 0;
+  char *next_br, *prev_br=s, *da = "\r\n";
+  while(next_br = strstr(prev_br,"<br>"))
+  {
+    d_ptr += next_br-prev_br;
+    d_ptr += 2;
+    prev_br = next_br+strlen("<br>");
+  }
+
+  char *d = (char*) malloc(d_ptr+1);
+
+  //добавим после <br> переводы строк
+  d_ptr = 0;
+  prev_br = s;
+  while(next_br = strstr(prev_br,"<br>"))
+  {
+    memcpy(d+d_ptr, prev_br, next_br-prev_br);
+    d_ptr += next_br-prev_br;
+    memcpy(d+d_ptr, da, 2);
+    d_ptr += 2;
+    prev_br = next_br+strlen("<br>");
+  }
+  d[d_ptr] = 0;
+  
+  //вернём модифицированную строку в исходный буфер
+  strcpy(s,d);
+
+  //отфильтруем html - результат заведомо меньшей длины
+  d_ptr = 0;
+  for(int i = 0; i < strlen(s); i++)
+  {
+    if(s[i] == '>' && b == -1) b = i+1;
+    if(s[i] == '<' && b != -1)
+    if(i!=b)
+    {
+      memcpy(d+d_ptr, s+b, i-b);
+      d_ptr += i-b;
+      b = -1;
+    }
+    else
+      b = -1;
+  }
+  d[d_ptr] = 0;
+
+  //вернём модифицированную строку в исходный буфер
+  strcpy(s,d);
+  mfree(d);
+}
+
 int get_charset(char *charset)
 {
   if (!strncmp_nocase(charset,"windows-1251",12))
@@ -275,6 +364,9 @@ int get_charset(char *charset)
   if (!strncmp_nocase(charset,"ISO-8859-5",10))
     return ISO_8859_5;
   
+  if (!strncmp_nocase(charset,"UTF-8",5))
+    return UTF_8;
+
   return WIN_1251;
 }
 
@@ -282,7 +374,7 @@ char *unmime_header(const char *encoded_str)
 {
   const char *p = encoded_str;
   const char *eword_begin_p, *encoding_begin_p, *text_begin_p, *eword_end_p;
-  
+
   char charset[32];
   int encoding;
   char *conv_str;
@@ -292,21 +384,25 @@ char *unmime_header(const char *encoded_str)
   size_t decoded_len;
   
   out_len=strlen(encoded_str) * 2;
-  outbuf = malloc(out_len);
+  outbuf = (char*) malloc(out_len);
   zeromem(outbuf,out_len);
   
-  while (*p != '\0') 
+  while (*p != '\0')
   {
     char *decoded_text = NULL;
     int len;
     
     eword_begin_p = strstr(p, ENCODED_WORD_BEGIN);
-    if (!eword_begin_p) 
+    if (!eword_begin_p)
     {
-      strcat(outbuf, p);
+      char * curbuf = (char*) malloc(strlen(p)+1);
+      utf82win(curbuf, p);
+      strcat(outbuf, curbuf);
+      mfree(curbuf);
+      //strcat(outbuf, p);
       break;
     }
-    
+
     encoding_begin_p = strchr(eword_begin_p + 2, '?');
     if (!encoding_begin_p)
     {
@@ -322,7 +418,7 @@ char *unmime_header(const char *encoded_str)
     }
     
     eword_end_p = strstr(text_begin_p + 1, ENCODED_WORD_END);
-    if (!eword_end_p) 
+    if (!eword_end_p)
     {
       strcat(outbuf, p);
       break;
@@ -374,14 +470,18 @@ char *unmime_header(const char *encoded_str)
       p = eword_end_p + 2;
       continue;
     case KOI8_R:
-      conv_str=malloc(strlen(decoded_text)+1);
+      conv_str=(char*) malloc(strlen(decoded_text)+1);
       koi2win(conv_str,decoded_text);
       break;
     case ISO_8859_5:
-      conv_str=malloc(strlen(decoded_text)+1);
+      conv_str=(char*) malloc(strlen(decoded_text)+1);
       iso885952win(conv_str,decoded_text);
       break;
-    }
+    case UTF_8:
+      conv_str=(char*) malloc(strlen(decoded_text)+1);
+      utf82win(conv_str,decoded_text);
+      break;
+         }
 
     strcat(outbuf, conv_str);
     mfree(conv_str);
@@ -390,6 +490,6 @@ char *unmime_header(const char *encoded_str)
   }
   out_str = outbuf;
   out_len = strlen(outbuf);
-  
+    
   return realloc(out_str, out_len + 1);
 }

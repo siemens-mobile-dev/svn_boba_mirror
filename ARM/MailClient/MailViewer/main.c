@@ -136,6 +136,20 @@ void dos2ws(WSHDR *ws, const char *s)
   }
 }  
 
+
+void delspaces(char *s)
+{
+  char *d = s;
+  while(*s)
+  {
+    *d = *s;
+    if((*s==0x0D && *(s+1)==0x0A) ||
+       (*s==0x0A && *(s+1)==0x0D)) s++;
+    s++; d++;
+  }
+  *d = 0;
+}
+
 // --------------------------------------------------------------------------------
 extern char *unmime_header(const char *encoded_str);
 // --------------------------------------------------------------------------------
@@ -342,7 +356,7 @@ const char eml_not_found[]="Error! File not found!";
 
 char *get_content_type(ML_VIEW *ml_list);
 int get_ctype_index(char *str);
-enum {MULTIPART, APPLICATION, TEXT};
+enum {MULTIPART, APPLICATION, TEXT, HTML};
 
 
 void InitHeaders()
@@ -868,8 +882,11 @@ int get_ctype_index(char *str)
     if (!strncmp_nocase(p,"application",11))
       return APPLICATION; 
     
-    if (!strncmp_nocase(p,"text",4))
+    if (!strncmp_nocase(p,"text/plain",10))
       return TEXT;
+    
+    if (!strncmp_nocase(p,"text/html",9))
+      return HTML;
     
     if (!strncmp_nocase(p,"image",5))
       return APPLICATION; 
@@ -901,13 +918,15 @@ int get_ctencoding_index(char *str)
   return BIT8;
 }
 
-enum {WIN_1251, KOI8_R, ISO_8859_5};
+enum {WIN_1251, KOI8_R, ISO_8859_5, UTF_8};
 
 extern int get_charset(char *charset);
 extern char * base64_decode(const char *str, size_t *size);
 extern char * quoted_printable_decode(const char *str, size_t *size);
 extern void koi2win(char*d,char *s);
 extern void iso885952win(char*d,char *s);
+extern void utf82win(char*d,char *s);
+extern void strip_html(char *s);
 
 const char default_ctype[]="Content-Type: text/plain; charset=\"windows-1251\"";
 const char default_transfere[]="Content-Transfer-Encoding: 8bit";
@@ -977,6 +996,65 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
     int i;
     switch(bot->content_type)
     {
+    case HTML:
+      p=bot->ct;
+      i=get_param_from_string(p, "charset=", fname, 127);
+      if (i)
+      {
+        bot->charset=get_charset(fname);
+      }
+      else bot->charset=WIN_1251;
+      switch(bot->transfer_encoding)
+      {
+      default:
+      case BIT8:
+        buf=malloc(bot->size+1);
+        strncpy(buf,eml+bot->offset,bot->size);
+        buf[bot->size]=0;
+        break;
+         
+      case BASE64:
+        buf_size=bot->size;
+        buf=base64_decode(eml+bot->offset, &buf_size);
+        break;
+          
+      case QPRINTABLE:
+        buf_size=bot->size;
+        buf=quoted_printable_decode(eml+bot->offset, &buf_size);
+        break;  
+      }
+      switch(bot->charset)
+      {
+      case WIN_1251:
+      default:
+        break;
+   
+      case KOI8_R:
+        koi2win(buf, buf);
+        break;
+   
+      case ISO_8859_5:
+        iso885952win(buf, buf);
+        break;
+
+      case UTF_8:
+        utf82win(buf, buf);
+        break;
+      }
+      strip_html(buf);
+      delspaces(buf);
+      ws=AllocWS(strlen(buf));
+      ascii2ws(ws, buf);
+        
+      PrepareEditControl(&ec);
+      ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+      SetFontToEditCOptions(&ec.ed_options,1);
+      ed_toitem=AddEditControlToEditQend(eq,&ec,ma); 
+      bot->ec_n=ed_toitem;
+      FreeWS(ws);
+      mfree(buf);
+      break;
+       
     case TEXT:
       p=bot->ct;
       i=get_param_from_string(p, "charset=", fname, 127);
@@ -1017,7 +1095,12 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       case ISO_8859_5:
         iso885952win(buf, buf);
         break;
+
+      case UTF_8:
+        utf82win(buf, buf);
+        break;
       }
+      delspaces(buf);
       ws=AllocWS(strlen(buf));
       ascii2ws(ws, buf);
         
@@ -1057,7 +1140,9 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         prev->offset=buf-eml;
         prev->size=b_end-buf;
         
+        
         content_type=get_from_multipartheader(p,buf,"content-type:");
+                
         if (content_type)
         {
           strcpy(prev->ct,content_type);  
@@ -1076,7 +1161,9 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         prev->content_type=get_ctype_index(prev->ct);
         prev->transfer_encoding=get_ctencoding_index(prev->te);
         p=b_end;
-      }      
+
+      } 
+      break;
     case APPLICATION:
       p=bot->ct;
       i=get_param_from_string(p,"name=",fname,127);
@@ -1092,6 +1179,9 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       ed_toitem=AddEditControlToEditQend(eq,&ec,ma); 
       bot->ec_n=ed_toitem;
       FreeWS(ws);
+      break;
+    default:
+      break;
     }
     bot=bot->next;
   }
