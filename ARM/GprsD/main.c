@@ -5,12 +5,18 @@
 
 #define RECONNECT_TIME (216*120)
 
-CSM_DESC icsmd;
+extern void kill_data(void *p, void (*func_p)(void *));
 
 int OldGPRSstatus=0; //0 - offline, 1 - connecting, 2 - connected
 
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
+const int minus11=-11;
+
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
+
+int IDLECSM_ID=-1;
 
 #ifdef NEWSGOLD
 char binary_profile[0x204];
@@ -88,8 +94,8 @@ void do_connect(void)
 }
 #endif
 
-void LogWriter(const char *s)
-{
+//void LogWriter(const char *s)
+//{
 /*  TTime t;
   TDate d;
   char ss[100];
@@ -105,14 +111,11 @@ void LogWriter(const char *s)
     fwrite(f,"\r\n",2,&ul);
     fclose(f,&ul);
   }*/
-}
+//}
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
-  char s[100];
-  csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
-  
+  //char s[100];  
 #ifdef NEWSGOLD
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
@@ -131,19 +134,19 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     if (m==LMAN_CONNECT_CNF)
     {
       OldGPRSstatus=2;
-      strcpy(s,"Session started!");
-      LogWriter(s);
-      ShowMSG(1,(int)s);
+      //strcpy(s,"Session started!");
+      //LogWriter(s);
+      //ShowMSG(1,(int)s);
     }
     else
     {
       if ((m==LMAN_DISCONNECT_IND)||(m==LMAN_CONNECT_REJ_IND))
       {
-        if (m==LMAN_DISCONNECT_IND) strcpy(s,"Session closed!");
-        else
-          strcpy(s,"Can't start session!");
-        LogWriter(s);
-        ShowMSG(1,(int)s);
+        //if (m==LMAN_DISCONNECT_IND) strcpy(s,"Session closed!");
+        //else
+          //strcpy(s,"Can't start session!");
+        //LogWriter(s);
+        //ShowMSG(1,(int)s);
 	if (m==LMAN_CONNECT_REJ_IND)
 	{
 	  //Если не удалось стартовать сессию, то пробуем еще раз по таймеру
@@ -167,28 +170,73 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     GBS_DelTimer(&mytmr);
     OldGPRSstatus=0;
   }
-  return(csm_result);
+  return(1);
 }
 
-void MyIDLECSM_onClose(CSM_RAM *data)
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+
+}
+
+static void Killer(void)
+{
   extern void *ELF_BEGIN;
   GBS_DelTimer(&mytmr);
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)Killer);
+}
+
+static unsigned short maincsm_name_body[140];
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"GprsD");
 }
 
 int main()
 {
+  CSM_RAM *save_cmpc;
+  char dummy[sizeof(MAIN_CSM)];
+  UpdateCSMname();
   LockSched();
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  icsmd.onClose=MyIDLECSM_onClose;
-  icsm->constr=&icsmd;
-  UnlockSched();
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+  UnlockSched(); 
 #ifdef NEWSGOLD  
   InitConfig();
 #endif  
