@@ -16,7 +16,7 @@ typedef struct
 {
   int ip;
   short port;
-  char *req;
+  const char *req;
   SOCKHQ *entry;
   char *buf;
   int bufsize;
@@ -45,7 +45,7 @@ SOCKDATAHANDLER stdhandle =
 
 SOCKHQ *sock_q = NULL;
 
-void GetDataByReq(char *req, int ip, short port, RecvCallbackProc rproc)
+void GetDataByReq(const char *req, int ip, short port, RecvCallbackProc rproc)
 {
   SOCKHQ *tmp_sock = malloc(sizeof(SOCKHQ));
   CONNDATA *tmp_cndata = malloc(sizeof(CONNDATA));

@@ -46,7 +46,7 @@ typedef struct
 void SocketConnect(SOCKDATAHANDLER *sock, int ip, short port);
 
 //Отправить данные
-void SocketSend(SOCKDATAHANDLER *sock, char *data, int size);
+void SocketSend(SOCKDATAHANDLER *sock, const char *data, int size);
 
 //Закрыть сокет
 void SocketClose(SOCKDATAHANDLER *sock);

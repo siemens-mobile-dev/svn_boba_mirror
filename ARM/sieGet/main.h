@@ -24,4 +24,8 @@ void onClose();
 void onExit();
 void onRedraw(void);
 
+void ResolveProc(void *_handler);
+void SendRequest(int ip);
+void RecvProc(int res, void *data, int size);
+
 #endif

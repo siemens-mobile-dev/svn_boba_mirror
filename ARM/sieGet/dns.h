@@ -11,7 +11,7 @@ typedef struct
 {
   int DNR_ID;
   int DNR_TRIES;
-  char *host;
+  const char *host;
   DNRResultFunc CallbackProc; //Â HELPER
   int result;
   int value;

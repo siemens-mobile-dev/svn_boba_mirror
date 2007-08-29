@@ -59,17 +59,17 @@ void DeleteHandler(DNRHANDLER *handler)
   }
 }
 
-void SendRequest(DNRHANDLER *handler);
+void SendDNR(DNRHANDLER *handler);
 void AddDNR(DNRHANDLER *handler);
 int onDNREvent(int DNR_ID);
 
 void AddDNR(DNRHANDLER *handler)
 {
   AddHandler(handler);
-  SUBPROC((void *)SendRequest, handler);
+  SUBPROC((void *)SendDNR, handler);
 }
 
-void SendRequest(DNRHANDLER *handler)
+void SendDNR(DNRHANDLER *handler)
 {
   int ***res = NULL;
   int err;
@@ -122,7 +122,7 @@ int onDNREvent(int DNR_ID)
   DNRHANDLER *handler = GetHandlerByID(DNR_ID);
   if (handler)
   {
-    SUBPROC((void *)SendRequest, handler);
+    SUBPROC((void *)SendDNR, handler);
     return 0;
   }
   else
