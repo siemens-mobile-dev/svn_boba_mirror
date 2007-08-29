@@ -11,6 +11,10 @@ const char ipc_my_name[]=IPC_DAEMON_NAME;
 
 volatile int viewer_present=-1; //Активен ли вьювер
 
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
 
 #pragma inline
 int is_digit(int c)
@@ -32,6 +36,8 @@ char *recived_line;
 
 volatile int sendq_l=0;
 volatile void *sendq_p=NULL;
+
+volatile int maincsm_id;
 
 int strcmp_nocase(const char *s1,const char *s2)
 {
@@ -768,8 +774,6 @@ void end_socket(void)
 #define sms_submess 0x1E
 #endif
 
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
 
 int numbercmp(const char *num, const char *numlist)
 {
@@ -795,9 +799,28 @@ int numbercmp(const char *num, const char *numlist)
   return(i);
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+IPC_REQ gipc;
+
+void CheckDoubleRun(void)
 {
-  int csm_result;
+  if ((int)(gipc.data)>1)
+  {
+    LockSched();
+    CloseCSM(maincsm_id);
+    ShowMSG(1,(int)"MailDaemon already started!");
+    UnlockSched();
+  }
+  else
+  {
+    gipc.name_to=ipc_viewer_name;
+    gipc.name_from=ipc_my_name;
+    gipc.data=&pop_stat;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DAEMON_LOGON,&gipc);
+  }
+}
+
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
+{
   if (msg->msg==MSG_RECONFIGURE_REQ)
   {
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
@@ -808,31 +831,29 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   if (msg->msg==MSG_IPC)  // Пришло сообщение, возможно от вьювера
   { 
-    IPC_REQ *ipc, *ipc_stat;
+    IPC_REQ *ipc;
     if ((ipc=(IPC_REQ*)msg->data0))
     {
-      if (strcmp(ipc->name_to,ipc_my_name)==0)
+      if (strcmp_nocase(ipc->name_to,ipc_my_name)==0)
       {
         switch (msg->submess)
         {
-        case IPC_LOGON:
-          viewer_present=0;
-          if ((int)ipc->data==0)
+        case IPC_VIEWER_LOGON:
+          if (viewer_present)
           {
-            ipc->name_to=ipc->name_from; 
+            viewer_present=0;
+            ipc->name_to=ipc->name_from;
             ipc->name_from=ipc_my_name;
-            ipc->data=(void *)1;
-            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,ipc);
+            ipc->data=&pop_stat;
+            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DAEMON_LOGON,ipc);
           }
-          ipc_stat=malloc(sizeof(IPC_REQ));
-          ipc_stat->name_to=ipc_viewer_name;
-          ipc_stat->name_from=ipc_my_name;
-          ipc_stat->data=&pop_stat;
-          GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_STAT,ipc_stat);
           break;
           
-        case IPC_LOGOFF:
-          viewer_present=-1;   // Вьювер вышел
+        case IPC_VIEWER_LOGFF:
+          if (!viewer_present)
+          {
+            viewer_present=-1;   // Вьювер вышел
+          }
           break;
           
         case IPC_CHECK_MAILBOX:
@@ -853,6 +874,12 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
         case IPC_STOP_CHECKING:
           mfree(ipc);
           SUBPROC((void *)end_connect,"Manually stopped");
+          break;
+          
+        case IPC_CHECK_DOUBLERUN:
+          ipc->data=(void *)((int)(ipc->data)+1);
+          //Если приняли свое собственное сообщение, значит запускаем чекер
+          if (ipc->name_from==ipc_my_name) SUBPROC((void *)CheckDoubleRun);
           break;
         }
       }
@@ -977,14 +1004,26 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
-  csm_result = old_icsm_onMessage(data, msg);
-  return(csm_result);
+  return(1);
+}
+// ==============================================================================================
+
+static void maincsm_oncreate(CSM_RAM *data)
+{
+  gipc.name_to=ipc_my_name;
+  gipc.name_from=ipc_my_name;
+  gipc.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
 }
 
-#pragma segment="ELFBEGIN"
-void MyIDLECSM_onClose(CSM_RAM *data)
+
+static void maincsm_onclose(CSM_RAM *csm)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+  gipc.name_to=ipc_viewer_name;
+  gipc.name_from=ipc_my_name;
+  gipc.data=(void *)0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DAEMON_LOGOFF,&gipc);
+  
   GBS_DelTimer(&reconnect_tmr);
   if (recived_line)
   {
@@ -994,32 +1033,59 @@ void MyIDLECSM_onClose(CSM_RAM *data)
   FreeMailDB();
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
-  seqkill(data,old_icsm_onClose,__segment_begin("ELFBEGIN"),SEQKILLER_ADR());
+  SUBPROC((void *)ElfKiller);
 }
 
-IPC_REQ gipc;
+static unsigned short maincsm_name_body[140];
+const int minus11=-11;
 
-// ==============================================================================================
-CSM_DESC icsmd;
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"MailDaemon");
+}
 
 int main(char *exename, char *fname)
 {
+  CSM_RAM *save_cmpc;
+  MAIN_CSM main_csm;
   InitConfig();
+  UpdateCSMname();
   LockSched();
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  icsmd.onClose=MyIDLECSM_onClose;
-  icsm->constr=&icsmd;
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
   UnlockSched();
-  
-  gipc.name_to=ipc_viewer_name;
-  gipc.name_from=ipc_my_name;
-  gipc.data=(void *)0;
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,&gipc);
-  
   return (0);
 }
 

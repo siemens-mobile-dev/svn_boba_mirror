@@ -56,14 +56,17 @@ extern const char I_MES_DEL[];
 #define IPC_VIEWER_NAME "MailViewer"
 //IPC messages
 
-#define IPC_LOGON 0
-#define IPC_LOGOFF 1
-
-#define IPC_STAT 2
-#define IPC_CHECK_MAILBOX 3
-#define IPC_LOADING_FINISHED 4
-#define IPC_STOP_CHECKING 5
-#define IPC_CHECK_DOUBLERUN 6
+enum IPC_MSGS
+{
+  IPC_DAEMON_LOGON,
+  IPC_DAEMON_LOGOFF,
+  IPC_VIEWER_LOGON,
+  IPC_VIEWER_LOGFF,
+  IPC_CHECK_MAILBOX,
+  IPC_LOADING_FINISHED,
+  IPC_STOP_CHECKING,
+  IPC_CHECK_DOUBLERUN
+};
 
 #pragma pack(1)
 typedef struct

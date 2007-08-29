@@ -1,32 +1,14 @@
 #include "..\..\inc\swilib.h"
 #include "..\conf_loader.h"
 #include "..\mailclient.h"
+#include "..\rect_patcher.h"
+#include "decode.h"
+
 
 const char ipc_daemon_name[]=IPC_DAEMON_NAME;
 const char ipc_my_name[]=IPC_VIEWER_NAME;
 
 extern int create_gui();
-//==============================================================================
-// ELKA Compatibility
-#pragma inline
-void patch_header(const HEADER_DESC* head)
-{
-  ((HEADER_DESC*)head)->rc.x=0;
-  ((HEADER_DESC*)head)->rc.y=YDISP;
-  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
-  ((HEADER_DESC*)head)->rc.y2=HeaderH()-1+YDISP;
-}
-#pragma inline
-void patch_input(const INPUTDIA_DESC* inp)
-{
-  ((INPUTDIA_DESC*)inp)->rc.x=0;
-  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
-  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
-  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-//==============================================================================
-
-
 //===============================================================================================
 int S_ICONS[8];
 const char empty_str[]="";
@@ -626,11 +608,6 @@ typedef struct{
 }MAIL_VIEW;
 
 char *strstr_nocase(const char *s1, const char *s2);
-extern char * base64_decode(const char *str, size_t *size);
-extern char * quoted_printable_decode(const char *str, size_t *size);
-extern void koi2win(char*d,char *s);
-extern void iso885952win(char*d,char *s);
-
 enum {BIT8, BASE64, QPRINTABLE, BIT7};
 
 void saveas_locret(void){}
@@ -920,16 +897,6 @@ int get_ctencoding_index(char *str)
   }
   return BIT8;
 }
-
-enum {WIN_1251, KOI8_R, ISO_8859_5, UTF_8};
-
-extern int get_charset(char *charset);
-extern char * base64_decode(const char *str, size_t *size);
-extern char * quoted_printable_decode(const char *str, size_t *size);
-extern void koi2win(char*d,char *s);
-extern void iso885952win(char*d,char *s);
-extern void utf82win(char*d,char *s);
-extern void strip_html(char *s);
 
 const char default_ctype[]="Content-Type: text/plain; charset=\"windows-1251\"";
 const char default_transfere[]="Content-Transfer-Encoding: 8bit";
@@ -1706,7 +1673,7 @@ void maincsm_onclose(CSM_RAM *csm)
   gipc.name_to=ipc_daemon_name;
   gipc.name_from=ipc_my_name;
   gipc.data=0;
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGOFF,&gipc);
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_VIEWER_LOGFF,&gipc);
   
   FreeMailDB();
   SUBPROC((void *)ElfKiller);
@@ -1741,7 +1708,7 @@ void CheckDoubleRun(void)
     gipc.name_to=ipc_daemon_name;
     gipc.name_from=ipc_my_name;
     gipc.data=0;
-    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,&gipc);
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_VIEWER_LOGON,&gipc);
   }
 }
 
@@ -1765,25 +1732,24 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       {
         switch (msg->submess)
         {
-        case IPC_LOGON:
-          daemon_present=0;
-          if ((int)ipc->data==0) // Если запущен при старте, иначе это был ответ
+        case IPC_DAEMON_LOGON:
+          if (daemon_present)
           {
+            daemon_present=0;
+            pop_stat=ipc->data;
             ipc->name_to=ipc->name_from;
             ipc->name_from=ipc_my_name;
-            ipc->data=(void *)1;
-            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_LOGON,ipc);
+            ipc->data=0;
+            GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_VIEWER_LOGON,ipc);
           }
           break;
           
-        case IPC_LOGOFF:
-          daemon_present=-1;   // Демон вышел
-          pop_stat=NULL;
-          break;
-          
-        case IPC_STAT:
-          pop_stat=ipc->data;
-          mfree(ipc);
+        case IPC_DAEMON_LOGOFF:
+          if (!daemon_present)   // только если демон до этого заходил
+          {
+            daemon_present=-1;   // Демон вышел
+            pop_stat=NULL;
+          }
           break;
           
         case IPC_CHECK_MAILBOX:

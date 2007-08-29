@@ -1,12 +1,10 @@
 #include "..\..\inc\swilib.h"
 #include "base64.h"
 #include "sf_mime.h"
+#include "decode.h"
+
 
 extern int strncmp_nocase(const char *s1,const char *s2,unsigned int n);
-
-enum {WIN_1251, KOI8_R, ISO_8859_5, UTF_8};
-
-
 
 #pragma inline 
 int is_space(int c)
@@ -100,14 +98,22 @@ char * base64_decode(const char *str, size_t *size)
   return (realloc(output,_sf_b64_len+1));
 }
 
+#pragma inline
+int char_to_hex(int c)
+{
+  if (c>='0' && c<='9') return c-'0';
+  if (c>='A' && c<='F') return c-'A'+10;
+  if (c>='a' && c<='f') return c-'a'+10;
+  return 0;
+}
 
-#pragma optimize=z 9
 char * quoted_printable_decode(const char *str, size_t *size)
 {
   char *buf;
   char *s, *d;
   register int n;
   register int len;
+  int c;
   
   if(!str) return 0;
   
@@ -141,65 +147,32 @@ char * quoted_printable_decode(const char *str, size_t *size)
       if(str[1] == '\0')
         break;
       
-      
-      switch(n)
+      if ((c=char_to_hex(n)))  *s=c;
+      else if (n=='\r' || n=='\n')
       {
-      case '0': case '1': case '2': case '3': case '4':
-      case '5': case '6': case '7': case '8': case '9':
-        *s = n - '0';
-        break;
-        
-      case 'A': case 'B': case 'C':
-      case 'D': case 'E': case 'F':
-        *s=n - 'A' + 10;
-        break;
-        
-      case 'a': case 'b': case 'c':
-      case 'd': case 'e': case 'f':
-        *s=n - 'a' + 10;
-        break;
-        
-      case '\r':
-      case '\n':
         while(str[1] == '\n' || str[1] == '\r') str++;
         continue;
-        
-      default:
+      }
+      else 
+      {
         *s++ = '=';
         *s++ = n;
         continue;
-      }
-      
+      }      
       *s <<= 4;                   
       n = *++str;
       
-      switch(n)
+      if ((c=char_to_hex(n)))  *s|=c;
+      else if (n=='\r' || n=='\n')
       {
-      case '0': case '1': case '2': case '3': case '4':
-      case '5': case '6': case '7': case '8': case '9':
-        *s |= n - '0';
-        break;
-        
-      case 'A': case 'B': case 'C':
-      case 'D': case 'E': case 'F':
-        *s|=n - 'A' + 10;
-        break;
-       
-      case 'a': case 'b': case 'c':
-      case 'd': case 'e': case 'f':
-        *s|=n - 'a' + 10;
-        break;
-        
-      case '\r':
-      case '\n':
         *s++ = n;
         continue;
-        
-      default:
-        *s = ' ';
-       	continue;
       }
-      
+      else 
+      {
+        *s = '_';
+        continue;
+      }       
       s++;     
       continue;
     }
@@ -312,11 +285,12 @@ void utf82win(char*d,const char *s)
   *d = 0;
 }
 
-char unicode2win(int code)
+int unicode2win(int code)
 {
-  for(unsigned char i = 0; i < 128; i++)
+  if (code<128) return (code);
+  for(unsigned int i = 0; i < 128; i++)
    if (cp1251_ucs_table[i] == code) return 0x80 + i;
-  return 0;
+  return '_';
 }
 
 void strreplace(char *s, char *r, char *w)
@@ -369,11 +343,12 @@ void strip_special(char *s)
     if(s[i] == '&' && s[i+1] == '#')
     {
       int c = 0;
-      for(i+=2; s[i] != ';'; i++, c *= 10)
-        c += s[i] - 0x30;
-      if(c) c /= 10;
-      *d = unicode2win(c);
-      d++;
+      for(i+=2; s[i] != ';'; i++)
+      {
+        c*=10;
+        c+= s[i] - '0';
+      }
+      *d++ = unicode2win(c);
     } else
     if(s[i] == '&' && s[i+1] == 'n' &&
                       s[i+2] == 'b' &&
@@ -381,8 +356,7 @@ void strip_special(char *s)
                       s[i+4] == 'p' &&
                       s[i+5] == ';')
     {
-      *d = ' ';
-      d++;
+      *d++ = ' ';
       i += 5;
     } else
     if(s[i] == '&' && s[i+1] == 'q' &&
@@ -391,8 +365,7 @@ void strip_special(char *s)
                       s[i+4] == 't' &&
                       s[i+5] == ';')
     {
-      *d = '"';
-      d++;
+      *d++ = '"';
       i += 5;
     } else
     if(s[i] == '&' && s[i+1] == 'a' &&
@@ -400,29 +373,25 @@ void strip_special(char *s)
                       s[i+3] == 'p' &&
                       s[i+4] == ';')
     {
-      *d = '&';
-      d++;
-      i += 5;
+      *d++ = '&';
+      i += 4;
     } else
     if(s[i] == '&' && s[i+1] == 'l' &&
                       s[i+2] == 't' &&
                       s[i+3] == ';')
     {
-      *d = '"';
-      d++;
-      i += 5;
+      *d++ = '"';
+      i += 3;
     } else
     if(s[i] == '&' && s[i+1] == 'g' &&
                       s[i+2] == 't' &&
                       s[i+3] == ';')
     {
-      *d = '"';
-      d++;
-      i += 5;
+      *d++ = '"';
+      i += 3;
     } else
     {
-      *d = s[i];
-      d++;
+      *d++ = s[i];
     }
   }
   *d = 0;
@@ -602,8 +571,7 @@ char *unmime_header(const char *encoded_str)
       conv_str=(char*) malloc(strlen(decoded_text)+1);
       utf82win(conv_str,decoded_text);
       break;
-         }
-
+    }
     strcat(outbuf, conv_str);
     mfree(conv_str);
     mfree(decoded_text);
