@@ -84,4 +84,6 @@ extern const char PER4_FMT[16];
 
 extern const unsigned int REFRESH;
 
+extern const int FRINGING_ENA;
+extern const char FRINGING_COLORS[];
 #endif

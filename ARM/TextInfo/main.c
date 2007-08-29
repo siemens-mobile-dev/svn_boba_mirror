@@ -49,7 +49,7 @@ void FillInfoData(TInfo *Info,int x_start,int y_start, int font,const char *colo
 {  
   Info->rc.x=x_start;
   Info->rc.y=y_start;
-  Info->rc.x2=x_start+Get_WS_width(Info->ws,font);
+  Info->rc.x2=x_start+Get_WS_width(Info->ws,font)+1;//без +1 неправильно работает обводка
   Info->rc.y2=y_start+GetFontYSIZE(font);
   Info->font=font;
   memcpy(Info->pen,color,4);
@@ -286,9 +286,10 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         {
           if (!InfoData[i].enabled)
 			  continue;
+          #define COLOR(x) (char *)(&(x))
           DrawCanvas(canvasdata, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, 1);
           DrawString(InfoData[i].ws, InfoData[i].rc.x, InfoData[i].rc.y, InfoData[i].rc.x2, InfoData[i].rc.y2, InfoData[i].font,
-                     0,InfoData[i].pen, GetPaletteAdrByColorIndex(23));         
+                     FRINGING_ENA ? TEXT_OUTLINE : 0,InfoData[i].pen, FRINGING_ENA ? COLOR(FRINGING_COLORS) : GetPaletteAdrByColorIndex(23));         
         }            
       }
     }

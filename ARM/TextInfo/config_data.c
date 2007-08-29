@@ -6,6 +6,13 @@
 __root const CFG_HDR cfghdr0={CFG_UINT,"Refresh period, 1/10 sec",0,600};
 __root const unsigned int REFRESH=20;
 
+__root const CFG_HDR cfghdr1 = {CFG_CBOX, "Fringing", 0, 2};
+__root const int FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox13[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr2={CFG_COLOR,"Fringing color",0,0};
+__root const char FRINGING_COLORS[4]={0,255,0,100};
+
 __root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Net setup",1,0};
 
 __root const CFG_HDR cfghdr1_1 = {CFG_CBOX, "Net display", 0, 2};
