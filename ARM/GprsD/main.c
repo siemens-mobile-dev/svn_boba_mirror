@@ -85,14 +85,22 @@ void do_connect(void)
 {
   unsigned int cur_profile;
   unsigned int cur_cepid;
-  unsigned int i;
   cur_cepid=GBS_GetCurCepid();
   cur_profile=GetCurrentGPRSProfile();
-  i=ActivateDialUpProfile(cur_cepid,cur_profile);
-  RegisterCepIdForCurProfile(cur_cepid,cur_profile,i);
-  GBS_SendMessage(LINKMANAGER,LMAN_CONNECT_REQ,0,0x80,0xFFFD);
+  ActivateDialUpProfile(cur_cepid,cur_profile);
+  RegisterCepIdForCurProfile(cur_cepid,cur_profile,1);
+  GBS_SendMessage(LINKMANAGER,LMAN_CONNECT_REQ,0,0x80,0xFFFF);
 }
 #endif
+
+
+#ifndef NEWSGOLD
+void do_disconnect(void)
+{
+  GBS_SendMessage(LINKMANAGER,LMAN_DISCONNECT_REQ,0,0,0);
+}
+#endif
+
 
 //void LogWriter(const char *s)
 //{
@@ -175,7 +183,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 
 static void maincsm_oncreate(CSM_RAM *data)
 {
-
+  SUBPROC((void*)do_connect);
 }
 
 static void Killer(void)
@@ -187,6 +195,9 @@ static void Killer(void)
 
 static void maincsm_onclose(CSM_RAM *csm)
 {
+#ifndef NEWSGOLD
+  SUBPROC((void *)do_disconnect);
+#endif
   SUBPROC((void *)Killer);
 }
 
@@ -229,17 +240,16 @@ static void UpdateCSMname(void)
 int main()
 {
   CSM_RAM *save_cmpc;
-  char dummy[sizeof(MAIN_CSM)];
+  MAIN_CSM main_csm;
   UpdateCSMname();
   LockSched();
   save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
   CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
-  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CreateCSM(&MAINCSM.maincsm,&main_csm,0);
   CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
   UnlockSched(); 
 #ifdef NEWSGOLD  
   InitConfig();
 #endif  
-  SUBPROC((void*)do_connect);
   return 0;
 }
