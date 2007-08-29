@@ -213,22 +213,31 @@ void Disp_Info(TRESOURCE* ResEx)
   CreateInputTextDialog(&info_desc,&info_hdr,eq,1,0);
 }
 
-//static char *Known_Features;
+static char *Known_Features = NULL;
+
 extern const char DEFAULT_DISC[128];
 char *Lookup_Known_Vars(char *var_name)
 {
-  // Грузим фичи из файла
-  unsigned int io_error;
-  char path[]="4:\\ZBin\\SieJC\\Templates\\known_features.txt";
-  path[0] = DEFAULT_DISC[0];
-  volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
-  if(io_error)return var_name;
-  char *buf=malloc(4096);
-  zeromem(buf,4096);
-  fread(hF, buf, 4095, &io_error);
-  fclose(hF, &io_error);
-  char *vn = Get_Param_Value(buf, var_name, 1);
-  mfree(buf);
+  if(!Known_Features)  
+  {
+    // Грузим фичи из файла
+    unsigned int io_error = 0;
+    char path[]="4:\\ZBin\\SieJC\\Templates\\known_features.txt";
+    path[0] = DEFAULT_DISC[0];
+    volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
+    if(io_error)
+    {
+      char q[40];
+      sprintf(q,"Err %d",io_error);
+      ShowMSG(1,(int)q);
+      return var_name;
+    }
+    Known_Features=malloc(4096);
+    zeromem(Known_Features,4096);
+    fread(hF, Known_Features, 4095, &io_error);
+    fclose(hF, &io_error);
+  }
+  char *vn = Get_Param_Value(Known_Features, var_name, 1);
   if(vn!=NULL)
   {return vn;
   }else return var_name;
@@ -281,6 +290,11 @@ void Disp_From_Disco(char *jid, XMLNode *info)
       }
     }
     nodeEx = nodeEx->next;
+  }
+  if(Known_Features)
+  {
+    mfree(Known_Features);
+    Known_Features = NULL;
   }  
   patch_header(&info_hdr);
   patch_input(&info_desc);
