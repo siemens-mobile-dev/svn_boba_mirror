@@ -4,7 +4,6 @@
 #include "history.h"
 #include "conf_loader.h"
 #include "main.h"
-#include "clist_util.h"
 #include "message_list.h"
 #include "xml_parser.h"
 #include "bookmarks.h"
@@ -13,6 +12,7 @@
 #include "string_util.h"
 #include "jabber_util.h"
 #include "groups_util.h"
+#include "clist_util.h"
 #include "roster_icons.h"
 #include "mainmenu.h"
 #include "serial_dbg.h"
@@ -36,7 +36,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "2.8.6-Z";
+const char VERSION_VERS[] = "2.8.8-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ÏËÌÛÚ˚

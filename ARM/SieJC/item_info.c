@@ -2,6 +2,8 @@
 #include "main.h"
 #include "clist_util.h"
 #include "jabber_util.h"
+#include "string_util.h"
+#include "xml_parser.h"
 #include "item_info.h"
 
 #define MAX_SYMB 1024
@@ -209,6 +211,80 @@ void Disp_Info(TRESOURCE* ResEx)
   patch_header(&info_hdr);
   patch_input(&info_desc);
   CreateInputTextDialog(&info_desc,&info_hdr,eq,1,0);
+}
+
+//static char *Known_Features;
+extern const char DEFAULT_DISC[128];
+char *Lookup_Known_Vars(char *var_name)
+{
+  // Грузим фичи из файла
+  unsigned int io_error;
+  char path[]="4:\\ZBin\\SieJC\\Templates\\known_features.txt";
+  path[0] = DEFAULT_DISC[0];
+  volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
+  if(io_error)return var_name;
+  char *buf=malloc(4096);
+  zeromem(buf,4096);
+  fread(hF, buf, 4095, &io_error);
+  fclose(hF, &io_error);
+  char *vn = Get_Param_Value(buf, var_name, 1);
+  mfree(buf);
+  if(vn!=NULL)
+  {return vn;
+  }else return var_name;
+}
+
+void Disp_From_Disco(char *jid, XMLNode *info)
+{
+  
+  // Сначала получим инфу о том, на какой контакт это всё приходится
+  CLIST* ClEx = CList_FindContactByJID(jid);
+  
+  // Теперь выполним приготовление самого диалога ввода
+  ws_info = AllocWS(MAX_SYMB);
+  EDITCONTROL ec;
+  void *ma=malloc_adr();
+  void *eq;
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  
+  
+  ConstructEditControl(&ec,1,0x40,ws_info,256);  
+  AddEditControlToEditQend(eq,&ec,ma);
+
+  // JID 
+  wsprintf(ws_info,percent_t,"JID:");
+  ConstructEditControl(&ec,1,0x40,ws_info,256);
+  AddEditControlToEditQend(eq,&ec,ma);
+
+  utf8_2ws(ws_info, jid, 128);
+  ConstructEditControl(&ec,3,0x40,ws_info,256);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+
+  wsprintf(ws_info,percent_t,"Возможности клиента:");
+  ConstructEditControl(&ec,1,0x40,ws_info,256);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  XMLNode *nodeEx = info->subnode;
+  while(nodeEx)
+  {
+    if(!strcmp(nodeEx->name,"feature"))
+    {
+      char *var = XML_Get_Attr_Value("var", nodeEx->attr);
+      if(var)
+      {
+        var = Lookup_Known_Vars(var);
+        utf8_2ws(ws_info, var, 128);
+        ConstructEditControl(&ec,3,0x40,ws_info,256);
+        AddEditControlToEditQend(eq,&ec,ma);
+      }
+    }
+    nodeEx = nodeEx->next;
+  }  
+  patch_header(&info_hdr);
+  patch_input(&info_desc);
+  CreateInputTextDialog(&info_desc,&info_hdr,eq,1,0);  
 }
 
 //EOL,EOF

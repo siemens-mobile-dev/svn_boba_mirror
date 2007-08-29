@@ -6,6 +6,7 @@
 #include "jabber_util.h"
 #include "string_util.h"
 #include "xml_parser.h"
+#include "item_info.h"
 #include "jabber.h"
 #include "bookmarks.h"
 #include "serial_dbg.h"
@@ -166,7 +167,23 @@ void Send_Auth()
   UnlockSched();
 }
 
+//Context: HELPER
+void _senddicoinforequest(char *dest_jid)
+{
+  char discoid[]="SieJC_discoinfo";
+  char typ[]=IQTYPE_GET;
+  char iqd[]=DISCO_INFO;
+  SendIq(dest_jid, typ, discoid, iqd, NULL);
+  mfree(dest_jid);
+}
 
+
+void Send_DiscoInfo_Request(char *dest_jid)
+{
+  char *to=malloc(128);
+  strcpy(to, dest_jid);
+  SUBPROC((void*)_senddicoinforequest,to);  
+}
 
 //Context: HELPER
 void _sendversionrequest(char *dest_jid)
@@ -804,6 +821,7 @@ if(!strcmp(gres,iqtype))
 {
   char bind_id[]="SieJC_bind_req";
   char sess_id[]="SieJC_sess_req";
+  char disco_id[]="SieJC_discoinfo";
 
   if(!strcmp(id, bind_id))
   {
@@ -841,6 +859,7 @@ if(!strcmp(gres,iqtype))
     }
   }
 
+  
   if(!strcmp(id,vreq_id))   // Запрос версии (ответ)
   {
     XMLNode* query;
@@ -873,6 +892,20 @@ if(!strcmp(gres,iqtype))
 
   }
 
+/////////////////
+  if(!strcmp(id,disco_id))   // Запрос диско (ответ)
+  {
+    XMLNode* query;
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
+    char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+    if(!q_type)return;
+    if(!strcmp(q_type,DISCO_INFO))
+    {
+      Disp_From_Disco(from, query);       
+    }
+
+  }
+/////////////////
 
   if(!strcmp(id,priv_id))
   {

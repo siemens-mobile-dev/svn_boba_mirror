@@ -55,8 +55,12 @@ void Send_Auth();
 void Send_Presence(PRESENCE_INFO *pr_info);
 
 // ѕослать запрос о версии пользователю с указанным JID
-// JID указываем в ANSI-кодировке
+// JID указываем в UTF-8
 void Send_Version_Request(char *dest_jid);
+
+// ѕослать запрос disco#info
+// JID указываем в UTF-8
+void Send_DiscoInfo_Request(char *dest_jid);
 
 /*
   ѕослать запрос ростера

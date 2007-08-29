@@ -42,6 +42,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 #define MI_CONF_VGR_THIS    5
 #define MI_QUERY_VERSION    6
 #define MI_LOGIN_LOGOUT     7
+#define MI_DISCO_QUERY      8
 
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
@@ -152,7 +153,12 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       SUBPROC((void*)_sendandfree,pres_str);        
       break;
     }     
-    
+  
+  case MI_DISCO_QUERY:
+    {
+      Send_DiscoInfo_Request(CList_GetActiveContact()->full_name);
+      break;
+    }
   default:
     {
       MsgBoxError(1,(int)"Действие неизвестно или не поддерживается");
@@ -220,6 +226,14 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
       strcpy(test_str,"Версия клиента");
       break;
     }    
+
+  case MI_DISCO_QUERY: 
+    {
+      strcpy(test_str,"Инфо из Disco");
+      break;
+    }    
+    
+
   case MI_LOGIN_LOGOUT: 
     {
       if(Act_contact->status==PRESENCE_OFFLINE)
@@ -279,6 +293,7 @@ char ICON_CONF_VREJ_THIS[128];
 char ICON_CONF_VGR_THIS[128];
 char ICON_QUERY_VERSION[128];
 char ICON_LOGIN_LOGOUT[128];
+char ICON_QUERY_DISCO[128];
 
 void Init_Icon_array()
 {
@@ -290,6 +305,7 @@ void Init_Icon_array()
   strcpy(ICON_CONF_VREJ_THIS, PATH_TO_PIC);strcat(ICON_CONF_VREJ_THIS, "menu_no_icon.png");
   strcpy(ICON_CONF_VGR_THIS, PATH_TO_PIC);strcat(ICON_CONF_VGR_THIS, "menu_no_icon.png");
   strcpy(ICON_QUERY_VERSION, PATH_TO_PIC);strcat(ICON_QUERY_VERSION, "menu_version.png");  
+  strcpy(ICON_QUERY_DISCO, PATH_TO_PIC);strcat(ICON_QUERY_DISCO, "menu_version.png");
   strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
   if(Act_contact->entry_type==T_TRANSPORT)
   if(Act_contact->status==PRESENCE_OFFLINE)
@@ -305,6 +321,7 @@ void Init_Icon_array()
   cmS_ICONS[MI_CONF_VREJ_THIS]=(int)ICON_CONF_VREJ_THIS;    
   cmS_ICONS[MI_CONF_VGR_THIS]=(int)ICON_CONF_VGR_THIS;    
   cmS_ICONS[MI_QUERY_VERSION]=(int)ICON_QUERY_VERSION;    
+  cmS_ICONS[MI_DISCO_QUERY]=(int)ICON_QUERY_DISCO;
   cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT; 
   
 }
@@ -333,6 +350,11 @@ void Disp_Contact_Menu()
     Menu_Contents[n_items++]=MI_CONF_LEAVE;
   }
 
+  if(Act_contact->entry_type!=T_GROUP)
+  {
+    Menu_Contents[n_items++]=MI_DISCO_QUERY;
+  }  
+  
   if(Act_contact->entry_type==T_CONF_NODE)
   {
     if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
