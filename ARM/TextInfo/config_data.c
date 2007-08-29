@@ -1,11 +1,7 @@
 #include "..\inc\cfg_items.h"
+#include "..\inc\swilib.h"
 #include "TextInfo.h"
 //Конфигурация
-#ifdef NEWSGOLD
-#define FONT 7;
-#else
-#define FONT 11;
-#endif
 
 __root const CFG_HDR cfghdr0={CFG_UINT,"Refresh period, 1/10 sec",0,600};
 __root const unsigned int REFRESH=20;
@@ -24,7 +20,7 @@ __root const CFG_HDR cfghdr1_3={CFG_COLOR,"Net color",0,0};
 __root const char NET_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr1_4={CFG_UINT,"Net font",0,65535};
-__root const unsigned int NET_FONT=FONT;
+__root const unsigned int NET_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr1_5={CFG_STR_WIN1251,"Net string format",0,15};
 __root const char NET_FMT[16]="%c%ddB";
@@ -47,7 +43,7 @@ __root const CFG_HDR cfghdr2_3={CFG_COLOR,"Temperature color",0,0};
 __root const char TEMP_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr2_4={CFG_UINT,"Temperature font",0,65535};
-__root const unsigned int TEMP_FONT=FONT;
+__root const unsigned int TEMP_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr2_5={CFG_STR_WIN1251,"Temp string format",0,15};
 __root const char TEMP_FMT[16]="%d,%d°C";
@@ -70,7 +66,7 @@ __root const CFG_HDR cfghdr3_3={CFG_COLOR,"Voltage color",0,0};
 __root const char VOLT_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr3_4={CFG_UINT,"Voltage font",0,65535};
-__root const unsigned int VOLT_FONT=FONT;
+__root const unsigned int VOLT_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr3_5={CFG_STR_WIN1251,"Voltage string format",0,15};
 __root const char VOLT_FMT[16]="%d,%02dV";
@@ -93,7 +89,7 @@ __root const CFG_HDR cfghdr4_3={CFG_COLOR,"AccuCap color",0,0};
 __root const char ACCU_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr4_4={CFG_UINT,"AccuCap font",0,65535};
-__root const unsigned int ACCU_FONT=FONT;
+__root const unsigned int ACCU_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr4_5={CFG_STR_WIN1251,"AccuCap string format",0,15};
 __root const char CAP_FMT[16]="%02d%%";
@@ -116,7 +112,7 @@ __root const CFG_HDR cfghdr5_3={CFG_COLOR,"GPRS color",0,0};
 __root const char GPRS_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr5_4={CFG_UINT,"GPRS font",0,65535};
-__root const unsigned int GPRS_FONT=FONT;
+__root const unsigned int GPRS_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr_m50={CFG_LEVEL,"",0,0};
 
@@ -136,7 +132,7 @@ __root const CFG_HDR cfghdr6_3={CFG_COLOR,"AvailRam color",0,0};
 __root const char RAM_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr6_4={CFG_UINT,"AvailRam font",0,65535};
-__root const unsigned int RAM_FONT=FONT;
+__root const unsigned int RAM_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr_m60={CFG_LEVEL,"",0,0};
 
@@ -156,7 +152,7 @@ __root const CFG_HDR cfghdr7_3={CFG_COLOR,"CPULoad color",0,0};
 __root const char CPU_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr7_4={CFG_UINT,"CPULoad font",0,65535};
-__root const unsigned int CPU_FONT=FONT;
+__root const unsigned int CPU_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr7_5={CFG_STR_WIN1251,"CPULoad string format",0,15};
 __root const char CPU_FMT[16]="%02d%%";
@@ -201,7 +197,7 @@ __root const CFG_HDR cfghdr9_3={CFG_COLOR,"Flex '0' color",0,0};
 __root const char FLEX0_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr9_4={CFG_UINT,"Flex '0' font",0,65535};
-__root const unsigned int FLEX0_FONT=FONT;
+__root const unsigned int FLEX0_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr_m100={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------
@@ -226,7 +222,7 @@ __root const CFG_HDR cfghdr10_3={CFG_COLOR,"Flex '4' color",0,0};
 __root const char FLEX4_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr10_4={CFG_UINT,"Flex '4' font",0,65535};
-__root const unsigned int FLEX4_FONT=FONT;
+__root const unsigned int FLEX4_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr_m110={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------
@@ -248,7 +244,7 @@ __root const CFG_HDR cfghdr11_3={CFG_COLOR,"Free % '0' color",0,0};
 __root const char PER0_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr11_4={CFG_UINT,"Free '0' font",0,65535};
-__root const unsigned int PER0_FONT=FONT;
+__root const unsigned int PER0_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr_m120={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------
@@ -269,7 +265,7 @@ __root const CFG_HDR cfghdr12_3={CFG_COLOR,"Free % '4' color",0,0};
 __root const char PER4_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr12_4={CFG_UINT,"Free '4' font",0,65535};
-__root const unsigned int PER4_FONT=FONT;
+__root const unsigned int PER4_FONT=FONT_SMALL;
 
 __root const CFG_HDR cfghdr_m130={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------

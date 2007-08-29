@@ -1,9 +1,12 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 #include "TextInfo.h"
+#include "local_ipc.h"
 
 #define TMR_SECOND 216
-#define ELF_ID 0x3EE
+extern void kill_data(void *p, void (*func_p)(void *));
+
+const char ipc_my_name[]=IPC_TEXTINFO_NAME;
 
 CSM_DESC icsmd;
 
@@ -20,40 +23,33 @@ typedef struct{
 
 TInfo InfoData[11];
  
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
-
 GBSTMR mytmr;
+const IPC_REQ my_ipc={
+  ipc_my_name,
+  ipc_my_name,
+  NULL
+};
 
 
 // ----------------------------------------------------------------------------
+#pragma segment="ELFBEGIN"
+void ElfKiller(void)
+{
+  kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
+}
+
 void InitInfoData(void);
 void TimerProc(void)
 {
   InitInfoData();
-  GBS_SendMessage(MMI_CEPID,ELF_ID);
-  GBS_StartTimerProc(&mytmr,REFRESH*TMR_SECOND/10,TimerProc);
-}
-
-#pragma inline
-int get_string_width(WSHDR *ws, int font)
-{
-  int width=0;
-  unsigned short *body=ws->wsbody;
-  int len=body[0];
-  while(len)
-  {
-    width+=GetSymbolWidth(body[len],font);
-    len--;
-  }
-  return (width);
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&my_ipc);
 }
 
 void FillInfoData(TInfo *Info,int x_start,int y_start, int font,const char *color)
 {  
   Info->rc.x=x_start;
   Info->rc.y=y_start;
-  Info->rc.x2=x_start+get_string_width(Info->ws,font);
+  Info->rc.x2=x_start+Get_WS_width(Info->ws,font);
   Info->rc.y2=y_start+GetFontYSIZE(font);
   Info->font=font;
   memcpy(Info->pen,color,4);
@@ -61,7 +57,7 @@ void FillInfoData(TInfo *Info,int x_start,int y_start, int font,const char *colo
   
 int wsprintf_bytes(WSHDR *ws, unsigned int bytes)
 {
-	//char *str;
+  	//char *str;
 	if (bytes<=1024)
 		return (wsprintf(ws,BYTES_FMT,bytes,BYTES_SG));
 	 //str=BYTES_SG;
@@ -79,6 +75,7 @@ void InitInfoData(void)
   int c;
   int Free;
   int Total;
+  unsigned int err;
   
   if(NET_ENA)
   {
@@ -168,7 +165,7 @@ void InitInfoData(void)
   if (FLEX0_ENA)
   {
     InfoData[7].enabled=1;
-    c=GetFreeFlexSpace(0,0) / 1024;
+    c=GetFreeFlexSpace(0,&err) / 1024;
     if (!cfgMB0) c=c;
     else
       c=c/1024;
@@ -182,7 +179,7 @@ void InitInfoData(void)
   if (FLEX4_ENA)
   {
     InfoData[8].enabled=1;
-    c=GetFreeFlexSpace(4,0) / 1024;
+    c=GetFreeFlexSpace(4,&err) / 1024;
     if (!cfgMB4) c=c;
       else
         c=c/1024;
@@ -196,9 +193,9 @@ void InitInfoData(void)
   if (PER0_ENA)
   {
     InfoData[9].enabled=1;
-    Free=GetFreeFlexSpace(0,0);
-    Total=GetTotalFlexSpace(0,0);
-    c=100*Free/Total;
+    Free=GetFreeFlexSpace(0,&err);
+    Total=GetTotalFlexSpace(0,&err);
+    c=(long long)Free*100/Total;
     wsprintf(InfoData[9].ws,PER0_FMT,c);
     FillInfoData(&InfoData[9],PER0_X,PER0_Y,PER0_FONT,PER0_COLORS);
   }
@@ -209,9 +206,9 @@ void InitInfoData(void)
   if (PER4_ENA)
   {
     InfoData[10].enabled=1;
-    Free=GetFreeFlexSpace(4,0);
-    Total=GetTotalFlexSpace(4,0);
-    c=100*Free/Total;
+    Free=GetFreeFlexSpace(4,&err);
+    Total=GetTotalFlexSpace(4,&err);
+    c=(long long)Free*100/Total;
     wsprintf(InfoData[10].ws,PER4_FMT,c);
     FillInfoData(&InfoData[10],PER4_X,PER4_Y,PER4_FONT,PER4_COLORS);
   }
@@ -220,9 +217,9 @@ void InitInfoData(void)
     InfoData[10].enabled=0;
   }
 }
-  
+
 // ----------------------------------------------------------------------------
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
+#define idlegui_id (((int *)FindCSMbyID(CSM_root()->idle_id))[DISPLACE_OF_IDLEGUI_ID/4])
 
 #pragma inline=forced
 int toupper(int c)
@@ -239,9 +236,8 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
@@ -251,7 +247,27 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       InitConfig();
     }
   }
-  csm_result=(msg->msg==ELF_ID)?0:old_icsm_onMessage(data,msg);
+  if (msg->msg==MSG_IPC)
+  {
+    IPC_REQ *ipc;
+    if ((ipc=(IPC_REQ*)msg->data0))
+    {
+      if (strcmp_nocase(ipc->name_to,ipc_my_name)==0)
+      {
+        switch (msg->submess)
+        {
+        case IPC_UPDATE_STAT:
+#ifdef NEWSGOLD
+          if (!getCpuUsedTime_if_ena())
+          {
+            StartCpuUsageCount();
+          }
+#endif
+          GBS_StartTimerProc(&mytmr, REFRESH*TMR_SECOND/10, TimerProc);
+        }
+      }
+    }
+  }
   if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
   {
     GUI *igui=GetTopGUI();
@@ -277,39 +293,79 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
-  return(csm_result);
+  return(1);
 }
 
-void MyIDLECSM_onClose(CSM_RAM *data)
+
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
+  for (int i=0;i<11; i++)
+  {
+    InfoData[i].ws=AllocWS(20);
+  }  
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&my_ipc);
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
   GBS_DelTimer(&mytmr);
   for (int i=0;i!=11; i++)
   {
     FreeWS(InfoData[i].ws);
-  }    
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  }  
+  SUBPROC((void *)ElfKiller);
 }
 
+static unsigned short maincsm_name_body[140];
+const int minus11=-11;
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(CSM_RAM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"TextInfo");
+}
 // ----------------------------------------------------------------------------
 
 int main(void)
 {
-  LockSched();
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  icsmd.onClose=MyIDLECSM_onClose;
-  icsm->constr=&icsmd;
-  UnlockSched();
+  CSM_RAM *save_cmpc;
+  CSM_RAM main_csm;
   InitConfig();
-  for (int i=0;i<11; i++)
-  {
-    InfoData[i].ws=AllocWS(20);
-  }    
-  GBS_StartTimerProc(&mytmr,TMR_SECOND*10,TimerProc);
-  return 0;
+  UpdateCSMname();
+  LockSched();
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,&main_csm,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+  UnlockSched();
+  return (0);
 }
