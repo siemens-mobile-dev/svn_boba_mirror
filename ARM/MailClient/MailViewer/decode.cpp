@@ -309,7 +309,6 @@ void strreplace(char *s, char *r, char *w)
 
   char *d = (char*) malloc(d_ptr+1);
 
-  //добавим после <br> переводы строк
   d_ptr = 0;
   prev_br = s;
   while(next_br = strstr(prev_br, r))
@@ -320,8 +319,8 @@ void strreplace(char *s, char *r, char *w)
     d_ptr += n_w;
     prev_br = next_br + n_r;
   }
-
-  memcpy(d+d_ptr, prev_br, strlen(s) - (prev_br-s) - (d_ptr?n_r:0));
+  int len = strlen(s) - (prev_br-s) - (d_ptr?n_r:0);
+  if (len > 0) memcpy(d+d_ptr, prev_br, len);
   d_ptr += strlen(s) - (prev_br - s);
   d[d_ptr] = 0;
   
@@ -403,19 +402,30 @@ void strip_html(char *s)
 {
   int b=-1, d_ptr = 0;
 
-  //уберём переводы строк
+  strreplace(s, "\r\n\r\n", "<br>");
+
   for(int i = 0, j = 0; s[i]; i++)
   {
-    if(s[i] != '\n' && s[i] != '\r') s[j++] = s[i];
+    if(s[i] != '\r' && s[i] != '\n')
+      s[j++] = s[i];
     if(!s[i+1]) s[j] = 0;
   }
-
+  
+  //strreplace(s, "\r\n", "");
   strreplace(s, "<br>", "\r\n");
-  strreplace(s, "<\\br>", "\r\n");
+  strreplace(s, "<br />", "\r\n");
   strreplace(s, "<BR>", "\r\n");
-  strreplace(s, "<\\BR>", "\r\n");
+  strreplace(s, "<BR />", "\r\n");
   strreplace(s, "<p>", "\r\n");
   strreplace(s, "<P>", "\r\n");
+  strreplace(s, "<blockquote", "\r\n<blockquote");
+  strreplace(s, "<BLOCKQUOTE", "\r\n<BLOCKQUOTE");
+  strreplace(s, "/blockquote>", "/blockquote>\r\n");
+  strreplace(s, "/BLOCKQUOTE>", "/BLOCKQUOTE>\r\n");
+  strreplace(s, "</td>", " ");
+  strreplace(s, "</TD>", " ");
+  strreplace(s, "</tr>", "\r\n");
+  strreplace(s, "</TR>", "\r\n");
 
   //сюда мы будем бросать кости
   char *d = (char*) malloc(strlen(s)+1);

@@ -903,7 +903,7 @@ const char default_transfere[]="Content-Transfer-Encoding: 8bit";
 
 MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
 {
-  WSHDR *ws;
+  WSHDR *ws, *headers;
   MAIL_PART *top=0, *bot, *prev;
   MAIL_VIEW *view_list;
   EDITCONTROL ec;
@@ -915,6 +915,8 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   int size;
   int ed_toitem;
     
+  headers=AllocWS(100);
+
   top=malloc(sizeof(MAIL_PART));
   bot=top;
   top->next=0;
@@ -964,6 +966,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
     size_t buf_size;
     char *p, *buf, *b_end;
     int i;
+      
     switch(bot->content_type)
     {
     case HTML:
@@ -1023,6 +1026,12 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       bot->ec_n=ed_toitem;
       FreeWS(ws);
       mfree(buf);
+
+      ascii2ws(headers,"------------------");
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
+      SetFontToEditCOptions(&ec.ed_options,4);
+      AddEditControlToEditQend(eq,&ec,ma);    
+
       break;
        
     case TEXT:
@@ -1081,6 +1090,12 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       bot->ec_n=ed_toitem;
       FreeWS(ws);
       mfree(buf);
+
+      ascii2ws(headers,"------------------");
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
+      SetFontToEditCOptions(&ec.ed_options,4);
+      AddEditControlToEditQend(eq,&ec,ma);    
+
       break;
       
     case MULTIPART:
@@ -1143,21 +1158,41 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       ws=AllocWS(strlen(p));
       ascii2ws(ws, p);
       mfree(p);
-      PrepareEditControl(&ec);
+      PrepareEditControl(&ec);   
+
       ConstructEditControl(&ec,ECT_READ_ONLY_SELECTED,ECF_APPEND_EOL,ws,wslen(ws));
       SetFontToEditCOptions(&ec.ed_options,1);
       ed_toitem=AddEditControlToEditQend(eq,&ec,ma); 
       bot->ec_n=ed_toitem;
       FreeWS(ws);
+
+      ascii2ws(headers,"------------------");
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
+      SetFontToEditCOptions(&ec.ed_options,4);
+      AddEditControlToEditQend(eq,&ec,ma);    
+
       break;
     default:
+      ascii2ws(headers,"<unknown message type>");
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
+      SetFontToEditCOptions(&ec.ed_options,2);
+      AddEditControlToEditQend(eq,&ec,ma);    
+
+
+      ascii2ws(headers,"------------------");
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
+      SetFontToEditCOptions(&ec.ed_options,4);
+      AddEditControlToEditQend(eq,&ec,ma);    
+
       break;
     }
     bot=bot->next;
+    
   }
   view_list=malloc(sizeof(MAIL_VIEW));
   view_list->top=top;
   view_list->eml=eml;
+  FreeWS(headers);
   return (view_list);
 }
 
@@ -1177,16 +1212,16 @@ int create_view(ML_VIEW *ml_list)
   if (from)
   {
     from=strchr(from, ':')+1;
-    while (*from==' ') from++;
+    while (*from==' ' || *from==0x09) from++;
     ws=AllocWS(strlen(from));
     ascii2ws(ws,from);
-    ascii2ws(headers,"From:");
+    ascii2ws(headers,"From: ");
     
-    ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
-    SetFontToEditCOptions(&ec.ed_options,1);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
+    SetFontToEditCOptions(&ec.ed_options,2);
     AddEditControlToEditQend(eq,&ec,ma);
     
-    ConstructEditControl(&ec,3,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
     FreeWS(ws);
@@ -1196,16 +1231,16 @@ int create_view(ML_VIEW *ml_list)
   if (to)
   {
     to=strchr(to, ':')+1;
-    while (*to==' ') to++;
+    while (*to==' ' || *to==0x09) to++;
     ws=AllocWS(strlen(to));
     ascii2ws(ws,to);
-    ascii2ws(headers,"To:");
+    ascii2ws(headers,"To: ");
     
-    ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
-    SetFontToEditCOptions(&ec.ed_options,1);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
+    SetFontToEditCOptions(&ec.ed_options,2);
     AddEditControlToEditQend(eq,&ec,ma);
     
-    ConstructEditControl(&ec,3,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
     FreeWS(ws);
@@ -1215,23 +1250,23 @@ int create_view(ML_VIEW *ml_list)
   if (subject)
   {
     subject=strchr(subject, ':')+1;
-    while (*subject==' ') subject++;
+    while (*subject==' ' || *subject==0x09) subject++;
     ws=AllocWS(strlen(subject));
     ascii2ws(ws,subject);
-    ascii2ws(headers,"Subject:");
+    ascii2ws(headers,"Subject: ");
     
-    ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
-    SetFontToEditCOptions(&ec.ed_options,1);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
+    SetFontToEditCOptions(&ec.ed_options,2);
     AddEditControlToEditQend(eq,&ec,ma);
     
-    ConstructEditControl(&ec,3,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
     FreeWS(ws);
   }
-  ascii2ws(headers,"---------------------");
-  ConstructEditControl(&ec,1,ECF_APPEND_EOL,headers,wslen(headers));
-  SetFontToEditCOptions(&ec.ed_options,1);
+  ascii2ws(headers,"------------------");
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
+  SetFontToEditCOptions(&ec.ed_options,4);
   AddEditControlToEditQend(eq,&ec,ma);  
   
   view_list=ParseMailBody(eq,ml_list,ma);    
