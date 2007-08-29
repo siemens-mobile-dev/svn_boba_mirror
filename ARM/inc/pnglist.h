@@ -22,7 +22,7 @@ typedef struct
 #define PNG_8 1
 #define PNG_16 2
 
-#ifdef NEWSGOLD
+#if NEWSGOLD || X75
 #define PNG_24 3
 #endif
 

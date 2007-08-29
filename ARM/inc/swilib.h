@@ -2404,7 +2404,7 @@ __swi __arm int GetDisconnectTime(void);
 //pattern=??,??,??,E5,??,??,??,E1,FA,0F,50,E3,??,??,??,8A,0A,00,50,E3,??,??,??,2A
 
 #pragma swi_number=0x01A5
-__swi __arm void RegisterCepIdForCurProfile(unsigned int cep_id,int profile_num,unsigned int unk);
+__swi __arm void RegisterCepIdForCurProfile(unsigned int cep_id,int profile_num,unsigned int csd_or_gprs);
 //thumb
 //pattern=03,1C,??,??,03,60,02,71,C1,80,70,47
 
