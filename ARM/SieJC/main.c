@@ -36,7 +36,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // ÍÅ ÌÅÍßÒÜ!
-const char VERSION_VERS[] = "2.8.5-Z";
+const char VERSION_VERS[] = "2.8.6-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ìèíóòû
@@ -696,6 +696,7 @@ void Process_Decoded_XML(XMLNode* node)
     if(!strcmp(nodeEx->name,"failure")&& Jabber_state < JS_AUTH_OK)
     {
       SASL_Process_Error(nodeEx);
+      SUBPROC((void*)end_socket);
     }
 
 //----------------
@@ -746,6 +747,7 @@ void Process_Decoded_XML(XMLNode* node)
       char err[]="Îøèáêà XML-ïîòîêà";
       MsgBoxError(1,(int)err);
       sprintf(logmsg, err);
+      SUBPROC((void*)end_socket);
     }
 //----------------
     if(!strcmp(nodeEx->name,"presence"))
