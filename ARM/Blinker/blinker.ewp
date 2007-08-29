@@ -559,7 +559,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -616,7 +616,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\test.xcl</state>
+          <state>test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -930,7 +930,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.42A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -1439,7 +1439,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\test.xcl</state>
+          <state>test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -1753,7 +1753,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.42A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -2206,7 +2206,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -2263,7 +2263,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\test.xcl</state>
+          <state>test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2392,7 +2392,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
