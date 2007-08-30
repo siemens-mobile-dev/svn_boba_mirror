@@ -87,14 +87,25 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #define COMPANY_NAME 0x29
 #define POST_NAME 0x6F
 #define DISPLAY_NAME 0x60
-#else 
+#else
+#define NICKNAME 0x12
 #define LAST_NAME 0x23
 #define FIRST_NAME 0x24
-#define PHONE_NUMBER 0x2D
+#define STREET 0x25
+#define POSTCODE 0x26
+#define CITY 0x27
+#define COUNTRY 0x28
+#define COMPANY_NAME 0x29
 #define PHONE_OFFICE 0x2A
-#define PHONE_MOBILE 0x2C
 #define PHONE_FAX 0x2B
+#define PHONE_MOBILE 0x2C
+#define PHONE_NUMBER 0x2D
+#define E_MAIL 0x2E
+#define URL 0x2F
+#define PICTURE 0x33
+#define E_MAIL2 0x5D
 #define PHONE_FAX2 0x5E
+#define WALKY_TALKY_ID 0x6D
 #endif
 
 char cur_imsi[IMSI_DATA_BYTE_LEN];
@@ -418,7 +429,11 @@ static void ConstructList(void)
 			r->item_type==DISPLAY_NAME
 			  )
                     #else
-                    if (r->item_type==LAST_NAME||r->item_type==FIRST_NAME)
+                    if (
+                        r->item_type==LAST_NAME||
+                        r->item_type==FIRST_NAME||
+                        r->item_type==COMPANY_NAME
+                          )
                     #endif   
 		    {
 //                      #ifdef NEWSGOLD
@@ -429,7 +444,7 @@ static void ConstructList(void)
 //		      }
 //                      #else
                       if (r->data)
-		      { 
+		      {
                         if (!contact.name)
                         {
 			 wstrcpy(contact.name=AllocWS(150),(WSHDR *)(r->data));
