@@ -2,7 +2,7 @@
 #include "conf_loader.h"
 
 
-#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
+#define idlegui_id(icsm) (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
 
 #define MIN_WIDTH 30
 #define MIN_HEIGHT 10
@@ -36,11 +36,6 @@ IMGHDR img1;
 unsigned char* loads;
 unsigned char* clocks;
 
-CSM_DESC icsmd;
-
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
-
 GBSTMR mytmr;
 
 WSHDR *ws1;
@@ -65,6 +60,13 @@ int strcmp_nocase(const char *s1,const char *s2)
   int c;
   while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
   return(i);
+}
+
+#pragma segment="ELFBEGIN"
+void ElfKiller(void)
+{
+  extern void kill_data(void *p, void (*func_p)(void *));
+  kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
 }
 
 void RereadSettings()
@@ -140,10 +142,10 @@ unsigned int ClocksColour(unsigned int clock)
 
 
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+static int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result=0;
-  unsigned char fShow;
+  unsigned int fShow;
+  void *icsm;
 
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
@@ -181,15 +183,12 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
               hhh = 0;
               cop = 1;
             }
-            csm_result = 1;
             GBS_StartTimerProc(&mytmr, uiUpdateTime, TimerProc);
           }
         }
       }
     }
   }
-  if (!csm_result)  csm_result=old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
-
   switch (cfgShowIn)
   {
   case 0:
@@ -202,71 +201,116 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     fShow = 1;
     break;
   }
-
-  if (IsGuiOnTop(idlegui_id) && fShow) //Если IdleGui на самом верху
+  
+  icsm=FindCSMbyID(CSM_root()->idle_id);
+  if (icsm)
   {
-    GUI *igui = GetTopGUI();
-    if (igui) //И он существует
+    if (IsGuiOnTop(idlegui_id(icsm)) && fShow) //Если IdleGui на самом верху
     {
+      GUI *igui = GetTopGUI();
+      if (igui) //И он существует
+      {
 #ifdef ELKA
-      {
-        void *canvasdata = BuildCanvas();
-#else
-      void *idata = GetDataOfItemByID(igui, 2);
-      if (idata)
-      {
-        void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
-#endif
-        DrawCanvas(canvasdata, position.x, position.y, position.x2, position.y2, 1);
-        //рисуем нашу требуху
-        int h = hhh;
-        for(unsigned int x = 0; x < uiWidth; x++)
         {
-          for(unsigned int y = 0; y < uiHeight; y++)
+          void *canvasdata = BuildCanvas();
+#else
+        void *idata = GetDataOfItemByID(igui, 2);
+        if (idata)
+        {
+          void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+#endif
+          DrawCanvas(canvasdata, position.x, position.y, position.x2, position.y2, 1);
+          //рисуем нашу требуху
+          int h = hhh;
+          for(unsigned int x = 0; x < uiWidth; x++)
           {
-            if (y < loads[h])
-              img1_bmp[x + (uiHeight - 1 - y) * uiWidth] = ClocksColour(clocks[h]);
-            else
-              img1_bmp[x + (uiHeight - 1 - y) * uiWidth] = 0xE000; //RGB16(21, 42, 21);
+            for(unsigned int y = 0; y < uiHeight; y++)
+            {
+              if (y < loads[h])
+                img1_bmp[x + (uiHeight - 1 - y) * uiWidth] = ClocksColour(clocks[h]);
+              else
+                img1_bmp[x + (uiHeight - 1 - y) * uiWidth] = 0xE000; //RGB16(21, 42, 21);
+            }
+            if (++h >= uiWidth)    h = 0;
           }
-          h++;
-          if (h >= uiWidth)
-            h = 0;
+          DrwImg((IMGHDR *)&img1, position.x, position.y, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
+          if (!cop && cfgStTxt)
+            DrawString(ws1, 0, position.y-(GetFontYSIZE(FONT_SMALL)+3), ScreenW()-1, ScreenH()-1, FONT_SMALL, 0x20,
+                       GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
         }
-        DrwImg((IMGHDR *)&img1, position.x, position.y, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
-        if (!cop && cfgStTxt)
-          DrawString(ws1, 0, position.y-(GetFontYSIZE(FONT_SMALL)+3), ScreenW()-1, ScreenH()-1, FONT_SMALL, 0x20,
-                     GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
       }
     }
   }
-  return(csm_result);
+  return(1);
 }
 
-void MyIDLECSM_onClose(CSM_RAM *data)
-{
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
-  GBS_DelTimer(&mytmr);
-  FreeMem();
-  FreeWS(ws1);
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
-}
 
-int main(void)
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  RereadSettings();
-  LockSched();
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-  old_icsm_onMessage=icsmd.onMessage;
-  old_icsm_onClose=icsmd.onClose;
-  icsmd.onMessage=MyIDLECSM_onMessage;
-  icsmd.onClose=MyIDLECSM_onClose;
-  icsm->constr=&icsmd;
-  UnlockSched();
   ws1=AllocWS(100);
   wsprintf(ws1,"%t","CPUMon (C)BoBa,Rst7");
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
-  return 0;
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  GBS_DelTimer(&mytmr);
+  FreeMem();
+  FreeWS(ws1);
+  SUBPROC((void *)ElfKiller);
+}
+
+static unsigned short maincsm_name_body[140];
+const int minus11=-11;
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(CSM_RAM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"CpuMon");
+}
+
+
+int main(void)
+{
+  CSMROOT *csmr;
+  CSM_RAM *save_cmpc;
+  CSM_RAM main_csm;
+  RereadSettings();
+  UpdateCSMname();
+  LockSched();
+  csmr=CSM_root();
+  save_cmpc=csmr->csm_q->current_msg_processing_csm;
+  csmr->csm_q->current_msg_processing_csm=csmr->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,&main_csm,0);
+  csmr->csm_q->current_msg_processing_csm=save_cmpc;
+  UnlockSched();
+  return (0);
 }
