@@ -15,8 +15,8 @@ const char _req[] = "HEAD %s HTTP/1.1\r\n"
                    "User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
                    "Connection: close\r\n"
                    "\r\n";
-const char host[] = "rambler.ru";
-const char path[] = "/";
+const char host[] = "borman.pocto.net";
+const char path[] = "/webstat";
 
 extern RECT Canvas;
 extern void UpdateCSMName(char *new_name);
@@ -32,12 +32,12 @@ void RenderString(RECT *rc, char *str, int font, int t_attr, char *Pen, char *Br
 {
   int len = strlen(str);
   WSHDR *ws = AllocWS(len);
-  str_2ws(ws, str, len);
+  utf8_2ws(ws, str, len);
   DrawString(ws, rc->x, rc->y, rc->x2, rc->y2, font, t_attr, Pen, Brush);
   FreeWS(ws);
 }
 
-char log[1024] = "";
+char log[2048] = "";
 char req[1024] = "";
 
 char *recvbuf;
@@ -90,7 +90,7 @@ void SendRequest(int ip)
 
 void RecvProc(int res, void *data, int size)
 {
-  char tmp[100];
+  char tmp[512];
   switch(res)
   {
   case RECV_RESULT_OK:

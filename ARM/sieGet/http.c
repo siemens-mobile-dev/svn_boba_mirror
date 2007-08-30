@@ -9,6 +9,8 @@ int ParseHeaders(char *buf, int len, HTTP_RESPONSE *result)
   int header_id; // ID соответствующий имени хедера
   char *h_value; // Значение текущего заголовка
 
+  zeromem(result, sizeof(HTTP_RESPONSE));
+
   while (!(buf[l_len-1]=='\n'&&buf[l_len-2]=='\r') && (l_len<len))
     l_len++;
   if (!(buf[l_len-1]=='\n'&&buf[l_len-2]=='\r'))
@@ -165,6 +167,88 @@ int ParseHeaders(char *buf, int len, HTTP_RESPONSE *result)
 
 void FreeHTTPMem(HTTP_RESPONSE *resp)
 {
-#warning Memory leak
+  if (resp->resp_msg)
+    mfree(resp->resp_msg);
+
+  if (resp->resp_headers.Accept_Ranges)
+    mfree(resp->resp_headers.Accept_Ranges);
+
+  if (resp->resp_headers.Age)
+    mfree(resp->resp_headers.Age);
+
+  if (resp->gen_headers.Cache_Control)
+    mfree(resp->gen_headers.Cache_Control);
+
+  if (resp->gen_headers.Connection)
+    mfree(resp->gen_headers.Connection);
+
+  if (resp->ent_headers.Content_Encoding)
+    mfree(resp->ent_headers.Content_Encoding);
+
+  if (resp->ent_headers.Content_Language)
+    mfree(resp->ent_headers.Content_Language);
+
+  if (resp->ent_headers.Content_Length)
+    mfree(resp->ent_headers.Content_Length);
+
+  if (resp->ent_headers.Content_Location)
+    mfree(resp->ent_headers.Content_Location);
+
+  if (resp->ent_headers.Content_MD5)
+    mfree(resp->ent_headers.Content_MD5);
+
+  if (resp->ent_headers.Content_Range)
+    mfree(resp->ent_headers.Content_Range);
+
+  if (resp->ent_headers.Content_Type)
+    mfree(resp->ent_headers.Content_Type);
+
+  if (resp->gen_headers.Date)
+    mfree(resp->gen_headers.Date);
+
+  if (resp->resp_headers.ETag)
+    mfree(resp->resp_headers.ETag);
+
+  if (resp->ent_headers.Expires)
+    mfree(resp->ent_headers.Expires);
+
+  if (resp->ent_headers.Last_Modified)
+    mfree(resp->ent_headers.Last_Modified);
+
+  if (resp->resp_headers.Location)
+    mfree(resp->resp_headers.Location);
+
+  if (resp->gen_headers.Pragma)
+    mfree(resp->gen_headers.Pragma);
+
+  if (resp->resp_headers.Proxy_Authenticate)
+    mfree(resp->resp_headers.Proxy_Authenticate);
+
+  if (resp->resp_headers.Retry_After)
+    mfree(resp->resp_headers.Retry_After);
+
+  if (resp->resp_headers.Server)
+    mfree(resp->resp_headers.Server);
+
+  if (resp->gen_headers.Trailer)
+    mfree(resp->gen_headers.Trailer);
+
+  if (resp->gen_headers.Transfer_Encoding)
+    mfree(resp->gen_headers.Transfer_Encoding);
+
+  if (resp->gen_headers.Upgrade)
+    mfree(resp->gen_headers.Upgrade);
+
+  if (resp->resp_headers.Vary)
+    mfree(resp->resp_headers.Vary);
+
+  if (resp->gen_headers.Via)
+    mfree(resp->gen_headers.Via);
+
+  if (resp->resp_headers.WWW_Authenticate)
+    mfree(resp->resp_headers.WWW_Authenticate);
+
+  if (resp->gen_headers.Warning)
+    mfree(resp->gen_headers.Warning);
 }
 
