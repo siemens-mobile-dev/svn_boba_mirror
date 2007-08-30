@@ -12,8 +12,6 @@ typedef struct
   CSM_RAM csm;
 }MAIN_CSM;
 
-int IDLECSM_ID=-1;
-
 GBSTMR mytmr;
 extern const unsigned int BUT_ENA;
 extern const unsigned int but_X;
@@ -41,19 +39,6 @@ extern const char pic_path[];
 WSHDR *ws1;
 
 #define TMR_SECOND 216
-
-int get_string_width(WSHDR *ws, int font)
-{
-  int width=0;
-  unsigned short *body=ws->wsbody;
-  int len=body[0];
-  while(len)
-  {
-    width+=GetSymbolWidth(body[len],font);
-    len--;
-  }
-  return (width+1);//хз, без этого тупит
-}
 
 #pragma inline=forced
 int toupper(int c)
@@ -139,31 +124,23 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
            if (DATE_ENA)
            {           
             wsprintf(ws1, DATE_FMT, dday[GetWeek(&date)], date.day, mmonth[date.month-1]);
-            DrawCanvas(canvasdata, date_X, date_Y, date_X+get_string_width(ws1, date_font), date_Y+GetFontYSIZE(date_font), 1); 
-            switch (FRINGING_ENA)
-              {
-                case 0:
-                  DrawString(ws1, date_X, date_Y, date_X+get_string_width(ws1, date_font), date_Y+GetFontYSIZE(date_font), date_font,0,GetPaletteAdrByColorIndex(color),GetPaletteAdrByColorIndex(23)); 
-                break;
-                case 1:
-                  DrawString(ws1, date_X, date_Y, date_X+get_string_width(ws1, date_font), date_Y+GetFontYSIZE(date_font), date_font,0x20,GetPaletteAdrByColorIndex(color),GetPaletteAdrByColorIndex(FRINGING_color)); 
-                break;
-              }
+            DrawCanvas(canvasdata, date_X, date_Y, date_X+Get_WS_width(ws1, date_font)+1, date_Y+GetFontYSIZE(date_font), 1); 
+            DrawString(ws1, date_X, date_Y, date_X+Get_WS_width(ws1, date_font)+1, date_Y+GetFontYSIZE(date_font), date_font,
+                       FRINGING_ENA ? TEXT_OUTLINE : 0,
+                       GetPaletteAdrByColorIndex(color), 
+                       FRINGING_ENA ? GetPaletteAdrByColorIndex(FRINGING_color) : GetPaletteAdrByColorIndex(23)); 
+
            }
            
            if (TIME_ENA)
            {
             wsprintf(ws1, TIME_FMT, time.hour, time.min);
-            DrawCanvas(canvasdata, time_X, time_Y, time_X+get_string_width(ws1, time_font), time_Y+GetFontYSIZE(time_font), 1); 
-            switch (FRINGING_ENA)
-              {
-                case 0:
-                  DrawString(ws1,time_X,time_Y,time_X+get_string_width(ws1, time_font), time_Y+GetFontYSIZE(time_font),time_font,0,GetPaletteAdrByColorIndex(color),GetPaletteAdrByColorIndex(23)); 
-                break;
-                case 1:
-                  DrawString(ws1,time_X,time_Y,time_X+get_string_width(ws1, time_font), time_Y+GetFontYSIZE(time_font),time_font,0x20,GetPaletteAdrByColorIndex(color),GetPaletteAdrByColorIndex(FRINGING_color)); 
-                break;
-              } 
+            DrawCanvas(canvasdata, time_X, time_Y, time_X+Get_WS_width(ws1, time_font)+1, time_Y+GetFontYSIZE(time_font), 1); 
+            DrawString(ws1,time_X,time_Y,time_X+Get_WS_width(ws1, time_font)+1, time_Y+GetFontYSIZE(time_font),time_font,
+                       FRINGING_ENA ? TEXT_OUTLINE : 0,
+                       GetPaletteAdrByColorIndex(color), 
+                       FRINGING_ENA ? GetPaletteAdrByColorIndex(FRINGING_color) : GetPaletteAdrByColorIndex(23));                       
+
            }
            
                      
