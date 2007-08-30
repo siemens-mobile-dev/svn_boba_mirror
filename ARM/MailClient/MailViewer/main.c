@@ -133,7 +133,7 @@ void delspaces(char *s)
 }
 
 // --------------------------------------------------------------------------------
-extern char *unmime_header(const char *encoded_str);
+extern char *unmime_header(const char *encoded_str, int default_charset);
 // --------------------------------------------------------------------------------
 const char mailer_db_name[]=MDB_NAME;
 const char _percent_t[]="%t";
@@ -338,6 +338,7 @@ const char eml_not_found[]="Error! File not found!";
 
 char *get_content_type(ML_VIEW *ml_list);
 int get_ctype_index(char *str);
+int get_param_from_string(char *str, char *param, char *to, int maxlen);
 enum {MULTIPART, APPLICATION, TEXT, HTML};
 
 
@@ -374,7 +375,15 @@ void InitHeaders()
       *_eol=0;
       buf=realloc(buf,strlen(buf)+1);
     }
-    dec_str=unmime_header(buf);
+
+    ml_cur->header=buf;
+    content_type=get_content_type(ml_cur);  // Проверим наличие аттачей
+    
+    if (get_param_from_string(content_type, "charset=", fname, 127))
+      dec_str=unmime_header(buf, get_charset(fname));
+    else
+      dec_str=unmime_header(buf, UTF_8);
+
     mfree(buf);
     ml_cur->header=dec_str;
     
@@ -488,12 +497,17 @@ char *get_string_from_header(ML_VIEW *ml_list, char *str)
 
 char *get_subject(ML_VIEW *ml_list)
 {
+  char no_subject[]="Subject: <без темы>";
   char *subject;
   if (ml_list->subject) return ml_list->subject;
   subject=get_string_from_header(ml_list, "subject:");
+  if(!subject)
+  {
+    subject=(char *)malloc(strlen(no_subject)+1);
+    strcpy(subject,no_subject);
+  }
   return (ml_list->subject=subject);
 }
-
 char *get_from(ML_VIEW *ml_list)
 {
   char *from;
@@ -737,7 +751,8 @@ void create_save_as_dialog(MAIL_PART *top, char *eml)
   
   p=top->ct;
   get_param_from_string(p, "name=", fname, 255);
-  p=unmime_header(fname);
+    
+  p=unmime_header(fname, top->charset);
   filename=AllocWS(strlen(p));
   ascii2ws(filename, p);
   str_2ws(ews, SAVE_AS_FOLDER, 127);
@@ -851,7 +866,7 @@ int get_ctype_index(char *str)
   p=strstr_nocase(str, "Content-Type:");
   if (p)
   {
-    p+=13;
+    p+=strlen("Content-Type:");
     while(*p==' ') p++;
     if (!strncmp_nocase(p,"multipart",9))
       return MULTIPART;
@@ -874,6 +889,24 @@ int get_ctype_index(char *str)
   return TEXT;
 }
 
+int get_cdisp_index(char *str)
+{
+  char *p;
+  p=strstr_nocase(str, "Content-Disposition:");
+  if (p)
+  {
+    p+=strlen("Content-Disposition:");
+    while(*p==' ') p++;
+    
+    if (!strncmp_nocase(p,"attachment",10))
+      return APPLICATION; 
+
+    if (!strncmp_nocase(p,"inline",6))
+      return TEXT; 
+    
+  }
+  return TEXT;
+}
 
 int get_ctencoding_index(char *str)
 {
@@ -907,10 +940,10 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   MAIL_PART *top=0, *bot, *prev;
   MAIL_VIEW *view_list;
   EDITCONTROL ec;
-  char *content_type, *content_encoding;
+  char *content_type, *content_encoding, *content_disposition;
   int f;
   unsigned int err;
-  char fname[128];
+  char fname[128], tmp[128];
   char *eml, *end_header;
   int size;
   int ed_toitem;
@@ -961,6 +994,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   size=strlen(eml);
   top->size=size;
   eml=realloc(eml, size+1);
+  top->charset=WIN_1251;
   while(bot)
   {
     size_t buf_size;
@@ -973,10 +1007,8 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       p=bot->ct;
       i=get_param_from_string(p, "charset=", fname, 127);
       if (i)
-      {
         bot->charset=get_charset(fname);
-      }
-      else bot->charset=WIN_1251;
+      //else bot->charset=WIN_1251;
       switch(bot->transfer_encoding)
       {
       default:
@@ -1038,10 +1070,8 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       p=bot->ct;
       i=get_param_from_string(p, "charset=", fname, 127);
       if (i)
-      {
         bot->charset=get_charset(fname);
-      }
-      else bot->charset=WIN_1251;
+      //else bot->charset=WIN_1251;
       switch(bot->transfer_encoding)
       {
       default:
@@ -1100,6 +1130,9 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       
     case MULTIPART:
       p=bot->ct;
+      i=get_param_from_string(p, "charset=", fname, 127);
+      if (i)
+        bot->charset=get_charset(fname);
       i=get_param_from_string(p,"boundary=",fname,127);
       if (!i) break;
       p=strstr_nocase(eml,fname);
@@ -1142,8 +1175,22 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
           mfree(content_encoding);
         }
         else strcpy(prev->te,default_transfere);
-        
+
+        content_disposition=get_from_multipartheader(p,buf,"Content-Disposition:");
+                
         prev->content_type=get_ctype_index(prev->ct);
+        
+        if (content_disposition)
+        {
+          if(get_cdisp_index(content_disposition) != TEXT) 
+            prev->content_type=APPLICATION;
+          mfree(content_disposition);
+        }
+        
+        if (get_param_from_string(prev->ct, "charset=", tmp, 127))
+          prev->charset=get_charset(tmp);
+        else
+          prev->charset = bot->charset;
         prev->transfer_encoding=get_ctencoding_index(prev->te);
         p=b_end;
 
@@ -1153,7 +1200,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       p=bot->ct;
       i=get_param_from_string(p,"name=",fname,127);
       if (i<=0) break;
-      p=unmime_header(fname);
+      p=unmime_header(fname, bot->charset);
       
       ws=AllocWS(strlen(p));
       ascii2ws(ws, p);

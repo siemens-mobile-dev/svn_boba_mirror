@@ -195,8 +195,8 @@ const char kw[] =
 {
   128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
   144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
-  160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,
-  176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,
+  160,161,162,184,164,165,166,167,168,169,170,171,172,173,174,175,
+  176,177,178,168,180,181,182,183,184,185,186,187,188,189,190,191,
   254,224,225,246,228,229,244,227,245,232,233,234,235,236,237,238,
   239,255,240,241,242,243,230,226,252,251,231,248,253,249,247,250,
   222,192,193,214,196,197,212,195,213,200,201,202,203,204,205,206,
@@ -234,7 +234,7 @@ static const unsigned short cp1251_ucs_table[] = {
  0x0448, 0x0449, 0x044a, 0x044b, 0x044c, 0x044d, 0x044e, 0x044f
 }; 
 
-void koi2win(char*d,char *s)
+void koi2win(char*d,const char *s)
 {
   int c;
   while((c=*s++))
@@ -244,7 +244,7 @@ void koi2win(char*d,char *s)
   *d=c;
 }
 
-void iso885952win(char*d,char *s)
+void iso885952win(char*d,const char *s)
 {
   int c;
   while((c=*s))
@@ -264,13 +264,13 @@ void utf82win(char*d,const char *s)
   {
     unsigned char ub = *s, lb = *(s+1);
     if (ub == 208)
-      if (lb != 81)
+      if (lb != 0x81)
         {*d = lb + 48; d++;}
       else
         {*d = '¨'; d++;}
 
     if (ub == 209)
-      if (lb != 91)
+      if (lb != 0x91)
         {*d = lb + 112; d++;}
       else
         {*d = '¸'; d++;}
@@ -470,7 +470,7 @@ int get_charset(char *charset)
   return WIN_1251;
 }
 
-char *unmime_header(const char *encoded_str)
+char *unmime_header(const char *encoded_str, int default_charset)
 {
   const char *p = encoded_str;
   const char *eword_begin_p, *encoding_begin_p, *text_begin_p, *eword_end_p;
@@ -496,7 +496,24 @@ char *unmime_header(const char *encoded_str)
     if (!eword_begin_p)
     {
       char * curbuf = (char*) malloc(strlen(p)+1);
-      utf82win(curbuf, p);
+
+      switch(default_charset)
+      {
+      default:
+      case WIN_1251:
+        strcpy(curbuf,p);
+        break;
+      case KOI8_R:
+        koi2win(curbuf,p);
+        break;
+      case ISO_8859_5:
+        iso885952win(curbuf,p);
+        break;
+      case UTF_8:
+        utf82win(curbuf,p);
+        break;
+      }
+
       strcat(outbuf, curbuf);
       mfree(curbuf);
       //strcat(outbuf, p);
