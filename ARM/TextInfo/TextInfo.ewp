@@ -3156,6 +3156,9 @@
   <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\TextInfo.h</name>
+  </file>
 </project>
 
 

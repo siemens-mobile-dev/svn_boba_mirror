@@ -6,13 +6,6 @@
 __root const CFG_HDR cfghdr0={CFG_UINT,"Refresh period, 1/10 sec",0,600};
 __root const unsigned int REFRESH=20;
 
-__root const CFG_HDR cfghdr1 = {CFG_CBOX, "Fringing", 0, 2};
-__root const int FRINGING_ENA = 0;
-__root const CFG_CBOX_ITEM cfgcbox13[2] = {"No", "Yes"};
-
-__root const CFG_HDR cfghdr2={CFG_COLOR,"Fringing color",0,0};
-__root const char FRINGING_COLORS[4]={0,255,0,100};
-
 __root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Net setup",1,0};
 
 __root const CFG_HDR cfghdr1_1 = {CFG_CBOX, "Net display", 0, 2};
@@ -29,7 +22,14 @@ __root const char NET_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr1_4={CFG_UINT,"Net font",0,65535};
 __root const unsigned int NET_FONT=FONT_SMALL;
 
-__root const CFG_HDR cfghdr1_5={CFG_STR_WIN1251,"Net string format",0,15};
+__root const CFG_HDR cfghdr1_5 = {CFG_CBOX, "Net fringing", 0, 2};
+__root const int NET_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox13[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr1_6={CFG_COLOR,"Net fringing color",0,0};
+__root const char NET_FRINGING_COLORS[4]={0,255,0,100};
+
+__root const CFG_HDR cfghdr1_7={CFG_STR_WIN1251,"Net string format",0,15};
 __root const char NET_FMT[16]="%c%ddB";
 
 __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"",0,0};
@@ -52,7 +52,14 @@ __root const char TEMP_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr2_4={CFG_UINT,"Temperature font",0,65535};
 __root const unsigned int TEMP_FONT=FONT_SMALL;
 
-__root const CFG_HDR cfghdr2_5={CFG_STR_WIN1251,"Temp string format",0,15};
+__root const CFG_HDR cfghdr2_5 = {CFG_CBOX, "Temperature fringing", 0, 2};
+__root const int TEMP_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox14[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr2_6={CFG_COLOR,"Temperature fringing color",0,0};
+__root const char TEMP_FRINGING_COLORS[4]={0,255,0,100};
+
+__root const CFG_HDR cfghdr2_7={CFG_STR_WIN1251,"Temp string format",0,15};
 __root const char TEMP_FMT[16]="%d,%d°C";
 
 __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"",0,0};
@@ -75,7 +82,14 @@ __root const char VOLT_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr3_4={CFG_UINT,"Voltage font",0,65535};
 __root const unsigned int VOLT_FONT=FONT_SMALL;
 
-__root const CFG_HDR cfghdr3_5={CFG_STR_WIN1251,"Voltage string format",0,15};
+__root const CFG_HDR cfghdr3_5 = {CFG_CBOX, "Voltage fringing", 0, 2};
+__root const int VOLT_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox15[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr3_6={CFG_COLOR,"Voltage fringing color",0,0};
+__root const char VOLT_FRINGING_COLORS[4]={0,255,0,100};
+
+__root const CFG_HDR cfghdr3_7={CFG_STR_WIN1251,"Voltage string format",0,15};
 __root const char VOLT_FMT[16]="%d,%02dV";
 
 __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"",0,0};
@@ -98,7 +112,14 @@ __root const char ACCU_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr4_4={CFG_UINT,"AccuCap font",0,65535};
 __root const unsigned int ACCU_FONT=FONT_SMALL;
 
-__root const CFG_HDR cfghdr4_5={CFG_STR_WIN1251,"AccuCap string format",0,15};
+__root const CFG_HDR cfghdr4_5 = {CFG_CBOX, "AccuCap fringing", 0, 2};
+__root const int ACCU_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox16[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr34_6={CFG_COLOR,"AccuCap fringing color",0,0};
+__root const char ACCU_FRINGING_COLORS[4]={0,255,0,100};
+
+__root const CFG_HDR cfghdr4_7={CFG_STR_WIN1251,"AccuCap string format",0,15};
 __root const char CAP_FMT[16]="%02d%%";
 
 __root const CFG_HDR cfghdr_m40={CFG_LEVEL,"",0,0};
@@ -121,6 +142,13 @@ __root const char GPRS_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr5_4={CFG_UINT,"GPRS font",0,65535};
 __root const unsigned int GPRS_FONT=FONT_SMALL;
 
+__root const CFG_HDR cfghdr5_5 = {CFG_CBOX, "GPRS fringing", 0, 2};
+__root const int GPRS_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox17[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr5_6={CFG_COLOR,"GPRS fringing color",0,0};
+__root const char GPRS_FRINGING_COLORS[4]={0,255,0,100};
+
 __root const CFG_HDR cfghdr_m50={CFG_LEVEL,"",0,0};
 
 // -------------------------------------------------------------------------- //
@@ -140,6 +168,13 @@ __root const char RAM_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr6_4={CFG_UINT,"AvailRam font",0,65535};
 __root const unsigned int RAM_FONT=FONT_SMALL;
+
+__root const CFG_HDR cfghdr6_5 = {CFG_CBOX, "AvailRam fringing", 0, 2};
+__root const int RAM_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox18[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr6_6={CFG_COLOR,"AvailRam fringing color",0,0};
+__root const char RAM_FRINGING_COLORS[4]={0,255,0,100};
 
 __root const CFG_HDR cfghdr_m60={CFG_LEVEL,"",0,0};
 
@@ -161,7 +196,14 @@ __root const char CPU_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr7_4={CFG_UINT,"CPULoad font",0,65535};
 __root const unsigned int CPU_FONT=FONT_SMALL;
 
-__root const CFG_HDR cfghdr7_5={CFG_STR_WIN1251,"CPULoad string format",0,15};
+__root const CFG_HDR cfghdr7_5 = {CFG_CBOX, "CPULoad fringing", 0, 2};
+__root const int CPU_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox19[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr7_6={CFG_COLOR,"CPULoad fringing color",0,0};
+__root const char CPU_FRINGING_COLORS[4]={0,255,0,100};
+
+__root const CFG_HDR cfghdr7_7={CFG_STR_WIN1251,"CPULoad string format",0,15};
 __root const char CPU_FMT[16]="%02d%%";
 
 __root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};
@@ -206,6 +248,13 @@ __root const char FLEX0_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr9_4={CFG_UINT,"Flex '0' font",0,65535};
 __root const unsigned int FLEX0_FONT=FONT_SMALL;
 
+__root const CFG_HDR cfghdr9_6 = {CFG_CBOX, "Flex '0' fringing", 0, 2};
+__root const int FLEX0_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox20[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr9_7={CFG_COLOR,"Flex '0' fringing color",0,0};
+__root const char FLEX0_FRINGING_COLORS[4]={0,255,0,100};
+
 __root const CFG_HDR cfghdr_m100={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------
 __root const CFG_HDR cfghdr_m111={CFG_LEVEL,"Flex '4' setup",1,0};
@@ -231,6 +280,13 @@ __root const char FLEX4_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr10_4={CFG_UINT,"Flex '4' font",0,65535};
 __root const unsigned int FLEX4_FONT=FONT_SMALL;
 
+__root const CFG_HDR cfghdr10_6 = {CFG_CBOX, "Flex '4' fringing", 0, 2};
+__root const int FLEX4_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox21[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr10_7={CFG_COLOR,"Flex '4' fringing color",0,0};
+__root const char FLEX4_FRINGING_COLORS[4]={0,255,0,100};
+
 __root const CFG_HDR cfghdr_m110={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------
 __root const CFG_HDR cfghdr_m121={CFG_LEVEL,"Free % '0' setup",1,0};
@@ -253,6 +309,13 @@ __root const char PER0_COLORS[4]={255,255,255,100};
 __root const CFG_HDR cfghdr11_4={CFG_UINT,"Free '0' font",0,65535};
 __root const unsigned int PER0_FONT=FONT_SMALL;
 
+__root const CFG_HDR cfghdr11_5 = {CFG_CBOX, "Free '0' fringing", 0, 2};
+__root const int PER0_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox22[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr11_6={CFG_COLOR,"Free '0' fringing color",0,0};
+__root const char PER0_FRINGING_COLORS[4]={0,255,0,100};
+
 __root const CFG_HDR cfghdr_m120={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------
 __root const CFG_HDR cfghdr_m131={CFG_LEVEL,"Free % '4' setup",1,0};
@@ -273,6 +336,13 @@ __root const char PER4_COLORS[4]={255,255,255,100};
 
 __root const CFG_HDR cfghdr12_4={CFG_UINT,"Free '4' font",0,65535};
 __root const unsigned int PER4_FONT=FONT_SMALL;
+
+__root const CFG_HDR cfghdr12_5 = {CFG_CBOX, "Free '4' fringing", 0, 2};
+__root const int PER4_FRINGING_ENA = 0;
+__root const CFG_CBOX_ITEM cfgcbox23[2] = {"No", "Yes"};
+
+__root const CFG_HDR cfghdr12_6={CFG_COLOR,"Free '4' fringing color",0,0};
+__root const char PER4_FRINGING_COLORS[4]={0,255,0,100};
 
 __root const CFG_HDR cfghdr_m130={CFG_LEVEL,"",0,0};
 //------------------------------------------------------------------------------
