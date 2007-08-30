@@ -5,6 +5,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len);
 enum IOMS_PARSESTATE
 {
   OMS_BEGIN=0,
+  OMS_HDR_COMMON,
   OMS_HDR,
   OMS_PAGEURL_SIZE,
   OMS_PAGEURL_DATA,
@@ -33,6 +34,7 @@ enum IOMS_PARSESTATE
   OMS_TAGi_STAGE3,
   OMS_TAGL_STAGE3,
   OMS_TAGP_STAGE3,
+  OMS_TAGZ_STAGE3,
   OMS_STOP
 };
 

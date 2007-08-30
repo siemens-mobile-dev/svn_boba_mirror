@@ -1,8 +1,8 @@
-
 #include "../inc/swilib.h"
 #include "parse_oms.h"
 #include "additems.h"
 #include "string_works.h"
+#include "..\inc\zlib.h"
 //#include <stdlib.h>
 //#include <string.h>
 //#include <stdio.h>
@@ -37,12 +37,24 @@ unsigned int _rlong(VIEWDATA *vd)
   return r;
 }
 
+// Функции-заглушки для ZLib
+void* zcalloc(int unk,size_t nelem, size_t elsize)
+{
+  return (malloc(nelem*elsize));
+}
+
+void zcfree(int unk, void* ptr)
+{
+  mfree(ptr);
+}
+
 //static const char slash[]="/";
 
 void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 {
   int i;
   unsigned int k;
+  int err;
   //  unsigned int iw;
   //  unsigned int ih;
   char s[128];
@@ -51,17 +63,82 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     vd->parse_state=OMS_STOP;
     return;
   }
-  memcpy((vd->oms=realloc(vd->oms,i=vd->oms_size+len))+vd->oms_size,buf,len);
-  vd->oms_size=i;
+  if (vd->zs)
+  {
+    vd->zs->next_in=(Byte *)buf;
+    vd->zs->avail_in=len;
+  L_ZNEXT:
+    vd->zs->next_out=(Byte *)(vd->oms=realloc(vd->oms,vd->oms_size+len))+vd->oms_size;
+    vd->zs->avail_out=len;
+    err=inflate(vd->zs, Z_NO_FLUSH);
+    switch (err)
+    {
+    case Z_NEED_DICT:
+    case Z_DATA_ERROR:
+    case Z_MEM_ERROR:
+      sprintf(s,"ZLib Err %d\n",err);
+      AddTextItem(vd,s,strlen(s));
+      AddBrItem(vd);
+      vd->parse_state=OMS_STOP;
+      return;
+    }
+    vd->oms_size+=len-vd->zs->avail_out;
+  }
+  else
+  {
+    memcpy((vd->oms=realloc(vd->oms,i=vd->oms_size+len))+vd->oms_size,buf,len);
+    vd->oms_size=i;
+  }
   if (vd->parse_state==OMS_BEGIN)
   {
-    vd->oms_wanted=sizeof(OMS_HEADER);
-    vd->parse_state=OMS_HDR;
+    vd->oms_wanted=sizeof(OMS_HEADER_COMMON);
+    vd->parse_state=OMS_HDR_COMMON;
   }
   while(vd->oms_size>=vd->oms_wanted)
   {
     switch(vd->parse_state)
     {
+    case OMS_HDR_COMMON:
+      //Получен заголовок
+      vd->oms_pos=vd->oms_wanted;
+      vd->oms_wanted+=sizeof(OMS_HEADER_V2);
+      vd->parse_state=OMS_HDR;
+      {
+	OMS_HEADER_COMMON *hdr=(OMS_HEADER_COMMON *)vd->oms;
+	switch(hdr->magic)
+	{
+	case 0x330D:
+	  vd->oms_wanted-=2;
+	  break;
+	case 0x3318:
+	  break;
+//	case 0x310D:
+//	  vd->oms_wanted-=2;
+	case 0x3218:
+	  //Производим инициализацию ZLib
+	  zeromem(vd->zs=malloc(sizeof(z_stream)),sizeof(z_stream));
+	  vd->zs->zalloc = (alloc_func)zcalloc;
+	  vd->zs->zfree = (free_func)zcfree;
+	  vd->zs->opaque = (voidpf)0;
+	  err = inflateInit2(vd->zs,-MAX_WBITS);
+	  if(err!=Z_OK)
+	  {
+	    sprintf(s,"inflateInit2 err %d\n",err);
+	    AddTextItem(vd,s,strlen(s));
+	    AddBrItem(vd);
+	    vd->parse_state=OMS_STOP;
+	    return;
+	  }
+	  return; //break; //Именно так!!!
+	default:
+	  sprintf(s,"Not supported type %X\n",hdr->magic);
+	  AddTextItem(vd,s,strlen(s));
+	  AddBrItem(vd);
+	  vd->parse_state=OMS_STOP;
+	  return;
+	}
+      }
+      break;
     case OMS_HDR:
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted+=2;
@@ -129,8 +206,17 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'e':
       case 'p':
       case 'u':
-      case 'x':
 	vd->oms_wanted+=2;
+	break;
+      case 'x':
+	if ((((OMS_HEADER_COMMON *)vd->oms)->magic&0xFF)==0x0D)
+	{
+	  vd->oms_wanted+=2;
+	}
+	else
+	{
+	  vd->oms_wanted+=3;
+	}
 	break;
       case 'c':
       case 'r':
@@ -172,11 +258,16 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	goto L_NOSTAGE2;
       case 'Q':
 	AddTextItem(vd,"\n<Q>",4);
+	AddBrItem(vd);
 	vd->parse_state=OMS_STOP;
 	return;
+      case 'Z':
+	vd->oms_wanted+=2;
+	break;
       default:
-	sprintf(s,"Unknown tag %c",i);
+	sprintf(s,"Unknown tag %c\n",i);
 	AddTextItem(vd,s,strlen(s));
+	AddBrItem(vd);
 	vd->parse_state=OMS_STOP;
 	return;
       }
@@ -266,6 +357,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	vd->parse_state=OMS_TAGu_STAGE3;
 	goto L_STAGE3_WANTED;
       case 'x':
+	if ((((OMS_HEADER_COMMON *)vd->oms)->magic&0xFF)!=0x0D) _rbyte(vd);
 	i=(vd->iw=_rshort(vd))+2;
 	AddBeginRef(vd);
 	vd->work_ref.tag='x';
@@ -307,7 +399,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	}
 	else
 	{
-	  AddTextItem(vd,"!Illegal <o>!",13);
+	  AddTextItem(vd,"!Illegal <o>!\n",14);
+	  AddBrItem(vd);
 	  vd->parse_state=OMS_STOP;
 	  return;
 	}
@@ -334,6 +427,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         i=_rshort(vd);
         AddPictureItemHr(vd);
         break;
+      case 'Z':
+	i=(vd->iw=_rshort(vd));
+	vd->work_ref.tag='Z';
+        vd->ref_mode=1;
+	AddBeginRef(vd);
+	vd->oms_wanted+=i;
+	vd->parse_state=OMS_TAGZ_STAGE3;
+	goto L_STAGE3_WANTED;
       default:
 	//	vd->parse_state=OMS_STOP;
 	break;
@@ -531,6 +632,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       else
       {
 	AddTextItem(vd,"!Illegal <i>!",13);
+	AddBrItem(vd);
 	vd->parse_state=OMS_STOP;
 	return;
       }
@@ -554,12 +656,28 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
+    case OMS_TAGZ_STAGE3:
+      i=vd->iw;
+      AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->oms_pos+=i;
+      AddEndRef(vd);
+      vd->oms_wanted++;
+      vd->parse_state=OMS_TAG_NAME;
+      break;
+    case OMS_STOP:
+      return;
     default:
       sprintf(s,"StateMachine failed %u",i);
       AddTextItem(vd,s,strlen(s));
+      AddBrItem(vd);
       vd->parse_state=OMS_STOP;
       return;
     }
+  }
+  if (vd->zs)
+  {
+    if (vd->zs->avail_out==0) goto L_ZNEXT;
   }
 }
 

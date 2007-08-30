@@ -16,6 +16,10 @@ typedef struct
 {
   unsigned short magic;
   unsigned long size;
+}OMS_HEADER_COMMON;
+
+typedef struct
+{
   unsigned short res1[9];
   unsigned short tag_count;
   unsigned short part_current;
@@ -25,8 +29,9 @@ typedef struct
   unsigned short res3;
   unsigned char res4;
   unsigned short cachable;
-//  unsigned short res5;
-}OMS_HEADER;
+  unsigned short res5;
+}OMS_HEADER_V2;
+
 #pragma pack(pop)
 
 typedef struct
@@ -71,6 +76,8 @@ typedef struct
 
 typedef struct
 {
+  z_stream *zs;                // Поток для ZLib
+  
   unsigned short *rawtext;
   unsigned int rawtext_size;
   

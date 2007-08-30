@@ -52,6 +52,11 @@ void FreeDynImgList(VIEWDATA *vd)
 
 void FreeViewData(VIEWDATA *vd)
 {
+  if (vd->zs)
+  {
+    inflateEnd(vd->zs);
+    mfree(vd->zs);
+  }
   if (vd->ws) FreeWS(vd->ws);
   FreeREFCACHEtotal(&vd->ref_cache);
   FreeREFCACHEentry(&vd->work_ref);

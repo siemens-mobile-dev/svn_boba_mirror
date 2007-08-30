@@ -35,10 +35,11 @@ static void StartGetFile(void)
     unsigned int err;
     char buf[1024];
     int i;
+    int reqlen=sizeof(OMS_HEADER_COMMON);
     int f=fopen(view_url,A_ReadOnly+A_BIN,P_READ,&err);
     if (f!=-1)
     {
-      while((i=fread(f,buf,sizeof(buf),&err))>0)
+      while((i=fread(f,buf,reqlen,&err))>0)
       {
 	IPC_REQ *sipc=malloc(sizeof(IPC_REQ));
 	sipc->name_to=ipc_my_name;
@@ -47,6 +48,7 @@ static void StartGetFile(void)
 	*((int *)(sipc->data))=i;
 	memcpy(((char *)(sipc->data))+4,buf,i);
 	GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+	reqlen=sizeof(buf);
       }
       fclose(f,&err);
     }
