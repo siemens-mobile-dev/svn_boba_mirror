@@ -65,6 +65,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
   }
   if (vd->zs)
   {
+  L_ZBEGIN:
     vd->zs->next_in=(Byte *)buf;
     vd->zs->avail_in=len;
   L_ZNEXT:
@@ -94,6 +95,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     vd->oms_wanted=sizeof(OMS_HEADER_COMMON);
     vd->parse_state=OMS_HDR_COMMON;
   }
+  OMS_HEADER_COMMON *hdr=(OMS_HEADER_COMMON *)vd->oms;
   while(vd->oms_size>=vd->oms_wanted)
   {
     switch(vd->parse_state)
@@ -104,7 +106,6 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->oms_wanted+=sizeof(OMS_HEADER_V2);
       vd->parse_state=OMS_HDR;
       {
-	OMS_HEADER_COMMON *hdr=(OMS_HEADER_COMMON *)vd->oms;
 	switch(hdr->magic)
 	{
 	case 0x330D:
@@ -112,9 +113,12 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	  break;
 	case 0x3318:
 	  break;
-//	case 0x310D:
-//	  vd->oms_wanted-=2;
+	case 0x310D:
+	  vd->oms_wanted-=sizeof(OMS_HEADER_V2)-10; //10 - размер хедера GZIP
+	  vd->parse_state=OMS_GZIPHDR;
+	  break;
 	case 0x3218:
+	L_ZINIT:
 	  //Производим инициализацию ZLib
 	  zeromem(vd->zs=malloc(sizeof(z_stream)),sizeof(z_stream));
 	  vd->zs->zalloc = (alloc_func)zcalloc;
@@ -129,7 +133,15 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	    vd->parse_state=OMS_STOP;
 	    return;
 	  }
-	  return; //break; //Именно так!!!
+	  //Теперь после vd->oms_pos до vd->oms_size есть данные ZLib
+	  //Они же есть в buf+len-(vd->oms_size-vd->oms_pos) длинной vd->oms_size-vd->oms_pos
+	  //Их необходимо обработать через ZLib
+	  i=vd->oms_size-vd->oms_pos;
+	  if (!i) return; //Нет данных
+	  buf=buf+len-i; //Новый указатель на данные
+	  len=i; //Новая длинна
+	  vd->oms_size=vd->oms_pos; //Возращаем размер на начало данных ZLib
+	  goto L_ZBEGIN;
 	default:
 	  sprintf(s,"Not supported type %X\n",hdr->magic);
 	  AddTextItem(vd,s,strlen(s));
@@ -139,6 +151,12 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	}
       }
       break;
+    case OMS_GZIPHDR:
+      //Пропустили хедер гзипа
+      vd->oms_pos=vd->oms_wanted;
+      vd->oms_wanted+=sizeof(OMS_HEADER_V2)-2; //Заголовок V1
+      vd->parse_state=OMS_HDR;
+      goto L_ZINIT;
     case OMS_HDR:
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted+=2;
