@@ -366,7 +366,18 @@ static const struct
 
 static void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"BM: %s",view_url);
+  WSHDR *ws=AllocWS(256);
+  switch(view_url_mode)
+  {
+  case MODE_FILE:
+    str_2ws(ws,view_url,255);
+    break;
+  case MODE_URL:
+    wsprintf(ws,"%s",view_url);
+    break;
+  }
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"BM: %w",ws);
+  FreeWS(ws);
 }
 
 int ParseInputFilename(const char *fn)
