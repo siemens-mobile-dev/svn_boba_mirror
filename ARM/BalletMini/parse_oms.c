@@ -659,6 +659,15 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGi_STAGE3:
       i=vd->iw;
       replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->oms_pos+=i;
+      i=(vd->ih=_rshort(vd));
+      vd->oms_wanted+=i;
+      vd->parse_state=OMS_TAGi_STAGE4;
+      break;
+    case OMS_TAGi_STAGE4:
+      i=vd->ih;
+      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      AddTextItem(vd,vd->oms+vd->oms_pos,i);
       if (vd->tag_l_count)
       {
 	if (!(--vd->tag_l_count))
@@ -674,7 +683,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	return;
       }
       vd->oms_pos+=i;
-      _rshort(vd); //unk
+//      _rshort(vd); //unk
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
