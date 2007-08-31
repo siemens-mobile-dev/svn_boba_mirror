@@ -186,6 +186,12 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	freegstr(&vd->work_ref.form_id1);
 	freegstr(&vd->work_ref.form_id2);
 	goto L_NOSTAGE2;
+      case 'A':
+	vd->oms_wanted+=2;
+	break;
+      case 'C':
+	vd->oms_pos++;
+	goto L_NOSTAGE2;
       case 'D':
 	vd->oms_wanted+=2;
 	break;
@@ -296,6 +302,12 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->oms_pos++;
       switch(i)
       {
+      case 'A':
+	i=_rshort(vd);
+//	vd->work_ref.tag='A';
+	vd->oms_wanted+=i;
+	vd->parse_state=OMS_TAGA_STAGE3;
+	goto L_STAGE3_WANTED;
       case 'D':
 	*((unsigned short *)(&(vd->current_tag_d)))=_rshort(vd);
 	AddNewStyle(vd);
@@ -461,6 +473,13 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
     L_STAGE3_WANTED:
+      break;
+    case OMS_TAGA_STAGE3:
+      i=vd->oms_wanted-vd->oms_pos;
+      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      vd->oms_pos=vd->oms_wanted;
+      vd->oms_wanted++;
+      vd->parse_state=OMS_TAG_NAME;
       break;
     case OMS_TAGT_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
