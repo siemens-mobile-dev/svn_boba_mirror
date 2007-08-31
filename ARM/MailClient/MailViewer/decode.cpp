@@ -293,14 +293,14 @@ int unicode2win(int code)
   return '_';
 }
 
-void strreplace(char *s, char *r, char *w)
+char *strreplace(char *s, char *r, char *w)
 {
   //посчитаем сколько места надо под буфер
   int n_r = strlen(r);
   int n_w = strlen(w);
   int d_ptr = 0;
   char *next_br, *prev_br=s;
-  while(next_br = strstr(prev_br, r))
+  while(next_br = strstr_nocase(prev_br, r))
   {
     d_ptr += next_br - prev_br + n_w;
     prev_br = next_br + n_r;
@@ -311,7 +311,7 @@ void strreplace(char *s, char *r, char *w)
 
   d_ptr = 0;
   prev_br = s;
-  while(next_br = strstr(prev_br, r))
+  while(next_br = strstr_nocase(prev_br, r))
   {
     memcpy(d+d_ptr, prev_br, next_br-prev_br);
     d_ptr += next_br-prev_br;
@@ -319,15 +319,12 @@ void strreplace(char *s, char *r, char *w)
     d_ptr += n_w;
     prev_br = next_br + n_r;
   }
-  int len = strlen(s) - (prev_br-s) - (d_ptr?n_r:0);
+  int len = strlen(s) - (prev_br-s);
   if (len > 0) memcpy(d+d_ptr, prev_br, len);
   d_ptr += strlen(s) - (prev_br - s);
   d[d_ptr] = 0;
-  
-  //вернём модифицированную строку в исходный буфер
-  strcpy(s,d);
-  mfree (d);
 
+  return(d);
 }
 
 void strip_special(char *s)
@@ -400,56 +397,71 @@ void strip_special(char *s)
 
 void strip_html(char *s)
 {
-  int b=-1, d_ptr = 0;
+  int d_ptr = 0;
+  char *script, *script_end, *s1, *s2;
 
-  strreplace(s, "\r\n\r\n", "<br>");
+  s1 = strreplace(s, "\r\n\r\n", "<br>");
 
-  for(int i = 0, j = 0; s[i]; i++)
+  for(int i = 0, j = 0; s1[i]; i++)
   {
-    if(s[i] != '\r' && s[i] != '\n')
-      s[j++] = s[i];
-    if(!s[i+1]) s[j] = 0;
+    if(s1[i] != '\r' && s1[i] != '\n')
+      s1[j++] = s1[i];
+    if(!s1[i+1]) s1[j] = 0;
   }
-  
-  //strreplace(s, "\r\n", "");
-  strreplace(s, "<br>", "\r\n");
-  strreplace(s, "<br />", "\r\n");
-  strreplace(s, "<BR>", "\r\n");
-  strreplace(s, "<BR />", "\r\n");
-  strreplace(s, "<p>", "\r\n");
-  strreplace(s, "<P>", "\r\n");
-  strreplace(s, "<blockquote", "\r\n<blockquote");
-  strreplace(s, "<BLOCKQUOTE", "\r\n<BLOCKQUOTE");
-  strreplace(s, "/blockquote>", "/blockquote>\r\n");
-  strreplace(s, "/BLOCKQUOTE>", "/BLOCKQUOTE>\r\n");
-  strreplace(s, "</td>", " ");
-  strreplace(s, "</TD>", " ");
-  strreplace(s, "</tr>", "\r\n");
-  strreplace(s, "</TR>", "\r\n");
+
+  while(script = strstr_nocase(s1, "<script"))
+  {
+    script_end =  strstr_nocase(s1, "</script>");
+    if(!script_end) break;
+    script_end += strlen("</script>");
+    strcpy(script, script_end);
+  }
+
+  while(script = strstr_nocase(s1, "<style"))
+  {
+    script_end =  strstr_nocase(s1, "</style>");
+    if(!script_end) break;
+    script_end += strlen("</style>");
+    strcpy(script, script_end);
+  }
+
+  s2 = s1;
+  s1 = strreplace(s2, "<br>", "\r\n");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "<br />", "\r\n");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "<p>", "\r\n");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "<blockquote", "\r\n<blockquote");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "/blockquote>", "/blockquote>\r\n");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "</td>", " ");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "</tr>", "\r\n");
+  mfree(s2);
 
   //сюда мы будем бросать кости
   char *d = (char*) malloc(strlen(s)+1);
 
   //отфильтруем html - результат заведомо меньшей длины
+  char *r = s1;
+
   d_ptr = 0;
-  for(int i = 0; i < strlen(s); i++)
+  while(*r)
   {
-    if(s[i] == '>' && b == -1) b = i+1;
-    if(s[i] == '<' && b != -1)
-    if(i!=b)
-    {
-      memcpy(d+d_ptr, s+b, i-b);
-      d_ptr += i-b;
-      b = -1;
-    }
-    else
-      b = -1;
+   for(;*r && *r != '<'; r++)
+    d[d_ptr++] = *r;
+   for(;*r && *r != '>'; r++);
+   if(*r) r++;
   }
   d[d_ptr] = 0;
+
 
   //вернём модифицированную строку в исходный буфер
   strcpy(s,d);
   mfree(d);
+  mfree(s1);
   strip_special(s);
 }
 

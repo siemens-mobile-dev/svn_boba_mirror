@@ -1191,6 +1191,12 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         
         if (content_disposition)
         {
+          if(get_param_from_string(content_disposition,"name=",tmp,127))
+          {
+            strcat(prev->ct,"; filename=");
+            strcat(prev->ct,tmp);
+          }
+          
           if(get_cdisp_index(content_disposition) != TEXT) 
             prev->content_type=APPLICATION;
           mfree(content_disposition);
@@ -1208,7 +1214,9 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
     case APPLICATION:
       p=bot->ct;
       i=get_param_from_string(p,"name=",fname,127);
-      if (i<=0) break;
+      if (i<=0) 
+        strcpy(fname, "noname");
+      
       p=unmime_header(fname, bot->charset);
       
       ws=AllocWS(strlen(p));
