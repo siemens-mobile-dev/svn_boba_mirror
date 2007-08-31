@@ -3061,6 +3061,28 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
         return (-1);
       }
     }
+    if (l==VOL_UP_BUTTON)
+    {
+      int pos;
+ 
+      if ((pos=EDIT_GetFocus(data)-2)>=2)
+      {
+        EDIT_SetFocus(data, pos);
+        EDIT_SetCursorPos(data, 1);
+      }
+      return (-1);
+    }
+    if (l==VOL_DOWN_BUTTON)
+    {
+      int pos;
+
+      if ((pos=EDIT_GetFocus(data)+2)<=ed_struct->ed_answer)
+      {
+        EDIT_SetFocus(data, pos);
+        EDIT_SetCursorPos(data, 1);
+      }
+      return (-1);
+    }
   }
   return(0); //Do standart keys
   //1: close
