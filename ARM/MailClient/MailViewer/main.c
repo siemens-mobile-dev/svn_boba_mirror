@@ -340,11 +340,12 @@ char *get_content_type(ML_VIEW *ml_list);
 int get_ctype_index(char *str);
 int get_param_from_string(char *str, char *param, char *to, int maxlen);
 enum {MULTIPART, APPLICATION, TEXT, HTML};
+char *strstr_nocase(const char *s1, const char *s2);
 
 
 void InitHeaders()
 {
-  int f;
+  int f, cd;
   unsigned int err;
   char fname[128];
   char *buf, *dec_str;
@@ -354,6 +355,7 @@ void InitHeaders()
   ML_VIEW *ml_cur=(ML_VIEW *)&mails;
   while((ml_cur=ml_cur->next))
   {
+    cd = TEXT;
     if (ml_cur->header)
     {
       mfree(ml_cur->header);
@@ -369,6 +371,13 @@ void InitHeaders()
     fread(f,buf,fsize,&err);
     fclose(f,&err);
     buf[fsize]=0;
+
+    if(strstr_nocase(buf, "Content-Disposition: attachment"))
+      cd=APPLICATION;
+
+    if(strstr_nocase(buf, "Content-Type: application"))
+      cd=APPLICATION;
+
     _eol=strstr(buf,d_eol);
     if (_eol)
     {
@@ -377,13 +386,13 @@ void InitHeaders()
     }
 
     ml_cur->header=buf;
-    content_type=get_content_type(ml_cur);  // Проверим наличие аттачей
+    content_type=get_content_type(ml_cur);  // Проверим кодировку
     
     if (get_param_from_string(content_type, "charset=", fname, 127))
       dec_str=unmime_header(buf, get_charset(fname));
     else
       dec_str=unmime_header(buf, UTF_8);
-
+    
     mfree(buf);
     ml_cur->header=dec_str;
     
@@ -392,7 +401,7 @@ void InitHeaders()
     {
       int l;
       l=get_ctype_index(content_type);
-      if (l==APPLICATION || l==MULTIPART)
+      if (l==APPLICATION || cd==APPLICATION)
       {
         ml_cur->is_attach=1;
       }
