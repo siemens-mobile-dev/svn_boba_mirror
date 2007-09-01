@@ -174,6 +174,18 @@ SOFTKEYSTAB menu_skt=
   menu_sk,0
 };
 
+
+SOFTKEY_DESC menu_sk2[]=
+{
+  {0x0000,0x0000,(int)""},
+  {0x0001,0x0000,(int)"Close"},
+  {0x003D,0x0000,(int)"+"}
+};
+
+SOFTKEYSTAB menu_skt2=
+{
+  menu_sk2,0
+};
 // ----------------------------------------------------------------------------------
 #pragma inline=forced
 int toupper(int c)
@@ -524,6 +536,15 @@ char *get_subject(ML_VIEW *ml_list)
   mfree(subject);
   return (ml_list->subject);
 }
+
+char *get_date(ML_VIEW *ml_list)
+{
+  char *date;
+  if (ml_list->date) return ml_list->date;
+  date=get_string_from_header(ml_list, "date:");
+  return (ml_list->date=date);
+}
+
 char *get_from(ML_VIEW *ml_list)
 {
   char *from;
@@ -793,7 +814,10 @@ void create_save_as_dialog(MAIL_PART *top, char *eml)
   
 HEADER_DESC ed1_hdr={0,0,0,0,NULL,(int)"Просмотр",LGP_NULL};
 
+HEADER_DESC ed2_hdr={0,0,0,0,NULL,(int)"Информация",LGP_NULL};
+
 void ed1_locret(void){}
+void ed2_locret(void){}
 
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
@@ -952,6 +976,11 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   return(0); 
 }
 
+int ed2_onkey(GUI *data, GUI_MSG *msg)
+{
+  return(0); 
+}
+
 void ed1_ghook(GUI *data, int cmd)
 {
   int j;
@@ -983,6 +1012,14 @@ void ed1_ghook(GUI *data, int cmd)
   }
 }
 
+void ed2_ghook(GUI *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+}
+
 INPUTDIA_DESC ed1_desc=
 {
   1,
@@ -1000,7 +1037,22 @@ INPUTDIA_DESC ed1_desc=
   0
 };
 
-
+INPUTDIA_DESC ed2_desc=
+{
+  1,
+  ed2_onkey,
+  ed2_ghook,
+  (void *)ed2_locret,
+  0,
+  &menu_skt2,
+  {0,0,0,0},
+  4,
+  100,
+  101,
+  0,
+  0,
+  0
+};
 
 int get_ctype_index(char *str)
 {
@@ -1504,7 +1556,76 @@ int create_view(ML_VIEW *ml_list)
 }  
 
 //----------------------------------------------------------------------------------------------
-      
+
+int create_info_view(ML_VIEW *ml_list)
+{
+  void *ma=malloc_adr();
+  void *eq;
+  int f, fsize;
+  unsigned err;
+  EDITCONTROL ec;
+  WSHDR *ws, *headers;
+  char *date, buf[128];
+  
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  headers=AllocWS(100);
+  date=get_date(ml_list);
+  if (date)
+  {
+    date=strchr(date, ':')+1;
+    while (*date==' ' || *date==0x09) date++;
+    ws=AllocWS(strlen(date));
+    ascii2ws(ws,date);
+    ascii2ws(headers,"Отправлено: ");
+    
+    ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
+    SetFontToEditCOptions(&ec.ed_options,2);
+    AddEditControlToEditQend(eq,&ec,ma);
+    
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+    SetFontToEditCOptions(&ec.ed_options,1);
+    AddEditControlToEditQend(eq,&ec,ma); 
+    FreeWS(ws);
+  }
+  
+  snprintf(buf,127,"%s%s.eml",EML_PATH,ml_list->uidl);
+  if ((f=fopen(buf,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+  {
+    fsize=get_fsize(f);
+    fclose(f,&err);
+  }
+  
+  snprintf(buf,127,"%d",fsize);
+  strcat(buf, " байт");
+  
+  ws=AllocWS(strlen(buf));
+  ascii2ws(ws,buf);
+  ascii2ws(headers,"Размер: ");
+  
+  ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
+  SetFontToEditCOptions(&ec.ed_options,2);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+  SetFontToEditCOptions(&ec.ed_options,1);
+  AddEditControlToEditQend(eq,&ec,ma); 
+  FreeWS(ws);
+  
+  ascii2ws(headers,"------------------");
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
+  SetFontToEditCOptions(&ec.ed_options,4);
+  AddEditControlToEditQend(eq,&ec,ma);  
+  
+  FreeWS(headers);
+  patch_header(&ed2_hdr);
+  patch_input(&ed2_desc);  
+  return CreateInputTextDialog(&ed2_desc,&ed2_hdr,eq,1,0);
+}  
+
+//----------------------------------------------------------------------------------------------
+
+
 int GetIconIndex(ML_VIEW *m_list)
 {
   if (!m_list) return (7);
@@ -1649,13 +1770,21 @@ void delete_all_records(GUI *data)
   GeneralFuncF1(2);
 }  
 
+void show_info(GUI *data)
+{
+  ML_VIEW *cur_menu;
+  cur_menu=MenuGetUserPointer(data);
+  create_info_view(cur_menu);
+  GeneralFuncF1(2);
+}
+
 void back(GUI *data)
 {
   GeneralFuncF1(1);
 }
 
 
-#define OPTIONS_ITEMS_N 10
+#define OPTIONS_ITEMS_N 11
 HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",LGP_NULL};
 
 MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
@@ -1669,6 +1798,7 @@ MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
   {NULL,(int)"Удалить запись",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //6
   {NULL,(int)"Очистить список",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //7
   {NULL,(int)"Догрузить все",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //8
+  {NULL,(int)"Информация",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //8
   {NULL,(int)"Назад",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //9
 };
 
@@ -1683,6 +1813,7 @@ const MENUPROCS_DESC options_menu_HNDLS[OPTIONS_ITEMS_N]=
   delete_record,
   delete_all_records,
   set_state_download_all,
+  show_info,
   back,  
 };
 

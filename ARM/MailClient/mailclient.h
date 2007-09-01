@@ -103,6 +103,7 @@ typedef struct
   char *subject;
   char *from;
   char *to;
+  char *date;
   char *content_type;
   char *content_encoding;
 }ML_VIEW;
