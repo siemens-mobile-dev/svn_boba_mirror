@@ -627,8 +627,10 @@ typedef struct{
   int charset;
   int offset;
   int size;
+  int textlen;
   char ct[256];
   char te[256];
+  int scroll[512];
   int ec_n;
 }MAIL_PART;
 
@@ -796,13 +798,96 @@ void ed1_locret(void){}
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
   int l;
-  int i;
+  int i,j;
   MAIL_VIEW *view_list;
-  MAIL_PART *top;
+  MAIL_PART *top, *prev;
   view_list=EDIT_GetUserPointer(data);
   if (!view_list) return (0);
   if (!view_list->eml) return (0);
   
+  if (msg->gbsmsg->msg==LONG_PRESS)
+  {
+    l=msg->gbsmsg->submess;
+    if (l==UP_BUTTON)
+    {
+      int pos;
+      top=view_list->top;
+      i=EDIT_GetFocus(data);
+
+      prev = top;            
+      while(top)
+      {
+        if (top->ec_n==i)
+        {
+          pos = EDIT_GetCursorPos(data);
+          if(pos == 1)
+          {
+            if(top == ((MAIL_PART *)view_list->top)->next)
+            {
+              EDIT_SetFocus(data,i-2);
+              EDIT_SetCursorPos(data, 1);
+            }
+            else
+            {
+              EDIT_SetFocus(data,prev->ec_n);
+              EDIT_SetCursorPos(data, prev->textlen+1);
+            }
+            return (-1);
+          }  
+            
+          for(j = 1; j < 512; j++)
+            if(top->scroll[j]+1 >= pos)
+            {
+              EDIT_SetCursorPos(data, top->scroll[j-1]+1);
+              return (-1);
+            }
+          return (-1);
+        }
+        prev = top;            
+        top=top->next;
+      }
+      EDIT_SetFocus(data,i-2);
+      EDIT_SetCursorPos(data, 1);
+      return (-1);
+    }
+    if (l==DOWN_BUTTON)
+    {
+      int pos;
+      top=view_list->top;
+      i=EDIT_GetFocus(data);
+      
+      while(top)
+      {
+        if (top->ec_n==i)
+        {
+          pos = EDIT_GetCursorPos(data);
+          for(j = 1; j < 512; j++)
+          {
+            if(top->scroll[j]+1 > pos)
+            {
+              EDIT_SetCursorPos(data, top->scroll[j]+1);
+              return (-1);
+            }
+            if(top->scroll[j] == top->textlen)
+            {
+              if(top->next)
+              {
+                EDIT_SetFocus(data,((MAIL_PART *)top->next)->ec_n);
+                EDIT_SetCursorPos(data, 1);
+              }
+              return (-1);
+            }
+          }
+          return (-1);
+        }
+        top=top->next;
+      }
+      EDIT_SetFocus(data,i+2);
+      EDIT_SetCursorPos(data, 1);
+      return (-1);
+    }
+  }
+
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     l=msg->gbsmsg->submess;
@@ -820,6 +905,47 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
       }
       if (!top) return (0);
       create_save_as_dialog(top, view_list->eml);
+      return (-1);
+    }
+    if (l==VOL_UP_BUTTON)
+    {
+      i=EDIT_GetFocus(data);
+      top=view_list->top;
+      prev = top;
+      while(top)
+      {
+        if (top->ec_n==i)
+        {
+          EDIT_SetFocus(data,prev->ec_n);
+          EDIT_SetCursorPos(data, 1);
+          break;
+        }
+        prev = top;
+        top=top->next;
+      }
+      EDIT_SetFocus(data,i-2);
+      EDIT_SetCursorPos(data, 1);
+      return (-1);
+    }
+    if (l==VOL_DOWN_BUTTON)
+    {
+      i=EDIT_GetFocus(data);
+      top=view_list->top;
+      while(top)
+      {
+        if (top->ec_n==i)
+        {
+          if(top->next)
+          {
+            EDIT_SetFocus(data,((MAIL_PART *)top->next)->ec_n);
+            EDIT_SetCursorPos(data, 1);
+          }
+          break;
+        }
+        top=top->next;
+      }
+      EDIT_SetFocus(data,i+2);
+      EDIT_SetCursorPos(data, 1);
       return (-1);
     }
   }
@@ -963,6 +1089,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   char *eml, *end_header;
   int size;
   int ed_toitem;
+  int scrolls;
     
   headers=AllocWS(100);
 
@@ -1011,6 +1138,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   top->size=size;
   eml=realloc(eml, size+1);
   top->charset=WIN_1251;
+  top->textlen=0;
   while(bot)
   {
     size_t buf_size;
@@ -1064,6 +1192,16 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       }
       strip_html(buf);
       delspaces(buf);
+      bot->textlen = strlen(buf);
+      bot->scroll[0] = 0;
+      scrolls = 1;
+      for(int scrl = 0, dx_s = 0; buf[scrl]; scrl++, dx_s++)
+        if(buf[scrl] == '\n' || (buf[scrl] == ' ' && dx_s > 50)) 
+        {
+          bot->scroll[scrolls++] = scrl;
+          dx_s = 0;
+        }
+      bot->scroll[scrolls] = bot->textlen;
       ws=AllocWS(strlen(buf));
       ascii2ws(ws, buf);
         
@@ -1126,6 +1264,16 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         break;
       }
       delspaces(buf);
+      bot->textlen = strlen(buf);
+      bot->scroll[0] = 0;
+      scrolls = 1;
+      for(int scrl = 0, dx_s = 0; buf[scrl]; scrl++, dx_s++)
+        if(buf[scrl] == '\n' || (buf[scrl] == ' ' && dx_s > 50)) 
+        {
+          bot->scroll[scrolls++] = scrl;
+          dx_s = 0;
+        }
+      bot->scroll[scrolls] = bot->textlen;
       ws=AllocWS(strlen(buf));
       ascii2ws(ws, buf);
         
@@ -1214,6 +1362,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         else
           prev->charset = bot->charset;
         prev->transfer_encoding=get_ctencoding_index(prev->te);
+        prev->textlen=0;
         p=b_end;
 
       } 
@@ -1226,6 +1375,10 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       
       p=unmime_header(fname, bot->charset);
       
+      bot->textlen = strlen(p);
+      bot->scroll[0] = 0;
+      bot->scroll[1] = bot->textlen;
+   
       ws=AllocWS(strlen(p));
       ascii2ws(ws, p);
       mfree(p);
@@ -1244,6 +1397,9 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
 
       break;
     default:
+      bot->scroll[0] = 0;
+      bot->scroll[1] = 22;
+      bot->textlen = 22;
       ascii2ws(headers,"<unknown message type>");
       ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
       SetFontToEditCOptions(&ec.ed_options,2);
