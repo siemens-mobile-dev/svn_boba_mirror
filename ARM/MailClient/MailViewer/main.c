@@ -1488,21 +1488,7 @@ void delete_record(GUI *data)
     
 void delete_all_records(GUI *data)
 {
-  ML_VIEW *mail_cur=(ML_VIEW *)&mails;
-  ML_VIEW *mail_next=mail_cur->next;
-  while(mail_next)
-  {
-      mail_next=mail_cur->next;
-      mfree(mail_cur->uidl);
-      mfree(mail_cur->header);
-      mfree(mail_cur->subject);
-      mfree(mail_cur->from);
-      mfree(mail_cur->to);
-      mfree(mail_cur->content_type);
-      mfree(mail_cur->content_encoding);
-      mfree(mail_cur);
-      mail_cur = mail_next;
-  }
+  FreeMailDB();
   request_recount_mailmenu=1;
   GeneralFuncF1(2);
 }  

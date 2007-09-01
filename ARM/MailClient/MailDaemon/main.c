@@ -141,6 +141,7 @@ void write_mail_DB()
       mail_db.state=ml_list->state;
       mail_db.is_read=ml_list->is_read;
       mail_db.mail_size=ml_list->mail_size;
+      mail_db.hdr[0] = 0;
       fwrite(f,&mail_db,sizeof(MAIL_DB),&err);
       if (mail_db.uidl_len) fwrite(f,ml_list->uidl,mail_db.uidl_len,&err);
     }

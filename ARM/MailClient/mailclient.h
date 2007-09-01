@@ -76,6 +76,7 @@ typedef struct
   unsigned char state;
   unsigned char is_read;  
   unsigned int mail_size;
+  char hdr[128];
 }MAIL_DB;
 #pragma pack()
 
@@ -94,6 +95,7 @@ typedef struct
   void *next;
   char *uidl;
   unsigned int state;
+  unsigned int prev_state;
   unsigned int is_read;
   unsigned int is_attach;
   unsigned int mail_size;
