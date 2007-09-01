@@ -259,9 +259,11 @@ int InitMailDB()
       if(mail_db.magic!=MDB_MAGIC) break;
       ml_cur=ml_cur->next=malloc(sizeof(ML_VIEW));
       zeromem(ml_cur,sizeof(ML_VIEW));
-      ml_cur->state=mail_db.state;
+      ml_cur->prev_state = ml_cur->state=mail_db.state;
       ml_cur->is_read=mail_db.is_read;
       ml_cur->mail_size=mail_db.mail_size;
+      ml_cur->subject=malloc(129);
+      strcpy(ml_cur->subject, mail_db.hdr);
       if (mail_db.uidl_len)
       {
         uidl=malloc(mail_db.uidl_len+1);
@@ -296,6 +298,7 @@ void write_mail_DB()
       mail_db.state=ml_list->state;
       mail_db.is_read=ml_list->is_read;
       mail_db.mail_size=ml_list->mail_size;
+      strcpy(mail_db.hdr,ml_list->subject);      
       fwrite(f,&mail_db,sizeof(MAIL_DB),&err);
       if (mail_db.uidl_len) fwrite(f,ml_list->uidl,mail_db.uidl_len,&err);
     }
@@ -355,6 +358,7 @@ void InitHeaders()
   ML_VIEW *ml_cur=(ML_VIEW *)&mails;
   while((ml_cur=ml_cur->next))
   {
+    //if(!ml_cur->subject[0]) continue;
     cd = TEXT;
     if (ml_cur->header)
     {
@@ -508,14 +512,17 @@ char *get_subject(ML_VIEW *ml_list)
 {
   char no_subject[]="Subject: <без темы>";
   char *subject;
-  if (ml_list->subject) return ml_list->subject;
+  if (ml_list->subject[0]) return ml_list->subject;
   subject=get_string_from_header(ml_list, "subject:");
   if(!subject)
   {
     subject=(char *)malloc(strlen(no_subject)+1);
     strcpy(subject,no_subject);
   }
-  return (ml_list->subject=subject);
+
+  strcpy(ml_list->subject, subject);
+  mfree(subject);
+  return (ml_list->subject);
 }
 char *get_from(ML_VIEW *ml_list)
 {
@@ -1401,6 +1408,7 @@ void set_state_for_all(int state)
   ML_VIEW *mail_cur=(ML_VIEW *)&mails;
   while((mail_cur=mail_cur->next))
   {
+    mail_cur->prev_state = mail_cur->state;
     mail_cur->state=state;
   }
 }
@@ -1409,7 +1417,16 @@ void set_state_download(GUI *data)
 {
   ML_VIEW *cur_menu;
   cur_menu=MenuGetUserPointer(data);
+  cur_menu->prev_state = cur_menu->state;
   cur_menu->state=M_LOAD_FULL;
+  GeneralFuncF1(2);
+}
+
+void set_state_not_download(GUI *data)
+{
+  ML_VIEW *cur_menu;
+  cur_menu=MenuGetUserPointer(data);
+  cur_menu->state=cur_menu->prev_state;
   GeneralFuncF1(2);
 }
 
@@ -1417,7 +1434,16 @@ void set_state_delete(GUI *data)
 {
   ML_VIEW *cur_menu;
   cur_menu=MenuGetUserPointer(data);
+  cur_menu->prev_state = cur_menu->state;
   cur_menu->state=M_DELETE;
+  GeneralFuncF1(2);
+}
+
+void set_state_not_delete(GUI *data)
+{
+  ML_VIEW *cur_menu;
+  cur_menu=MenuGetUserPointer(data);
+  cur_menu->state=cur_menu->prev_state;
   GeneralFuncF1(2);
 }
 
@@ -1460,7 +1486,26 @@ void delete_record(GUI *data)
   GeneralFuncF1(2);
 }
     
-  
+void delete_all_records(GUI *data)
+{
+  ML_VIEW *mail_cur=(ML_VIEW *)&mails;
+  ML_VIEW *mail_next=mail_cur->next;
+  while(mail_next)
+  {
+      mail_next=mail_cur->next;
+      mfree(mail_cur->uidl);
+      mfree(mail_cur->header);
+      mfree(mail_cur->subject);
+      mfree(mail_cur->from);
+      mfree(mail_cur->to);
+      mfree(mail_cur->content_type);
+      mfree(mail_cur->content_encoding);
+      mfree(mail_cur);
+      mail_cur = mail_next;
+  }
+  request_recount_mailmenu=1;
+  GeneralFuncF1(2);
+}  
 
 void back(GUI *data)
 {
@@ -1468,27 +1513,33 @@ void back(GUI *data)
 }
 
 
-#define OPTIONS_ITEMS_N 7
+#define OPTIONS_ITEMS_N 10
 HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",LGP_NULL};
 
 MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
 {
-  {NULL,(int)"Проверить почту",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Догрузить",           LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Удалить",             LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Удалить все",         LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Удалить запись",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Догрузить все",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL,(int)"Назад",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL,(int)"Проверить почту",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL,(int)"Догрузить",           LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
+  {NULL,(int)"Не загружать",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
+  {NULL,(int)"Удалить",             LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL,(int)"Не удалять",          LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //4
+  {NULL,(int)"Удалить все",         LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //5
+  {NULL,(int)"Удалить запись",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //6
+  {NULL,(int)"Очистить список",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //7
+  {NULL,(int)"Догрузить все",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //8
+  {NULL,(int)"Назад",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //9
 };
 
 const MENUPROCS_DESC options_menu_HNDLS[OPTIONS_ITEMS_N]=
 {
   check_mailbox,
   set_state_download,
+  set_state_not_download,
   set_state_delete,
+  set_state_not_delete,
   set_state_delete_all,
   delete_record,
+  delete_all_records,
   set_state_download_all,
   back,  
 };
@@ -1518,14 +1569,19 @@ void create_options_menu(ML_VIEW *i)
   n=0;
   if (i)
   {
-    if (i->state==M_FULL_LOADED)
+    if (i->state==M_FULL_LOADED || i->state==M_LOAD_FULL)
+      to_remove[++n]=1;
+
+    if (i->state!=M_LOAD_FULL)
+      to_remove[++n]=2;
+    
+    if (i->state==M_DELETE)
     {
       to_remove[++n]=1;
+      to_remove[++n]=3;
     }
-    if (i->state==M_DELETE) 
-    {
-      to_remove[++n]=2;
-    }
+    else
+      to_remove[++n]=4;
   }
   else
   {
@@ -1534,12 +1590,16 @@ void create_options_menu(ML_VIEW *i)
     to_remove[++n]=3;
     to_remove[++n]=4;
     to_remove[++n]=5;
+    to_remove[++n]=6;
+    to_remove[++n]=7;
+    to_remove[++n]=8;
   }
     
   if (get_mlist_N()==1)
   {
-    to_remove[++n]=3;
     to_remove[++n]=5;
+    to_remove[++n]=7;
+    to_remove[++n]=8;
   }
   if (daemon_present==-1)
   {
@@ -1626,9 +1686,9 @@ void maillist_menu_iconhndl(void *data, int curitem, void *unk)
     ws=AllocMenuWS(data,10);
     wsprintf(ws,_percent_t,"Ошибка");
   }
-  SetMenuItemIconArray(data,item,S_ICONS);
+  SetMenuItemIconArray(data,item,S_ICONS+GetIconIndex(mail_cur));
   SetMenuItemText(data,item,ws,curitem);
-  SetMenuItemIcon(data,curitem,GetIconIndex(mail_cur));
+  SetMenuItemIcon(data,curitem,0);
 }
 
 

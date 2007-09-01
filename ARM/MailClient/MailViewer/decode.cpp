@@ -346,46 +346,6 @@ void strip_special(char *s)
       }
       *d++ = unicode2win(c);
     } else
-    if(s[i] == '&' && s[i+1] == 'n' &&
-                      s[i+2] == 'b' &&
-                      s[i+3] == 's' &&
-                      s[i+4] == 'p' &&
-                      s[i+5] == ';')
-    {
-      *d++ = ' ';
-      i += 5;
-    } else
-    if(s[i] == '&' && s[i+1] == 'q' &&
-                      s[i+2] == 'u' &&
-                      s[i+3] == 'o' &&
-                      s[i+4] == 't' &&
-                      s[i+5] == ';')
-    {
-      *d++ = '"';
-      i += 5;
-    } else
-    if(s[i] == '&' && s[i+1] == 'a' &&
-                      s[i+2] == 'm' &&
-                      s[i+3] == 'p' &&
-                      s[i+4] == ';')
-    {
-      *d++ = '&';
-      i += 4;
-    } else
-    if(s[i] == '&' && s[i+1] == 'l' &&
-                      s[i+2] == 't' &&
-                      s[i+3] == ';')
-    {
-      *d++ = '"';
-      i += 3;
-    } else
-    if(s[i] == '&' && s[i+1] == 'g' &&
-                      s[i+2] == 't' &&
-                      s[i+3] == ';')
-    {
-      *d++ = '"';
-      i += 3;
-    } else
     {
       *d++ = s[i];
     }
@@ -439,6 +399,18 @@ void strip_html(char *s)
   s1 = strreplace(s2, "</td>", " ");
   mfree(s2); s2 = s1;
   s1 = strreplace(s2, "</tr>", "\r\n");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "&quote;", "\"");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "&nbsp;", " ");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "&lt;", "<");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "&gt;", ">");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "&amp;", "&");
+  mfree(s2); s2 = s1;
+  s1 = strreplace(s2, "&copy;", "(c)");
   mfree(s2);
 
   //сюда мы будем бросать кости
