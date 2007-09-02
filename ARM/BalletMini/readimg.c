@@ -102,25 +102,25 @@ IMGHDR *read_pngimg(const char *buf)
   pp.img_h=img_hc=malloc(sizeof(IMGHDR));
   
   {
-    unsigned char *iimg=(unsigned char *)(pp.img=malloc(width*height));
+    unsigned short *iimg=(unsigned short *)(pp.img=malloc(width*height*sizeof(unsigned short)));
     for (unsigned int y = 0; y<height; y++)
     {
       png_read_row(png_ptr, (png_bytep)pp.row, NULL);
       for (unsigned int x = 0; x<width; x++)
       {
         if (pp.row[x*4+3]<128)
-          *iimg++=0xC0;
+          *iimg++=0xE000;
         else
         {
-          unsigned char c=(pp.row[x*4+0] & 0xE0);
-          c|=((pp.row[x*4+1]>>3)&0x1C);
-          c|=((pp.row[x*4+2]>>6)&0x3);
+          unsigned int c=((pp.row[x*4+0]<<8)&0xF800);
+          c|=((pp.row[x*4+1]<<3)&0x7E0);
+          c|=((pp.row[x*4+2]>>3)&0x1F);
           *iimg++=c;
         }
       }
     }
   }
-  pp.img_h->bpnum=5;
+  pp.img_h->bpnum=8;
   pp.img_h->w=width;
   pp.img_h->h=height;
   pp.img_h->bitmap=pp.img;
@@ -164,7 +164,7 @@ IMGHDR *read_jpgimg(const char *buf)
   struct my_error_mgr jerr;
 
   IMGHDR * img_hc;
-  char *img, *iimg;
+  unsigned short *img, *iimg;
   JSAMPARRAY buffer;
   char *row;
   
@@ -194,7 +194,7 @@ IMGHDR *read_jpgimg(const char *buf)
   img_h=cinfo.output_height;
   
   img_hc=malloc(sizeof(IMGHDR));
-  iimg=img=malloc(img_w*img_h);
+  iimg=img=malloc(img_w*img_h*sizeof(unsigned short));
   buffer = (*cinfo.mem->alloc_sarray)  
 		((j_common_ptr) &cinfo, JPOOL_IMAGE, img_w*cinfo.output_components, 1);
   
@@ -205,17 +205,17 @@ IMGHDR *read_jpgimg(const char *buf)
     for (int x=0; x<img_w; x++)
     {
       unsigned int c;
-      c=row[0] & 0xE0;
-      c|=((row[1]>>3) & 0x1C);
-      c|=((row[2]>>6) & 0x3);
+      c=((row[0]<<8)&0xF800);
+      c|=((row[1]<<3)&0x7E0);
+      c|=((row[2]>>3)&0x1F);
       row+=3;
       *iimg++=c;
     }
   }
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
-  img_hc->bitmap=img;
-  img_hc->bpnum=5;
+  img_hc->bitmap=(char *)img;
+  img_hc->bpnum=8;
   img_hc->w=img_w;
   img_hc->h=img_h;
   if (!img)
@@ -231,11 +231,11 @@ IMGHDR *read_jpgimg(const char *buf)
 IMGHDR *ConvertRGBAToRGB8(const char *buf, int width, int height)
 {
   IMGHDR * img_hc=malloc(sizeof(IMGHDR));
-  char *iimg=malloc(width*height);
+  unsigned short *iimg=malloc(width*height*sizeof(unsigned short));
   img_hc->w=width;
   img_hc->h=height;
-  img_hc->bpnum=5;
-  img_hc->bitmap=iimg;
+  img_hc->bpnum=8;
+  img_hc->bitmap=(char *)iimg;
   
   for (unsigned int y = 0; y<height; y++)
   {
@@ -245,9 +245,9 @@ IMGHDR *ConvertRGBAToRGB8(const char *buf, int width, int height)
         *iimg++=0xC0;
       else
       {
-        unsigned char c=(buf[y*width*4+x*4+1] & 0xE0);
-        c|=((buf[y*width*4+x*4+2]>>3)&0x1C);
-        c|=((buf[y*width*4+x*4+3]>>6)&0x3);
+        unsigned int c=((buf[y*width*4+x*4+1]<<8)&0xF800);
+        c|=((buf[y*width*4+x*4+2]<<3)&0x7E0);
+        c|=((buf[y*width*4+x*4+3]>>3)&0x1F);
         *iimg++=c;
       }
     }
@@ -269,8 +269,8 @@ IMGHDR *CreateFrame(int width, int height, const char *color)
   else
   {
     unsigned char c=color[0]&0xE0;
-    c|=color[1]&0x1C;
-    c|=color[2]&0x3;
+    c|=(color[1]>>3)&0x1C;
+    c|=(color[2]>>6)&0x3;
     color_c=c;
   }
   for (unsigned int y = 0; y<height; y++)
