@@ -16,6 +16,7 @@ char cashfname[128];
 extern const char CASHREQNUM[];
 extern const char cashTEMP_PATH[];
 extern const char cashLOG_FILE[];
+extern const char cashLOG_Format[];
 
 int MaxCASH[MAX_CASH_SIZE];
 int CurrentCASH[MAX_CASH_SIZE];
@@ -29,7 +30,7 @@ static void WriteLog(int dummy, char *text)
 {
   unsigned int ul;
   extern const int ENA_CASHTRACELOG;
-  char std[64];
+  char std[300];
   TTime t;
   TDate d;
   if (!text) return;
@@ -38,11 +39,12 @@ static void WriteLog(int dummy, char *text)
     int f=fopen(cashLOG_FILE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)
     {
-      GetDateTime(&d,&t);
-      sprintf(std,"%02d:%02d %02d-%02d-%04d: ",
-            t.hour,t.min,d.day,d.month,d.year);
-      fwrite(f,std,strlen(std),&ul);
-      fwrite(f,text,strlen(text),&ul);
+      GetDateTime(&d, &t);
+      ul = sprintf(std, cashLOG_Format,
+              d.day,d.month,d.year, t.hour,t.min,
+              text, CurrentCASH[0], CurrentCASH[1], CurrentCASH[2], CurrentCASH[3]);
+      *(std+ul)=13; ul++; *(std+ul)=10; ul++; *(std+ul)=0;
+      fwrite(f,std,ul,&ul);
       fclose(f,&ul);
     }
   }
@@ -229,8 +231,8 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
       s[len++]=c;
     }
     i=FindCash(s);
-    s[len++]=13;
-    s[len++]=10;
+ //   s[len++]=13;
+ //   s[len++]=10;
     SUBPROC((void *)WriteLog,0,s);
   }
   FreeWS(ws);

@@ -43,6 +43,13 @@ __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
  __root const CFG_HDR cfghdr07 = {CFG_STR_UTF8,"Log file",0,127};
  __root const char cashLOG_FILE[128]=DEFAULT_DISK ":\\ZBin\\var\\CallCenter_cash.log";
 
+ __root const CFG_HDR cfghdr072 = {CFG_STR_UTF8,"Log format",0,127};
+ __root const char cashLOG_Format[128]="%02d.%02d.%04d %02d:%02d %.0s %d %d %d %d";
+
+__root const CFG_HDR cfghdr073 = {CFG_CBOX, "Show In", 0, 3};
+__root const int cfgShowIn = 1;
+__root const CFG_CBOX_ITEM cfgcbox1[3] = {"Lock", "Unlock", "Both"};
+
  __root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
  __root const unsigned int IDLE_X=0;
  __root const unsigned int IDLE_Y=95;

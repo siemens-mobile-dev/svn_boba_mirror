@@ -13,6 +13,7 @@ extern int MaxCASH[MAX_CASH_SIZE];
 
 extern const int ENA_CASHTRACE;
 extern const unsigned int CHECK_HOURS;
+extern const int cfgShowIn;
 
 extern const int ENA_VIBRA;
 extern const unsigned int vibraPower;
@@ -42,7 +43,7 @@ const char *progress_colors[MAX_CASH_SIZE]=
   COLOR_CASHPB4
 };
 
-#define TMR_SECOND 216
+#define TMR_SECOND (1300/6)
 
 
 #pragma inline
@@ -1111,7 +1112,7 @@ void StartHoursTimer(void)
 {
   if (CHECK_HOURS)
   {
-    GBS_StartTimerProc(&hours_tmr,TMR_SECOND*3600L*CHECK_HOURS,HoursTimerProc);
+    GBS_StartTimerProc(&hours_tmr,(3600L*1300/6)*CHECK_HOURS,HoursTimerProc);
   }
 }
 
@@ -1129,7 +1130,15 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       memcpy(cur_imsi,imsi,IMSI_DATA_BYTE_LEN);
       InitConfig();
       LoadCash();
-      StartHoursTimer();
+
+      //      StartHoursTimer();
+      if (CHECK_HOURS)
+      {
+        TTime t; int sc;
+        GetDateTime(0, &t);
+        sc = 3600 - 60*t.min - t.sec;
+        GBS_StartTimerProc(&hours_tmr,TMR_SECOND*sc,HoursTimerProc);
+      }
     }
   }
   if (msg->msg==MSG_USSD_RX || msg->msg==MSG_AUTOUSSD_RX)
@@ -1180,21 +1189,26 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     GBS_StartTimerProc(&vibra_tmr,vibraDuration*TMR_SECOND/1000,vibra_tmr_proc);
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
-  if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
+  
+  if (cfgShowIn != 1 - IsUnlocked())
   {
-    GUI *igui = GetTopGUI();
-    if (igui) //И он существует
+    if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
     {
-      extern int CASH_SIZE;               //by BoBa 4.07.07
-
-      int n=0; //Номер      
-      while(n<CASH_SIZE)
+      GUI *igui = GetTopGUI();
+      if (igui) //И он существует
       {
-        DrawMyProgress(IDLE_Y,n);
-        n++;
+        extern int CASH_SIZE;               //by BoBa 4.07.07
+
+        int n=0; //Номер      
+        while(n<CASH_SIZE)
+        {
+          DrawMyProgress(IDLE_Y,n);
+          n++;
+        }
       }
     }
   }
+  
   if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху
   {
     GUI *igui=GetTopGUI();
