@@ -578,7 +578,7 @@
 0760: 0xA0A11CB9 ; 1D8: int EDIT_IsMarkModeActive(void *gui)
 0764: 0xA0A11CD1 ; 1D9: int EDIT_GetMarkedText(void *gui,WSHDR *dest)
 0768: 0xA05396B1   ; 1DA: void SendSMS(WSHDR *ws,const char *num,int cepid,int msg,int flag)
-076C: 0xA8E87CFC   ; 1DB: PDU *IncommingPDU(void)
+076C: 0xA8E87ED0   ; 1DB: PDU *IncommingPDU(void)
 0770: 0xA01F703F   ; 1DC: short wstrchr(WSHDR *ws,unsigned int start_pos,unsigned int wchar)
 0774: 0xA01F7061   ; 1DD: short wstrrchr(WSHDR *ws,unsigned int max_pos,unsigned int wchar)
 0778: 0xA0A11D79   ; 1DE: int EDIT_SetTextToEditControl(void *gui,int n,WSHDR *ws)
