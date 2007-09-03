@@ -8,6 +8,12 @@
 ;Functions Library
 ;(c) кто попало ;)
 /*
+03.09.07
+* 0108: 0xA0303823   ;  42: IsScreenSaver
++ 0110: 0xA08FE105   ;  44: TempLigntOn
++ 0270: 0xA0303D09   ;  9C: CloseScreensaver
++ 08A4: 0xA0FC4D7C   ; 229: __arm void longjmp(jmp_buf, int);
+
 25.08.07
 исправил 
 0138: 0xA097725D ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
@@ -142,9 +148,9 @@
 
 0100: 0xA028B719   ;  40: GetVibraStatus
 0104: 0xA08FC087   ;  41: GetProvider
-0108: 0xA0DF3693   ;  42: IsScreenSaver
+0108: 0xA0303823   ;  42: IsScreenSaver
 010C: 0xA0903FE3   ;  43: int IsUnlocked(void)
-;110:              ;  44: TempLightOn
+0110: 0xA08FE105   ;  44: TempLigntOn
 0114: 0xA006F241   ;  45: GetWavLen
 ;118:              ;  46: int HasNewSMS()
 ;11C:              ;  47: HasFlashSMS
@@ -237,7 +243,7 @@
 ;264:              ;  99: int PlayMelodyInMem(char Unk_0x11,void *MelAddr,int MelSize,int unk2_0xFFFF,int Unk3_0,int Unk4_0)
 ;268:              ;  9A: int ChangeVolume(unsigned char Volume)
 ;26C:              ;  9B: RamAudioParamsAddr
-;270:              ;  9C: CloseScreensaver
+0270: 0xA0303D09   ;  9C: CloseScreensaver
 0274: 0xA02FE4A3   ;  9D: GetMissedEventsPtr
 0278: 0xA006F2B1   ;  9E: int GetMissedEventCount(unsigned int Event)
 ;27C:              ;  9F: DrawRect
@@ -658,6 +664,7 @@
 0898: 0xA027C83C   ; 226: int PlayMelody_StopPlayback(int handle)
 089C: 0xA027C8DC   ; 227: int PlayMelody_PausePlayback(int handle)
 08A0: 0xA027C90C   ; 228: int PlayMelody_ResumePlayBack(int handle)
+08A4: 0xA0FC4D7C   ; 229: __arm void longjmp(jmp_buf, int);
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------
