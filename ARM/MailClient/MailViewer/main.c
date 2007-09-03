@@ -1798,8 +1798,8 @@ MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
   {NULL,(int)"Удалить запись",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //6
   {NULL,(int)"Очистить список",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //7
   {NULL,(int)"Догрузить все",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //8
-  {NULL,(int)"Информация",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //8
-  {NULL,(int)"Назад",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //9
+  {NULL,(int)"Информация",          LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //9
+  {NULL,(int)"Назад",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //10
 };
 
 const MENUPROCS_DESC options_menu_HNDLS[OPTIONS_ITEMS_N]=
@@ -1866,6 +1866,7 @@ void create_options_menu(ML_VIEW *i)
     to_remove[++n]=6;
     to_remove[++n]=7;
     to_remove[++n]=8;
+    to_remove[++n]=9;
   }
     
   if (get_mlist_N()==1)
