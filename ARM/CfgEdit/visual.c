@@ -46,7 +46,11 @@ typedef struct
   int y_pos;
   int x2_pos;
   int y2_pos;
-  void *rect_or_xy;
+  union
+  {
+    unsigned int *xy;
+    RECT *rc;
+  };
   int cstep;
 }RECT_GUI;
 
@@ -58,7 +62,7 @@ typedef struct
   int g;
   int b;
   int a;
-  char* color;
+  char *color;
   int current_column;
   char testcolor[4];
   int cstep;
@@ -82,27 +86,26 @@ void method0_rect(RECT_GUI *data)
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   
-  DrawRectangle(0,0,scr_w-1,scr_h-1,0,white,white);
+  DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,white,white);
   // Нарисуем сетку
-  for (int y_0=0; y_0< scr_h;y_0+=10)
+  for (int y_0=YDISP; y_0< scr_h;y_0+=10)
   {
     DrawLine(0,y_0,scr_w-1,y_0,1,colors[3]);
   }  
   for (int x_0=0; x_0<scr_w;x_0+=10)
   {
-    DrawLine(x_0,0,x_0, scr_h-1,1,colors[3]);
+    DrawLine(x_0,YDISP,x_0, scr_h-1,1,colors[3]);
   }
   
   
   if (data->is_rect_needed)
   {
-    RECT *rc=data->rect_or_xy;
-    DrawRoundedFrame(rc->x,rc->y,rc->x2,rc->y2,
+    DrawRoundedFrame(data->rc->x,data->rc->y,data->rc->x2,data->rc->y2,
                      0,0,0,colors[3],transparent); // Предыдущий рект
     if (data->is_first_set)
     {
       DrawRoundedFrame(data->x2_pos,data->y2_pos,data->x_pos,data->y_pos,
-                     0,0,0,black,transparent);
+                       0,0,0,black,transparent);
       wsprintf(data->ws1,"%u,%u,%u,%u",data->x2_pos,data->y2_pos,data->x_pos,data->y_pos); 
     }
     else
@@ -173,7 +176,6 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
        case ENTER_BUTTON:
          if (data->is_rect_needed)
          {
-           RECT *rc=data->rect_or_xy;
            if (!data->is_first_set)
            {
              data->x2_pos=data->x_pos;
@@ -182,18 +184,17 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
            }
            else
            {
-             rc->x=data->x2_pos;
-             rc->y=data->y2_pos;
-             rc->x2=data->x_pos;
-             rc->y2=data->y_pos;
+             data->rc->x=data->x2_pos;
+             data->rc->y=data->y2_pos;
+             data->rc->x2=data->x_pos;
+             data->rc->y2=data->y_pos;
              return (1);
            }
          }
          else
          {
-           unsigned int *xy_pos=data->rect_or_xy;
-           xy_pos[0]=data->x_pos;
-           xy_pos[1]=data->y_pos;
+           data->xy[0]=data->x_pos;
+           data->xy[1]=data->y_pos;
            return (1);
          }
        }
@@ -206,21 +207,21 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
     case '1':
       if ((data->x_pos-=data->cstep)<0)
         data->x_pos=0;
-      if ((data->y_pos-=data->cstep)<0)
-        data->y_pos=0;
+      if ((data->y_pos-=data->cstep)<YDISP)
+        data->y_pos=YDISP;
       break;
       
     case '2':
     case UP_BUTTON:
-      if ((data->y_pos-=data->cstep)<0)
-        data->y_pos=0;
+      if ((data->y_pos-=data->cstep)<YDISP)
+        data->y_pos=YDISP;
       break;
       
     case '3':
       if ((data->x_pos+=data->cstep)>ScreenW()-1)
         data->x_pos=ScreenW()-1;
-      if ((data->y_pos-=data->cstep)<0)
-        data->y_pos=0;
+      if ((data->y_pos-=data->cstep)<YDISP)
+        data->y_pos=YDISP;
       break;
      
     case '4':
@@ -293,13 +294,14 @@ void EditCoordinates(void *rect_or_xy, int is_rect)
 {
   RECT_GUI *rect_gui=malloc(sizeof(RECT_GUI));
   zeromem(rect_gui,sizeof(RECT_GUI));
-  rect_gui->rect_or_xy=rect_or_xy;
+  
   rect_gui->is_rect_needed=is_rect;
   if (!is_rect)
   {
     unsigned int *xy=rect_or_xy;
     rect_gui->x_pos=xy[0];
-    rect_gui->y_pos=xy[1];   
+    rect_gui->y_pos=xy[1];
+    rect_gui->xy=rect_or_xy;
   }
   else
   {
@@ -308,8 +310,10 @@ void EditCoordinates(void *rect_or_xy, int is_rect)
     rect_gui->y_pos=rc->y;
     rect_gui->x2_pos=rc->x2;
     rect_gui->y2_pos=rc->y2;
+    rect_gui->rc=rect_or_xy;
   }
-  patch_rect((RECT*)&Canvas_1,0,0,ScreenW()-1,ScreenH()-1);
+  rect_gui->cstep=1;
+  patch_rect((RECT*)&Canvas_1,0,YDISP,ScreenW()-1,ScreenH()-1);
   rect_gui->gui.canvas=(void *)(&Canvas_1);
   rect_gui->gui.flag30=2;
   rect_gui->gui.methods=(void *)gui_methods_rect;
@@ -322,43 +326,43 @@ void method0_2(MAIN_GUI_2 *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  DrawRectangle(0,0,scr_w-1,scr_h-1,0,white,white);
+  DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,white,white);
 
-  int column_height=scr_h-35;
+  int column_height=scr_h-35-YDISP;
   int column_width=scr_w/9;
   int start_column;
   int y_line;
   wsprintf(data->ws1,"%02X,%02X,%02X,%02X",data->r,data->g,data->b,data->a);
-  DrawString(data->ws1,1,1,scr_w-20,12,FONT_SMALL,1,black,transparent);
+  DrawString(data->ws1,1,YDISP+1,scr_w-20,YDISP+1+GetFontYSIZE(FONT_SMALL),FONT_SMALL,1,black,transparent);
   
   for (int i=0;i!=4;i++)
   {
     start_column=column_width+2*i*column_width;
     if (data->current_column==i)
-      DrawRectangle(start_column-2,20-2,start_column+column_width+2,20+column_height+2,
+      DrawRectangle(start_column-2,YDISP+20-2,start_column+column_width+2,YDISP+20+column_height+2,
                     0,black,white);
 
-    DrawRectangle(start_column,20,start_column+column_width,20+column_height,
+    DrawRectangle(start_column,YDISP+20,start_column+column_width,YDISP+20+column_height,
                   0,black,colors[i]);
     switch(i)
     {
     case 0:
-      y_line=20+column_height-(data->r*column_height)/0xFF;
+      y_line=YDISP+20+column_height-(data->r*column_height)/0xFF;
       break;
     case 1:
-      y_line=20+column_height-(data->g*column_height)/0xFF;
+      y_line=YDISP+20+column_height-(data->g*column_height)/0xFF;
       break;      
     case 2:
-      y_line=20+column_height-(data->b*column_height)/0xFF;
+      y_line=YDISP+20+column_height-(data->b*column_height)/0xFF;
       break;
     case 3:
-      y_line=20+column_height-(data->a*column_height)/0x64;
+      y_line=YDISP+20+column_height-(data->a*column_height)/0x64;
       break;
     }
     DrawLine(start_column,y_line,start_column+column_width,y_line,0,black);
   }
   setColor(data->r,data->g,data->b,data->a,data->testcolor);
-  DrawRoundedFrame(scr_w-17,1,scr_w-2,16,2,2,0,black,data->testcolor);
+  DrawRoundedFrame(scr_w-17,YDISP+1,scr_w-2,YDISP+16,2,2,0,black,data->testcolor);
 
 }
 
@@ -500,7 +504,7 @@ const void * const gui_methods_2[11]={
 
 const RECT Canvas_2={0,0,0,0};
 
-void EditColors(char*color)
+void EditColors(char *color)
 {
   MAIN_GUI_2 *main_gui=malloc(sizeof(MAIN_GUI_2));
   zeromem(main_gui,sizeof(MAIN_GUI_2));
@@ -509,7 +513,7 @@ void EditColors(char*color)
   main_gui->b=color[2];
   main_gui->a=color[3];
   main_gui->color=color;
-  patch_rect((RECT*)&Canvas_2,0,0,ScreenW()-1,ScreenH()-1);
+  patch_rect((RECT*)&Canvas_2,0,YDISP,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas_2);
   main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods_2;
@@ -570,9 +574,9 @@ int strcmp_nocase(const char *s, const char *d)
 
 FLIST *AddToFList(const char* full_name, const char *name, int is_folder)
 {
-  int l_fname, l_name;
+  int l_fname;
   FLIST *fl;
-  FLIST *fn=malloc(sizeof(FLIST)+(l_fname=strlen(full_name))+(l_name=strlen(name))+2);
+  FLIST *fn=malloc(sizeof(FLIST)+(l_fname=strlen(full_name))+strlen(name)+2);
   fn->fullname=(char *)fn+sizeof(FLIST);
   fn->name=(char *)fn+sizeof(FLIST)+l_fname+1;
   strcpy(fn->fullname,full_name);
