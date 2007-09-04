@@ -544,7 +544,7 @@ void InitHeaders()
 {
   int f, cd;
   unsigned int err;
-  char fname[128], d[128];
+  char fname[128]/*, d[128]*/;
   char *buf, *dec_str, *date;
   int fsize, flag=1;
   char *_eol;
@@ -1789,6 +1789,34 @@ int create_view(ML_VIEW *ml_list)
 
 //----------------------------------------------------------------------------------------------
 
+void PrintTimeDate(char *p, unsigned long x)
+{
+  unsigned int sec,min,hrs,mon,yrs;
+  unsigned int day,iday,day4,yrs4;
+  const int DMonth[]={0,31,59,90,120,151,181,212,243,273,304,334,365};
+  
+  x-=946684800;
+  sec=x%60;
+  min=(x/60)%60;
+  hrs=(x/3600)%24;
+  iday=x/86400;
+  yrs4=x/((4*365+1)*86400);
+  day4=iday%(4*365+1);
+  iday=(day4==(31+28));
+  if (day4>=(31+28)) day4--;
+  yrs=(yrs4<<2)+day4/365;
+  day=day4%365;
+  mon=0;
+  while (DMonth[++mon]<=day);
+  day-=DMonth[mon-1];
+  if (iday) day++;
+  day++;
+  if (yrs>99) yrs=0;
+  sprintf(p,"%02d:%02d:%02d %02d.%02d.%04d GMT",hrs,min,sec,day,mon,yrs+2000);
+}
+
+//----------------------------------------------------------------------------------------------
+
 int create_info_view(ML_VIEW *ml_list)
 {
   void *ma=malloc_adr();
@@ -1797,18 +1825,16 @@ int create_info_view(ML_VIEW *ml_list)
   unsigned err;
   EDITCONTROL ec;
   WSHDR *ws, *headers;
-  char *date, buf[128];
+  char buf[128], *date, dbuf[256];
   
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   headers=AllocWS(100);
-  date=get_date(ml_list);
-  if (date)
-  {
-    date=strchr(date, ':')+1;
-    while (*date==' ' || *date==0x09) date++;
-    ws=AllocWS(strlen(date));
-    ascii2ws(ws,date);
+
+    PrintTimeDate(buf, ml_list->timestamp);
+
+    ws=AllocWS(strlen(buf));
+    ascii2ws(ws,buf);
     ascii2ws(headers,"Отправлено: ");
     
     ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
@@ -1819,8 +1845,50 @@ int create_info_view(ML_VIEW *ml_list)
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
     FreeWS(ws);
+
+    
+  date = strstr(ml_list->header, ";");
+  if(date)
+  {
+    date++;
+    while(*date && (*date == ' ' || *date == '\r' || *date == '\n' || *date == '\t')) date++;
+    memcpy(dbuf, date, 255);
+    dbuf[255] = 0;
+
+    fsize = get_date_from_str(dbuf);
+    buf[0] = 0;
+    PrintTimeDate(buf, fsize);
+    
+    ws=AllocWS(strlen(buf));
+    ascii2ws(ws,buf);
+    ascii2ws(headers,"Получено: ");
+    
+    ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
+    SetFontToEditCOptions(&ec.ed_options,2);
+    AddEditControlToEditQend(eq,&ec,ma);
+    
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+    SetFontToEditCOptions(&ec.ed_options,1);
+    AddEditControlToEditQend(eq,&ec,ma); 
+    FreeWS(ws);
   }
+
+  snprintf(buf,127,"%d",ml_list->mail_size);
+  strcat(buf, " байт");
   
+  ws=AllocWS(strlen(buf));
+  ascii2ws(ws,buf);
+  ascii2ws(headers,"Размер: ");
+  
+  ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
+  SetFontToEditCOptions(&ec.ed_options,2);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL | ECF_DISABLE_T9,ws,wslen(ws));
+  SetFontToEditCOptions(&ec.ed_options,1);
+  AddEditControlToEditQend(eq,&ec,ma); 
+  FreeWS(ws);
+    
   snprintf(buf,127,"%s%s.eml",EML_PATH,ml_list->uidl);
   if ((f=fopen(buf,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
   {
@@ -1833,7 +1901,7 @@ int create_info_view(ML_VIEW *ml_list)
   
   ws=AllocWS(strlen(buf));
   ascii2ws(ws,buf);
-  ascii2ws(headers,"Размер: ");
+  ascii2ws(headers,"Скачано: ");
   
   ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,headers,wslen(headers));
   SetFontToEditCOptions(&ec.ed_options,2);
