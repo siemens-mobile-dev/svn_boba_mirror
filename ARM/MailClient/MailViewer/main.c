@@ -356,18 +356,200 @@ int get_ctype_index(char *str);
 int get_param_from_string(char *str, char *param, char *to, int maxlen);
 enum {MULTIPART, APPLICATION, TEXT, HTML};
 char *strstr_nocase(const char *s1, const char *s2);
+char *get_date(ML_VIEW *ml_list);
 
+#define TM_YEAR_BASE 1900
+
+int tdiff (int year, int month, int day, int hour, int min, int sec)
+{
+  static int day_tab[2][12] =
+  {
+	{0,  31, 28+31, 31+28+31, 30+31+28+31, 31+30+31+28+31, 30+31+30+31+28+31, 31+30+31+30+31+28+31, 31+31+30+31+30+31+28+31, 30+31+31+30+31+30+31+28+31, 31+30+31+31+30+31+30+31+28+31, 30+31+30+31+31+30+31+30+31+28+31},
+	{0,  31, 29+31, 31+29+31, 30+31+29+31, 31+30+31+29+31, 30+31+30+31+29+31, 31+30+31+30+31+29+31, 31+31+30+31+30+31+29+31, 30+31+31+30+31+30+31+29+31, 31+30+31+31+30+31+30+31+29+31, 30+31+30+31+31+30+31+30+31+29+31},
+  };
+  int yday = day_tab[(year&3)?0:1][month-1] + day;
+
+  int a4 = (year >> 2) + (TM_YEAR_BASE >> 2) - ! (year & 3);
+  int b4 = (1970 >> 2) + (TM_YEAR_BASE >> 2) - ! (1970 & 3);
+
+  int intervening_leap_days = (a4 - b4);
+  int years = year - 1970;
+
+  int days = (365 * years + intervening_leap_days
+	      + (yday - 1));
+  return (60 * (60 * (24 * days + (hour - 0))
+		+ (min - 0))
+	  + (sec - 0));
+}
+
+
+int atoi (const char *str)
+{
+  int r = 0, n = 0;
+  while(*str == ' ') str++;
+  if(*str == '-') {n = 1; *str++;}
+  while(*str >= '0' && *str <= '9')
+  {
+    r *= 10;
+    r += *str - '0';
+    str++;
+  }
+  return n?-r:r;
+} 
+
+unsigned get_date_from_str(const char *str)
+{
+  static char *months[] =
+  {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+  static int day_tab[2][12] =
+  {
+    {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+    {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+  };
+  int year, month, day, hour, min, sec, cor;
+  char *buf, b[128];
+  buf = strstr_nocase(str, ", ");
+  if(buf) str = buf + 2;
+  buf = b;
+  while(*str == ' ') str++;
+  while(*str != ' ')
+  {
+   *buf = *str;
+   str++;
+   buf++;
+  }
+  *buf = 0;
+  buf = b;
+  day = atoi(buf);
+
+  while(*str == ' ') str++;
+  while(*str != ' ')
+  {
+   *buf = *str;
+   str++;
+   buf++;
+  }
+  *buf = 0;
+  buf = b;
+
+  for(int i = 0; i < 12; i++)
+    if(strcmp_nocase(buf, months[i])==0) month=i+1;
+  
+  while(*str == ' ') str++;
+  while(*str != ' ')
+  {
+   *buf = *str;
+   str++;
+   buf++;
+  }
+  *buf = 0;
+  buf = b;
+
+  year = atoi(buf);
+
+  while(*str == ' ') str++;
+  while(*str != ':')
+  {
+   *buf = *str;
+   str++;
+   buf++;
+  }
+  *buf = 0;
+  buf = b;
+  str++;
+
+  hour = atoi(buf);
+
+  while(*str != ':')
+  {
+   *buf = *str;
+   str++;
+   buf++;
+  }
+  *buf = 0;
+  buf = b;
+  str++;
+
+  min = atoi(buf);
+
+  while(*str != ' ')
+  {
+   *buf = *str;
+   str++;
+   buf++;
+  }
+  *buf = 0;
+  buf = b;
+  str++;
+
+  sec = atoi(buf);
+  cor = 0;
+  while(*str == ' ') str++;
+  if(*str == '+')
+  {
+    buf[0] = str[1];
+    buf[1] = str[2];
+    buf[2] = 0;
+    cor = atoi(buf);
+    hour -= cor;
+    if(hour < 0)
+    {
+      hour += 24;
+      day--;
+    }
+    if(!day)
+    {
+      month -=1;
+      if(!month)
+      {
+        month = 12;
+        day = 31;
+        year--;
+      }
+      else
+        if(year&3)
+          day = day_tab[0][month-1];
+        else
+          day = day_tab[1][month-1];
+    }
+    cor = -cor;
+  }
+  if(*str == '-')
+  {
+    buf[0] = str[1];
+    buf[1] = str[2];
+    buf[2] = 0;
+    cor = atoi(buf);
+    hour += cor;
+    if(hour > 24)
+    {
+      hour -= 24;
+      day++;
+    }
+    if(day > day_tab[(year&3)?0:1][month-1])
+    {
+      day = 1;
+      month++;
+      if(month>12)
+      {
+        month = 1;
+        year++;
+      }
+    }
+  }
+  return (tdiff(year, month, day, hour, min, sec));
+}
 
 void InitHeaders()
 {
   int f, cd;
   unsigned int err;
-  char fname[128];
-  char *buf, *dec_str;
-  int fsize;
+  char fname[128], d[128];
+  char *buf, *dec_str, *date;
+  int fsize, flag=1;
   char *_eol;
   char *content_type;
-  ML_VIEW *ml_cur=(ML_VIEW *)&mails;
+  ML_VIEW *ml_cur=(ML_VIEW *)&mails, *prev, *next;
   while((ml_cur=ml_cur->next))
   {
     //if(!ml_cur->subject[0]) continue;
@@ -409,8 +591,17 @@ void InitHeaders()
     else
       dec_str=unmime_header(buf, UTF_8);
     
+    date=get_date(ml_cur);
+    if (date)
+    {
+      date=strchr(date, ':')+1;
+      while (*date==' ' || *date==0x09) date++;
+      ml_cur->timestamp=get_date_from_str(date);
+    }
+
     mfree(buf);
-    ml_cur->header=dec_str;
+    ml_cur->header=dec_str; 
+
     
     content_type=get_content_type(ml_cur);  // Проверим наличие аттачей
     if (content_type)
@@ -423,6 +614,47 @@ void InitHeaders()
       }
     } 
   }
+  
+/*  ml_cur = (ML_VIEW *)&mails;
+  ml_cur = ml_cur->next;
+  while(ml_cur)
+  {
+    strcpy(fname,EML_PATH);
+    strcat(fname,"log.txt");
+    if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Append,P_WRITE,&err))!=-1)
+    {
+      snprintf(d,127,"%d %s\n",ml_cur->timestamp, ml_cur->uidl);
+  
+      fwrite(f,d,strlen(d),&err);
+      fclose(f,&err);
+    }
+    ml_cur = ml_cur->next;
+    
+  }*/
+  while(flag)
+  {
+    flag = 0;
+    ml_cur = (ML_VIEW *)&mails;
+    prev = ml_cur;
+    ml_cur = ml_cur->next;
+    next = ml_cur->next;
+    
+    while(ml_cur && next)
+    {
+      if(ml_cur->timestamp < next->timestamp)
+      {
+        prev->next = ml_cur->next;
+        ml_cur->next = next->next;
+        next->next = ml_cur;
+        flag = 1;
+      }
+      prev = ml_cur;
+      ml_cur = ml_cur->next;
+      next = ml_cur->next;      
+    }
+  }
+  ml_cur = (ML_VIEW *)&mails;
+  ml_cur = ml_cur->next;
 }
 
 

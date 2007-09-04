@@ -99,6 +99,7 @@ typedef struct
   unsigned int is_read;
   unsigned int is_attach;
   unsigned int mail_size;
+  unsigned timestamp;
   char *header;
   char *subject;
   char *from;
