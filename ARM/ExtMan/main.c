@@ -2,7 +2,10 @@
 #include "rect_patcher.h"
 
 extern void kill_data(void *p, void (*func_p)(void *));
+extern int strcmp_nocase(const char *s, const char *d);
+
 const char *successed_extfile="";
+volatile int main_gui_id;
 typedef struct
 {
   CSM_RAM csm;
@@ -24,20 +27,6 @@ void ElfKiller(void)
   kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
 }
 
-#pragma inline=forced
-int toupper(int c)
-{
-  if ((c>='a')&&(c<='z')) c+='A'-'a';
-  return(c);
-}
-
-int strcmp_nocase(const char *s1,const char *s2)
-{
-  int i;
-  int c;
-  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
-  return(i);
-}
 
 const char _percent_t[]="%t";
 const char _empty_str[]="";
@@ -139,6 +128,7 @@ int ParseExtCfg(const char *fname)  // Разобьем файл на строки
       cline[p-fl]=0;
       lines[lines_n]=cline;
       lines_n++;
+      if (c=='\r' && *(p+1)=='\n') p++;
       fl=p+1;
       if (c==0) break;
     }
@@ -196,6 +186,124 @@ int char16to8(int c)
   return (c);
 }
 
+enum CFG_TYPES {
+  EXT,
+  RUN,
+  SMALL,
+  BIG,
+  ALTRUN
+};
+
+int PasteLine(ES *p, int type)
+{
+  char **new_lines, **pp;
+  int n=0, d;
+  if (type==RUN)
+    if ((d=p->ext)!=-1) n=d+1;
+  if (type==SMALL || !n)
+    if ((d=p->elf)!=-1) n=d+1;
+  if (type==BIG || !n)
+    if ((d=p->small_png)!=-1) n=d+1;
+  if (type==ALTRUN || !n)
+    if ((d=p->large_png)!=-1) n=d+1;
+  if (!n) return (-1);
+  new_lines=malloc((lines_n+1)*sizeof(char *));
+  pp=lines;
+  for (int i=0, d=0, k=lines_n+1; i<k; i++)
+  {
+    if (i!=n) new_lines[i]=pp[d++];
+    else new_lines[i]=NULL;
+  }
+  for (int i=0; i<ES_num; i++)  // Подкорректируем ссылки на номера линий
+  {
+    ES *t=es+i;
+    if ((d=t->ext)!=-1) 
+      if (d>=n) t->ext=d+1;
+    if ((d=t->small_png)!=-1) 
+      if (d>=n) t->small_png=d+1;    
+    if ((d=t->large_png)!=-1) 
+      if (d>=n) t->large_png=d+1;
+    if ((d=t->elf)!=-1) 
+      if (d>=n) t->elf=d+1;
+    if ((d=t->altelf)!=-1) 
+      if (d>=n) t->altelf=d+1;    
+  }
+  lines=new_lines;
+  lines_n++;
+  mfree(pp);  
+  return (n);
+}
+
+void DeleteLine(int n)
+{
+  int d;
+  char **new_lines, **pp;
+  for (int i=0; i<ES_num; i++)  // Подкорректируем ссылки на номера линий
+  {
+    ES *t=es+i;
+    if ((d=t->ext)!=-1) 
+    {
+      if (d>n) t->ext=d-1;
+      else if (d==n) t->ext=-1;
+    }
+    if ((d=t->small_png)!=-1) 
+    {
+      if (d>n) t->small_png=d-1;
+      else if (d==n) t->small_png=-1;
+    }  
+    if ((d=t->large_png)!=-1) 
+    {
+      if (d>n) t->large_png=d-1;
+      else if (d==n) t->large_png=-1;
+    }
+    if ((d=t->elf)!=-1) 
+    {
+      if (d>n) t->elf=d-1;
+      else if (d==n) t->elf=-1;
+    }
+    if ((d=t->altelf)!=-1) 
+    {
+      if (d>n) t->altelf=d-1;
+      else if (d==n) t->altelf=-1;
+    }
+  }
+  mfree(lines[n]);
+  new_lines=malloc((lines_n-1)*sizeof(char *));
+  pp=lines;
+  for (int i=0, k=lines_n-1; i<k; i++)
+  {
+    if (i<n) new_lines[i]=pp[i];
+    else new_lines[i]=pp[i+1];
+  }
+  lines=new_lines;
+  lines_n--;
+  mfree(pp);
+}
+
+extern void open_select_file_gui(void *ed_gui);
+void on_file_select(USR_MENU_ITEM *item)
+{
+  if (item->type==0)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      wsprintf(item->ws,_percent_t,"SelectFile");
+      break;
+    }
+  }
+  if (item->type==1)
+  {
+    switch(item->cur_item)
+    {
+    case 0:
+      open_select_file_gui(item->user_pointer);
+      break;
+    }
+  }   
+}
+
+
 void new_or_editext_locret(void){}
 
 int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
@@ -203,10 +311,24 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
   char *s, tmp[132];
   int is_any_change=0;
   int n;
+  int efocus;
   WSHDR *ws;
   ES *cur_es=EDIT_GetUserPointer(data);
   ES *p=NULL;
   char *cline;
+  efocus=EDIT_GetFocus(data);
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    if (msg->gbsmsg->submess==ENTER_BUTTON)
+    {
+      if (efocus==4 || efocus==6 ||
+          efocus==8 || efocus==10)
+      {
+        EDIT_OpenOptionMenuWithUserItems(data,on_file_select,data,1);
+        return (-1);
+      }
+    }
+  }      
   if (msg->keys==0xFFF)
   {
     EDITCONTROL ec;
@@ -231,28 +353,31 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
     }
     else   // Добавление
     {
-      for (int i=0; i<ES_num; i++)
+      if (ws->wsbody[0])
       {
-        int index=es[i].ext;
-        if (index!=-1)
+        for (int i=0; i<ES_num; i++)
         {
-          if (strcmp_nocase(lines[index],tmp)==0)
+          int index=es[i].ext;
+          if (index!=-1)
           {
-            ShowMSG(1,(int)"Extension already registered!");
-            return (-1);
+            if (strcmp_nocase(lines[index],tmp)==0)
+            {
+              ShowMSG(1,(int)"Extension already registered!");
+              return (-1);
+            }
           }
         }
+        p=es=realloc(es,(ES_num+1)*sizeof(ES));
+        p+=ES_num;
+        lines=realloc(lines,(lines_n+1)*sizeof(char *));
+        cline=malloc(strlen(tmp)+1);
+        strcpy(cline,tmp);
+        lines[lines_n]=cline;
+        p->ext=lines_n;
+        lines_n++;
+        ES_num++;
+        is_any_change=1;
       }
-      p=es=realloc(es,(ES_num+1)*sizeof(ES));
-      p+=ES_num;
-      lines=realloc(lines,(lines_n+1)*sizeof(char *));
-      cline=malloc(strlen(tmp)+1);
-      strcpy(cline,tmp);
-      lines[lines_n]=cline;
-      p->ext=lines_n;
-      lines_n++;
-      ES_num++;
-      is_any_change=1;
     }
       
     ExtractEditControl(data,4,&ec);   // RUN
@@ -268,11 +393,33 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
     {
       if ((n=cur_es->elf)!=-1)
       {
-        if (strcmp(tmp,lines[n]))
+        if (ws->wsbody[0])
         {
-          lines[n]=realloc(lines[n],strlen(tmp)+1);
-          strcpy(lines[n],tmp);
-          is_any_change=1;
+          if (strcmp(tmp,lines[n]))
+          {
+            lines[n]=realloc(lines[n],strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            is_any_change=1;
+          }
+        }
+        else
+        {
+          DeleteLine(n);
+          is_any_change=1;         
+        }
+      }
+      else
+      {
+        if (ws->wsbody[0])
+        {
+          n=PasteLine(cur_es,RUN);
+          if (n!=-1)
+          {
+            lines[n]=malloc(strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            cur_es->elf=n;
+            is_any_change=1;
+          }
         }
       }
     }
@@ -305,11 +452,33 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
     {
       if ((n=cur_es->small_png)!=-1)
       {
-        if (strcmp(tmp,lines[n]))
+        if (ws->wsbody[0])
         {
-          lines[n]=realloc(lines[n],strlen(tmp)+1);
-          strcpy(lines[n],tmp);
-          is_any_change=1;
+          if (strcmp(tmp,lines[n]))
+          {
+            lines[n]=realloc(lines[n],strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            is_any_change=1;
+          }
+        }
+        else
+        {
+          DeleteLine(n);
+          is_any_change=1;        
+        }
+      }
+      else
+      {
+        if (ws->wsbody[0])
+        {
+          n=PasteLine(cur_es,SMALL);
+          if (n!=-1)
+          {
+            lines[n]=malloc(strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            cur_es->small_png=n;
+            is_any_change=1;
+          }
         }
       }
     }
@@ -340,11 +509,33 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
     {
       if ((n=cur_es->large_png)!=-1)
       {
-        if (strcmp(tmp,lines[n]))
+        if (ws->wsbody[0])
         {
-          lines[n]=realloc(lines[n],strlen(tmp)+1);
-          strcpy(lines[n],tmp);
-          is_any_change=1;
+          if (strcmp(tmp,lines[n]))
+          {
+            lines[n]=realloc(lines[n],strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            is_any_change=1;
+          }
+        }
+        else
+        {
+          DeleteLine(n);
+          is_any_change=1;        
+        }
+      }
+      else
+      {
+        if (ws->wsbody[0])
+        {
+          n=PasteLine(cur_es,BIG);
+          if (n!=-1)
+          {
+            lines[n]=malloc(strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            cur_es->large_png=n;
+            is_any_change=1;
+          }
         }
       }
     }
@@ -378,11 +569,33 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
     {
       if ((n=cur_es->altelf)!=-1)
       {
-        if (strcmp(tmp,lines[n]))
+        if (ws->wsbody[0])
         {
-          lines[n]=realloc(lines[n],strlen(tmp)+1);
-          strcpy(lines[n],tmp);
+          if (strcmp(tmp,lines[n]))
+          {
+            lines[n]=realloc(lines[n],strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            is_any_change=1;
+          }
+        }
+        else
+        {
+          DeleteLine(n);
           is_any_change=1;
+        }
+      }
+      else
+      {
+        if (ws->wsbody[0])
+        {
+          n=PasteLine(cur_es,ALTRUN);
+          if (n!=-1)
+          {
+            lines[n]=malloc(strlen(tmp)+1);
+            strcpy(lines[n],tmp);
+            cur_es->altelf=n;
+            is_any_change=1;
+          }
         }
       }
     }
@@ -405,6 +618,7 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
       int f;
       unsigned int err;
       char r='\r';
+      void *gui;
       if ((f=fopen(successed_extfile,A_WriteOnly|A_BIN|A_Truncate|A_Create,P_WRITE,&err))!=-1)
       {
         for (int i=0; i<lines_n; i++)
@@ -413,6 +627,12 @@ int new_or_editext_onkey(GUI *data, GUI_MSG *msg)
           fwrite(f,&r,1,&err);
         }
         fclose(f,&err);
+      }
+      gui=FindGUIbyId(main_gui_id, NULL);
+      if (gui)
+      {
+        Menu_SetItemCountDyn(gui, ES_num);
+        RefreshGUI();
       }
     }
     return (1);
@@ -666,7 +886,7 @@ void maincsm_oncreate(CSM_RAM *data)
   {
     ParseLines();
     patch_header(&main_menuhdr);
-    csm->gui_id=CreateMenu(0,0,&main_menustruct,&main_menuhdr,0,ES_num,0,0);
+    csm->gui_id=main_gui_id=CreateMenu(0,0,&main_menustruct,&main_menuhdr,0,ES_num,0,0);
   }
   else
   {

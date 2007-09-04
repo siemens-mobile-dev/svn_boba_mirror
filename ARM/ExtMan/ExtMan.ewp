@@ -2477,6 +2477,9 @@
   <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\visual.c</name>
+  </file>
 </project>
 
 
