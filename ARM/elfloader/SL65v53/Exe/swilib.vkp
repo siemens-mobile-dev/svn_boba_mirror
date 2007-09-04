@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SL65v53
 
-;Library 18.08.2007
+;Library 04.09.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -605,6 +605,8 @@
 08A0: 0xA094AF5C ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 ;
 08A4: 0xA161A68C ; 229: __arm void longjmp(jmp_buf, int);
+;
+08A8: 0xA0BFFC2F ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);

@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;CX75v13
 
-;Library 18.08.2007
+;Library 04.09.2007
 
 +0FD4000
 #pragma enable  old_equal_ff
@@ -571,6 +571,8 @@
 08A0: 0xA02F5054 ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 ;
 08A4: 0xA0EF30A4 ; 229: __arm void longjmp(jmp_buf, int);
+;
+08A8: 0xA07CEA53 ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
 #pragma disable old_equal_ff
 +0
 

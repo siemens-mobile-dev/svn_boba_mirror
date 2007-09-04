@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;S65v58
 
-;Library 18.08.2007
+;Library 04.09.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -606,6 +606,8 @@
 08A0: 0xA0961A60 ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 ;
 08A4: 0xA166B364 ; 229: __arm void longjmp(jmp_buf, int);
+;
+08A8: 0xA0C3421B ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver
