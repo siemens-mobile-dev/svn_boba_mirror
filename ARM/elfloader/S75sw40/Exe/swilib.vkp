@@ -371,6 +371,7 @@
 089C: 0xA027A958 ; 227: __arm int PlayMelody_PausePlayback(int handle);
 08A0: 0xA027A988 ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 08A4: 0xA0FC63B0 ; 229: __arm void longjmp(jmp_buf, int);
+08A8: 0xA095B861 ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
 
 #pragma disable old_equal_ff
 +0
