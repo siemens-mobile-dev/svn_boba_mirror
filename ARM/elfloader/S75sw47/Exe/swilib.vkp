@@ -8,6 +8,9 @@
 ;Functions Library
 ;(c) кто попало ;)
 /*
+04.09.07
++ 08A8: 0xA095B1DD   ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
+
 03.09.07
 * 0108: 0xA0303823   ;  42: IsScreenSaver
 + 0110: 0xA08FE105   ;  44: TempLigntOn
@@ -665,6 +668,7 @@
 089C: 0xA027C8DC   ; 227: int PlayMelody_PausePlayback(int handle)
 08A0: 0xA027C90C   ; 228: int PlayMelody_ResumePlayBack(int handle)
 08A4: 0xA0FC4D7C   ; 229: __arm void longjmp(jmp_buf, int);
+08A8: 0xA095B1DD   ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------
