@@ -7,7 +7,6 @@
 
 // Declare relocation areas for code, constants and data.
 -V(CODE)CODE_AREA,12
-//-V(CONST)CONFIG,12
 -V(DATA)DATA_AREA,12
 //-U(CODE_AREA)0-FFFFFFFF=(CONST_AREA)0-FFFFFFFF
 

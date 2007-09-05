@@ -2,9 +2,7 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\Weather.ewp</path>
+    <path>$WS_DIR$\weather.ewp</path>
   </project>
   <batchBuild/>
 </workspace>
-
-
