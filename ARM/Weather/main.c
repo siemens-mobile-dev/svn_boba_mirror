@@ -854,16 +854,21 @@ void ShowWeather(void)
     sprintf(s,"< %i/4 %i.%02i, %s >", itemnum+1, weath[itemnum].day,weath[itemnum].month,todlist[weath[itemnum].tod]);
     ascii2ws_add(ews, s);
     
+    extern const unsigned int FONT_SIZE_DATE;
+    extern const unsigned int FONT_DATE_COLOR;
+    
     PrepareEditCOptions(&ec_options);
-    SetPenColorToEditCOptions(&ec_options,3);//синий
-    SetFontToEditCOptions(&ec_options,2);
+    SetPenColorToEditCOptions(&ec_options,FONT_DATE_COLOR);
+    SetFontToEditCOptions(&ec_options,FONT_SIZE_DATE);
     ConstructEditControl(&ec,ECT_READ_ONLY,0x40,ews,wslen(ews));
     CopyOptionsToEditControl(&ec,&ec_options);  
     AddEditControlToEditQend(eq,&ec,ma);
     
+    extern const unsigned int FONT_SIZE_DATA;
+    extern const unsigned int FONT_DATA_COLOR;  
     PrepareEditCOptions(&ec_options);
-    SetPenColorToEditCOptions(&ec_options,1);//чёрный
-    SetFontToEditCOptions(&ec_options,1);
+    SetPenColorToEditCOptions(&ec_options,FONT_DATA_COLOR);
+    SetFontToEditCOptions(&ec_options,FONT_SIZE_DATA);
         
     CutWSTR(ews,0);
     pic_n= weath[itemnum].tod ? AddPicIfNotExist(&top,S_ICONS[weath[itemnum].cloudiness]) : AddPicIfNotExist(&top,S_ICONS[weath[itemnum].cloudiness+11]);

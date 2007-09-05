@@ -107,7 +107,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.40A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -546,11 +546,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>weather.elf</state>
+          <state>weather_NSG.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1369,11 +1369,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>weather.elf</state>
+          <state>weather_SG.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2193,11 +2193,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>weather.elf</state>
+          <state>weather_EL.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
