@@ -242,7 +242,7 @@ static void get_answer(void)
 static void SendHandShake()
 {
   char *hst=malloc(1024);
-  strcpy(hst,"GET /?hs=true&p=1.1&c=tst&v=1.0&u=");
+  strcpy(hst,"GET /?hs=true&p=1.1&c=lmd&v=1.0&u=");
   urlcat(hst,USERNAME);
   strcat(hst,"\r\nHost: post.audioscrobbler.com\r\n\r\n");
   SUBPROC((void*)INETLOG,0,hst);
@@ -417,7 +417,7 @@ static int SendSubmit()
   strcat(req," HTTP/1.1\r\nContent-type: application/x-www-form-urlencoded\r\nHost: ");
   strcat(req,POST_HOST);
 //  sprintf(req+strlen(req),":%d",POST_PORT);
-  strcat(req,"\r\nUser-Agent: Mozilla/5.0 (compatible; libscrobbler 2.0; tst 1.0)");
+  strcat(req,"\r\nUser-Agent: lmd");
   strcat(req,"\r\nContent-Length: ");
   sprintf(s2,"%d",strlen(SUBMIT_DATA));
   strcat(req,s2);
