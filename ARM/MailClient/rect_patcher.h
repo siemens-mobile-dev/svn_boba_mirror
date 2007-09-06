@@ -25,3 +25,16 @@ void patch_input(const INPUTDIA_DESC* inp)
   ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 
+#pragma inline
+void patch_header_small(HEADER_DESC* head)
+{
+  head->rc.x=3;
+  head->rc.x2=ScreenW()-6;
+#ifndef ELKA
+  head->rc.y=YDISP+0x18;
+  head->rc.y2=YDISP+0x18+0x13;
+#else
+  head->rc.y=YDISP+0x23;
+  head->rc.y2=YDISP+0x23+0x22;
+#endif
+}

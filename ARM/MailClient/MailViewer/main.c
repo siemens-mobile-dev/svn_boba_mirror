@@ -166,7 +166,7 @@ SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Options"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt=
@@ -179,7 +179,7 @@ SOFTKEY_DESC menu_sk2[]=
 {
   {0x0000,0x0000,(int)""},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt2=
@@ -2133,12 +2133,7 @@ void create_options_menu(ML_VIEW *i)
 {
   int to_remove[OPTIONS_ITEMS_N+1];
   int n;
-  
-  options_menuhdr.rc.x=3;
-  options_menuhdr.rc.y=0x18;
-  options_menuhdr.rc.x2=ScreenW()-6;
-  options_menuhdr.rc.y2=0x18+0x13;
-  
+
   n=0;
   if (i)
   {
@@ -2181,6 +2176,7 @@ void create_options_menu(ML_VIEW *i)
   }
   to_remove[0]=n;
   if (n==OPTIONS_ITEMS_N) return;
+  patch_header_small((HEADER_DESC*)(&options_menuhdr));
   options_menu_id=CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,OPTIONS_ITEMS_N,i,to_remove);
 }
 

@@ -57,7 +57,7 @@ void method0(MAIN_GUI *data)
     
     wsprintf(data->ws1,"send/recv bytes: %u/%u\nReceived: %u/%u\nDeleted: %u",pop_stat->total_send,pop_stat->total_recv,
              pop_stat->pop3_recv,pop_stat->in_pop3,pop_stat->pop3_del);
-    DrawString(data->ws1,3,60+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
+    DrawString(data->ws1,3,scr_h/3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM),FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
   }
    
   ascii2ws(data->ws1,"Stop");
