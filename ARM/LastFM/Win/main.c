@@ -30,7 +30,6 @@ FILE *f;*/
 //------------------------------------------------
 //Used on Submit
 char *password=NULL;
-char *challenge=NULL;
 char *sessionkey=NULL;
 char *submiturl=NULL;
 char *songlist=NULL;
@@ -94,8 +93,8 @@ char *urlescape(const unsigned char *source)
 		|| '0' <= c && c <= '9'
 		|| c == '-' || c == '_' || c == '.')
 			out[i++]= c;
-		else if( c == ' ' )
-			out[i++]= '+';
+//		else if( c == ' ' )
+//			out[i++]= '+';
 		else {
 			out[i++]= '%';
 			out[i++]= h[c >> 4];
@@ -106,7 +105,7 @@ char *urlescape(const unsigned char *source)
 	return out;
 }
 
-void genSessionKey(void)
+char *genSessionKey(const char *challenge)
 {
   md5_state_t md5state;
 	unsigned char md5pword[16];
@@ -126,10 +125,10 @@ void genSessionKey(void)
 		key[2*j+1] = a[1];
 	}
   mfree(clear);
-	sessionkey = key;
+  return key;
 }
 
-void setPassword(const char *pass)
+char *setPassword(const char *pass, const char *challenge)
 {
   char *tmp;
   int j;
@@ -138,7 +137,7 @@ void setPassword(const char *pass)
 	md5_init(&md5state);
 	md5_append(&md5state, (unsigned const char *)pass, (int)strlen(pass));
 	md5_finish(&md5state, md5pword);
-	if (!strlen(pass)) return;
+	if (!strlen(pass)) return NULL;
 	tmp=malloc(33);
   memset(tmp,0,33);
 	for (j = 0;j < 16;j++)
@@ -149,7 +148,7 @@ void setPassword(const char *pass)
 		tmp[2*j+1] = a[1];
 	}
 	password = tmp;
-	genSessionKey();
+	return genSessionKey(challenge);
 }
 
 /*int sockputs(char *s, char echof)
@@ -167,22 +166,26 @@ void sendHandShake(void)
 {
  char *hst=BS;
  char *s;
+ char *authdata;
+ char *timstmp;
  int i;
-// time_t now;
-// time(&now);
-// timstmp=i2a(now,10);
-// setPassword(PASSWORD);
+ time_t now;
+ time(&now);
+ timstmp=i2a(now,10);
+ authdata=setPassword(PASSWORD,timstmp);
  hst[0]=0;
- strcat(hst,"GET /?hs=true&p=1.1&c=tst&v=1.0&u=");
+ strcat(hst,"GET /?hs=true&p=1.2&c=lmd&v=1.1&u=");
  s=urlescape(USERNAME);
  strcat(hst,s);
  mfree(s);
-// strcat(hst,"&t=");
-// strcat(hst,timstmp);
-// strcat(hst,"&a=");
-// strcat(hst,authdata);
+ strcat(hst,"&t=");
+ strcat(hst,timstmp);
+ strcat(hst,"&a=");
+ strcat(hst,authdata);
  strcat(hst,"\r\nHost: post.audioscrobbler.com\r\n\r\n");
  send(sck,hst,strlen(hst),0);
+ mfree(authdata);
+ mfree(timstmp);
 }
 
 void recvHandShake(void)
@@ -201,13 +204,14 @@ void recvHandShake(void)
    return;
  }
  response=strtok(s, seps);
- if (stricmp("UPTODATE",response)!=0)
+ if (stricmp("OK",response)!=0)
  {
    printf("Error: %s",response);
    fmstate=0;
    return;
  }
- challenge=globalstr(strtok(NULL,seps));
+ sessionkey=globalstr(strtok(NULL,seps));
+ strtok(NULL,seps); //NP url
  submiturl=globalstr(strtok(NULL,seps));
 }
 
@@ -225,7 +229,7 @@ void addSong(
 //  char sc[]=" ";
   char *num=i2a(songnum,10);
   int i;
-	struct tm *today = gmtime(&splay_time);
+//	struct tm *today = gmtime(&splay_time);
 	char ti[20];
   if (!songlist)
   {
@@ -240,11 +244,16 @@ void addSong(
   strcat(songlist,"&b[");strcat(songlist,num);strcat(songlist,"]=");strcat(songlist,s);mfree(s);
   s=urlescape(track);
   strcat(songlist,"&t[");strcat(songlist,num);strcat(songlist,"]=");strcat(songlist,s);mfree(s);
-	strftime(ti, sizeof(ti), "%Y-%m-%d %H:%M:%S", today);
+  //
+  //	strftime(ti, sizeof(ti), "%Y-%m-%d %H:%M:%S", today);
+  sprintf(ti,"%u",splay_time);
   s=urlescape(ti);
   strcat(songlist,"&i[");strcat(songlist,num);strcat(songlist,"]=");strcat(songlist,s);mfree(s);
   s=i2a(length,10);
+  strcat(songlist,"&o[");strcat(songlist,num);strcat(songlist,"]=P");
+  strcat(songlist,"&r[");strcat(songlist,num);strcat(songlist,"]=");
   strcat(songlist,"&l[");strcat(songlist,num);strcat(songlist,"]=");strcat(songlist,s);mfree(s);
+  strcat(songlist,"&n[");strcat(songlist,num);strcat(songlist,"]=");
   strcat(songlist,"&m[");strcat(songlist,num);strcat(songlist,"]=");
   mfree(num);
   songnum++;
@@ -261,24 +270,24 @@ void sendSubmit(void)
     closesocket(sck);
     return;
   }
-  setPassword(PASSWORD);
+//  setPassword(PASSWORD);
   ss=malloc(256);ss[0]=0;
-  s=urlescape(USERNAME);
-  strcat(ss,"u=");
-  strcat(ss,s);mfree(s);
-  strcat(ss,"&s=");
+//  s=urlescape(USERNAME);
+//  strcat(ss,"u=");
+//  strcat(ss,s);mfree(s);
+  strcat(ss,"s=");
   strcat(ss,sessionkey);
   ss=realloc(ss,strlen(ss)+strlen(songlist)+1);
   strcat(ss,songlist);
   s=malloc(strlen(ss)+strlen(posturl)+1024);
   strcpy(s,"POST /");
   strcat(s,posturl);
-  strcat(s," HTTP/1.0\r\nHost: ");
+  strcat(s," HTTP/1.1\r\nHost: ");
   strcat(s,submhost);
   strcat(s,"\r\nContent-Length: ");
   s2=i2a(strlen(ss),10);
   strcat(s,s2);mfree(s2);
-  strcat(s,"\r\nUser-Agent: Mozilla/5.0 (compatible; libscrobbler 2.0; tst 1.0)");
+  strcat(s,"\r\nUser-Agent: lmd v1.1");
   strcat(s,"\r\nContent-type: application/x-www-form-urlencoded\r\nAccept: */*\r\nConnection: Close\r\n\r\n");
   strcat(s,ss);
   printf("Submit:\n%s",s);

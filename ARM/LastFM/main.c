@@ -110,7 +110,7 @@ unsigned long TimeDate2Long(void)
 }
 
 // Печать даты и времени по количеству секунд с 01-01-2000 00:00
-void PrintTimeDate(char *p, unsigned long x)
+/*static void PrintTimeDate(char *p, unsigned long x)
 {
   unsigned int sec,min,hrs,mon,yrs;
   unsigned int day,iday,day4,yrs4;
@@ -132,7 +132,7 @@ void PrintTimeDate(char *p, unsigned long x)
   day++;
   if (yrs>99) yrs=0;
   sprintf(p,"%04d-%02d-%02d %02d:%02d:%02d",yrs+2000,mon,day,hrs,min,sec);
-}
+}*/
 
 void SaveLog(int dummy, TSONG *song)
 {
@@ -166,14 +166,13 @@ void SaveLog(int dummy, TSONG *song)
 	  urlescape(buf,utf8);
 	  fwrite(f,buf,strlen(buf),&ul);
 
-	  fwrite(f,"&m[]=",5,&ul);
-
-	  fwrite(f,"&l[]=",5,&ul);
+	  fwrite(f,"&m[]=&o[]=P&r[]=&n[]=&l[]=",26,&ul);
 	  sprintf(utf8,"%d",song->length);
 	  fwrite(f,utf8,strlen(utf8),&ul);
 
 	  fwrite(f,"&i[]=",5,&ul);
-	  PrintTimeDate(utf8,TIMEZONESIGN?song->timedate-3600*TIMEZONE:song->timedate+3600*TIMEZONE);
+//	  PrintTimeDate(utf8,TIMEZONESIGN?song->timedate-3600*TIMEZONE:song->timedate+3600*TIMEZONE);
+	  sprintf(utf8,"%u",(TIMEZONESIGN?song->timedate-3600*TIMEZONE:song->timedate+3600*TIMEZONE)+946684800L);
 	  urlescape(buf,utf8);
 	  fwrite(f,buf,strlen(buf),&ul);
 	  
