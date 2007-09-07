@@ -340,15 +340,15 @@ SOFTKEYSTAB menu_skt=
 
 void contactlist_menu_ghook(void *data, int cmd);
 int contactlist_menu_onkey(void *data, GUI_MSG *msg);
-void contactlist_menu_iconhndl(void *data, int curitem, int *unk);
+void contactlist_menu_iconhndl(void *data, int curitem, void *unk);
 
 MENU_DESC contactlist_menu=
 {
-  8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
+  8,contactlist_menu_onkey,contactlist_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0x11,
-  (void *)contactlist_menu_iconhndl,
+  contactlist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -361,7 +361,7 @@ int create_menu(void)
   return(CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0));
 }
 
-void contactlist_menu_iconhndl(void *data, int curitem, int *unk)
+void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 {
   void *item=AllocMenuItem(data);
   WSHDR *ws=AllocMenuWS(data,10);
@@ -468,3 +468,4 @@ int create_menu2(void)
   wsprintf(ews,percent_t,"Μενώ2!");
   return(CreateMultiLinesMenu(0,0,&menu2,&contactlist_menuhdr,0,10));
 }
+
