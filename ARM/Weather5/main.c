@@ -51,6 +51,7 @@ void create_connect(void)
     sa.family=1;
     sa.port=htons(80);
     sa.ip=htonl(IP_ADDR(212,48,138,20));
+    //sa.ip=htonl(IP_ADDR(212,48,138,19));
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
       connect_state=1;
@@ -328,7 +329,7 @@ void maincsm_oncreate(CSM_RAM *data)
   */
   
   
-  ews=AllocWS(16384);
+  ews=AllocWS(1024);
   do_start_connection();
 }
 
@@ -532,10 +533,11 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   return(0); //Do standart keys
 }
 
-char hdesc[128];
+char hdesc[48];
 void patch_hdesc()
 {
   sprintf(hdesc, "%i/20, %s", itemnum+1, Town_Name);
+  //strcat(hdesc, Town_Name);
 }
 
 void edchat_locret(void){};
@@ -593,8 +595,10 @@ void ShowWeather(void)
   {
     patch_hdesc();
     
+    char str[1024];
     CutWSTR(ews,0);
-    utf8_2ws(ews, weath[itemnum].DateTime, 512);
+    utf82win(str,(const char *)weath[itemnum].DateTime);
+    ascii2ws(ews, str);
     
     extern const unsigned int FONT_SIZE_DATE;
     extern const unsigned int FONT_DATE_COLOR;
@@ -624,14 +628,13 @@ void ShowWeather(void)
       AddEditControlToEditQend(eq,&ec,ma);      
     }    
 
-    char str[512];
     sprintf(str, "%s\xB0\x43\n%s\n%s\n%s\n%s", weath[itemnum].Temp,
                                                weath[itemnum].Cloudiness,
                                                weath[itemnum].Pressure,
                                                weath[itemnum].Wind,
                                                weath[itemnum].Rewlet);
     utf82win(str,(const char *)str);
-    wsprintf(ews, str);
+    ascii2ws(ews, str);
 
     ConstructEditControl(&ec,/*ECT_READ_ONLY*/ECT_NORMAL_TEXT,0x40,ews,wslen(ews));
     CopyOptionsToEditControl(&ec,&ec_options);
