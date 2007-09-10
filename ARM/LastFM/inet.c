@@ -143,6 +143,13 @@ static void create_connect(void)
     is_gprs_online=0;
     return;
   }
+  {
+    //Проверяем, а если что передать вообще
+    unsigned int err;
+    FSTATS stat;
+    if (GetFileStats(TEMP_FILE,&stat,&err)==-1) return; //Нечего делать
+    if (stat.size<=0) return;
+  }
   DNR_ID=0;
   *socklasterr()=0;
   hostname=is_handshaked?POST_HOST:HANDSHAKE_HOST;
