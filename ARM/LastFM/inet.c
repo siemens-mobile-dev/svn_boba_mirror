@@ -651,7 +651,7 @@ static void stop_socket(void)
     closesocket(sock);
     sock=-1;
   }
-  if (enable_connect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*(is_handshaked?2:120),do_reconnect);
+  if (enable_connect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
 }
 
 int ParseSocketMsg(GBS_MSG *msg)
