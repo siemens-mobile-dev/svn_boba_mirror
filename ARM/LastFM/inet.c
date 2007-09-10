@@ -34,6 +34,7 @@ static int DNR_TRIES=3;
 static int connect_state=0;
 
 static int sock=-1;
+static int remote_closed=0;
 
 static int sendq_l=0; //Длинна очереди для send
 static char *sendq_p=NULL; //указатель очереди
@@ -135,6 +136,7 @@ static void create_connect(void)
   SOCK_ADDR sa;
   //Устанавливаем соединение
   connect_state = 0;
+  remote_closed=0;	  
   GBS_DelTimer(&reconnect_tmr);
   if (!IsGPRSEnabled())
   {
@@ -202,6 +204,7 @@ static void create_connect(void)
 	}
 	else
 	{
+	  remote_closed=1;
 	  closesocket(sock);
 	  sock=-1;
 	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
@@ -481,6 +484,7 @@ static void SendSubmit(void)
 {
   if (!_SendSubmit())
   {
+    remote_closed=1; //Потому как нех ;)
     enable_connect=0;
     end_socket();
   }
@@ -629,6 +633,20 @@ static void ParseSubmit(void)
   if (enable_connect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*(is_handshaked?2:120),do_reconnect);
 }
 
+static void stop_socket(void)
+{
+#ifdef NEEDINETLOG
+  INETLOG(0,"\r\n!!! Stop socket !!!\r\n");
+#endif
+  if (sock>=0)
+  {
+    shutdown(sock,2);
+    closesocket(sock);
+    sock=-1;
+  }
+  if (enable_connect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*(is_handshaked?2:120),do_reconnect);
+}
+
 int ParseSocketMsg(GBS_MSG *msg)
 {
   if (msg->msg==MSG_HELPER_TRANSLATOR)
@@ -709,8 +727,8 @@ int ParseSocketMsg(GBS_MSG *msg)
       case ENIP_BUFFER_FREE:
 	if (!sendq_p)
 	{
-	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE!");
-	  SUBPROC((void *)end_socket);
+//	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE!");
+//	  SUBPROC((void *)end_socket);
 	}
 	else
 	{
@@ -721,8 +739,8 @@ int ParseSocketMsg(GBS_MSG *msg)
       case ENIP_BUFFER_FREE1:
 	if (!sendq_p)
 	{
-	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
-	  SUBPROC((void *)end_socket);
+//	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
+//	  SUBPROC((void *)end_socket);
 	}
 	else
 	{
@@ -731,6 +749,7 @@ int ParseSocketMsg(GBS_MSG *msg)
 	}
 	break;
       case ENIP_SOCK_REMOTE_CLOSED:
+	remote_closed=1;
 #ifdef NEEDINETLOG
 	SUBPROC((void*)INETLOG,0,"ENIP_SOCK_REMOTE_CLOSED\r\n");
 #endif
@@ -743,16 +762,22 @@ int ParseSocketMsg(GBS_MSG *msg)
 	SUBPROC((void*)INETLOG,0,"ENIP_SOCK_CLOSED\r\n");
 #endif
 	connect_state=0;
-	sock=-1;
-	if (is_handshaked)
+	if (remote_closed)
 	{
-	  SUBPROC((void*)ParseSubmit);
+	  sock=-1;
+	  if (is_handshaked)
+	  {
+	    SUBPROC((void*)ParseSubmit);
+	  }
+	  else
+	  {
+	    SUBPROC((void*)ParseHandShake);
+	  }
 	}
 	else
 	{
-	  SUBPROC((void*)ParseHandShake);
+	  SUBPROC((void*)stop_socket);
 	}
-//	if (enable_connect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*(is_handshaked?2:120),do_reconnect);
 	break;
       }
     }
