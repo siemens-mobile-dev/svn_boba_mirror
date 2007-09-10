@@ -87,10 +87,10 @@
 012C: 0xA0908C68   ; 4B: StartMidlet
 0130: 0xA082D7D5   ; 4C: GetMissedCallsCount
 0134: 0xA00931E8   ; 4D: CallAfterTimer(void *htimer, long ms, void ptr())
-0138: 0xA07FCF55   ; 4E: int MsgBoxError(int flag, int LgpId)
-013C: 0xA07FCF65   ; 4F: int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int))
+0138: 0xA07FCF65 ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA07FCFC5 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
 
-0140: 0xA07FCFCF   ; 50: int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int))
+0140: 0xA07FCFCF ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
 0144: 0xA0B93043   ; 51: GetNetAccessMode
 0148: 0xA8D07E18   ; 52: GetIlluminationDataTable
 014C: 0xA0FBFA59   ; 53: memcmp(void *m1,void *m2,int n)
@@ -102,10 +102,10 @@
 0164: 0xA0FBFF70   ; 59: memcpy(void *dest,const void *source,int cnt)
 0168: 0xA07A6911   ; 5A: KeypressOn(int key)
 016C: 0xA07A6A23   ; 5B: KeypressOff(int key
-0170: 0xA0291EE4   ; 5C: GetCPUClock()
+0170: 0xA031A62D   ; 5C: GetCPUClock().
 0174: 0xA031A667   ; 5D: GetCPULoad()
 0178: 0xA031A635   ; 5E: GetMMIMemUsed
-017C: 0xA0094D58   ; 5F: int GetFreeRamAvail()
+017C: 0xA0094D58   ; 5F: int GetFreeRamAvail().
 
 0180: 0xA0316231   ; 60: ShowMainMenu
 0184: 0xA02A567B   ; 61: ShowNativeMenu
