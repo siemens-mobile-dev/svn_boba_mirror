@@ -112,7 +112,7 @@ void get_answer(void)
     }
   }
 }
-
+/*
 void log_data(char *data, int pn)
 {
   int hFile;
@@ -127,7 +127,7 @@ void log_data(char *data, int pn)
     fclose(hFile, &io_error);
   }  
 }
-
+*/
 int itemnum=0;
 void Parsing()
 {  

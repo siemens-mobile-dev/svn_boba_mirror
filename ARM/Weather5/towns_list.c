@@ -107,15 +107,20 @@ static int twns_menu_keyhook(void *data, GUI_MSG *msg)
   {
     if (twns_count) 
     {
+      extern int wd_id;
+      extern char logbuf[1024];
+      extern int page_num;
+      extern int itemnum;
+      
       const char *p=strrchr(towns_lines[GetCurMenuItem(data)],';')+1;
       strncpy(Town_ID,towns_lines[GetCurMenuItem(data)],p-towns_lines[GetCurMenuItem(data)]-1); 
       Town_ID[p-towns_lines[GetCurMenuItem(data)]-1]='\0';
       //ShowMSG(1, (int)Town_ID);
-      extern int wd_id;
-      extern char logbuf[1024];
+    
       sprintf(logbuf, "");
-      extern int page_num;
       page_num=1;
+      itemnum=0;
+      
       GeneralFunc_flag1(wd_id,1);
       GeneralFunc_flag1(Menu_ID,1);
       do_start_connection();
