@@ -140,7 +140,7 @@ void SaveLog(int dummy, TSONG *song)
   char buf[1024];
   char utf8[256];
   int playedsec;
-  if ((song->track)&&(song->artist)&&(song->album))
+  if ((song->track)&&(song->artist))
   {
     if (song->length>=30)
     {
@@ -162,9 +162,12 @@ void SaveLog(int dummy, TSONG *song)
 	  fwrite(f,buf,strlen(buf),&ul);
 
 	  fwrite(f,"&b[]=",5,&ul);
-	  ws_2utf8(song->album,utf8,&i,255);
-	  urlescape(buf,utf8);
-	  fwrite(f,buf,strlen(buf),&ul);
+	  if (song->album)
+	  {
+	    ws_2utf8(song->album,utf8,&i,255);
+	    urlescape(buf,utf8);
+	    fwrite(f,buf,strlen(buf),&ul);
+	  }
 
 	  fwrite(f,"&m[]=&o[]=P&r[]=&n[]=&l[]=",26,&ul);
 	  sprintf(utf8,"%d",song->length);
