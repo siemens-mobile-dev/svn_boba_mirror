@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>"obexcopy.exe" $EXE_DIR$\BalletMini.elf \MMCard\BalletMini.elf</postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\BalletMini.elf \MMCard\ZBin\BalletMini\BalletMini.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -2180,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>"obexcopy.exe" $EXE_DIR$\BalletMini.elf \Data\BalletMini.elf</postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\BalletMini.elf \Data\ZBin\BalletMini\BalletMini.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -3004,7 +3004,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>"obexcopy.exe" $EXE_DIR$\BalletMini.elf \MMCard\BalletMini.elf</postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\BalletMini.elf \MMCard\ZBin\BalletMini\BalletMini.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -3315,6 +3315,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\func.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\inet.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>

@@ -8,6 +8,9 @@
 #include "string_works.h"
 #include "destructors.h"
 #include "siemens_unicode.h"
+#include "inet.h"
+
+int ENABLE_REDRAW=0;
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -21,6 +24,7 @@ char *view_url;
 
 //static const char percent_t[]="%t";
 
+WSHDR *ws_console;
 
 typedef struct
 {
@@ -56,6 +60,10 @@ static void StartGetFile(void)
       ShowMSG(1,(int)"Can't open file!");
       UnlockSched();
     }
+  }
+  if (view_url_mode==MODE_URL)
+  {
+    StartINET(view_url);
   }
 }
 
@@ -103,6 +111,9 @@ static void method0(VIEW_GUI *data)
 		   FONT_SMALL,TEXT_NOFORMAT
 		       ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
     }*/
+    DrawString(ws_console,0,0,scr_w,20,
+		 FONT_SMALL,TEXT_NOFORMAT
+		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
   }
 }
 
@@ -128,6 +139,7 @@ static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(vo
 {
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=&data->vd->dynpng_list->dp;
+  ENABLE_REDRAW=1;
   DisableIDLETMR();
   data->gui.state=2;
 }
@@ -136,6 +148,7 @@ static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
 {
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=NULL;
+  ENABLE_REDRAW=0;
   if (data->gui.state!=2)
     return;
   data->gui.state=1;
@@ -259,6 +272,7 @@ static void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->view_id=CreateGUI(view_gui);
+  ws_console=AllocWS(1024);
 }
 
 void FreeViewUrl(void)
@@ -268,7 +282,9 @@ void FreeViewUrl(void)
 
 static void KillAll(void)
 {
+  StopINET();
   FreeViewUrl();
+  FreeWS(ws_console);
 }
 
 static void Killer(void)
@@ -321,6 +337,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       }
     }
   }
+  ParseSocketMsg(msg);
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->view_id)
@@ -373,7 +390,7 @@ static void UpdateCSMname(void)
     str_2ws(ws,view_url,255);
     break;
   case MODE_URL:
-    wsprintf(ws,"%s",view_url);
+    wsprintf(ws,"%s",view_url+2);
     break;
   }
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"BM: %w",ws);
@@ -403,8 +420,10 @@ int ParseInputFilename(const char *fn)
 	if (GetFileStats(fn,&stat,&err)==-1) return 0;
 	if ((fsize=stat.size)<=0) return 0;
 	if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
-	buf=malloc(fsize+1);
-	buf[fread(f,buf,fsize,&err)]=0;
+	buf=malloc(fsize+3);
+	buf[0]='0';
+	buf[1]='/';
+	buf[fread(f,buf+2,fsize,&err)]=0;
 	fclose(f,&err);
 	s=buf;
 	while(*s>32) s++;
@@ -418,9 +437,74 @@ int ParseInputFilename(const char *fn)
   return 0;
 }
 
+char URLCACHE_PATH[256];
+char OMSCACHE_PATH[256];
+char AUTHDATA_FILE[256];
+
+char AUTH_PREFIX[64];
+char AUTH_CODE[128];
+
+int LoadAuthCode(void)
+{
+  int f;
+  unsigned int err;
+  int fsize;
+  char *buf;
+  char *s;
+  int c;
+  FSTATS stat;
+  if (GetFileStats(AUTHDATA_FILE,&stat,&err)==-1) return 0;
+  if ((fsize=stat.size)<=0) return 0;
+  if ((f=fopen(AUTHDATA_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
+  buf=malloc(fsize+1);
+  buf[fread(f,buf,fsize,&err)]=0;
+  fclose(f,&err);
+  s=buf;
+  f=0;
+  err=0;
+  while((c=*s++)>=32)
+  {
+    if (f<63) AUTH_PREFIX[f++]=c;
+  }
+  if (c)
+  {
+    while((c=*s)<32)
+    {
+      if (!c) goto LEND;
+      s++;
+    }
+    f=0;
+    while((c=*s++)>32)
+    {
+      if (f<127) AUTH_CODE[f++]=c;
+    }
+    err=1;
+  }
+LEND:
+  mfree(buf);
+  return err;
+}
+
 int main(const char *exename, const char *filename)
 {
   char dummy[sizeof(MAIN_CSM)];
+  char *path=strrchr(exename,'\\');
+  int l;
+  if (!path) return 0; //Фигня какая-то
+  path++;
+  l=path-exename;
+  memcpy(URLCACHE_PATH,exename,l);
+  memcpy(OMSCACHE_PATH,exename,l);
+  memcpy(AUTHDATA_FILE,exename,l);
+  strcat(AUTHDATA_FILE,"AuthCode");
+  if (!LoadAuthCode())
+  {
+    LockSched();
+    ShowMSG(1,(int)"BM: Can't load AuthCode!");
+    UnlockSched();
+    SUBPROC((void *)Killer);
+    return 0;
+  }
   if (ParseInputFilename(filename))
   {
     UpdateCSMname();
@@ -431,7 +515,7 @@ int main(const char *exename, const char *filename)
   else
   {
     LockSched();
-    ShowMSG(1,(int)"Nothing to do!");
+    ShowMSG(1,(int)"BM: Nothing to do!");
     UnlockSched();
     SUBPROC((void *)Killer);
   }

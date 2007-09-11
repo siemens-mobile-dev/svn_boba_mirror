@@ -1,0 +1,508 @@
+#include "../inc/swilib.h"
+#include "inet.h"
+#include "local_ipc.h"
+#include "string_works.h"
+#include "view.h"
+
+#ifndef NEWSGOLD
+#define SEND_TIMER
+#endif
+
+#define TMR_SECOND 216
+
+extern WSHDR *ws_console;
+
+volatile static int is_gprs_online=1;
+
+static int DNR_ID=0;
+static int DNR_TRIES=3;
+
+static int connect_state=0;
+
+static int sock=-1;
+
+static int sendq_l=0; //Длинна очереди для send
+static char *sendq_p=NULL; //указатель очереди
+
+static int recvq_l=0;
+static char *recvq_p=NULL;
+
+static char OM_POST_HOST[]="80.232.117.10";
+static unsigned short OM_POST_PORT=80;
+
+static int receive_mode;
+
+static char *URL;
+
+static void SmartREDRAW(void)
+{
+  extern int ENABLE_REDRAW;
+  if (ENABLE_REDRAW) REDRAW();
+}
+
+static void create_connect(void)
+{
+  int ***p_res=NULL;
+  void do_reconnect(void);
+  const char *hostname;
+  unsigned int ip;
+  int err;
+
+  SOCK_ADDR sa;
+  //Устанавливаем соединение
+  connect_state = 0;
+  receive_mode=0;
+  if (!IsGPRSEnabled())
+  {
+    is_gprs_online=0;
+    return;
+  }
+  DNR_ID=0;
+  *socklasterr()=0;
+  hostname=OM_POST_HOST;
+  ip=str2ip(hostname);
+  if (ip!=0xFFFFFFFF)  
+  {
+    sa.ip=ip;
+    LockSched();
+    wsprintf(ws_console,"ip connect");
+    UnlockSched();
+    SmartREDRAW();
+    goto L_CONNECT;
+  }  
+  LockSched();
+  wsprintf(ws_console,"gethostbyname");
+  UnlockSched();
+  SmartREDRAW();
+  err=async_gethostbyname(hostname,&p_res,&DNR_ID); //03461351 3<70<19<81
+  if (err)
+  {
+    if ((err==0xC9)||(err==0xD6))
+    {
+      if (DNR_ID)
+      {
+	LockSched();
+	wsprintf(ws_console,"wait dnr...");
+	UnlockSched();
+	SmartREDRAW();
+	return; //Ждем готовности DNR
+      }
+    }
+    else
+    {
+      LockSched();
+      wsprintf(ws_console,"DNR fault!");
+      ShowMSG(1,(int)"BM: DNR fault!");
+      UnlockSched();
+      return;
+    }
+  }
+  if (p_res)
+  {
+    if (p_res[3])
+    {
+      LockSched();
+      wsprintf(ws_console,"DNR ok!");
+      UnlockSched();
+      SmartREDRAW();
+      DNR_TRIES=0;
+      sa.ip=p_res[3][0][0];
+    L_CONNECT:
+      LockSched();
+      wsprintf(ws_console,"Start socket...");
+      UnlockSched();
+      SmartREDRAW();
+      sock=socket(1,1,0);
+      if (sock!=-1)
+      {
+	sa.family=1;
+	sa.port=htons(OM_POST_PORT);
+	if (connect(sock,&sa,sizeof(sa))!=-1)
+	{
+	  connect_state=1;
+	}
+	else
+	{
+	  int s=sock;
+	  sock=-1;
+	  closesocket(s);
+	  LockSched();
+	  wsprintf(ws_console,"Connect fault");
+	  ShowMSG(1,(int)"BM: Connect fault!");
+	  UnlockSched();
+	}
+      }
+      else
+      {
+	//Не осилили создания сокета, закрываем GPRS-сессию
+	GPRS_OnOff(0,1);
+      }
+    }	
+  }
+  else
+  {
+    DNR_TRIES--;
+  }
+}
+
+#ifdef SEND_TIMER
+static GBSTMR send_tmr;
+#endif
+
+static void ClearSendQ(void)
+{
+  mfree(sendq_p);
+  sendq_p=NULL;
+  sendq_l=NULL;
+#ifdef SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
+}
+
+static void ClearRecvQ(void)
+{
+  mfree(recvq_p);
+  recvq_p=NULL;
+  recvq_l=NULL;
+}
+
+static void end_socket(void)
+{
+  if (sock>=0)
+  {
+    shutdown(sock,2);
+    closesocket(sock);
+  }
+#ifdef SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
+}
+
+static void free_socket(void)
+{
+  sock=-1;
+  connect_state=0;
+  ClearSendQ();
+  ClearRecvQ();
+}
+
+#ifdef SEND_TIMER
+static void resend(void)
+{
+  void bsend(int len, void *p);
+  SUBPROC((void*)bsend,0,0);
+}
+#endif
+
+//Буферизированая посылка в сокет, c последующим освобождением указателя
+static void bsend(int len, void *p)
+{
+  int i;
+  int j;
+  if (connect_state<2)
+  {
+    mfree(p);
+    return;
+  }
+  if (p)
+  {
+    //Проверяем, не надо ли добавить в очередь
+    if (sendq_p)
+    {
+      //Есть очередь, добавляем в нее
+      memcpy((sendq_p=realloc(sendq_p,sendq_l+len))+sendq_l,p,len);
+      mfree(p);
+      sendq_l+=len;
+      return;
+    }
+    sendq_p=p;
+    sendq_l=len;
+  }
+  //Отправляем уже существующее в очереди
+  while((i=sendq_l)!=0)
+  {
+    if (i>0x400) i=0x400;
+    j=send(sock,sendq_p,i,0);
+    if (j<0)
+    {
+      j=*socklasterr();
+      if ((j==0xC9)||(j==0xD6))
+      {
+	return; //Видимо, надо ждать сообщения ENIP_BUFFER_FREE
+      }
+      else
+      {
+	//Ошибка
+//	LockSched();
+//	ShowMSG(1,(int)"BM: Send error!");
+//	UnlockSched();
+//	end_socket();
+	return;
+      }
+    }
+    memcpy(sendq_p,sendq_p+j,sendq_l-=j); //Удалили переданное
+    if (j<i)
+    {
+      //Передали меньше чем заказывали
+#ifdef SEND_TIMER
+      GBS_StartTimerProc(&send_tmr,216*5,resend);
+#endif
+      return; //Ждем сообщения ENIP_BUFFER_FREE1
+    }
+  }
+  mfree(sendq_p);
+  sendq_p=NULL;
+}
+
+static void get_answer(void)
+{
+  char rb[1024];
+  extern const char ipc_my_name[];
+  int i=recv(sock,rb,sizeof(rb),0);
+  if (i<=0) return;
+  {
+    unsigned int ul;
+    int f=fopen("4:\\bm.dmp",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
+    if (f!=-1)
+    {
+      fwrite(f,rb,i,&ul);
+      fclose(f,&ul);
+    }
+  }
+  if (receive_mode)
+  {
+    IPC_REQ *sipc=malloc(sizeof(IPC_REQ));
+    sipc->name_to=ipc_my_name;
+    sipc->name_from=ipc_my_name;
+    sipc->data=malloc(i+4);
+    *((int *)(sipc->data))=i;
+    memcpy(((char *)(sipc->data))+4,rb,i);
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+  }
+  else
+  {
+    char *end_answer;
+    IPC_REQ *sipc;
+    memcpy((recvq_p=realloc(recvq_p,recvq_l+i+1))+recvq_l,rb,i);
+    recvq_l+=i;
+    recvq_p[recvq_l]=0;
+    if (!(end_answer=strstr(recvq_p,"\r\n\r\n"))) return;
+    receive_mode=1; //Остальное транслируем напрямую
+    end_answer+=2;
+    *end_answer=0;
+    LockSched();
+    wsprintf(ws_console,recvq_p);
+    UnlockSched();
+    SmartREDRAW();
+    end_answer+=2; //Теперь end_answer указывает на тело ответа, которое надо передавать в обработчик
+    i=recvq_l-(end_answer-recvq_p);
+    if (!i) return; //Нет данных, нечего посылать
+    sipc=malloc(sizeof(IPC_REQ));
+    sipc->name_to=ipc_my_name;
+    sipc->name_from=ipc_my_name;
+    sipc->data=malloc(i+4);
+    *((int *)(sipc->data))=i;
+    memcpy(((char *)(sipc->data))+4,end_answer,i);
+    ClearRecvQ();
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+  }
+}
+
+static void SendPost(void)
+{
+  char buf[3096];
+  int content_len=0;
+  int l;
+  int i;
+  char *content=NULL;
+  char *req;
+  extern char AUTH_PREFIX[];
+  extern char AUTH_CODE[];
+  
+  sprintf(buf,"k=image/jpeg");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"o=280");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+  
+  sprintf(buf,"u=/obml/%s",URL); // 0/http://
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"q=ru");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"v=Opera Mini/2.0.4509/hifi/woodland/ru");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"i-ua=Opera/9.10 (Windows NT 5.1; U; ru)");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"s=-1");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"n=1");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"A=CLDC-1.1");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"B=MIDP-2.0");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"C=j2me");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"D=ru");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"E=ISO8859_1");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"d=w:%d;h:%d;c:65536;m:3145728;i:1;q:0;f:0;j:0;l:256",ScreenW(),ScreenH());
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"c=%s",AUTH_CODE);
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"h=%s",AUTH_PREFIX);
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"g=1");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"b=");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"y=ru");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"t=2");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"w=1;0");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  sprintf(buf,"e=def");
+  strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+  
+  sprintf(buf,
+	  "POST / HTTP/1.1\r\n"
+	    "Connection: close\r\n"
+	      "Content-Type: application/xml\r\n"
+		"Content-Length: %d\r\n"
+		  "Host: %s:%d\r\n"
+		    "\r\n",
+		    content_len,OM_POST_HOST,OM_POST_PORT);
+  req=malloc(l=(i=strlen(buf))+content_len);
+  memcpy(req,buf,i);
+  memcpy(req+i,content,content_len);
+  mfree(content);
+  bsend(l,req);
+  freegstr(&URL);
+}
+
+int ParseSocketMsg(GBS_MSG *msg)
+{
+  if (msg->msg==MSG_HELPER_TRANSLATOR)
+  {
+    switch((int)msg->data0)
+    {
+    case LMAN_DISCONNECT_IND:
+      is_gprs_online=0;
+      return(1);
+    case LMAN_CONNECT_CNF:
+      is_gprs_online=1;
+      return(1);
+    case ENIP_DNR_HOST_BY_NAME:
+      if ((int)msg->data1==DNR_ID)
+      {
+	wsprintf(ws_console,"DNR answer...");
+	SmartREDRAW();
+	if (DNR_TRIES) SUBPROC((void *)create_connect);
+      }
+      return(1);
+    }
+    if ((int)msg->data1==sock)
+    {
+      //Если наш сокет
+      switch((int)msg->data0)
+      {
+      case ENIP_SOCK_CONNECTED:
+	wsprintf(ws_console,"Connected...");
+	SmartREDRAW();
+	if (connect_state==1)
+	{
+	  connect_state=2;
+	  //Соединение установленно, посылаем пакет
+	  SUBPROC((void*)SendPost);
+	}
+	break;
+      case ENIP_SOCK_DATA_READ:
+	wsprintf(ws_console,"Data received...");
+	SmartREDRAW();
+	if (connect_state>=2) SUBPROC((void *)get_answer);
+	break;
+      case ENIP_BUFFER_FREE:
+      case ENIP_BUFFER_FREE1:
+	//Досылаем очередь
+	SUBPROC((void *)bsend,0,0);
+	break;
+      case ENIP_SOCK_REMOTE_CLOSED:
+	//Закрыт со стороны сервера
+	wsprintf(ws_console,"Remote closed!");
+	SmartREDRAW();
+	goto ENIP_SOCK_CLOSED_ALL;
+      case ENIP_SOCK_CLOSED:
+	wsprintf(ws_console,"Local closed!");
+	SmartREDRAW();
+      ENIP_SOCK_CLOSED_ALL:
+	switch(connect_state)
+	{
+	case -1:
+	  connect_state=0;
+	  SUBPROC((void*)free_socket);
+//	  ShowMSG(1,(int)"BM: Socket closed");
+//	  if (vd->
+	  
+	  ws_console->wsbody[0]=0;
+	  break;
+	case 0:
+	  break;
+	default:
+	  connect_state=-1;
+	  SUBPROC((void*)end_socket);
+	  break;
+	}
+	break;
+      }
+    }
+  }
+  return(1);
+}
+
+void StartINET(const char *url)
+{
+  if (connect_state)
+  {
+    LockSched();
+    ShowMSG(1,(int)"INET process busy!");
+    UnlockSched();
+    return;
+  }
+  if (!IsGPRSEnabled())
+  {
+    LockSched();
+    ShowMSG(1,(int)"Enable GPRS first!");
+    UnlockSched();
+    return;
+  }
+  URL=globalstr(url);
+  SUBPROC((void*)create_connect);
+}
+
+void StopINET(void)
+{
+  end_socket();
+  free_socket();
+  freegstr(&URL);
+}
