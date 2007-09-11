@@ -32,6 +32,11 @@ typedef struct
   int view_id;
 }MAIN_CSM;
 
+
+char URLCACHE_PATH[256];
+char OMSCACHE_PATH[256];
+char AUTHDATA_FILE[256];
+
 static void StartGetFile(void)
 {
   if (view_url_mode==MODE_FILE)
@@ -154,9 +159,33 @@ static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
+static void RunOtherCopyByURL(const char *url)
+{
+  char fname[256];
+  TDate d;
+  TTime t;
+  int f;
+  unsigned int err;
+  WSHDR *ws;
+  GetDateTime(&d,&t);
+  sprintf(fname,"%s%d%d%d%d%d%d.url",URLCACHE_PATH,d.year,d.month,d.day,t.hour,t.min,t.sec);
+  f=fopen(fname,A_Create+A_Truncate+A_BIN+A_ReadWrite,P_READ+P_WRITE,&err);
+  if (f!=-1)
+  {
+    fwrite(f,url,strlen(url),&err);
+    fclose(f,&err);
+    ws=AllocWS(256);
+    str_2ws(ws,fname,255);
+    ExecuteFile(ws,NULL,NULL);
+    FreeWS(ws);
+    unlink(fname,&err);
+  }
+}
+
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
 {
   VIEWDATA *vd=data->vd;
+  REFCACHE *rf;
   int m=msg->gbsmsg->msg;
 //  REFCACHE *p;
 //  REFCACHE *q;
@@ -164,6 +193,23 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
   {
     switch(msg->gbsmsg->submess)
     {
+    case ENTER_BUTTON:
+      rf=FindReference(vd,vd->pos_cur_ref);
+      if (rf)
+      {
+	if (rf->tag=='L')
+	{
+//	  ShowMSG(0x10,(int)(rf->id));
+	  if (rf->id)
+	  {
+	    if (strlen(rf->id)>2)
+	    {
+	      RunOtherCopyByURL(rf->id+2);
+	    }
+	  }
+	}
+      }
+      break;
     case UP_BUTTON:
 //      if (!RenderPage(vd,1)) break;
       //Check reference move
@@ -423,7 +469,7 @@ int ParseInputFilename(const char *fn)
 	buf=malloc(fsize+3);
 	buf[0]='0';
 	buf[1]='/';
-	buf[fread(f,buf+2,fsize,&err)]=0;
+	buf[fread(f,buf+2,fsize,&err)+2]=0;
 	fclose(f,&err);
 	s=buf;
 	while(*s>32) s++;
@@ -436,10 +482,6 @@ int ParseInputFilename(const char *fn)
   }
   return 0;
 }
-
-char URLCACHE_PATH[256];
-char OMSCACHE_PATH[256];
-char AUTHDATA_FILE[256];
 
 char AUTH_PREFIX[64];
 char AUTH_CODE[128];
@@ -494,6 +536,7 @@ int main(const char *exename, const char *filename)
   path++;
   l=path-exename;
   memcpy(URLCACHE_PATH,exename,l);
+  strcat(URLCACHE_PATH,"UrlCache\\");
   memcpy(OMSCACHE_PATH,exename,l);
   memcpy(AUTHDATA_FILE,exename,l);
   strcat(AUTHDATA_FILE,"AuthCode");

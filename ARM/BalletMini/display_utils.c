@@ -320,3 +320,14 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   vd->view_line=store_line;
   return(result);
 }
+
+REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref)
+{
+  REFCACHE *rf=vd->ref_cache;
+  while(rf)
+  {
+    if ((rf->begin<=ref)&&(ref<rf->end)) break;
+    rf=rf->next;
+  }
+  return rf;
+}

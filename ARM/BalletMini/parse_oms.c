@@ -727,5 +727,3 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
   }
 }
 
-
-

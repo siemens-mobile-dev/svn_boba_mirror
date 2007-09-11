@@ -260,7 +260,7 @@ static void get_answer(void)
   extern const char ipc_my_name[];
   int i=recv(sock,rb,sizeof(rb),0);
   if (i<=0) return;
-  {
+/*  {
     unsigned int ul;
     int f=fopen("4:\\bm.dmp",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)
@@ -268,7 +268,7 @@ static void get_answer(void)
       fwrite(f,rb,i,&ul);
       fclose(f,&ul);
     }
-  }
+  }*/
   if (receive_mode)
   {
     IPC_REQ *sipc=malloc(sizeof(IPC_REQ));
