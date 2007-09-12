@@ -12,6 +12,9 @@
 
 extern WSHDR *ws_console;
 
+extern volatile int TERMINATED;
+extern volatile int STOPPED;
+
 volatile static int is_gprs_online=1;
 
 static int DNR_ID=0;
@@ -33,8 +36,9 @@ static unsigned short OM_POST_PORT=80;
 static int receive_mode;
 
 static char *URL;
+static char *FNCACHE;
 
-static void SmartREDRAW(void)
+void SmartREDRAW(void)
 {
   extern int ENABLE_REDRAW;
   if (ENABLE_REDRAW) REDRAW();
@@ -184,6 +188,11 @@ static void free_socket(void)
   connect_state=0;
   ClearSendQ();
   ClearRecvQ();
+  freegstr(&URL);
+  mfree(FNCACHE);
+  FNCACHE=NULL;
+  STOPPED=1;
+  SmartREDRAW();
 }
 
 #ifdef SEND_TIMER
@@ -254,35 +263,45 @@ static void bsend(int len, void *p)
   sendq_p=NULL;
 }
 
+static void writecache(void *buf, int len)
+{
+  unsigned int ul;
+  int f;
+  if (!FNCACHE) return;
+  f=fopen(FNCACHE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
+  if (f!=-1)
+  {
+    fwrite(f,buf,len,&ul);
+    fclose(f,&ul);
+  }
+}
+
 static void get_answer(void)
 {
   char rb[1024];
   extern const char ipc_my_name[];
+  IPC_REQ *sipc;
   int i=recv(sock,rb,sizeof(rb),0);
   if (i<=0) return;
-/*  {
-    unsigned int ul;
-    int f=fopen("4:\\bm.dmp",A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
-    if (f!=-1)
-    {
-      fwrite(f,rb,i,&ul);
-      fclose(f,&ul);
-    }
-  }*/
   if (receive_mode)
   {
-    IPC_REQ *sipc=malloc(sizeof(IPC_REQ));
-    sipc->name_to=ipc_my_name;
-    sipc->name_from=ipc_my_name;
-    sipc->data=malloc(i+4);
-    *((int *)(sipc->data))=i;
-    memcpy(((char *)(sipc->data))+4,rb,i);
-    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+    writecache(rb,i);
+    LockSched();
+    if ((!TERMINATED)&&(!STOPPED))
+    {
+      sipc=malloc(sizeof(IPC_REQ));
+      sipc->name_to=ipc_my_name;
+      sipc->name_from=ipc_my_name;
+      sipc->data=malloc(i+4);
+      *((int *)(sipc->data))=i;
+      memcpy(((char *)(sipc->data))+4,rb,i);
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+    }
+    UnlockSched();
   }
   else
   {
     char *end_answer;
-    IPC_REQ *sipc;
     memcpy((recvq_p=realloc(recvq_p,recvq_l+i+1))+recvq_l,rb,i);
     recvq_l+=i;
     recvq_p[recvq_l]=0;
@@ -297,14 +316,20 @@ static void get_answer(void)
     end_answer+=2; //Теперь end_answer указывает на тело ответа, которое надо передавать в обработчик
     i=recvq_l-(end_answer-recvq_p);
     if (!i) return; //Нет данных, нечего посылать
-    sipc=malloc(sizeof(IPC_REQ));
-    sipc->name_to=ipc_my_name;
-    sipc->name_from=ipc_my_name;
-    sipc->data=malloc(i+4);
-    *((int *)(sipc->data))=i;
-    memcpy(((char *)(sipc->data))+4,end_answer,i);
+    writecache(end_answer,i);
+    LockSched();
+    if ((!TERMINATED)&&(!STOPPED))
+    {
+      sipc=malloc(sizeof(IPC_REQ));
+      sipc->name_to=ipc_my_name;
+      sipc->name_from=ipc_my_name;
+      sipc->data=malloc(i+4);
+      *((int *)(sipc->data))=i;
+      memcpy(((char *)(sipc->data))+4,end_answer,i);
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+    }
+    UnlockSched();
     ClearRecvQ();
-    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
   }
 }
 
@@ -480,13 +505,16 @@ int ParseSocketMsg(GBS_MSG *msg)
   return(1);
 }
 
-void StartINET(const char *url)
+void StartINET(const char *url, char *fncache)
 {
+  unsigned int err;
   if (connect_state)
   {
     LockSched();
     ShowMSG(1,(int)"INET process busy!");
     UnlockSched();
+  ERR:
+    mfree(fncache);
     return;
   }
   if (!IsGPRSEnabled())
@@ -494,9 +522,19 @@ void StartINET(const char *url)
     LockSched();
     ShowMSG(1,(int)"Enable GPRS first!");
     UnlockSched();
-    return;
+    STOPPED=1;
+    goto ERR;
+  }
+  if (!url)
+  {
+    STOPPED=1;
+    goto ERR;
   }
   URL=globalstr(url);
+  if ((FNCACHE=fncache))
+  {
+    unlink(fncache,&err);
+  }
   SUBPROC((void*)create_connect);
 }
 
@@ -504,5 +542,4 @@ void StopINET(void)
 {
   end_socket();
   free_socket();
-  freegstr(&URL);
 }

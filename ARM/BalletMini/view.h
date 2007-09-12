@@ -78,6 +78,8 @@ typedef struct
 {
   z_stream *zs;                // Поток для ZLib
   
+  int cached;
+  
   unsigned short *rawtext;
   unsigned int rawtext_size;
   

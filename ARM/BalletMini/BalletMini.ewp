@@ -3331,6 +3331,9 @@
   <file>
     <name>$PROJ_DIR$\string_works.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\urlstack.c</name>
+  </file>
 </project>
 
 

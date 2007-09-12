@@ -9,6 +9,13 @@
 #include "destructors.h"
 #include "siemens_unicode.h"
 #include "inet.h"
+#include "urlstack.h"
+
+static void UpdateCSMname(void);
+static int ParseInputFilename(const char *fn);
+
+volatile int TERMINATED=0;
+volatile int STOPPED=0;
 
 int ENABLE_REDRAW=0;
 
@@ -21,6 +28,7 @@ IPC_REQ gipc;
 
 int view_url_mode; //MODE_FILE, MODE_URL
 char *view_url;
+static char *goto_url;
 
 //static const char percent_t[]="%t";
 
@@ -37,8 +45,9 @@ char URLCACHE_PATH[256];
 char OMSCACHE_PATH[256];
 char AUTHDATA_FILE[256];
 
-static void StartGetFile(void)
+static void StartGetFile(int dummy, char *fncache)
 {
+  IPC_REQ *sipc;
   if (view_url_mode==MODE_FILE)
   {
     unsigned int err;
@@ -47,16 +56,29 @@ static void StartGetFile(void)
     int f=fopen(view_url,A_ReadOnly+A_BIN,P_READ,&err);
     if (f!=-1)
     {
+      int fc=-1;
+      if (fncache) fc=fopen(fncache,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
       while((i=fread(f,buf,sizeof(buf),&err))>0)
       {
-	IPC_REQ *sipc=malloc(sizeof(IPC_REQ));
-	sipc->name_to=ipc_my_name;
-	sipc->name_from=ipc_my_name;
-	sipc->data=malloc(i+4);
-	*((int *)(sipc->data))=i;
-	memcpy(((char *)(sipc->data))+4,buf,i);
-	GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+	if (fc!=-1)
+	{
+	  fwrite(fc,buf,i,&err);
+	}
+	LockSched();
+	if ((!TERMINATED)&&(!STOPPED))
+	{
+	  sipc=malloc(sizeof(IPC_REQ));
+	  sipc->name_to=ipc_my_name;
+	  sipc->name_from=ipc_my_name;
+	  sipc->data=malloc(i+4);
+	  *((int *)(sipc->data))=i;
+	  memcpy(((char *)(sipc->data))+4,buf,i);
+	  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+	}
+	UnlockSched();
+	if (TERMINATED||STOPPED) break;
       }
+      if (fc!=-1) fclose(fc,&err);
       fclose(f,&err);
     }
     else
@@ -65,10 +87,13 @@ static void StartGetFile(void)
       ShowMSG(1,(int)"Can't open file!");
       UnlockSched();
     }
+    mfree(fncache);
+    STOPPED=1;
+    SmartREDRAW();
   }
   if (view_url_mode==MODE_URL)
   {
-    StartINET(view_url);
+    StartINET(view_url,fncache);
   }
 }
 
@@ -77,6 +102,7 @@ typedef struct
 {
   GUI gui;
   VIEWDATA *vd;
+  int cached;
 }VIEW_GUI;
 
 static void method0(VIEW_GUI *data)
@@ -119,6 +145,15 @@ static void method0(VIEW_GUI *data)
     DrawString(ws_console,0,0,scr_w,20,
 		 FONT_SMALL,TEXT_NOFORMAT
 		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+    if (!STOPPED)
+    {
+      WSHDR ws1loc, *ws1;
+      unsigned short num[128];
+      ws1=CreateLocalWS(&ws1loc,num,128);
+      wsprintf(ws1,"STOP!");
+      DrawString(ws1,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+		 scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT|TEXT_OUTLINE,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(1));
+    }
   }
 }
 
@@ -131,13 +166,30 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
   data->gui.state=1;
-  SUBPROC((void *)StartGetFile);
+  STOPPED=0;
+  if ((vd->cached=data->cached))
+  {
+    SUBPROC((void *)StartGetFile,0,NULL);
+  }
+  else
+  {
+    SUBPROC((void *)StartGetFile,1,PushPageToStack());
+  }
+}
+
+void FreeViewUrl(void)
+{
+  freegstr(&view_url);
 }
 
 static void method2(VIEW_GUI *data,void (*mfree_adr)(void *))
 {
+  STOPPED=1;
+  SUBPROC((void*)StopINET);
   FreeViewData(data->vd);
+  data->vd=NULL;
   data->gui.state=0;
+  FreeViewUrl();
 }
 
 static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
@@ -199,13 +251,10 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       {
 	if (rf->tag=='L')
 	{
-//	  ShowMSG(0x10,(int)(rf->id));
 	  if (rf->id)
 	  {
-	    if (strlen(rf->id)>2)
-	    {
-	      RunOtherCopyByURL(rf->id+2);
-	    }
+	    strcpy(goto_url=malloc(strlen(rf->id)+1),rf->id);
+	    return 0xFF;
 	  }
 	}
       }
@@ -266,9 +315,25 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     case LEFT_SOFT:
       break;
     case RIGHT_SOFT:
-      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
-    case GREEN_BUTTON:
+      if (STOPPED)
       {
+	mfree(PopPageFromStack());
+	return 0xFE;
+      }
+      else
+      {
+	if (view_url_mode==MODE_URL)
+	{
+	  SUBPROC((void*)StopINET);
+	}
+	else
+	{
+	  STOPPED=1;
+	}
+	break;
+      }
+    case GREEN_BUTTON:
+/*      {
 	//Dump rawtext
 	unsigned int ul;
 	int f;
@@ -278,6 +343,21 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	  fclose(f,&ul);
 	}
 //	RenderPage(vd,2); //With dump
+      }*/
+      rf=FindReference(vd,vd->pos_cur_ref);
+      if (rf)
+      {
+	if (rf->tag=='L')
+	{
+//	  ShowMSG(0x10,(int)(rf->id));
+	  if (rf->id)
+	  {
+	    if (strlen(rf->id)>2)
+	    {
+	      RunOtherCopyByURL(rf->id+2);
+	    }
+	  }
+	}
       }
       break;
     }
@@ -304,10 +384,9 @@ static const void * const gui_methods[11]={
   0
 };
 
-static void maincsm_oncreate(CSM_RAM *data)
+static int CreateViewGUI(int cached)
 {
   static const RECT Canvas={0,0,0,0};
-  MAIN_CSM *csm=(MAIN_CSM*)data;
   VIEW_GUI *view_gui=malloc(sizeof(VIEW_GUI));
   zeromem(view_gui,sizeof(VIEW_GUI));
   patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
@@ -315,21 +394,22 @@ static void maincsm_oncreate(CSM_RAM *data)
 //  view_gui->gui.flag30=2;
   view_gui->gui.methods=(void *)gui_methods;
   view_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
-  csm->csm.state=0;
-  csm->csm.unk1=0;
-  csm->view_id=CreateGUI(view_gui);
-  ws_console=AllocWS(1024);
+  view_gui->cached=cached;
+  return CreateGUI(view_gui);
 }
 
-void FreeViewUrl(void)
+static void maincsm_oncreate(CSM_RAM *data)
 {
-  freegstr(&view_url);
+  MAIN_CSM *csm=(MAIN_CSM*)data;
+  ws_console=AllocWS(1024);
+  csm->csm.state=0;
+  csm->csm.unk1=0;
+  csm->view_id=CreateViewGUI(0);
 }
 
 static void KillAll(void)
 {
-  StopINET();
-  FreeViewUrl();
+  FreePageStack();
   FreeWS(ws_console);
 }
 
@@ -342,7 +422,39 @@ static void Killer(void)
 
 static void maincsm_onclose(CSM_RAM *csm)
 {
+  TERMINATED=1;
+  mfree(goto_url);
   SUBPROC((void *)Killer);
+}
+
+static void GotoLink(void)
+{
+  LockSched();
+  if (!TERMINATED)
+  {
+    IPC_REQ *sipc;
+    sipc=malloc(sizeof(IPC_REQ));
+    sipc->name_to=ipc_my_name;
+    sipc->name_from=ipc_my_name;
+    sipc->data=NULL;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_GOTO_URL,sipc);
+  }
+  UnlockSched();
+}
+
+static void GotoFile(void)
+{
+  LockSched();
+  if (!TERMINATED)
+  {
+    IPC_REQ *sipc;
+    sipc=malloc(sizeof(IPC_REQ));
+    sipc->name_to=ipc_my_name;
+    sipc->name_from=ipc_my_name;
+    sipc->data=NULL;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_GOTO_FILE,sipc);
+  }
+  UnlockSched();
 }
 
 static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
@@ -379,6 +491,31 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	    mfree(ipc);
 	  }
 	  break;
+	case IPC_GOTO_URL:
+	  if (ipc->name_from==ipc_my_name)
+	  {
+	    mfree(ipc);
+	    FreeViewUrl();
+	    view_url=goto_url;
+	    view_url_mode=MODE_URL;
+	    goto_url=NULL;
+	    UpdateCSMname();
+	    csm->view_id=CreateViewGUI(0);
+	  }
+	  break;
+	case IPC_GOTO_FILE:
+	  if (ipc->name_from==ipc_my_name)
+	  {
+	    mfree(ipc);
+	    if (ParseInputFilename(goto_url))
+	    {
+	      UpdateCSMname();
+	      csm->view_id=CreateViewGUI(1);
+	    }
+	    mfree(goto_url);
+	    goto_url=NULL;
+	  }
+	  break;
 	}
       }
     }
@@ -388,8 +525,29 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     if ((int)msg->data0==csm->view_id)
     {
+      switch((int)msg->data1)
       {
+      case 0xFE:
+	//Пробуем идти по стеку назад
+	if ((goto_url=PopPageFromStack()))
+	{
+	  SUBPROC((void*)GotoFile);
+	  break;
+	}
+	goto L_CLOSE;
+      case 0xFF:
+	if (goto_url)
+	{
+	  //Есть куда пойти
+	  SUBPROC((void*)GotoLink);
+	  break;
+	}
+	else
+	  goto L_CLOSE;
+      default:
+      L_CLOSE:
 	csm->csm.state=-3;
+	break;
       }
     }
   }
@@ -443,7 +601,7 @@ static void UpdateCSMname(void)
   FreeWS(ws);
 }
 
-int ParseInputFilename(const char *fn)
+static int ParseInputFilename(const char *fn)
 {
   char *s=strrchr(fn,'.');
   FreeViewUrl();
@@ -538,6 +696,7 @@ int main(const char *exename, const char *filename)
   memcpy(URLCACHE_PATH,exename,l);
   strcat(URLCACHE_PATH,"UrlCache\\");
   memcpy(OMSCACHE_PATH,exename,l);
+  strcat(OMSCACHE_PATH,"OmsCache\\");
   memcpy(AUTHDATA_FILE,exename,l);
   strcat(AUTHDATA_FILE,"AuthCode");
   if (!LoadAuthCode())
