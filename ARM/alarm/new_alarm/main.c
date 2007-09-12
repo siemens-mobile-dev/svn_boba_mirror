@@ -1,4 +1,5 @@
-#include "..\..\inc\swilib.h"
+#include "../../inc/swilib.h"
+//#include "../../inc/xtask_ipc.h"
 
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
@@ -9,6 +10,8 @@
 void check();
 void start_ring();
 void load_settings();
+
+//GBSTMR *restarttmr;
 
 unsigned int hour[6];
 unsigned int min[6];
@@ -26,7 +29,6 @@ TDate date;
 TTime time;
 TDate week;
 
-#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
 extern void kill_data(void *p, void (*func_p)(void *));
 const int minus11=-11;
 typedef struct
@@ -74,7 +76,6 @@ void DrawGPF(char *fname, int x, int y)
     img.w = Pic_Header.w;
     img.h = Pic_Header.h;
     img.bpnum = Pic_Header.Compr_Bits;
-    //img.zero = 0;
     img.bitmap = pic_buffer;
     DrwImg(&img, x, y, GetPaletteAdrByColorIndex(1), GetPaletteAdrByColorIndex(0));
     mfree(pic_buffer);
@@ -238,18 +239,29 @@ int strcmp_nocase(const char *s1,const char *s2)
 
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  CSM_RAM *icsm;
-  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  //////////////////////////////////////////////////////////////////////////////
+  /*
+  if (msg->msg==MSG_IPC)
   {
-    if (strcmp_nocase("alarm",(char *)msg->data0)==0)
+    IPC_REQ *ipc;
+    if ((ipc=(IPC_REQ*)msg->data0))
     {
-      ShowMSG(1,(int)"alarm settings updated!");
-      load_settings();
+      if (strcmp_nocase(ipc->name_to,"alarm")==0)
+      {
+        if(msg->submess==1)
+        {
+          //ShowMSG(1,(int)"restart ok");
+          GBS_StartTimerProc(&restarttmr,216*60*3,start_ring);
+        }
+      }
     }
   }
-  
+  */
+  //////////////////////////////////////////////////////////////////////////////
+  CSM_RAM *icsm;
   if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
   {
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
     if (IsGuiOnTop(idlegui_id))
     {
       GUI *igui=GetTopGUI();
@@ -266,6 +278,14 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           }
         }
       }
+    }
+  }
+  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  {
+    if (strcmp_nocase("alarm",(char *)msg->data0)==0)
+    {
+      ShowMSG(1,(int)"alarm settings updated!");
+      load_settings();
     }
   }
 

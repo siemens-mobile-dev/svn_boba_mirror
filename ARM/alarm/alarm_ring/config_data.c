@@ -10,8 +10,8 @@ __root const unsigned int play_=1;
 __root const CFG_CBOX_ITEM cfgcbox0[2]={"file","standard"};
 #endif
 
-__root const CFG_HDR cfghdr1={CFG_STR_UTF8,"melody",0,63};
-__root const char melody[64]="0:\\Sounds\\alarm.mp3";
+__root const CFG_HDR cfghdr1={CFG_STR_UTF8,"melody",0,127};
+__root const char melody[128]="0:\\Sounds\\alarm.mp3";
 
 __root const CFG_HDR cfghdr2={CFG_STR_WIN1251,"shortcut",0,63};
 __root const char shcut[64]="ELSE_COUNT_DOWN";
@@ -22,3 +22,5 @@ __root const unsigned int vibra_power=50;
 __root const CFG_HDR cfghdr4={CFG_UINT,"sound volume",0,50};
 __root const int sndVolume=10;
 
+__root const CFG_HDR cfghdr5={CFG_CHECKBOX,"Set 1st profile",0,2};
+__root const int profile=1;

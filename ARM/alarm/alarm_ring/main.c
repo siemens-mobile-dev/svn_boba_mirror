@@ -2,6 +2,7 @@
 #include "..\..\inc\cfg_items.h"
 #include "conf_loader.h"
 #include "..\lgp.h"
+//#include "../../inc/xtask_ipc.h"
 
 
 #ifdef NEWSGOLD
@@ -13,26 +14,27 @@
 #endif
 
 unsigned short maincsm_name_body[140];
-unsigned int MAINCSM_ID = 0;
+unsigned int my_csm_id = 0;
 unsigned int MAINGUI_ID = 0;
-extern const char melody[64];
+
+extern const char melody[128];
 extern const unsigned int play_;
 extern const unsigned int vibra_power;
 extern const char shcut[64];
-GBSTMR mytmr;
-int count;
-void LightOff();
-const int minus11=-11;
+extern const int sndVolume;
+extern const int profile;
 extern char IMG[];
+
+GBSTMR mytmr;
+const int minus11=-11;
 WSHDR *ws;
 int scr_w;
 int scr_h;
 
 int old_light_kb;
 int old_light_d;
-
-//#define sndVolume 15
-extern const int sndVolume;
+int old_profile;
+//GBSTMR restarttmr;
 
 typedef struct
 {
@@ -126,7 +128,7 @@ if((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&err))==-1) return;
   Play(buf);
 }
 
-//////////////////////////////////////////////////////
+void LightOff();
 void LightOn()
 {
   if(vibra_power) SetVibration(vibra_power);
@@ -138,19 +140,7 @@ void LightOn()
 void LightOff()
 {
   SetVibration(0);
-  if (count)
-  {
-    GBS_StartTimerProc(&mytmr,100,LightOn);
-  }
-  else
-  {
-    GBS_StopTimer(&mytmr);
-    GBS_DelTimer(&mytmr);
-    
-    SetIllumination(0,1,old_light_d,0);
-    SetIllumination(1,1,old_light_kb,0);
-    if(vibra_power) SetVibration(0);
-  }
+  GBS_StartTimerProc(&mytmr,100,LightOn);
 }
 //////////////////////////////////////////////////////
 
@@ -180,11 +170,24 @@ void draw_pic()
     img.w = 52;
     img.h = 52;
     img.bpnum = 0x88;
-    //img.zero = 0;
     img.bitmap = IMG;
     DrwImg(&img,37,5, GetPaletteAdrByColorIndex(1), GetPaletteAdrByColorIndex(0));
 }
-
+/*
+void restart()
+{
+  GBS_DelTimer(&restarttmr);
+  //////////////////////////////////////////////////////////////////////////////
+  IPC_REQ gipc;
+  gipc.name_to="alarm";
+  gipc.name_from="alarm ring";
+  gipc.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,1,&gipc);
+  //////////////////////////////////////////////////////////////////////////////
+  GeneralFunc_flag1(((MAIN_CSM*)FindCSMbyID(my_csm_id))->gui_id,1);
+  //ShowMSG(1,(int)"restart");
+}
+*/
 void OnRedraw()
 {
   DrawRoundedFrame(0,0,scr_w,scr_h,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
@@ -212,6 +215,7 @@ void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
   ws=AllocWS(128);
   SetIllumination(1,1,100,0);
   SetIllumination(0,1,100,0);
+  //GBS_StartTimerProc(&restarttmr,216*60*7,restart);
   data->gui.state=1;
 }
 
@@ -240,6 +244,7 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case RIGHT_SOFT:  return(1);
+    //case LEFT_SOFT: restart(); break;
 #ifdef NEWSGOLD
     case RED_BUTTON:  return(1);
 #endif
@@ -291,11 +296,7 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->gui_id=CreateGUI(main_gui);
   MAINGUI_ID=csm->gui_id;
   
-  //if(vibra_power)
-  //{
-    count=1;
-    LightOn();
-  //}
+  LightOn();
 }
 
 void ElfKiller(void)
@@ -306,10 +307,15 @@ void ElfKiller(void)
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-  //if(vibra_power)
-  //{
-    count=0;
-  //}
+  //GBS_DelTimer(&restarttmr);
+  
+  GBS_DelTimer(&mytmr);
+  SetVibration(0);
+  SetIllumination(0,1,old_light_d,0);
+  SetIllumination(1,1,old_light_kb,0);  
+  if (profile)
+    SetProfile(old_profile);
+  
   PlayMelody_StopPlayback(tmp);
   SUBPROC((void *)ElfKiller);
 }
@@ -355,7 +361,7 @@ const struct
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"Alarm ring");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"alarm ring");
 }
 
 void play_sound()
@@ -367,7 +373,7 @@ void play_sound()
         LockSched();
         char dummy[sizeof(MAIN_CSM)];
         UpdateCSMname();
-        MAINCSM_ID = CreateCSM(&MAINCSM.maincsm,dummy,0);
+        my_csm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
         UnlockSched();
         play_standart_melody();
       } 
@@ -377,7 +383,7 @@ void play_sound()
       LockSched();
       char dummy[sizeof(MAIN_CSM)];
       UpdateCSMname();
-      MAINCSM_ID = CreateCSM(&MAINCSM.maincsm,dummy,0);
+      my_csm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
       UnlockSched();
       Play(melody);
     } break;
@@ -393,18 +399,11 @@ void play_sound()
   case 3:
     {
       typedef void (*voidfunc)();
-      voidfunc pp=(voidfunc)((int)GetFunctionPointer((char *)shcut)+0x10);
+      voidfunc pp=(voidfunc)(GetFunctionPointer((char *)shcut)+0x10);
       if(pp!=0) pp();
     }*/
 #endif
   }
-}
-
-void stop_sound()
-{
-  KbdUnlock();
-  GBS_SendMessage(MMI_CEPID,KEY_DOWN,RED_BUTTON);
-  GBS_SendMessage(MMI_CEPID,KEY_UP,RED_BUTTON);
 }
 
 int main(char *exename, char *fname)
@@ -413,10 +412,12 @@ int main(char *exename, char *fname)
   scr_w=ScreenW()-1;
   scr_h=ScreenH()-1;
   
-  char *illum=GetIlluminationDataTable()+3;
-  old_light_d=*illum;
-  illum+=152;
-  old_light_kb=*illum;
+  old_light_d=GetIlluminationDataTable()[3];
+  old_light_kb=GetIlluminationDataTable()[155];
+  old_profile=GetProfile();
+  
+  if (profile)
+    SetProfile(0);
   
   if (!IsCalling())
   {
