@@ -95,29 +95,29 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     vd->oms_wanted=sizeof(OMS_HEADER_COMMON);
     vd->parse_state=OMS_HDR_COMMON;
   }
-  OMS_HEADER_COMMON *hdr=(OMS_HEADER_COMMON *)vd->oms;
   while(vd->oms_size>=vd->oms_wanted)
   {
     switch(vd->parse_state)
     {
     case OMS_HDR_COMMON:
       //Получен заголовок
-      vd->oms_pos=vd->oms_wanted;
+      i=_rshort(vd);
+      vd->page_sz=_rlong(vd);
       vd->oms_wanted+=sizeof(OMS_HEADER_V2);
       vd->parse_state=OMS_HDR;
       {
-	switch(hdr->magic)
+	switch(i)
 	{
-	case 0x330D:
+	case 0x0D33:
 	  vd->oms_wanted-=2;
 	  break;
-	case 0x3318:
+	case 0x1833:
 	  break;
-	case 0x310D:
+	case 0x0D31:
 	  vd->oms_wanted-=sizeof(OMS_HEADER_V2)-10; //10 - размер хедера GZIP
 	  vd->parse_state=OMS_GZIPHDR;
 	  break;
-	case 0x3218:
+	case 0x1832:
 	L_ZINIT:
 	  //Производим инициализацию ZLib
 	  zeromem(vd->zs=malloc(sizeof(z_stream)),sizeof(z_stream));
@@ -143,7 +143,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	  vd->oms_size=vd->oms_pos; //Возращаем размер на начало данных ZLib
 	  goto L_ZBEGIN;
 	default:
-	  sprintf(s,"Not supported type %X\n",hdr->magic);
+	  sprintf(s,"Not supported type %X\n",i);
 	  AddTextItem(vd,s,strlen(s));
 	  AddBrItem(vd);
 	  vd->parse_state=OMS_STOP;

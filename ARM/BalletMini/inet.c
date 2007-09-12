@@ -20,7 +20,7 @@ volatile static int is_gprs_online=1;
 static int DNR_ID=0;
 static int DNR_TRIES=3;
 
-static int connect_state=0;
+int connect_state=0;
 
 static int sock=-1;
 
@@ -465,7 +465,11 @@ int ParseSocketMsg(GBS_MSG *msg)
       case ENIP_SOCK_DATA_READ:
 	wsprintf(ws_console,"Data received...");
 	SmartREDRAW();
-	if (connect_state>=2) SUBPROC((void *)get_answer);
+	if (connect_state>=2)
+        {
+          connect_state=3;
+          SUBPROC((void *)get_answer);
+        }
 	break;
       case ENIP_BUFFER_FREE:
       case ENIP_BUFFER_FREE1:

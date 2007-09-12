@@ -308,7 +308,7 @@ IMGHDR *CreateDelimiter(int width, int height, const char *color)
   {
     for (unsigned int x = 0; x<width; x++)
     {
-      if (y==height>>1)
+      if (y==height>>1 && x>3 && x<(width-3))
         *iimg++=color_c;
       else
         *iimg++=0xC0;

@@ -30,7 +30,7 @@ int view_url_mode; //MODE_FILE, MODE_URL
 char *view_url;
 static char *goto_url;
 
-//static const char percent_t[]="%t";
+static const char percent_t[]="%t";
 
 WSHDR *ws_console;
 
@@ -103,6 +103,8 @@ typedef struct
   GUI gui;
   VIEWDATA *vd;
   int cached;
+  WSHDR *ws1;
+  WSHDR *ws2;
 }VIEW_GUI;
 
 static void method0(VIEW_GUI *data)
@@ -145,14 +147,49 @@ static void method0(VIEW_GUI *data)
     DrawString(ws_console,0,0,scr_w,20,
 		 FONT_SMALL,TEXT_NOFORMAT
 		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+    extern int connect_state;
     if (!STOPPED)
     {
-      WSHDR ws1loc, *ws1;
-      unsigned short num[128];
-      ws1=CreateLocalWS(&ws1loc,num,128);
-      wsprintf(ws1,"STOP!");
-      DrawString(ws1,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
-		 scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT|TEXT_OUTLINE,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(1));
+      int w1, h1;
+      if (connect_state)
+      {
+        switch(connect_state)
+        {
+        case 1:
+          wsprintf(data->ws1,percent_t,"Соединение...");
+          break;
+        case 2:
+          wsprintf(data->ws1,percent_t,"Обработка...");
+          break;
+        case 3:
+          wsprintf(data->ws1,percent_t,"Загрузка...");
+          break;
+        }
+      }
+      wsprintf(data->ws2,percent_t,"Стоп");
+      
+      h1=scr_h-GetFontYSIZE(FONT_MEDIUM_BOLD)-2;
+      w1=scr_w-Get_WS_width(data->ws2,FONT_MEDIUM_BOLD)-2;
+      DrawRectangle(0,h1,w1,scr_h,0,
+                    GetPaletteAdrByColorIndex(1),
+                    GetPaletteAdrByColorIndex(0));
+      DrawRectangle(w1+1,h1,scr_w,scr_h,0,
+                    GetPaletteAdrByColorIndex(1),
+                    GetPaletteAdrByColorIndex(0));
+      if ((view_url_mode==MODE_FILE && vd->oms_size<vd->page_sz) ||
+          (view_url_mode==MODE_URL && connect_state==3 && vd->oms_size<vd->page_sz))
+      {
+        DrawRectangle(1,h1+1,vd->oms_size*(w1-1)/vd->page_sz,scr_h-1,0,
+                      GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+        wsprintf(data->ws1,"%uB/%uB",vd->oms_size,vd->page_sz);
+      }
+      DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));   
+      DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
+              
+      DrawString(ws_console,0,0,scr_w,20,
+		 FONT_SMALL,TEXT_NOFORMAT
+		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+
     }
   }
 }
@@ -165,6 +202,8 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
   vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
+  data->ws1=AllocWS(128);
+  data->ws2=AllocWS(128);
   data->gui.state=1;
   STOPPED=0;
   if ((vd->cached=data->cached))
@@ -188,6 +227,8 @@ static void method2(VIEW_GUI *data,void (*mfree_adr)(void *))
   SUBPROC((void*)StopINET);
   FreeViewData(data->vd);
   data->vd=NULL;
+  FreeWS(data->ws1);
+  FreeWS(data->ws2);
   data->gui.state=0;
   FreeViewUrl();
 }

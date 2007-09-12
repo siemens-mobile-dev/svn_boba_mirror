@@ -129,6 +129,9 @@ typedef struct
   REFCACHE work_ref;
   REFCACHE *ref_cache;
   
+  int page_sz;
+  unsigned short wchar_hr;
+  
 }VIEWDATA;
 
 #endif
