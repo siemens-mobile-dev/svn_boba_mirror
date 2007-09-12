@@ -242,7 +242,7 @@ IMGHDR *ConvertRGBAToRGB8(const char *buf, int width, int height)
     for (unsigned int x = 0; x<width; x++)
     {
       if (buf[y*width*4+x*4+0]<255)
-        *iimg++=0xC0;
+        *iimg++=0xE000;
       else
       {
         unsigned int c=((buf[y*width*4+x*4+1]<<8)&0xF800);

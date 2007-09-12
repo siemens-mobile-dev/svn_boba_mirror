@@ -3,6 +3,14 @@
 #include "display_utils.h"
 #include "siemens_unicode.h"
 
+int GetFontHeight(int font, int atribute)
+{
+  int height=GetFontYSIZE(font);
+  if (atribute&TEXT_INVERT)   height+=1;
+  if (atribute&TEXT_UNDERLINE)   height+=1;
+  if (atribute&TEXT_OUTLINE)  height+=2;
+  return height;
+}
 
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max_h)
 {
@@ -19,7 +27,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     }
     else
     {
-      h=GetFontYSIZE(p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+      h=GetFontHeight(p->bold?FONT_SMALL_BOLD:FONT_SMALL,p->underline?TEXT_UNDERLINE:0+p->ref?TEXT_INVERT:0);
     }
     if (max_h)
     {

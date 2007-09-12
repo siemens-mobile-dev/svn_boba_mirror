@@ -460,6 +460,7 @@ static void GotoFile(void)
 static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  int csm_result=1;
   //IPC
   if (msg->msg==MSG_IPC)
   {
@@ -489,6 +490,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	    }
 	    mfree(ipc->data);
 	    mfree(ipc);
+            csm_result=0;  //Обработали сообщение 
 	  }
 	  break;
 	case IPC_GOTO_URL:
@@ -501,6 +503,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	    goto_url=NULL;
 	    UpdateCSMname();
 	    csm->view_id=CreateViewGUI(0);
+            csm_result=0;  //Обработали сообщение 
 	  }
 	  break;
 	case IPC_GOTO_FILE:
@@ -514,6 +517,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	    }
 	    mfree(goto_url);
 	    goto_url=NULL;
+            csm_result=0;   //Обработали сообщение 
 	  }
 	  break;
 	}
@@ -551,7 +555,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       }
     }
   }
-  return(1);
+  return(csm_result);
 }
 
 static unsigned short maincsm_name_body[140];
