@@ -2,6 +2,7 @@
 #include "view.h"
 #include "display_utils.h"
 #include "siemens_unicode.h"
+#include "string_works.h"
 
 int GetFontHeight(int font, int atribute)
 {
@@ -338,4 +339,75 @@ REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref)
     rf=rf->next;
   }
   return rf;
+}
+
+REFCACHE *FindReferenceById(REFCACHE *rf, char *id, char *form_id1, char *form_id2, int tag)
+{
+  while(rf)
+  {
+    if (!tag)
+      goto LNOTAG;
+    else
+    {
+      if (tag==rf->tag)
+      {
+      LNOTAG:
+	if (rf->id)
+	{
+	  if (!strcmp_safe(rf->form_id1,form_id1)) 
+	  {
+	    if (!strcmp_safe(rf->form_id2,form_id2))
+	    {
+	      if (!strcmp_safe(rf->id,id)) break;
+	    }
+	  }
+	}
+      }
+    }
+    rf=rf->next;
+  }
+  return rf;
+}
+
+void ChangeRadioButtonState(VIEWDATA *vd, REFCACHE *rf)
+{
+  REFCACHE *rfp;
+  if (rf->tag!='r') return;
+  if (rf->begin>=vd->rawtext_size) return;
+  if (vd->rawtext[rf->begin+1]!=RADIOB_UNCHECKED) return;
+  vd->rawtext[rf->begin+1]=RADIOB_CHECKED;
+  rf->group_id=1;
+  rfp=vd->ref_cache;
+  while((rfp=FindReferenceById(rfp,rf->id,rf->form_id1,rf->form_id2,'r')))
+  {
+    if (rfp!=rf)
+    {
+      if (rfp->begin<vd->rawtext_size)
+      {
+	if (vd->rawtext[rfp->begin+1]==RADIOB_CHECKED)
+	{
+	  vd->rawtext[rfp->begin+1]=RADIOB_UNCHECKED;
+	  rfp->group_id=0;
+	}
+      }
+    }
+    rfp=rfp->next;
+  }
+}
+
+void ChangeCheckBoxState(VIEWDATA *vd, REFCACHE *rf)
+{
+  if (rf->tag!='c') return;
+  if (rf->begin>=vd->rawtext_size) return;
+  switch(vd->rawtext[rf->begin+1])
+  {
+  case CBOX_CHECKED:
+    vd->rawtext[rf->begin+1]=CBOX_UNCHECKED;
+    rf->group_id=0;
+    break;
+  case CBOX_UNCHECKED:
+    vd->rawtext[rf->begin+1]=CBOX_CHECKED;
+    rf->group_id=1;
+    break;
+  }
 }

@@ -297,14 +297,29 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
-	if (rf->tag=='L')
+	switch(rf->tag)
 	{
+	case 'L':
 	  if (rf->id)
 	  {
 	    strcpy(goto_url=malloc(strlen(rf->id)+1),rf->id);
 	    return 0xFF;
 	  }
+	  break;
+	case 'r':
+	  ChangeRadioButtonState(vd,rf);
+	  break;
+	case 'c':
+	  ChangeCheckBoxState(vd,rf);
+	  break;
+	default:
+	  ShowMSG(1,(int)"This Reftype under construction!");
+	  break;
 	}
+      }
+      else
+      {
+	ShowMSG(1,(int)"RF empty!");
       }
       break;
     case UP_BUTTON:

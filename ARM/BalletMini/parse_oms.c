@@ -639,8 +639,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->ih;
       replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
       vd->oms_pos+=i;
-      vd->work_ref.group_id=_rbyte(vd); //group id
-      AddCheckBoxItem(vd);
+      vd->work_ref.group_id=i=_rbyte(vd); //group id (checked???)
+      AddCheckBoxItem(vd,i);
       AddEndRef(vd);
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
@@ -657,8 +657,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->ih;
       replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
       vd->oms_pos+=i;
-      vd->work_ref.group_id=_rbyte(vd); //group id
-      AddRadioButton(vd);
+      vd->work_ref.group_id=i=_rbyte(vd); //group id (checked???)
+      AddRadioButton(vd,i);
       AddEndRef(vd);
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;

@@ -270,14 +270,14 @@ void AddPictureItemHr(VIEWDATA *vd)
   RawInsertChar(vd,wchar);
 }
 
-void AddRadioButton(VIEWDATA *vd)
+void AddRadioButton(VIEWDATA *vd, int checked)
 {
-  RawInsertChar(vd,CBOX_CHECKED);
+  RawInsertChar(vd,checked?RADIOB_CHECKED:RADIOB_UNCHECKED);
 }
 
-void AddCheckBoxItem(VIEWDATA *vd)
+void AddCheckBoxItem(VIEWDATA *vd, int checked)
 {
-  RawInsertChar(vd,CBOX_UNCHECKED);
+  RawInsertChar(vd,checked?CBOX_CHECKED:CBOX_UNCHECKED);
 }
 
 void AddInputItem(VIEWDATA *vd, const char *text, int len)

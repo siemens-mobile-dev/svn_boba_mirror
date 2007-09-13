@@ -22,9 +22,9 @@ void AddPictureItemFrame(VIEWDATA *vd,int width,int height);
 
 void AddPictureItemHr(VIEWDATA *vd);
 
-void AddRadioButton(VIEWDATA *vd);
+void AddRadioButton(VIEWDATA *vd, int checked);
 
-void AddCheckBoxItem(VIEWDATA *vd);
+void AddCheckBoxItem(VIEWDATA *vd, int checked);
 
 void AddInputItem(VIEWDATA *vd, const char *text, int len);
 

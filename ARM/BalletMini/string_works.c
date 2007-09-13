@@ -18,6 +18,16 @@ int strcmp_nocase(const char *s, const char *d)
   return(cs);
 }
 
+int strcmp_safe(const char *s, const char *d)
+{
+  int sf;
+  int df;
+  sf=s?1:0;
+  df=d?1:0;
+  if ((!s)||(!d)) return sf-df;
+  return strcmp(s,d);
+}
+
 char *globalstr(const char *s)
 {
   int l=strlen(s)+1;
