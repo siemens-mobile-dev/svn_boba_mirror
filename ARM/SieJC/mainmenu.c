@@ -8,6 +8,9 @@
 #include "MUC_Enter_UI.h"
 #include "cont_menu.h"
 #include "revision.h"
+#include "lang.h"
+#include "conf_loader2.h"
+#include "clist_util.h"
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
@@ -28,11 +31,11 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 9
+#define N_ITEMS 10
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
-
+ extern char Display_Offline; 
 int MainMenu_ID;
 
 extern char My_Presence;
@@ -42,7 +45,7 @@ extern const char VERSION_VERS[];
 
 void AboutDlg(GUI *data)
 {
-  char msg_tpl[]="Siemens natJabber Client\n(c)Kibab, Ad, Borman99\n%s r%d\nCompiled %s";
+  char msg_tpl[]=LG_COPYRIGHT;
   int l;
   char *msg = malloc(l=strlen(msg_tpl)+20+1);
   snprintf(msg,l,msg_tpl, VERSION_VERS, __SVN_REVISION__, __DATE__);
@@ -62,7 +65,7 @@ int icon[]={0x3DB,0};
 int about_icon[]={0x4DB,0};
 int dummy_icon[] = {0x50E,0};
 
-HEADER_DESC menuhdr={0,0,131,21,NULL,(int)"Меню",LGP_NULL};
+HEADER_DESC menuhdr={0,0,131,21,NULL,(int)LG_MENU,LGP_NULL};
 
 int mmenusoftkeys[]={0,1,2};
 
@@ -77,6 +80,12 @@ void ChangeVibraMode(GUI *data)
 void ChangeSoundMode(GUI *data)
 {
   Is_Sounds_Enabled=!(Is_Sounds_Enabled);
+  RefreshGUI();
+}
+
+void ChangeOffContMode(GUI *data)
+{
+  CList_ToggleOfflineDisplay();
   RefreshGUI();
 }
 
@@ -98,15 +107,16 @@ void Exit_SieJC(GUI *data)
 
 static const char * const menutexts[N_ITEMS]=
 {
-  "Контакт",
-  "Статус",
-  "Конференция",
-  "Закладки",
-  "Режим вибры",
-  "Режим звука",
-  "Настройки",
-  "Об эльфе...",
-  "Выход"
+  LG_CONTACT,
+  LG_STATUS,
+  LG_MUC,
+  LG_BOOKMARK,
+  LG_MVIBRA,
+  LG_MSOUND,
+  LG_MOFFLINE,
+  LG_SETTINGS,
+  LG_ABOUT,
+  LG_EXIT
 };
 
 
@@ -129,6 +139,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           Get_Bookmarks_List,
                           ChangeVibraMode,
                           ChangeSoundMode,
+                          ChangeOffContMode,
                           OpenSettings,
                           AboutDlg,
                           Exit_SieJC
@@ -136,8 +147,8 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
 
 static const SOFTKEY_DESC mmenu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -176,12 +187,15 @@ void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
     break;
   case 6:
-    SetMenuItemIconArray(data,item,S_ICONS+6);
+    SetMenuItemIconArray(data,item,icon_array+(Display_Offline?0:1));
     break;
   case 7:
-    SetMenuItemIconArray(data,item,S_ICONS+7);
+    SetMenuItemIconArray(data,item,S_ICONS+6);
     break;
   case 8:
+    SetMenuItemIconArray(data,item,S_ICONS+7);
+    break;
+  case 9:
     SetMenuItemIconArray(data,item,S_ICONS+8);
     break;    
   }

@@ -7,7 +7,7 @@
 #include "jabber_util.h"
 #include "string_util.h"
 #include "serial_dbg.h"
-
+#include "lang.h"
 
 #define MSG_START_X 1    //X-координата начала рисования строки сообщения
 
@@ -105,9 +105,9 @@ char Mess_was_sent = 0;
 
 void inp_ghook(GUI *gui, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Меню"};
+  static SOFTKEY_DESC sk={0x0018, 0x0000,(int)LG_MENU};
 #ifndef NEWSGOLD
-  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
+  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
 #endif
   EDITCONTROL ec;
   if (cmd==2)
@@ -172,7 +172,7 @@ void inp_ghook(GUI *gui, int cmd)
       REDRAW();
       Mess_was_sent = 1;
     }
-    else MsgBoxError(1,(int)"Нельзя послать пустое сообщение");
+    else MsgBoxError(1,(int)LG_NOSENDNULLMESS);
     Terminate = 0;
   }
 
@@ -190,8 +190,8 @@ void inp_locret(void){}
 
 SOFTKEY_DESC menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -217,7 +217,7 @@ INPUTDIA_DESC inp_desc=
   0x40000000
 };
 
-HEADER_DESC inp_hdr={0,0,0,0,NULL,(int)"Новое...",LGP_NULL};
+HEADER_DESC inp_hdr={0,0,0,0,NULL,(int)LG_NEW,LGP_NULL};
 
 
 

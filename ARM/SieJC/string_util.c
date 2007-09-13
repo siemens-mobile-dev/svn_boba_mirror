@@ -836,3 +836,4 @@ void ascii2ws(WSHDR *ws, const char *s)
     wsAppendChar(ws,char8to16(c));
   }
 }
+

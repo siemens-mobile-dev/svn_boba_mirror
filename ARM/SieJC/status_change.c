@@ -7,7 +7,8 @@
 #include "jabber_util.h"
 #include "status_change.h"
 #include "string_util.h"
-
+#include "conf_loader.h"
+#include "lang.h"
 //===============================================================================================
 // ELKA Compatibility
 #pragma inline
@@ -41,19 +42,19 @@ void Change_Status(char status)
 
 #define STATUSES_NUM 6
 
-HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)"Выбор статуса",LGP_NULL};
+HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)LG_STATUSSEL,LGP_NULL};
 
 int st_menusoftkeys[]={0,1,2};
 
 // "online", "chat", "away", "xa", "dnd", "invisible"
 MENUITEM_DESC st_menuitems[STATUSES_NUM]=
 {
-  {NULL,(int)"Онлайн",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Готов болтать",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Отсутствую",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Недоступен",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Занят",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Инвиз",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STONLINE,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STCHAT,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STAWAY,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STXA,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STDND,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_STINVIS,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 void dummy(GUI *data){};
@@ -68,8 +69,8 @@ const MENUPROCS_DESC st_menuprocs[STATUSES_NUM]={
 
 SOFTKEY_DESC st_menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -103,14 +104,14 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
 void ed1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
-  static SOFTKEY_DESC stchsk={0x0018, 0x0000,(int)"OK"};
+  static SOFTKEY_DESC stchsk={0x0018, 0x0000,(int)LG_OK};
 
   if (cmd==7)
   { 
     ExtractEditControl(data,2,&ec);
     wstrcpy(ews,ec.pWS);
 #ifndef NEWSGOLD
-  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
+  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
 #endif  
     //OnRun
 #ifdef NEWSGOLD
@@ -173,7 +174,7 @@ void ed1_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)"Статус",LGP_NULL};
+HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)LG_STATUS,LGP_NULL};
 
 INPUTDIA_DESC ed1_desc=
 {
@@ -203,10 +204,34 @@ INPUTDIA_DESC ed1_desc=
   0x40000000
 };
 
-void Disp_AddSettings_Dialog()
+void Disp_AddSettings_Dialog(char curentstat)
 {
   void *ma=malloc_adr();
   extern const char percent_t[];
+  char textstatus[255]="";
+  extern const char DEFTEX_ONLINE[];
+  extern const char DEFTEX_CHAT[];
+  extern const char DEFTEX_AWAY[];
+  extern const char DEFTEX_XA[];
+  extern const char DEFTEX_DND[];
+  extern const char DEFTEX_INVISIBLE[];
+
+ switch (curentstat)
+  {
+  case 0:
+    strcpy(textstatus,DEFTEX_ONLINE);break;
+  case 1:
+    strcpy(textstatus,DEFTEX_CHAT);break;
+  case 2:
+    strcpy(textstatus,DEFTEX_AWAY);break;
+  case 3:
+    strcpy(textstatus,DEFTEX_XA);break;
+  case 4:
+    strcpy(textstatus,DEFTEX_DND);break;
+  case 5:
+    strcpy(textstatus,DEFTEX_INVISIBLE);
+  }
+
   sTerminate =0;
   void *eq;
   EDITCONTROL ec;
@@ -215,15 +240,15 @@ void Disp_AddSettings_Dialog()
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
 
-  wsprintf(ews,percent_t,"Введите текст статуса:");
+  wsprintf(ews,percent_t,LG_ENTERTEXTSTATUS);
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"");
+  wsprintf(ews,percent_t,textstatus);
   ConstructEditControl(&ec,3,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,percent_t,"Приоритет:");
+  wsprintf(ews,percent_t,LG_PRIORITY);
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -241,7 +266,7 @@ int menu_onKey(void *data, GUI_MSG *msg)
   if (msg->keys==0x3D)
   {
     Selected_Status=GetCurMenuItem(data);
-    Disp_AddSettings_Dialog();
+    Disp_AddSettings_Dialog(Selected_Status);
     return(-1);
   }  
   

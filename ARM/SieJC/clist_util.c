@@ -8,7 +8,7 @@
 #include "roster_icons.h"
 #include "history.h"
 #include "item_info.h"
-
+#include "lang.h"
 const RGBA CURSOR =           {120, 120, 255, 100};         // Цвет курсора
 const RGBA CURSOR_BORDER =    {200, 200, 200, 100};         // Цвет ободка курсора
 const RGBA CLIST_F_COLOR_0 =  {  0,   0,   0, 100};         // Цвет шрифта
@@ -18,7 +18,7 @@ const RGBA CONTACT_BG_1 =     {225, 225, 225, 100};         // Чередование: цвет
 
 CLIST* cltop = NULL;
 
-char Display_Offline = 1;         // Отображать ли оффлайн-пользователей
+char Display_Offline;         // Отображать ли оффлайн-пользователей
 
 RGBA lineColor = {0, 0, 0, 0};    // Цвет текущей строчки
 RGBA borderColor = {0, 0, 0, 0};  // Цвет ободка текущей строчки
@@ -301,11 +301,11 @@ void CList_AddSystemMessage(char* jid, char status, char* status_msg)
   }
   if(status == PRESENCE_UNSUBSCRIBED)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was removed!");
+    CList_AddMessage(jid, MSG_SYSTEM, LG_AUTHORREM);
   }
   if(status==PRESENCE_SUBSCRIBED)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, "Authorization was granted");
+    CList_AddMessage(jid, MSG_SYSTEM, LG_AUTHORGRANTED);
   }
 }
 
@@ -580,7 +580,7 @@ CLIST* CList_AddContact(char* jid,
   {
     ResEx->entry_type=T_CONF_ROOT; // Корень конференции
     ResEx->status=PRESENCE_ONLINE;
-    ShowMSG(1,(int)"Conference created OK");
+    ShowMSG(1,(int)LG_MUCCROK);
   }
   else
   {
@@ -927,5 +927,6 @@ int CList_isGroup(CLIST *cont)
   if(cont->res_list->entry_type==T_GROUP) return 1;
   return 0;
 }
+
 
 

@@ -12,7 +12,7 @@
 #include "serial_dbg.h"
 #include "groups_util.h"
 #include "adv_login.h"
-
+#include "lang.h"
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];
 extern const char PASSWORD[];
@@ -182,7 +182,7 @@ void Send_DiscoInfo_Request(char *dest_jid)
 {
   char *to=malloc(128);
   strcpy(to, dest_jid);
-  SUBPROC((void*)_senddicoinforequest,to);  
+  SUBPROC((void*)_senddicoinforequest,to);
 }
 
 //Context: HELPER
@@ -202,7 +202,42 @@ void Send_Version_Request(char *dest_jid)
   strcpy(to, dest_jid);
   SUBPROC((void*)_sendversionrequest,to);
 }
+//Context: HELPER
 
+void _sendtimerequest(char *dest_jid)
+{
+  char typ[]=IQTYPE_GET;
+  char iq_v[]=IQ_TIME;
+  char vreq_id[]="time_1";
+//SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
+  SendIq(dest_jid, typ, vreq_id, iq_v, NULL);
+  mfree(dest_jid);
+}
+
+// Послать запрос о локальном времени клиента пользователю с указанным JID
+void Send_Time_Request(char *dest_jid)
+{
+  char *to=malloc(128);
+  strcpy(to, dest_jid);
+  SUBPROC((void*)_sendtimerequest,to);
+}
+
+void _sendvcardrequest(char *to)
+{
+  char* xmlq=malloc(1024);
+  sprintf(xmlq, "<iq to='%s' type='get' id='v3'>\r\n<vCard xmlns='vcard-temp'/>\r\n</iq>", to);
+  SendAnswer(xmlq);
+  mfree(xmlq);
+  mfree(to);
+}
+
+// Послать запрос о версии vcard
+void Send_Vcard_Request(char *dest_jid)
+{
+  char *to=malloc(128);
+  strcpy(to, dest_jid);
+  SUBPROC((void*)_sendvcardrequest,to);
+}
 
 /*
   Послать своё присутствие (в частности, после этого на нас вываливаются
@@ -215,7 +250,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   extern char My_Presence;
   My_Presence = pr_info->status;
 //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
-  
+
   char* presence = malloc(1024);
   if(pr_info->status!=PRESENCE_INVISIBLE)
   {
@@ -357,6 +392,27 @@ void Report_VersionInfo(char* id, char *to)
   mfree(to);
 }
 
+void Report_TimeInfo(char* id, char *to)
+{
+  char answer[200];
+  TTime reqt;
+  TDate reqd;
+  const char *TimeZone[24]={"+00:00","+01:00","+02:00","+03:00","+04:00","+05:00","+06:00","+07:00","+08:00",
+  "+09:00","+10:00","+11:00","+12:00","-01:00","-02:00","-03:00","-04:00","-05:00","-06:00","-07:00",
+  "-08:00","-09:00","-10:00","-11:00"};
+//  const signed int TimeZoneNum[24]={'0','1','2','3','4','5','6','7','8','9','10','11','12','-1','-2','-3','-4','-5','-6','-7','-8','-9','-10','-11'};
+  extern const int MY_DEF_ZONE;
+  char timzone[6];
+  GetDateTime(&reqd, &reqt);
+  strcpy(timzone, TimeZone[MY_DEF_ZONE]);
+ // ShowMSG(0,(int)to);
+  sprintf(answer, "<utc>%04d%02d%02dT%02d:%02d:%02d</utc><tz>%s</tz><display>%02d-%02d-%04d %02d:%02d:%02d</display>",reqd.year,reqd.month,reqd.day,reqt.hour,reqt.min,reqt.sec, timzone,reqd.day,reqd.month,reqd.year,reqt.hour,reqt.min,reqt.sec);
+//XMPP sprintf(answer, "<utc>20070910T17:58:35</utc><tz>MDT</tz><display>Tue Sep 10 15:58:35 2007</display>");
+  SendIq(to, IQTYPE_RES, id, IQ_TIME, answer);
+  mfree(id);
+  mfree(to);
+};
+
 // Context: HELPER
 void Report_DiscoInfo(char* id, char *to)
 {
@@ -364,12 +420,15 @@ void Report_DiscoInfo(char* id, char *to)
   sprintf(answer, "<identity category='client' type='mobile'/>"
                     "<feature var='%s'/>"
                     "<feature var='%s'/>"
-                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC);
+                    "<feature var='%s'/>"
+                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC, IQ_TIME);
+  //"urn:xmpp:time"
   if(DELIVERY_EVENTS)
   {
     char xevents_feature[]="<feature var='"JABBER_X_EVENT"'/>";
     strcat(answer, xevents_feature);
   }
+//  ShowMSG(0,(int)to);
   SendIq(to, IQTYPE_RES, id, DISCO_INFO, answer);
 
   mfree(id);
@@ -443,7 +502,7 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
       m_ex=m_ex->next;
     };
   }
-  
+
   if(!IsAlreadyInList)
   {
     // Добавляем контакт конференции в ростер
@@ -549,7 +608,7 @@ void Leave_Conference(char* room)
     }
     m_ex2 = m_ex2->next;
   }
-  ShowMSG(1,(int)"Выход из MUC выполнен");
+  ShowMSG(1,(int)LG_MUCEXITDONE);
 }
 
 
@@ -657,19 +716,19 @@ void FillRoster(XMLNode* items)
    rostEx=rostEx->next;
    i++;
   }
-  
+
   // Получение ростера закончено. Размечаем группы
   GR_ITEM *tmp_gpointer=GR_ROOT;
   CLIST *tmp_cpointer=cltop;
   int cur_gid=-1, this_grid;   // Текущий обрабатываемый GID
-  
- 
+
+
   // Цикл по всем контактам
   while(tmp_cpointer->next)
   {
     this_grid = ((CLIST*)tmp_cpointer->next)->group;
     // Получаем текущую группу
-    if(cur_gid!=this_grid)  
+    if(cur_gid!=this_grid)
     {
       tmp_gpointer = GetGroupByID(this_grid);
       cur_gid = this_grid;
@@ -686,7 +745,7 @@ void FillRoster(XMLNode* items)
       gr_pscontact->ResourceCount=1;
       gr_pscontact->next=tmp_cpointer->next;  // Вставляем между текущим и следующим
       tmp_cpointer->next = gr_pscontact;
-      
+
       // Cоздаём ещё и псевдоресурс
       TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
       ResEx->log=NULL;
@@ -787,8 +846,29 @@ if(!strcmp(gget,iqtype)) // Iq type = get
         SUBPROC((void*)Report_VersionInfo,loc_id, loc_from);
         return;
     }
+  } //end version
+
+  if(!strcmp(q_type,IQ_TIME))
+  {
+    // jabber:iq:time
+    if(from)
+    {
+        // Создаем переменные, чтобы в них записать данные
+        // и безопасно уничтожить в HELPER
+
+      char* loc_id = NULL;
+      if(id)
+        {
+          loc_id=malloc(strlen(id)+1);
+          strcpy(loc_id,id);
+        }
+        char* loc_from=malloc(strlen(from)+1);
+        strcpy(loc_from,from);
+        SUBPROC((void*)Report_TimeInfo,loc_id, loc_from);
+        return;
+    }
   }
-  
+
   //entity caps
   if(!strcmp(q_type,disco_info))
   {
@@ -810,7 +890,7 @@ if(!strcmp(gget,iqtype)) // Iq type = get
         return;
     }
   }
-  
+
   // Ни один обработчик не подошёл, отправляем ошибку.
   Send_Feature_Not_Implemented(from, id);
 }
@@ -859,7 +939,6 @@ if(!strcmp(gres,iqtype))
     }
   }
 
-  
   if(!strcmp(id,vreq_id))   // Запрос версии (ответ)
   {
     XMLNode* query;
@@ -883,15 +962,197 @@ if(!strcmp(gres,iqtype))
       }
       //Формируем сообщение
       char *reply=malloc(512);
-      snprintf(reply, 512,"Version Info:\nName:%s\nVersion:%s\nOS:%s",cl_name->value, cl_version->value, vers_os_str);
+      snprintf(reply, 512,LG_VERINFO,cl_name->value, cl_version->value, vers_os_str);
       CList_AddMessage(from, MSG_SYSTEM, reply);
-      ShowMSG(1,(int)reply);
+      ShowMSG(0,(int)reply);
       mfree(reply);
       return;
     }
-
   }
-
+    if(!strcmp(id,"time_1"))   // Запрос Time (ответ)
+  {
+    XMLNode* query;
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
+    char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+    if(!q_type)return;
+    if(!strcmp(q_type,IQ_TIME))
+    {
+      char no_display[]="(no data)";
+      char* display_str;
+      char* tz_str;
+      XMLNode *cl_utc=XML_Get_Child_Node_By_Name(query, "utc");
+      XMLNode *cl_tz=XML_Get_Child_Node_By_Name(query, "tz");
+      XMLNode *cl_display=XML_Get_Child_Node_By_Name(query, "display");
+      if(cl_display)
+      {
+        display_str = cl_display->value;
+      }
+      else
+      {
+        display_str=no_display;
+      }
+      if(cl_tz)
+      {
+        tz_str = cl_tz->value;
+      }
+      else
+      {
+        tz_str=no_display;
+      }
+      //Формируем сообщение
+      char *reply=malloc(512);
+      snprintf(reply, 512,LG_TIMEINFO,cl_utc->value, tz_str, display_str);
+      CList_AddMessage(from, MSG_SYSTEM, reply);
+      ShowMSG(0,(int)reply);
+      mfree(reply);
+      return;
+    }
+  }
+  if(!strcmp(id,"v3"))   // Запрос vcard (ответ)
+  {
+    XMLNode* vcard;
+    if(!(vcard = XML_Get_Child_Node_By_Name(nodeEx, "vCard")))return;
+    char* v_type = XML_Get_Attr_Value("xmlns", vcard->attr);
+    if(!v_type)return;
+    if(!strcmp(v_type,"vcard-temp"))
+    {
+      char* pres=malloc(1024);
+      int resul_s = 1024;
+      char* resul=malloc(resul_s);
+      char* FN_str;
+      char* NICKNAME_str;
+//      char* JABBERID_str;
+//      char* GIVEN_str;
+//      char* FAMILY_str;
+//      char* MIDDLE_str;
+//      char* EMAILHOME_str;
+//      char* EMAILWORK_str;
+//      char* URL_str;
+//      char* BDAY_str;
+//      char* ORGNAME_str;
+//      char* ORGUNIT_str;
+//      char* TITLE_str;
+//     char* ROLE_str;
+//      char* USERID_str;
+//      char* DESC_str;
+      XMLNode *vc_FN=XML_Get_Child_Node_By_Name(vcard, "FN");
+//--------<N>
+//     XMLNode *N_TEG=XML_Get_Child_Node_By_Name(vcard, "N");
+//     XMLNode *vc_GIVEN=XML_Get_Child_Node_By_Name(N_TEG, "GIVEN");
+//      XMLNode *vc_FAMILY=XML_Get_Child_Node_By_Name(N_TEG, "FAMILY");
+//      XMLNode *vc_MIDDLE=XML_Get_Child_Node_By_Name(N_TEG, "MIDDLE");
+//----------<N/>
+//-------<ORG>
+//       XMLNode *ORG_TEG=XML_Get_Child_Node_By_Name(vcard, "ORG");
+//     XMLNode *vc_ORGNAME=XML_Get_Child_Node_By_Name(ORG_TEG, "ORGNAME");
+//      XMLNode *vc_ORGUNIT=XML_Get_Child_Node_By_Name(ORG_TEG, "ORGUNIT");
+//------<ORG/>
+//---<EMAIL>
+//       XMLNode *EMAIL_TEG=XML_Get_Child_Node_By_Name(vcard, "EMAIL");
+//     XMLNode *vc_EMAILHOME=XML_Get_Child_Node_By_Name(EMAIL_TEG, "HOME");
+//     XMLNode *vc_EMAILWORK=XML_Get_Child_Node_By_Name(EMAIL_TEG, "WORK");
+//     XMLNode *vc_EMAILINTERNET=XML_Get_Child_Node_By_Name(EMAIL_TEG, "INTERNET");
+//     XMLNode *vc_EMAILPREF=XML_Get_Child_Node_By_Name(EMAIL_TEG, "PREF");
+//     XMLNode *vc_EMAILX400=XML_Get_Child_Node_By_Name(EMAIL_TEG, "X400");
+ //    XMLNode *vc_EMAILUSERID=XML_Get_Child_Node_By_Name(EMAIL_TEG, "USERID");
+//---<EMAIL/>
+//      XMLNode *vc_JABBERID=XML_Get_Child_Node_By_Name(vcard, "JABBERID");
+      XMLNode *vc_NICKNAME=XML_Get_Child_Node_By_Name(vcard, "NICKNAME");
+//      XMLNode *vc_URL=XML_Get_Child_Node_By_Name(vcard, "URL");
+//      XMLNode *vc_BDAY=XML_Get_Child_Node_By_Name(vcard, "BDAY");
+//     XMLNode *vc_TITLE=XML_Get_Child_Node_By_Name(vcard, "TITLE");
+//      XMLNode *vc_ROLE=XML_Get_Child_Node_By_Name(vcard, "ROLE");
+//      XMLNode *vc_DESC=XML_Get_Child_Node_By_Name(vcard, "DESC");
+      if(vc_FN)
+      { FN_str=vc_FN->value;
+        sprintf(pres,"Fullname: %s\n",FN_str);
+        if (strlen(resul)+strlen(pres)>resul_s)
+        {
+          resul_s *= 2;
+          resul = realloc(resul, resul_s);
+        }
+        strcpy(resul,pres);
+      };
+      if(vc_NICKNAME)
+      { NICKNAME_str=vc_NICKNAME->value;
+        sprintf(pres,"Nick: %s\n",NICKNAME_str);
+        if (strlen(resul)+strlen(pres)>resul_s)
+        {
+          resul_s *= 2;
+          resul = realloc(resul, resul_s);
+        }
+        strcat(resul,pres);
+      };
+//      if(vc_GIVEN)
+//      { GIVEN_str=vc_GIVEN->value;
+//        sprintf(pres,"GIVEN: %s\n",GIVEN_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_MIDDLE)
+//      { MIDDLE_str=vc_MIDDLE->value;
+//       sprintf(pres,"MIDDLE: %s\n",MIDDLE_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_FAMILY)
+//      { FAMILY_str=vc_FAMILY->value;
+//        sprintf(pres,"FAMILY: %s\n",FAMILY_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_BDAY)
+//      { BDAY_str=vc_BDAY->value;
+//        sprintf(pres,"BDAY: %s\n",BDAY_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_URL)
+//      { URL_str=vc_URL->value;
+//        sprintf(pres,"URL: %s\n",URL_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_EMAILHOME)
+//      { EMAILHOME_str=vc_EMAILHOME->value;
+//        sprintf(pres,"E.Home: %s\n",EMAILHOME_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_EMAILWORK)
+//      { EMAILWORK_str=vc_EMAILWORK->value;
+//        sprintf(pres,"E.Work: %s\n",EMAILWORK_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_JABBERID)
+//      { JABBERID_str=vc_JABBERID->value;
+//        sprintf(pres,"JABBERID: %s\n",JABBERID_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_TITLE)
+//      { TITLE_str=vc_TITLE->value;
+//        sprintf(pres,"TITLE: %s\n",TITLE_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_ROLE)
+//      { ROLE_str=vc_ROLE->value;
+//        sprintf(pres,"ROLE: %s\n",ROLE_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_ORGNAME)
+//      { ORGNAME_str=vc_ORGNAME->value;
+//        sprintf(pres,"Org.Name: %s\n",ORGNAME_str);
+//        strcat(resul,pres);
+//      };
+//      if(vc_ORGUNIT)
+//      { ORGUNIT_str=vc_ORGUNIT->value;
+//        sprintf(pres,"Org.Unit: %s\n",ORGUNIT_str);
+//        strcat(resul,pres);
+//      };
+      //Формируем сообщение
+      char *reply=malloc(strlen(resul)+16);
+      sprintf(reply, "vCard:\n%s", resul);
+      CList_AddMessage(from, MSG_SYSTEM, reply);
+      mfree(reply);
+      mfree(pres);
+      mfree(resul);
+      return;
+    }
+  }
 /////////////////
   if(!strcmp(id,disco_id))   // Запрос диско (ответ)
   {
@@ -901,12 +1162,10 @@ if(!strcmp(gres,iqtype))
     if(!q_type)return;
     if(!strcmp(q_type,DISCO_INFO))
     {
-      Disp_From_Disco(from, query);       
+      Disp_From_Disco(from, query);
     }
-
   }
 /////////////////
-
   if(!strcmp(id,priv_id))
   {
     XMLNode* query;
@@ -923,9 +1182,7 @@ if(!strcmp(gres,iqtype))
       return;
     }
   }
-
 }
-
 // Обработка  Iq type = set
 if(!strcmp(gset,iqtype))
 {
@@ -941,7 +1198,6 @@ if(!strcmp(gset,iqtype))
       return;
     }
 }
-
 
 if(!strcmp(gerr,iqtype)) // Iq type = error
 {
@@ -960,23 +1216,20 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
     extern void end_socket(void);
     SUBPROC((void*)end_socket);
   }
-
 }
-
 }
-
 /*
 Презенсы :)
 */
 void Process_Presence_Change(XMLNode* node)
-{
+ {
   // Иар заебал
 char loc_actor[]="actor";
 char loc_jid[]="jid";
 char loc_reason[]="reason";
 char loc_xmlns[]="xmlns";
 char loc_x[]="x";
-  
+
   CONF_DATA priv;
   char Req_Set_Role=0;
   char *real_jid = NULL;
@@ -1050,7 +1303,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         real_jid = XML_Get_Attr_Value(loc_jid, item->attr);
         priv.aff = (JABBER_GC_AFFILIATION)GetAffRoleIndex(affiliation);
         priv.role = (JABBER_GC_ROLE)GetAffRoleIndex(role);
-               
+
         if(ResEx)
         {
 
@@ -1113,7 +1366,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         if(!strcmp(st_code, MUCST_KICKED_MEMB_ONLY)) sprintf(r, MUCST_R_KICK_MEMB_ONLY, nick); // Сообщение о кике из мембер-онли румы
         if(!strcmp(st_code, MUCST_CHNICK)) sprintf(r, MUCST_R_CHNICK, nick,  XML_Get_Attr_Value("nick", item->attr)); // Сообщение о смене ника
         //sprintf(r,r,nick);
-        
+
         XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
         if(item)
         {
@@ -1144,7 +1397,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
   if(real_jid)
   {
     ResEx->muc_privs.real_jid = malloc(strlen(real_jid)+1);
-    strcpy(ResEx->muc_privs.real_jid, real_jid);          
+    strcpy(ResEx->muc_privs.real_jid, real_jid);
   }
 }
 
@@ -1225,8 +1478,8 @@ RECV: <message
         <delivered/>
         <id>message22</id>
       </x>
-    </message>  
-*/  
+    </message>
+*/
   char notif_tpl[]="<message to='%s'><x xmlns='jabber:x:event'><id>%s</id><delivered/></x></message>";
   char *ans = malloc(256);
   snprintf(ans,256,notif_tpl, to, mess_id);
@@ -1242,7 +1495,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   char from[]="from";
   char c_xmlns[]="xmlns";
   char c_id[]="id";
-  
+
   // Если включено обслуживание запросов о получении...
   if(DELIVERY_EVENTS)
   {
@@ -1265,7 +1518,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       }
     }
   }
-  
+
   XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");
   if(!msgnode)
   {
@@ -1285,7 +1538,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
         char* m = malloc(128+5+strlen(msgnode->value));
         sprintf(m,"%s: %s", XML_Get_Attr_Value(from,nodeEx->attr), msgnode->value);
         char *ansi_m=convUTF8_to_ANSI_STR(m);
-        ShowMSG(1,(int)ansi_m);
+        ShowMSG(0,(int)ansi_m);
         mfree(m);
         mfree(ansi_m);
       }
@@ -1295,14 +1548,14 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       else
         {
           extern const char sndConf[];
-          SUBPROC((void *)Play,sndConf);          
+          SUBPROC((void *)Play,sndConf);
         }
     if(Is_subj)
     {
       msgtype = MSG_SUBJECT;
     }
     CList_AddMessage(XML_Get_Attr_Value(from,nodeEx->attr), msgtype, msgnode->value);
-    
+
     extern volatile int vibra_count;
     Vibrate(1);
   }

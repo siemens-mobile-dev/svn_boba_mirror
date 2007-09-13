@@ -3,6 +3,7 @@
 #include "clist_util.h"
 #include "jabber_util.h"
 #include "string_util.h"
+#include "lang.h"
 
 //==============================================================================
 // ELKA Compatibility
@@ -33,7 +34,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 //==============================================================================
 
 
-#define MAX_ITEMS 8       // Максимальное количество пунктов меню 
+#define MAX_ITEMS 11       // Максимальное количество пунктов меню 
 
 #define MI_CONF_LEAVE       1
 #define MI_CONF_KICK_THIS   2
@@ -43,6 +44,9 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 #define MI_QUERY_VERSION    6
 #define MI_LOGIN_LOGOUT     7
 #define MI_DISCO_QUERY      8
+#define MI_HISTORY_OPEN     9
+#define MI_TIME_QUERY       10
+#define MI_VCARD_QUERY       11
 
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
@@ -50,13 +54,13 @@ int cmS_ICONS[MAX_ITEMS+1];
 
 int Contact_MenuID;
 int Req_Close_Cont_Menu=0;
-const char contmenu_header[]="Меню контакта";
+const char contmenu_header[]=LG_MENUCONTACT;
 int menusoftkeys[]={0,1,2};
 HEADER_DESC contact_menuhdr={0,0,0,0,NULL,(int)contmenu_header,LGP_NULL};
 SOFTKEY_DESC clmenu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -130,6 +134,18 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
       break;
     }    
+  case MI_TIME_QUERY:
+    {
+      Send_Time_Request((CList_GetActiveContact()->full_name));
+      break;
+    }       
+
+  case MI_VCARD_QUERY:
+    {
+      Send_Vcard_Request((CList_GetActiveContact()->full_name));
+      break;
+    }       
+
   case MI_QUERY_VERSION: 
     {
       
@@ -159,11 +175,23 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       Send_DiscoInfo_Request(CList_GetActiveContact()->full_name);
       break;
     }
-  default:
+////////////////////////HISTORY
+  case MI_HISTORY_OPEN:
     {
-      MsgBoxError(1,(int)"Действие неизвестно или не поддерживается");
+//С латинскими JID ами работает, а с теми у ого кирилица непробовал, нет таких в наличии.      
+  extern const char HIST_PATH[128];
+  WSHDR *wsfn=AllocWS(255);
+  wsprintf(wsfn,"%s%s.txt",HIST_PATH,CList_GetActiveContact()->full_name);
+  ExecuteFile(wsfn,NULL,NULL);
+  FreeWS(wsfn);
+       break; 
+    }
+ default:
+    {
+      MsgBoxError(1,(int)LG_UNKACTION);
     }
   }
+ 
   return 1;
 }  
 //  Req_Close_Cont_Menu = 1;
@@ -196,53 +224,68 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   {
   case MI_CONF_LEAVE: 
     {
-      strcpy(test_str,"Покинуть");
+      strcpy(test_str,LG_ABANDON);
       break;
     } 
     
   case MI_CONF_KICK_THIS: 
     {
-      strcpy(test_str,"Кик");
+      strcpy(test_str,LG_KIK);
       break;
     }    
   case MI_CONF_BAN_THIS: 
     {
-      strcpy(test_str,"Бан");
+      strcpy(test_str,LG_BAN);
       break;
     }  
   case MI_CONF_VREJ_THIS: 
     {
-      strcpy(test_str,"Отнять голос");
+      strcpy(test_str,LG_LVOISE);
       break;
     }  
   case MI_CONF_VGR_THIS: 
     {
-      strcpy(test_str,"Дать голос");
+      strcpy(test_str,LG_GVOISE);
       break;
     }  
     
   case MI_QUERY_VERSION: 
     {
-      strcpy(test_str,"Версия клиента");
+      strcpy(test_str,LG_VERCLIENT);
       break;
     }    
 
   case MI_DISCO_QUERY: 
     {
-      strcpy(test_str,"Инфо из Disco");
+      strcpy(test_str,LG_INFOFDISC);
       break;
     }    
-    
+  case MI_TIME_QUERY: 
+    {
+      strcpy(test_str,LG_QUERYTIME);
+      break;
+    } 
 
+  case MI_VCARD_QUERY: 
+    {
+      strcpy(test_str,"vCard");
+      break;
+    } 
+    
+  case MI_HISTORY_OPEN:
+     {
+      strcpy(test_str,LG_OHISTORY);
+       break;
+     }
   case MI_LOGIN_LOGOUT: 
     {
       if(Act_contact->status==PRESENCE_OFFLINE)
       {
-        strcpy(test_str,"Включить");
+        strcpy(test_str,LG_ON);
       }
       else
       {
-        strcpy(test_str,"Отключить");
+        strcpy(test_str,LG_OFF);
       }
       break;
     }      
@@ -294,7 +337,10 @@ char ICON_CONF_VGR_THIS[128];
 char ICON_QUERY_VERSION[128];
 char ICON_LOGIN_LOGOUT[128];
 char ICON_QUERY_DISCO[128];
-
+char ICON_HISTORY_OPEN[128];
+char ICON_QUERY_TIME[128];
+char ICON_QUERY_VCARD[128];     
+     
 void Init_Icon_array()
 {
   TRESOURCE *Act_contact = CList_GetActiveContact();
@@ -306,6 +352,9 @@ void Init_Icon_array()
   strcpy(ICON_CONF_VGR_THIS, PATH_TO_PIC);strcat(ICON_CONF_VGR_THIS, "menu_no_icon.png");
   strcpy(ICON_QUERY_VERSION, PATH_TO_PIC);strcat(ICON_QUERY_VERSION, "menu_version.png");  
   strcpy(ICON_QUERY_DISCO, PATH_TO_PIC);strcat(ICON_QUERY_DISCO, "menu_version.png");
+  strcpy(ICON_HISTORY_OPEN, PATH_TO_PIC);strcat(ICON_HISTORY_OPEN, "menu_version.png");
+  strcpy(ICON_QUERY_TIME, PATH_TO_PIC);strcat(ICON_QUERY_TIME, "menu_version.png");
+  strcpy(ICON_QUERY_VCARD, PATH_TO_PIC);strcat(ICON_QUERY_VCARD, "menu_version.png");  
   strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
   if(Act_contact->entry_type==T_TRANSPORT)
   if(Act_contact->status==PRESENCE_OFFLINE)
@@ -322,8 +371,11 @@ void Init_Icon_array()
   cmS_ICONS[MI_CONF_VGR_THIS]=(int)ICON_CONF_VGR_THIS;    
   cmS_ICONS[MI_QUERY_VERSION]=(int)ICON_QUERY_VERSION;    
   cmS_ICONS[MI_DISCO_QUERY]=(int)ICON_QUERY_DISCO;
+  cmS_ICONS[MI_HISTORY_OPEN]=(int)ICON_HISTORY_OPEN;
+  cmS_ICONS[MI_TIME_QUERY]=(int)ICON_QUERY_TIME;
+  cmS_ICONS[MI_VCARD_QUERY]=(int)ICON_QUERY_VCARD;
   cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT; 
-  
+
 }
 
 void Disp_Contact_Menu()
@@ -334,8 +386,15 @@ void Disp_Contact_Menu()
   TRESOURCE *Act_contact = CList_GetActiveContact();
 // Теперь определяем, какие пункты у нас будут, и сколько
   if(!Act_contact)return;
-  
-  if(Act_contact->entry_type!=T_CONF_ROOT)
+/*
+  Смотрим, если ето не группа, не участник конференции или транспорт то первым пунктом будет открыть историю.
+*/  
+ if((Act_contact->entry_type!=T_GROUP)&&(Act_contact->entry_type!=T_TRANSPORT)&&(Act_contact->entry_type!=T_CONF_NODE))
+{
+  Menu_Contents[n_items++]=MI_HISTORY_OPEN; 
+}
+
+  if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_GROUP)) //в групах версия клиента ненужна
   {
     Menu_Contents[n_items++]=MI_QUERY_VERSION;
   } 
@@ -354,7 +413,17 @@ void Disp_Contact_Menu()
   {
     Menu_Contents[n_items++]=MI_DISCO_QUERY;
   }  
-  
+ 
+ if(Act_contact->entry_type!=T_GROUP)
+  {
+    Menu_Contents[n_items++]=MI_VCARD_QUERY;
+  }  
+
+  if(Act_contact->entry_type!=T_GROUP)
+  {
+    Menu_Contents[n_items++]=MI_TIME_QUERY;
+  }  
+
   if(Act_contact->entry_type==T_CONF_NODE)
   {
     if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
@@ -376,6 +445,6 @@ void Disp_Contact_Menu()
   }
   else
   {
-    MsgBoxError(1,(int)"Нет поддерживаемых действий");
+    MsgBoxError(1,(int)LG_NOSUPACTION);
   }
 }

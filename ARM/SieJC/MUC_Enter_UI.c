@@ -2,7 +2,7 @@
 #include "main.h"
 #include "string_util.h"
 #include "jabber_util.h"
-
+#include "lang.h"
 //===============================================================================================
 // ELKA Compatibility
 #pragma inline
@@ -25,8 +25,8 @@ void patch_input(INPUTDIA_DESC* inp)
 
 SOFTKEY_DESC m_menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -60,7 +60,7 @@ int med1_onkey(GUI *data, GUI_MSG *msg)
 void med1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
-  static SOFTKEY_DESC mmmmsk={0x0018, 0x0000,(int)"OK"};
+  static SOFTKEY_DESC mmmmsk={0x0018, 0x0000,(int)LG_OK};
  
   if (cmd==7)
   {
@@ -68,7 +68,7 @@ void med1_ghook(GUI *data, int cmd)
     ExtractEditControl(data,2,&ec);    
     wstrcpy(mews,ec.pWS);    
 #ifndef NEWSGOLD
-  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)"Закрыть"};
+  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
 #endif
 #ifdef NEWSGOLD    
     SetSoftKey(data,&mmmmsk,0);
@@ -103,7 +103,7 @@ void med1_ghook(GUI *data, int cmd)
       param_ok = 1;
       if(conf_name[0]=='@')
       {
-        MsgBoxError(1,(int)"Имя конфы не заполнено!");
+        MsgBoxError(1,(int)LG_NONAMECONF);
         param_ok=0;
       }
    }
@@ -145,7 +145,7 @@ void med1_ghook(GUI *data, int cmd)
 
 extern void dummy(GUI *data);
 
-HEADER_DESC med1_hdr={0,0,131,21,NULL,(int)"Вход в MUC",LGP_NULL};
+HEADER_DESC med1_hdr={0,0,131,21,NULL,(int)LG_ENTERMUC,LGP_NULL};
 
 INPUTDIA_DESC med1_desc=
 {
@@ -190,7 +190,7 @@ void Disp_MUC_Enter_Dialog()
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
-  wsprintf(mews,percent_t,"Имя конференции:");
+  wsprintf(mews,percent_t,LG_NAMEMUC);
   ConstructEditControl(&ec,1,0x40,mews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -198,7 +198,7 @@ void Disp_MUC_Enter_Dialog()
   ConstructEditControl(&ec,3,0x40,mews,128);      //2
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,percent_t,"Ник:");
+  wsprintf(mews,percent_t,LG_NICK);
   ConstructEditControl(&ec,1,0x40,mews,256);
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -214,7 +214,7 @@ void Disp_MUC_Enter_Dialog()
   ConstructEditControl(&ec,3,0x40,mews,80);     // 4
   AddEditControlToEditQend(eq,&ec,ma);  
   
-  wsprintf(mews,percent_t,"Получить сообщений:");
+  wsprintf(mews,percent_t,LG_GETMESSAGECOUNT);
   ConstructEditControl(&ec,1,0x40,mews,256);      
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -226,6 +226,7 @@ void Disp_MUC_Enter_Dialog()
   patch_header(&med1_hdr);
   CreateInputTextDialog(&med1_desc,&med1_hdr,eq,1,0);
 }
+
 
 
 

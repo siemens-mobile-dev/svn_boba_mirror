@@ -1,6 +1,6 @@
 #include "../inc/swilib.h"
 #include "history.h"
-
+#include "lang.h"
 extern const char HIST_PATH[128];
 extern const char DEFAULT_DISC[128];
 
@@ -92,7 +92,7 @@ void _add2history(HIST_RECORD_INFO *info)
   }
   else
   {
-    sprintf(q, "Ошибка I/O #%u при записи истории", io_error);
+    sprintf(q, LG_ERRORWH, io_error);
     LockSched();
     ShowMSG(1,(int)q); 
     UnlockSched();

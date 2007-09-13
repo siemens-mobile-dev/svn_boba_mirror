@@ -2,6 +2,7 @@
 #include "main.h"
 #include "jabber_util.h"
 #include "bookmarks.h"
+#include "lang.h"
 
 BM_ITEM *BM_ROOT  = NULL;
 
@@ -136,13 +137,13 @@ int BM_MenuID;
 int Req_Close_BM_Menu=0;
 extern BM_ITEM *BM_ROOT;
 
-const char bmmenu_header[]="Меню закладок";
+const char bmmenu_header[]=LG_MENUBOOKMARK;
 int bmmenusoftkeys[]={0,1,2};
 HEADER_DESC bm_menuhdr={0,0,0,0,NULL,(int)bmmenu_header,LGP_NULL};
 SOFTKEY_DESC bmmenu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 

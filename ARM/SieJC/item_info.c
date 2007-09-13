@@ -5,10 +5,12 @@
 #include "string_util.h"
 #include "xml_parser.h"
 #include "item_info.h"
+#include "lang.h"
 
 #define MAX_SYMB 1024
 WSHDR* ws_info = NULL;
 
+extern const char KNOW_FEATURES_PATH[];
 int info_onkey(GUI *gui, GUI_MSG *msg)
 {
  if (msg->keys==0x18)
@@ -64,8 +66,8 @@ extern void patch_input(INPUTDIA_DESC* inp);
 
 SOFTKEY_DESC info_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -118,12 +120,12 @@ void Disp_Info(TRESOURCE* ResEx)
   T_TRANSPORT,    // Транспортный агент
   T_GROUP         // Элемент "группа"
   */  
-  if(ResEx->entry_type==T_NORMAL)wsprintf(ws_info,percent_t,"Элемент ростера");
-  if(ResEx->entry_type==T_VIRTUAL)wsprintf(ws_info,percent_t,"Оффлайн или контакт из транспорта");
-  if(ResEx->entry_type==T_CONF_ROOT)wsprintf(ws_info,percent_t,"Конференция");
-  if(ResEx->entry_type==T_CONF_NODE)wsprintf(ws_info,percent_t,"Участник конференции");
-  if(ResEx->entry_type==T_TRANSPORT)wsprintf(ws_info,percent_t,"Данный контакт является транспортом Jabber");
-  if(ResEx->entry_type==T_GROUP)wsprintf(ws_info,percent_t,"Группа ростера");
+  if(ResEx->entry_type==T_NORMAL)wsprintf(ws_info,percent_t,LG_ELROSTER);
+  if(ResEx->entry_type==T_VIRTUAL)wsprintf(ws_info,percent_t,LG_OFFLORCONTTR);
+  if(ResEx->entry_type==T_CONF_ROOT)wsprintf(ws_info,percent_t,LG_MUC);
+  if(ResEx->entry_type==T_CONF_NODE)wsprintf(ws_info,percent_t,LG_MUCPART);
+  if(ResEx->entry_type==T_TRANSPORT)wsprintf(ws_info,percent_t,LG_JTRANSP);
+  if(ResEx->entry_type==T_GROUP)wsprintf(ws_info,percent_t,LG_GROUPROSTER);
   
   ConstructEditControl(&ec,1,0x40,ws_info,256);  
   AddEditControlToEditQend(eq,&ec,ma);
@@ -144,7 +146,7 @@ void Disp_Info(TRESOURCE* ResEx)
   if(ResEx->entry_type==T_NORMAL)
   {  
     // Ресурс
-    wsprintf(ws_info,percent_t,"Ресурс:");
+    wsprintf(ws_info,percent_t,LG_RESOURCE);
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     
@@ -159,7 +161,7 @@ void Disp_Info(TRESOURCE* ResEx)
 
     if(ResEx->muc_privs.real_jid)
     {
-      wsprintf(ws_info,percent_t,"Реальный JID:");
+      wsprintf(ws_info,percent_t,LG_REALJID);
       ConstructEditControl(&ec,1,0x40,ws_info,256);
       AddEditControlToEditQend(eq,&ec,ma);
       
@@ -169,7 +171,7 @@ void Disp_Info(TRESOURCE* ResEx)
     }
 
     // Статус и сообщение статуса
-    wsprintf(ws_info,percent_t,"Статус:");
+    wsprintf(ws_info,percent_t,LG_STATUS2);
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     if(ResEx->status_msg)
@@ -191,7 +193,7 @@ void Disp_Info(TRESOURCE* ResEx)
   if(ResEx->entry_type==T_CONF_NODE)
   {
     // Afflliation, role
-    wsprintf(ws_info,percent_t,"Привилегии:");
+    wsprintf(ws_info,percent_t,LG_PRIVILEGES);
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     
@@ -199,7 +201,7 @@ void Disp_Info(TRESOURCE* ResEx)
     ConstructEditControl(&ec,3,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
-    wsprintf(ws_info,percent_t,"Роль:");
+    wsprintf(ws_info,percent_t,LG_ROLE);
     ConstructEditControl(&ec,1,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     
@@ -216,15 +218,19 @@ void Disp_Info(TRESOURCE* ResEx)
 static char *Known_Features = NULL;
 
 extern const char DEFAULT_DISC[128];
+extern const char KNOW_FEATURES_PATH[]; //ДОБАВЛЕНО
+
 char *Lookup_Known_Vars(char *var_name)
 {
   if(!Known_Features)  
   {
     // Грузим фичи из файла
     unsigned int io_error = 0;
-    char path[]="4:\\ZBin\\SieJC\\Templates\\known_features.txt";
-    path[0] = DEFAULT_DISC[0];
-    volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
+//    char path[]="4:\\ZBin\\SieJC\\Templates\\known_features.txt";
+//    path[0] = DEFAULT_DISC[0];
+   char path[255]; //ДОБАВЛЕНО
+	strcpy(path,KNOW_FEATURES_PATH);//ДОБАВЛЕНО
+	volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
     if(io_error)
     {
       char q[40];
@@ -271,7 +277,7 @@ void Disp_From_Disco(char *jid, XMLNode *info)
   AddEditControlToEditQend(eq,&ec,ma);
   
 
-  wsprintf(ws_info,percent_t,"Возможности клиента:");
+  wsprintf(ws_info,percent_t,LG_POSIBLCLIENT);
   ConstructEditControl(&ec,1,0x40,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
   

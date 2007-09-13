@@ -3,6 +3,7 @@
 #include "..\inc\zlib.h"
 #include "history.h"
 #include "conf_loader.h"
+#include "conf_loader2.h"
 #include "main.h"
 #include "message_list.h"
 #include "xml_parser.h"
@@ -17,6 +18,7 @@
 #include "mainmenu.h"
 #include "serial_dbg.h"
 #include "../inc/xtask_ipc.h"
+#include "lang.h"
 /*
 (c) Kibab
 (r) Rst7, MasterMind, AD, Borman99
@@ -56,9 +58,9 @@ const char ipc_my_name[]="SieJC";
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 
-extern const int Default_Sounds_State;
-int Is_Sounds_Enabled;
-int Is_Vibra_Enabled = 1;
+int Is_Sounds_Enabled=1;
+int Is_Vibra_Enabled=1;
+char *exename2;
 
 char Is_Compression_Enabled = 0;
 
@@ -937,12 +939,13 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 
 void QuitCallbackProc(int decision)
 {
+SaveTempSetting();
   if(!decision)Quit_Required = 1;
 }
 
 void DisplayQuitQuery()
 {
-  MsgBoxYesNo(1,(int)"Покинуть SieJC?",QuitCallbackProc);
+  MsgBoxYesNo(1,(int)LG_EXITSIEJC,QuitCallbackProc);
 }
 
 void Enter_SiepatchDB()
@@ -1284,6 +1287,7 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&redraw_tmr);
 #endif
   GBS_DelTimer(&reconnect_tmr);
+
   SetVibration(0);
 
   CList_Destroy();
@@ -1523,28 +1527,31 @@ unsigned short IsGoodPlatform()
 
 Check_Settings_Cleverness()
 {
-  if(!USE_SASL && USE_ZLIB)ShowMSG(0,(int)"ZLib не работает без SASL!");
+  if(!USE_SASL && USE_ZLIB)ShowMSG(0,(int)LG_ZLIBNOSASL);
 }
 
 int main(char *exename, char *fname)
 {
+ exename2=exename;
   if(!IsGoodPlatform())
   {
-    ShowMSG(1,(int)"Target platform mismatch!!");
+    ShowMSG(1,(int)LG_PLATFORMM);
     return 0;
   }
   char dummy[sizeof(MAIN_CSM)];
   InitConfig(fname);
-  Is_Sounds_Enabled = Default_Sounds_State;
   if(!strlen(USERNAME))
   {
-    ShowMSG(1,(int)"Введите логин/пароль!");
+    ShowMSG(1,(int)LG_ENTERLOGPAS);
     return 0;
   }
+  LoadTempSetting();
   UpdateCSMname();
+  
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();
+  
   Check_Settings_Cleverness();
   return 0;
 }

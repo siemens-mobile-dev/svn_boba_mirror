@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "main.h"
 #include "string_util.h"
+#include "lang.h"
 
 //=================================== Команды ===========================================
 int Templates_Menu_ID;
@@ -89,13 +90,13 @@ void UpdateTemplatesMenu_header(void)
   switch (Mode)
   {
     case 0:
-      strcpy(clm_hdr_text,"Выбор команды...");
+      strcpy(clm_hdr_text,LG_SELCOMMAND);
     break;
     case 1:
-      strcpy(clm_hdr_text,"Выбор шаблона...");
+      strcpy(clm_hdr_text,LG_SELTEMPLATE);
     break;
     case 2:
-      strcpy(clm_hdr_text,"Выбор смайла...");
+      strcpy(clm_hdr_text,LG_SELSMILE);
     break;    
   }
 }
@@ -149,8 +150,8 @@ void SetCmdToEditMessage(char *command)
 
 SOFTKEY_DESC tmpl_menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Отмена"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_CANCEL},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -227,24 +228,24 @@ void DispTemplatesMenu()
 #define SEL_MANU_ITEMS_NUM 3
 #endif
 
-HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)"Выбор...",LGP_NULL};
+HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)LG_SELECT2,LGP_NULL};
 
 int sel_menusoftkeys[]={0,1,2};
 
 static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
 {
-  "Команды",
-  "Шаблоны сообщений",
-  "Смайлы"
+  LG_COMMANDS,
+  LG_MSGTEMPLATE,
+  LG_SMILE
 #ifdef NEWSGOLD
-  , "Закрыть диалог"  
+  , LG_CLOSEDLG  
 #endif
 };
 
 SOFTKEY_DESC sel_menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
