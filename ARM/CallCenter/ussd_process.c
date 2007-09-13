@@ -26,6 +26,8 @@ static GBSTMR ussd_tmr;
 static volatile int ussdreq_sended;
 static volatile int locked;
 
+static char old_text[250];
+
 static void WriteLog(int dummy, char *text)
 {
   unsigned int ul;
@@ -34,8 +36,9 @@ static void WriteLog(int dummy, char *text)
   TTime t;
   TDate d;
   if (!text) return;
-  if (ENA_CASHTRACELOG)
+  if (ENA_CASHTRACELOG && strcmp(old_text,text))
   {
+    strcpy(old_text, text);
     int f=fopen(cashLOG_FILE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)
     {

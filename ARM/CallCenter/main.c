@@ -1112,7 +1112,10 @@ void StartHoursTimer(void)
 {
   if (CHECK_HOURS)
   {
-    GBS_StartTimerProc(&hours_tmr,(3600L*1300/6)*CHECK_HOURS,HoursTimerProc);
+    TTime t; int sc;
+    GetDateTime(0, &t);
+    sc = 3600*CHECK_HOURS - 60*t.min - t.sec;
+    GBS_StartTimerProc(&hours_tmr, sc*1300/6, HoursTimerProc);
   }
 }
 
@@ -1130,15 +1133,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       memcpy(cur_imsi,imsi,IMSI_DATA_BYTE_LEN);
       InitConfig();
       LoadCash();
-
-      //      StartHoursTimer();
-      if (CHECK_HOURS)
-      {
-        TTime t; int sc;
-        GetDateTime(0, &t);
-        sc = 3600 - 60*t.min - t.sec;
-        GBS_StartTimerProc(&hours_tmr,TMR_SECOND*sc,HoursTimerProc);
-      }
+      StartHoursTimer();
     }
   }
   if (msg->msg==MSG_USSD_RX || msg->msg==MSG_AUTOUSSD_RX)
