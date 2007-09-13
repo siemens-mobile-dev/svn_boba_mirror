@@ -57,7 +57,14 @@ static void StartGetFile(int dummy, char *fncache)
     if (f!=-1)
     {
       int fc=-1;
-      if (fncache) fc=fopen(fncache,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
+      if (fncache)
+      {
+	fc=fopen(fncache,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
+      }
+      else
+      {
+	UpPageStack(); 
+      }
       while((i=fread(f,buf,sizeof(buf),&err))>0)
       {
 	if (fc!=-1)
@@ -917,6 +924,7 @@ int LoadAuthCode(void)
   err=0;
   while((c=*s++)>=32)
   {
+    if (c=='.') break;
     if (f<63) AUTH_PREFIX[f++]=c;
   }
   if (c)
@@ -929,6 +937,7 @@ int LoadAuthCode(void)
     f=0;
     while((c=*s++)>32)
     {
+      if (c=='.') break;
       if (f<127) AUTH_CODE[f++]=c;
     }
     err=1;

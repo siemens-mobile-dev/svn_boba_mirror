@@ -85,3 +85,9 @@ void FreePageStack(void)
     i++;
   }  
 }
+
+void UpPageStack(void)
+{
+  if (stack_top==PageSTACK_SIZE) return;
+  stack_top++;
+}

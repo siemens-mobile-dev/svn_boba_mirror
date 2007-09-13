@@ -192,6 +192,7 @@ static void free_socket(void)
   mfree(FNCACHE);
   FNCACHE=NULL;
   STOPPED=1;
+  ws_console->wsbody[0]=0;
   SmartREDRAW();
 }
 
@@ -493,7 +494,6 @@ int ParseSocketMsg(GBS_MSG *msg)
 //	  ShowMSG(1,(int)"BM: Socket closed");
 //	  if (vd->
 	  
-	  ws_console->wsbody[0]=0;
 	  break;
 	case 0:
 	  break;
