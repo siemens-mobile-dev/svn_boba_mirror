@@ -3,7 +3,6 @@
 #include "..\inc\zlib.h"
 #include "history.h"
 #include "conf_loader.h"
-#include "conf_loader2.h"
 #include "main.h"
 #include "message_list.h"
 #include "xml_parser.h"
@@ -939,7 +938,6 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 
 void QuitCallbackProc(int decision)
 {
-SaveTempSetting();
   if(!decision)Quit_Required = 1;
 }
 
@@ -1278,6 +1276,11 @@ void maincsm_oncreate(CSM_RAM *data)
 #endif
 }
 
+extern const int DEF_SOUND_STATE;
+extern const int DEF_VIBRA_STATE;
+extern const int DEF_SHOW_OFFLINE;
+extern char Display_Offline;
+
 void maincsm_onclose(CSM_RAM *csm)
 {
   GBS_DelTimer(&tmr_vibra);
@@ -1300,6 +1303,13 @@ void maincsm_onclose(CSM_RAM *csm)
   {
     inflateEnd(&d_stream);
   }
+  
+  *((int *)&DEF_SOUND_STATE)=Is_Sounds_Enabled;
+  *((int *)&DEF_VIBRA_STATE)=Is_Vibra_Enabled;
+  *((int *)&DEF_SHOW_OFFLINE)=Display_Offline;
+  
+  SaveConfigData(successed_config_filename);
+  
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
   SUBPROC((void *)ElfKiller);
@@ -1545,7 +1555,11 @@ int main(char *exename, char *fname)
     ShowMSG(1,(int)LG_ENTERLOGPAS);
     return 0;
   }
-  LoadTempSetting();
+ 
+   Is_Sounds_Enabled=DEF_SOUND_STATE;
+   Is_Vibra_Enabled=DEF_VIBRA_STATE;
+   Display_Offline=DEF_SHOW_OFFLINE;
+  
   UpdateCSMname();
   
   LockSched();

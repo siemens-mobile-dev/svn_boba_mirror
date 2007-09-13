@@ -5,6 +5,24 @@
 const char *successed_config_filename="";
 
 #pragma segment="CONFIG_C"
+int SaveConfigData(const char *fname)
+{
+  int f;
+  unsigned int ul;
+  int result=-1;
+  unsigned int wlen;
+  unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
+
+  if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&ul))!=-1)
+  {
+    wlen=fwrite(f,__segment_begin("CONFIG_C"),len,&ul);
+    fclose(f,&ul);
+    if (wlen==len) result=0;
+  }
+  return(result);
+}
+
+#pragma segment="CONFIG_C"
 int LoadConfigData(const char *fname)
 {
   int f;

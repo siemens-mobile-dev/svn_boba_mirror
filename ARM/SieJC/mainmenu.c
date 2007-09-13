@@ -9,7 +9,6 @@
 #include "cont_menu.h"
 #include "revision.h"
 #include "lang.h"
-#include "conf_loader2.h"
 #include "clist_util.h"
 //==============================================================================
 // ELKA Compatibility

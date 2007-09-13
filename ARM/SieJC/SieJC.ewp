@@ -4166,12 +4166,6 @@
       <name>$PROJ_DIR$\conf_loader.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\conf_loader2.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\conf_loader2.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\config_data.c</name>
       <configuration>
         <name>Release</name>
@@ -5180,6 +5174,5 @@
     <name>$PROJ_DIR$\status_change.h</name>
   </file>
 </project>
-
 
 

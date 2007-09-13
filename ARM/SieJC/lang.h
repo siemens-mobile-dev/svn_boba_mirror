@@ -130,7 +130,9 @@
 #define LG_DELIVREP "Delivery Report if required"
 
 #define LG_SETUPSND "Sounds setup"
-//#define LG_SNDSTATE "Default Sounds State"
+#define LG_SNDSTATE "Default Sounds State"
+#define LG_VIBRASTATE "Default Vibra State"
+#define LG_OFFLINESTATE "Show Offline"
 #define LG_SNDVOL "sndVolume"
 #define LG_SNDMSGSND "Sound Msg Send"
 #define LG_SNDMSGMUC "Sound Msg Conf"
@@ -146,6 +148,7 @@
 #define LG_DEFUALTDISK "Default disc"
 
 #define LG_TEXTSTATUS "Текст статусов"
+#define LG_DEFSTATES "Состояния по умолчанию"
 #endif //ORIGINAL
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -271,7 +274,9 @@
 #define LG_DELIVREP "Delivery Report if required"
 
 #define LG_SETUPSND "Настройка звука"
-//#define LG_SNDSTATE "Звук по умолчанию"
+#define LG_SNDSTATE "Звук по умолчанию"
+#define LG_VIBRASTATE "Вибро по умолчанию"
+#define LG_OFFLINESTATE "Показывать оффлайн контакты"
 #define LG_SNDVOL "Громкость"
 #define LG_SNDMSGSND "Звук отправки"
 #define LG_SNDMSGMUC "Звук приема из MUC"
@@ -287,6 +292,7 @@
 #define LG_DEFUALTDISK "Диск по умолчанию"
 
 #define LG_TEXTSTATUS "Текст статусов"
+#define LG_DEFSTATES "Состояния по умолчанию"
 #endif //RU
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -412,7 +418,9 @@
 #define LG_DELIVREP "Delivery Report if required"
 
 #define LG_SETUPSND "Sounds setup"
-//#define LG_SNDSTATE "Default Sounds State"
+#define LG_SNDSTATE "Default Sounds State"
+#define LG_VIBRASTATE "Default Vibra State"
+#define LG_OFFLINESTATE "Show Offline"
 #define LG_SNDVOL "sndVolume"
 #define LG_SNDMSGSND "Sound Msg Send"
 #define LG_SNDMSGMUC "Sound Msg Conf"
@@ -427,7 +435,8 @@
 #define LG_PATHSMILE "Smiles path"
 #define LG_DEFUALTDISK "Default disc"
 
-#define LG_TEXTSTATUS "Statuse text"
+#define LG_TEXTSTATUS "Statuses text"
+#define LG_DEFSTATES "Default states"
 #endif //EN
 
 

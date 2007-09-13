@@ -170,4 +170,19 @@ __root const char DEFTEX_INVISIBLE[256]="";
 
 __root const CFG_HDR cfghdr_DEFTEXTSTAT_LEVEL_END={CFG_LEVEL,"",0,0};
 
+
+//////////////////Default states///////////////////////////
+
+__root const CFG_HDR cfghdr_DEFSTATES_LEVEL={CFG_LEVEL,LG_DEFSTATES,1,0};
+
+__root const CFG_HDR cfghdr31={CFG_CHECKBOX,LG_SNDSTATE,0,2};
+__root const int DEF_SOUND_STATE=1;
+
+__root const CFG_HDR cfghdr32={CFG_CHECKBOX,LG_VIBRASTATE,0,2};
+__root const int DEF_VIBRA_STATE=1;
+
+__root const CFG_HDR cfghdr33={CFG_CHECKBOX,LG_OFFLINESTATE,0,2};
+__root const int DEF_SHOW_OFFLINE=1;
+
+__root const CFG_HDR cfghdr_DEFSTATES_LEVEL_END={CFG_LEVEL,"",0,0};
 // EOL, EOF
