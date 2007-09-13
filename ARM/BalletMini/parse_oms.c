@@ -181,6 +181,22 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case '+':
         vd->oms_pos++;
 	goto L_NOSTAGE2;
+      case 'v':
+	//???
+        vd->oms_pos++;
+	goto L_NOSTAGE2;
+      case '(':
+	//???
+        AddPictureItemHr(vd);
+//	AddTextItem(vd,"(",1);
+        vd->oms_pos++;
+	goto L_NOSTAGE2;
+      case ')':
+	//???
+        AddPictureItemHr(vd);
+//	AddTextItem(vd,")",1);
+        vd->oms_pos++;
+	goto L_NOSTAGE2;
       case '$':
         vd->oms_pos++; //Form end
 	freegstr(&vd->work_ref.form_id1);
@@ -266,7 +282,13 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	}
 	vd->oms_wanted+=2;
 	break;
+      case 'k':
+	vd->oms_wanted+=3; //Code type and data length
+	break;	
       case 'L':
+	vd->oms_wanted+=2;
+	break;
+      case '^':
 	vd->oms_wanted+=2;
 	break;
       case 'P':
@@ -440,6 +462,12 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	vd->oms_wanted+=i;
 	vd->parse_state=OMS_TAGi_STAGE3;
 	goto L_STAGE3_WANTED;
+      case 'k':
+	vd->ih=_rbyte(vd); //Code type
+	i=(vd->iw=_rshort(vd));
+	vd->oms_wanted+=i;
+	vd->parse_state=OMS_TAGk_STAGE3;
+	goto L_STAGE3_WANTED;
       case 'L':
 	i=_rshort(vd);
 	vd->work_ref.tag='L';
@@ -447,6 +475,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	AddBeginRef(vd);
 	vd->oms_wanted+=i;
 	vd->parse_state=OMS_TAGL_STAGE3;
+	goto L_STAGE3_WANTED;
+      case '^':
+	i=_rshort(vd);
+	vd->work_ref.tag='^';
+        vd->ref_mode=1;
+	AddBeginRef(vd);
+	vd->oms_wanted+=i;
+	vd->parse_state=OMS_TAGx5E_STAGE3;
 	goto L_STAGE3_WANTED;
       case 'P':
 	i=_rshort(vd);
@@ -687,7 +723,25 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
+    case OMS_TAGk_STAGE3:
+      i=vd->iw;
+      AddPictureItemHr(vd);
+      sprintf(s,vd->ih?"New AuthCode: ":"New AuthPrefix: ",vd->ih);
+      AddTextItem(vd,s,strlen(s));
+      AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      AddPictureItemHr(vd);
+      vd->oms_pos=vd->oms_wanted;
+      vd->oms_wanted++;
+      vd->parse_state=OMS_TAG_NAME;
+      break;
     case OMS_TAGL_STAGE3:
+      i=vd->oms_wanted-vd->oms_pos;
+      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->oms_pos=vd->oms_wanted;
+      vd->oms_wanted++;
+      vd->parse_state=OMS_TAG_NAME;
+      break;
+    case OMS_TAGx5E_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
       replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
       vd->oms_pos=vd->oms_wanted;
