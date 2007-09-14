@@ -523,7 +523,7 @@ static void GotoFile(void)
 }
 
 
-int char16to8(int c)
+static int char16to8(int c)
 {
   if (c<0x400) return (c);
   c-=0x400;
@@ -548,7 +548,7 @@ int char16to8(int c)
 }
 
 
-SOFTKEY_DESC menu_sk[]=
+static const SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Перейти"},
   {0x0001,0x0000,(int)"Отмена"},
@@ -557,15 +557,15 @@ SOFTKEY_DESC menu_sk[]=
 
 
 
-SOFTKEYSTAB menu_skt=
+static const SOFTKEYSTAB menu_skt=
 {
   menu_sk,0
 };
 
 
-HEADER_DESC input_url_hdr={0,0,0,0,NULL,(int)"Адрес",LGP_NULL};
+static const HEADER_DESC input_url_hdr={0,0,0,0,NULL,(int)"Адрес",LGP_NULL};
 
-void input_url_ghook(GUI *data, int cmd)
+static void input_url_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Перейти"};
   if (cmd==0x0A)
@@ -578,9 +578,9 @@ void input_url_ghook(GUI *data, int cmd)
   }
 }
 
-void input_url_locret(void){}
+static void input_url_locret(void){}
 
-int input_url_onkey(GUI *data, GUI_MSG *msg)
+static int input_url_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
   WSHDR *ws;
@@ -589,16 +589,18 @@ int input_url_onkey(GUI *data, GUI_MSG *msg)
   {
     ExtractEditControl(data,1,&ec);
     ws = ec.pWS;
-    s = goto_url = (char *)malloc(ws->wsbody[0]+1);
+    s = goto_url = (char *)malloc(ws->wsbody[0]+3);
+    *s++='0';
+    *s++='/';
     for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
     *s = 0;
     SUBPROC((void*)GotoLink);
-    
+    return 1;
   }
   return (0);
 }
 
-INPUTDIA_DESC input_url_desc =
+static const INPUTDIA_DESC input_url_desc =
 {
   1,
   input_url_onkey,
@@ -624,7 +626,7 @@ INPUTDIA_DESC input_url_desc =
   0x40000000
 };
 
-const char wintranslation[128]=
+static const char wintranslation[128]=
 {
   0x5F,0x5F,0x27,0x5F,0x22,0x3A,0xC5,0xD8,0x5F,0x25,0x5F,0x3C,0x5F,0x5F,0x5F,0x5F,
   0x5F,0x27,0x27,0x22,0x22,0x07,0x2D,0x2D,0x5F,0x54,0x5F,0x3E,0x5F,0x5F,0x5F,0x5F,
@@ -636,7 +638,7 @@ const char wintranslation[128]=
   0xE0,0xE1,0xE2,0xE3,0xE4,0xE5,0xE6,0xE7,0xE8,0xE9,0xEA,0xEB,0xEC,0xED,0xEE,0xEF
 };
 
-const char koi8translation[128]=
+static const char koi8translation[128]=
 {
   0x5F,0x5F,0x27,0x5F,0x22,0x3A,0xC5,0xD8,0x5F,0x25,0x5F,0x3C,0x5F,0x5F,0x5F,0x5F,
   0x5F,0x27,0x27,0x22,0x22,0x07,0x2D,0x2D,0x5F,0x54,0x5F,0x3E,0x5F,0x5F,0x5F,0x5F,
@@ -649,7 +651,7 @@ const char koi8translation[128]=
   0x8F,0x9F,0x90,0x91,0x92,0x93,0x86,0x82,0x9C,0x9B,0x87,0x98,0x9D,0x99,0x97,0x9A
 };
 
-const unsigned short dos2unicode[128]=
+static const unsigned short dos2unicode[128]=
 {
   0x0410,0x0411,0x0412,0x0413,0x0414,0x0415,0x0416,0x0417,
   0x0418,0x0419,0x041A,0x041B,0x041C,0x041D,0x041E,0x041F,
@@ -671,7 +673,7 @@ const unsigned short dos2unicode[128]=
 
 
 
-unsigned int char8to16(int c, int type)
+static unsigned int char8to16(int c, int type)
 {
   if (c>=128)
   {
@@ -695,7 +697,7 @@ unsigned int char8to16(int c, int type)
   return(c);
 }
 
-void ascii2ws(WSHDR *ws, const char *s)
+static void ascii2ws(WSHDR *ws, const char *s)
 {
   char c;
   CutWSTR(ws,0);
@@ -705,7 +707,7 @@ void ascii2ws(WSHDR *ws, const char *s)
   }
 }
 
-void CreateInputUrl()
+static void CreateInputUrl()
 {
   void *ma=malloc_adr();
   void *eq;
