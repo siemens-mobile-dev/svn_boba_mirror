@@ -121,30 +121,29 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
           if (pos==0) pos=count+1;
        }
         break;        
-      /*case UP_BUTTON:
-      {
-        if (pos!=1) pos-=1;
-      }        
-        break; 
-    case DOWN_BUTTON:
-       {
-         if (pos!=count+1) pos+=1;
-       }break;*/
     case ENTER_BUTTON:
       {
         if(LabelData[pos-1].Type)
-        {
-          typedef void (*voidfunc)(); 
-          voidfunc pp=(voidfunc)GetFunctionPointer(LabelData[pos-1].FileName);
-          if(pp) SUBPROC((void*)pp);          
-        }
-          else
-        {
-          WSHDR *elfname=AllocWS(256);
-          wsprintf(elfname,LabelData[pos-1].FileName);
-          ExecuteFile(elfname,NULL,NULL);
-          FreeWS(elfname);        
-        }
+         {
+           unsigned int* addr = (unsigned int*)GetFunctionPointer(LabelData[pos-1].FileName);
+           if (addr)
+            {
+              typedef void (*voidfunc)(); 
+              #ifdef NEWSGOLD 
+                voidfunc pp=(voidfunc)*(addr+4);
+              #else 
+                voidfunc pp=(voidfunc)addr; 
+              #endif 
+              SUBPROC((void*)pp);
+            }
+          }
+           else
+          {
+            WSHDR *elfname=AllocWS(256);
+            wsprintf(elfname,LabelData[pos-1].FileName);
+            ExecuteFile(elfname,NULL,NULL);
+            FreeWS(elfname);        
+          }
         return(1);
       }
     }
@@ -208,7 +207,6 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
-  InitConfig();
 }
 
 // Вызывается при закрытии главного CSM. Тут и вызывается киллер
