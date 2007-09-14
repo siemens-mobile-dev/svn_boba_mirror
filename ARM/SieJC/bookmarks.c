@@ -233,15 +233,12 @@ void bm_menu_iconhndl(void *data, int curitem, void *unk)
   ws=AllocMenuWS(data,strlen(it->mucname));
   wsprintf(ws,percent_t,it->mucname);
   
-  SetMenuItemIconArray(data,item,BM_ICON);
+  SetMenuItemIconArray(data,item,BM_ICON+1);
   SetMenuItemText(data,item,ws,curitem);
-  SetMenuItemIcon(data,curitem,1);  // 0 = индекс иконки
+  //SetMenuItemIcon(data,curitem,1);  // 0 = индекс иконки
 };
 
 extern const char PATH_TO_PIC[128];
-
-
-
 
 void Init_bm_Icon_array()
 {

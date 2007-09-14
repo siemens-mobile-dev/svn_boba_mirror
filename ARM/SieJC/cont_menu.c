@@ -294,9 +294,9 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   ws=AllocMenuWS(data,strlen(test_str));
   wsprintf(ws,percent_t,test_str);
   
-  SetMenuItemIconArray(data,item,cmS_ICONS);
+  SetMenuItemIconArray(data,item,cmS_ICONS+Menu_Contents[curitem]);
   SetMenuItemText(data,item,ws,curitem);
-  SetMenuItemIcon(data,curitem,Menu_Contents[curitem]);  // 0 = индекс иконки
+  //SetMenuItemIcon(data,curitem,Menu_Contents[curitem]);  // 0 = индекс иконки
   /*
   CLIST *t;
   WSHDR *ws;
