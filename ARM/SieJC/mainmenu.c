@@ -223,7 +223,7 @@ static const MENU_DESC tmenu=
   8,mmenu_keyhook,mmenu_ghook,NULL,
   mmenusoftkeys,
   &mmenu_skt,
-  1,
+  0x11,
   menuitemhandler,
   NULL, //menuitems,
   NULL, //menuprocs,

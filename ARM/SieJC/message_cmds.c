@@ -296,7 +296,7 @@ static const MENU_DESC sel_menu=
   0,sel_menu_keyhook,sel_menu_ghook,NULL,
   sel_menusoftkeys,
   &sel_menu_skt,
-  8,
+  0x10,
   sel_menuitemhandler,
   NULL, //menuitems,
   NULL, //menuprocs,
