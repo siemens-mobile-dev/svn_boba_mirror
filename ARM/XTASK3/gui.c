@@ -141,7 +141,7 @@ int GetNumberOfDialogs(void)
   //Find new style daemons
   if (show_daemons)
   {
-    icsm=((CSM_RAM *)(CSM_root()->csm_q->csm.first))->next; //Начало расположения CSM демонов
+    icsm=((CSM_RAM *)(CSM_root()->csm_q->csm.first))->next; //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ CSM пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     while(((unsigned int)(icsm->constr)>>27)==0x15)
     {
       WSHDR *tws=(WSHDR *)(((char *)icsm->constr)+sizeof(CSM_DESC));
@@ -156,7 +156,7 @@ int GetNumberOfDialogs(void)
       icsm=icsm->next;
     }
   }
-  icsm=under_idle->next; //Начало карусели
+  icsm=under_idle->next; //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
   do
   {
     if (icsm==ircsm)
@@ -250,7 +250,11 @@ int GetNumberOfDialogs(void)
               wsprintf(ws,"User Java");
 	      break;
             case 0x11:
+#ifdef X75
+              wsprintf(ws,"Java: %t",GetLastJavaApplication());
+#else
               wsprintf(ws,"Java");
+#endif
 	      break; 
             case 18:
               wsprintf(ws,"E-mail client");
@@ -516,7 +520,7 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
       return 0;      
     case LEFT_SOFT:
       CSMtoTop(CSM_root()->idle_id,-1);
-      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      return(1); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ GeneralFunc пїЅпїЅпїЅ пїЅпїЅпїЅ. GUI -> пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ GUI
     case ENTER_BUTTON:
       if (!nl->is_daemon)
       {
@@ -524,7 +528,7 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
       }
       return(1);
     case RIGHT_SOFT:
-      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      return(1); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ GeneralFunc пїЅпїЅпїЅ пїЅпїЅпїЅ. GUI -> пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ GUI
     }
   }
   return(0);
