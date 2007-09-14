@@ -34,7 +34,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 //==============================================================================
 
 
-#define MAX_ITEMS 11       // ћаксимальное количество пунктов меню 
+#define MAX_ITEMS 11       // ћаксимальное количество пунктов меню
 
 #define MI_CONF_LEAVE       1
 #define MI_CONF_KICK_THIS   2
@@ -109,20 +109,20 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
 {
   int i=GetCurMenuItem(data);
   MUC_ADMIN admin_cmd;
-if(msg->keys==0x18 || msg->keys==0x3D)  
+if(msg->keys==0x18 || msg->keys==0x3D)
 {
   switch(Menu_Contents[i])
   {
-  case MI_CONF_LEAVE: 
+  case MI_CONF_LEAVE:
     {
       CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
       Leave_Conference(room->JID);
-      CList_MakeAllResourcesOFFLINE(room);      
+      CList_MakeAllResourcesOFFLINE(room);
       break;
     }
-  case MI_CONF_KICK_THIS: 
+  case MI_CONF_KICK_THIS:
   case MI_CONF_BAN_THIS:
-  case MI_CONF_VREJ_THIS:  
+  case MI_CONF_VREJ_THIS:
   case MI_CONF_VGR_THIS:
     {
       CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
@@ -133,29 +133,29 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       if(Menu_Contents[i]==MI_CONF_VGR_THIS)admin_cmd=ADM_VOICE_GRANT;
       MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
       break;
-    }    
+    }
   case MI_TIME_QUERY:
     {
       Send_Time_Request((CList_GetActiveContact()->full_name));
       break;
-    }       
+    }
 
   case MI_VCARD_QUERY:
     {
       Send_Vcard_Request((CList_GetActiveContact()->full_name));
       break;
-    }       
+    }
 
-  case MI_QUERY_VERSION: 
+  case MI_QUERY_VERSION:
     {
-      
+
       Send_Version_Request(CList_GetActiveContact()->full_name);
       break;
-    }       
+    }
 
-  case MI_LOGIN_LOGOUT: 
+  case MI_LOGIN_LOGOUT:
     {
-      
+
       char *pres_str = malloc(256);
       TRESOURCE *Transport = CList_GetActiveContact();
       if(Transport->status==PRESENCE_OFFLINE)
@@ -166,10 +166,10 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       {
         snprintf(pres_str,255,"<presence to='%s' type='unavailable'/>", Transport->full_name);
       }
-      SUBPROC((void*)_sendandfree,pres_str);        
+      SUBPROC((void*)_sendandfree,pres_str);
       break;
-    }     
-  
+    }
+
   case MI_DISCO_QUERY:
     {
       Send_DiscoInfo_Request(CList_GetActiveContact()->full_name);
@@ -178,22 +178,22 @@ if(msg->keys==0x18 || msg->keys==0x3D)
 ////////////////////////HISTORY
   case MI_HISTORY_OPEN:
     {
-//— латинскими JID ами работает, а с теми у ого кирилица непробовал, нет таких в наличии.      
+//— латинскими JID ами работает, а с теми у ого кирилица непробовал, нет таких в наличии.
   extern const char HIST_PATH[128];
   WSHDR *wsfn=AllocWS(255);
-  wsprintf(wsfn,"%s%s.txt",HIST_PATH,CList_GetActiveContact()->full_name);
+  wsprintf(wsfn,"%s%s.txt",HIST_PATH,CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID);
   ExecuteFile(wsfn,NULL,NULL);
   FreeWS(wsfn);
-       break; 
+       break;
     }
  default:
     {
       MsgBoxError(1,(int)LG_UNKACTION);
     }
   }
- 
+
   return 1;
-}  
+}
 //  Req_Close_Cont_Menu = 1;
 return 0;
 }
@@ -207,7 +207,7 @@ void InitMenuArray()
   ќбработчик по€влени€ пунктов динамического меню
   “ут мы сами создаЄм каждый пункт, указыва€ дл€ него иконку и текст.
   ѕри создании мы опираемс€ на данные массива Menu_Contents, в котором описано,
-  какие пункты и в каком пор€дке необходимо создать. 
+  какие пункты и в каком пор€дке необходимо создать.
 */
 void contact_menu_iconhndl(void *data, int curitem, void *unk)
 {
@@ -217,67 +217,67 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   char test_str[48];
   void *item=AllocMenuItem(data);
   strcpy(test_str,"(ошибка)");
-  
+
   TRESOURCE *Act_contact = CList_GetActiveContact();
-  
+
   switch(Menu_Contents[curitem])
   {
-  case MI_CONF_LEAVE: 
+  case MI_CONF_LEAVE:
     {
       strcpy(test_str,LG_ABANDON);
       break;
-    } 
-    
-  case MI_CONF_KICK_THIS: 
+    }
+
+  case MI_CONF_KICK_THIS:
     {
       strcpy(test_str,LG_KIK);
       break;
-    }    
-  case MI_CONF_BAN_THIS: 
+    }
+  case MI_CONF_BAN_THIS:
     {
       strcpy(test_str,LG_BAN);
       break;
-    }  
-  case MI_CONF_VREJ_THIS: 
+    }
+  case MI_CONF_VREJ_THIS:
     {
       strcpy(test_str,LG_LVOISE);
       break;
-    }  
-  case MI_CONF_VGR_THIS: 
+    }
+  case MI_CONF_VGR_THIS:
     {
       strcpy(test_str,LG_GVOISE);
       break;
-    }  
-    
-  case MI_QUERY_VERSION: 
+    }
+
+  case MI_QUERY_VERSION:
     {
       strcpy(test_str,LG_VERCLIENT);
       break;
-    }    
+    }
 
-  case MI_DISCO_QUERY: 
+  case MI_DISCO_QUERY:
     {
       strcpy(test_str,LG_INFOFDISC);
       break;
-    }    
-  case MI_TIME_QUERY: 
+    }
+  case MI_TIME_QUERY:
     {
       strcpy(test_str,LG_QUERYTIME);
       break;
-    } 
+    }
 
-  case MI_VCARD_QUERY: 
+  case MI_VCARD_QUERY:
     {
       strcpy(test_str,"vCard");
       break;
-    } 
-    
+    }
+
   case MI_HISTORY_OPEN:
      {
       strcpy(test_str,LG_OHISTORY);
        break;
      }
-  case MI_LOGIN_LOGOUT: 
+  case MI_LOGIN_LOGOUT:
     {
       if(Act_contact->status==PRESENCE_OFFLINE)
       {
@@ -288,12 +288,12 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
         strcpy(test_str,LG_OFF);
       }
       break;
-    }      
+    }
   }
   //ShowMSG(1,(int)test_str);
   ws=AllocMenuWS(data,strlen(test_str));
   wsprintf(ws,percent_t,test_str);
-  
+
   SetMenuItemIconArray(data,item,cmS_ICONS+Menu_Contents[curitem]);
   SetMenuItemText(data,item,ws,curitem);
   //SetMenuItemIcon(data,curitem,Menu_Contents[curitem]);  // 0 = индекс иконки
@@ -301,7 +301,7 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   CLIST *t;
   WSHDR *ws;
   void *item=AllocMenuItem(data);
-  
+
   t=FindContactByN(curitem);
   if (t)
   {
@@ -316,7 +316,7 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   SetMenuItemIconArray(data,item,S_ICONS);
   SetMenuItemText(data,item,ws,curitem);
   SetMenuItemIcon(data,curitem,GetIconIndex(t));
-*/  
+*/
 };
 
 /*
@@ -339,22 +339,22 @@ char ICON_LOGIN_LOGOUT[128];
 char ICON_QUERY_DISCO[128];
 char ICON_HISTORY_OPEN[128];
 char ICON_QUERY_TIME[128];
-char ICON_QUERY_VCARD[128];     
-     
+char ICON_QUERY_VCARD[128];
+
 void Init_Icon_array()
 {
   TRESOURCE *Act_contact = CList_GetActiveContact();
-  
+
   strcpy(ICON_CONF_LEAVE, PATH_TO_PIC);strcat(ICON_CONF_LEAVE, "menu_muc_leave.png");
   strcpy(ICON_CONF_KICK_THIS, PATH_TO_PIC);strcat(ICON_CONF_KICK_THIS, "menu_kick.png");
   strcpy(ICON_CONF_BAN_THIS, PATH_TO_PIC);strcat(ICON_CONF_BAN_THIS, "menu_ban.png");
   strcpy(ICON_CONF_VREJ_THIS, PATH_TO_PIC);strcat(ICON_CONF_VREJ_THIS, "menu_no_icon.png");
   strcpy(ICON_CONF_VGR_THIS, PATH_TO_PIC);strcat(ICON_CONF_VGR_THIS, "menu_no_icon.png");
-  strcpy(ICON_QUERY_VERSION, PATH_TO_PIC);strcat(ICON_QUERY_VERSION, "menu_version.png");  
+  strcpy(ICON_QUERY_VERSION, PATH_TO_PIC);strcat(ICON_QUERY_VERSION, "menu_version.png");
   strcpy(ICON_QUERY_DISCO, PATH_TO_PIC);strcat(ICON_QUERY_DISCO, "menu_version.png");
   strcpy(ICON_HISTORY_OPEN, PATH_TO_PIC);strcat(ICON_HISTORY_OPEN, "menu_version.png");
   strcpy(ICON_QUERY_TIME, PATH_TO_PIC);strcat(ICON_QUERY_TIME, "menu_version.png");
-  strcpy(ICON_QUERY_VCARD, PATH_TO_PIC);strcat(ICON_QUERY_VCARD, "menu_version.png");  
+  strcpy(ICON_QUERY_VCARD, PATH_TO_PIC);strcat(ICON_QUERY_VCARD, "menu_version.png");
   strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
   if(Act_contact->entry_type==T_TRANSPORT)
   if(Act_contact->status==PRESENCE_OFFLINE)
@@ -362,19 +362,19 @@ void Init_Icon_array()
     strcat(ICON_LOGIN_LOGOUT, "menu_version.png");
   }
   else strcat(ICON_LOGIN_LOGOUT, "menu_no_icon.png");
-  
+
   for(int i=0;i<=MAX_ITEMS;i++)cmS_ICONS[i]=0;
-  cmS_ICONS[MI_CONF_LEAVE]=(int)ICON_CONF_LEAVE;  
-  cmS_ICONS[MI_CONF_KICK_THIS]=(int)ICON_CONF_KICK_THIS;    
-  cmS_ICONS[MI_CONF_BAN_THIS]=(int)ICON_CONF_BAN_THIS;    
-  cmS_ICONS[MI_CONF_VREJ_THIS]=(int)ICON_CONF_VREJ_THIS;    
-  cmS_ICONS[MI_CONF_VGR_THIS]=(int)ICON_CONF_VGR_THIS;    
-  cmS_ICONS[MI_QUERY_VERSION]=(int)ICON_QUERY_VERSION;    
+  cmS_ICONS[MI_CONF_LEAVE]=(int)ICON_CONF_LEAVE;
+  cmS_ICONS[MI_CONF_KICK_THIS]=(int)ICON_CONF_KICK_THIS;
+  cmS_ICONS[MI_CONF_BAN_THIS]=(int)ICON_CONF_BAN_THIS;
+  cmS_ICONS[MI_CONF_VREJ_THIS]=(int)ICON_CONF_VREJ_THIS;
+  cmS_ICONS[MI_CONF_VGR_THIS]=(int)ICON_CONF_VGR_THIS;
+  cmS_ICONS[MI_QUERY_VERSION]=(int)ICON_QUERY_VERSION;
   cmS_ICONS[MI_DISCO_QUERY]=(int)ICON_QUERY_DISCO;
   cmS_ICONS[MI_HISTORY_OPEN]=(int)ICON_HISTORY_OPEN;
   cmS_ICONS[MI_TIME_QUERY]=(int)ICON_QUERY_TIME;
   cmS_ICONS[MI_VCARD_QUERY]=(int)ICON_QUERY_VCARD;
-  cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT; 
+  cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT;
 
 }
 
@@ -388,22 +388,22 @@ void Disp_Contact_Menu()
   if(!Act_contact)return;
 /*
   —мотрим, если ето не группа, не участник конференции или транспорт то первым пунктом будет открыть историю.
-*/  
+*/
  if((Act_contact->entry_type!=T_GROUP)&&(Act_contact->entry_type!=T_TRANSPORT)&&(Act_contact->entry_type!=T_CONF_NODE))
 {
-  Menu_Contents[n_items++]=MI_HISTORY_OPEN; 
+  Menu_Contents[n_items++]=MI_HISTORY_OPEN;
 }
 
   if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_GROUP)) //в групах верси€ клиента ненужна
   {
     Menu_Contents[n_items++]=MI_QUERY_VERSION;
-  } 
+  }
 
   if(Act_contact->entry_type==T_TRANSPORT)
   {
     Menu_Contents[n_items++]=MI_LOGIN_LOGOUT;
   }
-  
+
   if(Act_contact->entry_type==T_CONF_ROOT)
   {
     Menu_Contents[n_items++]=MI_CONF_LEAVE;
@@ -412,24 +412,24 @@ void Disp_Contact_Menu()
   if(Act_contact->entry_type!=T_GROUP)
   {
     Menu_Contents[n_items++]=MI_DISCO_QUERY;
-  }  
- 
+  }
+
  if(Act_contact->entry_type!=T_GROUP)
   {
     Menu_Contents[n_items++]=MI_VCARD_QUERY;
-  }  
+  }
 
   if(Act_contact->entry_type!=T_GROUP)
   {
     Menu_Contents[n_items++]=MI_TIME_QUERY;
-  }  
+  }
 
   if(Act_contact->entry_type==T_CONF_NODE)
   {
     if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
     {
       Menu_Contents[n_items++]=MI_CONF_KICK_THIS;
-      Menu_Contents[n_items++]=MI_CONF_BAN_THIS;    
+      Menu_Contents[n_items++]=MI_CONF_BAN_THIS;
       if(Act_contact->muc_privs.role==ROLE_VISITOR)
       {
         Menu_Contents[n_items++]=MI_CONF_VGR_THIS;
@@ -437,7 +437,7 @@ void Disp_Contact_Menu()
       else Menu_Contents[n_items++]=MI_CONF_VREJ_THIS;
     }
   }
-   
+
   if(n_items+1)
   {
     patch_rect(&contact_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
