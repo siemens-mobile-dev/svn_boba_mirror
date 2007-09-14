@@ -1473,123 +1473,141 @@ void get_answer(void)
   void *p;
   int i=RXstate;
   int j;
+  int n;
+  char rb[1024];
+  char *rp=rb;
   if (connect_state<2) return;
   if (i==EOP) return;
-  if (i<0)
+  j=recv(sock,rb,sizeof(rb),0);
+  while(j>0)
   {
-    j=recv(sock,RXbuf.data+i,-i,0);
-    if (j>0) i+=j;
-    if (i==0)
+    if (i<0)
     {
-      if (RXbuf.pkt.data_len==0) goto LPKT;
+      //Принимаем заголовок
+      n=-i; //Требуемое количество байт
+      if (j<n) n=j; //полученное<требуемое?
+      memcpy(RXbuf.data+i,rp,n); //Копируем
+      i+=n;
+      j-=n;
+      rp+=n;
     }
-  }
-  else
-  {
-    if (RXbuf.pkt.data_len>16383)
+    if (i>=0)
     {
-      strcpy(logmsg,LG_GRBADPACKET);
-      end_socket();
-      RXstate=EOP;
-      return;
-    }
-    j = recv(sock,RXbuf.data+i,RXbuf.pkt.data_len-i,0);
-    if (j>0) i+=j;
-  LPKT:
-    if (i==RXbuf.pkt.data_len)
-    {
-      TOTALRECEIVED+=(i+8);
-      //Пакет удачно принят, можно разбирать...
-      RXbuf.data[RXbuf.pkt.data_len]=0; //Конец строки
-      switch(RXbuf.pkt.type)
+      //Принимаем тельце ;)
+      n=RXbuf.pkt.data_len; //Всего в тельце
+      if (n>16383)
       {
-      case T_LOGIN:
-        //Удачно залогинились
-	//Посылаем в MMI
-        j=i+sizeof(PKT)+1;
-        p=malloc(j);
-        memcpy(p,&RXbuf,j);
-        GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-	Play(sndStartup);
-//        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
-        snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
-        connect_state=3;
-        SMART_REDRAW();
-        break;
-      case T_XTEXT_ACK:
-      case T_GROUPID:
-      case T_GROUPFOLLOW:
-      case T_CLENTRY:
-	//Посылаем в MMI
-        j=i+sizeof(PKT)+1;
-        p=malloc(j);
-        memcpy(p,&RXbuf,j);
-        GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-        //snprintf(logmsg,255,"CL: %s",RXbuf.data);
-        break;
-      case T_STATUSCHANGE:
-        j=i+sizeof(PKT);
-        p=malloc(j);
-        memcpy(p,&RXbuf,j);
-        snprintf(logmsg,255,LG_GRSTATUSCHNG,RXbuf.pkt.uin,*((unsigned short *)(RXbuf.data)));
-        GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-        break;
-      case T_ERROR:
-        snprintf(logmsg,255,LG_GRERROR,RXbuf.data);
-        SMART_REDRAW();
-        break;
-      case T_RECVMSG:
-        j=i+sizeof(PKT)+1;
-        p=malloc(j);
-        memcpy(p,&RXbuf,j);
-	{
-	  char *s=p;
-	  s+=sizeof(PKT);
-	  int c;
-	  while((c=*s))
-	  {
-	    if (c<3) *s=' ';
-	    s++;
-	  }
-	}
-        snprintf(logmsg,255,LG_GRRECVMSG,RXbuf.pkt.uin,RXbuf.data);
-	SendMSGACK(TOTALRECEIVED);
-        GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-        SMART_REDRAW();
-	Play(sndMsg);
-        break;
-      case T_SSLRESP:
-        LockSched();
-        ShowMSG(1,(int)RXbuf.data);
-        UnlockSched();
-        break;
-      case T_SRV_ACK:
-	if (FindContactLOGQByAck(&RXbuf)) Play(sndMsgSent);
-      case T_CLIENT_ACK:
-	p=malloc(sizeof(PKT)+2);
-	memcpy(p,&RXbuf,sizeof(PKT)+2);
-	GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
-	break;
-      case T_ECHORET:
-	{
-	  TDate d;
-	  TTime t;
-	  TTime *pt=(TTime *)(RXbuf.data);
-	  int s1;
-	  int s2;
-	  GetDateTime(&d,&t);
-	  s1=t.hour*3600+t.min*60+t.sec;
-	  s2=pt->hour*3600+pt->min*60+pt->sec;
-	  s1-=s2;
-	  if (s1<0) s1+=86400;
-	  snprintf(logmsg,255,"Ping %d-%d seconds!",s1,s1+1);
-	  LockSched();
-	  ShowMSG(1,(int)logmsg);
-	  UnlockSched();
-	}
-	break;
+	//Слишком много
+	strcpy(logmsg,LG_GRBADPACKET);
+	end_socket();
+	RXstate=EOP;
+	return;
       }
-      i=-(int)sizeof(PKT); //А может еще есть данные
+      n-=i; //Количество требуемых байт (общая длинна тельца-текущая позиция)
+      if (n>0)
+      {
+	if (j<n) n=j; //полученное<требуемое?
+	memcpy(RXbuf.data+i,rp,n);
+	i+=n;
+	j-=n;
+	rp+=n;
+      }
+      if (RXbuf.pkt.data_len==i)
+      {
+	//Пакет полностью получен
+	TOTALRECEIVED+=(i+8);
+	//Пакет удачно принят, можно разбирать...
+	RXbuf.data[i]=0; //Конец строки
+	switch(RXbuf.pkt.type)
+	{
+	case T_LOGIN:
+	  //Удачно залогинились
+	  //Посылаем в MMI
+	  n=i+sizeof(PKT)+1;
+	  p=malloc(n);
+	  memcpy(p,&RXbuf,n);
+	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	  Play(sndStartup);
+	  //        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
+	  snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
+	  connect_state=3;
+	  SMART_REDRAW();
+	  break;
+	case T_XTEXT_ACK:
+	case T_GROUPID:
+	case T_GROUPFOLLOW:
+	case T_CLENTRY:
+	  //Посылаем в MMI
+	  n=i+sizeof(PKT)+1;
+	  p=malloc(n);
+	  memcpy(p,&RXbuf,n);
+	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	  //snprintf(logmsg,255,"CL: %s",RXbuf.data);
+	  break;
+	case T_STATUSCHANGE:
+	  n=i+sizeof(PKT);
+	  p=malloc(n);
+	  memcpy(p,&RXbuf,n);
+	  snprintf(logmsg,255,LG_GRSTATUSCHNG,RXbuf.pkt.uin,*((unsigned short *)(RXbuf.data)));
+	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	  break;
+	case T_ERROR:
+	  snprintf(logmsg,255,LG_GRERROR,RXbuf.data);
+	  SMART_REDRAW();
+	  break;
+	case T_RECVMSG:
+	  n=i+sizeof(PKT)+1;
+	  p=malloc(n);
+	  memcpy(p,&RXbuf,n);
+	  {
+	    char *s=p;
+	    s+=sizeof(PKT);
+	    int c;
+	    while((c=*s))
+	    {
+	      if (c<3) *s=' ';
+	      s++;
+	    }
+	  }
+	  snprintf(logmsg,255,LG_GRRECVMSG,RXbuf.pkt.uin,RXbuf.data);
+	  SendMSGACK(TOTALRECEIVED);
+	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	  SMART_REDRAW();
+	  Play(sndMsg);
+	  break;
+	case T_SSLRESP:
+	  LockSched();
+	  ShowMSG(1,(int)RXbuf.data);
+	  UnlockSched();
+	  break;
+	case T_SRV_ACK:
+	  if (FindContactLOGQByAck(&RXbuf)) Play(sndMsgSent);
+	case T_CLIENT_ACK:
+	  p=malloc(sizeof(PKT)+2);
+	  memcpy(p,&RXbuf,sizeof(PKT)+2);
+	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	  break;
+	case T_ECHORET:
+	  {
+	    TDate d;
+	    TTime t;
+	    TTime *pt=(TTime *)(RXbuf.data);
+	    int s1;
+	    int s2;
+	    GetDateTime(&d,&t);
+	    s1=t.hour*3600+t.min*60+t.sec;
+	    s2=pt->hour*3600+pt->min*60+pt->sec;
+	    s1-=s2;
+	    if (s1<0) s1+=86400;
+	    snprintf(logmsg,255,"Ping %d-%d seconds!",s1,s1+1);
+	    LockSched();
+	    ShowMSG(1,(int)logmsg);
+	    UnlockSched();
+	  }
+	  break;
+	}
+	i=-(int)sizeof(PKT); //А может еще есть данные
+      }
     }
   }
   RXstate=i;
@@ -2486,30 +2504,8 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
 	break;
       case ENIP_BUFFER_FREE:
-	if (!sendq_p)
-	{
-	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE!");
-	  SUBPROC((void *)end_socket);
-	}
-	else
-	{
-	  //Досылаем очередь
-	  snprintf(logmsg,255,"ENIP_BUFFER_FREE");
-	  SMART_REDRAW();
-	  SUBPROC((void *)SendAnswer,0,0);
-	}
-	break;
       case ENIP_BUFFER_FREE1:
-	if (!sendq_p)
-	{
-	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
-	  SUBPROC((void *)end_socket);
-	}
-	else
-	{
-	  //Досылаем очередь
-	  SUBPROC((void *)SendAnswer,0,0);
-	}
+	SUBPROC((void *)SendAnswer,0,0);
 	break;
       case ENIP_SOCK_REMOTE_CLOSED:
 	//Закрыт со стороны сервера
@@ -2518,6 +2514,17 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	break;
       case ENIP_SOCK_CLOSED:
 	//strcpy(logmsg, "No connection");
+	//Dump not received
+	if (RXstate>(-(int)sizeof(PKT)))
+	{
+	  unsigned int err;
+	  int f=fopen("4:\\NATICQ.dump",A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
+	  if (f!=-1)
+	  {
+	    fwrite(f,&RXbuf,RXstate+sizeof(PKT),&err);
+	    fclose(f,&err);
+	  }
+	}
 	FillAllOffline();
 	RecountMenu(NULL);
 	connect_state=0;
