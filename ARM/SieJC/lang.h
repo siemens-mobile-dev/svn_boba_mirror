@@ -146,7 +146,8 @@
 #define LG_PATHCMD          "Команды"
 #define LG_PATHMESG         "Собщения"
 #define LG_PATHKNOWF        "Известные особенности"
-#define LG_PATHSMILE        "Смайлики"
+#define LG_PATHSMILECFG     "Конфиг смайлов"
+#define LG_PATHSMILEDIR     "Каталог смайлов"
 #define LG_DEFUALTDISK      "Диск по умолчанию"
 
 #define LG_TEXTSTATUS       "Текст статусов"
@@ -288,7 +289,8 @@
 #define LG_PATHCMD          "Команди"
 #define LG_PATHMESG         "Повідомлення"
 #define LG_PATHKNOWF        "Відомі особливості"
-#define LG_PATHSMILE        "Смайлики"
+#define LG_PATHSMILECFG     "Конфіг смайлів"
+#define LG_PATHSMILEDIR     "Каталог смайлів"
 #define LG_DEFUALTDISK      "Диск за умовчанням"
 
 #define LG_TEXTSTATUS       "Текст статусів"
@@ -430,7 +432,8 @@
 #define LG_PATHCMD          "Commands path"
 #define LG_PATHMESG         "Messages path"
 #define LG_PATHKNOWF        "Known features"
-#define LG_PATHSMILE        "Smiles path"
+#define LG_PATHSMILECFG     "Smiles config"
+#define LG_PATHSMILEDIR     "Smiles .png path"
 #define LG_DEFUALTDISK      "Default disc"
 
 #define LG_TEXTSTATUS       "Statuses text"

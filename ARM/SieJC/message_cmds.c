@@ -2,6 +2,8 @@
 #include "main.h"
 #include "string_util.h"
 #include "lang.h"
+#include "smiles.h"
+#include "../inc/pnglist.h"
 
 //=================================== Команды ===========================================
 int Templates_Menu_ID;
@@ -23,7 +25,7 @@ void FreeTemplates(void)
 
 extern const char COMMANDS_PATH[];
 extern const char MESSAGES_PATH[];
-extern const char SMILES_PATH[];
+//extern const char SMILES_PATH[];
 
 int LoadTemplates(void)
 {
@@ -46,9 +48,11 @@ int LoadTemplates(void)
     case 1:
       strcpy(fn,MESSAGES_PATH);
     break;
+    /*
     case 2:
       strcpy(fn,SMILES_PATH);
-    break;    
+    break;
+    */    
   }
 
   if (GetFileStats(fn,&stat,&ul)==-1) return 0;
@@ -95,9 +99,11 @@ void UpdateTemplatesMenu_header(void)
     case 1:
       strcpy(clm_hdr_text,LG_SELTEMPLATE);
     break;
+    /*
     case 2:
       strcpy(clm_hdr_text,LG_SELSMILE);
-    break;    
+    break;
+    */    
   }
 }
 
@@ -128,7 +134,7 @@ void SetCmdToEditMessage(char *command)
     break;
    
     case 1:
-    case 2:
+    //case 2:
       {
 	int c;
 	char *p=command;
@@ -221,7 +227,7 @@ void DispTemplatesMenu()
   Templates_Menu_ID = CreateMenu(0,0,&tmpl_menu,&tmpl_menuhdr,0,tmpl_num,0,0);
 }
 
-//================================== Меню выбора ========================================
+//================================== Меню выбора ===============================
 #ifdef NEWSGOLD
 #define SEL_MANU_ITEMS_NUM 4
 #else
@@ -272,20 +278,24 @@ void sel_menu_ghook(void *data, int cmd)
   }
 }
 
+void AddSmile(GUI *data);
 static int sel_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
     Mode = GetCurMenuItem(data);
     #ifdef NEWSGOLD
-      if (Mode==3)
+      if (Mode==3)//Закрыть нах
       {
         GeneralFunc_flag1(edmessage_id, 1);
         return(1);
       }
     #endif    
     
-    DispTemplatesMenu();    
+    if (Mode==2) AddSmile(data); //Диалог выбора смайлегов
+      else
+        DispTemplatesMenu();    
+      
     GeneralFunc_flag1(Select_Menu_ID,1);
   }
   return(0);
@@ -307,4 +317,159 @@ void DispSelectMenu()
 {
   patch_header(&sel_menuhdr);
   Select_Menu_ID = CreateMenu(0,0,&sel_menu,&sel_menuhdr,0,SEL_MANU_ITEMS_NUM,0,0);
+}
+
+//================================== Смайлеги ==================================
+extern S_SMILES *s_top;
+extern DYNPNGICONLIST *SmilesImgList;
+
+void as_locret(void){}
+
+int as_onkey(GUI *data,GUI_MSG *msg)
+{
+  //EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+  void *edmessage=FindGUIbyId(edmessage_id,NULL);
+  
+  if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
+  {
+    switch(msg->gbsmsg->submess)
+    {
+    case GREEN_BUTTON:
+    case ENTER_BUTTON:
+      msg->keys=0xFFF;
+    }
+  }
+  if (msg->keys==0xFFF)
+  {
+    S_SMILES *t;
+    int uni_smile;
+    WSHDR *ed_ws;
+    EDITCONTROL ec;
+    int pos;
+    pos=EDIT_GetCursorPos(data);
+    EDIT_ExtractFocusedControl(data,&ec);
+    uni_smile=ec.pWS->wsbody[pos];
+    
+    pos=EDIT_GetCursorPos(edmessage);
+    ExtractEditControl(edmessage,1,&ec);
+    
+    t=FindSmileByUni(uni_smile);
+    if (t)
+     {
+      if (t->lines)
+       {
+        ed_ws=AllocWS(ec.pWS->wsbody[0]+strlen(t->lines->text));
+        wstrcpy(ed_ws,ec.pWS);
+        
+	int c;
+	char *p=t->lines->text;        
+        while(c=*p++)
+          {
+            wsInsertChar(ed_ws,char8to16(c),pos++);
+          }        
+       }
+     }    
+      else
+      {
+        ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
+        wstrcpy(ed_ws,ec.pWS);        
+        wsInsertChar(ed_ws,uni_smile,pos);    
+      }
+
+    EDIT_SetTextToEditControl(edmessage,1,ed_ws);
+    EDIT_SetCursorPos(edmessage,pos+1);
+    FreeWS(ed_ws);
+    return (1);
+  }
+  return(0);
+}
+
+void as_ghook(GUI *data, int cmd)
+{
+  static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_SELECT};
+  PNGTOP_DESC *pltop=PNG_TOP();
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
+  if (cmd == 0x0A)
+  {
+    pltop->dyn_pltop=SmilesImgList;
+    DisableIDLETMR();
+  }
+  if (cmd == 7)
+  {
+    EDITCONTROL ec;
+    int pos;
+    
+    SetSoftKey(data,&ask,SET_SOFT_KEY_N);
+    EDIT_ExtractFocusedControl(data,&ec);
+    pos=EDIT_GetCursorPos(data);
+    EDIT_SetTextInvert(data,pos,1);
+  }
+  if (cmd==0x0C)
+  {
+    EDIT_SetCursorPos(data,1);
+  }
+}
+
+HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_SELSMILE,LGP_NULL};
+
+INPUTDIA_DESC as_desc=
+{
+  1,
+  as_onkey,
+  as_ghook,
+  (void *)as_locret,
+  0,
+  &tmpl_menu_skt,
+  {0,NULL,NULL,NULL},
+  4,
+  100,
+  101,
+  2,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+void AddSmile(GUI *data)
+{
+  //EDCHAT_STRUCT *ed_struct=MenuGetUserPointer(data);
+  void *edmessage=FindGUIbyId(edmessage_id,NULL);
+  S_SMILES *smiles,*st;
+  WSHDR *ws1;
+  int n;
+  
+  st=smiles=(S_SMILES *)&s_top;
+  n=0;
+  while((st=st->next)) n++;
+  if (!n) return;
+  ws1=AllocWS(n);
+  
+  st=smiles;
+  while((st=st->next)) wsAppendChar(ws1,st->uni_smile);
+  
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+  
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ws1,ws1->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);
+  patch_header(&as_hdr);
+  patch_input(&as_desc);
+  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,edmessage);
+  FreeWS(ws1);
+  GeneralFuncF1(1);
 }

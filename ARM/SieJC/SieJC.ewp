@@ -4137,6 +4137,7 @@
     <name>Serial_Debug</name>
     <excluded>
       <configuration>Release_SGOLD</configuration>
+      <configuration>Release_SGOLD_X75</configuration>
     </excluded>
     <file>
       <name>$PROJ_DIR$\..\SerialLib\serial.asm</name>
@@ -5166,6 +5167,15 @@
   </file>
   <file>
     <name>$PROJ_DIR$\roster_icons.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\siejc_ipc.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\smiles.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\smiles_loader.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\status_change.c</name>

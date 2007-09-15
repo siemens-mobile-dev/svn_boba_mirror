@@ -8,6 +8,8 @@
 #include "string_util.h"
 #include "serial_dbg.h"
 #include "lang.h"
+#include "../inc/pnglist.h"
+#include "smiles.h"
 
 #define MSG_START_X 1    //X-координата начала рисования строки сообщения
 
@@ -109,6 +111,16 @@ void inp_ghook(GUI *gui, int cmd)
 #ifndef NEWSGOLD
   static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
 #endif
+  
+  PNGTOP_DESC *pltop=PNG_TOP();
+  extern S_SMILES *s_top;
+  extern DYNPNGICONLIST *SmilesImgList;  
+
+  if (cmd==9)
+  {
+    pltop->dyn_pltop=NULL;
+  }
+  
   EDITCONTROL ec;
   if (cmd==2)
   {
@@ -127,8 +139,9 @@ void inp_ghook(GUI *gui, int cmd)
 #endif
   }
 
-  if(cmd==0xA)
+  if(cmd==0x0A)
   {
+    pltop->dyn_pltop=SmilesImgList;
     DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
 
@@ -697,6 +710,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     {
       temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
       utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
+      
       //temp_ws_2 = AllocWS(CHAR_ON_LINE*2); WTF?
       temp_ws_2 = AllocWS(200); //ИМХО, так лучше
       int l=wstrlen(temp_ws_1);

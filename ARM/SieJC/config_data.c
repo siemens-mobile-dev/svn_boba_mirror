@@ -138,8 +138,11 @@ __root const char MESSAGES_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\
 __root const CFG_HDR cfghdr22={CFG_STR_UTF8,LG_PATHKNOWF,0,63};
 __root const char KNOW_FEATURES_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\\known_features.txt";
 
-__root const CFG_HDR cfghdr23={CFG_STR_UTF8,LG_PATHSMILE,0,63};
-__root const char SMILES_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\\Smiles.txt";
+__root const CFG_HDR cfghdr23={CFG_STR_UTF8,LG_PATHSMILECFG,0,63};
+__root const char SMILE_FILE[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles\\smiles.cfg";
+
+__root const CFG_HDR cfghdr233={CFG_STR_UTF8,LG_PATHSMILEDIR,0,63};
+__root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles";
 
 __root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFUALTDISK,0,127};
 __root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
