@@ -49,4 +49,6 @@ char *stristr(const char *s, const char *find);
 // Аналог strcmp, но без чувствительности к регистру
 //int stricmp(char *str1, char *str2);
 int stricmp(const char *s, const char *d);
+
+unsigned int char16to8(unsigned int c);
 #endif
