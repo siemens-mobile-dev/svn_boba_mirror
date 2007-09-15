@@ -3,7 +3,7 @@
 <project>
   <fileVersion>1</fileVersion>
   <configuration>
-    <name>Release</name>
+    <name>Release_SGOLD</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -21,15 +21,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>Release\Exe</state>
+          <state>Release_SGOLD\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>Release\Obj</state>
+          <state>Release_SGOLD\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>Release\List</state>
+          <state>Release_SGOLD\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -534,7 +534,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>C:\WINDOWS\System32\irftp.exe $EXE_DIR$\KeyMaster_SGold.elf</postbuild>
+        <postbuild>C:\WINDOWS\System32\irftp.exe $TARGET_PATH$</postbuild>
       </data>
     </settings>
     <settings>
@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>KeyMaster_SGold.elf</state>
+          <state>KeyMaster.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -826,7 +826,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>NewSGold</name>
+    <name>Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -844,15 +844,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>NewSGold\Exe</state>
+          <state>Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>NewSGold\Obj</state>
+          <state>Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>NewSGold\List</state>
+          <state>Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -1373,7 +1373,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>KeyMaster_NewSGold.elf.mid</state>
+          <state>KeyMaster.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1649,7 +1649,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>ELKA</name>
+    <name>Release_ELKA</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1667,15 +1667,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>ELKA\Exe</state>
+          <state>Release_ELKA\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>ELKA\Obj</state>
+          <state>Release_ELKA\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>ELKA\List</state>
+          <state>Release_ELKA\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2197,7 +2197,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>KeyMaster_ELKA.elf.mid</state>
+          <state>KeyMaster.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2481,7 +2481,7 @@
   <file>
     <name>$PROJ_DIR$\config_data.c</name>
     <configuration>
-      <name>Release</name>
+      <name>Release_SGOLD</name>
       <settings>
         <name>ICCARM</name>
         <data>
@@ -2705,7 +2705,7 @@
       </settings>
     </configuration>
     <configuration>
-      <name>NewSGold</name>
+      <name>Release</name>
       <settings>
         <name>ICCARM</name>
         <data>
@@ -2929,7 +2929,7 @@
       </settings>
     </configuration>
     <configuration>
-      <name>ELKA</name>
+      <name>Release_ELKA</name>
       <settings>
         <name>ICCARM</name>
         <data>
@@ -3161,8 +3161,8 @@
     <name>$PROJ_DIR$\gui.c</name>
     <excluded>
       <configuration>Release</configuration>
-      <configuration>NewSGold</configuration>
-      <configuration>ELKA</configuration>
+      <configuration>Release</configuration>
+      <configuration>Release_ELKA</configuration>
     </excluded>
   </file>
   <file>
