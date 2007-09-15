@@ -156,7 +156,9 @@ void inp_ghook(GUI *gui, int cmd)
       //body[xz]='\0';
       int res_len;
       char* body = malloc(wstrlen(ws_eddata)*2+1);
+      ExtractAnswer(ws_eddata);
       ws_2utf8(ws_eddata, body, &res_len, wstrlen(ws_eddata)*2+1);
+      
       body = realloc(body, res_len+1);
       body[res_len]='\0';
       char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
@@ -248,7 +250,9 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   ws_eddata = AllocWS(MAX_MSG_LEN);
   if(init_text)
   {
-    utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
+    char *str = convUTF8_to_ANSI_STR(init_text);
+    ParseAnswer(ws_eddata, str);
+    //utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
   }
   EDITCONTROL ec;
   void *ma=malloc_adr();
@@ -401,7 +405,7 @@ void mGUI_onRedraw(GUI *data)
                        color(MsgBgColor),
                        color(MsgBgColor));
 
-      DrawString(ml->mess,MSG_START_X,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize*2,MESSAGEWIN_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);
+      DrawString(ml->mess, MSG_START_X,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize*2,MESSAGEWIN_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);
       i++;
     }
     ml = ml->next;

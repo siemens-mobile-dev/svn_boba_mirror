@@ -9,6 +9,9 @@
 #include "history.h"
 #include "item_info.h"
 #include "lang.h"
+#include "..\inc\pnglist.h"
+#include "smiles.h"
+
 const RGBA CURSOR =           {120, 120, 255, 100};         // Цвет курсора
 const RGBA CURSOR_BORDER =    {200, 200, 200, 100};         // Цвет ободка курсора
 const RGBA CLIST_F_COLOR_0 =  {  0,   0,   0, 100};         // Цвет шрифта
@@ -632,6 +635,8 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   TDate now_date;
   GetDateTime(&now_date,&now_time);
   char datestr[200];
+  
+  //ParseAnswer(mtext, mtext);  
   char IsMe = strstr(mtext,"/me ")==mtext ? 1 : 0; // Флаг наличия /me
   if(mtype==MSG_ME)
   {
@@ -928,5 +933,105 @@ int CList_isGroup(CLIST *cont)
   return 0;
 }
 
+extern S_SMILES *s_top;
+void ParseAnswer(WSHDR *ws, const char *s)
+{
+  S_SMILES *t;
+  S_SMILES *t_root=(S_SMILES *)s_top;
+  STXT_SMILES *st;
+  unsigned int wchar;
+  unsigned int ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
+  CutWSTR(ws,0);
+  int i;
+  while(wchar=*s)
+  {
+    t=t_root;
+    while(t)
+    {
+      st=t->lines;
+      while(st)
+      {
+	if ((ulb&st->mask)==st->key)
+	{
+	  if (!strncmp(s,st->text,strlen(st->text))) goto L1;
+	}
+	st=st->next;
+      }
+      t=t->next;
+    }
+  L1:
+    if (t)
+    {
+      wchar=t->uni_smile;
+      s+=strlen(st->text);
+      ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
+    }
+    else
+    {
+      wchar=char8to16(wchar);
+      s++;
+      ulb>>=8;
+      ulb+=s[3]<<24;
+    }
+    if (wchar!=10) wsAppendChar(ws,wchar);
+  }
+  i=ws->wsbody[0];
+  while(i>1)
+  {
+    if (ws->wsbody[i--]!=13) break;
+    ws->wsbody[0]=i;
+  }
+}
 
-
+void ExtractAnswer(WSHDR *ws)
+{
+  S_SMILES *t;
+  char *msg_buf;
+  int c;
+  int scur=0;
+  int wcur=0;
+  unsigned short *wsbody=ws->wsbody;
+  int wslen=wsbody[0];
+  msg_buf=malloc(16384);
+  do
+  {
+    if (wcur>=wslen) break;
+    c=wsbody[wcur+1];
+    if (c==10) c=13;
+    if (c>=0xE100)
+    {
+      t=FindSmileByUni(c);
+      if (t)
+      {
+        int w;
+        char *s;
+	if (t->lines)
+	{
+	  s=t->lines->text;
+	  while ((w=*s++) && scur<16383)
+	  {
+	    msg_buf[scur]=w;//char8to16(w);
+	    scur++;
+	  }
+	}
+      }
+      else
+      {
+        msg_buf[scur]=char16to8(c);
+        scur++;
+      }
+    }
+    else
+    {
+      msg_buf[scur]=char16to8(c);
+      scur++;
+    }
+    wcur++;
+  }
+  while(scur<16383);
+  msg_buf[scur]=0;
+  CutWSTR(ws, 0);
+  ascii2ws(ws, msg_buf);
+  mfree(msg_buf);
+  return;
+}

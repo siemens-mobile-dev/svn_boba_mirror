@@ -105,4 +105,6 @@
 // Убить список сообщений
   void KillMsgList(LOG_MESSAGE* messtop);
 
+  void ParseAnswer(WSHDR *ws, const char *s);
+  void ExtractAnswer(WSHDR *ws);
 #endif

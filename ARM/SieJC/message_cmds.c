@@ -341,7 +341,6 @@ int as_onkey(GUI *data,GUI_MSG *msg)
   }
   if (msg->keys==0xFFF)
   {
-    S_SMILES *t;
     int uni_smile;
     WSHDR *ed_ws;
     EDITCONTROL ec;
@@ -352,30 +351,9 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     
     pos=EDIT_GetCursorPos(edmessage);
     ExtractEditControl(edmessage,1,&ec);
-    
-    t=FindSmileByUni(uni_smile);
-    if (t)
-     {
-      if (t->lines)
-       {
-        ed_ws=AllocWS(ec.pWS->wsbody[0]+strlen(t->lines->text));
-        wstrcpy(ed_ws,ec.pWS);
-        
-	int c;
-	char *p=t->lines->text;        
-        while(c=*p++)
-          {
-            wsInsertChar(ed_ws,char8to16(c),pos++);
-          }        
-       }
-     }    
-      else
-      {
-        ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
-        wstrcpy(ed_ws,ec.pWS);        
-        wsInsertChar(ed_ws,uni_smile,pos);    
-      }
-
+    ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
+    wstrcpy(ed_ws,ec.pWS);        
+    wsInsertChar(ed_ws,uni_smile,pos);    
     EDIT_SetTextToEditControl(edmessage,1,ed_ws);
     EDIT_SetCursorPos(edmessage,pos+1);
     FreeWS(ed_ws);
