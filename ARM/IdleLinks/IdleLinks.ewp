@@ -1649,7 +1649,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>Relase_ELKA</name>
+    <name>Release_ELKA</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1671,15 +1671,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>Relase_ELKA\Exe</state>
+          <state>Release_ELKA\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>Relase_ELKA\Obj</state>
+          <state>Release_ELKA\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>Relase_ELKA\List</state>
+          <state>Release_ELKA\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2929,7 +2929,7 @@
       </settings>
     </configuration>
     <configuration>
-      <name>Relase_ELKA</name>
+      <name>Release_ELKA</name>
       <settings>
         <name>ICCARM</name>
         <data>
