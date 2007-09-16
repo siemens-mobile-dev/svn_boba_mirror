@@ -2,7 +2,6 @@
 __swi __arm void ShowNativeMenu();
 
 #include "..\inc\swilib.h"
-#include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 #include "..\inc\xtask_ipc.h"
 
@@ -101,6 +100,14 @@ int media_mode;
 
 int my_keyhook(int submsg, int msg)
 {
+  
+  extern void CreateRBMenu(void);
+  if ((submsg==RED_BUTTON)&&(IsIDLE()))
+  {
+    CreateRBMenu();
+    return (1);
+  }
+  
   char s[40];
   sprintf(s,RamMediaIsPlaying());
   
@@ -352,3 +359,4 @@ int main(void)
   UnlockSched();
   return 0;
 }
+
