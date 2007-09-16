@@ -3,6 +3,8 @@
 #include "conf_loader.h"
 #include "IdleLinks.h"
 
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
 CSM_DESC icsmd;
 
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
@@ -15,6 +17,16 @@ typedef struct
 }TLabelData;
 
 TLabelData LabelData[15];
+
+int CalcPic(char* picture)
+{
+  int pic = strtoul(picture, 0, 10);
+  if ( (pic <= 4) && (strlen(picture) > 1) )
+  {
+     pic = (int)picture;
+  }
+  return pic;
+}
 
 unsigned short maincsm_name_body[140];
 const int minus11=-11;
@@ -39,35 +51,38 @@ void OnRedraw(MAIN_GUI *data) // OnRedraw
 {
   void *canvasdata = BuildCanvas();
   int i=0;
+  int pic;
   do
     {
+     pic = CalcPic(LabelData[i].Pic);           
       if (!vybor)
         {                
           DrawCanvas(canvasdata,LabelData[i].x-1, LabelData[i].y-1,
-                                LabelData[i].x+GetImgWidth((int)LabelData[i].Pic)+1,
-                                LabelData[i].y+GetImgHeight((int)LabelData[i].Pic)+1, 1);
+                                LabelData[i].x+GetImgWidth(pic)+1,
+                                LabelData[i].y+GetImgHeight(pic)+1, 1);
         
           if (i==pos-1)
             {
               DrawRoundedFrame(LabelData[pos-1].x-1, LabelData[pos-1].y-1,
-                               LabelData[pos-1].x+GetImgWidth((int)LabelData[pos-1].Pic)+1,
-                               LabelData[pos-1].y+GetImgHeight((int)LabelData[pos-1].Pic)+1,0,0,0,frcol,cl);                      
+                               LabelData[pos-1].x+GetImgWidth(pic)+1,
+                               LabelData[pos-1].y+GetImgHeight(pic)+1,0,0,0,frcol,cl);                      
             }
         }
           else
             DrawCanvas(canvasdata,LabelData[i].x-1, LabelData[i].y-1,
-                                  LabelData[i].x+GetImgWidth((int)LabelData[i].Pic)+1,
-                                  LabelData[i].y+GetImgHeight((int)LabelData[i].Pic)+1, 1);  
+                                  LabelData[i].x+GetImgWidth(pic)+1,
+                                  LabelData[i].y+GetImgHeight(pic)+1, 1);  
       
-      DrawImg(LabelData[i].x,LabelData[i].y,(int)LabelData[i].Pic);    
+      DrawImg(LabelData[i].x,LabelData[i].y,pic);    
       i++;
     }
   while (i<=count);
 
   if (vybor==1)
     {
-      DrawImg(LabelData[pos-1].x+GetImgWidth((int)LabelData[pos-1].Pic)-GetImgWidth((int)chpic),
-              LabelData[pos-1].y+GetImgHeight((int)LabelData[pos-1].Pic)-GetImgHeight((int)chpic),(int)chpic);            
+      pic = CalcPic(LabelData[pos-1].Pic); 
+      DrawImg(LabelData[pos-1].x+GetImgWidth(pic)-GetImgWidth((int)chpic),
+              LabelData[pos-1].y+GetImgHeight(pic)-GetImgHeight((int)chpic),(int)chpic);            
     }
 }
 
@@ -123,27 +138,40 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
         break;        
     case ENTER_BUTTON:
       {
-        if(LabelData[pos-1].Type)
-         {
-           unsigned int* addr = (unsigned int*)GetFunctionPointer(LabelData[pos-1].FileName);
-           if (addr)
-            {
-              typedef void (*voidfunc)(); 
-              #ifdef NEWSGOLD 
-                voidfunc pp=(voidfunc)*(addr+4);
-              #else 
-                voidfunc pp=(voidfunc)addr; 
-              #endif 
-              SUBPROC((void*)pp);
-            }
-          }
-           else
+        switch (LabelData[pos-1].Type)
+        {
+        case 0:
           {
             WSHDR *elfname=AllocWS(256);
             wsprintf(elfname,LabelData[pos-1].FileName);
             ExecuteFile(elfname,NULL,NULL);
-            FreeWS(elfname);        
+            FreeWS(elfname);
           }
+          break;
+        case 1:
+          {
+            unsigned int* addr = (unsigned int*)GetFunctionPointer(LabelData[pos-1].FileName);
+            if (addr)
+            {
+              typedef void (*voidfunc)(); 
+      #ifdef NEWSGOLD          
+              voidfunc pp=(voidfunc)*(addr+4);
+      #else 
+              voidfunc pp=(voidfunc)addr; 
+      #endif 
+              SUBPROC((void*)pp);
+            }
+          }
+          break;
+        case 2:
+          {
+              typedef void (*voidfunc)(); 
+              unsigned int addr=strtoul( LabelData[pos-1].FileName, 0, 16 );
+              voidfunc pp=(voidfunc)addr;
+              SUBPROC((void*)pp);
+          }
+          break;          
+        }   
         return(1);
       }
     }
@@ -207,6 +235,7 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
+  InitConfig();
 }
 
 // Вызывается при закрытии главного CSM. Тут и вызывается киллер
@@ -305,9 +334,11 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
   if ((IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4]))&&(active)&&(!IsScreenSaver()))
   {
   int i=0;
+  int pic;
   do
   {
-    DrawImg(LabelData[i].x,LabelData[i].y,(int)LabelData[i].Pic);    
+    pic = CalcPic(LabelData[i].Pic); 
+    DrawImg(LabelData[i].x,LabelData[i].y,pic);    
     i++;
   }
   while (i<=count);  
