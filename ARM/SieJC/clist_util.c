@@ -636,7 +636,6 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   GetDateTime(&now_date,&now_time);
   char datestr[200];
   
-  //ParseAnswer(mtext, mtext);  
   char IsMe = strstr(mtext,"/me ")==mtext ? 1 : 0; // Флаг наличия /me
   if(mtype==MSG_ME)
   {
@@ -942,7 +941,6 @@ void ParseAnswer(WSHDR *ws, const char *s)
   unsigned int wchar;
   unsigned int ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
   CutWSTR(ws,0);
-  int i;
   while(wchar=*s)
   {
     t=t_root;
@@ -973,14 +971,18 @@ void ParseAnswer(WSHDR *ws, const char *s)
       ulb>>=8;
       ulb+=s[3]<<24;
     }
-    if (wchar!=10) wsAppendChar(ws,wchar);
+    //if (wchar!=10) 
+    wsAppendChar(ws,wchar);
   }
+  /*
+  //int i;
   i=ws->wsbody[0];
   while(i>1)
   {
-    if (ws->wsbody[i--]!=13) break;
+    if (ws->wsbody[i--]!=10) break;
     ws->wsbody[0]=i;
   }
+  */
 }
 
 void ExtractAnswer(WSHDR *ws)
@@ -1010,7 +1012,7 @@ void ExtractAnswer(WSHDR *ws)
 	  s=t->lines->text;
 	  while ((w=*s++) && scur<16383)
 	  {
-	    msg_buf[scur]=w;//char8to16(w);
+	    msg_buf[scur]=w;
 	    scur++;
 	  }
 	}
