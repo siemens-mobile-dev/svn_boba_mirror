@@ -165,7 +165,7 @@ void Parsing()
       weath[itemnum].Cloudiness[i]=0;
     
       //Температура
-      fcstr=strstr(fcstr,"<b>")+strlen ("<b>")+1;
+      fcstr=strstr(fcstr,"<b>")+strlen ("<b>");
       for (i=0;fcstr[i]!='<'&&(i<strlen (fcstr));i++);
         strncpy(weath[itemnum].Temp, fcstr, i+1);
       weath[itemnum].Temp[i]=0;      
