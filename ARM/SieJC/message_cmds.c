@@ -10,9 +10,9 @@ int Templates_Menu_ID;
 int Select_Menu_ID;
 
 int Mode;
-//0 - Команды
-//1 - Шаблоны сообщений
-//2 - Смайлы
+//0 - Смайлы
+//1 - Команды
+//2 - Шаблоны сообщений
 
 char **commands_lines; //Массив указателей на строки
 int tmpl_num=0;
@@ -25,7 +25,6 @@ void FreeTemplates(void)
 
 extern const char COMMANDS_PATH[];
 extern const char MESSAGES_PATH[];
-//extern const char SMILES_PATH[];
 
 int LoadTemplates(void)
 {
@@ -42,17 +41,12 @@ int LoadTemplates(void)
   
   switch (Mode)
   {
-    case 0:
+    case 1:
       strcpy(fn,COMMANDS_PATH);
     break;
-    case 1:
+    case 2:
       strcpy(fn,MESSAGES_PATH);
     break;
-    /*
-    case 2:
-      strcpy(fn,SMILES_PATH);
-    break;
-    */    
   }
 
   if (GetFileStats(fn,&stat,&ul)==-1) return 0;
@@ -93,17 +87,12 @@ void UpdateTemplatesMenu_header(void)
 {
   switch (Mode)
   {
-    case 0:
+    case 1:
       strcpy(clm_hdr_text,LG_SELCOMMAND);
     break;
-    case 1:
+    case 2:
       strcpy(clm_hdr_text,LG_SELTEMPLATE);
     break;
-    /*
-    case 2:
-      strcpy(clm_hdr_text,LG_SELSMILE);
-    break;
-    */    
   }
 }
 
@@ -125,7 +114,7 @@ void SetCmdToEditMessage(char *command)
 
   switch (Mode)
   {
-    case 0:
+    case 1:
       ascii2ws(ws_me,command);
       wstrcpy(ws_eddata, ws_me);
       wstrcat(ws_eddata,ec.pWS);
@@ -133,8 +122,7 @@ void SetCmdToEditMessage(char *command)
       EDIT_SetCursorPos(data,pos + strlen(command));
     break;
    
-    case 1:
-    //case 2:
+    case 2:
       {
 	int c;
 	char *p=command;
@@ -240,9 +228,10 @@ int sel_menusoftkeys[]={0,1,2};
 
 static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
 {
+  LG_SMILE,
   LG_COMMANDS,
-  LG_MSGTEMPLATE,
-  LG_SMILE
+  LG_MSGTEMPLATE
+  
 #ifdef NEWSGOLD
   , LG_CLOSEDLG  
 #endif
@@ -292,7 +281,7 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
       }
     #endif    
     
-    if (Mode==2) AddSmile(data); //Диалог выбора смайлегов
+    if (Mode==0) AddSmile(data); //Диалог выбора смайлегов
       else
         DispTemplatesMenu();    
       
@@ -327,7 +316,6 @@ void as_locret(void){}
 
 int as_onkey(GUI *data,GUI_MSG *msg)
 {
-  //EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
   void *edmessage=FindGUIbyId(edmessage_id,NULL);
   
   if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
@@ -351,11 +339,15 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     
     pos=EDIT_GetCursorPos(edmessage);
     ExtractEditControl(edmessage,1,&ec);
-    ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
-    wstrcpy(ed_ws,ec.pWS);        
-    wsInsertChar(ed_ws,uni_smile,pos);    
+    ed_ws=AllocWS(ec.pWS->wsbody[0]+3);
+    wstrcpy(ed_ws,ec.pWS);     
+    
+    wsInsertChar(ed_ws,' ',pos++);
+    wsInsertChar(ed_ws,uni_smile,pos++);
+    wsInsertChar(ed_ws,' ',pos++);
+    
     EDIT_SetTextToEditControl(edmessage,1,ed_ws);
-    EDIT_SetCursorPos(edmessage,pos+1);
+    EDIT_SetCursorPos(edmessage,pos);
     FreeWS(ed_ws);
     return (1);
   }

@@ -406,7 +406,6 @@ void mGUI_onRedraw(GUI *data)
                        color(MsgBgColor));
 
       DrawString(ml->mess, MSG_START_X,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize*2,MESSAGEWIN_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);
-      SMART_REDRAW();
       i++;
     }
     ml = ml->next;

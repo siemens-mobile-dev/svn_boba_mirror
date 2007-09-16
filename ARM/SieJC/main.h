@@ -177,5 +177,4 @@ void QuitCallbackProc(int decision);
 void patch_rect(RECT*rc,int x,int y, int x2, int y2);
 void patch_header(HEADER_DESC* head);
 void patch_input(INPUTDIA_DESC* inp);
-void SMART_REDRAW(void);
 #endif
