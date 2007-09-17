@@ -12,6 +12,7 @@
 #include "serial_dbg.h"
 #include "groups_util.h"
 #include "adv_login.h"
+#include "base64.h"
 #include "lang.h"
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];
@@ -239,6 +240,19 @@ void Send_Vcard_Request(char *dest_jid)
   SUBPROC((void*)_sendvcardrequest,to);
 }
 
+// Сгенерировать ver= исходя из текущих возможностей клиента
+// Возвращаемую строку необходимо освобождать!
+char *Generate_Caps()
+{
+  char caps_tpl[]="%s:%s:%d";
+  char *q = malloc(64);
+  zeromem(q,64);
+  snprintf(q,127, caps_tpl, VERSION_VERS,__SVN_REVISION__,DELIVERY_EVENTS);
+  char *Result_Resp;
+  base64_encode(q, strlen(q),&Result_Resp);
+  return Result_Resp;
+}
+
 /*
   Послать своё присутствие (в частности, после этого на нас вываливаются
   присутствия остальных, а мы появляемся в ресурсах своего контакта)
@@ -251,18 +265,21 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   My_Presence = pr_info->status;
 //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
 
+  // Генерируем капс исходя из включённых фич
+  char *caps = Generate_Caps();
+  
   char* presence = malloc(1024);
   if(pr_info->status!=PRESENCE_INVISIBLE)
   {
     if(pr_info->message)
     {
-      char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>"; //по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+      char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>"; //по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
     }
     else
     {
-      char presence_template[]="<presence><priority>%d</priority><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+      char presence_template[]="<presence><priority>%d</priority><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
     }
   }
   else
@@ -278,13 +295,13 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   {
     if(pr_info->message)
     {
-      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
     }
     else
     {
-      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s' ver='%s-r%d' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
+      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
     }
     SendAnswer(presence);
     m_ex=m_ex->next;
@@ -1271,9 +1288,19 @@ char loc_x[]="x";
       {
         // Хочу текст ошибки
         XMLNode* err_desc = XML_Get_Child_Node_By_Name(err_node,"text");
-        if(err_desc->value)msg = err_desc->value;
-        MsgBoxError(1,(int)err_desc->value);
-        CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, err_desc->value);
+        if(err_desc)
+        {
+          if(err_desc->value)msg = err_desc->value;
+          MsgBoxError(1,(int)err_desc->value);
+          CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, err_desc->value);
+        }
+        else
+        {
+          char q[40];
+          char *code = XML_Get_Attr_Value("code",err_node->attr);
+          sprintf(q,"ERR %d",code);
+          MsgBoxError(1,(int)q);
+        }
       }
     }
 

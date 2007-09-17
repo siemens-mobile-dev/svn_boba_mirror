@@ -282,7 +282,7 @@ CLIST* CList_FindContactByJID(char* jid)
   while(ClEx)
   {
     //    if(strstr(lc_jid,ClEx->JID)==lc_jid)
-    if(stristr(jid,ClEx->JID)==jid)
+    if(stristr(jid,ClEx->JID)==jid && ClEx->res_list->entry_type!=T_GROUP)
     {
       UnlockSched();
       return ClEx;
@@ -429,7 +429,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
   while(ClEx)
   {
 
-    if(stristr(jid,ClEx->JID)==jid) // Ага, именно так, ибо это соответствует началу строки!
+    if(stristr(jid,ClEx->JID)==jid && ClEx->res_list->entry_type!=T_GROUP) // Ага, именно так, ибо это соответствует началу строки!
     {
       TRESOURCE* ResEx=malloc(sizeof(TRESOURCE));//ClEx->res_list;
       char *resname_ptr=Get_Resource_Name_By_FullJID(jid);

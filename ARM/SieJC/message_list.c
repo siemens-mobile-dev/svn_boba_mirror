@@ -496,12 +496,11 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
 
     case ENTER_BUTTON:
       {
-        LOG_MESSAGE* log =GetCurMessage();
-        char *s=log->mess;
-        utf82win(s, s);
-        
+        LOG_MESSAGE* log =GetCurMessage();      
         if(log)
         {
+          char *s=log->mess;
+          utf82win(s, s);
           unsigned int l = strlen(s);
           char *init_text = malloc(l+3+1);
           zeromem(init_text,l+3+1);
@@ -613,6 +612,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             init_text[au_nick_len]=':';
             init_text[au_nick_len+1]=' ';
             init_text[au_nick_len+2]='\0';
+            utf82win(init_text, init_text);
             Init_Message(Resource_Ex, init_text);
             mfree(init_text);
           }
