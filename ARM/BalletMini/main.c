@@ -182,8 +182,8 @@ static void method0(VIEW_GUI *data)
       DrawRectangle(w1+1,h1,scr_w,scr_h,0,
                     GetPaletteAdrByColorIndex(1),
                     GetPaletteAdrByColorIndex(0));
-      if ((view_url_mode==MODE_FILE && vd->oms_size<vd->page_sz) ||
-          (view_url_mode==MODE_URL && connect_state==3 && vd->oms_size<vd->page_sz))
+      if ((view_url_mode==MODE_FILE && vd->loaded_sz<vd->page_sz) ||
+          (view_url_mode==MODE_URL && connect_state==3 && vd->loaded_sz<vd->page_sz))
       {
         DrawRectangle(1,h1+1,vd->loaded_sz*(w1-1)/vd->page_sz,scr_h-1,0,
                       GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
