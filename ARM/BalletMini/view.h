@@ -130,6 +130,7 @@ typedef struct
   REFCACHE *ref_cache;
   
   int page_sz;
+  int loaded_sz;
   unsigned short wchar_hr;
   
 }VIEWDATA;

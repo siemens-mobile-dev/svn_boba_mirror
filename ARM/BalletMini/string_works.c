@@ -51,5 +51,61 @@ char *replacegstr(char **ps, const char *s, int len)
   return *ps=d;
 }
 
+int char16to8(int c)
+{
+  if (c<0x400) return (c);
+  c-=0x400;
+  if (c<16)
+  {
+    if (c==1) c=0;
+    else if (c==4) c=2;
+    else if (c==6) c=10;
+    else return (c);
+  }
+  else if (c>79)
+  {
+    if (c==0x51) c=16;
+    else if (c==0x54) c=18;
+    else if (c==0x56) c=11;
+    else if (c==0x57) c=23;
+    else return (c);
+  }
+  else c+=8;
+  c+=168;
+  return (c);
+}
+
+int char8to16(int c)
+{
+  if (c<168) return (c);
+  c-=168;
+  if (!c)  c=1;
+  else if (c<24) 
+  {
+    if (c==2) c=4;
+    else if (c==10) c=6;
+    else if (c==11) c=0x56;
+    else if (c==16) c=0x51;
+    else if (c==18) c=0x54;
+    else if (c==23) c=0x57;
+    else return (c);
+  }
+  else if (c>87) return (c);
+  else c-=8;
+  c+=0x400;
+  return (c); 
+}
+
+void ascii2ws(WSHDR *ws, const char *s)
+{
+  char c;
+  CutWSTR(ws,0);
+  while((c=*s++))
+  {
+    wsAppendChar(ws,char8to16(c));
+  }
+}
+
+
 
 

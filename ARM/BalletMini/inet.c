@@ -8,7 +8,7 @@
 #define SEND_TIMER
 #endif
 
-#define TMR_SECOND 216
+#define TMR_SECOND(A) (1300*A/6)
 
 extern WSHDR *ws_console;
 
@@ -255,7 +255,7 @@ static void bsend(int len, void *p)
     {
       //ѕередали меньше чем заказывали
 #ifdef SEND_TIMER
-      GBS_StartTimerProc(&send_tmr,216*5,resend);
+      GBS_StartTimerProc(&send_tmr,TMR_SECOND(5),resend);
 #endif
       return; //∆дем сообщени€ ENIP_BUFFER_FREE1
     }
@@ -339,7 +339,7 @@ static void SendPost(void)
   char buf[3096];
   int content_len=0;
   int l;
-  int i;
+  int i, j;
   char *content=NULL;
   char *req;
   extern char AUTH_PREFIX[];
@@ -383,8 +383,29 @@ static void SendPost(void)
 
   sprintf(buf,"E=ISO8859_1");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
-
-  sprintf(buf,"d=w:%d;h:%d;c:65536;m:3145728;i:1;q:0;f:0;j:0;l:256",ScreenW(),ScreenH());
+  
+  extern const int PIC_QUALITY;
+  switch(PIC_QUALITY)
+  {
+  case 0:
+  default:
+    i=2;
+    j=0;
+    break;
+  case 1:
+    i=0;
+    j=0;
+    break;
+  case 2:
+    i=1;
+    j=0;
+    break;
+  case 3:
+    i=1;
+    j=1;
+    break;
+  }
+  sprintf(buf,"d=w:%d;h:%d;c:65536;m:3145728;i:%d;q:%d;f:0;j:0;l:256",ScreenW(),ScreenH(),i,j);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"c=%s",AUTH_CODE);

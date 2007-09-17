@@ -63,6 +63,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     vd->parse_state=OMS_STOP;
     return;
   }
+  vd->loaded_sz+=len;
   if (vd->zs)
   {
   L_ZBEGIN:
@@ -94,6 +95,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
   {
     vd->oms_wanted=sizeof(OMS_HEADER_COMMON);
     vd->parse_state=OMS_HDR_COMMON;
+    vd->loaded_sz-=sizeof(OMS_HEADER_COMMON);
   }
   while(vd->oms_size>=vd->oms_wanted)
   {
