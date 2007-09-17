@@ -250,8 +250,8 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   ws_eddata = AllocWS(MAX_MSG_LEN);
   if(init_text)
   {
-    char *str = convUTF8_to_ANSI_STR(init_text);
-    ParseAnswer(ws_eddata, str);
+    //char *str = convUTF8_to_ANSI_STR(init_text);
+    ParseAnswer(ws_eddata, init_text);
     //utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
   }
   EDITCONTROL ec;
@@ -497,14 +497,17 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
     case ENTER_BUTTON:
       {
         LOG_MESSAGE* log =GetCurMessage();
+        char *s=log->mess;
+        utf82win(s, s);
+        
         if(log)
         {
-          unsigned int l = strlen(log->mess);
+          unsigned int l = strlen(s);
           char *init_text = malloc(l+3+1);
           zeromem(init_text,l+3+1);
           init_text[0] = '>';
           init_text[1] = '>';
-          strcat(init_text, log->mess);
+          strcat(init_text, s);
           init_text[2+ l] = '\n';
           init_text[3+ l] = '\0';
           Init_Message(Resource_Ex, init_text);

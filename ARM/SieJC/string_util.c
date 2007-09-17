@@ -837,3 +837,29 @@ void ascii2ws(WSHDR *ws, const char *s)
   }
 }
 
+void utf82win(char*d,const char *s)
+{
+  for (; *s; s+=2)
+  {
+    unsigned char ub = *s, lb = *(s+1);
+    if (ub == 208)
+      if (lb != 0x81)
+        {*d = lb + 48; d++;}
+      else
+        {*d = '¨'; d++;}
+
+    if (ub == 209)
+      if (lb != 0x91)
+        {*d = lb + 112; d++;}
+      else
+        {*d = '¸'; d++;}
+
+    if ((ub != 208) && (ub != 209) && (lb != 91) && (lb != 81))
+    {
+      *d = ub;
+      d++;
+      s--;
+    }
+  }
+  *d = 0;
+}

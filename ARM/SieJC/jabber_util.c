@@ -1537,10 +1537,12 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       {
         char* m = malloc(128+5+strlen(msgnode->value));
         sprintf(m,"%s: %s", XML_Get_Attr_Value(from,nodeEx->attr), msgnode->value);
-        char *ansi_m=convUTF8_to_ANSI_STR(m);
+        //char *ansi_m=convUTF8_to_ANSI_STR(m);
+        char *ansi_m = m;
+        utf82win(ansi_m, ansi_m);
         ShowMSG(0,(int)ansi_m);
         mfree(m);
-        mfree(ansi_m);
+        //mfree(ansi_m);
       }
       extern const char sndPM[];
       SUBPROC((void *)Play,sndPM);
