@@ -1111,7 +1111,17 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case ENTER_BUTTON:
       {
-        CLIST *ActiveContact = CList_FindContactByJID(CList_GetActiveContact()->full_name);
+          LockSched();
+          extern CLIST *cltop;
+          CLIST* ClEx = cltop;
+          CLIST* ActiveContact = NULL;
+          char *gjid=CList_GetActiveContact()->full_name;
+          while(ClEx)
+          {
+            if(stristr(gjid,ClEx->JID)==gjid) ActiveContact = ClEx;
+            ClEx = ClEx->next;
+          }
+          UnlockSched();
         if (ActiveContact)
         {
           if(ActiveContact->res_list->entry_type!=T_GROUP)
