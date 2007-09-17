@@ -179,38 +179,103 @@ void ShowRedBtnMenu()
   UnlockSched();
 }
 */
+//
+//==============================================================================
+// Uptime counter
+//==============================================================================
 
+
+TDate date;
+TTime time; 
+int sh;
+int sm;
+int ss;
+int sd;
+int nh;
+int nm;
+int ns;
+int nd;
+
+char resstr;
+
+void count_uptime()
+{
+GetDateTime(&date,&time);
+  ns=time.sec-ss;
+  if (ns<0){
+    ns=60+ns;
+    time.min--;
+  }
+  nm=time.min-sm;
+  if (nm<0){
+    nm=60+nm;
+    time.hour--;
+  }
+  nh=time.hour-sh;
+  if (nh<0){
+    nh=24+nh;
+    date.day--;
+  }
+  nd=date.day-sd;
+  if (nd<0){
+    nd=0;
+  }
+  if (nd==0) sprintf(&resstr,"Uptime %02i:%02i",nh,nm);
+       else sprintf(&resstr,"Uptime %i Days, %02i:%02i",nh,nm);
+}
 //==============================================================================
 // Меню
 //==============================================================================
-#define MENU_ITEMS_NUM 2
+#define MENU_ITEMS_NUM 4
+
+char hdr[64];
+char hdr2;
+static const HEADER_DESC rb_menuhdr = {0, 0,NULL,NULL,NULL, (int) hdr, LGP_NULL};
 
 static void mp1()
 {
-  ShowMSG(2, (int)"Пункт 1");
+  SwitchPhoneOff();
+  GeneralFuncF1(1);
 }
 
 static void mp2()
 {
-  ShowMSG(2, (int)"Пункт 2");
+  RebootPhone();
+  GeneralFuncF1(1);
+}
+
+static void mp3()
+{
+  KbdLock();
+  GeneralFuncF1(1);
+}
+
+static void mp4()
+{
+  SetProfile(8);
+  GeneralFuncF1(1);
 }
 
 static const char * const menutexts[MENU_ITEMS_NUM]=
 {
-  "Пункт1",
-  "Пункт2"
+  "Выключить",
+  "Перезагрузить",
+  "Заблокировать клавиатуру",
+  "Выключить телефон и все сигналы"
 };
 
 static const void *menuprocs[MENU_ITEMS_NUM]=
 {
   (void *)mp1,
   (void *)mp2,
+  (void *)mp3,
+  (void *)mp4,
 };
 
 static const int menusoftkeys[] = {0,1,2};
 static const SOFTKEY_DESC menu_sk[]=
 {
-  {0x0018, 0x0000, (int)"OK"},
+  {0x0018, 0x0000, (int)"Выбрать"},
   {0x0001, 0x0000, (int)"Закрыть"},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -222,6 +287,13 @@ static const SOFTKEYSTAB menu_skt =
 
 int rb_menu_onkey(void *data, GUI_MSG *msg)
 {
+//  count_uptime();
+  TTime t;
+  TDate d;
+  GetDateTime(&d,&t);
+  sprintf(&hdr2,"Меню  %02d:%02d",t.hour,t.min);
+  strncpy(hdr,&hdr2,63);
+  
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
     ((void (*)(void))(menuprocs[GetCurMenuItem(data)]))();
@@ -239,19 +311,24 @@ void rb_menu_ghook(void *data, int cmd)
 
 void rb_menu_iconhndl(void *data, int curitem, void *unk)
 {
+  TTime t;
+  TDate d;
+  GetDateTime(&d,&t);
+  sprintf(&hdr2,"Меню  %02d:%02d",t.hour,t.min);
+  strncpy(hdr,&hdr2,63);
+//  count_uptime();
+  
   WSHDR *ws;
   WSHDR *ws2;
   void *item=AllocMLMenuItem(data);
   ws=AllocMenuWS(data,strlen(menutexts[curitem]));
   ws2=AllocMenuWS(data,strlen(menutexts[curitem]));
   wsprintf(ws, "%t", menutexts[curitem]);
-  wsprintf(ws2, "%t", menutexts[curitem]);
+  wsprintf(ws2, "%s", resstr);
 
   SetMLMenuItemText(data, item, ws, ws2, curitem);
 }
 
-
-static const HEADER_DESC rb_menuhdr = {0, 0, 0, 0, NULL, (int)"Меню", LGP_NULL};
 static const ML_MENU_DESC rb_menu=
 {
   8,rb_menu_onkey,rb_menu_ghook,NULL,
@@ -261,12 +338,18 @@ static const ML_MENU_DESC rb_menu=
   rb_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
-  2,   //n
+  MENU_ITEMS_NUM,   //n
   1 //Добавочных строк  
 };
 
 void CreateRBMenu(void)
 {
   patch_header(&rb_menuhdr);
-  CreateMultiLinesMenu(0,0,&rb_menu,&rb_menuhdr,0,2);
+  sprintf(&resstr,"");;
+  TTime t;
+  TDate d;
+  GetDateTime(&d,&t);
+  sprintf(&hdr2,"Меню  %02d:%02d",t.hour,t.min);
+  strncpy(hdr,&hdr2,63);
+  CreateMultiLinesMenu(0,0,&rb_menu,&rb_menuhdr,0,MENU_ITEMS_NUM);
 }
