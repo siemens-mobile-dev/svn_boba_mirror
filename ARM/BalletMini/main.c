@@ -100,7 +100,13 @@ static void StartGetFile(int dummy, char *fncache)
   }
   if (view_url_mode==MODE_URL)
   {
-    StartINET(view_url,fncache);
+    if (!view_url)
+    {
+      STOPPED=1;
+      CreateInputUrl();
+    }
+    else
+      StartINET(view_url,fncache);
   }
 }
 
@@ -717,7 +723,10 @@ static void CreateInputUrl()
   eq=AllocEQueue(ma,mfree_adr());    // Extension
   WSHDR *ews=AllocWS(1024);
 
-  ascii2ws(ews,view_url);  
+  if(view_url)
+    ascii2ws(ews,view_url);  
+  else
+    CutWSTR(ews,0);
 
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1024);
@@ -996,9 +1005,13 @@ int main(const char *exename, const char *filename)
   else
   {
     LockSched();
-    ShowMSG(1,(int)"BM: Nothing to do!");
+//    ShowMSG(1,(int)"BM: Nothing to do!");
+    view_url_mode=MODE_URL;
+    view_url = 0;
+    
+    CreateCSM(&MAINCSM.maincsm,dummy,0);
     UnlockSched();
-    SUBPROC((void *)Killer);
+    //SUBPROC((void *)Killer);
   }
   return 0;
 }
