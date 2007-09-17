@@ -213,7 +213,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	len=vd->rawtext_size-lc->pos;
       sc=lc->pos;
       if (ena_ref) ws->wsbody[++dc]=UTF16_ENA_INVERT;
-      while(len&&(dc<32000))
+      while(len>0&&(dc<32000))
       {
 	c=vd->rawtext[sc];
 	if (c==UTF16_ENA_INVERT)
@@ -279,6 +279,13 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         }         
 	ws->wsbody[++dc]=c;
         ws_width+=GetSymbolWidth(c,lc->bold?FONT_SMALL_BOLD:FONT_SMALL);
+	if ((c==UTF16_PAPER_RGBA)||(c==UTF16_INK_RGBA))
+	{
+	  len--;
+	  ws->wsbody[++dc]=vd->rawtext[++sc];
+	  len--;
+	  ws->wsbody[++dc]=vd->rawtext[++sc];
+	}
       L1:
 	sc++;
 	len--;
