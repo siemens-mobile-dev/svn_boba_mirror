@@ -47,15 +47,17 @@ int IsMediaActive(void)
 }
 int IsIDLE(void)
 {
-  void *icsm=FindCSMbyID(CSM_root()->idle_id);
+  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   if (IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])) return(1);
                                                            else return(0);
 }
 
+const int minus11=-11;
 
-CSM_DESC icsmd;
-int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
-void (*old_icsm_onClose)(CSM_RAM*);
+typedef struct
+{
+  CSM_RAM csm;
+}MAIN_CSM;
 
 CSM_RAM *under_idle;
 
@@ -72,13 +74,6 @@ void Idle(void)
 }
 
 extern void kill_data(void *p, void (*func_p)(void *));
-
-void ElfKiller(void)
-{
-  extern void *ELF_BEGIN;
-  RemoveKeybMsgHook((void *)my_keyhook);
-  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
-}
 
 void execelf(char *exename, char *fname) //fname-параметр (имя файла), передаваемый в эльф 
 {
@@ -332,11 +327,8 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
-  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
-  
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     extern const char *successed_config_filename;
@@ -346,20 +338,66 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       InitConfig();
     }
   }
-  return csm_result;  
-}
-void MyIDLECSM_onClose(CSM_RAM *data)
-{
-  extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
-  extern void *ELF_BEGIN;
-  RemoveKeybMsgHook((void *)my_keyhook);
-  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
+  return (1);  
 }
 
-int main(void)
+static void maincsm_oncreate(CSM_RAM *data)
+{
+
+}
+
+static void Killer(void)
+{
+  extern void *ELF_BEGIN;
+  RemoveKeybMsgHook((void *)my_keyhook);
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+}
+
+static void maincsm_onclose(CSM_RAM *csm)
+{
+  SUBPROC((void *)Killer);
+}
+
+static unsigned short maincsm_name_body[140];
+
+static const struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+}MAINCSM =
+{
+  {
+  maincsm_onmessage,
+  maincsm_oncreate,
+#ifdef NEWSGOLD
+  0,
+  0,
+  0,
+  0,
+#endif
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
+  },
+  {
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }
+};
+
+static void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"KeyMaster");
+}
+
+int main()
 {
   InitConfig();
-  LockSched();
+
   keymode=0;
   media_mode=0;
   mode_red=0;
@@ -368,29 +406,22 @@ int main(void)
   ss=time.sec;
   sh=time.hour;
   sd=date.day;
-  sm=time.min;
-  /*
-  if (!AddKeybMsgHook_end((void *)my_keyhook))
-  {
-    ShowMSG(1,(int)"Невозможно зарегистрировать обработчик!");
-    SUBPROC((void *)ElfKiller);
-  }
-  else*/
-  {
-    AddKeybMsgHook((void *)my_keyhook);
-    extern const int ENA_HELLO_MSG;
-    if (ENA_HELLO_MSG) ShowMSG(1,(int)"KeyMaster установлен!");
-    {
-      CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-      memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-      old_icsm_onClose=icsmd.onClose;
-      old_icsm_onMessage=icsmd.onMessage;
-      icsmd.onClose=MyIDLECSM_onClose;
-      icsmd.onMessage=MyIDLECSM_onMessage;
-      icsm->constr=&icsmd;
-    }
-  }
+  sm=time.min;  
+  
+  CSM_RAM *save_cmpc;
+  char dummy[sizeof(MAIN_CSM)];
+  UpdateCSMname();
+  
+  LockSched();
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
   UnlockSched();
+  
+  AddKeybMsgHook((void *)my_keyhook);
+  extern const int ENA_HELLO_MSG;
+  if (ENA_HELLO_MSG) ShowMSG(1,(int)"KeyMaster установлен!");
+  
   return 0;
 }
-
