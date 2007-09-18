@@ -110,6 +110,7 @@ int my_keyhook(int submsg, int msg)
     }
   }
 #endif
+#ifndef NEWSGOLD
   if (ACTIVE_KEY_STYLE==3)
   {
     if (submsg!=ENTER_BUTTON) return KEYHOOK_NEXT;
@@ -182,6 +183,7 @@ int my_keyhook(int submsg, int msg)
       }
     }
   }
+#endif
   if (ACTIVE_KEY_STYLE<2)
   {
     if (submsg!=ACTIVE_KEY) return KEYHOOK_NEXT;
@@ -238,6 +240,7 @@ int my_keyhook(int submsg, int msg)
       break;
     case LONG_PRESS:
       mode=1;
+#ifndef NEWSGOLD
       if (ACTIVE_KEY_STYLE==1)
       {
 	if (ENA_LONG_PRESS)
@@ -245,6 +248,9 @@ int my_keyhook(int submsg, int msg)
 	else 
 	  return KEYHOOK_BREAK;
       }
+#else
+      return KEYHOOK_BREAK;
+#endif
     }
   }
   return KEYHOOK_NEXT;
