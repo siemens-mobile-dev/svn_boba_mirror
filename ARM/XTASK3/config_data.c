@@ -32,9 +32,9 @@ __root const int ACTIVE_KEY=0x11;
 #endif
 #endif
 
-__root const CFG_HDR cfghdr2={CFG_CBOX,"Extra: on longpress",0,4};
+__root const CFG_HDR cfghdr2={CFG_CBOX,"Extra: on longpress",0,5};
 __root const int ENA_LONG_PRESS=2;
-__root const CFG_CBOX_ITEM cfgcbox2[4]={"As in FW","Do nothing","Hide all tasks","Launch XTask"};
+__root const CFG_CBOX_ITEM cfgcbox2[5]={"As in FW","Do nothing","Hide all tasks","Launch XTask","Hide & Lock"};
 
 #ifdef NEWSGOLD
 __root const CFG_HDR cfghdr3={CFG_CBOX,"Red button mode",0,3};

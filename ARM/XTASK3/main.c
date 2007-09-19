@@ -221,12 +221,18 @@ int my_keyhook(int submsg, int msg)
 	  }
 	  return KEYHOOK_BREAK;
 	}
+        if (ENA_LONG_PRESS==1) return KEYHOOK_BREAK;
 	if (ENA_LONG_PRESS==2)
 	{
 	  CSMtoTop(CSM_root()->idle_id,-1);
 	  return KEYHOOK_BREAK;
 	}
-	if (ENA_LONG_PRESS==1) return KEYHOOK_BREAK;
+        if (ENA_LONG_PRESS==4)
+        {
+          CSMtoTop(CSM_root()->idle_id,-1);
+          KbdLock();
+          return KEYHOOK_BREAK;
+        }
 	break;
       }
       if (ACTIVE_KEY_STYLE==0)
