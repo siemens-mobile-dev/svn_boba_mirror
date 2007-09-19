@@ -117,8 +117,8 @@ int my_keyhook(int submsg, int msg)
   //Red button menu
   extern void CreateRBMenu(void);  
   if (IsIDLE() && (submsg==RED_BUTTON) && (msg==KEY_DOWN) && IsUnlocked()) {
-      nat_red_mode=1;
-      return(2);
+        if (((int)GetTypeUSSD())!=8) return(0) ; else nat_red_mode=1;
+        return(2);
   }
   if (IsIDLE() && (submsg==RED_BUTTON) && (msg==KEY_UP) && (nat_red_mode)){
       CreateRBMenu();
