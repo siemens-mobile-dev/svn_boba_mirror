@@ -185,6 +185,67 @@ static void input_url_ghook(GUI *data, int cmd)
 
 static void input_url_locret(void){}
 
+int char_win2utf8(char*d,const char *s) // функция возвращает количество 
+{                                       // добавленных символов в d
+  char hex[] = "0123456789ABCDEF";
+  char *d0 = "%D0%";
+  char *d1 = "%D1%";
+  unsigned char b = *s, lb, ub;
+  int r = 0, ab;
+  if(b >= 0xC0 && b <= 0xFF)           //если это русская буква в коде win1251
+  {
+    ab = 0x350;                        //считаем её unicode-номер
+    ab += b;
+    ub = 0xC0 | ((ab>>6) & 0x1F);      //вычисляем бытовые компоненты для utf8
+    lb = 0x80 | (ab & 0x3F);
+    *d = '%'; d++;
+    *d = hex[(ub>>4)&0xF]; d++;        //и кладём в буфер результата
+    *d = hex[ub     &0xF]; d++;
+    *d = '%'; d++;
+    *d = hex[(lb>>4)&0xF]; d++;
+    *d = hex[lb     &0xF]; d++;
+    r = 6;
+  }
+  else
+      if(b == 0xA8)
+      {
+        memcpy(d, d0, 4);              //пара особых случаев для буквы "ё"
+        d+=4;
+        *d = '8'; d++;
+        *d = '1'; d++;
+        r = 6;
+      }
+      else
+        if(b == 0xB8)
+        {
+        memcpy(d, d1, 4);
+        d+=4;
+        *d = '9'; d++;
+        *d = '1'; d++;
+        r = 6;
+        }
+  return r;
+}
+
+char * ToWeb(char *src)                   //конвертируем ссылку в utf8
+{
+  int cnt = 0, i, j;
+  char *ret;
+  for(i = 0; src[i]; i++)                 //считаем русские символы
+    if((unsigned char)src[i] >= 0x80) cnt++;
+  ret = malloc(strlen(src) + cnt*6 + 1);  //выделяем память под utf8-строку
+  for(i = 0, j = 0; src[i]; i++)
+    if((unsigned char)src[i] >= 0x80)
+      j += char_win2utf8(ret+j, src+i);   //получаем вместо русского символа utf8-замену
+    else
+      ret[j++] = src[i];
+  ret[j] = 0;
+  mfree(src);                             //освобождаем память от исходной строки
+  return ret;
+}
+
+
+
 static int input_url_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
@@ -199,6 +260,7 @@ static int input_url_onkey(GUI *data, GUI_MSG *msg)
     *s++='/';
     for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
     *s = 0;
+    goto_url = ToWeb(goto_url);
     return (0xFF);
   }
   return (0);
