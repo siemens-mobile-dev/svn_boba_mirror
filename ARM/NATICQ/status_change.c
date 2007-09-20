@@ -7,6 +7,7 @@
 #include "NatICQ.h"
 #include "main.h"
 #include "status_change.h"
+#include "strings.h"
 #include "language.h"
 
 //===============================================================================================
@@ -202,17 +203,229 @@ extern DYNPNGICONLIST *XStatusesImgList;
 extern int *XStatusesIconArray;
 extern volatile int total_xstatuses;
 
+SOFTKEY_DESC edit_x_sk[]=
+{
+  {0x0018,0x0000,(int)"Save!"},
+  {0x0001,0x0000,(int)""},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB edit_x_skt=
+{
+  edit_x_sk,0
+};
+
+void edit_xstatus_locret(void){}
+
+int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
+{
+  WSHDR *ws;
+  char *s, *d, tmp[132];
+  int cur_x_st;
+  int len, l, l1;
+  int is_any_change=0;
+  if (msg->keys==0xFFF)
+  {
+    cur_x_st=(int)EDIT_GetUserPointer(data);
+    EDITCONTROL ec;
+    ExtractEditControl(data,2,&ec);   // Комментарий
+    ws=ec.pWS;
+    
+    s=GetXStatusStr(cur_x_st*3,&len);
+    d=tmp;
+
+    if (s)
+    {
+      l=0;
+      for (int i=0; i<ws->wsbody[0]; i++) 
+      {
+        *d++=char16to8(ws->wsbody[i+1]);
+        l++;
+      }
+      *d=0;
+      if (len!=l || strncmp(s,tmp,len))
+      {
+        XStatusText=realloc(XStatusText, (l1=strlen(XStatusText))+l+1);
+        s=GetXStatusStr(cur_x_st*3,&len);  // Возьмем новый указатель
+        memmove(s+l,s+len,l1-((s+len)-XStatusText)+1);
+        memcpy(s,tmp,l);
+        is_any_change=1;
+      }
+    }
+
+    ExtractEditControl(data,4,&ec);   // Короткий икс статус
+    ws=ec.pWS;
+    
+    s=GetXStatusStr(cur_x_st*3+1,&len);
+    d=tmp;
+
+    if (s)
+    {
+      l=0;
+      for (int i=0; i<ws->wsbody[0]; i++) 
+      {
+        *d++=char16to8(ws->wsbody[i+1]);
+        l++;
+      }
+      *d=0;
+      if (len!=l || strncmp(s,tmp,len))
+      {
+        XStatusText=realloc(XStatusText, (l1=strlen(XStatusText))+l+1);
+        s=GetXStatusStr(cur_x_st*3+1,&len);  // Возьмем новый указатель
+        memmove(s+l,s+len,l1-((s+len)-XStatusText)+1);
+        memcpy(s,tmp,l);
+        is_any_change=1;
+      }
+    }
+    
+    ExtractEditControl(data,6,&ec);   // Длинный икс статус
+    ws=ec.pWS;
+    
+    s=GetXStatusStr(cur_x_st*3+2,&len);
+    d=tmp;
+
+    if (s)
+    {
+      l=0;
+      for (int i=0; i<ws->wsbody[0]; i++) 
+      {
+        *d++=char16to8(ws->wsbody[i+1]);
+        l++;
+      }
+      *d=0;
+      if (len!=l || strncmp(s,tmp,len))
+      {
+        XStatusText=realloc(XStatusText, (l1=strlen(XStatusText))+l+1);
+        s=GetXStatusStr(cur_x_st*3+2,&len);  // Возьмем новый указатель
+        memmove(s+l,s+len,l1-((s+len)-XStatusText)+1);
+        memcpy(s,tmp,l);
+        is_any_change=1;
+      }
+    }
+    
+    if (is_any_change)
+    {
+      SaveXStatusText();
+    }
+    return (1);
+  }
+  return (0);
+}
+
+void edit_xstatus_ghook(GUI *data, int cmd)
+{
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Save!"};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+}
+
+HEADER_DESC edit_xstatus_hdr={0,0,0,0,NULL,(int)"X-Статус",LGP_NULL};
+
+INPUTDIA_DESC edit_xstatus_desc =
+{
+  1,
+  edit_xstatus_onkey,
+  edit_xstatus_ghook,
+  (void *)edit_xstatus_locret,
+  0,
+  &edit_x_skt,
+  {0,0,0,0},
+  FONT_SMALL,
+  100,
+  101,
+  0,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
 
 static void EditXStatus(int xstatus)
 {
-  char fname[256];
-  WSHDR *ws;
-  strcpy(fname,TEMPLATES_PATH);
-  strcat(fname,XS_FILE_NAME);
-  ws=AllocWS(256);
-  str_2ws(ws,fname,255);
-  ExecuteFile(ws,NULL,NULL);
-  FreeWS(ws);
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  char *s;
+  int len;
+  int c;
+   
+  eq=AllocEQueue(ma,mfree_adr());    
+  WSHDR *ews=AllocWS(128);
+  ascii2ws(ews,"Комментарий:");   // Коментарий
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,ews->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);    //1
+  
+  CutWSTR(ews,0);
+  s=GetXStatusStr(xstatus*3, &len);
+  if (s)
+  {
+    while((c=*s++) && len)
+    {
+      wsAppendChar(ews,char8to16(c));
+      len--;
+    }
+  }
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,20);
+  AddEditControlToEditQend(eq,&ec,ma);   //2
+  
+  ascii2ws(ews,"Short X:");      // Короткий Икс Статус
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,ews->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);   //3
+  
+  CutWSTR(ews,0);
+  s=GetXStatusStr(xstatus*3+1, &len);
+  if (s)
+  {
+    while((c=*s++) && len)
+    {
+      wsAppendChar(ews,char8to16(c));
+      len--;
+    }
+  }
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,128);
+  AddEditControlToEditQend(eq,&ec,ma);   //4
+  
+  ascii2ws(ews,"Large X:");     // Длинный Икс Статус
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_HEADER,0x40,ews,ews->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);   //5
+  
+  CutWSTR(ews,0);
+  s=GetXStatusStr(xstatus*3+2, &len);
+  if (s)
+  {
+    while((c=*s++) && len)
+    {
+      wsAppendChar(ews,char8to16(c));
+      len--;
+    }
+  }
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,128);
+  AddEditControlToEditQend(eq,&ec,ma);   //6
+  
+  FreeWS(ews);
+  patch_header(&edit_xstatus_hdr);
+  patch_input(&edit_xstatus_desc);
+  CreateInputTextDialog(&edit_xstatus_desc,&edit_xstatus_hdr,eq,1,(void *)xstatus);  
 }
 
 static int xst_onkey(void *data, GUI_MSG *msg)
@@ -335,7 +548,7 @@ void LoadXStatusText(void)
   int f;
   unsigned int ul;
   int fsize;
-  char *p;
+  char *p, *s;
   int c;
   FreeXStatusText();
   strcpy(fn,TEMPLATES_PATH);
@@ -343,26 +556,24 @@ void LoadXStatusText(void)
   if (GetFileStats(fn,&stat,&ul)==-1) return;
   if ((fsize=stat.size)<=0) return;
   if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return;
-  p=XStatusText=malloc(fsize+1);
-  p[fread(f,p,fsize,&ul)]=0;
-  fsize++;
+  p=XStatusText=malloc(fsize+2);
+  s=p+1;
+  s[fread(f,s,fsize,&ul)]=0;
   fclose(f,&ul);
-  while((c=*p++)!=0)
+  while((c=*s++)!=0)
   {
     if (c==10)
     {
-      p[-1]=13;
-      if (*p==13) goto LSKIP2;
+      c=13;
+      if (*s==13) s++;   // пропускаем
     }
-    if (c==13)
+    else if (c==13)
     {
-      if (*p==10)
-      {
-      LSKIP2:
-	memcpy(p,p+1,fsize-((p+1)-XStatusText));
-      }
+      if (*s==10) s++;  // пропускаем
     }
+    *p++=c;
   }
+  *p=0;
 }
 
 void SaveXStatusText(void)

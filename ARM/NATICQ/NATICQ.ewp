@@ -5054,6 +5054,9 @@
   <file>
     <name>$PROJ_DIR$\status_change.h</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\strings.c</name>
+  </file>
 </project>
 
 
