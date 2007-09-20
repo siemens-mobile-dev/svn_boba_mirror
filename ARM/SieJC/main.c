@@ -1476,28 +1476,9 @@ char mypic[128];
         }
         break;
       case ENIP_BUFFER_FREE:
-	if (!sendq_p)
-	{
-	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE!");
-	  SUBPROC((void *)end_socket);
-	}
-	else
-	{
-	  //Досылаем очередь
-	  SUBPROC((void *)bsend,0,0);
-	}
-	break;
       case ENIP_BUFFER_FREE1:
-	if (!sendq_p)
-	{
-	  ShowMSG(1,(int)"Illegal ENIP_BUFFER_FREE1!");
-	  SUBPROC((void *)end_socket);
-	}
-	else
-	{
 	  //Досылаем очередь
-	  SUBPROC((void *)bsend,0,0);
-	}
+	SUBPROC((void *)bsend,0,0);
 	break;
       case ENIP_SOCK_REMOTE_CLOSED:
         //Закрыт со стороны сервера
