@@ -8,6 +8,19 @@
 ;Functions Library
 ;(c) кто попало ;)
 /*
+20.09.07
+* 04C8: 0xA0FC4094   ; 132: void *memmove(void *dest,const void *source,int cnt)
++ 08AC: 0xA02D25B1   ; 22B: CreateRadioButtonList(RadioButtonListDesc *, char num_of_radiobuttons, 0, 0, char prev_setting, void HandlerFunc(int), char flag)
++ 08B0: 0xA02D1EA3   ; 22C: pdcache_getval(char *return, int maxlen_of_return_str, char cachetype,0, *pd_entry_identifier)
++ 08B4: 0xA02D1FA1   ; 22D: pdcache_setval(char *new_value, char cachetype, 0, char *pd_entry_identifier)
++ 08B8: 0xA0529EE7   ; 22E: OpenExplorer(ExplOpenDesc *)
++ 08BC: 0xA8D297CC   ; 22F: TDateTimeSettings *RamDateTimeSettings
++ 08C0: 0xA090052D   ; 230: int GetTimeZoneShift(int param1, int param2, int timeZone)
++ 08C4: 0xA8D29774   ; 231: TAppointment *RamAppointment
++ 08C8: 0xA0092848   ; 232: GBS_DestroyMessage(GBS_MSG *)
++ 08CC: 0xA0606CAB   ; 233: void GetAllEmail() 
++ 033C: 0xA8E93858   ; CF: char *RamAlarm()
+
 04.09.07
 + 08A8: 0xA095B1DD   ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
 
@@ -300,7 +313,7 @@
 0330: 0xA8DE9710   ;  CC: char *RamMissedCalls()
 ;334:              ;  CD: char *RamMissedSMS()
 0338: 0xA8D2977C   ;  CE: RamDateTime
-;33C:              ;  CF: RamAlarm
+033C: 0xA8E93858 ; CF: char *RamAlarm()
 
 0340: 0xA8D6A354   ;  D0: RamAccPoint
 ;344:              ;  D1: RamScreensaver
@@ -669,10 +682,19 @@
 08A0: 0xA027C90C   ; 228: int PlayMelody_ResumePlayBack(int handle)
 08A4: 0xA0FC4D7C   ; 229: __arm void longjmp(jmp_buf, int);
 08A8: 0xA095B1DD   ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
+08AC: 0xA02D25B1   ; 22B: CreateRadioButtonList(RadioButtonListDesc *, char num_of_radiobuttons, 0, 0, char prev_setting, void HandlerFunc(int), char flag)
+08B0: 0xA02D1EA3   ; 22C: pdcache_getval(char *return, int maxlen_of_return_str, char cachetype,0, *pd_entry_identifier)
+08B4: 0xA02D1FA1   ; 22D: pdcache_setval(char *new_value, char cachetype, 0, char *pd_entry_identifier)
+08B8: 0xA0529EE7   ; 22E: OpenExplorer(ExplOpenDesc *)
+08BC: 0xA8D297CC   ; 22F: TDateTimeSettings *RamDateTimeSettings
+08C0: 0xA090052D   ; 230: int GetTimeZoneShift(int param1, int param2, int timeZone)
+08C4: 0xA8D29774   ; 231: TAppointment *RamAppointment
+08C8: 0xA0092848   ; 232: GBS_DestroyMessage(GBS_MSG *)
+08CC: 0xA0606CAB   ; 233: void GetAllEmail() 
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------
 
 
 
-;locale=Ukrainian_Ukraine.1251
+;locale=Russian_Russia.1251
