@@ -406,7 +406,7 @@
 
 04C0: 0xA0970A51   ; 130: void getRGBbyPaletteAdr(int *paletteAdr,void *dest)
 04C4: 0xA0970A6F   ; 131: void setColor(int a,int r,int g,int b,void *dest)
-04C8: 0xA0FC4095   ; 132: void *memmove(void *dest,const void *source,int cnt)
+04C8: 0xA0FC4094   ; 132: void *memmove(void *dest,const void *source,int cnt)
 04CC: 0xA09752B5   ; 133: void StoreXYWHtoRECT(void *RECT,int x,int y,int w,int h)
 04D0: 0xA09752CB   ; 134: void StoreXYXYtoRECT(void *RECT,int x,int y,int x2,int y2)
 04D4: 0xA0977BB7   ; 135: int IsGuiOnTop(int id)
@@ -675,4 +675,4 @@
 
 
 
-;locale=Russian_Russia.1251
+;locale=Ukrainian_Ukraine.1251
