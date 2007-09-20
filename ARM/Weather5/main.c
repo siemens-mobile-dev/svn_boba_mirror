@@ -12,14 +12,18 @@ unsigned short maincsm_name_body[140];
 int MAINCSM_ID;
 WSHDR *ews;
 
+int request_type = GET_TOWN;
+
 int sock;
 int connect_state;
-char buf[16384];
+char buf[65546];
 char logbuf[1024];
 int pbuf;
 
-char Town_ID[5];
+char Town_ID[50];
 
+TownInfo *Towns = 0;
+int TownsCnt = 0;
 
 typedef struct
 {
@@ -36,7 +40,7 @@ typedef struct
 }MAIN_GUI;
 
 WEATHER weath[20];
-char Town_Name[64];
+char Town_Name[150];
 
 void create_connect(void)
 {
@@ -50,8 +54,10 @@ void create_connect(void)
   {
     sa.family=1;
     sa.port=htons(80);
-    sa.ip=htonl(IP_ADDR(212,48,138,20));
-    //sa.ip=htonl(IP_ADDR(212,48,138,19));
+    if(request_type==GET_TOWN)
+      sa.ip=htonl(IP_ADDR(212,48,138,20));
+    if(request_type==SEARCH)
+      sa.ip=htonl(IP_ADDR(212,48,138,19));
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
       connect_state=1;
@@ -85,6 +91,14 @@ void send_req(void)
   connect_state=2;
 }
 
+void send_req_search(void)
+{
+  sprintf(req_buf,"GET /?req=findtown&lang=rus&town=%s"
+     " HTTP/1.0\r\nHost: search.gismeteo.ru\r\n\r\n",Town_Name);              
+  send(sock,req_buf,strlen(req_buf),0);
+  connect_state=2;
+}
+
 void end_socket(void)
 {
   if (sock>=0)
@@ -97,11 +111,11 @@ void end_socket(void)
 void get_answer(void)
 {
   int i=pbuf;
-  if (i==16383)
+  if (i==65535)
     end_socket();
   else
   {
-    i=recv(sock,buf+i,16383-i,0);
+    i=recv(sock,buf+i,65535-i,0);
     if (i>=0)
     {
       pbuf+=i;
@@ -206,11 +220,35 @@ void Parsing()
       };
 }
 
+void ParsingSearch()
+{  
+    char *part, *p1, *p2;
+    int i = 0;
+
+    //Towns
+    part = buf;
+    while(strstr(part, "/towns/"))
+    {
+      Towns = realloc(Towns, sizeof(TownInfo)*(i+1));
+      part = strstr(part, "/towns/") + 7;
+      memcpy(Towns[i].TownID, part, 5);
+      Towns[i].TownID[5] = 0;
+      p1 = part + 11;
+      p2 = strstr(part, "<");
+      memcpy(Towns[i].TownName, p1, p2-p1);
+      Towns[i].TownName[p2-p1] = 0;
+      sprintf(logbuf, "%s%s %s\n", logbuf, Towns[i].TownID, Towns[i].TownName);
+      i++;
+    }
+    TownsCnt = i;
+    DispTownsSrchMenu();
+}
 
 void DrawWait()
 {
   WSHDR *ws = AllocWS(1024);
-    wsprintf(ws,"%s",logbuf);
+  ascii2ws(ws,logbuf);
+//    wsprintf(ws,"%s",logbuf);
     DrawString(ws,2,YDISP+5,ScreenW()-1,ScreenH()-1,FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   FreeWS(ws);
 }
@@ -365,7 +403,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         {
           //Если посылали запрос
           if (!strstr(logbuf,"Connected\n")) strcat(logbuf,"Connected\n");
-          SUBPROC((void *)send_req);
+          if(request_type == GET_TOWN)
+            SUBPROC((void *)send_req);
+          if(request_type == SEARCH)
+            SUBPROC((void *)send_req_search);
           REDRAW();
         }
         else
@@ -391,8 +432,16 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         break;
       case ENIP_SOCK_CLOSED:
         //Закрыт вызовом closesocket
-        sprintf(logbuf, "%sReceived page %i\n", logbuf, page_num);
-        SUBPROC((void *)Parsing);
+        if(request_type == GET_TOWN)
+        {
+          sprintf(logbuf, "%sReceived page %i\n", logbuf, page_num);
+          SUBPROC((void *)Parsing);
+        }
+        if(request_type == SEARCH)
+        {
+          sprintf(logbuf, "Search complete\n");
+          SUBPROC((void *)ParsingSearch);
+        }
         connect_state=0;
         sock=-1;
         break;
