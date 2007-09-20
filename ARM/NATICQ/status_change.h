@@ -7,4 +7,10 @@ void DispStatusChangeMenu();
 // Показать меню смены XStatus'а
 void DispXStatusChangeMenu(void);
 
+
+void LoadXStatusText(void);
+void SaveXStatusText(void);
+void FreeXStatusText(void);
+char *GetXStatusStr(int n, int *len);
+
 #endif

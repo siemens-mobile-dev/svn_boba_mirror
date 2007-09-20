@@ -10,6 +10,7 @@
 #include "../inc/xtask_ipc.h"
 #include "smiles.h"
 #include "naticq_ipc.h"
+#include "status_change.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -899,6 +900,15 @@ void FillAllOffline(void)
   CLIST *cl=(CLIST*)cltop;
   while(cl)
   {
+    if (!cl->isgroup)
+    {
+      LOGQ *lp=cl->log;
+      while(lp)
+      {
+	lp->ID|=0x18000;
+	lp=lp->next;
+      }
+    }
     if ((cl->state!=0xFFFF)&&
 	(!cl->isgroup))     //by BoBa 2.05.2007
     {
@@ -1793,11 +1803,26 @@ void set_my_status(void)
 void set_my_xstatus(void)
 {
   TPKT *p;
+  char *s1;
+  char *s2;
+  int l1;
+  int l2;
   p=malloc(sizeof(PKT)+1);
   p->pkt.uin=0;               // Никому; поле нужно проигнорировать на сервере
   p->pkt.type=T_MY_XSTATUS_CH; // Тип пакета: изменение статуса
   p->pkt.data_len=1;          // Длина пакета: 1 байт
   p->data[0]=CurrentXStatus;
+  SUBPROC((void *)SendAnswer,0,p);
+  s1=GetXStatusStr(CurrentXStatus*3+1,&l1);
+  s2=GetXStatusStr(CurrentXStatus*3+2,&l2);
+  if ((!s1)||(!s2)) return;
+  p=malloc(sizeof(PKT)+l1+l2+1);
+  p->pkt.uin=0;
+  p->pkt.type=T_XTEXT_SET;
+  p->pkt.data_len=l1+l2+1;
+  strncpy(p->data+0,s1,l1);
+  p->data[l1]=0;
+  strncpy(p->data+l1+1,s2,l2);
   SUBPROC((void *)SendAnswer,0,p);
 }
 
@@ -2255,6 +2280,7 @@ void maincsm_onclose(CSM_RAM *csm)
   //  FreeSmiles();
   mfree(msg_buf);
   FreeWS(ews);
+  FreeXStatusText();
   //  MutexDestroy(&contactlist_mtx);
   SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)FreeXStatusesImg);
@@ -2515,7 +2541,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       case ENIP_SOCK_CLOSED:
 	//strcpy(logmsg, "No connection");
 	//Dump not received
-	if (RXstate>(-(int)sizeof(PKT)))
+/*	if (RXstate>(-(int)sizeof(PKT)))
 	{
 	  unsigned int err;
 	  int f=fopen("4:\\NATICQ.dump",A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
@@ -2524,7 +2550,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	    fwrite(f,&RXbuf,RXstate+sizeof(PKT),&err);
 	    fclose(f,&err);
 	  }
-	}
+	}*/
 	FillAllOffline();
 	RecountMenu(NULL);
 	connect_state=0;
@@ -2599,6 +2625,7 @@ int main()
   CurrentXStatus=MY_DEF_XSTATUS;
   
   setup_ICONS();
+  LoadXStatusText();
   
   //  InitSmiles();
   

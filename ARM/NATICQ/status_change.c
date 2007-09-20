@@ -29,6 +29,11 @@ void patch_input(const INPUTDIA_DESC* inp)
 }
 //===============================================================================================
 
+extern const char TEMPLATES_PATH[];
+static const char XS_FILE_NAME[]="\\XStatuses.txt";
+
+
+char *XStatusText;
 
 extern int CurrentStatus;
 extern int CurrentXStatus;
@@ -200,6 +205,14 @@ extern volatile int total_xstatuses;
 
 static void EditXStatus(int xstatus)
 {
+  char fname[256];
+  WSHDR *ws;
+  strcpy(fname,TEMPLATES_PATH);
+  strcat(fname,XS_FILE_NAME);
+  ws=AllocWS(256);
+  str_2ws(ws,fname,255);
+  ExecuteFile(ws,NULL,NULL);
+  FreeWS(ws);
 }
 
 static int xst_onkey(void *data, GUI_MSG *msg)
@@ -209,7 +222,7 @@ static int xst_onkey(void *data, GUI_MSG *msg)
   if (msg->keys==0x18)
   {
     EditXStatus(i);
-    return(1);
+    return(0);
   }
   if (msg->keys==0x3D)
   {
@@ -230,6 +243,8 @@ static void xst_ghook(void *data, int cmd)
   {
     pltop->dyn_pltop=XStatusesImgList;
     DisableIDLETMR();
+    //Загрузка текста при фокусе
+    LoadXStatusText();
   }
 }
 
@@ -240,11 +255,36 @@ static void xst_itemh(void *data, int curitem, void *unk)
   unsigned short num[128];
   WSHDR ws3loc, *ws3, *ws4;
   unsigned short num3[128];
+  char ss[128];
+  char *s;
+  int l;
+  extern const char percent_t[];
+  
   ws1=CreateLocalWS(&ws1loc,num,128);
   ws3=CreateLocalWS(&ws3loc,num3,128);
-
-  wsprintf(ws1,"Short XS %d",curitem);
-  wsprintf(ws3,"Large XS %d",curitem);
+  
+  if (s=GetXStatusStr(curitem*3+1,&l))
+  {
+    memset(ss,0,128);
+    if (l>127) l=127;
+    strncpy(ss,s,l);
+    wsprintf(ws1,percent_t,ss);
+  }
+  else
+  {
+    wsprintf(ws1,"Short XS %d",curitem);
+  }
+  if (s=GetXStatusStr(curitem*3+2,&l))
+  {
+    memset(ss,0,128);
+    if (l>127) l=127;
+    strncpy(ss,s,l);
+    wsprintf(ws3,percent_t,ss);
+  }
+  else
+  {
+    wsprintf(ws3,"Large XS %d",curitem);
+  }
   ws2=AllocMenuWS(data,ws1->wsbody[0]);
 
   wstrcpy(ws2,ws1);
@@ -286,4 +326,80 @@ void DispXStatusChangeMenu(void)
   patch_header(&xst_menuhdr);
   *((int **)(&xst_menuhdr.icon))=XStatusesIconArray+CurrentXStatus;
   CreateMultiLinesMenu(0,0,&xst_menu,&xst_menuhdr,CurrentXStatus,total_xstatuses);
+}
+
+void LoadXStatusText(void)
+{
+  FSTATS stat;
+  char fn[256];
+  int f;
+  unsigned int ul;
+  int fsize;
+  char *p;
+  int c;
+  FreeXStatusText();
+  strcpy(fn,TEMPLATES_PATH);
+  strcat(fn,XS_FILE_NAME);
+  if (GetFileStats(fn,&stat,&ul)==-1) return;
+  if ((fsize=stat.size)<=0) return;
+  if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return;
+  p=XStatusText=malloc(fsize+1);
+  p[fread(f,p,fsize,&ul)]=0;
+  fsize++;
+  fclose(f,&ul);
+  while((c=*p++)!=0)
+  {
+    if (c==10)
+    {
+      p[-1]=13;
+      if (*p==13) goto LSKIP2;
+    }
+    if (c==13)
+    {
+      if (*p==10)
+      {
+      LSKIP2:
+	memcpy(p,p+1,fsize-((p+1)-XStatusText));
+      }
+    }
+  }
+}
+
+void SaveXStatusText(void)
+{
+  int f;
+  char fn[256];
+  unsigned int ul;
+  if (!XStatusText) return;
+  strcpy(fn,TEMPLATES_PATH);
+  strcat(fn,XS_FILE_NAME);
+  if ((f=fopen(fn,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&ul))==-1) return;
+  fwrite(f,XStatusText,strlen(XStatusText),&ul);
+  fclose(f,&ul);
+}
+
+void FreeXStatusText(void)
+{
+  mfree(XStatusText);
+  XStatusText=NULL;
+}
+
+char *GetXStatusStr(int n, int *len)
+{
+  int l=0;
+  int c;
+  char *p=XStatusText;
+  char *pp;
+  if (len) *len=0;
+  if (!p) return p;
+  while(n)
+  {
+    while((c=*p++)>=32);
+    if (!c) return NULL;
+    n--;
+  }
+  pp=p;
+  while((*pp++)>=32) l++;
+  if (len) *len=l;
+  return p;
 }
