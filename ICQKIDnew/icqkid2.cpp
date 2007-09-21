@@ -3496,16 +3496,16 @@ bool ICQKid2::parseOnlineNotify(string & uin, uint32_t & stat, vector<uint8_t> &
    }
   else if (tlv.type==0x001d && uen_ind>=0) // UserIcon Info
    {
-   if (tlv.data.size()<20) return false;
+/*   if (tlv.data.size()<20) return false;
    size_t curpos=0;
-   
+
    memcpy(&ContactListUins[uen_ind].icon_id, &tlv.data[curpos], sizeof(ContactListUins[uen_ind].icon_id));
    ContactListUins[uen_ind].icon_id=ntohs(ContactListUins[uen_ind].icon_id);
    curpos+=sizeof(ContactListUins[uen_ind].icon_id);
-   
+
    ContactListUins[uen_ind].icon_flags=tlv.data[curpos];
    curpos++;
-   
+
    uint8_t hash_len=tlv.data[curpos];
    if (hash_len!=16) return false;
    curpos++;
@@ -3519,7 +3519,7 @@ bool ICQKid2::parseOnlineNotify(string & uin, uint32_t & stat, vector<uint8_t> &
     {
     memcpy(ContactListUins[uen_ind].icon_md5_hash, tmp_md5_hash, 16);
     onIconChanged(uin);
-    }
+    }*/
    }
   else if (tlv.type==0x0019 && uen_ind>=0) // New type capabilities list
    {
