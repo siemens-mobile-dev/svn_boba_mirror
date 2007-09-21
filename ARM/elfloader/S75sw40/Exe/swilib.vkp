@@ -373,5 +373,17 @@
 08A4: 0xA0FC63B0 ; 229: __arm void longjmp(jmp_buf, int);
 08A8: 0xA095B861 ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
 
+08AC: 0xA02D0641   ; 22B: CreateRadioButtonList(RadioButtonListDesc *, char num_of_radiobuttons, 0, 0, char prev_setting, void HandlerFunc(int), char flag)
+08B0: 0xA02CFF33   ; 22C: pdcache_getval(char *return, int maxlen_of_return_str, char cachetype,0, *pd_entry_identifier)
+08B4: 0xA02D0031   ; 22D: pdcache_setval(char *new_value, char cachetype, 0, char *pd_entry_identifier)
+08B8: 0xA0528727   ; 22E: OpenExplorer(ExplOpenDesc *)
+08BC: 0xA8D29854   ; 22F: TDateTimeSettings *RamDateTimeSettings
+08C0: 0xA08FCD05   ; 230: int GetTimeZoneShift(int param1, int param2, int timeZone)
+08C4: 0xA8D297FC   ; 231: TAppointment *RamAppointment
+08C8: 0xA0092848   ; 232: GBS_DestroyMessage(GBS_MSG *)
+08CC: 0xA0603F8B   ; 233: void GetAllEmail()
 #pragma disable old_equal_ff
 +0
+
+
+;locale=Russian_Russia.1251
