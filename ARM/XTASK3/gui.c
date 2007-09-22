@@ -510,10 +510,17 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
     }
     switch(i)
     {
+#ifdef ELKA
+    case LEFT_BUTTON:
+      i=((CSM_RAM *)(nl->p))->id;
+      if (i!=CSM_root()->idle_id) CloseCSM(i);
+      return 0;
+#else
     case '#':
       i=((CSM_RAM *)(nl->p))->id;
       if (i!=CSM_root()->idle_id) CloseCSM(i);
       return 0;
+#endif
     case '*':
       show_daemons=!show_daemons;
       RefreshGUI();
