@@ -66,44 +66,115 @@ __arm void UnregExplExt_impl(REGEXPLEXT const * reg_orig)
 typedef struct
 {
   void *next;
+  void *prev;
   int (*proc)(int submsg,int msg);
-  void (*mfree)(void*data);
+  char is_first;
 }PLIST;
 
-__no_init void *KEY_TOP;
 
 
-__arm int AddKeybMsgHook_impl(int (*proc)(int submsg,int msg))
+__no_init LLQ _plistq;
+
+#pragma optimize=no_inline
+static void LLaddToEnd(LLQ *ll, void *data)
 {
-  if (proc==NULL) return (0);
-  PLIST *ptop=(PLIST*)&KEY_TOP;
-  PLIST *plist=malloc(sizeof(PLIST));
-  if (plist==NULL) return (0);
-  LockSched();
-  plist->next=0;
-  plist->proc=proc;
-  plist->mfree=(void(*)(void*))mfree_adr();
-  while(ptop->next)
-    ptop=ptop->next;
-  ptop->next=plist;
-  UnlockSched();
-  return (1);
+  LLIST *d=data;
+  d->next=NULL;
+  d->prev=ll->last;
+  if (ll->last)
+  {
+    ((LLIST *)ll->last)->next=d;
+  }
+  else
+  {
+    ll->first=d;
+  }
+  ll->last=d;
+}
+
+#pragma optimize=no_inline
+static void LLaddToBegin(LLQ *ll, void *data)
+{
+  LLIST *d=data;
+  d->next=ll->first;
+  d->prev=0;
+  if (!ll->last)
+  {
+    ll->last=d;
+  }
+  else
+  {
+    ((LLIST *)ll->first)->prev=d;
+  }
+  ll->first=d;
+}
+
+#pragma optimize=no_inline
+static void LLremoveFromQ(LLQ *ll, void *data, int is_free)
+{
+  LLIST *d=data;
+  if (d->prev)
+  {
+    ((LLIST *)d->prev)->next=d->next;
+  }
+  else
+  {
+    ll->first=d->next;
+  }
+  if (d->next)
+  {
+    ((LLIST *)d->next)->prev=d->prev;
+  }
+  else
+  {
+    ll->last=d->prev;
+  }
+  if (is_free)
+  {
+    ll->data_mfree(d);
+  }
+}
+
+__arm void AddKeybMsgHook_impl(int (*proc)(int submsg,int msg))
+{
+  LLQ *plistq=&_plistq;
+  PLIST *newp;
+  if (!plistq->data_mfree)
+  {
+    plistq->first=0;
+    plistq->last=0;
+    plistq->data_mfree=(void(*)(void *))mfree_adr();
+  }
+  newp=malloc(sizeof(PLIST));
+  if (newp)
+  {
+    newp->proc=proc;
+    newp->is_first=0;
+    LLaddToEnd(plistq,newp);
+  }
 }
 
 
 __arm int AddKeybMsgHook_end_impl(int (*proc)(int submsg,int msg))
 {
-  if (proc==NULL) return (0);
-  PLIST *ptop=KEY_TOP;
-  PLIST *plist=malloc(sizeof(PLIST));
-  if (plist==NULL) return (0);
-  LockSched();
-  plist->next=ptop;
-  plist->proc=proc;
-  plist->mfree=(void(*)(void*))mfree_adr();
-  KEY_TOP=plist;
-  UnlockSched();
-  return (1);
+  LLQ *plistq=&_plistq;
+  PLIST *newp, *pfirst;
+  if (!plistq->data_mfree)
+  {
+    plistq->first=0;
+    plistq->last=0;
+    plistq->data_mfree=(void(*)(void *))mfree_adr();
+  }
+  if ((pfirst=plistq->first))
+  {
+    if (pfirst->is_first==1) return 0;
+  }
+  newp=malloc(sizeof(PLIST));
+  if (!newp) return 0;
+  newp->proc=proc;
+  newp->is_first=1;
+  LLaddToBegin(plistq,newp);
+  return 1;
 }  
 
 extern BXR1(void *, void (*)(void *));
@@ -111,46 +182,49 @@ extern BXR1(void *, void (*)(void *));
 
 __arm void RemoveKeybMsgHook_impl(int (*proc)(int submsg,int msg))
 {
-  PLIST *ptop=(PLIST*)(&KEY_TOP);
-  PLIST *prev=ptop;
-  while ((ptop=ptop->next))
+  LLQ *plistq=&_plistq;
+  PLIST *plist=plistq->first;
+  while(plist)
   {
-    if (ptop->proc==proc)
+    if (plist->proc==proc)
     {
-      LockSched();
-      prev->next=ptop->next;
-      UnlockSched();
-      ptop->mfree(ptop);
-      return;
-    }
-    prev=ptop;
+      LLremoveFromQ(plistq,plist,1);
+      return;      
+    }  
+    plist=plist->next;    
   }
 }
 
 
 int PatchKeybMsg(int submsg, int msg)
 {
-  PLIST *ptop=(PLIST*)(&KEY_TOP);
-  int result;
-  int mode=0;
-  while ((ptop=ptop->next))
+  LLQ *plistq=&_plistq;
+  PLIST *plist=plistq->first;
+  int proc_ret;
+  int is_no_gui=0;
+  while(plist)
   {
-    if (!ptop->proc) continue;
-    result=ptop->proc(submsg,msg);
-    switch(result)
+    if (plist->proc)
     {
-    case 0:
-      continue;
-    case 1:
-      mode=1;
-      continue;
-    case 2:
-      return (2);
-    case 3:
-      return (mode==1?2:0);
+      proc_ret=plist->proc(submsg,msg);
+      switch(proc_ret)
+      {
+      case KEYHOOK_NEXT:
+        break;
+      case KEYHOOK_NEXT_NOT2GUI:
+        is_no_gui=1;
+        break;
+      case KEYHOOK_BREAK:
+        return (2);
+      case KEYHOOK_ENDQ:
+        return is_no_gui==1?2:0;
+      default:
+        break;
+      }      
     }
+    plist=plist->next;
   }
-  return (mode);
+  return is_no_gui;
 }
 
 // ========================================= fread/fwrite ===========================================
