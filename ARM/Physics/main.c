@@ -500,11 +500,11 @@ void main_menu_iconhndl(void *data, int curitem, void *user_pointer)
 
 MENU_DESC mainmenu_STRUCT=
 {
-  8,(void *)main_menu_onkey,(void*)main_menu_ghook,NULL,
+  8,main_menu_onkey,main_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0x10,
-  (void *)main_menu_iconhndl,
+  main_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
