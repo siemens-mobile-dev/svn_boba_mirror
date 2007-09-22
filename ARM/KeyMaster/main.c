@@ -124,7 +124,7 @@ int my_keyhook(int submsg, int msg)
       CreateRBMenu();
       nat_red_mode=0;
       return(2);}
-    else if (nat_red_mode) nat_red_mode=0;
+    else if ((nat_red_mode) && (submsg==RED_BUTTON)) nat_red_mode=0;
 #endif
   
   
@@ -172,7 +172,7 @@ int my_keyhook(int submsg, int msg)
       ShowNativeMenu();
       nat_red_mode=0;
       return(2);}
-    else if (nat_red_mode) nat_red_mode=0;
+    else if ((nat_red_mode)&& (submsg==ENTER_BUTTON)) nat_red_mode=0;
   
   //Side keys
   if ((SIDE_STYLE==1) && !(IsIDLE())){
