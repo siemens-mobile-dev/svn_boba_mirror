@@ -24,6 +24,12 @@ int curlist=0;
 //#include "const.c"
 
 
+#ifdef NEWSGOLD
+#define USR_MOBILE 0xE107
+#else
+#define USR_MOBILE 0xE101
+#endif
+
 
 
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -60,15 +66,23 @@ int CountRecord(void);
 
 char clm_hdr_text[48]="Calls Records";
 
-void UpdateCLheader(void)
-{
-  char str[3][15]={"Calls-Dial","Calls-Recv.","Calls-Miss"};
-  sprintf(clm_hdr_text,"%s :%d",str[curlist],CountRecord());
-}
 
 volatile int contactlist_menu_id=0;
 static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, S_ICONS+0, (int)clm_hdr_text, LGP_NULL};
 static const int menusoftkeys[] = {0,1,2};
+
+  char str[3][15]={"Calls-Dial","Calls-Recv.","Calls-Miss"};
+  int icn[3]={0x541,0x543,0x542}; //иконки под ЕЛКУ
+void UpdateCLheader(void)
+{
+#ifdef ELKA
+  int *p=contactlist_menuhdr.icon;
+  
+  *p=icn[curlist];
+#endif  
+  sprintf(clm_hdr_text,"%s :%d",str[curlist],CountRecord());
+}
+
 
 void contactlist_menu_ghook(void *data, int cmd);
 int contactlist_menu_onkey(void *data, GUI_MSG *msg);
@@ -82,12 +96,13 @@ typedef  struct {
   void* next_g;  //указатель на звонки с таким же номером
   dates datetime;
   char number[16];
-  char name[32];  
+  char name[31];  
   unsigned int duration;
   unsigned char type; //битовое поле флагов
   unsigned int recid;  //ид записи, мож пригодится
   char cnt;  //если группа то число субитемов -1
   char isGroup;  //признак группы
+
 }CRECS;
 
 
@@ -296,6 +311,8 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     return(-1);
   }
   */
+
+      
   if (msg->keys==0x3D)
   {
     if (t)
@@ -321,7 +338,11 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (key==LEFT_BUTTON){curlist--;
       if (curlist<0)curlist=2;
       RecountMenu(NULL);
-    }else;
+    }else
+    if (key==GREEN_BUTTON){      
+      MakeVoiceCall(t->number,0x10,0x2FFF);
+      return(0);
+    }
       
   }
 //ТУТ БЫ тоже не плохо было прикрутить поиск по Т9 и дозвон
@@ -342,6 +363,10 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
   
   WSHDR *ws2;
   WSHDR *ws4;
+  WSHDR ws1loc0, *ws0;
+  unsigned short num0[128];
+  ws0=CreateLocalWS(&ws1loc0,num0,128);
+  
   WSHDR ws1loc, *ws1;
   unsigned short num[128];
   ws1=CreateLocalWS(&ws1loc,num,128);
@@ -350,16 +375,32 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
   ws3=CreateLocalWS(&ws3loc,num3,128);
   
   t=FindRecordByN(curitem);
-  
+
   if (t!=NULL)
   {
+
     if (t->name[0]){  //если есть в справочнике имя то
-      str_2ws(ws1,t->name,120);    
-      wsprintf(ws3, "%t(%d)\n%02d.%02d.%02d\t%02d:%02d",t->number,(t->cnt&0x7f),t->datetime.day,t->datetime.month,t->datetime.year%100,t->datetime.hour,t->datetime.min);        
+           wsprintf(ws1, "(%d) ",(t->cnt&0x7f)+1);
+        str_2ws(ws0,t->name,120);    
+        wstrcat(ws1,ws0);
+      if (t->cnt&0x7f)      {//
+
+      }
+      else
+        wstrcpy(ws1,ws0);
+     
+      //     wsprintf(ws1, "%s -",ws1);
+//E01C/E01D - left/right align
+//E01E/E01F - center off/on      
+
+       wsprintf(ws3, "%t\n%02d.%02d.%02d%c%02d:%02d",t->number,t->datetime.day,t->datetime.month,t->datetime.year%100,0xE01D,t->datetime.hour,t->datetime.min);                
     }
     else{//иначе тока номер
-       wsprintf(ws1, "%d (%d) %t",curitem,t->cnt&0x7f,t->number);                   
-       wsprintf(ws3, "\n%02d.%02d.%02d\t%02d:%02d",t->datetime.day,t->datetime.month,t->datetime.year%100,t->datetime.hour,t->datetime.min);               
+      if (t->cnt&0x7f)
+       wsprintf(ws1, "(%d) %t",(t->cnt&0x7f)+1,t->number);                  
+      else
+       wsprintf(ws1, "%t",t->number);                         
+       wsprintf(ws3, " \n%02d.%02d.%02d%c%02d:%02d",t->datetime.day,t->datetime.month,t->datetime.year%100,0xE01D,t->datetime.hour,t->datetime.min);               
     }
     
   }
@@ -378,8 +419,10 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
      else //свернута +
        SetMenuItemIconArray(data, item, S_ICONS+1);
   }
- else
-   SetMenuItemIconArray(data, item, S_ICONS+2);
+  else{
+    
+     SetMenuItemIconArray(data, item, S_ICONS+2);
+  }
   
   ws4=AllocMenuWS(data,ws3->wsbody[0]);
   wstrcpy(ws4,ws3);
@@ -403,11 +446,11 @@ void ReadCal(void)//собсветнно чтени АПО
   int fin;
   
 #ifdef NEWSGOLD
-#define MAX_RECORDS 5000
+#define MAX_RECORDS 504
 #define LEVEL1_RN	(41*41)
 #define LEVEL2_RN	(41)
 #else 
-#define MAX_RECORDS 1024
+#define MAX_RECORDS 512
 #define LEVEL1_RN	(0x20)
 #endif
   
@@ -434,7 +477,7 @@ void ReadCal(void)//собсветнно чтени АПО
   void *buffer;
   int m=0;
 //start parsing  
-    if ((buffer=malloc(65536)))
+    if ((buffer=malloc(8192)))
   {
   zeromem(&ABmain,sizeof(ABmain));
 
@@ -447,7 +490,11 @@ void ReadCal(void)//собсветнно чтени АПО
       if (fread(fin,&ABmain,sizeof(ABmain),&ul)==sizeof(ABmain))
 #endif
       {
+#ifdef NEWSGOLD        
         rec=ABmain.len;  //СОБСТВЕННО ВОТ ЗДЕСЬ  И НАЧИНАЕМ ЦИКЛ НЕ С НУЛЯ
+#else
+        rec=MAX_RECORDS-1;//чит
+#endif         
         fclose(fin,&ul);
 	do
 	{
@@ -519,12 +566,16 @@ void ReadCal(void)//собсветнно чтени АПО
                   case 1:          //номер          
                       p=(PKT_NUM*)r->data;
                       if (p){
+
+                        
+                        
                         unsigned int c;
                          unsigned int c1;
                            int m,j;
 			  j=0;
                           m=0;
                         wsprintf(tel,"");
+                        //wsAppendChar(contact.icons,utf_symbs[n]);
                         if (p->format==0x91) wsAppendChar(tel,'+');
 			  while(j<p->data_size)
 			  {
@@ -714,16 +765,42 @@ void UpdateCSMname(void)
 int maincsm;
 
 // нужны иконки )
+#ifdef NEWSGOLD
 char str1[]="4:\\zbin\\naticq\\img\\groupon.png";
 char str2[]="4:\\zbin\\naticq\\img\\groupoff.png";
-char str3[]="4:\\zbin\\naticq\\img\\work.png";
+#else
+char str1[]="0:\\zbin\\naticq\\img\\groupon.png";
+char str2[]="0:\\zbin\\naticq\\img\\groupoff.png";
+
+#endif
+//char str3[]="4:\\zbin\\naticq\\img\\work.png";
 
 
 int main(void)
 {  
+  /*
+  #pragma pack(1)
+  struct {
+#ifdef NEWSGOLD
+    long dummy1; //62 33 dc 05
+    short len;  //!!!!! НА СГОЛД ХЗ ЕСТЬ ЭТО ПОЛЕ ИЛИ НЕТ
+    char bitmap[MAX_RECORDS/8];
+#else
+    long dummy1; // ВОЗМОЖНО ОН ВХОДИТ СЮДА и здесь должно быть два шота, иначе придется делать подругому поиск
+    char bitmap[MAX_RECORDS/8];    
+#endif    
+  } ABmain;
+#pragma pack()
+  char s[256];
+  sprintf (s,"%d",sizeof (ABmain));
+  
+  ShowMSG(1,(int)s);
+  return 0;
+  */
   S_ICONS[0]=(int)str1;
   S_ICONS[1]=(int)str2;
-  S_ICONS[2]=(int)str3;
+//  S_ICONS[2]=(int)str3;
+   S_ICONS[2]=GetPicNByUnicodeSymbol(USR_MOBILE); 
   SUBPROC((void*)  ReadCal);
   LockSched();
   char dummy[sizeof(MAIN_CSM)];
