@@ -105,5 +105,6 @@ extern const char PER4_FRINGING_COLORS[];
 extern const char PER4_FMT[16];
 
 extern const unsigned int REFRESH;
+extern const int cfgShowIn;
 
 #endif

@@ -6,6 +6,10 @@
 __root const CFG_HDR cfghdr0={CFG_UINT,"Refresh period, 1/10 sec",0,600};
 __root const unsigned int REFRESH=20;
 
+__root const CFG_HDR cfghdr0_0 = {CFG_CBOX, "Show In", 0, 3};
+__root const int cfgShowIn = 2;
+__root const CFG_CBOX_ITEM cfgcbox1_0[3] = {"Lock", "Unlock", "Both"};
+
 __root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Net setup",1,0};
 
 __root const CFG_HDR cfghdr1_1 = {CFG_CBOX, "Net display", 0, 2};
