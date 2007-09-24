@@ -203,30 +203,13 @@ int main(void)
   
   
   
-  #ifdef NEWSGOLD
-    LockSched();
-    save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
-    CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
-    CreateCSM(&MAINCSM.maincsm,dummy,0);
-    CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
-    AddKeybMsgHook((void *)my_keyhook);
-    UnlockSched(); 
-  #else
-    LockSched();
-      if (!AddKeybMsgHook_end((void *)my_keyhook)) 
-      {
-        ShowMSG(1, (int) "TalkKbd. Невозможно зарегистрировать обработчик!"); 
-        SUBPROC((void *)Killer);
-      }
-      else
-      {
-        save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
-        CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
-        CreateCSM(&MAINCSM.maincsm,dummy,0);
-        CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
-      }
-    UnlockSched();  
-  #endif
+  LockSched();
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
+  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
+  AddKeybMsgHook((void *)my_keyhook);
+  UnlockSched(); 
   
   return 0;      
 }
