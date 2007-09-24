@@ -1174,14 +1174,17 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     }
   }
   #ifdef NEWSGOLD
-  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2)&&(ENA_VIBRA))
+  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2))
   #else
-  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==0)&&(ENA_VIBRA))
+  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==0))
   #endif   
   {
     is_voice_connected=1;
-    SetVibration(vibraPower);
-    GBS_StartTimerProc(&vibra_tmr,vibraDuration*TMR_SECOND/1000,vibra_tmr_proc);
+    if (ENA_VIBRA)
+    {
+      SetVibration(vibraPower);
+      GBS_StartTimerProc(&vibra_tmr,vibraDuration*TMR_SECOND/1000,vibra_tmr_proc);
+    }
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
   
