@@ -76,7 +76,7 @@ bool FlapPacket::recv_from(int sock)
   tv.tv_sec=0;
   tv.tv_usec=100000; //ќжидание 100мс
   FD_ZERO(&rfds);
-  FD_SET(sock, &rfds);
+  FD_SET((SOCKET)sock, &rfds);
   int sel_ret = select(sock+1, &rfds, NULL, NULL, &tv);
   if (sel_ret==0) goto L_NTO;
   if (sel_ret<0) return false;
@@ -113,7 +113,7 @@ bool FlapPacket::recv_from(int sock)
    tv.tv_sec=30;
    tv.tv_usec=0;
    FD_ZERO(&rfds);
-   FD_SET(sock, &rfds);
+   FD_SET((SOCKET)sock, &rfds);
    int sel_ret = select(sock+1, &rfds, NULL, NULL, &tv);
    if (sel_ret==0) return false;
    if (sel_ret<0) return false;
