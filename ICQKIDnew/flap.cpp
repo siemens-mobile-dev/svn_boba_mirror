@@ -91,7 +91,7 @@ bool FlapPacket::recv_from(int sock)
   t_network_error=TNETWORK_TIMEOUT;
   return false;
  }
- if (recv(sock,&tmp_buf[0],6,0)!=6) return false;
+ if (recv(sock,(char*)&tmp_buf[0],6,0)!=6) return false;
 
  if (tmp_buf[0]!='*') return false;
  frame_type = tmp_buf[1];
@@ -101,7 +101,7 @@ bool FlapPacket::recv_from(int sock)
  memcpy(&payload_length, &tmp_buf[4], sizeof(payload_length));
  payload_length=ntohs(payload_length);
  payload.resize(payload_length);
- char *p=&payload[0];
+ char *p=(char*)&payload[0];
  int l=payload_length;
  int i;
  while(l>0)
@@ -142,8 +142,9 @@ bool FlapPacket::send_to(int sock)
  uint16_t payload_length = htons(payload.size());
  memcpy(&tmp_buf[4], &payload_length, sizeof(payload_length));
  t_network_error=TNETWORK_ERR;
- if (send(sock, &tmp_buf[0], 6, 0)!=6) return false;
- if (send(sock, &payload[0], payload.size(), 0)!=(int)payload.size()) return false;
+ if (send(sock, (char*)&tmp_buf[0], 6, 0)!=6) return false;
+ if(payload.size())
+	if (send(sock, (char*)&payload[0], payload.size(), 0)!=(int)payload.size()) return false;
  return true;
 }
 
@@ -187,7 +188,8 @@ void SNACData::encode_to(vector<uint8_t> & v, size_t start_ind)
  memcpy(&v[start_ind+2], &tmp_subtype_id, sizeof(tmp_subtype_id));
  memcpy(&v[start_ind+4], &tmp_flags, sizeof(tmp_flags));
  memcpy(&v[start_ind+6], &tmp_req_id, sizeof(tmp_req_id));
- memcpy(&v[start_ind+10], &data[0], data.size());
+ if(data.size())
+	memcpy(&v[start_ind+10], &data[0], data.size());
 }
 
 // ----------------=========ooooOOOOOOOOOoooo=========----------------
