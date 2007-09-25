@@ -2,6 +2,8 @@
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 
+const char *successed_config_filename="";
+
 #pragma segment="CONFIG_C"
 int LoadConfigData(const char *fname)
 {
@@ -13,10 +15,11 @@ int LoadConfigData(const char *fname)
 
   extern const CFG_HDR cfghdr0; //first var in CONFIG
   cfg=(void*)&cfghdr0;
+
   unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
-  if (len==0)  ShowMSG(1,(int)"NewYear: 0 config length!");
+
   if (!(buf=malloc(len))) return -1;
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,0,&ul))!=-1)
+  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
     if (fread(f,buf,len,&ul)==len)
     {
@@ -41,13 +44,14 @@ int LoadConfigData(const char *fname)
       result=-1;
   }
   mfree(buf);
+  if (result>=0) successed_config_filename=fname;
   return(result);
 }
 
 void InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\NewYear.bcfg")<0)
+  if (LoadConfigData("4:\\ZBin\\etc\\CallRecs.bcfg")<0)
   {
-    if (LoadConfigData("0:\\ZBin\\etc\\NewYear.bcfg")<0)  ShowMSG(1,(int)"NewYear couldn't create config!");
+    LoadConfigData("0:\\ZBin\\etc\\CallRecs.bcfg");
   }
 }
