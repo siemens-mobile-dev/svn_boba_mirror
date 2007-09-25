@@ -1,6 +1,6 @@
 /*
-  Проект SieGet Downloader
-                          */
+Проект SieGet Downloader
+*/
 
 // Siemens.c
 // Интерфейс Сименса для эльфов
@@ -9,16 +9,16 @@
 
 #include "..\inc\swilib.h"
 
-extern int onStart(char *exename, char *fname); // Старт приложения. Возвращает 0 (Ок) или 1 (выход).
+extern void onStart(char *exename, char *fname); // Старт приложения.
 extern void onCreate(); // Создание диалога
 extern void onClose(); // Закрытие диалога
 extern void onExit(); // Выход
 extern void onFocus(); // Фокус ввода на диалоге
 extern void onUnFocus(); // Фокус ввода уходит с диалога
 extern void onRedraw(void); // Перерисовка экрана
-extern int onKey(unsigned char keycode, int pressed); // Нажатие клавиши. Возвращает 0 (Ок) или 1 (GeneralFunc->выход) или -1 (Redraw).
-extern int onSockEvent(int sock, int event); // Событие сокета
-extern int onDNREvent(int DNR_ID); //Обработка результата DNR-запроса
+extern int  onKey(unsigned char keycode, int pressed); // Нажатие клавиши. Возвращает 0 (Ок) или 1 (GeneralFunc->выход) или -1 (Redraw).
+extern void onSockEvent(int sock, int event); // [HELPER] Событие сокета
+extern void onDNREvent(int DNR_ID); //[HELPER] Обработка результата DNR-запроса
 
 void UpdateCSMName(char *new_name);
 
@@ -86,22 +86,26 @@ RECT Canvas={0,0,0,0};
 
 void maincsm_oncreate(CSM_RAM *data)
 {
-  MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
-  MAIN_CSM *csm=(MAIN_CSM*)data;
-  zeromem(main_gui,sizeof(MAIN_GUI));
+  MAIN_GUI *main_gui = new MAIN_GUI;
+  MAIN_CSM *csm = (MAIN_CSM *)data;
+  zeromem(main_gui, sizeof(MAIN_GUI));
   StoreXYWHtoRECT(&Canvas, 0, YDISP, ScreenW(), ScreenH()-YDISP);
-  main_gui->gui.canvas=(void *)(&Canvas);
-  main_gui->gui.flag30=2;
-  main_gui->gui.methods=(void *)gui_methods;
-  main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
+  main_gui->gui.canvas = &Canvas;
+  main_gui->gui.flag30 = 2;
+  main_gui->gui.methods = (void *)gui_methods;
+  main_gui->gui.item_ll.data_mfree = (void (*)(void *))mfree_adr();
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->gui_id=CreateGUI(main_gui);
 }
 
+extern "C"
+{
+  extern void kill_data(void *p, void (*func_p)(void *));
+}
+
 void Killer(void){
   extern void *ELF_BEGIN;
-  extern void kill_data(void *p, void (*func_p)(void *));
   onExit();
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
   //  ((void (*)(void *))(mfree_adr()))(&ELF_BEGIN);
@@ -119,9 +123,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg){
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
     if ((int)msg->data0==ENIP_DNR_HOST_BY_NAME)
-      return onDNREvent((int)msg->data1);
+      SUBPROC((void *)onDNREvent, msg->data1);
     else
-      return onSockEvent((int)msg->data1, (int)msg->data0);
+    {
+      SUBPROC((void *)onSockEvent, msg->data1, msg->data0);
+    }
+    return 1; // Не знаем чье собщение, так что лучше мы его пропустим
   }
 
   if ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))
@@ -168,8 +175,8 @@ void UpdateCSMName(char *new_name)
 
 int main(char *exename, char *fname){
   char dummy[sizeof(MAIN_CSM)];
-  if(onStart(exename,fname)) SUBPROC((void *)Killer);
-  else CreateCSM(&MAINCSM.maincsm,dummy,0);
+  onStart(exename, fname);
+  CreateCSM(&MAINCSM.maincsm, dummy, 0);
   return 0;
 }
 

@@ -1,56 +1,49 @@
 #include "..\inc\swilib.h"
 #include "dns.h"
 
-typedef struct _DNRQ
-{
-  DNRHANDLER *handler;
-  struct _DNRQ *next;
-} DNRQ;
+extern void Log(char *str);
 
-DNRQ *dnr_top = NULL;
-
-DNRHANDLER *GetHandlerByID(int DNR_ID)
+DNR *DNRHandler::GetDNR(int DNR_ID)
 {
-  DNRQ *tmp = dnr_top;
+  DNRQ *tmp = queue;
   while (tmp)
   {
-    if (tmp->handler->DNR_ID==DNR_ID)
-      return tmp->handler; // Нашли!
+    if (tmp->dnr->DNR_ID==DNR_ID)
+      return tmp->dnr; // Нашли!
   }
   return NULL; // Не нашли...
 }
 
-void AddHandler(DNRHANDLER *handler)
+void DNRHandler::Add(DNR *dnr)
 {
-  DNRQ *tmp;
-  tmp = malloc(sizeof(DNRQ));
-  tmp->handler = handler;
-  tmp->next = dnr_top;
-  dnr_top = tmp;
+  DNRQ *tmp = new DNRQ;
+  tmp->dnr = dnr;
+  tmp->next = queue;
+  queue = tmp;
 }
 
-void DeleteHandler(DNRHANDLER *handler)
+void DNRHandler::Delete(DNR *dnr)
 {
-  if (!dnr_top)
+  if (!queue)
     return;
   DNRQ *tmp;
-  if (dnr_top->handler==handler)
+  if (queue->dnr==dnr)
   {
-    tmp = dnr_top;
-    dnr_top = dnr_top->next;
-    mfree(tmp);
+    tmp = queue;
+    queue = queue->next;
+    delete tmp;
   }
   else
   {
     DNRQ *prev;
-    prev = dnr_top;
-    tmp = dnr_top->next;
+    prev = queue;
+    tmp = queue->next;
     while (tmp)
     {
-      if (tmp->handler==handler)
+      if (tmp->dnr==dnr)
       {
         prev->next = tmp->next;
-        mfree(tmp);
+        delete tmp;
         break;
       }
       prev = tmp;
@@ -59,36 +52,32 @@ void DeleteHandler(DNRHANDLER *handler)
   }
 }
 
-void SendDNR(DNRHANDLER *handler);
-void AddDNR(DNRHANDLER *handler);
-int onDNREvent(int DNR_ID);
-
-void AddDNR(DNRHANDLER *handler)
+void DNRHandler::Reg(DNR *dnr)
 {
-  AddHandler(handler);
-  SUBPROC((void *)SendDNR, handler);
+  dnr->DNR_ID = 0;
+  Add(dnr);
+  SendDNR(dnr);
 }
 
-void SendDNR(DNRHANDLER *handler)
+void DNRHandler::SendDNR(DNR *dnr)
 {
+  Log("SendDNR()\n");
   int ***res = NULL;
   int err;
-  err = async_gethostbyname(handler->host, &res, &handler->DNR_ID);
+  err = async_gethostbyname(dnr->host, &res, &dnr->DNR_ID);
   if (err)
   {
     if ((err==0xC9)||(err==0xD6))
     {
-      if (handler->DNR_ID)
+      if (dnr->DNR_ID)
       {
         return; // Ждем готовности DNR
       }
     }
     else
     {
-      handler->result = DNR_RESULT_ERROR;
-      handler->value = err;
-      SUBPROC((void *)(handler->CallbackProc), handler);
-      DeleteHandler(handler); // Удаляем из списка
+      dnr->onResolve(DNR_RESULT_ERROR, err);
+      Delete(dnr); // Удаляем из списка
       return; // Получили ошибку
     }
   }
@@ -96,35 +85,53 @@ void SendDNR(DNRHANDLER *handler)
   {
     if (res[3])
     {
-      handler->result = DNR_RESULT_OK;
-      handler->value = res[3][0][0];
-      SUBPROC((void *)(handler->CallbackProc), handler);
-      DeleteHandler(handler); // Удаляем из списка
+      dnr->onResolve(DNR_RESULT_OK, res[3][0][0]);
+      Delete(dnr); // Удаляем из списка
       // Получили адрес
     }
   }
   else
   {
-    handler->DNR_TRIES--;
-    if (!handler->DNR_TRIES)
+    dnr->DNR_TRIES--;
+    if (!dnr->DNR_TRIES)
     {
-      handler->result = DNR_RESULT_OUT_OF_TRIES;
-      handler->value = 0;
-      SUBPROC((void *)(handler->CallbackProc), handler);
-      DeleteHandler(handler); // Удаляем из списка
+      dnr->onResolve(DNR_RESULT_OUT_OF_TRIES, 0);
+      Delete(dnr); // Удаляем из списка
       // Истекло количество попыток
     }
   }
 }
 
-int onDNREvent(int DNR_ID)
+void DNRHandler::onDNREvent(int DNR_ID)
 {
-  DNRHANDLER *handler = GetHandlerByID(DNR_ID);
-  if (handler)
+  DNR *dnr = GetDNR(DNR_ID);
+  if (dnr)
   {
-    SUBPROC((void *)SendDNR, handler);
-    return 0;
+    SendDNR(dnr);
   }
-  else
-    return 1;
+}
+
+DNRHandler::DNRHandler()
+{
+  queue = NULL;
+}
+
+DNRHandler::~DNRHandler()
+{
+
+}
+
+//---------------------------------------------------------------
+
+
+DNR::DNR(DNRHandler *handler)
+{
+  this->handler = handler;
+}
+
+void DNR::Start(const char *host, int tries)
+{
+  this->host = host;
+  this->DNR_TRIES = tries;
+  handler->Reg(this);
 }

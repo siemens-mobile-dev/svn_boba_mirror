@@ -16,13 +16,25 @@ typedef struct
   char a;
 } RGBA;
 
-void onFocus();
 void RenderString(RECT *rc, char *str, int font, int t_attr, char *Pen, char *Brush);
-int onStart(char *exename, char *fname);
+void Log(char *str);
+
+void onFocus();
+void onStart(char *exename, char *fname);
 void onCreate();
 void onClose();
 void onExit();
 void onRedraw(void);
+
+void onDNREvent(int DNR_ID);
+void InitDNR();
+void StopDNR();
+void SendDNR(char *host);
+
+void onSockEvent(int sock, int event);
+void InitSocket();
+void StopSocket();
+void SendRequest(int ip);
 
 void ResolveProc(void *_handler);
 void SendRequest(int ip);

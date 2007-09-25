@@ -25,35 +25,67 @@ typedef enum
   SOCK_ERROR_INVALID_CEPID
 } SOCK_ERROR;
 
-typedef void (*socket_handle_func)(void* sockdata);
-typedef void (*socket_error_handle_func)(void* sockdata, SOCK_ERROR err);
+class Socket;
+class SocketHandler;
 
-typedef struct
+// Класс сокета. Одноразовый.
+class Socket
 {
-  int sock;
+public:
+  // Интерфейс сокета, должен быть реализован потомками
+  virtual void onCreate() = 0;
+  virtual void onDataRead() = 0;
+  virtual void onConnected() = 0;
+  virtual void onClose() = 0;
+  virtual void onRemoteClose() = 0;
+  virtual void onError(SOCK_ERROR err) = 0;
+
+  //------------------------------
+
+  //Создать сокет
+  Socket(SocketHandler *handler);
+
+  //Соединить сокет по ip и порту
+  //ip должен иметь порядок байтов сети (htonl)
+  void Connect(int ip, short port);
+
+  //Отправить данные
+  void Send(const char *data, int size);
+
+  //Получить данные
+  int Recv(char *data, int size);
+
+  //Закрыть сокет
+  void Close();
+
+  SOCK_STATE GetState() const;
+
+  ~Socket();
+
+private:
+  int id;
+  char *senq_p;
+  int sendq_l;
   SOCK_STATE state;
-  socket_handle_func onCreate;
-  socket_handle_func onDataRead;
-  socket_handle_func onConnected;
-  socket_handle_func onClose;
-  socket_handle_func onRemoteClose;
-  socket_error_handle_func onError;
-  void *data; //Необязательное поле, нужно чтобы всякие доп.данные хранить
-} SOCKDATAHANDLER;
+  SocketHandler *handler;
 
-//Соединить сокет по ip и порту
-//ip должен иметь порядок байтов сети (htonl)
-void SocketConnect(SOCKDATAHANDLER *sock, int ip, short port);
+  friend class SocketHandler;
+};
 
-//Отправить данные
-void SocketSend(SOCKDATAHANDLER *sock, const char *data, int size);
+class SocketHandler
+{
+public:
+  void Reg(Socket *sock);
+  void UnReg(Socket *sock);
+  void onSockEvent(int sock, int event);
+private:
+  struct SocketQ
+  {
+    Socket *sock;
+    SocketQ *next;
+  };
+  SocketQ *queue;
+  Socket *GetSocket(int sock);
+};
 
-//Закрыть сокет
-void SocketClose(SOCKDATAHANDLER *sock);
-
-//Создать сокет и поместить его в очередь обработки
-void SocketCreate(SOCKDATAHANDLER *sock);
-
-//Удалить сокет из обработки
-void SocketUnReg(SOCKDATAHANDLER *sock);
 #endif

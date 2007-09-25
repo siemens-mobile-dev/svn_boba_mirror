@@ -1800,7 +1800,7 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
@@ -1812,7 +1812,7 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -1930,7 +1930,7 @@
         </option>
         <option>
           <name>CCLangSelect</name>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -2473,6 +2473,12 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\..\C++\_cpp.C</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\dns.c</name>
   </file>
   <file>
@@ -2509,7 +2515,7 @@
     <name>$PROJ_DIR$\Siemens.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\socket.c</name>
+    <name>$PROJ_DIR$\socket.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\socket.h</name>

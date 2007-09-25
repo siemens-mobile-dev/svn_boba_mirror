@@ -11,11 +11,36 @@
 #define RECV_RESULT_ERROR 0
 #define RECV_RESULT_OK 1
 
-typedef void (*RecvCallbackProc)(int res, void *data, int size);
+class HttpGet: public Socket
+{
+public:
+  virtual void onCreate();
+  virtual void onDataRead();
+  virtual void onConnected();
+  virtual void onClose();
+  virtual void onRemoteClose();
+  virtual void onError(SOCK_ERROR err);
 
-//«агружает данные, получаемые после посылки запроса.
-//¬озвращает, успешно ли завершилась операци€.
-//јдрес буфера и его размер возвращаютс€ в переменных data и size.
-void GetDataByReq(const char *req, int ip, short port, RecvCallbackProc rproc);
+  virtual void onFinish(int result) = 0;
+  virtual void onEvent(int event, int data) = 0;
+
+  void Start(const char *req, int ip, short port);
+
+  char *body;
+  int body_size;
+  char *headers;
+  int headers_size;
+
+  HttpGet(SocketHandler *handler);
+  ~HttpGet();
+private:
+  char *buf;
+  int buf_size;
+  int recvsize;
+
+  int ip;
+  short port;
+  const char *req;
+};
 
 #endif
