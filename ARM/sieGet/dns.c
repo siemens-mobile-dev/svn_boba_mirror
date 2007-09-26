@@ -1,8 +1,6 @@
 #include "..\inc\swilib.h"
 #include "dns.h"
 
-extern void Log(char *str);
-
 DNR *DNRHandler::GetDNR(int DNR_ID)
 {
   DNRQ *tmp = queue;
@@ -61,7 +59,6 @@ void DNRHandler::Reg(DNR *dnr)
 
 void DNRHandler::SendDNR(DNR *dnr)
 {
-  Log("SendDNR()\n");
   int ***res = NULL;
   int err;
   err = async_gethostbyname(dnr->host, &res, &dnr->DNR_ID);

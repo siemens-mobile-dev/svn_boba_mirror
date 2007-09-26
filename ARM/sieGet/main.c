@@ -42,6 +42,13 @@ void Log(char *str)
 {
   LockSched();
   strcat(log, str);
+  int f;
+  unsigned int ul;
+  if ((f=fopen("4:\\ZBin\\var\\SieGet.log", A_ReadWrite+A_Create+A_Truncate, P_READ+P_WRITE, &ul))!=-1)
+  {
+    fwrite(f, log, strlen(log), &ul);
+    fclose(f, &ul);
+  }
   UnlockSched();
   REDRAW();
 }
@@ -106,6 +113,7 @@ public:
 
 void MyDNR::onResolve(int result, int value)
 {
+  Log("onResolve() called\n");
   char tmp[100];
   switch (result)
   {
@@ -192,14 +200,15 @@ void onFocus()
 
 void onStartHelper()
 {
-  InitSocket();
-  InitDNR();
-  sock = new MySocket(MainSocketHandler);
-  dnr = new MyDNR(MainDNRHandler);
+  sock->Create();
 }
 void onStart(char *exename, char *fname)
 {
   UpdateCSMName("SieGET");
+  InitSocket();
+  InitDNR();
+  sock = new MySocket(MainSocketHandler);
+  dnr = new MyDNR(MainDNRHandler);
   SUBPROC((void *)onStartHelper);
   return;
 }

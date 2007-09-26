@@ -5,6 +5,7 @@
 #include "..\inc\swilib.h"
 #include "socket.h"
 
+extern void Log(char *str);
 
 //Получить класс зарегистрированного сокета
 Socket *SocketHandler::GetSocket(int sock)
@@ -63,18 +64,22 @@ void SocketHandler::onSockEvent(int sock, int event)
     {
     case ENIP_SOCK_CONNECTED: //Соединение через сокет установлено
       sock_class->state = SOCK_CONNECTED;
+      Log("onConnected()\n");
       sock_class->onConnected();
       break;
 
     case ENIP_SOCK_DATA_READ: //Готовность данных к получению
+      Log("onDataRead()\n");
       sock_class->onDataRead();
       break;
 
     case ENIP_SOCK_REMOTE_CLOSED: //Соединение разорвано сервером
+      Log("onRemoteClose()\n");
       sock_class->onRemoteClose();
       break;
 
     case ENIP_SOCK_CLOSED: //Соединение разрвано клиентом
+      Log("onClose()\n");
       sock_class->onClose();
       break;
 
@@ -181,16 +186,13 @@ void Socket::Close()
   state = SOCK_UNDEF;
 }
 
-//Создать сокет
-Socket::Socket(SocketHandler *_handler)
+void Socket::Create()
 {
   if (CheckCepId())
   {
     onError(SOCK_ERROR_INVALID_CEPID);
     return;
   }
-
-  state = SOCK_UNDEF;
 
   id = socket(1,1,0);
   if(id<0)
@@ -201,6 +203,12 @@ Socket::Socket(SocketHandler *_handler)
 
   state = SOCK_CREATED;
   onCreate();
+}
+
+//Создать сокет
+Socket::Socket(SocketHandler *_handler)
+{
+  state = SOCK_UNDEF;
 
   handler = _handler;
   handler->Reg(this);

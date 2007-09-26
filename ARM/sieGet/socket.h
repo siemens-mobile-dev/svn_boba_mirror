@@ -45,6 +45,8 @@ public:
   //Создать сокет
   Socket(SocketHandler *handler);
 
+  void Create();
+
   //Соединить сокет по ip и порту
   //ip должен иметь порядок байтов сети (htonl)
   void Connect(int ip, short port);
