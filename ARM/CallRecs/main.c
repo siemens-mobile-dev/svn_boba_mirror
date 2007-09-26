@@ -4,6 +4,7 @@ TODO:
 */
 #define DEBUG_
 
+#define DEMON_
 #ifdef NEWSGOLD
   #define DEFAULT_DISK "4"
   #define USR_MOBILE 0xE107
@@ -61,10 +62,10 @@ char str[3][15]={"Calls-Dial","Calls-Recv.","Calls-Miss"};
 
 void UpdateCLheader(void)
 {
-#ifdef ELKA
+//#ifdef ELKA
   int *p=contactlist_menuhdr.icon;
   *p=S_ICONS[curlist+3];
-#endif  
+//#endif  
   sprintf(clm_hdr_text,"%s :%d",str[curlist],CountRecord());
 }
 
@@ -102,6 +103,7 @@ void RecountMenu(CRECS  *req){
   if (!contactlist_menu_id) return; //Нечего считать
 
   data=FindGUIbyId(contactlist_menu_id,NULL);
+  if (!data)return;
   if (req==NULL)
   {
     j=0;
@@ -125,7 +127,8 @@ void RecountMenu(CRECS  *req){
 
 static const SOFTKEY_DESC clmenu_sk[]=
 {
-  {0x0018, 0x0000, (int)LG_OPTIONS},
+//  {0x0018, 0x0000, (int)LG_OPTIONS},  
+  {0x0000, 0x0000, (int)""},    
   {0x0001, 0x0000, (int)clmenu_sk_r},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -157,9 +160,14 @@ int create_contactlist_menu(void)
 
   prev_clmenu_itemcount=i;
   UpdateCLheader();
+#ifndef DEMON
   patch_header(&contactlist_menuhdr);
   contactlist_menu_id=CreateMultiLinesMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i);
   return contactlist_menu_id;
+#else
+  
+  return 0;
+#endif  
 }
 
 
@@ -310,7 +318,11 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
       }
     }
     return(-1);
-  }else;
+  }else
+  if (msg->keys==0x01)
+  {
+    contactlist_menu_id=0;
+  } else;   
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     int key=msg->gbsmsg->submess;
@@ -319,15 +331,19 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
       curlist++; 
       if (curlist>2)curlist=0;
       RecountMenu(NULL);
+      return (-1);
     }else
     if (key==LEFT_BUTTON){
       curlist--;
       if (curlist<0)curlist=2;
       RecountMenu(NULL);
+            return (-1);
     }else
     if (key==GREEN_BUTTON){      
+      contactlist_menu_id=0;            
       MakeVoiceCall(t->number,0x10,0x2FFF);
-      return(0);
+
+      return(-1);
     }
       
   }
@@ -622,7 +638,9 @@ void ReadCal(void)//собсветнно чтени АПО
 }
 ///end of parsing
     FreeWS(tel)  ;
-
+#ifdef DEMON
+  ShowMSG(1,(int)"CallRecs cached");
+#endif
 }
 
 
@@ -655,13 +673,16 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
 ///  csm->gui_id=CreateGUI(main_gui);
+#ifndef DEMON  
   csm->gui_id=    create_contactlist_menu();
   
+#endif  
 //  maincsm=
 
   
 //  SUBPROC((void*)  ReadCal);
-  ReadCal();    
+//  ReadCal();    
+  
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
@@ -734,7 +755,7 @@ sizeof(MAIN_CSM),
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"Call Records v0.2b");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"Call Records v0.3b");
 }
 
 int maincsm;
@@ -747,7 +768,73 @@ char str4[]="4:\\zbin\\img\\callrecs\\ci.png";
 char str5[]="4:\\zbin\\img\\callrecs\\cm.png";
 
 //char str3[]="4:\\zbin\\naticq\\img\\work.png";
+#ifdef DEMON
+int (*old_ed_onkey)(GUI *gui, GUI_MSG *msg);
 
+int my_ed_onkey(GUI *gui, GUI_MSG *msg)
+{
+  int key=msg->gbsmsg->submess;
+  int m=msg->gbsmsg->msg;
+  int r;
+  if (IsUnlocked()&&(m==KEY_DOWN)&&(key==GREEN_BUTTON)&&(!contactlist_menu_id))
+  {
+  patch_header(&contactlist_menuhdr);
+  curlist=0;
+  int i;
+   i=CountRecord();   
+
+  contactlist_menu_id=CreateMultiLinesMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i);
+  RecountMenu(NULL);
+
+//    ShowCallList(2, 0);
+//    ShowCallList(1, 0);
+//    ShowCallList(0, 0);
+    r=0;
+  }
+  else    
+    r=old_ed_onkey(gui,msg);
+  return(r);
+}
+
+void DoSplices(GUI *gui)
+{
+  static INPUTDIA_DESC my_ed;
+  memcpy(&my_ed,gui->definition,sizeof(INPUTDIA_DESC));
+  if (my_ed.onKey != my_ed_onkey)
+  {
+    old_ed_onkey=my_ed.onKey;
+    my_ed.onKey=my_ed_onkey;
+    gui->definition=&my_ed;
+  }
+}
+
+
+
+CSM_DESC icsmd;
+
+int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+
+
+int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+{
+  int csm_result=0;
+
+  csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
+
+#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])  
+  
+  if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
+  {
+    GUI *igui=GetTopGUI();
+    if (igui) //И он существует (а не в проекте ;))
+    {
+      DoSplices(igui);
+    }
+  }
+  return(csm_result);
+}
+
+#endif
 
 int main(void)
 {  
@@ -798,10 +885,31 @@ int main(void)
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
   LockSched();
-
+#ifdef DEMON
+  CSM_RAM *save_cmpc;
+  save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
+  CSM_root()->csm_q->current_msg_processing_csm=CSM_root()->csm_q->csm.first;
   maincsm=CreateCSM(&MAINCSM.maincsm,dummy,0);
-//  ReadCal();  
-  UnlockSched();
+  CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
 
+  
+   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+  memcpy(&icsmd,icsm->constr,sizeof(icsmd));
+  old_icsm_onMessage=icsmd.onMessage;
+  icsmd.onMessage=MyIDLECSM_onMessage;
+  icsm->constr=&icsmd;
+  // как бы его потом корректно удалить?
+
+#else
+  maincsm=CreateCSM(&MAINCSM.maincsm,dummy,0);  
+#endif  
+
+
+  UnlockSched();
+#ifdef ELKA  
+  SUBPROC((void*)  ReadCal);
+#else
+  ReadCal();
+#endif  
   return 0;
 }
