@@ -1,0 +1,1 @@
+gcc -o statgen -I/usr/local/include  -lstdc++ Stat_Generator.cpp
