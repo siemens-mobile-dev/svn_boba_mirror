@@ -12,12 +12,12 @@
 папку 4:\ZBin\img\
 6. Прописываете в 4:\ZBin\etc\extension.cfg следующие строчки:
 [oms]
-RUN=4:\ZBin\utilities\BalletMini.elf
+RUN=4:\ZBin\BalletMini\BalletMini.elf
 SMALL=4:\ZBin\img\OMS_SMALL.png
 BIG=4:\ZBin\img\OMS_BIG.png
 
 [url]
-RUN=4:\ZBin\utilities\BalletMini.elf
+RUN=4:\ZBin\BalletMini\BalletMini.elf
 SMALL=4:\ZBin\img\URL_SMALL.png
 BIG=4:\ZBin\img\URL_BIG.png
 
