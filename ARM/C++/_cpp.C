@@ -2,12 +2,12 @@
 
 
 //pure virtual function may show error
-void __pure_virtual_called(void * obj)
+void __pure_virtual_called(void)
 {
+  LockSched();
   ShowMSG(2,(int)"ABSTRACT VIRTUAL FUNCTION CALLED!");
+  UnlockSched();
 };
-
-
 
 typedef void (*tf)(void *);
 

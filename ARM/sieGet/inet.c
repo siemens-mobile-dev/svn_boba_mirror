@@ -5,15 +5,15 @@
 #include "socket.h"
 #include "inet.h"
 
-void HttpGet::Start(const char *req, int ip, short port)
+void HttpGet::Start(const char *_req, int _ip, short _port)
 {
-  this->req = req;
-  this->ip = ip;
-  this->port = port;
-  this->buf = new char[1024];
-  this->buf_size = 1024;
-  this->recvsize = 0;
-  this->Connect(this->ip, this->port);
+  req = _req;
+  ip = _ip;
+  port = _port;
+  buf = new char[1024];
+  buf_size = 1024;
+  recvsize = 0;
+  Connect(ip, port);
 }
 
 void HttpGet::onCreate()
@@ -22,37 +22,37 @@ void HttpGet::onCreate()
 
 void HttpGet::onConnected()
 {
-  this->Send(this->req, strlen(this->req));
+  Send(req, strlen(req));
 }
 
 void HttpGet::onDataRead()
 {
-  char *tmpbuf = new char[1024];
+  char tmpbuf[1024];
   int recvsize = Recv(tmpbuf, 1024);
-  if (this->recvsize+recvsize>this->buf_size-4)
+  if (recvsize+recvsize>buf_size-4)
   {
-    this->buf = (char *)realloc(this->buf, this->buf_size+1024);
-    this->buf_size += 1024;
+    buf = (char *)realloc(buf, buf_size+1024);
+    buf_size += 1024;
   }
-  memcpy(this->buf+this->recvsize, tmpbuf, recvsize);
-  this->recvsize += recvsize;
+  memcpy(buf+recvsize, tmpbuf, recvsize);
+  recvsize += recvsize;
 }
 
 void HttpGet::onClose()
 {
-  this->body = this->buf;
-  this->body_size = this->buf_size;
-  this->onFinish(RECV_RESULT_OK);
+  body = buf;
+  body_size = buf_size;
+  onFinish(RECV_RESULT_OK);
 }
 
 void HttpGet::onRemoteClose()
 {
-  this->Close();
+  Close();
 }
 
 void HttpGet::onError(SOCK_ERROR err)
 {
-  this->onFinish(RECV_RESULT_ERROR);
+  onFinish(RECV_RESULT_ERROR);
 }
 
 HttpGet::HttpGet(SocketHandler *handler)

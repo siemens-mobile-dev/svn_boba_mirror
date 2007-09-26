@@ -176,7 +176,9 @@ void UpdateCSMName(char *new_name)
 int main(char *exename, char *fname){
   char dummy[sizeof(MAIN_CSM)];
   onStart(exename, fname);
+  LockSched();
   CreateCSM(&MAINCSM.maincsm, dummy, 0);
+  UnlockSched();
   return 0;
 }
 

@@ -129,9 +129,9 @@ DNR::DNR(DNRHandler *handler)
   this->handler = handler;
 }
 
-void DNR::Start(const char *host, int tries)
+void DNR::Start(const char *_host, int _tries)
 {
-  this->host = host;
-  this->DNR_TRIES = tries;
+  host = _host;
+  DNR_TRIES = _tries;
   handler->Reg(this);
 }

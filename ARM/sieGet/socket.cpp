@@ -157,7 +157,7 @@ void Socket::Send(const char *data, int size)
 //Принять данные
 int Socket::Recv(char *data, int size)
 {
-  return recv(this->id, data, size, 0);
+  return recv(id, data, size, 0);
 }
 
 //Закрыть сокет
@@ -182,7 +182,7 @@ void Socket::Close()
 }
 
 //Создать сокет
-Socket::Socket(SocketHandler *handler)
+Socket::Socket(SocketHandler *_handler)
 {
   if (CheckCepId())
   {
@@ -202,7 +202,7 @@ Socket::Socket(SocketHandler *handler)
   state = SOCK_CREATED;
   onCreate();
 
-  this->handler = handler;
+  handler = _handler;
   handler->Reg(this);
 }
 
