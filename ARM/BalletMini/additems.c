@@ -9,6 +9,7 @@
 #define DP_IS_FRAME (-2)
 #define DP_IS_NOINDEX (-1)
 #define RAWTEXTCHUNK (16384)
+#define REFCACHECHUNK (256)
 
 unsigned int wchar_radio_on=0xFFFF;
 unsigned int wchar_radio_off=0xFFFF;
@@ -43,29 +44,16 @@ void AddBeginRef(VIEWDATA *vd)
 
 void AddEndRef(VIEWDATA *vd)
 {
-  REFCACHE *p=vd->ref_cache;
   RawInsertChar(vd,UTF16_DIS_INVERT);
-  if (!p)
+  REFCACHE *p;
+  if ((vd->ref_cache_size%REFCACHECHUNK)==0)
   {
-    zeromem(p=malloc(sizeof(REFCACHE)),sizeof(REFCACHE));
-    vd->ref_cache=p;
+    vd->ref_cache=realloc(vd->ref_cache,(vd->ref_cache_size+REFCACHECHUNK)*sizeof(REFCACHE));
   }
-  else
-  {
-    while(p->next) p=p->next;
-    zeromem(p->next=malloc(sizeof(REFCACHE)),sizeof(REFCACHE));
-    p=p->next;
-  }
-  p->begin=vd->work_ref.begin;
+  p=vd->ref_cache+vd->ref_cache_size;
+  memcpy(p,&(vd->work_ref),sizeof(REFCACHE));
   p->end=vd->rawtext_size;
-  p->tag=vd->work_ref.tag;
-  p->form_id1=globalstr(vd->work_ref.form_id1);
-  p->form_id2=globalstr(vd->work_ref.form_id2);
-  p->id=globalstr(vd->work_ref.id);
-  p->value=globalstr(vd->work_ref.value);
-  p->id2=globalstr(vd->work_ref.id2);
-  p->group_id=vd->work_ref.group_id;
-  p->checked=vd->work_ref.checked;
+  vd->ref_cache_size++;
   if (vd->pos_cur_ref==0xFFFFFFFF)
   {
     vd->pos_cur_ref=vd->work_ref.begin;

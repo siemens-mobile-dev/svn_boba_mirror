@@ -339,19 +339,24 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 
 REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref)
 {
-  REFCACHE *rf=vd->ref_cache;
-  while(rf)
+  int i=vd->ref_cache_size;
+  REFCACHE *rf;
+  if (!i) return NULL;
+  rf=vd->ref_cache;
+  do
   {
-    if ((rf->begin<=ref)&&(ref<rf->end)) break;
-    rf=rf->next;
+    if ((rf->begin<=ref)&&(ref<rf->end)) return rf;
+    rf++;
   }
-  return rf;
+  while(--i);
+  return NULL;
 }
 
-REFCACHE *FindReferenceById(REFCACHE *rf, char *id, char *form_id1, char *form_id2, int tag)
+int FindReferenceById(VIEWDATA *vd, int i, unsigned int id, unsigned int form_id1, unsigned int form_id2, int tag)
 {
-  while(rf)
+  while(i<vd->ref_cache_size)
   {
+    REFCACHE *rf=vd->ref_cache+i;
     if (!tag)
       goto LNOTAG;
     else
@@ -359,34 +364,36 @@ REFCACHE *FindReferenceById(REFCACHE *rf, char *id, char *form_id1, char *form_i
       if (tag==rf->tag)
       {
       LNOTAG:
-	if (rf->id)
+	if (id!=_NOREF)
 	{
-	  if (!strcmp_safe(rf->form_id1,form_id1)) 
+	  if (!omstrcmp(vd,rf->form_id1,form_id1)) 
 	  {
-	    if (!strcmp_safe(rf->form_id2,form_id2))
+	    if (!omstrcmp(vd,rf->form_id2,form_id2))
 	    {
-	      if (!strcmp_safe(rf->id,id)) break;
+	      if (!omstrcmp(vd,rf->id,id)) return i;
 	    }
 	  }
 	}
       }
     }
-    rf=rf->next;
+    i++;
   }
-  return rf;
+  return -1;
 }
 
 void ChangeRadioButtonState(VIEWDATA *vd, REFCACHE *rf)
 {
   REFCACHE *rfp;
+  int i;
   if (rf->tag!='r') return;
   if (rf->begin>=vd->rawtext_size) return;
   if (vd->rawtext[rf->begin+1]!=RADIOB_UNCHECKED) return;
   vd->rawtext[rf->begin+1]=RADIOB_CHECKED;
   rf->group_id=1;
-  rfp=vd->ref_cache;
-  while((rfp=FindReferenceById(rfp,rf->id,rf->form_id1,rf->form_id2,'r')))
+  i=0;
+  while((i=FindReferenceById(vd,i,rf->id,rf->form_id1,rf->form_id2,'r'))>=0)
   {
+    rfp=vd->ref_cache+i;
     if (rfp!=rf)
     {
       if (rfp->begin<vd->rawtext_size)
@@ -398,7 +405,7 @@ void ChangeRadioButtonState(VIEWDATA *vd, REFCACHE *rf)
 	}
       }
     }
-    rfp=rfp->next;
+    i++;
   }
 }
 

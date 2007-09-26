@@ -1,6 +1,14 @@
 #include "../inc/swilib.h"
 #include "string_works.h"
 
+static unsigned int _rshort(char *p)
+{
+  unsigned int r=*p++;
+  r<<=8;
+  r|=*p;
+  return r;
+}
+
 int strcmp_nocase(const char *s, const char *d)
 {
   int cs;
@@ -18,14 +26,20 @@ int strcmp_nocase(const char *s, const char *d)
   return(cs);
 }
 
-int strcmp_safe(const char *s, const char *d)
+int omstrcmp(VIEWDATA *vd, unsigned int ps, unsigned int pd)
 {
-  int sf;
-  int df;
-  sf=s?1:0;
-  df=d?1:0;
-  if ((!s)||(!d)) return sf-df;
-  return strcmp(s,d);
+  int ls;
+  char *s;
+  int ld;
+  char *d;
+  int l;
+  int r;
+  if (ps>=vd->oms_size) return 1;
+  if (pd>=vd->oms_size) return 1;
+  ls=_rshort(s=vd->oms+ps);
+  ld=_rshort(d=vd->oms+pd);
+  if (ls!=ld) return 1;
+  return memcmp(s+2,d+2,ls);
 }
 
 char *globalstr(const char *s)
@@ -106,6 +120,15 @@ void ascii2ws(WSHDR *ws, const char *s)
   }
 }
 
-
-
-
+char *extract_omstr(VIEWDATA *vd, unsigned int pos)
+{
+  int n;
+  char *s;
+  char *d;
+  if (pos>=vd->oms_size) return NULL;
+  n=_rshort(s=vd->oms+pos);
+  d=malloc(n+1);
+  memcpy(d,s+2,n);
+  d[n]=0;
+  return d;
+}

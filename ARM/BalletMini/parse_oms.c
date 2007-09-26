@@ -16,7 +16,7 @@ unsigned int _rbyte(VIEWDATA *vd)
   return r;
 }
 
-unsigned int _rshort(VIEWDATA *vd)
+static unsigned int _rshort(VIEWDATA *vd)
 {
   unsigned char *p=(unsigned char *)(vd->oms+vd->oms_pos);
   unsigned int r=*p++;
@@ -103,6 +103,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     {
     case OMS_HDR_COMMON:
       //Получен заголовок
+      memset(&(vd->work_ref),0xFF,sizeof(REFCACHE));
       i=_rshort(vd);
       vd->page_sz=_rlong(vd);
       vd->oms_wanted+=sizeof(OMS_HEADER_V2);
@@ -201,8 +202,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	goto L_NOSTAGE2;
       case '$':
         vd->oms_pos++; //Form end
-	freegstr(&vd->work_ref.form_id1);
-	freegstr(&vd->work_ref.form_id2);
+	vd->work_ref.form_id1=_NOREF;
+	vd->work_ref.form_id2=_NOREF;
 	goto L_NOSTAGE2;
       case 'A':
 	vd->oms_wanted+=2;
@@ -549,7 +550,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGh_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.form_id1,vd->oms+vd->oms_pos,i);
+      vd->work_ref.form_id1=vd->oms_pos;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd));
       vd->oms_wanted+=i;
@@ -557,14 +558,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGh_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.form_id2,vd->oms+vd->oms_pos,i);
+      vd->work_ref.form_id2=vd->oms_pos;
       vd->oms_pos+=i;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
     case OMS_TAGe_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd));
       vd->oms_wanted+=i;
@@ -572,7 +573,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGe_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
 //      AddEndRef(vd);
       vd->oms_pos+=i;
       vd->oms_wanted++;
@@ -580,7 +581,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGp_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd));
       vd->oms_wanted+=i;
@@ -588,7 +589,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGp_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
       AddPassInputItem(vd,vd->oms+vd->oms_pos,i);
       AddEndRef(vd);
       vd->oms_pos+=i;
@@ -597,7 +598,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGu_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd));
       vd->oms_wanted+=i;
@@ -605,7 +606,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGu_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
       AddButtonItem(vd,vd->oms+vd->oms_pos,i);
       AddEndRef(vd);
       vd->oms_pos+=i;
@@ -614,7 +615,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGx_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd));
       vd->oms_wanted+=i;
@@ -622,7 +623,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGx_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
       AddInputItem(vd,vd->oms+vd->oms_pos,i);
       AddEndRef(vd);
       vd->oms_pos+=i;
@@ -631,7 +632,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGc_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd))+1;
       vd->oms_wanted+=i;
@@ -639,7 +640,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGc_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
       vd->oms_pos+=i;
       vd->work_ref.group_id=i=_rbyte(vd); //group id (checked???)
       AddCheckBoxItem(vd,i);
@@ -649,7 +650,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGr_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd))+1;
       vd->oms_wanted+=i;
@@ -657,7 +658,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGr_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
       vd->oms_pos+=i;
       vd->work_ref.group_id=i=_rbyte(vd); //group id (checked???)
       AddRadioButton(vd,i);
@@ -667,7 +668,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGs_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       _rbyte(vd);
       vd->tag_o_count=_rshort(vd);
@@ -676,7 +677,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGo_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd))+1;
       vd->oms_wanted+=i;
@@ -684,7 +685,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGo_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.id2,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id2=vd->oms_pos-2;
       vd->oms_pos+=i;
       vd->work_ref.checked=_rbyte(vd); //checked/unchecked
       if (!vd->tag_o_count)
@@ -696,7 +697,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGi_STAGE3:
       i=vd->iw;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd));
       vd->oms_wanted+=i;
@@ -704,7 +705,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGi_STAGE4:
       i=vd->ih;
-      replacegstr(&vd->work_ref.value,vd->oms+vd->oms_pos,i);
+      vd->work_ref.value=vd->oms_pos-2;
       AddTextItem(vd,vd->oms+vd->oms_pos,i);
       if (vd->tag_l_count)
       {
@@ -738,14 +739,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGL_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
     case OMS_TAGx5E_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
@@ -761,7 +762,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGZ_STAGE3:
       i=vd->iw;
       AddTextItem(vd,vd->oms+vd->oms_pos,i);
-      replacegstr(&vd->work_ref.id,vd->oms+vd->oms_pos,i);
+      vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
       AddEndRef(vd);
       vd->oms_wanted++;

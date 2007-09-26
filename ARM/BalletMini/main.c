@@ -299,9 +299,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	switch(rf->tag)
 	{
 	case 'L':
-	  if (rf->id)
+	  if (rf->id!=_NOREF)
 	  {
-	    strcpy(goto_url=malloc(strlen(rf->id)+1),rf->id);
+	    goto_url=extract_omstr(vd,rf->id);
 	    return 0xFF;
 	  }
 	  break;
@@ -414,12 +414,11 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	if (rf->tag=='L')
 	{
 //	  ShowMSG(0x10,(int)(rf->id));
-	  if (rf->id)
+	  if (rf->id!=_NOREF)
 	  {
-	    if (strlen(rf->id)>2)
-	    {
-	      RunOtherCopyByURL(rf->id+2);
-	    }
+	    char *s=extract_omstr(vd,rf->id);
+	    RunOtherCopyByURL(s);
+	    mfree(s);
 	  }
 	}
       }

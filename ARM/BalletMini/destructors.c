@@ -3,29 +3,6 @@
 #include "string_works.h"
 #include "destructors.h"
 
-void FreeREFCACHEentry(REFCACHE *p)
-{
-  freegstr(&p->form_id1);
-  freegstr(&p->form_id2);
-  freegstr(&p->id);
-  freegstr(&p->value);
-  freegstr(&p->id2);
-}
-
-void FreeREFCACHEtotal(REFCACHE **t)
-{
-  REFCACHE *p=*t;
-  REFCACHE *next;
-  while(p)
-  {
-    FreeREFCACHEentry(p);
-    next=p->next;
-    mfree(p);
-    p=next;
-  }
-  *t=NULL;
-}
-
 void FreeRawText(VIEWDATA *vd)
 {
   mfree(vd->rawtext);
@@ -58,13 +35,20 @@ void FreeViewData(VIEWDATA *vd)
     mfree(vd->zs);
   }
   if (vd->ws) FreeWS(vd->ws);
-  FreeREFCACHEtotal(&vd->ref_cache);
-  FreeREFCACHEentry(&vd->work_ref);
+  mfree(vd->ref_cache);
+  vd->ref_cache=NULL;
+  vd->ref_cache_size=0;
   mfree(vd->lines_cache);
+  vd->lines_cache=NULL;
   mfree(vd->rawtext);
+  vd->rawtext=NULL;
+  vd->rawtext_size=0;
   mfree(vd->oms);
+  vd->oms=NULL;
+  vd->oms_size=0;
 //  mfree(vd->I_cache);
   mfree(vd->S_cache);
+  vd->S_cache=NULL;
   FreeDynImgList(vd); 
   mfree(vd);
 }

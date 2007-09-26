@@ -3,6 +3,8 @@
 
 #include "../inc/pnglist.h"
 
+#define _NOREF (0xFFFFFFFF)
+
 typedef struct
 {
   DYNPNGICONLIST dp;
@@ -60,15 +62,14 @@ typedef struct
 
 typedef struct
 {
-  void *next;
   unsigned int begin;
   unsigned int end;
   int tag;
-  char *form_id1;
-  char *form_id2;
-  char *id;
-  char *value;
-  char *id2;
+  unsigned int form_id1;
+  unsigned int form_id2;
+  unsigned int id;
+  unsigned int value;
+  unsigned int id2;
   int group_id;
   int checked;
 }REFCACHE;
@@ -128,6 +129,7 @@ typedef struct
   //References
   REFCACHE work_ref;
   REFCACHE *ref_cache;
+  int ref_cache_size;
   
   int page_sz;
   int loaded_sz;
