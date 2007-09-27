@@ -7,12 +7,13 @@
 #include "main.h"
 
 extern int S_ICONS[];
+extern int CurrentPrivateStatus;
 
 static const int mmanage_cl_softkeys[] = {0,1,2};
 
 static const SOFTKEY_DESC mmanage_cl_sk[] =
 {
-  {0x0018, 0x0000, (int)""},
+  {0x0018, 0x0000, (int)LG_SELECT},
   {0x0001, 0x0000, (int)LG_CLOSE},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -24,7 +25,7 @@ const SOFTKEYSTAB mmanage_cl_skt =
 
 static const SOFTKEY_DESC acgd_sk[] =
 {
-  {0x0018, 0x0000, (int)""},
+  {0x0018, 0x0000, (int)LG_ADD},
   {0x0001, 0x0000, (int)LG_CLOSE},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -39,7 +40,7 @@ static const int pl_softkeys[] = {0,1,2};
 
 static const SOFTKEY_DESC pl_sk[] =
 {
-  {0x0018, 0x0000, (int)""},
+  {0x0018, 0x0000, (int)LG_SELECT},
   {0x0001, 0x0000, (int)LG_CLOSE},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -104,7 +105,7 @@ int acgd_onkey(GUI *data, GUI_MSG *msg)
 
 void acgd_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk_add={0x0FFF,0x0000,(int)"Add"};
+  static SOFTKEY_DESC sk_add={0x0FFF,0x0000,(int)LG_ADD};
   GRP_ARRAY *grp=EDIT_GetUserPointer(data);
   EDITCONTROL ec;
   int i, j;
@@ -187,7 +188,7 @@ int CreateAddContactGrpDialog(void)
   eq=AllocEQueue(ma,mfree_adr());
   ews=AllocWS(128);
   
-  ascii2ws(ews,"Введите UIN");
+  ascii2ws(ews,LG_ENTERUIN);
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);   //1
@@ -197,7 +198,7 @@ int CreateAddContactGrpDialog(void)
   AddEditControlToEditQend(eq,&ec,ma);   //2
   
   
-  ascii2ws(ews,"Введите имя");
+  ascii2ws(ews,LG_ENTERNAME);
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);   //3
@@ -219,7 +220,7 @@ int CreateAddContactGrpDialog(void)
       grp_n++;
     }
   }
-  ascii2ws(ews,"Выберите группу");
+  ascii2ws(ews,LG_CHOOSEGROUP);
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);    //5
@@ -255,29 +256,35 @@ void SetPrivateStatus(int status)
 
 static void PL_VisibleForAll(GUI *data)
 {
+  CurrentPrivateStatus=PL_ALL_CAN_SEE;
   SetPrivateStatus(PL_ALL_CAN_SEE);
   GeneralFuncF1(1);
 }
 
 static void PL_VisibleOnlyForVisList(GUI *data)
 {
+  CurrentPrivateStatus=PL_VISLIST_CAN_SEE;
   SetPrivateStatus(PL_VISLIST_CAN_SEE);
   GeneralFuncF1(1);
 }
 
 static void PL_VisibleForAllExceptInvisList(GUI *data)
 {
+  CurrentPrivateStatus=PL_INVISLIST_CANNOT_SEE;
   SetPrivateStatus(PL_INVISLIST_CANNOT_SEE);
   GeneralFuncF1(1);
 }
 
 static void PL_VisibleOnlyForContactList(GUI *data)
 {
+  CurrentPrivateStatus=PL_CONTACTLIST_CAN_SEE;
   SetPrivateStatus(PL_CONTACTLIST_CAN_SEE);
   GeneralFuncF1(1);
 }
+
 static void PL_InvisibleForAll(GUI *data)
 {
+  CurrentPrivateStatus=PL_NOBODY_CAN_SEE;
   SetPrivateStatus(PL_NOBODY_CAN_SEE);
   GeneralFuncF1(1);
 }
@@ -292,11 +299,11 @@ static void private_list_ghook(void *data, int cmd)
 
 static const char * const private_list_texts[PRIVATE_LIST_MAX]=
 {
-  "Видимый для всех",
-  "Видимый только для списка видящих",
-  "Видимый для всех, кроме списка невидящих",
-  "Видимый только для списка контактов",
-  "Невидимый для всех"
+  LG_ALL_CAN_SEE,
+  LG_VISLIST_CAN_SEE,
+  LG_INVISLIST_CANNOT_SEE,
+  LG_CONTACTLIST_CAN_SEE,
+  LG_NOBODY_CAN_SEE
 };
 
 static const void *private_list_proc[PRIVATE_LIST_MAX]=
@@ -318,19 +325,19 @@ static void private_list_handler(void *data, int curitem, void *unk)
   switch(curitem)
   {
   case 0:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISALL);
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_ALL_CAN_SEE);
     break;
   case 1:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISWHITELIST);
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISLIST_CAN_SEE);
     break;
   case 2:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISNOBLACKLIST);
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_INVISLIST_CANNOT_SEE);
     break;
   case 3:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISONLYCLIST);
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_CONTACTLIST_CAN_SEE);
     break;
   case 4:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISNOALL);
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_NOBODY_CAN_SEE);
     break;
   }
   SetMenuItemText(data, item, ws, curitem);
@@ -363,7 +370,7 @@ static const MENU_DESC private_list_MNU=
 int CreatePrivateStatusMenu(void)
 {
   patch_header(&private_list_HDR);
-  return CreateMenu(0,0,&private_list_MNU,&private_list_HDR,0,PRIVATE_LIST_MAX,0,0);  
+  return CreateMenu(0,0,&private_list_MNU,&private_list_HDR,CurrentPrivateStatus,PRIVATE_LIST_MAX,0,0);  
 }
 
 static void AddContactGrp(GUI *data)
@@ -388,8 +395,8 @@ static void mmanage_cl_ghook(void *data, int cmd)
 
 static const MENUITEM_DESC mmanage_cl_ITEMS[M_MANAGE_CL_MAX]=
 {
-  {NULL,(int)"Добавить контакт",    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Приватный статус",    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_ADDCNT,    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_PRIVSTATUS,    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 static const MENUPROCS_DESC mmanage_cl_HNDLS[M_MANAGE_CL_MAX]=
@@ -405,7 +412,7 @@ static const MENU_DESC mmanage_cl_MNU=
   8,NULL,mmanage_cl_ghook,NULL,
   mmanage_cl_softkeys,
   &mmanage_cl_skt,
-  0,
+  0x01,
   NULL,
   mmanage_cl_ITEMS,
   mmanage_cl_HNDLS,

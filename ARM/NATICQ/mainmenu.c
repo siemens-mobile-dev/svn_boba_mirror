@@ -123,7 +123,7 @@ static const char * const menutexts[11]=
 {
   LG_MNUSTATUS,
   LG_MNUXSTATUS,
-  "”правление списком",
+  LG_MANAGELIST,
   LG_MNUVIBRA,
   LG_MNUSOUND,
   LG_MNUSHOWOFF,

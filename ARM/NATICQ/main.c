@@ -12,6 +12,7 @@
 #include "naticq_ipc.h"
 #include "status_change.h"
 #include "strings.h"
+#include "manage_cl.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -73,6 +74,7 @@ int S_ICONS[TOTAL_ICONS+1];
 #define EOP -10
 int CurrentStatus;
 int CurrentXStatus;
+int CurrentPrivateStatus;
 
 WSHDR *ews;
 
@@ -1824,6 +1826,7 @@ ProcessPacket(TPKT *p)
   case T_LOGIN:
     set_my_status();
     set_my_xstatus();
+    SetPrivateStatus(CurrentPrivateStatus);
     break;
   case T_CLENTRY:
     if (p->pkt.uin)
@@ -2214,6 +2217,7 @@ void maincsm_oncreate(CSM_RAM *data)
 }
 
 extern const int MY_DEF_STATUS;
+extern const int MY_DEF_PRIVSTATUS;
 extern const unsigned int MY_DEF_XSTATUS;
 extern const int DEF_VIBRA_STATUS;
 extern const int DEF_SOUNDS_STATUS;
@@ -2228,6 +2232,7 @@ void maincsm_onclose(CSM_RAM *csm)
   *((int *)&DEF_SHOW_GROUPS)=Is_Show_Groups;
   *((int *)&MY_DEF_STATUS)=CurrentStatus-1;
   *((int *)&MY_DEF_XSTATUS)=CurrentXStatus;
+  *((int *)&MY_DEF_PRIVSTATUS)=CurrentPrivateStatus;
   
   SaveConfigData(successed_config_filename);
   
@@ -2602,6 +2607,7 @@ int main()
   Is_Show_Groups=DEF_SHOW_GROUPS;
   CurrentStatus=MY_DEF_STATUS+1;
   CurrentXStatus=MY_DEF_XSTATUS;
+  CurrentPrivateStatus=MY_DEF_PRIVSTATUS;
   
   setup_ICONS();
   LoadXStatusText();

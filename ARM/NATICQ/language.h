@@ -91,6 +91,19 @@
 
 //================================
 
+#define LG_ALL_CAN_SEE          "Видимый для всех"
+#define LG_VISLIST_CAN_SEE      "Видимый только для списка видящих"
+#define LG_INVISLIST_CANNOT_SEE "Видимый для всех, кроме списка невидящих"
+#define LG_CONTACTLIST_CAN_SEE  "Видимый только для списка контактов"
+#define LG_NOBODY_CAN_SEE       "Невидимый для всех"
+
+#define LG_ENTERNAME      "Введите имя"
+#define LG_CHOOSEGROUP    "Выберите группу"
+#define LG_PRIVSTATUS     "Приватный статус"
+#define LG_MANAGELIST     "Управление списком"
+
+//================================
+
 #define LG_MSGILLEGMSGCON "Неверное сообщение ENIP_SOCK_CONNECTED!"
 #define LG_MSGILLEGMSGREA "Неверное сообщение ENIP_DATA_READ"
 #define LG_MSGCANTCONN    "Невозможно подключиться!"
@@ -209,6 +222,19 @@
 #define LG_STHOME "Вдома"
 #define LG_STLUNCH "Їм"
 #define LG_STWORK "На роботі"
+
+//================================
+
+#define LG_ALL_CAN_SEE          "Видимий для всіх"
+#define LG_VISLIST_CAN_SEE      "Видимий тільки для списку, що бачать мене"
+#define LG_INVISLIST_CANNOT_SEE "Видимий для всіх, окрім списку, що не бачать мене"
+#define LG_CONTACTLIST_CAN_SEE  "Видимий тільки для списку контактів"
+#define LG_NOBODY_CAN_SEE       "Невидимий для всіх"
+
+#define LG ENTERNAME      "Введіть ім'я"
+#define LG CHOOSEGROUP    "Виберіть групу"
+#define LG PRIVSTATUS     "Приватний статус"
+#define LG MANAGELIST     "Управління списком"
 
 //================================
 
@@ -331,6 +357,19 @@
 #define LG_STHOME "Home"
 #define LG_STLUNCH "Lunch"
 #define LG_STWORK "Work"
+
+//================================
+
+#define LG_ALL_CAN_SEE          "Visible for all"
+#define LG_VISLIST_CAN_SEE      "Visible only for list seeing"
+#define LG_INVISLIST_CANNOT_SEE "Visible for all, except for list blind"
+#define LG_CONTACTLIST_CAN_SEE  "Visible only for list of contacts"
+#define LG_NOBODY_CAN_SEE       "Invisible for all"
+
+#define LG_ENTERNAME      "Enter a name"
+#define LG_CHOOSEGROUP    "Choose a group"
+#define LG_PRIVSTATUS     "Private status"
+#define LG_MANAGELIST     "Management by list"
 
 //================================
 
