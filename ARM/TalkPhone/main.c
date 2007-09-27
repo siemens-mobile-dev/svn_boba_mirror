@@ -440,16 +440,21 @@ int my_keyhook(int submsg, int msg)
 {
   if (msg==LONG_PRESS)
     {
-      /*if ((submsg>='0')&&(submsg<='9')&&(!IsUnlocked()))
-        {  
-          GetDateTime(&date,&CurTime);
-          SayTime();
-        }*/
-      
-      if ((submsg==CALL_BUTTON)&&(!IsUnlocked()))
-        {  
-          GetDateTime(&date,&CurTime);
-          SayTime(PLAY_PARAM_BTN_CALL);
+      if (CALL_BUTTON)
+      {
+        if ((submsg==CALL_BUTTON)&&(!IsUnlocked()))
+          {  
+            GetDateTime(&date,&CurTime);
+            SayTime(PLAY_PARAM_BTN_CALL);
+          }        
+      }
+        else
+        {
+          if ((submsg>='0')&&(submsg<='9')&&(!IsUnlocked()))
+            {  
+              GetDateTime(&date,&CurTime);
+              SayTime(PLAY_PARAM_BTN_CALL);
+            }          
         }
     }
   
