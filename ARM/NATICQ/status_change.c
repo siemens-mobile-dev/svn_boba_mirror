@@ -236,11 +236,10 @@ int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
 
     if (s)
     {
-      l=0;
-      for (int i=0; i<ws->wsbody[0]; i++) 
+      l=ws->wsbody[0];
+      for (int i=0; i<l; i++) 
       {
         *d++=char16to8(ws->wsbody[i+1]);
-        l++;
       }
       *d=0;
       if (len!=l || strncmp(s,tmp,len))
@@ -261,11 +260,10 @@ int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
 
     if (s)
     {
-      l=0;
-      for (int i=0; i<ws->wsbody[0]; i++) 
+      l=ws->wsbody[0];
+      for (int i=0; i<l; i++) 
       {
         *d++=char16to8(ws->wsbody[i+1]);
-        l++;
       }
       *d=0;
       if (len!=l || strncmp(s,tmp,len))
@@ -286,11 +284,10 @@ int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
 
     if (s)
     {
-      l=0;
-      for (int i=0; i<ws->wsbody[0]; i++) 
+      l=ws->wsbody[0];
+      for (int i=0; i<l; i++) 
       {
         *d++=char16to8(ws->wsbody[i+1]);
-        l++;
       }
       *d=0;
       if (len!=l || strncmp(s,tmp,len))

@@ -5034,13 +5034,10 @@
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\main.h</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\mainmenu.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\mainmenu.h</name>
+    <name>$PROJ_DIR$\manage_cl.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\revision.h</name>
@@ -5050,9 +5047,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\status_change.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\status_change.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\strings.c</name>

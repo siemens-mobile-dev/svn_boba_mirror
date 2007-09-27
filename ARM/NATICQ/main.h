@@ -26,6 +26,12 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 //void patch_input(INPUTDIA_DESC* inp);
 
 
+#define PL_ALL_CAN_SEE 0
+#define PL_NOBODY_CAN_SEE 1
+#define PL_VISLIST_CAN_SEE 2
+#define PL_INVISLIST_CANNOT_SEE 3
+#define PL_CONTACTLIST_CAN_SEE 4
+
 
 // Константы операций (взаимодействие с сервером шлюза)
 #define T_REQLOGIN 1
@@ -61,5 +67,10 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define T_XTEXT_ACK 25
 #define T_XTEXT_SET 26
 
+#define T_ADDCONTACT_WITH_GRP 27
+
+#define T_ADDGROUP 28
+#define T_ADDIGNORE 29
+#define T_SETPRIVACY 30
 
 #endif
