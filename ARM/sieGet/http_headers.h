@@ -31,6 +31,24 @@
 #define H_WWW_Authenticate 25
 #define H_Warning 26
 
+class HTTP_Response_Headers
+{
+public:
+  // Добавить заголовок, передаваемый как одна строка ответа
+  int Add(char *str);
+
+  // Получить значение заголовка по его имени. Возвращает NULL если такой заголовок не найден
+  char *GetValue(char *name);
+
+  HTTP_Response_Headers();
+  ~HTTP_Response_Headers();
+private:
+  int GetHeaderId(char *header_name);
+  int SplitHeader(char *header, char *name, char *value);
+  char *headers[N_RESP_HEADERS];
+};
+
+/* // Страшный геморрой!
 typedef struct
 {
   char *Cache_Control;
@@ -92,9 +110,6 @@ typedef struct
   char *TE;
   char *User_Agent;
 } HTTP_REQUEST_HEADERS;
-
-int GetHeaderId(char *header_name);
-
-int SplitHeader(char *header, char *name, char *value);
+*/
 
 #endif

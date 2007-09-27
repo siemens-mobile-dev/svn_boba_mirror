@@ -38,7 +38,7 @@ HTTP_HEADER_DESC resp_headers[] =
   {H_Warning           , "Warning"}
 };
 
-int GetHeaderId(char *header_name)
+int HTTP_Response_Headers::GetHeaderId(char *header_name)
 {
   int l = 0;
   int r = N_RESP_HEADERS-1;
@@ -55,7 +55,7 @@ int GetHeaderId(char *header_name)
   return -1;
 }
 
-int SplitHeader(char *header, char *name, char *value)
+int HTTP_Response_Headers::SplitHeader(char *header, char *name, char *value)
 {
   int len = strlen(header);
   int delim_pos = strchr(header, ':')-header;
@@ -72,4 +72,49 @@ int SplitHeader(char *header, char *name, char *value)
   else
     return 0;
 }
+
+int HTTP_Response_Headers::Add(char *str)
+{
+  char *h_name = new char[strlen(str)];
+  char *h_value = new char[strlen(str)];
+  int r;
+  if (SplitHeader(str, h_name, h_value))
+  {
+    int id = GetHeaderId(h_name);
+    if (id!=-1)
+    {
+      headers[id] = new char[strlen(h_value)];
+      strcpy(headers[id], h_value);
+    }
+    r = 1;
+  }
+  else
+    r = 0;
+  delete h_name;
+  delete h_value;
+  return r;
+}
+
+char *HTTP_Response_Headers::GetValue(char *name)
+{
+  int id = GetHeaderId(name);
+  if (id!=-1)
+    return headers[id];
+  else
+    return NULL;
+}
+
+HTTP_Response_Headers::HTTP_Response_Headers()
+{
+  for (int i=0; i<N_RESP_HEADERS; i++)
+    headers[i] = NULL;
+}
+
+HTTP_Response_Headers::~HTTP_Response_Headers()
+{
+  for (int i=0; i<N_RESP_HEADERS; i++)
+    if (headers[i])
+      delete headers[i];
+}
+
 

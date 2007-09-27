@@ -1,4 +1,6 @@
-#include "stdafx.h"
+//#include "stdafx.h"
+#include "../inc/swilib.h"
+extern unsigned int strtoul(const char * str, char ** endptr, int base);
 
 #include "url.h"
 

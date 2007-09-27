@@ -115,7 +115,12 @@ DNRHandler::DNRHandler()
 
 DNRHandler::~DNRHandler()
 {
-
+  DNRQ *tmp;
+  while (tmp = queue)
+  {
+    queue = queue->next;
+    delete tmp;
+  }
 }
 
 //---------------------------------------------------------------

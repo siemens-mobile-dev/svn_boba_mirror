@@ -8,15 +8,15 @@
 #include "socket.h"
 #include "dns.h"
 #include "inet.h"
-//#include "http.h"
+#include "http.h"
 
 const char _req[] = "HEAD %s HTTP/1.1\r\n"
 "Host: %s\r\n"
 "User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 "Connection: close\r\n"
 "\r\n";
-const char host[] = "borman.pocto.net";
-const char path[] = "/webstat";
+const char host[] = "r0.ru";
+const char path[] = "/";
 
 extern RECT Canvas;
 extern void UpdateCSMName(char *new_name);
@@ -113,7 +113,6 @@ public:
 
 void MyDNR::onResolve(int result, int value)
 {
-  Log("onResolve() called\n");
   char tmp[100];
   switch (result)
   {
@@ -146,6 +145,7 @@ public:
 void MySocket::onFinish(int result)
 {
   char tmp[512];
+  HTTP_Response *http_resp = new HTTP_Response();
   switch(result)
   {
   case RECV_RESULT_OK:
@@ -155,7 +155,18 @@ void MySocket::onFinish(int result)
     recvbuf = new char[recvbufsize];
     memcpy(recvbuf, body, body_size);
     recvbuf[body_size] = 0;
+    Log("-=HTTP stream dump start=-\n");
     Log(recvbuf);
+    Log("-=HTTP stream dump end=-\n");
+    http_resp->Parse(recvbuf, recvbufsize);
+    sprintf(tmp, "response: %d(%s)\n", http_resp->resp_code, http_resp->resp_msg);
+    Log(tmp);
+    char *srv = http_resp->headers->GetValue("Server");
+    if (srv)
+    {
+      sprintf(tmp, "Server: %s\n", srv);
+      Log(tmp);
+    }
     break;
   case RECV_RESULT_ERROR:
     strcpy(tmp, "error receiving\n");
@@ -163,6 +174,7 @@ void MySocket::onFinish(int result)
     break;
   }
   REDRAW();
+  delete http_resp;
 }
 
 void MySocket::onEvent(int event, int data)

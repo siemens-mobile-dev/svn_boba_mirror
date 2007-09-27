@@ -80,6 +80,8 @@ public:
   void Reg(Socket *sock);
   void UnReg(Socket *sock);
   void onSockEvent(int sock, int event);
+  SocketHandler();
+  ~SocketHandler();
 private:
   struct SocketQ
   {

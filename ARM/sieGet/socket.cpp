@@ -64,22 +64,19 @@ void SocketHandler::onSockEvent(int sock, int event)
     {
     case ENIP_SOCK_CONNECTED: //Соединение через сокет установлено
       sock_class->state = SOCK_CONNECTED;
-      Log("onConnected()\n");
       sock_class->onConnected();
       break;
 
     case ENIP_SOCK_DATA_READ: //Готовность данных к получению
-      Log("onDataRead()\n");
       sock_class->onDataRead();
       break;
 
     case ENIP_SOCK_REMOTE_CLOSED: //Соединение разорвано сервером
-      Log("onRemoteClose()\n");
       sock_class->onRemoteClose();
       break;
 
     case ENIP_SOCK_CLOSED: //Соединение разрвано клиентом
-      Log("onClose()\n");
+      sock_class->id = -1;
       sock_class->onClose();
       break;
 
@@ -91,6 +88,21 @@ void SocketHandler::onSockEvent(int sock, int event)
       //To be implemented...
       break;
     }
+  }
+}
+
+SocketHandler::SocketHandler()
+{
+  queue = NULL;
+}
+
+SocketHandler::~SocketHandler()
+{
+  SocketQ *tmp;
+  while (tmp = queue)
+  {
+    queue = queue->next;
+    delete tmp;
   }
 }
 
@@ -181,7 +193,6 @@ void Socket::Close()
 
   shutdown(id, 2);
   closesocket(id);
-  id = -1;
 
   state = SOCK_UNDEF;
 }

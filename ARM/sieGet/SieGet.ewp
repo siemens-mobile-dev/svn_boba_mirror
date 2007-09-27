@@ -1800,7 +1800,7 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
@@ -1812,7 +1812,7 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -3152,7 +3152,7 @@
     <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\dns.c</name>
+    <name>$PROJ_DIR$\dns.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\dns.h</name>
@@ -3161,37 +3161,43 @@
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\http.c</name>
+    <name>$PROJ_DIR$\http.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\http.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\http_headers.c</name>
+    <name>$PROJ_DIR$\http_headers.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\http_headers.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\inet.c</name>
+    <name>$PROJ_DIR$\inet.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\inet.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\main.c</name>
+    <name>$PROJ_DIR$\main.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\Siemens.c</name>
+    <name>$PROJ_DIR$\Siemens.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\socket.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\socket.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\url.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\url.h</name>
   </file>
 </project>
 

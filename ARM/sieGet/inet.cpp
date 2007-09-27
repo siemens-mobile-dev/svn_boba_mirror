@@ -40,8 +40,9 @@ void HttpGet::onDataRead()
 
 void HttpGet::onClose()
 {
+#warning Надо бы убрать эту заглушку...
   body = buf;
-  body_size = buf_size;
+  body_size = recvsize;
   onFinish(RECV_RESULT_OK);
 }
 
