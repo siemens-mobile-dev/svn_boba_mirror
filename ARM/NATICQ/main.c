@@ -103,7 +103,12 @@ static const char * const icons_names[TOTAL_ICONS]=
   "head.png",
   "logo.png",
   "ping.png",
-  "settings.png"
+  "settings.png",
+  "vis1.png",
+  "vis2.png",
+  "vis3.png",
+  "vis4.png",
+  "vis5.png"  
 };
 
 extern const char ICON_PATH[];

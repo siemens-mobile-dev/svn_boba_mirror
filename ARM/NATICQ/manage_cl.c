@@ -6,6 +6,8 @@
 #include "strings.h"
 #include "main.h"
 
+extern int S_ICONS[];
+
 static const int mmanage_cl_softkeys[] = {0,1,2};
 
 static const SOFTKEY_DESC mmanage_cl_sk[] =
@@ -288,35 +290,72 @@ static void private_list_ghook(void *data, int cmd)
   }
 }
 
-static const MENUITEM_DESC private_list_ITEMS[PRIVATE_LIST_MAX]=
+static const char * const private_list_texts[PRIVATE_LIST_MAX]=
 {
-  {NULL,(int)"Видимый для всех",                          LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Видимый только для списка видящих",         LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Видимый для всех, кроме списка невидящих",  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Видимый только для списка контактов",       LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Невидимый для всех",                        LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
+  "Видимый для всех",
+  "Видимый только для списка видящих",
+  "Видимый для всех, кроме списка невидящих",
+  "Видимый только для списка контактов",
+  "Невидимый для всех"
 };
 
-static const MENUPROCS_DESC private_list_HNDLS[PRIVATE_LIST_MAX]=
+static const void *private_list_proc[PRIVATE_LIST_MAX]=
 {
-  PL_VisibleForAll,
-  PL_VisibleOnlyForVisList,
-  PL_VisibleForAllExceptInvisList,
-  PL_VisibleOnlyForContactList,
-  PL_InvisibleForAll
+  (void *)PL_VisibleForAll,
+  (void *)PL_VisibleOnlyForVisList,
+  (void *)PL_VisibleForAllExceptInvisList,
+  (void *)PL_VisibleOnlyForContactList,
+  (void *)PL_InvisibleForAll
 };
+
+static void private_list_handler(void *data, int curitem, void *unk)
+{
+  WSHDR *ws;
+  void *item=AllocMenuItem(data);
+  extern const char percent_t[];
+  ws=AllocMenuWS(data,strlen(private_list_texts[curitem]));
+  wsprintf(ws,percent_t,private_list_texts[curitem]);
+  switch(curitem)
+  {
+  case 0:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISALL);
+    break;
+  case 1:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISWHITELIST);
+    break;
+  case 2:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISNOBLACKLIST);
+    break;
+  case 3:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISONLYCLIST);
+    break;
+  case 4:
+    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISNOALL);
+    break;
+  }
+  SetMenuItemText(data, item, ws, curitem);
+}
+
+static int private_list_keyhook(void *data, GUI_MSG *msg)
+{
+  if ((msg->keys==0x18)||(msg->keys==0x3D))
+  {
+    ((void (*)(void))(private_list_proc[GetCurMenuItem(data)]))();
+  }
+  return(0);
+}
 
 static const HEADER_DESC private_list_HDR={0,0,NULL,NULL,NULL,(int)"Приватный статус",LGP_NULL};
 
 static const MENU_DESC private_list_MNU=
 {
-  8,NULL,private_list_ghook,NULL,
+  8,private_list_keyhook,private_list_ghook,NULL,
   pl_softkeys,
   &pl_skt,
-  0x10,
+  0x11,
+  private_list_handler,
   NULL,
-  private_list_ITEMS,
-  private_list_HNDLS,
+  NULL,
   PRIVATE_LIST_MAX
 };
 
