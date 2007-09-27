@@ -479,5 +479,22 @@
 0880: 0xA08DD893   ; 220: int IsSliderClosed(void)
 0884: 0xA06252F8   ; 221: SetCpuClockLow(2)
 0888: 0xA06252E0   ; 222: SetCpuClockTempHi(2)
+088C: 0xA06A1ECC   ; 223: IsMediaPlayerInBackground
+0890: 0xA06A33B8   ; 224: CloseMediaPlayer
+0894: 0xA059ABB8   ; 225: int PlayMelody_ChangeVolume(int handle,int volume)
+0898: 0xA059B668   ; 226: int PlayMelody_StopPlayback(int handle)
+089C: 0xA059B708   ; 227: int PlayMelody_PausePlayback(int handle)
+08A0: 0xA059B738   ; 228: int PlayMelody_ResumePlayBack(int handle)
+08A4: 0xA0FBD210   ; 229: void longjmp(jmp_buf, int);
+08A8: 0xA093706D   ; 22A: void FreeGSMTXTpkt(void *pkt);
+08AC: 0xA0643429   ; 22B: CreateRadioButtonList(RadioButtonListDesc *, char num_of_radiobuttons, 0, 0, char prev_setting, void HandlerFunc(int), char flag); 
+08B0: 0xA0642B4D   ; 22C: pdcache_getval(char *return, int maxlen_of_return_str, char cachetype, char *pd_entry_identifier.class, char *pd_entry_identifier.sub); OR (char *return, int maxlen_of_return_str, char cachetype,0, *pd_entry_identifier);
+08B4: 0xA0642D37   ; 22D: pdcache_setval(char *new_value, char cachetype, char *pd_entry_identifier.class, char *pd_entry_identifier.sub); OR (char *new_value, char cachetype, 0, char *pd_entry_identifier);
+08B8: 0xA069C1A4   ; 22E: OpenExplorer(ExplOpenDesc *)
+08BC: 0xA8DA7FE4   ; 22F: TDateTimeSettings *RamDateTimeSettings
+08C0: 0xA08D87B1   ; 230: int GetTimeZoneShift(int param1, int param2, int timeZone)
+08C4: 0xA8DA7F8C   ; 231: TAppointment *RamAppointment
+08C8: 0xA0091D7B   ; 232: GBS_DestroyMessage(GBS_MSG *)
+08CC: 0xA07BEBA3   ; 233: void GetAllEmail()
 #pragma disable old_equal_ff
 +0
