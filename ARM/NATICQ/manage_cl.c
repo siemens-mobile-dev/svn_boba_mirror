@@ -12,7 +12,7 @@ static const int mmanage_cl_softkeys[] = {0,1,2};
 
 static const SOFTKEY_DESC mmanage_cl_sk[] =
 {
-  {0x0018, 0x0000, (int)LG_SELECT},
+  {0x0018, 0x0000, (int)""},
   {0x0001, 0x0000, (int)LG_CLOSE},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -24,7 +24,7 @@ const SOFTKEYSTAB mmanage_cl_skt =
 
 static const SOFTKEY_DESC acgd_sk[] =
 {
-  {0x0018, 0x0000, (int)LG_ADD},
+  {0x0018, 0x0000, (int)""},
   {0x0001, 0x0000, (int)LG_CLOSE},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -39,7 +39,7 @@ static const int pl_softkeys[] = {0,1,2};
 
 static const SOFTKEY_DESC pl_sk[] =
 {
-  {0x0018, 0x0000, (int)LG_SELECT},
+  {0x0018, 0x0000, (int)""},
   {0x0001, 0x0000, (int)LG_CLOSE},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -204,7 +204,7 @@ int CreateAddContactGrpDialog(void)
   
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,NULL,64);
-  AddEditControlToEditQend(eq,&ec,ma);   //3
+  AddEditControlToEditQend(eq,&ec,ma);   //4
   
   for (CLIST *cl=(CLIST *)cltop; cl!=0; cl=cl->next)
   {
@@ -276,7 +276,6 @@ static void PL_VisibleOnlyForContactList(GUI *data)
   SetPrivateStatus(PL_CONTACTLIST_CAN_SEE);
   GeneralFuncF1(1);
 }
-
 static void PL_InvisibleForAll(GUI *data)
 {
   SetPrivateStatus(PL_NOBODY_CAN_SEE);
@@ -291,72 +290,35 @@ static void private_list_ghook(void *data, int cmd)
   }
 }
 
-static const char * const private_list_texts[PRIVATE_LIST_MAX]=
+static const MENUITEM_DESC private_list_ITEMS[PRIVATE_LIST_MAX]=
 {
-  LG_ALL_CAN_SEE,
-  LG_VISLIST_CAN_SEE,
-  LG_INVISLIST_CANNOT_SEE,
-  LG_CONTACTLIST_CAN_SEE,
-  LG_NOBODY_CAN_SEE
+  {S_ICONS+ICON_ALL_CAN_SEE,         (int)LG_ALL_CAN_SEE,           LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_VISLIST_CAN_SEE,     (int)LG_VISLIST_CAN_SEE,       LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_INVISLIST_CANNOT_SEE,(int)LG_INVISLIST_CANNOT_SEE,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_CONTACTLIST_CAN_SEE, (int)LG_CONTACTLIST_CAN_SEE,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_NOBODY_CAN_SEE,      (int)LG_NOBODY_CAN_SEE,        LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
-static const void *private_list_proc[PRIVATE_LIST_MAX]=
+static const MENUPROCS_DESC private_list_HNDLS[PRIVATE_LIST_MAX]=
 {
-  (void *)PL_VisibleForAll,
-  (void *)PL_VisibleOnlyForVisList,
-  (void *)PL_VisibleForAllExceptInvisList,
-  (void *)PL_VisibleOnlyForContactList,
-  (void *)PL_InvisibleForAll
+  PL_VisibleForAll,
+  PL_VisibleOnlyForVisList,
+  PL_VisibleForAllExceptInvisList,
+  PL_VisibleOnlyForContactList,
+  PL_InvisibleForAll
 };
-
-static void private_list_handler(void *data, int curitem, void *unk)
-{
-  WSHDR *ws;
-  void *item=AllocMenuItem(data);
-  extern const char percent_t[];
-  ws=AllocMenuWS(data,strlen(private_list_texts[curitem]));
-  wsprintf(ws,percent_t,private_list_texts[curitem]);
-  switch(curitem)
-  {
-  case 0:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_ALL_CAN_SEE);
-    break;
-  case 1:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_VISLIST_CAN_SEE);
-    break;
-  case 2:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_INVISLIST_CANNOT_SEE);
-    break;
-  case 3:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_CONTACTLIST_CAN_SEE);
-    break;
-  case 4:
-    SetMenuItemIconArray(data,item,S_ICONS+ICON_NOBODY_CAN_SEE);
-    break;
-  }
-  SetMenuItemText(data, item, ws, curitem);
-}
-
-static int private_list_keyhook(void *data, GUI_MSG *msg)
-{
-  if ((msg->keys==0x18)||(msg->keys==0x3D))
-  {
-    ((void (*)(void))(private_list_proc[GetCurMenuItem(data)]))();
-  }
-  return(0);
-}
 
 static const HEADER_DESC private_list_HDR={0,0,NULL,NULL,NULL,(int)"Приватный статус",LGP_NULL};
 
 static const MENU_DESC private_list_MNU=
 {
-  8,private_list_keyhook,private_list_ghook,NULL,
+  8,NULL,private_list_ghook,NULL,
   pl_softkeys,
   &pl_skt,
   0x11,
-  private_list_handler,
   NULL,
-  NULL,
+  private_list_ITEMS,
+  private_list_HNDLS,
   PRIVATE_LIST_MAX
 };
 
@@ -389,8 +351,8 @@ static void mmanage_cl_ghook(void *data, int cmd)
 
 static const MENUITEM_DESC mmanage_cl_ITEMS[M_MANAGE_CL_MAX]=
 {
-  {NULL,(int)LG_ADDCNT,    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_PRIVSTATUS,    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_ADDCNT,      LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)LG_PRIVSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 static const MENUPROCS_DESC mmanage_cl_HNDLS[M_MANAGE_CL_MAX]=
@@ -406,7 +368,7 @@ static const MENU_DESC mmanage_cl_MNU=
   8,NULL,mmanage_cl_ghook,NULL,
   mmanage_cl_softkeys,
   &mmanage_cl_skt,
-  0x01,
+  0,
   NULL,
   mmanage_cl_ITEMS,
   mmanage_cl_HNDLS,

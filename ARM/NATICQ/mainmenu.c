@@ -33,12 +33,14 @@ extern int Is_Show_Groups;
 static void ChangeVibraMode(void)
 {
   Is_Vibra_Enabled=!(Is_Vibra_Enabled);
+  WriteDefSettings();
   RefreshGUI();
 }
   
 static void ChangeSoundMode(void)
 {
   Is_Sounds_Enabled=!(Is_Sounds_Enabled);
+  WriteDefSettings();
   RefreshGUI();
 }
 
@@ -46,6 +48,7 @@ static void ChangeShowOfflineMode(void)
 {
   void RecountMenu(CLIST *req);
   Is_Show_Offline=!(Is_Show_Offline);
+  WriteDefSettings();
   RecountMenu(NULL);
   RefreshGUI();
 }
@@ -54,6 +57,7 @@ static void ChangeShowGroupsMode(void)
 {
   void RecountMenu(CLIST *req);
   Is_Show_Groups=!(Is_Show_Groups);
+  WriteDefSettings();
   
   extern volatile CLIST *cltop;
   CLIST *t;

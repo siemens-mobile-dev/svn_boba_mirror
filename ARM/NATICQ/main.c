@@ -30,6 +30,8 @@ const char ipc_my_name[32]="NatICQ";
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 
+
+char elf_path[256];
 int maincsm_id;
 int maingui_id;
 
@@ -181,7 +183,56 @@ void IlluminationOn(const int disp, const int key, const int tmr, const int fade
 
 volatile int silenthide;    //by BoBa 25.06.07
 ///////////
+int Is_Vibra_Enabled;
+unsigned int Is_Sounds_Enabled;
+int Is_Show_Offline;
+int Is_Show_Groups;
+int CurrentStatus;
+int CurrentXStatus;
 
+//===================================================================
+const char def_setting[]="%sdef_settings_%d";
+
+void ReadDefSettings(void)
+{
+  DEF_SETTINGS def_set;
+  int f;
+  unsigned int err;
+  char str[128];
+  snprintf(str,127,def_setting,elf_path,UIN);
+  if ((f=fopen(str,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+  {
+    fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
+    fclose(f,&err);
+    Is_Vibra_Enabled=def_set.vibra_status;
+    Is_Sounds_Enabled=def_set.sound_status;
+    Is_Show_Offline=def_set.off_contacts;
+    Is_Show_Groups=def_set.show_groups;
+    CurrentStatus=def_set.def_status+1;
+    CurrentXStatus=def_set.def_xstatus;
+  }
+}
+
+void WriteDefSettings(void)
+{
+  DEF_SETTINGS def_set;
+  int f;
+  unsigned int err;
+  char str[128];
+  snprintf(str,127,def_setting,elf_path,UIN);
+  if ((f=fopen(str,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
+  {
+    def_set.vibra_status=Is_Vibra_Enabled;
+    def_set.sound_status=Is_Sounds_Enabled;
+    def_set.off_contacts=Is_Show_Offline;
+    def_set.show_groups=Is_Show_Groups;
+    def_set.def_status=CurrentStatus-1;
+    def_set.def_xstatus=CurrentXStatus;
+    fwrite(f,&def_set,sizeof(DEF_SETTINGS),&err);
+    fclose(f,&err);
+  }
+}
+//by KreN 27.09.2007
 //===================================================================
 extern S_SMILES *s_top;
 extern DYNPNGICONLIST *SmilesImgList;
@@ -2213,22 +2264,9 @@ void maincsm_oncreate(CSM_RAM *data)
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
 }
 
-extern const int MY_DEF_STATUS;
-extern const unsigned int MY_DEF_XSTATUS;
-extern const int DEF_VIBRA_STATUS;
-extern const int DEF_SOUNDS_STATUS;
-extern const int DEF_SHOWOFF_STATUS;
-extern const int DEF_SHOW_GROUPS;
-
 void maincsm_onclose(CSM_RAM *csm)
 {
-  *((int *)&DEF_VIBRA_STATUS)=Is_Vibra_Enabled;
-  *((int *)&DEF_SOUNDS_STATUS)=Is_Sounds_Enabled;
-  *((int *)&DEF_SHOWOFF_STATUS)=Is_Show_Offline;
-  *((int *)&DEF_SHOW_GROUPS)=Is_Show_Groups;
-  *((int *)&MY_DEF_STATUS)=CurrentStatus-1;
-  *((int *)&MY_DEF_XSTATUS)=CurrentXStatus;
-  
+  WriteDefSettings(); 
   SaveConfigData(successed_config_filename);
   
 /*
@@ -2590,24 +2628,21 @@ void UpdateCSMname(void)
 }
 
 
-int main()
+int main(char *filename)
 {
-  char dummy[sizeof(MAIN_CSM)];
+  MAIN_CSM main_csm;
+  char *s;
+  int len;
   
   InitConfig();
-  
-  Is_Vibra_Enabled=DEF_VIBRA_STATUS;
-  Is_Sounds_Enabled=DEF_SOUNDS_STATUS;
-  Is_Show_Offline=DEF_SHOWOFF_STATUS;
-  Is_Show_Groups=DEF_SHOW_GROUPS;
-  CurrentStatus=MY_DEF_STATUS+1;
-  CurrentXStatus=MY_DEF_XSTATUS;
+  s=strrchr(filename,'\\');
+  len=(s-filename)+1;
+  strncpy(elf_path,filename,len);
+  elf_path[len]=0;
+  ReadDefSettings();
   
   setup_ICONS();
   LoadXStatusText();
-  
-  //  InitSmiles();
-  
   if (!UIN)
   {
     LockSched();
@@ -2617,7 +2652,7 @@ int main()
   }
   UpdateCSMname();
   LockSched();
-  maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+  maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
   UnlockSched();
   return 0;
 }

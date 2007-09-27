@@ -8,6 +8,9 @@ void CreateEditChat(CLIST *t);
 void set_my_status(void);
 void set_my_xstatus(void);
 
+
+void ReadDefSettings(void);
+void WriteDefSettings(void);
 extern int connect_state;
 
 typedef struct
@@ -18,6 +21,19 @@ typedef struct
   int requested_decrement_total_unread;
   int loaded_templates;
 }EDCHAT_STRUCT;
+
+#pragma pack(push)
+#pragma pack(1)
+typedef struct{
+  unsigned char
+  vibra_status:1,
+  sound_status:1,
+  off_contacts:1,
+  show_groups:1;
+  char def_status;
+  char def_xstatus;
+}DEF_SETTINGS;
+#pragma pack(pop)
 
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 

@@ -45,6 +45,7 @@ static void Change_Status(int status)
 {
   CurrentStatus=status;
   set_my_status();
+  WriteDefSettings();
 }
 
 #pragma inline
@@ -52,6 +53,7 @@ static void Change_XStatus(int xstatus)
 {
   CurrentXStatus=xstatus;
   set_my_xstatus();
+  WriteDefSettings();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

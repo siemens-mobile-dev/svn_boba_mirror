@@ -14,40 +14,6 @@ __root const unsigned int UIN=0;
 __root const CFG_HDR cfghdr1={CFG_STR_PASS,"Password",0,8};
 __root const char PASS[9]="";
 
-//Default statuses
-__root const CFG_HDR cfghdr_m71={CFG_LEVEL,"Default statuses",1,0};
-  __root const CFG_HDR cfghdr7_1={CFG_CHECKBOX,"Vibra Status",0,2};
-  __root const int DEF_VIBRA_STATUS=1;
-
-  __root const CFG_HDR cfghdr7_2={CFG_CHECKBOX,"Sounds Status",0,2};
-  __root const int DEF_SOUNDS_STATUS=1;
-
-  __root const CFG_HDR cfghdr7_3={CFG_CBOX,"My Status",0,12};
-  __root const int MY_DEF_STATUS = 10;
-  __root const CFG_CBOX_ITEM cfgcbox7_1[12]={
-    LG_STINVIS,
-    LG_STAWAY,
-    LG_STNA,
-    LG_STOCCUP,
-    LG_STDND,
-    LG_STDEPRESSION,
-    LG_STEVIL,
-    LG_STHOME,
-    LG_STLUNCH,
-    LG_STWORK,
-    LG_STONLINE,
-    LG_STFFC
-  };
-  __root const CFG_HDR cfghdr7_6={CFG_UINT,"My XStatus",0,100};
-  __root const unsigned int MY_DEF_XSTATUS=0;
-  
-  __root const CFG_HDR cfghdr7_4={CFG_CHECKBOX,"Show Offline",0,2};
-  __root const int DEF_SHOWOFF_STATUS=0;
-
-  __root const CFG_HDR cfghdr7_5={CFG_CHECKBOX,"Show Groups",0,2};
-  __root const int DEF_SHOW_GROUPS=1;
-__root const CFG_HDR cfghdr_m70={CFG_LEVEL,"",0,0};
-
 __root const CFG_HDR cfghdr19={CFG_COORDINATES,"Idle icon position",0,0};
 __root const unsigned int IDLEICON_X=0;
 __root const unsigned int IDLEICON_Y=50;
