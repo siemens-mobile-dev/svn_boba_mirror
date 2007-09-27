@@ -12,6 +12,7 @@
 #include "naticq_ipc.h"
 #include "status_change.h"
 #include "strings.h"
+#include "manage_cl.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -3497,114 +3498,10 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
   }
 }
 
-void anac_locret(void){}
-
-int anac_onkey(GUI *data, GUI_MSG *msg)
-{
-  EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
-  
-  CLIST *t;
-  TPKT *p;
-  int l;
-  char s[64];
-  int w;
-  EDITCONTROL ec;
-  if (msg->keys==0xFFF)
-  {
-    if (connect_state==3)
-    {
-      if ((t=ed_struct->ed_contact))
-      {
-	ExtractEditControl(data,2,&ec);
-	l=0;
-	while(l<ec.pWS->wsbody[0])
-	{
-	  w=char16to8(ec.pWS->wsbody[l+1]);
-	  if (w<32) w='_';
-	  s[l++]=w;
-	  if (l==63) break;
-	}
-	s[l]=0;
-	if (strlen(s))
-	{
-	  p=malloc(sizeof(PKT)+(l=strlen(s))+1);
-	  p->pkt.uin=t->uin;
-	  p->pkt.type=T_ADDCONTACT;
-	  p->pkt.data_len=l;
-	  strcpy(p->data,s);
-	  AddStringToLog(t, 0x01, LG_ADDCONT, I_str,0xFFFFFFFF);
-	  AddMsgToChat(ed_struct->ed_chatgui);
-	  RecountMenu(t);
-	  SUBPROC((void *)SendAnswer,0,p);
-	  return(1);
-	}
-      }
-    }
-  }
-  return(0);
-}
-
-void anac_ghook(GUI *data,int cmd)
-{
-  static const SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_DOIT};
-  if (cmd==0x0A)
-  {
-    DisableIDLETMR();
-  }
-  if (cmd==7)
-  {
-    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
-  }
-}
-
-static const HEADER_DESC anac_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDREN,LGP_NULL};
-
-static const INPUTDIA_DESC anac_desc=
-{
-  1,
-  anac_onkey,
-  anac_ghook,
-  (void *)anac_locret,
-  0,
-  &menu_skt,
-  {0,NULL,NULL,NULL},
-  4,
-  100,
-  101,
-  0,
-  //  0x00000001 - Выровнять по правому краю
-  //  0x00000002 - Выровнять по центру
-  //  0x00000004 - Инверсия знакомест
-  //  0x00000008 - UnderLine
-  //  0x00000020 - Не переносить слова
-  //  0x00000200 - bold
-  0,
-  //  0x00000002 - ReadOnly
-  //  0x00000004 - Не двигается курсор
-  //  0x40000000 - Поменять местами софт-кнопки
-  0x40000000
-};
 
 void AskNickAndAddContact(EDCHAT_STRUCT *ed_struct)
 {
-  void *ma=malloc_adr();
-  void *eq;
-  EDITCONTROL ec;
-  WSHDR *ews=AllocWS(256);
-  PrepareEditControl(&ec);
-  eq=AllocEQueue(ma,mfree_adr());
-  wsprintf(ews,LG_SETNICK,ed_struct->ed_contact->uin);
-  ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
-  AddEditControlToEditQend(eq,&ec,ma);
-  wsprintf(ews,percent_t,ed_struct->ed_contact->name);
-  ConstructEditControl(&ec,3,0x40,ews,63);
-  AddEditControlToEditQend(eq,&ec,ma);
-  //  int scr_w=ScreenW();
-  //  int head_h=HeaderH();
-  patch_header(&anac_hdr);
-  patch_input(&anac_desc);
-  CreateInputTextDialog(&anac_desc,&anac_hdr,eq,1,ed_struct);
-  FreeWS(ews);
+  CreateAddContactGrpDialog(ed_struct->ed_contact);
 }
 
 void as_locret(void){}

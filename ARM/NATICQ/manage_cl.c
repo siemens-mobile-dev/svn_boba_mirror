@@ -175,7 +175,7 @@ INPUTDIA_DESC acgd_desc=
 };
 
 extern volatile CLIST *cltop;
-int CreateAddContactGrpDialog(void)
+int CreateAddContactGrpDialog(CLIST *cl_sel)
 {
   WSHDR *ews;
   void *ma=malloc_adr();
@@ -183,6 +183,7 @@ int CreateAddContactGrpDialog(void)
   EDITCONTROL ec;
   GRP_ARRAY *grp=NULL;
   int grp_n=0;
+  int to_combo=0;
   
   eq=AllocEQueue(ma,mfree_adr());
   ews=AllocWS(128);
@@ -193,7 +194,15 @@ int CreateAddContactGrpDialog(void)
   AddEditControlToEditQend(eq,&ec,ma);   //1
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_NUM,ECF_APPEND_EOL|ECF_DISABLE_MINUS|ECF_DISABLE_POINT,NULL,9);
+  if (cl_sel)
+  {
+    wsprintf(ews,"%u",cl_sel->uin);
+  }
+  else
+  {
+    CutWSTR(ews,0);
+  }
+  ConstructEditControl(&ec,ECT_NORMAL_NUM,ECF_APPEND_EOL|ECF_DISABLE_MINUS|ECF_DISABLE_POINT,ews,9);
   AddEditControlToEditQend(eq,&ec,ma);   //2
   
   
@@ -203,7 +212,22 @@ int CreateAddContactGrpDialog(void)
   AddEditControlToEditQend(eq,&ec,ma);   //3
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,NULL,64);
+  if (cl_sel)
+  {
+    if (cl_sel->name)
+    {
+      ascii2ws(ews,cl_sel->name);
+    }
+    else
+    {
+      wsprintf(ews,"%u",cl_sel->uin);
+    }
+  }
+  else
+  {
+    CutWSTR(ews,0);
+  }
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,64);
   AddEditControlToEditQend(eq,&ec,ma);   //4
   
   for (CLIST *cl=(CLIST *)cltop; cl!=0; cl=cl->next)
@@ -216,6 +240,10 @@ int CreateAddContactGrpDialog(void)
       cur_grp->grp_id=cl->group;
       strncpy(cur_grp->name, cl->name,64);
       cur_grp->name[63]=0;
+      if (cl_sel)
+      {
+        if (cl_sel->group==cur_grp->grp_id)  to_combo=grp_n;
+      }
       grp_n++;
     }
   }
@@ -231,7 +259,7 @@ int CreateAddContactGrpDialog(void)
   {
     ascii2ws(ews,grp->name);
   }
-  ConstructComboBox(&ec,ECT_COMBO_BOX,ECF_APPEND_EOL,ews,64,0,grp_n,0);
+  ConstructComboBox(&ec,ECT_COMBO_BOX,ECF_APPEND_EOL,ews,64,0,grp_n,1+to_combo);
   AddEditControlToEditQend(eq,&ec,ma);    //6
   
   patch_header(&acgd_hdr);
@@ -331,7 +359,7 @@ int CreatePrivateStatusMenu(void)
 
 static void AddContactGrp(GUI *data)
 {
-  CreateAddContactGrpDialog();  
+  CreateAddContactGrpDialog(NULL);  
 }
 
 static void PrivateStatus(GUI *data)
