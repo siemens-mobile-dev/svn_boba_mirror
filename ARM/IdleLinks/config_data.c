@@ -1,6 +1,12 @@
 #include "..\inc\cfg_items.h"
 #include "..\inc\swilib.h"
 
+#ifdef NEWSGOLD
+#define DEFAULT_DISK "4"
+#else
+#define DEFAULT_DISK "0"
+#endif
+
 __root const CFG_HDR cfghdr0={CFG_UINT,"Клавиша вызова",0,100};
 __root const unsigned int CALL_BTN=ENTER_BUTTON;
 
@@ -40,10 +46,10 @@ __root const CFG_CBOX_ITEM cfgcbox5[3]={"файл","шорткат","адрес"};
 
 
 __root const CFG_HDR cfghdr3_1={CFG_STR_UTF8,"Иконка 2",0,127};
-__root const char pic2[128]="4:\\Zbin\\IdleLinks\\tc.png";
+__root const char pic2[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\tc.png";
 
 __root const CFG_HDR cfghdr3_2={CFG_STR_UTF8,"Файл 2/шорткат/aдрес",0,127};
-__root const char file2[128]="4:\\Zbin\\screensavers\\screensaver.elf";
+__root const char file2[128]=DEFAULT_DISK ":\\ZBin\\screensavers\\screensaver.elf";
 
 __root const CFG_HDR cfghdr3_3={7,"Координаты 2",0,0};
 __root const unsigned int x2=21;
@@ -58,10 +64,10 @@ __root const int type3=0;
 __root const CFG_CBOX_ITEM cfgcbox6[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr4_1={CFG_STR_UTF8,"Иконка 3",0,127};
-__root const char pic3[128]="4:\\Zbin\\IdleLinks\\ms.png";
+__root const char pic3[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\ms.png";
 
 __root const CFG_HDR cfghdr4_2={CFG_STR_UTF8,"Файл 3/шорткат/aдрес",0,127};
-__root const char file3[128]="4:\\Zbin\\MyStuff\\Stuff.elf";
+__root const char file3[128]=DEFAULT_DISK ":\\ZBin\\MyStuff\\Stuff.elf";
 
 __root const CFG_HDR cfghdr4_3={7,"Координаты 3",0,0};
 __root const unsigned int x3=41;
@@ -76,10 +82,10 @@ __root const int type4=0;
 __root const CFG_CBOX_ITEM cfgcbox7[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr5_1={CFG_STR_UTF8,"Иконка 4",0,127};
-__root const char pic4[128]="4:\\Zbin\\IdleLinks\\sj.png";
+__root const char pic4[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\sj.png";
 
 __root const CFG_HDR cfghdr5_2={CFG_STR_UTF8,"Файл 4/шорткат/aдрес",0,127};
-__root const char file4[128]="4:\\Zbin\\SieJC\\SieJC.elf";
+__root const char file4[128]=DEFAULT_DISK ":\\ZBin\\SieJC\\SieJC.elf";
 
 __root const CFG_HDR cfghdr5_3={7,"Координаты 4",0,0};
 __root const unsigned int x4=61;
@@ -94,7 +100,7 @@ __root const int type5=1;
 __root const CFG_CBOX_ITEM cfgcbox8[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr6_1={CFG_STR_UTF8,"Иконка 5",0,127};
-__root const char pic5[128]="4:\\Zbin\\IdleLinks\\ir.png";
+__root const char pic5[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\ir.png";
 
 __root const CFG_HDR cfghdr6_2={CFG_STR_UTF8,"Файл 5/шорткат/aдрес",0,127};
 __root const char file5[128]="STUP_CONCT_IRDA";
@@ -113,7 +119,7 @@ __root const int type6=1;
 __root const CFG_CBOX_ITEM cfgcbox9[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr7_1={CFG_STR_UTF8,"Иконка 6",0,127};
-__root const char pic6[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic6[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr7_2={CFG_STR_UTF8,"Файл 6/шорткат/aдрес",0,127};
 __root const char file6[128]="ELSE_ALARMCLOCK";
@@ -132,7 +138,7 @@ __root const int type7=1;
 __root const CFG_CBOX_ITEM cfgcbox10[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr8_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic7[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic7[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr8_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file7[128]="ELSE_ALARMCLOCK";
@@ -152,7 +158,7 @@ __root const int type8=1;
 __root const CFG_CBOX_ITEM cfgcbox11[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr9_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic8[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic8[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr9_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file8[128]="ELSE_ALARMCLOCK";
@@ -172,7 +178,7 @@ __root const int type9=1;
 __root const CFG_CBOX_ITEM cfgcbox12[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr10_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic9[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic9[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr10_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file9[128]="ELSE_ALARMCLOCK";
@@ -193,7 +199,7 @@ __root const int type10=1;
 __root const CFG_CBOX_ITEM cfgcbox13[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr21_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic10[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic10[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr21_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file10[128]="ELSE_ALARMCLOCK";
@@ -213,7 +219,7 @@ __root const int type11=1;
 __root const CFG_CBOX_ITEM cfgcbox14[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr22_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic11[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic11[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr22_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file11[128]="ELSE_ALARMCLOCK";
@@ -233,7 +239,7 @@ __root const int type12=1;
 __root const CFG_CBOX_ITEM cfgcbox15[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr23_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic12[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic12[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr23_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file12[128]="ELSE_ALARMCLOCK";
@@ -252,7 +258,7 @@ __root const int type13=1;
 __root const CFG_CBOX_ITEM cfgcbox16[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr24_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic13[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic13[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr24_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file13[128]="ELSE_ALARMCLOCK";
@@ -272,7 +278,7 @@ __root const int type14=1;
 __root const CFG_CBOX_ITEM cfgcbox17[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr25_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic14[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic14[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr25_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file14[128]="ELSE_ALARMCLOCK";
@@ -291,7 +297,7 @@ __root const int type15=1;
 __root const CFG_CBOX_ITEM cfgcbox18[3]={"файл","шорткат","адрес"};
 
 __root const CFG_HDR cfghdr26_1={CFG_STR_UTF8,"Иконка",0,127};
-__root const char pic15[128]="4:\\Zbin\\IdleLinks\\bud.png";
+__root const char pic15[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\bud.png";
 
 __root const CFG_HDR cfghdr26_2={CFG_STR_UTF8,"Файл/шорткат/aдрес",0,127};
 __root const char file15[128]="ELSE_ALARMCLOCK";
@@ -309,7 +315,7 @@ __root const int vybor=1;
 __root const CFG_CBOX_ITEM cfgcbox3[2]={"Цветом","Картинкой"};
 
 __root const CFG_HDR cfghdr51={CFG_STR_UTF8,"Картинка выбора",0,127};
-__root const char chpic[128]="4:\\Zbin\\IdleLinks\\choose.png";
+__root const char chpic[128]=DEFAULT_DISK ":\\ZBin\\IdleLinks\\choose.png";
 
 __root const CFG_HDR cfghdr121={8,"Цвет выбора",0,0};
 __root const char cl[4]={185,113,13,50};

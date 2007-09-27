@@ -47,6 +47,44 @@ typedef struct
 
 int pos;
 
+void DoLabel()
+{
+        switch (LabelData[pos-1].Type)
+        {
+        case 0:
+          {
+            WSHDR *elfname=AllocWS(256);
+            wsprintf(elfname,LabelData[pos-1].FileName);
+            ExecuteFile(elfname,NULL,NULL);
+            FreeWS(elfname);
+          }
+          break;
+        case 1:
+          {
+            unsigned int* addr = (unsigned int*)GetFunctionPointer(LabelData[pos-1].FileName);
+            if (addr)
+            {
+              typedef void (*voidfunc)(); 
+      #ifdef NEWSGOLD          
+              voidfunc pp=(voidfunc)*(addr+4);
+      #else 
+              voidfunc pp=(voidfunc)addr; 
+      #endif 
+              SUBPROC((void*)pp);
+            }
+          }
+          break;
+        case 2:
+          {
+              typedef void (*voidfunc)(); 
+              unsigned int addr=strtoul( LabelData[pos-1].FileName, 0, 16 );
+              voidfunc pp=(voidfunc)addr;
+              SUBPROC((void*)pp);
+          }
+          break;          
+        }  
+}
+
 void OnRedraw(MAIN_GUI *data) // OnRedraw
 {
   void *canvasdata = BuildCanvas();
@@ -138,42 +176,18 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
         break;        
     case ENTER_BUTTON:
       {
-        switch (LabelData[pos-1].Type)
-        {
-        case 0:
-          {
-            WSHDR *elfname=AllocWS(256);
-            wsprintf(elfname,LabelData[pos-1].FileName);
-            ExecuteFile(elfname,NULL,NULL);
-            FreeWS(elfname);
-          }
-          break;
-        case 1:
-          {
-            unsigned int* addr = (unsigned int*)GetFunctionPointer(LabelData[pos-1].FileName);
-            if (addr)
-            {
-              typedef void (*voidfunc)(); 
-      #ifdef NEWSGOLD          
-              voidfunc pp=(voidfunc)*(addr+4);
-      #else 
-              voidfunc pp=(voidfunc)addr; 
-      #endif 
-              SUBPROC((void*)pp);
-            }
-          }
-          break;
-        case 2:
-          {
-              typedef void (*voidfunc)(); 
-              unsigned int addr=strtoul( LabelData[pos-1].FileName, 0, 16 );
-              voidfunc pp=(voidfunc)addr;
-              SUBPROC((void*)pp);
-          }
-          break;          
-        }   
+        DoLabel();   
         return(1);
       }
+    case 49: case 50: case 51:  case 52:  case 53:  case 54:  case 55:  case 56: case 57: //1-9
+      {
+        if (msg->gbsmsg->submess-49>count) return(0);
+        
+        pos = msg->gbsmsg->submess-48;
+        DoLabel();
+        return(1);        
+      }
+      
     }
   }
   return(0);
@@ -413,11 +427,8 @@ int main(void)
   icsmd.onClose=MyIDLECSM_onClose;  
   icsm->constr=&icsmd;  
   
-  #ifdef NEWSGOLD
-      AddKeybMsgHook((void *)my_keyhook);
-  #else
-      if (!AddKeybMsgHook_end((void *)my_keyhook)) ShowMSG(1, (int) "IdleLinks. Невозможно зарегистрировать обработчик!"); 
-  #endif
+  AddKeybMsgHook((void *)my_keyhook);
+
   UnlockSched();
   
   return 0;
