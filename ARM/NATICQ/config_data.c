@@ -38,19 +38,8 @@ __root const CFG_HDR cfghdr_m71={CFG_LEVEL,"Default statuses",1,0};
     LG_STONLINE,
     LG_STFFC
   };
-  
   __root const CFG_HDR cfghdr7_6={CFG_UINT,"My XStatus",0,100};
   __root const unsigned int MY_DEF_XSTATUS=0;
-  
-  __root const CFG_HDR cfghdr7_7={CFG_CBOX,"My Private Status",0,5};
-  __root const int MY_DEF_PRIVSTATUS = 2;
-  __root const CFG_CBOX_ITEM cfgcbox7_7[5]={
-    "Vis for all",
-    "Vis only for list seeing",
-    "Vis for all, except list blind",
-    "Vis only for list of contacts",
-    "Invis for all"
-  };
   
   __root const CFG_HDR cfghdr7_4={CFG_CHECKBOX,"Show Offline",0,2};
   __root const int DEF_SHOWOFF_STATUS=0;

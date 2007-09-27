@@ -7,7 +7,6 @@
 #include "main.h"
 
 extern int S_ICONS[];
-extern int CurrentPrivateStatus;
 
 static const int mmanage_cl_softkeys[] = {0,1,2};
 
@@ -256,35 +255,30 @@ void SetPrivateStatus(int status)
 
 static void PL_VisibleForAll(GUI *data)
 {
-  CurrentPrivateStatus=PL_ALL_CAN_SEE;
   SetPrivateStatus(PL_ALL_CAN_SEE);
   GeneralFuncF1(1);
 }
 
 static void PL_VisibleOnlyForVisList(GUI *data)
 {
-  CurrentPrivateStatus=PL_VISLIST_CAN_SEE;
   SetPrivateStatus(PL_VISLIST_CAN_SEE);
   GeneralFuncF1(1);
 }
 
 static void PL_VisibleForAllExceptInvisList(GUI *data)
 {
-  CurrentPrivateStatus=PL_INVISLIST_CANNOT_SEE;
   SetPrivateStatus(PL_INVISLIST_CANNOT_SEE);
   GeneralFuncF1(1);
 }
 
 static void PL_VisibleOnlyForContactList(GUI *data)
 {
-  CurrentPrivateStatus=PL_CONTACTLIST_CAN_SEE;
   SetPrivateStatus(PL_CONTACTLIST_CAN_SEE);
   GeneralFuncF1(1);
 }
 
 static void PL_InvisibleForAll(GUI *data)
 {
-  CurrentPrivateStatus=PL_NOBODY_CAN_SEE;
   SetPrivateStatus(PL_NOBODY_CAN_SEE);
   GeneralFuncF1(1);
 }
@@ -370,7 +364,7 @@ static const MENU_DESC private_list_MNU=
 int CreatePrivateStatusMenu(void)
 {
   patch_header(&private_list_HDR);
-  return CreateMenu(0,0,&private_list_MNU,&private_list_HDR,CurrentPrivateStatus,PRIVATE_LIST_MAX,0,0);  
+  return CreateMenu(0,0,&private_list_MNU,&private_list_HDR,0,PRIVATE_LIST_MAX,0,0);  
 }
 
 static void AddContactGrp(GUI *data)
