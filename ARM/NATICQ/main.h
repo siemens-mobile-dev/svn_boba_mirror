@@ -88,5 +88,6 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define T_ADDGROUP 28
 #define T_ADDIGNORE 29
 #define T_SETPRIVACY 30
+#define T_LASTPRIVACY 31
 
 #endif

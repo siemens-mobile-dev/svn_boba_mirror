@@ -7,6 +7,7 @@
 #include "main.h"
 
 extern int S_ICONS[];
+extern int CurrentPrivateStatus;
 
 static const int mmanage_cl_softkeys[] = {0,1,2};
 
@@ -268,6 +269,16 @@ int CreateAddContactGrpDialog(CLIST *cl_sel)
   return CreateInputTextDialog(&acgd_desc,&acgd_hdr,eq,1,grp);
 }
 
+const int PR_LIST_ID[5]=
+{
+  PL_ALL_CAN_SEE,
+  PL_VISLIST_CAN_SEE,
+  PL_INVISLIST_CANNOT_SEE,
+  PL_CONTACTLIST_CAN_SEE,
+  PL_NOBODY_CAN_SEE
+};
+ 
+
 void SetPrivateStatus(int status)
 {
   TPKT *p;
@@ -276,7 +287,18 @@ void SetPrivateStatus(int status)
   p->pkt.type=T_SETPRIVACY;
   p->pkt.data_len=1;
   p->data[0]=status;
+  CurrentPrivateStatus=status;
   SUBPROC((void *)SendAnswer,0,p);
+}
+
+int GetPrivatePosInMenu(void)
+{
+  int i=0;
+  for (; i<5; i++)
+  {
+    if (PR_LIST_ID[i]==CurrentPrivateStatus) break;
+  }
+  return (i);
 }
 
 #define PRIVATE_LIST_MAX 5
@@ -354,7 +376,7 @@ static const MENU_DESC private_list_MNU=
 int CreatePrivateStatusMenu(void)
 {
   patch_header(&private_list_HDR);
-  return CreateMenu(0,0,&private_list_MNU,&private_list_HDR,0,PRIVATE_LIST_MAX,0,0);  
+  return CreateMenu(0,0,&private_list_MNU,&private_list_HDR,GetPrivatePosInMenu(),PRIVATE_LIST_MAX,0,0);  
 }
 
 static void AddContactGrp(GUI *data)

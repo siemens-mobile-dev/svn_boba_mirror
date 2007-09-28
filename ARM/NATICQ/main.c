@@ -190,6 +190,7 @@ int Is_Show_Offline;
 int Is_Show_Groups;
 int CurrentStatus;
 int CurrentXStatus;
+int CurrentPrivateStatus;
 
 //===================================================================
 const char def_setting[]="%sdef_settings_%d";
@@ -1646,6 +1647,12 @@ void get_answer(void)
 	    UnlockSched();
 	  }
 	  break;
+        case T_LASTPRIVACY:
+          n=i+sizeof(PKT);
+          p=malloc(n);
+          memcpy(p,&RXbuf,n);
+	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
+	  break;
 	}
 	i=-(int)sizeof(PKT); //А может еще есть данные
       }
@@ -2109,6 +2116,9 @@ ProcessPacket(TPKT *p)
 //      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
       ShowMSG(0,(int)s);
     }
+    break;
+  case T_LASTPRIVACY:
+    CurrentPrivateStatus=p->data[0];
     break;
   }
   mfree(p);
