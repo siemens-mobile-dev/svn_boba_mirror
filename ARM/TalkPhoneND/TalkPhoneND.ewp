@@ -546,11 +546,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>TalkPhoneND_NSG.elf</state>
+          <state>TalkPhoneND.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1370,11 +1370,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>TalkPhoneND_EL.elf</state>
+          <state>TalkPhoneND.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2193,11 +2193,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>TalkPhoneND_SG_X75.elf</state>
+          <state>TalkPhoneND.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -3016,11 +3016,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>TalkPhoneND_SG_X75.elf</state>
+          <state>TalkPhoneND.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
