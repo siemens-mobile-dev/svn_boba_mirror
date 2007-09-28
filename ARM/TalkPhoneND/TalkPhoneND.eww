@@ -2,7 +2,7 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\TalkPhone.ewp</path>
+    <path>$WS_DIR$\TalkPhoneND.ewp</path>
   </project>
   <batchBuild/>
 </workspace>
