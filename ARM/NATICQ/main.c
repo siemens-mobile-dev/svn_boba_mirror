@@ -13,6 +13,7 @@
 #include "status_change.h"
 #include "strings.h"
 #include "manage_cl.h"
+#include "cl_work.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -622,28 +623,6 @@ int AddLOGQ(LOGQ **queue, LOGQ *p)
   return(i+1); //Теперь всего в логе элементов
 }
 
-void FreeXText(CLIST *t)
-{
-  if (t->xtext) {mfree(t->xtext);t->xtext=NULL;}
-}
-
-//Уничтожить список
-void FreeCLIST(void)
-{
-  CLIST *cl=(CLIST*)cltop;
-  cltop=0;
-  while(cl)
-  {
-    CLIST *p;
-    if (cl->log) FreeLOGQ(&cl->log);
-    if (cl->answer) mfree(cl->answer);
-    if (cl->xtext) mfree(cl->xtext);
-    p=cl;
-    cl=(CLIST*)(cl->next);
-    mfree(p);
-  }
-}
-
 int GetIconIndex(CLIST *t)
 {
   unsigned short s;
@@ -677,30 +656,6 @@ int GetIconIndex(CLIST *t)
   return(IS_ONLINE);
 }
 
-CLIST *FindContactByUin(unsigned int uin)
-{
-  CLIST *t;
-  t=(CLIST *)cltop;
-  while(t)
-  {
-    if ((t->uin==uin)&&(!t->isgroup)) break;
-    t=t->next;
-  }
-  return(t);
-}
-
-CLIST *FindGroupByID(unsigned int grp)
-{
-  CLIST *t;
-  t=(CLIST *)cltop;
-  while(t)
-  {
-    if ((t->group==grp)&&(t->isgroup)) break;
-    t=t->next;
-  }
-  return(t);
-}
-
 LOGQ *FindContactLOGQByAck(TPKT *p)
 {
   CLIST *t;
@@ -721,99 +676,8 @@ LOGQ *FindContactLOGQByAck(TPKT *p)
   return q;
 }
 
-//Ключи для поиска по T9
-static const char table_T9Key[256]=
-"11111111111111111111111111111111"
-"10001**0***0000*012345678900***0"
-"0222333444555666777788899991*110"
-"122233344455566677778889999111*1"
-"11111111111111111111111111111111"
-"11111111311111111111111131111111"
-"22223333444455566677778888899999"
-"22223333444455566677778888899999";
 
 char ContactT9Key[32];
-
-
-int CompareContacts(CLIST *t, CLIST *p)
-{
-  int c;
-  /*  int i1=t->isactive?1:0;
-  int i2=p->isactive?1:0;
-  if ((c=i1-i2))
-  {
-  return(c);
-}*/
-  if ((c=p->group-t->group))
-  {
-    return(c);
-  }
-  
-  extern const int SORT_CLIST;
-  int ip=GetIconIndex(p);
-  int it=GetIconIndex(t);
-  switch (SORT_CLIST)
-  {
-  case 0: // by name
-    if ((ip>IS_OFFLINE)&&(ip<IS_MSG)&&
-	(it>IS_OFFLINE)&&(it<IS_MSG)) break;
-  case 1: // by status
-    if ((c=ip-it))
-    {
-      return(c);
-    }
-    break;
-  }
-  
-  return(strcmp_nocase(t->name,p->name));
-}
-
-CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
-{
-  CLIST *t;
-  t=(CLIST *)cltop;
-  char *s;
-  char *d;
-  int c;
-  int grp_id=0;
-  int grp_dis=0;
-  while(t)
-  {
-    if (t->isgroup)
-    {
-      grp_id=t->group;
-      grp_dis=t->state;
-    }
-    if (act_flag<2)
-    {
-      if ((act_flag)&&(!t->isactive)) goto L_NOT9;
-      if ((!act_flag)&&(t->isactive)) goto L_NOT9;
-    }
-    if ((si==IS_ANY)||(GetIconIndex(t)==si))
-    {
-      s=ContactT9Key;
-      if ((!Is_Show_Groups)&&(t->isgroup)) goto L_NOT9;
-      
-      if ((!t->isgroup)&&(t->group==grp_id)&&(grp_dis)&&(!(*s))) goto L_NOT9;
-      
-      if (!Is_Show_Offline) // by Seklth 13.06.2007
-        if ((!t->isgroup)&&(!t->isactive)&&(t->state==0xFFFF)&&(t->uin!=UIN)&&(!(*s))) 
-          if (!t->isunread) goto L_NOT9;
-      
-      d=t->name;
-      while(c=*s++)
-      {
-	if (c!=table_T9Key[*d++]) goto L_NOT9;
-      }
-      if (search_contact==t) return t; //Нашли контакт по адресу
-      if (!(*i)) return(t);
-      (*i)--;
-    }
-  L_NOT9:
-    t=t->next;
-  }
-  return(t);
-}
 
 void UpdateCLheader(void)
 {
@@ -851,107 +715,6 @@ void BackSpaceContactT9(void)
   {
     l--;
     ContactT9Key[l]=0;
-  }
-}
-
-int CountContacts(void)
-{
-  int l=-1;
-  FindContactByNS(&l,IS_ANY,2,NULL);
-  l=-1-l;
-  return l;
-}
-
-CLIST *FindContactByN(int i)
-{
-  CLIST *t;
-  int f=IsActiveUp;
-  if (f)
-  {
-    t=FindContactByNS(&i,IS_ANY,1,NULL); if ((!i)&&(t)) return (t);
-    f=0;
-  }
-  else f=2;
-  t=FindContactByNS(&i,IS_ANY,f,NULL);
-  return t;
-}
-
-int FindContactByContact(CLIST *p)
-{
-  int l=-1;
-  //  CLIST *t;
-  int f=IsActiveUp;
-  if (f)
-  {
-    if (FindContactByNS(&l,IS_ANY,1,p)) return -1-l;
-    f=0;
-  }
-  else f=2;
-  FindContactByNS(&l,IS_ANY,f,p);
-  return -1-l;
-}
-
-void SwapContacts(CLIST *first, CLIST *second)
-{
-  CLIST *tp;
-  if ((tp=second->next)) tp->prev=first;
-  if ((tp=first->prev)) tp->next=second;
-  first->next=second->next;
-  second->next=first;
-  second->prev=first->prev;
-  first->prev=second;
-}
-
-void ChangeContactPos(CLIST *p)
-{
-  CLIST *t;
-  if ((t=p->prev))
-  {
-    //Проверяем, не надо ли всплывать
-    while(CompareContacts(t,p)>0)
-    {
-      //Всплываем вверх списка
-      SwapContacts(t,p);
-      if (!(t=p->prev)) return; //Всплыли
-    }
-  }
-  if ((t=p->next))
-  {
-    //Проверяем, не надо ли углубляться
-    while(CompareContacts(p,t)>0)
-    {
-      SwapContacts(p,t);
-      if (!(t=p->next)) return; //Углубились нах ;)
-    }
-  }
-}
-
-//Прописать всех в offline
-void FillAllOffline(void)
-{
-  CLIST *cl=(CLIST*)cltop;
-  while(cl)
-  {
-    if (!cl->isgroup)
-    {
-      LOGQ *lp=cl->log;
-      while(lp)
-      {
-	lp->ID|=0x18000;
-	lp=lp->next;
-      }
-    }
-    if ((cl->state!=0xFFFF)&&
-	(!cl->isgroup))     //by BoBa 2.05.2007
-    {
-      CLIST *p=cl;
-      p->state=0xFFFF;
-      FreeXText(p);
-      cl=cl->next;
-      ChangeContactPos(p);
-      continue;
-    }
-    cl=(CLIST*)(cl->next);
   }
 }
 
@@ -1214,68 +977,6 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 #else
   SetMenuItemText(data, item, ws2, curitem);
 #endif
-}
-
-
-CLIST *AddContactOrGroup(CLIST *p)
-{
-  CLIST *t;
-  CLIST *pr;
-  t=(CLIST *)cltop;
-  if (t)
-  {
-    //Не первый
-    while(CompareContacts(t,p)<0)
-    {
-      if (!(pr=t->next))
-      {
-	//добавляем в конец
-	t->next=p;
-	p->prev=t;
-	return(p);
-      }
-      t=pr;
-    }
-    if ((pr=t->prev))
-      pr->next=p;
-    else
-      cltop=p;
-    p->prev=pr;
-    p->next=t;
-    t->prev=p;
-  }
-  else
-  {
-    //Первый
-    cltop=p;
-  }
-  return(p);
-}
-
-
-CLIST *AddContact(unsigned int uin, char *name)
-{
-  CLIST *p=malloc(sizeof(CLIST));
-  zeromem(p,sizeof(CLIST));
-  p->uin=uin;
-  p->group=GROUP_CACHE;
-  strncpy(p->name,name,sizeof(p->name)-1);
-  p->state=0xFFFF;
-  return AddContactOrGroup(p);
-}
-
-CLIST *AddGroup(unsigned int grp, char *name)
-{
-  CLIST *p=malloc(sizeof(CLIST));
-  zeromem(p,sizeof(CLIST));
-  //  p->uin=0;
-  p->group=grp;
-  p->isgroup=1;
-  strncpy(p->name,name,sizeof(p->name)-1);
-  if (!Is_Show_Groups) p->state=0;//Открыть группу
-  else
-    p->state=0xFFFF;
-  return AddContactOrGroup(p);
 }
 
 //===============================================================================================
@@ -2467,6 +2168,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       InitConfig();
       free_ICONS();
       setup_ICONS();
+      ResortCL();
       //      InitSmiles();
     }
   }

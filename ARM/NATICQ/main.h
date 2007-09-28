@@ -13,6 +13,12 @@ void ReadDefSettings(void);
 void WriteDefSettings(void);
 extern int connect_state;
 
+int GetIconIndex(CLIST *t);
+
+
+void FreeLOGQ(LOGQ **pp);
+
+
 typedef struct
 {
   CLIST *ed_contact;

@@ -11,6 +11,7 @@
 #include "revision.h"
 #include "manage_cl.h"
 #include "rect_patcher.h"
+#include "cl_work.h"
 
 //==============================================================================
 int MainMenu_ID;
@@ -78,7 +79,8 @@ static void ChangeShowGroupsMode(void)
           if (t->isgroup) t->state=0xFFFF;
           t=t->next;
         }      
-    }        
+    }
+  ResortCL();
   RecountMenu(NULL);
   RefreshGUI();
 }
