@@ -2162,7 +2162,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
   if (msg->msg==MSG_RECONFIGURE_REQ)
   {
     extern const char *successed_config_filename;
-    if (strcmp(successed_config_filename,(char *)msg->data0)==0)
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
       ShowMSG(1,(int)"NatICQ config updated!");
       InitConfig();
