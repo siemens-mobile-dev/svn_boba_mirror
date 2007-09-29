@@ -1816,6 +1816,13 @@ ProcessPacket(TPKT *p)
       }
 //      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
       ShowMSG(0,(int)s);
+      
+      for (int i=0;i<strlen(s);i++) 
+        {
+          if (s[i]=='\n') s[i]=13;
+        }
+      AddStringToLog(t,0x02,s,t->name,0xFFFFFFFF);
+      RecountMenu(t);      
     }
     break;
   case T_LASTPRIVACY:
