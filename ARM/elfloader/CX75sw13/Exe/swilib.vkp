@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;CX75v13
 
-;Library 04.09.2007
+;Library 29.09.2007
 
 +0FD4000
 #pragma enable  old_equal_ff
@@ -573,6 +573,16 @@
 08A4: 0xA0EF30A4 ; 229: __arm void longjmp(jmp_buf, int);
 ;
 08A8: 0xA07CEA53 ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
+;
+;8AC:              ; 22B:  CreateRadioButtonList(RadioButtonListDesc *, char num_of_radiobuttons, 0, 0, char prev_setting, void HandlerFunc(int), char flag)
+;8B0:              ; 22C:  pdcache_getval(char *return, int maxlen_of_return_str, char cachetype,0, *pd_entry_identifier)
+;8B4:              ; 22D:  pdcache_setval(char *new_value, char cachetype, 0, char *pd_entry_identifier)
+;8B8:              ; 22E:  OpenExplorer(ExplOpenDesc *)
+08BC: 0xA84D12E0   ; 22F:  TDateTimeSettings *RamDateTimeSettings
+08C0: 0xA07D7FAB   ; 230:  int GetTimeZoneShift(int param1, int param2, int timeZone)
+08C4: 0xA84D1288   ; 231:  TAppointment *RamAppointment
+;8C8:              ; 232:  void GBS_DestroyMessage(GBS_MSG *)
+;8CC:              ; 233:  void GetAllEmail()
 #pragma disable old_equal_ff
 +0
 

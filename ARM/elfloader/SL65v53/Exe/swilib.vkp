@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SL65v53
 
-;Library 04.09.2007
+;Library 29.09.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -607,6 +607,16 @@
 08A4: 0xA161A68C ; 229: __arm void longjmp(jmp_buf, int);
 ;
 08A8: 0xA0BFFC2F ; 22A: __thumb void FreeGSMTXTpkt(void *pkt);
+;
+;8AC:              ; 22B:  CreateRadioButtonList(RadioButtonListDesc *, char num_of_radiobuttons, 0, 0, char prev_setting, void HandlerFunc(int), char flag)
+;8B0:              ; 22C:  pdcache_getval(char *return, int maxlen_of_return_str, char cachetype,0, *pd_entry_identifier)
+;8B4:              ; 22D:  pdcache_setval(char *new_value, char cachetype, 0, char *pd_entry_identifier)
+;8B8:              ; 22E:  OpenExplorer(ExplOpenDesc *)
+08BC: 0xA8690630   ; 22F:  TDateTimeSettings *RamDateTimeSettings
+08C0: 0xA0B26E83   ; 230:  int GetTimeZoneShift(int param1, int param2, int timeZone)
+08C4: 0xA86905D8   ; 231:  TAppointment *RamAppointment
+;8C8:              ; 232:  void GBS_DestroyMessage(GBS_MSG *)
+;8CC:              ; 233:  void GetAllEmail()
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
