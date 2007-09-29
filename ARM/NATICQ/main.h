@@ -3,7 +3,6 @@
 
 // Общие функции модуля MAIN.C
 void SendAnswer(int dummy, TPKT *p);
-void ascii2ws(WSHDR *ws, const char *s);
 void CreateEditChat(CLIST *t);
 void set_my_status(void);
 void set_my_xstatus(void);

@@ -219,12 +219,35 @@ SOFTKEYSTAB edit_x_skt=
 
 void edit_xstatus_locret(void){}
 
+void ReplaceStr(char **str, int start_prev, int prev_len, char *next, int next_len)
+{
+  char *d, *buf;
+  char *s=*str;
+  if (s)
+  {
+    d=buf=malloc(strlen(s)+next_len-prev_len+1);
+    if (start_prev)
+    {
+      memcpy(buf, s, start_prev);
+      buf+=start_prev;
+    }
+    if (next_len)
+    {
+      memcpy(buf,next,next_len);
+      buf+=next_len;
+    }
+    strcpy(buf, s+start_prev+prev_len);
+    mfree(s);
+    *str=d;
+  }
+}
+
 int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
 {
   WSHDR *ws;
   char *s, *d, tmp[132];
   int cur_x_st;
-  int len, l, l1;
+  int len, l;
   int is_any_change=0;
   if (msg->keys==0xFFF)
   {
@@ -246,10 +269,7 @@ int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
       *d=0;
       if (len!=l || strncmp(s,tmp,len))
       {
-        XStatusText=realloc(XStatusText, (l1=strlen(XStatusText))+l+1);
-        s=GetXStatusStr(cur_x_st*3,&len);  // Возьмем новый указатель
-        memmove(s+l,s+len,l1-((s+len)-XStatusText)+1);
-        memcpy(s,tmp,l);
+        ReplaceStr(&XStatusText,s-XStatusText,len,tmp,l);
         is_any_change=1;
       }
     }
@@ -270,10 +290,7 @@ int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
       *d=0;
       if (len!=l || strncmp(s,tmp,len))
       {
-        XStatusText=realloc(XStatusText, (l1=strlen(XStatusText))+l+1);
-        s=GetXStatusStr(cur_x_st*3+1,&len);  // Возьмем новый указатель
-        memmove(s+l,s+len,l1-((s+len)-XStatusText)+1);
-        memcpy(s,tmp,l);
+        ReplaceStr(&XStatusText,s-XStatusText,len,tmp,l);
         is_any_change=1;
       }
     }
@@ -294,10 +311,7 @@ int edit_xstatus_onkey(GUI *data, GUI_MSG *msg)
       *d=0;
       if (len!=l || strncmp(s,tmp,len))
       {
-        XStatusText=realloc(XStatusText, (l1=strlen(XStatusText))+l+1);
-        s=GetXStatusStr(cur_x_st*3+2,&len);  // Возьмем новый указатель
-        memmove(s+l,s+len,l1-((s+len)-XStatusText)+1);
-        memcpy(s,tmp,l);
+        ReplaceStr(&XStatusText,s-XStatusText,len,tmp,l);
         is_any_change=1;
       }
     }
