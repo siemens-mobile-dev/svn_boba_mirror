@@ -151,7 +151,7 @@ void ProcessNextSmile(void)
     if (!p) break;
     zeromem(fn,128);
     strcpy(fn,SMILE_PATH);
-    strcat(fn,"\\");
+    if (fn[strlen(fn)-1]!='\\') strcat(fn,"\\");
     c=p-buf;
     if (c>(127-strlen(fn))) break;
     strncpy(fn+strlen(fn),buf,c);
