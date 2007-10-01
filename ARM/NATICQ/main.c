@@ -423,7 +423,6 @@ typedef struct
 
 int RXstate=EOP; //-sizeof(RXpkt)..-1 - receive header, 0..RXpkt.data_len - receive data
 
-char *msg_buf;
 TPKT RXbuf;
 TPKT TXbuf;
 
@@ -1970,7 +1969,6 @@ void maincsm_oncreate(CSM_RAM *data)
   csm->csm.unk1=0;
   maingui_id=csm->gui_id=CreateGUI(main_gui);
   ews=AllocWS(16384);
-  msg_buf=malloc(16384);
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
   //  SUBPROC((void *)InitSmiles);
@@ -2014,7 +2012,6 @@ void maincsm_onclose(CSM_RAM *csm)
   FreeCLIST();
   free_ICONS();
   //  FreeSmiles();
-  mfree(msg_buf);
   FreeWS(ews);
   FreeXStatusText();
   //  MutexDestroy(&contactlist_mtx);
@@ -2382,52 +2379,73 @@ int main(char *filename)
 //===========================================================
 void edchat_locret(void){}
 
-void ExtractAnswer(WSHDR *ws)
+char *ExtractAnswer(WSHDR *ws)
 {
   S_SMILES *t;
   int c;
-  int scur=0;
-  int wcur=0;
+  int len=0;
+  int scur;
+  char *msg=NULL;
   unsigned short *wsbody=ws->wsbody;
   int wslen=wsbody[0];
-  do
+  if (wslen)
   {
-    if (wcur>=wslen) break;
-    c=wsbody[wcur+1];
-    if (c==10) c=13;
-    if (c>=0xE100)
+    for (int i=0; i<wslen; i++) // Посчитаем общую длину будущей строки
     {
-      t=FindSmileByUni(c);
-      if (t)
+      c=wsbody[i+1];
+      if (c>=0xE100)
       {
-        int w;
-        char *s;
-	if (t->lines)
-	{
-	  s=t->lines->text;
-	  while ((w=*s++) && scur<16383)
-	  {
-	    msg_buf[scur]=w;
-	    scur++;
-	  }
-	}
+        t=FindSmileByUni(c);
+        if (t)
+        {
+          if (t->lines)
+          {
+            len+=strlen(t->lines->text);
+          }
+        }
+        else  len++;
+      }
+      else  len++;
+    }
+    
+    msg=malloc(len+1);
+    scur=0;
+    for (int wcur=0; wcur<wslen && scur<len; wcur++)
+    {
+      c=wsbody[wcur+1];
+      if (c==10) c=13;
+      if (c>=0xE100)
+      {
+        t=FindSmileByUni(c);
+        if (t)
+        {
+          int w;
+          char *s;
+          if (t->lines)
+          {
+            s=t->lines->text;
+            while ((w=*s++) && scur<len)
+            {
+              msg[scur]=w;
+              scur++;
+            }
+          }
+        }
+        else
+        {
+          msg[scur]=char16to8(c);
+          scur++;
+        }
       }
       else
       {
-        msg_buf[scur]=char16to8(c);
+        msg[scur]=char16to8(c);
         scur++;
       }
     }
-    else
-    {
-      msg_buf[scur]=char16to8(c);
-      scur++;
-    }
-    wcur++;
+    msg[scur]=0;
   }
-  while(scur<16383);
-  msg_buf[scur]=0;
-  return;
+  return msg;
 }
 
 CLIST *FindNextActiveContact(CLIST *t)
@@ -2549,12 +2567,71 @@ void ed_options_handler(USR_MENU_ITEM *item)
   }
 }
 
+void ParseAnswer(WSHDR *ws, const char *s)
+{
+  S_SMILES *t;
+  S_SMILES *t_root=(S_SMILES *)s_top;
+  STXT_SMILES *st;
+  unsigned int wchar;
+  unsigned int ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
+  CutWSTR(ws,0);
+  int i;
+  while(wchar=*s)
+  {
+    t=t_root;
+    while(t)
+    {
+      st=t->lines;
+      while(st)
+      {
+	if ((ulb&st->mask)==st->key)
+	{
+	  if (!strncmp(s,st->text,strlen(st->text))) goto L1;
+	}
+	st=st->next;
+      }
+      t=t->next;
+    }
+  L1:
+    if (t)
+    {
+      wchar=t->uni_smile;
+      s+=strlen(st->text);
+      ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
+    }
+    else
+    {
+      wchar=char8to16(wchar);
+      s++;
+      ulb>>=8;
+      ulb+=s[3]<<24;
+    }
+    if (wchar!=10) wsAppendChar(ws,wchar);
+  }
+  i=ws->wsbody[0];
+  while(i>1)
+  {
+    if (ws->wsbody[i--]!=13) break;
+    ws->wsbody[0]=i;
+  }
+}
+
+void SaveAnswer(CLIST *cl, WSHDR *ws)
+{
+  char *p=ExtractAnswer(ws);
+  mfree(cl->answer);
+  cl->answer=p;
+}
+
 int edchat_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
   GBS_DelTimer(&tmr_illumination);
   CLIST *t;
   TPKT *p;
+  EDITCONTROL ec;
+  int len;
+  char *s;
   int l=msg->gbsmsg->submess;
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
   
@@ -2571,7 +2648,6 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     {
       if (EDIT_GetFocus(data)==ed_struct->ed_answer)
       {
-	EDITCONTROL ec;
 	ExtractEditControl(data,ed_struct->ed_answer,&ec);
 	if (ec.pWS->wsbody[0]==(EDIT_GetCursorPos(data)-1))
 	{
@@ -2598,17 +2674,17 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
       {
 	if ((t=ed_struct->ed_contact))
 	{
-	  LOGQ *lp=t->answer;
-	  if (lp)
+          ExtractEditControl(data,ed_struct->ed_answer,&ec);
+          SaveAnswer(t,ec.pWS);
+	  if ((s=t->answer))
 	  {
-	    char *s=lp->text;
-	    if (strlen(s))
+	    if ((len=strlen(s)))
 	    {
 	      t->isactive=ACTIVE_TIME;
-	      p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+	      p=malloc(sizeof(PKT)+len+1);
 	      p->pkt.uin=t->uin;
 	      p->pkt.type=T_SENDMSG;
-	      p->pkt.data_len=l;
+	      p->pkt.data_len=len;
 	      strcpy(p->data,s);
 	      AddStringToLog(t,0x01,p->data,I_str,(++SENDMSGCOUNT)&0x7FFF); //Номер сообщения
 	      SUBPROC((void *)SendAnswer,0,p);
@@ -2663,56 +2739,6 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   //1: close
 }
 
-
-void ParseAnswer(WSHDR *ws, const char *s)
-{
-  S_SMILES *t;
-  S_SMILES *t_root=(S_SMILES *)s_top;
-  STXT_SMILES *st;
-  unsigned int wchar;
-  unsigned int ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
-  CutWSTR(ws,0);
-  int i;
-  while(wchar=*s)
-  {
-    t=t_root;
-    while(t)
-    {
-      st=t->lines;
-      while(st)
-      {
-	if ((ulb&st->mask)==st->key)
-	{
-	  if (!strncmp(s,st->text,strlen(st->text))) goto L1;
-	}
-	st=st->next;
-      }
-      t=t->next;
-    }
-  L1:
-    if (t)
-    {
-      wchar=t->uni_smile;
-      s+=strlen(st->text);
-      ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
-    }
-    else
-    {
-      wchar=char8to16(wchar);
-      s++;
-      ulb>>=8;
-      ulb+=s[3]<<24;
-    }
-    if (wchar!=10) wsAppendChar(ws,wchar);
-  }
-  i=ws->wsbody[0];
-  while(i>1)
-  {
-    if (ws->wsbody[i--]!=13) break;
-    ws->wsbody[0]=i;
-  }
-}
-
 static const HEADER_DESC edchat_hdr={0,0,NULL,NULL,NULL,0,LGP_NULL};
 
 void (*old_ed_redraw)(void *data);
@@ -2764,15 +2790,9 @@ void edchat_ghook(GUI *data, int cmd)
     ed_struct->ed_chatgui=data;
 //    edgui_data=data;
     EDIT_SetFocus(data,ed_struct->ed_answer);
-
-//#ifdef NEWSGOLD
-//#else
+    
     static void *methods[16];
-#ifdef NEWSGOLD
     void **m=GetDataOfItemByID(data,2);
-#else
-    void **m=GetDataOfItemByID(data,4);
-#endif
     if (m)
     {
       if (m[1])
@@ -2783,11 +2803,15 @@ void edchat_ghook(GUI *data, int cmd)
         m[1]=methods;
       }      
     }
-//#endif
   }
   if (cmd==3)
   {
 //    if (edgui_data==data) edgui_data=NULL;
+    if (ed_struct->ed_contact)
+    {
+      ExtractEditControl(data,ed_struct->ed_answer,&ec);
+      SaveAnswer(ed_struct->ed_contact,ec.pWS);
+    }
     RecountMenu(ed_struct->ed_contact);
     mfree(ed_struct);
   }
@@ -2808,14 +2832,8 @@ void edchat_ghook(GUI *data, int cmd)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
     ExtractEditControl(data,ed_struct->ed_answer,&ec);
-    ExtractAnswer(ec.pWS);
     if (ec.pWS->wsbody[0]==0)
       SetSoftKey(data,&sk_cancel,SET_SOFT_KEY_N==0?1:0);
-    if (ed_struct->ed_contact)
-    {
-      mfree(ed_struct->ed_contact->answer);
-      ed_struct->ed_contact->answer=NewLOGQ(msg_buf);
-    }
     if (!EDIT_IsBusy(data))
     {
       time_to_stop_t9=0;
@@ -2913,7 +2931,6 @@ void CreateEditChat(CLIST *t)
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     edchat_toitem++;
-    //    wsprintf(ews,percent_t,msg_buf);
     ParseAnswer(ews,lp->text);
     ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
@@ -2934,7 +2951,8 @@ void CreateEditChat(CLIST *t)
   AddEditControlToEditQend(eq,&ec,ma);
   edchat_toitem++;
   
-  ParseAnswer(ews,t->answer?t->answer->text:empty_str);
+  if (t->answer) ParseAnswer(ews,t->answer);
+  else  CutWSTR(ews,0);
   ConstructEditControl(&ec,3,0x00,ews,1024);
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
