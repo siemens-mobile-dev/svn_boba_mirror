@@ -23,7 +23,11 @@ __root const CFG_CBOX_ITEM cfgcbox1435[2]={"Normal","Centered"};
 
 // Шрифт текста
 __root const CFG_HDR cfghdr8o7yo0 = {CFG_UINT, "Font", 0, 11};
+#ifdef NEWSGOLD
 __root const unsigned int TXT_FONT = 11;
+#else
+__root const unsigned int TXT_FONT = 8;
+#endif
 
 // Цвет текста
 __root const CFG_HDR cfghdr5={CFG_COLOR,"Font Color",0,0};

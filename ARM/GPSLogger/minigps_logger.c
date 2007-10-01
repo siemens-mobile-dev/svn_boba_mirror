@@ -225,6 +225,7 @@ char *Get_Current_Location(char *action)
     {
       res = malloc(20);
       sprintf(res, "%d-%d", Res.ci,Res.lac);
+      Put_In_Cache(Res.ci,Res.lac, res);// Пишем псевдоимя в лог
       return res;
     }
     return NULL;
