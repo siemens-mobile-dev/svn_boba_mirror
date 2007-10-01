@@ -31,15 +31,14 @@ char path[128]="4:\\ZBin\\daemons\\";
 
 typedef struct
 {
-char name[256];
-char oldmode;
-char newmode;
-int size;
-}
-TDaemon;
+  char name[128];
+  int oldmode;
+  int newmode;
+  int size;
+}TDaemon;
 
-TDaemon *daemons;
-int ndaemons;
+TDaemon *daemons=NULL;
+int ndaemons=0;
 int total=0;
 
 //int icon[]={0x58,0};
@@ -54,13 +53,15 @@ void * old_redraw;
 
 typedef void (*tredraw)(void *data);
 
+
+static const char RED[4]={255,0,0,100};
+static const char BLACK[4]={0,0,0,100};
+
 void new_redraw(void *data)
 {
-((tredraw)old_redraw)(data);  
-wsprintf(ews,"total ~%dk",total/1024);
-unsigned int RED=0x640000FF;
-unsigned int BLACK=0x64000000;
-DrawString(ews,ScreenW()/2,YDISP+2,ScreenW(),YDISP+32,FONT_SMALL+1,TEXT_ALIGNMIDDLE,(char*)&RED,(char*)&BLACK);
+  ((tredraw)old_redraw)(data);
+  wsprintf(ews,"total ~%dk",total/1024);
+  DrawString(ews,ScreenW()/2,YDISP+2,ScreenW(),YDISP+32,FONT_SMALL+1,TEXT_ALIGNMIDDLE,RED,BLACK);
 }
 
 typedef struct
@@ -70,33 +71,129 @@ typedef struct
 }MAIN_CSM;
 
 
+#pragma inline=forced
+int toupper(int c)
+{
+  if ((c>='a')&&(c<='z')) c+='A'-'a';
+  return(c);
+}
+#pragma inline
+int strcmp_nocase(const char *s1,const char *s2)
+{
+  int i;
+  int c;
+  while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
+  return(i);
+}
+
+void FreeDaemonList()
+{
+  ndaemons=0;
+  mfree(daemons);
+  daemons=NULL;
+}
+
+int LoadDaemonList()
+{   
+  DIR_ENTRY de;
+  unsigned int err;
+  TDaemon * d;
+  char name[256];
+  FreeDaemonList();
+  strcpy(name,path);
+  strcat(name,"*.*");
+  char *s;
+  int len;
+  int mode=0;
+  if (FindFirstFile(&de,name,&err))
+  {
+    do
+    {
+      if (!(de.file_attr&FA_DIRECTORY))
+      {
+        if ((s=strrchr(de.file_name,'.')))
+        {
+          len=s-de.file_name;
+          s++;
+          if (strcmp_nocase(s,"elf")==0) mode=mode_enanled+1;
+          else if (strcmp_nocase(s,"fakk")==0)  mode=mode_disabled+1;
+          else mode=0;
+          if (mode)
+          {
+            d=daemons=realloc(daemons,(ndaemons+1)*sizeof(TDaemon));
+            d+=ndaemons;
+            strncpy(d->name,de.file_name,len);
+            d->name[len]=0;
+            d->size=de.file_size;
+            total+=d->size;
+            d->oldmode=d->newmode=mode-1;
+            ndaemons++;
+          }
+        }
+      }
+    }
+    while(FindNextFile(&de,&err));
+  }
+  FindClose(&de,&err);
+  return ndaemons;
+};
+
+int SaveDaemonList()
+{
+  TDaemon *d=daemons;
+  for(int i=0;i<ndaemons;i++)
+  {
+    char a[256],b[256]; 
+    if(d->newmode!=d->oldmode)
+    {
+      unsigned int err;
+      sprintf(a,"%s%s.fakk",path,d->name);
+      sprintf(b,"%s%s.elf",path,d->name);
+      if(d->newmode==mode_disabled)
+        fmove(b,a,&err);
+      else
+        fmove(a,b,&err);
+      if (err) return (err);
+    }
+    d++;
+  }
+  return 0;
+};
+
 int create_menu(void);
 
 void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
+  ews=AllocWS(128);
+  
+  if(!LoadDaemonList())
+  {
+    mfree(daemons);  
+    ShowMSG(2,(int)"Cant access Zbin\\Daemons!");
+  }
   csm->gui_id=create_menu();  
 }
 
 void Killer(void)
 {
-  FreeWS(ews);
   extern void *ELF_BEGIN;
   extern void kill_data(void *p, void (*func_p)(void *));
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
-int SaveDaemonList();
 void maincsm_onclose(CSM_RAM *csm)
 {
   if(SaveDaemonList()) //ошибка
     ShowMSG(2,(int)"Error while saving daemons list!!");
-  mfree(daemons);  
+  FreeWS(ews);
+  FreeDaemonList();
   SUBPROC((void *)Killer);
 }
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
+  
   MAIN_CSM *csm=(MAIN_CSM*)data;
   if (msg->msg==MSG_GUI_DESTROYED)
   {
@@ -116,18 +213,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 }
 
 unsigned short maincsm_name_body[140];
-
-int file_size(char * path)
-{
-unsigned int err,i;
-int handle;
-int len;
-handle=fopen(path,A_ReadOnly+A_BIN,P_READ,&err);
-if(handle==-1) return 0;
-len=lseek(handle,8*1024*1024,0,&err,&i);
-fclose(handle,&err);
-return len;
-};
 
 const struct
 {
@@ -164,87 +249,12 @@ void UpdateCSMname(void)
 }
 
 
-void del_ext(char *s)
-{
-while(*s)s++;  
-while(*s!='.')s--;
-*s=0;
-};
-
-int LoadDaemonList()
-{   
-  ndaemons=0;
-  DIR_ENTRY de;
-  unsigned int err;
-  TDaemon * d=daemons;
-  char name[256];
-  char bu[256];
-  strcpy(name,path);
-  strcat(name,"*.elf");
-  if (FindFirstFile(&de,name,&err))
-  {
-    do
-    {
-      strcpy(d->name,de.file_name);
-      sprintf(bu,"%s%s",path,de.file_name);
-      d->size=file_size(bu);
-      total+=d->size;
-      del_ext(d->name);
-      d->oldmode=d->newmode=mode_enanled;
-      ndaemons++;   
-      d++;
-      }
-    while(FindNextFile(&de,&err));
-  }
-  FindClose(&de,&err);
-
-  strcpy(name,path);
-  strcat(name,"*.fakk");
-  if (FindFirstFile(&de,name,&err))
-  {
-    do
-    {
-      strcpy(d->name,de.file_name);
-      sprintf(bu,"%s%s",path,de.file_name);
-      d->size=file_size(bu);
-      del_ext(d->name);
-      d->oldmode=d->newmode=mode_disabled;
-      ndaemons++;   
-      d++;
-    }
-    while(FindNextFile(&de,&err));
-  }
-  FindClose(&de,&err);
-  return ndaemons;
-};
-
-int SaveDaemonList()
-{
-TDaemon *d=daemons;  
-for(int i=0;i<ndaemons;i++)  
- { 
- char a[256],b[256];  
- if(d->newmode!=d->oldmode)
-   {
-   unsigned int err;  
-   sprintf(a,"%s%s.fakk",path,d->name);
-   sprintf(b,"%s%s.elf",path,d->name);
-   if(d->newmode==mode_disabled)
-     fmove(b,a,&err);
-   else
-     fmove(a,b,&err);
-   if (err) return (err);
-   };
- d++;  
- };
-return 0;
-};
 
 SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"On/Off"},
   {0x0001,0x0000,(int)"Exit"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt=
@@ -255,7 +265,7 @@ SOFTKEYSTAB menu_skt=
 
 int S_ICONS[3];
 
-HEADER_DESC contactlist_menuhdr={0,0,131,21,NULL,(int)"Autostart:",0x7FFFFFFF};
+HEADER_DESC contactlist_menuhdr={0,0,131,21,NULL,(int)"Autostart:",LGP_NULL};
 int menusoftkeys[]={0,1,2};
 
 void contactlist_menu_ghook(void *data, int cmd);
@@ -283,8 +293,8 @@ int create_menu(void)
 void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 {
   void *item=AllocMenuItem(data);
-  WSHDR *ws=AllocMenuWS(data,20);
-  wsprintf(ws,"%s",daemons[curitem].name);
+  WSHDR *ws=AllocMenuWS(data,32);
+  str_2ws(ws,daemons[curitem].name,32);
   SetMenuItemIconArray(data,item,S_ICONS);
   SetMenuItemText(data,item,ws,curitem);
   SetMenuItemIcon(data,curitem,daemons[curitem].newmode);
@@ -293,14 +303,15 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 void contactlist_menu_ghook(void *data, int cmd)
 {
   static int unhooked=1;
-  if(unhooked){
+  if(unhooked)
+  {
      GUI * gui=(GUI*)data;
      memcpy(&gui_methods,gui->methods,nmeth*4);    
      gui->methods=&gui_methods;  
      old_redraw=gui_methods[0];
      gui_methods[0]=(void*)&new_redraw;     
      unhooked=0;
-     };
+  }
 }
 
 int contactlist_menu_onkey(void *data, GUI_MSG *msg)
@@ -310,15 +321,14 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     int i=GetCurMenuItem(data);
     daemons[i].newmode=1-daemons[i].newmode;
     total+=((daemons[i].newmode)?1:-1)*(daemons[i].size);
-    SetMenuItemIcon(data,i,daemons[i].newmode);    
-    REDRAW();
+    RefreshGUI();
     return(-1);
   }
   if (msg->keys==0x3D)
   {
-  //create_options_menu();
-  ShowMSG(2,(int)"PANDEMONIUM\n(c)captain_SISka 2007"); 
-  return(-1);
+    //create_options_menu();
+    ShowMSG(2,(int)"PANDEMONIUM\n(c)captain_SISka 2007");
+    return(-1);
   }
   return(0);
 }
@@ -330,16 +340,6 @@ int main()
   
   fstats.file_attr=FA_DIRECTORY;
   if (GetFileStats(path,&fstats,&err)==-1) path[0]='0';
-  
-  ews=AllocWS(128);
-  
-  daemons=malloc(sizeof(TDaemon)*64);
-  if(!LoadDaemonList())
-    {
-    mfree(daemons);  
-    ShowMSG(2,(int)"Cant access Zbin\\Daemons!");
-    return 0;
-    };
   
   S_ICONS[0]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);//icon_disabled;
   S_ICONS[1]=GetPicNByUnicodeSymbol(CBOX_CHECKED);//icon_enabled;
