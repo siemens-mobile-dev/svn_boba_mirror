@@ -2356,17 +2356,17 @@ int main(char *filename)
   len=(s-filename)+1;
   strncpy(elf_path,filename,len);
   elf_path[len]=0;
-  ReadDefSettings();
-  
-  setup_ICONS();
-  LoadXStatusText();
   if (!UIN)
   {
     LockSched();
     ShowMSG(1,(int)LG_MSGNOUINPASS);
     UnlockSched();
+    SUBPROC((void *)ElfKiller);
     return 0;
   }
+  ReadDefSettings();
+  setup_ICONS();
+  LoadXStatusText();
   UpdateCSMname();
   LockSched();
   maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
