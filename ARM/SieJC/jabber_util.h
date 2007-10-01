@@ -22,6 +22,15 @@ typedef enum
   ADM_VOICE_GRANT       // Предоставить голос
 }MUC_ADMIN;
 
+// Для хранения текущей инфы о статусе (чтобы восстановить после реконнекта)
+// И для установки в конфу, если зашли позже установки статуса в ростере
+typedef struct
+{
+  char status;
+  short priority;
+  char *txt;
+}ONLINEINFO;
+
 /*
   Посылка стандартного Jabber Iq
 */

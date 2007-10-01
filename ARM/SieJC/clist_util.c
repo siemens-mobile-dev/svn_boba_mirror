@@ -379,6 +379,27 @@ void CList_MakeAllResourcesOFFLINE(CLIST* ClEx)
   }
 }
 
+// ƒелаем оффлайнами все контакты. Useful дл€ реконнекта *џ*
+void CList_MakeAllContactsOFFLINE()
+{
+  CLIST *ClEx;
+  if(!(ClEx=cltop))return;
+  while(ClEx)
+  {
+    TRESOURCE* ResEx = ClEx->res_list;
+    while(ResEx)
+    {
+      if(ResEx->entry_type!=T_GROUP)
+        CList_Ch_Status(ResEx,
+                      PRESENCE_OFFLINE,
+                       NULL
+                       );
+      ResEx = ResEx->next;
+    }
+    ClEx = ClEx->next;
+  }
+}
+
 void CList_ToggleVisibilityForGroup(int GID)
 {
   CLIST* ClEx = cltop;
@@ -780,6 +801,9 @@ void CList_Display_Popup_Info(TRESOURCE* ResEx)
   Disp_Info(ResEx);
 }
 
+
+char qqq[100];
+
 // бегаем по контактам с сообщени€ми
 void nextUnread()
 {
@@ -793,11 +817,15 @@ void nextUnread()
     ResEx = ClEx->res_list;
     while(ResEx) //идем по списку ресурсов
     {
-      if(ResEx->has_unread_msg) { //если есть непрочитанное
-        if (CList_GetActiveContact()!=ResEx) { //если мы не стоим на этом контакте
+      if(ResEx->has_unread_msg) //если есть непрочитанное
+      { 
+        if (CList_GetActiveContact()!=ResEx)//если мы не стоим на этом контакте
+        { 
           //нужна еще кака€-то проверка, € что-то не учитываю, поэтому иногда ведет себ€ странно...
           if(!CList_GetVisibilityForGroup(ClEx->group)) //если группа контакта свернута, надо ее развернуть, иначе плохо будет
+          {
             CList_ToggleVisibilityForGroup(ClEx->group);
+          }
           MoveCursorTo(ResEx);
           break;
         }
@@ -845,9 +873,15 @@ void MoveCursorTo(TRESOURCE* NewResEx)
   {
     while(CList_isGroup(ClEx)&&(ClEx->IsVisible==0)) //ѕерескакиваем через свернутую группу, иначе промахнемс€
     {
+
+//      sprintf(qqq,"Skip group %s\r\n", ClEx->name);tx_str(qqq);
+
       char c_group = ClEx->group;
       while(ClEx->group==c_group)
-        ClEx = ClEx->next;
+        if(ClEx->next!=NULL)
+        {
+          ClEx = ClEx->next;
+        }else return;
       pos++;
     }
 

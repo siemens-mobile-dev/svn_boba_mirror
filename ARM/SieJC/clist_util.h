@@ -65,6 +65,8 @@
 // Делаем оффлайнами все ресурсы заданного контакта. Useful для конференций.
   void CList_MakeAllResourcesOFFLINE(CLIST* ClEx);
 
+// Делаем оффлайнами все контакты.
+  void CList_MakeAllContactsOFFLINE();  
 // Уничтожить список контактов
   void CList_Destroy();
 

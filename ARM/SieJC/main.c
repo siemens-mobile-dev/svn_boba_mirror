@@ -41,7 +41,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "2.9.6-Z";
+const char VERSION_VERS[] = "2.9.8-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ÏËÌÛÚ˚
@@ -1023,6 +1023,7 @@ void Do_Reconnect()
 //        CList_Destroy();
 //        KillGroupsList();
         MUCList_Destroy();
+        CList_MakeAllContactsOFFLINE();
         KillBMList();
         UnlockSched();
         
@@ -1323,6 +1324,8 @@ void maincsm_onclose(CSM_RAM *csm)
 
   SetVibration(0);
 
+  extern ONLINEINFO OnlineInfo;
+  if(OnlineInfo.txt)mfree(OnlineInfo.txt);
   CList_Destroy();
   MUCList_Destroy();
   KillBMList();

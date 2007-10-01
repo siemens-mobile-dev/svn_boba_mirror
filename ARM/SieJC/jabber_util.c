@@ -62,6 +62,7 @@ const RGBA PRES_COLORS[PRES_COUNT] =
 const char* JABBER_AFFS[] = {"none", "outcast", "member", "admin", "owner"};
 const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
 
+ONLINEINFO OnlineInfo = {0,0,NULL};
 
 /*
   Посылка стандартного Jabber Iq
@@ -263,8 +264,18 @@ void Send_Presence(PRESENCE_INFO *pr_info)
 {
   extern char My_Presence;
   My_Presence = pr_info->status;
-//<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
 
+  OnlineInfo.status = pr_info->status;
+  OnlineInfo.priority = pr_info->priority;
+  if(OnlineInfo.txt)mfree(OnlineInfo.txt);
+  if(pr_info->message)
+  {
+    OnlineInfo.txt = malloc(strlen(pr_info->message)+1);
+    strcpy(OnlineInfo.txt, pr_info->message);
+  }else OnlineInfo.txt = NULL;
+  
+  //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
+  
   // Генерируем капс исходя из включённых фич
   char *caps = Generate_Caps();
   
@@ -306,7 +317,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     SendAnswer(presence);
     m_ex=m_ex->next;
   };
-
+  
   mfree(presence);
   if(pr_info->message)mfree(pr_info->message);
   mfree(pr_info);
@@ -473,12 +484,16 @@ char* Get_Resource_Name_By_FullJID(char* full_jid)
 //Context: HELPER
 void Send_Initial_Presence_Helper()
 {
-  char ansi_msg[]="Online";
-  char *message = ANSI2UTF8(ansi_msg, strlen(ansi_msg));
+//  OnlineInfo
+//  char *message = ANSI2UTF8(ansi_msg, strlen(ansi_msg));
   PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-  pr_info->priority = 16;
-  pr_info->status=PRESENCE_ONLINE;
-  pr_info->message=message;
+  pr_info->priority = OnlineInfo.priority;
+  pr_info->status=OnlineInfo.status;
+  if(OnlineInfo.txt)
+  {
+    pr_info->message = malloc(strlen(OnlineInfo.txt)+1);
+    strcpy(pr_info->message,OnlineInfo.txt);
+  }else pr_info->message = NULL;
   Send_Presence(pr_info);
   Jabber_state = JS_ONLINE;
 }
@@ -486,9 +501,12 @@ void Send_Initial_Presence_Helper()
 //Context: HELPER
 void _enterconference(MUC_ENTER_PARAM *param)
 {
-  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'><history maxstanzas='%d'/></x></presence>";
+  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'><history maxstanzas='%d'/></x><show>%s</show><status>%s</status></presence>";
   char* magic = malloc(1024);
-  sprintf(magic,magic_ex, My_JID_full, param->room_name,param->room_nick, param->mess_num);
+  char *stext;
+  extern char empty_str[];
+  if(OnlineInfo.txt){stext= OnlineInfo.txt;}else{stext = empty_str;}
+  sprintf(magic,magic_ex, My_JID_full, param->room_name,param->room_nick, param->mess_num, PRESENCES[OnlineInfo.status], stext);
   SendAnswer(magic);
   mfree(magic);
   mfree(param->room_nick);
