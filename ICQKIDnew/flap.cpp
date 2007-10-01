@@ -274,7 +274,8 @@ void TLVField::encode_to(vector<uint8_t> & v, size_t start_ind)
  
  memcpy(&v[start_ind], &tmp_type, sizeof(tmp_type));
  memcpy(&v[start_ind+2], &tmp_length, sizeof(tmp_length));
- memcpy(&v[start_ind+4], &data[0], data.size());
+ if(data.size())
+	 memcpy(&v[start_ind+4], &data[0], data.size());
 }
 
 // ----------------=========ooooOOOOOOOOOoooo=========----------------
