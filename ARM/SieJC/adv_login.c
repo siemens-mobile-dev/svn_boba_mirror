@@ -54,6 +54,29 @@ void Use_Md5_Auth_Report()
   SendAnswer(s);
 }
 
+// Сообщить серверу об использовании аунтитификации PLAIN
+//Context:HELPER
+void Use_Plain_Auth_Report()
+{
+// По мотивам e:\CPP_Proj\Miranda_IM\miranda\protocols\JabberG\jabber_secur.cpp
+  
+  char s[]="<auth xmlns=\"urn:ietf:params:xml:ns:xmpp-sasl\" mechanism=\"PLAIN\">%s</auth>";
+  char patt[]="%s@%s%c%s%c%s";
+  unsigned short patlen = strlen(USERNAME)*2 + strlen(JABBER_SERVER) + strlen(PASSWORD) + 3;
+  char *authdata = malloc(patlen+1);
+  zeromem(authdata, patlen+1);
+  snprintf(authdata, patlen+1, patt, USERNAME, JABBER_SERVER, 0, USERNAME, 0, PASSWORD);
+  char *Data_To_Send;
+  base64_encode(authdata, patlen,&Data_To_Send);
+  char *fin = malloc(strlen(Data_To_Send) + strlen(s) + 1 - 2); // ибо %s нах не надо считать
+  sprintf(fin, s, Data_To_Send);
+  Jabber_state = JS_SASL_AUTH_ACK;  // Фишка - пропускаем несколько этапов ;)
+  SendAnswer(fin);
+  mfree(Data_To_Send);
+  mfree(authdata);
+  mfree(fin);
+}
+
 // Открываем новый поток к серверу по окончании авторизации
 void SASL_Open_New_Stream()
 {

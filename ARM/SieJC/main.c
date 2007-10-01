@@ -41,7 +41,7 @@ extern const unsigned int IDLE_ICON_Y;
 
 const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // ÍÅ ÌÅÍßÒÜ!
-const char VERSION_VERS[] = "2.9.5-Z";
+const char VERSION_VERS[] = "2.9.6-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ìèíóòû
@@ -621,6 +621,7 @@ void SendPing()
 
 char Support_Compression = 0;
 char Support_MD5_Auth = 0;
+char Support_Plain_Auth = 0;
 char Support_Resource_Binding = 0;
 
 void Analyze_Stream_Features(XMLNode *nodeEx)
@@ -651,6 +652,11 @@ void Analyze_Stream_Features(XMLNode *nodeEx)
         Support_MD5_Auth = 1;
         strcat(logmsg, "\nDIGEST-MD5:  +");
       }
+      if(!strcmp(Ch_Node->value, "PLAIN"))
+      {
+        Support_Plain_Auth = 1;
+        strcat(logmsg, "\nPLAIN:  +");
+      }      
       Ch_Node = Ch_Node->next;
     }
   }
@@ -676,6 +682,11 @@ void Process_Decoded_XML(XMLNode* node)
       if(Support_MD5_Auth)
       {
         SUBPROC((void*)Use_Md5_Auth_Report);
+      }
+      else
+      if(Support_Plain_Auth)
+      {
+        SUBPROC((void*)Use_Plain_Auth_Report);
       }
       else
       {
