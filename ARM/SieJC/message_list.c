@@ -87,7 +87,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
   {
     DispSelectMenu();
   }
-  
+
 #ifndef NEWSGOLD
   if (msg->keys==0x0FF0) //Левый софт СГОЛД
   {
@@ -111,16 +111,16 @@ void inp_ghook(GUI *gui, int cmd)
 #ifndef NEWSGOLD
   static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
 #endif
-  
+
   PNGTOP_DESC *pltop=PNG_TOP();
   extern S_SMILES *s_top;
-  extern DYNPNGICONLIST *SmilesImgList;  
+  extern DYNPNGICONLIST *SmilesImgList;
 
   if (cmd==9)
   {
     pltop->dyn_pltop=NULL;
   }
-  
+
   EDITCONTROL ec;
   if (cmd==2)
   {
@@ -129,13 +129,13 @@ void inp_ghook(GUI *gui, int cmd)
   if (cmd==7)
   {
     ExtractEditControl(gui,1,&ec);
-    wstrcpy(ws_eddata,ec.pWS);    
+    wstrcpy(ws_eddata,ec.pWS);
 #ifdef NEWSGOLD
     SetSoftKey(gui,&sk,0);
 #else
    SetSoftKey(gui,&sk,1);
    if (ec.pWS->wsbody[0]==0)
-      SetSoftKey(gui,&sk_cancel,SET_SOFT_KEY_N==0?1:0);   
+      SetSoftKey(gui,&sk_cancel,SET_SOFT_KEY_N==0?1:0);
 #endif
   }
 
@@ -156,9 +156,9 @@ void inp_ghook(GUI *gui, int cmd)
       //body[xz]='\0';
       int res_len;
       char* body = malloc(wstrlen(ws_eddata)*2+1);
-      ExtractAnswer(ws_eddata);
+      //ExtractAnswer(ws_eddata);
       ws_2utf8(ws_eddata, body, &res_len, wstrlen(ws_eddata)*2+1);
-      
+
       body = realloc(body, res_len+1);
       body[res_len]='\0';
       char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
@@ -251,8 +251,8 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   if(init_text)
   {
     //char *str = convUTF8_to_ANSI_STR(init_text);
-    ParseAnswer(ws_eddata, init_text);
-    //utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
+    //ParseAnswer(ws_eddata, init_text);
+    utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
   }
   EDITCONTROL ec;
   void *ma=malloc_adr();
@@ -453,13 +453,6 @@ LOG_MESSAGE *GetCurMessage()
   return log;
 }
 
-void DbgInfo()
-{
-  char q[200];
-  sprintf(q,"Messlist_cnt=%d\nCurMessage=%d\nLines=%d\nCursor=%d, CurPage=%d",DispMessList_Count, CurrentMessage, CurrentMessage_Lines,Cursor_Pos, CurrentPage);
-  ShowMSG(2,(int)q);
-}
-
 int mGUI_onKey(GUI *data, GUI_MSG *msg)
 {
   if(MsgList_Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
@@ -490,17 +483,15 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
 
     case LEFT_SOFT:
       {
-        DbgInfo();
         break;
       }
 
     case ENTER_BUTTON:
       {
-        LOG_MESSAGE* log =GetCurMessage();      
+        LOG_MESSAGE* log =GetCurMessage();
         if(log)
         {
           char *s=log->mess;
-          utf82win(s, s);
           unsigned int l = strlen(s);
           char *init_text = malloc(l+3+1);
           zeromem(init_text,l+3+1);
@@ -551,10 +542,10 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         CurrentPage=MaxPages;
         REDRAW();
         break;
-      }  
+      }
    /* case VOL_UP_BUTTON://страница вверх
       {
-        if (CurrentPage>1) 
+        if (CurrentPage>1)
         {
           int cp=CurrentPage;
           for(;;)
@@ -566,8 +557,8 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             if (CurrentPage+1==cp)
             {
               Cursor_Pos--;
-              CurrentMessage--;             
-              break;            
+              CurrentMessage--;
+              break;
             }
           }
 
@@ -580,7 +571,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       }
     case VOL_DOWN_BUTTON://страница вниз
       {
-        if (CurrentPage<MaxPages) 
+        if (CurrentPage<MaxPages)
         {
           int cp=CurrentPage;
           for(;;)
@@ -591,14 +582,14 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             Calc_Pages_Data_2();
             if (CurrentPage-1==cp) break;
           }
-          
+
           //CurrentPage++;
           //Cursor_Pos+=lines_on_page;
           //CurrentMessage+=lines_on_page;
         }
         REDRAW();
         break;
-      } */     
+      } */
     case RIGHT_BUTTON:
       {
         LOG_MESSAGE *msg = GetCurMessage();
@@ -612,7 +603,6 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             init_text[au_nick_len]=':';
             init_text[au_nick_len+1]=' ';
             init_text[au_nick_len+2]='\0';
-            utf82win(init_text, init_text);
             Init_Message(Resource_Ex, init_text);
             mfree(init_text);
           }
@@ -698,7 +688,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int cnt=0;
 
   // В какую область уложить строку (слева без MSG_START_X, справа без одного пикселя)
-  int Scr_width = ScreenW() - MSG_START_X - 1 ;    
+  int Scr_width = ScreenW() - MSG_START_X - 1 ;
 
   int Curr_width=0;
   //  int chars;
@@ -717,7 +707,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     {
       temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
       utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
-      
+
       //temp_ws_2 = AllocWS(CHAR_ON_LINE*2); WTF?
       temp_ws_2 = AllocWS(200); //ИМХО, так лучше
       int l=wstrlen(temp_ws_1);

@@ -37,8 +37,18 @@ extern unsigned int NContacts;
 MUC_ITEM *muctop = NULL;
 
 extern JABBER_STATE Jabber_state;
-const char* PRESENCES[PRES_COUNT] = {"online", "chat", "away", "xa", "dnd", "invisible", "unavailable", "error",
-                                      "subscribe", "subscribed", "unsubscribe", "unsubscribed"};
+const char* PRESENCES[PRES_COUNT] = {"online",
+                                     "chat",
+                                     "away",
+                                     "xa",
+                                     "dnd",
+                                     "invisible",
+                                     "unavailable",
+                                     "error",
+                                     "subscribe",
+                                     "subscribed",
+                                     "unsubscribe",
+                                     "unsubscribed"};
 
 const RGBA PRES_COLORS[PRES_COUNT] =
 {

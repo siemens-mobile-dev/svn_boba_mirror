@@ -416,7 +416,7 @@ void get_answer(void)
     {
 	  char s[32];
 	  sprintf(s,"inflateInit2 err %d",err);
-	  POPUP(s);      
+	  POPUP(s);
       return;
     }
   }
@@ -656,7 +656,7 @@ void Analyze_Stream_Features(XMLNode *nodeEx)
       {
         Support_Plain_Auth = 1;
         strcat(logmsg, "\nPLAIN:  +");
-      }      
+      }
       Ch_Node = Ch_Node->next;
     }
   }
@@ -910,7 +910,7 @@ char mypic[128];
     if (total_smiles)
      {
        wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
-     }    
+     }
     DrawString(data->ws1,1,SCR_START+3+GetFontYSIZE(FONT_SMALL)+2,scr_w-4,scr_h-4-16,FONT_SMALL,0,color(font_color),0);
   }
 
@@ -997,7 +997,7 @@ void Do_Reconnect()
   extern unsigned int Active_page;
   extern unsigned int N_cont_disp;
   extern unsigned int CursorPos;
-  
+
   // Уничтожаем все объекты
         ClearSendQ();
         GBS_DelTimer(&Ping_Timer);
@@ -1009,8 +1009,8 @@ void Do_Reconnect()
         SetVibration(0);
 
         // Ре-Инициализация контакт-листа
-/*        
-        ActiveContact = NULL;     
+/*
+        ActiveContact = NULL;
         NContacts = 0;
         N_Disp_Contacts = 0;
         N_cont_disp=0;
@@ -1026,7 +1026,7 @@ void Do_Reconnect()
         CList_MakeAllContactsOFFLINE();
         KillBMList();
         UnlockSched();
-        
+
         virt_buffer_len = 0;
         Destroy_SASL_Ctx();
 
@@ -1039,14 +1039,14 @@ void Do_Reconnect()
           ZLib_Stream_Init=0;
           Is_Compression_Enabled = 0;
           out_bytes_count = 0; // Количество отправленных данных
-          Rstream_n = 0;             
+          Rstream_n = 0;
           Rstream_p = NULL;
         }
 
         // Создание головы списка
         //InitGroupsList();
-        
-          
+
+
 	DNR_TRIES=3;
         SUBPROC((void *)create_connect);
 }
@@ -1105,7 +1105,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
           KbdLock();
         }
       return(-1);
-    }    
+    }
     case '*':
       {
         gipc.name_to=ipc_xtask_name;
@@ -1113,7 +1113,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         gipc.data=0;
         GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
         Is_Vibra_Enabled=!Is_Vibra_Enabled;
-      }    
+      }
     }
   }
   if (msg->gbsmsg->msg==KEY_DOWN)
@@ -1293,7 +1293,7 @@ void maincsm_oncreate(CSM_RAM *data)
   DNR_TRIES=3;
   InitGroupsList();
 
-  SUBPROC((void *)InitSmiles);
+  //SUBPROC((void *)InitSmiles);
   SUBPROC((void *)create_connect);
   GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
 #ifdef LOG_ALL
@@ -1336,13 +1336,13 @@ void maincsm_onclose(CSM_RAM *csm)
   {
     inflateEnd(&d_stream);
   }
-  
+
   *((int *)&DEF_SOUND_STATE)=Is_Sounds_Enabled;
   *((int *)&DEF_VIBRA_STATE)=Is_Vibra_Enabled;
   *((int *)&DEF_SHOW_OFFLINE)=Display_Offline;
-  
+
   SaveConfigData(successed_config_filename);
-  
+
   SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
@@ -1380,8 +1380,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	  }
 	}
       }
-    }    
-    
+    }
+
 #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
     CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
     if (IsGuiOnTop(idlegui_id))
@@ -1589,17 +1589,17 @@ int main(char *exename, char *fname)
     ShowMSG(1,(int)LG_ENTERLOGPAS);
     return 0;
   }
- 
+
    Is_Sounds_Enabled=DEF_SOUND_STATE;
    Is_Vibra_Enabled=DEF_VIBRA_STATE;
    Display_Offline=DEF_SHOW_OFFLINE;
-  
+
   UpdateCSMname();
-  
+
   LockSched();
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   UnlockSched();
-  
+
   Check_Settings_Cleverness();
   return 0;
 }
