@@ -1,5 +1,15 @@
 @echo off
+SET iarmake="c:\Program Files\IAR Systems\Embedded Workbench 4.0 Evaluation\common\bin\iarbuild.exe"
 SET zipprog=..\_SVN_Utility\zip.exe
+
+%iarmake% alarm_cfg_editor/alarm_cfg_editor.ewp -build SGOLD
+%iarmake% alarm_ring/alarm_ring.ewp -build SGOLD
+%iarmake% new_alarm/new_alarm.ewp -build SGOLD
+%iarmake% alarm_cfg_editor/alarm_cfg_editor.ewp -build NEWSGOLD
+%iarmake% alarm_ring/alarm_ring.ewp -build NEWSGOLD
+%iarmake% new_alarm/new_alarm.ewp -build NEWSGOLD
+%iarmake% alarm_cfg_editor/alarm_cfg_editor.ewp -build SL65
+%iarmake% alarm_ring/alarm_ring.ewp -build SGOLD_X75
 
 copy alarm_ring\SGOLD\Exe\alarm_ring.elf alarm_ring.elf
 copy alarm_ring\SGOLD_X75\Exe\alarm_ring.elf alarm_ring_x75.elf
@@ -23,3 +33,4 @@ del alarm_ring.elf
 del alarm_cfg_editor.elf
 del alarm_cfg_editor_sl65.elf
 del new_alarm.elf
+del alarm_ring_x75.elf
