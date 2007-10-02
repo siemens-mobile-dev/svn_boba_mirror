@@ -386,17 +386,15 @@ void Disp_Contact_Menu()
   TRESOURCE *Act_contact = CList_GetActiveContact();
 // “еперь определ€ем, какие пункты у нас будут, и сколько
   if(!Act_contact)return;
-/*
-  —мотрим, если ето не группа, не участник конференции или транспорт то первым пунктом будет открыть историю.
-*/
- if((Act_contact->entry_type!=T_GROUP)&&(Act_contact->entry_type!=T_TRANSPORT)&&(Act_contact->entry_type!=T_CONF_NODE))
-{
-  Menu_Contents[n_items++]=MI_HISTORY_OPEN;
-}
 
   if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_GROUP)) //в групах верси€ клиента ненужна
   {
     Menu_Contents[n_items++]=MI_QUERY_VERSION;
+  }
+
+  if((Act_contact->entry_type!=T_GROUP)&&(Act_contact->entry_type!=T_TRANSPORT)&&(Act_contact->entry_type!=T_CONF_NODE))
+  {
+    Menu_Contents[n_items++]=MI_HISTORY_OPEN;
   }
 
   if(Act_contact->entry_type==T_TRANSPORT)
