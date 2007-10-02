@@ -36,7 +36,7 @@ SOFTKEY_DESC menu_sk[]=
 {
   {0x0018,0x0000,(int)"Add"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB menu_skt=

@@ -281,7 +281,7 @@ SOFTKEY_DESC fmenu_sk[]=
 {
   {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB fmenu_skt=
