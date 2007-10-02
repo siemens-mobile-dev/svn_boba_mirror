@@ -107,7 +107,7 @@ void Process_vCard(char *from, XMLNode *vCard)
   // Save photo :))
   XMLNode *photo = XML_Get_Child_Node_By_Name(vCard,"PHOTO");
   if(photo)
-     if(photo->value)
+     if(photo->subnode)
        SavePhoto(photo);
 }
 //EOL,EOF
