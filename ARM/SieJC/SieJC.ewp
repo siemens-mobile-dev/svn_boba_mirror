@@ -5128,6 +5128,12 @@
     <file>
       <name>$PROJ_DIR$\MUC_Enter_UI.h</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\vCard.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\vCard.h</name>
+    </file>
   </group>
   <file>
     <name>$PROJ_DIR$\clist_util.c</name>

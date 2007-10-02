@@ -7,6 +7,7 @@
 #include "string_util.h"
 #include "xml_parser.h"
 #include "item_info.h"
+#include "vCard.h"
 #include "jabber.h"
 #include "bookmarks.h"
 #include "serial_dbg.h"
@@ -683,6 +684,7 @@ void Send_Presence_MMIStub()
   SUBPROC((void*)Send_Initial_Presence_Helper);
 }
 
+
 // Изменяет имя контакта в ростере
 void ChangeRoster(XMLNode* items)
 {
@@ -1059,144 +1061,7 @@ if(!strcmp(gres,iqtype))
     if(!(vcard = XML_Get_Child_Node_By_Name(nodeEx, "vCard")))return;
     char* v_type = XML_Get_Attr_Value("xmlns", vcard->attr);
     if(!v_type)return;
-    if(!strcmp(v_type,"vcard-temp"))
-    {
-      char* pres=malloc(1024);
-      int resul_s = 1024;
-      char* resul=malloc(resul_s);
-      char* FN_str;
-      char* NICKNAME_str;
-//      char* JABBERID_str;
-//      char* GIVEN_str;
-//      char* FAMILY_str;
-//      char* MIDDLE_str;
-//      char* EMAILHOME_str;
-//      char* EMAILWORK_str;
-//      char* URL_str;
-//      char* BDAY_str;
-//      char* ORGNAME_str;
-//      char* ORGUNIT_str;
-//      char* TITLE_str;
-//     char* ROLE_str;
-//      char* USERID_str;
-//      char* DESC_str;
-      XMLNode *vc_FN=XML_Get_Child_Node_By_Name(vcard, "FN");
-//--------<N>
-//     XMLNode *N_TEG=XML_Get_Child_Node_By_Name(vcard, "N");
-//     XMLNode *vc_GIVEN=XML_Get_Child_Node_By_Name(N_TEG, "GIVEN");
-//      XMLNode *vc_FAMILY=XML_Get_Child_Node_By_Name(N_TEG, "FAMILY");
-//      XMLNode *vc_MIDDLE=XML_Get_Child_Node_By_Name(N_TEG, "MIDDLE");
-//----------<N/>
-//-------<ORG>
-//       XMLNode *ORG_TEG=XML_Get_Child_Node_By_Name(vcard, "ORG");
-//     XMLNode *vc_ORGNAME=XML_Get_Child_Node_By_Name(ORG_TEG, "ORGNAME");
-//      XMLNode *vc_ORGUNIT=XML_Get_Child_Node_By_Name(ORG_TEG, "ORGUNIT");
-//------<ORG/>
-//---<EMAIL>
-//       XMLNode *EMAIL_TEG=XML_Get_Child_Node_By_Name(vcard, "EMAIL");
-//     XMLNode *vc_EMAILHOME=XML_Get_Child_Node_By_Name(EMAIL_TEG, "HOME");
-//     XMLNode *vc_EMAILWORK=XML_Get_Child_Node_By_Name(EMAIL_TEG, "WORK");
-//     XMLNode *vc_EMAILINTERNET=XML_Get_Child_Node_By_Name(EMAIL_TEG, "INTERNET");
-//     XMLNode *vc_EMAILPREF=XML_Get_Child_Node_By_Name(EMAIL_TEG, "PREF");
-//     XMLNode *vc_EMAILX400=XML_Get_Child_Node_By_Name(EMAIL_TEG, "X400");
- //    XMLNode *vc_EMAILUSERID=XML_Get_Child_Node_By_Name(EMAIL_TEG, "USERID");
-//---<EMAIL/>
-//      XMLNode *vc_JABBERID=XML_Get_Child_Node_By_Name(vcard, "JABBERID");
-      XMLNode *vc_NICKNAME=XML_Get_Child_Node_By_Name(vcard, "NICKNAME");
-//      XMLNode *vc_URL=XML_Get_Child_Node_By_Name(vcard, "URL");
-//      XMLNode *vc_BDAY=XML_Get_Child_Node_By_Name(vcard, "BDAY");
-//     XMLNode *vc_TITLE=XML_Get_Child_Node_By_Name(vcard, "TITLE");
-//      XMLNode *vc_ROLE=XML_Get_Child_Node_By_Name(vcard, "ROLE");
-//      XMLNode *vc_DESC=XML_Get_Child_Node_By_Name(vcard, "DESC");
-      if(vc_FN)
-      { FN_str=vc_FN->value;
-        sprintf(pres,"Fullname: %s\n",FN_str);
-        if (strlen(resul)+strlen(pres)>resul_s)
-        {
-          resul_s *= 2;
-          resul = realloc(resul, resul_s);
-        }
-        strcpy(resul,pres);
-      };
-      if(vc_NICKNAME)
-      { NICKNAME_str=vc_NICKNAME->value;
-        sprintf(pres,"Nick: %s\n",NICKNAME_str);
-        if (strlen(resul)+strlen(pres)>resul_s)
-        {
-          resul_s *= 2;
-          resul = realloc(resul, resul_s);
-        }
-        strcat(resul,pres);
-      };
-//      if(vc_GIVEN)
-//      { GIVEN_str=vc_GIVEN->value;
-//        sprintf(pres,"GIVEN: %s\n",GIVEN_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_MIDDLE)
-//      { MIDDLE_str=vc_MIDDLE->value;
-//       sprintf(pres,"MIDDLE: %s\n",MIDDLE_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_FAMILY)
-//      { FAMILY_str=vc_FAMILY->value;
-//        sprintf(pres,"FAMILY: %s\n",FAMILY_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_BDAY)
-//      { BDAY_str=vc_BDAY->value;
-//        sprintf(pres,"BDAY: %s\n",BDAY_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_URL)
-//      { URL_str=vc_URL->value;
-//        sprintf(pres,"URL: %s\n",URL_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_EMAILHOME)
-//      { EMAILHOME_str=vc_EMAILHOME->value;
-//        sprintf(pres,"E.Home: %s\n",EMAILHOME_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_EMAILWORK)
-//      { EMAILWORK_str=vc_EMAILWORK->value;
-//        sprintf(pres,"E.Work: %s\n",EMAILWORK_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_JABBERID)
-//      { JABBERID_str=vc_JABBERID->value;
-//        sprintf(pres,"JABBERID: %s\n",JABBERID_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_TITLE)
-//      { TITLE_str=vc_TITLE->value;
-//        sprintf(pres,"TITLE: %s\n",TITLE_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_ROLE)
-//      { ROLE_str=vc_ROLE->value;
-//        sprintf(pres,"ROLE: %s\n",ROLE_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_ORGNAME)
-//      { ORGNAME_str=vc_ORGNAME->value;
-//        sprintf(pres,"Org.Name: %s\n",ORGNAME_str);
-//        strcat(resul,pres);
-//      };
-//      if(vc_ORGUNIT)
-//      { ORGUNIT_str=vc_ORGUNIT->value;
-//        sprintf(pres,"Org.Unit: %s\n",ORGUNIT_str);
-//        strcat(resul,pres);
-//      };
-      //Формируем сообщение
-      char *reply=malloc(strlen(resul)+16);
-      sprintf(reply, "vCard:\n%s", resul);
-      CList_AddMessage(from, MSG_SYSTEM, reply);
-      mfree(reply);
-      mfree(pres);
-      mfree(resul);
-      return;
-    }
+    if(!strcmp(v_type,"vcard-temp"))Process_vCard(from, vcard);
   }
 /////////////////
   if(!strcmp(id,disco_id))   // Запрос диско (ответ)
