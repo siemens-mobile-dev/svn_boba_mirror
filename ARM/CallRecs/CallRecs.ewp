@@ -2879,7 +2879,7 @@
           </option>
           <option>
             <name>CCCodeFunctions</name>
-            <state>CODE</state>
+            <state>CONFIG</state>
           </option>
           <option>
             <name>CCData</name>
@@ -3161,6 +3161,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\reclist.c</name>
   </file>
 </project>
 

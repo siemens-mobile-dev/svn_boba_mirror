@@ -1,9 +1,11 @@
 /*
 TODO:
-парсинг базы событий - пока обойдемся думаю мало у кого больше 512  слбытий
-*/
-#define DEBUG_
 
+*/
+
+//для отладки гуя
+#define ONLY_GUI_
+//для демона
 #define DEMON_
 #ifdef NEWSGOLD
   #define DEFAULT_DISK "4"
@@ -20,53 +22,48 @@ TODO:
 #include "rect_patcher.h"
 #include "conf_loader.h"
 #include "language.h" //потом сгодится
+
+#include "reclist.h"
+
 static int prev_clmenu_itemcount;
 int curlist=0;
+int mask=RECORD_TYPE_DIAL;
+SABmain ABmain;
+
+//10*512=5kb;
+CRECSLIGHT rc[MAX_RECORDS];
+int rcCnt=0;
 
 
-
+CContact cache[CONTACT_CACHE_SIZE];
 
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
-typedef struct 
-{
-  short year;
-  short unk;
-  char month;
-  char day;
-  short unk2;
-  char hour;
-  char min;
-  char sec;
-  char unk3; 
-}dates;
 
-//константы APO
-#define APO_EN "calrec"
-#define APO_TYPE 0x37
 
-int S_ICONS[7];
 
+int S_ICONS[8];
+int hdr_icon;
 int CountRecord(void);
 
 char clm_hdr_text[48]="Calls Records";
 
 
 volatile int contactlist_menu_id=0;
-static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, S_ICONS+6, (int)clm_hdr_text, LGP_NULL};
+static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, &hdr_icon, (int)clm_hdr_text, LGP_NULL};
 
 static const int menusoftkeys[] = {0,1,2};
 
-char str[3][15]={"Calls-Dial","Calls-Recv.","Calls-Miss"};
+char str[4][15]={"Calls-Dial","Calls-Recv","Calls-Miss","Calls-Moto"};
 
 void UpdateCLheader(void)
 {
-//#ifdef ELKA
-  int *p=contactlist_menuhdr.icon;
-  *p=S_ICONS[curlist+3];
-//#endif  
+#ifndef  ONLY_GUI
+  
+  hdr_icon=S_ICONS[curlist+3];
   sprintf(clm_hdr_text,"%s :%d",str[curlist],CountRecord());
+#endif  
 }
 
 
@@ -78,28 +75,14 @@ char clmenu_sk_r[16]=LG_CLOSE;
 
 
 
-typedef  struct {
-  void* next;
-  void* next_g;  //указатель на звонки с таким же номером
-  dates datetime;
-  char number[16];
-  char name[31];  
-  unsigned int duration;
-  unsigned char type; //битовое поле флагов
-  unsigned int recid;  //ид записи, мож пригодится
-  char cnt;  //если группа то число субитемов -1
-  char isGroup;  //признак группы
-
-}CRECS;
-
-
-int FindContactByContact(CRECS *req);
-
-void RecountMenu(CRECS  *req){
+void RecountMenu(CContact  *req){
+#ifdef ONLY_GUI
+  return;
+#endif   
+  UpdateCLheader();  
   int i;
   int j;
   void *data;
-  UpdateCLheader();  
   if (!contactlist_menu_id) return; //Нечего считать
 
   data=FindGUIbyId(contactlist_menu_id,NULL);
@@ -113,6 +96,9 @@ void RecountMenu(CRECS  *req){
     j=FindContactByContact(req);
   }
   i=CountRecord();
+
+//  i=1;
+  
   if (j>=i) j=i-1;
   if (j<0) j=0;
   
@@ -122,7 +108,9 @@ void RecountMenu(CRECS  *req){
     Menu_SetItemCountDyn(data,i);
   }
   SetCursorToMenuItem(data,j);
-  if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
+
+
+//  if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
 }
 
 static const SOFTKEY_DESC clmenu_sk[]=
@@ -144,10 +132,10 @@ static const ML_MENU_DESC contactlist_menu=
   8,contactlist_menu_onkey,contactlist_menu_ghook,NULL,
   menusoftkeys,
   &clmenu_skt,
-  0x11+0x00010000, //+0x400
+  0x11, 
   contactlist_menu_iconhndl,
-  NULL,   //Items
-  NULL,   //Procs
+  NULL, 
+  NULL, 
   0,   //n
   2 //Добавочных строк  
 };
@@ -156,8 +144,13 @@ static const ML_MENU_DESC contactlist_menu=
 int create_contactlist_menu(void)
 {
   int i;
-  i=CountRecord();
+#ifndef ONLY_GUI  
+   i=CountRecord();   
+#else
+   i=3;   
+#endif      
 
+//i=1;
   prev_clmenu_itemcount=i;
   UpdateCLheader();
 #ifndef DEMON
@@ -171,179 +164,92 @@ int create_contactlist_menu(void)
 }
 
 
-typedef struct {
-  CRECS *top;
-  CRECS *end;  
-  CRECS *grp;  
-} CRECL;
-
-CRECL list[4]={0}; //3 списка вызовов, 4-ый прозапас)
-
-CRECS *FindNum(char *num,CRECL* cl){
-  CRECS *ct=cl->top;
-  while (ct){
-    if (!strcmp(ct->number,num))return ct;
-    ct=ct->next;
-  }
-  return NULL;
-}
-
-int PutRecSub(CRECS* in,CRECL *cl){  //хитрожопые списки
-  if (!(cl->top)){cl->top=in;
-    cl->end=in;    
-  }
-  else{
-    CRECS *ex;
-    if ((ex=FindNum(in->number,cl))){
-      cl->grp=ex;
-      ex->cnt++;      
-       while(ex->next_g){
-        ex=ex->next_g;
-      }
-      ex->next_g=in;
-      in->next=cl->grp;
-      in->isGroup=1;
-      return 0;
-    }else{
-      cl->end->next=in;
-      cl->end=in;    
-    }
-  }
-  return 1;
-};
 
 
-int PutRec(CRECS* in){ 
-  if ((in->type&0x06)==0x06) //missed
-       return PutRecSub(in,&list[2]);
-  else
-    if ((in->type&0x02)==0x02)//incoming
-       return PutRecSub(in,&list[1]);
-  else  //others - dialed
-       return PutRecSub(in,&list[0]);
-};
 
 
 void contactlist_menu_ghook(void *data, int cmd)
 {
- // PNGTOP_DESC *pltop=PNG_TOP();
   if (cmd==9)  ///unfocus ?
   {
-//  pltop->dyn_pltop=NULL;
+    ;
   }
   if (cmd==0x0A)
   {
   //pltop->dyn_pltop=XStatusesImgList;
+
     DisableIDLETMR();
   }
 }
 
-CRECS* GetNext(CRECS *ct){  //хитрожопое выдергивание из списка
-    if (ct->cnt){ //группа
-      if (!(ct->cnt&0x80)){ //группа и свернута
-        ct=ct->next;
-      }else{
-        ct=ct->next_g;
-      }
-    }else{ //хз че
-      if (ct->isGroup){ //если ссылка  внутри группы
-       if (ct->next_g)  //если есть еще внутри группы то берем
-         ct=ct->next_g;
-         else{  //иначе откатываемся на след элемент 
-          ct=ct->next;
-          ct=ct->next;        
-         };
-       }
-       else  //не группа
-       ct=ct->next;       
-    }
-  
-  return ct;
-}
-
-CRECS *FindRecordByN(int curitem){
-  CRECS *ct=list[curlist].top;
-
-  for (int j=0;ct&&(j<curitem);j++){
-    ct=GetNext(ct);
-  }
-  return ct;
-}
-int CountRecord(void){
-  CRECS *ct=list[curlist].top;
-
-  int j;
-  for ( j=0;ct;j++){
-    ct=GetNext(ct);
-  }
-  return j;
-}
-
-
-int FindContactByContact(CRECS *req){
-  CRECS *ct=list[curlist].top;
-
-  int j;
-  for ( j=0;ct&&ct!=req;j++){
-    ct=GetNext(ct);
-  }
-  return j;
-}
+/*
+  //-1 - do redraw
+  return(0); //Do standart keys
+  //1: close
+*/
 
 int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 {
-  CRECS *t=NULL;
+
+    CContact *t=NULL;
   int i;
   i=GetCurMenuItem(data);
-  t=FindRecordByN(i);
-/*
-  if (msg->keys==0x18)
-  {
-    ShowMainMenu();
-    return(-1);
-  }
-  */
+#ifndef ONLY_GUI
+  t=GetContactByItem(i);
+#endif   
 
       
   if (msg->keys==0x3D)
   {
     if (t)
     {
-     
-      if (t->cnt)
+      if (t->recId&RECORD_IS_GROUP)
       {
-	t->cnt^=0x80;
+	t->recId^=RECORD_GROUP_EXPAND;
+        rc[FindIdByMenuId(i,mask)].recId^=RECORD_GROUP_EXPAND;
 	RecountMenu(t);
 	return(-1);
       }
     }
-    return(-1);
-  }else
+    return(0);
+  }else;
+  /*
   if (msg->keys==0x01)
   {
     contactlist_menu_id=0;
+    return 0;
   } else;   
+  */
   if (msg->gbsmsg->msg==KEY_DOWN)
   {
     int key=msg->gbsmsg->submess;
     //меняем списки
+    int masks[]={RECORD_TYPE_DIAL,RECORD_TYPE_RECV,RECORD_TYPE_MISS,RECORD_TYPE_ALL};//0-all calls
     if (key==RIGHT_BUTTON){
       curlist++; 
-      if (curlist>2)curlist=0;
+      if (curlist>3)curlist=0;
+      mask=masks[curlist];
       RecountMenu(NULL);
       return (-1);
     }else
     if (key==LEFT_BUTTON){
       curlist--;
-      if (curlist<0)curlist=2;
+      if (curlist<0)curlist=3;
+      mask=masks[curlist];
       RecountMenu(NULL);
             return (-1);
     }else
     if (key==GREEN_BUTTON){      
       contactlist_menu_id=0;            
-      MakeVoiceCall(t->number,0x10,0x2FFF);
+      char numb[132];
+      int ln;
+      ws_2utf8(t->Number,numb,&ln,20);
+//      sprintf(numb,"=%ls=\n-%hs-  ",);
+//        ShowMSG(1,(int)numb);
+      MakeVoiceCall(numb,0x10,0x2FFF);
 
-      return(-1);
+//      return(-1);
+      return(1);      //close ?
     }
       
   }
@@ -360,14 +266,11 @@ const char empty_str[]="";
 
 void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 {
-  CRECS *t=NULL;
+  CContact *t=NULL;
   void *item=AllocMLMenuItem(data);
   
   WSHDR *ws2;
   WSHDR *ws4;
-  WSHDR ws1loc0, *ws0;
-  unsigned short num0[128];
-  ws0=CreateLocalWS(&ws1loc0,num0,128);
   
   WSHDR ws1loc, *ws1;
   unsigned short num[128];
@@ -376,31 +279,28 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
   unsigned short num3[128];
   ws3=CreateLocalWS(&ws3loc,num3,128);
   
-  t=FindRecordByN(curitem);
 
-  if (t)
+#ifndef ONLY_GUI
+  t=GetContactByItem(curitem);
+#endif    
+
+  if (t&&(t->recId!=-1))
   {
-
-    if (t->name[0]){  //если есть  имя то
-        str_2ws(ws0,t->name,120);    
-      if (t->cnt&0x7f)      {//
-        wsprintf(ws1, "(%d) ",(t->cnt&0x7f)+1);
-        wstrcat(ws1,ws0);
-      }
-      else
-        wstrcpy(ws1,ws0);
-     
-      //     wsprintf(ws1, "%s -",ws1);
+    WSHDR *fn=t->Name;
+    if (fn->wsbody&&fn->wsbody[0]){  //если есть  имя то
 //E01C/E01D - left/right align
 //E01E/E01F - center off/on      
-
-       wsprintf(ws3, "%t\n%02d.%02d.%02d%c%02d:%02d",t->number,t->datetime.day,t->datetime.month,t->datetime.year%100,0xE01D,t->datetime.hour,t->datetime.min);                
+    if (t->recId&RECORD_IS_GROUP)
+      wsprintf(ws1, "(%d) %w",GetCallsCount(t->recId&0x1ff), t->Name);
+    else
+        wstrcpy(ws1,t->Name);      
+      wsprintf(ws3, "%w\n %02d.%02d.%02d%c%02d:%02d",t->Number,t->datetime.day,t->datetime.month,t->datetime.year%100,0xE01D,t->datetime.hour,t->datetime.min);                      
     }
     else{//иначе тока номер
-      if (t->cnt&0x7f)
-       wsprintf(ws1, "(%d) %t",(t->cnt&0x7f)+1,t->number);                  
+      if (t->recId&RECORD_IS_GROUP)
+        wsprintf(ws1, "(%d) %w",GetCallsCount(t->recId&0x1ff),t->Number);                  
       else
-       wsprintf(ws1, "%t",t->number);                         
+       wsprintf(ws1, "%w",/*FindRecordIdByMenuId(curitem,mask),GetCacheRecordById(FindRecordIdByMenuId(curitem,mask)),*/t->Number);                         
        wsprintf(ws3, " \n%02d.%02d.%02d%c%02d:%02d",t->datetime.day,t->datetime.month,t->datetime.year%100,0xE01D,t->datetime.hour,t->datetime.min);               
     }
     
@@ -415,14 +315,16 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
   wstrcpy(ws2,ws1);
   
   char ico=0;
-  if (t->cnt)      {//группа
-      if (t->cnt&0x80)  //развернута -
+  if (t&&t->recId&RECORD_IS_GROUP)      {//группа
+      if (t->recId&RECORD_GROUP_EXPAND)  //развернута -
 //        ico=0;
 ;
      else //свернута +
       ico=1;
   }
   else{
+    if (t&&t->recId&RECORD_IN_GROUP) ico=7;
+    else
      ico=2;
   }
   SetMenuItemIconArray(data, item, S_ICONS+ico);
@@ -435,213 +337,10 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
 
 
 
-void ReadCal(void)//собсветнно чтени АПО  
-// ВНИМАНИЕ ЧТЕНИЕ НАПИСАНО ПОД ЕЛКУ и наверно НСГ, и идет с последней записи а не с первой, на СГОЛД надо чето придумать
-{
-//  struct cals tmp_cal;
-//  tmp_cal.number=AllocWS(250);
-//  tmp_cal.name=AllocWS(250);  
-  unsigned int ul;
-
-  WSHDR *tel;
-  tel=AllocWS(50);
-  int fin;
-  
-#ifdef NEWSGOLD
-#define MAX_RECORDS 504
-#define LEVEL1_RN	(41*41)
-#define LEVEL2_RN	(41)
-#else 
-#define MAX_RECORDS 512
-//#define LEVEL1_RN	(0x20)
-#define LEVEL1_RN	(23)  
-#endif
-  
-  
-#pragma pack(1)
-  struct {
-#ifdef NEWSGOLD
-    long dummy1; //62 33 dc 05
-    short len;  //!!!!! НА СГОЛД ХЗ ЕСТЬ ЭТО ПОЛЕ ИЛИ НЕТ
-    char bitmap[MAX_RECORDS/8];
-#else
-    long dummy1; 
-    char bitmap[MAX_RECORDS/8];    
-#endif    
-  } ABmain;
-#pragma pack()
-  
-//    unsigned int rec=0;
-  unsigned int rec;    
-  int fsz;
-  char recname[128];  
-  
-  AB_UNPRES ur;
-  void *buffer;
-  int m=0;
-//start parsing  
-  if ((buffer=malloc(8192)))
-  {
-    zeromem(&ABmain,sizeof(ABmain));
-
-    if ((fin=fopen("0:\\System\\apo\\" APO_EN "\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
-    {
-  
-#ifdef ELKA
-      if (fread(fin,&ABmain,sizeof(ABmain),&ul)>=69)
-#else
-      if (fread(fin,&ABmain,sizeof(ABmain),&ul)==sizeof(ABmain))
-#endif
-      {
-#ifdef NEWSGOLD        
-        rec=ABmain.len;  //СОБСТВЕННО ВОТ ЗДЕСЬ  И НАЧИНАЕМ ЦИКЛ НЕ С НУЛЯ
-#else
-        rec=MAX_RECORDS-1;//чит
-#endif         
-        fclose(fin,&ul);
-	do
-	{
-          #ifdef NEWSGOLD
-	  if (ABmain.bitmap[rec>>3]&(0x80>>(rec&7)))
-          #else
-          if (ABmain.bitmap[rec>>3]&(1<<(rec&7)))
-          #endif   
-	  {
-            
-            #ifdef NEWSGOLD
-	    //Запись есть в битмапе
-            unsigned int rl1;
-	    unsigned int rl2;
-	    unsigned int rl3;
-	    rl1=rec/LEVEL1_RN;
-	    rl2=(rec%LEVEL1_RN)/LEVEL2_RN;
-	    rl3=rec%LEVEL2_RN;
-    	    snprintf(recname,128,"0:\\System\\apo\\" APO_EN "\\data\\%02d\\%02d\\%02d",rl1,rl2,rl3);
-            
-            #else
-	    unsigned int rl1=rec/LEVEL1_RN;
-	    unsigned int r12=rec%LEVEL1_RN;
-	    snprintf(recname,128,"0:\\System\\apo\\" APO_EN "\\%02x\\%02x",rl1,r12);            
-            #endif             
-	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
-	    {
-	      zeromem(&ur,sizeof(AB_UNPRES));
-              fsz=lseek(fin,0,S_END,&ul,&ul);
-              lseek(fin,0,S_SET,&ul,&ul);
-  	      fread(fin,buffer,fsz,&ul);
-	      fclose(fin,&ul);
-              #ifdef NEWSGOLD
-	      UnpackABentry(&ur,((char *)buffer+8),fsz,APO_TYPE);
-              #else
-              UnpackABentry(&ur,((char *)buffer+4),fsz-4,APO_TYPE);
-              #endif
-	      int i=0;
-              LockSched();
-              CRECS *loc;
-              loc=malloc(sizeof(CRECS));
-              zeromem(loc,sizeof(CRECS));
-              loc->  recid=rec;
-              UnlockSched();             
-              
-              while(i<ur.number_of_records)
-	      {
-                
-		AB_UNPRES_ITEM *r=ur.record_list+i;
-		if (r->no_data!=1)
-		{
 
 
-                  switch (GetTypeOfAB_UNPRES_ITEM(r->item_type))
-                  {
-                    case 6: //дата
-                      memcpy(&loc->datetime,r->data,sizeof(dates));
-                      break;
-                    case 5: //имя
-                      ws_2str(r->data,loc->name,30) ;    
-                      break;    
-                      
-                    case 1:  {        //номер          
-                      PKT_NUM *p=(PKT_NUM*)r->data;
-                      if (p){
-                        unsigned int c;
-                        unsigned int c1;
-                        int m,j;
-                        j=0;
-                        m=0;
-                        wsprintf(tel,"");
-                        //wsAppendChar(contact.icons,utf_symbs[n]);
-                        if (p->format==0x91) wsAppendChar(tel,'+');
-			  while(j<p->data_size)
-			  {
-                            if (m&1) {c1=c>>4; j++;}
-                            else c1=(c=p->data[j])&0x0F;
-			    if (c1==0x0F) break;
-                            
-                            if (c1==0xA) c1='*';
-                            else if (c1==0xB) c1='#';
-                            else if (c1==0xC) c1='+';
-                            else if (c1==0xD) c1='?';
-                            else c1+='0';
-                            wsAppendChar(tel,c1);
-			    m++;
-			  }
-                          ws_2str(tel,loc->number,15) ;    
-                      }
-                      }
-                      break;
-                    case 3://unsigned short / timne in secs?
-                      if (r->item_type==0x52)
-                      {
-                        loc->duration=*((short*)r->data);
-                      }
-                      break;
-                    case 0://unsigned int/ boolean ?
-                      if (r->item_type==0x54)  loc->type|=0x01*(*((short*)r->data));  //kto polozil trubku (1 -sam)
-                      if (r->item_type==0x55)  loc->type|=0x02*(*((short*)r->data)); //if 1 -incomig call
-                      if (r->item_type==0x56)  loc->type|=0x04*(*((short*)r->data));  //not answered 
-                      if (r->item_type==0x57)  loc->type|=0x08*(*((short*)r->data));  //conected by service  suzh as mts and wrong number 
-                      if (r->item_type==0x58)  loc->type|=0x10*(*((short*)r->data));  // ??? rejected
-                      if (r->item_type==0x59)  loc->type|=0x20*(*((short*)r->data));  //all side connected
-                      if (r->item_type==0x5a)  loc->type|=0x40*(*((short*)r->data));
-                                                                                                        //06 -07 missed calls
-                      break;
-                    
-                  };
-                }
-		i++; //next record
-	      }
-              //all readed
-              LockSched();
-              m+=PutRec(loc);
-              UnlockSched();
-	      FreeUnpackABentry(&ur,mfree_adr());
-                 LockSched();
-                   RecountMenu(NULL); // как-то позно оно апдеитится
-              UnlockSched();
-            }
-	
-	  }
-       
-//          rec++;
-          rec--;          //читы
-        }  
-//	while(rec<MAX_RECORDS); 
-	while(rec>0);        //читы
-      }
-      else
-      {
-	fclose(fin,&ul);
-      }
-     mfree(buffer) ;
-    }
-//    RecountMenu(NULL);
-}
-///end of parsing
-    FreeWS(tel)  ;
-#ifdef DEMON
-  ShowMSG(1,(int)"CallRecs cached");
-#endif
-}
+
+
 
 
 void ELF_KILLER(void)
@@ -678,7 +377,7 @@ void maincsm_oncreate(CSM_RAM *data)
   
 #endif  
 //  maincsm=
-
+      RecountMenu(NULL);
   
 //  SUBPROC((void*)  ReadCal);
 //  ReadCal();    
@@ -691,10 +390,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
   }
+  /*
  if (msg->msg==MSG_CSM_DESTROYED)
   {
     RefreshGUI();
   }  
+  */
   if ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==csm->gui_id))
   {
     csm->csm.state=-3;
@@ -702,24 +403,14 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   return(1);
 }
 
-void FreeList(void){
-    for (int i=0;i<3;i++){
-    curlist=i;
-    int cnt=CountRecord();
-    for (int j=cnt-1;j>=0;j--){
-      CRECS *t=      FindRecordByN(j);
-      mfree(t);
-    }
-      
-  }
 
-}
 void maincsm_onclose(CSM_RAM *csm)
 {
   contactlist_menu_id=0;
   ///kill lists
-  
-  SUBPROC((void *)FreeList);  
+#ifndef ONLY_GUI  
+  ClearContacts();  
+#endif  
   SUBPROC((void *)ELF_KILLER);
 }
 
@@ -766,8 +457,9 @@ char str2[]="4:\\zbin\\img\\callrecs\\groupoff.png";
 char str3[]="4:\\zbin\\img\\callrecs\\cd.png";
 char str4[]="4:\\zbin\\img\\callrecs\\ci.png";
 char str5[]="4:\\zbin\\img\\callrecs\\cm.png";
+char str6[]="4:\\zbin\\img\\callrecs\\ca.png";
+char str7[]="4:\\zbin\\img\\callrecs\\ce.png";
 
-//char str3[]="4:\\zbin\\naticq\\img\\work.png";
 #ifdef DEMON
 int (*old_ed_onkey)(GUI *gui, GUI_MSG *msg);
 
@@ -781,7 +473,12 @@ int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   patch_header(&contactlist_menuhdr);
   curlist=0;
   int i;
+#ifndef ONLY_GUI  
    i=CountRecord();   
+#else
+   i=3;   
+#endif    
+
 
   contactlist_menu_id=CreateMultiLinesMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i);
   RecountMenu(NULL);
@@ -831,32 +528,21 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       DoSplices(igui);
     }
   }
+  if (msg->msg==   MSG_END_CALL){
+//    refreshbase();
+  }
+  
   return(csm_result);
 }
 
 #endif
 
+
+void ReadRecord0(){
+  ReadRecord(-1);
+}
 int main(void)
 {  
-  /*
-  #pragma pack(1)
-  struct {
-#ifdef NEWSGOLD
-    long dummy1; //62 33 dc 05
-    short len;  //!!!!! НА СГОЛД ХЗ ЕСТЬ ЭТО ПОЛЕ ИЛИ НЕТ
-    char bitmap[MAX_RECORDS/8];
-#else
-    long dummy1; // ВОЗМОЖНО ОН ВХОДИТ СЮДА и здесь должно быть два шота, иначе придется делать подругому поиск
-    char bitmap[MAX_RECORDS/8];    
-#endif    
-  } ABmain;
-#pragma pack()
-  char s[256];
-  sprintf (s,"%d",sizeof (ABmain));
-  
-  ShowMSG(1,(int)s);
-  return 0;
-  */
   InitConfig();
   extern const char *successed_config_filename;  
   char m=successed_config_filename[0];
@@ -865,26 +551,25 @@ int main(void)
   str3[0]=  m;
   str4[0]=  m;
   str5[0]=  m;
-
-  //  str3[0]=  successed_config_filename[0];
+  str6[0]=  m;
+  str7[0]=  m;  
   
   
   S_ICONS[0]=(int)str1;
   S_ICONS[1]=(int)str2;
   S_ICONS[2]=GetPicNByUnicodeSymbol(USR_MOBILE); 
-  S_ICONS[6]=  S_ICONS[2];  
   S_ICONS[3]=(int)str3;
   S_ICONS[4]=(int)str4;
   S_ICONS[5]=(int)str5;
+  S_ICONS[6]=(int)str6;//all
+  S_ICONS[7]=(int)str7;//empty  
 
-  
-//  S_ICONS[2]=(int)str3;
   
 
   LockSched();
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
-  LockSched();
+
 #ifdef DEMON
   CSM_RAM *save_cmpc;
   save_cmpc=CSM_root()->csm_q->current_msg_processing_csm;
@@ -906,10 +591,15 @@ int main(void)
 
 
   UnlockSched();
-#ifdef ELKA  
-  SUBPROC((void*)  ReadCal);
-#else
-  ReadCal();
-#endif  
+//#ifdef ELKA  
+//  SUBPROC((void*)  ReadRecord0);
+//#else
+#ifndef ONLY_GUI  
+  InitContacts();
+  ReadRecord0();
+  PostProcessRecords();
+#endif 
+  
+//#endif  
   return 0;
 }
