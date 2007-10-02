@@ -318,6 +318,11 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 {
   if (msg->keys==0x18)
   {
+    if (!ndaemons)
+    {
+      ShowMSG(1, (int)"There is nothing to choose!");
+      return (-1);
+    }
     int i=GetCurMenuItem(data);
     daemons[i].newmode=1-daemons[i].newmode;
     total+=((daemons[i].newmode)?1:-1)*(daemons[i].size);
@@ -335,11 +340,12 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 
 int main()
 {
-  FSTATS fstats;
   unsigned int err;  
   
-  fstats.file_attr=FA_DIRECTORY;
-  if (GetFileStats(path,&fstats,&err)==-1) path[0]='0';
+  if (!isdir((path),&err))
+  {
+    path[0]='0';
+  }
   
   S_ICONS[0]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);//icon_disabled;
   S_ICONS[1]=GetPicNByUnicodeSymbol(CBOX_CHECKED);//icon_enabled;
