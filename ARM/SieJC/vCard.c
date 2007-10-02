@@ -31,22 +31,25 @@ void SavePhoto(XMLNode *photonode)
 {
   // Prepare path
   char ph_path[]="4:\\Zbin\\var\\UserTmpAvatar."; // Неграмотно, а хуле
-  char extension[4]="SSSS";
+  char extension[]="jpg";
   char Saved_OK = 0;
   ph_path[0] = DEFAULT_DISC[0];
   XMLNode *ph_node = XML_Get_Child_Node_By_Name(photonode, "TYPE");
-  char *ph_node_val = ph_node->value;
-  if(!strcmp(ph_node_val, "image/jpeg"))
+  if(ph_node)
   {
-    strcpy(extension,"jpg");
-  }
-  else if(!strcmp(ph_node_val, "image/png"))
-  {
-    strcpy(extension,"png");
-  }
-  else if(!strcmp(ph_node_val, "image/gif"))
-  {
-    strcpy(extension,"gif");
+    char *ph_node_val = ph_node->value;
+    if(!strcmp(ph_node_val, "image/jpeg"))
+    {
+      strcpy(extension,"jpg");
+    }
+    else if(!strcmp(ph_node_val, "image/png"))
+    {
+      strcpy(extension,"png");
+    }
+    else if(!strcmp(ph_node_val, "image/gif"))
+    {
+      strcpy(extension,"gif");
+    }
   }
   char *full_path = malloc(128);
   strcpy(full_path, ph_path);  
