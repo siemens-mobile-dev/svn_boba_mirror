@@ -19,6 +19,7 @@
 #include "../inc/xtask_ipc.h"
 #include "lang.h"
 #include "smiles.h"
+#include "vCard.h"
 #include "siejc_ipc.h"
 
 
@@ -1377,6 +1378,9 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextSmile);
 	    SMART_REDRAW();
 	    break;
+          case IPC_AVATAR_DECODE_OK:
+            vCard_Photo_Display(ipc->data);
+            break;
 	  }
 	}
       }

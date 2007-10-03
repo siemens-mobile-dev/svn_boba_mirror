@@ -13,5 +13,8 @@
 // Обработчик ноды vCard
 void Process_vCard(char *from, XMLNode *vCard);
 
+// Показать фотку из вкарда
+void vCard_Photo_Display(char *path);
+
 #endif
 

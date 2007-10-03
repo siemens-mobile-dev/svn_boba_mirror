@@ -2,6 +2,7 @@
 #include "clist_util.h"
 #include "xml_parser.h"
 #include "base64.h"
+#include "siejc_ipc.h"
 
 // Служебная функция, правильно и безопасно склеивает 
 // поля вкарда
@@ -25,6 +26,63 @@ char *Add_vCard_Value(char *dest, char *par_name, char *val)
 }
 
 extern const char DEFAULT_DISC[128];
+extern const char ipc_my_name[32];
+
+void vCard_Photo_Display(char *path)
+{
+  WSHDR *fp = AllocWS(128);
+  str_2ws(fp,path,128);
+  ExecuteFile(fp, NULL, NULL);
+  FreeWS(fp);
+  mfree(path);
+}
+
+static IPC_REQ vcard_ipc;
+
+//Context:HELPER
+void DecodePhoto(char *path, void *data)
+{
+  char *buf = malloc(strlen(data));
+  int binlen = base64_decode(data, buf);
+  char Saved_OK = 0;
+  unsigned int ec = 0;
+  unlink(path, &ec);
+  ec=0;   // похеру, чем закончится удаление.
+  volatile int f = fopen(path, A_ReadWrite +A_Create+ A_Append + A_BIN, P_READ+ P_WRITE, &ec);
+  if(!ec)
+  {
+    fwrite(f, buf, binlen, &ec);
+    fclose(f, &ec);
+    Saved_OK = 1;
+  }
+  else
+  {
+    LockSched();
+    MsgBoxError(1,(int)path);
+    UnlockSched();
+  }
+
+  // Display
+  if(Saved_OK)
+  {
+    //WSHDR *fp = AllocWS(128);
+    //str_2ws(fp,full_path,128);
+    //ExecuteFile(fp, NULL, NULL);
+    //FreeWS(fp);
+    char *fp = malloc(128);
+    strcpy(fp, path);
+    
+    vcard_ipc.name_to=ipc_my_name;
+    vcard_ipc.name_from=ipc_my_name;
+    vcard_ipc.data=fp;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_AVATAR_DECODE_OK,&vcard_ipc);
+  }
+  
+  // Cleanup
+  mfree(buf);
+  mfree(data);
+  mfree(path);  
+}
 
 // Сохранение фотографии
 void SavePhoto(XMLNode *photonode)
@@ -32,7 +90,6 @@ void SavePhoto(XMLNode *photonode)
   // Prepare path
   char ph_path[]="4:\\Zbin\\var\\UserTmpAvatar."; // Неграмотно, а хуле
   char extension[]="jpg";
-  char Saved_OK = 0;
   ph_path[0] = DEFAULT_DISC[0];
   XMLNode *ph_node = XML_Get_Child_Node_By_Name(photonode, "TYPE");
   if(ph_node)
@@ -59,31 +116,8 @@ void SavePhoto(XMLNode *photonode)
   XMLNode *binval = XML_Get_Child_Node_By_Name(photonode, "BINVAL");
   int ln = strlen(binval->value);
   char *buf = malloc(ln);
-  int binlen = base64_decode(binval->value, buf);
-  unsigned int ec = 0;
-  unlink(full_path, &ec);
-  ec=0;   // похеру, чем закончится удаление.
-  volatile int f = fopen(full_path, A_ReadWrite +A_Create+ A_Append + A_BIN, P_READ+ P_WRITE, &ec);
-  if(!ec)
-  {
-    fwrite(f, buf, binlen, &ec);
-    fclose(f, &ec);
-    Saved_OK = 1;
-  }
-  else MsgBoxError(1,(int)full_path);
-
-  // Display
-  if(Saved_OK)
-  {
-    WSHDR *fp = AllocWS(128);
-    str_2ws(fp,full_path,128);
-    ExecuteFile(fp, NULL, NULL);
-    FreeWS(fp);
-  }
-  
-  // Cleanup
-  mfree(buf);  
-  mfree(full_path);
+  memcpy(buf, binval->value, ln);
+  SUBPROC((void*)DecodePhoto, full_path, buf);
 }
 
 // Обработчик vCard
@@ -107,7 +141,6 @@ void Process_vCard(char *from, XMLNode *vCard)
   // Save photo :))
   XMLNode *photo = XML_Get_Child_Node_By_Name(vCard,"PHOTO");
   if(photo)
-     if(photo->subnode)
-       SavePhoto(photo);
+     if(photo->subnode)SavePhoto(photo);
 }
 //EOL,EOF

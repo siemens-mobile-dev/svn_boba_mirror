@@ -1460,7 +1460,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
         //char *ansi_m=convUTF8_to_ANSI_STR(m);
         char *ansi_m = m;
         utf82win(ansi_m, ansi_m);
-        ShowMSG(0,(int)ansi_m);
+        ShowMSG(1,(int)ansi_m);
         mfree(m);
         //mfree(ansi_m);
       }
