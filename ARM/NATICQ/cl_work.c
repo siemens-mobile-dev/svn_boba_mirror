@@ -298,6 +298,10 @@ void ResortCL(void)
     cl=cl->next;
     pr->next=0;
     pr->prev=0;
+    if (pr->isgroup)
+    {
+      pr->state=Is_Show_Groups?0xFFFF:0;
+    }
     AddContactOrGroup(&first,pr);    
   }
   cltop=first;

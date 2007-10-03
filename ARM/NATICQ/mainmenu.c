@@ -59,27 +59,6 @@ static void ChangeShowGroupsMode(void)
   void RecountMenu(CLIST *req);
   Is_Show_Groups=!(Is_Show_Groups);
   SUBPROC((void*)WriteDefSettings);
-  
-  extern volatile CLIST *cltop;
-  CLIST *t;
-  t=(CLIST *)cltop;
-  
-  if (!Is_Show_Groups)
-    {//Открываем группы
-      while(t)
-        {
-          if (t->isgroup) t->state=0;
-          t=t->next;
-        }      
-    }
-      else
-    {//Закрываем группы
-      while(t)
-        {
-          if (t->isgroup) t->state=0xFFFF;
-          t=t->next;
-        }      
-    }
   ResortCL();
   RecountMenu(NULL);
   RefreshGUI();

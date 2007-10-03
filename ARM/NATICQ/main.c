@@ -1856,7 +1856,7 @@ ProcessPacket(TPKT *p)
 	strncpy(s+i,p->data+p->data[0]+1,j);
       }
 //      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
-      ShowMSG(0,(int)s);
+      if (!edchat_id) ShowMSG(0,(int)s);   // Только если редактор не наверху
       
       zeromem(s,256);
       i=0;
