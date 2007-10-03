@@ -154,6 +154,7 @@ const char percent_t[]="%t";
 const char percent_d[]="%d";
 const char empty_str[]="";
 const char I_str[]="I";
+const char x_status_change[]="X-Status change";
 
 char logmsg[256];
 
@@ -1395,6 +1396,28 @@ void ParseAnswer(WSHDR *ws, const char *s);
 
 int time_to_stop_t9;
 
+void ParseXStatusText(WSHDR *ws, const char *s)
+{
+  int c;
+  int flag=0;
+  CutWSTR(ws,0);
+  wsAppendChar(ws,0xE008);
+  wsAppendChar(ws,2);
+  wsAppendChar(ws,0xE013);
+  while((c=*s++))
+  {
+    if (c==13)
+    {
+      if (!flag)
+      {
+        flag=1;
+        wsAppendChar(ws,0xE012);
+        c=' ';
+      }
+    }
+    wsAppendChar(ws,char8to16(c));
+  }
+}
 //Добавление итемов в чат при получении нового сообщения
 void AddMsgToChat(void *data)
 {
@@ -1414,9 +1437,7 @@ void AddMsgToChat(void *data)
   {
     while(p)
     {
-      ascii2ws(ews,p->hdr);
-      ConstructEditControl(&ec,1,ECF_APPEND_EOL,ews,ews->wsbody[0]);
-      PrepareEditCOptions(&ec_options);
+
       if ((zc=p->acked&3))
       {
 	if (zc==1)
@@ -1431,13 +1452,29 @@ void AddMsgToChat(void *data)
 	else
 	  color=20; //Серый
       }
+      if (p->type!=3)
+      {
+        ascii2ws(ews,p->hdr);
+        ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
+      }
+      else
+      {
+        ConstructEditControl(&ec,ECT_HEADER,ECF_DELSTR,ews,0);
+      }      
       SetPenColorToEditCOptions(&ec_options,color/*p->type==1?I_COLOR:TO_COLOR*/);
       SetFontToEditCOptions(&ec_options,2);
       CopyOptionsToEditControl(&ec,&ec_options);
       //AddEditControlToEditQend(eq,&ec,ma);
       EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
       ed_struct->ed_answer++;
-      ParseAnswer(ews,p->text);
+      if (p->type!=3)
+      {
+        ParseAnswer(ews,p->text);
+      }
+      else
+      {
+        ParseXStatusText(ews, p->text);
+      }
       ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
       SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -1571,6 +1608,34 @@ void to_develop(void)
   gipc.name_from=ipc_my_name;
   gipc.data=(void *)maincsm_id;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);  
+}
+
+void ReqAddMsgToChat(CLIST *t)
+{
+  if (edchat_id)
+  {
+    void *data=FindGUIbyId(edchat_id,NULL);
+    {
+      EDCHAT_STRUCT *ed_struct;
+      ed_struct=EDIT_GetUserPointer(data);
+      if (ed_struct) 
+      {
+        if (ed_struct->ed_contact==t)
+        {
+          if (EDIT_IsBusy(data))
+          {
+            t->req_add=1;
+            time_to_stop_t9=3;
+          }
+          else
+          {
+            AddMsgToChat(data);
+            DirectRedrawGUI_ID(edchat_id);
+	  }
+	}
+      }
+    }
+  }
 }
 
 ProcessPacket(TPKT *p)
@@ -1709,30 +1774,7 @@ ProcessPacket(TPKT *p)
 	}
       }
     }
-    if (edchat_id)
-    {
-      void *data=FindGUIbyId(edchat_id,NULL);
-      {
-	EDCHAT_STRUCT *ed_struct;
-	ed_struct=EDIT_GetUserPointer(data);
-	if (ed_struct) 
-	{
-	  if (ed_struct->ed_contact==t)
-	  {
-	    if (EDIT_IsBusy(data))
-	    {
-	      t->req_add=1;
-	      time_to_stop_t9=3;
-	    }
-	    else
-	    {
-	      AddMsgToChat(data);
-	      DirectRedrawGUI_ID(edchat_id);
-	    }
-	  }
-	}
-      }
-    }
+    ReqAddMsgToChat(t);
     RecountMenu(t);
     extern const int DEVELOP_IF;
     switch (DEVELOP_IF)
@@ -1816,11 +1858,21 @@ ProcessPacket(TPKT *p)
 //      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
       ShowMSG(0,(int)s);
       
-      for (int i=0;i<strlen(s);i++) 
-        {
-          if (s[i]=='\n') s[i]=13;
-        }
-      AddStringToLog(t,0x02,s,t->name,0xFFFFFFFF);
+      zeromem(s,256);
+      i=0;
+      j=p->data[0];
+      if (j>(255-i)) j=255-i;
+      strncpy(s,p->data+1,j);
+      i+=j;
+      if (i<255)
+      {
+	s[i++]=13;
+	j=p->pkt.data_len-p->data[0]-1;
+	if (j>(255-i)) j=255-i;
+	strncpy(s+i,p->data+p->data[0]+1,j);
+      }
+      AddStringToLog(t,0x03,s,x_status_change,0xFFFFFFFF);
+      ReqAddMsgToChat(t);
       RecountMenu(t);      
     }
     break;
@@ -2896,9 +2948,8 @@ void CreateEditChat(CLIST *t)
   int zc;
   
   LOGQ *lp=t->log;
-  
+  int edchat_toitem;
 //  edcontact=t;
-  int edchat_toitem=0;
   
   *((int *)(&edchat_hdr.lgp_id))=(int)t->name;
 //  *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+GetIconIndex(t);
@@ -2909,8 +2960,6 @@ void CreateEditChat(CLIST *t)
   
   while(lp)
   {
-    ascii2ws(ews,lp->hdr);
-    ConstructEditControl(&ec,1,ECF_APPEND_EOL,ews,ews->wsbody[0]);
     if ((zc=lp->acked&3))
     {
       if (zc==1)
@@ -2925,19 +2974,33 @@ void CreateEditChat(CLIST *t)
       else
 	color=20; //Серый
     }
+    if (lp->type!=3)
+    {
+      ascii2ws(ews,lp->hdr);
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
+    }
+    else
+    {
+      ConstructEditControl(&ec,ECT_HEADER,ECF_DELSTR,ews,0);
+    }
     PrepareEditCOptions(&ec_options);
     SetPenColorToEditCOptions(&ec_options,color);
     SetFontToEditCOptions(&ec_options,2);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
-    edchat_toitem++;
-    ParseAnswer(ews,lp->text);
+    if (lp->type!=3)
+    {
+      ParseAnswer(ews,lp->text);
+    }
+    else
+    {
+      ParseXStatusText(ews,lp->text);
+    }
     ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
-    edchat_toitem++;
     lp=lp->next;
   }
   if (t->isunread) total_unread--;
@@ -2949,7 +3012,6 @@ void CreateEditChat(CLIST *t)
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
-  edchat_toitem++;
   
   if (t->answer) ParseAnswer(ews,t->answer);
   else  CutWSTR(ews,0);
@@ -2957,8 +3019,7 @@ void CreateEditChat(CLIST *t)
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
   CopyOptionsToEditControl(&ec,&ec_options);
-  AddEditControlToEditQend(eq,&ec,ma);
-  edchat_toitem++;
+  edchat_toitem=AddEditControlToEditQend(eq,&ec,ma);
   
   EDCHAT_STRUCT *ed_struct=malloc(sizeof(EDCHAT_STRUCT));
   ed_struct->ed_contact=t;
