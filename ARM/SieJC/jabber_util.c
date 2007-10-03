@@ -256,7 +256,7 @@ void Send_Vcard_Request(char *dest_jid)
 // Возвращаемую строку необходимо освобождать!
 char *Generate_Caps()
 {
-  char caps_tpl[]="%s:%s:%d";
+  char caps_tpl[]="%s:%i:%d";
   char *q = malloc(64);
   zeromem(q,64);
   snprintf(q,127, caps_tpl, VERSION_VERS,__SVN_REVISION__,DELIVERY_EVENTS);
