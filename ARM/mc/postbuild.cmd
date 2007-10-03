@@ -1,6 +1,9 @@
-@echo off
-SET obextools=%windir%
-SET elf_file=%1\%3
+SET obextool="Q:\Soft\Obex\obexcopy.exe"
+SET mc="SGold_X75\Exe\mc"
+SET tripper="..\Tools\tripper.exe"
+rem %obextool% %elf_file% \Data\mc.elf
+rem %obextool% %elf_file% \MMCard\ZBin\mc\mc.elf
+%tripper% %mc%.elf
+move /Y %mc%_new.elf %mc%.elf
 
-%obextools%\obexdel.exe %2\%3
-%obextools%\obexcopy.exe %elf_file% %2\%3
+copy /Y %mc%.elf E:\
