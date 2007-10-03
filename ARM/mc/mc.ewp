@@ -3,7 +3,7 @@
 <project>
   <fileVersion>1</fileVersion>
   <configuration>
-    <name>NewSGold</name>
+    <name>Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -25,15 +25,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>NewSGold\Exe</state>
+          <state>Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>NewSGold\Obj</state>
+          <state>Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>NewSGold\List</state>
+          <state>Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -826,7 +826,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>ELKA</name>
+    <name>Release_ELKA</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -848,15 +848,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>ELKA\Exe</state>
+          <state>Release_ELKA\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>ELKA\Obj</state>
+          <state>Release_ELKA\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>ELKA\List</state>
+          <state>Release_ELKA\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -1650,7 +1650,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>SGold</name>
+    <name>Release_SGOLD</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1672,15 +1672,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>SGold\Exe</state>
+          <state>Release_SGOLD\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>SGold\Obj</state>
+          <state>Release_SGOLD\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>SGold\List</state>
+          <state>Release_SGOLD\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2473,7 +2473,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>SGold_X75</name>
+    <name>Release_SGOLD_X75</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -2495,15 +2495,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>SGold_X75\Exe</state>
+          <state>Release_SGOLD_X75\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>SGold_X75\Obj</state>
+          <state>Release_SGOLD_X75\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>SGold_X75\List</state>
+          <state>Release_SGOLD_X75\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -3436,7 +3436,7 @@
   <file>
     <name>$PROJ_DIR$\config_data.c</name>
     <configuration>
-      <name>NewSGold</name>
+      <name>Release</name>
       <settings>
         <name>ICCARM</name>
         <data>
@@ -3660,7 +3660,7 @@
       </settings>
     </configuration>
     <configuration>
-      <name>ELKA</name>
+      <name>Release_ELKA</name>
       <settings>
         <name>ICCARM</name>
         <data>
@@ -3884,7 +3884,7 @@
       </settings>
     </configuration>
     <configuration>
-      <name>SGold</name>
+      <name>Release_SGOLD</name>
       <settings>
         <name>ICCARM</name>
         <data>
@@ -4108,7 +4108,7 @@
       </settings>
     </configuration>
     <configuration>
-      <name>SGold_X75</name>
+      <name>Release_SGOLD_X75</name>
       <settings>
         <name>ICCARM</name>
         <data>
