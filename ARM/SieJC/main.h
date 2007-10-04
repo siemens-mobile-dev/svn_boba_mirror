@@ -114,6 +114,7 @@ typedef struct
   RES_TYPE entry_type;          // Тип записи (см. RES_TYPE)
   char status;                  // Статус
   char* status_msg;             // Статусное сообщение
+  short priority;               // Приоритет ресурса
   unsigned int has_unread_msg;  // Есть ли непрочитанные и сколько
   unsigned int total_msg_count; // Общее количество сообщений
   LOG_MESSAGE* log;             // Начало лога сообщений

@@ -1139,6 +1139,7 @@ char loc_jid[]="jid";
 char loc_reason[]="reason";
 char loc_xmlns[]="xmlns";
 char loc_x[]="x";
+short priority = 0;
 
   CONF_DATA priv;
   char Req_Set_Role=0;
@@ -1167,6 +1168,10 @@ char loc_x[]="x";
 
     XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"status");
     if(statusmsg_node)msg = statusmsg_node->value;
+
+    XMLNode* prio_node = XML_Get_Child_Node_By_Name(node,"priority");
+    extern long  strtol (const char *nptr,char **endptr,int base);
+    if(prio_node)priority = strtol (prio_node->value,0,10);        
   }
 
    // Предусматриваем случай, что послано нам что-то от конференции. Это важно.
@@ -1312,7 +1317,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
 
     }
 
-  TRESOURCE *ResEx = CList_AddResourceWithPresence(from, status, msg);
+  TRESOURCE *ResEx = CList_AddResourceWithPresence(from, status, msg, priority);
   if(Req_Set_Role) CList_MUC_SetRole(from, priv);
   if(real_jid)
   {

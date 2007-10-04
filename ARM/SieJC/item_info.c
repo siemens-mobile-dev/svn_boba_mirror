@@ -153,6 +153,18 @@ void Disp_Info(TRESOURCE* ResEx)
     utf8_2ws(ws_info, ResEx->name, 128);
     ConstructEditControl(&ec,3,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
+    
+    // Приоритет
+    wsprintf(ws_info,percent_t,LG_PRIORITY);
+    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+    
+    //utf8_2ws(ws_info, ResEx->name, 128);
+    wsprintf(ws_info, "%i", ResEx->priority);
+    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+    
+   
      
   }
   

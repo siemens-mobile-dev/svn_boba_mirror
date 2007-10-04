@@ -343,7 +343,8 @@ TRESOURCE* CList_IsResourceInList(char* jid)
 // Поменять статус у контакта
 void CList_Ch_Status(TRESOURCE* resource,
                      char status,
-                     char* status_msg
+                     char* status_msg,
+                     short priority  
                        )
 {
   LockSched();
@@ -358,6 +359,7 @@ void CList_Ch_Status(TRESOURCE* resource,
     strcpy(resource->status_msg, status_msg);
   }
   resource->status = status;
+  resource->priority = priority;
   UnlockSched();
   CList_AddSystemMessage(resource->full_name, status, status_msg);
 }
@@ -373,7 +375,7 @@ void CList_MakeAllResourcesOFFLINE(CLIST* ClEx)
   {
     CList_Ch_Status(ResEx,
                     PRESENCE_OFFLINE,
-                    NULL
+                    NULL, 0
                       );
     ResEx = ResEx->next;
   }
@@ -392,7 +394,7 @@ void CList_MakeAllContactsOFFLINE()
       if(ResEx->entry_type!=T_GROUP)
         CList_Ch_Status(ResEx,
                       PRESENCE_OFFLINE,
-                       NULL
+                       NULL,0
                        );
       ResEx = ResEx->next;
     }
@@ -434,7 +436,7 @@ int CList_GetVisibilityForGroup(int GID)
   return 1; //Такая группа не найдена. Такого вообще-то не должно быть, но для конференций это именно так.
 }
 
-TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg)
+TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_msg, short priority)
 {
   TRESOURCE* qq = CList_IsResourceInList(jid);
 
@@ -442,7 +444,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
   // Нужно ему статус поменять.
   if(qq)
   {
-    CList_Ch_Status(qq, status, status_msg);
+    CList_Ch_Status(qq, status, status_msg, priority);
     return qq;
   }
   CLIST* ClEx = cltop;
@@ -477,6 +479,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
 
       ResEx->status = status;
+      ResEx->priority = priority;
       ResEx->muc_privs.aff = AFFILIATION_NONE;
       ResEx->muc_privs.role=  ROLE_NONE;
       ResEx->muc_privs.real_jid =  NULL;
@@ -597,6 +600,7 @@ CLIST* CList_AddContact(char* jid,
   ResEx->log=NULL;
   ResEx->next=NULL;
   ResEx->status_msg=NULL;
+  ResEx->priority=0;
   ResEx->muc_privs.real_jid =  NULL;
   ResEx->has_unread_msg=0;
   ResEx->total_msg_count=0;
@@ -680,7 +684,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     ShowMSG(1,(int)qjid);
     contEx = CList_AddContact(qjid, qjid, SUB_NONE, 0, 0);
     mfree(qjid);
-    CList_AddResourceWithPresence(jid, PRESENCE_OFFLINE, NULL);
+    CList_AddResourceWithPresence(jid, PRESENCE_OFFLINE, NULL,0);
   }
   TRESOURCE* cont = (contEx->group & 0x80 && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT)) ? contEx->res_list : CList_IsResourceInList(jid);
   if(!cont)
