@@ -1,5 +1,7 @@
 #include "../inc/swilib.h"
 #include "minigps_logger.h"
+// $Revision$
+// $Revision
 
 // Путь к БД
 extern const          char MGPS_DB[128];
@@ -213,10 +215,7 @@ char *Get_Current_Location(char *action)
     strcpy(res, _res);
     return res;
   }
-  
-  Res.lac = 7737;
-  Res.ci = 32818;
-  
+
   // Не найдено в кеше, открываем файл и получаем имя и действие  
   snprintf(filename,127,"%s\\%u\\%u-%u.tmo",&MGPS_DB,Res.lac,Res.ci,Res.lac);  
   
