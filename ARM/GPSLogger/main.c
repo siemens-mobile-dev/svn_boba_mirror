@@ -10,6 +10,8 @@ CSM_DESC icsmd;
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
 
+unsigned int previousLength=0;
+
 WSHDR *Out_WS;
 GBSTMR mytmr;
 
@@ -25,6 +27,11 @@ extern const unsigned int TXT_FONT;
 extern const          int CENTER_TEXT;
 extern const          char TXT_COLOR[];
 extern const unsigned int TXT_ATTR;
+extern const          int SHOW_IN;
+
+#define SH_UNLOCK 0
+#define SH_LOCK 1
+#define SH_BOTH 2
 
 
 void TimerProc()
@@ -71,6 +78,14 @@ void RedrawScreen(CSM_RAM* data)
   char action;
   xz= Get_Current_Location(&action);
   if(!xz)return;
+  int is_unlocked = IsUnlocked();
+  if(action)DoAction(action);
+  
+  if(!(SHOW_IN==SH_BOTH || (is_unlocked && SHOW_IN==SH_UNLOCK)||(!is_unlocked && SHOW_IN==SH_LOCK)))
+  {
+    mfree(xz);
+    return;
+  }
         
   if(IsGuiOnTop(EDLEGUI_ID)) //Если IdleGui на самом верху
   {
@@ -100,9 +115,13 @@ void RedrawScreen(CSM_RAM* data)
 #else
         canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
 #endif      
+        if (previousLength>len)
+          len=previousLength;
+        
+        previousLength=len;
+        
         DrawCanvas(canvasdata,x_pos,TXT_Y,x_pos + len ,TXT_Y + GetFontYSIZE(TXT_FONT),1);
-        DrawString(Out_WS,x_pos,TXT_Y,x_pos + len+1 ,TXT_Y + GetFontYSIZE(TXT_FONT)+1,TXT_FONT,TXT_ATTR,COLOR(TXT_COLOR),GetPaletteAdrByColorIndex(1));
-        if(action)DoAction(action);       
+        DrawString(Out_WS,x_pos,TXT_Y,x_pos + len+1 ,TXT_Y + GetFontYSIZE(TXT_FONT)+1,TXT_FONT,TXT_ATTR,COLOR(TXT_COLOR),GetPaletteAdrByColorIndex(1));       
       }
     }
   }  

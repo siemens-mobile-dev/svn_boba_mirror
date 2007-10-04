@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe Release\Exe\GPSLogger.elf \MMCard\GPSLogger.elf</postbuild>
+        <postbuild>obexcopy.exe Release\Exe\GPSLogger.elf \MMCard\ZBin\Daemons\GPSLogger.elf</postbuild>
       </data>
     </settings>
     <settings>

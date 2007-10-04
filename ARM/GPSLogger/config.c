@@ -12,6 +12,11 @@ __root const int LOG_UNKNOWN_CELLS=0;
 ////////////////////////////////////////////////////////////////////////////////
 __root const CFG_HDR cfghdr_TEXT_CFG_LEVEL_B={CFG_LEVEL,"Display configuration",1,0};
 
+// Когда показывать (лок, нелок, всегда)
+__root const CFG_HDR cfghdrt545={CFG_CBOX,"Show in",0,3};
+__root const int SHOW_IN = 0;
+__root const CFG_CBOX_ITEM cfgcbox2[3]={"Unlock","Lock", "Both"};
+
 //Координаты X, Y вывода надписи
 __root const CFG_HDR cfghdrioykh={CFG_COORDINATES,"Text position",0,0};
 __root const unsigned int TXT_X=50;
