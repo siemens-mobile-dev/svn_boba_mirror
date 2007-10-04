@@ -213,6 +213,10 @@ char *Get_Current_Location(char *action)
     strcpy(res, _res);
     return res;
   }
+  
+  Res.lac = 7737;
+  Res.ci = 32818;
+  
   // Не найдено в кеше, открываем файл и получаем имя и действие  
   snprintf(filename,127,"%s\\%u\\%u-%u.tmo",&MGPS_DB,Res.lac,Res.ci,Res.lac);  
   
@@ -247,7 +251,7 @@ char *Get_Current_Location(char *action)
   memcpy(ws->wsbody+1, buf+2+2+2, (str_len)*2); // [0] = длина, + 2 символа в UTF-16 нам не нужны
   ws->wsbody[0] = str_len;
   str = malloc(str_len*2+1);
-  ws_2utf8(ws, str, &result_len, (str_len)*2);
+  ws_2utf8(ws, str, &result_len, (str_len)*2+1);
   FreeWS(ws);
   str = realloc(str, result_len+1);
   Put_In_Cache(Res.ci,Res.lac, str);
