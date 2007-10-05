@@ -75,7 +75,7 @@ char *Replace_Special_Syms(char *unrep_str)
 char *Mask_Special_Syms(char *unrep_str)
 {
   unsigned int unrep_len = strlen(unrep_str);
-  unsigned int rep_buffer_size = unrep_len*2+1;
+  unsigned int rep_buffer_size = unrep_len*2+16;
   char *rep_buffer = malloc(rep_buffer_size);
   unsigned int c_pos = 0;
   for(int i=0; i<unrep_len; i++)
