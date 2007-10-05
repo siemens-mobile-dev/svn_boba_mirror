@@ -456,20 +456,45 @@ void bm_menu_iconhndl(void *data, int curitem, void *unk)
 {
   const char *s;
   WSHDR *ws;
+  int l;
   void *item=AllocMenuItem(data);
 
   s=bm_name(curitem);
   if (s)
   {
-    if (strlen(s))
+    if ((l=strlen(s)))
     {
-      ws=AllocMenuWS(data,strlen(s));
+      ws=AllocMenuWS(data,l);
       wsprintf(ws,percent_t,s);
     }
     else
     {
-      ws=AllocMenuWS(data,10);
-      wsprintf(ws,"Empty");
+      s=bm_file(curitem);
+      if (s)
+      {
+        if (strlen(s))
+        {
+          char *p=strrchr(s,'\\');
+          if (p)
+          {
+            short pos;
+            ws=AllocWS((l=strlen(p+1)));
+            str_2ws(ws,p+1,l);
+            if ((pos=wstrrchr(ws,ws->wsbody[0],'.'))!=0xFFFF)
+            {
+              CutWSTR(ws,pos-1);
+            }
+          }
+          else goto L_EMPTY;
+        }
+        else goto L_EMPTY;
+      }
+      else
+      {
+      L_EMPTY:
+        ws=AllocMenuWS(data,10);
+        wsprintf(ws,"Empty");        
+      }
     }
   }
   else

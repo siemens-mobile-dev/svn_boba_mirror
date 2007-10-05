@@ -150,9 +150,8 @@ int my_keyhook(int submsg, int msg)
         ShowMenu();
       }
       mode=0;
-      break;
+      return KEYHOOK_BREAK;
     }
-    return KEYHOOK_BREAK;
   }
   // * + # implementation
   if ((ACTIVE_KEY_STYLE==2) && !(my_csm_id))
