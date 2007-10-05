@@ -5,15 +5,16 @@
 //File Name
 char* GetFileExt(char* fname)
 {
-	int len = strlen(fname);
-	int ii;
-	for (ii = len - 1; ii >= 0; ii--)
-	{
-		if (fname[ii] == '.') break;
-		if (len - ii > MAX_EXT) return 0;
-	}
-	if (ii >= 0) return (fname + ii + 1);
-	return 0;
+  char *s1, *s2;
+  s1=strrchr(fname,'.');
+  if (s1)
+  {
+    int i=0;
+    s2=++s1;       
+    while(*s2++) i++;
+    if (i>MAX_EXT) s1=0;
+  }
+  return (s1);
 }
 
 char* GetFileName(char* fname)
