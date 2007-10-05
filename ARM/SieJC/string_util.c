@@ -11,8 +11,8 @@ typedef struct
 }REPL_ARRAY;
 
 // Сами замены и их количество
-const int Repl_chars_count = 4;
-REPL_ARRAY Repl_chars[] = {//"&apos;\0",0x27,
+const int Repl_chars_count = 5;
+REPL_ARRAY Repl_chars[] = {"&apos;\0",0x27,
                            "&quot;\0",'"',
                            "&lt;\0\0\0", '<',
                            "&gt;\0\0\0", '>',

@@ -96,8 +96,10 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
   sprintf(xmlq, "<iq type='%s' %s from='%s'", type, s_id, My_JID_full);
   if(to)
   {
-    snprintf(s_to, 128, " to='%s'", to);
+    char *_to = Mask_Special_Syms(to);
+    snprintf(s_to, 128, " to='%s'", _to);
     strcat(xmlq, s_to);
+    mfree(_to);
   }
   if(payload)
   {
@@ -284,12 +286,12 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     OnlineInfo.txt = malloc(strlen(pr_info->message)+1);
     strcpy(OnlineInfo.txt, pr_info->message);
   }else OnlineInfo.txt = NULL;
-  
+
   //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
-  
+
   // Генерируем капс исходя из включённых фич
   char *caps = Generate_Caps();
-  
+
   char* presence = malloc(1024);
   if(pr_info->status!=PRESENCE_INVISIBLE)
   {
@@ -328,7 +330,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     SendAnswer(presence);
     m_ex=m_ex->next;
   };
-  
+
   mfree(presence);
   if(pr_info->message)mfree(pr_info->message);
   mfree(pr_info);
@@ -1171,7 +1173,7 @@ short priority = 0;
 
     XMLNode* prio_node = XML_Get_Child_Node_By_Name(node,"priority");
     extern long  strtol (const char *nptr,char **endptr,int base);
-    if(prio_node)priority = strtol (prio_node->value,0,10);        
+    if(prio_node)priority = strtol (prio_node->value,0,10);
   }
 
    // Предусматриваем случай, что послано нам что-то от конференции. Это важно.
