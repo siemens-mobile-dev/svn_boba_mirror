@@ -110,7 +110,7 @@ void ExtProc(char* name, char* value)
 	EXTINF* ext;
 	int inj;
 	int nlen = strlen(name);
-	
+	unsigned int i;
 	strtolower(name, name, -1);
 
 #ifdef LOG
@@ -133,7 +133,11 @@ void ExtProc(char* name, char* value)
 		inj=1;
 	}
 	int ico;
-	if (!value[0])
+        if (((i=(unsigned int)value)>>28) != 0xA)
+        {
+          ico=i;
+        }
+	else if (!value[0])
 		ico = ext_unk.ico;
 	else if (isNumericStr(value))
 	{
