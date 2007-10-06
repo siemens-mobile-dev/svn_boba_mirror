@@ -11,6 +11,9 @@ __root const CFG_HDR cfghdr1={CFG_CBOX,"Enable hello message",0,2};
 __root const int ENA_HELLO_MSG=1;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 
+__root const CFG_HDR cfghdr25={CFG_STR_WIN1251,"UnderIdleCSM_DESC",0,8};
+__root const char UNDER_IDLE_CONSTR[9]="";
+
 #ifndef NEWSGOLD
 __root const CFG_HDR cfghdr23={CFG_CBOX,"Activation style",0,4};
 __root const int ACTIVE_KEY_STYLE=0;

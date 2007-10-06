@@ -8,12 +8,15 @@
 #define USE_ONE_KEY
 #endif
 
+#define TMR_SECOND(A) (1300L*A/6)
+
 volatile int SHOW_LOCK;
 
 CSM_DESC icsmd;
 int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 void (*old_icsm_onClose)(CSM_RAM*);
 
+GBSTMR start_tmr;
 CSM_RAM *under_idle;
 
 extern const int ACTIVE_KEY;
@@ -23,7 +26,12 @@ extern const int ENA_LONG_PRESS;
 extern const int ENA_LOCK;
 extern int my_csm_id;
 
+extern const char UNDER_IDLE_CONSTR[];
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
 extern void kill_data(void *p, void (*func_p)(void *));
+
+extern const char *successed_config_filename;
 
 void ElfKiller(void)
 {
@@ -46,6 +54,26 @@ int mode_red;
 // 1 - long press ENTER_BUTTON
 // 2 - disable KEY_UP process
 int mode_enter;
+
+
+CSM_RAM *GetUnderIdleCSM(void)
+{
+  CSM_RAM *u;
+  CSM_DESC *UnderIdleDesc;
+  if (strlen((char *)UNDER_IDLE_CONSTR)==8)
+  {
+    UnderIdleDesc=(CSM_DESC *)strtoul((char *)UNDER_IDLE_CONSTR,0,0x10);
+  }
+  else
+  {
+    UnderIdleDesc=((CSM_RAM *)(FindCSMbyID(CSM_root()->idle_id))->prev)->constr;
+    sprintf((char *)UNDER_IDLE_CONSTR,"%08X",UnderIdleDesc);
+    SaveConfigData(successed_config_filename);
+  }
+  u=CSM_root()->csm_q->csm.first;
+  while(u && u->constr!=UnderIdleDesc) u=u->next;
+  return u;
+}
 
 int my_keyhook(int submsg, int msg)
 {
@@ -323,7 +351,6 @@ L1:
   
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
-    extern const char *successed_config_filename;
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
       ShowMSG(1,(int)"XTask config updated!");
@@ -394,10 +421,8 @@ void MyIDLECSM_onClose(CSM_RAM *data)
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
 
-void main(void)
+void DoSplices(void)
 {
-  mode=0;
-  InitConfig();
   extern const int SHOW_DAEMONS;
   extern int show_daemons;
   show_daemons=SHOW_DAEMONS;
@@ -420,7 +445,14 @@ void main(void)
       icsmd.onMessage=MyIDLECSM_onMessage;
       icsm->constr=&icsmd;
     }
-    under_idle=(FindCSMbyID(CSM_root()->idle_id))->prev; //»щем idle_dialog
+    under_idle=GetUnderIdleCSM(); //»щем idle_dialog
   }
   UnlockSched();
+}
+  
+void main(void)
+{
+  mode=0;
+  if (InitConfig()) GBS_StartTimerProc(&start_tmr,TMR_SECOND(60),DoSplices);
+  else DoSplices();
 }

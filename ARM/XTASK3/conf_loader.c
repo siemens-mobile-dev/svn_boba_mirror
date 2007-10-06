@@ -4,14 +4,37 @@
 
 const char *successed_config_filename="";
 
+
+
+
 #pragma segment="CONFIG_C"
-int LoadConfigData(const char *fname)
+int SaveConfigData(const char *fname)
+{
+  int f;
+  unsigned int ul;
+  int result=-1;
+  unsigned int wlen;
+  unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
+
+  if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&ul))!=-1)
+  {
+    wlen=fwrite(f,__segment_begin("CONFIG_C"),len,&ul);
+    fclose(f,&ul);
+    if (wlen==len) result=0;
+  }
+  return(result);
+}
+
+
+#pragma segment="CONFIG_C"
+int LoadConfigData(const char *fname, int *is_new)
 {
   int f;
   unsigned int ul;
   char *buf;
   int result=0;
   void *cfg;
+  unsigned int rlen, end;
 
   extern const CFG_HDR cfghdr0; //first var in CONFIG
   cfg=(void*)&cfghdr0;
@@ -21,37 +44,30 @@ int LoadConfigData(const char *fname)
   if (!(buf=malloc(len))) return -1;
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
-    if (fread(f,buf,len,&ul)==len)
-    {
-      memcpy(cfg,buf,len);
-      fclose(f,&ul);
-    }
-    else
-    {
-      fclose(f,&ul);
-      goto L_SAVENEWCFG;
-    }
+    rlen=fread(f,buf,len,&ul);
+    end=lseek(f,0,S_END,&ul,&ul);
+    fclose(f,&ul);
+    if (rlen!=end || rlen!=len)  goto L_SAVENEWCFG;
+    memcpy(cfg,buf,len);
+    if (is_new) *is_new=0;
   }
   else
   {
   L_SAVENEWCFG:
-    if ((f=fopen(fname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-    {
-      if (fwrite(f,cfg,len,&ul)!=len) result=-1;
-      fclose(f,&ul);
-    }
-    else
-      result=-1;
+    result=SaveConfigData(fname);
+    if (is_new) *is_new=1;
   }
   mfree(buf);
   if (result>=0) successed_config_filename=fname;
   return(result);
 }
 
-void InitConfig()
+int InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\XTask.bcfg")<0)
+  int is_new;
+  if (LoadConfigData("4:\\ZBin\\etc\\XTask.bcfg", &is_new)<0)
   {
-    LoadConfigData("0:\\ZBin\\etc\\XTask.bcfg");
+    LoadConfigData("0:\\ZBin\\etc\\XTask.bcfg", &is_new);
   }
+  return is_new;
 }
