@@ -1,6 +1,6 @@
 
 #include "..\inc\swilib.h"
-#include "..\inc\mplayer.h"
+
 #include "..\inc\playsound.h"
 #include "swilib2.h"
 #include "conf_loader.h"
@@ -12,8 +12,13 @@
 #include "some_utils.h"
 #endif
 #include "speech_txt.h"
+#include "..\inc\mplayer.h"
+word next=0;
+char gbs[128]; //check may be short 
 
-
+CSM_DESC icsmd;
+//CSM_RAM oldicsm,*poldicsm;
+void **picsm,*picsm2;
 //-------------------------------------------------------------------
 #ifdef NEWSGOLD
   #define _GetAkkuCapacity GetAkkuCapacity
@@ -47,17 +52,17 @@
 #endif
 #endif
 //-- vars ------------------------------------------------------------
-CSM_DESC icsmd;
+
 
 //void (*old_icsm_onClose)(CSM_RAM*);
-//int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
+int (*old_icsm_onMessage)(CSM_RAM*,GBS_MSG*);
 GBSTMR mytmr;
 #ifdef PLAYERTRACK  
   GBSTMR mytmr2;
 #endif
 const unsigned int refresh=130;
 byte  llevel=0;
-byte  kbs=0;
+//byte  kbs=0;
 
   extern const unsigned int spc_min;
   byte rds=0;
@@ -136,6 +141,32 @@ extern const unsigned int spc_kukkey;
 }
 //-------------------------------------------------------------------
 byte zds=0;
+/*
+char t_dash[]="#";
+ char num[22]="\0";
+void ProcessAON(){
+  int cnt=strlen(num);
+// ShowMSG(1,(int)num);
+  char tmp[128],*tmp2;
+  tmp2=tmp;
+  //оптимизировать
+  sprintf (tmp2,"kp.wav;"); //децл чит что все номера с +
+  for (int i=1;(i<cnt)&&(i<18);i++){ //i,17 additional check gbs 125 bytes only 
+        sprintf (tmp2,"k%c.wav;",num[i]);
+        tmp2+=7;
+  }
+//  tmp2[0]='#';
+//  tmp2[1]=0;
+
+  sprintf (tmp2,t_dash);  //оптимизировать
+  SpeechPhrasesChk(tmp);
+}
+/*
+void TimerProcAON(void)
+{ 
+  ProcessAON();
+}*/
+
 void ProcessAccum(void){
   char tmp[64];
   byte lvl= _GetAkkuCapacity();
@@ -238,10 +269,10 @@ void TimerProc(void)
 
 word  klong=0;
 
-int TopG (){
+int TopG (int disp){
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   if (!icsm) return 0;
-  if (!IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])) return 0;
+  if (!IsGuiOnTop(((int *)icsm)[disp/4])) return 0;
   return 1;
 }
 
@@ -249,10 +280,11 @@ int TopG (){
 //-------------------------------------------------------------
 int my_keyhook(int submsg, int msg)
 {
-  int vl=TopG();
+  int vl=TopG(DISPLACE_OF_IDLEGUI_ID);
  
   if (msg==KEY_UP){
     if (!IsCalling()){  
+
 #ifdef NEWSGOLD      
        if (submsg!=RED_BUTTON&&submsg!=key_prev&&submsg!=key_next&&submsg!=PTT_BUTTON&&submsg!=35&&((!IsUnlocked()&&spc_kukloc)||(submsg==spc_kukkey&&vl))){        
 #else
@@ -264,11 +296,14 @@ int my_keyhook(int submsg, int msg)
            return 2;    
          }else;
        } else
+       {
 #ifndef  NOHEADSET
-       if (spc_keyvol&&IsUnlocked()&&kbs&&!st){
+       
+       if (spc_keyvol&&IsUnlocked()&&TopG(DISPLACE_OF_EDGUI_ID)&&!st){
  #else
-       if (spc_keyvol&&IsUnlocked()&&kbs){         
+       if (spc_keyvol&&IsUnlocked()&&TopG(DISPLACE_OF_EDGUI_ID)){         
 #endif         
+            
          char tmp[]="k-.wav;#";
          if (submsg==35){
            if (klong)  tmp[1]='q';
@@ -284,9 +319,12 @@ int my_keyhook(int submsg, int msg)
            tmp[1]=(char)submsg;
          }else;
          if (tmp[1]!='-'){
-            SpeechPhrasesChk(tmp);       
+                          
+            SpeechPhrasesChk(tmp);    
+
          }
-       }   
+       }
+       }
        
      } 
     
@@ -338,6 +376,48 @@ int inline strcmp_nocase(const char *s1,const char *s2)
   while(!(i=(c=toupper(*s1++))-toupper(*s2++))) if (!c) break;
   return(i);
 }
+/*
+///////////////////////////////////////////////
+int ingui=0;
+  char s[]="s";
+        char ss[]="s2";
+       char sss[]="s3";
+
+char *getNumber(){
+
+
+ memset (num,0,sizeof(num));
+   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+ 
+      
+  void *data=FindGUIbyId(((int *)icsm)[DISPLACE_OF_INCOMMINGGUI/4],NULL);
+  if (data){
+
+    int ***d1=        GetDataOfItemByID(data,9);
+    int d3=d1[0x1c/4][0x08/4][0];
+    WSHDR *snd=AllocWS(70);
+    if (d3) {
+      memcpy(snd->wsbody,(unsigned short*)d3,((unsigned short*)d3)[0]*2+2);         //maybe check len of mem
+
+    }
+    if (snd){
+     
+      if (snd->wsbody) {
+        if (snd->wsbody[0]) {
+             ws_2str(snd,num,20);
+            
+             FreeWS(snd);
+                  
+             return num;
+           
+        }
+      }
+    }
+    FreeWS(snd);
+  }
+  return NULL;
+}
+*/
 
 
 
@@ -347,12 +427,62 @@ int inline strcmp_nocase(const char *s1,const char *s2)
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
 
+
+  #ifdef NEWSGOLD
+#ifndef ELKA  // cheats for mp3 melody on calls at S75
+
+  if (msg->msg==   MSG_INCOMMING_CALL){
+    gfp2=(_GetPlayStatus()==2);
+    if (gfp2&&killPlr){
+      MPlayer_Stop();
+      MPlayer_Shutdown();
+//      MEDIA_PLAYLAST();      
+//      MPlayer_Toggle();
+
+    }
+
+  }else
+  if (msg->msg==   MSG_END_CALL){
+    if (gfp2&&killPlr){
+      MEDIA_PLAYLAST();
+//      MPlayer_Toggle();      
+      gfp2=0;
+    }
+
+
+  }else;
+
+#endif
+#endif    
+    
+return(old_icsm_onMessage(data,msg));  
+  }
+ ;
+int MainCSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
+{
+
 //  int csm_result;
 
 #define edgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
 
 
-
+  /*
+    if (!ingui) {
+    if (TopG(DISPLACE_OF_INCOMMINGGUI)){
+       char *num ;
+      if (num=getNumber() ){
+                   
+    //    ProcessAON();
+        ingui=1;
+      }
+    }
+  }else{
+    
+    ingui=TopG(DISPLACE_OF_INCOMMINGGUI); //not good csm states
+  }
+  
+*/
+  
 #ifdef PLAYERTRACK
  
   if (msg->msg== sMSG){
@@ -363,36 +493,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }else{
 //     csm_result=old_icsm_onMessage(data,msg); 
 #else     
-//  csm_result=old_icsm_onMessage(data,msg);      
+    //  csm_result=old_icsm_onMessage(data,msg);      
 #endif     
-  if (IsGuiOnTop(edgui_id))  {
-    GUI *igui=GetTopGUI();
-    if (igui)kbs=1; else kbs=0;
-  }else{ 
-    kbs=0;
-  }
-  #ifdef NEWSGOLD
-#ifndef ELKA  // cheats for mp3 melody on calls at S75
 
-  if (msg->msg==   MSG_INCOMMING_CALL){
-    gfp2=(_GetPlayStatus()==2);
-    if (gfp2&&killPlr){
-      MPlayer_Stop();
-      MPlayer_Shutdown();
-    }
-
-  }else
-  if (msg->msg==   MSG_END_CALL){
-    if (gfp2&&killPlr){
-      MEDIA_PLAYLAST();
-      gfp2=0;
-    }
-
-
-  }else
-
-#endif
-#endif    
   if(msg->msg == MSG_RECONFIGURE_REQ)   {
     
    extern const int REFMSG;
@@ -407,17 +510,18 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       word kd=(msg->submess);
       if (kd==M_SAE_PLAYBACK_DONE||kd==M_SAE_PLAYBACK_ERROR)        SpeechPhrases(gbs);else;        
     };/*else{ //try capture song id
-      nextp=(msg->submess>>16);
+      int nextp=(msg->submess>>16);
       if (nextp){
         char p[128];
-        sprintf(p,"%d",nextp);
+        sprintf(p,"%d    ",nextp);
         ShowMSG(1,(int)p);
       }
      
-    }
-    */
+    }*/
     
-  }
+    
+  };/*else
+*/
  ;
 
 #ifdef PLAYERTRACK 
@@ -426,6 +530,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 //  return(csm_result);
     return(1);
 }
+
 /*
 void MyIDLECSM_onClose(CSM_RAM *data)
 {
@@ -454,19 +559,20 @@ typedef struct
   CSM_RAM csm;
 }MAIN_CSM;
 
+#define SND_VER "SndDemon v1.50"
 
 static void maincsm_oncreate(CSM_RAM *data)
 {
     extern const int ALLOW_HELLO_MSG;
-  if (ALLOW_HELLO_MSG) ShowMSG(1,(int)"SndDemon v1.48 loaded.");  
-// ShowMSG(1,(int)"SndDemon v1.48 loaded2.");  
-    sndPath=AllocWS(256);
+  if (ALLOW_HELLO_MSG) ShowMSG(1,(int)(SND_VER " loaded."));  
+  sndPath=AllocWS(256);
   sndFName=AllocWS(256);
 
   AddKeybMsgHook((void *)my_keyhook);   
   
   GBS_StartTimerProc(&mytmr,216*3,TimerProc);  //262 delay for starting from demon
 #ifdef PLAYERTRACK  
+
   GBS_SendMessage(MMI_CEPID, sMSG);
 #endif  
 
@@ -476,7 +582,19 @@ static void Killer(void)
 {
   extern void *ELF_BEGIN;
 
+  /*LockSched();
+  memcpy(poldicsm,&oldicsm,sizeof(oldicsm));  
+  UnlockSched();
+   */
+  picsm[0]=picsm2;
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
+  
+//    extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
+//  extern void *ELF_BEGIN;
+
+//  seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());  
+
+
 }
 
 static void maincsm_onclose(CSM_RAM *csm)
@@ -502,7 +620,7 @@ static const struct
 }MAINCSM =
 {
   {
-  MyIDLECSM_onMessage,
+ MainCSM_onMessage,
   maincsm_oncreate,
 #ifdef NEWSGOLD
   0,
@@ -526,7 +644,7 @@ static const struct
 
 static void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SndDemon v1.48");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),SND_VER);
 }
 
 
@@ -540,6 +658,7 @@ int main(char *exename, char *fname)
   LockSched();  
 
 #ifdef ELKA // try find audiobuffer size hook
+  
   if (allowbuf&&!audcfg){
     if (autosearch())
       ShowMSG(1,(int)"Entry point for Buffer change found.");
@@ -558,16 +677,21 @@ int main(char *exename, char *fname)
   CreateCSM(&MAINCSM.maincsm,dummy,0);
   CSM_root()->csm_q->current_msg_processing_csm=save_cmpc;
 
-/*
+
   CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+//  poldicsm=icsm;
+//  memcpy(&oldicsm,icsm,sizeof(oldicsm));  
+   picsm =&icsm->constr;
+   picsm2 =icsm->constr;
   memcpy(&icsmd,icsm->constr,sizeof(icsmd));
   old_icsm_onMessage=icsmd.onMessage;
-  old_icsm_onClose=icsmd.onClose;
+//  old_icsm_onClose=icsmd.onClose;
   icsmd.onMessage=MyIDLECSM_onMessage;  
-  icsmd.onClose=MyIDLECSM_onClose;  
+//  icsmd.onClose=MyIDLECSM_onClose;  
   icsm->constr=&icsmd;
-*/
+
   UnlockSched();    
   
   return 0;
 }
+

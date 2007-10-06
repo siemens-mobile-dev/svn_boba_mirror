@@ -1,3 +1,9 @@
+v1.50
+вроде пофиксил баг с непроизношением клавы и вырубанием плеера при звонке, возникший изза NSD
+выгрузка из демонов происходит через одно место (теоретически может отрубиться часть других не NSD демонов)
+звуковой АОН пока закоменчен.
+оптимизация в NSG под функцию #pragma swi_number=0x22C __swi __arm int pdcache_getval(char* ret, int maxlen_of_return_str, char cachetype, char *pd_entry_identifier_class, char  *pd_entry_identifier_sub);
+
 v1.48
 переделано под NewStyleDaemon's
 v1.47

@@ -5,7 +5,7 @@
   extern const RECT cTgr;  
   extern int scr_w;
   extern const char clr[];
-  extern int TopG ();
+  extern int TopG (int);
 
   void initTags(void);
   void GetTags();

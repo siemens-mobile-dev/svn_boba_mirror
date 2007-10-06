@@ -25,6 +25,7 @@
     }else{
       unsigned int *mem=(unsigned int*)((int)&allowbuf);
       *mem=0;
+
       SaveConfig();
     }
     return fl;

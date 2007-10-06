@@ -6,41 +6,33 @@ const char *successed_config_filename="";
 
 #pragma segment="CONFIG_C"
 #ifdef ELKA
-int SaveConfigDataSub(const char *fname)
+inline int SaveConfigDataSub(const char *fname)
 {
   int f;
   unsigned int ul;
-  char *buf;
-  int result=0;
-  void *cfg;
 
-  extern const CFG_HDR ch0; //first var in CONFIG
-  cfg=(void*)&ch0;
 
-  unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
+//  extern const CFG_HDR ch0; //first var in CONFIG
+//  cfg=(void*)&ch0;
 
-  if (!(buf=(char*)malloc(len))) return -1;
-//  L_SAVENEWCFG:
-    if ((f=fopen(fname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+//  unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
+  unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
+
+    if ((f=fopen(fname,A_WriteOnly+A_Create+A_BIN+A_Truncate,P_WRITE,&ul))!=-1)
     {
-      if (fwrite(f,cfg,len,&ul)!=len) result=-1;
+      if (fwrite(f,__segment_begin("CONFIG_C"),len,&ul)!=len)return -1;
       fclose(f,&ul);
     }
     else
-      result=-1;
+      return -1;
   
-  mfree(buf);
-  return(result);
+
+  return 0;
 }
 
 void SaveConfig(void){
-/*  if (SaveConfigDataSub("4:\\ZBin\\etc\\SndDemon.bcfg")<0)
-  {
-    SaveConfigDataSub("0:\\ZBin\\etc\\SndDemon.bcfg");
-  }*/
+
     SaveConfigDataSub(successed_config_filename);
-  
-  
 }
 #endif
 int LoadConfigData(const char *fname)

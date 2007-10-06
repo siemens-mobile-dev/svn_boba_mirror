@@ -1,37 +1,16 @@
 #ifdef NEWSGOLD
 #include "../inc/swilib.h"
+#include "swilib2.h"
 #include "some_utils.h"
-  int  GetValFromCache(char *filename,char *name){
-  int f;
-  unsigned int ul;
-  char *buf,*buf2;
-  int val=-1;
-  unsigned int len;
-  if ((f=fopen(filename,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)  {
-    len=lseek(f,0,S_END,&ul,&ul);;
-    if (!(buf2=(char*)malloc(len))) {
-      fclose(f,&ul);
-      return val;
-    }
-    lseek(f,0,S_SET,&ul,&ul);;
-    if (fread(f,buf2,len,&ul)==len)    {
-      buf=buf2;
-      int next=0;
-      char *str=malloc(256);
-      do {
-        sscanf(buf,"%6d:T:%[^=]=%d",&next,str,&val);//==3;
-        if (!strcmp(str,name))          break;
-        buf+=next+2;
-      }while ((buf-buf2)<len);
-      mfree (str);
-      mfree (buf2);
-      fclose(f,&ul);
-    }
-    else
-      fclose(f,&ul);
-  }
-  return val;
+//  int  GetValFromCache(char *filename,char *name){
+
+int  GetValFromCache(void){
+    char res[3];
+//   pdcache_getval(char* ret, int maxlen_of_return_str, char cachetype, char *pd_entry_identifier_class, char  *pd_entry_identifier_sub);
+   pdcache_getval(res, 0x2,4, NULL, "AUDIO_SYSTEMVOLUME");
+   return res[0]-'0';
 };
+
 /*
 MediaProc_IsBackgroundFree
 

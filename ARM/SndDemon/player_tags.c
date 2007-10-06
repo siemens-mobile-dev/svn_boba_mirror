@@ -89,7 +89,7 @@ int  ShowTag(void){
   if (!icsm) return 0;
   if (!IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])) return 0;  
   */
-  if (!TopG())return 0;
+  if (!TopG(DISPLACE_OF_IDLEGUI_ID))return 0;
   
   if (!(igui=GetTopGUI())) return 0;
   if (igui){
