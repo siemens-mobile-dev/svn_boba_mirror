@@ -1452,6 +1452,7 @@ void AddMsgToChat(void *data)
 	else
 	  color=20; //Серый
       }
+      PrepareEditControl(&ec);
       if (p->type!=3)
       {
         ascii2ws(ews,p->hdr);
@@ -1475,6 +1476,7 @@ void AddMsgToChat(void *data)
       {
         ParseXStatusText(ews, p->text);
       }
+      PrepareEditControl(&ec);
       ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
       SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -2959,7 +2961,6 @@ void CreateEditChat(CLIST *t)
 //  *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+GetIconIndex(t);
   *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+IS_NULLICON;
   
-  PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
   while(lp)
@@ -2978,6 +2979,7 @@ void CreateEditChat(CLIST *t)
       else
 	color=20; //Серый
     }
+    PrepareEditControl(&ec);
     if (lp->type!=3)
     {
       ascii2ws(ews,lp->hdr);
@@ -3000,6 +3002,7 @@ void CreateEditChat(CLIST *t)
     {
       ParseXStatusText(ews,lp->text);
     }
+    PrepareEditControl(&ec);
     ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -3011,6 +3014,7 @@ void CreateEditChat(CLIST *t)
   t->isunread=0;
   ChangeContactPos(t);
   wsprintf(ews, "-------");
+  PrepareEditControl(&ec);
   ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -3019,6 +3023,7 @@ void CreateEditChat(CLIST *t)
   
   if (t->answer) ParseAnswer(ews,t->answer);
   else  CutWSTR(ews,0);
+  PrepareEditControl(&ec);
   ConstructEditControl(&ec,3,0x00,ews,1024);
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
@@ -3420,9 +3425,9 @@ void AddSmile(GUI *data)
   void *eq;
   EDITCONTROL ec;
   
-  PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
+  PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ws1,ws1->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
   patch_header(&as_hdr);
