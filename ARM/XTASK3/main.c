@@ -70,8 +70,10 @@ CSM_RAM *GetUnderIdleCSM(void)
     sprintf((char *)UNDER_IDLE_CONSTR,"%08X",UnderIdleDesc);
     SaveConfigData(successed_config_filename);
   }
+  LockSched();
   u=CSM_root()->csm_q->csm.first;
   while(u && u->constr!=UnderIdleDesc) u=u->next;
+  UnlockSched();
   return u;
 }
 
@@ -417,6 +419,7 @@ void MyIDLECSM_onClose(CSM_RAM *data)
 {
   extern void seqkill(void *data, void(*next_in_seq)(CSM_RAM *), void *data_to_kill, void *seqkiller);
   extern void *ELF_BEGIN;
+  GBS_DelTimer(&start_tmr);
   RemoveKeybMsgHook((void *)my_keyhook);
   seqkill(data,old_icsm_onClose,&ELF_BEGIN,SEQKILLER_ADR());
 }
@@ -453,6 +456,6 @@ void DoSplices(void)
 void main(void)
 {
   mode=0;
-  if (InitConfig()) GBS_StartTimerProc(&start_tmr,TMR_SECOND(60),DoSplices);
+  if (InitConfig()!=2) GBS_StartTimerProc(&start_tmr,TMR_SECOND(60),DoSplices);
   else DoSplices();
 }
