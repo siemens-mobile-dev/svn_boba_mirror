@@ -28,7 +28,7 @@ extern volatile int xstatuses_load;
 #define TMR_SECOND 216
 
 //IPC
-const char ipc_my_name[32]="NatICQ";
+const char ipc_my_name[32]=IPC_NATICQ_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 
@@ -185,6 +185,7 @@ void IlluminationOn(const int disp, const int key, const int tmr, const int fade
 }
 
 volatile int silenthide;    //by BoBa 25.06.07
+volatile int disautorecconect;	//by BoBa 10.07
 ///////////
 int Is_Vibra_Enabled;
 unsigned int Is_Sounds_Enabled;
@@ -444,6 +445,8 @@ int sock=-1;
 
 volatile unsigned long TOTALRECEIVED;
 volatile unsigned long TOTALSENDED;
+volatile unsigned long ALLTOTALRECEIVED;	//by BoBa 10.07
+volatile unsigned long ALLTOTALSENDED;
 
 volatile int sendq_l=0; //Длинна очереди для send
 volatile void *sendq_p=NULL; //указатель очереди
@@ -1138,6 +1141,7 @@ void SendAnswer(int dummy, TPKT *p)
   {
     j=sizeof(PKT)+p->pkt.data_len; //Размер пакета
     TOTALSENDED+=j;
+    ALLTOTALSENDED+=j;			//by BoBa 10.07    
     //Проверяем, не надо ли добавить в очередь
     if (sendq_p)
     {
@@ -1274,6 +1278,7 @@ void get_answer(void)
       {
 	//Пакет полностью получен
 	TOTALRECEIVED+=(i+8);
+	ALLTOTALRECEIVED+=(i+8);			//by BoBa 10.07	
 	//Пакет удачно принят, можно разбирать...
 	RXbuf.data[i]=0; //Конец строки
 	switch(RXbuf.pkt.type)
@@ -1493,7 +1498,7 @@ void AddMsgToChat(void *data)
         ParseXStatusText(ews, p->text);
       }
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
+      ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
       SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
       CopyOptionsToEditControl(&ec,&ec_options);
@@ -1955,7 +1960,8 @@ void method0(MAIN_GUI *data)
 		   GetPaletteAdrByColorIndex(1),
 		   GetPaletteAdrByColorIndex(1));
   DrawImg(0,0,S_ICONS[ICON_LOGO]);
-  wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,logmsg);
+  unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
+  wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,logmsg);
   if (total_smiles)
   {
     wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
@@ -2015,6 +2021,7 @@ int method5(MAIN_GUI *data,GUI_MSG *msg)
     case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
     case GREEN_BUTTON:
+      disautorecconect=0;
       if ((connect_state==0)&&(sock==-1))
       {
         GBS_DelTimer(&reconnect_tmr);
@@ -2389,7 +2396,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
 	SMART_REDRAW();
 	SUBPROC((void *)ClearSendQ);
-	GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+	if (!disautorecconect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
 	break;
       }
     }
@@ -3037,7 +3044,7 @@ void CreateEditChat(CLIST *t)
       ParseXStatusText(ews,lp->text);
     }
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
     CopyOptionsToEditControl(&ec,&ec_options);
@@ -3049,7 +3056,7 @@ void CreateEditChat(CLIST *t)
   ChangeContactPos(t);
   wsprintf(ews, "-------");
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,1,0x40,ews,ews->wsbody[0]);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
   CopyOptionsToEditControl(&ec,&ec_options);
@@ -3122,6 +3129,7 @@ void Quote(GUI *data)
     wsInsertChar(ed_ws,' ',ed_pos);
   }
   while((ed_pos=wstrchr(ed_ws,ed_pos,'\r'))!=0xFFFF);
+  wsAppendChar(ed_ws,'\r');
   wsAppendChar(ed_ws,'\r');
   ws=AllocWS(ec_ed.pWS->wsbody[0]+ed_ws->wsbody[0]);
   wstrcpy(ws,ec_ed.pWS);
@@ -3365,6 +3373,10 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     case ENTER_BUTTON:
       msg->keys=0xFFF;
     }
+    if ((msg->gbsmsg->submess>='0')&&(msg->gbsmsg->submess<='9')){	//by BoBa 8.10.2007
+      EDIT_SetCursorPos(data,msg->gbsmsg->submess-'0'+1);
+      msg->keys=0xFFF;
+    }
   }
   if (msg->keys==0xFFF)
   {
@@ -3386,12 +3398,14 @@ int as_onkey(GUI *data,GUI_MSG *msg)
     FreeWS(ed_ws);
     return (1);
   }
+  if (msg->keys==0xFF0) return (1);	//by BoBa 8.10.2007
   return(0);
 }
 
 void as_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
+  static SOFTKEY_DESC ask_cancel={0x0FF0,0x0000,(int)LG_CLOSE};	//by BoBa 8.10.2007
   PNGTOP_DESC *pltop=PNG_TOP();
   if (cmd==9)
   {
@@ -3406,11 +3420,24 @@ void as_ghook(GUI *data, int cmd)
   {
     EDITCONTROL ec;
     int pos;
-    
-    SetSoftKey(data,&ask,SET_SOFT_KEY_N);
+
     EDIT_ExtractFocusedControl(data,&ec);
+    SetSoftKey(data,&ask,SET_SOFT_KEY_N);
+
     pos=EDIT_GetCursorPos(data);
+    if (pos>ec.pWS->wsbody[0]) pos=ec.pWS->wsbody[0];
+    EDIT_SetCursorPos(data,pos);
     EDIT_SetTextInvert(data,pos,1);
+
+    SetSoftKey(data,&ask_cancel,SET_SOFT_KEY_N==0?1:0);	//by BoBa 8.10.2007		
+    WSHDR *ws1=AllocWS(16);
+    int uni_smile=ec.pWS->wsbody[pos];
+    S_SMILES *t=FindSmileByUni(uni_smile);
+    if ((t)&&(t->lines)){
+      wsprintf(ws1,"%t (%d)",t->lines->text,pos-1);
+      EDIT_SetTextToEditControl(data,1,ws1);
+    }
+    FreeWS(ws1);
   }
   if (cmd==0x0C)
   {
@@ -3458,19 +3485,24 @@ void AddSmile(GUI *data)
   while((st=st->next)) n++;
   if (!n) return;
   ws1=AllocWS(n);
-  
-  st=smiles;
-  while((st=st->next)) wsAppendChar(ws1,st->uni_smile);
-  
+
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
-  
+
   eq=AllocEQueue(ma,mfree_adr());
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ws1,ws1->wsbody[0]);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws1,16);	//by BoBa 8.10.2007
   AddEditControlToEditQend(eq,&ec,ma);
+ 
+  st=smiles;
+  while((st=st->next)) wsAppendChar(ws1,st->uni_smile);
+  
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws1,ws1->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);
+
   patch_header(&as_hdr);
   patch_input(&as_desc);
   CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_struct);

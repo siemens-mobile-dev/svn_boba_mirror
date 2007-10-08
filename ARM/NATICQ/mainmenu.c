@@ -77,6 +77,8 @@ static void EditConfig(void)
 
 static void Disconnect(void)
 {
+  extern volatile int disautorecconect;
+  disautorecconect=1;
   extern void end_socket(void);
   SUBPROC((void*)end_socket);
   GeneralFuncF1(1);
