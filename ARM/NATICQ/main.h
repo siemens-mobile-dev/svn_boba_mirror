@@ -7,6 +7,7 @@ void CreateEditChat(CLIST *t);
 void set_my_status(void);
 void set_my_xstatus(void);
 
+void RequestXText(unsigned int uin);
 
 void ReadDefSettings(void);
 void WriteDefSettings(void);

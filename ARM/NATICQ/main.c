@@ -197,6 +197,13 @@ int CurrentPrivateStatus;
 //===================================================================
 const char def_setting[]="%sdef_settings_%d";
 
+const DEF_SETTINGS const_def_set={
+  0,0,0,1,
+  IS_ONLINE,
+  0
+};
+    
+  
 void ReadDefSettings(void)
 {
   DEF_SETTINGS def_set;
@@ -208,13 +215,17 @@ void ReadDefSettings(void)
   {
     fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
     fclose(f,&err);
-    Is_Vibra_Enabled=def_set.vibra_status;
-    Is_Sounds_Enabled=def_set.sound_status;
-    Is_Show_Offline=def_set.off_contacts;
-    Is_Show_Groups=def_set.show_groups;
-    CurrentStatus=def_set.def_status+1;
-    CurrentXStatus=def_set.def_xstatus;
   }
+  else
+  {
+    memcpy(&def_set,&const_def_set,sizeof(DEF_SETTINGS));
+  }
+  Is_Vibra_Enabled=def_set.vibra_status;
+  Is_Sounds_Enabled=def_set.sound_status;
+  Is_Show_Offline=def_set.off_contacts;
+  Is_Show_Groups=def_set.show_groups;
+  CurrentStatus=def_set.def_status+1;
+  CurrentXStatus=def_set.def_xstatus;
 }
 
 void WriteDefSettings(void)
@@ -549,11 +560,11 @@ static const ML_MENU_DESC contactlist_menu=
 #else
 static const MENU_DESC contactlist_menu=
 {
-  8,(void *)contactlist_menu_onkey,(void*)contactlist_menu_ghook,NULL,
+  8,contactlist_menu_onkey,contactlist_menu_ghook,NULL,
   menusoftkeys,
   &clmenu_skt,
   0x11, //+0x400
-  (void *)contactlist_menu_iconhndl,
+  contactlist_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -836,13 +847,8 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
       {
 	if (!t->isgroup)
 	{
-	  TPKT *p;
 	  FreeXText(t);
-	  p=malloc(sizeof(PKT));
-	  p->pkt.uin=t->uin;
-	  p->pkt.type=T_XTEXT_REQ;
-	  p->pkt.data_len=0;
-	  SUBPROC((void *)SendAnswer,0,p);
+          RequestXText(t->uin);
 	  RefreshGUI();
 	  return(-1);
 	}
@@ -1209,6 +1215,15 @@ void SendMSGACK(int i)
   ackp->pkt.type=T_MSGACK;
   ackp->pkt.data_len=0;
   SendAnswer(0,ackp);
+}
+
+void RequestXText(unsigned int uin)
+{
+  TPKT *p=malloc(sizeof(PKT));
+  p->pkt.uin=uin;
+  p->pkt.type=T_XTEXT_REQ;
+  p->pkt.data_len=0;
+  SUBPROC((void *)SendAnswer,0,p);
 }
 
 void get_answer(void)
@@ -1707,6 +1722,7 @@ ProcessPacket(TPKT *p)
       {
         t->xstate=p->data[2];
         FreeXText(t);
+        t->req_xtext=1;
       }
       if (contactlist_menu_id)
       {
@@ -3030,6 +3046,13 @@ void CreateEditChat(CLIST *t)
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
   CopyOptionsToEditControl(&ec,&ec_options);
   edchat_toitem=AddEditControlToEditQend(eq,&ec,ma);
+  
+  if (t->req_xtext)
+  {
+    FreeXText(t);
+    t->req_xtext=0;
+    RequestXText(t->uin);
+  }
   
   EDCHAT_STRUCT *ed_struct=malloc(sizeof(EDCHAT_STRUCT));
   ed_struct->ed_contact=t;

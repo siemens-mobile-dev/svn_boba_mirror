@@ -33,6 +33,7 @@ typedef struct
   int isactive;
   int msg_count;
   char *xtext;
+  int req_xtext;
 }CLIST;
 
 typedef struct
