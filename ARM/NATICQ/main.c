@@ -1462,6 +1462,7 @@ void AddMsgToChat(void *data)
       {
         ConstructEditControl(&ec,ECT_HEADER,ECF_DELSTR,ews,0);
       }      
+      PrepareEditCOptions(&ec_options);
       SetPenColorToEditCOptions(&ec_options,color/*p->type==1?I_COLOR:TO_COLOR*/);
       SetFontToEditCOptions(&ec_options,2);
       CopyOptionsToEditControl(&ec,&ec_options);
