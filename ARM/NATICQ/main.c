@@ -1721,8 +1721,25 @@ ProcessPacket(TPKT *p)
       if (t->xstate!=p->data[2])
       {
         t->xstate=p->data[2];
-        FreeXText(t);
         t->req_xtext=1;
+        FreeXText(t);
+        if (edchat_id)
+        {
+          void *data=FindGUIbyId(edchat_id,NULL);
+          if (data)
+          {
+            EDCHAT_STRUCT *ed_struct;
+            ed_struct=EDIT_GetUserPointer(data);
+            if (ed_struct)
+            {
+              if (ed_struct->ed_contact==t)
+              {
+                t->req_xtext=0;
+                RequestXText(t->uin);
+              }
+	    }
+	  }
+	}
       }
       if (contactlist_menu_id)
       {
