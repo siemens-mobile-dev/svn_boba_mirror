@@ -196,14 +196,7 @@ int CurrentXStatus;
 int CurrentPrivateStatus;
 
 //===================================================================
-const char def_setting[]="%sdef_settings_%d";
-
-const DEF_SETTINGS const_def_set={
-  0,0,0,1,
-  IS_ONLINE,
-  0
-};
-    
+const char def_setting[]="%sdef_settings_%d";   
   
 void ReadDefSettings(void)
 {
@@ -216,17 +209,22 @@ void ReadDefSettings(void)
   {
     fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
     fclose(f,&err);
+    Is_Vibra_Enabled=def_set.vibra_status;
+    Is_Sounds_Enabled=def_set.sound_status;
+    Is_Show_Offline=def_set.off_contacts;
+    Is_Show_Groups=def_set.show_groups;
+    CurrentStatus=def_set.def_status+1;
+    CurrentXStatus=def_set.def_xstatus;
   }
   else
   {
-    memcpy(&def_set,&const_def_set,sizeof(DEF_SETTINGS));
+    Is_Vibra_Enabled=0;
+    Is_Sounds_Enabled=0;
+    Is_Show_Offline=0;
+    Is_Show_Groups=1;
+    CurrentStatus=IS_ONLINE;
+    CurrentXStatus=0;    
   }
-  Is_Vibra_Enabled=def_set.vibra_status;
-  Is_Sounds_Enabled=def_set.sound_status;
-  Is_Show_Offline=def_set.off_contacts;
-  Is_Show_Groups=def_set.show_groups;
-  CurrentStatus=def_set.def_status+1;
-  CurrentXStatus=def_set.def_xstatus;
 }
 
 void WriteDefSettings(void)
@@ -1723,28 +1721,34 @@ ProcessPacket(TPKT *p)
     {
       int i=t->state;
       CLIST *oldt=NULL;
-      if (t->xstate!=p->data[2])
+      if (t->xstate!=p->data[2])  // Если картинка икс статуса сменилась
       {
         t->xstate=p->data[2];
-        t->req_xtext=1;
         FreeXText(t);
-        if (edchat_id)
+        if (t->xstate)   // Если установлен икс статус
         {
-          void *data=FindGUIbyId(edchat_id,NULL);
-          if (data)
+          t->req_xtext=1;
+          if (edchat_id)   // Если открыт чат
           {
-            EDCHAT_STRUCT *ed_struct;
-            ed_struct=EDIT_GetUserPointer(data);
-            if (ed_struct)
+            void *data=FindGUIbyId(edchat_id,NULL);
+            if (data)
             {
-              if (ed_struct->ed_contact==t)
+              EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+              if (ed_struct)
               {
-                t->req_xtext=0;
-                RequestXText(t->uin);
+                if (ed_struct->ed_contact==t)   // Если наш чат то запрашиваем текст статуса
+                {
+                  t->req_xtext=0;
+                  RequestXText(t->uin);
+                }
               }
 	    }
 	  }
 	}
+        else  // Если икс статус не установлен то на всякий случай снимаем флаг получения текста
+        {
+          t->req_xtext=0;
+        }
       }
       if (contactlist_menu_id)
       {
@@ -2083,7 +2087,7 @@ void maincsm_oncreate(CSM_RAM *data)
 void maincsm_onclose(CSM_RAM *csm)
 {
   WriteDefSettings(); 
-  SaveConfigData(successed_config_filename);
+  //  SaveConfigData(successed_config_filename);
   
 /*
   #pragma segment="CONFIG_C"
@@ -3500,7 +3504,7 @@ void AddSmile(GUI *data)
   while((st=st->next)) wsAppendChar(ws1,st->uni_smile);
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws1,ws1->wsbody[0]);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ws1,ws1->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
 
   patch_header(&as_hdr);
