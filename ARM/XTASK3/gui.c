@@ -477,7 +477,7 @@ void bm_menu_iconhndl(void *data, int curitem, void *unk)
           char *p=strrchr(s,'\\');
           if (p)
           {
-            short pos;
+            unsigned int pos;
             ws=AllocWS((l=strlen(p+1)));
             str_2ws(ws,p+1,l);
             if ((pos=wstrrchr(ws,ws->wsbody[0],'.'))!=0xFFFF)
