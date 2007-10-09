@@ -525,7 +525,7 @@ bool ICQKid2::getUserInfo(string uin, ICQKidShortUserInfo & info, bool force_upd
  uint32_t sync_id;
  if (!askShortInfo(uin, &sync_id)) return false;
  if (!getShortInfo(info, sync_id)) return false;
- 
+
  info.Uin=uin;
  userinfo_map[uin]=info;
  return true;
@@ -540,7 +540,7 @@ bool ICQKid2::getFullUserInfo(string uin, ICQKidFullUserInfo & info, bool force_
   info=mi->second;
   return true;
   }
- 
+
  uint32_t sync_id;
  if (!askFullInfo(uin, &sync_id)) return false;
  if (!getFullInfo(info, sync_id)) return false;
@@ -587,7 +587,7 @@ bool ICQKid2::publicMyInfo(ICQKidFullUserInfo & info)
  
  PACK_ASCIIZ(info.Firstname)
  PACK_TLV(0x0140)
- 
+
  PACK_ASCIIZ(info.Lastname)
  PACK_TLV(0x014A)
 
@@ -773,7 +773,7 @@ bool ICQKid2::publicMyInfo(ICQKidFullUserInfo & info)
  PACK_LE(my_int_uin)
  tlv_vec.insert(tlv_vec.end(), tail, tail+sizeof(tail));
  tlv_vec.insert(tlv_vec.end(), tlv_pack.begin(), tlv_pack.end());
- 
+
 #undef PACK_TLV
 #undef PACK_ASCIIZ
 #undef PACK_LE
@@ -1145,7 +1145,7 @@ bool ICQKid2::sub_ssi_removeContact(string uin, uint16_t * retflag)
 // ----------------=========ooooOOOOOOOOOoooo=========----------------
 bool ICQKid2::removeContact(string uin, uint16_t * retflag)
 {
- if (!startSSITransact()) 
+ if (!startSSITransact())
   {
   if (retflag!=NULL) *retflag=SSI_EDIT_ERR_NETWORK;
   return false;
@@ -1160,7 +1160,7 @@ bool ICQKid2::removeContact(string uin, uint16_t * retflag)
   if (!endSSITransact() && retflag!=NULL) *retflag=SSI_EDIT_ERR_NETWORK;
   return false;
   }
- 
+
  if (gr_id>0)
   {
   uint32_t sync_id;
@@ -1269,7 +1269,7 @@ bool ICQKid2::sub_registerNewUIN_simply(ICQKid2 * regist_serv, string password, 
  INSERT_LE_ASCIIZ(password)
  INSERT_LE_DWORD(reg_cookie)
  INSERT_LE_DWORD(0x01d10000)
- 
+
  TLVField tlv_f(data_vec, 0x0001);
  data_vec.clear();
  tlv_f.encode_to(data_vec, 0);
@@ -1734,7 +1734,7 @@ bool ICQKid2::renameGroup(string groupname, string newname, uint16_t * retflag)
 
  SSIGroupEntry gen=ContactListGroups[gr_ind];
  gen.name=newname;
- 
+
  uint16_t my_retflag;
  uint32_t sync_id;
  if (!startSSITransact()) 
@@ -1806,7 +1806,7 @@ bool ICQKid2::downloadMyIcon(void)
 {
  for (size_t i=0; i<ContactListIcons.size(); ++i)
   if (!sub_getBuddyIcon(ContactListIcons[i])) return false;
- 
+
  return true;
 }
 
@@ -1815,7 +1815,7 @@ bool ICQKid2::uploadMyIcon(vector<uint8_t> & icon_data)
 {
  // It's not possible to upload file more than 6kb
  if (icon_data.size()>6144) return false;
- 
+
  uint8_t addr_req_template[] = {0x00, 0x01, 0x31, /* Item name = "1", is an avatar id number as text */
                                 0x00, 0x00, /* Group id */
                                 0x18, 0x13, /* Item id */
@@ -1997,7 +1997,7 @@ if (!ContactListIcons.empty()) removeAllMyIcons();
     memcpy(&ichat_len, &snd.data[pos], sizeof(ichat_len));
     ichat_len=ntohs(ichat_len);
     pos+=sizeof(ichat_len);
-   
+
     if (snd.data.size()<(pos+ichat_len)) { if (!ContactListIcons.empty()) removeAllMyIcons(); return false; }
     pos+=ichat_len;
     }
@@ -2214,7 +2214,7 @@ bool ICQKid2::getRateLimits(uint32_t sync_id)
  memcpy(&class_count, &snd.data[curr_pos], sizeof(class_count));
  class_count=ntohs(class_count);
  curr_pos+=sizeof(class_count);
- 
+
  // Skip rate classes, we dont need it
  if (snd.data.size()<(curr_pos+class_count*35)) return false;
  curr_pos+=class_count*35;
@@ -2258,7 +2258,7 @@ bool ICQKid2::sendRateLimits(void)
  return (sendSNAC(0x0001, 0x0008, NULL, &vec)==1);
 }
 
-// ----------------=========ooooOOOOOOOOOoooo=========----------------  
+// ----------------=========ooooOOOOOOOOOoooo=========----------------
 bool ICQKid2::askSelfInfo(uint32_t * sync_id)
 {
  return (sendSNAC(0x0001, 0x000e, sync_id)==1);
@@ -2276,7 +2276,7 @@ bool ICQKid2::getSelfInfo(uint32_t sync_id)
  return true;
 }
 
-// ----------------=========ooooOOOOOOOOOoooo=========----------------  
+// ----------------=========ooooOOOOOOOOOoooo=========----------------
 bool ICQKid2::askLocationLimit(uint32_t * sync_id)
 {
  return (sendSNAC(0x0002, 0x0002, sync_id)==1);
@@ -2300,18 +2300,29 @@ bool ICQKid2::getLocationLimit(uint32_t sync_id)
 // ----------------=========ooooOOOOOOOOOoooo=========----------------  
 bool ICQKid2::sendLocationInfo(void)
 {
+ int i;
  uint8_t aim2icq_capa[] = {
                           0x56, 0x3f, 0xc8, 0x09, 0x0b, 0x6f, 0x41, 0xbd, 0x9f, 0x79, 0x42, 0x26, 0x09, 0xdf, 0xa2, 0xf3,   /* Mini Typing Notification */
                           0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1, 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00,   /* ICQ Server relaying */
 		          0x09, 0x46, 0x13, 0x4e, 0x4c, 0x7f, 0x11, 0xd1, 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00,   /* ICQ UTF-8 */
         		  0x09, 0x46, 0x00, 0x00, 0x4c, 0x7f, 0x11, 0xd1, 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00,   /* NEW CAPS */
                           0x1A, 0x09, 0x3C, 0x6C, 0xD7, 0xFD, 0x4E, 0xC5, 0x9D, 0x51, 0xA6, 0x47, 0x4E, 0x34, 0xF5, 0xA0,   /* XtraZ */
-		          0x09, 0x46, 0x13, 0x4c, 0x4c, 0x7f, 0x11, 0xd1, 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00,   /* Avatar icons */
+//		          0x09, 0x46, 0x13, 0x4c, 0x4c, 0x7f, 0x11, 0xd1, 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00,   /* Avatar icons */
 //		          0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1, 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00,   /* Direct ICQ communication */
-                          0x49, 0x63, 0x71, 0x4B, 0x69, 0x64, 0x32, 0x00, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   /* IcqKid2 0.5.2 */
+//                        0x49, 0x63, 0x71, 0x4B, 0x69, 0x64, 0x32, 0x00, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   /* IcqKid2 0.5.2 */
+                          'N',  'a',  't',  'I',  'C',  'Q',  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   /* NatICQ 1.0*/
                           };
- 
+
  vector<uint8_t> vec(aim2icq_capa, aim2icq_capa+sizeof(aim2icq_capa));
+
+ if ((i=subClientId.size())>0)
+ {
+   memcpy(&vec[16*5+8],&subClientId[0],i>8?8:i);
+ }
+ else
+ {
+   memcpy(&vec[16*5+8],"Unknown!",8);
+ }
  if (xStatus!=X_STATUS_NONE && xStatus<=X_STATUS_MAX_BOUND)
   vec.insert(vec.end(), XStatus_arr[xStatus-1], XStatus_arr[xStatus-1]+16);
   
@@ -2474,7 +2485,7 @@ bool ICQKid2::getSSICopy(uint32_t sync_id)
   if (!cl.decode_from(snd.data))
    return false;
   }
-  
+
 // Clear only SSI contacts from list
  for (size_t i=0; i<ContactListUins.size(); /* empty */)
   {
@@ -2570,7 +2581,7 @@ bool ICQKid2::getSSICopy(uint32_t sync_id)
     VisibleList.push_back(uen);
     }
    break;
-   
+
    case 0x0003 : // Invisible list item
     {
     SSIUINEntry uen;
@@ -2583,7 +2594,7 @@ bool ICQKid2::getSSICopy(uint32_t sync_id)
     InvisibleList.push_back(uen);
     }
    break;
-   
+
    case 0x000E : // Ignore list item
     {
     SSIUINEntry uen;
@@ -2596,7 +2607,7 @@ bool ICQKid2::getSSICopy(uint32_t sync_id)
     IgnoreList.push_back(uen);
     }
    break;
-    
+
    default :
     {
     // We need to store unknown items for correct work getUnusedItemID()
@@ -2604,7 +2615,7 @@ bool ICQKid2::getSSICopy(uint32_t sync_id)
     }
    }
   }
- 
+
  for (unsigned int i=0; i<ContactListUins.size(); ++i)
   {
   int gr_ind=findCLGroup(ContactListUins[i].groupid);
@@ -3494,9 +3505,9 @@ bool ICQKid2::parseOnlineNotify(string & uin, uint32_t & stat, vector<uint8_t> &
    if (tlv.data.size()<4) return false;
    memcpy(&ext_ip, &tlv.data[0], sizeof(ext_ip));
    }
-  else if (tlv.type==0x001d && uen_ind>=0) // UserIcon Info
+  else/* if (tlv.type==0x001d && uen_ind>=0) // UserIcon Info
    {
-/*   if (tlv.data.size()<20) return false;
+   if (tlv.data.size()<20) return false;
    size_t curpos=0;
 
    memcpy(&ContactListUins[uen_ind].icon_id, &tlv.data[curpos], sizeof(ContactListUins[uen_ind].icon_id));
@@ -3519,9 +3530,9 @@ bool ICQKid2::parseOnlineNotify(string & uin, uint32_t & stat, vector<uint8_t> &
     {
     memcpy(ContactListUins[uen_ind].icon_md5_hash, tmp_md5_hash, 16);
     onIconChanged(uin);
-    }*/
+    }
    }
-  else if (tlv.type==0x0019 && uen_ind>=0) // New type capabilities list
+  else */if (tlv.type==0x0019 && uen_ind>=0) // New type capabilities list
    {
    uint8_t cap_templ[16]={0x09, 0x46, 0xFF, 0xFF, 0x4c, 0x7f, 0x11, 0xd1, 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00};
    vector<uint8_t> reconstruct_capas;
@@ -4183,7 +4194,7 @@ void ICQKid2::parseMoreUserInfo(vector<uint8_t> & data, ICQKidFullUserInfo & inf
 void ICQKid2::parseEmailUserInfo(vector<uint8_t> & data, ICQKidFullUserInfo & info)
 {
  info.Emails.clear();
- 
+
  size_t pos=16;
  if (data[pos++]!=0x0a) return;
  
@@ -4927,7 +4938,7 @@ bool ICQKid2::haveUnicodeCapability(vector<uint8_t> & data)
   if (memcmp(&data[i*16], unicode_arr, 16)==0) return true;
 //  if (memcmp(&data[i*16], old_unicode_arr, 16)==0) return true;
   }
- 
+
  return false;
 }
     

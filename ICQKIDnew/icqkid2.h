@@ -421,7 +421,9 @@ class ICQKid2{
   string AutoNotAvailableMessageText;
   string AutoDoNotDisturbMessageText;
   string AutoFreeForChatMessageText;
-  
+
+  string subClientId;
+
   int getConnectPercentage(void) const { return connect_phase_percentage; }
   void setNetworkTimeout(int tm) { network_timeout=tm; }
   int getNetworkTimeout(void) const { return network_timeout; }

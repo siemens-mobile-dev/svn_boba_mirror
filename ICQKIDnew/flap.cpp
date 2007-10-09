@@ -1054,7 +1054,7 @@ bool SSIContactListItem::decode_from(vector<uint8_t> & v, size_t start_ind)
  memcpy(&name_length, &v[start_ind], sizeof(name_length));
  name_length=ntohs(name_length);
  start_ind+=sizeof(name_length);
- 
+
  if (v.size()<(start_ind+name_length)) return false;
  name.assign(reinterpret_cast<const char *>(&v[start_ind]), name_length);
  start_ind+=name.length();
@@ -1080,7 +1080,7 @@ bool SSIContactListItem::decode_from(vector<uint8_t> & v, size_t start_ind)
  start_ind+=sizeof(payload_length);
  
  if (v.size()<(start_ind+payload_length)) return false;
- 
+
  size_t start_ind_fix = start_ind;
  payload.clear();
  while(true)
@@ -1102,17 +1102,15 @@ void SSIContactListItem::encode_to(vector<uint8_t> & v, size_t start_ind)
  if (v.size()<(start_ind+2)) v.resize(start_ind+2);
  name_length=name.length();
  uint16_t tmp_name_length = htons(name_length);
+ memcpy(&v[start_ind], &tmp_name_length, sizeof(tmp_name_length));
+ start_ind += sizeof(tmp_name_length);
  if(name_length)
  {
-	memcpy(&v[start_ind], &tmp_name_length, sizeof(tmp_name_length));
-	start_ind += sizeof(tmp_name_length);
-
 	if (v.size()<(start_ind+name_length)) v.resize(start_ind+name_length);
 	//printf("name_length=%d",name_length);
 	memcpy(&v[start_ind], name.data(), name_length);
 	start_ind += name_length;
  }
- 
  if (v.size()<(start_ind+2)) v.resize(start_ind+2);
  uint16_t tmp_group_id = htons(group_id);
  memcpy(&v[start_ind], &tmp_group_id, sizeof(tmp_group_id));
