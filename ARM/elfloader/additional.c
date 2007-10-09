@@ -238,7 +238,7 @@ int fread32(int fh, void *buf, int len, unsigned int *err)
   int total=0;
   while(len)
   {
-    clen=len>=0x400?0x400:len;
+    clen=len>=0x4000?0x4000:len;
     total+=(rlen=FReadOld(fh, buf, clen, err));
     if (rlen!=clen) break;
     buf=(char *)buf+rlen;
@@ -255,7 +255,7 @@ unsigned int fwrite32(int fh, void *buf, int len, unsigned int *err)
   int total=0;
   while(len)
   {
-    clen=len>=0x400?0x400:len;
+    clen=len>=0x4000?0x4000:len;
     total+=(wlen=FWriteOld(fh, buf, clen, err));
     if (wlen!=clen) break;
     buf=(char *)buf+wlen;
@@ -278,3 +278,4 @@ __root static const int SWILIB_FUNC12D @ "SWILIB_FUNC12B_12D" = (int)RemoveKeybM
 
 
 #endif
+
