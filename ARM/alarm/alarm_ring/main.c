@@ -2,7 +2,6 @@
 #include "..\..\inc\cfg_items.h"
 #include "conf_loader.h"
 #include "..\lgp.h"
-//#include "../../inc/xtask_ipc.h"
 
 
 #ifdef NEWSGOLD
@@ -23,6 +22,7 @@ extern const unsigned int vibra_power;
 extern const char shcut[64];
 extern const int sndVolume;
 extern const int profile;
+extern const int time;
 extern char IMG[];
 
 GBSTMR mytmr;
@@ -34,7 +34,7 @@ int scr_h;
 int old_light_kb;
 int old_light_d;
 int old_profile;
-//GBSTMR restarttmr;
+GBSTMR restarttmr;
 
 typedef struct
 {
@@ -174,20 +174,37 @@ void draw_pic()
     DrwImg(&img,37,5, GetPaletteAdrByColorIndex(1), GetPaletteAdrByColorIndex(0));
 }
 /*
+void log(char *msg)
+{
+  unsigned int err;
+  char file[]="0:\\alarm.log";
+  int fp=fopen(file, A_WriteOnly+A_Create+A_Append, P_WRITE,&err);
+  fwrite(fp, msg, strlen(msg), &err);
+  fclose(fp, &err);  
+}*/
+
+const char ipc_alarm_name[]="alarm";
+const char ipc_alarm_ring_name[]="alarm_ring";
+//#define IPC_RESTART 1
+
+const IPC_REQ gipc={
+  ipc_alarm_name,
+  ipc_alarm_ring_name,
+  NULL
+};
+
 void restart()
 {
   GBS_DelTimer(&restarttmr);
-  //////////////////////////////////////////////////////////////////////////////
-  IPC_REQ gipc;
-  gipc.name_to="alarm";
-  gipc.name_from="alarm ring";
-  gipc.data=0;
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,1,&gipc);
-  //////////////////////////////////////////////////////////////////////////////
+  //IPC_REQ gipc;
+  //gipc.name_to="alarm";
+  //gipc.name_from="alarm_ring";
+  //gipc.data=NULL;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,time,&gipc);
   GeneralFunc_flag1(((MAIN_CSM*)FindCSMbyID(my_csm_id))->gui_id,1);
   //ShowMSG(1,(int)"restart");
 }
-*/
+
 void OnRedraw()
 {
   DrawRoundedFrame(0,0,scr_w,scr_h,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
@@ -212,15 +229,23 @@ void OnRedraw()
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
+#ifdef ELKA
+  RamIconBar()[0]=0;
+#endif
   ws=AllocWS(128);
   SetIllumination(1,1,100,0);
   SetIllumination(0,1,100,0);
-  //GBS_StartTimerProc(&restarttmr,216*60*7,restart);
+  //////////
+  GBS_StartTimerProc(&restarttmr,216*60*5,restart);
   data->gui.state=1;
 }
 
 void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  RamIconBar()[0]=1;
+#endif
+  GBS_DelTimer(&restarttmr);
   FreeWS(ws);
   data->gui.state=0;
 }
@@ -244,7 +269,7 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case RIGHT_SOFT:  return(1);
-    //case LEFT_SOFT: restart(); break;
+    case LEFT_SOFT: restart(); break;
 #ifdef NEWSGOLD
     case RED_BUTTON:  return(1);
 #endif
@@ -306,9 +331,7 @@ void ElfKiller(void)
 }
 
 void maincsm_onclose(CSM_RAM *csm)
-{
-  //GBS_DelTimer(&restarttmr);
-  
+{  
   GBS_DelTimer(&mytmr);
   SetVibration(0);
   SetIllumination(0,1,old_light_d,0);

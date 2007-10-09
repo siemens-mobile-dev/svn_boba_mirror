@@ -1,5 +1,4 @@
 #include "../../inc/swilib.h"
-//#include "../../inc/xtask_ipc.h"
 
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
@@ -11,7 +10,7 @@ void check();
 void start_ring();
 void load_settings();
 
-//GBSTMR *restarttmr;
+GBSTMR *restarttmr;
 
 unsigned int hour[6];
 unsigned int min[6];
@@ -237,26 +236,37 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
+void log(char *msg)
+{
+  unsigned int err;
+  char file[]="0:\\alarm.log";
+  int fp=fopen(file, A_WriteOnly+A_Create+A_Append, P_WRITE,&err);
+  fwrite(fp, msg, strlen(msg), &err);
+  fclose(fp, &err);  
+}
+
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
   //////////////////////////////////////////////////////////////////////////////
-  /*
-  if (msg->msg==MSG_IPC)
+  if (msg->msg == MSG_IPC)
   {
-    IPC_REQ *ipc;
-    if ((ipc=(IPC_REQ*)msg->data0))
+    IPC_REQ *ipc=(IPC_REQ*)((msg)->data0);
+    if (ipc)
     {
-      if (strcmp_nocase(ipc->name_to,"alarm")==0)
+      if (strcmp_nocase(ipc->name_to,"alarm") == 0)
       {
-        if(msg->submess==1)
+        int time2 = msg -> submess;
+        GBS_StartTimerProc(&restarttmr,216*60*time2,start_ring);
+        /*
+        if(msg->submess == 1)
         {
-          //ShowMSG(1,(int)"restart ok");
-          GBS_StartTimerProc(&restarttmr,216*60*3,start_ring);
-        }
+          ShowMSG(1,(int)"restart ok");
+          GBS_StartTimerProc(&restarttmr,216*60,start_ring);
+        }*/
       }
     }
   }
-  */
+  
   //////////////////////////////////////////////////////////////////////////////
   CSM_RAM *icsm;
   if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
@@ -346,7 +356,7 @@ static void UpdateCSMname(void)
 }
 
 int main(void)
-{  
+{
   CSM_RAM *save_cmpc;
   char dummy[sizeof(MAIN_CSM)];
   load_settings();

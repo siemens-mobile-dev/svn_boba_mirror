@@ -517,19 +517,25 @@ void OnRedraw()
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
+#ifdef ELKA
+  RamIconBar()[0]=0;
+#endif
   ws = AllocWS(128);
   data->gui.state=1;
 }
 
 void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  RamIconBar()[0]=1;
+#endif
   FreeWS(ws);
   data->gui.state=0;
 }
 
 void onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
-  DisableIDLETMR();
+  //DisableIDLETMR();
   data->gui.state=2;
 }
 

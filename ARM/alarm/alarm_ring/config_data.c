@@ -24,3 +24,6 @@ __root const int sndVolume=10;
 
 __root const CFG_HDR cfghdr5={CFG_CHECKBOX,"Set 1st profile",0,2};
 __root const int profile=1;
+
+__root const CFG_HDR cfghdr6={CFG_UINT,"restart waiting time (min)",0,60};
+__root const int time=5;
