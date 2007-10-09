@@ -34,12 +34,25 @@ __root const CFG_HDR cfghdr16_0={CFG_CBOX,"Sort CList",0,2};
 __root const int SORT_CLIST = 0;
 __root const CFG_CBOX_ITEM cfgcbox8_1[2]={"By Name","By Status"};
 
-__root const CFG_HDR cfghdr_m41={CFG_LEVEL,"Notify power",1,0};
-  __root const CFG_HDR cfghdr18={CFG_UINT,"Sound Volume",0,6};
-  __root const unsigned int sndVolume=3;
+__root const CFG_HDR cfghdr16_1={CFG_CBOX,"First letter",0,2};
+__root const int FIRST_LETTER = 0;
+__root const CFG_CBOX_ITEM cfgcbox16_1[2]={"Small","Big"};
 
-  __root const CFG_HDR cfghdr18_1={CFG_UINT,"Vibra power",0,100};
-  __root const unsigned int vibraPower=100;
+__root const CFG_HDR cfghdr_m41={CFG_LEVEL,"Notify power",1,0};
+__root const CFG_HDR cfghdr18={CFG_UINT,"Sound Volume",0,6};
+__root const unsigned int sndVolume=3;
+
+__root const CFG_HDR cfghdr18_1={CFG_UINT,"Vibra power",0,100};
+__root const unsigned int vibraPower=100;
+
+__root const CFG_HDR cfghdr18_2={CFG_CBOX,"Vibration type",0,2};
+__root const int VIBR_TYPE = 0;
+__root const CFG_CBOX_ITEM cfgcbox18_2[2]={"Single","Double"};
+
+__root const CFG_HDR cfghdr18_3={CFG_CBOX,"Vibra on connect",0,2};
+__root const int VIBR_ON_CONNECT = 0;
+__root const CFG_CBOX_ITEM cfgcbox18_3[2]={"No","Yes"};
+
 __root const CFG_HDR cfghdr_m40={CFG_LEVEL,"",0,0};
 
 //Illumination by BoBa 19.04.2007

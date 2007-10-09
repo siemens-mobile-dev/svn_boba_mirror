@@ -310,21 +310,29 @@ volatile int vibra_count;
 
 void start_vibra(void)
 {
+  extern const int VIBR_TYPE;
   void stop_vibra(void);
   if((Is_Vibra_Enabled)&&(!IsCalling()))
   {
     extern const unsigned int vibraPower;
     SetVibration(vibraPower);
-    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
+    if(VIBR_TYPE)
+      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>2,stop_vibra);
+    else
+      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
   }
 }
 
 void stop_vibra(void)
 {
+  extern const int VIBR_TYPE;
   SetVibration(0);
   if (--vibra_count)
   {
-    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
+    if(VIBR_TYPE)
+      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>5,start_vibra);
+    else
+      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
   }
 }
 
@@ -1661,6 +1669,7 @@ void ReqAddMsgToChat(CLIST *t)
 
 ProcessPacket(TPKT *p)
 {
+  extern const int VIBR_TYPE, VIBR_ON_CONNECT;
   CLIST *t;
   LOGQ *q;
   char s[256];
@@ -1688,9 +1697,12 @@ ProcessPacket(TPKT *p)
     }
     else
     {
-      vibra_count=1;
+      if(VIBR_ON_CONNECT)
+      {
+        vibra_count=1;
+        start_vibra();
+      }
       GROUP_CACHE=0;
-      start_vibra();
       ask_my_info();
       if (contactlist_menu_id)
       {
@@ -1792,7 +1804,10 @@ ProcessPacket(TPKT *p)
     }
     t->isactive=ACTIVE_TIME;
     //    ChangeContactPos(t);
-    vibra_count=1;
+    if(VIBR_TYPE)
+      vibra_count=2;
+    else
+      vibra_count=1;
     start_vibra();
     IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
     if (t->name[0]=='#')
@@ -2158,6 +2173,8 @@ void CheckDoubleRun(void)
 
 int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 {
+  extern const int VIBR_ON_CONNECT;
+
   //  char ss[100];
   MAIN_CSM *csm=(MAIN_CSM*)data;
   {
@@ -2303,7 +2320,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       is_gprs_online=0;
       return(1);
     case LMAN_CONNECT_CNF:
-      vibra_count=3;
+      vibra_count=1;
       start_vibra();
       is_gprs_online=1;
       strcpy(logmsg,LG_GRGPRSUP);
@@ -2330,7 +2347,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       case ENIP_SOCK_CONNECTED:
 	if (connect_state==1)
 	{
-	  vibra_count=2;
+	  if(VIBR_ON_CONNECT)
+            vibra_count=2;
+          else
+            vibra_count=1;
 	  start_vibra();
 	  //Соединение установленно, посылаем пакет login
 	  strcpy(logmsg, LG_GRTRYLOGIN);
@@ -2392,7 +2412,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	RecountMenu(NULL);
 	connect_state=0;
 	sock=-1;
-	vibra_count=4;
+        if(VIBR_ON_CONNECT)
+          vibra_count=4;
+        else
+          vibra_count=1;
+          
 	start_vibra();
 	if (sendq_p)
 	{
@@ -2453,6 +2477,8 @@ int main(char *filename)
   MAIN_CSM main_csm;
   char *s;
   int len;
+  extern const char *successed_config_filename;
+  WSHDR *ws;
   
   InitConfig();
   s=strrchr(filename,'\\');
@@ -2463,6 +2489,9 @@ int main(char *filename)
   {
     LockSched();
     ShowMSG(1,(int)LG_MSGNOUINPASS);
+    ws=AllocWS(150);
+    str_2ws(ws,successed_config_filename,128);
+    ExecuteFile(ws,0,0);
     UnlockSched();
     SUBPROC((void *)ElfKiller);
     return 0;
@@ -2991,6 +3020,7 @@ static const INPUTDIA_DESC edchat_desc =
 
 void CreateEditChat(CLIST *t)
 {
+  extern const int FIRST_LETTER;
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
@@ -3069,7 +3099,8 @@ void CreateEditChat(CLIST *t)
   if (t->answer) ParseAnswer(ews,t->answer);
   else  CutWSTR(ews,0);
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,3,0x00,ews,1024);
+  ConstructEditControl(&ec,3,(FIRST_LETTER)?ECF_DEFAULT_BIG_LETTER:0,ews,1024);
+
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
   CopyOptionsToEditControl(&ec,&ec_options);
