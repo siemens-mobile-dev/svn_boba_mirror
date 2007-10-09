@@ -96,4 +96,6 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define T_SETPRIVACY 30
 #define T_LASTPRIVACY 31
 
+#define T_SETCLIENT_ID 32
+
 #endif

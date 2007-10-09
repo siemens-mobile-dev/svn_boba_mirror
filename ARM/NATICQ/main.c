@@ -14,6 +14,7 @@
 #include "strings.h"
 #include "manage_cl.h"
 #include "cl_work.h"
+#include "revision.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -1205,6 +1206,17 @@ void SendAnswer(int dummy, TPKT *p)
 void send_login(int dummy, TPKT *p)
 {
   connect_state=2;
+  char rev[16];
+  //Кто будет менять в этом месте идентификатор клиента, буду банить на уровне сервера!!!
+  //А Вова будет банить на форуме!
+  snprintf(rev,9,"Sie_%04d",__SVN_REVISION__);
+  
+  TPKT *p2=malloc(sizeof(PKT)+8);
+  p2->pkt.uin=UIN;
+  p2->pkt.type=T_SETCLIENT_ID;
+  p2->pkt.data_len=8;
+  memcpy(p2->data,rev,8);
+  SendAnswer(0,p2);
   SendAnswer(dummy,p);
   RXstate=-(int)sizeof(PKT);
 }
