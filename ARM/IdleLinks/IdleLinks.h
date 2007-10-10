@@ -12,5 +12,6 @@ extern const char cl[4],frcol[4];
 
 extern const unsigned int CALL_BTN;
 extern const int active;
+extern const unsigned int KBD_STATE;
 
 #endif

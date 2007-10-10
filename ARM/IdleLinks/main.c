@@ -344,6 +344,9 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
     }
   }
 
+  if ((KBD_STATE==0) && (IsUnlocked())) return (csm_result);
+  if ((KBD_STATE==1) && (!IsUnlocked())) return (csm_result);
+  
   void *icsm=FindCSMbyID(CSM_root()->idle_id);
   if ((IsGuiOnTop(((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4]))&&(active)&&(!IsScreenSaver()))
   {
@@ -358,7 +361,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
   while (i<=count);  
   }
   
-  return(csm_result);
+  return (csm_result);
 }  
 
 int my_keyhook(int key, int m)

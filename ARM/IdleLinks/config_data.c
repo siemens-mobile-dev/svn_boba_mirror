@@ -13,6 +13,10 @@ __root const unsigned int CALL_BTN=ENTER_BUTTON;
 __root const CFG_HDR cfghdr1_1={CFG_CHECKBOX,"Активен",0,2};
 __root const int active=1;
 
+__root const CFG_HDR cfghdr222={CFG_CBOX,"Выводить на экран при",0,3};
+__root const unsigned int KBD_STATE=1;
+__root const CFG_CBOX_ITEM cfgcbox33[3]={"Забл. клав.","Разбл. клав.", "Всегда"};
+
 __root const CFG_HDR cfghdr1={CFG_CBOX,"Кол-во ярлычков",0,15};
 __root const int count=0;
 __root const CFG_CBOX_ITEM cfgcbox2[15]={"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"};
