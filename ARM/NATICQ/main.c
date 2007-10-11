@@ -1425,11 +1425,8 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
   }
   t->msg_count=i;
   if (!t->last_log) t->last_log=p;
-  if (p->type!=0x03)
-  {
-    if (!t->isunread) total_unread++;
-    t->isunread=1;
-  }
+  if (!t->isunread) total_unread++;
+  t->isunread=1;
   ChangeContactPos(t);
 }
 
@@ -1521,19 +1518,7 @@ void AddMsgToChat(void *data)
       PrepareEditControl(&ec);
       ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
-#ifdef M75
-      if (p->type!=3)
-      {
-        SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
-      }
-      else
-      {
-        SetPenColorToEditCOptions(&ec_options,2); 
-        SetFontToEditCOptions(&ec_options,ED_FONT_SIZE+1);
-      }
-#else
       SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
-#endif      
       CopyOptionsToEditControl(&ec,&ec_options);
       EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
       ed_struct->ed_answer++;
@@ -3107,19 +3092,7 @@ void CreateEditChat(CLIST *t)
     PrepareEditControl(&ec);
     ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
-#ifdef M75
-    if (lp->type!=3)
-    {
-      SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
-    }
-    else
-    {
-      SetPenColorToEditCOptions(&ec_options,2); 
-      SetFontToEditCOptions(&ec_options,ED_FONT_SIZE+1);
-    }
-#else
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
-#endif      
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     lp=lp->next;
