@@ -858,6 +858,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 	if (!t->isgroup)
 	{
 	  FreeXText(t);
+          t->req_xtext=0;          
           RequestXText(t->uin);
 	  RefreshGUI();
 	  return(-1);
@@ -1540,7 +1541,19 @@ void AddMsgToChat(void *data)
       PrepareEditControl(&ec);
       ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
+#ifdef M75
+      if (p->type!=3)
+      {
+        SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+      }
+      else
+      {
+        SetPenColorToEditCOptions(&ec_options,2); 
+        SetFontToEditCOptions(&ec_options,ED_FONT_SIZE+1);
+      }
+#else
       SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+#endif      
       CopyOptionsToEditControl(&ec,&ec_options);
       EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
       ed_struct->ed_answer++;
@@ -3114,7 +3127,19 @@ void CreateEditChat(CLIST *t)
     PrepareEditControl(&ec);
     ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
     PrepareEditCOptions(&ec_options);
+#ifdef M75
+    if (lp->type!=3)
+    {
+      SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+    }
+    else
+    {
+      SetPenColorToEditCOptions(&ec_options,2); 
+      SetFontToEditCOptions(&ec_options,ED_FONT_SIZE+1);
+    }
+#else
     SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+#endif      
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     lp=lp->next;
