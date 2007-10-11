@@ -1425,8 +1425,30 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
   }
   t->msg_count=i;
   if (!t->last_log) t->last_log=p;
+  if (code==3)
+  {
+    if (edchat_id)
+    {
+      void *data=FindGUIbyId(edchat_id,NULL);
+      if (data)
+      {
+	EDCHAT_STRUCT *ed_struct;
+	ed_struct=EDIT_GetUserPointer(data);
+	if (ed_struct) 
+	{
+	  if (ed_struct->ed_contact==t)
+	  {
+	    goto L_INC;
+	  }
+	}
+      }
+    }
+    goto L_NOINC;
+  }
+L_INC:
   if (!t->isunread) total_unread++;
   t->isunread=1;
+L_NOINC:
   ChangeContactPos(t);
 }
 
