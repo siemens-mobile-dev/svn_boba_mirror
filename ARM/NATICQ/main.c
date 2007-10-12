@@ -2340,6 +2340,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       free_ICONS();
       setup_ICONS();
       ResortCL();
+      RecountMenu(NULL);
       //      InitSmiles();
     }
   }
