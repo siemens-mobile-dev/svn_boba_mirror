@@ -15,6 +15,7 @@
 #define DEFAULT_DISK "0"
 #endif
 
+unsigned int status[6];
 unsigned int hour[6];
 unsigned int min[6];
 unsigned int weekdays[6][8];
@@ -30,7 +31,6 @@ unsigned int show_icon;
 GBSTMR mytmr;
 unsigned int input;
 
-unsigned int status[6];
 unsigned int num_alarm=1;
 unsigned int edit_level=1;
 unsigned int ch[3];
@@ -104,7 +104,7 @@ DrwImg(IMGHDR *img, int x, int y)
   SetColor(&drwobj,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
   DrawObject(&drwobj);
 }
-///////////////////////////////////////////////////////////////////////////////
+
 void DrawGPF(char *fname, int x, int y)
 {
   volatile int hFile;
@@ -191,6 +191,65 @@ void draw_pic(int num,int x, int y)
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+void geteeblock()
+{
+  char *Block5166=malloc(8);
+  ReadEEPROMData(5166, Block5166, 0, 5);
+  //int wdays=Block5166[3]-0x80;
+  //int wddays[7];
+  //char *msgg=malloc(128);
+  //sprintf(msgg, "%d", Block5166[3]);
+  //ShowMSG(1,(int)msgg);
+  //mfree(msgg);
+  
+  if (Block5166[4]==0xF1)
+    status[5]=1;
+  else status[5]=0;
+  hour[5]=Block5166[0];
+  min[5]=Block5166[1];
+  
+  weekdays[5][1]=0;
+  weekdays[5][2]=0;
+  weekdays[5][3]=0;
+  weekdays[5][4]=0;
+  weekdays[5][5]=0;
+  weekdays[5][6]=0;
+  weekdays[5][7]=0;
+  
+  mfree(Block5166);
+}
+
+void saveeeblock()
+{
+  char *Block5166=malloc(8);
+  Block5166[0]=hour[5];
+  Block5166[1]=min[5];
+  Block5166[2]=0;
+  /*
+  weekdays[5][1];
+  weekdays[5][2];
+  weekdays[5][3];
+  weekdays[5][4];
+  weekdays[5][5];
+  weekdays[5][6];
+  weekdays[5][7];
+  */
+  Block5166[3]=0x80;
+  if (status[5]==1)
+    Block5166[4]=0xF1;
+  else Block5166[4]=0xF0;
+  Block5166[5]=0xFF;
+  Block5166[6]=0xFF;
+  Block5166[7]=0xFF;
+  
+  WriteEEPROMData(5166, Block5166, 0, 5);
+  mfree(Block5166);  
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void load_settings(void)
 {
   unsigned int err;
@@ -202,56 +261,56 @@ void load_settings(void)
     {
       fread(handle,data,128,&err);
       
-status[1]=data[2];
-hour[1]=data[3];
-min[1]=data[4];
-weekdays[1][1]=data[5];
-weekdays[1][2]=data[6];
-weekdays[1][3]=data[7];
-weekdays[1][4]=data[8];
-weekdays[1][5]=data[9];
-weekdays[1][6]=data[10];
-weekdays[1][7]=data[11];
-status[2]=data[12];
-hour[2]=data[13];
-min[2]=data[14];
-weekdays[2][1]=data[15];
-weekdays[2][2]=data[16];
-weekdays[2][3]=data[17];
-weekdays[2][4]=data[18];
-weekdays[2][5]=data[19];
-weekdays[2][6]=data[20];
-weekdays[2][7]=data[21];
-status[3]=data[22];
-hour[3]=data[23];
-min[3]=data[24];
-weekdays[3][1]=data[25];
-weekdays[3][2]=data[26];
-weekdays[3][3]=data[27];
-weekdays[3][4]=data[28];
-weekdays[3][5]=data[29];
-weekdays[3][6]=data[30];
-weekdays[3][7]=data[31];
-status[4]=data[32];
-hour[4]=data[33];
-min[4]=data[34];
-weekdays[4][1]=data[35];
-weekdays[4][2]=data[36];
-weekdays[4][3]=data[37];
-weekdays[4][4]=data[38];
-weekdays[4][5]=data[39];
-weekdays[4][6]=data[40];
-weekdays[4][7]=data[41];
-status[5]=data[42];
-hour[5]=data[43];
-min[5]=data[44];
-weekdays[5][1]=data[45];
-weekdays[5][2]=data[46];
-weekdays[5][3]=data[47];
-weekdays[5][4]=data[48];
-weekdays[5][5]=data[49];
-weekdays[5][6]=data[50];
-weekdays[5][7]=data[51];
+status[0]=data[2];
+hour[0]=data[3];
+min[0]=data[4];
+weekdays[0][1]=data[5];
+weekdays[0][2]=data[6];
+weekdays[0][3]=data[7];
+weekdays[0][4]=data[8];
+weekdays[0][5]=data[9];
+weekdays[0][6]=data[10];
+weekdays[0][7]=data[11];
+status[1]=data[12];
+hour[1]=data[13];
+min[1]=data[14];
+weekdays[1][1]=data[15];
+weekdays[1][2]=data[16];
+weekdays[1][3]=data[17];
+weekdays[1][4]=data[18];
+weekdays[1][5]=data[19];
+weekdays[1][6]=data[20];
+weekdays[1][7]=data[21];
+status[2]=data[22];
+hour[2]=data[23];
+min[2]=data[24];
+weekdays[2][1]=data[25];
+weekdays[2][2]=data[26];
+weekdays[2][3]=data[27];
+weekdays[2][4]=data[28];
+weekdays[2][5]=data[29];
+weekdays[2][6]=data[30];
+weekdays[2][7]=data[31];
+status[3]=data[32];
+hour[3]=data[33];
+min[3]=data[34];
+weekdays[3][1]=data[35];
+weekdays[3][2]=data[36];
+weekdays[3][3]=data[37];
+weekdays[3][4]=data[38];
+weekdays[3][5]=data[39];
+weekdays[3][6]=data[40];
+weekdays[3][7]=data[41];
+status[4]=data[42];
+hour[4]=data[43];
+min[4]=data[44];
+weekdays[4][1]=data[45];
+weekdays[4][2]=data[46];
+weekdays[4][3]=data[47];
+weekdays[4][4]=data[48];
+weekdays[4][5]=data[49];
+weekdays[4][6]=data[50];
+weekdays[4][7]=data[51];
 //skin=data[52];
 show_icon=data[53];
 X=data[54];
@@ -261,6 +320,8 @@ Y=data[55];
     }
   }
   fclose(handle,&err);
+  
+  geteeblock();
 }
 
 void save_settings(void)
@@ -275,56 +336,56 @@ void save_settings(void)
       
 //data[0]=10;
 //data[1]=1;
-data[2]=status[1];
-data[3]=hour[1];
-data[4]=min[1];
-data[5]=weekdays[1][1];
-data[6]=weekdays[1][2];
-data[7]=weekdays[1][3];
-data[8]=weekdays[1][4];
-data[9]=weekdays[1][5];
-data[10]=weekdays[1][6];
-data[11]=weekdays[1][7];
-data[12]=status[2];
-data[13]=hour[2];
-data[14]=min[2];
-data[15]=weekdays[2][1];
-data[16]=weekdays[2][2];
-data[17]=weekdays[2][3];
-data[18]=weekdays[2][4];
-data[19]=weekdays[2][5];
-data[20]=weekdays[2][6];
-data[21]=weekdays[2][7];
-data[22]=status[3];
-data[23]=hour[3];
-data[24]=min[3];
-data[25]=weekdays[3][1];
-data[26]=weekdays[3][2];
-data[27]=weekdays[3][3];
-data[28]=weekdays[3][4];
-data[29]=weekdays[3][5];
-data[30]=weekdays[3][6];
-data[31]=weekdays[3][7];
-data[32]=status[4];
-data[33]=hour[4];
-data[34]=min[4];
-data[35]=weekdays[4][1];
-data[36]=weekdays[4][2];
-data[37]=weekdays[4][3];
-data[38]=weekdays[4][4];
-data[39]=weekdays[4][5];
-data[40]=weekdays[4][6];
-data[41]=weekdays[4][7];
-data[42]=status[5];
-data[43]=hour[5];
-data[44]=min[5];
-data[45]=weekdays[5][1];
-data[46]=weekdays[5][2];
-data[47]=weekdays[5][3];
-data[48]=weekdays[5][4];
-data[49]=weekdays[5][5];
-data[50]=weekdays[5][6];
-data[51]=weekdays[5][7];
+data[2]=status[0];
+data[3]=hour[0];
+data[4]=min[0];
+data[5]=weekdays[0][1];
+data[6]=weekdays[0][2];
+data[7]=weekdays[0][3];
+data[8]=weekdays[0][4];
+data[9]=weekdays[0][5];
+data[10]=weekdays[0][6];
+data[11]=weekdays[0][7];
+data[12]=status[1];
+data[13]=hour[1];
+data[14]=min[1];
+data[15]=weekdays[1][1];
+data[16]=weekdays[1][2];
+data[17]=weekdays[1][3];
+data[18]=weekdays[1][4];
+data[19]=weekdays[1][5];
+data[20]=weekdays[1][6];
+data[21]=weekdays[1][7];
+data[22]=status[2];
+data[23]=hour[2];
+data[24]=min[2];
+data[25]=weekdays[2][1];
+data[26]=weekdays[2][2];
+data[27]=weekdays[2][3];
+data[28]=weekdays[2][4];
+data[29]=weekdays[2][5];
+data[30]=weekdays[2][6];
+data[31]=weekdays[2][7];
+data[32]=status[3];
+data[33]=hour[3];
+data[34]=min[3];
+data[35]=weekdays[3][1];
+data[36]=weekdays[3][2];
+data[37]=weekdays[3][3];
+data[38]=weekdays[3][4];
+data[39]=weekdays[3][5];
+data[40]=weekdays[3][6];
+data[41]=weekdays[3][7];
+data[42]=status[4];
+data[43]=hour[4];
+data[44]=min[4];
+data[45]=weekdays[4][1];
+data[46]=weekdays[4][2];
+data[47]=weekdays[4][3];
+data[48]=weekdays[4][4];
+data[49]=weekdays[4][5];
+data[50]=weekdays[4][6];
+data[51]=weekdays[4][7];
 //data[52]=1;
 data[53]=show_icon;
 data[54]=X;
@@ -333,8 +394,10 @@ data[55]=Y;
       fwrite(handle,data,56,&err);
       mfree(data);
     }
-    fclose(handle,&err);
   }
+  fclose(handle,&err);
+  
+  saveeeblock();
 }
 
 void edit()
@@ -383,13 +446,13 @@ void OnRedraw()
       
       char *stat=malloc(16);
       int tmp=scr_h/7.3;
-      for (int i=1;i<6;i++)
+      for (int i=0;i<6;i++)
       {
         if (status[i]) strcpy(stat,on);
           else strcpy(stat,off);
-        wsprintf(ws, "%t %d: %d:%02d %t",alarm_name,i,hour[i],min[i],stat);
-        if (num_alarm==i) DrwStr(ws,5,1+tmp*i,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-          else DrwStr(ws,5,1+tmp*i,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+        wsprintf(ws, "%t %d: %d:%02d %t",alarm_name,i+1,hour[i],min[i],stat);
+        if (num_alarm==i) DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
+          else DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       }
       mfree(stat);
     } break;
@@ -400,7 +463,7 @@ void OnRedraw()
       draw_pic(fon,0,0);
       draw_pic(logo,2,2);
       
-      wsprintf(ws, "%t %d",alarm_name,num_alarm);
+      wsprintf(ws, "%t %d",alarm_name,num_alarm+1);
       DrwStr(ws,30,3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       
       //////////////////////////////////  SL65  ////////////////////////////////
@@ -578,7 +641,7 @@ int onkey(unsigned char keycode, int pressed)
             case UP_BUTTON:
             case LEFT_BUTTON:
               {
-                if (num_alarm>1) num_alarm--;
+                if (num_alarm>0) num_alarm--;
                   else num_alarm=5;
                 break;
               }
@@ -586,17 +649,19 @@ int onkey(unsigned char keycode, int pressed)
             case DOWN_BUTTON:
               {
                 if (num_alarm<5) num_alarm++;
-                  else num_alarm=1;
+                  else num_alarm=0;
                   break;
               }
             case GREEN_BUTTON: open_bcfg(); break;
-            case '1': num_alarm=1; break;
-            case '2': num_alarm=2; break;
-            case '3': num_alarm=3; break;
-            case '4': num_alarm=4; break;
-            case '5': num_alarm=5; break;
+            case '1': num_alarm=0; break;
+            case '2': num_alarm=1; break;
+            case '3': num_alarm=2; break;
+            case '4': num_alarm=3; break;
+            case '5': num_alarm=4; break;
+            case '6': num_alarm=5; break;
             case '#': mode=3; break;
-            case '*': ShowMSG(1,(int)"Alarm cfg editor\n(c)Geka"); break;
+            //case '*': geteeblock(); break;
+            //case '*': ShowMSG(1,(int)"Alarm cfg editor\n(c)Geka"); break;
             }
           }
       } break;
