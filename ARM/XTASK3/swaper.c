@@ -21,7 +21,7 @@ static int do_CSMtoTop(CSMQ *csm_q, void *_cmd)
   if (work_csm==bot_csm) return 1;
   if (work_csm==top_csm) return 1;
   if (work_csm==(top_csm?top_csm->prev:csm_q->csm.last)) return 1;
-  UnfocusGUI();
+  if (!top_csm) UnfocusGUI();
 //
   do
   {
@@ -53,12 +53,15 @@ static int do_CSMtoTop(CSMQ *csm_q, void *_cmd)
 			my_color,
 			my_color);*/
 
-  if ((gui=((CSM_RAM *)(csm_q->csm.last))->gui_ll.last))
+  if (!top_csm)
   {
-    FocusGUI(gui[3]);
+    if ((gui=((CSM_RAM *)(csm_q->csm.last))->gui_ll.last))
+    {
+      FocusGUI(gui[3]);
+    }
+    //Сообщение об уничтожении несуществующего CSM, необходимо для правильной работы IdleCSM
+    GBS_SendMessage(MMI_CEPID,MSG_CSM_DESTROYED,0,30002,0);
   }
-  //Сообщение об уничтожении несуществующего CSM, необходимо для правильной работы IdleCSM
-  GBS_SendMessage(MMI_CEPID,MSG_CSM_DESTROYED,0,30002,0);
   return 1;
 }
 
