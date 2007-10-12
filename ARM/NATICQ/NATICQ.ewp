@@ -5046,6 +5046,9 @@
     <name>$PROJ_DIR$\revision.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\select_smile.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\smiles_loader.c</name>
   </file>
   <file>

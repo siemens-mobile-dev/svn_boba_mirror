@@ -14,6 +14,7 @@
 #include "strings.h"
 #include "manage_cl.h"
 #include "cl_work.h"
+#include "select_smile.h"
 #include "revision.h"
 
 #ifndef NEWSGOLD
@@ -3455,152 +3456,9 @@ void AskNickAndAddContact(EDCHAT_STRUCT *ed_struct)
   CreateAddContactGrpDialog(ed_struct->ed_contact);
 }
 
-void as_locret(void){}
-
-int as_onkey(GUI *data,GUI_MSG *msg)
-{
-  EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
-  if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
-  {
-    switch(msg->gbsmsg->submess)
-    {
-    case GREEN_BUTTON: //insert smile by GREEN_BUTTON by BoBa 19.04.2007
-    case ENTER_BUTTON:
-      msg->keys=0xFFF;
-    }
-    if ((msg->gbsmsg->submess>='0')&&(msg->gbsmsg->submess<='9')){	//by BoBa 8.10.2007
-      EDIT_SetCursorPos(data,msg->gbsmsg->submess-'0'+1);
-      msg->keys=0xFFF;
-    }
-  }
-  if (msg->keys==0xFFF)
-  {
-    int uni_smile;
-    WSHDR *ed_ws;
-    EDITCONTROL ec;
-    int pos;
-    pos=EDIT_GetCursorPos(data);
-    EDIT_ExtractFocusedControl(data,&ec);
-    uni_smile=ec.pWS->wsbody[pos];
-    
-    ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
-    ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
-    wstrcpy(ed_ws,ec.pWS);
-    pos=EDIT_GetCursorPos(ed_struct->ed_chatgui);
-    wsInsertChar(ed_ws,uni_smile,pos);
-    EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
-    EDIT_SetCursorPos(ed_struct->ed_chatgui,pos+1);
-    FreeWS(ed_ws);
-    return (1);
-  }
-  if (msg->keys==0xFF0) return (1);	//by BoBa 8.10.2007
-  return(0);
-}
-
-void as_ghook(GUI *data, int cmd)
-{
-  static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_PASTESM};
-  static SOFTKEY_DESC ask_cancel={0x0FF0,0x0000,(int)LG_CLOSE};	//by BoBa 8.10.2007
-  PNGTOP_DESC *pltop=PNG_TOP();
-  if (cmd==9)
-  {
-    pltop->dyn_pltop=NULL;
-  }
-  if (cmd == 0x0A)
-  {
-    pltop->dyn_pltop=SmilesImgList;
-    DisableIDLETMR();
-  }
-  if (cmd == 7)
-  {
-    EDITCONTROL ec;
-    int pos;
-
-    EDIT_ExtractFocusedControl(data,&ec);
-    SetSoftKey(data,&ask,SET_SOFT_KEY_N);
-
-    pos=EDIT_GetCursorPos(data);
-    if (pos>ec.pWS->wsbody[0]) pos=ec.pWS->wsbody[0];
-    EDIT_SetCursorPos(data,pos);
-    EDIT_SetTextInvert(data,pos,1);
-
-    SetSoftKey(data,&ask_cancel,SET_SOFT_KEY_N==0?1:0);	//by BoBa 8.10.2007		
-    WSHDR *ws1=AllocWS(16);
-    int uni_smile=ec.pWS->wsbody[pos];
-    S_SMILES *t=FindSmileByUni(uni_smile);
-    if ((t)&&(t->lines)){
-      wsprintf(ws1,"%t (%d)",t->lines->text,pos-1);
-      EDIT_SetTextToEditControl(data,1,ws1);
-    }
-    FreeWS(ws1);
-  }
-  if (cmd==0x0C)
-  {
-    EDIT_SetCursorPos(data,1);
-  }
-}
-
-HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_ADDSMIL,LGP_NULL};
-
-INPUTDIA_DESC as_desc=
-{
-  1,
-  as_onkey,
-  as_ghook,
-  (void *)as_locret,
-  0,
-  &menu_skt,
-  {0,NULL,NULL,NULL},
-  4,
-  100,
-  101,
-  2,
-  //  0x00000001 - Выровнять по правому краю
-  //  0x00000002 - Выровнять по центру
-  //  0x00000004 - Инверсия знакомест
-  //  0x00000008 - UnderLine
-  //  0x00000020 - Не переносить слова
-  //  0x00000200 - bold
-  0,
-  //  0x00000002 - ReadOnly
-  //  0x00000004 - Не двигается курсор
-  //  0x40000000 - Поменять местами софт-кнопки
-  0x40000000
-};
-
 void AddSmile(GUI *data)
 {
   EDCHAT_STRUCT *ed_struct=MenuGetUserPointer(data);
-  S_SMILES *smiles,*st;
-  WSHDR *ws1;
-  int n;
-  
-  st=smiles=(S_SMILES *)&s_top;
-  n=0;
-  while((st=st->next)) n++;
-  if (!n) return;
-  ws1=AllocWS(n);
-
-  void *ma=malloc_adr();
-  void *eq;
-  EDITCONTROL ec;
-
-  eq=AllocEQueue(ma,mfree_adr());
-  
-  PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws1,16);	//by BoBa 8.10.2007
-  AddEditControlToEditQend(eq,&ec,ma);
- 
-  st=smiles;
-  while((st=st->next)) wsAppendChar(ws1,st->uni_smile);
-  
-  PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ws1,ws1->wsbody[0]);
-  AddEditControlToEditQend(eq,&ec,ma);
-
-  patch_header(&as_hdr);
-  patch_input(&as_desc);
-  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,ed_struct);
-  FreeWS(ws1);
+  CreateSmileSelectGUI(ed_struct);
   GeneralFuncF1(1);
 }
