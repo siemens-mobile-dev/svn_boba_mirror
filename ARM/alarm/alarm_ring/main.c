@@ -142,7 +142,6 @@ void LightOff()
   SetVibration(0);
   GBS_StartTimerProc(&mytmr,100,LightOn);
 }
-//////////////////////////////////////////////////////
 
 typedef struct
 {
@@ -173,19 +172,9 @@ void draw_pic()
     img.bitmap = IMG;
     DrwImg(&img,37,5, GetPaletteAdrByColorIndex(1), GetPaletteAdrByColorIndex(0));
 }
-/*
-void log(char *msg)
-{
-  unsigned int err;
-  char file[]="0:\\alarm.log";
-  int fp=fopen(file, A_WriteOnly+A_Create+A_Append, P_WRITE,&err);
-  fwrite(fp, msg, strlen(msg), &err);
-  fclose(fp, &err);  
-}*/
 
 const char ipc_alarm_name[]="alarm";
 const char ipc_alarm_ring_name[]="alarm_ring";
-//#define IPC_RESTART 1
 
 const IPC_REQ gipc={
   ipc_alarm_name,
@@ -196,13 +185,8 @@ const IPC_REQ gipc={
 void restart()
 {
   GBS_DelTimer(&restarttmr);
-  //IPC_REQ gipc;
-  //gipc.name_to="alarm";
-  //gipc.name_from="alarm_ring";
-  //gipc.data=NULL;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,time,&gipc);
   GeneralFunc_flag1(((MAIN_CSM*)FindCSMbyID(my_csm_id))->gui_id,1);
-  //ShowMSG(1,(int)"restart");
 }
 
 void OnRedraw()
@@ -235,7 +219,6 @@ void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
   ws=AllocWS(128);
   SetIllumination(1,1,100,0);
   SetIllumination(0,1,100,0);
-  //////////
   GBS_StartTimerProc(&restarttmr,216*60*5,restart);
   data->gui.state=1;
 }

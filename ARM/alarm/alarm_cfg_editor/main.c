@@ -123,7 +123,6 @@ void DrawGPF(char *fname, int x, int y)
     img.w = Pic_Header.w;
     img.h = Pic_Header.h;
     img.bpnum = Pic_Header.Compr_Bits;
-    //img.zero = 0;
     img.bitmap = pic_buffer;
     DrwImg(&img, x, y);
     mfree(pic_buffer);
@@ -144,7 +143,6 @@ void draw_pic(int num,int x, int y)
       img.w = 52;
       img.h = 52;
       img.bpnum = 0x88;
-      //img.zero = 0;
       img.bitmap = _st_off;
       DrwImg(&img,x,y);
     } break;
@@ -154,7 +152,6 @@ void draw_pic(int num,int x, int y)
       img.w = 52;
       img.h = 52;
       img.bpnum = 0x88;
-      //img.zero = 0;
       img.bitmap = _st_on;
       DrwImg(&img,x,y);
     } break;
@@ -164,7 +161,6 @@ void draw_pic(int num,int x, int y)
       img.w = 14;
       img.h = 14;
       img.bpnum = 0x85;
-      //img.zero = 0;
       img.bitmap = _wd_off;
       DrwImg(&img,x,y);
     } break;
@@ -174,7 +170,6 @@ void draw_pic(int num,int x, int y)
       img.w = 14;
       img.h = 14;
       img.bpnum = 0x85;
-      //img.zero = 0;
       img.bitmap = _wd_on;
       DrwImg(&img,x,y);
     } break;
@@ -184,7 +179,6 @@ void draw_pic(int num,int x, int y)
       img.w = 26;
       img.h = 14;
       img.bpnum = 0x85;
-      //img.zero = 0;
       img.bitmap = _logo;
       DrwImg(&img,x,y);
     } break;
@@ -192,6 +186,8 @@ void draw_pic(int num,int x, int y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#ifndef NEWSGOLD
+
 #define MAX_HEX   (100+10)
 #define MAX_BIN   (4 * MAX_HEX)
 
@@ -295,18 +291,14 @@ int hex2int (char *s)
 {
   int res;
   int tmp;
-  /* Gotta be at least one digit */
   if (strlen (s) < 1)
     return -1;
-  /* Can't be more than two */
   if (strlen (s) > 2)
     return -1;
-  /* Grab the first digit */
   res = digit2int (s[0]);
   if (res < 0)
     return -1;
   tmp = res;
-  /* Grab the next */
   if (strlen (s) > 1)
     {
       res = digit2int (s[1]);
@@ -391,6 +383,55 @@ void saveeeblock()
   mfree(hex);
 }
 
+#else
+
+void geteeblock()
+{
+  /*
+  unsigned int err;
+  int fp=fopen("2:\\Default\\PD\\alarmclock.pd", A_ReadOnly, P_READ,&err);
+  if(fp!=-1)
+  {
+    char *buf=malloc(128);
+    fread(fp, buf, 128, &err);
+    fclose(fp,&err);
+    
+    buf=strstr(buf,"days_in_use=");
+    buf+=strlen("days_in_use=");
+    for (int i=0; i<7; i++)
+    {
+      weekdays[5][i]=buf[i]-'0';
+    }
+    buf=strstr(buf,"alarm_time=");
+    buf+=strlen("alarm_time=");
+    //????????????????
+    buf=strstr(buf,"alarm_active=");
+    buf+=strlen("alarm_active=");
+    status[5]=buf[0]-'0';
+    mfree(buf);
+  }
+  else
+  {
+    status[5]=0;
+    hour[5]=0;
+    min[5]=0;
+    weekdays[5][0]=0;
+    weekdays[5][1]=0;
+    weekdays[5][2]=0;
+    weekdays[5][3]=0;
+    weekdays[5][4]=0;
+    weekdays[5][5]=0;
+    weekdays[5][6]=0;
+  }
+  */
+}
+
+void saveeeblock()
+{
+  
+}
+
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 
 void load_settings(void)
@@ -399,10 +440,8 @@ void load_settings(void)
   int handle=fopen(cfgfile, A_ReadOnly, P_READ,&err);
   if(handle!=-1)
   {
-    char *data=malloc(128);
-    if(data)
-    {
-      fread(handle,data,128,&err);
+    char *data=malloc(64);
+    fread(handle,data,60,&err);
       
 status[0]=data[2];
 hour[0]=data[3];
@@ -454,31 +493,25 @@ weekdays[4][3]=data[48];
 weekdays[4][4]=data[49];
 weekdays[4][5]=data[50];
 weekdays[4][6]=data[51];
-//skin=data[52];
+
 show_icon=data[53];
 X=data[54];
 Y=data[55];
 
-      mfree(data);
-    }
+    mfree(data);
   }
   fclose(handle,&err);
-  
   geteeblock();
 }
 
 void save_settings(void)
-{  
+{
   unsigned int err; 
   int handle=fopen(cfgfile,A_WriteOnly+A_Create,P_WRITE,&err);
   if(handle!=-1)
   {
-    char *data=malloc(128);
-    if(data!=0)
-    {
-      
-//data[0]=10;
-//data[1]=1;
+    char *data=malloc(64);
+    
 data[2]=status[0];
 data[3]=hour[0];
 data[4]=min[0];
@@ -529,17 +562,15 @@ data[48]=weekdays[4][3];
 data[49]=weekdays[4][4];
 data[50]=weekdays[4][5];
 data[51]=weekdays[4][6];
-//data[52]=1;
+
 data[53]=show_icon;
 data[54]=X;
 data[55]=Y;
 
-      fwrite(handle,data,56,&err);
-      mfree(data);
-    }
+    fwrite(handle,data,56,&err);
+    mfree(data);
   }
   fclose(handle,&err);
-  
   saveeeblock();
 }
 
@@ -803,7 +834,7 @@ int onkey(unsigned char keycode, int pressed)
             case '5': num_alarm=4; break;
             case '6': num_alarm=5; break;
             case '#': mode=3; break;
-            case '*': saveeeblock(); break;
+            //case '*': saveeeblock(); break;
             //case '*': ShowMSG(1,(int)"Alarm cfg editor\n(c)Geka"); break;
             }
           }

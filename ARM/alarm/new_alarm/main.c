@@ -12,10 +12,10 @@ void load_settings();
 
 GBSTMR *restarttmr;
 
-unsigned int hour[6];
-unsigned int min[6];
-unsigned int status[6];
-unsigned int weekdays[6][8];
+unsigned int hour[5];
+unsigned int min[5];
+unsigned int status[5];
+unsigned int weekdays[5][7];
 int show_icon;
 int X;
 int Y;
@@ -98,80 +98,73 @@ void getimgwh()
 
 void load_settings(void)
 {
-char *fname=DEFAULT_DISK":\\Zbin\\alarm\\alarm.cfg";
-char *data; 
-unsigned int err; 
-int handle; 
-handle=fopen(fname, A_ReadOnly, P_READ,&err); 
-if(handle!=-1)
-{
-  data=malloc(256);
-  if(data!=0)
-    {
-      fread(handle,data,10000,&err);
-      
-status[1]=data[2];
-hour[1]=data[3];
-min[1]=data[4];
-weekdays[1][1]=data[5];
-weekdays[1][2]=data[6];
-weekdays[1][3]=data[7];
-weekdays[1][4]=data[8];
-weekdays[1][5]=data[9];
-weekdays[1][6]=data[10];
-weekdays[1][7]=data[11];
-status[2]=data[12];
-hour[2]=data[13];
-min[2]=data[14];
-weekdays[2][1]=data[15];
-weekdays[2][2]=data[16];
-weekdays[2][3]=data[17];
-weekdays[2][4]=data[18];
-weekdays[2][5]=data[19];
-weekdays[2][6]=data[20];
-weekdays[2][7]=data[21];
-status[3]=data[22];
-hour[3]=data[23];
-min[3]=data[24];
-weekdays[3][1]=data[25];
-weekdays[3][2]=data[26];
-weekdays[3][3]=data[27];
-weekdays[3][4]=data[28];
-weekdays[3][5]=data[29];
-weekdays[3][6]=data[30];
-weekdays[3][7]=data[31];
-status[4]=data[32];
-hour[4]=data[33];
-min[4]=data[34];
-weekdays[4][1]=data[35];
-weekdays[4][2]=data[36];
-weekdays[4][3]=data[37];
-weekdays[4][4]=data[38];
-weekdays[4][5]=data[39];
-weekdays[4][6]=data[40];
-weekdays[4][7]=data[41];
-status[5]=data[42];
-hour[5]=data[43];
-min[5]=data[44];
-weekdays[5][1]=data[45];
-weekdays[5][2]=data[46];
-weekdays[5][3]=data[47];
-weekdays[5][4]=data[48];
-weekdays[5][5]=data[49];
-weekdays[5][6]=data[50];
-weekdays[5][7]=data[51];
+  char *fname=DEFAULT_DISK":\\Zbin\\alarm\\alarm.cfg";
+  unsigned int err;
+  int handle=fopen(fname, A_ReadOnly, P_READ,&err);
+  if(handle!=-1)
+  {
+    char *data=malloc(64);
+    fread(handle,data,60,&err);
+
+status[0]=data[2];
+hour[0]=data[3];
+min[0]=data[4];
+weekdays[0][0]=data[5];
+weekdays[0][1]=data[6];
+weekdays[0][2]=data[7];
+weekdays[0][3]=data[8];
+weekdays[0][4]=data[9];
+weekdays[0][5]=data[10];
+weekdays[0][6]=data[11];
+status[1]=data[12];
+hour[1]=data[13];
+min[1]=data[14];
+weekdays[1][0]=data[15];
+weekdays[1][1]=data[16];
+weekdays[1][2]=data[17];
+weekdays[1][3]=data[18];
+weekdays[1][4]=data[19];
+weekdays[1][5]=data[20];
+weekdays[1][6]=data[21];
+status[2]=data[22];
+hour[2]=data[23];
+min[2]=data[24];
+weekdays[2][0]=data[25];
+weekdays[2][1]=data[26];
+weekdays[2][2]=data[27];
+weekdays[2][3]=data[28];
+weekdays[2][4]=data[29];
+weekdays[2][5]=data[30];
+weekdays[2][6]=data[31];
+status[3]=data[32];
+hour[3]=data[33];
+min[3]=data[34];
+weekdays[3][0]=data[35];
+weekdays[3][1]=data[36];
+weekdays[3][2]=data[37];
+weekdays[3][3]=data[38];
+weekdays[3][4]=data[39];
+weekdays[3][5]=data[40];
+weekdays[3][6]=data[41];
+status[4]=data[42];
+hour[4]=data[43];
+min[4]=data[44];
+weekdays[4][0]=data[45];
+weekdays[4][1]=data[46];
+weekdays[4][2]=data[47];
+weekdays[4][3]=data[48];
+weekdays[4][4]=data[49];
+weekdays[4][5]=data[50];
+weekdays[4][6]=data[51];
 
 show_icon=data[53];
 X=data[54];
 Y=data[55];
 
-mfree(data);
-    }
-  fclose(handle,&err);
-}
-/////////////
+    mfree(data);
+    fclose(handle,&err);
+  }
   getimgwh();
-/////////////
 }
 
 void start_ring()
@@ -191,7 +184,7 @@ void alarm(int n)
     TDate date;
     GetDateTime(&date, 0);
     char wd = GetWeek(&date);
-    if (weekdays[n][wd+1])
+    if (weekdays[n][wd])
       {
         GetDateTime(&date,&time);
         if (time.hour==hour[n])
@@ -207,13 +200,13 @@ void alarm(int n)
 
 void start_check(void)
 {
-  if (status[1] || status[2] || status[3] || status[4] || status[5])
+  if (status[0] || status[1] || status[2] || status[3] || status[4])
   {
     show_icon=1;
   }
    else show_icon=0;
   
-  for (int i=1;i<6;i++)
+  for (int i=0;i<5;i++)
   {
     alarm(i);
   }
@@ -236,18 +229,8 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-void log(char *msg)
-{
-  unsigned int err;
-  char file[]="0:\\alarm.log";
-  int fp=fopen(file, A_WriteOnly+A_Create+A_Append, P_WRITE,&err);
-  fwrite(fp, msg, strlen(msg), &err);
-  fclose(fp, &err);  
-}
-
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  //////////////////////////////////////////////////////////////////////////////
   if (msg->msg == MSG_IPC)
   {
     IPC_REQ *ipc=(IPC_REQ*)((msg)->data0);
@@ -257,17 +240,10 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       {
         int time2 = msg -> submess;
         GBS_StartTimerProc(&restarttmr,216*60*time2,start_ring);
-        /*
-        if(msg->submess == 1)
-        {
-          ShowMSG(1,(int)"restart ok");
-          GBS_StartTimerProc(&restarttmr,216*60,start_ring);
-        }*/
       }
     }
   }
   
-  //////////////////////////////////////////////////////////////////////////////
   CSM_RAM *icsm;
   if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
   {
@@ -294,7 +270,6 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
   {
     if (strcmp_nocase("alarm",(char *)msg->data0)==0)
     {
-      ShowMSG(1,(int)"alarm settings updated!");
       load_settings();
     }
   }
