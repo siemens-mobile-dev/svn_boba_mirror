@@ -38,6 +38,9 @@ __root const CFG_HDR cfghdr16_1={CFG_CBOX,"First letter",0,2};
 __root const int FIRST_LETTER = 0;
 __root const CFG_CBOX_ITEM cfgcbox16_1[2]={"Small","Big"};
 
+__root const CFG_HDR cfghdr61={CFG_CHECKBOX,"Enable Auto Request XText",0,0};
+__root const int ENA_AUTO_XTXT = 1;
+
 __root const CFG_HDR cfghdr_m41={CFG_LEVEL,"Notify power",1,0};
 __root const CFG_HDR cfghdr18={CFG_UINT,"Sound Volume",0,6};
 __root const unsigned int sndVolume=3;

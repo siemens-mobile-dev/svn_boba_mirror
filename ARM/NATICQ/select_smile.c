@@ -5,6 +5,7 @@
 #include "smiles.h"
 #include "rect_patcher.h"
 #include "select_smile.h"
+#include "strings.h"
 
 #define MAX_ICON_IN_ROW 32
 typedef struct
@@ -26,6 +27,7 @@ typedef struct
   int cur_pos_y;
   int total_lines;
   IMGH_SMILE *icons;
+  WSHDR *ws;
 }SMILE_GUI;
 
 extern S_SMILES *s_top;
@@ -78,30 +80,44 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
   int scr_h=ScreenH()-1;
   int i=data->view_line;
   int max=data->total_lines;
+  int font_size;
   int x;
   int y=YDISP;
+  int y2=y+(font_size=GetFontYSIZE(FONT_SMALL))+2;
   int h_max=0;
+  S_SMILES *sm;
   while(i<max)
   {
     x=0;
     for (int k=0, m=data->icons[i].icon_in_row; k<m; k++)
     {
       IMGHDR *img=data->icons[i].w_chars[k].img;
-      if (i==data->cur_pos_y && k==data->cur_pos_x && is_draw)
-      {
-        DrawRectangle(x,y,x+img->w,y+img->h,0,
-                      GetPaletteAdrByColorIndex(3),
-                      GetPaletteAdrByColorIndex(3));
-      }
       if (is_draw)
-        DrwImg(img,x,y);
+      {
+        if (i==data->cur_pos_y && k==data->cur_pos_x)
+        {
+          DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,
+                        GetPaletteAdrByColorIndex(3),
+                        GetPaletteAdrByColorIndex(3));
+        }
+        DrwImg(img,x,y2);
+      }
       x+=img->w;
-      h_max=h_max>img->h?h_max:img->h;      
+      if (img->h>h_max) h_max=img->h;
     }
-    y+=h_max;
-    if (y>=scr_h) break;
+    y2+=h_max;
+    if (y2>=scr_h) break;
     i++;    
-  }  
+  }
+  if (is_draw)
+  {
+    sm=FindSmileByUni(data->icons[data->cur_pos_y].w_chars[data->cur_pos_x].wchar);
+    if (sm)
+    {
+      ascii2ws(data->ws,sm->lines->text);
+      DrawString(data->ws,1,1,scr_w,1+font_size,FONT_SMALL,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+    }
+  }
   return (i);  
 }
 
@@ -144,6 +160,7 @@ static void method1(SMILE_GUI *data,void *(*malloc_adr)(int))
     }
     sm=sm->next;
   }
+  data->ws=AllocWS(50);
   data->gui.state=1;
 }
 
@@ -151,6 +168,7 @@ static void method2(SMILE_GUI *data,void (*mfree_adr)(void *))
 {
   data->gui.state=0;
   mfree(data->icons);
+  FreeWS(data->ws);
 }
 
 static void method3(SMILE_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
@@ -175,16 +193,38 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case UP_BUTTON:
-      if (data->cur_pos_y>0) data->cur_pos_y--;
-      if (data->cur_pos_y<=data->view_line) data->view_line=data->cur_pos_y;
-      if (data->cur_pos_x>=data->icons[data->cur_pos_y].icon_in_row) data->cur_pos_x=0;  // Проверяем на выход за пределы
+      if (data->cur_pos_y>0)
+      {
+        data->cur_pos_y--;
+        if (data->cur_pos_y<=data->view_line) data->view_line=data->cur_pos_y;
+      }
+      else
+      {
+        data->cur_pos_y=data->total_lines-1;
+        if (data->view_line<data->cur_pos_y)
+        {
+          while(data->view_line<data->total_lines)
+          {
+            i=RenderPage(data,0);
+            data->view_line++;
+            if (i==data->cur_pos_y) break;
+          }
+        }
+      }
+      if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=i-1;  // Проверяем на выход за пределы
       break;
       
     case DOWN_BUTTON:
-      i=RenderPage(data,0);
-      if (data->cur_pos_y<data->total_lines-1) data->cur_pos_y++;
-      if (data->cur_pos_y>=i) data->view_line++;
-      if (data->cur_pos_x>=data->icons[data->cur_pos_y].icon_in_row) data->cur_pos_x=0;  // Проверяем на выход за пределы
+      if (data->cur_pos_y<data->total_lines-1)
+      {
+        data->cur_pos_y++;
+        if (data->cur_pos_y>=RenderPage(data,0)) data->view_line++;
+      }
+      else
+      {
+        data->cur_pos_y=data->view_line=0;
+      }
+      if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=i-1;  // Проверяем на выход за пределы
       break;
       
     case LEFT_BUTTON:
@@ -194,7 +234,7 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
       
     case RIGHT_BUTTON:
       data->cur_pos_x++;
-      if (data->cur_pos_x>=data->icons[data->cur_pos_y].icon_in_row) data->cur_pos_x=0;  // Проверяем на выход за пределы
+      if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=0;  // Переходим на первый в ряду
       break;
      
     case LEFT_SOFT:

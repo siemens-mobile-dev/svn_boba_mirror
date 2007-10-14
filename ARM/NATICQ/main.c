@@ -152,6 +152,8 @@ extern const unsigned int TO_COLOR;
 
 extern const unsigned int ED_FONT_SIZE;
 
+extern const int ENA_AUTO_XTXT;
+
 const char percent_t[]="%t";
 const char percent_d[]="%d";
 const char empty_str[]="";
@@ -1785,7 +1787,7 @@ ProcessPacket(TPKT *p)
       {
         t->xstate=p->data[2];
         FreeXText(t);
-        if (t->xstate)   // ≈сли установлен икс статус
+        if (t->xstate && ENA_AUTO_XTXT)   // ≈сли установлен икс статус и можно запрашивать по смене икс статуса :)
         {
           t->req_xtext=1;
           if (edchat_id)   // ≈сли открыт чат
