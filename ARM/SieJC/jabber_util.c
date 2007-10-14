@@ -93,7 +93,9 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
   {
     strcpy(s_id, "");
   }
-  sprintf(xmlq, "<iq type='%s' %s from='%s'", type, s_id, My_JID_full);
+  char *_from = Mask_Special_Syms(My_JID_full);
+  sprintf(xmlq, "<iq type='%s' %s from='%s'", type, s_id, _from);
+  mfree(_from);
   if(to)
   {
     char *_to = Mask_Special_Syms(to);
@@ -317,16 +319,20 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   MUC_ITEM* m_ex = muctop;
   while(m_ex)
   {
+    char *_to = Mask_Special_Syms(m_ex->conf_jid);
+    char *_from = Mask_Special_Syms(My_JID_full);
     if(pr_info->message)
     {
       char presence_template[]="<presence from='%s' to='%s'><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
+      snprintf(presence,1024,presence_template, _from, _to, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
     }
     else
     {
       char presence_template[]="<presence from='%s' to='%s'><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, My_JID_full, m_ex->conf_jid, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
+      snprintf(presence,1024,presence_template, _from, _to, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
     }
+    mfree(_to);
+    mfree(_from);
     SendAnswer(presence);
     m_ex=m_ex->next;
   };
@@ -368,8 +374,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
       </x>
     </message>
 */
-  char* _jid=malloc(128);
-  strcpy(_jid, jid);
+  char *_jid = Mask_Special_Syms(jid);
   char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body><x xmlns='jabber:x:event'></x></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   if(mess->IsGroupChat)
@@ -519,7 +524,13 @@ void _enterconference(MUC_ENTER_PARAM *param)
   char *stext;
   extern char empty_str[];
   if(OnlineInfo.txt){stext= OnlineInfo.txt;}else{stext = empty_str;}
-  sprintf(magic,magic_ex, My_JID_full, param->room_name,param->room_nick, param->mess_num, PRESENCES[OnlineInfo.status], stext);
+  char *_from = Mask_Special_Syms(My_JID_full);
+  char *_room_name = Mask_Special_Syms(param->room_name);
+  char *_room_nick = Mask_Special_Syms(param->room_nick);
+  sprintf(magic,magic_ex, _from, _room_name,_room_nick, param->mess_num, PRESENCES[OnlineInfo.status], stext);
+  mfree(_from);
+  mfree(_room_name);
+  mfree(_room_nick);
   SendAnswer(magic);
   mfree(magic);
   mfree(param->room_nick);
@@ -1353,8 +1364,7 @@ void _mucadmincmd(char* room, char* iq_payload)
 void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* reason)
 {
   char* payload = malloc(1024);
-  char *_room_name = malloc(strlen(room_name)+1);
-  strcpy(_room_name, room_name);
+  char *_room_name = Mask_Special_Syms(room_name);
   char payload_tpl[]="<item nick='%s' %s='%s'><reason>%s</reason></item>";
   char it[20];
   char val[20];
@@ -1390,8 +1400,9 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
 
   }
 
-  snprintf(payload, 1023, payload_tpl, room_jid, it, val, reason);
-//  ShowMSG(1,(int)payload);
+  char *_room_jid = Mask_Special_Syms(room_jid);
+  snprintf(payload, 1023, payload_tpl, _room_jid, it, val, reason);
+  mfree(_room_jid);
   SUBPROC((void*)_mucadmincmd, _room_name, payload);
 }
 
