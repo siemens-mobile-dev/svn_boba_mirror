@@ -39,7 +39,7 @@ PITret:
 
 
 	defadr	StoreErrInfoAndAbort,0xA01CE44C
-	defadr	StoreErrString,0xA01CE314
+	defadr	StoreErrString,0xA01CE318
 
 
 	END
