@@ -78,17 +78,16 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
-  int i=data->view_line;
-  int max=data->total_lines;
-  int font_size;
-  int x;
+  int res=0;
+  int font=FONT_SMALL;
+  int font_size=GetFontYSIZE(font);
   int y=YDISP;
-  int y2=y+(font_size=GetFontYSIZE(FONT_SMALL))+2;
-  int h_max=0;
+  int y2=y+font_size+2;
   S_SMILES *sm;
-  while(i<max)
+  for (int i=data->view_line, max=data->total_lines; i<max; i++)
   {
-    x=0;
+    int x=0;
+    int h_max=0;
     for (int k=0, m=data->icons[i].icon_in_row; k<m; k++)
     {
       IMGHDR *img=data->icons[i].w_chars[k].img;
@@ -107,7 +106,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
     }
     y2+=h_max;
     if (y2>=scr_h) break;
-    i++;    
+    res=i;
   }
   if (is_draw)
   {
@@ -115,10 +114,10 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
     if (sm)
     {
       ascii2ws(data->ws,sm->lines->text);
-      DrawString(data->ws,1,1,scr_w,1+font_size,FONT_SMALL,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
     }
   }
-  return (i);  
+  return (res);  
 }
 
 static void method0(SMILE_GUI *data)
@@ -152,7 +151,6 @@ static void method1(SMILE_GUI *data,void *(*malloc_adr)(int))
         cur_img+=data->total_lines;
         zeromem(cur_img,sizeof(IMGH_SMILE));
         data->total_lines++;
-        cur_img->icon_in_row=0;
       }
       cur_img->w_chars[cur_img->icon_in_row].img=img;
       cur_img->w_chars[cur_img->icon_in_row].wchar=sm->uni_smile;
@@ -188,62 +186,82 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
 {
   int i;
   int m=msg->gbsmsg->msg;
+  int key=msg->gbsmsg->submess;
   if ((m==KEY_DOWN)||(m==LONG_PRESS))
   {
-    switch(msg->gbsmsg->submess)
+    if (key==GREEN_BUTTON || (key>='0' && key<='9'))
     {
-    case UP_BUTTON:
-      if (data->cur_pos_y>0)
+      int c;
+      int n=0;
+      int d;
+      if (key==GREEN_BUTTON) c=0;
+      else if (key=='0') c=10;
+      else c=key-'0';
+      while(c>=(d=data->icons[n].icon_in_row) && n<data->total_lines)
       {
-        data->cur_pos_y--;
-        if (data->cur_pos_y<=data->view_line) data->view_line=data->cur_pos_y;
+        c-=d;
+        n++;
       }
-      else
+      if (c>=0 && n<data->total_lines)
       {
-        data->cur_pos_y=data->total_lines-1;
-        if (data->view_line<data->cur_pos_y)
+        PasteCharEditControl(data->ed_struct,data->icons[n].w_chars[c].wchar);
+        return (1);
+      }
+    }
+    else
+    {
+      switch(key)
+      {
+      case UP_BUTTON:
+        if (data->cur_pos_y>0)
         {
+          data->cur_pos_y--;
+          if (data->cur_pos_y<=data->view_line) data->view_line=data->cur_pos_y;
+        }
+        else
+        {
+          data->cur_pos_y=data->total_lines-1;
+          data->view_line=0;
           while(data->view_line<data->total_lines)
           {
-            i=RenderPage(data,0);
+            if (data->cur_pos_y==RenderPage(data,0)) break;
             data->view_line++;
-            if (i==data->cur_pos_y) break;
           }
         }
-      }
-      if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=i-1;  // Проверяем на выход за пределы
-      break;
+        if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=i-1;  // Проверяем на выход за пределы
+        break;
+        
+      case DOWN_BUTTON:
+        if (data->cur_pos_y<data->total_lines-1)
+        {
+          data->cur_pos_y++;
+          if (data->cur_pos_y>RenderPage(data,0)) data->view_line++;
+        }
+        else
+        {
+          data->cur_pos_y=data->view_line=0;
+        }
+        if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=i-1;  // Проверяем на выход за пределы
+        break;
+        
+      case LEFT_BUTTON:
+        if (data->cur_pos_x>0) data->cur_pos_x--;
+        else data->cur_pos_x=data->icons[data->cur_pos_y].icon_in_row-1;
+        break;
+        
+      case RIGHT_BUTTON:
+        data->cur_pos_x++;
+        if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=0;  // Переходим на первый в ряду
+        break;
+        
+      case LEFT_SOFT:
+      case ENTER_BUTTON:
+        PasteCharEditControl(data->ed_struct,data->icons[data->cur_pos_y].w_chars[data->cur_pos_x].wchar);
+        return (1);
       
-    case DOWN_BUTTON:
-      if (data->cur_pos_y<data->total_lines-1)
-      {
-        data->cur_pos_y++;
-        if (data->cur_pos_y>=RenderPage(data,0)) data->view_line++;
+      case RIGHT_SOFT:
+        return (1);
       }
-      else
-      {
-        data->cur_pos_y=data->view_line=0;
-      }
-      if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=i-1;  // Проверяем на выход за пределы
-      break;
-      
-    case LEFT_BUTTON:
-      if (data->cur_pos_x>0) data->cur_pos_x--;
-      else data->cur_pos_x=data->icons[data->cur_pos_y].icon_in_row-1;
-      break;
-      
-    case RIGHT_BUTTON:
-      data->cur_pos_x++;
-      if (data->cur_pos_x>=(i=data->icons[data->cur_pos_y].icon_in_row)) data->cur_pos_x=0;  // Переходим на первый в ряду
-      break;
-     
-    case LEFT_SOFT:
-    case GREEN_BUTTON:
-    case ENTER_BUTTON:
-      PasteCharEditControl(data->ed_struct,data->icons[data->cur_pos_y].w_chars[data->cur_pos_x].wchar);
-      return (1);
-    case RIGHT_SOFT:
-      return (1);
     }
   }
   DirectRedrawGUI();
@@ -281,13 +299,3 @@ int CreateSmileSelectGUI(EDCHAT_STRUCT *ed_struct)
   smile_gui->ed_struct=ed_struct;
   return CreateGUI(smile_gui);
 }
-
-
-
-
-
-
-
-
-
-
