@@ -37,6 +37,8 @@ unsigned int ch[3];
 unsigned int set=1;
 int lng;
 char cfgfile[]=DEFAULT_DISK":\\zbin\\alarm\\alarm.cfg";
+char fongpf[]=DEFAULT_DISK":\\zbin\\alarm\\fon.gpf";
+char bcfgfile[]=DEFAULT_DISK":\\Zbin\\etc\\alarm_melody.bcfg";
 
 int scr_w;
 int scr_h;
@@ -135,7 +137,7 @@ void draw_pic(int num,int x, int y)
   {
   case fon:
     {
-      DrawGPF(DEFAULT_DISK":\\zbin\\alarm\\fon.gpf",0,0);
+      DrawGPF(fongpf,0,0);
     } break;
   case st_off:
     {
@@ -784,9 +786,8 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 
 void open_bcfg()
 {
-  char *elf=DEFAULT_DISK":\\Zbin\\alarm\\alarm_melody.bcfg";
   WSHDR *_elf=AllocWS(256);
-  wsprintf(_elf,"%s",elf);
+  wsprintf(_elf,"%s",bcfgfile);
   ExecuteFile(_elf,0,0);
   FreeWS(_elf);
 }

@@ -47,9 +47,9 @@ int LoadConfigData(const char *fname)
 
 void InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\alarm\\alarm_melody.bcfg")<0)
+  if (LoadConfigData("4:\\ZBin\\etc\\alarm_melody.bcfg")<0)
   {
-    LoadConfigData("0:\\ZBin\\alarm\\alarm_melody.bcfg");
+    LoadConfigData("0:\\ZBin\\etc\\alarm_melody.bcfg");
   }
 }
 

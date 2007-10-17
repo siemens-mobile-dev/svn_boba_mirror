@@ -16,12 +16,14 @@ unsigned int hour[5];
 unsigned int min[5];
 unsigned int status[5];
 unsigned int weekdays[5][7];
-int show_icon;
+int show_icon=0;
+int status_icon=0;
 int X;
 int Y;
 int imgw;
 int imgh;
 char icon[]=DEFAULT_DISK":\\Zbin\\alarm\\icon.gpf";
+char cfgfile[]=DEFAULT_DISK":\\Zbin\\alarm\\alarm.cfg";
 
 GBSTMR mytmr;
 TDate date;
@@ -96,11 +98,19 @@ void getimgwh()
   }
 }
 
+void update_status()
+{
+  if (status[0] || status[1] || status[2] || status[3] || status[4])
+  {
+    status_icon=1;
+  }
+   else status_icon=0;
+}
+
 void load_settings(void)
 {
-  char *fname=DEFAULT_DISK":\\Zbin\\alarm\\alarm.cfg";
   unsigned int err;
-  int handle=fopen(fname, A_ReadOnly, P_READ,&err);
+  int handle=fopen(cfgfile, A_ReadOnly, P_READ,&err);
   if(handle!=-1)
   {
     char *data=malloc(64);
@@ -165,6 +175,7 @@ Y=data[55];
     fclose(handle,&err);
   }
   getimgwh();
+  update_status();
 }
 
 void start_ring()
@@ -200,12 +211,6 @@ void alarm(int n)
 
 void start_check(void)
 {
-  if (status[0] || status[1] || status[2] || status[3] || status[4])
-  {
-    show_icon=1;
-  }
-   else show_icon=0;
-  
   for (int i=0;i<5;i++)
   {
     alarm(i);
@@ -256,7 +261,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         void *idata = GetDataOfItemByID(igui, 2);
         if (idata)
         {
-          if((IsUnlocked())&&(show_icon==1))
+          if((IsUnlocked())&&(show_icon)&&(status_icon))
           {
             void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
             DrawCanvas(canvasdata, X, Y, X + imgh, Y + imgh, 1);

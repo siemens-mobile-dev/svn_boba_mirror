@@ -35,6 +35,7 @@ int old_light_kb;
 int old_light_d;
 int old_profile;
 GBSTMR restarttmr;
+char profile_pd_file[]=PROFILE_PD_DISC":\\system\\hmi\\profile.pd";
 
 typedef struct
 {
@@ -108,12 +109,11 @@ void play_standart_melody()
   int f;
   int i=0;
   unsigned int err;
-  char* buf;
-  char *fn=PROFILE_PD_DISC":\\system\\hmi\\profile.pd";
-  unsigned int fsize=get_file_size(fn);
+  unsigned int fsize=get_file_size(profile_pd_file);
   
-if((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&err))==-1) return;
-  buf=malloc(fsize+1);
+  if((f=fopen(profile_pd_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return;
+  char* buf=malloc(fsize+1);
+  char* buf2=buf;
   fread(f,buf,fsize,&err);
   fclose(f,&err);
   
@@ -126,6 +126,7 @@ if((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&err))==-1) return;
   }
   buf[i+1]=0;
   Play(buf);
+  mfree(buf2);
 }
 
 void LightOff();
