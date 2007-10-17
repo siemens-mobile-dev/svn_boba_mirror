@@ -952,7 +952,7 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
         wsInsertChar(ws1,0xE008,1);
       }
 #ifdef USE_MLMENU
-      if (t->xtext)
+      if (t->xtext && t->xtext[0]!=0)
       {
 	int i;
 	zeromem(s,64);
@@ -1465,6 +1465,7 @@ void ParseXStatusText(WSHDR *ws, const char *s)
   int c;
   int flag=0;
   CutWSTR(ws,0);
+  if (strlen(s)==1) return;
   wsAppendChar(ws,0xE008);
   wsAppendChar(ws,2);
   wsAppendChar(ws,0xE013);
@@ -1542,7 +1543,10 @@ void AddMsgToChat(void *data)
         ParseXStatusText(ews, p->text);
       }
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
+      ConstructEditControl(&ec,
+                           ECT_NORMAL_TEXT,
+                           ews->wsbody[0] ? ECF_APPEND_EOL|ECF_DISABLE_T9 : ECF_DELSTR,
+                           ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
 #ifdef M75
       if (p->type!=3)
@@ -3129,7 +3133,10 @@ void CreateEditChat(CLIST *t)
       ParseXStatusText(ews,lp->text);
     }
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
+    ConstructEditControl(&ec,
+                         ECT_NORMAL_TEXT,
+                         ews->wsbody[0] ? ECF_APPEND_EOL|ECF_DISABLE_T9 : ECF_DELSTR,
+                         ews,ews->wsbody[0]);    
     PrepareEditCOptions(&ec_options);
 #ifdef M75
     if (lp->type!=3)
