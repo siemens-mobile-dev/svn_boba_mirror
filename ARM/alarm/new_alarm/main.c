@@ -1,5 +1,7 @@
 #include "../../inc/swilib.h"
 
+//#define NO_PNG
+
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
 #else
@@ -22,7 +24,12 @@ int X;
 int Y;
 int imgw;
 int imgh;
+
+#ifdef NO_PNG
 char icon[]=DEFAULT_DISK":\\Zbin\\alarm\\icon.gpf";
+#else
+char icon[]=DEFAULT_DISK":\\Zbin\\alarm\\icon.png";
+#endif
 char cfgfile[]=DEFAULT_DISK":\\Zbin\\alarm\\alarm.cfg";
 
 GBSTMR mytmr;
@@ -39,6 +46,7 @@ typedef struct
 
 int IDLECSM_ID=-1;
 
+#ifdef NO_PNG
 typedef struct
 {
   char signature[16];
@@ -97,6 +105,13 @@ void getimgwh()
     imgh=Pic_Header.h;
   }
 }
+#else
+void getimgwh()
+{
+  imgw=GetImgWidth((int)icon);
+  imgh=GetImgHeight((int)icon);
+}
+#endif
 
 void update_status()
 {
@@ -265,7 +280,11 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           {
             void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
             DrawCanvas(canvasdata, X, Y, X + imgh, Y + imgh, 1);
+#ifdef NO_PNG
             DrawGPF(icon,X,Y);
+#else
+            DrawImg(X, Y, (int)icon);
+#endif
           }
         }
       }

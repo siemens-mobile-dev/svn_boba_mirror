@@ -9,17 +9,20 @@
 #define wd_on 5
 #define logo 6
 
+//#define NO_PNG
+
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
+#define num_alarms 5
 #else
 #define DEFAULT_DISK "0"
+#define num_alarms 6
 #endif
 
 unsigned int status[6];
 unsigned int hour[6];
 unsigned int min[6];
 unsigned int weekdays[6][7];
-unsigned int num_alarms;
 unsigned int backup[3];
 unsigned int ch[3];
 unsigned int max;
@@ -37,7 +40,11 @@ unsigned int ch[3];
 unsigned int set=1;
 int lng;
 char cfgfile[]=DEFAULT_DISK":\\zbin\\alarm\\alarm.cfg";
+#ifdef NO_PNG
 char fongpf[]=DEFAULT_DISK":\\zbin\\alarm\\fon.gpf";
+#else
+char fonpng[]=DEFAULT_DISK":\\zbin\\alarm\\fon.png";
+#endif
 char bcfgfile[]=DEFAULT_DISK":\\Zbin\\etc\\alarm_melody.bcfg";
 
 int scr_w;
@@ -107,6 +114,7 @@ DrwImg(IMGHDR *img, int x, int y)
   DrawObject(&drwobj);
 }
 
+#ifdef NO_PNG
 void DrawGPF(char *fname, int x, int y)
 {
   volatile int hFile;
@@ -130,6 +138,7 @@ void DrawGPF(char *fname, int x, int y)
     mfree(pic_buffer);
   }
 }
+#endif
 
 void draw_pic(int num,int x, int y)
 {
@@ -137,7 +146,11 @@ void draw_pic(int num,int x, int y)
   {
   case fon:
     {
+#ifdef NO_PNG
       DrawGPF(fongpf,0,0);
+#else
+      DrawImg(0, 0, (int)fonpng);
+#endif
     } break;
   case st_off:
     {
@@ -187,7 +200,6 @@ void draw_pic(int num,int x, int y)
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 #ifndef NEWSGOLD
 
 #define MAX_HEX   (100+10)
@@ -321,11 +333,6 @@ void geteeblock()
   sprintf(hex, "%x", Block5166[3]);  
   hex2bin(bin, 3, hex);
   
-  //char *msgg=malloc(128);
-  //sprintf(msgg, "%x", Block5166[3]);
-  //ShowMSG(1,(int)msgg);
-  //mfree(msgg);
-  
   if (Block5166[4]==0xF1)
     status[5]=1;
   else status[5]=0;
@@ -365,14 +372,6 @@ void saveeeblock()
   bin2hex(hex, 7, bin);
   hex[2]=0;
   Block5166[3]=hex2int(hex);
-  
-  //if (Block5166[3] > 0xFE)
-  //  ShowMSG(1,(int)":(");
-  //char *msgg=malloc(128);
-  //sprintf(msgg, "%X", Block5166[3]);
-  //ShowMSG(1,(int)hex);
-  //ShowMSG(1,(int)msgg);
-  //mfree(msgg);
   
   if (status[5]==1)
     Block5166[4]=0xF1;
@@ -434,7 +433,6 @@ void saveeeblock()
 }
 
 #endif
-////////////////////////////////////////////////////////////////////////////////
 
 void load_settings(void)
 {
@@ -622,7 +620,7 @@ void OnRedraw()
       
       char *stat=malloc(16);
       int tmp=scr_h/7.3;
-      for (int i=0;i<6;i++)
+      for (int i=0;i<num_alarms;i++)
       {
         if (status[i]) strcpy(stat,on);
           else strcpy(stat,off);
@@ -817,13 +815,13 @@ int onkey(unsigned char keycode, int pressed)
             case LEFT_BUTTON:
               {
                 if (num_alarm>0) num_alarm--;
-                  else num_alarm=5;
+                  else num_alarm=(num_alarms-1);
                 break;
               }
             case RIGHT_BUTTON:
             case DOWN_BUTTON:
               {
-                if (num_alarm<5) num_alarm++;
+                if (num_alarm<(num_alarms-1)) num_alarm++;
                   else num_alarm=0;
                   break;
               }
@@ -833,7 +831,7 @@ int onkey(unsigned char keycode, int pressed)
             case '3': num_alarm=2; break;
             case '4': num_alarm=3; break;
             case '5': num_alarm=4; break;
-            case '6': num_alarm=5; break;
+            //case '6': num_alarm=5; break;
             case '#': mode=3; break;
             //case '*': saveeeblock(); break;
             //case '*': ShowMSG(1,(int)"Alarm cfg editor\n(c)Geka"); break;
