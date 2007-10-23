@@ -435,6 +435,8 @@
 08C4: 0xA8690964   ; 231:  TAppointment *RamAppointment
 ;8C8:              ; 232:  void GBS_DestroyMessage(GBS_MSG *)
 ;8CC:              ; 233:  void GetAllEmail()
+
+08E0: 0xA0B8582D ; 238: __thumb void SendAutoUSSDack(void);
 #pragma disable old_equal_ff
 +0
 
