@@ -17,6 +17,7 @@ extern const char CASHREQNUM[];
 extern const char cashTEMP_PATH[];
 extern const char cashLOG_FILE[];
 extern const char cashLOG_Format[];
+extern const int ENA_AUTOCASHTRACE; 
 
 int MaxCASH[MAX_CASH_SIZE];
 int CurrentCASH[MAX_CASH_SIZE];
@@ -203,6 +204,7 @@ static void ussd_timeout(void)
   StartHoursTimer();
 }
 
+
 int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
 {
   WSHDR *ws;
@@ -218,11 +220,14 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
     if (!ussdreq_sended) return 0;
     EndUSSDtimer();
   }
+  if (msg->msg==MSG_AUTOUSSD_RX)
+  {
+    if (!ENA_AUTOCASHTRACE) return 0;
+  }  
   ws=AllocWS(256);
   len=msg->pkt_length;
   if (len>240) len=240;
   GSMTXT_Decode(ws,msg->pkt,len,msg->encoding_type,(void*(*)(int))malloc_adr(),(void(*)(void))mfree_adr());
-  FreeGSMTXTpkt(msg->pkt);
   if ((len=ws->wsbody[0]))
   {
     zeromem(s=malloc(len+3),len+3);
@@ -249,7 +254,9 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
   if (msg->msg==MSG_AUTOUSSD_RX)
   {
     if (!i) return (0);
+    SendAutoUSSDack();
   }
+  FreeGSMTXTpkt(msg->pkt);
   return 1;
 }
 
