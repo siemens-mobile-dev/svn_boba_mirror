@@ -479,7 +479,7 @@ class ICQKid2{
   bool sendMD5saltrequest(uint32_t * snac_sync);
   bool getMD5salt(uint32_t snac_sync, vector<uint8_t> & md5_salt);
   bool sendMD5authorize(uint32_t * snac_sync, vector<uint8_t> & md5_salt);
-  bool getBOSSparams(uint32_t snac_sync, string & boss_host, int & boss_port, vector<uint8_t> & cookie);  
+  bool getBOSSparams(string & boss_host, int & boss_port, vector<uint8_t> & cookie);  
   bool sendSignOff(void);
   bool sendSignOn2(vector<uint8_t> & cookie);
 

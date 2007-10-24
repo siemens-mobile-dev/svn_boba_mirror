@@ -139,7 +139,7 @@ bool ICQKid2::doConnect(uint32_t astat)
  connect_error_code=0;
  connect_error_url="";
  
- uint32_t snac_sync;
+// uint32_t snac_sync;
  vector<uint8_t> md5_salt;
  string boss_host;
  int boss_port;
@@ -183,8 +183,7 @@ bool ICQKid2::doConnect(uint32_t astat)
  if (!sendMD5authorize(&snac_sync, md5_salt)) { CLOSE_SOCK(sock); return false; }
  connect_phase_percentage += 2;
 */
-
- if (!getBOSSparams(snac_sync, boss_host, boss_port, boss_cookie)) { CLOSE_SOCK(sock); return false; }
+ if (!getBOSSparams(boss_host, boss_port, boss_cookie)) { CLOSE_SOCK(sock); return false; }
  connect_phase_percentage += 2;
 
  (void)sendSignOff();
@@ -2733,7 +2732,6 @@ int ICQKid2::directConnect(string ahost, int aport)
 
  if ((tmp_sock=socket(PF_INET, SOCK_STREAM, 0))==-1) return -1;
 
- int conn_ret;
  if (connect(tmp_sock,(const struct sockaddr *)&addr, (socklen_t)sizeof(addr)))
  {
    CLOSE_SOCK(tmp_sock);
@@ -2893,7 +2891,7 @@ bool ICQKid2::sendMD5authorize(uint32_t * snac_sync, vector<uint8_t> & md5_salt)
 }
 
 // ----------------=========ooooOOOOOOOOOoooo=========----------------
-bool ICQKid2::getBOSSparams(uint32_t snac_sync, string & boss_host, int & boss_port, vector<uint8_t> & cookie)
+bool ICQKid2::getBOSSparams(string & boss_host, int & boss_port, vector<uint8_t> & cookie)
 {
  FlapPacket fp;
  int t=network_timeout;
