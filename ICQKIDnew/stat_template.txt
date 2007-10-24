@@ -1,0 +1,8 @@
+<html>
+<head>
+<title>NatICQ Server stats</title>
+</head>
+<body>
+Сейчас клиентов: %d
+</body>
+</html>
