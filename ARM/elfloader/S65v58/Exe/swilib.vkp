@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;S65v58
 
-;Library 29.09.2007
+;Library 26.10.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -618,6 +618,8 @@
 08C4: 0xA8692218   ; 231:  TAppointment *RamAppointment
 ;8C8:              ; 232:  void GBS_DestroyMessage(GBS_MSG *)
 ;8CC:              ; 233:  void GetAllEmail()
+
+08E0: 0xA0C341C5 ; 238: __thumb void SendAutoUSSDack(void);
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver

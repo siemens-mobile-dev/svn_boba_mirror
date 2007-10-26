@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SK65v50
 
-;Library 15.09.2007
+;Library 26.10.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -609,5 +609,7 @@
 ;08E4: 0x ; 235: int GetLunarYearID(int year);
 ;08E8: 0x ; 236: int GetLunarAnimal(int year);;
 ;08EC: 0x ; 237: char *RamIconBar
+
+08E0: 0xA070CB9D ; 238: __thumb void SendAutoUSSDack(void);
 #pragma disable old_equal_ff
 +0

@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;CX75v13
 
-;Library 29.09.2007
+;Library 26.10.2007
 
 +0FD4000
 #pragma enable  old_equal_ff
@@ -583,6 +583,8 @@
 08C4: 0xA84D1288   ; 231:  TAppointment *RamAppointment
 ;8C8:              ; 232:  void GBS_DestroyMessage(GBS_MSG *)
 ;8CC:              ; 233:  void GetAllEmail()
+
+08E0: 0xA07CE9FD ; 238: __thumb void SendAutoUSSDack(void);
 #pragma disable old_equal_ff
 +0
 
