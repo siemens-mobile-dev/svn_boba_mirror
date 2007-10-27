@@ -1391,6 +1391,41 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
       break;
     }
 
+  case ADM_PARTICIPANT:
+    {
+      strcpy(it,aff);
+      strcpy(val,JABBER_AFFS[AFFILIATION_NONE]);
+      break;
+    }
+    
+  case ADM_MEMBER:
+    {
+      strcpy(it,aff);
+      strcpy(val,JABBER_AFFS[AFFILIATION_MEMBER]);
+      break;
+    }
+    
+  case ADM_MODERATOR:
+    {
+      strcpy(it,role);
+      strcpy(val,JABBER_ROLS[ROLE_MODERATOR]);
+      break;
+    }
+    
+  case ADM_ADMIN:
+    {
+      strcpy(it,aff);
+      strcpy(val,JABBER_AFFS[AFFILIATION_ADMIN]);
+      break;
+    }
+    
+  case ADM_OWNER:
+    {
+      strcpy(it,aff);
+      strcpy(val,JABBER_AFFS[AFFILIATION_OWNER]);
+      break;
+    }
+    
   case ADM_BAN:
     {
       strcpy(it,aff);

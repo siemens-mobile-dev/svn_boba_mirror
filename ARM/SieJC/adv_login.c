@@ -6,6 +6,7 @@
 #include "md5.h"
 #include "jabber.h"
 #include "jabber_util.h"
+#include "history.h"
 #include "adv_login.h"
 
 extern JABBER_STATE Jabber_state;
@@ -59,7 +60,7 @@ void Use_Md5_Auth_Report()
 void Use_Plain_Auth_Report()
 {
 // По мотивам e:\CPP_Proj\Miranda_IM\miranda\protocols\JabberG\jabber_secur.cpp
-  
+
   char s[]="<auth xmlns=\"urn:ietf:params:xml:ns:xmpp-sasl\" mechanism=\"PLAIN\">%s</auth>";
   char patt[]="%s@%s%c%s%c%s";
   unsigned short patlen = strlen(USERNAME)*2 + strlen(JABBER_SERVER) + strlen(PASSWORD) + 3;

@@ -19,7 +19,12 @@ typedef enum
   ADM_KICK,             // Кик 
   ADM_BAN,              // Бан
   ADM_VOICE_REMOVE,     // Лишить голоса
-  ADM_VOICE_GRANT       // Предоставить голос
+  ADM_VOICE_GRANT,      // Предоставить голос
+  ADM_PARTICIPANT,      // Participant
+  ADM_MEMBER,           // Member
+  ADM_MODERATOR,        // Moderator
+  ADM_ADMIN,            // Admin
+  ADM_OWNER             // Owner
 }MUC_ADMIN;
 
 // Для хранения текущей инфы о статусе (чтобы восстановить после реконнекта)

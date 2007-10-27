@@ -34,19 +34,24 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 //==============================================================================
 
 
-#define MAX_ITEMS 11       // ћаксимальное количество пунктов меню
+#define MAX_ITEMS 16       // ћаксимальное количество пунктов меню
 
 #define MI_CONF_LEAVE       1
 #define MI_CONF_KICK_THIS   2
 #define MI_CONF_BAN_THIS    3
 #define MI_CONF_VREJ_THIS   4
 #define MI_CONF_VGR_THIS    5
-#define MI_QUERY_VERSION    6
-#define MI_LOGIN_LOGOUT     7
-#define MI_DISCO_QUERY      8
-#define MI_HISTORY_OPEN     9
-#define MI_TIME_QUERY       10
-#define MI_VCARD_QUERY       11
+#define MI_CONF_PARTICIPANT 6
+#define MI_CONF_MEMBER      7   // by BalakinUser
+#define MI_CONF_MODERATOR   8
+#define MI_CONF_ADMIN       9
+#define MI_CONF_OWNER       10
+#define MI_QUERY_VERSION    11
+#define MI_LOGIN_LOGOUT     12
+#define MI_DISCO_QUERY      13
+#define MI_HISTORY_OPEN     14
+#define MI_TIME_QUERY       15
+#define MI_VCARD_QUERY      16
 
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
@@ -124,6 +129,11 @@ if(msg->keys==0x18 || msg->keys==0x3D)
   case MI_CONF_BAN_THIS:
   case MI_CONF_VREJ_THIS:
   case MI_CONF_VGR_THIS:
+  case MI_CONF_PARTICIPANT:
+  case MI_CONF_MEMBER:
+  case MI_CONF_MODERATOR:
+  case MI_CONF_ADMIN:
+  case MI_CONF_OWNER:
     {
       CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
       char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
@@ -131,6 +141,11 @@ if(msg->keys==0x18 || msg->keys==0x3D)
       if(Menu_Contents[i]==MI_CONF_BAN_THIS)admin_cmd=ADM_BAN;
       if(Menu_Contents[i]==MI_CONF_VREJ_THIS)admin_cmd=ADM_VOICE_REMOVE;
       if(Menu_Contents[i]==MI_CONF_VGR_THIS)admin_cmd=ADM_VOICE_GRANT;
+      if(Menu_Contents[i]==MI_CONF_PARTICIPANT)admin_cmd=ADM_PARTICIPANT;
+      if(Menu_Contents[i]==MI_CONF_MEMBER)admin_cmd=ADM_MEMBER;
+      if(Menu_Contents[i]==MI_CONF_MODERATOR)admin_cmd=ADM_MODERATOR;
+      if(Menu_Contents[i]==MI_CONF_ADMIN)admin_cmd=ADM_ADMIN;
+      if(Menu_Contents[i]==MI_CONF_OWNER)admin_cmd=ADM_OWNER;
       MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
       break;
     }
@@ -248,7 +263,37 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
       strcpy(test_str,LG_GVOISE);
       break;
     }
+    
+  case MI_CONF_PARTICIPANT:
+    {
+      strcpy(test_str,LG_PARTICIPANT);
+      break;
+    }
+    
+  case MI_CONF_MEMBER:
+    {
+      strcpy(test_str,LG_MEMBER);
+      break;
+    }
 
+  case MI_CONF_MODERATOR:
+    {
+      strcpy(test_str,LG_MODERATOR);
+      break;
+    }
+    
+  case MI_CONF_ADMIN:
+    {
+      strcpy(test_str,LG_ADMIN);
+      break;
+    }
+    
+  case MI_CONF_OWNER:
+    {
+      strcpy(test_str,LG_OWNER);
+      break;
+    }
+    
   case MI_QUERY_VERSION:
     {
       strcpy(test_str,LG_VERCLIENT);
@@ -369,6 +414,11 @@ void Init_Icon_array()
   cmS_ICONS[MI_CONF_BAN_THIS]=(int)ICON_CONF_BAN_THIS;
   cmS_ICONS[MI_CONF_VREJ_THIS]=(int)ICON_CONF_VREJ_THIS;
   cmS_ICONS[MI_CONF_VGR_THIS]=(int)ICON_CONF_VGR_THIS;
+  cmS_ICONS[MI_CONF_PARTICIPANT]=(int)ICON_CONF_VGR_THIS;
+  cmS_ICONS[MI_CONF_MEMBER]=(int)ICON_CONF_VGR_THIS;
+  cmS_ICONS[MI_CONF_MODERATOR]=(int)ICON_CONF_VGR_THIS;
+  cmS_ICONS[MI_CONF_ADMIN]=(int)ICON_CONF_VGR_THIS;
+  cmS_ICONS[MI_CONF_OWNER]=(int)ICON_CONF_VGR_THIS;
   cmS_ICONS[MI_QUERY_VERSION]=(int)ICON_QUERY_VERSION;
   cmS_ICONS[MI_DISCO_QUERY]=(int)ICON_QUERY_DISCO;
   cmS_ICONS[MI_HISTORY_OPEN]=(int)ICON_HISTORY_OPEN;
@@ -428,6 +478,11 @@ void Disp_Contact_Menu()
     {
       Menu_Contents[n_items++]=MI_CONF_KICK_THIS;
       Menu_Contents[n_items++]=MI_CONF_BAN_THIS;
+      Menu_Contents[n_items++]=MI_CONF_PARTICIPANT;
+      Menu_Contents[n_items++]=MI_CONF_MEMBER;
+      Menu_Contents[n_items++]=MI_CONF_MODERATOR;
+      Menu_Contents[n_items++]=MI_CONF_ADMIN;
+      Menu_Contents[n_items++]=MI_CONF_OWNER;
       if(Act_contact->muc_privs.role==ROLE_VISITOR)
       {
         Menu_Contents[n_items++]=MI_CONF_VGR_THIS;
