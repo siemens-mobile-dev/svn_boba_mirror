@@ -151,7 +151,6 @@
 
 #define LG_CLLOOPBACK "Loopback"
 #define LG_GROUPNOTINLIST "Нема в списку"
-
 //===============================
 
 #define LG_MENU    "Меню"
@@ -216,7 +215,6 @@
 #define LG_STOCCUP  "Зайнятий"
 #define LG_STFFC    "Вільний для чату"
 #define LG_STINVIS  "Невидимий"
-
 #define LG_STDEPRESSION "Депресія"
 #define LG_STEVIL "Злий"
 #define LG_STHOME "Вдома"
@@ -231,10 +229,10 @@
 #define LG_CONTACTLIST_CAN_SEE  "Видимий тільки для списку контактів"
 #define LG_NOBODY_CAN_SEE       "Невидимий для всіх"
 
-#define LG ENTERNAME      "Введіть ім'я"
-#define LG CHOOSEGROUP    "Виберіть групу"
-#define LG PRIVSTATUS     "Приватний статус"
-#define LG MANAGELIST     "Управління списком"
+#define LG_ENTERNAME      "Введіть ім'я"
+#define LG_CHOOSEGROUP    "Виберіть групу"
+#define LG_PRIVSTATUS     "Приватний статус"
+#define LG_MANAGELIST     "Управління списком"
 
 //================================
 
@@ -255,8 +253,7 @@
 #define LG_HISTIOERR "Помилка I/O  #%u"
 
 //=================================
-
-#define LG_GRSTATESTRING "State: %d, RXstate: %d\n%t"
+#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%t"
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
 
@@ -277,6 +274,7 @@
 #ifdef LANG_EN
 
 #define LG_ALREADY_STARTED "Already started!"
+
 #define LG_CLTITLE "Contacts..."
 #define LG_CLT9INP "T9 Key: "
 
@@ -284,7 +282,6 @@
 
 #define LG_CLLOOPBACK "Loopback"
 #define LG_GROUPNOTINLIST "Not in list"
-
 //===============================
 
 #define LG_MENU    "Menu"
@@ -293,14 +290,14 @@
 #define LG_CLEAR   "< C"
 #define LG_DOIT    "Do it!"
 #define LG_PASTESM "Paste it!"
+//-------------
+#define LG_SELECT  "Select"
+#define	LG_TEXT    "Text"
+#define LG_BACK    "Back"
 //--------------
 #define LG_ADD      "Add!"
 #define LG_ADDCNT   "Add Contact"
 #define LG_ENTERUIN "Please enter uin:"
-//--------------
-#define LG_SELECT  "Select"
-#define	LG_TEXT    "Text"
-#define LG_BACK    "Back"
 //--------------
 #define LG_ADDREN  "Add/Rename"
 #define LG_SETNICK "Set nickname of %u as"
@@ -314,7 +311,6 @@
 #define LG_AUTHGRANT "You are authorized!"
 
 //================================
-
 #define LG_MNUSTATUS  "Status"
 #define LG_MNUXSTATUS "X-Status"
 #define LG_MNUADDCONT "Add Contact"
@@ -326,7 +322,6 @@
 #define LG_MNUDISCONNECT "Disconnect"
 #define LG_MNUPING    "Ping"
 #define LG_MNUABOUT   "About"
-
 //-------------
 #define LG_MNUQUOTE    "Quote"
 #define LG_MNUADDSML   "Add smile"
@@ -351,7 +346,6 @@
 #define LG_STOCCUP  "Occupied"
 #define LG_STFFC    "Free For Chat"
 #define LG_STINVIS  "Invisible"
-
 #define LG_STDEPRESSION "Depression"
 #define LG_STEVIL "Evil"
 #define LG_STHOME "Home"
@@ -391,7 +385,7 @@
 
 //=================================
 
-#define LG_GRSTATESTRING "State: %d, RXstate: %d\n%t"
+#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%t"
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
 
@@ -410,4 +404,5 @@
 #endif
 
 #endif
+
 

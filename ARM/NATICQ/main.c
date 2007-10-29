@@ -527,7 +527,7 @@ static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, S_ICONS+ICON_HEAD, (
 static const int menusoftkeys[] = {0,1,2};
 static const SOFTKEY_DESC menu_sk[] =
 {
-  {0x0018, 0x0000, (int)LG_OPTIONS},
+  {0x0018, 0x0000, (int)LG_SELECT},
   {0x0001, 0x0000, (int)LG_CLOSE},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
