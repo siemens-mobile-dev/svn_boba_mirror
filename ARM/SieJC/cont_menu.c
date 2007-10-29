@@ -3,6 +3,7 @@
 #include "clist_util.h"
 #include "jabber_util.h"
 #include "string_util.h"
+#include "vCard.h"
 #include "lang.h"
 
 //==============================================================================
@@ -107,110 +108,111 @@ void contact_menu_ghook(void *data, int cmd)
 }
 
 /*
-  Обработчик нажатий клавиш меню. Отсюда следует вызывать необходимые действия
+Обработчик нажатий клавиш меню. Отсюда следует вызывать необходимые действия
 
 */
 int contact_menu_onkey(void *data, GUI_MSG *msg)
 {
   int i=GetCurMenuItem(data);
   MUC_ADMIN admin_cmd;
-if(msg->keys==0x18 || msg->keys==0x3D)
-{
-  switch(Menu_Contents[i])
+  if(msg->keys==0x18 || msg->keys==0x3D)
   {
-  case MI_CONF_LEAVE:
+    switch(Menu_Contents[i])
     {
-      CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
-      Leave_Conference(room->JID);
-      CList_MakeAllResourcesOFFLINE(room);
-      break;
-    }
-  case MI_CONF_KICK_THIS:
-  case MI_CONF_BAN_THIS:
-  case MI_CONF_VREJ_THIS:
-  case MI_CONF_VGR_THIS:
-  case MI_CONF_PARTICIPANT:
-  case MI_CONF_MEMBER:
-  case MI_CONF_MODERATOR:
-  case MI_CONF_ADMIN:
-  case MI_CONF_OWNER:
-    {
-      CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
-      char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
-      if(Menu_Contents[i]==MI_CONF_KICK_THIS)admin_cmd=ADM_KICK;
-      if(Menu_Contents[i]==MI_CONF_BAN_THIS)admin_cmd=ADM_BAN;
-      if(Menu_Contents[i]==MI_CONF_VREJ_THIS)admin_cmd=ADM_VOICE_REMOVE;
-      if(Menu_Contents[i]==MI_CONF_VGR_THIS)admin_cmd=ADM_VOICE_GRANT;
-      if(Menu_Contents[i]==MI_CONF_PARTICIPANT)admin_cmd=ADM_PARTICIPANT;
-      if(Menu_Contents[i]==MI_CONF_MEMBER)admin_cmd=ADM_MEMBER;
-      if(Menu_Contents[i]==MI_CONF_MODERATOR)admin_cmd=ADM_MODERATOR;
-      if(Menu_Contents[i]==MI_CONF_ADMIN)admin_cmd=ADM_ADMIN;
-      if(Menu_Contents[i]==MI_CONF_OWNER)admin_cmd=ADM_OWNER;
-      MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
-      break;
-    }
-  case MI_TIME_QUERY:
-    {
-      Send_Time_Request((CList_GetActiveContact()->full_name));
-      break;
-    }
-
-  case MI_VCARD_QUERY:
-    {
-      Send_Vcard_Request((CList_GetActiveContact()->full_name));
-      break;
-    }
-
-  case MI_QUERY_VERSION:
-    {
-
-      Send_Version_Request(CList_GetActiveContact()->full_name);
-      break;
-    }
-
-  case MI_LOGIN_LOGOUT:
-    {
-
-      char *pres_str = malloc(256);
-      TRESOURCE *Transport = CList_GetActiveContact();
-      if(Transport->status==PRESENCE_OFFLINE)
+    case MI_CONF_LEAVE:
       {
-        snprintf(pres_str,255,"<presence to='%s'/>", Transport->full_name);
+        CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
+        Leave_Conference(room->JID);
+        CList_MakeAllResourcesOFFLINE(room);
+        break;
       }
-      else
+    case MI_CONF_KICK_THIS:
+    case MI_CONF_BAN_THIS:
+    case MI_CONF_VREJ_THIS:
+    case MI_CONF_VGR_THIS:
+    case MI_CONF_PARTICIPANT:
+    case MI_CONF_MEMBER:
+    case MI_CONF_MODERATOR:
+    case MI_CONF_ADMIN:
+    case MI_CONF_OWNER:
       {
-        snprintf(pres_str,255,"<presence to='%s' type='unavailable'/>", Transport->full_name);
+        CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
+        char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
+        if(Menu_Contents[i]==MI_CONF_KICK_THIS)admin_cmd=ADM_KICK;
+        if(Menu_Contents[i]==MI_CONF_BAN_THIS)admin_cmd=ADM_BAN;
+        if(Menu_Contents[i]==MI_CONF_VREJ_THIS)admin_cmd=ADM_VOICE_REMOVE;
+        if(Menu_Contents[i]==MI_CONF_VGR_THIS)admin_cmd=ADM_VOICE_GRANT;
+        if(Menu_Contents[i]==MI_CONF_PARTICIPANT)admin_cmd=ADM_PARTICIPANT;
+        if(Menu_Contents[i]==MI_CONF_MEMBER)admin_cmd=ADM_MEMBER;
+        if(Menu_Contents[i]==MI_CONF_MODERATOR)admin_cmd=ADM_MODERATOR;
+        if(Menu_Contents[i]==MI_CONF_ADMIN)admin_cmd=ADM_ADMIN;
+        if(Menu_Contents[i]==MI_CONF_OWNER)admin_cmd=ADM_OWNER;
+        MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
+        break;
       }
-      SUBPROC((void*)_sendandfree,pres_str);
-      break;
+    case MI_TIME_QUERY:
+      {
+        Send_Time_Request((CList_GetActiveContact()->full_name));
+        break;
+      }
+
+    case MI_VCARD_QUERY:
+      {
+        if (!Show_vCard(CList_GetActiveContact()->full_name))
+          Send_Vcard_Request((CList_GetActiveContact()->full_name));
+        break;
+      }
+
+    case MI_QUERY_VERSION:
+      {
+
+        Send_Version_Request(CList_GetActiveContact()->full_name);
+        break;
+      }
+
+    case MI_LOGIN_LOGOUT:
+      {
+
+        char *pres_str = malloc(256);
+        TRESOURCE *Transport = CList_GetActiveContact();
+        if(Transport->status==PRESENCE_OFFLINE)
+        {
+          snprintf(pres_str,255,"<presence to='%s'/>", Transport->full_name);
+        }
+        else
+        {
+          snprintf(pres_str,255,"<presence to='%s' type='unavailable'/>", Transport->full_name);
+        }
+        SUBPROC((void*)_sendandfree,pres_str);
+        break;
+      }
+
+    case MI_DISCO_QUERY:
+      {
+        Send_DiscoInfo_Request(CList_GetActiveContact()->full_name);
+        break;
+      }
+      ////////////////////////HISTORY
+    case MI_HISTORY_OPEN:
+      {
+        //С латинскими JID ами работает, а с теми у ого кирилица непробовал, нет таких в наличии.
+        extern const char HIST_PATH[128];
+        WSHDR *wsfn=AllocWS(255);
+        wsprintf(wsfn,"%s%s.txt",HIST_PATH,CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID);
+        ExecuteFile(wsfn,NULL,NULL);
+        FreeWS(wsfn);
+        break;
+      }
+    default:
+      {
+        MsgBoxError(1,(int)LG_UNKACTION);
+      }
     }
 
-  case MI_DISCO_QUERY:
-    {
-      Send_DiscoInfo_Request(CList_GetActiveContact()->full_name);
-      break;
-    }
-////////////////////////HISTORY
-  case MI_HISTORY_OPEN:
-    {
-//С латинскими JID ами работает, а с теми у ого кирилица непробовал, нет таких в наличии.
-  extern const char HIST_PATH[128];
-  WSHDR *wsfn=AllocWS(255);
-  wsprintf(wsfn,"%s%s.txt",HIST_PATH,CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID);
-  ExecuteFile(wsfn,NULL,NULL);
-  FreeWS(wsfn);
-       break;
-    }
- default:
-    {
-      MsgBoxError(1,(int)LG_UNKACTION);
-    }
+    return 1;
   }
-
-  return 1;
-}
-//  Req_Close_Cont_Menu = 1;
-return 0;
+  //  Req_Close_Cont_Menu = 1;
+  return 0;
 }
 
 void InitMenuArray()
@@ -219,14 +221,14 @@ void InitMenuArray()
 }
 
 /*
-  Обработчик появления пунктов динамического меню
-  Тут мы сами создаём каждый пункт, указывая для него иконку и текст.
-  При создании мы опираемся на данные массива Menu_Contents, в котором описано,
-  какие пункты и в каком порядке необходимо создать.
+Обработчик появления пунктов динамического меню
+Тут мы сами создаём каждый пункт, указывая для него иконку и текст.
+При создании мы опираемся на данные массива Menu_Contents, в котором описано,
+какие пункты и в каком порядке необходимо создать.
 */
 void contact_menu_iconhndl(void *data, int curitem, void *unk)
 {
-//  cmS_ICONS[0]=(int)cmdummy_icon;
+  //  cmS_ICONS[0]=(int)cmdummy_icon;
   WSHDR *ws;
   extern const char percent_t[];
   char test_str[48];
@@ -263,13 +265,13 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
       strcpy(test_str,LG_GVOISE);
       break;
     }
-    
+
   case MI_CONF_PARTICIPANT:
     {
       strcpy(test_str,LG_PARTICIPANT);
       break;
     }
-    
+
   case MI_CONF_MEMBER:
     {
       strcpy(test_str,LG_MEMBER);
@@ -281,19 +283,19 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
       strcpy(test_str,LG_MODERATOR);
       break;
     }
-    
+
   case MI_CONF_ADMIN:
     {
       strcpy(test_str,LG_ADMIN);
       break;
     }
-    
+
   case MI_CONF_OWNER:
     {
       strcpy(test_str,LG_OWNER);
       break;
     }
-    
+
   case MI_QUERY_VERSION:
     {
       strcpy(test_str,LG_VERCLIENT);
@@ -318,10 +320,10 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
     }
 
   case MI_HISTORY_OPEN:
-     {
+    {
       strcpy(test_str,LG_OHISTORY);
-       break;
-     }
+      break;
+    }
   case MI_LOGIN_LOGOUT:
     {
       if(Act_contact->status==PRESENCE_OFFLINE)
@@ -350,18 +352,18 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   t=FindContactByN(curitem);
   if (t)
   {
-    ws=AllocMenuWS(data,strlen(t->name));
-    wsprintf(ws,percent_t,t->name);
-  }
+  ws=AllocMenuWS(data,strlen(t->name));
+  wsprintf(ws,percent_t,t->name);
+}
   else
   {
-    ws=AllocMenuWS(data,10);
-    wsprintf(ws,"error");
-  }
+  ws=AllocMenuWS(data,10);
+  wsprintf(ws,"error");
+}
   SetMenuItemIconArray(data,item,S_ICONS);
   SetMenuItemText(data,item,ws,curitem);
   SetMenuItemIcon(data,curitem,GetIconIndex(t));
-*/
+  */
 };
 
 /*
@@ -402,11 +404,11 @@ void Init_Icon_array()
   strcpy(ICON_QUERY_VCARD, PATH_TO_PIC);strcat(ICON_QUERY_VCARD, "menu_version.png");
   strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
   if(Act_contact->entry_type==T_TRANSPORT)
-  if(Act_contact->status==PRESENCE_OFFLINE)
-  {
-    strcat(ICON_LOGIN_LOGOUT, "menu_version.png");
-  }
-  else strcat(ICON_LOGIN_LOGOUT, "menu_no_icon.png");
+    if(Act_contact->status==PRESENCE_OFFLINE)
+    {
+      strcat(ICON_LOGIN_LOGOUT, "menu_version.png");
+    }
+    else strcat(ICON_LOGIN_LOGOUT, "menu_no_icon.png");
 
   for(int i=0;i<=MAX_ITEMS;i++)cmS_ICONS[i]=0;
   cmS_ICONS[MI_CONF_LEAVE]=(int)ICON_CONF_LEAVE;
@@ -434,7 +436,7 @@ void Disp_Contact_Menu()
   InitMenuArray();
   Init_Icon_array();
   TRESOURCE *Act_contact = CList_GetActiveContact();
-// Теперь определяем, какие пункты у нас будут, и сколько
+  // Теперь определяем, какие пункты у нас будут, и сколько
   if(!Act_contact)return;
 
   if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_GROUP)) //в групах версия клиента ненужна
@@ -462,7 +464,7 @@ void Disp_Contact_Menu()
     Menu_Contents[n_items++]=MI_DISCO_QUERY;
   }
 
- if(Act_contact->entry_type!=T_GROUP)
+  if(Act_contact->entry_type!=T_GROUP)
   {
     Menu_Contents[n_items++]=MI_VCARD_QUERY;
   }

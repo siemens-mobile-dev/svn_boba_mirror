@@ -804,10 +804,12 @@ void FillRoster(XMLNode* items)
       gr_pscontact->IsVisible = 1;
       gr_pscontact->ResourceCount=1;
       gr_pscontact->next=tmp_cpointer->next;  // Вставляем между текущим и следующим
+      gr_pscontact->vcard=NULL; //У группы нет vCard. И никогда не будет.
       tmp_cpointer->next = gr_pscontact;
 
       // Cоздаём ещё и псевдоресурс
       TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
+      ResEx->vcard = NULL;
       ResEx->log=NULL;
       ResEx->next=NULL;
       ResEx->status_msg=NULL;
@@ -1397,35 +1399,35 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
       strcpy(val,JABBER_AFFS[AFFILIATION_NONE]);
       break;
     }
-    
+
   case ADM_MEMBER:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_MEMBER]);
       break;
     }
-    
+
   case ADM_MODERATOR:
     {
       strcpy(it,role);
       strcpy(val,JABBER_ROLS[ROLE_MODERATOR]);
       break;
     }
-    
+
   case ADM_ADMIN:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_ADMIN]);
       break;
     }
-    
+
   case ADM_OWNER:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_OWNER]);
       break;
     }
-    
+
   case ADM_BAN:
     {
       strcpy(it,aff);

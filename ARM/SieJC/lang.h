@@ -158,6 +158,20 @@
 
 #define LG_TEXTSTATUS       "Текст статусов"
 #define LG_DEFSTATES        "Состояния по умолчанию"
+
+#define LG_VCARD_JABBERID   "JID"
+#define LG_VCARD_FN         "Полное имя"
+#define LG_VCARD_NICKNAME   "Ник"
+#define LG_VCARD_BDAY       "День рождения"
+#define LG_VCARD_GENDER     "Пол"
+#define LG_VCARD_ORGNAME    "Название организации"
+#define LG_VCARD_ORGUNIT    "Отделение организации"
+#define LG_VCARD_TITLE      "Название должности"
+#define LG_VCARD_ROLE       "Должность"
+#define LG_VCARD_EMAIL      "E-Mail"
+#define LG_VCARD_URL        "Домашняя страница"
+#define LG_VCARD_DESC       "О себе"
+
 #endif //RU
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -446,6 +460,21 @@
 
 #define LG_TEXTSTATUS       "Statuses text"
 #define LG_DEFSTATES        "Default states"
+
+// vCard.c
+
+#define LG_VCARD_JABBERID   "JID"
+#define LG_VCARD_FN         "Full name"
+#define LG_VCARD_NICKNAME   "Nickname"
+#define LG_VCARD_BDAY       "Birthday"
+#define LG_VCARD_GENDER     "Gender"
+#define LG_VCARD_ORGNAME    "Org. name"
+#define LG_VCARD_ORGUNIT    "Org. unit"
+#define LG_VCARD_TITLE      "Title"
+#define LG_VCARD_ROLE       "Role"
+#define LG_VCARD_EMAIL      "E-Mail"
+#define LG_VCARD_URL        "Homepage"
+#define LG_VCARD_DESC       "Description"
 #endif //EN
 
 

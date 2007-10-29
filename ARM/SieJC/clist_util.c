@@ -8,6 +8,7 @@
 #include "roster_icons.h"
 #include "history.h"
 #include "item_info.h"
+#include "vCard.h"
 #include "lang.h"
 #include "..\inc\pnglist.h"
 #include "smiles.h"
@@ -263,6 +264,7 @@ void KillResourceList(TRESOURCE* res_list)
     if(cl->status_msg)mfree(cl->status_msg);
     if(cl->log)KillMsgList(cl->log);
     if(cl->muc_privs.real_jid)mfree(cl->muc_privs.real_jid);
+    Free_vCard(cl->vcard);
     p=cl;
     cl=cl->next;
     mfree(p);
@@ -344,7 +346,7 @@ TRESOURCE* CList_IsResourceInList(char* jid)
 void CList_Ch_Status(TRESOURCE* resource,
                      char status,
                      char* status_msg,
-                     short priority  
+                     short priority
                        )
 {
   LockSched();
@@ -483,6 +485,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       ResEx->muc_privs.aff = AFFILIATION_NONE;
       ResEx->muc_privs.role=  ROLE_NONE;
       ResEx->muc_privs.real_jid =  NULL;
+      ResEx->vcard = NULL;
       if(ClEx->res_list->entry_type!=T_CONF_ROOT){ ResEx->entry_type = T_NORMAL;}
       else{ResEx->entry_type = T_CONF_NODE;}
       ResEx->has_unread_msg=0;
@@ -594,9 +597,11 @@ CLIST* CList_AddContact(char* jid,
   Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
   Cont_Ex->IsVisible = 1;
-  Cont_Ex->next=NULL;
+  Cont_Ex->next = NULL;
+  Cont_Ex->vcard = NULL; // Не запросили еще
 
   TRESOURCE* ResEx = malloc(sizeof(TRESOURCE));
+  ResEx->vcard = NULL;
   ResEx->log=NULL;
   ResEx->next=NULL;
   ResEx->status_msg=NULL;
@@ -660,7 +665,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   TDate now_date;
   GetDateTime(&now_date,&now_time);
   char datestr[200];
-  
+
   char IsMe = strstr(mtext,"/me ")==mtext ? 1 : 0; // Флаг наличия /me
   if(mtype==MSG_ME)
   {
@@ -768,7 +773,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
 
   extern const int WRITE_HISTORY, WRITE_MUC_HISTORY;
 
- 
+
   if((WRITE_HISTORY && !(cont->entry_type==T_CONF_ROOT)) || (WRITE_MUC_HISTORY && (cont->entry_type==T_CONF_ROOT)))
   {
     char *ansi_text = convUTF8_to_ANSI_STR(mtext);
@@ -787,6 +792,7 @@ void CList_Destroy()
     CLIST *p;
     if(cl->res_list) KillResourceList(cl->res_list);
     cl->ResourceCount=0;
+    Free_vCard(cl->vcard);
     mfree(cl->JID);
     mfree(cl->name);
     p=cl;
@@ -822,9 +828,9 @@ void nextUnread()
     while(ResEx) //идем по списку ресурсов
     {
       if(ResEx->has_unread_msg) //если есть непрочитанное
-      { 
+      {
         if (CList_GetActiveContact()!=ResEx)//если мы не стоим на этом контакте
-        { 
+        {
           //нужна еще какая-то проверка, я что-то не учитываю, поэтому иногда ведет себя странно...
           if(!CList_GetVisibilityForGroup(ClEx->group)) //если группа контакта свернута, надо ее развернуть, иначе плохо будет
           {
@@ -1009,7 +1015,7 @@ void ParseAnswer(WSHDR *ws, const char *s)
       ulb>>=8;
       ulb+=s[3]<<24;
     }
-    //if (wchar!=10) 
+    //if (wchar!=10)
     wsAppendChar(ws,wchar);
   }
   /*

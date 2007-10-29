@@ -107,6 +107,9 @@ typedef struct
   char *real_jid;
 }CONF_DATA;
 
+#define N_VCARD_FIELDS 12
+typedef char **VCARD;
+
 typedef struct
 {
   char* name;                   // Отображаемое имя ресурса
@@ -119,6 +122,7 @@ typedef struct
   unsigned int total_msg_count; // Общее количество сообщений
   LOG_MESSAGE* log;             // Начало лога сообщений
   CONF_DATA muc_privs;          // Тут для конференционных контактов - про роли и риал-жид
+  VCARD vcard;                  // Здесь хранится vCard для участников конференций
   void* next;                   // Следующий экземпляр
 } TRESOURCE;
 
@@ -132,6 +136,7 @@ typedef struct
   JABBER_SUBSCRIPTION subscription;
   char wants_subscription;
   char group;     // >128 -> конференции
+  VCARD vcard; // Полученная VCard, для контактов ростера
   void *next;
 } CLIST;
 
