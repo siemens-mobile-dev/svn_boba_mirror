@@ -18,6 +18,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
   int left=ScreenW();
   int c;
   int h;
+  int f=0;
   unsigned int pos=p->pos;
   while(pos<vd->rawtext_size)
   {
@@ -30,15 +31,12 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     {
       h=GetFontHeight(p->bold?FONT_SMALL_BOLD:FONT_SMALL,p->underline?TEXT_UNDERLINE:0+p->ref?TEXT_INVERT:0);
     }
-    if (max_h)
-    {
-      if (h>*max_h) *max_h=h;
-    }
     switch(c)
     {
     case 0x0A:
     case 0x0D:
-      return(pos);
+      f=1;
+      break;
     case UTF16_DIS_INVERT:
       p->ref=0;
       continue;
@@ -74,10 +72,12 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       continue;
     }
     left-=GetSymbolWidth(c,p->bold?FONT_SMALL_BOLD:FONT_SMALL);
-    if (left<0)
+    if (left<0)   return pos-1;
+    if (max_h)
     {
-      return pos-1;
+      if (h>*max_h)  *max_h=h;
     }
+    if (f) return pos;
   }
 LERR:
   return(vd->rawtext_size);
