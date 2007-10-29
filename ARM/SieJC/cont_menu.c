@@ -315,7 +315,7 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
 
   case MI_VCARD_QUERY:
     {
-      strcpy(test_str,"vCard");
+      strcpy(test_str,LG_QUERYVCARD);
       break;
     }
 
@@ -464,13 +464,9 @@ void Disp_Contact_Menu()
     Menu_Contents[n_items++]=MI_DISCO_QUERY;
   }
 
-  if(Act_contact->entry_type!=T_GROUP)
+ if((Act_contact->entry_type!=T_GROUP)&&(Act_contact->entry_type!=T_CONF_ROOT))
   {
     Menu_Contents[n_items++]=MI_VCARD_QUERY;
-  }
-
-  if(Act_contact->entry_type!=T_GROUP)
-  {
     Menu_Contents[n_items++]=MI_TIME_QUERY;
   }
 

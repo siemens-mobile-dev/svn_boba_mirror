@@ -166,7 +166,8 @@ char auth_id[] = "SieJC_auth_req";
 char rost_id[] = "SieJC_rost_req";
 char vreq_id[] = "SieJC_vers_req";
 char priv_id[] = "SieJC_priv_req";
-
+char treq_id[] = "SieJC_time_req";
+char vcreq_id[] = "SieJC_vcard_req";
 /*
   Авторизация на Jabber-сервере
   Самая тупая, без извращений.
@@ -225,9 +226,7 @@ void _sendtimerequest(char *dest_jid)
 {
   char typ[]=IQTYPE_GET;
   char iq_v[]=IQ_TIME;
-  char vreq_id[]="time_1";
-//SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
-  SendIq(dest_jid, typ, vreq_id, iq_v, NULL);
+  SendIq(dest_jid, typ, treq_id, iq_v, NULL);
   mfree(dest_jid);
 }
 
@@ -242,7 +241,7 @@ void Send_Time_Request(char *dest_jid)
 void _sendvcardrequest(char *to)
 {
   char* xmlq=malloc(1024);
-  sprintf(xmlq, "<iq to='%s' type='get' id='v3'>\r\n<vCard xmlns='vcard-temp'/>\r\n</iq>", to);
+  sprintf(xmlq, "<iq to='%s' type='get' id='%s'>\r\n<vCard xmlns='vcard-temp'/>\r\n</iq>", to, vcreq_id);
   SendAnswer(xmlq);
   mfree(xmlq);
   mfree(to);
@@ -440,6 +439,11 @@ void Report_VersionInfo(char* id, char *to)
 
 void Report_TimeInfo(char* id, char *to)
 {
+/*
+  <utc>20070910T17:58:35</utc>
+  <tz>MDT</tz>
+  <display>Tue Sep 10 15:58:35 2007</display>");
+*/
   char answer[200];
   TTime reqt;
   TDate reqd;
@@ -451,9 +455,7 @@ void Report_TimeInfo(char* id, char *to)
   char timzone[6];
   GetDateTime(&reqd, &reqt);
   strcpy(timzone, TimeZone[MY_DEF_ZONE]);
- // ShowMSG(0,(int)to);
   sprintf(answer, "<utc>%04d%02d%02dT%02d:%02d:%02d</utc><tz>%s</tz><display>%02d-%02d-%04d %02d:%02d:%02d</display>",reqd.year,reqd.month,reqd.day,reqt.hour,reqt.min,reqt.sec, timzone,reqd.day,reqd.month,reqd.year,reqt.hour,reqt.min,reqt.sec);
-//XMPP sprintf(answer, "<utc>20070910T17:58:35</utc><tz>MDT</tz><display>Tue Sep 10 15:58:35 2007</display>");
   SendIq(to, IQTYPE_RES, id, IQ_TIME, answer);
   mfree(id);
   mfree(to);
@@ -1031,7 +1033,7 @@ if(!strcmp(gres,iqtype))
       return;
     }
   }
-    if(!strcmp(id,"time_1"))   // Запрос Time (ответ)
+    if(!strcmp(id,treq_id))   // Запрос TIME (ответ)
   {
     XMLNode* query;
     if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
@@ -1070,7 +1072,7 @@ if(!strcmp(gres,iqtype))
       return;
     }
   }
-  if(!strcmp(id,"v3"))   // Запрос vcard (ответ)
+  if(!strcmp(id,vcreq_id))   // Запрос vcard (ответ)
   {
     XMLNode* vcard;
     if(!(vcard = XML_Get_Child_Node_By_Name(nodeEx, "vCard")))return;

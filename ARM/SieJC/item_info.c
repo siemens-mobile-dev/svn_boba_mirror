@@ -130,7 +130,8 @@ void Disp_Info(TRESOURCE* ResEx)
   ConstructEditControl(&ec,1,0x40,ws_info,256);  
   AddEditControlToEditQend(eq,&ec,ma);
 
-  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_VIRTUAL)
+//  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_VIRTUAL || ResEx->entry_type==T_CONF_ROOT || ResEx->entry_type==T_TRANSPORT)
+  if(ResEx->entry_type!=T_GROUP&& ResEx->entry_type!=T_CONF_NODE)
   {  
     // JID 
     wsprintf(ws_info,percent_t,"JID:");
@@ -142,7 +143,18 @@ void Disp_Info(TRESOURCE* ResEx)
     AddEditControlToEditQend(eq,&ec,ma);
   }
 
-    
+  if(ResEx->entry_type==T_CONF_NODE)
+  {  
+    // nick
+    wsprintf(ws_info,percent_t,"Nick:");
+    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+
+    utf8_2ws(ws_info, ResEx->name, 128);
+    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+  }
+
   if(ResEx->entry_type==T_NORMAL)
   {  
     // Ресурс
@@ -163,12 +175,48 @@ void Disp_Info(TRESOURCE* ResEx)
     wsprintf(ws_info, "%i", ResEx->priority);
     ConstructEditControl(&ec,3,0x40,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-    
-   
-     
   }
   
-  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_CONF_NODE)
+if (ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_TRANSPORT)
+  {    // подписка
+    wsprintf(ws_info,percent_t,"Подписка");
+    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+    switch (ClEx->subscription)
+    {
+    case SUB_NONE: 
+      {
+        wsprintf(ws_info, "%s", "нет");
+            break;
+      }
+    case SUB_TO: 
+      {
+        wsprintf(ws_info, "%s", "TO");
+            break;
+      }
+    case SUB_FROM: 
+      {
+            wsprintf(ws_info, "%s", "FROM");
+            break;
+      }
+    case SUB_BOTH: 
+      {
+            wsprintf(ws_info, "%s", "BOTH");
+            break;
+      }
+  default:
+    {
+      wsprintf(ws_info, "%s", "X.3.");
+            break;
+    }      
+    }
+    
+    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+   }
+ 
+//  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_CONF_NODE || ResEx->entry_type==T_TRANSPORT ||ResEx->entry_type==T_VIRTUAL)
+  if(ResEx->entry_type!=T_GROUP && ResEx->entry_type!=T_CONF_ROOT)
   {
 
     if(ResEx->muc_privs.real_jid)
@@ -230,7 +278,7 @@ void Disp_Info(TRESOURCE* ResEx)
 static char *Known_Features = NULL;
 
 extern const char DEFAULT_DISC[128];
-extern const char KNOW_FEATURES_PATH[]; //ДОБАВЛЕНО
+extern const char KNOW_FEATURES_PATH[];
 
 char *Lookup_Known_Vars(char *var_name)
 {
@@ -238,10 +286,8 @@ char *Lookup_Known_Vars(char *var_name)
   {
     // Грузим фичи из файла
     unsigned int io_error = 0;
-//    char path[]="4:\\ZBin\\SieJC\\Templates\\known_features.txt";
-//    path[0] = DEFAULT_DISC[0];
-   char path[255]; //ДОБАВЛЕНО
-	strcpy(path,KNOW_FEATURES_PATH);//ДОБАВЛЕНО
+   char path[255];
+	strcpy(path,KNOW_FEATURES_PATH);
 	volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
     if(io_error)
     {
