@@ -32,8 +32,8 @@ int omstrcmp(VIEWDATA *vd, unsigned int ps, unsigned int pd)
   char *s;
   int ld;
   char *d;
-  int l;
-  int r;
+//  int l;
+//  int r;
   if (ps>=vd->oms_size) return 1;
   if (pd>=vd->oms_size) return 1;
   ls=_rshort(s=vd->oms+ps);
