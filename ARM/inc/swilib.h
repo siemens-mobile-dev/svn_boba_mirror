@@ -336,7 +336,7 @@ typedef struct
   const char *ext;
   int unical_id;
   signed char enabled_options;
-  unsigned char obex_path_id;   
+  unsigned char obex_path_id;
   unsigned short menu_flag;
   const int *icon1;
   const int *icon2; //skip on reg
@@ -745,7 +745,7 @@ typedef struct{
 #else
   char unk1[14];
   short file_attr;
-  unsigned int create_date_time; 
+  unsigned int create_date_time;
   unsigned int file_size;
   char unk2[16];
   char folder_name[128];
@@ -812,7 +812,7 @@ typedef struct
   char type;
   void *user_pointer;
   unsigned short cur_item;
-  WSHDR *ws;  
+  WSHDR *ws;
 }USR_MENU_ITEM;
 
 typedef struct
@@ -855,6 +855,7 @@ typedef struct
 #define ECT_NORMAL_NUM 6
 #define ECT_COMBO_BOX 7
 #define ECT_READ_ONLY_SELECTED 8
+#define ECT_LINK 9
 #define ECT_CALENDAR 10
 #define ECT_TIME 11
 
@@ -1024,8 +1025,8 @@ typedef struct
   char unk1;
   char *unk;
   char one;
-  char isactivated;  
-#endif  
+  char isactivated;
+#endif
 }LMAN_DATA;
 
 #define IP_ADDR(A,B,C,D) (((unsigned long)A<<24)|((unsigned long)B<<16)|((unsigned long)C<<8)|((unsigned long)D<<0))
@@ -1062,7 +1063,7 @@ typedef struct{
   int unk5;
   int unk6;
 #endif
-#endif  
+#endif
 }PLAYFILE_OPT;
 
 
@@ -1571,13 +1572,13 @@ __swi __arm unsigned short *RamLS();
 __swi __arm  RAMNET * RamNet();
 //thumb
 
-#pragma swi_number=0x80CC 
-__swi __arm char * RamMissedCalls(); 
+#pragma swi_number=0x80CC
+__swi __arm char * RamMissedCalls();
 
-#pragma swi_number=0x80CD 
+#pragma swi_number=0x80CD
 __swi __arm char * RamMissedSMS();
 
-#pragma swi_number=0x80D4 
+#pragma swi_number=0x80D4
 __swi __arm char * RamMissedMessage();
 
 #pragma swi_number=0x80DF
@@ -2533,32 +2534,32 @@ __swi __arm void *DATA_N_SFB(void);
 __swi __arm void SHA1_Init(SHA_CTX *c);
 //thumb
 //pattern=??,49,??,60,??,49,??,60,??,49,??,43,??,60,??,49,??,43,??,60,??,49,??,61,??,21,??,61,??,61,??,65,??,47
- 
+
 #pragma swi_number=0x1BD
 __swi __arm void SHA1_Update(SHA_CTX *c, const void *data, unsigned long len);
 //thumb
 //pattern=??,B5,??,1C,??,1C,??,1C,??,D0,??,69,E8,00,08,18,81,42,??,D9,??,69,??,31,??,61,??,69,??,0F,??,18,??,61,??,61
- 
+
 #pragma swi_number=0x1BE
 __swi __arm void SHA1_Final(char *md, SHA_CTX *c);
 //thumb
 //pattern=??,B5,C8,6D,0D,1C,0C,1C,EF,6D,81,07,00,26,82,10,BF,10,BF,00,??,1C,??,0F,??,34,??,29
- 
+
 #pragma swi_number=0x1BF
 __swi __arm RSA * RSA_new_method(RSA_METHOD *method);
 //thumb
 //pattern=??,B5,??,??,??,1C,??,68,??,28,??,D1,??,??,??,??,??,60,??,20,??,??,??,??,??,1C,??,D1,??,23
- 
+
 #pragma swi_number=0x1C0
 __swi __arm void RSA_free (RSA *r);
 //thumb
 //pattern=??,B5,??,1C,??,D0,??,22,??,92,??,21,??,43,??,22,??,1C,??,30
- 
+
 #pragma swi_number=0x1C1
 __swi __arm int RSA_sign(int type, char *m, unsigned int m_len, char *sigret, unsigned int *siglen, RSA *rsa);
 //thumb
 //pattern=??,B5,??,B0,??,1C,??,20,??,9D,??,90,??,6B,??,1C,??,24,??,06,??,D5,??,99,??,95,??,91,??,68,??,1C,??,6A
- 
+
 #pragma swi_number=0x1C2
 __swi __arm BIGNUM *BN_bin2bn(const char *s,int len,BIGNUM *ret);
 //thumb
@@ -2633,7 +2634,7 @@ __swi __arm void CopyOptionsToEditControl(EDITCONTROL *ec,EDITC_OPTIONS *ec_opti
 #ifdef NEWSGOLD
   #define TREGEXPLEXT REGEXPLEXT
 #else
-  #define TREGEXPLEXT REGEXPLEXT_ARM_NEW 
+  #define TREGEXPLEXT REGEXPLEXT_ARM_NEW
 #endif
 
 #pragma swi_number=0x1CF
