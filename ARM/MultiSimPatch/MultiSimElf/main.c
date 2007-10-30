@@ -11,6 +11,7 @@ extern const unsigned int onc_sim;
 extern const unsigned int onc_sim2;\
   int curblock=0;;
 int maincsm;
+int patchversion=0;
 MSIM_ELF_RESP simblk;
 //unsigned char bp[1024];
      IPC_REQ gipc;
@@ -48,6 +49,12 @@ inline void ReadConfig(){
   InitConfig();
 }  
 
+extern int simnum;
+extern int simcnt;
+extern int WriteFile(char*,int);
+extern const char f5400s[];
+extern const char f5401s[];
+
 
 void maincsm_oncreate(CSM_RAM *data)
 {
@@ -65,6 +72,14 @@ void maincsm_oncreate(CSM_RAM *data)
 ///  csm->gui_id=CreateGUI(main_gui);
 //  csm->gui_id=    ShowMainMenu();  
 //  maincsm=
+  
+            if (!onc_ena){
+            csm->gui_id=    ShowMainMenu();            
+            RefreshGUI();
+          }else{
+            if (simnum==onc_sim)ChangeSim(onc_sim2);else
+              ChangeSim(onc_sim);
+          }
 }
 
 void ELF_KILLER(void)
@@ -78,11 +93,7 @@ void maincsm_onclose(CSM_RAM *csm)
   SUBPROC((void *)ELF_KILLER);
 }
 
-extern int simnum;
-extern int simcnt;
-extern int WriteFile(char*,int);
-extern const char f5400s[];
-extern const char f5401s[];
+
 
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
@@ -113,15 +124,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	case IPC_MSIM_PROCESSED: 
             simnum=simblk.CurSim;
             simcnt=simblk.SimCnt;
-          if (!onc_ena){
-            csm->gui_id=    ShowMainMenu();            
-            RefreshGUI();
-          }else{
-            if (simnum==onc_sim)ChangeSim(onc_sim2);else
-              ChangeSim(onc_sim);
-          }
+
             
         break;    
+        /*
 	case IPC_MSIM_PROCESSED_READBLOCK2FILE:
           if (curblock==0)
             WriteFile((char*)f5400s,0x30*20);
@@ -135,7 +141,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 
         //  }
 	  break;
-        
+        */
           
 	case IPC_MSIM_SWITCHED:
           if (onc_ena){
@@ -197,9 +203,95 @@ void UpdateCSMname(void)
   
 //MSIM_IPC_MSG_EEPROM msg;
 CSM_DESC icsmd;
+void UpdateTesters(){
+  unsigned char *block5401=(unsigned char*)malloc(0x50*20);
+  // EEFullCreateBlockThumb(5401,0x50*20,1);
+  EEFullCreateBlock(5403,0x50,1,0,0);    
+  EEFullReadBlock(5402,block5401,0,0x50,0,0);
+  EEFullWriteBlock(5403,block5401,0,0x50,0,0);  
+  EEFullDeleteBlock(5402,0,0);   
 
+  EEFullCreateBlock(5402,0x50*20,1,0,0);    
+  EEFullReadBlock(5401,block5401,0,0x50*20,0,0);
+  EEFullWriteBlock(5402,block5401,0,0x50*20,0,0);  
+  EEFullDeleteBlock(5401,0,0);     
+
+  EEFullCreateBlock(5401,0x30*20,1,0,0);    
+  EEFullReadBlock(5400,block5401,0,0x30*20,0,0);
+  EEFullWriteBlock(5401,block5401,0,0x30*20,0,0);  
+  EEFullDeleteBlock(5400,0,0);     
+  
+//    LIB_Memset(block5401,0xFF,0x50*20);
+ ShowMSG(1,(int)"Block 5401-5402 moved. Update patch to new version") ;
+    mfree(block5401);
+SwitchPhoneOff();
+ 
+  
+};
+void UpdateFromOld(){
+    unsigned char *block5400=(unsigned char*)malloc(1024);
+  unsigned char *block5401=(unsigned char*)malloc(0x50*20);
+  for (int i=0;i<20;i++){
+       memset(block5401+0x50*i,0xFF,0x30);
+       memset(block5401+0x50*i+0x30,0x0,0x30);  
+       block5401[0x50*i+0x30-1]=i;
+  }
+  // EEFullCreateBlockThumb(5401,0x50*20,1);
+  EEFullReadBlock(5400,block5400,0,1024,0,0);
+
+  for (int i=0;i<10;i++){
+       memcpy(block5401+0x30*i+0x30,block5400+0x50*i+0x40,0x10);//loci
+       memcpy(block5401+0x30*i+0x30+0x30,block5400+0x50*i+0x30,0x10);//smsc
+       memcpy(block5401+0x30*i+0x30+0x4c,block5400+0x50*i+0xC,0x04);// profiles?
+  }
+  //TODO copy settings to physical sim
+  
+  EEFullCreateBlock(5402,0x50*20,1,0,0);    
+  EEFullWriteBlock(5402,block5401,0,0x50*20,0,0);  
+
+  EEFullCreateBlock(5403,0x50,1,0,0);    
+  EEFullWriteBlock(5403,block5401,0,0x50,0,0);  
+
+  for (int i=0;i<10;i++){
+       memcpy(block5401+0x30*i+0x30,block5400+0x50*i+0x0,0x10);//imsi
+       memcpy(block5401+0x30*i+0x30+0x10,block5400+0x50*i+0x10,0x10);//ki 
+       memcpy(block5401+0x30*i+0x30+0x20,block5400+0x50*i+0x20,0x20);//names
+  }
+  EEFullCreateBlock(5401,0x30*20,1,0,0);    
+  EEFullWriteBlock(5401,block5401,0,0x30*20,0,0);  
+  
+  EEFullDeleteBlock(5400,0,0);     
+  
+//    LIB_Memset(block5401,0xFF,0x50*20);
+ ShowMSG(1,(int)"Block 5401-5403 created. Update patch to new version") ;
+    mfree(block5400);
+ mfree(block5401);
+  SwitchPhoneOff();
+};
+void CreateBlocksFromFiles(){
+};
 int main()
 {
+    int sz;
+    char ver;
+  patchversion=EEFullGetBlockInfo(5402,&sz,&ver);
+  if (!patchversion&&ver==0){patchversion=1;// old beta testers 
+    UpdateTesters();
+  }
+  if (patchversion==2){//block not exist
+    patchversion=EEFullGetBlockInfo(5400,&sz,&ver)+2;
+    if(patchversion==2)UpdateFromOld();else
+      CreateBlocksFromFiles();
+    
+  }
+  if (patchversion)return;
+    /*
+      0-- good
+      1-- // old beta testers 
+      2- block5400  present
+      4- block5400 not present
+  */
+  
   ReadConfig();
   
   /*
@@ -212,8 +304,8 @@ int main()
       icsm->constr=&icsmd;
 */
   
-      gipc.name_to=IPC_MSIM_NAME;
-      gipc.name_from=ELF_MSIM_NAME;
+  //    gipc.name_to=IPC_MSIM_NAME;
+//      gipc.name_from=ELF_MSIM_NAME;
 /*
       gipc.data=&msg;
      msg.type=0;
@@ -224,8 +316,8 @@ int main()
       GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_EEPROM_BACKDOOR,&gipc);
       
       */
-      gipc.data=&simblk;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_GET_RAM5400,&gipc);      
+  //    gipc.data=&simblk;
+    //  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_GET_RAM5400,&gipc);      
 //       GBS_SendMessage(MMI_CEPID, MSG_IPC,IPC_MSIM_PROCESSED,&gipc);
 /*
       for (int x=0x0000;x<0xFFFF;x++       )
@@ -244,6 +336,8 @@ int main()
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
   LockSched();
+
+  
   maincsm=CreateCSM(&MAINCSM.maincsm,dummy,0);
   
   UnlockSched();

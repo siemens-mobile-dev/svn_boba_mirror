@@ -58,13 +58,13 @@ __swi __arm void *LIB_Memcpy(void *dest,const void *source,int cnt);
 	case IPC_MSIM_EEPROM_AUTOSEARCH:
            RegNetwork(4,0,0x207);
 	  break;
-        
+        /*
 	case IPC_MSIM_EEPROM_BACKDOOR:
           eepmsg = (MSIM_IPC_MSG_EEPROM*) ipc->data;
           if (eepmsg->type&PRC_MSIM_WRITEBLOCK)
-            SetEEFULLBlock(eepmsg->block,eepmsg->buf,eepmsg->offset,eepmsg->size);
+            EEFullWriteBlock(eepmsg->block,eepmsg->buf,eepmsg->offset,eepmsg->size,0,0);
           else
-            GetEEFULLBlock(eepmsg->block,eepmsg->buf,eepmsg->offset,eepmsg->size);
+            EEFullReadBlock(eepmsg->block,eepmsg->buf,eepmsg->offset,eepmsg->size,0,0);
           SendReply(IPC_MSIM_PROCESSED+eepmsg->type,0);
           break;
 	case IPC_MSIM_GET_RAM5400:
@@ -87,6 +87,7 @@ __swi __arm void *LIB_Memcpy(void *dest,const void *source,int cnt);
           rbl->SimCnt=SIM_Cnt;
           SendReply(IPC_MSIM_PROCESSED,ipc->data);
           break;
+          */
 	}
       }
     }

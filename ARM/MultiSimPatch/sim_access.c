@@ -154,7 +154,7 @@ void SIM_Cmd_Hook(int what, int cla, int ins,
         case CONST_Select_LOCI_File:
           //store file LOCI into EEPROM block 5402
           LIB_Memcpy(&Block5402[0x00]+p2, SendBuf, SendLen);
-          SetEEFULLBlock(5402, &Block5402[0x00], 0x00, LOCI_DATA_BYTE_LEN);
+          EEFullWriteBlock(5402, &Block5402[0x00], 0x00, LOCI_DATA_BYTE_LEN,0,0);
           LIB_Memcpy(SIM_Data->SendBuf2, REAL_SIM_LOCI, LOCI_DATA_BYTE_LEN);
           flag=1;  // when virtual data is stored, SIM need write data physical SIM from
 //          SendBuf=SIM_Data->SendBuf2;
@@ -162,7 +162,7 @@ void SIM_Cmd_Hook(int what, int cla, int ins,
         case CONST_Select_BCCH_File:
           //store file BCCH into EEPROM block 5402
           LIB_Memcpy(&Block5402[0x10]+p2, SendBuf, SendLen);
-          SetEEFULLBlock(5402, &Block5402[0x10], 0x10, BCCH_DATA_BYTE_LEN);
+          EEFullWriteBlock(5402, &Block5402[0x10], 0x10, BCCH_DATA_BYTE_LEN,0,0);
           LIB_Memcpy(SIM_Data->SendBuf2, REAL_SIM_BCCH, BCCH_DATA_BYTE_LEN);
           flag=1;  // when virtual data is stored, SIM need write data physical SIM from
 //          SendBuf=SIM_Data->SendBuf2;          
@@ -170,7 +170,7 @@ void SIM_Cmd_Hook(int what, int cla, int ins,
         case CONST_Select_KC_File:
           //store file Kc into EEPROM block 5402
           LIB_Memcpy(&Block5402[0x20]+p2, SendBuf, SendLen);
-          SetEEFULLBlock(5402, &Block5402[0x20], 0x20, KC_DATA_BYTE_LEN);
+          EEFullWriteBlock(5402, &Block5402[0x20], 0x20, KC_DATA_BYTE_LEN,0,0);
           LIB_Memcpy(SIM_Data->SendBuf2, REAL_SIM_KC, KC_DATA_BYTE_LEN);
           flag=1;  // when virtual data is stored, SIM need write data physical SIM from
 //          SendBuf=SIM_Data->SendBuf2;          
@@ -479,11 +479,11 @@ __arm void TryRigesterInfinity(){
   Clear_FPNMN();  // all networks is permited for reistration
 
   //Store current SIM data on their place in 5401 block (dynamic data)
-  SetEEFULLBlock(5401, Block5402, SIM_number * 0x50 + 0x00, 0x50);
+  EEFullWriteBlock(5401, Block5402, SIM_number * 0x50 + 0x00, 0x50,0,0);
   //Read new SIM dynamic data
-  GetEEFULLBlock(5401, Block5402, SimNum * 0x50 + 0x00, 0x50);
+  EEFullReadBlock(5401, Block5402, SimNum * 0x50 + 0x00, 0x50,0,0);
   //Store new SIM dynamic data in working block (5402) 
-  SetEEFULLBlock(5402, Block5402, 0x00, 0x50);
+  EEFullWriteBlock(5402, Block5402, 0x00, 0x50,0,0);
   if(SimNum)
   {
     LIB_Memcpy(RAM_IMSI_Ptr, &Block5400[SimNum * 0x30], IMSI_DATA_BYTE_LEN);
@@ -534,7 +534,9 @@ __arm void TryRigesterInfinity(){
     GBS_StartTimerProc(&RAM_TIMER1, 13000*Block5400[0x40 + 0x0D], &ReturnToPhysicalSIM);
 }
 
- 
+
+
+
 
 void MultisimINIT(void){
   if(((int)SIM_Data & 0xA8000000) != 0xA8000000)
@@ -542,8 +544,8 @@ void MultisimINIT(void){
     SIM_Data = (KV_SIM_CTRL_BLOCK *) malloc(sizeof(KV_SIM_CTRL_BLOCK));
     LIB_Memset(SIM_Data, 0xFF, sizeof(KV_SIM_CTRL_BLOCK));
 
-    GetEEFULLBlock(5400, Block5400, 0, 0x3C0);
-    GetEEFULLBlock(5402, Block5402, 0, 0x50);
+    EEFullReadBlock(5400, Block5400, 0, 0x3C0,0,0);
+    EEFullReadBlock(5402, Block5402, 0, 0x50,0,0);
 
 //    SIM_number = Block5400[0x00];
     SIM_number = Block5402[0x2F];

@@ -4657,7 +4657,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>.\elf\1s.bat CX70v56 </postbuild>
+        <postbuild>.\elf\1s.bat CX70v56 d:\Telephon\proshivki\cx70v56\560300_rus.bin</postbuild>
       </data>
     </settings>
     <settings>
