@@ -2,14 +2,11 @@
     SieNatJabber Project
  Language
 */
+#include "setlang.h"
 #ifndef _LANG_H_
 #define _LANG_H_
 
 #define LG_COPYRIGHT "Siemens natJabber Client\n(c)Kibab, Ad, Borman99\n%s r%i\nCompiled %s"
-
-#define LANG_RU
-//#define LANG_UA
-//#define LANG_EN
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
