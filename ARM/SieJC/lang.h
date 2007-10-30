@@ -365,7 +365,7 @@
 #define LG_ENTERTEXTSTATUS  "Enter status text:"
 #define LG_PRIORITY         "Priority:"
 //MUC_Enter_UI.c
-#define LG_NONAMECONF       "A conference name is not filled!"
+#define LG_NONAMECONF       "A conference name is empty!"
 #define LG_ENTERMUC         "Join MUC"
 #define LG_NAMEMUC          "MUC name:"
 #define LG_NICK             "Nickname:"
@@ -374,19 +374,19 @@
 #define LG_NOSENDNULLMESS   "It is impossible to send the empty message!"
 #define LG_NEW              "New..."
 //message_cmds.c
-#define LG_SELCOMMAND       "Select commands..."
+#define LG_SELCOMMAND       "Select command..."
 #define LG_SELTEMPLATE      "Select template..."
 #define LG_SELSMILE         "Select smile..."
 #define LG_SELECT2          "Select..."
 #define LG_COMMANDS         "Commands"
-#define LG_MSGTEMPLATE      "Templates messages"
+#define LG_MSGTEMPLATE      "Templates"
 #define LG_SMILE            "Smiles"
-#define LG_CLOSEDLG         "Close a dialog"
+#define LG_CLOSEDLG         "Close"
 //mainmenu.c
 #define LG_CONTACT          "Contact"
 #define LG_STATUS           "Status"
 #define LG_MUC              "MUC"
-#define LG_BOOKMARK         "Bookmark"
+#define LG_BOOKMARK         "Bookmarks"
 #define LG_MVIBRA           "Vibra mode"
 #define LG_MSOUND           "Sound mode"
 #define LG_MOFFLINE         "Show Offline"
@@ -398,7 +398,7 @@
 #define LG_ENTERLOGPAS      "Enter login/password!"
 #define LG_PLATFORMM        "Target platform mismatch!"
 //jabber_util.c
-#define LG_MUCEXITDONE      "MUC leaved OK!"
+#define LG_MUCEXITDONE      "Leave MUC ok"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
 //item_info.c
@@ -415,7 +415,7 @@
 #define LG_ROLE             "Role:"
 #define LG_POSIBLCLIENT     "Client features:"
 //history.c
-#define LG_ERRORWH          "Error I/O #%u at the history record!"
+#define LG_ERRORWH          "I/O Error #%u while trying to write the history"
 //cont_menu.c
 #define LG_MENUCONTACT      "Contact menu"
 #define LG_UNKACTION        "Unknown or unsupported action!"
