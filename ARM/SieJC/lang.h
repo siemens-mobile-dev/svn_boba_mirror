@@ -7,8 +7,8 @@
 
 #define LG_COPYRIGHT "Siemens natJabber Client\n(c)Kibab, Ad, Borman99\n%s r%i\nCompiled %s"
 
-#define LANG_RU
-//#define LANG_UA
+//#define LANG_RU
+#define LANG_UA
 //#define LANG_EN
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -327,6 +327,19 @@
 
 #define LG_TEXTSTATUS       "Текст статусів"
 #define LG_DEFSTATES        "Стани за умовчанням"
+
+#define LG_VCARD_JABBERID   "JID"
+#define LG_VCARD_FN         "Повне ім'я"
+#define LG_VCARD_NICKNAME   "Нік"
+#define LG_VCARD_BDAY       "День народження"
+#define LG_VCARD_GENDER     "Стать"
+#define LG_VCARD_ORGNAME    "Назва організації"
+#define LG_VCARD_ORGUNIT    "Відділ організації"
+#define LG_VCARD_TITLE      "Назва посади"
+#define LG_VCARD_ROLE       "Посада"
+#define LG_VCARD_EMAIL      "E-Mail"
+#define LG_VCARD_URL        "Домашня сторінка"
+#define LG_VCARD_DESC       "Про себе"
 #endif //UA
 
 ///////////////////////////////////////////////////////////////////////////////////////////
