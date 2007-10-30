@@ -417,7 +417,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	  if (rf->id!=_NOREF)
 	  {
 	    char *s=extract_omstr(vd,rf->id);
-	    RunOtherCopyByURL(s);
+	    RunOtherCopyByURL(s+2);
 	    mfree(s);
 	  }
 	}
