@@ -13,7 +13,7 @@ extern JABBER_STATE Jabber_state;
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];
 extern const char PASSWORD[];
-extern const char RESOURCE[];
+extern const char RESOURCE[30];
 extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
@@ -93,11 +93,12 @@ void SASL_Bind_Resource()
 
   sprintf(logmsg, "Resource binding");
   REDRAW();
-static char bind_tpl[]="<iq type='set' id='SieJC_bind_req'>"
+  char *bind_tpl = malloc(200);
+  sprintf(bind_tpl, "<iq type='set' id='SieJC_bind_req'>"
                   "<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>"
-                  "<resource>SieJC</resource>"
+                  "<resource>%s</resource>"
                   "</bind>"
-                  "</iq>";
+                  "</iq>", RESOURCE);
   Jabber_state = JS_SASL_RESBIND_ACK;
   SUBPROC((void*)SendAnswer, bind_tpl);
 }

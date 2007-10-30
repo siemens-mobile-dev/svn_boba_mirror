@@ -40,7 +40,6 @@ extern const int USE_ZLIB;
 extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
-const char RESOURCE[] = "SieJC";
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
 const char VERSION_VERS[] = "2.9.C-Z";
 const char CMP_DATE[] = __DATE__;
@@ -968,7 +967,7 @@ void DisplayQuitQuery()
 
 void Enter_SiepatchDB()
 {
-
+  
   char room[]= "siepatchdb@conference.jabber.ru";
   char nick_t[]="%s_SieJC";
   char nick[100];
@@ -979,7 +978,7 @@ void Enter_SiepatchDB()
   char* room_name = ANSI2UTF8(room, strlen(room)*2);
   Enter_Conference(room, nick, 20);
   mfree(room_nick);
-  mfree(room_name);
+  mfree(room_name)
 }
 
 void Disp_State()

@@ -38,32 +38,35 @@ __root const CFG_HDR cfghdr6={CFG_CBOX,LG_ZLIBUSE,0,2};
 __root const int USE_ZLIB = 0;
 __root const CFG_CBOX_ITEM cfgcbox3[2]={LG_NO,LG_YES};
 
+__root const CFG_HDR cfghdr7={CFG_STR_WIN1251,LG_RES,0,29};
+__root const char RESOURCE[30] = "SieJC";
+
 __root const CFG_HDR cfghdr_CONNECT_LEVEL_END={CFG_LEVEL,"",0,0};
 
 ////////////////////////////////////////////////////////////////////////////////
 
-__root const CFG_HDR cfghdr7={CFG_CBOX,LG_HISTORY,0,2};
+__root const CFG_HDR cfghdr8={CFG_CBOX,LG_HISTORY,0,2};
 __root const int WRITE_HISTORY = 0;
 __root const CFG_CBOX_ITEM cfgcbox1435[2]={LG_DISABLED,LG_ENABLED};
 
-__root const CFG_HDR cfghdr8={CFG_CBOX,LG_MUCHIST,0,2};
+__root const CFG_HDR cfghdr9={CFG_CBOX,LG_MUCHIST,0,2};
 __root const int WRITE_MUC_HISTORY = 0;
 __root const CFG_CBOX_ITEM cfgcbox36546[2]={LG_DISABLED,LG_ENABLED};
 
-__root const CFG_HDR cfghdr9={CFG_UTF8_STRING,LG_MUCDEF,0,63};
+__root const CFG_HDR cfghdr10={CFG_UTF8_STRING,LG_MUCDEF,0,63};
 __root const char DEFAULT_MUC[64]="siepatchdb@conference.jabber.ru";
 
-__root const CFG_HDR cfghdr10={CFG_UTF8_STRING,LG_MUCDEFNIK,0,63};
+__root const CFG_HDR cfghdr11={CFG_UTF8_STRING,LG_MUCDEFNIK,0,63};
 __root const char DEFAULT_MUC_NICK[64]="";
 
-__root const CFG_HDR cfghdr11={CFG_COORDINATES,LG_IDLEICON,0,0};
+__root const CFG_HDR cfghdr12={CFG_COORDINATES,LG_IDLEICON,0,0};
 __root const unsigned int IDLE_ICON_X=0;
 __root const unsigned int IDLE_ICON_Y=50;
 
 __root const CFG_HDR cfghdr17657={CFG_CHECKBOX,LG_POPUPDIS,0,2};
 __root const int DISPLAY_POPUPS=1;
 
-__root const CFG_HDR cfghdr12={CFG_CHECKBOX,LG_COMPOSEV,0,2};
+__root const CFG_HDR cfghdr13={CFG_CHECKBOX,LG_COMPOSEV,0,2};
 __root const int COMPOSING_EVENTS=1;
 
 __root const CFG_HDR cfghdr15345={CFG_CHECKBOX,LG_DELIVREP,0,2};
@@ -188,4 +191,5 @@ __root const CFG_HDR cfghdr33={CFG_CHECKBOX,LG_MOFFLINE,0,2};
 __root const int DEF_SHOW_OFFLINE=1;
 
 __root const CFG_HDR cfghdr_DEFSTATES_LEVEL_END={CFG_LEVEL,"",0,0};
+
 // EOL, EOF
