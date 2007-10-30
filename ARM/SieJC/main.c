@@ -978,7 +978,7 @@ void Enter_SiepatchDB()
   char* room_name = ANSI2UTF8(room, strlen(room)*2);
   Enter_Conference(room, nick, 20);
   mfree(room_nick);
-  mfree(room_name)
+  mfree(room_name);
 }
 
 void Disp_State()
