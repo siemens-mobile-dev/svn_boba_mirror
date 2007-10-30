@@ -22,6 +22,7 @@
 #define LG_CANCEL           "Отмена"
 #define LG_EXIT             "Выход"
 #define LG_HELP             "Помощь"
+#define LG_UPDATE           "Обновить"
 //status_schange.c
 #define LG_STATUSSEL        "Выбор статуса"
 #define LG_STONLINE         "Онлайн"
@@ -188,6 +189,7 @@
 #define LG_CANCEL           "Відмінити"
 #define LG_EXIT             "Вихід"
 #define LG_HELP             "Допомога"
+#define LG_UPDATE           "Оновити"
 //status_schange.c
 #define LG_STATUSSEL        "Вибір статусу"
 #define LG_STONLINE         "В мережі"
@@ -353,6 +355,7 @@
 #define LG_CANCEL           "Cancel"
 #define LG_EXIT             "Exit"
 #define LG_HELP             "Help"
+#define LG_UPDATE           "Update"
 //status_schange.c
 #define LG_STATUSSEL        "Status choice"
 #define LG_STONLINE         "online"
@@ -371,7 +374,7 @@
 #define LG_NICK             "Nickname:"
 #define LG_GETMESSAGECOUNT  "Number of messages:"
 //message_list.c
-#define LG_NOSENDNULLMESS   "It is impossible to send the empty message!"
+#define LG_NOSENDNULLMESS   "It is impossible to send an empty message!"
 #define LG_NEW              "New..."
 //message_cmds.c
 #define LG_SELCOMMAND       "Select command..."

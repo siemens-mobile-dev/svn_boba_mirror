@@ -13,7 +13,7 @@ WSHDR* ws_info = NULL;
 extern const char KNOW_FEATURES_PATH[];
 int info_onkey(GUI *gui, GUI_MSG *msg)
 {
- if (msg->keys==0x18)
+  if (msg->keys==0x18)
   {
     return(-1); //do redraw
   }
@@ -23,22 +23,14 @@ int info_onkey(GUI *gui, GUI_MSG *msg)
 
 void info_ghook(GUI *gui, int cmd)
 {
-  //static SOFTKEY_DESC sk={0x0018, 0x0000,(int)"Помощь"};
-//  EDITCONTROL ec;
-
   if (cmd==2)
   {
     //Called after onCreate
   }
+
   if (cmd==7)
   {
-#ifdef NEWSGOLD
-    //SetSoftKey(gui,&sk,0);
-#else
-    //SetSoftKey(gui,&sk,2);
-#endif
-    //ExtractEditControl(gui,1,&ec);
-    //wstrcpy(ws_info, ec.pWS);
+
   }
 
   if(cmd==0xA)
@@ -46,7 +38,6 @@ void info_ghook(GUI *gui, int cmd)
     DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
 
-  
   if(cmd==0x03)     // onDestroy
   {
     FreeWS(ws_info);
@@ -84,7 +75,7 @@ INPUTDIA_DESC info_desc=
   (void *)inp_locret,
   0,
   &info_skt,
-  {0,22,131,153},
+  {0,0,0,0},
   4,
   100,
   101,
@@ -99,10 +90,10 @@ HEADER_DESC info_hdr={0,0,0,0,NULL,(int)"Contact Info",LGP_NULL};
 // Показ информации о контакте
 void Disp_Info(TRESOURCE* ResEx)
 {
-  
+
   // Сначала получим инфу о том, на какой контакт это всё приходится
   CLIST* ClEx = CList_FindContactByJID(ResEx->full_name);
-  
+
   // Теперь выполним приготовление самого диалога ввода
   ws_info = AllocWS(MAX_SYMB);
   EDITCONTROL ec;
@@ -110,129 +101,129 @@ void Disp_Info(TRESOURCE* ResEx)
   void *eq;
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  
+
   // Создаём поля
-/*
+  /*
   T_NORMAL,       // Обычный (просто ресурс)
   T_VIRTUAL,      // Создаётся при создании контакта, для удаления
   T_CONF_ROOT,    // Корень конференции (место доставки публичных сообщений)
   T_CONF_NODE,    // Участник конференции (отображаем только "ресурс" жида)
   T_TRANSPORT,    // Транспортный агент
   T_GROUP         // Элемент "группа"
-  */  
+  */
   if(ResEx->entry_type==T_NORMAL)wsprintf(ws_info,percent_t,LG_ELROSTER);
   if(ResEx->entry_type==T_VIRTUAL)wsprintf(ws_info,percent_t,LG_OFFLORCONTTR);
   if(ResEx->entry_type==T_CONF_ROOT)wsprintf(ws_info,percent_t,LG_MUC);
   if(ResEx->entry_type==T_CONF_NODE)wsprintf(ws_info,percent_t,LG_MUCPART);
   if(ResEx->entry_type==T_TRANSPORT)wsprintf(ws_info,percent_t,LG_JTRANSP);
   if(ResEx->entry_type==T_GROUP)wsprintf(ws_info,percent_t,LG_GROUPROSTER);
-  
-  ConstructEditControl(&ec,1,0x40,ws_info,256);  
+
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-//  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_VIRTUAL || ResEx->entry_type==T_CONF_ROOT || ResEx->entry_type==T_TRANSPORT)
+  //  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_VIRTUAL || ResEx->entry_type==T_CONF_ROOT || ResEx->entry_type==T_TRANSPORT)
   if(ResEx->entry_type!=T_GROUP&& ResEx->entry_type!=T_CONF_NODE)
-  {  
-    // JID 
+  {
+    // JID
     wsprintf(ws_info,percent_t,"JID:");
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
     utf8_2ws(ws_info, ClEx->JID, 128);
-    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
   }
 
   if(ResEx->entry_type==T_CONF_NODE)
-  {  
+  {
     // nick
     wsprintf(ws_info,percent_t,"Nick:");
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
     utf8_2ws(ws_info, ResEx->name, 128);
-    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
   }
 
   if(ResEx->entry_type==T_NORMAL)
-  {  
+  {
     // Ресурс
     wsprintf(ws_info,percent_t,LG_RESOURCE);
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-    
+
     utf8_2ws(ws_info, ResEx->name, 128);
-    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-    
+
     // Приоритет
     wsprintf(ws_info,percent_t,LG_PRIORITY);
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-    
+
     //utf8_2ws(ws_info, ResEx->name, 128);
     wsprintf(ws_info, "%i", ResEx->priority);
-    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
   }
-  
-if (ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_TRANSPORT)
+
+  if (ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_TRANSPORT)
   {    // подписка
     wsprintf(ws_info,percent_t,"Подписка");
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     switch (ClEx->subscription)
     {
-    case SUB_NONE: 
+    case SUB_NONE:
       {
         wsprintf(ws_info, "%s", "нет");
-            break;
+        break;
       }
-    case SUB_TO: 
+    case SUB_TO:
       {
         wsprintf(ws_info, "%s", "TO");
-            break;
+        break;
       }
-    case SUB_FROM: 
+    case SUB_FROM:
       {
-            wsprintf(ws_info, "%s", "FROM");
-            break;
+        wsprintf(ws_info, "%s", "FROM");
+        break;
       }
-    case SUB_BOTH: 
+    case SUB_BOTH:
       {
-            wsprintf(ws_info, "%s", "BOTH");
-            break;
+        wsprintf(ws_info, "%s", "BOTH");
+        break;
       }
-  default:
-    {
-      wsprintf(ws_info, "%s", "X.3.");
-            break;
-    }      
+    default:
+      {
+        wsprintf(ws_info, "%s", "X.3.");
+        break;
+      }
     }
-    
-    ConstructEditControl(&ec,3,0x40,ws_info,256);
+
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-   }
- 
-//  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_CONF_NODE || ResEx->entry_type==T_TRANSPORT ||ResEx->entry_type==T_VIRTUAL)
+  }
+
+  //  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_CONF_NODE || ResEx->entry_type==T_TRANSPORT ||ResEx->entry_type==T_VIRTUAL)
   if(ResEx->entry_type!=T_GROUP && ResEx->entry_type!=T_CONF_ROOT)
   {
 
     if(ResEx->muc_privs.real_jid)
     {
       wsprintf(ws_info,percent_t,LG_REALJID);
-      ConstructEditControl(&ec,1,0x40,ws_info,256);
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
       AddEditControlToEditQend(eq,&ec,ma);
-      
+
       utf8_2ws(ws_info, ResEx->muc_privs.real_jid, 128);
-      ConstructEditControl(&ec,3,0x40,ws_info,600);
+      ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,600);
       AddEditControlToEditQend(eq,&ec,ma);
     }
 
     // Статус и сообщение статуса
     wsprintf(ws_info,percent_t,LG_STATUS2);
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     if(ResEx->status_msg)
     {
@@ -245,31 +236,31 @@ if (ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_TRANSPORT)
       }
     }
     else wsprintf(ws_info,percent_s,PRESENCES[ResEx->status]);
-    ConstructEditControl(&ec,3,0x40,ws_info,600);
-    AddEditControlToEditQend(eq,&ec,ma);    
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,600);
+    AddEditControlToEditQend(eq,&ec,ma);
   }
-  
-  
+
+
   if(ResEx->entry_type==T_CONF_NODE)
   {
     // Afflliation, role
     wsprintf(ws_info,percent_t,LG_PRIVILEGES);
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-    
+
     wsprintf(ws_info, percent_s, JABBER_AFFS[ResEx->muc_privs.aff]);
-    ConstructEditControl(&ec,3,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
     wsprintf(ws_info,percent_t,LG_ROLE);
-    ConstructEditControl(&ec,1,0x40,ws_info,256);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
-    
+
     wsprintf(ws_info, percent_s, JABBER_ROLS[ResEx->muc_privs.role]);
-    ConstructEditControl(&ec,3,0x40,ws_info,256);
-    AddEditControlToEditQend(eq,&ec,ma);     
-  }  
-  
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+  }
+
   patch_header(&info_hdr);
   patch_input(&info_desc);
   CreateInputTextDialog(&info_desc,&info_hdr,eq,1,0);
@@ -282,13 +273,13 @@ extern const char KNOW_FEATURES_PATH[];
 
 char *Lookup_Known_Vars(char *var_name)
 {
-  if(!Known_Features)  
+  if(!Known_Features)
   {
     // Грузим фичи из файла
     unsigned int io_error = 0;
-   char path[255];
-	strcpy(path,KNOW_FEATURES_PATH);
-	volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
+    char path[255];
+    strcpy(path,KNOW_FEATURES_PATH);
+    volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
     if(io_error)
     {
       char q[40];
@@ -309,10 +300,10 @@ char *Lookup_Known_Vars(char *var_name)
 
 void Disp_From_Disco(char *jid, XMLNode *info)
 {
-  
+
   // Сначала получим инфу о том, на какой контакт это всё приходится
   CLIST* ClEx = CList_FindContactByJID(jid);
-  
+
   // Теперь выполним приготовление самого диалога ввода
   ws_info = AllocWS(MAX_SYMB);
   EDITCONTROL ec;
@@ -320,12 +311,12 @@ void Disp_From_Disco(char *jid, XMLNode *info)
   void *eq;
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  
-  
-  ConstructEditControl(&ec,1,0x40,ws_info,256);  
+
+
+  ConstructEditControl(&ec,1,0x40,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  // JID 
+  // JID
   wsprintf(ws_info,percent_t,"JID:");
   ConstructEditControl(&ec,1,0x40,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
@@ -333,12 +324,12 @@ void Disp_From_Disco(char *jid, XMLNode *info)
   utf8_2ws(ws_info, jid, 128);
   ConstructEditControl(&ec,3,0x40,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
-  
+
 
   wsprintf(ws_info,percent_t,LG_POSIBLCLIENT);
   ConstructEditControl(&ec,1,0x40,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
-  
+
   XMLNode *nodeEx = info->subnode;
   while(nodeEx)
   {
@@ -359,10 +350,10 @@ void Disp_From_Disco(char *jid, XMLNode *info)
   {
     mfree(Known_Features);
     Known_Features = NULL;
-  }  
+  }
   patch_header(&info_hdr);
   patch_input(&info_desc);
-  CreateInputTextDialog(&info_desc,&info_hdr,eq,1,0);  
+  CreateInputTextDialog(&info_desc,&info_hdr,eq,1,0);
 }
 
 //EOL,EOF

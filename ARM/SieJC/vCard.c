@@ -226,7 +226,9 @@ void Process_vCard(char *from, XMLNode *vCard)
   Show_vCard(from);
 }
 
-int Show_vCard(char *jid)
+
+
+int Show_vCard2(char *jid)
 {
   CLIST *ClEx = CList_FindContactByJID(jid);
   if (!ClEx)
@@ -263,6 +265,125 @@ int Show_vCard(char *jid)
     CList_AddMessage(jid, MSG_SYSTEM, result);
     mfree(param_pair);
     mfree(result);
+    return 1;
+  }
+  return 0;
+}
+
+//====================   GUI   ========================
+
+int vcinfo_onkey(GUI *gui, GUI_MSG *msg)
+{
+  if (msg->keys==0x18)
+  {
+    return(-1); //do redraw
+  }
+  return(0); //Do standart keys
+}
+
+void vcinfo_ghook(GUI *gui, int cmd)
+{
+  if (cmd==2)
+  {
+    //Called after onCreate
+  }
+
+  if (cmd==7)
+  {
+
+  }
+
+  if(cmd==0xA)
+  {
+    DisableIDLETMR();   // Отключаем таймер выхода по таймауту
+  }
+
+  if(cmd==0x03)     // onDestroy
+  {
+  }
+}
+
+extern void inp_locret(void);
+
+SOFTKEY_DESC vcinfo_sk[]=
+{
+  {0x0018,0x0000,(int)LG_UPDATE},
+  {0x0001,0x0000,(int)LG_BACK},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB vcinfo_skt=
+{
+  vcinfo_sk,0
+};
+
+INPUTDIA_DESC vcinfo_desc=
+{
+  1,
+  vcinfo_onkey,
+  vcinfo_ghook,
+  (void *)inp_locret,
+  0,
+  &vcinfo_skt,
+  {0,0,0,0},
+  4,
+  100,
+  101,
+  0,
+  0,
+  0x40000000// Поменять софт-кнопки
+};
+
+HEADER_DESC vcinfo_hdr={0,0,0,0,NULL,(int)"vCard",LGP_NULL};
+
+extern const char percent_t[];
+extern const char percent_s[];
+
+int Show_vCard(char *jid)
+{
+#define MAX_VCARD_LINE_LEN 1024
+  CLIST *ClEx = CList_FindContactByJID(jid);
+  if (!ClEx)
+    return 0;
+  VCARD vcard = ClEx->vcard;
+  if (!vcard) // Если не нашли - ищем в ресурсе (для конференции)
+  {
+    TRESOURCE *ResEx = CList_IsResourceInList(jid);
+    if (ResEx)
+      vcard = ResEx->vcard;
+  }
+  if (vcard)
+  {
+    WSHDR* ws_info = AllocWS(MAX_VCARD_LINE_LEN);
+
+    EDITCONTROL ec;
+    void *ma=malloc_adr();
+    void *eq;
+    PrepareEditControl(&ec);
+    eq=AllocEQueue(ma,mfree_adr());
+
+    for (int i=0; i<N_VCARD_FIELDS; i++)
+    {
+      if (vcard[i])
+      {
+        wsprintf(ws_info, percent_t, vcard_names[i]);
+        ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
+        AddEditControlToEditQend(eq,&ec,ma);
+        utf8_2ws(ws_info, vcard[i], MAX_VCARD_LINE_LEN);
+        ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
+        AddEditControlToEditQend(eq,&ec,ma);
+      }
+    }
+
+    wsprintf(ws_info, percent_t, LG_UPDATE);
+    ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
+    AddEditControlToEditQend(eq,&ec,ma);
+
+    patch_header(&vcinfo_hdr);
+    patch_input(&vcinfo_desc);
+    CreateInputTextDialog(&vcinfo_desc,&vcinfo_hdr,eq,1,0);
+
+    FreeWS(ws_info);
     return 1;
   }
   return 0;
