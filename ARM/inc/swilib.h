@@ -885,6 +885,15 @@ typedef struct
 #define ECF_MARKED 0x2000000
 #define ECF_GRAY 0x4000000
 
+//TextInput Dialog ghook commands
+#define TI_CMD_CREATE          2
+#define TI_CMD_DESTROY         3
+#define TI_CMD_REDRAW          7
+#define TI_CMD_UNFOCUS         9
+#define TI_CMD_FOCUS           10
+#define TI_CMD_SUBFOCUS_CHANGE 12
+#define TI_CMD_COMBOBOX_FOCUS  13
+
 /*
 !!!! DELETED !!!!
 !!!! Use EDIT_GetCursorPos & EDIT_SetCursorPos
@@ -1409,7 +1418,7 @@ __swi __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int
 //pattern_NSG=??,??,??,E9,??,??,??,E1,??,??,??,E5,??,??,??,E1,??,??,??,E3,??,??,??,05,??,??,??,E2,??,??,??,E1
 
 #pragma swi_number=0x87
-__swi __arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg); 
+__swi __arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg);
 //arm
 //pattern_NSG=??,??,??,E9,??,??,??,E2,??,??,??,E1,??,??,??,E5,??,??,??,E1,??,??,??,E3,??,??,??,05,??,??,??,E2
 
