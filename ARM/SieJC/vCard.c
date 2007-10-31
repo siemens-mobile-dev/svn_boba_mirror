@@ -7,6 +7,7 @@
 #include "history.h"
 #include "lang.h"
 #include "string_util.h"
+#include "jabber_util.h"
 #include "vCard.h"
 
 char *vcard_index[N_VCARD_FIELDS] =
@@ -203,11 +204,33 @@ void Process_vCard(char *from, XMLNode *vCard)
     vcard = Create_vCard();
 
   // Обходим все присланные ноды vCard
-  XMLNode* vCard_Node = vCard->subnode;
+  char field_name[256];
+  XMLNode *vCard_Node = vCard->subnode;
+  XMLNode *vCard_NodeL2;
   while(vCard_Node)
   {
-    if(vCard_Node->name && vCard_Node->value) // сюда не попадает Photo, и слава Богу
-      Add_vCard_Value(vcard, vCard_Node->name, vCard_Node->value);
+    //if(vCard_Node->name && vCard_Node->value) // сюда не попадает Photo, и слава Богу
+    //  Add_vCard_Value(vcard, vCard_Node->name, vCard_Node->value);
+    if (vCard_Node->name)
+    {
+      if (vCard_Node->value)
+        Add_vCard_Value(vcard, vCard_Node->name, vCard_Node->value);
+      if (strcmp(vCard_Node->name, "PHOTO") && strcmp(vCard_Node->name, "PHOTO")) // Не дай бог нам залезть в аватары...
+      {
+        vCard_NodeL2 = vCard_Node->subnode;
+        while (vCard_NodeL2) // Обрабатываем поля второй вложенности
+        {
+          if (vCard_NodeL2->name && vCard_NodeL2->value)
+          {
+            sprintf(field_name, "%s/%s", vCard_Node->name, vCard_NodeL2->name);
+            Add_vCard_Value(vcard, field_name, vCard_NodeL2->value);
+          }
+
+          vCard_NodeL2 = vCard_NodeL2->next;
+        }
+      }
+    }
+
     vCard_Node = vCard_Node->next;
   }
 
@@ -225,8 +248,6 @@ void Process_vCard(char *from, XMLNode *vCard)
 
   Show_vCard(from);
 }
-
-
 
 int Show_vCard2(char *jid)
 {
@@ -272,34 +293,74 @@ int Show_vCard2(char *jid)
 
 //====================   GUI   ========================
 
+typedef struct
+{
+  char *jid;
+  int update_pos;
+} VCARD_VIEW_DESC;
+
 int vcinfo_onkey(GUI *gui, GUI_MSG *msg)
 {
-  if (msg->keys==0x18)
+  VCARD_VIEW_DESC *desc = EDIT_GetUserPointer(gui);
+  if (desc)
   {
-    return(-1); //do redraw
+    if (msg->gbsmsg->msg==KEY_DOWN && msg->gbsmsg->submess==ENTER_BUTTON && EDIT_GetFocus(gui)==desc->update_pos)
+    {
+      CLIST *ClEx = CList_FindContactByJID(desc->jid);
+      if (ClEx)
+      {
+        if (ClEx->vcard)
+        {
+          Free_vCard(ClEx->vcard);
+          ClEx->vcard = NULL;
+          Send_Vcard_Request(desc->jid);
+        }
+        else // Если не нашли - ищем в ресурсе (для конференции)
+        {
+          TRESOURCE *ResEx = CList_IsResourceInList(desc->jid);
+          if (ResEx)
+            if (ResEx->vcard)
+            {
+              Free_vCard(ResEx->vcard);
+              ResEx->vcard = NULL;
+              Send_Vcard_Request(desc->jid);
+            }
+        }
+      }
+      return (1); //Exit
+    }
   }
   return(0); //Do standart keys
 }
 
 void vcinfo_ghook(GUI *gui, int cmd)
 {
-  if (cmd==2)
+  if (cmd==TI_CMD_CREATE)
   {
     //Called after onCreate
   }
 
-  if (cmd==7)
+  if (cmd==TI_CMD_DESTROY)
   {
-
+    // onDestroy
+    VCARD_VIEW_DESC *desc = EDIT_GetUserPointer(gui);
+    if (desc)
+    {
+      if (desc->jid)
+        mfree(desc->jid);
+      mfree(desc);
+    }
   }
 
-  if(cmd==0xA)
+  if(cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
 
-  if(cmd==0x03)     // onDestroy
+  if (cmd==TI_CMD_SUBFOCUS_CHANGE)
   {
+    if (EDIT_GetFocus(gui)>EDIT_GetUnFocus(gui)) // Если идем сверху вниз
+      EDIT_SetCursorPos(gui, 1); // То ставим курсор в начало
   }
 }
 
@@ -356,6 +417,10 @@ int Show_vCard(char *jid)
   {
     WSHDR* ws_info = AllocWS(MAX_VCARD_LINE_LEN);
 
+    VCARD_VIEW_DESC *view_desc = malloc(sizeof(VCARD_VIEW_DESC));
+    view_desc->jid = malloc(strlen(jid)+1);
+    strcpy(view_desc->jid, jid);
+
     EDITCONTROL ec;
     void *ma=malloc_adr();
     void *eq;
@@ -377,11 +442,11 @@ int Show_vCard(char *jid)
 
     wsprintf(ws_info, percent_t, LG_UPDATE);
     ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
-    AddEditControlToEditQend(eq,&ec,ma);
+    view_desc->update_pos = AddEditControlToEditQend(eq,&ec,ma);
 
     patch_header(&vcinfo_hdr);
     patch_input(&vcinfo_desc);
-    CreateInputTextDialog(&vcinfo_desc,&vcinfo_hdr,eq,1,0);
+    CreateInputTextDialog(&vcinfo_desc,&vcinfo_hdr,eq,1,view_desc);
 
     FreeWS(ws_info);
     return 1;

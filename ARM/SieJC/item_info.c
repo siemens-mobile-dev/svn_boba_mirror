@@ -102,6 +102,11 @@ void Disp_Info(TRESOURCE* ResEx)
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
 
+  // Маленькая хитрость - пустой элемент, принимающий фокус ввода, в начале списка
+  wsprintf(ws_info,"");
+  ConstructEditControl(&ec,ECT_READ_ONLY,0,ws_info,256);
+  AddEditControlToEditQend(eq,&ec,ma);
+
   // Создаём поля
   /*
   T_NORMAL,       // Обычный (просто ресурс)
