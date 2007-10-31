@@ -132,6 +132,9 @@ __root const char HIST_PATH[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\history\\";
 __root const CFG_HDR cfghdr19={CFG_STR_UTF8,LG_PATHPIC,0,127};
 __root const char PATH_TO_PIC[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\img\\";
 
+__root const CFG_HDR cfghdr34={CFG_STR_UTF8,LG_PATHAVATARS,0,127};
+__root const char PATH_TO_AVATARS[128]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\avatars\\";
+
 __root const CFG_HDR cfghdr20={CFG_STR_UTF8,LG_PATHCMD,0,63};
 __root const char COMMANDS_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\\commands.txt";
 
@@ -147,7 +150,7 @@ __root const char SMILE_FILE[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles\\smile
 __root const CFG_HDR cfghdr233={CFG_STR_UTF8,LG_PATHSMILEDIR,0,63};
 __root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles";
 
-__root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFUALTDISK,0,127};
+__root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFAULTDISK,0,127};
 __root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
 
 __root const CFG_HDR cfghdr_PATHS_LEVEL_END={CFG_LEVEL,"",0,0};

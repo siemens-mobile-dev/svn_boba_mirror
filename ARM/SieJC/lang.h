@@ -150,15 +150,20 @@
 #define LG_SETUPPATH        "Настройка путей"
 #define LG_PATHHIST         "История"
 #define LG_PATHPIC          "Картинки"
+#define LG_PATHAVATARS      "Аватары"
 #define LG_PATHCMD          "Команды"
-#define LG_PATHMESG         "Собщения"
-#define LG_PATHKNOWF        "Известные особенности"
+#define LG_PATHMESG         "Сообщения"
+#define LG_PATHKNOWF        "Известные возможности"
 #define LG_PATHSMILECFG     "Конфиг смайлов"
 #define LG_PATHSMILEDIR     "Каталог смайлов"
-#define LG_DEFUALTDISK      "Диск по умолчанию"
+#define LG_DEFAULTDISK      "Диск по умолчанию"
 
 #define LG_TEXTSTATUS       "Текст статусов"
 #define LG_DEFSTATES        "Состояния по умолчанию"
+
+//vCard.c
+
+#define LG_SHOW_AVATAR      "Показать аватару"
 
 #define LG_VCARD_JABBERID   "JID"
 #define LG_VCARD_FN         "Полное имя"
@@ -172,6 +177,7 @@
 #define LG_VCARD_EMAIL      "E-Mail"
 #define LG_VCARD_URL        "Домашняя страница"
 #define LG_VCARD_DESC       "О себе"
+#define LG_VCARD_AVATAR     "Аватара"
 
 #endif //RU
 
@@ -317,15 +323,20 @@
 #define LG_SETUPPATH        "Налаштування шляхів"
 #define LG_PATHHIST         "Історія"
 #define LG_PATHPIC          "Картинки"
+#define LG_PATHAVATARS      "Аватары"
 #define LG_PATHCMD          "Команди"
 #define LG_PATHMESG         "Повідомлення"
 #define LG_PATHKNOWF        "Відомі особливості"
 #define LG_PATHSMILECFG     "Конфіг смайлів"
 #define LG_PATHSMILEDIR     "Каталог смайлів"
-#define LG_DEFUALTDISK      "Диск за умовчанням"
+#define LG_DEFAULTDISK      "Диск за умовчанням"
 
 #define LG_TEXTSTATUS       "Текст статусів"
 #define LG_DEFSTATES        "Стани за умовчанням"
+
+//vCard.c
+
+#define LG_SHOW_AVATAR      "Показать аватару"
 
 #define LG_VCARD_JABBERID   "JID"
 #define LG_VCARD_FN         "Повне ім'я"
@@ -339,6 +350,7 @@
 #define LG_VCARD_EMAIL      "E-Mail"
 #define LG_VCARD_URL        "Домашня сторінка"
 #define LG_VCARD_DESC       "Про себе"
+#define LG_VCARD_AVATAR     "Аватара"
 #endif //UA
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -483,17 +495,20 @@
 #define LG_SETUPPATH        "Paths setup"
 #define LG_PATHHIST         "History path"
 #define LG_PATHPIC          "Pictures path"
+#define LG_PATHAVATARS      "Avatars path"
 #define LG_PATHCMD          "Commands path"
 #define LG_PATHMESG         "Messages path"
 #define LG_PATHKNOWF        "Known features"
 #define LG_PATHSMILECFG     "Smiles config"
 #define LG_PATHSMILEDIR     "Smiles .png path"
-#define LG_DEFUALTDISK      "Default disc"
+#define LG_DEFAULTDISK      "Default disc"
 
 #define LG_TEXTSTATUS       "Statuses text"
 #define LG_DEFSTATES        "Default states"
 
-// vCard.c
+//vCard.c
+
+#define LG_SHOW_AVATAR      "Show avatar"
 
 #define LG_VCARD_JABBERID   "JID"
 #define LG_VCARD_FN         "Full name"
@@ -507,6 +522,7 @@
 #define LG_VCARD_EMAIL      "E-Mail"
 #define LG_VCARD_URL        "Homepage"
 #define LG_VCARD_DESC       "Description"
+#define LG_VCARD_AVATAR     "Avatar"
 #endif //EN
 
 

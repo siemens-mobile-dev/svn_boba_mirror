@@ -107,7 +107,6 @@ typedef struct
   char *real_jid;
 }CONF_DATA;
 
-#define N_VCARD_FIELDS 12
 typedef char **VCARD;
 
 typedef struct
