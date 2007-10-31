@@ -52,4 +52,6 @@ int stricmp(const char *s, const char *d);
 
 unsigned int char16to8(unsigned int c);
 void utf82win(char*d,const char *s);
+
+char *utf82filename(char *str);
 #endif

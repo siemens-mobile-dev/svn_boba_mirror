@@ -114,15 +114,23 @@ void Get_Avatar_Path(char *path, char *jid)
   {
     if (ResEx->entry_type==T_CONF_NODE)
     {
-      strcat(path, ClEx->JID);
+      char *s1, *s2;
+      s1 = utf82filename(ClEx->JID);
+      strcat(path, s1);
       if (!isdir(path, &err))
         mkdir(path, &err);
       strcat(path, _slash);
-      strcat(path, ResEx->name);
+      s2 = utf82filename(ResEx->name);
+      strcat(path, s2);
+      mfree(s1);
+      mfree(s2);
     }
     else
     {
+      char *s1;
+      s1 = utf82filename(ClEx->JID);
       strcat(path, ClEx->JID);
+      mfree(s1);
     }
   }
 }

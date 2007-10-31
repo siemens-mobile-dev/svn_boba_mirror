@@ -863,3 +863,15 @@ void utf82win(char*d,const char *s)
   }
   *d = 0;
 }
+
+char *utf82filename(char *str)
+{
+  int len = strlen(str)+16;
+  WSHDR *ws = AllocWS(len);
+  char *res = malloc(len);
+  utf8_2ws(ws, str, len);
+  ws_2str(ws, res, len);
+  FreeWS(ws);
+  return res;
+}
+
