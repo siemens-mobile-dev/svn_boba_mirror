@@ -38,7 +38,7 @@ __root const CFG_HDR cfghdr6={CFG_CBOX,LG_ZLIBUSE,0,2};
 __root const int USE_ZLIB = 0;
 __root const CFG_CBOX_ITEM cfgcbox3[2]={LG_NO,LG_YES};
 
-__root const CFG_HDR cfghdr7={CFG_STR_WIN1251,LG_RES,0,29};
+__root const CFG_HDR cfghdr7={CFG_UTF8_STRING,LG_RES,0,29};
 __root const char RESOURCE[30] = "SieJC";
 
 __root const CFG_HDR cfghdr_CONNECT_LEVEL_END={CFG_LEVEL,"",0,0};

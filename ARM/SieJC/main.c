@@ -32,6 +32,7 @@
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];
+extern const char DEFAULT_MUC_NICK[];
 extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 extern const int USE_SASL;
@@ -967,12 +968,17 @@ void DisplayQuitQuery()
 
 void Enter_SiepatchDB()
 {
-  
   char room[]= "siepatchdb@conference.jabber.ru";
   char nick_t[]="%s_SieJC";
   char nick[100];
-  sprintf(nick, nick_t, USERNAME);
-//  char nick[]="Kibab_exp";
+  if(strlen(DEFAULT_MUC_NICK))
+  {
+    sprintf(nick, nick_t, DEFAULT_MUC_NICK);
+  }
+  else
+  {
+    sprintf(nick, nick_t,USERNAME);
+  }
 
   char *room_nick =ANSI2UTF8(nick, strlen(nick)*2);
   char* room_name = ANSI2UTF8(room, strlen(room)*2);
