@@ -864,6 +864,57 @@ void utf82win(char*d,const char *s)
   *d = 0;
 }
 
+long GetIDLETime(TTime intime, TDate indate)
+{
+ TTime endt;
+ TDate endd;
+// TDate endd, resd;
+ signed int res=0, rmin=0;
+ long resul=0;
+ GetDateTime(&endd, &endt);
+ res = endt.sec - intime.sec;
+ if (res < 0)
+ {
+   res = 60 + res;
+   rmin = 1;
+ }
+ resul = res;
+ res = endt.min - intime.min - rmin;
+ rmin = 0;
+ if (res <0 )
+ {
+   res = 60 + res;
+   rmin = 1;
+ }
+ resul = resul + res*60;
+ res = endt.hour - intime.hour - rmin;
+ rmin = 0;
+ if (res < 0) 
+ {
+   res = 24 + res;
+   rmin = 1;
+ }
+ resul = resul + res*3600;
+ res = endd.day - indate.day - rmin;
+ rmin = 0; 
+ if (res < 0)
+ {
+   res = 31 + res;
+//   rmin=1;
+ }
+ resul = resul + res*86400;
+/*
+ res = end.mounth - indate.mounth - rmin;
+ rmin = 0;
+ if (res < 0 )
+ {
+   res = 12 + res;
+ }
+ res = resul + res*2678400; mnogovato trowki
+   */
+ return(resul);
+}
+
 char *utf82filename(char *str)
 {
   int len = strlen(str)+16;
@@ -874,4 +925,5 @@ char *utf82filename(char *str)
   FreeWS(ws);
   return res;
 }
+
 

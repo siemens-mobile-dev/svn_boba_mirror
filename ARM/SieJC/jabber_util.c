@@ -15,6 +15,9 @@
 #include "adv_login.h"
 #include "base64.h"
 #include "lang.h"
+
+extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];
 extern const char PASSWORD[];
@@ -36,6 +39,9 @@ extern CLIST* cltop;
 extern unsigned int NContacts;
 
 MUC_ITEM *muctop = NULL;
+
+TTime intimes; //для idle
+TDate indates;
 
 extern JABBER_STATE Jabber_state;
 const char* PRESENCES[PRES_COUNT] = {"online",
@@ -168,6 +174,7 @@ char vreq_id[] = "SieJC_vers_req";
 char priv_id[] = "SieJC_priv_req";
 char treq_id[] = "SieJC_time_req";
 char vcreq_id[] = "SieJC_vcard_req";
+char lastact_id[] = "SieJC_lastact_req";
 /*
   Авторизация на Jabber-сервере
   Самая тупая, без извращений.
@@ -253,6 +260,21 @@ void Send_Vcard_Request(char *dest_jid)
   char *to=malloc(128);
   strcpy(to, dest_jid);
   SUBPROC((void*)_sendvcardrequest,to);
+}
+
+void _sendlastactivrequest(char *dest_jid)
+{
+  char typ[]=IQTYPE_GET;
+  char iq_v[]=IQ_IDLE;
+  SendIq(dest_jid, typ, lastact_id, iq_v, NULL);
+  mfree(dest_jid);
+}
+
+void Send_LastActivity_Request(char *dest_jid)
+{
+  char *to=malloc(128);
+  strcpy(to, dest_jid);
+  SUBPROC((void*)_sendlastactivrequest,to);
 }
 
 // Сгенерировать ver= исходя из текущих возможностей клиента
@@ -391,6 +413,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
   SendAnswer(msg_buf);
   mfree(msg_buf);
   m_num++;
+  GetDateTime(&indates, &intimes);
 }
 
 extern const int COMPOSING_EVENTS;
@@ -461,6 +484,21 @@ void Report_TimeInfo(char* id, char *to)
   mfree(to);
 };
 
+void Report_IDLEInfo(char* id, char *to)
+{
+/*
+   <iq from='' to='' id='' type=''>
+    <query xmlns='jabber:iq:last' seconds=''/>
+   </iq>
+*/
+  char* xmlql=malloc(1024);
+  sprintf(xmlql, "<iq type='result' id='%s' from='%s' to='%s'>\r\n<query xmlns='jabber:iq:last' seconds='%d'/>\r\n</iq>", id, My_JID_full, to,GetIDLETime(intimes, indates));
+  SendAnswer(xmlql);
+  mfree(xmlql);
+  mfree(to);
+  mfree(id);
+}
+
 // Context: HELPER
 void Report_DiscoInfo(char* id, char *to)
 {
@@ -469,8 +507,8 @@ void Report_DiscoInfo(char* id, char *to)
                     "<feature var='%s'/>"
                     "<feature var='%s'/>"
                     "<feature var='%s'/>"
-                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC, IQ_TIME);
-  //"urn:xmpp:time"
+                    "<feature var='%s'/>"
+                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC, IQ_TIME, IQ_IDLE);
   if(DELIVERY_EVENTS)
   {
     char xevents_feature[]="<feature var='"JABBER_X_EVENT"'/>";
@@ -933,6 +971,23 @@ if(!strcmp(gget,iqtype)) // Iq type = get
     }
   }
 
+  if(!strcmp(q_type,IQ_IDLE))    // jabber:iq:last
+  {
+    if(from)
+    {
+      char* loc_id = NULL;
+      if(id)
+        {
+          loc_id=malloc(strlen(id)+1);
+          strcpy(loc_id,id);
+        }
+        char* loc_from=malloc(strlen(from)+1);
+        strcpy(loc_from,from);
+        SUBPROC((void*)Report_IDLEInfo, loc_id, loc_from);
+        return;
+    }
+  } //end jabber:iq:last
+
   //entity caps
   if(!strcmp(q_type,disco_info))
   {
@@ -1033,6 +1088,34 @@ if(!strcmp(gres,iqtype))
       return;
     }
   }
+
+    if(!strcmp(id,lastact_id))   // Запрос IDLE (ответ)
+  {
+    XMLNode* query;
+    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
+    char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
+    if(!q_type)return;
+    if(!strcmp(q_type,IQ_IDLE))
+    {
+      char *cl_sec=XML_Get_Attr_Value("seconds", query->attr);
+      //Формируем сообщение
+      char *reply=malloc(512);
+      unsigned int nsec, nmin, nhr, nd;
+      nsec = strtoul(cl_sec, &cl_sec, 10);
+      nmin = udiv(60, nsec);
+      nsec -= nmin*60;
+      nhr = udiv(60, nmin);
+      nmin -= nhr*60;
+      nd = udiv(24, nhr);
+      nhr -= nd*24;
+      snprintf(reply, 512,LG_LASTACTIVMSG, nd, nhr, nmin, nsec);
+      CList_AddMessage(from, MSG_SYSTEM, reply);
+      ShowMSG(0,(int)reply);
+      mfree(reply);
+      return;
+    }
+  }//end lastactiv
+
     if(!strcmp(id,treq_id))   // Запрос TIME (ответ)
   {
     XMLNode* query;

@@ -35,7 +35,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 //==============================================================================
 
 
-#define MAX_ITEMS 8       // ћаксимальное количество пунктов меню
+#define MAX_ITEMS 9       // ћаксимальное количество пунктов меню
 
 #define MI_CONF_LEAVE       1
 #define MI_QUERY_VERSION    2
@@ -45,6 +45,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 #define MI_TIME_QUERY       6
 #define MI_VCARD_QUERY      7
 #define MI_MUC_ADMIN        8
+#define MI_LASTACTIV_QUERY  9
 
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
@@ -203,6 +204,12 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
         break;
       }
 
+    case MI_LASTACTIV_QUERY:
+    {
+      Send_LastActivity_Request((CList_GetActiveContact()->full_name));
+      break;
+    }
+
     case MI_QUERY_VERSION:
       {
 
@@ -315,6 +322,12 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
       break;
     }
 
+  case MI_LASTACTIV_QUERY:
+    {
+      strcpy(test_str,LG_QUERYLAST);
+      break;
+    }
+
   case MI_HISTORY_OPEN:
     {
       strcpy(test_str,LG_OHISTORY);
@@ -391,6 +404,7 @@ char ICON_HISTORY_OPEN[128];
 char ICON_QUERY_TIME[128];
 char ICON_QUERY_VCARD[128];
 char ICON_MUC_ADMIN[128];
+char ICON_QUERY_LASTACTIV[128];
 
 void Init_Icon_array()
 {
@@ -402,6 +416,7 @@ void Init_Icon_array()
   strcpy(ICON_HISTORY_OPEN, PATH_TO_PIC);strcat(ICON_HISTORY_OPEN, "menu_version.png");
   strcpy(ICON_QUERY_TIME, PATH_TO_PIC);strcat(ICON_QUERY_TIME, "menu_version.png");
   strcpy(ICON_QUERY_VCARD, PATH_TO_PIC);strcat(ICON_QUERY_VCARD, "menu_version.png");
+  strcpy(ICON_QUERY_LASTACTIV, PATH_TO_PIC);strcat(ICON_QUERY_LASTACTIV, "menu_version.png");
   strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
   strcpy(ICON_MUC_ADMIN, PATH_TO_PIC);strcat(ICON_MUC_ADMIN, "menu_muc_admin.png");
   if(Act_contact->entry_type==T_TRANSPORT)
@@ -418,6 +433,7 @@ void Init_Icon_array()
   cmS_ICONS[MI_HISTORY_OPEN]=(int)ICON_HISTORY_OPEN;
   cmS_ICONS[MI_TIME_QUERY]=(int)ICON_QUERY_TIME;
   cmS_ICONS[MI_VCARD_QUERY]=(int)ICON_QUERY_VCARD;
+  cmS_ICONS[MI_LASTACTIV_QUERY]=(int)ICON_QUERY_LASTACTIV;  
   cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT;
   cmS_ICONS[MI_MUC_ADMIN]=(int)ICON_MUC_ADMIN;
 }
@@ -460,6 +476,7 @@ void Disp_Contact_Menu()
   {
     Menu_Contents[n_items++]=MI_VCARD_QUERY;
     Menu_Contents[n_items++]=MI_TIME_QUERY;
+    Menu_Contents[n_items++]=MI_LASTACTIV_QUERY;    
   }
 
   if(Act_contact->entry_type==T_CONF_NODE)

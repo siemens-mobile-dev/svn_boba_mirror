@@ -46,6 +46,7 @@
 #define IQ_ROSTER  "jabber:iq:roster"
 #define IQ_PRIVATE "jabber:iq:private"
 #define IQ_TIME "jabber:iq:time"
+#define IQ_IDLE "jabber:iq:last"
 
 #define JABBER_X_EVENT "jabber:x:event"
 

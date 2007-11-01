@@ -71,6 +71,7 @@
 #define LG_MUCEXITDONE      "Выход из MUC выполнен!"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
+#define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec." //почемуто кирилица вызывает Bad UTF encoding..
 //item_info.c
 #define LG_ELROSTER         "Элемент ростера"
 #define LG_OFFLORCONTTR     "Оффлайн или контакт из транспорта"
@@ -108,6 +109,7 @@
 #define LG_OHISTORY         "История"
 #define LG_QUERYTIME        "Время клиента"
 #define LG_QUERYVCARD       "vCard"
+#define LG_QUERYLAST        "Последняя активность"
 //clist_util.c
 #define LG_AUTHORREM        "В авторизации отказано!"
 #define LG_AUTHORGRANTED    "Авторизация дана!"
@@ -139,7 +141,7 @@
 #define LG_IDLEICON         "Положение значка"
 #define LG_POPUPDIS         "Отображать POPUP"
 #define LG_COMPOSEV         "События сообщений"
-#define LG_DELIVREP         "Delivery Report if required"
+#define LG_DELIVREP         "Отчет о достаке, если требуется"
 
 #define LG_SETUPSND         "Настройка звука"
 #define LG_SNDVOL           "Громкость"
@@ -244,6 +246,7 @@
 #define LG_MUCEXITDONE      "Вихід из MUC виконано!"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
+#define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec." //почемуто кирилица вызывает Bad UTF encoding..
 //item_info.c
 #define LG_ELROSTER         "Елемент ростеру"
 #define LG_OFFLORCONTTR     "Оффлайн або контакт із транспорту"
@@ -281,6 +284,7 @@
 #define LG_OHISTORY         "Історія"
 #define LG_QUERYTIME        "Час"
 #define LG_QUERYVCARD       "vCard"
+#define LG_QUERYLAST        "Last Activity"
 //clist_util.c
 #define LG_AUTHORREM        "В авторизації відмовлено!"
 #define LG_AUTHORGRANTED    "Авторизація дана!"
@@ -416,6 +420,7 @@
 #define LG_MUCEXITDONE      "Leave MUC ok"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
+#define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec."
 //item_info.c
 #define LG_ELROSTER         "Roster elements"
 #define LG_OFFLORCONTTR     "Offline or transport contact"
@@ -453,6 +458,7 @@
 #define LG_OHISTORY         "History"
 #define LG_QUERYTIME        "Time"
 #define LG_QUERYVCARD       "vCard"
+#define LG_QUERYLAST        "Last Activity"
 //clist_util.c
 #define LG_AUTHORREM        "Authorization was removed!"
 #define LG_AUTHORGRANTED    "Authorization was granted!"

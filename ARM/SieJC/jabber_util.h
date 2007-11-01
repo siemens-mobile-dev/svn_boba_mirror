@@ -76,6 +76,10 @@ void Send_Version_Request(char *dest_jid);
 void Send_Time_Request(char *dest_jid);
 //vcard
 void Send_Vcard_Request(char *dest_jid);
+
+//lastactivity
+void Send_LastActivity_Request(char *dest_jid);
+
 // Послать запрос disco#info
 // JID указываем в UTF-8
 void Send_DiscoInfo_Request(char *dest_jid);
