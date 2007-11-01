@@ -412,13 +412,13 @@ void Init_Icon_array()
 
   strcpy(ICON_CONF_LEAVE, PATH_TO_PIC);strcat(ICON_CONF_LEAVE, "menu_muc_leave.png");
   strcpy(ICON_QUERY_VERSION, PATH_TO_PIC);strcat(ICON_QUERY_VERSION, "menu_version.png");
-  strcpy(ICON_QUERY_DISCO, PATH_TO_PIC);strcat(ICON_QUERY_DISCO, "menu_version.png");
-  strcpy(ICON_HISTORY_OPEN, PATH_TO_PIC);strcat(ICON_HISTORY_OPEN, "menu_version.png");
-  strcpy(ICON_QUERY_TIME, PATH_TO_PIC);strcat(ICON_QUERY_TIME, "menu_version.png");
-  strcpy(ICON_QUERY_VCARD, PATH_TO_PIC);strcat(ICON_QUERY_VCARD, "menu_version.png");
-  strcpy(ICON_QUERY_LASTACTIV, PATH_TO_PIC);strcat(ICON_QUERY_LASTACTIV, "menu_version.png");
+  strcpy(ICON_QUERY_DISCO, PATH_TO_PIC);strcat(ICON_QUERY_DISCO, "menu_disco.png");
+  strcpy(ICON_HISTORY_OPEN, PATH_TO_PIC);strcat(ICON_HISTORY_OPEN, "menu_history.png");
+  strcpy(ICON_QUERY_TIME, PATH_TO_PIC);strcat(ICON_QUERY_TIME, "menu_time.png");
+  strcpy(ICON_QUERY_VCARD, PATH_TO_PIC);strcat(ICON_QUERY_VCARD, "menu_vcard.png");
+  strcpy(ICON_QUERY_LASTACTIV, PATH_TO_PIC);strcat(ICON_QUERY_LASTACTIV, "menu_idle.png");
   strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
-  strcpy(ICON_MUC_ADMIN, PATH_TO_PIC);strcat(ICON_MUC_ADMIN, "menu_muc_admin.png");
+  strcpy(ICON_MUC_ADMIN, PATH_TO_PIC);strcat(ICON_MUC_ADMIN, "menu_kick.png");
   if(Act_contact->entry_type==T_TRANSPORT)
     if(Act_contact->status==PRESENCE_OFFLINE)
     {
