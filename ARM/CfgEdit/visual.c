@@ -35,6 +35,11 @@ void patch_input(INPUTDIA_DESC* inp)
   inp->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 //===============================================================================================
+//  YDISP нам больше не нужен так как иконбар отключим
+#ifdef ELKA  
+#undef YDISP
+#define   YDISP 0
+#endif
 
 typedef struct
 {
@@ -80,23 +85,27 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
   SetColor(&drwobj,pen,brush);
   DrawObject(&drwobj);
 }
-
+extern char picpath[];
 void method0_rect(RECT_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  
-  DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,white,white);
-  // Нарисуем сетку
-  for (int y_0=YDISP; y_0< scr_h;y_0+=10)
-  {
-    DrawLine(0,y_0,scr_w-1,y_0,1,colors[3]);
-  }  
-  for (int x_0=0; x_0<scr_w;x_0+=10)
-  {
-    DrawLine(x_0,YDISP,x_0, scr_h-1,1,colors[3]);
+  FSTATS fs;
+  unsigned int ul;
+  if (!GetFileStats(picpath,&fs,&ul))
+    DrawImg(0,0,(int)picpath);
+  else{
+    DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,white,white);
+    // Нарисуем сетку
+    for (int y_0=YDISP; y_0< scr_h;y_0+=10)
+    {
+      DrawLine(0,y_0,scr_w-1,y_0,1,colors[3]);
+    }  
+    for (int x_0=0; x_0<scr_w;x_0+=10)
+    {
+      DrawLine(x_0,YDISP,x_0, scr_h-1,1,colors[3]);
+    }
   }
-  
   
   if (data->is_rect_needed)
   {
@@ -139,6 +148,7 @@ void method2_rect(RECT_GUI *data, void (*mfree_adr)(void *))
 
 void method3_rect(RECT_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
+  DisableIconBar(1);
   data->gui.state=2;
 }
 
@@ -322,48 +332,50 @@ void EditCoordinates(void *rect_or_xy, int is_rect)
 }
 
 
+
 void method0_2(MAIN_GUI_2 *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,white,white);
 
-  int column_height=scr_h-35-YDISP;
+  int fsize=GetFontYSIZE(FONT_SMALL)+1;
+  int column_height=scr_h-fsize-fsize-YDISP;
   int column_width=scr_w/9;
   int start_column;
   int y_line;
   wsprintf(data->ws1,"%02X,%02X,%02X,%02X",data->r,data->g,data->b,data->a);
-  DrawString(data->ws1,1,YDISP+1,scr_w-20,YDISP+1+GetFontYSIZE(FONT_SMALL),FONT_SMALL,1,black,transparent);
-  
+
+  DrawString(data->ws1,1,YDISP+1,scr_w-20,YDISP+fsize,FONT_SMALL,1,black,transparent);
+  fsize+=3;
   for (int i=0;i!=4;i++)
   {
     start_column=column_width+2*i*column_width;
     if (data->current_column==i)
-      DrawRectangle(start_column-2,YDISP+20-2,start_column+column_width+2,YDISP+20+column_height+2,
+      DrawRectangle(start_column-2,YDISP+fsize-2,start_column+column_width+2,YDISP+fsize+column_height+2,
                     0,black,white);
 
-    DrawRectangle(start_column,YDISP+20,start_column+column_width,YDISP+20+column_height,
+    DrawRectangle(start_column,YDISP+fsize,start_column+column_width,YDISP+fsize+column_height,
                   0,black,colors[i]);
     switch(i)
     {
     case 0:
-      y_line=YDISP+20+column_height-(data->r*column_height)/0xFF;
+      y_line=YDISP+fsize+column_height-(data->r*column_height)/0xFF;
       break;
     case 1:
-      y_line=YDISP+20+column_height-(data->g*column_height)/0xFF;
+      y_line=YDISP+fsize+column_height-(data->g*column_height)/0xFF;
       break;      
     case 2:
-      y_line=YDISP+20+column_height-(data->b*column_height)/0xFF;
+      y_line=YDISP+fsize+column_height-(data->b*column_height)/0xFF;
       break;
     case 3:
-      y_line=YDISP+20+column_height-(data->a*column_height)/0x64;
+      y_line=YDISP+fsize+column_height-(data->a*column_height)/0x64;
       break;
     }
     DrawLine(start_column,y_line,start_column+column_width,y_line,0,black);
   }
   setColor(data->r,data->g,data->b,data->a,data->testcolor);
-  DrawRoundedFrame(scr_w-17,YDISP+1,scr_w-2,YDISP+16,2,2,0,black,data->testcolor);
-
+  DrawRoundedFrame(scr_w-1-fsize,YDISP+1,scr_w-2,YDISP+fsize,2,2,0,black,data->testcolor);
 }
 
 void method1_2(MAIN_GUI_2 *data, void *(*malloc_adr)(int))
@@ -380,6 +392,7 @@ void method2_2(MAIN_GUI_2 *data, void (*mfree_adr)(void *))
 
 void method3_2(MAIN_GUI_2 *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
+  DisableIconBar(1);
   data->gui.state=2;
 }
 

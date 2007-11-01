@@ -43,7 +43,7 @@
 00A0: 0xA0FE95E0   ;  28: double fp_sint2fp(signed int i)
 00A8: 0xA04EDF54   ;  2A: int *GetEELiteBlockAddress(short blocknum)
 00AC: 0xA0FE9480   ;  2B: signed int fp_fp2sint(double f)
-00B0: 0xA04ED5F1   ;  2C: getEEFullBlockSizeVersion
+00B0: 0xA04ED5F0   ;  2C: getEEFullBlockSizeVersion
 00B4: 0xA0FE8840   ;  2D: double fp_add(double addend1, double addend2)
 00B8: 0xA0FE97A0   ;  2E: double fp_mul(double factor1, double factor2)
 00BC: 0xA0FE8E54   ;  2F: double fp_div(double divisor, double divident
@@ -90,6 +90,7 @@
 017C: 0xA0092F9B   ;  5F: int GetFreeRamAvail()
 0180: 0xA06F5A09   ;  60: ShowMainMenu
 0184: 0xA063CCAB   ;  61: ShowNativeMenu
+0188: 0xA05AFB45   ;  62: SetVibraStatus
 0190: 0xA095931B   ;  64: TriggerUpdate
 0198: 0xA09C020F   ;  66: EndCallBusy
 019C: 0xA066AC95   ;  67: IsDirectCallActive
@@ -496,5 +497,14 @@
 08C4: 0xA8DA7F8C   ; 231: TAppointment *RamAppointment
 08C8: 0xA0091D7B   ; 232: GBS_DestroyMessage(GBS_MSG *)
 08CC: 0xA07BEBA3   ; 233: void GetAllEmail()
+;08D0:              ; 234: int GetLunarDate(struct DateInfo* pdate, struct DateInfo* pLdate);
+;08D4:              ; 235: int GetLunarYearID(int year);
+;08D8:              ; 236: int GetLunarAnimal(int year);
+08DC: 0xA8E94D8C   ; 237:char *RamIconBar
+08EO: 0xA0937017   ; 238:void SendAutoUSSDack(void);
+08E4: 0xA04EDABC   ; 239:int EEFullDeleteBlock(unsigned int block,int cepid,int msg); 
+08E8: 0xA04EDC28   ; 23A:int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08EC: 0xA096232F   ; 23B:void DisableIconBar(int disable);
+
 #pragma disable old_equal_ff
 +0

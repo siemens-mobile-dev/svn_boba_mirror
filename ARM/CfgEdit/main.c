@@ -910,9 +910,10 @@ void ErrorMsg(const char *msg)
   ShowMSG(1,(int)msg);
   UnlockSched();
 }
-
+char picpath[]="0:\\zbin\\img\\cfgedit.png";
 int main(const char *elf_name, const char *fname)
 {
+  picpath[0]=elf_name[0];
   MAIN_CSM main_csm;
   if (fname) strncpy(cfg_name,fname,255);
   zeromem(&main_csm,sizeof(MAIN_CSM));
