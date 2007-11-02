@@ -6,6 +6,8 @@ char white[4]={0xFF,0xFF,0xFF,0x64};
 char transparent[4]={0x00,0x00,0x00,0x00};
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+#define MIN(a,b) (a<b)?a:b
+#define MAX(a,b) (a>b)?a:b
 
 #pragma inline
 void patch_rect(RECT*rc,int x,int y, int x2, int y2)
@@ -148,7 +150,9 @@ void method2_rect(RECT_GUI *data, void (*mfree_adr)(void *))
 
 void method3_rect(RECT_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
+#ifdef ELKA  
   DisableIconBar(1);
+#endif  
   data->gui.state=2;
 }
 
@@ -161,6 +165,7 @@ void method4_rect(RECT_GUI *data, void (*mfree_adr)(void *))
 #define MIN_STEP 1
 #define MAX_STEP 8
 */
+
 
 int method5_rect(RECT_GUI *data, GUI_MSG *msg)
 {
@@ -194,10 +199,10 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
            }
            else
            {
-             data->rc->x=data->x2_pos;
-             data->rc->y=data->y2_pos;
-             data->rc->x2=data->x_pos;
-             data->rc->y2=data->y_pos;
+             data->rc->x=MIN(data->x2_pos,data->x_pos);
+             data->rc->y=MIN(data->y2_pos,data->y_pos);
+             data->rc->x2=MAX(data->x2_pos,data->x_pos);
+             data->rc->y2=MAX(data->y2_pos,data->y_pos);
              return (1);
            }
          }
@@ -210,7 +215,11 @@ int method5_rect(RECT_GUI *data, GUI_MSG *msg)
        }
     }
     if (msg->gbsmsg->msg==LONG_PRESS)
-      data->cstep=5;
+#ifdef ELKA      
+      data->cstep=9;
+#else
+      data->cstep=5;    
+#endif    
     
     switch(msg->gbsmsg->submess)
     {
@@ -392,7 +401,9 @@ void method2_2(MAIN_GUI_2 *data, void (*mfree_adr)(void *))
 
 void method3_2(MAIN_GUI_2 *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
+#ifdef ELKA    
   DisableIconBar(1);
+#endif  
   data->gui.state=2;
 }
 
