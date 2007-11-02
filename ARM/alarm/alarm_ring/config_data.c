@@ -11,7 +11,7 @@ __root const CFG_CBOX_ITEM cfgcbox0[2]={"file","standard"};
 #endif
 
 __root const CFG_HDR cfghdr1={CFG_STR_UTF8,"melody",0,127};
-__root const char melody[128]="0:\\Sounds\\alarm.mp3";
+__root const char melody[128]="2:\\Default\\AlarmMelody.wav";
 
 __root const CFG_HDR cfghdr2={CFG_STR_WIN1251,"shortcut",0,63};
 __root const char shcut[64]="ELSE_COUNT_DOWN";

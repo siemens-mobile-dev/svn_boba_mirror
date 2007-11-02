@@ -1088,6 +1088,19 @@ typedef struct
   void *data;
 }IPC_REQ;
 
+typedef struct
+{
+  unsigned short type; //00
+  WSHDR *wfilename; //04
+  int unk_08 ; //08
+  int unk_0C; //0C
+  int unk_10 ; //10
+  int unk_14 ; //14
+  long length; //18 <-- return
+  int unk_1C; //1C
+  int unk_20 ; //20
+} TWavLen;
+
 #pragma diag_suppress=Ta035
 
 #pragma swi_number=0
@@ -3121,3 +3134,10 @@ __swi __arm  int EEFullCreateBlock(unsigned int block,int size,int version,int c
  __swi __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
  //thumb
 //pattern_ELKA=?? b5 ?? 1c ?? ?? ?? fc ?? 24 ?? 28
+
+#pragma swi_number=0x45 
+#ifdef NEWSGOLD 
+__swi __arm int GetWavLen(char *filename); 
+#else 
+__swi __arm int GetWavLen(TWavLen *wl); 
+#endif
