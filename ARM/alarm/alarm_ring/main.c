@@ -3,7 +3,6 @@
 #include "conf_loader.h"
 #include "..\lgp.h"
 
-
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
 #define PROFILE_PD_DISC "1"
@@ -214,9 +213,6 @@ void OnRedraw()
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
-#ifdef ELKA
-  RamIconBar()[0]=0;
-#endif
   ws=AllocWS(128);
   SetIllumination(1,1,100,0);
   SetIllumination(0,1,100,0);
@@ -226,9 +222,6 @@ void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 
 void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
-#ifdef ELKA
-  RamIconBar()[0]=1;
-#endif
   GBS_DelTimer(&restarttmr);
   FreeWS(ws);
   data->gui.state=0;
@@ -236,6 +229,9 @@ void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 
 void onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  DisableIconBar(1);
+#endif
   DisableIDLETMR();
   data->gui.state=2;
 }

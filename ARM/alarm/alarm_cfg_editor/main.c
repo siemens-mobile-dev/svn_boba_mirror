@@ -40,11 +40,8 @@ unsigned int ch[3];
 unsigned int set=1;
 int lng;
 char cfgfile[]=DEFAULT_DISK":\\zbin\\alarm\\alarm.cfg";
-#ifdef NO_PNG
 char fongpf[]=DEFAULT_DISK":\\zbin\\alarm\\fon.gpf";
-#else
 char fonpng[]=DEFAULT_DISK":\\zbin\\alarm\\fon.png";
-#endif
 char bcfgfile[]=DEFAULT_DISK":\\Zbin\\etc\\alarm_melody.bcfg";
 
 int scr_w;
@@ -114,13 +111,12 @@ DrwImg(IMGHDR *img, int x, int y)
   DrawObject(&drwobj);
 }
 
-#ifdef NO_PNG
-void DrawGPF(char *fname, int x, int y)
+void DrawBackground()
 {
   volatile int hFile;
   PICHDR Pic_Header;
   unsigned int io_error = 0;
-  hFile = fopen(fname, A_ReadOnly + A_BIN, P_READ, &io_error);
+  hFile = fopen(fongpf, A_ReadOnly + A_BIN, P_READ, &io_error);
   if(!io_error)
   {
     fread(hFile, &Pic_Header, sizeof(Pic_Header), &io_error);
@@ -134,11 +130,14 @@ void DrawGPF(char *fname, int x, int y)
     img.h = Pic_Header.h;
     img.bpnum = Pic_Header.Compr_Bits;
     img.bitmap = pic_buffer;
-    DrwImg(&img, x, y);
+    DrwImg(&img, 0, 0);
     mfree(pic_buffer);
   }
+  else
+  {
+    DrawImg(0, 0, (int)fonpng);
+  }
 }
-#endif
 
 void draw_pic(int num,int x, int y)
 {
@@ -146,11 +145,7 @@ void draw_pic(int num,int x, int y)
   {
   case fon:
     {
-#ifdef NO_PNG
-      DrawGPF(fongpf,0,0);
-#else
-      DrawImg(0, 0, (int)fonpng);
-#endif
+      DrawBackground();
     } break;
   case st_off:
     {
@@ -326,7 +321,7 @@ int hex2int (char *s)
 void geteeblock()
 {
   char *Block5166=malloc(8);
-  ReadEEPROMData(5166, Block5166, 0, 5);
+  EEFullReadBlock(5166, Block5166, 0, 5,0,0);
   
   char *hex=malloc(8);
   char *bin=malloc(8);
@@ -378,7 +373,7 @@ void saveeeblock()
   else Block5166[4]=0xF0;
   Block5166[5]=0xFF;
   
-  WriteEEPROMData(5166, Block5166, 0, 5);
+  EEFullWriteBlock(5166, Block5166, 0, 5,0,0);
   mfree(Block5166);
   mfree(bin);
   mfree(hex);
@@ -754,24 +749,21 @@ void OnRedraw()
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
-#ifdef ELKA
-  RamIconBar()[0]=0;
-#endif
   ws = AllocWS(128);
   data->gui.state=1;
 }
 
 void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
-#ifdef ELKA
-  RamIconBar()[0]=1;
-#endif
   FreeWS(ws);
   data->gui.state=0;
 }
 
 void onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  DisableIconBar(1);
+#endif
   //DisableIDLETMR();
   data->gui.state=2;
 }
