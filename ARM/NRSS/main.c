@@ -99,7 +99,7 @@ void create_connect(void)
     else s=0;
   }
   if (!s) s=(char *)RSS_URL;
-  
+
   d=rss_host;
   while((c=*s++))
   {
@@ -107,7 +107,7 @@ void create_connect(void)
     *d++=c;
   }
   *d=0;
-  
+
   if ((s=strrchr(RSS_URL,':')))
   {
     if (*(s+1)!='/' || *(s+2)!='/')
@@ -125,11 +125,11 @@ void create_connect(void)
   sprintf(logmsg, "Connect to: %s Using port: %d", rss_host, rss_port);
   REDRAW();
   ip=str2ip(rss_host);
-  if (ip!=0xFFFFFFFF)  
+  if (ip!=0xFFFFFFFF)
   {
     sa.ip=ip;
     goto L_CONNECT;
-  }  
+  }
   err=async_gethostbyname(rss_host,&p_res,&DNR_ID); //03461351 3<70<19<81
   if (err)
   {
@@ -179,7 +179,7 @@ void create_connect(void)
         snprintf(logmsg,255,"Error Create Socket");
         REDRAW();
       }
-    } 
+    }
   }
   else
   {
@@ -208,7 +208,7 @@ void free_xml_buf(void)
   char *p=xml_buf;
   xml_buf_len=0;
   xml_buf=NULL;
-  mfree(p);  
+  mfree(p);
 }
 
 void free_recv_buf(void)
@@ -265,7 +265,7 @@ void free_send_buf(void)
   mfree(p);
 #ifdef SEND_TIMER
   GBS_DelTimer(&send_tmr);
-#endif  
+#endif
 }
 
 #ifdef SEND_TIMER
@@ -362,7 +362,7 @@ void send_req(void)
   if ((s=strchr(RSS_URL, ':')))
   {
     if (*(s+1)=='/' && *(s+2)=='/') {
-      s+=3;      
+      s+=3;
     } else {
       s=0;
     }
@@ -376,7 +376,7 @@ void send_req(void)
     s++;
   }
   *d=0;
-  
+
   d=get_path;
   while((c=*s))
   {
@@ -385,7 +385,7 @@ void send_req(void)
     s++;
   }
   *d=0;
-  
+
   snprintf(req_buf,255,"GET %s"
           " HTTP/1.0\r\nHost: %s\r\n\r\n", get_path, host);
   p=malloc((len=strlen(req_buf))+1);
@@ -407,25 +407,25 @@ char *html_decode(char *s)
       {
         *d++=13;
         s+=3;
-        continue;       
+        continue;
       }
       if (!strncmp(s,"br />",5))
       {
         *d++=13;
         s+=5;
-        continue; 
+        continue;
       }
       if (!strncmp(s,"/td>",4))
       {
         *d++=' ';
         s+=4;
-        continue; 
+        continue;
       }
       if (!strncmp(s,"p>",2))
       {
         *d++=13;
         s+=2;
-        continue; 
+        continue;
       }
     }
     if (c=='&')
@@ -434,31 +434,31 @@ char *html_decode(char *s)
       {
         *d++='\"';
         s+=6;
-        continue;       
+        continue;
       }
       if (!strncmp(s,"nbsp;",5))
       {
         *d++=' ';
         s+=5;
-        continue; 
+        continue;
       }
       if (!strncmp(s,"lt;",3))
       {
         *d++='<';
         s+=3;
-        continue; 
+        continue;
       }
       if (!strncmp(s,"gt;",3))
       {
         *d++='>';
         s+=3;
-        continue; 
+        continue;
       }
       if (!strncmp(s,"amp;",4))
       {
         *d++='&';
         s+=4;
-        continue; 
+        continue;
       }
       if (!strncmp(s,"copy;",5))
       {
@@ -466,8 +466,8 @@ char *html_decode(char *s)
         *d++='c';
         *d++=')';
         s+=5;
-        continue; 
-      }            
+        continue;
+      }
     }
     *d++=c;
   }
@@ -496,7 +496,7 @@ void DecodeRSS()
       while(channel)
       {
         if (!strcmp(channel->name, "channel")) break;
-        channel=channel->next;        
+        channel=channel->next;
       }
       if (channel)
       {
@@ -515,14 +515,14 @@ void DecodeRSS()
               if (!strcmp(item->name, "description")) desc=item->value;
               item=item->next;
             }
-            if (title) 
+            if (title)
             {
               p->title=malloc(strlen(title)+1);
               strcpy(p->title, title);
             }
             if (desc)
             {
-              p->description=html_decode(desc);         
+              p->description=html_decode(desc);
             }
             if (!rss_first)
             {
@@ -535,7 +535,7 @@ void DecodeRSS()
             }
           }
           items=items->next;
-        }        
+        }
       }
     }
     DestroyTree(root);
@@ -550,8 +550,8 @@ static void OnRedraw(MAIN_GUI *data)
   unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
   int n=0;
   RSS_ITEM *p=(RSS_ITEM *)&rss_first;
-  while((p=p->next)) n++; 
-  DrawRoundedFrame(0,0,ScreenW()-1,ScreenH()-1,0,0,0,GetPaletteAdrByColorIndex(4),GetPaletteAdrByColorIndex(1));
+  while((p=p->next)) n++;
+  DrawRoundedFrame(0,YDISP,ScreenW()-1,ScreenH()-1,0,0,0,GetPaletteAdrByColorIndex(4),GetPaletteAdrByColorIndex(1));
   wsprintf(data->ws1,
            "State: %d\n"
              "Rx: %db, Tx: %db\n"
@@ -560,7 +560,7 @@ static void OnRedraw(MAIN_GUI *data)
                    "Total items: %d",connect_state,RX,TX,send_buf_len,logmsg,n);
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
              FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  
+
 
 }
 
@@ -596,21 +596,21 @@ static int OnKey(MAIN_GUI *data, GUI_MSG *msg)
     {
     case '1':
       break;
-      
+
     case GREEN_BUTTON:
       DNR_TRIES=3;
       do_start_connection();
       REDRAW();
       break;
-      
+
     case LEFT_SOFT:
       if (rss_first) create_rssitems_menu();
       break;
-      
-    case RIGHT_SOFT: 
+
+    case RIGHT_SOFT:
       return (1);
     }
-    
+
   }
   return(0);
 }
@@ -677,7 +677,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     {
       ShowMSG(1,(int)"NRSS config updated!");
       InitConfig();
-    }    
+    }
   }
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
@@ -686,11 +686,11 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     case LMAN_DISCONNECT_IND:
       is_gprs_online=0;
       return(1);
-      
+
     case LMAN_CONNECT_CNF:
       is_gprs_online=1;
       return(1);
-      
+
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
       {
@@ -713,7 +713,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           SUBPROC((void *)send_req);
         }
         break;
-        
+
       case ENIP_SOCK_DATA_READ:
         //Если посылали send
         if (connect_state>=2)
@@ -721,20 +721,20 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           SUBPROC((void *)get_answer);
         }
         break;
-        
+
       case ENIP_BUFFER_FREE:
       case ENIP_BUFFER_FREE1:
 	//Досылаем очередь
 	SUBPROC((void *)send_answer,0,0);
 	break;
-        
+
       case ENIP_SOCK_REMOTE_CLOSED:
         //Закрыт со стороны сервера
         sprintf(logmsg,"Remote closed!");
         goto ENIP_SOCK_CLOSED_ALL;
-        
+
       case ENIP_SOCK_CLOSED:
-        //Закрыт вызовом closesocket 
+        //Закрыт вызовом closesocket
         sprintf(logmsg,"Local closed!");
       ENIP_SOCK_CLOSED_ALL:
 	switch(connect_state)
@@ -742,7 +742,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	case -1:
 	  connect_state=0;
           DecodeRSS();
-	  SUBPROC((void*)free_socket);	  
+	  SUBPROC((void*)free_socket);	
 	  break;
 	case 0:
 	  break;
@@ -754,7 +754,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         break;
       }
     }
-    
+
   }
   return(1);
 }
