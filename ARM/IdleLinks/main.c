@@ -153,11 +153,10 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
   DirectRedrawGUI();  
   
   if (msg->gbsmsg->msg==KEY_DOWN)
-  {          
-    switch(msg->gbsmsg->submess)
+  { 
+    if (msg->gbsmsg->submess == CALL_BTN) return (1);
+    switch (msg->gbsmsg->submess)
     {
-    case CALL_BTN:      
-      return(1);
     case RIGHT_BUTTON:
       {
         pos+=1;

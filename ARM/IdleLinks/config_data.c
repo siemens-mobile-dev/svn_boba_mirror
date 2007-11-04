@@ -8,7 +8,7 @@
 #endif
 
 __root const CFG_HDR cfghdr0={CFG_UINT,"Клавиша вызова",0,100};
-__root const unsigned int CALL_BTN=ENTER_BUTTON;
+__root const unsigned int CALL_BTN=RIGHT_SOFT;
 
 __root const CFG_HDR cfghdr1_1={CFG_CHECKBOX,"Активен",0,2};
 __root const int active=1;
