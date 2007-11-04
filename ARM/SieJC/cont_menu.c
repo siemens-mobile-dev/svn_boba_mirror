@@ -86,7 +86,7 @@ MENU_DESC contact_menu=
 };
 
 //////////////////////// Menu "muc#admin" ///////////////////////////
-#define MAX_MUC_ADMIN_ITEMS 9
+#define MAX_MUC_ADMIN_ITEMS 10
 
 #define MA_CONF_KICK_THIS   1
 #define MA_CONF_BAN_THIS    2
@@ -95,8 +95,9 @@ MENU_DESC contact_menu=
 #define MA_CONF_PARTICIPANT 5
 #define MA_CONF_MEMBER      6
 #define MA_CONF_MODERATOR   7
-#define MA_CONF_ADMIN       8
-#define MA_CONF_OWNER       9
+#define MA_CONF_MGR         8
+#define MA_CONF_ADMIN       9
+#define MA_CONF_OWNER       10
 
 char MA_Menu_Contents[MAX_MUC_ADMIN_ITEMS-1];
 const char ma_menu_header[]=LG_MUC_ADMIN;
@@ -140,21 +141,39 @@ void Disp_MA_Menu()
   TRESOURCE *Act_contact = CList_GetActiveContact();
   InitMAMenuArray();
   int n_items=0;
-  if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
-    {
-      MA_Menu_Contents[n_items++]=MA_CONF_KICK_THIS;
-      MA_Menu_Contents[n_items++]=MA_CONF_BAN_THIS;
+  //ќпредел€ем, каие будут пункты в меню меню muc#admin дл€ текущего контакта
+  MA_Menu_Contents[n_items++]=MA_CONF_KICK_THIS;
+  MA_Menu_Contents[n_items++]=MA_CONF_BAN_THIS;
+    if(Act_contact->muc_privs.role==ROLE_VISITOR) // если текущий контакт визитор, ему можно давать голос
+  {
+     MA_Menu_Contents[n_items++]=MA_CONF_VGR_THIS;    
+  }
+  else if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN) //если текущий контакт не визитор, не админ, и не овнер, его можно сделать визитором
+  {
+    MA_Menu_Contents[n_items++]=MA_CONF_VREJ_THIS;
+  }
+  if(Act_contact->muc_privs.aff>AFFILIATION_NONE) //“олько если контакт не мембер, его можно делать участником
+  {
       MA_Menu_Contents[n_items++]=MA_CONF_PARTICIPANT;
-      MA_Menu_Contents[n_items++]=MA_CONF_MEMBER;
-      MA_Menu_Contents[n_items++]=MA_CONF_MODERATOR;
-      MA_Menu_Contents[n_items++]=MA_CONF_ADMIN;
-      MA_Menu_Contents[n_items++]=MA_CONF_OWNER;
-      if(Act_contact->muc_privs.role==ROLE_VISITOR)
-      {
-        MA_Menu_Contents[n_items++]=MA_CONF_VGR_THIS;
-      }
-      else MA_Menu_Contents[n_items++]=MA_CONF_VREJ_THIS;
-    }
+  }
+  else  MA_Menu_Contents[n_items++]=MA_CONF_MEMBER; //»наче его можно делать мембером
+  if(Act_contact->muc_privs.role!=ROLE_MODERATOR) //≈сли контакт не модератор, его можно делать модератором
+  {
+       MA_Menu_Contents[n_items++]=MA_CONF_MODERATOR;
+  }
+  else if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN) //если контакт модератор, но не админ или овнер, у него можно забирать модератора
+  {
+    MA_Menu_Contents[n_items++]=MA_CONF_MGR;
+  }
+  if(Act_contact->muc_privs.aff!=AFFILIATION_ADMIN) // если текущий контакт не админ, его можо делать админом
+  {
+    MA_Menu_Contents[n_items++]=MA_CONF_ADMIN;
+  }
+  if(Act_contact->muc_privs.aff!=AFFILIATION_OWNER) // если текущий контакт не овнер, его можно делать овнером
+  {
+   MA_Menu_Contents[n_items++]=MA_CONF_OWNER; 
+  }
+
   patch_rect(&ma_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   CreateMenu(0,0,&ma_menu,&ma_menuhdr,0,n_items,0,0);
 }
@@ -481,10 +500,9 @@ void Disp_Contact_Menu()
 
   if(Act_contact->entry_type==T_CONF_NODE)
   {
-    if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN)
-    {
+ 
       Menu_Contents[n_items++]=MI_MUC_ADMIN;
-    }
+
   }
 
   if(n_items+1)
@@ -522,6 +540,7 @@ int ma_menu_onkey(void *data, GUI_MSG *msg)
     if(MA_Menu_Contents[i]==MA_CONF_PARTICIPANT)admin_cmd=ADM_PARTICIPANT;
     if(MA_Menu_Contents[i]==MA_CONF_MEMBER)admin_cmd=ADM_MEMBER;
     if(MA_Menu_Contents[i]==MA_CONF_MODERATOR)admin_cmd=ADM_MODERATOR;
+    if(MA_Menu_Contents[i]==MA_CONF_MGR)admin_cmd=ADM_MODERATOR_REMOVE;
     if(MA_Menu_Contents[i]==MA_CONF_ADMIN)admin_cmd=ADM_ADMIN;
     if(MA_Menu_Contents[i]==MA_CONF_OWNER)admin_cmd=ADM_OWNER;
     MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
@@ -574,7 +593,12 @@ void ma_menu_iconhndl(void *data, int curitem, void *unk)
       strcpy(test_str,LG_MEMBER);
       break;
     }
-
+  case MA_CONF_MGR:
+    {
+      strcpy(test_str,LG_MODERATOR_REMOVE);
+      break;   
+    }
+    
   case MA_CONF_MODERATOR:
     {
       strcpy(test_str,LG_MODERATOR);

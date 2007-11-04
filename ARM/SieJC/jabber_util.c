@@ -1498,6 +1498,12 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
       strcpy(val,JABBER_ROLS[ROLE_MODERATOR]);
       break;
     }
+ case ADM_MODERATOR_REMOVE:
+    {
+      strcpy(it,role);
+      strcpy(val,JABBER_ROLS[ROLE_PARTICIPANT]);
+      break;
+    }
 
   case ADM_ADMIN:
     {

@@ -23,6 +23,7 @@ typedef enum
   ADM_PARTICIPANT,      // Participant
   ADM_MEMBER,           // Member
   ADM_MODERATOR,        // Moderator
+  ADM_MODERATOR_REMOVE,  // Moderator remove
   ADM_ADMIN,            // Admin
   ADM_OWNER             // Owner
 }MUC_ADMIN;
