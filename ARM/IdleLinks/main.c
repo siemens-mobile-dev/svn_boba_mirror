@@ -156,11 +156,7 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
   {          
     switch(msg->gbsmsg->submess)
     {
-#ifdef NEWSGOLD
-    case RIGHT_SOFT:      
-#else
-    case RED_BUTTON:
-#endif
+    case CALL_BTN:      
       return(1);
     case RIGHT_BUTTON:
       {
