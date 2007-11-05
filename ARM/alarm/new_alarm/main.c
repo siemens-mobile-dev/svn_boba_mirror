@@ -273,12 +273,17 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       GUI *igui=GetTopGUI();
       if (igui)
       {
-        void *idata = GetDataOfItemByID(igui, 2);
-        if (idata)
+#ifdef ELKA
         {
-          if((IsUnlocked())&&(show_icon)&&(status_icon))
+          void *canvasdata = BuildCanvas();
+#else
+          void *idata = GetDataOfItemByID(igui, 2);
+          if (idata)
           {
             void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+#endif
+          if((IsUnlocked())&&(show_icon)&&(status_icon))
+          {
             DrawCanvas(canvasdata, X, Y, X + imgh, Y + imgh, 1);
 #ifdef NO_PNG
             DrawGPF(icon,X,Y);

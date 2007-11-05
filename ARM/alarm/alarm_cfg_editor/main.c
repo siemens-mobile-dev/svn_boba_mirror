@@ -48,21 +48,13 @@ int scr_w;
 int scr_h;
 int font_size;
 
-typedef struct
-{
-  char w;
-  char h;
-  unsigned short bpnum;
-  char *bitmap;
-}IMGHDR_;
-
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 unsigned int MAINCSM_ID = 0;
 unsigned int MAINGUI_ID = 0;
 char colors[4][4]={{0xFF,0,0,0x64},{0,0xFF,0,0x64},{0,0,0xFF,0x64},{0xC6,0xAA,0xAF,0x32}};
 const char Pointer[5]={0x27,0x27,0xFF,0x27,0x27};
-const IMGHDR_ imgPointer = {5,5,0x1,(char *)Pointer};
+const IMGHDR imgPointer = {5,5,0x1,(char *)Pointer};
 GBSTMR mytmr;
 
 WSHDR *ws;
@@ -952,9 +944,9 @@ int onkey(unsigned char keycode, int pressed)
       case LONG_PRESS:
         switch(keycode)
           {
-          case LEFT_BUTTON: case '4': if (X>0) X-=5; else X=132; break;
+          case LEFT_BUTTON: case '4': if (X>0) X-=5; else X=scr_w; break;
           case RIGHT_BUTTON: case '6': if (X<132) X+=5; else X=0; break;
-          case UP_BUTTON: case '2': if (Y>0) Y-=5; else Y=176; break;
+          case UP_BUTTON: case '2': if (Y>0) Y-=5; else Y=scr_h; break;
           case DOWN_BUTTON: case '8': if (Y<176) Y+=5; else Y=0; break;
           }
       case KEY_DOWN:
@@ -962,10 +954,10 @@ int onkey(unsigned char keycode, int pressed)
         {
         case RED_BUTTON:  mode=1; break;
         case LEFT_SOFT: if (show_icon==1) show_icon=0; else show_icon=1; break;
-        case LEFT_BUTTON: case '4': if (X!=0) X=X-1; else X=132; break;
-        case RIGHT_BUTTON: case '6': if (X!=132) X=X+1; else X=0; break;
-        case UP_BUTTON: case '2': if (Y!=0) Y=Y-1; else Y=176; break;
-        case DOWN_BUTTON: case '8': if (Y!=176) Y=Y+1; else Y=0; break;
+        case LEFT_BUTTON: case '4': if (X!=0) X--; else X=scr_w; break;
+        case RIGHT_BUTTON: case '6': if (X!=132) X++; else X=0; break;
+        case UP_BUTTON: case '2': if (Y!=0) Y--; else Y=scr_h; break;
+        case DOWN_BUTTON: case '8': if (Y!=176) Y++; else Y=0; break;
         default: mode=1; break;
         }
       }

@@ -9,6 +9,7 @@ const char change[]="change";
 const char save[]="save";
 const char ok[]="ok";
 const char *wd[7]={"Mo","Tu","We","Th","Fr","Sa","Su"};
+const char *wd2[7]={"Monday","Tuesday","Wednesday","Thesday","Friday","Saturday","Sunday"};
 #else
 const char on[]="вкл.";
 const char off[]="выкл.";
