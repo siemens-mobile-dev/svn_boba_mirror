@@ -142,36 +142,43 @@ void Disp_MA_Menu()
   InitMAMenuArray();
   int n_items=0;
   //Определяем, каие будут пункты в меню меню muc#admin для текущего контакта
-  MA_Menu_Contents[n_items++]=MA_CONF_KICK_THIS;
-  MA_Menu_Contents[n_items++]=MA_CONF_BAN_THIS;
-    if(Act_contact->muc_privs.role==ROLE_VISITOR) // если текущий контакт визитор, ему можно давать голос
+  //Считаем, что у нас права овнера, потому что определять собственные права сложновато
+  if(Act_contact->muc_privs.role!=ROLE_MODERATOR) //если текущий контакт не модератор, его можно кикать
   {
-     MA_Menu_Contents[n_items++]=MA_CONF_VGR_THIS;    
+       MA_Menu_Contents[n_items++]=MA_CONF_KICK_THIS; 
+  }
+       MA_Menu_Contents[n_items++]=MA_CONF_BAN_THIS; // банить можно всех подряд ;)
+  if(Act_contact->muc_privs.role==ROLE_VISITOR) // если текущий контакт визитор, ему можно давать голос
+  {
+       MA_Menu_Contents[n_items++]=MA_CONF_VGR_THIS;    
   }
   else if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN) //если текущий контакт не визитор, не админ, и не овнер, его можно сделать визитором
   {
-    MA_Menu_Contents[n_items++]=MA_CONF_VREJ_THIS;
+       MA_Menu_Contents[n_items++]=MA_CONF_VREJ_THIS;
   }
-  if(Act_contact->muc_privs.aff>AFFILIATION_NONE) //Только если контакт не мембер, его можно делать участником
+  if(Act_contact->muc_privs.aff>AFFILIATION_NONE) //если контакт не none, его можно делать мембером
   {
-      MA_Menu_Contents[n_items++]=MA_CONF_PARTICIPANT;
+       MA_Menu_Contents[n_items++]=MA_CONF_PARTICIPANT;
   }
-  else  MA_Menu_Contents[n_items++]=MA_CONF_MEMBER; //Иначе его можно делать мембером
-  if(Act_contact->muc_privs.role!=ROLE_MODERATOR) //Если контакт не модератор, его можно делать модератором
+  if(Act_contact->muc_privs.aff!=AFFILIATION_MEMBER) //если текущий контакт не мембер, его можно делать мембером (и админов с овнерами можно)
   {
-       MA_Menu_Contents[n_items++]=MA_CONF_MODERATOR;
+       MA_Menu_Contents[n_items++]=MA_CONF_MEMBER;
   }
-  else if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN) //если контакт модератор, но не админ или овнер, у него можно забирать модератора
+  if(Act_contact->muc_privs.role!=ROLE_MODERATOR) // если текущий не модератор, его можно делать модератором
   {
-    MA_Menu_Contents[n_items++]=MA_CONF_MGR;
+      MA_Menu_Contents[n_items++]=MA_CONF_MODERATOR;
+  }
+  else if(Act_contact->muc_privs.aff<AFFILIATION_ADMIN) // если текущий контакт модератор, но не админ или овнер, у него можно забирать модератора
+  {
+      MA_Menu_Contents[n_items++]=MA_CONF_MGR;
   }
   if(Act_contact->muc_privs.aff!=AFFILIATION_ADMIN) // если текущий контакт не админ, его можо делать админом
   {
-    MA_Menu_Contents[n_items++]=MA_CONF_ADMIN;
+      MA_Menu_Contents[n_items++]=MA_CONF_ADMIN;
   }
   if(Act_contact->muc_privs.aff!=AFFILIATION_OWNER) // если текущий контакт не овнер, его можно делать овнером
   {
-   MA_Menu_Contents[n_items++]=MA_CONF_OWNER; 
+      MA_Menu_Contents[n_items++]=MA_CONF_OWNER; 
   }
 
   patch_rect(&ma_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
