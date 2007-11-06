@@ -339,7 +339,7 @@ static const ML_MENU_DESC rb_menu=
   NULL,   //Items
   NULL,   //Procs
   MENU_ITEMS_NUM,   //n
-  1 //Добавочных строк  
+  0 //Добавочных строк  
 };
 
 void CreateRBMenu(void)

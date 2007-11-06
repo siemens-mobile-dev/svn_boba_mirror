@@ -976,7 +976,7 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
@@ -1356,8 +1356,8 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild></prebuild>
-        <postbuild>C:\WINDOWS\System32\irftp.exe $TARGET_PATH$</postbuild>
+        <prebuild>obexdel Data\ZBin\Daemons\KeyMaster.elf</prebuild>
+        <postbuild>obexcopy $TARGET_PATH$ Data\ZBin\Daemons\KeyMaster.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -1559,12 +1559,12 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>KeyMaster.a79</state>
+          <state>KeyMaster.dbg</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>15</state>
         </option>
         <option>
           <name>ExtraFormatVariant</name>
