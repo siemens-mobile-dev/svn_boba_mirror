@@ -34,6 +34,7 @@ void FreeAttrQueue(XMLAttr *ta)
 
 void DestroyTree(XMLNode *tmpp)
 {
+  XMLNode * tmpp2;
   while(tmpp)
   {
     FreeAttrQueue(tmpp->attr);
@@ -41,7 +42,7 @@ void DestroyTree(XMLNode *tmpp)
     {
       DestroyTree(tmpp->subnode);
     }
-    XMLNode *tmpp2=tmpp->next;
+    tmpp2=tmpp->next;
     mfree(tmpp->name);
     mfree(tmpp->value);
     mfree(tmpp);
@@ -319,6 +320,18 @@ XMLNode *XMLDecode(char *buf, int size)
         TextLen=0;
         MSState = MS_CDATA_SECTION;
         TagState = TS_NORMAL;
+      } else if (!strncmp(buf+i, "--", 2)) {
+        if(strstr(buf+i+2, "-->"))
+        {
+          i+= strstr(buf+i+2, "-->") - (buf+i) + 3;
+          TextLen=0;
+          MSState = MS_BEGIN;
+          TagState = TS_INDEFINITE;
+        }
+        else
+        {
+          goto L_ERR;
+        }
       } else {
         goto L_ERR;
       }

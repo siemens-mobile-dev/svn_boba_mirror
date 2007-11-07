@@ -2,20 +2,24 @@
   #define _DECODE_XML_H_
 
 
-typedef struct{
-  void *next;
+typedef struct XMLAttr_type XMLAttr;
+
+typedef struct XMLAttr_type {
+  XMLAttr *next;
   char *name;
   char *param;
-}XMLAttr;
+} _XMLAttr;
 
+typedef struct XMLNode_type XMLNode;
 
-typedef struct{
-  void *next;
-  void *subnode;
+typedef struct XMLNode_type {
+  XMLNode *next;
+  XMLNode *subnode;
   char *name;
   XMLAttr *attr;
   char *value;
-}XMLNode;
+} _XMLNode;
+
 
 // Декодировать поток
 XMLNode *XMLDecode(char *buf, int size);
