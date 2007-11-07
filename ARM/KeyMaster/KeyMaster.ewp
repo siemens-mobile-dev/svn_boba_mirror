@@ -1356,8 +1356,8 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>obexdel Data\ZBin\Daemons\KeyMaster.elf</prebuild>
-        <postbuild>obexcopy $TARGET_PATH$ Data\ZBin\Daemons\KeyMaster.elf</postbuild>
+        <prebuild></prebuild>
+        <postbuild>postbuild.bat $TARGET_PATH$ Data\ZBin\Daemons\KeyMaster.elf</postbuild>
       </data>
     </settings>
     <settings>
