@@ -1351,18 +1351,27 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
             }
           }
         }
-        else
+        else if(real_jid)  //если знаем реальный jid, выводим его
         {
-          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
+          sprintf(r, "%s (%s) joined as %s and %s", nick, real_jid, affiliation, role);
           Req_Set_Role = 1;
         }
+        else
+          sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
+          Req_Set_Role = 1;
 
         }
+        else if(real_jid)
+        {
+          sprintf(r, "%s (%s) joined as %s and %s", nick, real_jid, affiliation, role);
+          Req_Set_Role = 1;
+        }
         else
         {
           sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
           Req_Set_Role = 1;
         }
+         
 
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
