@@ -33,6 +33,7 @@ typedef struct
   WSHDR *ws1;
 }MAIN_GUI;
 
+int maingui_id;
 
 SOFTKEY_DESC menu_sk[]=
 {
@@ -71,10 +72,63 @@ void FreeRssItems(void)
 }
 
 //=====================================================================
+
+void SMART_REDRAW(void)
+{
+  int f;
+  LockSched();
+  f=IsGuiOnTop(maingui_id);
+  UnlockSched();
+  if (f) REDRAW();
+}
+
+//=====================================================================
+int get_path_from_url(char *dest, const char *source)
+{
+  char *s1;
+  int c;
+  int len=0;
+  const char *s2=source;
+  while((s1=strchr(s2, '/')))
+  {
+    s2=s1;
+    if (*(s2+1)!='/') break;
+    s2++;
+  }   
+  while((c=*s2++))
+  {
+    *dest++=c;
+    len++;
+  }
+  *dest=0;
+  return (len);   
+}
+
+int get_host_from_url(char *dest, const char *source)
+{
+  char *s1;
+  int len=0;
+  int c;
+  const char *s2=source;
+  if ((s1=strchr(s2, ':')))
+  {
+    if (*(s1+1)=='/' && *(s1+2)=='/')
+    {
+      s2=s1+3;
+    }
+  }
+  while((c=*s2++))
+  {
+    if (c=='/' || c==':') break;
+    *dest++=c;
+    len++;
+  }
+  *dest=0;
+  return (len); 
+}
+
 void create_connect(void)
 {
-  char *s, *d;
-  int c;
   char rss_host[64];
   unsigned int rss_port=80;
   int ***p_res=NULL;
@@ -90,40 +144,11 @@ void create_connect(void)
   }
   DNR_ID=0;
   *socklasterr()=0;
-  if ((s=strchr(RSS_URL,':')))
-  {
-    if (*(s+1)=='/' && *(s+2)=='/')
-    {
-      s+=3;
-    }
-    else s=0;
-  }
-  if (!s) s=(char *)RSS_URL;
+  
+  get_host_from_url(rss_host,RSS_URL);
 
-  d=rss_host;
-  while((c=*s++))
-  {
-    if (c=='/' || c==':') break;
-    *d++=c;
-  }
-  *d=0;
-
-  if ((s=strrchr(RSS_URL,':')))
-  {
-    if (*(s+1)!='/' || *(s+2)!='/')
-    {
-      rss_port=0;
-      s++;
-      while((c=*s++))
-      {
-        if (c=='/' || c==':' || !(c>='0' && c<='9')) break;
-        rss_port*=10;
-        rss_port+=c-'0';
-      }
-    }
-  }
   sprintf(logmsg, "Connect to: %s Using port: %d", rss_host, rss_port);
-  REDRAW();
+  SMART_REDRAW();
   ip=str2ip(rss_host);
   if (ip!=0xFFFFFFFF)
   {
@@ -138,13 +163,14 @@ void create_connect(void)
       if (DNR_ID)
       {
         strcpy(logmsg, "Wait DNR");
-        REDRAW();
+        SMART_REDRAW();
 	return; //Ждем готовности DNR
       }
     }
     else
     {
       snprintf(logmsg,255,"DNR error %d",err);
+      SMART_REDRAW();
       return;
     }
   }
@@ -171,13 +197,13 @@ void create_connect(void)
 	  closesocket(sock);
 	  sock=-1;
           snprintf(logmsg,255,"Connect fault");
-          REDRAW();
+          SMART_REDRAW();
 	}
       }
       else
       {
         snprintf(logmsg,255,"Error Create Socket");
-        REDRAW();
+        SMART_REDRAW();
       }
     }
   }
@@ -228,6 +254,7 @@ void get_answer(void)
   if (j>0)
   {
     ALLTOTALRECEIVED+=j;
+    SMART_REDRAW();
     if (receive_mode)
     {
       xml_buf=realloc(xml_buf, xml_buf_len+j+1);
@@ -311,6 +338,7 @@ void send_answer(char *buf, int len)
     }
     ALLTOTALSENDED+=j;
     send_buf_len-=j;
+    SMART_REDRAW();
     memcpy(send_buf,send_buf+j,send_buf_len); //Удалили переданное
     if (j<i)
     {
@@ -355,36 +383,12 @@ static void free_socket(void)
 void send_req(void)
 {
   char *p;
-  char *s, *d;
-  int c, len;
+  int len;
   char host[64], get_path[64];
   char req_buf[256];
-  if ((s=strchr(RSS_URL, ':')))
-  {
-    if (*(s+1)=='/' && *(s+2)=='/') {
-      s+=3;
-    } else {
-      s=0;
-    }
-  }
-  if (!s) s=(char *)RSS_URL;
-  d=host;
-  while((c=*s))
-  {
-    if (c=='/') break;
-    *d++=c;
-    s++;
-  }
-  *d=0;
-
-  d=get_path;
-  while((c=*s))
-  {
-    if (c==':') break;
-    *d++=c;
-    s++;
-  }
-  *d=0;
+  
+  get_path_from_url(get_path, RSS_URL);
+  get_host_from_url(host, RSS_URL);
 
   snprintf(req_buf,255,"GET %s"
           " HTTP/1.0\r\nHost: %s\r\n\r\n", get_path, host);
@@ -430,7 +434,7 @@ char *html_decode(char *s)
     }
     if (c=='&')
     {
-      if (!strncmp(s,"quote;",6))
+      if (!strncmp(s,"quot;",5))
       {
         *d++='\"';
         s+=6;
@@ -547,11 +551,11 @@ static void OnRedraw(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
+  unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;
   int n=0;
   RSS_ITEM *p=(RSS_ITEM *)&rss_first;
   while((p=p->next)) n++;
-  DrawRoundedFrame(0,YDISP,ScreenW()-1,ScreenH()-1,0,0,0,GetPaletteAdrByColorIndex(4),GetPaletteAdrByColorIndex(1));
+  DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,GetPaletteAdrByColorIndex(4),GetPaletteAdrByColorIndex(1));
   wsprintf(data->ws1,
            "State: %d\n"
              "Rx: %db, Tx: %db\n"
@@ -560,8 +564,6 @@ static void OnRedraw(MAIN_GUI *data)
                    "Total items: %d",connect_state,RX,TX,send_buf_len,logmsg,n);
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
              FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-
-
 }
 
 static void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
@@ -600,7 +602,7 @@ static int OnKey(MAIN_GUI *data, GUI_MSG *msg)
     case GREEN_BUTTON:
       DNR_TRIES=3;
       do_start_connection();
-      REDRAW();
+      SMART_REDRAW();
       break;
 
     case LEFT_SOFT:
@@ -637,7 +639,7 @@ static void maincsm_oncreate(CSM_RAM *data)
 {
   static const RECT Canvas={0,0,0,0};
   MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
-  MAIN_CSM*csm=(MAIN_CSM*)data;
+  MAIN_CSM *csm=(MAIN_CSM *)data;
   zeromem(main_gui,sizeof(MAIN_GUI));
   patch_rect((RECT*)&Canvas,0,YDISP,ScreenW()-1,ScreenH()-1);
   main_gui->gui.canvas=(void *)(&Canvas);
@@ -646,7 +648,7 @@ static void maincsm_oncreate(CSM_RAM *data)
   main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   csm->csm.state=0;
   csm->csm.unk1=0;
-  csm->gui_id=CreateGUI(main_gui);
+  maingui_id=csm->gui_id=CreateGUI(main_gui);
 }
 
 #pragma segment="ELFBEGIN"
@@ -737,6 +739,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         //Закрыт вызовом closesocket
         sprintf(logmsg,"Local closed!");
       ENIP_SOCK_CLOSED_ALL:
+        SMART_REDRAW();
 	switch(connect_state)
 	{
 	case -1:

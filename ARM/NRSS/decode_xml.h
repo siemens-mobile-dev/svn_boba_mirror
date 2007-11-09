@@ -40,7 +40,8 @@ enum XML_MAINSTATE{
   MS_ENDTAG,                  //< Конец тега (для самозакрывающегося после /)
   MS_TEXT,                    //< Текст
   MS_CHECK_DECL,
-  MS_CDATA_SECTION
+  MS_CDATA_SECTION,
+  MS_COMMENT
 };
 
 enum XML_TAGSTATE{

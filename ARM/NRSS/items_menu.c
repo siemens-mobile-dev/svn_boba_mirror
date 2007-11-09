@@ -30,7 +30,7 @@ static int items_menu_onkey(void *data, GUI_MSG *msg)
   {
     p=p->next;    
   }
-  if (msg->keys==0x3D)
+  if (msg->keys==0x3D || msg->keys==0x18)
   {
     if (p)
     {
