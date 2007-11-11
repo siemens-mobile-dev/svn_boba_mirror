@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>obexcopy.exe $EXE_DIR$\NRSS.elf \Data\Zbin\NRSS.elf</postbuild>
       </data>
     </settings>
     <settings>

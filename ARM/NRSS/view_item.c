@@ -89,7 +89,7 @@ int create_view_item(RSS_ITEM *p)
   ascii2ws(ws,p->title);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,ws->wsbody[0]);
   PrepareEditCOptions(&ec_options);
-  SetFontToEditCOptions(&ec_options,2);
+  SetFontToEditCOptions(&ec_options,1);
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -102,7 +102,7 @@ int create_view_item(RSS_ITEM *p)
   ascii2ws(ws,p->description);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,ws->wsbody[0]);
   PrepareEditCOptions(&ec_options);
-  SetFontToEditCOptions(&ec_options,2);
+  SetFontToEditCOptions(&ec_options,1);
   CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
 

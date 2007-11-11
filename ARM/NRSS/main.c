@@ -20,17 +20,30 @@ int ALLTOTALSENDED;
 char logmsg[256];
 GBSTMR mytmr;
 
+enum LOAD_TYPE {FILE, URL};
+
+typedef struct {
+  enum LOAD_TYPE type;    
+  char *load_file; 
+  char *load_url;
+  char *cur_xml;
+  int cur_xml_len;
+  XMLNode *prev;
+  XMLNode *cur;
+} RSS_FILE;
 
 typedef struct
 {
   CSM_RAM csm;
   int gui_id;
+  RSS_FILE frss;
 }MAIN_CSM;
 
 typedef struct
 {
   GUI gui;
   WSHDR *ws1;
+  RSS_FILE *frss;
 }MAIN_GUI;
 
 int maingui_id;
@@ -47,8 +60,20 @@ SOFTKEYSTAB menu_skt=
   menu_sk,0
 };
 
-
-
+void FreeRSS_FILE(RSS_FILE *frss)
+{
+  mfree(frss->load_file);
+  frss->load_file=0;
+  mfree(frss->load_url);
+  frss->load_url=0;
+  mfree(frss->cur_xml);
+  frss->cur_xml=0;
+  frss->cur_xml_len=0;
+  DestroyTree(frss->prev);
+  frss->prev=0;
+  DestroyTree(frss->cur);
+  frss->cur=0;
+}
 //=====================================================================
 
 
@@ -83,6 +108,25 @@ void SMART_REDRAW(void)
 }
 
 //=====================================================================
+const char badchars[] = {'?', '*', '"', ':', '<', '>', '/', '\\', '|', '\n', '\r'};
+
+void remove_bad_chars(char *s)
+{
+  int c;
+  while((c=*s))
+  {
+    for (int i=0; i<(sizeof(badchars)/sizeof(char)); i++)
+    {
+      if (c==badchars[i])
+      {
+        *s='_';
+        break;
+      }    
+    }
+    s++;
+  }
+}
+
 int get_path_from_url(char *dest, const char *source)
 {
   char *s1;
@@ -93,7 +137,7 @@ int get_path_from_url(char *dest, const char *source)
   {
     s2=s1;
     if (*(s2+1)!='/') break;
-    s2++;
+    s2+=2;
   }   
   while((c=*s2++))
   {
@@ -127,7 +171,32 @@ int get_host_from_url(char *dest, const char *source)
   return (len); 
 }
 
-void create_connect(void)
+const char cvar_folder[]="4:\\ZBin\\var\\";
+const char nrss_ext[]=".nrss";
+
+void get_var_nrss_name(char *dest, char *url, int maxlen)
+{
+  char *s;
+  unsigned int err;
+  int len=(sizeof(cvar_folder)-1)+(sizeof(nrss_ext)-1)+1;
+  if (maxlen>0)
+  {
+    *dest=0;
+    if (len<=maxlen)
+    {
+      strcpy(dest, cvar_folder);
+      if (!isdir(dest, &err))
+        dest[0]='0';
+      s=dest+(sizeof(cvar_folder)-1);
+      strncpy(s, url, maxlen-len);
+      s[maxlen-len]=0;
+      remove_bad_chars(s);
+      strcat(dest, nrss_ext);
+    }
+  }
+}
+
+void create_connect(int dummy, RSS_FILE *frss)
 {
   char rss_host[64];
   unsigned int rss_port=80;
@@ -145,7 +214,7 @@ void create_connect(void)
   DNR_ID=0;
   *socklasterr()=0;
   
-  get_host_from_url(rss_host,RSS_URL);
+  get_host_from_url(rss_host,frss->load_url);
 
   sprintf(logmsg, "Connect to: %s Using port: %d", rss_host, rss_port);
   SMART_REDRAW();
@@ -214,28 +283,12 @@ void create_connect(void)
 }
 
 
-void do_start_connection(void)
-{
-  SUBPROC((void *)create_connect);
-}
-
 char *recv_buf=NULL;
 int recv_buf_len=0;
 
 char *send_buf=NULL;
 int send_buf_len=0;
 
-char *xml_buf=NULL;
-int xml_buf_len=0;
-
-
-void free_xml_buf(void)
-{
-  char *p=xml_buf;
-  xml_buf_len=0;
-  xml_buf=NULL;
-  mfree(p);
-}
 
 void free_recv_buf(void)
 {
@@ -246,9 +299,9 @@ void free_recv_buf(void)
 }
 
 int receive_mode;
-void get_answer(void)
+void get_answer(int dummy, RSS_FILE *frss)
 {
-  char buf[1024];
+  char buf[2048];
   int j;
   j=recv(sock,buf,sizeof(buf),0);
   if (j>0)
@@ -257,10 +310,10 @@ void get_answer(void)
     SMART_REDRAW();
     if (receive_mode)
     {
-      xml_buf=realloc(xml_buf, xml_buf_len+j+1);
-      xml_buf[xml_buf_len+j]=0;
-      memcpy(xml_buf+xml_buf_len, buf, j);
-      xml_buf_len+=j;
+      frss->cur_xml=realloc(frss->cur_xml, frss->cur_xml_len+j+1);
+      frss->cur_xml[frss->cur_xml_len+j]=0;
+      memcpy(frss->cur_xml+frss->cur_xml_len, buf, j);
+      frss->cur_xml_len+=j;
     }
     else
     {
@@ -273,12 +326,14 @@ void get_answer(void)
       receive_mode=1; //Остальное транслируем напрямую
       end_answer+=4;
       j=recv_buf_len-(end_answer-recv_buf);
-      free_xml_buf();
+      mfree(frss->cur_xml);
+      frss->cur_xml=NULL;
+      frss->cur_xml_len=0;
       if (!j) return; //Нет данных, нечего посылать
-      xml_buf=malloc(j+1);
-      xml_buf[j]=0;
-      memcpy(xml_buf, end_answer, j);
-      xml_buf_len=j;
+      frss->cur_xml=malloc(j+1);
+      frss->cur_xml[j]=0;
+      memcpy(frss->cur_xml, end_answer, j);
+      frss->cur_xml_len=j;
       free_recv_buf();
     }
   }
@@ -380,19 +435,19 @@ static void free_socket(void)
   REDRAW();
 }
 
-void send_req(void)
+void send_req(int dummy, RSS_FILE *frss)
 {
   char *p;
   int len;
   char host[64], get_path[64];
   char req_buf[256];
   
-  get_path_from_url(get_path, RSS_URL);
-  get_host_from_url(host, RSS_URL);
+  get_path_from_url(get_path, frss->load_url);
+  get_host_from_url(host, frss->load_url);
 
-  snprintf(req_buf,255,"GET %s"
-          " HTTP/1.0\r\nHost: %s\r\n\r\n", get_path, host);
-  p=malloc((len=strlen(req_buf))+1);
+  len=snprintf(req_buf,255,"GET %s"
+               " HTTP/1.0\r\nHost: %s\r\n\r\n", get_path, host);
+  p=malloc(len+1);
   strcpy(p, req_buf);
   send_answer(p, len);
 }
@@ -432,12 +487,12 @@ char *html_decode(char *s)
         continue;
       }
     }
-    if (c=='&')
+    else if (c=='&')
     {
       if (!strncmp(s,"quot;",5))
       {
         *d++='\"';
-        s+=6;
+        s+=5;
         continue;
       }
       if (!strncmp(s,"nbsp;",5))
@@ -481,11 +536,10 @@ char *html_decode(char *s)
 
 
 
-void DecodeRSS()
+void DecodeRSS(XMLNode *root)
 {
-  XMLNode *root, *rss, *channel, *items, *item;
+  XMLNode *rss, *channel, *items, *item;
   FreeRssItems();
-  root=XMLDecode(xml_buf, xml_buf_len);
   if (root)
   {
     rss=root;
@@ -542,10 +596,55 @@ void DecodeRSS()
         }
       }
     }
-    DestroyTree(root);
   }
 }
 
+XMLNode *OpenRssFromFile(char *filename)
+{
+  XMLNode *p=0;
+  int f;
+  unsigned int err;
+  FSTATS fstat;
+  char *buf;
+  int size;
+  if (GetFileStats(filename, &fstat, &err)!=-1)
+  {
+    size=fstat.size;
+    if ((f=fopen(filename, A_ReadOnly+A_BIN, P_READ, &err))!=-1)
+    {
+      if ((buf=malloc(size+1)))
+      {
+        buf[fread(f, buf, size, &err)]=0;
+        p=XMLDecode(buf, size);
+        mfree(buf);
+      }
+      fclose(f, &err);
+    }
+  }
+  return (p);
+}
+
+XMLNode *TryReadCacheNrss(char *url)
+{
+  char new_url[255];
+  get_var_nrss_name(new_url,url,sizeof(new_url));
+  return (OpenRssFromFile(new_url));
+}
+
+int TryWriteCacheNrss(char *url, char *xml_buf, int xml_buf_len)
+{
+  int f;
+  unsigned int err;
+  char new_url[255];
+  int result=0;
+  get_var_nrss_name(new_url,url,sizeof(new_url));
+  if ((f=fopen(new_url, A_WriteOnly+A_Truncate+A_Create+A_BIN, P_WRITE, &err))!=-1)
+  {
+    if (fwrite(f, xml_buf, xml_buf_len, &err)==xml_buf_len) result=1;
+    fclose(f, &err);
+  }
+  return (result);
+}
 
 static void OnRedraw(MAIN_GUI *data)
 {
@@ -570,6 +669,19 @@ static void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
   data->ws1=AllocWS(256);
   data->gui.state=1;
+  if (data->frss->type==FILE)
+  {
+    data->frss->prev=OpenRssFromFile(data->frss->load_file);
+  }
+  else if (data->frss->type==URL)
+  {
+    data->frss->prev=TryReadCacheNrss(data->frss->load_url);
+  }
+  if (data->frss->prev)
+  {
+    DecodeRSS(data->frss->prev);
+    if (rss_first) create_rssitems_menu();
+  }
 }
 
 static void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
@@ -601,7 +713,7 @@ static int OnKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case GREEN_BUTTON:
       DNR_TRIES=3;
-      do_start_connection();
+      SUBPROC((void *)create_connect, 0, data->frss);
       SMART_REDRAW();
       break;
 
@@ -646,6 +758,7 @@ static void maincsm_oncreate(CSM_RAM *data)
   main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods;
   main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
+  main_gui->frss=&csm->frss;
   csm->csm.state=0;
   csm->csm.unk1=0;
   maingui_id=csm->gui_id=CreateGUI(main_gui);
@@ -657,12 +770,13 @@ void ElfKiller(void)
   kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
 }
 
-static void maincsm_onclose(CSM_RAM *csm)
+static void maincsm_onclose(CSM_RAM *data)
 {
+  MAIN_CSM *csm=(MAIN_CSM*)data;
   SUBPROC((void *)free_socket);
-  SUBPROC((void *)free_xml_buf);
   FreeRssItems();
   GBS_DelTimer(&mytmr);
+  FreeRSS_FILE(&csm->frss);
   SUBPROC((void *)ElfKiller);
 }
 
@@ -696,7 +810,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
       {
-	if (DNR_TRIES) SUBPROC((void *)create_connect);
+	if (DNR_TRIES) SUBPROC((void *)create_connect,0,&csm->frss);
       }
       return(1);
     }
@@ -712,7 +826,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         {
           receive_mode=0;
           connect_state=2;
-          SUBPROC((void *)send_req);
+          SUBPROC((void *)send_req, 0, &csm->frss);
         }
         break;
 
@@ -720,7 +834,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         //Если посылали send
         if (connect_state>=2)
         {
-          SUBPROC((void *)get_answer);
+          SUBPROC((void *)get_answer,0,&csm->frss);
         }
         break;
 
@@ -744,7 +858,10 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	{
 	case -1:
 	  connect_state=0;
-          DecodeRSS();
+          TryWriteCacheNrss(csm->frss.load_url,csm->frss.cur_xml,csm->frss.cur_xml_len);
+          DestroyTree(csm->frss.cur);
+          csm->frss.cur=XMLDecode(csm->frss.cur_xml,csm->frss.cur_xml_len);
+          DecodeRSS(csm->frss.cur);
 	  SUBPROC((void*)free_socket);	
 	  break;
 	case 0:
@@ -799,11 +916,65 @@ void UpdateCSMname(void)
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"NRSS");
 }
 
+char *read_urss_file(const char *file)
+{
+  char *s, *buf=0;
+  int f;
+  int c;
+  unsigned int err;
+  FSTATS fstat;
+  if (GetFileStats(file, &fstat, &err)!=-1)
+  {
+    if ((f=fopen(file, A_ReadOnly+A_BIN, P_READ, &err))!=-1)
+    {
+      buf=malloc(fstat.size+1);
+      if (buf)
+      {
+        buf[fread(f, buf, fstat.size, &err)]=0;
+        s=buf;
+        while(c=*s)
+        {
+          if (c==10 || c==13 || c==' ')
+          {
+            *s=0;
+            break;
+          }
+          s++;
+        }       
+      }
+      fclose(f, &err);
+    }    
+  }
+  return (buf);  
+}
 
 int main(char *exename, char *fname)
 {
+  char *s;
   MAIN_CSM main_csm;
+  zeromem(&main_csm, sizeof(MAIN_CSM));
+  main_csm.frss.type=URL;
   InitConfig();
+  s=strchr(fname,'.');
+  if (s)
+  {
+    s++;
+    if (!strcmp_nocase(s, "nrss"))  // файл с xml документом
+    {
+      main_csm.frss.type=FILE;
+      main_csm.frss.load_file=malloc(strlen(fname)+1);
+      strcpy(main_csm.frss.load_file, fname);
+    }
+    else if (!strcmp_nocase(s, "urss"))  // Файл с линком на рсс фид
+    {
+      main_csm.frss.load_url=read_urss_file(fname);
+    }
+  }
+  if (!main_csm.frss.load_url)
+  {
+    main_csm.frss.load_url=malloc(strlen(RSS_URL)+1);
+    strcpy(main_csm.frss.load_url, RSS_URL);
+  }
   LockSched();
   UpdateCSMname();
   CreateCSM(&MAINCSM.maincsm,&main_csm,0);
