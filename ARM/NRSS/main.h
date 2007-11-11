@@ -5,6 +5,7 @@
 typedef struct {
   void *next;
   char *title;
+  char *author;
   char *description;
 }RSS_ITEM;
 

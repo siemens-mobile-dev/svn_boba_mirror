@@ -91,6 +91,7 @@ void FreeRssItems(void)
   {
     RSS_ITEM *pr=p->next;
     mfree(p->title);
+    mfree(p->author);
     mfree(p->description);
     p=pr;
   }
@@ -563,13 +564,14 @@ void DecodeRSS(XMLNode *root)
         {
           if (!strcmp(items->name, "item"))
           {
-            char *desc=0, *title=0;
+            char *desc=0, *title=0, *author=0;
             item=items->subnode;
             RSS_ITEM *p=malloc(sizeof(RSS_ITEM));
             zeromem(p, sizeof(RSS_ITEM));
             while(item)
             {
               if (!strcmp(item->name, "title")) title=item->value;
+              if (!strcmp(item->name, "author")) author=item->value;
               if (!strcmp(item->name, "description")) desc=item->value;
               item=item->next;
             }
@@ -577,6 +579,11 @@ void DecodeRSS(XMLNode *root)
             {
               p->title=malloc(strlen(title)+1);
               strcpy(p->title, title);
+            }
+            if (author)
+            {
+              p->author=malloc(strlen(author)+1);
+              strcpy(p->author, author);              
             }
             if (desc)
             {
@@ -955,7 +962,7 @@ int main(char *exename, char *fname)
   zeromem(&main_csm, sizeof(MAIN_CSM));
   main_csm.frss.type=URL;
   InitConfig();
-  s=strchr(fname,'.');
+  s=strrchr(fname,'.');
   if (s)
   {
     s++;

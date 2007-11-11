@@ -69,42 +69,67 @@ int create_view_item(RSS_ITEM *p)
   void *eq;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
-  int t_len=0, d_len=0, h_len=64, max;
+  int t_len=0, d_len=0, a_len=0, h_len=64, max;
   WSHDR *ws;
 
   eq=AllocEQueue(ma,mfree_adr());
   if (p->title) t_len=strlen(p->title);
+  if (p->author) a_len=strlen(p->author);
   if (p->description) d_len=strlen(p->description);
+  
   if (t_len>h_len) max=t_len;
+  if (a_len>max) max=a_len;
   if (d_len>max) max=d_len;
 
   ws=AllocWS(max);
-
-  PrepareEditControl(&ec);
-  ascii2ws(ws,"Title:");
-  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws,ws->wsbody[0]);
-  AddEditControlToEditQend(eq,&ec,ma);
-
-  PrepareEditControl(&ec);
-  ascii2ws(ws,p->title);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,ws->wsbody[0]);
-  PrepareEditCOptions(&ec_options);
-  SetFontToEditCOptions(&ec_options,1);
-  CopyOptionsToEditControl(&ec,&ec_options);
-  AddEditControlToEditQend(eq,&ec,ma);
-
-  PrepareEditControl(&ec);
-  ascii2ws(ws,"Description:");
-  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws,ws->wsbody[0]);
-  AddEditControlToEditQend(eq,&ec,ma);
-
-  PrepareEditControl(&ec);
-  ascii2ws(ws,p->description);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,ws->wsbody[0]);
-  PrepareEditCOptions(&ec_options);
-  SetFontToEditCOptions(&ec_options,1);
-  CopyOptionsToEditControl(&ec,&ec_options);
-  AddEditControlToEditQend(eq,&ec,ma);
+  
+  if (p->title)
+  {
+    PrepareEditControl(&ec);
+    ascii2ws(ws,"Title:");
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+    AddEditControlToEditQend(eq,&ec,ma);
+    
+    PrepareEditControl(&ec);
+    ascii2ws(ws,p->title);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+    PrepareEditCOptions(&ec_options);
+    SetFontToEditCOptions(&ec_options,1);
+    CopyOptionsToEditControl(&ec,&ec_options);
+    AddEditControlToEditQend(eq,&ec,ma);
+  }
+  
+  if (p->author)
+  {
+    PrepareEditControl(&ec);
+    ascii2ws(ws,"Author:");
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+    AddEditControlToEditQend(eq,&ec,ma);
+    
+    PrepareEditControl(&ec);
+    ascii2ws(ws,p->author);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+    PrepareEditCOptions(&ec_options);
+    SetFontToEditCOptions(&ec_options,1);
+    CopyOptionsToEditControl(&ec,&ec_options);
+    AddEditControlToEditQend(eq,&ec,ma);
+  }
+  
+  if (p->description)
+  {
+    PrepareEditControl(&ec);
+    ascii2ws(ws,"Description:");
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+    AddEditControlToEditQend(eq,&ec,ma);
+    
+    PrepareEditControl(&ec);
+    ascii2ws(ws,p->description);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+    PrepareEditCOptions(&ec_options);
+    SetFontToEditCOptions(&ec_options,1);
+    CopyOptionsToEditControl(&ec,&ec_options);
+    AddEditControlToEditQend(eq,&ec,ma);
+  }
 
   FreeWS(ws);
   patch_header(&view_item_hdr);
