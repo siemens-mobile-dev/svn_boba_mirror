@@ -12,9 +12,9 @@
 
 
 __root const CFG_HDR ch0={CFG_STR_UTF8,LG_CFG_PATH5400S,0,63};
-__root const char f5400s[64]=DEFAULT_DISK_CFG ":\\misc\\5400.txt";
-__root const CFG_HDR ch1={CFG_STR_UTF8,LG_CFG_PATH5401S,0,63};
 __root const char f5401s[64]=DEFAULT_DISK_CFG ":\\misc\\5401.txt";
+__root const CFG_HDR ch1={CFG_STR_UTF8,LG_CFG_PATH5401S,0,63};
+__root const char f5402s[64]=DEFAULT_DISK_CFG ":\\misc\\5402.txt";
 
 
 __root const CFG_HDR cl0={CFG_LEVEL,LG_CFG_SEC_FCLICK,1,0};

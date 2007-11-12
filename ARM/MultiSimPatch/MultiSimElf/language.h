@@ -36,22 +36,22 @@
 #define LG_MNUABOUT   "Об эльфе"
 #define LG_MNUCFG   "Открыть конфиг"
 #define LG_MNUASNET   "Автовыбор сети"
-#define LG_MNUSAVEB   "Сохранить 5400 в файл"
-#define LG_MNULOADB   "Обновить 5400 из файла"
-#define LG_MNUOPENB   "Открыть файл 5400 в TED"
-#define LG_MNUSAVEB1   "Сохранить 5401 в файл"
-#define LG_MNULOADB1   "Обновить 5401 из файла"
-#define LG_MNUOPENB1   "Открыть файл 5401 в TED"
-
+#define LG_MNUSAVEB   "Сохранить 5401 в файл"
+#define LG_MNULOADB   "Обновить 5401 из файла"
+#define LG_MNUOPENB   "Открыть файл 5401 в TED"
+#define LG_MNUSAVEB1   "Сохранить 5402 в файл"
+#define LG_MNULOADB1   "Обновить 5402 из файла"
+#define LG_MNUOPENB1   "Открыть файл 5402 в TED"
+#define LG_MNUFIX   "Пофиксить блоки (physical SIM must select)"
 //--------------
-#define LG_CFG_PATH5400S   "Путь для  блока 5400"
-#define LG_CFG_PATH5401S   "Путь для  блока 5401"
+#define LG_CFG_PATH5400S   "Путь для  блока 5401"
+#define LG_CFG_PATH5401S   "Путь для  блока 5402"
 #define LG_CFG_SEC_FCLICK   "Настройка переключения 1-click"
 #define LG_CFG_NSIMENABLE   "Разрешить быстрое переключение"
 #define LG_CFG_NMAINSIM   "Номер основной сим"
 #define LG_CFG_NADITSIM   "Номер допольнительной сим"
 //--------------
-#define LG_MSGERRBLOCK     "Блок 5400/5401 не найден либо имеет неверный формат!"
+#define LG_MSGERRBLOCK     "Блок 5401/5402 не найден либо имеет неверный формат!"
 //=================================
 
 

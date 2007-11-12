@@ -3,8 +3,6 @@
 #define SIM_Access_Function_ADR   0xA0A961EC
 #define Set_LAI_ADR               0xA0A869AB
 #define RegisterInNetwork_ADR     0xA0836E93
-#define SetEEFULLBlock_ADR        0xA07CA044
-#define GetEEFULLBlock_ADR        0xA07C9F00
 
 #define UNUSED_RAM_BASE_ADR       0xA8780100
 

@@ -14,6 +14,15 @@ __swi __arm void *LIB_Memcpy(void *dest,const void *source,int cnt);
 __arm void GBS_SendMessageThumb(int cepid_to, int msg,int submess=0, void *data1=0, void *data2=0){
   GBS_SendMessage(cepid_to,msg,submess,data1,data2);
 }
+
+
+__arm int pdcache_getvalThumb(unsigned char* ret, int maxlen_of_return_str, char cachetype, char *pd_entry_identifier_class, char  *pd_entry_identifier_sub){
+  return  pdcache_getval(ret, maxlen_of_return_str,cachetype,  pd_entry_identifier_class, pd_entry_identifier_sub);
+}
+__arm int pdcache_setvalThumb(unsigned char *new_value, char cachetype,  char *pd_entry_identifier_class, char *pd_entry_identifier_sub){
+return  pdcache_setval(new_value,  cachetype,  pd_entry_identifier_class,pd_entry_identifier_sub);
+}
+
 ///////////////////////
 
 
@@ -39,11 +48,11 @@ __no_init KV_SIM_CTRL_BLOCK *SIM_Data @ UNUSED_RAM_BASE_ADR ;
 #define Response_State			(SIM_Data->Response_State)
 #define SIM_State		        (SIM_Data->SIM_State)
 #define SIM_number		        (SIM_Data->SIM_number)
-#define Block5400		        (SIM_Data->Block5400)
+#define Block5401		        (SIM_Data->Block5401)
 #define ReciveBuffer          (SIM_Data->ReciveBuffer)
 #define ReciveBufferLen       (SIM_Data->ReciveBufferLen)
 #define NeedAnswer            (SIM_Data->NeedAnswer)
-#define Block5402             (SIM_Data->Block5402)
+#define Block5403             (SIM_Data->Block5403)
 #define RAM_IMSI_Ptr          (SIM_Data->RAM_IMSI_Ptr)
 #define RAM_KC_Ptr            (SIM_Data->RAM_KC_Ptr)
 #define RAM_SPN_Ptr           (SIM_Data->RAM_SPN_Ptr)
@@ -153,24 +162,24 @@ void SIM_Cmd_Hook(int what, int cla, int ins,
       {
         case CONST_Select_LOCI_File:
           //store file LOCI into EEPROM block 5402
-          LIB_Memcpy(&Block5402[0x00]+p2, SendBuf, SendLen);
-          EEFullWriteBlock(5402, &Block5402[0x00], 0x00, LOCI_DATA_BYTE_LEN,0,0);
+          LIB_Memcpy(Block5403.LOCI+p2, SendBuf, SendLen);
+          EEFullWriteBlock(5403, Block5403.LOCI, 0x00, LOCI_DATA_BYTE_LEN,0,0);
           LIB_Memcpy(SIM_Data->SendBuf2, REAL_SIM_LOCI, LOCI_DATA_BYTE_LEN);
           flag=1;  // when virtual data is stored, SIM need write data physical SIM from
 //          SendBuf=SIM_Data->SendBuf2;
           break;   // other buffer
         case CONST_Select_BCCH_File:
           //store file BCCH into EEPROM block 5402
-          LIB_Memcpy(&Block5402[0x10]+p2, SendBuf, SendLen);
-          EEFullWriteBlock(5402, &Block5402[0x10], 0x10, BCCH_DATA_BYTE_LEN,0,0);
+          LIB_Memcpy(Block5403.BCCH+p2, SendBuf, SendLen);
+          EEFullWriteBlock(5403, Block5403.BCCH, 0x10, BCCH_DATA_BYTE_LEN,0,0);
           LIB_Memcpy(SIM_Data->SendBuf2, REAL_SIM_BCCH, BCCH_DATA_BYTE_LEN);
           flag=1;  // when virtual data is stored, SIM need write data physical SIM from
 //          SendBuf=SIM_Data->SendBuf2;          
           break;   // other buffer
         case CONST_Select_KC_File:
           //store file Kc into EEPROM block 5402
-          LIB_Memcpy(&Block5402[0x20]+p2, SendBuf, SendLen);
-          EEFullWriteBlock(5402, &Block5402[0x20], 0x20, KC_DATA_BYTE_LEN,0,0);
+          LIB_Memcpy(Block5403.KC+p2, SendBuf, SendLen);
+          EEFullWriteBlock(5403, Block5403.KC, 0x20, KC_DATA_BYTE_LEN,0,0);
           LIB_Memcpy(SIM_Data->SendBuf2, REAL_SIM_KC, KC_DATA_BYTE_LEN);
           flag=1;  // when virtual data is stored, SIM need write data physical SIM from
 //          SendBuf=SIM_Data->SendBuf2;          
@@ -202,7 +211,7 @@ void SIM_Rsp_Hook(void)
     case CONST_Run_GSM_A38:  // if MS want response for GSM algorithm
       if(SIM_number)         // for virtual SIM cards
         {
-          LIB_Memcpy(CUR_KI, &Block5400[SIM_number * 0x30 + 0x10], KI_BYTE_LEN);
+          LIB_Memcpy(CUR_KI, Block5401[SIM_number].KI, KI_BYTE_LEN);
           A3A8(A38_Data_buffer, CUR_KI, ReciveBuffer); // run aghorithm and store result
         }
       break;
@@ -210,38 +219,38 @@ void SIM_Rsp_Hook(void)
       RAM_IMSI_Ptr = ReciveBuffer; // capture IMSI address in RAM
       LIB_Memcpy(REAL_SIM_IMSI, ReciveBuffer, IMSI_DATA_BYTE_LEN);
       if(SIM_number)               // replace SIM response with virtual data from EEPROM
-        LIB_Memcpy(ReciveBuffer, &Block5400[SIM_number * 0x30 + 0x00], IMSI_DATA_BYTE_LEN);
+        LIB_Memcpy(ReciveBuffer, Block5401[SIM_number].IMSI, IMSI_DATA_BYTE_LEN);
       break;
     case CONST_Select_LOCI_File:   
       RAM_LOCI_Ptr = ReciveBuffer; // capture LOCI address in RAM
       LIB_Memcpy(REAL_SIM_LOCI, ReciveBuffer, LOCI_DATA_BYTE_LEN);
   //    if(SIM_number)               // replace SIM response with virtual data from EEPROM
-        LIB_Memcpy(ReciveBuffer, &Block5402[0x00], LOCI_DATA_BYTE_LEN);
+        LIB_Memcpy(ReciveBuffer, Block5403.LOCI, LOCI_DATA_BYTE_LEN);
       break;
     case CONST_Select_SPN_File:   
       RAM_SPN_Ptr = ReciveBuffer;  // capture SPN address in RAM
       LIB_Memcpy(REAL_SIM_SPN, ReciveBuffer, SPN_DATA_BYTE_LEN);
       if(SIM_number)               // replace SIM response with virtual data from EEPROM
-        CopySPN(ReciveBuffer, &Block5400[SIM_number * 0x30 + 0x20]);
+        CopySPN(ReciveBuffer, Block5401[SIM_number].SPN);
 
       break;
     case CONST_Select_File_14:    
       RAM_F14_Ptr = ReciveBuffer;  // capture F14 address in RAM
       LIB_Memcpy(REAL_SIM_F14, ReciveBuffer, SPN_DATA_BYTE_LEN);
       if(SIM_number)               // replace SIM response with virtual data from EEPROM
-        CopySPN(ReciveBuffer, &Block5400[SIM_number * 0x30 + 0x20]);
+        CopySPN(ReciveBuffer, Block5401[SIM_number].SPN);
       break;
     case CONST_Select_BCCH_File: 
       RAM_BCCH_Ptr = ReciveBuffer; // capture BCCH address in RAM
       LIB_Memcpy(REAL_SIM_BCCH, ReciveBuffer, BCCH_DATA_BYTE_LEN);
   //    if(SIM_number)               // replace SIM response with virtual data from EEPROM
-        LIB_Memcpy(ReciveBuffer, &Block5402[0x10], BCCH_DATA_BYTE_LEN);
+        LIB_Memcpy(ReciveBuffer, Block5403.BCCH, BCCH_DATA_BYTE_LEN);
       break;
     case CONST_Select_KC_File:   
       RAM_KC_Ptr = ReciveBuffer;   // capture KC address in RAM
       LIB_Memcpy(REAL_SIM_KC, ReciveBuffer, KC_DATA_BYTE_LEN);
   //    if(SIM_number)               // replace SIM response with virtual data from EEPROM
-        LIB_Memcpy(ReciveBuffer, &Block5402[0x20], KC_DATA_BYTE_LEN);
+        LIB_Memcpy(ReciveBuffer, Block5403.KC, KC_DATA_BYTE_LEN);
       break;
     case CONST_Select_FPLMN_File:   
       RAM_FPLMN_Ptr = ReciveBuffer;   // capture FPLMN address in RAM
@@ -273,7 +282,7 @@ void ReturnToPhysicalSIM(void)
 #else
   if (IdleGui())    
 #endif    
-    ChangeSIM(Block5402[0x40 + 0x0C]);
+    ChangeSIM(Block5403.num2sw);
   else
     GBS_StartTimerProc(&RAM_TIMER1, 13000, &ReturnToPhysicalSIM);
 }
@@ -371,6 +380,8 @@ inline __arm char*  GetSetValFromCache(char *filename,char *name,char *newval){
   else return NULL;
 };
 
+
+
 //struct that  descibes profiles inet profile NSG
 struct profnames{
   char num;  //1b  (0-9)
@@ -398,9 +409,10 @@ inline void SetProfileCtx(int n){
 
 
 #ifdef NEWSGOLD  
-  
-  if (Block5402[0x30]!=0)
-   GetSetValFromCache(SMS_CENTER_FILE,SMS_CENTER_PARAM,(char *)&Block5402[0x30]);
+   //TODO fix  
+//pdcache_setvalThumb(&Block5402[0x30], 0x2,NULL, "T:sms.center..0.number");        
+   if (Block5403.SMSC[0]!=0)
+      GetSetValFromCache(SMS_CENTER_FILE,SMS_CENTER_PARAM,(char*)Block5403.SMSC);
   /*
 // фиксить всю эту гадость наверно хватит памяти с размером 0x20, а может просто надо было ложить в стек со смещением 4
   /unsigned char *mts=NULL;//[]="\1\0\0\0\0\0\0\0\0\0\0\\0\\0\0\00\00\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -412,10 +424,10 @@ inline void SetProfileCtx(int n){
     mfree(mts)    ;
   }*/
 // warning !!! попробовал переделать профили на NSG, сам не тестил 
-  SetProfileCtx(Block5402[0x40 + 0x0F]);
+  SetProfileCtx(Block5403.inet_profile);
 #else   
-    Set_HTTP_Profile(Block5402[0x40 + 0x0F]);
-    Set_SMS_Profile(Block5402[0x40 + 0x0E]);
+    Set_HTTP_Profile(Block5403.inet_profile);
+    Set_SMS_Profile(Block5403.sms_profile);
 #endif  
 };
 
@@ -423,7 +435,9 @@ inline void SetProfileCtx(int n){
 
 
  void UpdateSMSC(void){
-  LIB_Memcpy(&Block5402[0x30],  GetSetValFromCache(SMS_CENTER_FILE,SMS_CENTER_PARAM,NULL),16);
+  LIB_Memcpy(Block5403.SMSC,  GetSetValFromCache(SMS_CENTER_FILE,SMS_CENTER_PARAM,NULL),16);
+   //TODO fix
+//  pdcache_getvalThumb(&Block5402[0x30], 0x2,16, NULL, "T:sms.center..0.number");
   char *prf=NULL;
   prf=(char*)malloc(0x190);
   if (prf){
@@ -431,7 +445,7 @@ inline void SetProfileCtx(int n){
     if (    GetAllCtxInfo(prf)){
       for (char i=0;i<10;i++){
         if         (((profnames*)(prf+0x28*i))->active){
-          Block5402[0x40 + 0x0F]=i;
+          Block5403.inet_profile=i;
           //  break;
         };
       }
@@ -470,7 +484,7 @@ __arm void TryRigesterInfinity(){
 */
 
  void ChangeSIM(int SimNum){
-  if(SimNum && !Block5400[SimNum * 0x30]) // if sim data not present (IMSI is null)
+  if(SimNum && !Block5401[SimNum].IMSI[0]) // if sim data not present (IMSI is null)
     return;
 #ifdef NEWSGOLD
   UpdateSMSC(); //сохраняем СМСЦ
@@ -478,15 +492,15 @@ __arm void TryRigesterInfinity(){
   
   Clear_FPNMN();  // all networks is permited for reistration
 
-  //Store current SIM data on their place in 5401 block (dynamic data)
-  EEFullWriteBlock(5401, Block5402, SIM_number * 0x50 + 0x00, 0x50,0,0);
+  //Store current SIM data on their place in 5402 block (dynamic data)
+  EEFullWriteBlock(5402, &Block5403, SIM_number * 0x50 + 0x00, 0x50,0,0);
   //Read new SIM dynamic data
-  EEFullReadBlock(5401, Block5402, SimNum * 0x50 + 0x00, 0x50,0,0);
-  //Store new SIM dynamic data in working block (5402) 
-  EEFullWriteBlock(5402, Block5402, 0x00, 0x50,0,0);
+  EEFullReadBlock(5402, &Block5403, SimNum * 0x50 + 0x00, 0x50,0,0);
+  //Store new SIM dynamic data in working block (5403) 
+  EEFullWriteBlock(5403, &Block5403, 0x00, 0x50,0,0);
   if(SimNum)
   {
-    LIB_Memcpy(RAM_IMSI_Ptr, &Block5400[SimNum * 0x30], IMSI_DATA_BYTE_LEN);
+    LIB_Memcpy(RAM_IMSI_Ptr, Block5401[SIM_number].IMSI, IMSI_DATA_BYTE_LEN);
   }
   else
   {
@@ -504,11 +518,11 @@ __arm void TryRigesterInfinity(){
 //    if (RAM_SPN_Ptr!=(void*)-1)    LIB_Memcpy(RAM_SPN_Ptr,  REAL_SIM_SPN,  SPN_DATA_BYTE_LEN);
 //    if (RAM_F14_Ptr!=(void*)-1)    LIB_Memcpy(RAM_F14_Ptr,  REAL_SIM_F14,  SPN_DATA_BYTE_LEN);   
   }
-    CopySPN(RAM_SPN_Ptr, &Block5400[SimNum * 0x30 + 0x20]);
+    CopySPN(RAM_SPN_Ptr, Block5401[SimNum].SPN);
 
-    LIB_Memcpy(RAM_LOCI_Ptr, &Block5402[0x00], LOCI_DATA_BYTE_LEN);
-    LIB_Memcpy(RAM_BCCH_Ptr, &Block5402[0x10], BCCH_DATA_BYTE_LEN);
-    LIB_Memcpy(RAM_KC_Ptr, &Block5402[0x20], KC_DATA_BYTE_LEN);
+    LIB_Memcpy(RAM_LOCI_Ptr, Block5403.LOCI, LOCI_DATA_BYTE_LEN);
+    LIB_Memcpy(RAM_BCCH_Ptr, Block5403.BCCH, BCCH_DATA_BYTE_LEN);
+    LIB_Memcpy(RAM_KC_Ptr, Block5403.KC, KC_DATA_BYTE_LEN);
 
   SIM_number = SimNum;
 
@@ -530,8 +544,8 @@ __arm void TryRigesterInfinity(){
 //  GBS_DelTimer(&RAM_TIMER2);
 //  GBS_StartTimerProc(&RAM_TIMER2, 216*10, &TryRigesterInfinity); //tipa 10secund hvatit na poteru seti
 
-  if (Block5402[0x40 + 0x0D]>0)
-    GBS_StartTimerProc(&RAM_TIMER1, 13000*Block5400[0x40 + 0x0D], &ReturnToPhysicalSIM);
+  if (Block5403.time2sw>0)
+    GBS_StartTimerProc(&RAM_TIMER1, 13000*Block5403.time2sw, &ReturnToPhysicalSIM);
 }
 
 
@@ -544,11 +558,12 @@ void MultisimINIT(void){
     SIM_Data = (KV_SIM_CTRL_BLOCK *) malloc(sizeof(KV_SIM_CTRL_BLOCK));
     LIB_Memset(SIM_Data, 0xFF, sizeof(KV_SIM_CTRL_BLOCK));
 
-    EEFullReadBlock(5400, Block5400, 0, 0x3C0,0,0);
-    EEFullReadBlock(5402, Block5402, 0, 0x50,0,0);
+    EEFullReadBlock(5401, &Block5401, 0, BL_SZ_5401,0,0);
+    EEFullReadBlock(5403, &Block5403, 0, BL_SZ_5403,0,0);
 
 //    SIM_number = Block5400[0x00];
-    SIM_number = Block5402[0x2F];
+    SIM_number = Block5403.simnum;
+   // SIM_number = 0;    
     SIM_State = CONST_Response_FALSE;
     GBS_StartTimerProc(&RAM_TIMER2, 216*1, &initMsg);    
   }
@@ -558,9 +573,9 @@ void MultisimINIT(void){
 #ifndef NEWSGOLD
 
 void SaveHTTPProfile(int profile){
-    Block5402[0x40 + 0x0F] = profile;
+    Block5403.inet_profile = profile;
     //maybe comment next line
-    SetEEFULLBlock(5402, &Block5400[0x40 + 0x0F], 0x40 + 0x0F, 1);
+    EEFullWriteBlock(5403, &Block5403.inet_profile, 0x40 + 0x0F, 1,0,0);
 }
 
 void SaveSMSProfile(char profile){
@@ -568,9 +583,9 @@ void SaveSMSProfile(char profile){
   if (profile>5) return;
   *curprof = profile;
   Save_SMS_Profile(5138);
-    Block5402[0x40 + 0x0E] = profile;
+    Block5403.sms_profile = profile;
     //maybe comment next line
-    SetEEFULLBlock(5402, &Block5400[0x40 + 0x0E], 0x40 + 0x0E, 1);
+    EEFullWriteBlock(5403, &Block5403.sms_profile, 0x40 + 0x0E, 1,0,0);
 }
 #endif
 

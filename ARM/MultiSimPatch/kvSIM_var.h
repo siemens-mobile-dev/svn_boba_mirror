@@ -63,8 +63,10 @@ typedef struct _KV_SIM_CTRL_BLOCK
 
         unsigned char SendBuf2[48];
 
-        unsigned char Block5400[1024];
-        unsigned char Block5402[0x50];
+        BLOCK5401 Block5401[MAX_SIM_CNT];
+      //  unsigned char Block5400[1024];
+        BLOCK5403 Block5403;
+//        unsigned char Block5402[0x50];
 
         ITEMSDATA items[10];
         MENUSTRUCT test_menu;

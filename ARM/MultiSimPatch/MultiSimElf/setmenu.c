@@ -45,31 +45,31 @@ const SOFTKEYSTAB smenu_skt =
 
 
 
-/*
-static void EditConfig(void)
-{
   extern const char *successed_config_filename;
+
+ void ExecFile(char *name)
+{
   WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,successed_config_filename,128);
+  ws=AllocWS(130);
+  str_2ws(ws,name,128);
   ExecuteFile(ws,0,0);
   FreeWS(ws);
-  GeneralFuncF1(1);
-}
-*/
-extern IPC_REQ gipc;
-MSIM_IPC_MSG_EEPROM msg;
-unsigned char bp[1600];
-extern const char f5400s[];
-extern const char f5401s[];
 
-int WriteFile(char *name,int size)
+}
+
+extern IPC_REQ gipc;
+
+unsigned char bp[BL_SZ_5402];
+extern const char f5401s[];
+extern const char f5402s[];
+
+int WriteFile(char *name, unsigned char *filebuf,int size)
 {
 
   int f;
-  unsigned char *filebuf;
+ 
   char *buf=NULL,*bufs;
-  filebuf=bp;
+ 
   const int c=3*size+size/16;
   buf=malloc(c);
   if (!buf)return 0;
@@ -100,42 +100,6 @@ int WriteFile(char *name,int size)
 }
 
 
-
-static void SaveBlock(void)
-{
-  curblock=0;
-  //add hash checking
-      gipc.name_to=IPC_MSIM_NAME;
-      gipc.name_from=ELF_MSIM_NAME;
-
-      gipc.data=&msg;
-      msg.type=PRC_MSIM_READBLOCK2FILE;
-      msg.block=5400;
-      msg.buf=bp;
-      msg.offset=0;
-      msg.size=0x30*20;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_EEPROM_BACKDOOR,&gipc);
-	  //поидее надо дождаться callback
-   //    WriteFile();
-}
-
-static void SaveBlock1(void)
-{
-    curblock=1;
-  //add hash checking
-      gipc.name_to=IPC_MSIM_NAME;
-      gipc.name_from=ELF_MSIM_NAME;
-
-      gipc.data=&msg;
-      msg.type=PRC_MSIM_READBLOCK2FILE;
-      msg.block=5401;
-      msg.buf=bp;
-      msg.offset=0;
-      msg.size=0x50*20;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_EEPROM_BACKDOOR,&gipc);
-	  //поидее надо дождаться callback
-   //    WriteFile();
-}
 
 
 unsigned char htoi(char c)
@@ -186,72 +150,84 @@ int ReadFile(char *name)
 
 static void LoadBlock(void) //from flie
 {
-//  int m;
-  if ((ReadFile((char*)f5400s))==0x30*20){
-    
-      gipc.name_to=IPC_MSIM_NAME;
-      gipc.name_from=ELF_MSIM_NAME;
 
-      gipc.data=&msg;
-      msg.type=PRC_MSIM_WRITEBLOCK4FILE;
-      msg.block=5400;
-      msg.buf=bp;
-      msg.offset=0;
-      msg.size=0x30*20;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_EEPROM_BACKDOOR,&gipc);
+  if ((ReadFile((char*)f5401s))==BL_SZ_5401){
+    EEFullWriteBlock(5401, bp, 0, BL_SZ_5401,0,0);
+
   }else {
     
       MsgBoxError(1,(int)LG_MSGERRBLOCK);
-      GeneralFuncF1(1);
   }
+      GeneralFuncF1(1);
+  
 }
 
 static void LoadBlock1(void) //from flie
 {
-  if (ReadFile((char*)f5401s)==0x50*20){
-    
-      gipc.name_to=IPC_MSIM_NAME;
-      gipc.name_from=ELF_MSIM_NAME;
+  if (ReadFile((char*)f5402s)==BL_SZ_5402){
+    EEFullWriteBlock(542, bp, 0, BL_SZ_5402,0,0);
 
-      gipc.data=&msg;
-      msg.type=PRC_MSIM_WRITEBLOCK4FILE;
-      msg.block=5401;
-      msg.buf=bp;
-      msg.offset=0;
-      msg.size=0x50*20;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_EEPROM_BACKDOOR,&gipc);
+    
   }else {
       MsgBoxError(1,(int)LG_MSGERRBLOCK);
-      GeneralFuncF1(1);
+
+
   }
+      GeneralFuncF1(1);  
 }
 
+static void FixBlock(void) //from flie
+{
+  
+  EEFullReadBlock(5402, bp, 0, BL_SZ_5402,0,0);
+  for(int i=0;i<MAX_SIM_CNT;i++)  
+   bp[0x50*i+0x2f]=i;
+  EEFullWriteBlock(5402, bp, 0, BL_SZ_5402,0,0);
+  
+  EEFullReadBlock(5403, bp, 0, BL_SZ_5403,0,0);
+   bp[0x2f]=0;  
+  EEFullWriteBlock(5403, bp, 0, BL_SZ_5403,0,0);  
+      GeneralFuncF1(1);  
+}
+
+
+static void SaveBlock(void)
+{
+   EEFullReadBlock(5401, bp, 0, BL_SZ_5401,0,0);
+   WriteFile((char*)f5401s,bp,BL_SZ_5401); 
+   GeneralFuncF1(1);    
+
+  //add hash checking
+ 
+	  //поидее надо дождаться callback
+   //    WriteFile();
+}
+
+static void SaveBlock1(void)
+{
+   EEFullReadBlock(5402, bp, 0, BL_SZ_5402,0,0);
+   WriteFile((char*)f5402s,bp,BL_SZ_5402); 
+   GeneralFuncF1(1);    
+}
+
+
+
 extern const char *successed_config_filename;
+
+
 static void OpenCfg(void) //from flie
 {
-  WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,successed_config_filename,128);
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
+  ExecFile((char*)successed_config_filename);
 }
 
 static void OpenBlock(void) //from flie
 {
-  WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,f5400s,128);
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
+  ExecFile((char*)f5401s);
 }
 
 static void OpenBlock1(void) //from flie
 {
-  WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,f5401s,128);
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
+  ExecFile((char*)f5402s);
 }
 
 static const HEADER_DESC smenuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
@@ -263,12 +239,13 @@ static const char * const smenutexts[]=
   LG_MNUASNET,
   LG_MNUCFG,
   LG_MNUSAVEB,
-  LG_MNULOADB,  
+  LG_MNULOADB, 
+  
   LG_MNUOPENB, 
   LG_MNUSAVEB1,
   LG_MNULOADB1,  
   LG_MNUOPENB1, 
-
+  LG_MNUFIX,
   
 };
 
@@ -288,7 +265,8 @@ static const void *smenuprocs[]=
   (void *)OpenBlock,
   (void *)SaveBlock1,    
   (void *)LoadBlock1,  
-   (void *)OpenBlock1
+   (void *)OpenBlock1,
+   (void *)FixBlock
 };
 
 void stmenu_ghook(void *data, int cmd)
@@ -299,7 +277,7 @@ void stmenu_ghook(void *data, int cmd)
   {
     DisableIDLETMR();
 
-   Menu_SetItemCountDyn(data,7);
+   Menu_SetItemCountDyn(data,8);
 
 //    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);    
   }
@@ -342,7 +320,7 @@ static const MENU_DESC stmenu=
   smenuitemhandler,
   NULL,//menuitems,
   NULL,//menuprocs,
-  11
+  9
 };
 
 int ShowSetMenu()

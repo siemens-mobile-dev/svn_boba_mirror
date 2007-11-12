@@ -12,7 +12,7 @@ extern const unsigned int onc_sim2;\
   int curblock=0;;
 int maincsm;
 int patchversion=0;
-MSIM_ELF_RESP simblk;
+
 //unsigned char bp[1024];
      IPC_REQ gipc;
 
@@ -21,7 +21,7 @@ const int minus11=-11;
 //__root int xxx=123;
 //volatile static int yyy;
 IPC_REQ gipc2;
-void SendRequest(int submess, void *data){
+ void SendRequest(int submess, void *data){
       gipc2.name_to=IPC_MSIM_NAME;
       gipc2.name_from=ELF_MSIM_NAME;
       gipc2.data=data;
@@ -51,10 +51,20 @@ inline void ReadConfig(){
 
 extern int simnum;
 extern int simcnt;
-extern int WriteFile(char*,int);
-extern const char f5400s[];
+extern int WriteFile(char *, unsigned char *,int );
 extern const char f5401s[];
-
+extern const char f5402s[];
+//char buf5401[0x30*20];
+BLOCK5401 block5401[MAX_SIM_CNT];
+void Get5401(void){
+  simnum=0;
+  EEFullReadBlock(5403,&simnum,0x2F,1,0,0);  
+  
+  EEFullReadBlock(5401,&block5401,0,BL_SZ_5401,0,0);
+  int i;
+  for (i=0;i<20&&(block5401[i].SPN[1]!=0);i++);
+  simcnt=i;
+}
 
 void maincsm_oncreate(CSM_RAM *data)
 {
@@ -72,7 +82,7 @@ void maincsm_oncreate(CSM_RAM *data)
 ///  csm->gui_id=CreateGUI(main_gui);
 //  csm->gui_id=    ShowMainMenu();  
 //  maincsm=
-  
+  Get5401();
             if (!onc_ena){
             csm->gui_id=    ShowMainMenu();            
             RefreshGUI();
@@ -112,7 +122,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 
   if (msg->msg==MSG_IPC)
   {
-        //  ShowMSG(1,(int)"test-ipc");
     IPC_REQ *ipc;
     if ((ipc=(IPC_REQ*)msg->data0))
     {
@@ -121,28 +130,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 
 	switch (msg->submess)
 	{
-	case IPC_MSIM_PROCESSED: 
-            simnum=simblk.CurSim;
-            simcnt=simblk.SimCnt;
-
-            
-        break;    
-        /*
-	case IPC_MSIM_PROCESSED_READBLOCK2FILE:
-          if (curblock==0)
-            WriteFile((char*)f5400s,0x30*20);
-          else
-            WriteFile((char*)f5401s,0x50*20);            
-            GeneralFuncF1(1);                      
-        break;  
-        case IPC_MSIM_PROCESSED_WRITEBLOCK4FILE:
-            GeneralFuncF1(1);                                
-         // }else{
-
-        //  }
-	  break;
-        */
-          
 	case IPC_MSIM_SWITCHED:
           if (onc_ena){
               CloseCSM(maincsm);
@@ -197,37 +184,32 @@ void UpdateCSMname(void)
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),ELF_MSIM_NAME);
 }
 
-//unsigned char Block5400[1024];
-     
 
-  
-//MSIM_IPC_MSG_EEPROM msg;
-CSM_DESC icsmd;
 void UpdateTesters(){
   unsigned char *block5401=(unsigned char*)malloc(0x50*20);
-  // EEFullCreateBlockThumb(5401,0x50*20,1);
-  EEFullCreateBlock(5403,0x50,1,0,0);    
-  EEFullReadBlock(5402,block5401,0,0x50,0,0);
+  EEFullCreateBlock(5403,BL_SZ_5403,1,0,0);    
+  EEFullReadBlock(5402,block5401,0,BL_SZ_5403,0,0);
+  WriteFile("0:\\misc\\5402.bak",block5401,BL_SZ_5403);
   EEFullWriteBlock(5403,block5401,0,0x50,0,0);  
   EEFullDeleteBlock(5402,0,0);   
 
-  EEFullCreateBlock(5402,0x50*20,1,0,0);    
-  EEFullReadBlock(5401,block5401,0,0x50*20,0,0);
-  EEFullWriteBlock(5402,block5401,0,0x50*20,0,0);  
+  EEFullCreateBlock(5402,BL_SZ_5402,1,0,0);    
+  EEFullReadBlock(5401,block5401,0,BL_SZ_5402,0,0);
+  WriteFile("0:\\misc\\5401.bak",block5401,BL_SZ_5402);  
+  EEFullWriteBlock(5402,block5401,0,BL_SZ_5402,0,0);  
   EEFullDeleteBlock(5401,0,0);     
 
-  EEFullCreateBlock(5401,0x30*20,1,0,0);    
-  EEFullReadBlock(5400,block5401,0,0x30*20,0,0);
-  EEFullWriteBlock(5401,block5401,0,0x30*20,0,0);  
+  EEFullCreateBlock(5401,BL_SZ_5401,1,0,0);    
+  EEFullReadBlock(5400,block5401,0,BL_SZ_5401,0,0);
+  WriteFile("0:\\misc\\5400.bak",block5401,BL_SZ_5401);    
+  EEFullWriteBlock(5401,block5401,0,BL_SZ_5401,0,0);  
   EEFullDeleteBlock(5400,0,0);     
-  
-//    LIB_Memset(block5401,0xFF,0x50*20);
- ShowMSG(1,(int)"Block 5401-5402 moved. Update patch to new version") ;
-    mfree(block5401);
-SwitchPhoneOff();
  
-  
+  ShowMSG(1,(int)"Block 5400-5402 moved. Update patch to new version") ;
+  mfree(block5401);
+  SwitchPhoneOff();
 };
+
 void UpdateFromOld(){
     unsigned char *block5400=(unsigned char*)malloc(1024);
   unsigned char *block5401=(unsigned char*)malloc(0x50*20);
@@ -236,7 +218,6 @@ void UpdateFromOld(){
        memset(block5401+0x50*i+0x30,0x0,0x30);  
        block5401[0x50*i+0x30-1]=i;
   }
-  // EEFullCreateBlockThumb(5401,0x50*20,1);
   EEFullReadBlock(5400,block5400,0,1024,0,0);
 
   for (int i=0;i<10;i++){
@@ -262,14 +243,19 @@ void UpdateFromOld(){
   
   EEFullDeleteBlock(5400,0,0);     
   
-//    LIB_Memset(block5401,0xFF,0x50*20);
  ShowMSG(1,(int)"Block 5401-5403 created. Update patch to new version") ;
     mfree(block5400);
- mfree(block5401);
+    mfree(block5401);
   SwitchPhoneOff();
 };
+
+//todo
 void CreateBlocksFromFiles(){
+  EEFullCreateBlock(5402,0x50*20,1,0,0);      
+  EEFullCreateBlock(5403,0x50,1,0,0);    
+  EEFullCreateBlock(5401,0x30*20,1,0,0);    
 };
+
 int main()
 {
     int sz;
@@ -284,7 +270,7 @@ int main()
       CreateBlocksFromFiles();
     
   }
-  if (patchversion)return;
+  if (patchversion)return 4;
     /*
       0-- good
       1-- // old beta testers 
@@ -294,45 +280,6 @@ int main()
   
   ReadConfig();
   
-  /*
-              CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-      memcpy(&icsmd,icsm->constr,sizeof(icsmd));
-
-      onmsg=icsmd.onMessage;
-
-      icsmd.onMessage=MyIDLECSM_onMessage;
-      icsm->constr=&icsmd;
-*/
-  
-  //    gipc.name_to=IPC_MSIM_NAME;
-//      gipc.name_from=ELF_MSIM_NAME;
-/*
-      gipc.data=&msg;
-     msg.type=0;
-      msg.block=5400;
-      msg.buf=bp;
-      msg.offset=0;
-      msg.size=1024;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_EEPROM_BACKDOOR,&gipc);
-      
-      */
-  //    gipc.data=&simblk;
-    //  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_MSIM_GET_RAM5400,&gipc);      
-//       GBS_SendMessage(MMI_CEPID, MSG_IPC,IPC_MSIM_PROCESSED,&gipc);
-/*
-      for (int x=0x0000;x<0xFFFF;x++       )
-    if (GetPicNByUnicodeSymbol(x)==0x53d){
-      char s[256];
-      sprintf(s,"%x\n%d ",x,GetPicNByUnicodeSymbol(CBOX_CHECKED));
-        ShowMSG(1,(int)s);
-    };
-      
-  */
-
-// 	void TestMenu(void);
-	//TestMenu();
-
-
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
   LockSched();

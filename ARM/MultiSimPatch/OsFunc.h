@@ -49,11 +49,6 @@ P_GetAllCtxInfo     *const GetAllCtxInfo =(P_GetAllCtxInfo*) GetAllCtxInfo_ADR;
 #endif
 
 
-typedef void P_GetEEFULLBlock(int block, void *buf, int offset, int size);
-typedef void P_SetEEFULLBlock(int block, void *buf, int offset, int size);
-
-// P_GetEEFULLBlock	*const GetEEFULLBlock = (P_GetEEFULLBlock*) GetEEFULLBlock_ADR;
-//P_SetEEFULLBlock        *const SetEEFULLBlock = (P_SetEEFULLBlock*) SetEEFULLBlock_ADR;
 
 #endif
 //

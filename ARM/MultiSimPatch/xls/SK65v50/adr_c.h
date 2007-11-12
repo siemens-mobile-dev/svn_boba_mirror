@@ -4,8 +4,6 @@
 #define Set_LAI_ADR               0xA094808B
 #define RegisterInNetwork_ADR     0xA076056F
 #define Net_Search_ADR            0xA07605C9
-#define SetEEFULLBlock_ADR        0xA09440F0
-#define GetEEFULLBlock_ADR        0xA0943FAC
 
 #define UNUSED_RAM_BASE_ADR       0xA8000380
 

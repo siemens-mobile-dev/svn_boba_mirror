@@ -7,7 +7,7 @@
 
 //==============================================================================
 // ELKA Compatibility
-extern MSIM_ELF_RESP simblk;
+
 #pragma inline
 static void patch_header(const HEADER_DESC* head)
 {
@@ -28,6 +28,8 @@ static void patch_input(const INPUTDIA_DESC* inp)
 */
 //==============================================================================
 int MainMenu_ID;
+//extern char buf5401[0x30*20];
+extern BLOCK5401 block5401[MAX_SIM_CNT];
 #define __SVN_REVISION__  1007
 int S_ICONS[3];
   int simnum=0;
@@ -46,35 +48,13 @@ const SOFTKEYSTAB menu_skt =
 extern IPC_REQ gipc2;
 extern void ChangeSim( int num);
 
-/*
-static void EditConfig(void)
-{
-  extern const char *successed_config_filename;
-  WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,successed_config_filename,128);
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
-  GeneralFuncF1(1);
-}
-*/
 
 static void Settings(void)
 {
-//  extern void end_socket(void);
-//  SUBPROC((void*)end_socket);
   ShowSetMenu();
-//  GeneralFuncF1(1);
 }
 
 static void AboutDlg(){
-//  char s[256];
-//  snprintf(s,255,LG_COPYRIGHT,__SVN_REVISION__);
-//  ShowMSG(2, (int)s);
-/*    char s[256];
-  sprintf(s,"%d",simblk.SimCnt);
-  ShowMSG(2, (int)s);
-*/
     ShowMSG(2, (int)LG_COPYRIGHT);
 }
 
@@ -172,7 +152,7 @@ static void menuitemhandler(void *data, int curitem, void *unk)
   if(curitem<2){
     SetMenuItemIconArray(data,item,S_ICONS+curitem);
   }else{
-  if (curitem==simblk.CurSim+2){
+  if (curitem==simnum+2){
   SetMenuItemIconArray(data,item,icon_array+0);  
 //  SetCursorToMenuItem(data,curitem);
   }
@@ -183,10 +163,11 @@ static void menuitemhandler(void *data, int curitem, void *unk)
 
   else{
     
-   ws=AllocMenuWS(data,strlen((char const*)simblk.SimNames[(curitem-2)]));
-   wsprintf(ws,percent_t,simblk.SimNames[(curitem-2)]);
-//   ws=AllocMenuWS(data,strlen("sim 9"));    
-//   wsprintf(ws,"sim %d",curitem);
+   ws=AllocMenuWS(data,strlen((const char*)block5401[curitem-2].SPNname));
+   wsprintf(ws,percent_t,block5401[curitem-2].SPNname);
+//   wsprintf(ws,"%d",curitem-2);   
+//   ws=AllocMenuWS(data,strlen("sim 924234"));    
+//   wsprintf(ws,"sim %x %d",strlen((const char*)block5401[curitem-2].SPNname),curitem);
   }
     SetMenuItemText(data, item, ws, curitem);    
   

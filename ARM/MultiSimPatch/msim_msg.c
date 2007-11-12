@@ -30,7 +30,7 @@ __swi __arm void *LIB_Memcpy(void *dest,const void *source,int cnt);
 {  
   int csm_result;
   csm_result = MEM_onmsg(data, msg); 
-  MSIM_IPC_MSG_EEPROM *eepmsg;  
+ // MSIM_IPC_MSG_EEPROM *eepmsg;  
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
 /*    extern const char *successed_config_filename;

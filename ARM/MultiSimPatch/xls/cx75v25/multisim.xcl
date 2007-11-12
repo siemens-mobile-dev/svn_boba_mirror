@@ -10,7 +10,7 @@
 -Z(CODE)GetLgp=0xA0A85B48-FFFFFFFF /* перехват обращения к ленгпаку */
 -Z(CODE)SetHTTPProfile=0xA0882F2C-FFFFFFFF /* сохранение HTTP-профиля */
 -Z(CODE)SetHTTPProfile_1=0xA0882F38-FFFFFFFF /* сохранение HTTP-профиля */
--Z(CODE)SetSMSProfile=0x-FFFFFFFF /* сохранение SMS-профиля */
+-Z(CODE)SetSMSProfile=0xA050CCA8-FFFFFFFF /* сохранение SMS-профиля */
 -Z(CONST)DATA_I,DATA_ID,INITTAB=0xA00D0000-FFFFFFFF
 -Z(CONST)DATA_C,DATA_Z=0xA00D0000-FFFFFFFF
 -Z(CODE)CODE=0xA00D0000-FFFFFFFF

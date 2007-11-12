@@ -66,6 +66,10 @@
         <project>multisim</project>
         <configuration>S7Cv47</configuration>
       </member>
+      <member>
+        <project>multisim</project>
+        <configuration>CX75v25</configuration>
+      </member>
     </batchDefinition>
     <batchDefinition>
       <name>build_elfs</name>
@@ -127,6 +131,10 @@
       <member>
         <project>multisim</project>
         <configuration>S7Cv47</configuration>
+      </member>
+      <member>
+        <project>multisim</project>
+        <configuration>CX75v25</configuration>
       </member>
     </batchDefinition>
     <batchDefinition>

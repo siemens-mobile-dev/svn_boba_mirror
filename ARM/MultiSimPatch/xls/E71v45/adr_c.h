@@ -3,8 +3,6 @@
 #define RegisterInNetwork_ADR                0xA09BA1C3 //F8 B5 0F 1C 06 1C 15 1C 00 24 ?? ?? ?? ?? ?? 4A +1
 #define Set_LAI_ADR               0xA0CDCAC3//A0CE9267//A0CE5D2B
 #define Net_Search_ADR            0xA09BA21D//A09C3FA1//A09C0CB5
-#define SetEEFULLBlock_ADR        0xA04E72D8//A04ED6A0//A04EC808
-#define GetEEFULLBlock_ADR        0xA04E7048//A04ED410//A04EC578
 #define UNUSED_RAM_BASE_ADR       0xA8EA4C50//A8EA493C//not tested A8EA4798 
 #define Set_Profile_ADR           0xA05F46D3
 
