@@ -20,6 +20,8 @@ int ALLTOTALSENDED;
 char logmsg[256];
 GBSTMR mytmr;
 
+const char _percent_t[]="%t";
+const char _empty_str[]="";
 enum LOAD_TYPE {FILE, URL};
 
 typedef struct {
@@ -670,6 +672,13 @@ static void OnRedraw(MAIN_GUI *data)
                    "Total items: %d",connect_state,RX,TX,send_buf_len,logmsg,n);
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
              FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  
+  wsprintf(data->ws1,_percent_t,rss_first?"List":_empty_str);
+  DrawString(data->ws1,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),scr_w>>1,scr_h-4,
+             FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  wsprintf(data->ws1,_percent_t,"Exit");
+  DrawString(data->ws1,scr_w>>1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),scr_w-4,scr_h-4,
+             FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));  
 }
 
 static void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
