@@ -28,8 +28,8 @@ extern void DiskErrorMsg(int mode);
 
 void savetext(void)
 {
-  char *ibuf;
-  char *obuf;
+  char *ibuf=NULL;
+  char *obuf=NULL;
 
   int sf;
   int f;
@@ -39,9 +39,20 @@ void savetext(void)
   char c;
   unsigned int seekpos;
 
-  if (!(ibuf=malloc(STKSZ50))) goto LERR1;
-  if (!(obuf=malloc(STKSZ50))) goto LERR1;
-
+  if (!(ibuf=malloc(STKSZ50)))
+  {
+    LockSched();
+    ShowMSG(1,(int)"Can't alloc IBUF!");
+    UnlockSched();
+    goto LERR1;
+  }
+  if (!(obuf=malloc(STKSZ50)))
+  {
+    LockSched();
+    ShowMSG(1,(int)"Can't alloc OBUF!");
+    UnlockSched();
+    goto LERR1;
+  }
   f=fopen(filename,A_ReadWrite+A_BIN+A_Create+A_Truncate,P_READ+P_WRITE,&ul); //Создаем выходной файл
   if (f==-1)
   {

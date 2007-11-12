@@ -2513,8 +2513,6 @@ void maincsm_oncreate(CSM_RAM *data)
   MAIN_CSM*csm=(MAIN_CSM*)data;
   zeromem(main_gui,sizeof(MAIN_GUI));
   
-  ustk=malloc(STKSZ);
-  dstk=malloc(STKSZ);
   info_ws=AllocWS(512);
   upinfo_ws=AllocWS(256);
   e_ws=AllocWS(256);
@@ -2721,8 +2719,25 @@ int main(char *exename, char *fname)
     }
   }
   UpdateCSMname();
+  if ((ustk=malloc(STKSZ)))
+  {
+    if ((dstk=malloc(STKSZ)))
+    {
+      LockSched();
+      CreateCSM(&MAINCSM.maincsm,dummy,0);
+      UnlockSched();
+      return 0;      
+    }
+    mfree(ustk);
+    LockSched();
+    ShowMSG(1,(int)"Can't alloc DSTK!");
+    UnlockSched();
+    SUBPROC((void *)Killer2);
+    return 0;
+  }
   LockSched();
-  CreateCSM(&MAINCSM.maincsm,dummy,0);
+  ShowMSG(1,(int)"Can't alloc USTK!");
   UnlockSched();
+  SUBPROC((void *)Killer2);
   return 0;
 }
