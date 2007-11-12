@@ -35,7 +35,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 //==============================================================================
 
 
-#define MAX_ITEMS 9       // Максимальное количество пунктов меню
+#define MAX_ITEMS 10       // Максимальное количество пунктов меню
 
 #define MI_CONF_LEAVE       1
 #define MI_QUERY_VERSION    2
@@ -46,6 +46,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 #define MI_VCARD_QUERY      7
 #define MI_MUC_ADMIN        8
 #define MI_LASTACTIV_QUERY  9
+#define MI_SUBSCRIBES_MENU  10
 
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
@@ -184,6 +185,72 @@ void Disp_MA_Menu()
   patch_rect(&ma_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   CreateMenu(0,0,&ma_menu,&ma_menuhdr,0,n_items,0,0);
 }
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//podpiska
+#define MAX_CONTC_ITEMS 5
+
+#define CONTC_SUBSCRIBE    1
+#define CONTC_SUBSCRIBED   2
+#define CONTC_UNSUBSCRIBED 3
+#define CONTC_UNSUBSCRIBE  4
+
+char CONTC_Menu_Contents[MAX_CONTC_ITEMS-1];
+const char contc_menu_header[]="Podpiska";
+int contcmenusoftkeys[]={0,1,2};
+HEADER_DESC contc_menuhdr={0,0,0,0,NULL,(int)contc_menu_header,LGP_NULL};
+SOFTKEY_DESC contc_menu_sk[]=
+{
+  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0001,0x0000,(int)LG_BACK},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB contc_menu_skt=
+{
+  contc_menu_sk,0
+};
+
+void contc_menu_ghook(void *data, int cmd);
+int contc_menu_onkey(void *data, GUI_MSG *msg);
+void contc_menu_iconhndl(void *data, int curitem, void *unk);
+
+MENU_DESC contc_menu=
+{
+  8,contc_menu_onkey,contc_menu_ghook,NULL,
+  contcmenusoftkeys,
+  &contc_menu_skt,
+  0x10, // 0x11 если надо меню с иконками
+  contc_menu_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0   //n
+};
+
+void InitContMenuArray()
+{
+  for(int i=0;i<MAX_CONTC_ITEMS;i++)CONTC_Menu_Contents[i]=0;
+}
+
+void Disp_Cont_Menu()
+{
+  TRESOURCE *Act_contact = CList_GetActiveContact();
+  CLIST* CLAct_contact=CList_FindContactByJID(CList_GetActiveContact()->full_name);
+  InitContMenuArray();
+  int n_items=0;
+  CONTC_Menu_Contents[n_items++]=CONTC_SUBSCRIBE;//zaprosit` 
+  if((CLAct_contact->subscription == SUB_BOTH)||(CLAct_contact->subscription==SUB_FROM))
+   {
+       CONTC_Menu_Contents[n_items++]=CONTC_UNSUBSCRIBE; //Otozvat` podpisku
+   }
+   if((Act_contact->status == PRESENCE_SUBSCRIBE))//Если контакт запрвшивает подписку...
+   {
+     CONTC_Menu_Contents[n_items++]=CONTC_UNSUBSCRIBED;//otkazat`
+     CONTC_Menu_Contents[n_items++]=CONTC_SUBSCRIBED;//soglasitsja
+   }   
+  patch_rect(&contc_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
+  if (n_items != 0) CreateMenu(0,0,&contc_menu,&contc_menuhdr,0,n_items,0,0);
+}
 /////////////////////////////////////////////////////////////////////
 
 void contact_menu_ghook(void *data, int cmd)
@@ -283,6 +350,12 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
         break;
       }
       
+    case MI_SUBSCRIBES_MENU:
+      {
+        Disp_Cont_Menu();
+        break;
+      }
+      
     default:
       {
         MsgBoxError(1,(int)LG_UNKACTION);
@@ -378,6 +451,12 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
       break;
     }
     
+  case MI_SUBSCRIBES_MENU:
+    {
+      strcpy(test_str,"Подписка");
+      break;
+    }
+      
   }
   //ShowMSG(1,(int)test_str);
   ws=AllocMenuWS(data,strlen(test_str));
@@ -431,6 +510,7 @@ char ICON_QUERY_TIME[128];
 char ICON_QUERY_VCARD[128];
 char ICON_MUC_ADMIN[128];
 char ICON_QUERY_LASTACTIV[128];
+char ICON_SUBSCRIBE_MENU[128];
 
 void Init_Icon_array()
 {
@@ -445,6 +525,7 @@ void Init_Icon_array()
   strcpy(ICON_QUERY_LASTACTIV, PATH_TO_PIC);strcat(ICON_QUERY_LASTACTIV, "menu_idle.png");
   strcpy(ICON_LOGIN_LOGOUT, PATH_TO_PIC);
   strcpy(ICON_MUC_ADMIN, PATH_TO_PIC);strcat(ICON_MUC_ADMIN, "menu_kick.png");
+  strcpy(ICON_SUBSCRIBE_MENU, PATH_TO_PIC);strcat(ICON_SUBSCRIBE_MENU, "menu_kick.png");  
   if(Act_contact->entry_type==T_TRANSPORT)
     if(Act_contact->status==PRESENCE_OFFLINE)
     {
@@ -462,6 +543,7 @@ void Init_Icon_array()
   cmS_ICONS[MI_LASTACTIV_QUERY]=(int)ICON_QUERY_LASTACTIV;  
   cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT;
   cmS_ICONS[MI_MUC_ADMIN]=(int)ICON_MUC_ADMIN;
+  cmS_ICONS[MI_SUBSCRIBES_MENU]=(int)  ICON_SUBSCRIBE_MENU;
 }
 
 void Disp_Contact_Menu()
@@ -512,6 +594,11 @@ void Disp_Contact_Menu()
 
   }
 
+  if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_CONF_NODE)&&(Act_contact->entry_type!=T_GROUP))
+  {
+       Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
+  }
+  
   if(n_items+1)
   {
     patch_rect(&contact_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
@@ -628,5 +715,101 @@ void ma_menu_iconhndl(void *data, int curitem, void *unk)
   ws=AllocMenuWS(data,strlen(test_str));
   wsprintf(ws,percent_t,test_str);
 
+  SetMenuItemText(data,item,ws,curitem);
+}
+
+//////////SUBSCRIBE
+void contc_menu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A)  // onFocus
+  {
+    DisableIDLETMR();
+  }
+}
+
+int contc_menu_onkey(void *data, GUI_MSG *msg)
+{
+  int i=GetCurMenuItem(data);
+  if(msg->keys==0x18 || msg->keys==0x3D)
+  {
+//    CLIST* 
+      char* jid=CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID;
+    char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
+    switch(CONTC_Menu_Contents[i])
+    {
+    case CONTC_SUBSCRIBE:
+      {
+      char *pres_str = malloc(256);
+      snprintf(pres_str,255,"<presence to='%s' type='subscribe'/>", jid);
+      SUBPROC((void*)_sendandfree,pres_str);      
+      break;    
+      }
+    case CONTC_SUBSCRIBED:
+      {
+      char *pres_str = malloc(256);
+      snprintf(pres_str,255,"<presence to='%s' type='subscribed'/>", jid);
+      SUBPROC((void*)_sendandfree,pres_str);      
+      break;    
+      }
+    case CONTC_UNSUBSCRIBE:
+      {
+      char *pres_str = malloc(256);
+      snprintf(pres_str,255,"<presence to='%s' type='unsubscribe'/>", jid);
+      SUBPROC((void*)_sendandfree,pres_str);      
+      break;    
+      }
+    case CONTC_UNSUBSCRIBED:
+      {
+      char *pres_str = malloc(256);
+      snprintf(pres_str,255,"<presence to='%s' type='unsubscribed'/>", jid);
+      SUBPROC((void*)_sendandfree,pres_str);      
+      break;    
+      }
+ default:
+    {
+      MsgBoxError(1,(int)LG_UNKACTION);
+    }      
+    }
+    return 1;
+  }
+  return 0;
+}
+
+void contc_menu_iconhndl(void *data, int curitem, void *unk)
+{
+  WSHDR *ws;
+  extern const char percent_t[];
+  char test_str[48];
+  void *item=AllocMenuItem(data);
+  strcpy(test_str,"(ошибка)");
+
+  TRESOURCE *Act_contact = CList_GetActiveContact();
+
+  switch(CONTC_Menu_Contents[curitem])
+  {
+  case CONTC_SUBSCRIBE:
+    {
+      strcpy(test_str,"Запросить подписку");
+      break;
+    }
+  case CONTC_SUBSCRIBED:
+    {
+      strcpy(test_str,"Разрешить");
+      break;
+    }
+  case CONTC_UNSUBSCRIBED:
+    {
+      strcpy(test_str,"Отклонить");
+      break;
+    }
+  case CONTC_UNSUBSCRIBE:
+    {
+      strcpy(test_str,"Удалить подписку");
+      break;
+    }
+  }
+
+  ws=AllocMenuWS(data,strlen(test_str));
+  wsprintf(ws,percent_t,test_str);
   SetMenuItemText(data,item,ws,curitem);
 }

@@ -142,7 +142,7 @@
 #define LG_IDLEICON         "Положение значка"
 #define LG_POPUPDIS         "Отображать POPUP"
 #define LG_COMPOSEV         "События сообщений"
-#define LG_DELIVREP         "Отчет о достаке, если требуется"
+#define LG_DELIVREP         "Отчет о доставке, если требуется"
 
 #define LG_SETUPSND         "Настройка звука"
 #define LG_SNDVOL           "Громкость"

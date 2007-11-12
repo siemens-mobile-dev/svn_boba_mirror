@@ -173,44 +173,6 @@ void Disp_Info(TRESOURCE* ResEx)
     AddEditControlToEditQend(eq,&ec,ma);
   }
 
-  if (ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_TRANSPORT)
-  {    // подписка
-    wsprintf(ws_info,percent_t,"Подписка");
-    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
-    AddEditControlToEditQend(eq,&ec,ma);
-    switch (ClEx->subscription)
-    {
-    case SUB_NONE:
-      {
-        wsprintf(ws_info, "%s", "нет");
-        break;
-      }
-    case SUB_TO:
-      {
-        wsprintf(ws_info, "%s", "TO");
-        break;
-      }
-    case SUB_FROM:
-      {
-        wsprintf(ws_info, "%s", "FROM");
-        break;
-      }
-    case SUB_BOTH:
-      {
-        wsprintf(ws_info, "%s", "BOTH");
-        break;
-      }
-    default:
-      {
-        wsprintf(ws_info, "%s", "X.3.");
-        break;
-      }
-    }
-
-    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
-    AddEditControlToEditQend(eq,&ec,ma);
-  }
-
   //  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_CONF_NODE || ResEx->entry_type==T_TRANSPORT ||ResEx->entry_type==T_VIRTUAL)
   if(ResEx->entry_type!=T_GROUP && ResEx->entry_type!=T_CONF_ROOT)
   {
@@ -265,7 +227,45 @@ void Disp_Info(TRESOURCE* ResEx)
     ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
   }
+  
+  if (ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_TRANSPORT)
+  {    // подписка
+    wsprintf(ws_info,percent_t,"Подписка");
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+    switch (ClEx->subscription)
+    {
+    case SUB_NONE:
+      {
+        wsprintf(ws_info, "%s", "нет");
+        break;
+      }
+    case SUB_TO:
+      {
+        wsprintf(ws_info, "%s", "TO");
+        break;
+      }
+    case SUB_FROM:
+      {
+        wsprintf(ws_info, "%s", "FROM");
+        break;
+      }
+    case SUB_BOTH:
+      {
+        wsprintf(ws_info, "%s", "BOTH");
+        break;
+      }
+    default:
+      {
+        wsprintf(ws_info, "%s", "X.3.");
+        break;
+      }
+    }
 
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+  }
+  
   patch_header(&info_hdr);
   patch_input(&info_desc);
   CreateInputTextDialog(&info_desc,&info_hdr,eq,1,0);

@@ -25,7 +25,26 @@ void FreeTemplates(void)
 
 extern const char COMMANDS_PATH[];
 extern const char MESSAGES_PATH[];
-
+extern CLIST* cltop;
+extern MUC_ITEM* muctop;
+int LoadRItems(void)
+{
+   int i=0;
+   FreeTemplates();
+   CLIST *tmp_list=cltop;
+//   MUC_ITEM *tmp_list = muctop;
+ //  TRESOURCE* ResEx = tmp_rsterlist->res_list;
+       while(tmp_list)   
+    {
+ //     if (ResEx->entry_type == T_CONF_NODE)
+      {
+     commands_lines=realloc(commands_lines,(i+1)*sizeof(char *));
+     commands_lines[i++]=tmp_list->res_list->full_name;
+      }
+      tmp_list=tmp_list->next;
+    };
+   return i;
+}
 int LoadTemplates(void)
 {
   FSTATS stat;
@@ -87,6 +106,9 @@ void UpdateTemplatesMenu_header(void)
 {
   switch (Mode)
   {
+    case 0:
+      strcpy(clm_hdr_text,"SelNIKI");
+    break;    
     case 1:
       strcpy(clm_hdr_text,LG_SELCOMMAND);
     break;
@@ -114,7 +136,8 @@ void SetCmdToEditMessage(char *command)
 
   switch (Mode)
   {
-    case 1:
+  case 0:
+  case 1:
       ascii2ws(ws_me,command);
       wstrcpy(ws_eddata, ws_me);
       wstrcat(ws_eddata,ec.pWS);
@@ -210,7 +233,8 @@ HEADER_DESC tmpl_menuhdr;
 void DispTemplatesMenu()
 {
   UpdateTemplatesMenu_header();
-  tmpl_num=LoadTemplates();
+  if (Mode == 0)  tmpl_num=LoadRItems();
+  else tmpl_num=LoadTemplates();
   patch_header(&tmpl_menuhdr);
   Templates_Menu_ID = CreateMenu(0,0,&tmpl_menu,&tmpl_menuhdr,0,tmpl_num,0,0);
 }
@@ -228,7 +252,7 @@ int sel_menusoftkeys[]={0,1,2};
 
 static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
 {
-  LG_SMILE,
+  "Niki",
   LG_COMMANDS,
   LG_MSGTEMPLATE
   
@@ -281,8 +305,8 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
       }
     #endif    
     
-    if (Mode==0) AddSmile(data); //Äטאכמד גûבמנא סלאיכודמג
-      else
+ //   if (Mode==0) AddSmile(data); //Äטאכמד גûבמנא סלאיכודמג
+//      else
         DispTemplatesMenu();    
       
     GeneralFunc_flag1(Select_Menu_ID,1);
