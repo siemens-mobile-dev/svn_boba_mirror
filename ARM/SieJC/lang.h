@@ -49,6 +49,8 @@
 #define LG_SELSMILE         "Выбор смайла..."
 #define LG_SELECT2          "Выбор..."
 #define LG_COMMANDS         "Команды"
+#define LG_CONTRESOURCES    "Ресурсы..."  //както подругому надо
+#define LG_CONTRESOURCE     "Ресурсы контакта"
 #define LG_MSGTEMPLATE      "Шаблоны сообщений"
 #define LG_SMILE            "Смайлы"
 #define LG_CLOSEDLG         "Закрыть диалог"
@@ -224,6 +226,8 @@
 #define LG_SELTEMPLATE      "Вибір шаблону..."
 #define LG_SELSMILE         "Вибір смайлу..."
 #define LG_SELECT2          "Вибір..."
+#define LG_CONTRESOURCES    "Ресурси..."  //както подругому надо
+#define LG_CONTRESOURCE     "Ресурси контакта"
 #define LG_COMMANDS         "Команди"
 #define LG_MSGTEMPLATE      "Шаблони повідомлень"
 #define LG_SMILE            "Смайли"
@@ -399,6 +403,8 @@
 #define LG_SELTEMPLATE      "Select template..."
 #define LG_SELSMILE         "Select smile..."
 #define LG_SELECT2          "Select..."
+#define LG_CONTRESOURCES    "Resource..."  //както подругому надо
+#define LG_CONTRESOURCE     "Resource"
 #define LG_COMMANDS         "Commands"
 #define LG_MSGTEMPLATE      "Templates"
 #define LG_SMILE            "Smiles"

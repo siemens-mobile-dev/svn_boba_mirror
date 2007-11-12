@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "main.h"
 #include "string_util.h"
+#include "clist_util.h"
 #include "lang.h"
 #include "smiles.h"
 #include "../inc/pnglist.h"
@@ -13,6 +14,7 @@ int Mode;
 //0 - Смайлы
 //1 - Команды
 //2 - Шаблоны сообщений
+//3 - Ресурсы контакта
 
 char **commands_lines; //Массив указателей на строки
 int tmpl_num=0;
@@ -26,22 +28,19 @@ void FreeTemplates(void)
 extern const char COMMANDS_PATH[];
 extern const char MESSAGES_PATH[];
 extern CLIST* cltop;
-extern MUC_ITEM* muctop;
-int LoadRItems(void)
+int LoadTemplates_new(void)
 {
    int i=0;
    FreeTemplates();
-   CLIST *tmp_list=cltop;
-//   MUC_ITEM *tmp_list = muctop;
- //  TRESOURCE* ResEx = tmp_rsterlist->res_list;
-       while(tmp_list)   
+   TRESOURCE *ResList = CList_FindContactByJID(CList_GetActiveContact()->full_name)->res_list;
+   while(ResList)
     {
- //     if (ResEx->entry_type == T_CONF_NODE)
+      if(ResList->name) //бывает что имя ресурса незадано
       {
      commands_lines=realloc(commands_lines,(i+1)*sizeof(char *));
-     commands_lines[i++]=tmp_list->res_list->full_name;
+     commands_lines[i++]= convUTF8_to_ANSI_STR(ResList->name);
       }
-      tmp_list=tmp_list->next;
+      ResList=ResList->next;
     };
    return i;
 }
@@ -106,14 +105,14 @@ void UpdateTemplatesMenu_header(void)
 {
   switch (Mode)
   {
-    case 0:
-      strcpy(clm_hdr_text,"SelNIKI");
-    break;    
     case 1:
       strcpy(clm_hdr_text,LG_SELCOMMAND);
     break;
     case 2:
       strcpy(clm_hdr_text,LG_SELTEMPLATE);
+    break;
+    case 3:
+      strcpy(clm_hdr_text,LG_CONTRESOURCES);
     break;
   }
 }
@@ -136,8 +135,7 @@ void SetCmdToEditMessage(char *command)
 
   switch (Mode)
   {
-  case 0:
-  case 1:
+    case 1:
       ascii2ws(ws_me,command);
       wstrcpy(ws_eddata, ws_me);
       wstrcat(ws_eddata,ec.pWS);
@@ -146,6 +144,7 @@ void SetCmdToEditMessage(char *command)
     break;
    
     case 2:
+    case 3:
       {
 	int c;
 	char *p=command;
@@ -183,8 +182,8 @@ void tmpl_menuitemhandler(void *data, int curitem, void *unk)
   void *item=AllocMenuItem(data);
   extern const char percent_t[];
   ws=AllocMenuWS(data,strlen(commands_lines[curitem]));
-  //wsprintf(ws,percent_t,commands_lines[curitem]);
-  ascii2ws(ws,commands_lines[curitem]);
+  if (Mode == 3) wsprintf(ws,percent_t,commands_lines[curitem]);
+  else ascii2ws(ws,commands_lines[curitem]);
   SetMenuItemText(data, item, ws, curitem);
 }
 
@@ -233,7 +232,7 @@ HEADER_DESC tmpl_menuhdr;
 void DispTemplatesMenu()
 {
   UpdateTemplatesMenu_header();
-  if (Mode == 0)  tmpl_num=LoadRItems();
+  if (Mode == 3) tmpl_num=LoadTemplates_new();
   else tmpl_num=LoadTemplates();
   patch_header(&tmpl_menuhdr);
   Templates_Menu_ID = CreateMenu(0,0,&tmpl_menu,&tmpl_menuhdr,0,tmpl_num,0,0);
@@ -241,9 +240,9 @@ void DispTemplatesMenu()
 
 //================================== Меню выбора ===============================
 #ifdef NEWSGOLD
-#define SEL_MANU_ITEMS_NUM 4
+#define SEL_MANU_ITEMS_NUM 5
 #else
-#define SEL_MANU_ITEMS_NUM 3
+#define SEL_MANU_ITEMS_NUM 4
 #endif
 
 HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)LG_SELECT2,LGP_NULL};
@@ -252,10 +251,10 @@ int sel_menusoftkeys[]={0,1,2};
 
 static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
 {
-  "Niki",
+  LG_SMILE,
   LG_COMMANDS,
-  LG_MSGTEMPLATE
-  
+  LG_MSGTEMPLATE,
+  LG_CONTRESOURCE
 #ifdef NEWSGOLD
   , LG_CLOSEDLG  
 #endif
@@ -298,15 +297,15 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
   {
     Mode = GetCurMenuItem(data);
     #ifdef NEWSGOLD
-      if (Mode==3)//Закрыть нах
+      if (Mode==4)//Закрыть нах
       {
         GeneralFunc_flag1(edmessage_id, 1);
         return(1);
       }
     #endif    
     
- //   if (Mode==0) AddSmile(data); //Диалог выбора смайлегов
-//      else
+    if (Mode==0) AddSmile(data); //Диалог выбора смайлегов
+      else
         DispTemplatesMenu();    
       
     GeneralFunc_flag1(Select_Menu_ID,1);
