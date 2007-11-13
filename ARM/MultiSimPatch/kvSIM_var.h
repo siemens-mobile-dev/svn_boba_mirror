@@ -68,8 +68,6 @@ typedef struct _KV_SIM_CTRL_BLOCK
         BLOCK5403 Block5403;
 //        unsigned char Block5402[0x50];
 
-        ITEMSDATA items[10];
-        MENUSTRUCT test_menu;
 	unsigned int simCnt;        
 
         CSM_DESC icsmd;

@@ -165,7 +165,7 @@ static void LoadBlock(void) //from flie
 static void LoadBlock1(void) //from flie
 {
   if (ReadFile((char*)f5402s)==BL_SZ_5402){
-    EEFullWriteBlock(542, bp, 0, BL_SZ_5402,0,0);
+    EEFullWriteBlock(5402, bp, 0, BL_SZ_5402,0,0);
 
     
   }else {
@@ -277,7 +277,7 @@ void stmenu_ghook(void *data, int cmd)
   {
     DisableIDLETMR();
 
-   Menu_SetItemCountDyn(data,8);
+   Menu_SetItemCountDyn(data,9);
 
 //    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);    
   }
@@ -316,11 +316,11 @@ static const MENU_DESC stmenu=
   8,stmenu_keyhook,stmenu_ghook,NULL,
   smmenusoftkeys,
   &smenu_skt,
-  0x11,//MENU_FLAG,
+  0x10,//MENU_FLAG,
   smenuitemhandler,
   NULL,//menuitems,
   NULL,//menuprocs,
-  9
+  8
 };
 
 int ShowSetMenu()

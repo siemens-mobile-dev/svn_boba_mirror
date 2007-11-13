@@ -14,7 +14,7 @@ __swi __arm void *LIB_Memcpy(void *dest,const void *source,int cnt);
 __arm void GBS_SendMessageThumb(int cepid_to, int msg,int submess=0, void *data1=0, void *data2=0){
   GBS_SendMessage(cepid_to,msg,submess,data1,data2);
 }
-
+/*
 
 __arm int pdcache_getvalThumb(unsigned char* ret, int maxlen_of_return_str, char cachetype, char *pd_entry_identifier_class, char  *pd_entry_identifier_sub){
   return  pdcache_getval(ret, maxlen_of_return_str,cachetype,  pd_entry_identifier_class, pd_entry_identifier_sub);
@@ -22,7 +22,7 @@ __arm int pdcache_getvalThumb(unsigned char* ret, int maxlen_of_return_str, char
 __arm int pdcache_setvalThumb(unsigned char *new_value, char cachetype,  char *pd_entry_identifier_class, char *pd_entry_identifier_sub){
 return  pdcache_setval(new_value,  cachetype,  pd_entry_identifier_class,pd_entry_identifier_sub);
 }
-
+*/
 ///////////////////////
 
 
@@ -532,14 +532,14 @@ __arm void TryRigesterInfinity(){
   //save number
 //  SetEEFULLBlock(5400, &SIM_number, 0x00, 1);
   //Block5402[0x51] = SIM_number;  
+  Set_LAI();
 
   ChangeSMSC();
-  Set_LAI();
+  SendReply(IPC_MSIM_SWITCHED,0);
 
   RegNetwork(1, (unsigned char *)(RAM_LOCI_Ptr)+4, 0x207);
   
   //send msg to elfs
-  SendReply(IPC_MSIM_SWITCHED,0);
 
 //  GBS_DelTimer(&RAM_TIMER2);
 //  GBS_StartTimerProc(&RAM_TIMER2, 216*10, &TryRigesterInfinity); //tipa 10secund hvatit na poteru seti

@@ -5,8 +5,8 @@ typedef  unsigned short word;
 typedef  unsigned int dword;
 
   #define MAX_SIM_CNT (19+1)
-  #define BL_SZ_5401  0x30*MAX_SIM_CNT
-  #define BL_SZ_5402  0x50*MAX_SIM_CNT
+  #define BL_SZ_5401  (0x30*MAX_SIM_CNT)
+  #define BL_SZ_5402  (0x50*MAX_SIM_CNT)
   #define BL_SZ_5403  0x50
 #pragma pack(1)
 typedef struct   {

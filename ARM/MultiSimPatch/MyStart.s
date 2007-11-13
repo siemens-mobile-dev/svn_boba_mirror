@@ -82,7 +82,7 @@ Cmd_Hook2:
 				mov		pc,r6
 
 #ifndef NEWSGOLD
-t5
+
         CODE32
 SetHTTPProfilel:
                                 MOV     R3, #0

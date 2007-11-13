@@ -248,12 +248,27 @@ void UpdateFromOld(){
     mfree(block5401);
   SwitchPhoneOff();
 };
-
+extern int ReadFile(char *name);
+extern unsigned char bp[BL_SZ_5402];
 //todo
 void CreateBlocksFromFiles(){
-  EEFullCreateBlock(5402,0x50*20,1,0,0);      
-  EEFullCreateBlock(5403,0x50,1,0,0);    
-  EEFullCreateBlock(5401,0x30*20,1,0,0);    
+  
+  if (ReadFile("0:\\misc\\5401.txt")==BL_SZ_5401){
+    EEFullCreateBlock(5401,BL_SZ_5401,1,0,0);
+    EEFullWriteBlock(5401, bp, 0, BL_SZ_5401,0,0);
+     ShowMSG(1,(int)"Block 5401 created.") ;    
+  }  
+  if (ReadFile("0:\\misc\\5402.txt")==BL_SZ_5402){
+    EEFullCreateBlock(5402,BL_SZ_5402,1,0,0);
+    EEFullWriteBlock(5402, bp, 0, BL_SZ_5402,0,0);
+     ShowMSG(1,(int)"Block 5402 created.") ;        
+  }  
+  if (ReadFile("0:\\misc\\5403.txt")==BL_SZ_5403){
+    EEFullCreateBlock(5403,BL_SZ_5403,1,0,0);
+    EEFullWriteBlock(5403, bp, 0, BL_SZ_5403,0,0);
+     ShowMSG(1,(int)"Block 5403 created.") ;        
+  }  
+  
 };
 
 int main()
