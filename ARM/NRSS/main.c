@@ -461,8 +461,10 @@ char *html_decode(char *s)
   int c;
   char *d, *dest;
   d=dest=malloc(l+1);
+  char *tag_strip=NULL;
   while((c=*s++))
   {
+  L_START:
     if (c=='<')
     {
       if (!strncmp(s,"br>",3))
@@ -489,46 +491,69 @@ char *html_decode(char *s)
         s+=2;
         continue;
       }
+      // Иначе какой то левый тэг, режем нахуй Ж)
+      tag_strip=d;
+      continue;
     }
-    else if (c=='&')
+    if (c=='>')
+    {
+      if (tag_strip)
+      {
+        d=tag_strip;
+        tag_strip=NULL;
+        continue;
+      }      
+    }
+    if (c=='&')
     {
       if (!strncmp(s,"quot;",5))
       {
-        *d++='\"';
+        c='\"';
         s+=5;
-        continue;
+        goto L_START;
       }
       if (!strncmp(s,"nbsp;",5))
       {
-        *d++=' ';
+        c='_';
         s+=5;
-        continue;
+        goto L_START;
       }
       if (!strncmp(s,"lt;",3))
       {
-        *d++='<';
+        c='<';
         s+=3;
-        continue;
+        goto L_START;
       }
       if (!strncmp(s,"gt;",3))
       {
-        *d++='>';
+        c='>';
         s+=3;
-        continue;
+        goto L_START;
       }
       if (!strncmp(s,"amp;",4))
       {
-        *d++='&';
+        c='&';
         s+=4;
-        continue;
+        goto L_START;
       }
       if (!strncmp(s,"copy;",5))
       {
-        *d++='(';
-        *d++='c';
-        *d++=')';
+        c=0xA9;
         s+=5;
-        continue;
+        goto L_START;
+      }
+      if (*s=='#')
+      {
+        int k;
+        s++;
+        c=0;
+        while((k=*s++)!=';')
+        {
+          c*=10;
+          c+=k-'0';
+        }
+        c=char16to8(c);
+        goto L_START;
       }
     }
     *d++=c;
@@ -579,13 +604,11 @@ void DecodeRSS(XMLNode *root)
             }
             if (title)
             {
-              p->title=malloc(strlen(title)+1);
-              strcpy(p->title, title);
+              p->title=html_decode(title);
             }
             if (author)
             {
-              p->author=malloc(strlen(author)+1);
-              strcpy(p->author, author);              
+              p->author=html_decode(author);     
             }
             if (desc)
             {
@@ -878,7 +901,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           DestroyTree(csm->frss.cur);
           csm->frss.cur=XMLDecode(csm->frss.cur_xml,csm->frss.cur_xml_len);
           DecodeRSS(csm->frss.cur);
-	  SUBPROC((void*)free_socket);	
+	  SUBPROC((void*)free_socket);
 	  break;
 	case 0:
 	  break;
@@ -956,7 +979,7 @@ char *read_urss_file(const char *file)
             break;
           }
           s++;
-        }       
+        }
       }
       fclose(f, &err);
     }    
