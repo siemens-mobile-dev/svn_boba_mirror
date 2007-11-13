@@ -1064,83 +1064,86 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   if (msg->gbsmsg->msg==LONG_PRESS)
   {
     l=msg->gbsmsg->submess;
-    if (l==UP_BUTTON)
+    if (!EDIT_IsMarkModeActive(data))  // Только если не выделение
     {
-      int pos;
-      top=view_list->top;
-      i=EDIT_GetFocus(data);
-
-      prev = top;            
-      while(top)
+      if (l==UP_BUTTON)
       {
-        if (top->ec_n==i)
+        int pos;
+        top=view_list->top;
+        i=EDIT_GetFocus(data);
+        
+        prev = top;
+        while(top)
         {
-          pos = EDIT_GetCursorPos(data);
-          if(pos == 1)
+          if (top->ec_n==i)
           {
-            if(top == ((MAIL_PART *)view_list->top)->next)
+            pos = EDIT_GetCursorPos(data);
+            if(pos == 1)
             {
-              EDIT_SetFocus(data,i-2);
-              EDIT_SetCursorPos(data, 1);
-            }
-            else
-            {
-              EDIT_SetFocus(data,prev->ec_n);
-              EDIT_SetCursorPos(data, prev->textlen+1);
-            }
-            return (-1);
-          }  
-            
-          for(j = 1; j < 512; j++)
-            if(top->scroll[j]+1 >= pos)
-            {
-              EDIT_SetCursorPos(data, top->scroll[j-1]+1);
-              return (-1);
-            }
-          return (-1);
-        }
-        prev = top;            
-        top=top->next;
-      }
-      EDIT_SetFocus(data,i-2);
-      EDIT_SetCursorPos(data, 1);
-      return (-1);
-    }
-    if (l==DOWN_BUTTON)
-    {
-      int pos;
-      top=view_list->top;
-      i=EDIT_GetFocus(data);
-      
-      while(top)
-      {
-        if (top->ec_n==i)
-        {
-          pos = EDIT_GetCursorPos(data);
-          for(j = 1; j < 512; j++)
-          {
-            if(top->scroll[j]+1 > pos)
-            {
-              EDIT_SetCursorPos(data, top->scroll[j]+1);
-              return (-1);
-            }
-            if(top->scroll[j] == top->textlen)
-            {
-              if(top->next)
+              if(top == ((MAIL_PART *)view_list->top)->next)
               {
-                EDIT_SetFocus(data,((MAIL_PART *)top->next)->ec_n);
+                EDIT_SetFocus(data,i-2);
                 EDIT_SetCursorPos(data, 1);
+              }
+              else
+              {
+                EDIT_SetFocus(data,prev->ec_n);
+                EDIT_SetCursorPos(data, prev->textlen+1);
               }
               return (-1);
             }
+            
+            for(j = 1; j < 512; j++)
+              if(top->scroll[j]+1 >= pos)
+              {
+                EDIT_SetCursorPos(data, top->scroll[j-1]+1);
+                return (-1);
+              }
+            return (-1);
           }
-          return (-1);
+          prev = top;
+          top=top->next;
         }
-        top=top->next;
+        EDIT_SetFocus(data,i-2);
+        EDIT_SetCursorPos(data, 1);
+        return (-1);
       }
-      EDIT_SetFocus(data,i+2);
-      EDIT_SetCursorPos(data, 1);
-      return (-1);
+      if (l==DOWN_BUTTON)
+      {
+        int pos;
+        top=view_list->top;
+        i=EDIT_GetFocus(data);
+        
+        while(top)
+        {
+          if (top->ec_n==i)
+          {
+            pos = EDIT_GetCursorPos(data);
+            for(j = 1; j < 512; j++)
+            {
+              if(top->scroll[j]+1 > pos)
+              {
+                EDIT_SetCursorPos(data, top->scroll[j]+1);
+                return (-1);
+              }
+              if(top->scroll[j] == top->textlen)
+              {
+                if(top->next)
+                {
+                  EDIT_SetFocus(data,((MAIL_PART *)top->next)->ec_n);
+                  EDIT_SetCursorPos(data, 1);
+                }
+                return (-1);
+              }
+            }
+            return (-1);
+          }
+          top=top->next;
+        }
+        EDIT_SetFocus(data,i+2);
+        EDIT_SetCursorPos(data, 1);
+        return (-1);
+      }
     }
   }
 
