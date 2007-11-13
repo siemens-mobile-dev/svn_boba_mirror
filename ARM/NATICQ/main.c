@@ -1007,8 +1007,81 @@ extern const char NATICQ_HOST[];
 extern const unsigned int NATICQ_PORT;
 
 
+//---------------------------------------------------------------------------
+const char *GetHost(int cnt, const char *str, char *buf)
+{
+  const char *tmp = str, *begin, *end;
+  if(cnt)
+  {
+    for(;cnt;cnt--)
+    {
+      for(;*str!=';' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str; str++);
+      if(!*str) str = tmp;
+      for(;(*str==';' || *str==' ' || *str=='\x0D' || *str=='\x0A') && *str; str++);
+      if(!*str) str = tmp;
+    }
+  }
+  tmp = buf;
+  begin = str;
+  for(;*str!=';' && *str!=':' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str; str++);
+  end = str;
+  for(;begin<end; *buf = *begin, begin++, buf++);
+  *buf = 0;
+  return tmp;
+}
+//---------------------------------------------------------------------------
+int atoi(char *attr)
+{
+  int ret=0;
+  int neg=1;
+  for (int k=0; ; k++)
+  {
+    if ( attr[k]>0x2F && attr[k]<0x3A) {ret=ret*10+attr[k]-0x30;} else { if ( attr[k]=='-') {neg=-1;} else {return(ret*neg);}}
+  }
+}
+//---------------------------------------------------------------------------
+int GetPort(int cnt, const char *str)
+{
+  const char *tmp = str;
+  char numbuf[6], numcnt = 0;
+  if(cnt)
+  {
+    for(;cnt;cnt--)
+    {
+      for(;*str!=';' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str; str++);
+      if(!*str) str = tmp;
+      for(;(*str==';' || *str==' ' || *str=='\x0D' || *str=='\x0A') && *str; str++);
+      if(!*str) str = tmp;
+    }
+  }
+  for(;*str!=';' && *str!=':' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str; str++);
+  if(*str!=':') return 5050;
+  numbuf[5] = 0;
+  for(;*str!=';' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str && numcnt<5; numbuf[numcnt] = *str, str++, numcnt++);
+  return atoi(numbuf);
+
+}
+//---------------------------------------------------------------------------
+int GetHostsCount(const char *str)
+{
+  char cnt = 1;
+  for(;cnt;cnt++)
+  {
+    for(;*str!=';' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str; str++);
+    if(!*str) return cnt;
+    for(;(*str==';' || *str==' ' || *str=='\x0D' || *str=='\x0A') && *str; str++);
+    if(!*str) return cnt;
+  }
+  return 0;
+
+}
+//---------------------------------------------------------------------------
+
 void create_connect(void)
 {
+  static int host_counter = 0;
+  char hostbuf[128], buf[128];
+  int hostport;
   int ***p_res=NULL;
   void do_reconnect(void);
   SOCK_ADDR sa;
@@ -1026,17 +1099,29 @@ void create_connect(void)
   }
   DNR_ID=0;
   *socklasterr()=0;
-  ip=str2ip(NATICQ_HOST);
+  
+  if(host_counter > GetHostsCount(NATICQ_HOST)) host_counter = 0;
+  GetHost(host_counter, NATICQ_HOST, hostbuf);
+  hostport = GetPort(host_counter, NATICQ_HOST);
+  host_counter++;
+
+  sprintf(buf, "Connect to %s:%d", hostbuf, hostport);
+  
+  strcpy(logmsg,buf);
+  SMART_REDRAW();
+    
+  ip=str2ip(hostbuf);
   if (ip!=0xFFFFFFFF)  
   {
     sa.ip=ip;
-    strcpy(logmsg,"Connect by IP!");
+    strcat(logmsg,"\nConnect by IP!");
     SMART_REDRAW();
     goto L_CONNECT;
   }  
-  strcpy(logmsg,LG_GRSENDDNR);
+  strcat(logmsg,"\n");
+  strcat(logmsg,LG_GRSENDDNR);
   SMART_REDRAW();
-  err=async_gethostbyname(NATICQ_HOST,&p_res,&DNR_ID); //03461351 3<70<19<81
+  err=async_gethostbyname(hostbuf,&p_res,&DNR_ID); //03461351 3<70<19<81
   if (err)
   {
     if ((err==0xC9)||(err==0xD6))
@@ -1058,7 +1143,9 @@ void create_connect(void)
   {
     if (p_res[3])
     {
-      strcpy(logmsg,LG_GRDNROK);
+      strcpy(logmsg,buf);
+      strcat(logmsg,"\n");
+      strcat(logmsg,LG_GRDNROK);
       SMART_REDRAW();
       DNR_TRIES=0;
       sa.ip=p_res[3][0][0];
@@ -1067,7 +1154,7 @@ void create_connect(void)
       if (sock!=-1)
       {
 	sa.family=1;
-	sa.port=htons(NATICQ_PORT);
+	sa.port=htons(hostport);
 	//    sa.ip=htonl(IP_ADDR(82,207,89,182));
 	if (connect(sock,&sa,sizeof(sa))!=-1)
 	{
