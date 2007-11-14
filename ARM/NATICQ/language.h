@@ -122,7 +122,7 @@
 
 //=================================
 
-#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%t"
+#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%s\n%t"
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
 
@@ -253,7 +253,7 @@
 #define LG_HISTIOERR "Помилка I/O  #%u"
 
 //=================================
-#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%t"
+#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%s\n%t"
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
 
@@ -385,7 +385,7 @@
 
 //=================================
 
-#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%t"
+#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx: %db, Tx: %db\nQueue: %db\n%s\n%t"
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
 

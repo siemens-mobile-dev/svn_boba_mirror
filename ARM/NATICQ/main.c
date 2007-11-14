@@ -182,6 +182,7 @@ void IlluminationOff(){
 }
 
 void IlluminationOn(const int disp, const int key, const int tmr, const int fade){
+  if(!tmr) return;
   GBS_DelTimer(&tmr_illumination);
   SetIllumination(0,1,disp,fade);
   SetIllumination(1,1,key,fade);
@@ -1005,7 +1006,7 @@ int DNR_TRIES=3;
 
 extern const char NATICQ_HOST[];
 extern const unsigned int NATICQ_PORT;
-
+char hostname[128];
 
 //---------------------------------------------------------------------------
 const char *GetHost(int cnt, const char *str, char *buf)
@@ -1059,6 +1060,7 @@ int GetPort(int cnt, const char *str)
   str++;
   numbuf[5] = 0;
   for(;*str!=';' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str && numcnt<5; numbuf[numcnt] = *str, str++, numcnt++);
+  numbuf[numcnt] = 0;
   return atoi(numbuf);
 
 }
@@ -1081,7 +1083,7 @@ int GetHostsCount(const char *str)
 void create_connect(void)
 {
   static int host_counter = 0;
-  char hostbuf[128], buf[128];
+  char hostbuf[128];
   int hostport;
   int ***p_res=NULL;
   void do_reconnect(void);
@@ -1106,21 +1108,19 @@ void create_connect(void)
   hostport = GetPort(host_counter, NATICQ_HOST);
   host_counter++;
 
-  sprintf(buf, "Connect to %s:%d", hostbuf, hostport);
+  sprintf(hostname, "%s:%d", hostbuf, hostport);
   
-  strcpy(logmsg,buf);
   SMART_REDRAW();
     
   ip=str2ip(hostbuf);
   if (ip!=0xFFFFFFFF)  
   {
     sa.ip=ip;
-    strcat(logmsg,"\nConnect by IP!");
+    strcpy(logmsg,"\nConnect by IP!");
     SMART_REDRAW();
     goto L_CONNECT;
   }  
-  strcat(logmsg,"\n");
-  strcat(logmsg,LG_GRSENDDNR);
+  strcpy(logmsg,LG_GRSENDDNR);
   SMART_REDRAW();
   err=async_gethostbyname(hostbuf,&p_res,&DNR_ID); //03461351 3<70<19<81
   if (err)
@@ -1129,6 +1129,7 @@ void create_connect(void)
     {
       if (DNR_ID)
       {
+        host_counter--;
 	return; //∆дем готовности DNR
       }
     }
@@ -1136,7 +1137,7 @@ void create_connect(void)
     {
       snprintf(logmsg,255,LG_GRDNRERROR,err);
       SMART_REDRAW();
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
       return;
     }
   }
@@ -1144,9 +1145,7 @@ void create_connect(void)
   {
     if (p_res[3])
     {
-      strcpy(logmsg,buf);
-      strcat(logmsg,"\n");
-      strcat(logmsg,LG_GRDNROK);
+      strcpy(logmsg,LG_GRDNROK);
       SMART_REDRAW();
       DNR_TRIES=0;
       sa.ip=p_res[3][0][0];
@@ -1171,7 +1170,7 @@ void create_connect(void)
 	  LockSched();
 	  ShowMSG(1,(int)LG_MSGCANTCONN);
 	  UnlockSched();
-	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
 	}
       }
       else
@@ -2122,7 +2121,7 @@ void method0(MAIN_GUI *data)
 		   GetPaletteAdrByColorIndex(1));
   DrawImg(0,0,S_ICONS[ICON_LOGO]);
   unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
-  wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,logmsg);
+  wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
   if (total_smiles)
   {
     wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
@@ -2573,7 +2572,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
 	SMART_REDRAW();
 	SUBPROC((void *)ClearSendQ);
-	if (!disautorecconect) GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*120,do_reconnect);
+	if (!disautorecconect)
+        {
+          GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
+          snprintf(logmsg,255,"%s\nReconect after 10 second...",logmsg);
+        }
 	break;
       }
     }
