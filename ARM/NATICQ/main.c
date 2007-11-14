@@ -1056,6 +1056,7 @@ int GetPort(int cnt, const char *str)
   }
   for(;*str!=';' && *str!=':' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str; str++);
   if(*str!=':') return 5050;
+  str++;
   numbuf[5] = 0;
   for(;*str!=';' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str && numcnt<5; numbuf[numcnt] = *str, str++, numcnt++);
   return atoi(numbuf);
