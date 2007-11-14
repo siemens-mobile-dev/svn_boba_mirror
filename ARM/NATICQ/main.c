@@ -1101,7 +1101,7 @@ void create_connect(void)
   DNR_ID=0;
   *socklasterr()=0;
   
-  if(host_counter > GetHostsCount(NATICQ_HOST)) host_counter = 0;
+  if(host_counter > GetHostsCount(NATICQ_HOST)-1) host_counter = 0;
   GetHost(host_counter, NATICQ_HOST, hostbuf);
   hostport = GetPort(host_counter, NATICQ_HOST);
   host_counter++;
@@ -2189,6 +2189,12 @@ int method5(MAIN_GUI *data,GUI_MSG *msg)
 	DNR_TRIES=3;
         SUBPROC((void *)create_connect);
       }
+      break;
+    case '0':
+      SUBPROC((void*)end_socket);
+      GBS_DelTimer(&reconnect_tmr);
+      DNR_TRIES=3;
+      SUBPROC((void *)create_connect);
       break;
     }
   }
