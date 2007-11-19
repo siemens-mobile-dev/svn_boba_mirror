@@ -67,7 +67,8 @@ void restart_melody();
 int findlength(char *playy)
 {
 #ifdef NEWSGOLD
-  return(GetWavLen(playy)); 
+  file_length=GetWavLen(playy)*216;
+  return(file_length);
 #else
   TWavLen wl;
   zeromem(&wl, sizeof(wl));
