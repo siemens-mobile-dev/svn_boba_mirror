@@ -3,6 +3,13 @@
 #include "strings.h"
 #include "edit_settings.h"
 
+#ifdef NEWSGOLD
+#define CBOX_CHECKED 0xE116
+#define CBOX_UNCHECKED 0xE117
+#else
+#define CBOX_CHECKED 0xE10B
+#define CBOX_UNCHECKED 0xE10C
+#endif
 
 CALC_SETTINGS calc_set;
 
@@ -64,8 +71,27 @@ static int view_settings_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
   WSHDR *ws;
-  int j;
+  int j, i, l;
   char *s;
+  WSHDR *ws1, locws1;
+  unsigned short ws_body1[128];
+  ws1=CreateLocalWS(&locws1, ws_body1, 128);
+  i=EDIT_GetFocus(data);
+  l=msg->gbsmsg->submess;
+  if (msg->gbsmsg->msg==KEY_DOWN)
+  {
+    if (i==6)
+    {
+      if (l==ENTER_BUTTON)
+      {
+        calc_set.auto_recalc=!calc_set.auto_recalc;
+        CutWSTR(ws1, 0);
+        wsAppendChar(ws1, calc_set.auto_recalc?CBOX_CHECKED:CBOX_UNCHECKED);
+        EDIT_SetTextToFocused(data,ws1);
+        return (-1);
+      }
+    }
+  }
   if (msg->keys==0xFFF)
   {   
     EDIT_SetFocus(data, 2);
@@ -197,7 +223,18 @@ int CreateSettingsEdit(void)
   ascii2ws(ws,calc_set.fmt);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,15);
   AddEditControlToEditQend(eq,&ec,ma);   // 4
-
+  
+  PrepareEditControl(&ec);
+  ascii2ws(ws,"Enable Real-Time Calculation:");
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);    // 5 
+  
+  PrepareEditControl(&ec);
+  CutWSTR(ws, 0);
+  wsAppendChar(ws, calc_set.auto_recalc?CBOX_CHECKED:CBOX_UNCHECKED);
+  ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,ws,ws->wsbody[0]);
+  AddEditControlToEditQend(eq,&ec,ma);    // 6 
+  
   FreeWS(ws);
   patch_header(&view_settings_hdr);
   patch_input(&view_settings_desc);

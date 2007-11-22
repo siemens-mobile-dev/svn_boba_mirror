@@ -39,6 +39,8 @@ char operation[256];
 int op_len=0;
 int op_pos=0;
 
+int req_recalc;
+
 void Killer(void)
 {
   extern void *ELF_BEGIN;
@@ -79,7 +81,7 @@ int GetOperIndexByKey(int key)
 
 void insert_operation(int op)
 {
-  if (op_len+1<=sizeof(operation))
+  if (op_len<sizeof(operation))
   {
     for(int i=op_len; i>=op_pos; i--)
     {
@@ -154,25 +156,43 @@ int PRIOR(int a)
   return (0);
 }
 
-void PushDoubleStack(double **stack, double value, int *size)
+
+typedef struct {
+  jmp_buf jmp;
+  double *stack;
+  int sp; 
+}DSTACK;
+
+void PushDoubleStack(DSTACK *dstack, double value)
 {
-  int st_size=*size;
-  double *st=*stack=realloc(*stack,(st_size+1)*(sizeof(double)));  
-  st[st_size]=value;
-  *size=st_size+1;
+  dstack->stack=realloc(dstack->stack,(dstack->sp+1)*sizeof(double));
+  dstack->stack[dstack->sp]=value;
+  dstack->sp++;
 }
 
-double PopDoubleStack(double **stack, int *size)
+double PopDoubleStack(DSTACK *dstack)
 {
-  int st_size=*size;
-  double *st=*stack;
   double a=0;
-  if (st_size)
+  if (dstack->sp)
   {
-    a=st[st_size-1];
-    *size=st_size-1;
+    a=dstack->stack[--dstack->sp];    
+  }
+  else
+  {
+    longjmp(dstack->jmp, 1);
   }
   return a;  
+}
+
+void ConstructDStackStruct(DSTACK *dstack)
+{
+  dstack->stack=NULL;
+  dstack->sp=0;
+}
+
+void DestructDStackStruct(DSTACK *dstack)
+{
+  mfree(dstack->stack);
 }
 
 double FacN(double n)
@@ -224,131 +244,131 @@ double ConvertRadiansToAngle(double radian)
   return (a);
 }
 
-void ParseOperation(double **stack, int *size, int operation)
+void ParseOperation(DSTACK *dstack, int operation)
 {
   double a, b, ans;
   switch (operation)
   {
   case 12:    // sin
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=sin(ConvertAngleToRadians(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 13:    // *
-    a=PopDoubleStack(stack, size);
-    b=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
+    b=PopDoubleStack(dstack);
     ans=b*a;
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 14:    // /
-    a=PopDoubleStack(stack, size);
-    b=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
+    b=PopDoubleStack(dstack);
     ans=b/a;
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 15:    // cos
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=cos(ConvertAngleToRadians(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 16:    // +
-    a=PopDoubleStack(stack, size);
-    b=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
+    b=PopDoubleStack(dstack);
     ans=b+a;
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;    
   case 17:    // -
-    a=PopDoubleStack(stack, size);
-    b=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
+    b=PopDoubleStack(dstack);
     ans=b-a;
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 18:    // tan
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=tan(ConvertAngleToRadians(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 21:    // ^2
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=pow(a, 2);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 22:    // sqrt
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=sqrt(a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 24:    // asin
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(asin(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 25:   // ln
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=log(a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 26:   // log 10
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=log10(a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 27:   // acos
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(acos(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 28:    // e^
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=exp(a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 30:    // atan
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(atan(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 31:    // 10^
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=pow(10, a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 33:     // ^
-    a=PopDoubleStack(stack, size);
-    b=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
+    b=PopDoubleStack(dstack);
     ans=pow(b, a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 36:    // sinh
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=sinh(ConvertAngleToRadians(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 37:    // asinh
     break;
   case 39:    // cosh
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=cosh(ConvertAngleToRadians(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 40:    // acosh
     break;
   case 42:    // tan
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=tanh(ConvertAngleToRadians(a));
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 43:    // atanh
     break;
   case 41:    // abs
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=fabs(a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   case 44:   // !
-    a=PopDoubleStack(stack, size);
+    a=PopDoubleStack(dstack);
     ans=FacN(a);
-    PushDoubleStack(stack, ans, size);
+    PushDoubleStack(dstack, ans);
     break;
   }
 }
@@ -361,11 +381,15 @@ void calc_answer()
   char stack[256];
   int stack_depth=0;
   s=operation;
-  double *double_stack=NULL;
-  int double_sp=0;
+  DSTACK dstack;
   char *d,value[128];
   double ans=0;
-  
+  ConstructDStackStruct(&dstack);
+  if (setjmp(dstack.jmp))
+  {
+    ans=NAN;
+    goto L_ERROR;
+  }
   while(i)
   {
     c=*s++;
@@ -380,31 +404,31 @@ void calc_answer()
       } while (IsCharNumber(c) && i);
       *d=0;
       a=strtod(value, NULL);
-      PushDoubleStack(&double_stack,a, &double_sp);
+      PushDoubleStack(&dstack, a);
       if (!i) break;
     }
     if (c==32)  // пи
     {
       double a=PI_CONST;
-      PushDoubleStack(&double_stack,a, &double_sp);
+      PushDoubleStack(&dstack, a);
     }
     else if (c==38)   // ANS
     {
-      PushDoubleStack(&double_stack, d_answer, &double_sp);
+      PushDoubleStack(&dstack, d_answer);
     }
     else if (c==45)   // X
     {
-      PushDoubleStack(&double_stack, calc_set.x, &double_sp);
+      PushDoubleStack(&dstack, calc_set.x);
     }
     else if (c==46)   // Y
     {
-      PushDoubleStack(&double_stack, calc_set.y, &double_sp);
+      PushDoubleStack(&dstack, calc_set.y);
     }
     else if (c==20)   // Закрывающаяся скобка
     {
       while(stack[stack_depth-1]!=19)
       {
-        ParseOperation(&double_stack, &double_sp, stack[--stack_depth]);
+        ParseOperation(&dstack, stack[--stack_depth]);
       }
       stack_depth--;  // удаляем саму открывающуюся скобку
     }
@@ -426,7 +450,7 @@ void calc_answer()
       {
         while(stack_depth && (PRIOR(stack[stack_depth-1])>=PRIOR(c)))
         {
-          ParseOperation(&double_stack, &double_sp, stack[--stack_depth]);
+          ParseOperation(&dstack, stack[--stack_depth]);
         }
         stack[stack_depth++]=c;
       }
@@ -435,10 +459,11 @@ void calc_answer()
   }
   while(stack_depth)
   {
-    ParseOperation(&double_stack, &double_sp, stack[--stack_depth]);
+    ParseOperation(&dstack, stack[--stack_depth]);
   }
-  ans=PopDoubleStack(&double_stack, &double_sp);
-  mfree(double_stack);
+  ans=PopDoubleStack(&dstack);
+L_ERROR:
+  DestructDStackStruct(&dstack);
   d_answer=ans;
 }
   
@@ -519,6 +544,7 @@ int method5(CHTYPE_GUI *data,GUI_MSG *msg)
     if (((i>='0')&&(i<='9'))||(i=='*'))
     {
       insert_operation(GetOperIndexByKey(i)+((data->state)*12));
+      if (calc_set.auto_recalc) req_recalc=1;
       return (1);
     }
     if (i=='#')
@@ -589,6 +615,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
     if (msg->keys==0xFFE)
     {
       remove_operation();
+      if (calc_set.auto_recalc) req_recalc=1;
       return (-1);    
     }
     if (msg->gbsmsg->msg==KEY_DOWN)
@@ -596,6 +623,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
       if (((i>='0')&&(i<='9'))||(i=='*'))
       {
         insert_operation(GetOperIndexByKey(i));
+        if (calc_set.auto_recalc) req_recalc=1;
         return(-1);
       }
       if (i=='#')
@@ -630,11 +658,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   {
     if (i==GREEN_BUTTON) 
     {
-      char revpn[256];
-      calc_answer();
-      sprintf(revpn, calc_set.fmt, d_answer);
-      wsprintf(ews, revpn);
-      EDIT_SetTextToEditControl(data,2,ews);
+      req_recalc=1;
       return(-1);
     }
   }
@@ -650,7 +674,9 @@ void ed1_ghook(GUI *data, int cmd)
   static SOFTKEY_DESC sk_del={0x0FFE,0x0FFE,(int)"< C"};
   if (cmd==2)
   {
-    op_len=0;    
+    op_len=0;
+    req_recalc=0;
+    EDIT_SetFocus(data, 4);
   }
   if (cmd==7)
   {
@@ -681,6 +707,15 @@ void ed1_ghook(GUI *data, int cmd)
       EDIT_SetCursorPos(data,k+1);
     }
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+    if (req_recalc)
+    {
+      char revpn[256];
+      req_recalc=0;
+      calc_answer();
+      sprintf(revpn, calc_set.fmt, d_answer);
+      wsprintf(ews, revpn);
+      EDIT_SetTextToEditControl(data,2,ews);
+    }
   }
   if (cmd==0x0A)
   {

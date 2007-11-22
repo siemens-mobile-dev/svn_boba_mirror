@@ -12,6 +12,7 @@ typedef struct {
   double y;
   char fmt[16];
   char drg;
+  char auto_recalc;
 } CALC_SETTINGS;
 
 void ReadCalcSettings(void);
