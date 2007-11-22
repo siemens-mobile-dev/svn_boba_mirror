@@ -1,4 +1,7 @@
 #include "../inc/swilib.h"
+#include "rect_patcher.h"
+#include "mainmenu.h"
+#include "edit_settings.h"
 #include <math.h>
 
 #define PI_CONST 3.141592653589793238
@@ -17,38 +20,14 @@ typedef struct
   void *calc_gui;
 }CHTYPE_GUI;
 
+extern CALC_SETTINGS calc_set;
+
 volatile int calc_gui_id;
 volatile int chtype_gui_id;
 
 extern double strtod(const char *_S, char **_Endptr);
 
 extern void kill_data(void *p, void (*func_p)(void *));
-
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-
-#pragma inline
-void patch_rect(RECT*rc,int x,int y, int x2, int y2)
-{
-  rc->x=x;
-  rc->y=y;
-  rc->x2=x2;
-  rc->y2=y2;
-}
 
 WSHDR *ews;
 const char empty_str[]="";
@@ -66,7 +45,7 @@ void Killer(void)
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
 
-const char *keydesc[4][12]=
+const char *const keydesc[4][12]=
 {
   { "1"    ,"2"   ,"3",
     "4"    ,"5"   ,"6",
@@ -134,19 +113,6 @@ int getXXXXwidth(int font)
   return (GetSymbolWidth('X',font)*4);
 }
 
-typedef struct {
-  void *next;
-  int lex;
-  double value;
-} NUM_STACK;
-
-typedef struct
-{
-  void *next;
-  double value;
-} VALUES_STACK;
-
-
 #pragma inline
 int IsCharNumber(int c)
 {
@@ -163,12 +129,12 @@ int GetCharByIndex(int c)
 int IsMathFunc(int c)
 {
   return (c==12 || c==15 || c==18 || c==21 || c==22 || c==24 ||
-          c==25 || c==26 || c==27 || c==28 || c==30 || c==31 || c==33 || c==41);
+          c==25 || c==26 || c==27 || c==28 || c==30 || c==31 || c==33 || c==41 || c==44 ||
+          c==36 || c==37 || c==39 || c==40 || c==42 || c==43);
 }
 
 
 /* Функция PRIOR возвpащает пpиоpитет аpифм. опеpации */
-
 int PRIOR(int a)
 {
   if (IsMathFunc(a)) return 4;
@@ -209,6 +175,55 @@ double PopDoubleStack(double **stack, int *size)
   return a;  
 }
 
+double FacN(double n)
+{
+  double ans=n;
+  while(n>1)
+  {
+    ans*=--n;   
+  }
+  return ans;  
+}
+
+double ConvertAngleToRadians(double angle)
+{
+  double a=0;
+  switch(calc_set.drg)
+  {
+  case DEGREES:
+  default:
+    a=angle*PI_CONST/180;
+    break;
+  case RADIANS:
+    a=angle;
+    break;
+  case GRADS:
+    a=angle*PI_CONST/200;
+    break;
+  }
+  return (a);
+}
+
+
+double ConvertRadiansToAngle(double radian)
+{
+  double a=0;
+  switch(calc_set.drg)
+  {
+  case DEGREES:
+  default:
+    a=radian*180/PI_CONST;
+    break;
+  case RADIANS:
+    a=radian;
+    break;
+  case GRADS:
+    a=radian*200/PI_CONST;
+    break;
+  }
+  return (a);
+}
+
 void ParseOperation(double **stack, int *size, int operation)
 {
   double a, b, ans;
@@ -216,7 +231,7 @@ void ParseOperation(double **stack, int *size, int operation)
   {
   case 12:    // sin
     a=PopDoubleStack(stack, size);
-    ans=sin(a*PI_CONST/180);
+    ans=sin(ConvertAngleToRadians(a));
     PushDoubleStack(stack, ans, size);
     break;
   case 13:    // *
@@ -233,7 +248,7 @@ void ParseOperation(double **stack, int *size, int operation)
     break;
   case 15:    // cos
     a=PopDoubleStack(stack, size);
-    ans=cos(a*PI_CONST/180);
+    ans=cos(ConvertAngleToRadians(a));
     PushDoubleStack(stack, ans, size);
     break;
   case 16:    // +
@@ -250,7 +265,7 @@ void ParseOperation(double **stack, int *size, int operation)
     break;
   case 18:    // tan
     a=PopDoubleStack(stack, size);
-    ans=tan(a*PI_CONST/180);
+    ans=tan(ConvertAngleToRadians(a));
     PushDoubleStack(stack, ans, size);
     break;
   case 21:    // ^2
@@ -265,7 +280,7 @@ void ParseOperation(double **stack, int *size, int operation)
     break;
   case 24:    // asin
     a=PopDoubleStack(stack, size);
-    ans=asin(a);
+    ans=ConvertRadiansToAngle(asin(a));
     PushDoubleStack(stack, ans, size);
     break;
   case 25:   // ln
@@ -280,7 +295,7 @@ void ParseOperation(double **stack, int *size, int operation)
     break;
   case 27:   // acos
     a=PopDoubleStack(stack, size);
-    ans=acos(a);
+    ans=ConvertRadiansToAngle(acos(a));
     PushDoubleStack(stack, ans, size);
     break;
   case 28:    // e^
@@ -290,7 +305,7 @@ void ParseOperation(double **stack, int *size, int operation)
     break;
   case 30:    // atan
     a=PopDoubleStack(stack, size);
-    ans=atan(a);
+    ans=ConvertRadiansToAngle(atan(a));
     PushDoubleStack(stack, ans, size);
     break;
   case 31:    // 10^
@@ -304,9 +319,35 @@ void ParseOperation(double **stack, int *size, int operation)
     ans=pow(b, a);
     PushDoubleStack(stack, ans, size);
     break;
+  case 36:    // sinh
+    a=PopDoubleStack(stack, size);
+    ans=sinh(ConvertAngleToRadians(a));
+    PushDoubleStack(stack, ans, size);
+    break;
+  case 37:    // asinh
+    break;
+  case 39:    // cosh
+    a=PopDoubleStack(stack, size);
+    ans=cosh(ConvertAngleToRadians(a));
+    PushDoubleStack(stack, ans, size);
+    break;
+  case 40:    // acosh
+    break;
+  case 42:    // tan
+    a=PopDoubleStack(stack, size);
+    ans=tanh(ConvertAngleToRadians(a));
+    PushDoubleStack(stack, ans, size);
+    break;
+  case 43:    // atanh
+    break;
   case 41:    // abs
     a=PopDoubleStack(stack, size);
     ans=fabs(a);
+    PushDoubleStack(stack, ans, size);
+    break;
+  case 44:   // !
+    a=PopDoubleStack(stack, size);
+    ans=FacN(a);
     PushDoubleStack(stack, ans, size);
     break;
   }
@@ -350,6 +391,14 @@ void calc_answer()
     else if (c==38)   // ANS
     {
       PushDoubleStack(&double_stack, d_answer, &double_sp);
+    }
+    else if (c==45)   // X
+    {
+      PushDoubleStack(&double_stack, calc_set.x, &double_sp);
+    }
+    else if (c==46)   // Y
+    {
+      PushDoubleStack(&double_stack, calc_set.y, &double_sp);
     }
     else if (c==20)   // Закрывающаяся скобка
     {
@@ -530,6 +579,11 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
   i=msg->gbsmsg->submess;
   
   focus=EDIT_GetFocus(data);
+  if (msg->keys==0xFFF)
+  {
+    ShowMainMenu();
+    return (-1);
+  }
   if (focus==4)
   {
     if (msg->keys==0xFFE)
@@ -537,7 +591,6 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
       remove_operation();
       return (-1);    
     }
-    
     if (msg->gbsmsg->msg==KEY_DOWN)
     {
       if (((i>='0')&&(i<='9'))||(i=='*'))
@@ -579,7 +632,7 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
     {
       char revpn[256];
       calc_answer();
-      sprintf(revpn, "%1.15lg", d_answer);
+      sprintf(revpn, calc_set.fmt, d_answer);
       wsprintf(ews, revpn);
       EDIT_SetTextToEditControl(data,2,ews);
       return(-1);
@@ -605,7 +658,6 @@ void ed1_ghook(GUI *data, int cmd)
     if (i==4)
     {
       int k=0;
-      SetSoftKey(data,&sk,SET_SOFT_KEY_N);
       CutWSTR(ews,0);
       if (op_len)
       {
@@ -628,6 +680,7 @@ void ed1_ghook(GUI *data, int cmd)
       EDIT_SetTextToEditControl(data,4,ews);
       EDIT_SetCursorPos(data,k+1);
     }
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
   }
   if (cmd==0x0A)
   {
@@ -726,11 +779,13 @@ void maincsm_oncreate(CSM_RAM *data)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ews=AllocWS(256);
+  ReadCalcSettings();
   csm->gui_id=calc_gui_id=create_ed();
 }
 
 void maincsm_onclose(CSM_RAM *csm)
 {
+  WriteCalcSettings();
   FreeWS(ews);
   SUBPROC((void *)Killer);
 }
@@ -770,7 +825,7 @@ sizeof(MAIN_CSM),
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "SCalca");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "SCalka");
 }
 
 
