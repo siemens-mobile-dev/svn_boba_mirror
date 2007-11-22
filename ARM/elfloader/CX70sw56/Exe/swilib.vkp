@@ -62,6 +62,10 @@
 01F0: 0xA1159514 ; 07C: __arm unsigned int SetVibration(unsigned int power);
 0200: 0xA0ACCD69 ; 080: __thumb void int ShowCallList(int list, int zero);
 0210: 0xA113B1D8 ; 084: __arm int GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber);
+
+0218: 0xA11398B0 ; 086: __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int cepid, int msg); //cepid=msg=0
+021C: 0xA11399F4 ; 087: __arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg);
+
 ;0220: 0x ; 088: __arm char GetAccessoryType(void);
 0228: 0xA113AF74 ; 08A: __arm int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber);
 022C: 0xA113B538 ; 08B: __arm int GetTotalFlexSpace(int DriveNum, unsigned int *ErrorNumber);
@@ -437,6 +441,9 @@
 ;8CC:              ; 233:  void GetAllEmail()
 
 08E0: 0xA0B8582D ; 238: __thumb void SendAutoUSSDack(void);
+08E4: 0xA1139CB4 ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg); //cepid=msg=0
+08E8: 0xA1139E00 ; 23A: __arm int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08EC: 0xA0002070 ; 23B: __arm void DisableIconBar(int disable); //Only loopback
 #pragma disable old_equal_ff
 +0
 
