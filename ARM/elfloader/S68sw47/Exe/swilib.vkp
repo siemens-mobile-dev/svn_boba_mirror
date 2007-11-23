@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;S68v47
 
-;Library 04.09.2007
+;Library 23.11.2007
 
 +0074000
 #pragma enable old_equal_ff
@@ -75,7 +75,7 @@
 
 0100: 0xA0256041   ; 40: GetVibraStatus
 0104: 0xA079F0EB   ; 41: GetProvider
-0108: 0xA0E97857   ; 42: IsScreenSaver
+0108: 0xA02D73DB   ; 42: IsScreenSaver
 010C: 0xA07A7047   ; 43: IsUnlocked
 ;110:              ; 44: TempLigntOn
 0114: 0xA006F241   ; 45: GetWavLen
@@ -87,10 +87,10 @@
 012C: 0xA0908C68   ; 4B: StartMidlet
 0130: 0xA082D7D5   ; 4C: GetMissedCallsCount
 0134: 0xA00931E8   ; 4D: CallAfterTimer(void *htimer, long ms, void ptr())
-0138: 0xA07FCF65 ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
-013C: 0xA07FCFC5 ; 04F: __thumb int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int));
+0138: 0xA07FCF65   ; 04E: __thumb int MsgBoxError(int flag, int LgpId);
+013C: 0xA07FCFC5   ; 4F: int MsgBoxYesNo(int flag, int LgpID, void CallBackProc(int))
 
-0140: 0xA07FCFCF ; 050: __thumb int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int));
+0140: 0xA07FCFCF   ; 50: int MsgBoxOkCancel(int flag, int LgpID, void CallBackProc(int))
 0144: 0xA0B93043   ; 51: GetNetAccessMode
 0148: 0xA8D07E18   ; 52: GetIlluminationDataTable
 014C: 0xA0FBFA59   ; 53: memcmp(void *m1,void *m2,int n)
@@ -105,7 +105,7 @@
 0170: 0xA031A62D   ; 5C: GetCPUClock().
 0174: 0xA031A667   ; 5D: GetCPULoad()
 0178: 0xA031A635   ; 5E: GetMMIMemUsed
-017C: 0xA0094D58   ; 5F: int GetFreeRamAvail().
+017C: 0xA00940EC   ; 5F: int GetFreeRamAvail()
 
 0180: 0xA0316231   ; 60: ShowMainMenu
 0184: 0xA02A567B   ; 61: ShowNativeMenu
@@ -147,8 +147,8 @@
 ;20C:              ; 83: GetPathOfFoundFile
 0210: 0xA021D73C   ; 84: int GetFileStats(const char *cFileName, void *StatBuffer, unsigned int *errornumber)
 0214: 0xA023A65D   ; 85: StrCmpNoCase
-;218:              ; 86: ReadEEPROMData
-;21C:              ; 87: WriteEEPROMData
+0218: 0xA01A79A4   ; 86: __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int cepid, int msg)
+021C: 0xA01A7C10   ; 87: _arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg);
 0220: 0xA01F13D8   ; 88: GetAccessoryType
 0224: 0xA07A931C   ; 89: GetLangMesIntoWS
 0228: 0xA021D320   ; 8A: int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber)
@@ -223,7 +223,7 @@
 0330: 0xA8DE365C   ; CC: RamMissedCalls
 ;334:              ; CD: RamMissedSMS
 0338: 0xA8DA850C   ; CE: RamDateTime
-;33C:              ; CF: RamAlarm
+033C: 0xA8E831EC   ; CF: RamAlarm
 
 0340: 0xA8D64E7C   ; D0: RamAccPoint
 ;344:              ; D1: RamScreensaver
@@ -329,7 +329,7 @@
 
 04C0: 0xA07F6759   ; 130: getRGBbyPaletteAdr(int *paletteAdr,void *dest)
 04C4: 0xA07F6777   ; 131: setColor(int a,int r,int g,int b,void *dest)
-04C8: 0xA0FC0029   ; 132: void *memmove(void *dest,const void *source,int cnt)
+04C8: 0xA0FC0028   ; 132: void *memmove(void *dest,const void *source,int cnt)
 04CC: 0xA07FAFBD   ; 133: StoreXYWHtoRECT_2(void *RECT,int x,int y,int w,int h)
 04D0: 0xA07FAFD3   ; 134: StoreXYXYtoRECT(void *RECT,int x,int y,int x2,int y2)
 04D4: 0xA07FD8BF   ; 135: IsGuiOnTop(int id)
@@ -352,7 +352,7 @@
 0514: 0xA0098A74   ; 145: GBS_GetCurCepid(void)
 0518: 0xA009A9EC   ; 146: LockSched_2(void)
 051C: 0xA009AAD8   ; 147: UnlockSched_2(void)
-0520: 0xA07FCF47 ; 148: __thumb int ShowMSG(int flag, int lgp_id);
+0520: 0xA07FCF47   ; 148: __thumb extern int ShowMSG(int flag, int lgp_id);
 0524: 0xA07F8A3D   ; 149: SetPropTo_Obj1(DRWOBJ *drwobj,void *rect,int rect_flag,WSHDR *wshdr,int font,int text_flag)
 0528: 0xA07F6C71   ; 14A: FreeDrawObject_subobj(DRWOBJ *drwobj)
 052C: 0xA07F6BDB   ; 14B: SetColor(DRWOBJ *drwobj, int *color1, int *color2)
@@ -590,5 +590,17 @@
 08A0: 0xA0247234   ; 228: __arm int PlayMelody_ResumePlayBack(int handle);
 08A4: 0xA0FC0D10   ; 229: __arm void longjmp(jmp_buf, int);
 08A8: 0xA07E0F81   ; 22A: __arm void FreeGSMTXTpkt(void *pkt);
+08AC: 0xA02A9D09   ; 22B: CreateRadioButtonList(RadioButtonListDesc *, char num_of_radiobuttons, 0, 0, char prev_setting, void HandlerFunc(int), char flag)
+08B0: 0xA02A95FB   ; 22C: pdcache_getval(char *return, int maxlen_of_return_str, char cachetype,0, *pd_entry_identifier)
+08B4: 0xA02A96F9   ; 22D: pdcache_setval(char *new_value, char cachetype, 0, char *pd_entry_identifier)
+08B8: 0xA02EB39F   ; 22E: OpenExplorer(ExplOpenDesc *)
+08BC: 0xA8D28184   ; 22F: TDateTimeSettings *RamDateTimeSettings
+08C0: 0xA07A3591   ; 230: int GetTimeZoneShift(int param1, int param2, int timeZone)
+08C4: 0xA8D28128   ; 231: TAppointment *RamAppointment
+08C8: 0xA00927B8   ; 232: GBS_DestroyMessage(GBS_MSG *)
+08CC: 0xA04D3CC9   ; 233: void GetAllEmail() 
+08D0: 0xA07E0F2B   ; 238: __arm void SendAutoUSSDack(void);]
+08D4: 0xA01A8008   ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg);
+08D8: 0xA01A8174   ; 23A: __arm  int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
 #pragma disable old_equal_ff
 +0

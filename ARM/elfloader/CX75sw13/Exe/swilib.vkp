@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;CX75v13
 
-;Library 26.10.2007
+;Library 23.11.2007
 
 +0FD4000
 #pragma enable  old_equal_ff
@@ -148,8 +148,8 @@
 020C: 0xA02DCFC0   ;  83: __arm GetPathOfFoundFile
 0210: 0xA07CAD50   ;  84: __arm int GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber)
 0214: 0xA0208941   ;  85: __thumb StrCmpNoCase
-0218: 0xA07C9360   ;  86: __arm ReadEEPROMData
-021C: 0xA07C94A4   ;  87: __arm WriteEEPROMData
+0218: 0xA07C9360 ; 086: __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int cepid, int msg); //cepid=msg=0
+021C: 0xA07C94A4 ; 087: __arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg);
 ;220:              ;  88: __unknown GetAccessoryType
 ;224:              ;  89: __unknown GetLangMesIntoWS
 0228: 0xA07CAAEC   ;  8A: __arm int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber)
@@ -585,10 +585,9 @@
 ;8CC:              ; 233:  void GetAllEmail()
 
 08E0: 0xA07CE9FD ; 238: __thumb void SendAutoUSSDack(void);
+
+08E4: 0xA07C9764 ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg); //cepid=msg=0
+08E8: 0xA07C98B0 ; 23A: __arm int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08EC: 0xA00404BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
 #pragma disable old_equal_ff
 +0
-
-
-
-
-;locale=Russian_Russia.1251

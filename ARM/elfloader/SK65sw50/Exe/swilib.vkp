@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SK65v50
 
-;Library 26.10.2007
+;Library 23.11.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -148,8 +148,8 @@
 020C: 0xA02DA1EC ; 83: GetPathOfFoundFile
 0210: 0xA09458D4 ; 84: __arm int GetFileStats(const char *cFileName, FSTATS * StatBuffer, unsigned int *errornumber);
 0214: 0xA02084BD ; 85: StrCmpNoCase
-0218: 0xA0943FAC ; 86: ReadEEPROMData
-021C: 0xA09440F0 ; 87: WriteEEPROMData
+0218: 0xA0943FAC ; 086: __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int cepid, int msg); //cepid=msg=0
+021C: 0xA09440F0 ; 087: __arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg);
 ;0220: 0x   ; 88: GetAccessoryType
 ;0224: 0x   ; 89: GetLangMesIntoWS
 0228: 0xA0945670 ; 8A: GetFreeFlexSpace
@@ -611,5 +611,9 @@
 ;08EC: 0x ; 237: char *RamIconBar
 
 08E0: 0xA070CB9D ; 238: __thumb void SendAutoUSSDack(void);
+
+08E4: 0xA09443B0 ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg); //cepid=msg=0
+08E8: 0xA09444FC ; 23A: __arm int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08EC: 0xA00404BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
 #pragma disable old_equal_ff
 +0

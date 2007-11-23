@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;S65v58
 
-;Library 26.10.2007
+;Library 23.11.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -154,8 +154,8 @@
 20C: 0xA094A914   ; f131: GetPathOfFoundFile
 0210: 0xA122EB64   ; 84: int GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber)(KMZ)
 214: 0xA0825D79   ; f133: StrCmpNoCase
-218: 0xA122D23C   ; f134: ReadEEPROMData
-21C: 0xA122D380   ; f135: WriteEEPROMData
+0218: 0xA122D23C ; 086: __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int cepid, int msg); //cepid=msg=0
+021C: 0xA122D380 ; 087: __arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg);
 ;220: 0x   ; f136: GetAccessoryType
 ;224: 0x   ; f137: GetLangMesIntoWS
 0228: 0xA122E900   ; 8A: int GetFreeFlexSpace(int DriveNum, unsigned int *ErrorNumber)
@@ -620,6 +620,10 @@
 ;8CC:              ; 233:  void GetAllEmail()
 
 08E0: 0xA0C341C5 ; 238: __thumb void SendAutoUSSDack(void);
+
+08E4: 0xA122D640 ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg); //cepid=msg=0
+08E8: 0xA122D78C ; 23A: __arm int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08EC: 0xA00204BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver

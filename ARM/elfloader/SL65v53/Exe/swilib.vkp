@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SL65v53
 
-;Library 26.10.2007
+;Library 23.11.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -148,8 +148,8 @@
 020C: 0xA093B018   ; 83: GetPathOfFoundFile
 0210: 0xA121C310   ; 84: GetFileStats(const char *cFileName, void * StatBuffer, unsigned int *errornumber)
 0214: 0xA0825D79   ; 85: StrCmpNoCase
-0218: 0xA121A9E8   ; 86: ReadEEPROMData
-021C: 0xA121AB2C   ; 87: WriteEEPROMData
+0218: 0xA121A9E8 ; 086: __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int cepid, int msg); //cepid=msg=0
+021C: 0xA121AB2C ; 087: __arm void EEFullWriteBlock(int block, void *buf, int offset, int size, int cepid, int msg);
 0220: 0xA0002070   ; 88: GetAccessoryType
 0224: 0xA0002070   ; 89: GetLangMesIntoWS
 0228: 0xA121C0AC   ; 8A: GetFreeFlexSpace
@@ -619,6 +619,10 @@
 ;8CC:              ; 233:  void GetAllEmail()
 
 08E0: 0xA0BFFBD9 ; 238: __thumb void SendAutoUSSDack(void);
+
+08E4: 0xA121ADEC ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg); //cepid=msg=0
+08E8: 0xA121AF38 ; 23A: __arm int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08EC: 0xA00204BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
