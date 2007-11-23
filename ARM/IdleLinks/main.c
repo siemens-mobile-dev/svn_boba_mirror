@@ -154,7 +154,7 @@ int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
   
   if (msg->gbsmsg->msg==KEY_DOWN)
   { 
-    if (msg->gbsmsg->submess == CALL_BTN) return (1);
+    if (msg->gbsmsg->submess == CLOSE_BTN) return (1);
     switch (msg->gbsmsg->submess)
     {
     case RIGHT_BUTTON:
