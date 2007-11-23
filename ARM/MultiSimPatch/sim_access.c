@@ -500,7 +500,7 @@ __arm void TryRigesterInfinity(){
   EEFullWriteBlock(5403, &Block5403, 0x00, 0x50,0,0);
   if(SimNum)
   {
-    LIB_Memcpy(RAM_IMSI_Ptr, Block5401[SIM_number].IMSI, IMSI_DATA_BYTE_LEN);
+    LIB_Memcpy(RAM_IMSI_Ptr, Block5401[SimNum].IMSI, IMSI_DATA_BYTE_LEN);
   }
   else
   {
