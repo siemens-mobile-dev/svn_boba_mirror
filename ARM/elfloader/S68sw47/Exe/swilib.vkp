@@ -599,8 +599,8 @@
 08C4: 0xA8D28128   ; 231: TAppointment *RamAppointment
 08C8: 0xA00927B8   ; 232: GBS_DestroyMessage(GBS_MSG *)
 08CC: 0xA04D3CC9   ; 233: void GetAllEmail() 
-08D0: 0xA07E0F2B   ; 238: __arm void SendAutoUSSDack(void);]
-08D4: 0xA01A8008   ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg);
-08D8: 0xA01A8174   ; 23A: __arm  int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08E0: 0xA07E0F2B   ; 238: __arm void SendAutoUSSDack(void);]
+08E4: 0xA01A8008   ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg);
+08E8: 0xA01A8174   ; 23A: __arm  int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
 #pragma disable old_equal_ff
 +0
