@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;C72v22
 
-;Library 23.11.2007
+;Library 25.11.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -610,5 +610,7 @@
 08E4: 0xA112E7C4 ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg); //cepid=msg=0
 08E8: 0xA112E910 ; 23A: __arm int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
 08EC: 0xA00204BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
+
+08F0: 0xA0CEA698 ; 23C: __arm int SetCurrentGPRSProfile(int profile);
 #pragma disable old_equal_ff
 +0
