@@ -35,7 +35,7 @@ int LoadTemplates_new(void)
    TRESOURCE *ResList = CList_FindContactByJID(CList_GetActiveContact()->full_name)->res_list;
    while(ResList)
     {
-      if(ResList->name) //бывает что имя ресурса незадано
+      if((ResList->name)&&(ResList->status!=6)) //бывает что имя ресурса незадано
       {
      commands_lines=realloc(commands_lines,(i+1)*sizeof(char *));
      commands_lines[i++]= convUTF8_to_ANSI_STR(ResList->name);
@@ -142,9 +142,8 @@ void SetCmdToEditMessage(char *command)
       EDIT_SetTextToEditControl(data, 1, ws_eddata);
       EDIT_SetCursorPos(data,pos + strlen(command));
     break;
-   
-    case 2:
-    case 3:
+
+  case 2:
       {
 	int c;
 	char *p=command;
@@ -158,6 +157,16 @@ void SetCmdToEditMessage(char *command)
         EDIT_SetCursorPos(data,pos);
       }
     break;
+   
+    case 3:
+      {
+      str_2ws(ws_me,command, strlen(command));
+      pos = pos+2;
+      wsprintf(ws_eddata, "%w: %w",ws_me, ec.pWS);
+      EDIT_SetTextToEditControl(data, 1, ws_eddata);
+      EDIT_SetCursorPos(data,pos + strlen(command));
+      }
+    break;    
   } 
   FreeWS(ws_me);
   FreeTemplates();

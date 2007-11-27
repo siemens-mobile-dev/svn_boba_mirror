@@ -151,7 +151,7 @@ void Disp_Info(TRESOURCE* ResEx)
     AddEditControlToEditQend(eq,&ec,ma);
   }
 
-  if(ResEx->entry_type==T_NORMAL)
+  if((ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_VIRTUAL)&&(ResEx->name))
   {
     // Ресурс
     wsprintf(ws_info,percent_t,LG_RESOURCE);
@@ -162,15 +162,17 @@ void Disp_Info(TRESOURCE* ResEx)
     ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
+////   if (ResEx->priority != 0)
+////    {
     // Приоритет
     wsprintf(ws_info,percent_t,LG_PRIORITY);
     ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
-    //utf8_2ws(ws_info, ResEx->name, 128);
     wsprintf(ws_info, "%i", ResEx->priority);
     ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
+////    }
   }
 
   //  if(ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_CONF_NODE || ResEx->entry_type==T_TRANSPORT ||ResEx->entry_type==T_VIRTUAL)
@@ -228,7 +230,7 @@ void Disp_Info(TRESOURCE* ResEx)
     AddEditControlToEditQend(eq,&ec,ma);
   }
   
-  if (ResEx->entry_type==T_NORMAL || ResEx->entry_type==T_TRANSPORT)
+  if ((ResEx->entry_type!=T_GROUP)&&(ResEx->entry_type!=T_CONF_NODE)&&(ResEx->entry_type!=T_CONF_ROOT))
   {    // подписка
     wsprintf(ws_info,percent_t,"Подписка");
     ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);

@@ -1600,6 +1600,10 @@ sizeof(MAIN_CSM),
     Is_Vibra_Enabled=DEF_VIBRA_STATE;
     Display_Offline=DEF_SHOW_OFFLINE;
 
+    extern TTime intimes;           // инициализация переменных
+    extern TDate indates;           // для idle
+    GetDateTime(&indates,&intimes); //
+
     UpdateCSMname();
 
     LockSched();
