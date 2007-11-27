@@ -5,6 +5,7 @@
 #include "lang.h"
 
 BM_ITEM *BM_ROOT  = NULL;
+int reqbook = 0; //флаг запроса закладок
 
 void KillBMList()
 {
@@ -39,7 +40,7 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
   while(elem)
   {
     n_name = elem->name;
-    if(!n_name)return;
+    //if(!n_name)return;
     if(!strcmp(n_name, conference_t))  // Элемент конференции
     {
       c_name = XML_Get_Attr_Value(jid,elem->attr);
@@ -52,7 +53,6 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
       {
         c_pass = tmpnode->value;
       }
-
       // Создаём очередной элемент списка
       BM_ITEM *bmitem = malloc(sizeof(BM_ITEM));
       bmitem->mucname = malloc(strlen(c_name)+1);
@@ -80,7 +80,6 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
     }
     elem = elem->next;
   }
-
   Disp_BM_Menu();
 }
 
@@ -98,7 +97,8 @@ void Get_Bookmarks_List()
 {
   if(!BM_ROOT)
   {
-    SUBPROC((void*)_getbookmarkslist);
+    if (reqbook==0) SUBPROC((void*)_getbookmarkslist);
+    reqbook=1;
   }
   else Disp_BM_Menu();
 }

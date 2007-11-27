@@ -50,7 +50,7 @@
 #define LG_SELECT2          "Выбор..."
 #define LG_COMMANDS         "Команды"
 #define LG_CONTRESOURCES    "Ресурсы..."  //както подругому надо
-#define LG_CONTRESOURCE     "Ресурсы контакта"
+#define LG_CONTRESOURCE     "Ники"
 #define LG_MSGTEMPLATE      "Шаблоны сообщений"
 #define LG_SMILE            "Смайлы"
 #define LG_CLOSEDLG         "Закрыть диалог"
@@ -140,6 +140,7 @@
 #define LG_HISTORY          "История"
 #define LG_MUCHIST          "MUC история"
 #define LG_MUCDEF           "MUC по умолчанию"
+#define LG_MUCDEFMSGCOUNT   "Кол. загружаемых сообщений"
 #define LG_MUCDEFNIK        "Ник поумолчанию"
 #define LG_IDLEICON         "Положение значка"
 #define LG_POPUPDIS         "Отображать POPUP"
@@ -227,7 +228,7 @@
 #define LG_SELSMILE         "Вибір смайлу..."
 #define LG_SELECT2          "Вибір..."
 #define LG_CONTRESOURCES    "Ресурси..."  //както подругому надо
-#define LG_CONTRESOURCE     "Ресурси контакта"
+#define LG_CONTRESOURCE     "Ніки"
 #define LG_COMMANDS         "Команди"
 #define LG_MSGTEMPLATE      "Шаблони повідомлень"
 #define LG_SMILE            "Смайли"
@@ -318,6 +319,7 @@
 #define LG_HISTORY          "Історія"
 #define LG_MUCHIST          "MUC історія"
 #define LG_MUCDEF           "MUC за умовчанням"
+#define LG_MUCDEFMSGCOUNT   "Кіл. отриманих повідомлень"
 #define LG_MUCDEFNIK        "Нік за умовчанням"
 #define LG_IDLEICON         "Розташування значка"
 #define LG_POPUPDIS         "Відображати POPUP"
@@ -404,7 +406,7 @@
 #define LG_SELSMILE         "Select smile..."
 #define LG_SELECT2          "Select..."
 #define LG_CONTRESOURCES    "Resource..."  //както подругому надо
-#define LG_CONTRESOURCE     "Resource"
+#define LG_CONTRESOURCE     "Nicknames" //
 #define LG_COMMANDS         "Commands"
 #define LG_MSGTEMPLATE      "Templates"
 #define LG_SMILE            "Smiles"
@@ -496,6 +498,7 @@
 #define LG_MUCHIST          "MUC history"
 #define LG_MUCDEF           "Default MUC"
 #define LG_MUCDEFNIK        "Default MUC nick"
+#define LG_MUCDEFMSGCOUNT   "MUC message count"
 #define LG_IDLEICON         "Idle icon position"
 #define LG_POPUPDIS         "Display pop-ups"
 #define LG_COMPOSEV         "Composing Events"

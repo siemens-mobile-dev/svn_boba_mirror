@@ -239,7 +239,7 @@ void Disp_Info(TRESOURCE* ResEx)
     {
     case SUB_NONE:
       {
-        wsprintf(ws_info, "%s", "нет");
+        wsprintf(ws_info, "%s", "NONE");
         break;
       }
     case SUB_TO:
