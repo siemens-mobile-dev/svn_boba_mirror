@@ -518,8 +518,9 @@ __arm void TryRigesterInfinity(){
 //    if (RAM_SPN_Ptr!=(void*)-1)    LIB_Memcpy(RAM_SPN_Ptr,  REAL_SIM_SPN,  SPN_DATA_BYTE_LEN);
 //    if (RAM_F14_Ptr!=(void*)-1)    LIB_Memcpy(RAM_F14_Ptr,  REAL_SIM_F14,  SPN_DATA_BYTE_LEN);   
   }
-    CopySPN(RAM_SPN_Ptr, Block5401[SimNum].SPN);
-
+   if (RAM_SPN_Ptr!=(void*)-1)  CopySPN(RAM_SPN_Ptr, Block5401[SimNum].SPN); // fixed old bug, thanx to  ManOfWar 
+	else    if (RAM_F14_Ptr!=(void*)-1)  CopySPN(RAM_F14_Ptr, Block5401[SimNum].SPN);	
+	
     LIB_Memcpy(RAM_LOCI_Ptr, Block5403.LOCI, LOCI_DATA_BYTE_LEN);
     LIB_Memcpy(RAM_BCCH_Ptr, Block5403.BCCH, BCCH_DATA_BYTE_LEN);
     LIB_Memcpy(RAM_KC_Ptr, Block5403.KC, KC_DATA_BYTE_LEN);
