@@ -278,7 +278,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         utf82win(sss,(const char *)sss);
         ascii2ws(ews, sss);
         DrawString(ews, DATA_X, DATA_Y ,scr_w-4, scr_h-4-GetFontYSIZE(FONT_SIZE),
-	         FONT_SIZE,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
         
         if (SHOW_PIC)
           DrawImg(PICT_X, PICT_Y, (int)MakeGlobalString(ICON_PATH, '\\', weath.Pic));

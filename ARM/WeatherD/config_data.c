@@ -27,7 +27,7 @@ __root const unsigned int FONT_SIZE=7; //SGOLD
 #endif
 
 __root const CFG_HDR cfghdr4={CFG_COLOR,"Font color",0,0};
-__root const char FONT_COLOR[4]={0xFF,0x00,0x00,0x64};
+__root const char FONT_COLOR[4]={0x00,0x00,0x00,0x64};
 
 
 __root const CFG_HDR cfghdr61={CFG_CHECKBOX,"Show Temperature",0,0};
