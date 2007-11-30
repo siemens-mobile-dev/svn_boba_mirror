@@ -161,8 +161,12 @@ void SetCmdToEditMessage(char *command)
     case 3:
       {
       ascii2ws(ws_me,command);
+      if (pos==1)
+      {
       pos = pos+2;
       wsprintf(ws_eddata, "%w: %w",ws_me, ec.pWS);
+      }
+      else wsprintf(ws_eddata, "%w%w",ec.pWS, ws_me);
       EDIT_SetTextToEditControl(data, 1, ws_eddata);
       EDIT_SetCursorPos(data,pos + strlen(command));
       }
