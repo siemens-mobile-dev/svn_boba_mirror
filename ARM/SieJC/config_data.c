@@ -221,10 +221,6 @@ __root const int DEF_VIBRA_STATE=1;
 __root const CFG_HDR cfghdr33={CFG_CHECKBOX,LG_MOFFLINE,0,2};
 __root const int DEF_SHOW_OFFLINE=1;
 
-
-
-
-
 __root const CFG_HDR cfghdr_DEFSTATES_LEVEL_END={CFG_LEVEL,"",0,0};
 
 
@@ -253,4 +249,11 @@ __root const CFG_CBOX_ITEM cfgcbox10[2]={LG_NO,LG_YES};
 
 
 __root const CFG_HDR cfghdr_FONTS_END={CFG_LEVEL,"",0,0};
+
+__root const CFG_HDR cfghdr39={CFG_CBOX,LG_KBD_LAYOUT,0,2};
+__root const int KBD_LAYOUT = 0;
+__root const CFG_CBOX_ITEM cfgcboxkbd[2]={
+  LG_KBD1,
+  LG_KBD2
+};
 // EOL, EOF

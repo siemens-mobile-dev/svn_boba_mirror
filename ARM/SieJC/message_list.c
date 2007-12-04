@@ -32,6 +32,7 @@ extern RGBA CURSOR_BORDER;
 extern const int pod_mess;
 //------------------
 
+extern const int KBD_LAYOUT;
 
 char MsgList_Quit_Required = 0;
 
@@ -471,247 +472,307 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
   if(MsgList_Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
 
   //DirectRedrawGUI();
-  if (msg->gbsmsg->msg==KEY_DOWN)
+  if (KBD_LAYOUT)
   {
-    switch(msg->gbsmsg->submess)
+    if (msg->gbsmsg->msg==KEY_DOWN)
     {
-    case '0':
+      switch(msg->gbsmsg->submess)
       {
-        // Убить список сообщений
-        //KillDisp(MessagesList);
-        KillMsgList(Resource_Ex->log);
-        Resource_Ex->log = NULL;
-        Resource_Ex->has_unread_msg=0;
-        Resource_Ex->total_msg_count=0;
-        return 1;
-      }
-
+      case '0':
+        {
+          // Убить список сообщений
+          //KillDisp(MessagesList);
+          KillMsgList(Resource_Ex->log);
+          Resource_Ex->log = NULL;
+          Resource_Ex->has_unread_msg=0;
+          Resource_Ex->total_msg_count=0;
+          return 1;
+        }
 #ifndef NEWSGOLD
-    case RED_BUTTON:
+      case RED_BUTTON:
 #endif
-    case RIGHT_SOFT:
-      {
-        return 1;
-      }
-
-    case LEFT_SOFT:
-      {
-        break;
-      }
-    case '5':
-    case ENTER_BUTTON:
-      {
-        LOG_MESSAGE* log =GetCurMessage();
-        if(log)
+      case RIGHT_SOFT:
         {
-          char *s=log->mess;
-          unsigned int l = strlen(s);
-          char *init_text = malloc(l+3+1);
-          zeromem(init_text,l+3+1);
-          init_text[0] = '>';
-          init_text[1] = '>';
-          strcat(init_text, s);
-          init_text[2+ l] = '\n';
-          init_text[3+ l] = '\0';
-          Init_Message(Resource_Ex, init_text);
-          mfree(init_text);
+          return 1;
         }
-        break;
-      }
-    case '2':
-    case UP_BUTTON:
-      {
-        Calc_Pages_Data_1();
-        CurrentMessage_Lines = 0;
-        if(Cursor_Pos>1)Cursor_Pos--;
-        if(CurrentMessage>1)CurrentMessage--;
-        
-        REDRAW();
-        break;
-      }
-       case LEFT_BUTTON:
-      //страница вверх
-      {
-        if (CurrentPage>1)
-        {
-          int cp=CurrentPage;
-          for(;;)
-          {
-            CurrentMessage_Lines = 0;
-            Cursor_Pos--;
-            CurrentMessage--;
-            Calc_Pages_Data_1();redraw_1();
-            if (CurrentPage+1==cp)
-            {
-             // Cursor_Pos--;
-             // CurrentMessage--;
-              break;
-            }
-            if (CurrentPage<1)break;
-          }
 
-          //CurrentPage--;
-          //Cursor_Pos-=lines_on_page;
-          //CurrentMessage-=lines_on_page;
-        }
-      redraw_1();  REDRAW();
-     
-    /*  CurrentMessage_Lines = 0; //
-        if(Cursor_Pos>1)Cursor_Pos--;
-        for(flag2=DEF_SKR;flag2>0;flag2--){ 
-          Calc_Pages_Data_1();
-          
-       
-       if(CurrentMessage>1)CurrentMessage--;
-  redraw_1();
-      
-        
-       }
-       REDRAW();*/
-        
-         /*
-        CurrentMessage_Lines = 0;
-       if(CurrentPage>1)CurrentPage--;
-        redraw_1();REDRAW();*/
-      Cursor_Pos=DispMessList_Count;
-       break; 
-      }
-   
-    case '8':
-    case DOWN_BUTTON:
-      {
-        CurrentMessage_Lines = 0;
-        if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
-        if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
-        Calc_Pages_Data_2();
-        REDRAW();
-        break;
-      }
-      case RIGHT_BUTTON:
-      { /* CurrentMessage_Lines = 0;
-      if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
-      for(flag2=DEF_SKR;flag2>0;flag2--){
-      
-        
-        if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
-        Calc_Pages_Data_2();
-       
-        
-       redraw_1();
-      }*/
-        
-       
-        if (CurrentPage<MaxPages)
+      case LEFT_SOFT:
         {
-          int cp=CurrentPage;
-          for(;;)
-          {
-            CurrentMessage_Lines = 0;
-            Cursor_Pos++;
-            CurrentMessage++;
-            Calc_Pages_Data_2();redraw_1();
-            if (CurrentPage-1==cp) break;
-            if (CurrentPage>=MaxPages)break;
-          }
-
-          //CurrentPage++;
-          //Cursor_Pos+=lines_on_page;
-          //CurrentMessage+=lines_on_page;
+          break;
         }
-       
-      
-      REDRAW(); break;}
-      
-    case '1'://в начало списка сообщений
-      {
-        CurrentMessage_Lines = 0;
-        Cursor_Pos=1;
-        CurrentMessage=1;
-        CurrentPage=1;
-        REDRAW();
-        break;
-      }
-    case '9'://в конец списка сообщений
-      {
-        CurrentMessage_Lines = 0;
-        Cursor_Pos=DispMessList_Count;
-        CurrentMessage=Resource_Ex->total_msg_count;
-        CurrentPage=MaxPages;
-        REDRAW();
-        break;
-      }
-   /* case VOL_UP_BUTTON://страница вверх
-      {
-        if (CurrentPage>1)
+      case '5':
+      case ENTER_BUTTON:
         {
-          int cp=CurrentPage;
-          for(;;)
+          LOG_MESSAGE* log =GetCurMessage();
+          if(log)
           {
-            CurrentMessage_Lines = 0;
-            Cursor_Pos--;
-            CurrentMessage--;
-            Calc_Pages_Data_1();
-            if (CurrentPage+1==cp)
-            {
-              Cursor_Pos--;
-              CurrentMessage--;
-              break;
-            }
-          }
-
-          //
-          //
-          //
-        }
-        REDRAW();}
-      
-    
-      
-    case VOL_DOWN_BUTTON://страница вниз
-      {
-        if (CurrentPage<MaxPages)
-        {
-          int cp=CurrentPage;
-          for(;;)
-          {
-            CurrentMessage_Lines = 0;
-            Cursor_Pos++;
-            CurrentMessage++;
-            Calc_Pages_Data_2();
-            if (CurrentPage-1==cp) break;
-          }
-
-          //
-          //
-          //
-        }
-        REDRAW(); } 
-        */
-     
-     
-    case '#':
-      {
-        LOG_MESSAGE *msg = GetCurMessage();
-        if(msg)
-          if(msg->mtype==MSG_GCHAT)
-          {
-            unsigned int au_nick_len = strlen(msg->muc_author);
-            char *init_text = malloc(au_nick_len+3);
-            zeromem(init_text, au_nick_len+3);
-            strcpy(init_text, msg->muc_author);
-            init_text[au_nick_len]=':';
-            init_text[au_nick_len+1]=' ';
-            init_text[au_nick_len+2]='\0';
+            char *s=log->mess;
+            unsigned int l = strlen(s);
+            char *init_text = malloc(l+3+1);
+            zeromem(init_text,l+3+1);
+            init_text[0] = '>';
+            init_text[1] = '>';
+            strcat(init_text, s);
+            init_text[2+ l] = '\n';
+            init_text[3+ l] = '\0';
             Init_Message(Resource_Ex, init_text);
             mfree(init_text);
           }
-        break;
+          break;
+        }
+      case '2':
+      case UP_BUTTON:
+        {
+          Calc_Pages_Data_1();
+          CurrentMessage_Lines = 0;
+          if(Cursor_Pos>1)Cursor_Pos--;
+          if(CurrentMessage>1)CurrentMessage--;
+        
+          REDRAW();
+          break;
+        }
+      case LEFT_BUTTON:
+      //страница вверх
+        {
+          if (CurrentPage>1)
+          {
+            int cp=CurrentPage;
+            for(;;)
+            {
+              CurrentMessage_Lines = 0;
+              Cursor_Pos--;
+              CurrentMessage--;
+              Calc_Pages_Data_1();redraw_1();
+              if (CurrentPage+1==cp)
+              {
+                break;
+              }
+              if (CurrentPage<1)break;
+            }
+          }
+          redraw_1();  REDRAW();
+          Cursor_Pos=DispMessList_Count;
+          break; 
+        } 
+      case '8':
+      case DOWN_BUTTON:
+        {
+          CurrentMessage_Lines = 0;
+          if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
+          if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
+          Calc_Pages_Data_2();
+          REDRAW();
+          break;
+        }
+      case RIGHT_BUTTON:
+        {
+          if (CurrentPage<MaxPages)
+          {
+            int cp=CurrentPage;
+            for(;;)
+            {
+              CurrentMessage_Lines = 0;
+              Cursor_Pos++;
+              CurrentMessage++;
+              Calc_Pages_Data_2();redraw_1();
+              if (CurrentPage-1==cp) break;
+              if (CurrentPage>=MaxPages)break;
+            }
+          }
+          REDRAW(); break;
+        }
+      case '1'://в начало списка сообщений
+        {
+          CurrentMessage_Lines = 0;
+          Cursor_Pos=1;
+          CurrentMessage=1;
+          CurrentPage=1;
+          REDRAW();
+          break;
+        }
+      case '9'://в конец списка сообщений
+        {
+          CurrentMessage_Lines = 0;
+          Cursor_Pos=DispMessList_Count;
+          CurrentMessage=Resource_Ex->total_msg_count;
+          CurrentPage=MaxPages;
+          REDRAW();
+          break;
+        }
+      case '#':
+        {
+          LOG_MESSAGE *msg = GetCurMessage();
+          if(msg)
+            if(msg->mtype==MSG_GCHAT)
+            {
+              unsigned int au_nick_len = strlen(msg->muc_author);
+              char *init_text = malloc(au_nick_len+3);
+              zeromem(init_text, au_nick_len+3);
+              strcpy(init_text, msg->muc_author);
+              init_text[au_nick_len]=':';
+              init_text[au_nick_len+1]=' ';
+              init_text[au_nick_len+2]='\0';
+              Init_Message(Resource_Ex, init_text);
+              mfree(init_text);
+            }
+          break;
+        }
+      case GREEN_BUTTON:
+        {
+          Init_Message(Resource_Ex, NULL);
+          break;
+        }
       }
-
-    case GREEN_BUTTON:
+    }
+  }
+  else
+  {
+    if (msg->gbsmsg->msg==KEY_DOWN)
+    {
+      switch(msg->gbsmsg->submess)
       {
-        Init_Message(Resource_Ex, NULL);
-        break;
+      case '0':
+        {
+          KillMsgList(Resource_Ex->log);
+          Resource_Ex->log = NULL;
+          Resource_Ex->has_unread_msg=0;
+          Resource_Ex->total_msg_count=0;
+          return 1;
+        }
+#ifndef NEWSGOLD
+      case RED_BUTTON:
+#endif
+      case RIGHT_SOFT:
+        {
+          return 1;
+        }
+
+      case LEFT_SOFT:
+        {
+          break;
+        }
+      case '5':
+      case ENTER_BUTTON:
+        {
+          LOG_MESSAGE* log =GetCurMessage();
+          if(log)
+          {
+            char *s=log->mess;
+            unsigned int l = strlen(s);
+            char *init_text = malloc(l+3+1);
+            zeromem(init_text,l+3+1);
+            init_text[0] = '>';
+            init_text[1] = '>';
+            strcat(init_text, s);
+            init_text[2+ l] = '\n';
+            init_text[3+ l] = '\0';
+            Init_Message(Resource_Ex, init_text);
+            mfree(init_text);
+          }
+          break;
+        }
+      case '2':
+      case UP_BUTTON:
+        {
+          Calc_Pages_Data_1();
+          CurrentMessage_Lines = 0;
+          if(Cursor_Pos>1)Cursor_Pos--;
+          if(CurrentMessage>1)CurrentMessage--;
+        
+          REDRAW();
+          break;
+        }
+      case '4':
+      //страница вверх
+        {
+          if (CurrentPage>1)
+          {
+            int cp=CurrentPage;
+            for(;;)
+            {
+              CurrentMessage_Lines = 0;
+              Cursor_Pos--;
+              CurrentMessage--;
+              Calc_Pages_Data_1();redraw_1();
+              if (CurrentPage+1==cp)
+              {
+                break;
+              }
+              if (CurrentPage<1)break;
+            }
+          }
+          redraw_1();  REDRAW();
+          Cursor_Pos=DispMessList_Count;
+          break; 
+        } 
+      case '8':
+      case DOWN_BUTTON:
+        {
+          CurrentMessage_Lines = 0;
+          if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
+          if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
+          Calc_Pages_Data_2();
+          REDRAW();
+          break;
+        }
+      case '6':
+        {
+          if (CurrentPage<MaxPages)
+          {
+            int cp=CurrentPage;
+            for(;;)
+            {
+              CurrentMessage_Lines = 0;
+              Cursor_Pos++;
+              CurrentMessage++;
+              Calc_Pages_Data_2();redraw_1();
+              if (CurrentPage-1==cp) break;
+              if (CurrentPage>=MaxPages)break;
+            }
+          }
+          REDRAW(); break;
+        }
+      case '1'://в начало списка сообщений
+        {
+          CurrentMessage_Lines = 0;
+          Cursor_Pos=1;
+          CurrentMessage=1;
+          CurrentPage=1;
+          REDRAW();
+          break;
+        }
+      case '9'://в конец списка сообщений
+        {
+          CurrentMessage_Lines = 0;
+          Cursor_Pos=DispMessList_Count;
+          CurrentMessage=Resource_Ex->total_msg_count;
+          CurrentPage=MaxPages;
+          REDRAW();
+          break;
+        }
+      case RIGHT_BUTTON:
+        {
+          LOG_MESSAGE *msg = GetCurMessage();
+          if(msg)
+            if(msg->mtype==MSG_GCHAT)
+            {
+              unsigned int au_nick_len = strlen(msg->muc_author);
+              char *init_text = malloc(au_nick_len+3);
+              zeromem(init_text, au_nick_len+3);
+              strcpy(init_text, msg->muc_author);
+              init_text[au_nick_len]=':';
+              init_text[au_nick_len+1]=' ';
+              init_text[au_nick_len+2]='\0';
+              Init_Message(Resource_Ex, init_text);
+              mfree(init_text);
+            }
+          break;
+        }
+      case GREEN_BUTTON:
+        {
+          Init_Message(Resource_Ex, NULL);
+          break;
+        }
       }
     }
   }
@@ -721,32 +782,24 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
     {
     case '2':
     case UP_BUTTON:
-      {CurrentPage--;
-    Cursor_Pos-=lines_on_page;
-    CurrentMessage-=lines_on_page;
-     break;/*
+      {
         Calc_Pages_Data_1();
         CurrentMessage_Lines = 0;
         if(Cursor_Pos>1)Cursor_Pos--;
         if(CurrentMessage>1)CurrentMessage--;
         REDRAW();
-        break;*/
+        break;
       }
     case '8':
     case DOWN_BUTTON:
-      {CurrentPage++;
-     Cursor_Pos+=lines_on_page;
-     CurrentMessage+=lines_on_page;
-     break;
-        /*CurrentMessage_Lines = 0;
+      {
+        CurrentMessage_Lines = 0;
         if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
         if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
         Calc_Pages_Data_2();
         REDRAW();
-        break;*/
+        break;
       }
-      
-      
     }
   }
   return(0);

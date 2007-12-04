@@ -116,7 +116,6 @@ int sock=-1;
 
 volatile int is_gprs_online=1;
 
-
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
 GBSTMR Ping_Timer;

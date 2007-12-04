@@ -176,6 +176,11 @@
 #define LG_NORMAL_FONT      "Нормальный"
 #define LG_BOLD_FONT        "Жирный"
 #define LG_UNDERLINING      "Подчеркивание сообщений"
+
+#define LG_KBD_LAYOUT       "\"Раскладка\" клавиатуры"
+#define LG_KBD1             "Раскладка 1"
+#define LG_KBD2             "Раскладка 2"
+
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Показать аватару"
@@ -365,6 +370,11 @@
 #define LG_NORMAL_FONT      "Нормальный"
 #define LG_BOLD_FONT        "Жирный"
 #define LG_UNDERLINING      "Подчеркивание сообщений"
+
+#define LG_KBD_LAYOUT       "\"Раскладка\" клавиатуры"
+#define LG_KBD1             "Раскладка 1"
+#define LG_KBD2             "Раскладка 2"
+
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Показать аватару"
@@ -552,6 +562,11 @@
 #define LG_NORMAL_FONT      "Normal"
 #define LG_BOLD_FONT        "Bold"
 #define LG_UNDERLINING      "Underline messages"
+
+#define LG_KBD_LAYOUT       "Keyboard \"layout\""
+#define LG_KBD1             "Layout 1"
+#define LG_KBD2             "Layout 2"
+
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Show avatar"
