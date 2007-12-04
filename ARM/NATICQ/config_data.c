@@ -41,6 +41,13 @@ __root const CFG_CBOX_ITEM cfgcbox16_1[2]={"Small","Big"};
 __root const CFG_HDR cfghdr61={CFG_CHECKBOX,"Enable Auto Request XText",0,0};
 __root const int ENA_AUTO_XTXT = 1;
 
+__root const CFG_HDR cfghdr62={CFG_CHECKBOX,"Not log same XText",0,0};
+__root const int NOT_LOG_SAME_XTXT = 1;
+
+__root const CFG_HDR cfghdr63={CFG_CBOX,"History read buffer",0,5};
+__root const int HISTORY_BUFFER = 2;
+__root const CFG_CBOX_ITEM cfgcbox8_2[5]={"128 bytes","256 bytes","512 bytes","1 kbyte" ,"2 kbyte"};
+
 __root const CFG_HDR cfghdr_m41={CFG_LEVEL,"Notify power",1,0};
 __root const CFG_HDR cfghdr18={CFG_UINT,"Sound Volume",0,6};
 __root const unsigned int sndVolume=3;
@@ -89,22 +96,56 @@ __root const CFG_HDR cfghdr_m61={CFG_LEVEL,"Illumination setup",1,0};
 __root const CFG_HDR cfghdr_m60={CFG_LEVEL,"",0,0};
 
 //Fonts
-__root const CFG_HDR cfghdr_m51={CFG_LEVEL,"Font setup",1,0};
+__root const CFG_HDR cfghdr_m51={CFG_LEVEL,"Font and colors setup",1,0};
   __root const CFG_HDR cfghdr21={CFG_UINT,"My string color",0,1000};
   __root const unsigned int I_COLOR=3;
 
   __root const CFG_HDR cfghdr22={CFG_UINT,"Your string color",0,1000};
   __root const unsigned int TO_COLOR=2;
 
-  __root const CFG_HDR cfghdr24={CFG_UINT,"FontSize",0,6};
+  __root const CFG_HDR cfghdr2K={CFG_UINT,"XStatus color",0,1000};
+  __root const unsigned int X_COLOR=2;
+
+  __root const CFG_HDR cfghdr24={CFG_UINT,"Main font size",0,6};
   __root const unsigned int ED_FONT_SIZE=1;
-__root const CFG_HDR cfghdr_m50={CFG_LEVEL,"",0,0};
 
-__root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Hosts and paths",1,0};
+  __root const CFG_HDR cfghdr2F={CFG_UINT,"Header font size",0,6};
+  __root const unsigned int ED_H_FONT_SIZE=2;
+
+  __root const CFG_HDR cfghdr2G={CFG_UINT,"XStatus font size",0,6};
+  __root const unsigned int ED_X_FONT_SIZE=1;
+
+  __root const CFG_HDR cfghdr2H={CFG_UINT,"My old string color",0,1000};
+  __root const unsigned int O_I_COLOR=15;
+
+  __root const CFG_HDR cfghdr2I={CFG_UINT,"Your old string color",0,1000};
+  __root const unsigned int O_TO_COLOR=14;
+  
+  __root const CFG_HDR cfghdr2J={CFG_UINT,"XStatus old color",0,1000};
+  __root const unsigned int O_X_COLOR=14;
+
+  __root const CFG_HDR cfghdr2A={CFG_UINT,"Main old font size",0,6};
+  __root const unsigned int O_ED_FONT_SIZE=1;
+
+  __root const CFG_HDR cfghdr2B={CFG_UINT,"Header old font size",0,6};
+  __root const unsigned int O_ED_H_FONT_SIZE=2;
+
+  __root const CFG_HDR cfghdr2C={CFG_UINT,"XStatus old font size",0,6};
+  __root const unsigned int O_ED_X_FONT_SIZE=1;
+
+  __root const CFG_HDR cfghdr2D={CFG_UINT,"Acked color",0,1000};
+  __root const unsigned int ACK_COLOR=4;
+
+  __root const CFG_HDR cfghdr2E={CFG_UINT,"Unacked color",0,1000};
+  __root const unsigned int UNACK_COLOR=20;
+  
+  __root const CFG_HDR cfghdr_m50={CFG_LEVEL,"",0,0};
+
+  __root const CFG_HDR cfghdr_m11={CFG_LEVEL,"Hosts and paths",1,0};
   __root const CFG_HDR cfghdr1_1={CFG_STR_WIN1251,"Host",0,127};
-  __root const char NATICQ_HOST[128]="cbsie.dyndns.info";
+  __root const char NATICQ_HOST[128]="cbsie.dyndns.info; freegw.alltime.ru; ig.nsmt.ru";
 
-  __root const CFG_HDR cfghdr1_2={CFG_UINT,"Port",0,65535};
+  __root const CFG_HDR cfghdr1_2={CFG_UINT,"Default port",0,65535};
   __root const unsigned int NATICQ_PORT=5050;
 
   __root const CFG_HDR cfghdr2={CFG_STR_UTF8,"History path",0,63};

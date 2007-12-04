@@ -149,10 +149,25 @@ extern const unsigned int IDLEICON_Y;
 
 extern const unsigned int I_COLOR;
 extern const unsigned int TO_COLOR;
+extern const unsigned int X_COLOR;
+extern const unsigned int O_I_COLOR;
+extern const unsigned int O_TO_COLOR;
+extern const unsigned int O_X_COLOR;
 
 extern const unsigned int ED_FONT_SIZE;
+extern const unsigned int ED_H_FONT_SIZE;
+extern const unsigned int ED_X_FONT_SIZE;
+extern const unsigned int O_ED_FONT_SIZE;
+extern const unsigned int O_ED_H_FONT_SIZE;
+extern const unsigned int O_ED_X_FONT_SIZE;
+
+extern const unsigned int ACK_COLOR;
+extern const unsigned int UNACK_COLOR;
 
 extern const int ENA_AUTO_XTXT;
+extern const int NOT_LOG_SAME_XTXT;
+
+extern const int HISTORY_BUFFER;
 
 const char percent_t[]="%t";
 const char percent_d[]="%d";
@@ -648,6 +663,23 @@ int AddLOGQ(LOGQ **queue, LOGQ *p)
   return(i+1); //Теперь всего в логе элементов
 }
 
+//Получаем последний полученный X-статус
+char *GetLastXTextLOGQ(CLIST *t)
+{
+  LOGQ *p = t->log;
+  char *s = 0;
+  if(!p) return 0;
+  while(p->next)
+  {
+    if((p->type&0x0F)==3)
+      s = p->text;
+    p = p->next;
+  }
+  if((p->type&0x0F)==3)
+    s = p->text;
+  return s;
+}
+
 int GetIconIndex(CLIST *t)
 {
   unsigned short s;
@@ -826,6 +858,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 	ClearContactT9Key();
 	RecountMenu(NULL);
       }
+      if(!t->isactive) GetHistory(t, 128<<HISTORY_BUFFER);
       CreateEditChat(t);
     }
     return(-1);
@@ -1056,7 +1089,7 @@ int GetPort(int cnt, const char *str)
     }
   }
   for(;*str!=';' && *str!=':' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str; str++);
-  if(*str!=':') return 5050;
+  if(*str!=':') return NATICQ_PORT;
   str++;
   numbuf[5] = 0;
   for(;*str!=';' && *str!=' ' && *str!='\x0D' && *str!='\x0A' && *str && numcnt<5; numbuf[numcnt] = *str, str++, numcnt++);
@@ -1495,14 +1528,21 @@ void get_answer(void)
 
 void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int IDforACK)
 {
-  char hs[128];
+  char hs[128], *lastX;
   TTime tt;
   TDate d;
   GetDateTime(&d,&tt);
   int i;
+
+  if (code==3 && NOT_LOG_SAME_XTXT)
+  {
+    lastX = GetLastXTextLOGQ(t);
+    if(lastX)
+      if(strcmp(lastX, s) == 0) return;
+  }
   
   snprintf(hs,127,"%02d:%02d %02d-%02d %s:\r\n",tt.hour,tt.min,d.day,d.month,name);
-  Add2History(t, hs, s); // Запись хистори
+  Add2History(t, hs, s, code); // Запись хистори
   LOGQ *p=NewLOGQ(s);
   snprintf(p->hdr,79,"%02d:%02d %02d-%02d %s:",tt.hour,tt.min,d.day,d.month,name);
   p->type=code;
@@ -1547,14 +1587,14 @@ void ParseAnswer(WSHDR *ws, const char *s);
 
 int time_to_stop_t9;
 
-void ParseXStatusText(WSHDR *ws, const char *s)
+void ParseXStatusText(WSHDR *ws, const char *s, int color)
 {
   int c;
   int flag=0;
   CutWSTR(ws,0);
   if (strlen(s)==1) return;
   wsAppendChar(ws,0xE008);
-  wsAppendChar(ws,2);
+  wsAppendChar(ws,color);
   wsAppendChar(ws,0xE013);
   while((c=*s++))
   {
@@ -1578,56 +1618,68 @@ void AddMsgToChat(void *data)
   EDITC_OPTIONS ec_options;
   EDCHAT_STRUCT *ed_struct;
   int j;
-  int color;
+  int color, font, type;
   int zc;
   if (!data) return;
   ed_struct=EDIT_GetUserPointer(data);
   if (!ed_struct) return;
   if (!ed_struct->ed_contact->isunread) return;
+
+  
   p=ed_struct->ed_contact->last_log;
   if (p)
   {
     while(p)
     {
-
+      font = ED_H_FONT_SIZE;
       if ((zc=p->acked&3))
       {
 	if (zc==1)
-	  color=4; //Зеленый
+	  color=ACK_COLOR; //Зеленый
 	else
 	  color=I_COLOR;
       }
       else
       {
 	if (p->ID==0xFFFFFFFF)
-	  color=p->type==1?I_COLOR:TO_COLOR;
-	else
-	  color=20; //Серый
+        {
+          type = p->type&0x0F;
+          if(p->type&0x10)
+          {
+            color = (type==1)?O_I_COLOR:((type==3)?O_X_COLOR:O_TO_COLOR);
+            font = (type==3)?O_ED_X_FONT_SIZE:O_ED_H_FONT_SIZE;
+          }
+          else
+          {
+            color = (type==1)?I_COLOR:((type==3)?X_COLOR:TO_COLOR);
+            font = (type==3)?ED_X_FONT_SIZE:ED_H_FONT_SIZE;
+          }
+        }
+        else
+	  color=UNACK_COLOR; //Серый
       }
       PrepareEditControl(&ec);
-      if (p->type!=3)
+      if ((p->type&0x0F)!=3)
       {
         ascii2ws(ews,p->hdr);
         ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
       }
       else
-      {
         ConstructEditControl(&ec,ECT_HEADER,ECF_DELSTR,ews,0);
-      }      
       PrepareEditCOptions(&ec_options);
-      SetPenColorToEditCOptions(&ec_options,color/*p->type==1?I_COLOR:TO_COLOR*/);
-      SetFontToEditCOptions(&ec_options,2);
+      SetPenColorToEditCOptions(&ec_options,color);
+      SetFontToEditCOptions(&ec_options,font);
       CopyOptionsToEditControl(&ec,&ec_options);
       //AddEditControlToEditQend(eq,&ec,ma);
       EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
       ed_struct->ed_answer++;
-      if (p->type!=3)
+      if ((p->type&0x0F)!=3)
       {
         ParseAnswer(ews,p->text);
       }
       else
       {
-        ParseXStatusText(ews, p->text);
+        ParseXStatusText(ews, p->text, (p->type&0x10)?O_X_COLOR:X_COLOR);
       }
       PrepareEditControl(&ec);
       ConstructEditControl(&ec,
@@ -1635,19 +1687,19 @@ void AddMsgToChat(void *data)
                            ews->wsbody[0] ? ECF_APPEND_EOL|ECF_DISABLE_T9 : ECF_DELSTR,
                            ews,ews->wsbody[0]);
       PrepareEditCOptions(&ec_options);
-#ifdef M75
-      if (p->type!=3)
+//#ifdef M75
+      if ((p->type&0x0F)!=3)
       {
-        SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+        SetFontToEditCOptions(&ec_options,(p->type&0x10)?O_ED_FONT_SIZE:ED_FONT_SIZE);
       }
       else
       {
-        SetPenColorToEditCOptions(&ec_options,2); 
-        SetFontToEditCOptions(&ec_options,ED_FONT_SIZE+1);
+        SetPenColorToEditCOptions(&ec_options,(p->type&0x10)?O_X_COLOR:X_COLOR); 
+        SetFontToEditCOptions(&ec_options,(p->type&0x10)?O_ED_X_FONT_SIZE:ED_X_FONT_SIZE);
       }
-#else
-      SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
-#endif      
+//#else
+//      SetFontToEditCOptions(&ec_options,(p->type&0x10)?O_ED_FONT_SIZE:ED_FONT_SIZE);
+//#endif      
       CopyOptionsToEditControl(&ec,&ec_options);
       EDIT_InsertEditControl(data,ed_struct->ed_answer-1,&ec);
       ed_struct->ed_answer++;
@@ -1697,19 +1749,19 @@ void DrawAck(void *data)
 	if (p->acked)
 	{
 	  if (p->acked==1)
-	    color=4; //Зеленый
+	    color=ACK_COLOR; //Зеленый
 	  else
 	    color=I_COLOR;
 	}
 	else
 	{
 	  if (p->ID==0xFFFFFFFF)
-	    color=p->type==1?I_COLOR:TO_COLOR;
+	    color=(p->type&0x10)?(((p->type&0x0F)==1)?O_I_COLOR:O_TO_COLOR):(((p->type&0x0F)==1)?I_COLOR:TO_COLOR);
 	  else
-	    color=20; //Серый
+	    color=UNACK_COLOR; //Серый
 	}
 	SetPenColorToEditCOptions(&ec_options,color/*p->type==1?I_COLOR:TO_COLOR*/);
-	SetFontToEditCOptions(&ec_options,2);
+	SetFontToEditCOptions(&ec_options,(p->type&0x10)?O_ED_H_FONT_SIZE:ED_H_FONT_SIZE);
 	CopyOptionsToEditControl(&ec,&ec_options);
 	StoreEditControl(data,j,&ec);
 	p->acked|=4; //Обработали
@@ -1943,7 +1995,9 @@ ProcessPacket(TPKT *p)
       sprintf(s,percent_d,p->pkt.uin);
       t=AddContact(p->pkt.uin,s);
     }
+    if(!t->isactive) GetHistory(t, 128<<HISTORY_BUFFER);
     t->isactive=ACTIVE_TIME;
+
     //    ChangeContactPos(t);
     if(VIBR_TYPE)
       vibra_count=2;
@@ -3177,10 +3231,10 @@ void CreateEditChat(CLIST *t)
   void *eq;
   EDITCONTROL ec;
   EDITC_OPTIONS ec_options;
-  int color;
+  int color, font, type;
   int zc;
   
-  LOGQ *lp=t->log;
+  LOGQ *lp;
   int edchat_toitem;
 //  edcontact=t;
   
@@ -3190,44 +3244,67 @@ void CreateEditChat(CLIST *t)
   
   eq=AllocEQueue(ma,mfree_adr());
   
+/*  hist = malloc(256);
+  if(!GetHistory(hist, 256, t->uin))
+  {
+    ascii2ws(ews,hist);
+    PrepareEditControl(&ec);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
+  }
+  mfree(hist);
+
+    AddEditControlToEditQend(eq,&ec,ma);  */
+  lp=t->log;
+  
   while(lp)
   {
+    font = ED_H_FONT_SIZE;
     if ((zc=lp->acked&3))
     {
       if (zc==1)
-	color=4; //Зеленый
+	color=ACK_COLOR; //Зеленый
       else
 	color=I_COLOR;
     }
     else
     {
       if (lp->ID==0xFFFFFFFF)
-	color=lp->type==1?I_COLOR:TO_COLOR;
+      {
+        type = lp->type&0x0F;
+        if(lp->type&0x10)
+        {
+          color = (type==1)?O_I_COLOR:((type==3)?O_X_COLOR:O_TO_COLOR);
+          font = (type==3)?O_ED_X_FONT_SIZE:O_ED_H_FONT_SIZE;
+        }
+        else
+        {
+          color = (type==1)?I_COLOR:((type==3)?X_COLOR:TO_COLOR);
+          font = (type==3)?ED_X_FONT_SIZE:ED_H_FONT_SIZE;
+        }
+      }
       else
-	color=20; //Серый
+	color=UNACK_COLOR; //Серый
     }
     PrepareEditControl(&ec);
-    if (lp->type!=3)
+    if ((lp->type&0x0F)!=3)
     {
       ascii2ws(ews,lp->hdr);
       ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
     }
     else
-    {
       ConstructEditControl(&ec,ECT_HEADER,ECF_DELSTR,ews,0);
-    }
     PrepareEditCOptions(&ec_options);
     SetPenColorToEditCOptions(&ec_options,color);
-    SetFontToEditCOptions(&ec_options,2);
+    SetFontToEditCOptions(&ec_options,font);
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
-    if (lp->type!=3)
+    if ((lp->type&0x0F)!=3)
     {
       ParseAnswer(ews,lp->text);
     }
     else
     {
-      ParseXStatusText(ews,lp->text);
+      ParseXStatusText(ews,lp->text,(lp->type&0x10)?O_X_COLOR:X_COLOR);
     }
     PrepareEditControl(&ec);
     ConstructEditControl(&ec,
@@ -3235,19 +3312,19 @@ void CreateEditChat(CLIST *t)
                          ews->wsbody[0] ? ECF_APPEND_EOL|ECF_DISABLE_T9 : ECF_DELSTR,
                          ews,ews->wsbody[0]);    
     PrepareEditCOptions(&ec_options);
-#ifdef M75
-    if (lp->type!=3)
+//#ifdef M75
+    if ((lp->type&0x0F)!=3)
     {
-      SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
+      SetFontToEditCOptions(&ec_options,(lp->type&0x10)?O_ED_FONT_SIZE:ED_FONT_SIZE);
     }
     else
     {
-      SetPenColorToEditCOptions(&ec_options,2); 
-      SetFontToEditCOptions(&ec_options,ED_FONT_SIZE+1);
+      SetPenColorToEditCOptions(&ec_options,(lp->type&0x10)?O_X_COLOR:X_COLOR); 
+      SetFontToEditCOptions(&ec_options,(lp->type&0x10)?O_ED_X_FONT_SIZE:ED_X_FONT_SIZE);
     }
-#else
-    SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);
-#endif      
+//#else
+//    SetFontToEditCOptions(&ec_options,(lp->type&0x10)?O_ED_FONT_SIZE:ED_FONT_SIZE);
+//#endif      
     CopyOptionsToEditControl(&ec,&ec_options);
     AddEditControlToEditQend(eq,&ec,ma);
     lp=lp->next;

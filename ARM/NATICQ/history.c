@@ -34,17 +34,129 @@ static do_logwrite(unsigned int uin, char *text)
   mfree(text);
 }
 
-void Add2History(CLIST *CListEx, char *header, char *message)
+void Add2History(CLIST *CListEx, char *header, char *message, int direction)
 {
-  static const char delim[] = "\r\n----------\r\n";
+  static const char *delim = "\r\n--------------<>-%04d\r\n";
   int len;
   if (!LOG_ALL) return;
-  len=sizeof(delim)+strlen(header)+strlen(message);
-  char *text=malloc(len);
-  strcpy(text,delim);
+  len=strlen(delim)+strlen(header)+strlen(message);
+  char *text=malloc(len+1);
+  sprintf(text,delim,direction);
   strcat(text,header);
   strcat(text,message);
   SUBPROC((void*)do_logwrite,CListEx->uin,text);
+}
+
+extern LOGQ *NewLOGQ(const char *s);
+extern int AddLOGQ(LOGQ **queue, LOGQ *p);
+
+
+//Добавить элемент в лог первым
+void AddFirstLOGQ(CLIST *t, LOGQ *p)
+{
+  LOGQ *q = t->log;
+  if(!p) return;
+  t->log = p;
+  while(p->next)
+    p = p->next;
+  p->next = q;
+}
+
+//Удаляем лог с заданного элемента
+void DeleteLOGQ(LOGQ *p)
+{
+  if(!p) return;
+  if(p->next) DeleteLOGQ(p->next);
+  mfree(p);
+}
+
+//Проверка что в логе не только иксстасусы
+int CheckLOGQ(CLIST *t)
+{
+  LOGQ *p = t->log;
+  if(!p) return 0;
+  for(; p->next && (p->type&0x0F)==3; p=p->next);
+  if(p->next)
+    if((p->type&0x0F)!=3)
+      return 1;
+  DeleteLOGQ(t->log);
+  t->log = 0;
+  return 0;
+}
+
+int GetHistory(CLIST *t, int bufsize)
+{
+  LOGQ *log, *head;
+  static const char *delim = "\r\n--------------<>-000";
+  volatile int hFile;
+  unsigned int io_error = 0;
+  char fullname[128], *s, *b, *e, *text, *str, *buf;
+  int i, delimlen = strlen(delim)+3, direction;
+  unsigned uin = t->uin;
+  
+  if(CheckLOGQ(t)) return 0;
+  
+  buf = text = malloc(bufsize);
+  text[0] = 0;
+  text[bufsize-1] = 0;
+  snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, uin);
+  // Открываем файл на чтение
+  hFile = fopen(fullname,A_ReadOnly + A_BIN,P_READ, &io_error);
+  if(hFile!=-1)
+  {
+    lseek(hFile, -(bufsize-1), S_END, &io_error, &io_error);
+    i = fread(hFile, text, bufsize-1, &io_error);
+    text[i] = 0;
+    fclose(hFile, &io_error);
+    s = strstr(text, delim);  
+    
+    head = NewLOGQ("");
+    head->next = 0;
+    
+    while(s && text)
+    {
+      direction = (*(s+delimlen-3))-0x30; 
+      text = s+delimlen;
+      s = strstr(text, delim); 
+      e = !s?(text+strlen(text)):s;
+      
+      str = malloc(e-text+1);
+      if(e-text > 0) memcpy(str, text, e-text);
+      str[e-text] = 0; 
+
+//      snprintf(fullname, 127, "\r\n-----\r\n%08X\r\n%08X, %d\r\n%08X, %d\r\n----\r\n", text, e, direction, s, e-text);
+      b = strstr(str, "\r\n");
+
+      
+//      log = NewLOGQ(fullname);
+      if(b)
+      {
+        log = NewLOGQ(b+2);
+        if(b-str >= 0) memcpy(log->hdr, str, b-str);
+        log->hdr[b-str] = 0;
+      }
+      else
+      {
+        log = NewLOGQ("");
+        strcpy(log->hdr, str);
+      }
+      
+      log->type = direction|0x10;
+      log->acked = 0;
+      log->ID=0xFFFFFFFF;
+      
+      AddLOGQ(&head, log);
+      
+      //mfree(log);
+      mfree(str);
+    }
+    AddFirstLOGQ(t, head->next);
+    mfree(head);
+      
+  }
+
+  mfree(buf);
+  return 0;
 }
 
 void GetStatusById(char *buffer, int id)
@@ -87,5 +199,5 @@ void LogStatusChange(CLIST *CListEx)
   }
   GetStatusById(status, CListEx->state);
   sprintf(message, msg, nickname, status);
-  Add2History(CListEx, hdr, message);
+  Add2History(CListEx, hdr, message, 0);
 }

@@ -3,7 +3,8 @@
 
 #include "naticq.h"
 
-void Add2History(CLIST *CListEx, char *header, char *message);
+void Add2History(CLIST *CListEx, char *header, char *message, int direction);
 void LogStatusChange(CLIST *CListEx);
+int GetHistory(CLIST *t, int bufsize);
 
 #endif
