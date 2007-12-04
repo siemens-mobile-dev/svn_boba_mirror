@@ -57,21 +57,7 @@ const char* PRESENCES[PRES_COUNT] = {"online",
                                      "unsubscribe",
                                      "unsubscribed"};
 
-const RGBA PRES_COLORS[PRES_COUNT] =
-{
-  {  0,   0, 127, 100},   // Online
-  {  0, 255,   0, 100},   // Chat
-  {  0,   0, 255, 100},   // Away
-  {  0, 127,   0, 100},   // XA
-  {255,   0,   0, 100},   // DND
-  {127, 127, 127, 100},   // Invisible
-  {170, 170, 170, 100},   // Offline
-  {127, 127, 127, 100},   // Error
-  {170, 170, 170, 100},   // Subscribe
-  {170, 170, 170, 100},   // Subscribed
-  {170, 170, 170, 100},   // Unsubscribe
-  {170, 170, 170, 100}    // Unsubscribed
-};
+
 
 #define AFFS_CNT 5
 #define ROLS_CNT 4
@@ -1260,6 +1246,9 @@ short priority = 0;
     if(!status_node)
     {
       status = PRESENCE_ONLINE;
+      extern const char sndOnline[64];
+      //Play(sndOnline);
+      SUBPROC((void *)Play, sndOnline);
     }
     else
     {
@@ -1379,7 +1368,14 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
 
       if(status==PRESENCE_OFFLINE) // Выход
       {
-        sprintf(r, "%s left us :(", nick);
+        XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"status");
+        if (!statusmsg_node)
+          sprintf(r, "%s left us", nick);
+        else
+          sprintf(r, "%s left us (%s)", nick, statusmsg_node->value);
+        extern const char sndOffline[64];
+        //Play(sndOffline);
+        SUBPROC((void *)Play, sndOffline);
         CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
         priv.role = ROLE_NONE;
         priv.aff  = AFFILIATION_NONE;

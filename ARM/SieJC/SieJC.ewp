@@ -271,7 +271,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -559,8 +559,8 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
-          <state>16</state>
+          <version>8</version>
+          <state>17</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -930,7 +930,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.40A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -947,7 +947,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>LPC2106	Philips LPC2106</state>
+          <state>Unable to find default state</state>
         </option>
       </data>
     </settings>
@@ -964,7 +964,7 @@
         </option>
         <option>
           <name>CCPreprocFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCPreprocComments</name>
@@ -976,15 +976,15 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
@@ -1020,17 +1020,17 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimization</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1001010</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -1094,7 +1094,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -1114,12 +1114,12 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCCodeFunctions</name>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1753,7 +1753,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.40A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1770,7 +1770,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>LPC2106	Philips LPC2106</state>
+          <state>Unable to find default state</state>
         </option>
       </data>
     </settings>
@@ -1783,11 +1783,11 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>SGOLD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCPreprocComments</name>
@@ -1799,15 +1799,15 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
@@ -1843,17 +1843,17 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimization</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1001010</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -1917,7 +1917,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -1937,12 +1937,12 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCCodeFunctions</name>
@@ -2205,7 +2205,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2391,7 +2391,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2623,15 +2623,15 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
@@ -2667,17 +2667,17 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimization</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1001010</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -2741,7 +2741,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -2761,12 +2761,12 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCCodeFunctions</name>
@@ -3029,7 +3029,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3215,7 +3215,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3400,7 +3400,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.40A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -3417,7 +3417,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>LPC2106	Philips LPC2106</state>
+          <state>Unable to find default state</state>
         </option>
       </data>
     </settings>
@@ -3434,7 +3434,7 @@
         </option>
         <option>
           <name>CCPreprocFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCPreprocComments</name>
@@ -3446,15 +3446,15 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
@@ -3490,17 +3490,17 @@
         </option>
         <option>
           <name>CCOptSizeSpeed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimization</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1001010</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -3564,7 +3564,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -3584,12 +3584,12 @@
         </option>
         <option>
           <name>CCOptSizeSpeedSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptimizationSlave</name>
           <version>0</version>
-          <state>3</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCCodeFunctions</name>
@@ -3852,7 +3852,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -4038,7 +4038,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -4182,7 +4182,7 @@
             </option>
             <option>
               <name>CCPreprocFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCPreprocComments</name>
@@ -4194,15 +4194,15 @@
             </option>
             <option>
               <name>CCListCFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMnemonics</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMessages</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListAssFile</name>
@@ -4238,7 +4238,7 @@
             </option>
             <option>
               <name>CCOptSizeSpeed</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimization</name>
@@ -4248,7 +4248,7 @@
             <option>
               <name>CCAllowList</name>
               <version>1</version>
-              <state>1011111</state>
+              <state>1111111</state>
             </option>
             <option>
               <name>CCObjUseModuleName</name>
@@ -4312,7 +4312,7 @@
             </option>
             <option>
               <name>CCCompilerRuntimeInfo</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>IFpuProcessor</name>
@@ -4332,7 +4332,7 @@
             </option>
             <option>
               <name>CCOptSizeSpeedSlave</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimizationSlave</name>
@@ -4406,7 +4406,7 @@
             </option>
             <option>
               <name>CCPreprocFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCPreprocComments</name>
@@ -4418,15 +4418,15 @@
             </option>
             <option>
               <name>CCListCFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMnemonics</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMessages</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListAssFile</name>
@@ -4462,17 +4462,17 @@
             </option>
             <option>
               <name>CCOptSizeSpeed</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimization</name>
               <version>0</version>
-              <state>3</state>
+              <state>2</state>
             </option>
             <option>
               <name>CCAllowList</name>
               <version>1</version>
-              <state>1011111</state>
+              <state>1001010</state>
             </option>
             <option>
               <name>CCObjUseModuleName</name>
@@ -4536,7 +4536,7 @@
             </option>
             <option>
               <name>CCCompilerRuntimeInfo</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>IFpuProcessor</name>
@@ -4556,12 +4556,12 @@
             </option>
             <option>
               <name>CCOptSizeSpeedSlave</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimizationSlave</name>
               <version>0</version>
-              <state>3</state>
+              <state>2</state>
             </option>
             <option>
               <name>CCCodeFunctions</name>
@@ -4622,15 +4622,16 @@
           <name>ICCARM</name>
           <data>
             <version>14</version>
-            <wantNonLocal>1</wantNonLocal>
+            <wantNonLocal>0</wantNonLocal>
             <debug>0</debug>
             <option>
               <name>CCDefines</name>
               <state>NEWSGOLD</state>
+              <state>ELKA</state>
             </option>
             <option>
               <name>CCPreprocFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCPreprocComments</name>
@@ -4642,15 +4643,15 @@
             </option>
             <option>
               <name>CCListCFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMnemonics</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMessages</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListAssFile</name>
@@ -4686,7 +4687,7 @@
             </option>
             <option>
               <name>CCOptSizeSpeed</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimization</name>
@@ -4696,7 +4697,7 @@
             <option>
               <name>CCAllowList</name>
               <version>1</version>
-              <state>1011111</state>
+              <state>1111111</state>
             </option>
             <option>
               <name>CCObjUseModuleName</name>
@@ -4760,7 +4761,7 @@
             </option>
             <option>
               <name>CCCompilerRuntimeInfo</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>IFpuProcessor</name>
@@ -4780,7 +4781,7 @@
             </option>
             <option>
               <name>CCOptSizeSpeedSlave</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimizationSlave</name>
@@ -4846,15 +4847,15 @@
           <name>ICCARM</name>
           <data>
             <version>14</version>
-            <wantNonLocal>1</wantNonLocal>
+            <wantNonLocal>0</wantNonLocal>
             <debug>0</debug>
             <option>
               <name>CCDefines</name>
-              <state></state>
+              <state>X75</state>
             </option>
             <option>
               <name>CCPreprocFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCPreprocComments</name>
@@ -4866,15 +4867,15 @@
             </option>
             <option>
               <name>CCListCFile</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMnemonics</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListCMessages</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCListAssFile</name>
@@ -4910,7 +4911,7 @@
             </option>
             <option>
               <name>CCOptSizeSpeed</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimization</name>
@@ -4920,7 +4921,7 @@
             <option>
               <name>CCAllowList</name>
               <version>1</version>
-              <state>1011111</state>
+              <state>1111111</state>
             </option>
             <option>
               <name>CCObjUseModuleName</name>
@@ -4984,7 +4985,7 @@
             </option>
             <option>
               <name>CCCompilerRuntimeInfo</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>IFpuProcessor</name>
@@ -5004,7 +5005,7 @@
             </option>
             <option>
               <name>CCOptSizeSpeedSlave</name>
-              <state>1</state>
+              <state>0</state>
             </option>
             <option>
               <name>CCOptimizationSlave</name>

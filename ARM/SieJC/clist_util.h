@@ -12,8 +12,6 @@
 
 #define CHAR_ON_LINE 20
 
-#define CLIST_FONT FONT_SMALL     // Ўрифт контакт-листа
-
 #define CLIST_Y1 5 + SCR_START               // ad: меньше сделал (26->5)
 
 // ќтрисовать список контактов
@@ -98,8 +96,8 @@
   void CList_Display_Popup_Info(TRESOURCE* ResEx);
 
 // ”правление курсором
-  void CList_MoveCursorUp();
-  void CList_MoveCursorDown();
+  void CList_MoveCursorUp(int flagi);
+  void CList_MoveCursorDown(int flagi);
 
   void CList_MoveCursorHome();
   void CList_MoveCursorEnd();

@@ -35,7 +35,7 @@ int LoadTemplates_new(void)
    TRESOURCE *ResList = CList_FindContactByJID(CList_GetActiveContact()->full_name)->res_list;
    while(ResList)
     {
-      if((ResList->name)&&(ResList->status!=6)) //бывает что имя ресурса незадано
+      if(ResList->name) //бывает что имя ресурса незадано
       {
      commands_lines=realloc(commands_lines,(i+1)*sizeof(char *));
      commands_lines[i++]= convUTF8_to_ANSI_STR(ResList->name);
@@ -142,8 +142,9 @@ void SetCmdToEditMessage(char *command)
       EDIT_SetTextToEditControl(data, 1, ws_eddata);
       EDIT_SetCursorPos(data,pos + strlen(command));
     break;
-
-  case 2:
+   
+    case 2:
+    //case 3:
       {
 	int c;
 	char *p=command;

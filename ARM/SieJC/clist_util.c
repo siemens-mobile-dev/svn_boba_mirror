@@ -13,19 +13,22 @@
 #include "..\inc\pnglist.h"
 #include "smiles.h"
 
-const RGBA CURSOR =           {120, 120, 255, 100};         // Цвет курсора
-const RGBA CURSOR_BORDER =    {200, 200, 200, 100};         // Цвет ободка курсора
-const RGBA CLIST_F_COLOR_0 =  {  0,   0,   0, 100};         // Цвет шрифта
-const RGBA CLIST_F_COLOR_1 =  {  0,   0, 170, 100};         // Цвет шрифта (есть сообщения)
-const RGBA CONTACT_BG_0 =     {255, 255, 255, 100};         // Чередование: цвет фона 1
-const RGBA CONTACT_BG_1 =     {225, 225, 225, 100};         // Чередование: цвет фона 2
 
+
+  // Цвет курсора
+extern char color_cfg[10000];
+extern RGBA CURSOR_BORDER;         // Цвет ободка курсора
+extern RGBA CLIST_F_COLOR_0;         // Цвет шрифта
+extern RGBA CLIST_F_COLOR_1 ;         // Цвет шрифта (есть сообщения)
+extern RGBA CONTACT_BG_0 ;         // Чередование: цвет фона 1
+extern RGBA CONTACT_BG_1 ;         // Чередование: цвет фона 2
+extern const unsigned int DEF_SKR;
 CLIST* cltop = NULL;
 
 char Display_Offline;         // Отображать ли оффлайн-пользователей
 
-RGBA lineColor = {0, 0, 0, 0};    // Цвет текущей строчки
-RGBA borderColor = {0, 0, 0, 0};  // Цвет ободка текущей строчки
+extern RGBA lineColor ;    // Цвет текущей строчки
+extern RGBA borderColor;  // Цвет ободка текущей строчки
 
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
 unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться
@@ -37,11 +40,12 @@ unsigned int CursorPos = 1;       // Текущая позиция курсора
 TRESOURCE* ActiveContact = NULL;
 
 extern char logmsg[512];
-extern const RGBA PRES_COLORS[PRES_COUNT];
+extern  RGBA PRES_COLORS[PRES_COUNT];
 extern char My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
 extern JABBER_STATE Jabber_state;
-
+extern RGBA CURSOR;
+extern int CLIST_FONT;
 /*
 Единственная процедура, которая занимается отрисовкой контакт-листа
 */
@@ -924,10 +928,10 @@ void MoveCursorTo(TRESOURCE* NewResEx)
 
 
 // Управление курсором
-void CList_MoveCursorUp()
+void CList_MoveCursorUp(int flagi)
 {
   if(!N_Disp_Contacts)return;
-  if(CursorPos==1)
+  if(CursorPos<=1)
   {
     CursorPos=N_Disp_Contacts;
     if (N_cont_disp==N_Disp_Contacts) {
@@ -937,29 +941,42 @@ void CList_MoveCursorUp()
     }
   }
   else
-  {
-    CursorPos--;
+  {if(flagi){CursorPos=CursorPos-DEF_SKR;}else{CursorPos--;}
+    
     if(CursorPos<=(Active_page-1)*N_cont_disp){Active_page--;}
   }
   REDRAW();
 };
 
-void CList_MoveCursorDown()
+
+void CList_MoveCursorDown(int flagi)
 {
   if(!N_Disp_Contacts)return;
-  CursorPos++;
-  if(CursorPos>N_Disp_Contacts){CursorPos=1;Active_page=1;}
+  if(flagi==1){
+    if(CursorPos==(N_Disp_Contacts+1)){CursorPos=1;Active_page=1;}
+    else {CursorPos=CursorPos+DEF_SKR;
+    if(CursorPos>(N_Disp_Contacts+1)){CursorPos=(N_Disp_Contacts+1);Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;}
+    }
+  }
+  
+
+  if(flagi==0)
+  {
+    CursorPos++;
+  
+  if(CursorPos>N_Disp_Contacts/*+1*/){CursorPos=1;Active_page=1;}
+  
+  }
   if(Active_page*N_cont_disp<CursorPos){Active_page++;}
   REDRAW();
-};
-
+}
 void CList_MoveCursorHome()
 {
   if(!N_Disp_Contacts)return;
   CursorPos =1;
   Active_page = 1;
   REDRAW();
-};
+}
 
 void CList_MoveCursorEnd()
 {
@@ -967,7 +984,7 @@ void CList_MoveCursorEnd()
   CursorPos = N_Disp_Contacts;
   Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
   REDRAW();
-};
+}
 
 int CList_isGroup(CLIST *cont)
 {

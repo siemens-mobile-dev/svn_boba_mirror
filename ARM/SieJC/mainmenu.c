@@ -10,6 +10,7 @@
 #include "revision.h"
 #include "lang.h"
 #include "clist_util.h"
+
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
@@ -30,7 +31,7 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 10
+#define N_ITEMS 11
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
@@ -40,6 +41,25 @@ int MainMenu_ID;
 extern char My_Presence;
 
 extern const char VERSION_VERS[];
+
+void Colorshem(GUI *data){{
+  extern int color_num;
+  extern  char color_PATH_load1[];
+  extern  char color_PATH_load2[];
+  extern  char color_PATH_load3[];
+  extern  char color_PATH_load4[];
+  extern  char color_PATH_load5[]; 
+  WSHDR *ws;
+  ws=AllocWS(150);
+  if(color_num==1){str_2ws(ws,(char*)color_PATH_load1,128);}
+  if(color_num==2){str_2ws(ws,(char*)color_PATH_load2,128);}
+  if(color_num==3){str_2ws(ws,(char*)color_PATH_load3,128);}
+  if(color_num==4){str_2ws(ws,(char*)color_PATH_load4,128);}
+  if(color_num==5){str_2ws(ws,(char*)color_PATH_load5,128);}
+  ExecuteFile(ws,0,0);
+  FreeWS(ws);
+  GeneralFuncF1(1);
+}}
 
 
 void AboutDlg(GUI *data)
@@ -53,7 +73,7 @@ void AboutDlg(GUI *data)
 };
 
 
-void Dummy()
+void Dummy(GUI *data)
 {
   ShowMSG(1,(int)"Раздел в разработке :)");
 };
@@ -114,8 +134,10 @@ static const char * const menutexts[N_ITEMS]=
   LG_MSOUND,
   LG_MOFFLINE,
   LG_SETTINGS,
+  LG_COLOR,
   LG_ABOUT,
-  LG_EXIT
+  LG_EXIT,
+  
 };
 
 
@@ -140,6 +162,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           ChangeSoundMode,
                           ChangeOffContMode,
                           OpenSettings,
+                          Colorshem,
                           AboutDlg,
                           Exit_SieJC
                          };
@@ -192,11 +215,14 @@ void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,S_ICONS+6);
     break;
   case 8:
-    SetMenuItemIconArray(data,item,S_ICONS+7);
+    SetMenuItemIconArray(data,item,S_ICONS+9);
     break;
   case 9:
+    SetMenuItemIconArray(data,item,S_ICONS+7);
+    break;  
+  case 10:
     SetMenuItemIconArray(data,item,S_ICONS+8);
-    break;    
+    break;
   }
   SetMenuItemText(data, item, ws, curitem);
 }
@@ -236,11 +262,13 @@ char exitpic[128];
 char infopic[128];
 char settpic[128];
 char aboutpic[128];
+char color_icon[128];
 extern const char conference_t[];
 const char exit_t[] = "exit";
 const char info_t[] = "info";
 const char about_t[] = "about";
 const char sett_t[] = "settings";
+const char coloricon[] = "coloricon";
 
 
 void MM_Show()
@@ -277,6 +305,11 @@ void MM_Show()
   strcat(settpic,png_t);
   S_ICONS[6] = (int)settpic;  
 
+  //цвета
+  strcpy(color_icon, PATH_TO_PIC);
+  strcat(color_icon,coloricon);
+  strcat(color_icon,png_t);
+  S_ICONS[9] =(int)color_icon;
   // Об эльфе...
   strcpy(aboutpic, PATH_TO_PIC);
   strcat(aboutpic,about_t);

@@ -120,6 +120,12 @@ __root const char sndConf[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\conf.wav
 __root const CFG_HDR cfghdr17={CFG_STR_UTF8,LG_SNDMSGPM,0,63};
 __root const char sndPM[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\message.wav";
 
+__root const CFG_HDR cfghdrsnd1={CFG_STR_UTF8,LG_SNDONLINE,0,63};
+__root const char sndOnline[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\online.wav";
+
+__root const CFG_HDR cfghdrsnd2={CFG_STR_UTF8,LG_SNDOFFLINE,0,63};
+__root const char sndOffline[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\offline.wav";
+
 __root const CFG_HDR cfghdr_SOUNDS_SETUP_END={CFG_LEVEL,"",0,0};
 
 ////////////////////////////// Пути ////////////////////////////////////////////
@@ -152,6 +158,28 @@ __root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles";
 
 __root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFAULTDISK,0,127};
 __root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
+
+__root const CFG_HDR cfghdr244={CFG_STR_UTF8,"color",0,63};
+__root const char color_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\";
+
+__root const CFG_HDR cfghdr245={CFG_STR_UTF8,"color_shem1",0,63};
+__root const char colorshem_PATH_1[64]="color1.bcfg";
+
+
+__root const CFG_HDR cfghdr246={CFG_STR_UTF8,"color_shem2",0,63};
+__root const char colorshem_PATH_2[64]="color2.bcfg";
+
+__root const CFG_HDR cfghdr247={CFG_STR_UTF8,"color_shem3",0,63};
+__root const char colorshem_PATH_3[64]="color3.bcfg";
+
+__root const CFG_HDR cfghdr248={CFG_STR_UTF8,"color_shem4",0,63};
+__root const char colorshem_PATH_4[64]="color4.bcfg";
+
+
+__root const CFG_HDR cfghdr249={CFG_STR_UTF8,"color_shem5",0,63};
+__root const char colorshem_PATH_5[64]="color5.bcfg";
+
+
 
 __root const CFG_HDR cfghdr_PATHS_LEVEL_END={CFG_LEVEL,"",0,0};
 
@@ -193,6 +221,36 @@ __root const int DEF_VIBRA_STATE=1;
 __root const CFG_HDR cfghdr33={CFG_CHECKBOX,LG_MOFFLINE,0,2};
 __root const int DEF_SHOW_OFFLINE=1;
 
+
+
+
+
 __root const CFG_HDR cfghdr_DEFSTATES_LEVEL_END={CFG_LEVEL,"",0,0};
 
+
+__root const CFG_HDR cfghdr35={CFG_UINT,LG_SKROLL,0,12};
+__root const unsigned int DEF_SKR=10;
+
+__root const CFG_HDR cfghdr_FONTS={CFG_LEVEL,LG_VIEW,1,0};
+
+__root const CFG_HDR cfghdr36={CFG_CBOX,LG_ROSTER_FONT,0,2};
+__root const int ROSTER_FONT = 0;
+__root const CFG_CBOX_ITEM cfgcbox_font_roster[2]={
+  LG_NORMAL_FONT,
+  LG_BOLD_FONT
+};
+
+__root const CFG_HDR cfghdr37={CFG_CBOX,LG_CHATS_FONT,0,2};
+__root const int MESSAGES_FONT = 0;
+__root const CFG_CBOX_ITEM cfgcbox_font_msgwin[2]={
+  "Нормальный",
+  "Жирный"
+};
+
+__root const CFG_HDR cfghdr38={CFG_CBOX,LG_UNDERLINING,0,2};
+__root const int pod_mess = 0;
+__root const CFG_CBOX_ITEM cfgcbox10[2]={LG_NO,LG_YES};
+
+
+__root const CFG_HDR cfghdr_FONTS_END={CFG_LEVEL,"",0,0};
 // EOL, EOF

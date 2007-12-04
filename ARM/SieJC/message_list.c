@@ -13,25 +13,23 @@
 
 #define MSG_START_X 1    //X-координата начала рисования строки сообщения
 
-
+int flag2;int flag1;
 //-------------Цвета. Много цветов :)
-
-RGBA MESSAGEWIN_BGCOLOR =         {255, 255, 255, 100}; // Общий фон
-RGBA MESSAGEWIN_TITLE_BGCOLOR =   {  0,   0, 255, 100}; // Фон заголовка
-RGBA MESSAGEWIN_TITLE_FONT =      {255, 255, 255, 100}; // Цвет шрифта заголовка
-RGBA MESSAGEWIN_MY_BGCOLOR =      {200, 215, 255, 100}; // Цвет фона исходящих сообщений
-RGBA MESSAGEWIN_CH_BGCOLOR =      {233, 233, 233, 100}; // Цвет фона приватных сообщений
-RGBA MESSAGEWIN_CURSOR_BGCOLOR =  {255, 255,   0, 100}; // Цвет фона курсора
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 = {255, 255, 255, 100}; // Чередование: Цвет фона сообщений конференции 1
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 = {233, 233, 233, 100}; // Чередование: Цвет фона сообщений конференции 2
-RGBA MESSAGEWIN_SYS_BGCOLOR =     {115, 170, 240, 100}; // Цвет фона сообщений уведомлений
-RGBA MESSAGEWIN_STATUS_BGCOLOR =  {155, 255, 180, 100}; // Цвет фона сообщений смены статуса
-RGBA MESSAGEWIN_CHAT_FONT =       {  0,   0,   0, 100}; // Цвет шрифта сообщений
-
-#define MESSAGEWIN_FONT FONT_SMALL
-
-
-
+extern const unsigned int DEF_SKR;
+extern RGBA MESSAGEWIN_BGCOLOR ; // Общий фон
+extern RGBA MESSAGEWIN_TITLE_BGCOLOR ; // Фон заголовка
+extern RGBA MESSAGEWIN_TITLE_FONT ; // Цвет шрифта заголовка
+extern RGBA MESSAGEWIN_MY_BGCOLOR ; // Цвет фона исходящих сообщений
+extern RGBA MESSAGEWIN_CH_BGCOLOR ; // Цвет фона приватных сообщений
+extern RGBA MESSAGEWIN_CURSOR_BGCOLOR; // Цвет фона курсора
+extern RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 ; // Чередование: Цвет фона сообщений конференции 1
+extern RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 ; // Чередование: Цвет фона сообщений конференции 2
+extern RGBA MESSAGEWIN_SYS_BGCOLOR ; // Цвет фона сообщений уведомлений
+extern RGBA MESSAGEWIN_STATUS_BGCOLOR; // Цвет фона сообщений смены статуса
+extern RGBA MESSAGEWIN_CHAT_FONT; // Цвет шрифта сообщений
+extern int MESSAGEWIN_FONT;
+extern RGBA CURSOR_BORDER;
+extern const int pod_mess;
 //------------------
 
 
@@ -79,7 +77,8 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
   {
     Terminate = 1;
     extern const char sndMsgSend[];
-    Play(sndMsgSend);
+    //Play(sndMsgSend);
+    SUBPROC((void *)Play, sndMsgSend);
     return 1;
   }
 
@@ -316,7 +315,7 @@ void Calc_Pages_Data_1()
     CurrentPage--;
     //Cursor_Pos--;
     //ShowMSG(1,(int)"Q");
-    return;
+    
   }
   else
   {
@@ -336,7 +335,7 @@ void Calc_Pages_Data_2()
   }
 }
 
-void mGUI_onRedraw(GUI *data)
+void redraw_1(void)
 {
 
   if(Resource_Ex->total_msg_count!=OLD_MessList_Count)
@@ -367,10 +366,12 @@ void mGUI_onRedraw(GUI *data)
 
   DISP_MESSAGE* ml = MessagesList;
   int i_ctrl=1;
-
+  int kur;
   int i = 0;
   RGBA MsgBgColor;
+  RGBA MsgBg2Color;
   CurrentMessage_Lines = 0;
+  
   while(ml)
   {
     if((i_ctrl>(CurrentPage-1)*lines_on_page) && (i_ctrl<=CurrentPage*lines_on_page))
@@ -388,21 +389,28 @@ void mGUI_onRedraw(GUI *data)
           break;
         }
       }
+      MsgBg2Color=MsgBgColor;
       if(CurrentMessage==ml->log_mess_number)
       {
         Cursor_Pos=i_ctrl;
       }
+      kur=0;
       if(Cursor_Pos==i_ctrl)
-      {
+      {kur=1;
         MsgBgColor = MESSAGEWIN_CURSOR_BGCOLOR;
+          if(pod_mess){
+        MsgBg2Color= CURSOR_BORDER;
+          } else  {
+        MsgBg2Color=MESSAGEWIN_CURSOR_BGCOLOR;
+          }
         DISP_MESSAGE *mln = ml->next;
         if(mln)
           if(CurrentMessage==mln->log_mess_number) Cursor_Pos++;                    // Обновляем позицию курсора
         CurrentMessage_Lines++;
       }
 
-      DrawRectangle(0,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize,0,
-                       color(MsgBgColor),
+      DrawRectangle(0,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize-kur,0,
+                       color(MsgBg2Color),
                        color(MsgBgColor));
 
       DrawString(ml->mess, MSG_START_X,SCR_START+FontSize+2+i*FontSize,ScreenW()-1,SCR_START+FontSize+2+(i+1)*FontSize*2,MESSAGEWIN_FONT,0,color(MESSAGEWIN_CHAT_FONT),0);
@@ -413,7 +421,10 @@ void mGUI_onRedraw(GUI *data)
   }
   FreeWS(ws_title);
   Resource_Ex->has_unread_msg =0; // Непрочитанных сообщений больше нет
-
+}
+void mGUI_onRedraw(GUI *data)
+{
+redraw_1();
 }
 
 void mGUI_onCreate(GUI *data, void *(*malloc_adr)(int))
@@ -455,6 +466,8 @@ LOG_MESSAGE *GetCurMessage()
 
 int mGUI_onKey(GUI *data, GUI_MSG *msg)
 {
+  
+ 
   if(MsgList_Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
 
   //DirectRedrawGUI();
@@ -485,7 +498,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       {
         break;
       }
-
+    case '5':
     case ENTER_BUTTON:
       {
         LOG_MESSAGE* log =GetCurMessage();
@@ -512,9 +525,58 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         CurrentMessage_Lines = 0;
         if(Cursor_Pos>1)Cursor_Pos--;
         if(CurrentMessage>1)CurrentMessage--;
+        
         REDRAW();
         break;
       }
+       case LEFT_BUTTON:
+      //страница вверх
+      {
+        if (CurrentPage>1)
+        {
+          int cp=CurrentPage;
+          for(;;)
+          {
+            CurrentMessage_Lines = 0;
+            Cursor_Pos--;
+            CurrentMessage--;
+            Calc_Pages_Data_1();redraw_1();
+            if (CurrentPage+1==cp)
+            {
+             // Cursor_Pos--;
+             // CurrentMessage--;
+              break;
+            }
+            if (CurrentPage<1)break;
+          }
+
+          //CurrentPage--;
+          //Cursor_Pos-=lines_on_page;
+          //CurrentMessage-=lines_on_page;
+        }
+      redraw_1();  REDRAW();
+     
+    /*  CurrentMessage_Lines = 0; //
+        if(Cursor_Pos>1)Cursor_Pos--;
+        for(flag2=DEF_SKR;flag2>0;flag2--){ 
+          Calc_Pages_Data_1();
+          
+       
+       if(CurrentMessage>1)CurrentMessage--;
+  redraw_1();
+      
+        
+       }
+       REDRAW();*/
+        
+         /*
+        CurrentMessage_Lines = 0;
+       if(CurrentPage>1)CurrentPage--;
+        redraw_1();REDRAW();*/
+      Cursor_Pos=DispMessList_Count;
+       break; 
+      }
+   
     case '8':
     case DOWN_BUTTON:
       {
@@ -525,6 +587,41 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         REDRAW();
         break;
       }
+      case RIGHT_BUTTON:
+      { /* CurrentMessage_Lines = 0;
+      if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
+      for(flag2=DEF_SKR;flag2>0;flag2--){
+      
+        
+        if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
+        Calc_Pages_Data_2();
+       
+        
+       redraw_1();
+      }*/
+        
+       
+        if (CurrentPage<MaxPages)
+        {
+          int cp=CurrentPage;
+          for(;;)
+          {
+            CurrentMessage_Lines = 0;
+            Cursor_Pos++;
+            CurrentMessage++;
+            Calc_Pages_Data_2();redraw_1();
+            if (CurrentPage-1==cp) break;
+            if (CurrentPage>=MaxPages)break;
+          }
+
+          //CurrentPage++;
+          //Cursor_Pos+=lines_on_page;
+          //CurrentMessage+=lines_on_page;
+        }
+       
+      
+      REDRAW(); break;}
+      
     case '1'://в начало списка сообщений
       {
         CurrentMessage_Lines = 0;
@@ -562,13 +659,14 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             }
           }
 
-          //CurrentPage--;
-          //Cursor_Pos-=lines_on_page;
-          //CurrentMessage-=lines_on_page;
+          //
+          //
+          //
         }
-        REDRAW();
-        break;
-      }
+        REDRAW();}
+      
+    
+      
     case VOL_DOWN_BUTTON://страница вниз
       {
         if (CurrentPage<MaxPages)
@@ -583,14 +681,15 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             if (CurrentPage-1==cp) break;
           }
 
-          //CurrentPage++;
-          //Cursor_Pos+=lines_on_page;
-          //CurrentMessage+=lines_on_page;
+          //
+          //
+          //
         }
-        REDRAW();
-        break;
-      } */
-    case RIGHT_BUTTON:
+        REDRAW(); } 
+        */
+     
+     
+    case '#':
       {
         LOG_MESSAGE *msg = GetCurMessage();
         if(msg)
@@ -622,24 +721,32 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
     {
     case '2':
     case UP_BUTTON:
-      {
+      {CurrentPage--;
+    Cursor_Pos-=lines_on_page;
+    CurrentMessage-=lines_on_page;
+     break;/*
         Calc_Pages_Data_1();
         CurrentMessage_Lines = 0;
         if(Cursor_Pos>1)Cursor_Pos--;
         if(CurrentMessage>1)CurrentMessage--;
         REDRAW();
-        break;
+        break;*/
       }
     case '8':
     case DOWN_BUTTON:
-      {
-        CurrentMessage_Lines = 0;
+      {CurrentPage++;
+     Cursor_Pos+=lines_on_page;
+     CurrentMessage+=lines_on_page;
+     break;
+        /*CurrentMessage_Lines = 0;
         if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
         if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
         Calc_Pages_Data_2();
         REDRAW();
-        break;
+        break;*/
       }
+      
+      
     }
   }
   return(0);

@@ -64,6 +64,7 @@
 #define LG_MOFFLINE         "Офф. контакты"
 #define LG_SETTINGS         "Настройки"
 #define LG_ABOUT            "Об эльфе..."
+#define LG_COLOR            "Цвета"
 //main.c
 #define LG_EXITSIEJC        "Покинуть SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не работает без SASL!"
@@ -152,6 +153,8 @@
 #define LG_SNDMSGSND        "Звук отправки"
 #define LG_SNDMSGMUC        "Звук приема из MUC"
 #define LG_SNDMSGPM         "Звук приема из PM"
+#define LG_SNDONLINE        "Звук статуса онлайн"
+#define LG_SNDOFFLINE       "Звук статуса оффлайн"
 
 #define LG_SETUPPATH        "Настройка путей"
 #define LG_PATHHIST         "История"
@@ -167,6 +170,12 @@
 #define LG_TEXTSTATUS       "Текст статусов"
 #define LG_DEFSTATES        "Состояния по умолчанию"
 
+#define LG_VIEW             "Вид"
+#define LG_ROSTER_FONT      "Шрифт ростера"
+#define LG_CHATS_FONT       "Шрифт списка сообщений"
+#define LG_NORMAL_FONT      "Нормальный"
+#define LG_BOLD_FONT        "Жирный"
+#define LG_UNDERLINING      "Подчеркивание сообщений"
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Показать аватару"
@@ -184,7 +193,7 @@
 #define LG_VCARD_URL        "Домашняя страница"
 #define LG_VCARD_DESC       "О себе"
 #define LG_VCARD_AVATAR     "Аватара"
-
+#define LG_SKROLL           "СКРОЛЛИНГ"
 #endif //RU
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -243,6 +252,7 @@
 #define LG_MOFFLINE         "Офф. контакти"
 #define LG_SETTINGS         "Налаштування"
 #define LG_ABOUT            "Про эльф..."
+#define LG_COLOR            "Цвета"
 //main.c
 #define LG_EXITSIEJC        "Покинути SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не працює без SASL!"
@@ -331,6 +341,8 @@
 #define LG_SNDMSGSND        "Звук відправки"
 #define LG_SNDMSGMUC        "Звук прийому із MUC"
 #define LG_SNDMSGPM         "Звук прийому із PM"
+#define LG_SNDONLINE        "Звук статуса онлайн"
+#define LG_SNDOFFLINE       "Звук статуса оффлайн"
 
 #define LG_SETUPPATH        "Налаштування шляхів"
 #define LG_PATHHIST         "Історія"
@@ -345,7 +357,14 @@
 
 #define LG_TEXTSTATUS       "Текст статусів"
 #define LG_DEFSTATES        "Стани за умовчанням"
+#define LG_SKROLL           "СКРОЛЛИНГ"
 
+#define LG_VIEW             "Вид"
+#define LG_ROSTER_FONT      "Шрифт ростера"
+#define LG_CHATS_FONT       "Шрифт списка сообщений"
+#define LG_NORMAL_FONT      "Нормальный"
+#define LG_BOLD_FONT        "Жирный"
+#define LG_UNDERLINING      "Подчеркивание сообщений"
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Показать аватару"
@@ -406,7 +425,7 @@
 #define LG_SELSMILE         "Select smile..."
 #define LG_SELECT2          "Select..."
 #define LG_CONTRESOURCES    "Resource..."  //както подругому надо
-#define LG_CONTRESOURCE     "Nicknames" //
+#define LG_CONTRESOURCE     "Nicknames"
 #define LG_COMMANDS         "Commands"
 #define LG_MSGTEMPLATE      "Templates"
 #define LG_SMILE            "Smiles"
@@ -421,6 +440,7 @@
 #define LG_MOFFLINE         "Show Offline"
 #define LG_SETTINGS         "Settings"
 #define LG_ABOUT            "About..."
+#define LG_COLOR            "Colors"
 //main.c
 #define LG_EXITSIEJC        "Exit SieJC?"
 #define LG_ZLIBNOSASL       "ZLib doesn't work without SASL!"
@@ -481,7 +501,7 @@
 #define LG_YES              "Yes"
 #define LG_DISABLED         "Disabled"
 #define LG_ENABLED          "Enabled"
-
+#define LG_SKROLL           "SCROLL"
 #define LG_SETUPCONECT      "Connection setup"
 #define LG_LOGIN            "Login"
 #define LG_PASSWORD         "Password"
@@ -509,6 +529,8 @@
 #define LG_SNDMSGSND        "Sound Msg Send"
 #define LG_SNDMSGMUC        "Sound Msg Conf"
 #define LG_SNDMSGPM         "Sound Msg PM"
+#define LG_SNDONLINE        "Sound for online-status"
+#define LG_SNDOFFLINE       "Sound for offline-status"
 
 #define LG_SETUPPATH        "Paths setup"
 #define LG_PATHHIST         "History path"
@@ -524,6 +546,12 @@
 #define LG_TEXTSTATUS       "Statuses text"
 #define LG_DEFSTATES        "Default states"
 
+#define LG_VIEW             "View"
+#define LG_ROSTER_FONT      "Roster font"
+#define LG_CHATS_FONT       "Messagelist font"
+#define LG_NORMAL_FONT      "Normal"
+#define LG_BOLD_FONT        "Bold"
+#define LG_UNDERLINING      "Underline messages"
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Show avatar"
