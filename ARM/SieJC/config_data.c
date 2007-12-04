@@ -160,7 +160,7 @@ __root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFAULTDISK,0,127};
 __root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
 
 __root const CFG_HDR cfghdr244={CFG_STR_UTF8,"color",0,63};
-__root const char color_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\";
+__root const char color_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Color\\";
 
 __root const CFG_HDR cfghdr245={CFG_STR_UTF8,"color_shem1",0,63};
 __root const char colorshem_PATH_1[64]="color1.bcfg";
