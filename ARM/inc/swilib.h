@@ -19,6 +19,7 @@ typedef int jmp_buf[11];
 #include "png.h"
 #include "rsa.h"
 #include "sha.h"
+#include "md5.h"
 
 #define LMAN_CONNECT_CNF 0x80
 #define LMAN_CONNECT_REJ_IND 0x81
@@ -3158,3 +3159,23 @@ __swi __arm int SetCurrentGPRSProfile(int profile);
 //pattern_SGOLD=0E,40,2D,E9,??,??,??,??,00,30,A0,E3,B0,00,C1,E1
 //arm
 //pattern_SGOLD_X75=0E,40,2D,E9,??,??,??,??,??,??,??,??,00,30,A0,E3,B0,00,C1,E1,0C,00,8D,E8
+
+#pragma swi_number=0x23D
+__swi __arm void MD5_Init(MD5_CTX *c);
+//thumb
+//pattern=BB 49 01 60 BB 49 41 60 +1
+
+#pragma swi_number=0x23E
+__swi __arm void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); 
+//thumb
+//pattern=FE B5 07 1C 0D 1C 16 1C 68 D0 39 69 +1
+
+#pragma swi_number=0x23F
+__swi __arm void MD5_Final(unsigned char *md, MD5_CTX *c);
+//thumb
+//pattern=F3 B5 88 6D +1
+
+#pragma swi_number=0x240
+__swi __arm char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md); //md can be NULL
+//thumb
+//pattern=F0 B5 0E 1C 05 1C 14 1C 97 B0 00 D1 +1
