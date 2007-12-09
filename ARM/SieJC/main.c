@@ -38,12 +38,8 @@ extern const char colorshem_PATH_2[];
 extern const char colorshem_PATH_3[];
 extern const char colorshem_PATH_4[];
 extern const char colorshem_PATH_5[];
-char color_PATH_load1[128];
-char color_PATH_load2[128];
-char color_PATH_load3[128];
-char color_PATH_load4[128];
-char color_PATH_load5[128];
-int color_num=1;
+
+int color_num;
 int color_state=0;
 extern const char COLOR_CURSOR []; 
 
@@ -85,9 +81,10 @@ const char ipc_my_name[32]=IPC_SIEJC_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 
-int Is_Sounds_Enabled=1;
-int Is_Vibra_Enabled=1;
+int Is_Sounds_Enabled;
+int Is_Vibra_Enabled;
 char *exename2;
+char elf_path[256];
 
 char Is_Compression_Enabled = 0;
 
@@ -358,26 +355,41 @@ borderColor.a=color_cfg [383];
 };
 */
 
-int readfile(char *path,char *buf)
+int readfile(char *color_PATH, char *colorshem_PATH, char *buf)
 {
-  unsigned int err;
- 
+  unsigned int err=0;
   int f;
-
-  GetFileStats(path,&fs,&err);
-  if((f=fopen(path,A_ReadOnly+A_BIN,P_READ,&err))==-1) return (0);
+  char path[128];
+  
+  strcpy(path, color_PATH);
+  strcat(path, colorshem_PATH);  
+  
+  GetFileStats((char*)path,&fs,&err);
+  if (err) return err;
+  f=fopen((char*)path,A_ReadOnly+A_BIN,P_READ,&err);
 //buf=malloc(fs.size+1);
 //file=malloc(fs.size+1);
 
-  fread(f,buf,fs.size,&err);
- fclose(f,&err);
- return err;
+  if (!err)
+  {
+    fread(f,buf,fs.size,&err);
+    fclose(f,&err);
+  }
+    else
+      return err;
+ return 0;
 }
 
-int writefile(char *path,char *buf)
+int writefile(char *color_PATH, char *colorshem_PATH, char *buf)
 {
  unsigned int err=0;
-  int f=0;  
+ int f=0;  
+ char path[128];
+  
+ strcpy(path, color_PATH);
+ strcat(path, colorshem_PATH);
+ 
+
  /*if((*/f=fopen(path,1+A_BIN+A_Create,P_WRITE,&err);//)==-1)
  fs.size=40;
      fwrite(f,buf,fs.size,&err);
@@ -390,31 +402,31 @@ int init_color(int num){
   switch(num)
     {
     case 1:
-  if(readfile((char*) color_PATH_load1,color_cfg))
+  if(readfile((char*) color_PATH, (char*)colorshem_PATH_1, color_cfg)==0)
   { colorload(); 
   return 1;
   }
    
    case 2:
-  if(readfile((char*) color_PATH_load2,color_cfg))
+  if(readfile((char*) color_PATH, (char*)colorshem_PATH_2, color_cfg)==0)
   { colorload(); 
   return 1;
   }
    
    case 3:
-  if(readfile((char*) color_PATH_load3,color_cfg))
+  if(readfile((char*) color_PATH, (char*)colorshem_PATH_3, color_cfg)==0)
   { colorload(); 
   return 1;
   }
     
    case 4:
-  if(readfile((char*) color_PATH_load4,color_cfg))
+  if(readfile((char*) color_PATH, (char*)colorshem_PATH_4, color_cfg)==0)
   { colorload(); 
   return 1;
   }
     
    case 5:
-  if(readfile((char*) color_PATH_load5,color_cfg))
+  if(readfile((char*) color_PATH, (char*)colorshem_PATH_5, color_cfg)==0)
   { colorload(); 
   return 1;
   } 
@@ -1418,9 +1430,12 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         break;
       }
       
- case '0': { color_state=1;ShowMSG(1,(int)"enter color num ");
-    break;
-    }
+    case '0': 
+      { 
+        color_state=1;ShowMSG(1,(int)"enter color num ");
+        CList_ToggleOfflineDisplay();
+        break;
+      }
    
     case UP_BUTTON:
     case '2':
@@ -1713,12 +1728,9 @@ void maincsm_onclose(CSM_RAM *csm)
     inflateEnd(&d_stream);
   }
 
-  *((int *)&DEF_SOUND_STATE)=Is_Sounds_Enabled;
-  *((int *)&DEF_VIBRA_STATE)=Is_Vibra_Enabled;
-  *((int *)&DEF_SHOW_OFFLINE)=Display_Offline;
-
-  SaveConfigData(successed_config_filename);
-
+  void WriteDefSettings(char *elfpath);
+  WriteDefSettings(elf_path);
+  
   SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
@@ -1950,10 +1962,65 @@ sizeof(MAIN_CSM),
     if(!USE_SASL && USE_ZLIB)ShowMSG(0,(int)LG_ZLIBNOSASL);
   }
 
-  
-  
+void ReadDefSettings(char *elfpath)
+{
+  DEF_SETTINGS def_set;
+  int f;
+  unsigned int err;
+  char str[128];
+
+  strcpy(str, elfpath);  
+  strcat(str, "def_settings");
+
+  if ((f=fopen(str,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+  {
+    fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
+    fclose(f,&err);
+    Is_Vibra_Enabled=def_set.vibra_status;
+    Is_Sounds_Enabled=def_set.sound_status;
+    Display_Offline=def_set.off_contacts;
+    color_num=def_set.cl_num;
+  }
+  else
+  {
+    Is_Vibra_Enabled=0;
+    Is_Sounds_Enabled=0;
+    Display_Offline=0;
+    color_num=1;
+  }
+}  
+
+void WriteDefSettings(char *elfpath)
+{
+  DEF_SETTINGS def_set;
+  int f;
+  unsigned int err;
+  char str[128];
+
+  strcpy(str, elfpath);  
+  strcat(str, "def_settings");
+
+  if ((f=fopen(str,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
+  {
+    def_set.vibra_status=Is_Vibra_Enabled;
+    def_set.sound_status=Is_Sounds_Enabled;
+    def_set.off_contacts=Display_Offline;
+    def_set.cl_num=color_num;
+    fwrite(f,&def_set,sizeof(DEF_SETTINGS),&err);
+    fclose(f,&err);
+  }
+}
+
   int main(char *exename, char *fname)
   {
+    char *s;
+    int len;
+    
+    s=strrchr(exename,'\\');
+    len=(s-exename)+1;
+    strncpy(elf_path,exename,len);
+    elf_path[len]=0;    
+    
     exename2=exename;
     if(!IsGoodPlatform())
     {
@@ -1963,24 +2030,13 @@ sizeof(MAIN_CSM),
     char dummy[sizeof(MAIN_CSM)];
      
     InitConfig(fname);
+    ReadDefSettings(elf_path);
     
-     strcpy(color_PATH_load1,color_PATH);
-     strcpy(color_PATH_load2,color_PATH);
-     strcpy(color_PATH_load3,color_PATH);
-     strcpy(color_PATH_load4,color_PATH);
-     strcpy(color_PATH_load5,color_PATH);
-     strcat(color_PATH_load1,colorshem_PATH_1);
-     strcat(color_PATH_load2,colorshem_PATH_2);
-     strcat(color_PATH_load3,colorshem_PATH_3);
-     strcat(color_PATH_load4,colorshem_PATH_4);
-     strcat(color_PATH_load5,colorshem_PATH_5);
-    
-    if(!init_color(color_num)){ShowMSG(1,(int)"no color cfg");
-     return 0;}
-   
-    
-   
-    
+    if(!init_color(color_num))
+      {
+        ShowMSG(1,(int)"no color cfg");
+        return 0;
+      }
     
     if(!strlen(USERNAME))
     {
@@ -1988,10 +2044,6 @@ sizeof(MAIN_CSM),
       return 0;
     }
    
-    Is_Sounds_Enabled=DEF_SOUND_STATE;
-    Is_Vibra_Enabled=DEF_VIBRA_STATE;
-    Display_Offline=DEF_SHOW_OFFLINE;
-
     extern TTime intimes;           // инициализация переменных
     extern TDate indates;           // для idle
     GetDateTime(&indates,&intimes); //

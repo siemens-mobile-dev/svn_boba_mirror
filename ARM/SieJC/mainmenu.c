@@ -42,24 +42,51 @@ extern char My_Presence;
 
 extern const char VERSION_VERS[];
 
-void Colorshem(GUI *data){{
+void Colorshem(GUI *data)
+{
   extern int color_num;
-  extern  char color_PATH_load1[];
-  extern  char color_PATH_load2[];
-  extern  char color_PATH_load3[];
-  extern  char color_PATH_load4[];
-  extern  char color_PATH_load5[]; 
+  extern const char color_PATH[];
+  extern const char colorshem_PATH_1[];
+  extern const char colorshem_PATH_2[];
+  extern const char colorshem_PATH_3[];
+  extern const char colorshem_PATH_4[];
+  extern const char colorshem_PATH_5[];
+
+  
+  char path[128];
   WSHDR *ws;
-  ws=AllocWS(150);
-  if(color_num==1){str_2ws(ws,(char*)color_PATH_load1,128);}
-  if(color_num==2){str_2ws(ws,(char*)color_PATH_load2,128);}
-  if(color_num==3){str_2ws(ws,(char*)color_PATH_load3,128);}
-  if(color_num==4){str_2ws(ws,(char*)color_PATH_load4,128);}
-  if(color_num==5){str_2ws(ws,(char*)color_PATH_load5,128);}
+  ws=AllocWS(150); 
+  
+  strcpy(path, color_PATH);
+  
+  switch (color_num)
+  {
+  case 1:
+    strcat(path, colorshem_PATH_1);
+    str_2ws(ws,(char*)path,128);
+    break;
+  case 2:
+    strcat(path, colorshem_PATH_2);
+    str_2ws(ws,(char*)path,128);
+    break;
+  case 3:
+    strcat(path, colorshem_PATH_3);
+    str_2ws(ws,(char*)path,128);
+    break;
+  case 4:
+    strcat(path, colorshem_PATH_4);
+    str_2ws(ws,(char*)path,128);
+    break;
+  case 5:
+    strcat(path, colorshem_PATH_5);
+    str_2ws(ws,(char*)path,128);
+    break;    
+  }
+
   ExecuteFile(ws,0,0);
   FreeWS(ws);
   GeneralFuncF1(1);
-}}
+}
 
 
 void AboutDlg(GUI *data)

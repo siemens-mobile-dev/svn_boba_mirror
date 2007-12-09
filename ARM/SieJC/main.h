@@ -163,6 +163,17 @@ typedef struct
   char a;
 }RGBA;
 
+#pragma pack(push)
+#pragma pack(1)
+typedef struct{
+  unsigned char
+  vibra_status:1,
+  sound_status:1,
+  off_contacts:1;
+  char cl_num;
+}DEF_SETTINGS;
+#pragma pack(pop)
+
 #ifdef NEWSGOLD
 #define CBOX_CHECKED 0xE116
 #define CBOX_UNCHECKED 0xE117
