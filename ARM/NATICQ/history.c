@@ -50,6 +50,21 @@ void Add2History(CLIST *CListEx, char *header, char *message, int direction)
 extern LOGQ *NewLOGQ(const char *s);
 extern int AddLOGQ(LOGQ **queue, LOGQ *p);
 
+//Делает ярким последний икс-статус, а остальные тусклыми
+void ActivateLastX(LOGQ *p)
+{
+  LOGQ *q = p, *lastX = 0;
+  while(q)
+  {
+    if((q->type&0x0F) == 3)
+    {
+      lastX = q;
+      q->type = 0x13;
+    }
+    q = q->next;
+  }
+  if(lastX) lastX->type = 3;
+}
 
 //Добавить элемент в лог первым
 void AddFirstLOGQ(CLIST *t, LOGQ *p)
@@ -60,6 +75,7 @@ void AddFirstLOGQ(CLIST *t, LOGQ *p)
   while(p->next)
     p = p->next;
   p->next = q;
+  ActivateLastX(t->log);
 }
 
 //Удаляем лог с заданного элемента

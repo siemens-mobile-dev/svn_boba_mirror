@@ -1536,6 +1536,7 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
 
   if (code==3 && NOT_LOG_SAME_XTXT)
   {
+    if(!t->isactive) GetHistory(t, 128<<HISTORY_BUFFER);
     lastX = GetLastXTextLOGQ(t);
     if(lastX)
       if(strcmp(lastX, s) == 0) return;
