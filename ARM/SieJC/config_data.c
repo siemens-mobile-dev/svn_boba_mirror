@@ -59,6 +59,9 @@ __root const char DEFAULT_MUC[64]="siepatchdb@conference.jabber.ru";
 __root const CFG_HDR cfghdr11={CFG_UTF8_STRING,LG_MUCDEFNIK,0,63};
 __root const char DEFAULT_MUC_NICK[64]="";
 
+__root const CFG_HDR cfghdr59={CFG_UINT,LG_MUCDEFMSGCOUNT,0,20};
+__root const unsigned int DEFAULT_MUC_MSGCOUNT=20;
+
 __root const CFG_HDR cfghdr12={CFG_COORDINATES,LG_IDLEICON,0,0};
 __root const unsigned int IDLE_ICON_X=0;
 __root const unsigned int IDLE_ICON_Y=50;

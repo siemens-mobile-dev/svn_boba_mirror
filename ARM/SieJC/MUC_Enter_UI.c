@@ -182,6 +182,7 @@ void Disp_MUC_Enter_Dialog()
   extern const char USERNAME[32];
   extern const char DEFAULT_MUC[64];
   extern const char DEFAULT_MUC_NICK[64];
+  extern const unsigned int DEFAULT_MUC_MSGCOUNT;
   
   void *eq;
   EDITCONTROL ec;
@@ -218,7 +219,7 @@ void Disp_MUC_Enter_Dialog()
   ConstructEditControl(&ec,1,0x40,mews,256);      
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,"20");
+  wsprintf(mews,"%d",DEFAULT_MUC_MSGCOUNT);
   ConstructEditControl(&ec,5,0x40,mews,2);    //6
   AddEditControlToEditQend(eq,&ec,ma);  
   
@@ -226,6 +227,7 @@ void Disp_MUC_Enter_Dialog()
   patch_header(&med1_hdr);
   CreateInputTextDialog(&med1_desc,&med1_hdr,eq,1,0);
 }
+
 
 
 

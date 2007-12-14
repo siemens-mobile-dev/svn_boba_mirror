@@ -142,10 +142,12 @@ typedef struct
 
 typedef struct
 {
+  char *bmname;
   char *mucname;
   char *nick;
   char *pass;
   char a_join;
+  char *url;
   void *next;
 }BM_ITEM;
 

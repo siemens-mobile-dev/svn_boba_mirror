@@ -1299,6 +1299,7 @@ void DisplayQuitQuery()
 
 void Enter_SiepatchDB()
 {
+  extern const unsigned int DEFAULT_MUC_MSGCOUNT;
   char room[]= "siepatchdb@conference.jabber.ru";
   char nick_t[]="%s_SieJC";
   char nick[100];
@@ -1313,7 +1314,7 @@ void Enter_SiepatchDB()
 
   char *room_nick =ANSI2UTF8(nick, strlen(nick)*2);
   char* room_name = ANSI2UTF8(room, strlen(room)*2);
-  Enter_Conference(room, nick, 20);
+  Enter_Conference(room, nick, DEFAULT_MUC_MSGCOUNT);
   mfree(room_nick);
   mfree(room_name);
 }
