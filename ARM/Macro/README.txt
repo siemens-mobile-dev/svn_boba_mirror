@@ -61,15 +61,3 @@ Macro is a sequence of symbols:
 ----------------------------------------------------------------
 
 (c) Captain_SISka 2007
-mailto:s0d@mail.ru?subject=siemens 
-
-
-(a) /Anti-Respects/ создателям MMORPG RFONline & собственной лени ...
-
-
-
-
-
-
-
-
