@@ -1,17 +1,23 @@
 #ifndef _URL_H_
 #define _URL_H_
 
-
 // scheme://host:port/path?param#fragment
-typedef struct
+class URL
 {
+public:
+  char *Print();
+  int Parse(char *s_url);
+
   char *scheme;
   char *host;
   short port;
   char *path;
   char *param;
   char *fragment;
-} URL;
+
+  URL();
+  ~URL();
+};
 
 char *FormatUrl(URL *url);
 

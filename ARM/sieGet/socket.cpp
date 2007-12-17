@@ -7,53 +7,9 @@
 
 extern void Log(char *str);
 
-//Получить класс зарегистрированного сокета
-Socket *SocketHandler::GetSocket(int sock)
-{
-  SocketQ *tmp_sock = queue;
-  while(tmp_sock)
-  {
-    if (tmp_sock->sock->id==sock)
-      return tmp_sock->sock;
-    tmp_sock = tmp_sock->next;
-  }
-  return 0;
-}
+Socket *Socket::TopSocket = NULL;
 
-void SocketHandler::Reg(Socket *sock)
-{
-  SocketQ *tmp_sock = new SocketQ; //Создали сокет, добавляем его в список
-  tmp_sock->sock = sock;
-  tmp_sock->next = queue;
-  queue = tmp_sock;
-}
-
-//Удалить сокет из обработки
-void SocketHandler::UnReg(Socket *sock)
-{
-  SocketQ *tmp_sock = queue;
-  if (queue->sock==sock)
-  {
-    queue = queue->next;
-    delete tmp_sock;
-  }
-  else
-  {
-    SocketQ *prev_sock = queue;
-    tmp_sock = queue->next;
-    while (tmp_sock)
-    {
-      if (tmp_sock->sock==sock)
-      {
-        prev_sock->next = tmp_sock->next;
-        delete tmp_sock;
-      }
-      prev_sock = tmp_sock;
-      tmp_sock = tmp_sock->next;
-    }
-  }
-}
-
+/*
 void SocketHandler::onSockEvent(int sock, int event)
 {
   Socket *sock_class;
@@ -90,21 +46,7 @@ void SocketHandler::onSockEvent(int sock, int event)
     }
   }
 }
-
-SocketHandler::SocketHandler()
-{
-  queue = NULL;
-}
-
-SocketHandler::~SocketHandler()
-{
-  SocketQ *tmp;
-  while (tmp = queue)
-  {
-    queue = queue->next;
-    delete tmp;
-  }
-}
+*/
 
 //---------------------------------------------------
 
@@ -217,16 +159,35 @@ void Socket::Create()
 }
 
 //Создать сокет
-Socket::Socket(SocketHandler *_handler)
+Socket::Socket()
 {
   state = SOCK_UNDEF;
 
-  handler = _handler;
-  handler->Reg(this);
+  LockSched();
+  PrevSocket = TopSocket;
+  if (TopSocket)
+    TopSocket->NextSocket = this;
+  NextSocket = NULL;
+  TopSocket = this;
+  UnlockSched();
 }
 
 // Уничтожение сокета
 Socket::~Socket()
 {
-
+  LockSched();
+  if (TopSocket==this)
+  {
+    TopSocket = PrevSocket;
+    if (TopSocket)
+      TopSocket->NextSocket = NULL;
+  }
+  else
+  {
+    if (NextSocket)
+      NextSocket->PrevSocket = PrevSocket;
+    if (PrevSocket)
+      PrevSocket->NextSocket = NextSocket;
+  }
+  UnlockSched();
 }

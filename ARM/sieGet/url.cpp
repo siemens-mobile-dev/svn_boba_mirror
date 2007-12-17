@@ -12,9 +12,9 @@ extern unsigned int strtoul(const char * str, char ** endptr, int base);
 #define ST_PARAM 4
 #define ST_FRAGMENT 5
 
-char *FormatUrl(URL *url)
+char *URL::Print()
 {
-  return "";
+  return NULL;
 }
 
 char host_term[] = ":/?#";
@@ -26,22 +26,22 @@ int  path_st[] = {ST_PARAM, ST_FRAGMENT};
 char param_term[] = "#";
 int  param_st[] = {ST_FRAGMENT};
 
-int ParseUrl(char *s_url, URL *url)
+int URL::Parse(char *s_url)
 {
   char *tmp = s_url;
   char *scheme_delim = strstr(tmp, "://");
   if (scheme_delim)
   {
     int schlen = scheme_delim-tmp;
-    url->scheme = (char *)malloc(schlen+1);
-    strncpy(url->scheme, tmp, schlen);
-    url->scheme[schlen] = 0;
+    this->scheme = new char[schlen+1];
+    strncpy(this->scheme, tmp, schlen);
+    this->scheme[schlen] = 0;
     tmp += schlen+3;
   }
   else
   {
-    url->scheme = (char *)malloc(5);
-    strcpy(url->scheme, "http");
+    this->scheme = new char[5];
+    strcpy(this->scheme, "http");
   }
   int st = ST_HOST;
   int len = strlen(tmp);
@@ -57,9 +57,9 @@ int ParseUrl(char *s_url, URL *url)
           st = host_st[strchr(host_term, tmp[clen])-host_term];
         else
           st = ST_FINISH;
-        url->host = (char *)malloc(clen+1);
-        strncpy(url->host, tmp, clen);
-        url->host[clen] = 0;
+        this->host = new char[clen+1];
+        strncpy(this->host, tmp, clen);
+        this->host[clen] = 0;
         tmp += clen+1;
         len -= clen+1;
         clen = 0;
@@ -68,7 +68,7 @@ int ParseUrl(char *s_url, URL *url)
         clen++;
       break;
     case ST_PORT:
-      url->port = strtoul(tmp, &tmp, 10);
+      this->port = strtoul(tmp, &tmp, 10);
       if (tmp[clen])
         st = port_st[strchr(port_term, *tmp++)-port_term];
       else
@@ -81,9 +81,9 @@ int ParseUrl(char *s_url, URL *url)
           st = path_st[strchr(path_term, tmp[clen])-path_term];
         else
           st = ST_FINISH;
-        url->path = (char *)malloc(clen+1);
-        strncpy(url->path, tmp, clen);
-        url->path[clen] = 0;
+        this->path = new char[clen+1];
+        strncpy(this->path, tmp, clen);
+        this->path[clen] = 0;
         tmp += clen+1;
         len -= clen+1;
         clen = 0;
@@ -98,9 +98,9 @@ int ParseUrl(char *s_url, URL *url)
           st = param_st[strchr(param_term, tmp[clen])-param_term];
         else
           st = ST_FINISH;
-        url->param = (char *)malloc(clen+1);
-        strncpy(url->param, tmp, clen);
-        url->param[clen] = 0;
+        this->param = new char[clen+1];
+        strncpy(this->param, tmp, clen);
+        this->param[clen] = 0;
         tmp += clen+1;
         len -= clen+1;
         clen = 0;
@@ -112,9 +112,9 @@ int ParseUrl(char *s_url, URL *url)
       if (!tmp[clen])
       {
         st = ST_FINISH;
-        url->fragment = (char *)malloc(clen+1);
-        strncpy(url->fragment, tmp, clen);
-        url->fragment[clen] = 0;
+        this->fragment = new char[clen+1];
+        strncpy(this->fragment, tmp, clen);
+        this->fragment[clen] = 0;
         tmp += clen+1;
         len -= clen+1;
         clen = 0;
@@ -124,22 +124,31 @@ int ParseUrl(char *s_url, URL *url)
       break;
     }
   }
-  if (url->port==0)
-    url->port = 80;
+  if (this->port==0)
+    this->port = 80;
   return 1;
 }
 
-void FreeUrlMem(URL *url)
+URL::~URL()
 {
-  if (url->fragment)
-    mfree(url->fragment);
-  if (url->host)
-    mfree(url->host);
-  if (url->param)
-    mfree(url->param);
-  if (url->path)
-    mfree(url->path);
-  if (url->scheme)
-    mfree(url->scheme);
+  if (this->fragment)
+    delete this->fragment;
+  if (this->host)
+    delete this->host;
+  if (this->param)
+    delete this->param;
+  if (this->path)
+    delete this->path;
+  if (this->scheme)
+    delete this->scheme;
+}
+
+URL::URL()
+{
+  fragment = NULL;
+  host = NULL;
+  param = NULL;
+  path = NULL;
+  scheme = NULL;
 }
 

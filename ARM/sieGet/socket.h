@@ -44,6 +44,7 @@ public:
 
   //Создать сокет
   Socket(SocketHandler *handler);
+  Socket(); // Из активного обработчика
 
   void Create();
 
@@ -64,32 +65,14 @@ public:
 
   ~Socket();
 
-private:
+  static Socket *TopSocket;
+  Socket *PrevSocket;
+  Socket *NextSocket;
+
   int id;
   char *senq_p;
   int sendq_l;
   SOCK_STATE state;
-  SocketHandler *handler;
-
-  friend class SocketHandler;
-};
-
-class SocketHandler
-{
-public:
-  void Reg(Socket *sock);
-  void UnReg(Socket *sock);
-  void onSockEvent(int sock, int event);
-  SocketHandler();
-  ~SocketHandler();
-private:
-  struct SocketQ
-  {
-    Socket *sock;
-    SocketQ *next;
-  };
-  SocketQ *queue;
-  Socket *GetSocket(int sock);
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "..\inc\swilib.h"
+//#include "stdafx.h"
 #include "http.h"
 
 int HTTP_Response::Parse(char *buf, int maxlen)
@@ -9,6 +10,7 @@ int HTTP_Response::Parse(char *buf, int maxlen)
 
   int l_len = 2; // Длина текущей строки (учитывая CRLF)
   char l_buf[512]; // Буфер текущей строки
+  int hlen = 0; // Длина всех заголовков
 
   while (!(buf[l_len-1]=='\n'&&buf[l_len-2]=='\r') && (l_len<maxlen))
     l_len++;
@@ -25,6 +27,7 @@ int HTTP_Response::Parse(char *buf, int maxlen)
   }
   buf += l_len;
   maxlen -= l_len;
+  hlen+= l_len;
 
   do
   {
@@ -34,7 +37,7 @@ int HTTP_Response::Parse(char *buf, int maxlen)
     if (!(buf[l_len-1]=='\n'&&buf[l_len-2]=='\r'))
       return 0;
     if (l_len==2)
-      return 1;
+      break;
     strncpy(l_buf, buf, l_len-2);
     l_buf[l_len-2] = 0;
 
@@ -43,8 +46,9 @@ int HTTP_Response::Parse(char *buf, int maxlen)
 
     buf += l_len;
     maxlen -= l_len;
+    hlen += l_len;
   } while (l_len>2);
-  return 1;
+  return hlen;
 }
 
 HTTP_Response::HTTP_Response()
