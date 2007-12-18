@@ -533,11 +533,21 @@ void Send_Initial_Presence_Helper()
   PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
   pr_info->priority = OnlineInfo.priority;
   pr_info->status=OnlineInfo.status;
-  if(OnlineInfo.txt)
+  /*if(OnlineInfo.txt)
   {
     pr_info->message = malloc(strlen(OnlineInfo.txt)+1);
     strcpy(pr_info->message,OnlineInfo.txt);
-  }else pr_info->message = NULL;
+  }else pr_info->message = NULL;*/
+  WSHDR *ws = AllocWS(256);
+  char *msg = malloc(256);
+  int len;
+  extern const char DEFTEX_ONLINE[256];
+  extern const char percent_t[];
+  wsprintf(ws, percent_t, DEFTEX_ONLINE);
+  ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+  msg = realloc(msg, len+1);
+  msg[len]='\0';
+  pr_info->message=msg;
   Send_Presence(pr_info);
   Jabber_state = JS_ONLINE;
 }

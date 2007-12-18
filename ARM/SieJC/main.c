@@ -27,6 +27,10 @@
 (r) Rst7, MasterMind, AD, Borman99
 */
 
+extern int status_keyhook(int submsg, int msg);
+extern void AutoStatus(void);
+int autostatus_time;
+int as;
 int CLIST_FONT;
 int MESSAGEWIN_FONT;
 char color_cfg[2000];
@@ -38,7 +42,8 @@ extern const char colorshem_PATH_2[];
 extern const char colorshem_PATH_3[];
 extern const char colorshem_PATH_4[];
 extern const char colorshem_PATH_5[];
-
+extern const int AUTOSTATUS_ENABLED;
+extern const unsigned int AUTOSTATUS_TIME;
 int color_num;
 int color_state=0;
 extern const char COLOR_CURSOR []; 
@@ -120,6 +125,7 @@ GBSTMR Ping_Timer;
 GBSTMR redraw_tmr;
 #define Redraw_Time TMR_SECOND*5
 #endif
+GBSTMR autostatus_tmr;
 
 //=============Некоторые цвета====================
 
@@ -1713,7 +1719,8 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&redraw_tmr);
 #endif
   GBS_DelTimer(&reconnect_tmr);
-
+  GBS_DelTimer(&autostatus_tmr);
+  
   SetVibration(0);
 
   extern ONLINEINFO OnlineInfo;
@@ -2012,6 +2019,56 @@ void WriteDefSettings(char *elfpath)
   }
 }
 
+int status_keyhook(int submsg, int msg)
+{
+  extern const char DEFTEX_ONLINE[256];
+  if (as==1)
+  {
+    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+    pr_info->priority=0;
+    pr_info->status=0;
+    char *msg = malloc(256);
+    WSHDR *ws = AllocWS(256);
+    int len;
+    wsprintf(ws, percent_t, DEFTEX_ONLINE);
+    ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+    msg=realloc(msg, len+1);
+    msg[len]='\0';
+    pr_info->message=msg;
+    SUBPROC((void *)Send_Presence,pr_info);
+  }
+  else
+  {
+    GBS_DelTimer(&autostatus_tmr);
+  }
+  as = 0;
+  GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
+  return KEYHOOK_NEXT;
+}
+
+void AutoStatus(void)
+{
+  if (My_Presence == PRESENCE_ONLINE)
+  {
+    TDate date;
+    TTime time;
+    GetDateTime(&date, &time);
+    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+    pr_info->priority=0;
+    pr_info->status=3;
+    char *msg = malloc(256);
+    WSHDR *ws = AllocWS(256);
+    int len;
+    wsprintf(ws, "%t %02d.%02d.%04d %t %d:%02d", "Автостатус \"Недоступен\" сработал", date.day, date.month, date.year, "в", time.hour, time.min);
+    ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+    msg=realloc(msg, len+1);
+    msg[len]='\0';
+    pr_info->message=msg;
+    Send_Presence(pr_info);
+    as = 1;
+  }
+}
+
   int main(char *exename, char *fname)
   {
     char *s;
@@ -2072,6 +2129,13 @@ void WriteDefSettings(char *elfpath)
     else
     {
       MESSAGEWIN_FONT=FONT_SMALL;
+    }
+    if (AUTOSTATUS_ENABLED)
+    {
+      autostatus_time = 250*60*AUTOSTATUS_TIME;
+      AddKeybMsgHook((void *)status_keyhook);
+      GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
+      as = 0;
     }
     return 0;
   }

@@ -181,6 +181,10 @@
 #define LG_KBD1             "Раскладка 1"
 #define LG_KBD2             "Раскладка 2"
 
+#define LG_AUTOSTATUS       "Автостатус"
+#define LG_AS_ENABLED       "Включен"
+#define LG_AS_TIME          "Время (в минутах)"
+
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Показать аватару"

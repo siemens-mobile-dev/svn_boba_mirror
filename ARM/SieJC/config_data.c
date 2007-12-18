@@ -243,4 +243,14 @@ __root const CFG_CBOX_ITEM cfgcboxkbd[2]={
   LG_KBD1,
   LG_KBD2
 };
+
+__root const CFG_HDR cfghdr_AUTOSTATUS={CFG_LEVEL, LG_AUTOSTATUS, 1,0};
+
+__root const CFG_HDR cfghdr40={CFG_CHECKBOX,LG_AS_ENABLED,0,2};
+__root const int AUTOSTATUS_ENABLED = 1;
+
+__root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,0,60};
+__root const unsigned int AUTOSTATUS_TIME = 5;
+
+__root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
 // EOL, EOF
