@@ -144,6 +144,11 @@ void Disp_MA_Menu()
   int n_items=0;
   //Определяем, каие будут пункты в меню меню muc#admin для текущего контакта
   //Считаем, что у нас права овнера, потому что определять собственные права сложновато
+
+//  TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
+//  MYMUCRES->muc_privs.role); //Вот наша роль
+//  MYMUCRES->muc_privs.aff); //Вот наша афилатион
+// да извратно, но почемуто работает
   if(Act_contact->muc_privs.role!=ROLE_MODERATOR) //если текущий контакт не модератор, его можно кикать
   {
        MA_Menu_Contents[n_items++]=MA_CONF_KICK_THIS; 
@@ -587,7 +592,8 @@ void Disp_Contact_Menu()
     Menu_Contents[n_items++]=MI_LASTACTIV_QUERY;    
   }
 
-  if(Act_contact->entry_type==T_CONF_NODE)
+  TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
+  if((Act_contact->entry_type==T_CONF_NODE)&&!(MYMUCRES->muc_privs.role<ROLE_MODERATOR))
   {
  
       Menu_Contents[n_items++]=MI_MUC_ADMIN;

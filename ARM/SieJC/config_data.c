@@ -166,7 +166,7 @@ __root const CFG_HDR cfghdr244={CFG_STR_UTF8,"color",0,63};
 __root const char color_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Color\\";
 
 __root const CFG_HDR cfghdr245={CFG_STR_UTF8,"color_shem1",0,63};
-__root const char colorshem_PATH_1[64]="color1.bcfg";
+__root const char colorshem_PATH_1[64]="default.bcfg";
 
 
 __root const CFG_HDR cfghdr246={CFG_STR_UTF8,"color_shem2",0,63};
@@ -247,7 +247,7 @@ __root const CFG_CBOX_ITEM cfgcboxkbd[2]={
 __root const CFG_HDR cfghdr_AUTOSTATUS={CFG_LEVEL, LG_AUTOSTATUS, 1,0};
 
 __root const CFG_HDR cfghdr40={CFG_CHECKBOX,LG_AS_ENABLED,0,2};
-__root const int AUTOSTATUS_ENABLED = 1;
+__root const int AUTOSTATUS_ENABLED = 0;
 
 __root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,0,60};
 __root const unsigned int AUTOSTATUS_TIME = 5;

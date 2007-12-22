@@ -298,6 +298,25 @@ CLIST* CList_FindContactByJID(char* jid)
   UnlockSched();
   return NULL;
 }
+//поиск конфы
+MUC_ITEM* CList_FindMUCByJID(char* jid)
+{
+  LockSched();
+  extern MUC_ITEM* muctop;
+  MUC_ITEM* McEx = muctop;
+  if(McEx)
+  while(McEx)
+  {
+    if(stristr(McEx->conf_jid,jid))
+    {
+      UnlockSched();
+      return McEx;
+    }
+    McEx = McEx->next;
+  }
+  UnlockSched();
+  return NULL;
+}
 
 // Добавляет в список контактов системное сообщение
 // Полезно, когда происходят действия с подпиской

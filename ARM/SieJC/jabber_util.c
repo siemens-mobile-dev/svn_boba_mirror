@@ -635,6 +635,7 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
     MUC_ITEM* mi = malloc(sizeof(MUC_ITEM));
     mi->conf_jid = malloc(strlen(par->room_name)*2+strlen(par->room_nick)*2+2);
     sprintf(mi->conf_jid, "%s/%s", par->room_name, par->room_nick);
+    mi->muctema=NULL;
     mi->next=NULL;
     m_ex = muctop;
     if(muctop)
@@ -689,6 +690,7 @@ void Leave_Conference(char* room)
   if(muctop==m_ex && muctop!=NULL)
   {
     mfree(m_ex->conf_jid);
+    if(m_ex->muctema)mfree(m_ex->muctema);
     muctop=m_ex->next;
     mfree(m_ex);
   }
@@ -717,6 +719,7 @@ void MUCList_Destroy()
   {
     MUC_ITEM *p;
     mfree(cl->conf_jid);
+    if(cl->muctema)mfree(cl->muctema);
     p=cl;
     cl=(MUC_ITEM*)(cl->next);
     mfree(p);
@@ -1601,10 +1604,22 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   }
 
   XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");
+  XMLNode* msgnodes = XML_Get_Child_Node_By_Name(nodeEx,"subject");  
   if(!msgnode)
   {
-    msgnode = XML_Get_Child_Node_By_Name(nodeEx,"subject");
+    msgnode = msgnodes;
     Is_subj = 1;
+  }
+  if(msgnodes) //если есть тема, обработаем...
+  {
+    MUC_ITEM* TmpMUC = CList_FindMUCByJID(CList_FindContactByJID(XML_Get_Attr_Value(from,nodeEx->attr))->JID);
+      if(TmpMUC)
+      {
+//     ShowMSG(0,(int)"Tema!!!");
+       if(TmpMUC->muctema) mfree(TmpMUC->muctema);
+       TmpMUC->muctema = malloc(strlen(msgnodes->value)*2+1);
+       strcpy(TmpMUC->muctema ,msgnodes->value);
+      }
   }
   if(msgnode)
   if(msgnode->value)

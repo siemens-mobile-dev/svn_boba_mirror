@@ -139,10 +139,27 @@ void Disp_Info(TRESOURCE* ResEx)
     AddEditControlToEditQend(eq,&ec,ma);
   }
 
+  if(ResEx->entry_type==T_CONF_ROOT)
+  {
+    // тема конфы
+    MUC_ITEM* TmpMUC= CList_FindMUCByJID(ClEx->JID);
+    if(TmpMUC)
+    {
+    if(TmpMUC->muctema)
+    {
+    wsprintf(ws_info,percent_t,LG_MUCSABJECT);
+    ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
+    AddEditControlToEditQend(eq,&ec,ma);
+    utf8_2ws(ws_info, TmpMUC->muctema, strlen(TmpMUC->muctema)*2);
+    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,wstrlen(ws_info));
+    AddEditControlToEditQend(eq,&ec,ma);
+    }
+    }
+  }
   if(ResEx->entry_type==T_CONF_NODE)
   {
     // nick
-    wsprintf(ws_info,percent_t,"Nick:");
+    wsprintf(ws_info,percent_t,LG_NICK);
     ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
 
@@ -232,7 +249,7 @@ void Disp_Info(TRESOURCE* ResEx)
   
   if ((ResEx->entry_type!=T_GROUP)&&(ResEx->entry_type!=T_CONF_NODE)&&(ResEx->entry_type!=T_CONF_ROOT))
   {    // подписка
-    wsprintf(ws_info,percent_t,"Подписка");
+    wsprintf(ws_info,percent_t,LG_ISUBSCRIBE);
     ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
     AddEditControlToEditQend(eq,&ec,ma);
     switch (ClEx->subscription)

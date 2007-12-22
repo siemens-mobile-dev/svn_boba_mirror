@@ -31,6 +31,7 @@
 #define LG_STXA             "Недоступен"
 #define LG_STDND            "Занят"
 #define LG_STINVIS          "Инвиз"
+#define LG_STOFFLINE        "Оффлайн"
 #define LG_STATUS           "Статус"
 #define LG_ENTERTEXTSTATUS  "Введите текст статуса:"
 #define LG_PRIORITY         "Приоритет:"
@@ -88,6 +89,9 @@
 #define LG_PRIVILEGES       "Привилегии:"
 #define LG_ROLE             "Роль:"
 #define LG_POSIBLCLIENT     "Возможности клиента:"
+#define LG_MUCSABJECT       "Тема:"
+//#define LG_MUCNICK          "Ник:"
+#define LG_ISUBSCRIBE       "Авторизация:"
 //history.c
 #define LG_ERRORWH          "Ошибка I/O #%u при записи истории!"
 //cont_menu.c
@@ -180,13 +184,13 @@
 #define LG_KBD_LAYOUT       "\"Раскладка\" клавиатуры"
 #define LG_KBD1             "Раскладка 1"
 #define LG_KBD2             "Раскладка 2"
+#define LG_SKROLL           "СКРОЛЛИНГ"
 
 #define LG_AUTOSTATUS       "Автостатус"
 #define LG_AS_ENABLED       "Включен"
 #define LG_AS_TIME          "Время (в минутах)"
 
 //vCard.c
-
 #define LG_SHOW_AVATAR      "Показать аватару"
 
 #define LG_VCARD_JABBERID   "JID"
@@ -202,7 +206,6 @@
 #define LG_VCARD_URL        "Домашняя страница"
 #define LG_VCARD_DESC       "О себе"
 #define LG_VCARD_AVATAR     "Аватара"
-#define LG_SKROLL           "СКРОЛЛИНГ"
 #endif //RU
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -228,6 +231,7 @@
 #define LG_STXA             "Недоступний"
 #define LG_STDND            "Зайнятий"
 #define LG_STINVIS          "Невидимий"
+#define LG_STOFFLINE        "Оффлайн"
 #define LG_STATUS           "Статус"
 #define LG_ENTERTEXTSTATUS  "Введіть текст статусу:"
 #define LG_PRIORITY         "Приоритет:"
@@ -245,7 +249,7 @@
 #define LG_SELTEMPLATE      "Вибір шаблону..."
 #define LG_SELSMILE         "Вибір смайлу..."
 #define LG_SELECT2          "Вибір..."
-#define LG_CONTRESOURCES    "Ресурси..."  //както подругому надо
+#define LG_CONTRESOURCES    "Ресурси..."
 #define LG_CONTRESOURCE     "Ніки"
 #define LG_COMMANDS         "Команди"
 #define LG_MSGTEMPLATE      "Шаблони повідомлень"
@@ -261,7 +265,7 @@
 #define LG_MOFFLINE         "Офф. контакти"
 #define LG_SETTINGS         "Налаштування"
 #define LG_ABOUT            "Про эльф..."
-#define LG_COLOR            "Цвета"
+#define LG_COLOR            "Кольори"
 //main.c
 #define LG_EXITSIEJC        "Покинути SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не працює без SASL!"
@@ -285,6 +289,9 @@
 #define LG_PRIVILEGES       "Привілеї:"
 #define LG_ROLE             "Роль:"
 #define LG_POSIBLCLIENT     "Можливості клієнта:"
+#define LG_MUCSABJECT       "Тема:"
+//#define LG_MUCNICK          "Нік:"
+#define LG_ISUBSCRIBE       "Авторизація:"
 //history.c
 #define LG_ERRORWH          "Помилка I/O #%u при запису історії!"
 //cont_menu.c
@@ -334,7 +341,7 @@
 #define LG_PORT             "Порт"
 #define LG_AUTHTYPE         "Авторизація"
 #define LG_ZLIBUSE          "Використання ZLib"
-#define LG_RES              "Ресурс"  // Если не так, сильно не бейте
+#define LG_RES              "Ресурс"
 #define LG_HISTORY          "Історія"
 #define LG_MUCHIST          "MUC історія"
 #define LG_MUCDEF           "MUC за умовчанням"
@@ -366,19 +373,22 @@
 
 #define LG_TEXTSTATUS       "Текст статусів"
 #define LG_DEFSTATES        "Стани за умовчанням"
-#define LG_SKROLL           "СКРОЛЛИНГ"
 
 #define LG_VIEW             "Вид"
 #define LG_ROSTER_FONT      "Шрифт ростера"
-#define LG_CHATS_FONT       "Шрифт списка сообщений"
+#define LG_CHATS_FONT       "Шрифт списку повідомлень"
 #define LG_NORMAL_FONT      "Нормальный"
-#define LG_BOLD_FONT        "Жирный"
-#define LG_UNDERLINING      "Подчеркивание сообщений"
+#define LG_BOLD_FONT        "Жирний"
+#define LG_UNDERLINING      "Підкреслення повідомлень"
 
-#define LG_KBD_LAYOUT       "\"Раскладка\" клавиатуры"
-#define LG_KBD1             "Раскладка 1"
-#define LG_KBD2             "Раскладка 2"
+#define LG_KBD_LAYOUT       "\"Разкладка\" клавіатури"
+#define LG_KBD1             "Разкладка 1"
+#define LG_KBD2             "Разкладка 2"
+#define LG_SKROLL           "Скролінг"
 
+#define LG_AUTOSTATUS       "Автостатус"
+#define LG_AS_ENABLED       "Включений"
+#define LG_AS_TIME          "Час (в хвилинах)"
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Показать аватару"
@@ -421,6 +431,7 @@
 #define LG_STXA             "xa"
 #define LG_STDND            "dnd"
 #define LG_STINVIS          "invisible"
+#define LG_STOFFLINE        "offline"
 #define LG_STATUS           "Status"
 #define LG_ENTERTEXTSTATUS  "Enter status text:"
 #define LG_PRIORITY         "Priority:"
@@ -478,6 +489,9 @@
 #define LG_PRIVILEGES       "Affiliation:"
 #define LG_ROLE             "Role:"
 #define LG_POSIBLCLIENT     "Client features:"
+#define LG_MUCSABJECT       "Sabject:"
+//#define LG_MUCNICK          "Nick:"
+#define LG_ISUBSCRIBE       "Subscibe:"
 //history.c
 #define LG_ERRORWH          "I/O Error #%u while trying to write the history"
 //cont_menu.c
@@ -515,7 +529,6 @@
 #define LG_YES              "Yes"
 #define LG_DISABLED         "Disabled"
 #define LG_ENABLED          "Enabled"
-#define LG_SKROLL           "SCROLL"
 #define LG_SETUPCONECT      "Connection setup"
 #define LG_LOGIN            "Login"
 #define LG_PASSWORD         "Password"
@@ -570,6 +583,7 @@
 #define LG_KBD_LAYOUT       "Keyboard \"layout\""
 #define LG_KBD1             "Layout 1"
 #define LG_KBD2             "Layout 2"
+#define LG_SKROLL           "SCROLL"
 
 //vCard.c
 

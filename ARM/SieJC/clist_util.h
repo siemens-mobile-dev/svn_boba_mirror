@@ -24,7 +24,10 @@
 
 // Получить дескриптор контакта по FullJID (JID вместе с ресурсом)
   CLIST* CList_FindContactByJID(char* jid);
-
+  
+// Получить дескриптор конфы по JID
+  MUC_ITEM* CList_FindMUCByJID(char* jid);
+    
 // Узнать, есть ли уже такой ресурс у контакта, по FullJID
   TRESOURCE* CList_IsResourceInList(char* jid);
 

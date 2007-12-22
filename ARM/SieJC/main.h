@@ -144,6 +144,7 @@ typedef struct
 typedef struct
 {
   char* conf_jid; //UTF-8
+  char* muctema;
   void* next;
 }MUC_ITEM;
 

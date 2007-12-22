@@ -35,7 +35,7 @@ int LoadTemplates_new(void)
    TRESOURCE *ResList = CList_FindContactByJID(CList_GetActiveContact()->full_name)->res_list;
    while(ResList)
     {
-      if(ResList->name) //бывает что имя ресурса незадано
+      if((ResList->name)&&(ResList->status!=6)) //бывает что имя ресурса незадано
       {
      commands_lines=realloc(commands_lines,(i+1)*sizeof(char *));
      commands_lines[i++]= convUTF8_to_ANSI_STR(ResList->name);
