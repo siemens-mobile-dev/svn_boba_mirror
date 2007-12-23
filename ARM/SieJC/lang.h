@@ -585,6 +585,9 @@
 #define LG_KBD2             "Layout 2"
 #define LG_SKROLL           "SCROLL"
 
+#define LG_AUTOSTATUS       "Autostatus"
+#define LG_AS_ENABLED       "Enable"
+#define LG_AS_TIME          "Time (minutes)"
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Show avatar"
