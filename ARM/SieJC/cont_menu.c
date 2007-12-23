@@ -143,17 +143,37 @@ void Disp_MA_Menu()
   InitMAMenuArray();
   int n_items=0;
   //ќпредел€ем, каие будут пункты в меню меню muc#admin дл€ текущего контакта
-  //—читаем, что у нас права овнера, потому что определ€ть собственные права сложновато
 
-//  TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
-//  MYMUCRES->muc_privs.role); //¬от наша роль
-//  MYMUCRES->muc_privs.aff); //¬от наша афилатион
-// да извратно, но почемуто работает
+TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
+//MYMUCRES->muc_privs.role); //¬от наша роль
+//MYMUCRES->muc_privs.aff); //¬от наша афилатион
+//да извратно, но почемуто работает
+if (MYMUCRES->muc_privs.aff<AFFILIATION_ADMIN) //≈сли мы мембер-модератор или ноне-модератор, а текущий контакт не модератор(это мы раньше провер€ли, когда думали, отображать ли muc#admin)
+  {
+   MA_Menu_Contents[n_items++]=MA_CONF_KICK_THIS; //кикать мы можем всех, кто прошел через услови€
+  if(Act_contact->muc_privs.role==ROLE_VISITOR) // если текущий контакт визитор, ему можно давать голос
+  {
+       MA_Menu_Contents[n_items++]=MA_CONF_VGR_THIS;    
+  }
+  else  //иначе его можно сделать визитором
+  {
+       MA_Menu_Contents[n_items++]=MA_CONF_VREJ_THIS;
+  }
+  //всЄ, на этом наши права закончились 
+  }
+
+  else
+  {
   if(Act_contact->muc_privs.role!=ROLE_MODERATOR) //если текущий контакт не модератор, его можно кикать
   {
        MA_Menu_Contents[n_items++]=MA_CONF_KICK_THIS; 
   }
-       MA_Menu_Contents[n_items++]=MA_CONF_BAN_THIS; // банить можно всех подр€д ;)
+       
+  if(MYMUCRES->muc_privs.aff==AFFILIATION_OWNER||MYMUCRES->muc_privs.aff>Act_contact->muc_privs.aff)
+  {
+      MA_Menu_Contents[n_items++]=MA_CONF_BAN_THIS; // банить можно всех кто хуже нас по affiliation, или равны, если мы овнер
+  }
+  
   if(Act_contact->muc_privs.role==ROLE_VISITOR) // если текущий контакт визитор, ему можно давать голос
   {
        MA_Menu_Contents[n_items++]=MA_CONF_VGR_THIS;    
@@ -162,11 +182,13 @@ void Disp_MA_Menu()
   {
        MA_Menu_Contents[n_items++]=MA_CONF_VREJ_THIS;
   }
-  if(Act_contact->muc_privs.aff>AFFILIATION_NONE) //если контакт не none, его можно делать мембером
+  if(Act_contact->muc_privs.aff>AFFILIATION_NONE&&(MYMUCRES->muc_privs.aff>Act_contact->muc_privs.aff||MYMUCRES->muc_privs.aff==AFFILIATION_OWNER)) 
+    //если контакт не none и хуже нас или если мы овнер, его можно делать мембером
   {
        MA_Menu_Contents[n_items++]=MA_CONF_PARTICIPANT;
   }
-  if(Act_contact->muc_privs.aff!=AFFILIATION_MEMBER) //если текущий контакт не мембер, его можно делать мембером (и админов с овнерами можно)
+  if(Act_contact->muc_privs.aff!=AFFILIATION_MEMBER&&(MYMUCRES->muc_privs.aff>Act_contact->muc_privs.aff||MYMUCRES->muc_privs.aff==AFFILIATION_OWNER)) 
+    //если текущий контакт не мембер и хуже нас, его можно делать мембером (и админов с овнерами можно)
   {
        MA_Menu_Contents[n_items++]=MA_CONF_MEMBER;
   }
@@ -178,15 +200,15 @@ void Disp_MA_Menu()
   {
       MA_Menu_Contents[n_items++]=MA_CONF_MGR;
   }
-  if(Act_contact->muc_privs.aff!=AFFILIATION_ADMIN) // если текущий контакт не админ, его можо делать админом
+  if(Act_contact->muc_privs.aff!=AFFILIATION_ADMIN&&MYMUCRES->muc_privs.aff==AFFILIATION_OWNER) // если текущий контакт не админ а мы овнер, его можо делать админом
   {
       MA_Menu_Contents[n_items++]=MA_CONF_ADMIN;
   }
-  if(Act_contact->muc_privs.aff!=AFFILIATION_OWNER) // если текущий контакт не овнер, его можно делать овнером
+  if(Act_contact->muc_privs.aff!=AFFILIATION_OWNER&&MYMUCRES->muc_privs.aff==AFFILIATION_OWNER) // если текущий контакт не овнер а мы овнер, его можно делать овнером
   {
       MA_Menu_Contents[n_items++]=MA_CONF_OWNER; 
   }
-
+  }
   patch_rect(&ma_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   CreateMenu(0,0,&ma_menu,&ma_menuhdr,0,n_items,0,0);
 }
@@ -591,15 +613,16 @@ void Disp_Contact_Menu()
     Menu_Contents[n_items++]=MI_TIME_QUERY;
     Menu_Contents[n_items++]=MI_LASTACTIV_QUERY;    
   }
-
+if (Act_contact->entry_type==T_CONF_NODE)
+{
   TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
-  if((Act_contact->entry_type==T_CONF_NODE)&&!(MYMUCRES->muc_privs.role<ROLE_MODERATOR))
+  if(!(MYMUCRES->muc_privs.role<ROLE_MODERATOR)&&(MYMUCRES->muc_privs.aff>Act_contact->muc_privs.aff||(MYMUCRES->muc_privs.aff<AFFILIATION_ADMIN&&Act_contact->muc_privs.role<ROLE_MODERATOR))||MYMUCRES->muc_privs.aff==AFFILIATION_OWNER)
   {
  
       Menu_Contents[n_items++]=MI_MUC_ADMIN;
 
   }
-
+}
   if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_CONF_NODE)&&(Act_contact->entry_type!=T_GROUP))
   {
        Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
