@@ -88,6 +88,7 @@ IPC_REQ gipc;
 
 int Is_Sounds_Enabled;
 int Is_Vibra_Enabled;
+int Is_Autostatus_Enabled;
 char *exename2;
 char elf_path[256];
 
@@ -1720,7 +1721,7 @@ void maincsm_onclose(CSM_RAM *csm)
 #endif
   GBS_DelTimer(&reconnect_tmr);
   GBS_DelTimer(&autostatus_tmr);
-  
+  RemoveKeybMsgHook((void *)status_keyhook);  
   SetVibration(0);
 
   extern ONLINEINFO OnlineInfo;
@@ -1978,7 +1979,7 @@ void ReadDefSettings(char *elfpath)
   char str[128];
 
   strcpy(str, elfpath);  
-  strcat(str, "def_settings");
+  strcat(str, USERNAME);
 
   if ((f=fopen(str,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
   {
@@ -1988,12 +1989,14 @@ void ReadDefSettings(char *elfpath)
     Is_Sounds_Enabled=def_set.sound_status;
     Display_Offline=def_set.off_contacts;
     color_num=def_set.cl_num;
+    Is_Autostatus_Enabled=def_set.auto_status;
   }
   else
   {
     Is_Vibra_Enabled=0;
     Is_Sounds_Enabled=0;
     Display_Offline=0;
+    Is_Autostatus_Enabled=0;
     color_num=1;
   }
 }  
@@ -2006,7 +2009,7 @@ void WriteDefSettings(char *elfpath)
   char str[128];
 
   strcpy(str, elfpath);  
-  strcat(str, "def_settings");
+  strcat(str, USERNAME);
 
   if ((f=fopen(str,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
   {
@@ -2014,6 +2017,7 @@ void WriteDefSettings(char *elfpath)
     def_set.sound_status=Is_Sounds_Enabled;
     def_set.off_contacts=Display_Offline;
     def_set.cl_num=color_num;
+    def_set.auto_status=Is_Autostatus_Enabled;
     fwrite(f,&def_set,sizeof(DEF_SETTINGS),&err);
     fclose(f,&err);
   }
@@ -2021,11 +2025,14 @@ void WriteDefSettings(char *elfpath)
 
 int status_keyhook(int submsg, int msg)
 {
+if(Is_Autostatus_Enabled)
+{
   extern const char DEFTEX_ONLINE[256];
+  extern ONLINEINFO OnlineInfo;  
   if (as==1)
   {
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority=0;
+    pr_info->priority=OnlineInfo.priority;
     pr_info->status=0;
     char *msg = malloc(256);
     WSHDR *ws = AllocWS(256);
@@ -2034,27 +2041,34 @@ int status_keyhook(int submsg, int msg)
     ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
     msg=realloc(msg, len+1);
     msg[len]='\0';
-    pr_info->message=msg;
+    pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
     SUBPROC((void *)Send_Presence,pr_info);
+    as = 0;
+    FreeWS(ws);    
+    mfree(msg);    
   }
   else
   {
     GBS_DelTimer(&autostatus_tmr);
   }
-  as = 0;
   GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
+}
   return KEYHOOK_NEXT;
 }
 
+
 void AutoStatus(void)
 {
-  if (My_Presence == PRESENCE_ONLINE)
+  if(Is_Autostatus_Enabled)
+  {
+    if (My_Presence == PRESENCE_ONLINE)
   {
     TDate date;
     TTime time;
     GetDateTime(&date, &time);
+    extern ONLINEINFO OnlineInfo;      
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority=0;
+    pr_info->priority=OnlineInfo.priority;
     pr_info->status=3;
     char *msg = malloc(256);
     WSHDR *ws = AllocWS(256);
@@ -2063,10 +2077,14 @@ void AutoStatus(void)
     ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
     msg=realloc(msg, len+1);
     msg[len]='\0';
-    pr_info->message=msg;
+    pr_info->message =msg == NULL ? NULL : Mask_Special_Syms(msg);
     Send_Presence(pr_info);
     as = 1;
+    GBS_DelTimer(&autostatus_tmr);
+    FreeWS(ws);    
+    mfree(msg);
   }
+  }else GBS_DelTimer(&autostatus_tmr);
 }
 
   int main(char *exename, char *fname)
@@ -2092,7 +2110,7 @@ void AutoStatus(void)
     
     if(!init_color(color_num))
       {
-        ShowMSG(1,(int)"no color cfg");
+        ShowMSG(1,(int)"no color bcfg");
         return 0;
       }
     
@@ -2121,7 +2139,6 @@ void AutoStatus(void)
     {
       CLIST_FONT=FONT_SMALL;
     }
-    
     if (MESSAGES_FONT)
     {
       MESSAGEWIN_FONT=FONT_SMALL_BOLD;
@@ -2132,7 +2149,8 @@ void AutoStatus(void)
     }
     if (AUTOSTATUS_ENABLED)
     {
-      autostatus_time = 250*60*AUTOSTATUS_TIME;
+      if(AUTOSTATUS_TIME<1) autostatus_time = 15000; //1min (интересный ефект если в конфиг внести 0 :)
+        else autostatus_time = 250*60*AUTOSTATUS_TIME;
       AddKeybMsgHook((void *)status_keyhook);
       GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
       as = 0;

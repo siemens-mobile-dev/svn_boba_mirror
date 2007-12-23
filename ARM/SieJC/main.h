@@ -170,7 +170,8 @@ typedef struct{
   unsigned char
   vibra_status:1,
   sound_status:1,
-  off_contacts:1;
+  off_contacts:1,
+  auto_status:1;
   char cl_num;
 }DEF_SETTINGS;
 #pragma pack(pop)

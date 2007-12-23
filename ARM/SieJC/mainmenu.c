@@ -31,11 +31,12 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 11
+#define N_ITEMS 12
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
- extern char Display_Offline; 
+extern char Display_Offline;
+extern int Is_Autostatus_Enabled;
 int MainMenu_ID;
 
 extern char My_Presence;
@@ -129,6 +130,12 @@ void ChangeSoundMode(GUI *data)
   RefreshGUI();
 }
 
+void ChangeAutostatusMode(GUI *data)
+{
+  Is_Autostatus_Enabled=!(Is_Autostatus_Enabled);
+  RefreshGUI();
+}
+
 void ChangeOffContMode(GUI *data)
 {
   CList_ToggleOfflineDisplay();
@@ -160,6 +167,7 @@ static const char * const menutexts[N_ITEMS]=
   LG_MVIBRA,
   LG_MSOUND,
   LG_MOFFLINE,
+  "Auto Status",
   LG_SETTINGS,
   LG_COLOR,
   LG_ABOUT,
@@ -188,6 +196,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           ChangeVibraMode,
                           ChangeSoundMode,
                           ChangeOffContMode,
+                          ChangeAutostatusMode,
                           OpenSettings,
                           Colorshem,
                           AboutDlg,
@@ -239,15 +248,18 @@ void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,icon_array+(Display_Offline?0:1));
     break;
   case 7:
-    SetMenuItemIconArray(data,item,S_ICONS+6);
+    SetMenuItemIconArray(data,item,icon_array+(Is_Autostatus_Enabled?0:1));
     break;
   case 8:
-    SetMenuItemIconArray(data,item,S_ICONS+9);
+    SetMenuItemIconArray(data,item,S_ICONS+6);
     break;
   case 9:
+    SetMenuItemIconArray(data,item,S_ICONS+9);
+    break;
+  case 10:
     SetMenuItemIconArray(data,item,S_ICONS+7);
     break;  
-  case 10:
+  case 11:
     SetMenuItemIconArray(data,item,S_ICONS+8);
     break;
   }
