@@ -5,53 +5,12 @@
 #include "..\inc\swilib.h"
 #include "socket.h"
 
-extern void Log(char *str);
-
 Socket *Socket::TopSocket = NULL;
-
-/*
-void SocketHandler::onSockEvent(int sock, int event)
-{
-  Socket *sock_class;
-  if (sock_class = GetSocket(sock))
-  {
-    //Если наш сокет
-    switch(event)
-    {
-    case ENIP_SOCK_CONNECTED: //Соединение через сокет установлено
-      sock_class->state = SOCK_CONNECTED;
-      sock_class->onConnected();
-      break;
-
-    case ENIP_SOCK_DATA_READ: //Готовность данных к получению
-      sock_class->onDataRead();
-      break;
-
-    case ENIP_SOCK_REMOTE_CLOSED: //Соединение разорвано сервером
-      sock_class->onRemoteClose();
-      break;
-
-    case ENIP_SOCK_CLOSED: //Соединение разрвано клиентом
-      sock_class->id = -1;
-      sock_class->onClose();
-      break;
-
-    case ENIP_BUFFER_FREE: //Буфер отпраки пуст
-      //To be implemented...
-      break;
-
-    case ENIP_BUFFER_FREE1: //Буфер отпраки пуст (в чем разница? - хз)
-      //To be implemented...
-      break;
-    }
-  }
-}
-*/
-
-//---------------------------------------------------
+int Socket::GlobalTx = 0;
+int Socket::GlobalRx = 0;
 
 //Проверить процесс (сокеты только в хелпере)
-int CheckCepId()
+inline int CheckCepId()
 {
   if (GBS_GetCurCepid()==MMI_CEPID) return 1;
   return 0;
@@ -100,11 +59,15 @@ void Socket::Send(const char *data, int size)
   }
 
   int send_res = send(id, data, size, 0);
-  if (send_res==-1)
+  if (send_res<0)
   {
     onError(SOCK_ERROR_SENDING);
     return;
   }
+
+  GlobalTx += send_res;
+  Tx += send_res;
+
   /*
   if (send_res<size) // Если не весь блок передан, надо передавать через очередь. Пока оставлю на потом.
   {
@@ -116,7 +79,10 @@ void Socket::Send(const char *data, int size)
 //Принять данные
 int Socket::Recv(char *data, int size)
 {
-  return recv(id, data, size, 0);
+  int nrecv = recv(id, data, size, 0);
+  GlobalRx += nrecv;
+  Rx += nrecv;
+  return nrecv;
 }
 
 //Закрыть сокет
@@ -162,6 +128,10 @@ void Socket::Create()
 Socket::Socket()
 {
   state = SOCK_UNDEF;
+  id = -1;
+
+  Tx = 0;
+  Rx = 0;
 
   LockSched();
   PrevSocket = TopSocket;

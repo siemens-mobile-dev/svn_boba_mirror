@@ -2,16 +2,28 @@
   Проект SieGet Downloader
                           */
 
-//inetapi.h
+//inet.h
 //Высокоуровневые функции для получения потока данных целиком по одному запросу
 
 #ifndef _INETAPI_H_
 #define _INETAPI_H_
 
+#include "include.h"
+#include "mem.h"
+#include "socket.h"
+#include "http.h"
+
 #define RECV_RESULT_ERROR 0
 #define RECV_RESULT_OK 1
 
-class HttpGet: public Socket
+enum HTTP_STATE
+{
+  HTTP_IDLE,
+  HTTP_HEADER,
+  HTTP_STREAM
+};
+
+class HttpAbstract: public Socket
 {
 public:
   virtual void onCreate();
@@ -21,26 +33,35 @@ public:
   virtual void onRemoteClose();
   virtual void onError(SOCK_ERROR err);
 
-  virtual void onFinish(int result) = 0;
-  virtual void onEvent(int event, int data) = 0;
+  virtual void onHTTPConnect() = 0;
+  virtual void onHTTPHeaders() = 0;
+  virtual void onHTTPData(char *data, int size) = 0;
+  virtual void onHTTPFinish() = 0;
 
   void Start(const char *req, int ip, short port);
+  void doConnect();
 
-  char *body;
-  int body_size;
-  char *headers;
-  int headers_size;
+  HttpAbstract();
+  ~HttpAbstract();
 
-  HttpGet(SocketHandler *handler);
-  ~HttpGet();
+  HTTP_Response *Headers;
+  HTTP_STATE http_state;
+
 private:
-  char *buf;
-  int buf_size;
-  int recvsize;
-
   int ip;
   short port;
-  const char *req;
+  char *req;
+
+  Buffer *recvbuf;
 };
+
+class HttpHead: public HttpAbstract
+{
+  virtual void onHTTPConnect() {};
+  virtual void onHTTPHeaders();
+  virtual void onHTTPData(char *data, int size) {};
+  virtual void onHTTPFinish() {}; // Требует переопределения
+};
+
 
 #endif

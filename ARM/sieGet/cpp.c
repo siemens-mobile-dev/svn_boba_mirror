@@ -1,6 +1,6 @@
 #include "include.h"
 
-extern void _C_LOG(char *str);
+extern void _C_LOG(const char *str);
 
 //pure virtual function may show error
 void __pure_virtual_called(void)

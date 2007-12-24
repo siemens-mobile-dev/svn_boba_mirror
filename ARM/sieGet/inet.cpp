@@ -1,70 +1,145 @@
 /*
-Проект SieGet Downloader
-*/
-#include "..\inc\swilib.h"
+  Проект SieGet Downloader
+                          */
+#include "include.h"
 #include "socket.h"
 #include "inet.h"
+#include "mem.h"
+#include "log.h"
 
-void HttpGet::Start(const char *_req, int _ip, short _port)
+//Проверить процесс (сокеты только в хелпере)
+inline int CheckCepId()
 {
-  req = _req;
+  if (GBS_GetCurCepid()==MMI_CEPID) return 1;
+  return 0;
+}
+
+HttpAbstract::HttpAbstract()
+{
+  ip = 0;
+  port = 0;
+  recvbuf = NULL;
+  req = NULL;
+
+  http_state = HTTP_IDLE;
+  Headers = NULL;
+}
+
+HttpAbstract::~HttpAbstract()
+{
+  if (req)
+    delete req;
+  if (Headers)
+    delete Headers;
+  if (recvbuf)
+    delete recvbuf;
+}
+
+void HttpAbstract::Start(const char *_req, int _ip, short _port)
+{
+  DEBUG("HttpAbstract::Start()");
+
+  if (req)
+    delete req;
+  if (Headers)
+  {
+    delete Headers;
+  }
+  if (recvbuf)
+  {
+    delete recvbuf;
+  }
+
+  req = new char[strlen(_req)+1];
+  Headers = new HTTP_Response();
+  recvbuf = new Buffer();
+  strcpy(req, _req);
   ip = _ip;
   port = _port;
-  buf = new char[1024];
-  buf_size = 1024;
-  recvsize = 0;
+  doConnect();
+}
+
+void _do_connect(HttpAbstract *obj)
+{
+  obj->doConnect();
+}
+
+void HttpAbstract::doConnect()
+{
+  if (CheckCepId())
+    SUBPROC((void *)_do_connect, this);
+  else
+    Create();
+}
+
+void HttpAbstract::onCreate()
+{
   Connect(ip, port);
 }
 
-void HttpGet::onCreate()
-{
-}
-
-void HttpGet::onConnected()
+void HttpAbstract::onConnected()
 {
   Send(req, strlen(req));
+  delete req;
+  req = NULL;
+
+  http_state = HTTP_HEADER;
+  onHTTPConnect();
 }
 
-void HttpGet::onDataRead()
+void HttpAbstract::onDataRead()
 {
   char tmpbuf[1024];
   int nrecv = Recv(tmpbuf, 1024);
-  if (recvsize+nrecv>buf_size-4)
+  if (http_state==HTTP_HEADER)
   {
-    buf = (char *)realloc(buf, buf_size+1024);
-    buf_size += 1024;
+    recvbuf->Write(tmpbuf, nrecv);
+    int hsize = Headers->Parse(recvbuf->data, recvbuf->size);
+    if (hsize)
+    {
+      onHTTPHeaders();
+      if (hsize<recvbuf->size)
+      {
+        onHTTPData(recvbuf->data+hsize, recvbuf->size-hsize);
+      }
+      http_state = HTTP_STREAM;
+    }
   }
-  memcpy(buf+recvsize, tmpbuf, nrecv);
-  recvsize += nrecv;
+  else
+  {
+    onHTTPData(tmpbuf, nrecv);
+  }
 }
 
-void HttpGet::onClose()
+void HttpAbstract::onClose()
 {
-#warning Надо бы убрать эту заглушку...
-  body = buf;
-  body_size = recvsize;
-  onFinish(RECV_RESULT_OK);
+  onHTTPFinish();
+  http_state = HTTP_IDLE;
 }
 
-void HttpGet::onRemoteClose()
+void HttpAbstract::onRemoteClose()
 {
   Close();
 }
 
-void HttpGet::onError(SOCK_ERROR err)
+void HttpAbstract::onError(SOCK_ERROR err)
 {
-  onFinish(RECV_RESULT_ERROR);
+  DEBUG("HttpAbstract::onError()");
 }
 
-HttpGet::HttpGet(SocketHandler *handler)
-  :Socket(handler)
+//---------------------------------------------------------------
+
+void HttpHead::onHTTPHeaders()
 {
-
+  DEBUG("HttpHead::onHTTPHeaders()");
+  char tmp[512];
+  sprintf(tmp, "Got response %d", Headers->resp_code);
+  Log::Active->PrintLn(tmp);
+  if (Headers->resp_msg)
+    sprintf(tmp, "Reason: %s", Headers->resp_msg);
+  else
+    sprintf(tmp, "Reason: %s", "[No reason specified]");
+  Log::Active->PrintLn(tmp);
+  Close();
 }
-
-HttpGet::~HttpGet()
-{
-
-}
-
 

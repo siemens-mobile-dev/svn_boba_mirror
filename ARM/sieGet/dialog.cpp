@@ -58,12 +58,12 @@ void SieGetGUI::onCreate()
 
 void SieGetGUI::onFocus()
 {
-
+  tabs[bm_current]->onFocus();
 }
 
 void SieGetGUI::onUnFocus()
 {
-
+  tabs[bm_current]->onUnFocus();
 }
 
 void SieGetGUI::onClose()
@@ -81,13 +81,19 @@ int  SieGetGUI::onKey(char key_code, int key_msg, short keys)
       return GUI_RESULT_CLOSE;
 
     case '*':
+      tabs[bm_current]->onUnFocus();
       bm_current = 0;
+      tabs[bm_current]->onFocus();
       break;
     case '0':
+      tabs[bm_current]->onUnFocus();
       bm_current = 1;
+      tabs[bm_current]->onFocus();
       break;
     case '#':
+      tabs[bm_current]->onUnFocus();
       bm_current = 2;
+      tabs[bm_current]->onFocus();
       break;
     case GREEN_BUTTON:
       Log::Active->PrintLn("Test Line");
@@ -98,6 +104,11 @@ int  SieGetGUI::onKey(char key_code, int key_msg, short keys)
   return GUI_RESULT_OK;
 }
 
+void SieGetGUI::Redraw(int bm)
+{
+  if (bm_current==bm)
+    REDRAW();
+}
 
 SieGetGUI::SieGetGUI()
 {
@@ -125,6 +136,8 @@ SieGetGUI::~SieGetGUI()
 //                            SieGetDialog                       //
 //---------------------------------------------------------------//
 
+SieGetDialog *SieGetDialog::Active = NULL;
+
 void SieGetDialog::onCreate()
 {
   SetName(DIALOG_CSM_NAME);
@@ -148,10 +161,18 @@ void SieGetDialog::onClose()
   Log::Active->PrintLn("Dialog closed!");
 }
 
+void SieGetDialog::Redraw(int bm)
+{
+  if (gui->gui_id && IsGuiOnTop(gui->gui_id))
+  {
+    gui->Redraw(bm);
+  }
+}
 
 SieGetDialog::SieGetDialog()
 {
   gui = new SieGetGUI;
+  Active = this;
 }
 
 SieGetDialog::~SieGetDialog()

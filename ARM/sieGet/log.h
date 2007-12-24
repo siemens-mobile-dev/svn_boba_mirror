@@ -1,10 +1,14 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 
+#define DEBUG(arg) Log::Active->PrintLn(arg);
+
+#define LOG_TO_FILE
+
 class Log
 {
 public:
-  void PrintLn(char *str);
+  void PrintLn(const char *str);
   Log();
   ~Log();
   struct LogLine

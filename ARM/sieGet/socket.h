@@ -25,9 +25,6 @@ typedef enum
   SOCK_ERROR_INVALID_CEPID
 } SOCK_ERROR;
 
-class Socket;
-class SocketHandler;
-
 // Класс сокета. Одноразовый.
 class Socket
 {
@@ -43,7 +40,6 @@ public:
   //------------------------------
 
   //Создать сокет
-  Socket(SocketHandler *handler);
   Socket(); // Из активного обработчика
 
   void Create();
@@ -65,10 +61,18 @@ public:
 
   ~Socket();
 
+  // Очередь сокетов
   static Socket *TopSocket;
   Socket *PrevSocket;
   Socket *NextSocket;
 
+  // Статистика трафика
+  int Tx;
+  int Rx;
+  static int GlobalTx;
+  static int GlobalRx;
+
+  // Внутреннее состояние
   int id;
   char *senq_p;
   int sendq_l;

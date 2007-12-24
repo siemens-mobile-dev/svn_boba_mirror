@@ -9,6 +9,7 @@
 
 #include "socket.h"
 //#include "dns.h"
+#include "inet.h"
 
 #define DAEMON_CSM_NAME "SieGetD"
 
@@ -21,7 +22,7 @@ public:
   virtual void onClose();
 
   void ProcessIPC(const char *from, int submsg, void *data);
-  void ProcessSocket(int sock, int event); // HELPER
+  void ProcessSocket(int id, int event); // HELPER
   void ProcessDNR(int DNR_ID); // HELPER
 
   SieGetDaemon();
@@ -29,11 +30,13 @@ public:
 
   SieGetDialog *dialog;
   Log *log;
-private:
 
+private:
   SIEGET_INTERNAL_IPC tint_ipc;
   IPC_REQ tipc;  //Для внутренней связи
   IPC_REQ tipc2; // Для связи с XTASK
+
+  HttpHead *test_req;
 };
 
 #endif

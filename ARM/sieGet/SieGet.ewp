@@ -2475,7 +2475,7 @@
   <group>
     <name>c++</name>
     <file>
-      <name>$PROJ_DIR$\cpp.C</name>
+      <name>$PROJ_DIR$\cpp.c</name>
       <configuration>
         <name>Release</name>
         <settings>
@@ -3206,7 +3206,7 @@
     <name>$PROJ_DIR$\daemon.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\dialog.c</name>
+    <name>$PROJ_DIR$\dialog.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\dialog.h</name>
@@ -3233,13 +3233,19 @@
     <name>$PROJ_DIR$\main.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\mem.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\mem.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\string_util.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\string_util.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\widget.c</name>
+    <name>$PROJ_DIR$\widget.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\widget.h</name>

@@ -8,8 +8,14 @@ class Widget
 {
 public:
   RECT Canvas;
-  virtual void onKey(int key_code, int key_msg) = 0;
-  virtual void onRedraw() = 0;
+  virtual void onKey(int key_code, int key_msg) {};
+  virtual void onRedraw() {};
+  virtual void onFocus() {};
+  virtual void onUnFocus() {};
+  virtual void onResize() {};
+
+  Widget();
+
   void Resize();
   void Resize(RECT *rc);
   void Resize(int x, int y, int x2, int y2);
@@ -22,6 +28,8 @@ class LogWidget: public Widget
 public:
   virtual void onKey(int key_code, int key_msg);
   virtual void onRedraw();
+  virtual void onFocus();
+  virtual void onUnFocus();
 
   LogWidget();
   LogWidget(RECT *rc);
@@ -36,6 +44,7 @@ private:
   int lines_on_page;
   int line_height;
   int line_offset;
+  int isFocused;
 };
 
 class ListWidget: public Widget

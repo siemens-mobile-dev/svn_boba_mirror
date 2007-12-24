@@ -20,6 +20,7 @@ public:
 
   SieGetGUI();
   virtual ~SieGetGUI();
+  void Redraw(int bm);
 private:
   int bm_current;
 
@@ -43,6 +44,9 @@ public:
   SieGetDialog();
   ~SieGetDialog();
   SieGetGUI *gui;
+
+  static SieGetDialog *Active;
+  void Redraw(int bm);
 };
 
 #endif

@@ -1,5 +1,4 @@
-#include "..\inc\swilib.h"
-//#include "stdafx.h"
+#include "include.h"
 #include "http.h"
 
 int HTTP_Response::Parse(char *buf, int maxlen)

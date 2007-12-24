@@ -8,11 +8,13 @@ void Widget::Resize()
   Canvas.y = YDISP;
   Canvas.x2 = ScreenW()-1;
   Canvas.y2 = ScreenH()-1;
+  onResize();
 }
 
 void Widget::Resize(RECT *rc)
 {
   Canvas = *rc;
+  onResize();
 }
 
 void Widget::Resize(int x, int y, int x2, int y2)
@@ -21,6 +23,15 @@ void Widget::Resize(int x, int y, int x2, int y2)
   Canvas.y = y;
   Canvas.x2 = x2;
   Canvas.y2 = y2;
+  onResize();
+}
+
+Widget::Widget()
+{
+  Canvas.x = 0;
+  Canvas.y = YDISP;
+  Canvas.x2 = ScreenW()-1;
+  Canvas.y2 = ScreenH()-1;
 }
 
 //---------------------------------------------------------------//
@@ -90,7 +101,7 @@ void LogWidget::onRedraw()
   Log::LogLine *curr_line=first_line;
   for (int i = first_line->index; i<=last_line->index; i++)
   {
-    DrawScrollString(curr_line->str, Canvas.x, y+1, Canvas.x2-6, y+line_height-1, line_offset+1, FONT_SMALL, 0, clLOGWIDGETTEXT, 0);
+    DrawScrollString(curr_line->str, Canvas.x, y, Canvas.x2-6, y+line_height, line_offset+1, FONT_SMALL, 0, clLOGWIDGETTEXT, 0);
     y += line_height;
     curr_line = curr_line->next;
   }
@@ -106,13 +117,18 @@ void LogWidget::onRedraw()
   }
 }
 
+void LogWidget::onFocus()
+{
+  isFocused = 1;
+}
+
+void LogWidget::onUnFocus()
+{
+  isFocused = 0;
+}
+
 LogWidget::LogWidget()
 {
-  Canvas.x = 0;
-  Canvas.y = YDISP;
-  Canvas.x2 = ScreenW()-1;
-  Canvas.y2 = ScreenH()-1;
-
   log = Log::Active;
   first_line = log->log_start;
   last_line = first_line->prev;
@@ -125,7 +141,6 @@ LogWidget::LogWidget()
 
 LogWidget::~LogWidget()
 {
-
 }
 
 //---------------------------------------------------------------//
@@ -136,7 +151,6 @@ char clINFOWIDGETBG[4] = {255, 0, 0, 100};
 
 void InfoWidget::onKey(int key_code, int key_msg)
 {
-
 }
 
 void InfoWidget::onRedraw()
@@ -146,15 +160,10 @@ void InfoWidget::onRedraw()
 
 InfoWidget::InfoWidget()
 {
-  Canvas.x = 0;
-  Canvas.y = YDISP;
-  Canvas.x2 = ScreenW()-1;
-  Canvas.y2 = ScreenH()-1;
 }
 
 InfoWidget::~InfoWidget()
 {
-
 }
 
 //---------------------------------------------------------------//
@@ -165,7 +174,6 @@ char clLISTWIDGETBG[4] = {0, 0, 255, 100};
 
 void ListWidget::onKey(int key_code, int key_msg)
 {
-
 }
 
 void ListWidget::onRedraw()
@@ -175,14 +183,9 @@ void ListWidget::onRedraw()
 
 ListWidget::ListWidget()
 {
-  Canvas.x = 0;
-  Canvas.y = YDISP;
-  Canvas.x2 = ScreenW()-1;
-  Canvas.y2 = ScreenH()-1;
 }
 
 ListWidget::~ListWidget()
 {
-
 }
 

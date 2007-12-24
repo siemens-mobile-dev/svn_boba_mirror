@@ -6,6 +6,12 @@
 char sieget_ipc_name[] = SIEGET_IPC_NAME;
 char xtask_ipc_name[]= IPC_XTASK_NAME;
 
+const char _req[] = "HEAD / HTTP/1.1\r\n"
+"Host: rambler.ru\r\n"
+"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
+"Connection: close\r\n"
+"\r\n";
+
 void SieGetDaemon::onCreate()
 {
   SetName(DAEMON_CSM_NAME);
@@ -18,6 +24,8 @@ void SieGetDaemon::onCreate()
   GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_SIEGET_INTERNAL, &tipc);
 
   dialog->Create();
+
+  test_req->Start(_req, htonl(IP_ADDR(81,19,70,3)), 80);
 }
 
 void MessageToHelper(SieGetDaemon *daemon, GBS_MSG *msg)
@@ -96,14 +104,56 @@ void SieGetDaemon::ProcessIPC(const char *from, int submsg, void *data)
   }
 }
 
-void SieGetDaemon::ProcessSocket(int sock, int event)
+void SieGetDaemon::ProcessSocket(int id, int event)
 {
-  Log::Active->PrintLn("Got socket event");
+  char tmp[128];
+
+  Socket *sock = NULL;
+  for (Socket *tsock = Socket::TopSocket; tsock && !sock; tsock = tsock->NextSocket)
+    if (tsock->id==id)
+      sock = tsock;
+  if (sock)
+  {
+    switch(event)
+    {
+    case ENIP_SOCK_CONNECTED: //Соединение через сокет установлено
+      sock->state = SOCK_CONNECTED;
+      sock->onConnected();
+      break;
+
+    case ENIP_SOCK_DATA_READ: //Готовность данных к получению
+      sock->onDataRead();
+      break;
+
+    case ENIP_SOCK_REMOTE_CLOSED: //Соединение разорвано сервером
+      sock->onRemoteClose();
+      break;
+
+    case ENIP_SOCK_CLOSED: //Соединение разрвано клиентом
+      sock->id = -1;
+      sock->onClose();
+      break;
+
+    case ENIP_BUFFER_FREE: //Буфер отпраки пуст
+      //To be implemented...
+      break;
+
+    case ENIP_BUFFER_FREE1: //Буфер отпраки пуст (в чем разница? - хз)
+      //To be implemented...
+      break;
+
+    default:
+      sprintf(tmp, "Socket %d: [0x%X]", id, event);
+      Log::Active->PrintLn(tmp);
+    }
+  }
 }
 
 void SieGetDaemon::ProcessDNR(int DNR_ID)
 {
-  Log::Active->PrintLn("Got DNR event");
+  char tmp[64];
+  sprintf(tmp, "DNR %d", DNR_ID);
+  Log::Active->PrintLn(tmp);
 }
 
 void SieGetDaemon::onClose()
@@ -117,6 +167,7 @@ SieGetDaemon::SieGetDaemon()
 {
   log = new Log();
   dialog = new SieGetDialog();
+  test_req = new HttpHead();
   log->PrintLn("Daemon created!");
 }
 
@@ -135,6 +186,7 @@ SieGetDaemon::~SieGetDaemon()
 {
   delete dialog;
   delete log;
+  delete test_req;
   SUBPROC((void *)Killer);
 }
 

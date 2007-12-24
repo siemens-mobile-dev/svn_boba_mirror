@@ -1,6 +1,7 @@
 #ifndef _HTTP_H_
 #define _HTTP_H_
 
+#include "include.h"
 #include "http_headers.h"
 
 class HTTP_Response
