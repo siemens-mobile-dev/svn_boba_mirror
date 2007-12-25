@@ -3179,3 +3179,8 @@ __swi __arm void MD5_Final(unsigned char *md, MD5_CTX *c);
 __swi __arm char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md); //md can be NULL
 //thumb
 //pattern=F0 B5 0E 1C 05 1C 14 1C 97 B0 00 D1 +1
+
+#pragma swi_number=0x241
+__swi __arm void SetDateTime(TDate *, TTime *);
+//thumb
+//pattern=F0,B5,05,1C,0C,1C,00,28,89,B0,??,??,00,2C

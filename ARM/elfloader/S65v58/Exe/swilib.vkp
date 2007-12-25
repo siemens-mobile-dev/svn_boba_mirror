@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;S65v58
 
-;Library 25.11.2007
+;Library 25.12.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -626,6 +626,12 @@
 08EC: 0xA00204BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
 
 08F0: 0xA0C79A34 ; 23C: __arm int SetCurrentGPRSProfile(int profile);
+
+08F4: 0xA155FC81 ; 23D: __thumb void MD5_Init(MD5_CTX *c);
+08F8: 0xA155F8F1 ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); //
+08FC: 0xA155FB89 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
+0900: 0xA1560611 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
+0904: 0xA0C36E63 ; 241: __thumb void SetDateTime(TDate *, TTime *);
 
 //0840: 0xA1144669   ; 210: int GetCurGuiID(void)
 //0844: 0x000000A1  ; 211: GBS_Cmd_4209_RefreshScreensaver

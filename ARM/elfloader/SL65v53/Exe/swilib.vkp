@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SL65v53
 
-;Library 25.11.2007
+;Library 25.12.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -625,6 +625,12 @@
 08EC: 0xA00204BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
 
 08F0: 0xA0C375EC ; 23C: __arm int SetCurrentGPRSProfile(int profile);
+
+08F4: 0xA1511BF9 ; 23D: __thumb void MD5_Init(MD5_CTX *c);
+08F8: 0xA1511869 ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); //
+08FC: 0xA1511B01 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
+0900: 0xA1512589 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
+0904: 0xA0B2719B ; 241: __thumb void SetDateTime(TDate *, TTime *);
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);

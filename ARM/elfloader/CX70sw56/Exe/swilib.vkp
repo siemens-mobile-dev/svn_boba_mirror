@@ -446,6 +446,12 @@
 08EC: 0xA0002070 ; 23B: __arm void DisableIconBar(int disable); //Only loopback
 
 08F0: 0xA0CD115C ; 23C: __arm int SetCurrentGPRSProfile(int profile);
+
+08F4: 0xA15D4A51 ; 23D: __thumb void MD5_Init(MD5_CTX *c);
+08F8: 0xA15D46C1 ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); //
+08FC: 0xA15D4959 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
+0900: 0xA15D53E1 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
+0904: 0xA0B908E3 ; 241: __thumb void SetDateTime(TDate *, TTime *);
 #pragma disable old_equal_ff
 +0
 

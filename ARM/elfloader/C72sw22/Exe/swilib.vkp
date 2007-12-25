@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;C72v22
 
-;Library 25.11.2007
+;Library 25.12.2007
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -612,5 +612,11 @@
 08EC: 0xA00204BC ; 23B: __arm void DisableIconBar(int disable); //disable=1 - iconbar don`t autoredraw
 
 08F0: 0xA0CEA698 ; 23C: __arm int SetCurrentGPRSProfile(int profile);
+
+08F4: 0xA15E6DF5 ; 23D: __thumb void MD5_Init(MD5_CTX *c);
+08F8: 0xA15E6A65 ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); //
+08FC: 0xA15E6CFD ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
+0900: 0xA15E7785 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
+0904: 0xA0B9DD1B ; 241: __thumb void SetDateTime(TDate *, TTime *);
 #pragma disable old_equal_ff
 +0
