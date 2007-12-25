@@ -36,7 +36,10 @@ int HTTP_Response::Parse(char *buf, int maxlen)
     if (!(buf[l_len-1]=='\n'&&buf[l_len-2]=='\r'))
       return 0;
     if (l_len==2)
+    {
+      hlen += 2;
       break;
+    }
     strncpy(l_buf, buf, l_len-2);
     l_buf[l_len-2] = 0;
 

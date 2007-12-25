@@ -25,7 +25,8 @@ void SieGetDaemon::onCreate()
 
   dialog->Create();
 
-  test_req->Start(_req, htonl(IP_ADDR(81,19,70,3)), 80);
+  //test_req->Start(_req, htonl(IP_ADDR(81,19,70,3)), 80);
+  test_req->Start(_req, "rambler.ru", 80);
 }
 
 void MessageToHelper(SieGetDaemon *daemon, GBS_MSG *msg)
@@ -108,10 +109,13 @@ void SieGetDaemon::ProcessSocket(int id, int event)
 {
   char tmp[128];
 
+  LockSched();
   Socket *sock = NULL;
   for (Socket *tsock = Socket::TopSocket; tsock && !sock; tsock = tsock->NextSocket)
     if (tsock->id==id)
       sock = tsock;
+  UnlockSched();
+
   if (sock)
   {
     switch(event)
@@ -154,6 +158,15 @@ void SieGetDaemon::ProcessDNR(int DNR_ID)
   char tmp[64];
   sprintf(tmp, "DNR %d", DNR_ID);
   Log::Active->PrintLn(tmp);
+
+  LockSched();
+  DNR *dnr = NULL;
+  for (DNR *tdnr = DNR::DNRTop; tdnr && !dnr; tdnr = tdnr->DNRNext)
+    if (tdnr->DNR_ID==DNR_ID)
+      dnr = tdnr;
+  UnlockSched();
+  if (dnr)
+    dnr->SendReq();
 }
 
 void SieGetDaemon::onClose()

@@ -2,6 +2,8 @@
 #include "include.h"
 #include "widget.h"
 
+extern char percent_t[];
+
 void Widget::Resize()
 {
   Canvas.x = 0;
@@ -147,7 +149,8 @@ LogWidget::~LogWidget()
 //                                InfoWidget                     //
 //---------------------------------------------------------------//
 
-char clINFOWIDGETBG[4] = {255, 0, 0, 100};
+char clINFOWIDGETBG[4] = {0, 0, 0, 100};
+char clINFOWIDGETTEXT[4] = {255, 255, 255, 100};
 
 void InfoWidget::onKey(int key_code, int key_msg)
 {
@@ -155,7 +158,13 @@ void InfoWidget::onKey(int key_code, int key_msg)
 
 void InfoWidget::onRedraw()
 {
+  WSHDR *ws = AllocWS(256);
+
   DrawRectangle(Canvas.x, Canvas.y, Canvas.x2, Canvas.y2, 0, 0, clINFOWIDGETBG);
+  wsprintf(ws, percent_t, "Under construction...");
+  DrawString(ws, Canvas.x, Canvas.y, Canvas.x2, Canvas.y2, FONT_MEDIUM, 0, clINFOWIDGETTEXT, 0);
+
+  FreeWS(ws);
 }
 
 InfoWidget::InfoWidget()
@@ -170,7 +179,8 @@ InfoWidget::~InfoWidget()
 //                                ListWidget                     //
 //---------------------------------------------------------------//
 
-char clLISTWIDGETBG[4] = {0, 0, 255, 100};
+char clLISTWIDGETBG[4] = {0, 0, 0, 100};
+char clLISTWIDGETTEXT[4] = {255, 255, 255, 100};
 
 void ListWidget::onKey(int key_code, int key_msg)
 {
@@ -178,7 +188,13 @@ void ListWidget::onKey(int key_code, int key_msg)
 
 void ListWidget::onRedraw()
 {
+  WSHDR *ws = AllocWS(256);
+
   DrawRectangle(Canvas.x, Canvas.y, Canvas.x2, Canvas.y2, 0, 0, clLISTWIDGETBG);
+  wsprintf(ws, percent_t, "Under construction...");
+  DrawString(ws, Canvas.x, Canvas.y, Canvas.x2, Canvas.y2, FONT_MEDIUM, 0, clLISTWIDGETTEXT, 0);
+
+  FreeWS(ws);
 }
 
 ListWidget::ListWidget()

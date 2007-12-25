@@ -14,6 +14,26 @@ inline int CheckCepId()
   return 0;
 }
 
+//---------------------------------------------------------------
+
+HttpDNR::HttpDNR()
+{
+  Callback = NULL;
+}
+
+void HttpDNR::Bind(HttpAbstract *sock)
+{
+  Callback = sock;
+}
+
+void HttpDNR::onResolve(int result, int value)
+{
+  if (Callback)
+    Callback->onResolve(result, value);
+}
+
+//---------------------------------------------------------------
+
 HttpAbstract::HttpAbstract()
 {
   ip = 0;
@@ -23,6 +43,9 @@ HttpAbstract::HttpAbstract()
 
   http_state = HTTP_IDLE;
   Headers = NULL;
+
+  Resolver = new HttpDNR();
+  Resolver->Bind(this);
 }
 
 HttpAbstract::~HttpAbstract()
@@ -33,10 +56,14 @@ HttpAbstract::~HttpAbstract()
     delete Headers;
   if (recvbuf)
     delete recvbuf;
+  if (Resolver)
+    delete Resolver;
 }
 
 void HttpAbstract::Start(const char *_req, int _ip, short _port)
 {
+  if (http_state!=HTTP_IDLE)
+    return;
   DEBUG("HttpAbstract::Start()");
 
   if (req)
@@ -56,7 +83,36 @@ void HttpAbstract::Start(const char *_req, int _ip, short _port)
   strcpy(req, _req);
   ip = _ip;
   port = _port;
+  http_state = HTTP_HEADER;
   doConnect();
+}
+
+void HttpAbstract::Start(const char *_req, const char *host, short _port)
+{
+  if (http_state!=HTTP_IDLE)
+    return;
+  DEBUG("HttpAbstract::Start()");
+
+  if (req)
+    delete req;
+  if (Headers)
+  {
+    delete Headers;
+  }
+  if (recvbuf)
+  {
+    delete recvbuf;
+  }
+
+  req = new char[strlen(_req)+1];
+  Headers = new HTTP_Response();
+  recvbuf = new Buffer();
+  strcpy(req, _req);
+  ip = 0;
+  port = _port;
+  http_state = HTTP_RESOLVE;
+  DEBUG("Resolving host...");
+  Resolver->Start(host, 3);
 }
 
 void _do_connect(HttpAbstract *obj)
@@ -72,8 +128,30 @@ void HttpAbstract::doConnect()
     Create();
 }
 
+void HttpAbstract::onResolve(int result, int value)
+{
+  char tmp[256];
+  sprintf(tmp, "HttpAbstract::onResolve(%d, 0x%X)", result, value);
+  DEBUG(tmp);
+
+  if (result==DNR_RESULT_OK)
+  {
+    ip = value;
+    http_state = HTTP_HEADER;
+    doConnect();
+  }
+  else
+  {
+    onError(SOCK_ERROR_CONNECTING);
+  }
+}
+
 void HttpAbstract::onCreate()
 {
+  char tmp[256];
+  sprintf(tmp, "Connecting to IP %d.%d.%d.%d, port %d", ip&0xff, (ip>>8)&0xff, (ip>>16)&0xff, (ip>>24)&0xff, port);
+  DEBUG(tmp);
+
   Connect(ip, port);
 }
 
@@ -83,18 +161,24 @@ void HttpAbstract::onConnected()
   delete req;
   req = NULL;
 
-  http_state = HTTP_HEADER;
   onHTTPConnect();
 }
 
 void HttpAbstract::onDataRead()
 {
+  DEBUG("HttpAbstract::onDataRead()");
+  char tmp[256];
+
   char tmpbuf[1024];
   int nrecv = Recv(tmpbuf, 1024);
   if (http_state==HTTP_HEADER)
   {
     recvbuf->Write(tmpbuf, nrecv);
     int hsize = Headers->Parse(recvbuf->data, recvbuf->size);
+
+    sprintf(tmp, "HTTP Parser returned %d (data size %d)", hsize, recvbuf->size);
+    DEBUG(tmp);
+
     if (hsize)
     {
       onHTTPHeaders();
@@ -113,6 +197,7 @@ void HttpAbstract::onDataRead()
 
 void HttpAbstract::onClose()
 {
+  DEBUG("HttpAbstract::onClose()");
   onHTTPFinish();
   http_state = HTTP_IDLE;
 }
@@ -125,6 +210,7 @@ void HttpAbstract::onRemoteClose()
 void HttpAbstract::onError(SOCK_ERROR err)
 {
   DEBUG("HttpAbstract::onError()");
+  http_state = HTTP_IDLE;
 }
 
 //---------------------------------------------------------------

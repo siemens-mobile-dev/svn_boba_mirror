@@ -8,7 +8,7 @@
 #include "dialog.h"
 
 #include "socket.h"
-//#include "dns.h"
+#include "dns.h"
 #include "inet.h"
 
 #define DAEMON_CSM_NAME "SieGetD"
