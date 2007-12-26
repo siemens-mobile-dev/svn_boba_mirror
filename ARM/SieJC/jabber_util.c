@@ -748,6 +748,7 @@ void ChangeRoster(XMLNode* items)
   char asub[]="subscribe";
   char aask[]="ask";
   char* jid;
+  int gr_id;
   char w_subscr_flag;
   while(rostEx)
   {
@@ -763,10 +764,19 @@ void ChangeRoster(XMLNode* items)
     {
       w_subscr_flag = 0;
     }
+    XMLNode *group = XML_Get_Child_Node_By_Name(rostEx, "group");
+    if(group)
+    {
+      if(!(gr_id = GetGroupID(group->value)))
+      {
+        gr_id = AddGroup(group->value);
+      }
+    }
+    else gr_id = 0;
     Cont_Ex = CList_FindContactByJID(jid);
     if(Cont_Ex)
     {
-      CList_ChangeContactParams(Cont_Ex,name,r_subscr, w_subscr_flag,0);
+      CList_ChangeContactParams(Cont_Ex,name,r_subscr, w_subscr_flag,gr_id);
     }
     rostEx=rostEx->next;
   }

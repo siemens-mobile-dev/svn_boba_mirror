@@ -3,6 +3,7 @@
 #include "clist_util.h"
 #include "jabber_util.h"
 #include "string_util.h"
+#include "JID_Enter_UI.h"
 #include "vCard.h"
 #include "lang.h"
 
@@ -35,7 +36,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 //==============================================================================
 
 
-#define MAX_ITEMS 10       // Максимальное количество пунктов меню
+#define MAX_ITEMS 11       // Максимальное количество пунктов меню
 
 #define MI_CONF_LEAVE       1
 #define MI_QUERY_VERSION    2
@@ -47,7 +48,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 #define MI_MUC_ADMIN        8
 #define MI_LASTACTIV_QUERY  9
 #define MI_SUBSCRIBES_MENU  10
-
+#define MI_CHANGECONTACT_VERSION  11
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
 
@@ -382,7 +383,12 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
         Disp_Cont_Menu();
         break;
       }
-      
+
+    case MI_CHANGECONTACT_VERSION:
+      {
+        Disp_JID_Enter_Dialog(CList_FindContactByJID(CList_GetActiveContact()->full_name));
+        break;
+      }      
     default:
       {
         MsgBoxError(1,(int)LG_UNKACTION);
@@ -480,10 +486,15 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
     
   case MI_SUBSCRIBES_MENU:
     {
-      strcpy(test_str,"Подписка");
+      strcpy(test_str,LG_SUBSCR);
       break;
     }
-      
+  case MI_CHANGECONTACT_VERSION:
+    {
+      strcpy(test_str,LG_EDIT);
+      break;
+    }
+
   }
   //ShowMSG(1,(int)test_str);
   ws=AllocMenuWS(data,strlen(test_str));
@@ -571,6 +582,7 @@ void Init_Icon_array()
   cmS_ICONS[MI_LOGIN_LOGOUT]=(int)ICON_LOGIN_LOGOUT;
   cmS_ICONS[MI_MUC_ADMIN]=(int)ICON_MUC_ADMIN;
   cmS_ICONS[MI_SUBSCRIBES_MENU]=(int)  ICON_SUBSCRIBE_MENU;
+  cmS_ICONS[MI_CHANGECONTACT_VERSION]=(int)  ICON_SUBSCRIBE_MENU;
 }
 
 void Disp_Contact_Menu()
@@ -626,8 +638,8 @@ if (Act_contact->entry_type==T_CONF_NODE)
   if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_CONF_NODE)&&(Act_contact->entry_type!=T_GROUP))
   {
        Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
+       Menu_Contents[n_items++]=MI_CHANGECONTACT_VERSION;
   }
-  
   if(n_items+1)
   {
     patch_rect(&contact_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);

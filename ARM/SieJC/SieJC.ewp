@@ -5120,6 +5120,12 @@
       <name>$PROJ_DIR$\jabber_util.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\JID_Enter_UI.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\JID_Enter_UI.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\MUC_Enter_UI.c</name>
     </file>
     <file>
@@ -5190,5 +5196,6 @@
     <name>$PROJ_DIR$\status_change.h</name>
   </file>
 </project>
+
 
 

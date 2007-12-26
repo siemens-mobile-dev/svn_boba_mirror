@@ -117,7 +117,9 @@
 #define LG_OHISTORY         "История"
 #define LG_QUERYTIME        "Время клиента"
 #define LG_QUERYVCARD       "vCard"
-#define LG_QUERYLAST        "Последняя активность"
+#define LG_QUERYLAST        "Бездействие"
+#define LG_SUBSCR           "Подписка"
+#define LG_EDIT             "Изменить"
 //clist_util.c
 #define LG_AUTHORREM        "В авторизации отказано!"
 #define LG_AUTHORGRANTED    "Авторизация дана!"
@@ -518,6 +520,9 @@
 #define LG_QUERYTIME        "Time"
 #define LG_QUERYVCARD       "vCard"
 #define LG_QUERYLAST        "Last Activity"
+#define LG_SUBSCR           "Subscription"
+#define LG_EDIT             "Edit"
+
 //clist_util.c
 #define LG_AUTHORREM        "Authorization was removed!"
 #define LG_AUTHORGRANTED    "Authorization was granted!"
