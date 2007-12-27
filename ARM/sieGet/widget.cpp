@@ -1,6 +1,7 @@
 
 #include "include.h"
 #include "widget.h"
+#include "url.h"
 
 extern char percent_t[];
 
@@ -184,6 +185,11 @@ char clLISTWIDGETTEXT[4] = {255, 255, 255, 100};
 
 void ListWidget::onKey(int key_code, int key_msg)
 {
+  if (key_msg==KEY_DOWN && key_code==GREEN_BUTTON)
+  {
+    URLInput *ui = new URLInput();
+    ui->Show();
+  }
 }
 
 void ListWidget::onRedraw()

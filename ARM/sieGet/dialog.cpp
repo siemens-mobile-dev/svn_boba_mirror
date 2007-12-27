@@ -95,9 +95,6 @@ int  SieGetGUI::onKey(char key_code, int key_msg, short keys)
       bm_current = 2;
       tabs[bm_current]->onFocus();
       break;
-    case GREEN_BUTTON:
-      Log::Active->PrintLn("Test Line");
-      break;
     }
   REDRAW();
   tabs[bm_current]->onKey(key_code, key_msg);

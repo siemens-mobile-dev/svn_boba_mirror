@@ -14,15 +14,35 @@ extern "C"
       Log::Active->PrintLn(str);
   }
 }
+
+#ifdef LOG_TO_FILE
+void PrintToFile(const char *str)
+{
+  volatile int hFile;
+  unsigned int io_error = 0;
+  char fullname[] ="4:\\ZBin\\var\\SieGET.log";
+  hFile = fopen(fullname, A_ReadWrite+A_Create+A_Append+A_BIN, P_READ+P_WRITE, &io_error);
+  if(!io_error)
+  {
+    fwrite(hFile, str, strlen(str), &io_error);
+    fwrite(hFile, "\r\n", 2, &io_error);
+    fclose(hFile, &io_error);
+  }
+}
+#endif
+
 Log::Log()
 {
+  char welcome_str[] = "--- LOG START ---";
   log_start = new LogLine;
   log_start->index = 0;
   log_start->str = AllocWS(256);
-  ascii2ws(log_start->str, "--- LOG START ---");
+  ascii2ws(log_start->str, welcome_str);
   log_start->next = log_start;
   log_start->prev = log_start;
   Active = this;
+
+  PrintToFile(welcome_str);
 }
 
 Log::~Log()
@@ -62,16 +82,7 @@ void Log::PrintLn(const char *str)
   _add_line(ws);
 
 #ifdef LOG_TO_FILE
-  volatile int hFile;
-  unsigned int io_error = 0;
-  char fullname[] ="4:\\ZBin\\var\\SieGET.log";
-  hFile = fopen(fullname, A_ReadWrite+A_Create+A_Append+A_BIN, P_READ+P_WRITE, &io_error);
-  if(!io_error)
-  {
-    fwrite(hFile, str, strlen(str), &io_error);
-    fwrite(hFile, "\r\n", 2, &io_error);
-    fclose(hFile, &io_error);
-  }
+  PrintToFile(str);
 #endif
 
   if (SieGetDialog::Active)

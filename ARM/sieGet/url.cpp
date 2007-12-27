@@ -1,8 +1,15 @@
-//#include "stdafx.h"
-#include "../inc/swilib.h"
-extern unsigned int strtoul(const char * str, char ** endptr, int base);
+#include "include.h"
 
 #include "url.h"
+#include "gui.h"
+#include "log.h"
+
+extern "C"
+{
+  extern unsigned long strtoul(const char *, char **, int);
+};
+
+extern char percent_t[];
 
 #define ST_ERR -1
 #define ST_FINISH 0
@@ -152,3 +159,194 @@ URL::URL()
   scheme = NULL;
 }
 
+//---------------------------------------------------------------
+
+// ELKA Compatibility
+
+inline void patch_rect(RECT*rc,int x,int y, int x2, int y2)
+{
+  rc->x=x;
+  rc->y=y;
+  rc->x2=x2;
+  rc->y2=y2;
+}
+
+inline void patch_header(HEADER_DESC* head)
+{
+  head->rc.x=0;
+  head->rc.y=YDISP;
+  head->rc.x2=ScreenW()-1;
+  head->rc.y2=HeaderH()+YDISP;
+}
+
+inline void patch_input(INPUTDIA_DESC* inp)
+{
+  inp->rc.x=0;
+  inp->rc.y=HeaderH()+1+YDISP;
+  inp->rc.x2=ScreenW()-1;
+  inp->rc.y2=ScreenH()-SoftkeyH()-1;
+}
+
+//---------------------------------------------------------------
+
+int urlinput_onkey(GUI *gui, GUI_MSG *msg)
+{
+  URLInput *ui = (URLInput *)EDIT_GetUserPointer(gui);
+  return ui->onKey(gui, msg);
+}
+
+void urlinput_ghook(GUI *gui, int cmd)
+{
+  URLInput *ui = (URLInput *)EDIT_GetUserPointer(gui);
+  ui->gHook(gui, cmd);
+}
+
+void urlinput_locret(void) {};
+
+SOFTKEY_DESC urlinput_sk[]=
+{
+  {0x0018,0x0000,(int)"Ok"},
+  {0x0001,0x0000,(int)"Cancel"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB urlinput_skt=
+{
+  urlinput_sk,0
+};
+
+HEADER_DESC urlinput_hdr={0,0,0,0,NULL,(int)"Введите URL...",LGP_NULL};
+
+INPUTDIA_DESC urlinput_desc=
+{
+  1,
+  urlinput_onkey,
+  urlinput_ghook,
+  (void *)urlinput_locret,
+  0,
+  &urlinput_skt,
+  {0,0,0,0},
+  4,
+  100,
+  101,
+  0,
+  0,
+  0x40000000// Поменять софт-кнопки
+};
+
+int  URLInput::onKey(GUI *gui, GUI_MSG *msg)
+{
+  if ((msg->gbsmsg->msg==KEY_DOWN && msg->gbsmsg->submess==ENTER_BUTTON && EDIT_GetFocus(gui)==ok_pos) || (msg->keys==0x18))
+  {
+      result = 1;
+      return GUI_RESULT_CLOSE;
+  }
+  if (msg->gbsmsg->msg==KEY_DOWN && msg->gbsmsg->submess==ENTER_BUTTON && EDIT_GetFocus(gui)==cancel_pos)
+      return GUI_RESULT_CLOSE;
+  return (GUI_RESULT_OK);
+}
+
+void URLInput::gHook(GUI *gui, int cmd)
+{
+  if (cmd==TI_CMD_DESTROY)
+  {
+    if (result)
+    {
+      EDITCONTROL ec;
+      ExtractEditControl(gui, url_pos, &ec);
+      char url_str[512];
+      int new_len;
+      ws_2utf8(ec.pWS, url_str, &new_len, 511);
+      DEBUG(url_str);
+      url->Parse(url_str);
+      onFinish();
+    }
+    else
+      onCancel();
+    delete this;
+  }
+}
+
+void URLInput::Show()
+{
+  result = 0;
+
+  WSHDR *ws = AllocWS(256);
+  EDITCONTROL ec;
+  void *ma=malloc_adr();
+  void *eq;
+
+  eq=AllocEQueue(ma,mfree_adr());
+
+  wsprintf(ws, percent_t, "http://");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
+  url_pos = AddEditControlToEditQend(eq,&ec,ma);
+
+  wsprintf(ws, percent_t, "-----");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, 256);
+  ok_pos = AddEditControlToEditQend(eq,&ec,ma);
+
+  wsprintf(ws, percent_t, "Ok");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws, 256);
+  ok_pos = AddEditControlToEditQend(eq,&ec,ma);
+
+  wsprintf(ws, percent_t, "Отмена");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws, 256);
+  cancel_pos = AddEditControlToEditQend(eq,&ec,ma);
+
+  patch_header(&urlinput_hdr);
+  patch_input(&urlinput_desc);
+  CreateInputTextDialog(&urlinput_desc,&urlinput_hdr,eq,1,this);
+}
+
+void URLInput::onFinish()
+{
+  DEBUG("URLInput::onFinish()");
+  char tmp[512];
+  if (url->scheme)
+  {
+    sprintf(tmp, "Scheme: %s", url->scheme);
+    DEBUG(tmp);
+  }
+  if (url->host)
+  {
+    sprintf(tmp, "Host: %s", url->host);
+    DEBUG(tmp);
+  }
+  sprintf(tmp, "Port: %d", url->port);
+  DEBUG(tmp);
+  if (url->path)
+  {
+    sprintf(tmp, "Path: %s", url->path);
+    DEBUG(tmp);
+  }
+  if (url->param)
+  {
+    sprintf(tmp, "Params: %s", url->param);
+    DEBUG(tmp);
+  }
+  if (url->fragment)
+  {
+    sprintf(tmp, "Fragment: %s", url->fragment);
+    DEBUG(tmp);
+  }
+}
+
+void URLInput::onCancel()
+{
+  DEBUG("URLInput::onCancel()");
+}
+
+URLInput::URLInput()
+{
+  url = new URL();
+}
+
+URLInput::~URLInput()
+{
+  delete url;
+}

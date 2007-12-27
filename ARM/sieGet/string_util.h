@@ -38,10 +38,6 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 // Получить значение по параметру (см. описание в теле файла)
 char *Get_Param_Value(char *ch, char *req, char cut_quotes);
 
-char *Replace_Special_Syms(char *unrep_str);
-
-char *Mask_Special_Syms(char *unrep_str);
-
 // Аналог strstr, но без чувствительности к регистру
 //char *stristr(char *haystack, char *needle);
 char *stristr(const char *s, const char *find);
