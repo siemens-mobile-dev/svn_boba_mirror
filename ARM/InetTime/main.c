@@ -7,27 +7,22 @@
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 int MAINCSM_ID;
-WSHDR *ews;
 
-#pragma inline
-void patch_rect(RECT*rc,int x,int y, int x2, int y2)
+
+
+extern void kill_data(void *p, void (*func_p)(void *));
+void ElfKiller(void)
 {
-  rc->x=x;
-  rc->y=y;
-  rc->x2=x2;
-  rc->y2=y2;
+  extern void *ELF_BEGIN;
+  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
-
-
-
-
 
 
 
 
 int sock;
 int connect_state;
-char buf[16384];
+char buf[512];
 char logbuf[1024];
 int pbuf;
 
@@ -38,7 +33,7 @@ typedef struct
   CSM_RAM csm;
   int gui_id;
 }MAIN_CSM;
-
+/*
 typedef struct
 {
   GUI gui;
@@ -47,10 +42,10 @@ typedef struct
   int i1;
 }MAIN_GUI;
 
+*/
 
 
-
-
+/*
 int atoi(char *attr)
 {
   int ret=0;
@@ -60,7 +55,7 @@ int atoi(char *attr)
     if ( attr[k]>0x2F && attr[k]<0x3A) {ret=ret*10+attr[k]-0x30;} else { if ( attr[k]=='-') {neg=-1;} else {return(ret*neg);}}
   }
 }
-
+*/
 void create_connect(void)
 {
   SOCK_ADDR sa;
@@ -71,8 +66,8 @@ void create_connect(void)
   if (sock!=-1)
   {
     sa.family=1;
-    sa.port=htons(37);
-    sa.ip=htonl(IP_ADDR(212,192,122,109));    
+//    sa.port=htons(37);
+//    sa.ip=htonl(IP_ADDR(212,192,122,109));    
     sa.port=htons(13);
     sa.ip=htonl(IP_ADDR(89,178,137,184));    
     
@@ -84,8 +79,10 @@ void create_connect(void)
       REDRAW();
     }
     else{
-      ShowMSG(1,(int)"state 3");
+      ShowMSG(1,(int)"Can`t conect");
+
       closesocket(sock);
+     CloseCSM( MAINCSM_ID);
     }
   }
 }
@@ -113,15 +110,12 @@ void end_socket(void)
 void get_answer(void)
 {
   strcat(logbuf,"ans1\n"); REDRAW();        
-  char st[512];
   int i=pbuf;
-  if (i==16383)
+  if (i==511)
     end_socket();
   else
   {
-    i=recv(sock,buf+i,16383-i,0);
-    sprintf(st,"%04x-rc%d\n",sock,i);
-  strcat(logbuf,st); REDRAW();            
+    i=recv(sock,buf+i,511-i,0);
     if (i>=0)
     {
       pbuf+=i;
@@ -153,188 +147,87 @@ typedef struct
 __swi __arm int GetTimeZoneShift(TDate *, TTime *, int timeZone);
 #pragma swi_number=0x822F
 __swi __arm  TDateTimeSettings *RamDateTimeSettings(void);
-
+ void ConvertTime(TDate *d,TTime *t, struct tm *dos ){
+  t->hour=dos->tm_hour;
+  t->min=dos->tm_min;
+  t->sec=dos->tm_sec;
+  t->millisec=0;
+  d->day=dos->tm_mday;
+  d->year=dos->tm_year+1900;
+  d->month=dos->tm_mon+1;
+  
+}
+char ddd[]="%d-%d-%d %d-%d-%d\n";
+char ps[]=  "%s";
 void Parsing()
 {
+  if (pbuf<10){  ShowMSG(1,(int)"Not all data trnsmited");
+//     CloseCSM( MAINCSM_ID);
+  }
   strcat(logbuf,"Parsing\n"); REDRAW();
   //  strcat(logbuf,"Parsing\n"); REDRAW();
-char st[1024];
+char st[512];
   long  a;
   sscanf (buf,"%d",&a);
   sprintf(st,"%08d\n",a);
 
   strcat(logbuf,st); REDRAW();
-  /*
-  b=a-2208988800;
   char *s;
-  struct tm *sd;
-
-  //sd=gmtime(&a);
-s=  ctime((const long*)&b);
-//  ShowMSG(1,(int)s);  
-  sprintf(st,"%08x\n%s",b,s);
-  strcat(logbuf,st); REDRAW();*/
-  char *s;
-    int b;
-  TDateTimeSettings *ts;
-  ts=RamDateTimeSettings();
-  
+  int b;
+  TDateTimeSettings *ts=RamDateTimeSettings();
   TDate d;
   TTime t;  
-
-  
-   struct tm *dos;
-dos=gmtime(&a);
-t.hour=dos->tm_hour;
-t.min=dos->tm_min;
-t.sec=dos->tm_sec;
-t.millisec=0;
-d.day=dos->tm_yday;
-d.year=dos->tm_year;
-d.month=dos->tm_mon;
-
-// GetDateTime(&d,&t);  
-b=GetTimeZoneShift(&d,&t,ts->timeZone);
+ 
+  struct tm *dos;
+  dos=gmtime(&a);   
+  ConvertTime(&d,&t,dos);
+  b=GetTimeZoneShift(&d,&t,ts->timeZone);
   a+=b*60;
-
-dos=gmtime(&a);
-t.hour=dos->tm_hour;
-t.min=dos->tm_min;
-t.sec=dos->tm_sec;
-t.millisec=0;
-d.day=dos->tm_yday;
-d.year=dos->tm_year;
-d.month=dos->tm_mon;
-a-=b*60;
-b=GetTimeZoneShift(&d,&t,ts->timeZone);
-a+=b*60;
-dos=gmtime(&a);
-t.hour=dos->tm_hour;
-t.min=dos->tm_min;
-t.sec=dos->tm_sec;
-t.millisec=0;
-d.day=dos->tm_yday;
-d.year=dos->tm_year;
-d.month=dos->tm_mon;
+  dos=gmtime(&a);   
+  ConvertTime(&d,&t,dos);
+  
+  sprintf(st,ddd,d.year,d.month,d.day,t.hour,t.min,t.sec);
+ 
+  strcat(logbuf,st); REDRAW();  
 
 SetDateTime(&d,&t);
 
 s=  ctime((const long*)&a);
-  sprintf(st,"%08x-%d\n%s",a,b,s);
+  sprintf(st,ps,s);
   strcat(logbuf,st); REDRAW();
-
-
+  ShowMSG(1,(int)s);
+//  SUBPROC((void *)ElfKiller);
+// CloseCSM( MAINCSM_ID);
 }
 
 
-void DrawWait()
-{
-  WSHDR *ws = AllocWS(1024);
-    wsprintf(ws,"%s",logbuf);
-    DrawString(ws,2,YDISP+5,ScreenW()-1,ScreenH()-1,FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  FreeWS(ws);
-}
 
-void OnRedraw(MAIN_GUI *data)
-{       
-  DrawRoundedFrame(1 ,YDISP, ScreenW()-1, ScreenH()-1, 0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(1));
-  DrawWait();
-}
 
-void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
-{
-  data->gui.state=1;
-}
 
-void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
-{
-  data->gui.state=0;
-}
 
-void onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
-{
 
-//  DisableIconBar(1);
 
-  data->gui.state=2;
-  DisableIDLETMR();
-}
-
-void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
-{
-  if (data->gui.state!=2) return;
-  data->gui.state=1;
-}
-
-int OnKey(MAIN_GUI *data, GUI_MSG *msg)
-{
-  DirectRedrawGUI();
-  if (msg->gbsmsg->msg==KEY_DOWN)
-  {
-    switch(msg->gbsmsg->submess)
-    {
-    case RIGHT_SOFT: 
-#ifndef NEWSGOLD
-    case RED_BUTTON:       
-#endif
-      return(1);
-    }
-  }
-  return(0);
-}
-
-extern void kill_data(void *p, void (*func_p)(void *));
-void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
-{
-  kill_data(data, mfree_adr);
-}
-
-int method8(void){return(0);}
-int method9(void){return(0);}
-
-const void * const gui_methods[11]={
-  (void *)OnRedraw,	
-  (void *)onCreate,	
-  (void *)onClose,	
-  (void *)onFocus,	
-  (void *)onUnfocus,
-  (void *)OnKey,	
-  0,
-  (void *)method7,	
-  (void *)method8,
-  (void *)method9,
-  0
-};
-
-const RECT Canvas={0,0,0,0};
 void maincsm_oncreate(CSM_RAM *data)
 {
-  MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
+//  MAIN_GUI *main_gui=malloc(sizeof(MAIN_GUI));
   MAIN_CSM*csm=(MAIN_CSM*)data;
-  zeromem(main_gui,sizeof(MAIN_GUI));
-  patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
-  main_gui->gui.canvas=(void *)(&Canvas);
+//  zeromem(main_gui,sizeof(MAIN_GUI));
+/*  main_gui->gui.canvas=(void *)(&Canvas);
   //main_gui->gui.flag30=2;
   main_gui->gui.methods=(void *)gui_methods;
   main_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
+  */
   csm->csm.state=0;
   csm->csm.unk1=0;
-  csm->gui_id=CreateGUI(main_gui);    
+//  csm->gui_id=CreateGUI(main_gui);    
 
   SUBPROC((void *)create_connect);
-  ews=AllocWS(16384);
+
 }
 
-void ElfKiller(void)
-{
-  extern void *ELF_BEGIN;
-  kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
-}
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-
-  FreeWS(ews);
   SUBPROC((void *)ElfKiller);
 }
 
@@ -357,26 +250,26 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         if (connect_state==1)
         {
           strcat(logbuf,"Connected\n");
-          REDRAW();
+         
           //Если посылали запрос
           SUBPROC((void *)send_req);
-          REDRAW();
+         
         }
         else
         {
           strcat(logbuf,"Error, try again..\n"); 
           SUBPROC((void *)create_connect); 
-          REDRAW();
+         
         }
         break;
       case ENIP_SOCK_DATA_READ:
         if (connect_state==2)
         {
           strcat(logbuf,"Reading\n"); 
-          REDRAW();
+         
           //Если посылали send
           SUBPROC((void *)get_answer);
-          REDRAW();
+         
         }
         else
         {
@@ -386,16 +279,17 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_REMOTE_CLOSED:
         //Закрыт со стороны сервера
         if (connect_state) SUBPROC((void *)end_socket);
+//                CloseCSM( MAINCSM_ID);
         break;
       case ENIP_SOCK_CLOSED:
         //Закрыт вызовом closesocket
         if (connect_state) SUBPROC((void *)end_socket);
             SUBPROC((void *)Parsing);
         strcat(logbuf,"Receiving\n"); 
-//        SUBPROC((void *)get_answer);
-        REDRAW();
+
         connect_state=3;
         sock=-1;
+         CloseCSM( MAINCSM_ID);
         break;
       }
     }
@@ -435,65 +329,23 @@ sizeof(MAIN_CSM),
 
 void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"Weather Forecast");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"DayTime Protocol (13)");
 }
 
 
 
 int main()
 {
-  int a,b,c;
-  TDateTimeSettings *ts;
-  ts=RamDateTimeSettings();
-  
-  a=GetTimeZoneShift(0,0,ts->timeZone);
-  TDate d;
-  TTime t;  
-  GetDateTime(&d,&t);
-  b=GetTimeZoneShift(&d,&t,ts->timeZone);
-  char s[512];
-  sprintf(s,"%d\n%d\n%d",a,b,c);
-  ShowMSG(1,(int)s);
-  
-  InitConfig();
-/*  if (TID)
-  {  
-*/
-    char dummy[sizeof(MAIN_CSM)];
-    UpdateCSMname();
-    LockSched();
-    MAINCSM_ID=CreateCSM(&MAINCSM.maincsm,dummy,0);
-    UnlockSched();
-    /*
-  }
-  else
-  {
-  
-    LockSched();
-    ShowMSG(1,(int)"Please setup Town ID!");
-    UnlockSched();
-  } 
-  */
+//  InitConfig();
+  char dummy[sizeof(MAIN_CSM)];
+  UpdateCSMname();
+  LockSched();
+  MAINCSM_ID=CreateCSM(&MAINCSM.maincsm,dummy,0);
+  UnlockSched();
   return 0;
 }
 
-//---------------------------- Edit Control -----------------------------------
-#pragma inline
-void patch_header(const HEADER_DESC* head)
-{
-  ((HEADER_DESC*)head)->rc.x=0;
-  ((HEADER_DESC*)head)->rc.y=YDISP;
-  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
-  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP-1;
-}
-#pragma inline
-void patch_input(const INPUTDIA_DESC* inp)
-{
-  ((INPUTDIA_DESC*)inp)->rc.x=0;
-  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
-  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
-  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
-}
+
 
 
 
