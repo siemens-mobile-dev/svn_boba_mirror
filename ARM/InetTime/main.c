@@ -6,7 +6,7 @@
 
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
-int MAINCSM_ID;
+int MAINCSM_ID=0;
 
 
 
@@ -18,12 +18,18 @@ void ElfKiller(void)
 }
 
 
+void clse(){
+  if (MAINCSM_ID){
+         CloseCSM(                  MAINCSM_ID);
+         MAINCSM_ID=0;
+  }
+}
 
 
 int sock;
 int connect_state;
 char buf[512];
-char logbuf[1024];
+
 int pbuf;
 
 
@@ -41,8 +47,8 @@ typedef struct
   WSHDR *ws2;
   int i1;
 }MAIN_GUI;
-
 */
+
 
 
 /*
@@ -56,8 +62,10 @@ int atoi(char *attr)
   }
 }
 */
+extern const char HOST[128];
 void create_connect(void)
 {
+  unsigned int ip;  
   SOCK_ADDR sa;
   //Устанавливаем соединение
   connect_state=0;
@@ -69,20 +77,24 @@ void create_connect(void)
 //    sa.port=htons(37);
 //    sa.ip=htonl(IP_ADDR(212,192,122,109));    
     sa.port=htons(13);
-    sa.ip=htonl(IP_ADDR(89,178,137,184));    
+//    sa.ip=htonl(IP_ADDR(89,178,137,184));    
+
+    sa.ip=htonl(IP_ADDR(192,43,244,18));          
+    
+    ip=str2ip(HOST);
+  if (ip!=0xFFFFFFFF)    sa.ip=ip;      
     
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
         //    ShowMSG(1,(int)"state 2");
       connect_state=1;
-    strcat(logbuf,"Conect\n"); REDRAW();      
-      REDRAW();
     }
     else{
       ShowMSG(1,(int)"Can`t conect");
 
       closesocket(sock);
-     CloseCSM( MAINCSM_ID);
+//     CloseCSM( MAINCSM_ID);
+             SUBPROC((void *)clse);
     }
   }
 }
@@ -95,7 +107,7 @@ void send_req(void)
   sprintf(req_buf,"\r\n");
   send(sock,req_buf,strlen(req_buf),0);
   connect_state=2;
-  strcat(logbuf,"req\n"); REDRAW();        
+
 }
 
 void end_socket(void)
@@ -109,7 +121,7 @@ void end_socket(void)
 
 void get_answer(void)
 {
-  strcat(logbuf,"ans1\n"); REDRAW();        
+
   int i=pbuf;
   if (i==511)
     end_socket();
@@ -132,21 +144,10 @@ void get_answer(void)
 //          Parsing();
 }
 
-typedef struct
-{
-  char yearNormBudd; //1 - norm, 2 - buddhist
-  char dateFormat;
-  char timeFormat; //0-24h, 1-12h
-  char timeZone; //internal representation
-  char isAutoTime1; 
-  char isAutoTime2;
-}TDateTimeSettings;
 
 
-#pragma swi_number=0x230
-__swi __arm int GetTimeZoneShift(TDate *, TTime *, int timeZone);
-#pragma swi_number=0x822F
-__swi __arm  TDateTimeSettings *RamDateTimeSettings(void);
+
+
  void ConvertTime(TDate *d,TTime *t, struct tm *dos ){
   t->hour=dos->tm_hour;
   t->min=dos->tm_min;
@@ -157,22 +158,39 @@ __swi __arm  TDateTimeSettings *RamDateTimeSettings(void);
   d->month=dos->tm_mon+1;
   
 }
-char ddd[]="%d-%d-%d %d-%d-%d\n";
-char ps[]=  "%s";
+
 void Parsing()
 {
-  if (pbuf<10){  ShowMSG(1,(int)"Not all data trnsmited");
-//     CloseCSM( MAINCSM_ID);
-  }
-  strcat(logbuf,"Parsing\n"); REDRAW();
-  //  strcat(logbuf,"Parsing\n"); REDRAW();
-char st[512];
-  long  a;
-  sscanf (buf,"%d",&a);
-  sprintf(st,"%08d\n",a);
+  //example of ans: 54462 07-12-28 18:55:44 00 0 0 744.7 UTC(NIST) *
 
-  strcat(logbuf,st); REDRAW();
+  
+  if (pbuf<24){  ShowMSG(1,(int)"Not all data transmited");
+//    if (pbuf!=4){  ShowMSG(1,(int)"Not all data transmited");
+//     CloseCSM( MAINCSM_ID);
+  return;
+  }
+//  LockSched();  
+
   char *s;
+  long  a;
+ 
+  //sscanf (buf,"%d",&a);
+  
+//  ShowMSG(1,(int)buf);
+  long t1;
+    struct tm nist;
+    memset(&nist,0,sizeof(nist));
+   
+  sscanf (buf,"%d %d-%d-%d %d:%d:%d",&t1,&nist.tm_year,&nist.tm_mon,&nist.tm_mday,&nist.tm_hour,&nist.tm_min,&nist.tm_sec);
+  nist.tm_year+=100;
+  nist.tm_mon-=1;  
+//   nist.tm_isdst=1;
+  a=mktime(&nist);
+
+  s=  ctime((const long*)&a);
+//  ShowMSG(1,(int)s);
+
+
   int b;
   TDateTimeSettings *ts=RamDateTimeSettings();
   TDate d;
@@ -186,18 +204,18 @@ char st[512];
   dos=gmtime(&a);   
   ConvertTime(&d,&t,dos);
   
-  sprintf(st,ddd,d.year,d.month,d.day,t.hour,t.min,t.sec);
+
  
-  strcat(logbuf,st); REDRAW();  
+
 
 SetDateTime(&d,&t);
 
 s=  ctime((const long*)&a);
-  sprintf(st,ps,s);
-  strcat(logbuf,st); REDRAW();
   ShowMSG(1,(int)s);
 //  SUBPROC((void *)ElfKiller);
 // CloseCSM( MAINCSM_ID);
+
+//     CloseCSM( MAINCSM_ID);
 }
 
 
@@ -225,7 +243,6 @@ void maincsm_oncreate(CSM_RAM *data)
 
 }
 
-
 void maincsm_onclose(CSM_RAM *csm)
 {
   SUBPROC((void *)ElfKiller);
@@ -249,7 +266,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_CONNECTED:
         if (connect_state==1)
         {
-          strcat(logbuf,"Connected\n");
+
          
           //Если посылали запрос
           SUBPROC((void *)send_req);
@@ -257,7 +274,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
         else
         {
-          strcat(logbuf,"Error, try again..\n"); 
+
           SUBPROC((void *)create_connect); 
          
         }
@@ -265,7 +282,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_DATA_READ:
         if (connect_state==2)
         {
-          strcat(logbuf,"Reading\n"); 
+
          
           //Если посылали send
           SUBPROC((void *)get_answer);
@@ -273,7 +290,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
         else
         {
-          strcat(logbuf,"Error, try again..\n"); SUBPROC((void *)create_connect); REDRAW();
+
         }
         break;
       case ENIP_SOCK_REMOTE_CLOSED:
@@ -285,11 +302,13 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         //Закрыт вызовом closesocket
         if (connect_state) SUBPROC((void *)end_socket);
             SUBPROC((void *)Parsing);
-        strcat(logbuf,"Receiving\n"); 
+
 
         connect_state=3;
         sock=-1;
-         CloseCSM( MAINCSM_ID);
+        SUBPROC((void *)clse);
+        
+//         CloseCSM( MAINCSM_ID);
         break;
       }
     }
@@ -336,11 +355,13 @@ void UpdateCSMname(void)
 
 int main()
 {
-//  InitConfig();
+  memset(buf,0,sizeof(buf));
+  InitConfig();
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
   LockSched();
   MAINCSM_ID=CreateCSM(&MAINCSM.maincsm,dummy,0);
+
   UnlockSched();
   return 0;
 }

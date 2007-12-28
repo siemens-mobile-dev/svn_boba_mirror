@@ -3,7 +3,9 @@
 //Eсли EL71 добавить предыдущий дефайн и ELKA
 
 typedef unsigned int size_t;
-typedef unsigned long time_t;
+//typedef unsigned long time_t;
+#include <time.h>
+
 typedef int jmp_buf[11];
 
 #ifndef _NULL
@@ -1102,6 +1104,18 @@ typedef struct
   int unk_1C; //1C
   int unk_20 ; //20
 } TWavLen;
+
+
+typedef struct
+{
+  char yearNormBudd; //1 - norm, 2 - buddhist
+  char dateFormat;
+  char timeFormat; //0-24h, 1-12h
+  char timeZone; //internal representation
+  char isAutoTime1; 
+  char isAutoTime2;
+}TDateTimeSettings;
+
 
 #pragma diag_suppress=Ta035
 
@@ -3126,6 +3140,14 @@ __swi __arm void FreeGSMTXTpkt(void *pkt);
 __swi __arm char *RamIconBar();
 //arm
 //pattern_ELKA=*(????????414D5F70)+4
+
+#pragma swi_number=0x822F
+__swi __arm  TDateTimeSettings *RamDateTimeSettings(void);
+//pattern=*(50bf0000????????01000080 + 4)
+
+#pragma swi_number=0x230
+__swi __arm int GetTimeZoneShift(TDate *, TTime *, int timeZone);
+//pattern=38B5151C0124002A + 1
 
 #pragma swi_number=0x238
 __swi __arm void SendAutoUSSDack(void);
