@@ -3381,7 +3381,7 @@ void CreateEditChat(CLIST *t)
 void Quote(GUI *data)
 {
   int q_n;
-  EDITCONTROL ec;
+  EDITCONTROL ec, ec_hdr;
   EDITCONTROL ec_ed;
   WSHDR *ed_ws;
   WSHDR *ws;
@@ -3391,15 +3391,24 @@ void Quote(GUI *data)
   
   q_n=EDIT_GetFocus(ed_struct->ed_chatgui);
   ExtractEditControl(ed_struct->ed_chatgui,q_n,&ec);
+  ExtractEditControl(ed_struct->ed_chatgui,q_n-1,&ec_hdr);
   ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec_ed);
-  ed_ws=AllocWS(ec_ed.maxlen);
+
+  ed_ws=AllocWS((ec_ed.maxlen<<1) + 1);
+  if(wstrlen(ec_hdr.pWS))
+  {
+    wstrcpy(ed_ws,ec_hdr.pWS);
+    wsAppendChar(ed_ws,'\r');
+  }
+  else
+    CutWSTR(ed_ws,0);
   if (EDIT_IsMarkModeActive(ed_struct->ed_chatgui))
   {
     EDIT_GetMarkedText(ed_struct->ed_chatgui,ed_ws);
   }
   else
   {
-    wstrcpy(ed_ws,ec.pWS);
+    wstrcat(ed_ws,ec.pWS);
   }
   int ed_pos=0;
   do
@@ -3521,28 +3530,47 @@ void OpenLogfile(GUI *data)
 
 void ClearLog(GUI *data/*,void *dummy*/)
 {
+  EDITCONTROL ec;
   EDCHAT_STRUCT *ed_struct;
+  WSHDR *ws;
+  CLIST *t;
+  
   ed_struct=MenuGetUserPointer(data);
   
-  CLIST *t;
-  if ((t=ed_struct->ed_contact))
+  ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
+  if(wstrlen(ec.pWS)>0)
   {
-    if (t->log)
+    ws=AllocWS(1);
+    CutWSTR(ws,0);
+  
+    EDIT_SetFocus(ed_struct->ed_chatgui,ed_struct->ed_answer);
+    EDIT_SetTextToFocused(ed_struct->ed_chatgui,ws); 
+    
+    FreeWS(ws);
+    GeneralFuncF1(1);    
+  }
+  else
+  {
+  
+    if ((t=ed_struct->ed_contact))
     {
-      FreeLOGQ(&t->log);
-      t->msg_count=0;
-      if (ed_struct->ed_answer>=2&&ed_struct->ed_chatgui)
+      if (t->log)
       {
-        while(ed_struct->ed_answer!=2)
+        FreeLOGQ(&t->log);
+        t->msg_count=0;
+        if (ed_struct->ed_answer>=2&&ed_struct->ed_chatgui)
         {
-          EDIT_RemoveEditControl(ed_struct->ed_chatgui,1);
-          ed_struct->ed_answer--;
+          while(ed_struct->ed_answer!=2)
+          {
+            EDIT_RemoveEditControl(ed_struct->ed_chatgui,1);
+            ed_struct->ed_answer--;
+          }
         }
       }
+      t->isactive=0;		//by BoBa  18.06.07
+      RecountMenu(t);
+      GeneralFuncF1(1);
     }
-    t->isactive=0;		//by BoBa  18.06.07
-    RecountMenu(t);
-    GeneralFuncF1(1);
   }
 }
 
