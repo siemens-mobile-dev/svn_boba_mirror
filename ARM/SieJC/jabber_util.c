@@ -778,6 +778,10 @@ void ChangeRoster(XMLNode* items)
     {
       CList_ChangeContactParams(Cont_Ex,name,r_subscr, w_subscr_flag,gr_id);
     }
+    else
+    { //если контакта нету надо добавить его в контактлист.
+     CList_AddContact(jid, name,r_subscr, w_subscr_flag, gr_id);
+    }
     rostEx=rostEx->next;
   }
 }

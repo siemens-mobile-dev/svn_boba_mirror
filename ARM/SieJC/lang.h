@@ -320,6 +320,8 @@
 #define LG_QUERYTIME        "Час"
 #define LG_QUERYVCARD       "vCard"
 #define LG_QUERYLAST        "Last Activity"
+#define LG_SUBSCR           "Подписка"
+#define LG_EDIT             "Изменить"
 //clist_util.c
 #define LG_AUTHORREM        "В авторизації відмовлено!"
 #define LG_AUTHORGRANTED    "Авторизація дана!"

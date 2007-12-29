@@ -630,16 +630,14 @@ if (Act_contact->entry_type==T_CONF_NODE)
   TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
   if(!(MYMUCRES->muc_privs.role<ROLE_MODERATOR)&&(MYMUCRES->muc_privs.aff>Act_contact->muc_privs.aff||(MYMUCRES->muc_privs.aff<AFFILIATION_ADMIN&&Act_contact->muc_privs.role<ROLE_MODERATOR))||MYMUCRES->muc_privs.aff==AFFILIATION_OWNER)
   {
- 
       Menu_Contents[n_items++]=MI_MUC_ADMIN;
-
   }
 }
   if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_CONF_NODE)&&(Act_contact->entry_type!=T_GROUP))
   {
        Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
-       Menu_Contents[n_items++]=MI_CHANGECONTACT_VERSION;
   }
+       Menu_Contents[n_items++]=MI_CHANGECONTACT_VERSION;
   if(n_items+1)
   {
     patch_rect(&contact_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
