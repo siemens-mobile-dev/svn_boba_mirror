@@ -66,6 +66,7 @@
 #define LG_SETTINGS         "Настройки"
 #define LG_ABOUT            "Об эльфе..."
 #define LG_COLOR            "Цвета"
+#define LG_ADDCONTACT       "Добавить контакт"
 //main.c
 #define LG_EXITSIEJC        "Покинуть SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не работает без SASL!"
@@ -268,6 +269,7 @@
 #define LG_SETTINGS         "Налаштування"
 #define LG_ABOUT            "Про эльф..."
 #define LG_COLOR            "Кольори"
+#define LG_ADDCONTACT       "Додати контакт"
 //main.c
 #define LG_EXITSIEJC        "Покинути SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не працює без SASL!"
@@ -470,6 +472,7 @@
 #define LG_SETTINGS         "Settings"
 #define LG_ABOUT            "About..."
 #define LG_COLOR            "Colors"
+#define LG_ADDCONTACT       "Add contact"
 //main.c
 #define LG_EXITSIEJC        "Exit SieJC?"
 #define LG_ZLIBNOSASL       "ZLib doesn't work without SASL!"

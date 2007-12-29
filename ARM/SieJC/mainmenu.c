@@ -6,6 +6,7 @@
 #include "bookmarks.h"
 #include "jabber_util.h"
 #include "MUC_Enter_UI.h"
+#include "JID_Enter_UI.h"
 #include "cont_menu.h"
 #include "revision.h"
 #include "lang.h"
@@ -31,7 +32,7 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 12
+#define N_ITEMS 13
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
@@ -153,6 +154,11 @@ void OpenSettings(GUI *data)
   GeneralFuncF1(1);
 }
 
+void AddContact(GUI *data)
+{
+ Disp_JID_Enter_Dialog(NULL);
+}
+
 void Exit_SieJC(GUI *data)
 {
   QuitCallbackProc(0);
@@ -164,6 +170,7 @@ static const char * const menutexts[N_ITEMS]=
   LG_STATUS,
   LG_MUC,
   LG_BOOKMARK,
+  LG_ADDCONTACT,
   LG_MVIBRA,
   LG_MSOUND,
   LG_MOFFLINE,
@@ -193,6 +200,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           DispStatusChangeMenu,
                           Disp_MUC_Enter_Dialog,
                           Get_Bookmarks_List,
+                          AddContact,
                           ChangeVibraMode,
                           ChangeSoundMode,
                           ChangeOffContMode,
@@ -239,27 +247,30 @@ void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,S_ICONS+3);
     break;
   case 4:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
+    SetMenuItemIconArray(data,item,S_ICONS+4);
     break;
   case 5:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
+    SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
     break;
   case 6:
-    SetMenuItemIconArray(data,item,icon_array+(Display_Offline?0:1));
+    SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
     break;
   case 7:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Autostatus_Enabled?0:1));
+    SetMenuItemIconArray(data,item,icon_array+(Display_Offline?0:1));
     break;
   case 8:
-    SetMenuItemIconArray(data,item,S_ICONS+6);
+    SetMenuItemIconArray(data,item,icon_array+(Is_Autostatus_Enabled?0:1));
     break;
   case 9:
-    SetMenuItemIconArray(data,item,S_ICONS+9);
+    SetMenuItemIconArray(data,item,S_ICONS+6);
     break;
   case 10:
+    SetMenuItemIconArray(data,item,S_ICONS+9);
+    break;
+  case 11:
     SetMenuItemIconArray(data,item,S_ICONS+7);
     break;  
-  case 11:
+  case 12:
     SetMenuItemIconArray(data,item,S_ICONS+8);
     break;
   }
@@ -332,8 +343,8 @@ void MM_Show()
   // Закладки
   S_ICONS[3] = (int)confpic;
 
-  // Режим вибры
-  // S_ICONS[4]
+  // Add Contact
+  S_ICONS[4] = (int)confpic;
 
   // Режим звука
   // S_ICONS[5]
