@@ -174,7 +174,7 @@ static const char * const menutexts[N_ITEMS]=
   LG_MVIBRA,
   LG_MSOUND,
   LG_MOFFLINE,
-  "Auto Status",
+  LG_AUTOSTATUS,
   LG_SETTINGS,
   LG_COLOR,
   LG_ABOUT,

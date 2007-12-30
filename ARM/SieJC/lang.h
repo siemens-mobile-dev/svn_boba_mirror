@@ -209,6 +209,12 @@
 #define LG_VCARD_URL        "Домашняя страница"
 #define LG_VCARD_DESC       "О себе"
 #define LG_VCARD_AVATAR     "Аватара"
+//jid_enter_ui
+#define LG_JEDELCONTACT     "Удалить контакт:"
+#define LG_JEAUTHORIZE      "Подписать:"
+#define LG_JEASK            "Запросить подписку:"
+#define LG_JEGROUP          "Группа:"
+#define LG_JENOJID          "Нет JIDа"
 #endif //RU
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -270,6 +276,7 @@
 #define LG_ABOUT            "Про эльф..."
 #define LG_COLOR            "Кольори"
 #define LG_ADDCONTACT       "Додати контакт"
+
 //main.c
 #define LG_EXITSIEJC        "Покинути SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не працює без SASL!"
@@ -412,6 +419,12 @@
 #define LG_VCARD_URL        "Домашня сторінка"
 #define LG_VCARD_DESC       "Про себе"
 #define LG_VCARD_AVATAR     "Аватара"
+//jid_enter_ui
+#define LG_JEDELCONTACT     "Видалити контакт:"
+#define LG_JEAUTHORIZE      "Підписати:"
+#define LG_JEASK            "Запросити підпис:"
+#define LG_JEGROUP          "Група:"
+#define LG_JENOJID          "JID відсутній!"
 #endif //UA
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -615,6 +628,12 @@
 #define LG_VCARD_URL        "Homepage"
 #define LG_VCARD_DESC       "Description"
 #define LG_VCARD_AVATAR     "Avatar"
+//jid_enter_ui
+#define LG_JEDELCONTACT     "Delete contact:"
+#define LG_JEAUTHORIZE      "Subscribe:"
+#define LG_JEASK            "Ask subscribe:"
+#define LG_JEGROUP          "Group:"
+#define LG_JENOJID          "No JID!"
 #endif //EN
 
 

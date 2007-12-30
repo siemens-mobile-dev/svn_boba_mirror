@@ -271,11 +271,11 @@ void Disp_Cont_Menu()
    {
        CONTC_Menu_Contents[n_items++]=CONTC_UNSUBSCRIBE; //Otozvat` podpisku
    }
-   if((Act_contact->status == PRESENCE_SUBSCRIBE))//Если контакт запрвшивает подписку...
+//   if((Act_contact->status == PRESENCE_SUBSCRIBE))//Если контакт запрвшивает подписку...
    {
      CONTC_Menu_Contents[n_items++]=CONTC_UNSUBSCRIBED;//otkazat`
      CONTC_Menu_Contents[n_items++]=CONTC_SUBSCRIBED;//soglasitsja
-   }   
+   }
   patch_rect(&contc_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
   if (n_items != 0) CreateMenu(0,0,&contc_menu,&contc_menuhdr,0,n_items,0,0);
 }
@@ -636,8 +636,9 @@ if (Act_contact->entry_type==T_CONF_NODE)
   if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_CONF_NODE)&&(Act_contact->entry_type!=T_GROUP))
   {
        Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
-  }
        Menu_Contents[n_items++]=MI_CHANGECONTACT_VERSION;
+  }
+
   if(n_items+1)
   {
     patch_rect(&contact_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
@@ -645,7 +646,7 @@ if (Act_contact->entry_type==T_CONF_NODE)
   }
   else
   {
-    MsgBoxError(1,(int)LG_NOSUPACTION);
+//    MsgBoxError(1,(int)LG_NOSUPACTION);
   }
 }
 

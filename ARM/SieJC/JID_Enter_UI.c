@@ -150,32 +150,29 @@ void jed1_ghook(GUI *data, int cmd)
   char* di = "roster3";
   if((jid_set.jid_del)&&(jid_set.jid_add))
   {
-    ShowMSG(1,(int)"Delete");
-     sprintf(answer, "<item jid='%s' subscription='remove'/>", jid_jid);
+     sprintf(answer, "<item jid='%s' subscription='remove'/>", Mask_Special_Syms(jid_jid));
   }
   else
   {
-    sprintf(answer, "<item jid='%s'", jid_jid);
+    sprintf(answer, "<item jid='%s'", Mask_Special_Syms(jid_jid));
     if(jid_name)
       {
-      sprintf(answer,"%s name='%s'",answer, jid_name);
+      sprintf(answer,"%s name='%s'",answer, Mask_Special_Syms(jid_name));
       }
-/*    if(!jid_set.jid_add) тут надо както презенсами делать.
+    if(!jid_set.jid_add) //тут надо както презенсами делать.
     {
     if(jid_set.jid_ask)
       {
-//        ShowMSG(1,(int)"ASK");
         strcat(answer," ask='subscribe'");
       }
     if(jid_set.jid_sub)
       {
-//        ShowMSG(1,(int)"SUb");
       strcat(answer," subscription='from'");
       }else strcat(answer," subscription='none'");
-    }*/
+    }
     if(jid_group)
     {
-      sprintf(answer,"%s><group>%s</group></item>",answer, jid_group);
+      sprintf(answer,"%s><group>%s</group></item>",answer, Mask_Special_Syms(jid_group));
     }
     else 
     {
@@ -187,7 +184,7 @@ void jed1_ghook(GUI *data, int cmd)
       if(jid_name) mfree(jid_name);
       if(jid_jid) mfree(jid_jid);
       if(jid_group) mfree(jid_group);
- } else ShowMSG(1,(int)"No JID");
+ } else ShowMSG(1,(int)LG_JENOJID);
  //end if(jid_jid)
  }
 
@@ -199,7 +196,7 @@ void jed1_ghook(GUI *data, int cmd)
 
 extern void dummy(GUI *data);
 
-HEADER_DESC jed1_hdr={0,0,131,21,NULL,(int)LG_ENTERMUC,LGP_NULL};
+HEADER_DESC jed1_hdr={0,0,131,21,NULL,(int)" онтакт",LGP_NULL};
 
 INPUTDIA_DESC jed1_desc=
 {
@@ -270,7 +267,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   AddEditControlToEditQend(eq,&ec,ma);  
 
   PrepareEditControl(&ec);
-  wsprintf(jews,percent_t,"Nick:");
+  wsprintf(jews,percent_t,LG_NICK);
   ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -280,7 +277,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   AddEditControlToEditQend(eq,&ec,ma);  
   
   PrepareEditControl(&ec);
-  wsprintf(jews,percent_t,"Group:");
+  wsprintf(jews,percent_t,LG_JEGROUP);
   ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -292,7 +289,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   if (!jid_set.jid_add)
     {
     PrepareEditControl(&ec);
-    wsprintf(jews,percent_t,"Ask:");
+    wsprintf(jews,percent_t,LG_JEASK);
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
     AddEditControlToEditQend(eq,&ec,ma);
 
@@ -303,7 +300,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   AddEditControlToEditQend(eq,&ec,ma); 
 
   PrepareEditControl(&ec);
-  wsprintf(jews,percent_t,"јвторизировать:");
+  wsprintf(jews,percent_t,LG_JEAUTHORIZE);
   ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -316,7 +313,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   else
   {
   PrepareEditControl(&ec);
-    wsprintf(jews,percent_t,"Delite contact:");
+    wsprintf(jews,percent_t,LG_JEDELCONTACT);
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
     AddEditControlToEditQend(eq,&ec,ma);
 
