@@ -123,7 +123,7 @@ void jed1_ghook(GUI *data, int cmd)
    if(st_len)
    {
       jid_jid =  utf16_to_utf8((char**)jews,&st_len);
-//      jid_jid[st_len]='\0';
+      jid_jid[st_len]='\0';
    } else jid_jid = NULL;
  
    ExtractEditControl(data,4,&ec);    
@@ -132,7 +132,7 @@ void jed1_ghook(GUI *data, int cmd)
    if(st_len)
    {
       jid_name =  utf16_to_utf8((char**)jews,&st_len);
-//      jid_name[st_len]='\0';
+      jid_name[st_len]='\0';
    }else jid_name=NULL;
   
     ExtractEditControl(data,6,&ec);
@@ -141,7 +141,7 @@ void jed1_ghook(GUI *data, int cmd)
    if(st_len)
    {
       jid_group =  utf16_to_utf8((char**)jews,&st_len);
-//      jid_group[st_len]='\0';
+      jid_group[st_len]='\0';
    } else jid_group =NULL;
    
  if(jid_jid)
@@ -283,7 +283,6 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
 
   PrepareEditControl(&ec);
   utf8_2ws(jews, group, 64);
-  wsprintf(jews,percent_t,group);
   ConstructEditControl(&ec,3,ECF_APPEND_EOL,jews,80);    //6
   AddEditControlToEditQend(eq,&ec,ma);
   if (!jid_set.jid_add)
