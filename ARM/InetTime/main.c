@@ -3,7 +3,7 @@
 #include "..\inc\pnglist.h"
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
-
+#include <time.h>
 const int minus11=-11;
 unsigned short maincsm_name_body[140];
 int MAINCSM_ID=0;

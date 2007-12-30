@@ -3,8 +3,8 @@
 //Eсли EL71 добавить предыдущий дефайн и ELKA
 
 typedef unsigned int size_t;
-//typedef unsigned long time_t;
-#include <time.h>
+typedef long time_t;
+
 
 typedef int jmp_buf[11];
 
