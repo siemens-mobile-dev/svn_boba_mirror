@@ -691,6 +691,14 @@
 08C4: 0xA8D29774   ; 231: TAppointment *RamAppointment
 08C8: 0xA0092848   ; 232: GBS_DestroyMessage(GBS_MSG *)
 08CC: 0xA0606CAB   ; 233: void GetAllEmail() 
+08E0: 0xA095B187   ; 238: __thumb void SendAutoUSSDack(void);
+08E4: 0xA01E5830   ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg); //cepid=msg=0
+08E8: 0xA01E599C   ; 23A: __arm int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
+08F4: 0xA0F41419   ; 23D: __thumb void MD5_Init(MD5_CTX *c);
+08F8: 0xA0F41089   ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); //
+08FC: 0xA0F41321   ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
+0900: 0xA0F41DA9   ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
+0904: 0xA090074B   ; 241: __thumb void SetDateTime(TDate *, TTime *);
 #pragma disable old_equal_ff
 +0
 ;------------------------- end -------------------------
