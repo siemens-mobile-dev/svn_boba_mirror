@@ -21,7 +21,7 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #define NULL	0
 
 #define SID_ANY_LEN 0xFFFF
-#define STR(__STR__) Str2ID((u16*)(L##__STR__),0,-1)
+#define STR(__STR__) Str2ID((u16*)(L##__STR__),0,SID_ANY_LEN)
 
 #define MINUTE_TICK_EVENT 999
 
