@@ -260,27 +260,35 @@ void iso885952win(char*d,const char *s)
 
 void utf82win(char*d,const char *s)
 {
-  for (; *s; s+=2)
+  int ds = 2;
+  for (; *s; s+=ds)
   {
     unsigned char ub = *s, lb = *(s+1);
-    if (ub == 208)
+    ds = 1;
+    if (ub == 0xD0)
       if (lb != 0x81)
         {*d = lb + 48; d++;}
       else
         {*d = '¨'; d++;}
 
-    if (ub == 209)
+    if (ub == 0xD1)
       if (lb != 0x91)
         {*d = lb + 112; d++;}
       else
         {*d = '¸'; d++;}
 
-    if ((ub != 208) && (ub != 209) && (lb != 91) && (lb != 81))
+    if (ub == 0xE2)
+      if (lb == 0x80)
+        if ((unsigned char)*(s+2) == 0x94)
+          {*d = '-'; d++; ds = 3;}
+
+    if(!(ub & 0x80))
     {
       *d = ub;
       d++;
-      s--;
     }
+    else
+      for(ds = 0; ub&0x80; ub <<= 1, ds++);
   }
   *d = 0;
 }
