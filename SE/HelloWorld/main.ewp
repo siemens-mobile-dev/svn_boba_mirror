@@ -283,7 +283,7 @@
         </option>
         <option>
           <name>CCLangSelect</name>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -546,16 +546,16 @@
         <debug>1</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>main.hex</state>
+          <state>main.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>16</state>
         </option>
         <option>
           <name>FormatVariant</name>
@@ -616,7 +616,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>F:\Projects\ARM\se\BookManeger\1.xcl</state>
+          <state>$PROJ_DIR$\..\include\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -684,11 +684,11 @@
         </option>
         <option>
           <name>XExtraOptionsCheck</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>XExtraOptions</name>
-          <state></state>
+          <state>-ynpra</state>
         </option>
         <option>
           <name>IncludeSuppressed</name>
