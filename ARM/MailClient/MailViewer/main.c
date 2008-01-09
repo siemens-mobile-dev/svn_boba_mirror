@@ -3,6 +3,7 @@
 #include "..\mailclient.h"
 #include "..\rect_patcher.h"
 #include "decode.h"
+//#include <time.h>
 
 
 const char ipc_daemon_name[]=IPC_DAEMON_NAME;
@@ -408,18 +409,22 @@ unsigned get_date_from_str(const char *str)
   };
   int year, month, day, hour, min, sec, cor;
   char *buf, b[128];
+  const char *ptr;
   buf = strstr_nocase(str, ", ");
 
   if(buf) 
     str = buf + 2;
-  else
+  
+  for(ptr = str; *ptr && !((*ptr > 'A' && *ptr < 'Z') || (*ptr > 'A' && *ptr < 'z')); ptr++);
+
+  if(!*ptr) 
   {
     buf = strstr_nocase(str, ".");
     if(!buf) return 0;
     
     buf = b;
-    while(!(*str >= '0' && *str <= '0')) str++;
-    while(*str >= '0' && *str <= '0')
+    while(!(*str >= '0' && *str <= '9')) str++;
+    while(*str >= '0' && *str <= '9')
     {
      *buf = *str;
      str++;
@@ -429,8 +434,8 @@ unsigned get_date_from_str(const char *str)
     buf = b;
     month = atoi(buf);
     
-    while(!(*str >= '0' && *str <= '0')) str++;
-    while(*str >= '0' && *str <= '0')
+    while(!(*str >= '0' && *str <= '9')) str++;
+    while(*str >= '0' && *str <= '9')
     {
      *buf = *str;
      str++;
@@ -440,8 +445,8 @@ unsigned get_date_from_str(const char *str)
     buf = b;
     day = atoi(buf);
     
-    while(!(*str >= '0' && *str <= '0')) str++;
-    while(*str >= '0' && *str <= '0')
+    while(!(*str >= '0' && *str <= '9')) str++;
+    while(*str >= '0' && *str <= '9')
     {
      *buf = *str;
      str++;
@@ -451,8 +456,8 @@ unsigned get_date_from_str(const char *str)
     buf = b;
     year = atoi(buf);
     
-    while(!(*str >= '0' && *str <= '0')) str++;
-    while(*str >= '0' && *str <= '0')
+    while(!(*str >= '0' && *str <= '9')) str++;
+    while(*str >= '0' && *str <= '9')
     {
      *buf = *str;
      str++;
@@ -462,8 +467,8 @@ unsigned get_date_from_str(const char *str)
     buf = b;
     hour = atoi(buf);
 
-    while(!(*str >= '0' && *str <= '0')) str++;
-    while(*str >= '0' && *str <= '0')
+    while(!(*str >= '0' && *str <= '9')) str++;
+    while(*str >= '0' && *str <= '9')
     {
      *buf = *str;
      str++;
@@ -473,8 +478,8 @@ unsigned get_date_from_str(const char *str)
     buf = b;
     min = atoi(buf);
 
-    while(!(*str >= '0' && *str <= '0')) str++;
-    while(*str >= '0' && *str <= '0')
+    while(!(*str >= '0' && *str <= '9')) str++;
+    while(*str >= '0' && *str <= '9')
     {
      *buf = *str;
      str++;
@@ -667,14 +672,27 @@ void InitHeaders()
     else
       dec_str=unmime_header(buf, UTF_8);
     
-    date=get_date(ml_cur);
-    if (date)
+    ml_cur->timestamp = 0;
+    
+    for(date = dec_str; *date && *date != ';'; date++);
+    if(*date)
     {
-      date=strchr(date, ':')+1;
-      while (*date==' ' || *date==0x09) date++;
+      for(date++; *date && (*date == ' ' || *date == '\r' || *date == '\n' || *date == '\t'); date++);
+
       ml_cur->timestamp=get_date_from_str(date);
     }
-
+    else
+    {
+    
+      date=get_date(ml_cur);
+      if (date)
+      {
+        date=strchr(date, ':')+1;
+        while (*date==' ' || *date==0x09) date++;
+        ml_cur->timestamp=get_date_from_str(date);
+      }
+    }
+    
     mfree(buf);
     ml_cur->header=dec_str; 
 
@@ -1873,12 +1891,25 @@ int create_view(ML_VIEW *ml_list)
 }  
 
 //----------------------------------------------------------------------------------------------
+/*void ConvertTime(TDate *d, TTime *t, struct tm *dos )
+{
+  t->hour=dos->tm_hour;
+  t->min=dos->tm_min;
+  t->sec=dos->tm_sec;
+  t->millisec=0;
+  d->day=dos->tm_mday;
+  d->year=dos->tm_year+1900;
+  d->month=dos->tm_mon+1;
+  
+}*/
+//----------------------------------------------------------------------------------------------
 
 void PrintTimeDate(char *p, unsigned long x)
 {
   unsigned int sec,min,hrs,mon,yrs;
   unsigned int day,iday,day4,yrs4;
   const int DMonth[]={0,31,59,90,120,151,181,212,243,273,304,334,365};
+  unsigned long tmpx = x;
   
   x-=946684800;
   sec=x%60;
@@ -1897,7 +1928,41 @@ void PrintTimeDate(char *p, unsigned long x)
   if (iday) day++;
   day++;
   if (yrs>99) yrs=0;
-  sprintf(p,"%02d:%02d:%02d %02d.%02d.%04d GMT",hrs,min,sec,day,mon,yrs+2000);
+  
+  
+  TDateTimeSettings *ts=RamDateTimeSettings();
+  TDate d;
+  TTime t;  
+  
+  t.hour=hrs;
+  t.min=min;
+  t.sec=sec;
+  t.millisec=0;
+  d.day=day;
+  d.year=yrs+2000;
+  d.month=mon;
+ 
+  x=tmpx+GetTimeZoneShift(&d,&t,ts->timeZone)*60;
+ 
+  x-=946684800;
+  sec=x%60;
+  min=(x/60)%60;
+  hrs=(x/3600)%24;
+  iday=x/86400;
+  yrs4=x/((4*365+1)*86400);
+  day4=iday%(4*365+1);
+  iday=(day4==(31+28));
+  if (day4>=(31+28)) day4--;
+  yrs=(yrs4<<2)+day4/365;
+  day=day4%365;
+  mon=0;
+  while (DMonth[++mon]<=day);
+  day-=DMonth[mon-1];
+  if (iday) day++;
+  day++;
+  if (yrs>99) yrs=0;
+  
+  sprintf(p,"%02d:%02d:%02d %02d.%02d.%04d",hrs,min,sec,day,mon,yrs+2000);
 }
 
 //----------------------------------------------------------------------------------------------
