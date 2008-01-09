@@ -16,7 +16,8 @@ int request_type = GET_TOWN;
 
 int sock;
 int connect_state;
-char buf[65546];
+//char buf[65546];
+char *buf;
 char logbuf[1024];
 int pbuf;
 
@@ -366,6 +367,7 @@ void maincsm_oncreate(CSM_RAM *data)
   fdt2dt(de.create_date_time, &ftime, &fdate);
   */
   
+  buf=malloc(0x10000);
   
   ews=AllocWS(1024);
   do_start_connection();
@@ -379,6 +381,7 @@ void ElfKiller(void)
 
 void maincsm_onclose(CSM_RAM *csm)
 {
+  mfree(buf);
   FreeWS(ews);
   SUBPROC((void *)ElfKiller);
 }
