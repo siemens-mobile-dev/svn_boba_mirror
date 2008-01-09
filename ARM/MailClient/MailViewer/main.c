@@ -409,7 +409,83 @@ unsigned get_date_from_str(const char *str)
   int year, month, day, hour, min, sec, cor;
   char *buf, b[128];
   buf = strstr_nocase(str, ", ");
-  if(buf) str = buf + 2;
+
+  if(buf) 
+    str = buf + 2;
+  else
+  {
+    buf = strstr_nocase(str, ".");
+    if(!buf) return 0;
+    
+    buf = b;
+    while(!(*str >= '0' && *str <= '0')) str++;
+    while(*str >= '0' && *str <= '0')
+    {
+     *buf = *str;
+     str++;
+     buf++;
+    }
+    *buf = 0;
+    buf = b;
+    month = atoi(buf);
+    
+    while(!(*str >= '0' && *str <= '0')) str++;
+    while(*str >= '0' && *str <= '0')
+    {
+     *buf = *str;
+     str++;
+     buf++;
+    }
+    *buf = 0;
+    buf = b;
+    day = atoi(buf);
+    
+    while(!(*str >= '0' && *str <= '0')) str++;
+    while(*str >= '0' && *str <= '0')
+    {
+     *buf = *str;
+     str++;
+     buf++;
+    }
+    *buf = 0;
+    buf = b;
+    year = atoi(buf);
+    
+    while(!(*str >= '0' && *str <= '0')) str++;
+    while(*str >= '0' && *str <= '0')
+    {
+     *buf = *str;
+     str++;
+     buf++;
+    }
+    *buf = 0;
+    buf = b;
+    hour = atoi(buf);
+
+    while(!(*str >= '0' && *str <= '0')) str++;
+    while(*str >= '0' && *str <= '0')
+    {
+     *buf = *str;
+     str++;
+     buf++;
+    }
+    *buf = 0;
+    buf = b;
+    min = atoi(buf);
+
+    while(!(*str >= '0' && *str <= '0')) str++;
+    while(*str >= '0' && *str <= '0')
+    {
+     *buf = *str;
+     str++;
+     buf++;
+    }
+    *buf = 0;
+    buf = b;
+    sec = atoi(buf);
+
+    return (tdiff(year, month, day, hour, min, sec));    
+  }
   buf = b;
   while(*str == ' ') str++;
   while(*str != ' ')
@@ -902,11 +978,11 @@ int saveas_onkey(GUI *data, GUI_MSG *msg)
 {
   MAIL_VIEW *mail_view;
   MAIL_PART *mail;
-  int f;
+  int f, len;
   unsigned int err;
   EDITCONTROL ec;
   char *p, *decoded;
-  size_t size;
+  size_t size = 0;
   char fname[128];
   mail_view=EDIT_GetUserPointer(data);
   if (msg->keys==0xFFF)
@@ -927,6 +1003,12 @@ int saveas_onkey(GUI *data, GUI_MSG *msg)
       
     case QPRINTABLE:
       decoded=quoted_printable_decode(p, &size);
+      break;
+    case BIT8: case BIT7:
+      len=size?size:strlen(p);
+      decoded = malloc(len+1);
+      decoded[len] = 0;
+      memcpy(decoded, p, len);
       break;
       
     default:
