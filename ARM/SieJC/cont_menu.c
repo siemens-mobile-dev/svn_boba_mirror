@@ -36,7 +36,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 //==============================================================================
 
 
-#define MAX_ITEMS 11       // Максимальное количество пунктов меню
+#define MAX_ITEMS 12       // Максимальное количество пунктов меню
 
 #define MI_CONF_LEAVE       1
 #define MI_QUERY_VERSION    2
@@ -49,6 +49,7 @@ void patch_rect(RECT*rc,int x,int y, int x2, int y2)
 #define MI_LASTACTIV_QUERY  9
 #define MI_SUBSCRIBES_MENU  10
 #define MI_CHANGECONTACT_VERSION  11
+#define MI_CONF_CLEAR       12
 char Menu_Contents[MAX_ITEMS-1];
 int cmS_ICONS[MAX_ITEMS+1];
 
@@ -267,7 +268,7 @@ void Disp_Cont_Menu()
   InitContMenuArray();
   int n_items=0;
   CONTC_Menu_Contents[n_items++]=CONTC_SUBSCRIBE;//zaprosit` 
-  if((CLAct_contact->subscription == SUB_BOTH)||(CLAct_contact->subscription==SUB_FROM))
+//  if((CLAct_contact->subscription == SUB_BOTH)||(CLAct_contact->subscription==SUB_FROM))
    {
        CONTC_Menu_Contents[n_items++]=CONTC_UNSUBSCRIBE; //Otozvat` podpisku
    }
@@ -310,6 +311,15 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
         CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
         Leave_Conference(room->JID);
         CList_MakeAllResourcesOFFLINE(room);
+        break;
+      }
+    case MI_CONF_CLEAR:
+      {
+        TRESOURCE *Reso_Ex = CList_GetActiveContact();
+        KillMsgList(Reso_Ex->log);
+        Reso_Ex->log = NULL;
+        Reso_Ex->has_unread_msg=0;
+        Reso_Ex->total_msg_count=0;
         break;
       }
     case MI_TIME_QUERY:
@@ -428,6 +438,11 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   case MI_CONF_LEAVE:
     {
       strcpy(test_str,LG_ABANDON);
+      break;
+    }
+  case MI_CONF_CLEAR:
+    {
+      strcpy(test_str,LG_MUCCLEAR);
       break;
     }
 
@@ -583,6 +598,7 @@ void Init_Icon_array()
   cmS_ICONS[MI_MUC_ADMIN]=(int)ICON_MUC_ADMIN;
   cmS_ICONS[MI_SUBSCRIBES_MENU]=(int)  ICON_SUBSCRIBE_MENU;
   cmS_ICONS[MI_CHANGECONTACT_VERSION]=(int)  ICON_SUBSCRIBE_MENU;
+  cmS_ICONS[MI_CONF_CLEAR]=(int)ICON_SUBSCRIBE_MENU;
 }
 
 void Disp_Contact_Menu()
@@ -612,6 +628,7 @@ void Disp_Contact_Menu()
   if(Act_contact->entry_type==T_CONF_ROOT)
   {
     Menu_Contents[n_items++]=MI_CONF_LEAVE;
+    if(Act_contact->total_msg_count)Menu_Contents[n_items++]=MI_CONF_CLEAR;
   }
 
   if(Act_contact->entry_type!=T_GROUP)
@@ -772,37 +789,28 @@ int contc_menu_onkey(void *data, GUI_MSG *msg)
   int i=GetCurMenuItem(data);
   if(msg->keys==0x18 || msg->keys==0x3D)
   {
-//    CLIST* 
-      char* jid=CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID;
-    char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
+    char* jid=CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID;
+//    char* nick = Get_Resource_Name_By_FullJID(CList_GetActiveContact()->full_name);
     switch(CONTC_Menu_Contents[i])
     {
     case CONTC_SUBSCRIBE:
       {
-      char *pres_str = malloc(256);
-      snprintf(pres_str,255,"<presence to='%s' type='subscribe'/>", jid);
-      SUBPROC((void*)_sendandfree,pres_str);      
+        Send_ShortPresence(jid,8);
       break;    
       }
     case CONTC_SUBSCRIBED:
       {
-      char *pres_str = malloc(256);
-      snprintf(pres_str,255,"<presence to='%s' type='subscribed'/>", jid);
-      SUBPROC((void*)_sendandfree,pres_str);      
+        Send_ShortPresence(jid,9);
       break;    
       }
     case CONTC_UNSUBSCRIBE:
       {
-      char *pres_str = malloc(256);
-      snprintf(pres_str,255,"<presence to='%s' type='unsubscribe'/>", jid);
-      SUBPROC((void*)_sendandfree,pres_str);      
+        Send_ShortPresence(jid,10);
       break;    
       }
     case CONTC_UNSUBSCRIBED:
       {
-      char *pres_str = malloc(256);
-      snprintf(pres_str,255,"<presence to='%s' type='unsubscribed'/>", jid);
-      SUBPROC((void*)_sendandfree,pres_str);      
+        Send_ShortPresence(jid,11);
       break;    
       }
  default:
@@ -829,22 +837,22 @@ void contc_menu_iconhndl(void *data, int curitem, void *unk)
   {
   case CONTC_SUBSCRIBE:
     {
-      strcpy(test_str,"Запросить подписку");
+      strcpy(test_str,LG_SUBSCRIBE);
       break;
     }
   case CONTC_SUBSCRIBED:
     {
-      strcpy(test_str,"Разрешить");
+      strcpy(test_str,LG_SUBSCRIBED);
       break;
     }
   case CONTC_UNSUBSCRIBED:
     {
-      strcpy(test_str,"Отклонить");
+      strcpy(test_str,LG_UNSUBSCRIBED);
       break;
     }
   case CONTC_UNSUBSCRIBE:
     {
-      strcpy(test_str,"Удалить подписку");
+      strcpy(test_str,LG_UNSUBSCRIBE);
       break;
     }
   }

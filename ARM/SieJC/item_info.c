@@ -84,7 +84,7 @@ INPUTDIA_DESC info_desc=
   0x40000000// Поменять софт-кнопки
 };
 
-HEADER_DESC info_hdr={0,0,0,0,NULL,(int)"Contact Info",LGP_NULL};
+HEADER_DESC info_hdr={0,0,0,0,NULL,(int)LG_ITEMIHDR,LGP_NULL};
 
 
 // Показ информации о контакте

@@ -234,7 +234,7 @@ void Send_Time_Request(char *dest_jid)
 void _sendvcardrequest(char *to)
 {
   char* xmlq=malloc(1024);
-  sprintf(xmlq, "<iq to='%s' type='get' id='%s'>\r\n<vCard xmlns='vcard-temp'/>\r\n</iq>", to, vcreq_id);
+  sprintf(xmlq, "<iq to='%s' type='get' id='%s'>\r\n<vCard xmlns='vcard-temp'/>\r\n</iq>", Mask_Special_Syms(to), vcreq_id);
   SendAnswer(xmlq);
   mfree(xmlq);
   mfree(to);
@@ -352,6 +352,15 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   UnlockSched();
 }
 
+void Send_ShortPresence(char *to,char type)
+{
+  char pr_templ[] = "<presence to='%s' type='%s'/>";
+  char* pr=malloc(1024);
+  sprintf(pr, pr_templ,Mask_Special_Syms(to),PRESENCES[type]);
+  SendAnswer(pr);
+  mfree(pr);
+}
+
 /*
   Послать запрос ростера
 */
@@ -408,7 +417,7 @@ void SendComposing(char* jid)
 {
   if(!COMPOSING_EVENTS)return;
   char* _jid=malloc(128);
-  strcpy(_jid, jid);
+  strcpy(_jid, Mask_Special_Syms(jid));
   char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><composing/><id>SieJC_%d</id></x></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   sprintf(msg_buf, mes_template, _jid, m_num, m_num);
@@ -423,7 +432,7 @@ void CancelComposing(char* jid)
 {
   if(!COMPOSING_EVENTS)return;
   char* _jid=malloc(128);
-  strcpy(_jid, jid);
+  strcpy(_jid, Mask_Special_Syms(jid));
   char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><id>SieJC_%d</id></x></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   sprintf(msg_buf, mes_template, _jid, m_num-1, m_num-1);
@@ -478,7 +487,7 @@ void Report_IDLEInfo(char* id, char *to)
    </iq>
 */
   char* xmlql=malloc(1024);
-  sprintf(xmlql, "<iq type='result' id='%s' from='%s' to='%s'>\r\n<query xmlns='jabber:iq:last' seconds='%d'/>\r\n</iq>", id, My_JID_full, to,GetIDLETime(intimes, indates));
+  sprintf(xmlql, "<iq type='result' id='%s' from='%s' to='%s'>\r\n<query xmlns='jabber:iq:last' seconds='%d'/>\r\n</iq>", id, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(to),GetIDLETime(intimes, indates));
   SendAnswer(xmlql);
   mfree(xmlql);
   mfree(to);

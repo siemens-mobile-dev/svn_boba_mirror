@@ -482,6 +482,7 @@ void patch_input(INPUTDIA_DESC* inp)
 //===============================================================================================
 extern int Message_gui_ID;
 int maingui_id;
+int maincsm_id;
 
 void SMART_REDRAW(void)
 {
@@ -1214,10 +1215,13 @@ void onRedraw(MAIN_GUI *data)
 
   LockSched();
 
-  if (CList_GetUnreadMessages()>0) {
-    wsprintf(data->ws1,"%d(%d/%d) IN:%d",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+  if (CList_GetUnreadMessages()>0) { //100000
+                                     //100Kb
+    if (virt_buffer_len>99999)wsprintf(data->ws1,"%d(%d/%d)IN:%dKb",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len>>10);
+    else wsprintf(data->ws1,"%d(%d/%d)IN:%d",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
   } else {
-    wsprintf(data->ws1,"(%d/%d) IN:%d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+    if(virt_buffer_len>99999)wsprintf(data->ws1,"(%d/%d)IN:%dKb",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len>>10);
+    else wsprintf(data->ws1,"(%d/%d)IN:%d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
   }
   UnlockSched();
 
@@ -1458,6 +1462,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }
     case '#':
       {
+        KbdLock();
         gipc.name_to=ipc_xtask_name;
         gipc.name_from=ipc_my_name;
         gipc.data=0;
@@ -1469,7 +1474,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }
     case '*':
       {
-          KbdLock();
         gipc.name_to=ipc_xtask_name;
         gipc.name_from=ipc_my_name;
         gipc.data=0;
@@ -1691,10 +1695,11 @@ void maincsm_oncreate(CSM_RAM *data)
   maingui_id=csm->gui_id=CreateGUI(main_gui);
   DNR_TRIES=3;
   InitGroupsList();
-
-  //SUBPROC((void *)InitSmiles);
-  SUBPROC((void *)create_connect);
-  GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
+  strcat((char *)ipc_my_name,USERNAME);
+  gipc.name_to=ipc_my_name;
+  gipc.name_from=ipc_my_name;
+  gipc.data=(void *)-1;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
 #ifdef LOG_ALL
   // Определим адреса некоторых процедур, на случай,
   // если клиент будет падать - там могут быть аборты...
@@ -1755,6 +1760,29 @@ void do_reconnect(void)
   }
 }
 
+void CheckDoubleRun(void)
+{
+  int csm_id;
+  if ((csm_id=(int)(gipc.data))!=-1)
+  {
+    gipc.name_to=ipc_xtask_name;
+    gipc.name_from=ipc_my_name;
+    gipc.data=(void *)csm_id;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);  
+    LockSched();
+    CloseCSM(maincsm_id);
+    ShowMSG(1,(int)ipc_my_name);
+    ShowMSG(1,(int)"Vge started");
+    UnlockSched();
+  }
+  else
+  {
+  //SUBPROC((void *)InitSmiles);
+  SUBPROC((void *)create_connect);
+  GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
+  }
+}
+
 int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 {
   MAIN_CSM *csm=(MAIN_CSM*)data;
@@ -1774,6 +1802,11 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             if (ipc->name_from==ipc_my_name) SUBPROC((void *)ProcessNextSmile);
             SMART_REDRAW();
             break;
+          case IPC_CHECK_DOUBLERUN:
+	    //Если приняли свое собственное сообщение, значит запускаем чекер
+	    if (ipc->name_from==ipc_my_name) SUBPROC((void *)CheckDoubleRun);
+            else ipc->data=(void *)maincsm_id;
+	    break;
           }
         }
       }
@@ -1950,9 +1983,9 @@ sizeof(MAIN_CSM),
 
   void UpdateCSMname(void)
   {
-    WSHDR *ws=AllocWS(256);
-    wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SieJC",ws);
-    FreeWS(ws);
+//    WSHDR *ws=AllocWS(256);
+    wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SieJC: %s",USERNAME);
+//    FreeWS(ws);
   }
 
   // Проверка, что платформа для компиляции выбрана правильно
@@ -2044,8 +2077,8 @@ if(Is_Autostatus_Enabled)
     pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
     SUBPROC((void *)Send_Presence,pr_info);
     as = 0;
-    FreeWS(ws);    
-    mfree(msg);    
+    FreeWS(ws);
+    mfree(msg);
   }
   else
   {
@@ -2091,6 +2124,7 @@ void AutoStatus(void)
   {
     char *s;
     int len;
+    MAIN_CSM main_csm;
     
     s=strrchr(exename,'\\');
     len=(s-exename)+1;
@@ -2103,7 +2137,7 @@ void AutoStatus(void)
       ShowMSG(1,(int)LG_PLATFORMM);
       return 0;
     }
-    char dummy[sizeof(MAIN_CSM)];
+//    char dummy[sizeof(MAIN_CSM)];
      
     InitConfig(fname);
     ReadDefSettings(elf_path);
@@ -2127,7 +2161,7 @@ void AutoStatus(void)
     UpdateCSMname();
 
     LockSched();
-    CreateCSM(&MAINCSM.maincsm,dummy,0);
+    maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
     UnlockSched();
 
     Check_Settings_Cleverness();

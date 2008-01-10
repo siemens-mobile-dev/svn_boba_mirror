@@ -69,6 +69,7 @@ void Send_Auth();
 // Context: HELPER
 void Send_Presence(PRESENCE_INFO *pr_info);
 
+void Send_ShortPresence(char *to,char type);
 // Послать запрос о версии пользователю с указанным JID
 // JID указываем в UTF-8
 void Send_Version_Request(char *dest_jid);

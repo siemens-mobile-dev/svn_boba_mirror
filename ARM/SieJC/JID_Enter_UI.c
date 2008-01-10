@@ -25,6 +25,12 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //===============================================================================================
 
+typedef struct {
+  char jid_ask;
+  char jid_del;
+  char jid_add;
+} JIDENTER_SETTINGS;
+
 SOFTKEY_DESC jid_menu_sk[]=
 {
   {0x0018,0x0000,(int)LG_SELECT},
@@ -71,15 +77,6 @@ if (msg->gbsmsg->msg==KEY_DOWN)
     EDIT_SetTextToFocused(data,jews);
     return (-1);
       }
-      if (EDIT_GetFocus(data)==10)
-      {
-    jid_set.jid_sub=!jid_set.jid_sub;
-    CutWSTR(jews,0);
-    wsAppendChar(jews, jid_set.jid_sub?CBOX_CHECKED:CBOX_UNCHECKED);
-    EDIT_SetTextToFocused(data,jews);
-    return (-1);
-      }
-      
     }
   }
   return 0;
@@ -159,17 +156,6 @@ void jed1_ghook(GUI *data, int cmd)
       {
       sprintf(answer,"%s name='%s'",answer, Mask_Special_Syms(jid_name));
       }
-    if(!jid_set.jid_add) //тут надо както презенсами делать.
-    {
-    if(jid_set.jid_ask)
-      {
-        strcat(answer," ask='subscribe'");
-      }
-    if(jid_set.jid_sub)
-      {
-      strcat(answer," subscription='from'");
-      }else strcat(answer," subscription='none'");
-    }
     if(jid_group)
     {
       sprintf(answer,"%s><group>%s</group></item>",answer, Mask_Special_Syms(jid_group));
@@ -181,6 +167,13 @@ void jed1_ghook(GUI *data, int cmd)
   }
 
   SendIq(NULL, IQTYPE_SET, di, IQ_ROSTER, answer);
+  if(!jid_set.jid_add)
+  {
+    if(jid_set.jid_ask)
+    {
+      Send_ShortPresence(jid_jid,8);//посылаем запрос авторизации
+    }
+  }
       if(jid_name) mfree(jid_name);
       if(jid_jid) mfree(jid_jid);
       if(jid_group) mfree(jid_group);
@@ -231,7 +224,6 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   //mode 0=edit; 1=add;
   jid_set.jid_del=NULL;
   jid_set.jid_ask=NULL;  
-  jid_set.jid_sub=NULL;
   char *jid = "";
   char *name = "";
   char *group = "";
@@ -285,9 +277,10 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   utf8_2ws(jews, group, 64);
   ConstructEditControl(&ec,3,ECF_APPEND_EOL,jews,80);    //6
   AddEditControlToEditQend(eq,&ec,ma);
+
+  PrepareEditControl(&ec);
   if (!jid_set.jid_add)
     {
-    PrepareEditControl(&ec);
     wsprintf(jews,percent_t,LG_JEASK);
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
     AddEditControlToEditQend(eq,&ec,ma);
@@ -296,22 +289,9 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   CutWSTR(jews, 0);
   wsAppendChar(jews, jid_set.jid_ask?CBOX_CHECKED:CBOX_UNCHECKED);
   ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,jews,jews->wsbody[0]); //8
-  AddEditControlToEditQend(eq,&ec,ma); 
-
-  PrepareEditControl(&ec);
-  wsprintf(jews,percent_t,LG_JEAUTHORIZE);
-  ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
-  AddEditControlToEditQend(eq,&ec,ma);
-
-  PrepareEditControl(&ec);
-  CutWSTR(jews, 0);
-  wsAppendChar(jews, jid_set.jid_sub?CBOX_CHECKED:CBOX_UNCHECKED);
-  ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,jews,jews->wsbody[0]); //10
-  AddEditControlToEditQend(eq,&ec,ma); 
     }
   else
   {
-  PrepareEditControl(&ec);
     wsprintf(jews,percent_t,LG_JEDELCONTACT);
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
     AddEditControlToEditQend(eq,&ec,ma);
@@ -320,8 +300,8 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   CutWSTR(jews, 0);
   wsAppendChar(jews, jid_set.jid_del?CBOX_CHECKED:CBOX_UNCHECKED);
   ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,jews,jews->wsbody[0]); //8
-  AddEditControlToEditQend(eq,&ec,ma); 
   }
+  AddEditControlToEditQend(eq,&ec,ma); 
   
   patch_input(&jed1_desc);
   patch_header(&jed1_hdr);

@@ -78,6 +78,7 @@
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
 #define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec." //почемуто кирилица вызывает Bad UTF encoding..
 //item_info.c
+#define LG_ITEMIHDR         "Контакт инфо"
 #define LG_ELROSTER         "Элемент ростера"
 #define LG_OFFLORCONTTR     "Оффлайн или контакт из транспорта"
 #define LG_MUCPART          "Участник конференции"
@@ -121,6 +122,12 @@
 #define LG_QUERYLAST        "Бездействие"
 #define LG_SUBSCR           "Подписка"
 #define LG_EDIT             "Изменить"
+#define LG_MUCCLEAR         "Очистить сообщения"
+#define LG_SUBSCRIBE        "Запросить"
+#define LG_SUBSCRIBEВ       "Разрешить"
+#define LG_UNSUBSCRIBED     "Отклонить"
+#define LG_UNSUBSCRIBE      "Удалить"
+
 //clist_util.c
 #define LG_AUTHORREM        "В авторизации отказано!"
 #define LG_AUTHORGRANTED    "Авторизация дана!"
@@ -211,10 +218,9 @@
 #define LG_VCARD_AVATAR     "Аватара"
 //jid_enter_ui
 #define LG_JEDELCONTACT     "Удалить контакт:"
-#define LG_JEAUTHORIZE      "Подписать:"
 #define LG_JEASK            "Запросить подписку:"
 #define LG_JEGROUP          "Группа:"
-#define LG_JENOJID          "Нет JIDа"
+#define LG_JENOJID          "Нет JIDа!"
 #endif //RU
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -288,6 +294,7 @@
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
 #define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec." //почемуто кирилица вызывает Bad UTF encoding..
 //item_info.c
+#define LG_ITEMIHDR         "Контакт інфо"
 #define LG_ELROSTER         "Елемент ростеру"
 #define LG_OFFLORCONTTR     "Оффлайн або контакт із транспорту"
 #define LG_MUCPART          "Учасник конференції"
@@ -314,7 +321,7 @@
 #define LG_BAN              "Бан"
 #define LG_LVOISE           "Відняти голос"     
 #define LG_GVOISE           "Дати голос"
-#define LG_PARTICIPANT      "Відняти членство" //Поправьте, если где ошибся с переводом
+#define LG_PARTICIPANT      "Відняти членство"
 #define LG_MEMBER           "Дати членство"
 #define LG_MODERATOR        "Дати модератора"
 #define LG_MODERATOR_REMOVE "Відняти модератора"
@@ -329,11 +336,16 @@
 #define LG_QUERYTIME        "Час"
 #define LG_QUERYVCARD       "vCard"
 #define LG_QUERYLAST        "Last Activity"
-#define LG_SUBSCR           "Подписка"
-#define LG_EDIT             "Изменить"
+#define LG_SUBSCR           "Авторизація"
+#define LG_EDIT             "Змінити"
+#define LG_MUCCLEAR         "Очистити повідомлення"
+#define LG_SUBSCRIBE        "Запросити"
+#define LG_SUBSCRIBED       "Дозволити"
+#define LG_UNSUBSCRIBED     "Відхилити"
+#define LG_UNSUBSCRIBE      "Видалити"
 //clist_util.c
 #define LG_AUTHORREM        "В авторизації відмовлено!"
-#define LG_AUTHORGRANTED    "Авторизація дана!"
+#define LG_AUTHORGRANTED    "Авторизація надана!"
 #define LG_MUCCROK          "Конференція створена успішно"
 //bookmarks.c
 #define LG_MENUBOOKMARK     "Меню закладок"
@@ -421,7 +433,6 @@
 #define LG_VCARD_AVATAR     "Аватара"
 //jid_enter_ui
 #define LG_JEDELCONTACT     "Видалити контакт:"
-#define LG_JEAUTHORIZE      "Підписати:"
 #define LG_JEASK            "Запросити підпис:"
 #define LG_JEGROUP          "Група:"
 #define LG_JENOJID          "JID відсутній!"
@@ -497,6 +508,7 @@
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
 #define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec."
 //item_info.c
+#define LG_ITEMIHDR         "Contact Info"
 #define LG_ELROSTER         "Roster elements"
 #define LG_OFFLORCONTTR     "Offline or transport contact"
 #define LG_MUCPART          "MUC partcipiant"
@@ -540,7 +552,11 @@
 #define LG_QUERYLAST        "Last Activity"
 #define LG_SUBSCR           "Subscription"
 #define LG_EDIT             "Edit"
-
+#define LG_MUCCLEAR         "Clear messages"
+#define LG_SUBSCRIBE        "Ask"
+#define LG_SUBSCRIBEВ       "Allow subscription"
+#define LG_UNSUBSCRIBED     "Deny subscription"
+#define LG_UNSUBSCRIBE      "Remove"
 //clist_util.c
 #define LG_AUTHORREM        "Authorization was removed!"
 #define LG_AUTHORGRANTED    "Authorization was granted!"
@@ -630,7 +646,6 @@
 #define LG_VCARD_AVATAR     "Avatar"
 //jid_enter_ui
 #define LG_JEDELCONTACT     "Delete contact:"
-#define LG_JEAUTHORIZE      "Subscribe:"
 #define LG_JEASK            "Ask subscribe:"
 #define LG_JEGROUP          "Group:"
 #define LG_JENOJID          "No JID!"
