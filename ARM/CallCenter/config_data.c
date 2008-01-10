@@ -18,13 +18,13 @@ __root const CFG_HDR cfghdr_m10={CFG_LEVEL,"Setup Cash",1,0};
 
  __root const CFG_HDR cfghdr01={CFG_CHECKBOX,"Enable Cash Trace",0,0};
  __root const int ENA_CASHTRACE = 1;
- 
+
  __root const CFG_HDR cfghdr022={CFG_CHECKBOX,"Enable Op USSD Trace",0,0};
- __root const int ENA_AUTOCASHTRACE = 0; 
+ __root const int ENA_AUTOCASHTRACE = 0;
 
  __root const CFG_HDR cfghdr08={CFG_CHECKBOX,"Enable Cash Trace logging",0,0};
  __root const int ENA_CASHTRACELOG = 1;
- 
+
  __root const CFG_HDR cfghdr02={CFG_STR_WIN1251,"Cash pattern 0",0,31};
  __root const char CashPat0[32]="alans #hrn";
 
@@ -66,19 +66,20 @@ __root const CFG_CBOX_ITEM cfgcbox1[3] = {"Lock", "Unlock", "Both"};
 
   __root const CFG_HDR cfghdr13={CFG_COLOR,"Cash Progressbar 4",0,0};
   __root const char COLOR_CASHPB4[4]={0xFF,0xFF,0x00,0x32};
-  
+
   __root const CFG_HDR cfghdr14={CFG_COLOR,"Font Color",0,0};
   __root const char COLOR_TEXTPB[4]={0xFF,0xFF,0xFF,0x64};
-  
+
   __root const CFG_HDR cfghdr15={CFG_UINT,"Font Size",0,100};
   __root const unsigned int TEXT_FONTSZ=FONT_NUMERIC_XSMALL;
-  
+
  __root const CFG_HDR cfghdr_m13={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_m11={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"Setup Vibra at Call",1,0};
- __root const CFG_HDR cfghdr7={CFG_CHECKBOX,"Use vibra",0,0};
- __root const int ENA_VIBRA = 1;
+ __root const CFG_HDR cfghdr7={CFG_CBOX, "Use vibra", 0, 4};
+ __root const int ENA_VIBRA = 0;
+ __root const CFG_CBOX_ITEM cfgcbox7[4]={"No", "Incomming", "Outgoing", "Both"};
 
  __root const CFG_HDR cfghdr8={CFG_UINT,"Vibra power",0,100};
  __root const unsigned int vibraPower=50;
@@ -86,7 +87,7 @@ __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"Setup Vibra at Call",1,0};
  __root const CFG_HDR cfghdr9={CFG_UINT,"Vibra duration (ms)",0,100};
  __root const unsigned int vibraDuration=200;
 __root const CFG_HDR cfghdr_m31={CFG_LEVEL,"",0,0};
- 
+
 __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"Setup MegaDial",1,0};
   __root const CFG_HDR cfghdr00={CFG_COLOR,"Color Menu background",0,0};
   __root const char COLOR_MENU_BK[4]={0xFF,0xFF,0x0,0x64};
@@ -108,7 +109,7 @@ __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"Setup MegaDial",1,0};
 
   __root const CFG_HDR cfghdr6={CFG_COLOR,"Color Search mark",0,0};
   __root const char COLOR_SEARCH_MARK[4]={0xFF,0x0,0x0,0x64};
-  
+
   __root const CFG_HDR cfghdr66={CFG_COLOR,"Color ScrollBar",0,0};
-  __root const char COLOR_SCROLLBAR[4]={0x0,0x0,0x0,0x64};  
+  __root const char COLOR_SCROLLBAR[4]={0x0,0x0,0x0,0x64};
 __root const CFG_HDR cfghdr_m21={CFG_LEVEL,"",0,0};

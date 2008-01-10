@@ -18,6 +18,7 @@ extern const int cfgShowIn;
 extern const int ENA_VIBRA;
 extern const unsigned int vibraPower;
 extern const unsigned int vibraDuration;
+extern const unsigned int IDLE_X;
 extern const unsigned int IDLE_Y;
 extern const char COLOR_MENU_BK[4];
 extern const char COLOR_MENU_BRD[4];
@@ -73,7 +74,7 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #define MAX_RECORDS 5000
 #define LEVEL1_RN	(41*41)
 #define LEVEL2_RN	(41)
-#else 
+#else
 #define MAX_RECORDS 1024
 #define LEVEL1_RN	(0x20)
 #endif
@@ -177,9 +178,9 @@ static void InitIcons(void)
 
 static void InitIcons(void)
 {
-  menu_icons[0]=GetPicNByUnicodeSymbol(utf_symbs[0]=USR_WIRE); 
-  menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE); 
-  menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE); 
+  menu_icons[0]=GetPicNByUnicodeSymbol(utf_symbs[0]=USR_WIRE);
+  menu_icons[1]=GetPicNByUnicodeSymbol(utf_symbs[1]=WORK_WIRE);
+  menu_icons[2]=GetPicNByUnicodeSymbol(utf_symbs[2]=USR_MOBILE);
   menu_icons[3]=GetPicNByUnicodeSymbol(utf_symbs[3]=USR_FAX1);
   menu_icons[4]=GetPicNByUnicodeSymbol(utf_symbs[4]=USR_FAX2);
 }
@@ -241,7 +242,7 @@ static int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
   int spos=1;
   int wpos=1;
   int c;
-  
+
   int first_pos=-1;
 
   //Таблица ключей для поиска текста
@@ -294,7 +295,7 @@ static int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
 	  return(1); //Все совпало
 	}
       }
-      else 
+      else
       {
 	first_pos=-1;
 	spos=0; //Ищем новое слово
@@ -337,7 +338,7 @@ static void ConstructList(void)
 
   AB_UNPRES ur;
   void *buffer;
-  
+
 #pragma pack(1)
   struct {
 #ifdef NEWSGOLD
@@ -346,8 +347,8 @@ static void ConstructList(void)
     char bitmap[MAX_RECORDS/8];
 #else
     long dummy1;
-    char bitmap[MAX_RECORDS/8];    
-#endif    
+    char bitmap[MAX_RECORDS/8];
+#endif
   } ABmain;
 #pragma pack()
 
@@ -366,7 +367,8 @@ static void ConstructList(void)
   if ((buffer=malloc(65536)))
   {
     zeromem(&ABmain,sizeof(ABmain));
-    if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
+//    if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
+    if ((fin=fopen("2:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
     {
 #ifdef ELKA
       if (fread(fin,&ABmain,sizeof(ABmain),&ul)>=194)
@@ -381,7 +383,7 @@ static void ConstructList(void)
 	  if (ABmain.bitmap[rec>>3]&(0x80>>(rec&7)))
           #else
           if (ABmain.bitmap[rec>>3]&(1<<(rec&7)))
-          #endif   
+          #endif
 	  {
             #ifdef NEWSGOLD
 	    //Запись есть в битмапе
@@ -395,8 +397,9 @@ static void ConstructList(void)
             #else
 	    unsigned int rl1=rec/LEVEL1_RN;
 	    unsigned int r12=rec%LEVEL1_RN;
-	    snprintf(recname,128,"0:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);            
-            #endif             
+//	    snprintf(recname,128,"0:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
+	    snprintf(recname,128,"2:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
+            #endif
 	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
 	    {
 	      zeromem(&ur,sizeof(AB_UNPRES));
@@ -435,7 +438,7 @@ static void ConstructList(void)
                         r->item_type==FIRST_NAME||
                         r->item_type==COMPANY_NAME
                           )
-                    #endif   
+                    #endif
 		    {
 //                      #ifdef NEWSGOLD
 //		      if (r->data)
@@ -459,7 +462,7 @@ static void ConstructList(void)
                          *((int *)(&contact.next))|=CompareStrT9(contact.name,sws,0);
                         }
 		      }
-//                      #endif 
+//                      #endif
 		    }
 		    break;
 		  case 0x01:
@@ -479,7 +482,7 @@ static void ConstructList(void)
                       switch(r->item_type)
                       {
                       case PHONE_NUMBER:
-                        n=0;    break;      
+                        n=0;    break;
                       case PHONE_OFFICE:
                         n=1;    break;
                       case PHONE_MOBILE:
@@ -491,7 +494,7 @@ static void ConstructList(void)
                       default:
                         continue;
                       }
-                      #endif 
+                      #endif
 		      {
 			if (p)
 			{
@@ -508,7 +511,7 @@ static void ConstructList(void)
                             if (m&1) {c1=c>>4; j++;}
                             else c1=(c=p->data[j])&0x0F;
 			    if (c1==0x0F) break;
-                            
+
                             if (c1==0xA) c1='*';
                             else if (c1==0xB) c1='#';
                             else if (c1==0xC) c1='+';
@@ -644,7 +647,7 @@ static void my_ed_redraw(void *data)
   CLIST *p=(CLIST *)cltop;
   CLIST *cl;
   old_ed_redraw(data);
-  
+
   WSHDR *prws=AllocWS(256);
 
   if (p && e_ws && e_ws->wsbody[0]<MAX_ESTR_LEN) //Ее длина <MAX_ESTR_LEN
@@ -858,7 +861,7 @@ static int gotomenu_onkey(void *data, GUI_MSG *msg)
   return(0);
 }
 
-static void gotomenu_ghook(void *data, int cmd){}   
+static void gotomenu_ghook(void *data, int cmd){}
 
 static void gotomenu_itemhandler(void *data, int curitem, void *user_pointer)
 {
@@ -896,10 +899,10 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
   int i=0;
   int n,d;
   int set_menu=0;
-  
+
   EDITCONTROL ec;
   CLIST *cl=(CLIST *)cltop;
-  
+
   is_sms_need=0;
   if ((key==RIGHT_BUTTON)&&(m==KEY_DOWN))
   {
@@ -990,7 +993,7 @@ static int my_ed_onkey(GUI *gui, GUI_MSG *msg)
     if ((key>='0'&&key<='9')||(key=='*')||(key=='#')||(key==RIGHT_SOFT))
     #else
     if ((key>='0'&&key<='9')||(key=='*')||(key=='#')||(key==LEFT_SOFT))
-    #endif  
+    #endif
     {
       if (m==KEY_DOWN)
       {
@@ -1083,23 +1086,23 @@ int strcmp_nocase(const char *s1,const char *s2)
 
 const char white[4]={0xFF,0xFF,0xFF,0x64};
 const char transparent[4]={0,0,0,0};
-static void DrawMyProgress(int y, int n)
+static void DrawMyProgress(int x, int y, int n)
 {
   int start_y, end_y, font_size,scr_w,fill, cur, max;
   WSHDR *ws=AllocWS(32);
   scr_w=ScreenW();
   cur=CurrentCASH[n];
   max=MaxCASH[n];
-  fill=((long long)cur)*(scr_w-5)/max;
+  fill=((long long)cur)*(scr_w-x-4)/max;
   font_size=GetFontYSIZE(TEXT_FONTSZ)+1;
   start_y=y+n*font_size;
   end_y=y+(n+1)*font_size-1;
-  
-  DrawCanvas(BuildCanvas(), 1, start_y, scr_w-2, end_y, 1);
-  DrawRectangle(1,start_y,scr_w-2,end_y,0,white,transparent);
-  DrawRectangle(2,start_y+1,fill+2,end_y-1,0,progress_colors[n],progress_colors[n]);
-  wsprintf(ws,"%u.%02u/%u.%02u",cur/100,cur%100,max/100,max%100);
-  DrawString(ws,3,start_y+1,scr_w-4,end_y-1,TEXT_FONTSZ,TEXT_ALIGNMIDDLE,COLOR_TEXTPB,transparent);
+
+  DrawCanvas(BuildCanvas(), x, start_y, scr_w-x-1, end_y, 1);
+  DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, white, transparent);
+  DrawRectangle(x+1, start_y+1, fill+2, end_y-1, 0, progress_colors[n], progress_colors[n]);
+  wsprintf(ws, "%u.%02u/%u.%02u", cur/100, cur%100, max/100, max%100);
+  DrawString(ws, x+2, start_y+1, scr_w-x-3, end_y-1, TEXT_FONTSZ, TEXT_ALIGNMIDDLE, COLOR_TEXTPB, transparent);
   FreeWS(ws);
 }
 
@@ -1142,7 +1145,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }
   if (msg->msg==MSG_END_CALL)
   {
-    if (ENA_CASHTRACE) 
+    if (ENA_CASHTRACE)
     {
       if (is_voice_connected)
       {
@@ -1162,7 +1165,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       DisableScroll();
     }
   }
-  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  if(msg->msg == MSG_RECONFIGURE_REQ)
   {
     extern const char *successed_config_filename;
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
@@ -1173,21 +1176,26 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       StartHoursTimer();
     }
   }
+
+  static volatile int is_incomming_call=0;
+  if (msg->msg==MSG_INCOMMING_CALL)
+   is_incomming_call=1;
   #ifdef NEWSGOLD
   if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2))
   #else
   if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==0))
-  #endif   
+  #endif
   {
     is_voice_connected=1;
-    if (ENA_VIBRA)
+    if (ENA_VIBRA==3 || is_incomming_call+ENA_VIBRA==2)
     {
       SetVibration(vibraPower);
-      GBS_StartTimerProc(&vibra_tmr,vibraDuration*TMR_SECOND/1000,vibra_tmr_proc);
+      GBS_StartTimerProc(&vibra_tmr, vibraDuration*TMR_SECOND/1000, vibra_tmr_proc);
     }
+    is_incomming_call=0;
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
-  
+
   if (cfgShowIn != 1 - IsUnlocked())
   {
     if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
@@ -1197,16 +1205,16 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       {
         extern int CASH_SIZE;               //by BoBa 4.07.07
 
-        int n=0; //Номер      
+        int n=0; //Номер
         while(n<CASH_SIZE)
         {
-          DrawMyProgress(IDLE_Y,n);
+          DrawMyProgress(IDLE_X, IDLE_Y, n);
           n++;
         }
       }
     }
   }
-  
+
   if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху
   {
     GUI *igui=GetTopGUI();
