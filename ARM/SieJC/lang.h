@@ -124,7 +124,7 @@
 #define LG_EDIT             "Изменить"
 #define LG_MUCCLEAR         "Очистить сообщения"
 #define LG_SUBSCRIBE        "Запросить"
-#define LG_SUBSCRIBEВ       "Разрешить"
+#define LG_SUBSCRIBED       "Разрешить"
 #define LG_UNSUBSCRIBED     "Отклонить"
 #define LG_UNSUBSCRIBE      "Удалить"
 
@@ -554,7 +554,7 @@
 #define LG_EDIT             "Edit"
 #define LG_MUCCLEAR         "Clear messages"
 #define LG_SUBSCRIBE        "Ask"
-#define LG_SUBSCRIBEВ       "Allow subscription"
+#define LG_SUBSCRIBED       "Allow subscription"
 #define LG_UNSUBSCRIBED     "Deny subscription"
 #define LG_UNSUBSCRIBE      "Remove"
 //clist_util.c
