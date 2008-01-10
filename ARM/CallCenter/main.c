@@ -367,8 +367,8 @@ static void ConstructList(void)
   if ((buffer=malloc(65536)))
   {
     zeromem(&ABmain,sizeof(ABmain));
-//    if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
-    if ((fin=fopen("2:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
+    if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
+//    if ((fin=fopen("2:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
     {
 #ifdef ELKA
       if (fread(fin,&ABmain,sizeof(ABmain),&ul)>=194)
@@ -397,8 +397,8 @@ static void ConstructList(void)
             #else
 	    unsigned int rl1=rec/LEVEL1_RN;
 	    unsigned int r12=rec%LEVEL1_RN;
-//	    snprintf(recname,128,"0:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
-	    snprintf(recname,128,"2:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
+	    snprintf(recname,128,"0:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
+//	    snprintf(recname,128,"2:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
             #endif
 	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
 	    {
