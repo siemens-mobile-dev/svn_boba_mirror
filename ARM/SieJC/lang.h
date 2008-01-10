@@ -127,6 +127,7 @@
 #define LG_SUBSCRIBED       "Разрешить"
 #define LG_UNSUBSCRIBED     "Отклонить"
 #define LG_UNSUBSCRIBE      "Удалить"
+#define LG_REASON           "Причина"
 
 //clist_util.c
 #define LG_AUTHORREM        "В авторизации отказано!"
@@ -557,6 +558,7 @@
 #define LG_SUBSCRIBED       "Allow subscription"
 #define LG_UNSUBSCRIBED     "Deny subscription"
 #define LG_UNSUBSCRIBE      "Remove"
+#define LG_REASON           "Reason"
 //clist_util.c
 #define LG_AUTHORREM        "Authorization was removed!"
 #define LG_AUTHORGRANTED    "Authorization was granted!"

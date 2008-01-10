@@ -7,6 +7,12 @@
 #include "vCard.h"
 #include "lang.h"
 
+char *room_name;
+char *room_jid;
+MUC_ADMIN macmd;
+int reason_pos;
+extern void ConstructReasonDlg(char *name, char *jid, MUC_ADMIN muccmd);
+
 //==============================================================================
 // ELKA Compatibility
 #pragma inline
@@ -694,7 +700,8 @@ int ma_menu_onkey(void *data, GUI_MSG *msg)
     if(MA_Menu_Contents[i]==MA_CONF_MGR)admin_cmd=ADM_MODERATOR_REMOVE;
     if(MA_Menu_Contents[i]==MA_CONF_ADMIN)admin_cmd=ADM_ADMIN;
     if(MA_Menu_Contents[i]==MA_CONF_OWNER)admin_cmd=ADM_OWNER;
-    MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
+    ConstructReasonDlg(room->JID, nick, admin_cmd);
+    //MUC_Admin_Command(room->JID, nick, admin_cmd, "SieJC_muc#admin");
     return 1;
   }
   return 0;
@@ -860,4 +867,82 @@ void contc_menu_iconhndl(void *data, int curitem, void *unk)
   ws=AllocMenuWS(data,strlen(test_str));
   wsprintf(ws,percent_t,test_str);
   SetMenuItemText(data,item,ws,curitem);
+}
+
+//=====================================================
+
+int reason_onkey(GUI *gui, GUI_MSG *msg)
+{
+  if (msg->gbsmsg->msg == KEY_DOWN)
+  {
+    if ((msg->gbsmsg->submess == GREEN_BUTTON) || (msg->gbsmsg->submess == 0x0018))
+    {
+      EDITCONTROL ec;
+      char *s = malloc(256);
+      int len;
+      ExtractEditControl(gui, reason_pos, &ec);
+      ws_2utf8(ec.pWS, s, &len, 256);
+      MUC_Admin_Command(room_name, room_jid, macmd, s);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+void reason_ghook(GUI *gui, int cmd)
+{
+}
+
+void reason_locret(void) {};
+
+SOFTKEY_DESC reason_sk[]=
+{
+  {0x0018,0x0000,(int)LG_OK},
+  {0x0001,0x0000,(int)LG_CLOSE},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB reason_skt=
+{
+  reason_sk,0
+};
+
+HEADER_DESC reason_hdr={0,0,0,0,NULL,(int)LG_REASON,LGP_NULL};
+
+INPUTDIA_DESC reason_desc=
+{
+  1,
+  reason_onkey,
+  reason_ghook,
+  (void *)reason_locret,
+  0,
+  &reason_skt,
+  {0,0,0,0},
+  4,
+  100,
+  101,
+  0,
+  0,
+  0x40000000
+};
+
+void ConstructReasonDlg(char *name, char *jid, MUC_ADMIN muccmd)
+{
+  room_name = name;
+  room_jid = jid;
+  macmd = muccmd;
+  
+  WSHDR *ws = AllocWS(256);
+  EDITCONTROL ec;
+  void *ma=malloc_adr();
+  void *eq=AllocEQueue(ma,mfree_adr());
+  
+  wsprintf(ws, "SieJC_muc#admin");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, 0, ws, 256);
+  reason_pos = AddEditControlToEditQend(eq,&ec,ma);
+  
+  patch_header(&reason_hdr);
+  patch_input(&reason_desc);
+  CreateInputTextDialog(&reason_desc,&reason_hdr,eq,1,NULL);
 }
