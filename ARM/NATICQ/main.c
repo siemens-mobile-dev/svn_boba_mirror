@@ -3521,7 +3521,7 @@ void OpenLogfile(GUI *data)
   WSHDR *ws=AllocWS(256);
   if ((t=ed_struct->ed_contact))
   {
-    wsprintf(ws,"%s\\%u.txt",HIST_PATH,t->uin);
+    wsprintf(ws,"%s\\%u\\%u.txt",HIST_PATH,UIN,t->uin);
     ExecuteFile(ws,NULL,NULL);
   }
   FreeWS(ws);

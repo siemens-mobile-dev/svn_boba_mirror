@@ -5,6 +5,7 @@
 
 extern const char HIST_PATH[64];
 extern const int LOG_ALL;
+extern const unsigned int UIN;
 /*
   Добавлет строку в историю контакта CLIST
 */
@@ -14,9 +15,16 @@ static do_logwrite(unsigned int uin, char *text)
 {
   volatile int hFile;
   unsigned int io_error = 0;
+  unsigned int ul;
   char error[36];
   char fullname[128];
-  snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, uin);
+  char hist_path[128];
+  snprintf(hist_path,127,"%s\\%u",HIST_PATH, UIN);
+  if (!isdir(hist_path,&ul))
+  {
+    mkdir(hist_path,&ul);
+  }
+  snprintf(fullname,127,"%s\\%u.txt", hist_path, uin);
   // Открываем файл на дозапись и создаём в случае неудачи
   hFile = fopen(fullname,A_ReadWrite + A_Create + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
   if(hFile!=-1)
@@ -115,7 +123,7 @@ int GetHistory(CLIST *t, int bufsize)
   buf = text = malloc(bufsize);
   text[0] = 0;
   text[bufsize-1] = 0;
-  snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, uin);
+  snprintf(fullname,127,"%s\\%u\\%u.txt", HIST_PATH, UIN, uin);
   // Открываем файл на чтение
   hFile = fopen(fullname,A_ReadOnly + A_BIN,P_READ, &io_error);
   if(hFile!=-1)
@@ -200,7 +208,7 @@ void LogStatusChange(CLIST *CListEx)
   if(!LOG_STATCH){return;}
   if(CListEx->state>7){return;}
   if(CListEx->log==NULL){return;}
-  char hdr[] = "(System message)";
+  char hdr[] = "(System message) ";
   char msg[] = "%s меняет статус на %s\r\n";
   char message[100];
   char nickname[64];
