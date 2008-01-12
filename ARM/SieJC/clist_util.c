@@ -576,6 +576,7 @@ void CList_ChangeContactParams(CLIST* Cont_Ex,
   Cont_Ex->subscription = subscription;
   Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
+  Cont_Ex->IsVisible = CList_GetVisibilityForGroup(group);
 }
 
 // Пишет роли контакта в конфе в структуру
@@ -619,7 +620,7 @@ CLIST* CList_AddContact(char* jid,
   Cont_Ex->subscription = subscription;
   Cont_Ex->wants_subscription = wants_subscription;
   Cont_Ex->group = group;
-  Cont_Ex->IsVisible = 1;
+  Cont_Ex->IsVisible = CList_GetVisibilityForGroup(group);
   Cont_Ex->next = NULL;
   Cont_Ex->vcard = NULL; // Не запросили еще
 
@@ -799,9 +800,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
 
   if((WRITE_HISTORY && !(cont->entry_type==T_CONF_ROOT)) || (WRITE_MUC_HISTORY && (cont->entry_type==T_CONF_ROOT)))
   {
-    char *ansi_text = convUTF8_to_ANSI_STR(mtext);
-    Add2History(CList_FindContactByJID(jid), datestr,ansi_text);
-    mfree(ansi_text);
+    Add2History(CList_FindContactByJID(jid), datestr,mtext);
   }
 }
 // Уничтожить список контактов

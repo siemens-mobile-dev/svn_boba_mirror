@@ -344,6 +344,7 @@
 #define LG_SUBSCRIBED       "Дозволити"
 #define LG_UNSUBSCRIBED     "Відхилити"
 #define LG_UNSUBSCRIBE      "Видалити"
+#define LG_REASON           "Причина"
 //clist_util.c
 #define LG_AUTHORREM        "В авторизації відмовлено!"
 #define LG_AUTHORGRANTED    "Авторизація надана!"

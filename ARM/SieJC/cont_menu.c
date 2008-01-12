@@ -231,7 +231,7 @@ if (MYMUCRES->muc_privs.aff<AFFILIATION_ADMIN) //Если мы мембер-модератор или но
 #define CONTC_UNSUBSCRIBE  4
 
 char CONTC_Menu_Contents[MAX_CONTC_ITEMS-1];
-const char contc_menu_header[]="Podpiska";
+const char contc_menu_header[]="Авторизация";
 int contcmenusoftkeys[]={0,1,2};
 HEADER_DESC contc_menuhdr={0,0,0,0,NULL,(int)contc_menu_header,LGP_NULL};
 SOFTKEY_DESC contc_menu_sk[]=
@@ -269,8 +269,8 @@ void InitContMenuArray()
 
 void Disp_Cont_Menu()
 {
-  TRESOURCE *Act_contact = CList_GetActiveContact();
-  CLIST* CLAct_contact=CList_FindContactByJID(CList_GetActiveContact()->full_name);
+//  TRESOURCE *Act_contact = CList_GetActiveContact();
+//  CLIST* CLAct_contact=CList_FindContactByJID(CList_GetActiveContact()->full_name);
   InitContMenuArray();
   int n_items=0;
   CONTC_Menu_Contents[n_items++]=CONTC_SUBSCRIBE;//zaprosit` 
@@ -379,12 +379,15 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
       ////////////////////////HISTORY
     case MI_HISTORY_OPEN:
       {
-        //С латинскими JID ами работает, а с теми у ого кирилица непробовал, нет таких в наличии.
-        extern const char HIST_PATH[128];
-        WSHDR *wsfn=AllocWS(255);
-        wsprintf(wsfn,"%s%s.txt",HIST_PATH,CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID);
+	extern const char HIST_PATH[128];
+        char *fn=malloc(1024);
+        sprintf(fn,"%s%s.txt",HIST_PATH,CList_FindContactByJID(CList_GetActiveContact()->full_name)->JID);
+        int len = strlen(fn)+16;
+        WSHDR *wsfn = AllocWS(len);
+        utf8_2ws(wsfn, fn, len);
         ExecuteFile(wsfn,NULL,NULL);
         FreeWS(wsfn);
+        mfree(fn);
         break;
       }
       

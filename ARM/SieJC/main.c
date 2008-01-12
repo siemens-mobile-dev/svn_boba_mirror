@@ -1771,8 +1771,7 @@ void CheckDoubleRun(void)
     GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);  
     LockSched();
     CloseCSM(maincsm_id);
-    ShowMSG(1,(int)ipc_my_name);
-    ShowMSG(1,(int)"Vge started");
+    ShowMSG(1,(int)"Уже запущен");
     UnlockSched();
   }
   else

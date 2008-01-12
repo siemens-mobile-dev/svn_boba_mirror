@@ -1,5 +1,6 @@
 #include "../inc/swilib.h"
 #include "history.h"
+#include "string_util.h"
 #include "lang.h"
 extern const char HIST_PATH[128];
 extern const char DEFAULT_DISC[128];
@@ -75,8 +76,6 @@ void _add2history(HIST_RECORD_INFO *info)
   // Открываем файл на дозапись и создаём в случае неудачи
   WSHDR *filename_WS = AllocWS(256);
   char *filename_utf8 = malloc(256);
-  //char *filename_ansi;
-  //filename_ansi = (char*)convUTF8_to_ANSI_STR(info->fname);
   utf8_2ws(filename_WS, info->fname, 256);  // Перевели UTF-8 в UTF-16
   ws_2str(filename_WS, filename_utf8, 256); // Перевели UTF-16 в UTF-8 для файлов
   hFile = fopen(filename_utf8,A_ReadWrite + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
@@ -109,6 +108,8 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   char *fullname = malloc(512);
   char delim[] = "\r\n----------\r\n";
   unsigned int delim_len = strlen(delim);
+  message = convUTF8_to_ANSI_STR(message);
+  header = convUTF8_to_ANSI_STR(header);
   unsigned int hdr_len = strlen(header);
   unsigned int msg_len = strlen(message);
   unsigned int buf_len = delim_len+hdr_len+msg_len+1;
