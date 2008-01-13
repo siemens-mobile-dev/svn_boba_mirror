@@ -166,6 +166,7 @@ extern const unsigned int UNACK_COLOR;
 
 extern const int ENA_AUTO_XTXT;
 extern const int NOT_LOG_SAME_XTXT;
+extern const int LOG_XTXT;
 
 extern const int HISTORY_BUFFER;
 
@@ -858,7 +859,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
 	ClearContactT9Key();
 	RecountMenu(NULL);
       }
-      if(!t->isactive) GetHistory(t, 128<<HISTORY_BUFFER);
+      if(!t->isactive && HISTORY_BUFFER) GetHistory(t, 64<<HISTORY_BUFFER);
       CreateEditChat(t);
     }
     return(-1);
@@ -1534,9 +1535,10 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
   GetDateTime(&d,&tt);
   int i;
 
+  if(code == 3 && !LOG_XTXT) return; //Не нужно сохранять иксстатус
   if (code==3 && NOT_LOG_SAME_XTXT)
   {
-    if(!t->isactive) GetHistory(t, 128<<HISTORY_BUFFER);
+    if(!t->isactive && HISTORY_BUFFER) GetHistory(t, 64<<HISTORY_BUFFER);
     lastX = GetLastXTextLOGQ(t);
     if(lastX)
       if(strcmp(lastX, s) == 0) return;
@@ -1996,7 +1998,7 @@ ProcessPacket(TPKT *p)
       sprintf(s,percent_d,p->pkt.uin);
       t=AddContact(p->pkt.uin,s);
     }
-    if(!t->isactive) GetHistory(t, 128<<HISTORY_BUFFER);
+    if(!t->isactive && HISTORY_BUFFER) GetHistory(t, 64<<HISTORY_BUFFER);
     t->isactive=ACTIVE_TIME;
 
     //    ChangeContactPos(t);
@@ -3245,16 +3247,7 @@ void CreateEditChat(CLIST *t)
   
   eq=AllocEQueue(ma,mfree_adr());
   
-/*  hist = malloc(256);
-  if(!GetHistory(hist, 256, t->uin))
-  {
-    ascii2ws(ews,hist);
-    PrepareEditControl(&ec);
-    ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_DISABLE_T9,ews,ews->wsbody[0]);
-  }
-  mfree(hist);
 
-    AddEditControlToEditQend(eq,&ec,ma);  */
   lp=t->log;
   
   while(lp)

@@ -5,6 +5,7 @@
 
 extern const char HIST_PATH[64];
 extern const int LOG_ALL;
+extern const int HISTORY_TYPE;
 extern const unsigned int UIN;
 /*
   Добавлет строку в историю контакта CLIST
@@ -19,7 +20,10 @@ static do_logwrite(unsigned int uin, char *text)
   char error[36];
   char fullname[128];
   char hist_path[128];
-  snprintf(hist_path,127,"%s\\%u",HIST_PATH, UIN);
+  if(HISTORY_TYPE)
+    snprintf(hist_path,127,"%s\\%u",HIST_PATH, UIN);
+  else
+    snprintf(hist_path,127,"%s",HIST_PATH);
   if (!isdir(hist_path,&ul))
   {
     mkdir(hist_path,&ul);
@@ -123,7 +127,10 @@ int GetHistory(CLIST *t, int bufsize)
   buf = text = malloc(bufsize);
   text[0] = 0;
   text[bufsize-1] = 0;
-  snprintf(fullname,127,"%s\\%u\\%u.txt", HIST_PATH, UIN, uin);
+  if(HISTORY_TYPE)
+    snprintf(fullname,127,"%s\\%u\\%u.txt", HIST_PATH, UIN, uin);
+  else
+    snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, uin);
   // Открываем файл на чтение
   hFile = fopen(fullname,A_ReadOnly + A_BIN,P_READ, &io_error);
   if(hFile!=-1)
