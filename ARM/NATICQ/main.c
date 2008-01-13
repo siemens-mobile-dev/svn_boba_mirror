@@ -1041,6 +1041,7 @@ int DNR_TRIES=3;
 extern const char NATICQ_HOST[];
 extern const unsigned int NATICQ_PORT;
 char hostname[128];
+int host_counter = 0;
 
 //---------------------------------------------------------------------------
 const char *GetHost(int cnt, const char *str, char *buf)
@@ -1116,7 +1117,6 @@ int GetHostsCount(const char *str)
 
 void create_connect(void)
 {
-  static int host_counter = 0;
   char hostbuf[128];
   int hostport;
   int ***p_res=NULL;
@@ -1437,6 +1437,7 @@ void get_answer(void)
 	  //        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
 	  snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
 	  connect_state=3;
+          host_counter--; //Если уж законнектились, будем сидеть на этом сервере
 	  SMART_REDRAW();
 	  break;
 	case T_XTEXT_ACK:
