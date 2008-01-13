@@ -537,24 +537,35 @@ typedef struct
 
 typedef struct
 {
-u16 num;
-u16 field_2;
-u16 field_4;
-u16 icon;
-int name;
-u16 field_C;
-u16 field_E;
-u16 field_10;
-char field_12;
-char field_13;
-char field_14;
-char field_15;
-u16 field_16l;
-char ID;
-char field_19;
-char field_1A;
-char field_1B;
-
+#ifdef DB2020
+  u16 num;
+  u16 tab;
+  u16 num_in_tab;
+  u16 icon;
+  int name;
+  u16 field_C;
+  u16 big_icon;
+  u16 field_10;
+  u16 ID;  
+#else
+  u16 num;
+  u16 field_2;
+  u16 field_4;
+  u16 icon;
+  int name;
+  u16 field_C;
+  u16 field_E;
+  u16 field_10;
+  char field_12;
+  char field_13;
+  char field_14;
+  char field_15;
+  u16 field_16l;
+  char ID;
+  char field_19;
+  char field_1A;
+  char field_1B;
+#endif
 }AB_ITEM_DESC;
 
 

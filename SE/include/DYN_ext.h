@@ -337,5 +337,10 @@ extern const int KEY_FLIP_CLOSE;
 extern const int FONT_D_18B;
 extern const int ICON_WRITE_NEW;
 extern const int ICON_OLD_GREEN_PHONE;
+extern const int AB_ITEM_DESC_SIZE;
+extern const int AB_ITEM_DESC_ID_DISPLACE;
+extern const int AB_ITEM_DESC_ICON_DISPLACE;
+extern const int AB_ITEM_DESC_NUM_DISPLACE;
+extern const int KEY_DIGITAL_0;
 
 #endif
