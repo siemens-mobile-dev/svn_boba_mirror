@@ -1981,7 +1981,15 @@ int create_info_view(ML_VIEW *ml_list)
   eq=AllocEQueue(ma,mfree_adr());
   headers=AllocWS(100);
 
-    PrintTimeDate(buf, ml_list->timestamp);
+  date=get_date(ml_list);
+  if (date)
+  {
+    date=strchr(date, ':')+1;
+    while (*date==' ' || *date==0x09) date++;
+    memcpy(dbuf, date, 255);
+    dbuf[255] = 0;
+    fsize = get_date_from_str(dbuf);
+    PrintTimeDate(buf, fsize);
 
     ws=AllocWS(strlen(buf));
     ascii2ws(ws,buf);
@@ -1995,6 +2003,7 @@ int create_info_view(ML_VIEW *ml_list)
     SetFontToEditCOptions(&ec.ed_options,1);
     AddEditControlToEditQend(eq,&ec,ma); 
     FreeWS(ws);
+  }
 
     
   date = strstr(ml_list->header, ";");
