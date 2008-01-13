@@ -878,7 +878,7 @@ int reason_onkey(GUI *gui, GUI_MSG *msg)
 {
   if (msg->gbsmsg->msg == KEY_DOWN)
   {
-    if ((msg->gbsmsg->submess == GREEN_BUTTON) || (msg->gbsmsg->submess == 0x0018))
+    if ((msg->gbsmsg->submess == GREEN_BUTTON) || (msg->keys == 0x0018))
     {
       EDITCONTROL ec;
       char *s = malloc(256);
@@ -894,6 +894,15 @@ int reason_onkey(GUI *gui, GUI_MSG *msg)
 
 void reason_ghook(GUI *gui, int cmd)
 {
+  if (cmd == 7)
+  {
+    static SOFTKEY_DESC sk = {0x0018, 0x0000, (int)LG_OK};
+#ifdef NEWSGOLD
+    SetSoftKey(gui, &sk, 0);
+#else
+    SetSoftKey(gui, &sk, 1);
+#endif
+  }
 }
 
 void reason_locret(void) {};
@@ -931,21 +940,33 @@ INPUTDIA_DESC reason_desc=
 
 void ConstructReasonDlg(char *name, char *jid, MUC_ADMIN muccmd)
 {
-  room_name = name;
-  room_jid = jid;
-  macmd = muccmd;
-  
-  WSHDR *ws = AllocWS(256);
-  EDITCONTROL ec;
-  void *ma=malloc_adr();
-  void *eq=AllocEQueue(ma,mfree_adr());
-  
-  wsprintf(ws, "SieJC_muc#admin");
-  PrepareEditControl(&ec);
-  ConstructEditControl(&ec, ECT_NORMAL_TEXT, 0, ws, 256);
-  reason_pos = AddEditControlToEditQend(eq,&ec,ma);
-  
-  patch_header(&reason_hdr);
-  patch_input(&reason_desc);
-  CreateInputTextDialog(&reason_desc,&reason_hdr,eq,1,NULL);
+  switch (muccmd)
+  {
+  case ADM_KICK:
+  case ADM_BAN:
+    {
+      room_name = name;
+      room_jid = jid;
+      macmd = muccmd;
+      
+      WSHDR *ws = AllocWS(256);
+      EDITCONTROL ec;
+      void *ma=malloc_adr();
+      void *eq=AllocEQueue(ma,mfree_adr());
+      
+      wsprintf(ws, "SieJC_muc#admin");
+      PrepareEditControl(&ec);
+      ConstructEditControl(&ec, ECT_NORMAL_TEXT, 0, ws, 256);
+      reason_pos = AddEditControlToEditQend(eq,&ec,ma);
+      
+      patch_header(&reason_hdr);
+      patch_input(&reason_desc);
+      CreateInputTextDialog(&reason_desc,&reason_hdr,eq,1,NULL);
+      break;
+    }
+  default:
+    {
+      MUC_Admin_Command(name, jid, muccmd, "");
+    }
+  }
 }
