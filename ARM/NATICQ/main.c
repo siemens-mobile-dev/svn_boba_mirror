@@ -1535,7 +1535,6 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
   GetDateTime(&d,&tt);
   int i;
 
-  if(code == 3 && !LOG_XTXT) return; //Не нужно сохранять иксстатус
   if (code==3 && NOT_LOG_SAME_XTXT)
   {
     if(!t->isactive && HISTORY_BUFFER) GetHistory(t, 64<<HISTORY_BUFFER);
@@ -1545,11 +1544,12 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
   }
   
   snprintf(hs,127,"%02d:%02d %02d-%02d %s:\r\n",tt.hour,tt.min,d.day,d.month,name);
-  Add2History(t, hs, s, code); // Запись хистори
+  if(code != 3 || LOG_XTXT) //Нужно сохранять иксстатус
+    Add2History(t, hs, s, code); // Запись хистори
   LOGQ *p=NewLOGQ(s);
   snprintf(p->hdr,79,"%02d:%02d %02d-%02d %s:",tt.hour,tt.min,d.day,d.month,name);
   p->type=code;
-  p->ID=IDforACK; //0-32767
+  p->ID=IDforACK;  //0-32767
   i=AddLOGQ(&t->log,p);
   while(i>MAXLOGMSG)
   {
