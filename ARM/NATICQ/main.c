@@ -3510,11 +3510,15 @@ void OpenLogfile(GUI *data)
   ed_struct=MenuGetUserPointer(data);
   
   extern const char HIST_PATH[64];
+  extern const int HISTORY_TYPE;
   CLIST *t;
   WSHDR *ws=AllocWS(256);
   if ((t=ed_struct->ed_contact))
   {
-    wsprintf(ws,"%s\\%u\\%u.txt",HIST_PATH,UIN,t->uin);
+    if (HISTORY_TYPE)
+      wsprintf(ws,"%s\\%u\\%u.txt",HIST_PATH,UIN,t->uin);
+    else
+      wsprintf(ws,"%s\\%u.txt",HIST_PATH,t->uin);
     ExecuteFile(ws,NULL,NULL);
   }
   FreeWS(ws);
