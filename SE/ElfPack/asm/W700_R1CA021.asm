@@ -8,7 +8,7 @@ a	EQU	b
 	ENDM
 
 // --- CreateLists ---
-/*
+
 	EXTERN	CreateLists
         RSEG  CODE
 	CODE16	
@@ -29,7 +29,7 @@ PATCH_STANDBY:
 	CODE16
 	LDR	R1,=PATCH_STANDBY
 	BLX	R1
-*/
+
 
 /*
 // --- PageAction_Hook ---

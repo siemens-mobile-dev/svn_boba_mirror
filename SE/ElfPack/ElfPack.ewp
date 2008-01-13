@@ -7557,6 +7557,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
+          <state>DB2020</state>
           <state>W580_R8BA024</state>
           <state>SWI_HOOK</state>
         </option>
@@ -9101,6 +9102,19 @@
       </excluded>
     </file>
     <file>
+      <name>$PROJ_DIR$\asm\W580_R8BA024.asm</name>
+      <excluded>
+        <configuration>K750_R1CA021</configuration>
+        <configuration>W810_R4EA031</configuration>
+        <configuration>Z550_R6CA009</configuration>
+        <configuration>W800_R1BC002</configuration>
+        <configuration>W810_R4DB005</configuration>
+        <configuration>W700_R1CA021</configuration>
+        <configuration>K600_R2BB001</configuration>
+        <configuration>W800_R1BD001</configuration>
+      </excluded>
+    </file>
+    <file>
       <name>$PROJ_DIR$\asm\W700_R1CA021.asm</name>
       <excluded>
         <configuration>K750_R1CA021</configuration>
@@ -9208,6 +9222,19 @@
       </excluded>
     </file>
     <file>
+      <name>$PROJ_DIR$\Target\W580_R8BA024.h</name>
+      <excluded>
+        <configuration>K750_R1CA021</configuration>
+        <configuration>W810_R4EA031</configuration>
+        <configuration>Z550_R6CA009</configuration>
+        <configuration>W800_R1BC002</configuration>
+        <configuration>W810_R4DB005</configuration>
+        <configuration>W700_R1CA021</configuration>
+        <configuration>K600_R2BB001</configuration>
+        <configuration>W800_R1BD001</configuration>
+      </excluded>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Target\W700_R1CA021.h</name>
       <excluded>
         <configuration>K750_R1CA021</configuration>
@@ -9311,6 +9338,19 @@
         <configuration>W700_R1CA021</configuration>
         <configuration>K600_R2BB001</configuration>
         <configuration>W580_R8BA024</configuration>
+        <configuration>W800_R1BD001</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\xcl\W580_R8BA024.xcl</name>
+      <excluded>
+        <configuration>K750_R1CA021</configuration>
+        <configuration>W810_R4EA031</configuration>
+        <configuration>Z550_R6CA009</configuration>
+        <configuration>W800_R1BC002</configuration>
+        <configuration>W810_R4DB005</configuration>
+        <configuration>W700_R1CA021</configuration>
+        <configuration>K600_R2BB001</configuration>
         <configuration>W800_R1BD001</configuration>
       </excluded>
     </file>

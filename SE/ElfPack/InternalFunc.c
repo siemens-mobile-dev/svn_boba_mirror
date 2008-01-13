@@ -11,6 +11,8 @@
 #endif
 
 
+__no_init int (*pKBD) (int,int,int) @ "OLD_KEY_HANDLER";
+__no_init EP_DATA *gepd;
 
 void StartHelper(void);
 
@@ -33,8 +35,7 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
 
 EP_DATA * getepd(void)
 {
-  EP_DATA * epd = (EP_DATA *)*((EP_DATA **)RAM_BASE);
-  return(epd);
+  return(gepd);
 }
 
 
@@ -157,6 +158,9 @@ __thumb void * malloc (int size)
   return(memalloc(size,1,5,"SwiLib",0));
 #endif
 
+#ifdef W580_R8BA024
+  return(memalloc(0,size,1,5,"SwiLib",0));
+#endif
 }
 
 __thumb void mfree (void * mem)
@@ -193,7 +197,9 @@ __thumb void mfree (void * mem)
   memfree(mem,"SwiLib",0);
 #endif
 
-
+#ifdef W580_R8BA024
+  if (mem) memfree(0, mem,"SwiLib",0);  
+#endif
 }
 //============================================================================
 
@@ -255,6 +261,21 @@ typedef struct
 
 //void main();
 
+#ifdef DB2020
+#define PAGE_ENTER_EVENT 7
+#define PAGE_EXIT_EVENT 8
+#define ACCEPT_EVENT 2
+#define PREVIOUS_EVENT 3
+#define CANCEL_EVENT 4
+#else
+#define PAGE_ENTER_EVENT 5
+#define PAGE_EXIT_EVENT 6
+#define ACCEPT_EVENT 0x0F
+#define PREVIOUS_EVENT 0x10
+#define CANCEL_EVENT 0x11
+#endif
+
+
 void onEv(FILESUBROUTINE ** r0);
 void SetSmallIcon(void * r0, u16 *r1);
 int Elf_Run_Subroutine(void *r0);
@@ -263,11 +284,11 @@ int Elf_Run(void * r0, BOOK * book);
 const char ers[]={"Elf_Run_Subroutine"};
 
 const PAGE_MSG erp_msg[]={
-  0x05,(int*)Elf_Run,
-  0x10,(int*)ELF_RUN_PAGE_EV_0x10 ,
-  0x0F,(int*)ELF_RUN_PAGE_EV_0x0F ,
-  0x11,(int*)ELF_RUN_PAGE_EV_0x11 ,
-  0x06,(int*)ELF_RUN_PAGE_EV_0x06 ,
+  PAGE_ENTER_EVENT,  (int*)Elf_Run,
+  PREVIOUS_EVENT,    (int*)ELF_RUN_PAGE_PREVIOUS_EVENT,
+  ACCEPT_EVENT,      (int*)ELF_RUN_PAGE_ACCEPT_EVENT,
+  CANCEL_EVENT,      (int*)ELF_RUN_PAGE_CANCEL_EVENT,
+  PAGE_EXIT_EVENT,   (int*)ELF_RUN_PAGE_PAGE_EXIT_EVENT,
   0,0
 };
 
@@ -342,7 +363,7 @@ __thumb int Elf_Run(void * r0, BOOK * book)
 
 
   mfree(filename);
-  BookObj_ReturnPage(book,0x10);
+  BookObj_ReturnPage(book,PREVIOUS_EVENT);
   return(1);
 };
 
@@ -740,9 +761,10 @@ epd->dbe[i]->PROC(&j);
 */
 void CreateLists(void)
 {
-  EP_DATA ** p=(EP_DATA**)RAM_BASE;
   EP_DATA * epd = malloc(sizeof(EP_DATA));
-  *p=epd;
+  memset(epd,0,sizeof(EP_DATA));
+  gepd=epd;
+
 
   _printf("EP_DATA @%x",epd)  ;
 
@@ -763,8 +785,7 @@ void CreateLists(void)
     DB_EXT ** m;
     DB_EXT **tab= (DB_EXT **)EXT_TABLE;
 
-    while (tab[i]->content_type) i++;
-    i++;
+    while (tab[i++]->content_type);
     m=malloc(i*4);
     memcpy(m,tab,i*4);
     epd->dbe=m;
@@ -782,7 +803,7 @@ void CreateLists(void)
 __thumb void Init()
 {
 
-  CreateLists();
+  //CreateLists();
 
   char * mem = malloc(0x300);
 
@@ -801,10 +822,10 @@ __thumb void Init()
 
   // отняли обработчик клавы
   gkhook=epd->gKbdHookList;
-  ListElement_AddtoTop(gkhook,(void*)*((int(**)(int,int,int))pKBD));
-  *((int(**)(int,int,int))pKBD)=KbdHook;
+  ListElement_AddtoTop(gkhook,(void*)pKBD);
+  pKBD=KbdHook;
 
-  _printf("     Changing KBD Hook (LIST@0x%X OldProc=0x%x)",gkhook,(void*)*((int(**)(int,int,int))pKBD))  ;
+  _printf("     Changing KBD Hook (LIST@0x%X OldProc=0x%x)",gkhook,(void*)pKBD)  ;
 
   // запустили хелпера
 
@@ -873,7 +894,7 @@ _printf("     MMIPROCExec(_ELF_RemoveFromList,0,%x)",elf_begin)  ;
 MMIPROCExec(_ELF_RemoveFromList,0,elf_begin);
 }
 */
-__root  const int PATCH_AUTO_RUN @ "PATCH_AUTO_RUN" =(int)5;
+__root  const int PATCH_AUTO_RUN @ "PATCH_AUTO_RUN" =(int)PAGE_ENTER_EVENT;
 __root  const int PATCH_AUTO_RUN1 @ "PATCH_AUTO_RUN1" =(int)Init;
 
 int GetExtTable()

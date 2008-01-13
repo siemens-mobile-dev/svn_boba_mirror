@@ -9,6 +9,11 @@
 // инициализация списков
 -Z(CODE)PATCH_STANDBY_CALL=452AC494-452AC49B
 
+// change keyhandler
+-Z(CODE)OLD_KEY_HANDLER=4C045A34-4C045A37
+
+// статическая рама
+-Z(DATA)DATA_N=4C02C7C4-4C02C7C7
 
 // ассоциация elf
 -Z(CODE)PATCH_DB2=455BAE48-455BAE4B

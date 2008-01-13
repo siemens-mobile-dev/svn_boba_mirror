@@ -94,4 +94,8 @@ a	EQU	b
         defadr  memfree,0x20364D24+1
 #endif	
 
+#ifdef W580_R8BA024
+        defadr  memalloc,0x44D42A58+1
+        defadr  memfree,0x44D42A84+1
+#endif	
    END
