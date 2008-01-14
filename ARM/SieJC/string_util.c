@@ -419,16 +419,12 @@ char* convUTF8_to_ANSI_STR(char *UTF8_str)
              else if ((chr == 0xD0)&&(chr2 == 0x86)){*(tmp_out+lastchar) = 0xB2;}//²
              else if ((chr == 0xD0)&&(chr2 == 0x87)){*(tmp_out+lastchar) = 0xAF;}//¯
              else if ((chr == 0xD0)&&(chr2 == 0x84)){*(tmp_out+lastchar) = 0xAA;}//ª
-             else if ((chr == 0xD0)&&(chr2 == 0x9E)){*(tmp_out+lastchar) = 0xA2;}//¢
              else if ((chr == 0xD1)&&(chr2 == 0x91)){*(tmp_out+lastchar) = 0xB8;}//¸
              else if ((chr == 0xD1)&&(chr2 == 0x96)){*(tmp_out+lastchar) = 0xB3;}//³
              else if ((chr == 0xD1)&&(chr2 == 0x97)){*(tmp_out+lastchar) = 0xBF;}//¿
              else if ((chr == 0xD1)&&(chr2 == 0x94)){*(tmp_out+lastchar) = 0xBA;}//º
-             else if ((chr == 0xD1)&&(chr2 == 0x8E)){*(tmp_out+lastchar) = 0xA1;}//¡
              else if ((chr == 0xD2)&&(chr2 == 0x91)){*(tmp_out+lastchar) = 0xE3;}//´->ã
              else if ((chr == 0xD2)&&(chr2 == 0x90)){*(tmp_out+lastchar) = 0xC3;}//¥->Ã
-//             else if ((chr == 0xD2)&&(chr2 == 0x91)){*(tmp_out+lastchar) = 0xB4;}//´
-//             else if ((chr == 0xD2)&&(chr2 == 0x90)){*(tmp_out+lastchar) = 0xA5;}//¥
              else
           {
 	    char test1 = (chr & 0x1f)<<6;
@@ -865,7 +861,6 @@ void utf82win(char*d,const char *s)
 		else if(lb == 0x86){*d = 0xB2;}//²
 		else if(lb == 0x87){*d = 0xAF;}//¯
 		else if(lb == 0x84){*d = 0xAA;}//ª
-		else if(lb == 0x8E){*d = 0xA1;}//¡
 	  else {*d = lb + 48;}
     } else
     if (ub == 0xD1)
@@ -873,8 +868,7 @@ void utf82win(char*d,const char *s)
                      if(lb == 0x91){*d = 0xB8;}//¸
 		else if(lb == 0x96){*d = 0xB3;}//³
 		else if(lb == 0x97){*d = 0xBF;}//¿
-		else if(lb == 0x94){*d = 0xBA; }//º
-		else if(lb == 0x9E){*d = 0xA2; }//¢
+		else if(lb == 0x94){*d = 0xBA;}//º
 	        else {*d = lb + 112;}
     } else
     if (ub == 0xD2)
@@ -954,6 +948,7 @@ char *utf82filename(char *str)
   FreeWS(ws);
   return res;
 }
+
 
 
 

@@ -168,7 +168,7 @@ void MUCList_Destroy();
 void Enter_Conference(char *room, char *roomnick, char N_messages);
 
 // Выйти из конференции
-void Leave_Conference(char* room);
+void Send_Leave_Conference(char* room);
 
 ///////////////////
 

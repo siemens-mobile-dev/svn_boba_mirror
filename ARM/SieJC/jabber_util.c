@@ -672,28 +672,24 @@ void _leaveconference(char *conf_jid)
 {
   char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'/>";
   char* pr=malloc(1024);
-  sprintf(pr, pr_templ,My_JID_full,conf_jid);
+  sprintf(pr, pr_templ,Mask_Special_Syms(My_JID_full),Mask_Special_Syms(conf_jid));
   mfree(conf_jid);
   SendAnswer(pr);
   mfree(pr);
 }
 
 // Выходит из конференции
+void Send_Leave_Conference(char* room)
+{
+      char* cj = malloc(strlen(room)*2+1);
+      strcpy(cj, room);
+      SUBPROC((void*)_leaveconference, cj);
+}
+
 void Leave_Conference(char* room)
 {
   // Ищем экземпляр контакта в списке для конференций
-  MUC_ITEM* m_ex = muctop;
-  while(m_ex)
-  {
-    if(strstr(m_ex->conf_jid, room))
-    {
-      char* cj = malloc(strlen(m_ex->conf_jid)*2+1);
-      strcpy(cj, m_ex->conf_jid);
-      SUBPROC((void*)_leaveconference, cj);
-      break;
-    }
-    m_ex = m_ex->next;
-  }
+  MUC_ITEM* m_ex = CList_FindMUCByJID(room);
 
   MUC_ITEM* m_ex2 = muctop;
   if(muctop==m_ex && muctop!=NULL)
@@ -1407,8 +1403,18 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         XMLNode* statusmsg_node = XML_Get_Child_Node_By_Name(node,"status");
         if (!statusmsg_node)
           sprintf(r, "%s left us", nick);
-        else
-          sprintf(r, "%s left us (%s)", nick, statusmsg_node->value);
+        else 
+        {
+         if(statusmsg_node->value) sprintf(r, "%s left us (%s)", nick, statusmsg_node->value);
+         else sprintf(r, "%s left us", nick);
+        }
+
+        char* my_nick = Get_Resource_Name_By_FullJID(CList_FindMUCByJID(Conference->JID)->conf_jid);
+        if (!strcmp(nick,my_nick)) //если ето мы, удаляем конфу.
+        {
+          Leave_Conference(Conference->JID);
+          CList_MakeAllResourcesOFFLINE(Conference);
+        };
         extern const char sndOffline[64];
         //Play(sndOffline);
         SUBPROC((void *)Play, sndOffline);

@@ -315,8 +315,7 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
     case MI_CONF_LEAVE:
       {
         CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
-        Leave_Conference(room->JID);
-        CList_MakeAllResourcesOFFLINE(room);
+        Send_Leave_Conference(room->JID);
         break;
       }
     case MI_CONF_CLEAR:
@@ -618,62 +617,61 @@ void Disp_Contact_Menu()
   TRESOURCE *Act_contact = CList_GetActiveContact();
   // Теперь определяем, какие пункты у нас будут, и сколько
   if(!Act_contact)return;
-
-  if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_GROUP)) //в групах версия клиента ненужна
+  if(Act_contact->entry_type==T_CONF_ROOT)
   {
-    Menu_Contents[n_items++]=MI_QUERY_VERSION;
+    if(Act_contact->status!=PRESENCE_OFFLINE) Menu_Contents[n_items++]=MI_CONF_LEAVE;
+    Menu_Contents[n_items++]=MI_HISTORY_OPEN;
+    Menu_Contents[n_items++]=MI_DISCO_QUERY;
+    if(Act_contact->total_msg_count) Menu_Contents[n_items++]=MI_CONF_CLEAR;
   }
 
-  if((Act_contact->entry_type!=T_GROUP)&&(Act_contact->entry_type!=T_TRANSPORT)&&(Act_contact->entry_type!=T_CONF_NODE))
+  if((Act_contact->entry_type==T_CONF_NODE)&&(Act_contact->status!=PRESENCE_OFFLINE))
   {
+    TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
+    Menu_Contents[n_items++]=MI_QUERY_VERSION;
+    Menu_Contents[n_items++]=MI_DISCO_QUERY;
+    Menu_Contents[n_items++]=MI_VCARD_QUERY;
+    Menu_Contents[n_items++]=MI_TIME_QUERY;
+    Menu_Contents[n_items++]=MI_LASTACTIV_QUERY;
+  if(!(MYMUCRES->muc_privs.role<ROLE_MODERATOR)&&(MYMUCRES->muc_privs.aff>Act_contact->muc_privs.aff||(MYMUCRES->muc_privs.aff<AFFILIATION_ADMIN&&Act_contact->muc_privs.role<ROLE_MODERATOR))||MYMUCRES->muc_privs.aff==AFFILIATION_OWNER)
+    {
+      Menu_Contents[n_items++]=MI_MUC_ADMIN;
+    }
+  }
+
+  if((Act_contact->entry_type==T_NORMAL)||(Act_contact->entry_type==T_VIRTUAL))
+  {
+    Menu_Contents[n_items++]=MI_QUERY_VERSION;
     Menu_Contents[n_items++]=MI_HISTORY_OPEN;
+    Menu_Contents[n_items++]=MI_DISCO_QUERY;
+    Menu_Contents[n_items++]=MI_VCARD_QUERY;
+    Menu_Contents[n_items++]=MI_TIME_QUERY;
+    Menu_Contents[n_items++]=MI_LASTACTIV_QUERY;
+    Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
+    Menu_Contents[n_items++]=MI_CHANGECONTACT_VERSION;
   }
 
   if(Act_contact->entry_type==T_TRANSPORT)
   {
     Menu_Contents[n_items++]=MI_LOGIN_LOGOUT;
-  }
-
-  if(Act_contact->entry_type==T_CONF_ROOT)
-  {
-    Menu_Contents[n_items++]=MI_CONF_LEAVE;
-    if(Act_contact->total_msg_count)Menu_Contents[n_items++]=MI_CONF_CLEAR;
-  }
-
-  if(Act_contact->entry_type!=T_GROUP)
-  {
+    Menu_Contents[n_items++]=MI_QUERY_VERSION;
     Menu_Contents[n_items++]=MI_DISCO_QUERY;
-  }
-
- if((Act_contact->entry_type!=T_GROUP)&&(Act_contact->entry_type!=T_CONF_ROOT))
-  {
     Menu_Contents[n_items++]=MI_VCARD_QUERY;
     Menu_Contents[n_items++]=MI_TIME_QUERY;
-    Menu_Contents[n_items++]=MI_LASTACTIV_QUERY;    
+    Menu_Contents[n_items++]=MI_LASTACTIV_QUERY;
+    Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
+    Menu_Contents[n_items++]=MI_CHANGECONTACT_VERSION;
   }
-if (Act_contact->entry_type==T_CONF_NODE)
-{
-  TRESOURCE* MYMUCRES = CList_IsResourceInList(CList_FindMUCByJID(CList_FindContactByJID(Act_contact->full_name)->JID)->conf_jid);
-  if(!(MYMUCRES->muc_privs.role<ROLE_MODERATOR)&&(MYMUCRES->muc_privs.aff>Act_contact->muc_privs.aff||(MYMUCRES->muc_privs.aff<AFFILIATION_ADMIN&&Act_contact->muc_privs.role<ROLE_MODERATOR))||MYMUCRES->muc_privs.aff==AFFILIATION_OWNER)
-  {
-      Menu_Contents[n_items++]=MI_MUC_ADMIN;
-  }
-}
-  if((Act_contact->entry_type!=T_CONF_ROOT)&&(Act_contact->entry_type!=T_CONF_NODE)&&(Act_contact->entry_type!=T_GROUP))
-  {
-       Menu_Contents[n_items++]=MI_SUBSCRIBES_MENU;
-       Menu_Contents[n_items++]=MI_CHANGECONTACT_VERSION;
-  }
-
-  if(n_items+1)
+  
+  if(n_items)
   {
     patch_rect(&contact_menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
     Contact_MenuID=CreateMenu(0,0,&contact_menu,&contact_menuhdr,0,n_items,0,0);
   }
-  else
-  {
-//    MsgBoxError(1,(int)LG_NOSUPACTION);
-  }
+  //else
+  //{
+  //MsgBoxError(1,(int)LG_NOSUPACTION);
+  //}
 }
 
 //////////////////////// Menu "muc#admin" ///////////////////////////

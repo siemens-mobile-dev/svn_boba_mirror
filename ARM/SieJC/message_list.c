@@ -172,8 +172,7 @@ void inp_ghook(GUI *gui, int cmd)
         if(strstr(body, part_str)==body)  // Ключ в начале
         {
           CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
-          Leave_Conference(room->JID);
-          CList_MakeAllResourcesOFFLINE(room);
+          Send_Leave_Conference(room->JID);
           Terminate = 0;
           Mess_was_sent = 1;
           mfree(body);
