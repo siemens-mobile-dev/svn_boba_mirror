@@ -670,21 +670,19 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
 //Context: HELPER
 void _leaveconference(char *conf_jid)
 {
-<<<<<<< .mine
+
   char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'/>";
   char* pr=malloc(1024);
   sprintf(pr, pr_templ,Mask_Special_Syms(My_JID_full),Mask_Special_Syms(conf_jid));
   mfree(conf_jid);
   SendAnswer(pr);
   mfree(pr);
-=======
   Send_ShortPresence(My_JID_full,PRESENCE_OFFLINE);
 
 
 
 
 
->>>>>>> .theirs
 }
 
 // Выходит из конференции
