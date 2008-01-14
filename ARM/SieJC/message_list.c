@@ -242,7 +242,10 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   Resource_Ex = ContEx;
 
   //Send composing
-  SUBPROC((void*)SendComposing,Resource_Ex->full_name);
+  if((ContEx->entry_type == T_NORMAL)||(ContEx->entry_type == T_CONF_NODE))
+  {
+    SUBPROC((void*)SendComposing,Resource_Ex->full_name);
+  }
 
   patch_header(&inp_hdr);
   patch_input(&inp_desc);

@@ -670,12 +670,21 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
 //Context: HELPER
 void _leaveconference(char *conf_jid)
 {
+<<<<<<< .mine
   char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'/>";
   char* pr=malloc(1024);
   sprintf(pr, pr_templ,Mask_Special_Syms(My_JID_full),Mask_Special_Syms(conf_jid));
   mfree(conf_jid);
   SendAnswer(pr);
   mfree(pr);
+=======
+  Send_ShortPresence(My_JID_full,PRESENCE_OFFLINE);
+
+
+
+
+
+>>>>>>> .theirs
 }
 
 // Выходит из конференции
@@ -1610,7 +1619,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   char c_id[]="id";
 
   // Если включено обслуживание запросов о получении...
-  if(DELIVERY_EVENTS)
+
   {
     XMLNode* xnode = XML_Get_Child_Node_By_Name(nodeEx,"x");
     if(xnode)
@@ -1621,12 +1630,19 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       {
         // получили <x xmlns='jabber:x:event'>
         // Проверяем <delivered/>, ибо не умеем ничего больше
+        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
         XMLNode *delivery = XML_Get_Child_Node_By_Name(xnode,"delivered");
-        if(delivery)
+        if((delivery)&&(DELIVERY_EVENTS)) //деливери
         {
           // Получаем ID сообщения
           char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
           if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
+        }
+        if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE)) //composing
+        {
+        delivery = XML_Get_Child_Node_By_Name(xnode,"composing");
+        if(delivery) CList_ChangeComposingStatus(Res_ex, 1);
+        else CList_ChangeComposingStatus(Res_ex, 0);
         }
       }
     }
@@ -1644,7 +1660,6 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     MUC_ITEM* TmpMUC = CList_FindMUCByJID(CList_FindContactByJID(XML_Get_Attr_Value(from,nodeEx->attr))->JID);
       if(TmpMUC)
       {
-//     ShowMSG(0,(int)"Tema!!!");
        if(TmpMUC->muctema) mfree(TmpMUC->muctema);
        TmpMUC->muctema = malloc(strlen(msgnodes->value)*2+1);
        strcpy(TmpMUC->muctema ,msgnodes->value);

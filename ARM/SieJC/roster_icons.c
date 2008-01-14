@@ -131,6 +131,12 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
     goto L_DONE;
   }
 
+  if((resEx->compos)&&(!resEx->has_unread_msg)&&((resEx->entry_type == T_NORMAL)||(resEx->entry_type == T_CONF_NODE))) //если ктото чтото набирает...
+  {
+    strcat(path_to_pic, "composing");
+    goto L_DONE;
+  }
+
   // ≈сли у нас нет подписки и у контакта нет непрочитанных сообщений
   if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
   {
