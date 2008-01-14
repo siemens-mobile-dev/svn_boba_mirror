@@ -128,33 +128,34 @@ typedef struct
   int    unk2;
 }LISTBOOK;
 
+struct UI_APP_SESSION;
 typedef struct
 {
-  int   unk;
+  char   unk;
   char * name;
-  void * app_session;
-  int   unk1;
-  int   unk2;
+  struct UI_APP_SESSION * app_session;
+  int   parrent_BookID;
+  u16   unk2;
   int   unk3;
   int   unk4;
-  int   unk5;
-  int   unk6;
+  char   unk5;
+  void * unk6;
   int   unk7;
-  int   unk8;
+  u16   unk8;
 }XBOOK;
 
 struct XGUILIST;
 struct GUI;
-
+struct PAGE_DESC;
 typedef struct
 {
   XBOOK * xbook;
   void * onClose;
-  int    sessionID;
-  void * idle_page;
-  void * base_page;
-  struct XGUILIST * xguilist;
-  struct GUI * gui;
+  int    BookID;
+  struct PAGE_DESC * current_page;
+  struct PAGE_DESC  * base_page;
+  XGUILIST * xguilist;
+  GUI * gui;
   void * unk3;
   char dummy[0x10];
 }BOOK;
@@ -165,7 +166,7 @@ typedef struct XGUILIST
   LIST * guilist;
 }XGUILIST;
 
-typedef struct
+typedef struct UI_APP_SESSION
 {
   LIST * listbook;
   int    name;
@@ -244,7 +245,7 @@ typedef struct
 #endif
 }PAGE_MSG;
 
-typedef struct
+typedef struct PAGE_DESC
 {
   const char * name;
   int unk_NULL;
