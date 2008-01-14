@@ -35,6 +35,8 @@ extern const char COLOR_CASHPB3[4];
 extern const char COLOR_CASHPB4[4];
 extern const char COLOR_TEXTPB[4];
 extern const unsigned int TEXT_FONTSZ;
+extern char *s_ab_main;
+extern char *s_ab_entry;
 
 const char *progress_colors[MAX_CASH_SIZE]=
 {
@@ -367,8 +369,7 @@ static void ConstructList(void)
   if ((buffer=malloc(65536)))
   {
     zeromem(&ABmain,sizeof(ABmain));
-    if ((fin=fopen("0:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
-//    if ((fin=fopen("2:\\System\\apo\\addr\\main",A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
+    if ((fin=fopen(s_ab_main, A_ReadOnly+A_BIN, P_READ, &ul))!=-1)
     {
 #ifdef ELKA
       if (fread(fin,&ABmain,sizeof(ABmain),&ul)>=194)
@@ -393,12 +394,11 @@ static void ConstructList(void)
 	    rl1=rec/LEVEL1_RN;
 	    rl2=(rec%LEVEL1_RN)/LEVEL2_RN;
 	    rl3=rec%LEVEL2_RN;
-	    snprintf(recname,128,"0:\\System\\apo\\addr\\data\\%02d\\%02d\\%02d",rl1,rl2,rl3);
+	    snprintf(recname, 128, s_ab_entry, rl1, rl2, rl3);
             #else
 	    unsigned int rl1=rec/LEVEL1_RN;
 	    unsigned int r12=rec%LEVEL1_RN;
-	    snprintf(recname,128,"0:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
-//	    snprintf(recname,128,"2:\\System\\apo\\addr\\%02x\\%02x",rl1,r12);
+	    snprintf(recname, 128, s_ab_entry, rl1, r12);
             #endif
 	    if ((fin=fopen(recname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
 	    {
@@ -1177,9 +1177,9 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     }
   }
 
-  static volatile int is_incomming_call=0;
+  static volatile int is_incoming_call=0;
   if (msg->msg==MSG_INCOMMING_CALL)
-   is_incomming_call=1;
+   is_incoming_call=1;
   #ifdef NEWSGOLD
   if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2))
   #else
@@ -1187,12 +1187,12 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   #endif
   {
     is_voice_connected=1;
-    if (ENA_VIBRA==3 || is_incomming_call+ENA_VIBRA==2)
+    if (ENA_VIBRA==3 || is_incoming_call+ENA_VIBRA==2)
     {
       SetVibration(vibraPower);
       GBS_StartTimerProc(&vibra_tmr, vibraDuration*TMR_SECOND/1000, vibra_tmr_proc);
     }
-    is_incomming_call=0;
+    is_incoming_call=0;
   }
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
 

@@ -3,6 +3,12 @@
 #include "conf_loader.h"
 
 const char *successed_config_filename="";
+char *s_ab_main="0:\\System\\apo\\addr\\main";
+#ifdef NEWSGOLD
+char *s_ab_entry="0:\\System\\apo\\addr\\data\\%02d\\%02d\\%02d";
+#else
+char *s_ab_entry="0:\\System\\apo\\addr\\%02x\\%02x";
+#endif
 
 #pragma segment="CONFIG_C"
 static int LoadConfigData(const char *fname)
@@ -76,4 +82,10 @@ void InitConfig()
     config_name[0] = '0';
     LoadConfigData(config_name);
   }
+
+  extern const int AB_DISK;
+  if (AB_DISK==1)
+   s_ab_entry[0]=s_ab_main[0]='2';
+  else
+   s_ab_entry[0]=s_ab_main[0]='0';
 }

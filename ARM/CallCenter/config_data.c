@@ -79,7 +79,7 @@ __root const CFG_HDR cfghdr_m11={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"Setup Vibra at Call",1,0};
  __root const CFG_HDR cfghdr7={CFG_CBOX, "Use vibra", 0, 4};
  __root const int ENA_VIBRA = 0;
- __root const CFG_CBOX_ITEM cfgcbox7[4]={"No", "Incomming", "Outgoing", "Both"};
+ __root const CFG_CBOX_ITEM cfgcbox7[4]={"No", "Incoming", "Outgoing", "Both"};
 
  __root const CFG_HDR cfghdr8={CFG_UINT,"Vibra power",0,100};
  __root const unsigned int vibraPower=50;
@@ -112,4 +112,8 @@ __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"Setup MegaDial",1,0};
 
   __root const CFG_HDR cfghdr66={CFG_COLOR,"Color ScrollBar",0,0};
   __root const char COLOR_SCROLLBAR[4]={0x0,0x0,0x0,0x64};
+
+  __root const CFG_HDR cfghdr61={CFG_CBOX, "AddrBook disk", 0, 2};
+  __root const int AB_DISK = 0;
+  __root const CFG_CBOX_ITEM cfgcbox61[2]={"0:\\Data", "2:\\Config"};
 __root const CFG_HDR cfghdr_m21={CFG_LEVEL,"",0,0};
