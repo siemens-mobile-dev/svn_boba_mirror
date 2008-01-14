@@ -277,7 +277,7 @@ __swi __arm  void GUI_SetStyle(GUI_NOFMANY *,int style);
 #endif
 
 #pragma swi_number=0x137
-__swi __arm  int GetCreatedListObjectItemNum ( void *msg);
+__swi __arm  int GUIonMessage_GetCreatedItemIndex ( void *msg);
 
 #pragma swi_number=0x138
 __swi __arm  char SetMenuItemText0 ( GUI_MESSAGE *, int StrID);
@@ -559,6 +559,8 @@ __swi __arm  void debug_printf(char * fmt,...);
 #pragma swi_number=0x1B2
 __swi __arm  int PlayFile(u16 * path, u16 * fname);
 
+#pragma swi_number=0x1B7
+__swi __arm  int  isKeylocked(void);
 
 
 #pragma swi_number=0x81B8
@@ -894,7 +896,20 @@ __swi __arm void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 #pragma swi_number=0x23F
 __swi __arm DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
 
-
+#pragma swi_number=0x240
+__swi __arm  void JavaSession_Manager (int cmd);
+#pragma swi_number=0x241
+__swi __arm  int JavaSession_GetName(void);
+#pragma swi_number=0x242
+__swi __arm  int TextCopyId(int);
+#pragma swi_number=0x243
+__swi __arm  UI_APP_SESSION *Book_GetSession(BOOK*);
+#pragma swi_number=0x244
+__swi __arm  void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
+#pragma swi_number=0x245
+__swi __arm  void List2lineSubitemAddText(void* msg,int StrID);
+#pragma swi_number=0x246
+__swi __arm  int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 
 
 
