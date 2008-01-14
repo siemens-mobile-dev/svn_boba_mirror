@@ -207,7 +207,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1111111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -736,7 +736,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>weather.a79</state>
+          <state>Weather.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
