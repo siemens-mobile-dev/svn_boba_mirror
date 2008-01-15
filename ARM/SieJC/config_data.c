@@ -129,6 +129,9 @@ __root const char sndOnline[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\online
 __root const CFG_HDR cfghdrsnd2={CFG_STR_UTF8,LG_SNDOFFLINE,0,63};
 __root const char sndOffline[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\offline.wav";
 
+__root const CFG_HDR cfghdrsnd3={CFG_STR_UTF8,LG_SNDCOMPOSING,0,63};
+__root const char sndComposing[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\composing.wav";
+
 __root const CFG_HDR cfghdr_SOUNDS_SETUP_END={CFG_LEVEL,"",0,0};
 
 ////////////////////////////// Пути ////////////////////////////////////////////

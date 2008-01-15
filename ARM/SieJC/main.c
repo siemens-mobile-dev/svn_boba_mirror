@@ -55,6 +55,7 @@ extern const int MESSAGES_FONT;
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];
+extern const char JABBER_SERVER[128];
 extern const char DEFAULT_MUC_NICK[];
 extern const char PATH_TO_PIC[];
 extern const int IS_IP;
@@ -1695,7 +1696,7 @@ void maincsm_oncreate(CSM_RAM *data)
   maingui_id=csm->gui_id=CreateGUI(main_gui);
   DNR_TRIES=3;
   InitGroupsList();
-  strcat((char *)ipc_my_name,USERNAME);
+  strcat((char *)ipc_my_name,USERNAME);strcat((char *)ipc_my_name, "@");strcat((char *)ipc_my_name, JABBER_SERVER);
   gipc.name_to=ipc_my_name;
   gipc.name_from=ipc_my_name;
   gipc.data=(void *)-1;
@@ -1771,7 +1772,7 @@ void CheckDoubleRun(void)
     GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_SHOW_CSM,&gipc);  
     LockSched();
     CloseCSM(maincsm_id);
-    ShowMSG(1,(int)"Уже запущен");
+    ShowMSG(1,(int)LG_ASTARTED);
     UnlockSched();
   }
   else
@@ -1983,7 +1984,7 @@ sizeof(MAIN_CSM),
   void UpdateCSMname(void)
   {
 //    WSHDR *ws=AllocWS(256);
-    wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SieJC: %s",USERNAME);
+    wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SieJC: %s@%s",USERNAME, JABBER_SERVER);
 //    FreeWS(ws);
   }
 

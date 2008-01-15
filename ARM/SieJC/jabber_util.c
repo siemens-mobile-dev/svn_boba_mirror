@@ -33,6 +33,7 @@ extern const int DISPLAY_POPUPS;
 extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
+extern const char sndComposing[64];
 
 extern GR_ITEM *GR_ROOT;
 extern CLIST* cltop;
@@ -1639,7 +1640,8 @@ void Process_Incoming_Message(XMLNode* nodeEx)
         if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE)) //composing
         {
         delivery = XML_Get_Child_Node_By_Name(xnode,"composing");
-        if(delivery) CList_ChangeComposingStatus(Res_ex, 1);
+        if(delivery) {CList_ChangeComposingStatus(Res_ex, 1);
+          SUBPROC((void *)Play, sndComposing);}
         else CList_ChangeComposingStatus(Res_ex, 0);
         }
       }

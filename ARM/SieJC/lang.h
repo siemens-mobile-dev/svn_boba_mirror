@@ -72,6 +72,7 @@
 #define LG_ZLIBNOSASL       "ZLib не работает без SASL!"
 #define LG_ENTERLOGPAS      "Введите логин/пароль!"
 #define LG_PLATFORMM        "Платформа не соответствует!"
+#define LG_ASTARTED         "Уже запущен"
 //jabber_util.c
 #define LG_MUCEXITDONE      "Выход из MUC выполнен!"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
@@ -170,6 +171,7 @@
 #define LG_SNDMSGPM         "Звук приема из PM"
 #define LG_SNDONLINE        "Звук статуса онлайн"
 #define LG_SNDOFFLINE       "Звук статуса оффлайн"
+#define LG_SNDCOMPOSING     "Звук composing-событий"
 
 #define LG_SETUPPATH        "Настройка путей"
 #define LG_PATHHIST         "История"
@@ -504,6 +506,7 @@
 #define LG_ZLIBNOSASL       "ZLib doesn't work without SASL!"
 #define LG_ENTERLOGPAS      "Enter login/password!"
 #define LG_PLATFORMM        "Target platform mismatch!"
+#define LG_ASTARTED         "Already started"
 //jabber_util.c
 #define LG_MUCEXITDONE      "Leave MUC ok"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
@@ -600,6 +603,7 @@
 #define LG_SNDMSGPM         "Sound Msg PM"
 #define LG_SNDONLINE        "Sound for online-status"
 #define LG_SNDOFFLINE       "Sound for offline-status"
+#define LG_SNDCOMPOSING     "Sound for composing-events"
 
 #define LG_SETUPPATH        "Paths setup"
 #define LG_PATHHIST         "History path"
