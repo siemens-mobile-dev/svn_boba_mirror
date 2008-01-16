@@ -17,7 +17,7 @@ extern const char CASHREQNUM[];
 extern const char cashTEMP_PATH[];
 extern const char cashLOG_FILE[];
 extern const char cashLOG_Format[];
-extern const int ENA_AUTOCASHTRACE; 
+extern const int ENA_AUTOCASHTRACE;
 
 int MaxCASH[MAX_CASH_SIZE];
 int CurrentCASH[MAX_CASH_SIZE];
@@ -58,7 +58,7 @@ static void WriteLog(int dummy, char *text)
 void SaveCash(void)
 {
   int f;
-  unsigned int ul; 
+  unsigned int ul;
   unsigned char attrib;
   if (*cashfname)
   {
@@ -157,15 +157,22 @@ static int FindCash(const char *s)
     pval=ep;
     if ((*pval=='.')||(*pval==','))
     {
-      if ((pval[1]>='0')&&(pval[1]<='9'))
-      {
-        pval++;
-        i+=strtol(pval,&ep,10);
-        pval=ep;
-      }
+      pval++;
+
+      int j=strtol(pval, &ep, 10);//надо домножить число после запятой...
+      int k=ep-pval;//... на 10^(2-k)
+      if (k==1)
+       j*=10;
+      else
+       while (k>2) {//делим j на 10^(k-2)
+        j/=10; k--;
+       }//ибо, бывают ещё балансы в у.е. с 3-4 знаками после запятой. Сам видел у МТСа. Lost, 15.01.2008
+      i+=j;
+
+      pval=ep;
     }
     if (i>(CurrentCASH[n]+(MaxCASH[n]/100))) //Если новый больше чем текущий +1 процент от максимального
-    {     
+    {
       MaxCASH[n]=i;
       f=1;
     }
@@ -210,10 +217,10 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
   WSHDR *ws;
   int len;
   char *s;
-  int i=0; 
+  int i=0;
 
 #define ussdreqgui_id (((int *)data)[DISPLACE_OF_USSDREQGUI_ID/4])
-  
+
 //  if (!ENA_CASHTRACE) return 0;
   if (msg->msg==MSG_USSD_RX)
   {
@@ -223,7 +230,7 @@ int ProcessUSSD(CSM_RAM* data, GBS_USSD_MSG *msg)
   if (msg->msg==MSG_AUTOUSSD_RX)
   {
     if (!ENA_AUTOCASHTRACE) return 0;
-  }  
+  }
   ws=AllocWS(256);
   len=msg->pkt_length;
   if (len>240) len=240;
@@ -309,9 +316,9 @@ void LoadCash(void)
   unsigned int ul;
   int s=0;
   char imsi_str[IMSI_DATA_BYTE_LEN*2+1];
- 
+
   CASH_SIZE=0;
-  
+
   extern char cur_imsi[];
   imsi2str(cur_imsi,imsi_str);
   sprintf(cashfname,"%sCallCenter_cash_%s.tmp",cashTEMP_PATH,imsi_str);
@@ -328,9 +335,9 @@ void LoadCash(void)
   {
     memcpy(MaxCASH,CurrentCASH,sizeof(MaxCASH));
     SaveCash();
-  }                    
+  }
   while ((CASH_SIZE<MAX_CASH_SIZE)&&(*patterns[CASH_SIZE]))
   {
     CASH_SIZE++;
   }
-}  
+}

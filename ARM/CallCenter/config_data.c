@@ -84,7 +84,7 @@ __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"Setup Vibra at Call",1,0};
  __root const CFG_HDR cfghdr8={CFG_UINT,"Vibra power",0,100};
  __root const unsigned int vibraPower=50;
 
- __root const CFG_HDR cfghdr9={CFG_UINT,"Vibra duration (ms)",0,100};
+ __root const CFG_HDR cfghdr9={CFG_UINT,"Vibra duration (ms)",0,200};
  __root const unsigned int vibraDuration=200;
 __root const CFG_HDR cfghdr_m31={CFG_LEVEL,"",0,0};
 
