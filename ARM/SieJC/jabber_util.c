@@ -33,7 +33,6 @@ extern const int DISPLAY_POPUPS;
 extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
-extern const char sndComposing[64];
 
 extern GR_ITEM *GR_ROOT;
 extern CLIST* cltop;
@@ -671,19 +670,7 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
 //Context: HELPER
 void _leaveconference(char *conf_jid)
 {
-
-  char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'/>";
-  char* pr=malloc(1024);
-  sprintf(pr, pr_templ,Mask_Special_Syms(My_JID_full),Mask_Special_Syms(conf_jid));
-  mfree(conf_jid);
-  SendAnswer(pr);
-  mfree(pr);
-  Send_ShortPresence(My_JID_full,PRESENCE_OFFLINE);
-
-
-
-
-
+  Send_ShortPresence(conf_jid,PRESENCE_OFFLINE);
 }
 
 // Выходит из конференции
@@ -1603,7 +1590,7 @@ RECV: <message
 */
   char notif_tpl[]="<message to='%s'><x xmlns='jabber:x:event'><id>%s</id><delivered/></x></message>";
   char *ans = malloc(256);
-  snprintf(ans,256,notif_tpl, to, mess_id);
+  snprintf(ans,256,notif_tpl, Mask_Special_Syms(to), mess_id);
   SUBPROC((void*)_sendandfree,ans);
 }
 
@@ -1618,7 +1605,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   char c_id[]="id";
 
   // Если включено обслуживание запросов о получении...
-
+  if((DELIVERY_EVENTS)||(COMPOSING_EVENTS))
   {
     XMLNode* xnode = XML_Get_Child_Node_By_Name(nodeEx,"x");
     if(xnode)
@@ -1637,11 +1624,16 @@ void Process_Incoming_Message(XMLNode* nodeEx)
           char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
           if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
         }
-        if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE)) //composing
+        if(COMPOSING_EVENTS) //composing
+          if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
         {
         delivery = XML_Get_Child_Node_By_Name(xnode,"composing");
-        if(delivery) {CList_ChangeComposingStatus(Res_ex, 1);
-          SUBPROC((void *)Play, sndComposing);}
+        if(delivery) 
+          {
+          CList_ChangeComposingStatus(Res_ex, 1);
+          extern const char sndComposing[];
+          SUBPROC((void *)Play, sndComposing);
+          }
         else CList_ChangeComposingStatus(Res_ex, 0);
         }
       }
