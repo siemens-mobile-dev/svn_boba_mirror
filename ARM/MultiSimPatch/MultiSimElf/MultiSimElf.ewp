@@ -561,7 +561,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -747,7 +747,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1384,7 +1384,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1570,7 +1570,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1755,7 +1755,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1801,7 +1801,7 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
@@ -1813,7 +1813,7 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssSource</name>
@@ -1855,7 +1855,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1111111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -2056,7 +2056,7 @@
         </option>
         <option>
           <name>AList</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>AListHeader</name>
@@ -2207,7 +2207,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2232,7 +2232,7 @@
         </option>
         <option>
           <name>XList</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>SegmentMap</name>
@@ -2323,7 +2323,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
@@ -2393,7 +2393,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>

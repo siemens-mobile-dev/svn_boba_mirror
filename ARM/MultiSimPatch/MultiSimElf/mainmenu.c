@@ -65,40 +65,40 @@ static const int mmenusoftkeys[]={0,1,2};
 static const char * const menutexts[]=
 {
   LG_MNUABOUT,
-  LG_MNUEDCFG,  
+  LG_MNUEDCFG,
 
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
-  LG_MNUVIRTSIM,  
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
-  LG_MNUVIRTSIM,  
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
-  LG_MNUVIRTSIM,  
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
-  LG_MNUVIRTSIM,  
+  LG_MNUVIRTSIM,
+  LG_MNUVIRTSIM,
+  LG_MNUVIRTSIM,
+  LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
   LG_MNUVIRTSIM,
 
-  
+
 };
 
 static const void *menuprocs[]=
 {
   (void *)AboutDlg,
-  (void *)Settings,  
+  (void *)Settings,
 
 };
 /*
-ghook_cmd: 
+ghook_cmd:
 1 - OncreateFirst
 2 - OnCreateAfterLLQ
 3 - OnClose
@@ -125,13 +125,13 @@ void tmenu_ghook(void *data, int cmd)
   if (cmd==9)
   {
  //   Menu_SetItemCountDyn(data,3+simcnt);
-//    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);    
+//    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);
   }
   if (cmd==0x0A)
   {
     DisableIDLETMR();
     Menu_SetItemCountDyn(data,2+simcnt);
-    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);    
+    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);
   }
 }
 
@@ -143,7 +143,7 @@ static void menuitemhandler(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
-  
+
   const char percent_t[]="%t";
 //  extern const char percent_t[];
   ws=AllocMenuWS(data,strlen(menutexts[curitem]));
@@ -153,24 +153,24 @@ static void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,S_ICONS+curitem);
   }else{
   if (curitem==simnum+2){
-  SetMenuItemIconArray(data,item,icon_array+0);  
+  SetMenuItemIconArray(data,item,icon_array+0);
 //  SetCursorToMenuItem(data,curitem);
   }
   else
-      SetMenuItemIconArray(data,item,icon_array+1);  
+      SetMenuItemIconArray(data,item,icon_array+1);
   }
   if (curitem<2);
 
   else{
-    
+
    ws=AllocMenuWS(data,strlen((const char*)block5401[curitem-2].SPNname));
    wsprintf(ws,percent_t,block5401[curitem-2].SPNname);
-//   wsprintf(ws,"%d",curitem-2);   
-//   ws=AllocMenuWS(data,strlen("sim 924234"));    
+//   wsprintf(ws,"%d",curitem-2);
+//   ws=AllocMenuWS(data,strlen("sim 924234"));
 //   wsprintf(ws,"sim %x %d",strlen((const char*)block5401[curitem-2].SPNname),curitem);
   }
-    SetMenuItemText(data, item, ws, curitem);    
-  
+    SetMenuItemText(data, item, ws, curitem);
+
 }
 
 static int tmenu_keyhook(void *data, GUI_MSG *msg)
@@ -187,8 +187,8 @@ static int tmenu_keyhook(void *data, GUI_MSG *msg)
       ShowMSG(1,(int)ss);
     */
   if ((msg->gbsmsg->submess>='0')&&(msg->gbsmsg->submess<=('0'+simcnt))){
-   
-      ChangeSim(msg->gbsmsg->submess-'0');      
+
+      ChangeSim(msg->gbsmsg->submess-'0');
   }
   }
   return(0);
@@ -208,22 +208,22 @@ static const MENU_DESC tmenu=
 };
 
 
-  char str1[]="4:\\zbin\\img\\BCFG_SMALL.PNG";;
-  char str2[]="4:\\zbin\\img\\TXT_SMALL.png";
-  char str3[]="4:\\zbin\\img\\BCFG_SMALL.PNG";;  
-//Õ”∆ÕŒ Õ¿–»—Œ¬¿“‹  ¿–“»Õ » À»¡Œ —Ã≈Õ»“‹ œ”“»  
+  char str1[]="4:\\zbin\\img\\ext\\TXT_SMALL.png";
+  char str2[]="4:\\zbin\\img\\ext\\BCFG_SMALL.PNG";;
+  char str3[]="4:\\zbin\\img\\ext\\BCFG_SMALL.PNG";;
+//Õ”∆ÕŒ Õ¿–»—Œ¬¿“‹  ¿–“»Õ » À»¡Œ —Ã≈Õ»“‹ œ”“»
   //char str1[]="4:\\zbin\\img\\multisim\\1.png";;
   //char str2[]="4:\\zbin\\img\\multisim\\2.png";
   //char str3[]="4:\\zbin\\img\\multisim\\3.png";
 int ShowMainMenu()
 {
-    extern const char *successed_config_filename;  
+    extern const char *successed_config_filename;
   str1[0]=  successed_config_filename[0];
-  str2[0]=  successed_config_filename[0];  
-  str3[0]=  successed_config_filename[0];    
+  str2[0]=  successed_config_filename[0];
+  str3[0]=  successed_config_filename[0];
   S_ICONS[0]=(int)str1;
   S_ICONS[1]=(int)str2;
-  
+
 
   S_ICONS[2]=(int)str3;
   icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);

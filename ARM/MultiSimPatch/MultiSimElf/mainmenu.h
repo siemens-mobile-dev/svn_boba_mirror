@@ -6,9 +6,11 @@
 #include "setmenu.h"
 
 #ifdef NEWSGOLD
+#define DEFAULT_DISK_CFG "4"
 #define CBOX_CHECKED 0xE116
 #define CBOX_UNCHECKED 0xE117
 #else
+#define DEFAULT_DISK_CFG "0"
 #define CBOX_CHECKED 0xE10B
 #define CBOX_UNCHECKED 0xE10C
 #endif

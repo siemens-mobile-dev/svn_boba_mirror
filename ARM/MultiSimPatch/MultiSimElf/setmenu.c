@@ -63,38 +63,30 @@ unsigned char bp[BL_SZ_5402];
 extern const char f5401s[];
 extern const char f5402s[];
 
-int WriteFile(char *name, unsigned char *filebuf,int size)
-{
-
+int WriteFile(char *name, unsigned char *filebuf, int size) {
   int f;
- 
   char *buf=NULL,*bufs;
- 
-  const int c=3*size+size/16;
-  buf=malloc(c);
-  if (!buf)return 0;
-  memset(buf,0,c);
-  bufs=buf;
-  
-  unsigned int ul;  
+  const int c=((size<<1)+size)+(size>>3);//==3*size+size/16*2 == по 3 символа на 16-ричное число + 2-байтовый перевод строки после каждых 16 байт
 
-//  char Block5400[1024];
-//  if ((f=fopen("0:\\Misc\\5400s.txt\0",0x8301,0x100,&ul))!=-1){
-  if ((f=fopen(name,0x8301,0x100,&ul))!=-1){
-    for (int i=0;i<(size/16);i++){
-      for (int j=0;j<15;j++){
-        sprintf(buf,"%02X ",*filebuf++);
-        buf+=strlen(buf);
+  buf=malloc(c);
+  if (!buf)
+    return 0;
+  memset(buf, 0, c);
+  bufs=buf;
+
+  unsigned int ul;
+  if ((f=fopen(name, A_BIN+A_Truncate+A_Create+A_WriteOnly, 0, &ul))!=-1) {
+    for (int i=0; i<(size>>4); i++) {
+      for (int j=0; j<16; j++) {
+        buf+=sprintf(buf, "%02X ", *filebuf++);
       }
-      sprintf(buf,"%02X\r\n",*filebuf++);
-       buf+=strlen(buf);
+      *buf++='\r';
+      *buf++='\n';
     }
-    fwrite(f,bufs,c,&ul);
-        fclose(f,&ul);    
+    fwrite(f, bufs, c, &ul);
+    fclose(f, &ul);
   }
-  
-//  SetEEFULLBlock(5400, Block5400, 0, 1024);
-//  ShowMSG(1,(int)"Block 5400 updated!");
+
   mfree(bufs);
   return 1;
 }
@@ -127,7 +119,7 @@ int ReadFile(char *name)
     size=lseek(f,0,S_END,&ul,&ul);
     filebuf=malloc(size+1);
     if (filebuf){
-      lseek(f,0,S_SET,&ul,&ul);   
+      lseek(f,0,S_SET,&ul,&ul);
       fread(f,filebuf,size,&ul);
       fclose(f,&ul);
 
@@ -140,10 +132,10 @@ int ReadFile(char *name)
       mfree(filebuf);
       return cnt;
     };
-   
+
   }
   return 0;
- 
+
 }
 
 
@@ -155,11 +147,11 @@ static void LoadBlock(void) //from flie
     EEFullWriteBlock(5401, bp, 0, BL_SZ_5401,0,0);
 
   }else {
-    
+
       MsgBoxError(1,(int)LG_MSGERRBLOCK);
   }
       GeneralFuncF1(1);
-  
+
 }
 
 static void LoadBlock1(void) //from flie
@@ -167,38 +159,38 @@ static void LoadBlock1(void) //from flie
   if (ReadFile((char*)f5402s)==BL_SZ_5402){
     EEFullWriteBlock(5402, bp, 0, BL_SZ_5402,0,0);
 
-    
+
   }else {
       MsgBoxError(1,(int)LG_MSGERRBLOCK);
 
 
   }
-      GeneralFuncF1(1);  
+      GeneralFuncF1(1);
 }
 
 static void FixBlock(void) //from flie
 {
-  
+
   EEFullReadBlock(5402, bp, 0, BL_SZ_5402,0,0);
-  for(int i=0;i<MAX_SIM_CNT;i++)  
+  for(int i=0;i<MAX_SIM_CNT;i++)
    bp[0x50*i+0x2f]=i;
   EEFullWriteBlock(5402, bp, 0, BL_SZ_5402,0,0);
-  
+
   EEFullReadBlock(5403, bp, 0, BL_SZ_5403,0,0);
-   bp[0x2f]=0;  
-  EEFullWriteBlock(5403, bp, 0, BL_SZ_5403,0,0);  
-      GeneralFuncF1(1);  
+   bp[0x2f]=0;
+  EEFullWriteBlock(5403, bp, 0, BL_SZ_5403,0,0);
+      GeneralFuncF1(1);
 }
 
 
 static void SaveBlock(void)
 {
    EEFullReadBlock(5401, bp, 0, BL_SZ_5401,0,0);
-   WriteFile((char*)f5401s,bp,BL_SZ_5401); 
-   GeneralFuncF1(1);    
+   WriteFile((char*)f5401s,bp,BL_SZ_5401);
+//   GeneralFuncF1(1);
 
   //add hash checking
- 
+
 	  //поидее надо дождаться callback
    //    WriteFile();
 }
@@ -206,8 +198,8 @@ static void SaveBlock(void)
 static void SaveBlock1(void)
 {
    EEFullReadBlock(5402, bp, 0, BL_SZ_5402,0,0);
-   WriteFile((char*)f5402s,bp,BL_SZ_5402); 
-   GeneralFuncF1(1);    
+   WriteFile((char*)f5402s,bp,BL_SZ_5402);
+//   GeneralFuncF1(1);
 }
 
 
@@ -239,14 +231,14 @@ static const char * const smenutexts[]=
   LG_MNUASNET,
   LG_MNUCFG,
   LG_MNUSAVEB,
-  LG_MNULOADB, 
-  
-  LG_MNUOPENB, 
+  LG_MNULOADB,
+
+  LG_MNUOPENB,
   LG_MNUSAVEB1,
-  LG_MNULOADB1,  
-  LG_MNUOPENB1, 
+  LG_MNULOADB1,
+  LG_MNUOPENB1,
   LG_MNUFIX,
-  
+
 };
 
 extern void SendRequest(int submess, void *data);
@@ -259,12 +251,12 @@ static void AutoNet(void)
 static const void *smenuprocs[]=
 {
   (void *)AutoNet,
-  (void *)OpenCfg,    
-  (void *)SaveBlock,  
+  (void *)OpenCfg,
+  (void *)SaveBlock,
   (void *)LoadBlock,
   (void *)OpenBlock,
-  (void *)SaveBlock1,    
-  (void *)LoadBlock1,  
+  (void *)SaveBlock1,
+  (void *)LoadBlock1,
    (void *)OpenBlock1,
    (void *)FixBlock
 };
@@ -279,7 +271,7 @@ void stmenu_ghook(void *data, int cmd)
 
    Menu_SetItemCountDyn(data,9);
 
-//    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);    
+//    if (simnum<3+simcnt)      SetCursorToMenuItem(data,2+simnum);
   }
 }
 
@@ -291,14 +283,14 @@ static void smenuitemhandler(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
-  
+
   const char percent_t[]="%t";
 //  extern const char percent_t[];
   ws=AllocMenuWS(data,strlen(smenutexts[curitem]));
   wsprintf(ws,percent_t,smenutexts[curitem]);
 
-    SetMenuItemText(data, item, ws, curitem);    
-  
+    SetMenuItemText(data, item, ws, curitem);
+
 }
 
 static int stmenu_keyhook(void *data, GUI_MSG *msg)
@@ -325,8 +317,8 @@ static const MENU_DESC stmenu=
 
 int ShowSetMenu()
 {
-  sS_ICONS[0]=(int)"4:\\zbin\\naticq\\img\\online.png";
-  sS_ICONS[1]=(int)"4:\\zbin\\naticq\\img\\offline.png";
+  sS_ICONS[0]=(int)DEFAULT_DISK_CFG ":\\zbin\\naticq\\img\\online.png";
+  sS_ICONS[1]=(int)DEFAULT_DISK_CFG ":\\zbin\\naticq\\img\\offline.png";
   sS_ICONS[2]=0;
 //  sicon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
 //  sicon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
