@@ -1487,7 +1487,11 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   {
     switch(msg->gbsmsg->submess)
     {
-    case '5': 
+    case '5':
+      {
+        CList_Display_Popup_Info(CList_GetActiveContact());
+        break;
+      }
     case ENTER_BUTTON:
       {
         LockSched();
@@ -1565,9 +1569,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
     case '7':
       { 
-        CList_Display_Popup_Info(CList_GetActiveContact());
-        break;
-
         /*
         char xz[] = "Test";
         char xz_jid[] = "test@j.ru";
