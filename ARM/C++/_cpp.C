@@ -1,6 +1,12 @@
 #include "..\inc\swilib.h"
 
 
+void __data_memzero(void * data,int n)
+{
+zeromem(data,n);    
+};
+
+
 //pure virtual function may show error
 void __pure_virtual_called(void)
 {
