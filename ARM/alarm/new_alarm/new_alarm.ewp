@@ -2473,6 +2473,9 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\..\alarm.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\..\func.asm</name>
   </file>
   <file>

@@ -1,15 +1,8 @@
 #include "..\..\inc\swilib.h"
 #include "..\..\inc\cfg_items.h"
 #include "conf_loader.h"
-#include "..\lgp.h"
-
-#ifdef NEWSGOLD
-#define DEFAULT_DISK "4"
-#define PROFILE_PD_DISC "1"
-#else
-#define DEFAULT_DISK "0"
-#define PROFILE_PD_DISC "0"
-#endif
+//#include "..\lgp.h"
+#include "..\alarm.h"
 
 unsigned short maincsm_name_body[140];
 unsigned int my_csm_id = 0;
@@ -36,7 +29,6 @@ int old_profile;
 GBSTMR restarttmr;
 GBSTMR restartmelody;
 int file_length;
-char profile_pd_file[]=PROFILE_PD_DISC":\\system\\hmi\\profile.pd";
 
 typedef struct
 {
@@ -232,13 +224,13 @@ void OnRedraw()
   wsprintf(ws,"%02d-%02d-%04d",date.day, date.month,date.year);
   DrawString(ws,0,90,scr_w,scr_h,FONT_SMALL,3,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   
-  wsprintf(ws, "%t",alarm_name);
+  wsprintf(ws, percent_t, alarm_name);
   DrawString(ws,0,60,scr_w,scr_h,FONT_SMALL,3,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
   
   TDate date1;
   GetDateTime(&date1,0);
   char wd = GetWeek(&date1);
-  wsprintf(ws, "%t",wd2[wd]);
+  wsprintf(ws, percent_t, wd2[wd]);
   DrawString(ws,0,105,scr_w,scr_h,FONT_SMALL,3,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
@@ -443,9 +435,10 @@ void play_sound()
   }
 }
 
-int main(char *exename, char *fname)
+int main(char *exename, const char *fname)
 {
   InitConfig();
+  if(strcmp_nocase(fname,param_new_cfg) == 0) return 0;
   scr_w=ScreenW()-1;
   scr_h=ScreenH()-1;
   

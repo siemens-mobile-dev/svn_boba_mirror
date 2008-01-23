@@ -1,23 +1,7 @@
 #include "..\..\inc\swilib.h"
 #include "image.h"
-#include "..\lgp.h"
-
-#define fon 1
-#define st_off 2
-#define st_on 3
-#define wd_off 4
-#define wd_on 5
-#define logo 6
-
-//#define NO_PNG
-
-#ifdef NEWSGOLD
-#define DEFAULT_DISK "4"
-#define num_alarms 5
-#else
-#define DEFAULT_DISK "0"
-#define num_alarms 6
-#endif
+//#include "..\lgp.h"
+#include "..\alarm.h"
 
 unsigned int status[6];
 unsigned int hour[6];
@@ -34,15 +18,11 @@ unsigned int show_icon;
 GBSTMR mytmr;
 unsigned int input;
 
-unsigned int num_alarm=1;
+unsigned int num_alarm=0;
 unsigned int edit_level=1;
 unsigned int ch[3];
 unsigned int set=1;
 int lng;
-char cfgfile[]=DEFAULT_DISK":\\zbin\\alarm\\alarm.cfg";
-char fongpf[]=DEFAULT_DISK":\\zbin\\alarm\\fon.gpf";
-char fonpng[]=DEFAULT_DISK":\\zbin\\alarm\\fon.png";
-char bcfgfile[]=DEFAULT_DISK":\\Zbin\\etc\\alarm_melody.bcfg";
 
 int scr_w;
 int scr_h;
@@ -105,10 +85,11 @@ DrwImg(IMGHDR *img, int x, int y)
 
 void DrawBackground()
 {
+#ifdef NO_PNG
   volatile int hFile;
   PICHDR Pic_Header;
   unsigned int io_error = 0;
-  hFile = fopen(fongpf, A_ReadOnly + A_BIN, P_READ, &io_error);
+  hFile = fopen(fonimg, A_ReadOnly + A_BIN, P_READ, &io_error);
   if(!io_error)
   {
     fread(hFile, &Pic_Header, sizeof(Pic_Header), &io_error);
@@ -125,10 +106,9 @@ void DrawBackground()
     DrwImg(&img, 0, 0);
     mfree(pic_buffer);
   }
-  else
-  {
-    DrawImg(0, 0, (int)fonpng);
-  }
+#else
+  DrawImg(0, 0, (int)fonimg);
+#endif
 }
 
 void draw_pic(int num,int x, int y)
@@ -187,6 +167,7 @@ void draw_pic(int num,int x, int y)
   }
 }
 
+#ifdef SIX_ALARMS
 #ifndef NEWSGOLD
 
 #define MAX_HEX   (100+10)
@@ -420,6 +401,7 @@ void saveeeblock()
 }
 
 #endif
+#endif
 
 void load_settings(void)
 {
@@ -488,12 +470,14 @@ Y=data[55];
     mfree(data);
   }
   fclose(handle,&err);
+#ifdef SIX_ALARMS
   geteeblock();
+#endif
 }
 
 void save_settings(void)
 {
-  unsigned int err; 
+  unsigned int err;
   int handle=fopen(cfgfile,A_WriteOnly+A_Create,P_WRITE,&err);
   if(handle!=-1)
   {
@@ -558,7 +542,9 @@ data[55]=Y;
     mfree(data);
   }
   fclose(handle,&err);
+#ifdef SIX_ALARMS
   saveeeblock();
+#endif
 }
 
 void edit()
@@ -596,13 +582,13 @@ void OnRedraw()
       draw_pic(fon,0,0);
       draw_pic(logo,2,2);
       
-      wsprintf(ws, "%t",alarm_name);
+      wsprintf(ws, percent_t, alarm_name);
       DrwStr(ws,30,3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       
-      wsprintf(ws, "%t",change);
+      wsprintf(ws, percent_t, change);
       DrwStr(ws,8,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       
-      wsprintf(ws, "%t",save);
+      wsprintf(ws, percent_t, save);
       DrwStr(ws,scr_w/1.5,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       
       char *stat=malloc(16);
@@ -638,18 +624,18 @@ void OnRedraw()
 #endif
       if ((edit_level==1)||(edit_level==3))
         {
-          wsprintf(ws,"%t",change);
+          wsprintf(ws, percent_t, change);
           DrwStr(ws,8,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
         }
       
-      wsprintf(ws, "%t",ok);
+      wsprintf(ws, percent_t,ok);
       DrwStr(ws,scr_w/1.5,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       
       int a=scr_w/2-GetSymbolWidth('n',FONT_SMALL)*2;
-      if (status[num_alarm]) wsprintf(ws, "%t",on);
+      if (status[num_alarm]) wsprintf(ws, percent_t,on);
           else 
           {
-            wsprintf(ws, "%t",off);
+            wsprintf(ws, percent_t,off);
             a-=3;
           }
       //////////////////////////////////  SL65  ////////////////////////////////
@@ -703,7 +689,7 @@ void OnRedraw()
       b=scr_h-SoftkeyH()-font_size-24;
       for (int i=0;i<7;i++)
       {
-        wsprintf(ws, "%t",wd[i]);
+        wsprintf(ws, percent_t,wd[i]);
         if ((edit_level==3)&&(set==i)) DrwStr(ws,4+a*i,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
           else DrwStr(ws,4+a*i,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       }
@@ -732,8 +718,8 @@ void OnRedraw()
       wsprintf(ws, "%03d,%03d", X, Y);
       DrwStr(ws,scr_w/1.5,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
       
-      if (show_icon) wsprintf(ws, "%t",on);
-        else wsprintf(ws, "%t",off);
+      if (show_icon) wsprintf(ws, percent_t, on);
+        else wsprintf(ws, percent_t, off);
       DrwStr(ws,8,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
     }
   }
@@ -766,14 +752,6 @@ void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
-void open_bcfg()
-{
-  WSHDR *_elf=AllocWS(256);
-  wsprintf(_elf,"%s",bcfgfile);
-  ExecuteFile(_elf,0,0);
-  FreeWS(_elf);
-}
-
 int onkey(unsigned char keycode, int pressed)
 {
   switch(mode)
@@ -788,7 +766,8 @@ int onkey(unsigned char keycode, int pressed)
             switch(keycode)
             {
             case RED_BUTTON: return(1);
-            case LEFT_SOFT:  mode=2; OnRedraw(); break;
+            case LEFT_SOFT:
+            case ENTER_BUTTON:  mode=2; OnRedraw(); break;
             case RIGHT_SOFT:
               {
                 save_settings();
@@ -815,7 +794,9 @@ int onkey(unsigned char keycode, int pressed)
             case '3': num_alarm=2; break;
             case '4': num_alarm=3; break;
             case '5': num_alarm=4; break;
-            //case '6': num_alarm=5; break;
+#ifdef SIX_ALARMS
+            case '6': num_alarm=5; break;
+#endif
             case '#': mode=3; break;
             //case '*': saveeeblock(); break;
             //case '*': ShowMSG(1,(int)"Alarm cfg editor\n(c)Geka"); break;
@@ -1075,6 +1056,8 @@ void UpdateCSMname(void)
 
 int main(void)
 {
+  if (check_install()>0)
+    return 0;
   font_size=GetFontYSIZE(FONT_SMALL);
   load_settings();
   scr_w=ScreenW()-1;
