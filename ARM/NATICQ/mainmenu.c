@@ -47,20 +47,20 @@ static void ChangeSoundMode(void)
 
 static void ChangeShowOfflineMode(void)
 {
-  void RecountMenu(CLIST *req);
+  void RecountMenu(CLIST *req, int needfocus);
   Is_Show_Offline=!(Is_Show_Offline);
   SUBPROC((void*)WriteDefSettings);
-  RecountMenu(NULL);
+  RecountMenu(NULL, 1);
   RefreshGUI();
 }
 
 static void ChangeShowGroupsMode(void)
 {
-  void RecountMenu(CLIST *req);
+  void RecountMenu(CLIST *req, int needfocus);
   Is_Show_Groups=!(Is_Show_Groups);
   SUBPROC((void*)WriteDefSettings);
   ResortCL();
-  RecountMenu(NULL);
+  RecountMenu(NULL, 1);
   RefreshGUI();
 }
 

@@ -805,7 +805,7 @@ void contactlist_menu_ghook(void *data, int cmd)
   }
 }
 
-void RecountMenu(CLIST *req)
+void RecountMenu(CLIST *req, int needfocus)
 {
   int i;
   int j;
@@ -829,7 +829,7 @@ void RecountMenu(CLIST *req)
     prev_clmenu_itemcount=i;
     Menu_SetItemCountDyn(data,i);
   }
-  SetCursorToMenuItem(data,j);
+  if(needfocus) SetCursorToMenuItem(data,j);
   if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
 }
 
@@ -851,13 +851,13 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
       if (t->isgroup)
       {
 	t->state^=0xFFFF;
-	RecountMenu(t);
+	RecountMenu(t, 1);
 	return(-1);
       }
       if (strlen(ContactT9Key))
       {
 	ClearContactT9Key();
-	RecountMenu(NULL);
+	RecountMenu(NULL, 1);
       }
       if(!t->isactive && HISTORY_BUFFER) GetHistory(t, 64<<HISTORY_BUFFER);
       CreateEditChat(t);
@@ -869,7 +869,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (strlen(ContactT9Key))
     {
       BackSpaceContactT9();
-      RecountMenu(NULL);
+      RecountMenu(NULL, 1);
       return(-1);
     }
   }
@@ -879,13 +879,13 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (((key>='0')&&(key<='9'))||(key=='#')||(key=='*'))
     {
       AddContactT9Key(key);
-      RecountMenu(NULL);
+      RecountMenu(NULL, 1);
       return(-1);
     }
     if (key==GREEN_BUTTON)
     {
       IsActiveUp=!IsActiveUp;
-      RecountMenu(NULL);
+      RecountMenu(NULL, 1);
       return(-1);
     }
     if (key==RIGHT_BUTTON)
@@ -910,7 +910,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
         t=FindGroupByID(t->group);
        if (t && !t->state) {//группа нашлась и она открыта?
         t->state^=0xFFFF;
-        RecountMenu(t);
+        RecountMenu(t, 1);
        }
       }
       return -1;
@@ -921,7 +921,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     if (msg->gbsmsg->submess=='#')
     {
       ClearContactT9Key();
-      RecountMenu(NULL);
+      RecountMenu(NULL, 1);
       gipc.name_to=ipc_xtask_name;
       gipc.name_from=ipc_my_name;
       gipc.data=0;
@@ -934,7 +934,7 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     }
     if (msg->gbsmsg->submess=='*'){
       ClearContactT9Key();
-      RecountMenu(NULL);
+      RecountMenu(NULL, 1);
       silenthide=1;
       gipc.name_to=ipc_xtask_name;
       gipc.name_from=ipc_my_name;
@@ -1897,11 +1897,11 @@ ProcessPacket(TPKT *p)
         strncpy(t->name,p->data,63);
 	t->group=GROUP_CACHE;
 	ChangeContactPos(t);
-	RecountMenu(t);
+	RecountMenu(t, 1);
       }
       else
       {
-        RecountMenu(AddContact(p->pkt.uin,p->data));
+        RecountMenu(AddContact(p->pkt.uin,p->data), 1);
       }
     }
     else
@@ -1915,7 +1915,7 @@ ProcessPacket(TPKT *p)
       ask_my_info();
       if (contactlist_menu_id)
       {
-	RecountMenu(NULL);
+	RecountMenu(NULL, 1);
       }
       else
         create_contactlist_menu();
@@ -1926,11 +1926,11 @@ ProcessPacket(TPKT *p)
     {
       strncpy(t->name,p->data,63);
       ChangeContactPos(t);
-      RecountMenu(t);
+      RecountMenu(t, 1);
     }
     else
     {
-      RecountMenu(AddGroup(p->pkt.uin,p->data));
+      RecountMenu(AddGroup(p->pkt.uin,p->data), 1);
     }
     break;
   case T_GROUPFOLLOW:
@@ -1978,7 +1978,7 @@ ProcessPacket(TPKT *p)
       t->state=*((unsigned short *)(p->data));
       LogStatusChange(t);
       ChangeContactPos(t);
-      RecountMenu(oldt);
+      RecountMenu(oldt, 1);
       if ((t->state!=0xFFFF)&&(i==0xFFFF))//Звук
       {
 	Play(sndGlobal);
@@ -2050,7 +2050,7 @@ ProcessPacket(TPKT *p)
       }
     }
     ReqAddMsgToChat(t);
-    RecountMenu(t);
+    RecountMenu(t, 1);
     extern const int DEVELOP_IF;
     switch (DEVELOP_IF)
     {
@@ -2131,7 +2131,9 @@ ProcessPacket(TPKT *p)
 	strncpy(s+i,p->data+p->data[0]+1,j);
       }
 //      if (IsGuiOnTop(contactlist_menu_id)) RefreshGUI();
-      if (!edchat_id) ShowMSG(0,(int)s);   // Только если редактор не наверху
+      if (!edchat_id &&           // Только если редактор не наверху
+          strlen(p->data))       // и x-status не пустой
+          ShowMSG(0,(int)s);
 
       zeromem(s,256);
       i=0;
@@ -2148,7 +2150,10 @@ ProcessPacket(TPKT *p)
       }
       AddStringToLog(t,0x03,s,x_status_change,0xFFFFFFFF);
       ReqAddMsgToChat(t);
-      RecountMenu(t);
+      if (strlen(p->data))       // Если x-status не пустой
+        RecountMenu(t, 1);
+      else
+        RecountMenu(NULL, 0);
     }
     break;
   case T_LASTPRIVACY:
@@ -2202,10 +2207,10 @@ void method0(MAIN_GUI *data)
   }
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t,LG_GRSKEYEXIT);
+  wsprintf(data->ws2,percent_t,cltop?LG_GRSKEYCLIST:empty_str);
   DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t,cltop?LG_GRSKEYCLIST:empty_str);
+  wsprintf(data->ws2,percent_t,LG_GRSKEYEXIT);
   DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     scr_w>>1,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
@@ -2245,11 +2250,11 @@ int method5(MAIN_GUI *data,GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case LEFT_SOFT:
-      if (cltop) create_contactlist_menu();
-      //      if (cltop) remake_clmenu();
-      break;
-    case RIGHT_SOFT:
       return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+    case RIGHT_SOFT:
+      //      if (cltop) remake_clmenu();
+      if (cltop) create_contactlist_menu();
+      break;
     case GREEN_BUTTON:
       disautorecconect=0;
       if ((connect_state==0)&&(sock==-1))
@@ -2441,7 +2446,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 		{
 		  oldt=FindContactByN(GetCurMenuItem(FindGUIbyId(contactlist_menu_id,NULL)));
 		}
-		RecountMenu(oldt);
+		RecountMenu(oldt, 1);
 	      }
 	      if (time_to_stop_t9)
 	      {
@@ -2510,7 +2515,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       free_ICONS();
       setup_ICONS();
       ResortCL();
-      RecountMenu(NULL);
+      RecountMenu(NULL, 1);
       //      InitSmiles();
     }
   }
@@ -2627,7 +2632,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  }
 	}*/
 	FillAllOffline();
-	RecountMenu(NULL);
+	RecountMenu(NULL, 1);
 	connect_state=0;
 	sock=-1;
         if(VIBR_ON_CONNECT)
@@ -3049,7 +3054,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 	      CutWSTR(ews,0);
 	      EDIT_SetTextToFocused(data,ews);
 	      AddMsgToChat(data);
-	      RecountMenu(t);
+	      RecountMenu(t, 1);
 	      return(-1);
 	    }
 	  }
@@ -3166,7 +3171,7 @@ void edchat_ghook(GUI *data, int cmd)
       ExtractEditControl(data,ed_struct->ed_answer,&ec);
       SaveAnswer(ed_struct->ed_contact,ec.pWS);
     }
-    RecountMenu(ed_struct->ed_contact);
+    RecountMenu(ed_struct->ed_contact, 1);
     mfree(ed_struct);
   }
   if (cmd==0x0A)
@@ -3195,7 +3200,7 @@ void edchat_ghook(GUI *data, int cmd)
       {
 	ed_struct->ed_contact->req_add=0;
 	AddMsgToChat(data);
-	RecountMenu(ed_struct->ed_contact);
+	RecountMenu(ed_struct->ed_contact, 1);
       }
       if (ed_struct->ed_contact->req_drawack)
       {
@@ -3453,7 +3458,7 @@ void GetShortInfo(GUI *data)
     p->pkt.data_len=0;
     AddStringToLog(t, 0x01, "Request info...", I_str,0xFFFFFFFF);
     AddMsgToChat(ed_struct->ed_chatgui);
-    RecountMenu(t);
+    RecountMenu(t, 1);
     SUBPROC((void *)SendAnswer,0,p);
   }
   GeneralFuncF1(1);
@@ -3487,7 +3492,7 @@ void SendAuthReq(GUI *data)
     strcpy(p->data,s);
     AddStringToLog(t,0x01,p->data,I_str,0xFFFFFFFF);
     AddMsgToChat(ed_struct->ed_chatgui);
-    RecountMenu(t);
+    RecountMenu(t, 1);
     SUBPROC((void *)SendAnswer,0,p);
   }
   GeneralFuncF1(1);
@@ -3511,7 +3516,7 @@ void SendAuthGrant(GUI *data)
     strcpy(p->data,s);
     AddStringToLog(t,0x01,p->data,I_str,0xFFFFFFFF);
     AddMsgToChat(ed_struct->ed_chatgui);
-    RecountMenu(t);
+    RecountMenu(t, 1);
     SUBPROC((void *)SendAnswer,0,p);
   }
   GeneralFuncF1(1);
@@ -3578,7 +3583,7 @@ void ClearLog(GUI *data/*,void *dummy*/)
         }
       }
       t->isactive=0;		//by BoBa  18.06.07
-      RecountMenu(t);
+      RecountMenu(t, 1);
       GeneralFuncF1(1);
     }
   }
