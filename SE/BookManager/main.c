@@ -47,9 +47,9 @@ int isBookManager(BOOK * struc);
 const PAGE_MSG bk_msglst[] @ "DYN_PAGE"  = 
 {
   BOOK_DESTROYED_EVENT_TAG,onRootListChanged,
-  0,0};
+  NIL_EVENT_TAG,          0};
 
-const PAGE_DESC bk = {"BookManagerBook",0,&bk_msglst[0]};
+const PAGE_DESC bk = {"BookManagerBook",0,bk_msglst};
 
 
 
@@ -74,6 +74,62 @@ int isBookManager(BOOK * struc)
   }
 }
 
+void win12512unicode(u16 *ws, char *s, int len)
+{
+  int c;
+  while((c=*s++)&&((len--)>0))
+  {
+    if (c==0xA8) c=0x401;
+    if (c==0xAA) c=0x404;
+    if (c==0xAF) c=0x407;
+    if (c==0xB8) c=0x451;
+    if (c==0xBA) c=0x454;
+    if (c==0xBF) c=0x457;
+    if ((c>=0xC0)&&(c<0x100)) c+=0x350;
+    *ws++=c;
+  }
+  *ws=0;
+}
+
+char *unicode2win1251(char *s, u16 *ws, int len)
+{
+  char *d=s;
+  int c;
+  while((c=*ws++)&&((len--)>0))
+  {
+    if (c==0x401) c=0xA8;
+    if (c==0x404) c=0xAA;
+    if (c==0x407) c=0xAF;
+    if (c==0x451) c=0xB8;
+    if (c==0x454) c=0xBA;
+    if (c==0x457) c=0xBF;
+    if ((c>=0x410)&&(c<0x450)) c-=0x350;
+    *s++=c;
+  }
+  *s=0;  
+  return(d);
+}
+
+int w1251toUNICODE (u16 * wstr)
+{
+  u16 * ws=wstr;
+  u16 c;
+  while(*ws)
+  {
+    c=*ws;
+    if (c==0xA8) c=0x401;
+    if (c==0xAA) c=0x404;
+    if (c==0xAF) c=0x407;
+    if (c==0xB8) c=0x451;
+    if (c==0xBA) c=0x454;
+    if (c==0xBF) c=0x457;
+    if ((c>=0xC0)&&(c<0x100)) c+=0x350;
+    *ws++=c;
+  }
+  return(Str2ID(wstr,0,SID_ANY_LEN));
+};
+
+
 // взять значение из ини-файла
 int GetParam(char * name)
 {
@@ -86,7 +142,7 @@ int GetParam(char * name)
     char * param;
     if (param=manifest_GetParam(myBook->filebuf,name,0))
     {
-      str2wstr(ws,param);
+      win12512unicode(ws,param,49);
       sID=Str2ID(ws,0,SID_ANY_LEN);
       mfree(param);
       return(sID);
@@ -94,7 +150,7 @@ int GetParam(char * name)
   }
   if(!sID)
   {
-    str2wstr(ws,name);
+    win12512unicode(ws,name,49);
     sID=Str2ID(ws,0,wstrlen(ws));
   }
   return(sID);
@@ -139,7 +195,7 @@ void CreateBookLst(MyBOOK * myBook)
             si=new SESSION_ITEM;
             si->book_list=List_New();
             TextID2wstr(session->name,ws,100);
-            si->session_name=GetParam(wstr2strn(s,ws,100));
+            si->session_name=GetParam(unicode2win1251(s,ws,100));
             si->session=session;
           }
           BOOK_ITEM * b = new BOOK_ITEM;
@@ -243,6 +299,7 @@ void onDelPressed(BOOK * book,void * lt)
       if (Find_StandbyBook()!=bk)
       {
         UI_Event_toSID(RETURN_TO_STANDBY_EVENT,bk->BookID);
+        UI_Event_toSID(TERMINATE_SESSION_EVENT,bk->BookID);
       }
     }
   }
@@ -269,7 +326,8 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
     {
       if (i4==KBD_SHORT_RELEASE)
       {
-	if (Find_StandbyBook()!=0)Show(Find_StandbyBook());
+        BOOK *stby_bk=Find_StandbyBook();
+	if (stby_bk) BookObj_SetFocus(stby_bk,0);
       }
       else
       {
@@ -281,7 +339,7 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
     {
       char key[20];
       char * param;
-      sprintf(key,i4==3?"[S_KEY%d]":"[L_KEY%d]",i1-0x10);
+      sprintf(key,i4==3?"[S_KEY%d]":"[L_KEY%d]",i1-KEY_DIGITAL_0);
       if (param=manifest_GetParam(myBook->filebuf,key,0))
       {
 	u16 par[256];
@@ -495,6 +553,7 @@ void get_ini_key(void)
 
 int main (void)
 {
+  bman_book=0;
   get_ini_key();
   ModifyKeyHook(NewKey,1);
   return(0);
