@@ -911,15 +911,15 @@ __swi __arm  void List2lineSubitemAddText(void* msg,int StrID);
 #pragma swi_number=0x246
 __swi __arm  int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 
-#pragma swi_number=0x247
-__swi __arm  int GUIonMessage_GetCurrentSubItemIndex(void * msg);
-#pragma swi_number=0x248
+#pragma swi_number=0x252
+__swi __arm  int List2LineGetCurrentIndex(void * msg);
+#pragma swi_number=0x253
 __swi __arm  int GUIonMessage_GetCurrentItemIndex(void * msg);
-#pragma swi_number=0x249
+#pragma swi_number=0x254
 __swi __arm  void DestroyDirHandle(void *handle);
-#pragma swi_number=0x824A
+#pragma swi_number=0x8255
 __swi __arm  DB_EXT *LastExtDB(void);
-#pragma swi_number=0x24B
+#pragma swi_number=0x256
 __swi __arm  void GetOtherExtMethods(FILESUBROUTINE **);
 
 
