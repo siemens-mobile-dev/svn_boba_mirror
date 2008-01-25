@@ -2,19 +2,19 @@
 
 #include "..\\include\k750.h"
 #include "..\\include\Dir.h"
+#include "vars.h"
 
 
-#ifdef DBG
-#define _printf(...) {debug_printf("\nOS: ElfPack -> ");debug_printf(__VA_ARGS__);}
-#else
-#define _printf(...)
-#endif
+
 
 
 __no_init int (*pKBD) (int,int,int) @ "OLD_KEY_HANDLER";
 __no_init EP_DATA *gepd;
 
 void StartHelper(void);
+
+
+extern DB_EXT **MoveExtTable(DB_EXT **old);
 
 typedef struct
 {
@@ -249,123 +249,6 @@ __thumb int fopen (const u16 * fname, int mode, int rights)
   mfree(path);
   return len;
 }
-
-//============================================================================
-
-typedef struct
-{
-  void * unk;
-  void * unk1;
-  BOOK * book;
-}DATA;
-
-//void main();
-
-#ifdef DB2020
-#define PAGE_ENTER_EVENT 7
-#define PAGE_EXIT_EVENT 8
-#define ACCEPT_EVENT 2
-#define PREVIOUS_EVENT 3
-#define CANCEL_EVENT 4
-#else
-#define PAGE_ENTER_EVENT 5
-#define PAGE_EXIT_EVENT 6
-#define ACCEPT_EVENT 0x0F
-#define PREVIOUS_EVENT 0x10
-#define CANCEL_EVENT 0x11
-#endif
-
-
-void onEv(FILESUBROUTINE ** r0);
-void SetSmallIcon(void * r0, u16 *r1);
-int Elf_Run_Subroutine(void *r0);
-int Elf_Run(void * r0, BOOK * book);
-
-const char ers[]={"Elf_Run_Subroutine"};
-
-const PAGE_MSG erp_msg[]={
-  PAGE_ENTER_EVENT,  (int*)Elf_Run,
-  PREVIOUS_EVENT,    (int*)ELF_RUN_PAGE_PREVIOUS_EVENT,
-  ACCEPT_EVENT,      (int*)ELF_RUN_PAGE_ACCEPT_EVENT,
-  CANCEL_EVENT,      (int*)ELF_RUN_PAGE_CANCEL_EVENT,
-  PAGE_EXIT_EVENT,   (int*)ELF_RUN_PAGE_PAGE_EXIT_EVENT,
-  0,0
-};
-
-const PAGE_DESC erun_page={"Elf_Run_Page",0,erp_msg};
-
-const int subrout[]={(int)&ers,(int)&erun_page,0,0};
-
-
-const u16 ext[]={L"elf"};
-const char ctype[]={"application/elf"};
-
-const int ex[2]={(int)ext,0};
-const int ct[2]={(int)ctype,0};
-
-
-typedef struct
-{
-  u16* fname;
-  u16* fpath;
-}FILETYPE;
-
-
-
-const DB_EXT_FOLDERS dbfolders={STR_APPLICATION,STR_Saved_on_Memory_Stick,PATH_ELF_ROOT_EXT,
-0,STR_APPLICATION,STR_Saved_in_phone_memory,PATH_ELF_ROOT_INT,1,NULL_STR,NULL_STR,0,0};
-
-const DB_EXT dbe_ELF={(char**)ct,(u16**)ex,onEv,DB_DB_EXT_C1,&dbfolders,0x0,0x00};
-
-
-__root void onEv(FILESUBROUTINE ** r0)
-{
-  __get_epd;
-  *r0=epd->elf_ext_m;
-}
-
-
-__thumb void SetSmallIcon(void * r0, u16 *r1)
-{
-  *r1=ELF_SMALL_ICON;
-}
-
-
-__thumb int Elf_Run_Subroutine(void * r0)
-{
-  BookObj_CallSubroutine(((DATA*)(r0))->book,(void*)subrout);
-  return(1);
-};
-
-
-__thumb int Elf_Run(void * r0, BOOK * book)
-{
-  char ch[500];
-  DATA * data = (DATA * )book->gui;
-  FILETYPE *ft = data->unk1;
-  u16 * filename = malloc((wstrlen(ft->fpath)+wstrlen(ft->fname)+2)*2);
-
-  wstrcpy(filename,ft->fpath);
-  wstrcat(filename,L"/");
-  wstrcat(filename,ft->fname);
-
-  wstr2str(ch,filename);
-
-  _printf("Starting %s",ch)  ;
-
-  {
-    //    int err;
-    //    err=
-    elfload(filename,0,0,0);
-
-    //    StatusIndication_ShowNotes(int2strID(elfload(filename,0,0,0)));
-  }
-
-
-  mfree(filename);
-  BookObj_ReturnPage(book,PREVIOUS_EVENT);
-  return(1);
-};
 
 
 //===============  KBD_HOOK  ================
@@ -681,64 +564,7 @@ void AddExt(DB_EXT * dbe)
 }
 
 
-void ELFExtrRegister(void)
-{
-  FILESUBROUTINE * fsr;
-  FILESUBROUTINE * fs;
-  FILESUBROUTINE * fsnew;
-  __get_epd;
-  int i=0;
-  int j=0;
 
-  if (epd->dbe)
-  {
-    _printf("     epd->dbe @0x%X",epd->dbe)  ;
-
-    // находим other
-    while  (*(epd->dbe[i]->content_type[0])) i++;
-
-    // берем его методы
-    epd->dbe[i]->GetMethods(&fsr);
-    fs=fsr;
-    // считаем их
-    while (fs->PROC) {fs++;j++;}
-    // выделяем память под n+1
-    _printf("     meth @0x%X items 0x%X",fsr,j+1)  ;
-
-    fsnew=malloc((j+2)*sizeof(FILESUBROUTINE));
-    _printf("     FILESUBROUTINE @0x%X(sz 0x%X)",fsnew,(j+2)*sizeof(FILESUBROUTINE))  ;
-    // первым вставляем своё
-    fsnew->cmd=1;
-    fsnew->PROC=Elf_Run_Subroutine;
-    fsnew->PROC1=(int(*)(void*,void*))RUN_CHECK;
-    fsnew->StrID=STR_START;
-    // забираем к себе старые методы
-    fs=fsnew+1;
-    memcpy(fs,fsr,(j+1)*sizeof(FILESUBROUTINE));
-    fs=fsnew;
-    // проходимся по всем, и кого надо, правим..
-    while (fs->PROC)
-    {
-      if (fs->cmd==DB_CMD_SETSMALLICON) fs->PROC=(int(*)(void*))SetSmallIcon;
-      fs++;
-    }
-    epd->elf_ext_m=fsnew;
-    {
-      DB_EXT **ext_desc=epd->dbe;
-      DB_EXT ** m;
-      i=0;
-      while (ext_desc[i]->content_type) i++;
-
-      m=malloc((i+2)*4);
-      memcpy(m,epd->dbe,(i+1)*4);
-
-      m[i+1]=m[i];
-      m[i]=(DB_EXT*)&dbe_ELF;
-      mfree(epd->dbe);
-      epd->dbe=m;
-    }
-  }
-}
 
 /*
 
@@ -779,22 +605,9 @@ void CreateLists(void)
   _printf("   epd->UIHookList @%x",epd->UIHookList)  ;
   _printf("   epd->OseHookList @%x",epd->OseHookList)  ;
   //  _printf("   epd->elflist @%x",epd->elflist)  ;
-  {
-
-    int i=0;
-    DB_EXT ** m;
-    DB_EXT **tab= (DB_EXT **)EXT_TABLE;
-
-    while (tab[i++]->content_type);
-    m=malloc(i*4);
-    memcpy(m,tab,i*4);
-    epd->dbe=m;
-    _printf("     New ExtTable @0x%X, total ext 0x%X",m,i)  ;
-
-
-    ELFExtrRegister();
-
-  }
+  
+  epd->dbe=MoveExtTable((DB_EXT **)EXT_TABLE);
+  ELFExtrRegister(epd);
 }
 
 
@@ -865,7 +678,7 @@ __thumb void Init()
   _printf("     ------End List-------")  ;
 
 
-  mfree(handle);
+  if (handle) DestroyDirHandle(handle);
   mfree(mem);
 
   _printf("     Exit Init")  ;

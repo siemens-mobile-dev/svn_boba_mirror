@@ -52,6 +52,7 @@ a	EQU	b
 	
 	call	int2strID,0x15C
 	call 	StatusIndication_ShowNotes,0x143
+        call 	DestroyDirHandle,0x249
 
 
 #ifdef K750_R1CA021

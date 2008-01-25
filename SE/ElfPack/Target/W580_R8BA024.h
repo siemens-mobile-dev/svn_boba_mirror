@@ -11,7 +11,7 @@
 #define STR_APPLICATION 0x0319
 #define STR_Saved_on_Memory_Stick 0x057D
 #define STR_Saved_in_phone_memory 0x057C
-#define ELF_SMALL_ICON 0xE816
+#define ELF_SMALL_ICON 0xE5CF
 //#define ROOT_APP 0x201820A4
 #define HELPER_SIG 0x6FF0
 
@@ -42,7 +42,7 @@
 #define ELF_RUN_PAGE_CANCEL_EVENT    0x44EB9CD1
 #define ELF_RUN_PAGE_PAGE_EXIT_EVENT 0x44EB26F9
 
-#define DB_CMD_SETSMALLICON 0x3A
+#define DB_CMD_SETSMALLICON 0x3B
 #define DB_DB_EXT_C1 0x2EC
 
 #endif
