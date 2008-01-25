@@ -235,7 +235,7 @@ __swi __arm  int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC
 __swi __arm  void BookObj_KillBook(void *Book);
 
 #pragma swi_number=0x12D
-__swi __arm  void BookObj_GotoPage(BOOK * book, PAGE_DESC * page);
+__swi __arm  void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 
 #pragma swi_number=0x12E
 __swi __arm  void BookObj_ReturnPage(BOOK * ,int);
@@ -455,10 +455,10 @@ __swi __arm  void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_le
 __swi __arm  int GetFreeBytesOnHeap(void);
 
 #pragma swi_number=0x171
-__swi __arm  void Hide(void * udata);
+__swi __arm  void Hide(void * udata, int zero);
 
 #pragma swi_number=0x172
-__swi __arm  void Show(void * udata);
+__swi __arm  void Show(void * udata, int zero);
 
 #pragma swi_number=0x173
 __swi __arm  void StartAPP (u16 * appname);
@@ -827,7 +827,7 @@ typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 __swi __arm DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);                          // !!!!!  не настоящий !!!!!!
 
 #pragma swi_number=0x220
-__swi __arm void DISP_DESC_SetName (DISP_DESC* , char * name);
+__swi __arm void DISP_DESC_SetName (DISP_DESC* , const char * name);
 #pragma swi_number=0x221
 __swi __arm char* DISP_OBJ_GetName (DISP_OBJ *);
 #pragma swi_number=0x222
