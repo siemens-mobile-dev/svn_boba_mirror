@@ -1,7 +1,6 @@
 #include "..\..\inc\swilib.h"
 #include "..\..\inc\cfg_items.h"
 #include "conf_loader.h"
-//#include "..\lgp.h"
 #include "..\alarm.h"
 
 unsigned short maincsm_name_body[140];
@@ -113,24 +112,34 @@ void Play(const char *fname)
       FreeWS(sndPath);
       FreeWS(sndFName);
     }
+    else
+    {
+      ShowMSG(1,(int)no_melody);
+    }
 }
 
-void play_standart_melody()
+int play_standart_melody()
 {
   int f;
   int i=0;
   unsigned int err;
   unsigned int fsize=get_file_size(profile_pd_file);
   
-  if((f=fopen(profile_pd_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return;
+  if((f=fopen(profile_pd_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
   char* buf=malloc(fsize+1);
   char* buf2=buf;
   fread(f,buf,fsize,&err);
   fclose(f,&err);
   
-  buf=strstr(buf,"Alarm_Clock_3=");
-  buf+=14;
-  
+  buf=strstr(buf,alarm_str);
+  if(!buf)
+  {
+    mfree(buf2);
+    CloseCSM(my_csm_id);
+    ShowMSG(1,(int)no_melody);
+    return 0;
+  }
+  buf+=strlen(alarm_str);
   while ((buf[i]!=10)&&(buf[i+1]!=13))
   {
       i++;
@@ -140,6 +149,7 @@ void play_standart_melody()
   if(findlength(buf))
     GBS_StartTimerProc(&restartmelody,file_length,restart_melody);
   mfree(buf2);
+  return 1;
 }
 
 void restart_melody()
@@ -397,12 +407,14 @@ void play_sound()
   {
   case 1:
       {
-        LockSched();
-        char dummy[sizeof(MAIN_CSM)];
-        UpdateCSMname();
-        my_csm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-        UnlockSched();
-        play_standart_melody();
+        if(play_standart_melody())
+        {
+          LockSched();
+          char dummy[sizeof(MAIN_CSM)];
+          UpdateCSMname();
+          my_csm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+          UnlockSched();
+        }
       } 
       break;
   case 0:

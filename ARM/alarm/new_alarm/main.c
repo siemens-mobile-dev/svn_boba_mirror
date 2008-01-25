@@ -1,14 +1,6 @@
 #include "..\..\inc\swilib.h"
 #include "..\alarm.h"
 
-//#define NO_PNG
-/*
-#ifdef NEWSGOLD
-#define DEFAULT_DISK "4"
-#else
-#define DEFAULT_DISK "0"
-#endif
-*/
 void check();
 void start_ring();
 void load_settings();
@@ -25,15 +17,7 @@ int X;
 int Y;
 int imgw;
 int imgh;
-/*
-#ifdef NO_PNG
-char icon[]=DEFAULT_DISK":\\Zbin\\alarm\\icon.gpf";
-#else
-char icon[]=DEFAULT_DISK":\\Zbin\\alarm\\icon.png";
-#endif
-char cfgfile[]=DEFAULT_DISK":\\Zbin\\alarm\\alarm.cfg";
-char alarm_dir[]=DEFAULT_DISK":\\Zbin\\alarm\\";
-*/
+
 GBSTMR mytmr;
 TDate date;
 TTime time;

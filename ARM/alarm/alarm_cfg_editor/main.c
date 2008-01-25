@@ -1,6 +1,5 @@
 #include "..\..\inc\swilib.h"
 #include "image.h"
-//#include "..\lgp.h"
 #include "..\alarm.h"
 
 unsigned int status[6];
@@ -298,7 +297,7 @@ void geteeblock()
   
   char *hex=malloc(8);
   char *bin=malloc(8);
-  sprintf(hex, "%x", Block5166[3]);  
+  sprintf(hex, "%x", Block5166[3]);
   hex2bin(bin, 3, hex);
   
   if (Block5166[4]==0xF1)
@@ -306,14 +305,8 @@ void geteeblock()
   else status[5]=0;
   hour[5]=Block5166[0];
   min[5]=Block5166[1];
-  
-  weekdays[5][0]=bin[6];
-  weekdays[5][1]=bin[5];
-  weekdays[5][2]=bin[4];
-  weekdays[5][3]=bin[3];
-  weekdays[5][4]=bin[2];
-  weekdays[5][5]=bin[1];
-  weekdays[5][6]=bin[0];
+  for (int i=0;i<7;i++)
+    weekdays[5][i]=bin[6-i];
   
   mfree(Block5166);
   mfree(bin);
@@ -329,13 +322,8 @@ void saveeeblock()
   
   char *hex=malloc(3);
   char *bin=malloc(8);
-  bin[0]=weekdays[5][6];
-  bin[1]=weekdays[5][5];
-  bin[2]=weekdays[5][4];
-  bin[3]=weekdays[5][3];
-  bin[4]=weekdays[5][2];
-  bin[5]=weekdays[5][1];
-  bin[6]=weekdays[5][0];
+  for (int i=0;i<7;i++)
+    bin[i]=weekdays[5][6-i];
   bin[7]=1;
   bin2hex(hex, 7, bin);
   hex[2]=0;
@@ -351,55 +339,6 @@ void saveeeblock()
   mfree(bin);
   mfree(hex);
 }
-
-#else
-
-void geteeblock()
-{
-  /*
-  unsigned int err;
-  int fp=fopen("2:\\Default\\PD\\alarmclock.pd", A_ReadOnly, P_READ,&err);
-  if(fp!=-1)
-  {
-    char *buf=malloc(128);
-    fread(fp, buf, 128, &err);
-    fclose(fp,&err);
-    
-    buf=strstr(buf,"days_in_use=");
-    buf+=strlen("days_in_use=");
-    for (int i=0; i<7; i++)
-    {
-      weekdays[5][i]=buf[i]-'0';
-    }
-    buf=strstr(buf,"alarm_time=");
-    buf+=strlen("alarm_time=");
-    //????????????????
-    buf=strstr(buf,"alarm_active=");
-    buf+=strlen("alarm_active=");
-    status[5]=buf[0]-'0';
-    mfree(buf);
-  }
-  else
-  {
-    status[5]=0;
-    hour[5]=0;
-    min[5]=0;
-    weekdays[5][0]=0;
-    weekdays[5][1]=0;
-    weekdays[5][2]=0;
-    weekdays[5][3]=0;
-    weekdays[5][4]=0;
-    weekdays[5][5]=0;
-    weekdays[5][6]=0;
-  }
-  */
-}
-
-void saveeeblock()
-{
-  
-}
-
 #endif
 #endif
 

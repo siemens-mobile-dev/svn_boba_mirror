@@ -10,10 +10,16 @@
   #define DEFAULT_DISK "4"
   #define alarm_dir "4:\\Zbin\\alarm\\"
   #define PROFILE_PD_DISC "1"
+char alarm_str[]="Alarm_Clock_3=";
 #else
   #define DEFAULT_DISK "0"
   #define alarm_dir "0:\\Zbin\\alarm\\"
   #define PROFILE_PD_DISC "0"
+  #ifdef X75
+char alarm_str[]="Alarm_Clock_3=";
+  #else
+char alarm_str[]="Alarm_3=";
+  #endif
 #endif
 
 #ifdef SIX_ALARMS
