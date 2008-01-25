@@ -392,6 +392,7 @@ extern __arm void *_GetFname(void *, void*);
 
 extern __thumb void debug_printf(char * fmt,...);
 
+extern __thumb void  DestroyDirHandle(void *handle);
 #endif
 
 
