@@ -1,4 +1,5 @@
 -carm
+-ynpra
 // Declare relocation areas for code, constants and data.
 -V(CODE)CODE_AREA,12
 -V(DATA)DATA_AREA,12

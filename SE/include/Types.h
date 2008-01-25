@@ -41,6 +41,9 @@ typedef void (OSENTRYPOINT)(void);
 
 typedef OSADDRESS (OSERRH)(OSBOOLEAN, OSERRCODE, OSERRCODE);
 
+typedef struct XGUILIST_type XGUILIST;
+typedef struct UI_APP_SESSION_type UI_APP_SESSION;
+typedef struct GUI_type GUI;
 
 
 struct HELPER_SIGNAL
@@ -128,12 +131,12 @@ typedef struct
   int    unk2;
 }LISTBOOK;
 
-struct UI_APP_SESSION;
+
 typedef struct
 {
   char   unk;
   char * name;
-  struct UI_APP_SESSION * app_session;
+  UI_APP_SESSION * app_session;
   int   parrent_BookID;
   u16   unk2;
   int   unk3;
@@ -144,9 +147,9 @@ typedef struct
   u16   unk8;
 }XBOOK;
 
-struct XGUILIST;
-struct GUI;
+
 struct PAGE_DESC;
+
 typedef struct
 {
   XBOOK * xbook;
@@ -160,13 +163,13 @@ typedef struct
   char dummy[0x10];
 }BOOK;
 
-typedef struct XGUILIST
+typedef struct XGUILIST_type
 {
   BOOK * book;
   LIST * guilist;
-}XGUILIST;
+}_XGUILIST;
 
-typedef struct UI_APP_SESSION
+typedef struct UI_APP_SESSION_type
 {
   LIST * listbook;
   int    name;
@@ -174,7 +177,7 @@ typedef struct UI_APP_SESSION
   int    W2;
   int    SessionID;
   int    unk2;
-}UI_APP_SESSION;
+}_UI_APP_SESSION;
 //-------------------------------------------
 typedef struct
 {
@@ -422,13 +425,13 @@ typedef struct
   char dummy2[20];
 }DISP_OBJ;
 
-typedef struct GUI
+typedef struct GUI_type
 {
   DISP_OBJ * DISP_OBJ;
   BOOK * book;
   void * unk;
   void * unk1;
-}GUI;
+}_GUI;
 
 typedef struct
 {
