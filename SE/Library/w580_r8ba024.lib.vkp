@@ -7,7 +7,7 @@
 +45C3FC00
 0440: 00000000 592AD444   ; 110:  void *memalloc(int zero, int size,int f1,int f2,const char *fname,int fline)
 0444: 00000000 852AD444   ; 111:  void memfree(int zero, void * mem,const char * fname ,int fline)
-0448: 00000000 2C002D44   ; 112:  void memset(void *mem,char chr,int size)
+0448: 00000000 50531444   ; 112:  void memset(void *mem,char chr,int size)
 044C: 00000000 40062D44   ; 113:  int memcpy(void *dest,const void *source,int cnt)
 0450: 00000000 756E5544   ; 114:  int sprintf(char *buf, char *str, ...)
 0454: 00000000 3D745544   ; 115:  int snwprintf(u16* buffer, int size, const u16* fmt, ...)
@@ -92,7 +92,7 @@
 056C: 00000000 3176E444   ; 15B:  char * wstr2strn (char * str , u16 * wstr, int maxlen)
 0570: 00000000 455A3445   ; 15C:  int int2strID (int num)
 0574: 00000000 F95C3445   ; 15D:  int Str2ID(const void * wstr , int  flag , int len)
-0578: 00000000 00000000   ; 15E:  void StrID2Str(int StrID,char * str,int maxlen)
+0578: 00000000 8D613445   ; 15E:  void StrID2Str(int StrID,char * str,int maxlen)
 057C: 00000000 7D603445   ; 15F:  void TextID2wstr(int StrID,u16 * str,int maxlen)
 
 0580: 00000000 5D5F3445   ; 160:  int TextGetLength(int StrID)
@@ -162,15 +162,13 @@
 06C8: 00000000 00000000   ; 1B2:  int PlayFile(u16 * path, u16 * fname);
 
 ;06CC: 00000000 ; 1B3: int GetChargeBatteryInPercent(BOOK *standby , int *level);
-;06D0: 00000000 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-;06D4: 00000000 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
+06D0: 00000000 15452E45   ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
+06D4: 00000000 71452E45   ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 ;06D8: 00000000 ; 1B6: void SetBrightnessOfScreen(int br);
-;06DC: 00000000 ; 1B7: int  isKeylocked(void);
-;06E0: 00000000 ; 81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-
-06E0: 00000000 00000000   ;81B8:  IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-06E4: 00000000 00000000   ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);  // גלוסעמ  get_APP_DESC_TABLE
-06FC: 00000000 00000000   ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
+06DC: 00000000 C9293945   ; 1B7: int  isKeylocked(void);
+06E0: 00000000 FDFFF444   ;81B8:  IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+;06E4: 00000000 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);  // גלוסעמ  get_APP_DESC_TABLE
+06FC: 00000000 BD8D2A45   ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 
 0700: 00000000 05CB3145   ; 1C0: GUI_LIST* CreateListObject(BOOK * , void * unk);
 0704: 00000000 35CD3145   ; 1C1: void SetNumOfMenuItem(void * , int  item_count);
@@ -193,7 +191,7 @@
 0740: 00000000 81562F45   ; 1D0: int StringInput_GetStringAndLen (GUI*,u16**,u16*);
 ;0744: 00000000    ; 1D1: 
 ;0748: 00000000    ; 1D2: 
-074C: 00000000 00000000   ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
+074C: 00000000 A59FE844   ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 01E73145   ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 41E93145   ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 0758: 00000000 C5E83145   ; 1D6: void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
@@ -311,16 +309,13 @@
 ;08F8: 00000000    ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: 00000000    ; 23F: DISP_BASE_METHOD DISP_BASE_GetMethod0C (DISP_BASE *);
 ;14.01.2008
-;0900: 00000000    ; 240: void JavaSession_Manager (int cmd);
-;0904: 00000000    ; 241: int JavaSession_GetName(void);
+0900: 00000000 DB051444   ; 240: void JavaSession_Manager (int cmd);
+0904: 00000000 D9051444   ; 241: int JavaSession_GetName(void);
 0908: 00000000 295E3445   ; 242: int TextCopyId(int);
 090C: 00000000 79D32A45   ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: 00000000 F9D83145   ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 71D93145   ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 65D93145   ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-
-
-
 
 
 
