@@ -537,8 +537,13 @@ void OnRedraw()
         if (status[i]) strcpy(stat,on);
           else strcpy(stat,off);
         wsprintf(ws, "%t %d: %d:%02d %t",alarm_name,i+1,hour[i],min[i],stat);
+#ifdef SL65
+        if (num_alarm==i) DrwStr(ws,1,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
+          else DrwStr(ws,1,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+#else
         if (num_alarm==i) DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
           else DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+#endif
       }
       mfree(stat);
     } break;
@@ -552,14 +557,12 @@ void OnRedraw()
       wsprintf(ws, "%t %d",alarm_name,num_alarm+1);
       DrwStr(ws,30,3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
       
-      //////////////////////////////////  SL65  ////////////////////////////////
 #ifdef SL65
       if(status[num_alarm]==1) draw_pic(st_on,5,HeaderH());
         else draw_pic(st_off,5,HeaderH());
 #else
-      //////////////////////////////////////////////////////////////////////////
-      if(status[num_alarm]==1) draw_pic(st_on,scr_w/2-25,HeaderH());
-        else draw_pic(st_off,scr_w/2-25,HeaderH());
+      if(status[num_alarm]==1) draw_pic(st_on,scr_w/2-26,HeaderH());
+        else draw_pic(st_off,scr_w/2-26,HeaderH());
 #endif
       if ((edit_level==1)||(edit_level==3))
         {
@@ -577,17 +580,14 @@ void OnRedraw()
             wsprintf(ws, percent_t,off);
             a-=3;
           }
-      //////////////////////////////////  SL65  ////////////////////////////////
 #ifdef SL65
       if (edit_level==1) DrwStr(ws,67,HeaderH()+18,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
         else DrwStr(ws,67,HeaderH()+18,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 #else
-      //////////////////////////////////////////////////////////////////////////
       if (edit_level==1) DrwStr(ws,a,HeaderH()+57,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
         else DrwStr(ws,a,HeaderH()+57,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 #endif
       
-      //////////////////////////////////  SL65  ////////////////////////////////
 #ifdef SL65
       a=67;
         int b=HeaderH()+21+font_size;
@@ -604,9 +604,8 @@ void OnRedraw()
       wsprintf(ws, "%02d",min[num_alarm]);
       if ((edit_level==2)&&(set==2))
         DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-        else DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));      
+        else DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 #else
-      //////////////////////////////////////////////////////////////////////////
       a=scr_w/2-GetSymbolWidth((backup[1]/10)+'0',FONT_SMALL)-GetSymbolWidth((backup[1]%10)+'0',FONT_SMALL);      
         int b=HeaderH()+60+font_size;
       wsprintf(ws, "%02d",hour[num_alarm]);
@@ -625,7 +624,11 @@ void OnRedraw()
         else DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 #endif
       a=scr_w/7.3;
+#ifdef SL65
+      b=scr_h-SoftkeyH()-font_size-18;
+#else
       b=scr_h-SoftkeyH()-font_size-24;
+#endif
       for (int i=0;i<7;i++)
       {
         wsprintf(ws, percent_t,wd[i]);
