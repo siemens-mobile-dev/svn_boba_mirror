@@ -317,6 +317,11 @@
 0914: 00000000 71D93145   ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 65D93145   ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 
+091C: 00000000 59D93145   ; 247: int GUIonMessage_GetCurrentSubItemIndex(void * msg);
+0920: 00000000 4DD93145   ; 248: int GUIonMessage_GetCurrentItemIndex(void * msg);
+0924: 00000000 8554E844   ; 249: void DestroyDirHandle(void *handle);
+0928: 00000000 7878AC45   ; 824A: DB_EXT *LastExtDB(void);
+092C: 00000000 35B6EB44   ; 24B: void GetOtherExtMethods(FILESUBROUTINE **);
 
 
 
