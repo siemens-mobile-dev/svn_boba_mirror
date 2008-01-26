@@ -521,29 +521,42 @@ void OnRedraw()
       draw_pic(fon,0,0);
       draw_pic(logo,2,2);
       
+      char *ColorIndex[3]={GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23),GetPaletteAdrByColorIndex(3)};
+      
       wsprintf(ws, percent_t, alarm_name);
-      DrwStr(ws,30,3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,30,3,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
       
       wsprintf(ws, percent_t, change);
-      DrwStr(ws,8,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,8,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
       
       wsprintf(ws, percent_t, save);
-      DrwStr(ws,scr_w/1.5,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,scr_w/1.5,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
       
       char *stat=malloc(16);
       int tmp=scr_h/7.3;
+#ifndef SL65
+      int tmp3=0;
+#endif
       for (int i=0;i<num_alarms;i++)
       {
         if (status[i]) strcpy(stat,on);
           else strcpy(stat,off);
 #ifdef SL65
         wsprintf(ws, "%d: %d:%02d %t",i+1,hour[i],min[i],stat);
-        if (num_alarm==i) DrwStr(ws,10,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-          else DrwStr(ws,10,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+        DrwStr(ws,10,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+(num_alarm==i)]);
 #else
         wsprintf(ws, "%t %d: %d:%02d %t",alarm_name,i+1,hour[i],min[i],stat);
-        if (num_alarm==i) DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-          else DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+        int tmp2=1+tmp*(i+1)+tmp3+tmp3;
+        if (num_alarm==i)
+        {
+          DrwStr(ws,5,tmp2,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[2]);
+          tmp3=3;
+          for (int ii=0;ii<7;ii++)
+          {
+            draw_pic((int)wd_off+weekdays[i][ii],scr_w-11*(7-ii)-3, tmp2+GetFontYSIZE(FONT_SMALL)+1);
+          }
+        }
+          else DrwStr(ws,5,tmp2,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
 #endif
       }
       mfree(stat);
@@ -555,8 +568,10 @@ void OnRedraw()
       draw_pic(fon,0,0);
       draw_pic(logo,2,2);
       
+      char *ColorIndex[3]={GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23),GetPaletteAdrByColorIndex(3)};
+      
       wsprintf(ws, "%t %d",alarm_name,num_alarm+1);
-      DrwStr(ws,30,3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,30,3,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
       
 #ifdef SL65
       if(status[num_alarm]==1) draw_pic(st_on,5,HeaderH());
@@ -568,11 +583,11 @@ void OnRedraw()
       if ((edit_level==1)||(edit_level==3))
         {
           wsprintf(ws, percent_t, change);
-          DrwStr(ws,8,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+          DrwStr(ws,8,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
         }
       
       wsprintf(ws, percent_t,ok);
-      DrwStr(ws,scr_w/1.5,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,scr_w/1.5,scr_h-font_size-3,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
       
       int a=scr_w/2-GetSymbolWidth('n',FONT_SMALL)*2;
       if (status[num_alarm]) wsprintf(ws, percent_t,on);
@@ -582,47 +597,37 @@ void OnRedraw()
             a-=3;
           }
 #ifdef SL65
-      if (edit_level==1) DrwStr(ws,67,HeaderH()+18,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-        else DrwStr(ws,67,HeaderH()+18,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,67,HeaderH()+18,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+(edit_level==1)]);
 #else
-      if (edit_level==1) DrwStr(ws,a,HeaderH()+57,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-        else DrwStr(ws,a,HeaderH()+57,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,a,HeaderH()+57,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+(edit_level==1)]);
 #endif
       
 #ifdef SL65
       a=67;
         int b=HeaderH()+21+font_size;
       wsprintf(ws, "%02d",hour[num_alarm]);
-      if ((edit_level==2)&&(set==1))
-        DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-        else DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+((edit_level==2)&&(set==1))]);
         
       a+=(GetSymbolWidth((backup[1]/10)+'0',FONT_SMALL)+GetSymbolWidth((backup[1]%10)+'0',FONT_SMALL));
       wsprintf(ws, ":");
-      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
       
       a+=GetSymbolWidth(':',FONT_SMALL);
       wsprintf(ws, "%02d",min[num_alarm]);
-      if ((edit_level==2)&&(set==2))
-        DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-        else DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+((edit_level==2)&&(set==2))]);
 #else
       a=scr_w/2-GetSymbolWidth((backup[1]/10)+'0',FONT_SMALL)-GetSymbolWidth((backup[1]%10)+'0',FONT_SMALL);      
         int b=HeaderH()+60+font_size;
       wsprintf(ws, "%02d",hour[num_alarm]);
-      if ((edit_level==2)&&(set==1))
-        DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-        else DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+((edit_level==2)&&(set==1))]);
         
       a=scr_w/2;
       wsprintf(ws, ":");
-      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1]);
       
       a+=GetSymbolWidth(':',FONT_SMALL);
       wsprintf(ws, "%02d",min[num_alarm]);
-      if ((edit_level==2)&&(set==2))
-        DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-        else DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+      DrwStr(ws,a,b,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+((edit_level==2)&&(set==2))]);
 #endif
       a=scr_w/7.3;
 #ifdef SL65
@@ -633,14 +638,12 @@ void OnRedraw()
       for (int i=0;i<7;i++)
       {
         wsprintf(ws, percent_t,wd[i]);
-        if ((edit_level==3)&&(set==i)) DrwStr(ws,4+a*i,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-          else DrwStr(ws,4+a*i,b,scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+        DrwStr(ws,4+a*i,b,scr_w,scr_h,FONT_SMALL,1,ColorIndex[0],ColorIndex[1+((edit_level==3)&&(set==i))]);
       }
       b+=(font_size+3);
       for (int i=0;i<7;i++)
       {
-        if (weekdays[num_alarm][i]) draw_pic(wd_on,5+a*i,b);
-          else draw_pic(wd_off,5+a*i,b);
+        draw_pic(wd_off+weekdays[num_alarm][i],5+a*i,b);
       }
     } break;
   case 3:
