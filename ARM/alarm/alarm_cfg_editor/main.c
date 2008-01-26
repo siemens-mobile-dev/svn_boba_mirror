@@ -536,11 +536,12 @@ void OnRedraw()
       {
         if (status[i]) strcpy(stat,on);
           else strcpy(stat,off);
-        wsprintf(ws, "%t %d: %d:%02d %t",alarm_name,i+1,hour[i],min[i],stat);
 #ifdef SL65
-        if (num_alarm==i) DrwStr(ws,1,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
-          else DrwStr(ws,1,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+        wsprintf(ws, "%d: %d:%02d %t",i+1,hour[i],min[i],stat);
+        if (num_alarm==i) DrwStr(ws,10,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
+          else DrwStr(ws,10,5+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 #else
+        wsprintf(ws, "%t %d: %d:%02d %t",alarm_name,i+1,hour[i],min[i],stat);
         if (num_alarm==i) DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(3));
           else DrwStr(ws,5,1+tmp*(i+1),scr_w,scr_h,FONT_SMALL,1,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 #endif
