@@ -219,7 +219,7 @@ __thumb u16 * GetDir (int DirIndex)
   switch (DirIndex>>1)
   {
   case  DIR_AUDIO>>1 : return (DirIndex&1)? (u16*)PATH_AUDIO_INT: (u16*)PATH_AUDIO_EXT;
-  case  DIR_IMAGE>>1 : return (DirIndex&1)? (u16*)PATH_IMAGE_INT: (u16*)PATH_VIDEO_EXT;
+  case  DIR_IMAGE>>1 : return (DirIndex&1)? (u16*)PATH_IMAGE_INT: (u16*)PATH_IMAGE_EXT;
   case  DIR_VIDEO>>1 : return (DirIndex&1)? (u16*)PATH_VIDEO_INT: (u16*)PATH_VIDEO_EXT;
   case  DIR_THEME>>1 : return (DirIndex&1)? (u16*)PATH_THEME_INT: (u16*)PATH_THEME_EXT;
   case  DIR_OTHER>>1 : return (DirIndex&1)? (u16*)PATH_OTHER_INT: (u16*)PATH_OTHER_EXT;
