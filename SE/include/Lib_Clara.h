@@ -692,7 +692,7 @@ __swi __arm void GetGuiRect(void*,RECT*);
 #pragma swi_number=0x1E7
 __swi __arm  void get_GC_RECT(void*,RECT*);
 #pragma swi_number=0x1E8
-__swi __arm char get_GC_xx(void * GC);
+__swi __arm int get_GC_xx(void * GC);
 #pragma swi_number=0x1E9
 __swi __arm void *set_GC_xx(void * GC, int);
 #pragma swi_number=0x1EA
@@ -708,9 +708,9 @@ __swi __arm  void addGui2XGuiList (void* xguilist , GUI*);
 #pragma swi_number=0x1EF
 __swi __arm void InvalidateRect(DISP_OBJ *,RECT*);
 #pragma swi_number=0x1F0
-__swi __arm int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,int,int);
+__swi __arm int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,int,int,int size_obj);
 #pragma swi_number=0x1F1
-__swi __arm void SetFont(int);
+__swi __arm int SetFont(int);
 #pragma swi_number=0x81F2
 __swi __arm DISP_OBJ ** StatusRow_p(void);
 

@@ -99,4 +99,9 @@ a	EQU	b
         defadr  memalloc,0x44D42A58+1
         defadr  memfree,0x44D42A84+1
 #endif	
+
+#ifdef W850_R1KG001
+        defadr  memalloc,0x44FE5018+1
+        defadr  memfree,0x44FE5044+1
+#endif
    END

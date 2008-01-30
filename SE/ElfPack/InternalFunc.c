@@ -161,6 +161,10 @@ __thumb void * malloc (int size)
 #ifdef W580_R8BA024
   return(memalloc(0,size,1,5,"SwiLib",0));
 #endif
+
+#ifdef W850_R1KG001
+  return(memalloc(0,size,1,5,"SwiLib",0));
+#endif
 }
 
 __thumb void mfree (void * mem)
@@ -198,6 +202,10 @@ __thumb void mfree (void * mem)
 #endif
 
 #ifdef W580_R8BA024
+  if (mem) memfree(0, mem,"SwiLib",0);  
+#endif
+
+#ifdef W850_R1KG001
   if (mem) memfree(0, mem,"SwiLib",0);  
 #endif
 }
