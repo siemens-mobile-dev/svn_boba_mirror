@@ -1,5 +1,6 @@
 //W850_R1KG001
         RSEG   CODE
+#ifdef W850_R1KG001
         CODE32
 
 defadr	MACRO	a,b
@@ -195,4 +196,5 @@ DB_PATCH4:
         RSEG   CUT_PRINT_BUF_SIZE3(2)
         DATA
         DCD    0xC351-0x1000             
+#endif
         END

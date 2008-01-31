@@ -1,5 +1,6 @@
 //K600_R2BB001
         RSEG   CODE
+#ifdef K600_R2BB001
         CODE32
 
 defadr	MACRO	a,b
@@ -120,4 +121,5 @@ DBEXT_EXIT:
 //        BL       DBEXT
         LDR     R4,=DBEXT
         BLX     R4
+#endif        
         END

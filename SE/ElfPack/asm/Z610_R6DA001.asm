@@ -1,42 +1,44 @@
-//W580 R8BA024
+//Z610 R6DA001
         RSEG   CODE
-#ifdef W580_R8BA024
+#ifdef Z610_R6DA001
         CODE32
 
-defadr	MACRO	a,b
-	PUBLIC	a
-a	EQU	b
-	ENDM
-        
+defadr  MACRO   a,b
+        PUBLIC  a
+a       EQU     b
+        ENDM
+
         RSEG  CODE
-        defadr   STANDBY_RET,0x452BFF04+1
-        defadr   DB_PATCH_RET,0x44EAF9F8+1
-        defadr   DB_EXT_RET,0x44EAF7E4+1
-        defadr   DB_PATCH3_RET,0x44EAF684+1
-        defadr   DB_PATCH4_RET,0x44EB004C+1
-        defadr   MESS_HOOK_RET,0x447B8904+1
-        defadr   PAGE_ACTION_RET,0x452ABA98+1
+        defadr   STANDBY_RET,PATCH_STANDBY_CALL_start+8 ;0x452BFF04+1
+        defadr   DB_PATCH_RET,PATCH_DB1_start+8 ;0x44EAF9F8+1
+        defadr   DB_EXT_RET, PATCH_DB2_start+8 ;0x44EAF7E4+1
+        defadr   DB_PATCH3_RET,0x44FA3238+1 ;0x44EAF684+1
+        defadr   DB_PATCH4_RET,PATCH_DB4_start+8 ;0x44EB004C+1
+        defadr   MESS_HOOK_RET,PATCH_MMI_MESSAGE_HOOK_start+8 ;0x447B8904+1
+        defadr   PAGE_ACTION_RET,PATCH_PageAction_start+8 ;0x452ABA98+1
 
 // --- CreateLists ---
 
-	EXTERN	CreateLists
+        EXTERN  CreateLists
         RSEG  CODE
-	CODE16	
+        CODE16
 PATCH_STANDBY:
 
-        STR     R0, [R5,#8]
-        STR     R0, [R5,#0]
         STR     R0, [R5,#0xC]
+        STR     R0, [R5,#4]
+        STR     R0, [R5,#0x8]
         STR     R0, [R5,#0x10]
-	BLX	CreateLists
-	MOV	R0, #0
+        BLX     CreateLists
+        MOV     R0, #0
         LDR     R1,=STANDBY_RET
         BX      R1
 
         RSEG  PATCH_STANDBY_CALL
-	CODE16
-	LDR	R1,=PATCH_STANDBY
-	BX	R1
+        CODE16
+PATCH_STANDBY_CALL_start:
+        LDR     R1,=PATCH_STANDBY
+        BX      R1
+
 
 // --- PageAction_Hook ---
 /*
@@ -46,8 +48,8 @@ PATCH_STANDBY:
 _PageAction:
         MOV     R2, R4
         MOV     R0, R5
-	LDR	R3,=PageAction_Hook
-	BX	R3
+        LDR     R3,=PageAction_Hook
+        BX      R3
 
         RSEG    PATCH_PageAction:CODE(1)
         CODE16
@@ -62,23 +64,22 @@ _PageAction:
         LDR     R0, [R0, #0]
         MOV     R1, #0
         BLX     ListElement_Remove
-	BL      PageAction_Hook
+        BL      PageAction_Hook
         MOV     R6, R0
         LDR     R1, =PAGE_ACTION_RET
         BX      R1
-        
 
 
-        RSEG    PATCH_PageAction:CODE(1)
+
+        RSEG    PATCH_PageAction ;:CODE(1)
         CODE16
+PATCH_PageAction_start:
         LDR     R1, =_PageAction
         BX      R1
-        
-
 
 // --- ParseHelperMessage ---
         EXTERN  ParseHelperMessage
-	RSEG   CODE
+        RSEG   CODE
         CODE16
 MESS_HOOK:
         LDR     R3, [R0, #0]
@@ -89,41 +90,42 @@ MESS_HOOK:
 
         RSEG   PATCH_MMI_MESSAGE_HOOK
         CODE16
-	LDR	R3,=MESS_HOOK
-	BX	R3
+PATCH_MMI_MESSAGE_HOOK_start:
+        LDR     R3,=MESS_HOOK
+        BX      R3
 
 // --- Data Browser ---
 
         EXTERN  GetExtTable
-	RSEG   CODE
+        RSEG   CODE
         CODE16
 DB_PATCH:
-	LSL     R7, R1, #2
+        LSL     R7, R1, #2
         BLX     GetExtTable
-	LDR     R7, [R0,R7]
-        LDR     R1, =0x45AC7790
+        LDR     R7, [R0,R7]
+        LDR     R1, =0x45A4E168 ;EXT_TABLE
         LDR     R3, =DB_PATCH_RET
         BX      R3
 
-	
-	RSEG   CODE
+
+        RSEG   CODE
         CODE16
-         
+
 DBEXT:
-        
+
         ADD     R2, R2, #1
         ADD     R1, R5, #0
         ADD     R0, R4, #0
         PUSH    {R0-R2}
         BLX     GetExtTable
         ADD     R5, R0, #0
-	POP	{R0-R2}
+        POP     {R0-R2}
         LDR     R3, =DB_EXT_RET
         BX      R3
 
-	RSEG   CODE
+        RSEG   CODE
         CODE16
-         
+
 DB_PATCH3:
         MOV     R6, #0
         ADD     R5, R0, #0
@@ -137,10 +139,10 @@ L_DB3EX
         ADD     R0, R6, #0
         ADD     SP, #8
         POP     {R4-R7,PC}
-        
-	RSEG   CODE
+
+        RSEG   CODE
         CODE16
-         
+
 DB_PATCH4:
         ADD     R2, SP, #4
         PUSH    {R2}
@@ -151,50 +153,53 @@ DB_PATCH4:
         ADD     R7, R0, #0
         POP     {R0-R3}
         LDR     R1, =DB_PATCH4_RET
-        BX      R1        
+        BX      R1
 
 
 
         RSEG   PATCH_DB1(2)
         CODE16
+PATCH_DB1_start:
         LDR    R3, =DB_PATCH
         BX     R3
-	
+
         RSEG   PATCH_DB2(2)
         CODE16
+PATCH_DB2_start:
         LDR    R3, =DBEXT
         BX     R3
-        
+
         RSEG   PATCH_DB3(2)
         CODE16
         LDR    R3, =DB_PATCH3
-        BX     R3        
-        
+        BX     R3
+
         RSEG   PATCH_DB4(2)
         CODE16
+PATCH_DB4_start:
         LDR    R3, =DB_PATCH4
-        BX     R3     
-        
-        
-        RSEG   DATA_N       
+        BX     R3
+
+
+        RSEG   DATA_N
         RSEG   CUT_PRINT_BUF1(2)
         DATA
         DCD    SFB(DATA_N)+0x1000
-        
+
         RSEG   CUT_PRINT_BUF2(2)
         DATA
         DCD    SFB(DATA_N)+0x1000
-        
+
         RSEG   CUT_PRINT_BUF_SIZE1(2)
         DATA
         DCD    0xC350-0x1000
-        
+
         RSEG   CUT_PRINT_BUF_SIZE2(2)
         DATA
-        DCD    0xC350-0x1000     
-        
+        DCD    0xC350-0x1000
+
         RSEG   CUT_PRINT_BUF_SIZE3(2)
         DATA
-        DCD    0xC351-0x1000             
-#endif        
+        DCD    0xC351-0x1000
+#endif
         END

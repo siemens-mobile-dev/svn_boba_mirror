@@ -104,4 +104,9 @@ a	EQU	b
         defadr  memalloc,0x44FE5018+1
         defadr  memfree,0x44FE5044+1
 #endif
+
+#ifdef Z610_R6DA001
+        defadr  memalloc,0x44E35A08+1
+        defadr  memfree,0x44E35A34+1
+#endif
    END

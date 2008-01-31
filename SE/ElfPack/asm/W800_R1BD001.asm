@@ -1,5 +1,6 @@
 //W800_R1BD001
         RSEG   CODE
+#ifdef W800_R1BD001
         CODE32
 
 defadr	MACRO	a,b
@@ -119,5 +120,5 @@ DBEXT:
         RSEG   PATCH_DB2
         CODE16
         BL       DBEXT
-
+#endif
         END
