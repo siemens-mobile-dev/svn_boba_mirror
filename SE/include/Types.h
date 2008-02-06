@@ -41,10 +41,14 @@ typedef void (OSENTRYPOINT)(void);
 
 typedef OSADDRESS (OSERRH)(OSBOOLEAN, OSERRCODE, OSERRCODE);
 
+struct PCOLOR
+{
+  int pen;
+  int brush;
+};
 typedef struct XGUILIST_type XGUILIST;
 typedef struct UI_APP_SESSION_type UI_APP_SESSION;
 typedef struct GUI_type GUI;
-
 
 struct HELPER_SIGNAL
 {
@@ -157,8 +161,9 @@ typedef struct
   int    BookID;
   struct PAGE_DESC * current_page;
   struct PAGE_DESC  * base_page;
-  XGUILIST * xguilist;
-  GUI * gui;
+
+  struct XGUILIST * xguilist;
+  struct GUI * gui;
   void * unk3;
   char dummy[0x10];
 }BOOK;

@@ -235,7 +235,7 @@ __swi __arm  int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC
 __swi __arm  void BookObj_KillBook(void *Book);
 
 #pragma swi_number=0x12D
-__swi __arm  void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
+__swi __arm  void BookObj_GotoPage(BOOK * book, const PAGE_DESC  * page);
 
 #pragma swi_number=0x12E
 __swi __arm  void BookObj_ReturnPage(BOOK * ,int);
