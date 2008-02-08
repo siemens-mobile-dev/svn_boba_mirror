@@ -47,8 +47,6 @@
                           char wants_subscription,
                           char group);
 
-  void CList_ChangeComposingStatus(TRESOURCE* Res_Ex, char composing);
-    
 // Пишет роли контакта в конфе в структуру
   void CList_MUC_SetRole(char* jid, CONF_DATA priv);
 

@@ -101,14 +101,6 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   // Åñëè ıòî êîíôåğåíöèÿ
   if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
 
-  extern const int COMPOSING_EVENTS;
-  if(COMPOSING_EVENTS)
-  if((resEx->compos)&&(!resEx->has_unread_msg)&&((resEx->entry_type == T_NORMAL)||(resEx->entry_type == T_CONF_NODE))) //åñëè êòîòî ÷òîòî íàáèğàåò...
-  {
-    strcat(path_to_pic, "composing");
-    goto L_DONE;
-  }
-
   // Åñëè ıòî ÷ëåíû êîíôåğåíöèè è îíè æèâû
   if(resEx->entry_type == T_CONF_NODE && !resEx->has_unread_msg && resEx->status<=PRESENCE_INVISIBLE)
   {

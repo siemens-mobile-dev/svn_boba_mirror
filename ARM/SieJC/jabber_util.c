@@ -671,6 +671,7 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
 void _leaveconference(char *conf_jid)
 {
   Send_ShortPresence(conf_jid,PRESENCE_OFFLINE);
+  mfree(conf_jid);
 }
 
 // Выходит из конференции
@@ -1605,7 +1606,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   char c_id[]="id";
 
   // Если включено обслуживание запросов о получении...
-  if((DELIVERY_EVENTS)||(COMPOSING_EVENTS))
+  if(DELIVERY_EVENTS)
   {
     XMLNode* xnode = XML_Get_Child_Node_By_Name(nodeEx,"x");
     if(xnode)
@@ -1616,25 +1617,12 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       {
         // получили <x xmlns='jabber:x:event'>
         // Проверяем <delivered/>, ибо не умеем ничего больше
-        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
         XMLNode *delivery = XML_Get_Child_Node_By_Name(xnode,"delivered");
-        if((delivery)&&(DELIVERY_EVENTS)) //деливери
+        if(delivery)
         {
           // Получаем ID сообщения
           char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
           if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
-        }
-        if(COMPOSING_EVENTS) //composing
-          if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
-        {
-        delivery = XML_Get_Child_Node_By_Name(xnode,"composing");
-        if(delivery) 
-          {
-          CList_ChangeComposingStatus(Res_ex, 1);
-          extern const char sndComposing[];
-          SUBPROC((void *)Play, sndComposing);
-          }
-        else CList_ChangeComposingStatus(Res_ex, 0);
         }
       }
     }
