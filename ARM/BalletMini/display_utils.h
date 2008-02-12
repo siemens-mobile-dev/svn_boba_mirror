@@ -7,3 +7,5 @@ int FindReferenceById(VIEWDATA *vd, int i, unsigned int id, unsigned int form_id
 void ChangeRadioButtonState(VIEWDATA *vd, REFCACHE *rf);
 void ChangeCheckBoxState(VIEWDATA *vd, REFCACHE *rf);
 
+void ScrollDown(int dy,VIEWDATA *vd);
+void ScrollUp(int dy,VIEWDATA *vd);

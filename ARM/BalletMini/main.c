@@ -44,6 +44,7 @@ char OMSCACHE_PATH[256];
 char AUTHDATA_FILE[256];
 char BOOKMARKS_PATH[256];
 
+
 static void StartGetFile(int dummy, char *fncache)
 {
   IPC_REQ *sipc;
@@ -126,30 +127,6 @@ static void method0(VIEW_GUI *data)
 		  GetPaletteAdrByColorIndex(0),
 		  GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
-/*    {
-      WSHDR *ws=vd->ws;
-      int dc=0;
-      ws->wsbody[++dc]=0xE012;
-      ws->wsbody[++dc]=0xE006;
-      ws->wsbody[++dc]=0x0000;
-      ws->wsbody[++dc]=0x0064;
-      ws->wsbody[++dc]=0xE007;
-      ws->wsbody[++dc]=0xFFFF;
-      ws->wsbody[++dc]=0xFF64;
-//      ws->wsbody[++dc]=0xE005;
-      ws->wsbody[++dc]=0xE001;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0xE002;
-      ws->wsbody[++dc]=0xE001;
-//      ws->wsbody[++dc]='A';
-      ws->wsbody[0]=dc;
-	DrawString(ws,0,0,scr_w,20,
-		   FONT_SMALL,TEXT_NOFORMAT
-		       ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
-    }*/
     DrawString(ws_console,0,0,scr_w,20,
 		 FONT_SMALL,TEXT_NOFORMAT
 		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
@@ -305,6 +282,25 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	    return 0xFF;
 	  }
 	  break;
+/*
+        //text
+        case 'r':
+	  ChangeRadioButtonState(vd,rf);
+	  break;
+
+        //select
+        case 'r':
+	  ChangeRadioButtonState(vd,rf);
+	  break;
+          
+        //submit form  
+        case 'r':
+	  ChangeRadioButtonState(vd,rf);
+	  break;
+          
+          
+          */          
+          
 	case 'r':
 	  ChangeRadioButtonState(vd,rf);
 	  break;
@@ -349,11 +345,12 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case LEFT_BUTTON:
-      m=6;
+/*      m=6;
       do
       {
 	if (!LineUp(vd)) break;
-      }
+      }*/
+      ScrollUp(ScreenH()-YDISP,vd);
       while(--m);
       RenderPage(vd,0);
       if (vd->pos_first_ref!=0xFFFFFFFF)
@@ -362,13 +359,14 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case RIGHT_BUTTON:
-      m=6;
+/*      m=6;
       do
       {
 	if (!RenderPage(vd,0)) break;
 	if (!LineDown(vd)) break;
       }
-      while(--m);
+      while(--m);*/
+      ScrollDown(ScreenH()-YDISP,vd);
       if (vd->pos_last_ref!=0xFFFFFFFF)
       {
 	vd->pos_cur_ref=vd->pos_last_ref;
@@ -719,6 +717,18 @@ int ReadUrlFile(char *url_file)
   return (1);
 }
 
+int SetInlineUrl(char*url)
+  {
+  char *buf=malloc(strlen(url)+3);
+  if(!buf) return 0;
+  buf[0]='0';
+  buf[1]='/';
+  strcpy(buf+2,url);
+  view_url=buf;
+  view_url_mode=MODE_URL;
+  return (1);
+  };
+
 static int ParseInputFilename(const char *fn)
 {
   char *s=strrchr(fn,'.');
@@ -726,18 +736,26 @@ static int ParseInputFilename(const char *fn)
   if (s)
   {
     s++;
+    //oms file
     if (!strcmp_nocase(s,"oms"))
     {
       view_url=globalstr(fn);
       view_url_mode=MODE_FILE;
     }
     else
-      if (!strcmp_nocase(s,"url"))
+    //url file  
+    if (!strcmp_nocase(s,"url"))
       {
         if (!ReadUrlFile((char *)fn)) return (0);
       }
-      else return 0;
-    return 1;
+   else 
+   //inline URL  
+   if (!memcmp((void*)fn,"http://",7))
+      {
+        if (!SetInlineUrl((char *)fn)) return (0);
+      }     
+   else return 0;
+   return 1;
   }
   return 0;
 }
@@ -813,19 +831,21 @@ int main(const char *exename, const char *filename)
     SUBPROC((void *)Killer);
     return 0;
   }
-  if (ParseInputFilename(filename))
-  {
+  
+extern char homepage[256];
+if (!ParseInputFilename(filename))
+ if (!ParseInputFilename(homepage))
+      {
+      LockSched();
+      ShowMSG(1,(int)"BM: Nothing to do!");
+      UnlockSched();
+      SUBPROC((void *)Killer);
+      return 0;
+      }
+  
     UpdateCSMname();
     LockSched();
     maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-    UnlockSched();
-  }
-  else
-  {
-    LockSched();
-    ShowMSG(1,(int)"BM: Nothing to do!");
-    UnlockSched();
-    SUBPROC((void *)Killer);
-  }
+    UnlockSched();   
   return 0;
 }
