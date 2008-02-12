@@ -27,11 +27,11 @@ void ScrollDown(int dy,VIEWDATA *vd)
 {
   int ypos=0;
   do
-    {
-	if (!RenderPage(vd,0)) break;
-	if (!LineDown(vd)) break;
-        ypos+=((vd->lines_cache+vd->view_line)->pixheight);
-      }
+  {
+    if (!RenderPage(vd,0)) break;
+    if (!LineDown(vd)) break;
+    ypos+=((vd->lines_cache+vd->view_line)->pixheight);
+  }
   while(ypos<dy);
   if(ypos>dy) LineUp(vd);  
 };
@@ -40,10 +40,10 @@ void ScrollUp(int dy,VIEWDATA *vd)
 {
   int ypos=0;
   do
-    {
-	if (!LineUp(vd)) break;
-        ypos+=((vd->lines_cache+vd->view_line)->pixheight);
-      }
+  {
+    if (!LineUp(vd)) break;
+    ypos+=((vd->lines_cache+vd->view_line)->pixheight);
+  }
   while(ypos<dy);
   if(ypos>dy) LineDown(vd);  
 };
@@ -196,7 +196,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int scr_h=ScreenH()-1;
   int sc;
   int dc;
-//  VIEWDATA *vd=data->vd;
+  //  VIEWDATA *vd=data->vd;
   WSHDR *ws=vd->ws;
   LINECACHE *lc;
   unsigned int vl;
@@ -215,7 +215,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int ena_ref=0;
   
   int result=1;
-
+  
   unsigned int _ref=0xFFFFFFFF;
   unsigned int flag=0;
   
@@ -256,11 +256,11 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	{
 	  //Found begin of ref
 	  _ref=sc;
-/*	  if (vd->pos_first_ref==0xFFFFFFFF)
+	  /*	  if (vd->pos_first_ref==0xFFFFFFFF)
 	  {
-	    vd->pos_first_ref=sc;
-	    vd->pos_last_ref=sc;
-	  }*/
+	  vd->pos_first_ref=sc;
+	  vd->pos_last_ref=sc;
+	}*/
 	  if (vd->pos_cur_ref!=sc)
 	  {
 	    if (flag==0) vd->pos_prev_ref=sc;
@@ -275,10 +275,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 	}
 	if (c==UTF16_DIS_INVERT)
 	{
-//	  if ((scr_h-ypos)>lc->pixheight)
-//	  {
-//	    vd->pos_botview_ref=prepare_bot_ref;
-//	  }
+	  //	  if ((scr_h-ypos)>lc->pixheight)
+	  //	  {
+	  //	    vd->pos_botview_ref=prepare_bot_ref;
+	  //	  }
 	  if (flag==2)
 	  {
 	    if ((scr_h-ypos)>lc->pixheight)
@@ -337,7 +337,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         for (int i=0; i!=cur_rc; i++) 
         {
           DrawRectangle(rc[i].start_x,ypos,rc[i].end_x,y2,
-		      RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
+			RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
         }
 	DrawString(ws,0,ypos,scr_w,y2,
 		   lc->bold?FONT_SMALL_BOLD:FONT_SMALL,TEXT_NOFORMAT
@@ -358,32 +358,30 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int sb_1  = store_pos; 
   int sb_2  = vd->view_pos;  
   
- 
+  
   vd->view_pos=store_pos;
   vd->view_line=store_line;
   
   //paint scrollbar here   
   if(sb_max>0)
-      {
-      if(sb_2<=sb_1) sb_2=sb_1+1;  
-      if(sb_1<0) sb_1=0;
-      if(sb_2<0) sb_2=0;
-      if(sb_1>=sb_max) sb_1=sb_max-1;
-      if(sb_2>=sb_max) sb_2=sb_max-1;   
-        
-      static const unsigned int SB_FG = 0x642FFF2F;  
-      static const unsigned int SB_BG = 0x64000000;  
-     /* DrawRectangle(scr_w-1,0,
-                    scr_w,scr_h,
-                    RECT_FILL_WITH_PEN,(char*)&WHITE,(char*)&WHITE);
-      DrawRectangle(scr_w-1,(scr_h*sb_1/sb_max),
-                    scr_w,(scr_h*sb_2/sb_max),
-                    RECT_FILL_WITH_PEN,(char*)&BLACK,(char*)&BLACK);*/
-      DrawLine(scr_w,0,scr_w,scr_h,0,(char*)&SB_BG);
-      DrawLine(scr_w,(scr_h*sb_1/sb_max),scr_w,(scr_h*sb_2/sb_max),0,(char*)&SB_FG);
-      };
-  
-  
+  {
+    if(sb_2<=sb_1) sb_2=sb_1+1;  
+    if(sb_1<0) sb_1=0;
+    if(sb_2<0) sb_2=0;
+    if(sb_1>=sb_max) sb_1=sb_max-1;
+    if(sb_2>=sb_max) sb_2=sb_max-1;   
+    
+    static const unsigned int SB_FG = 0x642FFF2F;  
+    static const unsigned int SB_BG = 0x64000000;  
+    /* DrawRectangle(scr_w-1,0,
+    scr_w,scr_h,
+    RECT_FILL_WITH_PEN,(char*)&WHITE,(char*)&WHITE);
+    DrawRectangle(scr_w-1,(scr_h*sb_1/sb_max),
+    scr_w,(scr_h*sb_2/sb_max),
+    RECT_FILL_WITH_PEN,(char*)&BLACK,(char*)&BLACK);*/
+    DrawLine(scr_w,0,scr_w,scr_h,0,(char*)&SB_BG);
+    DrawLine(scr_w,(scr_h*sb_1/sb_max),scr_w,(scr_h*sb_2/sb_max),0,(char*)&SB_FG);
+  }
   return(result);
 }
 

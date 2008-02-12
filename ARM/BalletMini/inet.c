@@ -38,8 +38,8 @@ static char *recvq_p=NULL;
 
 //static char OM_POST_HOST[]="80.232.117.10";
 //static unsigned short OM_POST_PORT=80;
-extern char OM_POST_HOST[32];
-extern unsigned int OM_POST_PORT;
+extern const char OM_POST_HOST[32];
+extern const unsigned int OM_POST_PORT;
 
 
 static int receive_mode;
@@ -414,7 +414,7 @@ static void SendPost(void)
     j=1;
     break;
   }
-  extern int java_heap_size;
+  extern const int java_heap_size;
   sprintf(buf,"d=w:%d;h:%d;c:65536;m:%d;i:%d;q:%d;f:0;j:0;l:256",ScreenW(),ScreenH(),min(1024*java_heap_size,GetFreeRamAvail()/2),i,j);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 

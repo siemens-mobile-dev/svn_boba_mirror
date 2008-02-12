@@ -128,8 +128,8 @@ static void method0(VIEW_GUI *data)
 		  GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
     DrawString(ws_console,0,0,scr_w,20,
-		 FONT_SMALL,TEXT_NOFORMAT
-		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+	       FONT_SMALL,TEXT_NOFORMAT
+		 ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
     extern int connect_state;
     if (!STOPPED)
     {
@@ -168,11 +168,11 @@ static void method0(VIEW_GUI *data)
       }
       DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));   
       DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
-              
+      
       DrawString(ws_console,0,0,scr_w,20,
 		 FONT_SMALL,TEXT_NOFORMAT
 		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
-
+      
     }
   }
 }
@@ -263,8 +263,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
   VIEWDATA *vd=data->vd;
   REFCACHE *rf;
   int m=msg->gbsmsg->msg;
-//  REFCACHE *p;
-//  REFCACHE *q;
+  //  REFCACHE *p;
+  //  REFCACHE *q;
   if ((m==KEY_DOWN)||(m==LONG_PRESS))
   {
     switch(msg->gbsmsg->submess)
@@ -282,18 +282,18 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	    return 0xFF;
 	  }
 	  break;
-/*
-        //text
+	  /*
+	  //text
         case 'r':
 	  ChangeRadioButtonState(vd,rf);
 	  break;
-
-        //select
+	  
+	  //select
         case 'r':
 	  ChangeRadioButtonState(vd,rf);
 	  break;
           
-        //submit form  
+	  //submit form  
         case 'r':
 	  ChangeRadioButtonState(vd,rf);
 	  break;
@@ -318,7 +318,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case UP_BUTTON:
-//      if (!RenderPage(vd,1)) break;
+      //      if (!RenderPage(vd,1)) break;
       //Check reference move
       if (vd->pos_prev_ref!=0xFFFFFFFF)
       {
@@ -345,11 +345,11 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case LEFT_BUTTON:
-/*      m=6;
+      /*      m=6;
       do
       {
-	if (!LineUp(vd)) break;
-      }*/
+      if (!LineUp(vd)) break;
+    }*/
       ScrollUp(ScreenH()-YDISP,vd);
       while(--m);
       RenderPage(vd,0);
@@ -359,12 +359,12 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case RIGHT_BUTTON:
-/*      m=6;
+      /*      m=6;
       do
       {
-	if (!RenderPage(vd,0)) break;
-	if (!LineDown(vd)) break;
-      }
+      if (!RenderPage(vd,0)) break;
+      if (!LineDown(vd)) break;
+    }
       while(--m);*/
       ScrollDown(ScreenH()-YDISP,vd);
       if (vd->pos_last_ref!=0xFFFFFFFF)
@@ -395,23 +395,23 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
 	break;
       }
     case GREEN_BUTTON:
-/*      {
-	//Dump rawtext
-	unsigned int ul;
-	int f;
-	if ((f=fopen("4:\\dumptext.raw",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-	{
-	  fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
-	  fclose(f,&ul);
-	}
-//	RenderPage(vd,2); //With dump
-      }*/
+      /*      {
+      //Dump rawtext
+      unsigned int ul;
+      int f;
+      if ((f=fopen("4:\\dumptext.raw",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+      {
+      fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
+      fclose(f,&ul);
+    }
+      //	RenderPage(vd,2); //With dump
+    }*/
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
 	if (rf->tag=='L')
 	{
-//	  ShowMSG(0x10,(int)(rf->id));
+	  //	  ShowMSG(0x10,(int)(rf->id));
 	  if (rf->id!=_NOREF)
 	  {
 	    char *s=extract_omstr(vd,rf->id);
@@ -452,7 +452,7 @@ static int CreateViewGUI(int cached)
   zeromem(view_gui,sizeof(VIEW_GUI));
   patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
   view_gui->gui.canvas=(void *)(&Canvas);
-//  view_gui->gui.flag30=2;
+  //  view_gui->gui.flag30=2;
   view_gui->gui.methods=(void *)gui_methods;
   view_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   view_gui->cached=cached;
@@ -656,18 +656,18 @@ static const struct
 }MAINCSM =
 {
   {
-  maincsm_onmessage,
-  maincsm_oncreate,
+    maincsm_onmessage,
+    maincsm_oncreate,
 #ifdef NEWSGOLD
-  0,
-  0,
-  0,
-  0,
+0,
+0,
+0,
+0,
 #endif
-  maincsm_onclose,
-  sizeof(MAIN_CSM),
-  1,
-  &minus11
+maincsm_onclose,
+sizeof(MAIN_CSM),
+1,
+&minus11
   },
   {
     maincsm_name_body,
@@ -718,7 +718,7 @@ int ReadUrlFile(char *url_file)
 }
 
 int SetInlineUrl(char*url)
-  {
+{
   char *buf=malloc(strlen(url)+3);
   if(!buf) return 0;
   buf[0]='0';
@@ -727,7 +727,7 @@ int SetInlineUrl(char*url)
   view_url=buf;
   view_url_mode=MODE_URL;
   return (1);
-  };
+};
 
 static int ParseInputFilename(const char *fn)
 {
@@ -743,19 +743,19 @@ static int ParseInputFilename(const char *fn)
       view_url_mode=MODE_FILE;
     }
     else
-    //url file  
-    if (!strcmp_nocase(s,"url"))
+      //url file  
+      if (!strcmp_nocase(s,"url"))
       {
         if (!ReadUrlFile((char *)fn)) return (0);
       }
-   else 
-   //inline URL  
-   if (!memcmp((void*)fn,"http://",7))
-      {
-        if (!SetInlineUrl((char *)fn)) return (0);
-      }     
-   else return 0;
-   return 1;
+      else 
+	//inline URL  
+	if (!memcmp((void*)fn,"http://",7))
+	{
+	  if (!SetInlineUrl((char *)fn)) return (0);
+	}     
+	else return 0;
+    return 1;
   }
   return 0;
 }
@@ -831,21 +831,19 @@ int main(const char *exename, const char *filename)
     SUBPROC((void *)Killer);
     return 0;
   }
-  
-extern char homepage[256];
-if (!ParseInputFilename(filename))
- if (!ParseInputFilename(homepage))
-      {
+  extern const char homepage[256];
+  if (!ParseInputFilename(filename))
+    if (!ParseInputFilename(homepage))
+    {
       LockSched();
       ShowMSG(1,(int)"BM: Nothing to do!");
       UnlockSched();
       SUBPROC((void *)Killer);
       return 0;
-      }
-  
-    UpdateCSMname();
-    LockSched();
-    maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-    UnlockSched();   
+    }
+  UpdateCSMname();
+  LockSched();
+  maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+  UnlockSched();   
   return 0;
 }
