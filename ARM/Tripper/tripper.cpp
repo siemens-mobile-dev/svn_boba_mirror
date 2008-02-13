@@ -1,8 +1,7 @@
 /*
 sielf (s)tripper
 
-(c)Captain_SISka 2007
-(r)Rst7
+(c)Разработчики эльфпака(Rst7/CBSIE, BoBa и другие), Captain_SISka
 */
 
 //#include <condefs.h>
