@@ -5,7 +5,7 @@
 #include "swaper.h"
 
 #ifdef NEWSGOLD
-#define USE_ONE_KEY
+ #define USE_ONE_KEY
 #endif
 
 #define TMR_SECOND(A) (1300L*A/6)
