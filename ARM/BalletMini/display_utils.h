@@ -5,3 +5,4 @@ int RenderPage(VIEWDATA *vd, int do_draw);
 REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref);
 int FindReferenceById(VIEWDATA *vd, unsigned int id, int i);
 int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf);
+int CreateInputBox(char *text_begin);

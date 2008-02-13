@@ -3,6 +3,7 @@
 #include "display_utils.h"
 #include "siemens_unicode.h"
 #include "string_works.h"
+#include "rect_patcher.h"
 
 #define ITEM_EDITBOX_SIZE 255
 
@@ -17,6 +18,7 @@ int GetFontHeight(int font, int atribute)
 
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max_h)
 {
+  REFCACHE *rf;
   int left=ScreenW();
   int c;
   int h;
@@ -38,7 +40,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     case 0xE11F:
     case 0xE11E:
       f=1;
-      REFCACHE *rf=FindReference(vd,pos);
+      rf=FindReference(vd,pos);
       if (rf) pos=rf->end;
       break;
     case 0x0A:
