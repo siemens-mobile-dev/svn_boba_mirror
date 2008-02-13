@@ -11,6 +11,8 @@
 #define RAWTEXTCHUNK (16384)
 #define REFCACHECHUNK (256)
 
+#define ITEM_EDITBOX_SIZE 255
+
 unsigned int wchar_radio_on=0xFFFF;
 unsigned int wchar_radio_off=0xFFFF;
 
@@ -58,6 +60,7 @@ void AddEndRef(VIEWDATA *vd)
   {
     vd->pos_cur_ref=vd->work_ref.begin;
   }
+  memset(&(vd->work_ref),0xFF,sizeof(REFCACHE));
 }
 
 void AddTextItem(VIEWDATA *vd, const char *text, int len)
@@ -70,23 +73,23 @@ void AddTextItem(VIEWDATA *vd, const char *text, int len)
     {
       if (len>0)
       {
-	c&=0x1F;
-	c<<=6;
-	c|=(*text++)&0x3F;
-	len-=1;
+        c&=0x1F;
+        c<<=6;
+        c|=(*text++)&0x3F;
+        len-=1;
       }
     }
     else
       if ((c&0xF0)==0xE0)
       {
-	if (len>1)
-	{
-	  c&=0x0F;
-	  c<<=12;
-	  c|=((*text++)&0x3F)<<6;
-	  c|=((*text++)&0x3F)<<0;
-	  len-=2;
-	}
+        if (len>1)
+        {
+          c&=0x0F;
+          c<<=12;
+          c|=((*text++)&0x3F)<<6;
+          c|=((*text++)&0x3F)<<0;
+          len-=2;
+        }
       }
     RawInsertChar(vd,c);
   }
@@ -270,18 +273,22 @@ void AddCheckBoxItem(VIEWDATA *vd, int checked)
 
 void AddInputItem(VIEWDATA *vd, const char *text, int len)
 {
-  RawInsertChar(vd,10);
-  RawInsertChar(vd,0xE11F);
+  RawInsertChar(vd,0x0A);
+  RawInsertChar(vd,0xE11E);
+  unsigned int i=vd->rawtext_size;
   AddTextItem(vd,text,len);
-  RawInsertChar(vd,10);
+  while (vd->rawtext_size<i+ITEM_EDITBOX_SIZE) RawInsertChar(vd,0x00);
+  RawInsertChar(vd,0x0A);
 }
   
 void AddPassInputItem(VIEWDATA *vd, const char *text, int len)
 {
-  RawInsertChar(vd,10);
+  RawInsertChar(vd,0x0A);
   RawInsertChar(vd,0xE11F);
-  AddTextItem(vd,"****",4);
-  RawInsertChar(vd,10);
+  unsigned int i=vd->rawtext_size;
+  AddTextItem(vd,text,len);
+  while (vd->rawtext_size<i+ITEM_EDITBOX_SIZE) RawInsertChar(vd,0x00);
+  RawInsertChar(vd,0x0A);
 }
 
 void AddButtonItem(VIEWDATA *vd, const char *text, int len)
@@ -293,4 +300,11 @@ void AddButtonItem(VIEWDATA *vd, const char *text, int len)
 
 void AddSelectItem(VIEWDATA *vd)
 {
+}
+
+void AddDropDownList(VIEWDATA *vd)
+{
+  RawInsertChar(vd,0x0A);
+  RawInsertChar(vd,0xE11B);
+  RawInsertChar(vd,0x0A);
 }

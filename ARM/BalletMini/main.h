@@ -15,3 +15,12 @@ enum I_INPUTMODE {MODE_FILE, MODE_URL};
 
 void FreeRawText(VIEWDATA *vd);
 
+typedef struct
+{
+  GUI gui;
+  VIEWDATA *vd;
+  int cached;
+  WSHDR *ws1;
+  WSHDR *ws2;
+}VIEW_GUI;
+

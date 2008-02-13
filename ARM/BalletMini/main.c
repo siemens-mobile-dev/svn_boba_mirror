@@ -31,6 +31,10 @@ IPC_REQ gipc;
 int view_url_mode; //MODE_FILE, MODE_URL
 char *view_url;
 char *goto_url;
+char *from_url;
+char *goto_params;
+
+int quit_reqired;
 
 static const char percent_t[]="%t";
 
@@ -43,7 +47,6 @@ char URLCACHE_PATH[256];
 char OMSCACHE_PATH[256];
 char AUTHDATA_FILE[256];
 char BOOKMARKS_PATH[256];
-
 
 static void StartGetFile(int dummy, char *fncache)
 {
@@ -59,31 +62,31 @@ static void StartGetFile(int dummy, char *fncache)
       int fc=-1;
       if (fncache)
       {
-	fc=fopen(fncache,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
+        fc=fopen(fncache,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&err);
       }
       else
       {
-	UpPageStack(); 
+        UpPageStack(); 
       }
       while((i=fread(f,buf,sizeof(buf),&err))>0)
       {
-	if (fc!=-1)
-	{
-	  fwrite(fc,buf,i,&err);
-	}
-	LockSched();
-	if ((!TERMINATED)&&(!STOPPED))
-	{
-	  sipc=malloc(sizeof(IPC_REQ));
-	  sipc->name_to=ipc_my_name;
-	  sipc->name_from=ipc_my_name;
-	  sipc->data=malloc(i+4);
-	  *((int *)(sipc->data))=i;
-	  memcpy(((char *)(sipc->data))+4,buf,i);
-	  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
-	}
-	UnlockSched();
-	if (TERMINATED||STOPPED) break;
+        if (fc!=-1)
+        {
+          fwrite(fc,buf,i,&err);
+        }
+        LockSched();
+        if ((!TERMINATED)&&(!STOPPED))
+        {
+          sipc=malloc(sizeof(IPC_REQ));
+          sipc->name_to=ipc_my_name;
+          sipc->name_from=ipc_my_name;
+          sipc->data=malloc(i+4);
+          *((int *)(sipc->data))=i;
+          memcpy(((char *)(sipc->data))+4,buf,i);
+          GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_ARRIVED,sipc);
+        }
+        UnlockSched();
+        if (TERMINATED||STOPPED) break;
       }
       if (fc!=-1) fclose(fc,&err);
       fclose(f,&err);
@@ -104,15 +107,117 @@ static void StartGetFile(int dummy, char *fncache)
   }
 }
 
-//===============================================================================================
-typedef struct
+char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
 {
-  GUI gui;
-  VIEWDATA *vd;
-  int cached;
-  WSHDR *ws1;
-  WSHDR *ws2;
-}VIEW_GUI;
+  char *s=malloc(1024);
+  unsigned int pos=0;
+  for (int i=0;i<vd->ref_cache_size;i++)
+  {
+    REFCACHE *prf=vd->ref_cache+i;
+    switch (prf->tag)
+    {
+    case 's':
+      {
+        s[pos]='&';
+        pos++;
+        char *c=extract_omstr(vd,prf->id);
+        memcpy(s+pos,c,strlen(c));
+        pos+=strlen(c);
+        mfree(c);
+        s[pos]='=';
+        pos++;
+        c=extract_omstr(vd,prf->id2);
+        memcpy(s+pos,c,strlen(c));
+        pos+=strlen(c);
+        mfree(c);
+      }
+      break;
+    case 'c':
+    case 'r':
+      {
+        if (vd->rawtext[prf->begin+1]==RADIOB_CHECKED||vd->rawtext[prf->begin+1]==CBOX_CHECKED)
+        {
+          s[pos]='&';
+          pos++;
+          char *c=extract_omstr(vd,prf->id);
+          memcpy(s+pos,c,strlen(c));
+          pos+=strlen(c);
+          mfree(c);
+          s[pos]='=';
+          pos++;
+          c=extract_omstr(vd,prf->value);
+          memcpy(s+pos,c,strlen(c));
+          pos+=strlen(c);
+          mfree(c);
+        }
+      }
+      break;
+    case 'u':
+      {
+        if (prf!=rf) break;
+        s[pos]='&';
+        pos++;
+        char *c=extract_omstr(vd,prf->id);
+        memcpy(s+pos,c,strlen(c));
+        pos+=strlen(c);
+        mfree(c);
+        s[pos]='=';
+        pos++;
+        c=extract_omstr(vd,prf->value);
+        WSHDR *ws=AllocWS(256);
+        oms2ws(ws,c,strlen(c));
+        mfree(c);
+        char *b=c=(char *)malloc(ws->wsbody[0]+3);
+        for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
+        *c=0;
+        b=ToWeb(b,1);
+        memcpy(s+pos,b,strlen(b));
+        pos+=strlen(b);
+        mfree(b);
+      }
+      break;
+    case 'p':
+    case 'x':
+      {
+        s[pos]='&';
+        pos++;
+        char *c=extract_omstr(vd,prf->id);
+        memcpy(s+pos,c,strlen(c));
+        pos+=strlen(c);
+        mfree(c);
+        s[pos]='=';
+        pos++;
+        WSHDR *ws=AllocWS(256);
+        for (int i=0;i<256;i++)
+        {
+          unsigned short v=*(vd->rawtext+prf->begin+3+i);
+          if (!v) break;
+          ws->wsbody[0]++;
+          ws->wsbody[ws->wsbody[0]]=v;
+        }
+        char *b=c=(char *)malloc(ws->wsbody[0]+3);
+        for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
+        *c=0;
+        b=ToWeb(b,1);
+        memcpy(s+pos,b,strlen(b));
+        pos+=strlen(b);
+        mfree(b);
+      }
+      break;
+    }
+  }
+  s[pos]=0;
+  //unsigned int ul;
+  //int f;
+  //if ((f=fopen("0:\\zbin\\balletmini\\dump.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+  //{
+  //  fwrite(f,s,pos,&ul);
+  //  fclose(f,&ul);
+  //}
+  return s;
+}
+
+//===============================================================================================
 
 static void method0(VIEW_GUI *data)
 {
@@ -127,9 +232,33 @@ static void method0(VIEW_GUI *data)
 		  GetPaletteAdrByColorIndex(0),
 		  GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
+/*    {
+      WSHDR *ws=vd->ws;
+      int dc=0;
+      ws->wsbody[++dc]=0xE012;
+      ws->wsbody[++dc]=0xE006;
+      ws->wsbody[++dc]=0x0000;
+      ws->wsbody[++dc]=0x0064;
+      ws->wsbody[++dc]=0xE007;
+      ws->wsbody[++dc]=0xFFFF;
+      ws->wsbody[++dc]=0xFF64;
+//      ws->wsbody[++dc]=0xE005;
+      ws->wsbody[++dc]=0xE001;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0x440;
+      ws->wsbody[++dc]=0xE002;
+      ws->wsbody[++dc]=0xE001;
+//      ws->wsbody[++dc]='A';
+      ws->wsbody[0]=dc;
+	DrawString(ws,0,0,scr_w,20,
+		   FONT_SMALL,TEXT_NOFORMAT
+		       ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+    }*/
     DrawString(ws_console,0,0,scr_w,20,
-	       FONT_SMALL,TEXT_NOFORMAT
-		 ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+		 FONT_SMALL,TEXT_NOFORMAT
+		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
     extern int connect_state;
     if (!STOPPED)
     {
@@ -168,11 +297,10 @@ static void method0(VIEW_GUI *data)
       }
       DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));   
       DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
-      
+              
       DrawString(ws_console,0,0,scr_w,20,
-		 FONT_SMALL,TEXT_NOFORMAT
+		  FONT_SMALL,TEXT_NOFORMAT
 		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
-      
     }
   }
 }
@@ -260,11 +388,16 @@ static void RunOtherCopyByURL(const char *url)
 
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
 {
+  if (quit_reqired)
+  {
+    quit_reqired=0;
+    return 0xFF;
+  }
   VIEWDATA *vd=data->vd;
   REFCACHE *rf;
   int m=msg->gbsmsg->msg;
-  //  REFCACHE *p;
-  //  REFCACHE *q;
+//  REFCACHE *p;
+//  REFCACHE *q;
   if ((m==KEY_DOWN)||(m==LONG_PRESS))
   {
     switch(msg->gbsmsg->submess)
@@ -273,104 +406,188 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
-	switch(rf->tag)
-	{
-	case 'L':
-	  if (rf->id!=_NOREF)
-	  {
-	    goto_url=extract_omstr(vd,rf->id);
-	    return 0xFF;
-	  }
-	  break;
-	  /*
-	  //text
+        switch(rf->tag)
+        {
+        case 'L':
+          if (rf->id!=_NOREF)
+          {
+            // 1/http:        не бывает здесь такого
+            // 0/http:        не загружать
+            goto_url=extract_omstr(vd,rf->id);
+            // 0/javascript:  upload data
+            if (!strncmp("0/javascript",goto_url,12))
+            {
+              from_url=malloc(strlen(vd->pageurl));
+              strcpy(from_url,vd->pageurl);
+              goto_params=collectItemsParams(vd,rf);
+            }
+            return 0xFF;
+          }
+          break;
         case 'r':
-	  ChangeRadioButtonState(vd,rf);
-	  break;
-	  
-	  //select
-        case 'r':
-	  ChangeRadioButtonState(vd,rf);
-	  break;
-          
-	  //submit form  
-        case 'r':
-	  ChangeRadioButtonState(vd,rf);
-	  break;
-          
-          
-          */          
-          
-	case 'r':
-	  ChangeRadioButtonState(vd,rf);
-	  break;
-	case 'c':
-	  ChangeCheckBoxState(vd,rf);
-	  break;
-	default:
-	  ShowMSG(1,(int)"This Reftype under construction!");
-	  break;
-	}
+          {
+            REFCACHE *rfp;
+            int i;
+            if (rf->tag!='r') break;
+            if (rf->begin>=vd->rawtext_size) break;
+            if (vd->rawtext[rf->begin+1]!=RADIOB_UNCHECKED) break;
+            vd->rawtext[rf->begin+1]=RADIOB_CHECKED;
+            i=0;
+            while((i=FindReferenceById(vd,rf->id,i))>=0)
+            {
+              rfp=vd->ref_cache+i;
+              if (rfp!=rf)
+                if (rfp->begin<vd->rawtext_size)
+                  if (vd->rawtext[rfp->begin+1]==RADIOB_CHECKED)
+                    vd->rawtext[rfp->begin+1]=RADIOB_UNCHECKED;
+              i++;
+            }
+          }
+          // if rf->upload, upload data
+          if (!rf->no_upload)
+          {
+            from_url=malloc(strlen(vd->pageurl));
+            strcpy(from_url,vd->pageurl);
+            goto_params=collectItemsParams(vd,rf);
+            return 0xFF;
+          }
+          break;
+        case 'c':
+          if (rf->begin>=vd->rawtext_size) break;
+          if (vd->rawtext[rf->begin+1]==CBOX_CHECKED)
+            vd->rawtext[rf->begin+1]=CBOX_UNCHECKED;
+          else
+            vd->rawtext[rf->begin+1]=CBOX_CHECKED;
+          // if rf->upload, upload data
+          if (!rf->no_upload)
+          {
+            from_url=malloc(strlen(vd->pageurl));
+            strcpy(from_url,vd->pageurl);
+            goto_params=collectItemsParams(vd,rf);
+            return 0xFF;
+          }
+          break;
+        case 'x':
+        case 'p':
+          if (rf->begin>=vd->rawtext_size) break;
+          CreateInputBox((char *)vd->rawtext+(rf->begin*2)+6);
+          // if rf->upload, upload data
+          if (!rf->no_upload)
+          {
+            from_url=malloc(strlen(vd->pageurl));
+            strcpy(from_url,vd->pageurl);
+            goto_params=collectItemsParams(vd,rf);
+            return 0xFF;
+          }
+          break;
+        case 'u':
+          if (rf->id!=_NOREF)
+          {
+            goto_url=malloc(strlen(vd->pageurl)+1);
+            memcpy(goto_url,vd->pageurl,strlen(vd->pageurl));
+            goto_url[strlen(vd->pageurl)]=0;
+            from_url=malloc(strlen(vd->pageurl));
+            strcpy(from_url,vd->pageurl);
+            goto_params=collectItemsParams(vd,rf);
+            return 0xFF;
+          }
+          break;
+        case 's':
+          if (rf->id!=_NOREF)
+          {
+            ChangeMenuSelection(vd, rf);
+          }
+          break;
+        default:
+          {
+            char c[128];
+            sprintf(c,"Reftype: \'%c\' under construction!",rf->tag);
+            ShowMSG(1,(int)c);
+          }
+        break;
+        }
       }
       else
       {
-	ShowMSG(1,(int)"RF empty!");
+	      ShowMSG(1,(int)"RF empty!");
       }
       break;
     case UP_BUTTON:
-      //      if (!RenderPage(vd,1)) break;
+      //if (!RenderPage(vd,1)) break;
       //Check reference move
       if (vd->pos_prev_ref!=0xFFFFFFFF)
       {
-	vd->pos_cur_ref=vd->pos_prev_ref;
+        vd->pos_cur_ref=vd->pos_prev_ref;
       }
       else
       {
-	LineUp(vd);
+        LineUp(vd);
       }
       break;
     case DOWN_BUTTON:
       if (vd->pos_next_ref!=0xFFFFFFFF)
       {
-	vd->pos_cur_ref=vd->pos_next_ref;
+        vd->pos_cur_ref=vd->pos_next_ref;
       }
       else
       {
-	if (vd->pos_last_ref!=0xFFFFFFFF)
-	{
-	  vd->pos_cur_ref=vd->pos_last_ref;
-	}
-	if (!RenderPage(vd,0)) break;
-	LineDown(vd);
+        if (vd->pos_last_ref!=0xFFFFFFFF)
+        {
+          vd->pos_cur_ref=vd->pos_last_ref;
+        }
+        if (!RenderPage(vd,0)) break;
+        LineDown(vd);
       }
       break;
-    case LEFT_BUTTON:
-      /*      m=6;
+    /*case LEFT_BUTTON:
+      m=6;
       do
       {
-      if (!LineUp(vd)) break;
-    }*/
-      ScrollUp(ScreenH()-YDISP,vd);
+        if (!LineUp(vd)) break;
+      }
       while(--m);
       RenderPage(vd,0);
       if (vd->pos_first_ref!=0xFFFFFFFF)
       {
-	vd->pos_cur_ref=vd->pos_first_ref;
+        vd->pos_cur_ref=vd->pos_first_ref;
       }
       break;
     case RIGHT_BUTTON:
-      /*      m=6;
+      m=6;
       do
       {
-      if (!RenderPage(vd,0)) break;
-      if (!LineDown(vd)) break;
-    }
-      while(--m);*/
-      ScrollDown(ScreenH()-YDISP,vd);
+        if (!RenderPage(vd,0)) break;
+        if (!LineDown(vd)) break;
+      }
+      while(--m);
       if (vd->pos_last_ref!=0xFFFFFFFF)
       {
-	vd->pos_cur_ref=vd->pos_last_ref;
+        vd->pos_cur_ref=vd->pos_last_ref;
       }
+      break;*/
+    case RIGHT_BUTTON:
+    case VOL_DOWN_BUTTON:
+      m=ScreenH()-24;
+      do
+      {
+        if (!RenderPage(vd,0)) break;
+        if (!LineDown(vd)) break;
+        m-=vd->lines_cache[vd->view_line].pixheight;
+      }
+      while(m>0);
+      vd->pos_cur_ref=0xFFFFFFFF;
+      break;
+    case LEFT_BUTTON:
+    case VOL_UP_BUTTON:
+      m=ScreenH()-24;
+      do
+      {
+        if (!LineUp(vd)) break;
+        m-=vd->lines_cache[vd->view_line].pixheight;
+      }
+      while(m>0);
+      RenderPage(vd,0);
+      vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_SOFT:
       STOPPED=1;
@@ -379,46 +596,155 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     case RIGHT_SOFT:
       if (STOPPED)
       {
-	mfree(PopPageFromStack());
-	return 0xFE;
+        mfree(PopPageFromStack());
+        return 0xFE;
       }
       else
       {
-	if (view_url_mode==MODE_URL)
-	{
-	  SUBPROC((void*)StopINET);
-	}
-	else
-	{
-	  STOPPED=1;
-	}
-	break;
+        if (view_url_mode==MODE_URL)
+        {
+          SUBPROC((void*)StopINET);
+        }
+        else
+        {
+          STOPPED=1;
+        }
+        break;
       }
     case GREEN_BUTTON:
-      /*      {
-      //Dump rawtext
-      unsigned int ul;
-      int f;
-      if ((f=fopen("4:\\dumptext.raw",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-      {
-      fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
-      fclose(f,&ul);
-    }
-      //	RenderPage(vd,2); //With dump
-    }*/
+      /*{
+        //Dump rawtext
+        unsigned int ul;
+        int f;
+        if ((f=fopen("4:\\dumptext.raw",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        {
+          fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
+          fclose(f,&ul);
+        }
+        //RenderPage(vd,2); //With dump
+      }*/
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
-	if (rf->tag=='L')
-	{
-	  //	  ShowMSG(0x10,(int)(rf->id));
-	  if (rf->id!=_NOREF)
-	  {
-	    char *s=extract_omstr(vd,rf->id);
-	    RunOtherCopyByURL(s+2);
-	    mfree(s);
-	  }
-	}
+        if (rf->tag=='L')
+        {
+          //ShowMSG(0x10,(int)(rf->id));
+          if (rf->id!=_NOREF)
+          {
+            char *s=extract_omstr(vd,rf->id);
+            RunOtherCopyByURL(s+2);
+            mfree(s);
+          }
+        }
+      }
+      break;
+    case 0x39: // '9'
+        do
+        {
+          if (!RenderPage(vd,0)) break;
+          if (!LineDown(vd)) break;
+        }
+        while(1);
+        vd->pos_cur_ref=0xFFFFFFFF;
+      break;
+    case 0x33: // '3'
+      do
+      {
+        if (!LineUp(vd)) break;
+      }
+      while(1);
+      vd->pos_cur_ref=0xFFFFFFFF;
+      break;
+    case 0x31: // '1'
+      {
+        //Dump OMS
+        unsigned int ul;
+        int f;
+        if ((f=fopen("0:\\zbin\\balletmini\\dumpoms.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        {
+          fwrite(f,vd->oms,vd->oms_size,&ul);
+          fclose(f,&ul);
+        }
+      }
+      break;
+    case 0x34: // '4'
+      {
+        //Dump RAWTEXT
+        unsigned int ul;
+        int f;
+        if ((f=fopen("0:\\zbin\\balletmini\\dumpraw.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        {
+          fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
+          fclose(f,&ul);
+        }
+      }
+      break;
+    case 0x37: // '7'
+      {
+        //Dump REFCACHE
+        unsigned int ul;
+        int f;
+        if ((f=fopen("0:\\zbin\\balletmini\\dumpref.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        {
+          char c[128];
+          sprintf(c,"\nref_cache_size : %i\n\n",vd->ref_cache_size);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,"\npos_cur_ref :    %i\n",vd->pos_cur_ref);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,"\npos_first_ref :  %i\n",vd->pos_first_ref);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,"\npos_last_ref :   %i\n",vd->pos_last_ref);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,"\npos_prev_ref :   %i\n",vd->pos_prev_ref);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,"\npos_next_ref :   %i\n",vd->pos_next_ref);
+          fwrite(f,c,strlen(c),&ul);
+          for (int i=0;i<vd->ref_cache_size;i++)
+          {
+            REFCACHE *rf=vd->ref_cache+i;
+            sprintf(c,"\nREF : %i\n",i);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  tag:      %c\n",rf->tag);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  id:       %u",rf->id);
+            fwrite(f,c,strlen(c),&ul);
+            if (rf->id!=_NOREF)
+            {
+              char *s=extract_omstr(vd,rf->id);
+              sprintf(c,"   %s",s);
+              fwrite(f,c,strlen(c),&ul);
+              mfree(s);
+            }
+            fwrite(f,"\n",1,&ul);
+            sprintf(c,"  id2:      %u",rf->id2);
+            fwrite(f,c,strlen(c),&ul);
+            if (rf->id2!=_NOREF)
+            {
+              char *s=extract_omstr(vd,rf->id2);
+              sprintf(c,"   %s",s);
+              fwrite(f,c,strlen(c),&ul);
+              mfree(s);
+            }
+            fwrite(f,"\n",1,&ul);
+            sprintf(c,"  value:    %u",rf->value);
+            fwrite(f,c,strlen(c),&ul);
+            if (rf->value!=_NOREF)
+            {
+              char *s=extract_omstr(vd,rf->value);
+              sprintf(c,"   %s",s);
+              fwrite(f,c,strlen(c),&ul);
+              mfree(s);
+            }
+            fwrite(f,"\n",1,&ul);
+            sprintf(c,"  begin:    %i\n",rf->begin);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  end:      %i\n",rf->end);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  upload:   %s\n\n",rf->no_upload?"false":"true");
+            fwrite(f,c,strlen(c),&ul);
+          }
+          fclose(f,&ul);
+        }
       }
       break;
     }
@@ -452,7 +778,7 @@ static int CreateViewGUI(int cached)
   zeromem(view_gui,sizeof(VIEW_GUI));
   patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
   view_gui->gui.canvas=(void *)(&Canvas);
-  //  view_gui->gui.flag30=2;
+//  view_gui->gui.flag30=2;
   view_gui->gui.methods=(void *)gui_methods;
   view_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   view_gui->cached=cached;
@@ -530,58 +856,58 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     {
       if (strcmp_nocase(ipc->name_to,ipc_my_name)==0)
       {
-	switch (msg->submess)
-	{
-	case IPC_DATA_ARRIVED:
-	  //Если приняли свое собственное сообщение, значит запускаем чекер
-	  if (ipc->name_from==ipc_my_name)
-	  {
-	    VIEW_GUI *p=FindGUIbyId(csm->view_id,NULL);
-	    VIEWDATA *vd;
-	    int len=*((int*)(ipc->data));
-	    char *buf=((char*)(ipc->data))+4;
-	    if (p)
-	    {
-	      vd=p->vd;
-	      if (vd)
-	      {
-		OMS_DataArrived(vd,buf,len);
-		if (IsGuiOnTop(csm->view_id)) DirectRedrawGUI();
-	      }
-	    }
-	    mfree(ipc->data);
-	    mfree(ipc);
+        switch (msg->submess)
+        {
+        case IPC_DATA_ARRIVED:
+          //Если приняли свое собственное сообщение, значит запускаем чекер
+          if (ipc->name_from==ipc_my_name)
+          {
+            VIEW_GUI *p=FindGUIbyId(csm->view_id,NULL);
+            VIEWDATA *vd;
+            int len=*((int*)(ipc->data));
+            char *buf=((char*)(ipc->data))+4;
+            if (p)
+            {
+              vd=p->vd;
+              if (vd)
+              {
+                OMS_DataArrived(vd,buf,len);
+                if (IsGuiOnTop(csm->view_id)) DirectRedrawGUI();
+              }
+            }
+            mfree(ipc->data);
+            mfree(ipc);
             csm_result=0;  //Обработали сообщение 
-	  }
-	  break;
-	case IPC_GOTO_URL:
-	  if (ipc->name_from==ipc_my_name)
-	  {
-	    mfree(ipc);
-	    FreeViewUrl();
-	    view_url=goto_url;
-	    view_url_mode=MODE_URL;
-	    goto_url=NULL;
-	    UpdateCSMname();
-	    csm->view_id=CreateViewGUI(0);
+          }
+          break;
+        case IPC_GOTO_URL:
+          if (ipc->name_from==ipc_my_name)
+          {
+            mfree(ipc);
+            FreeViewUrl();
+            view_url=goto_url;
+            view_url_mode=MODE_URL;
+            goto_url=NULL;
+            UpdateCSMname();
+            csm->view_id=CreateViewGUI(0);
             csm_result=0;  //Обработали сообщение 
-	  }
-	  break;
-	case IPC_GOTO_FILE:
-	  if (ipc->name_from==ipc_my_name)
-	  {
-	    mfree(ipc);
-	    if (ParseInputFilename(goto_url))
-	    {
-	      UpdateCSMname();
-	      csm->view_id=CreateViewGUI(1);
-	    }
-	    mfree(goto_url);
-	    goto_url=NULL;
+          }
+          break;
+        case IPC_GOTO_FILE:
+          if (ipc->name_from==ipc_my_name)
+          {
+            mfree(ipc);
+            if (ParseInputFilename(goto_url))
+            {
+              UpdateCSMname();
+              csm->view_id=CreateViewGUI(1);
+            }
+            mfree(goto_url);
+            goto_url=NULL;
             csm_result=0;   //Обработали сообщение 
-	  }
-	  break;
-	}
+          }
+          break;
+        }
       }
     }
   }
@@ -601,26 +927,26 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       switch((int)msg->data1)
       {
       case 0xFE:
-	//Пробуем идти по стеку назад
-	if ((goto_url=PopPageFromStack()))
-	{
-	  SUBPROC((void*)GotoFile);
-	  break;
-	}
-	goto L_CLOSE;
+        //Пробуем идти по стеку назад
+        if ((goto_url=PopPageFromStack()))
+        {
+          SUBPROC((void*)GotoFile);
+          break;
+        }
+        goto L_CLOSE;
       case 0xFF:
-	if (goto_url)
-	{
-	  //Есть куда пойти
-	  SUBPROC((void*)GotoLink);
-	  break;
-	}
-	else
-	  goto L_CLOSE;
+        if (goto_url)
+        {
+          //Есть куда пойти
+          SUBPROC((void*)GotoLink);
+          break;
+        }
+        else
+          goto L_CLOSE;
       default:
       L_CLOSE:
-	csm->csm.state=-3;
-	break;
+        csm->csm.state=-3;
+        break;
       }
     }
     if ((int)msg->data0==csm->goto_url)
@@ -656,18 +982,18 @@ static const struct
 }MAINCSM =
 {
   {
-    maincsm_onmessage,
-    maincsm_oncreate,
+  maincsm_onmessage,
+  maincsm_oncreate,
 #ifdef NEWSGOLD
-0,
-0,
-0,
-0,
+  0,
+  0,
+  0,
+  0,
 #endif
-maincsm_onclose,
-sizeof(MAIN_CSM),
-1,
-&minus11
+  maincsm_onclose,
+  sizeof(MAIN_CSM),
+  1,
+  &minus11
   },
   {
     maincsm_name_body,
@@ -717,18 +1043,6 @@ int ReadUrlFile(char *url_file)
   return (1);
 }
 
-int SetInlineUrl(char*url)
-{
-  char *buf=malloc(strlen(url)+3);
-  if(!buf) return 0;
-  buf[0]='0';
-  buf[1]='/';
-  strcpy(buf+2,url);
-  view_url=buf;
-  view_url_mode=MODE_URL;
-  return (1);
-};
-
 static int ParseInputFilename(const char *fn)
 {
   char *s=strrchr(fn,'.');
@@ -736,25 +1050,17 @@ static int ParseInputFilename(const char *fn)
   if (s)
   {
     s++;
-    //oms file
     if (!strcmp_nocase(s,"oms"))
     {
       view_url=globalstr(fn);
       view_url_mode=MODE_FILE;
     }
     else
-      //url file  
       if (!strcmp_nocase(s,"url"))
       {
         if (!ReadUrlFile((char *)fn)) return (0);
       }
-      else 
-	//inline URL  
-	if (!memcmp((void*)fn,"http://",7))
-	{
-	  if (!SetInlineUrl((char *)fn)) return (0);
-	}     
-	else return 0;
+      else return 0;
     return 1;
   }
   return 0;
@@ -831,19 +1137,19 @@ int main(const char *exename, const char *filename)
     SUBPROC((void *)Killer);
     return 0;
   }
-  extern const char homepage[256];
-  if (!ParseInputFilename(filename))
-    if (!ParseInputFilename(homepage))
-    {
-      LockSched();
-      ShowMSG(1,(int)"BM: Nothing to do!");
-      UnlockSched();
-      SUBPROC((void *)Killer);
-      return 0;
-    }
-  UpdateCSMname();
-  LockSched();
-  maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-  UnlockSched();   
+  if (ParseInputFilename(filename))
+  {
+    UpdateCSMname();
+    LockSched();
+    maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+    UnlockSched();
+  }
+  else
+  {
+    LockSched();
+    ShowMSG(1,(int)"BM: Nothing to do!");
+    UnlockSched();
+    SUBPROC((void *)Killer);
+  }
   return 0;
 }

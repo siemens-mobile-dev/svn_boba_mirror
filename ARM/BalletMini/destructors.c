@@ -50,5 +50,7 @@ void FreeViewData(VIEWDATA *vd)
   mfree(vd->S_cache);
   vd->S_cache=NULL;
   FreeDynImgList(vd); 
+  mfree(vd->pageurl);
+  vd->pageurl=NULL;
   mfree(vd);
 }

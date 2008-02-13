@@ -34,3 +34,4 @@ void AddButtonItem(VIEWDATA *vd, const char *text, int len);
 
 void AddSelectItem();
 
+void AddDropDownList(VIEWDATA *vd);

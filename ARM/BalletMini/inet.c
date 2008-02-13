@@ -10,12 +10,6 @@
 
 #define TMR_SECOND(A) (1300*A/6)
 
-inline int min(int a,int b)
-{
-  return (a>b)?b:a;
-};
-
-
 extern WSHDR *ws_console;
 
 extern volatile int TERMINATED;
@@ -36,11 +30,8 @@ static char *sendq_p=NULL; //указатель очереди
 static int recvq_l=0;
 static char *recvq_p=NULL;
 
-//static char OM_POST_HOST[]="80.232.117.10";
-//static unsigned short OM_POST_PORT=80;
-extern const char OM_POST_HOST[32];
-extern const unsigned int OM_POST_PORT;
-
+static char OM_POST_HOST[]="80.232.117.10";
+static unsigned short OM_POST_PORT=80;
 
 static int receive_mode;
 
@@ -251,12 +242,12 @@ static void bsend(int len, void *p)
       }
       else
       {
-	//Ошибка
-//	LockSched();
-//	ShowMSG(1,(int)"BM: Send error!");
-//	UnlockSched();
-//	end_socket();
-	return;
+        //Ошибка
+        //	LockSched();
+        //	ShowMSG(1,(int)"BM: Send error!");
+        //	UnlockSched();
+        //	end_socket();
+        return;
       }
     }
     memcpy(sendq_p,sendq_p+j,sendq_l-=j); //Удалили переданное
@@ -345,6 +336,9 @@ static void get_answer(void)
 
 static void SendPost(void)
 {
+  //ShowMSG(1,(int)URL);
+  //return;
+  
   char buf[3096];
   int content_len=0;
   int l;
@@ -353,6 +347,8 @@ static void SendPost(void)
   char *req;
   extern char AUTH_PREFIX[];
   extern char AUTH_CODE[];
+  extern char *from_url;
+  extern char *goto_params;
   
   sprintf(buf,"k=image/jpeg");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
@@ -360,7 +356,7 @@ static void SendPost(void)
   sprintf(buf,"o=280");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
   
-  sprintf(buf,"u=/obml/%s",URL); // 0/http://
+  sprintf(buf,"u=/obml/%s",URL);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"q=ru");
@@ -414,8 +410,7 @@ static void SendPost(void)
     j=1;
     break;
   }
-  extern const int java_heap_size;
-  sprintf(buf,"d=w:%d;h:%d;c:65536;m:%d;i:%d;q:%d;f:0;j:0;l:256",ScreenW(),ScreenH(),min(1024*java_heap_size,GetFreeRamAvail()/2),i,j);
+  sprintf(buf,"d=w:%d;h:%d;c:65536;m:3145728;i:%d;q:%d;f:0;j:0;l:256",ScreenW(),ScreenH(),i,j);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"c=%s",AUTH_CODE);
@@ -423,7 +418,15 @@ static void SendPost(void)
 
   sprintf(buf,"h=%s",AUTH_PREFIX);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
-
+  
+  if (from_url)
+  {
+    sprintf(buf,"f=%s",from_url);
+    strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+    mfree(from_url);
+    from_url=0;
+  }
+  
   sprintf(buf,"g=1");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
@@ -441,19 +444,36 @@ static void SendPost(void)
 
   sprintf(buf,"e=def");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+
+  if (goto_params)
+  {
+    sprintf(buf,"j=opf=1%s",goto_params);
+    strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
+    mfree(goto_params);
+    goto_params=0;
+  }
   
   sprintf(buf,
-	  "POST / HTTP/1.1\r\n"
-	    "Connection: close\r\n"
-	      "Content-Type: application/xml\r\n"
-		"Content-Length: %d\r\n"
-		  "Host: %s:%d\r\n"
-		    "\r\n",
-		    content_len,OM_POST_HOST,OM_POST_PORT);
+          "POST / HTTP/1.1\r\n"
+          "Connection: close\r\n"
+	        "Content-Type: application/xml\r\n"
+		      "Content-Length: %d\r\n"
+		      "Host: %s:%d\r\n"
+		      "\r\n",
+		      content_len,OM_POST_HOST,OM_POST_PORT);
   req=malloc(l=(i=strlen(buf))+content_len);
   memcpy(req,buf,i);
   memcpy(req+i,content,content_len);
   mfree(content);
+  
+  //unsigned int ul;
+  //int f;
+  //if ((f=fopen("0:\\zbin\\balletmini\\dump.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+  //{
+  //  fwrite(f,req,l,&ul);
+  //  fclose(f,&ul);
+  //}
+  
   bsend(l,req);
   freegstr(&URL);
 }

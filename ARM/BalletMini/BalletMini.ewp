@@ -559,8 +559,8 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
-          <state>17</state>
+          <version>7</version>
+          <state>16</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -930,7 +930,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.42A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>"obexcopy.exe" $EXE_DIR$\BalletMini.elf \MMCard\ZBin\BalletMini\BalletMini.elf</postbuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -1753,7 +1753,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.42A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -2205,7 +2205,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -2391,7 +2391,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -3029,7 +3029,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -3215,7 +3215,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -4014,7 +4014,13 @@
     <name>$PROJ_DIR$\string_works.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\ToDo.txt</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\urlstack.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\view.h</name>
   </file>
 </project>
 

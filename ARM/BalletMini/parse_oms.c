@@ -109,49 +109,49 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->oms_wanted+=sizeof(OMS_HEADER_V2);
       vd->parse_state=OMS_HDR;
       {
-	switch(i)
-	{
-	case 0x0D33:
-	  vd->oms_wanted-=2;
-	  break;
-	case 0x1833:
-	  break;
-	case 0x0D31:
-	  vd->oms_wanted-=sizeof(OMS_HEADER_V2)-10; //10 - размер хедера GZIP
-	  vd->parse_state=OMS_GZIPHDR;
-	  break;
-	case 0x1832:
-	L_ZINIT:
-	  //Производим инициализацию ZLib
-	  zeromem(vd->zs=malloc(sizeof(z_stream)),sizeof(z_stream));
-	  vd->zs->zalloc = (alloc_func)zcalloc;
-	  vd->zs->zfree = (free_func)zcfree;
-	  vd->zs->opaque = (voidpf)0;
-	  err = inflateInit2(vd->zs,-MAX_WBITS);
-	  if(err!=Z_OK)
-	  {
-	    sprintf(s,"inflateInit2 err %d\n",err);
-	    AddTextItem(vd,s,strlen(s));
-	    AddBrItem(vd);
-	    vd->parse_state=OMS_STOP;
-	    return;
-	  }
-	  //Теперь после vd->oms_pos до vd->oms_size есть данные ZLib
-	  //Они же есть в buf+len-(vd->oms_size-vd->oms_pos) длинной vd->oms_size-vd->oms_pos
-	  //Их необходимо обработать через ZLib
-	  i=vd->oms_size-vd->oms_pos;
-	  if (!i) return; //Нет данных
-	  buf=buf+len-i; //Новый указатель на данные
-	  len=i; //Новая длинна
-	  vd->oms_size=vd->oms_pos; //Возращаем размер на начало данных ZLib
-	  goto L_ZBEGIN;
-	default:
-	  sprintf(s,"Not supported type %X\n",i);
-	  AddTextItem(vd,s,strlen(s));
-	  AddBrItem(vd);
-	  vd->parse_state=OMS_STOP;
-	  return;
-	}
+        switch(i)
+        {
+        case 0x0D33:
+          vd->oms_wanted-=2;
+          break;
+        case 0x1833:
+          break;
+        case 0x0D31:
+          vd->oms_wanted-=sizeof(OMS_HEADER_V2)-10; //10 - размер хедера GZIP
+          vd->parse_state=OMS_GZIPHDR;
+          break;
+        case 0x1832:
+        L_ZINIT:
+          //Производим инициализацию ZLib
+          zeromem(vd->zs=malloc(sizeof(z_stream)),sizeof(z_stream));
+          vd->zs->zalloc = (alloc_func)zcalloc;
+          vd->zs->zfree = (free_func)zcfree;
+          vd->zs->opaque = (voidpf)0;
+          err = inflateInit2(vd->zs,-MAX_WBITS);
+          if(err!=Z_OK)
+          {
+            sprintf(s,"inflateInit2 err %d\n",err);
+            AddTextItem(vd,s,strlen(s));
+            AddBrItem(vd);
+            vd->parse_state=OMS_STOP;
+            return;
+          }
+          //Теперь после vd->oms_pos до vd->oms_size есть данные ZLib
+          //Они же есть в buf+len-(vd->oms_size-vd->oms_pos) длинной vd->oms_size-vd->oms_pos
+          //Их необходимо обработать через ZLib
+          i=vd->oms_size-vd->oms_pos;
+          if (!i) return; //Нет данных
+          buf=buf+len-i; //Новый указатель на данные
+          len=i; //Новая длинна
+          vd->oms_size=vd->oms_pos; //Возращаем размер на начало данных ZLib
+          goto L_ZBEGIN;
+        default:
+          sprintf(s,"Not supported type %X\n",i);
+          AddTextItem(vd,s,strlen(s));
+          AddBrItem(vd);
+          vd->parse_state=OMS_STOP;
+          return;
+        }
       }
       break;
     case OMS_GZIPHDR:
@@ -171,129 +171,133 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_PAGEURL_DATA:
       i=vd->oms_wanted-vd->oms_pos;
-//      AddTextItem(vd,vd->oms+vd->oms_pos,i);
-//      AddBrItem(vd);
+      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      //AddBrItem(vd);
+      vd->pageurl=(char *)malloc(i+1);
+      memcpy(vd->pageurl,vd->oms+vd->oms_pos,i);
+      vd->pageurl[i]=NULL;
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
     case OMS_TAG_NAME:
-      //Stage 1
+      // STAGE 1
       switch(i=vd->oms[vd->oms_pos])
       {
       case '+':
         vd->oms_pos++;
-	goto L_NOSTAGE2;
+	      goto L_NOSTAGE2;
       case 'v':
-	//???
+	      //???
         vd->oms_pos++;
-	goto L_NOSTAGE2;
+	      goto L_NOSTAGE2;
       case '(':
-	//???
+        //???
         AddPictureItemHr(vd);
-//	AddTextItem(vd,"(",1);
+        //AddTextItem(vd,"(",1);
         vd->oms_pos++;
-	goto L_NOSTAGE2;
+	      goto L_NOSTAGE2;
       case ')':
-	//???
+	      //???
         AddPictureItemHr(vd);
-//	AddTextItem(vd,")",1);
+        //AddTextItem(vd,")",1);
         vd->oms_pos++;
-	goto L_NOSTAGE2;
+	      goto L_NOSTAGE2;
       case '$':
         vd->oms_pos++; //Form end
-	vd->work_ref.form_id1=_NOREF;
-	vd->work_ref.form_id2=_NOREF;
-	goto L_NOSTAGE2;
+        //vd->work_ref.form_id1=_NOREF;
+        //vd->work_ref.form_id2=_NOREF;
+        goto L_NOSTAGE2;
       case 'A':
-	vd->oms_wanted+=2;
-	break;
-      case 'C':
-	vd->oms_pos++;
-	goto L_NOSTAGE2;
+        vd->oms_wanted+=2;
+        break;
+      case 'C':    // следующий тэг подразумевает загрузку данных форм
+        vd->work_ref.no_upload=0;
+        vd->oms_pos++;
+        goto L_NOSTAGE2;
       case 'D':
-	vd->oms_wanted+=2;
-	break;
-      case 'S':
-	vd->oms_wanted+=4;
-	break;
+        vd->oms_wanted+=2;
+        break;
+      case 'S':    // Style
+        vd->oms_wanted+=4;
+        break;
       case 'T':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       case 'Y':
-	vd->oms_wanted+=1;
-	break;
+        vd->oms_wanted+=1;
+        break;
       case 'B':
-	AddBrItem(vd);
+	      AddBrItem(vd);
         vd->oms_pos++;
-	goto L_NOSTAGE2;
+	      goto L_NOSTAGE2;
       case 'V':
-	AddPItem(vd);
+	      AddPItem(vd);
         vd->oms_pos++;
-	goto L_NOSTAGE2;
-      case 'I':
-	vd->oms_wanted+=8;
-	break;
+	      goto L_NOSTAGE2;
+      case 'I':    // 
+        vd->oms_wanted+=8;
+        break;
       case 'J':
-	vd->oms_wanted+=4;
-	break;
+        vd->oms_wanted+=4;
+        break;
       case 'K':
-	vd->oms_wanted+=6;
-	break;
-      case 'X':
-	vd->oms_wanted+=4;
-	break;
-      case 'h':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=6;
+        break;
+      case 'X':    // Image
+        vd->oms_wanted+=4;
+        break;
+      case 'h':    // opf 1
+        vd->oms_wanted+=2;
+        break;
       case 'e':
       case 'p':
       case 'u':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       case 'x':
-	if ((((OMS_HEADER_COMMON *)vd->oms)->magic&0xFF)==0x0D)
-	{
-	  vd->oms_wanted+=2;
-	}
-	else
-	{
-	  vd->oms_wanted+=3;
-	}
-	break;
+        if ((((OMS_HEADER_COMMON *)vd->oms)->magic&0xFF)==0x0D)
+        {
+          vd->oms_wanted+=2;
+        }
+        else
+        {
+          vd->oms_wanted+=3;
+        }
+        break;
       case 'c':
       case 'r':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       case 's':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       case 'o':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       case 'l':
-	AddBeginRef(vd);
-	vd->tag_l_count=2;
-//	AddTextItem(vd,"<l>",3);
+        AddBeginRef(vd);
+        vd->tag_l_count=2;
+        //AddTextItem(vd,"<l>",3);
         vd->oms_pos++;
-	goto L_NOSTAGE2;
+        goto L_NOSTAGE2;
       case 'i':
-	if (!vd->tag_l_count)
-	{
-	  AddBeginRef(vd);
-	  vd->tag_l_count=1;
-	}
-	vd->oms_wanted+=2;
-	break;
+        if (!vd->tag_l_count)
+        {
+          AddBeginRef(vd);
+          vd->tag_l_count=1;
+        }
+        vd->oms_wanted+=2;
+        break;
       case 'k':
-	vd->oms_wanted+=3; //Code type and data length
-	break;	
+        vd->oms_wanted+=3; //Code type and data length
+        break;	
       case 'L':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       case '^':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       case 'P':
         vd->oms_wanted+=2;
         break;
@@ -301,24 +305,24 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->oms_wanted+=2;
         break;        
       case 'E':
-	AddEndRef(vd);
+	      AddEndRef(vd);
         vd->ref_mode=0;
         vd->oms_pos++;
-	goto L_NOSTAGE2;
+	      goto L_NOSTAGE2;
       case 'Q':
-	AddTextItem(vd,"\n<Q>",4);
-	AddBrItem(vd);
-	vd->parse_state=OMS_STOP;
-	return;
+        AddTextItem(vd,"\n<Q>",4);
+        AddBrItem(vd);
+        vd->parse_state=OMS_STOP;
+        return;
       case 'Z':
-	vd->oms_wanted+=2;
-	break;
+        vd->oms_wanted+=2;
+        break;
       default:
-	sprintf(s,"Unknown tag %c\n",i);
-	AddTextItem(vd,s,strlen(s));
-	AddBrItem(vd);
-	vd->parse_state=OMS_STOP;
-	return;
+        sprintf(s,"Unknown tag %c\n",i);
+        AddTextItem(vd,s,strlen(s));
+        AddBrItem(vd);
+        vd->parse_state=OMS_STOP;
+        return;
       }
       vd->parse_state=OMS_TAG_DATA;
       break;
@@ -328,185 +332,184 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       switch(i)
       {
       case 'A':
-	i=_rshort(vd);
-//	vd->work_ref.tag='A';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGA_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=_rshort(vd);
+        //vd->work_ref.tag='A';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGA_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'D':
-	*((unsigned short *)(&(vd->current_tag_d)))=_rshort(vd);
-	AddNewStyle(vd);
-	break;
+        *((unsigned short *)(&(vd->current_tag_d)))=_rshort(vd);
+        AddNewStyle(vd);
+        break;
       case 'S':
-	*((unsigned int *)(&(vd->current_tag_s)))=k=_rlong(vd);
-	((unsigned int *)(vd->S_cache=realloc(vd->S_cache,(vd->S_cache_size+1)*sizeof(TAG_S))))[vd->S_cache_size]=k;
-	vd->S_cache_size++;
-	AddNewStyle(vd);
-	break;
+        *((unsigned int *)(&(vd->current_tag_s)))=k=_rlong(vd);
+        ((unsigned int *)(vd->S_cache=realloc(vd->S_cache,(vd->S_cache_size+1)*sizeof(TAG_S))))[vd->S_cache_size]=k;
+        vd->S_cache_size++;
+        AddNewStyle(vd);
+        break;
       case 'T':
-	i=_rshort(vd);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGT_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=_rshort(vd);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGT_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'Y':
-	i=_rbyte(vd);
-	vd->current_tag_s=vd->S_cache[i];
-	AddNewStyle(vd);
-	break;
+        i=_rbyte(vd);
+        vd->current_tag_s=vd->S_cache[i];
+        AddNewStyle(vd);
+        break;
       case 'I':
-	vd->iw=_rshort(vd); //width
-	vd->ih=_rshort(vd); //heigth
-	i=_rshort(vd);
-	_rshort(vd);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGI_STAGE3;
-	goto L_STAGE3_WANTED;
+        vd->iw=_rshort(vd); //width
+        vd->ih=_rshort(vd); //heigth
+        i=_rshort(vd);
+        _rshort(vd);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGI_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'J':
-	vd->iw=_rshort(vd); //width
-	vd->ih=_rshort(vd); //height
-	AddPictureItemFrame(vd,vd->iw,vd->ih);
-	if (vd->tag_l_count)
-	{
-	  if (!(--vd->tag_l_count))
-	  {
-	    AddEndRef(vd);
-	  }
-	}
-	break;
+        vd->iw=_rshort(vd); //width
+        vd->ih=_rshort(vd); //height
+        AddPictureItemFrame(vd,vd->iw,vd->ih);
+        if (vd->tag_l_count)
+        {
+          if (!(--vd->tag_l_count))
+          {
+            AddEndRef(vd);
+          }
+        }
+        break;
       case 'K':
-	_rshort(vd); //width
-	_rshort(vd); //height
-	i=_rshort(vd); //index
-	AddPictureItemIndex(vd,i);
-	break;
+        _rshort(vd); //width
+        _rshort(vd); //height
+        i=_rshort(vd); //index
+        AddPictureItemIndex(vd,i);
+        break;
       case 'X':
-	vd->iw=_rbyte(vd); //width
-	vd->ih=_rbyte(vd); //heigth
-	i=_rshort(vd);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGX_STAGE3;
-	goto L_STAGE3_WANTED;
+        vd->iw=_rbyte(vd); //width
+        vd->ih=_rbyte(vd); //heigth
+        i=_rshort(vd);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGX_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'h':
-	i=(vd->iw=_rshort(vd))+2;
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGh_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+2;
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGh_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'e':
-	i=(vd->iw=_rshort(vd))+2;
-	vd->work_ref.tag='e';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGe_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+2;
+        vd->work_ref.tag='e';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGe_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'p':
-	i=(vd->iw=_rshort(vd))+2;
-	AddBeginRef(vd);
-	vd->work_ref.tag='p';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGp_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+2;
+        AddBeginRef(vd);
+        vd->work_ref.tag='p';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGp_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'u':
-	i=(vd->iw=_rshort(vd))+2;
-	AddBeginRef(vd);
-	vd->work_ref.tag='u';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGu_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+2;
+        AddBeginRef(vd);
+        vd->work_ref.tag='u';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGu_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'x':
-	if ((((OMS_HEADER_COMMON *)vd->oms)->magic&0xFF)!=0x0D) _rbyte(vd);
-	i=(vd->iw=_rshort(vd))+2;
-	AddBeginRef(vd);
-	vd->work_ref.tag='x';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGx_STAGE3;
-	goto L_STAGE3_WANTED;
+        if ((((OMS_HEADER_COMMON *)vd->oms)->magic&0xFF)!=0x0D) _rbyte(vd);
+        i=(vd->iw=_rshort(vd))+2;
+        AddBeginRef(vd);
+        vd->work_ref.tag='x';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGx_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'c':
-	i=(vd->iw=_rshort(vd))+2;
-	AddBeginRef(vd);
-	vd->work_ref.tag='c';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGc_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+2;
+        AddBeginRef(vd);
+        vd->work_ref.tag='c';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGc_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'r':
-	i=(vd->iw=_rshort(vd))+2;
-	AddBeginRef(vd);
-	vd->work_ref.tag='r';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGr_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+2;
+        AddBeginRef(vd);
+        vd->work_ref.tag='r';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGr_STAGE3;
+        goto L_STAGE3_WANTED;
       case 's':
-	i=(vd->iw=_rshort(vd))+3;
-	AddBeginRef(vd);
-	vd->work_ref.tag='s';
-	AddTextItem(vd,"<s>",3);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGs_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+3;
+        AddBeginRef(vd);
+        vd->work_ref.tag='s';
+        //AddTextItem(vd,"<s>",3);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGs_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'o':
-	if (vd->tag_o_count)
-	{
-	  vd->tag_o_count--;
-	  i=(vd->iw=_rshort(vd))+2;
-	  vd->work_ref.tag='s';
-	  AddTextItem(vd,"<o>",3);
-	  vd->oms_wanted+=i;
-	  vd->parse_state=OMS_TAGo_STAGE3;
-	  goto L_STAGE3_WANTED;
-	}
-	else
-	{
-	  AddTextItem(vd,"!Illegal <o>!\n",14);
-	  AddBrItem(vd);
-	  vd->parse_state=OMS_STOP;
-	  return;
-	}
+        if (vd->tag_o_count)
+        {
+          vd->tag_o_count--;
+          i=(vd->iw=_rshort(vd))+2;
+          vd->work_ref.tag='s';
+          vd->oms_wanted+=i;
+          vd->parse_state=OMS_TAGo_STAGE3;
+          goto L_STAGE3_WANTED;
+        }
+        else
+        {
+          AddTextItem(vd,"!Illegal <o>!\n",14);
+          AddBrItem(vd);
+          vd->parse_state=OMS_STOP;
+          return;
+        }
       case 'i':
-	i=(vd->iw=_rshort(vd))+2;
-	vd->work_ref.tag='i';
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGi_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=(vd->iw=_rshort(vd))+2;
+        vd->work_ref.tag='i';
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGi_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'k':
-	vd->ih=_rbyte(vd); //Code type
-	i=(vd->iw=_rshort(vd));
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGk_STAGE3;
-	goto L_STAGE3_WANTED;
+        vd->ih=_rbyte(vd); //Code type
+        i=(vd->iw=_rshort(vd));
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGk_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'L':
-	i=_rshort(vd);
-	vd->work_ref.tag='L';
+        i=_rshort(vd);
+        vd->work_ref.tag='L';
         vd->ref_mode=1;
-	AddBeginRef(vd);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGL_STAGE3;
-	goto L_STAGE3_WANTED;
+        AddBeginRef(vd);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGL_STAGE3;
+        goto L_STAGE3_WANTED;
       case '^':
-	i=_rshort(vd);
-	vd->work_ref.tag='^';
+        i=_rshort(vd);
+        vd->work_ref.tag='^';
         vd->ref_mode=1;
-	AddBeginRef(vd);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGx5E_STAGE3;
-	goto L_STAGE3_WANTED;
+        AddBeginRef(vd);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGx5E_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'P':
-	i=_rshort(vd);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGP_STAGE3;
-	goto L_STAGE3_WANTED;
+        i=_rshort(vd);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGP_STAGE3;
+        goto L_STAGE3_WANTED;
       case 'R':
         i=_rshort(vd);
         AddPictureItemHr(vd);
         break;
       case 'Z':
-	i=(vd->iw=_rshort(vd));
-	vd->work_ref.tag='Z';
+        i=(vd->iw=_rshort(vd));
+        vd->work_ref.tag='Z';
         vd->ref_mode=1;
-	AddBeginRef(vd);
-	vd->oms_wanted+=i;
-	vd->parse_state=OMS_TAGZ_STAGE3;
-	goto L_STAGE3_WANTED;
+        AddBeginRef(vd);
+        vd->oms_wanted+=i;
+        vd->parse_state=OMS_TAGZ_STAGE3;
+        goto L_STAGE3_WANTED;
       default:
-	//	vd->parse_state=OMS_STOP;
-	break;
+        //vd->parse_state=OMS_STOP;
+        break;
       }
     L_NOSTAGE2:
       vd->oms_wanted++;
@@ -532,10 +535,10 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       AddPictureItem(vd,(void *)(vd->oms+vd->oms_pos));
       if (vd->tag_l_count)
       {
-	if (!(--vd->tag_l_count))
-	{
-	  AddEndRef(vd);
-	}
+        if (!(--vd->tag_l_count))
+        {
+          AddEndRef(vd);
+        }
       }
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
@@ -550,7 +553,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGh_STAGE3:
       i=vd->iw;
-      vd->work_ref.form_id1=vd->oms_pos;
+      //vd->work_ref.form_id1=vd->oms_pos;
       vd->oms_pos+=i;
       i=(vd->ih=_rshort(vd));
       vd->oms_wanted+=i;
@@ -558,7 +561,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGh_STAGE4:
       i=vd->ih;
-      vd->work_ref.form_id2=vd->oms_pos;
+      //vd->work_ref.form_id2=vd->oms_pos;
       vd->oms_pos+=i;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
@@ -574,7 +577,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGe_STAGE4:
       i=vd->ih;
       vd->work_ref.value=vd->oms_pos-2;
-//      AddEndRef(vd);
+      //AddEndRef(vd);
       vd->oms_pos+=i;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
@@ -642,7 +645,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->ih;
       vd->work_ref.value=vd->oms_pos-2;
       vd->oms_pos+=i;
-      vd->work_ref.group_id=i=_rbyte(vd); //group id (checked???)
+      i=_rbyte(vd);
       AddCheckBoxItem(vd,i);
       AddEndRef(vd);
       vd->oms_wanted++;
@@ -660,7 +663,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->ih;
       vd->work_ref.value=vd->oms_pos-2;
       vd->oms_pos+=i;
-      vd->work_ref.group_id=i=_rbyte(vd); //group id (checked???)
+      i=_rbyte(vd);
       AddRadioButton(vd,i);
       AddEndRef(vd);
       vd->oms_wanted++;
@@ -677,20 +680,26 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGo_STAGE3:
       i=vd->iw;
-      vd->work_ref.value=vd->oms_pos-2;
+      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
       vd->oms_pos+=i;
-      i=(vd->ih=_rshort(vd))+1;
-      vd->oms_wanted+=i;
+      i=vd->ih=_rshort(vd);
+      vd->oms_wanted+=i+1;
       vd->parse_state=OMS_TAGo_STAGE4;
       break;
     case OMS_TAGo_STAGE4:
       i=vd->ih;
-      vd->work_ref.id2=vd->oms_pos-2;
+      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      //AddBrItem(vd);
       vd->oms_pos+=i;
-      vd->work_ref.checked=_rbyte(vd); //checked/unchecked
+      if (_rbyte(vd)) //checked/unchecked
+      {
+        vd->work_ref.value=vd->oms_pos-1-vd->ih-2-vd->iw-2;
+        vd->work_ref.id2=vd->oms_pos-1-vd->ih-2;
+      }
       if (!vd->tag_o_count)
       {
-	AddEndRef(vd);
+        AddDropDownList(vd);
+        AddEndRef(vd);
       }
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
@@ -709,20 +718,20 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       AddTextItem(vd,vd->oms+vd->oms_pos,i);
       if (vd->tag_l_count)
       {
-	if (!(--vd->tag_l_count))
-	{
-	  AddEndRef(vd);
-	}
+        if (!(--vd->tag_l_count))
+        {
+          AddEndRef(vd);
+        }
       }
       else
       {
-	AddTextItem(vd,"!Illegal <i>!",13);
-	AddBrItem(vd);
-	vd->parse_state=OMS_STOP;
-	return;
+        AddTextItem(vd,"!Illegal <i>!",13);
+        AddBrItem(vd);
+        vd->parse_state=OMS_STOP;
+        return;
       }
       vd->oms_pos+=i;
-//      _rshort(vd); //unk
+      //_rshort(vd); //unk
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
@@ -753,8 +762,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGP_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
-//      AddTextItem(vd,vd->oms+vd->oms_pos,i);
-//      AddTextItem(vd,slash,1);
+      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      //AddTextItem(vd,slash,1);
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;

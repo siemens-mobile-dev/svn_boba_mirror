@@ -65,13 +65,14 @@ typedef struct
   unsigned int begin;
   unsigned int end;
   int tag;
-  unsigned int form_id1;
-  unsigned int form_id2;
+  //unsigned int form_id1;
+  //unsigned int form_id2;
   unsigned int id;
   unsigned int value;
   unsigned int id2;
-  int group_id;
-  int checked;
+  char no_upload:1, reserved:7;
+  //int group_id;
+  //int checked;
 }REFCACHE;
 
 
@@ -134,6 +135,8 @@ typedef struct
   int page_sz;
   int loaded_sz;
   unsigned short wchar_hr;
+  
+  char *pageurl;    //utf8
   
 }VIEWDATA;
 
