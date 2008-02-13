@@ -11,30 +11,6 @@ __root const CFG_HDR cfghdr1={CFG_CBOX,"Enable hello message",0,2};
 __root const int ENA_HELLO_MSG=1;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 
-#ifndef NEWSGOLD
-__root const CFG_HDR cfghdr23={CFG_CBOX,"Activation style",0,4};
-__root const int ACTIVE_KEY_STYLE=0;
-__root const CFG_CBOX_ITEM cfgcbox23[4]={"Short press","Long press","* + #","Enter Button"};
-
-__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
-__root const int ACTIVE_KEY=99;
-#else
-__root const CFG_HDR cfghdr23={CFG_CBOX,"Activation style",0,2};
-__root const int ACTIVE_KEY_STYLE=0;
-__root const CFG_CBOX_ITEM cfgcbox23[2]={"Short press","Long press"};
-
-#ifdef ELKA
-__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
-__root const int ACTIVE_KEY=0x15;
-#else
-__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
-__root const int ACTIVE_KEY=0x11;
-#endif
-#endif
-
-__root const CFG_HDR cfghdr2={CFG_CBOX,"Extra: on longpress",0,4};
-__root const int ENA_LONG_PRESS=2;
-__root const CFG_CBOX_ITEM cfgcbox2[4]={"As in FW","Do nothing","Hide all tasks","Launch XTask"};
 
 #ifdef NEWSGOLD
 __root const CFG_HDR cfghdr3={CFG_CBOX,"Red button mode",0,3};
@@ -43,7 +19,7 @@ __root const CFG_CBOX_ITEM cfgcbox3[3]={"As in FW","Classic","Hide all tasks"};
 #endif
 
 __root const CFG_HDR cfghdr22={CFG_CBOX,"Enable if keyboard locked",0,2};
-__root const int ENA_LOCK=1;
+__root const int ENA_LOCK=0;
 __root const CFG_CBOX_ITEM cfgcbox22[2]={"No","Yes"};
 
 __root const CFG_HDR cfghdr4={CFG_STR_WIN1251,"Bookmark 1 name",1,31};
