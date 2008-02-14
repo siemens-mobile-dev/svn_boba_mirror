@@ -394,9 +394,15 @@ int FindReferenceById(VIEWDATA *vd, unsigned int id, int i) // Находит index'ы в
 }
 
 // EDIT BOX
-char *work_begin;
 REFCACHE *cur_ref;
 VIEWDATA *cur_vd;
+
+extern char *goto_url;
+extern char *from_url;
+extern char *goto_params;
+extern int quit_reqired;
+
+char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf);
 
 static const SOFTKEY_DESC input_box_menu_sk[]=
 {
@@ -433,12 +439,25 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
   if (msg->keys==0xFFF)
   {
     // set value
+    char *work_begin=(char *)cur_vd->rawtext+(cur_ref->begin*2)+6;
     ExtractEditControl(data,1,&ec);
     WSHDR *sw=AllocWS(ec.pWS->wsbody[0]);
     wstrcpy(sw,ec.pWS);
     memset(work_begin,0,ITEM_EDITBOX_SIZE*2-2);
     if (sw->wsbody[0]>=ITEM_EDITBOX_SIZE) sw->wsbody[0]=ITEM_EDITBOX_SIZE-1;
     memcpy(work_begin,sw->wsbody+1,sw->wsbody[0]*2);
+    if (!cur_ref->no_upload)
+    {
+      goto_url=malloc(strlen(cur_vd->pageurl)+1);
+      memcpy(goto_url,cur_vd->pageurl,strlen(cur_vd->pageurl));
+      goto_url[strlen(cur_vd->pageurl)]=0;
+      from_url=malloc(strlen(cur_vd->pageurl));
+      strcpy(from_url,cur_vd->pageurl);
+      goto_params=collectItemsParams(cur_vd,cur_ref);
+      quit_reqired=1;
+    }
+    cur_ref=NULL;
+    cur_vd=NULL;
     return (0xFF);
   }
   return (0);
@@ -470,20 +489,21 @@ static const INPUTDIA_DESC input_box_desc =
   0x40000000
 };
 
-int CreateInputBox(char *text_begin)
+int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
 {
-  work_begin=text_begin;
-  
+  cur_ref=rf;
+  cur_vd=vd;
+  char *work_begin=(char *)cur_vd->rawtext+(cur_ref->begin*2)+6;
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
   
-  eq=AllocEQueue(ma,mfree_adr());    // Extension
+  eq=AllocEQueue(ma,mfree_adr());
   WSHDR *ews=AllocWS(ITEM_EDITBOX_SIZE);
   
-  memcpy(ews->wsbody+1,text_begin,ITEM_EDITBOX_SIZE*2);
+  memcpy(ews->wsbody+1,work_begin,ITEM_EDITBOX_SIZE*2);
   int i=0;
-  for (;i<ITEM_EDITBOX_SIZE*2;i+=2) if (text_begin[i]==0x0000) break;
+  for (;i<ITEM_EDITBOX_SIZE*2;i+=2) if (work_begin[i]==0x0000) break;
   ews->wsbody[0]=i/2;
   
   PrepareEditControl(&ec);
@@ -506,15 +526,8 @@ typedef struct
   unsigned short id2;
 }SEL_STRUCT;
 
-char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf);
-
 int sel_menu_onkey(void *gui, GUI_MSG *msg)
-{
-  extern char *goto_url;
-  extern char *from_url;
-  extern char *goto_params;
-  extern int quit_reqired;
-  
+{ 
   SEL_STRUCT *ustop=MenuGetUserPointer(gui);
   if (msg->keys==0x3D || msg->keys==0x18)
   {
@@ -535,6 +548,7 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
         quit_reqired=1;
       }
       cur_ref=NULL;
+      cur_vd=NULL;
       return 0xFF;
     }
   }
@@ -608,14 +622,6 @@ MENU_DESC sel_STRUCT=
   0   //n
 };
 
-static unsigned int _rshort(char *p)
-{
-  unsigned int r=*p++;
-  r<<=8;
-  r|=*p;
-  return r;
-}
-
 int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
 {
   int start=0;
@@ -623,9 +629,9 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
   SEL_STRUCT *us;
   unsigned short i;
   vd->oms_pos=rf->id;
-  i=_rshort(vd->oms+vd->oms_pos);
+  i=_rshort2(vd->oms+vd->oms_pos);
   vd->oms_pos+=2+i+1;
-  int n_sel=_rshort(vd->oms+vd->oms_pos);
+  int n_sel=_rshort2(vd->oms+vd->oms_pos);
   vd->oms_pos+=2;
   for(int o=0;o<n_sel;o++)
   {
@@ -636,10 +642,10 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
     strcpy(us->name,d);
     mfree(d);
     us->value=vd->oms_pos;
-    int i=_rshort(vd->oms+vd->oms_pos);
+    int i=_rshort2(vd->oms+vd->oms_pos);
     vd->oms_pos+=2+i;
     us->id2=vd->oms_pos;
-    i=_rshort(vd->oms+vd->oms_pos);
+    i=_rshort2(vd->oms+vd->oms_pos);
     vd->oms_pos+=2+i+1;
     us->next=0;
     if (usbot)

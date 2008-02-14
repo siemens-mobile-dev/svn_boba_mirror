@@ -305,8 +305,9 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->oms_wanted+=2;
         break;        
       case 'E':
-	      AddEndRef(vd);
-        vd->ref_mode=0;
+        vd->ref_mode--;
+        if (!vd->ref_mode) // must be equal 0
+  	      AddEndRef(vd);
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
       case 'Q':
@@ -348,6 +349,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         AddNewStyle(vd);
         break;
       case 'T':
+        vd->ref_mode++;
         i=_rshort(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGT_STAGE3;
@@ -358,6 +360,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         AddNewStyle(vd);
         break;
       case 'I':
+        vd->ref_mode++;
         vd->iw=_rshort(vd); //width
         vd->ih=_rshort(vd); //heigth
         i=_rshort(vd);
@@ -477,7 +480,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'L':
         i=_rshort(vd);
         vd->work_ref.tag='L';
-        vd->ref_mode=1;
+        vd->ref_mode=0;
         AddBeginRef(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGL_STAGE3;
@@ -500,10 +503,11 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         AddPictureItemHr(vd);
         break;
       case 'Z':
-        i=(vd->iw=_rshort(vd));
-        vd->work_ref.tag='Z';
-        vd->ref_mode=1;
-        AddBeginRef(vd);
+        i=vd->iw=_rshort(vd);
+        //vd->work_ref.tag='Z';
+        vd->work_ref.id2=vd->oms_pos-2;
+        vd->ref_mode++;
+        //AddBeginRef(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGZ_STAGE3;
         goto L_STAGE3_WANTED;
@@ -533,13 +537,13 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGI_STAGE3:
       //i=vd->oms_wanted-vd->oms_pos; //Size of picture
       AddPictureItem(vd,(void *)(vd->oms+vd->oms_pos));
-      if (vd->tag_l_count)
-      {
-        if (!(--vd->tag_l_count))
-        {
-          AddEndRef(vd);
-        }
-      }
+      //if (vd->tag_l_count)
+      //{
+        //if (!(--vd->tag_l_count))
+        //{
+          //AddEndRef(vd);
+        //}
+      //}
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
@@ -715,23 +719,40 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGi_STAGE4:
       i=vd->ih;
       vd->work_ref.value=vd->oms_pos-2;
-      AddTextItem(vd,vd->oms+vd->oms_pos,i);
-      if (vd->tag_l_count)
-      {
-        if (!(--vd->tag_l_count))
-        {
-          AddEndRef(vd);
-        }
-      }
-      else
-      {
-        AddTextItem(vd,"!Illegal <i>!",13);
-        AddBrItem(vd);
-        vd->parse_state=OMS_STOP;
-        return;
-      }
-      vd->oms_pos+=i;
+      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      //if (vd->tag_l_count)
+      //{
+      //  if (!(--vd->tag_l_count))
+      //  {
+      //    AddEndRef(vd);
+      //  }
+      //}
+      //else
+      //{
+      //  AddTextItem(vd,"!Illegal <i>!",13);
+      //  AddBrItem(vd);
+      //  vd->parse_state=OMS_STOP;
+      //  return;
+      //}
+      vd->oms_pos+=i+1;
       //_rshort(vd); //unk
+      vd->oms_wanted+=9;
+      vd->parse_state=OMS_TAGi_STAGE5;  // read next I tag
+      break;
+    case OMS_TAGi_STAGE5:
+      vd->iw=_rshort(vd); //width
+      vd->ih=_rshort(vd); //heigth
+      i=_rshort(vd);
+      _rshort(vd);
+      vd->oms_wanted+=i;
+      vd->parse_state=OMS_TAGi_STAGE6;
+      break;
+    case OMS_TAGi_STAGE6:
+      AddBrItem(vd);
+      AddPictureItem(vd,(void *)(vd->oms+vd->oms_pos));
+      AddBrItem(vd);
+      AddEndRef(vd);
+      vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
@@ -770,10 +791,11 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGZ_STAGE3:
       i=vd->iw;
+      AddBrItem(vd);
       AddTextItem(vd,vd->oms+vd->oms_pos,i);
-      vd->work_ref.id=vd->oms_pos-2;
+      AddBrItem(vd);
       vd->oms_pos+=i;
-      AddEndRef(vd);
+      //AddEndRef(vd);
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;

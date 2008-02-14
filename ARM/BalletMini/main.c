@@ -152,6 +152,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         }
       }
       break;
+    case 'i':
     case 'u':
       {
         if (prf!=rf) break;
@@ -396,8 +397,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
   VIEWDATA *vd=data->vd;
   REFCACHE *rf;
   int m=msg->gbsmsg->msg;
-//  REFCACHE *p;
-//  REFCACHE *q;
   if ((m==KEY_DOWN)||(m==LONG_PRESS))
   {
     switch(msg->gbsmsg->submess)
@@ -446,6 +445,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           // if rf->upload, upload data
           if (!rf->no_upload)
           {
+            goto_url=malloc(strlen(vd->pageurl));
+            strcpy(goto_url,vd->pageurl);
             from_url=malloc(strlen(vd->pageurl));
             strcpy(from_url,vd->pageurl);
             goto_params=collectItemsParams(vd,rf);
@@ -461,6 +462,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           // if rf->upload, upload data
           if (!rf->no_upload)
           {
+            goto_url=malloc(strlen(vd->pageurl));
+            strcpy(goto_url,vd->pageurl);
             from_url=malloc(strlen(vd->pageurl));
             strcpy(from_url,vd->pageurl);
             goto_params=collectItemsParams(vd,rf);
@@ -469,24 +472,15 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           break;
         case 'x':
         case 'p':
-          if (rf->begin>=vd->rawtext_size) break;
-          CreateInputBox((char *)vd->rawtext+(rf->begin*2)+6);
-          // if rf->upload, upload data
-          if (!rf->no_upload)
-          {
-            from_url=malloc(strlen(vd->pageurl));
-            strcpy(from_url,vd->pageurl);
-            goto_params=collectItemsParams(vd,rf);
-            return 0xFF;
-          }
+          CreateInputBox(vd,rf);
           break;
+        case 'i':
         case 'u':
           if (rf->id!=_NOREF)
           {
             goto_url=malloc(strlen(vd->pageurl)+1);
-            memcpy(goto_url,vd->pageurl,strlen(vd->pageurl));
-            goto_url[strlen(vd->pageurl)]=0;
-            from_url=malloc(strlen(vd->pageurl));
+            strcpy(goto_url,vd->pageurl);
+            from_url=malloc(strlen(vd->pageurl)+1);
             strcpy(from_url,vd->pageurl);
             goto_params=collectItemsParams(vd,rf);
             return 0xFF;
@@ -711,6 +705,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             if (rf->id!=_NOREF)
             {
               char *s=extract_omstr(vd,rf->id);
+              for (unsigned short to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
               sprintf(c,"   %s",s);
               fwrite(f,c,strlen(c),&ul);
               mfree(s);
@@ -721,6 +716,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             if (rf->id2!=_NOREF)
             {
               char *s=extract_omstr(vd,rf->id2);
+              for (unsigned short to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
               sprintf(c,"   %s",s);
               fwrite(f,c,strlen(c),&ul);
               mfree(s);
@@ -731,14 +727,15 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             if (rf->value!=_NOREF)
             {
               char *s=extract_omstr(vd,rf->value);
+              for (unsigned short to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
               sprintf(c,"   %s",s);
               fwrite(f,c,strlen(c),&ul);
               mfree(s);
             }
             fwrite(f,"\n",1,&ul);
-            sprintf(c,"  begin:    %i\n",rf->begin);
+            sprintf(c,"  begin:    %u\n",rf->begin);
             fwrite(f,c,strlen(c),&ul);
-            sprintf(c,"  end:      %i\n",rf->end);
+            sprintf(c,"  end:      %u\n",rf->end);
             fwrite(f,c,strlen(c),&ul);
             sprintf(c,"  upload:   %s\n\n",rf->no_upload?"false":"true");
             fwrite(f,c,strlen(c),&ul);

@@ -46,6 +46,11 @@ void AddBeginRef(VIEWDATA *vd)
 
 void AddEndRef(VIEWDATA *vd)
 {
+  //{
+  //  char c[64];
+  //  sprintf(c,"\nref_mode %i tag %x at oms_pos %i\n",vd->ref_mode,vd->work_ref.tag,vd->oms_pos);
+  //  AddTextItem(vd,c,strlen(c));
+  //}
   RawInsertChar(vd,UTF16_DIS_INVERT);
   REFCACHE *p;
   if ((vd->ref_cache_size%REFCACHECHUNK)==0)
@@ -296,10 +301,6 @@ void AddButtonItem(VIEWDATA *vd, const char *text, int len)
   RawInsertChar(vd,'[');
   AddTextItem(vd,text,len);
   RawInsertChar(vd,']');
-}
-
-void AddSelectItem(VIEWDATA *vd)
-{
 }
 
 void AddDropDownList(VIEWDATA *vd)

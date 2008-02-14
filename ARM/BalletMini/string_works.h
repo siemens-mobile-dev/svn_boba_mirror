@@ -1,5 +1,6 @@
 #include "view.h"
 
+unsigned int _rshort2(char *p);
 int strcmp_nocase(const char *s, const char *d);
 int omstrcmp(VIEWDATA *vd, unsigned int ps, unsigned int pd);
 char *globalstr(const char *s);

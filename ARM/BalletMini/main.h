@@ -23,4 +23,3 @@ typedef struct
   WSHDR *ws1;
   WSHDR *ws2;
 }VIEW_GUI;
-

@@ -9,6 +9,14 @@ static unsigned int _rshort(char *p)
   return r;
 }
 
+unsigned int _rshort2(char *p)
+{
+  unsigned int r=*p++;
+  r<<=8;
+  r|=*p;
+  return r;
+}
+
 int strcmp_nocase(const char *s, const char *d)
 {
   int cs;
