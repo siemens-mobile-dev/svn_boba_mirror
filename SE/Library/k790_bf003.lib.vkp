@@ -331,10 +331,4 @@
 0950: 00000000 B1FFE544   ; 254: void DestroyDirHandle(void *handle);
 0954: 00000000 80879D45   ;8255: DB_EXT *LastExtDB(void);
 0958: 00000000 755FE944   ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
-
-
-
-
-
-
-
+;095C: FFFFFFFF 315D2745   ; 257: void infobox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,int shouldbe0);
