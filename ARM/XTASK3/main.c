@@ -5,7 +5,9 @@
 #include "swaper.h"
 
 #ifdef NEWSGOLD
- #define USE_ONE_KEY
+#define ACTIVE_KEY INTERNET_BUTTON
+#else
+#define ACTIVE_KEY 0x63
 #endif
 
 #define TMR_SECOND(A) (1300L*A/6)
@@ -19,7 +21,6 @@ void (*old_icsm_onClose)(CSM_RAM*);
 GBSTMR start_tmr;
 CSM_RAM *under_idle;
 
-extern const int ACTIVE_KEY;
 extern const int ACTIVE_KEY_STYLE;
 extern const int RED_BUT_MODE;
 extern const int ENA_LONG_PRESS;
@@ -138,7 +139,7 @@ int my_keyhook(int submsg, int msg)
   }
 #endif
 #ifndef NEWSGOLD
-  if (ACTIVE_KEY_STYLE==3)
+  if (ACTIVE_KEY_STYLE==1)
   {
     if (submsg!=ENTER_BUTTON) return KEYHOOK_NEXT;
 /*    if (my_csm_id)
@@ -183,34 +184,8 @@ int my_keyhook(int submsg, int msg)
       return KEYHOOK_BREAK;
     }
   }
-  // * + # implementation
-  if ((ACTIVE_KEY_STYLE==2) && !(my_csm_id))
-  {
-    if (msg==KEY_UP)
-    {
-      mode=0;
-      return KEYHOOK_NEXT;
-    }
-    if (msg==KEY_DOWN)
-    {
-      switch (submsg)
-      {
-      case '*':
-        mode=1;
-        return (0);
-      case '#':
-        if (mode==1)
-        {
-          if (IsUnlocked()||ENA_LOCK)
-            ShowMenu();
-          else mode=0;
-        }
-        else return KEYHOOK_NEXT;
-      }
-    }
-  }
 #endif
-  if (ACTIVE_KEY_STYLE<2)
+  if (ACTIVE_KEY_STYLE==0)
   {
     if (submsg!=ACTIVE_KEY) return KEYHOOK_NEXT;
     if (my_csm_id)
@@ -229,24 +204,12 @@ int my_keyhook(int submsg, int msg)
     {
     case KEY_DOWN:
       mode=0;
-      if (ACTIVE_KEY_STYLE==0)
-	return KEYHOOK_BREAK;
-      else 
-	return KEYHOOK_NEXT;
+      return KEYHOOK_BREAK;
     case KEY_UP:
       if (mode==1)
       {
 	//Release after longpress
 	mode=0;
-	if ((ACTIVE_KEY_STYLE==1) || (ENA_LONG_PRESS==3))
-	{
-	  //Launch on LongPress or Extra on LP - Launch
-	  if (IsUnlocked()||ENA_LOCK)
-	  {
-	    ShowMenu();
-	  }
-	  return KEYHOOK_BREAK;
-	}
         if (ENA_LONG_PRESS==1) return KEYHOOK_BREAK;
 	if (ENA_LONG_PRESS==2)
 	{
@@ -261,28 +224,16 @@ int my_keyhook(int submsg, int msg)
         }
 	break;
       }
-      if (ACTIVE_KEY_STYLE==0)
-      {
-	if (IsUnlocked()||ENA_LOCK)
+      else{
+        if (IsUnlocked()||ENA_LOCK)
 	{
 	  ShowMenu();
 	}
 	return KEYHOOK_BREAK;
       }
-      break;
     case LONG_PRESS:
       mode=1;
-#ifndef NEWSGOLD
-      if (ACTIVE_KEY_STYLE==1)
-      {
-	if (ENA_LONG_PRESS)
-	  return KEYHOOK_NEXT;
-	else 
-	  return KEYHOOK_BREAK;
-      }
-#else
       return KEYHOOK_BREAK;
-#endif
     }
   }
   return KEYHOOK_NEXT;
@@ -315,30 +266,21 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   int idlegui_id;
   
 #ifndef NEWSGOLD 
-#define EXT_BUTTON 0x63  
-  if ((ACTIVE_KEY_STYLE!=2)&&(ACTIVE_KEY_STYLE!=3)) //не "* + #" и не "Enter Button"
-  {//чтоб можно было вызвать браузер при этих режимах
-    if (ACTIVE_KEY==EXT_BUTTON) //мнимая кнопка браузера
-    {
       if (msg->msg==439) //вызван браузер
       {
         switch (msg->submess) 
         {
 	case 1:
-	  GBS_SendMessage(MMI_CEPID,LONG_PRESS,EXT_BUTTON);
+	  if (ENA_LONG_PRESS) GBS_SendMessage(MMI_CEPID,LONG_PRESS,ACTIVE_KEY);
+                              else goto L1; // если не надо блокировать кнопку
           break;
 	case 2:
-	  GBS_SendMessage(MMI_CEPID,KEY_UP,EXT_BUTTON);
+	  GBS_SendMessage(MMI_CEPID,KEY_UP,ACTIVE_KEY);
           break; // Никакого default!!!
         }
       }
       else //браузер не вызывался
 	goto L1;
-    }
-    else //кнопка вызова не является мнимой кнопкой вызова браузера
-      goto L1;
-  }
-  else
 L1:
   csm_result=old_icsm_onMessage(data,msg);
 #else    
