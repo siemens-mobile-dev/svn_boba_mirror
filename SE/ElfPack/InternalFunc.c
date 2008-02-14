@@ -169,6 +169,10 @@ __thumb void * malloc (int size)
 #ifdef Z610_R6DA001
   return (memalloc(0,size,0,4,"SwiLib",0));
 #endif
+
+#ifdef K790_R8BF003
+  return (memalloc(0,size,0,4,"SwiLib",0));
+#endif
 }
 
 __thumb void mfree (void * mem)
@@ -214,6 +218,10 @@ __thumb void mfree (void * mem)
 #endif
 
 #ifdef Z610_R6DA001
+  if (mem) memfree(0, mem,"SwiLib",0);  
+#endif
+
+#ifdef K790_R8BF003
   if (mem) memfree(0, mem,"SwiLib",0);  
 #endif
 }

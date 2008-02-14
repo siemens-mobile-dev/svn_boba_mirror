@@ -109,4 +109,9 @@ a	EQU	b
         defadr  memalloc,0x44E35A08+1
         defadr  memfree,0x44E35A34+1
 #endif
+
+#ifdef K790_R8BF003
+        defadr  memalloc,0x44A7863C+1
+        defadr  memfree,0x44A78668+1
+#endif
    END
