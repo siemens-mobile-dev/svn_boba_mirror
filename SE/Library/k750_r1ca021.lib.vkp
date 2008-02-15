@@ -1,7 +1,7 @@
 ;K750 SW-R1CA021
 ;Библиотека функций
 ;v221207
-;(c) Hussein , IronMaster, GPcH
+;(c) Hussein , IronMaster
 ;
 
 +451CFC00
@@ -115,7 +115,7 @@
 05C8: FFFFFFFF 81A7E744   ; 172:  void Show(void * udata)
 05CC: FFFFFFFF 39F4E944   ; 173:  void StartAPP (u16 * appname)
 ;05D0: FFFFFFFF 8D9DE744   ; 174:  void CreateEvent(int event) -----------------------------------------------------
-05D0: FFFFFFFF FD9DD544   ; void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
+05D0: FFFFFFFF FD9DD544   ; 174:  void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
 05D4: FFFFFFFF 85030845   ; 175:  char * manifest_GetParam(char *buf,char *param_name,int unk)
 05D8: FFFFFFFF CD8D0D45   ; 176:  int lseek(int file,int offset,int mode)
 05DC: FFFFFFFF 3474094C   ; 177:  int get_VBUFFER(void)
@@ -315,5 +315,5 @@
 0918: FFFFFFFF 85A5D544   ; 246:
 
 0950: FFFFFFFF A15D0D45  ; 254: void DestroyDirHandle(void *handle);
-0954: FFFFFFFF 20CD2244  ; 255: DB_EXT *LastExtDB(void);
+0954: FFFFFFFF 20CD2244  ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF B9910E45  ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
