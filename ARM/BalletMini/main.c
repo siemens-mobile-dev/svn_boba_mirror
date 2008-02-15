@@ -416,7 +416,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             // 0/javascript:  upload data
             if (!strncmp("0/javascript",goto_url,12))
             {
-              from_url=malloc(strlen(vd->pageurl));
+              from_url=malloc(strlen(vd->pageurl)+1);
               strcpy(from_url,vd->pageurl);
               goto_params=collectItemsParams(vd,rf);
             }
@@ -445,9 +445,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           // if rf->upload, upload data
           if (!rf->no_upload)
           {
-            goto_url=malloc(strlen(vd->pageurl));
+            goto_url=malloc(strlen(vd->pageurl)+1);
             strcpy(goto_url,vd->pageurl);
-            from_url=malloc(strlen(vd->pageurl));
+            from_url=malloc(strlen(vd->pageurl)+1);
             strcpy(from_url,vd->pageurl);
             goto_params=collectItemsParams(vd,rf);
             return 0xFF;
@@ -462,9 +462,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           // if rf->upload, upload data
           if (!rf->no_upload)
           {
-            goto_url=malloc(strlen(vd->pageurl));
+            goto_url=malloc(strlen(vd->pageurl)+1);
             strcpy(goto_url,vd->pageurl);
-            from_url=malloc(strlen(vd->pageurl));
+            from_url=malloc(strlen(vd->pageurl)+1);
             strcpy(from_url,vd->pageurl);
             goto_params=collectItemsParams(vd,rf);
             return 0xFF;

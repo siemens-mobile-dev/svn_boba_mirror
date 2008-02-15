@@ -451,7 +451,7 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
       goto_url=malloc(strlen(cur_vd->pageurl)+1);
       memcpy(goto_url,cur_vd->pageurl,strlen(cur_vd->pageurl));
       goto_url[strlen(cur_vd->pageurl)]=0;
-      from_url=malloc(strlen(cur_vd->pageurl));
+      from_url=malloc(strlen(cur_vd->pageurl)+1);
       strcpy(from_url,cur_vd->pageurl);
       goto_params=collectItemsParams(cur_vd,cur_ref);
       quit_reqired=1;
@@ -542,7 +542,7 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
         goto_url=malloc(strlen(cur_vd->pageurl)+1);
         memcpy(goto_url,cur_vd->pageurl,strlen(cur_vd->pageurl));
         goto_url[strlen(cur_vd->pageurl)]=0;
-        from_url=malloc(strlen(cur_vd->pageurl));
+        from_url=malloc(strlen(cur_vd->pageurl)+1);
         strcpy(from_url,cur_vd->pageurl);
         goto_params=collectItemsParams(cur_vd,cur_ref);
         quit_reqired=1;
