@@ -12,7 +12,7 @@
 #include "urlstack.h"
 #include "conf_loader.h"
 #include "mainmenu.h"
-#include "default_page.h"
+//#include "default_page.h"
 
 static void UpdateCSMname(void);
 static int ParseInputFilename(const char *fn);
@@ -270,7 +270,7 @@ static void method0(VIEW_GUI *data)
   
   if (data->gui.state==2)
   {
-    DrawRectangle(0,YDISP,scr_w,scr_h,0,
+    DrawRectangle(0,0,scr_w,scr_h,0,
       GetPaletteAdrByColorIndex(0),
       GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
@@ -529,6 +529,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case UP_BUTTON:
+      if (vd->pos_cur_ref!=vd->pos_first_ref&&vd->pos_first_ref==vd->pos_last_ref)
+        vd->pos_cur_ref=0xFFFFFFFF;
       if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_last_ref!=0xFFFFFFFF)
         vd->pos_cur_ref=vd->pos_last_ref;
       else
@@ -538,6 +540,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           scrollUp(vd,20);
       break;
     case DOWN_BUTTON:
+      if (vd->pos_cur_ref!=vd->pos_first_ref&&vd->pos_first_ref==vd->pos_last_ref)
+        vd->pos_cur_ref=0xFFFFFFFF;
       if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_first_ref!=0xFFFFFFFF)
         vd->pos_cur_ref=vd->pos_first_ref;
       else
@@ -1064,10 +1068,12 @@ LEND:
 
 int main(const char *exename, const char *filename)
 {
-  char dummy[sizeof(MAIN_CSM)], *pathbuf;
+  char dummy[sizeof(MAIN_CSM)];
+  //char *pathbuf;
   unsigned int ul;
   char *path=strrchr(exename,'\\');
-  int f, l;
+  //int f;
+  int l;
   if (!path) return 0; //Фигня какая-то
   path++;
   l=path-exename;
@@ -1110,23 +1116,25 @@ int main(const char *exename, const char *filename)
   }
   else
   {
-    pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen("BalletMini.oms") + 1);
-    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, "BalletMini.oms");
-    unlink(pathbuf,&ul);
-    f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
-    if (f!=-1)
-    {
-      fwrite(f,default_page,default_page_size,&ul);
-      fclose(f,&ul);
-    }
-    
-    view_url=pathbuf;
-    view_url_mode=MODE_FILE;
-
-    UpdateCSMname();
+    //pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen("BalletMini.oms") + 1);
+    //strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, "BalletMini.oms");
+    //unlink(pathbuf,&ul);
+    //f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+    //if (f!=-1)
+    //{
+    //  fwrite(f,default_page,default_page_size,&ul);
+    //  fclose(f,&ul);
+    //}
+    //view_url=pathbuf;
+    //view_url_mode=MODE_FILE;
+    //UpdateCSMname();
+    //LockSched();
+    //maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+    //UnlockSched();
     LockSched();
-    maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+    ShowMSG(1,(int)"BM: Nothing to do!");
     UnlockSched();
+    SUBPROC((void *)Killer);
   }
   return 0;
 }

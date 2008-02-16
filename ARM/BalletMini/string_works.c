@@ -1,10 +1,10 @@
 #include "../inc/swilib.h"
 #include "string_works.h"
 
-
 static int debugA=A_Truncate;
 unsigned int debug_ul;
 int debug_file;
+
 void debugv(char *file,int line,void *p, int sz)
 {
   if ((debug_file=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&debug_ul))!=-1)

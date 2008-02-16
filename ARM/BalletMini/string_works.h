@@ -4,6 +4,7 @@ void debugf(char *file,int line);
 #define DEBUGF(void) debugf(__FILE__,__LINE__)
 void debugv(char *file,int line,void *p, int sz);
 #define DEBUGV(a,b) debugv(__FILE__,__LINE__,a,b)
+#define DEBUGC(a,b) {char c[64];sprintf(c,a,b);DEBUGV(c,strlen(c));}
 unsigned int _rshort2(char *p);
 int strcmp_nocase(const char *s, const char *d);
 int omstrcmp(VIEWDATA *vd, unsigned int ps, unsigned int pd);

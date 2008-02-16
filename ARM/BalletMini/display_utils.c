@@ -206,7 +206,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   WSHDR *ws=vd->ws;
   LINECACHE *lc;
   unsigned int vl;
-  int ypos=YDISP-vd->pixdisp;
+  int ypos=-vd->pixdisp;
   unsigned int store_pos=vd->view_pos;
   unsigned int store_line=vl=vd->view_line;
   unsigned int len;

@@ -88,7 +88,7 @@ typedef struct
   unsigned int view_pos;
   unsigned int view_line;
   unsigned int displayed_lines;
-  int pixdisp;    // YDISP-pixel_disp=view_line screen pos, 0 or out of screen
+  int pixdisp;
   
   WSHDR *ws;
   
@@ -121,7 +121,8 @@ typedef struct
   //
   unsigned int tag_o_count;
   //
-  unsigned int ref_mode;
+  unsigned int ref_mode_L;
+  unsigned int ref_mode_i;
   //
   OMS_DYNPNGLIST *dynpng_list;
   
