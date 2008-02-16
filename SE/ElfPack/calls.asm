@@ -1,5 +1,5 @@
 //#include "..\\include\DevDef.h"
-	RTMODEL "ARMv4M", "USED"
+        RTMODEL "ARMv4M", "USED"
         RTMODEL "ARMv4T", "USED"
         RTMODEL "ARMv5T", "USED"
         RTMODEL "StackAlign4", "USED"
@@ -12,29 +12,29 @@
         EXTERN  Library
 
         RSEG CODE:CODE:NOROOT(2)
-	
+
 
 
 call    MACRO   a,b
         PUBLIC  a
 a:
-	CODE32
+        CODE32
         LDR     R12,=Library-0x400
         LDR     R12,[R12,#b*4]
         BX      R12
         ENDM
 
-defadr	MACRO	a,b
-	PUBLIC	a
-a	EQU	b
-	ENDM
+defadr  MACRO   a,b
+        PUBLIC  a
+a       EQU     b
+        ENDM
 
         call    ListElement_Prt2NumElement,0x17B
         call    AllocDirHandle,0x11D
         call    GetFname,0x11E
         call    memset,0x112
         call    memcpy,0x113
-	call    List_New,0x169
+        call    List_New,0x169
         call    ListElement_Find,0x1AC
         call    ListElement_GetByIndex,0x1AD
         call    ListElement_AddtoTop,0x16B
@@ -49,56 +49,56 @@ a	EQU	b
         call    BookObj_ReturnPage,0x12E
         call    debug_printf,0x1B1
         call    wstr2str,0x15B
-	
-	call	int2strID,0x15C
-	call 	StatusIndication_ShowNotes,0x143
-        call 	DestroyDirHandle,0x254
+
+        call    int2strID,0x15C
+        call    StatusIndication_ShowNotes,0x143
+        call    DestroyDirHandle,0x254
 
 
 #ifdef K750_R1CA021
         defadr  memalloc,0x44F7B500+1
         defadr  memfree,0x44F7C61C+1
-#endif	
+#endif
 
 #ifdef W700_R1CA021
         defadr  memalloc,0x44F89D7C+1
         defadr  memfree,0x44F8AE98+1
-#endif	
+#endif
 
 #ifdef W810_R4EA031
         defadr  memalloc,0x45453AA8+1
         defadr  memfree,0x454547E0+1
-#endif	
+#endif
 
 #ifdef W810_R4DB005
         defadr  memalloc,0x454499A4+1
         defadr  memfree,0x4544A6DC+1
-#endif	
+#endif
 
 #ifdef Z550_R6CA009
         defadr  memalloc,0x45403710+1
         defadr  memfree,0x45404440+1
-#endif	
+#endif
 
 #ifdef W800_R1BC002
         defadr  memalloc,0x44F814DC+1
         defadr  memfree,0x44F825F8+1
-#endif	
+#endif
 
 #ifdef W800_R1BD001
         defadr  memalloc,0x44F8145C+1
         defadr  memfree,0x44F82578+1
-#endif	
+#endif
 
 #ifdef K600_R2BB001
         defadr  memalloc,0x20363C0C+1
         defadr  memfree,0x20364D24+1
-#endif	
+#endif
 
 #ifdef W580_R8BA024
         defadr  memalloc,0x44D42A58+1
         defadr  memfree,0x44D42A84+1
-#endif	
+#endif
 
 #ifdef W850_R1KG001
         defadr  memalloc,0x44FE5018+1
@@ -113,5 +113,15 @@ a	EQU	b
 #ifdef K790_R8BF003
         defadr  memalloc,0x44A7863C+1
         defadr  memfree,0x44A78668+1
+#endif
+
+#ifdef W610_R6BC002
+        defadr  memalloc,0x44D4C404+1
+        defadr  memfree,0x44D4C430+1
+#endif
+
+#ifdef W660_R8BB001
+        defadr  memalloc,0x44E6C3FC+1
+        defadr  memfree,0x44E6C428+1
 #endif
    END
