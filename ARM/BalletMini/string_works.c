@@ -3,29 +3,26 @@
 
 
 static int debugA=A_Truncate;
-
+unsigned int debug_ul;
+int debug_file;
 void debugv(char *file,int line,void *p, int sz)
 {
-  unsigned int ul;
-  int f;
-  if ((f=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&ul))!=-1)
+  if ((debug_file=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&debug_ul))!=-1)
   {
-    fwrite(f,p,sz,&ul);
-    fclose(f,&ul);
+    fwrite(debug_file,p,sz,&debug_ul);
+    fclose(debug_file,&debug_ul);
   }
   debugA=A_Append;
 }
 
 void debugf(char *file,int line)
 {
-  unsigned int ul;
-  int f;
-  if ((f=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&ul))!=-1)
+  if ((debug_file=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&debug_ul))!=-1)
   {
     char c[256];
     sprintf(c,"%s : %i\n",file,line);
-    fwrite(f,c,strlen(c),&ul);
-    fclose(f,&ul);
+    fwrite(debug_file,c,strlen(c),&debug_ul);
+    fclose(debug_file,&debug_ul);
   }
   debugA=A_Append;
 }
@@ -238,27 +235,6 @@ char * ToWeb(char *src,int special)                   //конвертируем ссылку в ut
   ret[j] = 0;
   mfree(src);                             //освобождаем память от исходной строки
   return ret;
-}
-
-//  Обеспечивает преобразование кривого UTF-8 Сименса в UTF-8 для Jabber
-char* Correct_UTF8_String(char* utf8_str)
-{
-  int j=0;
-  int i=0;
-  char character = *utf8_str;
-  while(character!='\0')
-  {
-    if(character!=0x1F)
-    {
-      utf8_str[j]=character;
-      j++;
-    }
-    i++;
-    character = *(utf8_str+i);
-  }
-  utf8_str[j]='\0';
-  //utf8_str = realloc(utf8_str, j+1);
-  return utf8_str;
 }
 
 void oms2ws(WSHDR *ws, const char *text, int len)

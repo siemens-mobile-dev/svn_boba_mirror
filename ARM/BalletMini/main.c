@@ -367,6 +367,9 @@ static void method2(VIEW_GUI *data,void (*mfree_adr)(void *))
 
 static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  DisableIconBar(1);
+#endif
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=&data->vd->dynpng_list->dp;
   ENABLE_REDRAW=1;
@@ -525,7 +528,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case UP_BUTTON:
-      if (vd->pos_cur_ref==0xFFFFFFFF)
+      if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_last_ref!=0xFFFFFFFF)
         vd->pos_cur_ref=vd->pos_last_ref;
       else
         if (vd->pos_prev_ref!=0xFFFFFFFF)
@@ -534,13 +537,12 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           scrollUp(vd,20);
       break;
     case DOWN_BUTTON:
-      if (vd->pos_cur_ref==0xFFFFFFFF)
+      if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_first_ref!=0xFFFFFFFF)
         vd->pos_cur_ref=vd->pos_first_ref;
       else
         if (vd->pos_next_ref!=0xFFFFFFFF)
           vd->pos_cur_ref=vd->pos_next_ref;
         else
-          //if (vd->pos_last_ref!=0xFFFFFFFF) vd->pos_cur_ref=vd->pos_last_ref;
           scrollDown(vd,20);
       break;
     case RIGHT_BUTTON:

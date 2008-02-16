@@ -16,5 +16,4 @@ void ascii2ws(WSHDR *ws, const char *s);
 char *extract_omstr(VIEWDATA *vd, unsigned int pos);
 int char_win2utf8(char*d,const char *s);
 char * ToWeb(char *src,int special);
-char* Correct_UTF8_String(char* utf8_str);
 void oms2ws(WSHDR *ws, const char *text, int len);

@@ -537,13 +537,13 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
 typedef struct
 {
   void *next;
-  char name[64];
+  char name[256];
   unsigned short value;
   unsigned short id2;
 }SEL_STRUCT;
 
 int sel_menu_onkey(void *gui, GUI_MSG *msg)
-{ 
+{
   SEL_STRUCT *ustop=MenuGetUserPointer(gui);
   if (msg->keys==0x3D || msg->keys==0x18)
   {

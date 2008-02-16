@@ -6,6 +6,12 @@ L Z I E E
 L I S T E
 L I T E
 L T S T T T B E
+L K E
+K
+L K I E
+formum.siemens-club.org
+...T P E B T B L K E L K E L K E L K E K K B T B T T B...
+...K B T B L K I E B B T B T T...
 patches.siemens-club.org/patches
 S + T L Z I E E L I E B S L T B E B D I S T B S L T E
 
@@ -17,13 +23,11 @@ V S L T B E B B N D  облом_внешн€€_ошибка
 dtf.ru
 S X I + T L B S T L T E L I E h_opf_1 i=_id_value I L
 T B E B S L B D
-
 google.com/reader/m   -  purple magic
 S X + I + T L I E S T B B D V Y T B S B D T S
 T L T E Y T S L T E B Y T "2" Y T L T E Y T Y
 L T E B Y T "3" Y T L T E Y T Y L T E B Y T "4"
-Y T L T E Y T Y L T E B Y T "5" Y T L T T E Y
-T
+Y T L T E Y T Y L T E B Y T "5" Y T L T T E Y T
 */
 
 #include "../inc/swilib.h"
@@ -263,16 +267,16 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 	      AddPItem(vd);
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
-      case 'I':    // 
+      case 'I':  // image
         vd->oms_wanted+=8;
         break;
-      case 'J':
+      case 'J':  // picture frame
         vd->oms_wanted+=4;
         break;
-      case 'K':
+      case 'K':  // image by id
         vd->oms_wanted+=6;
         break;
-      case 'X':    // Image
+      case 'X':  // Image RGBA
         vd->oms_wanted+=4;
         break;
       case 'h':    // opf 1
@@ -297,16 +301,16 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'r':
         vd->oms_wanted+=2;
         break;
-      case 's':
+      case 's': // drop down list
         vd->oms_wanted+=2;
         break;
-      case 'o':
+      case 'o': // drop down list item
         vd->oms_wanted+=2;
         break;
       case 'l':  // страннй тег, из за него курсор гллючит, может 'l' заканчивает список
         //AddBeginRef(vd);
         vd->tag_l_count=2;
-        AddTextItem(vd,"<l>",3);
+        //AddTextItem(vd,"<l>",3);
         vd->oms_pos++;
         goto L_NOSTAGE2;
       case 'i':  // image button
@@ -320,13 +324,13 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'k':
         vd->oms_wanted+=3; //Code type and data length
         break;	
-      case 'L':
+      case 'L':  // link
         vd->oms_wanted+=2;
         break;
-      case '^':
+      case '^':  // wrong tag
         vd->oms_wanted+=2;
         break;
-      case 'P':
+      case 'P':  // phone number
         vd->oms_wanted+=2;
         break;
       case 'R':
@@ -377,7 +381,6 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         AddNewStyle(vd);
         break;
       case 'T':
-        vd->ref_mode=1;
         i=_rshort(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGT_STAGE3;
@@ -388,7 +391,6 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         AddNewStyle(vd);
         break;
       case 'I':
-        vd->ref_mode++;
         vd->iw=_rshort(vd); //width
         vd->ih=_rshort(vd); //heigth
         i=_rshort(vd);
@@ -400,13 +402,13 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->iw=_rshort(vd); //width
         vd->ih=_rshort(vd); //height
         AddPictureItemFrame(vd,vd->iw,vd->ih);
-        if (vd->tag_l_count)
-        {
-          if (!(--vd->tag_l_count))
-          {
-            AddEndRef(vd);
-          }
-        }
+        //if (vd->tag_l_count)
+        //{
+        //  if (!(--vd->tag_l_count))
+        //  {
+        //    AddEndRef(vd);
+        //  }
+        //}
         break;
       case 'K':
         _rshort(vd); //width
@@ -508,7 +510,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'L':
         i=_rshort(vd);
         vd->work_ref.tag='L';
-        vd->ref_mode=0;
+        vd->ref_mode=1;
         AddBeginRef(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGL_STAGE3;
@@ -516,7 +518,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case '^':
         i=_rshort(vd);
         vd->work_ref.tag='^';
-        vd->ref_mode=1;
+        //vd->ref_mode=1;//????
         AddBeginRef(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGx5E_STAGE3;
