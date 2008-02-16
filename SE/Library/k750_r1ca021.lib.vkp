@@ -314,6 +314,7 @@
 0914: FFFFFFFF 95A5D544   ; 245:
 0918: FFFFFFFF 85A5D544   ; 246:
 
-0950: FFFFFFFF A15D0D45  ; 254: void DestroyDirHandle(void *handle);
+0950: FFFFFFFF A15D0D45  ; 254: void DestroyDirHandle(void *handle); // Added by GPcH
 0954: FFFFFFFF 20CD2244  ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF B9910E45  ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
+095C: FFFFFFFF 09930545  ; 257: void infobox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,int shouldbe0); // Added by GPcH
