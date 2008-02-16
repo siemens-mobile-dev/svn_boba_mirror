@@ -109,7 +109,7 @@ int LineDown(VIEWDATA *vd)
 {
   LINECACHE lc;
   unsigned int h;
-  unsigned int pos=vd->view_pos;
+  unsigned int pos=vd->view_pos; // pos - это последний символ в строке
   if (pos>=vd->rawtext_size) return 0;
   if (vd->view_line>=vd->lines_cache_size)
   {
@@ -157,6 +157,39 @@ int LineUp(VIEWDATA *vd)
     return 0;
 }
 
+void scrollDown(VIEWDATA *vd, int amount)
+{
+  if (!RenderPage(vd,0)) return;
+  vd->pixdisp+=amount;
+  unsigned int cl_h;
+L1:
+  cl_h=vd->lines_cache[vd->view_line].pixheight;
+  if (vd->pixdisp>cl_h)
+  {
+    vd->pixdisp-=cl_h;
+    unsigned int pd=vd->pixdisp;
+    LineDown(vd);
+    vd->pixdisp=0;
+    if (!RenderPage(vd,0)) return;
+    vd->pixdisp=pd;
+    goto L1;
+  }
+}
+
+void scrollUp(VIEWDATA *vd, int amount)
+{
+  while (vd->pixdisp-amount<0)
+  {
+    if (!LineUp(vd))
+    {
+      vd->pixdisp=0;
+      return;
+    }
+    amount-=vd->lines_cache[vd->view_line].pixheight;
+  }
+  vd->pixdisp-=amount;
+}
+
 #define MAX_COLORS_IN_LINE 32
 typedef struct {
   char color[4];
@@ -170,11 +203,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int scr_h=ScreenH()-1;
   int sc;
   int dc;
-  //VIEWDATA *vd=data->vd;
   WSHDR *ws=vd->ws;
   LINECACHE *lc;
   unsigned int vl;
-  int ypos=YDISP;
+  int ypos=YDISP-vd->pixdisp;
   unsigned int store_pos=vd->view_pos;
   unsigned int store_line=vl=vd->view_line;
   unsigned int len;
@@ -226,7 +258,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       while(len>0&&(dc<32000))
       {
         c=vd->rawtext[sc];
-        if (c==0x0000) goto L1;
+        //if (c==0x0000) goto L1;
         if (c==UTF16_ENA_INVERT)
         {
           //Found begin of ref
@@ -305,19 +337,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       y2=lc->pixheight+ypos;
       if (do_draw)
       {
-        /*if (do_draw==2)
-        {
-          //Dump rawtext
-	        unsigned int ul;
-	        int f;
-          char fn[128];
-          sprintf(fn,"4:\\dump%d.raw",vl);
-          if ((f=fopen(fn,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-          {
-            fwrite(f,ws->wsbody,ws->wsbody[0]*2,&ul);
-            fclose(f,&ul);
-          }
-        }*/
         def_ink[0]=lc->ink1>>8;
         def_ink[1]=lc->ink1;
         def_ink[2]=lc->ink2>>8;
@@ -328,9 +347,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 		        RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
         }
 	      DrawString(ws,0,ypos,scr_w,y2,
-		      lc->bold?FONT_SMALL_BOLD:FONT_SMALL,TEXT_NOFORMAT
-		        +(lc->underline?TEXT_UNDERLINE:0)
-		          ,def_ink,GetPaletteAdrByColorIndex(23));
+		      lc->bold?FONT_SMALL_BOLD:FONT_SMALL,TEXT_NOFORMAT+
+		      (lc->underline?TEXT_UNDERLINE:0),
+		      def_ink,GetPaletteAdrByColorIndex(23));
       }
       
       if (y2>=scr_h||vl==vd->lines_cache_size-2)
@@ -344,10 +363,15 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         }
         //WSHDR *ws;
         //ws=AllocWS(128);
-        //wsprintf(ws,"%u %u",vd->view_line,vd->lines_cache[vd->view_line].pixheight);
-        //DrawString(ws,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(0));
-        //wsprintf(ws,"%u %u",(vd->lines_cache[fl].pos*1000)/vd->rawtext_size*scr_h,(vd->lines_cache[fl].pos*1000)/vd->rawtext_size*scr_h/1000);
-        //DrawString(ws,3,28,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(0));
+        //wsprintf(ws,"%u %u",vd->pos_first_ref,vd->pos_last_ref);
+        //DrawString(ws,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
+        //wsprintf(ws,"%u %u",vd->pos_prev_ref,vd->pos_next_ref);
+        //DrawString(ws,3,26,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
+        //wsprintf(ws,"%u %c",vd->pos_cur_ref,FindReference(vd,vd->pos_cur_ref)?FindReference(vd,vd->pos_cur_ref)->tag:'0');
+        //DrawString(ws,3,38,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
+        //ws->wsbody[0]=10;
+        //memcpy(&(ws->wsbody[1]),(vd->rawtext+store_pos),10);
+        //DrawString(ws,3,50,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
         //FreeWS(ws);
       }
       ypos=y2;
@@ -356,7 +380,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
     else
     {
       result=0;
-      //if (ena_ref) vd->pos_botview_ref=prepare_bot_ref;
       break;
     }
   }
@@ -365,7 +388,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   return(result);
 }
 
-REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref)
+REFCACHE *FindReference(VIEWDATA *vd, unsigned int pos)
 {
   int i=vd->ref_cache_size;
   REFCACHE *rf;
@@ -373,7 +396,7 @@ REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref)
   rf=vd->ref_cache;
   do
   {
-    if ((rf->begin<=ref)&&(ref<rf->end)) return rf;
+    if ((rf->begin<=pos)&&(pos<rf->end)) return rf;
     rf++;
   }
   while(--i);
@@ -439,18 +462,14 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
   if (msg->keys==0xFFF)
   {
     // set value
-    char *work_begin=(char *)cur_vd->rawtext+(cur_ref->begin*2)+6;
     ExtractEditControl(data,1,&ec);
-    WSHDR *sw=AllocWS(ec.pWS->wsbody[0]);
-    wstrcpy(sw,ec.pWS);
-    memset(work_begin,0,ITEM_EDITBOX_SIZE*2-2);
-    if (sw->wsbody[0]>=ITEM_EDITBOX_SIZE) sw->wsbody[0]=ITEM_EDITBOX_SIZE-1;
-    memcpy(work_begin,sw->wsbody+1,sw->wsbody[0]*2);
+    FreeWS(cur_ref->ws);
+    cur_ref->ws=AllocWS(ec.pWS->wsbody[0]);
+    wstrcpy(cur_ref->ws,ec.pWS);
     if (!cur_ref->no_upload)
     {
       goto_url=malloc(strlen(cur_vd->pageurl)+1);
-      memcpy(goto_url,cur_vd->pageurl,strlen(cur_vd->pageurl));
-      goto_url[strlen(cur_vd->pageurl)]=0;
+      strcpy(goto_url,cur_vd->pageurl);
       from_url=malloc(strlen(cur_vd->pageurl)+1);
       strcpy(from_url,cur_vd->pageurl);
       goto_params=collectItemsParams(cur_vd,cur_ref);
@@ -493,21 +512,18 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
 {
   cur_ref=rf;
   cur_vd=vd;
-  char *work_begin=(char *)cur_vd->rawtext+(cur_ref->begin*2)+6;
+  
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
   
   eq=AllocEQueue(ma,mfree_adr());
-  WSHDR *ews=AllocWS(ITEM_EDITBOX_SIZE);
+  WSHDR *ews=AllocWS(16384);
   
-  memcpy(ews->wsbody+1,work_begin,ITEM_EDITBOX_SIZE*2);
-  int i=0;
-  for (;i<ITEM_EDITBOX_SIZE*2;i+=2) if (work_begin[i]==0x0000) break;
-  ews->wsbody[0]=i/2;
+  wstrcpy(ews,rf->ws);
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1024);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,16384);
   AddEditControlToEditQend(eq,&ec,ma);   //2
 
   FreeWS(ews);
@@ -540,8 +556,7 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
       if (!cur_ref->no_upload)
       {
         goto_url=malloc(strlen(cur_vd->pageurl)+1);
-        memcpy(goto_url,cur_vd->pageurl,strlen(cur_vd->pageurl));
-        goto_url[strlen(cur_vd->pageurl)]=0;
+        strcpy(goto_url,cur_vd->pageurl);
         from_url=malloc(strlen(cur_vd->pageurl)+1);
         strcpy(from_url,cur_vd->pageurl);
         goto_params=collectItemsParams(cur_vd,cur_ref);

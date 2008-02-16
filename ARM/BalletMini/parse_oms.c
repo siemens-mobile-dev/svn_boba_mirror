@@ -1,3 +1,31 @@
+/*
+Известные поядки тэгов:
+L T (I не отображается ?)
+L T E
+L Z I E E
+L I S T E
+L I T E
+L T S T T T B E
+patches.siemens-club.org/patches
+S + T L Z I E E L I E B S L T B E B D I S T B S L T E
+
+L T B E B V Y T h_opf_1 C s B Y L T s B Y L T E B Y T 
+mywishlist.ru
+S X 9байт_каких_то + I 'какойто B + T L I S T E L I T
+E L I T E B L I E B S B D T h_opf_1 C x B T p B c T B
+V S L T B E B B N D  облом_внешняя_ошибка
+dtf.ru
+S X I + T L B S T L T E L I E h_opf_1 i=_id_value I L
+T B E B S L B D
+
+google.com/reader/m   -  purple magic
+S X + I + T L I E S T B B D V Y T B S B D T S
+T L T E Y T S L T E B Y T "2" Y T L T E Y T Y
+L T E B Y T "3" Y T L T E Y T Y L T E B Y T "4"
+Y T L T E Y T Y L T E B Y T "5" Y T L T T E Y
+T
+*/
+
 #include "../inc/swilib.h"
 #include "parse_oms.h"
 #include "additems.h"
@@ -250,7 +278,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'h':    // opf 1
         vd->oms_wanted+=2;
         break;
-      case 'e':
+      case 'e':  // а нету такого тэга
       case 'p':
       case 'u':
         vd->oms_wanted+=2;
@@ -275,13 +303,13 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'o':
         vd->oms_wanted+=2;
         break;
-      case 'l':
-        AddBeginRef(vd);
+      case 'l':  // страннй тег, из за него курсор гллючит, может 'l' заканчивает список
+        //AddBeginRef(vd);
         vd->tag_l_count=2;
-        //AddTextItem(vd,"<l>",3);
+        AddTextItem(vd,"<l>",3);
         vd->oms_pos++;
         goto L_NOSTAGE2;
-      case 'i':
+      case 'i':  // image button
         if (!vd->tag_l_count)
         {
           AddBeginRef(vd);
@@ -349,7 +377,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         AddNewStyle(vd);
         break;
       case 'T':
-        vd->ref_mode++;
+        vd->ref_mode=1;
         i=_rshort(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGT_STAGE3;
@@ -597,7 +625,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGp_STAGE4:
       i=vd->ih;
       vd->work_ref.value=vd->oms_pos-2;
-      AddPassInputItem(vd,vd->oms+vd->oms_pos,i);
+      AddInputItem(vd,vd->oms_pos-2);
       AddEndRef(vd);
       vd->oms_pos+=i;
       vd->oms_wanted++;
@@ -631,7 +659,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGx_STAGE4:
       i=vd->ih;
       vd->work_ref.value=vd->oms_pos-2;
-      AddInputItem(vd,vd->oms+vd->oms_pos,i);
+      AddInputItem(vd,vd->oms_pos-2);
       AddEndRef(vd);
       vd->oms_pos+=i;
       vd->oms_wanted++;

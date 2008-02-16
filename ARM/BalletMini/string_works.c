@@ -1,6 +1,35 @@
 #include "../inc/swilib.h"
 #include "string_works.h"
 
+
+static int debugA=A_Truncate;
+
+void debugv(char *file,int line,void *p, int sz)
+{
+  unsigned int ul;
+  int f;
+  if ((f=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&ul))!=-1)
+  {
+    fwrite(f,p,sz,&ul);
+    fclose(f,&ul);
+  }
+  debugA=A_Append;
+}
+
+void debugf(char *file,int line)
+{
+  unsigned int ul;
+  int f;
+  if ((f=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&ul))!=-1)
+  {
+    char c[256];
+    sprintf(c,"%s : %i\n",file,line);
+    fwrite(f,c,strlen(c),&ul);
+    fclose(f,&ul);
+  }
+  debugA=A_Append;
+}
+
 static unsigned int _rshort(char *p)
 {
   unsigned int r=*p++;
@@ -146,7 +175,7 @@ int char_win2utf8(char*d,const char *s) // функция возвращает количество
   char *d1 = "%d1%";
   unsigned char b = *s, lb, ub;
   int r = 0, ab;
-  if (b==0x20||b==0x3A||b==0x2F)
+  if (b==0x20||b==0x3A||b==0x2F||b==0x0A)
   {
     *d = '%'; d++;
     *d = hex[(b>>4)&0xF]; d++;
@@ -195,13 +224,13 @@ char * ToWeb(char *src,int special)                   //конвертируем ссылку в ut
   for(i = 0; src[i]; i++)                 //считаем русские символы
   {
     unsigned char c=src[i];
-    if(c>=0x80||(special&&(c==0x20||c==0x3A||c==0x2F))) cnt++;
+    if(c>=0x80||(special&&(c==0x20||c==0x3A||c==0x2F||c==0x0A))) cnt++;
   }
   ret = malloc(strlen(src) + cnt*6 + 1);  //выделяем память под utf8-строку
   for(i = 0, j = 0; src[i]; i++)
   {
     unsigned char c=src[i];
-    if(c>=0x80||(special&&(c==0x20||c==0x3A||c==0x2F)))
+    if(c>=0x80||(special&&(c==0x20||c==0x3A||c==0x2F||c==0x0A)))
       j += char_win2utf8(ret+j, src+i);   //получаем вместо русского символа utf8-замену
     else
       ret[j++] = src[i];

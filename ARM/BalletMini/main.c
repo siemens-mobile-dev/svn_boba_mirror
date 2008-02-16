@@ -109,8 +109,55 @@ static void StartGetFile(int dummy, char *fncache)
 
 char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
 {
-  char *s=malloc(1024);
   unsigned int pos=0;
+  for (int i=0;i<vd->ref_cache_size;i++)
+  {
+    REFCACHE *prf=vd->ref_cache+i;
+    switch (prf->tag)
+    {
+    case 's':
+        pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->id2)+1;
+      break;
+    case 'c':
+    case 'r':
+      if (vd->rawtext[prf->begin+1]==RADIOB_CHECKED||vd->rawtext[prf->begin+1]==CBOX_CHECKED)
+        pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->value)+1;
+      break;
+    case 'i':
+    case 'u':
+      {
+        if (prf!=rf) break;
+        pos+=_rshort2(vd->oms+prf->id)+2;
+        char *c=extract_omstr(vd,prf->value);
+        WSHDR *ws=AllocWS(256);
+        oms2ws(ws,c,strlen(c));
+        mfree(c);
+        char *b=c=(char *)malloc(ws->wsbody[0]+3);
+        for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
+        *c=0;
+        b=ToWeb(b,1);
+        pos+=strlen(b);
+        mfree(b);
+        FreeWS(ws);
+      }
+      break;
+    case 'p':
+    case 'x':
+      {
+        pos+=_rshort2(vd->oms+prf->id)+2;
+        char *c;
+        char *b=c=(char *)malloc(prf->ws->wsbody[0]+3);
+        for (int i=0; i<prf->ws->wsbody[0]; i++) *c++=char16to8(prf->ws->wsbody[i+1]);
+        *c=0;
+        b=ToWeb(b,1);
+        pos+=strlen(b);
+        mfree(b);
+      }
+      break;
+    }
+  }
+  char *s=malloc(pos+1);
+  pos=0;
   for (int i=0;i<vd->ref_cache_size;i++)
   {
     REFCACHE *prf=vd->ref_cache+i;
@@ -175,6 +222,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         memcpy(s+pos,b,strlen(b));
         pos+=strlen(b);
         mfree(b);
+        FreeWS(ws);
       }
       break;
     case 'p':
@@ -188,16 +236,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         mfree(c);
         s[pos]='=';
         pos++;
-        WSHDR *ws=AllocWS(256);
-        for (int i=0;i<256;i++)
-        {
-          unsigned short v=*(vd->rawtext+prf->begin+3+i);
-          if (!v) break;
-          ws->wsbody[0]++;
-          ws->wsbody[ws->wsbody[0]]=v;
-        }
-        char *b=c=(char *)malloc(ws->wsbody[0]+3);
-        for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
+        char *b=c=(char *)malloc(prf->ws->wsbody[0]+3);
+        for (int i=0; i<prf->ws->wsbody[0]; i++) *c++=char16to8(prf->ws->wsbody[i+1]);
         *c=0;
         b=ToWeb(b,1);
         memcpy(s+pos,b,strlen(b));
@@ -230,36 +270,13 @@ static void method0(VIEW_GUI *data)
   if (data->gui.state==2)
   {
     DrawRectangle(0,YDISP,scr_w,scr_h,0,
-		  GetPaletteAdrByColorIndex(0),
-		  GetPaletteAdrByColorIndex(0));
+      GetPaletteAdrByColorIndex(0),
+      GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
-/*    {
-      WSHDR *ws=vd->ws;
-      int dc=0;
-      ws->wsbody[++dc]=0xE012;
-      ws->wsbody[++dc]=0xE006;
-      ws->wsbody[++dc]=0x0000;
-      ws->wsbody[++dc]=0x0064;
-      ws->wsbody[++dc]=0xE007;
-      ws->wsbody[++dc]=0xFFFF;
-      ws->wsbody[++dc]=0xFF64;
-//      ws->wsbody[++dc]=0xE005;
-      ws->wsbody[++dc]=0xE001;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0x440;
-      ws->wsbody[++dc]=0xE002;
-      ws->wsbody[++dc]=0xE001;
-//      ws->wsbody[++dc]='A';
-      ws->wsbody[0]=dc;
-	DrawString(ws,0,0,scr_w,20,
-		   FONT_SMALL,TEXT_NOFORMAT
-		       ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
-    }*/
     DrawString(ws_console,0,0,scr_w,20,
-		 FONT_SMALL,TEXT_NOFORMAT
-		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+		  FONT_SMALL,TEXT_NOFORMAT,
+		  GetPaletteAdrByColorIndex(1),
+      GetPaletteAdrByColorIndex(0));
     extern int connect_state;
     if (!STOPPED)
     {
@@ -284,24 +301,27 @@ static void method0(VIEW_GUI *data)
       h1=scr_h-GetFontYSIZE(FONT_MEDIUM_BOLD)-2;
       w1=scr_w-Get_WS_width(data->ws2,FONT_MEDIUM_BOLD)-2;
       DrawRectangle(0,h1,w1,scr_h,0,
-                    GetPaletteAdrByColorIndex(1),
-                    GetPaletteAdrByColorIndex(0));
+        GetPaletteAdrByColorIndex(1),
+        GetPaletteAdrByColorIndex(0));
       DrawRectangle(w1+1,h1,scr_w,scr_h,0,
-                    GetPaletteAdrByColorIndex(1),
-                    GetPaletteAdrByColorIndex(0));
+        GetPaletteAdrByColorIndex(1),
+        GetPaletteAdrByColorIndex(0));
       if ((view_url_mode==MODE_FILE && vd->loaded_sz<vd->page_sz) ||
-          (view_url_mode==MODE_URL && connect_state==3 && vd->loaded_sz<vd->page_sz))
+      (view_url_mode==MODE_URL && connect_state==3 && vd->loaded_sz<vd->page_sz))
       {
         DrawRectangle(1,h1+1,vd->loaded_sz*(w1-1)/vd->page_sz,scr_h-1,0,
-                      GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+          GetPaletteAdrByColorIndex(2),
+          GetPaletteAdrByColorIndex(2));
         wsprintf(data->ws1,"%uB/%uB",vd->loaded_sz,vd->page_sz);
       }
-      DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));   
-      DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
-              
+      DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,
+        GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));   
+      DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,
+        GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
+      
       DrawString(ws_console,0,0,scr_w,20,
-		  FONT_SMALL,TEXT_NOFORMAT
-		   ,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+		    FONT_SMALL,TEXT_NOFORMAT,
+		    GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
     }
   }
 }
@@ -442,7 +462,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               i++;
             }
           }
-          // if rf->upload, upload data
           if (!rf->no_upload)
           {
             goto_url=malloc(strlen(vd->pageurl)+1);
@@ -459,7 +478,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             vd->rawtext[rf->begin+1]=CBOX_UNCHECKED;
           else
             vd->rawtext[rf->begin+1]=CBOX_CHECKED;
-          // if rf->upload, upload data
           if (!rf->no_upload)
           {
             goto_url=malloc(strlen(vd->pageurl)+1);
@@ -507,81 +525,35 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case UP_BUTTON:
-      //if (!RenderPage(vd,1)) break;
-      //Check reference move
-      if (vd->pos_prev_ref!=0xFFFFFFFF)
-      {
-        vd->pos_cur_ref=vd->pos_prev_ref;
-      }
+      if (vd->pos_cur_ref==0xFFFFFFFF)
+        vd->pos_cur_ref=vd->pos_last_ref;
       else
-      {
-        LineUp(vd);
-      }
+        if (vd->pos_prev_ref!=0xFFFFFFFF)
+          vd->pos_cur_ref=vd->pos_prev_ref;
+        else
+          scrollUp(vd,20);
       break;
     case DOWN_BUTTON:
-      if (vd->pos_next_ref!=0xFFFFFFFF)
-      {
-        vd->pos_cur_ref=vd->pos_next_ref;
-      }
-      else
-      {
-        if (vd->pos_last_ref!=0xFFFFFFFF)
-        {
-          vd->pos_cur_ref=vd->pos_last_ref;
-        }
-        if (!RenderPage(vd,0)) break;
-        LineDown(vd);
-      }
-      break;
-    /*case LEFT_BUTTON:
-      m=6;
-      do
-      {
-        if (!LineUp(vd)) break;
-      }
-      while(--m);
-      RenderPage(vd,0);
-      if (vd->pos_first_ref!=0xFFFFFFFF)
-      {
+      if (vd->pos_cur_ref==0xFFFFFFFF)
         vd->pos_cur_ref=vd->pos_first_ref;
-      }
+      else
+        if (vd->pos_next_ref!=0xFFFFFFFF)
+          vd->pos_cur_ref=vd->pos_next_ref;
+        else
+          //if (vd->pos_last_ref!=0xFFFFFFFF) vd->pos_cur_ref=vd->pos_last_ref;
+          scrollDown(vd,20);
       break;
-    case RIGHT_BUTTON:
-      m=6;
-      do
-      {
-        if (!RenderPage(vd,0)) break;
-        if (!LineDown(vd)) break;
-      }
-      while(--m);
-      if (vd->pos_last_ref!=0xFFFFFFFF)
-      {
-        vd->pos_cur_ref=vd->pos_last_ref;
-      }
-      break;*/
     case RIGHT_BUTTON:
     case VOL_DOWN_BUTTON:
-      m=ScreenH()-24;
-      do
-      {
-        if (!RenderPage(vd,0)) break;
-        if (!LineDown(vd)) break;
-        m-=vd->lines_cache[vd->view_line].pixheight;
-      }
-      while(m>0);
-      vd->pos_cur_ref=0xFFFFFFFF;
+      scrollDown(vd,ScreenH()-20);
+      if (vd->pos_cur_ref<vd->pos_first_ref)
+        vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_BUTTON:
     case VOL_UP_BUTTON:
-      m=ScreenH()-24;
-      do
-      {
-        if (!LineUp(vd)) break;
-        m-=vd->lines_cache[vd->view_line].pixheight;
-      }
-      while(m>0);
-      RenderPage(vd,0);
-      vd->pos_cur_ref=0xFFFFFFFF;
+      scrollUp(vd,ScreenH()-20);
+      if (vd->pos_cur_ref>vd->pos_last_ref)
+        vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_SOFT:
       STOPPED=1;
@@ -606,17 +578,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         break;
       }
     case GREEN_BUTTON:
-      /*{
-        //Dump rawtext
-        unsigned int ul;
-        int f;
-        if ((f=fopen("4:\\dumptext.raw",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-        {
-          fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
-          fclose(f,&ul);
-        }
-        //RenderPage(vd,2); //With dump
-      }*/
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
@@ -631,23 +592,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
         }
       }
-      break;
-    case 0x39: // '9'
-        do
-        {
-          if (!RenderPage(vd,0)) break;
-          if (!LineDown(vd)) break;
-        }
-        while(1);
-        vd->pos_cur_ref=0xFFFFFFFF;
-      break;
-    case 0x33: // '3'
-      do
-      {
-        if (!LineUp(vd)) break;
-      }
-      while(1);
-      vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x31: // '1'
       {
@@ -680,18 +624,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         int f;
         if ((f=fopen("0:\\zbin\\balletmini\\dumpref.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
-          char c[128];
+          char c[256];
           sprintf(c,"\nref_cache_size : %i\n\n",vd->ref_cache_size);
-          fwrite(f,c,strlen(c),&ul);
-          sprintf(c,"\npos_cur_ref :    %i\n",vd->pos_cur_ref);
-          fwrite(f,c,strlen(c),&ul);
-          sprintf(c,"\npos_first_ref :  %i\n",vd->pos_first_ref);
-          fwrite(f,c,strlen(c),&ul);
-          sprintf(c,"\npos_last_ref :   %i\n",vd->pos_last_ref);
-          fwrite(f,c,strlen(c),&ul);
-          sprintf(c,"\npos_prev_ref :   %i\n",vd->pos_prev_ref);
-          fwrite(f,c,strlen(c),&ul);
-          sprintf(c,"\npos_next_ref :   %i\n",vd->pos_next_ref);
           fwrite(f,c,strlen(c),&ul);
           for (int i=0;i<vd->ref_cache_size;i++)
           {
@@ -705,7 +639,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             if (rf->id!=_NOREF)
             {
               char *s=extract_omstr(vd,rf->id);
-              for (unsigned short to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
+              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
               sprintf(c,"   %s",s);
               fwrite(f,c,strlen(c),&ul);
               mfree(s);
@@ -716,7 +650,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             if (rf->id2!=_NOREF)
             {
               char *s=extract_omstr(vd,rf->id2);
-              for (unsigned short to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
+              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
               sprintf(c,"   %s",s);
               fwrite(f,c,strlen(c),&ul);
               mfree(s);
@@ -727,7 +661,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             if (rf->value!=_NOREF)
             {
               char *s=extract_omstr(vd,rf->value);
-              for (unsigned short to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
+              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
               sprintf(c,"   %s",s);
               fwrite(f,c,strlen(c),&ul);
               mfree(s);
@@ -737,8 +671,24 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             fwrite(f,c,strlen(c),&ul);
             sprintf(c,"  end:      %u\n",rf->end);
             fwrite(f,c,strlen(c),&ul);
-            sprintf(c,"  upload:   %s\n\n",rf->no_upload?"false":"true");
+            sprintf(c,"  upload:   %s\n",rf->no_upload?"false":"true");
             fwrite(f,c,strlen(c),&ul);
+            /*if ((int)rf->ws!=0xFFFFFFFF)
+            {
+              int l=ws->wsbody[0];
+              char *s=malloc(l+3);
+              ws_2str(rf->ws,s,l);
+              sprintf(c,"  ws:     %i %s",l);
+              fwrite(f,c,strlen(c),&ul);
+              for (int i=1;i<rf->ws->wsbody[0];i++)
+              {
+                int c=char16to8(rf->ws->wsbody[i]);
+                fwrite(f,&c,1,&ul);
+              }
+              fwrite(f,"]",1,&ul);
+              mfree(s);
+            }*/
+            fwrite(f,"\n",1,&ul);
           }
           fclose(f,&ul);
         }

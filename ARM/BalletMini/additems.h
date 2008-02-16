@@ -26,9 +26,7 @@ void AddRadioButton(VIEWDATA *vd, int checked);
 
 void AddCheckBoxItem(VIEWDATA *vd, int checked);
 
-void AddInputItem(VIEWDATA *vd, const char *text, int len);
-
-void AddPassInputItem(VIEWDATA *vd, const char *text, int len);
+void AddInputItem(VIEWDATA *vd, unsigned int pos);
 
 void AddButtonItem(VIEWDATA *vd, const char *text, int len);
 

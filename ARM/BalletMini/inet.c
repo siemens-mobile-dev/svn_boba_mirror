@@ -336,19 +336,24 @@ static void get_answer(void)
 
 static void SendPost(void)
 {
-  //ShowMSG(1,(int)URL);
-  //return;
+  extern char AUTH_PREFIX[];
+  extern char AUTH_CODE[];
+  extern char *from_url;
+  extern char *goto_params;
   
-  char buf[3096];
+  char *buf;
+  int buf_max_sz=1024+strlen(URL);
+  if (from_url)
+    buf_max_sz+=strlen(from_url);
+  if (goto_params)
+    buf_max_sz+=strlen(goto_params);
+  buf=malloc(buf_max_sz);
+
   int content_len=0;
   int l;
   int i, j;
   char *content=NULL;
   char *req;
-  extern char AUTH_PREFIX[];
-  extern char AUTH_CODE[];
-  extern char *from_url;
-  extern char *goto_params;
   
   sprintf(buf,"k=image/jpeg");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
@@ -466,16 +471,11 @@ static void SendPost(void)
   memcpy(req+i,content,content_len);
   mfree(content);
   
-  //unsigned int ul;
-  //int f;
-  //if ((f=fopen("0:\\zbin\\balletmini\\dump.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-  //{
-  //  fwrite(f,req,l,&ul);
-  //  fclose(f,&ul);
-  //}
+  //DEBUGV(req,l);
   
   bsend(l,req);
   freegstr(&URL);
+  mfree(buf);
 }
 
 int ParseSocketMsg(GBS_MSG *msg)

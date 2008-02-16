@@ -35,6 +35,13 @@ void FreeViewData(VIEWDATA *vd)
     mfree(vd->zs);
   }
   if (vd->ws) FreeWS(vd->ws);
+  for (int i=0;i<vd->ref_cache_size;i++)
+  {
+    if ((int)vd->ref_cache[i].ws!=0xFFFFFFFF)
+    {
+      FreeWS(vd->ref_cache[i].ws);
+    }
+  }
   mfree(vd->ref_cache);
   vd->ref_cache=NULL;
   vd->ref_cache_size=0;

@@ -276,23 +276,15 @@ void AddCheckBoxItem(VIEWDATA *vd, int checked)
   RawInsertChar(vd,checked?CBOX_CHECKED:CBOX_UNCHECKED);
 }
 
-void AddInputItem(VIEWDATA *vd, const char *text, int len)
+void AddInputItem(VIEWDATA *vd, unsigned int pos)
 {
   RawInsertChar(vd,0x0A);
   RawInsertChar(vd,0xE11E);
-  unsigned int i=vd->rawtext_size;
-  AddTextItem(vd,text,len);
-  while (vd->rawtext_size<i+ITEM_EDITBOX_SIZE) RawInsertChar(vd,0x00);
-  RawInsertChar(vd,0x0A);
-}
-  
-void AddPassInputItem(VIEWDATA *vd, const char *text, int len)
-{
-  RawInsertChar(vd,0x0A);
-  RawInsertChar(vd,0xE11F);
-  unsigned int i=vd->rawtext_size;
-  AddTextItem(vd,text,len);
-  while (vd->rawtext_size<i+ITEM_EDITBOX_SIZE) RawInsertChar(vd,0x00);
+  int len=_rshort2(vd->oms+pos);
+  vd->work_ref.ws=AllocWS(len);
+  char *c=extract_omstr(vd,pos);
+  oms2ws(vd->work_ref.ws,c,len);
+  mfree(c);
   RawInsertChar(vd,0x0A);
 }
 

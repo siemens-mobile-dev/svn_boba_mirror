@@ -65,14 +65,11 @@ typedef struct
   unsigned int begin;
   unsigned int end;
   int tag;
-  //unsigned int form_id1;
-  //unsigned int form_id2;
   unsigned int id;
   unsigned int value;
   unsigned int id2;
+  WSHDR *ws;
   char no_upload:1, reserved:7;
-  //int group_id;
-  //int checked;
 }REFCACHE;
 
 
@@ -91,6 +88,7 @@ typedef struct
   unsigned int view_pos;
   unsigned int view_line;
   unsigned int displayed_lines;
+  int pixdisp;    // YDISP-pixel_disp=view_line screen pos, 0 or out of screen
   
   WSHDR *ws;
   
@@ -100,7 +98,7 @@ typedef struct
   unsigned int pos_last_ref;
   unsigned int pos_prev_ref;
   unsigned int pos_next_ref;
-  
+
   //
   char *oms;
   int oms_size;
@@ -131,6 +129,13 @@ typedef struct
   REFCACHE work_ref;
   REFCACHE *ref_cache;
   int ref_cache_size;
+  
+  REFCACHE *ref_cur;
+  
+  REFCACHE *ref_first;
+  REFCACHE *ref_last;
+  REFCACHE *ref_next;
+  REFCACHE *ref_prev;
   
   int page_sz;
   int loaded_sz;
