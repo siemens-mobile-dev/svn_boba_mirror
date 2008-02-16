@@ -126,103 +126,21 @@ __thumb int RemoveUserData(void (*constr)(void *, void *))
 
 __thumb void * malloc (int size)
 {
-#ifdef K750_R1CA021
+//previous versions had separate ifdefs for each FW-version
+#ifndef DB2020  
   return(memalloc(size,1,5,"SwiLib",0));
-#endif
-
-#ifdef W700_R1CA021
-  return(memalloc(size,1,5,"SwiLib",0));
-#endif
-
-#ifdef W810_R4DB005
-  return(memalloc(size,1,5));
-#endif
-
-#ifdef W810_R4EA031
-  return(memalloc(size,1,5));
-#endif
-
-#ifdef Z550_R6CA009
-  return(memalloc(size,1,5));
-#endif
-
-#ifdef W800_R1BC002
-  return(memalloc(size,1,5,"SwiLib",0));
-#endif
-
-#ifdef W800_R1BD001
-  return(memalloc(size,1,5,"SwiLib",0));
-#endif
-
-#ifdef K600_R2BB001
-  return(memalloc(size,1,5,"SwiLib",0));
-#endif
-
-#ifdef W580_R8BA024
+#else
   return(memalloc(0,size,1,5,"SwiLib",0));
-#endif
-
-#ifdef W850_R1KG001
-  return(memalloc(0,size,1,5,"SwiLib",0));
-#endif
-
-#ifdef Z610_R6DA001
-  return (memalloc(0,size,0,4,"SwiLib",0));
-#endif
-
-#ifdef K790_R8BF003
-  return (memalloc(0,size,0,4,"SwiLib",0));
 #endif
 }
 
 __thumb void mfree (void * mem)
 {
-#ifdef K750_R1CA021
+//previous versions had separate ifdefs for each FW-version
+#ifndef DB2020
   memfree(mem,"SwiLib",0);
-#endif
-
-#ifdef W700_R1CA021
-  memfree(mem,"SwiLib",0);
-#endif
-
-#ifdef W810_R4DB005
-  memfree(mem);
-#endif
-
-#ifdef W810_R4EA031
-  memfree(mem);
-#endif
-
-#ifdef Z550_R6CA009
-  memfree(mem);
-#endif
-
-#ifdef W800_R1BC002
-  memfree(mem,"SwiLib",0);
-#endif
-
-#ifdef W800_R1BD001
-  memfree(mem,"SwiLib",0);
-#endif
-
-#ifdef K600_R2BB001
-  memfree(mem,"SwiLib",0);
-#endif
-
-#ifdef W580_R8BA024
-  if (mem) memfree(0, mem,"SwiLib",0);  
-#endif
-
-#ifdef W850_R1KG001
-  if (mem) memfree(0, mem,"SwiLib",0);  
-#endif
-
-#ifdef Z610_R6DA001
-  if (mem) memfree(0, mem,"SwiLib",0);  
-#endif
-
-#ifdef K790_R8BF003
-  if (mem) memfree(0, mem,"SwiLib",0);  
+#else
+  if (mem) memfree(0, mem,"SwiLib",0);
 #endif
 }
 //============================================================================
@@ -241,16 +159,16 @@ __thumb u16 * GetDir (int DirIndex)
   case  DIR_OTHER>>1 : return (DirIndex&1)? (u16*)PATH_OTHER_INT: (u16*)PATH_OTHER_EXT;
 
 
-  case	DIR_ELFS>>1 :
+  case  DIR_ELFS>>1 :
     return (DirIndex&1)? PATH_ELF_INT: PATH_ELF_EXT;
 
-    case	DIR_ELFS_DAEMONS>>1 :
+    case        DIR_ELFS_DAEMONS>>1 :
       return (DirIndex&1)? PATH_ELF_DAEMONS_INT: PATH_ELF_DAEMONS_EXT;
 
-      case	DIR_ELFS_CONFIG>>1 :
+      case      DIR_ELFS_CONFIG>>1 :
         return (DirIndex&1)? PATH_ELF_CONFIG_INT: PATH_ELF_CONFIG_EXT;
 
-        case	DIR_INI>>1 :
+        case    DIR_INI>>1 :
           return PATH_INI;
 
   default: return(PATH_DEFAULT);
@@ -629,7 +547,7 @@ void CreateLists(void)
   _printf("   epd->UIHookList @%x",epd->UIHookList)  ;
   _printf("   epd->OseHookList @%x",epd->OseHookList)  ;
   //  _printf("   epd->elflist @%x",epd->elflist)  ;
-  
+
   epd->dbe=MoveExtTable((DB_EXT **)EXT_TABLE);
   ELFExtrRegister(epd);
 }
@@ -682,7 +600,7 @@ __thumb void Init()
   do
   {
     if(fli=GetFname(handle,mem))
-    {	
+    {
       u16 * filename = malloc((wstrlen(fli->path)+wstrlen(fli->fname)+2)*2);
       wstrcpy(filename,fli->path);
       wstrcat(filename,L"/");
