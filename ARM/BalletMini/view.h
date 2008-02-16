@@ -142,6 +142,7 @@ typedef struct
   unsigned short wchar_hr;
   
   char *pageurl;    //utf8
+  char *title;
   
 }VIEWDATA;
 

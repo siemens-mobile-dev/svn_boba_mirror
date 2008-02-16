@@ -17,3 +17,4 @@ char *extract_omstr(VIEWDATA *vd, unsigned int pos);
 int char_win2utf8(char*d,const char *s);
 char * ToWeb(char *src,int special);
 void oms2ws(WSHDR *ws, const char *text, int len);
+void utf82win(char*d,const char *s);

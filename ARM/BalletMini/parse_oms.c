@@ -560,6 +560,15 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGT_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
       AddTextItem(vd,vd->oms+vd->oms_pos,i);
+
+      if(!vd->title)
+      {
+        vd->title=(char *)malloc(i+1);
+        memcpy(vd->title,vd->oms+vd->oms_pos,i);
+        vd->title[i]=NULL;
+        utf82win(vd->title, vd->title);
+      }
+      
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;

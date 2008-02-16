@@ -165,6 +165,41 @@ char *extract_omstr(VIEWDATA *vd, unsigned int pos)
   return d;
 }
 
+void utf82win(char*d,const char *s)
+{
+  int ds = 2;
+  for (; *s; s+=ds)
+  {
+    unsigned char ub = *s, lb = *(s+1);
+    ds = 1;
+    if (ub == 0xD0)
+      if (lb != 0x81)
+        {*d = lb + 48; d++;}
+      else
+        {*d = 'Ё'; d++;}
+
+    if (ub == 0xD1)
+      if (lb != 0x91)
+        {*d = lb + 112; d++;}
+      else
+        {*d = 'ё'; d++;}
+
+    if (ub == 0xE2)
+      if (lb == 0x80)
+        if ((unsigned char)*(s+2) == 0x94)
+          {*d = '-'; d++; ds = 3;}
+
+    if(!(ub & 0x80))
+    {
+      *d = ub;
+      d++;
+    }
+    else
+      for(ds = 0; ub&0x80; ub <<= 1, ds++);
+  }
+  *d = 0;
+}
+
 int char_win2utf8(char*d,const char *s) // функция возвращает количество 
 {                                       // добавленных символов в d
   char hex[] = "0123456789abcdef";

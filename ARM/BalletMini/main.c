@@ -12,6 +12,7 @@
 #include "urlstack.h"
 #include "conf_loader.h"
 #include "mainmenu.h"
+#include "default_page.h"
 
 static void UpdateCSMname(void);
 static int ParseInputFilename(const char *fn);
@@ -298,8 +299,8 @@ static void method0(VIEW_GUI *data)
       }
       wsprintf(data->ws2,percent_t,"Стоп");
       
-      h1=scr_h-GetFontYSIZE(FONT_MEDIUM_BOLD)-2;
-      w1=scr_w-Get_WS_width(data->ws2,FONT_MEDIUM_BOLD)-2;
+      h1=scr_h-GetFontYSIZE(FONT_SMALL)-2;
+      w1=scr_w-Get_WS_width(data->ws2,FONT_SMALL)-2;
       DrawRectangle(0,h1,w1,scr_h,0,
         GetPaletteAdrByColorIndex(1),
         GetPaletteAdrByColorIndex(0));
@@ -314,9 +315,9 @@ static void method0(VIEW_GUI *data)
           GetPaletteAdrByColorIndex(2));
         wsprintf(data->ws1,"%uB/%uB",vd->loaded_sz,vd->page_sz);
       }
-      DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,
+      DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_SMALL,TEXT_ALIGNMIDDLE,
         GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));   
-      DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_MEDIUM_BOLD,TEXT_ALIGNMIDDLE,
+      DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_SMALL,TEXT_ALIGNMIDDLE,
         GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
       
       DrawString(ws_console,0,0,scr_w,20,
@@ -1063,21 +1064,35 @@ LEND:
 
 int main(const char *exename, const char *filename)
 {
-  char dummy[sizeof(MAIN_CSM)];
+  char dummy[sizeof(MAIN_CSM)], *pathbuf;
+  unsigned int ul;
   char *path=strrchr(exename,'\\');
-  int l;
+  int f, l;
   if (!path) return 0; //Фигня какая-то
   path++;
   l=path-exename;
   InitConfig();
   memcpy(URLCACHE_PATH,exename,l);
-  strcat(URLCACHE_PATH,"UrlCache\\");
+  strcat(URLCACHE_PATH,"UrlCache");
   memcpy(OMSCACHE_PATH,exename,l);
-  strcat(OMSCACHE_PATH,"OmsCache\\");
+  strcat(OMSCACHE_PATH,"OmsCache");
   memcpy(AUTHDATA_FILE,exename,l);
   strcat(AUTHDATA_FILE,"AuthCode");
   memcpy(BOOKMARKS_PATH,exename,l);
-  strcat(BOOKMARKS_PATH,"Bookmarks\\");
+  strcat(BOOKMARKS_PATH,"Bookmarks");
+
+  //Create folders if not exists
+  if (!isdir(URLCACHE_PATH,&ul))
+    mkdir(URLCACHE_PATH,&ul);
+  if (!isdir(OMSCACHE_PATH,&ul))
+    mkdir(OMSCACHE_PATH,&ul);
+  if (!isdir(BOOKMARKS_PATH,&ul))
+    mkdir(BOOKMARKS_PATH,&ul);
+  
+  strcat(URLCACHE_PATH,"\\");
+  strcat(OMSCACHE_PATH,"\\");
+  strcat(BOOKMARKS_PATH,"\\");
+  
   if (!LoadAuthCode())
   {
     LockSched();
@@ -1095,10 +1110,23 @@ int main(const char *exename, const char *filename)
   }
   else
   {
+    pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen("BalletMini.oms") + 1);
+    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, "BalletMini.oms");
+    unlink(pathbuf,&ul);
+    f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+    if (f!=-1)
+    {
+      fwrite(f,default_page,default_page_size,&ul);
+      fclose(f,&ul);
+    }
+    
+    view_url=pathbuf;
+    view_url_mode=MODE_FILE;
+
+    UpdateCSMname();
     LockSched();
-    ShowMSG(1,(int)"BM: Nothing to do!");
+    maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
     UnlockSched();
-    SUBPROC((void *)Killer);
   }
   return 0;
 }

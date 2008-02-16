@@ -59,5 +59,7 @@ void FreeViewData(VIEWDATA *vd)
   FreeDynImgList(vd); 
   mfree(vd->pageurl);
   vd->pageurl=NULL;
+  mfree(vd->title);
+  vd->title=NULL;
   mfree(vd);
 }
