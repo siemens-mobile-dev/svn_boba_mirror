@@ -320,15 +320,19 @@
 ;14.01.2008
 ;0900: FFFFFFFF ; 240: void JavaSession_Manager (int cmd);
 ;0904: FFFFFFFF ; 241: int JavaSession_GetName(coid);
-0908: FFFFFFFF 3143EF44 ; 242: int TextCopyId(int);
-090C: FFFFFFFF D530E844 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
-0910: FFFFFFFF 414AD644 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
-0914: FFFFFFFF B14AD644 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
-0918: FFFFFFFF A14AD644 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+0908: FFFFFFFF 3143EF44  ; 242: int TextCopyId(int);
+090C: FFFFFFFF D530E844  ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
+0910: FFFFFFFF 414AD644  ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
+0914: FFFFFFFF B14AD644  ; 245: void List2lineSubitemAddText(void* msg,int StrID);
+0918: FFFFFFFF A14AD644  ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 ;17.01.2008
-091c: FFFFFFFF A5C8D144 ; 247: go_music (int go);
-0920: FFFFFFFF 85AFF844 ; 248: void Vibra_Off(int t1);
-0924: FFFFFFFF 8527F744 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+091c: FFFFFFFF A5C8D144  ; 247: go_music (int go);
+0920: FFFFFFFF 85AFF844  ; 248: void Vibra_Off(int t1);
+0924: FFFFFFFF 8527F744  ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
 
+0948: FFFFFFFF 914AD644  ; 252: int List2LineGetCurrentIndex(void * msg);
+094C: FFFFFFFF 814AD644  ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
+0950: FFFFFFFF 1D400E45  ; 254: void DestroyDirHandle(void *handle);
 0954: FFFFFFFF A0C72244  ;8255: DB_EXT *LastExtDB(void);
-0958: FFFFFFFF 01750F45  ;256: void GetOtherExtMethods(FILESUBROUTINE **);
+0958: FFFFFFFF 81740F45  ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
+095C: FFFFFFFF 21750645  ; 257: void infobox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,int shouldbe0);
