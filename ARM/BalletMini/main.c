@@ -12,7 +12,7 @@
 #include "urlstack.h"
 #include "conf_loader.h"
 #include "mainmenu.h"
-//#include "default_page.h"
+#include "default_page.h"
 
 static void UpdateCSMname(void);
 static int ParseInputFilename(const char *fn);
@@ -1069,10 +1069,10 @@ LEND:
 int main(const char *exename, const char *filename)
 {
   char dummy[sizeof(MAIN_CSM)];
-  //char *pathbuf;
+  char *pathbuf;
   unsigned int ul;
   char *path=strrchr(exename,'\\');
-  //int f;
+  int f;
   int l;
   if (!path) return 0; //Фигня какая-то
   path++;
@@ -1116,25 +1116,21 @@ int main(const char *exename, const char *filename)
   }
   else
   {
-    //pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen("BalletMini.oms") + 1);
-    //strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, "BalletMini.oms");
-    //unlink(pathbuf,&ul);
-    //f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
-    //if (f!=-1)
-    //{
-    //  fwrite(f,default_page,default_page_size,&ul);
-    //  fclose(f,&ul);
-    //}
-    //view_url=pathbuf;
-    //view_url_mode=MODE_FILE;
-    //UpdateCSMname();
-    //LockSched();
-    //maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-    //UnlockSched();
+    pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen("BalletMini.oms") + 1);
+    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, "BalletMini.oms");
+    unlink(pathbuf,&ul);
+    f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+    if (f!=-1)
+    {
+      fwrite(f,default_page,default_page_size,&ul);
+      fclose(f,&ul);
+    }
+    view_url=pathbuf;
+    view_url_mode=MODE_FILE;
+    UpdateCSMname();
     LockSched();
-    ShowMSG(1,(int)"BM: Nothing to do!");
+    maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
     UnlockSched();
-    SUBPROC((void *)Killer);
   }
   return 0;
 }
