@@ -423,6 +423,261 @@ MENU_DESC selurl_STRUCT=
   0   //n
 };
 
+//-----
+
+#define   MAX_SEARCH_ENGINES 32
+
+
+static const SOFTKEY_DESC search_sk[]=
+{
+  {0x0018,0x0000,(int)"Искать"},
+  {0x0001,0x0000,(int)"Отмена"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+static const SOFTKEYSTAB search_skt=
+{
+  search_sk,0
+};
+
+
+
+static int search_engine_count;
+static int selected_search_engine=0;
+static char ** search_engines=NULL;
+
+static void free_search_engines()
+{
+if(!search_engines) return;
+LockSched();
+char ** p=search_engines;
+for(int i=search_engine_count-1;i>=0;i--) mfree(*p++); 
+mfree(search_engines);
+search_engines=NULL;
+UnlockSched();
+};
+
+static void get_search_engines()
+{
+  free_search_engines();
+  search_engine_count=0;    
+  char **sep=search_engines=malloc(4*MAX_SEARCH_ENGINES);
+  unsigned int err;
+  DIR_ENTRY de;
+  char str[128];  
+  
+  extern char SEARCH_PATH[256];
+  char * s=SEARCH_PATH;
+  strcpy(str,s);
+  strcat(str,"*.url");
+  if (FindFirstFile(&de,str,&err))
+  {
+    do
+    {
+      if (!(de.file_attr&FA_DIRECTORY))
+      {
+        if(search_engine_count>=MAX_SEARCH_ENGINES) break;        
+        int l=strlen(de.file_name); 
+        char * s=malloc(strlen(de.file_name)+1);
+        strcpy(s,de.file_name);
+        s[l-4]=0;
+        search_engine_count++;
+        *sep++=s;
+      }
+    }
+    while(FindNextFile(&de,&err));
+  }
+  FindClose(&de,&err);
+  
+  if(selected_search_engine>=search_engine_count) selected_search_engine=0;
+};
+
+void PerformSearch(char * enginename,char * text)
+{
+/*    char * s = goto_url = (char *)malloc(ws->wsbody[0]+3);
+    *s++='0';
+    *s++='/';
+    for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
+    *s = 0;
+    goto_url = ToWeb(goto_url,0);*/
+    goto_url = (char*)malloc(128);
+    strcpy(goto_url,"0/http://ya.ru/");
+/*  int ReadUrlFile(char *url_file)
+{
+  int f;
+  unsigned int err;
+  int fsize;
+  char *buf, *s;
+  FSTATS stat;
+  if (GetFileStats(url_file,&stat,&err)==-1) return 0;
+  if ((fsize=stat.size)<=0) return 0;
+  if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
+  buf=malloc(fsize+3);
+  buf[0]='0';
+  buf[1]='/';
+  buf[fread(f,buf+2,fsize,&err)+2]=0;
+  fclose(f,&err);
+  s=buf;
+  while(*s>32) s++;
+  *s++=0;
+  view_url=realloc(buf,s-buf);
+  view_url_mode=MODE_URL;
+  return (1);
+}
+*/
+};
+
+
+void search_locret(void){}
+
+int search_onkey(GUI *data, GUI_MSG *msg)
+{
+  EDITCONTROL ec;
+  if (msg->keys==0xFFF)
+  {
+    if(selected_search_engine<0)return 1;
+    
+    ExtractEditControl(data,2,&ec);
+    WSHDR *ws = ec.pWS;
+    
+    //read url file
+    int f;
+    unsigned int err;
+    int fsize;
+    char *buf, *s;
+    FSTATS stat;
+    char url_file[256];
+    
+    extern char SEARCH_PATH[256];
+    sprintf(url_file,"%s%s.url",SEARCH_PATH,search_engines[selected_search_engine]);
+    
+    if (GetFileStats(url_file,&stat,&err)==-1) goto fail;
+    if ((fsize=stat.size)<=0)  goto fail;
+    if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;;
+    
+    buf=malloc(fsize+3+ws->wsbody[0]*2+2);
+    buf[0]='0';
+    buf[1]='/';
+    buf[fread(f,buf+2,fsize,&err)+2]=0;
+    fclose(f,&err);  
+    
+    //text
+    s=buf+2+fsize;
+    for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
+    *s = 0;
+    
+    goto_url = buf;
+    
+    goto_url = ToWeb(goto_url,0);
+    return (0xFF);
+    
+  fail:
+    ShowMSG(2,(int)"Ошибка!");
+    return 1;
+  }
+  return (0);
+}
+
+void search_ghook(GUI *data, int cmd)
+{
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Искать"};
+  
+//  if (cmd==2)
+//  {
+    //Create
+//  }
+  
+  if(cmd==0x03)     // onDestroy
+  {
+    free_search_engines();
+  }  
+  
+  if (cmd==7)
+  {
+    //OnRun
+    SetSoftKey(data,&sk,1);
+  }
+  
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  
+  if (cmd==0x0D)
+  {
+    //onCombo
+    int cbi=EDIT_GetFocus(data);
+    if(cbi==4)
+      {
+      WSHDR * ews=AllocWS(128);    
+      selected_search_engine=EDIT_GetItemNumInFocusedComboBox(data)-1;
+      if(selected_search_engine>=0&&selected_search_engine<search_engine_count)
+        {
+        str_2ws(ews,search_engines[selected_search_engine],128);
+        EDIT_SetTextToFocused(data,ews);
+        };
+      FreeWS(ews);
+      };
+  }
+}
+
+HEADER_DESC search_hdr={0,0,0,0,NULL,(int)"Поиск",0x7FFFFFFF};
+
+INPUTDIA_DESC search_desc=
+{
+  1,
+  search_onkey,
+  search_ghook,
+  (void *)search_locret,
+  0,
+  &search_skt,
+  {0,0,0,0},
+  FONT_SMALL,
+  100,
+  101,
+  0,
+  0,
+  0
+};
+
+
+static int CreateSearchDialog()
+{
+  get_search_engines();
+
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+
+  WSHDR * ews=AllocWS(1024);
+
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+
+  ascii2ws(ews,"Текст:");
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+
+  wsprintf(ews,"");
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  ascii2ws(ews,"Поисковик:");
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  wsprintf(ews,"");
+  ConstructComboBox(&ec,7,ECF_APPEND_EOL,ews,32,0,search_engine_count,selected_search_engine+1);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  FreeWS(ews);
+  patch_header(&search_hdr);
+  patch_input(&search_desc);
+  return CreateInputTextDialog(&search_desc,&search_hdr,eq,1,0);  
+};
+//-----
+
+
 int CreateBookmarksMenu()
 {
   unsigned int err;
@@ -730,6 +985,18 @@ static void mm_goto_bookmarks(GUI *gui)
   GeneralFuncF1(1);
 }
 
+static void mm_search(GUI *gui)
+{
+  MAIN_CSM *main_csm;
+  int search_id;
+  if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+  {
+    search_id=CreateSearchDialog();
+    main_csm->goto_url=search_id;
+  } 
+  GeneralFuncF1(1);
+}
+
 static void mm_goto_history(GUI *gui)
 {
   MAIN_CSM *main_csm;
@@ -783,7 +1050,7 @@ static const SOFTKEYSTAB mmenu_skt=
   mmenu_sk,0
 };
 
-#define MAIN_MENU_ITEMS_N 5
+#define MAIN_MENU_ITEMS_N 6
 static HEADER_DESC main_menuhdr={0,0,0,0,NULL,(int)"Меню",LGP_NULL};
 
 static MENUITEM_DESC main_menu_ITEMS[MAIN_MENU_ITEMS_N]=
@@ -792,6 +1059,7 @@ static MENUITEM_DESC main_menu_ITEMS[MAIN_MENU_ITEMS_N]=
   {NULL,(int)"Закладки",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
   {NULL,(int)"История",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
   {NULL,(int)"Настройки",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL,(int)"Поиск",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
   {NULL,(int)"Выход",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
 };
 
@@ -801,6 +1069,7 @@ static const MENUPROCS_DESC main_menu_HNDLS[MAIN_MENU_ITEMS_N]=
   mm_goto_bookmarks,
   mm_goto_history,
   mm_options,
+  mm_search,
   mm_quit
 };
 

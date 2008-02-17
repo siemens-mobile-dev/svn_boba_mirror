@@ -51,6 +51,7 @@ char URLCACHE_PATH[256];
 char OMSCACHE_PATH[256];
 char AUTHDATA_FILE[256];
 char BOOKMARKS_PATH[256];
+char SEARCH_PATH[256];
 
 static void StartGetFile(int dummy, char *fncache)
 {
@@ -1091,6 +1092,9 @@ int main(const char *exename, const char *filename)
   strcat(AUTHDATA_FILE,"AuthCode");
   memcpy(BOOKMARKS_PATH,exename,l);
   strcat(BOOKMARKS_PATH,"Bookmarks");
+  memcpy(SEARCH_PATH,exename,l);
+  strcat(SEARCH_PATH,"Search");
+  
 
   //Create folders if not exists
   if (!isdir(URLCACHE_PATH,&ul))
@@ -1099,10 +1103,13 @@ int main(const char *exename, const char *filename)
     mkdir(OMSCACHE_PATH,&ul);
   if (!isdir(BOOKMARKS_PATH,&ul))
     mkdir(BOOKMARKS_PATH,&ul);
+  if (!isdir(SEARCH_PATH,&ul))
+    mkdir(SEARCH_PATH,&ul);  
   
   strcat(URLCACHE_PATH,"\\");
   strcat(OMSCACHE_PATH,"\\");
   strcat(BOOKMARKS_PATH,"\\");
+  strcat(SEARCH_PATH,"\\");  
   
   CheckHistory("http://perk11.info/elf");
 
