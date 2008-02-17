@@ -124,4 +124,10 @@ a       EQU     b
         defadr  memalloc,0x44E6C3FC+1
         defadr  memfree,0x44E6C428+1
 #endif
+
+#ifdef W550_R4CB020
+        defadr  memalloc,0x45379618+1
+        defadr  memfree,0x4537A34C+1
+#endif
+
    END
