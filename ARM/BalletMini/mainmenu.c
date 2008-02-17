@@ -6,6 +6,7 @@
 #include "mainmenu.h"
 #include "conf_loader.h"
 #include "urlstack.h"
+#include "history.h"
 
 extern int view_url_mode; //MODE_FILE, MODE_URL
 extern char *view_url;
@@ -65,10 +66,11 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
   {
     ExtractEditControl(data,2,&ec);
     ws = ec.pWS;
-    tmp = name = (char *)malloc(ws->wsbody[0]+3);
-    for (int i=0; i<ws->wsbody[0]; i++) *name++=char16to8(ws->wsbody[i+1]);
-    *name = 0;
-    name = tmp;
+    name = (char *)malloc(256);
+    ws_2str(ws, name, 256);
+    //for (int i=0; i<ws->wsbody[0]; i++) *name++=char16to8(ws->wsbody[i+1]);
+    //*name = 0;
+    //name = tmp;
 
     ExtractEditControl(data,4,&ec);
     ws = ec.pWS;
@@ -382,8 +384,8 @@ void selurl_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   {
     len=strlen(ustop->urlname);
     ws=AllocMenuWS(gui,len+4);
-    ascii2ws(ws,ustop->urlname);
-    //str_2ws(ws,ustop->urlname,64);
+    //ascii2ws(ws,ustop->urlname);
+    str_2ws(ws,ustop->urlname,64);
   }
   else
   {
@@ -463,6 +465,124 @@ int CreateBookmarksMenu()
   FindClose(&de,&err);
   patch_header(&selurl_HDR);
   return CreateMenu(0,0,&selurl_STRUCT,&selurl_HDR,0,n_url,ustop,0);
+}
+// ----------------------------------------------------------------------------------
+
+int history_menu_onkey(void *gui, GUI_MSG *msg) //history
+{
+  char **history = MenuGetUserPointer(gui);
+
+  int i = GetCurMenuItem(gui);
+  if (msg->keys==0x3D)
+  {
+    if (history[i])
+    {
+      goto_url=malloc(strlen(history[i])+3);
+      goto_url[0] = '0'; goto_url[1] = '/';      
+      strcpy(goto_url+2,history[i]);
+      return (0xFF);
+    }
+    return(1);
+  }
+
+/*
+  if (msg->keys==0x3D)
+  {
+    int i=GetCurMenuItem(gui);
+    for (int n=0; n!=i; n++) ustop=ustop->next;
+    if (ustop)
+    {
+      if (ReadUrlFile(ustop->fullpath))
+      {
+        goto_url=malloc((l=strlen(view_url))+1);
+        memcpy(goto_url,view_url,l+1);
+        return (0xFF);
+      }
+    }
+  }
+  if(msg->keys==0x18)
+  {
+    create_options_menu();
+    return(1);
+  }
+*/
+  return (0);
+}
+
+void history_menu_ghook(void *gui, int cmd)
+{
+  extern const int HISTORY_DEPTH;
+  int i;
+  char **history = MenuGetUserPointer(gui);
+  if (cmd==3)
+  {
+    for(i = 0; i < HISTORY_DEPTH; i++)
+      if(history[i])
+        mfree(history[i]);
+    mfree(history);
+  }
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+}
+
+void history_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
+{
+  char **history=user_pointer;
+  int len;
+  WSHDR *ws;
+  void *item=AllocMenuItem(gui);
+
+  if (history[cur_item])
+  {
+    len=strlen(history[cur_item]);
+    ws=AllocMenuWS(gui,len+4);
+    //ascii2ws(ws,ustop->urlname);
+    str_2ws(ws,history[cur_item],64);
+  }
+  else
+  {
+    ws=AllocMenuWS(gui,10);
+    ascii2ws(ws,"Ошибка");
+  }
+  SetMenuItemText(gui, item, ws, cur_item);
+}
+
+int history_softkeys[]={0,1,2};
+SOFTKEY_DESC history_sk[]=
+{
+  {0x0018,0x0000,(int)"Перейти"},
+  {0x0001,0x0000,(int)"Отмена"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+SOFTKEYSTAB history_skt=
+{
+  history_sk,0
+};
+
+HEADER_DESC history_HDR={0,0,0,0,NULL,(int)"History...",LGP_NULL};
+
+MENU_DESC history_STRUCT=
+{
+  8,history_menu_onkey,history_menu_ghook,NULL,
+  history_softkeys,
+  &history_skt,
+  0x10,
+  history_menu_iconhndl,
+  NULL,   //Items
+  NULL,   //Procs
+  0   //n
+};
+
+int CreateHistoryMenu()
+{
+  int depth;
+  char **history;
+  history = GetHistory(&depth);
+  patch_header(&history_HDR);
+  return CreateMenu(0,0,&history_STRUCT,&history_HDR,0,depth,history,0);
 }
 
 //------------------------------------------------------------------------------
@@ -610,6 +730,18 @@ static void mm_goto_bookmarks(GUI *gui)
   GeneralFuncF1(1);
 }
 
+static void mm_goto_history(GUI *gui)
+{
+  MAIN_CSM *main_csm;
+  int history_menu_id;
+  if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+  {
+    history_menu_id=CreateHistoryMenu();
+    main_csm->sel_bmk=history_menu_id;
+  } 
+  GeneralFuncF1(1);
+}
+
 static void mm_options(GUI *gui)
 {
   WSHDR *ws;
@@ -651,21 +783,23 @@ static const SOFTKEYSTAB mmenu_skt=
   mmenu_sk,0
 };
 
-#define MAIN_MENU_ITEMS_N 4
+#define MAIN_MENU_ITEMS_N 5
 static HEADER_DESC main_menuhdr={0,0,0,0,NULL,(int)"Меню",LGP_NULL};
 
 static MENUITEM_DESC main_menu_ITEMS[MAIN_MENU_ITEMS_N]=
 {
   {NULL,(int)"Перейти к",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
   {NULL,(int)"Закладки",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
-  {NULL,(int)"Настройки",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
-  {NULL,(int)"Выход",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2} //3
+  {NULL,(int)"История",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
+  {NULL,(int)"Настройки",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL,(int)"Выход",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
 };
 
 static const MENUPROCS_DESC main_menu_HNDLS[MAIN_MENU_ITEMS_N]=
 {
   mm_goto_url,
   mm_goto_bookmarks,
+  mm_goto_history,
   mm_options,
   mm_quit
 };

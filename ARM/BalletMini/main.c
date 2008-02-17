@@ -13,6 +13,9 @@
 #include "conf_loader.h"
 #include "mainmenu.h"
 #include "default_page.h"
+#include "history.h"
+
+#define DEFAULT_OMS "BalletMini.oms"
 
 static void UpdateCSMname(void);
 static int ParseInputFilename(const char *fn);
@@ -274,10 +277,10 @@ static void method0(VIEW_GUI *data)
       GetPaletteAdrByColorIndex(0),
       GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
-    DrawString(ws_console,0,0,scr_w,20,
+/*    DrawString(ws_console,0,0,scr_w,20,
 		  FONT_SMALL,TEXT_NOFORMAT,
 		  GetPaletteAdrByColorIndex(1),
-      GetPaletteAdrByColorIndex(0));
+      GetPaletteAdrByColorIndex(0));*/
     extern int connect_state;
     if (!STOPPED)
     {
@@ -286,15 +289,17 @@ static void method0(VIEW_GUI *data)
       {
         switch(connect_state)
         {
-        case 1:
-          wsprintf(data->ws1,percent_t,"Соединение...");
+        case 1: case 2: case 3:
+//          wsprintf(data->ws1,percent_t,"Соединение...");
+//          break;
+//        case 2:
+//          wsprintf(data->ws1,percent_t,"Обработка...");
+          wstrcpy(data->ws1, ws_console);
+          //wsprintf(data->ws1,percent_t,);
           break;
-        case 2:
-          wsprintf(data->ws1,percent_t,"Обработка...");
-          break;
-        case 3:
-          wsprintf(data->ws1,percent_t,"Загрузка...");
-          break;
+//        case 3:
+//          wsprintf(data->ws1,percent_t,"Загрузка...");
+//          break;
         }
       }
       wsprintf(data->ws2,percent_t,"Стоп");
@@ -320,9 +325,9 @@ static void method0(VIEW_GUI *data)
       DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_SMALL,TEXT_ALIGNMIDDLE,
         GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
       
-      DrawString(ws_console,0,0,scr_w,20,
+/*      DrawString(ws_console,0,0,scr_w,20,
 		    FONT_SMALL,TEXT_NOFORMAT,
-		    GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+		    GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));*/
     }
   }
 }
@@ -1099,6 +1104,8 @@ int main(const char *exename, const char *filename)
   strcat(OMSCACHE_PATH,"\\");
   strcat(BOOKMARKS_PATH,"\\");
   
+  CheckHistory("http://perk11.info/elf");
+
   if (!LoadAuthCode())
   {
     LockSched();
@@ -1107,6 +1114,7 @@ int main(const char *exename, const char *filename)
     SUBPROC((void *)Killer);
     return 0;
   }
+
   if (ParseInputFilename(filename))
   {
     UpdateCSMname();
@@ -1116,8 +1124,8 @@ int main(const char *exename, const char *filename)
   }
   else
   {
-    pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen("BalletMini.oms") + 1);
-    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, "BalletMini.oms");
+    pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen(DEFAULT_OMS) + 1);
+    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, DEFAULT_OMS);
     unlink(pathbuf,&ul);
     f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)

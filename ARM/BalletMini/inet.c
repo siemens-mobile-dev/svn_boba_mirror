@@ -3,6 +3,7 @@
 #include "local_ipc.h"
 #include "string_works.h"
 #include "view.h"
+#include "history.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -585,6 +586,7 @@ void StartINET(const char *url, char *fncache)
     STOPPED=1;
     goto ERR;
   }
+  AddURLToHistory(url+2);
   URL=globalstr(url);
   if ((FNCACHE=fncache))
   {
