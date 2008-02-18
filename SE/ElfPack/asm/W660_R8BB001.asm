@@ -39,21 +39,6 @@ PATCH_STANDBY:
         BX      R1
 
 // --- PageAction_Hook ---
-/*
-        EXTERN  PageAction_Hook
-        RSEG  CODE
-        CODE16
-_PageAction:
-        MOV     R2, R4
-        MOV     R0, R5
-        LDR     R3,=PageAction_Hook
-        BX      R3
-
-        RSEG    PATCH_PageAction:CODE(1)
-        CODE16
-        BL    _PageAction
-*/
-
         EXTERN  PageAction_Hook
         EXTERN  ListElement_Remove
         RSEG  CODE

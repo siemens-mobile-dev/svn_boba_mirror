@@ -3,19 +3,21 @@
 #ifdef Z610_R6DA001
         CODE32
 
+EXT_TABLE EQU 0x45A4E168
+
 defadr  MACRO   a,b
         PUBLIC  a
 a       EQU     b
         ENDM
 
         RSEG  CODE
-        defadr   STANDBY_RET,PATCH_STANDBY_CALL_start+8 ;0x452BFF04+1
-        defadr   DB_PATCH_RET,PATCH_DB1_start+8 ;0x44EAF9F8+1
-        defadr   DB_EXT_RET, PATCH_DB2_start+8 ;0x44EAF7E4+1
-        defadr   DB_PATCH3_RET,0x44FA3238+1 ;0x44EAF684+1
-        defadr   DB_PATCH4_RET,PATCH_DB4_start+8 ;0x44EB004C+1
-        defadr   MESS_HOOK_RET,PATCH_MMI_MESSAGE_HOOK_start+8 ;0x447B8904+1
-        defadr   PAGE_ACTION_RET,PATCH_PageAction_start+8 ;0x452ABA98+1
+        defadr   STANDBY_RET,PATCH_STANDBY_CALL_start+8
+        defadr   DB_PATCH_RET,PATCH_DB1_start+8
+        defadr   DB_EXT_RET, PATCH_DB2_start+8
+        defadr   DB_PATCH3_RET,PATCH_DB3_start+0x0A
+        defadr   DB_PATCH4_RET,PATCH_DB4_start+8
+        defadr   MESS_HOOK_RET,PATCH_MMI_MESSAGE_HOOK_start+8
+        defadr   PAGE_ACTION_RET,PATCH_PageAction_start+8
 
 // --- CreateLists ---
 
@@ -24,9 +26,9 @@ a       EQU     b
         CODE16
 PATCH_STANDBY:
 
-        STR     R0, [R5,#0xC]
-        STR     R0, [R5,#4]
-        STR     R0, [R5,#0x8]
+        STR     R0, [R5,#0x04]
+        STR     R0, [R5,#0x08]
+        STR     R0, [R5,#0x0C]
         STR     R0, [R5,#0x10]
         BLX     CreateLists
         MOV     R0, #0
@@ -41,21 +43,6 @@ PATCH_STANDBY_CALL_start:
 
 
 // --- PageAction_Hook ---
-/*
-        EXTERN  PageAction_Hook
-        RSEG  CODE
-        CODE16
-_PageAction:
-        MOV     R2, R4
-        MOV     R0, R5
-        LDR     R3,=PageAction_Hook
-        BX      R3
-
-        RSEG    PATCH_PageAction:CODE(1)
-        CODE16
-        BL    _PageAction
-*/
-
         EXTERN  PageAction_Hook
         EXTERN  ListElement_Remove
         RSEG  CODE
@@ -103,7 +90,7 @@ DB_PATCH:
         LSL     R7, R1, #2
         BLX     GetExtTable
         LDR     R7, [R0,R7]
-        LDR     R1, =0x45A4E168 ;EXT_TABLE
+        LDR     R1, =EXT_TABLE
         LDR     R3, =DB_PATCH_RET
         BX      R3
 
@@ -171,6 +158,7 @@ PATCH_DB2_start:
 
         RSEG   PATCH_DB3(2)
         CODE16
+PATCH_DB3_start:
         LDR    R3, =DB_PATCH3
         BX     R3
 
