@@ -306,8 +306,11 @@ __swi __arm  void SetMenuItemStyle( void *obj , int style);
 #pragma swi_number=0x140
 __swi __arm  void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
 
-#pragma swi_number=0x141
-__swi __arm  void SetGuiItemText(void *gui,int item,int StrID);
+//#pragma swi_number=0x141
+//__swi __arm  void SetGuiItemText(void *gui,int item,int StrID);
+
+#pragma swi_number=0x8141
+__swi __arm IS_NEEDED_BOOK isScreenSaverBook(void);
 
 #pragma swi_number=0x142
 __swi __arm  void StatusIndication_SetItemText(void *gui,int item,int StrID);
@@ -529,8 +532,8 @@ __swi __arm  void SendDispatchMessage(int id, int unk_zero, int size,void *mess)
 #pragma swi_number=0x1A6
 __swi __arm  char * UIEventName(int event);
 
-
-
+#pragma swi_number=0x81A7
+__swi __arm int * MissedEvents(void);
 
 #pragma swi_number=0x1A8
 __swi __arm  void  UI_Event(int event);
@@ -590,6 +593,8 @@ __swi __arm IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 
 
 */
+#pragma swi_number=0x1BE
+__swi __arm int Date2ID(DATE *, int TimeFormat,int);
 
 #pragma swi_number=0x1BF
 __swi __arm int Time2ID(TIME *, char TimeFormat,int);
@@ -921,10 +926,14 @@ __swi __arm  void DestroyDirHandle(void *handle);
 __swi __arm  DB_EXT *LastExtDB(void);
 #pragma swi_number=0x256
 __swi __arm  void GetOtherExtMethods(FILESUBROUTINE **);
-
-
-
-
+#pragma swi_number=0x257
+__swi __arm  void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
+#pragma swi_number=0x258
+__swi __arm  int Display_GetHeight(int Display);
+#pragma swi_number=0x259
+__swi __arm  int Display_GetWidth(int Display);
+#pragma swi_number=0x25A
+__swi __arm  void PlaySystemSound (int SndNumber);
 
 #endif
 
