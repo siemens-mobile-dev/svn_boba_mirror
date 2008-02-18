@@ -131,19 +131,14 @@ typedef struct
   REFCACHE *ref_cache;
   int ref_cache_size;
   
-  REFCACHE *ref_cur;
-  
-  REFCACHE *ref_first;
-  REFCACHE *ref_last;
-  REFCACHE *ref_next;
-  REFCACHE *ref_prev;
-  
   int page_sz;
   int loaded_sz;
   unsigned short wchar_hr;
   
   char *pageurl;    //utf8
   char *title;
+  
+  int img_cbtn_off, img_cbtn_on, img_rbtn_off, img_rbtn_on, img_tbox, img_ddlist;
   
 }VIEWDATA;
 

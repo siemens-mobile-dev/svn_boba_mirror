@@ -18,7 +18,6 @@ int GetFontHeight(int font, int atribute)
 
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max_h)
 {
-  REFCACHE *rf;
   int left=ScreenW();
   int c;
   int h;
@@ -37,12 +36,6 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     }
     switch(c)
     {
-    case 0xE11F:
-    case 0xE11E:
-      f=1;
-      rf=FindReference(vd,pos);
-      if (rf) pos=rf->end;
-      break;
     case 0x0A:
     case 0x0D:
       f=1;
@@ -258,7 +251,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       while(len>0&&(dc<32000))
       {
         c=vd->rawtext[sc];
-        //if (c==0x0000) goto L1;
         if (c==UTF16_ENA_INVERT)
         {
           //Found begin of ref
@@ -350,6 +342,56 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 		      lc->bold?FONT_SMALL_BOLD:FONT_SMALL,TEXT_NOFORMAT+
 		      (lc->underline?TEXT_UNDERLINE:0),
 		      def_ink,GetPaletteAdrByColorIndex(23));
+        
+        if (ws->wsbody[1]==vd->img_tbox)
+        {
+          REFCACHE *rf=FindReference(vd,vd->view_pos);
+          // calc pos
+          int d=(GetImgHeight(GetPicNByUnicodeSymbol(vd->img_tbox))-GetFontHeight(FONT_SMALL,0))/2;
+          // count lenght
+          int w=GetImgWidth(GetPicNByUnicodeSymbol(vd->img_tbox))-(d*2);
+          WSHDR *ws2=AllocWS(rf->ws->wsbody[0]);
+          for (;ws2->wsbody[0]<rf->ws->wsbody[0];)
+          {
+            w-=GetSymbolWidth(rf->ws->wsbody[ws2->wsbody[0]+1],FONT_SMALL);
+            if (w<=0)
+              break;
+            ws2->wsbody[0]++;
+            ws2->wsbody[ws2->wsbody[0]]=rf->ws->wsbody[ws2->wsbody[0]];
+          }
+          DrawString(ws2,0+d,ypos+d,scr_w,y2,
+            FONT_SMALL,TEXT_NOFORMAT,
+            vd->pos_cur_ref==rf->begin?GetPaletteAdrByColorIndex(0):GetPaletteAdrByColorIndex(1),
+            GetPaletteAdrByColorIndex(23));
+          FreeWS(ws2);
+        }
+        if (ws->wsbody[1]==vd->img_ddlist)
+        {
+          REFCACHE *rf=FindReference(vd,vd->view_pos);
+          // calc pos
+          int d=(GetImgHeight(GetPicNByUnicodeSymbol(vd->img_ddlist))-GetFontHeight(FONT_SMALL,0))/2;
+          // count lenght
+          int w=GetImgWidth(GetPicNByUnicodeSymbol(vd->img_ddlist))-(d*2)-GetImgHeight(GetPicNByUnicodeSymbol(vd->img_ddlist));
+          int count=_rshort2(vd->oms+rf->value);
+          char *c=extract_omstr(vd,rf->value);
+          WSHDR *ws2=AllocWS(count);
+          oms2ws(ws2,c,count);
+          count=ws2->wsbody[0];
+          ws2->wsbody[0]=0;
+          for (;ws2->wsbody[0]<count;)
+          {
+            w-=GetSymbolWidth(ws2->wsbody[ws2->wsbody[0]+1],FONT_SMALL);
+            if (w<=0)
+              break;
+            ws2->wsbody[0]++;
+          }
+          DrawString(ws2,0+d,ypos+d,scr_w,y2,
+            FONT_SMALL,TEXT_NOFORMAT,
+            GetPaletteAdrByColorIndex(1),
+            GetPaletteAdrByColorIndex(23));
+          FreeWS(ws2);
+          mfree(c);
+        }
       }
       
       if (y2>=scr_h||vl==vd->lines_cache_size-2)

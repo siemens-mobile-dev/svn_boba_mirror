@@ -218,8 +218,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAG_NAME:
       // STAGE 1
       //DEBUGV("OMS_TAG_NAME pos:",17);
-      //DEBUGC("%i ",vd->oms_pos);
-      //DEBUGC("%c\n",vd->oms[vd->oms_pos]);
+      //DEBUGS("%i ",vd->oms_pos);
+      //DEBUGS("%c\n",vd->oms[vd->oms_pos]);
       switch(i=vd->oms[vd->oms_pos])
       {
       case '+':
@@ -367,8 +367,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAG_DATA:
       //DEBUGV("OMS_TAG_DATA pos:",17);
-      //DEBUGC("%i ",vd->oms_pos);
-      //DEBUGC("%c\n",vd->oms[vd->oms_pos]);
+      //DEBUGS("%i ",vd->oms_pos);
+      //DEBUGS("%c\n",vd->oms[vd->oms_pos]);
       i=vd->oms[vd->oms_pos];
       vd->oms_pos++;
       switch(i)
@@ -589,15 +589,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->parse_state=OMS_TAG_NAME;
       break;
     case OMS_TAGI_STAGE3:
-      //i=vd->oms_wanted-vd->oms_pos; //Size of picture
       AddPictureItem(vd,(void *)(vd->oms+vd->oms_pos));
-      //if (vd->tag_l_count)
-      //{
-        //if (!(--vd->tag_l_count))
-        //{
-          //AddEndRef(vd);
-        //}
-      //}
       vd->ref_mode_i--;
       if (!vd->ref_mode_i)
         AddEndRef(vd);

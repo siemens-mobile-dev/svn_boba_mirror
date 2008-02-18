@@ -301,7 +301,6 @@ void oms2ws(WSHDR *ws, const char *text, int len)
           len-=2;
         }
       }
-    ws->wsbody[0]+=1;
-    ws->wsbody[ws->wsbody[0]]=c;
+    ws->wsbody[++ws->wsbody[0]]=c;
   }
 }

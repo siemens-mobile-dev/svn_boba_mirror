@@ -46,7 +46,7 @@ WSHDR *ws_console;
 
 int maincsm_id;
 
-
+char BALLET_PATH[256];
 char URLCACHE_PATH[256];
 char OMSCACHE_PATH[256];
 char AUTHDATA_FILE[256];
@@ -125,7 +125,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
       break;
     case 'c':
     case 'r':
-      if (vd->rawtext[prf->begin+1]==RADIOB_CHECKED||vd->rawtext[prf->begin+1]==CBOX_CHECKED)
+      if (vd->rawtext[prf->begin+1]==vd->img_rbtn_on||vd->rawtext[prf->begin+1]==vd->img_cbtn_on)
         pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->value)+1;
       break;
     case 'i':
@@ -187,7 +187,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     case 'c':
     case 'r':
       {
-        if (vd->rawtext[prf->begin+1]==RADIOB_CHECKED||vd->rawtext[prf->begin+1]==CBOX_CHECKED)
+        if (vd->rawtext[prf->begin+1]==vd->img_rbtn_on||vd->rawtext[prf->begin+1]==vd->img_cbtn_on)
         {
           s[pos]='&';
           pos++;
@@ -459,16 +459,16 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             int i;
             if (rf->tag!='r') break;
             if (rf->begin>=vd->rawtext_size) break;
-            if (vd->rawtext[rf->begin+1]!=RADIOB_UNCHECKED) break;
-            vd->rawtext[rf->begin+1]=RADIOB_CHECKED;
+            if (vd->rawtext[rf->begin+1]!=vd->img_rbtn_off) break;
+            vd->rawtext[rf->begin+1]=vd->img_rbtn_on;
             i=0;
             while((i=FindReferenceById(vd,rf->id,i))>=0)
             {
               rfp=vd->ref_cache+i;
               if (rfp!=rf)
                 if (rfp->begin<vd->rawtext_size)
-                  if (vd->rawtext[rfp->begin+1]==RADIOB_CHECKED)
-                    vd->rawtext[rfp->begin+1]=RADIOB_UNCHECKED;
+                  if (vd->rawtext[rfp->begin+1]==vd->img_rbtn_on)
+                    vd->rawtext[rfp->begin+1]=vd->img_rbtn_off;
               i++;
             }
           }
@@ -484,10 +484,10 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           break;
         case 'c':
           if (rf->begin>=vd->rawtext_size) break;
-          if (vd->rawtext[rf->begin+1]==CBOX_CHECKED)
-            vd->rawtext[rf->begin+1]=CBOX_UNCHECKED;
+          if (vd->rawtext[rf->begin+1]==vd->img_cbtn_on)
+            vd->rawtext[rf->begin+1]=vd->img_cbtn_off;
           else
-            vd->rawtext[rf->begin+1]=CBOX_CHECKED;
+            vd->rawtext[rf->begin+1]=vd->img_cbtn_on;
           if (!rf->no_upload)
           {
             goto_url=malloc(strlen(vd->pageurl)+1);
@@ -1092,9 +1092,11 @@ int main(const char *exename, const char *filename)
   strcat(AUTHDATA_FILE,"AuthCode");
   memcpy(BOOKMARKS_PATH,exename,l);
   strcat(BOOKMARKS_PATH,"Bookmarks");
+
+  memcpy(BALLET_PATH,exename,l);
+
   memcpy(SEARCH_PATH,exename,l);
   strcat(SEARCH_PATH,"Search");
-  
 
   //Create folders if not exists
   if (!isdir(URLCACHE_PATH,&ul))

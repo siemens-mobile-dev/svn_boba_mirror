@@ -5,16 +5,12 @@
 #include "string_works.h"
 #include "siemens_unicode.h"
 
+extern char BALLET_PATH[256];
 
 #define DP_IS_FRAME (-2)
 #define DP_IS_NOINDEX (-1)
 #define RAWTEXTCHUNK (16384)
 #define REFCACHECHUNK (256)
-
-#define ITEM_EDITBOX_SIZE 255
-
-unsigned int wchar_radio_on=0xFFFF;
-unsigned int wchar_radio_off=0xFFFF;
 
 static void RawInsertChar(VIEWDATA *vd, int wchar)
 {
@@ -123,6 +119,19 @@ void AddPictureItemIndex(VIEWDATA *vd, int index)
     }
     dpl=dpl->dp.next;
   }
+  //skip forms
+  if (vd->img_cbtn_off&&vd->img_cbtn_off<=w_char)
+    w_char++;
+  if (vd->img_cbtn_on&&vd->img_cbtn_on<=w_char)
+    w_char++;
+  if (vd->img_rbtn_off&&vd->img_rbtn_off<=w_char)
+    w_char++;
+  if (vd->img_rbtn_on&&vd->img_rbtn_on<=w_char)
+    w_char++;
+  if (vd->img_tbox&&vd->img_tbox<=w_char)
+    w_char++;
+  if (vd->img_ddlist&&vd->img_ddlist<=w_char)
+    w_char++;
   RawInsertChar(vd,w_char);  
 }
 
@@ -141,7 +150,7 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
   {
     odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_BITMAP));
     odp->w_char=wchar;
-    if (is_index>=0)  odp->index=0;
+    if (is_index>=0) odp->index=0;
     else odp->index=is_index;
     LockSched();
     vd->dynpng_list=odp;
@@ -160,7 +169,8 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
       i++;
     }
     while((dpl=dpl->dp.next));
-    odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_BITMAP+i));
+    wchar=FIRST_UCS2_BITMAP+i;
+    odp->dp.icon=GetPicNByUnicodeSymbol(wchar);
     odp->w_char=wchar;
     if (is_index>=0)  odp->index=index;
     else odp->index=is_index;
@@ -168,7 +178,7 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
     d->dp.next=odp;
     UnlockSched();
   }
-  return odp;  
+  return odp;
 }
 
 void AddPictureItem(VIEWDATA *vd, void *picture)
@@ -266,20 +276,69 @@ void AddPictureItemHr(VIEWDATA *vd)
   RawInsertChar(vd,wchar);
 }
 
+int AddPictureItemFile(VIEWDATA *vd, const char *file)
+{
+  int wchar=0xE115;
+  IMGHDR *img;
+  OMS_DYNPNGLIST *dpl;
+	FSTATS fs;
+  unsigned int err;
+  if (GetFileStats(file,&fs,&err)!=-1)
+  {
+    if (img=CreateIMGHDRFromPngFile(file, 0))
+    {
+      dpl=AddToDPngQueue(vd, img, 0);
+      wchar=dpl->w_char;
+    }
+  }
+  return wchar;
+}
+
 void AddRadioButton(VIEWDATA *vd, int checked)
 {
-  RawInsertChar(vd,checked?RADIOB_CHECKED:RADIOB_UNCHECKED);
+  if (!vd->img_rbtn_on)
+  {
+    char fname[256];
+    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
+    memcpy(fname+strlen(BALLET_PATH),"img\\radio_bttn_clkd.png",24);
+    vd->img_rbtn_on=AddPictureItemFile(vd, fname);
+    if (vd->img_rbtn_on==0xE115) vd->img_rbtn_on=0xE116;
+    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
+    memcpy(fname+strlen(BALLET_PATH),"img\\radio_bttn.png",19);
+    vd->img_rbtn_off=AddPictureItemFile(vd, fname);
+    if (vd->img_rbtn_off==0xE115) vd->img_rbtn_off=0xE117;
+  }
+  RawInsertChar(vd,checked?vd->img_rbtn_on:vd->img_rbtn_off);
 }
 
 void AddCheckBoxItem(VIEWDATA *vd, int checked)
 {
-  RawInsertChar(vd,checked?CBOX_CHECKED:CBOX_UNCHECKED);
+  if (!vd->img_cbtn_on)
+  {
+    char fname[256];
+    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
+    memcpy(fname+strlen(BALLET_PATH),"img\\button_clkd.png",20);
+    vd->img_cbtn_on=AddPictureItemFile(vd, fname);
+    if (vd->img_cbtn_on==0xE115) vd->img_cbtn_on=0xE116;
+    memcpy(fname+strlen(BALLET_PATH),"img\\button.png",15);
+    vd->img_cbtn_off=AddPictureItemFile(vd, fname);
+    if (vd->img_cbtn_off==0xE115) vd->img_cbtn_off=0xE117;
+  }
+  RawInsertChar(vd,checked?vd->img_cbtn_on:vd->img_cbtn_off);
 }
 
 void AddInputItem(VIEWDATA *vd, unsigned int pos)
 {
+  if (!vd->img_tbox)
+  {
+    char fname[256];
+    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
+    memcpy(fname+strlen(BALLET_PATH),"img\\text_form.png",18);
+    vd->img_tbox=AddPictureItemFile(vd, fname);
+    if (vd->img_tbox==0xE115) vd->img_tbox=0xE11E;
+  }
   RawInsertChar(vd,0x0A);
-  RawInsertChar(vd,0xE11E);
+  RawInsertChar(vd,vd->img_tbox);
   int len=_rshort2(vd->oms+pos);
   vd->work_ref.ws=AllocWS(len);
   char *c=extract_omstr(vd,pos);
@@ -297,7 +356,15 @@ void AddButtonItem(VIEWDATA *vd, const char *text, int len)
 
 void AddDropDownList(VIEWDATA *vd)
 {
+  if (!vd->img_ddlist)
+  {
+    char fname[256];
+    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
+    memcpy(fname+strlen(BALLET_PATH),"img\\spisok.png",15);
+    vd->img_ddlist=AddPictureItemFile(vd, fname);
+    if (vd->img_ddlist==0xE115) vd->img_ddlist=0xE11B;
+  }
   RawInsertChar(vd,0x0A);
-  RawInsertChar(vd,0xE11B);
+  RawInsertChar(vd,vd->img_ddlist);
   RawInsertChar(vd,0x0A);
 }
