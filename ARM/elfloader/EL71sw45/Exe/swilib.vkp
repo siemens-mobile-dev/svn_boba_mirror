@@ -501,10 +501,13 @@
 ;08D4:              ; 235: int GetLunarYearID(int year);
 ;08D8:              ; 236: int GetLunarAnimal(int year);
 08DC: 0xA8E94D8C   ; 237:char *RamIconBar
-08EO: 0xA0937017   ; 238:void SendAutoUSSDack(void);
+08E0: 0xA0937017   ; 238:void SendAutoUSSDack(void);
 08E4: 0xA04EDABC   ; 239:int EEFullDeleteBlock(unsigned int block,int cepid,int msg); 
 08E8: 0xA04EDC28   ; 23A:int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
 08EC: 0xA096232F   ; 23B:void DisableIconBar(int disable);
 
 #pragma disable old_equal_ff
 +0
+
+
+;locale=Russian_Russia.1251
