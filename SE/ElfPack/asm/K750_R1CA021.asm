@@ -8,6 +8,8 @@ defadr  MACRO   a,b
 a       EQU     b
         ENDM
 
+        defadr  memalloc,0x44F7B500+1
+        defadr  memfree,0x44F7C61C+1
 // --- CreateLists ---
 
         EXTERN  CreateLists

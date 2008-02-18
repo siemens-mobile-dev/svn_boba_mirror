@@ -19,6 +19,8 @@ a       EQU     b
         defadr   MESS_HOOK_RET,PATCH_MMI_MESSAGE_HOOK_start+8
         defadr   PAGE_ACTION_RET,PATCH_PageAction_start+8
 
+        defadr  memalloc,0x44E35A08+1
+        defadr  memfree,0x44E35A34+1
 // --- CreateLists ---
 
         EXTERN  CreateLists
