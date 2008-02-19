@@ -427,7 +427,6 @@ MENU_DESC selurl_STRUCT=
 
 #define   MAX_SEARCH_ENGINES 32
 
-
 static const SOFTKEY_DESC search_sk[]=
 {
   {0x0018,0x0000,(int)"Искать"},
@@ -491,42 +490,6 @@ static void get_search_engines()
   
   if(selected_search_engine>=search_engine_count) selected_search_engine=0;
 };
-
-void PerformSearch(char * enginename,char * text)
-{
-/*    char * s = goto_url = (char *)malloc(ws->wsbody[0]+3);
-    *s++='0';
-    *s++='/';
-    for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
-    *s = 0;
-    goto_url = ToWeb(goto_url,0);*/
-    goto_url = (char*)malloc(128);
-    strcpy(goto_url,"0/http://ya.ru/");
-/*  int ReadUrlFile(char *url_file)
-{
-  int f;
-  unsigned int err;
-  int fsize;
-  char *buf, *s;
-  FSTATS stat;
-  if (GetFileStats(url_file,&stat,&err)==-1) return 0;
-  if ((fsize=stat.size)<=0) return 0;
-  if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
-  buf=malloc(fsize+3);
-  buf[0]='0';
-  buf[1]='/';
-  buf[fread(f,buf+2,fsize,&err)+2]=0;
-  fclose(f,&err);
-  s=buf;
-  while(*s>32) s++;
-  *s++=0;
-  view_url=realloc(buf,s-buf);
-  view_url_mode=MODE_URL;
-  return (1);
-}
-*/
-};
-
 
 void search_locret(void){}
 
@@ -637,7 +600,7 @@ INPUTDIA_DESC search_desc=
   101,
   0,
   0,
-  0
+  0x40000000
 };
 
 
