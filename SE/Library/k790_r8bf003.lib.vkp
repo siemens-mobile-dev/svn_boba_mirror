@@ -60,7 +60,7 @@
 04FC: 00000000 899C2D45   ; 13F:  void SetMenuItemStyle( void *obj , int style)
 
 0500: 00000000 7DE33145   ; 140:  void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar)
-;0504: 00000000 E5FA3245   ; 141:  void SetGuiItemText(void *gui,int item,int StrID)
+0504: 00000000 9DE43445   ; 141:  IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: 00000000 E5FA3245   ; 142:  void StatusIndication_SetItemText(void *gui,int item,int StrID)
 050C: 00000000 19FB2745   ; 143:  void StatusIndication_ShowNotes(int StrID)
 0510: 00000000 E11D2B45   ; 144:  void * CreateStringInput(int,...)
@@ -333,3 +333,6 @@
 0954: 00000000 80879D45   ;8255: DB_EXT *LastExtDB(void);
 0958: 00000000 755FE944   ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 095C: 00000000 315D2745   ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
+0960: 00000000 C52F3345   ; 258: int Display_GetHeight(int Display);
+0964: 00000000 D12F3345   ; 259: int Display_GetWidth(int Display);
+0968: 00000000 FDBFFD44   ; 25A: void PlaySystemSound (int SndNumber);
