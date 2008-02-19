@@ -252,4 +252,5 @@
 
 0950: FFFFFFFF 69AC0E45 ; 254: void DestroyDirHandle(void *handle);
 0954: FFFFFFFF 50CF2244 ;8255: DB_EXT *LastExtDB(void);
+0958: FFFFFFFF A9E00F45 ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 095C: FFFFFFFF 81E10645 ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);

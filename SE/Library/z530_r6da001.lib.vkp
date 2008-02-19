@@ -253,7 +253,7 @@
 0818: FFFFFFFF E1DF1445   ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: FFFFFFFF EDDF1445   ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: FFFFFFFF DDD61445   ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: FFFFFFFF F10E0B45   ; 209: int isDirectory (u16 * path ,u16 * filename , int * error );
+0824: FFFFFFFF F1B10645   ; 209: int isDirectory (u16 * path ,u16 * filename , int * error );
 0828: FFFFFFFF 15B94C45   ; 20A: void FileDelete (u16 * path ,u16 * filename , int * error );
 082C: FFFFFFFF 61890C45   ; 20B: void SetFocus (GUI * , int);
 

@@ -58,7 +58,7 @@
 04FC: FFFFFFFF A1CB7720 ; 13F: void SetMenuItemStyle( void *obj , int style)
 
 0500: FFFFFFFF 55BF7520 ; 140: void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar)
-;0504: FFFFFFFF 99667520 ; 141: void SetGuiItemText(void *gui,int item,int StrID)
+0504: FFFFFFFF 1D1A7620 ; 141: __thumb IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: FFFFFFFF 99667520 ; 142: void StatusIndication_SetItemText(void *gui,int item,int StrID)
 050C: FFFFFFFF 993F2820 ; 143: void StatusIndication_ShowNotes(int StrID)
 0510: FFFFFFFF 49107720 ; 144: void * CreateStringInput(int,...)
@@ -142,7 +142,7 @@
 0690: FFFFFFFF 6DE96B20 ; 1A4: int FreeMessage(void **Mess);
 0694: FFFFFFFF 15AF2120 ; 1A5: void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 0698: FFFFFFFF 192A5420 ; 1A6:  char * UIEventName (int event);
-;069C: FFFFFFFF 387BF320 ;81A7:
+069C: FFFFFFFF 64432428 ;81A7: __thumb int * MissedEvents void);//возможно не правильно(
 06A0: FFFFFFFF B95D4220 ; 1A8: void UI_Event(int event);
 06A4: FFFFFFFF C55D4220 ; 1A9: void UI_Event_wData(int event,void *message,void (*mfree)(void*));
 06A8: FFFFFFFF E95D4220 ; 1AA: void UI_Event_toSID(int event,int SessionID);
@@ -322,3 +322,4 @@
 0950: FFFFFFFF F1A64D20   ; 254: void DestroyDirHandle(void *handle);
 0954: FFFFFFFF 74E1F120   ; 8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF 4DD34E20   ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
+095C: FFFFFFFF A51A4320   ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
