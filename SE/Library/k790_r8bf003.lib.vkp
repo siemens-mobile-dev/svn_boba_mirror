@@ -143,7 +143,7 @@
 0694: 00000000 C93BFA44   ; 1A5:  void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 
 0698: 00000000 E9802645   ; 1A6:  char * UIEventName (int event);
-;069C: 00000000 905DA045   ; 81A7:
+069C: 00000000 5DCE3445   ;81A7:  int * MissedEvents(void);
 
 06A0: 00000000 8D952645   ; 1A8:  void  UI_Event(int event);
 06A4: 00000000 9D952645   ; 1A9:  void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
