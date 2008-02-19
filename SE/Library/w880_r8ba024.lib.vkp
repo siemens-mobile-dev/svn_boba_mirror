@@ -41,7 +41,7 @@
 04CC: 00000000 49CB4745; 133:  void GuiObject_SetTitleText(void * gui , int StrID)
 04D0: 00000000 19C64745; 134:  void ShowWindow (void * gui);
 04D4: 00000000 7D5B4345; 135:  void SetCursorToItem ( void *obj , int item)
-04D8: 00000000 69C64745; 136: __thumb void GUI_SetStyle(GUI *,int style);
+04D8: 00000000 69C64745; 136: __thumb void GUI_SetStyle(GUI_NOFMANY *,int style);
 04DC: 00000000 CD664345; 137: __thumb int GUIonMessage_GetCreatedItemIndex ( void *msg);
 04E0: 00000000 D9664345; 138: __thumb char SetMenuItemText0 ( GUI_MESSAGE *, int StrID);
 04E4: 00000000 09674345; 139: __thumb char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
@@ -97,8 +97,8 @@
 05B4: 00000000 E188F644; 16D: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,u16 * unk);
 05B8: 00000000 A90CE744; 16E: __unknown void REQUEST_DATEANDTIME_GET(const int * __zero , DATETIME *dt);
 05C0: 00000000 C93E0A45; 170: __thumb int GetFreeBytesOnHeap(void);
-05C4: 00000000 496E3C45; 171: __thumb void Hide(void * udata);
-05C8: 00000000 596E3C45; 172: __thumb void Show(void * udata);
+05C4: 00000000 496E3C45; 171: __thumb void Hide(void * udata, int zero);
+05C8: 00000000 596E3C45; 172: __thumb void Show(void * udata, int zero);
 05CC: 00000000 B9A23D45; 173: __thumb void StartAPP (u16 * appname);
 05D0: 00000000 D15C4345; 174: __thumb void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
 05D4: 00000000 5D783945; 175: __thumb char * manifest_GetParam(char *buf,char *param_name,int unk);
@@ -112,11 +112,11 @@
 05F8: 00000000 ACD44244; 17E: __arm void send(union SIGNAL **sig,int PID);
 05FC: 00000000 0CD54244; 17F: __arm int sender(void **sig);
 0600: 00000000 CCD44244; 180: __arm void free_buf(void **sig);
-0604: 00000000 98D54244; 181: __unknown int create_process(int proc_type,char *name,void (*entrypoint)(void),int stack_size,int priority,int timeslice,int pid_bl00000000r *idvok,edir_table,int vector,int user);
+0604: 00000000 98D54244; 181: __unknown int create_process(int proc_type,char *name,void (*entrypoint)(void),int stack_size,int priority,int timeslice,int pid_block,void *redir_table,int vector,int user)
 0608: 00000000 B8D74244; 182: __arm void start (int pid);
 060C: 00000000 68D64244; 183: __arm int get_ptype(int pid);
 0610: 00000000 B4D54244; 184: __arm int current_process (void);
-0614: 00000000 ECD44244; 185: __arm int delay (int timeout);
+0614: 00000000 ECD44244; 185: __arm int int delay (int timeout);
 0680: 00000000 3DB26744; 1A0: __thumb char* strcpy(char * dest, char * source);
 0684: 00000000 A96D1245; 1A1: __thumb void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 FD6D1245; 1A2: __thumb void SendMessage(void **signal,int PID);
@@ -124,7 +124,7 @@
 0690: 00000000 996E1245; 1A4: __thumb int FreeMessage(void **Mess);
 0694: 00000000 ADE40E45; 1A5: __thumb void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 0698: 00000000 51413C45; 1A6: __thumb char * UIEventName(int event);
-069C: 00000000 14E61620; 1A6: __thumb int * MissedEvents(void);
+069C: 00000000 14E61620; 81A7: __thumb int * MissedEvents(void);
 06A0: 00000000 FD553C45; 1A8: __thumb void  UI_Event(int event);
 06A4: 00000000 0D563C45; 1A9: __thumb void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
 06A8: 00000000 55563C45; 1AA: __thumb void  UI_Event_toSID(int event,int SessionID);
@@ -137,7 +137,7 @@
 06C4: 00000000 A9A42C44; 1B1: __thumb void debug_printf(char * fmt,...);
 06C8: 00000000 355D1345; 1B2: __thumb int PlayFile(u16 * path, u16 * fname);
 06DC: 00000000 39AF4A45; 1B7: __thumb int  isKeylocked(void);
-06F8: 00000000 1D2A3C45; 1BF: __thumb int Date2ID(DATE*,int,int);
+06F8: 00000000 1D2A3C45; 1BE: __thumb int Date2ID(DATE*,int,int);
 06FC: 00000000 45293C45; 1BF: __thumb int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 75594345; 1C0: __thumb GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: 00000000 A55B4345; 1C1: __thumb void SetNumOfMenuItem(void * , int  item_count);
@@ -152,7 +152,7 @@
 0728: 00000000 81D44745; 1CA: __thumb GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: 00000000 55D54745; 1CB: __thumb void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
 0730: 00000000 09D64745; 1CC: __thumb void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI *);
-0738: 00000000 A9C34745; 1CE: __thumb void  GUI_Free(GUI*);
+0738: 00000000 A9C34745; 1CE: __thumb void GUI_Free(GUI*);
 073C: 00000000 C1E64045; 1CF: __thumb void GUI_SetIcon(GUI* , int icon);
 0740: 00000000 51E54045; 1D0: __thumb int StringInput_GetStringAndLen (GUI*,u16**,u16*);
 074C: 00000000 00000000; 1D3: __unknown int GetVolumeSize(char * volume, VOLUMESIZE *);
@@ -178,9 +178,9 @@
 07B0: 00000000 25504745; 1EC: __thumb void DrawRect(int x1, int y1,int x2 ,int y2,int pen_color,int brush_color);
 07B4: 00000000 25534745; 1ED: __thumb void DrawString(int StrID,int align,int x1,int y1,int x2,int y2,int unk,int unk1,int pen_color ,int brush_color);
 07BC: 00000000 05264745; 1EF: __thumb void InvalidateRect(DISP_OBJ *,RECT*);
-07C0: 00000000 CDC24745; 1F0: int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,int,int);
+07C0: 00000000 CDC24745; 1F0: int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,int,int,int size_obj);
 
-07C4: 00000000 815D4745; 1F1: __thumb void SetFont(int);
+07C4: 00000000 815D4745; 1F1: __thumb int SetFont(int);
 07C8: 00000000 34D81620; 81F2: __unknown DISP_OBJ ** StatusRow_p(void);
 07CC: 00000000 35533C45  ; 1F3: int root_list_get_session_count(void);
 07D0: 00000000 41533C45  ; 1F4: UI_APP_SESSION *root_list_get_session(int num_session);
@@ -204,7 +204,7 @@
 0834: 00000000 01A01545; 20D: __thumb int FreeSMSCont (void*);
 0838: 00000000 399B1545; 20E: __thumb int PrepareSMSCont (void*,u16*,u16*,int,int);
 083C: 00000000 619F1545; 20F: __thumb int CteateNewMessage (int,void*,int);
-0840: 00000000 C8F6BD45; 8210: __unknown void *  get_APP_DESC_TABLE(void);
+0840: 00000000 C8F6BD45; 8210: __unknown void *  void * get_APP_DESC_TABLE(void);
 0844: 00000000 C9954745; 211: __thumb C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 0848: 00000000 753FF144; 212: __thumb int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
 084C: 00000000 9D3EF144; 213: __thumb int AB_NAME_ITEM2StrID(void * ab_name);
