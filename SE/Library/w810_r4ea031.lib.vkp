@@ -316,5 +316,6 @@
 ;08F8: FFFFFFFF    ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: FFFFFFFF    ; 23F: DISP_BASE_METHOD DISP_BASE_GetMethod0C (DISP_BASE *);
 
+0950: FFFFFFFF C5285B45 ; 254: void DestroyDirHandle(void *handle);
 0954: FFFFFFFF B8E04E44  ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF 793C5C45  ;256: void GetOtherExtMethods(FILESUBROUTINE **);
