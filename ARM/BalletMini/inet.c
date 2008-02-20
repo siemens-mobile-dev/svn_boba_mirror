@@ -370,8 +370,9 @@ static void SendPost(void)
 
   sprintf(buf,"v=Opera Mini/2.0.4509/hifi/woodland/ru");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
-
-  sprintf(buf,"i-ua=Opera/9.10 (Windows NT 5.1; U; ru)");
+  
+  sprintf(buf,"i=Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1630; ru; U; ssr)");
+  //sprintf(buf,"i-ua=Opera/9.10 (Windows NT 5.1; U; ru)");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"s=-1");
@@ -380,7 +381,8 @@ static void SendPost(void)
   sprintf(buf,"n=1");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"A=CLDC-1.1");
+  sprintf(buf,"A=CLDC-1.0");
+  //sprintf(buf,"A=CLDC-1.1");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"B=MIDP-2.0");
@@ -392,7 +394,8 @@ static void SendPost(void)
   sprintf(buf,"D=ru");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"E=ISO8859_1");
+  sprintf(buf,"E=ISO-8859-1");
+  //sprintf(buf,"E=ISO8859_1");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
   
   extern const int PIC_QUALITY;
@@ -438,16 +441,19 @@ static void SendPost(void)
   sprintf(buf,"g=1");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"b=");
+  sprintf(buf,"b=mod2.04");
+  //sprintf(buf,"b=");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"y=ru");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"t=2");
+  sprintf(buf,"t=-1");
+  //sprintf(buf,"t=2");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"w=1;0");
+  sprintf(buf,"w=1;1");
+  //sprintf(buf,"w=1;0");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"e=def");
@@ -474,7 +480,7 @@ static void SendPost(void)
   memcpy(req+i,content,content_len);
   mfree(content);
   
-  //DEBUGV(req,l);
+  DEBUGV(req,l);
   
   bsend(l,req);
   freegstr(&URL);

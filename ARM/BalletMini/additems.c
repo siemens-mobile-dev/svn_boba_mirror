@@ -119,20 +119,7 @@ void AddPictureItemIndex(VIEWDATA *vd, int index)
     }
     dpl=dpl->dp.next;
   }
-  //skip forms
-  if (vd->img_cbtn_off&&vd->img_cbtn_off<=w_char)
-    w_char++;
-  if (vd->img_cbtn_on&&vd->img_cbtn_on<=w_char)
-    w_char++;
-  if (vd->img_rbtn_off&&vd->img_rbtn_off<=w_char)
-    w_char++;
-  if (vd->img_rbtn_on&&vd->img_rbtn_on<=w_char)
-    w_char++;
-  if (vd->img_tbox&&vd->img_tbox<=w_char)
-    w_char++;
-  if (vd->img_ddlist&&vd->img_ddlist<=w_char)
-    w_char++;
-  RawInsertChar(vd,w_char);  
+  RawInsertChar(vd,w_char);
 }
 
 
@@ -287,7 +274,7 @@ int AddPictureItemFile(VIEWDATA *vd, const char *file)
   {
     if (img=CreateIMGHDRFromPngFile(file, 0))
     {
-      dpl=AddToDPngQueue(vd, img, 0);
+      dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
       wchar=dpl->w_char;
     }
   }
@@ -299,12 +286,11 @@ void AddRadioButton(VIEWDATA *vd, int checked)
   if (!vd->img_rbtn_on)
   {
     char fname[256];
-    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
-    memcpy(fname+strlen(BALLET_PATH),"img\\radio_bttn_clkd.png",24);
+    strcpy(fname,BALLET_PATH);
+    strcat(fname,"img\\radio_bttn_clkd.png");
     vd->img_rbtn_on=AddPictureItemFile(vd, fname);
     if (vd->img_rbtn_on==0xE115) vd->img_rbtn_on=0xE116;
-    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
-    memcpy(fname+strlen(BALLET_PATH),"img\\radio_bttn.png",19);
+    strcpy(fname+strlen(BALLET_PATH),"img\\radio_bttn.png");
     vd->img_rbtn_off=AddPictureItemFile(vd, fname);
     if (vd->img_rbtn_off==0xE115) vd->img_rbtn_off=0xE117;
   }
@@ -316,11 +302,11 @@ void AddCheckBoxItem(VIEWDATA *vd, int checked)
   if (!vd->img_cbtn_on)
   {
     char fname[256];
-    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
-    memcpy(fname+strlen(BALLET_PATH),"img\\button_clkd.png",20);
+    strcpy(fname,BALLET_PATH);
+    strcat(fname,"img\\button_clkd.png");
     vd->img_cbtn_on=AddPictureItemFile(vd, fname);
     if (vd->img_cbtn_on==0xE115) vd->img_cbtn_on=0xE116;
-    memcpy(fname+strlen(BALLET_PATH),"img\\button.png",15);
+    strcpy(fname+strlen(BALLET_PATH),"img\\button.png");
     vd->img_cbtn_off=AddPictureItemFile(vd, fname);
     if (vd->img_cbtn_off==0xE115) vd->img_cbtn_off=0xE117;
   }
@@ -332,8 +318,8 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
   if (!vd->img_tbox)
   {
     char fname[256];
-    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
-    memcpy(fname+strlen(BALLET_PATH),"img\\text_form.png",18);
+    strcpy(fname,BALLET_PATH);
+    strcat(fname,"img\\text_form.png");
     vd->img_tbox=AddPictureItemFile(vd, fname);
     if (vd->img_tbox==0xE115) vd->img_tbox=0xE11E;
   }
@@ -359,10 +345,21 @@ void AddDropDownList(VIEWDATA *vd)
   if (!vd->img_ddlist)
   {
     char fname[256];
-    memcpy(fname,BALLET_PATH,strlen(BALLET_PATH));
-    memcpy(fname+strlen(BALLET_PATH),"img\\spisok.png",15);
+    strcpy(fname,BALLET_PATH);
+    strcat(fname,"img\\spisok.png");
     vd->img_ddlist=AddPictureItemFile(vd, fname);
     if (vd->img_ddlist==0xE115) vd->img_ddlist=0xE11B;
+  }
+  if (!vd->img_cbtn_on)
+  {
+    char fname[256];
+    strcpy(fname,BALLET_PATH);
+    strcat(fname,"img\\button_clkd.png");
+    vd->img_cbtn_on=AddPictureItemFile(vd, fname);
+    if (vd->img_cbtn_on==0xE115) vd->img_cbtn_on=0xE116;
+    strcpy(fname+strlen(BALLET_PATH),"img\\button.png");
+    vd->img_cbtn_off=AddPictureItemFile(vd, fname);
+    if (vd->img_cbtn_off==0xE115) vd->img_cbtn_off=0xE117;
   }
   RawInsertChar(vd,0x0A);
   RawInsertChar(vd,vd->img_ddlist);

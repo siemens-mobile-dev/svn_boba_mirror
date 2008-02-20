@@ -1,7 +1,7 @@
 #include "../inc/swilib.h"
 #include "string_works.h"
 
-static int debugA=A_Truncate;
+int debugA=A_Truncate;
 unsigned int debug_ul;
 int debug_file;
 
@@ -200,6 +200,15 @@ void utf82win(char*d,const char *s)
   *d = 0;
 }
 
+int find_symbol(char s)
+{
+  static char symbols[]={0x0A,0x20,0x23,0x24,0x25,0x26,0x2B,0x2C,0x2F,0x3A,0x3B,0x3D,0x3F,0x40,0x7E};
+  for (int i=0;i<strlen(symbols);i++)
+    if (s==symbols[i])
+      return i;
+  return -1;
+}
+
 int char_win2utf8(char*d,const char *s) // функция возвращает количество 
 {                                       // добавленных символов в d
   char hex[] = "0123456789abcdef";
@@ -207,7 +216,7 @@ int char_win2utf8(char*d,const char *s) // функция возвращает количество
   char *d1 = "%d1%";
   unsigned char b = *s, lb, ub;
   int r = 0, ab;
-  if (b==0x20||b==0x3A||b==0x2F||b==0x0A)
+  if (find_symbol(b)>=0)
   {
     *d = '%'; d++;
     *d = hex[(b>>4)&0xF]; d++;
@@ -256,13 +265,14 @@ char * ToWeb(char *src,int special)                   //конвертируем ссылку в ut
   for(i = 0; src[i]; i++)                 //считаем русские символы
   {
     unsigned char c=src[i];
-    if(c>=0x80||(special&&(c==0x20||c==0x3A||c==0x2F||c==0x0A))) cnt++;
+    if(c>=0x80) cnt+=2;
+    if(special&&(find_symbol(c)>=0)) cnt++;
   }
-  ret = malloc(strlen(src) + cnt*6 + 1);  //выделяем память под utf8-строку
+  ret = malloc(strlen(src) + cnt*3 + 1);  //выделяем память под utf8-строку
   for(i = 0, j = 0; src[i]; i++)
   {
     unsigned char c=src[i];
-    if(c>=0x80||(special&&(c==0x20||c==0x3A||c==0x2F||c==0x0A)))
+    if(c>=0x80||(special&&(find_symbol(c)>=0)))
       j += char_win2utf8(ret+j, src+i);   //получаем вместо русского символа utf8-замену
     else
       ret[j++] = src[i];
@@ -301,6 +311,6 @@ void oms2ws(WSHDR *ws, const char *text, int len)
           len-=2;
         }
       }
-    ws->wsbody[++ws->wsbody[0]]=c;
+    ws->wsbody[++(ws->wsbody[0])]=c;
   }
 }

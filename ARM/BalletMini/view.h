@@ -69,7 +69,7 @@ typedef struct
   unsigned int value;
   unsigned int id2;
   WSHDR *ws;
-  char no_upload:1, reserved:7;
+  char no_upload:1, multiselect_menu:1, reserved:7;
 }REFCACHE;
 
 
@@ -106,7 +106,7 @@ typedef struct
   int oms_wanted;
   int parse_state;
   //
-  int tag_l_count;
+  //int tag_l_count;
   //
   TAG_S *S_cache;
   int S_cache_size;

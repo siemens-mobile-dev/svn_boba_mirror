@@ -1,4 +1,7 @@
 /*
+x [1] 2l lid 2l lvalue
+s 2l lid 1 2count o 2l lo_name 2l lo_id 1checked ...  // 1 странный байт на гугл сеттингс равен 0 на симка 1
+
 Известные поядки тэгов:
 L T (I не отображается ?)
 L T E
@@ -313,9 +316,9 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'o': // drop down list item
         vd->oms_wanted+=2;
         break;
-      case 'l':  // страннй тег, из за него курсор гллючит, может 'l' заканчивает список
+      case 'l':  // страннй тег, из за него курсор гллючит, заканчивает список ?
         //AddBeginRef(vd);
-        vd->tag_l_count=2;
+        //vd->tag_l_count=2;
         //AddTextItem(vd,"<l>",3);
         vd->oms_pos++;
         goto L_NOSTAGE2;
@@ -333,7 +336,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'L':  // link
         vd->oms_wanted+=2;
         break;
-      case '^':  // wrong tag
+      case '^':  // wrong tag ?
         vd->oms_wanted+=2;
         break;
       case 'P':  // phone number
@@ -342,7 +345,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'R':
         vd->oms_wanted+=2;
         break;        
-      case 'E':
+      case 'E':  //finish ref
         vd->ref_mode_L--;
         if (!vd->ref_mode_L) // must be equal 0
   	      AddEndRef(vd);
@@ -729,7 +732,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->iw;
       vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
-      _rbyte(vd);
+      vd->work_ref.multiselect_menu=_rbyte(vd);
       vd->tag_o_count=_rshort(vd);
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;

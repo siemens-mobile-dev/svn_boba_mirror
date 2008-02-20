@@ -253,13 +253,13 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     }
   }
   s[pos]=0;
-  //unsigned int ul;
-  //int f;
-  //if ((f=fopen("0:\\zbin\\balletmini\\dump.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-  //{
-  //  fwrite(f,s,pos,&ul);
-  //  fclose(f,&ul);
-  //}
+//  unsigned int ul;
+//  int f;
+//  if ((f=fopen("0:\\zbin\\balletmini\\dump.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+//  {
+//    fwrite(f,s,pos,&ul);
+//    fclose(f,&ul);
+//  }
   return s;
 }
 
@@ -278,10 +278,10 @@ static void method0(VIEW_GUI *data)
       GetPaletteAdrByColorIndex(0),
       GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
-/*    DrawString(ws_console,0,0,scr_w,20,
-		  FONT_SMALL,TEXT_NOFORMAT,
-		  GetPaletteAdrByColorIndex(1),
-      GetPaletteAdrByColorIndex(0));*/
+//    DrawString(ws_console,0,0,scr_w,20,
+//		  FONT_SMALL,TEXT_NOFORMAT,
+//		  GetPaletteAdrByColorIndex(1),
+//      GetPaletteAdrByColorIndex(0));
     extern int connect_state;
     if (!STOPPED)
     {
@@ -326,9 +326,9 @@ static void method0(VIEW_GUI *data)
       DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_SMALL,TEXT_ALIGNMIDDLE,
         GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
       
-/*      DrawString(ws_console,0,0,scr_w,20,
-		    FONT_SMALL,TEXT_NOFORMAT,
-		    GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));*/
+//      DrawString(ws_console,0,0,scr_w,20,
+//		    FONT_SMALL,TEXT_NOFORMAT,
+//		    GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
     }
   }
 }
@@ -386,6 +386,9 @@ static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(vo
 
 static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  DisableIconBar(0);
+#endif
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=NULL;
   ENABLE_REDRAW=0;
@@ -638,7 +641,13 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         if ((f=fopen("0:\\zbin\\balletmini\\dumpref.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
           char c[256];
-          sprintf(c,"\nref_cache_size : %i\n\n",vd->ref_cache_size);
+          sprintf(c,"\nref_cache_size : %i\n",vd->ref_cache_size);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,  "oms_size       : %i\n",vd->oms_size);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,  "page_sz        : %i\n",vd->page_sz);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,  "loaded_sz      : %i\n\n",vd->loaded_sz);
           fwrite(f,c,strlen(c),&ul);
           for (int i=0;i<vd->ref_cache_size;i++)
           {
