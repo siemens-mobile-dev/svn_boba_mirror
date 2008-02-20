@@ -121,7 +121,37 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     switch (prf->tag)
     {
     case 's':
-        pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->id2)+1;
+      {
+        if (prf->multiselect)
+        {
+          int p=_rshort2(vd->oms+prf->id);
+          int start=prf->id+2+p+3+1;
+          for (int i=0;i<prf->size;i++)
+          {
+            if (((char*)prf->data)[i])
+            {
+              // write
+              p=_rshort2(vd->oms+start);
+              start=start+2+p;
+              pos+=_rshort2(vd->oms+prf->id)+_rshort2(vd->oms+start)+2;
+              p=_rshort2(vd->oms+start);
+              start=start+2+p+2;
+            }
+            else
+            {
+              // skip
+              p=_rshort2(vd->oms+start);
+              start=start+2+p;
+              p=_rshort2(vd->oms+start);
+              start=start+2+p+2;
+            }
+          }
+        }
+        else
+        {
+          pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->id2)+1;
+        }
+      }
       break;
     case 'c':
     case 'r':
@@ -151,8 +181,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
       {
         pos+=_rshort2(vd->oms+prf->id)+2;
         char *c;
-        char *b=c=(char *)malloc(prf->ws->wsbody[0]+3);
-        for (int i=0; i<prf->ws->wsbody[0]; i++) *c++=char16to8(prf->ws->wsbody[i+1]);
+        char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
+        for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
         b=ToWeb(b,1);
         pos+=strlen(b);
@@ -161,6 +191,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
       break;
     }
   }
+//  DEBUGS("pos:%i\r\n",pos);
   char *s=malloc(pos+1);
   pos=0;
   for (int i=0;i<vd->ref_cache_size;i++)
@@ -170,18 +201,57 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     {
     case 's':
       {
-        s[pos]='&';
-        pos++;
-        char *c=extract_omstr(vd,prf->id);
-        memcpy(s+pos,c,strlen(c));
-        pos+=strlen(c);
-        mfree(c);
-        s[pos]='=';
-        pos++;
-        c=extract_omstr(vd,prf->id2);
-        memcpy(s+pos,c,strlen(c));
-        pos+=strlen(c);
-        mfree(c);
+        if (prf->multiselect)
+        {
+          int p=_rshort2(vd->oms+prf->id);
+          int start=prf->id+2+p+3+1;
+          for (int i=0;i<prf->size;i++)
+          {
+            if (((char*)prf->data)[i])
+            {
+              // write
+              p=_rshort2(vd->oms+start);
+              start=start+2+p;
+              s[pos]='&';
+              pos++;
+              char *c=extract_omstr(vd,prf->id);
+              memcpy(s+pos,c,strlen(c));
+              pos+=strlen(c);
+              mfree(c);
+              s[pos]='=';
+              pos++;
+              c=extract_omstr(vd,start);
+              memcpy(s+pos,c,strlen(c));
+              pos+=strlen(c);
+              mfree(c);
+              p=_rshort2(vd->oms+start);
+              start=start+2+p+2;
+            }
+            else
+            {
+              // skip
+              p=_rshort2(vd->oms+start);
+              start=start+2+p;
+              p=_rshort2(vd->oms+start);
+              start=start+2+p+2;
+            }
+          }
+        }
+        else
+        {
+          s[pos]='&';
+          pos++;
+          char *c=extract_omstr(vd,prf->id);
+          memcpy(s+pos,c,strlen(c));
+          pos+=strlen(c);
+          mfree(c);
+          s[pos]='=';
+          pos++;
+          c=extract_omstr(vd,prf->id2);
+          memcpy(s+pos,c,strlen(c));
+          pos+=strlen(c);
+          mfree(c);
+        }
       }
       break;
     case 'c':
@@ -241,8 +311,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         mfree(c);
         s[pos]='=';
         pos++;
-        char *b=c=(char *)malloc(prf->ws->wsbody[0]+3);
-        for (int i=0; i<prf->ws->wsbody[0]; i++) *c++=char16to8(prf->ws->wsbody[i+1]);
+        char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
+        for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
         b=ToWeb(b,1);
         memcpy(s+pos,b,strlen(b));
@@ -252,6 +322,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
       break;
     }
   }
+//  DEBUGS("pos:%i\r\n",pos);
   s[pos]=0;
 //  unsigned int ul;
 //  int f;
@@ -654,9 +725,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             REFCACHE *rf=vd->ref_cache+i;
             sprintf(c,"\nREF : %i\n",i);
             fwrite(f,c,strlen(c),&ul);
-            sprintf(c,"  tag:      %c\n",rf->tag);
+            sprintf(c,"  tag:       %c\n",rf->tag);
             fwrite(f,c,strlen(c),&ul);
-            sprintf(c,"  id:       %u",rf->id);
+            sprintf(c,"  id:        %u",rf->id);
             fwrite(f,c,strlen(c),&ul);
             if (rf->id!=_NOREF)
             {
@@ -667,7 +738,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               mfree(s);
             }
             fwrite(f,"\n",1,&ul);
-            sprintf(c,"  id2:      %u",rf->id2);
+            sprintf(c,"  id2:       %u",rf->id2);
             fwrite(f,c,strlen(c),&ul);
             if (rf->id2!=_NOREF)
             {
@@ -678,7 +749,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               mfree(s);
             }
             fwrite(f,"\n",1,&ul);
-            sprintf(c,"  value:    %u",rf->value);
+            sprintf(c,"  value:     %u",rf->value);
             fwrite(f,c,strlen(c),&ul);
             if (rf->value!=_NOREF)
             {
@@ -689,28 +760,21 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               mfree(s);
             }
             fwrite(f,"\n",1,&ul);
-            sprintf(c,"  begin:    %u\n",rf->begin);
+            sprintf(c,"  begin:     %u\n",rf->begin);
             fwrite(f,c,strlen(c),&ul);
-            sprintf(c,"  end:      %u\n",rf->end);
+            sprintf(c,"  end:       %u\n",rf->end);
             fwrite(f,c,strlen(c),&ul);
-            sprintf(c,"  upload:   %s\n",rf->no_upload?"false":"true");
+            sprintf(c,"  upload:    %s\n",rf->no_upload?"false":"true");
             fwrite(f,c,strlen(c),&ul);
-            /*if ((int)rf->ws!=0xFFFFFFFF)
+            if (rf->tag=='s')
             {
-              int l=ws->wsbody[0];
-              char *s=malloc(l+3);
-              ws_2str(rf->ws,s,l);
-              sprintf(c,"  ws:     %i %s",l);
+              sprintf(c,"  multiple:  %s\n",rf->multiselect?"true":"false");
               fwrite(f,c,strlen(c),&ul);
-              for (int i=1;i<rf->ws->wsbody[0];i++)
-              {
-                int c=char16to8(rf->ws->wsbody[i]);
-                fwrite(f,&c,1,&ul);
-              }
-              fwrite(f,"]",1,&ul);
-              mfree(s);
-            }*/
-            fwrite(f,"\n",1,&ul);
+              sprintf(c,"  size:    %i ",rf->size);
+              fwrite(f,c,strlen(c),&ul);
+              fwrite(f,rf->data,rf->size,&ul);
+              fwrite(f,"\n",1,&ul);
+            }
           }
           fclose(f,&ul);
         }

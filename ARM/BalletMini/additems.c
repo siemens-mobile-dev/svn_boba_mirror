@@ -326,9 +326,9 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
   RawInsertChar(vd,0x0A);
   RawInsertChar(vd,vd->img_tbox);
   int len=_rshort2(vd->oms+pos);
-  vd->work_ref.ws=AllocWS(len);
+  vd->work_ref.data=(void *)AllocWS(len);
   char *c=extract_omstr(vd,pos);
-  oms2ws(vd->work_ref.ws,c,len);
+  oms2ws(((WSHDR *)vd->work_ref.data),c,len);
   mfree(c);
   RawInsertChar(vd,0x0A);
 }
@@ -349,17 +349,6 @@ void AddDropDownList(VIEWDATA *vd)
     strcat(fname,"img\\spisok.png");
     vd->img_ddlist=AddPictureItemFile(vd, fname);
     if (vd->img_ddlist==0xE115) vd->img_ddlist=0xE11B;
-  }
-  if (!vd->img_cbtn_on)
-  {
-    char fname[256];
-    strcpy(fname,BALLET_PATH);
-    strcat(fname,"img\\button_clkd.png");
-    vd->img_cbtn_on=AddPictureItemFile(vd, fname);
-    if (vd->img_cbtn_on==0xE115) vd->img_cbtn_on=0xE116;
-    strcpy(fname+strlen(BALLET_PATH),"img\\button.png");
-    vd->img_cbtn_off=AddPictureItemFile(vd, fname);
-    if (vd->img_cbtn_off==0xE115) vd->img_cbtn_off=0xE117;
   }
   RawInsertChar(vd,0x0A);
   RawInsertChar(vd,vd->img_ddlist);

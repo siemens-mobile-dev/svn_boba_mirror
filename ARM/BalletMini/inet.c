@@ -480,7 +480,7 @@ static void SendPost(void)
   memcpy(req+i,content,content_len);
   mfree(content);
   
-  DEBUGV(req,l);
+  //DEBUGV(req,l);
   
   bsend(l,req);
   freegstr(&URL);

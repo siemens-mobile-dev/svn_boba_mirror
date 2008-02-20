@@ -68,8 +68,10 @@ typedef struct
   unsigned int id;
   unsigned int value;
   unsigned int id2;
-  WSHDR *ws;
-  char no_upload:1, multiselect_menu:1, reserved:7;
+  //WSHDR *ws;
+  void *data;
+  int size;
+  char no_upload:1, multiselect:1;
 }REFCACHE;
 
 
@@ -120,7 +122,6 @@ typedef struct
   unsigned int ih;
   //
   unsigned int tag_o_count;
-  //
   unsigned int ref_mode_L;
   unsigned int ref_mode_i;
   //

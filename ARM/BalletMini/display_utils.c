@@ -350,14 +350,14 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           int d=(GetImgHeight(GetPicNByUnicodeSymbol(vd->img_tbox))-GetFontHeight(FONT_SMALL,0))/2;
           // count lenght
           int w=GetImgWidth(GetPicNByUnicodeSymbol(vd->img_tbox))-(d*2);
-          WSHDR *ws2=AllocWS(rf->ws->wsbody[0]);
-          for (;ws2->wsbody[0]<rf->ws->wsbody[0];)
+          WSHDR *ws2=AllocWS(((WSHDR *)rf->data)->wsbody[0]);
+          for (;ws2->wsbody[0]<((WSHDR *)rf->data)->wsbody[0];)
           {
-            w-=GetSymbolWidth(rf->ws->wsbody[ws2->wsbody[0]+1],FONT_SMALL);
+            w-=GetSymbolWidth(((WSHDR *)rf->data)->wsbody[ws2->wsbody[0]+1],FONT_SMALL);
             if (w<=0)
               break;
             ws2->wsbody[0]++;
-            ws2->wsbody[ws2->wsbody[0]]=rf->ws->wsbody[ws2->wsbody[0]];
+            ws2->wsbody[ws2->wsbody[0]]=((WSHDR *)rf->data)->wsbody[ws2->wsbody[0]];
           }
           DrawString(ws2,0+d,ypos+d,scr_w,y2,
             FONT_SMALL,TEXT_NOFORMAT,
@@ -508,9 +508,9 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
   {
     // set value
     ExtractEditControl(data,1,&ec);
-    FreeWS(cur_ref->ws);
-    cur_ref->ws=AllocWS(ec.pWS->wsbody[0]);
-    wstrcpy(cur_ref->ws,ec.pWS);
+    FreeWS(((WSHDR *)cur_ref->data));
+    cur_ref->data=(void *)AllocWS(ec.pWS->wsbody[0]);
+    wstrcpy(((WSHDR *)cur_ref->data),ec.pWS);
     if (!cur_ref->no_upload)
     {
       goto_url=malloc(strlen(cur_vd->pageurl)+1);
@@ -565,7 +565,7 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
   eq=AllocEQueue(ma,mfree_adr());
   WSHDR *ews=AllocWS(16384);
   
-  wstrcpy(ews,rf->ws);
+  wstrcpy(ews,((WSHDR *)rf->data));
   
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,16384);
@@ -593,23 +593,36 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
   if (msg->keys==0x3D || msg->keys==0x18)
   {
     int i=GetCurMenuItem(gui);
-    for (int n=0; n!=i; n++) ustop=ustop->next;
+    int n=0;
+    for (; n!=i; n++) ustop=ustop->next;
     if (ustop)
     {
-      cur_ref->value=ustop->value;
-      cur_ref->id2=ustop->id2;
-      if (!cur_ref->no_upload)
+      if (cur_ref->multiselect)
       {
-        goto_url=malloc(strlen(cur_vd->pageurl)+1);
-        strcpy(goto_url,cur_vd->pageurl);
-        from_url=malloc(strlen(cur_vd->pageurl)+1);
-        strcpy(from_url,cur_vd->pageurl);
-        goto_params=collectItemsParams(cur_vd,cur_ref);
-        quit_reqired=1;
+        if(((char*)cur_ref->data)[n])
+          ((char*)cur_ref->data)[n]=0;
+        else
+          ((char*)cur_ref->data)[n]=1;
+        SetMenuItemIcon(gui,i,((char*)cur_ref->data)[n]);
+        RefreshGUI();
       }
-      cur_ref=NULL;
-      cur_vd=NULL;
-      return 0xFF;
+      else
+      {
+        cur_ref->value=ustop->value;
+        cur_ref->id2=ustop->id2;
+        if (!cur_ref->no_upload)
+        {
+          goto_url=malloc(strlen(cur_vd->pageurl)+1);
+          strcpy(goto_url,cur_vd->pageurl);
+          from_url=malloc(strlen(cur_vd->pageurl)+1);
+          strcpy(from_url,cur_vd->pageurl);
+          goto_params=collectItemsParams(cur_vd,cur_ref);
+          quit_reqired=1;
+        }
+        cur_ref=NULL;
+        cur_vd=NULL;
+        return 0xFF;
+      }
     }
   }
   return (0);
@@ -640,17 +653,18 @@ void sel_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   SEL_STRUCT *ustop=user_pointer;
   WSHDR *ws;
   int len;
-  for (int n=0; n!=cur_item; n++) ustop=ustop->next;
+  int n=0;
+  for (; n!=cur_item; n++) ustop=ustop->next;
   void *item=AllocMenuItem(gui);
   if (ustop)
   {
     len=strlen(ustop->name);
     ws=AllocMenuWS(gui,len+4);
     oms2ws(ws,ustop->name,len);
-    if (cur_ref->multiselect_menu)
+    if (cur_ref->multiselect)
     {
       SetMenuItemIconArray(gui,item,icon_array);
-      SetMenuItemIcon(gui,cur_item,0);
+      SetMenuItemIcon(gui,cur_item,((char*)cur_ref->data)[n]);
     }
   }
   else
@@ -682,7 +696,7 @@ MENU_DESC sel_STRUCT=
   8,sel_menu_onkey,sel_menu_ghook,NULL,
   sel_softkeys,
   &sel_skt,
-  0x11,
+  0x10,
   sel_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
@@ -730,6 +744,10 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
   cur_vd=vd;
   icon_array[0]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  if (rf->multiselect)
+    sel_STRUCT.flags2=0x11;
+  else
+    sel_STRUCT.flags2=0x10;
   patch_header(&sel_HDR);
   return CreateMenu(0,0,&sel_STRUCT,&sel_HDR,start,n_sel,ustop,0);
 }

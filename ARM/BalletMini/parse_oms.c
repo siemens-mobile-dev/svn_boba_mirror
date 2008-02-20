@@ -732,8 +732,9 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->iw;
       vd->work_ref.id=vd->oms_pos-2;
       vd->oms_pos+=i;
-      vd->work_ref.multiselect_menu=_rbyte(vd);
-      vd->tag_o_count=_rshort(vd);
+      vd->work_ref.multiselect=_rbyte(vd);
+      vd->work_ref.data=malloc(vd->tag_o_count=_rshort(vd));
+      vd->work_ref.size=0;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;
@@ -750,11 +751,12 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       //AddTextItem(vd,vd->oms+vd->oms_pos,i);
       //AddBrItem(vd);
       vd->oms_pos+=i;
-      if (_rbyte(vd)) //checked/unchecked
+      if (((char*)vd->work_ref.data)[vd->work_ref.size]=_rbyte(vd)) //checked/unchecked
       {
         vd->work_ref.value=vd->oms_pos-1-vd->ih-2-vd->iw-2;
         vd->work_ref.id2=vd->oms_pos-1-vd->ih-2;
       }
+      vd->work_ref.size++;
       if (!vd->tag_o_count)
       {
         AddDropDownList(vd);
