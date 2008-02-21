@@ -504,7 +504,7 @@ int search_onkey(GUI *data, GUI_MSG *msg)
     WSHDR *ws = ec.pWS;
     
     //read url file
-    int f;
+    int f,ql;
     unsigned int err;
     int fsize;
     char *buf, *s;
@@ -516,21 +516,37 @@ int search_onkey(GUI *data, GUI_MSG *msg)
     
     if (GetFileStats(url_file,&stat,&err)==-1) goto fail;
     if ((fsize=stat.size)<=0)  goto fail;
-    if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;;
-    
-    buf=malloc(fsize+3+ws->wsbody[0]*2+2);
+    if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;    
+   
+    ql=ws->wsbody[0];
+    buf=malloc(2+fsize+ql+1);
     buf[0]='0';
-    buf[1]='/';
+    buf[1]='/';    
     buf[fread(f,buf+2,fsize,&err)+2]=0;
     fclose(f,&err);  
     
+    s=strstr(buf,"%s");
+    if(s)
+      {
+      char * cs=globalstr(buf);
+      char * csp=cs+(s-buf)+2;
+      for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
+      while(*s++=*csp++) ;
+      mfree(cs);
+      }
+    else
+      {
+      s=buf+(2+fsize);
+      for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
+      *s = 0;  
+      };    
+   
     //text
-    s=buf+2+fsize;
+/*    s=buf+2+fsize;
     for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
-    *s = 0;
+    *s = 0;*/
     
-    goto_url = buf;
-    
+    goto_url = buf;    
     goto_url = ToWeb(goto_url,0);
     return (0xFF);
     
@@ -558,7 +574,7 @@ void search_ghook(GUI *data, int cmd)
   if (cmd==7)
   {
     //OnRun
-    SetSoftKey(data,&sk,1);
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
   }
   
   if (cmd==0x0A)
@@ -840,7 +856,7 @@ static int input_url_onkey(GUI *data, GUI_MSG *msg)
   EDITCONTROL ec;
   WSHDR *ws;
   char *s;
-  if (msg->keys==0xFFF)
+  if (msg->keys==0xFFF || msg->keys == 0x18)
   {
     ExtractEditControl(data,1,&ec);
     ws = ec.pWS;
