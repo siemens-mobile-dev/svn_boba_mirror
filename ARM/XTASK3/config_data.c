@@ -20,7 +20,11 @@ __root const int RED_BUT_MODE=2;
 __root const CFG_CBOX_ITEM cfgcbox3[3]={"As in FW","Classic","Hide all tasks"};
 #else
 __root const CFG_HDR cfghdr3={CFG_CBOX,"Activate on",0,2};
+#ifdef X75
 __root const int ACTIVE_KEY_STYLE=0;
+#else
+__root const int ACTIVE_KEY_STYLE=0;
+#endif
 __root const CFG_CBOX_ITEM cfgcbox3[2]={"Internet Button","Long Joypress"};
 #endif
 

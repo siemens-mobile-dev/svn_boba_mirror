@@ -5,7 +5,11 @@
 #include "swaper.h"
 
 #ifdef NEWSGOLD
+#ifdef ELKA
+#define ACTIVE_KEY POC_BUTTON
+#else
 #define ACTIVE_KEY INTERNET_BUTTON
+#endif
 #else
 #define ACTIVE_KEY 0x63
 #endif
@@ -184,8 +188,8 @@ int my_keyhook(int submsg, int msg)
       return KEYHOOK_BREAK;
     }
   }
-#endif
   if (ACTIVE_KEY_STYLE==0)
+#endif
   {
     if (submsg!=ACTIVE_KEY) return KEYHOOK_NEXT;
     if (my_csm_id)
@@ -276,7 +280,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
           break;
 	case 2:
 	  GBS_SendMessage(MMI_CEPID,KEY_UP,ACTIVE_KEY);
-          break; // Никакого default!!!
+          break;
         }
       }
       else //браузер не вызывался
