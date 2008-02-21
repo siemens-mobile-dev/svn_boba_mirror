@@ -5,12 +5,12 @@
 #include "string_works.h"
 #include "siemens_unicode.h"
 
-extern char BALLET_PATH[256];
-
 #define DP_IS_FRAME (-2)
 #define DP_IS_NOINDEX (-1)
 #define RAWTEXTCHUNK (16384)
 #define REFCACHECHUNK (256)
+
+extern char IMG_PATH[];
 
 static void RawInsertChar(VIEWDATA *vd, int wchar)
 {
@@ -286,11 +286,11 @@ void AddRadioButton(VIEWDATA *vd, int checked)
   if (!vd->img_rbtn_on)
   {
     char fname[256];
-    strcpy(fname,BALLET_PATH);
-    strcat(fname,"img\\radio_bttn_clkd.png");
+    strcpy(fname,IMG_PATH);
+    strcat(fname,RADIO_BTTN_CLKD);
     vd->img_rbtn_on=AddPictureItemFile(vd, fname);
     if (vd->img_rbtn_on==0xE115) vd->img_rbtn_on=0xE116;
-    strcpy(fname+strlen(BALLET_PATH),"img\\radio_bttn.png");
+    strcpy(fname+strlen(IMG_PATH),RADIO_BTTN);
     vd->img_rbtn_off=AddPictureItemFile(vd, fname);
     if (vd->img_rbtn_off==0xE115) vd->img_rbtn_off=0xE117;
   }
@@ -302,11 +302,11 @@ void AddCheckBoxItem(VIEWDATA *vd, int checked)
   if (!vd->img_cbtn_on)
   {
     char fname[256];
-    strcpy(fname,BALLET_PATH);
-    strcat(fname,"img\\button_clkd.png");
+    strcpy(fname,IMG_PATH);
+    strcat(fname,BUTTON_CLKD);
     vd->img_cbtn_on=AddPictureItemFile(vd, fname);
     if (vd->img_cbtn_on==0xE115) vd->img_cbtn_on=0xE116;
-    strcpy(fname+strlen(BALLET_PATH),"img\\button.png");
+    strcpy(fname+strlen(IMG_PATH),BUTTON);
     vd->img_cbtn_off=AddPictureItemFile(vd, fname);
     if (vd->img_cbtn_off==0xE115) vd->img_cbtn_off=0xE117;
   }
@@ -318,8 +318,8 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
   if (!vd->img_tbox)
   {
     char fname[256];
-    strcpy(fname,BALLET_PATH);
-    strcat(fname,"img\\text_form.png");
+    strcpy(fname,IMG_PATH);
+    strcat(fname,TEXT_FORM);
     vd->img_tbox=AddPictureItemFile(vd, fname);
     if (vd->img_tbox==0xE115) vd->img_tbox=0xE11E;
   }
@@ -345,8 +345,8 @@ void AddDropDownList(VIEWDATA *vd)
   if (!vd->img_ddlist)
   {
     char fname[256];
-    strcpy(fname,BALLET_PATH);
-    strcat(fname,"img\\spisok.png");
+    strcpy(fname,IMG_PATH);
+    strcat(fname,LIST);
     vd->img_ddlist=AddPictureItemFile(vd, fname);
     if (vd->img_ddlist==0xE115) vd->img_ddlist=0xE11B;
   }

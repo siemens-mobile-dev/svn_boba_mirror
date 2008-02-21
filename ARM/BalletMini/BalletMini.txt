@@ -1,16 +1,13 @@
 Установка BalletMini.
 
 1. Копируете BalletMini.elf в папку 4:\ZBin\BalletMini\
-2. Создаёте папки 
-4:\ZBin\BalletMini\OmsCache
-4:\ZBin\BalletMini\UrlCache
-4:\ZBin\BalletMini\Bookmarks
+2. Запускаете OperaMini, идёте в Меню->Настройки->Параметры->Код автор->Опции->Экспорт
+3. Полученный файл называете AuthCode (без расширения) и кладёте в папку 4:\ZBin\BalletMini\
 
-3. Запускаете OperaMini, идёте в Меню->Настройки->Параметры->Код автор->Опции->Экспорт
-4. Полученный файл называете AuthCode (без расширения) и кладёте в папку 4:\ZBin\BalletMini\
-5. Кладёте картинки OMS_SMALL.png, OMS_BIG.png, URL_SMALL.png и URL_BIG.png в 
+Опционально, для обработки файлов:
+4. Кладёте картинки OMS_SMALL.png, OMS_BIG.png, URL_SMALL.png и URL_BIG.png в 
 папку 4:\ZBin\img\
-6. Прописываете в 4:\ZBin\etc\extension.cfg следующие строчки:
+5. Прописываете в 4:\ZBin\etc\extension.cfg следующие строчки:
 [oms]
 RUN=4:\ZBin\BalletMini\BalletMini.elf
 SMALL=4:\ZBin\img\OMS_SMALL.png
@@ -21,7 +18,7 @@ RUN=4:\ZBin\BalletMini\BalletMini.elf
 SMALL=4:\ZBin\img\URL_SMALL.png
 BIG=4:\ZBin\img\URL_BIG.png
 
-7. Перезагружаете трубу.
-8. Тыкаете по файлу с расширением url, в котором написана ссылка, и пользуете. Чтобы ссылки отображались в закладках - создаете файл url со ссылкой внутри и кладёте в папку 4:\ZBin\BalletMini\Bookmarks
-9. Если что-то не получилось - виновата кривизна ваших рук и ничего больше, вопросы
+6. Перезагружаете трубу.
+7. Тыкаете по файлу с расширением url, в котором написана ссылка, и пользуете. Чтобы ссылки отображались в закладках - создаете файл url со ссылкой внутри и кладёте в папку 4:\ZBin\BalletMini\Bookmarks
+8. Если что-то не получилось - виновата кривизна ваших рук и ничего больше, вопросы
 на эту тему не принимаются.

@@ -132,7 +132,7 @@ int CreateAddBookmark(GUI *data)
   MAIN_CSM *main_csm;
   VIEW_GUI *p;
   EDITCONTROL ec;
-  char *tmp = view_url;
+  char *tmp = view_url, *url_start;
   int tmp2 = view_url_mode, flag = 0;
   
   eq=AllocEQueue(ma,mfree_adr());    // Extension
@@ -176,7 +176,12 @@ int CreateAddBookmark(GUI *data)
     {
       p=FindGUIbyId(main_csm->view_id,NULL);
       if (p->vd->pageurl)
-        str_2ws(ews,p->vd->pageurl+2,strlen(p->vd->pageurl)-2);
+      {
+        for(url_start = p->vd->pageurl; *url_start && *url_start != '/'; url_start++);
+        for(; *url_start && *url_start == '/'; url_start++);
+        str_2ws(ews,url_start,strlen(url_start));
+        //str_2ws(ews,p->vd->pageurl+2,strlen(p->vd->pageurl)-2);
+      }
       else
       {
         // url не загружен
@@ -186,7 +191,10 @@ int CreateAddBookmark(GUI *data)
           str_2ws(ews,view_url,255);
           break;
         case MODE_URL:
-          ascii2ws(ews,view_url+2);
+          for(url_start = view_url; *url_start && *url_start != '/'; url_start++);
+          for(; *url_start && *url_start == '/'; url_start++);
+          str_2ws(ews,url_start,strlen(url_start));
+          //ascii2ws(ews,view_url+2);
           break;
         }
       }
@@ -707,7 +715,7 @@ int history_menu_onkey(void *gui, GUI_MSG *msg) //history
   char **history = MenuGetUserPointer(gui);
 
   int i = GetCurMenuItem(gui);
-  if (msg->keys==0x3D)
+  if (msg->keys==0x3D || msg->keys==0x18)
   {
     if (history[i])
     {
@@ -902,6 +910,7 @@ int CreateInputUrl()
 {
   void *ma=malloc_adr();
   void *eq;
+  char *url_start;
   EDITCONTROL ec;
   
   eq=AllocEQueue(ma,mfree_adr());    // Extension
@@ -912,7 +921,12 @@ int CreateInputUrl()
   {
     VIEW_GUI *p=FindGUIbyId(main_csm->view_id,NULL);
     if (p->vd->pageurl)
-      str_2ws(ews,p->vd->pageurl+2,strlen(p->vd->pageurl)-2);
+    {
+      for(url_start = p->vd->pageurl; *url_start && *url_start != '/'; url_start++);
+      for(; *url_start && *url_start == '/'; url_start++);
+      str_2ws(ews,url_start,strlen(url_start));
+      //str_2ws(ews,p->vd->pageurl+2,strlen(p->vd->pageurl)-2);
+    }
     else
     {
       // url не загружен
@@ -922,7 +936,10 @@ int CreateInputUrl()
         str_2ws(ews,view_url,255);
         break;
       case MODE_URL:
-        ascii2ws(ews,view_url+2);
+        for(url_start = view_url; *url_start && *url_start != '/'; url_start++);
+        for(; *url_start && *url_start == '/'; url_start++);
+        str_2ws(ews,url_start,strlen(url_start));        
+        //ascii2ws(ews,view_url+2);
         break;
       }
     }

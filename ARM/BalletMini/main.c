@@ -14,6 +14,7 @@
 #include "mainmenu.h"
 #include "default_page.h"
 #include "history.h"
+#include "images.h"
 
 #define DEFAULT_OMS "BalletMini.oms"
 
@@ -46,12 +47,12 @@ WSHDR *ws_console;
 
 int maincsm_id;
 
-char BALLET_PATH[256];
 char URLCACHE_PATH[256];
 char OMSCACHE_PATH[256];
 char AUTHDATA_FILE[256];
 char BOOKMARKS_PATH[256];
 char SEARCH_PATH[256];
+char IMG_PATH[256];
 
 static void StartGetFile(int dummy, char *fncache)
 {
@@ -1145,13 +1146,38 @@ LEND:
   return err;
 }
 
+void GenerateFile(char *path, char *name, unsigned char *from, unsigned size)
+{
+  unsigned ul;
+  int f;
+  FSTATS stat;
+  char *pathbuf;
+
+  pathbuf = (char *)malloc(strlen(path) + strlen(name) + 1);
+  strcpy(pathbuf, path); strcat(pathbuf, name);
+  
+  stat.size = 0;
+  GetFileStats(pathbuf,&stat,&ul); 
+  ///if (GetFileStats(pathbuf,&stat,&ul)!=-1) return;
+  if (stat.size>0) return;
+
+  unlink(pathbuf,&ul);
+  f = fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  if (f!=-1)
+  {
+    fwrite(f,from,size,&ul);
+    fclose(f,&ul);
+  }
+  mfree(pathbuf);
+
+}
+
 int main(const char *exename, const char *filename)
 {
   char dummy[sizeof(MAIN_CSM)];
   char *pathbuf;
   unsigned int ul;
   char *path=strrchr(exename,'\\');
-  int f;
   int l;
   if (!path) return 0; //Фигня какая-то
   path++;
@@ -1165,8 +1191,8 @@ int main(const char *exename, const char *filename)
   strcat(AUTHDATA_FILE,"AuthCode");
   memcpy(BOOKMARKS_PATH,exename,l);
   strcat(BOOKMARKS_PATH,"Bookmarks");
-
-  memcpy(BALLET_PATH,exename,l);
+  memcpy(IMG_PATH,exename,l);
+  strcat(IMG_PATH,"img");
 
   memcpy(SEARCH_PATH,exename,l);
   strcat(SEARCH_PATH,"Search");
@@ -1180,14 +1206,25 @@ int main(const char *exename, const char *filename)
     mkdir(BOOKMARKS_PATH,&ul);
   if (!isdir(SEARCH_PATH,&ul))
     mkdir(SEARCH_PATH,&ul);  
+  if (!isdir(IMG_PATH,&ul))
+    mkdir(IMG_PATH,&ul);  
   
   strcat(URLCACHE_PATH,"\\");
   strcat(OMSCACHE_PATH,"\\");
   strcat(BOOKMARKS_PATH,"\\");
   strcat(SEARCH_PATH,"\\");  
+  strcat(IMG_PATH,"\\");  
   
   CheckHistory("http://perk11.info/elf");
 
+  GenerateFile(IMG_PATH, RADIO_BTTN_CLKD, radio_bttn_clkd_png, radio_bttn_clkd_png_size);
+  GenerateFile(IMG_PATH, RADIO_BTTN,      radio_bttn_png,      radio_bttn_png_size);
+  GenerateFile(IMG_PATH, BUTTON_CLKD,     button_clkd_png,     button_clkd_png_size);
+  GenerateFile(IMG_PATH, BUTTON,          button_png,          button_png_size);
+  GenerateFile(IMG_PATH, TEXT_FORM,       text_form_png,       text_form_png_size);
+  GenerateFile(IMG_PATH, LIST,            list_png,            list_png_size);
+
+  
   if (!LoadAuthCode())
   {
     LockSched();
@@ -1206,15 +1243,20 @@ int main(const char *exename, const char *filename)
   }
   else
   {
-    pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen(DEFAULT_OMS) + 1);
-    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, DEFAULT_OMS);
-    unlink(pathbuf,&ul);
+    
+    GenerateFile(OMSCACHE_PATH, DEFAULT_OMS, default_page,default_page_size);
+
+    /*unlink(pathbuf,&ul);
     f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)
     {
       fwrite(f,default_page,default_page_size,&ul);
       fclose(f,&ul);
-    }
+    }*/
+//    mfree(pathbuf);
+    
+    pathbuf = malloc(strlen(OMSCACHE_PATH) + strlen(DEFAULT_OMS) + 1);
+    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, DEFAULT_OMS);
     view_url=pathbuf;
     view_url_mode=MODE_FILE;
     UpdateCSMname();

@@ -143,6 +143,13 @@ typedef struct
   
 }VIEWDATA;
 
+#define RADIO_BTTN_CLKD "radio_bttn_clkd.png"
+#define RADIO_BTTN      "radio_bttn.png"
+#define BUTTON_CLKD     "button_clkd.png"
+#define BUTTON          "button.png"
+#define TEXT_FORM       "text_form.png"
+#define LIST            "list.png"
+
 #endif
 
 
