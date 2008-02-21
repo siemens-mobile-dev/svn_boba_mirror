@@ -144,8 +144,8 @@
 0690: FFFFFFFF 751aCA44 ; 1A4: int FreeMessage(void **Mess);
 
 0694: FFFFFFFF 1519e444 ; 1A5: void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
-0698: FFFFFFFF B5FA1445   ; 1A6:  char * UIEventName (int event);
-069C: FFFFFFFF 01AE284C ; 1A7: __thumb int * MissedEvents void);
+0698: FFFFFFFF B5FA1445   ; 1A6:  char * UIEventName(int event);
+069C: FFFFFFFF 01AE284C ; 1A7: int * MissedEvents void);
 
 06A0: FFFFFFFF e5b50545 ; 1A8: void UI_Event(int event);
 06A4: FFFFFFFF f1b50545 ; 1A9: void UI_Event_wData(int event,void *message,void (*mfree)(void*));
@@ -173,7 +173,7 @@
 06EC: FFFFFFFF B5AEF844 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: FFFFFFFF 05740C45 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: FFFFFFFF A5740C45 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
-06F8: FFFFFFFF 6133D344 ; 1BE: int Date2ID(DATE *, char DateFormat);
+06F8: FFFFFFFF 6133D344 ; 1BE: int Date2ID(DATE *, int TimeFormat,int)
 06FC: FFFFFFFF 7932D344 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 
 0700: FFFFFFFF 4541D644 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -191,7 +191,7 @@
 
 0728: FFFFFFFF DDB5D344   ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: FFFFFFFF FDB6D344   ; 1CB: void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
-0730: FFFFFFFF E9B7D344   ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI*);
+0730: FFFFFFFF E9B7D344   ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
 0734: FFFFFFFF 59B8D344   ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 0738: FFFFFFFF 3965EA44   ; 1CE: void GUI_Free(GUI*);
 073C: FFFFFFFF 4999D344   ; 1CF: void GUI_SetIcon(GUI* , int icon);
@@ -284,7 +284,7 @@
 ;---
 087C: FFFFFFFF E5F50645   ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
 
-0880: FFFFFFFF DD94e844   ; 220: void DISP_DESC_SetName (DISP_DESC *  , char * name);
+0880: FFFFFFFF DD94e844   ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name)
 0884: FFFFFFFF 25BCE844   ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: FFFFFFFF 0595e844   ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 ;088C: FFFFFFFF    ; 223: u16 DISP_DESC_GetSize (DISP_BASE *);

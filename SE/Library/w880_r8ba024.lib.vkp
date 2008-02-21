@@ -32,13 +32,13 @@
 04A8: 00000000 CD383C45; 12A: __thumb void Timer_Kill(u16 *timerID);
 04AC: 00000000 756B3C45; 12B: __thumb int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
 04B0: 00000000 9D6C3C45; 12C: __thumb void BookObj_KillBook(void *Book);
-04B4: 00000000 F1693C45; 12D: __thumb void BookObj_GotoPage(BOOK * book, PAGE_DESC * page);
+04B4: 00000000 F1693C45; 12D: __thumb void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page)
 04B8: 00000000 596A3C45; 12E: __thumb void BookObj_ReturnPage(BOOK * ,int);
 04BC: 00000000 91713C45; 12F: __thumb void FreeBook ( void *book);
 04C0: 00000000 35523C45; 130: __thumb BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: 00000000 FDA03D45; 131: __unknown BOOK * Find_StandbyBook(void);
 04C8: 00000000 216E3C45; 132: __thumb void BookObj_SetFocus(void *,int focus);
-04CC: 00000000 49CB4745; 133:  void GuiObject_SetTitleText(void * gui , int StrID)
+04CC: 00000000 49CB4745; 133:  void GuiObject_SetTitleText (void * gui , int StrID)
 04D0: 00000000 19C64745; 134:  void ShowWindow (void * gui);
 04D4: 00000000 7D5B4345; 135:  void SetCursorToItem ( void *obj , int item)
 04D8: 00000000 69C64745; 136: __thumb void GUI_SetStyle(GUI_NOFMANY *,int style);
@@ -116,7 +116,7 @@
 0608: 00000000 B8D74244; 182: __arm void start (int pid);
 060C: 00000000 68D64244; 183: __arm int get_ptype(int pid);
 0610: 00000000 B4D54244; 184: __arm int current_process (void);
-0614: 00000000 ECD44244; 185: __arm int int delay (int timeout);
+0614: 00000000 ECD44244; 185: __arm int delay (int timeout);
 0680: 00000000 3DB26744; 1A0: __thumb char* strcpy(char * dest, char * source);
 0684: 00000000 A96D1245; 1A1: __thumb void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 FD6D1245; 1A2: __thumb void SendMessage(void **signal,int PID);
@@ -137,7 +137,7 @@
 06C4: 00000000 A9A42C44; 1B1: __thumb void debug_printf(char * fmt,...);
 06C8: 00000000 355D1345; 1B2: __thumb int PlayFile(u16 * path, u16 * fname);
 06DC: 00000000 39AF4A45; 1B7: __thumb int  isKeylocked(void);
-06F8: 00000000 1D2A3C45; 1BE: __thumb int Date2ID(DATE*,int,int);
+06F8: 00000000 1D2A3C45; 1BE: __thumb int Date2ID(DATE *, int TimeFormat,int)
 06FC: 00000000 45293C45; 1BF: __thumb int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 75594345; 1C0: __thumb GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: 00000000 A55B4345; 1C1: __thumb void SetNumOfMenuItem(void * , int  item_count);
@@ -148,10 +148,10 @@
 0718: 00000000 05CCFF44; 1C6: __thumb int REQUEST_SYSTEM_RESTART(void);
 071C: 00000000 AD8F4945; 1C7: __thumb void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: 00000000 C1284A45; 1C8: __unknown int isRightNowBook(BOOK *);
-0724: 00000000 D9963D45; 1C9: __unknown int isVolumeControlBook(BOOK *);
+0724: 00000000 D9963D45; 1C9: __unknown int isVolumeControllerBook(BOOK *)
 0728: 00000000 81D44745; 1CA: __thumb GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: 00000000 55D54745; 1CB: __thumb void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
-0730: 00000000 09D64745; 1CC: __thumb void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI *);
+0730: 00000000 09D64745; 1CC: __thumb void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *)
 0738: 00000000 A9C34745; 1CE: __thumb void GUI_Free(GUI*);
 073C: 00000000 C1E64045; 1CF: __thumb void GUI_SetIcon(GUI* , int icon);
 0740: 00000000 51E54045; 1D0: __thumb int StringInput_GetStringAndLen (GUI*,u16**,u16*);
@@ -172,7 +172,7 @@
 0794: 00000000 959E4745; 1E5: __thumb void * get_DisplayGC (void);
 0798: 00000000 99274745; 1E6: __thumb void GetGuiRect(void*,RECT*);
 079C: 00000000 6DA54745; 1E7: __thumb void get_GC_RECT(void*,RECT*);
-07A0: 00000000 71A84745; 1E8: __thumb char get_GC_xx(void * GC);
+07A0: 00000000 71A84745; 1E8: __thumb int get_GC_xx(void * GC)
 07A4: 00000000 65A84745; 1E9: __thumb void *set_GC_xx(void * GC, int);
 07A8: 00000000 1DA54745; 1EA: __thumb void GC_validate_RECT(void * GC , RECT*);
 07B0: 00000000 25504745; 1EC: __thumb void DrawRect(int x1, int y1,int x2 ,int y2,int pen_color,int brush_color);
@@ -204,7 +204,7 @@
 0834: 00000000 01A01545; 20D: __thumb int FreeSMSCont (void*);
 0838: 00000000 399B1545; 20E: __thumb int PrepareSMSCont (void*,u16*,u16*,int,int);
 083C: 00000000 619F1545; 20F: __thumb int CteateNewMessage (int,void*,int);
-0840: 00000000 C8F6BD45; 8210: __unknown void *  void * get_APP_DESC_TABLE(void);
+0840: 00000000 C8F6BD45; 8210: __unknown void * get_APP_DESC_TABLE(void);
 0844: 00000000 C9954745; 211: __thumb C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 0848: 00000000 753FF144; 212: __thumb int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
 084C: 00000000 9D3EF144; 213: __thumb int AB_NAME_ITEM2StrID(void * ab_name);
@@ -212,7 +212,7 @@
 0854: 00000000 BB051444; 215: __thumb int GetABRecNum(AB_GET_STRUCT *);
 0868: 00000000 E51E4745; 821A: __thumb int * PID_MMI(void);
 087C: 00000000 B593A144; 21F: __thumb DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);// !!!!!  не настоящий !!!!!!
-0880: 00000000 EDDF4645; 220: __thumb void DISP_DESC_SetName (DISP_DESC* , char * name);
+0880: 00000000 EDDF4645; 220: __thumb void DISP_DESC_SetName (DISP_DESC* , const char * name)
 0884: 00000000 A5354745; 221: __thumb char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: 00000000 F1DF4645; 222: __thumb void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 0890: 00000000 F5DF4645; 224: __thumb void DISP_DESC_SetOnCreate (DISP_DESC* , DISP_OBJ_ONCREATE_METHOD);

@@ -58,7 +58,7 @@
 04FC: FFFFFFFF A1CB7720 ; 13F: void SetMenuItemStyle( void *obj , int style)
 
 0500: FFFFFFFF 55BF7520 ; 140: void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar)
-0504: FFFFFFFF 1D1A7620 ;8141: __thumb IS_NEEDED_BOOK isScreenSaverBook(void);
+0504: FFFFFFFF 1D1A7620 ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: FFFFFFFF 99667520 ; 142: void StatusIndication_SetItemText(void *gui,int item,int StrID)
 050C: FFFFFFFF 993F2820 ; 143: void StatusIndication_ShowNotes(int StrID)
 0510: FFFFFFFF 49107720 ; 144: void * CreateStringInput(int,...)
@@ -141,8 +141,8 @@
 068C: FFFFFFFF 4DE96B20 ; 1A3: void * WaitMessage(void *SIGSEL);
 0690: FFFFFFFF 6DE96B20 ; 1A4: int FreeMessage(void **Mess);
 0694: FFFFFFFF 15AF2120 ; 1A5: void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
-0698: FFFFFFFF 192A5420 ; 1A6:  char * UIEventName (int event);
-069C: FFFFFFFF 64432428 ;81A7: __thumb int * MissedEvents void);//возможно не правильно(
+0698: FFFFFFFF 192A5420 ; 1A6:  char * UIEventName(int event);
+069C: FFFFFFFF 64432428 ;81A7: int * MissedEvents void);//возможно не правильно(
 06A0: FFFFFFFF B95D4220 ; 1A8: void UI_Event(int event);
 06A4: FFFFFFFF C55D4220 ; 1A9: void UI_Event_wData(int event,void *message,void (*mfree)(void*));
 06A8: FFFFFFFF E95D4220 ; 1AA: void UI_Event_toSID(int event,int SessionID);
@@ -166,7 +166,7 @@
 06EC: FFFFFFFF 8D834620 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: FFFFFFFF 3DD84B20 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: FFFFFFFF DDD84B20 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
-06F8: FFFFFFFF 19B97420 ; 1BE: int Date2ID(DATE *, char DateFormat);
+06F8: FFFFFFFF 19B97420 ; 1BE: int Date2ID(DATE *, int TimeFormat,int)
 06FC: FFFFFFFF 31B87420 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 
 0700: FFFFFFFF B5C97720   ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -181,7 +181,7 @@
 0724: FFFFFFFF 51915420   ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF 21407520   ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: FFFFFFFF 41417520   ; 1CB: void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
-0730: FFFFFFFF 2D427520   ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI*);
+0730: FFFFFFFF 2D427520   ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
 0734: FFFFFFFF 9D427520   ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 0738: FFFFFFFF 7D0C2820   ; 1CE: void GUI_Free(GUI*);
 073C: FFFFFFFF FD217520   ; 1CF: void GUI_SetIcon(GUI* , int icon);
@@ -271,7 +271,7 @@
 0878: FFFFFFFF 89462620   ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: FFFFFFFF 259C4320   ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
 
-0880: FFFFFFFF 093A2620   ; 220: void DISP_DESC_SetName (DISP_DESC *  , char * name);
+0880: FFFFFFFF 093A2620   ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name)
 0884: FFFFFFFF 51612620   ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: FFFFFFFF 313A2620   ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 ;088C: FFFFFFFF    ; 223: u16 DISP_DESC_GetSize (DISP_BASE *);

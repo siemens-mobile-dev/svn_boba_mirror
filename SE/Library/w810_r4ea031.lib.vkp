@@ -140,7 +140,7 @@
 0690: FFFFFFFF 55880945   ; 1A4:  int FreeMessage(void **Mess);
 0694: FFFFFFFF D56A2645   ; 1A5:  void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 
-0698: FFFFFFFF D5D16345   ; 1A6:  char * UIEventName (int event);
+0698: FFFFFFFF D5D16345   ; 1A6:  char * UIEventName(int event);
 ;069C: FFFFFFFF C0475044   ; 81A7:
 
 06A0: FFFFFFFF 7D125345   ; 1A8:  void  UI_Event(int event);
@@ -282,7 +282,7 @@
 0878: FFFFFFFF F5283045   ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: FFFFFFFF 79E63145   ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
 
-0880: FFFFFFFF 0D1D3045   ; 220: void DISP_DESC_SetName (DISP_DESC *  , char * name);
+0880: FFFFFFFF 0D1D3045   ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name)
 0884: FFFFFFFF 91463045   ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: FFFFFFFF 1D1D3045   ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 ;088C: FFFFFFFF    ; 223: u16 DISP_DESC_GetSize (DISP_BASE *);

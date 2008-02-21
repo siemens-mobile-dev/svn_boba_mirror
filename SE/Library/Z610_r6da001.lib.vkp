@@ -40,7 +40,7 @@
 4C0: 00000000 7DE13745  ;130:  BOOK * FindBook(IS_NEEDED_BOOK)
 4C4: 00000000 6D353945  ;131:  BOOK * Find_StandbyBook(void)
 4C8: 00000000 69FD3745  ;132:  void BookObj_SetFocus(void *,int focus)
-4CC: 00000000 11644345  ;133:  void GuiObject_SetTitleText(void * gui , int StrID)
+4CC: 00000000 11644345  ;133:  void GuiObject_SetTitleText (void * gui , int StrID)
 4D0: 00000000 955F4345  ;134:  void ShowWindow (void * gui)
 4D4: 00000000 71F83E45  ;135:  void SetCursorToItem ( void *obj , int item)
 4D8: 00000000 E55F4345  ;136:  void GUI_SetStyle(GUI_NOFMANY *,int style);
@@ -100,7 +100,7 @@
 5B0: 00000000 010CF344  ;16C:  int Gif2ID(u16 IMAGEHANDLE,u16 * path, u16 * fname,u16 * ID)
 5B4: 00000000 DD46F344  ;16D:  int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,u16 * unk)
 5B8: 00000000 11BFE344  ;16E:  void REQUEST_DATEANDTIME_GET(const int * __zero , DATETIME * dt)
-5BC: 00000000 55184645  ;16F:  void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_level)  ////
+5BC: 00000000 55184645  ;16F:  void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_level)
 5C0: 00000000 1DAC0645  ;170:  int GetFreeBytesOnHeap(void)
 5C4: 00000000 91FD3745  ;171:  void Hide(void * udata, int zero)
 5C8: 00000000 A1FD3745  ;172:  void Show(void * udata, int zero)
@@ -108,7 +108,7 @@
 5D0: 00000000 ADF93E45  ;174:  void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage)
 5D4: 00000000 850D3545  ;175:  char * manifest_GetParam(char *buf,char *param_name,int unk)
 5D8: 00000000 6DCAF744  ;176:  int lseek(int file,int offset,int mode)
-5E0: 00000000 9D450345  ;178:  viod SetLampLevel (int level); // nullstub
+5E0: 00000000 9D450345  ;178:  viod SetLampLevel (int level); // nullsub
 5E4: 00000000 2D1C2945  ;179:  void * ListElement_Remove(LIST *lst,int index)
 5E8: 00000000 F5293E44  ;17A:  int GetCurrentPID(void)
 5EC: 00000000 611C2945  ;17B:  int ListElement_Prt2NumElement(LIST *lst,void *ptr)
@@ -128,7 +128,7 @@
 68C: 00000000 49D50E45  ;1A3:  void * WaitMessage(void *SIGSEL);
 690: 00000000 5DD50E45  ;1A4:  int FreeMessage(void **Mess);
 694: 00000000 19590B45  ;1A5:  void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
-698: 00000000 4DD03745  ;1A6:  char * UIEventName (int event);
+698: 00000000 4DD03745  ;1A6:  char * UIEventName(int event);
 69C: 00000000 48D81620  ;81A7: int * MissedEvents(void)
 6A0: 00000000 45E53745  ;1A8:  void  UI_Event(int event);
 6A4: 00000000 55E53745  ;1A9:  void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
@@ -145,7 +145,7 @@
 6D4: 00000000 A9713B45  ;1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 6DC: 00000000 2D3C4645  ;1B7: int  isKeylocked(void);
 6E0: 00000000 E5ED0345  ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-6F8: 00000000 31B93745  ;1BE: int Date2ID(TIME *, char DateFormat,int);
+6F8: 00000000 31B93745  ;1BE: int Date2ID(DATE *, int TimeFormat,int)
 6FC: 00000000 59B83745  ;1BF: int Time2ID(TIME *, char TimeFormat,int);
 700: 00000000 69F63E45  ;1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
 704: 00000000 99F83E45  ;1C1: void SetNumOfMenuItem(void * , int  item_count);
@@ -159,7 +159,7 @@
 724: 00000000 212B3945  ;1C9: int isVolumeControllerBook(BOOK *);
 728: 00000000 2D6D4345  ;1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 72C: 00000000 016E4345  ;1CB: void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
-730: 00000000 B56E4345  ;1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI*);
+730: 00000000 B56E4345  ;1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
 734: 00000000 F16E4345  ;1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 738: 00000000 255D4345  ;1CE: void GUI_Free(GUI*);
 73C: 00000000 A1604345  ;1CF: void GUI_SetIcon(GUI* , int icon);
@@ -217,14 +217,14 @@
 82C: 00000000 415F4345  ;20B: void SetFocus (GUI * , int);
 830: 00000000 F9A31145  ;20C: int CreateSMSCont (int, void*);
 834: 00000000 8DAA1145  ;20D: int FreeSMSCont (void*);
-838: 00000000 D1A51145  ;20E: int PrepareSMSCont/MSG_SendMessage_AddRecipient (void*,u16*,u16*,int,int);
+838: 00000000 D1A51145  ;20E: int PrepareSMSCont (void*,u16*,u16*,int,int);
 83C: 00000000 EDA91145  ;20F: int CteateNewMessage (int,void*,int);
 840: 00000000 C0B1A745  ;8210: void * get_APP_DESC_TABLE(void);
 844: 00000000 8D2F4345  ;211: C_INTERFACE *Window_GetComponentInterface(WINDOW*)
 848: 00000000 0907EE44  ;212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
 84C: 00000000 3106EE44  ;213: int AB_NAME_ITEM2StrID(void * ab_name);
 850: 00000000 7906EE44  ;214: int AB_NUM_ITEM2StrID(void * ab_num_item);
-858: 00000000 FC1EA345  ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC()  ////
+858: 00000000 FC1EA345  ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC()
 85C: 00000000 156BB844  ;217: GUI * SBY_GetMainInput(BOOK * StandBy);
 860: 00000000 116BB844  ;218: GUI * SBY_GetStatusIndication(BOOK * StandBy);
 864: 00000000 299AE544  ;219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
@@ -232,21 +232,21 @@
 874: 00000000 09B94245  ;21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 878: 00000000 BDBE4245  ;21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 87C: 00000000 AD5D9F44  ;21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
-880: 00000000 657F4245  ;220: void DISP_DESC_SetName (DISP_DESC *  , char * name);
+880: 00000000 657F4245  ;220: void DISP_DESC_SetName (DISP_DESC* , const char * name)
 884: 00000000 2DD04245  ;221: char* DISP_OBJ_GetName (DISP_OBJ *);
 888: 00000000 697F4245  ;222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 890: 00000000 6D7F4245  ;224: void DISP_DESC_SetOnCreate (DISP_DESC* , DISP_OBJ_ONCREATE_METHOD);
 894: 00000000 F57F4245  ;225: DISP_OBJ_ONCREATE_METHOD DISP_OBJ_GetOnCreate (DISP_OBJ *);
-898: 00000000 717F4245  ;226: void DISP_DESC_SetOnClose / setOnDestroy(DISP_DESC* , DISP_BASE_ONCLOSE_METHOD);
+898: 00000000 717F4245  ;226: void DISP_DESC_SetOnClose (DISP_DESC* , DISP_OBJ_ONCLOSE_METHOD)
 89C: 00000000 11804245  ;227: DISP_OBJ_ONCLOSE_METHOD DISP_OBJ_GetOnClose (DISP_OBJ *);
 8A0: 00000000 757F4245  ;228: void DISP_DESC_SetOnRedraw (DISP_DESC* , DISP_OBJ_ONREDRAW_METHOD);
-8A4: 00000000 2D804245  ;229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw(DISP_BASE *);
+8A4: 00000000 2D804245  ;229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *)
 8A8: 00000000 7D7F4245  ;22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 8AC: 00000000 65804245  ;22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
 8C8: 00000000 817F4245  ;232: void DISP_DESC_SetMethod06 (DISP_DESC* ,DISP_OBJ_METHOD);
-8D8: 00000000 897F4245  ;236: void DISP_DESC_SetMethod08/DISP_DESC_SetOnLayout (DISP_DESC* ,void (*)(void*));
-8DC: 00000000 B9804245  ;237: DISP_BASE_METHOD DISP_BASE_GetMethod08/DISP_DESC_GetOnLayout (DISP_BASE *);
-8E0: 00000000 8D7F4245  ;238: void DISP_DESC_SetMethod09/DISP_DESC_SetOnConfig (DISP_DESC* ,void (*)(void*));
+8D8: 00000000 897F4245  ;236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD)
+8DC: 00000000 B9804245  ;237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *)
+8E0: 00000000 8D7F4245  ;238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 904: 00000000 39384645  ;241: int JavaSession_GetName(void); //nullsub
 908: 00000000 A9884145  ;242: int TextCopyId(int);
 90C: 00000000 39013845  ;243: UI_APP_SESSION *Book_GetSession(BOOK*);
@@ -258,7 +258,7 @@
 950: 00000000 8591F744  ;254: void DestroyDirHandle(void *handle);
 954: 00000000 4CE2A445  ;8255: DB_EXT *LastExtDB(void);
 958: 00000000 65EDFA44  ;256: void GetOtherExtMethods(FILESUBROUTINE **);
-95C: 00000000 FDAC3845  ;257: int MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
+95C: 00000000 FDAC3845  ;257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk)
 960: 00000000 998E4445  ;258: int Display_GetHeight(int Display);
 964: 00000000 A48E4445  ;259: int Display_GetWidth(int Display);
 968: 00000000 DDC20F45  ;25A: void PlaySystemSound (int SndNumber);

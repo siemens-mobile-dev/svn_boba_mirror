@@ -140,8 +140,8 @@
 0690: FFFFFFFF 1178FC44 ; 1A4:  int FreeMessage(void **Mess);
 0694: FFFFFFFF E9E11845 ; 1A5:  void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 
-0698: FFFFFFFF C5915645 ; 1A6:  char * UIEventName (int event);
-069C: FFFFFFFF 588D264C ; 81A7: __thumb int * MissedEvents void);
+0698: FFFFFFFF C5915645 ; 1A6:  char * UIEventName(int event);
+069C: FFFFFFFF 588D264C ; 81A7: int * MissedEvents void);
 
 06A0: FFFFFFFF 69424545 ; 1A8:  void  UI_Event(int event);
 06A4: FFFFFFFF 75424545 ; 1A9:  void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
@@ -153,7 +153,7 @@
 06B8: FFFFFFFF 099CD544 ; 1AE:  u16* wstrrchr(u16*wstr, u16 wchar);
 06BC: FFFFFFFF 5D751C45 ; 1AF:  void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: FFFFFFFF 21661A45 ; 1B0:  void ListElement_Add(LIST *lst,void *newElement);
-06C4: FFFFFFFF 15A6D044 ; 1B1: void debug_printf(char * fmt,...)
+06C4: FFFFFFFF 15A6D044 ; 1B1:  void debug_printf(char * fmt,...)
 06C8: FFFFFFFF 45F80745 ; 1B2:  int PlayFile(u16 * path, u16 * fname);
 
 ;06CC: FFFFFFFF 3D5BC144 ; 1B3: int GetChargeBatteryInPercent(BOOK *standby , int *level);  // нах не надо
@@ -282,7 +282,7 @@
 0878: FFFFFFFF 31A02245 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: FFFFFFFF 0D532445 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
 
-0880: FFFFFFFF 49942245 ; 220: void DISP_DESC_SetName (DISP_DESC *  , char * name);
+0880: FFFFFFFF 49942245 ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name)
 0884: FFFFFFFF 6DBD2245 ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: FFFFFFFF 59942245 ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 ;088C: FFFFFFFF ; 223: u16 DISP_DESC_GetSize (DISP_BASE *);

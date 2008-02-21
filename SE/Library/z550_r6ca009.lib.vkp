@@ -140,7 +140,7 @@
 0690: FFFFFFFF 69600545   ; 1A4:  int FreeMessage(void **Mess);
 0694: FFFFFFFF 39C22245   ; 1A5:  void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 
-0698: FFFFFFFF 0DD75D45   ; 1A6:  char * UIEventName (int event);
+0698: FFFFFFFF 0DD75D45   ; 1A6:  char * UIEventName(int event);
 069C: 00000000 DE7E264C   ;81A7:  int * MissedEvents(void);
 
 06A0: FFFFFFFF E5E74D45   ; 1A8:  void  UI_Event(int event);
@@ -282,7 +282,7 @@
 0878: FFFFFFFF D5A32B45   ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: FFFFFFFF 45622D45   ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
 
-0880: FFFFFFFF ED972B45   ; 220: void DISP_DESC_SetName (DISP_DESC *  , char * name);
+0880: FFFFFFFF ED972B45   ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name)
 0884: FFFFFFFF 79C22B45   ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: FFFFFFFF FD972B45   ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 ;088C: FFFFFFFF    ; 223: u16 DISP_DESC_GetSize (DISP_BASE *);
@@ -334,7 +334,7 @@
 0954: 00000000 202C4E44   ;8255: DB_EXT *LastExtDB(void);
 0958: 00000000 454C5645   ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 
-095C: 00000000 2D134E45   ; 257: int MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
+095C: 00000000 2D134E45   ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk)
 0960: 00000000 55524F45    ; 258: int Display_GetHeight(int Display);
 0964: 00000000 65524F45   ; 259: int Display_GetWidth(int Display);
 0968: 00000000 79DF1045   ; 25A: void PlaySystemSound (int SndNumber);

@@ -45,7 +45,7 @@
 04C4: 00000000 F9022C45   ; 131:  BOOK * Find_StandbyBook(void)
 
 04C8: 00000000 A9CF2A45   ; 132:  void BookObj_SetFocus(void *,int focus)
-04CC: 00000000 8D3C3645   ; 133:  void GuiObject_SetTitleText(void * gui , int StrID)
+04CC: 00000000 8D3C3645   ; 133:  void GuiObject_SetTitleText (void * gui , int StrID)
 04D0: 00000000 5D373645   ; 134:  void ShowWindow (void * gui)
 04D4: 00000000 0DCD3145   ; 135:  void SetCursorToItem ( void *obj , int item)
 04D8: 00000000 AD373645   ; 136:  void GUI_SetStyle(GUI_NOFMANY *,int style);
@@ -145,7 +145,7 @@
 068C: 00000000 D550FF44   ; 1A3:  void * WaitMessage(void *SIGSEL);
 0690: 00000000 E950FF44   ; 1A4:  int FreeMessage(void **Mess);
 0694: 00000000 41B9FC44   ; 1A5:  void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
-0698: 00000000 C9A22A45   ; 1A6:  char * UIEventName (int event);
+0698: 00000000 C9A22A45   ; 1A6:  char * UIEventName(int event);
 ;069C: 00000000 6C56AF45   ;81A7:
 
 06A0: 00000000 85B72A45   ; 1A8:  void  UI_Event(int event);
@@ -184,7 +184,7 @@
 
 0728: 00000000 C5453645   ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: 00000000 99463645   ; 1CB: void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
-0730: 00000000 4D473645   ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI*);
+0730: 00000000 4D473645   ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
 0734: 00000000 89473645   ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 0738: 00000000 ED343645   ; 1CE: void GUI_Free(GUI*);
 073C: 00000000 69383645   ; 1CF: void GUI_SetIcon(GUI* , int icon);
@@ -275,7 +275,7 @@
 0878: 00000000 95973545   ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 CD2F8F44   ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
 
-0880: 00000000 E9523545   ; 220: void DISP_DESC_SetName (DISP_DESC *  , char * name);
+0880: 00000000 E9523545   ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name)
 0884: 00000000 45A83545   ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: 00000000 ED523545   ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 ;088C: 00000000    ; 223: u16 DISP_DESC_GetSize (DISP_BASE *);
