@@ -23,6 +23,9 @@
 #ifdef CX75v25
 	#include "xls\CX75v25\adr_asm.inc"
 #endif
+#ifdef CX75v13
+	#include "xls\CX75v13\adr_asm.inc"
+#endif
 #ifdef CX70v56
 	#include "xls\CX70v56\adr_asm.inc"
 #endif
