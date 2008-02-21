@@ -59,7 +59,7 @@
 04FC: FFFFFFFF 81D00945 ; 13F:  void SetMenuItemStyle( void *obj , int style)
 
 0500: FFFFFFFF 49EC0B45 ; 140:  void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar)
-0504: FFFFFFFF 8D590845 ; 141: __thumb IS_NEEDED_BOOK isScreenSaverBook(void);
+0504: FFFFFFFF 8D590845 ;8141:  IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: FFFFFFFF 19FB0745 ; 142:  void StatusIndication_SetItemText(void *gui,int item,int StrID) !!!!!
 050C: FFFFFFFF 89631D45 ; 143:  void StatusIndication_ShowNotes(int StrID)
 0510: FFFFFFFF 85230945 ; 144:  void * CreateStringInput(int,...)

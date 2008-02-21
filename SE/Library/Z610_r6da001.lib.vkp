@@ -54,7 +54,7 @@
 4F8: 00000000 85F83E45  ;13E:  int GetFocusetListObjectItem( void *obj)
 4FC: 00000000 D5F83E45  ;13F:  void SetMenuItemStyle( void *obj , int style)
 500: 00000000 F1424345  ;140:  void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar)
-504: 00000000 993F4645  ;141:  IS_NEEDED_BOOK isScreenSaverBook(void);
+504: 00000000 993F4645  ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
 508: 00000000 39594445  ;142:  void StatusIndication_SetItemText(void *gui,int item,int StrID)
 50C: 00000000 ED533945  ;143:  void StatusIndication_ShowNotes(int StrID)
 510: 00000000 5D7A3C45  ;144:  void * CreateStringInput(int,...)

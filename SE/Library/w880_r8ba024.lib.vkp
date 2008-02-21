@@ -52,7 +52,7 @@
 04F8: 00000000 915B4345; 13E: __thumb int GetFocusetListObjectItem( void *obj);
 04FC: 00000000 E15B4345; 13F: __thumb void SetMenuItemStyle( void *obj , int style);
 0500: 00000000 6DA94745; 140: __thumb void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
-0504: 00000000 B1B24A45; 141: __thumb IS_NEEDED_BOOK isScreenSaverBook(void);
+0504: 00000000 B1B24A45;8141: __thumb IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: 00000000 C9C14845; 142: __thumb void StatusIndication_SetItemText(void *gui,int item,int StrID);
 050C: 00000000 21BD3D45; 143: __thumb void StatusIndication_ShowNotes(int StrID);
 0510: 00000000 B1DC4045; 144: __thumb void * CreateStringInput(int,...);

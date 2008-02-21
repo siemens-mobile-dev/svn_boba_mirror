@@ -50,11 +50,11 @@
 04E8: 00000000 095D4445   ; 13A:  char SetMenuItemText2 ( GUI_MESSAGE *, int StrID)
 04EC: 00000000 195D4445   ; 13B:  char SetMenuItemText3 ( GUI_MESSAGE *, int StrID)
 04F0: 00000000 715D4445   ; 13C:  void SetListObjectItemIcon ( void *msg , int align , int iconID)
-04F4: 00000000 F9084845    ;13D:  void SetHeaderText( void *obj , int StrID)
+04F4: 00000000 F9084845   ; 13D:  void SetHeaderText( void *obj , int StrID)
 04F8: 00000000 B1514445   ; 13E:  int GetFocusetListObjectItem( void *obj)
 04FC: 00000000 01524445   ; 13F:  void SetMenuItemStyle( void *obj , int style)
 0500: 00000000 099E4845   ; 140:  void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar)
-0504: 00000000 11AB4B45   ; 141: __thumb IS_NEEDED_BOOK isScreenSaverBook(void);
+0504: 00000000 11AB4B45   ;8141:  IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: 00000000 79B64945   ; 142:  void StatusIndication_SetItemText(void *gui,int item,int StrID)
 050C: 00000000 79B03E45   ; 143:  void StatusIndication_ShowNotes(int StrID)
 0510: 00000000 B5D24145   ; 144:  void * CreateStringInput(int,...)
@@ -105,7 +105,7 @@
 05C4: 00000000 BD613D45   ; 171:  void Hide(void * udata, int zero)
 05C8: 00000000 CD613D45   ; 172:  void Show(void * udata, int zero)
 05CC: 00000000 E9953E45   ; 173:  void StartAPP (u16 * appname)
-05D0: 00000000 8933E844   ; 174:  void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage) 
+05D0: 00000000 8933E844   ; 174:  void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage)
 05D4: 00000000 9D533A45   ; 175:  char * manifest_GetParam(char *buf,char *param_name,int unk)
 05D8: 00000000 9D30FB44   ; 176:  int lseek(int file,int offset,int mode)
 ;05DC: 00000000 00000000   ; 177:  int get_VBUFFER(void)
@@ -242,7 +242,7 @@
 0840: 00000000 244FB145   ; 8210: void * get_APP_DESC_TABLE(void);
 0844: 00000000 658A4845   ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*)
 0848: 00000000 3D65F144   ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
-084C: 00000000 6564F144   ; 213: int AB_NAME_ITEM2StrID(void * ab_name); 
+084C: 00000000 6564F144   ; 213: int AB_NAME_ITEM2StrID(void * ab_name);
 0850: 00000000 AD64F144   ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
 0854: 00000000 0B68B844   ; 215: int GetABRecNum(AB_GET_STRUCT *);
 0858: 00000000 7CAFAC45   ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC()
