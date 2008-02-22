@@ -449,26 +449,24 @@ static const SOFTKEYSTAB search_skt=
 
 
 
-static int search_engine_count;
+static int search_engine_count=0;
 static int selected_search_engine=0;
-static char ** search_engines=NULL;
+static char * search_engines[MAX_SEARCH_ENGINES];
 
 static void free_search_engines()
 {
-if(!search_engines) return;
 LockSched();
 char ** p=search_engines;
 for(int i=search_engine_count-1;i>=0;i--) mfree(*p++); 
-mfree(search_engines);
-search_engines=NULL;
+search_engine_count=0;
 UnlockSched();
 };
 
 static void get_search_engines()
 {
-  free_search_engines();
-  search_engine_count=0;    
-  char **sep=search_engines=malloc(4*MAX_SEARCH_ENGINES);
+  free_search_engines();  
+      
+  char **sep=search_engines;
   unsigned int err;
   DIR_ENTRY de;
   char str[128];  
@@ -496,7 +494,7 @@ static void get_search_engines()
   }
   FindClose(&de,&err);
   
-  if(selected_search_engine>=search_engine_count) selected_search_engine=0;
+  if(selected_search_engine>=search_engine_count) selected_search_engine=search_engine_count-1;
 };
 
 void search_locret(void){}
@@ -506,16 +504,18 @@ int search_onkey(GUI *data, GUI_MSG *msg)
   EDITCONTROL ec;
   if (msg->keys==0xFFF)
   {
-    if(selected_search_engine<0)return 1;
-    
+    if(selected_search_engine<0)return 0;      
+
+    //query
     ExtractEditControl(data,2,&ec);
     WSHDR *ws = ec.pWS;
+    int ql=ws->wsbody[0];
     
-    //read url file
-    int f,ql;
+    //read url file    
+    int f,fsize;
     unsigned int err;
-    int fsize;
-    char *buf, *s;
+    
+    char *s, *url;
     FSTATS stat;
     char url_file[256];
     
@@ -525,42 +525,45 @@ int search_onkey(GUI *data, GUI_MSG *msg)
     if (GetFileStats(url_file,&stat,&err)==-1) goto fail;
     if ((fsize=stat.size)<=0)  goto fail;
     if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;    
-   
-    ql=ws->wsbody[0];
-    buf=malloc(2+fsize+ql+1);
-    buf[0]='0';
-    buf[1]='/';    
-    buf[fread(f,buf+2,fsize,&err)+2]=0;
-    fclose(f,&err);  
     
-    s=strstr(buf,"%s");
+    url=(char*)malloc(fsize+1);
+    url[fread(f,url,fsize,&err)]=0;    
+    fclose(f,&err);  
+    s=url;
+    while(*s>32) s++;
+    *s=0;
+    fsize=strlen(url);
+    
+    //build search url    
+    goto_url=malloc(2+fsize+ql+2);    
+    goto_url[0]='0';
+    goto_url[1]='/';          
+    
+    s=strstr(url,"%s");
     if(s)
       {
-      char * cs=globalstr(buf);
-      char * csp=cs+(s-buf)+2;
+      int ofs=s-url;
+      memcpy(goto_url+2,url,ofs);
+      s=goto_url+2+ofs;
       for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
-      while(*s++=*csp++) ;
-      mfree(cs);
+      memcpy(goto_url+2+ofs+ql,url+ofs+2,fsize-ofs-1);
       }
     else
       {
-      s=buf+(2+fsize);
+      memcpy(goto_url+2,url,fsize);  
+      s=goto_url+2+fsize;
       for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
       *s = 0;  
-      };    
+      };       
+    mfree(url);
    
-    //text
-/*    s=buf+2+fsize;
-    for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
-    *s = 0;*/
-    
-    goto_url = buf;    
     goto_url = ToWeb(goto_url,0);
-    return (0xFF);
+    
+    return (0xFF);     
     
   fail:
-    ShowMSG(2,(int)"Ошибка!");
-    return 1;
+    ShowMSG(2,(int)"Ошибка!");    
+    return (0);
   }
   return (0);
 }
@@ -981,6 +984,7 @@ static void mm_goto_bookmarks(GUI *gui)
   GeneralFuncF1(1);
 }
 
+
 static void mm_search(GUI *gui)
 {
   MAIN_CSM *main_csm;
@@ -992,6 +996,7 @@ static void mm_search(GUI *gui)
   } 
   GeneralFuncF1(1);
 }
+
 
 static void mm_goto_history(GUI *gui)
 {
