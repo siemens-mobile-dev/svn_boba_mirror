@@ -487,6 +487,8 @@ typedef struct
 #define ENTER_BUTTON	0x1A
 #ifdef ELKA
 #define POC_BUTTON 0x15
+#define MEDIA_BUTTON	0x11
+#define EL_PLAY_BUTTON	0x1D
 #else
 #define INTERNET_BUTTON 0x11
 #endif
@@ -511,6 +513,7 @@ typedef struct
 #define ENTER_BUTTON	0x1A
 #define INTERNET_BUTTON     0x11
 #endif
+#define PTT_BUTTON	0x27
 // '*', '#', '0'-'9'
 
 //Draw flags
@@ -1295,6 +1298,9 @@ __swi __arm void PlaySound(long param1, long param2, long param3, long tone, lon
 //arm
 //pattern=??,??,??,E9,??,??,??,E2,??,??,??,E2,??,??,??,E2,??,??,??,E5,??,??,??,E1,??,??,??,E1,??,??,??,E1,??,??,??,??,??,??,??,1A,??,??,??,??,??,??,??,E3,??,??,??,E1,??,??,??,??,??,??,??,E3,??,??,??,0A,??,??,??,EF,??,??,??,E3,??,??,??,E3,??,??,??,E1,??,??,??,E3,??,??,??,??,??,??,??,EA
 
+#pragma swi_number=0x0034
+__swi __arm void PlaySoundLoop(int _0x2F, int param2, int duration);
+
 #pragma swi_number=0x0035
 __swi __arm void AlarmClockRing();
 //thumb
@@ -1393,6 +1399,9 @@ __swi __arm char *GetIlluminationDataTable();
 //arm
 //pattern_SGOLD=D8,00,9F,E5,1E,FF,2F,E1
 
+#pragma swi_number=0x0054
+__swi __arm int StrToInt(char *s, char **endp);
+
 #pragma swi_number=92
 __swi __arm unsigned char GetCPUClock();
 //arm
@@ -1461,6 +1470,9 @@ __swi __arm int ShowCallList(int list, int zero);
 __swi __arm int GetFileStats(const char *cFileName, FSTATS * StatBuffer, unsigned int *errornumber);
 //arm
 //pattern=7C,40,2D,E9,02,60,A0,E1,01,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,04,30,8D,E5,00,60,8D,E5,50,C0,90,E5,00,00,A0,E3,05,30,A0,E1,00,20,A0,E3,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
+
+#pragma swi_number=0x0085
+__swi __arm int strcmpi(const char *s1, const char *s2);
 
 #pragma swi_number=0x86
 __swi __arm void EEFullReadBlock(int block, void *buf, int offset, int size, int cepid, int msg); //cepid=msg=0
@@ -1620,6 +1632,12 @@ __swi __arm  int DivBy10(int divident);
 //arm
 //pattern=00,30,B0,E1,00,00,60,42,0A,10,40,E2,20,01,40,E0,20,02,80,E0,20,04,80,E0,20,08,80,E0,A0,01,A0,E1,00,21,80,E0,82,10,51,E0,01,00,80,52,0A,10,81,42,03,30,B0,E1,00,00,60,42,00,10,61,42,1E,FF,2F,E1
 
+#pragma swi_number=0x00BF
+__swi __arm void SpellTime();
+
+#pragma swi_number=0x00C4
+__swi __arm void *GetBuffer(int patch_id);
+
 ///Аналог RAMCAP, но без запарки над рамой
 #pragma swi_number=198
 __swi __arm  char GetAkkuCapacity();
@@ -1667,6 +1685,9 @@ __swi __arm void * RamScreenBuffer();
 __swi	__arm	 unsigned int *RamMPlayer_CtrlCode();
 //thumb
 //pattern= &(F8,B5,01,27,0D,1C,04,1C,08,1C,??,??,??,??,??,??,80,88,31,88,88,42+0E) + 4
+
+#pragma swi_number=0x80E4
+__swi __arm void *FreeRAM();
 
 #pragma swi_number=0x80F1
 __swi __arm void *BuildCanvas(void);
@@ -1761,6 +1782,9 @@ __swi __arm unsigned int SetUSSD(StructUSSDStr *);
 
 #pragma swi_number=0x0113
 __swi	__arm	char * strpbrk (const char *s1,const char *s2);
+
+#pragma swi_number=0x0113
+__swi __arm int strcspn(const char *s1, const char *s2);
 //thumb
 //pattern=??,B4,??,1C,??,1C,??,78,??,2D,??,D1,??,1A,??,BC,??,47,??,78,??,1C,??,2A,??,D0,??,42,??,D1,??,1A,??,E7,??,78,??,33,??,2A,??,D1,??,34,??,E7
 

@@ -1,5 +1,5 @@
 #include "..\inc\swilib.h"
-#include "..\inc\_lib_add.h"
+#include <stdbool.h>
 
 enum {COUNTRY=0x28, PHONE_OFFICE=0x2A, PHONE_FAX=0x2B, PHONE_MOBILE=0x2C, PHONE_HOME=0x2D, PHONE_FAX2=0x5E};
 //---------------------------------------------------------------------------

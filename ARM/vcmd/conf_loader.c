@@ -1,6 +1,6 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
-#include "..\inc\conf_loader.h"
+#include "conf_loader.h"
 
 const char *successed_config_filename="";
 

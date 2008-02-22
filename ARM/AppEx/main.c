@@ -1,5 +1,5 @@
 #include "..\inc\swilib.h"
-#include "..\inc\_lib_add.h"
+#include <stdbool.h>
 #include "..\inc\playsound.h"
 
 #define NO_SOUND 0x80000000

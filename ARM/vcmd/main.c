@@ -1,6 +1,6 @@
 #include "..\inc\swilib.h"
-#include "..\inc\_lib_add.h"
-#include "..\inc\conf_loader.h"
+#include <stdbool.h>
+#include "conf_loader.h"
 #include "..\inc\cfg_items.h"
 
 #ifdef NEWSGOLD
