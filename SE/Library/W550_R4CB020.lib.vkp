@@ -117,7 +117,7 @@
 05D4: FFFFFFFF DD924845 ; 175:  char * manifest_GetParam(char *buf,char *param_name,int unk)
 05D8: FFFFFFFF 35474E45 ; 176:  int lseek(int file,int offset,int mode)
 05DC: FFFFFFFF FC05074C ;8177:  int get_VBUFFER(void) !!!!!
-05E0: FFFFFFFF 1DF25145 ; 178:  viod SetLampLevel (int level) ;?????
+05E0: FFFFFFFF 3368CF44 ; 178:  viod SetLampLevel (int level)
 05E4: FFFFFFFF 99651A45 ; 179:  void * ListElement_Remove(LIST *lst,int index)
 05E8: FFFFFFFF A5D30A44 ; 17A:  int GetCurrentPID(void)
 05EC: FFFFFFFF D1651A45 ; 17B:  int ListElement_Prt2NumElement(LIST *lst,void *ptr)
@@ -163,7 +163,8 @@
 06DC: FFFFFFFF 5D3B0845 ; 1B7: int isKeylocked(void)
 06E0: FFFFFFFF C1A23645 ; 81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void)
 
-;06E4: FFFFFFFF A1EBE944 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);  // גלוסעמ  get_APP_DESC_TABLE
+06E4: FFFFFFFF A1EBE944 ; 1B9:  void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);  // גלוסעמ  get_APP_DESC_TABLE
+06EC: FFFFFFFF 2D2C3845 ; 1BB:  void Vibra(int t1, int t2, int t3);
 ;06E8: FFFFFFFF ; 1BA:
 ;06EC: FFFFFFFF ; 1BB:
 ;06F0: FFFFFFFF ; 1BC:
@@ -306,7 +307,7 @@
 ;08D0: FFFFFFFF ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: FFFFFFFF ; 235: DISP_BASE_METHOD DISP_BASE_GetMethod07 (DISP_BASE *);
 ;08D8: FFFFFFFF ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
-;08DC: FFFFFFFF ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
+08DC: FFFFFFFF 69972245 ; 237:  DISP_BASE_METHOD DISP_BASE_GetMethod08 (DISP_BASE *);
 ;08E0: FFFFFFFF ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 ;08E4: FFFFFFFF ; 239: DISP_BASE_METHOD DISP_BASE_GetMethod09 (DISP_BASE *);
 ;08E8: FFFFFFFF ; 23A: void DISP_DESC_SetMethod0A (DISP_DESC* ,void (*)(void*));
@@ -316,6 +317,25 @@
 ;08F8: FFFFFFFF ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: FFFFFFFF ; 23F: DISP_BASE_METHOD DISP_BASE_GetMethod0C (DISP_BASE *);
 
+
+;0900: FFFFFFFF ; 240:  void JavaSession_Manager (int cmd);
+;0904: FFFFFFFF ; 241:  int JavaSession_GetName(void);
+0908: FFFFFFFF 7BCF3F45 ; 242:  int TextCopyId(int);
+090C: FFFFFFFF B57C1C45 ; 243:  UI_APP_SESSION *Book_GetSession(BOOK*);
+0910: FFFFFFFF 2DDB0945 ; 244:  void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
+0914: FFFFFFFF A9DB0945 ; 245:  void List2lineSubitemAddText(void* msg,int StrID);
+0918: FFFFFFFF 99DB0945 ; 246:  int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+091c: FFFFFFFF 51D30545 ; 247:  go_music (int go);
+0920: FFFFFFFF 052D3845 ; 248:  void Vibra_Off (int t1);
+;0924: FFFFFFFF ; 249:  void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+
+;0948: FFFFFFFF ; 252:  int List2LineGetCurrentIndex(void * msg);
+;094C: FFFFFFFF ; 253:  int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF C9154E45 ;254: void DestroyDirHandle(void *handle);
 0954: FFFFFFFF 18e24444 ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF 211a4f45 ;256: void GetOtherExtMethods(FILESUBROUTINE **);
+
+095C: FFFFFFFF e56b4545 ; 257:  void infobox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,int shouldbe0);
+;0960: FFFFFFFF ; 258:  int Display_GetHeight(int Display);
+;0964: FFFFFFFF ; 259:  int Display_GetWidth(int Display);
+0968: FFFFFFFF 69F70745 ; 25A:  void PlaySystemSound (int SndNumber);
