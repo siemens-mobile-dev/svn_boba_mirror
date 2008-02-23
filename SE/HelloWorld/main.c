@@ -11,13 +11,13 @@ u16 timer; // ID таймера
 int lamp=0; // текуща€ €ркость лампы
 int n=10; // счетчик циклов мигани€
 
-void onTimer (u16 * unk , void * data)
+void onTimer (u16 * timerID , LPARAM data)
 {
   // если счетчик не дошел до нул€
   if(n--)
   {
     // перезапускаем таймер
-    Timer_ReSet(&timer,500,onTimer,0);
+    Timer_ReSet(&timer,500,onTimer,data);
     // переключаем лампу
     SetLampLevel(lamp^=0x10);
   }

@@ -10,12 +10,12 @@ void elf_exit(void)
   kill_data(&ELF_BEGIN, (void(*)(void*))mfree_adr());
 }
  
-void onTimer (u16 * unk , void * data)
+void onTimer (u16 *timerID , LPARAM lparam)
 {
   GetBattaryState((int const*)1 , &bat);
   snwprintf(ws,196,(u16*)L"Temp = %d C",bat.SystemTemperature);
   StatusIndication_ShowNotes(Str2ID(ws,0,SID_ANY_LEN));
-  Timer_ReSet(&timer,1000,onTimer,0);
+  Timer_ReSet(&timer,1000,onTimer,lparam);
 }
 
 int NewKey(int key, int r1 , int mode)

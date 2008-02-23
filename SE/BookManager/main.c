@@ -346,7 +346,7 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
 	str2wstr(par,param);
 	StartAPP(par);
 	mfree(param);
-	if (Find_StandbyBook()!=0)Show(Find_StandbyBook());
+	if (Find_StandbyBook()!=0)Show(Find_StandbyBook(),0);
         CloseMyBook((BOOK*)myBook,0);
       }
     }

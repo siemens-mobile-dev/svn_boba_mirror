@@ -220,10 +220,10 @@ __swi __arm  unsigned short * getFileExtention(unsigned short * fnane);
 __swi __arm  int DataBrowser_isFileInListExt(unsigned short * ext_table,unsigned short * patch ,unsigned short * fname );
 
 #pragma swi_number=0x128
-__swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 * unk , void *), void*);
+__swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
 
 #pragma swi_number=0x129
-__swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 * unk , void *), void*);
+__swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
 
 #pragma swi_number=0x12A
 __swi __arm  void Timer_Kill(u16 *timerID);
@@ -936,4 +936,3 @@ __swi __arm  int Display_GetWidth(int Display);
 __swi __arm  void PlaySystemSound (int SndNumber);
 
 #endif
-
