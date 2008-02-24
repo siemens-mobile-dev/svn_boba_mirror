@@ -307,7 +307,7 @@
 ;08D0: FFFFFFFF ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: FFFFFFFF ; 235: DISP_BASE_METHOD DISP_BASE_GetMethod07 (DISP_BASE *);
 ;08D8: FFFFFFFF ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
-08DC: FFFFFFFF 69972245 ; 237:  DISP_BASE_METHOD DISP_BASE_GetMethod08 (DISP_BASE *);
+08DC: FFFFFFFF 69972245 ; 237:  DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *)
 ;08E0: FFFFFFFF ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 ;08E4: FFFFFFFF ; 239: DISP_BASE_METHOD DISP_BASE_GetMethod09 (DISP_BASE *);
 ;08E8: FFFFFFFF ; 23A: void DISP_DESC_SetMethod0A (DISP_DESC* ,void (*)(void*));
@@ -335,7 +335,7 @@
 0954: FFFFFFFF 18e24444 ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF 211a4f45 ;256: void GetOtherExtMethods(FILESUBROUTINE **);
 
-095C: FFFFFFFF e56b4545 ; 257:  void infobox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,int shouldbe0);
+095C: FFFFFFFF e56b4545 ; 257:  void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk)
 ;0960: FFFFFFFF ; 258:  int Display_GetHeight(int Display);
 ;0964: FFFFFFFF ; 259:  int Display_GetWidth(int Display);
 0968: FFFFFFFF 69F70745 ; 25A:  void PlaySystemSound (int SndNumber);

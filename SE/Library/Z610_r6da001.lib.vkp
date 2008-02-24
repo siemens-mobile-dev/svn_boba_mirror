@@ -4,7 +4,7 @@
 ;(c) Hussein , IronMaster
 ;(p) den_po
 
-+45b87c00
++45B87C00
 440: 00000000 095AE344  ;110:  void *memalloc(int size,int f1,int f2,const char *fname,int fline)
 444: 00000000 355AE344  ;111:  void memfree(void * mem,const char * fname ,int fline)
 448: 00000000 B4521444  ;112:  void memset(void *mem,char chr,int size)
@@ -118,7 +118,7 @@
 5FC: 00000000 D8B04244  ;17F:  int sender(void **sig);
 600: 00000000 A8B04244  ;180:  void free_buf(void **sig);
 604: 00000000 74B14244  ;181:  int create_process(int proc_type,char *name,void (*entrypoint)(void),int stack_size,int priority,int timeslice,int pid_block,void *redir_table,int vector,int user);
-608: 00000000 94B34244  ;182:  void start (int pid)
+608: 00000000 A4B34244  ;182:  void start (int pid)
 60C: 00000000 44B24244  ;183:  int get_ptype(int pid);
 610: 00000000 90B14244  ;184:  int current_process (void);
 614: 00000000 C8B04244  ;185:  int delay (int timeout)
