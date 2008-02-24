@@ -4,6 +4,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
 //int LineDown(VIEWDATA *vd);
 //int LineUp(VIEWDATA *vd);
 int RenderPage(VIEWDATA *vd, int do_draw);
+REFCACHE *FindReferenceFirst(VIEWDATA *vd, unsigned int rawpos);
 REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref);
 int FindReferenceById(VIEWDATA *vd, unsigned int id, int i);
 int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf);

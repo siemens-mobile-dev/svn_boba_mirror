@@ -4,6 +4,8 @@ void AddNewStyle(VIEWDATA *vd);
 
 void AddBeginRef(VIEWDATA *vd);
 
+void AddBeginRefZ(VIEWDATA *vd);
+
 void AddEndRef(VIEWDATA *vd);
 
 void AddTextItem(VIEWDATA *vd, const char *text, int len);

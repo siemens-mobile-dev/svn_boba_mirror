@@ -5,7 +5,8 @@ s 2l lid 1 2count o 2l lo_name 2l lo_id 1checked ...  // 1 странный байт на гугл
 Известные поядки тэгов:
 L T (I не отображается ?)
 L T E
-L Z I E E
+L Z I E E - patches siemens club
+i Z I E - yandex maps
 L I S T E
 L I T E
 L T S T T T B E
@@ -20,7 +21,6 @@ formum.siemens-club.org
 ...K B T B L K I E B B T B T T...
 patches.siemens-club.org/patches
 S + T L Z I E E L I E B S L T B E B D I S T B S L T E
-
 L T B E B V Y T h_opf_1 C s B Y L T s B Y L T E B Y T 
 mywishlist.ru
 S X 9байт_каких_то + I 'какойто B + T L I S T E L I T
@@ -34,6 +34,10 @@ S X + I + T L I E S T B B D V Y T B S B D T S
 T L T E Y T S L T E B Y T "2" Y T L T E Y T Y
 L T E B Y T "3" Y T L T E Y T Y L T E B Y T "4"
 Y T L T E Y T Y L T E B Y T "5" Y T L T T E Y T
+expert.com - компоновка картинок
+X + I + T L I E !B! L I E L I E B L I E L 
+wap.lingvo
+S + T S L B D T B S E T B h_opf_1 B Y L T B E L T B E L 
 */
 
 #include "../inc/swilib.h"
@@ -142,6 +146,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_HDR_COMMON:
       //Получен заголовок
       memset(&(vd->work_ref),0xFF,sizeof(REFCACHE));
+      memset(&(vd->work_ref_Z),0xFF,sizeof(REFCACHE));
       i=_rshort(vd);
       vd->page_sz=_rlong(vd);
       vd->oms_wanted+=sizeof(OMS_HEADER_V2);
@@ -344,11 +349,15 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         break;
       case 'R':
         vd->oms_wanted+=2;
-        break;        
+        break;
       case 'E':  //finish ref
-        vd->ref_mode_L--;
-        if (!vd->ref_mode_L) // must be equal 0
-  	      AddEndRef(vd);
+        if (vd->work_ref.tag==_NOREF)
+          if (vd->work_ref_Z.tag=='Z')
+          {
+            memcpy(&(vd->work_ref),&(vd->work_ref_Z),sizeof(REFCACHE));
+            memset(&(vd->work_ref_Z),0xFF,sizeof(REFCACHE));
+          }
+	      AddEndRef(vd);
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
       case 'Q':
@@ -414,13 +423,6 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->iw=_rshort(vd); //width
         vd->ih=_rshort(vd); //height
         AddPictureItemFrame(vd,vd->iw,vd->ih);
-        //if (vd->tag_l_count)
-        //{
-        //  if (!(--vd->tag_l_count))
-        //  {
-        //    AddEndRef(vd);
-        //  }
-        //}
         vd->ref_mode_i--;
         if (!vd->ref_mode_i)
           AddEndRef(vd);
@@ -528,7 +530,6 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'L':
         i=_rshort(vd);
         vd->work_ref.tag='L';
-        vd->ref_mode_L=1;
         AddBeginRef(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGL_STAGE3;
@@ -552,10 +553,9 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         break;
       case 'Z':
         i=vd->iw=_rshort(vd);
-        //vd->work_ref.tag='Z';
-        vd->work_ref.id2=vd->oms_pos-2;
-        vd->ref_mode_L++;
-        //AddBeginRef(vd);
+        vd->work_ref_Z.tag='Z';
+        vd->work_ref_Z.id=vd->oms_pos-2;
+        AddBeginRefZ(vd);
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGZ_STAGE3;
         goto L_STAGE3_WANTED;
@@ -578,15 +578,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGT_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
       AddTextItem(vd,vd->oms+vd->oms_pos,i);
-
       if(!vd->title)
       {
         vd->title=(char *)malloc(i+1);
         memcpy(vd->title,vd->oms+vd->oms_pos,i);
         vd->title[i]=NULL;
         utf82win(vd->title, vd->title);
+        AddBrItem(vd);
       }
-      
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
@@ -832,9 +831,9 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       break;
     case OMS_TAGZ_STAGE3:
       i=vd->iw;
-      AddBrItem(vd);
-      AddTextItem(vd,vd->oms+vd->oms_pos,i);
-      AddBrItem(vd);
+      //AddBrItem(vd);
+      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      //AddBrItem(vd);
       vd->oms_pos+=i;
       //AddEndRef(vd);
       vd->oms_wanted++;

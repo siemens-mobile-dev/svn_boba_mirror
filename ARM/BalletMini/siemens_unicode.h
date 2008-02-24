@@ -13,8 +13,10 @@
 #define UTF16_FONT_SMALL (0xE012)
 #define UTF16_FONT_SMALL_BOLD (0xE013)
 
-//E01C/E01D - left/right align
-//E01E/E01F - center off/on
+#define UTF16_ALIGN_LEFT (0xE01C)
+#define UTF16_ALIGN_RIGHT (0xE01D)
+#define UTF16_ENA_CENTER (0xE01E)
+#define UTF16_DIS_CENTER (0xE01F)
 
 #ifdef NEWSGOLD
 #define CBOX_CHECKED 0xE116

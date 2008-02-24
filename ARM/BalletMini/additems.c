@@ -19,6 +19,7 @@ static void RawInsertChar(VIEWDATA *vd, int wchar)
     //Дошли до конца куска, реаллоцируем еще кусок
     vd->rawtext=realloc(vd->rawtext,(vd->rawtext_size+RAWTEXTCHUNK)*2);
   }
+  //
   vd->rawtext[vd->rawtext_size++]=wchar;
 }
 
@@ -32,11 +33,19 @@ void AddNewStyle(VIEWDATA *vd)
   RawInsertChar(vd,UTF16_PAPER_RGBA);
   RawInsertChar(vd,(vd->current_tag_d.red<<11)+(vd->current_tag_d.green<<2));
   RawInsertChar(vd,(vd->current_tag_d.blue<<11)+100);
+  RawInsertChar(vd,vd->current_tag_s.center?UTF16_ENA_CENTER:UTF16_DIS_CENTER);
+  RawInsertChar(vd,vd->current_tag_s.right?UTF16_ALIGN_RIGHT:UTF16_ALIGN_LEFT);
 }
 
 void AddBeginRef(VIEWDATA *vd)
 {
   vd->work_ref.begin=vd->rawtext_size;
+  RawInsertChar(vd,UTF16_ENA_INVERT);
+}
+
+void AddBeginRefZ(VIEWDATA *vd)
+{
+  vd->work_ref_Z.begin=vd->rawtext_size;
   RawInsertChar(vd,UTF16_ENA_INVERT);
 }
 
@@ -186,7 +195,6 @@ void AddPictureItem(VIEWDATA *vd, void *picture)
       wchar=dpl->w_char;
     }
   }
-  //Prepare Wide String
   RawInsertChar(vd,wchar);
 }
 
@@ -323,14 +331,14 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
     vd->img_tbox=AddPictureItemFile(vd, fname);
     if (vd->img_tbox==0xE115) vd->img_tbox=0xE11E;
   }
-  RawInsertChar(vd,0x0A);
+//  RawInsertChar(vd,0x0A);
   RawInsertChar(vd,vd->img_tbox);
   int len=_rshort2(vd->oms+pos);
   vd->work_ref.data=(void *)AllocWS(len);
   char *c=extract_omstr(vd,pos);
   oms2ws(((WSHDR *)vd->work_ref.data),c,len);
   mfree(c);
-  RawInsertChar(vd,0x0A);
+//  RawInsertChar(vd,0x0A);
 }
 
 void AddButtonItem(VIEWDATA *vd, const char *text, int len)
@@ -350,7 +358,7 @@ void AddDropDownList(VIEWDATA *vd)
     vd->img_ddlist=AddPictureItemFile(vd, fname);
     if (vd->img_ddlist==0xE115) vd->img_ddlist=0xE11B;
   }
-  RawInsertChar(vd,0x0A);
+//  RawInsertChar(vd,0x0A);
   RawInsertChar(vd,vd->img_ddlist);
-  RawInsertChar(vd,0x0A);
+//  RawInsertChar(vd,0x0A);
 }

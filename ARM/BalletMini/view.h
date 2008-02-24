@@ -1,5 +1,5 @@
 #ifndef _VIEW_H_
-  #define _VIEW_H_
+#define _VIEW_H_
 
 #include "../inc/pnglist.h"
 
@@ -57,7 +57,7 @@ typedef struct
   unsigned short paper1;
   unsigned short paper2;
   unsigned short pixheight;
-  unsigned short bold:1, underline:1, ref:1;
+  unsigned short bold:1, underline:1, ref:1,center:1,right:1;
 }LINECACHE;
 
 typedef struct
@@ -122,13 +122,14 @@ typedef struct
   unsigned int ih;
   //
   unsigned int tag_o_count;
-  unsigned int ref_mode_L;
+  //unsigned int ref_mode_L;
   unsigned int ref_mode_i;
   //
   OMS_DYNPNGLIST *dynpng_list;
   
   //References
   REFCACHE work_ref;
+  REFCACHE work_ref_Z;
   REFCACHE *ref_cache;
   int ref_cache_size;
   

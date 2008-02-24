@@ -54,6 +54,8 @@ char BOOKMARKS_PATH[256];
 char SEARCH_PATH[256];
 char IMG_PATH[256];
 
+char BALLET_PATH[256];
+
 static void StartGetFile(int dummy, char *fncache)
 {
   IPC_REQ *sipc;
@@ -512,6 +514,17 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       {
         switch(rf->tag)
         {
+        case 'Z':
+          if (rf->id!=_NOREF)
+          {
+            char *c=extract_omstr(vd,rf->id);
+            unsigned int l=_rshort2(vd->oms+rf->id);
+            goto_url=malloc(l-strlen(c)+1);
+            strcpy(goto_url,c+strlen(c)+1);
+            mfree(c);
+            return 0xFF;
+          }
+          break;
         case 'L':
           if (rf->id!=_NOREF)
           {
@@ -532,8 +545,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           {
             REFCACHE *rfp;
             int i;
-            if (rf->tag!='r') break;
-            if (rf->begin>=vd->rawtext_size) break;
             if (vd->rawtext[rf->begin+1]!=vd->img_rbtn_off) break;
             vd->rawtext[rf->begin+1]=vd->img_rbtn_on;
             i=0;
@@ -541,9 +552,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             {
               rfp=vd->ref_cache+i;
               if (rfp!=rf)
-                if (rfp->begin<vd->rawtext_size)
-                  if (vd->rawtext[rfp->begin+1]==vd->img_rbtn_on)
-                    vd->rawtext[rfp->begin+1]=vd->img_rbtn_off;
+                if (vd->rawtext[rfp->begin+1]==vd->img_rbtn_on)
+                  vd->rawtext[rfp->begin+1]=vd->img_rbtn_off;
               i++;
             }
           }
@@ -558,7 +568,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
           break;
         case 'c':
-          if (rf->begin>=vd->rawtext_size) break;
           if (vd->rawtext[rf->begin+1]==vd->img_cbtn_on)
             vd->rawtext[rf->begin+1]=vd->img_cbtn_off;
           else
@@ -579,21 +588,14 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           break;
         case 'i':
         case 'u':
-          if (rf->id!=_NOREF)
-          {
-            goto_url=malloc(strlen(vd->pageurl)+1);
-            strcpy(goto_url,vd->pageurl);
-            from_url=malloc(strlen(vd->pageurl)+1);
-            strcpy(from_url,vd->pageurl);
-            goto_params=collectItemsParams(vd,rf);
-            return 0xFF;
-          }
-          break;
+          goto_url=malloc(strlen(vd->pageurl)+1);
+          strcpy(goto_url,vd->pageurl);
+          from_url=malloc(strlen(vd->pageurl)+1);
+          strcpy(from_url,vd->pageurl);
+          goto_params=collectItemsParams(vd,rf);
+          return 0xFF;
         case 's':
-          if (rf->id!=_NOREF)
-          {
-            ChangeMenuSelection(vd, rf);
-          }
+          ChangeMenuSelection(vd, rf);
           break;
         default:
           {
@@ -1193,6 +1195,8 @@ int main(const char *exename, const char *filename)
   strcat(BOOKMARKS_PATH,"Bookmarks");
   memcpy(IMG_PATH,exename,l);
   strcat(IMG_PATH,"img");
+  
+  memcpy(BALLET_PATH,exename,l);
 
   memcpy(SEARCH_PATH,exename,l);
   strcat(SEARCH_PATH,"Search");
@@ -1205,15 +1209,15 @@ int main(const char *exename, const char *filename)
   if (!isdir(BOOKMARKS_PATH,&ul))
     mkdir(BOOKMARKS_PATH,&ul);
   if (!isdir(SEARCH_PATH,&ul))
-    mkdir(SEARCH_PATH,&ul);  
+    mkdir(SEARCH_PATH,&ul);
   if (!isdir(IMG_PATH,&ul))
-    mkdir(IMG_PATH,&ul);  
+    mkdir(IMG_PATH,&ul);
   
   strcat(URLCACHE_PATH,"\\");
   strcat(OMSCACHE_PATH,"\\");
   strcat(BOOKMARKS_PATH,"\\");
-  strcat(SEARCH_PATH,"\\");  
-  strcat(IMG_PATH,"\\");  
+  strcat(SEARCH_PATH,"\\");
+  strcat(IMG_PATH,"\\");
   
   CheckHistory("http://perk11.info/elf");
 
