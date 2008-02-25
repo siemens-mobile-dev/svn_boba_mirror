@@ -336,3 +336,5 @@
 0954: FFFFFFFF A0C72244  ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF 81740F45  ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 095C: FFFFFFFF 21750645  ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
+0960: FFFFFFFF A53B0645  ; 258: int Display_GetHeight(int Display)
+0964: FFFFFFFF B53B0645  ; 259: int Display_GetWidth(int Display)
