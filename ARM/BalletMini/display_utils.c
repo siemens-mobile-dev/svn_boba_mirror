@@ -821,7 +821,8 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
   vd->oms_pos+=2;
   for(int o=0;o<n_sel;o++)
   {
-    vd->oms_pos+=1;
+    while(*(vd->oms+vd->oms_pos)!='o') vd->oms_pos++; // '$'
+    vd->oms_pos++;
     if (rf->value==vd->oms_pos) start=o;
     us=malloc(sizeof(SEL_STRUCT));
     char *d=extract_omstr(vd,vd->oms_pos);
