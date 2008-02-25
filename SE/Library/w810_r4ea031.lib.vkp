@@ -59,7 +59,7 @@
 04FC: FFFFFFFF E9081745   ; 13F:  void SetMenuItemStyle( void *obj , int style)
 
 0500: FFFFFFFF BD251945   ; 140:  void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar)
-;0504: FFFFFFFF C5411545   ; 141:  void SetGuiItemText(void *gui,int item,int StrID)
+0504: FFFFFFFF EDA01545   ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: FFFFFFFF C5411545   ; 142:  void StatusIndication_SetItemText(void *gui,int item,int StrID)
 050C: FFFFFFFF 45E52A45   ; 143:  void StatusIndication_ShowNotes(int StrID)
 0510: FFFFFFFF DD5B1645   ; 144:  void * CreateStringInput(int,...)
@@ -141,7 +141,7 @@
 0694: FFFFFFFF D56A2645   ; 1A5:  void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 
 0698: FFFFFFFF D5D16345   ; 1A6:  char * UIEventName(int event);
-;069C: FFFFFFFF C0475044   ; 81A7:
+069C: FFFFFFFF 6F662E4C   ;81A7:  int * MissedEvents(void);
 
 06A0: FFFFFFFF 7D125345   ; 1A8:  void  UI_Event(int event);
 06A4: FFFFFFFF 89125345   ; 1A9:  void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
