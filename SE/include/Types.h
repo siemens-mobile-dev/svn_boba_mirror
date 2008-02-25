@@ -39,6 +39,7 @@ typedef signed long OSSEMVAL;
 
 typedef unsigned long LPARAM;
 typedef unsigned long LRESULT;
+#define OS_PROCESS(x) __interwork void x(void)
 
 typedef void (OSENTRYPOINT)(void);
 
@@ -349,7 +350,7 @@ typedef struct
   LIST *UserDataList;
   LIST *gKbdHookList;
   LIST *elflist;
-  int HPID;
+  PROCESS HPID;
   LIST *UIHookList;
   LIST	*OseHookList;
   DB_EXT **dbe;

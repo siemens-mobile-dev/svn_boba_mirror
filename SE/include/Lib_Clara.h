@@ -495,25 +495,29 @@ __swi __arm  int ListElement_Prt2NumElement(LIST *lst,void *ptr);
 
 
 #pragma swi_number=0x17C
-__swi   __arm void *alloc(int size,int signo);
+__swi   __arm union SIGNAL *alloc(OSBUFSIZE size,SIGSELECT signo);
 #pragma swi_number=0x17D
-__swi  __arm void * recive(const SIGSELECT *sigsel);
+__swi   __arm union SIGNAL *receive(const SIGSELECT *sigsel);
 #pragma swi_number=0x17E
-__swi   __arm void send(union SIGNAL **sig,int PID);
+__swi   __arm void send(union SIGNAL **sig,PROCESS to);
 #pragma swi_number=0x17F
-__swi   __arm int sender(void **sig);
+__swi   __arm PROCESS sender(union SIGNAL **sig);
 #pragma swi_number=0x180
-__swi   __arm void free_buf(void **sig);
+__swi   __arm void free_buf(union SIGNAL **sig);
 #pragma swi_number=0x181
-__swi   __arm int create_process(int proc_type,char *name,void (*entrypoint)(void),int stack_size,int priority,int timeslice,int pid_block,void *redir_table,int vector,int user);
+__swi   __arm PROCESS create_process(int proc_type,char *name,OSENTRYPOINT *entrypoint,OSADDRESS stack_size,OSPRIORITY priority,OSTIME timeslice,PROCESS pid_block,void *redir_table,OSVECTOR vector,OSUSER user);
 #pragma swi_number=0x182
-__swi   __arm void start (int pid);
+__swi   __arm void start(PROCESS pid);
 #pragma swi_number=0x183
-__swi   __arm int get_ptype(int pid);
+__swi   __arm int get_ptype(PROCESS pid);
 #pragma swi_number=0x184
-__swi   __arm int current_process (void);
+__swi   __arm PROCESS current_process(void);
 #pragma swi_number=0x185
-__swi   __arm int delay (int timeout);
+__swi   __arm void delay(OSTIME timeout);
+#pragma swi_number=0x186
+__swi   __arm OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
+#pragma swi_number=0x187
+__swi   __arm void kill_proc(PROCESS pid);
 
 #pragma swi_number=0x1A0
 __swi __arm  char* strcpy(char * dest, char * source);

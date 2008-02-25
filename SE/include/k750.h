@@ -58,13 +58,13 @@
 
 
 
-extern  __arm void *alloc(int size,int signo);
-extern  __arm void start (int pid);
-extern  __arm void * recive(void *sigsel);
-extern  __arm void send(void **sig,int PID);
-extern  __arm int sender(void **sig);
-extern  __arm void free_buf(void **sig);
-extern  __arm int create_process(int proc_type,char *name,void (*entrypoint)(void),int stack_size,int priority,int timeslice,int pid_block,void *redir_table,int vector,int user);
+extern   __arm union SIGNAL *alloc(OSBUFSIZE size,SIGSELECT signo);
+extern   __arm void start(PROCESS pid);
+extern   __arm union SIGNAL *receive(const SIGSELECT *sigsel);
+extern   __arm void send(union SIGNAL **sig,PROCESS to);
+extern   __arm PROCESS sender(union SIGNAL **sig);
+extern   __arm void free_buf(union SIGNAL **sig);
+extern   __arm PROCESS create_process(int proc_type,char *name,OSENTRYPOINT *entrypoint,OSADDRESS stack_size,OSPRIORITY priority,OSTIME timeslice,PROCESS pid_block,void *redir_table,OSVECTOR vector,OSUSER user);
 
 
 
