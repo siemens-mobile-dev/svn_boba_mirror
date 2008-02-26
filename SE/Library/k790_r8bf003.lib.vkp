@@ -118,8 +118,8 @@
 05D0: 00000000 619D2D45   ; 174:  void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage)
 05D4: 00000000 B9BA2345   ; 175:  char * manifest_GetParam(char *buf,char *param_name,int unk)
 05D8: 00000000 8938E644   ; 176:  int lseek(int file,int offset,int mode)
-05DC: 00000000 00000000   ;8177:  int get_VBUFFER(void)   ????????
-05E0: 00000000 00000000   ; 178:  viod SetLampLevel (int level)
+05DC: 00000000 7B251444   ;8177:  int get_VBUFFER(void)  //nullstub
+05E0: 00000000 7B251444   ; 178:  viod SetLampLevel (int level)  //nullstub
 05E4: 00000000 15BB1745   ; 179:  void * ListElement_Remove(LIST *lst,int index)
 05E8: 00000000 95632C44   ; 17A:  int GetCurrentPID(void)
 05EC: 00000000 49BB1745   ; 17B:  int ListElement_Prt2NumElement(LIST *lst,void *ptr)
@@ -256,7 +256,7 @@
 0818: 00000000 65A7DB44   ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 71A7DB44   ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 01A2DB44   ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: 00000000 00000000   ; 209: int isDirectory (u16 * path ,u16 * filename , int * error );  ?????????
+0824: 00000000 7B251444   ; 209: int isDirectory (u16 * path ,u16 * filename , int * error );  //nullstub
 0828: 00000000 9927E644   ; 20A: void FileDelete (u16 * path ,u16 * filename , int * error );
 082C: 00000000 D5FF3145   ; 20B: void SetFocus (GUI * , int);
 
@@ -318,8 +318,8 @@
 ;08F8: 00000000    ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: 00000000    ; 23F: DISP_BASE_METHOD DISP_BASE_GetMethod0C (DISP_BASE *);
 
-0900: 00000000 00000000   ; 240: void JavaSession_Manager (int cmd);
-0904: 00000000 00000000   ; 241: int JavaSession_GetName(void);
+0900: 00000000 7B251444   ; 240: void JavaSession_Manager (int cmd);  //nullstub
+0904: 00000000 7B251444   ; 241: int JavaSession_GetName(void);  //nullstub
 0908: 00000000 5D2C3045   ; 242: int TextCopyId(int);
 090C: 00000000 81B12645   ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: 00000000 A9A72D45   ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
