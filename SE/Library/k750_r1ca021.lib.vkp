@@ -319,3 +319,5 @@
 0958: FFFFFFFF B9910E45  ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 ;095C: FFFFFFFF 09930545  ; 257: void infoboxold(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,int shouldbe0);
 095C: FFFFFFFF AD920545  ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
+0960: FFFFFFFF 1D5A0545  ; 258: int Display_GetHeight(int Display);
+0964: FFFFFFFF 2D5A0545  ; 259: int Display_GetWidth(int Display);
