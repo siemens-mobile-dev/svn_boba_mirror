@@ -264,7 +264,7 @@ int onLBMessage(GUI_MESSAGE * msg)
   case 3:
     item=GUIonMessage_GetCreatedSubItemParrentIndex(msg);
     si=(SESSION_ITEM *)ListElement_GetByIndex(myBook->session_list,item); 
-    BOOK_ITEM * bi =(BOOK_ITEM *) ListElement_GetByIndex(si->book_list,SubItem++);
+    BOOK_ITEM * bi =(BOOK_ITEM *) ListElement_GetByIndex(si->book_list,List2LineGetCurrentIndex(msg));
     List2lineSubitemAddText(msg,TextCopyId(bi->book_name));
     break;
   }
