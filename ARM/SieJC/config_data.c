@@ -219,18 +219,26 @@ __root const unsigned int DEF_SKR=10;
 
 __root const CFG_HDR cfghdr_FONTS={CFG_LEVEL,LG_VIEW,1,0};
 
-__root const CFG_HDR cfghdr36={CFG_CBOX,LG_ROSTER_FONT,0,2};
+__root const CFG_HDR cfghdr36={CFG_CBOX,LG_ROSTER_FONT,0,6};
 __root const int ROSTER_FONT = 0;
-__root const CFG_CBOX_ITEM cfgcbox_font_roster[2]={
-  LG_NORMAL_FONT,
-  LG_BOLD_FONT
+__root const CFG_CBOX_ITEM cfgcbox_font_roster[6]={
+  LG_SMALL_NORMAL_FONT,
+  LG_SMALL_BOLD_FONT,
+  LG_MID_NORMAL_FONT,
+  LG_MID_BOLD_FONT,
+  LG_LARGE_NORMAL_FONT,
+  LG_LARGE_BOLD_FONT
 };
 
-__root const CFG_HDR cfghdr37={CFG_CBOX,LG_CHATS_FONT,0,2};
+__root const CFG_HDR cfghdr37={CFG_CBOX,LG_CHATS_FONT,0,6};
 __root const int MESSAGES_FONT = 0;
-__root const CFG_CBOX_ITEM cfgcbox_font_msgwin[2]={
-  "Нормальный",
-  "Жирный"
+__root const CFG_CBOX_ITEM cfgcbox_font_msgwin[6]={
+  LG_SMALL_NORMAL_FONT,
+  LG_SMALL_BOLD_FONT,
+  LG_MID_NORMAL_FONT,
+  LG_MID_BOLD_FONT,
+  LG_LARGE_NORMAL_FONT,
+  LG_LARGE_BOLD_FONT
 };
 
 __root const CFG_HDR cfghdr38={CFG_CBOX,LG_UNDERLINING,0,2};

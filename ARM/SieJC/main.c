@@ -2166,21 +2166,71 @@ void AutoStatus(void)
     UnlockSched();
 
     Check_Settings_Cleverness();
-    if (ROSTER_FONT)
+    switch (ROSTER_FONT)
     {
-      CLIST_FONT=FONT_SMALL_BOLD;
+    case 0:
+      {
+        CLIST_FONT=FONT_SMALL;
+        break;
+      }
+    case 1:
+      {
+        CLIST_FONT=FONT_SMALL_BOLD;
+        break;
+      }
+    case 2:
+      {
+        CLIST_FONT=FONT_MEDIUM;
+        break;
+      }
+    case 3:
+      {
+        CLIST_FONT=FONT_MEDIUM_BOLD;
+        break;
+      }
+    case 4:
+      {
+        CLIST_FONT=FONT_LARGE;
+        break;
+      }
+    case 5:
+      {
+        CLIST_FONT=FONT_LARGE_BOLD;
+        break;
+      }
     }
-    else
+    switch (MESSAGES_FONT)
     {
-      CLIST_FONT=FONT_SMALL;
-    }
-    if (MESSAGES_FONT)
-    {
-      MESSAGEWIN_FONT=FONT_SMALL_BOLD;
-    }
-    else
-    {
-      MESSAGEWIN_FONT=FONT_SMALL;
+    case 0:
+      {
+        MESSAGEWIN_FONT=FONT_SMALL;
+        break;
+      }
+    case 1:
+      {
+        MESSAGEWIN_FONT=FONT_SMALL_BOLD;
+        break;
+      }
+    case 2:
+      {
+        MESSAGEWIN_FONT=FONT_MEDIUM;
+        break;
+      }
+    case 3:
+      {
+        MESSAGEWIN_FONT=FONT_MEDIUM_BOLD;
+        break;
+      }
+    case 4:
+      {
+        MESSAGEWIN_FONT=FONT_LARGE;
+        break;
+      }
+    case 5:
+      {
+        MESSAGEWIN_FONT=FONT_LARGE_BOLD;
+        break;
+      }
     }
     if (AUTOSTATUS_ENABLED)
     {
