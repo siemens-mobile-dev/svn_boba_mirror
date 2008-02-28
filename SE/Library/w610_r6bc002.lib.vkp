@@ -239,7 +239,10 @@
 0954: 00000000 4C7E9645   ;8255: DB_EXT *LastExtDB(void);
 0958: 00000000 A134EC44   ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 
-095C: 00000000 0D0C2B45 ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk)
+095C: 00000000 0D0C2B45   ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk)
+0960: 00000000 29E43645   ; 258: int Display_GetHeight(int Display);
+0964: 00000000 35E43645   ; 259: int Display_GetWidth(int Display);
+0968: 00000000 E5D10045   ; 25A: void PlaySystemSound (int SndNumber);
 ;0960: 00000000 9DE72045 ; 258: int MemStickState(int *sp, int *sp1, int *sp2);
 ;0964: 00000000 6DC93445 ; 259: void SetTrayIcon(int iconID, int mode);
 ;0968: 00000000 79612A45 ; 25A: void SetOrientationScreen(BOOK * book, int orientation);
