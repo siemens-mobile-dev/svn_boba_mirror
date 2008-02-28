@@ -318,8 +318,8 @@
 ;08FC: FFFFFFFF    ; 23F: DISP_BASE_METHOD DISP_BASE_GetMethod0C (DISP_BASE *);
 
 
-;0900: FFFFFFFF    ; 240: void JavaSession_Manager (int cmd);
-;0904: FFFFFFFF    ; 241: int JavaSession_GetName(void);
+0900: FFFFFFFF 55564A45   ; 240: void JavaSession_Manager (int cmd);
+0904: FFFFFFFF 9D554A45   ; 241: int JavaSession_GetName(void);
 0908: FFFFFFFF 295E3445   ; 242: int TextCopyId(int);
 090C: FFFFFFFF 753D1145   ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: FFFFFFFF 5908FE44   ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
@@ -330,13 +330,13 @@
 ;0924: FFFFFFFF  ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
 
 
-;0948: FFFFFFFF    ; 252: int List2LineGetCurrentIndex(void * msg);
-;094C: FFFFFFFF    ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
+0948: FFFFFFFF C508FE44   ; 252: int List2LineGetCurrentIndex(void * msg);
+094C: FFFFFFFF B508FE44   ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF 814E4245   ; 254: void DestroyDirHandle(void *handle);
-0954: FFFFFFFF 7C934544   ; 8255: DB_EXT *LastExtDB(void);
-0958: FFFFFFFF F1614345   ;256: void GetOtherExtMethods(FILESUBROUTINE **);
+0954: FFFFFFFF 7C934544   ;8255: DB_EXT *LastExtDB(void);
+0958: FFFFFFFF F1614345   ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 
 095C: FFFFFFFF 05083A45   ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
-;0960: FFFFFFFF ; 258: int Display_GetHeight(int Display);
-;0964: FFFFFFFF ; 259: int Display_GetWidth(int Display);
+0960: FFFFFFFF 65313B45   ; 258: int Display_GetHeight(int Display);
+0964: FFFFFFFF 75313B45   ; 259: int Display_GetWidth(int Display);
 0968: FFFFFFFF 5DB2FC44   ; 25A: void PlaySystemSound (int SndNumber);

@@ -165,6 +165,7 @@
 06DC: FFFFFFFF A5D9D344   ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF 9199F644   ;81B8:  IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E4: FFFFFFFF 49B3F644   ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);  // גלוסעמ  get_APP_DESC_TABLE
+06F8: FFFFFFFF CD92D244   ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: FFFFFFFF E591D244   ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 
 0700: FFFFFFFF 119BD544   ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -313,6 +314,8 @@
 0910: FFFFFFFF 09A5D544   ; 244:
 0914: FFFFFFFF 95A5D544   ; 245:
 0918: FFFFFFFF 85A5D544   ; 246:
+
+0924: FFFFFFFF 44F6B3B5  ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
 
 0950: FFFFFFFF A15D0D45  ; 254: void DestroyDirHandle(void *handle);
 0954: FFFFFFFF 20CD2244  ;8255: DB_EXT *LastExtDB(void);
