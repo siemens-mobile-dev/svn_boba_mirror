@@ -9213,7 +9213,7 @@
         <option>
           <name>CCDefines</name>
           <state>DB2020</state>
-          <state>W580_R8BA024</state>
+          <state>W850_R1KG001.h</state>
           <state>SWI_HOOK</state>
         </option>
         <option>
@@ -9385,7 +9385,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W580_R8BA024.h</state>
+          <state>$PROJ_DIR$\Target\W850_R1KG001.h</state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -9481,7 +9481,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state>W580_R8BA024</state>
+          <state>W850_R1KG001</state>
           <state>SWI_HOOK</state>
         </option>
         <option>
