@@ -150,9 +150,10 @@ __swi __arm  void MMIPROC (void(*PROC)(int,void*),int p1 , void * p2);
 #pragma swi_number=0x10C
 __swi __arm int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode);
 
+#ifndef SWI_HOOK
 #pragma swi_number=0x10D
 __swi __arm int elfload(u16* filename, void *param1, void *param2, void *param3);
-
+#endif
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
@@ -226,14 +227,17 @@ __swi __arm  int DataBrowser_isFileInListExt(unsigned short * ext_table,unsigned
 
 #pragma swi_number=0x128
 __swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+#ifndef SWI_HOOK
 #pragma swi_number=0x128
 __swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
+#endif
 
 #pragma swi_number=0x129
 __swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+#ifndef SWI_HOOK
 #pragma swi_number=0x129
 __swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID,  void *),  void *);
-
+#endif
 #pragma swi_number=0x12A
 __swi __arm  void Timer_Kill(u16 *timerID);
 
@@ -955,8 +959,10 @@ __swi __arm  void PlaySystemSound (int SndNumber);
 
 #pragma swi_number=0x25D
 __swi __arm  int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
+#ifndef SWI_HOOK
 #pragma swi_number=0x25D
 __swi __arm  int TabMenuBar_GetFocusedTabIndex(GUI * );
+#endif
 #pragma swi_number=0x25E
 __swi __arm  void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 #pragma swi_number=0x25F
