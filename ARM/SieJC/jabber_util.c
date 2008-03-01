@@ -564,7 +564,18 @@ void Send_Initial_Presence_Helper()
 //Context: HELPER
 void _enterconference(MUC_ENTER_PARAM *param)
 {
-  char magic_ex[]="<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'><history maxstanzas='%d'/></x><show>%s</show><status>%s</status></presence>";
+  char *magic_ex = malloc(1024);
+  strcpy(magic_ex, "<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'><history maxstanzas='%d'/>");
+  if(param->pass)
+  {
+    char *_room_pass = Mask_Special_Syms(param->pass);
+    char *pass_str = malloc(128);
+    sprintf(pass_str,"<password>%s</password>", _room_pass);
+    strcat(magic_ex, pass_str);
+    mfree(pass_str);
+    mfree(_room_pass);
+  }
+  strcat(magic_ex, "</x><show>%s</show><status>%s</status></presence>");
   char* magic = malloc(1024);
   char *stext;
   extern char empty_str[];
@@ -576,6 +587,7 @@ void _enterconference(MUC_ENTER_PARAM *param)
   mfree(_from);
   mfree(_room_name);
   mfree(_room_nick);
+  mfree(magic_ex);
   SendAnswer(magic);
   mfree(magic);
   mfree(param->room_nick);
@@ -587,7 +599,7 @@ void _enterconference(MUC_ENTER_PARAM *param)
 
 // Входит в конференцию
 // Все имена в UTF-8 :)
-void Enter_Conference(char *room, char *roomnick, char N_messages)
+void Enter_Conference(char *room, char *roomnick, char *roompass, char N_messages)
 {
 
   // Смотрим, есть ли такая конфа в списке конференций
@@ -629,8 +641,13 @@ void Enter_Conference(char *room, char *roomnick, char N_messages)
   par->room_name = malloc(strlen(room)*2);
   strcpy(par->room_nick, roomnick);
   strcpy(par->room_name, room);
-
-  par->pass=NULL;
+  if(roompass)
+  {
+    par->pass = malloc(strlen(roompass)*2);
+    strcpy(par->pass, roompass);
+  }
+  else par->pass = NULL;
+  
   if(!IsAlreadyInList)
   {
     par->mess_num=N_messages;
@@ -1606,7 +1623,6 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   char c_id[]="id";
 
   // Если включено обслуживание запросов о получении...
-  if(DELIVERY_EVENTS)
   {
     XMLNode* xnode = XML_Get_Child_Node_By_Name(nodeEx,"x");
     if(xnode)
@@ -1617,12 +1633,19 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       {
         // получили <x xmlns='jabber:x:event'>
         // Проверяем <delivered/>, ибо не умеем ничего больше
+        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
         XMLNode *delivery = XML_Get_Child_Node_By_Name(xnode,"delivered");
-        if(delivery)
+        if((delivery)&&(DELIVERY_EVENTS)) //деливери
         {
           // Получаем ID сообщения
           char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
           if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
+        }
+        if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE)) //composing
+        {
+        delivery = XML_Get_Child_Node_By_Name(xnode,"composing");
+        if(delivery) CList_ChangeComposingStatus(Res_ex, 1);
+        else CList_ChangeComposingStatus(Res_ex, 0);
         }
       }
     }

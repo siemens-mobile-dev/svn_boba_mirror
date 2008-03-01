@@ -165,7 +165,7 @@ void CancelComposing(char* jid);
 void MUCList_Destroy();
 
 // Войти в конференцию
-void Enter_Conference(char *room, char *roomnick, char N_messages);
+void Enter_Conference(char *room, char *roomnick, char *roompass, char N_messages);
 
 // Выйти из конференции
 void Send_Leave_Conference(char* room);

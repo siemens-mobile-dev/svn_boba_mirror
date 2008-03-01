@@ -1326,7 +1326,7 @@ void Enter_SiepatchDB()
 
   char *room_nick =ANSI2UTF8(nick, strlen(nick)*2);
   char* room_name = ANSI2UTF8(room, strlen(room)*2);
-  Enter_Conference(room, nick, DEFAULT_MUC_MSGCOUNT);
+  Enter_Conference(room, nick, NULL, DEFAULT_MUC_MSGCOUNT);
   mfree(room_nick);
   mfree(room_name);
 }
@@ -1556,7 +1556,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
 
    case '4':
       {
-        Enter_SiepatchDB();
+        if(Jabber_state==JS_ONLINE) Enter_SiepatchDB();
         break;
       }
    

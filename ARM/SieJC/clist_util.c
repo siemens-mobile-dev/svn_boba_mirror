@@ -505,6 +505,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
 
       ResEx->status = status;
       ResEx->priority = priority;
+      ResEx->compos = 0;
       ResEx->muc_privs.aff = AFFILIATION_NONE;
       ResEx->muc_privs.role=  ROLE_NONE;
       ResEx->muc_privs.real_jid =  NULL;
@@ -579,6 +580,12 @@ void CList_ChangeContactParams(CLIST* Cont_Ex,
   Cont_Ex->IsVisible = CList_GetVisibilityForGroup(group);
 }
 
+void CList_ChangeComposingStatus(TRESOURCE* Res_Ex, char composing)
+{
+  if(!Res_Ex)return;
+  Res_Ex->compos = composing;
+}
+
 // Пишет роли контакта в конфе в структуру
 void CList_MUC_SetRole(char* jid, CONF_DATA priv)
 {
@@ -633,6 +640,7 @@ CLIST* CList_AddContact(char* jid,
   ResEx->muc_privs.real_jid =  NULL;
   ResEx->has_unread_msg=0;
   ResEx->total_msg_count=0;
+  ResEx->compos=0;
   if(group & 0x80)
   {
     ResEx->entry_type=T_CONF_ROOT; // Корень конференции

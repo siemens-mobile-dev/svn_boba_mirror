@@ -219,7 +219,7 @@ int bm_menu_onkey(void *data, GUI_MSG *msg)
       
     };
     extern const unsigned int DEFAULT_MUC_MSGCOUNT;
-      Enter_Conference(it->mucname, it->nick, DEFAULT_MUC_MSGCOUNT);
+      Enter_Conference(it->mucname, it->nick, it->pass, DEFAULT_MUC_MSGCOUNT);
   }
   Req_Close_BM_Menu = 1;
 return 0;
