@@ -24,6 +24,8 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #define STR(__STR__) Str2ID((u16*)(L##__STR__),0,SID_ANY_LEN)
 
 #define MINUTE_TICK_EVENT 999
+#define ELF_SHOW_INFO_EVENT 998
+#define ELF_TERMINATE_EVENT 997
 
 
 typedef  unsigned int size_t;
@@ -148,6 +150,9 @@ __swi __arm  void MMIPROC (void(*PROC)(int,void*),int p1 , void * p2);
 #pragma swi_number=0x10C
 __swi __arm int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode);
 
+#pragma swi_number=0x10D
+__swi __arm int elfload(u16* filename, void *param1, void *param2, void *param3);
+
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
@@ -221,9 +226,13 @@ __swi __arm  int DataBrowser_isFileInListExt(unsigned short * ext_table,unsigned
 
 #pragma swi_number=0x128
 __swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+#pragma swi_number=0x128
+__swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
 
 #pragma swi_number=0x129
 __swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+#pragma swi_number=0x129
+__swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID,  void *),  void *);
 
 #pragma swi_number=0x12A
 __swi __arm  void Timer_Kill(u16 *timerID);
@@ -717,7 +726,7 @@ __swi __arm  void addGui2XGuiList (void* xguilist , GUI*);
 #pragma swi_number=0x1EF
 __swi __arm void InvalidateRect(DISP_OBJ *,RECT*);
 #pragma swi_number=0x1F0
-__swi __arm int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,int,int,int size_obj);
+__swi __arm int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,void(*)(),int,int size_obj);
 #pragma swi_number=0x1F1
 __swi __arm int SetFont(int);
 #pragma swi_number=0x81F2
@@ -938,5 +947,31 @@ __swi __arm  int Display_GetHeight(int Display);
 __swi __arm  int Display_GetWidth(int Display);
 #pragma swi_number=0x25A
 __swi __arm  void PlaySystemSound (int SndNumber);
+
+/*
+#pragma swi_number=0x25B
+#pragma swi_number=0x25C
+*/
+
+#pragma swi_number=0x25D
+__swi __arm  int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
+#pragma swi_number=0x25D
+__swi __arm  int TabMenuBar_GetFocusedTabIndex(GUI * );
+#pragma swi_number=0x25E
+__swi __arm  void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
+#pragma swi_number=0x25F
+__swi __arm  int GC_GetPenColor (void* GC);
+#pragma swi_number=0x260
+__swi __arm  void GC_SetPenColor(void* GC , int pen_color);
+
+#pragma swi_number=0x261
+__swi __arm  void GC_SetPixel (void* GC,int x1,int y1,int color);
+#pragma swi_number=0x262
+__swi __arm  void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
+#pragma swi_number=0x263
+__swi __arm  void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
+#pragma swi_number=0x264
+__swi __arm  int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
+
 
 #endif
