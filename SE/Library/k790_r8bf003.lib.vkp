@@ -343,7 +343,7 @@
 097C: 00000000 89E13145; 25F: int GC_GetPenColor (void* GC);
 0980: 00000000 4DE13145; 260: void GC_SetPenColor(void* GC , int pen_color);
 0984: 00000000 8DDD3145; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
-0988: 00000000 00000000; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2); //похоже в прошивке w880 адрес ведет на мусор
+0988: 00000000 D9E93045; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
 098C: 00000000 91EA3145; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
 0990: 00000000 59DE3145; 264: int GC_DrawBitmap(void *gc, int x1, int y1, int x2, int y2, int * bmp);
 
