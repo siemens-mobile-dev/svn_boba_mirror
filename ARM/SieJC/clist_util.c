@@ -644,8 +644,6 @@ CLIST* CList_AddContact(char* jid,
   if(group & 0x80)
   {
     ResEx->entry_type=T_CONF_ROOT; // Корень конференции
-    ResEx->status=PRESENCE_ONLINE;
-    ShowMSG(1,(int)LG_MUCCROK);
   }
   else
   {
@@ -654,8 +652,9 @@ CLIST* CList_AddContact(char* jid,
     {
       ResEx->entry_type=T_TRANSPORT; // Транспортный агент
     }
-    ResEx->status=PRESENCE_OFFLINE;
   }
+  ResEx->status=PRESENCE_OFFLINE;
+  
   ResEx->name = NULL;
   ResEx->full_name = malloc(strlen(jid)+1);
   strcpy(ResEx->full_name, jid);

@@ -1405,7 +1405,13 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
           Req_Set_Role = 1;
         }
-         
+        
+        char* my_nick = Get_Resource_Name_By_FullJID(CList_FindMUCByJID(Conference->JID)->conf_jid);
+        if (!strcmp(nick,my_nick)) //если ето мы, входим в нее.
+        {
+          Conference->res_list->status=PRESENCE_ONLINE;
+          ShowMSG(1,(int)LG_MUCCROK);
+        };        
 
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
@@ -1629,6 +1635,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     {
       char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
       if(xmlns)
+      {
       if(!strcmp(xmlns,JABBER_X_EVENT))
       {
         // получили <x xmlns='jabber:x:event'>
@@ -1647,6 +1654,34 @@ void Process_Incoming_Message(XMLNode* nodeEx)
         if(delivery) CList_ChangeComposingStatus(Res_ex, 1);
         else CList_ChangeComposingStatus(Res_ex, 0);
         }
+      }
+      /*
+<message from="test1@conference.jabber.ru" to="olexandr@jabber.ru" type="normal">
+<x xmlns="http://jabber.org/protocol/muc#user">
+<invite from="olexn@jabber.kiev.ua/Miranda">
+<reason />
+</invite>
+</x>
+<x xmlns="jabber:x:conference" jid="test1@conference.jabber.ru" />
+<body>
+olexn@jabber.kiev.ua/Miranda invites you to the room test1@conference.jabber.ru
+</body>
+</message>
+      */
+      if(!strcmp(xmlns,XMLNS_MUC_USER)) //обработка invite
+      {
+       XMLNode *invite =  XML_Get_Child_Node_By_Name(xnode,"invite");
+       if(invite)
+       {
+        MUC_ITEM* muct = CList_FindMUCByJID(XML_Get_Attr_Value(from,nodeEx->attr)); 
+        if(!muct) //если еще нетты такой конфы то добавим в список muctop, а вдруг зайдем
+        {
+          
+          CList_AddContact(XML_Get_Attr_Value(from,nodeEx->attr),XML_Get_Attr_Value(from,nodeEx->attr), SUB_BOTH, 0, 129);
+          
+        }
+       }
+      }
       }
     }
   }
