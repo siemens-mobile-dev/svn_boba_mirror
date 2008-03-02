@@ -51,6 +51,10 @@ struct PCOLOR
   int brush;
 };
 
+typedef int jmp_buf[11];
+typedef unsigned int size_t;
+typedef long time_t;
+
 typedef struct XGUILIST_type XGUILIST;
 typedef struct UI_APP_SESSION_type UI_APP_SESSION;
 typedef struct GUI_type GUI;
@@ -582,5 +586,56 @@ typedef struct
 #endif
 }AB_ITEM_DESC;
 
+typedef struct {
+  short ch;    
+  unsigned char bsic;
+  unsigned char unk3;
+  unsigned short cid;
+  char unk6[2];
+  int unk8;
+  char index;
+  char unkD[3];
+  int unk10;
+  char unk14;
+  char unk15;
+  short unk16;
+  int unk18;
+  char unk1C[2];
+  char cc[2];
+  char mnc[2];
+  char lac;
+  signed char rxam;
+  int unk24;
+  int unk28;
+  char unk2C;
+  char cro;
+  char unk2E[2];
+  unsigned short unk30;
+  unsigned short unk32;
+  unsigned short unk34;
+  unsigned short unk36;
+  signed char rxlvl;
+  char unk39[3];
+  int unk3C;
+  int unk40; 
+} NEIGHBOUR_CELLDATA;
 
+
+typedef struct {
+  unsigned short cid;
+  char unk2[2];
+  char cc[2];
+  char mnc[2];
+  char lac;
+  char unk09[3];
+  int unk0C;
+  int unk10;
+  char unk14[2];
+  signed char unk16;
+  char unk17;
+  int unk18;
+  int unk1C;
+  char unk20[2];
+  signed char rxlev;
+} CUR_CELLDATA;
 #endif

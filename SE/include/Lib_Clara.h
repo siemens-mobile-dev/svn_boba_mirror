@@ -3,6 +3,7 @@
 #define _LIB_CLARA_H
 
 #include "..\\include\Types.h"
+#include "png.h"
 #ifndef SWI_HOOK
 #include "..\\include\DYN_ext.h"
 #include "..\\include\DYN_tag.h"
@@ -18,7 +19,13 @@ extern "C" void kill_data(void *p, void (*func_p)(void *));
 extern void kill_data(void *p, void (*func_p)(void *));
 #endif
 
-#define NULL	0
+#ifndef _NULL
+#define _NULL 0
+#endif
+
+#ifndef NULL
+#define NULL   _NULL
+#endif /* NULL */
 
 #define SID_ANY_LEN 0xFFFF
 #define STR(__STR__) Str2ID((u16*)(L##__STR__),0,SID_ANY_LEN)
@@ -979,5 +986,63 @@ __swi __arm  void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2)
 #pragma swi_number=0x264
 __swi __arm  int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
 
+#pragma swi_number=0x265
+__swi __arm  png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
+#pragma swi_number=0x266
+__swi __arm  void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
+#pragma swi_number=0x267
+__swi __arm  png_infop png_create_info_struct(png_structp png_ptr);
+#pragma swi_number=0x268
+__swi __arm  void png_destroy_info_struct(png_structp png_ptr, png_infopp info_ptr_ptr);
+#pragma swi_number=0x269
+__swi __arm  void png_set_progressive_read_fn(png_structp png_ptr, png_voidp progressive_ptr, png_progressive_info_ptr info_fn, png_progressive_row_ptr row_fn, png_progressive_end_ptr end_fn);
+#pragma swi_number=0x26A
+__swi __arm  void png_process_data(png_structp png_ptr, png_infop info_ptr, png_bytep buffer, png_size_t buffer_size);
+#pragma swi_number=0x26B
+__swi __arm  void png_read_update_info(png_structp png_ptr, png_infop info_ptr);
+#pragma swi_number=0x26C
+__swi __arm  png_voidp png_get_progressive_ptr(png_structp png_ptr);
+#pragma swi_number=0x26D
+__swi __arm  png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
+#pragma swi_number=0x26E
+__swi __arm  void png_set_strip_16(png_structp png_ptr);
+#pragma swi_number=0x26F
+__swi __arm  void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+#pragma swi_number=0x270
+__swi __arm  void png_set_gray_to_rgb(png_structp png_ptr);
+#pragma swi_number=0x271
+__swi __arm  png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
+#pragma swi_number=0x272
+__swi __arm  void png_set_tRNS_to_alpha(png_structp png_ptr);
+#pragma swi_number=0x273
+__swi __arm  void png_set_filler(png_structp png_ptr, png_uint_32 filler, int flags);
+#pragma swi_number=0x274
+__swi __arm  void png_set_palette_to_rgb(png_structp png_ptr);
+#pragma swi_number=0x275
+__swi __arm  png_uint_32 png_get_rowbytes(png_structp png_ptr, png_infop info_ptr);
+#pragma swi_number=0x276
+__swi __arm  void png_progressive_combine_row(png_structp png_ptr, png_bytep old_row, png_bytep new_row);
+#pragma swi_number=0x277
+__swi __arm  int png_sig_cmp(png_bytep sig, png_size_t start, png_size_t num_to_check);
+#pragma swi_number=0x278
+__swi __arm int setjmp(jmp_buf jmpbuf);
+#pragma swi_number=0x279
+__swi __arm void longjmp(jmp_buf, int);
+#pragma swi_number=0x27A
+__swi __arm int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
+#pragma swi_number=0x27B
+__swi __arm int inflate (z_streamp strm, int flush);
+#pragma swi_number=0x27C
+__swi __arm int inflateEnd (z_streamp strm);
+#pragma swi_number=0x27D
+__swi __arm int memcmp (const void *m1,const void *m2,int n);
+#pragma swi_number=0x27E
+__swi __arm int strncmp(const char *s1, const char *s2, int len);
+#pragma swi_number=0x27F
+__swi __arm char *strncpy (char *dest,const char *source,int maxlen);
+#pragma swi_number=0x280
+__swi __arm char *strcat(char *dest, const char *src);
+#pragma swi_number=0x281
+__swi __arm void GuiObject_SetTitleType(GUI *gui, int type);
 
 #endif
