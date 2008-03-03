@@ -1406,12 +1406,11 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           Req_Set_Role = 1;
         }
         
-        char* my_nick = Get_Resource_Name_By_FullJID(CList_FindMUCByJID(Conference->JID)->conf_jid);
-        if (!strcmp(nick,my_nick)) //если ето мы, входим в нее.
-        {
-          Conference->res_list->status=PRESENCE_ONLINE;
-          ShowMSG(1,(int)LG_MUCCROK);
-        };        
+        if(Conference->res_list->status==PRESENCE_OFFLINE) // когда в конфе ктото онлайн значит успешно вошли
+          {
+            Conference->res_list->status=PRESENCE_ONLINE;
+            ShowMSG(1,(int)LG_MUCCROK);
+          }
 
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
@@ -1655,19 +1654,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
         else CList_ChangeComposingStatus(Res_ex, 0);
         }
       }
-      /*
-<message from="test1@conference.jabber.ru" to="olexandr@jabber.ru" type="normal">
-<x xmlns="http://jabber.org/protocol/muc#user">
-<invite from="olexn@jabber.kiev.ua/Miranda">
-<reason />
-</invite>
-</x>
-<x xmlns="jabber:x:conference" jid="test1@conference.jabber.ru" />
-<body>
-olexn@jabber.kiev.ua/Miranda invites you to the room test1@conference.jabber.ru
-</body>
-</message>
-      */
+
       if(!strcmp(xmlns,XMLNS_MUC_USER)) //обработка invite
       {
        XMLNode *invite =  XML_Get_Child_Node_By_Name(xnode,"invite");

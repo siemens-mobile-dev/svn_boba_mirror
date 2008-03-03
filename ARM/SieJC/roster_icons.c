@@ -101,6 +101,14 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   // Если это конференция
   if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
 
+  
+  //отображаем компосинг только если нет не прочитаных сообщений, и это просто контакт\участник конфы
+  if((resEx->compos)&&(!resEx->has_unread_msg)&&((resEx->entry_type == T_NORMAL)||(resEx->entry_type == T_CONF_NODE))) //если ктото чтото набирает...
+  {
+    strcat(path_to_pic, "composing");
+    goto L_DONE;
+  }
+  
   // Если это члены конференции и они живы
   if(resEx->entry_type == T_CONF_NODE && !resEx->has_unread_msg && resEx->status<=PRESENCE_INVISIBLE)
   {
@@ -128,13 +136,6 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   if(resEx->entry_type == T_GROUP)
   {
     ClEx->IsVisible==1 ? strcat(path_to_pic, "groupon") : strcat(path_to_pic, "groupoff");
-    goto L_DONE;
-  }
-
-  //отображаем компосинг только если нет не прочитаных сообщений, и это просто контакт\участник конфы
-  if((resEx->compos)&&(!resEx->has_unread_msg)&&((resEx->entry_type == T_NORMAL)||(resEx->entry_type == T_CONF_NODE))) //если ктото чтото набирает...
-  {
-    strcat(path_to_pic, "composing");
     goto L_DONE;
   }
 
