@@ -566,7 +566,7 @@ __swi __arm  void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
 #pragma swi_number=0x1AA
 __swi __arm  void  UI_Event_toSID(int event,int SessionID);
 #pragma swi_number=0x1AB
-__swi __arm  void  UI_Event_toSIDwData(void *event,int SedionID,void *message,void (*mfree)(void*));
+__swi __arm  void  UI_Event_toSIDwData(int event,int SedionID,void *message,void (*mfree)(void*));
 #pragma swi_number=0x1AC
 __swi __arm  int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 
@@ -1044,5 +1044,9 @@ __swi __arm char *strncpy (char *dest,const char *source,int maxlen);
 __swi __arm char *strcat(char *dest, const char *src);
 #pragma swi_number=0x281
 __swi __arm void GuiObject_SetTitleType(GUI *gui, int type);
+
+#pragma swi_number=0x282
+__swi __arm void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+
 
 #endif
