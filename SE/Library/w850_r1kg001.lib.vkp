@@ -336,3 +336,14 @@
 0960: 00000000 D5824945    ; 258: int Display_GetHeight(int Display);
 0964: 00000000 E1824945   ; 259: int Display_GetWidth(int Display);
 0968: 00000000 45521345   ; 25A: void PlaySystemSound (int SndNumber);
+
+;096C: 00000000
+;0970: 00000000
+0974: 00000000 A1614845; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
+0978: 00000000 91614845; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
+097C: 00000000 CD334845; 25F: int GC_GetPenColor (void* GC);
+0980: 00000000 91334845; 260: void GC_SetPenColor(void* GC , int pen_color);
+0984: 00000000 15304845; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
+0988: 00000000 493B4845; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
+098C: 00000000 D53C4845; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
+0990: 00000000 A1304845; 264: int GC_DrawBitmap(void *gc, int x1, int y1, int x2, int y2, int * bmp);
