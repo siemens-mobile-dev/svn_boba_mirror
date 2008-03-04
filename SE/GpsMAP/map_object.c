@@ -7,8 +7,6 @@
 #include "read_csv.h"
 #include "math.h"
 
-extern "C" int GC_DrawBitmap(void *gc, int x1, int y1, int x2, int y2, const unsigned int *colors);
-
 
 float x1_map_real=39.532383;
 float x2_map_real=39.87645;
@@ -164,7 +162,7 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
   int cur_y_offs=db->total_y_pos<(height/2)?0:db->total_y_pos>=(db->ini.cur_town->map_height-height/2)?db->ini.cur_town->map_height-height:db->total_y_pos-height/2;
   int cur_pos_y=db->total_y_pos-cur_y_offs;
   
-  unsigned int *scr_buf=db->scr_buf;
+  int *scr_buf=db->scr_buf;
   for (int i=0,x_offs=0; i<db->ini.cur_town->map_arr_x; i++)   // ѕодсчитываем какие куски надо прочитать
   {
     if (x_offs<=cur_x_offs) block_x1=i;
@@ -253,7 +251,7 @@ int str_id=0x6FFFFFFF;
 int MapGuiOnCreate(DISP_OBJ_MAP *db)
 {
   TOWN *town;
-  db->scr_buf=new unsigned int[(db->disp_y=Display_GetHeight(0))*(db->disp_x=Display_GetWidth(0))];
+  db->scr_buf=new int[(db->disp_y=Display_GetHeight(0))*(db->disp_x=Display_GetWidth(0))];
   db->total_x_pos=db->total_y_pos=0;
   db->x1=db->y1=db->x2=db->y2=0;
   MainIniInit(&db->ini);

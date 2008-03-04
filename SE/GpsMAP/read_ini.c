@@ -126,7 +126,7 @@ void ReadMainIni(MAIN_INI *ini)
               town=new TOWN;
               memset(town,0,sizeof(TOWN));
               town->bs_dat=List_New();
-              town->id=strtol(s,NULL,10);
+              town->map_index=strtol(s,NULL,10);
               s=find_eol(s);
               continue;
             }

@@ -35,7 +35,7 @@ void info_callback(png_structp png_ptr, png_infop info)
   png_read_update_info(png_ptr, info);
   row_bytes=png_get_rowbytes(png_ptr, info);
   usr_png->bytes_in_row=(row_bytes+3)&~3;
-  usr_png->row_pointer=new png_bytep[usr_png->bytes_in_row];
+  usr_png->row_pointer=new png_byte[usr_png->bytes_in_row];
   usr_png->image=new char[usr_png->width*usr_png->height];
   memset((void *)usr_png->image,0,usr_png->width*usr_png->height*sizeof(char));
 }

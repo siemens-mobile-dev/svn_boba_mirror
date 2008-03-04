@@ -15,7 +15,7 @@ typedef struct {
   int disp_x, disp_y;
   int total_x_pos, total_y_pos;
   MAIN_INI ini;
-  unsigned int *scr_buf;
+  int *scr_buf;
   LIST *png_cache;
   float Xres, Yres;
 } DISP_OBJ_MAP;

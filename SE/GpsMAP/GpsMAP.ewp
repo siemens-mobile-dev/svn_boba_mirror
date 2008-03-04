@@ -1664,9 +1664,6 @@
     <name>$PROJ_DIR$\map_object.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\pngfunc.asm</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\pngread.c</name>
   </file>
   <file>
