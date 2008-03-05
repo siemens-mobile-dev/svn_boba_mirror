@@ -466,7 +466,7 @@ __swi __arm  void ListElement_AddtoTop(LIST *lst,void *newElement);
 __swi __arm  int Gif2ID(u16 IMAGEHANDLE,u16 * path, u16 * fname,u16 * ID);
 
 #pragma swi_number=0x16D
-__swi __arm  int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,u16 * unk);
+__swi __arm  int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,char * unk);
 
 #pragma swi_number=0x16E
 __swi __arm  void REQUEST_DATEANDTIME_GET(const int * __zero , DATETIME *dt);
@@ -1047,6 +1047,9 @@ __swi __arm void GuiObject_SetTitleType(GUI *gui, int type);
 
 #pragma swi_number=0x282
 __swi __arm void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
-
+#pragma swi_number=0x283
+__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+#pragma swi_number=0x284
+__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 
 #endif

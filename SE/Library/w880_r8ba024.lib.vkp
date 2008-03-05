@@ -152,6 +152,7 @@
 0728: 00000000 81D44745; 1CA: __thumb GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: 00000000 55D54745; 1CB: __thumb void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
 0730: 00000000 09D64745; 1CC: __thumb void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI *);
+0734: 00000000 45D64745; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 0738: 00000000 A9C34745; 1CE: __thumb void  GUI_Free(GUI*);
 073C: 00000000 C1E64045; 1CF: __thumb void GUI_SetIcon(GUI* , int icon);
 0740: 00000000 51E54045; 1D0: __thumb int StringInput_GetStringAndLen (GUI*,u16**,u16*);
@@ -289,6 +290,8 @@
 0A00: 00000000 DDB16744 ; 280: __thumb char *strcat(char *dest, const char *src);
 0A04: 00000000 2DCB4745 ; 281: __thumb void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: 00000000 75674345 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+0A0C: 00000000 4989F644 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+0A10: 00000000 F989F644 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 
 
 ;locale=Russian_Russia.1251
