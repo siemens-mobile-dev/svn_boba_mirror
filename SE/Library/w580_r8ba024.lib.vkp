@@ -328,8 +328,8 @@
 0968: 00000000 E13E0045   ; 25A: void PlaySystemSound (int SndNumber);
 ;096C: 00000000
 ;0970: 00000000
-;0974: 00000000 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
-;0978: 00000000 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
+0974: 00000000 8D463645   ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
+0978: 00000000 7D463645   ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 097C: 00000000 BD183645   ; 25F: int GC_GetPenColor (void* GC);
 0980: 00000000 81183645   ; 260: void GC_SetPenColor(void* GC , int pen_color);
 0984: 00000000 C1143645   ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
@@ -366,6 +366,11 @@
 09FC: 00000000 ED725544   ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 0A00: 00000000 E9715544   ; 280: char *strcat(char *dest, const char *src);
 0A04: 00000000 713C3645   ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
+
+0A08: 00000000 05D93145   ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+0A0C: 00000000 9D0AE444   ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+0A10: 00000000 4D0BE444   ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+
 
 
 ;locale=Russian_Russia.1251
