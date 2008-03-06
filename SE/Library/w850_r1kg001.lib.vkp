@@ -378,3 +378,5 @@
 0A00: 00000000 2D656744 ; 280: __thumb char *strcat(char *dest, const char *src);
 0A04: 00000000 81574845 ; 281: __thumb void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: 00000000 8DF54345 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+0A0C: 00000000 B18BF644 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+0A10: 00000000 618CF644 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
