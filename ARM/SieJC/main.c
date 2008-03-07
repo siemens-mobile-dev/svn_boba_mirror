@@ -90,6 +90,7 @@ IPC_REQ gipc;
 int Is_Sounds_Enabled;
 int Is_Vibra_Enabled;
 int Is_Autostatus_Enabled;
+int Is_Playerstatus_Enabled;
 char *exename2;
 char elf_path[256];
 
@@ -1463,13 +1464,13 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       }
     case '#':
       {
-        KbdLock();
         gipc.name_to=ipc_xtask_name;
         gipc.name_from=ipc_my_name;
         gipc.data=0;
         GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
         if (IsUnlocked())
         {
+          KbdLock();
         }
         return(-1);
       }
@@ -1578,7 +1579,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         CList_AddResourceWithPresence(xz_jid_full, PRESENCE_CHAT, xz_status_msg);
         */
        // SUBPROC((void *)end_socket);
-       // break;
+        break;
       }
 
     case DOWN_BUTTON:
@@ -1810,6 +1811,35 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	    break;
           }
         }
+
+        if(Is_Playerstatus_Enabled)
+        {
+          if ((stricmp(ipc->name_to,IPC_FROMMEDIA)==0)&&(Jabber_state == JS_ONLINE))//strcmp_nocase
+          {
+          extern ONLINEINFO OnlineInfo;
+          extern const char DEFTEX_PLAYER[];
+          PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+          pr_info->priority=OnlineInfo.priority;
+          pr_info->status=OnlineInfo.status;
+          WSHDR *ws = AllocWS(256);
+          int len;
+          char *msg = malloc(256);
+          if (ipc->data)
+          {
+          wsprintf(ws, "%t: %t", DEFTEX_PLAYER, (char*)(ipc->data));
+          ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+          msg=realloc(msg, len+1);
+          msg[len]='\0';
+          pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
+          } else
+          {
+            pr_info->message= NULL;
+          }
+          SUBPROC((void *)Send_Presence,pr_info);
+          FreeWS(ws);
+          mfree(msg);
+          }
+        }
       }
     }
 
@@ -2024,6 +2054,7 @@ void ReadDefSettings(char *elfpath)
     Display_Offline=def_set.off_contacts;
     color_num=def_set.cl_num;
     Is_Autostatus_Enabled=def_set.auto_status;
+    Is_Playerstatus_Enabled=def_set.player_status;;
   }
   else
   {
@@ -2031,6 +2062,7 @@ void ReadDefSettings(char *elfpath)
     Is_Sounds_Enabled=0;
     Display_Offline=0;
     Is_Autostatus_Enabled=0;
+    Is_Playerstatus_Enabled=0;
     color_num=1;
   }
 }  
@@ -2052,6 +2084,7 @@ void WriteDefSettings(char *elfpath)
     def_set.off_contacts=Display_Offline;
     def_set.cl_num=color_num;
     def_set.auto_status=Is_Autostatus_Enabled;
+    def_set.player_status=Is_Playerstatus_Enabled;
     fwrite(f,&def_set,sizeof(DEF_SETTINGS),&err);
     fclose(f,&err);
   }
@@ -2121,6 +2154,16 @@ void AutoStatus(void)
   }else GBS_DelTimer(&autostatus_tmr);
 }
 
+void OpenSettings(void)
+{
+  extern const char *successed_config_filename;
+  WSHDR *ws;
+  ws=AllocWS(150);
+  str_2ws(ws,successed_config_filename,128);
+  ExecuteFile(ws,0,0);
+  FreeWS(ws);
+}
+
   int main(char *exename, char *fname)
   {
     char *s;
@@ -2152,6 +2195,7 @@ void AutoStatus(void)
     if(!strlen(USERNAME))
     {
       ShowMSG(1,(int)LG_ENTERLOGPAS);
+      OpenSettings();
       return 0;
     }
    

@@ -32,12 +32,14 @@ void patch_input(INPUTDIA_DESC* inp)
 }
 //==============================================================================
 
-#define N_ITEMS 13
+#define N_ITEMS 14
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
 extern char Display_Offline;
 extern int Is_Autostatus_Enabled;
+extern int Is_Playerstatus_Enabled;
+
 int MainMenu_ID;
 
 extern char My_Presence;
@@ -118,6 +120,7 @@ HEADER_DESC menuhdr={0,0,131,21,NULL,(int)LG_MENU,LGP_NULL};
 int mmenusoftkeys[]={0,1,2};
 
 int icon_array[2];
+extern JABBER_STATE Jabber_state; 
 
 void ChangeVibraMode(GUI *data)
 {
@@ -137,31 +140,51 @@ void ChangeAutostatusMode(GUI *data)
   RefreshGUI();
 }
 
+void ChangePlayerstatusMode(GUI *data)
+{
+  Is_Playerstatus_Enabled=!(Is_Playerstatus_Enabled);
+  RefreshGUI();
+}
+
 void ChangeOffContMode(GUI *data)
 {
   CList_ToggleOfflineDisplay();
   RefreshGUI();
 }
 
-void OpenSettings(GUI *data)
+void OpenSettings_(GUI *data)
 {
-  extern const char *successed_config_filename;
-  WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,successed_config_filename,128);
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
+  OpenSettings();
   GeneralFuncF1(1);
 }
 
 void AddContact(GUI *data)
 {
- Disp_JID_Enter_Dialog(NULL);
+ if(Jabber_state==JS_ONLINE)
+ {
+  Disp_JID_Enter_Dialog(NULL);
+ }
+}
+
+void OpenBookmarks_List(GUI *data)
+{
+  if(Jabber_state==JS_ONLINE)
+  {
+  Get_Bookmarks_List();
+  }
+}
+void OpenDisp_MUC_Enter_Dialog(GUI *data)
+{
+  if(Jabber_state==JS_ONLINE)
+  {
+    Disp_MUC_Enter_Dialog();
+  }
 }
 
 void Exit_SieJC(GUI *data)
 {
   QuitCallbackProc(0);
+  GeneralFuncF1(1);
 }
 
 static const char * const menutexts[N_ITEMS]=
@@ -175,6 +198,7 @@ static const char * const menutexts[N_ITEMS]=
   LG_MSOUND,
   LG_MOFFLINE,
   LG_AUTOSTATUS,
+  "PlayerStatus",
   LG_SETTINGS,
   LG_COLOR,
   LG_ABOUT,
@@ -198,14 +222,15 @@ static const char * const menutexts[N_ITEMS]=
 static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           Disp_Contact_Menu,
                           DispStatusChangeMenu,
-                          Disp_MUC_Enter_Dialog,
-                          Get_Bookmarks_List,
+                          OpenDisp_MUC_Enter_Dialog,
+                          OpenBookmarks_List,
                           AddContact,
                           ChangeVibraMode,
                           ChangeSoundMode,
                           ChangeOffContMode,
                           ChangeAutostatusMode,
-                          OpenSettings,
+                          ChangePlayerstatusMode,
+                          OpenSettings_,
                           Colorshem,
                           AboutDlg,
                           Exit_SieJC
@@ -262,15 +287,18 @@ void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,icon_array+(Is_Autostatus_Enabled?0:1));
     break;
   case 9:
-    SetMenuItemIconArray(data,item,S_ICONS+6);
+    SetMenuItemIconArray(data,item,icon_array+(Is_Playerstatus_Enabled?0:1));
     break;
   case 10:
-    SetMenuItemIconArray(data,item,S_ICONS+9);
+    SetMenuItemIconArray(data,item,S_ICONS+6);
     break;
   case 11:
+    SetMenuItemIconArray(data,item,S_ICONS+9);
+    break;
+  case 12:
     SetMenuItemIconArray(data,item,S_ICONS+7);
     break;  
-  case 12:
+  case 13:
     SetMenuItemIconArray(data,item,S_ICONS+8);
     break;
   }

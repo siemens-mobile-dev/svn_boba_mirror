@@ -117,7 +117,8 @@ void Get_Bookmarks_List()
       SUBPROC((void*)_getbookmarkslist);
       reqbook=1;
   }
-  else Disp_BM_Menu();
+  else 
+    if(BM_ROOT) Disp_BM_Menu();
 }
 
 
@@ -221,7 +222,7 @@ int bm_menu_onkey(void *data, GUI_MSG *msg)
     extern const unsigned int DEFAULT_MUC_MSGCOUNT;
       Enter_Conference(it->mucname, it->nick, it->pass, DEFAULT_MUC_MSGCOUNT);
   }
-  Req_Close_BM_Menu = 1;
+//  Req_Close_BM_Menu = 1;
 return 0;
 }
 
@@ -266,12 +267,11 @@ void Init_bm_Icon_array()
 
 void Disp_BM_Menu()
 {
-  Init_bm_Icon_array();
-  int n_items=0;
-  BM_ITEM *i;
   if(BM_ROOT)
   {
-    i=BM_ROOT;
+    Init_bm_Icon_array();
+    int n_items=0;
+    BM_ITEM *i = BM_ROOT;
     n_items=1;
     while(i->next)
     {

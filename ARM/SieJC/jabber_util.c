@@ -273,6 +273,7 @@ char *Generate_Caps()
   snprintf(q,127, caps_tpl, VERSION_VERS,__SVN_REVISION__,DELIVERY_EVENTS);
   char *Result_Resp;
   base64_encode(q, strlen(q),&Result_Resp);
+  mfree(q);
   return Result_Resp;
 }
 
@@ -1395,7 +1396,9 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           Req_Set_Role = 1;
 
         }
-        else if(real_jid)
+        else 
+        {
+          if(real_jid)
         {
           sprintf(r, "%s (%s) joined as %s and %s", nick, real_jid, affiliation, role);
           Req_Set_Role = 1;
@@ -1405,12 +1408,14 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
           Req_Set_Role = 1;
         }
-        
-        if(Conference->res_list->status==PRESENCE_OFFLINE) // когда в конфе ктото онлайн значит успешно вошли
-          {
-            Conference->res_list->status=PRESENCE_ONLINE;
-            ShowMSG(1,(int)LG_MUCCROK);
-          }
+
+        char* my_nick = Get_Resource_Name_By_FullJID(CList_FindMUCByJID(Conference->JID)->conf_jid);
+        if ((!strcmp(nick,my_nick))&&(Conference->res_list->status==PRESENCE_OFFLINE)) //если ето мы, входим в нее.
+        {
+          Conference->res_list->status=PRESENCE_ONLINE;
+          ShowMSG(1,(int)LG_MUCCROK);
+        };
+        };
 
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }

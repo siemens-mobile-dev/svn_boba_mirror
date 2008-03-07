@@ -172,7 +172,8 @@ typedef struct{
   vibra_status:1,
   sound_status:1,
   off_contacts:1,
-  auto_status:1;
+  auto_status:1,
+  player_status:1;
   char cl_num;
 }DEF_SETTINGS;
 #pragma pack(pop)
@@ -196,4 +197,5 @@ void QuitCallbackProc(int decision);
 void patch_rect(RECT*rc,int x,int y, int x2, int y2);
 void patch_header(HEADER_DESC* head);
 void patch_input(INPUTDIA_DESC* inp);
+void OpenSettings(void);
 #endif
