@@ -135,7 +135,7 @@
 6A0: 00000000 45E53745  ; 1A8: void  UI_Event(int event);
 6A4: 00000000 55E53745  ; 1A9: void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
 6A8: 00000000 9DE53745  ; 1AA: void  UI_Event_toSID(int event,int SessionID);
-6AC: 00000000 F1B72A45  ; 1AB: void  UI_Event_toSIDwData(void *event,int SedionID,void *message,void (*mfree)(void*));
+6AC: 00000000 B1E53745  ; 1AB: void  UI_Event_toSIDwData(void *event,int SedionID,void *message,void (*mfree)(void*));
 6B0: 00000000 C11E2945  ; 1AC: int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 6B4: 00000000 C51D2945  ; 1AD: void * ListElement_GetByIndex(LIST * , int index);
 6B8: 00000000 15006744  ; 1AE: u16* wstrrchr(u16*wstr, u16 wchar);
@@ -147,6 +147,7 @@
 6D4: 00000000 A9713B45  ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 6DC: 00000000 2D3C4645  ; 1B7: int  isKeylocked(void);
 6E0: 00000000 E5ED0345  ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+6EC: 00000000 51F30B45  ; 1BB: void Vibra(int t1, int t2, int t3);
 6F8: 00000000 31B93745  ; 1BE: int Date2ID(DATE *, int TimeFormat,int)
 6FC: 00000000 59B83745  ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 700: 00000000 69F63E45  ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -264,3 +265,27 @@
 960: 00000000 998E4445  ; 258: int Display_GetHeight(int Display);
 964: 00000000 A58E4445  ; 259: int Display_GetWidth(int Display);
 968: 00000000 DDC20F45  ; 25A: void PlaySystemSound (int SndNumber);
+974: 00000000 F56D4345  ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
+978: 00000000 E56D4345  ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
+994: 00000000 0D10BE44  ; 265: png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
+998: 00000000 5911BE44  ; 266: void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
+99C: 00000000 B1F7BD44  ; 267: png_infop png_create_info_struct(png_structp png_ptr);
+9A0: 00000000 E5F7BD44  ; 268: void png_destroy_info_struct(png_structp png_ptr, png_infopp info_ptr_ptr);
+9A4: 00000000 E50FBE44  ; 269: void png_set_progressive_read_fn(png_structp png_ptr, png_voidp progressive_ptr, png_progressive_info_ptr info_fn, png_progressive_row_ptr row_fn, png_progressive_end_ptr end_fn);
+9A8: 00000000 A5FFBD44  ; 26A: void png_process_data(png_structp png_ptr, png_infop info_ptr, png_bytep buffer, png_size_t buffer_size);
+9AC: 00000000 2D11BE44  ; 26B: void png_read_update_info(png_structp png_ptr, png_infop info_ptr);
+9B0: 00000000 0910BE44  ; 26C: png_voidp png_get_progressive_ptr(png_structp png_ptr);
+9B4: 00000000 6DFCBD44  ; 26D: png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
+9B8: 00000000 F912BE44  ; 26E: void png_set_strip_16(png_structp png_ptr);
+9E0: 00000000 10653F44  ; 278: int setjmp(jmp_buf jmpbuf);
+9E4: 00000000 34653F44  ; 279: void longjmp(jmp_buf, int);
+9E8: 00000000 C54CBE44  ; 27A: int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
+9EC: 00000000 654EBE44  ; 27B: int inflate (z_streamp strm, int flush);
+9F0: 00000000 C560BE44  ; 27C: int inflateEnd (z_streamp strm);
+9F8: 00000000 85F66644  ; 27E: int strncmp(const char *s1, const char *s2, int len);
+9FC: 00000000 B9F66644  ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
+A00: 00000000 B5F56644  ; 280: char *strcat(char *dest, const char *src);
+A04: 00000000 F5634345  ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
+A08: 00000000 01043F45  ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+A0C: 00000000 4547F344  ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+A10: 00000000 F547F344  ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
