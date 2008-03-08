@@ -38,7 +38,7 @@
 04B8: 00000000 CD5D3D45 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
 04BC: 00000000 05653D45 ; 12F: void FreeBook ( void *book);
 04C0: 00000000 A9453D45 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
-04C4: 00000000 89943E45 ; 131: BOOK * Find_StandbyBook(void);
+04C4: 00000000 2D943E45 ; 131: BOOK * Find_StandbyBook(void);
 04C8: 00000000 95613D45 ; 132: void BookObj_SetFocus(void *,int focus);
 04CC: 00000000 E5BF4845 ; 133: void GuiObject_SetTitleText (void * gui , int StrID);
 04D0: 00000000 B5BA4845 ; 134: void ShowWindow (void * gui);
@@ -83,7 +83,7 @@
 056C: 00000000 6919F744 ; 15B: char * wstr2strn (char * str , u16 * wstr, int maxlen);
 0570: 00000000 A1DE4645 ; 15C: int int2strID (int num);
 0574: 00000000 55E14645 ; 15D: int Str2ID(const void * wstr , int flag , int len);
-0578: 00000000 A1DE4645 ; 15E: void StrID2Str(int StrID,char * str,int maxlen);
+0578: 00000000 E9E54645 ; 15E: void StrID2Str(int StrID,char * str,int maxlen);
 057C: 00000000 D9E44645 ; 15F: void TextID2wstr(int StrID,u16 * str,int maxlen);
 0580: 00000000 B9E34645 ; 160: int TextGetLength(int StrID);
 0584: 00000000 1DE34645 ; 161: void TextFree(int StrID);
