@@ -24,6 +24,8 @@
 extern volatile int total_smiles;
 extern volatile int total_xstatuses;
 extern volatile int xstatuses_load;
+extern volatile int pictures_max;
+extern volatile int pictures_loaded;
 
 #define USE_MLMENU
 
@@ -351,7 +353,7 @@ void stop_vibra(void)
   if (--vibra_count)
   {
     if(VIBR_TYPE)
-      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>5,start_vibra);
+      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND/40,start_vibra);
     else
       GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
   }
@@ -1052,6 +1054,7 @@ int DNR_TRIES=3;
 
 extern const char NATICQ_HOST[];
 extern const unsigned int NATICQ_PORT;
+extern const unsigned int RECONNECT_TIME;
 char hostname[128];
 int host_counter = 0;
 
@@ -1183,7 +1186,7 @@ void create_connect(void)
     {
       snprintf(logmsg,255,LG_GRDNRERROR,err);
       SMART_REDRAW();
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
+      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
       return;
     }
   }
@@ -1216,7 +1219,7 @@ void create_connect(void)
 	  LockSched();
 	  ShowMSG(1,(int)LG_MSGCANTCONN);
 	  UnlockSched();
-	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
+	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
 	}
       }
       else
@@ -2183,10 +2186,14 @@ void process_active_timer(void)
 }
 
 //===============================================================================================
+
+
 void method0(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  int pos_status;
+  int pm = pictures_max, pl = pictures_loaded;
 /*  DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));*/
@@ -2197,14 +2204,26 @@ void method0(MAIN_GUI *data)
   DrawImg(0,0,S_ICONS[ICON_LOGO]);
   unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
-  if (total_smiles)
+
+  if(pm != pl)
+  {
+     DrawRectangle(0,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD),scr_w-1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-2,0,
+                     GetPaletteAdrByColorIndex(0),
+                     GetPaletteAdrByColorIndex(0));
+    pos_status = ((scr_w-1) * pl) / pm;
+    DrawRectangle(1,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD)+1,pos_status,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-3,0,
+                     GetPaletteAdrByColorIndex(14),
+                     GetPaletteAdrByColorIndex(14));  
+    wstrcatprintf(data->ws1,"\nLoading images...");
+  }
+  /*  if (total_smiles)
   {
     wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
   }
   if (xstatuses_load)
   {
-    wstrcatprintf(data->ws1,"\nLoaded %d xstatus",total_xstatuses);
-  }
+    wstrcatprintf(data->ws1,"\nLoaded %d/%d xstatus",total_xstatuses, xstatuses_max);
+  }*/
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t,cltop?LG_GRSKEYCLIST:empty_str);
@@ -2325,7 +2344,6 @@ void maincsm_onclose(CSM_RAM *csm)
 {
   WriteDefSettings();
   //  SaveConfigData(successed_config_filename);
-
 /*
   #pragma segment="CONFIG_C"
   unsigned int ul;
@@ -2547,7 +2565,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       start_vibra();
       is_gprs_online=1;
       strcpy(logmsg,LG_GRGPRSUP);
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
+      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
       return(1);
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
@@ -2649,8 +2667,8 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	SUBPROC((void *)ClearSendQ);
 	if (!disautorecconect)
         {
-          GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*10,do_reconnect);
-          snprintf(logmsg,255,"%s\nReconect after 10 second...",logmsg);
+          GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
+          snprintf(logmsg,255,"%s\nReconect after %d second...",logmsg, RECONNECT_TIME);
         }
 	break;
       }
@@ -2982,6 +3000,40 @@ void SaveAnswer(CLIST *cl, WSHDR *ws)
   cl->answer=p;
 }
 
+int IsLink(char *str)
+{
+  char http[] = "http://";
+  char www[] = "www.";
+  int flag = 0;
+  for(int i = 0; i < 7; i++)
+    if(str[i] != http[i]) {flag = 1; break;}
+  
+  if(!flag) return 1;
+  
+  for(int i = 0; i < 4; i++)
+    if(str[i] != www[i]) return 0;
+
+  return 1;
+  
+}
+
+int GetTempName(void)
+{
+  static const int DMonth[]={0,31,59,90,120,151,181,212,243,273,304,334,365};
+  unsigned long iday;
+  TTime tt;
+  TDate dd;
+  GetDateTime(&dd,&tt);
+  dd.year=dd.year%100;
+  iday=365*dd.year+DMonth[dd.month-1]+(dd.day - 1);
+  iday=iday+(dd.year>>2);
+  if (dd.month>2||(dd.year&3)>0)
+    iday++;
+  iday=(tt.sec+60*(tt.min+60*(tt.hour+24* iday)));
+  return iday;
+}
+
+
 int edchat_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
@@ -2989,10 +3041,13 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   CLIST *t;
   TPKT *p;
   EDITCONTROL ec;
-  int len;
+  int len, f;
+  unsigned err;
   char *s;
   int l=msg->gbsmsg->submess;
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+//  WSHDR *ews;
+  char link[256], fn[256];
 
   if (msg->keys==0xFFF)
   {
@@ -3063,13 +3118,45 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     }
     if (l==ENTER_BUTTON)
     {
-      //      t=FindNextActiveContact(ed_struct->ed_contact);
-      //      if ((t!=ed_struct->ed_contact) && t)
+
+      if (!EDIT_IsMarkModeActive(data))  // Только если не выделение
       {
-	int i=ed_struct->loaded_templates=LoadTemplates(ed_struct->ed_contact->uin);
-        EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,i+2);
-        return (-1);
+        int pos, i, j = 0;
+        ExtractEditControl(ed_struct->ed_chatgui,EDIT_GetFocus(ed_struct->ed_chatgui),&ec);
+        wstrcpy(ews,ec.pWS);
+        pos = EDIT_GetCursorPos(data);
+        for(i = pos; i >= 0 && char16to8(ews->wsbody[i+1]) != ' '; i--);
+        pos = i;
+        for(i++; i < ews->wsbody[0] && char16to8(ews->wsbody[i+1]) != ' '; i++)
+          link[j++] = char16to8(ews->wsbody[i+1]);
+        link[j] = 0;
+        
+        if(IsLink(link))
+        {
+          snprintf(fn, 255, "%s\\tmp%u.url", TEMPLATES_PATH, GetTempName);
+          if ((f=fopen(fn,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
+          {
+            fwrite(f,link,strlen(link),&err);
+            fclose(f,&err);
+            str_2ws(ews,fn,256);
+            ExecuteFile(ews,0,0);            
+            unlink(fn, &err);
+          }          
+          
+//          LockSched();
+//          ShowMSG(1,(int)link);
+//          UnlockSched();
+          return (-1);
+        }
+        else
+        {
+          int i=ed_struct->loaded_templates=LoadTemplates(ed_struct->ed_contact->uin);
+          EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,i+2);
+          return (-1);
+        }          
+          
       }
+
     }
     if (l==VOL_UP_BUTTON)
     {

@@ -14,6 +14,8 @@ int *XStatusesIconArray;
 volatile int total_smiles;
 volatile int total_xstatuses;
 volatile int xstatuses_load;
+volatile int pictures_max;
+volatile int pictures_loaded;
 
 extern const char SMILE_FILE[];
 extern const char SMILE_PATH[];
@@ -122,7 +124,50 @@ void InitSmiles(void)
   gipc.name_to=ipc_my_name;
   gipc.name_from=ipc_my_name;
   gipc.data=0;
+      
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_SMILE_PROCESSED,&gipc);
+}
+
+void CheckSmiles(void)
+{
+  int f;
+  unsigned int err;
+  int fsize;
+  char *buf, *p_buf;
+  FSTATS stat;
+
+  if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
+    return;
+
+  if ((fsize=stat.size)<=0)
+    return;
+
+  if ((f=fopen(SMILE_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1)
+    return;
+
+  buf=p_buf=malloc(fsize+1);
+  buf[fread(f,buf,fsize,&err)]=0;
+  fclose(f,&err);
+  
+  f = pictures_max;
+  for(buf=p_buf;*buf; buf++)
+    if(*buf == ':')
+    {
+      buf++;
+      while(*buf && *buf != 0x0D) buf++;
+      pictures_max++;
+    }
+/*  if(f == pictures_max)                 //А вдруг у нас кривые переводы строк?
+  {
+    for(buf=p_buf;*buf; buf++)
+    if(*buf == 0x0A)
+    {
+      buf++;
+      while(*buf && *buf != 0x0A && *buf!=':') buf++;
+      if(*buf!=':') pictures_max++;
+    }
+  }*/
+  mfree(p_buf);
 }
 
 void ProcessNextSmile(void)  
@@ -212,10 +257,11 @@ void ProcessNextSmile(void)
       }
       buf+=i;
     }
+    pictures_loaded++;
     total_smiles++;
   }
   //fclose(f,&err);
-  total_smiles=0;
+//  total_smiles=0;
   p_buf=NULL;
   mfree(s_buf);
   s_buf=NULL;
@@ -248,6 +294,10 @@ void FreeXStatusesImg(void)
 
 void InitXStatusesImg(void)
 {
+  char fn[128];
+  FSTATS stat;
+  unsigned err;
+  
   FreeXStatusesImg();
   total_xstatuses=0;
   *(XStatusesIconArray=malloc(sizeof(int)))=S_ICONS[IS_NULLICON];
@@ -256,6 +306,18 @@ void InitXStatusesImg(void)
   gipc.name_to=ipc_my_name;
   gipc.name_from=ipc_my_name;
   gipc.data=0;
+  
+  pictures_max = 0;
+  do
+  {
+    strcpy(fn,XSTATUSES_PATH);
+    sprintf(fn+strlen(fn),"\\%d.png",pictures_max++);
+    if (GetFileStats(fn,&stat,&err)==-1) break;
+  }  
+  while (stat.size>0);
+  pictures_max--;
+  CheckSmiles();
+  
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc);
 }
 
@@ -285,6 +347,7 @@ void ProcessNextXStatImg(void)
       XStatusesImgList=dp;
       UnlockSched();
       total_xstatuses++;
+      pictures_loaded++;
       XStatusesIconArray=realloc(XStatusesIconArray,(total_xstatuses*sizeof(int)));
       *(XStatusesIconArray+(total_xstatuses-1))=i;
       n_pic++;
