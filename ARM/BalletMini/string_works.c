@@ -200,11 +200,12 @@ void utf82win(char*d,const char *s)
   *d = 0;
 }
 
-int find_symbol(char s)
+char symbols[]={0x0A,0x20,0x23,0x24,0x25,0x26,0x2B,0x2C,0x2F,0x3A,0x3B,0x3D,0x3F,0x40,0x7E,0x00};
+
+int sfind8(char s,char *v)
 {
-  static char symbols[]={0x0A,0x20,0x23,0x24,0x25,0x26,0x2B,0x2C,0x2F,0x3A,0x3B,0x3D,0x3F,0x40,0x7E};
-  for (int i=0;i<strlen(symbols);i++)
-    if (s==symbols[i])
+  for (int i=0;i<strlen(v);i++)
+    if (s==v[i])
       return i;
   return -1;
 }
@@ -216,7 +217,7 @@ int char_win2utf8(char*d,const char *s) // функция возвращает количество
   char *d1 = "%d1%";
   unsigned char b = *s, lb, ub;
   int r = 0, ab;
-  if (find_symbol(b)>=0)
+  if (sfind8(b,symbols)>=0)
   {
     *d = '%'; d++;
     *d = hex[(b>>4)&0xF]; d++;
@@ -266,13 +267,13 @@ char * ToWeb(char *src,int special)                   //конвертируем ссылку в ut
   {
     unsigned char c=src[i];
     if(c>=0x80) cnt+=2;
-    if(special&&(find_symbol(c)>=0)) cnt++;
+    if(special&&(sfind8(c,symbols)>=0)) cnt++;
   }
   ret = malloc(strlen(src) + cnt*3 + 1);  //выделяем память под utf8-строку
   for(i = 0, j = 0; src[i]; i++)
   {
     unsigned char c=src[i];
-    if(c>=0x80||(special&&(find_symbol(c)>=0)))
+    if(c>=0x80||(special&&(sfind8(c,symbols)>=0)))
       j += char_win2utf8(ret+j, src+i);   //получаем вместо русского символа utf8-замену
     else
       ret[j++] = src[i];

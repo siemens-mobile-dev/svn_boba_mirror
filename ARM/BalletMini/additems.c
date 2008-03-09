@@ -25,16 +25,20 @@ static void RawInsertChar(VIEWDATA *vd, int wchar)
 
 void AddNewStyle(VIEWDATA *vd)
 {
-  RawInsertChar(vd,vd->current_tag_s.bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL);
-  RawInsertChar(vd,vd->current_tag_s.underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE);
+  if (vd->current_tag_s.bold!=vd->prev_tag_s.bold)
+    RawInsertChar(vd,vd->current_tag_s.bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL);
+  if (vd->current_tag_s.underline!=vd->prev_tag_s.underline)
+    RawInsertChar(vd,vd->current_tag_s.underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE);
   RawInsertChar(vd,UTF16_INK_RGBA);
   RawInsertChar(vd,(vd->current_tag_s.red<<11)+(vd->current_tag_s.green<<2));
   RawInsertChar(vd,(vd->current_tag_s.blue<<11)+100);
   RawInsertChar(vd,UTF16_PAPER_RGBA);
   RawInsertChar(vd,(vd->current_tag_d.red<<11)+(vd->current_tag_d.green<<2));
   RawInsertChar(vd,(vd->current_tag_d.blue<<11)+100);
-  RawInsertChar(vd,vd->current_tag_s.center?UTF16_ENA_CENTER:UTF16_DIS_CENTER);
-  RawInsertChar(vd,vd->current_tag_s.right?UTF16_ALIGN_RIGHT:UTF16_ALIGN_LEFT);
+  if (vd->current_tag_s.center!=vd->prev_tag_s.center)
+    RawInsertChar(vd,vd->current_tag_s.center?UTF16_ENA_CENTER:UTF16_DIS_CENTER);
+  if (vd->current_tag_s.right!=vd->prev_tag_s.right)
+    RawInsertChar(vd,vd->current_tag_s.right?UTF16_ALIGN_RIGHT:UTF16_ALIGN_LEFT);
 }
 
 void AddBeginRef(VIEWDATA *vd)

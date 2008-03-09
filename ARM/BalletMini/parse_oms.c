@@ -3,10 +3,7 @@ x [1] 2l lid 2l lvalue
 s 2l lid 1 2count o 2l lo_name 2l lo_id 1checked ...  // 1 странный байт на гугл сеттингс равен 0 на симка 1
 
 Известные поядки тэгов:
-L T (I не отображается ?)
 L T E
-L Z I E E - patches siemens club
-i Z I E - yandex maps
 L I S T E
 L I T E
 L T S T T T B E
@@ -16,6 +13,10 @@ L K I E
 Z J E
 i I
 i J
+i Z I E - yandex maps
+L Z I E E - patches siemens club
+L P T E T P T E T E - perk11.info/dantix
+
 formum.siemens-club.org
 ...T P E B T B L K E L K E L K E L K E K K B T B T T B...
 ...K B T B L K I E B B T B T T...
@@ -346,6 +347,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         break;
       case 'P':  // phone number
         vd->oms_wanted+=2;
+        vd->ref_mode_P=1;
         break;
       case 'R':
         vd->oms_wanted+=2;
@@ -357,12 +359,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
             memcpy(&(vd->work_ref),&(vd->work_ref_Z),sizeof(REFCACHE));
             memset(&(vd->work_ref_Z),0xFF,sizeof(REFCACHE));
           }
-	      AddEndRef(vd);
+        if (vd->ref_mode_P==0)
+          AddEndRef(vd);
+        vd->ref_mode_P=0;
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
       case 'Q':
-        AddTextItem(vd,"\n<Q>",4);
-        AddBrItem(vd);
+//        AddTextItem(vd,"\n<Q>",4);
+        AddPItem(vd);
         vd->parse_state=OMS_STOP;
         return;
       case 'Z':
@@ -396,6 +400,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         AddNewStyle(vd);
         break;
       case 'S':
+        vd->prev_tag_s=vd->current_tag_s;
         *((unsigned int *)(&(vd->current_tag_s)))=k=_rlong(vd);
         ((unsigned int *)(vd->S_cache=realloc(vd->S_cache,(vd->S_cache_size+1)*sizeof(TAG_S))))[vd->S_cache_size]=k;
         vd->S_cache_size++;
@@ -408,6 +413,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         goto L_STAGE3_WANTED;
       case 'Y':
         i=_rbyte(vd);
+        vd->prev_tag_s=vd->current_tag_s;
         vd->current_tag_s=vd->S_cache[i];
         AddNewStyle(vd);
         break;
@@ -584,7 +590,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         memcpy(vd->title,vd->oms+vd->oms_pos,i);
         vd->title[i]=NULL;
         utf82win(vd->title, vd->title);
-        AddBrItem(vd);
+//        AddBrItem(vd);
       }
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;

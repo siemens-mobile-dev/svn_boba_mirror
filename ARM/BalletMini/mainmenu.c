@@ -7,13 +7,12 @@
 #include "conf_loader.h"
 #include "urlstack.h"
 #include "history.h"
+#include "file_works.h"
 
 extern int view_url_mode; //MODE_FILE, MODE_URL
 extern char *view_url;
 extern char *goto_url;
 extern int maincsm_id;
-extern char BOOKMARKS_PATH[];
-
 
 typedef struct
 {
@@ -58,7 +57,7 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
   WSHDR *ws;
-  char *name, *url, *pathbuf, *tmp;
+  char *name, *url, pathbuf[256], *tmp;
   unsigned ul;
   int f;
 
@@ -79,8 +78,9 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
     *url = 0;
     url = tmp;
 
-    pathbuf = malloc(strlen(BOOKMARKS_PATH) + strlen(name) + strlen(".url") + 1);
-    strcpy(pathbuf, BOOKMARKS_PATH); strcat(pathbuf, name); strcat(pathbuf, ".url");
+    getSymbolicPath(pathbuf,"$bookmarks\\");
+    strcat(pathbuf, name);
+    strcat(pathbuf, ".url");
     unlink(pathbuf,&ul);
     f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)
@@ -91,7 +91,6 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
     }
     mfree(url);
     mfree(name);
-    mfree(pathbuf);
       
     return (1);
   }
@@ -149,7 +148,7 @@ int CreateAddBookmark(GUI *data)
   AddEditControlToEditQend(eq,&ec,ma); 
       
   if(data && flag)
-    ascii2ws(ews,ustop->urlname);
+    str_2ws(ews,ustop->urlname,64);
   else
     if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
     {
@@ -667,8 +666,7 @@ static int CreateSearchDialog()
 };
 //-----
 
-
-int CreateBookmarksMenu()
+int CreateBookmarksMenu(char *dir)
 {
   unsigned int err;
   DIR_ENTRY de;
@@ -677,14 +675,14 @@ int CreateBookmarksMenu()
   URL_STRUCT *us;
   int n_url=0;
   char str[128];
-  s=BOOKMARKS_PATH;
+  s=dir;
   strcpy(str,s);
   strcat(str,"*.url");
   if (FindFirstFile(&de,str,&err))
   {
     do
     {
-      if (!(de.file_attr&FA_DIRECTORY))
+      if (!(de.file_attr/*&FA_DIRECTORY*/))
       {
         us=malloc(sizeof(URL_STRUCT));
         strcpy(us->fullpath,s);
@@ -978,7 +976,9 @@ static void mm_goto_bookmarks(GUI *gui)
   int bookmark_menu_id;
   if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
   {
-    bookmark_menu_id=CreateBookmarksMenu();
+    char path[256];
+    getSymbolicPath(path,"$bookmarks\\");
+    bookmark_menu_id=CreateBookmarksMenu(path);
     main_csm->sel_bmk=bookmark_menu_id;
   } 
   GeneralFuncF1(1);

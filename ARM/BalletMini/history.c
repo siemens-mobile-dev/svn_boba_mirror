@@ -1,33 +1,26 @@
-#ifndef __HISTORY_URL__
-#define __HISTORY_URL__
-
 #include "../inc/swilib.h"
-extern char URLCACHE_PATH[];
+#include "file_works.h"
+#include "string_works.h"
 
 extern const int HISTORY_DEPTH;
-const char *HISTORY_FILE = "history.txt";
 const int MAX_FILE_SIZE = 32768;
 const char *NEW_LINE = "\r\n";
 
-//------------------------------------------------------------------------------
-
 void CheckHistory(const char *url)
 {
-  char *pathbuf, *default_url;
+  char path[256], *default_url;
   int f;
   unsigned ul;
-  pathbuf = (char*)malloc(strlen(URLCACHE_PATH) + strlen(HISTORY_FILE) + 1);
-  strcpy(pathbuf, URLCACHE_PATH); strcat(pathbuf, HISTORY_FILE);
-  f=fopen(pathbuf,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  getSymbolicPath(path,"$urlcache\\history.txt");
+  f=fopen(path,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
-    f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+    f=fopen(path,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
     if (f==-1)
     {
       LockSched();
       ShowMSG(1,(int)"Can't write history.txt!");
       UnlockSched();
-      mfree(pathbuf);
       return;
     }
 
@@ -37,37 +30,32 @@ void CheckHistory(const char *url)
     fwrite(f,default_url,strlen(default_url), &ul);
     fclose(f, &ul);
 
-    mfree(pathbuf);
     mfree(default_url);
     return;
   }
   fclose(f, &ul);
-  mfree(pathbuf);
 }
 
 //------------------------------------------------------------------------------
 
 char **GetHistory(int *cnt)
 {
-  char *pathbuf, *history_buf, **history, *s, *tmp;
+  char path[256];
+  char *history_buf,*s,*tmp;
+  char **history;
   int f, flen, history_depth = 0, i;
   unsigned ul;
-
-  pathbuf = (char*)malloc(strlen(URLCACHE_PATH) + strlen(HISTORY_FILE) + 1);
-  strcpy(pathbuf, URLCACHE_PATH); strcat(pathbuf, HISTORY_FILE);
-  f=fopen(pathbuf,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  getSymbolicPath(path,"$urlcache\\history.txt");
+  f=fopen(path,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();
     ShowMSG(1,(int)"Can't read history.txt!");
     UnlockSched();
-    mfree(pathbuf);
     return 0;
   }
-
   flen = lseek(f, 0, 2, &ul, &ul)+1;
   lseek(f, 0, 0, &ul, &ul);
-
 
   flen = (flen>MAX_FILE_SIZE)?MAX_FILE_SIZE:flen;
   history_buf = (char*)malloc(MAX_FILE_SIZE);
@@ -78,7 +66,6 @@ char **GetHistory(int *cnt)
   history = (char**)malloc(sizeof(char *) * HISTORY_DEPTH);
   for(i = 0; i < HISTORY_DEPTH; i++)
   history[i] = 0;
-
   s = history_buf;
   tmp = history_buf;
   for(i = 0; i < HISTORY_DEPTH && s && tmp < history_buf + flen; i++)
@@ -93,10 +80,8 @@ char **GetHistory(int *cnt)
       history_depth++;
     }
   }
-  
   *cnt = history_depth;
   mfree(history_buf);
-  mfree(pathbuf);
   return history;
 }
 
@@ -104,19 +89,16 @@ char **GetHistory(int *cnt)
 
 void AddURLToHistory(const char *url)
 {
-  char *pathbuf, *history_buf, **history, *s, *tmp;
+  char path[256], *history_buf, **history, *s, *tmp;
   int f, flen, history_depth = 0, i;
   unsigned ul;
-
-  pathbuf = (char*)malloc(strlen(URLCACHE_PATH) + strlen(HISTORY_FILE) + 1);
-  strcpy(pathbuf, URLCACHE_PATH); strcat(pathbuf, HISTORY_FILE);
-  f=fopen(pathbuf,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  getSymbolicPath(path,"$urlcache\\history.txt");
+  f=fopen(path,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();
     ShowMSG(1,(int)"Can't read history.txt!");
     UnlockSched();
-    mfree(pathbuf);
     return;
   }
 
@@ -185,24 +167,18 @@ void AddURLToHistory(const char *url)
   }
   mfree(history);
 
-  unlink(pathbuf, &ul);
+  unlink(path, &ul);
 
-  f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  f=fopen(path,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();
     ShowMSG(1,(int)"Can't write history.txt!");
     UnlockSched();
-    mfree(pathbuf);
     mfree(history_buf);
     return;
   }
   fwrite(f,history_buf,strlen(history_buf), &ul);
   fclose(f, &ul);
-  mfree(pathbuf);
   mfree(history_buf);
 }
-
-//------------------------------------------------------------------------------
-
-#endif
