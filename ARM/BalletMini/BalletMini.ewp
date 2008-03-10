@@ -3993,6 +3993,9 @@
     <name>$PROJ_DIR$\display_utils.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\file_works.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
