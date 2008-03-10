@@ -682,7 +682,7 @@ int CreateBookmarksMenu(char *dir)
   {
     do
     {
-      if (!(de.file_attr/*&FA_DIRECTORY*/))
+      if (!(de.file_attr&FA_DIRECTORY))
       {
         us=malloc(sizeof(URL_STRUCT));
         strcpy(us->fullpath,s);
