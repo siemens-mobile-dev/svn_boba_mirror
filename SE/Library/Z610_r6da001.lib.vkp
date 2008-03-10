@@ -143,7 +143,7 @@
 6BC: 00000000 ADF83745 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 6C0: 00000000 A91C2945 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 6C4: 00000000 F9E02344 ; 1B1: void debug_printf(char * fmt,...);
-6C8: 00000000 31C30F45 ; 1B2: int PlayFile(u16 * path, u16 * fname);
+6C8: 00000000 2DC30F45 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 6D0: 00000000 4D713B45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 6D4: 00000000 A9713B45 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 6DC: 00000000 2D3C4645 ; 1B7: int isKeylocked(void);
@@ -277,6 +277,7 @@
 910: 00000000 F5033F45 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 914: 00000000 6D043F45 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 918: 00000000 61043F45 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+920: 00000000 25F40B45 ; 248: void Vibra_Off (int t1);
 948: 00000000 55043F45 ; 252: int List2LineGetCurrentIndex(void * msg);
 94C: 00000000 49043F45 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 950: 00000000 8591F744 ; 254: void DestroyDirHandle(void *handle);

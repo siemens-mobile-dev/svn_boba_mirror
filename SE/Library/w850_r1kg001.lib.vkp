@@ -148,6 +148,7 @@
 06D4: 00000000 F9614045 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: 00000000 993C4B45 ; 1B7: int isKeylocked(void);
 06E0: 00000000 11630745 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06EC: 00000000 A9740F45 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F8: 00000000 61B53C45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 89B43C45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 85E74345 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -157,7 +158,7 @@
 0710: 00000000 DD1C4A45 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: 00000000 71553E45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: 00000000 81553E45 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: 00000000 FD1B4A45 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: 00000000 211C4A45 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: 00000000 D1B34A45 ; 1C8: int isRightNowBook(BOOK *);
 0724: 00000000 B91F3E45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: 00000000 D9604845 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -216,7 +217,7 @@
 0818: 00000000 B976F044 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 C576F044 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 D170F044 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: 00000000 8D621345 ; 209: int isDirectory (u16 * path ,u16 * filename , int * error ); ?????????
+;0824: xxxxxxxx yyyyyyyy ; 209: int isDirectory (u16 * path ,u16 * filename , int * error );
 0828: 00000000 F1FDFA44 ; 20A: void FileDelete (u16 * path ,u16 * filename , int * error );
 082C: 00000000 19524845 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 999C1545 ; 20C: int CreateSMSCont (int, void*);
@@ -276,6 +277,7 @@
 0910: 00000000 81F54345 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 F9F54345 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 EDF54345 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+0920: 00000000 7D750F45 ; 248: void Vibra_Off (int t1);
 0948: 00000000 E1F54345 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 D5F54345 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 0DD6FA44 ; 254: void DestroyDirHandle(void *handle);
