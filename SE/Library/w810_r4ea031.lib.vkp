@@ -201,7 +201,7 @@
 07DC: FFFFFFFF 558E1545 ; 1F7: int MainInput_strlen(GUI *);
 07E0: FFFFFFFF 758E1545 ; 1F8: char * MainInput_getPNUM(GUI *);
 07E4: FFFFFFFF 818E1545 ; 1F9: int MainInput_isPlus(GUI *);
-07E8: FFFFFFFF 690B5345 ; 1FA: int BOOK_GetSessionID(BOOK * );
+07E8: FFFFFFFF 0DFD2945 ; 1FA: int BOOK_GetSessionID(BOOK * );
 07EC: FFFFFFFF AD5CE244 ; 1FB: int wstrncmp(u16*,u16*,int);
 07F0: FFFFFFFF 89483045 ; 1FC: int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
 07F4: FFFFFFFF C1483045 ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
@@ -285,14 +285,14 @@
 0960: FFFFFFFF 75795445 ; 258: int Display_GetHeight(int Display);
 0964: FFFFFFFF 85795445 ; 259: int Display_GetWidth(int Display);
 0968: FFFFFFFF 093E1545 ; 25A: void PlaySystemSound (int SndNumber);
-;0974: xxxxxxxx yyyyyyyy ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
-;0978: xxxxxxxx yyyyyyyy ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
+0974: ffffffff 45381545 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
+0978: ffffffff 1D381545 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 ;097C: xxxxxxxx yyyyyyyy ; 25F: int GC_GetPenColor (void* GC);
 ;0980: xxxxxxxx yyyyyyyy ; 260: void GC_SetPenColor(void* GC , int pen_color);
 ;0984: xxxxxxxx yyyyyyyy ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
 ;0988: xxxxxxxx yyyyyyyy ; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
 ;098C: xxxxxxxx yyyyyyyy ; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
-;0990: xxxxxxxx yyyyyyyy ; 264: int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
+0990: FFFFFFFF 7D1F1945 ; 264: int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
 ;0994: xxxxxxxx yyyyyyyy ; 265: png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
 ;0998: xxxxxxxx yyyyyyyy ; 266: void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
 ;099C: xxxxxxxx yyyyyyyy ; 267: png_infop png_create_info_struct(png_structp png_ptr);
@@ -322,9 +322,9 @@
 ;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 ;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
 ;0A04: xxxxxxxx yyyyyyyy ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
-;0A08: xxxxxxxx yyyyyyyy ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
-;0A0C: xxxxxxxx yyyyyyyy ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
-;0A10: xxxxxxxx yyyyyyyy ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+0A08: FFFFFFFF 4D141745 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+0A0C: FFFFFFFF 51DE5A45 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+0A10: FFFFFFFF E5DE5A45 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 
 
 
