@@ -784,11 +784,11 @@ __swi __arm int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char
 #pragma swi_number=0x202
 __swi __arm void VCALL_Init (void* vc);
 #pragma swi_number=0x203
-__swi __arm void VCALL_SetName (void * vc , u16 * name ,char name_len);
+__swi __arm void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 #pragma swi_number=0x204
 __swi __arm void VCALL_SetNameIcon (void * vc , u16 icon);
 #pragma swi_number=0x205
-__swi __arm void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+__swi __arm void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 #pragma swi_number=0x206
 __swi __arm void VCALL_SetHZ1 (void * vc, int , u16 );
 #pragma swi_number=0x207
@@ -944,11 +944,11 @@ __swi __arm  void List2lineSubitemAddText(void* msg,int StrID);
 __swi __arm  int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 
 #pragma swi_number=0x24A
-__swi __arm bool PlayFileV(u16 * path, u16 * fname, char vol);
+__swi __arm int PlayFileV(u16 * path, u16 * fname, int vol);
 #pragma swi_number=0x24B
-__swi __arm bool GetSilent(void);
+__swi __arm int GetSilent(void);
 #pragma swi_number=0x24C
-__swi __arm bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+__swi __arm int GetVibrator(int ignorevibrator,int ignoresilent);
 #pragma swi_number=0x24D
 __swi __arm int GetAudioSettings(int what, char* retvalue);
 

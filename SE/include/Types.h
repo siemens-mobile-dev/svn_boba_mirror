@@ -1,7 +1,7 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
-#define u16 unsigned short
+typedef unsigned short u16
 
 
 
