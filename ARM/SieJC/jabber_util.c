@@ -628,10 +628,10 @@ void Enter_Conference(char *room, char *roomnick, char *roompass, char N_message
     {
       CList_AddContact(room,room, SUB_BOTH, 0, 129);
     }
-    else  // Конфа могла остаться от предыдущего входа/выхода
-    {
-      Conference->res_list->status=PRESENCE_ONLINE;
-    }
+//    else  // Конфа могла остаться от предыдущего входа/выхода
+//    {
+//      Conference->res_list->status=PRESENCE_ONLINE;
+//    }
   }
   // Готовим структуру для передачи в HELPER
   MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
@@ -1408,6 +1408,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
           Req_Set_Role = 1;
         }
+        };
 
         char* my_nick = Get_Resource_Name_By_FullJID(CList_FindMUCByJID(Conference->JID)->conf_jid);
         if ((!strcmp(nick,my_nick))&&(Conference->res_list->status==PRESENCE_OFFLINE)) //если ето мы, входим в нее.
@@ -1415,8 +1416,6 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           Conference->res_list->status=PRESENCE_ONLINE;
           ShowMSG(1,(int)LG_MUCCROK);
         };
-        };
-
         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
 

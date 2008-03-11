@@ -1821,14 +1821,18 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
           pr_info->priority=OnlineInfo.priority;
           pr_info->status=OnlineInfo.status;
-          WSHDR *ws = AllocWS(256);
-          int len;
           char *msg = malloc(256);
           if (ipc->data)
           {
-          wsprintf(ws, "%t: %t", DEFTEX_PLAYER, (char*)(ipc->data));
+          int len=0;
+          WSHDR *ws = AllocWS(256);
+          WSHDR *ws2 = AllocWS(256);
+          str_2ws(ws2, (char*)(ipc->data), 256);
+          wsprintf(ws, "%t%w", DEFTEX_PLAYER, ws2);
           ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
           msg=realloc(msg, len+1);
+          FreeWS(ws);
+          FreeWS(ws2);
           msg[len]='\0';
           pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
           } else
@@ -1836,7 +1840,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             pr_info->message= NULL;
           }
           SUBPROC((void *)Send_Presence,pr_info);
-          FreeWS(ws);
           mfree(msg);
           }
         }
