@@ -365,12 +365,14 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
       case 'Q':
-//        AddTextItem(vd,"\n<Q>",4);
-        AddPItem(vd);
+        AddTextItem(vd,"\n<Q>",4);
         vd->parse_state=OMS_STOP;
         return;
       case 'Z':
         vd->oms_wanted+=2;
+        break;
+      case '@':
+        vd->oms_wanted+=4;
         break;
       default:
         sprintf(s,"Unknown tag %c\n",i);
@@ -565,6 +567,19 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGZ_STAGE3;
         goto L_STAGE3_WANTED;
+      case '@':
+        vd->ih=_rshort(vd);
+        i=vd->iw=_rshort(vd);
+        if (i>0)
+        {
+          vd->work_ref.id=vd->oms_pos-2;
+          vd->work_ref.id2=vd->ih;
+          vd->work_ref.tag='@';
+          AddBeginRef(vd);
+          vd->oms_wanted+=i;
+          vd->parse_state=OMS_TAGx40_STAGE3;
+          goto L_STAGE3_WANTED;
+        }
       default:
         //vd->parse_state=OMS_STOP;
         break;
@@ -842,6 +857,15 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       //AddBrItem(vd);
       vd->oms_pos+=i;
       //AddEndRef(vd);
+      vd->oms_wanted++;
+      vd->parse_state=OMS_TAG_NAME;
+      break;
+    case OMS_TAGx40_STAGE3:
+      i=vd->iw;
+      AddTextItem(vd,vd->oms+vd->oms_pos,i);
+      AddBrItem(vd);
+      vd->oms_pos+=i;
+      AddEndRef(vd);
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
       break;

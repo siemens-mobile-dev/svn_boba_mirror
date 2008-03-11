@@ -456,7 +456,7 @@ static void free_search_engines()
 {
 LockSched();
 char ** p=search_engines;
-for(int i=search_engine_count-1;i>=0;i--) mfree(*p++); 
+for(int i=search_engine_count-1;i>=0;i--) mfree(*p++);
 search_engine_count=0;
 UnlockSched();
 };
@@ -503,7 +503,7 @@ int search_onkey(GUI *data, GUI_MSG *msg)
   EDITCONTROL ec;
   if (msg->keys==0xFFF)
   {
-    if(selected_search_engine<0)return 0;      
+    if(selected_search_engine<0)return 0;
 
     //query
     ExtractEditControl(data,2,&ec);

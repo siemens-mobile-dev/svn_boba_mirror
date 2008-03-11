@@ -40,7 +40,7 @@ char *goto_url;
 char *from_url;
 char *goto_params;
 
-int quit_reqired;
+//int quit_reqired;
 
 static const char percent_t[]="%t";
 
@@ -502,11 +502,11 @@ static void RunOtherCopyByURL(const char *url, int isNativeBrowser)
 
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
 {
-  if (quit_reqired)
-  {
-    quit_reqired=0;
-    return 0xFF;
-  }
+//  if (quit_reqired)
+//  {
+//    quit_reqired=0;
+//    return 0xFF;
+//  }
   VIEWDATA *vd=data->vd;
   REFCACHE *rf;
   int m=msg->gbsmsg->msg;
@@ -546,6 +546,14 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               goto_params=collectItemsParams(vd,rf);
             }
             return 0xFF;
+          }
+          break;
+        case '@':
+          if (rf->id!=_NOREF)
+          {
+            char *s=extract_omstr(vd,rf->id);
+            RunOtherCopyByURL(s,1);
+            mfree(s);
           }
           break;
         case 'r':
@@ -591,7 +599,15 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           break;
         case 'x':
         case 'p':
-          CreateInputBox(vd,rf);
+          {
+            MAIN_CSM *main_csm;
+            int bookmark_menu_id;
+            if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+            {
+              bookmark_menu_id=CreateInputBox(vd,rf);
+              main_csm->sel_bmk=bookmark_menu_id;
+            }
+          }
           break;
         case 'i':
         case 'u':
@@ -602,7 +618,16 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           goto_params=collectItemsParams(vd,rf);
           return 0xFF;
         case 's':
-          ChangeMenuSelection(vd, rf);
+          
+          {
+            MAIN_CSM *main_csm;
+            int bookmark_menu_id;
+            if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+            {
+              bookmark_menu_id=ChangeMenuSelection(vd, rf);
+              main_csm->sel_bmk=bookmark_menu_id;
+            }
+          }
           break;
         default:
           {
@@ -714,7 +739,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     case 0x39: // '9'
       while(LineDown(vd)) ;
       vd->pixdisp=0;
-      scrollUp(vd,ScreenH());
+      scrollUp(vd,ScreenH()-1);
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x31: // '1'
@@ -769,7 +794,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             if (rf->id!=_NOREF)
             {
               char *s=extract_omstr(vd,rf->id);
-              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
+              for (int to=strlen(s);to;to--) if (s[to-1]==NULL) s[to-1]=' ';
               sprintf(c,"   %s",s);
               fwrite(f,c,strlen(c),&ul);
               mfree(s);
@@ -777,7 +802,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             fwrite(f,"\n",1,&ul);
             sprintf(c,"  id2:       %u",rf->id2);
             fwrite(f,c,strlen(c),&ul);
-            if (rf->id2!=_NOREF)
+            if (rf->id2!=_NOREF&&rf->tag!='@')
             {
               char *s=extract_omstr(vd,rf->id2);
               for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
@@ -1016,18 +1041,16 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     {
       switch((int)msg->data1)
       {
-      case 0xFE:
-        //Пробуем идти по стеку назад
+      case 0xFE: //Пробуем идти по стеку назад
         if ((goto_url=PopPageFromStack()))
         {
           SUBPROC((void*)GotoFile);
           break;
         }
         goto L_CLOSE;
-      case 0xFF:
+      case 0xFF: //Есть куда пойти
         if (goto_url)
         {
-          //Есть куда пойти
           SUBPROC((void*)GotoLink);
           break;
         }
@@ -1051,7 +1074,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     {
       if ((int)msg->data1==0xFF)
       {
-        GeneralFunc_flag1(csm->view_id,0xFF);        
+        GeneralFunc_flag1(csm->view_id,0xFF);
       }
       csm->sel_bmk=0;
     }

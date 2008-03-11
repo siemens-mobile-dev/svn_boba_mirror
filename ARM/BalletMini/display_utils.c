@@ -4,6 +4,9 @@
 #include "siemens_unicode.h"
 #include "string_works.h"
 #include "rect_patcher.h"
+#include "main.h"
+
+extern int maincsm_id;
 
 int GetFontHeight(int font, int atribute)
 {
@@ -225,7 +228,7 @@ L1:
     {
       while(LineDown(vd)) ;
       vd->pixdisp=0;
-      scrollUp(vd,ScreenH());
+      scrollUp(vd,ScreenH()-1);
       return;
     }
     vd->pixdisp=pd;
@@ -237,7 +240,7 @@ L1:
     {
       while(LineDown(vd)) ;
       vd->pixdisp=0;
-      scrollUp(vd,ScreenH());
+      scrollUp(vd,ScreenH()-1);
     }
   }
 }
@@ -328,7 +331,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   LINECACHE *lc;
   unsigned int vl;
   int ypos=-vd->pixdisp;
-//  unsigned int store_pos=vd->view_pos;
   unsigned int store_line=vl=vd->view_line;
   unsigned int len;
   unsigned int y2;
@@ -356,7 +358,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int rnd_x;
   REFCACHE *rnd_rf;
   
-  while(ypos<scr_h)
+  while(ypos<=scr_h)
   {
     if (LineDown(vd))
     {
@@ -388,6 +390,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         c=vd->rawtext[sc];
         if (c==UTF16_ENA_INVERT)
         {
+          //ws->wsbody[++dc]='>';
           rnd_rf=FindReferenceByBegin(vd,sc);
           rnd_x=ws_width;
           if (ypos+lc[0].pixheight>dfh||ypos>=0)
@@ -402,7 +405,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         }
         if (c==UTF16_DIS_INVERT)
         {
-          if (lc->pixheight<dfh?(ypos+lc->pixheight<scr_h+2):(ypos+dfh<scr_h+2))
+          //ws->wsbody[++dc]='<';
+          if ((lc->pixheight<dfh)?(ypos+lc->pixheight<scr_h+2):(ypos+dfh<scr_h+2))
           {
             if (_ref!=0xFFFFFFFF)
             {
@@ -594,7 +598,7 @@ VIEWDATA *cur_vd;
 extern char *goto_url;
 extern char *from_url;
 extern char *goto_params;
-extern int quit_reqired;
+//extern int quit_reqired;
 
 char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf);
 
@@ -644,7 +648,15 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
       from_url=malloc(strlen(cur_vd->pageurl)+1);
       strcpy(from_url,cur_vd->pageurl);
       goto_params=collectItemsParams(cur_vd,cur_ref);
-      quit_reqired=1;
+//      quit_reqired=1;
+    }
+    else
+    {
+      MAIN_CSM *main_csm;
+      if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+      {
+        main_csm->sel_bmk=0;
+      }
     }
     cur_ref=NULL;
     cur_vd=NULL;
@@ -743,7 +755,15 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
           from_url=malloc(strlen(cur_vd->pageurl)+1);
           strcpy(from_url,cur_vd->pageurl);
           goto_params=collectItemsParams(cur_vd,cur_ref);
-          quit_reqired=1;
+//          quit_reqired=1;
+        }
+        else
+        {
+          MAIN_CSM *main_csm;
+          if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+          {
+            main_csm->sel_bmk=0;
+          }
         }
         cur_ref=NULL;
         cur_vd=NULL;
