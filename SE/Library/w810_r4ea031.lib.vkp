@@ -276,6 +276,10 @@
 0910: FFFFFFFF 41141745 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: FFFFFFFF CD141745 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: FFFFFFFF BD141745 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: FFFFFFFF AD141745 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 9D141745 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF C5285B45 ; 254: void DestroyDirHandle(void *handle);

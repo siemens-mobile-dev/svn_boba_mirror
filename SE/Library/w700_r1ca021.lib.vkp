@@ -283,6 +283,10 @@
 091c: FFFFFFFF 5D0AD244 ; 247: go_music (int go);
 0920: FFFFFFFF B538F944 ; 248: void Vibra_Off(int t1);
 0924: FFFFFFFF A19CF744 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
 ;0948: xxxxxxxx yyyyyyyy ; 252: int List2LineGetCurrentIndex(void * msg);
 ;094C: xxxxxxxx yyyyyyyy ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF 69AC0E45 ; 254: void DestroyDirHandle(void *handle);

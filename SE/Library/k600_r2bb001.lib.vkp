@@ -286,6 +286,10 @@
 091C: FFFFFFFF E14D7320 ; 247: go_music (int go); // не правильный прототип!!!!!!!
 0920: FFFFFFFF 5D844620 ; 248: void Vibra_Off(int t1);
 0924: FFFFFFFF 95553520 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: FFFFFFFF 6DD67720 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 5DD67720 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF F1A64D20 ; 254: void DestroyDirHandle(void *handle);

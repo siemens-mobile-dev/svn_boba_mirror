@@ -282,6 +282,10 @@
 0918: FFFFFFFF 01600A45 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 0920: FFFFFFFF 29343845 ; 248: void Vibra_Off (int t1);
 0924: FFFFFFFF 45CA3645 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: FFFFFFFF 21600A45 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 11600A45 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF E5954C45 ; 254: void DestroyDirHandle(void *handle);

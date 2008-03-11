@@ -278,6 +278,10 @@
 0914: 00000000 F9F54345 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 EDF54345 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 0920: 00000000 7D750F45 ; 248: void Vibra_Off (int t1);
+;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: 00000000 E1F54345 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 D5F54345 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 0DD6FA44 ; 254: void DestroyDirHandle(void *handle);
