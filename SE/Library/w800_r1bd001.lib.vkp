@@ -66,7 +66,7 @@
 0524: FFFFFFFF 2DEFD344 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 0528: FFFFFFFF 6196EA44 ; 14A: void StatusIndication_Item8_SetText(int StrID);
 052C: FFFFFFFF 09ADD344 ; 14B: void AddMSGHook(void * menu,short msg,void (*proc)(BOOK *,void*));
-0530: FFFFFFFF 61AFD344 ; 14C: void AddCommand(void * menu,int cmd , int StrID);
+0530: FFFFFFFF F1ADD344 ; 14C: void AddCommand(void * menu,int cmd , int StrID);
 0534: FFFFFFFF b5adD344 ; 14D: void SoftKey_SetEnable(void *gui,int msg,int ena);
 0538: FFFFFFFF 8DB0D344 ; 14E: void SoftKey_AddErrorStr(void *gui,int msg,int StrID);
 053C: FFFFFFFF d9b0D344 ; 14F: void SoftKey_RemoveItem(void *gui,u16 action);
