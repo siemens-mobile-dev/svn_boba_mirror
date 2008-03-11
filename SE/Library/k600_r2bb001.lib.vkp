@@ -217,9 +217,9 @@
 0800: FFFFFFFF 214A5520 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: FFFFFFFF C5495520 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: FFFFFFFF 3D291C20 ; 202: void VCALL_Init (void* vc);
-080C: FFFFFFFF 312A1C20 ; 203: void VCALL_SetName (void * vc , u16 * name ,char name_len);
+080C: FFFFFFFF 312A1C20 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: FFFFFFFF 8D2A1C20 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
-0814: FFFFFFFF 512A1C20 ; 205: void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+0814: FFFFFFFF 512A1C20 ; 205: void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 0818: FFFFFFFF 792A1C20 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: FFFFFFFF 852A1C20 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: FFFFFFFF 55201C20 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
@@ -286,10 +286,10 @@
 091C: FFFFFFFF E14D7320 ; 247: go_music (int go); // не правильный прототип!!!!!!!
 0920: FFFFFFFF 5D844620 ; 248: void Vibra_Off(int t1);
 0924: FFFFFFFF 95553520 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
-;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
-;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
+0928: FFFFFFFF 59637520 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+092C: FFFFFFFF 697A4620 ; 24B: int GetSilent(void);
+0930: FFFFFFFF AD454620 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
+0934: FFFFFFFF DD854620 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: FFFFFFFF 6DD67720 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 5DD67720 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF F1A64D20 ; 254: void DestroyDirHandle(void *handle);

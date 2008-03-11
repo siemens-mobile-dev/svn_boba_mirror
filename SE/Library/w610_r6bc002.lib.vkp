@@ -54,7 +54,7 @@
 04F8: 00000000 B94B3145 ; 13E: int GetFocusetListObjectItem( void *obj);
 04FC: 00000000 094C3145 ; 13F: void SetMenuItemStyle( void *obj , int style);
 0500: 00000000 E5963545 ; 140: void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
-0504: 00000000 2D9E3845 ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
+0504: 00000000 3D9A3845 ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: 00000000 49AF3645 ; 142: void StatusIndication_SetItemText(void *gui,int item,int StrID);
 050C: 00000000 ADA92B45 ; 143: void StatusIndication_ShowNotes(int StrID);
 0510: 00000000 11CD2E45 ; 144: void * CreateStringInput(int,...);
@@ -123,8 +123,8 @@
 060C: 00000000 70E33044 ; 183: int get_ptype(PROCESS pid);
 0610: 00000000 BCE23044 ; 184: PROCESS current_process(void);
 0614: 00000000 F4E13044 ; 185: void delay(OSTIME timeout);
-;0618: xxxxxxxx yyyyyyyy ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-;061C: xxxxxxxx yyyyyyyy ; 187: void kill_proc(PROCESS pid);
+0618: 00000000 BCE33044 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
+061C: 00000000 E8E33044 ; 187: void kill_proc(PROCESS pid);
 0680: 00000000 DDBC5544 ; 1A0: char* strcpy(char * dest, char * source);
 0684: 00000000 29E4FF44 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 7DE4FF44 ; 1A2: void SendMessage(void **signal,int PID);
@@ -168,7 +168,7 @@
 0738: 00000000 21B13545 ; 1CE: void GUI_Free(GUI*);
 073C: 00000000 9DB43545 ; 1CF: void GUI_SetIcon(GUI* , int icon);
 0740: 00000000 B5D52E45 ; 1D0: int StringInput_GetStringAndLen (GUI*,u16**,u16*);
-074C: 00000000 881EE944 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
+074C: 00000000 891EE944 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 99653145 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 D9673145 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 0758: 00000000 5D673145 ; 1D6: void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
@@ -211,9 +211,9 @@
 0800: 00000000 D5BC2D45 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: 00000000 7DBC2D45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 5171DE44 ; 202: void VCALL_Init (void* vc);
-080C: 00000000 4972DE44 ; 203: void VCALL_SetName (void * vc , u16 * name ,char name_len);
+080C: 00000000 4972DE44 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: 00000000 A972DE44 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
-0814: 00000000 6972DE44 ; 205: void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+0814: 00000000 6972DE44 ; 205: void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 0818: 00000000 8D72DE44 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 9972DE44 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 296DDE44 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
@@ -278,9 +278,9 @@
 0914: 00000000 09583145 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 FD573145 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 0920: 00000000 41EBFD44 ; 248: void Vibra_Off (int t1);
-;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 ;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: 00000000 F1573145 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 E5573145 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
@@ -313,7 +313,7 @@
 09BC: 00000000 815EAF44 ; 26F: void png_set_gray_1_2_4_to_8(png_structp png_ptr);
 09C0: 00000000 995EAF44 ; 270: void png_set_gray_to_rgb(png_structp png_ptr);
 09C4: 00000000 B147AF44 ; 271: png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
-09C8: 00000000 8E5EAF44 ; 272: void png_set_tRNS_to_alpha(png_structp png_ptr);
+09C8: 00000000 8D5EAF44 ; 272: void png_set_tRNS_to_alpha(png_structp png_ptr);
 09CC: 00000000 D18BAF44 ; 273: void png_set_filler(png_structp png_ptr, png_uint_32 filler, int flags);
 09D0: 00000000 755EAF44 ; 274: void png_set_palette_to_rgb(png_structp png_ptr);
 09D4: 00000000 C947AF44 ; 275: png_uint_32 png_get_rowbytes(png_structp png_ptr, png_infop info_ptr);
