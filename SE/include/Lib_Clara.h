@@ -28,7 +28,10 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #endif /* NULL */
 
 #define SID_ANY_LEN 0xFFFF
-#define STR(__STR__) Str2ID((u16*)(L##__STR__),0,SID_ANY_LEN)
+#define TEXT(__STR__) (u16*)L##__STR__
+#define _T(__STR__) (u16*)L##__STR__
+#define MAXELEMS(x) (sizeof(x)/sizeof(x[0]))
+#define STR(__STR__) Str2ID(_T(__STR__),0,SID_ANY_LEN)
 
 #define MINUTE_TICK_EVENT 999
 #define ELF_SHOW_INFO_EVENT 998
@@ -939,6 +942,15 @@ __swi __arm  void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 __swi __arm  void List2lineSubitemAddText(void* msg,int StrID);
 #pragma swi_number=0x246
 __swi __arm  int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+
+#pragma swi_number=0x24A
+__swi __arm bool PlayFileV(u16 * path, u16 * fname, char vol);
+#pragma swi_number=0x24B
+__swi __arm bool GetSilent(void);
+#pragma swi_number=0x24C
+__swi __arm bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+#pragma swi_number=0x24D
+__swi __arm int GetAudioSettings(int what, char* retvalue);
 
 #pragma swi_number=0x252
 __swi __arm  int List2LineGetCurrentIndex(void * msg);

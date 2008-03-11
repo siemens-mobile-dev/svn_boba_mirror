@@ -87,7 +87,7 @@
 057C: 00000000 7D603445 ; 15F: void TextID2wstr(int StrID,u16 * str,int maxlen);
 0580: 00000000 5D5F3445 ; 160: int TextGetLength(int StrID);
 0584: 00000000 C15E3445 ; 161: void TextFree(int StrID);
-0588: 00000000 00000000 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
+0588: 00000000 D564DE44 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
 058C: 00000000 A5B5DE44 ; 163: int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
 0590: 00000000 71B6DE44 ; 164: int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
 0594: 00000000 29B7DE44 ; 165: int AB_GETNBROFITEMS(int get_from,int unk_0);
@@ -143,11 +143,12 @@
 06BC: 00000000 EDCA2A45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: 00000000 79421B45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 C1682344 ; 1B1: void debug_printf(char * fmt,...);
-06C8: 00000000 00000000 ; 1B2: int PlayFile(u16 * path, u16 * fname);
+06C8: 00000000 313F0045 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: 00000000 15452E45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 71452E45 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: 00000000 C9293945 ; 1B7: int isKeylocked(void);
 06E0: 00000000 FDFFF444 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06EC: 00000000 4D57FD44 ; 1BB: void Vibra(int t1, int t2, int t3);
 ;06F8: xxxxxxxx yyyyyyyy ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 BD8D2A45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 05CB3145 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -179,7 +180,7 @@
 0784: 00000000 D1EE3145 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , void * proc);
 0788: 00000000 31B42B45 ; 1E2: GUI_FEEDBACK * CreateFeedBack (int,...);
 078C: 00000000 FDB42B45 ; 1E3: void FeedBack_SetText(GUI_FEEDBACK*,int);
-0790: 00000000 00000000 ; 1E4: int GetBattaryState(const int * , BATT *);
+0790: 00000000 599D9C44 ; 1E4: int GetBattaryState(const int * , BATT *);
 0794: 00000000 D90F3645 ; 1E5: void * get_DisplayGC (void);
 0798: 00000000 959A3545 ; 1E6: void GetGuiRect(void*,RECT*);
 079C: 00000000 B1163645 ; 1E7: void get_GC_RECT(void*,RECT*);
@@ -276,6 +277,11 @@
 0910: 00000000 F9D83145 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 71D93145 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 65D93145 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+0920: 00000000 2158FD44 ; 248: void Vibra_Off (int t1);
+0928: 00000000 353F0045 ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
+092C: 00000000 194CFD44 ; 24B: bool GetSilent(void);
+0930: 00000000 8522FD44 ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+0934: 00000000 995AFD44 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: 00000000 59D93145 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 4DD93145 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 8554E844 ; 254: void DestroyDirHandle(void *handle);
