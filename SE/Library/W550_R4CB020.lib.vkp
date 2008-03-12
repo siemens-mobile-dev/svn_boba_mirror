@@ -143,7 +143,7 @@
 06BC: FFFFFFFF 5D751C45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: FFFFFFFF 21661A45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 15A6D044 ; 1B1: void debug_printf(char * fmt,...);
-06C8: FFFFFFFF 45F80745 ; 1B2: int PlayFile(u16 * path, u16 * fname);
+06C8: FFFFFFFF 35F80745 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: FFFFFFFF 2D605745 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: FFFFFFFF 89605745 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: FFFFFFFF 5D3B0845 ; 1B7: int isKeylocked(void);
@@ -212,9 +212,9 @@
 0800: FFFFFFFF 01585745 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: FFFFFFFF A5575745 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: FFFFFFFF A5575745 ; 202: void VCALL_Init (void* vc);
-080C: FFFFFFFF 8C741345 ; 203: void VCALL_SetName (void * vc , u16 * name ,char name_len);
+080C: FFFFFFFF 8C741345 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: FFFFFFFF F1741345 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
-0814: FFFFFFFF AD741345 ; 205: void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+0814: FFFFFFFF AD741345 ; 205: void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 0818: FFFFFFFF D5741345 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: FFFFFFFF E1741345 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: FFFFFFFF D16B1345 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
@@ -280,10 +280,10 @@
 0918: FFFFFFFF 99DB0945 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 091c: FFFFFFFF 51D30545 ; 247: go_music (int go);
 0920: FFFFFFFF 052D3845 ; 248: void Vibra_Off (int t1);
-;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
-;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
+0928: FFFFFFFF 45F80745 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+092C: FFFFFFFF 2D223845 ; 24B: int GetSilent(void);
+0930: FFFFFFFF DDF73745 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
+0934: FFFFFFFF 6D2F3845 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: FFFFFFFF 89DB0945 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 89DB0945 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF C9154E45 ; 254: void DestroyDirHandle(void *handle);

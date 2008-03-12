@@ -148,6 +148,7 @@
 06D4: FFFFFFFF CDD66445 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: FFFFFFFF C5821545 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF 71504445 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06EC: FFFFFFFF 41d04545 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F8: FFFFFFFF E10B1545 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: FFFFFFFF F90A1545 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: FFFFFFFF 75061745 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -276,6 +277,7 @@
 0910: FFFFFFFF 41141745 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: FFFFFFFF CD141745 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: FFFFFFFF BD141745 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+0920: FFFFFFFF 19d14545 ; 248: void Vibra_Off (int t1);
 ;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
 ;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
 ;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
