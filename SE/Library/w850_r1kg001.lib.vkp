@@ -143,7 +143,7 @@
 06BC: 00000000 ADF33C45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: 00000000 417A2D45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 8D412444 ; 1B1: void debug_printf(char * fmt,...);
-06C8: 00000000 99521345 ; 1B2: int PlayFile(u16 * path, u16 * fname);
+06C8: 00000000 95521345 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: 00000000 9D614045 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 F9614045 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: 00000000 993C4B45 ; 1B7: int isKeylocked(void);
@@ -278,10 +278,10 @@
 0914: 00000000 F9F54345 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 EDF54345 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 0920: 00000000 7D750F45 ; 248: void Vibra_Off (int t1);
-;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
-;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
+0928: 00000000 99521345 ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
+092C: 00000000 75690F45 ; 24B: bool GetSilent(void);
+0930: 00000000 15400F45 ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+0934: 00000000 F5770F45 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0948: 00000000 E1F54345 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 D5F54345 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 0DD6FA44 ; 254: void DestroyDirHandle(void *handle);
