@@ -2097,10 +2097,11 @@ int status_keyhook(int submsg, int msg)
 {
 if(Is_Autostatus_Enabled)
 {
-  extern const char DEFTEX_ONLINE[256];
-  extern ONLINEINFO OnlineInfo;  
   if (as==1)
+    if (IsGuiOnTop(maingui_id)||IsGuiOnTop(Message_gui_ID))
   {
+    extern const char DEFTEX_ONLINE[256];
+    extern ONLINEINFO OnlineInfo;
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
     pr_info->priority=OnlineInfo.priority;
     pr_info->status=0;

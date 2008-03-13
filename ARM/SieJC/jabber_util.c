@@ -17,6 +17,7 @@
 #include "lang.h"
 
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+extern const char percent_t[];
 
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];
@@ -688,7 +689,24 @@ void Enter_Conference(char *room, char *roomnick, char *roompass, char N_message
 //Context: HELPER
 void _leaveconference(char *conf_jid)
 {
-  Send_ShortPresence(conf_jid,PRESENCE_OFFLINE);
+  extern const char DEFTEX_MUCOFFLINE[];
+  if(strlen(DEFTEX_MUCOFFLINE))
+  {
+  char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'><status>%s</status></presence>";
+  char* pr=malloc(1024);
+  char *msg = malloc(256);
+  WSHDR *ws = AllocWS(256);
+  int len;
+  wsprintf(ws, percent_t, DEFTEX_MUCOFFLINE);
+  ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+  msg=realloc(msg, len+1);
+  msg[len]='\0';
+  sprintf(pr, pr_templ, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(conf_jid), Mask_Special_Syms(msg));
+  SendAnswer(pr);
+  FreeWS(ws);
+  mfree(msg);
+  mfree(pr);
+  } else Send_ShortPresence(conf_jid,PRESENCE_OFFLINE);
   mfree(conf_jid);
 }
 
