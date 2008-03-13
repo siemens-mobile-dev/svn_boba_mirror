@@ -214,9 +214,9 @@
 0800: FFFFFFFF 7D371645 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: FFFFFFFF 21371645 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: FFFFFFFF A5B3DF44 ; 202: void VCALL_Init (void* vc);
-080C: FFFFFFFF 5DF0DE44 ; 203: void VCALL_SetName (void * vc , u16 * name ,char name_len);
+080C: FFFFFFFF 5DF0DE44 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: FFFFFFFF B9F0DE44 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
-0814: FFFFFFFF 7DF0DE44 ; 205: void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+0814: FFFFFFFF 7DF0DE44 ; 205: void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 0818: FFFFFFFF A5F0DE44 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: FFFFFFFF B1F0DE44 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: FFFFFFFF 21E7DE44 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
@@ -283,10 +283,11 @@
 091c: FFFFFFFF 5D0AD244 ; 247: go_music (int go);
 0920: FFFFFFFF B538F944 ; 248: void Vibra_Off(int t1);
 0924: FFFFFFFF A19CF744 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
-;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 ;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
+;0938: xxxxxxxx yyyyyyyy ; 24E: int GetChipID(void);
 ;0948: xxxxxxxx yyyyyyyy ; 252: int List2LineGetCurrentIndex(void * msg);
 ;094C: xxxxxxxx yyyyyyyy ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF 69AC0E45 ; 254: void DestroyDirHandle(void *handle);

@@ -290,7 +290,7 @@
 092C: FFFFFFFF 697A4620 ; 24B: int GetSilent(void);
 0930: FFFFFFFF AD454620 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: FFFFFFFF DD854620 ; 24D: int GetAudioSettings(int what, char* retvalue);
-0938: FFFFFFFF 5868B320 ; 24E: int GetChipID(void);
+0938: FFFFFFFF 5968B320 ; 24E: int GetChipID(void);
 0948: FFFFFFFF 6DD67720 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 5DD67720 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF F1A64D20 ; 254: void DestroyDirHandle(void *handle);

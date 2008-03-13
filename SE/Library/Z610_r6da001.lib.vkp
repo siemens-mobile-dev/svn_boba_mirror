@@ -282,7 +282,7 @@
 92C: 00000000 2DE80B45 ; 24B: int GetSilent(void);
 930: 00000000 39BF0B45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 934: 00000000 9DF60B45 ; 24D: int GetAudioSettings(int what, char* retvalue);
-938: 00000000 54CA2344 ; 24E: int GetChipID(void);
+938: 00000000 55CA2344 ; 24E: int GetChipID(void);
 948: 00000000 55043F45 ; 252: int List2LineGetCurrentIndex(void * msg);
 94C: 00000000 49043F45 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 950: 00000000 8591F744 ; 254: void DestroyDirHandle(void *handle);
