@@ -952,6 +952,9 @@ __swi __arm int GetVibrator(int ignorevibrator,int ignoresilent);
 #pragma swi_number=0x24D
 __swi __arm int GetAudioSettings(int what, char* retvalue);
 
+#pragma swi_number=0x24E
+__swi __arm int GetChipID(void);
+
 #pragma swi_number=0x252
 __swi __arm  int List2LineGetCurrentIndex(void * msg);
 #pragma swi_number=0x253

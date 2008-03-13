@@ -211,9 +211,9 @@
 800: 00000000 256A3B45 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 804: 00000000 CD693B45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 808: 00000000 B534ED44 ; 202: void VCALL_Init (void* vc);
-80C: 00000000 AD35ED44 ; 203: void VCALL_SetName (void * vc , u16 * name ,char name_len);
+80C: 00000000 AD35ED44 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 810: 00000000 0D36ED44 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
-814: 00000000 CD35ED44 ; 205: void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+814: 00000000 CD35ED44 ; 205: void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 818: 00000000 F135ED44 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 81C: 00000000 FD35ED44 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 820: 00000000 0930ED44 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
@@ -278,10 +278,11 @@
 914: 00000000 6D043F45 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 918: 00000000 61043F45 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 920: 00000000 25F40B45 ; 248: void Vibra_Off (int t1);
-928: 00000000 31C30F45 ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-92C: 00000000 2DE80B45 ; 24B: bool GetSilent(void);
-930: 00000000 39BF0B45 ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+928: 00000000 31C30F45 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+92C: 00000000 2DE80B45 ; 24B: int GetSilent(void);
+930: 00000000 39BF0B45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 934: 00000000 9DF60B45 ; 24D: int GetAudioSettings(int what, char* retvalue);
+938: 00000000 54CA2344 ; 24E: int GetChipID(void);
 948: 00000000 55043F45 ; 252: int List2LineGetCurrentIndex(void * msg);
 94C: 00000000 49043F45 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 950: 00000000 8591F744 ; 254: void DestroyDirHandle(void *handle);

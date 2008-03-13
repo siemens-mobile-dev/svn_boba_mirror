@@ -211,9 +211,9 @@
 0800: 00000000 755A4045 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: 00000000 1D5A4045 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 7D75F044 ; 202: void VCALL_Init (void* vc);
-080C: 00000000 7576F044 ; 203: void VCALL_SetName (void * vc , u16 * name ,char name_len);
+080C: 00000000 7576F044 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: 00000000 D576F044 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
-0814: 00000000 9576F044 ; 205: void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+0814: 00000000 9576F044 ; 205: void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 0818: 00000000 B976F044 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 C576F044 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 D170F044 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
@@ -278,10 +278,11 @@
 0914: 00000000 F9F54345 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 EDF54345 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 0920: 00000000 7D750F45 ; 248: void Vibra_Off (int t1);
-0928: 00000000 99521345 ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-092C: 00000000 75690F45 ; 24B: bool GetSilent(void);
-0930: 00000000 15400F45 ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+0928: 00000000 99521345 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+092C: 00000000 75690F45 ; 24B: int GetSilent(void);
+0930: 00000000 15400F45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: 00000000 F5770F45 ; 24D: int GetAudioSettings(int what, char* retvalue);
+0938: 00000000 E82A2444 ; 24E: int GetChipID(void);
 0948: 00000000 E1F54345 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 D5F54345 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 0DD6FA44 ; 254: void DestroyDirHandle(void *handle);

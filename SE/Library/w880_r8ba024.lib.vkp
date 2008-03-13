@@ -206,9 +206,9 @@
 ;0800: xxxxxxxx yyyyyyyy ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 ;0804: xxxxxxxx yyyyyyyy ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 216DF044 ; 202: __thumb void VCALL_Init (void* vc);
-080C: 00000000 196EF044 ; 203: __thumb void VCALL_SetName (void * vc , u16 * name ,char name_len);
+080C: 00000000 196EF044 ; 203: __thumb void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: 00000000 796EF044 ; 204: __thumb void VCALL_SetNameIcon (void * vc , u16 icon);
-0814: 00000000 396EF044 ; 205: __thumb void VCALL_SetNumber (void * vc , u16 * number , char num_len);
+0814: 00000000 396EF044 ; 205: __thumb void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 0818: 00000000 5D6EF044 ; 206: __thumb void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 696EF044 ; 207: __thumb void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 7968F044 ; 208: __thumb void MakeVoiceCall (int SessioID , void * vc ,int flag);
@@ -270,10 +270,11 @@
 0910: 00000000 69674345 ; 244: __thumb void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 E1674345 ; 245: __thumb void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 D5674345 ; 246: __thumb int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-;0928: xxxxxxxx yyyyyyyy ; 24A: bool PlayFileV(u16 * path, u16 * fname, char vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: bool GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: bool GetVibrator(bool ignorevibrator,bool ignoresilent);
+;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
+;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 ;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
+0938: 00000000 DC8D2C44 ; 24E: int GetChipID(void);
 0948: 00000000 C9674345 ; 252: __thumb int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 BD674345 ; 253: __thumb int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 39D3FA44 ; 254: __thumb void DestroyDirHandle(void *handle);
