@@ -1238,14 +1238,15 @@ void GenerateFile(char *path, char *name, unsigned char *from, unsigned size)
   stat.size = 0;
   GetFileStats(pathbuf,&stat,&ul); 
   ///if (GetFileStats(pathbuf,&stat,&ul)!=-1) return;
-  if (stat.size>0) return;
-
-  unlink(pathbuf,&ul);
-  f = fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
-  if (f!=-1)
+  if (stat.size==0)
   {
-    fwrite(f,from,size,&ul);
-    fclose(f,&ul);
+    unlink(pathbuf,&ul);
+    f = fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+    if (f!=-1)
+    {
+      fwrite(f,from,size,&ul);
+      fclose(f,&ul);
+    }
   }
   mfree(pathbuf);
 
