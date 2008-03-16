@@ -286,11 +286,11 @@
 091c: FFFFFFFF A5C8D144 ; 247: go_music (int go);
 0920: FFFFFFFF 85AFF844 ; 248: void Vibra_Off(int t1);
 0924: FFFFFFFF 8527F744 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
-;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
-;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
-;0938: xxxxxxxx yyyyyyyy ; 24E: int GetChipID(void);
+0928: FFFFFFFF 19D7D344 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+092C: FFFFFFFF 39A5F844 ; 24B: int GetSilent(void);
+0930: FFFFFFFF F571F844 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
+0934: FFFFFFFF 05B1F844 ; 24D: int GetAudioSettings(int what, char* retvalue);
+0938: FFFFFFFF 292BA344 ; 24E: int GetChipID(void);
 0948: FFFFFFFF 914AD644 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 814AD644 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF 1D400E45 ; 254: void DestroyDirHandle(void *handle);
