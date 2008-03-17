@@ -1066,5 +1066,6 @@ __swi __arm void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 __swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 #pragma swi_number=0x284
 __swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
-
+#pragma swi_number=0x8285
+__swi __arm SURFACE ** get_Surfaces(void);
 #endif

@@ -59,12 +59,35 @@ typedef struct XGUILIST_type XGUILIST;
 typedef struct UI_APP_SESSION_type UI_APP_SESSION;
 typedef struct GUI_type GUI;
 
+typedef struct SURFACE
+{
+  int Ifc;
+  u16 Flags;
+  int Width;
+  int Height;
+  int Buffer;
+  int BufferSize;
+  int Tag;
+  int RefCount;
+  SURFACE *  next;
+  int HWFlags;
+  int BitsLock;
+  int unk;
+  int MemLocks;
+  int unk1;
+  int unk2;
+  int unk3;
+  int unk4;
+  int unk5;
+  int Display;
+}SURFACE;
+
 struct HELPER_SIGNAL
 {
-    SIGSELECT signo;
-    void(*PROC)(int,void*);
-    int   param1;
-    void * param2;
+  SIGSELECT signo;
+  void(*PROC)(int,void*);
+  int   param1;
+  void * param2;
 };
 typedef struct
 {
@@ -240,9 +263,9 @@ typedef struct
 /*
 typedef struct
 {
-  u16 len;
-  u16 unk;
-  char str[];
+u16 len;
+u16 unk;
+char str[];
 }AB_STR_ITEM;
 */
 
@@ -304,7 +327,7 @@ typedef struct
 typedef struct
 {
   unsigned short event;
-//  int (* HOOK)(UI_MESSAGE*, BOOK *);
+  //  int (* HOOK)(UI_MESSAGE*, BOOK *);
   int (* HOOK)(UI_MESSAGE*);
 }UI_HOOK_ITEM;
 
@@ -319,13 +342,13 @@ typedef struct
 /*
 typedef struct
 {
-  char ** content_type;
-  int ext_list;
-  void (*PROC)(int*);
-  int u3;
-  u16* u4;
-  int u5;
-  int u6;
+char ** content_type;
+int ext_list;
+void (*PROC)(int*);
+int u3;
+u16* u4;
+int u5;
+int u6;
 }DB_EXT;
 */
 
@@ -491,25 +514,25 @@ typedef struct
 
 typedef struct DISP_DESC
 {
-char *name        ;
-u16 DataSize    ;
-u16 field_6     ;
-void (*Constructor)(DISP_OBJ *);
-void (*onCreate)(DISP_OBJ *);
-void (*onClose)(DISP_OBJ *);
-void (*onRedraw)(DISP_OBJ *);
-void (*field_18)(DISP_OBJ *);
-void (*field_1C)(DISP_OBJ *);
-void (*onKey)(DISP_OBJ *,int scan_code,int unk,int repeat_num,int key_mode);
-void (*field_24)(DISP_OBJ *);
-void (*field_28)(DISP_OBJ *);
-void (*field_2C)(DISP_OBJ *);
-void (*field_30)(DISP_OBJ *);
-void (*field_34)(DISP_OBJ *);
-void (*field_38)(DISP_OBJ *);
-void (*field_39)(DISP_OBJ *);
-void (*field_3A)(DISP_OBJ *);
-char field_3B;
+  char *name        ;
+  u16 DataSize    ;
+  u16 field_6     ;
+  void (*Constructor)(DISP_OBJ *);
+  void (*onCreate)(DISP_OBJ *);
+  void (*onClose)(DISP_OBJ *);
+  void (*onRedraw)(DISP_OBJ *);
+  void (*field_18)(DISP_OBJ *);
+  void (*field_1C)(DISP_OBJ *);
+  void (*onKey)(DISP_OBJ *,int scan_code,int unk,int repeat_num,int key_mode);
+  void (*field_24)(DISP_OBJ *);
+  void (*field_28)(DISP_OBJ *);
+  void (*field_2C)(DISP_OBJ *);
+  void (*field_30)(DISP_OBJ *);
+  void (*field_34)(DISP_OBJ *);
+  void (*field_38)(DISP_OBJ *);
+  void (*field_39)(DISP_OBJ *);
+  void (*field_3A)(DISP_OBJ *);
+  char field_3B;
 }DISP_DESC;
 
 typedef struct
@@ -564,7 +587,7 @@ typedef struct
   u16 field_C;
   u16 big_icon;
   u16 field_10;
-  u16 ID;  
+  u16 ID;
 #else
   u16 num;
   u16 field_2;
@@ -587,7 +610,7 @@ typedef struct
 }AB_ITEM_DESC;
 
 typedef struct {
-  short ch;    
+  short ch;
   unsigned char bsic;
   unsigned char unk3;
   unsigned short cid;
@@ -617,7 +640,7 @@ typedef struct {
   signed char rxlvl;
   char unk39[3];
   int unk3C;
-  int unk40; 
+  int unk40;
 } NEIGHBOUR_CELLDATA;
 
 
