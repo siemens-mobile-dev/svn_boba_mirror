@@ -2944,8 +2944,72 @@ void ed_options_handler(USR_MENU_ITEM *item)
   }
 }
 
+unsigned short * wstrstr(unsigned short *ws, char *str, int *wslen, int len)
+{
+  char *s;
+  unsigned short *w;
+  int l;
+ 
+  while(*wslen >= len)
+  {
+    s = str;
+    w = ws;
+    l = len;
+    for(; (char16to8(*w) == *s) && l; w++, s++, l--);     
+    if(!l) return ws;
+    ws++;
+    (*wslen)--;
+  }
+  return 0;
+  
+}
+
+int IsUrl(WSHDR *ws, int pos, char *link)
+{
+  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&=/?àáâãäå¸æçèéêëìíîïðñòóôõö÷øùúûüýþÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß";
+
+  int len = wstrlen(ws);
+  unsigned short *str = ws->wsbody+1, *tmp, *begin;
+  tmp = str;
+  
+  begin = str = wstrstr(str, "http://", &len, 7);
+
+  while(str && (begin-tmp <= pos))
+  {
+    while(len && strchr(valid, char16to8(*str))) {str++; len--;}
+    if(str-tmp >= pos-2)
+    {
+      for(;begin < str; begin++, link++)
+        *link = char16to8(*begin);
+      link[str-begin] = 0;
+      return 1;
+    }
+    begin = str = wstrstr(str, "http://", &len, 7);
+  }
+
+  len = wstrlen(ws);
+  begin = str = wstrstr(tmp, "www.", &len, 4);
+  while(str && (begin-tmp <= pos))
+  {
+    while(len && strchr(valid, char16to8(*str))) {str++; len--;}
+    if(str-tmp >= pos-2)
+    {
+      for(;begin < str; begin++, link++)
+        *link = char16to8(*begin);
+      link[str-begin] = 0;
+      return 1;
+    }
+    begin = str = wstrstr(str, "www.", &len, 4);
+  }
+  return 0;
+}
+
+#define UTF16_DIS_UNDERLINE (0xE002)
+#define UTF16_ENA_UNDERLINE (0xE001)
+
 void ParseAnswer(WSHDR *ws, const char *s)
 {
+  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&=/?àáâãäå¸æçèéêëìíîïðñòóôõö÷øùúûüýþÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß";
   S_SMILES *t;
   S_SMILES *t_root=(S_SMILES *)s_top;
   STXT_SMILES *st;
@@ -2955,6 +3019,20 @@ void ParseAnswer(WSHDR *ws, const char *s)
   int i;
   while(wchar=*s)
   {
+    if(s==strstr(s, "http://") || s == strstr(s, "www."))
+    {
+      wsAppendChar(ws,UTF16_ENA_UNDERLINE);
+      while(*s && strchr(valid, *s))
+      {
+        wchar=char8to16(*s);
+        wsAppendChar(ws,wchar);
+        s++;       
+      }
+      wsAppendChar(ws,UTF16_DIS_UNDERLINE);
+      ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
+      continue;
+    }
+    
     t=t_root;
     while(t)
     {
@@ -3000,22 +3078,6 @@ void SaveAnswer(CLIST *cl, WSHDR *ws)
   cl->answer=p;
 }
 
-int IsLink(char *str)
-{
-  char http[] = "http://";
-  char www[] = "www.";
-  int flag = 0;
-  for(int i = 0; i < 7; i++)
-    if(str[i] != http[i]) {flag = 1; break;}
-  
-  if(!flag) return 1;
-  
-  for(int i = 0; i < 4; i++)
-    if(str[i] != www[i]) return 0;
-
-  return 1;
-  
-}
 
 int GetTempName(void)
 {
@@ -3047,7 +3109,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
   int l=msg->gbsmsg->submess;
   EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
 //  WSHDR *ews;
-  char link[256], fn[256];
+  char fn[256];
 
   if (msg->keys==0xFFF)
   {
@@ -3121,17 +3183,16 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 
       if (!EDIT_IsMarkModeActive(data))  // Òîëüêî åñëè íå âûäåëåíèå
       {
-        int pos, i, j = 0;
+        int pos, len;
+        char *link;
         ExtractEditControl(ed_struct->ed_chatgui,EDIT_GetFocus(ed_struct->ed_chatgui),&ec);
         wstrcpy(ews,ec.pWS);
         pos = EDIT_GetCursorPos(data);
-        for(i = pos; i >= 0 && char16to8(ews->wsbody[i+1]) != ' '; i--);
-        pos = i;
-        for(i++; i < ews->wsbody[0] && char16to8(ews->wsbody[i+1]) != ' '; i++)
-          link[j++] = char16to8(ews->wsbody[i+1]);
-        link[j] = 0;
+        len = wstrlen(ews);
         
-        if(IsLink(link))
+        link = malloc(len+1);
+                
+        if(IsUrl(ews, pos, link))
         {
           snprintf(fn, 255, "%s\\tmp%u.url", TEMPLATES_PATH, GetTempName);
           if ((f=fopen(fn,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
@@ -3146,12 +3207,14 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
 //          LockSched();
 //          ShowMSG(1,(int)link);
 //          UnlockSched();
+          mfree(link);
           return (-1);
         }
         else
         {
           int i=ed_struct->loaded_templates=LoadTemplates(ed_struct->ed_contact->uin);
           EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,i+2);
+          mfree(link);
           return (-1);
         }          
           
