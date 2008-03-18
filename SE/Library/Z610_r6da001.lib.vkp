@@ -332,6 +332,7 @@ A04: 00000000 F5634345 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
 A08: 00000000 01043F45 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 A0C: 00000000 4547F344 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 A10: 00000000 F547F344 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+A14: 00000000 20462E20 ;8285: SURFACE ** get_Surfaces(void);
 
 
 

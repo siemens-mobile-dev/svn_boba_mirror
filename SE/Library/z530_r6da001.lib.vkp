@@ -286,7 +286,7 @@
 ;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
 ;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 ;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
-;0938: xxxxxxxx yyyyyyyy ; 24E: int GetChipID(void);
+0938: FFFFFFFF 8D1BC844 ; 24E: int GetChipID(void);
 0948: FFFFFFFF 21600A45 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 11600A45 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF E5954C45 ; 254: void DestroyDirHandle(void *handle);
@@ -336,6 +336,7 @@
 0A08: FFFFFFFF C15F0A45 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: FFFFFFFF 714B4C45 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: FFFFFFFF 054C4C45 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
 
 
 

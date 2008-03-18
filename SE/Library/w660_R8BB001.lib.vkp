@@ -148,6 +148,7 @@
 06D4: 00000000 F5C94045 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: 00000000 99A74B45 ; 1B7: int isKeylocked(void);
 06E0: 00000000 65970745 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06EC: 00000000 91EE0F45 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F8: 00000000 691D3D45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 911C3D45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 954F4445 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -210,7 +211,7 @@
 0800: 00000000 71C24045 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: 00000000 19C24045 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 DD92F044 ; 202: void VCALL_Init (void* vc);
-080C: 00000000 DD92F044 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
+080C: 00000000 D593F044 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: 00000000 3594F044 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
 0814: 00000000 F593F044 ; 205: void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
 0818: 00000000 1994F044 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
@@ -276,11 +277,12 @@
 0910: 00000000 895D4445 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 015E4445 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 F55D4445 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
-;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
-;0938: xxxxxxxx yyyyyyyy ; 24E: int GetChipID(void);
+0920: 00000000 65EF0F45 ; 248: void Vibra_Off (int t1);
+0928: 00000000 21C01345 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+092C: 00000000 79E30F45 ; 24B: int GetSilent(void);
+0930: 00000000 B5BB0F45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
+0934: 00000000 F9F10F45 ; 24D: int GetAudioSettings(int what, char* retvalue);
+0938: 00000000 CD8E2C44 ; 24E: int GetChipID(void);
 0948: 00000000 E95D4445 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 DD5D4445 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 C5F7FA44 ; 254: void DestroyDirHandle(void *handle);
@@ -330,6 +332,7 @@
 0A08: 00000000 955D4445 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: 00000000 D5ADF644 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: 00000000 85AEF644 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
 
 
 
