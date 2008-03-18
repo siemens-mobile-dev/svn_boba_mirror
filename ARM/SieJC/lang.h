@@ -27,7 +27,7 @@
 #define LG_STATUSSEL        "Выбор статуса"
 #define LG_STONLINE         "Онлайн"
 #define LG_STCHAT           "Готов болтать"
-#define LG_STAWAY           "Отсутсвую"
+#define LG_STAWAY           "Отсутствую"
 #define LG_STXA             "Недоступен"
 #define LG_STDND            "Занят"
 #define LG_STINVIS          "Инвиз"
@@ -67,6 +67,7 @@
 #define LG_ABOUT            "Об эльфе..."
 #define LG_COLOR            "Цвета"
 #define LG_ADDCONTACT       "Добавить контакт"
+#define LG_PLAYERSTATUS     "PlayerStatus"
 //main.c
 #define LG_EXITSIEJC        "Покинуть SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не работает без SASL!"
@@ -158,7 +159,7 @@
 #define LG_MUCHIST          "MUC история"
 #define LG_MUCDEF           "MUC по умолчанию"
 #define LG_MUCDEFMSGCOUNT   "Кол. загружаемых сообщений"
-#define LG_MUCDEFNIK        "Ник поумолчанию"
+#define LG_MUCDEFNIK        "Ник по умолчанию"
 #define LG_IDLEICON         "Положение значка"
 #define LG_POPUPDIS         "Отображать POPUP"
 #define LG_COMPOSEV         "События сообщений"
@@ -330,7 +331,7 @@
 #define LG_ABOUT            "Про эльф..."
 #define LG_COLOR            "Кольори"
 #define LG_ADDCONTACT       "Додати контакт"
-
+#define LG_PLAYERSTATUS     "PlayerStatus"
 //main.c
 #define LG_EXITSIEJC        "Покинути SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не працює без SASL!"
@@ -595,6 +596,7 @@
 #define LG_ABOUT            "About..."
 #define LG_COLOR            "Colors"
 #define LG_ADDCONTACT       "Add contact"
+#define LG_PLAYERSTATUS     "PlayerStatus"
 //main.c
 #define LG_EXITSIEJC        "Exit SieJC?"
 #define LG_ZLIBNOSASL       "ZLib doesn't work without SASL!"

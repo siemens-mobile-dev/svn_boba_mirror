@@ -197,7 +197,7 @@ __root const CFG_HDR cfghdr25={CFG_STR_WIN1251,LG_STONLINE,0,255};
 __root const char DEFTEX_ONLINE[256]="В сети";
 
 __root const CFG_HDR cfghdr26={CFG_STR_WIN1251,LG_STCHAT,0,255};
-__root const char DEFTEX_CHAT[256]="Готов общатся";
+__root const char DEFTEX_CHAT[256]="Готов общаться";
 
 __root const CFG_HDR cfghdr27={CFG_STR_WIN1251,LG_STAWAY,0,255};
 __root const char DEFTEX_AWAY[256]="";
