@@ -648,7 +648,7 @@ int templ_menu_onkey(void *gui, GUI_MSG *msg)
       fclose(file, &ul);
       int start=0,len=0;
       for (int i=0;i<=buf_size;i++)
-        if (buffer[i]==0x0A||i==buf_size)
+        if (buffer[i]==0x0A||buffer[i]==0x0D||i==buf_size)
         {
           if (num==item) len=i-start;
           num++;
@@ -696,7 +696,7 @@ void templ_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
     fclose(file, &ul);
     int start=0,len=0;
     for (int i=0;i<=buf_size;i++)
-      if (buffer[i]==0x0A||i==buf_size)
+      if (buffer[i]==0x0A||buffer[i]==0x0D||i==buf_size)
       {
         if (num==cur_item) len=i-start;
         num++;
@@ -756,9 +756,10 @@ void createTemplatesMenu()
     char *buffer=malloc(buf_size);
     fread(file, buffer, buf_size, &ul);
     fclose(file, &ul);
+    if ((buffer[buf_size-1]==0x0A||buffer[buf_size-1]==0x0D)) buf_size--;
     for (int i=0;i<buf_size;i++)
     {
-      if (buffer[i]==0x0A)
+      if ((buffer[i]==0x0A||buffer[i]==0x0D))
       {
         num++;
       }
