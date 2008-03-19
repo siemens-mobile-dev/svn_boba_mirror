@@ -1897,14 +1897,14 @@ ProcessPacket(TPKT *p)
       if ((t=FindContactByUin(p->pkt.uin)))
       {
 	//        t->state=0xFFFF;
-        strncpy(t->name,p->data,63);
+        if (!t->local) strncpy(t->name,p->data,63);
 	t->group=GROUP_CACHE;
 	ChangeContactPos(t);
 	RecountMenu(t, 1);
       }
       else
       {
-        RecountMenu(AddContact(p->pkt.uin,p->data), 1);
+        RecountMenu(AddContact(p->pkt.uin,p->data, GROUP_CACHE, 0),1);
       }
     }
     else
@@ -2012,7 +2012,7 @@ ProcessPacket(TPKT *p)
     if (!t)
     {
       sprintf(s,percent_d,p->pkt.uin);
-      t=AddContact(p->pkt.uin,s);
+      t=AddContact(p->pkt.uin,s,GROUP_CACHE,0);
     }
     if(!t->isactive && HISTORY_BUFFER) GetHistory(t, 64<<HISTORY_BUFFER);
     t->isactive=ACTIVE_TIME;
@@ -2070,7 +2070,6 @@ ProcessPacket(TPKT *p)
   case T_SRV_ACK:
   case T_CLIENT_ACK:
     q=FindContactLOGQByAck(p);
-    if (q&&(p->pkt.type==T_SRV_ACK)) IlluminationOn(ILL_DISP_SEND,ILL_KEYS_SEND,ILL_SEND_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
 /*    if ((
 	IsGuiOnTop(contactlist_menu_id)||
 	  IsGuiOnTop(edchat_id)
@@ -2100,8 +2099,11 @@ ProcessPacket(TPKT *p)
 		t->req_drawack=1;
 		time_to_stop_t9=3;
 	      }
-	      else
+	      else {
 		DrawAck(data);
+                if (p->pkt.type==T_SRV_ACK)
+                  IlluminationOn(ILL_DISP_SEND,ILL_KEYS_SEND,ILL_SEND_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
+              }
 	    }
 	  }
 	}
@@ -2607,7 +2609,8 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  GROUP_CACHE=0;
 	  SENDMSGCOUNT=0; //Начинаем отсчет
 	  if (!FindGroupByID(0)) AddGroup(0,LG_GROUPNOTINLIST);
-	  if (!FindContactByUin(UIN)) AddContact(UIN, LG_CLLOOPBACK);
+	  if (!FindContactByUin(UIN)) AddContact(UIN, LG_CLLOOPBACK,0,1);
+	  SUBPROC((void *)LoadLocalCL);
 	  SMART_REDRAW();
 	}
 	else

@@ -34,6 +34,7 @@ typedef struct
   int msg_count;
   char *xtext;
   int req_xtext;
+  int local;  
 }CLIST;
 
 typedef struct
