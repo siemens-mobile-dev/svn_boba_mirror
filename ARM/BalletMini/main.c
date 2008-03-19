@@ -159,7 +159,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
       break;
     case 'c':
     case 'r':
-      if (vd->rawtext[prf->begin+1]==vd->img_rbtn_on||vd->rawtext[prf->begin+1]==vd->img_cbtn_on)
+      if (vd->rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
         pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->value)+1;
       break;
     case 'i':
@@ -261,7 +261,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     case 'c':
     case 'r':
       {
-        if (vd->rawtext[prf->begin+1]==vd->img_rbtn_on||vd->rawtext[prf->begin+1]==vd->img_cbtn_on)
+        if (vd->rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
         {
           s[pos]='&';
           pos++;
@@ -560,15 +560,15 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           {
             REFCACHE *rfp;
             int i;
-            if (vd->rawtext[rf->begin+1]!=vd->img_rbtn_off) break;
-            vd->rawtext[rf->begin+1]=vd->img_rbtn_on;
+            if (vd->rawtext[rf->begin+1]!=vd->WCHAR_RADIO_OFF) break;
+            vd->rawtext[rf->begin+1]=vd->WCHAR_RADIO_ON;
             i=0;
             while((i=FindReferenceById(vd,rf->id,i))>=0)
             {
               rfp=vd->ref_cache+i;
               if (rfp!=rf)
-                if (vd->rawtext[rfp->begin+1]==vd->img_rbtn_on)
-                  vd->rawtext[rfp->begin+1]=vd->img_rbtn_off;
+                if (vd->rawtext[rfp->begin+1]==vd->WCHAR_RADIO_ON)
+                  vd->rawtext[rfp->begin+1]=vd->WCHAR_RADIO_OFF;
               i++;
             }
           }
@@ -583,10 +583,10 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
           break;
         case 'c':
-          if (vd->rawtext[rf->begin+1]==vd->img_cbtn_on)
-            vd->rawtext[rf->begin+1]=vd->img_cbtn_off;
+          if (vd->rawtext[rf->begin+1]==vd->WCHAR_BUTTON_ON)
+            vd->rawtext[rf->begin+1]=vd->WCHAR_BUTTON_OFF;
           else
-            vd->rawtext[rf->begin+1]=vd->img_cbtn_on;
+            vd->rawtext[rf->begin+1]=vd->WCHAR_BUTTON_ON;
           if (!rf->no_upload)
           {
             goto_url=malloc(strlen(vd->pageurl)+1);

@@ -295,48 +295,48 @@ int AddPictureItemFile(VIEWDATA *vd, const char *file)
 
 void AddRadioButton(VIEWDATA *vd, int checked)
 {
-  if (!vd->img_rbtn_on)
+  if (!vd->WCHAR_RADIO_ON)
   {
     char fname[256];
     strcpy(fname,IMG_PATH);
     strcat(fname,RADIO_BTTN_CLKD);
-    vd->img_rbtn_on=AddPictureItemFile(vd, fname);
-    if (vd->img_rbtn_on==0xE115) vd->img_rbtn_on=0xE116;
+    vd->WCHAR_RADIO_ON=AddPictureItemFile(vd, fname);
+    if (vd->WCHAR_RADIO_ON==0xE115) vd->WCHAR_RADIO_ON=0xE116;
     strcpy(fname+strlen(IMG_PATH),RADIO_BTTN);
-    vd->img_rbtn_off=AddPictureItemFile(vd, fname);
-    if (vd->img_rbtn_off==0xE115) vd->img_rbtn_off=0xE117;
+    vd->WCHAR_RADIO_OFF=AddPictureItemFile(vd, fname);
+    if (vd->WCHAR_RADIO_OFF==0xE115) vd->WCHAR_RADIO_OFF=0xE117;
   }
-  RawInsertChar(vd,checked?vd->img_rbtn_on:vd->img_rbtn_off);
+  RawInsertChar(vd,checked?vd->WCHAR_RADIO_ON:vd->WCHAR_RADIO_OFF);
 }
 
 void AddCheckBoxItem(VIEWDATA *vd, int checked)
 {
-  if (!vd->img_cbtn_on)
+  if (!vd->WCHAR_BUTTON_ON)
   {
     char fname[256];
     strcpy(fname,IMG_PATH);
     strcat(fname,BUTTON_CLKD);
-    vd->img_cbtn_on=AddPictureItemFile(vd, fname);
-    if (vd->img_cbtn_on==0xE115) vd->img_cbtn_on=0xE116;
+    vd->WCHAR_BUTTON_ON=AddPictureItemFile(vd, fname);
+    if (vd->WCHAR_BUTTON_ON==0xE115) vd->WCHAR_BUTTON_ON=0xE116;
     strcpy(fname+strlen(IMG_PATH),BUTTON);
-    vd->img_cbtn_off=AddPictureItemFile(vd, fname);
-    if (vd->img_cbtn_off==0xE115) vd->img_cbtn_off=0xE117;
+    vd->WCHAR_BUTTON_OFF=AddPictureItemFile(vd, fname);
+    if (vd->WCHAR_BUTTON_OFF==0xE115) vd->WCHAR_BUTTON_OFF=0xE117;
   }
-  RawInsertChar(vd,checked?vd->img_cbtn_on:vd->img_cbtn_off);
+  RawInsertChar(vd,checked?vd->WCHAR_BUTTON_ON:vd->WCHAR_BUTTON_OFF);
 }
 
 void AddInputItem(VIEWDATA *vd, unsigned int pos)
 {
-  if (!vd->img_tbox)
+  if (!vd->WCHAR_TEXT_FORM)
   {
     char fname[256];
     strcpy(fname,IMG_PATH);
     strcat(fname,TEXT_FORM);
-    vd->img_tbox=AddPictureItemFile(vd, fname);
-    if (vd->img_tbox==0xE115) vd->img_tbox=0xE11E;
+    vd->WCHAR_TEXT_FORM=AddPictureItemFile(vd, fname);
+    if (vd->WCHAR_TEXT_FORM==0xE115) vd->WCHAR_TEXT_FORM=0xE11E;
   }
 //  RawInsertChar(vd,0x0A);
-  RawInsertChar(vd,vd->img_tbox);
+  RawInsertChar(vd,vd->WCHAR_TEXT_FORM);
   int len=_rshort2(vd->oms+pos);
   vd->work_ref.data=(void *)AllocWS(len);
   char *c=extract_omstr(vd,pos);
@@ -354,15 +354,15 @@ void AddButtonItem(VIEWDATA *vd, const char *text, int len)
 
 void AddDropDownList(VIEWDATA *vd)
 {
-  if (!vd->img_ddlist)
+  if (!vd->WCHAR_LIST_FORM)
   {
     char fname[256];
     strcpy(fname,IMG_PATH);
     strcat(fname,LIST);
-    vd->img_ddlist=AddPictureItemFile(vd, fname);
-    if (vd->img_ddlist==0xE115) vd->img_ddlist=0xE11B;
+    vd->WCHAR_LIST_FORM=AddPictureItemFile(vd, fname);
+    if (vd->WCHAR_LIST_FORM==0xE115) vd->WCHAR_LIST_FORM=0xE11B;
   }
 //  RawInsertChar(vd,0x0A);
-  RawInsertChar(vd,vd->img_ddlist);
+  RawInsertChar(vd,vd->WCHAR_LIST_FORM);
 //  RawInsertChar(vd,0x0A);
 }

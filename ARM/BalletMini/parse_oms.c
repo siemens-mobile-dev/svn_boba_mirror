@@ -16,6 +16,8 @@ i J
 i Z I E - yandex maps
 L Z I E E - patches siemens club
 L P T E T P T E T E - perk11.info/dantix
+L B T J E - глупости!
+L T B Y E - глупости!
 
 formum.siemens-club.org
 ...T P E B T B L K E L K E L K E L K E K K B T B T T B...

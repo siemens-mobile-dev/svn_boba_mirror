@@ -59,7 +59,7 @@ typedef struct
   unsigned short paper1;
   unsigned short paper2;
   unsigned short pixheight;
-  unsigned short bold:1, underline:1, ref:1,center:1,right:1;
+  unsigned short bold:1, underline:1, ref:1,center:1,right:1,centerAtAll:1;
 }LINECACHE;
 
 typedef struct
@@ -143,7 +143,7 @@ typedef struct
   char *pageurl;    //utf8
   char *title;
   
-  int img_cbtn_off, img_cbtn_on, img_rbtn_off, img_rbtn_on, img_tbox, img_ddlist;
+  int WCHAR_BUTTON_OFF, WCHAR_BUTTON_ON, WCHAR_RADIO_OFF, WCHAR_RADIO_ON, WCHAR_TEXT_FORM, WCHAR_LIST_FORM;
   
 }VIEWDATA;
 
