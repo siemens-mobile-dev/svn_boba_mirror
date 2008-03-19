@@ -69,7 +69,7 @@ typedef struct SURFACE
   int BufferSize;
   int Tag;
   int RefCount;
-  SURFACE *  next;
+  struct SURFACE *  next;
   int HWFlags;
   int BitsLock;
   int unk;
