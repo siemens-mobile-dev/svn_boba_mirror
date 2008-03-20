@@ -7,7 +7,7 @@
 +45C3FC00
 0440: 00000000 05C4D444 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
 0444: 00000000 31C4D444 ; 111: void memfree(void * mem,const char * fname ,int fline)
-0448: 00000000 044D2D44 ; 112: void memset(void *mem,char chr,int size);
+0448: 00000000 A0531444 ; 112: void memset(void *mem,char chr,int size);
 044C: 00000000 18532D44 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: 00000000 09B95544 ; 114: int sprintf(char *buf, char *str, ...);
 0454: 00000000 D1BE5544 ; 115: int snwprintf(u16* buffer, int size, const u16* fmt, ...);
@@ -282,7 +282,7 @@
 092C: 00000000 55DFFD44 ; 24B: int GetSilent(void);
 0930: 00000000 C5B7FD44 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: 00000000 B9EDFD44 ; 24D: int GetAudioSettings(int what, char* retvalue);
-;0938: xxxxxxxx yyyyyyyy ; 24E: int GetChipID(void);
+0938: 00000000 39A32344 ; 24E: int GetChipID(void);
 0948: 00000000 F1573145 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 E5573145 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 69D3E844 ; 254: void DestroyDirHandle(void *handle);
@@ -333,6 +333,7 @@
 0A08: 00000000 9D573145 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: 00000000 3189E444 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: 00000000 E189E444 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+0A14: 00000000 FC922F20 ;8285: SURFACE ** get_Surfaces(void);
 
 
 
