@@ -329,7 +329,7 @@
 ;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
 ;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 ;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
-;0938: xxxxxxxx yyyyyyyy ; 24E: int GetChipID(void);
+0938: 00000000 C9A22344 ; 24E: int GetChipID(void);
 
 0948: 00000000 09A82D45   ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 FDA72D45   ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
