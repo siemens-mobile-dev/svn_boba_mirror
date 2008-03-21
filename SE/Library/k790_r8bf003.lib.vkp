@@ -382,7 +382,7 @@
 0A08: 00000000 B5A72D45 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: 00000000 C1B5E144 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: 00000000 71B6E144 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
-0A14: 00000000 40CA2E20 ;8285: void *get_Surfaces(void);
+0A14: 00000000 948C2F20 ;8285: void *get_Surfaces(void);
 
 
 ;locale=Russian_Russia.1251
