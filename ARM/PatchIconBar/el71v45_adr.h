@@ -9,6 +9,8 @@ P_IsBooleanIntInt *const GetBTstate =(P_IsBooleanIntInt*)0xA065ABD1;//
 P_IsBooleanIntInt *const GetHeadSet =(P_IsBooleanIntInt*)0xA05B8A2D;//elka 30 B5 04 1C 89 B0 68 46 0D 1C  ?? ?? ?? ff+1
 P_IsBooleanPintPint *const GetNetworkAccess =(P_IsBooleanPintPint*)0xA0935B1D;//elka B0 B5 04 1C 0D 1C ?? ?? ?? EC ?? 49  ?? 78+1
 
+P_IsBooleanVoid   *const GetBatIcon  = (P_IsBooleanVoid*) 0xA05C2201; //NSG 1C B5 ?? 48 ?? 4C 00 68 +1
+
 //*(5f 05 00 00 ?? ?? ?? a8 ff ff 00 00 +c)
 #define NETPICS (0xA8F5954C-0x74) 
 //*(5f 05 00 00 ?? ?? ?? a8 ff ff 00 00 +4)

@@ -29,8 +29,8 @@ enum systray{ST_x1=0,ST_y1=0,ST_x2=239,ST_y2=23};
 //enum battray_{BAT_x1=182,BAT_y1=0,BAT_x2=239,BAT_y2=23};
 
 enum nettray_{NETO_x1=6-2,NETO_y1=4,NETO_x2=57-2,NETO_y2=19};
-enum icontray{IC_x1=57,IC_y1=4,IC_x2=188,IC_y2=19};
-enum battray_{BAT_x1=190,BAT_y1=0,BAT_x2=237,BAT_y2=23};
+enum icontray{IC_x1=57,IC_y1=4,IC_x2=184,IC_y2=19};
+enum battray_{BAT_x1=182+4,BAT_y1=4,BAT_x2=233+4,BAT_y2=19};
 
 /*
 enum nettray_text_{NET_x1=0,NET_y1=0,NET_x2=47,NET_y2=23};
@@ -48,6 +48,20 @@ void DrawNetText(void *canvas){
   
 };
 */
+
+/*
+enum battray_{BAT_x1=190,BAT_y1=0,BAT_x2=237,BAT_y2=23};
+inline void DrawBatText(void *canvas){
+  int vl=GetAkkuCapacity();
+  WSHDR ws1loc, *ws1;
+  unsigned short num[4];
+  ws1=CreateLocalWS(&ws1loc,num,4);
+  wsprintf(ws1,"%02d%",vl);
+  DrawCanvas(canvas,BAT_x1,BAT_y1,BAT_x2,BAT_y2,1);
+  DrawString(ws1,BAT_x1,BAT_y1,BAT_x2,BAT_y2,FONT_SMALL_BOLD,TEXT_ALIGNLEFT|TEXT_OUTLINE,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(1));
+};
+*/
+
 typedef struct {
   short unk1;
   short unk2;  
@@ -82,13 +96,9 @@ inline void DrawNet(void *canvas){
 }
 
 inline void DrawBat(void *canvas){
-  int vl=GetAkkuCapacity();
-  WSHDR ws1loc, *ws1;
-  unsigned short num[4];
-  ws1=CreateLocalWS(&ws1loc,num,4);
-  wsprintf(ws1,"%02d%",vl);
+  
   DrawCanvas(canvas,BAT_x1,BAT_y1,BAT_x2,BAT_y2,1);
-  DrawString(ws1,BAT_x1,BAT_y1,BAT_x2,BAT_y2,FONT_SMALL_BOLD,TEXT_ALIGNLEFT|TEXT_OUTLINE,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(1));
+  DrawImg(BAT_x1,BAT_y1,GetBatIcon());
 };
 
 enum iconsELKA{ICO_locked=0x203,ICO_mplayer=0x206,ICO_vibra=0x258,ICO_gprs=0x1EC,ICO_gprsred=0x1EB,ICO_dumping=0x204,ICO_callout=0x1E5,ICO_SMS_both=0x209,ICO_SMS_recv=0x208,ICO_SMS_send=0x20A,ICO_net_na=0x267,ICO_BT_vis=0x1C6,ICO_BT_nvis=0x1C5,ICO_BT_ntrans=0x1C7,ICO_BT_trans=0x1C8,ICO_BT_headset=0x1C9,ICO_headset=0x1F0,ICO_decrypt=0x256,ICO_car=0x1e6};
