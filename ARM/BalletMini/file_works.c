@@ -56,9 +56,11 @@ void getSymbolicPath(char * path,const char * cFileName)
         {
           strcpy(path+pp,BALLET_PATH);
           pp+=strlen(BALLET_PATH);
-          strcpy(path+pp,"Resouces");
-          pp+=9;
+//          strcpy(path+pp,"Resouces");
+//          pp+=9;
           ps+=9;
+          strcpy(path+pp,"img");
+          pp+=3;
           continue;
         }
         if (cFileName[ps+1]=='o') // root

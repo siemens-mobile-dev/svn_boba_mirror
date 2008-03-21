@@ -10,3 +10,4 @@ REFCACHE *FindReference(VIEWDATA *vd, unsigned int ref);
 int FindReferenceById(VIEWDATA *vd, unsigned int id, int i);
 int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf);
 int CreateInputBox(VIEWDATA *vd, REFCACHE *rf);
+void createTextView(WSHDR *ws);

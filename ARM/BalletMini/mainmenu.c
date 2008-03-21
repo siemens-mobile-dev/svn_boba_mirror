@@ -14,6 +14,9 @@ extern char *view_url;
 extern char *goto_url;
 extern int maincsm_id;
 
+char curBookmarksDir[128];
+int CreateBookmarksMenu(char *dir);
+
 typedef struct
 {
   void *next;
@@ -78,7 +81,7 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
     *url = 0;
     url = tmp;
 
-    getSymbolicPath(pathbuf,"$bookmarks\\");
+    getSymbolicPath(pathbuf,curBookmarksDir);
     strcat(pathbuf, name);
     strcat(pathbuf, ".url");
     unlink(pathbuf,&ul);
@@ -139,9 +142,7 @@ int CreateAddBookmark(GUI *data)
 
   URL_STRUCT *ustop = MenuGetUserPointer(data);
 
-  if(data)
-    if (ReadUrlFile(ustop->fullpath))
-      flag = 1;
+  if(data) if (ReadUrlFile(ustop->fullpath)) flag = 1; // edit
   
   ascii2ws(ews,"Èìÿ:");
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,wslen(ews));
@@ -234,7 +235,7 @@ static void do_delete_bookmark(GUI *data)
   if(ustop)
     if(ustop->fullpath)
       unlink(ustop->fullpath,&ul);
-  GeneralFuncF1(2);  
+  GeneralFuncF1(2);
 }
   
 //------------------------------------------------------------------------------
@@ -258,10 +259,10 @@ MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
 
 const MENUPROCS_DESC options_menu_HNDLS[OPTIONS_ITEMS_N]=
 {
-  do_add_bookmark,  
-  do_edit_bookmark,  
-  do_delete_bookmark,  
-  back,  
+  do_add_bookmark,
+  do_edit_bookmark,
+  do_delete_bookmark,
+  back,
 };
 
 int menusoftkeys[]={0,1,2};
@@ -317,13 +318,28 @@ int selurl_menu_onkey(void *gui, GUI_MSG *msg) //bookmarks
   {
     if (msg->keys==0x3D)
     {
-      if (ReadUrlFile(ustop->fullpath))
+      if (!strcmp(ustop->fullpath+(strlen(ustop->fullpath)-4),".url")) // file
       {
-        goto_url=malloc((l=strlen(view_url))+1);
-        memcpy(goto_url,view_url,l+1);
-        return (0xFF);
+        if (ReadUrlFile(ustop->fullpath))
+        {
+          goto_url=malloc((l=strlen(view_url))+1);
+          memcpy(goto_url,view_url,l+1);
+          return (0xFF);
+        }
+        return(1);
       }
-      return(1);
+      else // dir
+      {
+        MAIN_CSM *main_csm;
+        int bookmark_menu_id;
+        if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+        {
+          main_csm->sel_bmk=0;
+          GeneralFuncF1(1);
+          bookmark_menu_id=CreateBookmarksMenu(ustop->fullpath);
+          main_csm->sel_bmk=bookmark_menu_id;
+        }
+      }
     }
     if(msg->keys==0x18)
     {
@@ -332,33 +348,13 @@ int selurl_menu_onkey(void *gui, GUI_MSG *msg) //bookmarks
     }
   }
   else
+  {
     if(msg->keys==0x18)
     {
       create_options_menu(0);
       return(1);
     }
-
-/*
-  if (msg->keys==0x3D)
-  {
-    int i=GetCurMenuItem(gui);
-    for (int n=0; n!=i; n++) ustop=ustop->next;
-    if (ustop)
-    {
-      if (ReadUrlFile(ustop->fullpath))
-      {
-        goto_url=malloc((l=strlen(view_url))+1);
-        memcpy(goto_url,view_url,l+1);
-        return (0xFF);
-      }
-    }
   }
-  if(msg->keys==0x18)
-  {
-    create_options_menu();
-    return(1);
-  }
-*/
   return (0);
 }
 
@@ -380,6 +376,10 @@ void selurl_menu_ghook(void *gui, int cmd)
   }
 }
 
+int S_ICONS[2];
+char bmkpic[128];
+char dirpic[128];
+
 void selurl_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
 {
   URL_STRUCT *ustop=user_pointer;
@@ -387,12 +387,23 @@ void selurl_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   int len;
   for (int n=0; n!=cur_item; n++) ustop=ustop->next;
   void *item=AllocMenuItem(gui);
+  if (!S_ICONS[0])
+  {
+    getSymbolicPath(bmkpic,"$resources\\bookmark.png");
+    getSymbolicPath(dirpic,"$resources\\folder.png");
+    S_ICONS[0] = (int)bmkpic;
+    S_ICONS[1] = (int)dirpic;
+  }
   if (ustop)
   {
     len=strlen(ustop->urlname);
     ws=AllocMenuWS(gui,len+4);
     //ascii2ws(ws,ustop->urlname);
     str_2ws(ws,ustop->urlname,64);
+    if (!strcmp(ustop->fullpath+(strlen(ustop->fullpath)-4),".url"))
+      SetMenuItemIconArray(gui,item,S_ICONS+0);
+    else
+      SetMenuItemIconArray(gui,item,S_ICONS+1);
   }
   else
   {
@@ -423,7 +434,7 @@ MENU_DESC selurl_STRUCT=
   8,selurl_menu_onkey,selurl_menu_ghook,NULL,
   selurl_softkeys,
   &selurl_skt,
-  0x10,
+  0x11,
   selurl_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
@@ -668,24 +679,77 @@ static int CreateSearchDialog()
 
 int CreateBookmarksMenu(char *dir)
 {
+  strcpy(curBookmarksDir,dir);
   unsigned int err;
   DIR_ENTRY de;
-  const char *s;
   URL_STRUCT *ustop=0, *usbot=0;
   URL_STRUCT *us;
   int n_url=0;
-  char str[128];
-  s=dir;
-  strcpy(str,s);
-  strcat(str,"*.url");
-  if (FindFirstFile(&de,str,&err))
+  char path[128];
+  sprintf(path,"%s*",dir);
+  
+  char rootpath[128];
+  getSymbolicPath(rootpath,"$bookmarks\\");
+  if (strcmp(dir,rootpath))
+  {
+    us=malloc(sizeof(URL_STRUCT));
+    int last=strlen(dir)-1;
+    for (int i=0;i<strlen(dir)-1;i++)
+    {
+      if (dir[i]=='\\') last=i+1;
+    }
+    memcpy(us->fullpath,dir,last);
+    us->fullpath[last]=NULL;
+    strcpy(us->urlname,"...");
+    us->next=0;
+    if (usbot)
+    {
+      usbot->next=us;
+      usbot=us;
+    }
+    else
+    {
+      ustop=us;
+      usbot=us;
+    }
+    n_url++;
+  }
+  if (FindFirstFile(&de,path,&err))
   {
     do
     {
-      if (!(de.file_attr&FA_DIRECTORY))
+      if (de.file_attr&FA_DIRECTORY) // dir
       {
         us=malloc(sizeof(URL_STRUCT));
-        strcpy(us->fullpath,s);
+        strcpy(us->fullpath,dir);
+        strcat(us->fullpath,de.file_name);
+        strcat(us->fullpath,"\\");
+        strcpy(us->urlname,de.file_name);
+        us->next=0;
+        if (usbot)
+        {
+          usbot->next=us;
+          usbot=us;
+        }
+        else
+        {
+          ustop=us;
+          usbot=us;
+        }
+        n_url++;
+      }
+    }
+    while(FindNextFile(&de,&err));
+  }
+  FindClose(&de,&err);
+  if (FindFirstFile(&de,path,&err))
+  {
+    do
+    {
+      if (!(de.file_attr&FA_DIRECTORY)&&!strcmp(de.file_name+(strlen(de.file_name)-4),".url")) // file
+      {
+        us=malloc(sizeof(URL_STRUCT));
+        strcpy(us->fullpath,dir);
         strcat(us->fullpath,de.file_name);
         strcpy(us->urlname,de.file_name);
         us->urlname[strlen(de.file_name)-4]=0;
@@ -709,8 +773,8 @@ int CreateBookmarksMenu(char *dir)
   patch_header(&selurl_HDR);
   return CreateMenu(0,0,&selurl_STRUCT,&selurl_HDR,0,n_url,ustop,0);
 }
-// ----------------------------------------------------------------------------------
 
+// ----------------------------------------------------------------------------------
 int history_menu_onkey(void *gui, GUI_MSG *msg) //history
 {
   char **history = MenuGetUserPointer(gui);
@@ -976,7 +1040,7 @@ static void mm_goto_bookmarks(GUI *gui)
   int bookmark_menu_id;
   if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
   {
-    char path[256];
+    char path[128];
     getSymbolicPath(path,"$bookmarks\\");
     bookmark_menu_id=CreateBookmarksMenu(path);
     main_csm->sel_bmk=bookmark_menu_id;

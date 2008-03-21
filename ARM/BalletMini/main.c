@@ -862,6 +862,73 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         }
       }
       break;
+    case 0x30: // '0'
+      {
+        // get text from page
+        int scr_h=ScreenH()-1;
+        WSHDR *ws=AllocWS(512);
+        LINECACHE *lc;
+        unsigned int vl;
+        int ypos=-vd->pixdisp;
+        unsigned int store_line=vl=vd->view_line;
+        unsigned int len;
+        int sc;
+        int c;
+
+        while(ypos<=scr_h)
+        {
+          if (LineDown(vd))
+          {
+            lc=vd->lines_cache+vl;
+            if ((vl+1)<vd->lines_cache_size)
+            {
+              len=(lc[1]).pos-(lc[0]).pos;
+            }
+            else
+              len=vd->rawtext_size-lc->pos;
+            sc=lc->pos;
+            while(len>0)
+            {
+              c=vd->rawtext[sc];
+              if ((c&0xFF00)!=0xE100)
+              {
+                switch (c)
+                {
+                case UTF16_FONT_SMALL:
+                case UTF16_FONT_SMALL_BOLD:
+                case UTF16_DIS_UNDERLINE:
+                case UTF16_ENA_UNDERLINE:
+                case UTF16_ENA_INVERT:
+                case UTF16_DIS_INVERT:
+                case UTF16_ALIGN_LEFT:
+                case UTF16_ALIGN_RIGHT:
+                case UTF16_ENA_CENTER:
+                case UTF16_DIS_CENTER:
+                  break;
+                case UTF16_INK_RGBA:
+                case UTF16_PAPER_RGBA:
+                  len--;
+                  sc++;
+                  len--;
+                  sc++;
+                  break;
+                default :
+                  wsAppendChar(ws,c);
+                }
+              }
+              sc++;
+              len--;
+            }
+            ypos+=lc->pixheight;
+            vl++;
+          }
+          else
+            break;
+        }
+        vd->view_line=store_line;
+        createTextView(ws);
+      }
+      break;
     }
   }
   DirectRedrawGUI();

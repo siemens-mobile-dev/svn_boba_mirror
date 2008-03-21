@@ -388,13 +388,13 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int dfh=GetFontHeight(FONT_SMALL,0)*2; //double font height
   
   int rnd_x;
-  REFCACHE *rnd_rf;
+  REFCACHE *rnd_rf; 
   
   while(ypos<=scr_h)
   {
     if (LineDown(vd))
     {
-      lc=vd->lines_cache+vl;
+      lc=vd->lines_cache+vl;  
       dc=0;
       ws_width=0;
       cur_rc=1;
@@ -819,7 +819,7 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
     switch(item->cur_item)
     {
     case 0:
-      str_2ws(item->ws,"Шаблоны",128);
+      ascii2ws(item->ws,"Шаблоны");
       break;
     }
   }
@@ -923,6 +923,81 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
   return CreateInputTextDialog(&input_box_desc,&input_box_hdr,eq,1,0);
 }
 
+// TEXT VIEW
+static const SOFTKEY_DESC txtview_menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Ok"},
+  {0x0001,0x0000,(int)"Cancel"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+static const SOFTKEYSTAB txtview_menu_skt=
+{
+  txtview_menu_sk,0
+};
+
+static const HEADER_DESC txtview_hdr={0,0,0,0,NULL,(int)"Text :",LGP_NULL};
+
+static void txtview_ghook(GUI *data, int cmd)
+{
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Ок"};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+}
+
+static void txtview_locret(void){}
+
+static int txtview_onkey(GUI *data, GUI_MSG *msg)
+{
+  if (msg->keys==0xFFF)
+  {
+    return (0xFF);
+  }
+  return (0);
+}
+
+static const INPUTDIA_DESC txtview_desc =
+{
+  1,
+  txtview_onkey,
+  txtview_ghook,
+  (void *)txtview_locret,
+  0,
+  &txtview_menu_skt,
+  {0,0,0,0},
+  FONT_SMALL,
+  100,
+  101,
+  0,
+  0,
+  0x40000000
+};
+
+void createTextView(WSHDR *ws)
+{
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  eq=AllocEQueue(ma,mfree_adr());
+  if (!wstrlen(ws))
+  {
+    FreeWS(ws);
+    return;
+  }
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,512);
+  AddEditControlToEditQend(eq,&ec,ma);
+  FreeWS(ws);
+  patch_header(&txtview_hdr);
+  patch_input(&txtview_desc);
+  CreateInputTextDialog(&txtview_desc,&txtview_hdr,eq,1,0);
+}
 
 // SELECTION MENU
 typedef struct
@@ -1105,3 +1180,4 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
   patch_header(&sel_HDR);
   return CreateMenu(0,0,&sel_STRUCT,&sel_HDR,start,n_sel,ustop,0);
 }
+
