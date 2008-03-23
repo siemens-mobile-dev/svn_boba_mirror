@@ -885,9 +885,11 @@ void FillRoster(XMLNode* items)
       // Создаём псевдоконтакт, вставляем его
       CLIST *gr_pscontact = malloc(sizeof(CLIST));
       gr_pscontact->name = malloc(strlen(tmp_gpointer->name)+1);
-      gr_pscontact->JID = malloc(strlen(tmp_gpointer->name)+1);
+      gr_pscontact->JID = malloc(strlen(tmp_gpointer->name)+2+(strlen(My_JID_full)));
       strcpy(gr_pscontact->name, tmp_gpointer->name);
       strcpy(gr_pscontact->JID, tmp_gpointer->name);
+      strcat(gr_pscontact->JID, "@"); //присвоим группе несущемтвуюший JID, чтоб не сбивала с толку.
+      strcat(gr_pscontact->JID, My_JID_full);//но ресурс и контакт должны совпадать
       gr_pscontact->subscription = SUB_BOTH;
       gr_pscontact->wants_subscription = 0;
       gr_pscontact->group = cur_gid;
@@ -909,8 +911,10 @@ void FillRoster(XMLNode* items)
       ResEx->total_msg_count=0;
       ResEx->entry_type=T_GROUP;
       ResEx->name = NULL;
-      ResEx->full_name = malloc(strlen(tmp_gpointer->name)+1);
+      ResEx->full_name = malloc(strlen(tmp_gpointer->name)+2+(strlen(My_JID_full)));
       strcpy(ResEx->full_name, tmp_gpointer->name);
+      strcat(ResEx->full_name, "@");
+      strcat(ResEx->full_name, My_JID_full);
       // Коннектим ресурс к группе
       gr_pscontact->res_list = ResEx;
       NContacts++;
