@@ -276,8 +276,8 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DISP_OBJ_GetMethod0B (DISP_OBJ *);
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
-;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager (int cmd);
-;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName(void);
+0900: FFFFFFFF 8732E844 ; 240: void JavaSession_Manager (int cmd);
+0904: FFFFFFFF 8732E844 ; 241: int JavaSession_GetName(void);
 0908: FFFFFFFF 3143EF44 ; 242: int TextCopyId(int);
 090C: FFFFFFFF D530E844 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: FFFFFFFF 414AD644 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
@@ -337,7 +337,7 @@
 ;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 ;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
 ;0A04: xxxxxxxx yyyyyyyy ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
-0A08: FFFFFFFF 414AD644 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+0A08: FFFFFFFF 4D4AD644 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: FFFFFFFF 29EC0D45 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: FFFFFFFF A9ED0D45 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 
