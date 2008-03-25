@@ -21,6 +21,10 @@ __swi __arm unsigned int GetPlayStatus(void);
 #pragma swi_number=0x40 
 __swi __arm int GetVibraStatus (void);
 
+#pragma swi_number=0x80CB 
+__swi __arm unsigned char* RamRingtoneStatus (void);
+
+
 enum systray{ST_x1=0,ST_y1=0,ST_x2=239,ST_y2=23};
 
 
@@ -101,7 +105,7 @@ inline void DrawBat(void *canvas){
   DrawImg(BAT_x1,BAT_y1,GetBatIcon());
 };
 
-enum iconsELKA{ICO_locked=0x203,ICO_mplayer=0x206,ICO_vibra=0x258,ICO_gprs=0x1EC,ICO_gprsred=0x1EB,ICO_dumping=0x204,ICO_callout=0x1E5,ICO_SMS_both=0x209,ICO_SMS_recv=0x208,ICO_SMS_send=0x20A,ICO_net_na=0x267,ICO_BT_vis=0x1C6,ICO_BT_nvis=0x1C5,ICO_BT_ntrans=0x1C7,ICO_BT_trans=0x1C8,ICO_BT_headset=0x1C9,ICO_headset=0x1F0,ICO_decrypt=0x256,ICO_car=0x1e6};
+enum iconsELKA{ICO_locked=0x203,ICO_mplayer=0x206,ICO_vibra=0x258,ICO_gprs=0x1EC,ICO_gprsred=0x1EB,ICO_dumping=0x204,ICO_callout=0x1E5,ICO_SMS_both=0x209,ICO_SMS_recv=0x208,ICO_SMS_send=0x20A,ICO_net_na=0x267,ICO_BT_vis=0x1C6,ICO_BT_nvis=0x1C5,ICO_BT_ntrans=0x1C7,ICO_BT_trans=0x1C8,ICO_BT_headset=0x1C9,ICO_headset=0x1F0,ICO_decrypt=0x256,ICO_car=0x1e6,ICO_ringoff=0x1C2,ICO_ring_onlygroups=0x1E4};
 enum some{ic_w=IC_x2-IC_x1,ico_width=16,ico_height=16,iconnar_height=24, ico_ofs_y=(iconnar_height-ico_height)/2,ico_beetwen=2,ico_ofs2=(ico_width+ico_beetwen)/2,ico_ofs1=(ic_w-ico_width)/2};
 
 typedef struct{
@@ -159,6 +163,9 @@ Draw:
   if (IsCalling()) {
     if (isDecryption())    stacked_img[icon_cntr++]=ICO_decrypt; //11
     stacked_img[icon_cntr++]=ICO_callout; //6
+  }else{
+//calls_from    
+    if (AlertCallsFrom())   stacked_img[icon_cntr++]= ICO_ring_onlygroups;  //14
   }
 // SMS send/recv  
   int sm=(GetSMSState())&0x3;
@@ -186,6 +193,14 @@ if (GetHeadSet (2,0) )       stacked_img[icon_cntr++]=ICO_headset; //10
 //car
 if (GetHeadSet (-1,1) )       stacked_img[icon_cntr++]=ICO_car; //12
 
+//ring settings
+//LockSched()  -called in firmware
+if (*RamRingtoneStatus())stacked_img[icon_cntr++]=ICO_ringoff; //13
+//UnlockSched()
+
+
+
+
   int stx=IC_x1+ico_ofs1-(icon_cntr-1)*ico_ofs2;
   DrawCanvas(canvas,IC_x1,IC_y1,IC_x2,IC_y2,1);
   for (int i=0;i<icon_cntr;i++){
@@ -196,15 +211,16 @@ if (GetHeadSet (-1,1) )       stacked_img[icon_cntr++]=ICO_car; //12
   
  return;
 }
+
+
 /*
 NOT  display icons
-0x1e4 - budilnik co strelkoi
+
 0x1c4 -podnyatay trubka
 0x1f1 - domik
 0x266 - telefon c kluchom
 0x205 -mafon - autoanswer
 1e0 - strelka+telefon - divert
-1c2 - ring off 
 0x27a -TTY  if (GetHeadSet (2,2) )       stacked_img[icon_cntr++]=ICO_tty; 
 
 */

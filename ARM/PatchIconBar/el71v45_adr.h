@@ -5,6 +5,9 @@ P_IsBooleanVoid   *const BT_GetLocVisibility  = (P_IsBooleanVoid*) 0xA0643D19; /
 P_IsBooleanVoid   *const GetCurrAudioPath  = (P_IsBooleanVoid*) 0xA065E2A9; //ELKA BC B5 ?? ?? ?? FC 04 1C+1
 P_IsBooleanVoid   *const isDecryption  = (P_IsBooleanVoid*) 0xA0DA6875; //ELKA ?? 48 80 B5 01 78 01 29 ?? ?? ?? ?? 01 28+1 
 
+P_IsBooleanVoid   *const AlertCallsFrom  = (P_IsBooleanVoid*) 0xA0668457; //ELKA ?? 49 98 b5 08 68 ?? 4c ?? ?? 10 ?? +1
+
+
 P_IsBooleanIntInt *const GetBTstate =(P_IsBooleanIntInt*)0xA065ABD1;//
 P_IsBooleanIntInt *const GetHeadSet =(P_IsBooleanIntInt*)0xA05B8A2D;//elka 30 B5 04 1C 89 B0 68 46 0D 1C  ?? ?? ?? ff+1
 P_IsBooleanPintPint *const GetNetworkAccess =(P_IsBooleanPintPint*)0xA0935B1D;//elka B0 B5 04 1C 0D 1C ?? ?? ?? EC ?? 49  ?? 78+1
