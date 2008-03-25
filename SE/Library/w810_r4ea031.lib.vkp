@@ -123,8 +123,8 @@
 060C: FFFFFFFF A4D91844 ; 183: int get_ptype(PROCESS pid);
 0610: FFFFFFFF F0D81844 ; 184: PROCESS current_process(void);
 0614: FFFFFFFF 28D81844 ; 185: void delay(OSTIME timeout);
-;0618: xxxxxxxx yyyyyyyy ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-;061C: xxxxxxxx yyyyyyyy ; 187: void kill_proc(PROCESS pid);
+0618: FFFFFFFF F0D91844 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
+061C: FFFFFFFF 10DA1844 ; 187: void kill_proc(PROCESS pid);
 0680: FFFFFFFF 1D53E244 ; 1A0: char* strcpy(char * dest, char * source);
 0684: FFFFFFFF 51870945 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: FFFFFFFF A5870945 ; 1A2: void SendMessage(void **signal,int PID);
