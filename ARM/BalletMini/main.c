@@ -1210,6 +1210,7 @@ int ReadUrlFile(char *url_file)
   if (GetFileStats(url_file,&stat,&err)==-1) return 0;
   if ((fsize=stat.size)<=0) return 0;
   if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
+  FreeViewUrl();
   buf=malloc(fsize+3);
   buf[0]='0';
   buf[1]='/';

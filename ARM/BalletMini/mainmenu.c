@@ -203,7 +203,8 @@ int CreateAddBookmark(GUI *data)
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);   //2
-
+  
+  FreeViewUrl();
   view_url = tmp;
   view_url_mode = tmp2;
     

@@ -1,4 +1,4 @@
-void KillViewUrl(void);
+void FreeViewUrl(void);
 char *globalstr(const char *s);
 int ReadUrlFile(char *url_file);
 
