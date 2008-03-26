@@ -145,7 +145,7 @@
 06C0: FFFFFFFF E5D4E544 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 1570AF44 ; 1B1: void debug_printf(char * fmt,...);
 06C8: FFFFFFFF D918D444 ; 1B2: int PlayFile(u16 * path, u16 * fname);
-;06DC: xxxxxxxx yyyyyyyy ; 1B7: int isKeylocked(void);
+06DC: FFFFFFFF E1E2D444 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF A5EBD444 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E4: FFFFFFFF 28552444 ; 81B9: void * get_APP_DESC_TABLE(void)
 06E8: FFFFFFFF E9C8D444 ; 1BA: void ShuttingDown(void)
@@ -205,7 +205,7 @@
 07DC: FFFFFFFF 8107D444 ; 1F7: int MainInput_strlen(GUI *);
 07E0: FFFFFFFF 9507D444 ; 1F8: char * MainInput_getPNUM(GUI *);
 07E4: FFFFFFFF A107D444 ; 1F9: int MainInput_isPlus(GUI *);
-;07E8: xxxxxxxx yyyyyyyy ; 1FA: int BOOK_GetSessionID(BOOK * );
+07E8: FFFFFFFF 7D92E844 ; 1FA: int BOOK_GetSessionID(BOOK * );
 07EC: FFFFFFFF 515FBF44 ; 1FB: int wstrncmp(u16*,u16*,int);
 07F0: FFFFFFFF 051EE944 ; 1FC: int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
 07F4: FFFFFFFF 2D1EE944 ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
@@ -273,8 +273,8 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DISP_OBJ_GetMethod0B (DISP_OBJ *);
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
-;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager (int cmd);
-;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName(void);
+0900: FFFFFFFF 9DE7A144 ; 240: void JavaSession_Manager (int cmd);
+0904: FFFFFFFF 9DE7A144 ; 241: int JavaSession_GetName(void);
 0908: FFFFFFFF 99A4EF44 ; 242: int TextCopyId(int);
 090C: FFFFFFFF 6D91E844 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: FFFFFFFF FD8CD644 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
@@ -297,8 +297,8 @@
 ;0960: xxxxxxxx yyyyyyyy ; 258: int Display_GetHeight(int Display);
 ;0964: xxxxxxxx yyyyyyyy ; 259: int Display_GetWidth(int Display);
 ;0968: xxxxxxxx yyyyyyyy ; 25A: void PlaySystemSound (int SndNumber);
-;0974: xxxxxxxx yyyyyyyy ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
-;0978: xxxxxxxx yyyyyyyy ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
+0974: FFFFFFFF A1F8D344 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
+0978: FFFFFFFF 75F8D344 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 ;097C: xxxxxxxx yyyyyyyy ; 25F: int GC_GetPenColor (void* GC);
 ;0980: xxxxxxxx yyyyyyyy ; 260: void GC_SetPenColor(void* GC , int pen_color);
 ;0984: xxxxxxxx yyyyyyyy ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
@@ -334,9 +334,12 @@
 ;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 ;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
 ;0A04: xxxxxxxx yyyyyyyy ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
-;0A08: xxxxxxxx yyyyyyyy ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
-;0A0C: xxxxxxxx yyyyyyyy ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
-;0A10: xxxxxxxx yyyyyyyy ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+0A08: FFFFFFFF FD8CD644 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+0A0C: FFFFFFFF 75580E45 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+0A10: FFFFFFFF F5590E45 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
+;0A18: xxxxxxxx yyyyyyyy ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
+;0A1C: xxxxxxxx yyyyyyyy ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 
 
 
