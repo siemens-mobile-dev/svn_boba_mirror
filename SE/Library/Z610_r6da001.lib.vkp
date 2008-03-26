@@ -333,8 +333,8 @@ A08: 00000000 01043F45 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int
 A0C: 00000000 4547F344 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 A10: 00000000 F547F344 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 A14: 00000000 20462E20 ;8285: SURFACE ** get_Surfaces(void);
-
-
+A18: 00000000 45C6D244 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
+A1C: 00000000 293FE344 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 
 
 

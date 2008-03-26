@@ -1068,4 +1068,9 @@ __swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  I
 __swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 #pragma swi_number=0x8285
 __swi __arm SURFACE ** get_Surfaces(void);
+
+#pragma swi_number=0x286
+__swi __arm int iconidname2id(u16* idname,int maxnamelen,int* id);
+#pragma swi_number=0x287
+__swi __arm int textidname2id(u16* idname,int maxnamelen,int* id);
 #endif
