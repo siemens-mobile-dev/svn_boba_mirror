@@ -25,7 +25,7 @@ static int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 
 void LoadBanList(void)
 {
-  static const int _banned[]={102,104,707-(512-175),699-(512-175),684-(512-175),709-(512-175),0};
+  static const int _banned[]={102,104,707-(512-175),699-(512-175),684-(512-175),685-(512-175),709-(512-175),0};
   ban_list=_banned;
 }
 
