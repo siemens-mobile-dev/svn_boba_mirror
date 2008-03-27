@@ -2,7 +2,7 @@
 ;Библиотека функций
 ;v
 ;(c) Hussein , IronMaster
-;(p) Victor_k, diezel, MouSeX
+;(p) Victor_k, diezil, MouSeX
 
 +45CCAE00
 0440: 00000000 2587E544 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)

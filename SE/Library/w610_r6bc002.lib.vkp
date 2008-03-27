@@ -334,6 +334,8 @@
 0A0C: 00000000 3189E444 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: 00000000 E189E444 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 0A14: 00000000 FC922F20 ;8285: SURFACE ** get_Surfaces(void);
+;0A18: xxxxxxxx yyyyyyyy ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
+;0A1C: xxxxxxxx yyyyyyyy ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 
 
 
