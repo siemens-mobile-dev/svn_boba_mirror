@@ -173,7 +173,8 @@ void Send_Auth()
   sprintf(My_JID_full,"%s/%s",My_JID, RESOURCE);
   char* payload = malloc(256);
   sprintf(payload,"<username>%s</username>\n<password>%s</password>\n<resource>%s</resource>",USERNAME, PASSWORD, RESOURCE);
-  SendIq(NULL, "set", auth_id, IQ_AUTH, payload);
+  SendIq(NULL, IQTYPE_SET, auth_id, IQ_AUTH, payload);
+  mfree(payload);
   LockSched();
   strcpy(logmsg,"Send auth");
   UnlockSched();
@@ -345,7 +346,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     SendAnswer(presence);
     m_ex=m_ex->next;
   };
-
+  mfree(caps);
   mfree(presence);
   if(pr_info->message)mfree(pr_info->message);
   mfree(pr_info);
@@ -418,9 +419,8 @@ extern const int COMPOSING_EVENTS;
 void SendComposing(char* jid)
 {
   if(!COMPOSING_EVENTS)return;
-  char* _jid=malloc(128);
-  strcpy(_jid, Mask_Special_Syms(jid));
-  char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><composing/><id>SieJC_%d</id></x></message>";
+  char* _jid = Mask_Special_Syms(jid);
+  const char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><composing/><id>SieJC_%d</id></x></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   sprintf(msg_buf, mes_template, _jid, m_num, m_num);
   mfree(_jid);
@@ -433,9 +433,8 @@ void SendComposing(char* jid)
 void CancelComposing(char* jid)
 {
   if(!COMPOSING_EVENTS)return;
-  char* _jid=malloc(128);
-  strcpy(_jid, Mask_Special_Syms(jid));
-  char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><id>SieJC_%d</id></x></message>";
+  char* _jid= Mask_Special_Syms(jid);
+  const char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><id>SieJC_%d</id></x></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   sprintf(msg_buf, mes_template, _jid, m_num-1, m_num-1);
   mfree(_jid);
@@ -1622,6 +1621,7 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
   char *_room_jid = Mask_Special_Syms(room_jid);
   snprintf(payload, 1023, payload_tpl, _room_jid, it, val, reason);
   mfree(_room_jid);
+  mfree(reason);
   SUBPROC((void*)_mucadmincmd, _room_name, payload);
 }
 

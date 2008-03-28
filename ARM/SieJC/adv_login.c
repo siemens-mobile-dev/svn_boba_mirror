@@ -93,14 +93,14 @@ void SASL_Bind_Resource()
 
   sprintf(logmsg, "Resource binding");
   REDRAW();
-  char *bind_tpl = malloc(200);
+  char *bind_tpl = malloc(256);
   sprintf(bind_tpl, "<iq type='set' id='SieJC_bind_req'>"
                   "<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>"
                   "<resource>%s</resource>"
                   "</bind>"
                   "</iq>", RESOURCE);
   Jabber_state = JS_SASL_RESBIND_ACK;
-  SUBPROC((void*)SendAnswer, bind_tpl);
+  SUBPROC((void*)_sendandfree, bind_tpl);
 }
 
 // Инициализация сессии
