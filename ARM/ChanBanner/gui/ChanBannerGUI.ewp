@@ -107,7 +107,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state></state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ChanBanner.d79</state>
+          <state>ChanBannerGUI.d79</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -861,7 +861,7 @@
         <option>
           <name>Variant</name>
           <version>5</version>
-          <state>11</state>
+          <state>0</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -909,24 +909,24 @@
         <option>
           <name>GRuntimeLibSelect</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>RTDescription</name>
-          <state>Do not link with a runtime library.</state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl4tpainl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl4tpainl8n.r79</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
@@ -984,7 +984,7 @@
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\ChanBanner.elf \MMCard\ZBin\Daemons\ChanBanner.elf</postbuild>
+        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\ChanBannerGUI.elf \MMCard\ZBin\utilities\ChanBannerGUI.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -1373,7 +1373,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ChanBanner.elf</state>
+          <state>ChanBannerGUI.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1407,7 +1407,7 @@
         </option>
         <option>
           <name>XList</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>SegmentMap</name>
@@ -1439,7 +1439,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\1.xcl</state>
+          <state>$PROJ_DIR$\..\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -1559,7 +1559,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>ChanBanner.a79</state>
+          <state>ChanBannerGUI.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>

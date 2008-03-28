@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ChanBanner.d79</state>
+          <state>ChanBanPatch.d79</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -909,24 +909,24 @@
         <option>
           <name>GRuntimeLibSelect</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>RTDescription</name>
-          <state>Do not link with a runtime library.</state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.r79</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
@@ -960,7 +960,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>NEWSGOLD</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1231,7 +1231,7 @@
         </option>
         <option>
           <name>AList</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AListHeader</name>
@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>obexcopy.exe $PROJ_DIR$\Release\Exe\ChanBanner.elf \MMCard\ZBin\Daemons\ChanBanner.elf</postbuild>
+        <postbuild>$PROJ_DIR$\postbuild.cmd $PROJ_DIR$ $EXE_DIR$</postbuild>
       </data>
     </settings>
     <settings>
@@ -1373,7 +1373,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ChanBanner.elf</state>
+          <state>ChanBanPatch.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1383,7 +1383,7 @@
         <option>
           <name>FormatVariant</name>
           <version>8</version>
-          <state>2</state>
+          <state>17</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -1439,7 +1439,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\1.xcl</state>
+          <state>E:\ARM\ChanBanner\vkp\S75sw47.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -1507,11 +1507,11 @@
         </option>
         <option>
           <name>XExtraOptionsCheck</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XExtraOptions</name>
-          <state>-ynpra</state>
+          <state></state>
         </option>
         <option>
           <name>IncludeSuppressed</name>
@@ -1527,7 +1527,7 @@
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
-          <state>main</state>
+          <state></state>
         </option>
         <option>
           <name>DebugInformation</name>
@@ -1559,7 +1559,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>ChanBanner.a79</state>
+          <state>ChanBanPatch.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -1649,10 +1649,10 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\func.asm</name>
+    <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\main.c</name>
+    <name>$PROJ_DIR$\stuff.asm</name>
   </file>
 </project>
 

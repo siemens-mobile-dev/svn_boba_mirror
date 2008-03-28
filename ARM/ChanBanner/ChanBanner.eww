@@ -4,7 +4,29 @@
   <project>
     <path>$WS_DIR$\ChanBanner.ewp</path>
   </project>
-  <batchBuild/>
+  <project>
+    <path>$WS_DIR$\gui\ChanBannerGUI.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\vkp\ChanBanPatch.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>NewSGOLD</name>
+      <member>
+        <project>ChanBanner</project>
+        <configuration>Release</configuration>
+      </member>
+      <member>
+        <project>ChanBannerGUI</project>
+        <configuration>Release</configuration>
+      </member>
+      <member>
+        <project>ChanBanPatch</project>
+        <configuration>Release</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
 </workspace>
 
 

@@ -22,6 +22,7 @@ typedef int jmp_buf[11];
 #include "rsa.h"
 #include "sha.h"
 #include "md5.h"
+#include "data_n.h"
 
 #define LMAN_CONNECT_CNF 0x80
 #define LMAN_CONNECT_REJ_IND 0x81
@@ -2624,7 +2625,7 @@ __swi __arm void *PNG_TOP(void);
 __swi __arm void *LIB_TOP(void);
 
 #pragma swi_number=0x81BB
-__swi __arm void *DATA_N_SFB(void);
+__swi __arm SFN_DATA *DATA_N_SFB(void);
 
 //===========================================
 //openssl_lib
