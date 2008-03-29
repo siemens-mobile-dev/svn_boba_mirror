@@ -253,7 +253,7 @@
 04BC: 0xA0951DD9   ; 12F: getRGBcolor(int ColorIndex,void *dest)
 04C0: 0xA0951DE9   ; 130: getRGBbyPaletteAdr(int *paletteAdr,void *dest)
 04C4: 0xA0951E07   ; 131: setColor(int a,int r,int g,int b,void *dest)
-04C8: 0xA0FBC501   ; 132: void *memmove(void *dest,const void *source,int cnt)
+04C8: 0xA0FBC500   ; 132: void *memmove(void *dest,const void *source,int cnt)
 04CC: 0xA0956815   ; 133: StoreXYWHtoRECT_2(void *RECT,int x,int y,int w,int h)
 04D0: 0xA095682B   ; 134: StoreXYXYtoRECT(void *RECT,int x,int y,int x2,int y2)
 04D4: 0xA0959183   ; 135: IsGuiOnTop(int id)
@@ -505,7 +505,20 @@
 08E4: 0xA04EDABC   ; 239:int EEFullDeleteBlock(unsigned int block,int cepid,int msg); 
 08E8: 0xA04EDC28   ; 23A:int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
 08EC: 0xA096232F   ; 23B:void DisableIconBar(int disable);
-
+;8F0:              ; 23C: int SetCurrentGPRSProfile(int profile)
+;08F4:    ; 23D: void MD5_Init(MD5_CTX *c)
+;08F8:    ; 23E: void MD5_Update(MD5_CTX *c, const void *data, unsigned long len)
+;08FC:    ; 23F: void MD5_Final(unsigned char *md, MD5_CTX *c)
+;0900:    ; 240: char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md)
+0904: 0xA08D89CF   ; 241: void SetDateTime(TDate *, TTime *)
+;908:              ; 242: void gb2ws(WSHDR *ws, const char *s, int len)
+;90C:              ; 243: void ws2gb(WSHDR *ws, char *s, int len)
+;0910:    ; 244: int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize)
+;0914:    ; 245: int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5)
+0918: 0xA0720328   ; 246: int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder);  
+;091C:    ; 247: NetOff()
+092C: 0xA095E80F   ; 24B: void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc)
+0930: 0xA065ABD1   ; 24C: int GetPeripheryState (int device, int check_state);
 #pragma disable old_equal_ff
 +0
 

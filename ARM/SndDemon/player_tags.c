@@ -26,6 +26,9 @@ void  initTags(){
     CSM_RAM *csmp=FindCSMbyID(pcsmid);
     if (csmp){
       WSHDR *fn=((WSHDR **)csmp)[0x2C/4];
+
+
+  
       if (!fn)return;
       if (!fn->wsbody) return;
       if (fn->wsbody[0])        ;
@@ -49,6 +52,41 @@ void  initTags(){
               wsprintf(wstag,pr,wstag,tws);
              else
               wstrcpy(wstag,fn);            
+/// new
+ 
+     WSHDR *folder=((WSHDR **)csmp)[0x30/4];      
+  WSHDR *fp=((WSHDR **)csmp)[0x12C/4];            //fullpath may be diff on NSG
+     
+  FILE_PROP wl;
+  zeromem(&wl, sizeof(wl));
+  wl.type=0x1800;
+  wl.filename=fp;
+  WSHDR *w_0=AllocWS(0x200);
+  WSHDR *w_1=AllocWS(0x10);
+  WSHDR *w_2=AllocWS(0x10);  
+  WSHDR *w_3=AllocWS(0x100);    
+  wl.bitrate_ws=w_1;
+  wl.audio_frequency_ws=w_2;  
+  wl.duration_mp3_ws=w_3;    
+  GetFileProp(&wl,fn,folder);
+  if (w_3->wsbody[0]){
+    wsprintf (w_0,"%w: %w",wstag,w_3);
+    wstrcpy (wstag,w_0);
+  }
+  if (w_1->wsbody[0]){
+    wsprintf (w_0,"%w %w",wstag,w_1);
+    wstrcpy (wstag,w_0);
+  }
+  if (w_2->wsbody[0]){
+    wsprintf (w_0,"%w %w",wstag,w_2);
+    wstrcpy (wstag,w_0);
+  }
+
+  FreeWS(w_0);  
+  FreeWS(w_1);
+  FreeWS(w_2);  
+  FreeWS(w_3);                 
+       
          //Патчим строку на предмет win1251
         int i=1;
         int c;
@@ -65,6 +103,8 @@ void  initTags(){
           wstag->wsbody[i++]=c;
           tagw+=GetSymbolWidth(c,cfnt);
         }
+
+    
       }else;
     }
     else    pcsmid=0;
