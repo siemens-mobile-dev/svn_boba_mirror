@@ -884,6 +884,7 @@ int reason_onkey(GUI *gui, GUI_MSG *msg)
       ExtractEditControl(gui, reason_pos, &ec);
       ws_2utf8(ec.pWS, s, &len, 256);
       MUC_Admin_Command(room_name, room_jid, macmd, s);
+      mfree(s);
       return 1;
     }
   }

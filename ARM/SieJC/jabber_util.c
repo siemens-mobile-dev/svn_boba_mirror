@@ -1621,7 +1621,6 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
   char *_room_jid = Mask_Special_Syms(room_jid);
   snprintf(payload, 1023, payload_tpl, _room_jid, it, val, reason);
   mfree(_room_jid);
-  mfree(reason);
   SUBPROC((void*)_mucadmincmd, _room_name, payload);
 }
 
