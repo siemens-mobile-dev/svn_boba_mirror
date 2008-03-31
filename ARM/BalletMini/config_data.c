@@ -27,3 +27,6 @@ __root const CFG_HDR cfghdr3_2={CFG_UINT,"Port",0,65535};
 __root const unsigned int OM_POST_PORT=80;
 
 __root const CFG_HDR cfghdr3_end={CFG_LEVEL,"",0,0};
+
+__root const CFG_HDR cfghdr4={CFG_STR_UTF8,"Default launch parameter",0,127};
+__root const char DEFAULT_PARAM[128]="bookmarks";

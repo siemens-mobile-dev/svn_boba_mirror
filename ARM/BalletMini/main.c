@@ -12,12 +12,10 @@
 #include "urlstack.h"
 #include "conf_loader.h"
 #include "mainmenu.h"
-#include "default_page.h"
 #include "history.h"
-#include "images.h"
 #include "file_works.h"
 
-#define DEFAULT_OMS "BalletMini.oms"
+extern const char DEFAULT_PARAM[128];
 
 static void UpdateCSMname(void);
 static int ParseInputFilename(const char *fn);
@@ -34,13 +32,11 @@ const int minus11=-11;
 const char ipc_my_name[32]=IPC_BALLETMINI_NAME;
 IPC_REQ gipc;
 
-int view_url_mode; //MODE_FILE, MODE_URL
+int view_url_mode;
 char *view_url;
 char *goto_url;
 char *from_url;
 char *goto_params;
-
-//int quit_reqired;
 
 static const char percent_t[]="%t";
 
@@ -52,7 +48,6 @@ char OMSCACHE_PATH[256];
 char AUTHDATA_FILE[256];
 char BOOKMARKS_PATH[256];
 char SEARCH_PATH[256];
-char IMG_PATH[256];
 
 char BALLET_PATH[256];
 char BALLET_EXE[256];
@@ -113,6 +108,17 @@ static void StartGetFile(int dummy, char *fncache)
   if (view_url_mode==MODE_URL)
   {
     StartINET(view_url,fncache);
+  }
+  if (view_url_mode==MODE_BOOKMARKS)
+  {
+    MAIN_CSM *main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id);
+    if (main_csm)
+    {
+      STOPPED=1;
+      char fname[256];
+      getSymbolicPath(fname,"$bookmarks\\");
+      main_csm->sel_bmk=CreateBookmarksMenu(fname);
+    }
   }
 }
 
@@ -1195,6 +1201,9 @@ static void UpdateCSMname(void)
   case MODE_URL:
     ascii2ws(ws,view_url+2);
     break;
+  case MODE_BOOKMARKS:
+    str_2ws(ws,"Bookmarks",10);
+    break;
   }
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"BM: %w",ws);
   FreeWS(ws);
@@ -1226,23 +1235,30 @@ int ReadUrlFile(char *url_file)
 
 static int ParseInputFilename(const char *fn)
 {
-  char *s=strrchr(fn,'.');
-  FreeViewUrl();
-  if (s)
+  if (!strcmp_nocase(fn,"bookmarks"))
   {
-    s++;
-    if (!strcmp_nocase(s,"oms"))
+    view_url_mode=MODE_BOOKMARKS;
+    return 1;
+  }
+  else
+  {
+    char *s=strrchr(fn,'.');
+    FreeViewUrl();
+    if (s)
     {
-      view_url=globalstr(fn);
-      view_url_mode=MODE_FILE;
-    }
-    else
-      if (!strcmp_nocase(s,"url"))
+      s++;
+      if (!strcmp_nocase(s,"oms"))
+      {
+        view_url=globalstr(fn);
+        view_url_mode=MODE_FILE;
+      }
+      else if (!strcmp_nocase(s,"url"))
       {
         if (!ReadUrlFile((char *)fn)) return (0);
       }
       else return 0;
-    return 1;
+      return 1;
+    }
   }
   return 0;
 }
@@ -1304,8 +1320,8 @@ void GenerateFile(char *path, char *name, unsigned char *from, unsigned size)
   strcpy(pathbuf, path); strcat(pathbuf, name);
   
   stat.size = 0;
-  GetFileStats(pathbuf,&stat,&ul); 
-  ///if (GetFileStats(pathbuf,&stat,&ul)!=-1) return;
+  GetFileStats(pathbuf,&stat,&ul);
+  //if (GetFileStats(pathbuf,&stat,&ul)!=-1) return;
   if (stat.size==0)
   {
     unlink(pathbuf,&ul);
@@ -1319,9 +1335,6 @@ void GenerateFile(char *path, char *name, unsigned char *from, unsigned size)
   mfree(pathbuf);
 
 }
-
-//int CreateBookmarksMenu(char *dir);
-//extern __root const char DEFAULT_PARAM[256];
 
 int main(const char *exename, const char *filename)
 {
@@ -1339,8 +1352,6 @@ int main(const char *exename, const char *filename)
   strcat(AUTHDATA_FILE,"AuthCode");
   memcpy(BOOKMARKS_PATH,exename,l);
   strcat(BOOKMARKS_PATH,"Bookmarks");
-  memcpy(IMG_PATH,exename,l);
-  strcat(IMG_PATH,"img");
   
   memcpy(BALLET_PATH,exename,l);
   strcpy(BALLET_EXE, exename);
@@ -1355,24 +1366,20 @@ int main(const char *exename, const char *filename)
     mkdir(BOOKMARKS_PATH,&ul);
   if (!isdir(SEARCH_PATH,&ul))
     mkdir(SEARCH_PATH,&ul);
-  if (!isdir(IMG_PATH,&ul))
-    mkdir(IMG_PATH,&ul);
   
   strcat(OMSCACHE_PATH,"\\");
   strcat(BOOKMARKS_PATH,"\\");
   strcat(SEARCH_PATH,"\\");
-  strcat(IMG_PATH,"\\");
   
   //CheckHistory("http://perk11.info/elf");
 
-  GenerateFile(IMG_PATH, RADIO_BTTN_CLKD, radio_bttn_clkd_png, radio_bttn_clkd_png_size);
-  GenerateFile(IMG_PATH, RADIO_BTTN,      radio_bttn_png,      radio_bttn_png_size);
-  GenerateFile(IMG_PATH, BUTTON_CLKD,     button_clkd_png,     button_clkd_png_size);
-  GenerateFile(IMG_PATH, BUTTON,          button_png,          button_png_size);
-  GenerateFile(IMG_PATH, TEXT_FORM,       text_form_png,       text_form_png_size);
-  GenerateFile(IMG_PATH, LIST,            list_png,            list_png_size);
+//  GenerateFile(IMG_PATH, RADIO_BTTN_CLKD, radio_bttn_clkd_png, radio_bttn_clkd_png_size);
+//  GenerateFile(IMG_PATH, RADIO_BTTN,      radio_bttn_png,      radio_bttn_png_size);
+//  GenerateFile(IMG_PATH, BUTTON_CLKD,     button_clkd_png,     button_clkd_png_size);
+//  GenerateFile(IMG_PATH, BUTTON,          button_png,          button_png_size);
+//  GenerateFile(IMG_PATH, TEXT_FORM,       text_form_png,       text_form_png_size);
+//  GenerateFile(IMG_PATH, LIST,            list_png,            list_png_size);
 
-  
   if (!LoadAuthCode())
   {
     LockSched();
@@ -1382,7 +1389,7 @@ int main(const char *exename, const char *filename)
     return 0;
   }
 
-  if (ParseInputFilename(filename))
+  if (ParseInputFilename(filename)) // open oms or url
   {
     UpdateCSMname();
     LockSched();
@@ -1391,37 +1398,13 @@ int main(const char *exename, const char *filename)
   }
   else
   {
-//    char fname[256];
-//    if (!strcmp(DEFAULT_PARAM,"opera:bookmarks"))
-//    {
-//      UpdateCSMname();
-//      LockSched();
-//      maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-//      UnlockSched();
-//      getSymbolicPath(fname,"$bookmarks\\");
-//      MAINCSM.maincsm.sel_bmk=CreateBookmarksMenu(fname);
-//    }
-//    else
-//    {
-//      getSymbolicPath(fname,DEFAULT_PARAM);
-//      if (ParseInputFilename(fname))
-//      {
-//        UpdateCSMname();
-//        LockSched();
-//        maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-//        UnlockSched();
-//      }
-//    }
-//  }
-    GenerateFile(OMSCACHE_PATH, DEFAULT_OMS, default_page,default_page_size);
-    char *pathbuf=malloc(strlen(OMSCACHE_PATH) + strlen(DEFAULT_OMS) + 1);
-    strcpy(pathbuf, OMSCACHE_PATH); strcat(pathbuf, DEFAULT_OMS);
-    view_url=pathbuf;
-    view_url_mode=MODE_FILE;
-    UpdateCSMname();
-    LockSched();
-    maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
-    UnlockSched();
+    if (ParseInputFilename(DEFAULT_PARAM))
+    {
+      UpdateCSMname();
+      LockSched();
+      maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+      UnlockSched();
+    }
   }
   return 0;
 }

@@ -11,7 +11,7 @@ typedef struct
   int main_menu_id;
 }MAIN_CSM;
 
-enum I_INPUTMODE {MODE_FILE, MODE_URL};
+enum I_INPUTMODE {MODE_FILE, MODE_URL, MODE_BOOKMARKS};
 
 void FreeRawText(VIEWDATA *vd);
 

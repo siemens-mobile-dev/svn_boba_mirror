@@ -2,3 +2,4 @@
 
 int CreateMainMenu(VIEWDATA *vd);
 int CreateInputUrl();
+int CreateBookmarksMenu(char *dir);

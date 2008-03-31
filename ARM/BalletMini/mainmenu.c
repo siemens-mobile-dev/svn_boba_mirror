@@ -15,6 +15,7 @@ extern char *goto_url;
 extern int maincsm_id;
 
 char curBookmarksDir[128];
+
 int CreateBookmarksMenu(char *dir);
 
 typedef struct
@@ -60,7 +61,7 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
   WSHDR *ws;
-  char *name, *url, pathbuf[256], *tmp;
+  char *name, *url, path[256], *tmp;
   unsigned ul;
   int f;
 
@@ -70,9 +71,6 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
     ws = ec.pWS;
     name = (char *)malloc(256);
     ws_2str(ws, name, 256);
-    //for (int i=0; i<ws->wsbody[0]; i++) *name++=char16to8(ws->wsbody[i+1]);
-    //*name = 0;
-    //name = tmp;
 
     ExtractEditControl(data,4,&ec);
     ws = ec.pWS;
@@ -81,11 +79,11 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
     *url = 0;
     url = tmp;
 
-    getSymbolicPath(pathbuf,curBookmarksDir);
-    strcat(pathbuf, name);
-    strcat(pathbuf, ".url");
-    unlink(pathbuf,&ul);
-    f=fopen(pathbuf,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+    getSymbolicPath(path,curBookmarksDir);
+    strcat(path, name);
+    strcat(path, ".url");
+    unlink(path,&ul); // it will duplicate, if name changed :(
+    f=fopen(path,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
     if (f!=-1)
     {
       url = ToWeb(url, 0);
@@ -94,7 +92,6 @@ static int add_bookmark_onkey(GUI *data, GUI_MSG *msg)
     }
     mfree(url);
     mfree(name);
-      
     return (1);
   }
   return (0);
@@ -134,23 +131,47 @@ int CreateAddBookmark(GUI *data)
   MAIN_CSM *main_csm;
   VIEW_GUI *p;
   EDITCONTROL ec;
-  char *tmp = view_url, *url_start;
-  int tmp2 = view_url_mode, flag = 0;
+  char *url_start;
+  int flag = 0;
+  char *buf;
   
   eq=AllocEQueue(ma,mfree_adr());    // Extension
   WSHDR *ews=AllocWS(1024);
 
   URL_STRUCT *ustop = MenuGetUserPointer(data);
 
-  if(data) if (ReadUrlFile(ustop->fullpath)) flag = 1; // edit
+  if(data) // edit
+  {
+    // read url file
+    int f;
+    unsigned int err;
+    int fsize;
+    FSTATS stat;
+    if (GetFileStats(ustop->fullpath,&stat,&err)!=-1)
+    {
+      if ((fsize=stat.size)>0)
+      {
+        if ((f=fopen(ustop->fullpath,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+        {
+          buf=malloc(fsize+1);
+          buf[fread(f,buf,fsize,&err)]=0;
+          fclose(f,&err);
+          flag = 1;
+        }
+      }
+    }
+  }
   
   ascii2ws(ews,"»м€:");
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,wslen(ews));
-  AddEditControlToEditQend(eq,&ec,ma); 
+  AddEditControlToEditQend(eq,&ec,ma);
       
-  if(data && flag)
+  if(flag) // edit bookmark
+  {
     str_2ws(ews,ustop->urlname,64);
-  else
+  }
+  else // add bookmark
+  {
     if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
     {
       p=FindGUIbyId(main_csm->view_id,NULL);
@@ -159,7 +180,7 @@ int CreateAddBookmark(GUI *data)
       else
         ascii2ws(ews,"New bookmark");
     }
-    
+  }
     
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,64);
@@ -167,11 +188,15 @@ int CreateAddBookmark(GUI *data)
 
   ascii2ws(ews,"—сылка:");
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,wslen(ews));
-  AddEditControlToEditQend(eq,&ec,ma); 
+  AddEditControlToEditQend(eq,&ec,ma);
 
-  if(data && flag)
-    ascii2ws(ews,view_url+2);
-  else
+  if(flag) // edit bookmark
+  {
+    ascii2ws(ews,buf);
+    mfree(buf);
+  }
+  else // add bookmark
+  {
     if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
     {
       p=FindGUIbyId(main_csm->view_id,NULL);
@@ -180,11 +205,9 @@ int CreateAddBookmark(GUI *data)
         for(url_start = p->vd->pageurl; *url_start && *url_start != '/'; url_start++);
         for(; *url_start && *url_start == '/'; url_start++);
         str_2ws(ews,url_start,strlen(url_start));
-        //str_2ws(ews,p->vd->pageurl+2,strlen(p->vd->pageurl)-2);
       }
-      else
+      else // url не загружен
       {
-        // url не загружен
         switch(view_url_mode)
         {
         case MODE_FILE:
@@ -194,20 +217,18 @@ int CreateAddBookmark(GUI *data)
           for(url_start = view_url; *url_start && *url_start != '/'; url_start++);
           for(; *url_start && *url_start == '/'; url_start++);
           str_2ws(ews,url_start,strlen(url_start));
-          //ascii2ws(ews,view_url+2);
+          break;
+        default:
+          str_2ws(ews,"absent...",10);
           break;
         }
       }
     }
-
+  }
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);   //2
   
-  FreeViewUrl();
-  view_url = tmp;
-  view_url_mode = tmp2;
-    
   FreeWS(ews);
   patch_header(&add_bookmark_hdr);
   patch_input(&add_bookmark_desc);
@@ -217,14 +238,14 @@ int CreateAddBookmark(GUI *data)
 static void do_add_bookmark(GUI *data)
 {
   CreateAddBookmark(0);
-  GeneralFuncF1(2);  
+  GeneralFuncF1(2);
 }
 //------------------------------------------------------------------------------
 
 static void do_edit_bookmark(GUI *data)
 {
   CreateAddBookmark(data);
-  GeneralFuncF1(2);  
+  GeneralFuncF1(2);
 }
 
 //------------------------------------------------------------------------------
@@ -364,6 +385,7 @@ void selurl_menu_ghook(void *gui, int cmd)
   URL_STRUCT *ustop=MenuGetUserPointer(gui);
   if (cmd==3)
   {
+    
     while(ustop)
     {
       URL_STRUCT *us=ustop;
@@ -466,11 +488,11 @@ static char * search_engines[MAX_SEARCH_ENGINES];
 
 static void free_search_engines()
 {
-LockSched();
-char ** p=search_engines;
-for(int i=search_engine_count-1;i>=0;i--) mfree(*p++);
-search_engine_count=0;
-UnlockSched();
+  LockSched();
+  char ** p=search_engines;
+  for(int i=search_engine_count-1;i>=0;i--) mfree(*p++);
+  search_engine_count=0;
+  UnlockSched();
 };
 
 static void get_search_engines()
@@ -1004,8 +1026,11 @@ int CreateInputUrl()
       case MODE_URL:
         for(url_start = view_url; *url_start && *url_start != '/'; url_start++);
         for(; *url_start && *url_start == '/'; url_start++);
-        str_2ws(ews,url_start,strlen(url_start));        
+        str_2ws(ews,url_start,strlen(url_start));
         //ascii2ws(ews,view_url+2);
+        break;
+      default:
+        str_2ws(ews,"under construction!",21);
         break;
       }
     }

@@ -423,8 +423,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         if (c==UTF16_ENA_INVERT)
         {
           //ws->wsbody[++dc]='>';
-          rnd_rf=FindReferenceByBegin(vd,sc);
-          rnd_x=ws_width;
           if (ypos+lc[0].pixheight>dfh||ypos>=0)
           {
             if (_ref==0xFFFFFFFF) _ref=sc;
@@ -434,7 +432,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           }
           else
             goto L1;
-        }
+        } else
         if (c==UTF16_DIS_INVERT)
         {
           //ws->wsbody[++dc]='<';
@@ -459,7 +457,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           }
           else
             goto L1;
-        }
+        } else
         if (c==UTF16_PAPER_RGBA)
         {
           if (cur_rc<MAX_COLORS_IN_LINE)
@@ -477,11 +475,21 @@ int RenderPage(VIEWDATA *vd, int do_draw)
               cur_rc++;
             }
           }
-        }
-        if (c==UTF16_ALIGN_LEFT||c==UTF16_ALIGN_RIGHT||c==UTF16_ENA_CENTER||c==UTF16_DIS_CENTER)
+        } else
+        if (c==UTF16_ALIGN_LEFT||c==UTF16_ALIGN_RIGHT||c==UTF16_ENA_CENTER|| \
+            c==UTF16_DIS_CENTER||c==UTF16_NEWLINE)
+        {
           goto L1;
+        } else
+        if ((c&0xFF00)==0xE100)
+        {
+          if (c==vd->WCHAR_TEXT_FORM||c==vd->WCHAR_LIST_FORM)
+          {
+            rnd_rf=FindReferenceByBegin(vd,sc-1);
+            rnd_x=ws_width;
+          }
+        }
 //        if (c==0x20&&ws_width==0) goto L1;
-        if (c==UTF16_NEWLINE) goto L1;
         
         ws->wsbody[++dc]=c;
         ws_width+=GetSymbolWidth(c,lc->bold?FONT_SMALL_BOLD:FONT_SMALL);
@@ -534,24 +542,26 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 //        {
 //          WSHDR *ws;
 //          ws=AllocWS(128);
-////          for (int i=store_line;i<=vl;i++)
-////          {
-////            wsprintf(ws,"%u: %u %c%c",i,vd->lines_cache[i].pos,vd->lines_cache[i].center?'+':'-',vd->lines_cache[i].right?'>':'<');
-////            DrawString(ws,3,(1+i-store_line)*14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
-////          }
+//          for (int i=store_line;i<=vl;i++)
 //          {
-//            wsprintf(ws,"%u %u",vd->pos_first_ref,vd->pos_last_ref);
-//            DrawString(ws,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
-//            wsprintf(ws,"%u %u",vd->pos_prev_ref,vd->pos_next_ref);
-//            DrawString(ws,3,26,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
-//            wsprintf(ws,"%u %c",vd->pos_cur_ref,FindReference(vd,vd->pos_cur_ref)?FindReference(vd,vd->pos_cur_ref)->tag:'0');
-//            DrawString(ws,3,38,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
-//            wsprintf(ws,"%i",vd->pixdisp);
-//            DrawString(ws,3,50,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
-////            ws->wsbody[0]=10;
-////            memcpy(&(ws->wsbody[1]),(vd->rawtext+store_pos),10);
-////            DrawString(ws,3,50,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
+//            wsprintf(ws,"%u: %u %c%c h:%u",i,vd->lines_cache[i].pos,vd->lines_cache[i].center?'+':'-',vd->lines_cache[i].right?'>':'<',vd->lines_cache[i].pixheight);
+//            DrawString(ws,3,(1+i-store_line)*14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
 //          }
+////          {
+////            wsprintf(ws,"%i",ws_width);
+////            DrawString(ws,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
+////            wsprintf(ws,"%u %u",vd->pos_first_ref,vd->pos_last_ref);
+////            DrawString(ws,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
+////            wsprintf(ws,"%u %u",vd->pos_prev_ref,vd->pos_next_ref);
+////            DrawString(ws,3,26,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
+////            wsprintf(ws,"%u %c",vd->pos_cur_ref,FindReference(vd,vd->pos_cur_ref)?FindReference(vd,vd->pos_cur_ref)->tag:'0');
+////            DrawString(ws,3,38,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
+////            wsprintf(ws,"%i",vd->pixdisp);
+////            DrawString(ws,3,50,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(23));
+//////            ws->wsbody[0]=10;
+//////            memcpy(&(ws->wsbody[1]),(vd->rawtext+store_pos),10);
+//////            DrawString(ws,3,50,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
+////          }
 //          FreeWS(ws);
 //        }
       }

@@ -4,13 +4,12 @@
 #include "readimg.h"
 #include "string_works.h"
 #include "siemens_unicode.h"
+#include "file_works.h"
 
 #define DP_IS_FRAME (-2)
 #define DP_IS_NOINDEX (-1)
 #define RAWTEXTCHUNK (16384)
 #define REFCACHECHUNK (256)
-
-extern char IMG_PATH[];
 
 static void RawInsertChar(VIEWDATA *vd, int wchar)
 {
@@ -298,11 +297,13 @@ void AddRadioButton(VIEWDATA *vd, int checked)
   if (!vd->WCHAR_RADIO_ON)
   {
     char fname[256];
-    strcpy(fname,IMG_PATH);
-    strcat(fname,RADIO_BTTN_CLKD);
+//    strcpy(fname,IMG_PATH);
+//    strcat(fname,RADIO_BTTN_CLKD);
+    getSymbolicPath(fname,"$resources\\radio_bttn_clkd.png");
     vd->WCHAR_RADIO_ON=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_RADIO_ON==0xE115) vd->WCHAR_RADIO_ON=0xE116;
-    strcpy(fname+strlen(IMG_PATH),RADIO_BTTN);
+//    strcpy(fname+strlen(IMG_PATH),RADIO_BTTN);
+    getSymbolicPath(fname,"$resources\\radio_bttn.png");
     vd->WCHAR_RADIO_OFF=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_RADIO_OFF==0xE115) vd->WCHAR_RADIO_OFF=0xE117;
   }
@@ -314,11 +315,13 @@ void AddCheckBoxItem(VIEWDATA *vd, int checked)
   if (!vd->WCHAR_BUTTON_ON)
   {
     char fname[256];
-    strcpy(fname,IMG_PATH);
-    strcat(fname,BUTTON_CLKD);
+//    strcpy(fname,IMG_PATH);
+//    strcat(fname,BUTTON_CLKD);
+    getSymbolicPath(fname,"$resources\\button_clkd.png");
     vd->WCHAR_BUTTON_ON=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_BUTTON_ON==0xE115) vd->WCHAR_BUTTON_ON=0xE116;
-    strcpy(fname+strlen(IMG_PATH),BUTTON);
+//    strcpy(fname+strlen(IMG_PATH),BUTTON);
+    getSymbolicPath(fname,"$resources\\button.png");
     vd->WCHAR_BUTTON_OFF=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_BUTTON_OFF==0xE115) vd->WCHAR_BUTTON_OFF=0xE117;
   }
@@ -330,19 +333,18 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
   if (!vd->WCHAR_TEXT_FORM)
   {
     char fname[256];
-    strcpy(fname,IMG_PATH);
-    strcat(fname,TEXT_FORM);
+//    strcpy(fname,IMG_PATH);
+//    strcat(fname,TEXT_FORM);
+    getSymbolicPath(fname,"$resources\\text_form.png");
     vd->WCHAR_TEXT_FORM=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_TEXT_FORM==0xE115) vd->WCHAR_TEXT_FORM=0xE11E;
   }
-//  RawInsertChar(vd,0x0A);
   RawInsertChar(vd,vd->WCHAR_TEXT_FORM);
   int len=_rshort2(vd->oms+pos);
   vd->work_ref.data=(void *)AllocWS(len);
   char *c=extract_omstr(vd,pos);
   oms2ws(((WSHDR *)vd->work_ref.data),c,len);
   mfree(c);
-//  RawInsertChar(vd,0x0A);
 }
 
 void AddButtonItem(VIEWDATA *vd, const char *text, int len)
@@ -357,12 +359,11 @@ void AddDropDownList(VIEWDATA *vd)
   if (!vd->WCHAR_LIST_FORM)
   {
     char fname[256];
-    strcpy(fname,IMG_PATH);
-    strcat(fname,LIST);
+//    strcpy(fname,IMG_PATH);
+//    strcat(fname,LIST);
+    getSymbolicPath(fname,"$resources\\list.png");
     vd->WCHAR_LIST_FORM=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_LIST_FORM==0xE115) vd->WCHAR_LIST_FORM=0xE11B;
   }
-//  RawInsertChar(vd,0x0A);
   RawInsertChar(vd,vd->WCHAR_LIST_FORM);
-//  RawInsertChar(vd,0x0A);
 }
