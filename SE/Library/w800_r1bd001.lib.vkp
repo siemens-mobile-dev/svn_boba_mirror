@@ -1,6 +1,6 @@
 ;W800 SW-R1BD001
 ;Библиотека функций
-;v221207
+;v
 ;
 ;(c) Hussein , IronMaster
 ;(p) HierOS
@@ -55,7 +55,7 @@
 04F8: FFFFFFFF e542D644 ; 13E: int GetFocusetListObjectItem( void *obj);
 04FC: FFFFFFFF 3143D644 ; 13F: void SetMenuItemStyle( void *obj , int style);
 0500: FFFFFFFF 1932D444 ; 140: void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
-0504: FFFFFFFF 8D8CD444 ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
+0504: FFFFFFFF 2DA1D444 ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: FFFFFFFF 59daD344 ; 142: void StatusIndication_SetItemText(void *gui,int item,int StrID);
 050C: FFFFFFFF 4597EA44 ; 143: void StatusIndication_ShowNotes(int StrID);
 0510: FFFFFFFF 6189D544 ; 144: void * CreateStringInput(int,...);
@@ -146,7 +146,7 @@
 06C4: FFFFFFFF 7d8aAc44 ; 1B1: void debug_printf(char * fmt,...);
 06C8: FFFFFFFF 0dd7d344 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: FFFFFFFF 71d31545 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-06D4: FFFFFFFF 87d31545 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
+06D4: FFFFFFFF CDD31545 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06D8: FFFFFFFF 7530EB44 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: FFFFFFFF 1da1D444 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF c10dF744 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
@@ -263,7 +263,7 @@
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
 ;08C4: xxxxxxxx yyyyyyyy ; 231: DISP_OBJ_METHOD DISP_OBJ_GetMethod05 (DISP_OBJ *);
 08C8: FFFFFFFF C595e844 ; 232: void DISP_DESC_SetMethod06 (DISP_DESC* ,DISP_OBJ_METHOD);
-08CC: FFFFFFFF c595e844 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
+08CC: FFFFFFFF 3599E844 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
 ;08D8: xxxxxxxx yyyyyyyy ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
@@ -327,22 +327,22 @@
 ;09D4: xxxxxxxx yyyyyyyy ; 275: png_uint_32 png_get_rowbytes(png_structp png_ptr, png_infop info_ptr);
 ;09D8: xxxxxxxx yyyyyyyy ; 276: void png_progressive_combine_row(png_structp png_ptr, png_bytep old_row, png_bytep new_row);
 ;09DC: xxxxxxxx yyyyyyyy ; 277: int png_sig_cmp(png_bytep sig, png_size_t start, png_size_t num_to_check);
-;09E0: xxxxxxxx yyyyyyyy ; 278: int setjmp(jmp_buf jmpbuf);
-;09E4: xxxxxxxx yyyyyyyy ; 279: void longjmp(jmp_buf, int);
+09E0: FFFFFFFF 94E20644 ; 278: int setjmp(jmp_buf jmpbuf);
+09E4: FFFFFFFF B8E20644 ; 279: void longjmp(jmp_buf, int);
 ;09E8: xxxxxxxx yyyyyyyy ; 27A: int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
 ;09EC: xxxxxxxx yyyyyyyy ; 27B: int inflate (z_streamp strm, int flush);
 ;09F0: xxxxxxxx yyyyyyyy ; 27C: int inflateEnd (z_streamp strm);
-;09F4: xxxxxxxx yyyyyyyy ; 27D: int memcmp (const void *m1,const void *m2,int n);
-;09F8: xxxxxxxx yyyyyyyy ; 27E: int strncmp(const char *s1, const char *s2, int len);
-;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
-;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
-;0A04: xxxxxxxx yyyyyyyy ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
+09F4: FFFFFFFF 212FB444 ; 27D: int memcmp (const void *m1,const void *m2,int n);
+09F8: FFFFFFFF B93FB444 ; 27E: int strncmp(const char *s1, const char *s2, int len);
+09FC: FFFFFFFF F53FB444 ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
+0A00: FFFFFFFF DD3EB444 ; 280: char *strcat(char *dest, const char *src);
+0A04: FFFFFFFF 45080745 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: FFFFFFFF 4D4AD644 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: FFFFFFFF 29EC0D45 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: FFFFFFFF A9ED0D45 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 ;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
-;0A18: xxxxxxxx yyyyyyyy ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
-;0A1C: xxxxxxxx yyyyyyyy ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
+0A18: FFFFFFFF e902f044 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
+0A1C: FFFFFFFF 2942dc44 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 
 
 

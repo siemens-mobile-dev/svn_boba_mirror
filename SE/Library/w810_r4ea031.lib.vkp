@@ -1,6 +1,6 @@
 ;W810 SW-R4EA031
 ;Библиотека функций
-;v221207
+;v
 ;(c) Hussein , IronMaster
 ;
 
@@ -146,9 +146,14 @@
 06C8: FFFFFFFF F13E1545 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: FFFFFFFF 71D66445 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: FFFFFFFF CDD66445 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
+06D8: FFFFFFFF B1812B45 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: FFFFFFFF C5821545 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF 71504445 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06E4: FFFFFFFF DD654445 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);
+06E8: FFFFFFFF C99A1545 ; 1BA: void ShuttingDown(void);
 06EC: FFFFFFFF 41d04545 ; 1BB: void Vibra(int t1, int t2, int t3);
+06F0: FFFFFFFF BD555945 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F4: FFFFFFFF 5D565945 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: FFFFFFFF E10B1545 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: FFFFFFFF F90A1545 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: FFFFFFFF 75061745 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -260,8 +265,8 @@
 08CC: FFFFFFFF ED1F3045 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
-;08D8: xxxxxxxx yyyyyyyy ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
-;08DC: xxxxxxxx yyyyyyyy ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
+08D8: FFFFFFFF 3D1D3045 ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
+08DC: FFFFFFFF 2D203045 ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
 ;08E0: xxxxxxxx yyyyyyyy ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 ;08E4: xxxxxxxx yyyyyyyy ; 239: DISP_OBJ_METHOD DISP_OBJ_GetMethod09 (DISP_OBJ *);
 ;08E8: xxxxxxxx yyyyyyyy ; 23A: void DISP_DESC_SetMethod0A (DISP_DESC* ,void (*)(void*));
@@ -294,11 +299,11 @@
 0968: FFFFFFFF 093E1545 ; 25A: void PlaySystemSound (int SndNumber);
 0974: ffffffff 45381545 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
 0978: ffffffff 1D381545 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
-;097C: xxxxxxxx yyyyyyyy ; 25F: int GC_GetPenColor (void* GC);
-;0980: xxxxxxxx yyyyyyyy ; 260: void GC_SetPenColor(void* GC , int pen_color);
-;0984: xxxxxxxx yyyyyyyy ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
-;0988: xxxxxxxx yyyyyyyy ; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
-;098C: xxxxxxxx yyyyyyyy ; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
+097C: FFFFFFFF C1221945 ; 25F: int GC_GetPenColor (void* GC);
+0980: FFFFFFFF 81221945 ; 260: void GC_SetPenColor(void* GC , int pen_color);
+0984: FFFFFFFF FF1E1945 ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
+0988: FFFFFFFF D12C1945 ; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
+098C: FFFFFFFF 652E1945 ; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
 0990: FFFFFFFF 7D1F1945 ; 264: int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
 ;0994: xxxxxxxx yyyyyyyy ; 265: png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
 ;0998: xxxxxxxx yyyyyyyy ; 266: void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
@@ -328,7 +333,7 @@
 ;09F8: xxxxxxxx yyyyyyyy ; 27E: int strncmp(const char *s1, const char *s2, int len);
 ;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 ;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
-;0A04: xxxxxxxx yyyyyyyy ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
+0A04: FFFFFFFF 693F1945 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: FFFFFFFF 4D141745 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: FFFFFFFF 51DE5A45 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: FFFFFFFF E5DE5A45 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);

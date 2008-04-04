@@ -1,6 +1,6 @@
 ;W580 SW-R8BA024
 ;Библиотека функций
-;v221207
+;v
 ;(c) Hussein , IronMaster
 ;
 
@@ -108,7 +108,7 @@
 05D0: 00000000 FD9DD544 ; 174: void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
 05D4: 00000000 45B42745 ; 175: char * manifest_GetParam(char *buf,char *param_name,int unk);
 05D8: 00000000 5D8DE844 ; 176: int lseek(int file,int offset,int mode);
-05DC: 00000000 00000000 ;8177: int get_VBUFFER(void);
+05DC: 00000000 B7251444 ;8177: int get_VBUFFER(void);
 05E0: 00000000 E1032E45 ; 178: void SetLampLevel (int level);
 05E4: 00000000 FD411B45 ; 179: void * ListElement_Remove(LIST *lst,int index);
 05E8: 00000000 990C2C44 ; 17A: int GetCurrentPID(void);
@@ -332,7 +332,7 @@
 0A08: 00000000 05D93145 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: 00000000 9D0AE444 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: 00000000 4D0BE444 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
-;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
+0A14: 00000000 B8782F20 ;8285: SURFACE ** get_Surfaces(void);
 0A18: 00000000 D14AC344 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 0A1C: 00000000 290FD444 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 

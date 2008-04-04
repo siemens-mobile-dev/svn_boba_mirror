@@ -1,6 +1,6 @@
 ;K750 SW-R1CA021
 ;Библиотека функций
-;v221207
+;v
 ;(c) Hussein , IronMaster
 ;
 
@@ -269,13 +269,13 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DISP_OBJ_GetMethod0B (DISP_OBJ *);
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
-0900: FFFFFFFF C9541445 ; 240:
-0904: FFFFFFFF 11541445 ; 241:
-0908: FFFFFFFF 15C5EE44 ; 242:
-090C: FFFFFFFF E5AAE744 ; 243:
-0910: FFFFFFFF 09A5D544 ; 244:
-0914: FFFFFFFF 95A5D544 ; 245:
-0918: FFFFFFFF 85A5D544 ; 246:
+0900: FFFFFFFF C9541445 ; 240: void JavaSession_Manager (int cmd);
+0904: FFFFFFFF 11541445 ; 241: int JavaSession_GetName(void);
+0908: FFFFFFFF 15C5EE44 ; 242: int TextCopyId(int);
+090C: FFFFFFFF E5AAE744 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
+0910: FFFFFFFF 09A5D544 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
+0914: FFFFFFFF 95A5D544 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
+0918: FFFFFFFF 85A5D544 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 0920: FFFFFFFF 4150F844 ; 248: void Vibra_Off (int t1);
 0924: FFFFFFFF 44F6B3B5 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
 0928: FFFFFFFF 7136D344 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
