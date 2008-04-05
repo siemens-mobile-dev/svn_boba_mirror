@@ -335,6 +335,7 @@
 0A14: 00000000 0C5D2E20 ;8285: SURFACE ** get_Surfaces(void);
 0A18: 00000000 510BD644 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 0A1C: 00000000 799AE644 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
+0A20: 00000000 85EB4345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 
 
 
