@@ -38,6 +38,7 @@ int KeyActiv=0x1F;
 int Ignore_KeyLock=0;
 int ElfInBookListEnabled=1;
 int UserInactivityEventEnabled=1;
+int NameBookAsSession=0;
 
 typedef struct
 {
@@ -293,7 +294,14 @@ void CreateBookLst(MyBOOK * myBook)
               u16 ws[100];
               si=new SESSION_ITEM;
               si->book_list=List_New();
-              TextID2wstr(session->name,ws,100);
+              if ((strcmp(book->xbook->name,"CUIDisplayableBook"))&&(NameBookAsSession==0))
+              {
+                str2wstr(ws,book->xbook->name);
+              }
+              else
+              {
+                TextID2wstr(book->xbook->app_session->name,ws,100);
+              }
               si->session_name=GetParam(unicode2win1251(s,ws,100));
               si->session=session;
               si->isGuiBook=fgui;
@@ -717,12 +725,16 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
   }
   AddMSGHook(elist,ACTION_BACK, CloseMyBook);
   AddMSGHook(elist,ACTION_LONG_BACK, TerminateManager);
-  AddMSGHook(elist,ACTION_SELECT1,onEnterPressed1);
   
   if (((MyBOOK*)bk)->elfs_list->FirstFree)
   {
     AddMSGHook(elist,1,Author);
     AddCommand(elist,1,STR("Author"));
+    AddMSGHook(elist,ACTION_SELECT1,onEnterPressed1);
+  }
+  else
+  {
+    ListMenu_SetNoItemText(elist,STR("No elfs in memory"));
   }
   
   ((MyBOOK*)bk)->oldOnKey1=(void*)DISP_OBJ_GetOnKey(elist->DISP_OBJ);
@@ -845,7 +857,7 @@ void CloseMyBook(BOOK * Book, void *)
 
 void TerminateManager(BOOK * Book, void *)
 {
-  MESSAGE(STR("BookManager\n\nterminated."));
+  MESSAGE(STR("BookManager\n\nterminated"));
   FreeBook(Book);
   ModifyKeyHook(NewKey,0);
   SUBPROC(elf_exit);
@@ -885,6 +897,11 @@ char * get_ini_key(int full_init)
       if (param=manifest_GetParam(buf,"[UIEE]",0))
       {
         UserInactivityEventEnabled=h2i(param);
+        mfree(param);
+      }
+      if (param=manifest_GetParam(buf,"[NBAS]",0))
+      {
+        NameBookAsSession=h2i(param);
         mfree(param);
       }
       if (param=manifest_GetParam(buf,"[EIBL]",0))
