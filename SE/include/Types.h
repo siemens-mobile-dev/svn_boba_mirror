@@ -142,12 +142,11 @@ typedef struct
 {
   u16 *fname;
   u16 *path;
-  u16 *MIME_type;
+  char *MIME_type;
   u16 *extension;
   int *FSTAT;
   int *DRMHandle;
-  char unk1;
- // u16 unk4;
+  char DRM_Flag;
 }FILEITEM;
 
 typedef struct
