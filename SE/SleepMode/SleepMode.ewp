@@ -107,7 +107,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -550,17 +550,17 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>main.hex</state>
+          <state>sleepmode.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>16</state>
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
-          <state>2</state>
+          <version>8</version>
+          <state>17</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -616,7 +616,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>F:\Projects\ARM\se\BookManeger\1.xcl</state>
+          <state>..\include\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -704,7 +704,7 @@
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
-          <state>__program_start</state>
+          <state>main</state>
         </option>
         <option>
           <name>DebugInformation</name>
@@ -736,7 +736,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>main.a79</state>
+          <state>SleepMode.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -745,12 +745,12 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
           <name>xcOverrideProgramEntryLabel</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>xcProgramEntryLabelSelect</name>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1649,10 +1649,10 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
+    <name>$EW_DIR$\ELF KITS\C++\_cpp2.cpp</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\include\func.asm</name>
+    <name>$EW_DIR$\ELF KITS\include\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
