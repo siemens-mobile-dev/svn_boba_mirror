@@ -1073,4 +1073,7 @@ __swi __arm SURFACE ** get_Surfaces(void);
 __swi __arm int iconidname2id(u16* idname,int maxnamelen,int* id);
 #pragma swi_number=0x287
 __swi __arm int textidname2id(u16* idname,int maxnamelen,int* id);
+
+#pragma swi_number=0x288
+__swi __arm void ListMenu_SetNoItemText(GUI_LIST *, int str);
 #endif
