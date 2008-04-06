@@ -123,18 +123,10 @@ typedef struct
 
 typedef struct
 {
-  int  FlashFolderName;
-  int SavedToFlash;
-  u16 *FlashPath;
-  int unk0;
-  int PhoneFolderName;
-  int SavedToPhone;
-  u16 *PhonePath;
-  int unk1;
-  int unk_StrID0;
-  int unk_StrID1;
-  int unk2;
-  int unk3;
+  int StrID_FolderName;
+  int StrID_SavedTo;
+  u16 *Path;
+  int isInternal;
 }DB_EXT_FOLDERS;
 
 

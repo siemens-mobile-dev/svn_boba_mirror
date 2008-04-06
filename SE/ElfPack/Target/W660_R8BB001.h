@@ -5,14 +5,7 @@
 #define _W660_R8BB001_
 
 #define EXT_TABLE 0x45AE72C8
-
 #define RUN_CHECK 0x44FE4CE5
-#define STR_START 0xFF8
-#define STR_APPLICATION 0x0469
-#define STR_Saved_on_Memory_Stick 0x15A0
-#define STR_Saved_in_phone_memory 0x159F
-#define ELF_SMALL_ICON 0xE5D1
-//#define ROOT_APP 0x201820A4
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x4587E204

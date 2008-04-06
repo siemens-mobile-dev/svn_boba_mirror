@@ -4,18 +4,9 @@
 #ifndef _Z610_R6DA001_
 #define _Z610_R6DA001_
 
-//#define pKBD 0x4C05DD60
 #define EXT_TABLE 0x45A4E168
 #define RUN_CHECK 0x44FAE065
-#define STR_START 0x0FBA
-#define STR_APPLICATION 0x0460
-#define STR_Saved_on_Memory_Stick 0x0580
-#define STR_Saved_in_phone_memory 0x057F
-#define ELF_SMALL_ICON 0xE5D2
-//#define ROOT_APP 0x201820A4
-//#define PID_MMI 0x100E4
-#define HELPER_SIG 0x6FF0//???0x6FF0
-//#define RAM_BASE (0x4C04B1D4)
+#define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45802BC4
 #define PATH_AUDIO_EXT 0x45802EE4
@@ -45,7 +36,8 @@
 #define ELF_RUN_PAGE_PAGE_EXIT_EVENT 0x44FA62B5
 
 #define DB_CMD_SETSMALLICON 0x3B
-#define DB_DB_EXT_C1 0x2EC //???0x2EC
+#define DB_CMD_SETTHUMBNAILICON 0x3C
+#define DB_DB_EXT_C1 0x2EC
 
 #endif
 #endif

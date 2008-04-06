@@ -6,18 +6,7 @@
 
 #define EXT_TABLE 0x444E9A98
 #define RUN_CHECK 0x455B5945
-
-#define STR_START 0x0B9D
-#define STR_APPLICATION 0x0342
-#define STR_Saved_on_Memory_Stick 0x0FEF
-#define STR_Saved_in_phone_memory 0x0FEE
-
-#define ELF_SMALL_ICON 0xE5AC
-
-//#define ROOT_APP 0x4C2EE860
-//#define PID_MMI 0x100E5							//
 #define HELPER_SIG 0x6FF0
-//#define RAM_BASE (0x4C03F018)
 
 #define PATH_AUDIO_INT 0x44647CFA
 #define PATH_AUDIO_EXT 0x44646698
@@ -30,23 +19,24 @@
 #define PATH_OTHER_INT 0x44647E08
 #define PATH_OTHER_EXT 0x44646828
 
-#define PATH_ELF_ROOT_INT		(L"/usb/other/ZBin")
-#define PATH_ELF_ROOT_EXT		(L"/card/MSSEMC/Media files/other/ZBin")
-#define PATH_ELF_INT		(L"/usb/other/ZBin")
-#define PATH_ELF_EXT		(L"/card/MSSEMC/Media files/other/ZBin")
-#define PATH_ELF_DAEMONS_INT 	(L"/usb/other/ZBin/Daemons")
-#define PATH_ELF_DAEMONS_EXT	(L"/card/MSSEMC/Media files/other/ZBin/Daemons")
-#define PATH_ELF_CONFIG_INT 	(L"/usb/other/ZBin/Config")
-#define PATH_ELF_CONFIG_EXT	(L"/card/MSSEMC/Media files/other/ZBin/Config")
-#define	PATH_INI		(L"/usb/other/ini")
-#define	PATH_DEFAULT		(L"/usb/other")
+#define PATH_ELF_ROOT_INT     (L"/usb/other/ZBin")
+#define PATH_ELF_ROOT_EXT     (L"/card/MSSEMC/Media files/other/ZBin")
+#define PATH_ELF_INT          (L"/usb/other/ZBin")
+#define PATH_ELF_EXT          (L"/card/MSSEMC/Media files/other/ZBin")
+#define PATH_ELF_DAEMONS_INT  (L"/usb/other/ZBin/Daemons")
+#define PATH_ELF_DAEMONS_EXT  (L"/card/MSSEMC/Media files/other/ZBin/Daemons")
+#define PATH_ELF_CONFIG_INT   (L"/usb/other/ZBin/Config")
+#define PATH_ELF_CONFIG_EXT   (L"/card/MSSEMC/Media files/other/ZBin/Config")
+#define PATH_INI              (L"/usb/other/ini")
+#define PATH_DEFAULT          (L"/usb/other")
 
 #define ELF_RUN_PAGE_PREVIOUS_EVENT  0x455B27DD
 #define ELF_RUN_PAGE_ACCEPT_EVENT    0x455B27DD
 #define ELF_RUN_PAGE_CANCEL_EVENT    0x455B27E5
 #define ELF_RUN_PAGE_PAGE_EXIT_EVENT 0x455B2879
 
-#define DB_CMD_SETSMALLICON 0x36					
-#define DB_DB_EXT_C1 0x290	
+#define DB_CMD_SETSMALLICON 0x36
+#define DB_DB_EXT_C1 0x290
+
 #endif
 #endif

@@ -5,14 +5,7 @@
 #define _K810_R8BA024_
 
 #define EXT_TABLE 0x45B75F44
-
 #define RUN_CHECK 0x44FCC2F1
-#define STR_START 0xEE6
-#define STR_APPLICATION 0x45C
-#define STR_Saved_on_Memory_Stick 0x1487
-#define STR_Saved_in_phone_memory 0x1486
-#define ELF_SMALL_ICON 0xE5CF
-//#define ROOT_APP 0x201820A4
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45842278

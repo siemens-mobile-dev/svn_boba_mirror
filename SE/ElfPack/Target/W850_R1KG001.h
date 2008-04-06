@@ -5,14 +5,7 @@
 #define _W850_R1KG001_
 
 #define EXT_TABLE 0x45BA8184
-
 #define RUN_CHECK 0x44FDE189
-#define STR_START 0xED5
-#define STR_APPLICATION 0x456
-#define STR_Saved_on_Memory_Stick 0x057D
-#define STR_Saved_in_phone_memory 0x057C
-#define ELF_SMALL_ICON 0xE5CF
-//#define ROOT_APP 0x201820A4
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45876138

@@ -5,16 +5,7 @@
 #define _W880_R8BA024_
 
 #define EXT_TABLE 0x45BB1C5C
-
 #define RUN_CHECK 0x44FE26F1
-
-#define STR_START 0x0EB1
-#define STR_APPLICATION 0x0D76
-#define STR_Saved_on_Memory_Stick 0x0554
-#define STR_Saved_in_phone_memory 0x0553
-
-#define ELF_SMALL_ICON 0xE5CF
-
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45B10850

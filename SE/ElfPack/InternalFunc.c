@@ -187,7 +187,6 @@ __thumb int fopen (const u16 * fname, int mode, int rights)
   path[len]=0;
   name++;
   len=_fopen(path,name,mode,rights,NULL);
-  //  len=_fopen(path,name,1,0x1FF,NULL);
   mfree(path);
   return len;
 }
@@ -311,41 +310,6 @@ __thumb int ModifyOSEHook(int event , void (*PROC)(void*),int mode)
 
 //===============  UI_HOOK  ================
 
-/*
-__thumb int PageAction_Hook(UI_MESSAGE * ui, BOOK * book, ACTION * action)
-//__thumb void UI_Message_Hook(LIST * lst, UI_MESSAGE *ui)
-{
-int f=0;
-int n;
-int uiev=action->event;
-
-__get_epd;
-if (epd)
-{
-LIST * UI_Hook_List=epd->UIHookList;
-_printf("PageAction_Hook msg:0x%X",action->event)  ;
-n=UI_Hook_List->FirstFree;
-
-if (n)
-{
-n--;
-UI_HOOK_ITEM ** uihook = (UI_HOOK_ITEM**)(UI_Hook_List->listdata);
-do
-{
-{
-UI_HOOK_ITEM * item=uihook[n];
-_printf("PageAction 0x%x 0x%x",item->event,uiev)  ;
-{
-if (item->event==uiev) f|=item->HOOK(ui,book);
-          }
-        }
-      }
-while(n--);
-    }
-  }
-if (!f) return(action->PROC(ui,book)); else return(f);
-}
-*/
 __thumb UI_MESSAGE * PageAction_Hook(UI_MESSAGE * ui)
 //__thumb void UI_Message_Hook(LIST * lst, UI_MESSAGE *ui)
 {
@@ -387,54 +351,6 @@ __thumb int UIHookCmpProc(void * e1, void * e2)
   UI_HOOK_ITEM * ud = (UI_HOOK_ITEM*)e1;
   if ((int)ud->HOOK==(int)e2) return (0); else  return(1);
 }
-/*
-__thumb int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*,BOOK * book),int mode)
-{
-__get_epd;
-LIST * UI_Hook_List=epd->UIHookList;
-
-int n=ListElement_Find(UI_Hook_List,(void*)PROC,UIHookCmpProc);
-
-_printf("ModifyUIHook PROC@0x%x, mode=0x%x",PROC,mode)  ;
-
-switch (mode)
-{
-  case 0: //remove
-if (n!=0xFFFF)
-{
-mfree(ListElement_Remove(UI_Hook_List,n));
-
-_printf("PROC@0x%X, Removed OK..",PROC)  ;
-
-return(0);
-    }
-    else
-{
-return(-2);
-    }
-
-  case 1:
-if (n==0xFFFF)
-{
-UI_HOOK_ITEM *item=malloc(sizeof(UI_HOOK_ITEM));
-item->event=event;
-item->HOOK=PROC;
-ListElement_AddtoTop(UI_Hook_List,(void*)item);
-
-_printf("PROC@0x%X, Added OK..",PROC)  ;
-_printf("Total HookItems : 0x%X",UI_Hook_List->FirstFree)  ;
-
-return(0);
-    }
-    else
-{
-return(-3);
-    }
-default: return(-4);
-  }
-}
-*/
-
 
 __thumb int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode)
 {
@@ -657,18 +573,3 @@ int GetExtTable()
   __get_epd;
   return((int)epd->dbe);
 }
-/*
-__root  const u16 PATCH_DB_INT[] @ "PATCH_DB_INT" ={L"/tpa/user/exec/ZBin"};
-__root  const u16 PATCH_DB_EXT[] @ "PATCH_DB_EXT" ={L"/card/MSSEMC/Media files/exec/ZBin"};
-*/
-/*
-const u16 eint[]={L"/tpa/user/ZBin"};
-const u16 eext[]={L"/card/MSSEMC/Media files/ZBin"};
-//static const u16* eext={L"/card/MSSEMC/Media files/ZBin"};
-const int efolders[3] ={(int)eint,(int)eext,0};
-
-__root  const int PATCH_DB_INT @ "PATCH_DB_INT" =(int)eint;
-__root  const int PATCH_DB_EXT @ "PATCH_DB_EXT" =(int)eext;
-__root  const int PATCH_DB_THEME_ITEM @ "PATCH_DB_THEME_ITEM" =(int)0x14E2;
-__root  const int PATCH_DB_THEME_HEADER @ "PATCH_DB_THEME_HEADER" =(int)0x14DE;
-*/

@@ -4,18 +4,9 @@
 #ifndef _K800_R8BF003_
 #define _K800_R8BF003_
 
-//#define pKBD 0x4C05DD60
 #define EXT_TABLE 0x45B623A4
 #define RUN_CHECK 0x44FC7BA5
-#define STR_START 0xEE6
-#define STR_APPLICATION 0x45C
-#define STR_Saved_on_Memory_Stick 0x01487
-#define STR_Saved_in_phone_memory 0x01486
-#define ELF_SMALL_ICON 0xE5CF
-//#define ROOT_APP 0x201820A4
-//#define PID_MMI 0x100E4
-#define HELPER_SIG 0x6FF0//???0x6FF0
-//#define RAM_BASE (0x4C04B1D4)
+#define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45838490
 #define PATH_AUDIO_EXT 0x45835C90
@@ -45,7 +36,7 @@
 #define ELF_RUN_PAGE_PAGE_EXIT_EVENT 0x44FBFBF5
 
 #define DB_CMD_SETSMALLICON 0x3B
-#define DB_DB_EXT_C1 0x2EC //???0x2EC
+#define DB_DB_EXT_C1 0x2EC
 
 #endif
 #endif
