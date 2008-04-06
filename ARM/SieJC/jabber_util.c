@@ -1371,6 +1371,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
       {
         return;
       }
+      if (!CList_FindMUCByJID(Conference->JID)) return; //нету такой конференции, значит мы ёё несоздавали
       char* nick = Get_Resource_Name_By_FullJID(from);
 
       // Тут можно обрабатывать события входа/выхода в конфу
