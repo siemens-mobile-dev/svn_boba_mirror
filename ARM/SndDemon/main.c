@@ -222,40 +222,20 @@ void TimerProc(void)
     if  (spc_level)ProcessAccum();
     
   #ifndef NOHEADSET
-    byte loc;
-    loc=keyb_state==2?1:IsUnlocked()==keyb_state;
+    if (st>3)st--;
     if (st==3){
       st=2;
       MEDIA_PLAYER();
     }
-    if (loc&&(!batt_level||(_GetAkkuCapacity()>batt_level))){
-      byte acc=GetAccessoryType();
-      if (((acc>=18)&&(acc<=21))||acc==29||acc==31){
-        if (st==0){
-    #ifdef ELKA        
-          if (allowbuf)SetupBuffers((buff_size+(buff_nof*256)));
-    #endif        
-          if (!_GetPlayStatus()){
-//            MEDIA_PLAYLAST();
-            st=3;
-          }else
-            st=2;
-          
-            MEDIA_PLAYLAST();          
-          }
-        
-      ;//     PlayVibra(50,30,1);
-      }else {
-        if (st==2){
-    #ifdef ELKA        
-          if (oldAudValue)SetupBuffers(oldAudValue);
-    #endif        
-          if (exitOnHeadDisc) MPlayer_Shutdown();
-            else  MPlayer_Pause();
-        }
-        st=0;
-      }  
+  #ifdef ELKA
+    if (cntr==1)  if (allowbuf==2){
+      if (GetPlayStatus())
+       SetupBuffers((buff_size+(buff_nof*256)));
+      else
+        SetupBuffers(oldAudValue);        
     }
+  #endif
+    
   #endif  
     
   }
@@ -333,7 +313,7 @@ int my_keyhook(int submsg, int msg)
      if (msg==LONG_PRESS){
        klong++;   
 #ifndef NOHEADSET     
-       if ((_GetPlayStatus()==2)&&(klong&0x1)){
+       if ((GetPlayStatus()==2)&&(klong&0x1)){
          if (submsg==key_prev||submsg==key_next){  
            
 //            (void *)(MPlayer_VolChange(submsg==VOL_DOWN_BUTTON));
@@ -432,7 +412,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 #ifndef ELKA  // cheats for mp3 melody on calls at S75
 
   if (msg->msg==   MSG_INCOMMING_CALL){
-    gfp2=(_GetPlayStatus()==2);
+    gfp2=(GetPlayStatus()==2);
     if (gfp2&&killPlr){
       MPlayer_Stop();
       MPlayer_Shutdown();
@@ -453,6 +433,54 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   }else;
 
 #endif
+  //new code (R) BoBa
+
+#ifdef ELKA
+  
+
+  if (msg->msg==0x15680){
+#else
+  if (msg->msg==0x15682){
+#endif    
+
+    if ((   ((char *)(((int *)msg->data1)[6]))[0x11]  )==0){
+
+      byte loc;
+      loc=keyb_state==2?1:IsUnlocked()==keyb_state;
+      
+      if (loc&&(!batt_level||(_GetAkkuCapacity()>batt_level))){
+     //insert 
+      
+    #ifdef ELKA        
+          if (allowbuf)SetupBuffers((buff_size+(buff_nof*256)));
+    #endif        
+
+          if (!GetPlayStatus()){
+            st=7;
+          }else
+            st=2;            
+          
+            MEDIA_PLAYLAST();          
+       }
+        
+      ;//     PlayVibra(50,30,1);
+  
+    }
+    if ((   ((char *)(((int *)msg->data1)[6]))[0x11]  )==1){
+      //eject
+    #ifdef ELKA        
+          if (oldAudValue)SetupBuffers(oldAudValue);
+    #endif        
+          if (exitOnHeadDisc) MPlayer_Shutdown();
+            else  MPlayer_Pause();
+
+    }
+  }
+  
+  
+  
+  
+  
 #endif    
     
 return(old_icsm_onMessage(data,msg));  

@@ -140,8 +140,10 @@ __root const CFG_HDR _l4={CFG_LEVEL,"",0,0};
 
 #ifdef ELKA
 __root const CFG_HDR cl2={CFG_LEVEL,"AudioBuffer setup",1,0};
-__root const CFG_HDR ch7={CFG_CHECKBOX,"Enable AudioBuffer config",0,2};
+__root const CFG_HDR ch7={CFG_CBOX,"Enable AudioBuffer config",0,3};
 __root const unsigned int allowbuf=1;
+__root const CFG_CBOX_ITEM cb78[3]={"Disable","Enable only Headset","Auto on player"};
+
 
 
 __root const CFG_HDR ch14={CFG_UINT,"RAM AudBufOffset",0x00000000,0xFFFFFFFF};

@@ -8,6 +8,7 @@
  word  oldAudValue=0;
   void SetupBuffers(word val){
     word * buf=(word*)audcfg;
+    if  (*buf==val)return;
     oldAudValue=*buf;
     buf[0]=val;
   }

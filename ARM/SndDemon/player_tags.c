@@ -123,7 +123,7 @@ void  initTags(){
 
 
 int  ShowTag(void){
-  if (pcsmadr&&((_GetPlayStatus()==2)));else return 2;
+  if (pcsmadr&&((GetPlayStatus()==2)));else return 2;
   GUI *igui;
 /*  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
   if (!icsm) return 0;

@@ -87,7 +87,7 @@ void SpeechPhrasesChkNat(char *str){
 
 
 #ifndef NOHEADSET  
-  gfp=((_GetPlayStatus()==2));
+  gfp=((GetPlayStatus()==2));
   if (gfp&&spc_ign){gfp=0;return;}
   if(gfp!=0){
 

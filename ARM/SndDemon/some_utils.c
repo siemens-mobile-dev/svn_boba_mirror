@@ -30,11 +30,7 @@ __swi __arm int* MEDIA_PLAYLASTadr();
 typedef void ( local)(void);
 void MEDIA_PLAYER(void){
   local *m;
-m=(local*)(MEDIA_PLAYLASTadr());
-m=(local*)(((int)m));
-
-m();
-m=(local*)(((int)m)-0x8);
+m=(local*)((char*)MEDIA_PLAYLASTadr()-0x8);
               if (IsUnlocked())
 m();
 }
