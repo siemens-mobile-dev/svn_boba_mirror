@@ -19,14 +19,14 @@
 #define PATH_OTHER_INT 0x45715460
 #define PATH_OTHER_EXT 0x457157A0
 
-#define PATH_ELF_ROOT_INT     (L"/tpa/user/other")
-#define PATH_ELF_ROOT_EXT     (L"/card/other")
+#define PATH_ELF_ROOT_INT     (L"/tpa/user/other/ZBin")
+#define PATH_ELF_ROOT_EXT     (L"/card/other/ZBin")
 #define PATH_ELF_INT          (L"/tpa/user/other/ZBin")
 #define PATH_ELF_EXT          (L"/card/other/ZBin")
-#define PATH_ELF_DAEMONS_INT  (L"/tpa/user/other/Daemons")
-#define PATH_ELF_DAEMONS_EXT  (L"/card/other/Daemons")
-#define PATH_ELF_CONFIG_INT   (L"/tpa/user/other/Config")
-#define PATH_ELF_CONFIG_EXT   (L"/card/other/Config")
+#define PATH_ELF_DAEMONS_INT  (L"/tpa/user/other/ZBin/Daemons")
+#define PATH_ELF_DAEMONS_EXT  (L"/card/other/ZBin/Daemons")
+#define PATH_ELF_CONFIG_INT   (L"/tpa/user/other/ZBin/Config")
+#define PATH_ELF_CONFIG_EXT   (L"/card/other/ZBin/Config")
 #define PATH_INI              (L"/tpa/user/other/ini")
 #define PATH_DEFAULT          (L"/tpa/user/other")
 
