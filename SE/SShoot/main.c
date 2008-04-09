@@ -169,8 +169,10 @@ int NewKey(int key, int r1 , int mode)
     if (mode==KeyPressMode)
     {
       Snap();
-    }
-    return(-1);
+      return(-1);
+    } else {
+      return(0);
+    }  
   }
   return(0);
 }
