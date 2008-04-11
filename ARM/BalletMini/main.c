@@ -14,6 +14,93 @@
 #include "mainmenu.h"
 #include "history.h"
 #include "file_works.h"
+#include "lang.h"
+
+char *lgpData[LGP_DATA_NUM];
+int lgpLoaded;
+
+void initDisplayUtilsLangPack();
+void initMainMenuLangPack();
+
+void lgpInitLangPack(void)
+{
+  unsigned int err;
+  char fname[128];
+  getSymbolicPath(fname,"$ballet\\lang.txt");
+  int f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err);
+  lgpLoaded=0;
+  if (f!=-1)
+  {
+    char c;
+    char line[128];
+    int lineSize=0;
+    int lp_id=0;
+    while ((fread(f,&c,1,&err))>0&&lp_id<LGP_DATA_NUM)
+    {
+      if (c==0x0D||c==0x0A)
+      {
+        if (lineSize>0)
+        {
+          lgpData[lp_id]=malloc(lineSize+1);
+          memcpy(lgpData[lp_id],line,lineSize);
+          lgpData[lp_id][lineSize]=0;
+          lp_id++;
+          lineSize=0;
+        }
+      }
+      else
+        line[lineSize++]=c;
+    }
+    if (lineSize>0&&lp_id<LGP_DATA_NUM) // eof
+    {
+      lgpData[lp_id]=malloc(lineSize+1);
+      memcpy(lgpData[lp_id],line,lineSize);
+      lgpData[lp_id][lineSize]=0;
+      lp_id++;
+      lineSize=0;
+    }
+    fclose(f,&err);
+    initDisplayUtilsLangPack();
+    initMainMenuLangPack();
+    lgpLoaded=1;
+  }
+  else
+  {
+    lgpData[LGP_CantOpenFile]=         "Can't open file!";
+    lgpData[LGP_CantLoadAuthCode]=     "Can't load AuthCode!";
+    lgpData[LGP_HistoryFileFailed]=    "Can't open history.txt!";
+    lgpData[LGP_CfgUpdated]=           "Congif updated";
+    lgpData[LGP_RefUnderConstruction]= "Ref \'%c\' under construction!";
+    lgpData[LGP_RefEmpty]=             "RF empty!";
+    lgpData[LGP_Error]=                "Error!";
+    lgpData[LGP_Stop]=                 "Stop";
+    lgpData[LGP_WaitDNR]=              "Wait DNR ...";
+    lgpData[LGP_IpConnect]=            "Ip connect ...";
+    lgpData[LGP_GetHostByName]=        "Get host by name";
+    lgpData[LGP_FaultDNR]=             "DNR falut!";
+    lgpData[LGP_OkDNR]=                "DNR ok!";
+    lgpData[LGP_OpenSocket]=           "Open socket...";
+    lgpData[LGP_ConnectFault]=         "Connect fault...";
+    lgpData[LGP_AnswerDNR]=            "DNR answer...";
+    lgpData[LGP_Connected]=            "Connected...";
+    lgpData[LGP_DataReceived]=         "Data received...";
+    lgpData[LGP_RemoteClosed]=         "Remote closed!";
+    lgpData[LGP_LocalClosed]=          "Local closed!";
+    lgpData[LGP_InetBussy]=            "INET process bussy!";
+    lgpData[LGP_EnableGPRS]=           "Enable GPRS first!";
+    lgpData[LGP_UnderConstruction]=    "Under Construction!";
+  }
+}
+
+void lgpFreeLangPack(void)
+{
+  if (!lgpLoaded) return;
+  for (int i=0;i<LGP_DATA_NUM;i++)
+  {
+    if (lgpData[i]!=NULL)
+      mfree(lgpData[i]);
+  }
+}
 
 extern const char DEFAULT_PARAM[128];
 
@@ -98,7 +185,7 @@ static void StartGetFile(int dummy, char *fncache)
     else
     {
       LockSched();
-      ShowMSG(1,(int)"Can't open file!");
+      ShowMSG(1,(int)lgpData[LGP_CantOpenFile]);
       UnlockSched();
     }
     mfree(fncache);
@@ -165,7 +252,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
       break;
     case 'c':
     case 'r':
-      if (vd->rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
+      if (vd->rw.rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rw.rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
         pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->value)+1;
       break;
     case 'i':
@@ -267,7 +354,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     case 'c':
     case 'r':
       {
-        if (vd->rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
+        if (vd->rw.rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rw.rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
         {
           s[pos]='&';
           pos++;
@@ -384,7 +471,7 @@ static void method0(VIEW_GUI *data)
 //          break;
         }
       }
-      wsprintf(data->ws2,percent_t,"Стоп");
+      wsprintf(data->ws2,percent_t,lgpData[LGP_Stop]);
       
       h1=scr_h-GetFontYSIZE(FONT_SMALL)-2;
       w1=scr_w-Get_WS_width(data->ws2,FONT_SMALL)-2;
@@ -418,8 +505,8 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
 {
   VIEWDATA *vd=malloc(sizeof(VIEWDATA));
   zeromem(vd,sizeof(VIEWDATA));
-  vd->ws=AllocWS(32767);
-  vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
+  vd->rw.ws=AllocWS(32767);
+  vd->rw.pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
   data->ws1=AllocWS(128);
@@ -521,8 +608,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case ENTER_BUTTON:
-      if (vd->pos_cur_ref==0xFFFFFFFF) break;
-      rf=FindReference(vd,vd->pos_cur_ref);
+      if (vd->rw.pos_cur_ref==0xFFFFFFFF) break;
+      rf=FindReference(vd,vd->rw.pos_cur_ref);
       if (rf)
       {
         switch(rf->tag)
@@ -566,15 +653,15 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           {
             REFCACHE *rfp;
             int i;
-            if (vd->rawtext[rf->begin+1]!=vd->WCHAR_RADIO_OFF) break;
-            vd->rawtext[rf->begin+1]=vd->WCHAR_RADIO_ON;
+            if (vd->rw.rawtext[rf->begin+1]!=vd->WCHAR_RADIO_OFF) break;
+            vd->rw.rawtext[rf->begin+1]=vd->WCHAR_RADIO_ON;
             i=0;
             while((i=FindReferenceById(vd,rf->id,i))>=0)
             {
               rfp=vd->ref_cache+i;
               if (rfp!=rf)
-                if (vd->rawtext[rfp->begin+1]==vd->WCHAR_RADIO_ON)
-                  vd->rawtext[rfp->begin+1]=vd->WCHAR_RADIO_OFF;
+                if (vd->rw.rawtext[rfp->begin+1]==vd->WCHAR_RADIO_ON)
+                  vd->rw.rawtext[rfp->begin+1]=vd->WCHAR_RADIO_OFF;
               i++;
             }
           }
@@ -589,10 +676,10 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
           break;
         case 'c':
-          if (vd->rawtext[rf->begin+1]==vd->WCHAR_BUTTON_ON)
-            vd->rawtext[rf->begin+1]=vd->WCHAR_BUTTON_OFF;
+          if (vd->rw.rawtext[rf->begin+1]==vd->WCHAR_BUTTON_ON)
+            vd->rw.rawtext[rf->begin+1]=vd->WCHAR_BUTTON_OFF;
           else
-            vd->rawtext[rf->begin+1]=vd->WCHAR_BUTTON_ON;
+            vd->rw.rawtext[rf->begin+1]=vd->WCHAR_BUTTON_ON;
           if (!rf->no_upload)
           {
             goto_url=malloc(strlen(vd->pageurl)+1);
@@ -638,7 +725,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         default:
           {
             char c[128];
-            sprintf(c,"Reftype: \'%c\' under construction!",rf->tag);
+            sprintf(c,lgpData[LGP_RefUnderConstruction],rf->tag);
             ShowMSG(1,(int)c);
           }
         break;
@@ -646,50 +733,50 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       else
       {
-	      ShowMSG(1,(int)"RF empty!");
+	      ShowMSG(1,(int)lgpData[LGP_RefEmpty]);
       }
       break;
     case UP_BUTTON:
-      if (vd->pos_cur_ref!=vd->pos_first_ref&&vd->pos_first_ref==vd->pos_last_ref)
-        vd->pos_cur_ref=0xFFFFFFFF;
-      if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_last_ref!=0xFFFFFFFF)
-        vd->pos_cur_ref=vd->pos_last_ref;
+      if (vd->rw.pos_cur_ref!=vd->rw.pos_first_ref&&vd->rw.pos_first_ref==vd->rw.pos_last_ref)
+        vd->rw.pos_cur_ref=0xFFFFFFFF;
+      if (vd->rw.pos_cur_ref==0xFFFFFFFF&&vd->rw.pos_last_ref!=0xFFFFFFFF)
+        vd->rw.pos_cur_ref=vd->rw.pos_last_ref;
       else
-        if (vd->pos_prev_ref!=0xFFFFFFFF)
-          vd->pos_cur_ref=vd->pos_prev_ref;
+        if (vd->rw.pos_prev_ref!=0xFFFFFFFF)
+          vd->rw.pos_cur_ref=vd->rw.pos_prev_ref;
         else
         {
           scrollUp(vd,20);
           RenderPage(vd,0);
-          if (vd->pos_prev_ref!=0xFFFFFFFF)
-            vd->pos_cur_ref=vd->pos_prev_ref;
+          if (vd->rw.pos_prev_ref!=0xFFFFFFFF)
+            vd->rw.pos_cur_ref=vd->rw.pos_prev_ref;
         }
       break;
     case DOWN_BUTTON:
-      if (vd->pos_cur_ref!=vd->pos_first_ref&&vd->pos_first_ref==vd->pos_last_ref)
-        vd->pos_cur_ref=0xFFFFFFFF;
-      if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_first_ref!=0xFFFFFFFF)
-        vd->pos_cur_ref=vd->pos_first_ref;
+      if (vd->rw.pos_cur_ref!=vd->rw.pos_first_ref&&vd->rw.pos_first_ref==vd->rw.pos_last_ref)
+        vd->rw.pos_cur_ref=0xFFFFFFFF;
+      if (vd->rw.pos_cur_ref==0xFFFFFFFF&&vd->rw.pos_first_ref!=0xFFFFFFFF)
+        vd->rw.pos_cur_ref=vd->rw.pos_first_ref;
       else
-        if (vd->pos_next_ref!=0xFFFFFFFF)
-          vd->pos_cur_ref=vd->pos_next_ref;
+        if (vd->rw.pos_next_ref!=0xFFFFFFFF)
+          vd->rw.pos_cur_ref=vd->rw.pos_next_ref;
         else
         {
           scrollDown(vd,20);
           RenderPage(vd,0);
-          if (vd->pos_next_ref!=0xFFFFFFFF)
-            vd->pos_cur_ref=vd->pos_next_ref;
+          if (vd->rw.pos_next_ref!=0xFFFFFFFF)
+            vd->rw.pos_cur_ref=vd->rw.pos_next_ref;
         }
       break;
     case RIGHT_BUTTON:
     case VOL_DOWN_BUTTON:
       scrollDown(vd,ScreenH()-20);
-      vd->pos_cur_ref=0xFFFFFFFF;
+      vd->rw.pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_BUTTON:
     case VOL_UP_BUTTON:
       scrollUp(vd,ScreenH()-20);
-      vd->pos_cur_ref=0xFFFFFFFF;
+      vd->rw.pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_SOFT:
       STOPPED=1;
@@ -715,7 +802,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
     case 0x32:
     case GREEN_BUTTON:
-      rf=FindReference(vd,vd->pos_cur_ref);
+      rf=FindReference(vd,vd->rw.pos_cur_ref);
       if (rf)
       {
         if (rf->tag=='L')
@@ -738,15 +825,15 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case 0x33: // '3'
-      vd->pixdisp=0;
-      vd->view_line=0;
-      vd->pos_cur_ref=0xFFFFFFFF;
+      vd->rw.pixdisp=0;
+      vd->rw.view_line=0;
+      vd->rw.pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x39: // '9'
-      while(LineDown(vd)) ;
-      vd->pixdisp=0;
+      while(LineDown(&vd->rw)) ;
+      vd->rw.pixdisp=0;
       scrollUp(vd,ScreenH()-1);
-      vd->pos_cur_ref=0xFFFFFFFF;
+      vd->rw.pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x31: // '1'
       {
@@ -767,7 +854,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         int f;
         if ((f=fopen("0:\\zbin\\balletmini\\dumpraw.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
-          fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
+          fwrite(f,vd->rw.rawtext,vd->rw.rawtext_size*2,&ul);
           fclose(f,&ul);
         }
       }
@@ -856,11 +943,11 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         if ((f=fopen("0:\\zbin\\balletmini\\dumplc.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
           char c[256];
-          sprintf(c,"\nlines_cache_size : %i\n",vd->lines_cache_size);
+          sprintf(c,"\nlines_cache_size : %i\n",vd->rw.lines_cache_size);
           fwrite(f,c,strlen(c),&ul);
-          for (int i=0;i<vd->lines_cache_size;i++)
+          for (int i=0;i<vd->rw.lines_cache_size;i++)
           {
-            LINECACHE *lc=vd->lines_cache+i;
+            LINECACHE *lc=vd->rw.lines_cache+i;
             sprintf(c,"%i\n  pos : %u\n  pix : %u\n",i,lc->pos,lc->pixheight);
             fwrite(f,c,strlen(c),&ul);
           }
@@ -875,27 +962,27 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         WSHDR *ws=AllocWS(512);
         LINECACHE *lc;
         unsigned int vl;
-        int ypos=-vd->pixdisp;
-        unsigned int store_line=vl=vd->view_line;
+        int ypos=-vd->rw.pixdisp;
+        unsigned int store_line=vl=vd->rw.view_line;
         unsigned int len;
         int sc;
         int c;
 
         while(ypos<=scr_h)
         {
-          if (LineDown(vd))
+          if (LineDown(&vd->rw))
           {
-            lc=vd->lines_cache+vl;
-            if ((vl+1)<vd->lines_cache_size)
+            lc=vd->rw.lines_cache+vl;
+            if ((vl+1)<vd->rw.lines_cache_size)
             {
               len=(lc[1]).pos-(lc[0]).pos;
             }
             else
-              len=vd->rawtext_size-lc->pos;
+              len=vd->rw.rawtext_size-lc->pos;
             sc=lc->pos;
             while(len>0)
             {
-              c=vd->rawtext[sc];
+              c=vd->rw.rawtext[sc];
               if ((c&0xFF00)!=0xE100)
               {
                 switch (c)
@@ -931,7 +1018,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           else
             break;
         }
-        vd->view_line=store_line;
+        vd->rw.view_line=store_line;
         createTextView(ws);
       }
       break;
@@ -986,6 +1073,7 @@ static void KillAll(void)
 {
   FreePageStack();
   FreeWS(ws_console);
+  lgpFreeLangPack();
 }
 
 static void Killer(void)
@@ -1103,7 +1191,8 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
-      ShowMSG(1,(int)"BalletMini config updated!");
+      //ShowMSG(1,(int)"BalletMini config updated!");
+      ShowMSG(1,(int)lgpData[LGP_CfgUpdated]);
       InitConfig();
     }    
   }
@@ -1379,11 +1468,13 @@ int main(const char *exename, const char *filename)
 //  GenerateFile(IMG_PATH, BUTTON,          button_png,          button_png_size);
 //  GenerateFile(IMG_PATH, TEXT_FORM,       text_form_png,       text_form_png_size);
 //  GenerateFile(IMG_PATH, LIST,            list_png,            list_png_size);
+  
+  lgpInitLangPack();
 
   if (!LoadAuthCode())
   {
     LockSched();
-    ShowMSG(1,(int)"BM: Can't load AuthCode!");
+    ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
     UnlockSched();
     SUBPROC((void *)Killer);
     return 0;

@@ -6,6 +6,7 @@
 #include "rect_patcher.h"
 #include "main.h"
 #include "file_works.h"
+#include "lang.h"
 
 extern int maincsm_id;
 
@@ -18,15 +19,15 @@ int GetFontHeight(int font, int atribute)
   return height;
 }
 
-unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max_h)
+unsigned int SearchNextDisplayLine(REFVIEW *rw, LINECACHE *p, unsigned int *max_h)
 {
   int left=ScreenW();
   int c,h,cw,f=0;
   unsigned int pos=p->pos;
   p->centerAtAll=0;
-  while(pos<vd->rawtext_size)
+  while(pos<rw->rawtext_size)
   {
-    c=vd->rawtext[pos++];
+    c=rw->rawtext[pos++];
     if ((c&0xFF00)==0xE100)
     {
       h=GetImgHeight(GetPicNByUnicodeSymbol(c));
@@ -72,19 +73,19 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       p->bold=1;
       continue;
     case UTF16_INK_RGBA:
-      if (pos>(vd->rawtext_size-2)) goto LERR;
-      p->ink1=vd->rawtext[pos++];
-      p->ink2=vd->rawtext[pos++];
+      if (pos>(rw->rawtext_size-2)) goto LERR;
+      p->ink1=rw->rawtext[pos++];
+      p->ink2=rw->rawtext[pos++];
       continue;
     case UTF16_PAPER_RGBA:
-      if (pos>(vd->rawtext_size-2)) goto LERR;
-      p->paper1=vd->rawtext[pos++];
-      p->paper2=vd->rawtext[pos++];
+      if (pos>(rw->rawtext_size-2)) goto LERR;
+      p->paper1=rw->rawtext[pos++];
+      p->paper2=rw->rawtext[pos++];
       continue;
     case UTF16_INK_INDEX:
     case UTF16_PAPER_INDEX:
       pos++;
-      if (pos>=vd->rawtext_size) goto LERR;
+      if (pos>=rw->rawtext_size) goto LERR;
       continue;
     }
     // компоновка элементов здесь
@@ -103,8 +104,8 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       {
         while (1)
         {
-          if (vd->rawtext[pos-b]==UTF16_ENA_INVERT) break;
-          if (vd->rawtext[pos-b]==UTF16_NEWLINE)
+          if (rw->rawtext[pos-b]==UTF16_ENA_INVERT) break;
+          if (rw->rawtext[pos-b]==UTF16_NEWLINE)
           {
             b++;
             break;
@@ -114,7 +115,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
             b=1;
             break;
           }
-          cw+=GetSymbolWidth(vd->rawtext[pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+          cw+=GetSymbolWidth(rw->rawtext[pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
           b++;
         }
       }
@@ -129,9 +130,9 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     {
       if (left+cw<ScreenW()) // image is last character
       {
-        if (c!=vd->WCHAR_LIST_FORM) // preserve dropdown list centring
-          p->centerAtAll=1;
-        if (vd->rawtext[pos-1]==UTF16_ENA_INVERT)
+        //if (c!=vd->WCHAR_LIST_FORM) // preserve dropdown list centring
+        p->centerAtAll=1;
+        if (rw->rawtext[pos-1]==UTF16_ENA_INVERT)
         {
           return pos-2;
         }
@@ -149,10 +150,10 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     {
       if (left+cw==ScreenW()) // image is first character
       {
-        if (pos>(vd->rawtext_size-1)) goto LERR;
-        if (c!=vd->WCHAR_LIST_FORM) // preserve dropdown list centring
-          p->centerAtAll=1;
-        if (vd->rawtext[pos+1]==UTF16_DIS_INVERT)
+        if (pos>(rw->rawtext_size-1)) goto LERR;
+        //if (c!=vd->WCHAR_LIST_FORM) // preserve dropdown list centring
+        p->centerAtAll=1;
+        if (rw->rawtext[pos+1]==UTF16_DIS_INVERT)
         {
           p->ref=0;
           return pos+1;
@@ -169,34 +170,33 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     }
   }
 LERR:
-  return(vd->rawtext_size);
+  return(rw->rawtext_size);
 }
 
 #define LINESCACHECHUNK 256
 
-static void AddLineToCache(VIEWDATA *vd, LINECACHE *p)
+static void AddLineToCache(REFVIEW *rw, LINECACHE *p)
 {
-  if ((vd->lines_cache_size%LINESCACHECHUNK)==0)
+  if ((rw->lines_cache_size%LINESCACHECHUNK)==0)
   {
     //Дошли до конца куска, реаллоцируем еще кусок
-    vd->lines_cache=realloc(vd->lines_cache,(vd->lines_cache_size+LINESCACHECHUNK)*sizeof(LINECACHE));
+    rw->lines_cache=realloc(rw->lines_cache,(rw->lines_cache_size+LINESCACHECHUNK)*sizeof(LINECACHE));
   }
-  memcpy(vd->lines_cache+(vd->lines_cache_size++),p,sizeof(LINECACHE));
+  memcpy(rw->lines_cache+(rw->lines_cache_size++),p,sizeof(LINECACHE));
 }
 
-int LineDown(VIEWDATA *vd)
+int LineDown(REFVIEW *rw)
 {
-  if (vd->view_line+1<vd->lines_cache_size)
+  if (rw->view_line+1<rw->lines_cache_size)
   {
-    vd->view_line++;
+    rw->view_line++;
   }
   else
   {
     LINECACHE lc;
     unsigned int h;
-    unsigned int pos;//=vd->view_pos; // pos - это последний символ в строке
-    //if (pos>=vd->rawtext_size) return 0;
-    if (vd->view_line>=vd->lines_cache_size)
+    unsigned int pos;
+    if (rw->view_line>=rw->lines_cache_size)
     {
       lc.ink1=0x0000;
       lc.ink2=0x0064;
@@ -206,37 +206,36 @@ int LineDown(VIEWDATA *vd)
       lc.bold=0;
       lc.underline=0;
       lc.ref=0;
-      lc.pos=0;//pos;
+      lc.pos=0;
       lc.center=0;
       lc.right=0;
-      AddLineToCache(vd,&lc);
+      AddLineToCache(rw,&lc);
     }
     else
     {
-      memcpy(&lc,vd->lines_cache+vd->view_line,sizeof(lc));
+      memcpy(&lc,rw->lines_cache+rw->view_line,sizeof(lc));
     }
     h=0;
-    pos=SearchNextDisplayLine(vd,&lc,&h);
-    (vd->lines_cache+vd->view_line)->pixheight=h;
-    if (pos>=vd->rawtext_size) return 0;
+    pos=SearchNextDisplayLine(rw,&lc,&h);
+    (rw->lines_cache+rw->view_line)->pixheight=h;
+    if (pos>=rw->rawtext_size) return 0;
     lc.pos=pos;
-    vd->view_line++;
-    if (vd->view_line>=vd->lines_cache_size)
+    rw->view_line++;
+    if (rw->view_line>=rw->lines_cache_size)
     {
-      // HACK prev line if there is ref begin symbol, then add new
-      AddLineToCache(vd,&lc);
+      AddLineToCache(rw,&lc);
     }
   }
   return 1;
 }
 
-int LineUp(VIEWDATA *vd)
+int LineUp(REFVIEW *rw)
 {
-  int vl=vd->view_line;
+  int vl=rw->view_line;
   if (vl)
   {
     vl--;
-    vd->view_line=vl;
+    rw->view_line=vl;
     return 1;
   }
   else
@@ -246,32 +245,32 @@ int LineUp(VIEWDATA *vd)
 void scrollDown(VIEWDATA *vd, int amount)
 {
   if (!RenderPage(vd,0)) return;
-  vd->pixdisp+=amount;
+  vd->rw.pixdisp+=amount;
   unsigned int cl_h;
 L1:
-  cl_h=vd->lines_cache[vd->view_line].pixheight;
-  if (vd->pixdisp>cl_h)
+  cl_h=vd->rw.lines_cache[vd->rw.view_line].pixheight;
+  if (vd->rw.pixdisp>cl_h)
   {
-    vd->pixdisp-=cl_h;
-    unsigned int pd=vd->pixdisp;
-    LineDown(vd);
-    vd->pixdisp=0;
+    vd->rw.pixdisp-=cl_h;
+    unsigned int pd=vd->rw.pixdisp;
+    LineDown(&vd->rw);
+    vd->rw.pixdisp=0;
     if (!RenderPage(vd,0))
     {
-      while(LineDown(vd)) ;
-      vd->pixdisp=0;
+      while(LineDown(&vd->rw)) ;
+      vd->rw.pixdisp=0;
       scrollUp(vd,ScreenH()-1);
       return;
     }
-    vd->pixdisp=pd;
+    vd->rw.pixdisp=pd;
     goto L1;
   }
   else
   {
     if (!RenderPage(vd,0))
     {
-      while(LineDown(vd)) ;
-      vd->pixdisp=0;
+      while(LineDown(&vd->rw)) ;
+      vd->rw.pixdisp=0;
       scrollUp(vd,ScreenH()-1);
     }
   }
@@ -279,16 +278,16 @@ L1:
 
 void scrollUp(VIEWDATA *vd, int amount)
 {
-  while (vd->pixdisp-amount<0)
+  while (vd->rw.pixdisp-amount<0)
   {
-    if (!LineUp(vd))
+    if (!LineUp(&vd->rw))
     {
-      vd->pixdisp=0;
+      vd->rw.pixdisp=0;
       return;
     }
-    amount-=vd->lines_cache[vd->view_line].pixheight;
+    amount-=vd->rw.lines_cache[vd->rw.view_line].pixheight;
   }
-  vd->pixdisp-=amount;
+  vd->rw.pixdisp-=amount;
 }
 
 #define MAX_COLORS_IN_LINE 32
@@ -359,11 +358,11 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int scr_h=ScreenH()-1;
   int sc;
   int dc;
-  WSHDR *ws=vd->ws;
+  WSHDR *ws=vd->rw.ws;
   LINECACHE *lc;
   unsigned int vl;
-  int ypos=-vd->pixdisp;
-  unsigned int store_line=vl=vd->view_line;
+  int ypos=-vd->rw.pixdisp;
+  unsigned int store_line=vl=vd->rw.view_line;
   unsigned int len;
   unsigned int y2;
   
@@ -380,10 +379,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   unsigned int _ref=0xFFFFFFFF;
   unsigned int flag=0;
   
-  vd->pos_first_ref=0xFFFFFFFF;
-  vd->pos_last_ref=0xFFFFFFFF;
-  vd->pos_prev_ref=0xFFFFFFFF;
-  vd->pos_next_ref=0xFFFFFFFF;
+  vd->rw.pos_first_ref=0xFFFFFFFF;
+  vd->rw.pos_last_ref=0xFFFFFFFF;
+  vd->rw.pos_prev_ref=0xFFFFFFFF;
+  vd->rw.pos_next_ref=0xFFFFFFFF;
   
   int dfh=GetFontHeight(FONT_SMALL,0)*2; //double font height
   
@@ -392,9 +391,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   
   while(ypos<=scr_h)
   {
-    if (LineDown(vd))
+    if (LineDown(&vd->rw))
     {
-      lc=vd->lines_cache+vl;  
+      lc=vd->rw.lines_cache+vl;  
       dc=0;
       ws_width=0;
       cur_rc=1;
@@ -408,25 +407,25 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       rc[0].color[3]=lc->paper2;
       //ws->wsbody[++dc]=lc->bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL;
       //ws->wsbody[++dc]=lc->underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE;
-      if ((vl+1)<vd->lines_cache_size)
+      if ((vl+1)<vd->rw.lines_cache_size)
       {
         len=(lc[1]).pos-(lc[0]).pos;
       }
       else
-        len=vd->rawtext_size-lc->pos;
+        len=vd->rw.rawtext_size-lc->pos;
       sc=lc->pos;
       if (ena_ref) ws->wsbody[++dc]=UTF16_ENA_INVERT; // если реф начался на предыдущей строке
       //ws->wsbody[++dc]='\\';
       while(len>0&&(dc<32000))
       {
-        c=vd->rawtext[sc];
+        c=vd->rw.rawtext[sc];
         if (c==UTF16_ENA_INVERT)
         {
           //ws->wsbody[++dc]='>';
           if (ypos+lc[0].pixheight>dfh||ypos>=0)
           {
             if (_ref==0xFFFFFFFF) _ref=sc;
-            if (vd->pos_cur_ref!=sc) goto L1;
+            if (vd->rw.pos_cur_ref!=sc) goto L1;
             flag=1;
             ena_ref=1;
           }
@@ -441,12 +440,12 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             if (_ref!=0xFFFFFFFF)
             {
               // здесь все рефы видны
-              if (vd->pos_first_ref==0xFFFFFFFF) vd->pos_first_ref=_ref;
-              vd->pos_last_ref=_ref;
-              if (flag==0) vd->pos_prev_ref=_ref;
+              if (vd->rw.pos_first_ref==0xFFFFFFFF) vd->rw.pos_first_ref=_ref;
+              vd->rw.pos_last_ref=_ref;
+              if (flag==0) vd->rw.pos_prev_ref=_ref;
               if (flag==2)
               {
-                vd->pos_next_ref=_ref;
+                vd->rw.pos_next_ref=_ref;
                 flag=3;
               }
               if (flag==1) flag=2;
@@ -463,10 +462,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           if (cur_rc<MAX_COLORS_IN_LINE)
           {
             COLOR_RC *prev=rc+cur_rc-1;
-            rc[cur_rc].color[0]=vd->rawtext[sc+1]>>8;
-            rc[cur_rc].color[1]=vd->rawtext[sc+1];
-            rc[cur_rc].color[2]=vd->rawtext[sc+2]>>8;
-            rc[cur_rc].color[3]=vd->rawtext[sc+2];
+            rc[cur_rc].color[0]=vd->rw.rawtext[sc+1]>>8;
+            rc[cur_rc].color[1]=vd->rw.rawtext[sc+1];
+            rc[cur_rc].color[2]=vd->rw.rawtext[sc+2]>>8;
+            rc[cur_rc].color[3]=vd->rw.rawtext[sc+2];
             if (memcmp((void *)rc[cur_rc].color,(void *)prev->color,4))  // Только если цвет не равен предыдущему (очередь объектов не резиновая ;))
             {
               prev->end_x=ws_width-1;
@@ -496,9 +495,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         if ((c==UTF16_PAPER_RGBA)||(c==UTF16_INK_RGBA))
         {
           len--;
-          ws->wsbody[++dc]=vd->rawtext[++sc];
+          ws->wsbody[++dc]=vd->rw.rawtext[++sc];
           len--;
-          ws->wsbody[++dc]=vd->rawtext[++sc];
+          ws->wsbody[++dc]=vd->rw.rawtext[++sc];
         }
         L1:
         sc++;
@@ -529,10 +528,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         
         if (rnd_rf) renderForm(vd,rnd_rf,rnd_x+x,ypos);
       }
-      if (y2>=scr_h||vl==vd->lines_cache_size-2)
+      if (y2>=scr_h||vl==vd->rw.lines_cache_size-2)
       {
-        int b=(vd->lines_cache[store_line].pos*1000)/vd->rawtext_size*scr_h/1000-2;
-        int e=(lc->pos*1000)/vd->rawtext_size*scr_h/1000+2;
+        int b=(vd->rw.lines_cache[store_line].pos*1000)/vd->rw.rawtext_size*scr_h/1000-2;
+        int e=(lc->pos*1000)/vd->rw.rawtext_size*scr_h/1000+2;
         for (int i=b;i<=e;i++)
         {
           SetPixel(scr_w,i,GetPaletteAdrByColorIndex(2));
@@ -575,7 +574,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
     }
   }
 //  vd->view_pos=store_pos;
-  vd->view_line=store_line;
+  vd->rw.view_line=store_line;
   return(result);
 }
 
@@ -596,7 +595,7 @@ REFCACHE *FindReferenceByBegin(VIEWDATA *vd, unsigned int pos)
 
 REFCACHE *FindReferenceFirst(VIEWDATA *vd, unsigned int pos)
 {
-  while (pos<vd->rawtext_size&&vd->rawtext[pos]!=UTF16_ENA_INVERT)
+  while (pos<vd->rw.rawtext_size&&vd->rw.rawtext[pos]!=UTF16_ENA_INVERT)
     pos++;
   return FindReferenceByBegin(vd,pos);
 }
@@ -793,7 +792,7 @@ extern char *goto_params;
 
 char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf);
 
-static const SOFTKEY_DESC input_box_menu_sk[]=
+SOFTKEY_DESC input_box_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Ok"},
   {0x0001,0x0000,(int)"Cancel"},
@@ -805,11 +804,11 @@ static const SOFTKEYSTAB input_box_menu_skt=
   input_box_menu_sk,0
 };
 
-static const HEADER_DESC input_box_hdr={0,0,0,0,NULL,(int)"Ввод",LGP_NULL};
+HEADER_DESC input_box_hdr={0,0,0,0,NULL,(int)"Enter:",LGP_NULL};
 
 static void input_box_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Ок"};
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Ok]};
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -829,7 +828,7 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
     switch(item->cur_item)
     {
     case 0:
-      ascii2ws(item->ws,"Шаблоны");
+      ascii2ws(item->ws,lgpData[LGP_Templates]);
       break;
     }
   }
@@ -934,7 +933,7 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
 }
 
 // TEXT VIEW
-static const SOFTKEY_DESC txtview_menu_sk[]=
+SOFTKEY_DESC txtview_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Ok"},
   {0x0001,0x0000,(int)"Cancel"},
@@ -946,11 +945,11 @@ static const SOFTKEYSTAB txtview_menu_skt=
   txtview_menu_sk,0
 };
 
-static const HEADER_DESC txtview_hdr={0,0,0,0,NULL,(int)"Text :",LGP_NULL};
+HEADER_DESC txtview_hdr={0,0,0,0,NULL,(int)"Text :",LGP_NULL};
 
 static void txtview_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Ок"};
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Ok]};
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -1048,7 +1047,6 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
           from_url=malloc(strlen(cur_vd->pageurl)+1);
           strcpy(from_url,cur_vd->pageurl);
           goto_params=collectItemsParams(cur_vd,cur_ref);
-//          quit_reqired=1;
         }
         else
         {
@@ -1109,7 +1107,7 @@ void sel_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   else
   {
     ws=AllocMenuWS(gui,10);
-    ascii2ws(ws,"Ошибка");
+    ascii2ws(ws,lgpData[LGP_Error]);//"Ошибка");
   }
   SetMenuItemText(gui, item, ws, cur_item);
 }
@@ -1127,7 +1125,7 @@ SOFTKEYSTAB sel_skt=
   sel_sk,0
 };
 
-HEADER_DESC sel_HDR={0,0,0,0,NULL,(int)"Выбор",LGP_NULL};
+HEADER_DESC sel_HDR={0,0,0,0,NULL,(int)"Select:",LGP_NULL};
 
 MENU_DESC sel_STRUCT=
 {
@@ -1183,11 +1181,22 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
   cur_vd=vd;
   icon_array[0]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
-  if (rf->multiselect)
-    sel_STRUCT.flags2=0x11;
-  else
-    sel_STRUCT.flags2=0x10;
+  if (rf->multiselect) sel_STRUCT.flags2=0x11;
+  else sel_STRUCT.flags2=0x10;
   patch_header(&sel_HDR);
   return CreateMenu(0,0,&sel_STRUCT,&sel_HDR,start,n_sel,ustop,0);
 }
 
+void initDisplayUtilsLangPack()
+{
+  txtview_hdr.lgp_id=(int)lgpData[LGP_TextHeader];
+  sel_HDR.lgp_id=(int)lgpData[LGP_TextHeader];
+  sel_HDR.lgp_id=(int)lgpData[LGP_SelectHeader];
+  sel_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  sel_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  txtview_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
+  txtview_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  input_box_hdr.lgp_id=(int)lgpData[LGP_EnterHeader];
+  input_box_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
+  input_box_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+}

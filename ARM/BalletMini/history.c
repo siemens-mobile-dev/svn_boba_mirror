@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "file_works.h"
 #include "string_works.h"
+#include "lang.h"
 
 extern const int HISTORY_DEPTH;
 const int MAX_FILE_SIZE = 32768;
@@ -19,7 +20,7 @@ void CheckHistory(const char *url)
     if (f==-1)
     {
       LockSched();
-      ShowMSG(1,(int)"Can't write history.txt!");
+      ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
       UnlockSched();
       return;
     }
@@ -50,7 +51,7 @@ char **GetHistory(int *cnt)
   if (f==-1)
   {
     LockSched();
-    ShowMSG(1,(int)"Can't read history.txt!");
+    ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
     UnlockSched();
     return 0;
   }
@@ -97,7 +98,7 @@ void AddURLToHistory(const char *url)
   if (f==-1)
   {
     LockSched();
-    ShowMSG(1,(int)"Can't read history.txt!");
+    ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
     UnlockSched();
     return;
   }
@@ -173,7 +174,7 @@ void AddURLToHistory(const char *url)
   if (f==-1)
   {
     LockSched();
-    ShowMSG(1,(int)"Can't write history.txt!");
+    ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
     UnlockSched();
     mfree(history_buf);
     return;

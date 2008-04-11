@@ -4017,6 +4017,9 @@
     <name>$PROJ_DIR$\readimg.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\refview.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\string_works.c</name>
   </file>
   <file>

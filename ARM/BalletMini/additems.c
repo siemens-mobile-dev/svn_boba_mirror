@@ -1,5 +1,4 @@
 #include "../inc/swilib.h"
-#include "view.h"
 #include "additems.h"
 #include "readimg.h"
 #include "string_works.h"
@@ -13,13 +12,13 @@
 
 static void RawInsertChar(VIEWDATA *vd, int wchar)
 {
-  if ((vd->rawtext_size%RAWTEXTCHUNK)==0)
+  if ((vd->rw.rawtext_size%RAWTEXTCHUNK)==0)
   {
     //Дошли до конца куска, реаллоцируем еще кусок
-    vd->rawtext=realloc(vd->rawtext,(vd->rawtext_size+RAWTEXTCHUNK)*2);
+    vd->rw.rawtext=realloc(vd->rw.rawtext,(vd->rw.rawtext_size+RAWTEXTCHUNK)*2);
   }
   //
-  vd->rawtext[vd->rawtext_size++]=wchar;
+  vd->rw.rawtext[vd->rw.rawtext_size++]=wchar;
 }
 
 void AddNewStyle(VIEWDATA *vd)
@@ -42,13 +41,13 @@ void AddNewStyle(VIEWDATA *vd)
 
 void AddBeginRef(VIEWDATA *vd)
 {
-  vd->work_ref.begin=vd->rawtext_size;
+  vd->work_ref.begin=vd->rw.rawtext_size;
   RawInsertChar(vd,UTF16_ENA_INVERT);
 }
 
 void AddBeginRefZ(VIEWDATA *vd)
 {
-  vd->work_ref_Z.begin=vd->rawtext_size;
+  vd->work_ref_Z.begin=vd->rw.rawtext_size;
   RawInsertChar(vd,UTF16_ENA_INVERT);
 }
 
@@ -67,11 +66,11 @@ void AddEndRef(VIEWDATA *vd)
   }
   p=vd->ref_cache+vd->ref_cache_size;
   memcpy(p,&(vd->work_ref),sizeof(REFCACHE));
-  p->end=vd->rawtext_size;
+  p->end=vd->rw.rawtext_size;
   vd->ref_cache_size++;
-  if (vd->pos_cur_ref==0xFFFFFFFF)
+  if (vd->rw.pos_cur_ref==0xFFFFFFFF)
   {
-    vd->pos_cur_ref=vd->work_ref.begin;
+    vd->rw.pos_cur_ref=vd->work_ref.begin;
   }
   memset(&(vd->work_ref),0xFF,sizeof(REFCACHE));
 }

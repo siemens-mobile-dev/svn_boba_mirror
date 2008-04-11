@@ -8,8 +8,9 @@
 #include "urlstack.h"
 #include "history.h"
 #include "file_works.h"
+#include "lang.h"
 
-extern int view_url_mode; //MODE_FILE, MODE_URL
+extern int view_url_mode;
 extern char *view_url;
 extern char *goto_url;
 extern int maincsm_id;
@@ -27,10 +28,11 @@ typedef struct
 
 //------------------------------------------------------------------------------
 
-static const SOFTKEY_DESC add_bookmark_sk[]=
+
+SOFTKEY_DESC add_bookmark_sk[]=
 {
-  {0x0018,0x0000,(int)"Добавить"},
-  {0x0001,0x0000,(int)"Отмена"},
+  {0x0018,0x0000,(int)"Add"},
+  {0x0001,0x0000,(int)"Cancel"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -40,11 +42,11 @@ static const SOFTKEYSTAB add_bookmark_skt=
 };
 
 
-static const HEADER_DESC add_bookmark_hdr={0,0,0,0,NULL,(int)"Закладка...",LGP_NULL};
+HEADER_DESC add_bookmark_hdr={0,0,0,0,NULL,(int)"Bookmark...",LGP_NULL};
 
 static void add_bookmark_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Сохранить"};
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Save]};
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -162,7 +164,7 @@ int CreateAddBookmark(GUI *data)
     }
   }
   
-  ascii2ws(ews,"Имя:");
+  ascii2ws(ews,lgpData[LGP_NameHeader]);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,wslen(ews));
   AddEditControlToEditQend(eq,&ec,ma);
       
@@ -178,7 +180,7 @@ int CreateAddBookmark(GUI *data)
       if (p->vd->title)
         ascii2ws(ews,p->vd->title);
       else
-        ascii2ws(ews,"New bookmark");
+        ascii2ws(ews,lgpData[LGP_NewBookmark]);
     }
   }
     
@@ -186,7 +188,7 @@ int CreateAddBookmark(GUI *data)
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,64);
   AddEditControlToEditQend(eq,&ec,ma);   //2
 
-  ascii2ws(ews,"Ссылка:");
+  ascii2ws(ews,lgpData[LGP_LinkHeader]);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,wslen(ews));
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -219,7 +221,7 @@ int CreateAddBookmark(GUI *data)
           str_2ws(ews,url_start,strlen(url_start));
           break;
         default:
-          str_2ws(ews,"absent...",10);
+          str_2ws(ews,lgpData[LGP_Absent],32);
           break;
         }
       }
@@ -269,14 +271,14 @@ void back(GUI *data)
 
 
 #define OPTIONS_ITEMS_N 4
-HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Опции",LGP_NULL};
+HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Options:",LGP_NULL};
 
 MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
 {
-  {NULL,(int)"Добавить",            LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
-  {NULL,(int)"Изменить",            LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
-  {NULL,(int)"Удалить",             LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
-  {NULL,(int)"Назад",               LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL,(int)"Add",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL,(int)"Edit",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
+  {NULL,(int)"Delete",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
+  {NULL,(int)"Back",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
 };
 
 const MENUPROCS_DESC options_menu_HNDLS[OPTIONS_ITEMS_N]=
@@ -431,7 +433,7 @@ void selurl_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   else
   {
     ws=AllocMenuWS(gui,10);
-    ascii2ws(ws,"Ошибка");
+    ascii2ws(ws,lgpData[LGP_Error]);
   }
   SetMenuItemText(gui, item, ws, cur_item);
 }
@@ -439,8 +441,8 @@ void selurl_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
 int selurl_softkeys[]={0,1,2};
 SOFTKEY_DESC selurl_sk[]=
 {
-  {0x0018,0x0000,(int)"Опции"},
-  {0x0001,0x0000,(int)"Отмена"},
+  {0x0018,0x0000,(int)"Options"},
+  {0x0001,0x0000,(int)"Cancel"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -449,7 +451,7 @@ SOFTKEYSTAB selurl_skt=
   selurl_sk,0
 };
 
-HEADER_DESC selurl_HDR={0,0,0,0,NULL,(int)"Select Bookmark",LGP_NULL};
+HEADER_DESC selurl_HDR={0,0,0,0,NULL,(int)"Select Bookmark:",LGP_NULL};
 
 
 MENU_DESC selurl_STRUCT=
@@ -468,10 +470,10 @@ MENU_DESC selurl_STRUCT=
 
 #define   MAX_SEARCH_ENGINES 32
 
-static const SOFTKEY_DESC search_sk[]=
+SOFTKEY_DESC search_sk[]=
 {
-  {0x0018,0x0000,(int)"Искать"},
-  {0x0001,0x0000,(int)"Отмена"},
+  {0x0018,0x0000,(int)"Search"},
+  {0x0001,0x0000,(int)"Cancel"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -479,8 +481,6 @@ static const SOFTKEYSTAB search_skt=
 {
   search_sk,0
 };
-
-
 
 static int search_engine_count=0;
 static int selected_search_engine=0;
@@ -595,7 +595,7 @@ int search_onkey(GUI *data, GUI_MSG *msg)
     return (0xFF);     
     
   fail:
-    ShowMSG(2,(int)"Ошибка!");    
+    ShowMSG(2,(int)lgpData[LGP_Error]);
     return (0);
   }
   return (0);
@@ -603,7 +603,7 @@ int search_onkey(GUI *data, GUI_MSG *msg)
 
 void search_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Искать"};
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Search]};
   
 //  if (cmd==2)
 //  {
@@ -644,7 +644,7 @@ void search_ghook(GUI *data, int cmd)
   }
 }
 
-HEADER_DESC search_hdr={0,0,0,0,NULL,(int)"Поиск",0x7FFFFFFF};
+HEADER_DESC search_hdr={0,0,0,0,NULL,(int)"Search:",0x7FFFFFFF};
 
 INPUTDIA_DESC search_desc=
 {
@@ -677,7 +677,7 @@ static int CreateSearchDialog()
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
 
-  ascii2ws(ews,"Текст:");
+  ascii2ws(ews,lgpData[LGP_TextHeader]);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -685,7 +685,7 @@ static int CreateSearchDialog()
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
   
-  ascii2ws(ews,"Поисковик:");
+  ascii2ws(ews,lgpData[LGP_SearchEngine]);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
   
@@ -874,7 +874,7 @@ void history_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   else
   {
     ws=AllocMenuWS(gui,10);
-    ascii2ws(ws,"Ошибка");
+    ascii2ws(ws,lgpData[LGP_Error]);
   }
   SetMenuItemText(gui, item, ws, cur_item);
 }
@@ -882,8 +882,8 @@ void history_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
 int history_softkeys[]={0,1,2};
 SOFTKEY_DESC history_sk[]=
 {
-  {0x0018,0x0000,(int)"Перейти"},
-  {0x0001,0x0000,(int)"Отмена"},
+  {0x0018,0x0000,(int)"Go"},
+  {0x0001,0x0000,(int)"Cancel"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -892,7 +892,7 @@ SOFTKEYSTAB history_skt=
   history_sk,0
 };
 
-HEADER_DESC history_HDR={0,0,0,0,NULL,(int)"History...",LGP_NULL};
+HEADER_DESC history_HDR={0,0,0,0,NULL,(int)"History:",LGP_NULL};
 
 MENU_DESC history_STRUCT=
 {
@@ -917,10 +917,10 @@ int CreateHistoryMenu()
 
 //------------------------------------------------------------------------------
 
-static const SOFTKEY_DESC input_menu_sk[]=
+SOFTKEY_DESC input_menu_sk[]=
 {
-  {0x0018,0x0000,(int)"Перейти"},
-  {0x0001,0x0000,(int)"Отмена"},
+  {0x0018,0x0000,(int)"Go"},
+  {0x0001,0x0000,(int)"Cnacel"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -930,11 +930,11 @@ static const SOFTKEYSTAB input_menu_skt=
 };
 
 
-static const HEADER_DESC input_url_hdr={0,0,0,0,NULL,(int)"Адрес",LGP_NULL};
+HEADER_DESC input_url_hdr={0,0,0,0,NULL,(int)"Adress:",LGP_NULL};
 
 static void input_url_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Перейти"};
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Go]};
   if (cmd==0x0A)
   {
     DisableIDLETMR();
@@ -1030,7 +1030,7 @@ int CreateInputUrl()
         //ascii2ws(ews,view_url+2);
         break;
       default:
-        str_2ws(ews,"under construction!",21);
+        str_2ws(ews,lgpData[LGP_Absent],32);
         break;
       }
     }
@@ -1129,10 +1129,10 @@ static void mm_quit(GUI *gui)
 
 static const int mmenusoftkeys[]={0,1,2};
 
-static const SOFTKEY_DESC mmenu_sk[]=
+SOFTKEY_DESC mmenu_sk[]=
 {
-  {0x0018,0x0000,(int)"Выбор"},
-  {0x0001,0x0000,(int)"Назад"},
+  {0x0018,0x0000,(int)"Select"},
+  {0x0001,0x0000,(int)"Back"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
@@ -1142,16 +1142,16 @@ static const SOFTKEYSTAB mmenu_skt=
 };
 
 #define MAIN_MENU_ITEMS_N 6
-static HEADER_DESC main_menuhdr={0,0,0,0,NULL,(int)"Меню",LGP_NULL};
+HEADER_DESC main_menuhdr={0,0,0,0,NULL,(int)"Menu:",LGP_NULL};
 
-static MENUITEM_DESC main_menu_ITEMS[MAIN_MENU_ITEMS_N]=
+MENUITEM_DESC main_menu_ITEMS[MAIN_MENU_ITEMS_N]=
 {
-  {NULL,(int)"Перейти к",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
-  {NULL,(int)"Закладки",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
-  {NULL,(int)"История",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
-  {NULL,(int)"Настройки",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL,(int)"Поиск",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL,(int)"Выход",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
+  {NULL,(int)"Go to",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL,(int)"Bookmarks",  LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
+  {NULL,(int)"History",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
+  {NULL,(int)"Settings",   LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL,(int)"Search",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL,(int)"Exit",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
 };
 
 static const MENUPROCS_DESC main_menu_HNDLS[MAIN_MENU_ITEMS_N]=
@@ -1200,4 +1200,39 @@ int CreateMainMenu(VIEWDATA *vd)
     main_csm->main_menu_id=main_menu_id;
   }
   return main_menu_id;
+}
+
+void initMainMenuLangPack()
+{
+  add_bookmark_sk[0].lgp_id=(int)lgpData[LGP_Add];
+  add_bookmark_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  add_bookmark_hdr.lgp_id=(int)lgpData[LGP_BookmarkHeader];
+  options_menuhdr.lgp_id=(int)lgpData[LGP_OptionsHeader];
+  options_menu_ITEMS[0].lgp_id_small=(int)lgpData[LGP_Add];
+  options_menu_ITEMS[1].lgp_id_small=(int)lgpData[LGP_Edit];
+  options_menu_ITEMS[2].lgp_id_small=(int)lgpData[LGP_Delete];
+  options_menu_ITEMS[3].lgp_id_small=(int)lgpData[LGP_Back];
+  menu_sk[0].lgp_id=(int)lgpData[LGP_Options];
+  menu_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  selurl_sk[0].lgp_id=(int)lgpData[LGP_Options];
+  selurl_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  selurl_HDR.lgp_id=(int)lgpData[LGP_SelectBookmarkHeader];
+  search_sk[0].lgp_id=(int)lgpData[LGP_Search];
+  search_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  search_hdr.lgp_id=(int)lgpData[LGP_SearchHeader];
+  history_sk[0].lgp_id=(int)lgpData[LGP_Go];
+  history_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  history_HDR.lgp_id=(int)lgpData[LGP_HistoryHeader];
+  input_menu_sk[0].lgp_id=(int)lgpData[LGP_Go];
+  input_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  input_url_hdr.lgp_id=(int)lgpData[LGP_AddressHeader];
+  mmenu_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  mmenu_sk[1].lgp_id=(int)lgpData[LGP_Back];
+  main_menuhdr.lgp_id=(int)lgpData[LGP_Menu];
+  main_menu_ITEMS[0].lgp_id_small=(int)lgpData[LGP_GoTo];
+  main_menu_ITEMS[1].lgp_id_small=(int)lgpData[LGP_Bookmarks];
+  main_menu_ITEMS[2].lgp_id_small=(int)lgpData[LGP_History];
+  main_menu_ITEMS[3].lgp_id_small=(int)lgpData[LGP_Settings];
+  main_menu_ITEMS[4].lgp_id_small=(int)lgpData[LGP_Search];
+  main_menu_ITEMS[5].lgp_id_small=(int)lgpData[LGP_Exit];
 }

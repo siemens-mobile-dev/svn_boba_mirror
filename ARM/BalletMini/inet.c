@@ -4,6 +4,7 @@
 #include "string_works.h"
 #include "view.h"
 #include "history.h"
+#include "lang.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -70,13 +71,13 @@ static void create_connect(void)
   {
     sa.ip=ip;
     LockSched();
-    wsprintf(ws_console,"ip connect");
+    ascii2ws(ws_console,lgpData[LGP_IpConnect]);
     UnlockSched();
     SmartREDRAW();
     goto L_CONNECT;
   }  
   LockSched();
-  wsprintf(ws_console,"gethostbyname");
+  ascii2ws(ws_console,lgpData[LGP_GetHostByName]);
   UnlockSched();
   SmartREDRAW();
   err=async_gethostbyname(hostname,&p_res,&DNR_ID); //03461351 3<70<19<81
@@ -86,61 +87,61 @@ static void create_connect(void)
     {
       if (DNR_ID)
       {
-	LockSched();
-	wsprintf(ws_console,"wait dnr...");
-	UnlockSched();
-	SmartREDRAW();
-	return; //Ждем готовности DNR
-      }
-    }
-    else
-    {
-      LockSched();
-      wsprintf(ws_console,"DNR fault!");
-      ShowMSG(1,(int)"BM: DNR fault!");
-      UnlockSched();
-      return;
-    }
-  }
-  if (p_res)
-  {
-    if (p_res[3])
-    {
-      LockSched();
-      wsprintf(ws_console,"DNR ok!");
-      UnlockSched();
-      SmartREDRAW();
-      DNR_TRIES=0;
-      sa.ip=p_res[3][0][0];
-    L_CONNECT:
-      LockSched();
-      wsprintf(ws_console,"Start socket...");
-      UnlockSched();
-      SmartREDRAW();
-      sock=socket(1,1,0);
-      if (sock!=-1)
-      {
-	sa.family=1;
-	sa.port=htons(OM_POST_PORT);
-	if (connect(sock,&sa,sizeof(sa))!=-1)
-	{
-	  connect_state=1;
-	}
-	else
-	{
-	  int s=sock;
-	  sock=-1;
-	  closesocket(s);
-	  LockSched();
-	  wsprintf(ws_console,"Connect fault");
-	  ShowMSG(1,(int)"BM: Connect fault!");
-	  UnlockSched();
-	}
+        LockSched();
+        ascii2ws(ws_console,lgpData[LGP_WaitDNR]);
+        UnlockSched();
+        SmartREDRAW();
+        return; //Ждем готовности DNR
+            }
+          }
+          else
+          {
+            LockSched();
+            ascii2ws(ws_console,lgpData[LGP_FaultDNR]);
+            ShowMSG(1,(int)lgpData[LGP_FaultDNR]);
+            UnlockSched();
+            return;
+          }
+        }
+        if (p_res)
+        {
+          if (p_res[3])
+          {
+            LockSched();
+            ascii2ws(ws_console,lgpData[LGP_OkDNR]);
+            UnlockSched();
+            SmartREDRAW();
+            DNR_TRIES=0;
+            sa.ip=p_res[3][0][0];
+          L_CONNECT:
+            LockSched();
+            ascii2ws(ws_console,lgpData[LGP_OpenSocket]);
+            UnlockSched();
+            SmartREDRAW();
+            sock=socket(1,1,0);
+            if (sock!=-1)
+            {
+        sa.family=1;
+        sa.port=htons(OM_POST_PORT);
+        if (connect(sock,&sa,sizeof(sa))!=-1)
+        {
+          connect_state=1;
+        }
+        else
+        {
+          int s=sock;
+          sock=-1;
+          closesocket(s);
+          LockSched();
+          ascii2ws(ws_console,lgpData[LGP_ConnectFault]);
+          ShowMSG(1,(int)lgpData[LGP_ConnectFault]);
+          UnlockSched();
+        }
       }
       else
       {
-	//Не осилили создания сокета, закрываем GPRS-сессию
-	GPRS_OnOff(0,1);
+        //Не осилили создания сокета, закрываем GPRS-сессию
+        GPRS_OnOff(0,1);
       }
     }	
   }
@@ -239,7 +240,7 @@ static void bsend(int len, void *p)
       j=*socklasterr();
       if ((j==0xC9)||(j==0xD6))
       {
-	return; //Видимо, надо ждать сообщения ENIP_BUFFER_FREE
+	      return; //Видимо, надо ждать сообщения ENIP_BUFFER_FREE
       }
       else
       {
@@ -502,9 +503,9 @@ int ParseSocketMsg(GBS_MSG *msg)
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
       {
-	wsprintf(ws_console,"DNR answer...");
-	SmartREDRAW();
-	if (DNR_TRIES) SUBPROC((void *)create_connect);
+        ascii2ws(ws_console,lgpData[LGP_AnswerDNR]);
+        SmartREDRAW();
+        if (DNR_TRIES) SUBPROC((void *)create_connect);
       }
       return(1);
     }
@@ -514,55 +515,53 @@ int ParseSocketMsg(GBS_MSG *msg)
       switch((int)msg->data0)
       {
       case ENIP_SOCK_CONNECTED:
-	wsprintf(ws_console,"Connected...");
-	SmartREDRAW();
-	if (connect_state==1)
-	{
-	  connect_state=2;
-	  //Соединение установленно, посылаем пакет
-	  SUBPROC((void*)SendPost);
-	}
-	break;
+        ascii2ws(ws_console,lgpData[LGP_Connected]);
+        SmartREDRAW();
+        if (connect_state==1)
+        {
+          connect_state=2;
+          //Соединение установленно, посылаем пакет
+          SUBPROC((void*)SendPost);
+        }
+        break;
       case ENIP_SOCK_DATA_READ:
-	wsprintf(ws_console,"Data received...");
-	SmartREDRAW();
-	if (connect_state>=2)
+        ascii2ws(ws_console,lgpData[LGP_DataReceived]);
+        SmartREDRAW();
+        if (connect_state>=2)
         {
           connect_state=3;
           SUBPROC((void *)get_answer);
         }
-	break;
+        break;
       case ENIP_BUFFER_FREE:
       case ENIP_BUFFER_FREE1:
-	//Досылаем очередь
-	SUBPROC((void *)bsend,0,0);
-	break;
+        //Досылаем очередь
+        SUBPROC((void *)bsend,0,0);
+        break;
       case ENIP_SOCK_REMOTE_CLOSED:
-	//Закрыт со стороны сервера
-	wsprintf(ws_console,"Remote closed!");
-	SmartREDRAW();
-	goto ENIP_SOCK_CLOSED_ALL;
+        //Закрыт со стороны сервера
+        ascii2ws(ws_console,lgpData[LGP_RemoteClosed]);
+        SmartREDRAW();
+        goto ENIP_SOCK_CLOSED_ALL;
       case ENIP_SOCK_CLOSED:
-	wsprintf(ws_console,"Local closed!");
-	SmartREDRAW();
+        ascii2ws(ws_console,lgpData[LGP_LocalClosed]);
+        SmartREDRAW();
       ENIP_SOCK_CLOSED_ALL:
-	switch(connect_state)
-	{
-	case -1:
-	  connect_state=0;
-	  SUBPROC((void*)free_socket);
-//	  ShowMSG(1,(int)"BM: Socket closed");
-//	  if (vd->
-	  
-	  break;
-	case 0:
-	  break;
-	default:
-	  connect_state=-1;
-	  SUBPROC((void*)end_socket);
-	  break;
-	}
-	break;
+        switch(connect_state)
+        {
+        case -1:
+          connect_state=0;
+          SUBPROC((void*)free_socket);
+          //ShowMSG(1,(int)"BM: Socket closed");
+          break;
+        case 0:
+          break;
+        default:
+          connect_state=-1;
+          SUBPROC((void*)end_socket);
+          break;
+        }
+      break;
       }
     }
   }
@@ -575,7 +574,7 @@ void StartINET(const char *url, char *fncache)
   if (connect_state)
   {
     LockSched();
-    ShowMSG(1,(int)"INET process busy!");
+    ShowMSG(1,(int)lgpData[LGP_InetBussy]);
     UnlockSched();
   ERR:
     mfree(fncache);
@@ -584,7 +583,7 @@ void StartINET(const char *url, char *fncache)
   if (!IsGPRSEnabled())
   {
     LockSched();
-    ShowMSG(1,(int)"Enable GPRS first!");
+    ShowMSG(1,(int)lgpData[LGP_EnableGPRS]);
     UnlockSched();
     STOPPED=1;
     goto ERR;
