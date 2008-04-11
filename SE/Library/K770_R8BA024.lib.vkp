@@ -1,6 +1,6 @@
 ;K770 SW-R8BA024
 ;Библиотека функций
-;v221207
+;v
 ;(c) Hussein , IronMaster
 ;(p) Adrenalin, Zormax (aka mobilefree)
 
@@ -333,8 +333,8 @@
 0A0C: 00000000 69DBF744 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: 00000000 19DCF744 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 0A14: 00000000 18E32E20 ;8285: SURFACE ** get_Surfaces(void);
-;0A18: xxxxxxxx yyyyyyyy ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
-;0A1C: xxxxxxxx yyyyyyyy ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
+0A18: 00000000 BD3ED744 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
+0A1C: 00000000 25D6E744 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 
 
 
