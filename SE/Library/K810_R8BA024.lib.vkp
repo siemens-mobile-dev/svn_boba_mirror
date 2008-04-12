@@ -209,7 +209,7 @@
 07F8: 00000000 894D4645 ; 1FE: WINDOW * DISP_OBJ_GetWindow(DISP_OBJ *);
 07FC: 00000000 B1DB4845 ; 1FF: int GetThemeColor(int , int);
 0800: 00000000 B9C13E45 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
-0804: 00000000 5DC13E45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
+0804: 00000000 A9F43E45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 0157EF44 ; 202: void VCALL_Init (void* vc);
 080C: 00000000 F957EF44 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: 00000000 5958EF44 ; 204: void VCALL_SetNameIcon (void * vc , u16 icon);
