@@ -335,6 +335,7 @@ A10: 00000000 F547F344 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGIST
 A14: 00000000 20462E20 ;8285: SURFACE ** get_Surfaces(void);
 A18: 00000000 45C6D244 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 A1C: 00000000 293FE344 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
+A20: 00000000 3DFA3E45 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 
 
 
