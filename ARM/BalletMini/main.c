@@ -89,6 +89,17 @@ void lgpInitLangPack(void)
     lgpData[LGP_InetBussy]=            "INET process bussy!";
     lgpData[LGP_EnableGPRS]=           "Enable GPRS first!";
     lgpData[LGP_UnderConstruction]=    "Under Construction!";
+    lgpData[LGP_Ok]=                   "Ok";
+    lgpData[LGP_Templates]=            "Templates";
+    lgpData[LGP_Save]=                 "Save";
+    lgpData[LGP_NameHeader]=           "Name:";
+    lgpData[LGP_NewBookmark]=          "New Bookmark";
+    lgpData[LGP_LinkHeader]=           "Link:";
+    lgpData[LGP_Absent]=               "Absent...";
+    lgpData[LGP_Search]=               "Search";
+    lgpData[LGP_TextHeader]=           "Text:";
+    lgpData[LGP_SearchEngine]=         "Search engine:";
+    lgpData[LGP_Go]=                   "Go";
   }
 }
 

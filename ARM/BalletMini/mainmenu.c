@@ -1012,29 +1012,27 @@ int CreateInputUrl()
     {
       for(url_start = p->vd->pageurl; *url_start && *url_start != '/'; url_start++);
       for(; *url_start && *url_start == '/'; url_start++);
-      str_2ws(ews,url_start,strlen(url_start));
-      //str_2ws(ews,p->vd->pageurl+2,strlen(p->vd->pageurl)-2);
     }
     else
     {
-      // url не загружен
       switch(view_url_mode)
       {
       case MODE_FILE:
-        str_2ws(ews,view_url,255);
+        url_start=view_url;
         break;
       case MODE_URL:
         for(url_start = view_url; *url_start && *url_start != '/'; url_start++);
         for(; *url_start && *url_start == '/'; url_start++);
-        str_2ws(ews,url_start,strlen(url_start));
-        //ascii2ws(ews,view_url+2);
         break;
       default:
-        str_2ws(ews,lgpData[LGP_Absent],32);
+        url_start=lgpData[LGP_Absent]; // HACK, symbols will be taken from the bottom table part
         break;
       }
     }
   }
+  ews->wsbody[0]=0;
+  for(int i=0;i<strlen(url_start);i++)
+    ews->wsbody[++ews->wsbody[0]]=url_start[i];
 
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,1024);
