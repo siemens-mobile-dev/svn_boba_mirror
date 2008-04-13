@@ -208,7 +208,7 @@
 07F4: 00000000 395B4645 ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
 07F8: 00000000 894D4645 ; 1FE: WINDOW * DISP_OBJ_GetWindow(DISP_OBJ *);
 07FC: 00000000 B1DB4845 ; 1FF: int GetThemeColor(int , int);
-0800: 00000000 B9C13E45 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
+0800: 00000000 01F53E45 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: 00000000 A9F43E45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 0157EF44 ; 202: void VCALL_Init (void* vc);
 080C: 00000000 F957EF44 ; 203: void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
@@ -281,7 +281,7 @@
 0928: 00000000 5D7D1245 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
 092C: 00000000 85920E45 ; 24B: int GetSilent(void);
 0930: 00000000 C16A0E45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
-0934: 00000000 09AE0E45 ; 24D: int GetAudioSettings(int what, char* retvalue);
+0934: 00000000 E9A00E45 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: 00000000 29F12C44 ; 24E: int GetChipID(void);
 0948: 00000000 4D8F4245 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 418F4245 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);

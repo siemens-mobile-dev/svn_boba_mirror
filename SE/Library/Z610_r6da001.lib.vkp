@@ -294,12 +294,12 @@
 968: 00000000 DDC20F45 ; 25A: void PlaySystemSound (int SndNumber);
 974: 00000000 F56D4345 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
 978: 00000000 E56D4345 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
-;097C: xxxxxxxx yyyyyyyy ; 25F: int GC_GetPenColor (void* GC);
-;0980: xxxxxxxx yyyyyyyy ; 260: void GC_SetPenColor(void* GC , int pen_color);
-;0984: xxxxxxxx yyyyyyyy ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
-;0988: xxxxxxxx yyyyyyyy ; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
-;098C: xxxxxxxx yyyyyyyy ; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
-;0990: xxxxxxxx yyyyyyyy ; 264: int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
+97C: 00000000 FD404345 ; 25F: int GC_GetPenColor (void* GC);
+980: 00000000 C1404345 ; 260: void GC_SetPenColor(void* GC , int pen_color);
+984: 00000000 413D4345 ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
+988: 00000000 79484345 ; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
+98C: 00000000 054A4345 ; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
+990: 00000000 CD3D4345 ; 264: int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
 994: 00000000 0D10BE44 ; 265: png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
 998: 00000000 5911BE44 ; 266: void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
 99C: 00000000 B1F7BD44 ; 267: png_infop png_create_info_struct(png_structp png_ptr);
