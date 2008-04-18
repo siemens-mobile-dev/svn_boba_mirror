@@ -33,3 +33,5 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos);
 void AddButtonItem(VIEWDATA *vd, const char *text, int len);
 
 void AddDropDownList(VIEWDATA *vd);
+
+void AddPageEndItem(VIEWDATA *vd);

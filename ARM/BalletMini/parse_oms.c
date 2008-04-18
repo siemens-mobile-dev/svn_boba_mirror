@@ -100,8 +100,6 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
   int i;
   unsigned int k;
   int err;
-  //  unsigned int iw;
-  //  unsigned int ih;
   char s[128];
   if ((len==0)||(buf==0))
   {
@@ -252,10 +250,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         //AddTextItem(vd,")",1);
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
-      case '$':
-        vd->oms_pos++; //Form end
-        //vd->work_ref.form_id1=_NOREF;
-        //vd->work_ref.form_id2=_NOREF;
+      case '$':  //Form end ???
+        vd->oms_pos++;
         goto L_NOSTAGE2;
       case 'A':
         vd->oms_wanted+=2;
@@ -270,7 +266,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       case 'S':    // Style
         vd->oms_wanted+=4;
         break;
-      case 'T':
+      case 'T':    // Text
         vd->oms_wanted+=2;
         break;
       case 'Y':
@@ -367,7 +363,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
       case 'Q':
-        AddTextItem(vd,"\n<Q>",4);
+        AddPageEndItem(vd);
         vd->parse_state=OMS_STOP;
         return;
       case 'Z':

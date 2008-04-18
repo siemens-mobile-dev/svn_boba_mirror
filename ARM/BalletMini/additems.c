@@ -1,4 +1,5 @@
 #include "../inc/swilib.h"
+#include "view.h"
 #include "additems.h"
 #include "readimg.h"
 #include "string_works.h"
@@ -10,15 +11,15 @@
 #define RAWTEXTCHUNK (16384)
 #define REFCACHECHUNK (256)
 
-static void RawInsertChar(VIEWDATA *vd, int wchar)
+/*static*/ void RawInsertChar(VIEWDATA *vd, int wchar)
 {
-  if ((vd->rw.rawtext_size%RAWTEXTCHUNK)==0)
+  if ((vd->rawtext_size%RAWTEXTCHUNK)==0)
   {
     //Дошли до конца куска, реаллоцируем еще кусок
-    vd->rw.rawtext=realloc(vd->rw.rawtext,(vd->rw.rawtext_size+RAWTEXTCHUNK)*2);
+    vd->rawtext=realloc(vd->rawtext,(vd->rawtext_size+RAWTEXTCHUNK)*2);
   }
   //
-  vd->rw.rawtext[vd->rw.rawtext_size++]=wchar;
+  vd->rawtext[vd->rawtext_size++]=wchar;
 }
 
 void AddNewStyle(VIEWDATA *vd)
@@ -41,23 +42,18 @@ void AddNewStyle(VIEWDATA *vd)
 
 void AddBeginRef(VIEWDATA *vd)
 {
-  vd->work_ref.begin=vd->rw.rawtext_size;
+  vd->work_ref.begin=vd->rawtext_size;
   RawInsertChar(vd,UTF16_ENA_INVERT);
 }
 
 void AddBeginRefZ(VIEWDATA *vd)
 {
-  vd->work_ref_Z.begin=vd->rw.rawtext_size;
+  vd->work_ref_Z.begin=vd->rawtext_size;
   RawInsertChar(vd,UTF16_ENA_INVERT);
 }
 
 void AddEndRef(VIEWDATA *vd)
 {
-  //{
-  //  char c[64];
-  //  sprintf(c,"\nref_mode %i tag %x at oms_pos %i\n",vd->ref_mode,vd->work_ref.tag,vd->oms_pos);
-  //  AddTextItem(vd,c,strlen(c));
-  //}
   RawInsertChar(vd,UTF16_DIS_INVERT);
   REFCACHE *p;
   if ((vd->ref_cache_size%REFCACHECHUNK)==0)
@@ -66,11 +62,11 @@ void AddEndRef(VIEWDATA *vd)
   }
   p=vd->ref_cache+vd->ref_cache_size;
   memcpy(p,&(vd->work_ref),sizeof(REFCACHE));
-  p->end=vd->rw.rawtext_size;
+  p->end=vd->rawtext_size;
   vd->ref_cache_size++;
-  if (vd->rw.pos_cur_ref==0xFFFFFFFF)
+  if (vd->pos_cur_ref==0xFFFFFFFF)
   {
-    vd->rw.pos_cur_ref=vd->work_ref.begin;
+    vd->pos_cur_ref=vd->work_ref.begin;
   }
   memset(&(vd->work_ref),0xFF,sizeof(REFCACHE));
 }
@@ -296,12 +292,9 @@ void AddRadioButton(VIEWDATA *vd, int checked)
   if (!vd->WCHAR_RADIO_ON)
   {
     char fname[256];
-//    strcpy(fname,IMG_PATH);
-//    strcat(fname,RADIO_BTTN_CLKD);
     getSymbolicPath(fname,"$resources\\radio_bttn_clkd.png");
     vd->WCHAR_RADIO_ON=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_RADIO_ON==0xE115) vd->WCHAR_RADIO_ON=0xE116;
-//    strcpy(fname+strlen(IMG_PATH),RADIO_BTTN);
     getSymbolicPath(fname,"$resources\\radio_bttn.png");
     vd->WCHAR_RADIO_OFF=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_RADIO_OFF==0xE115) vd->WCHAR_RADIO_OFF=0xE117;
@@ -314,12 +307,9 @@ void AddCheckBoxItem(VIEWDATA *vd, int checked)
   if (!vd->WCHAR_BUTTON_ON)
   {
     char fname[256];
-//    strcpy(fname,IMG_PATH);
-//    strcat(fname,BUTTON_CLKD);
     getSymbolicPath(fname,"$resources\\button_clkd.png");
     vd->WCHAR_BUTTON_ON=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_BUTTON_ON==0xE115) vd->WCHAR_BUTTON_ON=0xE116;
-//    strcpy(fname+strlen(IMG_PATH),BUTTON);
     getSymbolicPath(fname,"$resources\\button.png");
     vd->WCHAR_BUTTON_OFF=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_BUTTON_OFF==0xE115) vd->WCHAR_BUTTON_OFF=0xE117;
@@ -332,8 +322,6 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
   if (!vd->WCHAR_TEXT_FORM)
   {
     char fname[256];
-//    strcpy(fname,IMG_PATH);
-//    strcat(fname,TEXT_FORM);
     getSymbolicPath(fname,"$resources\\text_form.png");
     vd->WCHAR_TEXT_FORM=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_TEXT_FORM==0xE115) vd->WCHAR_TEXT_FORM=0xE11E;
@@ -358,11 +346,14 @@ void AddDropDownList(VIEWDATA *vd)
   if (!vd->WCHAR_LIST_FORM)
   {
     char fname[256];
-//    strcpy(fname,IMG_PATH);
-//    strcat(fname,LIST);
     getSymbolicPath(fname,"$resources\\list.png");
     vd->WCHAR_LIST_FORM=AddPictureItemFile(vd, fname);
     if (vd->WCHAR_LIST_FORM==0xE115) vd->WCHAR_LIST_FORM=0xE11B;
   }
   RawInsertChar(vd,vd->WCHAR_LIST_FORM);
+}
+
+void AddPageEndItem(VIEWDATA *vd)
+{
+  AddTextItem(vd,"\n<Q>",4);
 }

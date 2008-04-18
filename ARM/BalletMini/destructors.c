@@ -5,9 +5,9 @@
 
 void FreeRawText(VIEWDATA *vd)
 {
-  mfree(vd->rw.rawtext);
-  vd->rw.rawtext=NULL;
-  vd->rw.rawtext_size=0;
+  mfree(vd->rawtext);
+  vd->rawtext=NULL;
+  vd->rawtext_size=0;
 }
 
 void FreeDynImgList(VIEWDATA *vd)
@@ -34,7 +34,7 @@ void FreeViewData(VIEWDATA *vd)
     inflateEnd(vd->zs);
     mfree(vd->zs);
   }
-  if (vd->rw.ws) FreeWS(vd->rw.ws);
+  if (vd->ws) FreeWS(vd->ws);
   for (int i=0;i<vd->ref_cache_size;i++)
   {
     REFCACHE *rf=vd->ref_cache+i;
@@ -49,11 +49,11 @@ void FreeViewData(VIEWDATA *vd)
   mfree(vd->ref_cache);
   vd->ref_cache=NULL;
   vd->ref_cache_size=0;
-  mfree(vd->rw.lines_cache);
-  vd->rw.lines_cache=NULL;
-  mfree(vd->rw.rawtext);
-  vd->rw.rawtext=NULL;
-  vd->rw.rawtext_size=0;
+  mfree(vd->lines_cache);
+  vd->lines_cache=NULL;
+  mfree(vd->rawtext);
+  vd->rawtext=NULL;
+  vd->rawtext_size=0;
   mfree(vd->oms);
   vd->oms=NULL;
   vd->oms_size=0;

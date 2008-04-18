@@ -218,6 +218,37 @@ static void StartGetFile(int dummy, char *fncache)
       main_csm->sel_bmk=CreateBookmarksMenu(fname);
     }
   }
+  if (view_url_mode==MODE_NONE)
+  {
+//    MAIN_CSM *main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id);
+//    if (main_csm)
+//    {
+//      VIEW_GUI *p=FindGUIbyId(main_csm->view_id,NULL);
+//      VIEWDATA *vd=p->vd;
+//      *((unsigned short *)(&(vd->current_tag_d)))=(unsigned short)0x813A;
+//      *((unsigned int *)(&(vd->current_tag_s)))=(unsigned int)0x0D15F000;
+//      AddNewStyle(vd);
+//      AddTextItem(vd, "Begin OMS Hacking . . .\nNOW\n!!!\n\n",33);
+//      AddBeginRef(vd);
+//      RawInsertChar(vd,AddPictureItemFile(vd, "0:\\ZBin\\NatICQ\\smiles\\1405.png"));
+//      AddEndRef(vd);
+//      RawInsertChar(vd,AddPictureItemFile(vd, "0:\\ZBin\\NatICQ\\smiles\\1406.png"));
+//      AddBeginRef(vd);
+//      AddEndRef(vd);
+//      RawInsertChar(vd,AddPictureItemFile(vd, "0:\\ZBin\\NatICQ\\smiles\\1407.png"));
+//      AddBeginRef(vd);
+//      AddEndRef(vd);
+//      RawInsertChar(vd,AddPictureItemFile(vd, "0:\\ZBin\\NatICQ\\smiles\\1408.png"));
+//      AddBeginRef(vd);
+//      AddEndRef(vd);
+//      RawInsertChar(vd,AddPictureItemFile(vd, "0:\\ZBin\\NatICQ\\smiles\\1409.png"));
+//      RawInsertChar(vd,AddPictureItemFile(vd, "0:\\ZBin\\NatICQ\\smiles\\1410.png"));
+//      RawInsertChar(vd,AddPictureItemFile(vd, "0:\\ZBin\\NatICQ\\smiles\\1411.png"));
+//      AddBrItem(vd);
+//      AddPageEndItem(vd);
+//      SmartREDRAW();
+//    }
+  }
 }
 
 char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
@@ -263,7 +294,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
       break;
     case 'c':
     case 'r':
-      if (vd->rw.rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rw.rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
+      if (vd->rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
         pos+=_rshort2(vd->oms+prf->id)+1+_rshort2(vd->oms+prf->value)+1;
       break;
     case 'i':
@@ -365,7 +396,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     case 'c':
     case 'r':
       {
-        if (vd->rw.rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rw.rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
+        if (vd->rawtext[prf->begin+1]==vd->WCHAR_RADIO_ON||vd->rawtext[prf->begin+1]==vd->WCHAR_BUTTON_ON)
         {
           s[pos]='&';
           pos++;
@@ -516,8 +547,8 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
 {
   VIEWDATA *vd=malloc(sizeof(VIEWDATA));
   zeromem(vd,sizeof(VIEWDATA));
-  vd->rw.ws=AllocWS(32767);
-  vd->rw.pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
+  vd->ws=AllocWS(32767);
+  vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
   data->ws1=AllocWS(128);
@@ -600,17 +631,12 @@ static void RunOtherCopyByURL(const char *url, int isNativeBrowser)
       ExecuteFile(ws,NULL,fname);
     } 
     FreeWS(ws);
-    unlink(fname,&err);
+    //unlink(fname,&err);
   }
 }
 
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
 {
-//  if (quit_reqired)
-//  {
-//    quit_reqired=0;
-//    return 0xFF;
-//  }
   VIEWDATA *vd=data->vd;
   REFCACHE *rf;
   int m=msg->gbsmsg->msg;
@@ -619,8 +645,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     switch(msg->gbsmsg->submess)
     {
     case ENTER_BUTTON:
-      if (vd->rw.pos_cur_ref==0xFFFFFFFF) break;
-      rf=FindReference(vd,vd->rw.pos_cur_ref);
+      if (vd->pos_cur_ref==0xFFFFFFFF) break;
+      rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
         switch(rf->tag)
@@ -664,15 +690,15 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           {
             REFCACHE *rfp;
             int i;
-            if (vd->rw.rawtext[rf->begin+1]!=vd->WCHAR_RADIO_OFF) break;
-            vd->rw.rawtext[rf->begin+1]=vd->WCHAR_RADIO_ON;
+            if (vd->rawtext[rf->begin+1]!=vd->WCHAR_RADIO_OFF) break;
+            vd->rawtext[rf->begin+1]=vd->WCHAR_RADIO_ON;
             i=0;
             while((i=FindReferenceById(vd,rf->id,i))>=0)
             {
               rfp=vd->ref_cache+i;
               if (rfp!=rf)
-                if (vd->rw.rawtext[rfp->begin+1]==vd->WCHAR_RADIO_ON)
-                  vd->rw.rawtext[rfp->begin+1]=vd->WCHAR_RADIO_OFF;
+                if (vd->rawtext[rfp->begin+1]==vd->WCHAR_RADIO_ON)
+                  vd->rawtext[rfp->begin+1]=vd->WCHAR_RADIO_OFF;
               i++;
             }
           }
@@ -687,10 +713,10 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
           break;
         case 'c':
-          if (vd->rw.rawtext[rf->begin+1]==vd->WCHAR_BUTTON_ON)
-            vd->rw.rawtext[rf->begin+1]=vd->WCHAR_BUTTON_OFF;
+          if (vd->rawtext[rf->begin+1]==vd->WCHAR_BUTTON_ON)
+            vd->rawtext[rf->begin+1]=vd->WCHAR_BUTTON_OFF;
           else
-            vd->rw.rawtext[rf->begin+1]=vd->WCHAR_BUTTON_ON;
+            vd->rawtext[rf->begin+1]=vd->WCHAR_BUTTON_ON;
           if (!rf->no_upload)
           {
             goto_url=malloc(strlen(vd->pageurl)+1);
@@ -748,46 +774,42 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
       break;
     case UP_BUTTON:
-      if (vd->rw.pos_cur_ref!=vd->rw.pos_first_ref&&vd->rw.pos_first_ref==vd->rw.pos_last_ref)
-        vd->rw.pos_cur_ref=0xFFFFFFFF;
-      if (vd->rw.pos_cur_ref==0xFFFFFFFF&&vd->rw.pos_last_ref!=0xFFFFFFFF)
-        vd->rw.pos_cur_ref=vd->rw.pos_last_ref;
+      if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_last_ref!=0xFFFFFFFF)
+        vd->pos_cur_ref=vd->pos_last_ref;
       else
-        if (vd->rw.pos_prev_ref!=0xFFFFFFFF)
-          vd->rw.pos_cur_ref=vd->rw.pos_prev_ref;
+        if (vd->pos_prev_ref!=0xFFFFFFFF)
+          vd->pos_cur_ref=vd->pos_prev_ref;
         else
         {
           scrollUp(vd,20);
           RenderPage(vd,0);
-          if (vd->rw.pos_prev_ref!=0xFFFFFFFF)
-            vd->rw.pos_cur_ref=vd->rw.pos_prev_ref;
+          if (vd->pos_prev_ref!=0xFFFFFFFF)
+            vd->pos_cur_ref=vd->pos_prev_ref;
         }
       break;
     case DOWN_BUTTON:
-      if (vd->rw.pos_cur_ref!=vd->rw.pos_first_ref&&vd->rw.pos_first_ref==vd->rw.pos_last_ref)
-        vd->rw.pos_cur_ref=0xFFFFFFFF;
-      if (vd->rw.pos_cur_ref==0xFFFFFFFF&&vd->rw.pos_first_ref!=0xFFFFFFFF)
-        vd->rw.pos_cur_ref=vd->rw.pos_first_ref;
+      if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_first_ref!=0xFFFFFFFF)
+        vd->pos_cur_ref=vd->pos_first_ref;
       else
-        if (vd->rw.pos_next_ref!=0xFFFFFFFF)
-          vd->rw.pos_cur_ref=vd->rw.pos_next_ref;
+        if (vd->pos_next_ref!=0xFFFFFFFF)
+          vd->pos_cur_ref=vd->pos_next_ref;
         else
         {
           scrollDown(vd,20);
           RenderPage(vd,0);
-          if (vd->rw.pos_next_ref!=0xFFFFFFFF)
-            vd->rw.pos_cur_ref=vd->rw.pos_next_ref;
+          if (vd->pos_next_ref!=0xFFFFFFFF)
+            vd->pos_cur_ref=vd->pos_next_ref;
         }
       break;
     case RIGHT_BUTTON:
     case VOL_DOWN_BUTTON:
       scrollDown(vd,ScreenH()-20);
-      vd->rw.pos_cur_ref=0xFFFFFFFF;
+      vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_BUTTON:
     case VOL_UP_BUTTON:
       scrollUp(vd,ScreenH()-20);
-      vd->rw.pos_cur_ref=0xFFFFFFFF;
+      vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_SOFT:
       STOPPED=1;
@@ -813,38 +835,42 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       }
     case 0x32:
     case GREEN_BUTTON:
-      rf=FindReference(vd,vd->rw.pos_cur_ref);
+      rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
-        if (rf->tag=='L')
+        if (rf->id!=_NOREF)
         {
-          //ShowMSG(0x10,(int)(rf->id));
-          if (rf->id!=_NOREF)
+          if (rf->tag=='L'||rf->tag=='Z')
           {
             char *s=extract_omstr(vd,rf->id);
+            if (rf->tag=='L')
+              s+=2;
+            if (rf->tag=='Z')
+              s+=strlen(s)+1;
             if (msg->gbsmsg->submess==0x32)
             {
-              RunOtherCopyByURL(s+2,1);
+              RunOtherCopyByURL(s,1);
             }
             else
             {
-              RunOtherCopyByURL(s+2,0);
+              RunOtherCopyByURL(s,0);
             }
+            s=0; // is it necessary
             mfree(s);
           }
         }
       }
       break;
     case 0x33: // '3'
-      vd->rw.pixdisp=0;
-      vd->rw.view_line=0;
-      vd->rw.pos_cur_ref=0xFFFFFFFF;
+      vd->pixdisp=0;
+      vd->view_line=0;
+      vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x39: // '9'
-      while(LineDown(&vd->rw)) ;
-      vd->rw.pixdisp=0;
+      while(LineDown(vd)) ;
+      vd->pixdisp=0;
       scrollUp(vd,ScreenH()-1);
-      vd->rw.pos_cur_ref=0xFFFFFFFF;
+      vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x31: // '1'
       {
@@ -865,7 +891,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         int f;
         if ((f=fopen("0:\\zbin\\balletmini\\dumpraw.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
-          fwrite(f,vd->rw.rawtext,vd->rw.rawtext_size*2,&ul);
+          fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
           fclose(f,&ul);
         }
       }
@@ -954,11 +980,11 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         if ((f=fopen("0:\\zbin\\balletmini\\dumplc.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
           char c[256];
-          sprintf(c,"\nlines_cache_size : %i\n",vd->rw.lines_cache_size);
+          sprintf(c,"\nlines_cache_size : %i\n",vd->lines_cache_size);
           fwrite(f,c,strlen(c),&ul);
-          for (int i=0;i<vd->rw.lines_cache_size;i++)
+          for (int i=0;i<vd->lines_cache_size;i++)
           {
-            LINECACHE *lc=vd->rw.lines_cache+i;
+            LINECACHE *lc=vd->lines_cache+i;
             sprintf(c,"%i\n  pos : %u\n  pix : %u\n",i,lc->pos,lc->pixheight);
             fwrite(f,c,strlen(c),&ul);
           }
@@ -973,27 +999,27 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         WSHDR *ws=AllocWS(512);
         LINECACHE *lc;
         unsigned int vl;
-        int ypos=-vd->rw.pixdisp;
-        unsigned int store_line=vl=vd->rw.view_line;
+        int ypos=-vd->pixdisp;
+        unsigned int store_line=vl=vd->view_line;
         unsigned int len;
         int sc;
         int c;
 
         while(ypos<=scr_h)
         {
-          if (LineDown(&vd->rw))
+          if (LineDown(vd))
           {
-            lc=vd->rw.lines_cache+vl;
-            if ((vl+1)<vd->rw.lines_cache_size)
+            lc=vd->lines_cache+vl;
+            if ((vl+1)<vd->lines_cache_size)
             {
               len=(lc[1]).pos-(lc[0]).pos;
             }
             else
-              len=vd->rw.rawtext_size-lc->pos;
+              len=vd->rawtext_size-lc->pos;
             sc=lc->pos;
             while(len>0)
             {
-              c=vd->rw.rawtext[sc];
+              c=vd->rawtext[sc];
               if ((c&0xFF00)!=0xE100)
               {
                 switch (c)
@@ -1029,7 +1055,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           else
             break;
         }
-        vd->rw.view_line=store_line;
+        vd->view_line=store_line;
         createTextView(ws);
       }
       break;
@@ -1301,8 +1327,8 @@ static void UpdateCSMname(void)
   case MODE_URL:
     ascii2ws(ws,view_url+2);
     break;
-  case MODE_BOOKMARKS:
-    str_2ws(ws,"Bookmarks",10);
+  default:
+    str_2ws(ws,"",1);
     break;
   }
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"BM: %w",ws);
@@ -1506,6 +1532,15 @@ int main(const char *exename, const char *filename)
       LockSched();
       maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
       UnlockSched();
+    }
+    else
+    {
+      // create smiles view
+      UpdateCSMname();
+      LockSched();
+      maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
+      UnlockSched();
+      view_url_mode=MODE_NONE;
     }
   }
   return 0;
