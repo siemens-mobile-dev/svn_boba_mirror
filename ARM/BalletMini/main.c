@@ -631,7 +631,7 @@ static void RunOtherCopyByURL(const char *url, int isNativeBrowser)
       ExecuteFile(ws,NULL,fname);
     } 
     FreeWS(ws);
-    //unlink(fname,&err);
+    unlink(fname,&err);
   }
 }
 
@@ -869,7 +869,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     case 0x39: // '9'
       while(LineDown(vd)) ;
       vd->pixdisp=0;
-      scrollUp(vd,ScreenH()-1);
+      scrollUp(vd,ScreenH()-1-vd->lastLineHeight);
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x31: // '1'

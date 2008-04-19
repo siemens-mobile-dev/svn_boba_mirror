@@ -44,7 +44,7 @@ char **GetHistory(int *cnt)
   char path[256];
   char *history_buf,*s,*tmp;
   char **history;
-  int f, flen, history_depth = 0, i;
+  int f,flen,history_depth=0,i;
   unsigned ul;
   getSymbolicPath(path,"$urlcache\\history.txt");
   f=fopen(path,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
@@ -53,35 +53,36 @@ char **GetHistory(int *cnt)
     LockSched();
     ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
     UnlockSched();
+    *cnt=history_depth;
     return 0;
   }
-  flen = lseek(f, 0, 2, &ul, &ul)+1;
-  lseek(f, 0, 0, &ul, &ul);
+  flen=lseek(f,0,2,&ul,&ul)+1;
+  lseek(f,0,0,&ul,&ul);
 
-  flen = (flen>MAX_FILE_SIZE)?MAX_FILE_SIZE:flen;
-  history_buf = (char*)malloc(MAX_FILE_SIZE);
-  history_buf[flen-1] = 0;
+  flen=(flen>MAX_FILE_SIZE)?MAX_FILE_SIZE:flen;
+  history_buf=(char*)malloc(MAX_FILE_SIZE);
+  history_buf[flen-1]=0;
   fread(f,history_buf,flen,&ul);
   fclose(f,&ul);
 
-  history = (char**)malloc(sizeof(char *) * HISTORY_DEPTH);
-  for(i = 0; i < HISTORY_DEPTH; i++)
-  history[i] = 0;
-  s = history_buf;
-  tmp = history_buf;
-  for(i = 0; i < HISTORY_DEPTH && s && tmp < history_buf + flen; i++)
+  history=(char**)malloc(sizeof(char *)*HISTORY_DEPTH);
+  for(i=0;i<HISTORY_DEPTH;i++)
+  history[i]=0;
+  s=history_buf;
+  tmp=history_buf;
+  for(i=0;i<HISTORY_DEPTH&&s&&tmp<history_buf+flen;i++)
   {
-    s = strstr(tmp, NEW_LINE);
+    s=strstr(tmp,NEW_LINE);
     if(s)
     {
-      history[i] = (char*)malloc(s - tmp + 1);
-      memcpy(history[i], tmp, s-tmp);
-      history[i][s-tmp] = 0;
-      tmp = s + 2;
+      history[i]=(char*)malloc(s-tmp+1);
+      memcpy(history[i],tmp,s-tmp);
+      history[i][s-tmp]=0;
+      tmp=s+2;
       history_depth++;
     }
   }
-  *cnt = history_depth;
+  *cnt=history_depth;
   mfree(history_buf);
   return history;
 }
@@ -94,7 +95,7 @@ void AddURLToHistory(const char *url)
   int f, flen, history_depth = 0, i;
   unsigned ul;
   getSymbolicPath(path,"$urlcache\\history.txt");
-  f=fopen(path,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  f=fopen(path,A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();

@@ -352,8 +352,3 @@ void AddDropDownList(VIEWDATA *vd)
   }
   RawInsertChar(vd,vd->WCHAR_LIST_FORM);
 }
-
-void AddPageEndItem(VIEWDATA *vd)
-{
-  AddTextItem(vd,"\n<Q>",4);
-}

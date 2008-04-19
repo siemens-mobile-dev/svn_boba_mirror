@@ -25,6 +25,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
   int c,h,cw,f=0;
   unsigned int pos=p->pos;
   p->centerAtAll=0;
+  vd->lastLineHeight=0;
   while(pos<vd->rawtext_size)
   {
     c=vd->rawtext[pos++];
@@ -90,11 +91,6 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     }
     // компоновка элементов здесь
     cw=GetSymbolWidth(c,p->bold?FONT_SMALL_BOLD:FONT_SMALL);
-//    if (needNewLine&&cw>0)
-//    {
-//      needNewLine=0;
-//      cw=ScreenW();
-//    }
     left-=cw;
     if (left<0)
     {
@@ -144,7 +140,10 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     }
     if (max_h)
     {
-      if (h>*max_h)  *max_h=h;
+      if (h>*max_h)
+      {
+        *max_h=vd->lastLineHeight=h;
+      }
     }
     if (cw>=ScreenW()/2||h>GetFontHeight(FONT_SMALL,0)*2) // Картинки отдельно
     {
@@ -245,6 +244,7 @@ int LineUp(VIEWDATA *vd)
 void scrollDown(VIEWDATA *vd, int amount)
 {
   if (!RenderPage(vd,0)) return;
+  
   vd->pixdisp+=amount;
   unsigned int cl_h;
 L1:
@@ -259,7 +259,7 @@ L1:
     {
       while(LineDown(vd)) ;
       vd->pixdisp=0;
-      scrollUp(vd,ScreenH()-1);
+      scrollUp(vd,ScreenH()-1-vd->lastLineHeight);
       return;
     }
     vd->pixdisp=pd;
@@ -271,7 +271,7 @@ L1:
     {
       while(LineDown(vd)) ;
       vd->pixdisp=0;
-      scrollUp(vd,ScreenH()-1);
+      scrollUp(vd,ScreenH()-1-vd->lastLineHeight);
     }
   }
 }
@@ -386,13 +386,22 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int dfh=GetFontHeight(FONT_SMALL,0)*2; //double font height
   
   int rnd_x;
-  REFCACHE *rnd_rf; 
+  REFCACHE *rnd_rf;
+  
+//  RECT refrc[32];
+//  int refrc_count=0;
+//  int refrc_dispd=0;
+  
+  int lcheck=0;  // last line checker
   
   while(ypos<=scr_h)
   {
-    if (LineDown(vd))
+    if (!lcheck) lcheck=!LineDown(vd);
+    else lcheck++;
+    if (lcheck<=1&&vd->lines_cache_size>1)
     {
-      lc=vd->lines_cache+vl;  
+      if (lcheck) vl--;
+      lc=vd->lines_cache+vl;
       dc=0;
       ws_width=0;
       cur_rc=1;
@@ -405,15 +414,26 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       rc[0].color[2]=lc->paper2>>8;
       rc[0].color[3]=lc->paper2;
       
-      if ((vl+1)<vd->lines_cache_size)
+      if (lcheck)
       {
-        len=(lc[1]).pos-(lc[0]).pos;
+        sc=(lc[1]).pos;
+        len=vd->rawtext_size-sc;
       }
       else
-        len=vd->rawtext_size-lc->pos;
-      sc=lc->pos;
-      if (ena_ref) ws->wsbody[++dc]=UTF16_ENA_INVERT; // если реф начался на предыдущей строке
-      //ws->wsbody[++dc]='\\';
+      {
+        sc=lc->pos;
+        len=(lc[1]).pos-sc;
+      }
+      
+      if (ena_ref)
+      {
+        ws->wsbody[++dc]=UTF16_ENA_INVERT; // если реф начался на предыдущей строке
+//        refrc[refrc_count].x=0;
+//        refrc[refrc_count].y=ypos;
+//        refrc[refrc_count].y2=lc->pixheight+ypos;
+//        refrc_count++;
+      }
+      
       while(len>0&&(dc<32000))
       {
         c=vd->rawtext[sc];
@@ -422,12 +442,16 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         {
           if ((lc->pixheight<dfh)?(ypos<0):(ypos+lc->pixheight-dfh<0))
             goto L1;
-          if ((lc->pixheight<dfh)?(ypos+lc->pixheight>scr_h+2):(ypos+dfh>scr_h+2))
+          if ((lc->pixheight<dfh)?(ypos+lc->pixheight>=scr_h):(ypos+dfh>=scr_h))
             goto L1;
           if (vd->pos_cur_ref==sc)
           {
             flag=1;
             ena_ref=1;
+//            refrc[0].x=ws_width;
+//            refrc[0].y=ypos;
+//            refrc[0].y2=lc->pixheight+ypos;
+//            refrc_count++;
           }
           else
           {
@@ -439,54 +463,24 @@ int RenderPage(VIEWDATA *vd, int do_draw)
               flag=2;
             }
             vd->pos_last_ref=sc;
+            if (ena_ref) ena_ref++;
             goto L1;
           }
+//          goto L1;
         }
+        else
         if (c==UTF16_DIS_INVERT)
         {
-          if (!ena_ref) goto L1;
+          if (ena_ref!=1)
+          {
+            if (ena_ref) ena_ref--;
+            goto L1;
+          }
+//          refrc[refrc_count-1].x2=ws_width-refrc[refrc_count-1].x;
           ena_ref=0;
+//          goto L1;
         }
-        
-//        if (c==UTF16_ENA_INVERT)
-//        {
-//          //ws->wsbody[++dc]='>';
-//          if (ypos+lc[0].pixheight>dfh||ypos>=0)
-//          {
-//            if (_ref==0xFFFFFFFF) _ref=sc;
-//            if (vd->pos_cur_ref!=sc) goto L1;
-//            flag=1;
-//            ena_ref=1;
-//          }
-//          else
-//            goto L1;
-//        } else
-//        if (c==UTF16_DIS_INVERT)
-//        {
-//          //ws->wsbody[++dc]='<';
-//          if ((lc->pixheight<dfh)?(ypos+lc->pixheight<scr_h+2):(ypos+dfh<scr_h+2))
-//          {
-//            if (_ref!=0xFFFFFFFF)
-//            {
-//              // здесь все рефы видны
-//              if (vd->pos_first_ref==0xFFFFFFFF) vd->pos_first_ref=_ref;
-//              vd->pos_last_ref=_ref;
-//              if (flag==0) vd->pos_prev_ref=_ref;
-//              if (flag==2)
-//              {
-//                vd->pos_next_ref=_ref;
-//                flag=3;
-//              }
-//              if (flag==1) flag=2;
-//              _ref=0xFFFFFFFF;
-//              if (!ena_ref) goto L1;
-//              ena_ref=0;
-//            }
-//          }
-//          else
-//            goto L1;
-//        } else
-        
+        else
         if (c==UTF16_PAPER_RGBA)
         {
           if (cur_rc<MAX_COLORS_IN_LINE)
@@ -518,7 +512,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             rnd_x=ws_width;
           }
         }
-//        if (c==0x20&&ws_width==0) goto L1;
         
         ws->wsbody[++dc]=c;
         ws_width+=GetSymbolWidth(c,lc->bold?FONT_SMALL_BOLD:FONT_SMALL);
@@ -542,6 +535,12 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         int x=0;
         if (lc[1].right) x=scr_w-ws_width;
         if (lc[1].center||lc[1].centerAtAll) x=(scr_w-ws_width)/2;
+//        if (ena_ref) refrc[refrc_count-1].x2=ws_width;
+//        if (refrc_count>refrc_dispd)
+//        {
+//          refrc[refrc_dispd].x+=x;
+//          refrc_dispd++;
+//        }
         def_ink[0]=lc->ink1>>8;
         def_ink[1]=lc->ink1;
         def_ink[2]=lc->ink2>>8;
@@ -551,6 +550,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           DrawRectangle(rc[i].start_x,ypos,rc[i].end_x,y2,
 		                    RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
         }
+        if (lcheck) y2=ypos+vd->lastLineHeight;
+        
 	      DrawString(ws,x,ypos,scr_w,y2,
 		               lc->bold?FONT_SMALL_BOLD:FONT_SMALL,
                    TEXT_NOFORMAT+(lc->underline?TEXT_UNDERLINE:0),
@@ -558,7 +559,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         
         if (rnd_rf) renderForm(vd,rnd_rf,rnd_x+x,ypos);
       }
-      if (y2>=scr_h||vl==vd->lines_cache_size-2)
+      if (y2>=scr_h||lcheck)
       {
         int b=(vd->lines_cache[store_line].pos*1000)/vd->rawtext_size*scr_h/1000-2;
         int e=(lc->pos*1000)/vd->rawtext_size*scr_h/1000+2;
@@ -566,7 +567,19 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         {
           SetPixel(scr_w,i,GetPaletteAdrByColorIndex(2));
           SetPixel(scr_w-1,i,GetPaletteAdrByColorIndex(2));
+#ifdef ELKA
+          SetPixel(scr_w-2,i,GetPaletteAdrByColorIndex(2));
+#endif
         }
+//        if (refrc_count)
+//        {
+//          for (int i=0;i<refrc_count;i++)
+//          {
+//            DrawRectangle(refrc->x,refrc->y,refrc->x+refrc->x2,refrc->y2,0,
+//              GetPaletteAdrByColorIndex(2),
+//              GetPaletteAdrByColorIndex(23));
+//          }
+//        }
 //        if (ballet_fexists("$ballet\\debug.txt"))
 //        {
 //          WSHDR *ws;
@@ -603,6 +616,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       break;
     }
   }
+  if (lcheck) result=0;
   if (flag==0) vd->pos_cur_ref=0xFFFFFFFF;
   vd->view_line=store_line;
   return(result);

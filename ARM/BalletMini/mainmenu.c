@@ -868,7 +868,6 @@ void history_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   {
     len=strlen(history[cur_item]);
     ws=AllocMenuWS(gui,len+4);
-    //ascii2ws(ws,ustop->urlname);
     str_2ws(ws,history[cur_item],64);
   }
   else
@@ -911,6 +910,7 @@ int CreateHistoryMenu()
   int depth;
   char **history;
   history = GetHistory(&depth);
+  if (!depth) return 0;
   patch_header(&history_HDR);
   return CreateMenu(0,0,&history_STRUCT,&history_HDR,0,depth,history,0);
 }

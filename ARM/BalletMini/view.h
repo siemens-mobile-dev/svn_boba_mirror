@@ -145,6 +145,8 @@ typedef struct
   
   int WCHAR_BUTTON_OFF, WCHAR_BUTTON_ON, WCHAR_RADIO_OFF, WCHAR_RADIO_ON, WCHAR_TEXT_FORM, WCHAR_LIST_FORM;
   
+  unsigned short lastLineHeight;
+  
 }VIEWDATA;
 
 //#define RADIO_BTTN_CLKD "radio_bttn_clkd.png"
