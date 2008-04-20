@@ -559,8 +559,8 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
-          <state>16</state>
+          <version>8</version>
+          <state>17</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -930,7 +930,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild>upload.cmd</postbuild>
+        <postbuild>obexcopy.exe $EXE_DIR$\BalletMini.elf \MMCard\ZBin\BalletMini\BalletMini.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2205,7 +2205,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2391,7 +2391,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3029,7 +3029,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3215,7 +3215,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3296,15 +3296,6 @@
     </settings>
   </configuration>
   <group>
-    <name>Files</name>
-    <file>
-      <name>$PROJ_DIR$\img\lang.txt</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\upload.cmd</name>
-    </file>
-  </group>
-  <group>
     <name>jpeglib</name>
     <file>
       <name>$PROJ_DIR$\jpeglib\jinclude.h</name>
@@ -3315,9 +3306,6 @@
   </group>
   <file>
     <name>$PROJ_DIR$\additems.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\BalletMini.txt</name>
   </file>
   <file>
     <name>$PROJ_DIR$\conf_loader.c</name>
