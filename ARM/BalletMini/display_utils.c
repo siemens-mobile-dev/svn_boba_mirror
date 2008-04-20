@@ -126,7 +126,6 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     {
       if (left+cw<ScreenW()) // image is last character
       {
-        //if (c!=vd->WCHAR_LIST_FORM) // preserve dropdown list centring
         p->centerAtAll=1;
         if (vd->rawtext[pos-1]==UTF16_ENA_INVERT)
         {
@@ -150,7 +149,6 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       if (left+cw==ScreenW()) // image is first character
       {
         if (pos>(vd->rawtext_size-1)) goto LERR;
-        //if (c!=vd->WCHAR_LIST_FORM) // preserve dropdown list centring
         p->centerAtAll=1;
         if (vd->rawtext[pos+1]==UTF16_DIS_INVERT)
         {
@@ -388,9 +386,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int rnd_x;
   REFCACHE *rnd_rf;
   
-//  RECT refrc[32];
-//  int refrc_count=0;
-//  int refrc_dispd=0;
+  RECT rcs[32]; // cursor
+  RECT rcs_work;
+  int  rcs_num=0;
   
   int lcheck=0;  // last line checker
   
@@ -406,6 +404,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       ws_width=0;
       cur_rc=1;
       rnd_rf=NULL;
+      zeromem(&rcs_work,sizeof(RECT));
       
       rc[0].start_x=0;
       rc[0].end_x=scr_w;
@@ -427,11 +426,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       
       if (ena_ref)
       {
-        ws->wsbody[++dc]=UTF16_ENA_INVERT; // если реф начался на предыдущей строке
-//        refrc[refrc_count].x=0;
-//        refrc[refrc_count].y=ypos;
-//        refrc[refrc_count].y2=lc->pixheight+ypos;
-//        refrc_count++;
+//        ws->wsbody[++dc]=UTF16_ENA_INVERT; // если реф начался на предыдущей строке
+        rcs_work.x=0;
       }
       
       while(len>0&&(dc<32000))
@@ -448,10 +444,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           {
             flag=1;
             ena_ref=1;
-//            refrc[0].x=ws_width;
-//            refrc[0].y=ypos;
-//            refrc[0].y2=lc->pixheight+ypos;
-//            refrc_count++;
+            rcs_work.x=ws_width;
           }
           else
           {
@@ -466,9 +459,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             if (ena_ref) ena_ref++;
             goto L1;
           }
-//          goto L1;
+          goto L1;
         }
-        else
         if (c==UTF16_DIS_INVERT)
         {
           if (ena_ref!=1)
@@ -476,11 +468,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             if (ena_ref) ena_ref--;
             goto L1;
           }
-//          refrc[refrc_count-1].x2=ws_width-refrc[refrc_count-1].x;
+          rcs_work.x2=ws_width;
           ena_ref=0;
-//          goto L1;
+          goto L1;
         }
-        else
         if (c==UTF16_PAPER_RGBA)
         {
           if (cur_rc<MAX_COLORS_IN_LINE)
@@ -498,12 +489,12 @@ int RenderPage(VIEWDATA *vd, int do_draw)
               cur_rc++;
             }
           }
-        } else
+        }
         if (c==UTF16_ALIGN_LEFT||c==UTF16_ALIGN_RIGHT||c==UTF16_ENA_CENTER|| \
             c==UTF16_DIS_CENTER||c==UTF16_NEWLINE)
         {
           goto L1;
-        } else
+        }
         if ((c&0xFF00)==0xE100)
         {
           if (c==vd->WCHAR_TEXT_FORM||c==vd->WCHAR_LIST_FORM)
@@ -512,9 +503,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             rnd_x=ws_width;
           }
         }
-        
         ws->wsbody[++dc]=c;
         ws_width+=GetSymbolWidth(c,lc->bold?FONT_SMALL_BOLD:FONT_SMALL);
+        
         if ((c==UTF16_PAPER_RGBA)||(c==UTF16_INK_RGBA))
         {
           len--;
@@ -526,31 +517,43 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         sc++;
         len--;
       }
-      //ws->wsbody[++dc]='/';
       ws->wsbody[0]=dc;
       y2=lc->pixheight+ypos;
       
-      if (do_draw)
+      if (do_draw&&y2!=ypos)
       {
         int x=0;
         if (lc[1].right) x=scr_w-ws_width;
         if (lc[1].center||lc[1].centerAtAll) x=(scr_w-ws_width)/2;
-//        if (ena_ref) refrc[refrc_count-1].x2=ws_width;
-//        if (refrc_count>refrc_dispd)
-//        {
-//          refrc[refrc_dispd].x+=x;
-//          refrc_dispd++;
-//        }
+        
         def_ink[0]=lc->ink1>>8;
         def_ink[1]=lc->ink1;
         def_ink[2]=lc->ink2>>8;
         def_ink[3]=lc->ink2;
+        
         for (int i=0; i!=cur_rc; i++)
         {
           DrawRectangle(rc[i].start_x,ypos,rc[i].end_x,y2,
 		                    RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
         }
         if (lcheck) y2=ypos+vd->lastLineHeight;
+        
+        if (ena_ref) rcs_work.x2=ws_width;
+        if (rcs_work.x!=0||rcs_work.x2!=0)
+        {
+          rcs_work.y=ypos;
+          rcs_work.y2=lc->pixheight+ypos;
+          rcs_work.x+=x;
+          rcs_work.x2+=x;
+          
+          rcs_work.x--;
+          rcs_work.x2++;
+          rcs_work.y--;
+          rcs_work.y2--;
+          
+          memcpy(&rcs[rcs_num],&rcs_work,sizeof(RECT));
+          rcs_num++;
+        }
         
 	      DrawString(ws,x,ypos,scr_w,y2,
 		               lc->bold?FONT_SMALL_BOLD:FONT_SMALL,
@@ -571,15 +574,46 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           SetPixel(scr_w-2,i,GetPaletteAdrByColorIndex(2));
 #endif
         }
-//        if (refrc_count)
-//        {
-//          for (int i=0;i<refrc_count;i++)
-//          {
-//            DrawRectangle(refrc->x,refrc->y,refrc->x+refrc->x2,refrc->y2,0,
-//              GetPaletteAdrByColorIndex(2),
-//              GetPaletteAdrByColorIndex(23));
-//          }
-//        }
+        if (rcs_num)
+        {
+          int col=3;
+          REFCACHE *rf=FindReferenceByBegin(vd,vd->pos_cur_ref);
+          if (rf->tag=='Z') col=2;
+          for (int i=0;i<rcs_num;i++)
+          {
+             DrawLine(rcs[i].x2  ,rcs[i].y  ,rcs[i].x2  ,rcs[i].y2  ,0,GetPaletteAdrByColorIndex(col));
+             DrawLine(rcs[i].x2-1,rcs[i].y  ,rcs[i].x2-1,rcs[i].y2  ,0,GetPaletteAdrByColorIndex(col));
+             if (i+1<rcs_num&&rcs[i].x<rcs[i+1].x2)
+             {
+               DrawLine(rcs[i].x2,rcs[i].y2,rcs[i+1].x2,rcs[i].y2,0,GetPaletteAdrByColorIndex(col));
+               if (rcs[i].x2>rcs[i+1].x2)
+                 DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i+1].x2+1,rcs[i].y2+1,0,GetPaletteAdrByColorIndex(col));
+               else
+                 DrawLine(rcs[i].x2+1,rcs[i].y2+1,rcs[i+1].x2-1,rcs[i].y2+1,0,GetPaletteAdrByColorIndex(col));
+             }
+             else
+             {
+               DrawLine(rcs[i].x2  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y2  ,0,GetPaletteAdrByColorIndex(col));
+               DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i].x+1,rcs[i].y2+1,0,GetPaletteAdrByColorIndex(col));
+             }
+             
+             DrawLine(rcs[i].x  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y  ,0,GetPaletteAdrByColorIndex(col));
+             DrawLine(rcs[i].x+1,rcs[i].y2  ,rcs[i].x+1,rcs[i].y  ,0,GetPaletteAdrByColorIndex(col));
+             if (i>0&&rcs[i].x2>rcs[i-1].x)
+             {
+               DrawLine(rcs[i].x,rcs[i].y,rcs[i-1].x,rcs[i].y,0,GetPaletteAdrByColorIndex(col));
+               if (rcs[i].x<rcs[i-1].x)
+                 DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i-1].x-1,rcs[i].y-1,0,GetPaletteAdrByColorIndex(col));
+               else
+                 DrawLine(rcs[i].x-1,rcs[i].y-1,rcs[i-1].x+1,rcs[i].y-1,0,GetPaletteAdrByColorIndex(col));
+             }
+             else
+             {
+               DrawLine(rcs[i].x  ,rcs[i].y  ,rcs[i].x2 , rcs[i].y  ,0,GetPaletteAdrByColorIndex(col));
+               DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i].x2-1,rcs[i].y-1,0,GetPaletteAdrByColorIndex(col));
+             }
+          }
+        }
 //        if (ballet_fexists("$ballet\\debug.txt"))
 //        {
 //          WSHDR *ws;
@@ -616,9 +650,17 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       break;
     }
   }
+  
   if (lcheck) result=0;
   if (flag==0) vd->pos_cur_ref=0xFFFFFFFF;
   vd->view_line=store_line;
+  
+//  WSHDR *ws2;
+//  ws2=AllocWS(128);
+//  wsprintf(ws2,"End:%i\n",result);
+//  DrawString(ws2,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
+//  FreeWS(ws2);
+          
   return(result);
 }
 

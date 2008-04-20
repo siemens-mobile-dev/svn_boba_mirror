@@ -26,8 +26,8 @@ void AddNewStyle(VIEWDATA *vd)
 {
   if (vd->current_tag_s.bold!=vd->prev_tag_s.bold)
     RawInsertChar(vd,vd->current_tag_s.bold?UTF16_FONT_SMALL_BOLD:UTF16_FONT_SMALL);
-  if (vd->current_tag_s.underline!=vd->prev_tag_s.underline)
-    RawInsertChar(vd,vd->current_tag_s.underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE);
+//  if (vd->current_tag_s.underline!=vd->prev_tag_s.underline)
+//    RawInsertChar(vd,vd->current_tag_s.underline?UTF16_ENA_UNDERLINE:UTF16_DIS_UNDERLINE);
   RawInsertChar(vd,UTF16_INK_RGBA);
   RawInsertChar(vd,(vd->current_tag_s.red<<11)+(vd->current_tag_s.green<<2));
   RawInsertChar(vd,(vd->current_tag_s.blue<<11)+100);
