@@ -2,6 +2,7 @@
 #include "base64.h"
 #include "sf_mime.h"
 #include "decode.h"
+#include "leak_debug.h"
 
 
 extern int strncmp_nocase(const char *s1,const char *s2,unsigned int n);
@@ -37,7 +38,7 @@ char * base64_decode(const char *str, size_t *size)
   
   s=str;
   len=size?*size:strlen(str);
-  ou = output = malloc(len+1);
+  ou = output = debug_malloc(len+1, "base64_decode (alloc)");
   if(output == NULL)
     return NULL;
   
@@ -95,7 +96,7 @@ char * base64_decode(const char *str, size_t *size)
     *size = _sf_b64_len;
   
   *ou = '\0';	/* NUL-terminate */
-  return (realloc(output,_sf_b64_len+1));
+  return (debug_realloc(output,_sf_b64_len+1, "base64_decode (realloc)"));
 }
 
 #pragma inline
@@ -122,7 +123,7 @@ char * quoted_printable_decode(const char *str, size_t *size)
   */
   d=(char *)str;
   len=size?*size:strlen(str);
-  s=buf=malloc(len + 1);
+  s=buf=debug_malloc(len + 1, "quoted_printable_decode (1)");
   if(!buf)
     
     /* ENOMEM? */
@@ -184,7 +185,7 @@ char * quoted_printable_decode(const char *str, size_t *size)
 //  if(_sf_qp_buf)
 //    mfree(_sf_qp_buf);
   if(size) *size = (s - buf);
-  return (realloc(buf,(s-buf)+1));
+  return (debug_realloc(buf,(s-buf)+1, "quoted_printable_decode (1)"));
 }
 
 
@@ -315,7 +316,7 @@ char *strreplace(char *s, char *r, char *w)
   }
   d_ptr += strlen(s) - (prev_br - s);
 
-  char *d = (char*) malloc(d_ptr+1);
+  char *d = (char*) debug_malloc(d_ptr+1, "strreplace (1)");
 
   d_ptr = 0;
   prev_br = s;
@@ -340,7 +341,7 @@ void strip_special(char *s)
   int n = strlen(s);
 
   //сюда мы будем бросать кости
-  char *d = (char*) malloc(n+1);
+  char *d = (char*) debug_malloc(n+1, "strip_special (1)");
   char *buf = d;
   for(int i = 0; i < n; i++)
   {
@@ -360,7 +361,7 @@ void strip_special(char *s)
   }
   *d = 0;
   strcpy(s,buf);
-  mfree(buf);
+  debug_mfree(buf, "strip_special (1)");
 }
 
 void strip_html(char *s)
@@ -395,34 +396,34 @@ void strip_html(char *s)
 
   s2 = s1;
   s1 = strreplace(s2, "<br>", "\r\n");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "<br />", "\r\n");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "<p>", "\r\n");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "<blockquote", "\r\n<blockquote");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "/blockquote>", "/blockquote>\r\n");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "</td>", " ");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "</tr>", "\r\n");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "&quote;", "\"");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "&nbsp;", " ");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "&lt;", "<");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "&gt;", ">");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "&amp;", "&");
-  mfree(s2); s2 = s1;
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
   s1 = strreplace(s2, "&copy;", "(c)");
-  mfree(s2);
+  debug_mfree(s2, "strip_html (1)");
 
   //сюда мы будем бросать кости
-  char *d = (char*) malloc(strlen(s)+1);
+  char *d = (char*) debug_malloc(strlen(s)+1, "strip_html (1)");
 
   //отфильтруем html - результат заведомо меньшей длины
   char *r = s1;
@@ -440,8 +441,8 @@ void strip_html(char *s)
 
   //вернём модифицированную строку в исходный буфер
   strcpy(s,d);
-  mfree(d);
-  mfree(s1);
+  debug_mfree(d, "strip_html (2)");
+  debug_mfree(s1, "strip_html (3)");
   strip_special(s);
 }
 
@@ -476,7 +477,7 @@ char *unmime_header(const char *encoded_str, int default_charset)
   size_t decoded_len;
   
   out_len=strlen(encoded_str) * 2;
-  outbuf = (char*) malloc(out_len);
+  outbuf = (char*) debug_malloc(out_len, "unmime_header (1)");
   zeromem(outbuf,out_len);
   
   while (*p != '\0')
@@ -487,7 +488,7 @@ char *unmime_header(const char *encoded_str, int default_charset)
     eword_begin_p = strstr(p, ENCODED_WORD_BEGIN);
     if (!eword_begin_p)
     {
-      char * curbuf = (char*) malloc(strlen(p)+1);
+      char * curbuf = (char*) debug_malloc(strlen(p)+1, "unmime_header (2)");
 
       switch(default_charset)
       {
@@ -507,7 +508,7 @@ char *unmime_header(const char *encoded_str, int default_charset)
       }
 
       strcat(outbuf, curbuf);
-      mfree(curbuf);
+      debug_mfree(curbuf, "unmime_header (1)");
       //strcat(outbuf, p);
       break;
     }
@@ -575,29 +576,29 @@ char *unmime_header(const char *encoded_str, int default_charset)
     switch(get_charset(charset))
     {
     case WIN_1251:
-      strcat(outbuf, decoded_text);
-      p = eword_end_p + 2;
-      continue;
+      conv_str=(char*) debug_malloc(strlen(decoded_text)+1, "unmime_header (6)");
+      strcpy(conv_str,decoded_text);
+      break;
     case KOI8_R:
-      conv_str=(char*) malloc(strlen(decoded_text)+1);
+      conv_str=(char*) debug_malloc(strlen(decoded_text)+1, "unmime_header (3)");
       koi2win(conv_str,decoded_text);
       break;
     case ISO_8859_5:
-      conv_str=(char*) malloc(strlen(decoded_text)+1);
+      conv_str=(char*) debug_malloc(strlen(decoded_text)+1, "unmime_header (4)");
       iso885952win(conv_str,decoded_text);
       break;
     case UTF_8:
-      conv_str=(char*) malloc(strlen(decoded_text)+1);
+      conv_str=(char*) debug_malloc(strlen(decoded_text)+1, "unmime_header (5)");
       utf82win(conv_str,decoded_text);
       break;
     }
     strcat(outbuf, conv_str);
-    mfree(conv_str);
-    mfree(decoded_text);
+    debug_mfree(conv_str, "unmime_header (2)");
+    debug_mfree(decoded_text, "unmime_header (3)");
     p = eword_end_p + 2;
   }
   out_str = outbuf;
   out_len = strlen(outbuf);
     
-  return realloc(out_str, out_len + 1);
+  return debug_realloc(out_str, out_len + 1, "unmime_header (1)");
 }

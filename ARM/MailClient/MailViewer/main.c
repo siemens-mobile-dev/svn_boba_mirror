@@ -4,7 +4,7 @@
 #include "..\rect_patcher.h"
 #include "decode.h"
 //#include <time.h>
-
+#include "leak_debug.h"
 
 const char ipc_daemon_name[]=IPC_DAEMON_NAME;
 const char ipc_my_name[]=IPC_VIEWER_NAME;
@@ -156,6 +156,7 @@ typedef struct
 #pragma segment="ELFBEGIN"
 void ElfKiller(void)
 {
+  Clean();
   kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
 }
 //-----------------------------------------------------------------------------------
@@ -225,22 +226,24 @@ volatile ML_VIEW *mails;
 void FreeMailDB()
 {
   ML_VIEW *ml_cur=(ML_VIEW *)mails;
+
   LockSched();
   mails=0;
   UnlockSched();
   ML_VIEW *ml_prev;
   while (ml_cur)
   {
-    mfree(ml_cur->uidl);
-    mfree(ml_cur->header);
-    mfree(ml_cur->subject);
-    mfree(ml_cur->from);
-    mfree(ml_cur->to);
-    mfree(ml_cur->content_type);
-    mfree(ml_cur->content_encoding);
+    if(ml_cur->uidl)             debug_mfree(ml_cur->uidl, "FreeMailDB (1)");
+    if(ml_cur->header)           debug_mfree(ml_cur->header, "FreeMailDB (2)");
+    if(ml_cur->subject)          debug_mfree(ml_cur->subject, "FreeMailDB (3)");
+    if(ml_cur->from)             debug_mfree(ml_cur->from, "FreeMailDB (4)");
+    if(ml_cur->to)               debug_mfree(ml_cur->to, "FreeMailDB (5)");
+    if(ml_cur->content_type)     debug_mfree(ml_cur->content_type, "FreeMailDB (6)");
+    if(ml_cur->content_encoding) debug_mfree(ml_cur->content_encoding, "FreeMailDB (7)");
+    if(ml_cur->date)             debug_mfree(ml_cur->date, "FreeMailDB (8)");
     ml_prev=ml_cur;
     ml_cur=ml_cur->next;
-    mfree(ml_prev);
+    debug_mfree(ml_prev, "FreeMailDB (8)");
   }
 }
 
@@ -252,6 +255,7 @@ int InitMailDB()
   MAIL_DB mail_db;
   char *uidl;
   int n=0;
+
   ML_VIEW *ml_cur=(ML_VIEW *)&mails;
   unsigned int err;
   strcpy(fname,EML_PATH);
@@ -269,26 +273,27 @@ int InitMailDB()
   {
     while (fread(f,&mail_db,sizeof(MAIL_DB),&err)==sizeof(MAIL_DB))
     {
+
       if(mail_db.magic!=MDB_MAGIC) break;
-      ml_cur=ml_cur->next=malloc(sizeof(ML_VIEW));
+      ml_cur=ml_cur->next=debug_malloc(sizeof(ML_VIEW), "InitMailDB (1)");
       zeromem(ml_cur,sizeof(ML_VIEW));
       ml_cur->prev_state = ml_cur->state=mail_db.state;
       ml_cur->is_read=mail_db.is_read;
       ml_cur->mail_size=mail_db.mail_size;
-      ml_cur->subject=malloc(129);
-      strcpy(ml_cur->subject, mail_db.hdr);
+      ml_cur->subject=debug_malloc(129, "InitMailDB (2)");
+      memcpy(ml_cur->subject, mail_db.hdr, 128);
       if (mail_db.uidl_len)
       {
-        uidl=malloc(mail_db.uidl_len+1);
+        uidl=debug_malloc(mail_db.uidl_len+1, "InitMailDB (3)");
         uidl[mail_db.uidl_len]=0;
-        fread(f,uidl,mail_db.uidl_len,&err);
+        fread(f,uidl,mail_db.uidl_len,&err); 
         ml_cur->uidl=uidl;
       }
       else ml_cur->uidl=0;
       n++;
     }
     fclose(f,&err);
-    InitHeaders();
+    InitHeaders(); 
   }
   return (n);
 }
@@ -298,6 +303,7 @@ void write_mail_DB()
   int f;
   unsigned int err;
   char fname[128];
+
   ML_VIEW *ml_list=(ML_VIEW *)&mails;
   MAIL_DB mail_db;
   strcpy(fname,EML_PATH);
@@ -415,7 +421,7 @@ unsigned get_date_from_str(const char *str)
   if(buf) 
     str = buf + 2;
   
-  for(ptr = str; *ptr && !((*ptr > 'A' && *ptr < 'Z') || (*ptr > 'A' && *ptr < 'z')); ptr++);
+  for(ptr = str; *ptr && !((*ptr > 'A' && *ptr < 'Z') || (*ptr > 'a' && *ptr < 'z')); ptr++);
 
   if(!*ptr) 
   {
@@ -630,6 +636,7 @@ void InitHeaders()
   int fsize, flag=1;
   char *_eol;
   char *content_type;
+  
   ML_VIEW *ml_cur=(ML_VIEW *)&mails, *prev, *next;
   while((ml_cur=ml_cur->next))
   {
@@ -637,16 +644,19 @@ void InitHeaders()
     cd = TEXT;
     if (ml_cur->header)
     {
-      mfree(ml_cur->header);
+      debug_mfree(ml_cur->header, "InitHeaders (1)");
       ml_cur->header=0;
     }
+    
+    ml_cur->timestamp = 0;
     snprintf(fname,127,"%s%s.eml",EML_PATH,ml_cur->uidl);
     if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err))==-1)
     {
+      ml_cur->header=0;
       continue;
     }
     fsize=get_fsize(f);
-    buf=malloc(fsize+1);
+    buf=debug_malloc(fsize+1, "InitHeaders (1)");
     fread(f,buf,fsize,&err);
     fclose(f,&err);
     buf[fsize]=0;
@@ -661,7 +671,7 @@ void InitHeaders()
     if (_eol)
     {
       *_eol=0;
-      buf=realloc(buf,strlen(buf)+1);
+      buf=debug_realloc(buf,strlen(buf)+1, "InitHeaders (1)");
     }
 
     ml_cur->header=buf;
@@ -671,18 +681,16 @@ void InitHeaders()
       dec_str=unmime_header(buf, get_charset(fname));
     else
       dec_str=unmime_header(buf, UTF_8);
-    
-    ml_cur->timestamp = 0;
-    
+        
     for(date = dec_str; *date && *date != ';'; date++);
-    if(*date)
+ /*   if(*date)
     {
       for(date++; *date && (*date == ' ' || *date == '\r' || *date == '\n' || *date == '\t'); date++);
 
       ml_cur->timestamp=get_date_from_str(date);
     }
-    else
-    {
+    else*/
+ //   {
     
       date=get_date(ml_cur);
       if (date)
@@ -691,9 +699,9 @@ void InitHeaders()
         while (*date==' ' || *date==0x09) date++;
         ml_cur->timestamp=get_date_from_str(date);
       }
-    }
-    
-    mfree(buf);
+ //   }
+        
+    debug_mfree(buf, "InitHeaders (2)");
     ml_cur->header=dec_str; 
 
     
@@ -810,6 +818,7 @@ char *get_string_from_header(ML_VIEW *ml_list, char *str)
   char *end;
   char *subject;
   int len, prev_len, c_len;
+
   if (!ml_list) return (0);
   if (ml_list->header)
   {
@@ -823,7 +832,7 @@ char *get_string_from_header(ML_VIEW *ml_list, char *str)
       if (!strncmp_nocase(p, str,len))
       {
         len=cstrlen(p);
-        subject=malloc(len+1);
+        subject=debug_malloc(len+1, str);
         cstrcpy(subject,p);
         p+=len;
         while(*p!=0 && (*(p+2)=='\t' || *(p+2)==' '))
@@ -832,7 +841,7 @@ char *get_string_from_header(ML_VIEW *ml_list, char *str)
           prev_len=len;
           c_len=cstrlen(p);
           len+=c_len;
-          subject=realloc(subject,len+1);
+          subject=debug_realloc(subject,len+1, "get_string_from_header (realloc)");
           cstrcpy(subject+prev_len,p);
           p+=c_len;
         }
@@ -854,12 +863,12 @@ char *get_subject(ML_VIEW *ml_list)
   subject=get_string_from_header(ml_list, "subject:");
   if(!subject)
   {
-    subject=(char *)malloc(strlen(no_subject)+1);
+    subject=(char *)debug_malloc(strlen(no_subject)+1, "get_subject (1)");
     strcpy(subject,no_subject);
   }
 
   strcpy(ml_list->subject, subject);
-  mfree(subject);
+  debug_mfree(subject, "get_subject (1)");
   return (ml_list->subject);
 }
 
@@ -921,7 +930,7 @@ char *get_from_multipartheader(char *begin_h, char *end_h, char *str)
       if (!strncmp_nocase(p, str,len))
       {
         len=cstrlen(p);
-        s=malloc(len+1);
+        s=debug_malloc(len+1, "get_from_multipartheader (1)");
         cstrcpy(s,p);
         p+=len;
         while(*p!=0 && (*(p+2)=='\t' || *(p+2)==' '))
@@ -930,7 +939,7 @@ char *get_from_multipartheader(char *begin_h, char *end_h, char *str)
           prev_len=len;
           c_len=cstrlen(p);
           len+=c_len;
-          s=realloc(s,len+1);
+          s=debug_realloc(s,len+1, "get_from_multipartheader (1)");
           cstrcpy(s+prev_len,p);
           p+=c_len;
         }
@@ -1024,7 +1033,7 @@ int saveas_onkey(GUI *data, GUI_MSG *msg)
       break;
     case BIT8: case BIT7:
       len=size?size:strlen(p);
-      decoded = malloc(len+1);
+      decoded = debug_malloc(len+1, "saveas_onkey (1)");
       decoded[len] = 0;
       memcpy(decoded, p, len);
       break;
@@ -1042,12 +1051,12 @@ int saveas_onkey(GUI *data, GUI_MSG *msg)
     ws_2str(ec.pWS,fname,128);
     if ((f=fopen(fname,A_WriteOnly+A_BIN+A_Truncate+A_Create, P_WRITE, &err))==-1)
     {
-      mfree(decoded);
+      debug_mfree(decoded, "saveas_onkey (1)");
       ShowMSG(1,(int)"Can't create file!");
       return (1);
     }
     fwrite(f, decoded, size, &err);
-    mfree(decoded);
+    debug_mfree(decoded, "saveas_onkey (2)");
     fclose(f, &err);
     ShowMSG(1,(int)"Succesfully saved!");
     return(1);
@@ -1063,7 +1072,7 @@ void saveas_ghook(GUI *data, int cmd)
   mail_view=EDIT_GetUserPointer(data);
   if (cmd==3)
   {
-    mfree(mail_view);
+    debug_mfree(mail_view, "saveas_ghook (1)");
   }
   if (cmd==0x0A)
   {
@@ -1129,12 +1138,12 @@ void create_save_as_dialog(MAIL_PART *top, char *eml)
   str_2ws(ews, SAVE_AS_FOLDER, 127);
   wstrcat(ews, filename);
   FreeWS(filename);
-  mfree(p);
+  debug_mfree(p, "create_save_as_dialog (1)");
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ews,128);
   AddEditControlToEditQend(eq,&ec,ma);  
     
   
-  mail_view=malloc(sizeof(MAIL_VIEW));
+  mail_view=debug_malloc(sizeof(MAIL_VIEW), "create_save_as_dialog (1)");
   mail_view->top=top;
   mail_view->eml=eml;
   patch_header(&saveas_hdr);
@@ -1330,10 +1339,10 @@ void ed1_ghook(GUI *data, int cmd)
       {
         prev=m;
         m=m->next;
-        mfree(prev);
+        debug_mfree(prev, "ed1_ghook (1)");
       }
-      mfree(view_list->eml);
-      mfree(view_list);
+      debug_mfree(view_list->eml, "ed1_ghook (2)");
+      debug_mfree(view_list, "ed1_ghook (3)");
     }
   }
   if (cmd==0x0C)
@@ -1480,7 +1489,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
     
   headers=AllocWS(100);
 
-  top=malloc(sizeof(MAIL_PART));
+  top=debug_malloc(sizeof(MAIL_PART), "ParseMailBody (1)");
   bot=top;
   top->next=0;
   top->offset=0;
@@ -1498,7 +1507,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err);
   if (f==-1)
   {
-    mfree(top);
+    debug_mfree(top, "ParseMailBody (1)");
     return (0);
   }
   
@@ -1506,24 +1515,24 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
   if (!size)
   {
     fclose(f, &err);
-    mfree(top);
+    debug_mfree(top, "ParseMailBody (2)");
     return (0);
   }
-  eml=malloc(size+1);
+  eml=debug_malloc(size+1, "ParseMailBody (2)");
   fread(f, eml, size, &err);
   fclose(f, &err);
   eml[size]=0;
   end_header=strstr(eml, d_eol);
   if (!end_header || (end_header+4)==(eml+size))
   {
-    mfree(eml);
-    mfree(top);
+    debug_mfree(eml, "ParseMailBody (3)");
+    debug_mfree(top, "ParseMailBody (4)");
     return (0);
   }
   strcpy(eml,end_header+4);
   size=strlen(eml);
   top->size=size;
-  eml=realloc(eml, size+1);
+  eml=debug_realloc(eml, size+1, "ParseMailBody (1)");
   top->charset=WIN_1251;
   top->textlen=0;
   while(bot)
@@ -1544,7 +1553,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       {
       default:
       case BIT8:
-        buf=malloc(bot->size+1);
+        buf=debug_malloc(bot->size+1, "ParseMailBody (3)");
         strncpy(buf,eml+bot->offset,bot->size);
         buf[bot->size]=0;
         break;
@@ -1598,7 +1607,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       ed_toitem=AddEditControlToEditQend(eq,&ec,ma); 
       bot->ec_n=ed_toitem;
       FreeWS(ws);
-      mfree(buf);
+      debug_mfree(buf, "ParseMailBody (5)");
 
       ascii2ws(headers,"------------------");
       ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
@@ -1617,7 +1626,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       {
       default:
       case BIT8:
-        buf=malloc(bot->size+1);
+        buf=debug_malloc(bot->size+1, "ParseMailBody (4)");
         strncpy(buf,eml+bot->offset,bot->size);
         buf[bot->size]=0;
         break;
@@ -1670,7 +1679,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
       ed_toitem=AddEditControlToEditQend(eq,&ec,ma); 
       bot->ec_n=ed_toitem;
       FreeWS(ws);
-      mfree(buf);
+      debug_mfree(buf, "ParseMailBody (6)");
 
       ascii2ws(headers,"------------------");
       ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,headers,wslen(headers));
@@ -1703,7 +1712,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         
         prev=bot;
         while(prev->next) prev=prev->next;
-        prev=prev->next=malloc(sizeof(MAIL_PART));
+        prev=prev->next=debug_malloc(sizeof(MAIL_PART), "ParseMailBody (5)");
         prev->next=0;
         prev->ec_n=-1;
         prev->offset=buf-eml;
@@ -1715,7 +1724,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         if (content_type)
         {
           strcpy(prev->ct,content_type);  
-          mfree(content_type);
+          debug_mfree(content_type, "ParseMailBody (7)");
         }
         else strcpy(prev->ct,default_ctype);
         
@@ -1723,7 +1732,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
         if (content_encoding)
         {
           cstrcpy(prev->te,content_encoding);     
-          mfree(content_encoding);
+          debug_mfree(content_encoding, "ParseMailBody (8)");
         }
         else strcpy(prev->te,default_transfere);
 
@@ -1741,7 +1750,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
           
           if(get_cdisp_index(content_disposition) != TEXT) 
             prev->content_type=APPLICATION;
-          mfree(content_disposition);
+          debug_mfree(content_disposition, "ParseMailBody (9)");
         }
         
         if (get_param_from_string(prev->ct, "charset=", tmp, 127))
@@ -1768,7 +1777,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
    
       ws=AllocWS(strlen(p));
       ascii2ws(ws, p);
-      mfree(p);
+      debug_mfree(p, "ParseMailBody (10)");
       PrepareEditControl(&ec);   
 
       ConstructEditControl(&ec,ECT_READ_ONLY_SELECTED,ECF_APPEND_EOL,ws,wslen(ws));
@@ -1803,7 +1812,7 @@ MAIL_VIEW *ParseMailBody(void *eq,ML_VIEW *ml_list, void *ma)
     bot=bot->next;
     
   }
-  view_list=malloc(sizeof(MAIL_VIEW));
+  view_list=debug_malloc(sizeof(MAIL_VIEW), "ParseMailBody (6)");
   view_list->top=top;
   view_list->eml=eml;
   FreeWS(headers);
@@ -2113,7 +2122,7 @@ void send_req_checkmailbox(void)
 {
   if (daemon_present!=-1)
   {
-    IPC_REQ *ipc=malloc(sizeof(IPC_REQ));
+    IPC_REQ *ipc=debug_malloc(sizeof(IPC_REQ), "send_req_checkmailbox (1)");
     ipc->name_to=ipc_daemon_name;
     ipc->name_from=ipc_my_name;
     ipc->data=0;
@@ -2125,7 +2134,7 @@ void send_req_stopcheck(void)
 {
   if (daemon_present!=-1)
   {
-    IPC_REQ *ipc=malloc(sizeof(IPC_REQ));
+    IPC_REQ *ipc=debug_malloc(sizeof(IPC_REQ), "send_req_stopcheck (1)");
     ipc->name_to=ipc_daemon_name;
     ipc->name_from=ipc_my_name;
     ipc->data=0;
@@ -2206,14 +2215,17 @@ void delete_record(GUI *data)
     if(!(strcmp(mail_cur->uidl,cur_menu->uidl)))
     {
       ml_prev->next=mail_cur->next;
-      mfree(mail_cur->uidl);
-      mfree(mail_cur->header);
-      mfree(mail_cur->subject);
-      mfree(mail_cur->from);
-      mfree(mail_cur->to);
-      mfree(mail_cur->content_type);
-      mfree(mail_cur->content_encoding);
-      mfree(mail_cur);
+
+      if(mail_cur->uidl)             debug_mfree(mail_cur->uidl, "delete_record (1)");
+      if(mail_cur->header)           debug_mfree(mail_cur->header, "delete_record (2)");
+      if(mail_cur->subject)          debug_mfree(mail_cur->subject, "delete_record (3)");
+      if(mail_cur->from)             debug_mfree(mail_cur->from, "delete_record (4)");
+      if(mail_cur->to)               debug_mfree(mail_cur->to, "delete_record (5)");
+      if(mail_cur->content_type)     debug_mfree(mail_cur->content_type, "delete_record (6)");
+      if(mail_cur->content_encoding) debug_mfree(mail_cur->content_encoding, "delete_record (7)");
+      if(mail_cur->date)             debug_mfree(mail_cur->date, "delete_record (8)");
+      debug_mfree(mail_cur, "delete_record (9)");
+
       request_recount_mailmenu=1;
       break;        
     }
@@ -2398,6 +2410,7 @@ void maillist_menu_iconhndl(void *data, int curitem, void *unk)
   ML_VIEW *mail_cur;
   WSHDR *ws;
   char *subject;
+
   mail_cur=find_mlist_ByID(curitem);
   if (!mail_cur) return;
   void *item=AllocMenuItem(data);
@@ -2562,7 +2575,6 @@ void maincsm_onclose(CSM_RAM *csm)
   gipc.name_from=ipc_my_name;
   gipc.data=0;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_VIEWER_LOGFF,&gipc);
-  
   FreeMailDB();
   SUBPROC((void *)ElfKiller);
 }
@@ -2652,7 +2664,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             ShowMSG(1,(int)"Can't connect!");
             break;
           }
-          mfree(ipc);
+          debug_mfree(ipc, "csm1");
           break;
           
          
@@ -2662,6 +2674,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             GeneralFunc_flag1(stat_gui_id,2);
           }
           mfree(ipc);
+          //debug_mfree(ipc, "csm2");
           break;
           
         case IPC_CHECK_DOUBLERUN:
