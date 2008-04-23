@@ -363,7 +363,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         vd->oms_pos++;
 	      goto L_NOSTAGE2;
       case 'Q':
-        AddTextItem(vd,"\n",1); // HACK at the end of page we must add invisible ending line
+        //AddTextItem(vd,"Q",1); // HACK at the end of page we must add invisible ending line
         vd->parse_state=OMS_STOP;
         return;
       case 'Z':

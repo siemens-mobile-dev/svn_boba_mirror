@@ -372,8 +372,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int c;
   int ena_ref=0;
   
-  int result=1;
-
   unsigned int flag=0;
   
   vd->pos_first_ref=0xFFFFFFFF;
@@ -424,12 +422,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         len=(lc[1]).pos-sc;
       }
       
-      if (ena_ref)
-      {
-//        ws->wsbody[++dc]=UTF16_ENA_INVERT; // если реф начался на предыдущей строке
-        rcs_work.x=0;
-      }
-      
       while(len>0&&(dc<32000))
       {
         c=vd->rawtext[sc];
@@ -438,7 +430,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         {
           if ((lc->pixheight<dfh)?(ypos<0):(ypos+lc->pixheight-dfh<0))
             goto L1;
-          if ((lc->pixheight<dfh)?(ypos+lc->pixheight>=scr_h):(ypos+dfh>=scr_h))
+          if ((lc->pixheight<dfh)?(ypos+lc->pixheight>scr_h):(ypos+dfh>scr_h))
             goto L1;
           if (vd->pos_cur_ref==sc)
           {
@@ -518,7 +510,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         len--;
       }
       ws->wsbody[0]=dc;
-      y2=lc->pixheight+ypos;
+      if (lcheck)
+        y2=ypos+vd->lastLineHeight;
+      else
+        y2=lc->pixheight+ypos;
       
       if (do_draw&&y2!=ypos)
       {
@@ -536,25 +531,25 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           DrawRectangle(rc[i].start_x,ypos,rc[i].end_x,y2,
 		                    RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
         }
-        if (lcheck) y2=ypos+vd->lastLineHeight;
         
         if (ena_ref) rcs_work.x2=ws_width;
-        if (rcs_work.x!=0||rcs_work.x2!=0)
+        if ((rcs_work.x!=0||rcs_work.x2!=0)&&rcs_work.x!=rcs_work.x2)
         {
           rcs_work.y=ypos;
-          rcs_work.y2=lc->pixheight+ypos;
+          rcs_work.y2=y2;
           rcs_work.x+=x;
           rcs_work.x2+=x;
           
-          rcs_work.x--;
+          rcs_work.x-=2;
           rcs_work.x2++;
           rcs_work.y--;
-          rcs_work.y2--;
+          
+          if (rcs_work.x<0) rcs_work.x=0;
+          if (rcs_work.x2>scr_w) rcs_work.x2=scr_w;
           
           memcpy(&rcs[rcs_num],&rcs_work,sizeof(RECT));
           rcs_num++;
         }
-        
 	      DrawString(ws,x,ypos,scr_w,y2,
 		               lc->bold?FONT_SMALL_BOLD:FONT_SMALL,
                    TEXT_NOFORMAT+(lc->underline?TEXT_UNDERLINE:0),
@@ -564,56 +559,59 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       }
       if (y2>=scr_h||lcheck)
       {
-        int b=(vd->lines_cache[store_line].pos*1000)/vd->rawtext_size*scr_h/1000-2;
-        int e=(lc->pos*1000)/vd->rawtext_size*scr_h/1000+2;
-        for (int i=b;i<=e;i++)
-        {
-          SetPixel(scr_w,i,GetPaletteAdrByColorIndex(2));
-          SetPixel(scr_w-1,i,GetPaletteAdrByColorIndex(2));
-#ifdef ELKA
-          SetPixel(scr_w-2,i,GetPaletteAdrByColorIndex(2));
-#endif
-        }
         if (rcs_num)
         {
-          int col=3;
+          char c1[4];
+          setColor(0,0,180,100,c1);
           REFCACHE *rf=FindReferenceByBegin(vd,vd->pos_cur_ref);
-          if (rf->tag=='Z') col=2;
+          if (rf->tag=='Z')
+          {
+            setColor(200,0,0,100,c1);
+          }
           for (int i=0;i<rcs_num;i++)
           {
-             DrawLine(rcs[i].x2  ,rcs[i].y  ,rcs[i].x2  ,rcs[i].y2  ,0,GetPaletteAdrByColorIndex(col));
-             DrawLine(rcs[i].x2-1,rcs[i].y  ,rcs[i].x2-1,rcs[i].y2  ,0,GetPaletteAdrByColorIndex(col));
+             DrawLine(rcs[i].x2  ,rcs[i].y  ,rcs[i].x2  ,rcs[i].y2  ,0,c1);
+             DrawLine(rcs[i].x2-1,rcs[i].y  ,rcs[i].x2-1,rcs[i].y2  ,0,c1);
              if (i+1<rcs_num&&rcs[i].x<rcs[i+1].x2)
              {
-               DrawLine(rcs[i].x2,rcs[i].y2,rcs[i+1].x2,rcs[i].y2,0,GetPaletteAdrByColorIndex(col));
+               DrawLine(rcs[i].x2,rcs[i].y2,rcs[i+1].x2,rcs[i].y2,0,c1);
                if (rcs[i].x2>rcs[i+1].x2)
-                 DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i+1].x2+1,rcs[i].y2+1,0,GetPaletteAdrByColorIndex(col));
+                 DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i+1].x2+1,rcs[i].y2+1,0,c1);
                else
-                 DrawLine(rcs[i].x2+1,rcs[i].y2+1,rcs[i+1].x2-1,rcs[i].y2+1,0,GetPaletteAdrByColorIndex(col));
+                 DrawLine(rcs[i].x2+1,rcs[i].y2+1,rcs[i+1].x2-1,rcs[i].y2+1,0,c1);
              }
              else
              {
-               DrawLine(rcs[i].x2  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y2  ,0,GetPaletteAdrByColorIndex(col));
-               DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i].x+1,rcs[i].y2+1,0,GetPaletteAdrByColorIndex(col));
+               DrawLine(rcs[i].x2  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y2  ,0,c1);
+               DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i].x+1,rcs[i].y2+1,0,c1);
              }
              
-             DrawLine(rcs[i].x  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y  ,0,GetPaletteAdrByColorIndex(col));
-             DrawLine(rcs[i].x+1,rcs[i].y2  ,rcs[i].x+1,rcs[i].y  ,0,GetPaletteAdrByColorIndex(col));
+             DrawLine(rcs[i].x  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y  ,0,c1);
+             DrawLine(rcs[i].x+1,rcs[i].y2  ,rcs[i].x+1,rcs[i].y  ,0,c1);
              if (i>0&&rcs[i].x2>rcs[i-1].x)
              {
-               DrawLine(rcs[i].x,rcs[i].y,rcs[i-1].x,rcs[i].y,0,GetPaletteAdrByColorIndex(col));
+               DrawLine(rcs[i].x,rcs[i].y,rcs[i-1].x,rcs[i].y,0,c1);
                if (rcs[i].x<rcs[i-1].x)
-                 DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i-1].x-1,rcs[i].y-1,0,GetPaletteAdrByColorIndex(col));
+                 DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i-1].x-1,rcs[i].y-1,0,c1);
                else
-                 DrawLine(rcs[i].x-1,rcs[i].y-1,rcs[i-1].x+1,rcs[i].y-1,0,GetPaletteAdrByColorIndex(col));
+                 DrawLine(rcs[i].x-1,rcs[i].y-1,rcs[i-1].x+1,rcs[i].y-1,0,c1);
              }
              else
              {
-               DrawLine(rcs[i].x  ,rcs[i].y  ,rcs[i].x2 , rcs[i].y  ,0,GetPaletteAdrByColorIndex(col));
-               DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i].x2-1,rcs[i].y-1,0,GetPaletteAdrByColorIndex(col));
+               DrawLine(rcs[i].x  ,rcs[i].y  ,rcs[i].x2 , rcs[i].y  ,0,c1);
+               DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i].x2-1,rcs[i].y-1,0,c1);
              }
           }
         }
+        int b=(vd->lines_cache[store_line].pos*1000)/vd->rawtext_size*scr_h/1000-2;
+        int e=(lc->pos*1000)/vd->rawtext_size*scr_h/1000+2;
+        if (lcheck) e=scr_h;
+#ifdef ELKA
+        DrawRectangle(scr_w-2,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+#else
+        DrawRectangle(scr_w-1,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+#endif
+        
 //        if (ballet_fexists("$ballet\\debug.txt"))
 //        {
 //          WSHDR *ws;
@@ -645,23 +643,15 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       vl++;
     }
     else
-    {
-      result=0;
       break;
-    }
   }
-  
-  if (lcheck) result=0;
   if (flag==0) vd->pos_cur_ref=0xFFFFFFFF;
   vd->view_line=store_line;
   
-//  WSHDR *ws2;
-//  ws2=AllocWS(128);
-//  wsprintf(ws2,"End:%i\n",result);
-//  DrawString(ws2,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
-//  FreeWS(ws2);
-          
-  return(result);
+  if (lcheck==2)
+    return 0;
+  else
+    return 1;
 }
 
 REFCACHE *FindReferenceByBegin(VIEWDATA *vd, unsigned int pos)
