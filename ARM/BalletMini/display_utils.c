@@ -648,10 +648,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   if (flag==0) vd->pos_cur_ref=0xFFFFFFFF;
   vd->view_line=store_line;
   
-  if (lcheck==2)
-    return 0;
-  else
+  if (lcheck==0)
     return 1;
+  else
+    return 0;
 }
 
 REFCACHE *FindReferenceByBegin(VIEWDATA *vd, unsigned int pos)

@@ -1,11 +1,16 @@
 #include "view.h"
 
 void debugf(char *file,int line);
-#define DEBUGF(void) debugf(__FILE__,__LINE__)
 void debugv(char *file,int line,void *p, int sz);
+void debuf(void *p, int sz);
+#define DEBUGF(void) debugf(__FILE__,__LINE__)
 #define DEBUGV(a,b) debugv(__FILE__,__LINE__,a,b)
 #define DEBUGC(a) debugv(__FILE__,__LINE__,a,strlen(a))
-#define DEBUGS(a,b) {static char c[512];sprintf(c,a,b);DEBUGV(c,strlen(c));}
+#define DEBUGS(a,b) {static char c[128];sprintf(c,a,b);DEBUGV(c,strlen(c));}
+#define DEBUFC(a) debuf(a,strlen(a))
+#define DEBUFV(a,b) debuf(a,b)
+#define DEBUFS(a,b) {static char c[128];sprintf(c,a,b);debuf(c,strlen(c));}
+
 unsigned int _rshort2(char *p);
 int strcmp_nocase(const char *s, const char *d);
 int omstrcmp(VIEWDATA *vd, unsigned int ps, unsigned int pd);

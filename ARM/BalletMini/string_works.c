@@ -5,14 +5,17 @@ int debugA=A_Truncate;
 unsigned int debug_ul;
 int debug_file;
 
+static char buf[1024];
+int buf_sz=0;
+
 void debugv(char *file,int line,void *p, int sz)
 {
   if ((debug_file=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&debug_ul))!=-1)
   {
     fwrite(debug_file,p,sz,&debug_ul);
     fclose(debug_file,&debug_ul);
+    debugA=A_Append;
   }
-  debugA=A_Append;
 }
 
 void debugf(char *file,int line)
@@ -23,8 +26,30 @@ void debugf(char *file,int line)
     sprintf(c,"%s : %i\n",file,line);
     fwrite(debug_file,c,strlen(c),&debug_ul);
     fclose(debug_file,&debug_ul);
+    debugA=A_Append;
   }
-  debugA=A_Append;
+}
+
+void debuf(void *p, int sz)
+{
+  static char buf[1024];
+  static int buf_sz=0;
+  
+  if (buf_sz+sz<1024)
+  {
+    memcpy(&buf[buf_sz],p,sz);
+    buf_sz+=sz;
+    return;
+  }
+  if ((debug_file=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&debug_ul))!=-1)
+  {
+    fwrite(debug_file,c,strlen(c),&debug_ul);
+    fclose(debug_file,&debug_ul);
+    buf_sz=0;
+    debugA=A_Append;
+    memcpy(&buf[buf_sz],p,sz);
+    buf_sz+=sz;
+  }
 }
 
 static unsigned int _rshort(char *p)
