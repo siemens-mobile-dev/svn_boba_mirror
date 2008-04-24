@@ -389,6 +389,7 @@ int tdiff (int year, int month, int day, int hour, int min, int sec)
 	  + (sec - 0));
 }
 
+//------------------------------------------------------------------------------
 
 int atoi (const char *str)
 {
@@ -404,10 +405,13 @@ int atoi (const char *str)
   return n?-r:r;
 } 
 
+//------------------------------------------------------------------------------
+
 unsigned get_date_from_str(const char *str)
 {
   static char *months[] =
-  {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+  {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
   static int day_tab[2][12] =
   {
     {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
@@ -421,7 +425,8 @@ unsigned get_date_from_str(const char *str)
   if(buf) 
     str = buf + 2;
   
-  for(ptr = str; *ptr && !((*ptr > 'A' && *ptr < 'Z') || (*ptr > 'a' && *ptr < 'z')); ptr++);
+  for(ptr = str; *ptr && !((*ptr > 'A' && *ptr < 'Z') || 
+                           (*ptr > 'a' && *ptr < 'z')); ptr++);
 
   if(!*ptr) 
   {
@@ -627,6 +632,29 @@ unsigned get_date_from_str(const char *str)
   return (tdiff(year, month, day, hour, min, sec));
 }
 
+//------------------------------------------------------------------------------
+
+int get_received_date(char * str)
+{
+  char * r = strstr_nocase(str, "Received:"), *s, *line;
+  if(!r) return 0;
+  
+  line = s = r;
+  while(*s)
+  {
+    if((*s == '\r' || *s == '\n') && (*(s+1) == '\t' || *(s+1) == ' '))
+      line = s+1;
+    if((*s == '\r' || *s == '\n') && ((*(s+1) >= 'a' && *(s+1) <= 'z') || 
+                                      (*(s+1) >= 'A' && *(s+1) <= 'Z')))
+      break;
+    s++;
+  }
+  while(*line && (*line == ' ' || *line == '\t')) line++;
+  return get_date_from_str(line);
+}
+
+//------------------------------------------------------------------------------
+
 void InitHeaders()
 {
   int f, cd;
@@ -681,17 +709,9 @@ void InitHeaders()
       dec_str=unmime_header(buf, get_charset(fname));
     else
       dec_str=unmime_header(buf, UTF_8);
-        
-    for(date = dec_str; *date && *date != ';'; date++);
- /*   if(*date)
-    {
-      for(date++; *date && (*date == ' ' || *date == '\r' || *date == '\n' || *date == '\t'); date++);
-
-      ml_cur->timestamp=get_date_from_str(date);
-    }
-    else*/
- //   {
-    
+       
+    if(!(ml_cur->timestamp = get_received_date(dec_str)))
+    {    
       date=get_date(ml_cur);
       if (date)
       {
@@ -699,7 +719,7 @@ void InitHeaders()
         while (*date==' ' || *date==0x09) date++;
         ml_cur->timestamp=get_date_from_str(date);
       }
- //   }
+    }
         
     debug_mfree(buf, "InitHeaders (2)");
     ml_cur->header=dec_str; 
@@ -2015,15 +2035,8 @@ int create_info_view(ML_VIEW *ml_list)
   }
 
     
-  date = strstr(ml_list->header, ";");
-  if(date)
+  if(fsize=get_received_date(ml_list->header))
   {
-    date++;
-    while(*date && (*date == ' ' || *date == '\r' || *date == '\n' || *date == '\t')) date++;
-    memcpy(dbuf, date, 255);
-    dbuf[255] = 0;
-
-    fsize = get_date_from_str(dbuf);
     buf[0] = 0;
     PrintTimeDate(buf, fsize);
     
