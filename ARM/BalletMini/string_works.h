@@ -10,6 +10,7 @@ void debuf(void *p, int sz);
 #define DEBUFC(a) debuf(a,strlen(a))
 #define DEBUFV(a,b) debuf(a,b)
 #define DEBUFS(a,b) {static char c[128];sprintf(c,a,b);debuf(c,strlen(c));}
+#define DEBUFF(void) {static char c[128];sprintf(c,"%s : %i\n",__FILE__,__LINE__);debuf(c,strlen(c));}
 
 unsigned int _rshort2(char *p);
 int strcmp_nocase(const char *s, const char *d);

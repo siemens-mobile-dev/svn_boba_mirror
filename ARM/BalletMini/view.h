@@ -53,13 +53,13 @@ typedef struct
 // выравнивание, же, - для данной линии
 typedef struct
 {
-  unsigned int pos;  // позиция последего символа в строке
-  unsigned short ink1;
+  unsigned int   pos; // last line character
+  unsigned short ink1; // line ends with . . .
   unsigned short ink2;
   unsigned short paper1;
   unsigned short paper2;
-  unsigned short pixheight;
-  unsigned short bold:1, underline:1, ref:1,center:1,right:1,centerAtAll:1;
+  unsigned short bold:1,underline:1,ref:1,center:1,right:1,centerAtAll:1;
+  unsigned short pixheight; // line height
 }LINECACHE;
 
 typedef struct
@@ -88,8 +88,8 @@ typedef struct
     
   LINECACHE *lines_cache;
   unsigned int lines_cache_size;
+  unsigned int lines_cache_pos;
 
-  unsigned int view_pos;  // del
   unsigned int view_line;
   int pixdisp;
   
@@ -144,8 +144,6 @@ typedef struct
   char *title;
   
   int WCHAR_BUTTON_OFF, WCHAR_BUTTON_ON, WCHAR_RADIO_OFF, WCHAR_RADIO_ON, WCHAR_TEXT_FORM, WCHAR_LIST_FORM;
-  
-  unsigned short lastLineHeight;
   
 }VIEWDATA;
 

@@ -547,7 +547,7 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
 {
   VIEWDATA *vd=malloc(sizeof(VIEWDATA));
   zeromem(vd,sizeof(VIEWDATA));
-  vd->ws=AllocWS(32767);
+  vd->ws=AllocWS(256);
   vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
@@ -869,7 +869,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     case 0x39: // '9'
       while(LineDown(vd)) ;
       vd->pixdisp=0;
-      scrollUp(vd,ScreenH()-1-vd->lastLineHeight);
+      scrollUp(vd,ScreenH()-1);
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case 0x31: // '1'

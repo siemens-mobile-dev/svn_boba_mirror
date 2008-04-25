@@ -19,16 +19,16 @@ int GetFontHeight(int font, int atribute)
   return height;
 }
 
-unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max_h)
+unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *max_h*/)
 {
   int left=ScreenW();
   int c,h,cw,f=0;
-  unsigned int pos=p->pos;
   p->centerAtAll=0;
-  vd->lastLineHeight=0;
-  while(pos<vd->rawtext_size)
+  p->pixheight=0;
+  p->pos=vd->lines_cache_pos;
+  while(p->pos<vd->rawtext_size)
   {
-    c=vd->rawtext[pos++];
+    c=vd->rawtext[p->pos++];
     if ((c&0xFF00)==0xE100)
     {
       h=GetImgHeight(GetPicNByUnicodeSymbol(c));
@@ -39,7 +39,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
     }
     switch(c)
     {
-    case 0x0A:
+    case UTF16_NEWLINE:
       f=1;
       h=0;
       break;
@@ -74,19 +74,19 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       p->bold=1;
       continue;
     case UTF16_INK_RGBA:
-      if (pos>(vd->rawtext_size-2)) goto LERR;
-      p->ink1=vd->rawtext[pos++];
-      p->ink2=vd->rawtext[pos++];
+      if (p->pos>(vd->rawtext_size-2)) return 0;
+      p->ink1=vd->rawtext[p->pos++];
+      p->ink2=vd->rawtext[p->pos++];
       continue;
     case UTF16_PAPER_RGBA:
-      if (pos>(vd->rawtext_size-2)) goto LERR;
-      p->paper1=vd->rawtext[pos++];
-      p->paper2=vd->rawtext[pos++];
+      if (p->pos>(vd->rawtext_size-2)) return 0;
+      p->paper1=vd->rawtext[p->pos++];
+      p->paper2=vd->rawtext[p->pos++];
       continue;
     case UTF16_INK_INDEX:
     case UTF16_PAPER_INDEX:
-      pos++;
-      if (pos>=vd->rawtext_size) goto LERR;
+      if (p->pos>=(vd->rawtext_size-1)) return 0;
+      p->pos++;
       continue;
     }
     // компоновка элементов здесь
@@ -100,8 +100,8 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       {
         while (1)
         {
-          if (vd->rawtext[pos-b]==UTF16_ENA_INVERT) break;
-          if (vd->rawtext[pos-b]==UTF16_NEWLINE)
+          if (vd->rawtext[p->pos-b]==UTF16_ENA_INVERT) break;
+          if (vd->rawtext[p->pos-b]==UTF16_NEWLINE)
           {
             b++;
             break;
@@ -111,7 +111,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
             b=1;
             break;
           }
-          cw+=GetSymbolWidth(vd->rawtext[pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+          cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
           b++;
         }
       }
@@ -119,7 +119,8 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       {
         ;
       }
-      return pos-b;
+      p->pos-=b;
+      return 1; // here can be a bug with line height
     }
     
     if (cw>=ScreenW()/2||h>GetFontHeight(FONT_SMALL,0)*2) // Картинки отдельно
@@ -127,52 +128,46 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p, unsigned int *max
       if (left+cw<ScreenW()) // image is last character
       {
         p->centerAtAll=1;
-        if (vd->rawtext[pos-1]==UTF16_ENA_INVERT)
+        if (vd->rawtext[p->pos-1]==UTF16_ENA_INVERT)
         {
-          return pos-2;
+          p->pos-=2;
+          return 1;
         }
         else
         {
-          return pos-1;
+          p->pos-=1;
+          return 1;
         }
       }
     }
-    if (max_h)
-    {
-      if (h>*max_h)
-      {
-        *max_h=vd->lastLineHeight=h;
-      }
-    }
+    if (h>p->pixheight) p->pixheight=h;
+      
     if (cw>=ScreenW()/2||h>GetFontHeight(FONT_SMALL,0)*2) // Картинки отдельно
     {
       if (left+cw==ScreenW()) // image is first character
       {
-        if (pos>(vd->rawtext_size-1)) goto LERR;
+        if (p->pos>(vd->rawtext_size-1)) return 0;
         p->centerAtAll=1;
-        if (vd->rawtext[pos+1]==UTF16_DIS_INVERT)
+        if (vd->rawtext[p->pos+1]==UTF16_DIS_INVERT)
         {
           p->ref=0;
-          return pos+1;
+          p->pos+=1;
+          return 1;
         }
         else
         {
-          return pos;
+          return 1;
         }
       }
     }
-    if (f)
-    {
-      return pos;
-    }
+    if (f) return 1;
   }
-LERR:
-  return(vd->rawtext_size);
+  return 0;
 }
 
 #define LINESCACHECHUNK 256
 
-static void AddLineToCache(VIEWDATA *vd, LINECACHE *p)
+static void newCacheLine(VIEWDATA *vd, LINECACHE *p)
 {
   if ((vd->lines_cache_size%LINESCACHECHUNK)==0)
   {
@@ -180,6 +175,7 @@ static void AddLineToCache(VIEWDATA *vd, LINECACHE *p)
     vd->lines_cache=realloc(vd->lines_cache,(vd->lines_cache_size+LINESCACHECHUNK)*sizeof(LINECACHE));
   }
   memcpy(vd->lines_cache+(vd->lines_cache_size++),p,sizeof(LINECACHE));
+  vd->lines_cache_pos=p->pos;
 }
 
 int LineDown(VIEWDATA *vd)
@@ -190,11 +186,10 @@ int LineDown(VIEWDATA *vd)
   }
   else
   {
-    LINECACHE lc;
-    unsigned int h;
-    unsigned int pos;
-    if (vd->view_line>=vd->lines_cache_size)
+    LINECACHE *lc;
+    if (!vd->lines_cache_size)
     {
+      LINECACHE lc;
       lc.ink1=0x0000;
       lc.ink2=0x0064;
       lc.paper1=0xFFFF;
@@ -206,26 +201,17 @@ int LineDown(VIEWDATA *vd)
       lc.pos=0;
       lc.center=0;
       lc.right=0;
-      AddLineToCache(vd,&lc);
+      newCacheLine(vd,&lc);
     }
-    else
-    {
-      memcpy(&lc,vd->lines_cache+vd->view_line,sizeof(lc));
-    }
-    h=0;
-    pos=SearchNextDisplayLine(vd,&lc,&h);
-    (vd->lines_cache+vd->view_line)->pixheight=h;
-    if (pos>=vd->rawtext_size) return 0;
-    lc.pos=pos;
+    lc=vd->lines_cache+vd->lines_cache_size-1;
+    if (!SearchNextDisplayLine(vd,lc)) return 0; // can't caching futher
+    newCacheLine(vd,lc);
     vd->view_line++;
-    if (vd->view_line>=vd->lines_cache_size)
-    {
-      AddLineToCache(vd,&lc);
-    }
   }
   return 1;
 }
 
+// 0 page start
 int LineUp(VIEWDATA *vd)
 {
   int vl=vd->view_line;
@@ -241,7 +227,7 @@ int LineUp(VIEWDATA *vd)
 
 void scrollDown(VIEWDATA *vd, int amount)
 {
-  if (!RenderPage(vd,0)) return;
+  if (!RenderPage(vd,0)||vd->lines_cache_size==0) return;
   
   vd->pixdisp+=amount;
   unsigned int cl_h;
@@ -256,8 +242,8 @@ L1:
     if (!RenderPage(vd,0))
     {
       while(LineDown(vd)) ;
-      vd->pixdisp=0;
-      scrollUp(vd,ScreenH()-1-vd->lastLineHeight);
+      vd->pixdisp=(vd->lines_cache+vd->lines_cache_size-1)->pixheight;
+      scrollUp(vd,ScreenH()-1);
       return;
     }
     vd->pixdisp=pd;
@@ -268,8 +254,8 @@ L1:
     if (!RenderPage(vd,0))
     {
       while(LineDown(vd)) ;
-      vd->pixdisp=0;
-      scrollUp(vd,ScreenH()-1-vd->lastLineHeight);
+      vd->pixdisp=(vd->lines_cache+vd->lines_cache_size-1)->pixheight;
+      scrollUp(vd,ScreenH()-1);
     }
   }
 }
@@ -349,17 +335,18 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y)
   }
 }
 
-// возвращает 0, если виден конец страницы
+// возвращает 1, если видна последняя строка
+// возвращает 2, если виден конец страницы
 int RenderPage(VIEWDATA *vd, int do_draw)
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
-  int sc;
+  int sc=0;
   int dc;
   WSHDR *ws=vd->ws;
   LINECACHE *lc;
-  unsigned int vl;
   int ypos=-vd->pixdisp;
+  unsigned int vl;
   unsigned int store_line=vl=vd->view_line;
   unsigned int len;
   unsigned int y2;
@@ -388,16 +375,19 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   RECT rcs_work;
   int  rcs_num=0;
   
-  int lcheck=0;  // last line checker
+  int lcheck=0; // last line checker
+  int lprev=0; // prev line
+  
+  int x;
   
   while(ypos<=scr_h)
   {
     if (!lcheck) lcheck=!LineDown(vd);
     else lcheck++;
-    if (lcheck<=1&&vd->lines_cache_size>1)
+    if (lcheck<=1&&vd->lines_cache_size>0)
     {
-      if (lcheck) vl--;
       lc=vd->lines_cache+vl;
+      if (vl) lprev=-1;
       dc=0;
       ws_width=0;
       cur_rc=1;
@@ -406,23 +396,15 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       
       rc[0].start_x=0;
       rc[0].end_x=scr_w;
-      rc[0].color[0]=lc->paper1>>8;
-      rc[0].color[1]=lc->paper1;
-      rc[0].color[2]=lc->paper2>>8;
-      rc[0].color[3]=lc->paper2;
+      rc[0].color[0]=lc[lprev].paper1>>8;
+      rc[0].color[1]=lc[lprev].paper1;
+      rc[0].color[2]=lc[lprev].paper2>>8;
+      rc[0].color[3]=lc[lprev].paper2;
       
-      if (lcheck)
-      {
-        sc=(lc[1]).pos;
-        len=vd->rawtext_size-sc;
-      }
-      else
-      {
-        sc=lc->pos;
-        len=(lc[1]).pos-sc;
-      }
+      if (vl) sc=lc[lprev].pos;
+      len=lc->pos-sc;
       
-      while(len>0&&(dc<32000))
+      while(len>0&&dc<250)
       {
         c=vd->rawtext[sc];
         
@@ -496,7 +478,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           }
         }
         ws->wsbody[++dc]=c;
-        ws_width+=GetSymbolWidth(c,lc->bold?FONT_SMALL_BOLD:FONT_SMALL);
+        ws_width+=GetSymbolWidth(c,lc[lprev].bold?FONT_SMALL_BOLD:FONT_SMALL);
         
         if ((c==UTF16_PAPER_RGBA)||(c==UTF16_INK_RGBA))
         {
@@ -510,21 +492,18 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         len--;
       }
       ws->wsbody[0]=dc;
-      if (lcheck)
-        y2=ypos+vd->lastLineHeight;
-      else
-        y2=lc->pixheight+ypos;
-      
+      y2=lc->pixheight+ypos;
+
       if (do_draw&&y2!=ypos)
       {
-        int x=0;
-        if (lc[1].right) x=scr_w-ws_width;
-        if (lc[1].center||lc[1].centerAtAll) x=(scr_w-ws_width)/2;
+        x=0;
+        if (lc[lprev].right) x=scr_w-ws_width;
+        if (lc[lprev].center||lc->centerAtAll) x=(scr_w-ws_width)/2;
         
-        def_ink[0]=lc->ink1>>8;
-        def_ink[1]=lc->ink1;
-        def_ink[2]=lc->ink2>>8;
-        def_ink[3]=lc->ink2;
+        def_ink[0]=lc[lprev].ink1>>8;
+        def_ink[1]=lc[lprev].ink1;
+        def_ink[2]=lc[lprev].ink2>>8;
+        def_ink[3]=lc[lprev].ink2;
         
         for (int i=0; i!=cur_rc; i++)
         {
@@ -551,67 +530,65 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           rcs_num++;
         }
 	      DrawString(ws,x,ypos,scr_w,y2,
-		               lc->bold?FONT_SMALL_BOLD:FONT_SMALL,
-                   TEXT_NOFORMAT+(lc->underline?TEXT_UNDERLINE:0),
+		               lc[lprev].bold?FONT_SMALL_BOLD:FONT_SMALL,
+                   TEXT_NOFORMAT+(lc[lprev].underline?TEXT_UNDERLINE:0),
 		               def_ink,GetPaletteAdrByColorIndex(23));
         
         if (rnd_rf) renderForm(vd,rnd_rf,rnd_x+x,ypos);
-      }
-      if (y2>=scr_h||lcheck)
-      {
-        if (rcs_num)
-        {
-          char c1[4];
-          setColor(0,0,180,100,c1);
-          REFCACHE *rf=FindReferenceByBegin(vd,vd->pos_cur_ref);
-          if (rf->tag=='Z')
-          {
-            setColor(200,0,0,100,c1);
-          }
-          for (int i=0;i<rcs_num;i++)
-          {
-             DrawLine(rcs[i].x2  ,rcs[i].y  ,rcs[i].x2  ,rcs[i].y2  ,0,c1);
-             DrawLine(rcs[i].x2-1,rcs[i].y  ,rcs[i].x2-1,rcs[i].y2  ,0,c1);
-             if (i+1<rcs_num&&rcs[i].x<rcs[i+1].x2)
-             {
-               DrawLine(rcs[i].x2,rcs[i].y2,rcs[i+1].x2,rcs[i].y2,0,c1);
-               if (rcs[i].x2>rcs[i+1].x2)
-                 DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i+1].x2+1,rcs[i].y2+1,0,c1);
-               else
-                 DrawLine(rcs[i].x2+1,rcs[i].y2+1,rcs[i+1].x2-1,rcs[i].y2+1,0,c1);
-             }
-             else
-             {
-               DrawLine(rcs[i].x2  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y2  ,0,c1);
-               DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i].x+1,rcs[i].y2+1,0,c1);
-             }
-             
-             DrawLine(rcs[i].x  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y  ,0,c1);
-             DrawLine(rcs[i].x+1,rcs[i].y2  ,rcs[i].x+1,rcs[i].y  ,0,c1);
-             if (i>0&&rcs[i].x2>rcs[i-1].x)
-             {
-               DrawLine(rcs[i].x,rcs[i].y,rcs[i-1].x,rcs[i].y,0,c1);
-               if (rcs[i].x<rcs[i-1].x)
-                 DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i-1].x-1,rcs[i].y-1,0,c1);
-               else
-                 DrawLine(rcs[i].x-1,rcs[i].y-1,rcs[i-1].x+1,rcs[i].y-1,0,c1);
-             }
-             else
-             {
-               DrawLine(rcs[i].x  ,rcs[i].y  ,rcs[i].x2 , rcs[i].y  ,0,c1);
-               DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i].x2-1,rcs[i].y-1,0,c1);
-             }
-          }
-        }
-        int b=(vd->lines_cache[store_line].pos*1000)/vd->rawtext_size*scr_h/1000-2;
-        int e=(lc->pos*1000)/vd->rawtext_size*scr_h/1000+2;
-        if (lcheck) e=scr_h;
-#ifdef ELKA
-        DrawRectangle(scr_w-2,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
-#else
-        DrawRectangle(scr_w-1,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
-#endif
         
+        if (y2>=scr_h||lcheck)
+        {
+          if (rcs_num)
+          {
+            char cl[4];
+            setColor(0,0,170,100,cl);
+            REFCACHE *rf=FindReferenceByBegin(vd,vd->pos_cur_ref);
+            if (rf->tag=='Z') setColor(190,0,0,100,cl);
+            for (int i=0;i<rcs_num;i++)
+            {
+               DrawLine(rcs[i].x2  ,rcs[i].y  ,rcs[i].x2  ,rcs[i].y2  ,0,cl);
+               DrawLine(rcs[i].x2-1,rcs[i].y  ,rcs[i].x2-1,rcs[i].y2  ,0,cl);
+               if (i+1<rcs_num&&rcs[i].x<rcs[i+1].x2)
+               {
+                 DrawLine(rcs[i].x2,rcs[i].y2,rcs[i+1].x2,rcs[i].y2,0,cl);
+                 if (rcs[i].x2>rcs[i+1].x2)
+                   DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i+1].x2+1,rcs[i].y2+1,0,cl);
+                 else
+                   DrawLine(rcs[i].x2+1,rcs[i].y2+1,rcs[i+1].x2-1,rcs[i].y2+1,0,cl);
+               }
+               else
+               {
+                 DrawLine(rcs[i].x2  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y2  ,0,cl);
+                 DrawLine(rcs[i].x2-1,rcs[i].y2+1,rcs[i].x+1,rcs[i].y2+1,0,cl);
+               }
+               DrawLine(rcs[i].x  ,rcs[i].y2  ,rcs[i].x  ,rcs[i].y  ,0,cl);
+               DrawLine(rcs[i].x+1,rcs[i].y2  ,rcs[i].x+1,rcs[i].y  ,0,cl);
+               if (i>0&&rcs[i].x2>rcs[i-1].x)
+               {
+                 DrawLine(rcs[i].x,rcs[i].y,rcs[i-1].x,rcs[i].y,0,cl);
+                 if (rcs[i].x<rcs[i-1].x)
+                   DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i-1].x-1,rcs[i].y-1,0,cl);
+                 else
+                   DrawLine(rcs[i].x-1,rcs[i].y-1,rcs[i-1].x+1,rcs[i].y-1,0,cl);
+               }
+               else
+               {
+                 DrawLine(rcs[i].x  ,rcs[i].y  ,rcs[i].x2 , rcs[i].y  ,0,cl);
+                 DrawLine(rcs[i].x+1,rcs[i].y-1,rcs[i].x2-1,rcs[i].y-1,0,cl);
+               }
+            }
+          }
+          int b=((store_line?vd->lines_cache[store_line+lprev].pos:0)*1000)/vd->rawtext_size*scr_h/1000-2; // no float
+          int e=(lc->pos*1000)/vd->rawtext_size*scr_h/1000+2;
+          if (!lcheck||b>0)
+          {
+#ifdef ELKA
+            DrawRectangle(scr_w-2,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+#else
+            DrawRectangle(scr_w-1,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+#endif
+          }
+          
 //        if (ballet_fexists("$ballet\\debug.txt"))
 //        {
 //          WSHDR *ws;
@@ -638,6 +615,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 //          }
 //          FreeWS(ws);
 //        }
+        }
       }
       ypos=y2;
       vl++;
@@ -648,10 +626,16 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   if (flag==0) vd->pos_cur_ref=0xFFFFFFFF;
   vd->view_line=store_line;
   
-  if (lcheck==0)
-    return 1;
-  else
+//  WSHDR *ws2;
+//  ws2=AllocWS(128);
+//  wsprintf(ws2,"lcheck:%i",lcheck);
+//  DrawString(ws2,3,14,scr_w,scr_h,FONT_SMALL,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(21));
+//  FreeWS(ws2);
+  
+  if (lcheck==2)
     return 0;
+  else
+    return 1;
 }
 
 REFCACHE *FindReferenceByBegin(VIEWDATA *vd, unsigned int pos)
