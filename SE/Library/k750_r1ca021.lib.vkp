@@ -148,6 +148,8 @@
 06E0: FFFFFFFF 9199F644 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E4: FFFFFFFF 49B3F644 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book); // גלוסעמ get_APP_DESC_TABLE
 06EC: FFFFFFFF 714FF844 ; 1BB: void Vibra(int t1, int t2, int t3);
+06F0: FFFFFFFF C9910B45 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F4: FFFFFFFF 69920B45 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: FFFFFFFF CD92D244 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: FFFFFFFF E591D244 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: FFFFFFFF 119BD544 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
