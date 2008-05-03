@@ -310,7 +310,7 @@
 09B0: 00000000 D958C144 ; 26C: __thumb png_voidp png_get_progressive_ptr(png_structp png_ptr);
 09B4: 00000000 3D45C144 ; 26D: __thumb png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
 09B8: 00000000 C95BC144 ; 26E: __thumb void png_set_strip_16(png_structp png_ptr);
-09BC: 00000000 D55BC144 ; 26F: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+09BC: 00000000 E15BC144 ; 26F: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
 09C0: 00000000 F95BC144 ; 270: __thumb void png_set_gray_to_rgb(png_structp png_ptr);
 09C4: 00000000 1145C144 ; 271: __thumb png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
 09C8: 00000000 ED5BC144 ; 272: __thumb void png_set_tRNS_to_alpha(png_structp png_ptr);
