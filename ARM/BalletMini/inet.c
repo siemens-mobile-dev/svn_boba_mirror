@@ -366,13 +366,14 @@ static void SendPost(void)
   sprintf(buf,"u=/obml/%s",URL);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"q=ru");
+  sprintf(buf,"q=%s",lgpData[LGP_LangCode]);
+  //sprintf(buf,"q=ru");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"v=Opera Mini/2.0.4509/hifi/woodland/ru");
+  sprintf(buf,"v=Opera Mini/2.0.4509/hifi/woodland/%s",lgpData[LGP_LangCode]);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
   
-  sprintf(buf,"i=Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1630; ru; U; ssr)");
+  sprintf(buf,"i=Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1630; %s; U; ssr)",lgpData[LGP_LangCode]);
   //sprintf(buf,"i-ua=Opera/9.10 (Windows NT 5.1; U; ru)");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
@@ -382,8 +383,8 @@ static void SendPost(void)
   sprintf(buf,"n=1");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"A=CLDC-1.0");
-  //sprintf(buf,"A=CLDC-1.1");
+  //sprintf(buf,"A=CLDC-1.0");
+  sprintf(buf,"A=CLDC-1.1");//
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"B=MIDP-2.0");
@@ -392,7 +393,8 @@ static void SendPost(void)
   sprintf(buf,"C=j2me");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"D=ru");
+  sprintf(buf,"D=%s",lgpData[LGP_LangCode]);
+  //sprintf(buf,"D=ru");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"E=ISO-8859-1");
@@ -443,10 +445,10 @@ static void SendPost(void)
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"b=mod2.04");
-  //sprintf(buf,"b=");
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
-  sprintf(buf,"y=ru");
+  
+  sprintf(buf,"y=%s",lgpData[LGP_LangCode]);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"t=-1");

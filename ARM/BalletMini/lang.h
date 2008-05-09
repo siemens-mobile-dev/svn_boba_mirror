@@ -60,7 +60,7 @@ enum LGP_ID
   LGP_Settings,
   LGP_Exit,
   LGP_Search,
-  LGP_Reserve1,
+  LGP_LangCode,
   LGP_Reserve2,
   LGP_Reserve3,
   LGP_Reserve4,
