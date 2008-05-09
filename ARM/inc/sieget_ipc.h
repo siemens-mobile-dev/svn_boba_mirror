@@ -3,4 +3,6 @@
 
 #define SIEGET_IPC_NAME "SieGetD"
 
+#define SIEGET_GOTO_URL 0
+
 #endif
