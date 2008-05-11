@@ -150,7 +150,7 @@ const int minus11=-11;
 const char ipc_my_name[32]=IPC_BALLETMINI_NAME;
 const char sieget_ipc_name[32] = SIEGET_IPC_NAME;
 
-IPC_REQ gipc;
+IPC_REQ sieget_ipc;
 
 int view_url_mode;
 char *view_url;
@@ -866,11 +866,12 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               if (rf->tag == 'L') s += 2;
               if (rf->tag == 'Z') s += strlen(s) + 1;
               
-              gipc.name_to = sieget_ipc_name; // Посылка url в SieGet
-              gipc.name_from = ipc_my_name;
-              gipc.data = malloc(strlen(s) + 1);
-              strcpy((char *)gipc.data, s);
-              GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &gipc);
+              if (sieget_ipc.data) mfree(sieget_ipc.data);
+              sieget_ipc.name_to = sieget_ipc_name; // Посылка url в SieGet
+              sieget_ipc.name_from = ipc_my_name;
+              sieget_ipc.data = malloc(strlen(s) + 1);
+              strcpy((char *)sieget_ipc.data, s);
+              GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &sieget_ipc);
 
               s=0; // is it necessary
               mfree(s);
@@ -1137,6 +1138,7 @@ static void maincsm_oncreate(CSM_RAM *data)
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->view_id=CreateViewGUI(0);
+  sieget_ipc.data = NULL;
 }
 
 static void KillAll(void)
@@ -1157,6 +1159,7 @@ static void maincsm_onclose(CSM_RAM *csm)
 {
   TERMINATED=1;
   mfree(goto_url);
+  if (sieget_ipc.data) mfree(sieget_ipc.data);
   SUBPROC((void *)Killer);
 }
 
