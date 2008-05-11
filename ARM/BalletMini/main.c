@@ -148,6 +148,8 @@ extern void kill_data(void *p, void (*func_p)(void *));
 const int minus11=-11;
 
 const char ipc_my_name[32]=IPC_BALLETMINI_NAME;
+const char sieget_ipc_name[32] = SIEGET_IPC_NAME;
+
 IPC_REQ gipc;
 
 int view_url_mode;
@@ -864,16 +866,12 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               if (rf->tag == 'L') s += 2;
               if (rf->tag == 'Z') s += strlen(s) + 1;
               
-              char sieget_ipc_name[] = SIEGET_IPC_NAME;
-              IPC_REQ ipc;
-              ipc.name_to = sieget_ipc_name;
-              ipc.name_from = ipc_my_name;
-              ipc.data = malloc(strlen(s) + 1);
-              strcpy((char *)ipc.data, s);
-//              DEBUGS("ipc.data : %s\n",ipc.data);
-//              DEBUGS("ipc.name_from : %s\n",ipc.name_from);
-//              DEBUGS("ipc.name_to : %s\n",ipc.name_to);
-              GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &ipc);
+              gipc.name_to = sieget_ipc_name; // Посылка url в SieGet
+              gipc.name_from = ipc_my_name;
+              gipc.data = malloc(strlen(s) + 1);
+              strcpy((char *)gipc.data, s);
+              GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &gipc);
+
               s=0; // is it necessary
               mfree(s);
             }
@@ -913,132 +911,120 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       vd->view_line=0;
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
+    /*case 0x34: // '4'
+      {
+        //Dump RAWTEXT
+        unsigned int ul;
+        int f;
+        if ((f=fopen("0:\\zbin\\balletmini\\dumpraw.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        {
+          fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
+          fclose(f,&ul);
+        }
+      }
+      break;
+    case 0x37: // '7'
+      {
+        //Dump REFCACHE
+        unsigned int ul;
+        int f;
+        if ((f=fopen("0:\\zbin\\balletmini\\dumpref.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        {
+          char c[256];
+          sprintf(c,"\nref_cache_size : %i\n",vd->ref_cache_size);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,  "oms_size       : %i\n",vd->oms_size);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,  "page_sz        : %i\n",vd->page_sz);
+          fwrite(f,c,strlen(c),&ul);
+          sprintf(c,  "loaded_sz      : %i\n\n",vd->loaded_sz);
+          fwrite(f,c,strlen(c),&ul);
+          for (int i=0;i<vd->ref_cache_size;i++)
+          {
+            REFCACHE *rf=vd->ref_cache+i;
+            sprintf(c,"\nREF : %i\n",i);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  tag:       %c\n",rf->tag);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  id:        %u",rf->id);
+            fwrite(f,c,strlen(c),&ul);
+            if (rf->id!=_NOREF)
+            {
+              char *s=extract_omstr(vd,rf->id);
+              for (int to=strlen(s);to;to--) if (s[to-1]==NULL) s[to-1]=' ';
+              sprintf(c,"   %s",s);
+              fwrite(f,c,strlen(c),&ul);
+              mfree(s);
+            }
+            fwrite(f,"\n",1,&ul);
+            sprintf(c,"  id2:       %u",rf->id2);
+            fwrite(f,c,strlen(c),&ul);
+            if (rf->id2!=_NOREF&&rf->tag!='@')
+            {
+              char *s=extract_omstr(vd,rf->id2);
+              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
+              sprintf(c,"   %s",s);
+              fwrite(f,c,strlen(c),&ul);
+              mfree(s);
+            }
+            fwrite(f,"\n",1,&ul);
+            sprintf(c,"  value:     %u",rf->value);
+            fwrite(f,c,strlen(c),&ul);
+            if (rf->value!=_NOREF)
+            {
+              char *s=extract_omstr(vd,rf->value);
+              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
+              sprintf(c,"   %s",s);
+              fwrite(f,c,strlen(c),&ul);
+              mfree(s);
+            }
+            fwrite(f,"\n",1,&ul);
+            sprintf(c,"  begin:     %u\n",rf->begin);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  end:       %u\n",rf->end);
+            fwrite(f,c,strlen(c),&ul);
+            sprintf(c,"  upload:    %s\n",rf->no_upload?"false":"true");
+            fwrite(f,c,strlen(c),&ul);
+            if (rf->tag=='s')
+            {
+              sprintf(c,"  multiple:  %s\n",rf->multiselect?"true":"false");
+              fwrite(f,c,strlen(c),&ul);
+              sprintf(c,"  size:    %i ",rf->size);
+              fwrite(f,c,strlen(c),&ul);
+              fwrite(f,rf->data,rf->size,&ul);
+              fwrite(f,"\n",1,&ul);
+            }
+          }
+          fclose(f,&ul);
+        }
+      }
+      break;
+    case 0x38: // '8'
+      {
+        //Dump LINECACHE
+        unsigned int ul;
+        int f;
+        if ((f=fopen("0:\\zbin\\balletmini\\dumplc.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        {
+          char c[256];
+          sprintf(c,"\nlines_cache_size : %i\n",vd->lines_cache_size);
+          fwrite(f,c,strlen(c),&ul);
+          for (int i=0;i<vd->lines_cache_size;i++)
+          {
+            LINECACHE *lc=vd->lines_cache+i;
+            sprintf(c,"%i\n  pos : %u\n  pix : %u\n",i,lc->pos,lc->pixheight);
+            fwrite(f,c,strlen(c),&ul);
+          }
+         fclose(f,&ul);
+        }
+      }
+      break;*/
     case 0x39: // '9'
       while(LineDown(vd)) ;
       vd->pixdisp=0;
       scrollUp(vd,ScreenH()-1);
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
-//    case 0x31: // '1'
-//      {
-//        //Dump OMS
-//        unsigned int ul;
-//        int f;
-//        if ((f=fopen("0:\\zbin\\balletmini\\dumpoms.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-//        {
-//          fwrite(f,vd->oms,vd->oms_size,&ul);
-//          fclose(f,&ul);
-//        }
-//      }
-//      break;
-//    case 0x34: // '4'
-//      {
-//        //Dump RAWTEXT
-//        unsigned int ul;
-//        int f;
-//        if ((f=fopen("0:\\zbin\\balletmini\\dumpraw.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-//        {
-//          fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
-//          fclose(f,&ul);
-//        }
-//      }
-//      break;
-//    case 0x37: // '7'
-//      {
-//        //Dump REFCACHE
-//        unsigned int ul;
-//        int f;
-//        if ((f=fopen("0:\\zbin\\balletmini\\dumpref.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-//        {
-//          char c[256];
-//          sprintf(c,"\nref_cache_size : %i\n",vd->ref_cache_size);
-//          fwrite(f,c,strlen(c),&ul);
-//          sprintf(c,  "oms_size       : %i\n",vd->oms_size);
-//          fwrite(f,c,strlen(c),&ul);
-//          sprintf(c,  "page_sz        : %i\n",vd->page_sz);
-//          fwrite(f,c,strlen(c),&ul);
-//          sprintf(c,  "loaded_sz      : %i\n\n",vd->loaded_sz);
-//          fwrite(f,c,strlen(c),&ul);
-//          for (int i=0;i<vd->ref_cache_size;i++)
-//          {
-//            REFCACHE *rf=vd->ref_cache+i;
-//            sprintf(c,"\nREF : %i\n",i);
-//            fwrite(f,c,strlen(c),&ul);
-//            sprintf(c,"  tag:       %c\n",rf->tag);
-//            fwrite(f,c,strlen(c),&ul);
-//            sprintf(c,"  id:        %u",rf->id);
-//            fwrite(f,c,strlen(c),&ul);
-//            if (rf->id!=_NOREF)
-//            {
-//              char *s=extract_omstr(vd,rf->id);
-//              for (int to=strlen(s);to;to--) if (s[to-1]==NULL) s[to-1]=' ';
-//              sprintf(c,"   %s",s);
-//              fwrite(f,c,strlen(c),&ul);
-//              mfree(s);
-//            }
-//            fwrite(f,"\n",1,&ul);
-//            sprintf(c,"  id2:       %u",rf->id2);
-//            fwrite(f,c,strlen(c),&ul);
-//            if (rf->id2!=_NOREF&&rf->tag!='@')
-//            {
-//              char *s=extract_omstr(vd,rf->id2);
-//              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
-//              sprintf(c,"   %s",s);
-//              fwrite(f,c,strlen(c),&ul);
-//              mfree(s);
-//            }
-//            fwrite(f,"\n",1,&ul);
-//            sprintf(c,"  value:     %u",rf->value);
-//            fwrite(f,c,strlen(c),&ul);
-//            if (rf->value!=_NOREF)
-//            {
-//              char *s=extract_omstr(vd,rf->value);
-//              for (int to=_rshort2(vd->oms+rf->id)-1;to;to--) if (s[to]==NULL) s[to]=' ';
-//              sprintf(c,"   %s",s);
-//              fwrite(f,c,strlen(c),&ul);
-//              mfree(s);
-//            }
-//            fwrite(f,"\n",1,&ul);
-//            sprintf(c,"  begin:     %u\n",rf->begin);
-//            fwrite(f,c,strlen(c),&ul);
-//            sprintf(c,"  end:       %u\n",rf->end);
-//            fwrite(f,c,strlen(c),&ul);
-//            sprintf(c,"  upload:    %s\n",rf->no_upload?"false":"true");
-//            fwrite(f,c,strlen(c),&ul);
-//            if (rf->tag=='s')
-//            {
-//              sprintf(c,"  multiple:  %s\n",rf->multiselect?"true":"false");
-//              fwrite(f,c,strlen(c),&ul);
-//              sprintf(c,"  size:    %i ",rf->size);
-//              fwrite(f,c,strlen(c),&ul);
-//              fwrite(f,rf->data,rf->size,&ul);
-//              fwrite(f,"\n",1,&ul);
-//            }
-//          }
-//          fclose(f,&ul);
-//        }
-//      }
-//      break;
-//    case 0x38: // '8'
-//      {
-//        //Dump LINECACHE
-//        unsigned int ul;
-//        int f;
-//        if ((f=fopen("0:\\zbin\\balletmini\\dumplc.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-//        {
-//          char c[256];
-//          sprintf(c,"\nlines_cache_size : %i\n",vd->lines_cache_size);
-//          fwrite(f,c,strlen(c),&ul);
-//          for (int i=0;i<vd->lines_cache_size;i++)
-//          {
-//            LINECACHE *lc=vd->lines_cache+i;
-//            sprintf(c,"%i\n  pos : %u\n  pix : %u\n",i,lc->pos,lc->pixheight);
-//            fwrite(f,c,strlen(c),&ul);
-//          }
-//          fclose(f,&ul);
-//        }
-//      }
-//      break;
     case 0x30: // '0'
       {
         // get text from page
