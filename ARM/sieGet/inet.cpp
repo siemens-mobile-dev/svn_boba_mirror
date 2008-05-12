@@ -281,7 +281,10 @@ int Download::onHTTPHeaders()
   if(char * content_disposition_str = HTTPResponse->headers->GetValue(RESP_Content_Disposition))
   {
     if (file_name) delete file_name;
-    file_name = Get_Param_Value(content_disposition_str, "filename", 1);
+    char * new_fname = Get_Param_Value(content_disposition_str, "filename", 1); // Получаем имя из url->path
+    remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы
+    file_name = utf82filename(new_fname); // utf8 в имя файла
+    delete new_fname;
     if (full_file_name) delete full_file_name;
     full_file_name = new char[strlen(file_path)+strlen(file_name)+2];
     sprintf(full_file_name, "%s%s", file_path, file_name);
@@ -311,7 +314,7 @@ void Download::onHTTPData(char * data, int size) // Запись данных в файл
   download_state = DOWNLOAD_DATA;
   volatile int hFile;
   unsigned int io_error = 0;
-  hFile = fopen(full_file_name, A_ReadWrite+A_Create+A_Append+A_BIN, P_READ+P_WRITE, &io_error);
+  hFile = fopen(full_file_name, A_ReadWrite + A_Create + A_Append + A_BIN, P_READ + P_WRITE, &io_error);
   if(!io_error)
   {
     fwrite(hFile, data, size, &io_error);

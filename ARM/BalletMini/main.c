@@ -860,7 +860,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         {
           if (rf->id != _NOREF)
           {
-            if (rf->tag == 'L' || rf->tag == 'Z')
+            if (rf->tag == 'L' || rf->tag == 'Z' || rf->tag == '@')
             {
               char * s = extract_omstr(vd, rf->id);
               if (rf->tag == 'L') s += 2;
