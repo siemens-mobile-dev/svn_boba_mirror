@@ -5,7 +5,7 @@ extern void _C_LOG(const char *str);
 //pure virtual function may show error
 void __pure_virtual_called(void)
 {
-  _C_LOG("ABSTRACT VIRTUAL FUNCTION CALLED!");
+  MsgBoxError(2, (int)"ABSTRACT VIRTUAL FUNCTION CALLED!");
 };
 
 typedef void (*tf)(void *);

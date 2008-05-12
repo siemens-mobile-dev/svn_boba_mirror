@@ -4,8 +4,10 @@
 
 #include "..\inc\swilib.h"
 #include "socket.h"
+#include "log.h"
 
-Socket *Socket::TopSocket = NULL;
+//SocketHandler *SocketHandler::TopSocketHandler = NULL;
+
 int Socket::GlobalTx = 0;
 int Socket::GlobalRx = 0;
 
@@ -20,7 +22,7 @@ inline int CheckCepId()
 
 SOCK_STATE Socket::GetState() const
 {
-  return state;
+  return socket_state;
 }
 
 //Соединить сокет по ip и порту
@@ -31,26 +33,26 @@ void Socket::Connect(int ip, short port)
     onError(SOCK_ERROR_INVALID_CEPID);
     return;
   }
-  if(id<0)
+  if(socket_id<0)
   {
     onError(SOCK_ERROR_INVALID_SOCKET);
     return;
   }
-
+  
   SOCK_ADDR sa;
   sa.family=1;
   sa.port=htons(port);
   sa.ip=ip;
-  if (connect(id, &sa, sizeof(sa))==-1)
+  if (connect(socket_id, &sa, sizeof(sa))==-1)
   {
     onError(SOCK_ERROR_CONNECTING);
     return;
   }
-  state = SOCK_CREATED;
+  socket_state = SOCK_CREATED;
 }
 
 //Отправить данные
-void Socket::Send(const char *data, int size)
+void Socket::Send(const char * data, int size)
 {
   if (CheckCepId())
   {
@@ -58,7 +60,7 @@ void Socket::Send(const char *data, int size)
     return;
   }
 
-  int send_res = send(id, data, size, 0);
+  int send_res = send(socket_id, data, size, 0);
   if (send_res<0)
   {
     onError(SOCK_ERROR_SENDING);
@@ -79,10 +81,14 @@ void Socket::Send(const char *data, int size)
 //Принять данные
 int Socket::Recv(char *data, int size)
 {
-  int nrecv = recv(id, data, size, 0);
-  GlobalRx += nrecv;
-  Rx += nrecv;
-  return nrecv;
+  int nrecv = recv(socket_id, (char *)data, size, 0);
+  if(nrecv)
+  {
+    GlobalRx += nrecv;
+    Rx += nrecv;
+    return nrecv;
+  }
+  return 0;
 }
 
 //Закрыть сокет
@@ -93,18 +99,17 @@ void Socket::Close()
     onError(SOCK_ERROR_INVALID_CEPID);
     return;
   }
-  if(id<0)
+  if(socket_id < 0)
   {
     onError(SOCK_ERROR_INVALID_SOCKET);
     return;
   }
-
-  shutdown(id, 2);
-  closesocket(id);
-
-  state = SOCK_UNDEF;
+  shutdown(socket_id, 2);
+  closesocket(socket_id);
+  socket_state = SOCK_UNDEF;
 }
 
+//Создать сокет
 void Socket::Create()
 {
   if (CheckCepId())
@@ -112,52 +117,32 @@ void Socket::Create()
     onError(SOCK_ERROR_INVALID_CEPID);
     return;
   }
-
-  id = socket(1,1,0);
-  if(id<0)
+  socket_id = socket(1,1,0);
+  if(socket_id<0)
   {
     onError(SOCK_ERROR_CREATING);
     return;
   }
 
-  state = SOCK_CREATED;
+  socket_state = SOCK_CREATED;
   onCreate();
 }
 
-//Создать сокет
+// Создание сокета
 Socket::Socket()
 {
-  state = SOCK_UNDEF;
-  id = -1;
+  socket_state = SOCK_UNDEF;
+  socket_id = -1;
 
   Tx = 0;
   Rx = 0;
-
-  LockSched();
-  PrevSocket = TopSocket;
-  if (TopSocket)
-    TopSocket->NextSocket = this;
-  NextSocket = NULL;
-  TopSocket = this;
-  UnlockSched();
+  
+  log = new Log;
 }
 
 // Уничтожение сокета
 Socket::~Socket()
 {
-  LockSched();
-  if (TopSocket==this)
-  {
-    TopSocket = PrevSocket;
-    if (TopSocket)
-      TopSocket->NextSocket = NULL;
-  }
-  else
-  {
-    if (NextSocket)
-      NextSocket->PrevSocket = PrevSocket;
-    if (PrevSocket)
-      PrevSocket->NextSocket = NextSocket;
-  }
-  UnlockSched();
+  delete log;
 }
+

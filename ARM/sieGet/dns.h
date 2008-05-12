@@ -3,9 +3,12 @@
 
 #include "include.h"
 
-#define DNR_RESULT_OK 0
-#define DNR_RESULT_ERROR 1
-#define DNR_RESULT_OUT_OF_TRIES 2
+enum DNR_RESULT_MSG
+{
+  DNR_RESULT_OK,
+  DNR_RESULT_ERROR,
+  DNR_RESULT_OUT_OF_TRIES
+};
 
 class DNR
 {
@@ -15,15 +18,32 @@ public:
   void Start(const char *host, int tries);
   void SendReq();
 
-  virtual void onResolve(int result, int value) = 0; //Â HELPER
-
-  static DNR *DNRTop;
-  DNR *DNRNext;
-  DNR *DNRPrev;
+  virtual void onResolve(DNR_RESULT_MSG result_msg, int value) = 0; //Â HELPER
+  
   int DNR_ID;
 private:
   int DNR_TRIES;
-  char *host;
+  char * host;
 };
 
+class DNRHandler
+{
+public:
+  void RegisterDNR(DNR *dnr);
+  void DeleteDNR(DNR *dnr);
+  DNR * GetDNR(int DNR_ID);
+  
+  static DNRHandler * Top;
+  
+  DNRHandler();
+  ~DNRHandler();
+  
+private:
+  struct DNRQ
+  {
+    DNR * dnr;
+    DNRQ * next;
+  };
+  DNRQ *queue;
+};
 #endif

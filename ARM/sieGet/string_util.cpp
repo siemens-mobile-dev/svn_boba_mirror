@@ -6,36 +6,38 @@
 /* Вернуть значение параметра по имени параметра из строки вида:
  nonce="2444323444",qop="auth",charset=utf-8,algorithm=md5-sess
 
-IN: ch - строка
+IN: str - строка
     req - имя требуемого параметра
     cut_quotes - обрезать ли кавычки, если параметр в кавычках
 OUT: Искомое значение; нужно освободить память!
 */
-char *Get_Param_Value(char *ch, char *req, char cut_quotes)
+char * Get_Param_Value(char * str, char * req, int cut_quotes)
 {
-//  char ch[]="nonce=\"2444323444\",qop=\"auth\",charset=utf-8,algorithm=md5-sess";
+//  char str[]="nonce=\"2444323444\",qop=\"auth\",charset=utf-8,algorithm=md5-sess";
 //  char req[]="qop";
-  char *n_displace = strstr(ch, req);     // начало строки с именем параметра
-  char *eq=n_displace + strlen(req);
-  if(!(eq[0]=='='))return NULL;
-  eq+=1;
-  char *zpt= strchr(n_displace,',');
-  if(!zpt)zpt=ch+strlen(ch);
+  char * n_displace = strstr(str, req);     // начало строки с именем параметра
+  char * eq = n_displace + strlen(req);
+  if (!(eq[0] == '=')) return NULL;
+  eq += 1;
+  char * zpt = strchr(n_displace, ',');
+  if (!zpt) zpt= str + strlen(str);
   int len;
-  char *val;
+  char * val;
   if(cut_quotes)
   {
-    len=zpt-eq-2;
-    val=(char *)malloc(len+1);
-    for(int i=0;i<len;i++) val[i]=*(eq+i+1);
+    len = zpt - eq - 2;
+    val = new char[len + 1];
+    for(int i = 0; i < len; i++)
+      val[i] = *(eq + i + 1);
   }
   else
   {
-    len=zpt-eq;
-    val=(char *)malloc(len+1);
-    for(int i=0;i<len;i++) val[i]=*(eq+i);
+    len = zpt - eq;
+    val = new char[len + 1];
+    for(int i = 0; i < len; i++)
+      val[i] = *(eq + i);
   }
-  val[len]=0x0;
+  val[len] = NULL;
   return val;
 }
 
@@ -124,7 +126,7 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
 }
 
 // Преобразование в нижний регистр
-char* str2lower(char *st)
+char * str2lower(char *st)
 {
   unsigned int len = strlen(st);
   for(int i=0;i<len;i++)
@@ -158,7 +160,6 @@ int tolower(int C)
   return(C);
 }
 
-
 // Аналог strcmp, но без чувствительности к регистру
 int stricmp(const char *s, const char *d)
 {
@@ -177,27 +178,25 @@ int stricmp(const char *s, const char *d)
 
 int strnicmp(const char *s1, const char *s2, size_t len)
 {
-	/* Yes, Virginia, it had better be unsigned */
-	unsigned int c1, c2;
+  /* Yes, Virginia, it had better be unsigned */
+  unsigned int c1 = 0;
+  unsigned int c2 = 0;
 
-	c1 = 0;	c2 = 0;
-	if (len) {
-		do {
-			c1 = *s1; c2 = *s2;
-			s1++; s2++;
-			if (!c1)
-				break;
-			if (!c2)
-				break;
-			if (c1 == c2)
-				continue;
-			c1 = tolower(c1);
-			c2 = tolower(c2);
-			if (c1 != c2)
-				break;
-		} while (--len);
-	}
-	return c1 - c2;
+  if (len)
+  {
+    do
+    {
+      c1 = *s1; c2 = *s2;
+      s1++; s2++;
+      if (!c1) break;
+      if (!c2) break;
+      if (c1 == c2) continue;
+      c1 = tolower(c1);
+      c2 = tolower(c2);
+      if (c1 != c2) break;
+    } while (--len);
+  }
+  return c1 - c2;
 }
 
 // Аналог strstr, но без чувствительности к регистру
@@ -543,8 +542,6 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
   return utf8_str;
 }
 
-
-
 // From NatICQ
 
 typedef struct
@@ -729,7 +726,7 @@ unsigned int char16to8(unsigned int c)
   return(c);
 }
 
-void ascii2ws(WSHDR *ws, const char *s)
+void ascii2ws(WSHDR * ws, const char * s)
 {
   char c;
   CutWSTR(ws,0);
@@ -783,7 +780,7 @@ long GetIDLETime(TTime intime, TDate indate)
  resul = res;
  res = endt.min - intime.min - rmin;
  rmin = 0;
- if (res <0 )
+ if (res < 0)
  {
    res = 60 + res;
    rmin = 1;
@@ -817,15 +814,72 @@ long GetIDLETime(TTime intime, TDate indate)
  return(resul);
 }
 
-char *utf82filename(char *str)
+char * utf82filename(char *str)
 {
   int len = strlen(str)+16;
   WSHDR *ws = AllocWS(len);
-  char *res = (char *)malloc(len);
+  char * res = new char[len];
   utf8_2ws(ws, str, len);
   ws_2str(ws, res, len);
   FreeWS(ws);
   return res;
 }
 
+char * filename2utf8(char * str)
+{
+  int len = strlen(str) + 16;
+  int new_len = 0;
+  WSHDR * ws = AllocWS(len);
+  char * tmp = new char[len];
+  str_2ws(ws, tmp, len);
+  ws_2utf8(ws, tmp, &new_len, len);
+  char * res = new char[new_len + 1];
+  strcpy(res, tmp);
+  delete tmp;
+  FreeWS(ws);
+  return res;
+}
 
+// Удаление расширения из имени файла
+void del_ext(char * source)
+{
+  while(*source)source++;
+  while(*source!='.')source--;
+  *source=0;
+};
+
+char * get_fname_from_path(char * path)
+{
+  char * fname = NULL;
+  char * tmp_fname = NULL;
+  if(tmp_fname = strrchr(path, '/'))
+  {
+    fname = new char[strlen(tmp_fname)+1];
+    strcpy(fname, tmp_fname + 1);
+  }
+  else
+  {
+    fname = new char[strlen(path)+1];
+    strcpy(fname, path);
+  }
+  return fname;
+}
+
+const char badchars[] = {'?', '*', '"', ':', '<', '>', '/', '\\', '|', '\n', '\r'};
+
+void remove_bad_chars(char *s)
+{
+  int c;
+  while((c=*s))
+  {
+    for (int i=0; i<(sizeof(badchars)/sizeof(char)); i++)
+    {
+      if (c==badchars[i])
+      {
+        *s='_';
+        break;
+      }    
+    }
+    s++;
+  }
+}

@@ -2,7 +2,6 @@
 #include "csm.h"
 
 const int minus11=-11;
-const char percent_t[] = "%t";
 
 void csm_oncreate(CSM_RAM *data);
 int csm_onmessage(CSM_RAM* data,GBS_MSG* msg);
@@ -56,7 +55,7 @@ void csm_oncreate(CSM_RAM *data)
   desc->csm_class->onCreate();
 }
 
-int csm_onmessage(CSM_RAM* data,GBS_MSG* msg)
+int csm_onmessage(CSM_RAM * data, GBS_MSG * msg)
 {
   EXTRA_CSM_DESC *desc = (EXTRA_CSM_DESC *)data->constr;
   return desc->csm_class->onMessage(msg);
@@ -86,7 +85,7 @@ void AbstractCSM::Close()
 void AbstractCSM::SetName(char *name)
 {
   if (this->name)
-    wsprintf(this->name, percent_t, name);
+    ascii2ws(this->name, name);
 }
 
 AbstractCSM::AbstractCSM()
@@ -153,7 +152,6 @@ DaemonCSM::~DaemonCSM()
     Close();
 }
 
-//=======================================================================================
 
 
 

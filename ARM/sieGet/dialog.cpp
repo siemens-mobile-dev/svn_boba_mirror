@@ -1,179 +1,104 @@
+/*******************************************************************************
+                                  SieGetDialog
+*******************************************************************************/
 
 #include "include.h"
 #include "dialog.h"
-#include "log.h"
+#include "daemon.h"
+#include "../inc/xtask_ipc.h"
 
-char percent_t[] = "%t";
+char xtask_ipc_name[]= IPC_XTASK_NAME;
 
-char clBG[4] = {72, 72, 72, 100};
-char clLine[4] = {255, 255, 255, 100};
-char clText[4] = {255, 255, 255, 100};
-char clBMsel[4] = {0, 0, 0, 100};
+extern char sieget_ipc_name[];
 
-//---------------------------------------------------------------//
-//                            SieGetGUI                          //
-//---------------------------------------------------------------//
-
-void SieGetGUI::onRedraw()
-{
-  WSHDR *ws = AllocWS(256);
-  tabs[bm_current]->onRedraw();
-
-  if (bm_current==0)
-  {
-    DrawRectangle(Canvas.x, Canvas.y2-tabs_h, Canvas.x+tab_w-1, Canvas.y2, 0, clLine, clBMsel);
-    DrawLine(Canvas.x, Canvas.y2-tabs_h, Canvas.x+tab_w-1, Canvas.y2-tabs_h, 0, clBMsel);
-  }
-  else
-    DrawRectangle(Canvas.x, Canvas.y2-tabs_h, Canvas.x+tab_w-1, Canvas.y2, 0, clLine, clBG);
-  if (bm_current==1)
-  {
-    DrawRectangle(Canvas.x+tab_w, Canvas.y2-tabs_h, Canvas.x2-tab_w, Canvas.y2, 0, clLine, clBMsel);
-    DrawLine(Canvas.x+tab_w, Canvas.y2-tabs_h, Canvas.x2-tab_w, Canvas.y2-tabs_h, 0, clBMsel);
-  }
-  else
-    DrawRectangle(Canvas.x+tab_w, Canvas.y2-tabs_h, Canvas.x2-tab_w, Canvas.y2, 0, clLine, clBG);
-  if (bm_current==2)
-  {
-    DrawRectangle(Canvas.x2-tab_w+1, Canvas.y2-tabs_h, Canvas.x2, Canvas.y2, 0, clLine, clBMsel);
-    DrawLine(Canvas.x2-tab_w+1, Canvas.y2-tabs_h, Canvas.x2, Canvas.y2-tabs_h, 0, clBMsel);
-  }
-  else
-    DrawRectangle(Canvas.x2-tab_w+1, Canvas.y2-tabs_h, Canvas.x2, Canvas.y2, 0, clLine, clBG);
-
-  wsprintf(ws, percent_t, "Info");
-  DrawString(ws, Canvas.x, Canvas.y2-tabs_h+1, Canvas.x+tab_w-1, Canvas.y2-1, FONT_SMALL, TEXT_ALIGNMIDDLE, clText, 0);
-  wsprintf(ws, percent_t, "List");
-  DrawString(ws, Canvas.x+tab_w, Canvas.y2-tabs_h+1, Canvas.x2-tab_w, Canvas.y2-1, FONT_SMALL, TEXT_ALIGNMIDDLE, clText, 0);
-  wsprintf(ws, percent_t, "Log");
-  DrawString(ws, Canvas.x2-tab_w+1, Canvas.y2-tabs_h+1, Canvas.x2, Canvas.y2-1, FONT_SMALL, TEXT_ALIGNMIDDLE, clText, 0);
-
-  FreeWS(ws);
-}
-
-void SieGetGUI::onCreate()
-{
-
-}
-
-void SieGetGUI::onFocus()
-{
-  tabs[bm_current]->onFocus();
-}
-
-void SieGetGUI::onUnFocus()
-{
-  tabs[bm_current]->onUnFocus();
-}
-
-void SieGetGUI::onClose()
-{
-
-}
-
-int  SieGetGUI::onKey(char key_code, int key_msg, short keys)
-{
-  if (key_msg==KEY_DOWN)
-    switch (key_code)
-    {
-    case RED_BUTTON:
-    case RIGHT_SOFT:
-      return GUI_RESULT_CLOSE;
-
-    case '*':
-      tabs[bm_current]->onUnFocus();
-      bm_current = 0;
-      tabs[bm_current]->onFocus();
-      break;
-    case '0':
-      tabs[bm_current]->onUnFocus();
-      bm_current = 1;
-      tabs[bm_current]->onFocus();
-      break;
-    case '#':
-      tabs[bm_current]->onUnFocus();
-      bm_current = 2;
-      tabs[bm_current]->onFocus();
-      break;
-    }
-  REDRAW();
-  tabs[bm_current]->onKey(key_code, key_msg);
-  return GUI_RESULT_OK;
-}
-
-void SieGetGUI::Redraw(int bm)
-{
-  if (bm_current==bm)
-    REDRAW();
-}
-
-SieGetGUI::SieGetGUI()
-{
-  bm_current = 0;
-  tabs_h = GetFontYSIZE(FONT_SMALL)+2;
-  tab_w = (Canvas.x2-Canvas.x)/3;
-
-  tabs[0] = new InfoWidget;
-  tabs[1] = new ListWidget;
-  tabs[2] = new LogWidget;
-
-  tabs[0]->Resize(Canvas.x, Canvas.y, Canvas.x2, Canvas.y2-tabs_h-1);
-  tabs[1]->Resize(Canvas.x, Canvas.y, Canvas.x2, Canvas.y2-tabs_h-1);
-  tabs[2]->Resize(Canvas.x, Canvas.y, Canvas.x2, Canvas.y2-tabs_h-1);
-}
-
-SieGetGUI::~SieGetGUI()
-{
-  delete tabs[0];
-  delete tabs[1];
-  delete tabs[2];
-}
-
-//---------------------------------------------------------------//
-//                            SieGetDialog                       //
-//---------------------------------------------------------------//
-
-SieGetDialog *SieGetDialog::Active = NULL;
+SieGetDialog * SieGetDialog::Active = NULL;
 
 void SieGetDialog::onCreate()
 {
+  Active = this;
   SetName(DIALOG_CSM_NAME);
-  gui->Create();
-  Log::Active->PrintLn("Dialog created!");
+  list->Show();
 }
 
-int SieGetDialog::onMessage(GBS_MSG *msg)
+void SieGetDialog::Show(char * _url)
 {
-  if ((msg->msg==MSG_GUI_DESTROYED)&&((int)msg->data0==gui->gui_id))
+  if (!csm_id) Create();
+  else // Иначе посылаем сообщение в XTask для получения диалогом фокуса
+  {
+    Xipc.name_to = xtask_ipc_name;
+    Xipc.name_from = sieget_ipc_name;
+    Xipc.data = (void *)csm_id;
+    GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_XTASK_SHOW_CSM, &Xipc);
+  }
+  if (_url)
+  {
+    if (url) delete url;
+    url = new char[strlen(_url) + 1];
+    strcpy(url, _url);
+  }
+}
+
+int SieGetDialog::onMessage(GBS_MSG * msg)
+{
+  if (msg->msg==MSG_GUI_DESTROYED && (int)msg->data0==list->gui_id)
   {
     data->state=-3;
-    gui->gui_id = 0;
+    list->gui_id = NULL;
     Close();
+  }
+  if (msg->msg==MSG_IPC )
+  {
+    IPC_REQ *ipc;
+    if (ipc = (IPC_REQ *)msg->data0)
+      // Обработка IPC сообщений
+      if(stricmp(ipc->name_to, sieget_ipc_name)==0)
+        ProcessIPC(ipc->name_from, msg->submess, ipc->data);
+  }
+  if (url)
+  {
+    URLInput * ui = new URLInput;
+    ui->Show(url);
+    delete url;
+    url = NULL;
   }
   return CSM_MSG_RESULT_CONTINUE;
 }
 
-void SieGetDialog::onClose()
+void SieGetDialog::ProcessIPC(const char * from, int submsg, void * data)
 {
-  Log::Active->PrintLn("Dialog closed!");
+  switch(submsg)
+  {
+  case IPC_REFRESH_LIST:
+    if (IsGuiOnTop(list->gui_id)) RefreshGUI(); // Это нужно запускать из диалога. Иначе - пикофф :(
+    break;
+  }
 }
 
-void SieGetDialog::Redraw(int bm)
+void SieGetDialog::RefreshList()
 {
-  if (gui->gui_id && IsGuiOnTop(gui->gui_id))
-  {
-    gui->Redraw(bm);
-  }
+  if (!list->gui_id) return;
+  if (!IsGuiOnTop(list->gui_id)) return;
+  IPC_REQ ipc;
+  ipc.name_to = sieget_ipc_name;
+  ipc.name_from = sieget_ipc_name;
+  ipc.data = NULL;
+  GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_REFRESH_LIST, &ipc);
+}
+
+void SieGetDialog::onClose()
+{
+  Active = NULL;
 }
 
 SieGetDialog::SieGetDialog()
 {
-  gui = new SieGetGUI;
-  Active = this;
+  url = NULL;
+  list = new List;
 }
 
 SieGetDialog::~SieGetDialog()
 {
-  delete gui;
+  if (url) delete url;
+  delete list;
 }
 

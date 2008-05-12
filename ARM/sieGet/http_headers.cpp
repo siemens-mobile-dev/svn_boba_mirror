@@ -1,52 +1,59 @@
-#include "..\inc\swilib.h"
+#include "include.h"
 #include "http_headers.h"
+#include "log.h"
+
+/*******************************************************************************
+  HTTP Response Headers
+*******************************************************************************/
 
 typedef struct
 {
-  int header_id;
-  char *header_name;
-} HTTP_HEADER_DESC;
+  HTTP_RESP_HEADERS id;
+  char * name;
+} HTTP_RESP_HEADER_DESC;
 
-HTTP_HEADER_DESC resp_headers[] =
+HTTP_RESP_HEADER_DESC resp_headers[N_HTTP_RESP_HEADERS] =
 {
-  {H_Accept_Ranges     , "Accept-Ranges"},
-  {H_Age               , "Age"},
-  {H_Cache_Control     , "Cache-Control"},
-  {H_Connection        , "Connection"},
-  {H_Content_Encoding  , "Content-Encoding"},
-  {H_Content_Language  , "Content-Language"},
-  {H_Content_Length    , "Content-Length"},
-  {H_Content_Location  , "Content-Location"},
-  {H_Content_MD5       , "Content-MD5"},
-  {H_Content_Range     , "Content-Range"},
-  {H_Content_Type      , "Content-Type"},
-  {H_Date              , "Date"},
-  {H_ETag              , "ETag"},
-  {H_Expires           , "Expires"},
-  {H_Last_Modified     , "Last-Modified"},
-  {H_Location          , "Location"},
-  {H_Pragma            , "Pragma"},
-  {H_Proxy_Authenticate, "Proxy-Authenticate"},
-  {H_Retry_After       , "Retry-After"},
-  {H_Server            , "Server"},
-  {H_Trailer           , "Trailer"},
-  {H_Transfer_Encoding , "Transfer-Encoding"},
-  {H_Upgrade           , "Upgrade"},
-  {H_Vary              , "Vary"},
-  {H_Via               , "Via"},
-  {H_WWW_Authenticate  , "WWW-Authenticate"},
-  {H_Warning           , "Warning"}
+  {RESP_Accept_Ranges       , "Accept-Ranges"},
+  {RESP_Age                 , "Age"},
+  {RESP_Cache_Control       , "Cache-Control"},
+  {RESP_Connection          , "Connection"},
+  {RESP_Content_Disposition , "Content-Disposition"},
+  {RESP_Content_Encoding    , "Content-Encoding"},
+  {RESP_Content_Language    , "Content-Language"},
+  {RESP_Content_Length      , "Content-Length"},
+  {RESP_Content_Location    , "Content-Location"},
+  {RESP_Content_MD5         , "Content-MD5"},
+  {RESP_Content_Range       , "Content-Range"},
+  {RESP_Content_Type        , "Content-Type"},
+  {RESP_Date                , "Date"},
+  {RESP_ETag                , "ETag"},
+  {RESP_Expires             , "Expires"},
+  {RESP_Last_Modified       , "Last-Modified"},
+  {RESP_Location            , "Location"},
+  {RESP_Pragma              , "Pragma"},
+  {RESP_Proxy_Authenticate  , "Proxy-Authenticate"},
+  {RESP_Retry_After         , "Retry-After"},
+  {RESP_Server              , "Server"},
+  {RESP_Set_Cookie          , "Set-Cookie"},
+  {RESP_Trailer             , "Trailer"},
+  {RESP_Transfer_Encoding   , "Transfer-Encoding"},
+  {RESP_Upgrade             , "Upgrade"},
+  {RESP_Vary                , "Vary"},
+  {RESP_Via                 , "Via"},
+  {RESP_WWW_Authenticate    , "WWW-Authenticate"},
+  {RESP_Warning             , "Warning"}
 };
 
-int HTTP_Response_Headers::GetHeaderId(char *header_name)
+int HTTP_Response_Headers::GetHeaderId(char * header_name)
 {
   int l = 0;
-  int r = N_RESP_HEADERS-1;
+  int r = N_HTTP_RESP_HEADERS-1;
   while (l<=r)
   {
     int m = (l+r)>>1;
-    int cmp_res = strcmp(resp_headers[m].header_name, header_name);
-    if (cmp_res==0) return resp_headers[m].header_id;
+    int cmp_res = stricmp(resp_headers[m].name, header_name);
+    if (cmp_res==0) return resp_headers[m].id;
     if (cmp_res>0)
       r = m-1;
     else
@@ -77,25 +84,28 @@ int HTTP_Response_Headers::Add(char *str)
 {
   char *h_name = new char[strlen(str)];
   char *h_value = new char[strlen(str)];
-  int r;
+  int id;
   if (SplitHeader(str, h_name, h_value))
   {
-    int id = GetHeaderId(h_name);
+    id = GetHeaderId(h_name);
     if (id!=-1)
     {
-      headers[id] = new char[strlen(h_value)];
-      strcpy(headers[id], h_value);
+      headers[id] = h_value;
+      log->Print(str, CLR_DarkBlue);
+      delete h_name;
+      return 1;
     }
-    r = 1;
+    log->Print(str, CLR_LightBlue);
+    delete h_name;
+    delete h_value;
+    return 1;
   }
-  else
-    r = 0;
   delete h_name;
   delete h_value;
-  return r;
+  return 0;
 }
 
-char *HTTP_Response_Headers::GetValue(char *name)
+char * HTTP_Response_Headers::GetValue(char * name)
 {
   int id = GetHeaderId(name);
   if (id!=-1)
@@ -104,17 +114,20 @@ char *HTTP_Response_Headers::GetValue(char *name)
     return NULL;
 }
 
-HTTP_Response_Headers::HTTP_Response_Headers()
+char * HTTP_Response_Headers::GetValue(HTTP_RESP_HEADERS id)
 {
-  for (int i=0; i<N_RESP_HEADERS; i++)
+  return headers[id];
+}
+
+HTTP_Response_Headers::HTTP_Response_Headers(Log * _log)
+{
+  log = _log;
+  for (int i=0; i<N_HTTP_RESP_HEADERS; i++)
     headers[i] = NULL;
 }
 
 HTTP_Response_Headers::~HTTP_Response_Headers()
 {
-  for (int i=0; i<N_RESP_HEADERS; i++)
-    if (headers[i])
-      delete headers[i];
+  for (int i=0; i<N_HTTP_RESP_HEADERS; i++)
+    if (headers[i]) delete headers[i];
 }
-
-

@@ -4,15 +4,19 @@
 #include "../inc/sieget_ipc.h"
 
 // Запрос запущенной копии
-#define IPC_CODE_DOUBLEREQ 0
-#define IPC_CODE_DOUBLERESP 1
+enum IPC_CODE
+{
+  IPC_DOUBLEREQ,
+  IPC_DOUBLERESP
+};
 
+#define IPC_REFRESH_LIST 1
 #define IPC_SIEGET_INTERNAL 0xFADE
 
 typedef struct
 {
   int csm_id;
-  int code;
+  enum IPC_CODE code;
 } SIEGET_INTERNAL_IPC;
 
 #endif

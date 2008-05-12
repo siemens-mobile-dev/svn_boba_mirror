@@ -4,5 +4,8 @@
 // Все стандартные инклуды
 
 #include "..\inc\swilib.h"
+#include "config_data.h"
+#include "string_util.h"
+#include "notify.h"
 
 #endif

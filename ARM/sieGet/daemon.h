@@ -11,6 +11,8 @@
 #include "dns.h"
 #include "inet.h"
 
+#include "iconpack.h"
+
 #define DAEMON_CSM_NAME "SieGetD"
 
 class SieGetDaemon: public DaemonCSM
@@ -28,15 +30,17 @@ public:
   SieGetDaemon();
   ~SieGetDaemon();
 
-  SieGetDialog *dialog;
-  Log *log;
+  SieGetDialog * dialog;
+  
+  LangPack * lgp;
+  IconPack * icp;
 
+  DownloadHandler * DL_Handler;
+  DNRHandler * DNR_Handler;
+  
 private:
+  IPC_REQ Lipc;  //Для внутренней связи
   SIEGET_INTERNAL_IPC tint_ipc;
-  IPC_REQ tipc;  //Для внутренней связи
-  IPC_REQ tipc2; // Для связи с XTASK
-
-  HttpHead *test_req;
 };
 
 #endif

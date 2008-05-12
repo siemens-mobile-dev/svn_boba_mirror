@@ -2,7 +2,7 @@
 #include "dns.h"
 #include "log.h"
 
-DNR *DNR::DNRTop = NULL;
+DNRHandler * DNRHandler::Top = NULL;
 
 //Проверить процесс (работа с DNR только в хелпере)
 inline int CheckCepId()
@@ -13,14 +13,9 @@ inline int CheckCepId()
 
 DNR::DNR()
 {
-  LockSched();
-  DNRPrev = DNRTop;
-  if (DNRTop)
-    DNRTop->DNRNext = this;
-  DNRNext = NULL;
-  DNRTop = this;
-  UnlockSched();
-
+  if(DNRHandler::Top)
+    DNRHandler::Top->RegisterDNR(this);
+  
   DNR_ID = 0;
   host = NULL;
   DNR_TRIES = 0;
@@ -28,31 +23,15 @@ DNR::DNR()
 
 DNR::~DNR()
 {
-  LockSched();
-  if (DNRTop==this)
-  {
-    DNRTop = DNRPrev;
-    if (DNRTop)
-      DNRTop->DNRNext = NULL;
-  }
-  else
-  {
-    if (DNRNext)
-      DNRNext->DNRPrev = DNRPrev;
-    if (DNRPrev)
-      DNRPrev->DNRNext = DNRNext;
-  }
+  if (host) delete host;
 
-  if (host)
-    delete host;
-
-  UnlockSched();
+  if(DNRHandler::Top)
+    DNRHandler::Top->DeleteDNR(this);
 }
 
 void DNR::Start(const char *_host, int _tries)
 {
-  if (host)
-    delete host;
+  if (host) delete host;
   host = new char[strlen(_host)+1];
   strcpy(host, _host);
   DNR_TRIES = _tries;
@@ -67,8 +46,6 @@ void _send_req(DNR *obj)
 
 void DNR::SendReq()
 {
-  char tmp[256];
-
   if (CheckCepId())
   {
     SUBPROC((void *)_send_req, this);
@@ -78,8 +55,11 @@ void DNR::SendReq()
   int err;
   err = async_gethostbyname(host, &res, &DNR_ID);
 
-  sprintf(tmp, "Sent DNR %d: result 0x%X", DNR_ID, err);
-  DEBUG(tmp);
+  
+  /*char * tmp_msg = new char[128];
+  sprintf(tmp_msg, "Sent DNR %d: result 0x%X", DNR_ID, err);
+  Log::Active->Print(tmp_msg, CLR_Green);
+  delete tmp_msg;*/
 
   if (err)
   {
@@ -113,5 +93,74 @@ void DNR::SendReq()
       onResolve(DNR_RESULT_OUT_OF_TRIES, 0); // Истекло количество попыток
       DNR_ID = 0;
     }
+  }
+}
+
+/*******************************************************************************
+ DNRHandler
+*******************************************************************************/
+
+DNR *DNRHandler::GetDNR(int DNR_ID)
+{
+  DNRQ *tmp = queue;
+  while (tmp)
+  {
+    if (tmp->dnr->DNR_ID==DNR_ID)
+      return tmp->dnr; // Нашли!
+    tmp = tmp->next;
+  }
+  return NULL; // Не нашли...
+}
+
+void DNRHandler::RegisterDNR(DNR *dnr)
+{
+  DNRQ *tmp = new DNRQ;
+  tmp->dnr = dnr;
+  tmp->next = queue;
+  queue = tmp;
+}
+
+void DNRHandler::DeleteDNR(DNR *dnr)
+{
+  if (!queue)
+    return;
+  DNRQ *tmp;
+  if (queue->dnr==dnr)
+  {
+    tmp = queue;
+    queue = queue->next;
+    delete tmp;
+  }
+  else
+  {
+    DNRQ * prev = queue;
+    tmp = queue->next;
+    while (tmp)
+    {
+      if (tmp->dnr == dnr)
+      {
+        prev->next = tmp->next;
+        delete tmp;
+        break;
+      }
+      prev = tmp;
+      tmp = tmp->next;
+    }
+  }
+}
+
+DNRHandler::DNRHandler()
+{
+  queue = NULL;
+  Top = this;
+}
+
+DNRHandler::~DNRHandler()
+{
+  DNRQ *tmp;
+  while (tmp = queue)
+  {
+    queue = queue->next;
+    delete tmp;
   }
 }

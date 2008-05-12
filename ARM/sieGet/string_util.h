@@ -16,7 +16,8 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
 
 char* convUTF8_to_ANSI_STR(char *UTF8_str);
 
-void ascii2ws(WSHDR *ws, const char *s);
+
+void ascii2ws(WSHDR * ws, const char * s);
 
 unsigned int char8to16(int c);
 
@@ -36,14 +37,13 @@ char* Correct_UTF8_String(char* utf8_jid);
 char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 
 // ѕолучить значение по параметру (см. описание в теле файла)
-char *Get_Param_Value(char *ch, char *req, char cut_quotes);
+char * Get_Param_Value(char * str, char * req, int cut_quotes);
 
 // јналог strstr, но без чувствительности к регистру
 //char *stristr(char *haystack, char *needle);
 char *stristr(const char *s, const char *find);
 
 // јналог strcmp, но без чувствительности к регистру
-//int stricmp(char *str1, char *str2);
 int stricmp(const char *s, const char *d);
 
 unsigned int char16to8(unsigned int c);
@@ -52,5 +52,11 @@ void utf82win(char*d,const char *s);
 //разница времени
 long GetIDLETime(TTime intime, TDate indate);
 
-char *utf82filename(char *str);
+char * utf82filename(char *str);
+char * filename2utf8(char *str);
+
+void del_ext(char *source);
+char * get_fname_from_path(char * path);
+void remove_bad_chars(char *s);
+
 #endif

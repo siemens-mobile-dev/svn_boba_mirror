@@ -3,25 +3,14 @@
 #include "string_util.h"
 #include "log.h"
 #include "dialog.h"
+#include "log_widget.h"
+#include "file_works.h"
 
-Log *Log::Active = NULL;
-
-extern "C"
-{
-  void _C_LOG(const char *str)
-  {
-    if (Log::Active)
-      Log::Active->PrintLn(str);
-  }
-}
-
-#ifdef LOG_TO_FILE
-void PrintToFile(const char *str)
+void Log::PrintToFile(const char *str)
 {
   volatile int hFile;
   unsigned int io_error = 0;
-  char fullname[] ="4:\\ZBin\\var\\SieGET.log";
-  hFile = fopen(fullname, A_ReadWrite+A_Create+A_Append+A_BIN, P_READ+P_WRITE, &io_error);
+  hFile = fopen(filename, A_ReadWrite+A_Create+A_Append+A_BIN, P_READ+P_WRITE, &io_error); 
   if(!io_error)
   {
     fwrite(hFile, str, strlen(str), &io_error);
@@ -29,20 +18,36 @@ void PrintToFile(const char *str)
     fclose(hFile, &io_error);
   }
 }
-#endif
+
+void Log::ChangeFileName(char * fname)
+{
+  char logs_path[256];
+  getSymbolicPath(logs_path, "$logs\\");
+  char * name = new char[strlen(fname)+1];
+  strcpy(name, fname);
+  remove_bad_chars(name);
+  unsigned int io_error = 0;
+  char * new_fname = new char[strlen(logs_path) + strlen(name) + 9];
+  sprintf(new_fname, "%s%s.log", logs_path, name);
+  /*strcpy(new_fname, logs_path);
+  strcat(new_fname, name);
+  strcat(new_fname, ".log");*/
+  unlink(new_fname, &io_error);
+  fmove(filename, new_fname, &io_error);
+  delete filename;
+  filename = new_fname;
+}
 
 Log::Log()
 {
-  char welcome_str[] = "--- LOG START ---";
-  log_start = new LogLine;
-  log_start->index = 0;
-  log_start->str = AllocWS(256);
-  ascii2ws(log_start->str, welcome_str);
-  log_start->next = log_start;
-  log_start->prev = log_start;
-  Active = this;
-
-  PrintToFile(welcome_str);
+  char logs_path[256];
+  getSymbolicPath(logs_path, "$logs\\");
+  filename = new char[strlen(logs_path) + 32];
+  strcpy(filename, logs_path);
+  strcat(filename, "temp.log");
+  log_start = NULL;
+  unsigned int io_error = 0;
+  unlink(filename, &io_error);
 }
 
 Log::~Log()
@@ -59,32 +64,53 @@ Log::~Log()
   }
   FreeWS(tmp->str);
   delete tmp;
+  delete filename;
 }
 
-void Log::_add_line(WSHDR *ws)
+void Log::_add_line(WSHDR *ws, CLR_ID color)
 {
-  LogLine *tmp = new LogLine;
+  LogLine * tmp = new LogLine;
   tmp->str = ws;
-  GetDateTime(&tmp->date, &tmp->time);
+  tmp->color = color;
   LockSched();
-  tmp->index = log_start->prev->index+1;
-  tmp->prev = log_start->prev;
-  log_start->prev->next = tmp;
-  tmp->next = log_start;
-  log_start->prev = tmp;
+  if(log_start)
+  {
+    tmp->index = log_start->prev->index+1;
+    tmp->prev = log_start->prev;
+    log_start->prev->next = tmp;
+    tmp->next = log_start;
+    log_start->prev = tmp;
+  }
+  else
+  {
+    tmp->index = 0;
+    log_start = tmp;
+    log_start->next = log_start;
+    log_start->prev = log_start;
+  }
   UnlockSched();
 }
 
-void Log::PrintLn(const char *str)
+void Log::Print(const char * str, CLR_ID color)
 {
-  WSHDR *ws = AllocWS(strlen(str)+4);
+  int len = strlen(str);
+  
+  WSHDR * ws = AllocWS(len + 6);
   ascii2ws(ws, str);
-  _add_line(ws);
-
-#ifdef LOG_TO_FILE
-  PrintToFile(str);
-#endif
-
-  if (SieGetDialog::Active)
-    SieGetDialog::Active->Redraw(2);
+  if(str[len]!='\r' && str[len]!='\n')
+    wsInsertChar(ws, '\n', len + 1);
+  _add_line(ws, color);
+  
+  if (CFG_LOG_TO_FILE)
+  {
+    TTime time;
+    TDate date;
+    GetDateTime(&date, &time);
+    char * _str = new char[len + 32];
+    sprintf(_str, "[%02d.%02d.%02d-%02d:%02d:%02d] %s", date.day, date.month, date.year, time.hour, time.min, time.sec, str);
+    PrintToFile(_str);
+    delete _str;
+  }
+  if (LogWidget::Active)
+    LogWidget::Active->Redraw();
 }

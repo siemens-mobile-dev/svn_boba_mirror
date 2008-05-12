@@ -1,10 +1,13 @@
+#include "include.h"
+#include "daemon.h"
+#include "conf_loader.h"
 
-#include "main.h"
+extern const char * successed_config_filename;
 
-SieGetDaemon *daemon;
-
-int main(char *exename, char *fname){
-  daemon = new SieGetDaemon();
+int main(char * exename, char * filename)
+{
+  InitConfig();
+  SieGetDaemon * daemon = new SieGetDaemon();
   daemon->Create();
   return 0;
 }

@@ -3,36 +3,11 @@
 
 #include "include.h"
 #include "csm.h"
-#include "gui.h"
-#include "widget.h"
+#include "list.h"
+#include "url_input.h"
+#include "langpack.h"
 
 #define DIALOG_CSM_NAME "SieGet"
-
-class SieGetGUI: public AbstractGUI
-{
-public:
-  virtual void onRedraw();
-  virtual void onCreate();
-  virtual void onFocus();
-  virtual void onUnFocus();
-  virtual void onClose();
-  virtual int  onKey(char key_code, int key_msg, short keys);
-
-  SieGetGUI();
-  virtual ~SieGetGUI();
-  void Redraw(int bm);
-private:
-  int bm_current;
-
-  //Geometry
-  int tabs_h;
-  int tab_w;
-
-  //Widgets
-
-  Widget *tabs[3];
-};
-
 
 class SieGetDialog: public DialogCSM
 {
@@ -40,13 +15,18 @@ public:
   virtual void onCreate();
   virtual int onMessage(GBS_MSG *msg);
   virtual void onClose();
-
+  void Show(char * _url);
+  void ProcessIPC(const char * from, int submsg, void * data);
+  
   SieGetDialog();
   ~SieGetDialog();
-  SieGetGUI *gui;
-
-  static SieGetDialog *Active;
-  void Redraw(int bm);
+  List * list;
+  static SieGetDialog * Active;
+  
+  void RefreshList();
+private:
+  IPC_REQ Xipc; // Для связи с XTASK
+  char * url;
 };
 
 #endif
