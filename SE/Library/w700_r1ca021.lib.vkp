@@ -281,7 +281,7 @@
 0910: FFFFFFFF FD8CD644 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: FFFFFFFF 6D8DD644 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: FFFFFFFF 5D8DD644 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-091c: FFFFFFFF 5D0AD244 ; 247: go_music (int go);
+091c: FFFFFFFF 5D0AD244 ; 247: void GoMusic(void);
 0920: FFFFFFFF B538F944 ; 248: void Vibra_Off(int t1);
 0924: FFFFFFFF A19CF744 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
 ;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
@@ -341,6 +341,12 @@
 ;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
 0A18: FFFFFFFF ED68F044 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 0A1C: FFFFFFFF A1A3DC44 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
+;0A20: xxxxxxxx yyyyyyyy ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
+;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
+;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
+;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
+;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
 
 
 
