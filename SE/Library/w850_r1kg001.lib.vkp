@@ -338,8 +338,7 @@
 0A18: 00000000 510BD644 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 0A1C: 00000000 799AE644 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 0A20: 00000000 85EB4345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-
-
+0A24: 00000000 5DF24A45 ; 289: void Shortcut_Run (u16 * shortcut_name);
 
 
 
