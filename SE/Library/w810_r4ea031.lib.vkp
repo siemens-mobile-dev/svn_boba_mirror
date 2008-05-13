@@ -333,7 +333,7 @@
 ;09F8: xxxxxxxx yyyyyyyy ; 27E: int strncmp(const char *s1, const char *s2, int len);
 ;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 ;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
-0A04: FFFFFFFF 693F1945 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
+0A04: FFFFFFFF 593F1945 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: FFFFFFFF 4D141745 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: FFFFFFFF 51DE5A45 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
 0A10: FFFFFFFF E5DE5A45 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
