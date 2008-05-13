@@ -1077,3 +1077,6 @@ __swi __arm int textidname2id(u16* idname,int maxnamelen,int* id);
 #pragma swi_number=0x288
 __swi __arm void ListMenu_SetNoItemText(GUI_LIST *, int str);
 #endif
+
+#pragma swi_number=0x289
+__swi __arm  void Shortcut_Run (u16 * shortcut_name);

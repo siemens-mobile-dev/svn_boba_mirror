@@ -39,6 +39,7 @@ int Ignore_KeyLock=0;
 int ElfInBookListEnabled=1;
 int UserInactivityEventEnabled=1;
 int NameBookAsSession=0;
+int StandbyOnTop=0;
 
 typedef struct
 {
@@ -577,7 +578,14 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
       {
 	u16 par[256];
 	str2wstr(par,param);
-	StartAPP(par);
+        if (StandbyOnTop)
+        {
+	  StartAPP(par);
+        }
+        else
+        {
+          Shortcut_Run(par);
+        }
 	mfree(param);
 	if (Find_StandbyBook()!=0)Show(Find_StandbyBook(),0);
         CloseMyBook((BOOK*)myBook,0);
@@ -902,6 +910,11 @@ char * get_ini_key(int full_init)
       if (param=manifest_GetParam(buf,"[NBAS]",0))
       {
         NameBookAsSession=h2i(param);
+        mfree(param);
+      }
+      if (param=manifest_GetParam(buf,"[SOT]",0))
+      {
+        StandbyOnTop=h2i(param);
         mfree(param);
       }
       if (param=manifest_GetParam(buf,"[EIBL]",0))
