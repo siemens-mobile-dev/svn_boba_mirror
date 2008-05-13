@@ -942,6 +942,8 @@ __swi __arm  void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 __swi __arm  void List2lineSubitemAddText(void* msg,int StrID);
 #pragma swi_number=0x246
 __swi __arm  int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
+#pragma swi_number=0x247
+__swi __arm void GoMusic(void);
 
 #pragma swi_number=0x24A
 __swi __arm int PlayFileV(u16 * path, u16 * fname, int vol);
@@ -1076,7 +1078,17 @@ __swi __arm int textidname2id(u16* idname,int maxnamelen,int* id);
 
 #pragma swi_number=0x288
 __swi __arm void ListMenu_SetNoItemText(GUI_LIST *, int str);
-#endif
+
+#pragma swi_number=0x828A
+__swi __arm IS_NEEDED_BOOK isFmRadioBook(void);
+#pragma swi_number=0x828B
+__swi __arm IS_NEEDED_BOOK isAudioPlayerBook(void);
+#pragma swi_number=0x28C
+__swi __arm void PlayerControl(BOOK *AudioPlayerBook, int);
+#pragma swi_number=0x28D
+__swi __arm void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 
 #pragma swi_number=0x28E
 __swi __arm  void Shortcut_Run (u16 * shortcut_name);
+
+#endif
