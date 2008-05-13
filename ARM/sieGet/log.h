@@ -47,7 +47,6 @@ public:
   };
   LogLine * log_start;
   char * filename;
-  //static Log * Active;
 
   void ShowScreen();
 private:

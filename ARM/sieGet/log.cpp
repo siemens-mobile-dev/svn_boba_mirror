@@ -29,9 +29,6 @@ void Log::ChangeFileName(char * fname)
   unsigned int io_error = 0;
   char * new_fname = new char[strlen(logs_path) + strlen(name) + 9];
   sprintf(new_fname, "%s%s.log", logs_path, name);
-  /*strcpy(new_fname, logs_path);
-  strcat(new_fname, name);
-  strcat(new_fname, ".log");*/
   unlink(new_fname, &io_error);
   fmove(filename, new_fname, &io_error);
   delete filename;

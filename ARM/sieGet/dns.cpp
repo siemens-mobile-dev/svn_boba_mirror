@@ -54,13 +54,7 @@ void DNR::SendReq()
   int ***res = NULL;
   int err;
   err = async_gethostbyname(host, &res, &DNR_ID);
-
   
-  /*char * tmp_msg = new char[128];
-  sprintf(tmp_msg, "Sent DNR %d: result 0x%X", DNR_ID, err);
-  Log::Active->Print(tmp_msg, CLR_Green);
-  delete tmp_msg;*/
-
   if (err)
   {
     if ((err==0xC9)||(err==0xD6))

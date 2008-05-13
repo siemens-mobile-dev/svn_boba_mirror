@@ -138,29 +138,6 @@ typedef struct
   char * Expires;
   char * Last_Modified;
 } HTTP_ENTITY_HEADERS;
-
-typedef struct
-{
-  char * Accept;
-  char * Accept_Charset;
-  char * Accept_Encoding;
-  char * Accept_Language;
-  char * Authorization;
-  char * Expect;
-  char * From;
-  char * Host;
-  char * If_Match;
-  char * If_Modified_Since;
-  char * If_None_Match;
-  char * If_Range;
-  char * If_Unmodified_Since;
-  char * Max_Forwards;
-  char * Proxy_Authorization;
-  char * Range;
-  char * Referer;
-  char * TE;
-  char * User_Agent;
-} HTTP_REQUEST_HEADERS;
 */
 
 #endif

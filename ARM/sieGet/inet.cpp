@@ -69,7 +69,7 @@ HttpAbstract::~HttpAbstract()
 
 void HttpAbstract::Start(int _ip, short _port)
 {
-  if(http_state!=HTTP_IDLE)
+  if (http_state!=HTTP_IDLE && http_state!=HTTP_REDIRECT)
     return;
   if (!IsGPRSEnabled())
   {
@@ -90,7 +90,7 @@ void HttpAbstract::Start(int _ip, short _port)
 
 void HttpAbstract::Start(const char * host, short _port)
 {
-  if (http_state!=HTTP_IDLE)
+  if (http_state!=HTTP_IDLE && http_state!=HTTP_REDIRECT)
     return;
   if (!IsGPRSEnabled())
   {
@@ -209,7 +209,7 @@ void HttpAbstract::onDataRead()
 
 void HttpAbstract::onClose()
 {
-  if(download_state!=DOWNLOAD_STOPPED && download_state!=DOWNLOAD_ERROR)
+  if(download_state!=DOWNLOAD_STOPPED && download_state!=DOWNLOAD_ERROR && http_state!=HTTP_REDIRECT)
     onHTTPFinish();
   http_state = HTTP_IDLE;
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
@@ -294,8 +294,11 @@ int Download::onHTTPHeaders()
   {
     file_size = NULL;
     file_size = strtoul(content_length_str, 0, 10);
-    if(RESP_CODE_PARTIAL(HTTPResponse->resp_code)) // Если докачка
+    if (RESP_CODE_PARTIAL(HTTPResponse->resp_code)) // Если докачка
+    {
+      AcceptRanges = ACCEPT_RANGES_OK; // Сервер поддерживает докачку ;)
       file_size += file_loaded_size; // Добавляем то, что уже закачано
+    }
     else
     {
       file_loaded_size = NULL;
@@ -303,6 +306,13 @@ int Download::onHTTPHeaders()
       if (is_file_exists(full_file_name))
         unlink(full_file_name, &err);
     }
+  }
+  if (!RESP_CODE_PARTIAL(HTTPResponse->resp_code))
+  {
+    if (HTTPResponse->headers->GetValue(RESP_Accept_Ranges))
+      AcceptRanges = ACCEPT_RANGES_OK;
+    else
+      AcceptRanges = ACCEPT_RANGES_NO;
   }
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList();
@@ -327,7 +337,7 @@ void Download::onHTTPData(char * data, int size) // Запись данных в файл
 
 void Download::onHTTPRedirect() // Переадресация
 {
-  http_state = HTTP_IDLE;
+  http_state = HTTP_REDIRECT;
   char * Location = HTTPResponse->headers->GetValue(RESP_Location);
   if (strstr(Location, "http://")) // Если в строке Location полный URL
   {
@@ -494,6 +504,7 @@ void Download::StopDownload()
 
 Download::Download()
 {
+  AcceptRanges = ACCEPT_RANGES_UNKNOWN;
   url = NULL;
   file_name = NULL;
   full_file_name = NULL;

@@ -20,6 +20,7 @@ enum HTTP_STATE
 {
   HTTP_IDLE,    // Простой
   HTTP_RESOLVE, // Получение IP
+  HTTP_REDIRECT,
   HTTP_HEADER,  // Получение заголовка
   HTTP_STREAM,  // Получение данных
 };
@@ -33,6 +34,13 @@ enum DOWNLOAD_STATE
   DOWNLOAD_DATA,      // Получение файла
   DOWNLOAD_COMPLETE,  // Успешно завершено
   DOWNLOAD_STOPPED    // Остановлено
+};
+
+enum ACCEPT_RANGES_STATE
+{
+  ACCEPT_RANGES_UNKNOWN,
+  ACCEPT_RANGES_OK,
+  ACCEPT_RANGES_NO
 };
 
 #define ACTIVE_DOWNLOAD_STATE(x) ((x) == DOWNLOAD_WAITING      \
@@ -125,6 +133,8 @@ public:
 
   void StartDownload();
   void StopDownload();
+  
+  ACCEPT_RANGES_STATE AcceptRanges;
   
   char * url;             // URL
   char * file_name;       // Имя файла

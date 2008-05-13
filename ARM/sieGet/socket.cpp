@@ -6,8 +6,6 @@
 #include "socket.h"
 #include "log.h"
 
-//SocketHandler *SocketHandler::TopSocketHandler = NULL;
-
 int Socket::GlobalTx = 0;
 int Socket::GlobalRx = 0;
 

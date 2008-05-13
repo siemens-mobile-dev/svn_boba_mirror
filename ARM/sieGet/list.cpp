@@ -146,7 +146,6 @@ void List::ItemHandler(void * data, int curitem, void * unk)
       wsprintf_bytes(ws2, dl->file_loaded_size);
       wsprintf_bytes(ws3, dl->file_loaded_size, dl->file_size);
       wstrcat(ws2, ws3);
-       //wsprintf(ws2, "%t: %d%", LangPack::Active->data[LGP_Downloading], dl->file_loaded_size * 100 / dl->file_size);
       FreeWS(ws3);
     }
     else
@@ -166,6 +165,8 @@ void List::ItemHandler(void * data, int curitem, void * unk)
     SetMenuItemIconArray(data, item, &IconPack::Active->data[IMG_Idle]);
     break;
   }
+  if (dl->AcceptRanges != ACCEPT_RANGES_UNKNOWN)
+    wsInsertChar(ws2, dl->AcceptRanges == ACCEPT_RANGES_OK?LGP_SMILE_OK:LGP_SMILE_NO, 1);
   SetMLMenuItemText(data, item, ws1, ws2, curitem);
 }
 
