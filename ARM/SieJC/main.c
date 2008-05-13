@@ -62,6 +62,7 @@ extern const int IS_IP;
 extern const int USE_SASL;
 extern const int USE_ZLIB;
 extern const unsigned int DEF_SKR;
+extern const int IDLE_ICON;
 extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
@@ -363,6 +364,68 @@ borderColor.a=color_cfg [383];
   {170, 170, 170, 100}    // Unsubscribed
 };
 */
+
+void addIconBar(short* num)
+{
+  #pragma swi_number=0x27 
+  __swi __arm void AddIconToIconBar(int pic, short *num);
+  int icon_num;
+  
+  if (CList_GetUnreadMessages()>0)
+  {
+    extern const int IB_NEWMESSAGE;
+    icon_num = IB_NEWMESSAGE;
+  }
+  else
+  {
+    switch (My_Presence)
+    {
+    case PRESENCE_ONLINE:
+      {
+        extern const int IB_ONLINE;
+        icon_num = IB_ONLINE;
+        break;
+      }
+    case PRESENCE_CHAT:
+      {
+        extern const int IB_CHAT;
+        icon_num = IB_CHAT;
+      break;
+    }
+    case PRESENCE_AWAY:
+      {
+        extern const int IB_AWAY;
+        icon_num = IB_AWAY;
+        break;
+      }
+    case PRESENCE_XA:
+      {
+        extern const int IB_XA;
+        icon_num = IB_XA;
+        break;
+      }
+    case PRESENCE_DND:
+      {
+        extern const int IB_DND;
+        icon_num = IB_DND;
+        break;
+      }
+    case PRESENCE_INVISIBLE:
+      {
+        extern const int IB_INVISIBLE;
+        icon_num = IB_INVISIBLE;
+        break;
+      }
+    case PRESENCE_OFFLINE:
+      {
+        extern const int IB_OFFLINE;
+        icon_num = IB_OFFLINE;
+        break;
+      }
+    }
+  }
+  AddIconToIconBar(icon_num, num);
+}
 
 int readfile(char *color_PATH, char *colorshem_PATH, char *buf)
 {
@@ -1850,45 +1913,48 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       }
     }
 
-#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
-    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-    if (IsGuiOnTop(idlegui_id))
+    if (IDLE_ICON)
     {
-      GUI *igui=GetTopGUI();
-      if (igui) //» он существует
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+      CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+      if (IsGuiOnTop(idlegui_id))
       {
-#ifdef ELKA
+        GUI *igui=GetTopGUI();
+        if (igui) //» он существует
         {
-          void *canvasdata=BuildCanvas();
-#else
-          void *idata=GetDataOfItemByID(igui,2);
-          if (idata)
+#ifdef ELKA
           {
-            void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+            void *canvasdata=BuildCanvas();
+#else
+            void *idata=GetDataOfItemByID(igui,2);
+            if (idata)
+            {
+              void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
 #endif
 
 #ifdef USE_PNG_EXT
-            char mypic[128];
+              char mypic[128];
 
-            if (CList_GetUnreadMessages()>0)
-              Roster_getIconByStatus(mypic,50); //иконка сообщени€
-            else
-              Roster_getIconByStatus(mypic, My_Presence);
-            DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth((int)mypic)-1,IDLE_ICON_Y+GetImgHeight((int)mypic)-1,1);
-            DrawImg(IDLE_ICON_X,IDLE_ICON_Y,(int)mypic);
+              if (CList_GetUnreadMessages()>0)
+                Roster_getIconByStatus(mypic,50); //иконка сообщени€
+              else
+                Roster_getIconByStatus(mypic, My_Presence);
+              DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth((int)mypic)-1,IDLE_ICON_Y+GetImgHeight((int)mypic)-1,1);
+              DrawImg(IDLE_ICON_X,IDLE_ICON_Y,(int)mypic);
 #else
-            int mypic=0;
-            if (CList_GetUnreadMessages()>0)
-              mypic=Roster_getIconByStatus(50); //иконка сообщени€
-            else
-              mypic=Roster_getIconByStatus(My_Presence);
-            DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
-            DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
+              int mypic=0;
+              if (CList_GetUnreadMessages()>0)
+                mypic=Roster_getIconByStatus(50); //иконка сообщени€
+              else
+                mypic=Roster_getIconByStatus(My_Presence);
+              DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
+              DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
 #endif
             //#ifdef ELKA
             //#else
             //}
             //#endif
+            }
           }
         }
       }
@@ -1985,15 +2051,21 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     return(1);
   }
 
+typedef struct
+{
+  char check_name[8];
+  int addr;
+}ICONBAR_H;
 
   const int minus11=-11;
 
   unsigned short maincsm_name_body[140];
 
-  const struct
+  struct
   {
     CSM_DESC maincsm;
     WSHDR maincsm_name;
+    ICONBAR_H iconbar_handler;
   }MAINCSM =
   {
     {
@@ -2016,6 +2088,9 @@ sizeof(MAIN_CSM),
       NAMECSM_MAGIC2,
       0x0,
       139
+    },
+    {
+      "IconBar"
     }
   };
 
@@ -2172,6 +2247,11 @@ void OpenSettings(void)
   FreeWS(ws);
 }
 
+void SetIconBarHandler()
+{
+  MAINCSM.iconbar_handler.addr = (int)addIconBar;
+}
+  
   int main(char *exename, char *fname)
   {
     char *s;
@@ -2292,5 +2372,7 @@ void OpenSettings(void)
       GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
       as = 0;
     }
+    extern const int SHOW_ICONBAR_ICON;
+    if (SHOW_ICONBAR_ICON) SetIconBarHandler();
     return 0;
   }
