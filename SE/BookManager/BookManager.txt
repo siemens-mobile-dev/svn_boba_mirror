@@ -1,4 +1,4 @@
-BookManager v2.5 
+BookManager v2.6 
 
 
 Умеет показывать/закрывать/переключать книги/жаву.
@@ -79,7 +79,8 @@ bookman.ini теперь переехал в $DIR_INI$/bookman/
 [EIBL]: 0x01;
 [NBAS]: 0x00;
 [IGNORE_KEYLOCK]: 0x00;
-
+[SOT]: 0x00;
+[NBAS]: 0x00;
 
 
 итого имеем:

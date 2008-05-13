@@ -1,7 +1,7 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 
-#define COPYRIGHT_STRING STR("\nBookManager v2.5\nbuild 040308\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
+#define COPYRIGHT_STRING STR("\nBookManager v2.6\nbuild 130508\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
 #define MESSAGE(__STR__) MessageBox(0x6fffffff,__STR__,0, 1 ,11000,(BOOK*)BookManager_Book);
 #define BOOKLIST 0
 #define ELFLIST 1
