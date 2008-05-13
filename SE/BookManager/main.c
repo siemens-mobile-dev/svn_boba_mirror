@@ -581,13 +581,13 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
         if (StandbyOnTop)
         {
 	  StartAPP(par);
+          Show(Find_StandbyBook(),0);
         }
         else
         {
           Shortcut_Run(par);
         }
 	mfree(param);
-	if (Find_StandbyBook()!=0)Show(Find_StandbyBook(),0);
         CloseMyBook((BOOK*)myBook,0);
       }
     }
