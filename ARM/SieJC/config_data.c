@@ -274,34 +274,9 @@ __root const unsigned int AUTOSTATUS_TIME = 5;
 
 __root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
 
-__root const CFG_HDR cfghdr_IBARICON={CFG_LEVEL, LG_ICONBAR, 1, 0};
-
 __root const CFG_HDR cfghdr_IBI1={CFG_CHECKBOX, LG_ICONBAR_SI, 0, 2};
 __root const int SHOW_ICONBAR_ICON = 1;
 
-__root const CFG_HDR cfghdr_IBI2={CFG_INT, LG_ICONBAR_ONLINE, 0, 9999};
-__root const int IB_ONLINE = 2200;
-
-__root const CFG_HDR cfghdr_IBI3={CFG_INT, LG_ICONBAR_CHAT, 0, 9999};
-__root const int IB_CHAT = 2201;
-
-__root const CFG_HDR cfghdr_IBI4={CFG_INT, LG_ICONBAR_AWAY, 0, 9999};
-__root const int IB_AWAY = 2202;
-
-__root const CFG_HDR cfghdr_IBI5={CFG_INT, LG_ICONBAR_XA, 0, 9999};
-__root const int IB_XA = 2203;
-
-__root const CFG_HDR cfghdr_IBI6={CFG_INT, LG_ICONBAR_DND, 0, 9999};
-__root const int IB_DND = 2204;
-
-__root const CFG_HDR cfghdr_IBI7={CFG_INT, LG_ICONBAR_INVIS, 0, 9999};
-__root const int IB_INVISIBLE = 2205;
-
-__root const CFG_HDR cfghdr_IBI8={CFG_INT, LG_ICONBAR_OFFLINE, 0, 9999};
-__root const int IB_OFFLINE = 2206;
-
-__root const CFG_HDR cfghdr_IBI9={CFG_INT, LG_ICONBAR_NEWMSG, 0, 9999};
-__root const int IB_NEWMESSAGE = 2207;
-
-__root const CFG_HDR cfghdr_IBARICON_END={CFG_LEVEL, "", 0, 0};
+__root const CFG_HDR cfghdr_IBI2={CFG_STR_WIN1251, LG_ICONSET_FILENAME, 0, 127};
+__root const char ICONSET_FILENAME[128] = DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\IconSets\\default.bcfg";
 // EOL, EOF

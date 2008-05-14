@@ -122,6 +122,16 @@ int sock=-1;
 
 volatile int is_gprs_online=1;
 
+
+int IB_NEWMESSAGE;
+int IB_ONLINE;
+int IB_CHAT;
+int IB_AWAY;
+int IB_XA;
+int IB_DND;
+int IB_INVISIBLE;
+int IB_OFFLINE;
+
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
 GBSTMR Ping_Timer;
@@ -373,7 +383,6 @@ void addIconBar(short* num)
   
   if (CList_GetUnreadMessages()>0)
   {
-    extern const int IB_NEWMESSAGE;
     icon_num = IB_NEWMESSAGE;
   }
   else
@@ -382,43 +391,36 @@ void addIconBar(short* num)
     {
     case PRESENCE_ONLINE:
       {
-        extern const int IB_ONLINE;
         icon_num = IB_ONLINE;
         break;
       }
     case PRESENCE_CHAT:
       {
-        extern const int IB_CHAT;
         icon_num = IB_CHAT;
       break;
     }
     case PRESENCE_AWAY:
       {
-        extern const int IB_AWAY;
         icon_num = IB_AWAY;
         break;
       }
     case PRESENCE_XA:
       {
-        extern const int IB_XA;
         icon_num = IB_XA;
         break;
       }
     case PRESENCE_DND:
       {
-        extern const int IB_DND;
         icon_num = IB_DND;
         break;
       }
     case PRESENCE_INVISIBLE:
       {
-        extern const int IB_INVISIBLE;
         icon_num = IB_INVISIBLE;
         break;
       }
     case PRESENCE_OFFLINE:
       {
-        extern const int IB_OFFLINE;
         icon_num = IB_OFFLINE;
         break;
       }
@@ -2237,6 +2239,29 @@ void AutoStatus(void)
   }else GBS_DelTimer(&autostatus_tmr);
 }
 
+void LoadIconSet(const char *fname)
+{
+  int hFile;
+  unsigned int err;
+  hFile = fopen(fname, A_ReadOnly + A_BIN, P_READ, &err);
+  if (hFile == -1) return;
+  FSTATS stats;
+  if (GetFileStats(fname, &stats, &err)) return;
+  int fs = stats.size;
+  char *buff = malloc(fs);
+  fread(hFile, buff, fs, &err);
+  IB_ONLINE = buff[0x2D] * 0x100 + buff[0x2C];
+  IB_CHAT = buff[0x5D] * 0x100 + buff[0x5C];
+  IB_AWAY = buff[0x8D] * 0x100 + buff[0x8C];
+  IB_XA = buff[0xBD] * 0x100 + buff[0xBC];
+  IB_DND = buff[0xED] * 0x100 + buff[0xEC];
+  IB_INVISIBLE = buff[0x11D] * 0x100 + buff[0x11C];
+  IB_OFFLINE = buff[0x14D] * 0x100 + buff[0x14C];
+  IB_NEWMESSAGE = buff[0x17D] * 0x100 + buff[0x17C];
+  fclose(hFile, &err);
+  mfree(buff);
+}
+
 void OpenSettings(void)
 {
   extern const char *successed_config_filename;
@@ -2373,6 +2398,11 @@ void SetIconBarHandler()
       as = 0;
     }
     extern const int SHOW_ICONBAR_ICON;
-    if (SHOW_ICONBAR_ICON) SetIconBarHandler();
+    if (SHOW_ICONBAR_ICON)
+    {
+      extern const char ICONSET_FILENAME[128];
+      LoadIconSet(ICONSET_FILENAME);
+      SetIconBarHandler();
+    }
     return 0;
   }

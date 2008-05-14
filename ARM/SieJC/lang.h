@@ -209,16 +209,8 @@
 #define LG_AS_ENABLED       "Включен"
 #define LG_AS_TIME          "Время (в минутах)"
 
-#define LG_ICONBAR          "IconBar"
 #define LG_ICONBAR_SI       "Показывать иконку в IconBar"
-#define LG_ICONBAR_ONLINE   "Online-иконка"
-#define LG_ICONBAR_CHAT     "Chat-иконка"
-#define LG_ICONBAR_AWAY     "Away-иконка"
-#define LG_ICONBAR_XA       "Xa-иконка"
-#define LG_ICONBAR_DND      "Dnd-иконка"
-#define LG_ICONBAR_INVIS    "Инвиз-иконка"
-#define LG_ICONBAR_OFFLINE  "Offline-иконка"
-#define LG_ICONBAR_NEWMSG   "Иконка нового сообщения"
+#define LG_ICONSET_FILENAME "Имя файла с номерами иконок"
 //vCard.c
 #define LG_SHOW_AVATAR      "Показать аватару"
 
@@ -747,16 +739,8 @@
 #define LG_AS_ENABLED       "Enable"
 #define LG_AS_TIME          "Time (minutes)"
 
-#define LG_ICONBAR          "IconBar"
 #define LG_ICONBAR_SI       "Show icon in IconBar"
-#define LG_ICONBAR_ONLINE   "Online icon"
-#define LG_ICONBAR_CHAT     "Chat icon"
-#define LG_ICONBAR_AWAY     "Away icon"
-#define LG_ICONBAR_XA       "Xa icon"
-#define LG_ICONBAR_DND      "Dnd icon"
-#define LG_ICONBAR_INVIS    "Invisible icon"
-#define LG_ICONBAR_OFFLINE  "Offline icon"
-#define LG_ICONBAR_NEWMSG   "New message icon"
+#define LG_ICONSET_FILENAME "File name with icon numbers"
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Show avatar"
