@@ -149,6 +149,8 @@
 06DC: 00000000 D5C94945 ; 1B7: int isKeylocked(void);
 06E0: 00000000 012D0645 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06EC: 00000000 9D9D0E45 ; 1BB: void Vibra(int t1, int t2, int t3);
+06F0: 00000000 91EEE544 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F4: 00000000 25EFE544 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 C14F3B45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 E94E3B45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 61814245 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -342,7 +344,7 @@
 0A2C: 00000000 C5A20445 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 55E40445 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 25BE2145 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
-;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+0A38: 00000000 31814945 ; 28E: void Shortcut_Run (u16 * shortcut_name);
 
 
 
