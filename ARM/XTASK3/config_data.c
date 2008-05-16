@@ -14,23 +14,33 @@ __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 __root const CFG_HDR cfghdr25={CFG_STR_WIN1251,"UnderIdleCSM_DESC",0,8};
 __root const char UNDER_IDLE_CONSTR[9]="";
 
-#ifdef NEWSGOLD
-__root const CFG_HDR cfghdr3={CFG_CBOX,"Red button mode",0,3};
-__root const int RED_BUT_MODE=2;
-__root const CFG_CBOX_ITEM cfgcbox3[3]={"As in FW","Classic","Hide all tasks"};
-#else
-__root const CFG_HDR cfghdr3={CFG_CBOX,"Activate on",0,2};
-#ifdef X75
+
+__root const CFG_HDR cfghdr23={CFG_CBOX,"Activation style",0,4};
 __root const int ACTIVE_KEY_STYLE=0;
+__root const CFG_CBOX_ITEM cfgcbox23[4]={"Short press","Long press","* + #","Enter Button"};
+
+#ifndef NEWSGOLD
+__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
+__root const int ACTIVE_KEY=99;
 #else
-__root const int ACTIVE_KEY_STYLE=0;
+#ifdef ELKA
+__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
+__root const int ACTIVE_KEY=0x15;
+#else
+__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
+__root const int ACTIVE_KEY=0x11;
 #endif
-__root const CFG_CBOX_ITEM cfgcbox3[2]={"Internet Button","Long Joypress"};
 #endif
 
 __root const CFG_HDR cfghdr2={CFG_CBOX,"Extra: on longpress",0,5};
 __root const int ENA_LONG_PRESS=2;
 __root const CFG_CBOX_ITEM cfgcbox2[5]={"As in FW","Do nothing","Hide all tasks","Launch XTask","Hide & Lock"};
+
+#ifdef NEWSGOLD
+__root const CFG_HDR cfghdr3={CFG_CBOX,"Red button mode",0,3};
+__root const int RED_BUT_MODE=2;
+__root const CFG_CBOX_ITEM cfgcbox3[3]={"As in FW","Classic","Hide all tasks"};
+#endif
 
 __root const CFG_HDR cfghdr22={CFG_CBOX,"Enable if keyboard locked",0,2};
 __root const int ENA_LOCK=1;
