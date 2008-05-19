@@ -77,7 +77,7 @@ void Socket::Send(const char * data, int size)
 }
 
 //Принять данные
-int Socket::Recv(char *data, int size)
+int Socket::Recv(char * data, int size)
 {
   int nrecv = recv(socket_id, (char *)data, size, 0);
   if(nrecv)

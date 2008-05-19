@@ -193,10 +193,12 @@ int fmenu_keyhook(void *data, GUI_MSG *msg)
 
 HEADER_DESC fmenu_hdr={0,0,0,0, NULL, NULL, LGP_NULL};
 
+const int fmenu_softkeys[]={0,1,2};
+
 const MENU_DESC fmenu_desc=
 {
   8, fmenu_keyhook, fmenu_ghook, NULL,
-  MenuSoftkeys,
+  fmenu_softkeys,
   &fmenu_skt,
   0x11,
   fmenu_itemhndl,

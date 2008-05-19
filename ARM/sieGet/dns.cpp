@@ -23,7 +23,7 @@ DNR::DNR()
 
 DNR::~DNR()
 {
-  if (host) delete host;
+  _safe_delete(host);
 
   if(DNRHandler::Top)
     DNRHandler::Top->DeleteDNR(this);
@@ -31,7 +31,7 @@ DNR::~DNR()
 
 void DNR::Start(const char *_host, int _tries)
 {
-  if (host) delete host;
+  _safe_delete(host);
   host = new char[strlen(_host)+1];
   strcpy(host, _host);
   DNR_TRIES = _tries;

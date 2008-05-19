@@ -142,6 +142,8 @@ public:
   char * file_path;       // Папка сохранения
   int file_size;          // Полный размер файла
   int file_loaded_size;   // Размер закачанной части
+private:
+  int hFile;
 };
 
 void _start_download(Download * download);

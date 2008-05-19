@@ -35,4 +35,3 @@ void patch_input(INPUTDIA_DESC * inp)
   inp->rc.y2=ScreenH()-SoftkeyH()-1;
 }
 
-const int MenuSoftkeys[]={0,1,2};

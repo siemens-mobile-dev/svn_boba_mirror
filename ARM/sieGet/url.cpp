@@ -126,7 +126,7 @@ int URL::Parse(char * s_url)
       break;
     }
   }
-  if (this->port==0)
+  if (!this->port)
     this->port = 80;
   return 1;
 }
@@ -134,31 +134,31 @@ int URL::Parse(char * s_url)
 void URL::Print(Log * log)
 {
   char * msg = new char[128];
-  if (this->scheme)
+  if (scheme)
   {
-    sprintf(msg, "Scheme: %s", this->scheme);
+    sprintf(msg, "Scheme: %s", scheme);
     log->Print(msg, CLR_Violet);
   }
-  if (this->host)
+  if (host)
   {
-    sprintf(msg, "Host: %s", this->host);
+    sprintf(msg, "Host: %s", host);
     log->Print(msg, CLR_Violet);
   }
-  sprintf(msg, "Port: %d", this->port);
+  sprintf(msg, "Port: %d", port);
   log->Print(msg, CLR_Violet);
-  if (this->path)
+  if (path)
   {
-    sprintf(msg, "Path: %s", this->path);
+    sprintf(msg, "Path: %s", path);
     log->Print(msg, CLR_Violet);
   }
-  if (this->param)
+  if (param)
   {
-    sprintf(msg, "Params: %s", this->param);
+    sprintf(msg, "Params: %s", param);
     log->Print(msg, CLR_Violet);
   }
-  if (this->fragment)
+  if (fragment)
   {
-    sprintf(msg, "Fragment: %s", this->fragment);
+    sprintf(msg, "Fragment: %s", fragment);
     log->Print(msg, CLR_Violet);
   }
   delete msg;
@@ -166,11 +166,11 @@ void URL::Print(Log * log)
 
 URL::~URL()
 {
-  if (this->fragment) delete this->fragment;
-  if (this->host) delete this->host;
-  if (this->param) delete this->param;
-  if (this->path) delete this->path;
-  if (this->scheme) delete this->scheme;
+  _safe_delete(fragment);
+  _safe_delete(host);
+  _safe_delete(param);
+  _safe_delete(path);
+  _safe_delete(scheme);
 }
 
 URL::URL()
@@ -194,7 +194,7 @@ URLFile::URLFile()
 
 URLFile::~URLFile()
 {
-  if (url) delete url;
+  _safe_delete(url);
 }
 
 int URLFile::Read(char * file)

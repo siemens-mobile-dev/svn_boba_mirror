@@ -8,6 +8,7 @@ extern const unsigned int CFG_IDLE_ICON_X;
 extern const unsigned int CFG_IDLE_ICON_Y;
 extern const unsigned int CFG_SOUNDS_VOLUME;
 extern const unsigned int CFG_VIBRA_POWER;
+extern const unsigned int CFG_DOWNLOAD_BUFFER_SIZE;
 
 extern const int CFG_LOG_TO_FILE;
 

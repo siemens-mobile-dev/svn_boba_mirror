@@ -145,11 +145,8 @@ void LangPack::Free()
 {
   if (loaded)
   {
-    for (int i=0; i<LGP_DATA_NUM; i++)
-    {
-      if (data[i])
-        delete data[i];
-    }
+    for (int i = 0; i < LGP_DATA_NUM; i ++)
+      _safe_delete(data[i]);
     loaded = NULL;
   }
 }

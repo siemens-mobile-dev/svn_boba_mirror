@@ -6,7 +6,6 @@ void getSymbolicPath(char * path, const char * cFileName)
 {
   int ps = NULL;
   int pp = NULL;
-  unsigned int err;
   while (ps < strlen(cFileName))
   {
     if (cFileName[ps] == '$')
@@ -20,8 +19,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Bookmarks");
-          if (!isdir(path, &err))
-            mkdir(path, &err);
+          make_dir(path);
           pp += 9;
           ps += 9;
           continue;
@@ -32,8 +30,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "img");
-          if (!isdir(path, &err))
-            mkdir(path, &err);
+          make_dir(path);
           pp += 3;
           ps += 3;
           continue;
@@ -44,8 +41,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Logs");
-          if (!isdir(path, &err))
-            mkdir(path, &err);
+          make_dir(path);
           pp += 4;
           ps += 4;
           continue;
@@ -63,8 +59,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Sounds");
-          if (!isdir(path, &err))
-            mkdir(path, &err);
+          make_dir(path);
           pp += 6;
           ps += 6;
           continue;
@@ -98,15 +93,26 @@ int Is_URL_File(const char *s)
 int is_file_exists(const char * fname)
 {
   FSTATS fstat;
-  unsigned int err;
-  return (GetFileStats(fname, &fstat, &err)!=-1);
+  unsigned int io_error;
+  return (GetFileStats(fname, &fstat, &io_error)!=-1);
 }
 
 int get_file_size(const char * fname)
 {
-  unsigned int err;
+  unsigned int io_error;
   FSTATS fs;
-  if (GetFileStats(fname, &fs, &err)==-1)
+  if (GetFileStats(fname, &fs, &io_error)==-1)
     return 0;
   return (fs.size);
+}
+
+int make_dir(const char * dir_fname)
+{
+  unsigned int io_error;
+  if (!isdir(dir_fname, &io_error))
+  {
+    mkdir(dir_fname, &io_error);
+    return 1;
+  }
+  return 0;
 }

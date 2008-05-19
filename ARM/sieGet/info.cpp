@@ -88,9 +88,8 @@ int Info::onKey(GUI *gui, GUI_MSG *msg)
       ws_2str(ec.pWS, path, ec.maxlen);
       if(strcmp(download->file_path, path))
       {
-        if (download->HTTPRequest)
-          delete download->HTTPRequest;
-        download->HTTPRequest = NULL;
+        _safe_delete(download->HTTPRequest);
+        
         delete download->file_path;
         download->file_path = path;
         download->file_size = NULL;
@@ -99,9 +98,8 @@ int Info::onKey(GUI *gui, GUI_MSG *msg)
       else delete path;
       if(strcmp(download->url, url))
       {
-        if (download->HTTPRequest)
-          delete download->HTTPRequest;
-        download->HTTPRequest = NULL;
+        _safe_delete(download->HTTPRequest)
+
         delete download->url;
         download->url = url;
         download->file_size = NULL;
@@ -152,7 +150,7 @@ void Info::gHook(GUI *gui, int cmd)
   }
   if (cmd==TI_CMD_REDRAW && download)
   {
-    if (mode ==DownloadInfo)
+    if (mode == DownloadInfo)
     {
       SetSoftKey(gui, &sk_ok, SET_SOFT_KEY_N); // Устанавливаем на правый софткей текст "OK"
       int focused = EDIT_GetFocus(gui);
@@ -317,9 +315,9 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
     break;
   }
   FreeWS(ws);
-  if (mode==DownloadInfo)
+  if (mode == DownloadInfo)
     patch_header(&info_hdr, &IconPack::Active->data[IMG_GetInfo], (int)LangPack::Active->data[LGP_Info]);
-  if (mode==TrafficInfo)
+  if (mode == TrafficInfo)
     patch_header(&info_hdr, &IconPack::Active->data[IMG_Traffic], (int)LangPack::Active->data[LGP_Traffic]);
   patch_input(&info_desc);
   info_sk[0].lgp_id=(int)LangPack::Active->data[LGP_Cancel];

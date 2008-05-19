@@ -24,8 +24,7 @@ BookmarksList::BookmarksList()
 BookmarksList::~BookmarksList()
 {
   FreeList();
-  if(current_folder)
-    delete current_folder;
+  _safe_delete(current_folder);
 }
 
 void BookmarksList::FreeList()
@@ -206,10 +205,12 @@ int bookmarks_menu_keyhook(void *data, GUI_MSG *msg)
 
 HEADER_DESC bookmarks_menu_hdr={0,0,0,0, NULL, NULL, LGP_NULL};
 
+const int bookmarks_menu_softkeys[]={0,1,2};
+
 const MENU_DESC bookmarks_menu_desc=
 {
   8, bookmarks_menu_keyhook, bookmarks_menu_ghook, NULL,
-  MenuSoftkeys,
+  bookmarks_menu_softkeys,
   &bookmarks_menu_skt,
   0x11,
   bookmarks_menu_itemhndl,
@@ -362,15 +363,16 @@ void AddFolder(GUI *data)
 
 void Delete(GUI *data)
 {
-  unsigned int err;
+  unsigned int io_error;
+  
   BookmarksOptions * options = (BookmarksOptions *)MenuGetUserPointer(data);
   if(options->il->type==BookmarksList::IS_FOLDER)
   {
-    if(!rmdir(options->il->fullname, &err))
+    if(!rmdir(options->il->fullname, &io_error))
       MsgBoxError(1, (int)LangPack::Active->data[LGP_FolderNotEmpty]);
   }
   if(options->il->type==BookmarksList::IS_FILE)
-    unlink(options->il->fullname, &err);
+    unlink(options->il->fullname, &io_error);
   GeneralFunc_flag1(options->gui_id, 1);
 }
 
@@ -411,10 +413,12 @@ void bookmarks_options_ghook(void *data, int cmd)
   bo->gHook(data, cmd);
 }
 
+const int bookmarks_options_softkeys[]={0,1,2};
+
 MENU_DESC bookmarks_options_desc=
 {
   8,NULL, bookmarks_options_ghook,NULL,
-  MenuSoftkeys,
+  bookmarks_options_softkeys,
   &bookmarks_options_skt,
   0x10,
   NULL,
@@ -437,43 +441,49 @@ void BookmarksOptions::gHook(void * data, int cmd)
 
 void BookmarksOptions::Show(BookmarksList::ItemsList * _il)
 {
-  il = _il;
+  
   int to_remove[OPTIONS_ITEMS_N+1];
-  int n;
+  int n = NULL;
+  
+  //il = _il;
   patch_header_small(&bookmarks_options_hdr);
   
-  n=0;
-  if (il)
+  if (il = _il)
   {
     switch(il->type)
     {
     case BookmarksList::IS_BACK:
-      to_remove[++n]=0;
-      to_remove[++n]=3;
+      to_remove[++n] = 0;
+      to_remove[++n] = 3;
       break;
     case BookmarksList::IS_FOLDER:
-      bookmarks_options_items[0].lgp_id_small=(int)LangPack::Active->data[LGP_RenameFolder];
-      bookmarks_options_items[3].lgp_id_small=(int)LangPack::Active->data[LGP_DeleteFolder];
+      bookmarks_options_items[0].lgp_id_small = (int)LangPack::Active->data[LGP_RenameFolder];
+      bookmarks_options_items[3].lgp_id_small = (int)LangPack::Active->data[LGP_DeleteFolder];
       break;
     case BookmarksList::IS_FILE:
-      bookmarks_options_items[0].lgp_id_small=(int)LangPack::Active->data[LGP_EditBookmark];
-      bookmarks_options_items[3].lgp_id_small=(int)LangPack::Active->data[LGP_DeleteBookmark];
+      bookmarks_options_items[0].lgp_id_small = (int)LangPack::Active->data[LGP_EditBookmark];
+      bookmarks_options_items[3].lgp_id_small = (int)LangPack::Active->data[LGP_DeleteBookmark];
       break;
     }
   }
   else
   {
-    to_remove[++n]=0;
-    to_remove[++n]=3;
+    to_remove[++n] = 0;
+    to_remove[++n] = 3;
   }
-  to_remove[0]=n;
-  if (n==OPTIONS_ITEMS_N) return;
-  bookmarks_options_items[1].lgp_id_small=(int)LangPack::Active->data[LGP_AddBookmark];
-  bookmarks_options_items[2].lgp_id_small=(int)LangPack::Active->data[LGP_AddFolder];
-  bookmarks_options_hdr.lgp_id=(int)LangPack::Active->data[LGP_Options];
-  bookmarks_options_sk[0].lgp_id=(int)LangPack::Active->data[LGP_Select];
-  bookmarks_options_sk[1].lgp_id=(int)LangPack::Active->data[LGP_Back];
-  gui_id=CreateMenu(1, 0, &bookmarks_options_desc, &bookmarks_options_hdr, 0, OPTIONS_ITEMS_N, this, to_remove);
+  to_remove[0] = n;
+  
+  if (n == OPTIONS_ITEMS_N) return;
+  
+  bookmarks_options_items[1].lgp_id_small = (int)LangPack::Active->data[LGP_AddBookmark];
+  bookmarks_options_items[2].lgp_id_small = (int)LangPack::Active->data[LGP_AddFolder];
+  
+  bookmarks_options_hdr.lgp_id = (int)LangPack::Active->data[LGP_Options];
+  
+  bookmarks_options_sk[0].lgp_id = (int)LangPack::Active->data[LGP_Select];
+  bookmarks_options_sk[1].lgp_id = (int)LangPack::Active->data[LGP_Back];
+  
+  gui_id = CreateMenu(1, NULL, &bookmarks_options_desc, &bookmarks_options_hdr, NULL, OPTIONS_ITEMS_N, this, to_remove);
 }
 
 BookmarksOptions::BookmarksOptions()
@@ -573,22 +583,22 @@ char * BookmarksInput::extract_link(GUI * gui)
 
 int BookmarksInput::onKey(GUI *gui, GUI_MSG *msg)
 {
-  unsigned int err;
+  unsigned int io_error;
   if (msg->keys==0xFF0)
   {
     return GUI_RESULT_CLOSE;
   }
   if(msg->keys==0xFFF)
   {
-    if(mode==CreateFolder || mode==RenameFolder)
+    if(mode == CreateFolder || mode == RenameFolder)
     {
       if (name) delete name;
       if (!(name = extract_name(gui))) goto NO_NAME;
-      if (isdir(name, &err)) goto SAME_FOLDER;
-      if(mode==CreateFolder)
-        mkdir(name, &err);
-      if(mode==RenameFolder)
-        fmove(il->fullname, name, &err);
+      if (isdir(name, &io_error)) goto SAME_FOLDER;
+      if(mode == CreateFolder)
+        mkdir(name, &io_error);
+      if(mode == RenameFolder)
+        fmove(il->fullname, name, &io_error);
     }
     if(mode==CreateBookmark || mode==EditBookmark)
     {
@@ -597,10 +607,10 @@ int BookmarksInput::onKey(GUI *gui, GUI_MSG *msg)
       URLFile * url_file = new URLFile;
       if (!(url_file->url = extract_link(gui))) goto NO_URL;
       strcat(name, ".url");
-      if(mode==CreateBookmark)
+      if(mode == CreateBookmark)
         if (is_file_exists(name)) goto SAME_FILE;
-      if(mode==EditBookmark)
-        unlink(il->fullname, &err);
+      if(mode == EditBookmark)
+        unlink(il->fullname, &io_error);
       url_file->Write(name);
       delete url_file;
     }
@@ -647,10 +657,8 @@ void BookmarksInput::Show(EDIT_MODE _mode, BookmarksList::ItemsList * _il)
 {
   il = _il;
   mode = _mode;
-  if(name)delete name;
-  name = NULL;
-  if(url)delete url;
-  url = NULL;
+  _safe_delete(name);
+  _safe_delete(url);
   
   URLFile * urlfile = NULL;
   WSHDR *ws = AllocWS(512);
@@ -694,7 +702,7 @@ void BookmarksInput::Show(EDIT_MODE _mode, BookmarksList::ItemsList * _il)
   }
 
   FreeWS(ws);
-  if (urlfile) delete urlfile;
+  _safe_delete(urlfile);
   
   switch(mode)
   {
@@ -725,8 +733,8 @@ BookmarksInput::BookmarksInput()
 
 BookmarksInput::~BookmarksInput()
 {
-  if(name) delete name;
-  if(url) delete url;
+  _safe_delete(name);
+  _safe_delete(url);
 }
 
 

@@ -129,5 +129,5 @@ HTTP_Response_Headers::HTTP_Response_Headers(Log * _log)
 HTTP_Response_Headers::~HTTP_Response_Headers()
 {
   for (int i=0; i<N_HTTP_RESP_HEADERS; i++)
-    if (headers[i]) delete headers[i];
+    _safe_delete(headers[i]);
 }

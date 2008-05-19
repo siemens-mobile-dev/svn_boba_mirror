@@ -63,7 +63,7 @@ HTTP_Request::~HTTP_Request()
                                                                   */
 int HTTP_Response::Parse(char * buf, int maxlen)
 {
-  if (headers) delete headers; // Нафиг нам старые заголовки, тем более что неизвестно что там
+  _safe_delete(headers); // Нафиг нам старые заголовки, тем более что неизвестно что там
   headers = new HTTP_Response_Headers(log); // Создаем новое хранилище заголовков
 
   int l_len = 0;    // Длина текущей строки
@@ -81,7 +81,7 @@ int HTTP_Response::Parse(char * buf, int maxlen)
     return 0;
   if (strlen(l_buf)>13) // Если есть сообщение статуса
   {
-    if (resp_msg) delete resp_msg; // Удаляем старое
+    _safe_delete(resp_msg); // Удаляем старое
     resp_msg = new char[strlen(l_buf)-13+1]; // Создаем новое
     strcpy(resp_msg, l_buf+13); // Копируем из строки
   }
@@ -134,6 +134,6 @@ HTTP_Response::HTTP_Response(Log * _log)
 
 HTTP_Response::~HTTP_Response()
 {
-  if (resp_msg) delete resp_msg;
-  if (headers) delete headers;
+  _safe_delete(resp_msg);
+  _safe_delete(headers);
 }

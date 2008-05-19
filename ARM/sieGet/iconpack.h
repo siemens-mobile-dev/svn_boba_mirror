@@ -3,7 +3,6 @@
 
 #define LGP_SMILE_OK 0xE41F // :)
 #define LGP_SMILE_NO 0xE43D // :(
-#define LGP_MENU_PIC 0xE44D
 
 enum ICON_ID
 {

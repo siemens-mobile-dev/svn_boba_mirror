@@ -45,17 +45,17 @@ int SieGetDaemon::onMessage(GBS_MSG *msg)
   if(msg->msg == MSG_RECONFIGURE_REQ) // CONFIG 
   {
     extern const char * successed_config_filename;
-    if (stricmp(successed_config_filename,(char *)msg->data0)==0)
+    if (!stricmp(successed_config_filename,(char *)msg->data0))
     {
       InitConfig(); // Обновляем конфиг
-      lgp->Setup(); // Обновляем ленгпак
+      //lgp->Setup(); // Обновляем ленгпак
       icp->Setup(); // Обновляем иконки
     }
   }
   // Рисуем иконку на IDLE
-  #define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
-  CSM_RAM * data=FindCSMbyID(CSM_root()->idle_id);
-  if(IsGuiOnTop(idlegui_id))
+  //#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
+  CSM_RAM * data = FindCSMbyID(CSM_root()->idle_id);
+  if(IsGuiOnTop(((int *)data)[DISPLACE_OF_IDLEGUI_ID/4]))
   {
     GUI * igui = GetTopGUI();
     if (igui)

@@ -45,10 +45,12 @@ int list_keyhook(void * data, GUI_MSG *msg)
 
 HEADER_DESC list_hdr={0,0,0,0, NULL, NULL, LGP_NULL};
 
+const int list_softkeys[]={0,1,2};
+
 static const ML_MENU_DESC list_desc=
 {
   8, list_keyhook, list_ghook, NULL,
-  MenuSoftkeys,
+  list_softkeys,
   &list_skt,
   0x200+0x11,
   list_itemhndl,
@@ -62,26 +64,62 @@ int List::onKey(void * data, GUI_MSG * msg)
 {
   Download * dl;
   if(DownloadHandler::Top)
-    dl = DownloadHandler::Top->GetDownloadbyN(GetCurMenuItem(data));
-  if(msg->keys==0x3D)
   {
-    if(dl)
+    if(msg->keys==0x3D)
     {
-      LogWidget * log = new LogWidget(dl->log);
-      log->Create();
+      if(dl = DownloadHandler::Top->GetDownloadbyN(GetCurMenuItem(data)))
+      {
+        LogWidget * log = new LogWidget(dl->log);
+        log->Create();
+      }
     }
-  }
-  if (msg->keys==0x18)
-  {
-    ListOptions * opt = new ListOptions;
-    opt->Show(dl);
+    if (msg->keys==0x18)
+    {
+      dl = DownloadHandler::Top->GetDownloadbyN(GetCurMenuItem(data));
+      ListOptions * opt = new ListOptions;
+      opt->Show(dl);
+    }
+    if (msg->gbsmsg->msg == KEY_DOWN)
+    {
+      switch(msg->gbsmsg->submess)
+      {
+      case GREEN_BUTTON:
+        {
+          URLInput * ui = new URLInput();
+          ui->Show("http://");
+        }
+        break;
+      case '#':
+        if(dl = DownloadHandler::Top->GetDownloadbyN(GetCurMenuItem(data)))
+        {
+          unsigned int io_error;
+          unlink(dl->log->filename, &io_error);
+          DownloadHandler::Top->DeleteDownload(dl);
+          RefreshGUI();
+        }
+        break;
+      case '5':
+        if(dl = DownloadHandler::Top->GetDownloadbyN(GetCurMenuItem(data)))
+        {
+          if (dl->download_state == DOWNLOAD_COMPLETE)
+          {
+            int len = strlen(dl->full_file_name);
+            WSHDR * ws = AllocWS(len + 1);
+            str_2ws(ws, dl->full_file_name, len);
+            ExecuteFile(ws, 0, 0);
+            FreeWS(ws);
+          }
+        }
+        break;
+      }
+    }
   }
   return GUI_RESULT_OK;
 }
 
 void List::gHook(void *data, int cmd)
 {
-  if (cmd==TI_CMD_FOCUS)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
     int n = DownloadHandler::Top->GetNumOfDownloads();
@@ -102,11 +140,11 @@ void List::wsprintf_bytes(WSHDR * ws, int bytes)
 void List::wsprintf_bytes(WSHDR * ws, int bytes1, int bytes2)
 {
   if(bytes1 < 1024)
-    wsprintf(ws, "/%u b (%d%)", bytes2, bytes1 * 100 / bytes2);
+    wsprintf(ws, "/%u b, %d%", bytes2, bytes1 * 100 / bytes2);
   if(bytes1 > 1024 && bytes1 < 1024*1024)
-    wsprintf(ws, "/%u Kb (%d%)", bytes2/1024, bytes1 * 100 / bytes2);
+    wsprintf(ws, "/%u Kb, %d%", bytes2/1024, bytes1 * 100 / bytes2);
   if(bytes1 > 1024*1024)
-    wsprintf(ws, "/%u Mb (%d%)", bytes2/1024*1024, bytes1 * 100 / bytes2);
+    wsprintf(ws, "/%u Mb, %d%", bytes2/1024*1024, bytes1 * 100 / bytes2);
 }
 
 void List::ItemHandler(void * data, int curitem, void * unk)
@@ -173,9 +211,11 @@ void List::ItemHandler(void * data, int curitem, void * unk)
 void List::Show()
 {
   patch_header(&list_hdr, &IconPack::Active->data[IMG_Logo], (int)"SieGet");
-  list_sk[0].lgp_id=(int)LangPack::Active->data[LGP_Options];
-  list_sk[1].lgp_id=(int)LangPack::Active->data[LGP_Close];
-  gui_id = CreateMultiLinesMenu(0, 0, &list_desc, &list_hdr, 0, DownloadHandler::Top->GetNumOfDownloads());
+  
+  list_sk[0].lgp_id = (int)LangPack::Active->data[LGP_Options];
+  list_sk[1].lgp_id = (int)LangPack::Active->data[LGP_Close];
+  
+  gui_id = CreateMultiLinesMenu(NULL, NULL, &list_desc, &list_hdr, NULL, DownloadHandler::Top->GetNumOfDownloads());
 }
 
 List::List()
@@ -232,20 +272,23 @@ void list_options_traffic_selected(GUI * data)
 
 void list_options_delete_selected(GUI * data)
 {
+  unsigned int io_error;
+  
   ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
-  unsigned int err;
-  unlink(list_opt->dl->log->filename, &err);
+
+  unlink(list_opt->dl->log->filename, &io_error);
   DownloadHandler::Top->DeleteDownload(list_opt->dl);
   GeneralFunc_flag1(list_opt->gui_id, 1);
 }
 
 void list_options_delete_successfull(GUI * data)
 {
+  unsigned int io_error;
+  
   ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
   while(Download * complete_download = DownloadHandler::Top->GetDownloadByState(DOWNLOAD_COMPLETE))
   {
-    unsigned int err;
-    unlink(complete_download->log->filename, &err);
+    unlink(complete_download->log->filename, &io_error);
     DownloadHandler::Top->DeleteDownload(complete_download);
   }
   GeneralFunc_flag1(list_opt->gui_id, 1);
@@ -254,12 +297,15 @@ void list_options_delete_successfull(GUI * data)
 void list_options_edit_config(GUI * data)
 {
   extern const char * successed_config_filename;
-  ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
   int len = strlen(successed_config_filename);
+  
+  ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
+  
   WSHDR * ws = AllocWS(len);
   str_2ws(ws, successed_config_filename, len);
   ExecuteFile(ws, 0, 0);
   FreeWS(ws);
+  
   GeneralFunc_flag1(list_opt->gui_id, 1);
 }
 
@@ -290,14 +336,14 @@ HEADER_DESC list_options_hdr={0,0,0,0,NULL,NULL,LGP_NULL};
 
 MENUITEM_DESC list_options_items[LIST_OPTIONS_ITEMS_N]=
 {
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, NULL, LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
 };
 
 const MENUPROCS_DESC list_options_procs[LIST_OPTIONS_ITEMS_N]=
@@ -319,10 +365,12 @@ void list_options_ghook(void * data, int cmd)
   list_opt->gHook(data, cmd);
 }
 
+const int list_options_softkeys[]={0,1,2};
+
 MENU_DESC list_options_desc=
 {
   8, NULL, list_options_ghook,NULL,
-  MenuSoftkeys,
+  list_options_softkeys,
   &list_options_skt,
   0x11,
   NULL,
@@ -333,11 +381,11 @@ MENU_DESC list_options_desc=
 
 void ListOptions::gHook(void * data, int cmd)
 {
-  if (cmd==TI_CMD_FOCUS)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
-  if (cmd==TI_CMD_DESTROY)
+  if (cmd == TI_CMD_DESTROY)
   {
     delete this;
   }
@@ -345,55 +393,59 @@ void ListOptions::gHook(void * data, int cmd)
 
 void ListOptions::Show(Download * _dl)
 {
-  dl = _dl;
   int to_remove[LIST_OPTIONS_ITEMS_N+1];
-  int n = 0;
+  int n = NULL;
+  
+  this->dl = _dl;
+  
   patch_header_small(&list_options_hdr);
   
   if(!dl) // Закачек нет
   {
-    to_remove[++n]=1; // Не показываем пункт "Старт"
-    to_remove[++n]=2; // Не показываем пункт "Стоп"
-    to_remove[++n]=3; // Не показываем пункт "Свойства"
-    to_remove[++n]=5; // Не показываем пункт "Удалить"
-    to_remove[++n]=6; // Не показываем пункт "Удалить успешные"
+    to_remove[++n] = 1; // Не показываем пункт "Старт"
+    to_remove[++n] = 2; // Не показываем пункт "Стоп"
+    to_remove[++n] = 3; // Не показываем пункт "Свойства"
+    to_remove[++n] = 5; // Не показываем пункт "Удалить"
+    to_remove[++n] = 6; // Не показываем пункт "Удалить успешные"
   }
   else // Что-то все таки есть
   {
     if (ACTIVE_DOWNLOAD_STATE(dl->download_state))
-      to_remove[++n]=1;
+      to_remove[++n] = 1;
     else
-      to_remove[++n]=2;
+      to_remove[++n] = 2;
     if(!DownloadHandler::Top->GetNumOfDownloadsByState(DOWNLOAD_COMPLETE))
-      to_remove[++n]=6; // Не показываем пункт "Удалить успешные"
+      to_remove[++n] = 6; // Не показываем пункт "Удалить успешные"
   }
   
-  to_remove[0]=n;
-  if (n==LIST_OPTIONS_ITEMS_N) return;
+  to_remove[0] = n;
+  if (n == LIST_OPTIONS_ITEMS_N) return;
   
-  list_options_items[0].icon=&IconPack::Active->data[IMG_New];
-  list_options_items[1].icon=&IconPack::Active->data[IMG_Start];
-  list_options_items[2].icon=&IconPack::Active->data[IMG_Pause];
-  list_options_items[3].icon=&IconPack::Active->data[IMG_GetInfo];
-  list_options_items[4].icon=&IconPack::Active->data[IMG_Traffic];
-  list_options_items[5].icon=&IconPack::Active->data[IMG_Delete];
-  list_options_items[6].icon=&IconPack::Active->data[IMG_DeleteSuccesful];
-  list_options_items[7].icon=&IconPack::Active->data[IMG_Settings];
-  list_options_items[8].icon=&IconPack::Active->data[IMG_About];
+  list_options_items[0].icon = &IconPack::Active->data[IMG_New];
+  list_options_items[1].icon = &IconPack::Active->data[IMG_Start];
+  list_options_items[2].icon = &IconPack::Active->data[IMG_Pause];
+  list_options_items[3].icon = &IconPack::Active->data[IMG_GetInfo];
+  list_options_items[4].icon = &IconPack::Active->data[IMG_Traffic];
+  list_options_items[5].icon = &IconPack::Active->data[IMG_Delete];
+  list_options_items[6].icon = &IconPack::Active->data[IMG_DeleteSuccesful];
+  list_options_items[7].icon = &IconPack::Active->data[IMG_Settings];
+  list_options_items[8].icon = &IconPack::Active->data[IMG_About];
   
-  list_options_items[0].lgp_id_small=(int)LangPack::Active->data[LGP_NewDownload];
-  list_options_items[1].lgp_id_small=(int)LangPack::Active->data[LGP_StartDownload];
-  list_options_items[2].lgp_id_small=(int)LangPack::Active->data[LGP_PauseDownload];
-  list_options_items[3].lgp_id_small=(int)LangPack::Active->data[LGP_Info];
-  list_options_items[4].lgp_id_small=(int)LangPack::Active->data[LGP_Traffic];
-  list_options_items[5].lgp_id_small=(int)LangPack::Active->data[LGP_DeleteDownload];
-  list_options_items[6].lgp_id_small=(int)LangPack::Active->data[LGP_DeleteSuccesfulDownload];
-  list_options_items[7].lgp_id_small=(int)LangPack::Active->data[LGP_Settings];
-  list_options_items[8].lgp_id_small=(int)LangPack::Active->data[LGP_About];
+  list_options_items[0].lgp_id_small = (int)LangPack::Active->data[LGP_NewDownload];
+  list_options_items[1].lgp_id_small = (int)LangPack::Active->data[LGP_StartDownload];
+  list_options_items[2].lgp_id_small = (int)LangPack::Active->data[LGP_PauseDownload];
+  list_options_items[3].lgp_id_small = (int)LangPack::Active->data[LGP_Info];
+  list_options_items[4].lgp_id_small = (int)LangPack::Active->data[LGP_Traffic];
+  list_options_items[5].lgp_id_small = (int)LangPack::Active->data[LGP_DeleteDownload];
+  list_options_items[6].lgp_id_small = (int)LangPack::Active->data[LGP_DeleteSuccesfulDownload];
+  list_options_items[7].lgp_id_small = (int)LangPack::Active->data[LGP_Settings];
+  list_options_items[8].lgp_id_small = (int)LangPack::Active->data[LGP_About];
   
-  list_options_sk[0].lgp_id=(int)LangPack::Active->data[LGP_Select];
-  list_options_sk[1].lgp_id=(int)LangPack::Active->data[LGP_Back];
-  list_options_hdr.lgp_id=(int)LangPack::Active->data[LGP_Options];
+  list_options_sk[0].lgp_id = (int)LangPack::Active->data[LGP_Select];
+  list_options_sk[1].lgp_id = (int)LangPack::Active->data[LGP_Back];
+  
+  list_options_hdr.lgp_id = (int)LangPack::Active->data[LGP_Options];
+  
   gui_id = CreateMenu(1, 0, &list_options_desc, &list_options_hdr, 0, LIST_OPTIONS_ITEMS_N, this, to_remove);
 }
 

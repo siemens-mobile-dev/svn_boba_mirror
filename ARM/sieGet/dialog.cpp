@@ -32,7 +32,7 @@ void SieGetDialog::Show(char * _url)
   }
   if (_url)
   {
-    if (url) delete url;
+    _safe_delete(url);
     url = new char[strlen(_url) + 1];
     strcpy(url, _url);
   }
@@ -98,7 +98,7 @@ SieGetDialog::SieGetDialog()
 
 SieGetDialog::~SieGetDialog()
 {
-  if (url) delete url;
+  _safe_delete(url);
   delete list;
 }
 

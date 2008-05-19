@@ -6,6 +6,4 @@ void patch_header(HEADER_DESC * head, int * icon, int lgp_id);
 void patch_header_small(HEADER_DESC * head);
 void patch_input(INPUTDIA_DESC * inp);
 
-extern const int MenuSoftkeys[];
-
 #endif
