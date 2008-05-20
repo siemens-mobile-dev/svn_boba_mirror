@@ -645,9 +645,16 @@
 08F0: 0xA082AF70 ; 23C: __arm int SetCurrentGPRSProfile(int profile);
 
 08F4: 0xA0DAA43D ; 23D: __thumb void MD5_Init(MD5_CTX *c);
-08F8: 0xA0DAA0AD ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); //
-08FC: 0xA0DAA345 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
+08F8: 0xA0DAA0AD ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
+08FC: 0xA0DAA345 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);
 0900: 0xA0DAADCD ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA078905F ; 241: __thumb void SetDateTime(TDate *, TTime *);
+0918: 0xA03484B4 ; 246: __arm int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder);
+092C: 0xA077C9DA ; 24B: __arm void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc);
+0950: 0xA034A418 ; 254: __arm int StartNativeExplorer(NativeExplorerData* data);
+
 #pragma disable old_equal_ff
 +0
+
+
+;locale=Russian_Russia.1251
