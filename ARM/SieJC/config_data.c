@@ -274,9 +274,9 @@ __root const unsigned int AUTOSTATUS_TIME = 5;
 
 __root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
 
-__root const CFG_HDR cfghdr_IBI1={CFG_CHECKBOX, LG_ICONBAR_SI, 0, 2};
+/*__root const CFG_HDR cfghdr_IBI1={CFG_CHECKBOX, LG_ICONBAR_SI, 0, 2};
 __root const int SHOW_ICONBAR_ICON = 1;
 
 __root const CFG_HDR cfghdr_IBI2={CFG_STR_WIN1251, LG_ICONSET_FILENAME, 0, 127};
-__root const char ICONSET_FILENAME[128] = DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\IconSets\\default.bcfg";
+__root const char ICONSET_FILENAME[128] = DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\IconSets\\default.bcfg";*/ // IconBar
 // EOL, EOF

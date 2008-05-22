@@ -123,14 +123,14 @@ int sock=-1;
 volatile int is_gprs_online=1;
 
 
-int IB_NEWMESSAGE;
+/*int IB_NEWMESSAGE;
 int IB_ONLINE;
 int IB_CHAT;
 int IB_AWAY;
 int IB_XA;
 int IB_DND;
 int IB_INVISIBLE;
-int IB_OFFLINE;
+int IB_OFFLINE;*/ // IconBar
 
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
@@ -375,7 +375,7 @@ borderColor.a=color_cfg [383];
 };
 */
 
-void addIconBar(short* num)
+/*void addIconBar(short* num)
 {
   #pragma swi_number=0x27 
   __swi __arm void AddIconToIconBar(int pic, short *num);
@@ -427,7 +427,7 @@ void addIconBar(short* num)
     }
   }
   AddIconToIconBar(icon_num, num);
-}
+}*/ // IconBar
 
 int readfile(char *color_PATH, char *colorshem_PATH, char *buf)
 {
@@ -2053,11 +2053,11 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     return(1);
   }
 
-typedef struct
+/*typedef struct
 {
   char check_name[8];
   int addr;
-}ICONBAR_H;
+}ICONBAR_H;*/ // IconBar
 
   const int minus11=-11;
 
@@ -2067,7 +2067,7 @@ typedef struct
   {
     CSM_DESC maincsm;
     WSHDR maincsm_name;
-    ICONBAR_H iconbar_handler;
+    //ICONBAR_H iconbar_handler; // IconBar
   }MAINCSM =
   {
     {
@@ -2090,10 +2090,10 @@ sizeof(MAIN_CSM),
       NAMECSM_MAGIC2,
       0x0,
       139
-    },
+    }/*,
     {
       "IconBar"
-    }
+    }*/ // IconBar
   };
 
   void UpdateCSMname(void)
@@ -2239,7 +2239,7 @@ void AutoStatus(void)
   }else GBS_DelTimer(&autostatus_tmr);
 }
 
-void LoadIconSet(const char *fname)
+/*void LoadIconSet(const char *fname)
 {
   int hFile;
   unsigned int err;
@@ -2260,7 +2260,7 @@ void LoadIconSet(const char *fname)
   IB_NEWMESSAGE = buff[0x17D] * 0x100 + buff[0x17C];
   fclose(hFile, &err);
   mfree(buff);
-}
+}*/ // IconBar
 
 void OpenSettings(void)
 {
@@ -2272,10 +2272,10 @@ void OpenSettings(void)
   FreeWS(ws);
 }
 
-void SetIconBarHandler()
+/*void SetIconBarHandler()
 {
   MAINCSM.iconbar_handler.addr = (int)addIconBar;
-}
+}*/ // IconBar
   
   int main(char *exename, char *fname)
   {
@@ -2397,12 +2397,12 @@ void SetIconBarHandler()
       GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
       as = 0;
     }
-    extern const int SHOW_ICONBAR_ICON;
+    /*extern const int SHOW_ICONBAR_ICON;
     if (SHOW_ICONBAR_ICON)
     {
       extern const char ICONSET_FILENAME[128];
       LoadIconSet(ICONSET_FILENAME);
       SetIconBarHandler();
-    }
+    }*/ // IconBar
     return 0;
   }

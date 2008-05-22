@@ -209,8 +209,8 @@
 #define LG_AS_ENABLED       "Включен"
 #define LG_AS_TIME          "Время (в минутах)"
 
-#define LG_ICONBAR_SI       "Показывать иконку в IconBar"
-#define LG_ICONSET_FILENAME "Имя файла с номерами иконок"
+/*#define LG_ICONBAR_SI       "Показывать иконку в IconBar"
+#define LG_ICONSET_FILENAME "Имя файла с номерами иконок"*/ // IconBar
 //vCard.c
 #define LG_SHOW_AVATAR      "Показать аватару"
 
@@ -739,8 +739,8 @@
 #define LG_AS_ENABLED       "Enable"
 #define LG_AS_TIME          "Time (minutes)"
 
-#define LG_ICONBAR_SI       "Show icon in IconBar"
-#define LG_ICONSET_FILENAME "File name with icon numbers"
+/*#define LG_ICONBAR_SI       "Show icon in IconBar"
+#define LG_ICONSET_FILENAME "File name with icon numbers"*/ // IconBar
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Show avatar"
