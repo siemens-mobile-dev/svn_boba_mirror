@@ -7,10 +7,12 @@ extern void kill_data(void *p, void (*func_p)(void *));
 
 char mmenu_hdr_txt[32];
 
+int number_nsd;  // Number of new style dialogs
 int show_daemons;
 //extern int mode;
 extern CSM_RAM *under_idle;
 
+extern const int SHOW_IDLESCREEN;
 extern const char BM1NAME[32];
 extern const char BM1FILE[128];
 extern const char BM2NAME[32];
@@ -137,8 +139,8 @@ int GetNumberOfDialogs(void)
 
   void *ircsm=FindCSMbyID(CSM_root()->idle_id);
   ClearNL();
-
   //Find new style daemons
+  number_nsd=0;
   if (show_daemons)
   {
     icsm=((CSM_RAM *)(CSM_root()->csm_q->csm.first))->next; //������ ������������ CSM �������
@@ -151,7 +153,8 @@ int GetNumberOfDialogs(void)
         wstrcpy(ws,tws);
         AddNL(ws,1);
         nltop->p=icsm;
-        count++;
+        count++;                  
+        number_nsd++;         // count new style dialogs
       }
       icsm=icsm->next;
     }
@@ -161,11 +164,14 @@ int GetNumberOfDialogs(void)
   {
     if (icsm==ircsm)
     {
-      ws=AllocWS(40);
-      wsprintf(ws,"IDLE Screen");
-      AddNL(ws,0);
-      nltop->p=icsm;
-      count++;
+      if (SHOW_IDLESCREEN)
+      {
+        ws=AllocWS(40);
+        wsprintf(ws,"IDLE Screen");
+        AddNL(ws,0);
+        nltop->p=icsm;
+        count++;
+      }
     }
     else
     {
@@ -623,7 +629,9 @@ void maincsm_oncreate(CSM_RAM *data)
   }
   if (sz>=0) csm_text[sz]=0;
   patch_header(&mm_menuhdr);
-  csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,1,GetNumberOfDialogs(),csm,0);
+  int n_dialogs=GetNumberOfDialogs()-number_nsd;
+  if (n_dialogs>1) csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,1,n_dialogs,csm,0);    // if more than 1 dialog, position of cursor in menu will be 1
+              else csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,0,n_dialogs,csm,0);    // else - 0
 }
 
 void maincsm_onclose(CSM_RAM *csm)
