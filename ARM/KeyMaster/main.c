@@ -304,7 +304,7 @@ void *icsm=FindCSMbyID(CSM_root()->idle_id);
 
   
   //keypad2joy implementation
-  if ((keymode==1) && !(IsIDLE())){
+  if (keymode==1){
     if (submsg==0x38){
 	GBS_SendMessage(MMI_CEPID,msg,DOWN_BUTTON);
 	  return(2); 

@@ -345,11 +345,11 @@ static const ML_MENU_DESC rb_menu=
 void CreateRBMenu(void)
 {
   patch_header(&rb_menuhdr);
-  sprintf(&resstr,"");;
+  sprintf(&resstr,"");
   TTime t;
   TDate d;
   GetDateTime(&d,&t);
-  sprintf(&hdr2,"Μενώ  %02d:%02d",t.hour,t.min);
+  sprintf(&hdr2,"%i kb RAM %02d:%02d",GetFreeRamAvail()/1024,t.hour,t.min);
   strncpy(hdr,&hdr2,63);
   CreateMultiLinesMenu(0,0,&rb_menu,&rb_menuhdr,0,MENU_ITEMS_NUM);
 }
