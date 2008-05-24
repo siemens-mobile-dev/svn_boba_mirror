@@ -345,7 +345,7 @@
 0A2C: 00000000 3DEBF044 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 CD2CF144 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 ADE10C45 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
-;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+0A38: 00000000 2D993445 ; 28E: void Shortcut_Run (u16 * shortcut_name);
 
 
 
