@@ -94,7 +94,7 @@
 0594: FFFFFFFF 51DADF44 ; 165: int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: FFFFFFFF D19BEF44 ; 166: int PNUM_len(void *pnum);
 059C: FFFFFFFF 49ADF344 ; 167: void PNUM2str(char *str,void *pnum,int len, int max_len);
-05A0: FFFFFFFF D1E1E944 ; 168: DISP_OBJ * GUIObj_GetDISPObj (void * gui);
+05A0: FFFFFFFF 11C8EA44 ; 168: DISP_OBJ * GUIObj_GetDISPObj (void * gui);
 05A4: FFFFFFFF 91D3E544 ; 169: LIST *List_New(void);
 05A8: FFFFFFFF B5D3E544 ; 16A: void List_Free(LIST *lst);
 05AC: FFFFFFFF D5D4E544 ; 16B: void ListElement_AddtoTop(LIST *lst,void *newElement);
