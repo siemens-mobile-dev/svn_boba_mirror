@@ -298,7 +298,6 @@
 0960: FFFFFFFF 99CE5345 ; 258: int Display_GetHeight(int Display);
 0964: FFFFFFFF A9CE5345 ; 259: int Display_GetWidth(int Display);
 0968: FFFFFFFF 75921445 ; 25A: void PlaySystemSound (int SndNumber);
-0970: FFFFFFFF D1191945 ; 25C: void ListMenu_SetItemUnavailable(void * menu, void *item, int available);
 0974: FFFFFFFF B18C1445 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
 0978: FFFFFFFF 898C1445 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 097C: FFFFFFFF F9841845 ; 25F: int GC_GetPenColor (void* GC);

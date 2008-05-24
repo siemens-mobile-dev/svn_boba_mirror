@@ -148,7 +148,6 @@
 06D4: FFFFFFFF D13F1645 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: FFFFFFFF E1E2D444 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF A5EBD444 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-06E4: FFFFFFFF 28552444 ; 81B9: void * get_APP_DESC_TABLE(void)
 06E8: FFFFFFFF E9C8D444 ; 1BA: void ShuttingDown(void)
 06EC: FFFFFFFF E537F944 ; 1BB: void Vibra(int t1, int t2, int t3)
 06F0: FFFFFFFF 4DE00C45 ; 1BC: void GetDateFormat(const int *zero, char *level)
