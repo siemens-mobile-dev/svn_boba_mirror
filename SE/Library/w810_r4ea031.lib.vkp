@@ -2,7 +2,7 @@
 ;Библиотека функций
 ;v
 ;(c) Hussein , IronMaster
-;
+;(p) zoyd
 
 +456BFC00
 0440: FFFFFFFF A93A4545 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
@@ -282,12 +282,13 @@
 0910: FFFFFFFF 41141745 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: FFFFFFFF CD141745 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: FFFFFFFF BD141745 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-;091C: xxxxxxxx yyyyyyyy ; 247: void GoMusic(void);
+091C: FFFFFFFF 95181345 ; 247: void GoMusic(void);
 0920: FFFFFFFF 19d14545 ; 248: void Vibra_Off (int t1);
-;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
-;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
+0924: FFFFFFFF 39664445 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+0928: FFFFFFFF F13E1545 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+092C: FFFFFFFF 79AA9C44 ; 24B: int GetSilent(void);
+0930: FFFFFFFF 1B9D4545 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
+0934: FFFFFFFF 95D34545 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: FFFFFFFF FD0FDD44 ; 24E: int GetChipID(void);
 0948: FFFFFFFF AD141745 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 9D141745 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
@@ -306,34 +307,34 @@
 0988: FFFFFFFF D12C1945 ; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
 098C: FFFFFFFF 652E1945 ; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
 0990: FFFFFFFF 7D1F1945 ; 264: int GC_DrawBitmap(void *GC, int x1, int y1, int x2, int y2, int * bmp);
-;0994: xxxxxxxx yyyyyyyy ; 265: png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
-;0998: xxxxxxxx yyyyyyyy ; 266: void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
-;099C: xxxxxxxx yyyyyyyy ; 267: png_infop png_create_info_struct(png_structp png_ptr);
-;09A0: xxxxxxxx yyyyyyyy ; 268: void png_destroy_info_struct(png_structp png_ptr, png_infopp info_ptr_ptr);
-;09A4: xxxxxxxx yyyyyyyy ; 269: void png_set_progressive_read_fn(png_structp png_ptr, png_voidp progressive_ptr, png_progressive_info_ptr info_fn, png_progressive_row_ptr row_fn, png_progressive_end_ptr end_fn);
-;09A8: xxxxxxxx yyyyyyyy ; 26A: void png_process_data(png_structp png_ptr, png_infop info_ptr, png_bytep buffer, png_size_t buffer_size);
-;09AC: xxxxxxxx yyyyyyyy ; 26B: void png_read_update_info(png_structp png_ptr, png_infop info_ptr);
-;09B0: xxxxxxxx yyyyyyyy ; 26C: png_voidp png_get_progressive_ptr(png_structp png_ptr);
-;09B4: xxxxxxxx yyyyyyyy ; 26D: png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
-;09B8: xxxxxxxx yyyyyyyy ; 26E: void png_set_strip_16(png_structp png_ptr);
-;09BC: xxxxxxxx yyyyyyyy ; 26F: void png_set_gray_1_2_4_to_8(png_structp png_ptr);
-;09C0: xxxxxxxx yyyyyyyy ; 270: void png_set_gray_to_rgb(png_structp png_ptr);
-;09C4: xxxxxxxx yyyyyyyy ; 271: png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
-;09C8: xxxxxxxx yyyyyyyy ; 272: void png_set_tRNS_to_alpha(png_structp png_ptr);
-;09CC: xxxxxxxx yyyyyyyy ; 273: void png_set_filler(png_structp png_ptr, png_uint_32 filler, int flags);
-;09D0: xxxxxxxx yyyyyyyy ; 274: void png_set_palette_to_rgb(png_structp png_ptr);
-;09D4: xxxxxxxx yyyyyyyy ; 275: png_uint_32 png_get_rowbytes(png_structp png_ptr, png_infop info_ptr);
-;09D8: xxxxxxxx yyyyyyyy ; 276: void png_progressive_combine_row(png_structp png_ptr, png_bytep old_row, png_bytep new_row);
-;09DC: xxxxxxxx yyyyyyyy ; 277: int png_sig_cmp(png_bytep sig, png_size_t start, png_size_t num_to_check);
-;09E0: xxxxxxxx yyyyyyyy ; 278: int setjmp(jmp_buf jmpbuf);
-;09E4: xxxxxxxx yyyyyyyy ; 279: void longjmp(jmp_buf, int);
+0994: FFFFFFFF C512E944 ; 265: png_structp png_create_read_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,png_error_ptr error_fn, png_error_ptr warn_fn, png_voidp mem_ptr,png_malloc_ptr malloc_fn, png_free_ptr free_fn);
+0998: FFFFFFFF 0B13E944 ; 266: void png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr);
+099C: FFFFFFFF 4700E944 ; 267: png_infop png_create_info_struct(png_structp png_ptr);
+09A0: FFFFFFFF 7100E944 ; 268: void png_destroy_info_struct(png_structp png_ptr, png_infopp info_ptr_ptr);
+09A4: FFFFFFFF A512E944 ; 269: void png_set_progressive_read_fn(png_structp png_ptr, png_voidp progressive_ptr, png_progressive_info_ptr info_fn, png_progressive_row_ptr row_fn, png_progressive_end_ptr end_fn);
+09A8: FFFFFFFF C906E944 ; 26A: void png_process_data(png_structp png_ptr, png_infop info_ptr, png_bytep buffer, png_size_t buffer_size);
+09AC: FFFFFFFF B913E944 ; 26B: void png_read_update_info(png_structp png_ptr, png_infop info_ptr);
+09B0: FFFFFFFF C112E944 ; 26C: png_voidp png_get_progressive_ptr(png_structp png_ptr);
+09B4: FFFFFFFF 5104E944 ; 26D: png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
+09B8: FFFFFFFF 4915E944 ; 26E: void png_set_strip_16(png_structp png_ptr);
+09BC: FFFFFFFF 5D15E944 ; 26F: void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+09C0: FFFFFFFF 6315E944 ; 270: void png_set_gray_to_rgb(png_structp png_ptr);
+09C4: FFFFFFFF 2D04E9FF ; 271: png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
+09C8: FFFFFFFF 5F15E944 ; 272: void png_set_tRNS_to_alpha(png_structp png_ptr);
+09CC: FFFFFFFF 253BE944 ; 273: void png_set_filler(png_structp png_ptr, png_uint_32 filler, int flags);
+09D0: FFFFFFFF 5115E944 ; 274: void png_set_palette_to_rgb(png_structp png_ptr);
+09D4: FFFFFFFF 3F02E944 ; 275: png_uint_32 png_get_rowbytes(png_structp png_ptr, png_infop info_ptr);
+09D8: FFFFFFFF 8B12E944 ; 276: void png_progressive_combine_row(png_structp png_ptr, png_bytep old_row, png_bytep new_row);
+09DC: FFFFFFFF 69FFE844 ; 277: int png_sig_cmp(png_bytep sig, png_size_t start, png_size_t num_to_check);
+09E0: FFFFFFFF 602A1944 ; 278: int setjmp(jmp_buf jmpbuf);
+09E4: FFFFFFFF 842A1944 ; 279: void longjmp(jmp_buf, int);
 ;09E8: xxxxxxxx yyyyyyyy ; 27A: int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
 ;09EC: xxxxxxxx yyyyyyyy ; 27B: int inflate (z_streamp strm, int flush);
 ;09F0: xxxxxxxx yyyyyyyy ; 27C: int inflateEnd (z_streamp strm);
-;09F4: xxxxxxxx yyyyyyyy ; 27D: int memcmp (const void *m1,const void *m2,int n);
-;09F8: xxxxxxxx yyyyyyyy ; 27E: int strncmp(const char *s1, const char *s2, int len);
-;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
-;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
+09F4: FFFFFFFF F542E244 ; 27D: int memcmp (const void *m1,const void *m2,int n);
+09F8: FFFFFFFF 558A5345 ; 27E: int strncmp(const char *s1, const char *s2, int len);
+09FC: FFFFFFFF 2960E244 ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
+0A00: FFFFFFFF B152E244 ; 280: char *strcat(char *dest, const char *src);
 0A04: FFFFFFFF 593F1945 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: FFFFFFFF 4D141745 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: FFFFFFFF 51DE5A45 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
@@ -341,12 +342,12 @@
 ;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
 0A18: FFFFFFFF 11913245 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 0A1C: FFFFFFFF 9D871E45 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
-;0A20: xxxxxxxx yyyyyyyy ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
-;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
-;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
-;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+0A20: FFFFFFFF 5D0A1745 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
+0A28: FFFFFFFF A5026045 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
+0A2C: FFFFFFFF 59FF4245 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+0A30: FFFFFFFF 794C4345 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
+0A34: FFFFFFFF 81E65F45 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
+0A38: FFFFFFFF 99326445 ; 28E: void Shortcut_Run (u16 * shortcut_name);
 
 
 
