@@ -43,33 +43,33 @@ void LangPack::Setup()
       {
         buf[fread(hFile, buf, fstat.size, &io_error)]=0; // Читаем файл в буфер
 
-        while(buf[buf_pos]!=0 && buf_pos < fstat.size && cur_id < LGP_DATA_NUM) // Пока не конец файла и не заполнены все поля массива
+        while(buf[buf_pos] && buf_pos < fstat.size && cur_id < LGP_DATA_NUM) // Пока не конец файла и не заполнены все поля массива
         {
           if (buf[buf_pos]=='\n' || buf[buf_pos]=='\r') // Если конец строки
           {
-            if (line_size > 0) // Если длина строки > 0
+            if (line_size) // Если длина строки > 0
             {
-              data[cur_id] = new char[line_size+1]; // Выделяем память в массиве под строку
+              data[cur_id] = new char[line_size + 1]; // Выделяем память в массиве под строку
               memcpy(data[cur_id], line, line_size); // Копируем строку в массив
-              data[cur_id][line_size]=0; // Конец строки
-              cur_id++;
-              line_size=0;
+              data[cur_id][line_size] = NULL; // Конец строки
+              cur_id ++;
+              line_size = NULL;
             }
           }
           else
             line[line_size++]=buf[buf_pos]; // Добавляем в строку символы из буфера, пока не конец сроки
           buf_pos++;
         }
-        if (line_size > 0 && cur_id < LGP_DATA_NUM) // eof
+        if (line_size && cur_id < LGP_DATA_NUM) // eof
         {
-          data[cur_id] = new char[line_size+1];
+          data[cur_id] = new char[line_size + 1];
           memcpy(data[cur_id], line, line_size);
-          data[cur_id][line_size]=0;
-          cur_id++;
-          line_size=0;
+          data[cur_id][line_size] = NULL;
+          cur_id ++;
+          line_size = NULL;
         }
         delete buf; // Удаляем буфер. он нам уже не понадобится
-        loaded=1;
+        loaded = 1;
         fclose(hFile, &io_error);
         return;
       }
@@ -118,6 +118,7 @@ void LangPack::Setup()
   data[LGP_Traffic] = "Traffic";
   data[LGP_Name] = "Name:";
   data[LGP_DownloadFolder] = "Download to:";
+  data[LGP_FileName] = "File name:";
   data[LGP_CantReadBookmark] = "Can't read bookmark!";
   data[LGP_FolderNotEmpty] = "Folder is not empty!";
   data[LGP_EnterName] = "Enter name, please!";
@@ -134,6 +135,7 @@ void LangPack::Setup()
   data[LGP_SocketCloseError] = "Socket close error!";
   data[LGP_InvalidSocket] = "Invalid socket!";
   data[LGP_EnableGPRSFirst] = "Enable GPRS first!";
+  
   data[LGP_Reserved1] = 
   data[LGP_Reserved2] = 
   data[LGP_Reserved3] = 

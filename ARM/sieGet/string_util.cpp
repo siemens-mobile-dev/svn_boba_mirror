@@ -13,32 +13,33 @@ OUT: Искомое значение; нужно освободить память!
 */
 char * Get_Param_Value(char * str, char * req, int cut_quotes)
 {
-//  char str[]="nonce=\"2444323444\",qop=\"auth\",charset=utf-8,algorithm=md5-sess";
-//  char req[]="qop";
-  char * n_displace = strstr(str, req);     // начало строки с именем параметра
-  char * eq = n_displace + strlen(req);
-  if (!(eq[0] == '=')) return NULL;
-  eq += 1;
-  char * zpt = strchr(n_displace, ',');
-  if (!zpt) zpt= str + strlen(str);
-  int len;
-  char * val;
-  if(cut_quotes)
+  // char str[] = "nonce=\"2444323444\",qop=\"auth\",charset=utf-8,algorithm=md5-sess";
+  // char req[] = "qop";
+  // result = auth
+  char * req_displace = strstr(str, req); // начало строки с именем параметра
+  char * value = req_displace + strlen(req); // начало строки со значением параметра
+  if (!(value[0] == '=')) return NULL;
+  value += 1;
+  char * zpt = strchr(req_displace, ','); // конец строки
+  if (!zpt) zpt = str + strlen(str);
+  int len = NULL;
+  char * result = NULL;
+  if(cut_quotes && value[0] == '\"') // Обрезаем кавычки, если параметр в кавычках
   {
-    len = zpt - eq - 2;
-    val = new char[len + 1];
+    len = zpt - value - 2;
+    result = new char[len + 1];
     for(int i = 0; i < len; i++)
-      val[i] = *(eq + i + 1);
+      result[i] = *(value + i + 1);
   }
   else
   {
-    len = zpt - eq;
-    val = new char[len + 1];
+    len = zpt - value;
+    result = new char[len + 1];
     for(int i = 0; i < len; i++)
-      val[i] = *(eq + i);
+      result[i] = *(value + i);
   }
-  val[len] = NULL;
-  return val;
+  result[len] = NULL;
+  return result;
 }
 
 

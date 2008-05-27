@@ -12,6 +12,7 @@ public:
 private:
   int url_pos;
   int path_pos;
+  int fname_pos;
 };
 
 void input_options_select_bookmark(USR_MENU_ITEM *item);

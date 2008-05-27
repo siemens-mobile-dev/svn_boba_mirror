@@ -140,16 +140,37 @@ int  URLInput::onKey(GUI *gui, GUI_MSG *msg)
     char * path = new char[ec.maxlen];
     ws_2str(ec.pWS, path, ec.maxlen);
     
+    char * fname = NULL;
+    ExtractEditControl(gui, fname_pos, &ec);
+    if(ec.pWS->wsbody[0])
+    {
+      fname = new char[ec.maxlen];
+      ws_2str(ec.pWS, fname, ec.maxlen);
+    }
     Download * new_dl = new Download;
     new_dl->url = url;
+    if (fname)
+    {
+      new_dl->is_const_file_name = 1;
+      new_dl->file_name = fname;
+    }
     new_dl->file_path = path;
     new_dl->StartDownload();
     return GUI_RESULT_CLOSE;
   }
   if(msg->gbsmsg->msg==KEY_DOWN && msg->gbsmsg->submess==ENTER_BUTTON)
   {
-    EDIT_OpenOptionMenuWithUserItems(gui, EDIT_GetFocus(gui)==url_pos?input_options_select_bookmark:input_options_select_folder, gui, 1);
-    return GUI_RESULT_REDRAW;
+    int focus = EDIT_GetFocus(gui);
+    if (focus == url_pos)
+    {
+      EDIT_OpenOptionMenuWithUserItems(gui, input_options_select_bookmark, gui, 1);
+      return GUI_RESULT_REDRAW;
+    }
+    if (focus == path_pos)
+    {
+      EDIT_OpenOptionMenuWithUserItems(gui, input_options_select_folder, gui, 1);
+      return GUI_RESULT_REDRAW;
+    }
   }
   return GUI_RESULT_OK;
 }
@@ -205,6 +226,16 @@ void URLInput::Show(char * url_str)
   PrepareEditControl(&ec);
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 511);
   path_pos = AddEditControlToEditQend(eq, &ec, ma);
+
+  ascii2ws(ws, LangPack::Active->data[LGP_FileName]);
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+  AddEditControlToEditQend(eq, &ec, ma);
+  
+  ascii2ws(ws, "");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
+  fname_pos = AddEditControlToEditQend(eq, &ec, ma);
 
   FreeWS(ws);
   

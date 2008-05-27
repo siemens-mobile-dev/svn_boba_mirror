@@ -149,31 +149,11 @@ void LogWidget::onRedraw()
   DrawLine(Canvas.x2-2, Canvas.y+1, Canvas.x2-2, Canvas.y2-1, 0, clLOGWIDGETSCROLLBAR);
   if (log->log_start->prev->index - log->log_start->index)
   {
-    int ys1 = (first_line->index*(Canvas.y2-Canvas.y-2)) /
+    int ys1 = (first_line->index *(Canvas.y2 - Canvas.y - 2)) /
               (log->log_start->prev->index - log->log_start->index);
-    int ys2 = (last_line->index*(Canvas.y2-Canvas.y-2)) /
+    int ys2 = (last_line->index * (Canvas.y2 - Canvas.y - 2)) /
               (log->log_start->prev->index - log->log_start->index);
     DrawRectangle(Canvas.x2-3, Canvas.y+ys1+2, Canvas.x2-1, Canvas.y+ys2-1, 0, 0, clLOGWIDGETSCROLLBAR);
-  }
-}
-
-void LogWidget::ScrollUp()
-{
-  if (first_line->index > first_line->prev->index)
-  {
-    last_line = last_line->prev;
-    first_line = first_line->prev;
-    Redraw();
-  }
-}
-
-void LogWidget::ScrollDown()
-{
-  if (last_line->index < last_line->next->index)
-  {
-    last_line = last_line->next;
-    first_line = first_line->next;
-    Redraw();
   }
 }
 
@@ -199,8 +179,7 @@ void LogWidget::onClose()
 
 int  LogWidget::onKey(char key_code, int key_msg, short keys)
 {
-  LogInput * li;
-  if (key_msg==KEY_DOWN || key_msg==LONG_PRESS)
+  if (key_msg == KEY_DOWN || key_msg == LONG_PRESS)
   {
     switch (key_code)
     {
@@ -210,7 +189,7 @@ int  LogWidget::onKey(char key_code, int key_msg, short keys)
     case ENTER_BUTTON:
       if (log && first_line)
       {
-        li=new LogInput;
+        LogInput * li = new LogInput;
         li->Show(first_line, last_line, lines_on_page);
       }
       return GUI_RESULT_OK;
@@ -225,12 +204,24 @@ int  LogWidget::onKey(char key_code, int key_msg, short keys)
       Redraw();
       return GUI_RESULT_OK;
     case UP_BUTTON:
-      if (log && first_line)
+    case '2':
+      if (key_msg == KEY_DOWN)
         ScrollUp();
+      if (key_msg == LONG_PRESS)
+        PrevPage();
       return GUI_RESULT_OK;
     case DOWN_BUTTON:
-      if (log && first_line)
+    case '8':
+      if (key_msg == KEY_DOWN)
         ScrollDown();
+      if (key_msg == LONG_PRESS)
+        NextPage();
+      return GUI_RESULT_OK;
+    case '4':
+      PrevPage();
+      return GUI_RESULT_OK;
+    case '6':
+      NextPage();
       return GUI_RESULT_OK;
     }
   }
@@ -239,8 +230,66 @@ int  LogWidget::onKey(char key_code, int key_msg, short keys)
 
 void LogWidget::Redraw()
 {
-  if(isFocused)
+  if (isFocused)
     REDRAW();
+}
+
+void LogWidget::ScrollUp()
+{
+  if (log && first_line)
+  {
+    if (first_line->index > first_line->prev->index)
+    {
+      last_line = last_line->prev;
+      first_line = first_line->prev;
+      Redraw();
+    }
+  }
+}
+
+void LogWidget::ScrollDown()
+{
+  if (log && first_line)
+  {
+    if (last_line->index < last_line->next->index)
+    {
+      last_line = last_line->next;
+      first_line = first_line->next;
+      Redraw();
+    }
+  }
+}
+
+void LogWidget::PrevPage()
+{
+  if (log && first_line)
+  {
+    for(int i = 0; i < lines_on_page; i ++)
+    {
+      if (first_line->index > first_line->prev->index)
+      {
+        last_line = last_line->prev;
+        first_line = first_line->prev;
+      }
+    }
+    Redraw();
+  }
+}
+
+void LogWidget::NextPage()
+{
+  if (log && first_line)
+  {
+    for(int i = 0; i < lines_on_page; i ++)
+    {
+      if (last_line->index < last_line->next->index)
+      {
+        last_line = last_line->next;
+        first_line = first_line->next;
+      }
+    }
+    Redraw();
+  }
 }
 
 LogWidget::LogWidget(Log * show_log)
@@ -249,8 +298,8 @@ LogWidget::LogWidget(Log * show_log)
   log = show_log;
   first_line = log->log_start;
   last_line = first_line;
-  line_height = GetFontYSIZE(FONT_SMALL)+2;
-  lines_on_page = (Canvas.y2-Canvas.y)/line_height;
+  line_height = GetFontYSIZE(FONT_SMALL) + 2;
+  lines_on_page = (Canvas.y2-Canvas.y) / line_height;
   line_offset = 0;
 }
 

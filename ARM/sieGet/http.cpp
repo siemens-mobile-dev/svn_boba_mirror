@@ -32,25 +32,25 @@ HTTP_Request::HTTP_Request()
 
 HTTP_Request::~HTTP_Request()
 {
-  if (Path) delete Path;
-  if (Accept) delete Accept;
-  if (Accept_Charset) delete Accept_Charset;
-  if (Accept_Encoding) delete Accept_Encoding;
-  if (Accept_Language) delete Accept_Language;
-  if (Authorization) delete Authorization;
-  if (Expect) delete Expect;
-  if (From) delete From;
-  if (Host) delete Host;
-  if (If_Match) delete If_Match;
-  if (If_Modified_Since) delete If_Modified_Since;
-  if (If_None_Match) delete If_None_Match;
-  if (If_Range) delete If_Range;
-  if (If_Unmodified_Since) delete If_Unmodified_Since;
-  if (Max_Forwards) delete Max_Forwards;
-  if (Proxy_Authorization) delete Proxy_Authorization;
-  if (Range) delete Range;
-  if (Referer) delete Referer;
-  if (TE) delete TE;
+  _safe_delete(Path);
+  _safe_delete(Accept);
+  _safe_delete(Accept_Charset);
+  _safe_delete(Accept_Encoding);
+  _safe_delete(Accept_Language);
+  _safe_delete(Authorization);
+  _safe_delete(Expect);
+  _safe_delete(From);
+  _safe_delete(Host);
+  _safe_delete(If_Match);
+  _safe_delete(If_Modified_Since);
+  _safe_delete(If_None_Match);
+  _safe_delete(If_Range);
+  _safe_delete(If_Unmodified_Since);
+  _safe_delete(Max_Forwards);
+  _safe_delete(Proxy_Authorization);
+  _safe_delete(Range);
+  _safe_delete(Referer);
+  _safe_delete(TE);
   //if (User_Agent) delete User_Agent;
 }
 

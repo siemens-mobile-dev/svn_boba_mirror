@@ -2,7 +2,7 @@
 #include "notify.h"
 #include "file_works.h"
 
-int IsMediaActive(void)
+/*int IsMediaActive(void)
 {
   char s[40];
   sprintf(s, RamMediaIsPlaying());
@@ -12,11 +12,11 @@ int IsMediaActive(void)
   if (s[0]==2) return 1;// для SGOLD s[0]!=2    
 #endif 
   return 0;
-}
+}*/
 
 void Play_Sound(const char * filename)
 {
-  if (!IsCalling() && !IsMediaActive() && CFG_SOUNDS_VOLUME)
+  if (!IsCalling()/* && !IsMediaActive()*/ && CFG_SOUNDS_VOLUME)
   {
     char full_filename[256];
     getSymbolicPath(full_filename, filename);
@@ -46,11 +46,11 @@ void Play_Sound(const char * filename)
       PlayFile(0x10, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
 #else
 #ifdef X75
-      _sfo1.unk4=0x80000000;
-      _sfo1.unk5=1;
+      _sfo1.unk4 = 0x80000000;
+      _sfo1.unk5 = 1;
       PlayFile(0xC, sndPath, sndFName, 0, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
 #else
-      _sfo1.unk5=1;
+      _sfo1.unk5 = 1;
       PlayFile(0xC, sndPath, sndFName, GBS_GetCurCepid(), MSG_PLAYFILE_REPORT, &_sfo1);
 #endif
 #endif

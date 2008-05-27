@@ -170,20 +170,20 @@ void Info::wsprintf_bytes(WSHDR * ws, int bytes)
 {
   if(bytes < 1024)
     wsprintf(ws, "%u b", bytes);
-  if(bytes > 1024 && bytes < 1024*1024)
+  if(bytes > 1024 && bytes < (1024 * 1024))
     wsprintf(ws, "%u Kb (%u b)", bytes/1024, bytes);
-  if(bytes > 1024*1024)
-    wsprintf(ws, "%u Mb (%u Kb)", bytes/1024*1024, bytes/1024);
+  if(bytes > (1024 * 1024))
+    wsprintf(ws, "%u Mb (%u Kb)", bytes/(1024 * 1024), bytes/1024);
 }
 
 void Info::wsprintf_bytes(WSHDR * ws, int bytes1, int bytes2)
 {
-  if(bytes1 < 1024)
+  if(bytes1 < 1024) // Bytes
     wsprintf(ws, "%u b (%d%)", bytes1, bytes1 * 100 / bytes2);
-  if(bytes1 > 1024 && bytes1 < 1024*1024)
+  if(bytes1 > 1024 && bytes1 < (1024 * 1024)) // Kilobytes
     wsprintf(ws, "%u Kb (%u b, %d%)", bytes1/1024, bytes1, bytes1 * 100 / bytes2);
-  if(bytes1 > 1024*1024)
-    wsprintf(ws, "%u Mb (%u Kb, %d%)", bytes1/1024*1024, bytes1/1024, bytes1 * 100 / bytes2);
+  if(bytes1 > (1024 * 1024)) // Megabytes
+    wsprintf(ws, "%u Mb (%u Kb, %d%)", bytes1/(1024 * 1024), bytes1/1024, bytes1 * 100 / bytes2);
 }
 
 void Info::Show(Download * _download, Info::InfoMode _mode)

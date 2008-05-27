@@ -1357,7 +1357,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\SieGet.elf \Data\ZBin\Daemons\SieGet.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -2180,7 +2180,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\SieGet.elf \Data\ZBin\Daemons\SieGet.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -3003,7 +3003,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\SieGet.elf \Data\ZBin\Daemons\SieGet.elf</postbuild>
       </data>
     </settings>
     <settings>
@@ -3827,7 +3827,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>"obexcopy.exe" $EXE_DIR$\SieGet.elf \Data\ZBin\Daemons\SieGet.elf</postbuild>
       </data>
     </settings>
     <settings>

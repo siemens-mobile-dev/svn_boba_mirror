@@ -256,7 +256,7 @@ void HttpAbstract::onError(SOCK_ERROR err)
 
 int Download::onHTTPHeaders()
 {
-  char * tmp_msg = new char[128];
+  char * tmp_msg = new char[256];
   sprintf(tmp_msg, "Got response %d", HTTPResponse->resp_code);
   log->Print(tmp_msg, CLR_Green);
   
@@ -267,55 +267,64 @@ int Download::onHTTPHeaders()
   log->Print(tmp_msg, CLR_Green);
   delete tmp_msg;
   
-  if(RESP_CODE_ERR(HTTPResponse->resp_code)) // Если код ответа > 400 
+  if(RESP_CODE_CLIENT_ERROR(HTTPResponse->resp_code)) // Ошибка клиента
   {
-    onHTTPFinish();
+    onError(SOCK_ERROR_CLIENT);
     return 0;
   }
-  if(RESP_CODE_REDIRECTED(HTTPResponse->resp_code))
+  if(RESP_CODE_SERVER_ERROR(HTTPResponse->resp_code)) // Ошибка сервера
+  {
+    onError(SOCK_ERROR_SERVER);
+    return 0;
+  }
+  if(RESP_CODE_REDIRECTED(HTTPResponse->resp_code)) // Редирект
   {
     onHTTPRedirect();
     return 0;
   }
   /* Строка Content-Disposition */
-  if(char * content_disposition_str = HTTPResponse->headers->GetValue(RESP_Content_Disposition))
+  if(char * content_disposition_str = HTTPResponse->headers->GetValue("Content-Disposition"))
   {
-    _safe_delete(file_name);
-    char * new_fname = Get_Param_Value(content_disposition_str, "filename", 1); // Получаем имя из url->path
-    remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы
-    file_name = utf82filename(new_fname); // utf8 в имя файла
-    delete new_fname;
-    _safe_delete(full_file_name);
-    full_file_name = new char[strlen(file_path)+strlen(file_name)+2];
-    sprintf(full_file_name, "%s%s", file_path, file_name);
+    if (!is_const_file_name) // Если имя не указано юзером
+    {
+      _safe_delete(file_name);
+      char * new_fname = Get_Param_Value(content_disposition_str, "filename", 1); // Получаем имя из заголовка
+      remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы, хотя наверное сервер таких имен не держит :)
+      file_name = utf82filename(new_fname); // utf8 в имя файла
+      delete new_fname;
+      
+      _safe_delete(full_file_name);
+      full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
+      sprintf(full_file_name, "%s%s", file_path, file_name);
+      log->ChangeFileName(file_name);
+    }
   }
   /* Строка Content-Length */
-  if(char * content_length_str = HTTPResponse->headers->GetValue(RESP_Content_Length)) // Получаем размер файла
+  if(char * content_length_str = HTTPResponse->headers->GetValue("Content-Length")) // Получаем размер файла из заголовка
   {
     file_size = NULL;
     file_size = strtoul(content_length_str, 0, 10);
     if (RESP_CODE_PARTIAL(HTTPResponse->resp_code)) // Если докачка
     {
-      AcceptRanges = ACCEPT_RANGES_OK; // Сервер поддерживает докачку ;)
-      file_size += file_loaded_size; // Добавляем то, что уже закачано
+      AcceptRangesState = ACCEPT_RANGES_OK; // Значит сервер поддерживает докачку ;)
+      file_size += file_loaded_size;        // Добавляем размер того, что уже закачано
     }
-    else
+    else // Если сервер докачку не держит
     {
-      file_loaded_size = NULL;
+      file_loaded_size = NULL; // Размер файла = 0
       unsigned int io_error;
-      if (is_file_exists(full_file_name))
-        unlink(full_file_name, &io_error);
+      unlink(full_file_name, &io_error); // Удаляем файл, если он есть
     }
   }
-  if (!RESP_CODE_PARTIAL(HTTPResponse->resp_code))
+  if (!RESP_CODE_PARTIAL(HTTPResponse->resp_code)) // Partial Content
   {
-    if (HTTPResponse->headers->GetValue(RESP_Accept_Ranges))
-      AcceptRanges = ACCEPT_RANGES_OK;
+    if (HTTPResponse->headers->GetValue("Accept-Ranges")) // Если есть заголовок "Accept-Ranges"
+      AcceptRangesState = ACCEPT_RANGES_OK; // Значит сервер держит докачку
     else
-      AcceptRanges = ACCEPT_RANGES_NO;
+      AcceptRangesState = ACCEPT_RANGES_NO; // Иначе не держит
   }
   if (SieGetDialog::Active)
-    SieGetDialog::Active->RefreshList();
+    SieGetDialog::Active->RefreshList(); // Перерисовываем список
   return 1;
 }
 
@@ -323,13 +332,13 @@ void Download::onHTTPData(char * data, int size) // Запись данных в файл
 {
   unsigned int io_error;
   
-  download_state = DOWNLOAD_DATA;
+  download_state = DOWNLOAD_DATA; // Статус закачки - загрузка данных
   
-  if (hFile == -1)
-    hFile = fopen(full_file_name, A_ReadWrite + A_Create + A_Append + A_BIN, P_READ + P_WRITE, &io_error);
+  if (hFile == -1) // Если файл не открыт, открываем его
+    hFile = fopen(full_file_name, A_WriteOnly + A_Create + A_Append + A_BIN, P_WRITE, &io_error);
 
-  fwrite(hFile, data, size, &io_error);
-  file_loaded_size += size;
+  fwrite(hFile, data, size, &io_error); // Записываем принятые данные в файл
+  file_loaded_size += size; // Обновляем размер загруженного куска
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList();
 }
@@ -337,30 +346,39 @@ void Download::onHTTPData(char * data, int size) // Запись данных в файл
 void Download::onHTTPRedirect() // Переадресация
 {
   http_state = HTTP_REDIRECT;
-  char * Location = HTTPResponse->headers->GetValue(RESP_Location);
-  if (strstr(Location, "http://")) // Если в строке Location полный URL
+   // В заголовке "Location" указывается реальное местонахождение файла
+  if (char * Location = HTTPResponse->headers->GetValue("Location"))
   {
-    _safe_delete(HTTPRequest);
-    _safe_delete(url);
-    url = new char[strlen(Location) + 1];
-    strcpy(url, Location);
-  }
-  else
-  {
-    _safe_delete(HTTPRequest->Path);
-    HTTPRequest->Path = new char[strlen(Location) + 1];
-    strcpy(HTTPRequest->Path, Location);
-    file_name = get_fname_from_path(HTTPRequest->Path);
+    if (strstr(Location, "http://")) // Если в заголовке URL
+    {
+      _safe_delete(HTTPRequest); // Удаляем запрос
+      _safe_delete(url); // Удаляем URL
+      url = new char[strlen(Location) + 1]; // Создаем новый URL
+      strcpy(url, Location);
+    }
+    else
+    {
+      _safe_delete(HTTPRequest->Path);
+      HTTPRequest->Path = new char[strlen(Location) + 1];
+      strcpy(HTTPRequest->Path, Location);
+      
+      if (!is_const_file_name)
+      {
+        _safe_delete(file_name);
+        file_name = get_fname_from_path(HTTPRequest->Path);
+      
+        _safe_delete(full_file_name);
+        full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
+        sprintf(full_file_name, "%s%s", file_path, file_name);
+        
+        log->ChangeFileName(file_name);
+      }
+      file_loaded_size = NULL;
+      file_size = NULL;
+    }
     
-    _safe_delete(full_file_name);
-    full_file_name = new char[strlen(file_path)+strlen(file_name)+2];
-    sprintf(full_file_name, "%s%s", file_path, file_name);
-    
-    log->ChangeFileName(file_name);
-    file_loaded_size = NULL;
-    file_size = NULL;
+    StartDownload();
   }
-  StartDownload();
 }
 
 void Download::onHTTPStopped()
@@ -409,11 +427,14 @@ void Download::StartDownload()
     URL * tmp_url = new URL; // Создаем новый URL
     tmp_url->Parse(url); // Парсим
 
-    _safe_delete(file_name); 
-    char * new_fname = get_fname_from_path(tmp_url->path); // Получаем имя из url->path
-    remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы
-    file_name = utf82filename(new_fname); // utf8 в имя файла
-    delete new_fname;
+    if (!is_const_file_name)
+    {
+      _safe_delete(file_name);
+      char * new_fname = get_fname_from_path(tmp_url->path); // Получаем имя из url->path
+      remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы
+      file_name = utf82filename(new_fname); // utf8 в имя файла
+      delete new_fname;
+    }
     
     _safe_delete(full_file_name);
     full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
@@ -517,9 +538,10 @@ void Download::StopDownload()
 
 Download::Download()
 {
-  AcceptRanges = ACCEPT_RANGES_UNKNOWN;
+  AcceptRangesState = ACCEPT_RANGES_UNKNOWN;
   url = NULL;
   file_name = NULL;
+  is_const_file_name = NULL;
   full_file_name = NULL;
   file_path = NULL;
   file_size = NULL;

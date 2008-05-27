@@ -6,9 +6,7 @@
 /*******************************************************************************
   HTTP Response Headers
 *******************************************************************************/
-
-#define N_HTTP_RESP_HEADERS 29
-                           
+                          
 enum HTTP_RESP_HEADERS
 {
   RESP_Accept_Ranges,
@@ -39,7 +37,9 @@ enum HTTP_RESP_HEADERS
   RESP_Vary,
   RESP_Via,
   RESP_WWW_Authenticate,
-  RESP_Warning
+  RESP_Warning,
+  
+  N_HTTP_RESP_HEADERS
 };
 
 // Статус-код ответа
@@ -71,13 +71,14 @@ enum HTTP_RESP_CODES
   RESP_CODE_UNAVAILABLE =           503,
 };
 
-#define RESP_CODE_20X(x)        (((x) >= 200) && ((x) < 300))
-#define RESP_CODE_ERR(x)        (((x) >= 400) && ((x) < 600))
-#define RESP_CODE_PARTIAL(x)    ((x) == RESP_CODE_PARTIAL_CONTENTS)
-#define RESP_CODE_REDIRECTED(x) ((x) == RESP_CODE_MOVED_PERMANENTLY	\
-                                 || (x) == RESP_CODE_MOVED_TEMPORARILY	\
-                                 || (x) == RESP_CODE_SEE_OTHER		\
-                                 || (x) == RESP_CODE_TEMPORARY_REDIRECT)
+#define RESP_CODE_20X(x)          (((x) >= 200) && ((x) < 300))
+#define RESP_CODE_CLIENT_ERROR(x) (((x) >= 400) && ((x) < 500))
+#define RESP_CODE_SERVER_ERROR(x) (((x) >= 500) && ((x) < 600))
+#define RESP_CODE_PARTIAL(x)      ((x) == RESP_CODE_PARTIAL_CONTENTS)
+#define RESP_CODE_REDIRECTED(x)   ((x) == RESP_CODE_MOVED_PERMANENTLY || \
+                                   (x) == RESP_CODE_MOVED_TEMPORARILY || \
+                                   (x) == RESP_CODE_SEE_OTHER	      || \
+                                   (x) == RESP_CODE_TEMPORARY_REDIRECT)
 
 class HTTP_Response_Headers
 {
@@ -87,8 +88,6 @@ public:
 
   // Получить значение заголовка по его имени. Возвращает NULL если такой заголовок не найден
   char * GetValue(char * name);
-  
-  char * GetValue(HTTP_RESP_HEADERS id);
   
   HTTP_Response_Headers(Log * _log);
   ~HTTP_Response_Headers();

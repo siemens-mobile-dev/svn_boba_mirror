@@ -44,6 +44,7 @@ enum LGP_ID
   LGP_Traffic,
   LGP_Name,
   LGP_DownloadFolder,
+  LGP_FileName,
   LGP_CantReadBookmark,
   LGP_FolderNotEmpty,
   LGP_EnterName,
@@ -60,6 +61,7 @@ enum LGP_ID
   LGP_SocketCloseError,
   LGP_InvalidSocket,
   LGP_EnableGPRSFirst,
+  
   LGP_Reserved1,
   LGP_Reserved2,
   LGP_Reserved3,

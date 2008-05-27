@@ -114,11 +114,6 @@ char * HTTP_Response_Headers::GetValue(char * name)
     return NULL;
 }
 
-char * HTTP_Response_Headers::GetValue(HTTP_RESP_HEADERS id)
-{
-  return headers[id];
-}
-
 HTTP_Response_Headers::HTTP_Response_Headers(Log * _log)
 {
   log = _log;

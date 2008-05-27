@@ -39,5 +39,5 @@ __root const unsigned int CFG_IDLE_ICON_Y = 35;
 __root const CFG_HDR cfghdr3 = {CFG_CHECKBOX, "Save logs to files", 0, 3};
 __root const int CFG_LOG_TO_FILE = 1;
 
-__root const CFG_HDR cfghdr4 = {CFG_UINT, "Download buffer size", 1024, 16384};
+__root const CFG_HDR cfghdr4 = {CFG_UINT, "Download buffer size (in bytes)", 1024, 16384};
 __root const unsigned int CFG_DOWNLOAD_BUFFER_SIZE = 4096;

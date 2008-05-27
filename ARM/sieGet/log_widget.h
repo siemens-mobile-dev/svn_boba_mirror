@@ -29,8 +29,11 @@ public:
   static LogWidget * Active;
   void Redraw();
   
-  void ScrollDown();
   void ScrollUp();
+  void ScrollDown();
+  void PrevPage();
+  void NextPage();
+  
 private:
   Log * log;
   Log::LogLine * first_line, * last_line;

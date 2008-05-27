@@ -131,38 +131,38 @@ void List::wsprintf_bytes(WSHDR * ws, int bytes)
 {
   if(bytes < 1024)
     wsprintf(ws, "%u b", bytes);
-  if(bytes > 1024 && bytes < 1024*1024)
+  if(bytes > 1024 && bytes < (1024 * 1024))
     wsprintf(ws, "%u Kb", bytes/1024);
-  if(bytes > 1024*1024)
-    wsprintf(ws, "%u Mb", bytes/1024*1024);
+  if(bytes > (1024 * 1024))
+    wsprintf(ws, "%u Mb", bytes/1024/1024);
 }
 
 void List::wsprintf_bytes(WSHDR * ws, int bytes1, int bytes2)
 {
-  if(bytes1 < 1024)
+  if(bytes2 < 1024)
     wsprintf(ws, "/%u b, %d%", bytes2, bytes1 * 100 / bytes2);
-  if(bytes1 > 1024 && bytes1 < 1024*1024)
+  if(bytes2 > 1024 && bytes2 < (1024 * 1024))
     wsprintf(ws, "/%u Kb, %d%", bytes2/1024, bytes1 * 100 / bytes2);
-  if(bytes1 > 1024*1024)
-    wsprintf(ws, "/%u Mb, %d%", bytes2/1024*1024, bytes1 * 100 / bytes2);
+  if(bytes2 > (1024 * 1024))
+    wsprintf(ws, "/%u Mb, %d%", bytes2/(1024 * 1024), bytes1 * 100 / bytes2);
 }
 
 void List::ItemHandler(void * data, int curitem, void * unk)
 {
   WSHDR * ws1, * ws2, * ws3;
-  void * item=AllocMLMenuItem(data);
+  void * item = AllocMLMenuItem(data);
   Download * dl = DownloadHandler::Top->GetDownloadbyN(curitem);
   if(dl && dl->file_name)
   {
-    ws1=AllocMenuWS(data, strlen(dl->file_name) + 1);
+    ws1 = AllocMenuWS(data, strlen(dl->file_name) + 1);
     str_2ws(ws1, dl->file_name, strlen(dl->file_name));
   }
   else
   {
-    ws1=AllocMenuWS(data, 32);
+    ws1 = AllocMenuWS(data, 32);
     ascii2ws(ws1, "No name");
   }
-  ws2=AllocMenuWS(data, 64);
+  ws2 = AllocMenuWS(data, 32);
   switch(dl->download_state)
   {
   case DOWNLOAD_ERROR:
@@ -180,7 +180,7 @@ void List::ItemHandler(void * data, int curitem, void * unk)
   case DOWNLOAD_DATA:
     if(dl->file_size)
     {
-      ws3 = AllocWS(64);
+      ws3 = AllocWS(16);
       wsprintf_bytes(ws2, dl->file_loaded_size);
       wsprintf_bytes(ws3, dl->file_loaded_size, dl->file_size);
       wstrcat(ws2, ws3);
@@ -203,8 +203,8 @@ void List::ItemHandler(void * data, int curitem, void * unk)
     SetMenuItemIconArray(data, item, &IconPack::Active->data[IMG_Idle]);
     break;
   }
-  if (dl->AcceptRanges != ACCEPT_RANGES_UNKNOWN)
-    wsInsertChar(ws2, dl->AcceptRanges == ACCEPT_RANGES_OK?LGP_SMILE_OK:LGP_SMILE_NO, 1);
+  if (dl->AcceptRangesState != ACCEPT_RANGES_UNKNOWN) // Вставляем смайл - индикатор поддержки докачки
+    wsInsertChar(ws2, dl->AcceptRangesState == ACCEPT_RANGES_OK?LGP_SMILE_OK:LGP_SMILE_NO, 1);
   SetMLMenuItemText(data, item, ws1, ws2, curitem);
 }
 
