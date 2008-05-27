@@ -165,7 +165,10 @@ void  list_options_reboot(GUI * data)
 {
     ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
     if(reboot_address)
+      {
+      ListOptions::DaemonList->Save(0);
       ((voidproc)reboot_address)();
+      }
     else
       do_edit_config();
     GeneralFunc_flag1(list_opt->gui_id, 1);
