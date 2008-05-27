@@ -435,10 +435,10 @@ int LaunchEditor(void)
     inp_hdr.lgp_id = (int)sh_fname;
     tmostr->wsbody[0]=str_len;   
     fread(hFile,tmostr->wsbody+1,str_len*2,&errcode);
-    if(errcode)
+   /* if(errcode)
     {
-      wsprintf(tmostr,"%t %u (файл %s)","Ошибка I/O", errcode, filename);          
-    }
+      wsprintf(tmostr,"%t %u (file %s)","Ошибка I/O", errcode, filename);          
+    }*/
     fclose(hFile, &errcode);
   }
   else
