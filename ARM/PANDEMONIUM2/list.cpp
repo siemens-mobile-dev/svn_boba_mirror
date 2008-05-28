@@ -7,9 +7,6 @@
 
 List * List::Active = NULL;
 
-typedef void (*voidproc)();
-unsigned int reboot_address;
-
 SOFTKEY_DESC list_sk[]=
 {
   {0x0018,0x0000,NULL},
@@ -102,7 +99,7 @@ void List::gHook(void *data, int cmd)
 
 void List::ItemHandler(void * data, int curitem, void * unk)
 {
-  WSHDR * ws1, * ws2, * ws3;
+  WSHDR * ws1, * ws2;
   TDaemon * d=dl->daemons+curitem;  
   void * item=AllocMLMenuItem(data);
   ws1=AllocMenuWS(data, strlen(d->name) + 1);
@@ -164,13 +161,8 @@ void do_edit_config()
 void  list_options_reboot(GUI * data)
 {
     ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
-    if(reboot_address)
-      {
-      ListOptions::DaemonList->Save(0);
-      ((voidproc)reboot_address)();
-      }
-    else
-      do_edit_config();
+    ListOptions::DaemonList->Save(0);
+    RebootPhone();
     GeneralFunc_flag1(list_opt->gui_id, 1);
 };
 

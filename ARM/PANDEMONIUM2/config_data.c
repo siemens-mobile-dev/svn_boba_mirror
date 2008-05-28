@@ -9,6 +9,6 @@
 #endif
 
 
-__root const CFG_HDR cfghdr0 = {CFG_STR_WIN1251, "Reboot entrypoint address", 0, 9};
-__root const char REBOOT_ADDR_STR[10] = "0";
+__root const CFG_HDR cfghdr0 = {CFG_STR_WIN1251, "dummy value", 0, 3};
+__root const char DUMMY_VALUE[4] = "";
 

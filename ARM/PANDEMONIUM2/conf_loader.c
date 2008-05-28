@@ -50,7 +50,7 @@ int LoadConfigData(const char *fname)
   return(result);
 }
 
-static int _hc(char c)
+/*static int _hc(char c)
 {
   if(c>='0'&&c<='9')
    return c-'0';
@@ -71,7 +71,7 @@ while(s[i]!=0)
   a=(a<<4)+_hc(s[i++]);
   };
 return a;
-};
+};*/
 
 void InitConfig()
 {
@@ -79,8 +79,5 @@ void InitConfig()
   {
     LoadConfigData("0:\\ZBin\\etc\\PANDEMONUIM.bcfg");
   }
-  
-  extern char REBOOT_ADDR_STR[10];
-  reboot_address = Hex2Int(REBOOT_ADDR_STR);
 }
 
