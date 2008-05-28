@@ -930,7 +930,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.40A</state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1106,7 +1106,7 @@
         </option>
         <option>
           <name>CCLangSelect</name>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -1930,7 +1930,7 @@
         </option>
         <option>
           <name>CCLangSelect</name>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
