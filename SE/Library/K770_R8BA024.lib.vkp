@@ -313,7 +313,7 @@
 09B0: 00000000 3588C244 ; 26C: __thumb png_voidp png_get_progressive_ptr(png_structp png_ptr);
 09B4: 00000000 9974C244 ; 26D: __thumb png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
 09B8: 00000000 258BC244 ; 26E: __thumb void png_set_strip_16(png_structp png_ptr);
-09BC: 00000000 318BC244 ; 26F: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+09BC: 00000000 3D8BC244 ; 26F: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
 09C0: 00000000 558BC244 ; 270: __thumb void png_set_gray_to_rgb(png_structp png_ptr);
 09C4: 00000000 6D74C244 ; 271: __thumb png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
 09C8: 00000000 498BC244 ; 272: __thumb void png_set_tRNS_to_alpha(png_structp png_ptr);
@@ -344,6 +344,10 @@
 0A30: 00000000 2D500745 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 E13C2445 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 BD234C45 ; 28E: void Shortcut_Run (u16 * shortcut_name);
+;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
+;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
+;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
+;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 
