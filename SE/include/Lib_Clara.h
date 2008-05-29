@@ -1091,4 +1091,13 @@ __swi __arm void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 #pragma swi_number=0x28E
 __swi __arm  void Shortcut_Run (u16 * shortcut_name);
 
+#pragma swi_number=0x28F
+__swi __arm int mkdir(u16* path);
+#pragma swi_number=0x290
+__swi __arm int rmdir(u16* path, int zero);
+#pragma swi_number=0x291
+__swi __arm int chmod(u16* path, u16* fname, int amode);
+#pragma swi_number=0x292
+__swi __arm int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+
 #endif
