@@ -106,7 +106,7 @@ void List::ItemHandler(void * data, int curitem, void * unk)
   str_2ws(ws1, d->name, strlen(d->name));
   
   ws2=AllocMenuWS(data, 64);
-  wsprintf(ws2,"%d kb",d->size/1024);
+  wsprintf(ws2,"%d kb",d->size/1024);  
   SetMenuItemIconArray(data, item, &IconPack::Active->mode_data[d->mode]);
   SetMLMenuItemText(data, item, ws1, ws2, curitem);
 }
@@ -118,7 +118,7 @@ void List::Show()
   list_sk[0].lgp_id = (int)"Menu";
   list_sk[1].lgp_id = (int)"Close";
   
-  gui_id = CreateMultiLinesMenu(NULL, NULL, &list_desc, &list_hdr, NULL, dl->count);
+  gui_id = CreateMultiLinesMenu(NULL, NULL, &list_desc, &list_hdr, NULL, dl->count); 
 }
 
 List::List()
@@ -138,11 +138,24 @@ List::~List()
   Îïöèè
 *******************************************************************************/
 
+void list_options_update_callback(int ans)
+{
+if(ans==IDYES)
+  RebootPhone();
+else
+  ShowMSG(2,(int)"Updated!");
+};
+
 void list_options_update(GUI * data)
 {
     ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
-    ListOptions::DaemonList->Save(1);
-    ShowMSG(2,(int)"Updated!");
+    extern int ASK_FOR_REBOOT;
+    ListOptions::DaemonList->Save(1);    
+    
+    if(ListOptions::DaemonList->reboot_required&&ASK_FOR_REBOOT)
+      MsgBoxYesNo(1,(int)"Reboot?",list_options_update_callback);
+    else
+      ShowMSG(2,(int)"Updated!");
     GeneralFunc_flag1(list_opt->gui_id, 1);
 };
 

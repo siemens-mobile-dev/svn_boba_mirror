@@ -13,6 +13,7 @@ TDaemonList::TDaemonList()
       daemon_path[0]='0';
   daemons=NULL;
   count=0;
+  reboot_required=0;
   Load();  
 };
 
@@ -117,6 +118,7 @@ void TDaemonList::Load()
 
 void TDaemonList::Save(int update)
 {
+reboot_required=0;
 TDaemon * d=daemons;
 for(int i=0;i<count;i++,d++)  
   {
@@ -144,16 +146,24 @@ for(int i=0;i<count;i++,d++)
       }
     else
       {
-      if(update && mode&MODE_UPDATEABLE)
+      if(update)
+        {
+        if(mode&MODE_UPDATEABLE)
+          {
           ShowMSG(2,(int)"Unsupported action!");
+          }
+        else
+          reboot_required=1;  
+        };
+
       fmove(elfpath,fakkpath,&err);      
       };    
-    if(err)
-      { 
-      static char errbu[256];
-      sprintf(errbu,"'%s'<->'%s' failed!",elfpath,fakkpath);
-      ShowMSG(2,(int)errbu);
-      };
+//    if(err)
+//      { 
+//      static char errbu[256];
+//      sprintf(errbu,"'%s'<->'%s' failed!",elfpath,fakkpath);
+//      ShowMSG(2,(int)errbu);
+//      };
     };
   };
 Load();

@@ -9,6 +9,9 @@
 #endif
 
 
-__root const CFG_HDR cfghdr0 = {CFG_STR_WIN1251, "dummy value", 0, 3};
-__root const char DUMMY_VALUE[4] = "";
+__root const CFG_HDR cfghdr0 = {CFG_STR_UTF8, "path to graphics", 0, 127};
+__root const char IMG_PATH[128] = "0:\\ZBin\\pandemonium\\img\\";
 
+__root const CFG_HDR cfghdr1={CFG_CBOX,"offer reboot",0,2};
+__root const int ASK_FOR_REBOOT = 1;
+__root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};

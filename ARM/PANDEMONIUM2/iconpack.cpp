@@ -30,22 +30,20 @@ extern char basepath[128];
 void IconPack::Setup()
 {
   Free();
-  char icons_path[256];
-  strcpy(icons_path,basepath);
-  strcat(icons_path,"img\\");
-  
+  extern char IMG_PATH[128]; 
   Active = this;
   for(int i=0; i<TOTAL_ICONS_NUM; i++)
   {
-    char * img = new char[strlen(icons_path) + strlen(img_names[i])+1];
-    strcpy(img, icons_path);
+    char * img = new char[strlen(IMG_PATH) + strlen(img_names[i])+1];
+    strcpy(img, IMG_PATH);
     strcat(img, img_names[i]);
     data[i] = (int)img;
-  }    
+  }  
+  
   for(int i=0;i<7;i++)
     {
-     char * img=new char[strlen(icons_path) + 11];
-     sprintf(img,"%s%c%c%s.png",icons_path,i&MODE_ENABLED_NEW?'E':'D',i&MODE_ENABLED_OLD?'E':'D',i&MODE_UPDATEABLE?"G":"");
+     char * img=new char[strlen(IMG_PATH) + 11];
+     sprintf(img,"%s%c%c%s.png",IMG_PATH,i&MODE_ENABLED_NEW?'E':'D',i&MODE_ENABLED_OLD?'E':'D',i&MODE_UPDATEABLE?"G":"");
      mode_data[i] = (int)img;
     };
      

@@ -22,6 +22,9 @@ private:
 public:
   int count;
   int total_size;  
+  
+  int reboot_required;
+  
   TDaemon * daemons;
   int enabled_size();
   
