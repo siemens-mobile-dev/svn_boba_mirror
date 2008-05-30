@@ -420,7 +420,7 @@ int LaunchEditor(void)
   WSHDR *tmostr;
 
   int str_len = 0;
-  unsigned int errcode;
+  unsigned int errcode = NULL;
   volatile int hFile = -1;
   
   tmostr=AllocWS(MAX_TMO_LEN);
@@ -435,10 +435,10 @@ int LaunchEditor(void)
     inp_hdr.lgp_id = (int)sh_fname;
     tmostr->wsbody[0]=str_len;   
     fread(hFile,tmostr->wsbody+1,str_len*2,&errcode);
-   /* if(errcode)
+    if(errcode)
     {
-      wsprintf(tmostr,"%t %u (file %s)","Ошибка I/O", errcode, filename);          
-    }*/
+      wsprintf(tmostr,"%t %u (%t %s)","Ошибка I/O", errcode, "Файл", filename);          
+    }
     fclose(hFile, &errcode);
   }
   else
