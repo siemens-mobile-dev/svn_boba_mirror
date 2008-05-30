@@ -7,6 +7,7 @@ extern void kill_data(void *p, void (*func_p)(void *));
 
 char mmenu_hdr_txt[32];
 
+int number_reald;  // Number of real dialogs
 int number_nsd;  // Number of new style dialogs
 int show_daemons;
 //extern int mode;
@@ -293,6 +294,7 @@ int GetNumberOfDialogs(void)
   }
   while((icsm=icsm->next));
   sprintf(mmenu_hdr_txt,"XTask3.0 : %d dialogs",count);
+  number_reald=count-number_nsd;
   return(count);
 }
 
@@ -548,8 +550,11 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
       return 0;
 #else
     case '#':
-      i=((CSM_RAM *)(nl->p))->id;
-      if (i!=CSM_root()->idle_id) CloseCSM(i);
+      if (number_reald+number_nsd>0)
+      {
+        i=((CSM_RAM *)(nl->p))->id;
+        if (i!=CSM_root()->idle_id) CloseCSM(i);
+      }
       return 0;
 #endif
     case '*':
@@ -629,9 +634,9 @@ void maincsm_oncreate(CSM_RAM *data)
   }
   if (sz>=0) csm_text[sz]=0;
   patch_header(&mm_menuhdr);
-  int n_dialogs=GetNumberOfDialogs()-number_nsd;
-  if (n_dialogs>1) csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,1,n_dialogs,csm,0);    // if more than 1 dialog, position of cursor in menu will be 1
-              else csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,0,n_dialogs,csm,0);    // else - 0
+  GetNumberOfDialogs();
+  if (number_reald>1) csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,1,number_reald,csm,0);    // if more than 1 dialog, position of cursor in menu will be 1
+              else csm->gui_id=CreateMenu(0,0,&mm_menu,&mm_menuhdr,0,number_reald,csm,0);    // else - 0
 }
 
 void maincsm_onclose(CSM_RAM *csm)
