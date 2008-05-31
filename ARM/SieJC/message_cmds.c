@@ -27,6 +27,8 @@ void FreeTemplates(void)
 
 extern const char COMMANDS_PATH[];
 extern const char MESSAGES_PATH[];
+extern const char SMILE_FILE[];
+
 extern CLIST* cltop;
 int LoadTemplates_new(void)
 {
@@ -59,11 +61,14 @@ int LoadTemplates(void)
   
   switch (Mode)
   {
-    case 1:
-      strcpy(fn,COMMANDS_PATH);
+  case 0:
+    strcpy(fn, SMILE_FILE);
     break;
-    case 2:
-      strcpy(fn,MESSAGES_PATH);
+  case 1:
+    strcpy(fn, COMMANDS_PATH);
+    break;
+  case 2:
+    strcpy(fn, MESSAGES_PATH);
     break;
   }
 
@@ -105,14 +110,17 @@ void UpdateTemplatesMenu_header(void)
 {
   switch (Mode)
   {
-    case 1:
-      strcpy(clm_hdr_text,LG_SELCOMMAND);
+  case 0:
+    strcpy(clm_hdr_text, LG_SELSMILE);
     break;
-    case 2:
-      strcpy(clm_hdr_text,LG_SELTEMPLATE);
+  case 1:
+    strcpy(clm_hdr_text,LG_SELCOMMAND);
     break;
-    case 3:
-      strcpy(clm_hdr_text,LG_CONTRESOURCES);
+  case 2:
+    strcpy(clm_hdr_text,LG_SELTEMPLATE);
+    break;
+  case 3:
+    strcpy(clm_hdr_text,LG_CONTRESOURCES);
     break;
   }
 }
@@ -135,6 +143,7 @@ void SetCmdToEditMessage(char *command)
 
   switch (Mode)
   {
+    case 0:
     case 1:
       ascii2ws(ws_me,command);
       wstrcpy(ws_eddata, ws_me);
@@ -318,8 +327,8 @@ static int sel_menu_keyhook(void *data, GUI_MSG *msg)
       }
     #endif    
     
-    if (Mode==0) AddSmile(data); //Äטאכמד גûבמנא סלאיכודמג
-      else
+    //if (Mode==0) AddSmile(data); //Äטאכמד גûבמנא סלאיכודמג
+      //else
         DispTemplatesMenu();    
       
     GeneralFunc_flag1(Select_Menu_ID,1);
