@@ -67,7 +67,7 @@ else
 if (msg->keys==0x1)
    {
    dl->Save(0); 
-   ShowMSG(2,(int)"Saved!");
+   //ShowMSG(2,(int)"Saved!");
    return GUI_RESULT_CLOSE;
    };
 
