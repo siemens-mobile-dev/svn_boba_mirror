@@ -143,7 +143,6 @@ void SetCmdToEditMessage(char *command)
 
   switch (Mode)
   {
-    case 0:
     case 1:
       ascii2ws(ws_me,command);
       wstrcpy(ws_eddata, ws_me);
@@ -152,6 +151,7 @@ void SetCmdToEditMessage(char *command)
       EDIT_SetCursorPos(data,pos + strlen(command));
     break;
    
+    case 0:
     case 2:
     //case 3:
       {
