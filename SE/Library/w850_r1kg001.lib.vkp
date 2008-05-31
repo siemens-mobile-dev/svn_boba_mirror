@@ -344,10 +344,10 @@
 0A30: 00000000 15110645 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 C9A62245 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 5DF24A45 ; 28E: void Shortcut_Run (u16 * shortcut_name);
-;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
-;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
-;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
-;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+0A3C: 00000000 55C8FA44 ; 28F: int mkdir(u16* path);
+0A40: 00000000 45CFFA44 ; 290: int rmdir(u16* path, int zero);
+0A44: 00000000 21FDFA44 ; 291: int chmod(u16* path, u16* fname, int amode);
+0A48: 00000000 1503FB44 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 
