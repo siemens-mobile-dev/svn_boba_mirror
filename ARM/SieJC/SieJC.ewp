@@ -5145,6 +5145,12 @@
     <name>$PROJ_DIR$\clist_util.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\color.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\color.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\cont_menu.c</name>
   </file>
   <file>

@@ -21,6 +21,7 @@
 #include "smiles.h"
 #include "vCard.h"
 #include "siejc_ipc.h"
+#include "color.h"
 
 /*
 (c) Kibab
@@ -33,9 +34,8 @@ int autostatus_time;
 int as;
 int CLIST_FONT;
 int MESSAGEWIN_FONT;
-char color_cfg[2000];
 FSTATS fs;
-//extern int init_color(void);
+
 extern const char color_PATH[];
 extern const char colorshem_PATH_1[];
 extern const char colorshem_PATH_2[];
@@ -45,7 +45,6 @@ extern const char colorshem_PATH_5[];
 extern const int AUTOSTATUS_ENABLED;
 extern const unsigned int AUTOSTATUS_TIME;
 int color_num;
-int color_state=0;
 extern const char COLOR_CURSOR []; 
 
 extern const int ROSTER_FONT;
@@ -141,221 +140,9 @@ GBSTMR redraw_tmr;
 #endif
 GBSTMR autostatus_tmr;
 
-//=============Некоторые цвета====================
 
-RGBA MAINBG_NOT_CONNECTED;
-RGBA MAINBG_CONNECTED;
-RGBA MAINBG_ERROR;
-RGBA MAINFONT_NOT_CONNECTED =   {200, 200, 200, 100};
-RGBA MAINFONT_CONNECTED;
-RGBA MAINFONT_ERROR;
-RGBA MESSAGEWIN_BGCOLOR;
-RGBA MESSAGEWIN_TITLE_BGCOLOR;
-RGBA MESSAGEWIN_TITLE_FONT;
-RGBA MESSAGEWIN_MY_BGCOLOR ;
-RGBA MESSAGEWIN_CH_BGCOLOR ;
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 ;
-RGBA MESSAGEWIN_CURSOR_BGCOLOR;
-RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 ;
-RGBA MESSAGEWIN_SYS_BGCOLOR ; 
-RGBA MESSAGEWIN_STATUS_BGCOLOR; 
-RGBA MESSAGEWIN_CHAT_FONT;
-RGBA CURSOR;
-RGBA CURSOR_BORDER;        
-RGBA CLIST_F_COLOR_0;        
-RGBA CLIST_F_COLOR_1 ;        
-RGBA CONTACT_BG_0 ;         
-RGBA CONTACT_BG_1 ;
-RGBA lineColor ;    
-RGBA borderColor;
 
-RGBA OnlineColor;
-RGBA ChatColor;
-RGBA AwayColor;
-RGBA XAColor;
-RGBA DNDColor;
-RGBA InvisibleColor;
-RGBA OfflineColor;
-RGBA ErrorColor;
-RGBA SubscribeColor;
-RGBA SubscribedColor;
-RGBA UnsubscribeColor;
-RGBA UnsubscribedColor;
 
-RGBA PRES_COLORS[PRES_COUNT] ;
-
-void colorload(void){
-CURSOR.r=color_cfg [44];
-CURSOR.g=color_cfg [45];
-CURSOR.b=color_cfg [46];
-CURSOR.a=color_cfg [47];
-
-OnlineColor.r=color_cfg [1196];
-OnlineColor.g=color_cfg [1197];
-OnlineColor.b=color_cfg [1198];
-OnlineColor.a=color_cfg [1199];
-PRES_COLORS[0]=OnlineColor;
-
-ChatColor.r=color_cfg [1244];
-ChatColor.g=color_cfg [1245];
-ChatColor.b=color_cfg [1246];
-ChatColor.a=color_cfg [1247];
-PRES_COLORS[1]=ChatColor;
-
-AwayColor.r=color_cfg [1292];
-AwayColor.g=color_cfg [1293];
-AwayColor.b=color_cfg [1294];
-AwayColor.a=color_cfg [1295];
-PRES_COLORS[2]=AwayColor;
-
-XAColor.r=color_cfg [1340];
-XAColor.g=color_cfg [1341];
-XAColor.b=color_cfg [1342];
-XAColor.a=color_cfg [1343];
-PRES_COLORS[3]=XAColor;
-
-DNDColor.r=color_cfg [1388];
-DNDColor.g=color_cfg [1389];
-DNDColor.b=color_cfg [1390];
-DNDColor.a=color_cfg [1391];
-PRES_COLORS[4]=DNDColor;
-
-InvisibleColor.r=color_cfg [1436];
-InvisibleColor.g=color_cfg [1437];
-InvisibleColor.b=color_cfg [1438];
-InvisibleColor.a=color_cfg [1439];
-PRES_COLORS[5]=InvisibleColor;
-
-OfflineColor.r=color_cfg [1484];
-OfflineColor.g=color_cfg [1485];
-OfflineColor.b=color_cfg [1486];
-OfflineColor.a=color_cfg [1487];
-PRES_COLORS[6]=OfflineColor;
-
-ErrorColor.r=color_cfg [1532];
-ErrorColor.g=color_cfg [1533];
-ErrorColor.b=color_cfg [1534];
-ErrorColor.a=color_cfg [1535];
-PRES_COLORS[7]=ErrorColor;
-
-SubscribeColor.r=color_cfg [1580];
-SubscribeColor.g=color_cfg [1581];
-SubscribeColor.b=color_cfg [1582];
-SubscribeColor.a=color_cfg [1583];
-PRES_COLORS[8]=SubscribeColor;
-
-SubscribedColor.r=color_cfg [1628];
-SubscribedColor.g=color_cfg [1629];
-SubscribedColor.b=color_cfg [1630];
-SubscribedColor.a=color_cfg [1631];
-PRES_COLORS[9]=SubscribedColor;
-
-UnsubscribeColor.r=color_cfg [1676];
-UnsubscribeColor.g=color_cfg [1677];
-UnsubscribeColor.b=color_cfg [1678];
-UnsubscribeColor.a=color_cfg [1679];
-PRES_COLORS[10]=UnsubscribeColor;
-
-UnsubscribedColor.r=color_cfg [1724];
-UnsubscribedColor.g=color_cfg [1725];
-UnsubscribedColor.b=color_cfg [1726];
-UnsubscribedColor.a=color_cfg [1727];
-PRES_COLORS[11]=UnsubscribedColor;
-
-CURSOR_BORDER.r=color_cfg [92];
-CURSOR_BORDER.g=color_cfg [93];
-CURSOR_BORDER.b=color_cfg [94];
-CURSOR_BORDER.a=color_cfg [95];
-CLIST_F_COLOR_0.r=color_cfg [140];
-CLIST_F_COLOR_0.g=color_cfg [141];
-CLIST_F_COLOR_0.b=color_cfg [142];
-CLIST_F_COLOR_0.a=color_cfg [143];
-CLIST_F_COLOR_1.r=color_cfg [188];
-CLIST_F_COLOR_1.g=color_cfg [189];
-CLIST_F_COLOR_1.b=color_cfg [190];
-CLIST_F_COLOR_1.a=color_cfg [191];
-CONTACT_BG_0.r=color_cfg [236];
-CONTACT_BG_0.g=color_cfg [237];
-CONTACT_BG_0.b=color_cfg [238];
-CONTACT_BG_0.a=color_cfg [239];
-CONTACT_BG_1.r=color_cfg [284];
-CONTACT_BG_1.g=color_cfg [285];
-CONTACT_BG_1.b=color_cfg [286];
-CONTACT_BG_1.a=color_cfg [287];
-lineColor.r=color_cfg [332];
-lineColor.g=color_cfg [333];
-lineColor.b=color_cfg [334];
-lineColor.a=color_cfg [335];
-borderColor.r=color_cfg [380];
-borderColor.g=color_cfg [381];
-borderColor.b=color_cfg [382];
-borderColor.a=color_cfg [383];
-     MAINBG_NOT_CONNECTED.r=color_cfg [428];
-     MAINBG_NOT_CONNECTED.g=color_cfg [429];
-     MAINBG_NOT_CONNECTED.b=color_cfg [430];
-     MAINBG_NOT_CONNECTED.a=color_cfg [431];
-     MAINBG_CONNECTED.r=color_cfg [476];
-     MAINBG_CONNECTED.g=color_cfg [477];
-     MAINBG_CONNECTED.b=color_cfg [478];
-     MAINBG_CONNECTED.a=color_cfg [479];
-     MAINBG_ERROR.r=color_cfg [524];
-     MAINBG_ERROR.g=color_cfg [525];
-     MAINBG_ERROR.b=color_cfg [526];
-     MAINBG_ERROR.a=color_cfg [527];
-     MAINFONT_CONNECTED.r=color_cfg [572];
-     MAINFONT_CONNECTED.g=color_cfg [573];
-     MAINFONT_CONNECTED.b=color_cfg [574];
-     MAINFONT_CONNECTED.a=color_cfg [575];
-     MAINFONT_ERROR.r=color_cfg [620];
-     MAINFONT_ERROR.g=color_cfg [621];
-     MAINFONT_ERROR.b=color_cfg [622];
-     MAINFONT_ERROR.a=color_cfg [623];
-     MESSAGEWIN_BGCOLOR.r=color_cfg [668];
-     MESSAGEWIN_BGCOLOR.g=color_cfg [669];
-     MESSAGEWIN_BGCOLOR.b=color_cfg [670];
-     MESSAGEWIN_BGCOLOR.a=color_cfg [671];
-     MESSAGEWIN_CURSOR_BGCOLOR.r=color_cfg [908];
-     MESSAGEWIN_CURSOR_BGCOLOR.g=color_cfg [909];
-     MESSAGEWIN_CURSOR_BGCOLOR.b=color_cfg [910];
-     MESSAGEWIN_CURSOR_BGCOLOR.a=color_cfg [911];
-     MESSAGEWIN_TITLE_BGCOLOR.r=color_cfg [716];
-     MESSAGEWIN_TITLE_BGCOLOR.g=color_cfg [717];
-     MESSAGEWIN_TITLE_BGCOLOR.b=color_cfg [718];
-     MESSAGEWIN_TITLE_BGCOLOR.a=color_cfg [719];
-     MESSAGEWIN_TITLE_FONT.r=color_cfg [764];
-     MESSAGEWIN_TITLE_FONT.g=color_cfg [765];
-     MESSAGEWIN_TITLE_FONT.b=color_cfg [766];
-     MESSAGEWIN_TITLE_FONT.a=color_cfg [767];
-     MESSAGEWIN_MY_BGCOLOR.r=color_cfg [812];
-     MESSAGEWIN_MY_BGCOLOR.g=color_cfg [813];
-     MESSAGEWIN_MY_BGCOLOR.b=color_cfg [814];
-     MESSAGEWIN_MY_BGCOLOR.a=color_cfg [815];
-     MESSAGEWIN_CH_BGCOLOR.r=color_cfg [860];
-     MESSAGEWIN_CH_BGCOLOR.g=color_cfg [861];
-     MESSAGEWIN_CH_BGCOLOR.b=color_cfg [862];
-     MESSAGEWIN_CH_BGCOLOR.a=color_cfg [863];
-     MESSAGEWIN_GCHAT_BGCOLOR_1.r=color_cfg [956];
-     MESSAGEWIN_GCHAT_BGCOLOR_1.g=color_cfg [957];
-     MESSAGEWIN_GCHAT_BGCOLOR_1.b=color_cfg [958];
-     MESSAGEWIN_GCHAT_BGCOLOR_1.a=color_cfg [959];
-     MESSAGEWIN_GCHAT_BGCOLOR_2.r=color_cfg [1004];
-     MESSAGEWIN_GCHAT_BGCOLOR_2.g=color_cfg [1005];
-     MESSAGEWIN_GCHAT_BGCOLOR_2.b=color_cfg [1006];
-     MESSAGEWIN_GCHAT_BGCOLOR_2.a=color_cfg [1007];
-     MESSAGEWIN_SYS_BGCOLOR.r=color_cfg [1052];
-     MESSAGEWIN_SYS_BGCOLOR.g=color_cfg [1053];
-     MESSAGEWIN_SYS_BGCOLOR.b=color_cfg [1054];
-     MESSAGEWIN_SYS_BGCOLOR.a=color_cfg [1055];
-     MESSAGEWIN_STATUS_BGCOLOR.r=color_cfg [1100];
-     MESSAGEWIN_STATUS_BGCOLOR.g=color_cfg [1101];
-     MESSAGEWIN_STATUS_BGCOLOR.b=color_cfg [1102];
-     MESSAGEWIN_STATUS_BGCOLOR.a=color_cfg [1103];
-     MESSAGEWIN_CHAT_FONT.r=color_cfg [1148];
-     MESSAGEWIN_CHAT_FONT.g=color_cfg [1149];
-     MESSAGEWIN_CHAT_FONT.b=color_cfg [1150];
-     MESSAGEWIN_CHAT_FONT.a=color_cfg [1151];
-     
-}
 
 
 /*
@@ -429,30 +216,7 @@ borderColor.a=color_cfg [383];
   AddIconToIconBar(icon_num, num);
 }*/ // IconBar
 
-int readfile(char *color_PATH, char *colorshem_PATH, char *buf)
-{
-  unsigned int err=0;
-  int f;
-  char path[128];
-  
-  strcpy(path, color_PATH);
-  strcat(path, colorshem_PATH);  
-  
-  GetFileStats((char*)path,&fs,&err);
-  if (err) return err;
-  f=fopen((char*)path,A_ReadOnly+A_BIN,P_READ,&err);
-//buf=malloc(fs.size+1);
-//file=malloc(fs.size+1);
 
-  if (!err)
-  {
-    fread(f,buf,fs.size,&err);
-    fclose(f,&err);
-  }
-    else
-      return err;
- return 0;
-}
 
 int writefile(char *color_PATH, char *colorshem_PATH, char *buf)
 {
@@ -469,43 +233,6 @@ int writefile(char *color_PATH, char *colorshem_PATH, char *buf)
      fwrite(f,buf,fs.size,&err);
   fclose(f,&err);
 return err;
-}     
-
-
-int init_color(int num){
-  switch(num)
-    {
-    case 1:
-  if(readfile((char*) color_PATH, (char*)colorshem_PATH_1, color_cfg)==0)
-  { colorload(); 
-  return 1;
-  }
-   
-   case 2:
-  if(readfile((char*) color_PATH, (char*)colorshem_PATH_2, color_cfg)==0)
-  { colorload(); 
-  return 1;
-  }
-   
-   case 3:
-  if(readfile((char*) color_PATH, (char*)colorshem_PATH_3, color_cfg)==0)
-  { colorload(); 
-  return 1;
-  }
-    
-   case 4:
-  if(readfile((char*) color_PATH, (char*)colorshem_PATH_4, color_cfg)==0)
-  { colorload(); 
-  return 1;
-  }
-    
-   case 5:
-  if(readfile((char*) color_PATH, (char*)colorshem_PATH_5, color_cfg)==0)
-  { colorload(); 
-  return 1;
-  } 
-    }
-return 0;
 }
 
 //================================================
@@ -1493,7 +1220,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   SGOLD_RedrawProc_Starter();
 #endif
   //DirectRedrawGUI();
-  if (!color_state){if(msg->gbsmsg->msg==LONG_PRESS)
+  if(msg->gbsmsg->msg==LONG_PRESS)
   {
     switch(msg->gbsmsg->submess)
     {
@@ -1508,14 +1235,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         CList_MoveCursorDown(1);
         break;
       }
-      
-    case '0': 
-      { 
-        color_state=1;ShowMSG(1,(int)"enter color num ");
-        CList_ToggleOfflineDisplay();
-        break;
-      }
-   
     case UP_BUTTON:
     case '2':
       {
@@ -1701,33 +1420,7 @@ case '8':
         break;
       }
     }
-  }}else{
-    if (msg->gbsmsg->msg==KEY_DOWN)
-  {
-    switch(msg->gbsmsg->submess)
-    {
-    case '1': 
-    color_state=0;
-    if(!init_color(1)){ShowMSG(0,(int)"no color 1");}else{color_num=1;ShowMSG(0,(int)"load color 1");}
-    break;
-    case '2': 
-    color_state=0;
-    if(!init_color(2)){ShowMSG(0,(int)"no color 2");}else{color_num=2;ShowMSG(0,(int)"load color 2");}
-    break;
-    case '3': 
-    color_state=0;
-    if(!init_color(3)){ShowMSG(0,(int)"no color 3");}else{color_num=3;ShowMSG(0,(int)"load color 3");}
-    break;
-    case '4': 
-    color_state=0;
-    if(!init_color(4)){ShowMSG(0,(int)"no color 4");}else{color_num=4;ShowMSG(0,(int)"load color 4");}
-    break;
-    case '5': 
-    color_state=0;
-    if(!init_color(5)){ShowMSG(0,(int)"no color 5");}else{color_num=5;ShowMSG(0,(int)"load color 5");}
-    break;
-   
-    }}}
+  }
   //  onRedraw(data);
   return(0);
 }
@@ -1816,6 +1509,8 @@ void maincsm_onclose(CSM_RAM *csm)
 
   void WriteDefSettings(char *elfpath);
   WriteDefSettings(elf_path);
+  
+  if (cur_color_name) mfree(cur_color_name);
   
   SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)end_socket);
@@ -2136,7 +1831,9 @@ void ReadDefSettings(char *elfpath)
     Is_Vibra_Enabled=def_set.vibra_status;
     Is_Sounds_Enabled=def_set.sound_status;
     Display_Offline=def_set.off_contacts;
-    color_num=def_set.cl_num;
+    if (cur_color_name) mfree(cur_color_name);
+    cur_color_name = (char *)malloc(32);
+    strcpy(cur_color_name, def_set.color_name);
     Is_Autostatus_Enabled=def_set.auto_status;
     Is_Playerstatus_Enabled=def_set.player_status;;
   }
@@ -2147,7 +1844,9 @@ void ReadDefSettings(char *elfpath)
     Display_Offline=0;
     Is_Autostatus_Enabled=0;
     Is_Playerstatus_Enabled=0;
-    color_num=1;
+    if (cur_color_name) mfree(cur_color_name);
+    cur_color_name = (char *)malloc(32);
+    strcpy(cur_color_name, "default");
   }
 }  
 
@@ -2166,11 +1865,11 @@ void WriteDefSettings(char *elfpath)
     def_set.vibra_status=Is_Vibra_Enabled;
     def_set.sound_status=Is_Sounds_Enabled;
     def_set.off_contacts=Display_Offline;
-    def_set.cl_num=color_num;
+    strcpy(def_set.color_name, cur_color_name);
     def_set.auto_status=Is_Autostatus_Enabled;
     def_set.player_status=Is_Playerstatus_Enabled;
-    fwrite(f,&def_set,sizeof(DEF_SETTINGS),&err);
-    fclose(f,&err);
+    fwrite(f, &def_set, sizeof(DEF_SETTINGS), &err);
+    fclose(f, &err);
   }
 }
 
@@ -2277,132 +1976,105 @@ void OpenSettings(void)
   MAINCSM.iconbar_handler.addr = (int)addIconBar;
 }*/ // IconBar
   
-  int main(char *exename, char *fname)
+int main(char *exename, char *fname)
+{
+  MAIN_CSM main_csm;
+    
+  char * s=strrchr(exename,'\\');
+  int len = (s - exename) + 1;
+  strncpy(elf_path, exename, len);
+  elf_path[len] = 0;    
+    
+  exename2 = exename;
+  if(!IsGoodPlatform())
   {
-    char *s;
-    int len;
-    MAIN_CSM main_csm;
-    
-    s=strrchr(exename,'\\');
-    len=(s-exename)+1;
-    strncpy(elf_path,exename,len);
-    elf_path[len]=0;    
-    
-    exename2=exename;
-    if(!IsGoodPlatform())
-    {
-      ShowMSG(1,(int)LG_PLATFORMM);
-      return 0;
-    }
-//    char dummy[sizeof(MAIN_CSM)];
-     
-    InitConfig(fname);
-    ReadDefSettings(elf_path);
-    
-    if(!init_color(color_num))
-      {
-        ShowMSG(1,(int)"no color bcfg");
-        return 0;
-      }
-    
-    if(!strlen(USERNAME))
-    {
-      ShowMSG(1,(int)LG_ENTERLOGPAS);
-      OpenSettings();
-      return 0;
-    }
-   
-    extern TTime intimes;           // инициализация переменных
-    extern TDate indates;           // для idle
-    GetDateTime(&indates,&intimes); //
-
-    UpdateCSMname();
-
-    LockSched();
-    maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
-    UnlockSched();
-
-    Check_Settings_Cleverness();
-    switch (ROSTER_FONT)
-    {
-    case 0:
-      {
-        CLIST_FONT=FONT_SMALL;
-        break;
-      }
-    case 1:
-      {
-        CLIST_FONT=FONT_SMALL_BOLD;
-        break;
-      }
-    case 2:
-      {
-        CLIST_FONT=FONT_MEDIUM;
-        break;
-      }
-    case 3:
-      {
-        CLIST_FONT=FONT_MEDIUM_BOLD;
-        break;
-      }
-    case 4:
-      {
-        CLIST_FONT=FONT_LARGE;
-        break;
-      }
-    case 5:
-      {
-        CLIST_FONT=FONT_LARGE_BOLD;
-        break;
-      }
-    }
-    switch (MESSAGES_FONT)
-    {
-    case 0:
-      {
-        MESSAGEWIN_FONT=FONT_SMALL;
-        break;
-      }
-    case 1:
-      {
-        MESSAGEWIN_FONT=FONT_SMALL_BOLD;
-        break;
-      }
-    case 2:
-      {
-        MESSAGEWIN_FONT=FONT_MEDIUM;
-        break;
-      }
-    case 3:
-      {
-        MESSAGEWIN_FONT=FONT_MEDIUM_BOLD;
-        break;
-      }
-    case 4:
-      {
-        MESSAGEWIN_FONT=FONT_LARGE;
-        break;
-      }
-    case 5:
-      {
-        MESSAGEWIN_FONT=FONT_LARGE_BOLD;
-        break;
-      }
-    }
-    if (AUTOSTATUS_ENABLED)
-    {
-      if(AUTOSTATUS_TIME<1) autostatus_time = 15000; //1min (интересный ефект если в конфиг внести 0 :)
-        else autostatus_time = 250*60*AUTOSTATUS_TIME;
-      AddKeybMsgHook((void *)status_keyhook);
-      GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
-      as = 0;
-    }
-    /*extern const int SHOW_ICONBAR_ICON;
-    if (SHOW_ICONBAR_ICON)
-    {
-      extern const char ICONSET_FILENAME[128];
-      LoadIconSet(ICONSET_FILENAME);
-      SetIconBarHandler();
-    }*/ // IconBar
+    ShowMSG(1,(int)LG_PLATFORMM);
     return 0;
   }
+  
+  InitConfig(fname);
+  ReadDefSettings(elf_path);
+    
+  if(!ReadColor(cur_color_name))
+  {
+    MsgBoxError(1,(int)"No color bcfg");
+    return 0;
+  }
+    
+  if(!strlen(USERNAME))
+  {
+    ShowMSG(1,(int)LG_ENTERLOGPAS);
+    OpenSettings();
+    return 0;
+  }
+   
+  extern TTime intimes;           // инициализация переменных
+  extern TDate indates;           // для idle
+  GetDateTime(&indates,&intimes); //
+
+  UpdateCSMname();
+
+  LockSched();
+  maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
+  UnlockSched();
+
+  Check_Settings_Cleverness();
+  switch (ROSTER_FONT)
+  {
+  case 0:
+    CLIST_FONT=FONT_SMALL;
+    break;
+  case 1:
+    CLIST_FONT=FONT_SMALL_BOLD;
+    break;
+  case 2:
+    CLIST_FONT=FONT_MEDIUM;
+    break;
+  case 3:
+    CLIST_FONT=FONT_MEDIUM_BOLD;
+    break;
+  case 4:
+    CLIST_FONT=FONT_LARGE;
+    break;
+  case 5:
+    CLIST_FONT=FONT_LARGE_BOLD;
+    break;
+  }
+  switch (MESSAGES_FONT)
+  {
+  case 0:
+    MESSAGEWIN_FONT=FONT_SMALL;
+    break;
+  case 1:
+    MESSAGEWIN_FONT=FONT_SMALL_BOLD;
+    break;
+  case 2:
+    MESSAGEWIN_FONT=FONT_MEDIUM;
+    break;
+  case 3:
+    MESSAGEWIN_FONT=FONT_MEDIUM_BOLD;
+    break;
+  case 4:
+    MESSAGEWIN_FONT=FONT_LARGE;
+    break;
+  case 5:
+    MESSAGEWIN_FONT=FONT_LARGE_BOLD;
+    break;
+  }
+  if (AUTOSTATUS_ENABLED)
+  {
+    if(AUTOSTATUS_TIME < 1) autostatus_time = 15000; //1min (интересный ефект если в конфиг внести 0 :)
+    else autostatus_time = 250*60*AUTOSTATUS_TIME;
+    AddKeybMsgHook((void *)status_keyhook);
+    GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
+    as = 0;
+  }
+  /*extern const int SHOW_ICONBAR_ICON;
+  if (SHOW_ICONBAR_ICON)
+  {
+    extern const char ICONSET_FILENAME[128];
+    LoadIconSet(ICONSET_FILENAME);
+    SetIconBarHandler();
+  }*/ // IconBar
+  return 0;
+}

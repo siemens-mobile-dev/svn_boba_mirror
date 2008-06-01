@@ -10,27 +10,15 @@
 #include "lang.h"
 #include "../inc/pnglist.h"
 #include "smiles.h"
+#include "color.h"
 
 #define MSG_START_X 1    //X-координата начала рисовани€ строки сообщени€
 
-int flag2;int flag1;
-//-------------÷вета. ћного цветов :)
+int flag2;
+int flag1;
 extern const unsigned int DEF_SKR;
-extern RGBA MESSAGEWIN_BGCOLOR ; // ќбщий фон
-extern RGBA MESSAGEWIN_TITLE_BGCOLOR ; // ‘он заголовка
-extern RGBA MESSAGEWIN_TITLE_FONT ; // ÷вет шрифта заголовка
-extern RGBA MESSAGEWIN_MY_BGCOLOR ; // ÷вет фона исход€щих сообщений
-extern RGBA MESSAGEWIN_CH_BGCOLOR ; // ÷вет фона приватных сообщений
-extern RGBA MESSAGEWIN_CURSOR_BGCOLOR; // ÷вет фона курсора
-extern RGBA MESSAGEWIN_GCHAT_BGCOLOR_1 ; // „ередование: ÷вет фона сообщений конференции 1
-extern RGBA MESSAGEWIN_GCHAT_BGCOLOR_2 ; // „ередование: ÷вет фона сообщений конференции 2
-extern RGBA MESSAGEWIN_SYS_BGCOLOR ; // ÷вет фона сообщений уведомлений
-extern RGBA MESSAGEWIN_STATUS_BGCOLOR; // ÷вет фона сообщений смены статуса
-extern RGBA MESSAGEWIN_CHAT_FONT; // ÷вет шрифта сообщений
 extern int MESSAGEWIN_FONT;
-extern RGBA CURSOR_BORDER;
 extern const int pod_mess;
-//------------------
 
 extern const int KBD_LAYOUT;
 

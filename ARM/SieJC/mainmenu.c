@@ -11,6 +11,7 @@
 #include "revision.h"
 #include "lang.h"
 #include "clist_util.h"
+#include "color.h"
 
 //==============================================================================
 // ELKA Compatibility
@@ -46,53 +47,6 @@ extern char My_Presence;
 
 extern const char VERSION_VERS[];
 
-void Colorshem(GUI *data)
-{
-  extern int color_num;
-  extern const char color_PATH[];
-  extern const char colorshem_PATH_1[];
-  extern const char colorshem_PATH_2[];
-  extern const char colorshem_PATH_3[];
-  extern const char colorshem_PATH_4[];
-  extern const char colorshem_PATH_5[];
-
-  
-  char path[128];
-  WSHDR *ws;
-  ws=AllocWS(150); 
-  
-  strcpy(path, color_PATH);
-  
-  switch (color_num)
-  {
-  case 1:
-    strcat(path, colorshem_PATH_1);
-    str_2ws(ws,(char*)path,128);
-    break;
-  case 2:
-    strcat(path, colorshem_PATH_2);
-    str_2ws(ws,(char*)path,128);
-    break;
-  case 3:
-    strcat(path, colorshem_PATH_3);
-    str_2ws(ws,(char*)path,128);
-    break;
-  case 4:
-    strcat(path, colorshem_PATH_4);
-    str_2ws(ws,(char*)path,128);
-    break;
-  case 5:
-    strcat(path, colorshem_PATH_5);
-    str_2ws(ws,(char*)path,128);
-    break;    
-  }
-
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
-  GeneralFuncF1(1);
-}
-
-
 void AboutDlg(GUI *data)
 {
   char msg_tpl[]=LG_COPYRIGHT;
@@ -103,12 +57,10 @@ void AboutDlg(GUI *data)
   mfree(msg);
 };
 
-
 void Dummy(GUI *data)
 {
   ShowMSG(1,(int)"Раздел в разработке :)");
 };
-
 
 // Ad, сюда напиши номера, которые сочтёшь нужным!
 int icon[]={0x3DB,0};
@@ -231,7 +183,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           ChangeAutostatusMode,
                           ChangePlayerstatusMode,
                           OpenSettings_,
-                          Colorshem,
+                          ShowSelectColorMenu,
                           AboutDlg,
                           Exit_SieJC
                          };

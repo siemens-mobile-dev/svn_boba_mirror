@@ -168,27 +168,8 @@ __root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles";
 __root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFAULTDISK,0,127};
 __root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
 
-__root const CFG_HDR cfghdr244={CFG_STR_UTF8,"color",0,63};
+__root const CFG_HDR cfghdr244={CFG_STR_UTF8, LG_COLORPATH,0, 63};
 __root const char color_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Color\\";
-
-__root const CFG_HDR cfghdr245={CFG_STR_UTF8,"color_shem1",0,63};
-__root const char colorshem_PATH_1[64]="default.bcfg";
-
-
-__root const CFG_HDR cfghdr246={CFG_STR_UTF8,"color_shem2",0,63};
-__root const char colorshem_PATH_2[64]="color2.bcfg";
-
-__root const CFG_HDR cfghdr247={CFG_STR_UTF8,"color_shem3",0,63};
-__root const char colorshem_PATH_3[64]="color3.bcfg";
-
-__root const CFG_HDR cfghdr248={CFG_STR_UTF8,"color_shem4",0,63};
-__root const char colorshem_PATH_4[64]="color4.bcfg";
-
-
-__root const CFG_HDR cfghdr249={CFG_STR_UTF8,"color_shem5",0,63};
-__root const char colorshem_PATH_5[64]="color5.bcfg";
-
-
 
 __root const CFG_HDR cfghdr_PATHS_LEVEL_END={CFG_LEVEL,"",0,0};
 

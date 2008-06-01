@@ -185,6 +185,7 @@
 #define LG_PATHSMILECFG     "Конфиг смайлов"
 #define LG_PATHSMILEDIR     "Каталог смайлов"
 #define LG_DEFAULTDISK      "Диск по умолчанию"
+#define LG_COLORPATH        "Каталог цвет. схем"
 
 #define LG_TEXTSTATUS       "Текст статусов"
 #define LG_DEFSTATES        "Состояния по умолчанию"
@@ -450,6 +451,7 @@
 #define LG_PATHSMILECFG     "Конфіг смайлів"
 #define LG_PATHSMILEDIR     "Каталог смайлів"
 #define LG_DEFAULTDISK      "Диск за умовчанням"
+#define LG_COLORPATH        "Каталог кол. схем"
 
 #define LG_TEXTSTATUS       "Текст статусів"
 #define LG_DEFSTATES        "Стани за умовчанням"
@@ -715,6 +717,7 @@
 #define LG_PATHSMILECFG     "Smiles config"
 #define LG_PATHSMILEDIR     "Smiles .png path"
 #define LG_DEFAULTDISK      "Default disc"
+#define LG_COLORPATH        "Color schemes path"
 
 #define LG_TEXTSTATUS       "Statuses text"
 #define LG_DEFSTATES        "Default states"

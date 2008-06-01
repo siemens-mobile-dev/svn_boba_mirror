@@ -12,23 +12,12 @@
 #include "lang.h"
 #include "..\inc\pnglist.h"
 #include "smiles.h"
+#include "color.h"
 
-
-
-  // Цвет курсора
-extern char color_cfg[10000];
-extern RGBA CURSOR_BORDER;         // Цвет ободка курсора
-extern RGBA CLIST_F_COLOR_0;         // Цвет шрифта
-extern RGBA CLIST_F_COLOR_1 ;         // Цвет шрифта (есть сообщения)
-extern RGBA CONTACT_BG_0 ;         // Чередование: цвет фона 1
-extern RGBA CONTACT_BG_1 ;         // Чередование: цвет фона 2
 extern const unsigned int DEF_SKR;
 CLIST* cltop = NULL;
 
 char Display_Offline;         // Отображать ли оффлайн-пользователей
-
-extern RGBA lineColor ;    // Цвет текущей строчки
-extern RGBA borderColor;  // Цвет ободка текущей строчки
 
 unsigned int NContacts = 0;       // Всего контактов (и ресурсов) в списке
 unsigned int N_Disp_Contacts = 0; // Сколько из них должны отображаться
@@ -40,11 +29,9 @@ unsigned int CursorPos = 1;       // Текущая позиция курсора
 TRESOURCE* ActiveContact = NULL;
 
 extern char logmsg[512];
-extern  RGBA PRES_COLORS[PRES_COUNT];
 extern char My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
 extern JABBER_STATE Jabber_state;
-extern RGBA CURSOR;
 extern int CLIST_FONT;
 /*
 Единственная процедура, которая занимается отрисовкой контакт-листа
