@@ -208,7 +208,7 @@ void URLInput::Show(char * url_str)
 
   ascii2ws(ws, "URL:");
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq, &ec, ma);
   
   URL_unescape(url_str);
@@ -219,7 +219,7 @@ void URLInput::Show(char * url_str)
   
   ascii2ws(ws, LangPack::Active->data[LGP_DownloadFolder]);
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq, &ec, ma);
   
   str_2ws(ws, CFG_DOWNLOADS_FOLDER, 511);
@@ -229,7 +229,7 @@ void URLInput::Show(char * url_str)
 
   ascii2ws(ws, LangPack::Active->data[LGP_FileName]);
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq, &ec, ma);
   
   ascii2ws(ws, "");

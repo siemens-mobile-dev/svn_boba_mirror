@@ -19,7 +19,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Bookmarks");
-          make_dir(path);
+          make_dirs(path);
           pp += 9;
           ps += 9;
           continue;
@@ -30,7 +30,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "img");
-          make_dir(path);
+          make_dirs(path);
           pp += 3;
           ps += 3;
           continue;
@@ -41,7 +41,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Logs");
-          make_dir(path);
+          make_dirs(path);
           pp += 4;
           ps += 4;
           continue;
@@ -59,7 +59,7 @@ void getSymbolicPath(char * path, const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Sounds");
-          make_dir(path);
+          make_dirs(path);
           pp += 6;
           ps += 6;
           continue;
@@ -76,18 +76,29 @@ void getSymbolicPath(char * path, const char * cFileName)
   path[pp] = NULL;
 }
 
-int Is_URL_File(const char *s)
+/*
+  Сравнивает расширение файла с указанным в параметре
+  fname - имя файла;
+  mask - нужное нам расширение;
+  Пример: if (is_file("0:\\Music\\1.mp3", "mp3")
+*/
+int is_file(const char * fname, const char * mask)
 {
-  int len=strlen(s);
-  if(s && len)
+  int fname_len = strlen(fname);
+  int mask_len = strlen(mask);
+  
+  if (!fname_len && !mask_len)
+    return 0;
+  
+  if (fname[fname_len - mask_len - 1] != '.')
+    return 0;
+  
+  for (int i = fname_len, p = mask_len; i && p; i --, p --)
   {
-    if(s[len-4]=='.' &&
-       (s[len-3]=='u' || s[len-3]=='U')&&
-       (s[len-2]=='r' || s[len-2]=='R')&&
-       (s[len-1]=='l' || s[len-1]=='L'))
-    return (1);
+    if (tolower(fname[i]) != tolower(mask[p]))
+      return 0;
   }
-  return (0);
+  return 1;
 }
 
 int is_file_exists(const char * fname)
@@ -106,13 +117,21 @@ int get_file_size(const char * fname)
   return (fs.size);
 }
 
-int make_dir(const char * dir_fname)
+int make_dirs(const char * path)
 {
+  int c, i = 0;
   unsigned int io_error;
-  if (!isdir(dir_fname, &io_error))
+  char tmp[256], * s;
+  strcpy(tmp, path);
+  s = tmp;
+  while((s = strchr(s, '\\')))
   {
-    mkdir(dir_fname, &io_error);
-    return 1;
+    s++;
+    c = *s;
+    *s = 0;
+    i += mkdir(tmp, &io_error);
+    *s = c;
   }
-  return 0;
+  return (i);
 }
+

@@ -127,38 +127,35 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
 }
 
 // Преобразование в нижний регистр
-char * str2lower(char *st)
+char * str2lower(char * str)
 {
-  unsigned int len = strlen(st);
-  for(int i=0;i<len;i++)
+  unsigned int len = strlen(str);
+  for(int i = 0; i < len; i ++)
   {
-    char sym = *(st+i);
-    if(sym<0x80)
+    char sym = *(str + i);
+    if(sym < 0x80)
     {
-      if(st[i]>='A' && st[i]<='Z') st[i] += ('a' - 'A');
+      if(str[i] >= 'A' && str[i] <= 'Z') str[i] += ('a' - 'A');
       continue;
     }
-    if(sym<0xe0)
+    if(sym < 0xe0)
     {
-      i++;
-      if(st[i] >= 0x90 && st[i]<=0xAF) st[i]+= (0xB0 - 0x90);
+      i ++;
+      if(str[i] >= 0x90 && str[i] <= 0xAF) str[i]+= (0xB0 - 0x90);
     }
   }
-  return st;
+  return str;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-#pragma inline
-int tolower(int C)
+int tolower(int c)
 {
-//  if ((C>='A' && C<='Z')) C-='A'-'a';
-    if(C<0x80)
-    {
-      if(C>='A' && C<='Z') C += ('a' - 'A');
-      return C;
-    }
-      if(C >= 0x90 && C<=0xAF) C+= (0xB0 - 0x90);
-  return(C);
+  if(c < 0x80)
+  {
+    if(c >= 'A' && c <= 'Z') c += ('a' - 'A');
+      return c;
+  }
+  if(c >= 0x90 && c <= 0xAF) c+= (0xB0 - 0x90);
+  return(c);
 }
 
 // Аналог strcmp, но без чувствительности к регистру

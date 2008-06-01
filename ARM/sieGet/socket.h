@@ -58,18 +58,16 @@ public:
   //Закрыть сокет
   void Close();
 
-  SOCK_STATE GetState() const;
-
   // Статистика трафика
   int Tx;
   int Rx;
   static int GlobalTx;
   static int GlobalRx;
 
+  Log * log;
+  
   // Внутреннее состояние
   int socket_id;
-
-  Log * log;
   SOCK_STATE socket_state;
 };
 

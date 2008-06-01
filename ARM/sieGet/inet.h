@@ -112,9 +112,6 @@ class Download: public HttpAbstract
 public:
   Download();
   ~Download();
-
-  static Download * Top; // Очередь закачек
-  Download * next;
   
   void StartDownload();
   void StopDownload();
@@ -128,6 +125,7 @@ public:
   char * file_path;       // Папка сохранения
   int file_size;          // Полный размер файла
   int file_loaded_size;   // Размер закачанной части
+  
 private:
   int hFile; // Хендлер файла
 };

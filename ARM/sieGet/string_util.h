@@ -12,17 +12,18 @@ IN:
 
 OUT:  результирующий буфер.
 */
-void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact);
+void * convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fact);
 
-char* convUTF8_to_ANSI_STR(char *UTF8_str);
-
+char * convUTF8_to_ANSI_STR(char *UTF8_str);
 
 void ascii2ws(WSHDR * ws, const char * s);
 
 unsigned int char8to16(int c);
 
 // Преобразование в нижний регистр
-char* str2lower(char *st);
+char * str2lower(const char * str);
+
+int tolower(int c);
 
 // Функция из интернета. UTF16->UTF8
 char *utf16_to_utf8(char **s, size_t *len);
@@ -40,7 +41,6 @@ char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 char * Get_Param_Value(char * str, char * req, int cut_quotes);
 
 // Аналог strstr, но без чувствительности к регистру
-//char *stristr(char *haystack, char *needle);
 char *stristr(const char *s, const char *find);
 
 // Аналог strcmp, но без чувствительности к регистру

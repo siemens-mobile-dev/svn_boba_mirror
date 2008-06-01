@@ -48,8 +48,10 @@ public:
   LogLine * log_start;
   char * filename;
 
-  void ShowScreen();
+  void DeleteFile();
+  
 private:
+  int hFile;
   void _add_line(WSHDR *ws, CLR_ID color);
 };
 

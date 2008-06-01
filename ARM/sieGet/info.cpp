@@ -203,7 +203,7 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
   case DownloadInfo:
     ascii2ws(ws, LangPack::Active->data[LGP_DownloadState]);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
       
     switch(download->download_state)
@@ -217,12 +217,12 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
     default: ascii2ws(ws, LangPack::Active->data[LGP_Waiting]); break;
     }
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
       
     ascii2ws(ws, "URL:");
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
       
     utf8_2ws(ws, download->url, 511);
@@ -232,7 +232,7 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
       
     ascii2ws(ws, LangPack::Active->data[LGP_DownloadFolder]);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
       
     str_2ws(ws, download->file_path, 511);
@@ -242,31 +242,31 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
       
     ascii2ws(ws, LangPack::Active->data[LGP_FileSize]);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
       
     if(download->file_size) wsprintf_bytes(ws, download->file_size);
     else ascii2ws(ws, LangPack::Active->data[LGP_Unknown]);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
       
     ascii2ws(ws, LangPack::Active->data[LGP_LoadedSize]);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
       
     if(download->file_size) wsprintf_bytes(ws, download->file_loaded_size, download->file_size);
     else wsprintf_bytes(ws, download->file_loaded_size);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
     
     if (download->download_state == DOWNLOAD_COMPLETE)
     {
       ascii2ws(ws, LangPack::Active->data[LGP_OpenFile]);
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws, wstrlen(ws));
+      ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws, ws->wsbody[0]);
       open_file_pos = AddEditControlToEditQend(eq,&ec,ma);
     }
     break;
@@ -275,42 +275,42 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
     {
       ascii2ws(ws, LangPack::Active->data[LGP_Sended]);
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+      ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
       AddEditControlToEditQend(eq,&ec,ma);
       
       wsprintf_bytes(ws, download->Tx);
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, wstrlen(ws));
+      ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
       AddEditControlToEditQend(eq,&ec,ma);
         
       ascii2ws(ws, LangPack::Active->data[LGP_Received]);
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+      ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
       AddEditControlToEditQend(eq,&ec,ma);
         
       wsprintf_bytes(ws, download->Rx);
       PrepareEditControl(&ec);
-      ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, wstrlen(ws));
+      ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
       AddEditControlToEditQend(eq,&ec,ma);
     }
     ascii2ws(ws, LangPack::Active->data[LGP_TotalSended]);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
     
     wsprintf_bytes(ws, Download::GlobalTx);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
     
     ascii2ws(ws, LangPack::Active->data[LGP_TotalReceived]);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
     
     wsprintf_bytes(ws, Download::GlobalRx);
     PrepareEditControl(&ec);
-    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, wstrlen(ws));
+    ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
     AddEditControlToEditQend(eq,&ec,ma);
     break;
   }

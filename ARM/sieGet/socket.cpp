@@ -18,11 +18,6 @@ inline int CheckCepId()
 
 //---------------------------------------------------
 
-SOCK_STATE Socket::GetState() const
-{
-  return socket_state;
-}
-
 //Соединить сокет по ip и порту
 void Socket::Connect(int ip, short port)
 {
@@ -31,7 +26,7 @@ void Socket::Connect(int ip, short port)
     onError(SOCK_ERROR_INVALID_CEPID);
     return;
   }
-  if(socket_id<0)
+  if(socket_id < 0)
   {
     onError(SOCK_ERROR_INVALID_SOCKET);
     return;

@@ -48,33 +48,34 @@ int SieGetDaemon::onMessage(GBS_MSG *msg)
     if (!stricmp(successed_config_filename,(char *)msg->data0))
     {
       InitConfig(); // Обновляем конфиг
-      //lgp->Setup(); // Обновляем ленгпак
+      //lgp->Setup(); // Обновляем ленгпак. Глючит меню!!!
       icp->Setup(); // Обновляем иконки
     }
   }
   // Рисуем иконку на IDLE
-  //#define idlegui_id (((int *)data)[DISPLACE_OF_IDLEGUI_ID/4])
-  CSM_RAM * data = FindCSMbyID(CSM_root()->idle_id);
-  if(IsGuiOnTop(((int *)data)[DISPLACE_OF_IDLEGUI_ID/4]))
+  if (CFG_SHOW_IDLE_ICON)
   {
-    GUI * igui = GetTopGUI();
-    if (igui)
+    CSM_RAM * data = FindCSMbyID(CSM_root()->idle_id);
+    if(IsGuiOnTop(((int *)data)[DISPLACE_OF_IDLEGUI_ID/4]))
     {
-      void * CanvasData;
-#ifdef ELKA
+      GUI * igui = GetTopGUI();
+      if (igui)
       {
-        CanvasData = BuildCanvas();
-#else
-      void * idata = GetDataOfItemByID(igui,2);
-      if (idata)
-      {
-        CanvasData = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
-#endif
-        DrawCanvas(CanvasData , CFG_IDLE_ICON_X,  CFG_IDLE_ICON_Y, 
-               CFG_IDLE_ICON_X + GetImgWidth(DL_Handler->IsAnyDownloadActive()?IconPack::Active->data[IMG_Downloading]:IconPack::Active->data[IMG_Logo]), 
-               CFG_IDLE_ICON_Y + GetImgHeight(DL_Handler->IsAnyDownloadActive()?IconPack::Active->data[IMG_Downloading]:IconPack::Active->data[IMG_Logo]), 1);
-        DrawImg(CFG_IDLE_ICON_X,  CFG_IDLE_ICON_Y, DL_Handler->IsAnyDownloadActive()?IconPack::Active->data[IMG_Downloading]:IconPack::Active->data[IMG_Logo]);
-  
+        void * CanvasData;
+  #ifdef ELKA
+        {
+          CanvasData = BuildCanvas();
+  #else
+        void * idata = GetDataOfItemByID(igui,2);
+        if (idata)
+        {
+          CanvasData = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+  #endif
+          DrawCanvas(CanvasData , CFG_IDLE_ICON_X,  CFG_IDLE_ICON_Y, 
+                 CFG_IDLE_ICON_X + GetImgWidth(DL_Handler->IsAnyDownloadActive()?IconPack::Active->data[IMG_Downloading]:IconPack::Active->data[IMG_Logo]), 
+                 CFG_IDLE_ICON_Y + GetImgHeight(DL_Handler->IsAnyDownloadActive()?IconPack::Active->data[IMG_Downloading]:IconPack::Active->data[IMG_Logo]), 1);
+          DrawImg(CFG_IDLE_ICON_X,  CFG_IDLE_ICON_Y, DL_Handler->IsAnyDownloadActive()?IconPack::Active->data[IMG_Downloading]:IconPack::Active->data[IMG_Logo]);
+        }
       }
     }
   }
@@ -206,11 +207,11 @@ void Killer(void)
 
 SieGetDaemon::~SieGetDaemon()
 {
+  if(dialog->csm_id)
+    dialog->Close();
   GBS_DelTimer(&VibraTimer);
   delete lgp;
   delete icp;
-  if(dialog->csm_id)
-    dialog->Close();
   delete dialog;
   delete DNR_Handler;
   delete DL_Handler;

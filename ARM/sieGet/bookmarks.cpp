@@ -129,7 +129,7 @@ int BookmarksList::FindFilesInFolder(char * folder)  // SelectFile
       }
       else
       {
-        if(Is_URL_File(de.file_name))
+        if(is_file(de.file_name, "url"))
         {
           strcpy(name, de.file_name);
           del_ext(name);

@@ -1,4 +1,3 @@
-
 #include "include.h"
 #include "string_util.h"
 #include "log.h"
@@ -8,14 +7,13 @@
 
 void Log::PrintToFile(const char *str)
 {
-  volatile int hFile;
   unsigned int io_error = 0;
-  hFile = fopen(filename, A_ReadWrite+A_Create+A_Append+A_BIN, P_READ+P_WRITE, &io_error); 
+  if (hFile == -1)
+    hFile = fopen(filename, A_ReadWrite + A_Create + A_Append + A_BIN, P_WRITE, &io_error); 
   if(!io_error)
   {
     fwrite(hFile, str, strlen(str), &io_error);
     fwrite(hFile, "\r\n", 2, &io_error);
-    fclose(hFile, &io_error);
   }
 }
 
@@ -38,6 +36,7 @@ void Log::ChangeFileName(char * fname)
 
 Log::Log()
 {
+  hFile = -1;
   char logs_path[256];
   unsigned int io_error = 0;
   
@@ -52,6 +51,12 @@ Log::Log()
 
 Log::~Log()
 {
+  unsigned int io_error = 0;
+  
+  if (hFile != -1)
+    fclose(hFile, &io_error);
+  hFile = -1;
+  
   LogLine *tmp = log_start;
   while (tmp->next!=tmp)
   {
@@ -103,14 +108,28 @@ void Log::Print(const char * str, CLR_ID color)
   
   if (CFG_LOG_TO_FILE)
   {
-    TTime time;
-    TDate date;
-    GetDateTime(&date, &time);
-    char * _str = new char[len + 32];
-    sprintf(_str, "[%02d.%02d.%02d-%02d:%02d:%02d] %s", date.day, date.month, date.year, time.hour, time.min, time.sec, str);
-    PrintToFile(_str);
-    delete _str;
+    if (CFG_LOG_DATE_TIME)
+    {
+      TTime time;
+      TDate date;
+      GetDateTime(&date, &time);
+      char * tmp_str = new char[len + 32];
+      sprintf(tmp_str, "[%02d.%02d.%02d-%02d:%02d:%02d] %s", date.day, date.month, date.year, time.hour, time.min, time.sec, str);
+      PrintToFile(tmp_str);
+      delete tmp_str;
+    }
+    else
+      PrintToFile(str);
   }
   if (LogWidget::Active)
     LogWidget::Active->Redraw();
+}
+
+void Log::DeleteFile()
+{
+  unsigned int io_error = 0;
+  if (hFile != -1)
+    fclose(hFile, &io_error);
+  hFile = -1;
+  unlink(filename, &io_error);
 }

@@ -176,25 +176,32 @@ void HttpAbstract::onConnected()
 
 void HttpAbstract::onDataRead()
 {
-  char * tmp_buf = new char[CFG_DOWNLOAD_BUFFER_SIZE];
-  int nrecv = Recv(tmp_buf, CFG_DOWNLOAD_BUFFER_SIZE); // Получаем даные
-  int hsize;
+  if (download_state == DOWNLOAD_STOPPED || download_state == DOWNLOAD_ERROR)
+    return;
 
+  char tmp_buf[4096];
+  int nrecv = Recv(tmp_buf, sizeof(tmp_buf)); // Получаем даные
+  int hsize;
+  
   switch(http_state)
   {
   case HTTP_HEADER: // Принимаем заголовок HTTP
     download_state = DOWNLOAD_GET_INFO;
     recv_buf->Write(tmp_buf, nrecv);
-
+  
     if(hsize = HTTPResponse->Parse(recv_buf->data, recv_buf->size)) // Обработали весь заголовок
     {
       char * tmp_msg = new char[128];
       sprintf(tmp_msg, "HTTP Parser returned %d (data size %d)", hsize, recv_buf->size);
       log->Print(tmp_msg, CLR_Green);
       delete tmp_msg;
-      if(!onHTTPHeaders()) return;
+      
+      if (!onHTTPHeaders())
+        return;
+      
       if (hsize < recv_buf->size) // Если есть данные помимо заголовка
-        onHTTPData(recv_buf->data+hsize, recv_buf->size - hsize);
+        onHTTPData(recv_buf->data + hsize, recv_buf->size - hsize);
+      
       http_state = HTTP_STREAM;
       if (SieGetDialog::Active)
         SieGetDialog::Active->RefreshList();
@@ -204,7 +211,6 @@ void HttpAbstract::onDataRead()
     if(nrecv) onHTTPData(tmp_buf, nrecv);
     break;
   }
-  delete tmp_buf;
 }
 
 void HttpAbstract::onClose()
@@ -249,6 +255,7 @@ void HttpAbstract::onError(SOCK_ERROR err)
   }
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList();
+  
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
 }
 
@@ -256,7 +263,9 @@ void HttpAbstract::onError(SOCK_ERROR err)
 
 int Download::onHTTPHeaders()
 {
+  unsigned int io_error;
   char * tmp_msg = new char[256];
+  
   sprintf(tmp_msg, "Got response %d", HTTPResponse->resp_code);
   log->Print(tmp_msg, CLR_Green);
   
@@ -265,6 +274,7 @@ int Download::onHTTPHeaders()
   else
     sprintf(tmp_msg, "Reason: %s", "[No reason specified]");
   log->Print(tmp_msg, CLR_Green);
+  
   delete tmp_msg;
   
   if(RESP_CODE_CLIENT_ERROR(HTTPResponse->resp_code)) // Ошибка клиента
@@ -296,6 +306,7 @@ int Download::onHTTPHeaders()
       _safe_delete(full_file_name);
       full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
       sprintf(full_file_name, "%s%s", file_path, file_name);
+      make_dirs(full_file_name);
       log->ChangeFileName(file_name);
     }
   }
@@ -312,8 +323,13 @@ int Download::onHTTPHeaders()
     else // Если сервер докачку не держит
     {
       file_loaded_size = NULL; // Размер файла = 0
-      unsigned int io_error;
       unlink(full_file_name, &io_error); // Удаляем файл, если он есть
+    }
+    int free_space = GetFreeFlexSpace(full_file_name[0]-'0', &io_error);
+    if (file_size >= free_space)
+    {
+      onError(SOCK_ERROR_CLIENT);
+      return 0;
     }
   }
   if (!RESP_CODE_PARTIAL(HTTPResponse->resp_code)) // Partial Content
@@ -370,7 +386,7 @@ void Download::onHTTPRedirect() // Переадресация
         _safe_delete(full_file_name);
         full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
         sprintf(full_file_name, "%s%s", file_path, file_name);
-        
+        make_dirs(full_file_name);
         log->ChangeFileName(file_name);
       }
       file_loaded_size = NULL;
@@ -439,7 +455,7 @@ void Download::StartDownload()
     _safe_delete(full_file_name);
     full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
     sprintf(full_file_name, "%s%s", file_path, file_name); // Полное имя файла
-
+    make_dirs(full_file_name);
     log->ChangeFileName(file_name); // Сменяем имя файла лога
 
     char * encoded_url = URL_reencode_escapes(url); // Конвертируем URL в Web формат
@@ -489,7 +505,7 @@ void Download::StartDownload()
   _safe_delete(req_buf); //Удаляем старый буфер запроса. Мало ли что там ;)
   req_buf = new Buffer; // Создаем новый буфер
   int req_len = 0; // Длина одной строки запроса
-  char * req_str = new char[512]; // Строка запрса
+  char * req_str = new char[512]; // Строка запроса
   
   req_len=snprintf(req_str, 511, "GET /%s HTTP/1.1\r\n", HTTPRequest->Path); // Формируем строку
   req_buf->Write(req_str, req_len); // Пишем строку в буфер
@@ -554,16 +570,17 @@ Download::Download()
 
 Download::~Download()
 {
-  _safe_delete(url);
-  _safe_delete(file_name);
-  _safe_delete(full_file_name);
-  _safe_delete(file_path);
-  
   unsigned int io_error;
+  
   if (hFile != -1)
     fclose(hFile, &io_error);
   hFile = -1;
   
+  _safe_delete(url);
+  _safe_delete(file_name);
+  _safe_delete(full_file_name);
+  _safe_delete(file_path);
+
   if (DownloadHandler::Top)
     DownloadHandler::Top->DeleteDownload(this);
 }
@@ -587,17 +604,19 @@ void DownloadHandler::DeleteDownload(Download * download)
   if (queue->download==download)
   {
     queue = queue->next;
+    tmp->download->log->DeleteFile();
     delete tmp;
   }
   else
   {
-    DownloadQ *prev_download = queue;
+    DownloadQ * prev_download = queue;
     tmp = queue->next;
     while (tmp)
     {
       if (tmp->download==download)
       {
         prev_download->next = tmp->next;
+        tmp->download->log->DeleteFile();
         delete tmp;
       }
       prev_download = tmp;
@@ -622,7 +641,7 @@ Download * DownloadHandler::GetDownloadbyID(int socket_id)
 Download * DownloadHandler::GetDownloadbyN(int n)
 {
   DownloadQ * tmp = queue;
-  for (int i=0; i!=n && tmp; i++)
+  for (int i = 0; i != n && tmp; i ++)
     tmp = tmp->next;
   if(tmp)
     return tmp->download;
