@@ -19,11 +19,11 @@ void Log::PrintToFile(const char *str)
 
 void Log::ChangeFileName(char * fname)
 {
-  char logs_path[256];
   unsigned int io_error = 0;
   
-  getSymbolicPath(logs_path, "$logs\\");
-  char * name = new char[strlen(fname)+1];
+  char * logs_path = getSymbolicPath("$logs\\");
+  
+  char * name = new char[strlen(fname) + 1];
   strcpy(name, fname);
   remove_bad_chars(name);
   char * new_fname = new char[strlen(logs_path) + strlen(name) + 9];
@@ -31,18 +31,19 @@ void Log::ChangeFileName(char * fname)
   unlink(new_fname, &io_error);
   fmove(filename, new_fname, &io_error);
   delete filename;
+  delete logs_path;
   filename = new_fname;
 }
 
 Log::Log()
 {
   hFile = -1;
-  char logs_path[256];
   unsigned int io_error = 0;
   
-  getSymbolicPath(logs_path, "$logs\\");
+  char * logs_path = getSymbolicPath("$logs\\");
   filename = new char[strlen(logs_path) + 32];
   strcpy(filename, logs_path);
+  delete logs_path;
   strcat(filename, "temp.log");
   log_start = NULL;
   

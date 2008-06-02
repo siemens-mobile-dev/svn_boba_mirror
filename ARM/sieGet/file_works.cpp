@@ -2,10 +2,11 @@
 #include "string_util.h"
 #include "file_works.h"
 
-void getSymbolicPath(char * path, const char * cFileName)
+char * getSymbolicPath(const char * cFileName)
 {
   int ps = NULL;
   int pp = NULL;
+  char * path = new char[strlen(CFG_SIEGET_FOLDER) + strlen(cFileName) + 1];
   while (ps < strlen(cFileName))
   {
     if (cFileName[ps] == '$')
@@ -74,6 +75,7 @@ void getSymbolicPath(char * path, const char * cFileName)
     }
   }
   path[pp] = NULL;
+  return path;
 }
 
 /*

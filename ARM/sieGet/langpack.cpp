@@ -12,6 +12,8 @@ LangPack * LangPack::Active = NULL;
 
 LangPack::LangPack()
 {
+  for (int i = 0; i < LGP_DATA_NUM; i ++)
+    data[i] = NULL;
   loaded = NULL;
   Setup();
 }
@@ -33,8 +35,7 @@ void LangPack::Setup()
   int cur_id=0; // Текущий LGP_ID
   int buf_pos = 0; // Позиция в буфере
   FSTATS fstat;
-  char lang_file[256];
-  getSymbolicPath(lang_file, "$sieget\\lang.txt");
+  char * lang_file = getSymbolicPath("$sieget\\lang.txt");
   if (GetFileStats(lang_file, &fstat, &io_error)!=-1) // Получаем размер файла
   {
     if((hFile=fopen(lang_file, A_ReadOnly + A_BIN, P_READ, &io_error))!=-1) // Открываем файл для чтения
@@ -71,11 +72,20 @@ void LangPack::Setup()
         delete buf; // Удаляем буфер. он нам уже не понадобится
         loaded = 1;
         fclose(hFile, &io_error);
+        for (int i = 0; i < LGP_DATA_NUM; i ++)
+        {
+          if (!data[i])
+          {
+            data[i] = new char[64];
+            strcpy(data[i], "Error! Update lang.txt!");
+          }
+        }
         return;
       }
       fclose(hFile, &io_error);
     }
   }
+  delete lang_file;
   // Если по каким-то причинам файл нельзя прочитать, то устанавливаем английский ленгпак
   data[LGP_Options] = "Options";
   data[LGP_Select] = "Select";
@@ -135,12 +145,6 @@ void LangPack::Setup()
   data[LGP_SocketCloseError] = "Socket close error!";
   data[LGP_InvalidSocket] = "Invalid socket!";
   data[LGP_EnableGPRSFirst] = "Enable GPRS first!";
-  
-  data[LGP_Reserved1] = 
-  data[LGP_Reserved2] = 
-  data[LGP_Reserved3] = 
-  data[LGP_Reserved4] = 
-  data[LGP_Reserved5] = "Please, update lang.txt";
 }
 
 void LangPack::Free()

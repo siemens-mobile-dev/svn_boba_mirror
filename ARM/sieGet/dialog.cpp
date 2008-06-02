@@ -87,7 +87,6 @@ void SieGetDialog::RefreshList()
 
 void SieGetDialog::onClose()
 {
-  Active = NULL;
 }
 
 SieGetDialog::SieGetDialog()

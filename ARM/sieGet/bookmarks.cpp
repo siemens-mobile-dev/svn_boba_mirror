@@ -94,8 +94,7 @@ int BookmarksList::FindFilesInFolder(char * folder)  // SelectFile
   d=name;
   rev=0;
 
-  char bookmarks_path[256];
-  getSymbolicPath(bookmarks_path, "$bookmarks\\");
+  char * bookmarks_path = getSymbolicPath("$bookmarks\\");
   if(strcmp(folder, bookmarks_path))
   {
     while((c=*s++))
@@ -107,6 +106,7 @@ int BookmarksList::FindFilesInFolder(char * folder)  // SelectFile
     AddItemToList(name, "...", IS_BACK);
     n++;
   }
+  delete bookmarks_path;
   
   i=strlen(path);
   path[i++]='*';
@@ -310,14 +310,14 @@ void BookmarksMenu::Show(void * inp_data)
 {
   input_data=inp_data;
   
-  char bookmarks_path[256];
-  getSymbolicPath(bookmarks_path, "$bookmarks\\");
+  char * bookmarks_path = getSymbolicPath("$bookmarks\\");
   
   bookmarks_menu_sk[0].lgp_id=(int)LangPack::Active->data[LGP_Options];
   bookmarks_menu_sk[1].lgp_id=(int)LangPack::Active->data[LGP_Back];
   
   patch_header(&bookmarks_menu_hdr, NULL, (int)LangPack::Active->data[LGP_Bookmarks]);
   CreateMenu(0, 0, &bookmarks_menu_desc, &bookmarks_menu_hdr, 0, list->FindFilesInFolder(bookmarks_path), this, NULL);
+  delete bookmarks_path;
 }
 
 BookmarksMenu::BookmarksMenu()

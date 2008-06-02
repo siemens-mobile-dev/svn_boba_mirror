@@ -18,8 +18,8 @@ void Play_Sound(const char * filename)
 {
   if (!IsCalling()/* && !IsMediaActive()*/ && CFG_SOUNDS_VOLUME)
   {
-    char full_filename[256];
-    getSymbolicPath(full_filename, filename);
+    char * full_filename = getSymbolicPath(filename);
+    
     FSTATS fstats;
     unsigned int err;
     if (GetFileStats(full_filename, &fstats, &err)!=-1)
@@ -57,6 +57,7 @@ void Play_Sound(const char * filename)
       FreeWS(sndPath);
       FreeWS(sndFName);
     }
+    delete full_filename;
   }
 }
 

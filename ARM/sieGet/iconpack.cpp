@@ -40,8 +40,8 @@ IconPack::~IconPack()
 void IconPack::Setup()
 {
   Free();
-  char icons_path[256];
-  getSymbolicPath(icons_path, "$img\\");
+  
+  char * icons_path = getSymbolicPath("$img\\");
   
   Active = this;
   for(int i=0; i<TOTAL_ICONS_NUM; i++)
@@ -51,6 +51,7 @@ void IconPack::Setup()
     strcat(img, img_names[i]);
     data[i] = (int)img;
   }
+  delete icons_path;
 }
 
 void IconPack::Free()

@@ -61,12 +61,7 @@ enum LGP_ID
   LGP_SocketCloseError,
   LGP_InvalidSocket,
   LGP_EnableGPRSFirst,
-  
-  LGP_Reserved1,
-  LGP_Reserved2,
-  LGP_Reserved3,
-  LGP_Reserved4,
-  LGP_Reserved5,
+
   LGP_DATA_NUM
 };
 

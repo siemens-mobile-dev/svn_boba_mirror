@@ -78,8 +78,6 @@ int Info::onKey(GUI *gui, GUI_MSG *msg)
         delete u_str;
         return GUI_RESULT_OK;
       }
-      if ACTIVE_DOWNLOAD_STATE(download->download_state)
-        download->download_state = DOWNLOAD_STOPPED;
       char * url = new char[new_len + 1];
       strcpy(url, u_str);
       delete u_str;
@@ -88,6 +86,9 @@ int Info::onKey(GUI *gui, GUI_MSG *msg)
       ws_2str(ec.pWS, path, ec.maxlen);
       if(strcmp(download->file_path, path))
       {
+        if ACTIVE_DOWNLOAD_STATE(download->download_state)
+        download->StopDownload();
+        
         _safe_delete(download->HTTPRequest);
         
         delete download->file_path;
@@ -98,6 +99,9 @@ int Info::onKey(GUI *gui, GUI_MSG *msg)
       else delete path;
       if(strcmp(download->url, url))
       {
+        if ACTIVE_DOWNLOAD_STATE(download->download_state)
+        download->StopDownload();
+        
         _safe_delete(download->HTTPRequest)
 
         delete download->url;
@@ -208,13 +212,13 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
       
     switch(download->download_state)
     {
-    case DOWNLOAD_ERROR: ascii2ws(ws, LangPack::Active->data[LGP_Error]); break;
-    case DOWNLOAD_CONNECT: ascii2ws(ws, LangPack::Active->data[LGP_Connecting]); break;
-    case DOWNLOAD_GET_INFO: ascii2ws(ws, LangPack::Active->data[LGP_GettingInfo]); break;
-    case DOWNLOAD_DATA: ascii2ws(ws, LangPack::Active->data[LGP_Downloading]); break;
-    case DOWNLOAD_COMPLETE: ascii2ws(ws, LangPack::Active->data[LGP_Completed]); break;
-    case DOWNLOAD_STOPPED: ascii2ws(ws, LangPack::Active->data[LGP_Stopped]); break;
-    default: ascii2ws(ws, LangPack::Active->data[LGP_Waiting]); break;
+    case DOWNLOAD_ERROR:    ascii2ws(ws, LangPack::Active->data[LGP_Error]);        break;
+    case DOWNLOAD_CONNECT:  ascii2ws(ws, LangPack::Active->data[LGP_Connecting]);   break;
+    case DOWNLOAD_GET_INFO: ascii2ws(ws, LangPack::Active->data[LGP_GettingInfo]);  break;
+    case DOWNLOAD_DATA:     ascii2ws(ws, LangPack::Active->data[LGP_Downloading]);  break;
+    case DOWNLOAD_COMPLETE: ascii2ws(ws, LangPack::Active->data[LGP_Completed]);    break;
+    case DOWNLOAD_STOPPED:  ascii2ws(ws, LangPack::Active->data[LGP_Stopped]);      break;
+    default:                ascii2ws(ws, LangPack::Active->data[LGP_Waiting]);      break;
     }
     PrepareEditControl(&ec);
     ConstructEditControl(&ec, ECT_READ_ONLY, ECF_APPEND_EOL, ws, ws->wsbody[0]);
@@ -315,12 +319,12 @@ void Info::Show(Download * _download, Info::InfoMode _mode)
     break;
   }
   FreeWS(ws);
-  if (mode == DownloadInfo)
-    patch_header(&info_hdr, &IconPack::Active->data[IMG_GetInfo], (int)LangPack::Active->data[LGP_Info]);
-  if (mode == TrafficInfo)
-    patch_header(&info_hdr, &IconPack::Active->data[IMG_Traffic], (int)LangPack::Active->data[LGP_Traffic]);
+  
+  patch_header(&info_hdr, &IconPack::Active->data[mode == DownloadInfo?IMG_GetInfo:IMG_Traffic], (int)LangPack::Active->data[mode == DownloadInfo?LGP_Info:LGP_Traffic]);
   patch_input(&info_desc);
-  info_sk[0].lgp_id=(int)LangPack::Active->data[LGP_Cancel];
-  gui_id=CreateInputTextDialog(&info_desc, &info_hdr, eq, 1, this); 
+  
+  info_sk[0].lgp_id = (int)LangPack::Active->data[LGP_Cancel];
+  
+  gui_id = CreateInputTextDialog(&info_desc, &info_hdr, eq, 1, this); 
 }
 

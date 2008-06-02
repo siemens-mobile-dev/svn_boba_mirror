@@ -623,7 +623,7 @@ void DownloadHandler::DeleteDownload(Download * download)
       tmp = tmp->next;
     }
   }
-  SaveQueue();
+  SUBPROC((void *)_save_queue, this);
 }
 
 Download * DownloadHandler::GetDownloadbyID(int socket_id)
@@ -724,8 +724,7 @@ void DownloadHandler::LoadQueue()
   int buf_pos = 0; // Позиция в буфере
   Download * top_download;
   FSTATS fstat;
-  char list_file[256];
-  getSymbolicPath(list_file, "$sieget\\List.txt");
+  char * list_file = getSymbolicPath("$sieget\\List.txt");
   if (GetFileStats(list_file, &fstat, &io_error)!=-1) // Получаем размер файла
   {
     if((hFile=fopen(list_file, A_ReadOnly + A_BIN, P_READ, &io_error))!=-1) // Открываем файл для чтения
@@ -808,6 +807,7 @@ void DownloadHandler::LoadQueue()
       fclose(hFile, &io_error);
     }
   }
+  delete list_file;
 }
 
 void _save_queue(DownloadHandler * dh)
@@ -820,12 +820,11 @@ void DownloadHandler::SaveQueue()
   volatile int hFile;
   unsigned int io_error = 0;
   int download_n = 0; // Номер текущей закачки
-  char list_file[256]; // Имя файла
   char * tmp_str = new char[512]; // Временная строка
   int tmp_str_len = 0; // Длина временной строки
   Buffer * tmp_buf = new Buffer; // Буфер данных
   
-  getSymbolicPath(list_file, "$sieget\\List.txt"); // ...\Sieget\List.txt
+  char * list_file = getSymbolicPath("$sieget\\List.txt"); // ...\Sieget\List.txt
   
   unlink(list_file, &io_error); // Удаляем старый файл
   
@@ -877,6 +876,7 @@ void DownloadHandler::SaveQueue()
     fwrite(hFile, tmp_buf->data, tmp_buf->size, &io_error);
     fclose(hFile, &io_error);
   }
+  delete list_file;
   delete tmp_str;
   delete tmp_buf;
 }
@@ -885,7 +885,7 @@ DownloadHandler::DownloadHandler()
 {
   Top = this;
   queue = NULL;
-  SUBPROC((void *)_load_queue, this);
+  LoadQueue();
 }
 
 DownloadHandler::~DownloadHandler()

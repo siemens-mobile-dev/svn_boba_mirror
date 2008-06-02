@@ -115,8 +115,6 @@ void SieGetDaemon::ProcessIPC(const char * from, int submsg, void * data) // IPC
       case IPC_DOUBLERESP:
         if (int_ipc->csm_id != csm_id) // Есть кто-то кроме нас
         {
-          if(dialog->csm_id)
-            dialog->Close();
           Close();
         }
         break;
@@ -182,6 +180,7 @@ void SieGetDaemon::ProcessDNR(int DNR_ID)
 
 void SieGetDaemon::onClose()
 {
+  dialog->Close();
   delete this;
 }
 
@@ -207,12 +206,10 @@ void Killer(void)
 
 SieGetDaemon::~SieGetDaemon()
 {
-  if(dialog->csm_id)
-    dialog->Close();
   GBS_DelTimer(&VibraTimer);
   delete lgp;
   delete icp;
-  delete dialog;
+  //delete dialog;
   delete DNR_Handler;
   delete DL_Handler;
   SUBPROC((void *)Killer);

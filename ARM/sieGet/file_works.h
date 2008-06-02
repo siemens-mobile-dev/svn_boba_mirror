@@ -2,7 +2,7 @@
 #define _FILE_WORKS_H_
 
 // Символические пути
-void getSymbolicPath(char * path, const char * cFileName);
+char * getSymbolicPath(const char * cFileName);
 // Сравнивает расширение файла с указанным в параметре
 int is_file(const char * fname, const char * mask);
 // Возвращает размера файла
