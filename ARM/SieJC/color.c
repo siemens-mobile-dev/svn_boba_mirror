@@ -5,7 +5,6 @@
 
 extern const char color_PATH[];
 char * cur_color_name;
-extern void patch_header(HEADER_DESC* head);
 
 // Цвета
 
@@ -347,6 +346,8 @@ void select_color_menu_ghook(void *gui, int cmd)
   }
 }
 
+extern int icon_array[2];
+
 void select_color_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
 {
   SEL_COLOR * sbtop = user_pointer;
@@ -359,11 +360,13 @@ void select_color_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
     int len = strlen(sbtop->cfgname);
     ws = AllocMenuWS(gui, len + 4);
     str_2ws(ws, sbtop->cfgname, len);
+    SetMenuItemIconArray(gui, item, icon_array + (strcmp(sbtop->cfgname, cur_color_name)?1:0));
   }
   else
   {
     ws = AllocMenuWS(gui, 10);
     ascii2ws(ws, "Error");
+    SetMenuItemIconArray(gui, item, icon_array);
   }
   SetMenuItemText(gui, item, ws, cur_item);
 }
@@ -389,7 +392,7 @@ MENU_DESC select_color_menu_struct=
   8, select_color_menu_onkey, select_color_menu_ghook, NULL,
   select_color_menu_softkeys,
   &select_color_menu_skt,
-  0x10,
+  0x11,
   select_color_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
@@ -442,6 +445,8 @@ void ShowSelectColorMenu()
     while(FindNextFile(&de,&err));
   }
   FindClose(&de,&err);
+  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   patch_header(&select_color_menu_header);
   CreateMenu(0, 0, &select_color_menu_struct, &select_color_menu_header, 0, n_bcfg, sbtop, 0);
 }
