@@ -3311,6 +3311,16 @@ __swi __arm void SetDateTime(TDate *, TTime *);
 //thumb
 //pattern=F0,B5,05,1C,0C,1C,00,28,89,B0,??,??,00,2C
 
+#pragma swi_number=0x244
+__swi __arm int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize);//returns length of encoded message
+//thumb
+//pattern=F8 B5 15 1C 04 1C 1E 1C 03 20 +1
+
+#pragma swi_number=0x245
+__swi __arm int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5);//returns length of decoded message
+//thumb
+//pattern=FE B5 84 46 48 00 40 18 1C 1C 83 08 08 9E 96 46 +1
+
 #pragma swi_number=0x246
 __swi __arm int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder); 
 //arm
