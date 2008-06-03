@@ -145,6 +145,9 @@ void LangPack::Setup()
   data[LGP_SocketCloseError] = "Socket close error!";
   data[LGP_InvalidSocket] = "Invalid socket!";
   data[LGP_EnableGPRSFirst] = "Enable GPRS first!";
+  data[LGP_DownloadStarted] = "Download started";
+  data[LGP_DownloadStopped] = "Download stopped";
+  data[LGP_DownloadCompleted] = "Download completed";
 }
 
 void LangPack::Free()

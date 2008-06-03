@@ -69,7 +69,11 @@ void SieGetDialog::ProcessIPC(const char * from, int submsg, void * data)
   switch(submsg)
   {
   case IPC_REFRESH_LIST:
-    if (IsGuiOnTop(list->gui_id)) RefreshGUI(); // Это нужно запускать из диалога. Иначе - пикофф :(
+    if (list->gui_id)
+    {
+      if (IsGuiOnTop(list->gui_id))
+        RefreshGUI(); // Это нужно запускать из диалога. Иначе - пикофф :(
+    }
     break;
   }
 }

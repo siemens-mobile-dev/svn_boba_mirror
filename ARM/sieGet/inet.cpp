@@ -129,8 +129,8 @@ void HttpAbstract::doConnect()
 void HttpAbstract::onResolve(DNR_RESULT_MSG result_msg, int value)
 {
   char * msg = new char[64];
-  sprintf(msg, "HttpAbstract::onResolve(%d, 0x%X)", result_msg, value);
-  log->Print(msg, CLR_Yellow);
+  /*sprintf(msg, "HttpAbstract::onResolve(%d, 0x%X)", result_msg, value);
+  log->Print(msg, CLR_Yellow);*/
 
   switch(result_msg)
   {
@@ -218,7 +218,6 @@ void HttpAbstract::onClose()
   if(download_state!=DOWNLOAD_STOPPED && download_state!=DOWNLOAD_ERROR && http_state!=HTTP_REDIRECT)
     onHTTPFinish();
   http_state = HTTP_IDLE;
-  SUBPROC((void *)_save_queue, DownloadHandler::Top);
 }
 
 void HttpAbstract::onRemoteClose()
@@ -247,12 +246,14 @@ void HttpAbstract::onError(SOCK_ERROR err)
     break;
   }
   http_state = HTTP_IDLE;
+  
   if(download_state != DOWNLOAD_STOPPED)
   {
     download_state = DOWNLOAD_ERROR;
-    StartVibra(2);
+    StartVibra();
     Play_Sound("$sounds\\error.wav");
   }
+  
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList();
   
@@ -407,7 +408,7 @@ void Download::onHTTPStopped()
   if (hFile != -1)
     fclose(hFile, &io_error);
   hFile = -1;
-  
+  log->Print(LangPack::Active->data[LGP_DownloadStopped], CLR_Yellow);
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
 }
 
@@ -421,11 +422,14 @@ void Download::onHTTPFinish()
   
   download_state = DOWNLOAD_COMPLETE;
   http_state = HTTP_IDLE;
+  
+  StartVibra();
+  Play_Sound("$sounds\\complete.wav");
+  
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList();
+  log->Print(LangPack::Active->data[LGP_DownloadCompleted], CLR_Yellow);
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
-  StartVibra(1);
-  Play_Sound("$sounds\\complete.wav");
 }
 
 void _start_download(Download * download)
@@ -435,7 +439,8 @@ void _start_download(Download * download)
 
 void Download::StartDownload()
 {
-  download_state=DOWNLOAD_WAITING;
+  download_state = DOWNLOAD_WAITING;
+  log->Print(LangPack::Active->data[LGP_DownloadStarted], CLR_Yellow);
   if (!HTTPRequest)
   {
     URL_unescape(url); // На всякий случай конвертируем url в обычный вид
@@ -711,7 +716,8 @@ char QL_Downloaded[]="Downloaded=";
 
 void _load_queue(DownloadHandler * dh)
 {
-  dh->LoadQueue();
+  if (dh)
+    dh->LoadQueue();
 }
 
 void DownloadHandler::LoadQueue()
@@ -812,7 +818,8 @@ void DownloadHandler::LoadQueue()
 
 void _save_queue(DownloadHandler * dh)
 {
-  dh->SaveQueue();
+  if (dh)
+    dh->SaveQueue();
 }
 
 void DownloadHandler::SaveQueue()

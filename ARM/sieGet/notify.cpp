@@ -21,8 +21,8 @@ void Play_Sound(const char * filename)
     char * full_filename = getSymbolicPath(filename);
     
     FSTATS fstats;
-    unsigned int err;
-    if (GetFileStats(full_filename, &fstats, &err)!=-1)
+    unsigned int io_error;
+    if (GetFileStats(full_filename, &fstats, &io_error)!=-1)
     {
       PLAYFILE_OPT _sfo1;
       WSHDR * sndPath = AllocWS(128);
@@ -62,26 +62,17 @@ void Play_Sound(const char * filename)
 }
 
 GBSTMR VibraTimer;
-int vibra_count;
 
-void _vibra(void)
+void StartVibra(void)
 {
-  StartVibra(vibra_count);
-}
-
-void StartVibra(int count)
-{
-  vibra_count = count;
-  if(CFG_VIBRA_POWER && !IsCalling())
+  if(CFG_VIBRA_POWER)
   {
     SetVibration(CFG_VIBRA_POWER);
-    GBS_StartTimerProc(&VibraTimer, 216 >> 2, StopVibra);
+    GBS_StartTimerProc(&VibraTimer, 216/3, StopVibra);
   }
 }
 
 void StopVibra(void)
 {
   SetVibration(0);
-  if (--vibra_count)
-    GBS_StartTimerProc(&VibraTimer, 216/40, _vibra);
 }

@@ -4,7 +4,7 @@
 void Play_Sound(const char * filename);
 
 extern GBSTMR VibraTimer;
-void StartVibra(int count);
+void StartVibra(void);
 void StopVibra(void);
 
 #endif

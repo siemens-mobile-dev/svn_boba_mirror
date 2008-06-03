@@ -6,7 +6,7 @@ char * getSymbolicPath(const char * cFileName)
 {
   int ps = NULL;
   int pp = NULL;
-  char * path = new char[strlen(CFG_SIEGET_FOLDER) + strlen(cFileName) + 1];
+  char * path = new char[strlen(CFG_SIEGET_FOLDER) + strlen(cFileName) + 32];
   while (ps < strlen(cFileName))
   {
     if (cFileName[ps] == '$')
