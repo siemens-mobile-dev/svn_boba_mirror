@@ -576,7 +576,7 @@ void StartINET(const char *url, char *fncache)
   if (connect_state)
   {
     LockSched();
-    ShowMSG(1,(int)lgpData[LGP_InetBussy]);
+    ShowMSG(1,(int)lgpData[LGP_InetBusy]);
     UnlockSched();
   ERR:
     mfree(fncache);

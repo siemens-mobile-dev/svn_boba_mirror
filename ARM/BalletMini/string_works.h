@@ -1,3 +1,6 @@
+#ifndef _STRING_WORKS_H_
+#define _STRING_WORKS_H_
+
 #include "view.h"
 
 void debugf(char *file,int line);
@@ -26,3 +29,5 @@ int char_win2utf8(char*d,const char *s);
 char * ToWeb(char *src,int special);
 void oms2ws(WSHDR *ws, const char *text, int len);
 void utf82win(char*d,const char *s);
+
+#endif /* _STRING_WORKS_H_ */

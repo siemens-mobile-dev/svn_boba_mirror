@@ -1,13 +1,7 @@
-
-#ifndef _SWILIB_H_
 #include "..\inc\swilib.h"
-#define _SWILIB_H_
-#endif
-
 #include "jpeglib/jpeglib.h"
 #include "jpeglib/jerror.h"
 #include "readimg.h"
-
 
 #define PNG_BYTES_TO_CHECK 8
 

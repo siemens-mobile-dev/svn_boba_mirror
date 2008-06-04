@@ -1,3 +1,6 @@
+#ifndef _ADDITEMS_H_
+#define _ADDITEMS_H_
+
 #include "view.h"
 
 void AddNewStyle(VIEWDATA *vd);
@@ -33,3 +36,5 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos);
 void AddButtonItem(VIEWDATA *vd, const char *text, int len);
 
 void AddDropDownList(VIEWDATA *vd);
+
+#endif /* _ADDITEMS_H_ */

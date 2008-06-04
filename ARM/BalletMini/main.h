@@ -1,3 +1,6 @@
+#ifndef _MAIN_H_
+#define _MAIN_H_
+
 void FreeViewUrl(void);
 char *globalstr(const char *s);
 int ReadUrlFile(char *url_file);
@@ -23,3 +26,5 @@ typedef struct
   WSHDR *ws1;
   WSHDR *ws2;
 }VIEW_GUI;
+
+#endif /* _MAIN_H_ */

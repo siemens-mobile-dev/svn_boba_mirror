@@ -26,8 +26,7 @@ typedef struct
   char fullpath[128];
 }URL_STRUCT;
 
-//------------------------------------------------------------------------------
-
+//----------------------------------- Add bookmark -----------------------------
 
 SOFTKEY_DESC add_bookmark_sk[]=
 {
@@ -234,25 +233,28 @@ int CreateAddBookmark(GUI *data)
   FreeWS(ews);
   patch_header(&add_bookmark_hdr);
   patch_input(&add_bookmark_desc);
+  add_bookmark_sk[0].lgp_id=(int)lgpData[LGP_Add];
+  add_bookmark_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  
+  add_bookmark_hdr.lgp_id=(int)lgpData[LGP_BookmarkHeader];
   return CreateInputTextDialog(&add_bookmark_desc,&add_bookmark_hdr,eq,1,0);
 }
 
-static void do_add_bookmark(GUI *data)
+//--------------------------- Bookmarks options --------------------------------
+
+static void bookmarks_options_add_bookmark(GUI *data)
 {
   CreateAddBookmark(0);
   GeneralFuncF1(2);
 }
-//------------------------------------------------------------------------------
 
-static void do_edit_bookmark(GUI *data)
+static void bookmarks_options_edit_bookmark(GUI *data)
 {
   CreateAddBookmark(data);
   GeneralFuncF1(2);
 }
 
-//------------------------------------------------------------------------------
-
-static void do_delete_bookmark(GUI *data)
+static void bookmarks_options_delete_bookmark(GUI *data)
 {
   URL_STRUCT *ustop = MenuGetUserPointer(data);
   unsigned ul;
@@ -261,19 +263,16 @@ static void do_delete_bookmark(GUI *data)
       unlink(ustop->fullpath,&ul);
   GeneralFuncF1(2);
 }
-  
-//------------------------------------------------------------------------------
 
-void back(GUI *data)
+void bookmarks_options_back(GUI *data)
 {
   GeneralFuncF1(1);
 }
 
-
 #define OPTIONS_ITEMS_N 4
-HEADER_DESC options_menuhdr={0,0,0,0,NULL,(int)"Options:",LGP_NULL};
+HEADER_DESC bookmarks_options_header={0,0,0,0,NULL,(int)"Options:",LGP_NULL};
 
-MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
+MENUITEM_DESC bookmarks_options_items[OPTIONS_ITEMS_N]=
 {
   {NULL,(int)"Add",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
   {NULL,(int)"Edit",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
@@ -281,36 +280,37 @@ MENUITEM_DESC options_menu_ITEMS[OPTIONS_ITEMS_N]=
   {NULL,(int)"Back",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
 };
 
-const MENUPROCS_DESC options_menu_HNDLS[OPTIONS_ITEMS_N]=
+const MENUPROCS_DESC bookmarks_options_procs[OPTIONS_ITEMS_N]=
 {
-  do_add_bookmark,
-  do_edit_bookmark,
-  do_delete_bookmark,
-  back,
+  bookmarks_options_add_bookmark,
+  bookmarks_options_edit_bookmark,
+  bookmarks_options_delete_bookmark,
+  bookmarks_options_back,
 };
 
-int menusoftkeys[]={0,1,2};
-SOFTKEY_DESC menu_sk[]=
+int bookmarks_options_softkeys[]={0,1,2};
+
+SOFTKEY_DESC bookmarks_options_sk[]=
 {
-  {0x0018,0x0000,(int)"Options"},
+  {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Close"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB menu_skt=
+SOFTKEYSTAB bookmarks_options_skt=
 {
-  menu_sk,0
+  bookmarks_options_sk,0
 };
 
-MENU_DESC options_menu_STRUCT=
+MENU_DESC bookmarks_options_struct=
 {
-  0,(void *)NULL,(void*)NULL,NULL,
-  menusoftkeys,
-  &menu_skt,
+  0, NULL, NULL, NULL,
+  bookmarks_options_softkeys,
+  &bookmarks_options_skt,
   8,
   NULL,
-  options_menu_ITEMS,   //Items
-  options_menu_HNDLS,   //Procs
+  bookmarks_options_items,   //Items
+  bookmarks_options_procs,   //Procs
   OPTIONS_ITEMS_N //n
 };
 
@@ -324,14 +324,24 @@ void create_options_menu(URL_STRUCT *ustop)
     to_remove[++n]=2;
   }
   to_remove[0]=n;
-  patch_header_small((HEADER_DESC*)(&options_menuhdr));
-  CreateMenu(1,0,&options_menu_STRUCT,&options_menuhdr,0,OPTIONS_ITEMS_N,ustop,to_remove);
+  patch_header_small((HEADER_DESC*)(&bookmarks_options_header));
+  
+  bookmarks_options_header.lgp_id=(int)lgpData[LGP_OptionsHeader];
+  
+  bookmarks_options_items[0].lgp_id_small=(int)lgpData[LGP_Add];
+  bookmarks_options_items[1].lgp_id_small=(int)lgpData[LGP_Edit];
+  bookmarks_options_items[2].lgp_id_small=(int)lgpData[LGP_Delete];
+  bookmarks_options_items[3].lgp_id_small=(int)lgpData[LGP_Back];
+  
+  bookmarks_options_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  bookmarks_options_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  
+  CreateMenu(1,0,&bookmarks_options_struct,&bookmarks_options_header,0,OPTIONS_ITEMS_N,ustop,to_remove);
 }
 
-// ----------------------------------------------------------------------------------
+//------------------------------- Bookmarks menu -------------------------------
 
-
-int selurl_menu_onkey(void *gui, GUI_MSG *msg) //bookmarks
+int bookmarks_menu_onkey(void *gui, GUI_MSG *msg) //bookmarks
 {
   int l;
   URL_STRUCT *ustop=MenuGetUserPointer(gui);
@@ -382,12 +392,11 @@ int selurl_menu_onkey(void *gui, GUI_MSG *msg) //bookmarks
   return (0);
 }
 
-void selurl_menu_ghook(void *gui, int cmd)
+void bookmarks_menu_ghook(void *gui, int cmd)
 {
   URL_STRUCT *ustop=MenuGetUserPointer(gui);
-  if (cmd==3)
+  if (cmd == TI_CMD_DESTROY)
   {
-    
     while(ustop)
     {
       URL_STRUCT *us=ustop;
@@ -395,7 +404,7 @@ void selurl_menu_ghook(void *gui, int cmd)
       mfree(us);
     }    
   }
-  if (cmd==0x0A)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
@@ -405,7 +414,7 @@ int S_ICONS[2];
 char bmkpic[128];
 char dirpic[128];
 
-void selurl_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
+void bookmarks_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
 {
   URL_STRUCT *ustop=user_pointer;
   WSHDR *ws;
@@ -438,267 +447,33 @@ void selurl_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   SetMenuItemText(gui, item, ws, cur_item);
 }
 
-int selurl_softkeys[]={0,1,2};
-SOFTKEY_DESC selurl_sk[]=
+int bookmarks_menu_softkeys[]={0,1,2};
+SOFTKEY_DESC bookmarks_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Options"},
   {0x0001,0x0000,(int)"Cancel"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB selurl_skt=
+SOFTKEYSTAB bookmarks_menu_skt=
 {
-  selurl_sk,0
+  bookmarks_menu_sk,0
 };
 
-HEADER_DESC selurl_HDR={0,0,0,0,NULL,(int)"Select Bookmark:",LGP_NULL};
+HEADER_DESC bookmarks_menu_header={0,0,0,0,NULL,(int)"Select Bookmark:",LGP_NULL};
 
 
-MENU_DESC selurl_STRUCT=
+MENU_DESC bookmarks_menu_struct=
 {
-  8,selurl_menu_onkey,selurl_menu_ghook,NULL,
-  selurl_softkeys,
-  &selurl_skt,
+  8,bookmarks_menu_onkey, bookmarks_menu_ghook, NULL,
+  bookmarks_menu_softkeys,
+  &bookmarks_menu_skt,
   0x11,
-  selurl_menu_iconhndl,
+  bookmarks_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
 };
-
-//-----
-
-#define   MAX_SEARCH_ENGINES 32
-
-SOFTKEY_DESC search_sk[]=
-{
-  {0x0018,0x0000,(int)"Search"},
-  {0x0001,0x0000,(int)"Cancel"},
-  {0x003D,0x0000,(int)LGP_DOIT_PIC}
-};
-
-static const SOFTKEYSTAB search_skt=
-{
-  search_sk,0
-};
-
-static int search_engine_count=0;
-static int selected_search_engine=0;
-static char * search_engines[MAX_SEARCH_ENGINES];
-
-static void free_search_engines()
-{
-  LockSched();
-  char ** p=search_engines;
-  for(int i=search_engine_count-1;i>=0;i--) mfree(*p++);
-  search_engine_count=0;
-  UnlockSched();
-};
-
-static void get_search_engines()
-{
-  free_search_engines();  
-      
-  char **sep=search_engines;
-  unsigned int err;
-  DIR_ENTRY de;
-  char str[128];  
-  
-  extern char SEARCH_PATH[256];
-  char * s=SEARCH_PATH;
-  strcpy(str,s);
-  strcat(str,"*.url");
-  if (FindFirstFile(&de,str,&err))
-  {
-    do
-    {
-      if (!(de.file_attr&FA_DIRECTORY))
-      {
-        if(search_engine_count>=MAX_SEARCH_ENGINES) break;        
-        int l=strlen(de.file_name); 
-        char * s=malloc(strlen(de.file_name)+1);
-        strcpy(s,de.file_name);
-        s[l-4]=0;
-        search_engine_count++;
-        *sep++=s;
-      }
-    }
-    while(FindNextFile(&de,&err));
-  }
-  FindClose(&de,&err);
-  
-  if(selected_search_engine>=search_engine_count) selected_search_engine=search_engine_count-1;
-};
-
-void search_locret(void){}
-
-int search_onkey(GUI *data, GUI_MSG *msg)
-{
-  EDITCONTROL ec;
-  if (msg->keys==0xFFF)
-  {
-    if(selected_search_engine<0)return 0;
-
-    //query
-    ExtractEditControl(data,2,&ec);
-    WSHDR *ws = ec.pWS;
-    int ql=ws->wsbody[0];
-    
-    //read url file    
-    int f,fsize;
-    unsigned int err;
-    
-    char *s, *url;
-    FSTATS stat;
-    char url_file[256];
-    
-    extern char SEARCH_PATH[256];
-    sprintf(url_file,"%s%s.url",SEARCH_PATH,search_engines[selected_search_engine]);
-    
-    if (GetFileStats(url_file,&stat,&err)==-1) goto fail;
-    if ((fsize=stat.size)<=0)  goto fail;
-    if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;    
-    
-    url=(char*)malloc(fsize+1);
-    url[fread(f,url,fsize,&err)]=0;    
-    fclose(f,&err);  
-    s=url;
-    while(*s>32) s++;
-    *s=0;
-    fsize=strlen(url);
-    
-    //build search url    
-    goto_url=malloc(2+fsize+ql+2);    
-    goto_url[0]='0';
-    goto_url[1]='/';          
-    
-    s=strstr(url,"%s");
-    if(s)
-      {
-      int ofs=s-url;
-      memcpy(goto_url+2,url,ofs);
-      s=goto_url+2+ofs;
-      for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
-      memcpy(goto_url+2+ofs+ql,url+ofs+2,fsize-ofs-1);
-      }
-    else
-      {
-      memcpy(goto_url+2,url,fsize);  
-      s=goto_url+2+fsize;
-      for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
-      *s = 0;  
-      };       
-    mfree(url);
-   
-    goto_url = ToWeb(goto_url,0);
-    
-    return (0xFF);     
-    
-  fail:
-    ShowMSG(2,(int)lgpData[LGP_Error]);
-    return (0);
-  }
-  return (0);
-}
-
-void search_ghook(GUI *data, int cmd)
-{
-  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Search]};
-  
-//  if (cmd==2)
-//  {
-    //Create
-//  }
-  
-  if(cmd==0x03)     // onDestroy
-  {
-    free_search_engines();
-  }  
-  
-  if (cmd==7)
-  {
-    //OnRun
-    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
-  }
-  
-  if (cmd==0x0A)
-  {
-    DisableIDLETMR();
-  }
-  
-  if (cmd==0x0D)
-  {
-    //onCombo
-    int cbi=EDIT_GetFocus(data);
-    if(cbi==4)
-      {
-      WSHDR * ews=AllocWS(128);    
-      selected_search_engine=EDIT_GetItemNumInFocusedComboBox(data)-1;
-      if(selected_search_engine>=0&&selected_search_engine<search_engine_count)
-        {
-        str_2ws(ews,search_engines[selected_search_engine],128);
-        EDIT_SetTextToFocused(data,ews);
-        };
-      FreeWS(ews);
-      };
-  }
-}
-
-HEADER_DESC search_hdr={0,0,0,0,NULL,(int)"Search:",0x7FFFFFFF};
-
-INPUTDIA_DESC search_desc=
-{
-  1,
-  search_onkey,
-  search_ghook,
-  (void *)search_locret,
-  0,
-  &search_skt,
-  {0,0,0,0},
-  FONT_SMALL,
-  100,
-  101,
-  0,
-  0,
-  0x40000000
-};
-
-
-static int CreateSearchDialog()
-{
-  get_search_engines();
-
-  void *ma=malloc_adr();
-  void *eq;
-  EDITCONTROL ec;
-
-  WSHDR * ews=AllocWS(1024);
-
-  PrepareEditControl(&ec);
-  eq=AllocEQueue(ma,mfree_adr());
-
-  ascii2ws(ews,lgpData[LGP_TextHeader]);
-  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
-  AddEditControlToEditQend(eq,&ec,ma);
-
-  wsprintf(ews,"");
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,1024);
-  AddEditControlToEditQend(eq,&ec,ma);
-  
-  ascii2ws(ews,lgpData[LGP_SearchEngine]);
-  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
-  AddEditControlToEditQend(eq,&ec,ma);
-  
-  wsprintf(ews,"");
-  ConstructComboBox(&ec,7,ECF_APPEND_EOL,ews,32,0,search_engine_count,selected_search_engine+1);
-  AddEditControlToEditQend(eq,&ec,ma);
-  
-  FreeWS(ews);
-  patch_header(&search_hdr);
-  patch_input(&search_desc);
-  return CreateInputTextDialog(&search_desc,&search_hdr,eq,1,0);  
-};
-//-----
 
 int CreateBookmarksMenu(char *dir)
 {
@@ -793,11 +568,243 @@ int CreateBookmarksMenu(char *dir)
     while(FindNextFile(&de,&err));
   }
   FindClose(&de,&err);
-  patch_header(&selurl_HDR);
-  return CreateMenu(0,0,&selurl_STRUCT,&selurl_HDR,0,n_url,ustop,0);
+  patch_header(&bookmarks_menu_header);
+  bookmarks_menu_sk[0].lgp_id=(int)lgpData[LGP_Options];
+  bookmarks_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  bookmarks_menu_header.lgp_id=(int)lgpData[LGP_SelectBookmarkHeader];
+  return CreateMenu(0,0,&bookmarks_menu_struct,&bookmarks_menu_header,0,n_url,ustop,0);
 }
 
-// ----------------------------------------------------------------------------------
+//--------------------------------- Search menu --------------------------------
+
+#define   MAX_SEARCH_ENGINES 32
+
+SOFTKEY_DESC search_menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Search"},
+  {0x0001,0x0000,(int)"Cancel"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+static const SOFTKEYSTAB search_menu_skt=
+{
+  search_menu_sk,0
+};
+
+static int search_engine_count=0;
+static int selected_search_engine=0;
+static char * search_engines[MAX_SEARCH_ENGINES];
+
+static void free_search_engines()
+{
+  LockSched();
+  char ** p=search_engines;
+  for(int i=search_engine_count-1;i>=0;i--) mfree(*p++);
+  search_engine_count=0;
+  UnlockSched();
+};
+
+static void get_search_engines()
+{
+  free_search_engines();  
+      
+  char **sep=search_engines;
+  unsigned int err;
+  DIR_ENTRY de;
+  char str[128];  
+  
+  char search_path[256];
+  getSymbolicPath(search_path, "$search\\");
+  char * s=search_path;
+  strcpy(str,s);
+  strcat(str,"*.url");
+  if (FindFirstFile(&de,str,&err))
+  {
+    do
+    {
+      if (!(de.file_attr&FA_DIRECTORY))
+      {
+        if(search_engine_count>=MAX_SEARCH_ENGINES) break;        
+        int l=strlen(de.file_name); 
+        char * s=malloc(strlen(de.file_name)+1);
+        strcpy(s,de.file_name);
+        s[l-4]=0;
+        search_engine_count++;
+        *sep++=s;
+      }
+    }
+    while(FindNextFile(&de,&err));
+  }
+  FindClose(&de,&err);
+  
+  if(selected_search_engine>=search_engine_count) selected_search_engine=search_engine_count-1;
+};
+
+void search_menu_locret(void){}
+
+int search_menu_onkey(GUI *data, GUI_MSG *msg)
+{
+  EDITCONTROL ec;
+  if (msg->keys==0xFFF)
+  {
+    if(selected_search_engine<0)return 0;
+
+    //query
+    ExtractEditControl(data,2,&ec);
+    WSHDR *ws = ec.pWS;
+    int ql=ws->wsbody[0];
+    
+    //read url file    
+    int f,fsize;
+    unsigned int err;
+    
+    char *s, *url;
+    FSTATS stat;
+    char url_file[256];
+    
+    char search_path[256];
+    getSymbolicPath(search_path, "$search\\");
+    sprintf(url_file,"%s%s.url", search_path, search_engines[selected_search_engine]);
+    
+    if (GetFileStats(url_file,&stat,&err)==-1) goto fail;
+    if ((fsize=stat.size)<=0)  goto fail;
+    if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;    
+    
+    url=(char*)malloc(fsize+1);
+    url[fread(f,url,fsize,&err)]=0;    
+    fclose(f,&err);  
+    s=url;
+    while(*s>32) s++;
+    *s=0;
+    fsize=strlen(url);
+    
+    //build search url    
+    goto_url=malloc(2+fsize+ql+2);    
+    goto_url[0]='0';
+    goto_url[1]='/';          
+    
+    s=strstr(url,"%s");
+    if(s)
+    {
+      int ofs=s-url;
+      memcpy(goto_url+2,url,ofs);
+      s=goto_url+2+ofs;
+      for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
+      memcpy(goto_url+2+ofs+ql,url+ofs+2,fsize-ofs-1);
+    }
+    else
+    {
+      memcpy(goto_url+2,url,fsize);  
+      s=goto_url+2+fsize;
+      for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
+      *s = 0;  
+    };       
+    mfree(url);
+   
+    goto_url = ToWeb(goto_url,0);
+    
+    return (0xFF);     
+    
+  fail:
+    ShowMSG(2,(int)lgpData[LGP_Error]);
+    return (0);
+  }
+  return (0);
+}
+
+void search_menu_ghook(GUI *data, int cmd)
+{
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Search]};
+  
+  if(cmd == TI_CMD_DESTROY)
+  {
+    free_search_engines();
+  }
+  if (cmd == TI_CMD_REDRAW)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+  if (cmd == TI_CMD_FOCUS)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd == TI_CMD_COMBOBOX_FOCUS)
+  {
+    int cbi=EDIT_GetFocus(data);
+    if(cbi==4)
+    {
+      WSHDR * ews=AllocWS(128);    
+      selected_search_engine=EDIT_GetItemNumInFocusedComboBox(data)-1;
+      if(selected_search_engine>=0&&selected_search_engine<search_engine_count)
+      {
+        str_2ws(ews,search_engines[selected_search_engine],128);
+        EDIT_SetTextToFocused(data,ews);
+      };
+      FreeWS(ews);
+    };
+  }
+}
+
+HEADER_DESC search_menu_header={0,0,0,0,NULL,(int)"Search:",0x7FFFFFFF};
+
+INPUTDIA_DESC search_menu_struct=
+{
+  1,
+  search_menu_onkey,
+  search_menu_ghook,
+  (void *)search_menu_locret,
+  0,
+  &search_menu_skt,
+  {0,0,0,0},
+  FONT_SMALL,
+  100,
+  101,
+  0,
+  0,
+  0x40000000
+};
+
+
+static int CreateSearchDialog()
+{
+  get_search_engines();
+
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+
+  WSHDR * ews=AllocWS(1024);
+
+  PrepareEditControl(&ec);
+  eq=AllocEQueue(ma,mfree_adr());
+
+  ascii2ws(ews,lgpData[LGP_TextHeader]);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+
+  wsprintf(ews,"");
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  ascii2ws(ews,lgpData[LGP_SearchEngine]);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  wsprintf(ews,"");
+  ConstructComboBox(&ec,7,ECF_APPEND_EOL,ews,32,0,search_engine_count,selected_search_engine+1);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  FreeWS(ews);
+  patch_header(&search_menu_header);
+  patch_input(&search_menu_struct);
+  search_menu_sk[0].lgp_id=(int)lgpData[LGP_Search];
+  search_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  search_menu_header.lgp_id=(int)lgpData[LGP_SearchHeader];
+  return CreateInputTextDialog(&search_menu_struct, &search_menu_header, eq, 1, 0);  
+};
+
+//------------------------------- History menu ---------------------------------
+
 int history_menu_onkey(void *gui, GUI_MSG *msg) //history
 {
   char **history = MenuGetUserPointer(gui);
@@ -810,32 +817,10 @@ int history_menu_onkey(void *gui, GUI_MSG *msg) //history
       goto_url=malloc(strlen(history[i])+3);
       goto_url[0] = '0'; goto_url[1] = '/';      
       strcpy(goto_url+2,history[i]);
-      return (0xFF);
+      return (1);
     }
     return(1);
   }
-
-/*
-  if (msg->keys==0x3D)
-  {
-    int i=GetCurMenuItem(gui);
-    for (int n=0; n!=i; n++) ustop=ustop->next;
-    if (ustop)
-    {
-      if (ReadUrlFile(ustop->fullpath))
-      {
-        goto_url=malloc((l=strlen(view_url))+1);
-        memcpy(goto_url,view_url,l+1);
-        return (0xFF);
-      }
-    }
-  }
-  if(msg->keys==0x18)
-  {
-    create_options_menu();
-    return(1);
-  }
-*/
   return (0);
 }
 
@@ -844,14 +829,14 @@ void history_menu_ghook(void *gui, int cmd)
   extern const int HISTORY_DEPTH;
   int i;
   char **history = MenuGetUserPointer(gui);
-  if (cmd==3)
+  if (cmd == TI_CMD_DESTROY)
   {
     for(i = 0; i < HISTORY_DEPTH; i++)
       if(history[i])
         mfree(history[i]);
     mfree(history);
   }
-  if (cmd==0x0A)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
@@ -878,26 +863,26 @@ void history_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   SetMenuItemText(gui, item, ws, cur_item);
 }
 
-int history_softkeys[]={0,1,2};
-SOFTKEY_DESC history_sk[]=
+int history_menu_softkeys[]={0,1,2};
+SOFTKEY_DESC history_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Go"},
   {0x0001,0x0000,(int)"Cancel"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB history_skt=
+SOFTKEYSTAB history_menu_skt=
 {
-  history_sk,0
+  history_menu_sk,0
 };
 
-HEADER_DESC history_HDR={0,0,0,0,NULL,(int)"History:",LGP_NULL};
+HEADER_DESC history_menu_header={0,0,0,0,NULL,(int)"History:",LGP_NULL};
 
-MENU_DESC history_STRUCT=
+MENU_DESC history_menu_struct=
 {
-  8,history_menu_onkey,history_menu_ghook,NULL,
-  history_softkeys,
-  &history_skt,
+  8, history_menu_onkey, history_menu_ghook, NULL,
+  history_menu_softkeys,
+  &history_menu_skt,
   0x10,
   history_menu_iconhndl,
   NULL,   //Items
@@ -911,35 +896,38 @@ int CreateHistoryMenu()
   char **history;
   history = GetHistory(&depth);
   if (!depth) return 0;
-  patch_header(&history_HDR);
-  return CreateMenu(0,0,&history_STRUCT,&history_HDR,0,depth,history,0);
+  patch_header(&history_menu_header);
+  history_menu_sk[0].lgp_id=(int)lgpData[LGP_Go];
+  history_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  history_menu_header.lgp_id=(int)lgpData[LGP_HistoryHeader];
+  return CreateMenu(0, 0, &history_menu_struct, &history_menu_header, 0, depth, history, 0);
 }
 
-//------------------------------------------------------------------------------
+//--------------------------------- Url input ----------------------------------
 
-SOFTKEY_DESC input_menu_sk[]=
+SOFTKEY_DESC input_url_sk[]=
 {
-  {0x0018,0x0000,(int)"Go"},
-  {0x0001,0x0000,(int)"Cnacel"},
-  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+  {0x0018,0x0000, NULL},
+  {0x0001,0x0000, NULL},
+  {0x003D,0x0000, (int)LGP_DOIT_PIC}
 };
 
-static const SOFTKEYSTAB input_menu_skt=
+static const SOFTKEYSTAB input_url_skt=
 {
-  input_menu_sk,0
+  input_url_sk,0
 };
 
 
-HEADER_DESC input_url_hdr={0,0,0,0,NULL,(int)"Adress:",LGP_NULL};
+HEADER_DESC input_url_header={0,0,0,0,NULL,NULL,LGP_NULL};
 
 static void input_url_ghook(GUI *data, int cmd)
 {
   SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Go]};
-  if (cmd==0x0A)
+  if (cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
-  if (cmd==7)
+  if (cmd==TI_CMD_REDRAW)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
   }
@@ -962,7 +950,7 @@ static int input_url_onkey(GUI *data, GUI_MSG *msg)
     for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
     *s = 0;
     goto_url = ToWeb(goto_url,0);
-    return (0xFF);
+    return (1);
   }
   return (0);
 }
@@ -974,7 +962,7 @@ static const INPUTDIA_DESC input_url_desc =
   input_url_ghook,
   (void *)input_url_locret,
   0,
-  &input_menu_skt,
+  &input_url_skt,
   {0,0,0,0},
   FONT_SMALL,
   100,
@@ -1039,14 +1027,17 @@ int CreateInputUrl()
   AddEditControlToEditQend(eq,&ec,ma);   //2
 
   FreeWS(ews);
-  patch_header(&input_url_hdr);
+  patch_header(&input_url_header);
   patch_input(&input_url_desc);
-  return CreateInputTextDialog(&input_url_desc,&input_url_hdr,eq,1,0);
+  input_url_sk[0].lgp_id=(int)lgpData[LGP_Go];
+  input_url_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  input_url_header.lgp_id=(int)lgpData[LGP_AddressHeader];
+  return CreateInputTextDialog(&input_url_desc, &input_url_header, eq,1,0);
 }
 
-//------------------------------------------------------------------------------
+//--------------------------------- Main menu ----------------------------------
 
-static void mm_goto_url(GUI *gui)
+static void main_menu_goto_url(GUI *gui)
 {
   MAIN_CSM *main_csm;
   int goto_url_id;
@@ -1058,7 +1049,7 @@ static void mm_goto_url(GUI *gui)
   GeneralFuncF1(1);  
 }
 
-static void mm_goto_bookmarks(GUI *gui)
+static void main_menu_goto_bookmarks(GUI *gui)
 {
   MAIN_CSM *main_csm;
   int bookmark_menu_id;
@@ -1073,7 +1064,7 @@ static void mm_goto_bookmarks(GUI *gui)
 }
 
 
-static void mm_search(GUI *gui)
+static void main_menu_search(GUI *gui)
 {
   MAIN_CSM *main_csm;
   int search_id;
@@ -1086,7 +1077,7 @@ static void mm_search(GUI *gui)
 }
 
 
-static void mm_goto_history(GUI *gui)
+static void main_menu_goto_history(GUI *gui)
 {
   MAIN_CSM *main_csm;
   int history_menu_id;
@@ -1098,7 +1089,7 @@ static void mm_goto_history(GUI *gui)
   GeneralFuncF1(1);
 }
 
-static void mm_options(GUI *gui)
+static void main_menu_options(GUI *gui)
 {
   WSHDR *ws;
   ws=AllocWS(150);
@@ -1108,7 +1099,7 @@ static void mm_options(GUI *gui)
   GeneralFuncF1(1);
 }
 
-static void mm_quit(GUI *gui)
+static void main_menu_quit(GUI *gui)
 {
   MAIN_CSM *main_csm;
   if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
@@ -1116,7 +1107,6 @@ static void mm_quit(GUI *gui)
     FreePageStack();
     goto_url = 0;
     GeneralFunc_flag1(main_csm->view_id,0xFF);
-//    GeneralFunc_flag1(1,main_csm->view_id);
     GeneralFuncF1(1);
   }
   else
@@ -1125,112 +1115,82 @@ static void mm_quit(GUI *gui)
   }
 }
 
-static const int mmenusoftkeys[]={0,1,2};
+static const int main_menu_softkeys[]={0,1,2};
 
-SOFTKEY_DESC mmenu_sk[]=
+SOFTKEY_DESC main_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Back"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-static const SOFTKEYSTAB mmenu_skt=
+static const SOFTKEYSTAB main_menu_skt=
 {
-  mmenu_sk,0
+  main_menu_sk,0
 };
 
 #define MAIN_MENU_ITEMS_N 6
-HEADER_DESC main_menuhdr={0,0,0,0,NULL,(int)"Menu:",LGP_NULL};
+HEADER_DESC main_menu_header={0,0,0,0,NULL,(int)"Menu:",LGP_NULL};
 
-MENUITEM_DESC main_menu_ITEMS[MAIN_MENU_ITEMS_N]=
+MENUITEM_DESC main_menu_items[MAIN_MENU_ITEMS_N]=
 {
-  {NULL,(int)"Go to",      LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
-  {NULL,(int)"Bookmarks",  LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
-  {NULL,(int)"History",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
-  {NULL,(int)"Settings",   LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL,(int)"Search",     LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL,(int)"Exit",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
 };
 
-static const MENUPROCS_DESC main_menu_HNDLS[MAIN_MENU_ITEMS_N]=
+static const MENUPROCS_DESC main_menu_procs[MAIN_MENU_ITEMS_N]=
 {
-  mm_goto_url,
-  mm_goto_bookmarks,
-  mm_goto_history,
-  mm_options,
-  mm_search,
-  mm_quit
+  main_menu_goto_url,
+  main_menu_goto_bookmarks,
+  main_menu_goto_history,
+  main_menu_options,
+  main_menu_search,
+  main_menu_quit
 };
 
-static int mainmenu_keyhook(void *data, GUI_MSG *msg)
+static void main_menu_ghook(void *data, int cmd)
 {
-  return(0);
-}
-
-static void mainmenu_ghook(void *data, int cmd)
-{
-  if (cmd==0x0A)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
 }
 
-static const MENU_DESC mainmenu=
+static const MENU_DESC main_menu_struct=
 {
-  8,mainmenu_keyhook,mainmenu_ghook,NULL,
-  mmenusoftkeys,
-  &mmenu_skt,
+  8, NULL, main_menu_ghook, NULL,
+  main_menu_softkeys,
+  &main_menu_skt,
   0x10,//MENU_FLAG,
   NULL,
-  main_menu_ITEMS,//menuitems,
-  main_menu_HNDLS,//menuprocs,
+  main_menu_items,//menuitems,
+  main_menu_procs,//menuprocs,
   MAIN_MENU_ITEMS_N
 };
 
 int CreateMainMenu(VIEWDATA *vd)
 {
-  MAIN_CSM *main_csm;
+  MAIN_CSM * main_csm;
   int main_menu_id;
   if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
   {
-    patch_header(&main_menuhdr);
-    main_menu_id=CreateMenu(0,0,&mainmenu,&main_menuhdr,0,MAIN_MENU_ITEMS_N,vd,0);
+    patch_header(&main_menu_header);
+    main_menu_sk[0].lgp_id=(int)lgpData[LGP_Select];
+    main_menu_sk[1].lgp_id=(int)lgpData[LGP_Back];
+    main_menu_header.lgp_id=(int)lgpData[LGP_Menu];
+    main_menu_items[0].lgp_id_small=(int)lgpData[LGP_GoTo];
+    main_menu_items[1].lgp_id_small=(int)lgpData[LGP_Bookmarks];
+    main_menu_items[2].lgp_id_small=(int)lgpData[LGP_History];
+    main_menu_items[3].lgp_id_small=(int)lgpData[LGP_Settings];
+    main_menu_items[4].lgp_id_small=(int)lgpData[LGP_Search];
+    main_menu_items[5].lgp_id_small=(int)lgpData[LGP_Exit];
+  
+    main_menu_id=CreateMenu(0, 0, &main_menu_struct, &main_menu_header, 0, MAIN_MENU_ITEMS_N, vd, 0);
     main_csm->main_menu_id=main_menu_id;
   }
   return main_menu_id;
-}
-
-void initMainMenuLangPack()
-{
-  add_bookmark_sk[0].lgp_id=(int)lgpData[LGP_Add];
-  add_bookmark_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
-  add_bookmark_hdr.lgp_id=(int)lgpData[LGP_BookmarkHeader];
-  options_menuhdr.lgp_id=(int)lgpData[LGP_OptionsHeader];
-  options_menu_ITEMS[0].lgp_id_small=(int)lgpData[LGP_Add];
-  options_menu_ITEMS[1].lgp_id_small=(int)lgpData[LGP_Edit];
-  options_menu_ITEMS[2].lgp_id_small=(int)lgpData[LGP_Delete];
-  options_menu_ITEMS[3].lgp_id_small=(int)lgpData[LGP_Back];
-  menu_sk[0].lgp_id=(int)lgpData[LGP_Options];
-  menu_sk[1].lgp_id=(int)lgpData[LGP_Close];
-  selurl_sk[0].lgp_id=(int)lgpData[LGP_Options];
-  selurl_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
-  selurl_HDR.lgp_id=(int)lgpData[LGP_SelectBookmarkHeader];
-  search_sk[0].lgp_id=(int)lgpData[LGP_Search];
-  search_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
-  search_hdr.lgp_id=(int)lgpData[LGP_SearchHeader];
-  history_sk[0].lgp_id=(int)lgpData[LGP_Go];
-  history_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
-  history_HDR.lgp_id=(int)lgpData[LGP_HistoryHeader];
-  input_menu_sk[0].lgp_id=(int)lgpData[LGP_Go];
-  input_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
-  input_url_hdr.lgp_id=(int)lgpData[LGP_AddressHeader];
-  mmenu_sk[0].lgp_id=(int)lgpData[LGP_Select];
-  mmenu_sk[1].lgp_id=(int)lgpData[LGP_Back];
-  main_menuhdr.lgp_id=(int)lgpData[LGP_Menu];
-  main_menu_ITEMS[0].lgp_id_small=(int)lgpData[LGP_GoTo];
-  main_menu_ITEMS[1].lgp_id_small=(int)lgpData[LGP_Bookmarks];
-  main_menu_ITEMS[2].lgp_id_small=(int)lgpData[LGP_History];
-  main_menu_ITEMS[3].lgp_id_small=(int)lgpData[LGP_Settings];
-  main_menu_ITEMS[4].lgp_id_small=(int)lgpData[LGP_Search];
-  main_menu_ITEMS[5].lgp_id_small=(int)lgpData[LGP_Exit];
 }

@@ -1,3 +1,6 @@
+#ifndef _SIEMENS_UNICODE_H_
+#define _SIEMENS_UNICODE_H_
+
 // FONT
 #define UTF16_DIS_UNDERLINE (0xE002)
 #define UTF16_ENA_UNDERLINE (0xE001)
@@ -34,3 +37,5 @@
 //
 #define UTF16_NEWLINE 0x000A
 #define UTF16_SPACE 0x0020
+
+#endif /* _SIEMENS_UNICODE_H_ */

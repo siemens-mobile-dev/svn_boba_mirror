@@ -692,94 +692,106 @@ int FindReferenceById(VIEWDATA *vd, unsigned int id, int i) // Находит index'ы в
   return -1;
 }
 
-// TEMPLATES MENU
+/*******************************************************************************
+  Templates menu
+*******************************************************************************/
 GUI *paste_gui;
 
-int templ_menu_onkey(void *gui, GUI_MSG *msg)
+//Templates
+char * templates_chars; //Собственно файл
+char ** templates_lines; //Массив указателей на строки
+
+void FreeTemplates(void)
 {
-  if (msg->keys==0x3D || msg->keys==0x18)
+  if (templates_lines) mfree(templates_lines);
+  if (templates_chars) mfree(templates_chars);
+  templates_lines=NULL;
+  templates_chars=NULL;
+}
+
+extern const char TEMPLATES_PATH[];
+
+int LoadTemplates()
+{
+  FSTATS fstat;
+  int hFile;
+  unsigned int io_error = NULL;
+  int templates_num = NULL;
+  char * p;
+  char * pp;
+  int c;
+  char fname[256];
+  getSymbolicPath(fname, "$ballet\\templates.txt");
+
+  FreeTemplates();
+  if (GetFileStats(fname, &fstat, &io_error) != -1)
   {
-    // select
-    int item=GetCurMenuItem(gui);
-    EDITCONTROL ec;
-    ExtractEditControl(paste_gui,1,&ec);
-    char fname[256];
-    int file;
-    unsigned int ul;
-    getSymbolicPath(fname,"$ballet\\templates.txt");
-    if ((file=fopen(fname,A_ReadWrite,P_READ+P_WRITE,&ul))!=-1)
+    if (fstat.size > 0)
     {
-      int num=0;
-      unsigned int buf_size = lseek(file, 0, S_END, &ul, &ul);
-      lseek(file, 0, S_SET, &ul, &ul);
-      char *buffer = malloc(buf_size);
-      fread(file, buffer, buf_size, &ul);
-      fclose(file, &ul);
-      int start=0,len=0;
-      for (int i=0;i<=buf_size;i++)
-        if (buffer[i]==0x0A||buffer[i]==0x0D||i==buf_size)
+      if ((hFile = fopen(fname, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
+      {
+        p = templates_chars = malloc(fstat.size + 1);
+        p[fread(hFile, p, fstat.size, &io_error)] = NULL;
+        fclose(hFile, &io_error);
+        pp = p;
+        for(;;)
         {
-          if (num==item) len=i-start;
-          num++;
-          if (num==item) start=i+1;
+          c = *p;
+          if (c < 32)
+          {
+            if (pp && (pp != p))
+            {
+              templates_lines = realloc(templates_lines,(templates_num + 1)*sizeof(char *));
+              templates_lines[templates_num ++] = pp;
+            }
+            pp = NULL;
+            if (!c) break;
+            *p = NULL;
+          }
+          else
+          {
+            if (!pp) pp = p;
+          }
+          p++;
         }
-      char *c=malloc(len+1);
-      memcpy(c,buffer+start,len);
-      c[len]=NULL;
-      ascii2ws(ec.pWS,c);
-      StoreEditControl(paste_gui,1,&ec);
-      mfree(buffer);
-      mfree(c);
+      }
     }
-    return 0xFF;
+  }
+  return templates_num;
+}
+
+int templates_menu_onkey(void *gui, GUI_MSG *msg)
+{
+  if (msg->keys == 0x3D || msg->keys == 0x18)
+  {
+    EDITCONTROL ec;
+    ExtractEditControl(paste_gui, 1, &ec);
+    WSHDR * ws = AllocWS(ec.maxlen);
+    ascii2ws(ws, templates_lines[GetCurMenuItem(gui)]);
+    EDIT_SetTextToEditControl(paste_gui, 1, ws);
+    FreeWS(ws);
+    return (1);
   }
   return (0);
 }
 
-void templ_menu_ghook(void *gui, int cmd)
+void templates_menu_ghook(void *gui, int cmd)
 {
-  if (cmd==3) // free
+  if (cmd == TI_CMD_DESTROY) // free
   {
-    ;
+    FreeTemplates();
   }
-  if (cmd==0x0A)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
 }
-void templ_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
+void templates_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
 {
-  WSHDR *ws;
-  void *item=AllocMenuItem(gui);
-  char fname[256];
-  int file;
-  unsigned int ul;
-  getSymbolicPath(fname,"$ballet\\templates.txt");
-  if ((file=fopen(fname,A_ReadWrite,P_READ+P_WRITE,&ul))!=-1)
-  {
-    int num=0;
-    unsigned int buf_size = lseek(file, 0, S_END, &ul, &ul);
-    lseek(file, 0, S_SET, &ul, &ul);
-    char *buffer = malloc(buf_size);
-    fread(file, buffer, buf_size, &ul);
-    fclose(file, &ul);
-    int start=0,len=0;
-    for (int i=0;i<=buf_size;i++)
-      if (buffer[i]==0x0A||buffer[i]==0x0D||i==buf_size)
-      {
-        if (num==cur_item) len=i-start;
-        num++;
-        if (num==cur_item) start=i+1;
-      }
-    ws=AllocMenuWS(gui,len);
-    str_2ws(ws,buffer+start,len);
-    mfree(buffer);
-  }
-  else
-  {
-    ws=AllocMenuWS(gui,10);
-    wsprintf(ws, "Ошибка");
-  }
+  int len = strlen(templates_lines[cur_item]);
+  WSHDR * ws = AllocMenuWS(gui, len + 4);
+  void * item = AllocMenuItem(gui);
+  ascii2ws(ws, templates_lines[cur_item]);
   SetMenuItemText(gui, item, ws, cur_item);
 }
 
@@ -796,15 +808,15 @@ SOFTKEYSTAB templ_skt=
   templ_sk,0
 };
 
-HEADER_DESC templ_HDR={0,0,0,0,NULL,(int)"Выбор",LGP_NULL};
+HEADER_DESC templates_menu_header={0,0,0,0,NULL,(int)"Выбор",LGP_NULL};
 
-MENU_DESC templ_STRUCT=
+MENU_DESC templates_menu_struct=
 {
-  8,templ_menu_onkey,templ_menu_ghook,NULL,
+  8, templates_menu_onkey, templates_menu_ghook, NULL,
   templ_softkeys,
   &templ_skt,
   0x10,
-  templ_menu_iconhndl,
+  templates_menu_iconhndl,
   NULL,   //Items
   NULL,   //Procs
   0   //n
@@ -812,34 +824,8 @@ MENU_DESC templ_STRUCT=
 
 void createTemplatesMenu()
 {
-  // get amount of lines
-  char fname[256];
-  int file;
-  unsigned int ul;
-  getSymbolicPath(fname,"$ballet\\templates.txt");
-  if ((file=fopen(fname,A_ReadWrite,P_READ+P_WRITE,&ul))!=-1)
-  {
-    int num=1;
-    unsigned int buf_size=lseek(file, 0, S_END, &ul, &ul);
-    lseek(file, 0, S_SET, &ul, &ul);
-    char *buffer=malloc(buf_size);
-    fread(file, buffer, buf_size, &ul);
-    fclose(file, &ul);
-    if ((buffer[buf_size-1]==0x0A||buffer[buf_size-1]==0x0D)) buf_size--;
-    for (int i=0;i<buf_size;i++)
-    {
-      if ((buffer[i]==0x0A||buffer[i]==0x0D))
-      {
-        num++;
-      }
-    }
-    patch_header(&templ_HDR);
-    mfree(buffer);
-    if (num>0)
-    {
-      CreateMenu(0,0,&templ_STRUCT,&templ_HDR,0,num,0,0);
-    }
-  }
+  patch_header(&templates_menu_header);
+  CreateMenu(0, 0, &templates_menu_struct, &templates_menu_header, 0, LoadTemplates(), 0, 0);
 }
 
 // EDIT BOX
@@ -989,6 +975,9 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
   FreeWS(ews);
   patch_header(&input_box_hdr);
   patch_input(&input_box_desc);
+  input_box_hdr.lgp_id=(int)lgpData[LGP_EnterHeader];
+  input_box_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
+  input_box_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
   return CreateInputTextDialog(&input_box_desc,&input_box_hdr,eq,1,0);
 }
 
@@ -1065,6 +1054,9 @@ void createTextView(WSHDR *ws)
   FreeWS(ws);
   patch_header(&txtview_hdr);
   patch_input(&txtview_desc);
+  txtview_hdr.lgp_id=(int)lgpData[LGP_TextHeader];
+  txtview_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
+  txtview_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
   CreateInputTextDialog(&txtview_desc,&txtview_hdr,eq,1,0);
 }
 
@@ -1244,19 +1236,9 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
   if (rf->multiselect) sel_STRUCT.flags2=0x11;
   else sel_STRUCT.flags2=0x10;
   patch_header(&sel_HDR);
-  return CreateMenu(0,0,&sel_STRUCT,&sel_HDR,start,n_sel,ustop,0);
-}
-
-void initDisplayUtilsLangPack()
-{
-  txtview_hdr.lgp_id=(int)lgpData[LGP_TextHeader];
-  sel_HDR.lgp_id=(int)lgpData[LGP_TextHeader];
   sel_HDR.lgp_id=(int)lgpData[LGP_SelectHeader];
   sel_sk[0].lgp_id=(int)lgpData[LGP_Select];
   sel_sk[1].lgp_id=(int)lgpData[LGP_Close];
-  txtview_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
-  txtview_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
-  input_box_hdr.lgp_id=(int)lgpData[LGP_EnterHeader];
-  input_box_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
-  input_box_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  return CreateMenu(0,0,&sel_STRUCT,&sel_HDR,start,n_sel,ustop,0);
 }
+

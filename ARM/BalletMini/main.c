@@ -17,122 +17,6 @@
 #include "lang.h"
 #include "../inc/sieget_ipc.h"
 
-char *lgpData[LGP_DATA_NUM];
-int lgpLoaded;
-
-void initDisplayUtilsLangPack();
-void initMainMenuLangPack();
-
-void lgpInitLangPack(void)
-{
-  unsigned int err;
-  char fname[128];
-  getSymbolicPath(fname,"$ballet\\lang.txt");
-  int f;
-  lgpLoaded=0;
-  char * buf;
-  FSTATS fstat;
-  if (GetFileStats(fname, &fstat, &err)!=-1)
-  {
-    if((f=fopen(fname, A_ReadOnly + A_BIN, P_READ, &err))!=-1)
-    {
-      if (buf =(char *)malloc(fstat.size+1))
-      {
-        buf[fread(f, buf, fstat.size, &err)]=0;
-        fclose(f, &err);
-        char line[128];
-        int lineSize=0;
-        int lp_id=0;
-        int buf_pos = 0;
-        while(buf[buf_pos]!=0 && buf_pos < fstat.size && lp_id < LGP_DATA_NUM)
-        {
-          if (buf[buf_pos]=='\n' || buf[buf_pos]=='\r')
-          {
-            if (lineSize > 0)
-            {
-              lgpData[lp_id] = (char *)malloc(lineSize+1);
-              memcpy(lgpData[lp_id], line, lineSize);
-              lgpData[lp_id][lineSize]=0;
-              lp_id++;
-              lineSize=0;
-            }
-          }
-          else
-            line[lineSize++]=buf[buf_pos];
-          buf_pos++;
-        }
-        if (lineSize > 0 && lp_id < LGP_DATA_NUM) // eof
-        {
-          lgpData[lp_id] = (char *)malloc(lineSize+1);
-          memcpy(lgpData[lp_id], line, lineSize);
-          lgpData[lp_id][lineSize]=0;
-          lp_id++;
-          lineSize=0;
-        }
-        mfree(buf);
-        initDisplayUtilsLangPack();
-        initMainMenuLangPack();
-        lgpLoaded=1;
-        
-        // old langpack
-        if (strlen(lgpData[LGP_LangCode])>2)
-        {
-          mfree(lgpData[LGP_LangCode]);
-          lgpData[LGP_LangCode]=malloc(3);
-          strcpy(lgpData[LGP_LangCode],"ru");
-        }
-        return;
-      }
-      fclose(f, &err);
-    }
-  }
-  lgpData[LGP_CantOpenFile]=         "Can't open file!";
-  lgpData[LGP_CantLoadAuthCode]=     "Can't load AuthCode!";
-  lgpData[LGP_HistoryFileFailed]=    "Can't open history.txt!";
-  lgpData[LGP_CfgUpdated]=           "Congif updated";
-  lgpData[LGP_RefUnderConstruction]= "Ref \'%c\' under construction!";
-  lgpData[LGP_RefEmpty]=             "RF empty!";
-  lgpData[LGP_Error]=                "Error!";
-  lgpData[LGP_Stop]=                 "Stop";
-  lgpData[LGP_WaitDNR]=              "Wait DNR ...";
-  lgpData[LGP_IpConnect]=            "Ip connect ...";
-  lgpData[LGP_GetHostByName]=        "Get host by name";
-  lgpData[LGP_FaultDNR]=             "DNR falut!";
-  lgpData[LGP_OkDNR]=                "DNR ok!";
-  lgpData[LGP_OpenSocket]=           "Open socket...";
-  lgpData[LGP_ConnectFault]=         "Connect fault...";
-  lgpData[LGP_AnswerDNR]=            "DNR answer...";
-  lgpData[LGP_Connected]=            "Connected...";
-  lgpData[LGP_DataReceived]=         "Data received...";
-  lgpData[LGP_RemoteClosed]=         "Remote closed!";
-  lgpData[LGP_LocalClosed]=          "Local closed!";
-  lgpData[LGP_InetBussy]=            "INET process bussy!";
-  lgpData[LGP_EnableGPRS]=           "Enable GPRS first!";
-  lgpData[LGP_UnderConstruction]=    "Under Construction!";
-  lgpData[LGP_Ok]=                   "Ok";
-  lgpData[LGP_Templates]=            "Templates";
-  lgpData[LGP_Save]=                 "Save";
-  lgpData[LGP_NameHeader]=           "Name:";
-  lgpData[LGP_NewBookmark]=          "New Bookmark";
-  lgpData[LGP_LinkHeader]=           "Link:";
-  lgpData[LGP_Absent]=               "Absent...";
-  lgpData[LGP_Search]=               "Search";
-  lgpData[LGP_TextHeader]=           "Text:";
-  lgpData[LGP_SearchEngine]=         "Search engine:";
-  lgpData[LGP_Go]=                   "Go";
-  lgpData[LGP_LangCode]=             "en";
-}
-
-void lgpFreeLangPack(void)
-{
-  if (!lgpLoaded) return;
-  for (int i=0;i<LGP_DATA_NUM;i++)
-  {
-    if (lgpData[i]!=NULL)
-      mfree(lgpData[i]);
-  }
-}
-
 extern const char DEFAULT_PARAM[128];
 
 static void UpdateCSMname(void);
@@ -158,16 +42,9 @@ char *goto_url;
 char *from_url;
 char *goto_params;
 
-static const char percent_t[]="%t";
-
 WSHDR *ws_console;
 
 int maincsm_id;
-
-char OMSCACHE_PATH[256];
-char AUTHDATA_FILE[256];
-char BOOKMARKS_PATH[256];
-char SEARCH_PATH[256];
 
 char BALLET_PATH[256];
 char BALLET_EXE[256];
@@ -535,7 +412,7 @@ static void method0(VIEW_GUI *data)
 //          break;
         }
       }
-      wsprintf(data->ws2,percent_t,lgpData[LGP_Stop]);
+      ascii2ws(data->ws2, lgpData[LGP_Stop]);
       
       h1=scr_h-GetFontYSIZE(FONT_SMALL)-2;
       w1=scr_w-Get_WS_width(data->ws2,FONT_SMALL)-2;
@@ -1437,9 +1314,11 @@ int LoadAuthCode(void)
   char *s;
   int c;
   FSTATS stat;
-  if (GetFileStats(AUTHDATA_FILE,&stat,&err)==-1) return 0;
+  char authdata_file[256];
+  getSymbolicPath(authdata_file, "$ballet\\AuthCode");
+  if (GetFileStats(authdata_file,&stat,&err)==-1) return 0;
   if ((fsize=stat.size)<=0) return 0;
-  if ((f=fopen(AUTHDATA_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
+  if ((f=fopen(authdata_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
   buf=malloc(fsize+1);
   buf[fread(f,buf,fsize,&err)]=0;
   fclose(f,&err);
@@ -1501,37 +1380,16 @@ void GenerateFile(char *path, char *name, unsigned char *from, unsigned size)
 int main(const char *exename, const char *filename)
 {
   char dummy[sizeof(MAIN_CSM)];
-  unsigned int ul;
   char *path=strrchr(exename,'\\');
   int l;
   if (!path) return 0; //Фигня какая-то
   path++;
   l=path-exename;
   InitConfig();
-  memcpy(OMSCACHE_PATH,exename,l);
-  strcat(OMSCACHE_PATH,"OmsCache");
-  memcpy(AUTHDATA_FILE,exename,l);
-  strcat(AUTHDATA_FILE,"AuthCode");
-  memcpy(BOOKMARKS_PATH,exename,l);
-  strcat(BOOKMARKS_PATH,"Bookmarks");
   
   memcpy(BALLET_PATH,exename,l);
   strcpy(BALLET_EXE, exename);
-  
-  memcpy(SEARCH_PATH,exename,l);
-  strcat(SEARCH_PATH,"Search");
-
-  //Create folders if not exists
-  if (!isdir(OMSCACHE_PATH,&ul))
-    mkdir(OMSCACHE_PATH,&ul);
-  if (!isdir(BOOKMARKS_PATH,&ul))
-    mkdir(BOOKMARKS_PATH,&ul);
-  if (!isdir(SEARCH_PATH,&ul))
-    mkdir(SEARCH_PATH,&ul);
-  
-  strcat(OMSCACHE_PATH,"\\");
-  strcat(BOOKMARKS_PATH,"\\");
-  strcat(SEARCH_PATH,"\\");
+ 
   
   //CheckHistory("http://perk11.info/elf");
 

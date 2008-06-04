@@ -1,3 +1,6 @@
+#ifndef _PARSE_OMS_H_
+#define _PARSE_OMS_H_
+
 #include "view.h"
 
 void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len);
@@ -44,3 +47,4 @@ enum IOMS_PARSESTATE
   OMS_STOP
 };
 
+#endif /* _PARSE_OMS_H_ */

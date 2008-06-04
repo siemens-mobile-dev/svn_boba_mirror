@@ -1,6 +1,8 @@
+#ifndef _LANG_H_
+#define _LANG_H_
 
-void lgpInitLangPack ();
-void lgpFreeLangPack ();
+void lgpInitLangPack(void);
+void lgpFreeLangPack(void);
 
 enum LGP_ID
 {
@@ -24,7 +26,7 @@ enum LGP_ID
   LGP_DataReceived,
   LGP_RemoteClosed,
   LGP_LocalClosed,
-  LGP_InetBussy,
+  LGP_InetBusy,
   LGP_EnableGPRS,
   LGP_UnderConstruction,
   LGP_Select,
@@ -61,13 +63,11 @@ enum LGP_ID
   LGP_Exit,
   LGP_Search,
   LGP_LangCode,
-  LGP_Reserve2,
-  LGP_Reserve3,
-  LGP_Reserve4,
-  LGP_Reserve5,
-  LGP_Reserve6,
-  LGP_Reserve7,
+
   LGP_DATA_NUM
 };
 
-extern char *lgpData[LGP_DATA_NUM];
+extern char * lgpData[LGP_DATA_NUM];
+
+#endif /* _LANG_H_ */
+
