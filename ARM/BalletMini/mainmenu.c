@@ -950,7 +950,7 @@ static int input_url_onkey(GUI *data, GUI_MSG *msg)
     for (int i=0; i<ws->wsbody[0]; i++) *s++=char16to8(ws->wsbody[i+1]);
     *s = 0;
     goto_url = ToWeb(goto_url,0);
-    return (1);
+    return 0xFF;
   }
   return (0);
 }
