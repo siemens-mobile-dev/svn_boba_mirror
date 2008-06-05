@@ -4029,6 +4029,12 @@
     <name>$PROJ_DIR$\ToDo.txt</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\url_utils.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\url_utils.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\urlstack.c</name>
   </file>
   <file>

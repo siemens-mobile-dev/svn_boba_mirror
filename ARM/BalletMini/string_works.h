@@ -3,6 +3,8 @@
 
 #include "view.h"
 
+#define _safe_free(x) { if (x) mfree(x); (x) = NULL; }
+
 void debugf(char *file,int line);
 void debugv(char *file,int line,void *p, int sz);
 void debuf(void *p, int sz);

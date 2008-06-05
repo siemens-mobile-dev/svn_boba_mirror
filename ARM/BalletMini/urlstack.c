@@ -11,9 +11,9 @@ static int stack_top;
 static char * pagename(int n)
 {
   char *s=malloc(300);
-  char omscache[256];
-  getSymbolicPath(omscache, "$omscache\\");
-  sprintf(s,"%s%d.oms", omscache, PageSTACK[n]);
+  char * omscache_path = getSymbolicPath("$omscache\\");
+  sprintf(s,"%s%d.oms", omscache_path, PageSTACK[n]);
+  mfree(omscache_path);
   return s;
 }
 

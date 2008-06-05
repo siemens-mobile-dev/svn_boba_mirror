@@ -10,19 +10,18 @@ const char *NEW_LINE = "\r\n";
 
 void CheckHistory(const char *url)
 {
-  char path[256], *default_url;
+  char *default_url;
   int f;
   unsigned ul;
-  getSymbolicPath(path,"$urlcache\\history.txt");
-  f=fopen(path,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
-  if (f==-1)
+  char * history_file = getSymbolicPath("$urlcache\\history.txt");
+  if ((f = fopen(history_file, A_ReadOnly + A_Create + A_BIN, P_READ + P_WRITE, &ul)) == -1)
   {
-    f=fopen(path,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
-    if (f==-1)
+    if ((f = fopen(history_file, A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul)) == -1)
     {
       LockSched();
       ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
       UnlockSched();
+      mfree(history_file);
       return;
     }
 
@@ -33,28 +32,30 @@ void CheckHistory(const char *url)
     fclose(f, &ul);
 
     mfree(default_url);
+    mfree(history_file);
     return;
   }
   fclose(f, &ul);
+  mfree(history_file);
 }
 
 //------------------------------------------------------------------------------
 
 char **GetHistory(int *cnt)
 {
-  char path[256];
   char *history_buf,*s,*tmp;
   char **history;
   int f,flen,history_depth=0,i;
   unsigned ul;
-  getSymbolicPath(path,"$urlcache\\history.txt");
-  f=fopen(path,A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  char * history_file = getSymbolicPath("$urlcache\\history.txt");
+  f=fopen(history_file, A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();
     ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
     UnlockSched();
     *cnt=history_depth;
+    mfree(history_file);
     return 0;
   }
   flen=lseek(f,0,2,&ul,&ul)+1;
@@ -85,6 +86,7 @@ char **GetHistory(int *cnt)
   }
   *cnt=history_depth;
   mfree(history_buf);
+  mfree(history_file);
   return history;
 }
 
@@ -92,16 +94,16 @@ char **GetHistory(int *cnt)
 
 void AddURLToHistory(const char *url)
 {
-  char path[256], *history_buf, **history, *s, *tmp;
+  char *history_buf, **history, *s, *tmp;
   int f, flen, history_depth = 0, i;
   unsigned ul;
-  getSymbolicPath(path,"$urlcache\\history.txt");
-  f=fopen(path,A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul);
-  if (f==-1)
+  char * history_file = getSymbolicPath("$urlcache\\history.txt");
+  if ((f=fopen(history_file, A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul))==-1)
   {
     LockSched();
     ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
     UnlockSched();
+    mfree(history_file);
     return;
   }
 
@@ -170,18 +172,20 @@ void AddURLToHistory(const char *url)
   }
   mfree(history);
 
-  unlink(path, &ul);
+  unlink(history_file, &ul);
 
-  f=fopen(path,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  f=fopen(history_file,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();
     ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
     UnlockSched();
     mfree(history_buf);
+    mfree(history_file);
     return;
   }
   fwrite(f,history_buf,strlen(history_buf), &ul);
   fclose(f, &ul);
   mfree(history_buf);
+  mfree(history_file);
 }

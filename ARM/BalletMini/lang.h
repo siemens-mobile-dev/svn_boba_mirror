@@ -44,6 +44,7 @@ enum LGP_ID
   LGP_BookmarkHeader,
   LGP_Save,
   LGP_NewBookmark,
+  LGP_NewFolder,
   LGP_Absent,
   LGP_OptionsHeader,
   LGP_Edit,
@@ -62,8 +63,14 @@ enum LGP_ID
   LGP_Settings,
   LGP_Exit,
   LGP_Search,
-  LGP_LangCode,
-
+  LGP_EnterName,
+  LGP_EnterURL,
+  LGP_FolderExists,
+  LGP_FileExists,
+  LGP_FolderNotEmpty,
+  
+  LGP_LangCode, // Пусть всегда будет в конце
+  
   LGP_DATA_NUM
 };
 

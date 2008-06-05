@@ -16,6 +16,7 @@
 #include "file_works.h"
 #include "lang.h"
 #include "../inc/sieget_ipc.h"
+#include "url_utils.h"
 
 extern const char DEFAULT_PARAM[128];
 
@@ -112,9 +113,7 @@ static void StartGetFile(int dummy, char *fncache)
     if (main_csm)
     {
       STOPPED=1;
-      char fname[256];
-      getSymbolicPath(fname,"$bookmarks\\");
-      main_csm->sel_bmk=CreateBookmarksMenu(fname);
+      main_csm->sel_bmk=CreateBookmarksMenu();
     }
   }
   if (view_url_mode==MODE_NONE)
@@ -208,8 +207,10 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
         for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
-        pos+=strlen(b);
+        //b=ToWeb(b,1);
+        char * url = URL_reencode_escapes(b);
+        pos+=strlen(url);
+        mfree(url);
         mfree(b);
         FreeWS(ws);
       }
@@ -222,8 +223,10 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
         for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
-        pos+=strlen(b);
+        //b=ToWeb(b,1);
+        char * url = URL_reencode_escapes(b);
+        pos+=strlen(url);
+        mfree(url);
         mfree(b);
       }
       break;
@@ -331,9 +334,11 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
         for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
-        memcpy(s+pos,b,strlen(b));
-        pos+=strlen(b);
+        //b=ToWeb(b,1);
+        char * url = URL_reencode_escapes(b);
+        memcpy(s+pos, url, strlen(url));
+        pos+=strlen(url);
+        mfree(url);
         mfree(b);
         FreeWS(ws);
       }
@@ -352,9 +357,11 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
         for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
-        memcpy(s+pos,b,strlen(b));
-        pos+=strlen(b);
+        //b=ToWeb(b,1);
+        char * url = URL_reencode_escapes(b);
+        memcpy(s+pos, url, strlen(url));
+        pos+=strlen(url);
+        mfree(url);
         mfree(b);
       }
       break;
@@ -508,12 +515,11 @@ static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
 
 static void RunOtherCopyByURL(const char *url, int isNativeBrowser)
 {
-  char fname[256];
   int f;
   unsigned int err;
   WSHDR *ws;
-  getSymbolicPath(fname,"$urlcache\\$date$time.url");
-  f=fopen(fname,A_Create+A_Truncate+A_BIN+A_ReadWrite,P_READ+P_WRITE,&err);
+  char * filename = getSymbolicPath("$urlcache\\$date$time.url");
+  f=fopen(filename,A_Create+A_Truncate+A_BIN+A_ReadWrite,P_READ+P_WRITE,&err);
   if (f!=-1)
   {
     fwrite(f,url,strlen(url),&err);
@@ -521,17 +527,18 @@ static void RunOtherCopyByURL(const char *url, int isNativeBrowser)
     ws=AllocWS(256);
     if (isNativeBrowser)
     {
-      str_2ws(ws,fname,255);
+      str_2ws(ws,filename,255);
       ExecuteFile(ws,NULL,NULL);
     }
     else
     {
       str_2ws(ws,BALLET_EXE,255);
-      ExecuteFile(ws,NULL,fname);
+      ExecuteFile(ws,NULL,filename);
     } 
     FreeWS(ws);
-    unlink(fname,&err);
+    unlink(filename,&err);
   }
+  mfree(filename);
 }
 
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
@@ -555,6 +562,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           {
             char *c=extract_omstr(vd,rf->id);
             unsigned int l=_rshort2(vd->oms+rf->id);
+            _safe_free(goto_url);
             goto_url=malloc(l-strlen(c)+1);
             strcpy(goto_url,c+strlen(c)+1);
             mfree(c);
@@ -566,6 +574,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           {
             // 1/http:        не бывает здесь такого
             // 0/http:        не загружать
+            _safe_free(goto_url);
             goto_url=extract_omstr(vd,rf->id);
             // 0/javascript:  upload data
             if (!strncmp("0/javascript",goto_url,12))
@@ -603,6 +612,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
           if (!rf->no_upload)
           {
+            _safe_free(goto_url);
             goto_url=malloc(strlen(vd->pageurl)+1);
             strcpy(goto_url,vd->pageurl);
             from_url=malloc(strlen(vd->pageurl)+1);
@@ -618,6 +628,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             vd->rawtext[rf->begin+1]=vd->WCHAR_BUTTON_ON;
           if (!rf->no_upload)
           {
+            _safe_free(goto_url);
             goto_url=malloc(strlen(vd->pageurl)+1);
             strcpy(goto_url,vd->pageurl);
             from_url=malloc(strlen(vd->pageurl)+1);
@@ -640,6 +651,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           break;
         case 'i':
         case 'u':
+          _safe_free(goto_url);
           goto_url=malloc(strlen(vd->pageurl)+1);
           strcpy(goto_url,vd->pageurl);
           from_url=malloc(strlen(vd->pageurl)+1);
@@ -1010,6 +1022,7 @@ static int CreateViewGUI(int cached)
 
 static void maincsm_oncreate(CSM_RAM *data)
 {
+  goto_url = NULL;
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ws_console=AllocWS(1024);
   csm->csm.state=0;
@@ -1035,7 +1048,7 @@ static void Killer(void)
 static void maincsm_onclose(CSM_RAM *csm)
 {
   TERMINATED=1;
-  mfree(goto_url);
+  if (goto_url) mfree(goto_url);
   if (sieget_ipc.data) mfree(sieget_ipc.data);
   SUBPROC((void *)Killer);
 }
@@ -1128,8 +1141,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
               UpdateCSMname();
               csm->view_id=CreateViewGUI(1);
             }
-            mfree(goto_url);
-            goto_url=NULL;
+            _safe_free(goto_url);
             csm_result=0;   //Обработали сообщение 
           }
           break;
@@ -1314,11 +1326,11 @@ int LoadAuthCode(void)
   char *s;
   int c;
   FSTATS stat;
-  char authdata_file[256];
-  getSymbolicPath(authdata_file, "$ballet\\AuthCode");
+  char * authdata_file = getSymbolicPath("$ballet\\AuthCode");
   if (GetFileStats(authdata_file,&stat,&err)==-1) return 0;
   if ((fsize=stat.size)<=0) return 0;
   if ((f=fopen(authdata_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) return 0;
+  mfree(authdata_file);
   buf=malloc(fsize+1);
   buf[fread(f,buf,fsize,&err)]=0;
   fclose(f,&err);

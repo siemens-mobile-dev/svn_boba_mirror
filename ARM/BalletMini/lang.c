@@ -9,8 +9,7 @@ void lgpInitLangPack(void)
 {
   int hFile;
   unsigned int io_error = NULL;
-  char fname[128];
-  getSymbolicPath(fname,"$ballet\\lang.txt");
+  char * lang_file = getSymbolicPath("$ballet\\lang.txt");
   
   for (int i = 0; i < LGP_DATA_NUM; i ++)
     lgpData[i] = NULL;
@@ -19,9 +18,9 @@ void lgpInitLangPack(void)
   char * buf;
   FSTATS fstat;
   
-  if (GetFileStats(fname, &fstat, &io_error) != -1)
+  if (GetFileStats(lang_file, &fstat, &io_error) != -1)
   {
-    if((hFile = fopen(fname, A_ReadOnly + A_BIN, P_READ, &io_error))!=-1)
+    if((hFile = fopen(lang_file, A_ReadOnly + A_BIN, P_READ, &io_error))!=-1)
     {
       if (buf =(char *)malloc(fstat.size + 1))
       {
@@ -75,11 +74,13 @@ void lgpInitLangPack(void)
             strcpy(lgpData[i], "Error! Update lang.txt!");
           }
         }
+        mfree(lang_file);
         return;
       }
       fclose(hFile, &io_error);
     }
   }
+  mfree(lang_file);
   lgpData[LGP_CantOpenFile]=          "Can't open file!";
   lgpData[LGP_CantLoadAuthCode]=      "Can't load AuthCode!";
   lgpData[LGP_HistoryFileFailed]=     "Can't open history.txt!";
@@ -118,6 +119,7 @@ void lgpInitLangPack(void)
   lgpData[LGP_BookmarkHeader]=        "Bookmark...";
   lgpData[LGP_Save]=                  "Save";
   lgpData[LGP_NewBookmark]=           "New bookmark";
+  lgpData[LGP_NewFolder]=             "New folder";
   lgpData[LGP_Absent]=                "Absent";
   lgpData[LGP_OptionsHeader]=         "Options:";
   lgpData[LGP_Edit]=                  "Edit";
@@ -136,6 +138,12 @@ void lgpInitLangPack(void)
   lgpData[LGP_Settings]=              "Settings";
   lgpData[LGP_Exit]=                  "Exit";
   lgpData[LGP_Search]=                "Search";
+  lgpData[LGP_EnterName]=             "Enter name!";
+  lgpData[LGP_EnterURL]=              "Enter URL!";
+  lgpData[LGP_FolderExists]=          "Folder is allready exists!";
+  lgpData[LGP_FileExists]=            "File is allready exists!";
+  lgpData[LGP_FolderNotEmpty]=        "Folder is not empty!";
+  
   lgpData[LGP_LangCode]=              "en";
 }
 

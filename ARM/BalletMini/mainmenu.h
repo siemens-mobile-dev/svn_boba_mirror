@@ -5,6 +5,6 @@
 
 int CreateMainMenu(VIEWDATA *vd);
 int CreateInputUrl();
-int CreateBookmarksMenu(char *dir);
+int CreateBookmarksMenu();
 
 #endif /* _MAIN_MENU_H_ */

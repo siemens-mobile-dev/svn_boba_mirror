@@ -720,15 +720,14 @@ int LoadTemplates()
   char * p;
   char * pp;
   int c;
-  char fname[256];
-  getSymbolicPath(fname, "$ballet\\templates.txt");
+  char * templates_file = getSymbolicPath("$ballet\\templates.txt");
 
   FreeTemplates();
-  if (GetFileStats(fname, &fstat, &io_error) != -1)
+  if (GetFileStats(templates_file, &fstat, &io_error) != -1)
   {
     if (fstat.size > 0)
     {
-      if ((hFile = fopen(fname, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
+      if ((hFile = fopen(templates_file, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
       {
         p = templates_chars = malloc(fstat.size + 1);
         p[fread(hFile, p, fstat.size, &io_error)] = NULL;
@@ -757,6 +756,7 @@ int LoadTemplates()
       }
     }
   }
+  mfree(templates_file);
   return templates_num;
 }
 
@@ -799,17 +799,17 @@ void templates_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   SetMenuItemText(gui, item, ws, cur_item);
 }
 
-int templ_softkeys[]={0,1,2};
-SOFTKEY_DESC templ_sk[]=
+int templates_menu_softkeys[]={0,1,2};
+SOFTKEY_DESC templates_menu_sk[]=
 {
   {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Close"},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB templ_skt=
+SOFTKEYSTAB templates_menu_skt=
 {
-  templ_sk,0
+  templates_menu_sk,0
 };
 
 HEADER_DESC templates_menu_header={0,0,0,0,NULL,(int)"Выбор",LGP_NULL};
@@ -817,8 +817,8 @@ HEADER_DESC templates_menu_header={0,0,0,0,NULL,(int)"Выбор",LGP_NULL};
 MENU_DESC templates_menu_struct=
 {
   8, templates_menu_onkey, templates_menu_ghook, NULL,
-  templ_softkeys,
-  &templ_skt,
+  templates_menu_softkeys,
+  &templates_menu_skt,
   0x10,
   templates_menu_iconhndl,
   NULL,   //Items
@@ -829,6 +829,10 @@ MENU_DESC templates_menu_struct=
 void createTemplatesMenu()
 {
   patch_header(&templates_menu_header);
+  
+  templates_menu_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  templates_menu_sk[1].lgp_id=(int)lgpData[LGP_Back];
+  
   CreateMenu(0, 0, &templates_menu_struct, &templates_menu_header, 0, LoadTemplates(), 0, 0);
 }
 
