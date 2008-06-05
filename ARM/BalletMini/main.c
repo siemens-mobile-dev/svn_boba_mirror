@@ -207,10 +207,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
         for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
         *c=0;
-        //b=ToWeb(b,1);
-        char * url = URL_reencode_escapes(b);
-        pos+=strlen(url);
-        mfree(url);
+        b=ToWeb(b,1);
+        pos+=strlen(b);
         mfree(b);
         FreeWS(ws);
       }
@@ -223,10 +221,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
         for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
-        //b=ToWeb(b,1);
-        char * url = URL_reencode_escapes(b);
-        pos+=strlen(url);
-        mfree(url);
+        b=ToWeb(b,1);
+        pos+=strlen(b);
         mfree(b);
       }
       break;
@@ -334,11 +330,9 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
         for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
         *c=0;
-        //b=ToWeb(b,1);
-        char * url = URL_reencode_escapes(b);
-        memcpy(s+pos, url, strlen(url));
-        pos+=strlen(url);
-        mfree(url);
+        b=ToWeb(b,1);
+        memcpy(s+pos, b, strlen(b));
+        pos+=strlen(b);
         mfree(b);
         FreeWS(ws);
       }
@@ -357,11 +351,9 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
         for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
-        //b=ToWeb(b,1);
-        char * url = URL_reencode_escapes(b);
-        memcpy(s+pos, url, strlen(url));
-        pos+=strlen(url);
-        mfree(url);
+        b=ToWeb(b,1);
+        memcpy(s+pos, b, strlen(b));
+        pos+=strlen(b);
         mfree(b);
       }
       break;
