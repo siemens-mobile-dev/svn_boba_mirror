@@ -143,7 +143,7 @@
 06BC: 00000000 398E3B45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: 00000000 05A02C45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 F5072D44 ; 1B1: void debug_printf(char * fmt,...);
-06C8: 00000000 5D7D1245 ; 1B2: int PlayFile(u16 * path, u16 * fname);
+06C8: 00000000 597D1245 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: 00000000 29FC3E45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 85FC3E45 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: 00000000 D5C94945 ; 1B7: int isKeylocked(void);
@@ -160,7 +160,7 @@
 0710: 00000000 59B14845 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: 00000000 51F13C45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: 00000000 61F13C45 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: 00000000 79B04845 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: 00000000 9DB04845 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: 00000000 A9424945 ; 1C8: int isRightNowBook(BOOK *);
 0724: 00000000 65BB3C45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: 00000000 99F54645 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -245,7 +245,7 @@
 0888: 00000000 1D084645 ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
 ;088C: xxxxxxxx yyyyyyyy ; 223: u16 DISP_DESC_GetSize (DISP_OBJ *);
 0890: 00000000 21084645 ; 224: void DISP_DESC_SetOnCreate (DISP_DESC* , DISP_OBJ_ONCREATE_METHOD);
-0894: 00000000 C5084645 ; 225: DISP_OBJ_ONCREATE_METHOD DISP_OBJ_GetOnCreate (DISP_OBJ *);
+0894: 00000000 A9084645 ; 225: DISP_OBJ_ONCREATE_METHOD DISP_OBJ_GetOnCreate (DISP_OBJ *);
 0898: 00000000 25084645 ; 226: void DISP_DESC_SetOnClose (DISP_DESC* , DISP_OBJ_ONCLOSE_METHOD);
 089C: 00000000 C5084645 ; 227: DISP_OBJ_ONCLOSE_METHOD DISP_OBJ_GetOnClose (DISP_OBJ *);
 08A0: 00000000 29084645 ; 228: void DISP_DESC_SetOnRedraw (DISP_DESC* , DISP_OBJ_ONREDRAW_METHOD);
@@ -344,6 +344,10 @@
 0A30: 00000000 55E40445 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 25BE2145 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 31814945 ; 28E: void Shortcut_Run (u16 * shortcut_name);
+;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
+;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
+;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
+;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 
