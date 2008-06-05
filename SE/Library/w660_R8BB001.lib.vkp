@@ -143,12 +143,14 @@
 06BC: 00000000 D95C3D45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: 00000000 A9E42D45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 99A52C44 ; 1B1: void debug_printf(char * fmt,...);
-06C8: 00000000 21C01345 ; 1B2: int PlayFile(u16 * path, u16 * fname);
+06C8: 00000000 1DC01345 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: 00000000 99C94045 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 F5C94045 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: 00000000 99A74B45 ; 1B7: int isKeylocked(void);
 06E0: 00000000 65970745 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06EC: 00000000 91EE0F45 ; 1BB: void Vibra(int t1, int t2, int t3);
+06F0: 00000000 692BE744 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F4: 00000000 FD2BE744 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 691D3D45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 911C3D45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 954F4445 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
