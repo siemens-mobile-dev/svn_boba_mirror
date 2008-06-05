@@ -817,7 +817,7 @@ int history_menu_onkey(void *gui, GUI_MSG *msg) //history
       goto_url=malloc(strlen(history[i])+3);
       goto_url[0] = '0'; goto_url[1] = '/';      
       strcpy(goto_url+2,history[i]);
-      return (1);
+      return (0xFF);
     }
     return(1);
   }

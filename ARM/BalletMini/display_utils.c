@@ -764,12 +764,16 @@ int templates_menu_onkey(void *gui, GUI_MSG *msg)
 {
   if (msg->keys == 0x3D || msg->keys == 0x18)
   {
-    EDITCONTROL ec;
-    ExtractEditControl(paste_gui, 1, &ec);
-    WSHDR * ws = AllocWS(ec.maxlen);
-    ascii2ws(ws, templates_lines[GetCurMenuItem(gui)]);
-    EDIT_SetTextToEditControl(paste_gui, 1, ws);
-    FreeWS(ws);
+    int i = GetCurMenuItem(gui);
+    if (templates_lines[i])
+    {
+      EDITCONTROL ec;
+      ExtractEditControl(paste_gui, 1, &ec);
+      WSHDR * ws = AllocWS(ec.maxlen);
+      ascii2ws(ws, templates_lines[i]);
+      EDIT_SetTextToEditControl(paste_gui, 1, ws);
+      FreeWS(ws);
+    }
     return (1);
   }
   return (0);
