@@ -100,12 +100,12 @@
 05B0: 00000000 5DCFE344 ; 16C: int Gif2ID(u16 IMAGEHANDLE,u16 * path, u16 * fname,u16 * ID);
 05B4: 00000000 350AE444 ; 16D: int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,char * unk);
 05B8: 00000000 E58FD444 ; 16E: void REQUEST_DATEANDTIME_GET(const int * __zero , DATETIME *dt);
-05BC: 00000000 00000000 ; 16F: void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_level);
+05BC: 00000000 F1F83845 ; 16F: void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_level);
 05C0: 00000000 ADD4F744 ; 170: int GetFreeBytesOnHeap(void);
 05C4: 00000000 D1CF2A45 ; 171: void Hide(void * udata, int zero);
 05C8: 00000000 E1CF2A45 ; 172: void Show(void * udata, int zero);
 05CC: 00000000 75042C45 ; 173: void StartAPP (u16 * appname);
-05D0: 00000000 FD9DD544 ; 174: void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
+05D0: 00000000 61CE3145 ; 174: void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
 05D4: 00000000 45B42745 ; 175: char * manifest_GetParam(char *buf,char *param_name,int unk);
 05D8: 00000000 5D8DE844 ; 176: int lseek(int file,int offset,int mode);
 05DC: 00000000 B7251444 ;8177: int get_VBUFFER(void);
@@ -149,6 +149,8 @@
 06DC: 00000000 C9293945 ; 1B7: int isKeylocked(void);
 06E0: 00000000 FDFFF444 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06EC: 00000000 4D57FD44 ; 1BB: void Vibra(int t1, int t2, int t3);
+06F0: 00000000 C591D444 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F4: 00000000 5992D444 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 958E2A45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 BD8D2A45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 05CB3145 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
