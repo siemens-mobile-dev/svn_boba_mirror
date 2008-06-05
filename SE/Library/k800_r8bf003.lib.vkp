@@ -149,6 +149,8 @@
 6DC: 00000000 29204945 ; 1B7: int isKeylocked(void);
 6E0: 00000000 399F0545 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 6EC: 00000000 99020E45 ; 1BB: void Vibra(int t1, int t2, int t3);
+6F0: 00000000 B164E544 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+6F4: 00000000 4565E544 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 6F8: 00000000 55A73A45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 6FC: 00000000 7DA63A45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 700: 00000000 E9D84145 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -257,11 +259,11 @@
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
 ;08C4: xxxxxxxx yyyyyyyy ; 231: DISP_OBJ_METHOD DISP_OBJ_GetMethod05 (DISP_OBJ *);
 8C8: 00000000 BD5F4545 ; 232: void DISP_DESC_SetMethod06 (DISP_DESC* ,DISP_OBJ_METHOD);
-08CC: 00000000 BD604545 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
+8CC: 00000000 BD604545 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
 8D8: 00000000 C55F4545 ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
-8DC: 00000000 B9804245 ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
+8DC: 00000000 F5604545 ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
 8E0: 00000000 F5604545 ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 ;08E4: xxxxxxxx yyyyyyyy ; 239: DISP_OBJ_METHOD DISP_OBJ_GetMethod09 (DISP_OBJ *);
 ;08E8: xxxxxxxx yyyyyyyy ; 23A: void DISP_DESC_SetMethod0A (DISP_DESC* ,void (*)(void*));
@@ -277,10 +279,10 @@
 910: 00000000 75E64145 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 914: 00000000 EDE64145 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 918: 00000000 E1E64145 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-;091C: xxxxxxxx yyyyyyyy ; 247: void GoMusic(void);
+91C: 00000000 85063245 ; 247: void GoMusic(void);
 920: 00000000 6D030E45 ; 248: void Vibra_Off (int t1);
 928: 00000000 71E21145 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
-92C: 00000000 91E03B45 ; 24B: int GetSilent(void);
+92C: 00000000 6DF70D45 ; 24B: int GetSilent(void);
 930: 00000000 A5CF0D45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 934: 00000000 E5050E45 ; 24D: int GetAudioSettings(int what, char* retvalue);
 938: 00000000 65DB2344 ; 24E: int GetChipID(void);
@@ -336,12 +338,16 @@ A10: 00000000 A1DFF444 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGIST
 A14: 00000000 A06C2E20 ;8285: SURFACE ** get_Surfaces(void);
 A18: 00000000 9539D444 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 A1C: 00000000 21E2E444 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
-;0A20: xxxxxxxx yyyyyyyy ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
-;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
-;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
-;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+A20: 00000000 D1DC4145 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
+A28: 00000000 4D473745 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
+A2C: 00000000 1D030445 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+A30: 00000000 8D560445 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
+A34: 00000000 0D082145 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
+A38: 00000000 11D84845 ; 28E: void Shortcut_Run (u16 * shortcut_name);
+A3C: 00000000 2D1BF944 ; 28F: int mkdir(u16* path);
+A40: 00000000 1922F944 ; 290: int rmdir(u16* path, int zero);
+A44: 00000000 F94FF944 ; 291: int chmod(u16* path, u16* fname, int amode);
+A48: 00000000 E955F944 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 
