@@ -67,7 +67,7 @@
 052C: 00000000 9D7C3745 ; 14B: void AddMSGHook(void * menu,short msg,void (*proc)(BOOK *,void*));
 0530: 00000000 157D3745 ; 14C: void AddCommand(void * menu,int cmd , int StrID);
 0534: 00000000 D17D3745 ; 14D: void SoftKey_SetEnable(void *gui,int msg,int ena);
-0538: 00000000 F57D3745 ; 14E: void SoftKey_AddErrorStr(void *gui,int msg,int StrID);
+0538: 00000000 897D3745 ; 14E: void SoftKey_AddErrorStr(void *gui,int msg,int StrID);
 053C: 00000000 617C3745 ; 14F: void SoftKey_RemoveItem(void *gui,u16 action);
 0540: 00000000 657D3745 ; 150: void SoftKey_SetVisible(void *gui,int action,int visible);
 0544: 00000000 D57F3745 ; 151: void SoftKey_SuppressDefaultAction(void *gui,int action);
