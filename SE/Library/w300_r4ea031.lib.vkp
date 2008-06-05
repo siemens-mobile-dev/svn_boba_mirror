@@ -231,7 +231,7 @@
 0854: FFFFFFFF 99275D45 ; 215: int GetABRecNum(AB_GET_STRUCT *);
 0858: FFFFFFFF 3C094E44 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
 085C: FFFFFFFF 9D6ACE44 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy)
-0860: FFFFFFFF 996ACE44 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy)
+0860: FFFFFFFF 855C1B45 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy)
 0864: FFFFFFFF 45005245 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: FFFFFFFF 54D90D4C ;821A: int * PID_MMI(void);
 0874: FFFFFFFF 79A72845 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
@@ -341,6 +341,10 @@
 ;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 ;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 ;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
+;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
+;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
+;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 

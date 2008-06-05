@@ -149,6 +149,8 @@
 6DC: 00000000 2D3C4645 ; 1B7: int isKeylocked(void);
 6E0: 00000000 E5ED0345 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 6EC: 00000000 51F30B45 ; 1BB: void Vibra(int t1, int t2, int t3);
+6F0: 00000000 F1C0E344 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+6F4: 00000000 85C1E344 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 6F8: 00000000 31B93745 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 6FC: 00000000 59B83745 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 700: 00000000 69F63E45 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);

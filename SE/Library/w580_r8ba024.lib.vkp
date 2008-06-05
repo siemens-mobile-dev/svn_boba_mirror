@@ -123,8 +123,8 @@
 060C: 00000000 98963044 ; 183: int get_ptype(PROCESS pid);
 0610: 00000000 E4953044 ; 184: PROCESS current_process(void);
 0614: 00000000 1C953044 ; 185: void delay(OSTIME timeout);
-;0618: xxxxxxxx yyyyyyyy ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-;061C: xxxxxxxx yyyyyyyy ; 187: void kill_proc(PROCESS pid);
+0618: 00000000 E4963044 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
+061C: 00000000 04973044 ; 187: void kill_proc(PROCESS pid);
 0680: 00000000 49725544 ; 1A0: char* strcpy(char * dest, char * source);
 0684: 00000000 F94FFF44 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 4D50FF44 ; 1A2: void SendMessage(void **signal,int PID);
@@ -149,7 +149,7 @@
 06DC: 00000000 C9293945 ; 1B7: int isKeylocked(void);
 06E0: 00000000 FDFFF444 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06EC: 00000000 4D57FD44 ; 1BB: void Vibra(int t1, int t2, int t3);
-;06F8: xxxxxxxx yyyyyyyy ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
+06F8: 00000000 958E2A45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 BD8D2A45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 05CB3145 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: 00000000 35CD3145 ; 1C1: void SetNumOfMenuItem(void * , int item_count);
@@ -277,7 +277,7 @@
 0910: 00000000 F9D83145 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 71D93145 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 65D93145 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-;091C: xxxxxxxx yyyyyyyy ; 247: void GoMusic(void);
+091C: 00000000 D94B2145 ; 247: void GoMusic(void);
 0920: 00000000 2158FD44 ; 248: void Vibra_Off (int t1);
 0928: 00000000 353F0045 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
 092C: 00000000 194CFD44 ; 24B: int GetSilent(void);
@@ -337,11 +337,15 @@
 0A18: 00000000 D14AC344 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 0A1C: 00000000 290FD444 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 ;0A20: xxxxxxxx yyyyyyyy ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
-;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
-;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
-;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+0A28: 00000000 F1A30F45 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
+0A2C: 00000000 9D45F344 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+0A30: 00000000 D1A7F344 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
+0A34: 00000000 D9850F45 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
+0A38: 00000000 DDD83845 ; 28E: void Shortcut_Run (u16 * shortcut_name);
+0A3C: 00000000 D146E844 ; 28F: int mkdir(u16* path);
+0A40: 00000000 BD4DE844 ; 290: int rmdir(u16* path, int zero);
+0A44: 00000000 9D7BE844 ; 291: int chmod(u16* path, u16* fname, int amode);
+0A48: 00000000 8D81E844 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 
