@@ -81,7 +81,7 @@ void CList_RedrawCList()
       while(resEx)
       {
 
-        Is_Right_Vis_Mode = (resEx->entry_type!=T_GROUP && ClEx->IsVisible==1) || resEx->entry_type==T_GROUP ;
+        Is_Right_Vis_Mode = (resEx->entry_type!=T_GROUP && resEx->entry_type!=T_CONF_ROOT && ClEx->IsVisible==1) || (resEx->entry_type==T_CONF_ROOT || resEx->entry_type==T_GROUP) ;
         if((i>(Active_page-1)*N_cont_disp) && ((Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg) && Is_Right_Vis_Mode))
         {
           if(i==CursorPos)
@@ -138,7 +138,7 @@ void CList_RedrawCList()
           DrawString(out_ws,Roster_getIconWidth(icon_num)+2,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0);
 #endif
 
-          Alternation=(Alternation==1)?0:1; //ad: перещелкиваем чередование
+          Alternation=!Alternation; //ad: перещелкиваем чередование
         }
         if((Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg) && Is_Right_Vis_Mode) i++;
         resEx = resEx->next;
@@ -175,7 +175,8 @@ unsigned int CList_GetNumberOfOnlineUsers()
     ResEx = ClEx->res_list;
     while(ResEx)
     {
-      if(ResEx->status!=PRESENCE_OFFLINE && (ClEx->IsVisible==1 || ResEx->entry_type==T_GROUP))Online++;
+      if(ResEx->status!=PRESENCE_OFFLINE && (ClEx->IsVisible==1 || ResEx->entry_type==T_GROUP || ResEx->entry_type==T_CONF_ROOT))
+        Online++;
       ResEx=ResEx->next;
     }
     ClEx = ClEx->next;
@@ -421,14 +422,7 @@ void CList_ToggleVisibilityForGroup(int GID)
   {
     if(ClEx->group==GID)
     {
-      if(ClEx->IsVisible)
-      {
-        ClEx->IsVisible=0;
-      }
-      else
-      {
-        ClEx->IsVisible=1;
-      }
+      ClEx->IsVisible = !ClEx->IsVisible;
     }
     ClEx = ClEx->next;
   }

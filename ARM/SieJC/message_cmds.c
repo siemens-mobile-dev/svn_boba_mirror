@@ -240,10 +240,10 @@ static int tmpl_menu_keyhook(void *data, GUI_MSG *msg)
 
 static const MENU_DESC tmpl_menu=
 {
-  0,tmpl_menu_keyhook,tmpl_menu_ghook,NULL,
+  8,tmpl_menu_keyhook,tmpl_menu_ghook,NULL,
   tmpl_menusoftkeys,
   &tmpl_menu_skt,
-  8,
+  0x10,
   tmpl_menuitemhandler,
   NULL, //menuitems,
   NULL, //menuprocs,

@@ -1272,6 +1272,33 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
   {
     switch(msg->gbsmsg->submess)
     {
+    case '3': // Сворачивание/разворачивание конференции
+      {
+        LockSched();
+        extern CLIST *cltop;
+        CLIST* ClEx = cltop;
+        CLIST* ActiveContact = NULL;
+        char *gjid=CList_GetActiveContact()->full_name;
+        while(ClEx)
+        {
+          if(strcmp(gjid,ClEx->JID) == 0) 
+          {
+            ActiveContact = ClEx;
+            break;
+          }
+          ClEx = ClEx->next;
+        }
+        UnlockSched();
+        if (ActiveContact)
+        {
+          if(ActiveContact->res_list->entry_type == T_CONF_ROOT)
+          {
+            ActiveContact->IsVisible=!ActiveContact->IsVisible;
+            SMART_REDRAW();
+          }
+        }
+      }
+      break;
     case '5':
       {
         CList_Display_Popup_Info(CList_GetActiveContact());
@@ -1394,17 +1421,13 @@ case '8':
         CList_MoveCursorUp(1);
         break;
       }
-   
-    
       case '9':
       {
         CList_MoveCursorEnd();
         break;
       }
-    
     case '0':
       {
-
         CList_ToggleOfflineDisplay();
         break;
       }
