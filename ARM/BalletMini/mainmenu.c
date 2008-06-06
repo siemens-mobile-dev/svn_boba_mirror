@@ -1098,13 +1098,14 @@ static int input_url_onkey(GUI *data, GUI_MSG *msg)
   if (msg->keys==0xFFF || msg->keys == 0x18)
   {
     EDITCONTROL ec;
-    ExtractEditControl(data, 1, &ec);
-    int new_len = NULL;
-    char * tmp_url = (char *)malloc(ec.maxlen);
-    ws_2utf8(ec.pWS, tmp_url, &new_len, ec.maxlen);
+    ExtractEditControl(data,1,&ec);
     _safe_free(goto_url);
-    goto_url = URL_reencode_escapes(tmp_url);
-    mfree(tmp_url);
+    char * s = goto_url = (char *)malloc(ec.pWS->wsbody[0]+3);
+    *s++='0';
+    *s++='/';
+    for (int i=0; i<ec.pWS->wsbody[0]; i++) *s++=char16to8(ec.pWS->wsbody[i+1]);
+    *s = 0;
+    goto_url = ToWeb(goto_url,0);
     return 0xFF;
   }
   return (0);

@@ -84,13 +84,13 @@ void lgpInitLangPack(void)
   lgpData[LGP_CantOpenFile]=          "Can't open file!";
   lgpData[LGP_CantLoadAuthCode]=      "Can't load AuthCode!";
   lgpData[LGP_HistoryFileFailed]=     "Can't open history.txt!";
-  lgpData[LGP_CfgUpdated]=            "Congif updated";
+  lgpData[LGP_CfgUpdated]=            "Config updated!";
   lgpData[LGP_RefUnderConstruction]=  "Ref \'%c\' under construction!";
   lgpData[LGP_RefEmpty]=              "RF empty!";
   lgpData[LGP_Error]=                 "Error!";
   lgpData[LGP_Stop]=                  "Stop";
-  lgpData[LGP_WaitDNR]=               "Wait DNR ...";
-  lgpData[LGP_IpConnect]=             "Ip connect ...";
+  lgpData[LGP_WaitDNR]=               "Wait DNR...";
+  lgpData[LGP_IpConnect]=             "Ip connect...";
   lgpData[LGP_GetHostByName]=         "Get host by name";
   lgpData[LGP_FaultDNR]=              "DNR fault!";
   lgpData[LGP_OkDNR]=                 "DNR ok!";

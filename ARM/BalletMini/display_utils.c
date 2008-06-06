@@ -832,6 +832,7 @@ void createTemplatesMenu()
   
   templates_menu_sk[0].lgp_id=(int)lgpData[LGP_Select];
   templates_menu_sk[1].lgp_id=(int)lgpData[LGP_Back];
+  templates_menu_header.lgp_id=(int)lgpData[LGP_Templates];
   
   CreateMenu(0, 0, &templates_menu_struct, &templates_menu_header, 0, LoadTemplates(), 0, 0);
 }
