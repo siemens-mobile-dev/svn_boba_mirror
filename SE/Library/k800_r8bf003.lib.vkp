@@ -338,9 +338,9 @@ A10: 00000000 A1DFF444 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGIST
 A14: 00000000 A06C2E20 ;8285: SURFACE ** get_Surfaces(void);
 A18: 00000000 9539D444 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 A1C: 00000000 21E2E444 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
-A20: 00000000 D1DC4145 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-A28: 00000000 4D473745 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-A2C: 00000000 1D030445 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+A20: 00000000 BDDC4145 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
+A28: 00000000 E5252145 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
+A2C: 00000000 FD140445 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 A30: 00000000 8D560445 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 A34: 00000000 0D082145 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 A38: 00000000 11D84845 ; 28E: void Shortcut_Run (u16 * shortcut_name);
