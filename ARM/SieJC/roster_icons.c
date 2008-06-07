@@ -99,8 +99,11 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   strcpy(path_to_pic, PATH_TO_PIC);
 
   // Если это конференция
-  if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg){strcat(path_to_pic, "conference");goto L_DONE;}
-
+  if(resEx->entry_type == T_CONF_ROOT && !resEx->has_unread_msg)
+  {
+    strcat(path_to_pic, ClEx->IsVisible?"conference_on":"conference_off");
+    goto L_DONE;
+  }
   
   //отображаем компосинг только если нет не прочитаных сообщений, и это просто контакт\участник конфы
   if((resEx->compos)&&(!resEx->has_unread_msg)&&((resEx->entry_type == T_NORMAL)||(resEx->entry_type == T_CONF_NODE))) //если ктото чтото набирает...

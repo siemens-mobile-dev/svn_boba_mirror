@@ -89,7 +89,9 @@ void CList_RedrawCList()
             lineColor=CURSOR;
             borderColor=CURSOR_BORDER; //бортик курсора
             ActiveContact = resEx;
-          } else{
+          }
+          else
+          {
             borderColor=lineColor=(Alternation==1)? CONTACT_BG_0 : CONTACT_BG_1;
           }
 
@@ -842,10 +844,8 @@ void nextUnread()
         if (CList_GetActiveContact()!=ResEx)//если мы не стоим на этом контакте
         {
           //нужна еще какая-то проверка, я что-то не учитываю, поэтому иногда ведет себя странно...
-          if(!CList_GetVisibilityForGroup(ClEx->group)) //если группа контакта свернута, надо ее развернуть, иначе плохо будет
-          {
-            CList_ToggleVisibilityForGroup(ClEx->group);
-          }
+          if (!ClEx->IsVisible) //если группа контакта свернута, надо ее развернуть, иначе плохо будет
+            ClEx->IsVisible = 1;
           MoveCursorTo(ResEx);
           break;
         }
