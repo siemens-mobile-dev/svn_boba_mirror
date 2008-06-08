@@ -93,8 +93,55 @@ int Roster_getIconByStatus(char status) //вернет номер картинки по статусу
 }
 #endif
 
+/*
+  Добавить в путь к иконке папку с иконками транспорта.
+  Имя папки берем из жида контакта транспорта (xxxx@icq.jabber.ru -> icq)
+*/
+void GetTransportPath(char * path_to_pic, TRESOURCE* resEx)
+{
+  int len = NULL;
+  char * tmp_path = NULL;
+  unsigned int io_error = NULL;
+  if(resEx->entry_type == T_TRANSPORT) // Сам транспорт
+  {
+    while(resEx->full_name[len] != '.')
+      len ++;
+    tmp_path = malloc(strlen(path_to_pic) + len + 2);
+    strcpy(tmp_path, path_to_pic);
+    strncat(tmp_path, resEx->full_name, len);
+    if (isdir(tmp_path, &io_error)) // Если есть такая папка
+    {
+      strncat(path_to_pic, resEx->full_name, len); // Пишем папку в наш путь
+      goto L_DONE;
+    }
+  }
+  else
+  {
+    char * tmp = strrchr(resEx->full_name, '@') + 1; // Контакт из транспорта
+    if (tmp)
+    {
+      while(tmp[len] != '.')
+        len ++;
+      tmp_path = malloc(strlen(path_to_pic) + len + 2);
+      strcpy(tmp_path, path_to_pic);
+      strncat(tmp_path, tmp, len);
+      if (isdir(tmp_path, &io_error))
+      {
+        strncat(path_to_pic, tmp, len);
+        goto L_DONE;
+      }
+    }
+  }
+  if (tmp_path) mfree(tmp_path);
+  return;
+  
+L_DONE:
+  if (tmp_path) mfree(tmp_path);
+  strcat(path_to_pic, "\\");
+}
+
 #ifdef USE_PNG_EXT
-void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
+void Roster_getIcon(char * path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
 {
   strcpy(path_to_pic, PATH_TO_PIC);
 
@@ -115,6 +162,7 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   // Если это члены конференции и они живы
   if(resEx->entry_type == T_CONF_NODE && !resEx->has_unread_msg && resEx->status<=PRESENCE_INVISIBLE)
   {
+    GetTransportPath(path_to_pic, resEx);
     if(resEx->status==PRESENCE_ONLINE)
     {
       if(resEx->muc_privs.role==ROLE_VISITOR)strcat(path_to_pic, "vis_");
@@ -171,6 +219,7 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   }
   else
   {
+    GetTransportPath(path_to_pic, resEx);
     // Если же непрочитанных сообщений нет
     if(resEx->status<=PRESENCE_ERROR) // Если адекватный статус
     {
@@ -183,7 +232,6 @@ void Roster_getIcon(char* path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   }
 L_DONE:
   strcat(path_to_pic, ".png");
-
 }
 #else
 int Roster_getIcon(CLIST* ClEx, TRESOURCE* resEx) {

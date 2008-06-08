@@ -732,7 +732,6 @@
 #define LG_LARGE_NORMAL_FONT "Large"
 #define LG_LARGE_BOLD_FONT  "Large bold"
 #define LG_UNDERLINING      "Underline messages"
-
 #define LG_KBD_LAYOUT       "Keyboard \"layout\""
 #define LG_KBD1             "Layout 1"
 #define LG_KBD2             "Layout 2"
@@ -794,9 +793,9 @@
 #define LG_VCARD_ADR_EXTADD "ADR_EXTADD"
 #define LG_VCARD_ADR_STREET "ADR_STREET"
 #define LG_VCARD_ADR_LOCALITY   "ADR_LOCALITY"
-#define LG_VCARD_ADR_ADR_REGION "ADR_REGION"
-#define LG_VCARD_ADR_ADR_PCODE  "ADR_PCODE"
-#define LG_VCARD_ADR_ADR_CTRY   "ADR_CTRY"
+#define LG_VCARD_ADR_REGION "Region(state)"
+#define LG_VCARD_ADR_PCODE  "Post code"
+#define LG_VCARD_ADR_CTRY   "Country"
 
 #define LG_VCARD_URL        "Homepage"
 #define LG_VCARD_DESC       "Description"
