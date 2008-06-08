@@ -11,27 +11,9 @@
 #include "revision.h"
 #include "lang.h"
 #include "clist_util.h"
+#include "string_util.h"
 #include "color.h"
-
-//==============================================================================
-// ELKA Compatibility
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-//==============================================================================
+#include "rect_patcher.h"
 
 #define N_ITEMS 14
 
@@ -206,9 +188,8 @@ void menuitemhandler(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
-  extern const char percent_t[];
   ws=AllocMenuWS(data,strlen(menutexts[curitem]));
-  wsprintf(ws,percent_t,menutexts[curitem]);
+  ascii2ws(ws, menutexts[curitem]);
   switch(curitem)
   {
   case 0:

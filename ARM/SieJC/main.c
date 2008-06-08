@@ -22,6 +22,7 @@
 #include "vCard.h"
 #include "siejc_ipc.h"
 #include "color.h"
+#include "rect_patcher.h"
 
 /*
 (c) Kibab
@@ -96,7 +97,6 @@ char elf_path[256];
 
 char Is_Compression_Enabled = 0;
 
-const char percent_t[]="%t";
 const char percent_s[]="%s";
 const char empty_t[]="";
 const char conference_t[]="conference";
@@ -134,10 +134,10 @@ int IB_OFFLINE;*/ // IconBar
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
 GBSTMR Ping_Timer;
-#ifndef NEWSGOLD
+/*#ifndef NEWSGOLD
 GBSTMR redraw_tmr;
-#define Redraw_Time TMR_SECOND*5
-#endif
+#define Redraw_Time TMR_SECOND*1
+#endif*/
 GBSTMR autostatus_tmr;
 
 
@@ -244,36 +244,7 @@ void ElfKiller(void)
   extern void *ELF_BEGIN;
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
-//===============================================================================================
-// ELKA Compatibility
 
-//#pragma inline
-void patch_rect(RECT*rc,int x,int y, int x2, int y2)
-{
-  rc->x=x;
-  rc->y=y;
-  rc->x2=x2;
-  rc->y2=y2;
-}
-
-
-//#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-//#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-//===============================================================================================
 extern int Message_gui_ID;
 int maingui_id;
 int maincsm_id;
@@ -953,10 +924,10 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   // Освобождаем память :)
   mfree(xmlbuf->xml_buffer);
   mfree(xmlbuf);
-#ifdef NEWSGOLD
+//#ifdef NEWSGOLD
   SMART_REDRAW();
-#else
-#endif
+//#else
+//#endif
 }
 
 
@@ -1145,9 +1116,9 @@ void Do_Reconnect()
   ClearSendQ();
   GBS_DelTimer(&Ping_Timer);
   GBS_DelTimer(&TMR_Send_Presence);
-#ifndef NEWSGOLD
+/*#ifndef NEWSGOLD
   GBS_DelTimer(&redraw_tmr);
-#endif
+#endif*/
   GBS_DelTimer(&reconnect_tmr);
   SetVibration(0);
 
@@ -1195,7 +1166,7 @@ void Do_Reconnect()
 }
 
 
-#ifndef NEWSGOLD
+/*#ifndef NEWSGOLD
 volatile char IsRedrawTimerStarted=0;
 
 void SGOLD_RedrawProc()
@@ -1211,14 +1182,14 @@ void SGOLD_RedrawProc_Starter()
   IsRedrawTimerStarted=1;
   SGOLD_RedrawProc();//GBS_StartTimerProc(&redraw_tmr, Redraw_Time, (void*)SGOLD_RedrawProc);
 }
-#endif
+#endif*/
 
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
-#ifndef NEWSGOLD
+/*#ifndef NEWSGOLD
   SGOLD_RedrawProc_Starter();
-#endif
+#endif*/
   //DirectRedrawGUI();
   if(msg->gbsmsg->msg==LONG_PRESS)
   {
@@ -1329,7 +1300,6 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
           }
           else
           {
-            //ActiveContact->IsVisible = ActiveContact->IsVisible==1?0:1;
             CList_ToggleVisibilityForGroup(ActiveContact->group);
             SMART_REDRAW();
           }
@@ -1509,9 +1479,9 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&Ping_Timer);
   GBS_DelTimer(&TMR_Send_Presence);
-#ifndef NEWSGOLD
+/*#ifndef NEWSGOLD
   GBS_DelTimer(&redraw_tmr);
-#endif
+#endif*/
   GBS_DelTimer(&reconnect_tmr);
   GBS_DelTimer(&autostatus_tmr);
   RemoveKeybMsgHook((void *)status_keyhook);  
@@ -1901,7 +1871,7 @@ int status_keyhook(int submsg, int msg)
 if(Is_Autostatus_Enabled)
 {
   if (as==1)
-    if (IsGuiOnTop(maingui_id)||IsGuiOnTop(Message_gui_ID))
+  if (IsGuiOnTop(maingui_id)||IsGuiOnTop(Message_gui_ID))
   {
     extern const char DEFTEX_ONLINE[256];
     extern ONLINEINFO OnlineInfo;
@@ -1911,7 +1881,7 @@ if(Is_Autostatus_Enabled)
     char *msg = malloc(256);
     WSHDR *ws = AllocWS(256);
     int len;
-    wsprintf(ws, percent_t, DEFTEX_ONLINE);
+    ascii2ws(ws, DEFTEX_ONLINE);
     ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
     msg=realloc(msg, len+1);
     msg[len]='\0';

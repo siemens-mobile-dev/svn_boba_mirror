@@ -2,6 +2,7 @@
 #include "color.h"
 #include "string_util.h"
 #include "lang.h"
+#include "rect_patcher.h"
 
 extern const char color_PATH[];
 char * cur_color_name;

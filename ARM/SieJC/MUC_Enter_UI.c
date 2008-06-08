@@ -3,25 +3,7 @@
 #include "string_util.h"
 #include "jabber_util.h"
 #include "lang.h"
-//===============================================================================================
-// ELKA Compatibility
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-//===============================================================================================
+#include "rect_patcher.h"
 
 SOFTKEY_DESC m_menu_sk[]=
 {
@@ -189,7 +171,6 @@ INPUTDIA_DESC med1_desc=
 void Disp_MUC_Enter_Dialog()
 {
   void *ma=malloc_adr();
-  extern const char percent_t[];
   extern const char USERNAME[32];
   extern const char DEFAULT_MUC[64];
   extern const char DEFAULT_MUC_NICK[64];
@@ -202,7 +183,7 @@ void Disp_MUC_Enter_Dialog()
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
   
-  wsprintf(mews,percent_t,LG_NAMEMUC);
+  ascii2ws(mews, LG_NAMEMUC);
   ConstructEditControl(&ec,1,0x40,mews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -210,7 +191,7 @@ void Disp_MUC_Enter_Dialog()
   ConstructEditControl(&ec,3,0x40,mews,128);      //2
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,percent_t,LG_NICK);
+  ascii2ws(mews, LG_NICK);
   ConstructEditControl(&ec,1,0x40,mews,256);
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -221,24 +202,24 @@ void Disp_MUC_Enter_Dialog()
   }
   else
   {
-    wsprintf(mews,percent_t,USERNAME);
+    ascii2ws(mews, USERNAME);
   }
   ConstructEditControl(&ec,3,0x40,mews,80);     // 4
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,percent_t,"Password");
+  ascii2ws(mews, LG_PASSWORD);
   ConstructEditControl(&ec,1,0x40,mews,256);
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,percent_t,"");
+  ascii2ws(mews, "");
   ConstructEditControl(&ec,3,0x40,mews,80);     // 6
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,percent_t,LG_GETMESSAGECOUNT);
+  ascii2ws(mews, LG_GETMESSAGECOUNT);
   ConstructEditControl(&ec,1,0x40,mews,256);      
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews,"%d",DEFAULT_MUC_MSGCOUNT);
+  wsprintf(mews, "%d", DEFAULT_MUC_MSGCOUNT);
   ConstructEditControl(&ec,5,0x40,mews,2);    //8
   AddEditControlToEditQend(eq,&ec,ma);  
   

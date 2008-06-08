@@ -17,7 +17,6 @@
 #include "lang.h"
 
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
-extern const char percent_t[];
 
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];
@@ -552,8 +551,7 @@ void Send_Initial_Presence_Helper()
   char *msg = malloc(256);
   int len;
   extern const char DEFTEX_ONLINE[256];
-  extern const char percent_t[];
-  wsprintf(ws, percent_t, DEFTEX_ONLINE);
+  ascii2ws(ws,  DEFTEX_ONLINE);
   ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
   msg = realloc(msg, len+1);
   msg[len]='\0';
@@ -696,7 +694,7 @@ void _leaveconference(char *conf_jid)
   char *msg = malloc(256);
   WSHDR *ws = AllocWS(256);
   int len;
-  wsprintf(ws, percent_t, DEFTEX_MUCOFFLINE);
+  ascii2ws(ws, DEFTEX_MUCOFFLINE);
   ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
   msg=realloc(msg, len+1);
   msg[len]='\0';

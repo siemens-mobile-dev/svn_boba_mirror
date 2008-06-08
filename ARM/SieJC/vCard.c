@@ -9,6 +9,7 @@
 #include "string_util.h"
 #include "jabber_util.h"
 #include "vCard.h"
+#include "rect_patcher.h"
 
 #define N_VCARD_FIELDS 51
 
@@ -536,7 +537,6 @@ INPUTDIA_DESC vcinfo_desc=
 
 HEADER_DESC vcinfo_hdr={0,0,0,0,NULL,(int)"vCard",LGP_NULL};
 
-extern const char percent_t[];
 extern const char percent_s[];
 
 int Show_vCard(char *jid)
@@ -570,7 +570,7 @@ int Show_vCard(char *jid)
     {
       if (vcard[i])
       {
-        wsprintf(ws_info, percent_t, vcard_names[i]);
+        ascii2ws(ws_info, vcard_names[i]);
         ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
         AddEditControlToEditQend(eq,&ec,ma);
         utf8_2ws(ws_info, vcard[i], MAX_VCARD_LINE_LEN);
@@ -579,13 +579,13 @@ int Show_vCard(char *jid)
       }
     }
 
-    wsprintf(ws_info, percent_t, LG_UPDATE);
+    ascii2ws(ws_info, LG_UPDATE);
     ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
     view_desc->update_pos = AddEditControlToEditQend(eq,&ec,ma);
 
     if (Get_VCard_Value(vcard, "!PHOTO"))
     {
-      wsprintf(ws_info, percent_t, LG_SHOW_AVATAR);
+      ascii2ws(ws_info, LG_SHOW_AVATAR);
       ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
       view_desc->photo_show_pos = AddEditControlToEditQend(eq,&ec,ma);
     }

@@ -9,26 +9,7 @@
 #include "string_util.h"
 #include "conf_loader.h"
 #include "lang.h"
-//===============================================================================================
-// ELKA Compatibility
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-//===============================================================================================
-
+#include "rect_patcher.h"
 
 extern int My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
@@ -207,7 +188,6 @@ INPUTDIA_DESC ed1_desc=
 void Disp_AddSettings_Dialog(char curentstat)
 {
   void *ma=malloc_adr();
-  extern const char percent_t[];
   char textstatus[255]="";
   extern const char DEFTEX_ONLINE[];
   extern const char DEFTEX_CHAT[];
@@ -240,19 +220,19 @@ void Disp_AddSettings_Dialog(char curentstat)
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
 
-  wsprintf(ews,percent_t,LG_ENTERTEXTSTATUS);
+  ascii2ws(ews, LG_ENTERTEXTSTATUS);
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,percent_t,textstatus);
+  ascii2ws(ews, textstatus);
   ConstructEditControl(&ec,3,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,percent_t,LG_PRIORITY);
+  ascii2ws(ews, LG_PRIORITY);
   ConstructEditControl(&ec,1,0x40,ews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"0");
+  wsprintf(ews, "0");
   ConstructEditControl(&ec,5,0x40,ews,2);
   AddEditControlToEditQend(eq,&ec,ma);
 

@@ -493,8 +493,10 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       ResEx->muc_privs.role=  ROLE_NONE;
       ResEx->muc_privs.real_jid =  NULL;
       ResEx->vcard = NULL;
-      if(ClEx->res_list->entry_type!=T_CONF_ROOT){ ResEx->entry_type = T_NORMAL;}
-      else{ResEx->entry_type = T_CONF_NODE;}
+      if(!CList_isMUC(ClEx))
+         ResEx->entry_type = T_NORMAL;
+      else
+        ResEx->entry_type = T_CONF_NODE;
       ResEx->has_unread_msg=0;
       ResEx->total_msg_count=0;
       ResEx->log = NULL;
@@ -843,9 +845,16 @@ void nextUnread()
       {
         if (CList_GetActiveContact()!=ResEx)//если мы не стоим на этом контакте
         {
-          //нужна еще кака€-то проверка, € что-то не учитываю, поэтому иногда ведет себ€ странно...
-          if (!ClEx->IsVisible) //если группа контакта свернута, надо ее развернуть, иначе плохо будет
-            ClEx->IsVisible = 1;
+          if (!CList_isMUC(ClEx))
+          {
+            if (!CList_GetVisibilityForGroup(ClEx->group)) //если группа контакта свернута, надо ее развернуть, иначе плохо будет
+              CList_ToggleVisibilityForGroup(ClEx->group);
+          }
+          else
+          {
+            if (!ClEx->IsVisible) // –азворачиваем конференцию
+              ClEx->IsVisible = 1;
+          }
           MoveCursorTo(ResEx);
           break;
         }
@@ -868,16 +877,14 @@ unsigned int CList_GetUnreadMessages() //количество непрочитанных сообщений
     ResEx = ClEx->res_list;
     while(ResEx)
     {
-      if(ResEx->has_unread_msg) {
+      if(ResEx->has_unread_msg)
         unread+=ResEx->has_unread_msg;
-      }
       ResEx=ResEx->next;
     }
     ClEx = ClEx->next;
   }
   return unread;
 };
-
 
 // —тавим курсор на нужный ресурс
 void MoveCursorTo(TRESOURCE* NewResEx)
@@ -891,41 +898,43 @@ void MoveCursorTo(TRESOURCE* NewResEx)
   int pos=0;
   while(ClEx)
   {
-    while(CList_isGroup(ClEx)&&(ClEx->IsVisible==0)) //ѕерескакиваем через свернутую группу, иначе промахнемс€
+    while((CList_isGroup(ClEx) || CList_isMUC(ClEx)) && ClEx->IsVisible == NULL) //ѕерескакиваем через свернутые группы и конференции, иначе промахнемс€
     {
-
-//      sprintf(qqq,"Skip group %s\r\n", ClEx->name);tx_str(qqq);
-
       char c_group = ClEx->group;
-      while(ClEx->group==c_group)
-        if(ClEx->next!=NULL)
+      if (c_group & 0x80) // ѕропускаем конференции
+      {
+        if (!ClEx->next) return;
+        ClEx = ClEx->next;
+      }
+      else
+      {
+        while(ClEx->group == c_group) // ѕроаускаем группы
         {
+          if (!ClEx->next) return;
           ClEx = ClEx->next;
-        }else return;
-      pos++;
+        }
+      }
+      pos ++;
     }
 
     ResEx = ClEx->res_list;
     while(ResEx)
     {
-      if(ResEx==NewResEx) {
+      if(ResEx==NewResEx)
+      {
         //ставим курсор на клиента
         CursorPos=pos+1;
         //тут надо бы еще проверит на какой мы странице.. а то вдруг не там и курсор проебетс€ :-D
         // сначала считаем на какой странице должен быть курсор
-        if (CursorPos>N_cont_disp) {
+        if (CursorPos>N_cont_disp)
           Active_page = sdiv(N_cont_disp, CursorPos)+1;
-        } else {
+        else
           Active_page=1;
-        }
         REDRAW();
         break;
       }
-      if (Display_Offline) {
+      if (Display_Offline || ResEx->status!=PRESENCE_OFFLINE)
         pos++;
-      } else if (ResEx->status!=PRESENCE_OFFLINE) {
-        pos++;
-      }
       ResEx=ResEx->next;
     }
     ClEx = ClEx->next;
@@ -940,16 +949,20 @@ void CList_MoveCursorUp(int flagi)
   if(CursorPos<=1)
   {
     CursorPos=N_Disp_Contacts;
-    if (N_cont_disp==N_Disp_Contacts) {
+    if (N_cont_disp==N_Disp_Contacts)
       Active_page = 1;
-    } else {
+    else
       Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
-    }
   }
   else
-  {if(flagi){CursorPos=CursorPos-DEF_SKR;}else{CursorPos--;}
+  {
+    if (flagi)
+      CursorPos=CursorPos-DEF_SKR;
+    else
+      CursorPos--;
     
-    if(CursorPos<=(Active_page-1)*N_cont_disp){Active_page--;}
+    if (CursorPos<=(Active_page-1)*N_cont_disp)
+      Active_page--;
   }
   REDRAW();
 };
@@ -957,21 +970,33 @@ void CList_MoveCursorUp(int flagi)
 
 void CList_MoveCursorDown(int flagi)
 {
-  if(!N_Disp_Contacts)return;
-  if(flagi==1){
-    if(CursorPos==(N_Disp_Contacts+1)){CursorPos=1;Active_page=1;}
-    else {CursorPos=CursorPos+DEF_SKR;
-    if(CursorPos>(N_Disp_Contacts+1)){CursorPos=(N_Disp_Contacts+1);Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;}
+  if (!N_Disp_Contacts)
+    return;
+  if(flagi==1)
+  {
+    if (CursorPos==(N_Disp_Contacts+1))
+    {
+      CursorPos=1;
+      Active_page=1;
+    }
+    else
+    {
+      CursorPos=CursorPos+DEF_SKR;
+      if(CursorPos>(N_Disp_Contacts+1))
+      {
+        CursorPos=(N_Disp_Contacts+1);
+        Active_page = sdiv(N_cont_disp, N_Disp_Contacts)+1;
+      }
     }
   }
-  
-
   if(flagi==0)
   {
     CursorPos++;
-  
-  if(CursorPos>N_Disp_Contacts/*+1*/){CursorPos=1;Active_page=1;}
-  
+    if(CursorPos>N_Disp_Contacts/*+1*/)
+    {
+      CursorPos=1;
+      Active_page=1;
+    }
   }
   if(Active_page*N_cont_disp<CursorPos){Active_page++;}
   REDRAW();
@@ -996,6 +1021,13 @@ int CList_isGroup(CLIST *cont)
 {
   if(cont->ResourceCount==0) return 0;
   if(cont->res_list->entry_type==T_GROUP) return 1;
+  return 0;
+}
+
+int CList_isMUC(CLIST *cont)
+{
+  if(cont->ResourceCount==0) return 0;
+  if(cont->res_list->entry_type==T_CONF_ROOT) return 1;
   return 0;
 }
 

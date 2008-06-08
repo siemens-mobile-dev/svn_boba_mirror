@@ -5,25 +5,7 @@
 #include "groups_util.h"
 #include "JID_Enter_UI.h"
 #include "lang.h"
-//===============================================================================================
-// ELKA Compatibility
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-//===============================================================================================
+#include "rect_patcher.h"
 
 typedef struct {
   char jid_ask;
@@ -240,7 +222,6 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   }
   
   void *ma=malloc_adr();
-  extern const char percent_t[];
 
   void *eq;
   EDITCONTROL ec;
@@ -248,7 +229,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   eq=AllocEQueue(ma,mfree_adr());
   
   PrepareEditControl(&ec);
-  wsprintf(jews,percent_t,"JID:");
+  ascii2ws(jews, "JID:");
   ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
@@ -259,7 +240,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   AddEditControlToEditQend(eq,&ec,ma);  
 
   PrepareEditControl(&ec);
-  wsprintf(jews,percent_t,LG_NICK);
+  ascii2ws(jews, LG_NICK);
   ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -269,7 +250,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   AddEditControlToEditQend(eq,&ec,ma);  
   
   PrepareEditControl(&ec);
-  wsprintf(jews,percent_t,LG_JEGROUP);
+  ascii2ws(jews, LG_JEGROUP);
   ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -280,19 +261,19 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
 
   PrepareEditControl(&ec);
   if (!jid_set.jid_add)
-    {
-    wsprintf(jews,percent_t,LG_JEASK);
+  {
+    ascii2ws(jews, LG_JEASK);
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
     AddEditControlToEditQend(eq,&ec,ma);
 
-  PrepareEditControl(&ec);
-  CutWSTR(jews, 0);
-  wsAppendChar(jews, jid_set.jid_ask?CBOX_CHECKED:CBOX_UNCHECKED);
-  ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,jews,jews->wsbody[0]); //8
-    }
+    PrepareEditControl(&ec);
+    CutWSTR(jews, 0);
+    wsAppendChar(jews, jid_set.jid_ask?CBOX_CHECKED:CBOX_UNCHECKED);
+    ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,jews,jews->wsbody[0]); //8
+  }
   else
   {
-    wsprintf(jews,percent_t,LG_JEDELCONTACT);
+    ascii2ws(jews, LG_JEDELCONTACT);
     ConstructEditControl(&ec,1,ECF_APPEND_EOL,jews,256);      
     AddEditControlToEditQend(eq,&ec,ma);
 

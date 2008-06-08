@@ -6,41 +6,13 @@
 #include "JID_Enter_UI.h"
 #include "vCard.h"
 #include "lang.h"
+#include "rect_patcher.h"
 
 char *room_name;
 char *room_jid;
 MUC_ADMIN macmd;
 int reason_pos;
 extern void ConstructReasonDlg(char *name, char *jid, MUC_ADMIN muccmd);
-
-//==============================================================================
-// ELKA Compatibility
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-#pragma inline
-void patch_rect(RECT*rc,int x,int y, int x2, int y2)
-{
-  rc->x=x;
-  rc->y=y;
-  rc->x2=x2;
-  rc->y2=y2;
-}
-//==============================================================================
-
 
 #define MAX_ITEMS 12       // Максимальное количество пунктов меню
 
@@ -434,7 +406,6 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
 {
   //  cmS_ICONS[0]=(int)cmdummy_icon;
   WSHDR *ws;
-  extern const char percent_t[];
   char test_str[48];
   void *item=AllocMenuItem(data);
   strcpy(test_str,"(ошибка)");
@@ -521,7 +492,7 @@ void contact_menu_iconhndl(void *data, int curitem, void *unk)
   }
   //ShowMSG(1,(int)test_str);
   ws=AllocMenuWS(data,strlen(test_str));
-  wsprintf(ws,percent_t,test_str);
+  ascii2ws(ws, test_str);
 
   SetMenuItemIconArray(data,item,cmS_ICONS+Menu_Contents[curitem]);
   SetMenuItemText(data,item,ws,curitem);
@@ -711,7 +682,6 @@ int ma_menu_onkey(void *data, GUI_MSG *msg)
 void ma_menu_iconhndl(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
-  extern const char percent_t[];
   char test_str[48];
   void *item=AllocMenuItem(data);
   strcpy(test_str,"(ошибка)");
@@ -778,7 +748,7 @@ void ma_menu_iconhndl(void *data, int curitem, void *unk)
   }
 
   ws=AllocMenuWS(data,strlen(test_str));
-  wsprintf(ws,percent_t,test_str);
+  ascii2ws(ws, test_str);
 
   SetMenuItemText(data,item,ws,curitem);
 }
@@ -834,7 +804,6 @@ int contc_menu_onkey(void *data, GUI_MSG *msg)
 void contc_menu_iconhndl(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
-  extern const char percent_t[];
   char test_str[48];
   void *item=AllocMenuItem(data);
   strcpy(test_str,"(ошибка)");
@@ -866,7 +835,7 @@ void contc_menu_iconhndl(void *data, int curitem, void *unk)
   }
 
   ws=AllocMenuWS(data,strlen(test_str));
-  wsprintf(ws,percent_t,test_str);
+  ascii2ws(ws, test_str);
   SetMenuItemText(data,item,ws,curitem);
 }
 

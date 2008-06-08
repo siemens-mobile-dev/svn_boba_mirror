@@ -11,6 +11,7 @@
 #include "../inc/pnglist.h"
 #include "smiles.h"
 #include "color.h"
+#include "rect_patcher.h"
 
 #define MSG_START_X 1    //X-координата начала рисования строки сообщения
 
@@ -29,24 +30,6 @@ TRESOURCE* Resource_Ex = NULL;
 
 int Message_gui_ID;
 int edmessage_id;
-
-#pragma inline
-void patch_header(HEADER_DESC* head)
-{
-  head->rc.x=0;
-  head->rc.y=YDISP;
-  head->rc.x2=ScreenW()-1;
-  head->rc.y2=HeaderH()+YDISP;
-}
-#pragma inline
-void patch_input(INPUTDIA_DESC* inp)
-{
-  inp->rc.x=0;
-  inp->rc.y=HeaderH()+1+YDISP;
-  inp->rc.x2=ScreenW()-1;
-  inp->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-
 
 WSHDR* ws_eddata = NULL;
 int Terminate=0;
@@ -816,16 +799,6 @@ const void * const mgui_methods[11]={
   (void *)mGUI_method9,
   0
 };
-////////////////////////////////////////////////////////////////////////////////
-#pragma inline
-void patch_rect(RECT*rc,int x,int y, int x2, int y2)
-{
-  rc->x=x;
-  rc->y=y;
-  rc->x2=x2;
-  rc->y2=y2;
-}
-
 
 const RECT mCanvas={0,0,0,0};
 

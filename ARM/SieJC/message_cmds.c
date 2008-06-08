@@ -5,6 +5,7 @@
 #include "lang.h"
 #include "smiles.h"
 #include "../inc/pnglist.h"
+#include "rect_patcher.h"
 
 //=================================== Команды ===========================================
 int Templates_Menu_ID;
@@ -203,10 +204,8 @@ void tmpl_menuitemhandler(void *data, int curitem, void *unk)
 {
   WSHDR *ws;
   void *item=AllocMenuItem(data);
-  extern const char percent_t[];
   ws=AllocMenuWS(data,strlen(commands_lines[curitem]));
-  if (Mode == 3) wsprintf(ws,percent_t,commands_lines[curitem]);
-  else ascii2ws(ws,commands_lines[curitem]);
+  ascii2ws(ws, commands_lines[curitem]);
   SetMenuItemText(data, item, ws, curitem);
 }
 
@@ -262,25 +261,62 @@ void DispTemplatesMenu()
 }
 
 //================================== Меню выбора ===============================
-#ifdef NEWSGOLD
-#define SEL_MANU_ITEMS_NUM 5
-#else
-#define SEL_MANU_ITEMS_NUM 4
-#endif
+#define SEL_MENU_ITEMS_NUM 5
 
-HEADER_DESC sel_menuhdr={0,0,131,21,NULL,(int)LG_SELECT2,LGP_NULL};
-
-int sel_menusoftkeys[]={0,1,2};
-
-static const char * const sel_menutexts[SEL_MANU_ITEMS_NUM]=
+void select_smile(GUI * data)
 {
-  LG_SMILE,
-  LG_COMMANDS,
-  LG_MSGTEMPLATE,
-  LG_CONTRESOURCE
-#ifdef NEWSGOLD
-  , LG_CLOSEDLG  
-#endif
+  Mode = 0;
+  DispTemplatesMenu();
+  GeneralFunc_flag1(Select_Menu_ID, 1);
+}
+
+void select_command(GUI * data)
+{
+  Mode = 1;
+  DispTemplatesMenu();
+  GeneralFunc_flag1(Select_Menu_ID, 1);
+}
+
+void select_template(GUI * data)
+{
+  Mode = 2;
+  DispTemplatesMenu();
+  GeneralFunc_flag1(Select_Menu_ID, 1);
+}
+
+void select_nick(GUI * data)
+{
+  Mode = 3;
+  DispTemplatesMenu();
+  GeneralFunc_flag1(Select_Menu_ID, 1);
+}
+
+void select_close(GUI * data)
+{
+  GeneralFunc_flag1(edmessage_id, 1);
+  GeneralFunc_flag1(Select_Menu_ID, 1);
+}
+
+HEADER_DESC sel_menu_header={0,0,131,21,NULL,(int)LG_SELECT2,LGP_NULL};
+
+int sel_menu_softkeys[]={0,1,2};
+
+MENUITEM_DESC sel_menu_items[SEL_MENU_ITEMS_NUM]=
+{
+  {NULL, (int)LG_SMILE,         LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, (int)LG_COMMANDS,      LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, (int)LG_MSGTEMPLATE,   LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, (int)LG_CONTRESOURCE,  LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+  {NULL, (int)LG_CLOSEDLG,      LGP_NULL, NULL, NULL, MENU_FLAG3, MENU_FLAG2},
+};
+
+const MENUPROCS_DESC sel_menu_procs[SEL_MENU_ITEMS_NUM]=
+{
+  select_smile,
+  select_command,
+  select_template,
+  select_nick,
+  select_close
 };
 
 SOFTKEY_DESC sel_menu_sk[]=
@@ -295,16 +331,6 @@ SOFTKEYSTAB sel_menu_skt=
   tmpl_menu_sk,3
 };
 
-void sel_menuitemhandler(void *data, int curitem, void *unk)
-{
-  WSHDR *ws;
-  void *item=AllocMenuItem(data);
-  extern const char percent_t[];
-  ws=AllocMenuWS(data,strlen(sel_menutexts[curitem]));
-  wsprintf(ws,percent_t,sel_menutexts[curitem]);
-  SetMenuItemText(data, item, ws, curitem);
-}
-
 void sel_menu_ghook(void *data, int cmd)
 {
   if (cmd==0x0A)
@@ -314,44 +340,42 @@ void sel_menu_ghook(void *data, int cmd)
 }
 
 void AddSmile(GUI *data);
-static int sel_menu_keyhook(void *data, GUI_MSG *msg)
-{
-  if ((msg->keys==0x18)||(msg->keys==0x3D))
-  {
-    Mode = GetCurMenuItem(data);
-    #ifdef NEWSGOLD
-      if (Mode==4)//Закрыть нах
-      {
-        GeneralFunc_flag1(edmessage_id, 1);
-        return(1);
-      }
-    #endif    
-    
-    //if (Mode==0) AddSmile(data); //Диалог выбора смайлегов
-      //else
-        DispTemplatesMenu();    
-      
-    GeneralFunc_flag1(Select_Menu_ID,1);
-  }
-  return(0);
-}
 
-static const MENU_DESC sel_menu=
+MENU_DESC sel_menu_struct=
 {
-  0,sel_menu_keyhook,sel_menu_ghook,NULL,
-  sel_menusoftkeys,
+  8, NULL, sel_menu_ghook, NULL,
+  sel_menu_softkeys,
   &sel_menu_skt,
-  0x10,
-  sel_menuitemhandler,
-  NULL, //menuitems,
-  NULL, //menuprocs,
-  SEL_MANU_ITEMS_NUM
+  0x11,
+  NULL,
+  sel_menu_items, //menuitems,
+  sel_menu_procs, //menuprocs,
+  SEL_MENU_ITEMS_NUM
 };
 
 void DispSelectMenu()
 {
-  patch_header(&sel_menuhdr);
-  Select_Menu_ID = CreateMenu(0,0,&sel_menu,&sel_menuhdr,0,SEL_MANU_ITEMS_NUM,0,0);
+  FSTATS fstat;
+  unsigned int io_error = NULL;
+  int to_remove[SEL_MENU_ITEMS_NUM + 1];
+  int n = NULL;
+  
+  if (GetFileStats(SMILE_FILE, &fstat, &io_error) == -1)
+    to_remove[++n] = 0; // Не показываем пункт "Смайлы"
+  if (GetFileStats(COMMANDS_PATH, &fstat, &io_error) == -1)
+    to_remove[++n] = 1; // Не показываем пункт "Комманды"
+  if (GetFileStats(MESSAGES_PATH, &fstat, &io_error) == -1)
+    to_remove[++n] = 2; // Не показываем пункт "Шаблоны"
+  
+#ifndef NEWSGOLD
+  to_remove[++n] = 4; // Не показываем пункт "Закрыть" для сголд
+#endif
+  
+  to_remove[0] = n;
+  if (n == SEL_MENU_ITEMS_NUM) return;
+  
+  patch_header(&sel_menu_header);
+  Select_Menu_ID = CreateMenu(0, 0, &sel_menu_struct, &sel_menu_header, 0, SEL_MENU_ITEMS_NUM, 0, to_remove);
 }
 
 //================================== Смайлеги ==================================

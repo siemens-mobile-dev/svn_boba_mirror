@@ -96,6 +96,9 @@
 
 // Проверить, является ли контакт псевдоконтактом группы
   int CList_isGroup(CLIST *cont);
+  
+// Проверить, является ли контакт корнем конференции
+  int CList_isMUC(CLIST *cont);
 
 // Показать информацию о ресурсе во всплывающем окне
   void CList_Display_Popup_Info(TRESOURCE* ResEx);
