@@ -1284,11 +1284,11 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         char *gjid=CList_GetActiveContact()->full_name;
         while(ClEx)
         {
-          if(strstr(gjid,ClEx->JID)==gjid) 
-              {
-                        ActiveContact = ClEx;
-                        break;
-              }
+          if(stristr(gjid,ClEx->JID)==gjid) 
+          {
+            ActiveContact = ClEx;
+            break;
+          }
           ClEx = ClEx->next;
         }
         UnlockSched();
