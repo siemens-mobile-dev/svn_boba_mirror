@@ -170,12 +170,12 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
     ExtractEditControl(gui, 1, &ec);
     if(ec.pWS->wsbody[0])
     {
-      WSHDR * ws = AllocWS(ec.maxlen);
+      WSHDR * ws = AllocWS(MAX_MSG_LEN);
       wstrcpy(ws, ec.pWS);
       ExtractAnswer(ws);
       int res_len;
-      char * body = malloc(ws->wsbody[0] * 2 + 1);
-      ws_2utf8(ws, body, &res_len, ws->wsbody[0] * 2);
+      char * body = malloc(MAX_MSG_LEN);
+      ws_2utf8(ws, body, &res_len, MAX_MSG_LEN);
 
       body = realloc(body, res_len + 1);
       body[res_len] = '\0';
@@ -421,12 +421,10 @@ void mGUI_onRedraw(GUI *data)
   Calc_Pages_Data();
   // Заголовок окна
   DrawRectangle(0,SCR_START,ScreenW()-1,SCR_START+FontSize*2+1,0,
-                   0,
-                   color(MESSAGEWIN_TITLE_BGCOLOR));
+                   0, color(MESSAGEWIN_TITLE_BGCOLOR));
 
   DrawRectangle(0,SCR_START+FontSize+2,ScreenW()-1,ScreenH()-1,0,
-                   0,
-                   color(MESSAGEWIN_BGCOLOR));
+                   0, color(MESSAGEWIN_BGCOLOR));
 
   // Делаем типо название окошка... :)
   WSHDR* ws_title = AllocWS(256);

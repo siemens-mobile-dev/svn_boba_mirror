@@ -5,6 +5,7 @@
 #include "rect_patcher.h"
 #include "select_smile.h"
 #include "string_util.h"
+#include "color.h"
 
 #define MAX_ICON_IN_ROW 32
 typedef struct
@@ -59,18 +60,7 @@ void DrwImg(IMGHDR *img, int x, int y)
 }
 
 void PasteCharEditControl(GUI * ed_gui, int wchar)
-{/*
-  WSHDR *ed_ws;
-  EDITCONTROL ec;
-  int pos;
-  ExtractEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,&ec);
-  ed_ws=AllocWS(ec.pWS->wsbody[0]+1);
-  wstrcpy(ed_ws,ec.pWS);
-  pos=EDIT_GetCursorPos(ed_struct->ed_chatgui);
-  wsInsertChar(ed_ws,wchar,pos);
-  EDIT_SetTextToEditControl(ed_struct->ed_chatgui,ed_struct->ed_answer,ed_ws);
-  EDIT_SetCursorPos(ed_struct->ed_chatgui,pos+1);
-  FreeWS(ed_ws);*/
+{
   int pos = EDIT_GetCursorPos(ed_gui);
   EDITCONTROL ec;
   ExtractEditControl(ed_gui, 1, &ec);
@@ -108,8 +98,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
         if (i==data->cur_pos_y && k==data->cur_pos_x)
         {
           DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,
-                        GetPaletteAdrByColorIndex(3),
-                        GetPaletteAdrByColorIndex(3));
+                        color(CURSOR), color(CURSOR_BORDER));
         }
         DrwImg(img,x,y2);
       }
@@ -126,7 +115,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
     if (sm)
     {
       ascii2ws(data->ws,sm->lines->text);
-      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0, color(CLIST_F_COLOR_0), GetPaletteAdrByColorIndex(23));
     }
   }
   return (res);  
@@ -136,9 +125,9 @@ static void method0(SMILE_GUI *data)
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
-  DrawRectangle(0,YDISP,scr_w,scr_h,0,
-                GetPaletteAdrByColorIndex(0),
-                GetPaletteAdrByColorIndex(0));
+  DrawRectangle(0,YDISP,scr_w,scr_h,0, 
+                color(MAINBG_CONNECTED),
+                color(MAINBG_CONNECTED));
   RenderPage(data,1);
 }
 
