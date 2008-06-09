@@ -6,7 +6,7 @@
 #include "smiles.h"
 #include "../inc/pnglist.h"
 #include "rect_patcher.h"
-
+#include "select_smile.h"
 //=================================== Команды ===========================================
 int Templates_Menu_ID;
 int Select_Menu_ID;
@@ -130,7 +130,6 @@ HEADER_DESC tmpl_menuhdr={0,0,131,21,NULL,(int)clm_hdr_text,LGP_NULL};
 
 int tmpl_menusoftkeys[]={0,1,2};
 extern int edmessage_id;
-extern WSHDR* ws_eddata;
 
 void SetCmdToEditMessage(char *command)
 {
@@ -140,17 +139,20 @@ void SetCmdToEditMessage(char *command)
   ExtractEditControl(data,1,&ec);
   int pos=EDIT_GetCursorPos(data);
   WSHDR *ws_me = AllocWS(ec.pWS->wsbody[0]+strlen(command));
-  //utf8_2ws(ws_me, command, strlen(command));
 
   switch (Mode)
   {
     case 1:
-      ascii2ws(ws_me,command);
-      wstrcpy(ws_eddata, ws_me);
-      wstrcat(ws_eddata,ec.pWS);
-      EDIT_SetTextToEditControl(data, 1, ws_eddata);
-      EDIT_SetCursorPos(data,pos + strlen(command));
-    break;
+      {
+        ascii2ws(ws_me, command);
+        WSHDR * ws = AllocWS(ws_me->wsbody[0] + ec.pWS->wsbody[0] + 2);
+        wstrcpy(ws, ws_me);
+        wstrcat(ws, ec.pWS);
+        EDIT_SetTextToEditControl(data, 1, ws);
+        EDIT_SetCursorPos(data, pos + strlen(command));
+        FreeWS(ws);
+      }
+      break;
    
     case 0:
     case 2:
@@ -171,15 +173,17 @@ void SetCmdToEditMessage(char *command)
    
     case 3:
       {
-      ascii2ws(ws_me,command);
-      if (pos==1)
-      {
-      pos = pos+2;
-      wsprintf(ws_eddata, "%w: %w",ws_me, ec.pWS);
-      }
-      else wsprintf(ws_eddata, "%w%w",ec.pWS, ws_me);
-      EDIT_SetTextToEditControl(data, 1, ws_eddata);
-      EDIT_SetCursorPos(data,pos + strlen(command));
+        WSHDR * ws = AllocWS(ws_me->wsbody[0] + ec.pWS->wsbody[0] + 2);
+        ascii2ws(ws_me,command);
+        if (pos==1)
+        {
+          pos = pos+2;
+          wsprintf(ws, "%w: %w",ws_me, ec.pWS);
+        }
+        else wsprintf(ws, "%w%w",ec.pWS, ws_me);
+        EDIT_SetTextToEditControl(data, 1, ws);
+        EDIT_SetCursorPos(data, pos + strlen(command));
+        FreeWS(ws);
       }
     break;    
   } 
@@ -266,7 +270,9 @@ void DispTemplatesMenu()
 void select_smile(GUI * data)
 {
   Mode = 0;
-  DispTemplatesMenu();
+  //DispTemplatesMenu();
+  void * ed_gui = FindGUIbyId(edmessage_id, NULL);
+  CreateSmileSelectGUI(ed_gui);
   GeneralFunc_flag1(Select_Menu_ID, 1);
 }
 
@@ -376,140 +382,4 @@ void DispSelectMenu()
   
   patch_header(&sel_menu_header);
   Select_Menu_ID = CreateMenu(0, 0, &sel_menu_struct, &sel_menu_header, 0, SEL_MENU_ITEMS_NUM, 0, to_remove);
-}
-
-//================================== Смайлеги ==================================
-extern S_SMILES *s_top;
-extern DYNPNGICONLIST *SmilesImgList;
-
-void as_locret(void){}
-
-int as_onkey(GUI *data,GUI_MSG *msg)
-{
-  void *edmessage=FindGUIbyId(edmessage_id,NULL);
-  
-  if ((msg->gbsmsg->msg==KEY_DOWN)||(msg->gbsmsg->msg==LONG_PRESS))
-  {
-    switch(msg->gbsmsg->submess)
-    {
-    case GREEN_BUTTON:
-    case ENTER_BUTTON:
-      msg->keys=0xFFF;
-    }
-  }
-  if (msg->keys==0xFFF)
-  {
-    int uni_smile;
-    WSHDR *ed_ws;
-    EDITCONTROL ec;
-    int pos;
-    pos=EDIT_GetCursorPos(data);
-    EDIT_ExtractFocusedControl(data,&ec);
-    uni_smile=ec.pWS->wsbody[pos];
-    
-    pos=EDIT_GetCursorPos(edmessage);
-    ExtractEditControl(edmessage,1,&ec);
-    ed_ws=AllocWS(ec.pWS->wsbody[0]+3);
-    wstrcpy(ed_ws,ec.pWS);     
-    
-    wsInsertChar(ed_ws,' ',pos++);
-    wsInsertChar(ed_ws,uni_smile,pos++);
-    wsInsertChar(ed_ws,' ',pos++);
-    
-    EDIT_SetTextToEditControl(edmessage,1,ed_ws);
-    EDIT_SetCursorPos(edmessage,pos);
-    FreeWS(ed_ws);
-    return (1);
-  }
-  return(0);
-}
-
-void as_ghook(GUI *data, int cmd)
-{
-  static SOFTKEY_DESC ask={0x0FFF,0x0000,(int)LG_SELECT};
-  PNGTOP_DESC *pltop=PNG_TOP();
-  if (cmd==9)
-  {
-    pltop->dyn_pltop=NULL;
-  }
-  if (cmd == 0x0A)
-  {
-    pltop->dyn_pltop=SmilesImgList;
-    DisableIDLETMR();
-  }
-  if (cmd == 7)
-  {
-    EDITCONTROL ec;
-    int pos;
-    
-    SetSoftKey(data,&ask,SET_SOFT_KEY_N);
-    EDIT_ExtractFocusedControl(data,&ec);
-    pos=EDIT_GetCursorPos(data);
-    EDIT_SetTextInvert(data,pos,1);
-  }
-  if (cmd==0x0C)
-  {
-    EDIT_SetCursorPos(data,1);
-  }
-}
-
-HEADER_DESC as_hdr={0,0,NULL,NULL,NULL,(int)LG_SELSMILE,LGP_NULL};
-
-INPUTDIA_DESC as_desc=
-{
-  1,
-  as_onkey,
-  as_ghook,
-  (void *)as_locret,
-  0,
-  &tmpl_menu_skt,
-  {0,NULL,NULL,NULL},
-  4,
-  100,
-  101,
-  2,
-  //  0x00000001 - Выровнять по правому краю
-  //  0x00000002 - Выровнять по центру
-  //  0x00000004 - Инверсия знакомест
-  //  0x00000008 - UnderLine
-  //  0x00000020 - Не переносить слова
-  //  0x00000200 - bold
-  0,
-  //  0x00000002 - ReadOnly
-  //  0x00000004 - Не двигается курсор
-  //  0x40000000 - Поменять местами софт-кнопки
-  0x40000000
-};
-
-void AddSmile(GUI *data)
-{
-  //EDCHAT_STRUCT *ed_struct=MenuGetUserPointer(data);
-  void *edmessage=FindGUIbyId(edmessage_id,NULL);
-  S_SMILES *smiles,*st;
-  WSHDR *ws1;
-  int n;
-  
-  st=smiles=(S_SMILES *)&s_top;
-  n=0;
-  while((st=st->next)) n++;
-  if (!n) return;
-  ws1=AllocWS(n);
-  
-  st=smiles;
-  while((st=st->next)) wsAppendChar(ws1,st->uni_smile);
-  
-  void *ma=malloc_adr();
-  void *eq;
-  EDITCONTROL ec;
-  
-  PrepareEditControl(&ec);
-  eq=AllocEQueue(ma,mfree_adr());
-  
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,0x40,ws1,ws1->wsbody[0]);
-  AddEditControlToEditQend(eq,&ec,ma);
-  patch_header(&as_hdr);
-  patch_input(&as_desc);
-  CreateInputTextDialog(&as_desc,&as_hdr,eq,1,edmessage);
-  FreeWS(ws1);
-  GeneralFuncF1(1);
 }

@@ -1,3 +1,8 @@
+#ifndef _SMILES_H_
+#define _SMILES_H_
+
+#include "../inc/pnglist.h"
+
 #pragma pack(1)
 typedef struct
 {
@@ -23,6 +28,13 @@ void ProcessNextSmile(void);
 S_SMILES *FindSmileById(int n);
 S_SMILES *FindSmileByUni(int wchar);
 
+extern S_SMILES *s_top;
+extern DYNPNGICONLIST *SmilesImgList;
+
+extern int smiles_max;
+extern int smiles_loaded;
+
+#endif
 
 
 

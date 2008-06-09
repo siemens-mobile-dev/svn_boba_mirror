@@ -160,7 +160,7 @@ __root const CFG_HDR cfghdr22={CFG_STR_UTF8,LG_PATHKNOWF,0,63};
 __root const char KNOW_FEATURES_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\\known_features.txt";
 
 __root const CFG_HDR cfghdr23={CFG_STR_UTF8,LG_PATHSMILECFG,0,63};
-__root const char SMILE_FILE[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Templates\\smiles.txt";
+__root const char SMILE_FILE[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles.cfg";
 
 __root const CFG_HDR cfghdr233={CFG_STR_UTF8,LG_PATHSMILEDIR,0,63};
 __root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles";

@@ -1,3 +1,6 @@
+#ifndef _PNG_LIST_H_
+#define _PNG_LIST_H_
+
 typedef struct
 {
   void *next;
@@ -27,3 +30,5 @@ typedef struct
 #endif
 
 #define PNG_1 0xFF
+
+#endif

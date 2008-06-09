@@ -1,5 +1,4 @@
 #include "../inc/swilib.h"
-#include "../inc/pnglist.h"
 #include "siejc_ipc.h"
 #include "smiles.h"
 
@@ -7,7 +6,8 @@ S_SMILES *s_top=0;
 
 DYNPNGICONLIST *SmilesImgList;
 
-volatile int total_smiles;
+int smiles_max;
+int smiles_loaded;
 
 extern const char SMILE_FILE[];
 extern const char SMILE_PATH[];
@@ -50,7 +50,8 @@ void FreeSmiles(void)
   DYNPNGICONLIST *d;
   DYNPNGICONLIST *nd;
   LockSched();
-  total_smiles=0;
+  smiles_loaded = 0;
+  smiles_max = 0;
   s_smile=(S_SMILES *)s_top;
   s_top=0;
   s_bot=0;
@@ -87,6 +88,38 @@ void FreeSmiles(void)
   mfree(s_buf);
 }
 
+void CheckSmiles(void)
+{
+  int f;
+  unsigned int err;
+  int fsize;
+  char *buf, *p_buf;
+  FSTATS stat;
+
+  if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
+    return;
+
+  if ((fsize=stat.size)<=0)
+    return;
+
+  if ((f=fopen(SMILE_FILE,A_ReadOnly+A_BIN,P_READ,&err))==-1)
+    return;
+
+  buf=p_buf=malloc(fsize+1);
+  buf[fread(f,buf,fsize,&err)]=0;
+  fclose(f,&err);
+  
+  f = smiles_max;
+  for(buf=p_buf;*buf; buf++)
+    if(*buf == ':')
+    {
+      buf++;
+      while(*buf && *buf != 0x0D) buf++;
+      smiles_max++;
+    }
+  mfree(p_buf);
+}
+
 void InitSmiles(void)
 {
   int f;
@@ -96,7 +129,8 @@ void InitSmiles(void)
   FSTATS stat;
 
   FreeSmiles();
-
+  CheckSmiles();
+  
   n_pic=FIRST_UCS2_BITMAP;
   if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
     return;
@@ -110,7 +144,7 @@ void InitSmiles(void)
   buf=s_buf=p_buf=malloc(fsize+1);
   buf[fread(f,buf,fsize,&err)]=0;
   fclose(f,&err);
-  //f=fopen("4:\\smiles.cfg",A_ReadWrite+A_BIN+A_Create+A_Append,P_READ+P_WRITE,&err);
+
   gipc.name_to=ipc_my_name;
   gipc.name_from=ipc_my_name;
   gipc.data=0;
@@ -147,8 +181,6 @@ void ProcessNextSmile(void)
     c=p-buf;
     if (c>(127-strlen(fn))) break;
     strncpy(fn+strlen(fn),buf,c);
-//    snprintf(logmsg,255,"Process file %s...",fn);
-//    REDRAW();
     buf=p;
     dp=malloc(sizeof(DYNPNGICONLIST));
     zeromem(dp,sizeof(DYNPNGICONLIST));
@@ -204,10 +236,8 @@ void ProcessNextSmile(void)
       }
       buf+=i;
     }
-    total_smiles++;
+    smiles_loaded++;
   }
-  //fclose(f,&err);
-  total_smiles=0;
   p_buf=NULL;
   mfree(s_buf);
   s_buf=NULL;

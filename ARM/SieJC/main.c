@@ -82,7 +82,6 @@ const char OS[] = "SGOLD_ELF-Platform";
 #define SEND_TIMER
 #endif
 
-extern volatile int total_smiles;
 //IPC
 const char ipc_my_name[32]=IPC_SIEJC_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
@@ -1014,10 +1013,16 @@ void onRedraw(MAIN_GUI *data)
 
   if(Jabber_state!=JS_ONLINE)
   {
-    wsprintf(data->ws1,"%t", logmsg);
-    if (total_smiles)
+    wsprintf(data->ws1, "%t", logmsg);
+    if(smiles_max != smiles_loaded)
     {
-      wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
+      DrawRectangle(0, scr_h - 7, scr_w-1, scr_h - 1,0,
+                    GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(0));
+      int pos_status = ((scr_w-1) * smiles_loaded) / smiles_max;
+      DrawRectangle(1, scr_h - 6, pos_status, scr_h - 2, 0,
+                    GetPaletteAdrByColorIndex(14), GetPaletteAdrByColorIndex(14));
+      
+      wstrcatprintf(data->ws1,"\nLoading smiles...");
     }
     DrawString(data->ws1,1,SCR_START+3+GetFontYSIZE(font_width)+2,scr_w-4,scr_h-4-16,font_width,0,color(font_color),0);
   }
@@ -1536,9 +1541,9 @@ void CheckDoubleRun(void)
   }
   else
   {
-  //SUBPROC((void *)InitSmiles);
-  SUBPROC((void *)create_connect);
-  GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
+    SUBPROC((void *)InitSmiles);
+    SUBPROC((void *)create_connect);
+    GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);
   }
 }
 

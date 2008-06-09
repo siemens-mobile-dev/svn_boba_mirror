@@ -5190,13 +5190,19 @@
     <name>$PROJ_DIR$\roster_icons.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\select_smile.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\select_smile.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\siejc_ipc.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\smiles.h</name>
+    <name>$PROJ_DIR$\smiles.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\smiles_loader.c</name>
+    <name>$PROJ_DIR$\smiles.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\status_change.c</name>
