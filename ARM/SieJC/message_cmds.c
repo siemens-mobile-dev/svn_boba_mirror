@@ -145,7 +145,7 @@ void SetCmdToEditMessage(char *command)
     case 1:
       {
         ascii2ws(ws_me, command);
-        WSHDR * ws = AllocWS(ws_me->wsbody[0] + ec.pWS->wsbody[0] + 2);
+        WSHDR * ws = AllocWS(512);
         wstrcpy(ws, ws_me);
         wstrcat(ws, ec.pWS);
         EDIT_SetTextToEditControl(data, 1, ws);
@@ -156,7 +156,6 @@ void SetCmdToEditMessage(char *command)
    
     case 0:
     case 2:
-    //case 3:
       {
 	int c;
 	char *p=command;
@@ -173,7 +172,7 @@ void SetCmdToEditMessage(char *command)
    
     case 3:
       {
-        WSHDR * ws = AllocWS(ws_me->wsbody[0] + ec.pWS->wsbody[0] + 2);
+        WSHDR * ws = AllocWS(512);
         ascii2ws(ws_me,command);
         if (pos==1)
         {
