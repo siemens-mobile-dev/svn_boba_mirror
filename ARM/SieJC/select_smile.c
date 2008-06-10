@@ -97,17 +97,17 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
       {
         if (i==data->cur_pos_y && k==data->cur_pos_x)
         {
-          DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,
+          DrawRectangle(x, y2, x+img->w-1, y2+img->h-1, 0,
                         color(CURSOR), color(CURSOR_BORDER));
         }
-        DrwImg(img,x,y2);
+        DrwImg(img,  x,y2);
       }
-      x+=img->w;
-      if (img->h>h_max) h_max=img->h;
+      x += img->w + 1;
+      if ((img->h + 1) > h_max) h_max = img->h + 1;
     }
-    y2+=h_max;
-    if (y2>=scr_h) break;
-    res=i;
+    y2 += h_max + 1;
+    if (y2 >= scr_h) break;
+    res = i;
   }
   if (is_draw)
   {
@@ -144,10 +144,10 @@ static void method1(SMILE_GUI *data,void *(*malloc_adr)(int))
     img=FindSmileIMGHDR(pic);
     if (img)
     {
-      row_w+=img->w;
+      row_w+=img->w + 1;
       if (row_w>(ScreenW()-1) || cur_img->icon_in_row>=MAX_ICON_IN_ROW)
       {
-        row_w=img->w;
+        row_w = img->w + 1;
         cur_img=data->icons=realloc(data->icons,(data->total_lines+1)*sizeof(IMGH_SMILE));
         cur_img+=data->total_lines;
         zeromem(cur_img,sizeof(IMGH_SMILE));
