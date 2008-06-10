@@ -7,7 +7,10 @@
 #include "string_util.h"
 #include "color.h"
 
+extern int Is_Smiles_Enabled;
+
 #define MAX_ICON_IN_ROW 32
+
 typedef struct
 {
   int icon_in_row;
@@ -59,7 +62,7 @@ void DrwImg(IMGHDR *img, int x, int y)
   DrawObject(&drwobj);
 }
 
-void PasteCharEditControl(GUI * ed_gui, int wchar)
+void PasteSmileToEditControl(GUI * ed_gui, int wchar)
 {
   int pos = EDIT_GetCursorPos(ed_gui);
   EDITCONTROL ec;
@@ -71,6 +74,24 @@ void PasteCharEditControl(GUI * ed_gui, int wchar)
   wsInsertChar(ed_ws, wchar, pos ++);
   wsInsertChar(ed_ws, ' ', pos ++);
     
+  EDIT_SetTextToEditControl(ed_gui, 1, ed_ws);
+  EDIT_SetCursorPos(ed_gui, pos);
+  FreeWS(ed_ws);
+}
+
+void PasteTextToEditControl(GUI * ed_gui, char * text)
+{
+  int c;
+  char * p = text;
+  int pos = EDIT_GetCursorPos(ed_gui);
+  EDITCONTROL ec;
+  ExtractEditControl(ed_gui, 1, &ec);
+  WSHDR * ed_ws = AllocWS(ec.pWS->wsbody[0] + strlen(text) + 2);
+  wstrcpy(ed_ws, ec.pWS);
+  wsInsertChar(ed_ws, ' ', pos ++);
+  while(c = * p ++)
+    wsInsertChar(ed_ws, char8to16(c), pos ++);
+  wsInsertChar(ed_ws, ' ', pos ++);
   EDIT_SetTextToEditControl(ed_gui, 1, ed_ws);
   EDIT_SetCursorPos(ed_gui, pos);
   FreeWS(ed_ws);
@@ -188,6 +209,7 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
   int i;
   int m=msg->gbsmsg->msg;
   int key=msg->gbsmsg->submess;
+  S_SMILES *sm;
   if ((m==KEY_DOWN)||(m==LONG_PRESS))
   {
     if (key==GREEN_BUTTON || (key>='0' && key<='9'))
@@ -205,7 +227,11 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
       }
       if (c>=0 && n<data->total_lines)
       {
-        PasteCharEditControl(data->ed_gui,data->icons[n].w_chars[c].wchar);
+        if (Is_Smiles_Enabled)
+          PasteSmileToEditControl(data->ed_gui, data->icons[n].w_chars[c].wchar);
+        else
+          if (sm=FindSmileByUni(data->icons[n].w_chars[c].wchar))
+            PasteTextToEditControl(data->ed_gui, sm->lines->text);
         return (1);
       }
     }
@@ -257,7 +283,11 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
         
       case LEFT_SOFT:
       case ENTER_BUTTON:
-        PasteCharEditControl(data->ed_gui, data->icons[data->cur_pos_y].w_chars[data->cur_pos_x].wchar);
+        if (Is_Smiles_Enabled)
+          PasteSmileToEditControl(data->ed_gui, data->icons[data->cur_pos_y].w_chars[data->cur_pos_x].wchar);
+        else
+          if (sm=FindSmileByUni(data->icons[data->cur_pos_y].w_chars[data->cur_pos_x].wchar))
+            PasteTextToEditControl(data->ed_gui, sm->lines->text);
         return (1);
       
     #ifndef NEWSGOLD

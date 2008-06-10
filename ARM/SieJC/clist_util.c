@@ -177,7 +177,7 @@ unsigned int CList_GetNumberOfOnlineUsers()
     ResEx = ClEx->res_list;
     while(ResEx)
     {
-      if(ResEx->status!=PRESENCE_OFFLINE && (ClEx->IsVisible==1 || ResEx->entry_type==T_GROUP || ResEx->entry_type==T_CONF_ROOT))
+      if((ResEx->status!=PRESENCE_OFFLINE || ResEx->has_unread_msg) && (ClEx->IsVisible==1 || ResEx->entry_type==T_GROUP || ResEx->entry_type==T_CONF_ROOT))
         Online++;
       ResEx=ResEx->next;
     }
@@ -200,16 +200,19 @@ unsigned int CList_GetNumberOfUsers_Visible()
 
   while(ClEx)
   {
-    while((ClEx)&&CList_isGroup(ClEx)&&(ClEx->IsVisible==0)) //Перескакиваем через свернутую группу, иначе промахнемся
+    while(ClEx && (CList_isGroup(ClEx) || CList_isMUC(ClEx)) && ClEx->IsVisible == NULL) //Перескакиваем через свернутые группы и конференции, иначе промахнемся
     {
       char c_group = ClEx->group;
-      while((ClEx)&&ClEx->group==c_group)
+      if (c_group & 0x80) // Пропускаем конференции
         ClEx = ClEx->next;
+      else
+        while(ClEx && ClEx->group == c_group) // Пропускаем группы
+          ClEx = ClEx->next;
       N_Cont++;
     }
 
     if (!ClEx) return N_Cont;
-
+    
     ResEx = ClEx->res_list;
     while(ResEx)
     {
@@ -525,7 +528,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
       }
       NContacts++;
       ResEx->next=NULL;
-      CursorPos = 1;
+      //CursorPos = 1;
       Active_page=1;
       UnlockSched();
       CList_AddSystemMessage(ResEx->full_name, status, ResEx->status_msg);
@@ -533,7 +536,7 @@ TRESOURCE* CList_AddResourceWithPresence(char* jid, char status, char* status_ms
     }
     ClEx = ClEx->next;
   }
-  CursorPos = 1;
+  //CursorPos = 1;
   Active_page=1;
   UnlockSched();
   return NULL;
@@ -908,7 +911,7 @@ void MoveCursorTo(TRESOURCE* NewResEx)
       }
       else
       {
-        while(ClEx->group == c_group) // Проаускаем группы
+        while(ClEx->group == c_group) // Пропускаем группы
         {
           if (!ClEx->next) return;
           ClEx = ClEx->next;

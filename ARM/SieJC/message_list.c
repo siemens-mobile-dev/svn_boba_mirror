@@ -172,7 +172,8 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
     {
       WSHDR * ws = AllocWS(MAX_MSG_LEN);
       wstrcpy(ws, ec.pWS);
-      SmilesToChars(ws);
+      if (Is_Smiles_Enabled && SmilesImgList)
+        SmilesToChars(ws);
       int res_len;
       char * body = malloc(MAX_MSG_LEN);
       ws_2utf8(ws, body, &res_len, MAX_MSG_LEN);
@@ -321,10 +322,14 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   WSHDR * ws = AllocWS(MAX_MSG_LEN);
   if(init_text)
   {
-    char * tmp_str = convUTF8_to_ANSI_STR(init_text);
-    CharsToSmiles(ws, tmp_str);
-    mfree(tmp_str);
-    //utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
+    if (Is_Smiles_Enabled && SmilesImgList)
+    {
+      char * tmp_str = convUTF8_to_ANSI_STR(init_text);
+      CharsToSmiles(ws, tmp_str);
+      mfree(tmp_str);
+    }
+    else
+      utf8_2ws(ws, init_text, MAX_MSG_LEN);
   }
   EDITCONTROL ec;
   void *ma=malloc_adr();
