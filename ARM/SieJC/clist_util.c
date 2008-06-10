@@ -668,7 +668,7 @@ CLIST* CList_AddContact(char* jid,
 
   NContacts++;
   UnlockSched();
-  CursorPos = 1;
+  //CursorPos = 1;
   Active_page=1;
   return Cont_Ex;
 }

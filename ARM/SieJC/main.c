@@ -38,20 +38,16 @@ int MESSAGEWIN_FONT;
 FSTATS fs;
 
 extern const char color_PATH[];
-extern const char colorshem_PATH_1[];
-extern const char colorshem_PATH_2[];
-extern const char colorshem_PATH_3[];
-extern const char colorshem_PATH_4[];
-extern const char colorshem_PATH_5[];
+
 extern const int AUTOSTATUS_ENABLED;
 extern const unsigned int AUTOSTATUS_TIME;
-int color_num;
-extern const char COLOR_CURSOR []; 
+extern const char DEFTEX_AUTOSTATUS[];
 
 extern const int ROSTER_FONT;
 extern const int MESSAGES_FONT;
 
 // ============= Учетные данные =============
+
 extern const char JABBER_HOST[];
 extern const unsigned int JABBER_PORT;
 extern const char USERNAME[];
@@ -91,6 +87,7 @@ int Is_Sounds_Enabled;
 int Is_Vibra_Enabled;
 int Is_Autostatus_Enabled;
 int Is_Playerstatus_Enabled;
+int Is_Smiles_Enabled;
 char *exename2;
 char elf_path[256];
 
@@ -133,16 +130,7 @@ int IB_OFFLINE;*/ // IconBar
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
 GBSTMR Ping_Timer;
-/*#ifndef NEWSGOLD
-GBSTMR redraw_tmr;
-#define Redraw_Time TMR_SECOND*1
-#endif*/
 GBSTMR autostatus_tmr;
-
-
-
-
-
 
 /*
 {
@@ -214,8 +202,6 @@ GBSTMR autostatus_tmr;
   }
   AddIconToIconBar(icon_num, num);
 }*/ // IconBar
-
-
 
 int writefile(char *color_PATH, char *colorshem_PATH, char *buf)
 {
@@ -303,9 +289,6 @@ void Play(const char *fname)
     }
   }
 }
-
-
-
 
 //===================================================================
 
@@ -761,12 +744,6 @@ void Analyze_Stream_Features(XMLNode *nodeEx)
   SMART_REDRAW();
 }
 
-//
-
-//
-
-//
-//
 /*
 Рекурсивная функция декодирования XML-потока
 */
@@ -923,10 +900,7 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
   // Освобождаем память :)
   mfree(xmlbuf->xml_buffer);
   mfree(xmlbuf);
-//#ifdef NEWSGOLD
   SMART_REDRAW();
-//#else
-//#endif
 }
 
 
@@ -936,17 +910,6 @@ void Process_XML_Packet(IPC_BUFFER* xmlbuf)
 RECT ConnPopupRC;
 RECT ConnLogRC;
 RECT ConnHeaderRC;
-
-void InitConnPopup()
-{
-
-}
-
-void DrawConnect()
-{
-
-}
-
 
 void onRedraw(MAIN_GUI *data)
 {
@@ -1024,11 +987,9 @@ void onRedraw(MAIN_GUI *data)
       
       wstrcatprintf(data->ws1,"\nLoading smiles...");
     }
+    
     DrawString(data->ws1,1,SCR_START+3+GetFontYSIZE(font_width)+2,scr_w-4,scr_h-4-16,font_width,0,color(font_color),0);
   }
-
-  //DrawString(data->ws2,3,13,scr_w-4,scr_h-4-16,SMALL_FONT,0,GetPaletteAdrByColorIndex(font_color),GetPaletteAdrByColorIndex(23));
-
 #ifdef USE_PNG_EXT
 
   if(connect_state<2)
@@ -1170,78 +1131,48 @@ void Do_Reconnect()
   SUBPROC((void *)create_connect);
 }
 
-
-/*#ifndef NEWSGOLD
-volatile char IsRedrawTimerStarted=0;
-
-void SGOLD_RedrawProc()
-{
-  DirectRedrawGUI();
-  extern void SGOLD_RedrawProc(void);
-  GBS_StartTimerProc(&redraw_tmr, Redraw_Time, SGOLD_RedrawProc);
-}
-
-void SGOLD_RedrawProc_Starter()
-{
-  if(IsRedrawTimerStarted)return;
-  IsRedrawTimerStarted=1;
-  SGOLD_RedrawProc();//GBS_StartTimerProc(&redraw_tmr, Redraw_Time, (void*)SGOLD_RedrawProc);
-}
-#endif*/
-
 int onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
-  if(Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
-/*#ifndef NEWSGOLD
-  SGOLD_RedrawProc_Starter();
-#endif*/
-  //DirectRedrawGUI();
+  if(Quit_Required)
+    return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+
   if(msg->gbsmsg->msg==LONG_PRESS)
   {
     switch(msg->gbsmsg->submess)
     {
     case DOWN_BUTTON:
     case '8':
-      {
-        CList_MoveCursorDown(0);
-        break;
-      }
+      CList_MoveCursorDown(0);
+      break;
+
     case RIGHT_BUTTON:
-      {
-        CList_MoveCursorDown(1);
-        break;
-      }
+      CList_MoveCursorDown(1);
+      break;
+
     case UP_BUTTON:
     case '2':
-      {
-        CList_MoveCursorUp(0);
-        break;
-      }
-      case LEFT_BUTTON:
-      {
-        CList_MoveCursorUp(1);
-        break;
-      }
+      CList_MoveCursorUp(0);
+      break;
+      
+    case LEFT_BUTTON:
+      CList_MoveCursorUp(1);
+      break;
+
     case '#':
-      {
-        gipc.name_to=ipc_xtask_name;
-        gipc.name_from=ipc_my_name;
-        gipc.data=0;
-        GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
-        if (IsUnlocked())
-        {
-          KbdLock();
-        }
-        return(-1);
-      }
+      gipc.name_to=ipc_xtask_name;
+      gipc.name_from=ipc_my_name;
+      gipc.data=0;
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
+      if (IsUnlocked())
+        KbdLock();
+      return(-1);
+
     case '*':
-      {
-        gipc.name_to=ipc_xtask_name;
-        gipc.name_from=ipc_my_name;
-        gipc.data=0;
-        GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
-        Is_Vibra_Enabled=!Is_Vibra_Enabled;
-      }
+      gipc.name_to=ipc_xtask_name;
+      gipc.name_from=ipc_my_name;
+      gipc.data=0;
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XTASK_IDLE,&gipc);
+      Is_Vibra_Enabled=!Is_Vibra_Enabled;
     }
   }
   if (msg->gbsmsg->msg==KEY_DOWN)
@@ -1275,11 +1206,11 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         }
       }
       break;
+      
     case '5':
-      {
-        CList_Display_Popup_Info(CList_GetActiveContact());
-        break;
-      }
+      CList_Display_Popup_Info(CList_GetActiveContact());
+      break;
+
     case ENTER_BUTTON:
       {
         LockSched();
@@ -1309,117 +1240,78 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
             SMART_REDRAW();
           }
         }
-        break;
       }
+      break;
 
     case LEFT_SOFT:
-      {
-        MM_Show();
-        break;
-      }
+      MM_Show();
+      break;
+
 #ifndef NEWSGOLD
     case RED_BUTTON:
 #endif
     case RIGHT_SOFT:
-      {
-        DisplayQuitQuery();
-        break;
-      }
+      DisplayQuitQuery();
+      break;
     
     case GREEN_BUTTON:
-      if ((connect_state==0)&&(sock==-1))
-      {
+      if (connect_state == 0 && sock == -1)
         Do_Reconnect();
-      }
-
-      if(connect_state==2 && Jabber_state==JS_ONLINE && CList_GetActiveContact()->entry_type!=T_GROUP)
-      {
+      if(connect_state==2 && Jabber_state==JS_ONLINE && CList_GetActiveContact()->entry_type != T_GROUP)
         Init_Message(CList_GetActiveContact(), NULL);
-      }
-
       break;
 
     case '1':
-      {
-        CList_MoveCursorHome();
-        break;
-      }
+      CList_MoveCursorHome();
+      break;
 
-   case '4':
-      {
-        if(Jabber_state==JS_ONLINE) Enter_SiepatchDB();
-        break;
-      }
-   
+    case '4':
+      if(Jabber_state == JS_ONLINE)
+        Enter_SiepatchDB();
+      break;
+      
+    case '6':
+      Disp_State();
+      break;
 
-   case '6':
-      {
-        Disp_State();
-        break;
-      }
-
-    case '7':
-      { 
-        /*
-        char xz[] = "Test";
-        char xz_jid[] = "test@j.ru";
-        char xz_jid_full[] = "test@j.ru/QQQ";
-        char xz_status_msg[]="Fucking with GPRS";
-        CList_AddContact(xz,xz_jid, SUB_BOTH, 0, 0);
-        CList_AddResourceWithPresence(xz_jid_full, PRESENCE_CHAT, xz_status_msg);
-        */
-       // SUBPROC((void *)end_socket);
-        break;
-      }
+    case '7': // НЕ ЗАНИМАТЬ!!!
+      break;
 
     case DOWN_BUTTON:
-  
-      
-case '8':
-      {
-        CList_MoveCursorDown(0);
-        break;
-      }
+    case '8':
+      CList_MoveCursorDown(0);
+      break;
+
     case RIGHT_BUTTON:
-      {
-        CList_MoveCursorDown(1);
-        break;
-      }
+      CList_MoveCursorDown(1);
+      break;
+
     case UP_BUTTON:
     case '2':
-      {
-        CList_MoveCursorUp(0);
-        break;
-      }
-      case LEFT_BUTTON:
-      {
-        CList_MoveCursorUp(1);
-        break;
-      }
-      case '9':
-      {
-        CList_MoveCursorEnd();
-        break;
-      }
+      CList_MoveCursorUp(0);
+      break;
+
+    case LEFT_BUTTON:
+      CList_MoveCursorUp(1);
+      break;
+
+    case '9':
+      CList_MoveCursorEnd();
+      break;
+
     case '0':
-      {
-        CList_ToggleOfflineDisplay();
-        break;
-      }
+      CList_ToggleOfflineDisplay();
+      break;
 
     case '*':
-      {
-        Is_Vibra_Enabled=!(Is_Vibra_Enabled);
-        break;
-      }
+      Is_Vibra_Enabled=!(Is_Vibra_Enabled);
+      break;
+
     case '#': //решеткой бегаем между непрочитанными
-      {
-        nextUnread();
-        break;
-      }
+      nextUnread();
+      break;
     }
   }
-  //  onRedraw(data);
   return(0);
 }
 
@@ -1484,9 +1376,6 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&Ping_Timer);
   GBS_DelTimer(&TMR_Send_Presence);
-/*#ifndef NEWSGOLD
-  GBS_DelTimer(&redraw_tmr);
-#endif*/
   GBS_DelTimer(&reconnect_tmr);
   GBS_DelTimer(&autostatus_tmr);
   RemoveKeybMsgHook((void *)status_keyhook);  
@@ -1557,7 +1446,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       IPC_REQ *ipc;
       if ((ipc=(IPC_REQ*)msg->data0))
       {
-        if (stricmp(ipc->name_to,ipc_my_name)==0)//strcmp_nocase
+        if (stricmp(ipc->name_to,ipc_my_name)==0)
         {
           switch (msg->submess)
           {
@@ -1645,10 +1534,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
               DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
               DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
 #endif
-            //#ifdef ELKA
-            //#else
-            //}
-            //#endif
             }
           }
         }
@@ -1752,65 +1637,64 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   int addr;
 }ICONBAR_H;*/ // IconBar
 
-  const int minus11=-11;
+const int minus11=-11;
 
-  unsigned short maincsm_name_body[140];
+unsigned short maincsm_name_body[140];
 
-  struct
+struct
+{
+  CSM_DESC maincsm;
+  WSHDR maincsm_name;
+  //ICONBAR_H iconbar_handler; // IconBar
+}MAINCSM =
+{
   {
-    CSM_DESC maincsm;
-    WSHDR maincsm_name;
-    //ICONBAR_H iconbar_handler; // IconBar
-  }MAINCSM =
-  {
-    {
-      maincsm_onmessage,
-      maincsm_oncreate,
+    maincsm_onmessage,
+    maincsm_oncreate,
 #ifdef NEWSGOLD
-0,
-0,
-0,
-0,
+    0,
+    0,
+    0,
+    0,
 #endif
-maincsm_onclose,
-sizeof(MAIN_CSM),
-1,
-&minus11
-    },
-    {
-      maincsm_name_body,
-      NAMECSM_MAGIC1,
-      NAMECSM_MAGIC2,
-      0x0,
-      139
-    }/*,
-    {
-      "IconBar"
-    }*/ // IconBar
-  };
-
-  void UpdateCSMname(void)
+    maincsm_onclose,
+    sizeof(MAIN_CSM),
+    1,
+    &minus11
+  },
   {
-//    WSHDR *ws=AllocWS(256);
-    wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SieJC: %s@%s",USERNAME, JABBER_SERVER);
-//    FreeWS(ws);
-  }
-
-  // Проверка, что платформа для компиляции выбрана правильно
-
-  unsigned short IsGoodPlatform()
+    maincsm_name_body,
+    NAMECSM_MAGIC1,
+    NAMECSM_MAGIC2,
+    0x0,
+    139
+  }/*,
   {
+    "IconBar"
+  }*/ // IconBar
+};
+
+void UpdateCSMname(void)
+{
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"SieJC: %s@%s",USERNAME, JABBER_SERVER);
+}
+
+// Проверка, что платформа для компиляции выбрана правильно
+
+unsigned short IsGoodPlatform()
+{
 #ifdef NEWSGOLD
-    return  isnewSGold();
+  return  isnewSGold();
 #else
-    return  !isnewSGold();
+  return  !isnewSGold();
 #endif
-  }
+}
 
-  Check_Settings_Cleverness()
-  {
-    if(!USE_SASL && USE_ZLIB)ShowMSG(0,(int)LG_ZLIBNOSASL);
-  }
+void Check_Settings_Cleverness()
+{
+  if(!USE_SASL && USE_ZLIB)
+    ShowMSG(0,(int)LG_ZLIBNOSASL);
+}
 
 void ReadDefSettings(char *elfpath)
 {
@@ -1829,11 +1713,12 @@ void ReadDefSettings(char *elfpath)
     Is_Vibra_Enabled=def_set.vibra_status;
     Is_Sounds_Enabled=def_set.sound_status;
     Display_Offline=def_set.off_contacts;
+    Is_Autostatus_Enabled=def_set.auto_status;
+    Is_Playerstatus_Enabled=def_set.player_status;
+    Is_Smiles_Enabled=def_set.smiles_status;
     if (cur_color_name) mfree(cur_color_name);
     cur_color_name = (char *)malloc(32);
     strcpy(cur_color_name, def_set.color_name);
-    Is_Autostatus_Enabled=def_set.auto_status;
-    Is_Playerstatus_Enabled=def_set.player_status;;
   }
   else
   {
@@ -1842,6 +1727,7 @@ void ReadDefSettings(char *elfpath)
     Display_Offline=0;
     Is_Autostatus_Enabled=0;
     Is_Playerstatus_Enabled=0;
+    Is_Smiles_Enabled=0;
     if (cur_color_name) mfree(cur_color_name);
     cur_color_name = (char *)malloc(32);
     strcpy(cur_color_name, "default");
@@ -1866,6 +1752,7 @@ void WriteDefSettings(char *elfpath)
     strcpy(def_set.color_name, cur_color_name);
     def_set.auto_status=Is_Autostatus_Enabled;
     def_set.player_status=Is_Playerstatus_Enabled;
+    def_set.smiles_status=Is_Smiles_Enabled;
     fwrite(f, &def_set, sizeof(DEF_SETTINGS), &err);
     fclose(f, &err);
   }
@@ -1873,35 +1760,37 @@ void WriteDefSettings(char *elfpath)
 
 int status_keyhook(int submsg, int msg)
 {
-if(Is_Autostatus_Enabled)
-{
-  if (as==1)
-  if (IsGuiOnTop(maingui_id)||IsGuiOnTop(Message_gui_ID))
+  if(Is_Autostatus_Enabled)
   {
-    extern const char DEFTEX_ONLINE[256];
-    extern ONLINEINFO OnlineInfo;
-    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority=OnlineInfo.priority;
-    pr_info->status=0;
-    char *msg = malloc(256);
-    WSHDR *ws = AllocWS(256);
-    int len;
-    ascii2ws(ws, DEFTEX_ONLINE);
-    ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
-    msg=realloc(msg, len+1);
-    msg[len]='\0';
-    pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
-    SUBPROC((void *)Send_Presence,pr_info);
-    as = 0;
-    FreeWS(ws);
-    mfree(msg);
+    if (as==1)
+    {
+      if (IsGuiOnTop(maingui_id)||IsGuiOnTop(Message_gui_ID))
+      {
+        extern const char DEFTEX_ONLINE[256];
+        extern ONLINEINFO OnlineInfo;
+        PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+        pr_info->priority=OnlineInfo.priority;
+        pr_info->status=0;
+        char *msg = malloc(256);
+        WSHDR *ws = AllocWS(256);
+        int len;
+        ascii2ws(ws, DEFTEX_ONLINE);
+        ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+        msg=realloc(msg, len+1);
+        msg[len]='\0';
+        pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
+        SUBPROC((void *)Send_Presence,pr_info);
+        as = 0;
+        FreeWS(ws);
+        mfree(msg);
+      }
+    }
+    else
+    {
+      GBS_DelTimer(&autostatus_tmr);
+    }
+    GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
   }
-  else
-  {
-    GBS_DelTimer(&autostatus_tmr);
-  }
-  GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
-}
   return KEYHOOK_NEXT;
 }
 
@@ -1911,29 +1800,30 @@ void AutoStatus(void)
   if(Is_Autostatus_Enabled)
   {
     if (My_Presence == PRESENCE_ONLINE)
-  {
-    TDate date;
-    TTime time;
-    GetDateTime(&date, &time);
-    extern ONLINEINFO OnlineInfo;      
-    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority=OnlineInfo.priority;
-    pr_info->status=3;
-    char *msg = malloc(256);
-    WSHDR *ws = AllocWS(256);
-    int len;
-    wsprintf(ws, "%t %02d.%02d.%04d %t %d:%02d", "Автостатус \"Недоступен\" сработал", date.day, date.month, date.year, "в", time.hour, time.min);
-    ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
-    msg=realloc(msg, len+1);
-    msg[len]='\0';
-    pr_info->message =msg == NULL ? NULL : Mask_Special_Syms(msg);
-    Send_Presence(pr_info);
-    as = 1;
-    GBS_DelTimer(&autostatus_tmr);
-    FreeWS(ws);    
-    mfree(msg);
+    {
+      TDate date;
+      TTime time;
+      GetDateTime(&date, &time);
+      extern ONLINEINFO OnlineInfo;      
+      PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+      pr_info->priority=OnlineInfo.priority;
+      pr_info->status=3;
+      char *msg = malloc(256);
+      WSHDR *ws = AllocWS(256);
+      int len;
+      wsprintf(ws, "%t %02d.%02d.%04d %d:%02d", DEFTEX_AUTOSTATUS, date.day, date.month, date.year, time.hour, time.min);
+      ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+      msg=realloc(msg, len+1);
+      msg[len]='\0';
+      pr_info->message =msg == NULL ? NULL : Mask_Special_Syms(msg);
+      Send_Presence(pr_info);
+      as = 1;
+      GBS_DelTimer(&autostatus_tmr);
+      FreeWS(ws);    
+      mfree(msg);
+    }
   }
-  }else GBS_DelTimer(&autostatus_tmr);
+  else GBS_DelTimer(&autostatus_tmr);
 }
 
 /*void LoadIconSet(const char *fname)

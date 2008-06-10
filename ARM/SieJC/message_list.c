@@ -20,7 +20,7 @@ int flag1;
 extern const unsigned int DEF_SKR;
 extern int MESSAGEWIN_FONT;
 extern const int pod_mess;
-
+extern int Is_Smiles_Enabled;
 extern const int KBD_LAYOUT;
 
 char MsgList_Quit_Required = 0;
@@ -31,7 +31,7 @@ TRESOURCE* Resource_Ex = NULL;
 int Message_gui_ID;
 int edmessage_id;
 
-void ParseAnswer(WSHDR *ws, const char *s)
+void CharsToSmiles(WSHDR *ws, const char *s)
 {
   S_SMILES *t;
   S_SMILES *t_root=(S_SMILES *)s_top;
@@ -80,7 +80,7 @@ void ParseAnswer(WSHDR *ws, const char *s)
   }*/
 }
 
-void ExtractAnswer(WSHDR *ws)
+void SmilesToChars(WSHDR *ws)
 {
   S_SMILES *t;
   int c;
@@ -172,7 +172,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
     {
       WSHDR * ws = AllocWS(MAX_MSG_LEN);
       wstrcpy(ws, ec.pWS);
-      ExtractAnswer(ws);
+      SmilesToChars(ws);
       int res_len;
       char * body = malloc(MAX_MSG_LEN);
       ws_2utf8(ws, body, &res_len, MAX_MSG_LEN);
@@ -322,7 +322,7 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   if(init_text)
   {
     char * tmp_str = convUTF8_to_ANSI_STR(init_text);
-    ParseAnswer(ws, tmp_str);
+    CharsToSmiles(ws, tmp_str);
     mfree(tmp_str);
     //utf8_2ws(ws_eddata, init_text, MAX_MSG_LEN);
   }
@@ -473,23 +473,14 @@ void mGUI_onRedraw(GUI *data)
           if(CurrentMessage==mln->log_mess_number) Cursor_Pos++;  // Обновляем позицию курсора
         CurrentMessage_Lines++;
       }
-      int pic = NULL;
-      int pic_height = NULL;
-      int line_height = FontSize;
-      for(int ii = 1; ii < ml->mess->wsbody[0] + 1; ii ++) // Проверяем на наличие смайлов в строке
-      {
-        if (ml->mess->wsbody[ii] >= FIRST_UCS2_BITMAP && ml->mess->wsbody[ii] <= FIRST_UCS2_BITMAP + smiles_loaded) // Если код смайла
-          if (pic = GetPicNByUnicodeSymbol(ml->mess->wsbody[ii]))
-            if ((pic_height = GetImgHeight(pic)) > line_height)
-              line_height = pic_height; // Подгоняем высоту строки под размер смайла
-      }
-      DrawRectangle(0, SCR_START + FontSize + 2 + Y_pos, ScreenW() - 1, SCR_START + FontSize + 2 + line_height + Y_pos - kur, 0,
+      
+      DrawRectangle(0, SCR_START + FontSize + 2 + Y_pos, ScreenW() - 1, SCR_START + FontSize + 2 + ml->line_height + Y_pos - kur, 0,
                        color(MsgBg2Color), color(MsgBgColor));
 
-      DrawString(ml->mess, MSG_START_X, SCR_START + FontSize + 2 + Y_pos, ScreenW()-1, SCR_START + FontSize + 2 + line_height + Y_pos, MESSAGEWIN_FONT, 0,
+      DrawString(ml->mess, MSG_START_X, SCR_START + FontSize + 2 + Y_pos, ScreenW()-1, SCR_START + FontSize + 2 + ml->line_height + Y_pos, MESSAGEWIN_FONT, 0,
                  color(MESSAGEWIN_CHAT_FONT), 0);
-      
-      Y_pos += line_height;
+
+      Y_pos += ml->line_height;
     }
     ml = ml->next;
     i_ctrl++;
@@ -506,16 +497,22 @@ void mGUI_onCreate(GUI *data, void *(*malloc_adr)(int))
 
 void mGUI_onClose(GUI *data, void (*mfree_adr)(void *))
 {
-  PNGTOP_DESC * pltop = PNG_TOP();
-  pltop->dyn_pltop = NULL;
+  if (Is_Smiles_Enabled && SmilesImgList)
+  {
+    PNGTOP_DESC * pltop = PNG_TOP();
+    pltop->dyn_pltop = NULL;
+  }
   KillDisp(MessagesList);
   data->state=0;
 }
 
 void mGUI_onFocus(GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
-  PNGTOP_DESC * pltop = PNG_TOP();
-  pltop->dyn_pltop = SmilesImgList;
+  if (Is_Smiles_Enabled && SmilesImgList)
+  {
+    PNGTOP_DESC * pltop = PNG_TOP();
+    pltop->dyn_pltop = SmilesImgList;
+  }
   DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   data->state=2;
   REDRAW();
@@ -542,11 +539,9 @@ LOG_MESSAGE *GetCurMessage()
 
 int mGUI_onKey(GUI *data, GUI_MSG *msg)
 {
-  
- 
-  if(MsgList_Quit_Required)return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+  if(MsgList_Quit_Required)
+    return 1; //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
 
-  //DirectRedrawGUI();
   if (KBD_LAYOUT)
   {
     if (msg->gbsmsg->msg==KEY_DOWN)
@@ -554,27 +549,22 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       switch(msg->gbsmsg->submess)
       {
       case '0':
-        {
-          // Убить список сообщений
-          //KillDisp(MessagesList);
-          KillMsgList(Resource_Ex->log);
-          Resource_Ex->log = NULL;
-          Resource_Ex->has_unread_msg=0;
-          Resource_Ex->total_msg_count=0;
-          return 1;
-        }
+        // Убить список сообщений
+        KillMsgList(Resource_Ex->log);
+        Resource_Ex->log = NULL;
+        Resource_Ex->has_unread_msg=0;
+        Resource_Ex->total_msg_count=0;
+        return 1;
+        
 #ifndef NEWSGOLD
       case RED_BUTTON:
 #endif
       case RIGHT_SOFT:
-        {
-          return 1;
-        }
+        return 1;
 
       case LEFT_SOFT:
-        {
           break;
-        }
+
       case '5':
       case ENTER_BUTTON:
         {
@@ -593,21 +583,19 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             Init_Message(Resource_Ex, init_text);
             mfree(init_text);
           }
-          break;
         }
+        break;
+        
       case '2':
       case UP_BUTTON:
-        {
-          Calc_Pages_Data_1();
-          CurrentMessage_Lines = 0;
-          if(Cursor_Pos>1)Cursor_Pos--;
-          if(CurrentMessage>1)CurrentMessage--;
-        
-          REDRAW();
-          break;
-        }
-      case LEFT_BUTTON:
-      //страница вверх
+        Calc_Pages_Data_1();
+        CurrentMessage_Lines = 0;
+        if (Cursor_Pos > 1) Cursor_Pos --;
+        if (CurrentMessage > 1) CurrentMessage --;
+        REDRAW();
+        break;
+
+      case LEFT_BUTTON: //страница вверх
         {
           if (CurrentPage>1)
           {
@@ -624,18 +612,20 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
           }
           Cursor_Pos=DispMessList_Count;
           REDRAW();
-          break; 
-        } 
+        }
+        break;
+        
       case '8':
       case DOWN_BUTTON:
-        {
-          CurrentMessage_Lines = 0;
-          if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
-          if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
-          Calc_Pages_Data_2();
-          REDRAW();
-          break;
-        }
+        CurrentMessage_Lines = 0;
+        if (Cursor_Pos < DispMessList_Count)
+          Cursor_Pos ++;
+        if (CurrentMessage < Resource_Ex->total_msg_count)
+          CurrentMessage ++;
+        Calc_Pages_Data_2();
+        REDRAW();
+        break;
+
       case RIGHT_BUTTON:
         {
           if (CurrentPage<MaxPages)
@@ -652,30 +642,30 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             }
           }
           REDRAW();
-          break;
         }
-      case '1'://в начало списка сообщений
-        {
-          CurrentMessage_Lines = 0;
-          Cursor_Pos=1;
-          CurrentMessage=1;
-          CurrentPage=1;
-          REDRAW();
-          break;
-        }
-      case '9'://в конец списка сообщений
-        {
-          CurrentMessage_Lines = 0;
-          Cursor_Pos=DispMessList_Count;
-          CurrentMessage=Resource_Ex->total_msg_count;
-          CurrentPage=MaxPages;
-          REDRAW();
-          break;
-        }
+        break;
+        
+      case '1': // в начало списка сообщений
+        CurrentMessage_Lines = 0;
+        Cursor_Pos=1;
+        CurrentMessage=1;
+        CurrentPage=1;
+        REDRAW();
+        break;
+
+      case '9': // в конец списка сообщений
+        CurrentMessage_Lines = 0;
+        Cursor_Pos=DispMessList_Count;
+        CurrentMessage=Resource_Ex->total_msg_count;
+        CurrentPage=MaxPages;
+        REDRAW();
+        break;
+
       case '#':
         {
           LOG_MESSAGE *msg = GetCurMessage();
           if(msg)
+          {
             if(msg->mtype==MSG_GCHAT)
             {
               unsigned int au_nick_len = strlen(msg->muc_author);
@@ -688,13 +678,13 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
               Init_Message(Resource_Ex, init_text);
               mfree(init_text);
             }
-          break;
+          }
         }
+        break;
+        
       case GREEN_BUTTON:
-        {
-          Init_Message(Resource_Ex, NULL);
-          break;
-        }
+        Init_Message(Resource_Ex, NULL);
+        break;
       }
     }
   }
@@ -705,25 +695,21 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
       switch(msg->gbsmsg->submess)
       {
       case '0':
-        {
-          KillMsgList(Resource_Ex->log);
-          Resource_Ex->log = NULL;
-          Resource_Ex->has_unread_msg=0;
-          Resource_Ex->total_msg_count=0;
-          return 1;
-        }
+        KillMsgList(Resource_Ex->log);
+        Resource_Ex->log = NULL;
+        Resource_Ex->has_unread_msg=0;
+        Resource_Ex->total_msg_count=0;
+        return 1;
+
 #ifndef NEWSGOLD
       case RED_BUTTON:
 #endif
       case RIGHT_SOFT:
-        {
-          return 1;
-        }
+        return 1;
 
       case LEFT_SOFT:
-        {
-          break;
-        }
+        break;
+        
       case '5':
       case ENTER_BUTTON:
         {
@@ -742,21 +728,19 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
             Init_Message(Resource_Ex, init_text);
             mfree(init_text);
           }
-          break;
         }
+        break;
+        
       case '2':
       case UP_BUTTON:
-        {
-          Calc_Pages_Data_1();
-          CurrentMessage_Lines = 0;
-          if(Cursor_Pos>1)Cursor_Pos--;
-          if(CurrentMessage>1)CurrentMessage--;
+        Calc_Pages_Data_1();
+        CurrentMessage_Lines = 0;
+        if (Cursor_Pos > 1) Cursor_Pos --;
+        if (CurrentMessage > 1) CurrentMessage --;
+        REDRAW();
+        break;
         
-          REDRAW();
-          break;
-        }
-      case '4':
-      //страница вверх
+      case '4': //страница вверх
         {
           if (CurrentPage>1)
           {
@@ -773,18 +757,18 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
           }
           Cursor_Pos=DispMessList_Count;
           REDRAW();
-          break; 
-        } 
+        }
+        break;
+        
       case '8':
       case DOWN_BUTTON:
-        {
-          CurrentMessage_Lines = 0;
-          if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
-          if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
-          Calc_Pages_Data_2();
-          REDRAW();
-          break;
-        }
+        CurrentMessage_Lines = 0;
+        if (Cursor_Pos < DispMessList_Count) Cursor_Pos ++;
+        if (CurrentMessage < Resource_Ex->total_msg_count) CurrentMessage ++;
+        Calc_Pages_Data_2();
+        REDRAW();
+        break;
+
       case '6':
         {
           if (CurrentPage<MaxPages)
@@ -800,26 +784,26 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
                 break;
             }
           }
-          REDRAW(); break;
+          REDRAW();
         }
+        break;
+        
       case '1'://в начало списка сообщений
-        {
-          CurrentMessage_Lines = 0;
-          Cursor_Pos=1;
-          CurrentMessage=1;
-          CurrentPage=1;
-          REDRAW();
-          break;
-        }
+        CurrentMessage_Lines = 0;
+        Cursor_Pos=1;
+        CurrentMessage=1;
+        CurrentPage=1;
+        REDRAW();
+        break;
+
       case '9'://в конец списка сообщений
-        {
-          CurrentMessage_Lines = 0;
-          Cursor_Pos=DispMessList_Count;
-          CurrentMessage=Resource_Ex->total_msg_count;
-          CurrentPage=MaxPages;
-          REDRAW();
-          break;
-        }
+        CurrentMessage_Lines = 0;
+        Cursor_Pos=DispMessList_Count;
+        CurrentMessage=Resource_Ex->total_msg_count;
+        CurrentPage=MaxPages;
+        REDRAW();
+        break;
+
       case RIGHT_BUTTON:
         {
           LOG_MESSAGE *msg = GetCurMessage();
@@ -836,13 +820,12 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
               Init_Message(Resource_Ex, init_text);
               mfree(init_text);
             }
-          break;
         }
+        break;
+        
       case GREEN_BUTTON:
-        {
-          Init_Message(Resource_Ex, NULL);
-          break;
-        }
+        Init_Message(Resource_Ex, NULL);
+        break;
       }
     }
   }
@@ -852,24 +835,21 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
     {
     case '2':
     case UP_BUTTON:
-      {
-        Calc_Pages_Data_1();
-        CurrentMessage_Lines = 0;
-        if(Cursor_Pos>1)Cursor_Pos--;
-        if(CurrentMessage>1)CurrentMessage--;
-        REDRAW();
-        break;
-      }
+      Calc_Pages_Data_1();
+      CurrentMessage_Lines = 0;
+      if (Cursor_Pos > 1) Cursor_Pos --;
+      if (CurrentMessage > 1) CurrentMessage --;
+      REDRAW();
+      break;
+      
     case '8':
     case DOWN_BUTTON:
-      {
-        CurrentMessage_Lines = 0;
-        if(Cursor_Pos<DispMessList_Count)Cursor_Pos++;
-        if(CurrentMessage<Resource_Ex->total_msg_count)CurrentMessage++;
-        Calc_Pages_Data_2();
-        REDRAW();
-        break;
-      }
+      CurrentMessage_Lines = 0;
+      if (Cursor_Pos < DispMessList_Count) Cursor_Pos++;
+      if (CurrentMessage < Resource_Ex->total_msg_count) CurrentMessage++;
+      Calc_Pages_Data_2();
+      REDRAW();
+      break;
     }
   }
   return(0);
@@ -884,14 +864,14 @@ int mGUI_method8(void){return(0);}
 int mGUI_method9(void){return(0);}
 
 const void * const mgui_methods[11]={
-  (void *)mGUI_onRedraw,	//Redraw
-  (void *)mGUI_onCreate,	//Create
-  (void *)mGUI_onClose,	//Close
-  (void *)mGUI_onFocus,	//Focus
-  (void *)mGUI_onUnfocus,	//Unfocus
-  (void *)mGUI_onKey,	//OnKey
+  (void *)mGUI_onRedraw,  //Redraw
+  (void *)mGUI_onCreate,  //Create
+  (void *)mGUI_onClose,   //Close
+  (void *)mGUI_onFocus,   //Focus
+  (void *)mGUI_onUnfocus, //Unfocus
+  (void *)mGUI_onKey,     //OnKey
   0,
-  (void *)kill_data, //onDestroy,	//Destroy
+  (void *)kill_data,      //onDestroy
   (void *)mGUI_method8,
   (void *)mGUI_method9,
   0
@@ -908,9 +888,11 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
   int cnt=0;
 
   // В какую область уложить строку (слева без MSG_START_X, справа без одного пикселя)
-  int Scr_width = ScreenW() - MSG_START_X - 1 ;
+  int screen_width = ScreenW() - MSG_START_X - 1 ;
 
-  int Curr_width=0;
+  int line_width = 0; // Ширина текущей строки в пикселях
+  int line_height = GetFontYSIZE(MESSAGEWIN_FONT); // Высота текущей строки. Подгоняется под размер смайлов
+  int symbol_width = 0;  // Ширина текущего символа в пикселях
   //  int chars;
   DISP_MESSAGE* Disp_Mess_Ex, *tmp;
   if(!MessEx)return;
@@ -925,27 +907,28 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
     if(parsed_counter>=OLD_MessList_Count)
     {
       temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
-      char * tmp_str = convUTF8_to_ANSI_STR(MessEx->mess);
-      ParseAnswer(temp_ws_1, tmp_str);
-      mfree(tmp_str);
-      //utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
+      if (Is_Smiles_Enabled && SmilesImgList)
+      {
+        char * tmp_str = convUTF8_to_ANSI_STR(MessEx->mess);
+        CharsToSmiles(temp_ws_1, tmp_str); // Добавляем иконки смайлов в сообщение
+        mfree(tmp_str);
+      }
+      else
+      {
+        utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
+      }
 
       //temp_ws_2 = AllocWS(CHAR_ON_LINE*2); WTF?
       temp_ws_2 = AllocWS(200); //ИМХО, так лучше
-      int l=wstrlen(temp_ws_1);
 
       //char q[40];
       //sprintf(q,"UTF_len=%d, WSTR_len=%d", strlen(MessEx->mess),l);
       //ShowMSG(2,(int)q);
 
-      int i=0;
-      unsigned short *wschar;
-      unsigned short symb;
       cnt=0;
-      for(i=1;i<=l;i++)
+      for(int i = 1; i <= temp_ws_1->wsbody[0]; i++)
       {
-        wschar = temp_ws_1->wsbody+i;
-        symb = *wschar;
+        unsigned int symb = temp_ws_1->wsbody[i];
         if ((symb==0x000A) || (symb==0x000D) || (symb==0x00A0)) //Перевод строки
 	{
 	L_ADD:
@@ -954,8 +937,13 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
           wstrcpy(Disp_Mess_Ex->mess, temp_ws_2);
           CutWSTR(temp_ws_2, 0);
           Disp_Mess_Ex->mtype = MessEx->mtype;
-          Disp_Mess_Ex->log_mess_number=parsed_counter+1;
-          if(!MessagesList){MessagesList =Disp_Mess_Ex;Disp_Mess_Ex->next=NULL;}
+          Disp_Mess_Ex->log_mess_number = parsed_counter+1;
+          Disp_Mess_Ex->line_height = line_height;
+          if(!MessagesList)
+          {
+            MessagesList = Disp_Mess_Ex;
+            Disp_Mess_Ex->next=NULL;
+          }
           else
           {
             tmp= MessagesList;
@@ -968,20 +956,29 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
           }
           cnt=0;
           DispMessList_Count++;
-          Curr_width = 0;
+          line_width = 0;
+          line_height = GetFontYSIZE(MESSAGEWIN_FONT);
 	}
 	else
 	{
-	  Curr_width+=GetSymbolWidth(symb,MESSAGEWIN_FONT);
-	  if (Curr_width>Scr_width)
+          symbol_width = GetSymbolWidth(symb,MESSAGEWIN_FONT);
+	  line_width += symbol_width;
+	  if (line_width > screen_width)
 	  {
 	    i--; //Повторить с текущим символом, сейчас не лезет
 	    goto L_ADD; //Добавить строку
 	  }
+
+          if (Is_Smiles_Enabled && SmilesImgList)
+          {
+            if (symb >= FIRST_UCS2_BITMAP && symb <= FIRST_UCS2_BITMAP + smiles_loaded) // Если код смайла
+              if (line_height < symbol_width) // Будем надеяться, что смайлы квадратные ;)
+                line_height = symbol_width; // Подгоняем высоту строки под размер смайла
+          }
 	  wsAppendChar(temp_ws_2, symb);
-	  cnt++;
-	  if (i==l) goto L_ADD; //Последний символ, добавить и слинять ;)
-	  if (Curr_width==Scr_width) goto L_ADD; //Ровненько легли в строку, тоже добавить
+	  cnt ++;
+	  if (i == temp_ws_1->wsbody[0]) goto L_ADD; //Последний символ, добавить и слинять ;)
+	  if (line_width == screen_width) goto L_ADD; //Ровненько легли в строку, тоже добавить
 	}
       }
       FreeWS(temp_ws_1);
@@ -999,6 +996,13 @@ void Display_Message_List(TRESOURCE* ContEx)
 {
   if(!ContEx)return;
   // Инициализация
+  if (Is_Smiles_Enabled && SmilesImgList)
+  {
+    /* The_ZeN: Это надо сделать обязательно до вызова парсера мессаг!
+       Иначе будет брать размер смайлов из фула */
+    PNGTOP_DESC * pltop = PNG_TOP();
+    pltop->dyn_pltop = SmilesImgList; 
+  }
   OLD_MessList_Count = 0;
   MessagesList = NULL;
   DispMessList_Count = 0;

@@ -195,7 +195,7 @@ __root const char DEFTEX_DND[256]="Занят";
 __root const CFG_HDR cfghdr30={CFG_STR_WIN1251,LG_STINVIS,0,255};
 __root const char DEFTEX_INVISIBLE[256]="";
 
-__root const CFG_HDR cfghdr141={CFG_STR_WIN1251,"Player text",0,255};
+__root const CFG_HDR cfghdr141={CFG_STR_WIN1251, LG_PLAYER_STATUS ,0,255};
 __root const char DEFTEX_PLAYER[256]="Слушаю";
 
 __root const CFG_HDR cfghdr142={CFG_STR_WIN1251,"MUC offline",0,255};
@@ -252,6 +252,9 @@ __root const int AUTOSTATUS_ENABLED = 0;
 
 __root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,0,60};
 __root const unsigned int AUTOSTATUS_TIME = 5;
+
+__root const CFG_HDR cfghdr42={CFG_STR_WIN1251, LG_AS_TEXT, 0, 255};
+__root const char DEFTEX_AUTOSTATUS[256]="Автостатус \"Недоступен\" сработал";
 
 __root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
 

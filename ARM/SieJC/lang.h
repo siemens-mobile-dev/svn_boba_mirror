@@ -63,6 +63,7 @@
 #define LG_MVIBRA           "Режим вибры"
 #define LG_MSOUND           "Режим звука"
 #define LG_MOFFLINE         "Офф. контакты"
+#define LG_PLAYER_STATUS    "Плеер-статус"
 #define LG_SETTINGS         "Настройки"
 #define LG_ABOUT            "Об эльфе..."
 #define LG_COLOR            "Цвета"
@@ -209,6 +210,7 @@
 #define LG_AUTOSTATUS       "Автостатус"
 #define LG_AS_ENABLED       "Включен"
 #define LG_AS_TIME          "Время (в минутах)"
+#define LG_AS_TEXT          "Текст"
 
 /*#define LG_ICONBAR_SI       "Показывать иконку в IconBar"
 #define LG_ICONSET_FILENAME "Имя файла с номерами иконок"*/ // IconBar
@@ -331,6 +333,7 @@
 #define LG_MVIBRA           "Режим вібри"
 #define LG_MSOUND           "Режим звуку"
 #define LG_MOFFLINE         "Офф. контакти"
+#define LG_PLAYER_STATUS    "Плеер-статус"
 #define LG_SETTINGS         "Налаштування"
 #define LG_ABOUT            "Про эльф..."
 #define LG_COLOR            "Кольори"
@@ -427,6 +430,7 @@
 #define LG_MUCDEF           "MUC за умовчанням"
 #define LG_MUCDEFMSGCOUNT   "Кіл. отриманих повідомлень"
 #define LG_MUCDEFNIK        "Нік за умовчанням"
+#define LG_SHOWIDLEICON     "Показувати значок на idle"
 #define LG_IDLEICON         "Розташування значка"
 #define LG_POPUPDIS         "Відображати POPUP"
 #define LG_COMPOSEV         "Події повідомлень"
@@ -475,6 +479,7 @@
 #define LG_AUTOSTATUS       "Автостатус"
 #define LG_AS_ENABLED       "Включений"
 #define LG_AS_TIME          "Час (в хвилинах)"
+#define LG_AS_TEXT          "Текст"
 //vCard.c
 
 #define LG_SHOW_AVATAR      "Показать аватару"
@@ -597,6 +602,7 @@
 #define LG_MVIBRA           "Vibra mode"
 #define LG_MSOUND           "Sound mode"
 #define LG_MOFFLINE         "Show Offline"
+#define LG_PLAYER_STATUS    "Player-status"
 #define LG_SETTINGS         "Settings"
 #define LG_ABOUT            "About..."
 #define LG_COLOR            "Colors"
@@ -740,6 +746,7 @@
 #define LG_AUTOSTATUS       "Autostatus"
 #define LG_AS_ENABLED       "Enable"
 #define LG_AS_TIME          "Time (minutes)"
+#define LG_AS_TEXT          "Text"
 
 /*#define LG_ICONBAR_SI       "Show icon in IconBar"
 #define LG_ICONSET_FILENAME "File name with icon numbers"*/ // IconBar

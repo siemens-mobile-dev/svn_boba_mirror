@@ -142,52 +142,49 @@ void SetCmdToEditMessage(char *command)
 
   switch (Mode)
   {
-    case 1:
-      {
-        ascii2ws(ws_me, command);
-        WSHDR * ws = AllocWS(512);
-        wstrcpy(ws, ws_me);
-        wstrcat(ws, ec.pWS);
-        EDIT_SetTextToEditControl(data, 1, ws);
-        EDIT_SetCursorPos(data, pos + strlen(command));
-        FreeWS(ws);
-      }
-      break;
-   
-    case 0:
-    case 2:
-      {
-	int c;
-	char *p=command;
-	wstrcpy(ws_me,ec.pWS);
-
-        while(c=*p++)
-          {
-            wsInsertChar(ws_me,char8to16(c),pos++);
-          }
-        EDIT_SetTextToEditControl(data,1,ws_me);
-        EDIT_SetCursorPos(data,pos);
-      }
+  case 1:
+    {
+      ascii2ws(ws_me, command);
+      WSHDR * ws = AllocWS(512);
+      wstrcpy(ws, ws_me);
+      wstrcat(ws, ec.pWS);
+      EDIT_SetTextToEditControl(data, 1, ws);
+      EDIT_SetCursorPos(data, pos + strlen(command));
+      FreeWS(ws);
+    }
     break;
    
-    case 3:
+  case 0:
+  case 2:
+    {
+      int c;
+      char *p=command;
+      wstrcpy(ws_me,ec.pWS);
+      while(c=*p++)
+        wsInsertChar(ws_me,char8to16(c),pos++);
+      EDIT_SetTextToEditControl(data,1,ws_me);
+      EDIT_SetCursorPos(data,pos);
+    }
+    break;
+   
+  case 3:
+    {
+      WSHDR * ws = AllocWS(512);
+      ascii2ws(ws_me,command);
+      if (pos==1)
       {
-        WSHDR * ws = AllocWS(512);
-        ascii2ws(ws_me,command);
-        if (pos==1)
-        {
-          pos = pos+2;
-          wsprintf(ws, "%w: %w",ws_me, ec.pWS);
-        }
-        else wsprintf(ws, "%w%w",ec.pWS, ws_me);
-        EDIT_SetTextToEditControl(data, 1, ws);
-        EDIT_SetCursorPos(data, pos + strlen(command));
-        FreeWS(ws);
+        pos = pos+2;
+        wsprintf(ws, "%w: %w",ws_me, ec.pWS);
       }
+      else
+        wsprintf(ws, "%w%w",ec.pWS, ws_me);
+      EDIT_SetTextToEditControl(data, 1, ws);
+      EDIT_SetCursorPos(data, pos + strlen(command));
+      FreeWS(ws);
+    }
     break;    
-  } 
+  }
   FreeWS(ws_me);
-  FreeTemplates();
   GeneralFunc_flag1(Templates_Menu_ID,1);
 }
 
@@ -205,18 +202,21 @@ SOFTKEYSTAB tmpl_menu_skt=
 
 void tmpl_menuitemhandler(void *data, int curitem, void *unk)
 {
-  WSHDR *ws;
-  void *item=AllocMenuItem(data);
-  ws=AllocMenuWS(data,strlen(commands_lines[curitem]));
+  WSHDR * ws = AllocMenuWS(data,strlen(commands_lines[curitem]));
+  void * item = AllocMenuItem(data);
   ascii2ws(ws, commands_lines[curitem]);
   SetMenuItemText(data, item, ws, curitem);
 }
 
 void tmpl_menu_ghook(void *data, int cmd)
 {
-  if (cmd==0x0A)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
+  }
+  if (cmd == TI_CMD_DESTROY)
+  {
+    FreeTemplates();
   }
 }
 
@@ -224,17 +224,13 @@ static int tmpl_menu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    if (tmpl_num) SetCmdToEditMessage(commands_lines[GetCurMenuItem(data)]);
-       else
-         {
-           FreeTemplates();
-           GeneralFunc_flag1(Templates_Menu_ID,1);           
-         }
+    if (tmpl_num)
+      SetCmdToEditMessage(commands_lines[GetCurMenuItem(data)]);
+    else
+      GeneralFunc_flag1(Templates_Menu_ID, 1);
   }
-  
   if (msg->keys==0x01)
   {
-    FreeTemplates();
     GeneralFunc_flag1(Select_Menu_ID,1);
   }  
   return(0);
@@ -257,8 +253,8 @@ HEADER_DESC tmpl_menuhdr;
 void DispTemplatesMenu()
 {
   UpdateTemplatesMenu_header();
-  if (Mode == 3) tmpl_num=LoadTemplates_new();
-  else tmpl_num=LoadTemplates();
+  if (Mode == 3) tmpl_num = LoadTemplates_new();
+  else tmpl_num = LoadTemplates();
   patch_header(&tmpl_menuhdr);
   Templates_Menu_ID = CreateMenu(0,0,&tmpl_menu,&tmpl_menuhdr,0,tmpl_num,0,0);
 }
@@ -269,9 +265,9 @@ void DispTemplatesMenu()
 void select_smile(GUI * data)
 {
   Mode = 0;
-  //DispTemplatesMenu();
-  void * ed_gui = FindGUIbyId(edmessage_id, NULL);
-  CreateSmileSelectGUI(ed_gui);
+  void * ed_gui = NULL;
+  if (ed_gui = FindGUIbyId(edmessage_id, NULL))
+    CreateSmileSelectGUI(ed_gui);
   GeneralFunc_flag1(Select_Menu_ID, 1);
 }
 
@@ -344,8 +340,6 @@ void sel_menu_ghook(void *data, int cmd)
   }
 }
 
-void AddSmile(GUI *data);
-
 MENU_DESC sel_menu_struct=
 {
   8, NULL, sel_menu_ghook, NULL,
@@ -365,7 +359,7 @@ void DispSelectMenu()
   int to_remove[SEL_MENU_ITEMS_NUM + 1];
   int n = NULL;
   
-  if (GetFileStats(SMILE_FILE, &fstat, &io_error) == -1)
+  if (GetFileStats(SMILE_FILE, &fstat, &io_error) == -1 || !s_top || !SmilesImgList)
     to_remove[++n] = 0; // Не показываем пункт "Смайлы"
   if (GetFileStats(COMMANDS_PATH, &fstat, &io_error) == -1)
     to_remove[++n] = 1; // Не показываем пункт "Комманды"

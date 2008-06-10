@@ -260,6 +260,9 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
         PasteCharEditControl(data->ed_gui, data->icons[data->cur_pos_y].w_chars[data->cur_pos_x].wchar);
         return (1);
       
+    #ifndef NEWSGOLD
+      case RED_BUTTON:
+    #endif
       case RIGHT_SOFT:
         return (1);
       }

@@ -14,6 +14,7 @@ typedef struct
   MESS_TYPE mtype;
   unsigned short log_mess_number;
   WSHDR* mess;
+  int line_height;
   void* next;
 }DISP_MESSAGE;
 

@@ -165,7 +165,8 @@ typedef struct{
   sound_status:1,
   off_contacts:1,
   auto_status:1,
-  player_status:1;
+  player_status:1,
+  smiles_status:1;
   char color_name[32];
 }DEF_SETTINGS;
 #pragma pack(pop)

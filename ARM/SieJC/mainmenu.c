@@ -15,13 +15,14 @@
 #include "color.h"
 #include "rect_patcher.h"
 
-#define N_ITEMS 14
+#define N_ITEMS 15
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
 extern char Display_Offline;
 extern int Is_Autostatus_Enabled;
 extern int Is_Playerstatus_Enabled;
+extern int Is_Smiles_Enabled;
 
 int MainMenu_ID;
 
@@ -80,6 +81,12 @@ void ChangePlayerstatusMode(GUI *data)
   RefreshGUI();
 }
 
+void ChangeSmilesMode(GUI *data)
+{
+  Is_Smiles_Enabled=!(Is_Smiles_Enabled);
+  RefreshGUI();
+}
+
 void ChangeOffContMode(GUI *data)
 {
   CList_ToggleOfflineDisplay();
@@ -132,7 +139,8 @@ static const char * const menutexts[N_ITEMS]=
   LG_MSOUND,
   LG_MOFFLINE,
   LG_AUTOSTATUS,
-  "PlayerStatus",
+  LG_PLAYER_STATUS,
+  LG_SMILE,
   LG_SETTINGS,
   LG_COLOR,
   LG_ABOUT,
@@ -164,6 +172,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           ChangeOffContMode,
                           ChangeAutostatusMode,
                           ChangePlayerstatusMode,
+                          ChangeSmilesMode,
                           OpenSettings_,
                           ShowSelectColorMenu,
                           AboutDlg,
@@ -192,24 +201,12 @@ void menuitemhandler(void *data, int curitem, void *unk)
   ascii2ws(ws, menutexts[curitem]);
   switch(curitem)
   {
-  case 0:
-    SetMenuItemIconArray(data,item,S_ICONS+0);
-    break;
-  case 1:
-    SetMenuItemIconArray(data,item,S_ICONS+1);
-    break;
-  case 2:
-    SetMenuItemIconArray(data,item,S_ICONS+2);
-    break;
-  case 3:
-    SetMenuItemIconArray(data,item,S_ICONS+3);
-    break;
-  case 4:
-    SetMenuItemIconArray(data,item,S_ICONS+4);
-    break;
-  case 5:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1));
-    break;
+  case 0: SetMenuItemIconArray(data,item,S_ICONS+0); break;
+  case 1: SetMenuItemIconArray(data,item,S_ICONS+1); break;
+  case 2: SetMenuItemIconArray(data,item,S_ICONS+2); break;
+  case 3: SetMenuItemIconArray(data,item,S_ICONS+3); break;
+  case 4: SetMenuItemIconArray(data,item,S_ICONS+4); break;
+  case 5: SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1)); break;
   case 6:
     SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
     break;
@@ -223,15 +220,18 @@ void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,icon_array+(Is_Playerstatus_Enabled?0:1));
     break;
   case 10:
-    SetMenuItemIconArray(data,item,S_ICONS+6);
+    SetMenuItemIconArray(data,item,icon_array+(Is_Smiles_Enabled?0:1));
     break;
   case 11:
-    SetMenuItemIconArray(data,item,S_ICONS+9);
+    SetMenuItemIconArray(data,item,S_ICONS+6);
     break;
   case 12:
+    SetMenuItemIconArray(data,item,S_ICONS+9);
+    break;
+  case 13:
     SetMenuItemIconArray(data,item,S_ICONS+7);
     break;  
-  case 13:
+  case 14:
     SetMenuItemIconArray(data,item,S_ICONS+8);
     break;
   }
