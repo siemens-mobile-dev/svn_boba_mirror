@@ -109,7 +109,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
   S_SMILES *sm;
   for (int i=data->view_line, max=data->total_lines; i<max; i++)
   {
-    int x=0;
+    int x = 1;
     int h_max=0;
     for (int k=0, m=data->icons[i].icon_in_row; k<m; k++)
     {
@@ -118,7 +118,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
       {
         if (i==data->cur_pos_y && k==data->cur_pos_x)
         {
-          DrawRectangle(x, y2, x+img->w-1, y2+img->h-1, 0,
+          DrawRectangle(x - 1, y2 - 1, x + img->w, y2 + img->h, 0,
                         color(CURSOR), color(CURSOR_BORDER));
         }
         DrwImg(img,  x,y2);

@@ -169,16 +169,17 @@ void jed1_ghook(GUI *data, int cmd)
   }
 }
 
-extern void dummy(GUI *data);
 
 HEADER_DESC jed1_hdr={0,0,131,21,NULL,(int)"Контакт",LGP_NULL};
+
+void jed1_locret(void){}
 
 INPUTDIA_DESC jed1_desc=
 {
   1,
   jed1_onkey,
   jed1_ghook,
-  (void *)dummy,
+  (void *)jed1_locret,
   0,
   &jid_menu_skt,
   {0,22,131,153},

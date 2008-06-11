@@ -324,9 +324,13 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   {
     if (Is_Smiles_Enabled && SmilesImgList)
     {
-      char * tmp_str = convUTF8_to_ANSI_STR(init_text);
-      CharsToSmiles(ws, tmp_str);
-      mfree(tmp_str);
+      char * tmp_str = NULL;
+      if (tmp_str = convUTF8_to_ANSI_STR(init_text))
+      {
+        CharsToSmiles(ws, tmp_str);
+        mfree(tmp_str);
+      }
+      else utf8_2ws(ws, init_text, MAX_MSG_LEN);
     }
     else
       utf8_2ws(ws, init_text, MAX_MSG_LEN);
@@ -343,7 +347,7 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
 }
 ////////////////////////////////////////////////////////////////////////////////
 DISP_MESSAGE* MessagesList = NULL;      // Корень списка
-unsigned int DispMessList_Count = 0;        // Количество сообщений
+unsigned int DispMessList_Count = 0;    // Количество сообщений
 unsigned int OLD_MessList_Count = 0;    // Отпарсенное количество сообщений
 unsigned int Cursor_Pos = 0;            // Позиция курсора в списке
 
@@ -914,14 +918,16 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
       if (Is_Smiles_Enabled && SmilesImgList)
       {
-        char * tmp_str = convUTF8_to_ANSI_STR(MessEx->mess);
-        CharsToSmiles(temp_ws_1, tmp_str); // Добавляем иконки смайлов в сообщение
-        mfree(tmp_str);
+        char * tmp_str = NULL;
+        if (tmp_str = convUTF8_to_ANSI_STR(MessEx->mess))
+        {
+          CharsToSmiles(temp_ws_1, tmp_str); // Добавляем иконки смайлов в сообщение
+          mfree(tmp_str);
+        }
+        else utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
       }
       else
-      {
         utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
-      }
 
       //temp_ws_2 = AllocWS(CHAR_ON_LINE*2); WTF?
       temp_ws_2 = AllocWS(200); //ИМХО, так лучше

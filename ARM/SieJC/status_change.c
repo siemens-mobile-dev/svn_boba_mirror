@@ -10,76 +10,86 @@
 #include "conf_loader.h"
 #include "lang.h"
 #include "rect_patcher.h"
+#include "roster_icons.h"
 
-extern int My_Presence;
+extern char My_Presence;
 extern const char* PRESENCES[PRES_COUNT];
+extern const char DEFTEX_ONLINE[];
+extern const char DEFTEX_CHAT[];
+extern const char DEFTEX_AWAY[];
+extern const char DEFTEX_XA[];
+extern const char DEFTEX_DND[];
+extern const char DEFTEX_INVISIBLE[];
+
 int StatChange_Menu_ID;
+char Selected_Status;
 
 void Change_Status(char status)
 {
-    //CurrentStatus = status;
-    GeneralFunc_flag1(StatChange_Menu_ID,1);
+  GeneralFunc_flag1(StatChange_Menu_ID,1);
 }
 
 #define STATUSES_NUM 6
 
-HEADER_DESC st_menuhdr={0,0,131,21,NULL,(int)LG_STATUSSEL,LGP_NULL};
+HEADER_DESC status_change_menu_header={0,0,131,21,NULL,(int)LG_STATUSSEL,LGP_NULL};
 
-int st_menusoftkeys[]={0,1,2};
+int status_change_menu_softkeys[]={0,1,2};
 
-// "online", "chat", "away", "xa", "dnd", "invisible"
-MENUITEM_DESC st_menuitems[STATUSES_NUM]=
+SOFTKEY_DESC status_change_menu_sk[]=
 {
-  {NULL,(int)LG_STONLINE,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STCHAT,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STAWAY,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STXA,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STDND,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_STINVIS,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-};
-
-void dummy(GUI *data){};
-const MENUPROCS_DESC st_menuprocs[STATUSES_NUM]={
-                                  dummy,
-                                  dummy,
-                                  dummy,
-                                  dummy,
-                                  dummy,
-                                  dummy
-                                 };
-
-SOFTKEY_DESC st_menu_sk[]=
-{
-  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0018,0x0000,(int)LG_EDIT},
   {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-SOFTKEYSTAB st_menu_skt=
+SOFTKEYSTAB status_change_menu_skt=
 {
-  st_menu_sk,3
+  status_change_menu_sk, 3
 };
 
-WSHDR* ews;
-char sTerminate=0;
-char Selected_Status=0;
+static const char * const status_texts[STATUSES_NUM]=
+{
+  DEFTEX_ONLINE,
+  DEFTEX_CHAT,
+  DEFTEX_AWAY,
+  DEFTEX_XA,
+  DEFTEX_DND,
+  DEFTEX_INVISIBLE
+};
 
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
-  //-1 - do redraw
+  EDITCONTROL ec;
   if(msg->gbsmsg->submess==GREEN_BUTTON  || msg->keys==0x18)
   {
-    sTerminate = 1;
+    ExtractEditControl(data, 2, &ec);
+    char * status_text = NULL;
+    if(ec.pWS->wsbody[0])
+    {
+      int res_len;
+      status_text = malloc(ec.pWS->wsbody[0] * 2 + 1);
+      ws_2utf8(ec.pWS, status_text, &res_len, ec.pWS->wsbody[0] * 2 + 1);
+      status_text = realloc(status_text, res_len + 1);
+      status_text[res_len]='\0';
+    }
+    PRESENCE_INFO * pr_info = malloc(sizeof(PRESENCE_INFO));
+    extern long  strtol (const char *nptr,char **endptr,int base);
+    ExtractEditControl(data, 4, &ec);    // = priority
+    char ss[10];
+    ws_2str(ec.pWS, ss, 15);
+    pr_info->priority = strtol (ss,0,10);
+    pr_info->status = Selected_Status;
+    pr_info->message = status_text ? Mask_Special_Syms(status_text) : NULL;
+    if (status_text) mfree(status_text);
+    SUBPROC((void*)Send_Presence,pr_info);
     GeneralFunc_flag1(StatChange_Menu_ID,1);
     return 1;
   }
- 
   if (msg->keys==0x0FF0) //Левый софт СГОЛД
   {
     return(1);
-  }  
+  }
   return 0;
-  //1: close
 }
 
 void ed1_ghook(GUI *data, int cmd)
@@ -88,9 +98,8 @@ void ed1_ghook(GUI *data, int cmd)
   static SOFTKEY_DESC stchsk={0x0018, 0x0000,(int)LG_OK};
 
   if (cmd==7)
-  { 
-    ExtractEditControl(data,2,&ec);
-    wstrcpy(ews,ec.pWS);
+  {
+    ExtractEditControl(data, 2, &ec);
 #ifndef NEWSGOLD
   static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
 #endif  
@@ -108,63 +117,20 @@ void ed1_ghook(GUI *data, int cmd)
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
-
-  if(sTerminate)  // cmd==9 - нажатие на левую софт-кнопку "ОК"
- {
-//     char q[10];
-//     sprintf(q,"N=%d",cmd);
-//     ShowMSG(1,(int)q);
-   sTerminate=0;
-
-/*
-   size_t xz = wstrlen(ews)*2;
-   char* body;
-   if(xz)
-   {
-      body =  utf16_to_utf8((char**)ews,&xz);
-      body[xz]='\0';
-   }
-   else body = NULL;
-*/
-     char* body;
-     if(wstrlen(ews))
-     {
-       int res_len;
-       body = malloc(wstrlen(ews)*2+1);
-       ws_2utf8(ews, body, &res_len, wstrlen(ews)*2+1);
-       body = realloc(body, res_len+1);
-       body[res_len]='\0';
-     }else body = NULL;
-
-    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    extern long  strtol (const char *nptr,char **endptr,int base);
-    ExtractEditControl(data,4,&ec);    // = priority
-    wstrcpy(ews,ec.pWS);
-    char ss[10];
-    ws_2str(ews,ss,15);
-    pr_info->priority = strtol (ss,0,10);
-    pr_info->status=Selected_Status;
-    pr_info->message=  body==NULL ? NULL : Mask_Special_Syms(body);
-    mfree(body);
-    SUBPROC((void*)Send_Presence,pr_info);
-   }
-
-  if(cmd==0x03)     // onDestroy
-  {
-    FreeWS(ews);
-  }
 }
 
 HEADER_DESC ed1_hdr={0,0,131,21,NULL,(int)LG_STATUS,LGP_NULL};
+
+void ed1_locret(void){}
 
 INPUTDIA_DESC ed1_desc=
 {
   1,
   ed1_onkey,
   ed1_ghook,
-  (void *)dummy,
+  (void *)ed1_locret,
   0,
-  &st_menu_skt,
+  &status_change_menu_skt,
   {0,22,131,153},
   4,
   100,
@@ -187,132 +153,120 @@ INPUTDIA_DESC ed1_desc=
 
 void Disp_AddSettings_Dialog(char curentstat)
 {
-  void *ma=malloc_adr();
-  char textstatus[255]="";
-  extern const char DEFTEX_ONLINE[];
-  extern const char DEFTEX_CHAT[];
-  extern const char DEFTEX_AWAY[];
-  extern const char DEFTEX_XA[];
-  extern const char DEFTEX_DND[];
-  extern const char DEFTEX_INVISIBLE[];
-
- switch (curentstat)
-  {
-  case 0:
-    strcpy(textstatus,DEFTEX_ONLINE);break;
-  case 1:
-    strcpy(textstatus,DEFTEX_CHAT);break;
-  case 2:
-    strcpy(textstatus,DEFTEX_AWAY);break;
-  case 3:
-    strcpy(textstatus,DEFTEX_XA);break;
-  case 4:
-    strcpy(textstatus,DEFTEX_DND);break;
-  case 5:
-    strcpy(textstatus,DEFTEX_INVISIBLE);
-  }
-
-  sTerminate =0;
-  void *eq;
+  WSHDR * ws = AllocWS(256);
   EDITCONTROL ec;
-  ews=AllocWS(256);
-
+  void * ma = malloc_adr();
+  void * eq = AllocEQueue(ma,mfree_adr());
+  
   PrepareEditControl(&ec);
-  eq=AllocEQueue(ma,mfree_adr());
 
-  ascii2ws(ews, LG_ENTERTEXTSTATUS);
-  ConstructEditControl(&ec,1,0x40,ews,256);
+  ascii2ws(ws, LG_ENTERTEXTSTATUS);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  ascii2ws(ews, textstatus);
-  ConstructEditControl(&ec,3,0x40,ews,256);
-  AddEditControlToEditQend(eq,&ec,ma);
+  ascii2ws(ws, status_texts[curentstat]);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
+  AddEditControlToEditQend(eq, &ec, ma);
 
-  ascii2ws(ews, LG_PRIORITY);
-  ConstructEditControl(&ec,1,0x40,ews,256);
-  AddEditControlToEditQend(eq,&ec,ma);
+  ascii2ws(ws, LG_PRIORITY);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
+  AddEditControlToEditQend(eq, &ec, ma);
 
-  wsprintf(ews, "0");
-  ConstructEditControl(&ec,5,0x40,ews,2);
-  AddEditControlToEditQend(eq,&ec,ma);
+  wsprintf(ws, "0");
+  ConstructEditControl(&ec, ECT_FIXED_STR_NUM, ECF_APPEND_EOL, ws, 2);
+  AddEditControlToEditQend(eq, &ec, ma);
 
   patch_input(&ed1_desc);
   patch_header(&ed1_hdr);
-  CreateInputTextDialog(&ed1_desc,&ed1_hdr,eq,1,0);
+  CreateInputTextDialog(&ed1_desc, &ed1_hdr, eq, 1, (void *)curentstat);
+  FreeWS(ws);
 }
 
-int menu_onKey(void *data, GUI_MSG *msg)
+int status_change_menu_onkey(void *data, GUI_MSG *msg)
 {
-  if (msg->keys==0x3D)
+  if (msg->keys==0x18)
   {
-    Selected_Status=GetCurMenuItem(data);
+    Selected_Status = GetCurMenuItem(data);
     Disp_AddSettings_Dialog(Selected_Status);
     return(-1);
-  }  
-  
-  if (msg->keys==0x0018)
+  }
+  if (msg->keys==0x3D)
   {
-    Selected_Status=GetCurMenuItem(data);
-    //Disp_AddSettings_Dialog();
-    //sTerminate = 1;
-    
-    sTerminate=0;
+    Selected_Status = GetCurMenuItem(data);
+    char * status_text = ANSI2UTF8(status_texts[Selected_Status], strlen(status_texts[Selected_Status]));
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority = '00';
-    pr_info->status=Selected_Status;
-    pr_info->message=NULL;
+    pr_info->priority = 0;
+    pr_info->status = Selected_Status;
+    pr_info->message = Mask_Special_Syms(status_text);
+    mfree(status_text);
     SUBPROC((void*)Send_Presence,pr_info);    
     return 1;
   }  
   return 0;
 }
 
-void menu_gHook(void *data, int cmd)
+int status_change_menu_icons[STATUSES_NUM];
+
+void status_change_menu_ghook(void *data, int cmd)
 {
-  if (cmd==0x0A)
+  if (cmd == TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
-  
- /* if(sTerminate)
+  if (cmd == TI_CMD_DESTROY)
   {
-    sTerminate=0;
-
-    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority = '00';
-    pr_info->status=Selected_Status;
-    pr_info->message=NULL;
-    SUBPROC((void*)Send_Presence,pr_info);
-   }  */
+    for(int i = 0; i < STATUSES_NUM; i ++)
+      mfree((void *)status_change_menu_icons[i]);
+  }
 }
 
-MENU_DESC st_tmenu=
+static const char * const status_change_menu_texts[STATUSES_NUM]=
 {
-  8,menu_onKey,menu_gHook,NULL,
-  st_menusoftkeys,
-  &st_menu_skt,
-  1,//MENU_FLAG,
-  NULL,
-  st_menuitems,
-  st_menuprocs,
-  STATUSES_NUM
+  LG_STONLINE,
+  LG_STCHAT,
+  LG_STAWAY,
+  LG_STXA,
+  LG_STDND,
+  LG_STINVIS
 };
 
-//int SS_ICONS[STATUSES_NUM];
+void status_change_menu_itemhandler(void *data, int curitem, void *unk)
+{
+  void * item = AllocMLMenuItem(data);
+  WSHDR * ws1 = AllocMenuWS(data, strlen(status_change_menu_texts[curitem]));
+  ascii2ws(ws1, status_change_menu_texts[curitem]);
+  WSHDR * ws2 = AllocMenuWS(data, strlen(status_texts[curitem]));
+  ascii2ws(ws2, status_texts[curitem]);
+  SetMenuItemIconArray(data, item, status_change_menu_icons + curitem);
+  SetMLMenuItemText(data, item, ws1, ws2, curitem);
+}
+
+static const ML_MENU_DESC status_change_menu_struct=
+{
+  8,
+  status_change_menu_onkey,
+  status_change_menu_ghook,
+  NULL,
+  status_change_menu_softkeys,
+  &status_change_menu_skt,
+  0x11,
+  status_change_menu_itemhandler,
+  NULL,
+  NULL,
+  STATUSES_NUM,
+  1
+};
 
 void DispStatusChangeMenu()
 {
-  /*
-  st_menuitems[0].icon = S_ICONS+IS_ONLINE;
-  st_menuitems[1].icon = S_ICONS+IS_AWAY;
-  st_menuitems[2].icon = S_ICONS+IS_NA;
-  st_menuitems[3].icon = S_ICONS+IS_DND;
-  st_menuitems[4].icon = S_ICONS+IS_OCCUPIED;
-  st_menuitems[5].icon = S_ICONS+IS_FFC;
-  st_menuitems[6].icon = S_ICONS+IS_INVISIBLE;
-  st_menuhdr.icon=S_ICONS+CurrentStatus;
-*/
-  patch_header(&st_menuhdr);
+  status_change_menu_icons[0] = (int)Roster_getIconByStatus(NULL, PRESENCE_ONLINE);
+  status_change_menu_icons[1] = (int)Roster_getIconByStatus(NULL, PRESENCE_CHAT);
+  status_change_menu_icons[2] = (int)Roster_getIconByStatus(NULL, PRESENCE_AWAY);
+  status_change_menu_icons[3] = (int)Roster_getIconByStatus(NULL, PRESENCE_XA);
+  status_change_menu_icons[4] = (int)Roster_getIconByStatus(NULL, PRESENCE_DND);
+  status_change_menu_icons[5] = (int)Roster_getIconByStatus(NULL, PRESENCE_INVISIBLE);
+
+  patch_header(&status_change_menu_header);
   Selected_Status = 0;
-  StatChange_Menu_ID = CreateMenu(0,0,&st_tmenu,&st_menuhdr,0,STATUSES_NUM,0,0);
+  StatChange_Menu_ID = CreateMultiLinesMenu(NULL, NULL, &status_change_menu_struct, &status_change_menu_header, My_Presence < PRESENCE_OFFLINE ? My_Presence: 0, STATUSES_NUM);
 }

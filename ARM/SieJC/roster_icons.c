@@ -28,24 +28,20 @@ extern const char PATH_TO_PIC[128];
 
 #ifdef USE_PNG_EXT
 
-char* Roster_getIconByStatus(char* path_to_pic, char status) //вернет путь к картинке картинке по статусу
+char * Roster_getIconByStatus(char * path_to_pic, char status) //вернет путь к картинке по статусу
 {
+  if (!path_to_pic)
+    path_to_pic = malloc(256);
   strcpy(path_to_pic, PATH_TO_PIC);
 
   // Если непрочитанных сообщений нет
-  if(status<PRESENCE_INVISIBLE) // Если адекватный статус
-  {
+  if(status < PRESENCE_INVISIBLE) // Если адекватный статус
     strcat(path_to_pic, PRESENCES[status]);
-  }
   else
-    if(status==50)
-    {
+    if( status == 50)
       strcat(path_to_pic, "message");
-    }
     else
-    {
       strcat(path_to_pic, PRESENCES[PRESENCE_OFFLINE]); // Иначе типа оффлайн
-    }
   strcat(path_to_pic, ".png");
   return path_to_pic;
 }

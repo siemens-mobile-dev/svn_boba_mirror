@@ -54,7 +54,7 @@ int GetSpecialSymMaskN(char sym)
   return -1;
 }
 
-char *Replace_Special_Syms(char *unrep_str)
+char * Replace_Special_Syms(char * unrep_str)
 {
   unsigned int unrep_len=strlen(unrep_str);
   char *rep_buffer = malloc(unrep_len+1);
@@ -72,7 +72,7 @@ char *Replace_Special_Syms(char *unrep_str)
   return rep_buffer;
 }
 
-char *Mask_Special_Syms(char *unrep_str)
+char * Mask_Special_Syms(const char * unrep_str)
 {
   unsigned int unrep_len = strlen(unrep_str);
   unsigned int rep_buffer_size = unrep_len*2+16;
@@ -643,18 +643,18 @@ char* Correct_UTF8_String(char* utf8_str)
 }
 
 
-char* ANSI2UTF8(char* ansi_str, unsigned int maxlen)
+char * ANSI2UTF8(const char * ansi_str, int maxlen)
 {
-  WSHDR* ws_str = AllocWS(maxlen);
+  int utf8_len = NULL;
+  WSHDR * ws_str = AllocWS(maxlen);
   ascii2ws(ws_str, ansi_str);
-  char* utf8_str = malloc(maxlen*2+1);
-  ws_2str(ws_str, utf8_str, maxlen*2);
+  char * utf8_str = malloc(maxlen * 2 + 1);
+  ws_2utf8(ws_str, utf8_str, &utf8_len, maxlen * 2 + 1);
   FreeWS(ws_str);
-  //utf8_str = Correct_UTF8_String(utf8_str);
+  utf8_str = realloc(utf8_str, utf8_len + 1);
+  utf8_str[utf8_len] = '\0';
   return utf8_str;
 }
-
-
 
 // From NatICQ
 

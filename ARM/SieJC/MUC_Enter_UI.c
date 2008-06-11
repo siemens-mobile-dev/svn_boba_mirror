@@ -136,16 +136,17 @@ void med1_ghook(GUI *data, int cmd)
   }
 }
 
-extern void dummy(GUI *data);
 
 HEADER_DESC med1_hdr={0,0,131,21,NULL,(int)LG_ENTERMUC,LGP_NULL};
+
+void med1_locret(void){}
 
 INPUTDIA_DESC med1_desc=
 {
   1,
   med1_onkey,
   med1_ghook,
-  (void *)dummy,
+  (void *)med1_locret,
   0,
   &m_menu_skt,
   {0,22,131,153},
