@@ -5,8 +5,6 @@
 ;(p) -=MooN=-, Adrenalin, Ploik, Virusmater
 
 +45C3FC00
-0440: 00000000 05C4D444 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: 00000000 31C4D444 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: 00000000 A0531444 ; 112: void memset(void *mem,char chr,int size);
 044C: 00000000 18532D44 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: 00000000 09B95544 ; 114: int sprintf(char *buf, char *str, ...);

@@ -7,8 +7,6 @@
 ;
 
 +45B1FC00
-0440: 00000000 3D86A744 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: 00000000 6986A744 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: 00000000 94300020 ; 112: void memset(void *mem,char chr,int size);
 044C: 00000000 BC5B2D44 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: 00000000 51335544 ; 114: int sprintf(char *buf, char *str, ...);

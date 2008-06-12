@@ -5,8 +5,6 @@
 ;(p) Victor_k, Ploik, diezil, MouSeX
 
 +45CCAE00
-0440: 00000000 090FBB44 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: 00000000 350FBB44 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: 00000000 94300020 ; 112: void memset(void *mem,char chr,int size);
 044C: 00000000 FCC53F44 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: 00000000 31336844 ; 114: int sprintf(char *buf, char *str, ...);

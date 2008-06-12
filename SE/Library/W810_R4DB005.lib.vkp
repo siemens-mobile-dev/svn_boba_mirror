@@ -5,8 +5,6 @@
 ;(p)Joker777&ZEN
 
 +456BFC00
-0440: FFFFFFFF A5994445 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: FFFFFFFF DDA64445 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: FFFFFFFF D5ACE144 ; 112: void memset(void *mem,char chr,int size);
 044C: FFFFFFFF 40C51844 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: FFFFFFFF F5B7E144 ; 114: int sprintf(char *buf, char *str, ...);
@@ -347,6 +345,10 @@
 ;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 ;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 ;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
+;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
+;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
+;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 

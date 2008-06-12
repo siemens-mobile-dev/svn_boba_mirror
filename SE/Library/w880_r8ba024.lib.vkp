@@ -98,7 +98,7 @@
 05B0: 00000000 094EF644 ; 16C: __thumb int Gif2ID(u16 IMAGEHANDLE,u16 * path, u16 * fname,u16 * ID);
 05B4: 00000000 E188F644 ; 16D: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,char * unk);
 05B8: 00000000 A90CE744 ; 16E: __unknown void REQUEST_DATEANDTIME_GET(const int * __zero , DATETIME *dt);
-;05BC: xxxxxxxx yyyyyyyy ; 16F: void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_level);
+05BC: 00000000 F1844A45 ; 16F: void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_level);
 05C0: 00000000 C93E0A45 ; 170: __thumb int GetFreeBytesOnHeap(void);
 05C4: 00000000 496E3C45 ; 171: __thumb void Hide(void * udata, int zero);
 05C8: 00000000 596E3C45 ; 172: __thumb void Show(void * udata, int zero);
@@ -141,9 +141,13 @@
 06BC: 00000000 65693C45 ; 1AF: __thumb void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: 00000000 8D0A2D45 ; 1B0: __unknown void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 A9A42C44 ; 1B1: __thumb void debug_printf(char * fmt,...);
-06C8: 00000000 355D1345 ; 1B2: __thumb int PlayFile(u16 * path, u16 * fname);
+06C8: 00000000 315D1345 ; 1B2: __thumb int PlayFile(u16 * path, u16 * fname);
+06D0: 00000000 B9D33F45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06DC: 00000000 39AF4A45 ; 1B7: __thumb int isKeylocked(void);
-;06E0: xxxxxxxx yyyyyyyy ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06E0: 00000000 7D690745 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06EC: 00000000 F97E0F45 ; 1BB: void Vibra(int t1, int t2, int t3);
+06F0: 00000000 890EE744 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F4: 00000000 1D0FE744 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 1D2A3C45 ; 1BE: __thumb int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 45293C45 ; 1BF: __thumb int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 75594345 ; 1C0: __thumb GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -202,9 +206,9 @@
 ;07F0: xxxxxxxx yyyyyyyy ; 1FC: int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
 ;07F4: xxxxxxxx yyyyyyyy ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
 ;07F8: xxxxxxxx yyyyyyyy ; 1FE: WINDOW * DISP_OBJ_GetWindow(DISP_OBJ *);
-;07FC: xxxxxxxx yyyyyyyy ; 1FF: int GetThemeColor(int , int);
+07FC: 00000000 91BB4945 ; 1FF: int GetThemeColor(int , int);
 ;0800: xxxxxxxx yyyyyyyy ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
-;0804: xxxxxxxx yyyyyyyy ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
+0804: 00000000 39CC3F45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 216DF044 ; 202: __thumb void VCALL_Init (void* vc);
 080C: 00000000 196EF044 ; 203: __thumb void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
 0810: 00000000 796EF044 ; 204: __thumb void VCALL_SetNameIcon (void * vc , u16 icon);
@@ -226,6 +230,7 @@
 0850: 00000000 E53EF144 ; 214: __thumb int AB_NUM_ITEM2StrID(void * ab_num_item);
 0854: 00000000 BB051444 ; 215: __thumb int GetABRecNum(AB_GET_STRUCT *);
 ;0858: xxxxxxxx yyyyyyyy ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
+0860: 00000000 7949B944 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy);
 0864: 00000000 DDE7E844 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: 00000000 7C3C0820 ;821A: __thumb int * PID_MMI(void);
 ;0874: xxxxxxxx yyyyyyyy ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
@@ -270,8 +275,9 @@
 0910: 00000000 69674345 ; 244: __thumb void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 E1674345 ; 245: __thumb void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 D5674345 ; 246: __thumb int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
-;091C: xxxxxxxx yyyyyyyy ; 247: void GoMusic(void);
-;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
+091C: 00000000 C5103345 ; 247: void GoMusic(void);
+0920: 00000000 CD7F0F45 ; 248: void Vibra_Off (int t1);
+0928: 00000000 355D1345 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
 ;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
 ;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 ;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
@@ -328,12 +334,16 @@
 0A14: 00000000 40CA2E20 ;8285: SURFACE ** get_Surfaces(void);
 0A18: 00000000 7D0DD644 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* id);
 0A1C: 00000000 3D8CE644 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
-;0A20: xxxxxxxx yyyyyyyy ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
+0A20: 00000000 755D4345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 ;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
 ;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
-;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
+0A30: 00000000 F1130645 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 ;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
-;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+0A38: 00000000 49674A45 ; 28E: void Shortcut_Run (u16 * shortcut_name);
+;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
+;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
+;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
+;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 

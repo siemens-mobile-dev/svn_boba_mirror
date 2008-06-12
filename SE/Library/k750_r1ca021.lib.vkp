@@ -5,8 +5,6 @@
 ;
 
 +451CFC00
-0440: FFFFFFFF 01B5F744 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: FFFFFFFF 1DC6F744 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: FFFFFFFF B576B344 ; 112: void memset(void *mem,char chr,int size);
 044C: FFFFFFFF 449D0644 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: FFFFFFFF DD81B344 ; 114: int sprintf(char *buf, char *str, ...);

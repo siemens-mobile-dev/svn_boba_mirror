@@ -5,8 +5,6 @@
 ;(p) Adrenalin, Zormax (aka mobilefree)
 
 +45D3FC00
-0440: 00000000 5DF15345 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: 00000000 21BE5545 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: 00000000 B8521444 ; 112: void memset(void *mem,char chr,int size);
 044C: 00000000 F4C83F44 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: 00000000 4D316844 ; 114: int sprintf(char *buf, char *str, ...);

@@ -6,8 +6,6 @@
 ;(p) d1gger17, Casper
 
 +451E7C00
-0440: FFFFFFFF 7D9DF844 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: FFFFFFFF 99AEF844 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: FFFFFFFF 9968B444 ; 112: void memset(void *mem,char chr,int size);
 044C: FFFFFFFF 549D0644 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: FFFFFFFF C173B444 ; 114: int sprintf(char *buf, char *str, ...);
@@ -346,6 +344,10 @@
 ;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 ;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 ;0A38: xxxxxxxx yyyyyyyy ; 28E: void Shortcut_Run (u16 * shortcut_name);
+;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
+;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
+;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
+;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
 
 

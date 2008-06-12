@@ -5,8 +5,6 @@
 ;(p) hippy dave
 
 +45D1FC00
-440: 00000000 45FDE444 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-444: 00000000 71FDE444 ; 111: void memfree(void * mem,const char * fname ,int fline)
 448: 00000000 94300020 ; 112: void memset(void *mem,char chr,int size);
 44C: 00000000 18CB3F44 ; 113: int memcpy(void *dest,const void *source,int cnt);
 450: 00000000 95A26744 ; 114: int sprintf(char *buf, char *str, ...);

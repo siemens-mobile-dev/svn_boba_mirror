@@ -5,8 +5,6 @@
 ;(p) den_po
 
 +45B87C00
-440: 00000000 095AE344 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-444: 00000000 355AE344 ; 111: void memfree(void * mem,const char * fname ,int fline)
 448: 00000000 B4521444 ; 112: void memset(void *mem,char chr,int size);
 44C: 00000000 EC213F44 ; 113: int memcpy(void *dest,const void *source,int cnt);
 450: 00000000 41F26644 ; 114: int sprintf(char *buf, char *str, ...);

@@ -4,8 +4,6 @@
 ;(p) stuCk
 
 +4567CC00
-0440: FFFFFFFF 69C13D45 ; 110: void *memalloc(int size,int f1,int f2,const char *fname,int fline)
-0444: FFFFFFFF 9DCE3D45 ; 111: void memfree(void * mem,const char * fname ,int fline)
 0448: FFFFFFFF CDB7DA44 ; 112: void memset(void *mem,char chr,int size);
 044C: FFFFFFFF 780D1944 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: FFFFFFFF F5C2DA44 ; 114: int sprintf(char *buf, char *str, ...);
