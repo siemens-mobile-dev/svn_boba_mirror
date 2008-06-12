@@ -144,8 +144,10 @@
 06C8: 00000000 35D20045 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: 00000000 FDC32D45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 59C42D45 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
+06D8: 00000000 7D4F2D45 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: 00000000 C19A3845 ; 1B7: int isKeylocked(void);
 06E0: 00000000 FD7BF544 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06E8: 00000000 9B4F2B45 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 6DEAFD44 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 312BD544 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 C52BD544 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
