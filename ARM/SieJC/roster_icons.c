@@ -5,6 +5,7 @@
 #include "jabber_util.h"
 #include "string_util.h"
 #include "history.h"
+#include "transports_icons.h"
 
 unsigned int conference=0x18C;
 
@@ -24,7 +25,7 @@ unsigned int dnd=0x231;
 unsigned int invisible=0x306;
 
 extern const char* PRESENCES[PRES_COUNT];
-extern const char PATH_TO_PIC[128];
+extern const char PATH_TO_PIC[];
 
 #ifdef USE_PNG_EXT
 
@@ -89,53 +90,6 @@ int Roster_getIconByStatus(char status) //вернет номер картинки по статусу
 }
 #endif
 
-/*
-  Добавить в путь к иконке папку с иконками транспорта.
-  Имя папки берем из жида контакта транспорта (xxxx@icq.jabber.ru -> icq)
-*/
-void GetTransportPath(char * path_to_pic, TRESOURCE* resEx)
-{
-  int len = NULL;
-  char * tmp_path = NULL;
-  unsigned int io_error = NULL;
-  if(resEx->entry_type == T_TRANSPORT) // Сам транспорт
-  {
-    while(resEx->full_name[len] != '.')
-      len ++;
-    tmp_path = malloc(strlen(path_to_pic) + len + 2);
-    strcpy(tmp_path, path_to_pic);
-    strncat(tmp_path, resEx->full_name, len);
-    if (isdir(tmp_path, &io_error)) // Если есть такая папка
-    {
-      strncat(path_to_pic, resEx->full_name, len); // Пишем папку в наш путь
-      goto L_DONE;
-    }
-  }
-  else
-  {
-    char * tmp = strrchr(resEx->full_name, '@') + 1; // Контакт из транспорта
-    if (tmp)
-    {
-      while(tmp[len] != '.')
-        len ++;
-      tmp_path = malloc(strlen(path_to_pic) + len + 2);
-      strcpy(tmp_path, path_to_pic);
-      strncat(tmp_path, tmp, len);
-      if (isdir(tmp_path, &io_error))
-      {
-        strncat(path_to_pic, tmp, len);
-        goto L_DONE;
-      }
-    }
-  }
-  if (tmp_path) mfree(tmp_path);
-  return;
-  
-L_DONE:
-  if (tmp_path) mfree(tmp_path);
-  strcat(path_to_pic, "\\");
-}
-
 #ifdef USE_PNG_EXT
 void Roster_getIcon(char * path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
 {
@@ -158,7 +112,7 @@ void Roster_getIcon(char * path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   // Если это члены конференции и они живы
   if(resEx->entry_type == T_CONF_NODE && !resEx->has_unread_msg && resEx->status<=PRESENCE_INVISIBLE)
   {
-    GetTransportPath(path_to_pic, resEx);
+    GetTransportIconsPath(path_to_pic, resEx);
     if(resEx->status==PRESENCE_ONLINE)
     {
       if(resEx->muc_privs.role==ROLE_VISITOR)strcat(path_to_pic, "vis_");
@@ -189,6 +143,7 @@ void Roster_getIcon(char * path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   // Если у нас нет подписки и у контакта нет непрочитанных сообщений
   if(((ClEx->subscription== SUB_FROM) || (ClEx->subscription== SUB_NONE))&& !resEx->has_unread_msg)
   {
+    GetTransportIconsPath(path_to_pic, resEx);
     strcat(path_to_pic, "noauth"); // иконка "нет авторизации"
     goto L_DONE;
   }
@@ -196,6 +151,7 @@ void Roster_getIcon(char * path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   // Если стоит флаг запроса подписки
   if(ClEx->wants_subscription)
   {
+    GetTransportIconsPath(path_to_pic, resEx);
     strcat(path_to_pic, "ask");
     goto L_DONE;
   }
@@ -215,7 +171,8 @@ void Roster_getIcon(char * path_to_pic, CLIST* ClEx, TRESOURCE* resEx)
   }
   else
   {
-    GetTransportPath(path_to_pic, resEx);
+    if(resEx->status < PRESENCE_ERROR)
+      GetTransportIconsPath(path_to_pic, resEx);
     // Если же непрочитанных сообщений нет
     if(resEx->status<=PRESENCE_ERROR) // Если адекватный статус
     {

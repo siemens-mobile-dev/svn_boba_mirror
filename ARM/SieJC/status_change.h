@@ -2,6 +2,7 @@
   #define _STATUSCHANGE_H_
 
 // Показать меню смены статуса
-void DispStatusChangeMenu();
+void ShowStatusSelectMenu();
+void EditStatus(int status_n);
 
 #endif

@@ -163,7 +163,7 @@ static const char * const menutexts[N_ITEMS]=
 
 static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           Disp_Contact_Menu,
-                          DispStatusChangeMenu,
+                          ShowStatusSelectMenu,
                           OpenDisp_MUC_Enter_Dialog,
                           OpenBookmarks_List,
                           AddContact,

@@ -23,6 +23,7 @@
 #include "siejc_ipc.h"
 #include "color.h"
 #include "rect_patcher.h"
+#include "transports_icons.h"
 
 /*
 (c) Kibab
@@ -1350,7 +1351,9 @@ void maincsm_oncreate(CSM_RAM *data)
   maingui_id=csm->gui_id=CreateGUI(main_gui);
   DNR_TRIES=3;
   InitGroupsList();
-  strcat((char *)ipc_my_name,USERNAME);strcat((char *)ipc_my_name, "@");strcat((char *)ipc_my_name, JABBER_SERVER);
+  strcat((char *)ipc_my_name,USERNAME);
+  strcat((char *)ipc_my_name, "@");
+  strcat((char *)ipc_my_name, JABBER_SERVER);
   gipc.name_to=ipc_my_name;
   gipc.name_from=ipc_my_name;
   gipc.data=(void *)-1;
@@ -1399,6 +1402,7 @@ void maincsm_onclose(CSM_RAM *csm)
   
   if (cur_color_name) mfree(cur_color_name);
   
+  SUBPROC((void *)FreeTranspostIconsList);
   SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)end_socket);
   SUBPROC((void *)ClearSendQ);
@@ -1430,6 +1434,7 @@ void CheckDoubleRun(void)
   }
   else
   {
+    SUBPROC((void *)LoadTranspostIconsList);
     SUBPROC((void *)InitSmiles);
     SUBPROC((void *)create_connect);
     GBS_StartTimerProc(&Ping_Timer,PING_INTERVAL,SendPing);

@@ -5210,6 +5210,12 @@
   <file>
     <name>$PROJ_DIR$\status_change.h</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\transports_icons.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\transports_icons.h</name>
+  </file>
 </project>
 
 

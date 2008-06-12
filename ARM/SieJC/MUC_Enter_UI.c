@@ -17,21 +17,65 @@ SOFTKEYSTAB m_menu_skt=
   m_menu_sk,0
 };
 
-WSHDR* mews;
-char mTerminate=0;
-
 int med1_onkey(GUI *data, GUI_MSG *msg)
 {
-  //-1 - do redraw
-  //1: close
-  
   // Если зелёная кнопка либо нажата кнопка, которую мы повесили в cmd=7
   if(msg->gbsmsg->submess==GREEN_BUTTON || msg->keys==0x18)
   {
-    mTerminate = 1;
+    EDITCONTROL ec;
+    int utf8_len = NULL;
+    char * conf_name = NULL;
+    char * user_name = NULL;
+    char * pass_name = NULL;
+    // Конференция
+    ExtractEditControl(data, 2, &ec);
+    if(ec.pWS->wsbody[0])
+    {
+      
+      conf_name = malloc(ec.pWS->wsbody[0] * 2 + 1);
+      ws_2utf8(ec.pWS, conf_name, &utf8_len, ec.pWS->wsbody[0] * 2 + 1);
+      conf_name = realloc(conf_name, utf8_len + 1);
+      conf_name[utf8_len]='\0';
+      if(conf_name[0]=='@')
+      {
+        mfree(conf_name);
+        MsgBoxError(1,(int)LG_NONAMECONF);
+        return 0;
+      }
+    }
+    // Ник
+    ExtractEditControl(data, 4, &ec);    
+    if(ec.pWS->wsbody[0])
+    {
+      user_name = malloc(ec.pWS->wsbody[0] * 2 + 1);
+      ws_2utf8(ec.pWS, user_name, &utf8_len, ec.pWS->wsbody[0] * 2 + 1);
+      user_name = realloc(user_name, utf8_len + 1);
+      user_name[utf8_len]='\0';
+    }
+    // Пароль
+    ExtractEditControl(data, 6, &ec);    
+    if(ec.pWS->wsbody[0])
+    {
+      pass_name = malloc(ec.pWS->wsbody[0] * 2 + 1);
+      ws_2utf8(ec.pWS, pass_name, &utf8_len, ec.pWS->wsbody[0] * 2 + 1);
+      pass_name = realloc(pass_name, utf8_len + 1);
+      pass_name[utf8_len]='\0';
+    }
+    // Число сообщений
+    ExtractEditControl(data, 8, &ec);
+    char ss[10];
+    ws_2str(ec.pWS, ss, 15);
+    extern long  strtol (const char *nptr,char **endptr,int base);
+    int n_messages = strtol (ss,0,10);
+    if(user_name && conf_name)
+    {
+      Enter_Conference(conf_name, user_name, pass_name, n_messages);
+      mfree(user_name);
+      mfree(pass_name);
+      mfree(conf_name);
+    }
     return 1;
   }
-  
   if (msg->keys==0x0FF0) //Левый софт СГОЛД
   {
     return(1);
@@ -44,11 +88,10 @@ void med1_ghook(GUI *data, int cmd)
   EDITCONTROL ec;
   static SOFTKEY_DESC mmmmsk={0x0018, 0x0000,(int)LG_OK};
  
-  if (cmd==7)
+  if (cmd == TI_CMD_REDRAW)
   {
     //OnRun
-    ExtractEditControl(data,2,&ec);    
-    wstrcpy(mews,ec.pWS);    
+    ExtractEditControl(data,2,&ec);   
 #ifndef NEWSGOLD
   static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
 #endif
@@ -61,78 +104,9 @@ void med1_ghook(GUI *data, int cmd)
 #endif   
   }
   
-  if(cmd==0x0A)   // Фокусирование
+  if(cmd == TI_CMD_FOCUS)   // Фокусирование
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
-  }
-
-  if(mTerminate)
- {
-//     char q[10];
-//     sprintf(q,"N=%d",cmd);
-//     ShowMSG(1,(int)q); 
-   mTerminate=0;
-   int param_ok=0;      // Флаг правильности всех параметров
-   size_t st_len;
-// Имя конфы
-
-   st_len = wstrlen(mews)*2;
-   char* conf_name;
-   if(st_len)
-   {
-      conf_name =  utf16_to_utf8((char**)mews,&st_len);
-      conf_name[st_len]='\0';
-      param_ok = 1;
-      if(conf_name[0]=='@')
-      {
-        MsgBoxError(1,(int)LG_NONAMECONF);
-        param_ok=0;
-      }
-   }
-   else conf_name = NULL;
-   
-   char* user_name;
-   ExtractEditControl(data,4,&ec);    
-   wstrcpy(mews,ec.pWS);
-   st_len = wstrlen(mews)*2;
-   if(st_len)
-   {
-      user_name =  utf16_to_utf8((char**)mews,&st_len);
-      user_name[st_len]='\0';
-   }
-   else user_name = NULL;
-   
-   char* pass_name;
-   ExtractEditControl(data,6,&ec);
-   wstrcpy(mews,ec.pWS);
-   st_len = wstrlen(mews)*2;
-   if(st_len)
-   {
-      pass_name =  utf16_to_utf8((char**)mews,&st_len);
-      pass_name[st_len]='\0';
-   }
-   else pass_name = NULL;
-
-    extern long  strtol (const char *nptr,char **endptr,int base);
-    ExtractEditControl(data,8,&ec);    // = n_messages
-    wstrcpy(mews,ec.pWS);
-    char ss[10];
-    ws_2str(mews,ss,15);
-    int n_messages = strtol (ss,0,10);
-    if(user_name && conf_name && param_ok)
-    {
-      //ShowMSG(1,(int)user_name);
-      //ShowMSG(1,(int)conf_name);
-      Enter_Conference(conf_name, user_name, pass_name, n_messages);
-      mfree(user_name);
-      mfree(pass_name);
-      mfree(conf_name);
-    }
-   }
-  
-    if(cmd==0x03)     // onDestroy
-  {
-    FreeWS(mews);
   }
 }
 
@@ -154,79 +128,63 @@ INPUTDIA_DESC med1_desc=
   100,
   101,
   0,
-
-//  0x00000001 - Выровнять по правому краю
-//  0x00000002 - Выровнять по центру
-//  0x00000004 - Инверсия знакомест
-//  0x00000008 - UnderLine
-//  0x00000020 - Не переносить слова
-//  0x00000200 - bold
   0,
-
-//  0x00000002 - ReadOnly
-//  0x00000004 - Не двигается курсор
-//  0x40000000 - Поменять местами софт-кнопки
   0x40000000
 };
 
 void Disp_MUC_Enter_Dialog()
 {
-  void *ma=malloc_adr();
   extern const char USERNAME[32];
   extern const char DEFAULT_MUC[64];
   extern const char DEFAULT_MUC_NICK[64];
   extern const unsigned int DEFAULT_MUC_MSGCOUNT;
   
-  void *eq;
   EDITCONTROL ec;
-  mews=AllocWS(256);
+  void * ma = malloc_adr();
+  void * eq = AllocEQueue(ma,mfree_adr());
+  WSHDR * ws = AllocWS(256);
   
   PrepareEditControl(&ec);
-  eq=AllocEQueue(ma,mfree_adr());
   
-  ascii2ws(mews, LG_NAMEMUC);
-  ConstructEditControl(&ec,1,0x40,mews,256);
+  ascii2ws(ws, LG_NAMEMUC);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  utf8_2ws(mews, (char*)DEFAULT_MUC, 64);
-  ConstructEditControl(&ec,3,0x40,mews,128);      //2
+  utf8_2ws(ws, (char*)DEFAULT_MUC, 128);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 128);      //2
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  ascii2ws(mews, LG_NICK);
-  ConstructEditControl(&ec,1,0x40,mews,256);
+  ascii2ws(ws, LG_NICK);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);  
 
   if(strlen(DEFAULT_MUC_NICK))
-  {
-    //wsprintf(mews,"%s",DEFAULT_MUC_NICK);
-    utf8_2ws(mews, (char*)DEFAULT_MUC_NICK, 64);
-  }
+    utf8_2ws(ws, (char*)DEFAULT_MUC_NICK, 80);
   else
-  {
-    ascii2ws(mews, USERNAME);
-  }
-  ConstructEditControl(&ec,3,0x40,mews,80);     // 4
+    ascii2ws(ws, USERNAME);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 80);     // 4
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  ascii2ws(mews, LG_PASSWORD);
-  ConstructEditControl(&ec,1,0x40,mews,256);
+  ascii2ws(ws, LG_PASSWORD);
+  ConstructEditControl(&ec, ECT_HEADER,ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  ascii2ws(mews, "");
-  ConstructEditControl(&ec,3,0x40,mews,80);     // 6
+  ascii2ws(ws, "");
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 80);     // 6
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  ascii2ws(mews, LG_GETMESSAGECOUNT);
-  ConstructEditControl(&ec,1,0x40,mews,256);      
+  ascii2ws(ws, LG_GETMESSAGECOUNT);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);      
   AddEditControlToEditQend(eq,&ec,ma);  
 
-  wsprintf(mews, "%d", DEFAULT_MUC_MSGCOUNT);
-  ConstructEditControl(&ec,5,0x40,mews,2);    //8
+  wsprintf(ws, "%d", DEFAULT_MUC_MSGCOUNT);
+  ConstructEditControl(&ec,5,ECF_APPEND_EOL, ws, 2);    //8
   AddEditControlToEditQend(eq,&ec,ma);  
   
+  FreeWS(ws);
   patch_input(&med1_desc);
   patch_header(&med1_hdr);
-  CreateInputTextDialog(&med1_desc,&med1_hdr,eq,1,0);
+  CreateInputTextDialog(&med1_desc, &med1_hdr,eq, 1, 0);
 }
 
 
