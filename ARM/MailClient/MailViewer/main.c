@@ -420,6 +420,7 @@ unsigned get_date_from_str(const char *str)
   int year, month, day, hour, min, sec, cor;
   char *buf, b[128];
   const char *ptr;
+
   buf = strstr_nocase(str, ", ");
 
   if(buf) 
@@ -642,11 +643,11 @@ int get_received_date(char * str)
   line = s = r;
   while(*s)
   {
-    if((*s == '\r' || *s == '\n') && (*(s+1) == '\t' || *(s+1) == ' '))
-      line = s+1;
-    if((*s == '\r' || *s == '\n') && ((*(s+1) >= 'a' && *(s+1) <= 'z') || 
-                                      (*(s+1) >= 'A' && *(s+1) <= 'Z')))
-      break;
+    if((*s == '\r' || *s == '\n') && (s[1] == '\t' || s[1] == ' '))
+      line = s+1;  //»щем строку, начинающуюс€ с пробелов или табул€ции
+    if((*s == '\r' || *s == '\n') && ((s[1] >= 'a' && s[1] <= 'z') || 
+                                      (s[1] >= 'A' && s[1] <= 'Z')))
+      break;  //ѕоследн€€ ли строка блока?
     s++;
   }
   while(*line && (*line == ' ' || *line == '\t')) line++;
@@ -2135,7 +2136,7 @@ void send_req_checkmailbox(void)
 {
   if (daemon_present!=-1)
   {
-    IPC_REQ *ipc=debug_malloc(sizeof(IPC_REQ), "send_req_checkmailbox (1)");
+    IPC_REQ *ipc=malloc(sizeof(IPC_REQ)); //debug_malloc(sizeof(IPC_REQ), "send_req_checkmailbox (1)");
     ipc->name_to=ipc_daemon_name;
     ipc->name_from=ipc_my_name;
     ipc->data=0;
@@ -2147,7 +2148,7 @@ void send_req_stopcheck(void)
 {
   if (daemon_present!=-1)
   {
-    IPC_REQ *ipc=debug_malloc(sizeof(IPC_REQ), "send_req_stopcheck (1)");
+    IPC_REQ *ipc=malloc(sizeof(IPC_REQ)); //debug_malloc(sizeof(IPC_REQ), "send_req_stopcheck (1)");
     ipc->name_to=ipc_daemon_name;
     ipc->name_from=ipc_my_name;
     ipc->data=0;
@@ -2677,7 +2678,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             ShowMSG(1,(int)"Can't connect!");
             break;
           }
-          debug_mfree(ipc, "csm1");
+          mfree(ipc);
+          //debug_mfree(ipc, "csm1");
           break;
           
          
@@ -2720,7 +2722,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     if ((int)msg->data0==stat_gui_id)
     {
       stat_gui_id=0;
-      if ((int)msg->data1==2)
+      if ((int)msg->data1==2) 
       {
         if (maillist_menu_id)
         {
