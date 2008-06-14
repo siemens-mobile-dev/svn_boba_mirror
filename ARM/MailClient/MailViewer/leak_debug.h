@@ -8,3 +8,4 @@ void debug_mfree(void *block, char * caller_name);
 void * debug_realloc(void *block, int size, char * caller_name);
 void Clean();
 void SaveError(char * msg);
+int GetTempName(void);

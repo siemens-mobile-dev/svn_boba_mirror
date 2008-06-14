@@ -8,6 +8,7 @@
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+unsigned int char8to16(int c, int type);
 
 extern const char MAIL_LOGIN[];
 extern const char MAIL_PASS[];

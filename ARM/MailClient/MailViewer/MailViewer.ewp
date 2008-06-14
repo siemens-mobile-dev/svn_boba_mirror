@@ -3165,6 +3165,9 @@
   <file>
     <name>$PROJ_DIR$\statscreen.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\strings.c</name>
+  </file>
 </project>
 
 

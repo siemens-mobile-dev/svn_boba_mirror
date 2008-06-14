@@ -4,6 +4,7 @@
 #include "decode.h"
 #include "leak_debug.h"
 
+char *br = "<br>", *zerostr = "";
 
 extern int strncmp_nocase(const char *s1,const char *s2,unsigned int n);
 
@@ -368,9 +369,89 @@ void strip_html(char *s)
 {
   int d_ptr = 0;
   char *script, *script_end, *s1, *s2;
+  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&=/?абвгдеЄжзийклмнопрстуфхцчшщъыьэю€јЅ¬√ƒ≈®∆«»… ЋћЌќѕ–—“”‘’÷„ЎўЏџ№Ёёя~#";
 
-  s1 = strreplace(s, "\r\n\r\n", "<br>");
+  s1 = strreplace(s, "\r\n\r\n", br);
+  s2 = s1;
+  s1 = strreplace(s2, "<br />", br);
+  debug_mfree(s2, "strip_html (11)"); s2 = s1;
+  s1 = strreplace(s2, "<wbr />", zerostr);
+  debug_mfree(s2, "strip_html (12)"); s2 = s1;
+  s1 = strreplace(s2, "\r\r", br);
+  debug_mfree(s2, "strip_html (13)"); s2 = s1;
+  s1 = strreplace(s2, "\n\n", br);
+  debug_mfree(s2, "strip_html (14)"); s2 = s1;
+  s1 = strreplace(s2, "</ul>\n", "</ul><br>");
+  debug_mfree(s2, "strip_html (15)"); s2 = s1;
+  s1 = strreplace(s2, "</ul>\r", "</ul><br>");
+  debug_mfree(s2, "strip_html (16)"); s2 = s1;
+  s1 = strreplace(s2, "<li>", br);
+  debug_mfree(s2, "strip_html (17)"); s2 = s1;
+  s1 = strreplace(s2, "</li>", br);
+  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  s1 = strreplace(s2, "</ol>\r", "</ol><br>");
+  debug_mfree(s2, "strip_html (18)"); s2 = s1;
+  s1 = strreplace(s2, "</ol>\n", "</ol><br>");
+  debug_mfree(s2, "strip_html (19)"); s2 = s1;
+  s1 = strreplace(s2, "<br><br>", br);
+  debug_mfree(s2, "strip_html (20)"); s2 = s1;
+  //«аменим ссылки
+  char *a = strstr(s1, "<a "), *hrf, *he, *ea, *ss, *st1, *st2, *rpl;
+  int n;
+  while(a)  //ѕока есть теги <a ...
+  {
+    he = hrf = strstr(a, "href=");  //находим указатель на адрес
+    if(hrf)
+    {
+      if(hrf[5] == '\"')            //смотрим как оформлена ссылка
+        he = strstr(hrf+6, "\""); //в кавычках
+      else
+        if(hrf[5] == '\'')          //в апострофах
+          he = strstr(&hrf[5], "\'");
+        else
+          for(he = hrf+5; *he && strchr(valid, *he); he++);//или без ничего
+      ss = strstr(he, ">")+1;       //ищем конец открывающего тега
+      ea = strstr(he, "</a>");      //и начало закрывающего
+      rpl = strstr(he, "<a ");
+      if(rpl && ea > rpl)
+      {
+        a = rpl;
+        continue;
+      }
 
+      if(ss && ea)                  //если не нашли - кос€к
+      {
+        st1 = (char*)debug_malloc(he-hrf-5, "strip_html (a1)"); //выдел€ем пам€ть под промежуточные строки
+        st2 = (char*)debug_malloc(ea-ss+1,  "strip_html (a2)");
+        rpl = (char*)debug_malloc(ea-a+5,   "strip_html (a3)");
+        
+        memcpy(st1, hrf+6, he-hrf-6); st1[he-hrf-6] = 0; //копируем их туда
+        memcpy(st2, ss, ea-ss);       st2[ea-ss]    = 0;
+        memcpy(rpl, a, ea-a+4);       rpl[ea-a+4]   = 0; //что будем замен€ть
+
+        ss = (char*)debug_malloc(strlen(st1) + strlen(st2) + 6, "strip_html (a4)");
+        memset(ss, 0, strlen(st1) + strlen(st2) + 6);
+        if(strcmp(st1, st2))
+          snprintf(ss, strlen(st1) + strlen(st2) + 5, " %s {%s} ", st2, st1); // на что замен€ем
+        else
+          snprintf(ss, strlen(st1) + strlen(st2) + 5, " {%s} ", st2, st1); // на что замен€ем
+
+        n = a-s1;                                        //ЌайдЄм смещение, откуда пл€сать дальше
+        s2 = strreplace(s1, rpl, ss);                    //—обственно замена
+        debug_mfree(s1, "strip_html (a4)"); s1 = s2;     //€вки-пароли помен€лись
+        a = s1 + n;                                      //дальше искать отсюда
+
+        debug_mfree(ss,  "strip_html (a4)");             //всем спасибо, все свободны
+        debug_mfree(rpl, "strip_html (a3)");
+        debug_mfree(st2, "strip_html (a2)");
+        debug_mfree(st1, "strip_html (a1)");
+      }
+    }
+    if(ss) a = s1;
+    a = strstr(a+1, "<a ");
+  }
+
+  
   for(int i = 0, j = 0; s1[i]; i++)
   {
     if(s1[i] != '\r' && s1[i] != '\n')
@@ -395,32 +476,30 @@ void strip_html(char *s)
   }
 
   s2 = s1;
-  s1 = strreplace(s2, "<br>", "\r\n");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
-  s1 = strreplace(s2, "<br />", "\r\n");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  s1 = strreplace(s2, br, "\r\n");
+  debug_mfree(s2, "strip_html (21)"); s2 = s1;
   s1 = strreplace(s2, "<p>", "\r\n");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (23)"); s2 = s1;
   s1 = strreplace(s2, "<blockquote", "\r\n<blockquote");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (24)"); s2 = s1;
   s1 = strreplace(s2, "/blockquote>", "/blockquote>\r\n");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (25)"); s2 = s1;
   s1 = strreplace(s2, "</td>", " ");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (26)"); s2 = s1;
   s1 = strreplace(s2, "</tr>", "\r\n");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (27)"); s2 = s1;
   s1 = strreplace(s2, "&quote;", "\"");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (28)"); s2 = s1;
   s1 = strreplace(s2, "&nbsp;", " ");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (29)"); s2 = s1;
   s1 = strreplace(s2, "&lt;", "<");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (30)"); s2 = s1;
   s1 = strreplace(s2, "&gt;", ">");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (31)"); s2 = s1;
   s1 = strreplace(s2, "&amp;", "&");
-  debug_mfree(s2, "strip_html (1)"); s2 = s1;
+  debug_mfree(s2, "strip_html (32)"); s2 = s1;
   s1 = strreplace(s2, "&copy;", "(c)");
-  debug_mfree(s2, "strip_html (1)");
+  debug_mfree(s2, "strip_html (33)");
 
   //сюда мы будем бросать кости
   char *d = (char*) debug_malloc(strlen(s)+1, "strip_html (1)");
