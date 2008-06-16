@@ -158,8 +158,9 @@ void SieGetDaemon::ProcessSocket(int id, int event)
 
     case ENIP_BUFFER_FREE: //Буфер отпраки пуст
     case ENIP_BUFFER_FREE1:
+      //Досылаем очередь
       download->log->Print("Socket buffer free", CLR_Grey);
-      //To be implemented...
+      download->Send(NULL, NULL);
       break;
 
     default:
@@ -209,7 +210,7 @@ SieGetDaemon::~SieGetDaemon()
   GBS_DelTimer(&VibraTimer);
   delete lgp;
   delete icp;
-  //delete dialog;
+  delete dialog;
   delete DNR_Handler;
   delete DL_Handler;
   SUBPROC((void *)Killer);

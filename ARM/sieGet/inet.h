@@ -36,13 +36,6 @@ enum DOWNLOAD_STATE   // Статус закачки
   DOWNLOAD_STOPPED    // Остановлено
 };
 
-enum ACCEPT_RANGES_STATE
-{
-  ACCEPT_RANGES_UNKNOWN,  // Неизвестно
-  ACCEPT_RANGES_OK,       // Сервер поддерживает докачку
-  ACCEPT_RANGES_NO        // Сервер не поддерживает докачку
-};
-
 // Макрос, показывающий активность нужной закачки
 #define ACTIVE_DOWNLOAD_STATE(x) ((x) == DOWNLOAD_WAITING      \
                                   || (x) == DOWNLOAD_CONNECT   \
@@ -116,7 +109,7 @@ public:
   void StartDownload();
   void StopDownload();
   
-  ACCEPT_RANGES_STATE AcceptRangesState; // Поддержка сервером докачки
+  int ranges_support;     // Поддержка сервером докачки. 0 - не держит, 1 - держит
   
   char * url;             // URL
   char * file_name;       // Имя файла

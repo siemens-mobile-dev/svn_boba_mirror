@@ -64,7 +64,16 @@ enum LGP_ID
   LGP_DownloadStarted,
   LGP_DownloadStopped,
   LGP_DownloadCompleted,
-
+  LGP_ResolvingHost,
+  LGP_WaitDNR,
+  LGP_DNRError,
+  LGP_DNROutOfTries,
+  LGP_ConnectToIPPort,
+  LGP_HTTPParserReturned,
+  LGP_GotResponseCode,
+  LGP_GotResponseReason,
+  LGP_RangesNotSupportFileDelete,
+  
   LGP_DATA_NUM
 };
 

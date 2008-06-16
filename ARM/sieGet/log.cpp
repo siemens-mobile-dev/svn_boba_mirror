@@ -52,11 +52,7 @@ Log::Log()
 
 Log::~Log()
 {
-  unsigned int io_error = 0;
-  
-  if (hFile != -1)
-    fclose(hFile, &io_error);
-  hFile = -1;
+  CloseFile();
   
   LogLine *tmp = log_start;
   while (tmp->next!=tmp)
@@ -133,4 +129,12 @@ void Log::DeleteFile()
     fclose(hFile, &io_error);
   hFile = -1;
   unlink(filename, &io_error);
+}
+
+void Log::CloseFile()
+{
+  unsigned int io_error = 0;
+  if (hFile != -1)
+    fclose(hFile, &io_error);
+  hFile = -1;
 }

@@ -2,6 +2,9 @@
 #define _DNS_H_
 
 #include "include.h"
+#include "log.h"
+
+#define DNR_SEND_TIMER
 
 enum DNR_RESULT_MSG
 {
@@ -18,12 +21,19 @@ public:
   void Start(const char *host, int tries);
   void SendReq();
 
+#ifdef DNR_SEND_TIMER
+  static DNR * Top;
+#endif
   virtual void onResolve(DNR_RESULT_MSG result_msg, int value) = 0; //Â HELPER
   
   int DNR_ID;
+  Log * log;
 private:
   int DNR_TRIES;
   char * host;
+#ifdef DNR_SEND_TIMER
+  GBSTMR send_tmr;
+#endif
 };
 
 class DNRHandler

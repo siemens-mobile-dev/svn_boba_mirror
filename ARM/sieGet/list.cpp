@@ -198,8 +198,8 @@ void List::ItemHandler(void * data, int curitem, void * unk)
     SetMenuItemIconArray(data, item, &IconPack::Active->data[IMG_Idle]);
     break;
   }
-  if (dl->AcceptRangesState != ACCEPT_RANGES_UNKNOWN) // Вставляем смайл - индикатор поддержки докачки
-    wsInsertChar(ws2, dl->AcceptRangesState == ACCEPT_RANGES_OK?LGP_SMILE_OK:LGP_SMILE_NO, 1);
+  if (dl->ranges_support != -1) // Вставляем смайл - индикатор поддержки докачки
+    wsInsertChar(ws2, dl->ranges_support == 1?LGP_SMILE_OK:LGP_SMILE_NO, 1);
   SetMLMenuItemText(data, item, ws1, ws2, curitem);
 }
 

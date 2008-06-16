@@ -20,7 +20,6 @@ char * getSymbolicPath(const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Bookmarks");
-          make_dirs(path);
           pp += 9;
           ps += 9;
           continue;
@@ -31,7 +30,6 @@ char * getSymbolicPath(const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "img");
-          make_dirs(path);
           pp += 3;
           ps += 3;
           continue;
@@ -42,7 +40,6 @@ char * getSymbolicPath(const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Logs");
-          make_dirs(path);
           pp += 4;
           ps += 4;
           continue;
@@ -60,7 +57,6 @@ char * getSymbolicPath(const char * cFileName)
           strcpy(path + pp, CFG_SIEGET_FOLDER);
           pp += strlen(CFG_SIEGET_FOLDER);
           strcpy(path + pp, "Sounds");
-          make_dirs(path);
           pp += 6;
           ps += 6;
           continue;
@@ -75,6 +71,7 @@ char * getSymbolicPath(const char * cFileName)
     }
   }
   path[pp] = NULL;
+  make_dirs(path); // Создаем все несуществующие папки в пути
   return path;
 }
 

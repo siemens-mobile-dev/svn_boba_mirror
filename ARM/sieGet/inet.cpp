@@ -31,9 +31,10 @@ HttpDNR::HttpDNR()
   Callback = NULL;
 }
 
-void HttpDNR::Bind(HttpAbstract *sock)
+void HttpDNR::Bind(HttpAbstract * sock)
 {
   Callback = sock;
+  log = sock->log;
 }
 
 void HttpDNR::onResolve(DNR_RESULT_MSG result_msg, int value)
@@ -107,7 +108,7 @@ void HttpAbstract::Start(const char * host, short _port)
   port = _port;
   http_state = HTTP_RESOLVE;
   download_state = DOWNLOAD_CONNECT;
-  log->Print("Resolving host...", CLR_Green);
+  log->Print(LangPack::Active->data[LGP_ResolvingHost], CLR_Green);
   Resolver->Start(host, 3);
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList();
@@ -128,9 +129,12 @@ void HttpAbstract::doConnect()
 
 void HttpAbstract::onResolve(DNR_RESULT_MSG result_msg, int value)
 {
+  if (download_state == DOWNLOAD_STOPPED || download_state == DOWNLOAD_ERROR)
+    return;
+  
   char * msg = new char[64];
-  /*sprintf(msg, "HttpAbstract::onResolve(%d, 0x%X)", result_msg, value);
-  log->Print(msg, CLR_Yellow);*/
+  //sprintf(msg, "HttpAbstract::onResolve(%d, 0x%X)", result_msg, value);
+  //log->Print(msg, CLR_Yellow);
 
   switch(result_msg)
   {
@@ -143,12 +147,12 @@ void HttpAbstract::onResolve(DNR_RESULT_MSG result_msg, int value)
     doConnect();
     break;
   case DNR_RESULT_ERROR:
-    sprintf(msg, "DNR Error %d", value);
+    sprintf(msg, LangPack::Active->data[LGP_DNRError], value);
     log->Print(msg, CLR_Red);
     onError(SOCK_ERROR_CONNECTING);
     break;
   case DNR_RESULT_OUT_OF_TRIES:
-    log->Print("DNR out of tries!", CLR_Red);
+    log->Print(LangPack::Active->data[LGP_DNROutOfTries], CLR_Red);
     onError(SOCK_ERROR_CONNECTING);
     break;
   }
@@ -157,8 +161,11 @@ void HttpAbstract::onResolve(DNR_RESULT_MSG result_msg, int value)
 
 void HttpAbstract::onCreate()
 {
+  if (download_state == DOWNLOAD_STOPPED || download_state == DOWNLOAD_ERROR)
+    return;
+  
   char * msg=new char[128];
-  sprintf(msg, "Connecting to IP %d.%d.%d.%d, port %d", ip&0xff, (ip>>8)&0xff, (ip>>16)&0xff, (ip>>24)&0xff, port);
+  sprintf(msg, LangPack::Active->data[LGP_ConnectToIPPort], ip&0xff, (ip>>8)&0xff, (ip>>16)&0xff, (ip>>24)&0xff, port);
   log->Print(msg, CLR_Green);
   delete msg;
   download_state = DOWNLOAD_CONNECT;
@@ -169,6 +176,9 @@ void HttpAbstract::onCreate()
 
 void HttpAbstract::onConnected()
 {
+  if (download_state == DOWNLOAD_STOPPED || download_state == DOWNLOAD_ERROR)
+    return;
+  
   Send(req_buf->data, req_buf->size);
   _safe_delete(req_buf);
   onHTTPConnect();
@@ -176,12 +186,13 @@ void HttpAbstract::onConnected()
 
 void HttpAbstract::onDataRead()
 {
+  // Проверяем статус закачки, чтобы не качать при остановленной закачке
   if (download_state == DOWNLOAD_STOPPED || download_state == DOWNLOAD_ERROR)
     return;
 
-  char tmp_buf[4096];
+  char tmp_buf[4096]; // Буфер приема даннях
   int nrecv = Recv(tmp_buf, sizeof(tmp_buf)); // Получаем даные
-  int hsize;
+  int hsize; // Длина HTTP заголовка
   
   switch(http_state)
   {
@@ -192,25 +203,25 @@ void HttpAbstract::onDataRead()
     if(hsize = HTTPResponse->Parse(recv_buf->data, recv_buf->size)) // Обработали весь заголовок
     {
       char * tmp_msg = new char[128];
-      sprintf(tmp_msg, "HTTP Parser returned %d (data size %d)", hsize, recv_buf->size);
+      sprintf(tmp_msg, LangPack::Active->data[LGP_HTTPParserReturned], hsize, recv_buf->size);
       log->Print(tmp_msg, CLR_Green);
       delete tmp_msg;
       
-      if (!onHTTPHeaders())
+      if (!onHTTPHeaders()) // Обрабатываем заголовок на предмет редиректа и т.п.
         return;
       
       if (hsize < recv_buf->size) // Если есть данные помимо заголовка
-        onHTTPData(recv_buf->data + hsize, recv_buf->size - hsize);
+        onHTTPData(recv_buf->data + hsize, recv_buf->size - hsize); // Пишем в файл
       
-      http_state = HTTP_STREAM;
-      if (SieGetDialog::Active)
-        SieGetDialog::Active->RefreshList();
+      http_state = HTTP_STREAM; // Дальше у нас идет чистый файл
     }
     break;
   case HTTP_STREAM: // Принимаем данные
     if(nrecv) onHTTPData(tmp_buf, nrecv);
     break;
   }
+  if (SieGetDialog::Active)
+    SieGetDialog::Active->RefreshList();
 }
 
 void HttpAbstract::onClose()
@@ -267,13 +278,13 @@ int Download::onHTTPHeaders()
   unsigned int io_error;
   char * tmp_msg = new char[256];
   
-  sprintf(tmp_msg, "Got response %d", HTTPResponse->resp_code);
+  sprintf(tmp_msg, LangPack::Active->data[LGP_GotResponseCode], HTTPResponse->resp_code);
   log->Print(tmp_msg, CLR_Green);
   
   if (HTTPResponse->resp_msg)
-    sprintf(tmp_msg, "Reason: %s", HTTPResponse->resp_msg);
+    sprintf(tmp_msg, LangPack::Active->data[LGP_GotResponseReason], HTTPResponse->resp_msg);
   else
-    sprintf(tmp_msg, "Reason: %s", "[No reason specified]");
+    sprintf(tmp_msg, LangPack::Active->data[LGP_GotResponseReason], "[No reason specified]");
   log->Print(tmp_msg, CLR_Green);
   
   delete tmp_msg;
@@ -318,13 +329,14 @@ int Download::onHTTPHeaders()
     file_size = strtoul(content_length_str, 0, 10);
     if (RESP_CODE_PARTIAL(HTTPResponse->resp_code)) // Если докачка
     {
-      AcceptRangesState = ACCEPT_RANGES_OK; // Значит сервер поддерживает докачку ;)
-      file_size += file_loaded_size;        // Добавляем размер того, что уже закачано
+      ranges_support = 1; // Значит сервер поддерживает докачку ;)
+      file_size += file_loaded_size;  // Добавляем размер того, что уже закачано
     }
     else // Если сервер докачку не держит
     {
       file_loaded_size = NULL; // Размер файла = 0
       unlink(full_file_name, &io_error); // Удаляем файл, если он есть
+      log->Print(LangPack::Active->data[LGP_RangesNotSupportFileDelete], CLR_Yellow);
     }
     int free_space = GetFreeFlexSpace(full_file_name[0]-'0', &io_error);
     if (file_size >= free_space)
@@ -336,9 +348,9 @@ int Download::onHTTPHeaders()
   if (!RESP_CODE_PARTIAL(HTTPResponse->resp_code)) // Partial Content
   {
     if (HTTPResponse->headers->GetValue("Accept-Ranges")) // Если есть заголовок "Accept-Ranges"
-      AcceptRangesState = ACCEPT_RANGES_OK; // Значит сервер держит докачку
+      ranges_support = 1; // Значит сервер держит докачку
     else
-      AcceptRangesState = ACCEPT_RANGES_NO; // Иначе не держит
+      ranges_support = 0; // Иначе не держит
   }
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList(); // Перерисовываем список
@@ -352,19 +364,17 @@ void Download::onHTTPData(char * data, int size) // Запись данных в файл
   download_state = DOWNLOAD_DATA; // Статус закачки - загрузка данных
   
   if (hFile == -1) // Если файл не открыт, открываем его
-    hFile = fopen(full_file_name, A_WriteOnly + A_Create + A_Append + A_BIN, P_WRITE, &io_error);
+    hFile = fopen(full_file_name, A_WriteOnly + A_Create + A_Append + A_BIN, P_WRITE, &io_error); // Только запись с созданием и добавлением в конец
 
   fwrite(hFile, data, size, &io_error); // Записываем принятые данные в файл
   file_loaded_size += size; // Обновляем размер загруженного куска
-  if (SieGetDialog::Active)
-    SieGetDialog::Active->RefreshList();
 }
 
 void Download::onHTTPRedirect() // Переадресация
 {
   http_state = HTTP_REDIRECT;
    // В заголовке "Location" указывается реальное местонахождение файла
-  if (char * Location = HTTPResponse->headers->GetValue("Location"))
+  if (char * Location = HTTPResponse->headers->GetValue("Location")) // Есть такой заголовок
   {
     if (strstr(Location, "http://")) // Если в заголовке URL
     {
@@ -375,7 +385,7 @@ void Download::onHTTPRedirect() // Переадресация
     }
     else
     {
-      _safe_delete(HTTPRequest->Path);
+      _safe_delete(HTTPRequest->Path); // Иначе изменяем только путь к файлу в запросе
       HTTPRequest->Path = new char[strlen(Location) + 1];
       strcpy(HTTPRequest->Path, Location);
       
@@ -402,14 +412,19 @@ void Download::onHTTPStopped()
 {
   unsigned int io_error;
   
-  download_state=DOWNLOAD_STOPPED;
+  download_state = DOWNLOAD_STOPPED;
   Close();
   
   if (hFile != -1)
     fclose(hFile, &io_error);
   hFile = -1;
+  
   log->Print(LangPack::Active->data[LGP_DownloadStopped], CLR_Yellow);
+  
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
+  
+  if (SieGetDialog::Active)
+    SieGetDialog::Active->RefreshList();
 }
 
 void Download::onHTTPFinish()
@@ -426,10 +441,12 @@ void Download::onHTTPFinish()
   StartVibra();
   Play_Sound("$sounds\\complete.wav");
   
+  log->Print(LangPack::Active->data[LGP_DownloadCompleted], CLR_Yellow);
+  
+  SUBPROC((void *)_save_queue, DownloadHandler::Top);
+  
   if (SieGetDialog::Active)
     SieGetDialog::Active->RefreshList();
-  log->Print(LangPack::Active->data[LGP_DownloadCompleted], CLR_Yellow);
-  SUBPROC((void *)_save_queue, DownloadHandler::Top);
 }
 
 void _start_download(Download * download)
@@ -549,6 +566,7 @@ void Download::StartDownload()
   Start(HTTPRequest->Host, HTTPRequest->Port);
   
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
+  
   delete req_str;
 }
 
@@ -559,7 +577,7 @@ void Download::StopDownload()
 
 Download::Download()
 {
-  AcceptRangesState = ACCEPT_RANGES_UNKNOWN;
+  ranges_support = -1;
   url = NULL;
   file_name = NULL;
   is_const_file_name = NULL;
@@ -902,6 +920,7 @@ DownloadHandler::~DownloadHandler()
   while (tmp = queue)
   {
     queue = queue->next;
+    tmp->download->log->CloseFile();
     delete tmp;
   }
 }

@@ -148,6 +148,15 @@ void LangPack::Setup()
   data[LGP_DownloadStarted] = "Download started";
   data[LGP_DownloadStopped] = "Download stopped";
   data[LGP_DownloadCompleted] = "Download completed";
+  data[LGP_ResolvingHost] = "Resolving host...";
+  data[LGP_WaitDNR] = "DNR not ready! Wait 5 seconds...";
+  data[LGP_DNRError] = "DNR Error: %d";
+  data[LGP_DNROutOfTries] = "DNR out of tries!";
+  data[LGP_ConnectToIPPort] = "Connecting to IP %d.%d.%d.%d, port %d";
+  data[LGP_HTTPParserReturned] = "HTTP Parser returned %d b (data size %d b)";
+  data[LGP_GotResponseCode] = "Got response code: %d";
+  data[LGP_GotResponseReason] = "Got response reason: \"%s\"";
+  data[LGP_RangesNotSupportFileDelete] = "Ranges not supported, file will be deleted!";
 }
 
 void LangPack::Free()

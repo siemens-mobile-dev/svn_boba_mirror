@@ -49,7 +49,7 @@ public:
   char * filename;
 
   void DeleteFile();
-  
+  void CloseFile();
 private:
   int hFile;
   void _add_line(WSHDR *ws, CLR_ID color);

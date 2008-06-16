@@ -2,9 +2,13 @@
   Проект SieGet Downloader
                           */
 
-#include "..\inc\swilib.h"
+#include "include.h"
 #include "socket.h"
 #include "log.h"
+
+#ifdef SOCK_SEND_TIMER
+  Socket * Socket::Top = NULL;
+#endif
 
 int Socket::GlobalTx = 0;
 int Socket::GlobalRx = 0;
@@ -44,30 +48,76 @@ void Socket::Connect(int ip, short port)
   socket_state = SOCK_CREATED;
 }
 
+
+#ifdef SOCK_SEND_TIMER
+void sock_resend(Socket * sock)
+{
+  sock->Send(NULL, NULL);
+}
+
+static void _resend(void)
+{
+  SUBPROC((void *)sock_resend, Socket::Top, NULL, NULL);
+}
+#endif
+
+
 //Отправить данные
 void Socket::Send(const char * data, int size)
 {
+  int send_size = NULL;
   if (CheckCepId())
   {
     onError(SOCK_ERROR_INVALID_CEPID);
     return;
   }
-
-  int send_res = send(socket_id, data, size, 0);
-  if (send_res<0)
+  if (data)
   {
-    onError(SOCK_ERROR_SENDING);
-    return;
+    if (send_q) // Есть очередь
+    {
+      send_q = (char *)realloc(send_q, send_q_size + size);
+      memcpy(send_q + send_q_size, data, size);
+      send_q_size += size;
+      SUBPROC((void *)sock_resend, this);
+      return;
+    }
+    send_q = new char[size + 1];
+    memcpy(send_q, data, size);
+    send_q_size = size;
   }
-
-  GlobalTx += send_res;
-  Tx += send_res;
-
-  /*
-  if (send_res<size) // Если не весь блок передан, надо передавать через очередь. Пока оставлю на потом.
+  while((send_size = send_q_size) != 0)
   {
+    if (send_size > 0x400)
+      send_size = 0x400;
+    int send_res = send(socket_id, send_q, send_size, 0);
+    if (send_res < 0)
+    {
+      int err = * socklasterr();
+      if (err == 0xC9 || err == 0xD6)
+      {
+	return; //Видимо, надо ждать сообщения ENIP_BUFFER_FREE
+      }
+      else
+      {
+        onError(SOCK_ERROR_SENDING);
+	return;
+      }
+    }
+    GlobalTx += send_res;
+    Tx += send_res;
+    send_q_size -= send_res;
+
+    memcpy(send_q, send_q + send_res, send_q_size); //Удалили переданное
+    if (send_res < send_size)
+    {
+      //Передали меньше чем заказывали
+#ifdef SOCK_SEND_TIMER
+      Top = this;
+      GBS_StartTimerProc(&send_tmr, _tmr_second(5), _resend);
+#endif
+      return; //Ждем сообщения ENIP_BUFFER_FREE1
+    }
   }
-  */
 
 }
 
@@ -100,6 +150,9 @@ void Socket::Close()
   shutdown(socket_id, 2);
   closesocket(socket_id);
   socket_state = SOCK_UNDEF;
+#ifdef SOCK_SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
 }
 
 //Создать сокет
@@ -131,11 +184,14 @@ Socket::Socket()
   Rx = 0;
   
   log = new Log;
+  send_q = NULL;
+  send_q_size = NULL;
 }
 
 // Уничтожение сокета
 Socket::~Socket()
 {
   delete log;
+  _safe_delete(send_q);
 }
 

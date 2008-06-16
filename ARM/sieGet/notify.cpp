@@ -2,7 +2,7 @@
 #include "notify.h"
 #include "file_works.h"
 
-/*int IsMediaActive(void)
+int IsMediaActive(void)
 {
   char s[40];
   sprintf(s, RamMediaIsPlaying());
@@ -12,11 +12,11 @@
   if (s[0]==2) return 1;// для SGOLD s[0]!=2    
 #endif 
   return 0;
-}*/
+}
 
 void Play_Sound(const char * filename)
 {
-  if (!IsCalling()/* && !IsMediaActive()*/ && CFG_SOUNDS_VOLUME)
+  if (!IsCalling() && !IsMediaActive() && CFG_SOUNDS_VOLUME)
   {
     char * full_filename = getSymbolicPath(filename);
     

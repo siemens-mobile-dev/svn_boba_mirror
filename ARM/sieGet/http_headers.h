@@ -80,6 +80,9 @@ enum HTTP_RESP_CODES
                                    (x) == RESP_CODE_SEE_OTHER	      || \
                                    (x) == RESP_CODE_TEMPORARY_REDIRECT)
 
+/* How many bytes it will take to store LEN bytes in base64.  */
+#define BASE64_LENGTH(len) (4 * (((len) + 2) / 3))
+
 class HTTP_Response_Headers
 {
 public:

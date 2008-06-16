@@ -95,14 +95,15 @@ int BookmarksList::FindFilesInFolder(char * folder)  // SelectFile
   rev=0;
 
   char * bookmarks_path = getSymbolicPath("$bookmarks\\");
-  if(strcmp(folder, bookmarks_path))
+  if(strcmp(folder, bookmarks_path) != 0)
   {
     while((c=*s++))
     {
-      *d++=c;
-      if (c=='\\' && *s!='\0') rev=d;
+      *d++ = c;
+      if (c == '\\' && *s != '\0')
+        rev=d;
     }
-    *rev=0;
+    *rev = 0;
     AddItemToList(name, "...", IS_BACK);
     n++;
   }

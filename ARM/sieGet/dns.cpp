@@ -1,9 +1,14 @@
 #include "include.h"
 #include "dns.h"
 #include "log.h"
+#include "langpack.h"
 
 DNRHandler * DNRHandler::Top = NULL;
 
+#ifdef DNR_SEND_TIMER
+  DNR * DNR::Top = NULL;
+#endif
+  
 //Проверить процесс (работа с DNR только в хелпере)
 inline int CheckCepId()
 {
@@ -18,13 +23,16 @@ DNR::DNR()
   
   DNR_ID = 0;
   host = NULL;
+  log = NULL;
   DNR_TRIES = 0;
 }
 
 DNR::~DNR()
 {
   _safe_delete(host);
-
+#ifdef DNR_SEND_TIMER
+  GBS_DelTimer(&send_tmr);
+#endif
   if(DNRHandler::Top)
     DNRHandler::Top->DeleteDNR(this);
 }
@@ -44,6 +52,13 @@ void _send_req(DNR *obj)
   obj->SendReq();
 }
 
+#ifdef DNR_SEND_TIMER
+static void dnr_resend(void)
+{
+  SUBPROC((void *)_send_req, DNR::Top);
+}
+#endif
+
 void DNR::SendReq()
 {
   if (CheckCepId())
@@ -53,14 +68,28 @@ void DNR::SendReq()
   }
   int ***res = NULL;
   int err;
+
   err = async_gethostbyname(host, &res, &DNR_ID);
   
   if (err)
   {
-    if ((err==0xC9)||(err==0xD6))
+    if (err == 0xC9 || err == 0xD6)
     {
       if (DNR_ID)
       {
+        #ifdef DNR_SEND_TIMER
+        DNR_TRIES --;
+        if (!DNR_TRIES)
+        {
+          onResolve(DNR_RESULT_OUT_OF_TRIES, 0); // Истекло количество попыток
+          DNR_ID = 0;
+          return;
+        }
+        if (log)
+          log->Print(LangPack::Active->data[LGP_WaitDNR], CLR_Green);
+        Top = this;
+        GBS_StartTimerProc(&send_tmr, _tmr_second(5), dnr_resend); // Пробуем резолвиться по таймеру
+        #endif
         return; // Ждем готовности DNR
       }
     }

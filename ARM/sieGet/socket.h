@@ -10,6 +10,8 @@
 
 #include "log.h"
 
+#define SOCK_SEND_TIMER
+
 typedef enum
 {
   SOCK_UNDEF,
@@ -58,6 +60,10 @@ public:
   //Закрыть сокет
   void Close();
 
+#ifdef SOCK_SEND_TIMER
+  static Socket * Top;
+#endif
+  
   // Статистика трафика
   int Tx;
   int Rx;
@@ -69,6 +75,12 @@ public:
   // Внутреннее состояние
   int socket_id;
   SOCK_STATE socket_state;
+private:
+  char * send_q; // Очередь посылки данных
+  int send_q_size;
+#ifdef SOCK_SEND_TIMER
+  GBSTMR send_tmr;
+#endif
 };
 
 #endif
