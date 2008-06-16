@@ -8,6 +8,6 @@
 
 // Вызвать обязательно перед обращением к переменным конфигурации
 void InitConfig(char* fname);
-extern const char *successed_config_filename;
+extern char * successed_config_filename;
 int SaveConfigData(const char *fname);
 #endif

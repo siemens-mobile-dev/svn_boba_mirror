@@ -174,17 +174,9 @@ int edit_status_menu_onkey(GUI *data, GUI_MSG *msg)
       ws_2utf8(ec.pWS, status_text, &res_len, ec.pWS->wsbody[0] * 2 + 1);
       status_text = realloc(status_text, res_len + 1);
       status_text[res_len]='\0';
+      utf82win((char *)status_texts[(int)EDIT_GetUserPointer(data)], status_text);
+      SaveConfigData(successed_config_filename);
     }
-    PRESENCE_INFO * pr_info = malloc(sizeof(PRESENCE_INFO));
-    extern long  strtol (const char *nptr,char **endptr,int base);
-    ExtractEditControl(data, 4, &ec);    // = priority
-    char ss[10];
-    ws_2str(ec.pWS, ss, 15);
-    pr_info->priority = strtol (ss,0,10);
-    pr_info->status = (int)EDIT_GetUserPointer(data);
-    pr_info->message = status_text ? Mask_Special_Syms(status_text) : NULL;
-    if (status_text) mfree(status_text);
-    SUBPROC((void*)Send_Presence,pr_info);
     return 1;
   }
   if (msg->keys==0x0FF0) //ֻוגûי סמפע ֳׁ־ִֻ

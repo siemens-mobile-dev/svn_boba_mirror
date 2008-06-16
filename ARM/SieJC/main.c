@@ -1400,8 +1400,10 @@ void maincsm_onclose(CSM_RAM *csm)
   void WriteDefSettings(char *elfpath);
   WriteDefSettings(elf_path);
   
-  if (cur_color_name) mfree(cur_color_name);
-  
+  if (cur_color_name)
+    mfree(cur_color_name);
+  if (successed_config_filename)
+    mfree(successed_config_filename);
   SUBPROC((void *)FreeTranspostIconsList);
   SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)end_socket);
@@ -1856,11 +1858,9 @@ void AutoStatus(void)
 
 void OpenSettings(void)
 {
-  extern const char *successed_config_filename;
-  WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,successed_config_filename,128);
-  ExecuteFile(ws,0,0);
+  WSHDR * ws = AllocWS(150);
+  str_2ws(ws, successed_config_filename, 128);
+  ExecuteFile(ws, 0, 0);
   FreeWS(ws);
 }
 
