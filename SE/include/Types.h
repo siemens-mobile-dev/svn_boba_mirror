@@ -550,6 +550,7 @@ typedef struct
   int PowerDissipation;
   int NrOfChargingCycles;
   int NrOfSecondsOnSafetyTimer;
+  char SuspensionCause;
 }BATT;
 
 typedef struct
