@@ -195,6 +195,9 @@ __root const char DEFTEX_DND[256]="Занят";
 __root const CFG_HDR cfghdr30={CFG_STR_WIN1251,LG_STINVIS,0,255};
 __root const char DEFTEX_INVISIBLE[256]="";
 
+__root const CFG_HDR cfghdr31={CFG_STR_WIN1251,LG_STOFFLINE,0,255};
+__root const char DEFTEX_OFFLINE[256]="";
+
 __root const CFG_HDR cfghdr141={CFG_STR_WIN1251, LG_PLAYER_STATUS ,0,255};
 __root const char DEFTEX_PLAYER[256]="Слушаю";
 

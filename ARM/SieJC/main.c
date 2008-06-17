@@ -542,6 +542,7 @@ void get_answer(void)
   i=0; //Ѕаланс тегов
   j=0; //Ѕаланс скобок
   p=Rstream_p;
+  if (strstr(p,"</stream:stream>")) QuitCallbackProc(0); //сервер потвердил завершение, можно выходить.
   while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} // остыль - пропуск заголовков xml, дл€ них нет закрывающих
   p=Rstream_p;
   while((p=strstr(p,"<stream:stream"))) {i--; p++;} // остыль - пропуск тегов stream, дл€ них нет закрывающих (fuckin' XMPP)

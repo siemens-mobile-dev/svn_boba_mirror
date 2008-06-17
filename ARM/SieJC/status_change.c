@@ -20,8 +20,9 @@ extern const char DEFTEX_AWAY[];
 extern const char DEFTEX_XA[];
 extern const char DEFTEX_DND[];
 extern const char DEFTEX_INVISIBLE[];
+extern const char DEFTEX_OFFLINE[];
 
-#define STATUSES_NUM 6
+#define STATUSES_NUM 7
 
 static const char * const status_texts[STATUSES_NUM]=
 {
@@ -30,7 +31,8 @@ static const char * const status_texts[STATUSES_NUM]=
   DEFTEX_AWAY,
   DEFTEX_XA,
   DEFTEX_DND,
-  DEFTEX_INVISIBLE
+  DEFTEX_INVISIBLE,
+  DEFTEX_OFFLINE
 };
 
 /*
@@ -97,7 +99,8 @@ static const char * const select_status_menu_texts[STATUSES_NUM]=
   LG_STAWAY,
   LG_STXA,
   LG_STDND,
-  LG_STINVIS
+  LG_STINVIS,
+  LG_STOFFLINE
 };
 
 void select_status_menu_itemhandler(void *data, int curitem, void *unk)
@@ -135,6 +138,7 @@ void ShowStatusSelectMenu()
   select_status_menu_icons[3] = (int)Roster_getIconByStatus(NULL, PRESENCE_XA);
   select_status_menu_icons[4] = (int)Roster_getIconByStatus(NULL, PRESENCE_DND);
   select_status_menu_icons[5] = (int)Roster_getIconByStatus(NULL, PRESENCE_INVISIBLE);
+  select_status_menu_icons[6] = (int)Roster_getIconByStatus(NULL, PRESENCE_OFFLINE);
   if (My_Presence < PRESENCE_OFFLINE)
     select_status_menu_header.icon = &select_status_menu_icons[My_Presence];
   

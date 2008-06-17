@@ -304,6 +304,8 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   char *caps = Generate_Caps();
 
   char* presence = malloc(1024);
+  if(pr_info->status!=PRESENCE_OFFLINE)
+  {
   if(pr_info->status!=PRESENCE_INVISIBLE)
   {
     if(pr_info->message)
@@ -321,6 +323,20 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   {
       char presence_template[]="<presence type='invisible'/>";
       strcpy(presence,presence_template);
+  }
+  }
+  else
+  {
+    if(pr_info->message)
+    {
+      char presence_template[]="<presence type='unavailable'><status>%s</status></presence>";
+      snprintf(presence,1024,presence_template, pr_info->message);
+    }
+    else
+    {
+      char presence_template[]="<presence type='unavailable'/>";
+      strcpy(presence,presence_template);
+    }
   }
   SendAnswer(presence);
 
@@ -348,6 +364,10 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   mfree(caps);
   mfree(presence);
   if(pr_info->message)mfree(pr_info->message);
+  if(pr_info->status==PRESENCE_OFFLINE)
+  {
+    Send_Disconnect();
+  }
   mfree(pr_info);
   LockSched();
   strcpy(logmsg,"Send presence");
