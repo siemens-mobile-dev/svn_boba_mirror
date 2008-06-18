@@ -71,11 +71,13 @@ void InitConfig()
   extern char cur_imsi[];
   unsigned int cc;
   unsigned int nc;
-  cc=GetCC_NCfromIMSI(cur_imsi);
+  char *imsi=RAM_IMSI();
+  cc=GetCC_NCfromIMSI(imsi);
   nc=cc&0xFFFF;
   cc>>=16;
   if (cc==0xFFF && nc==0xFF) return; // Если нет сети то ждем пока появится
-  sprintf(config_name,"4:\\ZBin\\etc\\CallCenter_%03X-%02X.bcfg",cc,nc);
+//  sprintf(config_name,"4:\\ZBin\\etc\\CallCenter_%03X-%02X.bcfg",cc,nc);
+  sprintf(config_name,"4:\\ZBin\\etc\\CallCenter%02X-%02X%02X%02X%02X-%03X.bcfg",nc,imsi[5],imsi[6],imsi[7],imsi[8],cc);
   //ShowMSG(1,(int)config_name);
   if(LoadConfigData(config_name)<0)
   {

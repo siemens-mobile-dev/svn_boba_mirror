@@ -1093,15 +1093,16 @@ static void DrawMyProgress(int x, int y, int n)
   scr_w=ScreenW();
   cur=CurrentCASH[n];
   max=MaxCASH[n];
-  fill=((long long)cur)*(scr_w-x-4)/max;
+  fill=((long long)((cur<0)?0:cur))*(scr_w-x-4)/max;
   font_size=GetFontYSIZE(TEXT_FONTSZ)+1;
   start_y=y+n*font_size;
   end_y=y+(n+1)*font_size-1;
 
   DrawCanvas(BuildCanvas(), x, start_y, scr_w-x-1, end_y, 1);
-  DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, white, transparent);
+  DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, COLOR_TEXTPB, transparent);
+//  DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, white, transparent);
   DrawRectangle(x+1, start_y+1, fill+2, end_y-1, 0, progress_colors[n], progress_colors[n]);
-  wsprintf(ws, "%u.%02u/%u.%02u", cur/100, cur%100, max/100, max%100);
+  wsprintf(ws, "%s%u.%02u/%u.%02u", ((cur<0)?"-":""), ((cur<0)?(0-cur):cur)/100, ((cur<0)?(0-cur):cur)%100, max/100, max%100);
   DrawString(ws, x+2, start_y+1, scr_w-x-3, end_y-1, TEXT_FONTSZ, TEXT_ALIGNMIDDLE, COLOR_TEXTPB, transparent);
   FreeWS(ws);
 }
