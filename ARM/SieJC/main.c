@@ -156,6 +156,9 @@ GBSTMR autostatus_tmr;
   __swi __arm void AddIconToIconBar(int pic, short *num);
   int icon_num;
   
+  extern const int SHOW_ICONBAR_ICON;
+  if (!SHOW_ICONBAR_ICON) return;
+
   if (CList_GetUnreadMessages()>0)
   {
     icon_num = IB_NEWMESSAGE;
@@ -1963,12 +1966,8 @@ int main(char *exename, char *fname)
     GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
     as = 0;
   }
-  /*extern const int SHOW_ICONBAR_ICON;
-  if (SHOW_ICONBAR_ICON)
-  {
-    extern const char ICONSET_FILENAME[128];
-    LoadIconSet(ICONSET_FILENAME);
-    SetIconBarHandler();
-  }*/ // IconBar
+  /*extern const char ICONSET_FILENAME[128];
+  LoadIconSet(ICONSET_FILENAME);
+  SetIconBarHandler();*/ // IconBar
   return 0;
 }

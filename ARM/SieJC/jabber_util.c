@@ -67,6 +67,19 @@ const char* JABBER_ROLS[] = {"none", "visitor", "participant", "moderator"};
 
 ONLINEINFO OnlineInfo = {0,0,NULL};
 
+/**
+  * Функция для отправки настроения
+ **/
+// Context: HELPER
+void Send_Mood(char *mood, char *text)
+{
+  char *reply = malloc(2048);
+  sprintf(reply, "<iq type='set'>\n<pubsub xmlns='http://jabber.org/protocol/pubsub'>\n<publish node='http://jabber.org/protocol/mood'>\n<item>\n<mood xmlns='http://jabber.org/protocol/mood'>\n<%s/>\n<text>%s</text>\n</mood>\n</item>\n</publish>\n</pubsub>\n</iq>", mood, text);
+  SendAnswer(reply);
+  mfree(reply);
+  //mfree(text);
+}
+
 /*
   Посылка стандартного Jabber Iq
 */

@@ -14,8 +14,9 @@
 #include "string_util.h"
 #include "color.h"
 #include "rect_patcher.h"
+#include "moods.h"
 
-#define N_ITEMS 15
+#define N_ITEMS 16
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
@@ -142,10 +143,10 @@ static const char * const menutexts[N_ITEMS]=
   LG_PLAYER_STATUS,
   LG_SMILE,
   LG_SETTINGS,
+  LG_MOODS,
   LG_COLOR,
   LG_ABOUT,
-  LG_EXIT,
-  
+  LG_EXIT
 };
 
 
@@ -174,6 +175,7 @@ static const MENUPROCS_DESC menuprocs[N_ITEMS]={
                           ChangePlayerstatusMode,
                           ChangeSmilesMode,
                           OpenSettings_,
+                          Show_Moods_Menu,
                           ShowSelectColorMenu,
                           AboutDlg,
                           Exit_SieJC
@@ -226,12 +228,15 @@ void menuitemhandler(void *data, int curitem, void *unk)
     SetMenuItemIconArray(data,item,S_ICONS+6);
     break;
   case 12:
-    SetMenuItemIconArray(data,item,S_ICONS+9);
+    SetMenuItemIconArray(data, item, S_ICONS+1);
     break;
   case 13:
+    SetMenuItemIconArray(data,item,S_ICONS+9);
+    break;
+  case 14:
     SetMenuItemIconArray(data,item,S_ICONS+7);
     break;  
-  case 14:
+  case 15:
     SetMenuItemIconArray(data,item,S_ICONS+8);
     break;
   }

@@ -37,6 +37,11 @@ typedef struct
   char *txt;
 }ONLINEINFO;
 
+/**
+  * Функция для отправки настроения
+ **/
+void Send_Mood(char *mood, char *text);
+
 /*
   Посылка стандартного Jabber Iq
 */
