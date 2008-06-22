@@ -49,7 +49,7 @@
 #define LG_SELTEMPLATE      "Выбор шаблона..."
 #define LG_SELSMILE         "Выбор смайла..."
 #define LG_SELECT2          "Выбор..."
-#define LG_CONTRESOURCES    "Ресурсы..."  //както подругому надо
+#define LG_CONTRESOURCES    "Ресурсы..."
 #define LG_CONTRESOURCE     "Ники"
 #define LG_COMMANDS         "Команды"
 #define LG_MSGTEMPLATE      "Шаблоны сообщений"
@@ -68,7 +68,6 @@
 #define LG_ABOUT            "Об эльфе..."
 #define LG_COLOR            "Цвета"
 #define LG_ADDCONTACT       "Добавить контакт"
-#define LG_PLAYERSTATUS     "PlayerStatus"
 #define LG_MOODS            "Настроения"
 //main.c
 #define LG_EXITSIEJC        "Покинуть SieJC?"
@@ -80,7 +79,7 @@
 #define LG_MUCEXITDONE      "Выход из MUC выполнен!"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
-#define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec." //почемуто кирилица вызывает Bad UTF encoding..
+#define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec."
 //item_info.c
 #define LG_ITEMIHDR         "Контакт инфо"
 #define LG_ELROSTER         "Элемент ростера"
@@ -96,7 +95,6 @@
 #define LG_ROLE             "Роль:"
 #define LG_POSIBLCLIENT     "Возможности клиента:"
 #define LG_MUCSABJECT       "Тема:"
-//#define LG_MUCNICK          "Ник:"
 #define LG_ISUBSCRIBE       "Авторизация:"
 //history.c
 #define LG_ERRORWH          "Ошибка I/O #%u при записи истории!"
@@ -132,10 +130,12 @@
 #define LG_UNSUBSCRIBED     "Отклонить"
 #define LG_UNSUBSCRIBE      "Удалить"
 #define LG_REASON           "Причина"
-
 //clist_util.c
-#define LG_AUTHORREM        "В авторизации отказано!"
+#define LG_AUTHORREM        "Авторизация удалена!"
 #define LG_AUTHORGRANTED    "Авторизация дана!"
+#define LG_AUTHORCAME       "Пришел запрос на авторизацию"
+#define LG_AUTHORDECLINE    "В авторизации отказано"
+
 #define LG_MUCCROK          "Конференция создана успешно"
 //bookmarks.c
 #define LG_MENUBOOKMARK     "Меню закладок"
@@ -144,7 +144,6 @@
 #define LG_YES              "Да"
 #define LG_DISABLED         "Отключить"
 #define LG_ENABLED          "Включить"
-
 #define LG_SETUPCONECT      "Настройка подключения"
 #define LG_LOGIN            "Логин"
 #define LG_PASSWORD         "Пароль"
@@ -202,7 +201,6 @@
 #define LG_LARGE_NORMAL_FONT "Большой"
 #define LG_LARGE_BOLD_FONT  "Большой жирный"
 #define LG_UNDERLINING      "Подчеркивание сообщений"
-
 #define LG_KBD_LAYOUT       "\"Раскладка\" клавиатуры"
 #define LG_KBD1             "Раскладка 1"
 #define LG_KBD2             "Раскладка 2"
@@ -217,7 +215,6 @@
 #define LG_ICONBAR_SI       "Показывать иконку в IconBar"
 #define LG_ICONSET_FILENAME "Имя файла с номерами иконок"
 #endif
-
 //vCard.c
 #define LG_SHOW_AVATAR      "Показать аватару"
 
@@ -406,7 +403,7 @@
 #define LG_ABOUT            "Про эльф..."
 #define LG_COLOR            "Кольори"
 #define LG_ADDCONTACT       "Додати контакт"
-#define LG_PLAYERSTATUS     "PlayerStatus"
+#define LG_MOODS            "Настрій"
 //main.c
 #define LG_EXITSIEJC        "Покинути SieJC?"
 #define LG_ZLIBNOSASL       "ZLib не працює без SASL!"
@@ -417,7 +414,7 @@
 #define LG_MUCEXITDONE      "Вихід из MUC виконано!"
 #define LG_VERINFO          "Version Info:\nName:%s\nVersion:%s\nOS:%s"
 #define LG_TIMEINFO         "Time Info:\nUTC:%s\nTime Zone:%s\n:>%s"
-#define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec." //почемуто кирилица вызывает Bad UTF encoding..
+#define LG_LASTACTIVMSG     "IDLE: %d d. %d hr. %d min. %d sec."
 //item_info.c
 #define LG_ITEMIHDR         "Контакт інфо"
 #define LG_ELROSTER         "Елемент ростеру"
@@ -433,7 +430,6 @@
 #define LG_ROLE             "Роль:"
 #define LG_POSIBLCLIENT     "Можливості клієнта:"
 #define LG_MUCSABJECT       "Тема:"
-//#define LG_MUCNICK          "Нік:"
 #define LG_ISUBSCRIBE       "Авторизація:"
 //history.c
 #define LG_ERRORWH          "Помилка I/O #%u при запису історії!"
@@ -470,8 +466,11 @@
 #define LG_UNSUBSCRIBE      "Видалити"
 #define LG_REASON           "Причина"
 //clist_util.c
-#define LG_AUTHORREM        "В авторизації відмовлено!"
+#define LG_AUTHORREM        "Авторизація видалена!"
 #define LG_AUTHORGRANTED    "Авторизація надана!"
+#define LG_AUTHORCAME       "Прийшов запит на авторизацію"
+#define LG_AUTHORDECLINE    "В авторизації відмовленно"
+
 #define LG_MUCCROK          "Конференція створена успішно"
 //bookmarks.c
 #define LG_MENUBOOKMARK     "Меню закладок"
@@ -480,7 +479,6 @@
 #define LG_YES              "Так"
 #define LG_DISABLED         "Відключити"
 #define LG_ENABLED          "Включити"
-
 #define LG_SETUPCONECT      "Налаштування підключення"
 #define LG_LOGIN            "Логін"
 #define LG_PASSWORD         "Пароль"
@@ -502,7 +500,7 @@
 #define LG_IDLEICON         "Розташування значка"
 #define LG_POPUPDIS         "Відображати POPUP"
 #define LG_COMPOSEV         "Події повідомлень"
-#define LG_DELIVREP         "Delivery Report if required"
+#define LG_DELIVREP         "Звіт о отриманні, якщо потрібно"
 
 #define LG_SETUPSND         "Налаштування звуку"
 #define LG_SNDVOL           "Гучність"
@@ -538,7 +536,6 @@
 #define LG_LARGE_NORMAL_FONT "Великий"
 #define LG_LARGE_BOLD_FONT  "Великий жирний"
 #define LG_UNDERLINING      "Підкреслення повідомлень"
-
 #define LG_KBD_LAYOUT       "\"Разкладка\" клавіатури"
 #define LG_KBD1             "Разкладка 1"
 #define LG_KBD2             "Разкладка 2"
@@ -548,8 +545,12 @@
 #define LG_AS_ENABLED       "Включений"
 #define LG_AS_TIME          "Час (в хвилинах)"
 #define LG_AS_TEXT          "Текст"
-//vCard.c
 
+#ifdef ICONBAR
+#define LG_ICONBAR_SI       "Показувати іконку в IconBar"
+#define LG_ICONSET_FILENAME "Им'я файла з номерами іконок"
+#endif
+//vCard.c
 #define LG_SHOW_AVATAR      "Показать аватару"
 
 #define LG_VCARD_JABBERID   "JID"
@@ -560,15 +561,14 @@
 #define LG_VCARD_N_MIDDLE   "По батькові"
 #define LG_VCARD_N_PREFIX   "LG_VCARD_N_PREFIX"
 #define LG_VCARD_N_SUFFIX   "LG_VCARD_N_SUFFIX"
-
 #define LG_VCARD_BDAY       "День народження"
 #define LG_VCARD_GENDER     "Стать"
 #define LG_VCARD_ORGNAME    "Назва організації"
 #define LG_VCARD_ORGUNIT    "Відділ організації"
 #define LG_VCARD_TITLE      "Назва посади"
 #define LG_VCARD_ROLE       "Посада"
-#define LG_VCARD_EMAIL      "E-Mail"
 
+#define LG_VCARD_EMAIL      "E-Mail"
 #define LG_VCARD_EMAIL_HOME          "EMAIL_HOME"
 #define LG_VCARD_EMAIL_WORK          "EMAIL_WORK"
 #define LG_VCARD_EMAIL_INTERNET      "EMAIL_INTERNET"
@@ -603,7 +603,6 @@
 #define LG_VCARD_ADR_REGION          "Область"
 #define LG_VCARD_ADR_PCODE           "Поштовий код"
 #define LG_VCARD_ADR_CTRY            "Держава"
-
 #define LG_VCARD_URL        "Домашня сторінка"
 #define LG_VCARD_DESC       "Про себе"
 #define LG_VCARD_TZ         "Часовий пояс"
@@ -613,6 +612,70 @@
 #define LG_JEASK            "Запросити підпис:"
 #define LG_JEGROUP          "Група:"
 #define LG_JENOJID          "JID відсутній!"
+//moods
+#define LG_M_AFRAID         "Переляканий"
+#define LG_M_AMAZED         "Поразка"
+#define LG_M_ANGRY          "Сердитий"
+#define LG_M_ANNOYED        "Раздратований"
+#define LG_M_ANXIOUS        "Стурбований"
+#define LG_M_AROUSED        "Розбуджений"
+#define LG_M_ASHAMED        "Присоромлений"
+#define LG_M_BORED          "Нудьгуючий"
+#define LG_M_BRAVE          "Хоробрий"
+#define LG_M_CALM           "Спокійний"
+#define LG_M_COLD           "Змерз"
+#define LG_M_CONFUSED       "Збентежений"
+#define LG_M_CONTENTED      "Задоволений"
+#define LG_M_CRANKY         "Вагаюсь"
+#define LG_M_CURIOUS        "Зацікавлений"
+#define LG_M_DEPRESSED      "Пригноблений"
+#define LG_M_DISAPPOINTED   "Розчаруваний"
+#define LG_M_DISGUSTED      "Огида"
+#define LG_M_DISTRACTED     "Розгублений"
+#define LG_M_EMBARRASSED    "Сором'язливість"
+#define LG_M_EXCITED        "Схвильований"
+#define LG_M_FLIRTATIOUS    "Кокетлевий"
+#define LG_M_FRUSTRATED     "Розбитий"
+#define LG_M_GRUMPY         "Сердитий"
+#define LG_M_GUILTY         "Винуватий"
+#define LG_M_HAPPY          "Щасливий"
+#define LG_M_HOT            "Гаряче"
+#define LG_M_HUMBLED        "Принижений"
+#define LG_M_HUMILIATED     "Ображений"
+#define LG_M_HUNGRY         "Голодний"
+#define LG_M_HURT           "Бешкетливий"
+#define LG_M_IMPRESSED      "Вражений"
+#define LG_M_IN_AWE         "Страх"
+#define LG_M_IN_LOVE        "Закоханий"
+#define LG_M_INDIGNANT      "Обурений"
+#define LG_M_INTERESTED     "Зацікавлений"
+#define LG_M_INTOXICATED    "Сп'янілий"
+#define LG_M_INVINCIBLE     "Непереможний"
+#define LG_M_JEALOUS        "Ревнивий"
+#define LG_M_LONELY         "Самотній"
+#define LG_M_MEAN           "Скупість"
+#define LG_M_MOODY          "Вередливий"
+#define LG_M_NERVOUS        "Нервовий"
+#define LG_M_NEUTRAL        "Нейтральний"
+#define LG_M_OFFENDED       "Ображений"
+#define LG_M_PLAYFUL        "Грайливий"
+#define LG_M_PROUD          "Гордий"
+#define LG_M_RELIEVED       "Вільний"
+#define LG_M_REMORSEFUL     "Розкаяння"
+#define LG_M_RESTLESS       "Неспокійний"
+#define LG_M_SAD            "Сумний"
+#define LG_M_SARCASTIC      "Саркастичний"
+#define LG_M_SERIOUS        "Серйозний"
+#define LG_M_SHOCKED        "Шокований"
+#define LG_M_SHY            "Полохливий"
+#define LG_M_SICK           "Хворий"
+#define LG_M_SLEEPY         "Сонний"
+#define LG_M_STRESSED       "Стрес"
+#define LG_M_SURPRISED      "Здивований"
+#define LG_M_THIRSTY        "Спрага"
+#define LG_M_WORRIED        "Хвилююсь"
+
+#define LG_MOOD_TEXT        "Текст настрою"
 #endif //UA
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -656,7 +719,7 @@
 #define LG_SELTEMPLATE      "Select template..."
 #define LG_SELSMILE         "Select smile..."
 #define LG_SELECT2          "Select..."
-#define LG_CONTRESOURCES    "Resource..."  //както подругому надо
+#define LG_CONTRESOURCES    "Resource..."
 #define LG_CONTRESOURCE     "Nicknames"
 #define LG_COMMANDS         "Commands"
 #define LG_MSGTEMPLATE      "Templates"
@@ -675,7 +738,6 @@
 #define LG_ABOUT            "About..."
 #define LG_COLOR            "Colors"
 #define LG_ADDCONTACT       "Add contact"
-#define LG_PLAYERSTATUS     "PlayerStatus"
 #define LG_MOODS            "User Moods"
 //main.c
 #define LG_EXITSIEJC        "Exit SieJC?"
@@ -703,7 +765,6 @@
 #define LG_ROLE             "Role:"
 #define LG_POSIBLCLIENT     "Client features:"
 #define LG_MUCSABJECT       "Sabject:"
-//#define LG_MUCNICK          "Nick:"
 #define LG_ISUBSCRIBE       "Subscibe:"
 //history.c
 #define LG_ERRORWH          "I/O Error #%u while trying to write the history"
@@ -742,6 +803,9 @@
 //clist_util.c
 #define LG_AUTHORREM        "Authorization was removed!"
 #define LG_AUTHORGRANTED    "Authorization was granted!"
+#define LG_AUTHORCAME       "Authorization request came"
+#define LG_AUTHORDECLINE    "Authorization decline"
+
 #define LG_MUCCROK          "MUC created OK!"
 //bookmarks.c
 #define LG_MENUBOOKMARK     "Bookmarks menu"
@@ -822,7 +886,6 @@
 #define LG_ICONSET_FILENAME "File name with icon numbers"
 #endif
 //vCard.c
-
 #define LG_SHOW_AVATAR      "Show avatar"
 
 #define LG_VCARD_JABBERID   "JID"
@@ -839,6 +902,7 @@
 #define LG_VCARD_ORGUNIT    "Org. unit"
 #define LG_VCARD_TITLE      "Title"
 #define LG_VCARD_ROLE       "Role"
+
 #define LG_VCARD_EMAIL      "E-Mail"
 #define LG_VCARD_EMAIL_HOME          "EMAIL_HOME"
 #define LG_VCARD_EMAIL_WORK          "EMAIL_WORK"
@@ -874,7 +938,6 @@
 #define LG_VCARD_ADR_REGION "Region(state)"
 #define LG_VCARD_ADR_PCODE  "Post code"
 #define LG_VCARD_ADR_CTRY   "Country"
-
 #define LG_VCARD_URL        "Homepage"
 #define LG_VCARD_DESC       "Description"
 #define LG_VCARD_TZ         "Time zone"
@@ -949,6 +1012,4 @@
 
 #define LG_MOOD_TEXT        "Mood text"
 #endif //EN
-
-
 #endif

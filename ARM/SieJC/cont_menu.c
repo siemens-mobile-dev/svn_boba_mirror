@@ -203,7 +203,7 @@ if (MYMUCRES->muc_privs.aff<AFFILIATION_ADMIN) //Если мы мембер-модератор или но
 #define CONTC_UNSUBSCRIBE  4
 
 char CONTC_Menu_Contents[MAX_CONTC_ITEMS-1];
-const char contc_menu_header[]="Авторизация";
+const char contc_menu_header[]=LG_AUTHTYPE;
 int contcmenusoftkeys[]={0,1,2};
 HEADER_DESC contc_menuhdr={0,0,0,0,NULL,(int)contc_menu_header,LGP_NULL};
 SOFTKEY_DESC contc_menu_sk[]=

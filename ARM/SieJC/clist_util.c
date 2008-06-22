@@ -319,15 +319,27 @@ void CList_AddSystemMessage(char* jid, char status, char* status_msg)
   {
     if(!status_msg)return;
     CList_AddMessage(jid, MSG_STATUS, status_msg);
+    return;
   }
-  if(status == PRESENCE_UNSUBSCRIBED)
+  char *sws = malloc(128);
+  switch (status)
   {
-    CList_AddMessage(jid, MSG_SYSTEM, LG_AUTHORREM);
+  case PRESENCE_SUBSCRIBE:   strcpy(sws,LG_AUTHORCAME); break;
+  case PRESENCE_SUBSCRIBED:  strcpy(sws,LG_AUTHORGRANTED); break;
+  case PRESENCE_UNSUBSCRIBE: strcpy(sws,LG_AUTHORREM); break;
+  case PRESENCE_UNSUBSCRIBED:strcpy(sws,LG_AUTHORDECLINE); break;
   }
-  if(status==PRESENCE_SUBSCRIBED)
-  {
-    CList_AddMessage(jid, MSG_SYSTEM, LG_AUTHORGRANTED);
-  }
+  WSHDR *wsaut = AllocWS(256);
+  wsprintf(wsaut, "%t", sws);
+  mfree(sws);
+  int len;
+  char *saut=malloc(256);
+  ws_2utf8(wsaut, saut, &len, 256);
+  saut = realloc(saut, len + 1);
+  saut[len] = '\0';
+  CList_AddMessage(jid, MSG_SYSTEM, saut);
+  mfree(saut);
+  FreeWS(wsaut);
 }
 
 void CList_AddSystemMessageA(char* jid, char status, char* ansi_status_msg)

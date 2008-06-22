@@ -548,7 +548,7 @@ void get_answer(void)
   i=0; //Баланс тегов
   j=0; //Баланс скобок
   p=Rstream_p;
-  if (strstr(p,"</stream:stream>")) QuitCallbackProc(0); //сервер потвердил завершение, можно выходить.
+  if ((strstr(p,"</stream:stream>"))&&(My_Presence == PRESENCE_OFFLINE)) QuitCallbackProc(0); //сервер потвердил завершение, можно выходить.
   while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} //Костыль - пропуск заголовков xml, для них нет закрывающих
   p=Rstream_p;
   while((p=strstr(p,"<stream:stream"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих (fuckin' XMPP)
