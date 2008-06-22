@@ -261,9 +261,11 @@ __root const char DEFTEX_AUTOSTATUS[256]="Автостатус \"Недоступен\" сработал";
 
 __root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
 
-/*__root const CFG_HDR cfghdr_IBI1={CFG_CHECKBOX, LG_ICONBAR_SI, 0, 2};
+#ifdef ICONBAR
+__root const CFG_HDR cfghdr_IBI1={CFG_CHECKBOX, LG_ICONBAR_SI, 0, 2};
 __root const int SHOW_ICONBAR_ICON = 1;
 
 __root const CFG_HDR cfghdr_IBI2={CFG_STR_WIN1251, LG_ICONSET_FILENAME, 0, 127};
-__root const char ICONSET_FILENAME[128] = DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\IconSets\\default.bcfg";*/ // IconBar
+__root const char ICONSET_FILENAME[128] = DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\IconSets\\default.bcfg";
+#endif
 // EOL, EOF

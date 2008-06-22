@@ -170,17 +170,35 @@ int edit_status_menu_onkey(GUI *data, GUI_MSG *msg)
   if(msg->gbsmsg->submess==GREEN_BUTTON  || msg->keys == 0x18)
   {
     ExtractEditControl(data, 2, &ec);
-    char * status_text = NULL;
+    char * status_text = malloc(1024);
     if(ec.pWS->wsbody[0])
     {
       int res_len;
-      status_text = malloc(ec.pWS->wsbody[0] * 2 + 1);
+      //status_text = malloc(ec.pWS->wsbody[0] * 2 + 1);
       ws_2utf8(ec.pWS, status_text, &res_len, ec.pWS->wsbody[0] * 2 + 1);
       status_text = realloc(status_text, res_len + 1);
       status_text[res_len]='\0';
       utf82win((char *)status_texts[(int)EDIT_GetUserPointer(data)], status_text);
-      SaveConfigData(successed_config_filename);
     }
+    else
+    {
+      extern const char empty_t[];
+      sprintf(status_text, empty_t);
+      sprintf((char *)status_texts[(int)EDIT_GetUserPointer(data)], empty_t);
+    }
+    SaveConfigData(successed_config_filename);
+    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+    EDITCONTROL ec2;
+    ExtractEditControl(data, 4, &ec2);
+    char *status_prior = malloc(10);
+    ws_2str(ec2.pWS, status_prior, 10);
+    long strtol(const char *, char **, int); // чтобы иар варнинг не выдавал
+    pr_info->priority = strtol(status_prior, 0, 0);
+    pr_info->status = (int)EDIT_GetUserPointer(data);
+    pr_info->message = (status_text) ? Mask_Special_Syms(status_text) : NULL;
+    SUBPROC((void*)Send_Presence,pr_info);
+    if (status_text) mfree(status_text);
+    mfree(status_prior);
     return 1;
   }
   if (msg->keys==0x0FF0) //Левый софт СГОЛД

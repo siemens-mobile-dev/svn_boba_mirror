@@ -118,15 +118,16 @@ int sock=-1;
 
 volatile int is_gprs_online=1;
 
-
-/*int IB_NEWMESSAGE;
+#ifdef ICONBAR
+int IB_NEWMESSAGE;
 int IB_ONLINE;
 int IB_CHAT;
 int IB_AWAY;
 int IB_XA;
 int IB_DND;
 int IB_INVISIBLE;
-int IB_OFFLINE;*/ // IconBar
+int IB_OFFLINE;
+#endif
 
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
@@ -150,7 +151,8 @@ GBSTMR autostatus_tmr;
 };
 */
 
-/*void addIconBar(short* num)
+#ifdef ICONBAR
+void addIconBar(short* num)
 {
   #pragma swi_number=0x27 
   __swi __arm void AddIconToIconBar(int pic, short *num);
@@ -205,7 +207,8 @@ GBSTMR autostatus_tmr;
     }
   }
   AddIconToIconBar(icon_num, num);
-}*/ // IconBar
+}
+#endif
 
 int writefile(char *color_PATH, char *colorshem_PATH, char *buf)
 {
@@ -1642,11 +1645,13 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     return(1);
   }
 
-/*typedef struct
+#ifdef ICONBAR
+typedef struct
 {
   char check_name[8];
   int addr;
-}ICONBAR_H;*/ // IconBar
+}ICONBAR_H;
+#endif
 
 const int minus11=-11;
 
@@ -1656,7 +1661,9 @@ struct
 {
   CSM_DESC maincsm;
   WSHDR maincsm_name;
-  //ICONBAR_H iconbar_handler; // IconBar
+#ifdef ICONBAR
+  ICONBAR_H iconbar_handler;
+#endif
 }MAINCSM =
 {
   {
@@ -1679,10 +1686,13 @@ struct
     NAMECSM_MAGIC2,
     0x0,
     139
-  }/*,
+  }
+#ifdef ICONBAR
+  ,
   {
     "IconBar"
-  }*/ // IconBar
+  }
+#endif
 };
 
 void UpdateCSMname(void)
@@ -1837,7 +1847,8 @@ void AutoStatus(void)
   else GBS_DelTimer(&autostatus_tmr);
 }
 
-/*void LoadIconSet(const char *fname)
+#ifdef ICONBAR
+void LoadIconSet(const char *fname)
 {
   int hFile;
   unsigned int err;
@@ -1858,7 +1869,8 @@ void AutoStatus(void)
   IB_NEWMESSAGE = buff[0x17D] * 0x100 + buff[0x17C];
   fclose(hFile, &err);
   mfree(buff);
-}*/ // IconBar
+}
+#endif
 
 void OpenSettings(void)
 {
@@ -1868,10 +1880,12 @@ void OpenSettings(void)
   FreeWS(ws);
 }
 
-/*void SetIconBarHandler()
+#ifdef ICONBAR
+void SetIconBarHandler()
 {
   MAINCSM.iconbar_handler.addr = (int)addIconBar;
-}*/ // IconBar
+}
+#endif
   
 int main(char *exename, char *fname)
 {
@@ -1966,8 +1980,10 @@ int main(char *exename, char *fname)
     GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
     as = 0;
   }
-  /*extern const char ICONSET_FILENAME[128];
+#ifdef ICONBAR
+  extern const char ICONSET_FILENAME[128];
   LoadIconSet(ICONSET_FILENAME);
-  SetIconBarHandler();*/ // IconBar
+  SetIconBarHandler();
+#endif
   return 0;
 }
