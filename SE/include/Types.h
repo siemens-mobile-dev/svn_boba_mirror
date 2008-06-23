@@ -654,3 +654,15 @@ typedef struct {
   signed char rxlev;
 } CUR_CELLDATA;
 #endif
+
+
+typedef struct
+{
+  char CallID;
+  char CallType;
+  char CallState;
+  int  *PNUM;
+  char unk1;
+  char unk2;
+  char CallCause;
+}CALLMANAGER_EVENT_DATA;
