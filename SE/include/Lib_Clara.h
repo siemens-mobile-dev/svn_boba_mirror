@@ -1100,4 +1100,16 @@ __swi __arm int chmod(u16* path, u16* fname, int amode);
 #pragma swi_number=0x292
 __swi __arm int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 
+#pragma swi_number=0x293
+__swi __arm int GetImageWidth(int ImageID);
+#pragma swi_number=0x294
+__swi __arm int GetImageHeight(int ImageID);
+
+#pragma swi_number=0x295
+__swi __arm void * CallID_GetCallStatusDesc(int CallID);
+#pragma swi_number=0x296
+__swi __arm u16 * CallStatusDesc_GetName(void * CallStatusDesc);
+#pragma swi_number=0x297
+__swi __arm void List_FreeElements(LIST *,int * filter,void * freefunc);
+
 #endif
