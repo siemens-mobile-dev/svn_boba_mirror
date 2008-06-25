@@ -2,7 +2,6 @@
 #include "main.h"
 #include "clist_util.h"
 #include "xml_parser.h"
-#include "base64.h"
 #include "siejc_ipc.h"
 #include "history.h"
 #include "lang.h"
@@ -233,7 +232,9 @@ void vCard_Photo_Display(char *path)
 void DecodePhoto(char *path, void *data)
 {
   char *buf = malloc(strlen(data));
-  int binlen = base64_decode(data, buf);
+  zeromem(buf, strlen(data));
+  int unk5 = 0;
+  int binlen = Base64Decode(data,strlen(data), buf, strlen(data), NULL, &unk5);  
   unsigned int ec = 0;
   unlink(path, &ec);
   ec=0;   // похеру, чем закончится удаление.
@@ -306,7 +307,8 @@ void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode)
   // Decode & write
   XMLNode *binval = XML_Get_Child_Node_By_Name(photonode, "BINVAL");
   int ln = strlen(binval->value);
-  char *buf = malloc(ln);
+  char *buf = malloc(ln+1);
+  buf[ln+1]=0x0;
   memcpy(buf, binval->value, ln);
   SUBPROC((void*)DecodePhoto, full_path, buf);
 }

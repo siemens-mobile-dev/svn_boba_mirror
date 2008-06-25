@@ -2,7 +2,6 @@
 #include "main.h"
 #include "string_util.h"
 #include "xml_parser.h"
-#include "base64.h"
 #include "md5.h"
 #include "jabber.h"
 #include "jabber_util.h"
@@ -67,8 +66,9 @@ void Use_Plain_Auth_Report()
   char *authdata = malloc(patlen+1);
   zeromem(authdata, patlen+1);
   snprintf(authdata, patlen+1, patt, USERNAME, JABBER_SERVER, 0, USERNAME, 0, PASSWORD);
-  char *Data_To_Send;
-  base64_encode(authdata, patlen,&Data_To_Send);
+  char *Data_To_Send=malloc(patlen*2);
+  zeromem(Data_To_Send, patlen*2);
+  Base64Encode(authdata, patlen,Data_To_Send, patlen*2);
   char *fin = malloc(strlen(Data_To_Send) + strlen(s) + 1 - 2); // ибо %s нах не надо считать
   sprintf(fin, s, Data_To_Send);
   Jabber_state = JS_SASL_AUTH_ACK;  // Фишка - пропускаем несколько этапов ;)
@@ -120,7 +120,9 @@ static char sess_init_tpl[]="<iq type='set' id='SieJC_sess_req'>"
 void Decode_Challenge(char *challenge)
 {
   char *decoded_challenge = malloc(1024);
-  base64_decode(challenge, decoded_challenge);
+  zeromem(decoded_challenge, 1024);
+  int unk5 = 0;
+  Base64Decode(challenge,strlen(challenge), decoded_challenge, 1024, NULL, &unk5);  
   SASL_Auth_data.nonce = Get_Param_Value(decoded_challenge, "nonce",1);
   SASL_Auth_data.qop   = Get_Param_Value(decoded_challenge, "qop",1);
 
@@ -143,7 +145,9 @@ char ans[]="<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>";
 void Process_Auth_Answer(char *challenge)
 {
   char *decoded_challenge = malloc(256);
-  base64_decode(challenge, decoded_challenge);
+  zeromem(decoded_challenge, 256);
+  int unk5 = 0;
+  Base64Decode(challenge,strlen(challenge), decoded_challenge, 256, NULL, &unk5);  
   SASL_Auth_data.rsp_auth   = Get_Param_Value(decoded_challenge, "rspauth",0);
   mfree(decoded_challenge);
   Jabber_state = JS_SASL_AUTH_ACK;
@@ -220,9 +224,10 @@ void Send_Login_Packet()
            JABBER_SERVER,
            R_HEX
            );
-  char *Result_Resp;
-  base64_encode(Response_STR, strlen(Response_STR),&Result_Resp);
-  char resp_full_tpl[]="<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>";
+  char *Result_Resp=malloc(2048);
+  zeromem(Result_Resp, 2048);
+  Base64Encode(Response_STR, strlen(Response_STR),Result_Resp, 2048);
+  const char resp_full_tpl[]="<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>";
   char *resp_full = malloc(1024);
   zeromem(resp_full, 1024);
   snprintf(resp_full, 1023, resp_full_tpl, Result_Resp);

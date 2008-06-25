@@ -13,7 +13,6 @@
 #include "serial_dbg.h"
 #include "groups_util.h"
 #include "adv_login.h"
-#include "base64.h"
 #include "lang.h"
 
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
@@ -285,8 +284,9 @@ char *Generate_Caps()
   char *q = malloc(64);
   zeromem(q,64);
   snprintf(q,127, caps_tpl, VERSION_VERS,__SVN_REVISION__,DELIVERY_EVENTS);
-  char *Result_Resp;
-  base64_encode(q, strlen(q),&Result_Resp);
+  char *Result_Resp = malloc(256);
+  zeromem(Result_Resp, 256);
+  Base64Encode(q, 128,Result_Resp, 256);
   mfree(q);
   return Result_Resp;
 }
