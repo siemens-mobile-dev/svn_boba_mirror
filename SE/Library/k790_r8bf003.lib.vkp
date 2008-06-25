@@ -348,8 +348,8 @@
 0A40: 00000000 E9F8E544 ; 290: int rmdir(u16* path, int zero);
 0A44: 00000000 C926E644 ; 291: int chmod(u16* path, u16* fname, int amode);
 0A48: 00000000 B92CE644 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
-0A4C: xxxxxxxx yyyyyyyy ; 293: int GetImageWidth(int ImageID);
-0A50: xxxxxxxx yyyyyyyy ; 294: int GetImageHeight(int ImageID);
+;0A4C: xxxxxxxx yyyyyyyy ; 293: int GetImageWidth(int ImageID);
+;0A50: xxxxxxxx yyyyyyyy ; 294: int GetImageHeight(int ImageID);
 0A54: 00000000 99B7D844 ; 295: void * CallID_GetCallStatusDesc(int CallID);
 0A58: 00000000 41AED844 ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
 0A5C: 00000000 EDBD1745 ; 297: void List_FreeElements(LIST *,int * filter,void * freefunc);
