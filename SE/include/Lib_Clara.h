@@ -1112,4 +1112,7 @@ __swi __arm u16 * CallStatusDesc_GetName(void * CallStatusDesc);
 #pragma swi_number=0x297
 __swi __arm void List_FreeElements(LIST *,int * filter,void * freefunc);
 
+#pragma swi_number=0x298
+__swi __arm char * strstr(char * str1,char * str2);
+
 #endif
