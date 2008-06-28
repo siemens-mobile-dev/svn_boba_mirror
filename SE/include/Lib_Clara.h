@@ -1115,4 +1115,7 @@ __swi __arm void List_FreeElements(LIST *,int * filter,void * freefunc);
 #pragma swi_number=0x298
 __swi __arm char * strstr(char * str1,char * str2);
 
+#pragma swi_number=0x299
+__swi __arm int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
+
 #endif

@@ -666,3 +666,10 @@ typedef struct
   char unk2;
   char CallCause;
 }CALLMANAGER_EVENT_DATA;
+
+typedef struct
+{
+  int SesTime;
+  int SentBytes;
+  int RcvBytes;
+}GPRS_SESSION_INFO;
