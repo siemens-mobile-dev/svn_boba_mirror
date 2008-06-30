@@ -284,8 +284,8 @@
 0920: FFFFFFFF 19d14545 ; 248: void Vibra_Off (int t1);
 0924: FFFFFFFF 39664445 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
 0928: FFFFFFFF F13E1545 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
-092C: FFFFFFFF 79AA9C44 ; 24B: int GetSilent(void);
-0930: FFFFFFFF 1B9D4545 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
+092C: FFFFFFFF 59C64545 ; 24B: int GetSilent(void);
+0930: FFFFFFFF 199D4545 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: FFFFFFFF 95D34545 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: FFFFFFFF FD0FDD44 ; 24E: int GetChipID(void);
 0948: FFFFFFFF AD141745 ; 252: int List2LineGetCurrentIndex(void * msg);
@@ -350,6 +350,13 @@
 ;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
 ;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
 ;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+;0A4C: xxxxxxxx yyyyyyyy ; 293: int GetImageWidth(int ImageID);
+;0A50: xxxxxxxx yyyyyyyy ; 294: int GetImageHeight(int ImageID);
+;0A54: xxxxxxxx yyyyyyyy ; 295: void * CallID_GetCallStatusDesc(int CallID);
+;0A58: xxxxxxxx yyyyyyyy ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
+;0A5C: xxxxxxxx yyyyyyyy ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
+;0A60: xxxxxxxx yyyyyyyy ; 298: char * strstr(char * str1,char * str2);
+;0A64: xxxxxxxx yyyyyyyy ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 
 
 
