@@ -350,7 +350,7 @@
 0A50: 00000000 F9F04745 ; 294: int GetImageHeight(int ImageID);
 0A54: 00000000 BD78ED44 ; 295: void * CallID_GetCallStatusDesc(int CallID);
 0A58: 00000000 9D6FED44 ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
-0A5C: 00000000 BD7C2D45 ; 297: void List_FreeElements(LIST *,int * filter,void * freefunc);
+0A5C: 00000000 BD7C2D45 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
 0A60: 00000000 C9666744 ; 298: char * strstr(char * str1,char * str2);
 0A64: 00000000 75604D45 ; 299: int GPRS_GetLastSessionInfo(int,SESION_INFO *);
 
