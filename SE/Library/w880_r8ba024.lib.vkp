@@ -340,10 +340,17 @@
 0A30: 00000000 F1130645 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 ;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 49674A45 ; 28E: void Shortcut_Run (u16 * shortcut_name);
-;0A3C: xxxxxxxx yyyyyyyy ; 28F: int mkdir(u16* path);
-;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
-;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
-;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+0A3C: 00000000 85C5Fa44 ; 28F: int mkdir(u16* path);
+0A40: 00000000 71CCFa44 ; 290: int rmdir(u16* path, int zero);
+0A44: 00000000 51FAFA44 ; 291: int chmod(u16* path, u16* fname, int amode);
+0A48: 00000000 4100FB44 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+0A4C: 00000000 3D644745 ; 293: int GetImageWidth(int ImageID);
+0A50: 00000000 51644754 ; 294: int GetImageHeight(int ImageID);
+0A54: 00000000 5574ED44 ; 295: void * CallID_GetCallStatusDesc(int CallID);
+0A58: 00000000 05CA7444 ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
+0A5C: 00000000 E90C2D45 ; 297: void List_FreeElements(LIST *,int * filter,void * freefunc);
+0A60: 00000000 79B36744 ; 298: char * strstr(char * str1,char * str2);
+0A64: 00000000 A5DE4C45 ; 299: int GPRS_GetLastSessionInfo(int,SESION_INFO *);
 
 
 
