@@ -141,7 +141,7 @@
 06BC: FFFFFFFF 5D751C45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 06C0: FFFFFFFF 21661A45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 15A6D044 ; 1B1: void debug_printf(char * fmt,...);
-06C8: FFFFFFFF 45F80745 ; 1B2: int PlayFile(u16 * path, u16 * fname);
+06C8: FFFFFFFF 35F80745 ; 1B2: int PlayFile(u16 * path, u16 * fname);
 06D0: FFFFFFFF 2D605745 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: FFFFFFFF 89605745 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06DC: FFFFFFFF 5D3B0845 ; 1B7: int isKeylocked(void);
@@ -157,7 +157,7 @@
 0710: FFFFFFFF E17D0C45 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF DDC95645 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF EDC95645 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 2D7C0C45 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: FFFFFFFF 757C0C45 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF 75875245 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF EDC65645 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF F5F00745 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -346,6 +346,13 @@
 ;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(u16* path, int zero);
 ;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(u16* path, u16* fname, int amode);
 ;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+;0A4C: xxxxxxxx yyyyyyyy ; 293: int GetImageWidth(int ImageID);
+;0A50: xxxxxxxx yyyyyyyy ; 294: int GetImageHeight(int ImageID);
+;0A54: xxxxxxxx yyyyyyyy ; 295: void * CallID_GetCallStatusDesc(int CallID);
+;0A58: xxxxxxxx yyyyyyyy ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
+;0A5C: xxxxxxxx yyyyyyyy ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
+;0A60: xxxxxxxx yyyyyyyy ; 298: char * strstr(char * str1,char * str2);
+;0A64: xxxxxxxx yyyyyyyy ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 
 
 
