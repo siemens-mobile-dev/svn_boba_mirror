@@ -146,7 +146,7 @@
 06D0: FFFFFFFF 71d31545 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: FFFFFFFF CDD31545 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
 06D8: FFFFFFFF 7530EB44 ; 1B6: void SetBrightnessOfScreen(int br);
-06DC: FFFFFFFF 1da1D444 ; 1B7: int isKeylocked(void);
+06DC: FFFFFFFF E97AD444 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF c10dF744 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E4: FFFFFFFF 1927F744 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);
 06E8: FFFFFFFF 1D87D444 ; 1BA: void ShuttingDown(void);
