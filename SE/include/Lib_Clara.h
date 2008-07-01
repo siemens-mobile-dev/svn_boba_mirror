@@ -1118,4 +1118,7 @@ __swi __arm char * strstr(char * str1,char * str2);
 #pragma swi_number=0x299
 __swi __arm int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 
+#pragma swi_number=0x300
+__swi __arm int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
+
 #endif
