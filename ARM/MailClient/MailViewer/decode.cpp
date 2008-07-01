@@ -407,7 +407,7 @@ void strip_html(char *s)
         he = strstr(hrf+6, "\""); //в кавычках
       else
         if(hrf[5] == '\'')          //в апострофах
-          he = strstr(&hrf[5], "\'");
+          he = strstr(hrf+6, "\'");
         else
           for(he = hrf+5; *he && strchr(valid, *he); he++);//или без ничего
       ss = strstr(he, ">")+1;       //ищем конец открывающего тега
