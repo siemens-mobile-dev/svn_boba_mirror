@@ -57,10 +57,10 @@
 050C: 00000000 21BD3D45 ; 143: __thumb void StatusIndication_ShowNotes(int StrID);
 0510: 00000000 B1DC4045 ; 144: __thumb void * CreateStringInput(int,...);
 0514: 00000000 317B4345 ; 145: __thumb GUI_ONEOFMANY * CreateOneOfMany(BOOK *);
-0518: 00000000 00000000 ; 146: __unknown void OneOfMany_SetItemCount(GUI_ONEOFMANY * , int count);
-051C: 00000000 00000000 ; 147: __unknown void OneOfMany_SetChecked(GUI_ONEOFMANY * , int checked);
-;0520: xxxxxxxx yyyyyyyy ; 148: void OneOfMany_SetTexts(GUI_ONEOFMANY * , int * StrID , int Count);
-;0524: xxxxxxxx yyyyyyyy ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
+0518: 00000000 F97C4345 ; 146: __unknown void OneOfMany_SetItemCount(GUI_ONEOFMANY * , int count);
+051C: 00000000 157D4345 ; 147: __unknown void OneOfMany_SetChecked(GUI_ONEOFMANY * , int checked);
+0520: 00000000 497D4345 ; 148: void OneOfMany_SetTexts(GUI_ONEOFMANY * , int * StrID , int Count);
+0524: 00000000 257D4345 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 0528: 00000000 51BC3D45 ; 14A: __thumb void StatusIndication_Item8_SetText(int StrID);
 052C: 00000000 118F4945 ; 14B: __thumb void AddMSGHook(void * menu,short msg,void (*proc)(BOOK *,void*)); //BOOK *,GUI ? *
 0530: 00000000 898F4945 ; 14C: __thumb void AddCommand(void * menu,int cmd , int StrID);
@@ -121,8 +121,8 @@
 060C: 00000000 68D64244 ; 183: __arm int get_ptype(PROCESS pid);
 0610: 00000000 B4D54244 ; 184: __arm PROCESS current_process(void);
 0614: 00000000 ECD44244 ; 185: __arm void delay(OSTIME timeout);
-;0618: xxxxxxxx yyyyyyyy ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-;061C: xxxxxxxx yyyyyyyy ; 187: void kill_proc(PROCESS pid);
+0618: 00000000 B4D64244 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
+061C: 00000000 E0D64244 ; 187: void kill_proc(PROCESS pid);
 0680: 00000000 3DB26744 ; 1A0: __thumb char* strcpy(char * dest, char * source);
 0684: 00000000 A96D1245 ; 1A1: __thumb void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 FD6D1245 ; 1A2: __thumb void SendMessage(void **signal,int PID);
@@ -143,8 +143,11 @@
 06C4: 00000000 A9A42C44 ; 1B1: __thumb void debug_printf(char * fmt,...);
 06C8: 00000000 315D1345 ; 1B2: __thumb int PlayFile(u16 * path, u16 * fname);
 06D0: 00000000 B9D33F45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
+06D4: 00000000 15D43F45 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
+06D8: 00000000 C15F3F45 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: 00000000 39AF4A45 ; 1B7: __thumb int isKeylocked(void);
 06E0: 00000000 7D690745 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06E8: 00000000 93613D45 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 F97E0F45 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 890EE744 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 1D0FE744 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
@@ -167,7 +170,7 @@
 0738: 00000000 A9C34745 ; 1CE: __thumb void GUI_Free(GUI*);
 073C: 00000000 C1E64045 ; 1CF: __thumb void GUI_SetIcon(GUI* , int icon);
 0740: 00000000 51E54045 ; 1D0: __thumb int StringInput_GetStringAndLen (GUI*,u16**,u16*);
-074C: 00000000 00000000 ; 1D3: __unknown int GetVolumeSize(char * volume, VOLUMESIZE *);
+074C: 00000000 491EFB44 ; 1D3: __unknown int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 71754345 ; 1D4: __thumb GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 B1774345 ; 1D5: __thumb void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 0758: 00000000 35774345 ; 1D6: __thumb void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
@@ -177,7 +180,7 @@
 0768: 00000000 A9774345 ; 1DA: __thumb void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
 0780: 00000000 DD7C4345 ; 1E0: __thumb void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 0784: 00000000 417D4345 ; 1E1: __thumb void OneOfMany_SetonMessage(GUI_ONEOFMANY * , void * proc);
-0788: 00000000 00000000 ; 1E2: __unknown GUI_FEEDBACK * CreateFeedBack (int,...);
+0788: 00000000 C1503D45 ; 1E2: __unknown GUI_FEEDBACK * CreateFeedBack (int,...);
 078C: 00000000 8D513D45 ; 1E3: __thumb void FeedBack_SetText(GUI_FEEDBACK*,int);
 0790: 00000000 11FAAE44 ; 1E4: __thumb int GetBattaryState(const int * , BATT *);
 0794: 00000000 959E4745 ; 1E5: __thumb void * get_DisplayGC (void);
@@ -189,7 +192,7 @@
 07AC: 00000000 D56E3C45 ; 1EB: __thumb void addGui2book(BOOK*,GUI*);
 07B0: 00000000 25504745 ; 1EC: __thumb void DrawRect(int x1, int y1,int x2 ,int y2,int pen_color,int brush_color);
 07B4: 00000000 25534745 ; 1ED: __thumb void DrawString(int StrID,int align,int x1,int y1,int x2,int y2,int unk,int unk1,int pen_color ,int brush_color);
-;07B8: xxxxxxxx yyyyyyyy ; 1EE: void addGui2XGuiList (void* xguilist , GUI*);
+07B8: 00000000 B1733C45 ; 1EE: void addGui2XGuiList (void* xguilist , GUI*);
 07BC: 00000000 05264745 ; 1EF: __thumb void InvalidateRect(DISP_OBJ *,RECT*);
 07C0: 00000000 CDC24745 ; 1F0: int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,void(*)(),int,int size_obj);
 07C4: 00000000 815D4745 ; 1F1: __thumb int SetFont(int);
@@ -203,11 +206,11 @@
 07E4: 00000000 F54C3D45 ; 1F9: int MainInput_isPlus(GUI *);
 07E8: 00000000 51723C45 ; 1FA: int BOOK_GetSessionID(BOOK * );
 07EC: 00000000 B5BB6744 ; 1FB: __thumb int wstrncmp(u16*,u16*,int);
-;07F0: xxxxxxxx yyyyyyyy ; 1FC: int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
-;07F4: xxxxxxxx yyyyyyyy ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
-;07F8: xxxxxxxx yyyyyyyy ; 1FE: WINDOW * DISP_OBJ_GetWindow(DISP_OBJ *);
+07F0: 00000000 E5374745 ; 1FC: int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
+07F4: 00000000 19384745 ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
+07F8: 00000000 B52A4745 ; 1FE: WINDOW * DISP_OBJ_GetWindow(DISP_OBJ *);
 07FC: 00000000 91BB4945 ; 1FF: int GetThemeColor(int , int);
-;0800: xxxxxxxx yyyyyyyy ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
+0800: 00000000 91CC3F45 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: 00000000 39CC3F45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 216DF044 ; 202: __thumb void VCALL_Init (void* vc);
 080C: 00000000 196EF044 ; 203: __thumb void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
@@ -216,7 +219,7 @@
 0818: 00000000 5D6EF044 ; 206: __thumb void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 696EF044 ; 207: __thumb void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 7968F044 ; 208: __thumb void MakeVoiceCall (int SessioID , void * vc ,int flag);
-;0824: xxxxxxxx yyyyyyyy ; 209: int isDirectory (u16 * path ,u16 * filename , int * error );
+0824: 00000000 F37A3345 ; 209: int isDirectory (u16 * path ,u16 * filename , int * error );
 0828: 00000000 21FBFA44 ; 20A: __thumb void FileDelete (u16 * path ,u16 * filename , int * error );
 082C: 00000000 C5C54745 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 61991545 ; 20C: __thumb int CreateSMSCont (int, void*);
@@ -229,12 +232,13 @@
 084C: 00000000 9D3EF144 ; 213: __thumb int AB_NAME_ITEM2StrID(void * ab_name);
 0850: 00000000 E53EF144 ; 214: __thumb int AB_NUM_ITEM2StrID(void * ab_num_item);
 0854: 00000000 BB051444 ; 215: __thumb int GetABRecNum(AB_GET_STRUCT *);
-;0858: xxxxxxxx yyyyyyyy ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
+0858: 00000000 9058B945 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
+085C: 00000000 7D49B944 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy);
 0860: 00000000 7949B944 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy);
 0864: 00000000 DDE7E844 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: 00000000 7C3C0820 ;821A: __thumb int * PID_MMI(void);
-;0874: xxxxxxxx yyyyyyyy ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
-;0878: xxxxxxxx yyyyyyyy ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
+0874: 00000000 E51E4745 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
+0878: 00000000 99244745 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 B593A144 ; 21F: __thumb DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*); // !!!!! не настоящий !!!!!!
 0880: 00000000 EDDF4645 ; 220: __thumb void DISP_DESC_SetName (DISP_DESC* , const char * name);
 0884: 00000000 A5354745 ; 221: __thumb char* DISP_OBJ_GetName (DISP_OBJ *);
@@ -260,7 +264,7 @@
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
 08D8: 00000000 11E04645 ; 236: __thumb void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
 08DC: 00000000 41E14645 ; 237: __thumb DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
-;08E0: xxxxxxxx yyyyyyyy ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
+08E0: 00000000 15E04645 ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 ;08E4: xxxxxxxx yyyyyyyy ; 239: DISP_OBJ_METHOD DISP_OBJ_GetMethod09 (DISP_OBJ *);
 ;08E8: xxxxxxxx yyyyyyyy ; 23A: void DISP_DESC_SetMethod0A (DISP_DESC* ,void (*)(void*));
 ;08EC: xxxxxxxx yyyyyyyy ; 23B: DISP_OBJ_METHOD DISP_OBJ_GetMethod0A (DISP_OBJ *);
@@ -278,9 +282,9 @@
 091C: 00000000 C5103345 ; 247: void GoMusic(void);
 0920: 00000000 CD7F0F45 ; 248: void Vibra_Off (int t1);
 0928: 00000000 355D1345 ; 24A: int PlayFileV(u16 * path, u16 * fname, int vol);
-;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
-;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
-;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
+092C: 00000000 E1730F45 ; 24B: int GetSilent(void);
+0930: 00000000 594C0F45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
+0934: 00000000 45820F45 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: 00000000 DD8D2C44 ; 24E: int GetChipID(void);
 0948: 00000000 C9674345 ; 252: __thumb int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 BD674345 ; 253: __thumb int GUIonMessage_GetCurrentItemIndex(void * msg);
@@ -336,7 +340,7 @@
 0A1C: 00000000 3D8CE644 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 0A20: 00000000 755D4345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 ;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+0A2C: 00000000 BDCC0545 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 F1130645 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 ;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 49674A45 ; 28E: void Shortcut_Run (u16 * shortcut_name);
@@ -345,12 +349,12 @@
 0A44: 00000000 51FAFA44 ; 291: int chmod(u16* path, u16* fname, int amode);
 0A48: 00000000 4100FB44 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
 0A4C: 00000000 3D644745 ; 293: int GetImageWidth(int ImageID);
-0A50: 00000000 51644754 ; 294: int GetImageHeight(int ImageID);
+0A50: 00000000 51644745 ; 294: int GetImageHeight(int ImageID);
 0A54: 00000000 5574ED44 ; 295: void * CallID_GetCallStatusDesc(int CallID);
 0A58: 00000000 05CA7444 ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
-0A5C: 00000000 E90C2D45 ; 297: void List_FreeElements(LIST *,int * filter,void * freefunc);
+0A5C: 00000000 E90C2D45 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
 0A60: 00000000 79B36744 ; 298: char * strstr(char * str1,char * str2);
-0A64: 00000000 A5DE4C45 ; 299: int GPRS_GetLastSessionInfo(int,SESION_INFO *);
+0A64: 00000000 A5DE4C45 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 
 
 
