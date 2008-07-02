@@ -1121,4 +1121,7 @@ __swi __arm int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 #pragma swi_number=0x300
 __swi __arm int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
 
+#pragma swi_number=0x301
+__swi __arm int wtoi(u16 * wstr,int len,int * hex);
+
 #endif

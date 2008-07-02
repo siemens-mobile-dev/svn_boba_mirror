@@ -354,6 +354,8 @@
 0A60: 00000000 C9666744 ; 298: char * strstr(char * str1,char * str2);
 0A64: 00000000 75604D45 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 0A68: 00000000 9909F744 ; 300: int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
+0A6C: 00000000 5DBD3C45 ; 301: int wtoi(u16 * wstr,int len,int * hex);
+
 
 
 
