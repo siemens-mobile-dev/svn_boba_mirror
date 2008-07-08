@@ -106,8 +106,8 @@
 05D0: 00000000 D15C4345 ; 174: __thumb void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
 05D4: 00000000 5D783945 ; 175: __thumb char * manifest_GetParam(char *buf,char *param_name,int unk);
 05D8: 00000000 110CFB44 ; 176: __thumb int lseek(int file,int offset,int mode);
-;05DC: xxxxxxxx yyyyyyyy ;8177: int get_VBUFFER(void);
-05E0: 00000000 00000000 ; 178: __unknown void SetLampLevel (int level);
+05DC: 00000000 1F251444 ;8177: int get_VBUFFER(void); //nullsub
+;05E0: xxxxxxxx yyyyyyyy ; 178: void SetLampLevel (int level);
 05E4: 00000000 110A2D45 ; 179: __thumb void * ListElement_Remove(LIST *lst,int index);
 05E8: 00000000 694C3E44 ; 17A: __thumb int GetCurrentPID(void);
 05EC: 00000000 450A2D45 ; 17B: __thumb int ListElement_Prt2NumElement(LIST *lst,void *ptr);
@@ -355,6 +355,12 @@
 0A5C: 00000000 E90C2D45 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
 0A60: 00000000 79B36744 ; 298: char * strstr(char * str1,char * str2);
 0A64: 00000000 A5DE4C45 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
+0A68: 00000000 9D07F744 ; 29A: int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
+0A6C: 00000000 21323C45 ; 29B: int wtoi(u16 * wstr,int len,int * dest);
+;0A70: xxxxxxxx yyyyyyyy ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
+;0A74: xxxxxxxx yyyyyyyy ; 29D: void Cale_GetSettings(int setID,void *);
+;0A78: xxxxxxxx yyyyyyyy ; 29E: u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
+;0A7C: xxxxxxxx yyyyyyyy ; 29F: u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
 
 
 
