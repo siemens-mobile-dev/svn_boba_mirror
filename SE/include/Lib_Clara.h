@@ -1139,4 +1139,10 @@ __swi __arm u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
 #pragma swi_number=0x2A0
 __swi __arm u16 * wstrchr(u16 * source,u16 chr);
 
+#pragma swi_number=0x2A1
+__swi __arm void GUIObject_HideSoftkeys(void *gui);
+
+#pragma swi_number=0x2A2
+__swi __arm void GUIObject_ShowSoftkeys(void *gui);
+
 #endif
