@@ -161,7 +161,7 @@ typedef struct
 
 typedef struct
 {
-  char   unk;
+  char   isDestroyed;
   char * name;
   UI_APP_SESSION * app_session;
   int   parrent_BookID;

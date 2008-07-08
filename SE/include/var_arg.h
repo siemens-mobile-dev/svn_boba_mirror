@@ -1,7 +1,7 @@
 extern int __var_arg_book;
 extern int __var_arg_htext;
 extern int __var_arg_call_back_ok;
-extern int __var_arg_call_back_unk1;
+extern int __var_arg_call_back_prev_act;
 extern int __var_arg_call_back_long_back;
 extern int __var_arg_strinp_mode;
 extern int __var_arg_strinp_fixed_text;
@@ -24,7 +24,7 @@ extern int __var_arg_perinp_cur_percent;
 #define VAR_BOOK(__param__) &__var_arg_book,__param__
 #define VAR_HEADER_TEXT(__param__) &__var_arg_htext,__param__
 #define VAR_OK_PROC(__param__) &__var_arg_call_back_ok,__param__
-#define VAR_UNK1_PROC(__param__) &__var_arg_call_back_unk1,__param__
+#define VAR_PREV_ACTION_PROC(__param__) &__var_arg_call_back_prev_act,__param__
 #define VAR_LONG_BACK_PROC(__param__) &__var_arg_call_back_long_back,__param__
 
 #define VAR_STRINP_MODE(__param__) &__var_arg_strinp_mode,__param__

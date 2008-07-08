@@ -311,15 +311,15 @@
 9B0: 00000000 0910BE44 ; 26C: png_voidp png_get_progressive_ptr(png_structp png_ptr);
 9B4: 00000000 6DFCBD44 ; 26D: png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
 9B8: 00000000 F912BE44 ; 26E: void png_set_strip_16(png_structp png_ptr);
-;09BC: xxxxxxxx yyyyyyyy ; 26F: void png_set_gray_1_2_4_to_8(png_structp png_ptr);
-;09C0: xxxxxxxx yyyyyyyy ; 270: void png_set_gray_to_rgb(png_structp png_ptr);
-;09C4: xxxxxxxx yyyyyyyy ; 271: png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
-;09C8: xxxxxxxx yyyyyyyy ; 272: void png_set_tRNS_to_alpha(png_structp png_ptr);
-;09CC: xxxxxxxx yyyyyyyy ; 273: void png_set_filler(png_structp png_ptr, png_uint_32 filler, int flags);
-;09D0: xxxxxxxx yyyyyyyy ; 274: void png_set_palette_to_rgb(png_structp png_ptr);
-;09D4: xxxxxxxx yyyyyyyy ; 275: png_uint_32 png_get_rowbytes(png_structp png_ptr, png_infop info_ptr);
-;09D8: xxxxxxxx yyyyyyyy ; 276: void png_progressive_combine_row(png_structp png_ptr, png_bytep old_row, png_bytep new_row);
-;09DC: xxxxxxxx yyyyyyyy ; 277: int png_sig_cmp(png_bytep sig, png_size_t start, png_size_t num_to_check);
+9BC: 00000000 1113BE44 ; 26F: void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+9C0: 00000000 2913BE44 ; 270: void png_set_gray_to_rgb(png_structp png_ptr);
+9C4: 00000000 41FCBD44 ; 271: png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
+9C8: 00000000 1D13BE44 ; 272: void png_set_tRNS_to_alpha(png_structp png_ptr);
+9CC: 00000000 6140BE44 ; 273: void png_set_filler(png_structp png_ptr, png_uint_32 filler, int flags);
+9D0: 00000000 0513BE44 ; 274: void png_set_palette_to_rgb(png_structp png_ptr);
+9D4: 00000000 59FCBD44 ; 275: png_uint_32 png_get_rowbytes(png_structp png_ptr, png_infop info_ptr);
+9D8: 00000000 C50FBE44 ; 276: void png_progressive_combine_row(png_structp png_ptr, png_bytep old_row, png_bytep new_row);
+9DC: 00000000 A9F6BD44 ; 277: int png_sig_cmp(png_bytep sig, png_size_t start, png_size_t num_to_check);
 9E0: 00000000 10653F44 ; 278: int setjmp(jmp_buf jmpbuf);
 9E4: 00000000 34653F44 ; 279: void longjmp(jmp_buf, int);
 9E8: 00000000 C54CBE44 ; 27A: int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
@@ -338,14 +338,23 @@ A18: 00000000 45C6D244 ; 286: int iconidname2id(u16* idname,int maxnamelen,int* 
 A1C: 00000000 293FE344 ; 287: int textidname2id(u16* idname,int maxnamelen,int* id);
 A20: 00000000 3DFA3E45 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 ;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
-;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
+A2C: 00000000 29560245 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+A30: 00000000 31A90245 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 ;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 A38: 00000000 F9FA4545 ; 28E: void Shortcut_Run (u16 * shortcut_name);
 A3C: 00000000 D183F744 ; 28F: int mkdir(u16* path);
 A40: 00000000 BD8AF744 ; 290: int rmdir(u16* path, int zero);
 A44: 00000000 99B8F744 ; 291: int chmod(u16* path, u16* fname, int amode);
 A48: 00000000 8DBEF744 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+A4C: 00000000 6DFD4245 ; 293: int GetImageWidth(int ImageID);
+A50: 00000000 80FD4245 ; 294: int GetImageHeight(int ImageID);
+A54: 00000000 1D33EA44 ; 295: void * CallID_GetCallStatusDesc(int CallID);
+A58: 00000000 4129EA44 ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
+A5C: 00000000 051F2945 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
+A60: 00000000 51F76644 ; 298: char * strstr(char * str1,char * str2);
+A64: 00000000 ED664845 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
+A68: 00000000 A1C5F344 ; 29A: int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
+A6C: 00000000 1DC13745 ; 29B: int wtoi(u16 * wstr,int len,int * dest);
 
 
 
