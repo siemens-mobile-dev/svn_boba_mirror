@@ -1121,8 +1121,22 @@ __swi __arm int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 #pragma swi_number=0x29A
 __swi __arm int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
 
-
 #pragma swi_number=0x29B
-__swi __arm int wtoi(u16 * wstr,int len,int * hex);
+__swi __arm int wtoi(u16 * wstr,int len,int * dest);
+
+#pragma swi_number=0x29C
+__swi __arm void DATE_GetWeekDay(DATE *,char * dest);
+
+#pragma swi_number=0x29D
+__swi __arm void Cale_GetSettings(int setID,void *);
+
+#pragma swi_number=0x29E
+__swi __arm u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
+
+#pragma swi_number=0x29F
+__swi __arm u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
+
+#pragma swi_number=0x300
+__swi __arm u16 * wstrchr(u16 * source,u16 chr);
 
 #endif
