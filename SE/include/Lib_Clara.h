@@ -1136,7 +1136,7 @@ __swi __arm u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
 #pragma swi_number=0x29F
 __swi __arm u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
 
-#pragma swi_number=0x300
+#pragma swi_number=0x2A0
 __swi __arm u16 * wstrchr(u16 * source,u16 chr);
 
 #endif
