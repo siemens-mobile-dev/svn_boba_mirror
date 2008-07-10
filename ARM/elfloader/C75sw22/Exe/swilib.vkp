@@ -110,8 +110,8 @@
 0160: 0xA0005D18   ; 58: ClearMemory
 0164: 0xA0E4F4F8   ; 59: memcpy(void *dest,const void *source,int cnt)
 
-0168: 0xA07AFEB3   ; 5A: KeypressOn
-016C: 0xA07AFF71   ; 5B: KeypressOff
+0168: 0xA07AF9AB ; 5A: KeypressOn(int key)
+016C: 0xA07AFAD9 ; 5B: KeypressOff(int key)
 0170: 0xA0883ED4  ; 5C: GetCPUClock()
 0174: 0xA03ACB33   ; 5D: GetCPULoad()
 0178: 0xA03ACB01  ; 5E: GetMMIMemUsed
