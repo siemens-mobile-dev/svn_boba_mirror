@@ -354,7 +354,7 @@
 0A60: 00000000 C9666744 ; 298: char * strstr(char * str1,char * str2);
 0A64: 00000000 75604D45 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 0A68: 00000000 9909F744 ; 29A: int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
-0A6C: 00000000 5DBD3C45 ; 29B: int wtoi(u16 * wstr,int len,int * hex);
+0A6C: 00000000 5DBD3C45 ; 29B: int wtoi(u16 * wstr,int len,int * dest);
 0A70: 00000000 E16F1245 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
 0A74: 00000000 79CFE944 ; 29D: void Cale_GetSettings(int setID,void *);
 0A78: 00000000 CD6F6744 ; 29E: u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
@@ -362,6 +362,7 @@
 0A80: 00000000 4D6E6744 ; 2A0: u16 * wstrchr(u16 * source,u16 chr);
 0A84: 00000000 091F4A45 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
 0A88: 00000000 151F4A45 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
+
 
 
 

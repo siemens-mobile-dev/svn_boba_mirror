@@ -353,6 +353,15 @@
 ;0A5C: xxxxxxxx yyyyyyyy ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
 ;0A60: xxxxxxxx yyyyyyyy ; 298: char * strstr(char * str1,char * str2);
 ;0A64: xxxxxxxx yyyyyyyy ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
+;0A68: xxxxxxxx yyyyyyyy ; 29A: int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
+;0A6C: xxxxxxxx yyyyyyyy ; 29B: int wtoi(u16 * wstr,int len,int * dest);
+;0A70: xxxxxxxx yyyyyyyy ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
+;0A74: xxxxxxxx yyyyyyyy ; 29D: void Cale_GetSettings(int setID,void *);
+;0A78: xxxxxxxx yyyyyyyy ; 29E: u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
+;0A7C: xxxxxxxx yyyyyyyy ; 29F: u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
+;0A80: xxxxxxxx yyyyyyyy ; 2A0: u16 * wstrchr(u16 * source,u16 chr);
+;0A84: xxxxxxxx yyyyyyyy ; 2A1: void GUIObject_HideSoftkeys(void *gui);
+;0A88: xxxxxxxx yyyyyyyy ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
 
 
 
