@@ -348,11 +348,22 @@
 0A40: 00000000 E9F8E544 ; 290: int rmdir(u16* path, int zero);
 0A44: 00000000 C926E644 ; 291: int chmod(u16* path, u16* fname, int amode);
 0A48: 00000000 B92CE644 ; 292: int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
-;0A4C: xxxxxxxx yyyyyyyy ; 293: int GetImageWidth(int ImageID);
-;0A50: xxxxxxxx yyyyyyyy ; 294: int GetImageHeight(int ImageID);
+0A4C: 00000000 5D9E3145 ; 293: int GetImageWidth(int ImageID);
+0A50: 00000000 719E3145 ; 294: int GetImageHeight(int ImageID);
 0A54: 00000000 99B7D844 ; 295: void * CallID_GetCallStatusDesc(int CallID);
 0A58: 00000000 41AED844 ; 296: u16 * CallStatusDesc_GetName(void * CallStatusDesc);
-0A5C: 00000000 EDBD1745 ; 297: void List_FreeElements(LIST *,int * filter,void * freefunc);
+0A5C: 00000000 EDBD1745 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
+0A60: 00000000 61385544 ; 298: char * strstr(char * str1,char * str2);
+0A64: 00000000 09103745 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
+0A68: 00000000 1534E244 ; 29A: int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
+0A6C: 00000000 89722645 ; 29B: int wtoi(u16 * wstr,int len,int * dest);
+0A70: 00000000 F9DBFC44 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
+0A74: 00000000 DD0FD544 ; 29D: void Cale_GetSettings(int setID,void *);
+0A78: 00000000 65415544 ; 29E: u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
+0A7C: 00000000 9120E244 ; 29F: u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
+0A80: 00000000 E53F5544 ; 2A0: u16 * wstrchr(u16 * source,u16 chr);
+0A84: 00000000 A1CB3345 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
+0A88: 00000000 ADCB3345 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
 
 
 
