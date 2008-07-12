@@ -322,7 +322,7 @@
 #define KEY_PHF1 0x37
 #define KEY_PHF_ENDOF 0x38
 //#define KEY_PLAY UNDEFINED
-//#define KEY_POWER UNDEFINED
+#define KEY_POWER 0x0
 #define KEY_RIGHT 0x8
 #define KEY_RIGHT_SOFT 0x2
 //#define KEY_SLIDER_CLOSE UNDEFINED
