@@ -1145,4 +1145,9 @@ __swi __arm void GUIObject_HideSoftkeys(void *gui);
 #pragma swi_number=0x2A2
 __swi __arm void GUIObject_ShowSoftkeys(void *gui);
 
+#pragma swi_number=0x2A3
+__swi __arm DISP_OBJ* DispObject_SoftKeys_Get(void);
+#pragma swi_number=0x2A4
+__swi __arm int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
+
 #endif
