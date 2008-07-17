@@ -364,6 +364,8 @@
 0A80: 00000000 E53F5544 ; 2A0: u16 * wstrchr(u16 * source,u16 chr);
 0A84: 00000000 A1CB3345 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
 0A88: 00000000 ADCB3345 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
+0A8C: 00000000 39B33345 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get(void);
+0A90: 00000000 11EF3045 ; 2A4: int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
 
 
 
