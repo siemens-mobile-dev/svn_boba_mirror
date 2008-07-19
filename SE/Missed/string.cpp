@@ -6,12 +6,6 @@ char* strchr(char* str,char c)
 	return NULL;
 }
 
-u16* wstrchr(u16* str,u16 c)
-{
-	for(;*str;str++)if(*str==c)return str;
-	return NULL;
-}
-
 char* strrchr(char* str,char c)
 {
 	char* retpos=NULL;
