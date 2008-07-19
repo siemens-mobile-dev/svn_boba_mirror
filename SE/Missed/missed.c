@@ -131,17 +131,6 @@ int onAbout(void* mess,BOOK* b)
         return 1;
 }
 
-struct  CALLMANAGER_EVENT_DATA
-{
-        char x0;
-        char x1;
-        char callstate;
-        int  x4;
-        char x8;
-        char x9;
-        char callcause;
-};
-
 enum
 {
         CALLMANAGER_IDLE            =0,
@@ -154,7 +143,7 @@ enum
 
 int OnCallManagerEvent(void* r0,BOOK* b)
 {
-        switch(((CALLMANAGER_EVENT_DATA*)r0)->callstate)
+        switch(((CALLMANAGER_EVENT_DATA*)r0)->CallState)
         {
         case CALLMANAGER_CALL_SETUP:
         case CALLMANAGER_CALL_ALERT:
