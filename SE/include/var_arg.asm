@@ -18,6 +18,7 @@ name:
         VARARG __var_arg_strinp_empty_str_en,0x7D
         VARARG __var_arg_strinp_max_len,0x8C
         VARARG __var_arg_strinp_min_len,0x93
+        VARARG __var_arg_strinp_is_pass_mode,0xAF
         VARARG __var_arg_strinp_unk1,0x4E
         VARARG __var_arg_strinp_unk2,0xB3
         VARARG __var_arg_strinp_unk3,0x50

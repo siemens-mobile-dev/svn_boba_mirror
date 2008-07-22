@@ -10,6 +10,7 @@ extern int __var_arg_strinp_new_line;
 extern int __var_arg_strinp_empty_str_en;
 extern int __var_arg_strinp_max_len;
 extern int __var_arg_strinp_min_len;
+extern int __var_arg_strinp_is_pass_mode;
 extern int __var_arg_strinp_unk1;
 extern int __var_arg_strinp_unk2;
 extern int __var_arg_strinp_unk3;
@@ -34,6 +35,7 @@ extern int __var_arg_perinp_cur_percent;
 #define VAR_STRINP_ENABLE_EMPTY_STR(__param__) &__var_arg_strinp_empty_str_en,__param__
 #define VAR_STRINP_MAX_LEN(__param__) &__var_arg_strinp_max_len,__param__
 #define VAR_STRINP_MIN_LEN(__param__) &__var_arg_strinp_min_len,__param__
+#define VAR_STRINP_IS_PASS_MODE(__param__) &__var_arg_strinp_is_pass_mode,__param__
 #define VAR_STRINP_UNK1(__param__) &__var_arg_strinp_unk1,__param__
 #define VAR_STRINP_UNK2(__param__) &__var_arg_strinp_unk2,__param__
 #define VAR_STRINP_UNK3(__param__) &__var_arg_strinp_unk3,__param__
