@@ -7,6 +7,18 @@
 #define ELFLIST 1
 #define ICONS_COUNT 4
 
+#define IDN_BOOKS_DEACT_ICON _T("RN_TAB_SESSION_MANAGER_DESELECTED_DISABLED_ICN")
+#define IDN_BOOKS_ACT_ICON _T("RN_TAB_SESSION_MANAGER_DESELECTED_ANI_ICN")
+#define IDN_ELFS_DEACT_ICON _T("RN_TAB_BOOKMARKS_DESELECTED_DISABLED_ICN")
+#define IDN_ELFS_ACT_ICON _T("RN_TAB_BOOKMARKS_DESELECTED_ANI_ICN")
+
+u16 *id_names[4]=
+{
+  IDN_BOOKS_DEACT_ICON,
+  IDN_BOOKS_ACT_ICON,
+  IDN_ELFS_DEACT_ICON,
+  IDN_ELFS_ACT_ICON
+};
 
 int onUserInactivity(void * r0, BOOK * bk);
 int onRootListChanged(void * r0, BOOK * bk);
@@ -105,8 +117,9 @@ void elf_exit(void)
 }
 
 //=====================================================================================
-u16 RegisterImage(IMG * i , u16 * path, u16 * fname)
+int RegisterImage(IMG * i , u16 * path, u16 * fname)
 {
+  int r=0;
   char error_code;
   i->ImageID=0xFFFF;
   i->ImageHandle=0xFFFF;
@@ -123,10 +136,11 @@ u16 RegisterImage(IMG * i , u16 * path, u16 * fname)
         {
           i->ImageHandle=0xFFFF;
         }
+        else r=1;
       }
     }
   }
-  return(i->ImageID);
+  return (r);
 };
 
 
@@ -925,9 +939,10 @@ char * get_ini_key(int full_init)
       if (full_init)
       {
         // если full_init то регистрируем иконки и не освобождаем загруженный ини
-        int i;
+        int i, r;
         for (i=0;i<ICONS_COUNT;i++)
         {
+          r=0;
           char key[50];
           u16 ws[100];
           sprintf(key,"[ICON%.02d]",i);
@@ -936,8 +951,16 @@ char * get_ini_key(int full_init)
           {
             str2wstr(ws,param);
             // грузим иконки
-            RegisterImage(&dyn_image[i] ,path, ws);
+            r=RegisterImage(&dyn_image[i] ,path, ws);
             mfree(param);
+          }
+          if (!r)
+          {
+            int img;
+            if (iconidname2id(id_names[i],-1,&img))
+            {
+              dyn_image[i].ImageID=img;              
+            }            
           }
         }
       }
