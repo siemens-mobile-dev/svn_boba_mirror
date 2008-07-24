@@ -72,8 +72,8 @@
 0548: 00000000 4D7D5544 ; 152: u16* wstrcpy(u16 * dest, u16 * source);
 054C: 00000000 F97D5544 ; 153: u16* wstrncpy(u16 * dest, u16 * source, int maxlen);
 0550: 00000000 F17C5544 ; 154: u16* wstrcat(u16 * wstr, u16 * subwstr);
-0554: 00000000 997D5544 ; 155: short* wstrncat(short * wstr, short * subwstr , int maxlen);
-0558: 00000000 257D5544 ; 156: int wstrcmp(unsigned short * wstr1, unsigned short * wstr2);
+0554: 00000000 997D5544 ; 155: u16 *wstrncat(u16 *wstr, u16 *subwstr , int maxlen);
+0558: 00000000 257D5544 ; 156: int wstrcmp(u16 *wstr1, u16 *wstr2);
 055C: 00000000 C97DE444 ; 157: int wstrlen(u16 * wstr);
 0560: 00000000 9190E444 ; 158: u16 * str2wstr(u16 * wstr,char * str);
 0564: 00000000 25745544 ; 159: int strcmp(char * str1, char * str2);
@@ -179,7 +179,7 @@
 0764: 00000000 15003245 ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 0768: 00000000 75003245 ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
 0780: 00000000 A9053245 ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
-0784: 00000000 0D063245 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , void * proc);
+0784: 00000000 0D063245 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
 0788: 00000000 6DCB2B45 ; 1E2: GUI_FEEDBACK * CreateFeedBack (int,...);
 078C: 00000000 39CC2B45 ; 1E3: void FeedBack_SetText(GUI_FEEDBACK*,int);
 0790: 00000000 895C9C44 ; 1E4: int GetBattaryState(const int * , BATT *);
@@ -368,6 +368,7 @@
 0A90: 00000000 01383545 ; 2A4: int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
 0A94: 00000000 F1573745 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
 0A98: 00000000 65E83145 ; 2A6: void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
+
 
 
 

@@ -72,8 +72,8 @@
 548: 00000000 05B2F344 ; 152: u16* wstrcpy(u16 * dest, u16 * source);
 54C: 00000000 1DB2F344 ; 153: u16* wstrncpy(u16 * dest, u16 * source, int maxlen);
 550: 00000000 49B2F344 ; 154: u16* wstrcat(u16 * wstr, u16 * subwstr);
-554: 00000000 65B2F344 ; 155: short* wstrncat(short * wstr, short * subwstr , int maxlen);
-558: 00000000 D5B1F344 ; 156: int wstrcmp(unsigned short * wstr1, unsigned short * wstr2);
+554: 00000000 65B2F344 ; 155: u16 *wstrncat(u16 *wstr, u16 *subwstr , int maxlen);
+558: 00000000 D5B1F344 ; 156: int wstrcmp(u16 *wstr1, u16 *wstr2);
 55C: 00000000 C1B1F344 ; 157: int wstrlen(u16 * wstr);
 560: 00000000 89C4F344 ; 158: u16 * str2wstr(u16 * wstr,char * str);
 564: 00000000 EDF56644 ; 159: int strcmp(char * str1, char * str2);
@@ -177,7 +177,7 @@
 764: 00000000 BD133F45 ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 768: 00000000 1D143F45 ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
 780: 00000000 51193F45 ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
-784: 00000000 B5193F45 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , void * proc);
+784: 00000000 B5193F45 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
 788: 00000000 49E03845 ; 1E2: GUI_FEEDBACK * CreateFeedBack (int,...);
 78C: 00000000 15E13845 ; 1E3: void FeedBack_SetText(GUI_FEEDBACK*,int);
 790: 00000000 DDF8AC44 ; 1E4: int GetBattaryState(const int * , BATT *);
@@ -358,10 +358,14 @@ A6C: 00000000 1DC13745 ; 29B: int wtoi(u16 * wstr,int len,int * dest);
 ;0A70: xxxxxxxx yyyyyyyy ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
 ;0A74: xxxxxxxx yyyyyyyy ; 29D: void Cale_GetSettings(int setID,void *);
 ;0A78: xxxxxxxx yyyyyyyy ; 29E: u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
-;0A7C: xxxxxxxx yyyyyyyy ; 29F: u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
+;0A7C: xxxxxxxx yyyyyyyy ; 29F: int wstrcmpi(const u16 *ws1, const u16 *ws2);
 ;0A80: xxxxxxxx yyyyyyyy ; 2A0: u16 * wstrchr(u16 * source,u16 chr);
 ;0A84: xxxxxxxx yyyyyyyy ; 2A1: void GUIObject_HideSoftkeys(void *gui);
 ;0A88: xxxxxxxx yyyyyyyy ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
+;0A8C: xxxxxxxx yyyyyyyy ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get(void);
+;0A90: xxxxxxxx yyyyyyyy ; 2A4: int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
+;0A94: xxxxxxxx yyyyyyyy ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
+;0A98: xxxxxxxx yyyyyyyy ; 2A6: void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
 
 
 
