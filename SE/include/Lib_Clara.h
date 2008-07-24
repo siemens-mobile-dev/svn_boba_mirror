@@ -36,7 +36,7 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #define MINUTE_TICK_EVENT 999
 #define ELF_SHOW_INFO_EVENT 998
 #define ELF_TERMINATE_EVENT 997
-
+#define ELF_RECONFIG_EVENT 996
 
 typedef  unsigned int size_t;
 
@@ -393,10 +393,10 @@ __swi __arm  u16* wstrncpy(u16 * dest, u16 * source, int maxlen);
 __swi __arm  u16* wstrcat(u16 * wstr, u16 * subwstr);
 
 #pragma swi_number=0x155
-__swi __arm  short* wstrncat(short * wstr, short * subwstr , int maxlen);
+__swi __arm  u16 *wstrncat(u16 *wstr, u16 *subwstr , int maxlen);
 
 #pragma swi_number=0x156
-__swi __arm  int wstrcmp(unsigned short * wstr1, unsigned short * wstr2);
+__swi __arm  int wstrcmp(u16 *wstr1, u16 *wstr2);
 
 #pragma swi_number=0x157
 __swi __arm  int wstrlen(u16 * wstr);
@@ -707,7 +707,7 @@ __swi __arm  void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
 #pragma swi_number=0x1E0
 __swi __arm  void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 #pragma swi_number=0x1E1
-__swi __arm  void OneOfMany_SetonMessage(GUI_ONEOFMANY * , void * proc);
+__swi __arm  void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
 
 
 
@@ -1134,7 +1134,7 @@ __swi __arm void Cale_GetSettings(int setID,void *);
 __swi __arm u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
 
 #pragma swi_number=0x29F
-__swi __arm u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
+__swi __arm int wstrcmpi(const u16 *ws1, const u16 *ws2);
 
 #pragma swi_number=0x2A0
 __swi __arm u16 * wstrchr(u16 * source,u16 chr);
@@ -1150,4 +1150,8 @@ __swi __arm DISP_OBJ* DispObject_SoftKeys_Get(void);
 #pragma swi_number=0x2A4
 __swi __arm int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
 
+#pragma swi_number=0x2A5
+__swi __arm GUI *CreateYesNoQuestionVA(int zero, ...);
+#pragma swi_number=0x2A6
+__swi __arm void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
 #endif
