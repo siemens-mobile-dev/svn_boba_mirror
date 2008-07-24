@@ -122,7 +122,7 @@
 0610: 00000000 703A4344 ; 184: PROCESS current_process(void);
 0614: 00000000 A8394344 ; 185: void delay(OSTIME timeout);
 0618: 00000000 703B4344 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-061C: 00000000 903B4344 ; 187: void kill_proc(PROCESS pid);
+061C: 00000000 9C3B4344 ; 187: void kill_proc(PROCESS pid);
 0680: 00000000 8D656744 ; 1A0: char* strcpy(char * dest, char * source);
 0684: 00000000 2D641245 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 81641245 ; 1A2: void SendMessage(void **signal,int PID);
@@ -358,10 +358,14 @@
 0A70: 00000000 E16F1245 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
 0A74: 00000000 79CFE944 ; 29D: void Cale_GetSettings(int setID,void *);
 0A78: 00000000 CD6F6744 ; 29E: u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
-;0A7C: 00000000 15F6F644 ; 29F: u16 * wstrcpyn(u16 * dest,u16 * source,int maxlen);
+0A7C: 00000000 DD09F744 ; 29F: int wstrcmpi(const u16 *ws1, const u16 *ws2);
 0A80: 00000000 4D6E6744 ; 2A0: u16 * wstrchr(u16 * source,u16 chr);
 0A84: 00000000 091F4A45 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
 0A88: 00000000 151F4A45 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
+0A8C: 00000000 BDEC4945 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get(void);
+0A90: 00000000 B53C4745 ; 2A4: iint StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
+0A94: 00000000 455C4945 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
+0A98: 00000000 A9ED4345 ; 2A6: void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
 
 
 
