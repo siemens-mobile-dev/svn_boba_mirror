@@ -29,6 +29,16 @@ e.g.:
 
 e.g.:
 [S_KEY0]: MenuItem_Bt_Activation
+
+Java running:
+
+Mask: java:Name//Vendor
+Name - Midlet Name
+Vendor - Midlet Vendor
+You can get this params in "Information" of midlet
+
+e.g.
+[S_KEY0]: java:Jimm//Jimm Project
  
 [ES_KEY0] - Run elf on "0" key on the second tab.
 [EL_KEY0] - Run elf on long "0" key on the second tab.

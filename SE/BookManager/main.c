@@ -1,7 +1,7 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 
-#define COPYRIGHT_STRING STR("\nBookManager v2.6\nbuild 130508\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
+#define COPYRIGHT_STRING STR("\nBookManager v2.7\nbuild 250708\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
 #define MESSAGE(__STR__) MessageBox(0x6fffffff,__STR__,0, 1 ,11000,(BOOK*)BookManager_Book);
 #define BOOKLIST 0
 #define ELFLIST 1
@@ -89,6 +89,8 @@ typedef struct
   int book_in_session;
   int isGuiBook;
 }SESSION_ITEM;
+
+
 
 
 
@@ -590,16 +592,44 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
       sprintf(key,i4==3?"[S_KEY%d]":"[L_KEY%d]",i1-KEY_DIGITAL_0);
       if (param=manifest_GetParam(myBook->filebuf,key,0))
       {
-	u16 par[256];
-	str2wstr(par,param);
-        if (StandbyOnTop)
+        u16 par[256];
+        str2wstr(par,param);
+        if (strstr(param,"java:"))
         {
-	  StartAPP(par);
-          Show(Find_StandbyBook(),0);
+          u16 name_len=strstr(param,"//")-param-5;
+          u16 vendor_len=strlen(param+7+name_len);
+          
+          MIDP_DESC * java=new MIDP_DESC;
+          java->name=new MIDP_DESC_ITEM;
+          java->vendor=new MIDP_DESC_ITEM;
+          java->point=0;
+          java->name->item_name=new u16[name_len];
+          java->name->item_name_len=name_len;
+          java->name->const_2=2;
+          java->vendor->item_name=new u16[vendor_len];
+          java->vendor->item_name_len=vendor_len;
+          java->vendor->const_2=2;
+          
+          wstrncpy(java->name->item_name,par+5,name_len);
+          wstrncpy(java->vendor->item_name,par+7+name_len,vendor_len);
+          _REQUEST_OAF_START_APPLICATION(ASYNC,0,java,0);
+          delete(java->name->item_name);
+          delete(java->vendor->item_name);
+          delete(java->vendor);
+          delete(java->name);
+          delete(java);
         }
         else
         {
-          Shortcut_Run(par);
+          if (StandbyOnTop)
+          {
+            StartAPP(par);
+            Show(Find_StandbyBook(),0);
+          }
+          else
+          {
+            Shortcut_Run(par);
+          }
         }
 	mfree(param);
         CloseMyBook((BOOK*)myBook,0);
@@ -708,7 +738,7 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
   GuiObject_SetTitleText(lo,Str2ID(p,5,2));
   
   
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)lo,(void*)onLBMessage);
+  OneOfMany_SetonMessage((GUI_ONEOFMANY*)lo,onLBMessage);
   SetNumOfMenuItem(lo,blistcnt);
   if (blistpos>blistcnt)
   {
@@ -735,7 +765,7 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
   
   GuiObject_SetTitleText(elist,(STR("Elfs")));
   SetCursorToItem(elist,0);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)elist,(void*)onLBMessage1);
+  OneOfMany_SetonMessage((GUI_ONEOFMANY*)elist,onLBMessage1);
   SetNumOfMenuItem(elist,elistcnt);
   if (elistpos>elistcnt)
   {
