@@ -653,7 +653,6 @@ typedef struct {
   char unk20[2];
   signed char rxlev;
 } CUR_CELLDATA;
-#endif
 
 
 typedef struct
@@ -673,3 +672,5 @@ typedef struct
   int SentBytes;
   int RcvBytes;
 }GPRS_SESSION_INFO;
+
+#endif
