@@ -1154,4 +1154,7 @@ __swi __arm int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname
 __swi __arm GUI *CreateYesNoQuestionVA(int zero, ...);
 #pragma swi_number=0x2A6
 __swi __arm void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
+
+#pragma swi_number=0x2A7
+__swi __arm void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
 #endif

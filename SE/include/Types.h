@@ -673,4 +673,18 @@ typedef struct
   int RcvBytes;
 }GPRS_SESSION_INFO;
 
+typedef struct
+{
+  u16 item_name_len;
+  char const_2;
+  u16 * item_name;
+}MIDP_DESC_ITEM;
+
+typedef struct
+{
+  MIDP_DESC_ITEM * name;
+  MIDP_DESC_ITEM * vendor;
+  MIDP_DESC_ITEM * point;
+}MIDP_DESC;
+
 #endif
