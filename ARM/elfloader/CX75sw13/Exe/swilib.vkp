@@ -597,5 +597,36 @@
 08FC: 0xA0E4BC9D ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
 0900: 0xA0E4C725 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA07D82C3 ; 241: __thumb void SetDateTime(TDate *, TTime *);
+
+0934: 0xA02F5098 ; 24D: __arm int PlayMelody_SetPosition(int handle, int pos_ms);
+0938: 0xA0366AFC ; 24E: __arm void* Obs_GetById(int handle);
+093C: 0xA0309BBC ; 24F: __arm int Obs_GetPosition(void *playobj_3D0, int *pos_ms);
+0940: 0xA0309A48 ; 250: __arm int Obs_GetDuration(void *playobj_3D0, int *pos_ms);
+0950: 0xA0353760 ; 254: __arm int StartNativeExplorer(NativeExplorerData* data)
+
+0960: 0xA0800135 ; 258: __thumb int CalcBitmapSize(short w,short h, char typy)
+0964: 0xA0308DD0 ; 259: __arm HObj Obs_CreateObject(int uid, int unk1, int unk2, int unk3, int unk4, int unk6,unsigned int *ErrorNumber);
+0968: 0xA030973C ; 25A: __arm Obs_DestroyObject(HObj hObj);
+096C: 0xA030D958 ; 25B: __arm int Obs_SetInput_File (HObj hObj, int unk_zero, WSHDR *path);
+0970: 0xA03071A0 ; 25C: __arm int Obs_GetInputImageSize (HObj hObj, short *w, short *h);
+0974: 0xA03072F8 ; 25D: __arm int Obs_SetOutputImageSize (HObj hObj, short w, short h)
+0978: 0xA030C4FC ; 25E: __arm int Obs_Start(HObj hObj)
+097C: 0xA0303DC4 ; 25F: __arm int Obs_Output_GetPictstruct(HObj hObj, IMGHDR **img)
+0980: 0xA0307C44 ; 260: __arm int Obs_Graphics_SetClipping(HObj hObj, short x, short y, short w, short h)
+0984: 0xA03077B0 ; 261: __arm int Obs_SetRotation(HObj hObj, int angle)
+0988: 0xA030C38C ; 262: __arm int Obs_GetInfo (HObj hObj, int unk_0or1)
+098C: 0xA0307670 ; 263: __arm int Obs_SetScaling (HObj hObj, int unk5)
+0990: 0xA030EE9C ; 264: __arm int Obs_TranslateMessageGBS (GBS_MSG *msg, OBSevent *event_handler);
+0994: 0xA030C840 ; 265: __arm int Obs_Pause (HObj hObj);
+0998: 0xA030CAEC ; 266: __arm int Obs_Resume (HObj hObj);
+099C: 0xA030C968 ; 267: __arm int Obs_Stop (HObj hObj);
+;09A0: 0x00000000 ; 268: 
+;09A4: 0x00000000 ; 269:
+09A8: 0xA0309B60 ; 26A: __arm int Obs_SetPosition (HObj hObj,int ms);
+;09AC: 0x00000000 ; 26B:
+09B0: 0xA0303D18 ; 26C: __arm int Obs_Sound_SetVolume (HObj hObj, char vol, char delta);
+09B4: 0xA0303C68 ; 26D: __arm int Obs_Sound_GetVolume (HObj hObj, char *vol);
 #pragma disable old_equal_ff
 +0
+
+;locale=Russian_Russia.1251
