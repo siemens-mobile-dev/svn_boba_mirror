@@ -368,6 +368,7 @@
 0A90: 00000000 D99E3445 ; 2A4: int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
 0A94: 00000000 99BD3645 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
 0A98: 00000000 C14F3145 ; 2A6: void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
+0A9C: 00000000 CD67EB44 ; 2A7: void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
 
 
 
