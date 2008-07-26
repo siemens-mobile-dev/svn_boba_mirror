@@ -34,13 +34,13 @@ const int YEAR_0[]={0,31,60,91,121,152,182,213,244,274,305,335};
 const int YEAR_1[]={366,397,425,456,486,517,547,578,609,639,670,700};
 const int YEAR_2[]={731,762,790,821,851,882,912,943,974,1004,1035,1065};
 const int YEAR_3[]={1096,1127,1155,1186,1216,1247,1277,1308,1339,1369,1400,1430};
-u16 * days[][7]={(u16*)L"Воскресенье",
-(u16*)L"Понедельник",
-(u16*)L"Вторник",
-(u16*)L"Среда",
-(u16*)L"Четверг",
-(u16*)L"Пятница",
-(u16*)L"Суббота"
+wchar_t * days[][7]={L"Воскресенье",
+L"Понедельник",
+L"Вторник",
+L"Среда",
+L"Четверг",
+L"Пятница",
+L"Суббота"
 };
 
 int h2i(char * h)
@@ -132,10 +132,10 @@ void get_ini_key(void)
   int file;
   int i;
   char * buf;
-  if ((file=_fopen(GetDir(DIR_INI),(u16*)L"SleepMode.ini",0x001,0x180,0))>=0)
+  if ((file=_fopen(GetDir(DIR_INI),L"SleepMode.ini",0x001,0x180,0))>=0)
   {
     FSTAT fstat;
-    if (isFileExist(GetDir(DIR_INI),(u16*)L"SleepMode.ini",&fstat)==0)
+    if (isFileExist(GetDir(DIR_INI),L"SleepMode.ini",&fstat)==0)
     {
       buf=(char*)malloc(fstat.fsize+1);
       fread(file,buf,fstat.fsize);

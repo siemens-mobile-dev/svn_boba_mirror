@@ -4,11 +4,11 @@
 #include "conf_loader.h"
 
 
-const u16 *successed_config_path=(u16 *)L"";
-const u16 *successed_config_name=(u16 *)L"";
+const wchar_t *successed_config_path=L"";
+const wchar_t *successed_config_name=L"";
 
 #pragma segment="CONFIG_C"
-int LoadConfigData(u16 *path, u16 *fname)
+int LoadConfigData(const wchar_t *path,const wchar_t *fname)
 {
   int f;
   char *buf;
@@ -56,8 +56,8 @@ int LoadConfigData(u16 *path, u16 *fname)
 
 void InitConfig(void)
 {
-  if (LoadConfigData(GetDir(DIR_ELFS_CONFIG|MEM_EXTERNAL),(u16*)L"BcfgExample.bcfg")<0)
+  if (LoadConfigData(GetDir(DIR_ELFS_CONFIG|MEM_EXTERNAL),L"BcfgExample.bcfg")<0)
   {
-    LoadConfigData(GetDir(DIR_ELFS_CONFIG|MEM_INTERNAL),(u16*)L"BcfgExample.bcfg");
+    LoadConfigData(GetDir(DIR_ELFS_CONFIG|MEM_INTERNAL),L"BcfgExample.bcfg");
   }
 }

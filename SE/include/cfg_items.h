@@ -34,12 +34,9 @@ typedef struct
   char cbox_text[32];
 }CFG_CBOX_ITEM;
 
-#ifndef u16
-typedef unsigned short u16;
-#endif
 
 typedef struct
 {
-  u16 path[64];
-  u16 name[64];
+  wchar_t path[64];
+  wchar_t name[64];
 } RECONFIG_EVENT_DATA;

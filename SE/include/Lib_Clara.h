@@ -13,7 +13,8 @@
 extern int *SYNC;
 extern int *ASYNC;
 extern void *ELF_BEGIN;
-#ifndef SWI_HOOK
+
+#ifdef __cplusplus
 extern "C" void kill_data(void *p, void (*func_p)(void *));
 #else
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -28,8 +29,8 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #endif /* NULL */
 
 #define SID_ANY_LEN 0xFFFF
-#define TEXT(__STR__) (u16*)L##__STR__
-#define _T(__STR__) (u16*)L##__STR__
+#define TEXT(__STR__) L##__STR__
+#define _T(__STR__) L##__STR__
 #define MAXELEMS(x) (sizeof(x)/sizeof(x[0]))
 #define STR(__STR__) Str2ID(_T(__STR__),0,SID_ANY_LEN)
 
@@ -39,8 +40,6 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #define ELF_RECONFIG_EVENT 996
 
 typedef  unsigned int size_t;
-
-#define u16 unsigned short
 
 // Str2ID conversion flag
 /*
@@ -100,6 +99,7 @@ typedef  unsigned int size_t;
 
 
 #pragma diag_suppress=Ta035
+#pragma diag_suppress=Ta036
 
 #pragma swi_number=0x100
 __swi __arm  void IMB(void);
@@ -120,10 +120,10 @@ __swi __arm  void mfree(void *p);
 __swi __arm void *mfree_adr(void);
 
 #pragma swi_number=0x105
-__swi __arm  u16 * GetDir (int DirIndex);
+__swi __arm  wchar_t * GetDir (int DirIndex);
 
 #pragma swi_number=0x106
-__swi __arm  int fopen (const u16 * fname, int mode, int rights);
+__swi __arm  int fopen (const wchar_t * fname, int mode, int rights);
 
 #pragma swi_number=0x107
 __swi __arm  int ModifyKeyHook(int(*proc)(int,int,int),int mode);
@@ -132,7 +132,7 @@ __swi __arm  int ModifyKeyHook(int(*proc)(int,int,int),int mode);
 __swi __arm  void SUBPROC (void(*PROC)(void));
 
 
-#ifndef SWI_HOOK
+#ifdef __cplusplus
 #pragma swi_number=0x108
 __swi __arm  void SUBPROC (void(*PROC)(int),int p1);
 
@@ -143,8 +143,7 @@ __swi __arm  void SUBPROC (void(*PROC)(int,void*),int p1 , void * p2);
 #pragma swi_number=0x109
 __swi __arm  void MMIPROC (void(*PROC)(void));
 
-#ifndef SWI_HOOK
-
+#ifdef __cplusplus
 #pragma swi_number=0x109
 __swi __arm  void MMIPROC (void(*PROC)(int),int p1);
 #pragma swi_number=0x109
@@ -162,7 +161,7 @@ __swi __arm int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode);
 
 #ifndef SWI_HOOK
 #pragma swi_number=0x10D
-__swi __arm int elfload(u16* filename, void *param1, void *param2, void *param3);
+__swi __arm int elfload(const wchar_t* filename, void *param1, void *param2, void *param3);
 #endif
 //-------------------------------------------------------------------------------------------
 
@@ -173,16 +172,16 @@ __swi __arm  void memset(void *mem,char chr,int size);
 __swi __arm  int memcpy(void *dest,const void *source,int cnt);
 
 #pragma swi_number=0x114
-__swi __arm  int sprintf(char *buf, char *str, ...);
+__swi __arm  int sprintf(char *buf, const char *fmt, ...);
 
 #pragma swi_number=0x115
-__swi __arm  int snwprintf(u16* buffer, int size, const u16* fmt, ...);
+__swi __arm  int snwprintf(wchar_t* buffer, int size, const wchar_t* fmt, ...);
 
 #pragma swi_number=0x116
 //0x204 - append
 //0x004 - write begin
 
-__swi __arm  int _fopen(const unsigned short *filpath, const unsigned short *filname,unsigned int mode , unsigned int rights, unsigned int __0);
+__swi __arm  int _fopen(const wchar_t *filpath, const wchar_t *filname,unsigned int mode , unsigned int rights, unsigned int __0);
 
 #pragma swi_number=0x117
 __swi __arm  int fclose(int  file);
@@ -200,10 +199,10 @@ __swi __arm  int fwrite(int file , const void *ptr, int size);
 //__swi __arm  int fputs(const char *s, int file);
 
 #pragma swi_number=0x11C
-__swi __arm  int isFileExist(u16 * pach, u16 *fname , FSTAT * fstat_stuct);
+__swi __arm  int isFileExist(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 
 #pragma swi_number=0x11D
-__swi __arm  void * AllocDirHandle(u16 * path);
+__swi __arm  void * AllocDirHandle(const wchar_t * path);
 
 #pragma swi_number=0x11E
 __swi __arm  void *GetFname(void *, void*);
@@ -230,21 +229,21 @@ __swi __arm  void DataBrowser_Show(void * db);
 __swi __arm  void DataBrowser_XXX(void * db);
 
 #pragma swi_number=0x126
-__swi __arm  unsigned short * getFileExtention(unsigned short * fnane);
+__swi __arm  wchar_t * getFileExtention(wchar_t * fnane);
 
 #pragma swi_number=0x127
-__swi __arm  int DataBrowser_isFileInListExt(unsigned short * ext_table,unsigned short * patch ,unsigned short * fname );
+__swi __arm  int DataBrowser_isFileInListExt(unsigned short * ext_table,const wchar_t * path ,const wchar_t *fname );
 
 #pragma swi_number=0x128
 __swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
-#ifndef SWI_HOOK
+#ifdef __cplusplus
 #pragma swi_number=0x128
 __swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
 #endif
 
 #pragma swi_number=0x129
 __swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
-#ifndef SWI_HOOK
+#ifdef __cplusplus
 #pragma swi_number=0x129
 __swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID,  void *),  void *);
 #endif
@@ -288,7 +287,7 @@ __swi __arm  void SetCursorToItem ( void *obj , int item);
 #pragma swi_number=0x136
 __swi __arm  void GUI_SetStyle(GUI *,int style);
 
-#ifndef SWI_HOOK
+#ifdef __cplusplus
 #pragma swi_number=0x136
 __swi __arm  void GUI_SetStyle(GUI_LIST *,int style);
 #pragma swi_number=0x136
@@ -384,34 +383,34 @@ __swi __arm  void SoftKey_SetVisible(void *gui,int action,int visible);
 __swi __arm  void SoftKey_SuppressDefaultAction(void *gui,int action);
 
 #pragma swi_number=0x152
-__swi __arm  u16* wstrcpy(u16 * dest, u16 * source);
+__swi __arm  wchar_t* wstrcpy(wchar_t * dest, const wchar_t * source);
 
 #pragma swi_number=0x153
-__swi __arm  u16* wstrncpy(u16 * dest, u16 * source, int maxlen);
+__swi __arm  wchar_t* wstrncpy(wchar_t * dest, const wchar_t * source, int maxlen);
 
 #pragma swi_number=0x154
-__swi __arm  u16* wstrcat(u16 * wstr, u16 * subwstr);
+__swi __arm  wchar_t* wstrcat(wchar_t * wstr, const wchar_t * subwstr);
 
 #pragma swi_number=0x155
-__swi __arm  u16 *wstrncat(u16 *wstr, u16 *subwstr , int maxlen);
+__swi __arm  wchar_t *wstrncat(wchar_t *wstr, const wchar_t *subwstr , int maxlen);
 
 #pragma swi_number=0x156
-__swi __arm  int wstrcmp(u16 *wstr1, u16 *wstr2);
+__swi __arm  int wstrcmp(const wchar_t *wstr1, const wchar_t *wstr2);
 
 #pragma swi_number=0x157
-__swi __arm  int wstrlen(u16 * wstr);
+__swi __arm  int wstrlen(const wchar_t * wstr);
 
 #pragma swi_number=0x158
-__swi __arm  u16 * str2wstr(u16 * wstr,char * str);
+__swi __arm  wchar_t * str2wstr(wchar_t * wstr, const char * str);
 
 #pragma swi_number=0x159
-__swi __arm  int strcmp(char * str1, char * str2);
+__swi __arm  int strcmp(const char * str1, const char * str2);
 
 #pragma swi_number=0x15A
-__swi __arm  int strlen(char *str);
+__swi __arm  int strlen(const char *str);
 
 #pragma swi_number=0x15B
-__swi __arm  char * wstr2strn (char * str , u16 * wstr, int maxlen);
+__swi __arm  char * wstr2strn (char * str , const wchar_t * wstr, int maxlen);
 
 #pragma swi_number=0x15C
 __swi __arm  int int2strID (int num);
@@ -423,7 +422,7 @@ __swi __arm  int Str2ID(const void * wstr , int  flag , int len);
 __swi __arm  void StrID2Str(int StrID,char * str,int maxlen);
 
 #pragma swi_number=0x15F
-__swi __arm  void TextID2wstr(int StrID,u16 * str,int maxlen);
+__swi __arm  void TextID2wstr(int StrID,wchar_t * str,int maxlen);
 
 #pragma swi_number=0x160
 __swi __arm  int TextGetLength(int StrID);
@@ -466,7 +465,7 @@ __swi __arm  void List_Free(LIST *lst);
 __swi __arm  void ListElement_AddtoTop(LIST *lst,void *newElement);
 
 #pragma swi_number=0x16C
-__swi __arm  int Gif2ID(u16 IMAGEHANDLE,u16 * path, u16 * fname,u16 * ID);
+__swi __arm  int Gif2ID(u16 IMAGEHANDLE,const wchar_t * path, const wchar_t * fname,u16 * ID);
 
 #pragma swi_number=0x16D
 __swi __arm  int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,char * unk);
@@ -487,7 +486,7 @@ __swi __arm  void Hide(void * udata, int zero);
 __swi __arm  void Show(void * udata, int zero);
 
 #pragma swi_number=0x173
-__swi __arm  void StartAPP (u16 * appname);
+__swi __arm  void StartAPP (const wchar_t * appname);
 
 //#pragma swi_number=0x174
 //__swi __arm  void CreateEvent(int event);
@@ -496,7 +495,7 @@ __swi __arm  void StartAPP (u16 * appname);
 __swi __arm  void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
 
 #pragma swi_number=0x175
-__swi __arm  char * manifest_GetParam(char *buf,char *param_name,int unk);
+__swi __arm  char * manifest_GetParam(const char *buf, const char *param_name,int unk);
 
 #pragma swi_number=0x176
 __swi __arm  int lseek(int file,int offset,int mode);
@@ -577,17 +576,17 @@ __swi __arm  int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void 
 #pragma swi_number=0x1AD
 __swi __arm  void * ListElement_GetByIndex(LIST * , int index);
 #pragma swi_number=0x1AE
-__swi __arm  u16* wstrrchr(u16*wstr, u16 wchar);
+__swi __arm  wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
 #pragma swi_number=0x1AF
 __swi __arm  void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
 #pragma swi_number=0x1B0
 __swi __arm  void ListElement_Add(LIST *lst,void *newElement);
 
 #pragma swi_number=0x1B1
-__swi __arm  void debug_printf(char * fmt,...);
+__swi __arm  void debug_printf(const char * fmt,...);
 
 #pragma swi_number=0x1B2
-__swi __arm  int PlayFile(u16 * path, u16 * fname);
+__swi __arm  int PlayFile(const wchar_t * path, const wchar_t * fname);
 
 #pragma swi_number=0x1B7
 __swi __arm  int  isKeylocked(void);
@@ -659,7 +658,7 @@ __swi __arm  void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
 #pragma swi_number=0x1CC
 __swi __arm  void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI *);
 
-#ifndef SWI_HOOK
+#ifdef __cplusplus
 #pragma swi_number=0x1CC
 __swi __arm  void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_LIST *);
 #pragma swi_number=0x1CC
@@ -678,7 +677,7 @@ __swi __arm  void  GUI_Free(GUI*);
 __swi __arm  void GUI_SetIcon(GUI* , int icon);
 
 #pragma swi_number=0x1D0
-__swi __arm int StringInput_GetStringAndLen (GUI*,u16**,u16*);
+__swi __arm int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 
 //#pragma swi_number=0x1D3
 
@@ -766,7 +765,7 @@ __swi __arm int MainInput_isPlus(GUI *);
 #pragma swi_number=0x1FA
 __swi __arm int BOOK_GetSessionID(BOOK * );
 #pragma swi_number=0x1FB
-__swi __arm int wstrncmp(u16*,u16*,int);
+__swi __arm int wstrncmp(const wchar_t*,const wchar_t*,int);
 #pragma swi_number=0x1FC
 __swi __arm  int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
 #pragma swi_number=0x1FD
@@ -784,11 +783,11 @@ __swi __arm int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char
 #pragma swi_number=0x202
 __swi __arm void VCALL_Init (void* vc);
 #pragma swi_number=0x203
-__swi __arm void VCALL_SetName (void * vc , u16 * name ,unsigned short name_len);
+__swi __arm void VCALL_SetName (void * vc , wchar_t * name ,unsigned short name_len);
 #pragma swi_number=0x204
 __swi __arm void VCALL_SetNameIcon (void * vc , u16 icon);
 #pragma swi_number=0x205
-__swi __arm void VCALL_SetNumber (void * vc , u16 * number , unsigned short num_len);
+__swi __arm void VCALL_SetNumber (void * vc , wchar_t * number , unsigned short num_len);
 #pragma swi_number=0x206
 __swi __arm void VCALL_SetHZ1 (void * vc, int , u16 );
 #pragma swi_number=0x207
@@ -797,9 +796,9 @@ __swi __arm void VCALL_SetHZ2 (void * vc , u16 );
 __swi __arm void MakeVoiceCall (int SessioID , void * vc ,int flag);
 
 #pragma swi_number=0x209
-__swi __arm int isDirectory (u16 * path ,u16 * filename , int * error );
+__swi __arm int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
 #pragma swi_number=0x20A
-__swi __arm void FileDelete (u16 * path ,u16 * filename , int * error );
+__swi __arm void FileDelete (wchar_t * path ,wchar_t * filename , int * error );
 #pragma swi_number=0x20B
 __swi __arm void SetFocus (GUI * , int);
 
@@ -946,7 +945,7 @@ __swi __arm  int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 __swi __arm void GoMusic(void);
 
 #pragma swi_number=0x24A
-__swi __arm int PlayFileV(u16 * path, u16 * fname, int vol);
+__swi __arm int PlayFileV(const wchar_t * path,const wchar_t * fname, int vol);
 #pragma swi_number=0x24B
 __swi __arm int GetSilent(void);
 #pragma swi_number=0x24C
@@ -983,7 +982,7 @@ __swi __arm  void PlaySystemSound (int SndNumber);
 
 #pragma swi_number=0x25D
 __swi __arm  int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
-#ifndef SWI_HOOK
+#ifdef __cplusplus
 #pragma swi_number=0x25D
 __swi __arm  int TabMenuBar_GetFocusedTabIndex(GUI * );
 #endif
@@ -1065,16 +1064,16 @@ __swi __arm void GuiObject_SetTitleType(GUI *gui, int type);
 #pragma swi_number=0x282
 __swi __arm void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 #pragma swi_number=0x283
-__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,u16*,u16*,int unk, u16 * ImageID ,char * error);
+__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16  ImageHandle,wchar_t *path,wchar_t *fname,int unk, u16 * ImageID ,char * error);
 #pragma swi_number=0x284
 __swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
 #pragma swi_number=0x8285
 __swi __arm SURFACE ** get_Surfaces(void);
 
 #pragma swi_number=0x286
-__swi __arm int iconidname2id(u16* idname,int maxnamelen,int* id);
+__swi __arm int iconidname2id(const wchar_t* idname,int maxnamelen,int* id);
 #pragma swi_number=0x287
-__swi __arm int textidname2id(u16* idname,int maxnamelen,int* id);
+__swi __arm int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 
 #pragma swi_number=0x288
 __swi __arm void ListMenu_SetNoItemText(GUI_LIST *, int str);
@@ -1089,16 +1088,16 @@ __swi __arm void PlayerControl(BOOK *AudioPlayerBook, int);
 __swi __arm void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 
 #pragma swi_number=0x28E
-__swi __arm  void Shortcut_Run (u16 * shortcut_name);
+__swi __arm  void Shortcut_Run (wchar_t * shortcut_name);
 
 #pragma swi_number=0x28F
-__swi __arm int mkdir(u16* path);
+__swi __arm int mkdir(const wchar_t* path);
 #pragma swi_number=0x290
-__swi __arm int rmdir(u16* path, int zero);
+__swi __arm int rmdir(const wchar_t* path, int zero);
 #pragma swi_number=0x291
-__swi __arm int chmod(u16* path, u16* fname, int amode);
+__swi __arm int chmod(const wchar_t* path, const wchar_t* fname, int amode);
 #pragma swi_number=0x292
-__swi __arm int rename(u16* oldpath, u16* oldfname, u16* newpath, u16* newfname, int zero);
+__swi __arm int rename(const wchar_t* oldpath, const wchar_t* oldfname, const wchar_t* newpath, const wchar_t* newfname, int zero);
 
 #pragma swi_number=0x293
 __swi __arm int GetImageWidth(int ImageID);
@@ -1108,18 +1107,18 @@ __swi __arm int GetImageHeight(int ImageID);
 #pragma swi_number=0x295
 __swi __arm void * CallID_GetCallStatusDesc(int CallID);
 #pragma swi_number=0x296
-__swi __arm u16 * CallStatusDesc_GetName(void * CallStatusDesc);
+__swi __arm wchar_t * CallStatusDesc_GetName(void * CallStatusDesc);
 #pragma swi_number=0x297
 __swi __arm void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
 
 #pragma swi_number=0x298
-__swi __arm char * strstr(char * str1,char * str2);
+__swi __arm char * strstr(const char * str1,const char * str2);
 
 #pragma swi_number=0x299
 __swi __arm int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 
 #pragma swi_number=0x29A
-__swi __arm int wstrcmpni(u16 * wstr1,u16 * wstr2,int len);
+__swi __arm int wstrcmpni(const wchar_t * wstr1,const wchar_t * wstr2,int len);
 
 #pragma swi_number=0x29B
 __swi __arm int wtoi(u16 * wstr,int len,int * dest);
@@ -1131,13 +1130,13 @@ __swi __arm void DATE_GetWeekDay(DATE *,char * dest);
 __swi __arm void Cale_GetSettings(int setID,void *);
 
 #pragma swi_number=0x29E
-__swi __arm u16 * wstrwstr(u16 * wstr1,u16 * wstr2);
+__swi __arm wchar_t * wstrwstr(const wchar_t * wstr1,const wchar_t * wstr2);
 
 #pragma swi_number=0x29F
-__swi __arm int wstrcmpi(const u16 *ws1, const u16 *ws2);
+__swi __arm int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
 
 #pragma swi_number=0x2A0
-__swi __arm u16 * wstrchr(u16 * source,u16 chr);
+__swi __arm wchar_t * wstrchr(const wchar_t * source,wchar_t chr);
 
 #pragma swi_number=0x2A1
 __swi __arm void GUIObject_HideSoftkeys(void *gui);
@@ -1148,7 +1147,7 @@ __swi __arm void GUIObject_ShowSoftkeys(void *gui);
 #pragma swi_number=0x2A3
 __swi __arm DISP_OBJ* DispObject_SoftKeys_Get(void);
 #pragma swi_number=0x2A4
-__swi __arm int StandbyBackground_SetImage(int type,int,int,u16* path,u16* fname,int);
+__swi __arm int StandbyBackground_SetImage(int type,int,int,const wchar_t* path,const wchar_t* fname,int);
 
 #pragma swi_number=0x2A5
 __swi __arm GUI *CreateYesNoQuestionVA(int zero, ...);

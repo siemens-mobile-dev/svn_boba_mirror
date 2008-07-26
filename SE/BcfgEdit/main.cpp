@@ -26,8 +26,8 @@ const PAGE_DESC bk_base = {"BcfgEdit_Base_Page",0,bk_msglst_base};
 const PAGE_DESC bk_main = {"BcfgEdit_Main_Page",0,bk_msglst_main};
 
 
-u16 cfgpath[128];
-u16 cfgname[128];
+wchar_t cfgpath[128];
+wchar_t cfgname[128];
 
 //Указатель на буфер конфигурации
 char *cfg;
@@ -40,7 +40,7 @@ CFG_HDR *levelstack[16];
 enum INPUT_TYPES {
   IT_REAL=0,
   IT_STRING=1,
-  IT_SIGNED_DIGIT=2,
+  IT_INTEGER=2,
   IT_PHONE_NUMBER=3,
   IT_DIGITAL_PASS=4,
   IT_DIGITAL_IP=5,
@@ -74,7 +74,7 @@ unsigned long Crc32(unsigned char *buf, unsigned long len)
   return crc ^ 0xFFFFFFFFUL;
 };
 
-void win12512unicode(u16 *ws, char *s, int len)
+void win12512unicode(wchar_t *ws, char *s, int len)
 {
   int c;
   while((c=*s++)&&((len--)>0))
@@ -91,7 +91,7 @@ void win12512unicode(u16 *ws, char *s, int len)
   *ws=0;
 }
 
-char *unicode2win1251(char *s, u16 *ws, int len)
+char *unicode2win1251(char *s, wchar_t *ws, int len)
 {
   char *d=s;
   int c;
@@ -132,7 +132,7 @@ int SaveCfg()
   return result;
 }
 
-int LoadCfg(u16 *path, u16 *fname)
+int LoadCfg(wchar_t *path, wchar_t *fname)
 {
   int f;
   FSTAT fstat;
@@ -168,14 +168,14 @@ int LoadCfg(u16 *path, u16 *fname)
 
 void SendReconfigEvent()
 {
-  RECONFIG_EVENT_DATA *reconf=(RECONFIG_EVENT_DATA *)malloc(sizeof(RECONFIG_EVENT_DATA));
+  RECONFIG_EVENT_DATA *reconf;
   if (wstrlen(cfgpath)<MAXELEMS(reconf->path) && wstrlen(cfgname)<MAXELEMS(reconf->name))
   {
+    reconf=(RECONFIG_EVENT_DATA *)malloc(sizeof(RECONFIG_EVENT_DATA));
     wstrcpy(reconf->path,cfgpath);
     wstrcpy(reconf->name,cfgname);
     UI_Event_wData(ELF_RECONFIG_EVENT,reconf,(void(*)(void*))mfree_adr());
   }
-  else mfree(reconf);
 }
 
 
@@ -257,7 +257,7 @@ void CreateCBoxGui(MyBOOK *myBook)
 {
   GUI_ONEOFMANY *om=CreateOneOfMany(&myBook->book);
   CFG_HDR *hp=myBook->cur_hp;
-  u16 ustr[64];
+  wchar_t ustr[64];
   myBook->cbox_gui=om;
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   GuiObject_SetTitleText(om,Str2ID(ustr,0,SID_ANY_LEN));
@@ -285,24 +285,16 @@ void OnBackCreateTextInputGui(BOOK * bk, u16 *string, int len)
   myBook->text_input=NULL;
 }
 
-void OnOkCreateUnsignedNumberGui(BOOK * bk, u16 *string, int len)
+void OnOkCreateUnsignedNumberGui(BOOK * bk, wchar_t *string, int len)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   CFG_HDR *hp=myBook->cur_hp;
-  u16 ustr[64];
-  char str[64];
+  wchar_t ustr[64];
   unsigned int ui;
-  if (len>(sizeof(str)-1)) len=sizeof(str)-1;
-  wstr2strn(str,string,len);
-  ui=strtoul(str,0,10);
-  if (ui>hp->max)
+  ui=wcstoul(string,0,10);
+  if (ui<hp->min || ui>hp->max)
   {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"max: %u",hp->max);
-    MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
-  }
-  else if (ui<hp->min)
-  {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"min: %u",hp->min);
+    snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %u\nmax: %u",hp->min, hp->max);
     MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
   }
   else
@@ -316,18 +308,18 @@ void OnOkCreateUnsignedNumberGui(BOOK * bk, u16 *string, int len)
 
 void CreateUnsignedNumberInput(MyBOOK *myBook)
 {
-  u16 ustr[64];
+  wchar_t ustr[64];
   CFG_HDR *hp=myBook->cur_hp;
   STRID text, header_name;
   
-  snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%u",*((unsigned int *)((char *)hp+sizeof(CFG_HDR))));
+  snwprintf(ustr,MAXELEMS(ustr)-1,L"%u",*((unsigned int *)((char *)hp+sizeof(CFG_HDR))));
   text=Str2ID(ustr,0,SID_ANY_LEN);
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   header_name=Str2ID(ustr,0,SID_ANY_LEN);
   myBook->text_input=(GUI *)CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MAX_LEN(getnumwidth(hp->max)),
-                                              VAR_STRINP_MODE(IT_UNSIGNED_DIGIT),
+                                              VAR_STRINP_MODE(IT_INTEGER),
                                               VAR_BOOK(myBook),
                                               VAR_STRINP_ENABLE_EMPTY_STR(0),
                                               VAR_STRINP_TEXT(text),
@@ -336,24 +328,16 @@ void CreateUnsignedNumberInput(MyBOOK *myBook)
                                               0);
 }
 
-void OnOkCreateSignedNumberGui(BOOK * bk, u16 *string, int len)
+void OnOkCreateSignedNumberGui(BOOK * bk, wchar_t *string, int len)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   CFG_HDR *hp=myBook->cur_hp;
-  char str[64];
-  u16 ustr[64];
+  wchar_t ustr[64];
   int i;
-  if (len>(sizeof(str)-1)) len=sizeof(str)-1;
-  wstr2strn(str,string,len);
-  i=strtol(str,0,10);
-  if (i>hp->max)
+  i=wcstol(string,0,10);
+  if (i<(int)hp->min || i>(int)hp->max)
   {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"max: %d",hp->max);
-    MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
-  }
-  else if (i<hp->min)
-  {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"min: %d",hp->min);
+    snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %d\nmax: %d",hp->min,hp->max);
     MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
   }
   else
@@ -366,21 +350,20 @@ void OnOkCreateSignedNumberGui(BOOK * bk, u16 *string, int len)
 
 void CreateSignedNumberInput(MyBOOK *myBook)
 {
-  u16 ustr[64];
-  int min,max,k1,k2,mode;
+  wchar_t ustr[64];
+  int min,max,k1,k2;
   CFG_HDR *hp=myBook->cur_hp;
   STRID text, header_name;
-  snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%d",*((int *)((char *)hp+sizeof(CFG_HDR))));
+  snwprintf(ustr,MAXELEMS(ustr)-1,L"%d",*((int *)((char *)hp+sizeof(CFG_HDR))));
   text=Str2ID(ustr,0,SID_ANY_LEN);
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   header_name=Str2ID(ustr,0,SID_ANY_LEN);
   min=(k1=(int)hp->min)>=0?k1:(-k1)*10;
   max=(k2=(int)hp->max)>=0?k2:(-k2)*10;
-  mode=(k1>=0 && k2>=0)?IT_UNSIGNED_DIGIT:IT_SIGNED_DIGIT;
   myBook->text_input=(GUI *)CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MAX_LEN(getnumwidth(min>max?min:max)),
-                                              VAR_STRINP_MODE(mode),
+                                              VAR_STRINP_MODE(IT_INTEGER),
                                               VAR_BOOK(myBook),
                                               VAR_STRINP_ENABLE_EMPTY_STR(0),
                                               VAR_STRINP_TEXT(text),
@@ -390,19 +373,14 @@ void CreateSignedNumberInput(MyBOOK *myBook)
 }
 
 
-void OnOkCreateWinOrPassGui(BOOK * bk, u16 *string, int len)
+void OnOkCreateWinOrPassGui(BOOK * bk, wchar_t *string, int len)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   CFG_HDR *hp=myBook->cur_hp;
-  u16 ustr[64];
-  if (len>hp->max)
+  wchar_t ustr[64];
+  if (len<hp->min || len>hp->max)
   {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"max_string_len: %d",hp->max);
-    MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
-  }
-  else if (len<hp->min)
-  {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"min_string_len: %d",hp->max);
+    snwprintf(ustr,MAXELEMS(ustr)-1,L"min_string_len: %d\nmax_string_len: %d",hp->min,hp->max);
     MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
   }
   else
@@ -415,13 +393,13 @@ void OnOkCreateWinOrPassGui(BOOK * bk, u16 *string, int len)
 
 void CreateWinOrPassSI(MyBOOK *myBook, int is_pass)
 {
-  u16 *ustr;
+  wchar_t *ustr;
   CFG_HDR *hp=myBook->cur_hp;
   int len;
   STRID text, header_name;
   len=hp->max;
   if (len<63) len=63;
-  ustr=new u16[len+1];
+  ustr=new wchar_t[len+1];
   win12512unicode(ustr,hp->name,len);
   header_name=Str2ID(ustr,0,SID_ANY_LEN);
   win12512unicode(ustr,(char *)hp+sizeof(CFG_HDR),len);
@@ -496,18 +474,18 @@ void onEnterPressed(BOOK * bk, void *)
 
 STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
 {
-  u16 ustr[64];
+  wchar_t ustr[64];
   STRID str_id=LGP_NULL;
   if (hp)
   {
     switch(hp->type)
     {
     case CFG_UINT:
-      snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%u",*((unsigned int *)((char *)hp+sizeof(CFG_HDR))));
+      snwprintf(ustr,MAXELEMS(ustr)-1,L"%u",*((unsigned int *)((char *)hp+sizeof(CFG_HDR))));
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
       break;
     case CFG_INT:
-      snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%d",*((int *)((char *)hp+sizeof(CFG_HDR))));
+      snwprintf(ustr,MAXELEMS(ustr)-1,L"%d",*((int *)((char *)hp+sizeof(CFG_HDR))));
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
       break;      
     case CFG_STR_WIN1251:
@@ -526,14 +504,14 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
       int x,y;
       x=*((int *)((char *)hp+sizeof(CFG_HDR)));
       y=*((int *)((char *)hp+sizeof(CFG_HDR)+sizeof(int)));
-      snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%03d,%03d",x,y);
+      snwprintf(ustr,MAXELEMS(ustr)-1,L"%03d,%03d",x,y);
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
       break;
     case CFG_COLOR:
       {
         char *color;
         color=(char *)hp+sizeof(CFG_HDR);
-        snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%02X,%02X,%02X,%02X",color[0],color[1],color[2],color[3]);
+        snwprintf(ustr,MAXELEMS(ustr)-1,L"%02X,%02X,%02X,%02X",color[0],color[1],color[2],color[3]);
         str_id=Str2ID(ustr,0,SID_ANY_LEN);
         break;
       }
@@ -550,7 +528,7 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
       {
         unsigned int color;
         color=*((unsigned int *)((char *)hp+sizeof(CFG_HDR)));
-        snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%02X,%02X,%02X,%02X",COLOR_GET_R(color),COLOR_GET_G(color),COLOR_GET_B(color),COLOR_GET_A(color));
+        snwprintf(ustr,MAXELEMS(ustr)-1,L"%02X,%02X,%02X,%02X",COLOR_GET_R(color),COLOR_GET_G(color),COLOR_GET_B(color),COLOR_GET_A(color));
         str_id=Str2ID(ustr,0,SID_ANY_LEN);
         break;
       }
@@ -559,7 +537,7 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
     case CFG_TIME:
     case CFG_DATE:
     case CFG_RECT:
-      snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"Type %d is not supporting yet",hp->type);
+      snwprintf(ustr,MAXELEMS(ustr)-1,L"Type %d is not supporting yet",hp->type);
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
       break;
     }
@@ -592,7 +570,7 @@ int onLBMessage(GUI_MESSAGE * msg)
 
 STRID GetParentName()
 {
-  u16 ustr[32];
+  wchar_t ustr[32];
   if (level)
   {
     CFG_HDR *hp=levelstack[level];
@@ -815,7 +793,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
       mbk->old_crc=Crc32((unsigned char *)cfg,size_cfg);
       create_ed((BOOK *)mbk, 0);
       find_cfg=0;
-    }   
+    }
   }
   if (find_cfg)
   {
@@ -838,12 +816,12 @@ int isBcfgEditBook(BOOK * struc)
   return(struc->onClose==(void*)onMyBookClose);
 }
 
-int main(u16 *elfname, u16 *path, u16 *fname)
+int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
   MyBOOK * myBook=new MyBOOK;
   memset(myBook,0,sizeof(MyBOOK));
-  if (path) wstrncpy(cfgpath,path,sizeof(cfgpath)/sizeof(u16)); else *cfgpath=0;
-  if (fname) wstrncpy(cfgname,fname,sizeof(cfgname)/sizeof(u16)); else *cfgname=0;
+  if (path) wstrncpy(cfgpath,path,MAXELEMS(cfgpath)); else *cfgpath=0;
+  if (fname) wstrncpy(cfgname,fname,MAXELEMS(cfgname)); else *cfgname=0;
   if (!CreateBook(myBook,onMyBookClose,&bk_base,"BcfgEdit",-1,0))
   {
     delete myBook;

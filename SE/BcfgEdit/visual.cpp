@@ -31,7 +31,7 @@ void ColorGuiOnRedraw(DISP_OBJ_COLOR *db,int ,int,int)
   void *gc=get_DisplayGC();
   int column_height, column_width;
   int start_column, y_line;
-  u16 ustr[32];
+  wchar_t ustr[32];
   int scr_w, scr_h, x1, y1;
   int testcolor;
   
@@ -49,7 +49,7 @@ void ColorGuiOnRedraw(DISP_OBJ_COLOR *db,int ,int,int)
   DrawRect(x1,y1,x1+scr_w,y1+scr_h,clWhite,clWhite);
   if (db->need_str)
   {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%02X,%02X,%02X,%02X",db->r,db->g,db->b,db->a);
+    snwprintf(ustr,MAXELEMS(ustr)-1,L"%02X,%02X,%02X,%02X",db->r,db->g,db->b,db->a);
     TextFree(db->str_id);
     db->str_id=Str2ID(ustr,0,SID_ANY_LEN);
     db->need_str=0;
@@ -203,7 +203,7 @@ void OnOkColorEdit(BOOK * bk, void *)
 
 GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE color_type, int type)
 {
-  u16 ustr[32];
+  wchar_t ustr[32];
   GUI_COLOR *gui_color=new GUI_COLOR;
   DISP_OBJ_COLOR *disp_obj;
   
@@ -241,6 +241,7 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE color_type, int type)
   //GUIObject_HideSoftkeys(myBook->color);
   AddMSGHook(myBook->color,ACTION_BACK, OnBackColorEdit);
   AddMSGHook(myBook->color,ACTION_SELECT1, OnOkColorEdit);
+  AddCommand(myBook->color,ACTION_SELECT1,STR("OK"));
   ShowWindow(myBook->color);
   return gui_color;
 }
@@ -268,7 +269,7 @@ void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
   int font_old, gc_xx;
   int font=FONT_E_20R, fsize=20;
   void *gc=get_DisplayGC();
-  u16 ustr[32];
+  wchar_t ustr[32];
   int old_pen;
   int scr_w=Display_GetWidth(0), scr_h=Display_GetHeight(0);
   
@@ -298,7 +299,7 @@ void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
 
   if (db->need_str)
   {
-    snwprintf(ustr,MAXELEMS(ustr)-1,(u16*)L"%d,%d",db->x,db->y);
+    snwprintf(ustr,MAXELEMS(ustr)-1,L"%d,%d",db->x,db->y);
     TextFree(db->str_id);
     db->str_id=Str2ID(ustr,0,SID_ANY_LEN);
     db->need_str=0;

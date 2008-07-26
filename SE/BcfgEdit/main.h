@@ -31,17 +31,17 @@ int MainPageOnCreate(void *, BOOK *bk);
 int MainPageOnClose(void *, BOOK *bk);
 int isBcfgEditBook(BOOK * struc);
 GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus);
-void win12512unicode(u16 *ws, char *s, int len);
+void win12512unicode(wchar_t *ws, char *s, int len);
 int SaveCfg();
 
-extern "C" unsigned long strtoul(const char *, char **, int);
-extern "C" long strtol(const char *, char **, int);
+extern "C" unsigned long wcstoul(const wchar_t *, wchar_t **, int);
+extern "C" long wcstol(const wchar_t *, wchar_t **, int);
 
-#define IDN_CHANGES_HAVE_BEEN_MADE _T("HPB_SAVE_BEFORE_EXITD_TXT")
-#define IDN_SAVE_BEFORE_EXIT _T("HPB_SAVE_BEFORE_EXITQ_TXT")
+#define IDN_CHANGES_HAVE_BEEN_MADE L"HPB_SAVE_BEFORE_EXITD_TXT"
+#define IDN_SAVE_BEFORE_EXIT L"HPB_SAVE_BEFORE_EXITQ_TXT"
 
-#define IDN_CHECKBOX_UNCHECKED_ICON _T("CHECKBOX_ICN")
-#define IDN_CHECKBOX_CHECKED_ICON _T("CHECKMARK_IN_BOX_ICN")
+#define IDN_CHECKBOX_UNCHECKED_ICON L"CHECKBOX_ICN"
+#define IDN_CHECKBOX_CHECKED_ICON L"CHECKMARK_IN_BOX_ICN"
 
 #define LGP_NULL 0x6FFFFFFF
 #endif

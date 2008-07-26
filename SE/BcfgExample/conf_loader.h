@@ -9,6 +9,6 @@
 // Вызвать обязательно перед обращением к переменным конфигурации
 void InitConfig(void);
 
-extern const u16 *successed_config_path;
-extern const u16 *successed_config_name;
+extern const wchar_t *successed_config_path;
+extern const wchar_t *successed_config_name;
 #endif

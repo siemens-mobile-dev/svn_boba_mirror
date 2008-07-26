@@ -22,6 +22,9 @@ name:
         VARARG __var_arg_strinp_unk1,0x4E
         VARARG __var_arg_strinp_unk2,0xB3
         VARARG __var_arg_strinp_unk3,0x50
+        
+        VARARG __var_arg_strinp_min_int_val,0x95
+        VARARG __var_arg_strinp_max_int_val,0x8F
 
 
         VARARG __var_arg_yesno_pre_question,0x6B

@@ -3,6 +3,9 @@
 
 typedef unsigned short u16;
 
+#ifndef __cplusplus
+typedef unsigned short wchar_t;
+#endif
 
 
 /*
@@ -677,7 +680,7 @@ typedef struct
 {
   u16 item_name_len;
   char const_2;
-  u16 * item_name;
+  wchar_t * item_name;
 }MIDP_DESC_ITEM;
 
 typedef struct

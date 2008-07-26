@@ -22,9 +22,9 @@ int str2int(char* s)
         return retval;
 }
 
-void splitfilename(u16* src,u16* destpath,u16* destname)
+void splitfilename(wchar_t* src,wchar_t* destpath,wchar_t* destname)
 {
-        u16* fname=wstrrchr(src,'/');
+        wchar_t* fname=wstrrchr(src,'/');
         wstrncpy(destpath,src,fname-src);
         wstrcpy(destname,fname+1);
 }
@@ -45,10 +45,10 @@ struct
         ,"ELFS_CONFIG",DIR_ELFS_CONFIG
         ,"INI",DIR_INI
 };
-void extractdir(u16* path,u16* name,char* src)
+void extractdir(wchar_t* path,wchar_t* name,char* src)
 {
         int dir=-1;
-        u16 dest[256];
+        wchar_t dest[256];
 
         for(int i=0;i<sizeof(cfgmacro)/sizeof(cfgmacro[0]);i++)
         {

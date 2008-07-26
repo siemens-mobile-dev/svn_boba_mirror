@@ -19,8 +19,8 @@ __swi __arm void Vibra_Off(int t1);
 
 bool disabled=false;
 int cfg_period=30;
-u16 cfg_filepath[256];
-u16 cfg_filename[256];
+wchar_t cfg_filepath[256];
+wchar_t cfg_filename[256];
 
 u16 timer;
 u16 vibratimer;
@@ -57,7 +57,7 @@ void onTimer(u16 *timerID, LPARAM lparam)
 #ifdef DEBUG
                 if( mestatus & ~(skipevents|checkevents))
                 {
-                        u16 temp[256];
+                        wchar_t temp[256];
                         snwprintf(temp, MAXELEMS(temp), _T("unknown event status\n%x: %x"), me, mestatus &~(skipevents|checkevents));
                         MessageBox(0x6FFFFFFF, Str2ID(temp,0,MAXELEMS(temp)), 0xFFFF, 1, 0, 0);
                         skipevents|=mestatus;
@@ -173,7 +173,7 @@ int isOurBook(BOOK * book)
         return false;
 }
 
-int main(u16* filename)
+int main(wchar_t* filename)
 {
         BOOK* alreadyrunned=FindBook(isOurBook);
         if(alreadyrunned)
@@ -182,7 +182,7 @@ int main(u16* filename)
                 SUBPROC(elf_exit);
         }else
         {
-                u16 temp[256];
+                wchar_t temp[256];
                 //check cfg params------
                 char* badarg=NULL;
                 FSTAT fstat;
@@ -221,7 +221,7 @@ int main(u16* filename)
 
                 timer=Timer_Set(cfg_period*1000, onTimer, 0);
 
-                if(!wstrstr(filename,GetDir(DIR_ELFS_DAEMONS)))
+                if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
                         MessageBox(0x6FFFFFFF,Str2ID( LELFNAME L" has been started",0,SID_ANY_LEN),0xFFFF,1,5000,0);
         }
 

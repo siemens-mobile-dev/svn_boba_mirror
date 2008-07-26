@@ -32,7 +32,7 @@ int KeyActiv=0x20;
 int KeyPressMode=0x03;
 
 BMP_HDR *hdr;
-u16 * path=0;
+wchar_t * path=0;
 
 BOOK * SSBook;
 
@@ -94,8 +94,8 @@ void Snap(void)
   u16 cl=0;
   char *bmp =new char[((xsize*ysize*3)+54)];
   char *bp=bmp+54;
-  u16 * fname =new u16[50];
-  u16 * fpath =new u16[wstrlen(path)+20];
+  wchar_t * fname =new wchar_t[50];
+  wchar_t * fpath =new wchar_t[wstrlen(path)+20];
   DATETIME dt;
   int platform = GetChipID()>>12;
   char * BUFF_p;
@@ -146,9 +146,9 @@ void Snap(void)
 
   REQUEST_DATEANDTIME_GET(SYNC,&dt);
   wstrcpy(fpath,path);
-  snwprintf(fname,25,(u16*)L"/%02d-%02d-%02d",dt.date.day,dt.date.mon,dt.date.year);
+  snwprintf(fname,25,L"/%02d-%02d-%02d",dt.date.day,dt.date.mon,dt.date.year);
   wstrcat(fpath,fname);
-  snwprintf(fname,25,(u16*)L"scr%02d-%02d-%02d.bmp",dt.time.hour,dt.time.min,dt.time.sec);
+  snwprintf(fname,25,L"scr%02d-%02d-%02d.bmp",dt.time.hour,dt.time.min,dt.time.sec);
 
   if ((f=_fopen(fpath,fname,0x204,0x180,0))>=0)
   {
@@ -215,9 +215,9 @@ char * get_ini_key()
   int file;
   char * buf=0;
   FSTAT fstat;
-  if (isFileExist(GetDir(DIR_INI),(u16*)L"sshoot.ini",&fstat)==0)
+  if (isFileExist(GetDir(DIR_INI),L"sshoot.ini",&fstat)==0)
   {
-    if ((file=_fopen(GetDir(DIR_INI),(u16*)L"sshoot.ini",0x001,0x180,0))>=0)
+    if ((file=_fopen(GetDir(DIR_INI),L"sshoot.ini",0x001,0x180,0))>=0)
     {
       buf=new char[fstat.fsize+1];
       buf[fread(file,buf,fstat.fsize)]=0;
@@ -234,7 +234,7 @@ char * get_ini_key()
       }
       if (param=manifest_GetParam(buf,"[PATH]",0))
       {
-        path=new u16[strlen(param)+1];
+        path=new wchar_t[strlen(param)+1];
         str2wstr(path,param);
         mfree(param);
       }
@@ -245,9 +245,9 @@ char * get_ini_key()
 
   if (!path)
   {
-    path = new u16[wstrlen(GetDir(DIR_IMAGE | MEM_INTERNAL))+wstrlen((u16*)L"/SnapShots")+1];
+    path = new wchar_t[wstrlen(GetDir(DIR_IMAGE | MEM_INTERNAL))+wstrlen(L"/SnapShots")+1];
     wstrcpy(path,GetDir(DIR_IMAGE | MEM_INTERNAL));
-    wstrcat(path,(u16*)L"/SnapShots");  return(buf);
+    wstrcat(path,L"/SnapShots");  return(buf);
   }
   return(0);
 }

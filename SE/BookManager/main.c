@@ -12,7 +12,7 @@
 #define IDN_ELFS_DEACT_ICON _T("RN_TAB_BOOKMARKS_DESELECTED_DISABLED_ICN")
 #define IDN_ELFS_ACT_ICON _T("RN_TAB_BOOKMARKS_DESELECTED_ANI_ICN")
 
-u16 *id_names[4]=
+wchar_t *id_names[4]=
 {
   IDN_BOOKS_DEACT_ICON,
   IDN_BOOKS_ACT_ICON,
@@ -119,7 +119,7 @@ void elf_exit(void)
 }
 
 //=====================================================================================
-int RegisterImage(IMG * i , u16 * path, u16 * fname)
+int RegisterImage(IMG * i , wchar_t * path, wchar_t * fname)
 {
   int r=0;
   char error_code;
@@ -158,7 +158,7 @@ int isBookManager(BOOK * struc)
   }
 }
 
-void win12512unicode(u16 *ws, char *s, int len)
+void win12512unicode(wchar_t *ws, char *s, int len)
 {
   int c;
   while((c=*s++)&&((len--)>0))
@@ -175,7 +175,7 @@ void win12512unicode(u16 *ws, char *s, int len)
   *ws=0;
 }
 
-char *unicode2win1251(char *s, u16 *ws, int len)
+char *unicode2win1251(char *s, wchar_t *ws, int len)
 {
   char *d=s;
   int c;
@@ -238,7 +238,7 @@ int CheckEv(BOOK * bk, int ev)
 // взять значение из ини-файла
 int GetParam(char * name)
 {
-  u16 ws[50];
+  wchar_t ws[50];
   int sID=0;
   MyBOOK * myBook = (MyBOOK *) FindBook(isBookManager);
   
@@ -264,13 +264,13 @@ int GetParam(char * name)
 // получить имя жавы
 int GetJavaName(BOOK * bk)
 {
-  u16 ws[100];
+  wchar_t ws[100];
   TextID2wstr(Book_GetSession(bk)->name,ws,100);
-  if (!wstrncmp(ws,(u16*)L"Foreign app",11))
+  if (!wstrncmp(ws,L"Foreign app",11))
   {
     return(JavaSession_GetName());
   }
-  if (!wstrcmp(ws,(u16*)L"Java"))
+  if (!wstrcmp(ws,L"Java"))
   {
     return(JavaSession_GetName());
   }
@@ -308,7 +308,7 @@ void CreateBookLst(MyBOOK * myBook)
             //                      if (!si)
             {
               char s[100];
-              u16 ws[100];
+              wchar_t ws[100];
               si=new SESSION_ITEM;
               si->book_list=List_New();
               if ((strcmp(book->xbook->name,"CUIDisplayableBook"))&&(NameBookAsSession==0))
@@ -592,7 +592,7 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
       sprintf(key,i4==3?"[S_KEY%d]":"[L_KEY%d]",i1-KEY_DIGITAL_0);
       if (param=manifest_GetParam(myBook->filebuf,key,0))
       {
-        u16 par[256];
+        wchar_t par[256];
         str2wstr(par,param);
         if (strstr(param,"java:"))
         {
@@ -603,10 +603,10 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
           java->name=new MIDP_DESC_ITEM;
           java->vendor=new MIDP_DESC_ITEM;
           java->point=0;
-          java->name->item_name=new u16[name_len];
+          java->name->item_name=new wchar_t[name_len];
           java->name->item_name_len=name_len;
           java->name->const_2=2;
-          java->vendor->item_name=new u16[vendor_len];
+          java->vendor->item_name=new wchar_t[vendor_len];
           java->vendor->item_name_len=vendor_len;
           java->vendor->const_2=2;
           
@@ -638,24 +638,24 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
   }
 };
 
-int StartElf(u16 * path , char * name)
+int StartElf(wchar_t * path , char * name)
 {
   int res=-1;
-  u16 * elfname = new u16[wstrlen(path)+strlen(name)+1];
-  u16 * wname = new u16[strlen(name)+1];
+  wchar_t * elfname = new wchar_t[wstrlen(path)+strlen(name)+1];
+  wchar_t * wname = new wchar_t[strlen(name)+1];
   str2wstr(wname,name);
   wstrcpy(elfname,path);
   wstrcat(elfname,wname);
   
   {
-    u16 *path;
-    u16 *name;
+    wchar_t *path;
+    wchar_t *name;
     int len;
     name=wstrrchr(elfname,'/');
     if (name)
     {
-      path=new u16 [((len=name-elfname)+1)];
-      memcpy(path,elfname,len*sizeof(u16));
+      path=new wchar_t [((len=name-elfname)+1)];
+      memcpy(path,elfname,len*sizeof(wchar_t));
       path[len]=0;
       name++;
       if (!isFileExist(path,name,0))
@@ -921,12 +921,12 @@ char * get_ini_key(int full_init)
   int file;
   char * buf=0;
   FSTAT fstat;
-  u16 * path = new u16[wstrlen(GetDir(DIR_INI))+wstrlen((u16*)L"/bookman")+1];
+  wchar_t * path = new wchar_t[wstrlen(GetDir(DIR_INI))+wstrlen(L"/bookman")+1];
   wstrcpy(path,GetDir(DIR_INI));
-  wstrcat(path,(u16*)L"/bookman");
-  if (isFileExist(path,(u16*)L"bookman.ini",&fstat)==0)
+  wstrcat(path,L"/bookman");
+  if (isFileExist(path,L"bookman.ini",&fstat)==0)
   {
-    if ((file=_fopen(path,(u16*)L"bookman.ini",0x001,0x180,0))>=0)
+    if ((file=_fopen(path,L"bookman.ini",0x001,0x180,0))>=0)
     {
       buf=(char*)malloc(fstat.fsize+1);
       fread(file,buf,fstat.fsize);
@@ -974,7 +974,7 @@ char * get_ini_key(int full_init)
         {
           r=0;
           char key[50];
-          u16 ws[100];
+          wchar_t ws[100];
           sprintf(key,"[ICON%.02d]",i);
           
           if (param=manifest_GetParam(buf,key,0))

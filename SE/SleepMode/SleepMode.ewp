@@ -1649,10 +1649,10 @@
     </settings>
   </configuration>
   <file>
-    <name>$EW_DIR$\ELF KITS\C++\_cpp2.cpp</name>
+    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
   </file>
   <file>
-    <name>$EW_DIR$\ELF KITS\include\func.asm</name>
+    <name>$PROJ_DIR$\..\include\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
