@@ -1,7 +1,7 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 
-#include "cfg_items.h"
+#include "..\\include\cfg_items.h"
 #include "main.h"
 #include "visual.h"
 
