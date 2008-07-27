@@ -2,6 +2,7 @@
 #include "..\\include\Dir.h"
 #include "..\\include\var_arg.h"
 #include "..\\include\cfg_items.h"
+#include <errno.h>
 
 #include "visual.h"
 #include "main.h"
@@ -291,8 +292,9 @@ void OnOkCreateUnsignedNumberGui(BOOK * bk, wchar_t *string, int len)
   CFG_HDR *hp=myBook->cur_hp;
   wchar_t ustr[64];
   unsigned int ui;
+  *_Geterrno()=0;
   ui=wcstoul(string,0,10);
-  if (ui<hp->min || ui>hp->max)
+  if (ui<hp->min || ui>hp->max || *_Geterrno()==ERANGE)
   {
     snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %u\nmax: %u",hp->min, hp->max);
     MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
@@ -319,7 +321,7 @@ void CreateUnsignedNumberInput(MyBOOK *myBook)
   myBook->text_input=(GUI *)CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MAX_LEN(getnumwidth(hp->max)),
-                                              VAR_STRINP_MODE(IT_INTEGER),
+                                              VAR_STRINP_MODE(IT_UNSIGNED_DIGIT),
                                               VAR_BOOK(myBook),
                                               VAR_STRINP_ENABLE_EMPTY_STR(0),
                                               VAR_STRINP_TEXT(text),
@@ -334,8 +336,9 @@ void OnOkCreateSignedNumberGui(BOOK * bk, wchar_t *string, int len)
   CFG_HDR *hp=myBook->cur_hp;
   wchar_t ustr[64];
   int i;
+  *_Geterrno()=0;
   i=wcstol(string,0,10);
-  if (i<(int)hp->min || i>(int)hp->max)
+  if (i<(int)hp->min || i>(int)hp->max || *_Geterrno()==ERANGE)
   {
     snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %d\nmax: %d",hp->min,hp->max);
     MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
@@ -369,6 +372,7 @@ void CreateSignedNumberInput(MyBOOK *myBook)
                                               VAR_STRINP_TEXT(text),
                                               VAR_PREV_ACTION_PROC(OnBackCreateTextInputGui),
                                               VAR_OK_PROC(OnOkCreateSignedNumberGui),
+                                              VAR_STRINP_CHANGE_SIGN_ON_SHARP((k1>=0 && k2>=0)?0:1),
                                               0);
 }
 
@@ -549,6 +553,7 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
 int onLBMessage(GUI_MESSAGE * msg)
 {
   MyBOOK * myBook = (MyBOOK *) FindBook(isBcfgEditBook);
+  wchar_t ustr[32];
   int item;
   int str_id;
   CFG_HDR *hp;
@@ -558,7 +563,8 @@ int onLBMessage(GUI_MESSAGE * msg)
   case 1:
     item=GUIonMessage_GetCreatedItemIndex(msg);
     hp=(CFG_HDR *)ListElement_GetByIndex(myBook->list,item);
-    SetMenuItemText0(msg,Str2ID(hp->name,6,SID_ANY_LEN));
+    win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
+    SetMenuItemText0(msg,Str2ID(ustr,0,SID_ANY_LEN));
     SetMenuItemText2(msg,Str2ID(L"BcfgEdit v1.0\n(c) Rst7, KreN",0,SID_ANY_LEN));
     str_id=GetSubItemText(myBook, hp);
     if (str_id==LGP_NULL) str_id=Str2ID (L"Υπενό",0,SID_ANY_LEN);

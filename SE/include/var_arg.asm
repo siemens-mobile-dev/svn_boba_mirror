@@ -25,8 +25,8 @@ name:
         
         VARARG __var_arg_strinp_min_int_val,0x95
         VARARG __var_arg_strinp_max_int_val,0x8F
-
-
+        VARARG __var_arg_strinp_change_sign_on_sharp,0x47
+        
         VARARG __var_arg_yesno_pre_question,0x6B
         VARARG __var_arg_yesno_question,0xAD
         VARARG __var_arg_yesno_yes_action,0xC7
