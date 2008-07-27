@@ -1156,4 +1156,26 @@ __swi __arm void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
 
 #pragma swi_number=0x2A7
 __swi __arm void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
+
+#pragma swi_number=0x2A8
+__swi __arm int FSX_isNameValid(wchar_t * name);
+
+#pragma swi_number=0x2A9
+__swi __arm void DataBrowserDesc_SetFoldersNumber(void * DataBrowserDesc,int state);
+#pragma swi_number=0x2AA
+__swi __arm void DataBrowserDesc_SetActions(void * DataBrowserDesc,char * actions);
+#pragma swi_number=0x2AB
+__swi __arm void DataBrowserDesc_SetSelectAction(void * DataBrowserDesc,int state);
+#pragma swi_number=0x2AC
+__swi __arm void DataBrowserDesc_SetSelectActionOnFolders(void * DataBrowserDesc,int state);
+#pragma swi_number=0x2AD
+__swi __arm void DataBrowserDesc_SetBookID(void * DataBrowserDesc,int BookID);
+#pragma swi_number=0x2AE
+__swi __arm void DataBrowserDesc_SetItemFilter(void * DataBrowserDesc,int (*proc)(const wchar_t * ExtList,const wchar_t * ItemPath,const wchar_t * ItemName));
+#pragma swi_number=0x2AF
+__swi __arm void DataBrowserDesc_SetOption(void * DataBrowserDesc,char * option);
+#pragma swi_number=0x2B0
+__swi __arm void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
+#pragma swi_number=0x2B1
+__swi __arm void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
 #endif
