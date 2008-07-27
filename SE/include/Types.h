@@ -118,8 +118,8 @@ typedef struct
 typedef struct
 {
   int  unk;
-  u16 *path;
-  u16 *fname;
+  wchar_t * path;
+  wchar_t * fname;
   char * content_type;
 }FILELISTITEM;
 
@@ -128,19 +128,19 @@ typedef struct
 {
   int StrID_FolderName;
   int StrID_SavedTo;
-  u16 *Path;
+  wchar_t * Path;
   int isInternal;
 }DB_EXT_FOLDERS;
 
 
 typedef struct
 {
-  u16 *fname;
-  u16 *path;
+  wchar_t * fname;
+  wchar_t * path;
   char *MIME_type;
-  u16 *extension;
-  int *FSTAT;
-  int *DRMHandle;
+  wchar_t * extension;
+  int * FSTAT;
+  int * DRMHandle;
   char DRM_Flag;
 }FILEITEM;
 
@@ -382,7 +382,7 @@ typedef struct
 {
   int base;
   int size;
-  u16 * fname;
+  wchar_t * fname;
 }ELF_DESC;
 
 typedef int (*IS_NEEDED_BOOK)(BOOK *);
