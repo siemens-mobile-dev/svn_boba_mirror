@@ -559,7 +559,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -930,7 +930,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -1369,11 +1369,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>main.elf</state>
+          <state>CreateFile.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1649,10 +1649,10 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
+    <name>$EW_DIR$\Project\C++\_cpp2.cpp</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\include\func.asm</name>
+    <name>$EW_DIR$\Project\include\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
