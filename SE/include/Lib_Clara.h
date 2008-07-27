@@ -208,25 +208,25 @@ __swi __arm  void * AllocDirHandle(const wchar_t * path);
 __swi __arm  void *GetFname(void *, void*);
 
 #pragma swi_number=0x11F
-__swi __arm  void * CreateDataBrowser(void);
+__swi __arm  void * DataBrowserDesc_Create(void);
 
 #pragma swi_number=0x120
-__swi __arm  void DataBrowser_SetStyle(void * db , int style);
+__swi __arm  void DataBrowserDesc_SetStyle(void * db , int style);
 
 #pragma swi_number=0x121
-__swi __arm  void DataBrowser_SetHeaderText(void * db , int StrID);
+__swi __arm  void DataBrowserDesc_SetHeaderText(void * db , int StrID);
 
 #pragma swi_number=0x122
-__swi __arm  void DataBrowser_SetFolders(void * db , int * FolderList);
+__swi __arm  void DataBrowserDesc_SetFolders(void * db , int * FolderList);
 
 #pragma swi_number=0x123
-__swi __arm  void DataBrowser_SetOKSoftKeyText(void * db , int StrID);
+__swi __arm  void DataBrowserDesc_SetOKSoftKeyText(void * db , int StrID);
 
 #pragma swi_number=0x124
-__swi __arm  void DataBrowser_Show(void * db);
+__swi __arm  void DataBrowser_Create(void * db);
 
 #pragma swi_number=0x125
-__swi __arm  void DataBrowser_XXX(void * db);
+__swi __arm  void DataBrowserDesc_Destroy(void * db);
 
 #pragma swi_number=0x126
 __swi __arm  wchar_t * getFileExtention(wchar_t * fnane);
