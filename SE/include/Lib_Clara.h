@@ -1158,7 +1158,7 @@ __swi __arm void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
 __swi __arm void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
 
 #pragma swi_number=0x2A8
-__swi __arm int FSX_isNameValid(wchar_t * name);
+__swi __arm int FSX_isNameInvalid(wchar_t * name);
 
 #pragma swi_number=0x2A9
 __swi __arm void DataBrowserDesc_SetFoldersNumber(void * DataBrowserDesc,int state);

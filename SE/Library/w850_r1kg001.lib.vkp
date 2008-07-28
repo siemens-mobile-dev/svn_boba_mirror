@@ -367,7 +367,7 @@
 0A94: 00000000 455C4945 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
 0A98: 00000000 A9ED4345 ; 2A6: void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
 0A9C: 00000000 8969FD44 ; 2A7: void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
-0AA0: 00000000 111FFB44 ; 2A8: FSX_isNameValid(wchar_t * name);
+0AA0: 00000000 111FFB44 ; 2A8: FSX_isNameInvalid(wchar_t * name);
 0AA4: 00000000 E9C9FE44 ; 2A9: DataBrowserDesc_SetFoldersNumber(void * DataBrowserDesc,int state);
 0AA8: 00000000 B9C9FE44 ; 2AA: DataBrowserDesc_SetActions(void * DataBrowserDesc,char * actions);
 0AAC: 00000000 29C9FE44 ; 2AB: DataBrowserDesc_SetSelectAction(void * DataBrowserDesc,int state);
