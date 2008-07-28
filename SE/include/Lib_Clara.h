@@ -217,7 +217,7 @@ __swi __arm  void DataBrowserDesc_SetStyle(void * db , int style);
 __swi __arm  void DataBrowserDesc_SetHeaderText(void * db , int StrID);
 
 #pragma swi_number=0x122
-__swi __arm  void DataBrowserDesc_SetFolders(void * db , int * FolderList);
+__swi __arm  void DataBrowserDesc_SetFolders(void * db , wchar_t const ** FolderList);
 
 #pragma swi_number=0x123
 __swi __arm  void DataBrowserDesc_SetOKSoftKeyText(void * db , int StrID);
