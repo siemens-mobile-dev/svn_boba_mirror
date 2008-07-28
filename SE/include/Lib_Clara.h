@@ -1178,4 +1178,12 @@ __swi __arm void DataBrowserDesc_SetOption(void * DataBrowserDesc,char * option)
 __swi __arm void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
 #pragma swi_number=0x2B1
 __swi __arm void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
+
+#pragma swi_number=0x2B2
+__swi __arm void FSX_RemoveIllegalSymbolsName(FILEITEM *);
+#pragma swi_number=0x2B3
+__swi __arm FILEITEM * DataBrowser_ItemDesc_Create(void);
+#pragma swi_number=0x2B4
+__swi __arm void DataBrowser_ItemDesc_Destroy(FILEITEM *);
+
 #endif
