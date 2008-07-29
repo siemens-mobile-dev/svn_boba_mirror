@@ -18,13 +18,13 @@
 0470: 00000000 DDF9FA44 ; 11C: __thumb int isFileExist(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 FDCFFA44 ; 11D: __thumb void * AllocDirHandle(const wchar_t * path);
 0478: 00000000 BDD1FA44 ; 11E: __thumb void *GetFname(void *, void*);
-047C: 00000000 25C7FE44 ; 11F: __thumb void * CreateDataBrowser(void);
-0480: 00000000 E9C9FE44 ; 120: __thumb void DataBrowser_SetStyle(void * db , int style);
-0484: 00000000 19CAFE44 ; 121: __thumb void DataBrowser_SetHeaderText(void * db , int StrID);
-0488: 00000000 01CAFE44 ; 122: __thumb void DataBrowser_SetFolders(void * db , int * FolderList);
-048C: 00000000 21CAFE44 ; 123: __thumb void DataBrowser_SetOKSoftKeyText(void * db , int StrID);
-0490: 00000000 758FFE44 ; 124: __thumb void DataBrowser_Show(void * db);
-0494: 00000000 D9C7FE44 ; 125: __thumb void DataBrowser_XXX(void * db);
+047C: 00000000 25C7FE44 ; 11F: __thumb void * DataBrowserDesc_Create(void);
+0480: 00000000 E9C9FE44 ; 120: __thumb void DataBrowserDesc_SetStyle(void * db , int style);
+0484: 00000000 19CAFE44 ; 121: __thumb void DataBrowserDesc_SetHeaderText(void * db , int StrID);
+0488: 00000000 01CAFE44 ; 122: __thumb void DataBrowserDesc_SetFolders(void * db , wchar_t const ** FolderList);
+048C: 00000000 21CAFE44 ; 123: __thumb void DataBrowserDesc_SetOKSoftKeyText(void * db , int StrID);
+0490: 00000000 758FFE44 ; 124: __thumb void DataBrowser_Create(void * db);
+0494: 00000000 D9C7FE44 ; 125: __thumb void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 2D21FB44 ; 126: __thumb wchar_t * getFileExtention(wchar_t * fnane);
 049C: 00000000 29D4FA44 ; 127: __thumb int DataBrowser_isFileInListExt(unsigned short * ext_table,const wchar_t * path ,const wchar_t *fname );
 04A0: 00000000 75383C45 ; 128: __thumb void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
@@ -382,6 +382,11 @@
 0AC8: 00000000 356CFF44 ; 2B2: __thumb void FSX_RemoveIllegalSymbolsName(FILEITEM *);
 0ACC: 00000000 9D64FF44 ; 2B3: __thumb FILEITEM * DataBrowser_ItemDesc_Create(void);
 0AD0: 00000000 8D65FF44 ; 2B4: __thumb void DataBrowser_ItemDesc_Destroy(FILEITEM *);
+;0AD4: xxxxxxxx yyyyyyyy ; 2B5: GUI *CreateDateInputVA(int zero, ...);
+;0AD8: xxxxxxxx yyyyyyyy ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
+
+
+
 
 
 ;locale=Russian_Russia.1251
