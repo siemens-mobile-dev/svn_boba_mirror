@@ -217,7 +217,7 @@
 0818: 00000000 89E7DD44 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 95E7DD44 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 25E2DD44 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: 00000000 00000000 ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
+;0824: xxxxxxxx yyyyyyyy ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
 0828: 00000000 6D7CE844 ; 20A: void FileDelete (wchar_t * path ,wchar_t * filename , int * error );
 082C: 00000000 09373645 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 49790245 ; 20C: int CreateSMSCont (int, void*);

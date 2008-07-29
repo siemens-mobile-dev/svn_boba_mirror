@@ -378,7 +378,7 @@
 0ABC: 00000000 B9FCEA44 ; 2AF: __thumb void DataBrowserDesc_SetOption(void * DataBrowserDesc,char * option);
 0AC0: 00000000 4DFDEA44 ; 2B0: __thumb void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
 0AC4: 00000000 5DFBEA44 ; 2B1: __thumb void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
-0AC8: 00000000 00000000 ; 2B2: __unknown void FSX_RemoveIllegalSymbolsName(FILEITEM *);
+;0AC8: xxxxxxxx yyyyyyyy ; 2B2: void FSX_RemoveIllegalSymbolsName(FILEITEM *);
 0ACC: 00000000 3D95EB44 ; 2B3: __thumb FILEITEM * DataBrowser_ItemDesc_Create(void);
 0AD0: 00000000 2D96EB44 ; 2B4: __thumb void DataBrowser_ItemDesc_Destroy(FILEITEM *);
 0AD4: 00000000 E5B63545 ; 2B5: __thumb GUI *CreateDateInputVA(int zero, ...);
