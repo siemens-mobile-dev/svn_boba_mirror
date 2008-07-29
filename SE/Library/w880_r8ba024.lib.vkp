@@ -382,8 +382,8 @@
 0AC8: 00000000 356CFF44 ; 2B2: __thumb void FSX_RemoveIllegalSymbolsName(FILEITEM *);
 0ACC: 00000000 9D64FF44 ; 2B3: __thumb FILEITEM * DataBrowser_ItemDesc_Create(void);
 0AD0: 00000000 8D65FF44 ; 2B4: __thumb void DataBrowser_ItemDesc_Destroy(FILEITEM *);
-;0AD4: xxxxxxxx yyyyyyyy ; 2B5: GUI *CreateDateInputVA(int zero, ...);
-;0AD8: xxxxxxxx yyyyyyyy ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
+0AD4: 00000000 51B44845 ; 2B5: __thumb GUI *CreateDateInputVA(int zero, ...);
+0AD8: 00000000 49CC4845 ; 2B6: __thumb GUI *CreateTimeInputVA(int zero, ...);
 
 
 
