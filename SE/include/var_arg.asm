@@ -34,4 +34,9 @@ name:
         VARARG __var_arg_perinp_row_numbers,0xB7
         VARARG __var_arg_perinp_cur_percent,0x68
         
+	VARARG __var_arg_dateinp_date_format,0x5E
+	VARARG __var_arg_dateinp_date,0x63
+	VARARG __var_arg_timeinp_time_format,0xBB
+	VARARG __var_arg_timeinp_time,0x67
+	
  

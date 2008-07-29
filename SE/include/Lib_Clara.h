@@ -1186,4 +1186,8 @@ __swi __arm FILEITEM * DataBrowser_ItemDesc_Create(void);
 #pragma swi_number=0x2B4
 __swi __arm void DataBrowser_ItemDesc_Destroy(FILEITEM *);
 
+#pragma swi_number=0x2B5
+__swi __arm GUI *CreateDateInputVA(int zero, ...);
+#pragma swi_number=0x2B6
+__swi __arm GUI *CreateTimeInputVA(int zero, ...);
 #endif

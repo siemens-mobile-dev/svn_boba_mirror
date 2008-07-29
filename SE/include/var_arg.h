@@ -26,6 +26,11 @@ extern int __var_arg_yesno_no_action;
 extern int __var_arg_perinp_row_numbers;
 extern int __var_arg_perinp_cur_percent;
 
+extern int __var_arg_dateinp_date_format;
+extern int __var_arg_dateinp_date;
+extern int __var_arg_timeinp_time_format;
+extern int __var_arg_timeinp_time;
+
 #define VAR_BOOK(__param__) &__var_arg_book,__param__
 #define VAR_HEADER_TEXT(__param__) &__var_arg_htext,__param__
 #define VAR_OK_PROC(__param__) &__var_arg_call_back_ok,__param__
@@ -55,3 +60,9 @@ extern int __var_arg_perinp_cur_percent;
 
 #define VAR_PERINP_ROWNUM(__param__) &__var_arg_perinp_row_numbers,__param__
 #define VAR_PERINP_CURPERC(__param__) &__var_arg_perinp_cur_percent,__param__
+
+#define VAR_DATEINP_DATEFORMAT(__param__) &__var_arg_dateinp_date_format,__param__
+#define VAR_DATEINP_DATE(__param__) &__var_arg_dateinp_date,__param__
+
+#define VAR_TIMEINP_TIMEFORMAT(__param__) &__var_arg_timeinp_time_format,__param__
+#define VAR_TIMEINP_TIME(__param__) &__var_arg_timeinp_time,__param__
