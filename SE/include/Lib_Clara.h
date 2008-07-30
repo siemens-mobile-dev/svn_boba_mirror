@@ -341,7 +341,7 @@ __swi __arm  void StatusIndication_SetItemText(void *gui,int item,int StrID);
 __swi __arm  void StatusIndication_ShowNotes(int StrID);
 
 #pragma swi_number=0x144
-__swi __arm  void * CreateStringInput(int,...);
+__swi __arm  GUI * CreateStringInput(int,...);
 
 #pragma swi_number=0x145
 __swi __arm  GUI_ONEOFMANY * CreateOneOfMany(BOOK *);
