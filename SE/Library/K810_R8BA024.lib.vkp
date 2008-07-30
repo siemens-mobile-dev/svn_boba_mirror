@@ -19,7 +19,7 @@
 0474: 00000000 F5AEF944 ; 11D: void * AllocDirHandle(const wchar_t * path);
 0478: 00000000 B5B0F944 ; 11E: void *GetFname(void *, void*);
 047C: 00000000 05ADFD44 ; 11F: void * DataBrowserDesc_Create(void);
-0480: 00000000 31AFFD44 ; 120: void DataBrowserDesc_SetStyle(void * db , int style);
+0480: 00000000 D1AFFD44 ; 120: void DataBrowserDesc_SetStyle(void * db , int style);
 0484: 00000000 09B0FD44 ; 121: void DataBrowserDesc_SetHeaderText(void * db , int StrID);
 0488: 00000000 F1AFFD44 ; 122: void DataBrowserDesc_SetFolders(void * db , wchar_t const ** FolderList);
 048C: 00000000 11B0FD44 ; 123: void DataBrowserDesc_SetOKSoftKeyText(void * db , int StrID);
