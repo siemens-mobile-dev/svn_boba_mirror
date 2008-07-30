@@ -1190,4 +1190,7 @@ __swi __arm void DataBrowser_ItemDesc_Destroy(FILEITEM *);
 __swi __arm GUI *CreateDateInputVA(int zero, ...);
 #pragma swi_number=0x2B6
 __swi __arm GUI *CreateTimeInputVA(int zero, ...);
+
+#pragma swi_number=0x2B7
+__swi __arm void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
 #endif
