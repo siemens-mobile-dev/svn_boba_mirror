@@ -1652,6 +1652,9 @@
     <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\datetime.cpp</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\..\include\func.asm</name>
   </file>
   <file>

@@ -619,6 +619,14 @@ __swi __arm IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 
 
 */
+
+
+#pragma swi_number=0x1BC
+__swi __arm int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+
+#pragma swi_number=0x1BD
+__swi __arm int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
+
 #pragma swi_number=0x1BE
 __swi __arm int Date2ID(DATE *, int TimeFormat,int);
 
@@ -671,7 +679,7 @@ __swi __arm  void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMA
 __swi __arm  void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 
 #pragma swi_number=0x1CE
-__swi __arm  void  GUI_Free(GUI*);
+__swi __arm  GUI *GUI_Free(GUI*);
 
 #pragma swi_number=0x1CF
 __swi __arm  void GUI_SetIcon(GUI* , int icon);
@@ -1193,4 +1201,23 @@ __swi __arm GUI *CreateTimeInputVA(int zero, ...);
 
 #pragma swi_number=0x2B7
 __swi __arm void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
+
+#pragma swi_number=0x2B8
+__swi __arm void BookObj_CallPage(BOOK * book, const PAGE_DESC  * page);
+ 
+#pragma swi_number=0x2B9
+__swi __arm unsigned int DateInput_GetDateInt(void *dateinp_msg);
+
+#pragma swi_number=0x2BA
+__swi __arm unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
+
+#pragma swi_number=0x2BB
+__swi __arm void InputFeedback_SetIcon(GUI *gui, int icon);
+
+#pragma swi_number=0x82BC
+__swi __arm FONT_DESC *GetFontDesc(void);
+
+#pragma swi_number=0x82BD
+__swi __arm int *GetFontCount();
+
 #endif

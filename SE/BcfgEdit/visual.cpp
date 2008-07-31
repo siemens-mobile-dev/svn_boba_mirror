@@ -246,7 +246,7 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE color_type, int type)
   return gui_color;
 }
 
-
+// --------------------------------------------------------------------------------------------------------------------------------
 static const char CooordinatesGuiName[]="Gui_Coordinates";
 
 int CoordinatesGuiOnCreate(DISP_OBJ_COORD *db)
@@ -283,7 +283,7 @@ void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
   rc_new.y2=scr_h;
   GC_validate_RECT(gc,&rc_new);
     
-  font_old=SetFont(font);    
+  font_old=SetFont(font);
   DrawRect(0,0,scr_w,scr_h,clWhite,clWhite);
   old_pen=GC_GetPenColor(gc);
   GC_SetPenColor(gc,colors[3]);
@@ -424,4 +424,192 @@ GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook)
   AddMSGHook(myBook->coord,ACTION_SELECT1, OnOkCoordinatesEdit);
   ShowWindow(myBook->coord);
   return gui_coord;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------
+static const char FontSelectGuiName[]="Gui_FontSelect";
+
+
+const char test_str[]="Test string 123";
+
+wchar_t *Font_GetNameByFontId(int id)
+{
+  wchar_t *txt=L"Undefined";
+  FONT_DESC *font=GetFontDesc();
+  for (int i=0, max=*GetFontCount(); i<max; i++)
+  {
+    if (id==font[i].id) 
+    {
+      txt=font[i].name;
+      break;
+    }    
+  } 
+  return txt;  
+}
+
+int GetIdByFontId(int id)
+{
+  int r=0;
+  FONT_DESC *font=GetFontDesc();
+  for (int i=0, max=*GetFontCount(); i<max; i++)
+  {
+    if (id==font[i].id) 
+    {
+      r=i;
+      break;
+    }    
+  } 
+  return r;
+}
+
+int FontSelectGuiOnCreate(DISP_OBJ_FONT_SEL *db)
+{
+  wchar_t ustr[64];
+  win12512unicode(ustr,test_str,MAXELEMS(test_str)-1);
+  db->test_str_id=Str2ID(ustr,0,SID_ANY_LEN);
+  db->total_fonts=*GetFontCount();
+  return (1);
+}
+
+void FontSelectGuiOnClose(DISP_OBJ_FONT_SEL *db)
+{
+  TextFree(db->test_str_id);  db->test_str_id=LGP_NULL;
+}
+
+
+void FontSelectGuiOnRedraw(DISP_OBJ_FONT_SEL *db,int ,int,int)
+{
+  RECT rc_old, rc_new;
+  int font_old, gc_xx;
+  int tfont=FONT_E_20R, tfsize=20;
+  void *gc=get_DisplayGC();
+  STRID selfont;
+  int scr_w=Display_GetWidth(0), scr_h=Display_GetHeight(0);
+  
+  get_GC_RECT(gc, &rc_old);
+  gc_xx=get_GC_xx(gc);
+  set_GC_xx(gc,1);
+  rc_new.x1=0;
+  rc_new.x2=scr_w;
+  rc_new.y1=0;
+  rc_new.y2=scr_h;
+  GC_validate_RECT(gc,&rc_new);
+  font_old=SetFont(tfont);
+  DrawRect(0,0,scr_w,scr_h,clBlack,clBlack);
+  
+  selfont=Str2ID(GetFontDesc()[db->cur_pos].name,0,9);
+  DrawString(selfont,0, 3,1,scr_w-2, tfsize+1,0,0,0xFF0080FF,0x00000000);   // Рисуем выбранный шрифт в шапке меню
+  TextFree(selfont);
+  
+  int cur_y=tfsize+2;
+  for (int i=db->cur_offs; i<db->total_fonts; i++)
+  {
+    int font, font_h;
+    font=GetFontDesc()[i].id;
+    SetFont(font);
+    font_h=GetImageHeight(' ');
+    if (i==db->cur_pos)   // Если это выбранный шрифт
+      DrawRect(1,cur_y,scr_w-1,cur_y+font_h+2,0xFF00FF00,0xFF408000);
+    DrawString(db->test_str_id,0,2,cur_y+1,scr_w-2,cur_y+font_h+1,0,0,clWhite,0x00000000);
+    cur_y+=font_h+2;
+    if (cur_y>scr_h) break;    
+  }
+
+  GC_validate_RECT(gc,&rc_old);
+  SetFont(font_old);
+  set_GC_xx(gc,gc_xx);
+}
+
+void FontSelectGuiOnKey(DISP_OBJ_FONT_SEL *db,int key,int,int repeat,int type)
+{
+  if (type==KBD_SHORT_RELEASE || type==KBD_REPEAT)
+  {
+    int scr_w=Display_GetWidth(0), scr_h=Display_GetHeight(0);
+    if (key==KEY_UP || key==KEY_DIGITAL_0+2)
+    {
+      if ((--db->cur_pos)<0) db->cur_pos=0;
+      if (db->cur_pos<db->cur_offs)
+      {
+        db->cur_offs=db->cur_pos;
+      }
+    }
+    else if (key==KEY_DOWN || key==KEY_DIGITAL_0+8)
+    {
+      if ((++db->cur_pos)>=db->total_fonts) db->cur_pos=db->total_fonts-1;
+      int f=0;
+      do {
+        int cur_y=20+2;
+        int k=0;
+        for (int i=db->cur_offs; i<db->total_fonts; i++)
+        {
+          int old_font, font, font_h,sum;
+          font=GetFontDesc()[i].id;
+          old_font=SetFont(font);
+          font_h=GetImageHeight(' ');
+          SetFont(old_font);
+          if (db->cur_pos==i) k=1;
+          if ((sum=cur_y+font_h+3)<scr_h && k) f=1;
+          cur_y=sum;
+          if (cur_y>scr_h) break;
+        }
+      } while(!f && ++db->cur_offs<db->total_fonts);
+    }
+  }
+  InvalidateRect(&db->dsp_obj,0);
+}
+
+void OnBackFontSelect(BOOK * bk, void *)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  GUI_Free(myBook->font_select);
+  myBook->font_select=NULL;
+}
+
+void OnOkFontSelect(BOOK * bk, void *)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  DISP_OBJ_FONT_SEL *disp_obj=(DISP_OBJ_FONT_SEL *)GUIObj_GetDISPObj(myBook->font_select);
+  *((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)))=GetFontDesc()[disp_obj->cur_pos].id;
+  GUI_Free(myBook->font_select);
+  myBook->font_select=NULL;
+}
+
+void FontSelectGui_constr(DISP_DESC *desc)
+{
+  DISP_DESC_SetName(desc,FontSelectGuiName);
+  DISP_DESC_SetSize(desc,sizeof(DISP_OBJ_FONT_SEL));
+  DISP_DESC_SetOnCreate(desc,(DISP_OBJ_ONCREATE_METHOD)FontSelectGuiOnCreate);
+  DISP_DESC_SetOnClose(desc,(DISP_OBJ_ONCLOSE_METHOD)FontSelectGuiOnClose);
+  DISP_DESC_SetOnRedraw(desc,(DISP_OBJ_ONREDRAW_METHOD)FontSelectGuiOnRedraw);
+  DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)FontSelectGuiOnKey);
+}
+
+
+void FontSelectGui_destr(DISP_DESC *desc)
+{
+}
+
+GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook)
+{
+  GUI_FONT_SEL *gui_fontsel=new GUI_FONT_SEL;
+  DISP_OBJ_FONT_SEL *disp_obj;
+  
+  if (!CreateObject((GUI *)gui_fontsel,FontSelectGui_destr,FontSelectGui_constr, &myBook->book,0,0,0))
+  {
+    delete gui_fontsel;
+    return 0;
+  }
+  disp_obj=(DISP_OBJ_FONT_SEL *)GUIObj_GetDISPObj(gui_fontsel);
+  disp_obj->cur_pos=disp_obj->cur_offs=GetIdByFontId(*((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR))));
+
+  myBook->font_select=(GUI *)gui_fontsel;
+  if (myBook) addGui2book(&myBook->book,myBook->font_select);
+  
+  GUI_SetStyle(myBook->font_select,4);
+  GuiObject_SetTitleType(myBook->font_select, 1);
+  GUIObject_HideSoftkeys(myBook->font_select);
+  AddMSGHook(myBook->font_select,ACTION_BACK, OnBackFontSelect);
+  AddMSGHook(myBook->font_select,ACTION_SELECT1, OnOkFontSelect);
+  ShowWindow(myBook->font_select);
+  return gui_fontsel;
 }

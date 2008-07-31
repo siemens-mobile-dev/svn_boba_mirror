@@ -11,6 +11,9 @@ typedef struct
   GUI *yesno;
   GUI *color;
   GUI *coord;
+  GUI *tinput;
+  GUI *dinput;
+  GUI *font_select;
   LIST *list;
   CFG_HDR *cur_hp;
   unsigned long old_crc;
@@ -31,7 +34,7 @@ int MainPageOnCreate(void *, BOOK *bk);
 int MainPageOnClose(void *, BOOK *bk);
 int isBcfgEditBook(BOOK * struc);
 GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus);
-void win12512unicode(wchar_t *ws, char *s, int len);
+void win12512unicode(wchar_t *ws, const char *s, int len);
 int SaveCfg();
 
 extern "C" unsigned long wcstoul(const wchar_t *, wchar_t **, int);

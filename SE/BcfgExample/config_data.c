@@ -28,8 +28,17 @@ __root const unsigned int REFRESH_TIME=500;
 __root const CFG_HDR cfghdr8={CFG_INT,"Signed int test",-100,100};
 __root const int INT_TEST=0;
 
-__root const CFG_HDR cfghdr9={CFG_STR_WIN1251,"WisStr test",0,63};
+__root const CFG_HDR cfghdr9={CFG_STR_WIN1251,"Русские символы",0,63};
 __root const char WIN_TEST[64]="Превед";
 
 __root const CFG_HDR cfghdr10={CFG_STR_PASS,"PassStr test",0,63};
 __root const char PASS_TEST[64]="Парол";
+
+__root const CFG_HDR cfghdr11={CFG_TIME,"Time test",0,0};
+__root const TIME MY_TIME={23,11,3};
+
+__root const CFG_HDR cfghdr12={CFG_DATE,"Date test",0,0};
+__root const DATE MY_DATE={1988,10,4};
+
+__root const CFG_HDR cfghdr13={CFG_FONT,"Font test",0,0};
+__root const int FONT=0;

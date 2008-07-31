@@ -43,6 +43,21 @@ typedef struct {
 } DISP_OBJ_COORD;
 
 
+typedef struct {
+  char gui[0x2c];
+} GUI_FONT_SEL;
+
+typedef struct {
+  DISP_OBJ dsp_obj;
+  int cur_font;
+  int cur_offs, cur_pos;
+  int total_fonts;
+  STRID test_str_id;
+  STRID selfont;
+} DISP_OBJ_FONT_SEL;
+
 GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE, int type);
 GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook);
+GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook);
+wchar_t *Font_GetNameByFontId(int id);
 #endif

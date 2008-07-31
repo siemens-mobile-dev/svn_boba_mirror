@@ -1,3 +1,5 @@
+#include "Types.h"
+
 #define CFG_UINT 1
 #define CFG_STR_UTF8 2
 #define CFG_INT 3
@@ -20,6 +22,7 @@
 #define CFG_RECT 14  
 //RECT
 #define CFG_COLOR_INT 15  
+#define CFG_FONT 16
 
 typedef struct
 {

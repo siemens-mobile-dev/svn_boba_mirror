@@ -5,6 +5,7 @@
 #include <errno.h>
 
 #include "visual.h"
+#include "datetime.h"
 #include "main.h"
 
 #define MESSAGE(__STR__) MessageBox(LGP_NULL,__STR__,0, 1 ,11000,(BOOK*)FindBook(isBcfgEditBook));
@@ -75,7 +76,7 @@ unsigned long Crc32(unsigned char *buf, unsigned long len)
   return crc ^ 0xFFFFFFFFUL;
 };
 
-void win12512unicode(wchar_t *ws, char *s, int len)
+void win12512unicode(wchar_t *ws, const char *s, int len)
 {
   int c;
   while((c=*s++)&&((len--)>0))
@@ -372,7 +373,6 @@ void CreateSignedNumberInput(MyBOOK *myBook)
                                               VAR_STRINP_TEXT(text),
                                               VAR_PREV_ACTION_PROC(OnBackCreateTextInputGui),
                                               VAR_OK_PROC(OnOkCreateSignedNumberGui),
-                                              VAR_STRINP_CHANGE_SIGN_ON_SHARP((k1>=0 && k2>=0)?0:1),
                                               0);
 }
 
@@ -465,9 +465,18 @@ void onEnterPressed(BOOK * bk, void *)
     str_id=(a?myBook->check_box_checked:myBook->check_box_unchecked)+0x78000000;
     ListMenu_SetSecondLineText((GUI_LIST *)myBook->bcfg,item,str_id);
     break;
+  case CFG_TIME:
+    BookObj_CallPage(&myBook->book,&bk_time_input);
+    break;
+  case CFG_DATE:
+    BookObj_CallPage(&myBook->book,&bk_date_input);
+    break;
   case CFG_COLOR_INT:
     color.int_color=*((unsigned int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
     CreateEditColorGUI(myBook, color,1);
+    break;
+  case CFG_FONT:
+    CreateFontSelectGUI(myBook);
     break;
   default:
     return;
@@ -517,16 +526,31 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
         color=(char *)hp+sizeof(CFG_HDR);
         snwprintf(ustr,MAXELEMS(ustr)-1,L"%02X,%02X,%02X,%02X",color[0],color[1],color[2],color[3]);
         str_id=Str2ID(ustr,0,SID_ANY_LEN);
-        break;
       }
+      break;
     case CFG_LEVEL:
       {
         win12512unicode(ustr,"[Enter]",MAXELEMS(ustr)-1);
         str_id=Str2ID(ustr,0,SID_ANY_LEN);
-        break;
+        
       }
+      break;
     case CFG_CHECKBOX:
       str_id=(*((int *)((char *)hp+sizeof(CFG_HDR)))?myBook->check_box_checked:myBook->check_box_unchecked)+0x78000000;
+      break;
+    case CFG_TIME:
+      {
+        TIME *time=((TIME *)((char *)hp+sizeof(CFG_HDR)));
+        snwprintf(ustr,MAXELEMS(ustr)-1,L"%02d:%02d",time->hour,time->min);
+        str_id=Str2ID(ustr,0,SID_ANY_LEN);
+      }
+      break;
+    case CFG_DATE:
+      {
+        DATE *date=((DATE *)((char *)hp+sizeof(CFG_HDR)));
+        snwprintf(ustr,MAXELEMS(ustr)-1,L"%02d.%02d.%04d",date->day,date->mon,date->year);
+        str_id=Str2ID(ustr,0,SID_ANY_LEN);
+      }
       break;
     case CFG_COLOR_INT:
       {
@@ -534,12 +558,13 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
         color=*((unsigned int *)((char *)hp+sizeof(CFG_HDR)));
         snwprintf(ustr,MAXELEMS(ustr)-1,L"%02X,%02X,%02X,%02X",COLOR_GET_R(color),COLOR_GET_G(color),COLOR_GET_B(color),COLOR_GET_A(color));
         str_id=Str2ID(ustr,0,SID_ANY_LEN);
-        break;
       }
+      break;
+    case CFG_FONT:
+      str_id=Str2ID(Font_GetNameByFontId(*((int *)((char *)hp+sizeof(CFG_HDR)))),0,SID_ANY_LEN);
+      break;
     case CFG_STR_UTF8:
     case CFG_UTF8_STRING:
-    case CFG_TIME:
-    case CFG_DATE:
     case CFG_RECT:
       snwprintf(ustr,MAXELEMS(ustr)-1,L"Type %d is not supporting yet",hp->type);
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
@@ -583,7 +608,9 @@ STRID GetParentName()
     win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);    
   }
   else
-    win12512unicode(ustr,"BcfgEdit",MAXELEMS(ustr)-1);   
+  {
+    wstrncpy(ustr,cfgname,MAXELEMS(ustr)-1);
+  }
   return (Str2ID(ustr,0,MAXELEMS(ustr)-1));
 }
 
@@ -746,6 +773,11 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       break;
       
     case CFG_COLOR_INT:
+      n-=sizeof(int);
+      if (n<0) goto L_ERRCONSTR;
+      p+=sizeof(int);
+      break;
+    case CFG_FONT:
       n-=sizeof(int);
       if (n<0) goto L_ERRCONSTR;
       p+=sizeof(int);

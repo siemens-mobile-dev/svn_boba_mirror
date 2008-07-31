@@ -386,6 +386,12 @@
 0AD8: 00000000 19543745 ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
 0ADC: 00000000 096E2F45 ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
 
+0AE0: 00000000 C5E22A45 ; 2B8: void BookObj_CallPage(BOOK * book, const PAGE_DESC  * page);
+0AE4: 00000000 253E3745 ; 2B9: unsigned int DateInput_GetDateInt(void *dateinp_msg);
+0AE8: 00000000 61563745 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
+0AEC: 00000000 A54F3645 ; 2BB: void InputFeedback_SetIcon(GUI *gui, int icon);
+0AF0: 00000000 00721820 ;82BC: FONT_DESC *GetFontDesc(void);
+0AF4: 00000000 94741820 ;82BD: int *GetFontCount();
 
 
 

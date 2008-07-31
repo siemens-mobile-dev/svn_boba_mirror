@@ -690,4 +690,12 @@ typedef struct
   MIDP_DESC_ITEM * point;
 }MIDP_DESC;
 
+#pragma pack(2)
+typedef struct
+{
+  u16 id;
+  wchar_t name[10];  
+} FONT_DESC;
+#pragma pack()
+
 #endif
