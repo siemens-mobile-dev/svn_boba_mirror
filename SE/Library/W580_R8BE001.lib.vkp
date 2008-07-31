@@ -57,7 +57,7 @@
 050C: 00000000 ED362C45 ; 143: void StatusIndication_ShowNotes(int StrID);
 0510: 00000000 19652F45 ; 144: void * CreateStringInput(int,...);
 0514: 00000000 FD033245 ; 145: GUI_ONEOFMANY * CreateOneOfMany(BOOK *);
-0518: 00000000 A9053245 ; 146: void OneOfMany_SetItemCount(GUI_ONEOFMANY * , int count);
+0518: 00000000 C5053245 ; 146: void OneOfMany_SetItemCount(GUI_ONEOFMANY * , int count);
 051C: 00000000 E1053245 ; 147: void OneOfMany_SetChecked(GUI_ONEOFMANY * , int checked);
 0520: 00000000 15063245 ; 148: void OneOfMany_SetTexts(GUI_ONEOFMANY * , int * StrID , int Count);
 0524: 00000000 F1053245 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
@@ -384,6 +384,7 @@
 0AD0: 00000000 21F2EC44 ; 2B4: void DataBrowser_ItemDesc_Destroy(FILEITEM *);
 0AD4: 00000000 213C3745 ; 2B5: GUI *CreateDateInputVA(int zero, ...);
 0AD8: 00000000 19543745 ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
+0ADC: 00000000 096E2F45 ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
 
 
 
