@@ -609,7 +609,10 @@ STRID GetParentName()
   }
   else
   {
-    wstrncpy(ustr,cfgname,MAXELEMS(ustr)-1);
+    wchar_t *ext=wstrrchr(cfgname,'.');
+    int len=ext?(ext-cfgname):MAXELEMS(ustr)-1;
+    wstrncpy(ustr,cfgname,len);
+    ustr[len]=0;
   }
   return (Str2ID(ustr,0,MAXELEMS(ustr)-1));
 }

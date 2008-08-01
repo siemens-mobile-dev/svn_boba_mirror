@@ -465,95 +465,105 @@ int GetIdByFontId(int id)
 int FontSelectGuiOnCreate(DISP_OBJ_FONT_SEL *db)
 {
   wchar_t ustr[64];
+  int font_old;
   win12512unicode(ustr,test_str,MAXELEMS(test_str)-1);
   db->test_str_id=Str2ID(ustr,0,SID_ANY_LEN);
   db->total_fonts=*GetFontCount();
+  font_old=SetFont(FONT_E_20R);
+  db->font_heights=new u16[db->total_fonts];
+  for (int i=0; i<db->total_fonts; i++)
+  {
+    SetFont(GetFontDesc()[i].id);
+    db->font_heights[i]=GetImageHeight(' ');
+  }
+  SetFont(font_old);
+  db->deffont=FONT_E_20R;
+  db->defsize=20;
   return (1);
 }
 
 void FontSelectGuiOnClose(DISP_OBJ_FONT_SEL *db)
 {
   TextFree(db->test_str_id);  db->test_str_id=LGP_NULL;
+  delete db->font_heights;
 }
 
 
-void FontSelectGuiOnRedraw(DISP_OBJ_FONT_SEL *db,int ,int,int)
+void FontSelectGuiOnRedraw(DISP_OBJ_FONT_SEL *db,int, RECT *cur_rc,int)
 {
-  RECT rc_old, rc_new;
   int font_old, gc_xx;
-  int tfont=FONT_E_20R, tfsize=20;
   void *gc=get_DisplayGC();
   STRID selfont;
-  int scr_w=Display_GetWidth(0), scr_h=Display_GetHeight(0);
-  
-  get_GC_RECT(gc, &rc_old);
+
   gc_xx=get_GC_xx(gc);
   set_GC_xx(gc,1);
-  rc_new.x1=0;
-  rc_new.x2=scr_w;
-  rc_new.y1=0;
-  rc_new.y2=scr_h;
-  GC_validate_RECT(gc,&rc_new);
-  font_old=SetFont(tfont);
-  DrawRect(0,0,scr_w,scr_h,clBlack,clBlack);
+  db->x1=cur_rc->x1;
+  db->y1=cur_rc->y1;
+  db->x2=cur_rc->x2;
+  db->y2=cur_rc->y2;
+
+  font_old=SetFont(db->deffont);
+  DrawRect(db->x1,db->y1,db->x2,db->y2,clBlack,clBlack);
   
   selfont=Str2ID(GetFontDesc()[db->cur_pos].name,0,9);
-  DrawString(selfont,0, 3,1,scr_w-2, tfsize+1,0,0,0xFF0080FF,0x00000000);   // Рисуем выбранный шрифт в шапке меню
+  DrawString(selfont,0, db->x1+3,db->y1+1,db->x2-2, db->y1+db->defsize+1,0,0,0xFF0080FF,0x00000000);   // Рисуем выбранный шрифт в шапке меню
   TextFree(selfont);
   
-  int cur_y=tfsize+2;
+  int cur_y=db->y1+db->defsize+2;
   for (int i=db->cur_offs; i<db->total_fonts; i++)
   {
     int font, font_h;
     font=GetFontDesc()[i].id;
     SetFont(font);
-    font_h=GetImageHeight(' ');
+    font_h=db->font_heights[i];
     if (i==db->cur_pos)   // Если это выбранный шрифт
-      DrawRect(1,cur_y,scr_w-1,cur_y+font_h+2,0xFF00FF00,0xFF408000);
-    DrawString(db->test_str_id,0,2,cur_y+1,scr_w-2,cur_y+font_h+1,0,0,clWhite,0x00000000);
+      DrawRect(db->x1+1,cur_y,db->x2-1,cur_y+font_h+2,0xFF00FF00,0xFF408000);
+    DrawString(db->test_str_id,0,db->x1+2,cur_y+1,db->x2-2,cur_y+font_h+1,0,0,clWhite,0x00000000);
     cur_y+=font_h+2;
-    if (cur_y>scr_h) break;    
+    if (cur_y>db->y2) break;    
   }
 
-  GC_validate_RECT(gc,&rc_old);
   SetFont(font_old);
   set_GC_xx(gc,gc_xx);
+}
+
+
+void CheckStringVisibility(DISP_OBJ_FONT_SEL *db)
+{
+  if (db->cur_pos<db->cur_offs)  // строка выше смещения, поднимаем смещение
+  {
+    db->cur_offs=db->cur_pos;
+  }
+  else   // иначе проверяем в зоне видимости ли мы, если нет то опускаемся пока не увидим
+  {
+    int f=0;
+    do {
+      int cur_y=db->y1+db->defsize+2;
+      for (int i=db->cur_offs, k=0; i<db->total_fonts; i++)
+      {
+        int sum;
+        if (db->cur_pos==i) k=1;
+        if ((sum=cur_y+db->font_heights[i]+3)<db->y2 && k) f=1;
+        cur_y=sum;
+        if (cur_y>db->y2) break;
+      }
+    } while(!f && ++db->cur_offs<db->total_fonts);
+  }
 }
 
 void FontSelectGuiOnKey(DISP_OBJ_FONT_SEL *db,int key,int,int repeat,int type)
 {
   if (type==KBD_SHORT_RELEASE || type==KBD_REPEAT)
   {
-    int scr_w=Display_GetWidth(0), scr_h=Display_GetHeight(0);
     if (key==KEY_UP || key==KEY_DIGITAL_0+2)
     {
-      if ((--db->cur_pos)<0) db->cur_pos=0;
-      if (db->cur_pos<db->cur_offs)
-      {
-        db->cur_offs=db->cur_pos;
-      }
+      if ((--db->cur_pos)<0) db->cur_pos=db->total_fonts-1;
     }
     else if (key==KEY_DOWN || key==KEY_DIGITAL_0+8)
     {
-      if ((++db->cur_pos)>=db->total_fonts) db->cur_pos=db->total_fonts-1;
-      int f=0;
-      do {
-        int cur_y=20+2;
-        int k=0;
-        for (int i=db->cur_offs; i<db->total_fonts; i++)
-        {
-          int old_font, font, font_h,sum;
-          font=GetFontDesc()[i].id;
-          old_font=SetFont(font);
-          font_h=GetImageHeight(' ');
-          SetFont(old_font);
-          if (db->cur_pos==i) k=1;
-          if ((sum=cur_y+font_h+3)<scr_h && k) f=1;
-          cur_y=sum;
-          if (cur_y>scr_h) break;
-        }
-      } while(!f && ++db->cur_offs<db->total_fonts);
+      if ((++db->cur_pos)>=db->total_fonts) db->cur_pos=0;
     }
+    CheckStringVisibility(db);
   }
   InvalidateRect(&db->dsp_obj,0);
 }
@@ -593,7 +603,7 @@ GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook)
 {
   GUI_FONT_SEL *gui_fontsel=new GUI_FONT_SEL;
   DISP_OBJ_FONT_SEL *disp_obj;
-  
+  wchar_t ustr[64];
   if (!CreateObject((GUI *)gui_fontsel,FontSelectGui_destr,FontSelectGui_constr, &myBook->book,0,0,0))
   {
     delete gui_fontsel;
@@ -605,9 +615,11 @@ GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook)
   myBook->font_select=(GUI *)gui_fontsel;
   if (myBook) addGui2book(&myBook->book,myBook->font_select);
   
-  GUI_SetStyle(myBook->font_select,4);
-  GuiObject_SetTitleType(myBook->font_select, 1);
-  GUIObject_HideSoftkeys(myBook->font_select);
+  //GUI_SetStyle(myBook->font_select,4);
+  win12512unicode(ustr,myBook->cur_hp->name,MAXELEMS(ustr)-1);
+  GuiObject_SetTitleText(myBook->font_select, Str2ID(ustr,0,SID_ANY_LEN));
+  GuiObject_SetTitleType(myBook->font_select, 3);
+  //GUIObject_HideSoftkeys(myBook->font_select);
   AddMSGHook(myBook->font_select,ACTION_BACK, OnBackFontSelect);
   AddMSGHook(myBook->font_select,ACTION_SELECT1, OnOkFontSelect);
   ShowWindow(myBook->font_select);
