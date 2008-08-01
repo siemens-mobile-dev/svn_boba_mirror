@@ -55,7 +55,7 @@
 0504: 00000000 3D9A3845 ;8141: IS_NEEDED_BOOK isScreenSaverBook(void);
 0508: 00000000 49AF3645 ; 142: void StatusIndication_SetItemText(void *gui,int item,int StrID);
 050C: 00000000 ADA92B45 ; 143: void StatusIndication_ShowNotes(int StrID);
-0510: 00000000 11CD2E45 ; 144: void * CreateStringInput(int,...);
+0510: 00000000 11CD2E45 ; 144: GUI * CreateStringInput(int,...);
 0514: 00000000 596B3145 ; 145: GUI_ONEOFMANY * CreateOneOfMany(BOOK *);
 0518: 00000000 216D3145 ; 146: void OneOfMany_SetItemCount(GUI_ONEOFMANY * , int count);
 051C: 00000000 3D6D3145 ; 147: void OneOfMany_SetChecked(GUI_ONEOFMANY * , int checked);
@@ -149,8 +149,8 @@
 06E0: 00000000 FD7BF544 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E8: 00000000 9B4F2B45 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 6DEAFD44 ; 1BB: void Vibra(int t1, int t2, int t3);
-06F0: 00000000 312BD544 ; 1BC: char REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
-06F4: 00000000 C52BD544 ; 1BD: char REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
+06F0: 00000000 312BD544 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F4: 00000000 C52BD544 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 B9192A45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: 00000000 E1182A45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 9D493145 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
@@ -167,8 +167,8 @@
 072C: 00000000 D1C23545 ; 1CB: void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
 0730: 00000000 85C33545 ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
 0734: 00000000 C1C33545 ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
-0738: 00000000 21B13545 ; 1CE: void GUI_Free(GUI*);
-073C: 00000000 9DB43545 ; 1CF: void GUI_SetIcon(GUI* , int icon);
+0738: 00000000 21B13545 ; 1CE: GUI *GUI_Free(GUI*);
+073C: 00000000 9DB43545 ; 1CF: void InputFeedback_SetIcon(GUI *gui, int icon);
 0740: 00000000 B5D52E45 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 074C: 00000000 891EE944 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 99653145 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
@@ -384,6 +384,12 @@
 0AD0: 00000000 2570ED44 ; 2B4: void DataBrowser_ItemDesc_Destroy(FILEITEM *);
 0AD4: 00000000 D1A13645 ; 2B5: __thumb GUI *CreateDateInputVA(int zero, ...);
 0AD8: 00000000 C1B93645 ; 2B6: __thumb GUI *CreateTimeInputVA(int zero, ...);
+0ADC: 00000000 01D62E45 ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
+0AE0: 00000000 B5582A45 ; 2B8: void BookObj_CallPage(BOOK * book, const PAGE_DESC * page);
+0AE4: 00000000 D5A33645 ; 2B9: unsigned int DateInput_GetDateInt(void *dateinp_msg);
+0AE8: 00000000 09BC3645 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
+0AEC: 00000000 94901820 ;82BB: FONT_DESC *GetFontDesc(void);
+0AF0: 00000000 28931820 ;82BC: int *GetFontCount();
 
 
 
