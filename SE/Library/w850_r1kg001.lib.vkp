@@ -383,12 +383,15 @@
 0AD4: 00000000 7D404945 ; 2B5: GUI *CreateDateInputVA(int zero, ...);
 0AD8: 00000000 6D584945 ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
 0ADC: 00000000 A5734145 ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
-
 0AE0: 00000000 39F43C45 ; 2B8: void BookObj_CallPage(BOOK * book, const PAGE_DESC  * page);
 0AE4: 00000000 81424945 ; 2B9: unsigned int DateInput_GetDateInt(void *dateinp_msg);
 0AE8: 00000000 B55A4945 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
 0AEC: 00000000 50F21620 ;82BB: FONT_DESC *GetFontDesc(void);
 0AF0: 00000000 E4F41620 ;82BC: int *GetFontCount();
+0AF4: 00000000 AD344845 ; 2BD: int GC_GetBrushColor (void* GC);
+0AF8: 00000000 6D344845 ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
+0AFC: 00000000 1D3D4845 ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
+
 
 
 ;locale=Russian_Russia.1251

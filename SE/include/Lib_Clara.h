@@ -1217,4 +1217,10 @@ __swi __arm FONT_DESC *GetFontDesc(void);
 #pragma swi_number=0x82BC
 __swi __arm int *GetFontCount();
 
+#pragma swi_number=0x2BD
+__swi __arm  int GC_GetBrushColor (void* GC);
+#pragma swi_number=0x2BE
+__swi __arm  void GC_SetBrushColor(void* GC , int brush_color);
+#pragma swi_number=0x2BF
+__swi __arm  void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
 #endif
