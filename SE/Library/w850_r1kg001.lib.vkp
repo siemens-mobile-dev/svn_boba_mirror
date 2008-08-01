@@ -166,7 +166,7 @@
 0730: 00000000 51624845 ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
 0734: 00000000 8D624845 ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 0738: 00000000 FD4F4845 ; 1CE: void GUI_Free(GUI*);
-073C: 00000000 79534845 ; 1CF: void GUI_SetIcon(GUI* , int icon);
+073C: 00000000 79534845 ; 2BB: void InputFeedback_SetIcon(GUI *gui, int icon);
 0740: 00000000 59734145 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 074C: 00000000 2921FB44 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 89034445 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
@@ -387,9 +387,8 @@
 0AE0: 00000000 39F43C45 ; 2B8: void BookObj_CallPage(BOOK * book, const PAGE_DESC  * page);
 0AE4: 00000000 81424945 ; 2B9: unsigned int DateInput_GetDateInt(void *dateinp_msg);
 0AE8: 00000000 B55A4945 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
-0AEC: 00000000 79534845 ; 2BB: void InputFeedback_SetIcon(GUI *gui, int icon);
-0AF0: 00000000 50F21620 ;82BC: FONT_DESC *GetFontDesc(void);
-0AF4: 00000000 E4F41620 ;82BD: int *GetFontCount();
+0AEC: 00000000 50F21620 ;82BB: FONT_DESC *GetFontDesc(void);
+0AF0: 00000000 E4F41620 ;82BC: int *GetFontCount();
 
 
 ;locale=Russian_Russia.1251

@@ -682,7 +682,7 @@ __swi __arm  void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int
 __swi __arm  GUI *GUI_Free(GUI*);
 
 #pragma swi_number=0x1CF
-__swi __arm  void GUI_SetIcon(GUI* , int icon);
+__swi __arm  __swi __arm void InputFeedback_SetIcon(GUI *gui, int icon);
 
 #pragma swi_number=0x1D0
 __swi __arm int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
@@ -1211,13 +1211,10 @@ __swi __arm unsigned int DateInput_GetDateInt(void *dateinp_msg);
 #pragma swi_number=0x2BA
 __swi __arm unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
 
-#pragma swi_number=0x2BB
-__swi __arm void InputFeedback_SetIcon(GUI *gui, int icon);
-
-#pragma swi_number=0x82BC
+#pragma swi_number=0x82BB
 __swi __arm FONT_DESC *GetFontDesc(void);
 
-#pragma swi_number=0x82BD
+#pragma swi_number=0x82BC
 __swi __arm int *GetFontCount();
 
 #endif
