@@ -682,7 +682,7 @@ __swi __arm  void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int
 __swi __arm  GUI *GUI_Free(GUI*);
 
 #pragma swi_number=0x1CF
-__swi __arm  __swi __arm void InputFeedback_SetIcon(GUI *gui, int icon);
+__swi __arm void InputFeedback_SetIcon(GUI *gui, int icon);
 
 #pragma swi_number=0x1D0
 __swi __arm int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
