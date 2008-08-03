@@ -18,14 +18,9 @@ const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE"  =
   NIL_EVENT_TAG,           NULL
 };
 
-const PAGE_MSG bk_msglst_main[] @ "DYN_PAGE"  = 
-{
-  PAGE_ENTER_EVENT_TAG,    MainPageOnCreate,
-  NIL_EVENT_TAG,           NULL
-};
 
 const PAGE_DESC bk_base = {"BcfgEdit_Base_Page",0,bk_msglst_base};
-const PAGE_DESC bk_main = {"BcfgEdit_Main_Page",0,bk_msglst_main};
+
 
 
 wchar_t cfgpath[128];
@@ -139,6 +134,7 @@ int LoadCfg(wchar_t *path, wchar_t *fname)
   int f;
   FSTAT fstat;
   int result=0;
+  if (cfg) delete cfg;
   if (path)
   {
     if (isFileExist(path,fname,&fstat)!=-1)
@@ -180,11 +176,6 @@ void SendReconfigEvent()
   }
 }
 
-
-GUI *CreateSelectBCFGMenu(int)
-{
-  return NULL;
-}
 
 void OnYesExitGui(BOOK * bk, void *)
 {
@@ -811,6 +802,65 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
   return(1);
 }
 
+int SelBcfg_BcfgFilter(const wchar_t *ExtList, const wchar_t *ItemPath, const wchar_t *ItemName)
+{
+  return (DataBrowser_isFileInListExt(ExtList,ItemPath,ItemName));
+}
+
+static int SelBcfgPageOnCreate(void *, BOOK *bk)
+{
+  MyBOOK *mbk=(MyBOOK *)bk;
+  void * DB_Desc=DataBrowserDesc_Create();
+  const wchar_t * folder_list[2];
+  folder_list[0]=GetDir(DIR_ELFS_CONFIG|MEM_INTERNAL);
+  folder_list[1]=GetDir(DIR_ELFS_CONFIG|MEM_EXTERNAL);
+  DataBrowserDesc_SetHeaderText(DB_Desc,Str2ID(L"Config",0,SID_ANY_LEN));
+  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetSessionID(&mbk->book));
+  DataBrowserDesc_SetFolders(DB_Desc,folder_list);
+  DataBrowserDesc_SetFoldersNumber(DB_Desc,2);
+  DataBrowserDesc_SetSelectAction(DB_Desc,1);
+  DataBrowserDesc_SetFileExtList(DB_Desc,L"*.bcfg");
+  DataBrowserDesc_SetItemFilter(DB_Desc,SelBcfg_BcfgFilter);
+  DataBrowser_Create(DB_Desc);
+  DataBrowserDesc_Destroy(DB_Desc);
+  return(1);
+}
+
+static int SelBcfgPageOnAccept(void *data, BOOK *bk)
+{
+  MyBOOK *mbk=(MyBOOK *)bk;
+  FILEITEM *file=(FILEITEM *)data;
+  if (LoadCfg(file->path, file->fname))
+  {
+    wstrncpy(cfgpath,file->path,MAXELEMS(cfgpath));
+    wstrncpy(cfgname,file->fname,MAXELEMS(cfgname));
+    mbk->old_crc=Crc32((unsigned char *)cfg,size_cfg);
+    create_ed(&mbk->book, 0);
+  }
+  else
+  {
+    FreeBook(&mbk->book);
+  }
+  return(1);
+}
+
+static int SelBcfgPageOnCancel(void *data, BOOK *bk)
+{
+  FreeBook(bk);
+  return(1);
+}
+
+const PAGE_MSG bk_msglst_selbcfg[] @ "DYN_PAGE"  = 
+{
+  PAGE_ENTER_EVENT_TAG,    SelBcfgPageOnCreate,
+  ACCEPT_EVENT_TAG,        SelBcfgPageOnAccept,
+  CANCEL_EVENT_TAG,        SelBcfgPageOnCancel,
+  PREVIOUS_EVENT_TAG,      SelBcfgPageOnCancel,
+  NIL_EVENT_TAG,           NULL
+};
+
+const PAGE_DESC bk_selbcfg = {"BcfgEdit_SelectBcfg_Page",0,bk_msglst_selbcfg};
+
 static int MainPageOnCreate(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
@@ -838,10 +888,19 @@ static int MainPageOnCreate(void *, BOOK *bk)
   }
   if (find_cfg)
   {
-    mbk->sel_bcfg=CreateSelectBCFGMenu(0);
+    BookObj_GotoPage(&mbk->book,&bk_selbcfg);
   }
   return (1);
 }
+
+const PAGE_MSG bk_msglst_main[] @ "DYN_PAGE"  = 
+{
+  PAGE_ENTER_EVENT_TAG,    MainPageOnCreate,
+  NIL_EVENT_TAG,           NULL
+};
+
+const PAGE_DESC bk_main = {"BcfgEdit_Main_Page",0,bk_msglst_main};
+
 
 // при закрытии книги
 static void onMyBookClose(BOOK * book)

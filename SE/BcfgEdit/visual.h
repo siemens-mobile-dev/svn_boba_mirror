@@ -55,8 +55,7 @@ typedef struct {
   STRID test_str_id;
   STRID selfont;
   u16 *font_heights;
-  int x1,y1,x2,y2;
-  int deffont, defsize;
+  int req_check_vis;
 } DISP_OBJ_FONT_SEL;
 
 GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE, int type);

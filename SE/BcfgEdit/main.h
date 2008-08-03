@@ -5,7 +5,6 @@ typedef struct
 {
   BOOK  book;
   GUI *bcfg;
-  GUI *sel_bcfg;
   GUI_ONEOFMANY *cbox_gui;
   GUI *text_input;
   GUI *yesno;
