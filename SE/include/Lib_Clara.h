@@ -232,7 +232,7 @@ __swi __arm  void DataBrowserDesc_Destroy(void * db);
 __swi __arm  wchar_t * getFileExtention(wchar_t * fnane);
 
 #pragma swi_number=0x127
-__swi __arm  int DataBrowser_isFileInListExt(unsigned short * ext_table,const wchar_t * path ,const wchar_t *fname );
+__swi __arm  int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
 
 #pragma swi_number=0x128
 __swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
