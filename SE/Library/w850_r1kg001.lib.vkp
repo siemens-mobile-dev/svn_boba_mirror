@@ -26,7 +26,7 @@
 0490: 00000000 758FFE44 ; 124: void DataBrowser_Create(void * db);
 0494: 00000000 A9C7FE44 ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 1124FB44 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
-049C: 00000000 FDD6FA44 ; 127: int DataBrowser_isFileInListExt(unsigned short * ext_table,const wchar_t * path ,const wchar_t *fname );
+049C: 00000000 FDD6FA44 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
 04A0: 00000000 C1C33C45 ; 128: void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
 04A4: 00000000 8DC33C45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, void *), void *);
 04A8: 00000000 19C43C45 ; 12A: void Timer_Kill(u16 *timerID);
@@ -391,6 +391,11 @@
 0AF4: 00000000 AD344845 ; 2BD: int GC_GetBrushColor (void* GC);
 0AF8: 00000000 6D344845 ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
 0AFC: 00000000 1D3D4845 ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
+0B00: 00000000 756B4A45 ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
+0B04: 00000000 0D6D4A45 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
+0B08: 00000000 29CD4945 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
+0B0C: 00000000 61CD4945 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
+0B10: 00000000 59DC3C45 ; 2C4: BOOK * Root_GetBookByID(int BookID);
 
 
 

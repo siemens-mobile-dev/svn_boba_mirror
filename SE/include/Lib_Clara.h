@@ -1218,9 +1218,20 @@ __swi __arm FONT_DESC *GetFontDesc(void);
 __swi __arm int *GetFontCount();
 
 #pragma swi_number=0x2BD
-__swi __arm  int GC_GetBrushColor (void* GC);
+__swi __arm  int GC_GetBrushColor(void* GC);
 #pragma swi_number=0x2BE
 __swi __arm  void GC_SetBrushColor(void* GC , int brush_color);
 #pragma swi_number=0x2BF
 __swi __arm  void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
+
+#pragma swi_number=0x2C0
+__swi __arm  BOOK * MenuBook_Desktop(int mode,int BookID);
+#pragma swi_number=0x2C1
+__swi __arm  wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
+#pragma swi_number=0x2C2
+__swi __arm  void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
+#pragma swi_number=0x2C3
+__swi __arm  void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
+#pragma swi_number=0x2C4
+__swi __arm  BOOK * Root_GetBookByID(int BookID);
 #endif
