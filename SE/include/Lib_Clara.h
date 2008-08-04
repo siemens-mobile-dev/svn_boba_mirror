@@ -1131,7 +1131,7 @@ __swi __arm int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 __swi __arm int wstrcmpni(const wchar_t * wstr1,const wchar_t * wstr2,int len);
 
 #pragma swi_number=0x29B
-__swi __arm int wtoi(u16 * wstr,int len,int * dest);
+__swi __arm int wtoi(const wchar_t * wstr,int len,int * dest);
 
 #pragma swi_number=0x29C
 __swi __arm void DATE_GetWeekDay(DATE *,char * dest);
