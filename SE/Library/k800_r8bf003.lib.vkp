@@ -382,6 +382,20 @@ ACC: 00000000 71BEFD44 ; 2B3: FILEITEM * DataBrowser_ItemDesc_Create(void);
 AD0: 00000000 61BFFD44 ; 2B4: void DataBrowser_ItemDesc_Destroy(FILEITEM *);
 AD4: 00000000 212C4745 ; 2B5: __thumb GUI *CreateDateInputVA(int zero, ...);
 AD8: 00000000 11444745 ; 2B6: __thumb GUI *CreateTimeInputVA(int zero, ...);
+ADC: 00000000 85653F45 ; 2B7: __thumb void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
+AE0: 00000000 51E63A45 ; 2B8: __thumb void BookObj_CallPage(BOOK * book, const PAGE_DESC * page);
+AE4: 00000000 252E4745 ; 2B9: __thumb unsigned int DateInput_GetDateInt(void *dateinp_msg);
+AE8: 00000000 59464745 ; 2BA: __thumb unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
+;0AEC: xxxxxxxx yyyyyyyy ;82BB: FONT_DESC *GetFontDesc(void);
+;0AF0: xxxxxxxx yyyyyyyy ;82BC: int *GetFontCount();
+AF4: 00000000 25214645 ; 2BD: __thumb int GC_GetBrushColor(void* GC);
+AF8: 00000000 E5204645 ; 2BE: __thumb void GC_SetBrushColor(void* GC , int brush_color);
+AFC: 00000000 95294645 ; 2BF: __thumb void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
+;0B00: xxxxxxxx yyyyyyyy ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
+B04: 00000000 A9534845 ; 2C1: __thumb wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
+B08: 00000000 CDB84745 ; 2C2: __thumb void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
+B0C: 00000000 05B94745 ; 2C3: __thumb void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
+B10: 00000000 61CE3A45 ; 2C4: __thumb BOOK * Root_GetBookByID(int BookID);
 
 
 
