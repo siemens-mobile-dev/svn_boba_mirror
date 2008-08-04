@@ -14,10 +14,10 @@ extern int __var_arg_strinp_is_pass_mode;
 extern int __var_arg_strinp_unk1;
 extern int __var_arg_strinp_unk2;
 extern int __var_arg_strinp_unk3;
+extern int __var_arg_strinp_ok_on_sharp;
 
 extern int __var_arg_strinp_min_int_val;
 extern int __var_arg_strinp_max_int_val;
-extern int __var_arg_strinp_change_sign_on_sharp;
 
 extern int __var_arg_yesno_pre_question;
 extern int __var_arg_yesno_question;
