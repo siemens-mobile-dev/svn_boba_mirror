@@ -393,7 +393,11 @@
 0AF4: 00000000 D9303645 ; 2BD: int GC_GetBrushColor (void* GC);
 0AF8: 00000000 99303645 ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
 0AFC: 00000000 49393645 ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
-
+0B00: 00000000 C9683845 ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
+0B04: 00000000 5D6A3845 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
+0B08: 00000000 CDC83745 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
+0B0C: 00000000 05C93745 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
+0B10: 00000000 D5CA2A45 ; 2C4: BOOK * Root_GetBookByID(int BookID);
 
 
 ;locale=Russian_Russia.1251
