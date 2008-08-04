@@ -41,7 +41,7 @@
 4CC: 00000000 61434645 ; 133: void GuiObject_SetTitleText (void * gui , int StrID);
 4D0: 00000000 E53E4645 ; 134: void ShowWindow (void * gui);
 4D4: 00000000 F1DA4145 ; 135: void SetCursorToItem ( void *obj , int item);
-4D8: 00000000 353F4645 ; 136: void GUI_SetStyle(GUI_NOFMANY *,int style);
+4D8: 00000000 353F4645 ; 136: void GUI_SetStyle(GUI *,int style);
 4DC: 00000000 D9E54145 ; 137: int GUIonMessage_GetCreatedItemIndex ( void *msg);
 4E0: 00000000 E5E54145 ; 138: char SetMenuItemText0 ( GUI_MESSAGE *, int StrID);
 4E4: 00000000 15E64145 ; 139: char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
@@ -396,6 +396,11 @@ B04: 00000000 A9534845 ; 2C1: __thumb wchar_t * MenuBook_Desktop_GetSelectedItem
 B08: 00000000 CDB84745 ; 2C2: __thumb void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
 B0C: 00000000 05B94745 ; 2C3: __thumb void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
 B10: 00000000 61CE3A45 ; 2C4: __thumb BOOK * Root_GetBookByID(int BookID);
+;0B14: xxxxxxxx yyyyyyyy ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
+;0B18: xxxxxxxx yyyyyyyy ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
+;0B1C: xxxxxxxx yyyyyyyy ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
+;0B20: xxxxxxxx yyyyyyyy ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
+;0B24: xxxxxxxx yyyyyyyy ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
 
 
 

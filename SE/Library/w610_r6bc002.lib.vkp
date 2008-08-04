@@ -26,7 +26,7 @@
 0490: 00000000 9191EC44 ; 124: void DataBrowser_Create(void * db);
 0494: 00000000 9DCBEC44 ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 7121E944 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
-049C: 00000000 59D4E844 ; 127: int DataBrowser_isFileInListExt(unsigned short * ext_table,const wchar_t * path ,const wchar_t *fname );
+049C: 00000000 59D4E844 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
 04A0: 00000000 21282A45 ; 128: void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
 04A4: 00000000 ED272A45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, void *), void *);
 04A8: 00000000 79282A45 ; 12A: void Timer_Kill(u16 *timerID);
@@ -41,7 +41,7 @@
 04CC: 00000000 C1B83545 ; 133: void GuiObject_SetTitleText (void * gui , int StrID);
 04D0: 00000000 91B33545 ; 134: void ShowWindow (void * gui);
 04D4: 00000000 A54B3145 ; 135: void SetCursorToItem ( void *obj , int item);
-04D8: 00000000 E1B33545 ; 136: void GUI_SetStyle(GUI_NOFMANY *,int style);
+04D8: 00000000 E1B33545 ; 136: void GUI_SetStyle(GUI *,int style);
 04DC: 00000000 F5563145 ; 137: int GUIonMessage_GetCreatedItemIndex ( void *msg);
 04E0: 00000000 01573145 ; 138: char SetMenuItemText0 ( GUI_MESSAGE *, int StrID);
 04E4: 00000000 11573145 ; 139: char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
@@ -356,7 +356,7 @@
 0A60: 00000000 19BE5544 ; 298: char * strstr(const char * str1,const char * str2);
 0A64: 00000000 41C93A45 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 0A68: 00000000 8D07E544 ; 29A: int wstrcmpni(const wchar_t * wstr1,const wchar_t * wstr2,int len);
-0A6C: 00000000 BD212A45 ; 29B: int wtoi(u16 * wstr,int len,int * dest);
+0A6C: 00000000 BD212A45 ; 29B: int wtoi(const wchar_t * wstr,int len,int * dest);
 0A70: 00000000 DDEFFF44 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
 0A74: 00000000 19DED744 ; 29D: void Cale_GetSettings(int setID,void *);
 0A78: 00000000 1DC75544 ; 29E: wchar_t * wstrwstr(const wchar_t * wstr1,const wchar_t * wstr2);
@@ -390,6 +390,19 @@
 0AE8: 00000000 09BC3645 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
 0AEC: 00000000 94901820 ;82BB: FONT_DESC *GetFontDesc(void);
 0AF0: 00000000 28931820 ;82BC: int *GetFontCount();
+;0AF4: xxxxxxxx yyyyyyyy ; 2BD: int GC_GetBrushColor(void* GC);
+;0AF8: xxxxxxxx yyyyyyyy ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
+;0AFC: xxxxxxxx yyyyyyyy ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
+;0B00: xxxxxxxx yyyyyyyy ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
+;0B04: xxxxxxxx yyyyyyyy ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
+;0B08: xxxxxxxx yyyyyyyy ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
+;0B0C: xxxxxxxx yyyyyyyy ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
+;0B10: xxxxxxxx yyyyyyyy ; 2C4: BOOK * Root_GetBookByID(int BookID);
+;0B14: xxxxxxxx yyyyyyyy ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
+;0B18: xxxxxxxx yyyyyyyy ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
+;0B1C: xxxxxxxx yyyyyyyy ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
+;0B20: xxxxxxxx yyyyyyyy ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
+;0B24: xxxxxxxx yyyyyyyy ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
 
 
 
