@@ -396,6 +396,12 @@
 0B08: 00000000 29CD4945 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
 0B0C: 00000000 61CD4945 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
 0B10: 00000000 59DC3C45 ; 2C4: BOOK * Root_GetBookByID(int BookID);
+0B14: 00000000 ED504945 ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
+0B18: 00000000 25554945 ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
+0B1C: 00000000 C5544945 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
+0B20: 00000000 E5534945 ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
+0B24: 00000000 89554945 ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
+
 
 
 
