@@ -23,6 +23,7 @@
 //RECT
 #define CFG_COLOR_INT 15  
 #define CFG_FONT 16
+#define CFG_KEYCODE 17
 
 typedef struct
 {

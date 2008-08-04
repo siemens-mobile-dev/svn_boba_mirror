@@ -296,6 +296,8 @@ __swi __arm  void GUI_SetStyle(GUI_TABMENUBAR *,int style);
 __swi __arm  void GUI_SetStyle(GUI_ONEOFMANY *,int style);
 #pragma swi_number=0x136
 __swi __arm  void GUI_SetStyle(GUI_NOFMANY *,int style);
+#pragma swi_number=0x136
+__swi __arm  void GUI_SetStyle(GUI_FEEDBACK *,int style);
 #endif
 
 #pragma swi_number=0x137
@@ -1234,4 +1236,15 @@ __swi __arm  void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOO
 __swi __arm  void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
 #pragma swi_number=0x2C4
 __swi __arm  BOOK * Root_GetBookByID(int BookID);
+
+#pragma swi_number=0x2C5
+__swi __arm  GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
+#pragma swi_number=0x2C6
+__swi __arm  void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
+#pragma swi_number=0x2C7
+__swi __arm  void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
+#pragma swi_number=0x2C8
+__swi __arm  void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
+#pragma swi_number=0x2C9
+__swi __arm  void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
 #endif

@@ -3,6 +3,16 @@
 
 typedef struct
 {
+  wchar_t path[128];
+  wchar_t name[128];
+  unsigned char *cfg;
+  int size_cfg;
+  unsigned int level;
+  CFG_HDR *levelstack[16];
+}BCFG_DATA;
+
+typedef struct
+{
   BOOK  book;
   GUI *bcfg;
   GUI_ONEOFMANY *cbox_gui;
@@ -13,6 +23,7 @@ typedef struct
   GUI *tinput;
   GUI *dinput;
   GUI *font_select;
+  GUI_FEEDBACK *key_input;
   LIST *list;
   CFG_HDR *cur_hp;
   unsigned long old_crc;
@@ -20,6 +31,7 @@ typedef struct
   u16 check_box_checked;
   STRID changes_have_been_made;
   STRID save_before_exit;
+  BCFG_DATA bdata;
 }MyBOOK;
 
 typedef struct

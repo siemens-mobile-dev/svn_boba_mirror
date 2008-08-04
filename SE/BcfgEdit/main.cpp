@@ -6,6 +6,7 @@
 
 #include "visual.h"
 #include "datetime.h"
+#include "keyinput.h"
 #include "main.h"
 
 #define MESSAGE(__STR__) MessageBox(LGP_NULL,__STR__,0, 1 ,11000,(BOOK*)FindBook(isBcfgEditBook));
@@ -18,21 +19,7 @@ const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE"  =
   NIL_EVENT_TAG,           NULL
 };
 
-
 const PAGE_DESC bk_base = {"BcfgEdit_Base_Page",0,bk_msglst_base};
-
-
-
-wchar_t cfgpath[128];
-wchar_t cfgname[128];
-
-//Указатель на буфер конфигурации
-char *cfg;
-//Длинна файла конфигурации
-int size_cfg=0;
-
-unsigned int level;
-CFG_HDR *levelstack[16];
 
 enum INPUT_TYPES {
   IT_REAL=0,
@@ -117,43 +104,43 @@ int getnumwidth(unsigned int num)
   return (i);  
 }
 
-int SaveCfg()
+int SaveCfg(BCFG_DATA *bdata)
 {
   int f;
   int result=0;
-  if ((f=_fopen(cfgpath,cfgname,0x204,0x180,0))>=0)
+  if ((f=_fopen(bdata->path,bdata->name,0x204,0x180,0))>=0)
   {
-    if (fwrite(f,cfg,size_cfg)==size_cfg) result=1;
+    if (fwrite(f,bdata->cfg,bdata->size_cfg)==bdata->size_cfg) result=1;
     fclose(f);
   }
   return result;
 }
 
-int LoadCfg(wchar_t *path, wchar_t *fname)
+int LoadCfg(BCFG_DATA *bdata)
 {
   int f;
   FSTAT fstat;
   int result=0;
-  if (cfg) delete cfg;
-  if (path)
+  if (bdata->cfg) delete bdata->cfg;
+  if (bdata->path)
   {
-    if (isFileExist(path,fname,&fstat)!=-1)
+    if (isFileExist(bdata->path,bdata->name,&fstat)!=-1)
     {
-      if ((f=_fopen(path,fname,0x001,0x180,0))>=0)
+      if ((f=_fopen(bdata->path,bdata->name,0x001,0x180,0))>=0)
       {
-        size_cfg=fstat.fsize;
-        if (size_cfg<=0)
+        bdata->size_cfg=fstat.fsize;
+        if (bdata->size_cfg<=0)
         {
           MESSAGE(STR("Zero lenght of .bcfg file!"));
         }
         else
         {
-          cfg=new char[(size_cfg+3)&~3];
-          if (fread(f,cfg,size_cfg)!=size_cfg)
+          bdata->cfg=new unsigned char[(bdata->size_cfg+3)&~3];
+          if (fread(f,bdata->cfg,bdata->size_cfg)!=bdata->size_cfg)
           {
             MESSAGE(STR("Can't read .bcfg file!"));
-            delete cfg;
-            cfg=NULL;
+            delete bdata->cfg;
+            bdata->cfg=NULL;
           }
           else result=1;
         }
@@ -164,14 +151,14 @@ int LoadCfg(wchar_t *path, wchar_t *fname)
   return result;
 }
 
-void SendReconfigEvent()
+void SendReconfigEvent(BCFG_DATA *bdata)
 {
   RECONFIG_EVENT_DATA *reconf;
-  if (wstrlen(cfgpath)<MAXELEMS(reconf->path) && wstrlen(cfgname)<MAXELEMS(reconf->name))
+  if (wstrlen(bdata->path)<MAXELEMS(reconf->path) && wstrlen(bdata->name)<MAXELEMS(reconf->name))
   {
     reconf=(RECONFIG_EVENT_DATA *)malloc(sizeof(RECONFIG_EVENT_DATA));
-    wstrcpy(reconf->path,cfgpath);
-    wstrcpy(reconf->name,cfgname);
+    wstrcpy(reconf->path,bdata->path);
+    wstrcpy(reconf->name,bdata->name);
     UI_Event_wData(ELF_RECONFIG_EVENT,reconf,(void(*)(void*))mfree_adr());
   }
 }
@@ -179,8 +166,10 @@ void SendReconfigEvent()
 
 void OnYesExitGui(BOOK * bk, void *)
 {
-  SaveCfg();
-  SendReconfigEvent();
+  MyBOOK * mbk=(MyBOOK *)bk;
+  BCFG_DATA *bdata=&mbk->bdata;
+  SaveCfg(bdata);
+  SendReconfigEvent(bdata);
   FreeBook(bk);
 }
 
@@ -198,33 +187,34 @@ void OnBackExitGui(BOOK * bk, void *)
 
 void CloseMyBook(BOOK * bk, void *)
 {
-  MyBOOK * myBook=(MyBOOK *)bk;
+  MyBOOK * mbk=(MyBOOK *)bk;
+  BCFG_DATA *bdata=&mbk->bdata;
   CFG_HDR *hp;
-  if (level)
+  if (bdata->level)
   {
-    hp=levelstack[level];
-    levelstack[level]=NULL;
-    level--;
-    GUI_Free(myBook->bcfg);
-    myBook->bcfg=NULL;
+    hp=bdata->levelstack[bdata->level];
+    bdata->levelstack[bdata->level]=NULL;
+    bdata->level--;
+    GUI_Free(mbk->bcfg);
+    mbk->bcfg=NULL;
     create_ed(bk, hp);
   }
   else
   {
-    if (myBook->old_crc==Crc32((unsigned char *)cfg,size_cfg))
+    if (mbk->old_crc==Crc32(bdata->cfg,bdata->size_cfg))
     {
       FreeBook(bk);     
     }
     else
     {
-      myBook->yesno=CreateYesNoQuestionVA(0,
-                                          VAR_BOOK(bk),
-                                          VAR_YESNO_PRE_QUESTION(myBook->changes_have_been_made),
-                                          VAR_YESNO_QUESTION(myBook->save_before_exit),
+      mbk->yesno=CreateYesNoQuestionVA(0,
+                                          VAR_BOOK(mbk),
+                                          VAR_YESNO_PRE_QUESTION(mbk->changes_have_been_made),
+                                          VAR_YESNO_QUESTION(mbk->save_before_exit),
                                           0);
-      AddMSGHook(myBook->yesno,ACTION_YES,OnYesExitGui);
-      AddMSGHook(myBook->yesno,ACTION_NO,OnNoExitGui);
-      AddMSGHook(myBook->yesno,ACTION_BACK,OnBackExitGui);
+      AddMSGHook(mbk->yesno,ACTION_YES,OnYesExitGui);
+      AddMSGHook(mbk->yesno,ACTION_NO,OnNoExitGui);
+      AddMSGHook(mbk->yesno,ACTION_BACK,OnBackExitGui);
     }
   }
 }
@@ -415,59 +405,63 @@ void CreateWinOrPassSI(MyBOOK *myBook, int is_pass)
 
 void onEnterPressed(BOOK * bk, void *)
 {
-  MyBOOK * myBook=(MyBOOK *)bk;
+  MyBOOK * mbk=(MyBOOK *)bk;
+  BCFG_DATA *bdata=&mbk->bdata;
   COLOR_TYPE color;
-  int item=GetFocusetListObjectItem(myBook->bcfg);
-  myBook->cur_hp=(CFG_HDR *)ListElement_GetByIndex(myBook->list,item);
-  switch(myBook->cur_hp->type)
+  int item=GetFocusetListObjectItem(mbk->bcfg);
+  mbk->cur_hp=(CFG_HDR *)ListElement_GetByIndex(mbk->list,item);
+  switch(mbk->cur_hp->type)
   {
   case CFG_UINT:
-    CreateUnsignedNumberInput(myBook);
+    CreateUnsignedNumberInput(mbk);
     break;
   case CFG_INT:
-    CreateSignedNumberInput(myBook);
+    CreateSignedNumberInput(mbk);
     break;
   case CFG_STR_WIN1251:
-    CreateWinOrPassSI(myBook,0);
+    CreateWinOrPassSI(mbk,0);
     break;
   case CFG_CBOX:
-    CreateCBoxGui(myBook);
+    CreateCBoxGui(mbk);
     break;
   case CFG_STR_PASS:
-    CreateWinOrPassSI(myBook,1);
+    CreateWinOrPassSI(mbk,1);
     break;
   case CFG_COORDINATES:
-    CreateEditCoordinatesGUI(myBook);
+    CreateEditCoordinatesGUI(mbk);
     break;
   case CFG_COLOR:
-    color.char_color=((char *)myBook->cur_hp+sizeof(CFG_HDR));
-    CreateEditColorGUI(myBook, color,0);
+    color.char_color=((char *)mbk->cur_hp+sizeof(CFG_HDR));
+    CreateEditColorGUI(mbk, color,0);
     break;
   case CFG_LEVEL:
-    level++;
-    levelstack[level]=myBook->cur_hp;
-    GUI_Free(myBook->bcfg);
-    myBook->bcfg=NULL;
+    bdata->level++;
+    bdata->levelstack[bdata->level]=mbk->cur_hp;
+    GUI_Free(mbk->bcfg);
+    mbk->bcfg=NULL;
     create_ed(bk, NULL);
     return;
   case CFG_CHECKBOX:
     int str_id, a;
-    a=(*((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)))=!*((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR))));
-    str_id=(a?myBook->check_box_checked:myBook->check_box_unchecked)+0x78000000;
-    ListMenu_SetSecondLineText((GUI_LIST *)myBook->bcfg,item,str_id);
+    a=(*((int *)((char *)mbk->cur_hp+sizeof(CFG_HDR)))=!*((int *)((char *)mbk->cur_hp+sizeof(CFG_HDR))));
+    str_id=(a?mbk->check_box_checked:mbk->check_box_unchecked)+0x78000000;
+    ListMenu_SetSecondLineText((GUI_LIST *)mbk->bcfg,item,str_id);
     break;
   case CFG_TIME:
-    BookObj_CallPage(&myBook->book,&bk_time_input);
+    BookObj_CallPage(&mbk->book,&bk_time_input);
     break;
   case CFG_DATE:
-    BookObj_CallPage(&myBook->book,&bk_date_input);
+    BookObj_CallPage(&mbk->book,&bk_date_input);
     break;
   case CFG_COLOR_INT:
-    color.int_color=*((unsigned int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
-    CreateEditColorGUI(myBook, color,1);
+    color.int_color=*((unsigned int *)((char *)mbk->cur_hp+sizeof(CFG_HDR)));
+    CreateEditColorGUI(mbk, color,1);
     break;
   case CFG_FONT:
-    CreateFontSelectGUI(myBook);
+    CreateFontSelectGUI(mbk);
+    break;
+  case CFG_KEYCODE:
+    BookObj_CallPage(&mbk->book,&bk_keycode_input);
     break;
   default:
     return;
@@ -554,6 +548,10 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
     case CFG_FONT:
       str_id=Str2ID(Font_GetNameByFontId(*((int *)((char *)hp+sizeof(CFG_HDR)))),0,SID_ANY_LEN);
       break;
+    case CFG_KEYCODE:
+      snwprintf(ustr,MAXELEMS(ustr)-1,L"0x%02X",*((int *)((char *)hp+sizeof(CFG_HDR))));
+      str_id=Str2ID(ustr,0,SID_ANY_LEN);
+      break;
     case CFG_STR_UTF8:
     case CFG_UTF8_STRING:
     case CFG_RECT:
@@ -590,19 +588,19 @@ int onLBMessage(GUI_MESSAGE * msg)
 };
 
 
-STRID GetParentName()
+STRID GetParentName(BCFG_DATA *bdata)
 {
   wchar_t ustr[32];
-  if (level)
+  if (bdata->level)
   {
-    CFG_HDR *hp=levelstack[level];
+    CFG_HDR *hp=bdata->levelstack[bdata->level];
     win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);    
   }
   else
   {
-    wchar_t *ext=wstrrchr(cfgname,'.');
-    int len=ext?(ext-cfgname):MAXELEMS(ustr)-1;
-    wstrncpy(ustr,cfgname,len);
+    wchar_t *ext=wstrrchr(bdata->name,'.');
+    int len=ext?(ext-bdata->name):MAXELEMS(ustr)-1;
+    wstrncpy(ustr,bdata->name,len);
     ustr[len]=0;
   }
   return (Str2ID(ustr,0,MAXELEMS(ustr)-1));
@@ -614,7 +612,7 @@ GUI_LIST * CreateGuiList(MyBOOK * bk, int set_focus)
   GUI_LIST * lo;
   lo=CreateListObject(&bk->book,0);
   bk->bcfg=(GUI *)lo;
-  GuiObject_SetTitleText(lo,GetParentName());
+  GuiObject_SetTitleText(lo,GetParentName(&bk->bdata));
   SetNumOfMenuItem(lo,bk->list->FirstFree);
   OneOfMany_SetonMessage((GUI_ONEOFMANY*)lo,onLBMessage);
   SetCursorToItem(lo,set_focus);
@@ -628,8 +626,9 @@ GUI_LIST * CreateGuiList(MyBOOK * bk, int set_focus)
 GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
 {
   MyBOOK *mbk=(MyBOOK *)book;
-  char *p=cfg;
-  int n=size_cfg;
+  BCFG_DATA *bdata=&mbk->bdata;
+  unsigned char *p=bdata->cfg;
+  int n=bdata->size_cfg;
   CFG_HDR *hp;
   int need_to_jump=0;
   LIST *list=mbk->list;
@@ -648,7 +647,7 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
     {
       if (hp->min)
       {
-        if ((curlev==level)&&(parent==levelstack[level]))
+        if ((curlev==bdata->level)&&(parent==bdata->levelstack[bdata->level]))
 	{
 	  ListElement_Add(list,hp);
 	}
@@ -660,7 +659,7 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
     }
     else
     {
-      if ((curlev==level)&&(parent==levelstack[level]))
+      if ((curlev==bdata->level)&&(parent==bdata->levelstack[bdata->level]))
       {
         ListElement_Add(list,hp);
       }
@@ -730,7 +729,7 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       if (n<0) goto L_ERRCONSTR;
       if (hp->min)
       {
-	if ((curlev==level)&&(parent==levelstack[level]))
+	if ((curlev==bdata->level)&&(parent==bdata->levelstack[bdata->level]))
 	{
           if (need_to_focus)
           {
@@ -776,6 +775,11 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       if (n<0) goto L_ERRCONSTR;
       p+=sizeof(int);
       break;
+    case CFG_KEYCODE:
+      n-=sizeof(int);
+      if (n<0) goto L_ERRCONSTR;
+      p+=sizeof(int);
+      break;      
       
     default:
       goto L_ENDCONSTR;
@@ -786,6 +790,25 @@ L_ENDCONSTR:
   ShowWindow(gui);
   return(gui);
 }
+
+
+static int CreateEdPageOnCreate(void *mess ,BOOK *bk)
+{
+  MyBOOK *mbk=(MyBOOK *)bk;
+  BCFG_DATA *bdata=&mbk->bdata;
+  mbk->old_crc=Crc32(bdata->cfg,bdata->size_cfg);
+  create_ed(&mbk->book, 0);
+  return(1);
+}
+
+const PAGE_MSG bk_msglst_create_ed[] @ "DYN_PAGE"  = 
+{
+  PAGE_ENTER_EVENT_TAG,    CreateEdPageOnCreate,
+  NIL_EVENT_TAG,           NULL
+};
+
+const PAGE_DESC bk_create_ed = {"BcfgEdit_CreateEditor_Page",0,bk_msglst_create_ed};
+
 
 
 static int TerminateElf(void * ,BOOK *book)
@@ -830,12 +853,12 @@ static int SelBcfgPageOnAccept(void *data, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   FILEITEM *file=(FILEITEM *)data;
-  if (LoadCfg(file->path, file->fname))
+  BCFG_DATA *bdata=&mbk->bdata;
+  wstrncpy(bdata->path,file->path,MAXELEMS(bdata->path));
+  wstrncpy(bdata->name,file->fname,MAXELEMS(bdata->name));
+  if (LoadCfg(bdata))
   {
-    wstrncpy(cfgpath,file->path,MAXELEMS(cfgpath));
-    wstrncpy(cfgname,file->fname,MAXELEMS(cfgname));
-    mbk->old_crc=Crc32((unsigned char *)cfg,size_cfg);
-    create_ed(&mbk->book, 0);
+    BookObj_GotoPage(&mbk->book,&bk_create_ed);
   }
   else
   {
@@ -864,12 +887,10 @@ const PAGE_DESC bk_selbcfg = {"BcfgEdit_SelectBcfg_Page",0,bk_msglst_selbcfg};
 static int MainPageOnCreate(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
+  BCFG_DATA *bdata=&mbk->bdata;
   int find_cfg=1;
-  level=0;
   int icon_id;
-  cfg=NULL;
   mbk->list=List_New();
-  memset(levelstack,0,sizeof(levelstack));
   
   textidname2id(IDN_CHANGES_HAVE_BEEN_MADE,-1,&mbk->changes_have_been_made);
   textidname2id(IDN_SAVE_BEFORE_EXIT,-1,&mbk->save_before_exit);
@@ -877,12 +898,11 @@ static int MainPageOnCreate(void *, BOOK *bk)
   mbk->check_box_unchecked=icon_id;
   iconidname2id(IDN_CHECKBOX_CHECKED_ICON,-1,&icon_id);
   mbk->check_box_checked=icon_id;
-  if (*cfgpath=='/') // Вероятно передали указатель на файл
+  if (*bdata->path=='/') // Вероятно передали указатель на файл
   {
-    if (LoadCfg(cfgpath, cfgname))
+    if (LoadCfg(bdata))
     {
-      mbk->old_crc=Crc32((unsigned char *)cfg,size_cfg);
-      create_ed((BOOK *)mbk, 0);
+      BookObj_GotoPage(&mbk->book,&bk_create_ed);
       find_cfg=0;
     }
   }
@@ -906,7 +926,7 @@ const PAGE_DESC bk_main = {"BcfgEdit_Main_Page",0,bk_msglst_main};
 static void onMyBookClose(BOOK * book)
 {
   MyBOOK *mbk=(MyBOOK *)book;
-  delete cfg;
+  delete mbk->bdata.cfg;
   List_Free(mbk->list);
   SUBPROC(elf_exit);
 }
@@ -919,9 +939,10 @@ int isBcfgEditBook(BOOK * struc)
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
   MyBOOK * myBook=new MyBOOK;
+  BCFG_DATA *bdata=&myBook->bdata;
   memset(myBook,0,sizeof(MyBOOK));
-  if (path) wstrncpy(cfgpath,path,MAXELEMS(cfgpath)); else *cfgpath=0;
-  if (fname) wstrncpy(cfgname,fname,MAXELEMS(cfgname)); else *cfgname=0;
+  if (path) wstrncpy(bdata->path,path,MAXELEMS(bdata->path)); else *bdata->path=0;
+  if (fname) wstrncpy(bdata->name,fname,MAXELEMS(bdata->name)); else *bdata->name=0;
   if (!CreateBook(myBook,onMyBookClose,&bk_base,"BcfgEdit",-1,0))
   {
     delete myBook;
