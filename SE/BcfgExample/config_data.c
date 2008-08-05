@@ -43,5 +43,6 @@ __root const DATE MY_DATE={1988,10,4};
 __root const CFG_HDR cfghdr13={CFG_FONT,"Font test",0,0};
 __root const int FONT=0;
 
-__root const CFG_HDR cfghdr14={CFG_KEYCODE,"Key test",0,0};
+__root const CFG_HDR cfghdr14={CFG_KEYCODE,"Тест клавиши",0,0};
 __root const int KEY=0;
+__root const int KEYMODE=0;

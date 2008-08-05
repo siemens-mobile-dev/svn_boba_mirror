@@ -12,5 +12,7 @@ extern const unsigned int REFRESH_TIME;
 extern const int INT_TEST;
 extern const char WIN_TEST[64];
 extern const char PASS_TEST[64];
-
+extern const int FONT;
+extern const int KEY;
+extern const int KEYMODE;
 #endif

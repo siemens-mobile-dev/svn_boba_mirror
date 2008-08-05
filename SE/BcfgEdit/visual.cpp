@@ -574,8 +574,8 @@ void FontSelectGuiOnKey(DISP_OBJ_FONT_SEL *db,int key,int,int repeat,int type)
       if ((++db->cur_pos)>=db->total_fonts) db->cur_pos=0;
     }
     db->req_check_vis=1;
+    InvalidateRect(&db->dsp_obj,0);
   }
-  InvalidateRect(&db->dsp_obj,0);
 }
 
 void OnBackFontSelect(BOOK * bk, void *)

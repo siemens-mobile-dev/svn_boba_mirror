@@ -29,7 +29,7 @@ void Draw(DISP_OBJ * db,int r1, int r2,int r3)
   {
     if (IS_ENABLED)
     {
-      SetFont(FONT_D_7R);
+      SetFont(FONT);
       //очистили прямоугольник
       DrawRect(X_POS,Y_POS,X_POS+40,Y_POS+9,BRUSH_COLOR,BRUSH_COLOR) ;
       

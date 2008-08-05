@@ -235,17 +235,17 @@ __swi __arm  wchar_t * getFileExtention(wchar_t * fnane);
 __swi __arm  int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
 
 #pragma swi_number=0x128
-__swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+__swi __arm  void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
 #ifdef __cplusplus
 #pragma swi_number=0x128
-__swi __arm  void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
+__swi __arm  void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, void *), void *);
 #endif
 
 #pragma swi_number=0x129
-__swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+__swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 #ifdef __cplusplus
 #pragma swi_number=0x129
-__swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 *timerID,  void *),  void *);
+__swi __arm  u16 Timer_Set(int time, void (*onTimer)(u16 timerID,  void *),  void *);
 #endif
 #pragma swi_number=0x12A
 __swi __arm  void Timer_Kill(u16 *timerID);
@@ -542,6 +542,16 @@ __swi   __arm void delay(OSTIME timeout);
 __swi   __arm OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 #pragma swi_number=0x187
 __swi   __arm void kill_proc(PROCESS pid);
+#pragma swi_number=0x188
+__swi   __arm OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+#pragma swi_number=0x8188
+__swi   __arm int set_bp_adr (void);
+#pragma swi_number=0x189
+__swi   __arm union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
+#pragma swi_number=0x18A
+__swi   __arm OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr); 
+#pragma swi_number=0x818A
+__swi   __arm int clear_bp_adr (void);
 
 #pragma swi_number=0x1A0
 __swi __arm  char* strcpy(char * dest, char * source);
@@ -1250,4 +1260,9 @@ __swi __arm  void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where
 
 #pragma swi_number=0x2CA
 __swi __arm  void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
+
+#pragma swi_number=0x2CB
+__swi __arm  STRID KeyCode2Name(int key_code);
+
+
 #endif

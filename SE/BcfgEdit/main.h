@@ -24,6 +24,9 @@ typedef struct
   GUI *dinput;
   GUI *font_select;
   GUI_FEEDBACK *key_input;
+  GUI * key_sel_list;
+  GUI_ONEOFMANY * keymode_sel_list;
+  
   LIST *list;
   CFG_HDR *cur_hp;
   unsigned long old_crc;

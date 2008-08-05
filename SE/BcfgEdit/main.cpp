@@ -461,7 +461,7 @@ void onEnterPressed(BOOK * bk, void *)
     CreateFontSelectGUI(mbk);
     break;
   case CFG_KEYCODE:
-    BookObj_CallPage(&mbk->book,&bk_keycode_input);
+    BookObj_CallPage(&mbk->book,&bk_keycode_select);
     break;
   default:
     return;
@@ -549,8 +549,7 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
       str_id=Str2ID(Font_GetNameByFontId(*((int *)((char *)hp+sizeof(CFG_HDR)))),0,SID_ANY_LEN);
       break;
     case CFG_KEYCODE:
-      snwprintf(ustr,MAXELEMS(ustr)-1,L"0x%02X",*((int *)((char *)hp+sizeof(CFG_HDR))));
-      str_id=Str2ID(ustr,0,SID_ANY_LEN);
+      str_id=KeyCode2Name(*((int *)((char *)hp+sizeof(CFG_HDR))));
       break;
     case CFG_STR_UTF8:
     case CFG_UTF8_STRING:
