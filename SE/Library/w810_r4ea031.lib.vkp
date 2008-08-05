@@ -392,21 +392,23 @@
 0AE8: FFFFFFFF 916A1945 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
 0AEC: FFFFFFFF 88FB2D4C ;82BB: FONT_DESC *GetFontDesc(void);
 0AF0: FFFFFFFF D0F92D4C ;82BC: int *GetFontCount();
-;0AF4: xxxxxxxx yyyyyyyy ; 2BD: int GC_GetBrushColor(void* GC);
-;0AF8: xxxxxxxx yyyyyyyy ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
-;0AFC: xxxxxxxx yyyyyyyy ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
-;0B00: xxxxxxxx yyyyyyyy ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
-;0B04: xxxxxxxx yyyyyyyy ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
-;0B08: xxxxxxxx yyyyyyyy ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
-;0B0C: xxxxxxxx yyyyyyyy ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
-;0B10: xxxxxxxx yyyyyyyy ; 2C4: BOOK * Root_GetBookByID(int BookID);
-;0B14: xxxxxxxx yyyyyyyy ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
-;0B18: xxxxxxxx yyyyyyyy ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
-;0B1C: xxxxxxxx yyyyyyyy ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
-;0B20: xxxxxxxx yyyyyyyy ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
-;0B24: xxxxxxxx yyyyyyyy ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
-;0B28: xxxxxxxx yyyyyyyy ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
-;0B2C: xxxxxxxx yyyyyyyy ; 2CB: STRID KeyCode2Name(int key_code);
+0AF4: FFFFFFFF A9231945 ; 2BD: int GC_GetBrushColor(void* GC);
+0AF8: FFFFFFFF 69231945 ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
+0AFC: FFFFFFFF B12E1945 ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
+0B00: FFFFFFFF F1A45345 ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
+0B04: FFFFFFFF 91B45345 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
+0B08: FFFFFFFF B1A65445 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
+0B0C: FFFFFFFF FDA65445 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
+0B10: FFFFFFFF 25115345 ; 2C4: BOOK * Root_GetBookByID(int BookID);
+0B14: FFFFFFFF 6D601945 ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
+0B18: FFFFFFFF E1641945 ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
+0B1C: FFFFFFFF 75641945 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
+0B20: FFFFFFFF A5641945 ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
+0B24: FFFFFFFF 4D651945 ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
+0B28: FFFFFFFF BD3A1545 ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
+0B2C: FFFFFFFF 85930A45 ; 2CB: STRID KeyCode2Name(int key_code);
+0B30: FFFFFFFF 556B4245 ; 2CC: int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,u16 * imageID);
+0B34: FFFFFFFF 456B4245 ; 2CD: int ImageID_Free(u16 imageID);
 
 
 
