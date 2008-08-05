@@ -103,7 +103,7 @@
 05C4: 00000000 BD613D45 ; 171: void Hide(void * udata, int zero);
 05C8: 00000000 CD613D45 ; 172: void Show(void * udata, int zero);
 05CC: 00000000 E9953E45 ; 173: void StartAPP (const wchar_t * appname);
-05D0: 00000000 8933E844 ; 174: void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
+05D0: 00000000 F1524445 ; 174: __thumb void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
 05D4: 00000000 9D533A45 ; 175: char * manifest_GetParam(const char *buf, const char *param_name,int unk);
 05D8: 00000000 9D30FB44 ; 176: int lseek(int file,int offset,int mode);
 05DC: 00000000 1F251444 ;8177: int get_VBUFFER(void); //nullsub(void)
@@ -125,7 +125,7 @@
 061C: 00000000 B8D34244 ; 187: void kill_proc(PROCESS pid);
 0680: 00000000 15AF6744 ; 1A0: char* strcpy(char * dest, char * source);
 0684: 00000000 75D01245 ; 1A1: void *CreateMessage(int size,int ev,char *name);
-0688: 00000000 CBD01245 ; 1A2: void SendMessage(void **signal,int PID);
+0688: 00000000 C9D01245 ; 1A2: __thumb void SendMessage(void **signal,int PID);
 068C: 00000000 51D11245 ; 1A3: void * WaitMessage(void *SIGSEL);
 0690: 00000000 65D11245 ; 1A4: int FreeMessage(void **Mess);
 0694: 00000000 21520F45 ; 1A5: void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
