@@ -1747,6 +1747,9 @@ __swi __arm char * RamMissedSMS();
 #pragma swi_number=0x80D4
 __swi __arm char * RamMissedMessage();
 
+#pragma swi_number=0x80D8
+__swi __arm char * RamMenuAnywhere();
+
 #pragma swi_number=0x80DF
 __swi __arm char *RamPressedKey();
 
