@@ -403,9 +403,8 @@
 0B1C: 00000000 71503745 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
 0B20: 00000000 9D503745 ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
 0B24: 00000000 35513745 ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
-
-
-
+0B28: 00000000 1D5F3645 ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
+0B2C: 00000000 61D00145 ; 2CB: STRID KeyCode2Name(int key_code);
 
 
 ;locale=Russian_Russia.1251
