@@ -403,6 +403,8 @@
 0B24: 00000000 89554945 ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
 0B28: 00000000 E5624845 ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
 0B2C: 00000000 9DEC1445 ; 2CB: STRID KeyCode2Name(int key_code);
+0B30: 00000000 9942F644 ; 2CC: int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,u16 * imageID);
+0B34: 00000000 8D42F644 ; 2CD: int ImageID_Free(u16 imageID);
 
 
 

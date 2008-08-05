@@ -1264,5 +1264,9 @@ __swi __arm  void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *
 #pragma swi_number=0x2CB
 __swi __arm  STRID KeyCode2Name(int key_code);
 
+#pragma swi_number=0x2CC
+__swi __arm  int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,u16 * imageID);
+#pragma swi_number=0x2CD
+__swi __arm  int ImageID_Free(u16 imageID);
 
 #endif
