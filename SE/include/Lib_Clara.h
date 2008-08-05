@@ -1247,4 +1247,7 @@ __swi __arm  void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk))
 __swi __arm  void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
 #pragma swi_number=0x2C9
 __swi __arm  void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
+
+#pragma swi_number=0x2CA
+__swi __arm  void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
 #endif
