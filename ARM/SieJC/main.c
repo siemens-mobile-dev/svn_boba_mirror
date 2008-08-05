@@ -32,6 +32,7 @@
 
 extern int status_keyhook(int submsg, int msg);
 extern void AutoStatus(void);
+extern void RedrawMainIcon(void);
 int autostatus_time;
 int as;
 int CLIST_FONT;
@@ -83,6 +84,7 @@ const char OS[] = "SGOLD_ELF-Platform";
 const char ipc_my_name[32]=IPC_SIEJC_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
+IPC_REQ ipcscrp={"ScrD","SieJC",(void*)RedrawMainIcon};
 
 int Is_Sounds_Enabled;
 int Is_Vibra_Enabled;
@@ -1365,6 +1367,9 @@ void maincsm_oncreate(CSM_RAM *data)
   gipc.name_from=ipc_my_name;
   gipc.data=(void *)-1;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
+#ifndef NEWSGOLD
+  if ((IDLE_ICON)&&(*(RamMenuAnywhere()+10)==0xA8)) GBS_SendMessage(MMI_CEPID,MSG_IPC,0,&ipcscrp); //если стоит патч ScrP работаем через него
+#endif
 #ifdef LOG_ALL
   // Определим адреса некоторых процедур, на случай,
   // если клиент будет падать - там могут быть аборты...
@@ -1383,6 +1388,9 @@ extern char Display_Offline;
 
 void maincsm_onclose(CSM_RAM *csm)
 {
+#ifndef NEWSGOLD
+  if ((IDLE_ICON)&&(*(RamMenuAnywhere()+10)==0xA8)) GBS_SendMessage(MMI_CEPID,MSG_IPC,1,&ipcscrp); //если стоит патч ScrP работаем через него
+#endif
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&Ping_Timer);
   GBS_DelTimer(&TMR_Send_Presence);
@@ -1510,48 +1518,15 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
       }
     }
-
     if (IDLE_ICON)
-    {
+#ifndef NEWSGOLD
+      if(*(RamMenuAnywhere()+10)!=0xA8)
+#endif
+     {
 #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
       CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-      if (IsGuiOnTop(idlegui_id))
-      {
-        GUI *igui=GetTopGUI();
-        if (igui) //И он существует
-        {
-#ifdef ELKA
-          {
-            void *canvasdata=BuildCanvas();
-#else
-            void *idata=GetDataOfItemByID(igui,2);
-            if (idata)
-            {
-              void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
-#endif
-
-#ifdef USE_PNG_EXT
-              char mypic[128];
-
-              if (CList_GetUnreadMessages()>0)
-                Roster_getIconByStatus(mypic,50); //иконка сообщения
-              else
-                Roster_getIconByStatus(mypic, My_Presence);
-              DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth((int)mypic)-1,IDLE_ICON_Y+GetImgHeight((int)mypic)-1,1);
-              DrawImg(IDLE_ICON_X,IDLE_ICON_Y,(int)mypic);
-#else
-              int mypic=0;
-              if (CList_GetUnreadMessages()>0)
-                mypic=Roster_getIconByStatus(50); //иконка сообщения
-              else
-                mypic=Roster_getIconByStatus(My_Presence);
-              DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
-              DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
-#endif
-            }
-          }
-        }
-      }
+      if (IsGuiOnTop(idlegui_id)) RedrawMainIcon();
+     }
     }
     if(Quit_Required)
     {
@@ -1644,6 +1619,36 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     }
     return(1);
   }
+
+void RedrawMainIcon(void)
+{
+  GUI *igui=GetTopGUI();
+  if (igui) //И он существует
+ {
+      void *idata=GetDataOfItemByID(igui,2);
+      if (idata)
+      {
+        void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+#ifdef USE_PNG_EXT
+        char mypic[128];
+        if (CList_GetUnreadMessages()>0)
+          Roster_getIconByStatus(mypic,50); //иконка сообщения
+        else
+          Roster_getIconByStatus(mypic, My_Presence);
+        DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth((int)mypic)-1,IDLE_ICON_Y+GetImgHeight((int)mypic)-1,1);
+        DrawImg(IDLE_ICON_X,IDLE_ICON_Y,(int)mypic);
+#else
+        int mypic=0;
+        if (CList_GetUnreadMessages()>0)
+          mypic=Roster_getIconByStatus(50); //иконка сообщения
+        else
+          mypic=Roster_getIconByStatus(My_Presence);
+        DrawCanvas(canvasdata,IDLE_ICON_X,IDLE_ICON_Y,IDLE_ICON_X+GetImgWidth(mypic)-1,IDLE_ICON_Y+GetImgHeight(mypic)-1,1);
+        DrawImg(IDLE_ICON_X,IDLE_ICON_Y,mypic);
+#endif
+       }
+ }
+}
 
 #ifdef ICONBAR
 typedef struct
@@ -1905,20 +1910,20 @@ int main(char *exename, char *fname)
   
   InitConfig(fname);
   ReadDefSettings(elf_path);
-    
-  if(!ReadColor(cur_color_name))
-  {
-    MsgBoxError(1,(int)"No color bcfg");
-    return 0;
-  }
-    
+
   if(!strlen(USERNAME))
   {
     ShowMSG(1,(int)LG_ENTERLOGPAS);
     OpenSettings();
     return 0;
   }
-   
+
+  if(!ReadColor(cur_color_name))
+  {
+    MsgBoxError(1,(int)"No color bcfg");
+    return 0;
+  }
+
   extern TTime intimes;           // инициализация переменных
   extern TDate indates;           // для idle
   GetDateTime(&indates,&intimes); //

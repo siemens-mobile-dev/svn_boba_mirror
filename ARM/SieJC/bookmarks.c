@@ -34,12 +34,15 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
   XMLNode *elem = nodeEx->subnode;
   XMLNode *tmpnode;
   extern const char conference_t[];
-  char jid[]="jid";
+  extern const int MUC_AUTOJOIN;
+  char jid[] = "jid";
+  char ajoin=0;
   char *bm_name = NULL;
   char *n_name = NULL;
   char *c_name=NULL;
   char *c_nick=NULL;
   char *c_pass=NULL;
+  char *c_ajoin = NULL;
 
   while(elem)
   {
@@ -49,6 +52,8 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
     {
       c_name = XML_Get_Attr_Value(jid,elem->attr);
       bm_name = XML_Get_Attr_Value("name",elem->attr);
+      c_ajoin = XML_Get_Attr_Value("autojoin",elem->attr);
+       
       tmpnode = XML_Get_Child_Node_By_Name(elem, "nick");
       if(tmpnode)
       {
@@ -84,6 +89,15 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
       //если нет ника и имени конфы такая закладка нам ненужна
       if((bmitem->mucname)&&(bmitem->nick))
       {
+      if(MUC_AUTOJOIN&&c_ajoin)
+      {
+      if((!strcmp(c_ajoin, "true"))||(!strcmp(c_ajoin, "1")))
+        {
+          ajoin=1;
+          extern const unsigned int DEFAULT_MUC_MSGCOUNT;
+          Enter_Conference(bmitem->mucname, bmitem->nick, bmitem->pass, DEFAULT_MUC_MSGCOUNT);
+        }
+      }
       bmitem->next = NULL;
 
       BM_ITEM *tmp=BM_ROOT;
@@ -98,7 +112,7 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
     }
     elem = elem->next;
   }
-  Disp_BM_Menu();
+  if (!(MUC_AUTOJOIN&&ajoin))Disp_BM_Menu();
 }
 
 //Context:HELPER

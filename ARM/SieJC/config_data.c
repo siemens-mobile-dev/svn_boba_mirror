@@ -62,6 +62,9 @@ __root const char DEFAULT_MUC_NICK[64]="";
 __root const CFG_HDR cfghdr59={CFG_UINT,LG_MUCDEFMSGCOUNT,0,20};
 __root const unsigned int DEFAULT_MUC_MSGCOUNT=20;
 
+__root const CFG_HDR cfghdr60={CFG_CHECKBOX,"Автовход в конференцию",0,2};
+__root const int MUC_AUTOJOIN=0;
+
 __root const CFG_HDR cfghdrshowii={CFG_CHECKBOX, LG_SHOWIDLEICON, 0, 2};
 __root const int IDLE_ICON=1;
 
