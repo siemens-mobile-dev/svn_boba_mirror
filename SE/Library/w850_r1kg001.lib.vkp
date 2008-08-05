@@ -401,8 +401,7 @@
 0B1C: 00000000 C5544945 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
 0B20: 00000000 E5534945 ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
 0B24: 00000000 89554945 ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
-0B28: 00000000 89554945 ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
-
+0B28: 00000000 E5624845 ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
 
 
 
