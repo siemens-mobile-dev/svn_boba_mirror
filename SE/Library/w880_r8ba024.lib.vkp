@@ -391,7 +391,7 @@
 0AEC: 00000000 9CDB1620 ;82BB: FONT_DESC *GetFontDesc(void);
 0AF0: 00000000 30DE1620 ;82BC: int *GetFontCount();
 0AF4: 00000000 59A84745 ; 2BD: __thumb int GC_GetBrushColor(void* GC);
-0AF8: 00000000 19A84645 ; 2BE: __thumb void GC_SetBrushColor(void* GC , int brush_color);
+0AF8: 00000000 19A84745 ; 2BE: __thumb void GC_SetBrushColor(void* GC , int brush_color);
 0AFC: 00000000 C9B04745 ; 2BF: __thumb void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
 0B00: 00000000 F1DF4945 ; 2C0: __thumb BOOK * MenuBook_Desktop(int mode,int BookID);
 0B04: 00000000 85E14945 ; 2C1: __thumb wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
