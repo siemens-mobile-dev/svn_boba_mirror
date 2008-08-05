@@ -44,11 +44,11 @@
 04D8: 00000000 05CF4745 ; 136: void GUI_SetStyle(GUI *,int style);
 04DC: 00000000 45724345 ; 137: int GUIonMessage_GetCreatedItemIndex ( void *msg);
 04E0: 00000000 51724345 ; 138: char SetMenuItemText0 ( GUI_MESSAGE *, int StrID);
-04E4: 00000000 61724345 ; 139: char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
-04E8: 00000000 71724345 ; 13A: char SetMenuItemText2 ( GUI_MESSAGE *, int StrID);
+04E4: 00000000 81724345 ; 139: __thumb char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
+04E8: 00000000 61724345 ; 13A: __thumb char SetMenuItemText2 ( GUI_MESSAGE *, int StrID);
 04EC: 00000000 71724345 ; 13B: char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
 04F0: 00000000 C9724345 ; 13C: void SetListObjectItemIcon ( void *msg , int align , int iconID);
-04F4: 00000000 09B24745 ; 13D: void SetHeaderText( void *obj , int StrID);
+04F4: 00000000 211D4745 ; 13D: __thumb void SetHeaderText( void *obj , int StrID);
 04F8: 00000000 01674345 ; 13E: int GetFocusetListObjectItem( void *obj);
 04FC: 00000000 51674345 ; 13F: void SetMenuItemStyle( void *obj , int style);
 0500: 00000000 09B24745 ; 140: void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
@@ -81,8 +81,8 @@
 056C: 00000000 E995F644 ; 15B: char * wstr2strn (char * str , const wchar_t * wstr, int maxlen);
 0570: 00000000 B1F34545 ; 15C: int int2strID (int num);
 0574: 00000000 65F64545 ; 15D: int Str2ID(const void * wstr , int flag , int len);
-0578: 00000000 E9F94545 ; 15E: void StrID2Str(int StrID,char * str,int maxlen);
-057C: 00000000 F9FA4545 ; 15F: void TextID2wstr(int StrID,wchar_t * str,int maxlen);
+0578: 00000000 F9FA4545 ; 15E: __thumb void StrID2Str(int StrID,char * str,int maxlen);
+057C: 00000000 E9F94545 ; 15F: __thumb void TextID2wstr(int StrID,wchar_t * str,int maxlen);
 0580: 00000000 C9F84545 ; 160: int TextGetLength(int StrID);
 0584: 00000000 2DF84545 ; 161: void TextFree(int StrID);
 0588: 00000000 1993F044 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
