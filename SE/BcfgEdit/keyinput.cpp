@@ -93,11 +93,16 @@ const PAGE_DESC bk_keycode_input = {"BcfgEdit_KeyCodeInput_Page",0,bk_msglst_key
 const wchar_t * modes[] =
 {
   L"Short Press",
-  L"Short Release",
   L"Long Press",
-  L"Long Release",
-  L"Repeat"
+  L"Repeat",
+  L"Short Release",
+  L"Long Release"
 };
+
+STRID GetKeyModeName(int mode)
+{
+  return (mode<5?Str2ID(modes[mode],0,SID_ANY_LEN):LGP_NULL);
+}
 
 void KeyModeSelect_OnCloseCBoxGui(BOOK * bk, void *)
 {
@@ -128,11 +133,11 @@ void KeyModeSelect_CreateCBoxGui(MyBOOK *myBook)
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   GuiObject_SetTitleText(om,Str2ID(ustr,0,SID_ANY_LEN));
   
-  strid[0]=Str2ID(modes[0],0,SID_ANY_LEN);
-  strid[1]=Str2ID(modes[1],0,SID_ANY_LEN);
-  strid[2]=Str2ID(modes[2],0,SID_ANY_LEN);
-  strid[3]=Str2ID(modes[3],0,SID_ANY_LEN);
-  strid[4]=Str2ID(modes[4],0,SID_ANY_LEN);
+  strid[0]=GetKeyModeName(0);
+  strid[1]=GetKeyModeName(1);
+  strid[2]=GetKeyModeName(2);
+  strid[3]=GetKeyModeName(3);
+  strid[4]=GetKeyModeName(4);
   
   OneOfMany_SetTexts(om,strid,5);
   OneOfMany_SetChecked(om,*((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)+sizeof(int))));

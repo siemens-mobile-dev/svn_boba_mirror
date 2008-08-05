@@ -549,7 +549,14 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
       str_id=Str2ID(Font_GetNameByFontId(*((int *)((char *)hp+sizeof(CFG_HDR)))),0,SID_ANY_LEN);
       break;
     case CFG_KEYCODE:
-      str_id=KeyCode2Name(*((int *)((char *)hp+sizeof(CFG_HDR))));
+      {
+        STRID s_ids[3];
+        int *p=((int *)((char *)hp+sizeof(CFG_HDR)));
+        s_ids[0]=KeyCode2Name(p[0]);
+        s_ids[1]=','+0x78000000;
+        s_ids[2]=GetKeyModeName(p[1]);
+        str_id=Str2ID(s_ids,5,3);
+      }
       break;
     case CFG_STR_UTF8:
     case CFG_UTF8_STRING:
@@ -775,9 +782,9 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       p+=sizeof(int);
       break;
     case CFG_KEYCODE:
-      n-=sizeof(int);
+      n-=2*sizeof(int);
       if (n<0) goto L_ERRCONSTR;
-      p+=sizeof(int);
+      p+=2*sizeof(int);
       break;      
       
     default:
