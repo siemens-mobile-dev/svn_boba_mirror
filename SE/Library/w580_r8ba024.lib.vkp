@@ -168,7 +168,7 @@
 0738: 00000000 ED343645 ; 1CE: GUI *GUI_Free(GUI*);
 073C: 00000000 69383645 ; 1CF: void InputFeedback_SetIcon(GUI *gui, int icon);
 0740: 00000000 81562F45 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
-074C: 00000000 A59FE844 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
+074C: 00000000 959FE844 ; 1D3: __thumb int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 01E73145 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 41E93145 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 0758: 00000000 C5E83145 ; 1D6: void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
