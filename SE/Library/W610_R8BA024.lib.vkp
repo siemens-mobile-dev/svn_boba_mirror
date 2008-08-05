@@ -44,9 +44,9 @@
 04D8: 00000000 610C3645 ; 136: void GUI_SetStyle(GUI *,int style);
 04DC: 00000000 29AE3145 ; 137: int GUIonMessage_GetCreatedItemIndex ( void *msg);
 04E0: 00000000 35AE3145 ; 138: char SetMenuItemText0 ( GUI_MESSAGE *, int StrID);
-04E4: 00000000 45AE3145 ; 139: char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
-04E8: 00000000 55AE3145 ; 13A: char SetMenuItemText2 ( GUI_MESSAGE *, int StrID);
-04EC: 00000000 65AE3145 ; 13B: char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
+04E4: 00000000 65AE3145 ; 139: __thumb char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
+04E8: 00000000 45AE3145 ; 13A: __thumb char SetMenuItemText2 ( GUI_MESSAGE *, int StrID);
+04EC: 00000000 55AE3145 ; 13B: __thumb char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
 04F0: 00000000 ADAE3145 ; 13C: void SetListObjectItemIcon ( void *msg , int align , int iconID);
 04F4: 00000000 555A3545 ; 13D: void SetHeaderText( void *obj , int StrID);
 04F8: 00000000 EDA23145 ; 13E: int GetFocusetListObjectItem( void *obj);
@@ -187,7 +187,7 @@
 0798: 00000000 E96E3545 ; 1E6: void GetGuiRect(void*,RECT*);
 079C: 00000000 65EB3545 ; 1E7: void get_GC_RECT(void*,RECT*);
 07A0: 00000000 69EE3545 ; 1E8: int get_GC_xx(void * GC);
-07A4: 00000000 4535EE5D ; 1E9: void *set_GC_xx(void * GC, int);
+07A4: 00000000 5DEE3545 ; 1E9: __thumb void *set_GC_xx(void * GC, int);
 07A8: 00000000 15EB3545 ; 1EA: void GC_validate_RECT(void * GC , RECT*);
 07AC: 00000000 69B32A45 ; 1EB: void addGui2book(BOOK*,GUI*);
 07B0: 00000000 71973545 ; 1EC: void DrawRect(int x1, int y1,int x2 ,int y2,int pen_color,int brush_color);
@@ -332,7 +332,7 @@
 09F8: 00000000 C5D05544 ; 27E: int strncmp(const char *s1, const char *s2, int len);
 09FC: 00000000 F9D05544 ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 0A00: 00000000 F5CF5544 ; 280: char *strcat(char *dest, const char *src);
-0A04: 00000000 39C43145 ; 281: __thumb void GuiObject_SetTitleType(GUI *gui, int type);
+0A04: 00000000 25113645 ; 281: __thumb void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: 00000000 D1AE3145 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: 00000000 2DD1E444 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, u16 * ImageID ,char * error);
 0A10: 00000000 DDD1E444 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
