@@ -494,7 +494,7 @@ __swi __arm  void StartAPP (const wchar_t * appname);
 //__swi __arm  void CreateEvent(int event);
 
 #pragma swi_number=0x174
-__swi __arm  void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
+__swi __arm  void ListMenu_SetOnMessages (GUI_LIST * , int (*proc)(GUI_MESSAGE *));
 
 #pragma swi_number=0x175
 __swi __arm  char * manifest_GetParam(const char *buf, const char *param_name,int unk);
@@ -1091,7 +1091,7 @@ __swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16
 __swi __arm SURFACE ** get_Surfaces(void);
 
 #pragma swi_number=0x286
-__swi __arm int iconidname2id(const wchar_t* idname,int maxnamelen,wchar_t * id);
+__swi __arm int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 #pragma swi_number=0x287
 __swi __arm int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 
@@ -1268,5 +1268,18 @@ __swi __arm  STRID KeyCode2Name(int key_code);
 __swi __arm  int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,wchar_t * imageID);
 #pragma swi_number=0x2CD
 __swi __arm  void ImageID_Free(wchar_t imageID);
+
+#pragma swi_number=0x2CE
+__swi __arm  SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
+#pragma swi_number=0x2CF
+__swi __arm  int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
+#pragma swi_number=0x2D0
+__swi __arm  int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
+#pragma swi_number=0x2D1
+__swi __arm  int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
+#pragma swi_number=0x2D2
+__swi __arm  wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
+#pragma swi_number=0x2D3
+__swi __arm  wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
 
 #endif

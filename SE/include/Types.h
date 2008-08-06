@@ -698,4 +698,6 @@ typedef struct
 } FONT_DESC;
 #pragma pack()
 
+typedef struct{} SUB_EXECUTE;
+
 #endif
