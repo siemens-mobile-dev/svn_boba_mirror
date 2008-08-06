@@ -27,8 +27,8 @@
 0494: 00000000 9DCBEC44 ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 7121E944 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
 049C: 00000000 59D4E844 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
-04A0: 00000000 21282A45 ; 128: void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
-04A4: 00000000 ED272A45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, void *), void *);
+04A0: 00000000 21282A45 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+04A4: 00000000 ED272A45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 79282A45 ; 12A: void Timer_Kill(u16 *timerID);
 04AC: 00000000 395A2A45 ; 12B: int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
 04B0: 00000000 615B2A45 ; 12C: void BookObj_KillBook(void *Book);
@@ -123,6 +123,9 @@
 0614: 00000000 F4E13044 ; 185: void delay(OSTIME timeout);
 0618: 00000000 BCE33044 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 061C: 00000000 E8E33044 ; 187: void kill_proc(PROCESS pid);
+;0620: xxxxxxxx yyyyyyyy ;8188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
+;0628: xxxxxxxx yyyyyyyy ;818A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 0680: 00000000 DDBC5544 ; 1A0: char* strcpy(char * dest, char * source);
 0684: 00000000 29E4FF44 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 7DE4FF44 ; 1A2: void SendMessage(void **signal,int PID);
@@ -165,7 +168,7 @@
 0724: 00000000 2D832B45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: 00000000 FDC13545 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: 00000000 D1C23545 ; 1CB: void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
-0730: 00000000 85C33545 ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
+0730: 00000000 85C33545 ; 1CC: void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI *);
 0734: 00000000 C1C33545 ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
 0738: 00000000 21B13545 ; 1CE: GUI *GUI_Free(GUI*);
 073C: 00000000 9DB43545 ; 1CF: void InputFeedback_SetIcon(GUI *gui, int icon);
@@ -295,7 +298,7 @@
 0960: 00000000 29E43645 ; 258: int Display_GetHeight(int Display);
 0964: 00000000 35E43645 ; 259: int Display_GetWidth(int Display);
 0968: 00000000 E5D10045 ; 25A: void PlaySystemSound (int SndNumber);
-0974: 00000000 C5C23545 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
+0974: 00000000 C5C23545 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
 0978: 00000000 B5C23545 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 097C: 00000000 F1943545 ; 25F: int GC_GetPenColor (void* GC);
 0980: 00000000 B5943545 ; 260: void GC_SetPenColor(void* GC , int pen_color);
@@ -390,19 +393,23 @@
 0AE8: 00000000 09BC3645 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
 0AEC: 00000000 94901820 ;82BB: FONT_DESC *GetFontDesc(void);
 0AF0: 00000000 28931820 ;82BC: int *GetFontCount();
-;0AF4: xxxxxxxx yyyyyyyy ; 2BD: int GC_GetBrushColor(void* GC);
-;0AF8: xxxxxxxx yyyyyyyy ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
-;0AFC: xxxxxxxx yyyyyyyy ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
-;0B00: xxxxxxxx yyyyyyyy ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
-;0B04: xxxxxxxx yyyyyyyy ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
-;0B08: xxxxxxxx yyyyyyyy ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
-;0B0C: xxxxxxxx yyyyyyyy ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
-;0B10: xxxxxxxx yyyyyyyy ; 2C4: BOOK * Root_GetBookByID(int BookID);
-;0B14: xxxxxxxx yyyyyyyy ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
-;0B18: xxxxxxxx yyyyyyyy ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
-;0B1C: xxxxxxxx yyyyyyyy ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
-;0B20: xxxxxxxx yyyyyyyy ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
-;0B24: xxxxxxxx yyyyyyyy ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
+0AF4: 00000000 D1953545 ; 2BD: int GC_GetBrushColor(void* GC);
+0AF8: 00000000 91953545 ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
+0AFC: 00000000 419E3545 ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
+0B00: 00000000 71CD3745 ; 2C0: BOOK * MenuBook_Desktop(int mode,int BookID);
+0B04: 00000000 05CF3745 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
+0B08: 00000000 752E3745 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
+0B0C: 00000000 AD2E3745 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
+0B10: 00000000 C5402A45 ; 2C4: BOOK * Root_GetBookByID(int BookID);
+0B14: 00000000 41B23645 ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
+0B18: 00000000 79B63645 ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
+0B1C: 00000000 19B63645 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
+0B20: 00000000 39B53645 ; 2C8: void Feedback_SetTimeout(GUI_FEEDBACK *, int time_ms);
+0B24: 00000000 DDB63645 ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
+0B28: 00000000 19C43545 ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
+0B2C: 00000000 55710245 ; 2CB: STRID KeyCode2Name(int key_code);
+0B30: 00000000 1940E444 ; 2CC: int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,u16 * imageID);
+0B34: 00000000 0D40E444 ; 2CD: int ImageID_Free(u16 imageID);
 
 
 
