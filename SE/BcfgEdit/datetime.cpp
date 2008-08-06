@@ -30,7 +30,7 @@ static int TI_OnEnter(void *, BOOK * bk)
   TIME *time=((TIME *)((char *)mbk->cur_hp+sizeof(CFG_HDR)));
   int time_format=4;
   char time_f;
-  int icon_id;
+  wchar_t icon_id;
   t.hour=time->hour;
   t.min=time->min;
   t.sec=time->sec;
@@ -86,7 +86,7 @@ static int DI_OnEnter(void *, BOOK * bk)
   DATE *date=((DATE *)((char *)mbk->cur_hp+sizeof(CFG_HDR)));
   int date_format=4;
   char date_f;
-  int icon_id;
+  wchar_t icon_id;
   d.year=date->year;
   d.mon=date->mon;
   d.day=date->day;

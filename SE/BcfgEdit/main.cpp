@@ -895,7 +895,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   MyBOOK *mbk=(MyBOOK *)bk;
   BCFG_DATA *bdata=&mbk->bdata;
   int find_cfg=1;
-  int icon_id;
+  wchar_t icon_id;
   mbk->list=List_New();
   
   textidname2id(IDN_CHANGES_HAVE_BEEN_MADE,-1,&mbk->changes_have_been_made);
