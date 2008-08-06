@@ -1281,5 +1281,8 @@ __swi __arm  int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath)
 __swi __arm  wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
 #pragma swi_number=0x2D3
 __swi __arm  wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
-
+#pragma swi_number=0x2D4
+__swi __arm  int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+#pragma swi_number=0x2D5
+__swi __arm  int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 #endif
