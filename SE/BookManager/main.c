@@ -1073,6 +1073,10 @@ int main (void)
     InitConfig();
     ModifyKeyHook(NewKey,1);
   }
-  else MessageBox(0x6fFFFFFF,STR("BookManager is already runed"),0, 1 ,5000,0);
+  else
+  {
+    MessageBox(0x6fFFFFFF,STR("BookManager is already runed"),0, 1 ,5000,0);
+    SUBPROC(elf_exit);
+  }
   return(0);
 }
