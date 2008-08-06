@@ -1267,6 +1267,6 @@ __swi __arm  STRID KeyCode2Name(int key_code);
 #pragma swi_number=0x2CC
 __swi __arm  int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,wchar_t * imageID);
 #pragma swi_number=0x2CD
-__swi __arm  int ImageID_Free(wchar_t imageID);
+__swi __arm  void ImageID_Free(wchar_t imageID);
 
 #endif
