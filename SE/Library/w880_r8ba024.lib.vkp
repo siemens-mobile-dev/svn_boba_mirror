@@ -405,8 +405,7 @@
 0B24: 00000000 65C94845 ; 2C9: __thumb void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
 0B28: 00000000 9DD64745 ; 2CA: __thumb void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
 0B2C: 00000000 45EC1445 ; 2CB: __thumb STRID KeyCode2Name(int key_code);
-
-
-
+0B30: 00000000 3540F644 ; 2CC: __thumb int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,u16 * imageID);
+0B34: 00000000 2940F644 ; 2CD: __thumb int ImageID_Free(u16 imageID);
 
 ;locale=Russian_Russia.1251
