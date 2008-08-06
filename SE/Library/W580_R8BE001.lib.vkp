@@ -413,6 +413,7 @@
 0B44: 00000000 2DF7EC44 ; 2D1: int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
 0B48: 00000000 25F7EC44 ; 2D2: wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
 0B4C: 00000000 D9F7EC44 ; 2D3: wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
-
+0B50: 00000000 A5F3EC44 ; 2D4: int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+0B54: 00000000 B1F7EC44 ; 2D5: int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 
 ;locale=Russian_Russia.1251
