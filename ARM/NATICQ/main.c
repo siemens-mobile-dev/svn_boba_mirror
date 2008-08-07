@@ -1474,7 +1474,14 @@ void get_answer(void)
 	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	  break;
 	case T_ERROR:
-	  snprintf(logmsg,255,LG_GRERROR,RXbuf.data);
+          if(strstr(RXbuf.data, "Error code 1") || strstr(RXbuf.data, "110"))
+          {
+            snprintf(logmsg,255,LG_GRERROR,LG_GRDBLCONNECT);
+            disautorecconect = 1;
+          }
+          else
+            snprintf(logmsg,255,LG_GRERROR,RXbuf.data);
+
 	  SMART_REDRAW();
 	  break;
 	case T_RECVMSG:
@@ -2286,6 +2293,7 @@ int method5(MAIN_GUI *data,GUI_MSG *msg)
       }
       break;
     case '0':
+      disautorecconect=0;
       SUBPROC((void*)end_socket);
       GBS_DelTimer(&reconnect_tmr);
       DNR_TRIES=3;
@@ -2566,7 +2574,8 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       vibra_count=1;
       start_vibra();
       is_gprs_online=1;
-      strcpy(logmsg,LG_GRGPRSUP);
+      //strcpy(logmsg,LG_GRGPRSUP);
+      snprintf(logmsg, 255, LG_GRGPRSUP, RECONNECT_TIME);
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
       return(1);
     case ENIP_DNR_HOST_BY_NAME:
@@ -2671,7 +2680,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	if (!disautorecconect)
         {
           GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
-          snprintf(logmsg,255,"%s\nReconect after %d second...",logmsg, RECONNECT_TIME);
+          snprintf(logmsg,255,LG_GRRECONNECT,logmsg, RECONNECT_TIME);
         }
 	break;
       }

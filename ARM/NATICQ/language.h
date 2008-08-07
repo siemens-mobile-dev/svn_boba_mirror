@@ -136,7 +136,10 @@
 #define LG_GRSTATUSCHNG  "SC%d: %04X"
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
-#define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
+#define LG_GRGPRSUP      "GPRS сессия запущена, подключение через %d секунд..."
+#define LG_GRDBLCONNECT  "Номером зашли с другого клиента"
+#define LG_GRRECONNECT   "%s\nОшибка, переподключение через %d секунд..."
+
 
 #endif
 
@@ -267,7 +270,9 @@
 #define LG_GRSTATUSCHNG  "SC%d: %04X"
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
-#define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
+#define LG_GRGPRSUP      "GPRS up, wait %d sec..."
+#define LG_GRDBLCONNECT  "Another client connected"
+#define LG_GRRECONNECT   "%s\nReconect after %d second..."
 
 #endif
 
@@ -399,7 +404,9 @@
 #define LG_GRSTATUSCHNG  "SC%d: %04X"
 #define LG_GRERROR       "ERR: %s"
 #define LG_GRRECVMSG     "MSG%d: %s"
-#define LG_GRGPRSUP      "GPRS up, wait 10 sec..."
+#define LG_GRGPRSUP      "GPRS up, wait %d sec..."
+#define LG_GRDBLCONNECT  "Another client connected"
+#define LG_GRRECONNECT   "%s\nReconect after %d second..."
 
 #endif
 
