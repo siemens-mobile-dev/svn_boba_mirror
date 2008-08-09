@@ -1129,7 +1129,7 @@ __swi __arm void * CallID_GetCallStatusDesc(int CallID);
 #pragma swi_number=0x296
 __swi __arm wchar_t * CallStatusDesc_GetName(void * CallStatusDesc);
 #pragma swi_number=0x297
-__swi __arm void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
+__swi __arm void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void (*freefunc)(void * elem_from_list));
 
 #pragma swi_number=0x298
 __swi __arm char * strstr(const char * str1,const char * str2);
@@ -1285,4 +1285,17 @@ __swi __arm  wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
 __swi __arm  int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 #pragma swi_number=0x2D5
 __swi __arm  int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+
+#pragma swi_number=0x2D6
+__swi __arm  int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
+#pragma swi_number=0x2D7
+__swi __arm  void JavaDialog_Uninit(int unk1);
+#pragma swi_number=0x2D8
+__swi __arm  int JavaAppDesc_Get(int unk1,void ** JavaDesc);
+#pragma swi_number=0x2D9
+__swi __arm  int JavaAppDesc_GetFirstApp(void * JavaDesc);
+#pragma swi_number=0x2DA
+__swi __arm  int JavaAppDesc_GetNextApp(void * JavaDesc);
+#pragma swi_number=0x2DB
+__swi __arm  int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 #endif

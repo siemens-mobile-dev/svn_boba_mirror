@@ -413,6 +413,12 @@
 0B4C: 00000000 396BFF44 ; 2D3: wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
 0B50: 00000000 0567FF44 ; 2D4: int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: 00000000 116BFF44 ; 2D5: int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+0B58: 00000000 3152FC44 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
+0B5C: 00000000 F18CFC44 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B60: 00000000 B58EFC44 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
+0B64: 00000000 59ECFB44 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
+0B68: 00000000 61ECFB44 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
+0B6C: 00000000 79E8FB44 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 
 
 
