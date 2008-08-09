@@ -7,7 +7,7 @@
 
 
 
-#define COPYRIGHT_STRING STR("\nBookManager v2.8\nbuild 060808\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
+#define COPYRIGHT_STRING STR("\nBookManager v2.85\nbuild 090808\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
 #define MESSAGE(__STR__) MessageBox(0x6fffffff,__STR__,0, 1 ,11000,(BOOK*)BookManager_Book);
 #define BOOKLIST 0
 #define ELFLIST 1
@@ -89,6 +89,9 @@ typedef struct
 
 MyBOOK * BookManager_Book=0;
 IMG dyn_image[ICONS_COUNT];
+
+GUI_LIST * java_list_menu;
+LIST * java_list;
 
 GUI_LIST * blist;
 GUI_LIST * elist;
@@ -909,6 +912,17 @@ void onMyBookClose(BOOK * book)
     mfree(myBook->filebuf);
     myBook->filebuf=0;
   }
+    if (java_list_menu)
+  {
+    GUI_Free((GUI*)java_list_menu);
+    java_list_menu=0;
+  }
+  if (java_list)
+  {
+    List_FreeElements(java_list,elem_filter,elem_free);
+    List_Free(java_list);
+    java_list=0;
+  }
   if (mode_list)
   {
     GUI_Free((GUI*)mode_list);
@@ -1029,6 +1043,8 @@ __root int CreateBookList(void)
     but_list=0;
     buffer=0;
     str_inp=0;
+    java_list=0;
+    java_list_menu=0;
     CreateMenu(0,(BOOK*)myBook);
   }
   return(0);

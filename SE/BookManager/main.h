@@ -4,6 +4,9 @@
 int isBookManager(BOOK * struc);
 char * unicode2win1251(char *s, wchar_t *ws, int len);
 
+extern GUI_LIST * java_list_menu;
+extern LIST * java_list;
+
 extern GUI_LIST * mode_list;
 extern GUI_LIST * but_list;
 extern GUI * str_inp;

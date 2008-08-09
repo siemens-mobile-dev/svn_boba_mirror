@@ -4,6 +4,14 @@
 #include "..\\include\var_arg.h"
 #include "main.h"
 
+
+typedef struct
+{
+  wchar_t * name;
+  wchar_t * vendor;
+}java_list_elem;
+
+
 int get_file(wchar_t * fname,char ** buf_set);
 int CreateButtonList(void *data, BOOK * book);
 
@@ -224,9 +232,9 @@ void onPrevious_SI(BOOK * book)
 
 void onCancel_SI(BOOK * book)
 {
-  BookObj_ReturnPage(book,ACCEPT_EVENT);
-  BookObj_ReturnPage(book,ACCEPT_EVENT);
-  BookObj_ReturnPage(book,ACCEPT_EVENT);
+  BookObj_ReturnPage(book,NIL_EVENT);
+  BookObj_ReturnPage(book,NIL_EVENT);
+  BookObj_ReturnPage(book,NIL_EVENT);
 }
 
 int onExit_SI(void *data, BOOK * book)
@@ -279,6 +287,123 @@ int CreateSI(void *data, BOOK * book)
 }
 
 
+void onEnter_JavaList(BOOK * book, void *)
+{
+  java_list_elem * elem=(java_list_elem *)ListElement_GetByIndex(java_list,GetFocusetListObjectItem(java_list_menu));
+  int java_buf_len=wstrlen(elem->name)+wstrlen(elem->vendor)+8;
+  wchar_t * java_buf=new wchar_t[java_buf_len];
+  snwprintf(java_buf,java_buf_len,L"java:%ls//%ls",elem->name,elem->vendor);
+  WriteShortcut(java_buf);
+  delete(java_buf);
+  BookObj_ReturnPage(book,ACCEPT_EVENT);
+}
+
+
+void ExitJavaList(BOOK * book, void *)
+{
+  BookObj_ReturnPage(book,NIL_EVENT);
+  BookObj_ReturnPage(book,NIL_EVENT);
+  BookObj_ReturnPage(book,NIL_EVENT);
+}
+
+
+void DestroyJavaList(BOOK * book, void *)
+{
+  BookObj_ReturnPage(book,NIL_EVENT);
+}
+
+
+void elem_free(void * elem)
+{
+  java_list_elem * lm=(java_list_elem *)elem;
+  if (lm->name) delete(lm->name);
+  if (lm->vendor) delete(lm->vendor);
+  delete(lm);
+}
+
+int elem_filter(void * elem)
+{
+  if (elem) return(1);
+  return(0);
+}
+
+
+int onExit_JavaList(void *data, BOOK * book)
+{
+  if (java_list_menu)
+  {
+    GUI_Free((GUI*)java_list_menu);
+    java_list_menu=0;
+  }
+  if (java_list)
+  {
+    List_FreeElements(java_list,elem_filter,elem_free);
+    List_Free(java_list);
+    java_list=0;
+  }
+  return(0);
+}
+
+
+int java_list_callback(GUI_MESSAGE * msg)
+{
+  switch(msg->msg)
+  {
+  case 1:
+    java_list_elem * elem=(java_list_elem*)ListElement_GetByIndex(java_list,GUIonMessage_GetCreatedItemIndex(msg));
+    SetMenuItemText0(msg,Str2ID(elem->name,0,SID_ANY_LEN));
+  }
+  return(1);
+}
+
+
+java_list_elem * CreateElem(void * JavaDesc)
+{
+  java_list_elem * elem=new java_list_elem;
+  wchar_t * sp;
+  JavaAppDesc_GetJavaAppInfo(JavaDesc,0,&sp);
+  elem->name=sp;
+  JavaAppDesc_GetJavaAppInfo(JavaDesc,2,&sp);
+  elem->vendor=sp;
+  return(elem);
+}
+
+
+int CreateJavaList(void *data, BOOK * book)
+{
+  if (java_list)
+  {
+    List_FreeElements(java_list,elem_filter,elem_free);
+    List_Free(java_list);
+  }
+  java_list=List_New();
+  char sp1;
+  void * JavaDesc;
+  JavaDialog_Init(1,&sp1,&JavaDesc);
+  if (!JavaAppDesc_GetFirstApp(JavaDesc))
+  {
+    int result=0;
+    while (!result)
+    {
+      ListElement_Add(java_list,CreateElem(JavaDesc));
+      result=JavaAppDesc_GetNextApp(JavaDesc);
+    }
+  }
+  JavaDialog_Uninit(sp1);
+  if (java_list_menu) GUI_Free((GUI*)java_list_menu);
+  java_list_menu=CreateListObject(book,0);
+  GuiObject_SetTitleText(java_list_menu,STR("Java"));
+  SetNumOfMenuItem(java_list_menu,java_list->FirstFree);
+  OneOfMany_SetonMessage((GUI_ONEOFMANY*)java_list_menu,java_list_callback);
+  SetCursorToItem(java_list_menu,0);
+  AddMSGHook(java_list_menu,ACTION_BACK,DestroyJavaList);
+  AddMSGHook(java_list_menu,ACTION_LONG_BACK,ExitJavaList);
+  AddMSGHook(java_list_menu,ACTION_SELECT1,onEnter_JavaList);
+  ShowWindow(java_list_menu);
+  return(0);
+}
+
+
 const PAGE_MSG SelectShortcut_PageEvents[]@ "DYN_PAGE" ={
   PAGE_ENTER_EVENT_TAG,CreateMainMenu,
   PREVIOUS_EVENT_TAG,onPrevious_MainMenu_DB,
@@ -308,6 +433,20 @@ const PAGE_MSG EditShortcut_PageEvents[]@ "DYN_PAGE" ={
 
 PAGE_DESC ChangeShortcuts_Edit_page ={"BookManager_ChangeShortcuts_Edit_Page",0,EditShortcut_PageEvents};
 
+
+const PAGE_MSG SetJava_PageEvents[]@ "DYN_PAGE" ={
+  PAGE_ENTER_EVENT_TAG,CreateJavaList,
+  PAGE_EXIT_EVENT_TAG,onExit_JavaList,
+  NIL_EVENT_TAG,0
+};
+
+PAGE_DESC ChangeShortcuts_SetJava_page ={"BookManager_ChangeShortcuts_SetJava_Page",0,SetJava_PageEvents};
+
+
+void But_SetJava(BOOK * book, void *)
+{
+  BookObj_CallPage(book,&ChangeShortcuts_SetJava_page);
+}
 
 
 void DestroyButList(BOOK * book, void *)
@@ -492,9 +631,12 @@ int CreateButtonList(void *data, BOOK * book)
     AddMSGHook(but_list,0,But_SetMM);
     textidname2id(L"SHC_SET_MAINMENU_TXT",SID_ANY_LEN,&str_id);
     AddCommand(but_list,0,str_id);
-    AddMSGHook(but_list,1,But_EditShortcut);
+    AddMSGHook(but_list,1,But_SetJava);
+    AddCommand(but_list,1,STR("Java"));
+    AddMSGHook(but_list,2,But_EditShortcut);
     textidname2id(L"CALE_EDIT_EVENT_TXT",SID_ANY_LEN,&str_id);
-    AddCommand(but_list,1,str_id);
+    AddCommand(but_list,2,str_id);
+
   }
     
   ShowWindow(but_list);
