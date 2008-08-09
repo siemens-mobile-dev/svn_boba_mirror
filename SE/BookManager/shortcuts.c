@@ -225,6 +225,7 @@ int CreateDB(void *data, BOOK * book)
   return(0);
 }
 
+/*
 void onPrevious_SI(BOOK * book)
 {
   BookObj_ReturnPage(book,ACCEPT_EVENT);
@@ -285,7 +286,7 @@ int CreateSI(void *data, BOOK * book)
                                                          0);
   return(0);
 }
-
+*/
 
 void onEnter_JavaList(BOOK * book, void *)
 {
@@ -424,7 +425,7 @@ const PAGE_MSG SelectElf_PageEvents[]@ "DYN_PAGE" ={
 
 PAGE_DESC SelectElf_page ={"BookManager_ChangeShortcuts_SelectElf_Page",0,SelectElf_PageEvents};
 
-
+/*
 const PAGE_MSG EditShortcut_PageEvents[]@ "DYN_PAGE" ={
   PAGE_ENTER_EVENT_TAG,CreateSI,
   PAGE_EXIT_EVENT_TAG,onExit_SI,
@@ -432,7 +433,7 @@ const PAGE_MSG EditShortcut_PageEvents[]@ "DYN_PAGE" ={
 };
 
 PAGE_DESC ChangeShortcuts_Edit_page ={"BookManager_ChangeShortcuts_Edit_Page",0,EditShortcut_PageEvents};
-
+*/
 
 const PAGE_MSG SetJava_PageEvents[]@ "DYN_PAGE" ={
   PAGE_ENTER_EVENT_TAG,CreateJavaList,
@@ -509,10 +510,12 @@ int but_list_callback(GUI_MESSAGE * msg)
   return(1);
 }
 
+/*
 void But_EditShortcut(BOOK * book, void *)
 {
   BookObj_CallPage(book,&ChangeShortcuts_Edit_page);
 }
+*/
 
 void But_SetMM(BOOK * book, void *)
 {
@@ -633,10 +636,11 @@ int CreateButtonList(void *data, BOOK * book)
     AddCommand(but_list,0,str_id);
     AddMSGHook(but_list,1,But_SetJava);
     AddCommand(but_list,1,STR("Java"));
+    /*
     AddMSGHook(but_list,2,But_EditShortcut);
     textidname2id(L"CALE_EDIT_EVENT_TXT",SID_ANY_LEN,&str_id);
     AddCommand(but_list,2,str_id);
-
+    */
   }
     
   ShowWindow(but_list);

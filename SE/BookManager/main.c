@@ -97,7 +97,7 @@ GUI_LIST * blist;
 GUI_LIST * elist;
 GUI_LIST * mode_list;
 GUI_LIST * but_list;
-GUI * str_inp;
+//GUI * str_inp;
 char * buffer=0;
 int buf_size=0;
 int MainMenuID=-1;
@@ -933,11 +933,11 @@ void onMyBookClose(BOOK * book)
     GUI_Free((GUI*)but_list);
     but_list=0;
   }
-  if (str_inp)
+/*  if (str_inp)
   {
     GUI_Free(str_inp);
     str_inp=0;
-  }
+  }*/
   if (buffer)
   {
     delete(buffer);
@@ -1042,7 +1042,7 @@ __root int CreateBookList(void)
     mode_list=0;
     but_list=0;
     buffer=0;
-    str_inp=0;
+//    str_inp=0;
     java_list=0;
     java_list_menu=0;
     CreateMenu(0,(BOOK*)myBook);

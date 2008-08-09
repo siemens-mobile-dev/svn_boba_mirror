@@ -9,7 +9,7 @@ extern LIST * java_list;
 
 extern GUI_LIST * mode_list;
 extern GUI_LIST * but_list;
-extern GUI * str_inp;
+//extern GUI * str_inp;
 extern char * buffer;
 extern int buf_size;
 extern int MainMenuID;
