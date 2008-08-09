@@ -407,5 +407,19 @@
 0B2C: 00000000 45EC1445 ; 2CB: __thumb STRID KeyCode2Name(int key_code);
 0B30: 00000000 3540F644 ; 2CC: __thumb int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,u16 * imageID);
 0B34: 00000000 2940F644 ; 2CD: __thumb int ImageID_Free(u16 imageID);
+0B38: 00000000 2171FD44 ; 2CE: __thumb SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
+0B3C: 00000000 417BFD44 ; 2CF: __thumb int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
+0B40: 00000000 8966FF44 ; 2D0: __thumb int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
+0B44: 00000000 996AFF44 ; 2D1: __thumb int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
+0B48: 00000000 916AFF44 ; 2D2: __thumb wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
+0B4C: 00000000 456BFF44 ; 2D3: __thumb wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
+0B50: 00000000 1167FF44 ; 2D4: __thumb int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+0B54: 00000000 1D6BFF44 ; 2D5: __thumb int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+0B58: 00000000 9D50FC44 ; 2D6: __thumb int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
+0B5C: 00000000 518BFC44 ; 2D7: __thumb void JavaDialog_Uninit(int unk1);
+0B60: 00000000 158DFC44 ; 2D8: __thumb int JavaAppDesc_Get(int unk1,void ** JavaDesc);
+0B64: 00000000 B9EAFB44 ; 2D9: __thumb int JavaAppDesc_GetFirstApp(void * JavaDesc);
+0B68: 00000000 C1EAFB44 ; 2DA: __thumb int JavaAppDesc_GetNextApp(void * JavaDesc);
+0B6C: 00000000 D9E6FB44 ; 2DB: __thumb int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 
 ;locale=Russian_Russia.1251
