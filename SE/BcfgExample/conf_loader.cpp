@@ -14,7 +14,7 @@ int LoadConfigData(const wchar_t *path,const wchar_t *fname)
   char *buf;
   int result=-1;
   void *cfg;
-  FSTAT fstat;
+  FSTAT _fstat;
   unsigned int rlen;
 
   cfg=(char *)__segment_begin("CONFIG_C");
@@ -23,13 +23,13 @@ int LoadConfigData(const wchar_t *path,const wchar_t *fname)
 
   if ((buf=new char[len]))
   {
-    if (isFileExist(path,fname,&fstat)!=-1)
+    if (fstat(path,fname,&_fstat)!=-1)
     {
       if ((f=_fopen(path,fname,0x001,0x180,0))>=0)
       {
         rlen=fread(f,buf,len);
         fclose(f);
-        if (rlen!=fstat.fsize || rlen!=len)  goto L_SAVENEWCFG;
+        if (rlen!=_fstat.fsize || rlen!=len)  goto L_SAVENEWCFG;
         memcpy(cfg,buf,len);
         result=0;
       }
