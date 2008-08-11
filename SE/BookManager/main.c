@@ -435,13 +435,13 @@ BOOK * GetBook(int list)
   switch (list)
   {
   case BOOKLIST:
-    blistpos=GetFocusetListObjectItem(blist);
+    blistpos=ListMenu_GetSelectedItem(blist);
     si= (SESSION_ITEM*)ListElement_GetByIndex(BookManager_Book->session_list,blistpos);
     break;
   case ELFLIST:
     if (BookManager_Book->elfs_list->FirstFree)
     {
-      elistpos=GetFocusetListObjectItem(elist);
+      elistpos=ListMenu_GetSelectedItem(elist);
       si= (SESSION_ITEM*)ListElement_GetByIndex(BookManager_Book->elfs_list,elistpos);
     }
     else
@@ -485,8 +485,8 @@ void onDelPressed(BOOK * book,void * lt)
     {
       if (Find_StandbyBook()!=bk)
       {
-        UI_Event_toSID(RETURN_TO_STANDBY_EVENT,BOOK_GetSessionID(bk));
-        UI_Event_toSID(TERMINATE_SESSION_EVENT,BOOK_GetSessionID(bk));
+        UI_Event_toBookID(RETURN_TO_STANDBY_EVENT,BOOK_GetBookID(bk));
+        UI_Event_toBookID(TERMINATE_SESSION_EVENT,BOOK_GetBookID(bk));
       }
     }
   }
@@ -503,13 +503,13 @@ void onDelPressed1(BOOK * book,void * lt)
       {
         if (CheckEv(bk,RETURN_TO_STANDBY_EVENT))
         {
-          UI_Event_toSID(RETURN_TO_STANDBY_EVENT,BOOK_GetSessionID(bk));
+          UI_Event_toBookID(RETURN_TO_STANDBY_EVENT,BOOK_GetBookID(bk));
         }
         else
         {
           if (CheckEv(bk,ELF_TERMINATE_EVENT))
           {
-            UI_Event_toSID(ELF_TERMINATE_EVENT,BOOK_GetSessionID(bk)/*bk->BookID*/);
+            UI_Event_toBookID(ELF_TERMINATE_EVENT,BOOK_GetBookID(bk)/*bk->BookID*/);
           }
           else
           {
@@ -539,7 +539,7 @@ void Author(BOOK * book,void * lt)
         {
           MSG * msg =new MSG;
           msg->book=(BOOK*)BookManager_Book;
-          UI_Event_toSIDwData(ELF_SHOW_INFO_EVENT,BOOK_GetSessionID(bk),msg,(void(*)(void*))mfree_adr());
+          UI_Event_toBookIDwData(ELF_SHOW_INFO_EVENT,BOOK_GetBookID(bk),msg,(void(*)(void*))mfree_adr());
         }
         else
         {
@@ -552,7 +552,7 @@ void Author(BOOK * book,void * lt)
 
 void Copyright(BOOK * book,void * lt)
 {
-  blistpos=GetFocusetListObjectItem(blist);
+  blistpos=ListMenu_GetSelectedItem(blist);
   MESSAGE(COPYRIGHT_STRING);
 };
 
@@ -625,7 +625,7 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
           if (StandbyOnTop)
           {
             StartAPP(par);
-            Show(Find_StandbyBook(),0);
+            BookObj_Show(Find_StandbyBook(),0);
           }
           else
           {
@@ -660,7 +660,7 @@ int StartElf(wchar_t * path , char * name)
       memcpy(path,elfname,len*sizeof(wchar_t));
       path[len]=0;
       name++;
-      if (!isFileExist(path,name,0))
+      if (!fstat(path,name,0))
       {
         res=elfload(elfname,0,0,0);
       }
@@ -761,15 +761,15 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
     SetCursorToItem(lo,blistpos);
   }
   
-  AddMSGHook(lo,ACTION_BACK, CloseMyBook);
-  AddMSGHook(lo,ACTION_LONG_BACK, TerminateManager);
-  AddMSGHook(lo,ACTION_SELECT1,onEnterPressed);
+  GUIObject_Softkey_SetAction(lo,ACTION_BACK, CloseMyBook);
+  GUIObject_Softkey_SetAction(lo,ACTION_LONG_BACK, TerminateManager);
+  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,onEnterPressed);
 
-  AddMSGHook(lo,0,Shortcuts);
+  GUIObject_Softkey_SetAction(lo,0,Shortcuts);
   textidname2id(L"SHC_EDIT_SHORTCUT_TXT",SID_ANY_LEN,&str_id);
-  AddCommand(lo,0,str_id);
-  AddMSGHook(lo,1,Copyright);
-  AddCommand(lo,1,STR("About"));
+  GUIObject_Softkey_SetText(lo,0,str_id);
+  GUIObject_Softkey_SetAction(lo,1,Copyright);
+  GUIObject_Softkey_SetText(lo,1,STR("About"));
 
   ((MyBOOK*)bk)->oldOnKey=(void*)DISP_OBJ_GetOnKey(lo->DISP_OBJ);
   
@@ -790,17 +790,17 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
   {
     SetCursorToItem(elist,elistpos);
   }
-  AddMSGHook(elist,ACTION_BACK, CloseMyBook);
-  AddMSGHook(elist,ACTION_LONG_BACK, TerminateManager);
-  AddMSGHook(elist,0,Shortcuts);
+  GUIObject_Softkey_SetAction(elist,ACTION_BACK, CloseMyBook);
+  GUIObject_Softkey_SetAction(elist,ACTION_LONG_BACK, TerminateManager);
+  GUIObject_Softkey_SetAction(elist,0,Shortcuts);
   textidname2id(L"SHC_EDIT_SHORTCUT_TXT",SID_ANY_LEN,&str_id);
-  AddCommand(elist,0,str_id);
+  GUIObject_Softkey_SetText(elist,0,str_id);
   
   if (((MyBOOK*)bk)->elfs_list->FirstFree)
   {
-    AddMSGHook(elist,ACTION_SELECT1,onEnterPressed1);
-    AddMSGHook(elist,1,Author);
-    AddCommand(elist,1,STR("Author"));
+    GUIObject_Softkey_SetAction(elist,ACTION_SELECT1,onEnterPressed1);
+    GUIObject_Softkey_SetAction(elist,1,Author);
+    GUIObject_Softkey_SetText(elist,1,STR("Author"));
   }
   else
   {
@@ -982,16 +982,16 @@ int get_file(wchar_t * name,char ** buf_set)
   int size=0;
   int file;
   char * buf=0;
-  FSTAT fstat;
+  FSTAT _fstat;
   wchar_t * path = get_path();
-  if (isFileExist(path,name,&fstat)==0)
+  if (fstat(path,name,&_fstat)==0)
   {
     if ((file=_fopen(path,name,0x1,0x180,0))>=0)
     {
-      buf=(char*)malloc(fstat.fsize+1);
-      fread(file,buf,fstat.fsize);
+      buf=(char*)malloc(_fstat.fsize+1);
+      fread(file,buf,_fstat.fsize);
       fclose(file);
-      size=fstat.fsize;
+      size=_fstat.fsize;
     }
   }
   buf_set[0]=buf;

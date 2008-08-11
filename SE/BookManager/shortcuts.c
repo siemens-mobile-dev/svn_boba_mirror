@@ -121,8 +121,8 @@ void WriteShortcut(wchar_t * name_buf)
 {
   wchar_t * path = get_path();
   char mask_buf[10];
-  int dig_num=GetFocusetListObjectItem(but_list);
-  if (!GetFocusetListObjectItem(mode_list))
+  int dig_num=ListMenu_GetSelectedItem(but_list);
+  if (!ListMenu_GetSelectedItem(mode_list))
   {
     if (!ActiveTab) sprintf(mask_buf,"[S_KEY%d]",dig_num);
     else sprintf(mask_buf,"[ES_KEY%d]",dig_num);
@@ -169,9 +169,9 @@ int onCancel_MainMenu_DB(void *data, BOOK * book)
 int CreateMainMenu(void *data, BOOK * book)
 {
   BOOK * MainMenu;
-  if (MainMenu=MenuBook_Desktop(1,BOOK_GetSessionID(book)))
+  if (MainMenu=MenuBook_Desktop(1,BOOK_GetBookID(book)))
   {
-    MainMenuID=BOOK_GetSessionID(MainMenu);
+    MainMenuID=BOOK_GetBookID(MainMenu);
     BookObj_Softkey_SetAction(MainMenu,0x0,onShortcutSet);
     int str_id;
     textidname2id(L"SHC_SET_SHORTCUT_SK",SID_ANY_LEN,&str_id);
@@ -184,10 +184,10 @@ int CreateMainMenu(void *data, BOOK * book)
 
 int DB_Filter(const wchar_t * ext_table,const wchar_t * path ,const wchar_t * name)
 {
-  FSTAT fstat;
+  FSTAT _fstat;
   if (DataBrowser_isFileInListExt(ext_table,path,name)) return(1);
-  isFileExist(path,name,&fstat);
-  if ((fstat.unk1&0x10000)) return(1);
+  fstat(path,name,&_fstat);
+  if ((_fstat.unk1&0x10000)) return(1);
   return(0);
 }
 
@@ -214,7 +214,7 @@ int CreateDB(void *data, BOOK * book)
   folder_list[1]=GetDir(DIR_ELFS | MEM_EXTERNAL);
   folder_list[2]=0;
   DataBrowserDesc_SetHeaderText(DB_Desc,STR("ZBin"));
-  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetSessionID(book));
+  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(book));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetFileExtList(DB_Desc,L"*.elf");
   DataBrowserDesc_SetItemFilter(DB_Desc,DB_Filter);
@@ -262,8 +262,8 @@ int CreateSI(void *data, BOOK * book)
   if (buffer)
   {
     char mask_buf[10];
-    int dig_num=GetFocusetListObjectItem(but_list);
-    if (!GetFocusetListObjectItem(mode_list)) sprintf(mask_buf,"[S_KEY%d]",dig_num);
+    int dig_num=ListMenu_GetSelectedItem(but_list);
+    if (!ListMenu_GetSelectedItem(mode_list)) sprintf(mask_buf,"[S_KEY%d]",dig_num);
     else sprintf(mask_buf,"[L_KEY%d]",dig_num);
     char * param;
     if (param=manifest_GetParam(buffer,mask_buf,0))
@@ -290,7 +290,7 @@ int CreateSI(void *data, BOOK * book)
 
 void onEnter_JavaList(BOOK * book, void *)
 {
-  java_list_elem * elem=(java_list_elem *)ListElement_GetByIndex(java_list,GetFocusetListObjectItem(java_list_menu));
+  java_list_elem * elem=(java_list_elem *)ListElement_GetByIndex(java_list,ListMenu_GetSelectedItem(java_list_menu));
   int java_buf_len=wstrlen(elem->name)+wstrlen(elem->vendor)+8;
   wchar_t * java_buf=new wchar_t[java_buf_len];
   snwprintf(java_buf,java_buf_len,L"java:%ls//%ls",elem->name,elem->vendor);
@@ -397,9 +397,9 @@ int CreateJavaList(void *data, BOOK * book)
   SetNumOfMenuItem(java_list_menu,java_list->FirstFree);
   OneOfMany_SetonMessage((GUI_ONEOFMANY*)java_list_menu,java_list_callback);
   SetCursorToItem(java_list_menu,0);
-  AddMSGHook(java_list_menu,ACTION_BACK,DestroyJavaList);
-  AddMSGHook(java_list_menu,ACTION_LONG_BACK,ExitJavaList);
-  AddMSGHook(java_list_menu,ACTION_SELECT1,onEnter_JavaList);
+  GUIObject_Softkey_SetAction(java_list_menu,ACTION_BACK,DestroyJavaList);
+  GUIObject_Softkey_SetAction(java_list_menu,ACTION_LONG_BACK,ExitJavaList);
+  GUIObject_Softkey_SetAction(java_list_menu,ACTION_SELECT1,onEnter_JavaList);
   ShowWindow(java_list_menu);
   return(0);
 }
@@ -469,7 +469,7 @@ int but_list_callback(GUI_MESSAGE * msg)
     char mask_buf[10];
     if (buffer)
     {
-      if (!GetFocusetListObjectItem(mode_list))
+      if (!ListMenu_GetSelectedItem(mode_list))
       {
         if (!ActiveTab) sprintf(mask_buf,"[S_KEY%d]",item_num);
         else sprintf(mask_buf,"[ES_KEY%d]",item_num);
@@ -580,8 +580,8 @@ void But_onDelete(BOOK * book, void *)
    if ((f=_fopen(path,L"shortcuts.ini",0x204,0x180,0))>=0)
    {
      char mask_buf[10];
-     int dig_num=GetFocusetListObjectItem(but_list);
-     if (!GetFocusetListObjectItem(mode_list))
+     int dig_num=ListMenu_GetSelectedItem(but_list);
+     if (!ListMenu_GetSelectedItem(mode_list))
      {
        if (!ActiveTab) sprintf(mask_buf,"[S_KEY%d]",dig_num);
        else sprintf(mask_buf,"[ES_KEY%d]",dig_num);
@@ -616,7 +616,7 @@ int CreateButtonList(void *data, BOOK * book)
   int but_pos=0;
   if (but_list)
   {
-    but_pos=GetFocusetListObjectItem(but_list);
+    but_pos=ListMenu_GetSelectedItem(but_list);
     GUI_Free((GUI*)but_list);
   }
   but_list=CreateListObject(book,0);
@@ -624,22 +624,22 @@ int CreateButtonList(void *data, BOOK * book)
   SetNumOfMenuItem(but_list,10);
   OneOfMany_SetonMessage((GUI_ONEOFMANY*)but_list,but_list_callback);
   SetCursorToItem(but_list,but_pos);
-  AddMSGHook(but_list,ACTION_BACK,DestroyButList);
-  AddMSGHook(but_list,ACTION_LONG_BACK,CancelButtonList);
-  AddMSGHook(but_list,ACTION_SELECT1,But_onEnter);
-  AddMSGHook(but_list,ACTION_DELETE,But_onDelete);
-  SoftKey_SetVisible(but_list,ACTION_DELETE,0);
+  GUIObject_Softkey_SetAction(but_list,ACTION_BACK,DestroyButList);
+  GUIObject_Softkey_SetAction(but_list,ACTION_LONG_BACK,CancelButtonList);
+  GUIObject_Softkey_SetAction(but_list,ACTION_SELECT1,But_onEnter);
+  GUIObject_Softkey_SetAction(but_list,ACTION_DELETE,But_onDelete);
+  GUIObject_SoftKey_SetVisible(but_list,ACTION_DELETE,0);
   if (!ActiveTab)
   {
-    AddMSGHook(but_list,0,But_SetMM);
+    GUIObject_Softkey_SetAction(but_list,0,But_SetMM);
     textidname2id(L"SHC_SET_MAINMENU_TXT",SID_ANY_LEN,&str_id);
-    AddCommand(but_list,0,str_id);
-    AddMSGHook(but_list,1,But_SetJava);
-    AddCommand(but_list,1,STR("Java"));
+    GUIObject_Softkey_SetText(but_list,0,str_id);
+    GUIObject_Softkey_SetAction(but_list,1,But_SetJava);
+    GUIObject_Softkey_SetText(but_list,1,STR("Java"));
     /*
-    AddMSGHook(but_list,2,But_EditShortcut);
+    GUIObject_Softkey_SetAction(but_list,2,But_EditShortcut);
     textidname2id(L"CALE_EDIT_EVENT_TXT",SID_ANY_LEN,&str_id);
-    AddCommand(but_list,2,str_id);
+    GUIObject_Softkey_SetText(but_list,2,str_id);
     */
   }
     
@@ -693,7 +693,7 @@ int CreateModeList(void *data, BOOK * book)
   int mode_list_pos=0;
   if (mode_list)
   {
-    mode_list_pos=GetFocusetListObjectItem(mode_list);
+    mode_list_pos=ListMenu_GetSelectedItem(mode_list);
     GUI_Free((GUI*)mode_list);
   }
   mode_list=CreateListObject(book,0);
@@ -701,9 +701,9 @@ int CreateModeList(void *data, BOOK * book)
   SetNumOfMenuItem(mode_list,2);
   OneOfMany_SetonMessage((GUI_ONEOFMANY*)mode_list,list_callback);
   SetCursorToItem(mode_list,mode_list_pos);
-  AddMSGHook(mode_list,ACTION_BACK,DestroyModeList);
-  AddMSGHook(mode_list,ACTION_LONG_BACK,DestroyModeList);
-  AddMSGHook(mode_list,ACTION_SELECT1,onEnter_ModeList);
+  GUIObject_Softkey_SetAction(mode_list,ACTION_BACK,DestroyModeList);
+  GUIObject_Softkey_SetAction(mode_list,ACTION_LONG_BACK,DestroyModeList);
+  GUIObject_Softkey_SetAction(mode_list,ACTION_SELECT1,onEnter_ModeList);
   ShowWindow(mode_list);
   return(0);
 }
