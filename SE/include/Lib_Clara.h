@@ -10,6 +10,8 @@
 #include "..\\include\Colors.h"
 #endif
 
+#include "..\include\obsolete.h"
+
 extern int *SYNC;
 extern int *ASYNC;
 extern void *ELF_BEGIN;
@@ -199,7 +201,7 @@ __swi __arm  int fwrite(int file , const void *ptr, int size);
 //__swi __arm  int fputs(const char *s, int file);
 
 #pragma swi_number=0x11C
-__swi __arm  int isFileExist(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
+__swi __arm  int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 
 #pragma swi_number=0x11D
 __swi __arm  void * AllocDirHandle(const wchar_t * path);
@@ -319,10 +321,10 @@ __swi __arm  char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
 __swi __arm  void SetListObjectItemIcon ( void *msg , int align , wchar_t iconID);
 
 #pragma swi_number=0x13D
-__swi __arm  void SetHeaderText( void *obj , int StrID);
+__swi __arm  void GUIObject_SetHeaderText(void *gui , int StrID);
 
 #pragma swi_number=0x13E
-__swi __arm  int GetFocusetListObjectItem( void *obj);
+__swi __arm  int ListMenu_GetSelectedItem(GUI_LIST * );
 
 #pragma swi_number=0x13F
 __swi __arm  void SetMenuItemStyle( void *obj , int style);
@@ -364,25 +366,25 @@ __swi __arm  int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 __swi __arm  void StatusIndication_Item8_SetText(int StrID);
 
 #pragma swi_number=0x14B
-__swi __arm  void AddMSGHook(void * menu,short msg,void (*proc)(BOOK *,void*));//BOOK *,GUI ? *
+__swi __arm  void GUIObject_Softkey_SetAction(void * gui,u16 actionID,void (*proc)(BOOK *,void*));
 
 #pragma swi_number=0x14C
-__swi __arm  void AddCommand(void * menu,int cmd , int StrID);
+__swi __arm  void GUIObject_Softkey_SetText(void * gui,u16 actionID , int StrID);
 
 #pragma swi_number=0x14D
-__swi __arm  void SoftKey_SetEnable(void *gui,int msg,int ena);
+__swi __arm  void GUIObject_SoftKey_SetEnable(void *gui,u16 actionID,int ena);
 
 #pragma swi_number=0x14E
-__swi __arm  void SoftKey_AddErrorStr(void *gui,int msg,int StrID);
+__swi __arm  void GUIObject_SoftKey_AddErrorStr(void *gui,u16 actionID,int StrID);
 
 #pragma swi_number=0x14F
-__swi __arm  void SoftKey_RemoveItem(void *gui,u16 action);
+__swi __arm  void GUIObject_SoftKey_RemoveItem(void *gui,u16 actionID);
 
 #pragma swi_number=0x150
-__swi __arm  void SoftKey_SetVisible(void *gui,int action,int visible);
+__swi __arm  void GUIObject_SoftKey_SetVisible(void *gui,u16 actionID,int visible);
 
 #pragma swi_number=0x151
-__swi __arm  void SoftKey_SuppressDefaultAction(void *gui,int action);
+__swi __arm  void GUIObject_SoftKey_SuppressDefaultAction(void *gui,u16 actionID);
 
 #pragma swi_number=0x152
 __swi __arm  wchar_t* wstrcpy(wchar_t * dest, const wchar_t * source);
@@ -482,10 +484,10 @@ __swi __arm  void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_le
 __swi __arm  int GetFreeBytesOnHeap(void);
 
 #pragma swi_number=0x171
-__swi __arm  void Hide(void * udata, int zero);
+__swi __arm  void BookObj_Hide(BOOK *,int display_type);
 
 #pragma swi_number=0x172
-__swi __arm  void Show(void * udata, int zero);
+__swi __arm  void BookObj_Show(BOOK *,int display_type);
 
 #pragma swi_number=0x173
 __swi __arm  void StartAPP (const wchar_t * appname);
@@ -578,9 +580,9 @@ __swi __arm  void  UI_Event(int event);
 #pragma swi_number=0x1A9
 __swi __arm  void  UI_Event_wData(int event,void *message,void (*mfree)(void*));
 #pragma swi_number=0x1AA
-__swi __arm  void  UI_Event_toSID(int event,int SessionID);
+__swi __arm  void  UI_Event_toBookID(int event,int BookID);
 #pragma swi_number=0x1AB
-__swi __arm  void  UI_Event_toSIDwData(int event,int SedionID,void *message,void (*mfree)(void*));
+__swi __arm  void  UI_Event_toBookIDwData(int event,int BookID,void *message,void (*mfree)(void*));
 #pragma swi_number=0x1AC
 __swi __arm  int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 
@@ -783,7 +785,7 @@ __swi __arm char * MainInput_getPNUM(GUI *);
 __swi __arm int MainInput_isPlus(GUI *);
 
 #pragma swi_number=0x1FA
-__swi __arm int BOOK_GetSessionID(BOOK * );
+__swi __arm int BOOK_GetBookID(BOOK * );
 #pragma swi_number=0x1FB
 __swi __arm int wstrncmp(const wchar_t*,const wchar_t*,int);
 #pragma swi_number=0x1FC
