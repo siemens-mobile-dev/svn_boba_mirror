@@ -214,13 +214,13 @@ char * get_ini_key()
 {
   int file;
   char * buf=0;
-  FSTAT fstat;
-  if (isFileExist(GetDir(DIR_INI),L"sshoot.ini",&fstat)==0)
+  FSTAT _fstat;
+  if (fstat(GetDir(DIR_INI),L"sshoot.ini",&_fstat)==0)
   {
     if ((file=_fopen(GetDir(DIR_INI),L"sshoot.ini",0x001,0x180,0))>=0)
     {
-      buf=new char[fstat.fsize+1];
-      buf[fread(file,buf,fstat.fsize)]=0;
+      buf=new char[_fstat.fsize+1];
+      buf[fread(file,buf,_fstat.fsize)]=0;
       char * param;
       if (param=manifest_GetParam(buf,"[START_KEY]",0))
       {
