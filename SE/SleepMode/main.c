@@ -134,11 +134,11 @@ void get_ini_key(void)
   char * buf;
   if ((file=_fopen(GetDir(DIR_INI),L"SleepMode.ini",0x001,0x180,0))>=0)
   {
-    FSTAT fstat;
-    if (isFileExist(GetDir(DIR_INI),L"SleepMode.ini",&fstat)==0)
+    FSTAT _fstat;
+    if (fstat(GetDir(DIR_INI),L"SleepMode.ini",&_fstat)==0)
     {
-      buf=(char*)malloc(fstat.fsize+1);
-      fread(file,buf,fstat.fsize);
+      buf=(char*)malloc(_fstat.fsize+1);
+      fread(file,buf,_fstat.fsize);
       char * param;
       // иконки пропущенных
       for (i=0;i<ICONS_COUNT;i++)
