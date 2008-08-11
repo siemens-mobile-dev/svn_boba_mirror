@@ -14,7 +14,7 @@ typedef struct
 typedef struct
 {
   BOOK  book;
-  GUI *bcfg;
+  GUI_LIST *bcfg;
   GUI_ONEOFMANY *cbox_gui;
   GUI *text_input;
   GUI *yesno;
@@ -24,7 +24,7 @@ typedef struct
   GUI *dinput;
   GUI *font_select;
   GUI_FEEDBACK *key_input;
-  GUI * key_sel_list;
+  GUI_LIST * key_sel_list;
   GUI_ONEOFMANY * keymode_sel_list;
   
   LIST *list;

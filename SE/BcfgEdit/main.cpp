@@ -119,16 +119,16 @@ int SaveCfg(BCFG_DATA *bdata)
 int LoadCfg(BCFG_DATA *bdata)
 {
   int f;
-  FSTAT fstat;
+  FSTAT _fstat;
   int result=0;
   if (bdata->cfg) delete bdata->cfg;
   if (bdata->path)
   {
-    if (isFileExist(bdata->path,bdata->name,&fstat)!=-1)
+    if (fstat(bdata->path,bdata->name,&_fstat)!=-1)
     {
       if ((f=_fopen(bdata->path,bdata->name,0x001,0x180,0))>=0)
       {
-        bdata->size_cfg=fstat.fsize;
+        bdata->size_cfg=_fstat.fsize;
         if (bdata->size_cfg<=0)
         {
           MESSAGE(STR("Zero lenght of .bcfg file!"));
@@ -195,7 +195,7 @@ void CloseMyBook(BOOK * bk, void *)
     hp=bdata->levelstack[bdata->level];
     bdata->levelstack[bdata->level]=NULL;
     bdata->level--;
-    GUI_Free(mbk->bcfg);
+    GUI_Free((GUI*)mbk->bcfg);
     mbk->bcfg=NULL;
     create_ed(bk, hp);
   }
@@ -212,9 +212,9 @@ void CloseMyBook(BOOK * bk, void *)
                                           VAR_YESNO_PRE_QUESTION(mbk->changes_have_been_made),
                                           VAR_YESNO_QUESTION(mbk->save_before_exit),
                                           0);
-      AddMSGHook(mbk->yesno,ACTION_YES,OnYesExitGui);
-      AddMSGHook(mbk->yesno,ACTION_NO,OnNoExitGui);
-      AddMSGHook(mbk->yesno,ACTION_BACK,OnBackExitGui);
+      GUIObject_Softkey_SetAction(mbk->yesno,ACTION_YES,OnYesExitGui);
+      GUIObject_Softkey_SetAction(mbk->yesno,ACTION_NO,OnNoExitGui);
+      GUIObject_Softkey_SetAction(mbk->yesno,ACTION_BACK,OnBackExitGui);
     }
   }
 }
@@ -255,8 +255,8 @@ void CreateCBoxGui(MyBOOK *myBook)
   OneOfMany_SetTexts(om,strid,hp->max);
   delete strid;
   OneOfMany_SetChecked(om,*((int *)((char *)hp+sizeof(CFG_HDR))));
-  AddMSGHook(om,ACTION_BACK,OnCloseCBoxGui);
-  AddMSGHook(om,ACTION_SELECT1,OnSelectCBoxGui);
+  GUIObject_Softkey_SetAction(om,ACTION_BACK,OnCloseCBoxGui);
+  GUIObject_Softkey_SetAction(om,ACTION_SELECT1,OnSelectCBoxGui);
   ShowWindow(om);
 }
 
@@ -408,7 +408,7 @@ void onEnterPressed(BOOK * bk, void *)
   MyBOOK * mbk=(MyBOOK *)bk;
   BCFG_DATA *bdata=&mbk->bdata;
   COLOR_TYPE color;
-  int item=GetFocusetListObjectItem(mbk->bcfg);
+  int item=ListMenu_GetSelectedItem(mbk->bcfg);
   mbk->cur_hp=(CFG_HDR *)ListElement_GetByIndex(mbk->list,item);
   switch(mbk->cur_hp->type)
   {
@@ -437,7 +437,7 @@ void onEnterPressed(BOOK * bk, void *)
   case CFG_LEVEL:
     bdata->level++;
     bdata->levelstack[bdata->level]=mbk->cur_hp;
-    GUI_Free(mbk->bcfg);
+    GUI_Free((GUI*)mbk->bcfg);
     mbk->bcfg=NULL;
     create_ed(bk, NULL);
     return;
@@ -617,14 +617,14 @@ GUI_LIST * CreateGuiList(MyBOOK * bk, int set_focus)
 {
   GUI_LIST * lo;
   lo=CreateListObject(&bk->book,0);
-  bk->bcfg=(GUI *)lo;
+  bk->bcfg=lo;
   GuiObject_SetTitleText(lo,GetParentName(&bk->bdata));
   SetNumOfMenuItem(lo,bk->list->FirstFree);
   OneOfMany_SetonMessage((GUI_ONEOFMANY*)lo,onLBMessage);
   SetCursorToItem(lo,set_focus);
   SetMenuItemStyle(lo,3);
-  AddMSGHook(lo,ACTION_BACK, CloseMyBook);
-  AddMSGHook(lo,ACTION_SELECT1,onEnterPressed);
+  GUIObject_Softkey_SetAction(lo,ACTION_BACK, CloseMyBook);
+  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,onEnterPressed);
   return(lo);
 };
 
@@ -844,7 +844,7 @@ static int SelBcfgPageOnCreate(void *, BOOK *bk)
   folder_list[0]=GetDir(DIR_ELFS_CONFIG|MEM_INTERNAL);
   folder_list[1]=GetDir(DIR_ELFS_CONFIG|MEM_EXTERNAL);
   DataBrowserDesc_SetHeaderText(DB_Desc,Str2ID(L"Config",0,SID_ANY_LEN));
-  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetSessionID(&mbk->book));
+  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(&mbk->book));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,2);
   DataBrowserDesc_SetSelectAction(DB_Desc,1);

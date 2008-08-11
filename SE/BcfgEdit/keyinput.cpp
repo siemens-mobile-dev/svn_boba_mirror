@@ -141,8 +141,8 @@ void KeyModeSelect_CreateCBoxGui(MyBOOK *myBook)
   
   OneOfMany_SetTexts(om,strid,5);
   OneOfMany_SetChecked(om,*((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)+sizeof(int))));
-  AddMSGHook(om,ACTION_BACK,KeyModeSelect_OnCloseCBoxGui);
-  AddMSGHook(om,ACTION_SELECT1,KeyModeSelect_OnSelectCBoxGui);
+  GUIObject_Softkey_SetAction(om,ACTION_BACK,KeyModeSelect_OnCloseCBoxGui);
+  GUIObject_Softkey_SetAction(om,ACTION_SELECT1,KeyModeSelect_OnSelectCBoxGui);
   ShowWindow(om);
 }
 
@@ -151,7 +151,7 @@ void KeyCodeSelect_onEnterPressed(BOOK * bk, void *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
 
-  int item=GetFocusetListObjectItem(mbk->key_sel_list);
+  int item=ListMenu_GetSelectedItem(mbk->key_sel_list);
   switch (item)
   {
   case 0:
@@ -167,7 +167,7 @@ void KeyCodeSelect_onEnterPressed(BOOK * bk, void *)
 void KeyCodeSelect_OnBack(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free(myBook->key_sel_list);
+  GUI_Free((GUI*)myBook->key_sel_list);
   myBook->key_sel_list=NULL;
 }
 
@@ -183,7 +183,7 @@ int KeyCodeSelect_OnEnter(void *, BOOK * bk)
   strid[0]=Str2ID(L"Select key",0,SID_ANY_LEN);
   strid[1]=Str2ID(L"Key mode",0,SID_ANY_LEN);
   lo=CreateListObject(&mbk->book,0);
-  mbk->key_sel_list=(GUI *)lo;
+  mbk->key_sel_list=lo;
 
 
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
@@ -196,8 +196,8 @@ int KeyCodeSelect_OnEnter(void *, BOOK * bk)
   ListMenu_SetSecondLineText(lo,1,Str2ID(modes[*p],0,SID_ANY_LEN));
   SetCursorToItem(lo,0);
   SetMenuItemStyle(lo,1);
-  AddMSGHook(lo,ACTION_SELECT1,KeyCodeSelect_onEnterPressed); 
-  AddMSGHook(lo,ACTION_BACK,KeyCodeSelect_OnBack);
+  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,KeyCodeSelect_onEnterPressed); 
+  GUIObject_Softkey_SetAction(lo,ACTION_BACK,KeyCodeSelect_OnBack);
   ShowWindow(lo);
   return (1);
 }

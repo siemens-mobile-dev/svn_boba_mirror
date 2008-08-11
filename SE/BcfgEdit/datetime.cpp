@@ -42,10 +42,10 @@ static int TI_OnEnter(void *, BOOK * bk)
                                 VAR_TIMEINP_TIME(&t),
                                 VAR_BOOK(&mbk->book),
                                 0);
-  AddMSGHook(mbk->tinput,ACTION_ACCEPT, AcceptTIinput);
-  AddCommand(mbk->tinput,ACTION_ACCEPT,STR("OK"));
-  SoftKey_SetVisible(mbk->tinput,ACTION_ACCEPT,1);
-  AddMSGHook(mbk->tinput,ACTION_BACK, CloseTIinput);
+  GUIObject_Softkey_SetAction(mbk->tinput,ACTION_ACCEPT, AcceptTIinput);
+  GUIObject_Softkey_SetText(mbk->tinput,ACTION_ACCEPT,STR("OK"));
+  GUIObject_SoftKey_SetVisible(mbk->tinput,ACTION_ACCEPT,1);
+  GUIObject_Softkey_SetAction(mbk->tinput,ACTION_BACK, CloseTIinput);
   if (iconidname2id(IDN_TIME_INPUT_ICON,-1,&icon_id))
     InputFeedback_SetIcon(mbk->tinput,icon_id);
   return (1);
@@ -98,10 +98,10 @@ static int DI_OnEnter(void *, BOOK * bk)
                                 VAR_DATEINP_DATE(&d),
                                 VAR_BOOK(&mbk->book),
                                 0);
-  AddMSGHook(mbk->dinput,ACTION_ACCEPT, AcceptDIinput);
-  AddCommand(mbk->dinput,ACTION_ACCEPT,STR("OK"));
-  SoftKey_SetVisible(mbk->dinput,ACTION_ACCEPT,1);
-  AddMSGHook(mbk->dinput,ACTION_BACK, CloseDIinput);
+  GUIObject_Softkey_SetAction(mbk->dinput,ACTION_ACCEPT, AcceptDIinput);
+  GUIObject_Softkey_SetText(mbk->dinput,ACTION_ACCEPT,STR("OK"));
+  GUIObject_SoftKey_SetVisible(mbk->dinput,ACTION_ACCEPT,1);
+  GUIObject_Softkey_SetAction(mbk->dinput,ACTION_BACK, CloseDIinput);
   if (iconidname2id(IDN_DATE_INPUT_ICON,-1,&icon_id))
     InputFeedback_SetIcon(mbk->dinput,icon_id);
   return (1);

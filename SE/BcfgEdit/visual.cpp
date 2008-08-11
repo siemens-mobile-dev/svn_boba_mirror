@@ -239,9 +239,9 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE color_type, int type)
   GuiObject_SetTitleText(myBook->color, Str2ID(ustr,0,SID_ANY_LEN));
   GuiObject_SetTitleType(myBook->color, 3);
   //GUIObject_HideSoftkeys(myBook->color);
-  AddMSGHook(myBook->color,ACTION_BACK, OnBackColorEdit);
-  AddMSGHook(myBook->color,ACTION_SELECT1, OnOkColorEdit);
-  AddCommand(myBook->color,ACTION_SELECT1,STR("OK"));
+  GUIObject_Softkey_SetAction(myBook->color,ACTION_BACK, OnBackColorEdit);
+  GUIObject_Softkey_SetAction(myBook->color,ACTION_SELECT1, OnOkColorEdit);
+  GUIObject_Softkey_SetText(myBook->color,ACTION_SELECT1,STR("OK"));
   ShowWindow(myBook->color);
   return gui_color;
 }
@@ -420,8 +420,8 @@ GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook)
   GUI_SetStyle(myBook->coord,4);
   GuiObject_SetTitleType(myBook->coord, 1);
   GUIObject_HideSoftkeys(myBook->coord);
-  AddMSGHook(myBook->coord,ACTION_BACK, OnBackCoordinatesEdit);
-  AddMSGHook(myBook->coord,ACTION_SELECT1, OnOkCoordinatesEdit);
+  GUIObject_Softkey_SetAction(myBook->coord,ACTION_BACK, OnBackCoordinatesEdit);
+  GUIObject_Softkey_SetAction(myBook->coord,ACTION_SELECT1, OnOkCoordinatesEdit);
   ShowWindow(myBook->coord);
   return gui_coord;
 }
@@ -630,8 +630,8 @@ GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook)
   GuiObject_SetTitleText(myBook->font_select, Str2ID(ustr,0,SID_ANY_LEN));
   GuiObject_SetTitleType(myBook->font_select, 3);
   //GUIObject_HideSoftkeys(myBook->font_select);
-  AddMSGHook(myBook->font_select,ACTION_BACK, OnBackFontSelect);
-  AddMSGHook(myBook->font_select,ACTION_SELECT1, OnOkFontSelect);
+  GUIObject_Softkey_SetAction(myBook->font_select,ACTION_BACK, OnBackFontSelect);
+  GUIObject_Softkey_SetAction(myBook->font_select,ACTION_SELECT1, OnOkFontSelect);
   ShowWindow(myBook->font_select);
   return gui_fontsel;
 }
