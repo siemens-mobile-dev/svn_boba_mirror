@@ -419,7 +419,7 @@
 0B64: 00000000 59ECFB44 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 61ECFB44 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 79E8FB44 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
-0B70: 00000000 65D73B45 ; 2DC: void OrangeLED_Control(int _NULL, int or_LED_ID, int level, int fade_time);
+0B70: 00000000 65D73B45 ; 2DC: void OrangeLED_Control(int free_val, int or_LED_ID, int level, int fade_time);
 
 
 

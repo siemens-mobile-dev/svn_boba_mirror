@@ -1300,5 +1300,5 @@ __swi __arm  int JavaAppDesc_GetNextApp(void * JavaDesc);
 __swi __arm  int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 
 #pragma swi_number=0x2DC
-__swi __arm  void OrangeLED_Control(int _NULL, int or_LED_ID, int level, int fade_time);
+__swi __arm  void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 #endif
