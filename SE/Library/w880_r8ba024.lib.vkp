@@ -15,7 +15,7 @@
 0464: 00000000 690AFB44 ; 119: __thumb int fwrite(int file , const void *ptr, int size);
 0468: 00000000 A1D49844 ; 11A: __thumb int _wstat(short *path, void *statbuf);
 046C: 00000000 25E12C45 ; 11B: __thumb int fputs(const char *s, int file);
-0470: 00000000 DDF9FA44 ; 11C: __thumb int isFileExist(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
+0470: 00000000 DDF9FA44 ; 11C: __thumb int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 FDCFFA44 ; 11D: __thumb void * AllocDirHandle(const wchar_t * path);
 0478: 00000000 BDD1FA44 ; 11E: __thumb void *GetFname(void *, void*);
 047C: 00000000 25C7FE44 ; 11F: __thumb void * DataBrowserDesc_Create(void);
@@ -27,8 +27,8 @@
 0494: 00000000 D9C7FE44 ; 125: __thumb void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 2D21FB44 ; 126: __thumb wchar_t * getFileExtention(wchar_t * fnane);
 049C: 00000000 29D4FA44 ; 127: __thumb int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
-04A0: 00000000 75383C45 ; 128: __thumb void Timer_ReSet(u16 *timerID ,int time, void (*onTimer)(u16 *timerID, void *), void *);
-04A4: 00000000 41383C45 ; 129: __thumb u16 Timer_Set(int time, void (*onTimer)(u16 *timerID, void *), void *);
+04A0: 00000000 75383C45 ; 128: __thumb void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+04A4: 00000000 41383C45 ; 129: __thumb u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 CD383C45 ; 12A: __thumb void Timer_Kill(u16 *timerID);
 04AC: 00000000 756B3C45 ; 12B: __thumb int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
 04B0: 00000000 9D6C3C45 ; 12C: __thumb void BookObj_KillBook(void *Book);
@@ -47,9 +47,9 @@
 04E4: 00000000 09674345 ; 139: __thumb char SetMenuItemText1 ( GUI_MESSAGE *, int StrID);
 04E8: 00000000 E9664345 ; 13A: __thumb char SetMenuItemText2 ( GUI_MESSAGE *, int StrID);
 04EC: 00000000 F9664345 ; 13B: __thumb char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
-04F0: 00000000 51674345 ; 13C: __thumb void SetListObjectItemIcon ( void *msg , int align , int iconID);
-04F4: 00000000 05134745 ; 13D: __thumb void SetHeaderText( void *obj , int StrID);
-04F8: 00000000 915B4345 ; 13E: __thumb int GetFocusetListObjectItem( void *obj);
+04F0: 00000000 51674345 ; 13C: __thumb void SetListObjectItemIcon ( void *msg , int align , wchar_t iconID);
+04F4: 00000000 05134745 ; 13D: __thumb void GUIObject_SetHeaderText(void *gui , int StrID);
+04F8: 00000000 915B4345 ; 13E: __thumb int ListMenu_GetSelectedItem(GUI_LIST * );
 04FC: 00000000 E15B4345 ; 13F: __thumb void SetMenuItemStyle( void *obj , int style);
 0500: 00000000 6DA94745 ; 140: __thumb void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
 0504: 00000000 B1B24A45 ;8141: __thumb IS_NEEDED_BOOK isScreenSaverBook(void);
@@ -62,13 +62,13 @@
 0520: 00000000 497D4345 ; 148: void OneOfMany_SetTexts(GUI_ONEOFMANY * , int * StrID , int Count);
 0524: 00000000 257D4345 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 0528: 00000000 51BC3D45 ; 14A: __thumb void StatusIndication_Item8_SetText(int StrID);
-052C: 00000000 118F4945 ; 14B: __thumb void AddMSGHook(void * menu,short msg,void (*proc)(BOOK *,void*)); //BOOK *,GUI ? *
-0530: 00000000 898F4945 ; 14C: __thumb void AddCommand(void * menu,int cmd , int StrID);
-0534: 00000000 45904945 ; 14D: __thumb void SoftKey_SetEnable(void *gui,int msg,int ena);
-0538: 00000000 FD8F4945 ; 14E: __thumb void SoftKey_AddErrorStr(void *gui,int msg,int StrID);
-053C: 00000000 D58E4945 ; 14F: __thumb void SoftKey_RemoveItem(void *gui,u16 action);
-0540: 00000000 D98F4945 ; 150: __thumb void SoftKey_SetVisible(void *gui,int action,int visible);
-0544: 00000000 49924945 ; 151: __thumb void SoftKey_SuppressDefaultAction(void *gui,int action);
+052C: 00000000 118F4945 ; 14B: __thumb void GUIObject_Softkey_SetAction(void * gui,u16 actionID,void (*proc)(BOOK *,void*)); //BOOK *,GUI ? *
+0530: 00000000 898F4945 ; 14C: __thumb void GUIObject_Softkey_SetText(void * gui,u16 actionID , int StrID);
+0534: 00000000 45904945 ; 14D: __thumb void GUIObject_SoftKey_SetEnable(void *gui,u16 actionID,int ena);
+0538: 00000000 FD8F4945 ; 14E: __thumb void GUIObject_SoftKey_AddErrorStr(void *gui,u16 actionID,int StrID);
+053C: 00000000 D58E4945 ; 14F: __thumb void GUIObject_SoftKey_RemoveItem(void *gui,u16 actionID);
+0540: 00000000 D98F4945 ; 150: __thumb void GUIObject_SoftKey_SetVisible(void *gui,u16 actionID,int visible);
+0544: 00000000 49924945 ; 151: __thumb void GUIObject_SoftKey_SuppressDefaultAction(void *gui,u16 actionID);
 0548: 00000000 3DBB6744 ; 152: __thumb wchar_t* wstrcpy(wchar_t * dest, const wchar_t * source);
 054C: 00000000 E9BB6744 ; 153: __thumb wchar_t* wstrncpy(wchar_t * dest, const wchar_t * source, int maxlen);
 0550: 00000000 E1BA6744 ; 154: __thumb wchar_t* wstrcat(wchar_t * wstr, const wchar_t * subwstr);
@@ -95,15 +95,15 @@
 05A4: 00000000 D5082D45 ; 169: __thumb LIST *List_New(void);
 05A8: 00000000 11092D45 ; 16A: __thumb void List_Free(LIST *lst);
 05AC: 00000000 850A2D45 ; 16B: __unknown void ListElement_AddtoTop(LIST *lst,void *newElement);
-05B0: 00000000 094EF644 ; 16C: __thumb int Gif2ID(u16 IMAGEHANDLE,const wchar_t * path, const wchar_t * fname,u16 * ID);
+05B0: 00000000 094EF644 ; 16C: __thumb int Gif2ID(u16 IMAGEHANDLE,const wchar_t * path, const wchar_t * fname,wchar_t * ID);
 05B4: 00000000 E188F644 ; 16D: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(const int * __zero,u16 * IMAGEHANDLE,char * unk);
 05B8: 00000000 A90CE744 ; 16E: __unknown void REQUEST_DATEANDTIME_GET(const int * __zero , DATETIME *dt);
 05BC: 00000000 F1844A45 ; 16F: void IndicationDevice_Backlight_FadeToLevel(int unk_zero ,int bl_level);
 05C0: 00000000 C93E0A45 ; 170: __thumb int GetFreeBytesOnHeap(void);
-05C4: 00000000 496E3C45 ; 171: __thumb void Hide(void * udata, int zero);
-05C8: 00000000 596E3C45 ; 172: __thumb void Show(void * udata, int zero);
+05C4: 00000000 496E3C45 ; 171: __thumb void BookObj_Hide(BOOK *,int display_type);
+05C8: 00000000 596E3C45 ; 172: __thumb void BookObj_Show(BOOK *,int display_type);
 05CC: 00000000 B9A23D45 ; 173: __thumb void StartAPP (const wchar_t * appname);
-05D0: 00000000 D15C4345 ; 174: __thumb void ListMenu_SetOnMessages (GUI_LIST * , void * onMessage);
+05D0: 00000000 D15C4345 ; 174: __thumb void ListMenu_SetOnMessages (GUI_LIST * , int (*proc)(GUI_MESSAGE *));
 05D4: 00000000 5D783945 ; 175: __thumb char * manifest_GetParam(const char *buf, const char *param_name,int unk);
 05D8: 00000000 110CFB44 ; 176: __thumb int lseek(int file,int offset,int mode);
 05DC: 00000000 1F251444 ;8177: int get_VBUFFER(void); //nullsub(void)
@@ -123,6 +123,9 @@
 0614: 00000000 ECD44244 ; 185: __arm void delay(OSTIME timeout);
 0618: 00000000 B4D64244 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 061C: 00000000 E0D64244 ; 187: void kill_proc(PROCESS pid);
+;0620: xxxxxxxx yyyyyyyy ;8188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
+;0628: xxxxxxxx yyyyyyyy ;818A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 0680: 00000000 3DB26744 ; 1A0: __thumb char* strcpy(char * dest, char * source);
 0684: 00000000 A96D1245 ; 1A1: __thumb void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 FD6D1245 ; 1A2: __thumb void SendMessage(void **signal,int PID);
@@ -133,8 +136,8 @@
 069C: 00000000 14E61620 ;81A7: __thumb int * MissedEvents(void);
 06A0: 00000000 FD553C45 ; 1A8: __thumb void UI_Event(int event);
 06A4: 00000000 0D563C45 ; 1A9: __thumb void UI_Event_wData(int event,void *message,void (*mfree)(void*));
-06A8: 00000000 55563C45 ; 1AA: __thumb void UI_Event_toSID(int event,int SessionID);
-06AC: 00000000 69563C45 ; 1AB: __thumb void UI_Event_toSIDwData(int event,int SedionID,void *message,void (*mfree)(void*));
+06A8: 00000000 55563C45 ; 1AA: __thumb void UI_Event_toBookID(int event,int BookID);
+06AC: 00000000 69563C45 ; 1AB: __thumb void UI_Event_toBookIDwData(int event,int BookID,void *message,void (*mfree)(void*));
 06B0: 00000000 A50C2D45 ; 1AC: __thumb int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 06B4: 00000000 A90B2D45 ; 1AD: __thumb void * ListElement_GetByIndex(LIST * , int index);
 06B8: 00000000 3DBC6744 ; 1AE: __thumb wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
@@ -165,10 +168,10 @@
 0724: 00000000 D9963D45 ; 1C9: __unknown int isVolumeControllerBook(BOOK *);
 0728: 00000000 81D44745 ; 1CA: __thumb GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
 072C: 00000000 55D54745 ; 1CB: __thumb void TabMenuBar_SetTabCount(GUI_TABMENUBAR * , int count);
-0730: 00000000 09D64745 ; 1CC: __thumb void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI_NOFMANY *);
-0734: 00000000 45D64745 ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, u16 icon , int for_state);
+0730: 00000000 09D64745 ; 1CC: __thumb void TabMenuBar_AssignGuiObj(GUI_TABMENUBAR * , int tab , GUI *);
+0734: 00000000 45D64745 ; 1CD: void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, wchar_t icon , int for_state);
 0738: 00000000 A9C34745 ; 1CE: __thumb GUI *GUI_Free(GUI*);
-073C: 00000000 C1E64045 ; 1CF: __thumb void InputFeedback_SetIcon(GUI *gui, int icon);
+073C: 00000000 C1E64045 ; 1CF: __thumb void InputFeedback_SetIcon(GUI *gui, wchar_t icon);
 0740: 00000000 51E54045 ; 1D0: __thumb int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 074C: 00000000 491EFB44 ; 1D3: __unknown int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 71754345 ; 1D4: __thumb GUI_NOFMANY * CreateNOfMany(BOOK *);
@@ -204,7 +207,7 @@
 07DC: 00000000 35553D45 ; 1F7: int MainInput_strlen(GUI *);
 07E0: 00000000 41553D45 ; 1F8: char * MainInput_getPNUM(GUI *);
 07E4: 00000000 F54C3D45 ; 1F9: int MainInput_isPlus(GUI *);
-07E8: 00000000 51723C45 ; 1FA: int BOOK_GetSessionID(BOOK * );
+07E8: 00000000 51723C45 ; 1FA: int BOOK_GetBookID(BOOK * );
 07EC: 00000000 B5BB6744 ; 1FB: __thumb int wstrncmp(const wchar_t*,const wchar_t*,int);
 07F0: 00000000 E5374745 ; 1FC: int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
 07F4: 00000000 19384745 ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
@@ -214,7 +217,7 @@
 0804: 00000000 39CC3F45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: 00000000 216DF044 ; 202: __thumb void VCALL_Init (void* vc);
 080C: 00000000 196EF044 ; 203: __thumb void VCALL_SetName (void * vc , wchar_t * name ,unsigned short name_len);
-0810: 00000000 796EF044 ; 204: __thumb void VCALL_SetNameIcon (void * vc , u16 icon);
+0810: 00000000 796EF044 ; 204: __thumb void VCALL_SetNameIcon (void * vc , wchar_t icon);
 0814: 00000000 396EF044 ; 205: __thumb void VCALL_SetNumber (void * vc , wchar_t * number , unsigned short num_len);
 0818: 00000000 5D6EF044 ; 206: __thumb void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 696EF044 ; 207: __thumb void VCALL_SetHZ2 (void * vc , u16 );
@@ -291,11 +294,11 @@
 0950: 00000000 39D3FA44 ; 254: __thumb void DestroyDirHandle(void *handle);
 0954: 00000000 441DBB45 ;8255: DB_EXT *LastExtDB(void);
 0958: 00000000 F533FE44 ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
-095C: 00000000 B11D3D45 ; 257: void MessageBox(int HeaderStrID,int MessageStrID,int IconID, int style /*1 or 2*/,int time,BOOK * unk);
+095C: 00000000 B11D3D45 ; 257: void MessageBox(int HeaderStrID,int MessageStrID,wchar_t IconID, int style /*1 or 2*/,int time,BOOK * unk);
 0960: 00000000 ADF64845 ; 258: int Display_GetHeight(int Display);
 0964: 00000000 B9F64845 ; 259: int Display_GetWidth(int Display);
 0968: 00000000 E15C1345 ; 25A: void PlaySystemSound (int SndNumber);
-0974: 00000000 49D54745 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI * );
+0974: 00000000 49D54745 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
 0978: 00000000 39D54745 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 097C: 00000000 79A74745 ; 25F: int GC_GetPenColor (void* GC);
 0980: 00000000 3DA74745 ; 260: void GC_SetPenColor(void* GC , int pen_color);
@@ -333,10 +336,10 @@
 0A00: 00000000 DDB16744 ; 280: __thumb char *strcat(char *dest, const char *src);
 0A04: 00000000 2DCB4745 ; 281: __thumb void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: 00000000 75674345 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
-0A0C: 00000000 4989F644 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, u16 * ImageID ,char * error);
-0A10: 00000000 F989F644 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,int ImageID, int unk_1,char * error);
+0A0C: 00000000 4989F644 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, wchar_t * ImageID ,char * error);
+0A10: 00000000 F989F644 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,wchar_t ImageID, int unk_1,char * error);
 0A14: 00000000 40CA2E20 ;8285: SURFACE ** get_Surfaces(void);
-0A18: 00000000 7D0DD644 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int* id);
+0A18: 00000000 7D0DD644 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: 00000000 3D8CE644 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: 00000000 755D4345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 ;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
@@ -348,11 +351,11 @@
 0A40: 00000000 71CCFA44 ; 290: int rmdir(const wchar_t* path, int zero);
 0A44: 00000000 51FAFA44 ; 291: int chmod(const wchar_t* path, const wchar_t* fname, int amode);
 0A48: 00000000 4100FB44 ; 292: int rename(const wchar_t* oldpath, const wchar_t* oldfname, const wchar_t* newpath, const wchar_t* newfname, int zero);
-0A4C: 00000000 3D644745 ; 293: int GetImageWidth(int ImageID);
-0A50: 00000000 51644745 ; 294: int GetImageHeight(int ImageID);
+0A4C: 00000000 3D644745 ; 293: int GetImageWidth(wchar_t ImageID);
+0A50: 00000000 51644745 ; 294: int GetImageHeight(wchar_t ImageID);
 0A54: 00000000 5574ED44 ; 295: void * CallID_GetCallStatusDesc(int CallID);
 0A58: 00000000 05CA7444 ; 296: wchar_t * CallStatusDesc_GetName(void * CallStatusDesc);
-0A5C: 00000000 E90C2D45 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void * freefunc);
+0A5C: 00000000 E90C2D45 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void (*freefunc)(void * elem_from_list));
 0A60: 00000000 79B36744 ; 298: char * strstr(const char * str1,const char * str2);
 0A64: 00000000 A5DE4C45 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 0A68: 00000000 9D07F744 ; 29A: int wstrcmpni(const wchar_t * wstr1,const wchar_t * wstr2,int len);
@@ -405,8 +408,8 @@
 0B24: 00000000 65C94845 ; 2C9: __thumb void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
 0B28: 00000000 9DD64745 ; 2CA: __thumb void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
 0B2C: 00000000 45EC1445 ; 2CB: __thumb STRID KeyCode2Name(int key_code);
-0B30: 00000000 3540F644 ; 2CC: __thumb int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,u16 * imageID);
-0B34: 00000000 2940F644 ; 2CD: __thumb int ImageID_Free(u16 imageID);
+0B30: 00000000 3540F644 ; 2CC: __thumb int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,wchar_t * imageID);
+0B34: 00000000 2940F644 ; 2CD: __thumb void ImageID_Free(wchar_t imageID);
 0B38: 00000000 2171FD44 ; 2CE: __thumb SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 0B3C: 00000000 417BFD44 ; 2CF: __thumb int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
 0B40: 00000000 8966FF44 ; 2D0: __thumb int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
@@ -421,5 +424,10 @@
 0B64: 00000000 B9EAFB44 ; 2D9: __thumb int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 C1EAFB44 ; 2DA: __thumb int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 D9E6FB44 ; 2DB: __thumb int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
+;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+
+
+
+
 
 ;locale=Russian_Russia.1251
