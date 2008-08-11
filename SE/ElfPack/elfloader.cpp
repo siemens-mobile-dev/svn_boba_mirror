@@ -345,7 +345,7 @@ __arm void elfldr_debug_printf(char * fmt,int n)
 
 __arm int elfldr_FStat(u16 * pach, u16 *fname , FSTAT * fstat_stuct)
 {
-  return(isFileExist(pach,fname,fstat_stuct));
+  return(fstat(pach,fname,fstat_stuct));
 }
 
 __arm u16 * elfldr_GetDir(int i)

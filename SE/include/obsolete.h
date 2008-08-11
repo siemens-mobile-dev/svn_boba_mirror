@@ -1,3 +1,5 @@
+#ifdef __cplusplus
+
 #define DEPRECATE(t,f,n) extern t f##_FUNCTION_IS_DEPRECATED_USE_##n(); static t f(...){ f##_FUNCTION_IS_DEPRECATED_USE_##n(); return (t)0; }
 
 DEPRECATE(int,BOOK_GetSessionID,BOOK_GetBookID)
@@ -15,3 +17,5 @@ DEPRECATE(int,GetFocusetListObjectItem,ListMenu_GetSelectedItem)
 DEPRECATE(void,SetHeaderText,GUIObject_SetHeaderText)
 DEPRECATE(void,Hide,BookObj_Hide)
 DEPRECATE(void,Show,BookObj_Show)
+
+#endif

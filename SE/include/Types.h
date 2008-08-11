@@ -7,16 +7,6 @@ typedef unsigned short u16;
 typedef unsigned short wchar_t;
 #endif
 
-
-/*
-#ifndef SWI_HOOK
-const int _SYNC=0;
-const int _ASYNC=0;
-#define SYNC &_SYNC
-#define ASYNC &_ASYNC
-#endif
-*/
-
 typedef int STRID;
 
 union SIGNAL;
@@ -698,6 +688,10 @@ typedef struct
 } FONT_DESC;
 #pragma pack()
 
+#ifdef __cplusplus
 typedef struct{} SUB_EXECUTE;
+#else
+typedef void SUB_EXECUTE;
+#endif
 
 #endif

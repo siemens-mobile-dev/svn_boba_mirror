@@ -41,64 +41,13 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #define ELF_TERMINATE_EVENT 997
 #define ELF_RECONFIG_EVENT 996
 
-typedef  unsigned int size_t;
-
 // Str2ID conversion flag
 /*
 #define WSTR_2_ID 0
 
 #define NO_ERROR 0
 
-#define keySELECT 0xFC3
-#define keyESC    0xFC1
-
-//#define BOOK_DESTROYED_EVENT 4
-
-
-//#define RAM_BASE 0x4C04B1CCL
-
-//PhoneBook const
-
-#define ALL_AB_ITEMS            0x20
-
-
-#define AB_N_FAX                0x08
-#define AB_N_OTHER              0x0A
-#define AB_EMAIL                0x0B
-#define AB_URL                  0x0E
-#define AB_INFO                 0x1D
 */
-
-//Key Code
-/*
-#define KEY_UP                  0x06
-#define KEY_DOWN                0x0A
-#define KEY_LEFT                0x0C
-#define KEY_RIGHT               0x08
-#define KEY_ENTER               0x05
-#define KEY_ESC                 0x03
-#define KEY_DEL                 0x04
-#define KEY_LEFT_SOFT           0x01
-#define KEY_RIGHT_SOFT          0x02
-#define KEY_TASK                0x1C
-#define KEY_PLAY                0x20
-#define KEY_CAMERA_FOCUS        0x22
-#define KEY_CAMERA_SHOT         0x23
-#define KEY_VOL_UP              0x0E
-#define KEY_VOL_DOWN            0x0F
-#define KEY_LENS_COVER_OPEN     0x31
-#define KEY_LENS_COVER_CLOSE    0x32
-#define KEY_STAR                0x1A
-#define KEY_DIEZ                0x1B
-#define KEY_POWER               0x00
-
-#define KBD_SHORT_PRESS         0x00
-#define KBD_SHORT_RELEASE       0x03
-#define KBD_LONG_PRESS          0x01
-#define KBD_LONG_RELEASE        0x04
-#define KBD_REPEAT              0x02
-*/
-
 
 #pragma diag_suppress=Ta035
 #pragma diag_suppress=Ta036
