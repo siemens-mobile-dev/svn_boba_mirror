@@ -418,12 +418,12 @@
 0B4C: 00000000 DD75ED44 ; 2D3: wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
 0B50: 00000000 A971ED44 ; 2D4: int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: 00000000 B575ED44 ; 2D5: int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-;0B58: xxxxxxxx yyyyyyyy ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-;0B5C: xxxxxxxx yyyyyyyy ; 2D7: void JavaDialog_Uninit(int unk1);
-;0B60: xxxxxxxx yyyyyyyy ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
-;0B64: xxxxxxxx yyyyyyyy ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
-;0B68: xxxxxxxx yyyyyyyy ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
-;0B6C: xxxxxxxx yyyyyyyy ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
+0B58: 00000000 7550EA44 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
+0B5C: 00000000 358BEA44 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B60: 00000000 F98CEA44 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
+0B64: 00000000 89EAE944 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
+0B68: 00000000 91EAE944 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
+0B6C: 00000000 A9E6E944 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 
 
