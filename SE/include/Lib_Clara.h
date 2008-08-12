@@ -858,9 +858,9 @@ __swi __arm DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
 
 
 #pragma swi_number=0x22C
-__swi __arm void DISP_DESC_SetMethod03 (DISP_DESC* ,void (*)(void*));
+__swi __arm void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
 #pragma swi_number=0x22D
-__swi __arm DISP_OBJ_METHOD DISP_OBJ_GetMethod03 (DISP_OBJ *);
+__swi __arm DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 #pragma swi_number=0x22E
 __swi __arm void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 #pragma swi_number=0x22F
@@ -1252,4 +1252,9 @@ __swi __arm  int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** ws
 
 #pragma swi_number=0x2DC
 __swi __arm  void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+
+#pragma swi_number=0x2DD
+__swi __arm  void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
+#pragma swi_number=0x2DE
+__swi __arm  void DispObject_KillRefreshTimer(DISP_OBJ *);
 #endif
