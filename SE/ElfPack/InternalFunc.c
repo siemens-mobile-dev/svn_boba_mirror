@@ -1,6 +1,6 @@
 //#define K750_R1CA021
 
-#include "..\\include\k750.h"
+#include "calls.h"
 #include "..\\include\Dir.h"
 #include "vars.h"
 
