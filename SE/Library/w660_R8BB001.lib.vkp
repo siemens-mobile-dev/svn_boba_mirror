@@ -27,7 +27,7 @@
 0494: 00000000 6DEDFE44 ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 B945FB44 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
 049C: 00000000 B5F8FA44 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
-04A0: 00000000 E92B3D45 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+04A0: 00000000 E92B3D45 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A4: 00000000 B52B3D45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 412C3D45 ; 12A: void Timer_Kill(u16 *timerID);
 04AC: 00000000 E95E3D45 ; 12B: int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
@@ -255,8 +255,8 @@
 08A4: 00000000 ADD64745 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *); /!\
 08A8: 00000000 FDD54745 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD); /!\
 08AC: 00000000 E5D64745 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *); /!\
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetMethod03 (DISP_DESC* ,void (*)(void*));
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetMethod03 (DISP_OBJ *);
+08B0: 00000000 F9D54745 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
+08B4: 00000000 C9D64745 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -425,6 +425,8 @@
 0B68: 00000000 910FFC44 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 A90BFC44 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 0B70: 00000000 294A3C45 ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+0B74: 00000000 BD164845 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
+0B78: 00000000 3D174845 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 
 
 
