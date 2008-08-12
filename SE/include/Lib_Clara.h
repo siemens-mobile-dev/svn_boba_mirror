@@ -186,10 +186,10 @@ __swi __arm  wchar_t * getFileExtention(wchar_t * fnane);
 __swi __arm  int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
 
 #pragma swi_number=0x128
-__swi __arm  void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+__swi __arm  void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 #ifdef __cplusplus
 #pragma swi_number=0x128
-__swi __arm  void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, void *), void *);
+__swi __arm  void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, void *), void *);
 #endif
 
 #pragma swi_number=0x129
