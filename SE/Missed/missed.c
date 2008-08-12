@@ -28,13 +28,13 @@ u16 vibratimer;
 int skipevents;
 int checkevents;
 
-void myVibraOff(u16 *timerID, LPARAM lparam)
+void myVibraOff(u16 timerID, LPARAM lparam)
 {
         Vibra_Off(0);
         vibratimer=0;
 }
 
-void onTimer(u16 *timerID, LPARAM lparam)
+void onTimer(u16 timerID, LPARAM lparam)
 {
         if(!disabled)
         {
@@ -74,11 +74,11 @@ int getcfg()
 
         if( (fcfg=_fopen(GetDir(DIR_INI), LINIFILENAME ,0x001,0x180,0))>=0)
         {
-                FSTAT fstat;
-                if (isFileExist(GetDir(DIR_INI), LINIFILENAME ,&fstat)==0)
+                FSTAT _fstat;
+                if (fstat(GetDir(DIR_INI), LINIFILENAME ,&_fstat)==0)
                 {
-                        pcfg=(char*)malloc(fstat.fsize+1);
-                        fread(fcfg,pcfg,fstat.fsize);
+                        pcfg=(char*)malloc(_fstat.fsize+1);
+                        fread(fcfg,pcfg,_fstat.fsize);
 
                         if(char* pfilepath=manifest_GetParam(pcfg,"[FILE]",0))
                         {
@@ -185,11 +185,11 @@ int main(wchar_t* filename)
                 wchar_t temp[256];
                 //check cfg params------
                 char* badarg=NULL;
-                FSTAT fstat;
+                FSTAT _fstat;
                 if(!getcfg())
                         badarg="INI";
                 else
-                        if(isFileExist(cfg_filepath,cfg_filename,&fstat)!=0)
+                        if(fstat(cfg_filepath,cfg_filename,&_fstat)!=0)
                                 badarg="[FILE]";
                         else
                                 if(cfg_period<3)badarg="[PERIOD]";
