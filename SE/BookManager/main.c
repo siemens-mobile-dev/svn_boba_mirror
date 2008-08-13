@@ -40,6 +40,7 @@ const char * img_names[4]=
 typedef struct
 {
   BOOK  book;
+  GUI_TABMENUBAR * gui;
   char * filebuf;
   void * oldOnKey;
   void * oldOnKey1;
@@ -370,7 +371,7 @@ int onRootListChanged(void * r0, BOOK * bk)
   if ((!mode_list)&&(!but_list))
   {
     // åñëè ÃÓÈ åñòü, òî óáèëè
-    if (bk->gui) GUI_Free((GUI*)bk->gui);
+    if (((MyBOOK*)bk)->gui) GUI_Free((GUI*)((MyBOOK*)bk)->gui);
     
     // ñîçäàëè ìåíş
     CreateMenu(0,bk);
@@ -835,8 +836,8 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
 // ñîçäàíèå è îòîáğàæåíèå ìåíş
 int CreateMenu(void * r0, BOOK * bk)
 {
-  bk->gui=(GUI*)CreateGuiList(0,bk);
-  ShowWindow(bk->gui);
+  ((MyBOOK*)bk)->gui=CreateGuiList(0,bk);
+  ShowWindow(((MyBOOK*)bk)->gui);
   return(0);
 }
 
