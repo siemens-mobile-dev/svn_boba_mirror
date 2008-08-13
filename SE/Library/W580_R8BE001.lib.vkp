@@ -122,7 +122,7 @@
 0610: 00000000 E8973044 ; 184: PROCESS current_process(void);
 0614: 00000000 20973044 ; 185: void delay(OSTIME timeout);
 0618: 00000000 E8983044 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-061C: 00000000 08993044 ; 187: void kill_proc(PROCESS pid);
+061C: 00000000 15993044 ; 187: void kill_proc(PROCESS pid);
 ;0620: xxxxxxxx yyyyyyyy ;8188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ;818A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
@@ -240,7 +240,7 @@
 0860: 00000000 0198A644 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy);
 0864: 00000000 A977D644 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: 00000000 44D00920 ;821A: int * PID_MMI(void);
-0874: 00000000 1FA93545 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
+0874: 00000000 1DA93545 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 D1AE3545 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 E9ED8E44 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
 0880: 00000000 256A3545 ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name);
@@ -289,8 +289,8 @@
 0930: 00000000 6D2BFD44 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: 00000000 9963FD44 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: 00000000 315F2344 ; 24E: int GetChipID(void);
-0948: 00000000 49F13145 ; 252: int List2LineGetCurrentIndex(void * msg);
-094C: 00000000 55961F44 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
+0948: 00000000 95F03145 ; 252: int List2LineGetCurrentIndex(void * msg);
+094C: 00000000 89F03145 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 3D5DE844 ; 254: void DestroyDirHandle(void *handle);
 0954: 00000000 F097AC45 ;8255: DB_EXT *LastExtDB(void);
 0958: 00000000 EDBEEB44 ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
@@ -427,7 +427,7 @@
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 0B74: 00000000 01AB3545 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 81AB3545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
-
+0B7C: 00000000 4922EC44 ; 2DF: int isDataBrowserBook(BOOK *);
 
 
 
