@@ -177,11 +177,7 @@ typedef struct
   int    BookID;
   struct PAGE_DESC * current_page;
   struct PAGE_DESC  * base_page;
-
   XGUILIST * xguilist;
-  GUI * gui;
-  void * unk3;
-  char dummy[0x10];
 }BOOK;
 
 typedef struct XGUILIST_type

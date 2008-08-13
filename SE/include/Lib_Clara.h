@@ -1257,4 +1257,7 @@ __swi __arm  void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int
 __swi __arm  void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 #pragma swi_number=0x2DE
 __swi __arm  void DispObject_KillRefreshTimer(DISP_OBJ *);
+
+#pragma swi_number=0x2DF
+__swi __arm int isDataBrowserBook(BOOK *);
 #endif

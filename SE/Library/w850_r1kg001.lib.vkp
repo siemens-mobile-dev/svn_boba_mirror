@@ -424,7 +424,8 @@
 0B6C: 00000000 79E8FB44 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 0B70: 00000000 65D73B45 ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 0B74: 00000000 E9AE4745 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
-0B78: 00000000 69AF4745 ; 2DD: void DispObject_KillRefreshTimer(DISP_OBJ *);
+0B78: 00000000 69AF4745 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
+0B7C: 00000000 8197FE44 ; 2DF: int isDataBrowserBook(BOOK *);
 
 
 
