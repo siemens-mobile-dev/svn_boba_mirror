@@ -1018,6 +1018,7 @@ void get_iconsID(void)
     }
     else dyn_image[i].ImageID=imgID;
   }
+  delete(path);
 }
 
 
