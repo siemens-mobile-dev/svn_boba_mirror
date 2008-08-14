@@ -21,18 +21,6 @@
 #define CANCEL_EVENT 0x11
 #endif
 
-typedef struct
-{
-  void * unk;
-  void * unk1;
-  BOOK * book;
-}DATA;
-
-typedef struct
-{
-  u16* fname;
-  u16* fpath;
-}FILETYPE;
 
 void ELFExtrRegister(EP_DATA * epd);
 

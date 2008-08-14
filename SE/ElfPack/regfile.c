@@ -1,4 +1,5 @@
 #include "..\\include\Lib_Clara.h"
+#include "..\\include\Types.h"
 #include "vars.h"
 
 #define IDN_ELF_SMALL_ICON _T("CALE_LUNAR_12ANIMALS_1ST_MOUSE_ICN")
@@ -47,13 +48,15 @@ __arm int SetThumbnailIcon(void * r0, u16 *r1)
 __arm int Elf_Run(void * r0, BOOK * book)
 {
   char ch[500];
-  DATA * data = (DATA * )book->gui;
-  FILETYPE *ft = data->unk1;
-  u16 * filename = malloc((wstrlen(ft->fpath)+wstrlen(ft->fname)+2)*2);
+  SUB_EXECUTE * data = BrowserItem_Get_SUB_EXECUTE(book);
 
-  wstrcpy(filename,ft->fpath);
+  wchar_t * fpath = DataBrowser_ItemDesc_GetPath(data->file_item);
+  wchar_t * fname = DataBrowser_ItemDesc_GetFname(data->file_item);
+  u16 * filename = malloc((wstrlen(fpath)+wstrlen(fname)+2)*2);
+
+  wstrcpy(filename,fpath);
   wstrcat(filename,L"/");
-  wstrcat(filename,ft->fname);
+  wstrcat(filename,fname);
 
   wstr2strn(ch,filename,MAXELEMS(ch)-1);
 
@@ -90,7 +93,7 @@ const DB_EXT dbe_ELF={(char**)ct,(u16**)ex,onEv,DB_DB_EXT_C1,NULL,0x0,0x00};
 
 __arm int Elf_Run_Subroutine(void * r0)
 {
-  BookObj_CallSubroutine(((DATA*)(r0))->book,(void*)subrout);
+  BookObj_CallSubroutine(((SUB_EXECUTE*)r0)->BrowserItemBook,(void*)subrout);
   return(1);
 };
 
