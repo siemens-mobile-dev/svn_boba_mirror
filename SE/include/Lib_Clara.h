@@ -1196,7 +1196,7 @@ __swi __arm  void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOO
 #pragma swi_number=0x2C3
 __swi __arm  void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
 #pragma swi_number=0x2C4
-__swi __arm  BOOK * Root_GetBookByID(int BookID);
+__swi __arm  BOOK * FindBookByID(int BookID);
 
 #pragma swi_number=0x2C5
 __swi __arm  GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);

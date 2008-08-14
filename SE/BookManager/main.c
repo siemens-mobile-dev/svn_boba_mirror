@@ -946,7 +946,7 @@ void onMyBookClose(BOOK * book)
   }
   if (MainMenuID!=-1)
   {
-    BOOK * MainMenu=Root_GetBookByID(MainMenuID);
+    BOOK * MainMenu=FindBookByID(MainMenuID);
     if (MainMenu) FreeBook(MainMenu);
     MainMenuID=-1;
   }
