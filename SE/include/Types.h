@@ -684,10 +684,18 @@ typedef struct
 } FONT_DESC;
 #pragma pack()
 
-#ifdef __cplusplus
-typedef struct{} SUB_EXECUTE;
-#else
-typedef void SUB_EXECUTE;
-#endif
+
+
+typedef struct
+{
+  void * ext_methods_table;
+  FILEITEM * file_item;
+  BOOK * BrowserItemBook;
+  int DB_BookID;
+  void * unk2;
+  void * unk3;
+  GUI * gui;
+  void * strinp_struct;
+}SUB_EXECUTE;
 
 #endif

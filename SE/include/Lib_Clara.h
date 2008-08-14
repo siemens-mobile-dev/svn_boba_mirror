@@ -1260,4 +1260,7 @@ __swi __arm  void DispObject_KillRefreshTimer(DISP_OBJ *);
 
 #pragma swi_number=0x2DF
 __swi __arm int isDataBrowserBook(BOOK *);
+
+#pragma swi_number=0x2E0
+__swi __arm SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 #endif
