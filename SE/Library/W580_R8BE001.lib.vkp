@@ -428,7 +428,7 @@
 0B74: 00000000 01AB3545 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 81AB3545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 4922EC44 ; 2DF: int isDataBrowserBook(BOOK *);
-
+0B80: 00000000 E9DAEB44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 
 
 ;locale=Russian_Russia.1251
