@@ -27,7 +27,7 @@
 0494: 00000000 9DCBEC44 ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 7121E944 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
 049C: 00000000 59D4E844 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
-04A0: 00000000 21282A45 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+04A0: 00000000 21282A45 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A4: 00000000 ED272A45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 79282A45 ; 12A: void Timer_Kill(u16 *timerID);
 04AC: 00000000 395A2A45 ; 12B: int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
@@ -255,8 +255,8 @@
 08A4: 00000000 C1CF3445 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: 00000000 11CF3445 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: 00000000 F9CF3445 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetMethod03 (DISP_DESC* ,void (*)(void*));
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetMethod03 (DISP_OBJ *);
+;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
+;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -400,7 +400,7 @@
 0B04: 00000000 05CF3745 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
 0B08: 00000000 752E3745 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
 0B0C: 00000000 AD2E3745 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
-0B10: 00000000 C5402A45 ; 2C4: BOOK * Root_GetBookByID(int BookID);
+0B10: 00000000 C5402A45 ; 2C4: BOOK * FindBookByID(int BookID);
 0B14: 00000000 41B23645 ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
 0B18: 00000000 79B63645 ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
 0B1C: 00000000 19B63645 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
@@ -425,6 +425,10 @@
 0B68: 00000000 91EAE944 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 A9E6E944 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+;0B74: xxxxxxxx yyyyyyyy ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
+;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
+;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
+0B80: 00000000 0550EC44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 
 
 

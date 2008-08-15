@@ -27,7 +27,7 @@
 0494: FFFFFFFF 6DA62445 ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: FFFFFFFF C16D5B45 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
 049C: FFFFFFFF 71295B45 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
-04A0: FFFFFFFF E5EA2945 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+04A0: FFFFFFFF E5EA2945 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A4: FFFFFFFF C1EA2945 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: FFFFFFFF 11EB2945 ; 12A: void Timer_Kill(u16 *timerID);
 04AC: FFFFFFFF 51F72945 ; 12B: int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
@@ -256,8 +256,8 @@
 08A4: FFFFFFFF 8D1F3045 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: FFFFFFFF 311D3045 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: FFFFFFFF CD1F3045 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetMethod03 (DISP_DESC* ,void (*)(void*));
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetMethod03 (DISP_OBJ *);
+;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
+;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -402,7 +402,7 @@
 0B04: FFFFFFFF 91B45345 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
 0B08: FFFFFFFF B1A65445 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
 0B0C: FFFFFFFF FDA65445 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
-0B10: FFFFFFFF 25115345 ; 2C4: BOOK * Root_GetBookByID(int BookID);
+0B10: FFFFFFFF 25115345 ; 2C4: BOOK * FindBookByID(int BookID);
 0B14: FFFFFFFF 6D601945 ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
 0B18: FFFFFFFF E1641945 ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
 0B1C: FFFFFFFF 75641945 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
@@ -416,8 +416,8 @@
 ;0B3C: xxxxxxxx yyyyyyyy ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
 ;0B40: xxxxxxxx yyyyyyyy ; 2D0: int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
 ;0B44: xxxxxxxx yyyyyyyy ; 2D1: int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
-;0B48: xxxxxxxx yyyyyyyy ; 2D2: wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
-;0B4C: xxxxxxxx yyyyyyyy ; 2D3: wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
+0B48: FFFFFFFF 096A5C45 ; 2D2: wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
+0B4C: FFFFFFFF 6D6A5C45 ; 2D3: wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
 ;0B50: xxxxxxxx yyyyyyyy ; 2D4: int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 ;0B54: xxxxxxxx yyyyyyyy ; 2D5: int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 ;0B58: xxxxxxxx yyyyyyyy ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
@@ -427,6 +427,10 @@
 ;0B68: xxxxxxxx yyyyyyyy ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 ;0B6C: xxxxxxxx yyyyyyyy ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+;0B74: xxxxxxxx yyyyyyyy ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
+;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
+;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
+0B80: FFFFFFFF DD4E5C45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 
 
 

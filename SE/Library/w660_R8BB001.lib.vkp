@@ -400,7 +400,7 @@
 0B04: 00000000 69D64A45 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
 0B08: 00000000 AD354A45 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
 0B0C: 00000000 E5354A45 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
-0B10: 00000000 75453D45 ; 2C4: BOOK * Root_GetBookByID(int BookID);
+0B10: 00000000 75453D45 ; 2C4: BOOK * FindBookByID(int BookID);
 0B14: 00000000 79B94945 ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
 0B18: 00000000 B1BD4945 ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
 0B1C: 00000000 51BD4945 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
@@ -427,6 +427,8 @@
 0B70: 00000000 294A3C45 ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 0B74: 00000000 BD164845 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 3D174845 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
+;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
+0B80: 00000000 DD75FE44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 
 
 
