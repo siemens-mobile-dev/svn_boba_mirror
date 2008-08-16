@@ -460,51 +460,66 @@ void DestroyButList(BOOK * book, void *)
 int but_list_callback(GUI_MESSAGE * msg)
 {
   int str_id;
+  int icon_id;
+  int count;
   char * param=0;
   switch(msg->msg)
   {
   case 1:
     int item_num=GUIonMessage_GetCreatedItemIndex(msg);
-    char item_buf[100];
+//    char item_buf[100];
     char mask_buf[10];
+    textidname2id(L"SHC_NONE_NAME_TXT",SID_ANY_LEN,&str_id);
+    icon_id=0xFFFF;
     if (buffer)
     {
       if (!ListMenu_GetSelectedItem(mode_list))
       {
         if (!ActiveTab) sprintf(mask_buf,"[S_KEY%d]",item_num);
         else sprintf(mask_buf,"[ES_KEY%d]",item_num);
-        if (param=manifest_GetParam(buffer,mask_buf,0))
-        {
-          if (strlen(param))
-          {
-            sprintf(item_buf,"%d: %s",item_num,param);
-            SetMenuItemText0(msg,Str2ID(item_buf,6,0xFFFF));
-            return(0);
-          }
-        }
       }
       else
       {
         if (!ActiveTab) sprintf(mask_buf,"[L_KEY%d]",item_num);
         else sprintf(mask_buf,"[EL_KEY%d]",item_num);
-        if (param=manifest_GetParam(buffer,mask_buf,0))
+      }
+      if (param=manifest_GetParam(buffer,mask_buf,0))
+      {
+        if (strlen(param))
         {
-          if (strlen(param))
+          if (strstr(param,"java:"))
           {
-            sprintf(item_buf,"%d: %s",item_num,param);
-            SetMenuItemText0(msg,Str2ID(item_buf,6,0xFFFF));
-            return(0);
+            str_id=Str2ID(param+5,6,strstr(param,"//")-(param+5));
+            iconidname2id(L"DB_LIST_JAVA_ICN",SID_ANY_LEN,&icon_id);
+          }
+          else
+          {
+            wchar_t w_buf[0x66];
+            w_buf[0x64]=0x2;
+            str2wstr(w_buf,param);
+            str_id=Shortcut_Get_MenuItemName(w_buf);
+            if ((icon_id=Shortcut_Get_MenuItemIconID(w_buf))==0xFFFF) iconidname2id(L"RN_VERT_MY_SHORTCUTS_ICN",SID_ANY_LEN,&icon_id);
           }
         }
       }
     }
-    textidname2id(L"SHC_NONE_NAME_TXT",SID_ANY_LEN,&str_id);
-    int strID_array[4];
+    if (str_id==0x6FFFFFFF) str_id=Str2ID(param,6,SID_ANY_LEN);
+    int strID_array[5];
     strID_array[0]=int2strID(item_num);
     strID_array[1]=0x7800003A;
     strID_array[2]=0x78000020;
-    strID_array[3]=str_id;
-    SetMenuItemText0(msg,Str2ID(strID_array,5,4));
+    if (icon_id!=0xFFFF)
+    {
+      strID_array[3]=icon_id+0x78000000;
+      strID_array[4]=str_id;
+      count=5;
+    }
+    else
+    {
+      strID_array[3]=str_id;
+      count=4;
+    }
+    SetMenuItemText0(msg,Str2ID(strID_array,5,count));
   }
   if (param) mfree(param);
   return(1);

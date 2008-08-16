@@ -7,7 +7,7 @@
 
 
 
-#define COPYRIGHT_STRING STR("\nBookManager v2.85\nbuild 090808\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
+#define COPYRIGHT_STRING STR("\nBookManager v2.9\nbuild 170808\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
 #define MESSAGE(__STR__) MessageBox(0x6fffffff,__STR__,0, 1 ,11000,(BOOK*)BookManager_Book);
 #define BOOKLIST 0
 #define ELFLIST 1
@@ -113,7 +113,7 @@ int onUserInactivity(void * r0, BOOK * bk);
 int onRootListChanged(void * r0, BOOK * bk);
 void onMyBookClose(BOOK *);
 void CloseMyBook(BOOK * Book, void *);
-int CreateMenu(void * r0, BOOK * bk);
+int CreateMenu(int r0, BOOK * bk);
 void TerminateManager(BOOK * Book, void *);
 int NewKey(int key, int r1 , int mode);
 void SessoinListsFree(BOOK * book);
@@ -374,7 +374,7 @@ int onRootListChanged(void * r0, BOOK * bk)
     if (((MyBOOK*)bk)->gui) GUI_Free((GUI*)((MyBOOK*)bk)->gui);
     
     // создали меню
-    CreateMenu(0,bk);
+    CreateMenu(ActiveTab,bk);
   }
   return(0);
 };
@@ -737,7 +737,7 @@ void onTabSwitch(BOOK * bk,int active_tab)
 }
 
 // создание меню
-GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
+GUI_TABMENUBAR * CreateGuiList(int tab_pos, BOOK * bk)
 {
   int str_id;
   int p[2];
@@ -815,9 +815,6 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
   
   GUI_TABMENUBAR * tab = CreateTabMenuBar(bk);
   TabMenuBar_SetTabCount(tab,2);
-  int tab_pos;
-  if (!FirstTab) tab_pos=ActiveTab;
-  else tab_pos=FirstTab-1;
   TabMenuBar_SetTabFocused(tab,tab_pos);
   TabMenuBar_AssignGuiObj(tab,0,lo);
   TabMenuBar_AssignGuiObj(tab,1,elist);
@@ -834,9 +831,9 @@ GUI_TABMENUBAR * CreateGuiList(void * r0, BOOK * bk)
 };
 
 // создание и отображение меню
-int CreateMenu(void * r0, BOOK * bk)
+int CreateMenu(int tab_pos, BOOK * bk)
 {
-  ((MyBOOK*)bk)->gui=CreateGuiList(0,bk);
+  ((MyBOOK*)bk)->gui=CreateGuiList(tab_pos,bk);
   ShowWindow(((MyBOOK*)bk)->gui);
   return(0);
 }
@@ -1047,7 +1044,10 @@ __root int CreateBookList(void)
 //    str_inp=0;
     java_list=0;
     java_list_menu=0;
-    CreateMenu(0,(BOOK*)myBook);
+    int tab_pos;
+    if (!FirstTab) tab_pos=ActiveTab;
+    else tab_pos=FirstTab-1;
+    CreateMenu(tab_pos,(BOOK*)myBook);
   }
   return(0);
 }
