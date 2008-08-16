@@ -118,11 +118,11 @@
 0600: 00000000 00973044 ; 180: void free_buf(union SIGNAL **sig);
 0604: 00000000 CC973044 ; 181: PROCESS create_process(int proc_type,char *name,OSENTRYPOINT *entrypoint,OSADDRESS stack_size,OSPRIORITY priority,OSTIME timeslice,PROCESS pid_block,void *redir_table,OSVECTOR vector,OSUSER user);
 0608: 00000000 EC993044 ; 182: void start(PROCESS pid);
-060C: 00000000 98963044 ; 183: int get_ptype(PROCESS pid);
+060C: 00000000 9C983044 ; 183: int get_ptype(PROCESS pid);
 0610: 00000000 E8973044 ; 184: PROCESS current_process(void);
 0614: 00000000 20973044 ; 185: void delay(OSTIME timeout);
 0618: 00000000 E8983044 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-061C: 00000000 15993044 ; 187: void kill_proc(PROCESS pid);
+061C: 00000000 14993044 ; 187: void kill_proc(PROCESS pid);
 ;0620: xxxxxxxx yyyyyyyy ;8188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ;818A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
@@ -429,6 +429,8 @@
 0B78: 00000000 81AB3545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 4922EC44 ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: 00000000 E9DAEB44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
+0B84: 00000000 51DC3845 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
+0B88: 00000000 796B3845 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 
 
 ;locale=Russian_Russia.1251
