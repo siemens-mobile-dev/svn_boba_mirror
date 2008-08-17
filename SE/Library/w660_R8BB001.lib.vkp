@@ -427,8 +427,10 @@
 0B70: 00000000 294A3C45 ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 0B74: 00000000 BD164845 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 3D174845 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
-;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
+0B7C: 00000000 3DBDFE44 ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: 00000000 DD75FE44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
+0B84: 00000000 61484B45 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
+0B88: 00000000 85D74A45 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 
 
 
