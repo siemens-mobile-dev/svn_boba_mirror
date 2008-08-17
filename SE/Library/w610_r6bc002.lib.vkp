@@ -425,10 +425,12 @@
 0B68: 00000000 91EAE944 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 A9E6E944 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
-;0B74: xxxxxxxx yyyyyyyy ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
-;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
+0B74: 00000000 D10F3545 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
+0B78: 00000000 51103545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 ;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: 00000000 0550EC44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
+;0B84: xxxxxxxx yyyyyyyy ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
+;0B88: xxxxxxxx yyyyyyyy ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 
 
 
