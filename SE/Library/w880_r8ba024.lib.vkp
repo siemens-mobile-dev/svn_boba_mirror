@@ -30,7 +30,7 @@
 04A0: 00000000 75383C45 ; 128: __thumb void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A4: 00000000 41383C45 ; 129: __thumb u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 CD383C45 ; 12A: __thumb void Timer_Kill(u16 *timerID);
-04AC: 00000000 756B3C45 ; 12B: __thumb int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __00000000 FFFFFFFF,int __0);
+04AC: 00000000 756B3C45 ; 12B: __thumb int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
 04B0: 00000000 9D6C3C45 ; 12C: __thumb void BookObj_KillBook(void *Book);
 04B4: 00000000 F1693C45 ; 12D: __thumb void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: 00000000 596A3C45 ; 12E: __thumb void BookObj_ReturnPage(BOOK * ,int);
@@ -85,9 +85,9 @@
 057C: 00000000 D9EE4545 ; 15F: __thumb void TextID2wstr(int StrID,wchar_t * str,int maxlen);
 0580: 00000000 B9ED4545 ; 160: __thumb int TextGetLength(int StrID);
 0584: 00000000 1DED4545 ; 161: __thumb void TextFree(int StrID);
-0588: 00000000 79ECF044 ; 162: __thumb int AB_DEFAULTNBR_GET(int rec_num, void * mem_00000000 t in, 30* unk);
-058C: 00000000 193CF144 ; 163: __thumb int AB_READSTRING(void * mem_00000000  rnt,i30ec_num, int rec_item_num);
-0590: 00000000 E53CF144 ; 164: __thumb int AB_READPHONENBR(void * mem_00000000  rnt,i30ec_num, int rec_item_num);
+0588: 00000000 79ECF044 ; 162: __thumb int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
+058C: 00000000 193CF144 ; 163: __thumb int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
+0590: 00000000 E53CF144 ; 164: __thumb int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
 0594: 00000000 9D3DF144 ; 165: __thumb int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: 00000000 C5E14545 ; 166: __thumb int PNUM_len(void *pnum);
 059C: 00000000 6DED3445 ; 167: __thumb void PNUM2str(char *str,void *pnum,int len, int max_len);
@@ -107,7 +107,7 @@
 05D4: 00000000 5D783945 ; 175: __thumb char * manifest_GetParam(const char *buf, const char *param_name,int unk);
 05D8: 00000000 110CFB44 ; 176: __thumb int lseek(int file,int offset,int mode);
 05DC: 00000000 1F251444 ;8177: int get_VBUFFER(void); //nullsub(void)
-05E0: 00000000 27734B45 ; 178: nullsub! void SetLampLevel (int level);
+05E0: 00000000 27734B45 ; 178: void SetLampLevel (int level); //nullsub(ret 0)
 05E4: 00000000 110A2D45 ; 179: __thumb void * ListElement_Remove(LIST *lst,int index);
 05E8: 00000000 694C3E44 ; 17A: __thumb int GetCurrentPID(void);
 05EC: 00000000 450A2D45 ; 17B: __thumb int ListElement_Prt2NumElement(LIST *lst,void *ptr);
@@ -123,9 +123,9 @@
 0614: 00000000 ECD44244 ; 185: __arm void delay(OSTIME timeout);
 0618: 00000000 B4D64244 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 061C: 00000000 E0D64244 ; 187: void kill_proc(PROCESS pid);
-;0620: xxxxxxxx yyyyyyyy ;8188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
-;0628: xxxxxxxx yyyyyyyy ;818A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
+;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 0680: 00000000 3DB26744 ; 1A0: __thumb char* strcpy(char * dest, char * source);
 0684: 00000000 A96D1245 ; 1A1: __thumb void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 FD6D1245 ; 1A2: __thumb void SendMessage(void **signal,int PID);
@@ -276,7 +276,7 @@
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
 0900: 00000000 EBB31145 ; 240: void JavaSession_Manager (int cmd); //nullsub(void)
-0904: 00000000 E9B31145 ; 241: int JavaSession_GetName(void);
+0904: 00000000 E9B31145 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: 00000000 85EC4545 ; 242: __thumb int TextCopyId(int);
 090C: 00000000 F1713C45 ; 243: __thumb UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: 00000000 69674345 ; 244: __thumb void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
@@ -424,15 +424,16 @@
 0B64: 00000000 B9EAFB44 ; 2D9: __thumb int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 C1EAFB44 ; 2DA: __thumb int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 D9E6FB44 ; 2DB: __thumb int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
-0B70: 00000000 27734B45 ; 2DC: __unknown void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+0B70: 00000000 27734B45 ; 2DC: __unknown void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time); //nullsub(ret 0)
 0B74: 00000000 C9204745 ; 2DD: __thumb void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 49214745 ; 2DE: __thumb void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 8997FE44 ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: 00000000 F54FFE44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: 00000000 7D534A45 ; 2E1: __thumb int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: 00000000 A1E24945 ; 2E2: __thumb int Shortcut_Get_MenuItemIconID(wchar_t *);
-0B8C: 00000000 CD633C45 ; 2E3: __thumb BOOK * FindBookEx(int (*)(BOOK*, int *);
+0B8C: 00000000 CD633C45 ; 2E3: __thumb BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 0B90: 00000000 DD64FF44 ; 2E4: __thumb FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+
 
 
 

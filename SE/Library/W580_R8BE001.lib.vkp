@@ -27,7 +27,7 @@
 0494: 00000000 7552EC44 ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: 00000000 31ABE844 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
 049C: 00000000 2D5EE844 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
-04A0: 00000000 39B42A45 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 *timerID, LPARAM lparam), LPARAM lparam);
+04A0: 00000000 39B42A45 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A4: 00000000 05B42A45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 91B42A45 ; 12A: void Timer_Kill(u16 *timerID);
 04AC: 00000000 49E42A45 ; 12B: int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
@@ -123,9 +123,9 @@
 0614: 00000000 20973044 ; 185: void delay(OSTIME timeout);
 0618: 00000000 E8983044 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 061C: 00000000 14993044 ; 187: void kill_proc(PROCESS pid);
-;0620: xxxxxxxx yyyyyyyy ;8188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
-;0628: xxxxxxxx yyyyyyyy ;818A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
+;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 0680: 00000000 4D745544 ; 1A0: char* strcpy(char * dest, char * source);
 0684: 00000000 F958FF44 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 4D59FF44 ; 1A2: void SendMessage(void **signal,int PID);
@@ -276,7 +276,7 @@
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
 0900: 00000000 DB051444 ; 240: void JavaSession_Manager (int cmd); //nullsub(void)
-0904: 00000000 D9051444 ; 241: int JavaSession_GetName(void);
+0904: 00000000 D9051444 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: 00000000 65753445 ; 242: int TextCopyId(int);
 090C: 00000000 C5EA2A45 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: 00000000 35F03145 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
@@ -383,8 +383,8 @@
 0AC0: 00000000 7155EC44 ; 2B0: void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
 0AC4: 00000000 8153EC44 ; 2B1: void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
 0AC8: 00000000 C9F8EC44 ; 2B2: void FSX_RemoveIllegalSymbolsName(FILEITEM *);
-0ACC: 00000000 31F1EC44 ; 2B3: FILEITEM * DataBrowser_ItemDesc_Create(void);
-0AD0: 00000000 21F2EC44 ; 2B4: void DataBrowser_ItemDesc_Destroy(FILEITEM *);
+0ACC: 00000000 31F1EC44 ; 2B3: FILEITEM * FILEITEM_Create(void);
+0AD0: 00000000 21F2EC44 ; 2B4: void FILEITEM_Destroy(FILEITEM *);
 0AD4: 00000000 213C3745 ; 2B5: GUI *CreateDateInputVA(int zero, ...);
 0AD8: 00000000 19543745 ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
 0ADC: 00000000 096E2F45 ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
@@ -400,7 +400,7 @@
 0B04: 00000000 5D6A3845 ; 2C1: wchar_t * MenuBook_Desktop_GetSelectedItemID(BOOK * MenuBook_Desktop);
 0B08: 00000000 CDC83745 ; 2C2: void BookObj_Softkey_SetAction(BOOK *,int actionID,void (*proc)(BOOK *,void*));
 0B0C: 00000000 05C93745 ; 2C3: void BookObj_Softkey_SetText(BOOK *,int actionID,int StrID);
-0B10: 00000000 D5CA2A45 ; 2C4: BOOK * Root_GetBookByID(int BookID);
+0B10: 00000000 D5CA2A45 ; 2C4: BOOK * FindBookByID(int BookID);
 0B14: 00000000 994C3745 ; 2C5: GUI_FEEDBACK *TextFeedbackWindow(BOOK *bk, int zero);
 0B18: 00000000 D1503745 ; 2C6: void Feedback_SetKeyHook(GUI_FEEDBACK *, void (*hook)(BOOK *bk, int key, int unk, int unk2));
 0B1C: 00000000 71503745 ; 2C7: void Feedback_SetOnClose(GUI_FEEDBACK *, void (*OnClose)(BOOK *bk));
@@ -412,12 +412,12 @@
 0B34: 00000000 35CAE344 ; 2CD: void ImageID_Free(wchar_t imageID);
 0B38: 00000000 05FBEA44 ; 2CE: SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 0B3C: 00000000 2505EB44 ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
-0B40: 00000000 1DF3EC44 ; 2D0: int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
-0B44: 00000000 2DF7EC44 ; 2D1: int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
-0B48: 00000000 25F7EC44 ; 2D2: wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
-0B4C: 00000000 D9F7EC44 ; 2D3: wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
-0B50: 00000000 A5F3EC44 ; 2D4: int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
-0B54: 00000000 B1F7EC44 ; 2D5: int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+0B40: 00000000 1DF3EC44 ; 2D0: int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
+0B44: 00000000 2DF7EC44 ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
+0B48: 00000000 25F7EC44 ; 2D2: wchar_t *FILEITEM_GetFname(FILEITEM *f);
+0B4C: 00000000 D9F7EC44 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
+0B50: 00000000 A5F3EC44 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+0B54: 00000000 B1F7EC44 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 0B58: 00000000 81DAE944 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
 0B5C: 00000000 3515EA44 ; 2D7: void JavaDialog_Uninit(int unk1);
 0B60: 00000000 F916EA44 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
@@ -431,6 +431,11 @@
 0B80: 00000000 E9DAEB44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: 00000000 51DC3845 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: 00000000 796B3845 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
+;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+
+
+
 
 
 ;locale=Russian_Russia.1251

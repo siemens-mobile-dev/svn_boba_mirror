@@ -25,7 +25,7 @@
 0488: FFFFFFFF 5DB5E244 ; 122: void DataBrowserDesc_SetFolders(void * db , wchar_t const ** FolderList);
 048C: FFFFFFFF C9B5E244 ; 123: void DataBrowserDesc_SetOKSoftKeyText(void * db , int StrID);
 0490: FFFFFFFF 65A7E244 ; 124: void DataBrowser_Create(void * db);
-0494: FFFFFFFF 66B7E244 ; 125: void DataBrowserDesc_Destroy(void * db);
+;0494: xxxxxxxx yyyyyyyy ; 125: void DataBrowserDesc_Destroy(void * db);
 0498: FFFFFFFF 25EC0E45 ; 126: wchar_t * getFileExtention(wchar_t * fnane);
 049C: FFFFFFFF 25AD0E45 ; 127: int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
 04A0: FFFFFFFF 757EE844 ; 128: void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
@@ -124,9 +124,9 @@
 0614: FFFFFFFF E88C0644 ; 185: void delay(OSTIME timeout);
 ;0618: xxxxxxxx yyyyyyyy ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 ;061C: xxxxxxxx yyyyyyyy ; 187: void kill_proc(PROCESS pid);
-;0620: xxxxxxxx yyyyyyyy ;8188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
-;0628: xxxxxxxx yyyyyyyy ;818A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
+;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 0680: FFFFFFFF 5578B444 ; 1A0: char* strcpy(char * dest, char * source);
 0684: FFFFFFFF 595CCA44 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: FFFFFFFF AD5CCA44 ; 1A2: void SendMessage(void **signal,int PID);
@@ -274,8 +274,8 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DISP_OBJ_GetMethod0B (DISP_OBJ *);
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
-0900: FFFFFFFF 9DE7A144 ; 240: void JavaSession_Manager (int cmd);
-0904: FFFFFFFF 9DE7A144 ; 241: int JavaSession_GetName(void);
+0900: FFFFFFFF 9DE7A144 ; 240: void JavaSession_Manager (int cmd); //nullsub(ret 0)
+0904: FFFFFFFF 9DE7A144 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: FFFFFFFF 99A4EF44 ; 242: int TextCopyId(int);
 090C: FFFFFFFF 6D91E844 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: FFFFFFFF FD8CD644 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
@@ -383,8 +383,8 @@
 ;0AC0: xxxxxxxx yyyyyyyy ; 2B0: void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
 ;0AC4: xxxxxxxx yyyyyyyy ; 2B1: void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
 ;0AC8: xxxxxxxx yyyyyyyy ; 2B2: void FSX_RemoveIllegalSymbolsName(FILEITEM *);
-;0ACC: xxxxxxxx yyyyyyyy ; 2B3: FILEITEM * DataBrowser_ItemDesc_Create(void);
-;0AD0: xxxxxxxx yyyyyyyy ; 2B4: void DataBrowser_ItemDesc_Destroy(FILEITEM *);
+;0ACC: xxxxxxxx yyyyyyyy ; 2B3: FILEITEM * FILEITEM_Create(void);
+;0AD0: xxxxxxxx yyyyyyyy ; 2B4: void FILEITEM_Destroy(FILEITEM *);
 ;0AD4: xxxxxxxx yyyyyyyy ; 2B5: GUI *CreateDateInputVA(int zero, ...);
 ;0AD8: xxxxxxxx yyyyyyyy ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
 ;0ADC: xxxxxxxx yyyyyyyy ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
@@ -412,12 +412,12 @@
 ;0B34: xxxxxxxx yyyyyyyy ; 2CD: void ImageID_Free(wchar_t imageID);
 ;0B38: xxxxxxxx yyyyyyyy ; 2CE: SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 ;0B3C: xxxxxxxx yyyyyyyy ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
-;0B40: xxxxxxxx yyyyyyyy ; 2D0: int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
-;0B44: xxxxxxxx yyyyyyyy ; 2D1: int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
-0B48: FFFFFFFF 451A1045 ; 2D2: wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
-0B4C: FFFFFFFF 2D1B1045 ; 2D3: wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
-;0B50: xxxxxxxx yyyyyyyy ; 2D4: int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
-;0B54: xxxxxxxx yyyyyyyy ; 2D5: int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+;0B40: xxxxxxxx yyyyyyyy ; 2D0: int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
+;0B44: xxxxxxxx yyyyyyyy ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
+0B48: FFFFFFFF 451A1045 ; 2D2: wchar_t *FILEITEM_GetFname(FILEITEM *f);
+0B4C: FFFFFFFF 2D1B1045 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
+;0B50: xxxxxxxx yyyyyyyy ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+;0B54: xxxxxxxx yyyyyyyy ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 ;0B58: xxxxxxxx yyyyyyyy ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
 ;0B5C: xxxxxxxx yyyyyyyy ; 2D7: void JavaDialog_Uninit(int unk1);
 ;0B60: xxxxxxxx yyyyyyyy ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
@@ -429,6 +429,10 @@
 ;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 ;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: FFFFFFFF 05F70F45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
+;0B84: xxxxxxxx yyyyyyyy ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
+;0B88: xxxxxxxx yyyyyyyy ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
+;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 
 
 
