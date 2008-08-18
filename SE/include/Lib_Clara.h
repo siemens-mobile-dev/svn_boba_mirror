@@ -1153,9 +1153,9 @@ __swi __arm void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wch
 #pragma swi_number=0x2B2
 __swi __arm void FSX_RemoveIllegalSymbolsName(FILEITEM *);
 #pragma swi_number=0x2B3
-__swi __arm FILEITEM * DataBrowser_ItemDesc_Create(void);
+__swi __arm FILEITEM * FILEITEM_Create(void);
 #pragma swi_number=0x2B4
-__swi __arm void DataBrowser_ItemDesc_Destroy(FILEITEM *);
+__swi __arm void FILEITEM_Destroy(FILEITEM *);
 
 #pragma swi_number=0x2B5
 __swi __arm GUI *CreateDateInputVA(int zero, ...);
@@ -1225,17 +1225,17 @@ __swi __arm  SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 #pragma swi_number=0x2CF
 __swi __arm  int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
 #pragma swi_number=0x2D0
-__swi __arm  int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
+__swi __arm  int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
 #pragma swi_number=0x2D1
-__swi __arm  int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
+__swi __arm  int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
 #pragma swi_number=0x2D2
-__swi __arm  wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
+__swi __arm  wchar_t *FILEITEM_GetFname(FILEITEM *f);
 #pragma swi_number=0x2D3
-__swi __arm  wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
+__swi __arm  wchar_t *FILEITEM_GetPath(FILEITEM *f);
 #pragma swi_number=0x2D4
-__swi __arm  int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+__swi __arm  int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 #pragma swi_number=0x2D5
-__swi __arm  int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+__swi __arm  int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 
 #pragma swi_number=0x2D6
 __swi __arm  int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
@@ -1268,4 +1268,14 @@ __swi __arm SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 __swi __arm int Shortcut_Get_MenuItemName(wchar_t *);
 #pragma swi_number=0x2E2
 __swi __arm int Shortcut_Get_MenuItemIconID(wchar_t *);
+
+#pragma swi_number=0x2E3
+__swi __arm BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+#pragma swi_number=0x2E4
+__swi __arm FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+#pragma swi_number=0x2E5
+__swi __arm  void FILEITEM_Destroy (FILEITEM *);
+#pragma swi_number=0x82E5
+__swi __arm  void *FILEITEM_Destroy_adr (void);
+
 #endif

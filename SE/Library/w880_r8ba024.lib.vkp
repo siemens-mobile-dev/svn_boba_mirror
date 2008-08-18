@@ -30,7 +30,7 @@
 04A0: 00000000 75383C45 ; 128: __thumb void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A4: 00000000 41383C45 ; 129: __thumb u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 CD383C45 ; 12A: __thumb void Timer_Kill(u16 *timerID);
-04AC: 00000000 756B3C45 ; 12B: __thumb int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
+04AC: 00000000 756B3C45 ; 12B: __thumb int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __00000000 FFFFFFFF,int __0);
 04B0: 00000000 9D6C3C45 ; 12C: __thumb void BookObj_KillBook(void *Book);
 04B4: 00000000 F1693C45 ; 12D: __thumb void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: 00000000 596A3C45 ; 12E: __thumb void BookObj_ReturnPage(BOOK * ,int);
@@ -85,9 +85,9 @@
 057C: 00000000 D9EE4545 ; 15F: __thumb void TextID2wstr(int StrID,wchar_t * str,int maxlen);
 0580: 00000000 B9ED4545 ; 160: __thumb int TextGetLength(int StrID);
 0584: 00000000 1DED4545 ; 161: __thumb void TextFree(int StrID);
-0588: 00000000 79ECF044 ; 162: __thumb int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
-058C: 00000000 193CF144 ; 163: __thumb int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
-0590: 00000000 E53CF144 ; 164: __thumb int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
+0588: 00000000 79ECF044 ; 162: __thumb int AB_DEFAULTNBR_GET(int rec_num, void * mem_00000000 t in, 30* unk);
+058C: 00000000 193CF144 ; 163: __thumb int AB_READSTRING(void * mem_00000000  rnt,i30ec_num, int rec_item_num);
+0590: 00000000 E53CF144 ; 164: __thumb int AB_READPHONENBR(void * mem_00000000  rnt,i30ec_num, int rec_item_num);
 0594: 00000000 9D3DF144 ; 165: __thumb int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: 00000000 C5E14545 ; 166: __thumb int PNUM_len(void *pnum);
 059C: 00000000 6DED3445 ; 167: __thumb void PNUM2str(char *str,void *pnum,int len, int max_len);
@@ -107,7 +107,7 @@
 05D4: 00000000 5D783945 ; 175: __thumb char * manifest_GetParam(const char *buf, const char *param_name,int unk);
 05D8: 00000000 110CFB44 ; 176: __thumb int lseek(int file,int offset,int mode);
 05DC: 00000000 1F251444 ;8177: int get_VBUFFER(void); //nullsub(void)
-;05E0: xxxxxxxx yyyyyyyy ; 178: void SetLampLevel (int level);
+05E0: 00000000 27734B45 ; 178: nullsub! void SetLampLevel (int level);
 05E4: 00000000 110A2D45 ; 179: __thumb void * ListElement_Remove(LIST *lst,int index);
 05E8: 00000000 694C3E44 ; 17A: __thumb int GetCurrentPID(void);
 05EC: 00000000 450A2D45 ; 17B: __thumb int ListElement_Prt2NumElement(LIST *lst,void *ptr);
@@ -255,8 +255,8 @@
 08A4: 00000000 B5E04645 ; 229: __thumb DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: 00000000 05E04645 ; 22A: __thumb void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: 00000000 EDE04645 ; 22B: __thumb DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+08B0: 00000000 01E04645 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
+08B4: 00000000 D1E04645 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -383,8 +383,8 @@
 0AC0: 00000000 CDCAFE44 ; 2B0: __thumb void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
 0AC4: 00000000 E5C8FE44 ; 2B1: __thumb void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
 0AC8: 00000000 356CFF44 ; 2B2: __thumb void FSX_RemoveIllegalSymbolsName(FILEITEM *);
-0ACC: 00000000 9D64FF44 ; 2B3: __thumb FILEITEM * DataBrowser_ItemDesc_Create(void);
-0AD0: 00000000 8D65FF44 ; 2B4: __thumb void DataBrowser_ItemDesc_Destroy(FILEITEM *);
+0ACC: 00000000 9D64FF44 ; 2B3: __thumb FILEITEM * FILEITEM_Create(void);
+0AD0: 00000000 8D65FF44 ; 2B4: __thumb void FILEITEM_Destroy(FILEITEM *);
 0AD4: 00000000 51B44845 ; 2B5: __thumb GUI *CreateDateInputVA(int zero, ...);
 0AD8: 00000000 49CC4845 ; 2B6: __thumb GUI *CreateTimeInputVA(int zero, ...);
 0ADC: 00000000 9DE54045 ; 2B7: __thumb void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
@@ -412,24 +412,28 @@
 0B34: 00000000 2940F644 ; 2CD: __thumb void ImageID_Free(wchar_t imageID);
 0B38: 00000000 2171FD44 ; 2CE: __thumb SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 0B3C: 00000000 417BFD44 ; 2CF: __thumb int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
-0B40: 00000000 8966FF44 ; 2D0: __thumb int DataBrowser_ItemDesc_SetFname(FILEITEM *f, const wchar_t *fname);
-0B44: 00000000 996AFF44 ; 2D1: __thumb int DataBrowser_ItemDesc_SetPath(FILEITEM *f, const wchar_t *fpath);
-0B48: 00000000 916AFF44 ; 2D2: __thumb wchar_t *DataBrowser_ItemDesc_GetFname(FILEITEM *f);
-0B4C: 00000000 456BFF44 ; 2D3: __thumb wchar_t *DataBrowser_ItemDesc_GetPath(FILEITEM *f);
-0B50: 00000000 1167FF44 ; 2D4: __thumb int DataBrowser_ItemDesc_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
-0B54: 00000000 1D6BFF44 ; 2D5: __thumb int DataBrowser_ItemDesc_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+0B40: 00000000 8966FF44 ; 2D0: __thumb int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
+0B44: 00000000 996AFF44 ; 2D1: __thumb int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
+0B48: 00000000 916AFF44 ; 2D2: __thumb wchar_t *FILEITEM_GetFname(FILEITEM *f);
+0B4C: 00000000 456BFF44 ; 2D3: __thumb wchar_t *FILEITEM_GetPath(FILEITEM *f);
+0B50: 00000000 1167FF44 ; 2D4: __thumb int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+0B54: 00000000 1D6BFF44 ; 2D5: __thumb int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 0B58: 00000000 9D50FC44 ; 2D6: __thumb int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
 0B5C: 00000000 518BFC44 ; 2D7: __thumb void JavaDialog_Uninit(int unk1);
 0B60: 00000000 158DFC44 ; 2D8: __thumb int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 0B64: 00000000 B9EAFB44 ; 2D9: __thumb int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 C1EAFB44 ; 2DA: __thumb int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 D9E6FB44 ; 2DB: __thumb int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
-;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
-;0B74: xxxxxxxx yyyyyyyy ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
-;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
-;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
+0B70: 00000000 27734B45 ; 2DC: __unknown void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+0B74: 00000000 C9204745 ; 2DD: __thumb void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
+0B78: 00000000 49214745 ; 2DE: __thumb void DispObject_KillRefreshTimer(DISP_OBJ *);
+0B7C: 00000000 8997FE44 ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: 00000000 F54FFE44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
-
+0B84: 00000000 7D534A45 ; 2E1: __thumb int Shortcut_Get_MenuItemName(wchar_t *);
+0B88: 00000000 A1E24945 ; 2E2: __thumb int Shortcut_Get_MenuItemIconID(wchar_t *);
+0B8C: 00000000 CD633C45 ; 2E3: __thumb BOOK * FindBookEx(int (*)(BOOK*, int *);
+0B90: 00000000 DD64FF44 ; 2E4: __thumb FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B94: 00000000 8D65FF44 ; 2E5: __thumb void FILEITEM_Destroy (FILEITEM *);
 
 
 
