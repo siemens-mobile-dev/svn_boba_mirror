@@ -39,7 +39,7 @@ void Draw(DISP_OBJ * db,int r1, int r2,int r3)
   }
 }
 
-void onTimer(u16 * r0, void * r1)
+void onTimer(u16 r0, void * r1)
 {
   if (SIDheap!=0x6FFFFFFF){TextFree(SIDheap);SIDheap=0x6FFFFFFF;}
   SIDheap=int2strID(GetFreeBytesOnHeap());

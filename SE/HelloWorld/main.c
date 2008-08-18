@@ -40,7 +40,7 @@ void elf_exit(void)
 
 
 
-void onTimer (u16 * unk , void * data)
+void onTimer (u16 unk , void * data)
 {
   {
     // перезапускаем таймер

@@ -50,8 +50,8 @@ __arm int Elf_Run(void * r0, BOOK * book)
   char ch[500];
   SUB_EXECUTE * data = BrowserItem_Get_SUB_EXECUTE(book);
 
-  wchar_t * fpath = DataBrowser_ItemDesc_GetPath(data->file_item);
-  wchar_t * fname = DataBrowser_ItemDesc_GetFname(data->file_item);
+  wchar_t * fpath = FILEITEM_GetPath(data->file_item);
+  wchar_t * fname = FILEITEM_GetFname(data->file_item);
   u16 * filename = malloc((wstrlen(fpath)+wstrlen(fname)+2)*2);
 
   wstrcpy(filename,fpath);
