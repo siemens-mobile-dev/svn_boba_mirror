@@ -1156,6 +1156,8 @@ __swi __arm void FSX_RemoveIllegalSymbolsName(FILEITEM *);
 __swi __arm FILEITEM * FILEITEM_Create(void);
 #pragma swi_number=0x2B4
 __swi __arm void FILEITEM_Destroy(FILEITEM *);
+#pragma swi_number=0x82B4
+__swi __arm  void *FILEITEM_Destroy_adr (void);
 
 #pragma swi_number=0x2B5
 __swi __arm GUI *CreateDateInputVA(int zero, ...);
@@ -1273,9 +1275,6 @@ __swi __arm int Shortcut_Get_MenuItemIconID(wchar_t *);
 __swi __arm BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 #pragma swi_number=0x2E4
 __swi __arm FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
-#pragma swi_number=0x2E5
-__swi __arm  void FILEITEM_Destroy (FILEITEM *);
-#pragma swi_number=0x82E5
-__swi __arm  void *FILEITEM_Destroy_adr (void);
+
 
 #endif

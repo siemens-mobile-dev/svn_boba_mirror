@@ -433,7 +433,6 @@
 0B88: 00000000 A1E24945 ; 2E2: __thumb int Shortcut_Get_MenuItemIconID(wchar_t *);
 0B8C: 00000000 CD633C45 ; 2E3: __thumb BOOK * FindBookEx(int (*)(BOOK*, int *);
 0B90: 00000000 DD64FF44 ; 2E4: __thumb FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
-0B94: 00000000 8D65FF44 ; 2E5: __thumb void FILEITEM_Destroy (FILEITEM *);
 
 
 
