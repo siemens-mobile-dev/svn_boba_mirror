@@ -433,6 +433,9 @@
 0B88: 00000000 85D74A45 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 0B8C: 00000000 41573D45 ; 2E3: __thumb BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 0B90: 00000000 858CFF44 ; 2E4: __thumb FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B94: 00000000 8D563D45 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+0B98: 00000000 B5643D45 ; 2E6: int BOOK_GetSessionID(BOOK *);
+0B9C: 00000000 95493D45 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 
 
 
