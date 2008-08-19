@@ -85,7 +85,7 @@ struct HELPER_SIGNAL
 typedef struct
 {
   char mode;
-  int   SID;
+  int  book_or_sess_id;
   unsigned short event;
 
   void *data;
@@ -313,9 +313,9 @@ typedef struct
 
 typedef struct
 {
-  int (*PROC)(UI_MESSAGE*,BOOK*);
-  int SessionID;
-  unsigned short event;
+  int (*PROC)(void *msg,BOOK*);
+  int BookID;
+  u16 event;
   void * APP_DESC;
   void * PAGE_DESC;
 }ACTION;

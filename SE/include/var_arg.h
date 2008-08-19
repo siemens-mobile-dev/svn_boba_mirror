@@ -16,6 +16,7 @@ extern int __var_arg_strinp_unk2;
 extern int __var_arg_strinp_unk3;
 extern int __var_arg_strinp_ok_on_diez;
 
+extern int __var_arg_strinp_set_int_val;
 extern int __var_arg_strinp_min_int_val;
 extern int __var_arg_strinp_max_int_val;
 
@@ -50,6 +51,7 @@ extern int __var_arg_timeinp_time;
 #define VAR_STRINP_UNK3(__param__) &__var_arg_strinp_unk3,__param__
 #define VAR_STRINP_OK_ON_DIEZ(__param__) &__var_arg_strinp_ok_on_diez,__param__
 
+#define VAR_STRINP_SET_INT_VAL(__param__) &__var_arg_strinp_set_int_val,__param__
 #define VAR_STRINP_MIN_INT_VAL(__param__) &__var_arg_strinp_min_int_val,__param__
 #define VAR_STRINP_MAX_INT_VAL(__param__) &__var_arg_strinp_max_int_val,__param__
 

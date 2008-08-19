@@ -643,6 +643,16 @@ __swi __arm  void TabMenuBar_SetTabIcon(GUI_TABMENUBAR *,int tab, wchar_t icon ,
 
 #pragma swi_number=0x1CE
 __swi __arm  GUI *GUI_Free(GUI*);
+#ifdef __cplusplus
+#pragma swi_number=0x1CE
+__swi __arm  GUI_LIST *GUI_Free(GUI_LIST *);
+#pragma swi_number=0x1CE
+__swi __arm  GUI_ONEOFMANY *GUI_Free(GUI_ONEOFMANY *);
+#pragma swi_number=0x1CE
+__swi __arm  GUI_NOFMANY *GUI_Free(GUI_NOFMANY *);
+#pragma swi_number=0x1CE
+__swi __arm  GUI_FEEDBACK *GUI_Free(GUI_FEEDBACK *);
+#endif
 
 #pragma swi_number=0x1CF
 __swi __arm void InputFeedback_SetIcon(GUI *gui, wchar_t icon);
@@ -1276,5 +1286,10 @@ __swi __arm BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param)
 #pragma swi_number=0x2E4
 __swi __arm FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 
-
+#pragma swi_number=0x2E5
+__swi __arm ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+#pragma swi_number=0x2E6
+__swi __arm int BOOK_GetSessionID(BOOK *);
+#pragma swi_number=0x2E7
+__swi __arm void UI_Event_toSID(int event, int sess_id);
 #endif
