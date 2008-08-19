@@ -429,8 +429,8 @@
 0B80: 00000000 F54EFE44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: 00000000 91DE4A45 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: 00000000 296E4A45 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
-;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
-;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B8C: 00000000 EDDC3C45 ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+0B90: 00000000 D164FF44 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 
 
 
