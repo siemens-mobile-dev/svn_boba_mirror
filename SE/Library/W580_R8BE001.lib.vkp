@@ -31,7 +31,7 @@
 04A4: 00000000 05B42A45 ; 129: u16 Timer_Set(int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
 04A8: 00000000 91B42A45 ; 12A: void Timer_Kill(u16 *timerID);
 04AC: 00000000 49E42A45 ; 12B: int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
-04B0: 00000000 0D2BF044 ; 12C: void BookObj_KillBook(void *Book);
+04B0: 00000000 71E52A45 ; 12C: void BookObj_KillBook(void *Book);
 04B4: 00000000 C5E12A45 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: 00000000 2DE32A45 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
 04BC: 00000000 65EA2A45 ; 12F: void FreeBook ( void *book);
@@ -431,11 +431,11 @@
 0B80: 00000000 E9DAEB44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: 00000000 51DC3845 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: 00000000 796B3845 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
-;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
-;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
-
-
-
+0B8C: 00000000 69CB2A45 ; 2E3: BOOK * FindBookEx(int (*)(BOOK*, int *);
+0B90: 00000000 71F1EC44 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B94: 00000000 EDDB2A45 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+0B98: 00000000 15EA2A45 ; 2E6: int BOOK_GetSessionID(BOOK *);
+0B9C: 00000000 F5CE2A45 ; 2E7: void UI_Event_toSID(int event);
 
 
 ;locale=Russian_Russia.1251
