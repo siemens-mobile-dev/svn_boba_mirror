@@ -1292,4 +1292,6 @@ __swi __arm ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 e
 __swi __arm int BOOK_GetSessionID(BOOK *);
 #pragma swi_number=0x2E7
 __swi __arm void UI_Event_toSID(int event, int sess_id);
+#pragma swi_number=0x2E8
+__swi __arm char *GetIMSI(void);
 #endif
