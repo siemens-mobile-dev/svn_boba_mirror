@@ -1294,4 +1294,6 @@ __swi __arm int BOOK_GetSessionID(BOOK *);
 __swi __arm void UI_Event_toSID(int event, int sess_id);
 #pragma swi_number=0x2E8
 __swi __arm char *GetIMSI(void);
+#pragma swi_number=0x2E9
+__swi __arm void UI_CONTROLLED_SHUTDOWN_RESPONSE(void);
 #endif
