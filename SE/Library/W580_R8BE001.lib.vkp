@@ -436,6 +436,7 @@
 0B94: 00000000 EDDB2A45 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
 0B98: 00000000 15EA2A45 ; 2E6: int BOOK_GetSessionID(BOOK *);
 0B9C: 00000000 F5CE2A45 ; 2E7: void UI_Event_toSID(int event, int sess_id);
+0BA0: 00000000 01EA2244 ; 2E8: char *GetIMSI(void);
 
 
 ;locale=Russian_Russia.1251
