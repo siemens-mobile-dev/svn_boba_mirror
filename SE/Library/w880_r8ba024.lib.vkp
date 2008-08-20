@@ -433,9 +433,10 @@
 0B88: 00000000 A1E24945 ; 2E2: __thumb int Shortcut_Get_MenuItemIconID(wchar_t *);
 0B8C: 00000000 CD633C45 ; 2E3: __thumb BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 0B90: 00000000 DD64FF44 ; 2E4: __thumb FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
-
-
-
+0B94: 00000000 19633C45 ; 2E5: __thumb ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+0B98: 00000000 41713C45 ; 2E6: int BOOK_GetSessionID(BOOK *);
+0B9C: 00000000 21563C45 ; 2E7: __thumb void UI_Event_toSID(int event, int sess_id);
+0BA0: 00000000 F90E2C44 ; 2E8: char *GetIMSI(void);
 
 
 ;locale=Russian_Russia.1251
