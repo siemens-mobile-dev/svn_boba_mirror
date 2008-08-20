@@ -1295,5 +1295,5 @@ __swi __arm void UI_Event_toSID(int event, int sess_id);
 #pragma swi_number=0x2E8
 __swi __arm char *GetIMSI(void);
 #pragma swi_number=0x2E9
-__swi __arm void UI_CONTROLLED_SHUTDOWN_RESPONSE(void);
+__swi __arm void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 #endif
