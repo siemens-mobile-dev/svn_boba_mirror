@@ -429,10 +429,15 @@
 0B78: 00000000 E95C3145 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 C1C4E944 ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: 00000000 717BE944 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
-;0B84: xxxxxxxx yyyyyyyy ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
-;0B88: xxxxxxxx yyyyyyyy ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
-;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
-;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B84: 00000000 65853445 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
+0B88: 00000000 F5153445 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
+0B8C: 00000000 25922645 ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+0B90: 00000000 0995EA44 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B94: 00000000 A9A22645 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+0B98: 00000000 D1B02645 ; 2E6: int BOOK_GetSessionID(BOOK *);
+0B9C: 00000000 B1952645 ; 2E7: void UI_Event_toSID(int event, int sess_id);
+0BA0: 00000000 B92D2344 ; 2E8: char *GetIMSI(void);
+0BA4: 00000000 11A12745 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 
 
 
