@@ -436,6 +436,8 @@
 0B94: 00000000 8D563D45 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
 0B98: 00000000 B5643D45 ; 2E6: int BOOK_GetSessionID(BOOK *);
 0B9C: 00000000 95493D45 ; 2E7: void UI_Event_toSID(int event, int sess_id);
+0BA0: 00000000 E90F2C44 ; 2E8: char *GetIMSI(void);
+0BA4: 00000000 15553E45 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 
 
 
