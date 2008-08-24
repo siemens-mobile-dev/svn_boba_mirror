@@ -8,6 +8,9 @@
 static const char EditColorGuiName[]="Gui_EditColor";
 int colors[4]={0xFFFF0000,0xFF00FF00,0xFF0000FF,0x80C6AAAF};
 
+#define MIN(a,b) (a<b)?a:b
+#define MAX(a,b) (a>b)?a:b
+
 int ColorGuiOnCreate(DISP_OBJ_COLOR *db)
 {
   db->str_id=LGP_NULL;
@@ -60,10 +63,12 @@ void ColorGuiOnRedraw(DISP_OBJ_COLOR *db,int ,int,int)
   for (int i=0;i!=4;i++)
   {
     start_column=column_width+2*i*column_width;
+    column_height++;  // Какая то фигня с DrawRect, координаты не совпадают с DrawLine
     if (db->current_column==i)
       DrawRect(x1+start_column-2,y1+fsize-2,x1+start_column+column_width+2,y1+fsize+column_height+2,clBlack,clWhite);
 
     DrawRect(x1+start_column,y1+fsize,x1+start_column+column_width,y1+fsize+column_height,clBlack,colors[i]);
+    column_height--;
     switch(i)
     {
     case 0:
@@ -177,8 +182,7 @@ void EditColorGui_destr(DISP_DESC *desc)
 void OnBackColorEdit(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free(myBook->color);
-  myBook->color=NULL;
+  FREE_GUI(myBook->color);
 }
 
 void OnOkColorEdit(BOOK * bk, void *)
@@ -197,11 +201,10 @@ void OnOkColorEdit(BOOK * bk, void *)
   {
     *((unsigned int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)))=COLOR_RGBA(disp_obj->r,disp_obj->g,disp_obj->b,disp_obj->a);
   }
-  GUI_Free(myBook->color);
-  myBook->color=NULL;
+  FREE_GUI(myBook->color);
 }
 
-GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE color_type, int type)
+GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type)
 {
   wchar_t ustr[32];
   GUI_COLOR *gui_color=new GUI_COLOR;
@@ -216,7 +219,7 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE color_type, int type)
   disp_obj=(DISP_OBJ_COLOR *)GUIObj_GetDISPObj(gui_color);
   if (type==0)
   {
-    char *color=color_type.char_color;
+    char *color=(char *)myBook->cur_hp+sizeof(CFG_HDR);
     disp_obj->r=color[0];
     disp_obj->g=color[1];
     disp_obj->b=color[2];
@@ -224,7 +227,7 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE color_type, int type)
   }
   else
   {
-    unsigned int color=color_type.int_color;
+    unsigned int color=*((unsigned int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
     disp_obj->r=COLOR_GET_R(color);
     disp_obj->g=COLOR_GET_G(color);
     disp_obj->b=COLOR_GET_B(color);
@@ -253,6 +256,7 @@ int CoordinatesGuiOnCreate(DISP_OBJ_COORD *db)
 {
   db->str_id=LGP_NULL;
   db->need_str=1;
+  db->is_first_set=0;
   db->cstep=1;
   return (1);
 }
@@ -262,6 +266,21 @@ void CoordinatesGuiOnClose(DISP_OBJ_COORD *db)
   TextFree(db->str_id);
 }
 
+void DrawOwnRect(int _x1, int _y1,int _x2 ,int _y2,int pen_color,int brush_color)
+{
+  int x1,x2,y1,y2;
+  if (_x1>_x2){ x1=_x2;  x2=_x1;} else { x1=_x1;  x2=_x2;}
+  if (_y1>_y2){ y1=_y2;  y2=_y1;} else { y1=_y1;  y2=_y2;}
+  if (y1==y2 || x1==x2)
+  {
+    void *gc=get_DisplayGC();
+    GC_SetPenColor(gc,pen_color);
+    GC_SetBrushColor(gc,brush_color);
+    GC_DrawLine(gc,x1,y1,x2,y2);
+  }
+  else
+    DrawRect(x1,y1,x2,y2,pen_color,brush_color);
+}
 
 void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
 {
@@ -296,13 +315,40 @@ void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
     GC_DrawLine(gc,x_0,0,x_0, scr_h);
   }
   GC_SetPenColor(gc,old_pen);
-
-  if (db->need_str)
+  if (db->type)  // Если нужен рект
   {
-    snwprintf(ustr,MAXELEMS(ustr)-1,L"%d,%d",db->x,db->y);
-    TextFree(db->str_id);
-    db->str_id=Str2ID(ustr,0,SID_ANY_LEN);
-    db->need_str=0;
+    DrawOwnRect(db->old_rect.x1,db->old_rect.y1,db->old_rect.x2,db->old_rect.y2,0xC0808080,0x00000000);  // Нарисуем старый рект
+    if (db->is_first_set)
+    {
+      DrawOwnRect(db->x,db->y,db->x2,db->y2,clBlack,0x00000000);
+      if (db->need_str)
+      {
+        snwprintf(ustr,MAXELEMS(ustr)-1,L"%d,%d,%d,%d",db->x2,db->y2,db->x,db->y);
+        TextFree(db->str_id);
+        db->str_id=Str2ID(ustr,0,SID_ANY_LEN);
+        db->need_str=0;
+      }
+    }
+    else
+    {
+      if (db->need_str)
+      {
+        snwprintf(ustr,MAXELEMS(ustr)-1,L"%d,%d,%d,%d",db->x,db->y,db->x2,db->y2);
+        TextFree(db->str_id);
+        db->str_id=Str2ID(ustr,0,SID_ANY_LEN);
+        db->need_str=0;
+      }
+    }
+  }
+  else
+  {
+    if (db->need_str)
+    {
+      snwprintf(ustr,MAXELEMS(ustr)-1,L"%d,%d",db->x,db->y);
+      TextFree(db->str_id);
+      db->str_id=Str2ID(ustr,0,SID_ANY_LEN);
+      db->need_str=0;
+    }
   }
   DrawString(db->str_id,0, 3,scr_h-fsize-2,scr_w-4, scr_h-1,0,0,clBlack,0x00000000);
   
@@ -385,43 +431,84 @@ void EditCoordinatesGui_destr(DISP_DESC *desc)
 void OnBackCoordinatesEdit(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free(myBook->coord);
-  myBook->coord=NULL;
+  DISP_OBJ_COORD *disp_obj=(DISP_OBJ_COORD *)GUIObj_GetDISPObj(myBook->coord);
+  int f=0;
+  if (disp_obj->type)
+  {
+    if (disp_obj->is_first_set) 
+    {
+      disp_obj->is_first_set=0;
+      f=1;      
+    }
+  }
+  if (!f) FREE_GUI(myBook->coord);
 }
 
 void OnOkCoordinatesEdit(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   DISP_OBJ_COORD *disp_obj=(DISP_OBJ_COORD *)GUIObj_GetDISPObj(myBook->coord);
-  int *coordinates=((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
-  coordinates[0]=disp_obj->x;
-  coordinates[1]=disp_obj->y;
-  GUI_Free(myBook->coord);
-  myBook->coord=NULL;
+  int f=0;
+  if (disp_obj->type)
+  {
+    if (!disp_obj->is_first_set)
+    {
+      disp_obj->x2=disp_obj->x;
+      disp_obj->y2=disp_obj->y;
+      disp_obj->is_first_set=1;
+      f=1;
+    }
+    else
+    {
+      RECT *rc=((RECT *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
+      rc->x1=MIN(disp_obj->x2,disp_obj->x);
+      rc->y1=MIN(disp_obj->y2,disp_obj->y);
+      rc->x2=MAX(disp_obj->x2,disp_obj->x);
+      rc->y2=MAX(disp_obj->y2,disp_obj->y);
+    }
+  }
+  else
+  {
+    int *coordinates=((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
+    coordinates[0]=disp_obj->x;
+    coordinates[1]=disp_obj->y;
+  }
+  if (!f) FREE_GUI(myBook->coord);
 }
 
-GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook)
+
+GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook, int type)
 {
   GUI_COORDINATES *gui_coord=new GUI_COORDINATES;
-  DISP_OBJ_COORD *disp_obj;
-  int *coordinates;
-  
+  DISP_OBJ_COORD *disp_obj;  
   if (!CreateObject((GUI *)gui_coord,EditCoordinatesGui_destr,EditCoordinatesGui_constr, &myBook->book,0,0,0))
   {
     delete gui_coord;
     return 0;    
   }
   disp_obj=(DISP_OBJ_COORD *)GUIObj_GetDISPObj(gui_coord);
-  coordinates=((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
-  disp_obj->x=coordinates[0];
-  disp_obj->y=coordinates[1];
+  if (type==0)
+  {
+    int *coordinates=((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
+    disp_obj->x=coordinates[0];
+    disp_obj->y=coordinates[1];
+  }
+  else
+  {
+    RECT *rc=((RECT *)((char *)myBook->cur_hp+sizeof(CFG_HDR)));
+    disp_obj->old_rect.x1=disp_obj->x=rc->x1;
+    disp_obj->old_rect.y1=disp_obj->y=rc->y1;
+    disp_obj->old_rect.x2=disp_obj->x2=rc->x2;
+    disp_obj->old_rect.y2=disp_obj->y2=rc->y2;
+  }
+  disp_obj->type=type;
   myBook->coord=(GUI *)gui_coord;
   if (myBook) addGui2book(&myBook->book,myBook->coord);
   GUI_SetStyle(myBook->coord,4);
   GuiObject_SetTitleType(myBook->coord, 1);
   GUIObject_HideSoftkeys(myBook->coord);
   GUIObject_Softkey_SetAction(myBook->coord,ACTION_BACK, OnBackCoordinatesEdit);
-  GUIObject_Softkey_SetAction(myBook->coord,ACTION_SELECT1, OnOkCoordinatesEdit);
+  GUIObject_Softkey_SetAction(myBook->coord,ACTION_ACCEPT, OnOkCoordinatesEdit);
   ShowWindow(myBook->coord);
   return gui_coord;
 }
@@ -581,8 +668,7 @@ void FontSelectGuiOnKey(DISP_OBJ_FONT_SEL *db,int key,int,int repeat,int type)
 void OnBackFontSelect(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free(myBook->font_select);
-  myBook->font_select=NULL;
+  FREE_GUI(myBook->font_select);
 }
 
 void OnOkFontSelect(BOOK * bk, void *)
@@ -590,8 +676,7 @@ void OnOkFontSelect(BOOK * bk, void *)
   MyBOOK * myBook=(MyBOOK *)bk;
   DISP_OBJ_FONT_SEL *disp_obj=(DISP_OBJ_FONT_SEL *)GUIObj_GetDISPObj(myBook->font_select);
   *((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)))=GetFontDesc()[disp_obj->cur_pos].id;
-  GUI_Free(myBook->font_select);
-  myBook->font_select=NULL;
+  FREE_GUI(myBook->font_select);
 }
 
 void FontSelectGui_constr(DISP_DESC *desc)

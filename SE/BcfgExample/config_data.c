@@ -46,3 +46,6 @@ __root const int FONT=0;
 __root const CFG_HDR cfghdr14={CFG_KEYCODE,"Тест клавиши",0,0};
 __root const int KEY=0;
 __root const int KEYMODE=0;
+
+__root const CFG_HDR cfghdr134={CFG_RECT,"Rect Test",0,0};
+__root const RECT rc={80,120,50,100};

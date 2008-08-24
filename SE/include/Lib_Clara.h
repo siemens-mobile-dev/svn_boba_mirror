@@ -541,7 +541,7 @@ __swi __arm  void * ListElement_GetByIndex(LIST * , int index);
 #pragma swi_number=0x1AE
 __swi __arm  wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
 #pragma swi_number=0x1AF
-__swi __arm  void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
+__swi __arm  void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 #pragma swi_number=0x1B0
 __swi __arm  void ListElement_Add(LIST *lst,void *newElement);
 

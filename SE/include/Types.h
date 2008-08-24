@@ -265,10 +265,18 @@ typedef struct
 #endif
 }PAGE_MSG;
 
+typedef struct
+{
+  const char *name;
+  const PAGE_DESC *page;
+  void (*OnEnter)(void *, BOOK *);
+  void (*OnExit)(void *, BOOK *);
+}BOOK_SUBROUTINE;
+
 typedef struct PAGE_DESC
 {
   const char * name;
-  int unk_NULL;
+  BOOK_SUBROUTINE *subr;
   const PAGE_MSG * msg_lst;
 }PAGE_DESC;
 

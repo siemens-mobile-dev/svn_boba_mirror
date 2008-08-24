@@ -54,11 +54,7 @@ static int TI_OnEnter(void *, BOOK * bk)
 static int TI_OnExit(void *, BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  if (mbk->tinput)
-  {
-    GUI_Free(mbk->tinput);
-    mbk->tinput=NULL;
-  }
+  FREE_GUI(mbk->tinput);
   return (1);  
 }
 // ----------------------------------------------------------------
@@ -110,11 +106,7 @@ static int DI_OnEnter(void *, BOOK * bk)
 static int DI_OnExit(void *, BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  if (mbk->dinput)
-  {
-    GUI_Free(mbk->dinput);
-    mbk->dinput=NULL;
-  }
+  FREE_GUI(mbk->dinput);
   return (1);  
 }
 

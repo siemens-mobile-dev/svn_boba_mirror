@@ -27,11 +27,7 @@ void KeyCode_KeyHook(BOOK *bk, int key, int unk, int unk2)
 void KeyCode_OnClose(BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  if (mbk->key_input)
-  {
-    GUI_Free((GUI *)mbk->key_input);
-    mbk->key_input=NULL;
-  }
+  FREE_GUI(mbk->key_input);
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 }
 
@@ -101,14 +97,13 @@ const wchar_t * modes[] =
 
 STRID GetKeyModeName(int mode)
 {
-  return (mode<5?Str2ID(modes[mode],0,SID_ANY_LEN):LGP_NULL);
+  return (mode<MAXELEMS(modes)?Str2ID(modes[mode],0,SID_ANY_LEN):LGP_NULL);
 }
 
 void KeyModeSelect_OnCloseCBoxGui(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free((GUI *)myBook->keymode_sel_list);
-  myBook->keymode_sel_list=NULL;
+  FREE_GUI(myBook->keymode_sel_list);
 }
 
 void KeyModeSelect_OnSelectCBoxGui(BOOK * bk, void *)
@@ -117,14 +112,12 @@ void KeyModeSelect_OnSelectCBoxGui(BOOK * bk, void *)
   int item=OneOfMany_GetSelected(myBook->keymode_sel_list);
   *((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)+sizeof(int)))=item;
   ListMenu_SetSecondLineText((GUI_LIST*)myBook->key_sel_list,1,Str2ID(modes[item],0,SID_ANY_LEN));
-  GUI_Free((GUI *)myBook->keymode_sel_list);
-  myBook->keymode_sel_list=NULL;
-  
+  FREE_GUI(myBook->keymode_sel_list); 
 }
 
 void KeyModeSelect_CreateCBoxGui(MyBOOK *myBook)
 {
-  STRID strid[5];
+  STRID strid[MAXELEMS(modes)];
   GUI_ONEOFMANY *om=CreateOneOfMany(&myBook->book);
   myBook->keymode_sel_list=om;
   
@@ -132,14 +125,8 @@ void KeyModeSelect_CreateCBoxGui(MyBOOK *myBook)
   wchar_t ustr[64];
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   GuiObject_SetTitleText(om,Str2ID(ustr,0,SID_ANY_LEN));
-  
-  strid[0]=GetKeyModeName(0);
-  strid[1]=GetKeyModeName(1);
-  strid[2]=GetKeyModeName(2);
-  strid[3]=GetKeyModeName(3);
-  strid[4]=GetKeyModeName(4);
-  
-  OneOfMany_SetTexts(om,strid,5);
+  for (int i=0; i<MAXELEMS(modes); i++) strid[i]=GetKeyModeName(i);
+  OneOfMany_SetTexts(om,strid,MAXELEMS(modes));
   OneOfMany_SetChecked(om,*((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR)+sizeof(int))));
   GUIObject_Softkey_SetAction(om,ACTION_BACK,KeyModeSelect_OnCloseCBoxGui);
   GUIObject_Softkey_SetAction(om,ACTION_SELECT1,KeyModeSelect_OnSelectCBoxGui);
@@ -167,8 +154,7 @@ void KeyCodeSelect_onEnterPressed(BOOK * bk, void *)
 void KeyCodeSelect_OnBack(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free((GUI*)myBook->key_sel_list);
-  myBook->key_sel_list=NULL;
+  FREE_GUI(myBook->key_sel_list);
 }
 
 int KeyCodeSelect_OnEnter(void *, BOOK * bk)

@@ -36,11 +36,19 @@ typedef struct {
 
 typedef struct {
   DISP_OBJ dsp_obj;
-  int x, y;
+  int x, y, x2, y2;
+  int type;
+  int is_first_set;
+  RECT old_rect;
   STRID str_id;
   int need_str;
   int cstep;
 } DISP_OBJ_COORD;
+
+typedef union {
+  int xy[2];
+  RECT rc;
+} COORD_TYPE;
 
 
 typedef struct {
@@ -53,13 +61,12 @@ typedef struct {
   int cur_offs, cur_pos;
   int total_fonts;
   STRID test_str_id;
-  STRID selfont;
   u16 *font_heights;
   int req_check_vis;
 } DISP_OBJ_FONT_SEL;
 
-GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, COLOR_TYPE, int type);
-GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook);
+GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type);
+GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook, int type);
 GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook);
 wchar_t *Font_GetNameByFontId(int id);
 #endif

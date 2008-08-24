@@ -7,6 +7,7 @@
 #include "visual.h"
 #include "datetime.h"
 #include "keyinput.h"
+#include "revision.h"
 #include "main.h"
 
 #define MESSAGE(__STR__) MessageBox(LGP_NULL,__STR__,0, 1 ,11000,(BOOK*)FindBook(isBcfgEditBook));
@@ -181,11 +182,10 @@ void OnNoExitGui(BOOK * bk, void *)
 void OnBackExitGui(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free(myBook->yesno);
-  myBook->yesno=NULL;
+  FREE_GUI(myBook->yesno);
 }
 
-void CloseMyBook(BOOK * bk, void *)
+void OnBackBcfgGui(BOOK * bk, void *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   BCFG_DATA *bdata=&mbk->bdata;
@@ -195,8 +195,7 @@ void CloseMyBook(BOOK * bk, void *)
     hp=bdata->levelstack[bdata->level];
     bdata->levelstack[bdata->level]=NULL;
     bdata->level--;
-    GUI_Free((GUI*)mbk->bcfg);
-    mbk->bcfg=NULL;
+    FREE_GUI(mbk->bcfg);
     create_ed(bk, hp);
   }
   else
@@ -222,8 +221,7 @@ void CloseMyBook(BOOK * bk, void *)
 void OnCloseCBoxGui(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free((GUI *)myBook->cbox_gui);
-  myBook->cbox_gui=NULL;
+  FREE_GUI(myBook->cbox_gui);
 }
 
 void OnSelectCBoxGui(BOOK * bk, void *)
@@ -232,8 +230,7 @@ void OnSelectCBoxGui(BOOK * bk, void *)
   int item=OneOfMany_GetSelected(myBook->cbox_gui);
   CFG_HDR *hp=myBook->cur_hp;
   if (item<hp->max)  *((int *)((char *)hp+sizeof(CFG_HDR)))=item;
-  GUI_Free((GUI *)myBook->cbox_gui);
-  myBook->cbox_gui=NULL;
+  FREE_GUI(myBook->cbox_gui);
 }
 
 void CreateCBoxGui(MyBOOK *myBook)
@@ -264,8 +261,7 @@ void CreateCBoxGui(MyBOOK *myBook)
 void OnBackCreateTextInputGui(BOOK * bk, u16 *string, int len)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
-  GUI_Free(myBook->text_input);
-  myBook->text_input=NULL;
+  FREE_GUI(myBook->text_input);
 }
 
 void OnOkCreateUnsignedNumberGui(BOOK * bk, wchar_t *string, int len)
@@ -284,8 +280,7 @@ void OnOkCreateUnsignedNumberGui(BOOK * bk, wchar_t *string, int len)
   else
   {
     *((unsigned int *)((char *)hp+sizeof(CFG_HDR)))=ui;
-    GUI_Free(myBook->text_input);
-    myBook->text_input=NULL;
+    FREE_GUI(myBook->text_input);
   }
 }
 
@@ -328,30 +323,24 @@ void OnOkCreateSignedNumberGui(BOOK * bk, wchar_t *string, int len)
   else
   {
     *((int *)((char *)hp+sizeof(CFG_HDR)))=i;
-    GUI_Free(myBook->text_input);
-    myBook->text_input=NULL;
+    FREE_GUI(myBook->text_input);
   }
 }
 
 void CreateSignedNumberInput(MyBOOK *myBook)
 {
   wchar_t ustr[64];
-  int min,max,k1,k2;
   CFG_HDR *hp=myBook->cur_hp;
-  STRID text, header_name;
-  snwprintf(ustr,MAXELEMS(ustr)-1,L"%d",*((int *)((char *)hp+sizeof(CFG_HDR))));
-  text=Str2ID(ustr,0,SID_ANY_LEN);
+  STRID header_name;
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   header_name=Str2ID(ustr,0,SID_ANY_LEN);
-  min=(k1=(int)hp->min)>=0?k1:(-k1)*10;
-  max=(k2=(int)hp->max)>=0?k2:(-k2)*10;
   myBook->text_input=(GUI *)CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
-                                              VAR_STRINP_MAX_LEN(getnumwidth(min>max?min:max)),
                                               VAR_STRINP_MODE(IT_INTEGER),
                                               VAR_BOOK(myBook),
-                                              VAR_STRINP_ENABLE_EMPTY_STR(0),
-                                              VAR_STRINP_TEXT(text),
+                                              VAR_STRINP_MIN_INT_VAL(hp->min),
+                                              VAR_STRINP_MAX_INT_VAL(hp->max),
+                                              VAR_STRINP_SET_INT_VAL(*((int *)((char *)hp+sizeof(CFG_HDR)))),
                                               VAR_PREV_ACTION_PROC(OnBackCreateTextInputGui),
                                               VAR_OK_PROC(OnOkCreateSignedNumberGui),
                                               0);
@@ -371,8 +360,7 @@ void OnOkCreateWinOrPassGui(BOOK * bk, wchar_t *string, int len)
   else
   {
     unicode2win1251((char *)hp+sizeof(CFG_HDR),string,hp->max);
-    GUI_Free(myBook->text_input);
-    myBook->text_input=NULL;
+    FREE_GUI(myBook->text_input);
   }
 }
 
@@ -403,11 +391,10 @@ void CreateWinOrPassSI(MyBOOK *myBook, int is_pass)
   delete ustr;
 }
 
-void onEnterPressed(BOOK * bk, void *)
+void OnSelect1GuiBcfg(BOOK * bk, void *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   BCFG_DATA *bdata=&mbk->bdata;
-  COLOR_TYPE color;
   int item=ListMenu_GetSelectedItem(mbk->bcfg);
   mbk->cur_hp=(CFG_HDR *)ListElement_GetByIndex(mbk->list,item);
   switch(mbk->cur_hp->type)
@@ -428,11 +415,10 @@ void onEnterPressed(BOOK * bk, void *)
     CreateWinOrPassSI(mbk,1);
     break;
   case CFG_COORDINATES:
-    CreateEditCoordinatesGUI(mbk);
+    CreateEditCoordinatesGUI(mbk,0);
     break;
   case CFG_COLOR:
-    color.char_color=((char *)mbk->cur_hp+sizeof(CFG_HDR));
-    CreateEditColorGUI(mbk, color,0);
+    CreateEditColorGUI(mbk, 0);
     break;
   case CFG_LEVEL:
     bdata->level++;
@@ -453,9 +439,11 @@ void onEnterPressed(BOOK * bk, void *)
   case CFG_DATE:
     BookObj_CallPage(&mbk->book,&bk_date_input);
     break;
+  case CFG_RECT:
+    CreateEditCoordinatesGUI(mbk,1);
+    break;
   case CFG_COLOR_INT:
-    color.int_color=*((unsigned int *)((char *)mbk->cur_hp+sizeof(CFG_HDR)));
-    CreateEditColorGUI(mbk, color,1);
+    CreateEditColorGUI(mbk, 1);
     break;
   case CFG_FONT:
     CreateFontSelectGUI(mbk);
@@ -517,7 +505,6 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
       {
         win12512unicode(ustr,"[Enter]",MAXELEMS(ustr)-1);
         str_id=Str2ID(ustr,0,SID_ANY_LEN);
-        
       }
       break;
     case CFG_CHECKBOX:
@@ -534,6 +521,13 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
       {
         DATE *date=((DATE *)((char *)hp+sizeof(CFG_HDR)));
         snwprintf(ustr,MAXELEMS(ustr)-1,L"%02d.%02d.%04d",date->day,date->mon,date->year);
+        str_id=Str2ID(ustr,0,SID_ANY_LEN);
+      }
+      break;
+    case CFG_RECT:
+      {
+        RECT *rc=((RECT *)((char *)hp+sizeof(CFG_HDR)));
+        snwprintf(ustr,MAXELEMS(ustr)-1,L"RC:%03d,%03d,%03d,%03d",rc->x1,rc->y1,rc->x2,rc->y2);
         str_id=Str2ID(ustr,0,SID_ANY_LEN);
       }
       break;
@@ -560,7 +554,7 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
       break;
     case CFG_STR_UTF8:
     case CFG_UTF8_STRING:
-    case CFG_RECT:
+    default:
       snwprintf(ustr,MAXELEMS(ustr)-1,L"Type %d is not supporting yet",hp->type);
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
       break;
@@ -585,7 +579,7 @@ int onLBMessage(GUI_MESSAGE * msg)
     hp=(CFG_HDR *)ListElement_GetByIndex(myBook->list,item);
     win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
     SetMenuItemText0(msg,Str2ID(ustr,0,SID_ANY_LEN));
-    SetMenuItemText2(msg,Str2ID(L"BcfgEdit v1.0\n(c) Rst7, KreN",0,SID_ANY_LEN));
+    SetMenuItemText2(msg,Str2ID(ustr,0,SID_ANY_LEN));
     str_id=GetSubItemText(myBook, hp);
     if (str_id==LGP_NULL) str_id=Str2ID (L"Υπενό",0,SID_ANY_LEN);
     SetMenuItemText1(msg,str_id);
@@ -620,11 +614,11 @@ GUI_LIST * CreateGuiList(MyBOOK * bk, int set_focus)
   bk->bcfg=lo;
   GuiObject_SetTitleText(lo,GetParentName(&bk->bdata));
   SetNumOfMenuItem(lo,bk->list->FirstFree);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)lo,onLBMessage);
+  ListMenu_SetOnMessages(lo,onLBMessage);
   SetCursorToItem(lo,set_focus);
   SetMenuItemStyle(lo,3);
-  GUIObject_Softkey_SetAction(lo,ACTION_BACK, CloseMyBook);
-  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,onEnterPressed);
+  GUIObject_Softkey_SetAction(lo,ACTION_BACK, OnBackBcfgGui);
+  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,OnSelect1GuiBcfg);
   return(lo);
 };
 
@@ -807,18 +801,19 @@ static int CreateEdPageOnCreate(void *mess ,BOOK *bk)
   return(1);
 }
 
-const PAGE_MSG bk_msglst_create_ed[] @ "DYN_PAGE"  = 
+const PAGE_MSG bk_msglst_editor[] @ "DYN_PAGE"  = 
 {
   PAGE_ENTER_EVENT_TAG,    CreateEdPageOnCreate,
   NIL_EVENT_TAG,           NULL
 };
 
-const PAGE_DESC bk_create_ed = {"BcfgEdit_CreateEditor_Page",0,bk_msglst_create_ed};
+const PAGE_DESC bk_editor = {"BcfgEdit_CreateEditor_Page",0,bk_msglst_editor};
 
 
 
 static int TerminateElf(void * ,BOOK *book)
 {
+  UI_Event_toSID(TERMINATE_SESSION_EVENT, BOOK_GetSessionID(book));
   FreeBook(book);
   return(1);
 }
@@ -827,7 +822,9 @@ static int TerminateElf(void * ,BOOK *book)
 static int ShowAuthorInfo(void *mess ,BOOK *book)
 {
   MSG * msg = (MSG *)mess;
-  MessageBox(LGP_NULL,STR("\nBcfgEdit v1.0\n(c) Rst7, KreN"),0, 1 ,5000,msg->book);
+  wchar_t ustr[64];
+  snwprintf(ustr,MAXELEMS(ustr)-1,L"\nBcfgEdit v1.0\nRevision %d\n(c) Rst7, KreN, Hussein",__SVN_REVISION__);
+  MessageBox(LGP_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,msg->book);
   return(1);
 }
 
@@ -860,11 +857,11 @@ static int SelBcfgPageOnAccept(void *data, BOOK *bk)
   MyBOOK *mbk=(MyBOOK *)bk;
   FILEITEM *file=(FILEITEM *)data;
   BCFG_DATA *bdata=&mbk->bdata;
-  wstrncpy(bdata->path,file->path,MAXELEMS(bdata->path));
-  wstrncpy(bdata->name,file->fname,MAXELEMS(bdata->name));
+  wstrncpy(bdata->path,FILEITEM_GetPath(file),MAXELEMS(bdata->path));
+  wstrncpy(bdata->name,FILEITEM_GetFname(file),MAXELEMS(bdata->name));
   if (LoadCfg(bdata))
   {
-    BookObj_GotoPage(&mbk->book,&bk_create_ed);
+    BookObj_GotoPage(&mbk->book,&bk_editor);
   }
   else
   {
@@ -908,7 +905,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   {
     if (LoadCfg(bdata))
     {
-      BookObj_GotoPage(&mbk->book,&bk_create_ed);
+      BookObj_GotoPage(&mbk->book,&bk_editor);
       find_cfg=0;
     }
   }
@@ -947,8 +944,11 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
   MyBOOK * myBook=new MyBOOK;
   BCFG_DATA *bdata=&myBook->bdata;
   memset(myBook,0,sizeof(MyBOOK));
-  if (path) wstrncpy(bdata->path,path,MAXELEMS(bdata->path)); else *bdata->path=0;
-  if (fname) wstrncpy(bdata->name,fname,MAXELEMS(bdata->name)); else *bdata->name=0;
+  if (path && fname)
+  {
+    wstrncpy(bdata->path,path,MAXELEMS(bdata->path));
+    wstrncpy(bdata->name,fname,MAXELEMS(bdata->name));
+  }
   if (!CreateBook(myBook,onMyBookClose,&bk_base,"BcfgEdit",-1,0))
   {
     delete myBook;
