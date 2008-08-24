@@ -431,8 +431,13 @@
 0B80: 00000000 0550EC44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: 00000000 B1403845 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: 00000000 21D03745 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
-;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
-;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B8C: 00000000 91522A45 ; 2E3: __thumb BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+0B90: 00000000 756FED44 ; 2E4: __thumb FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B94: 00000000 DD512A45 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+0B98: 00000000 05602A45 ; 2E6: int BOOK_GetSessionID(BOOK *);
+0B9C: 00000000 E5442A45 ; 2E7: void UI_Event_toSID(int event, int sess_id);
+0BA0: 00000000 152E2344 ; 2E8: char *GetIMSI(void);
+0BA4: 00000000 BD4F2B45 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 
 
 
