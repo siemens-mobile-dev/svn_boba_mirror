@@ -304,7 +304,7 @@ __arm int elfldr_fread(int file, void *buf, int len, unsigned int *err)
 __arm int elfldr_lseek(int file, int pos, int mode, unsigned int *err1, unsigned int *err2)
 {
   return (int)lseek(file, pos, mode);
-
+  
 }
 
 __arm void *elfldr_malloc(int size)
@@ -374,28 +374,25 @@ __arm int PatchDynConst (int * p)
   int *DynConst;
   int file;
   unsigned int iError;
-  if ((file=_elfldr_fopen(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin", A_ReadOnly+A_BIN, P_READ, &iError))<0) return (-101);	//не открывается DYN_CONST.
+  FSTAT fstat;
+  if (elfldr_FStat(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin",&fstat)==0)  
   {
-    FSTAT fstat;
-    if (elfldr_FStat(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin",&fstat)==0)
+    if ((file=_elfldr_fopen(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin", A_ReadOnly+A_BIN, P_READ, &iError))<0) return (-101);	//не открывается DYN_CONST.
+    
+    DynConst=elfldr_malloc(fstat.fsize);
+    if (elfldr_fread(file, DynConst, fstat.fsize, &iError)!=fstat.fsize)	
     {
-      DynConst=elfldr_malloc(fstat.fsize);
-      if (elfldr_fread(file, DynConst, fstat.fsize, &iError)!=fstat.fsize)	
-      {
-        elfldr_mfree(DynConst);
-        elfldr_fclose(file, &iError);
-        return(-103);                     //не читается DYN_CONST
-      }
-      maxi=fstat.fsize/sizeof(int);
-    }
-    else
-    {
+      elfldr_mfree(DynConst);
       elfldr_fclose(file, &iError);
-      return (-102);	//не определяется размер файл с DYN_CONST.
+      return(-103);                     //не читается DYN_CONST
     }
+    maxi=fstat.fsize/sizeof(int);
     elfldr_fclose(file, &iError);
   }
-
+  else
+  {
+    return (-102);	//не определяется размер файл с DYN_CONST.
+  }  
   int cnt;
   p--;
   cnt=*p;
@@ -428,18 +425,18 @@ __arm int PatchDynConst (int * p)
 
 
 __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3){
-
-
+  
+  
   Elf32_Ehdr ehdr;				                        //заголовок ельфа
   Elf32_Phdr phdrs[MAX_PHNUM];	                                        //заголовки програм
   Elf32_Word dyn[DT_BIND_NOW+1];	                                        //тэги динамической секции
   char *reloc, *base;
   unsigned long minadr=(unsigned long)-1, maxadr=0;//, maxadrsize;
   int n,m;
-
-
+  
+  
   zeromem_a(dyn, sizeof(dyn));
-
+  
   /////////////////////////////////////////
   //WINTEL
 #ifdef wintel
@@ -447,7 +444,7 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
   if ((fin=elfldr_fopen(filename,"rb"))==NULL) return -1;			//не открывается ельф
   if (elfldr_fread(&ehdr,sizeof(Elf32_Ehdr),1,fin)!=1) return -2;	        //не читается ельф
 #endif
-
+  
   //ARM
 #ifndef wintel
   int fin;
@@ -457,20 +454,20 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
   {elfldr_fclose(fin, &iError); return -2;}
 #endif
   /////////////////////////////////////////
-
+  
   if (*((long *)ehdr.e_ident)!=0x464C457F){                               //да и не ельф это вовсе
 #ifndef wintel
     elfldr_fclose(fin, &iError);
 #endif
     return -3;
   }
-
+  
 #ifdef wintel
   cout << "Elf header"<<endl;
   cout << "ehdr.e_entry:"<<ehdr.e_entry<<endl;
   cout << "ehdr.e_phoff:"<<ehdr.e_phoff<<endl;
 #endif
-
+  
   //прочитаем все програмные сегменты и вычислим необходимую область в раме
   if (ehdr.e_phnum>MAX_PHNUM) return -9;					//слишком много програмных сегментов
   for(n=0;n<ehdr.e_phnum;n++){
@@ -480,7 +477,7 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
     if (fseek(fin,ehdr.e_phoff+n*ehdr.e_phentsize,SEEK_SET)!=0) return -4;	//не сикается програмный заголовок
     if (elfldr_fread(&(phdrs[n]),sizeof(Elf32_Phdr),1,fin)!=1) return -5;		//не читается програмный заголовок
 #endif
-
+    
     //ARM
 #ifndef wintel
     if (elfldr_lseek(fin, ehdr.e_phoff+n*ehdr.e_phentsize, S_SET, &iError, &iError2)!=ehdr.e_phoff+n*ehdr.e_phentsize)
@@ -508,7 +505,7 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
     cout << "phdr.p_memsz:"<<phdrs[n].p_memsz<<endl;
 #endif
   }
-
+  
   //выделим эту область и очистим ее
   if ((base=(char *)elfldr_malloc(maxadr-minadr))==0){		//не выделяеться память под ельф
 #ifndef wintel
@@ -525,14 +522,14 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
   //  if (!((MY_BOOK*)elfldr_Find_StandbyBook())->elflist)  ((MY_BOOK*)elfldr_Find_StandbyBook())->elflist=elfldr_List_New();
   /*
   {
-    EP_DATA * epd = (EP_DATA *)*((EP_DATA **)RAM_BASE);
-    ELF_DESC * ed=(ELF_DESC *)elfldr_malloc(sizeof(ELF_DESC));
-    ed->base=(int)base;
-    ed->size=maxadr-minadr;
-    ed->fname=(u16*)elfldr_malloc((elfldr_wstrlen((u16*)filename)*2)+2);
-    elfldr_wstrcpy(ed->fname,(u16*)filename);
-    elfldr_ListElement_AddtoTop(epd->elflist,ed);
-  }
+  EP_DATA * epd = (EP_DATA *)*((EP_DATA **)RAM_BASE);
+  ELF_DESC * ed=(ELF_DESC *)elfldr_malloc(sizeof(ELF_DESC));
+  ed->base=(int)base;
+  ed->size=maxadr-minadr;
+  ed->fname=(u16*)elfldr_malloc((elfldr_wstrlen((u16*)filename)*2)+2);
+  elfldr_wstrcpy(ed->fname,(u16*)filename);
+  elfldr_ListElement_AddtoTop(epd->elflist,ed);
+}
   */
 #ifdef DBG
   elfldr_debug_printf("\n  OS: ElfPack   ElfBegin @%x",(int)base)  ;
@@ -547,7 +544,7 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
 #ifdef wintel
     if (fseek(fin,phdrs[n].p_offset,SEEK_SET)!=0) return -6;	//не сикается динамический сегмент
 #endif
-
+    
     //ARM
 #ifndef wintel
     if (elfldr_lseek(fin, phdrs[n].p_offset, S_SET, &iError, &iError)!=phdrs[n].p_offset)
@@ -587,7 +584,7 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
       cout << "dyn seg: off="<<hex<<phdrs[n].p_offset<<", sz="<<phdrs[n].p_filesz<<endl;
       if (elfldr_fread(reloc,phdrs[n].p_filesz,1,fin)!=1) {elfldr_mfree(reloc); return -8;} //не читается динамический сегмент
 #endif
-
+      
       //ARM
 #ifndef wintel
       if (elfldr_fread(fin, reloc, phdrs[n].p_filesz, &iError)!=phdrs[n].p_filesz)
@@ -615,7 +612,7 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
       cout<<"dyn[DT_REL]="<<dyn[DT_REL]<<", dyn[DT_RELA]="<<dyn[DT_RELA]<<endl;
       cout<<"dyn[DT_RELSZ]="<<dyn[DT_RELSZ]<<", dyn[DT_RELASZ]="<<dyn[DT_RELASZ]<<endl;
 #endif
-
+      
       m=0;
       //выполним релокацию REL
       if (dyn[DT_RELSZ]!=0) {
@@ -634,9 +631,9 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
             }
             else
               switch(ri){
-
+                
               case R_ARM_NONE: break; // пустой релокейшен
-
+              
               case R_ARM_ABS32:
 #ifdef wintel
                 cout << "base="<<hex<<(long)base<< endl;
@@ -644,15 +641,15 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
 #endif
                 *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base;
                 break;
-
+                
               case R_ARM_RELATIVE: // вообще говоря не minadr а начало сегмента содержащего символ
                 *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset-minadr))+=(long)base-minadr;
                 break; // ignore
-
+                
                 //	  case R_ARM_RABS32:
                 //	    *((long*)(base+((Elf32_Rel *)(reloc+dyn[DT_REL]-phdrs[n].p_vaddr))[m].r_offset))+=(long)base-minadr;
                 //            break;
-
+                
                 //              case R_ARM_RBASE: break;
               default: 	//неизвестный тип релокации
 #ifdef wintel
@@ -691,13 +688,13 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
     //    ExecuteIMB();	
     PatchDynConst((int*)(base+(maxadr-minadr)));
   }
-/*  {
-    char * tmp=elfldr_malloc(32000);
-    zeromem_a(tmp,31999);
-    elfldr_mfree(tmp);
-  }
-*/
-    _IMB();
+  /*  {
+  char * tmp=elfldr_malloc(32000);
+  zeromem_a(tmp,31999);
+  elfldr_mfree(tmp);
+}
+  */
+  _IMB();
   ((TElfEntry *)(base+ehdr.e_entry-minadr))(filename,param1,param2,param3);
   //	mfree(base);
   return 0;
@@ -719,7 +716,7 @@ int main(int argc, char* argv[]){
     cout << "no .elf specified"<<endl;
     return -1;
   }
-
+  
   cout << elfload(argv[1],0,0,0);
   return 1;
 }

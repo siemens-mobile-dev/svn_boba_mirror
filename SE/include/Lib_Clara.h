@@ -788,7 +788,7 @@ __swi __arm int CreateSMSCont (int, void*);
 #pragma swi_number=0x20D
 __swi __arm int FreeSMSCont (void*);
 #pragma swi_number=0x20E
-__swi __arm int PrepareSMSCont (void*,u16*,u16*,int,int);
+__swi __arm int PrepareSMSCont (void*,wchar_t*,wchar_t*,int,int);
 #pragma swi_number=0x20F
 __swi __arm int CteateNewMessage (int,void*,int);
 #pragma swi_number=0x8210

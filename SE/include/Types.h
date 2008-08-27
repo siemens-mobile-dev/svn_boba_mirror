@@ -231,13 +231,15 @@ typedef struct
 
 typedef struct
 {
-  u16 unk;
+  u16 RecordID;
   char num[40];//2
   char unk1; //43
   char plus;
   char unk2;
   char len;
   // и еще какоето гавно....
+  char unk3;
+  
   char xx[0x200];
 }AB_NUM_ITEM;
 /*
@@ -268,7 +270,7 @@ typedef struct
 typedef struct
 {
   const char *name;
-  const PAGE_DESC *page;
+  struct PAGE_DESC *page;
   void (*OnEnter)(void *, BOOK *);
   void (*OnExit)(void *, BOOK *);
 }BOOK_SUBROUTINE;
