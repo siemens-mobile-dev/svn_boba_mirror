@@ -40,6 +40,7 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #define ELF_SHOW_INFO_EVENT 998
 #define ELF_TERMINATE_EVENT 997
 #define ELF_RECONFIG_EVENT 996
+#define SBY_REDRAW_RELEASE_EVENT 995
 
 // Str2ID conversion flag
 /*
@@ -500,7 +501,7 @@ __swi   __arm int set_bp_adr (void);
 #pragma swi_number=0x189
 __swi   __arm union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 #pragma swi_number=0x18A
-__swi   __arm OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr); 
+__swi   __arm OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 #pragma swi_number=0x818A
 __swi   __arm int clear_bp_adr (void);
 
@@ -1179,7 +1180,7 @@ __swi __arm void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
 
 #pragma swi_number=0x2B8
 __swi __arm void BookObj_CallPage(BOOK * book, const PAGE_DESC  * page);
- 
+
 #pragma swi_number=0x2B9
 __swi __arm unsigned int DateInput_GetDateInt(void *dateinp_msg);
 

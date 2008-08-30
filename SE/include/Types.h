@@ -239,7 +239,7 @@ typedef struct
   char len;
   // и еще какоето гавно....
   char unk3;
-  
+
   char xx[0x200];
 }AB_NUM_ITEM;
 /*
@@ -690,7 +690,7 @@ typedef struct
 typedef struct
 {
   u16 id;
-  wchar_t name[10];  
+  wchar_t name[10];
 } FONT_DESC;
 #pragma pack()
 
@@ -707,5 +707,11 @@ typedef struct
   GUI * gui;
   void * strinp_struct;
 }SUB_EXECUTE;
+
+typedef struct
+{
+  void (*OldonRedraw)(DISP_OBJ *,int ,int ,int);
+  void (*NewonRedraw)(DISP_OBJ *,int ,int ,int);
+}SBY_REDRAW_RELEASE_MESSAGE;
 
 #endif
