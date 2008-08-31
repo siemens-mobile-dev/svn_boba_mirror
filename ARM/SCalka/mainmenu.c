@@ -3,10 +3,19 @@
 #include "edit_settings.h"
 #include "mainmenu.h"
 
+extern volatile int calc_gui_id;;
+
 static void mm_settings(GUI *gui)
 {
   CreateSettingsEdit();
   GeneralFuncF1(1);
+}
+
+static void mm_exit(GUI *gui)
+{
+  GeneralFunc_flag1(calc_gui_id,0xFF);
+  GeneralFuncF1(1);
+
 }
 
 static const int mmenusoftkeys[]={0,1,2};
@@ -23,17 +32,19 @@ static const SOFTKEYSTAB mmenu_skt=
   mmenu_sk,0
 };
 
-#define MAIN_MENU_ITEMS_N 1
+#define MAIN_MENU_ITEMS_N 2
 static HEADER_DESC mmenu_hdr={0,0,0,0,NULL,(int)"Меню",LGP_NULL};
 
 static MENUITEM_DESC mmenu_ITEMS[MAIN_MENU_ITEMS_N]=
 {
-  {NULL,(int)"Настройки",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2} //0
+  {NULL,(int)"Настройки",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL,(int)"Выход",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2} //0
 };
 
 static const MENUPROCS_DESC mmenu_HNDLS[MAIN_MENU_ITEMS_N]=
 {
-  mm_settings
+  mm_settings,
+  mm_exit
 };
 
 
