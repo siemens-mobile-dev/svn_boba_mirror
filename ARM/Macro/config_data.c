@@ -1,8 +1,17 @@
 #include "..\inc\cfg_items.h"
+#include "..\inc\swilib.h"
 
 __root const CFG_HDR cfghdr0={CFG_CBOX,"show title",0,2};
 __root const int show = 1;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
+
+
+__root const CFG_HDR cfghdr00={CFG_CBOX,"break by any key",0,2};
+__root const int bak = 1;
+__root const CFG_CBOX_ITEM cfgcbox2[2]={"No","Yes"};
+
+__root const CFG_HDR cfghdr0000={CFG_UINT,"break key code",0,65530};
+__root const int breakeycode=RED_BUTTON;
 
 
 __root const CFG_HDR cfghdr000={CFG_UINT,"watch_delay",5,65530};

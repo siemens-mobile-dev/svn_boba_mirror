@@ -13,6 +13,8 @@ Parameter is a path to file or macro string(auto)
 
 show title - показывать надпись MAC во время выполнения макроса(требует доработки т.к. глючит: вывод всегда идёт в один и тот же layer :( )
 CPU wait threshold,% - 
+break by any key - 
+break key code -
 ShowNativeMenu() address - 
 
 
@@ -55,6 +57,9 @@ Macro is a sequence of symbols:
   (1234) пауза 1234 миллисек/pause 1234 msec
   (1234s) пауза 1234 сек/pause 1234 sec
   (1234m) пауза 1234 min/pause 1234 min
+  
+  { ... }x123 - повтор 123 раз
+  &call{+7915 ... } - набрать номер
 
   N native menu(требуется указать адрес ShowMativeMenu() в /you must enter address ShowMativeMenu() in  macro.bcfg) 
   

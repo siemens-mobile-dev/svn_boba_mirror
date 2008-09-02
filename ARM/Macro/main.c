@@ -43,6 +43,7 @@ WSHDR * ws1;
 volatile int brk;
 int wc;
 char ebu[128];
+char bpath[256];
 
 typedef enum
 {
@@ -55,7 +56,7 @@ typedef enum
 } TState;
 
 char * mac=0;
-char * po;
+unsigned char * po;
 TState s;
 short lpc;
 
@@ -230,9 +231,156 @@ void Step()
   case ST_NORM:
     {
     delay=delay_keybreak;  
-    while(*po==10||*po==13||*po==';') po++;
+    while(*po==10||*po==13||*po==';'||*po==SYM_NOP) po++;
     switch(*po)
-      {
+      {        
+//SYM_LOOP_4 backlow backhigh|(ctr<<4)
+//   }         x      1
+        
+      case SYM_LOOP_4:
+        {
+        unsigned char * zz=po;  
+        unsigned int back=(po[1])||((po[2]&0xF)<<8);
+        unsigned int ctr=po[2]>>4;
+        if(ctr>0)
+            {
+            ctr--;  
+            po-=(1+back);
+            }
+        else
+            po+=2;
+        zz[1]=back & 0xFF;
+        zz[2]=((back>>8)&0xF)||(ctr<<4);
+        break;
+        };  
+        
+     
+       
+//SYM_LOOP_8 backlow backhigh ctr
+//   }         x      1        2        
+      case SYM_LOOP_8:
+        {
+        unsigned char * zz=po;  
+        unsigned int back=(po[1])||(po[2]<<8);
+        unsigned int ctr=po[3];
+        if(ctr>0)
+            {
+            ctr--;  
+            po-=(1+back);
+            }
+        else
+            po+=3;
+        zz[1]=back & 0xFF;
+        zz[2]=(back>>8);
+        zz[3]=ctr;
+        break;
+        };  
+
+//SYM_LOOP_16 backlow backhigh ctrlow ctrhigh
+//   }         x      1        2       3        
+        
+      case SYM_LOOP_16:
+        {
+        unsigned char * zz=po;  
+        unsigned int back=(po[1])||(po[2]<<8);
+        unsigned int ctr=(po[3])||(po[4]<<8);
+        if(ctr>0)
+            {
+            ctr--;  
+            po-=(1+back);
+            }
+        else
+            po+=4;
+        zz[1]=back & 0xFF;
+        zz[2]=(back>>8);
+        zz[3]=ctr && 0xFF;
+        zz[4]=(ctr>>8);
+        break;
+        };          
+
+      case '{':
+        {
+        *po=SYM_NOP;  
+        unsigned char * la=po+1;
+        int sco=1;
+        while(*la)
+          {
+            if(*la=='{')  sco++;
+            else if(*la=='}')  sco--;
+            if(sco<0)
+              {
+              s=ST_ERROR;
+              sprintf(ebu,"unexpected }");  
+              goto fuck1;
+              }
+            else if(sco==0) break;
+            la++;
+          };
+        if(*la==0)
+              {
+              s=ST_ERROR;
+              sprintf(ebu,"not founded }");  
+              goto fuck1;
+              };
+        //ppoints to }
+        unsigned char * zu=la+1;
+        unsigned int back=la-po-1;
+        if(*zu!='x')        
+          {
+              s=ST_ERROR;
+              sprintf(ebu,"expected 'x'");  
+              goto fuck1;            
+          };
+        zu++;
+        int ctr=Str2Int(zu);
+        if(ctr<10)
+          {
+          *la=SYM_LOOP_4;
+          la[1]=back & 0xFF;
+          la[2]=((back>>8) & 0xFF) || (ctr<<4);
+          }
+        else if(ctr<100)
+          {
+          *la=SYM_LOOP_8;  
+          la[1]=back & 0xFF;
+          la[2]=((back>>8) & 0xFF);          
+          la[3]=ctr;
+          }
+        else
+          {
+          *la=SYM_LOOP_16;  
+          la[1]=back & 0xFF;
+          la[2]=((back>>8) & 0xFF);          
+          la[3]=ctr & 0xFF;
+          la[4]=((ctr>>8) & 0xFF);          
+          while(*zu && *zu>='0' && *zu<='9') *zu++=SYM_NOP;
+          };
+        
+  fuck1:
+        break;  
+        };
+
+        
+      case '&':
+        {
+        po++;
+        if(!strncmp(po,"call",4))
+          {
+          po+=4;  
+          if(*po++!='{'){s=ST_ERROR;sprintf(ebu,"no { after &call");break;}; 
+          unsigned char * nu=po;
+          while(*po&&*po!='}') po++;
+          *po=0;
+          MakeVoiceCall(nu,0x10,0x20C0);
+          delay=delay_longpause*2;  
+          }
+        else
+          {
+          s=ST_ERROR;sprintf(ebu,"Unk cmd");
+          };     
+        break;  
+        };
+        
       case '`':
         {
         char * p1=po+1;
@@ -247,7 +395,8 @@ void Step()
         char bu[256];
         memcpy(bu,p1,p2-p1);
         bu[p2-p1]=0;
-        ShowMSG(2,(int)bu);
+        //ShowMSG(2,(int)bu);
+        if(bu[0]==0) strcpy(bu,bpath);
         wsprintf(ws1,"%t",bu);
         ExecuteFile(ws1,0,0);  
                 
@@ -413,8 +562,15 @@ GBS_StartTimerProc(&step_timer,delay,&Step);
 
 void Watch()
 {
-if(*RamPressedKey()) brk=1;
-else if(!brk)GBS_StartTimerProc(&watch_timer,watch_delay,&Watch);
+extern int bak;
+extern int breakeycode;  
+unsigned char rac;
+if(rac=*RamPressedKey())
+  {
+  if(bak || (rac==breakeycode)) brk=1;
+  };
+
+if(!brk)GBS_StartTimerProc(&watch_timer,watch_delay,&Watch);
 };
 
 void Paint()
@@ -427,6 +583,8 @@ if(!brk)GBS_StartTimerProc(&paint_timer,paint_delay,&Paint);
 
 int main(char * self,char * path)
 {
+  strcpy(bpath,path);
+  
   static const char pt[]="%t";
   wsprintf(&q,pt,"mac");
   wsprintf(&qw,pt,"wait");
