@@ -6,6 +6,21 @@
 
 #define t(a) ((a)*TMR_SECOND/1000)
 
+#define SYM_NOP 0x01
+#define SYM_LOOP_4 0x02
+#define SYM_LOOP_8 0x03
+#define SYM_LOOP_16 0x04
+
+//SYM_LOOP_4 backlow backhigh|(ctr<<4)
+//   }         x      1
+
+//SYM_LOOP_8 backlow backhigh ctr
+//   }         x      1        2
+
+//SYM_LOOP_16 backlow backhigh ctrhigh ctrlow
+//   }         x      1        2       3
+
+ 
 extern int delay_keybreak;
 extern int watch_delay;
 extern int pre_delay;
@@ -261,6 +276,17 @@ void Step()
         {
         delay=t(Str2Int(po+1));  
         do{po++;}while(*po&&*po>='0'&&*po<='9');
+        if(*po=='s')
+          {
+          po++;  
+          delay*=1000;
+          }
+        else
+        if(*po=='m')
+          {
+          po++;  
+          delay*=(1000*60);
+          };          
         if(*po!=')')
            {
              s=ST_ERROR;

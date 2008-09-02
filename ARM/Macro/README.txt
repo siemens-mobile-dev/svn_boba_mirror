@@ -53,6 +53,8 @@ Macro is a sequence of symbols:
   `0:\apps\opera.jar` запустить файл/run file
 
   (1234) пауза 1234 миллисек/pause 1234 msec
+  (1234s) пауза 1234 сек/pause 1234 sec
+  (1234m) пауза 1234 min/pause 1234 min
 
   N native menu(требуется указать адрес ShowMativeMenu() в /you must enter address ShowMativeMenu() in  macro.bcfg) 
   
@@ -60,4 +62,4 @@ Macro is a sequence of symbols:
 ------------------- (с)&(r)'s ----------------------------------
 ----------------------------------------------------------------
 
-(c) Captain_SISka 2007
+(c) Captain_SISka 2007-2008
