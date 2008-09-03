@@ -55,14 +55,14 @@ typedef enum
   ST_WAIT,
 } TState;
 
-char * mac=0;
+unsigned char * mac=0;
 unsigned char * po;
 TState s;
 short lpc;
 
 
-static const unsigned short qq[8];
-static WSHDR q={(unsigned short*)&qq,0,0,0,8};
+static const unsigned short qq[16];
+static WSHDR q={(unsigned short*)&qq,0,0,0,16};
 
 static const unsigned short qqw[16];
 static WSHDR qw={(unsigned short*)&qqw,0,0,0,16};
@@ -137,7 +137,7 @@ while((s[i]>='0')&&(s[i]<='9'))
 return a;
 };
 
-char * ReadFile(const char * path)
+unsigned char * ReadFile(const char * path)
 {
 char *mem;
 unsigned int i, err;
@@ -240,8 +240,9 @@ void Step()
       case SYM_LOOP_4:
         {
         unsigned char * zz=po;  
-        unsigned int back=(po[1])||((po[2]&0xF)<<8);
-        unsigned int ctr=po[2]>>4;
+        unsigned int back=(po[1])|((po[2]&0xF)<<8);
+        unsigned int ctr=(po[2])>>4;
+        
         if(ctr>0)
             {
             ctr--;  
@@ -250,7 +251,7 @@ void Step()
         else
             po+=2;
         zz[1]=back & 0xFF;
-        zz[2]=((back>>8)&0xF)||(ctr<<4);
+        zz[2]=((back>>8)&0xF)|(ctr<<4);
         break;
         };  
         
@@ -261,7 +262,7 @@ void Step()
       case SYM_LOOP_8:
         {
         unsigned char * zz=po;  
-        unsigned int back=(po[1])||(po[2]<<8);
+        unsigned int back=(po[1])|(po[2]<<8);
         unsigned int ctr=po[3];
         if(ctr>0)
             {
@@ -282,8 +283,8 @@ void Step()
       case SYM_LOOP_16:
         {
         unsigned char * zz=po;  
-        unsigned int back=(po[1])||(po[2]<<8);
-        unsigned int ctr=(po[3])||(po[4]<<8);
+        unsigned int back=(po[1])|(po[2]<<8);
+        unsigned int ctr=(po[3])|(po[4]<<8);
         if(ctr>0)
             {
             ctr--;  
@@ -332,12 +333,12 @@ void Step()
               goto fuck1;            
           };
         zu++;
-        int ctr=Str2Int(zu);
+        unsigned int ctr=Str2Int(zu);
         if(ctr<10)
           {
           *la=SYM_LOOP_4;
-          la[1]=back & 0xFF;
-          la[2]=((back>>8) & 0xFF) || (ctr<<4);
+          la[1]=back&0xFF;
+          la[2]=((back>>8) & 0x0F) | (ctr<<4);
           }
         else if(ctr<100)
           {
@@ -423,8 +424,8 @@ void Step()
         
       case '(':
         {
-        delay=t(Str2Int(po+1));  
-        do{po++;}while(*po&&*po>='0'&&*po<='9');
+        delay=Str2Int(++po);
+        while(*po&&*po>='0'&&*po<='9') po++;
         if(*po=='s')
           {
           po++;  
@@ -434,13 +435,14 @@ void Step()
         if(*po=='m')
           {
           po++;  
-          delay*=(1000*60);
+          delay*=60000;
           };          
         if(*po!=')')
            {
              s=ST_ERROR;
              sprintf(ebu,") expected but %s founded",xs(po));
            };
+        delay=t(delay);
         };
         break;
         
@@ -556,7 +558,7 @@ void Step()
   default:
      strcpy(ebu,"wrong state!");
      s=ST_ERROR;
-  };
+  };  
 GBS_StartTimerProc(&step_timer,delay,&Step);
 };
 
@@ -564,12 +566,12 @@ void Watch()
 {
 extern int bak;
 extern int breakeycode;  
-unsigned char rac;
-if(rac=*RamPressedKey())
+int rac;
+if((rac=*RamPressedKey())!=0)
   {
   if(bak || (rac==breakeycode)) brk=1;
   };
-
+//wsprintf(&q,"~%d",rac);
 if(!brk)GBS_StartTimerProc(&watch_timer,watch_delay,&Watch);
 };
 
