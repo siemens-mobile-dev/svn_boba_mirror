@@ -1297,4 +1297,15 @@ __swi __arm void UI_Event_toSID(int event, int sess_id);
 __swi __arm char *GetIMSI(void);
 #pragma swi_number=0x2E9
 __swi __arm void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
+
+#pragma swi_number=0x2EA
+__swi __arm int MainInput_getCurPos(GUI*);
+#pragma swi_number=0x2EB
+__swi __arm void MainInput_Hide(GUI*);
+#pragma swi_number=0x2EC
+__swi __arm void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
+#pragma swi_number=0x2ED
+__swi __arm STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
+#pragma swi_number=0x2EE
+__swi __arm int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
 #endif
