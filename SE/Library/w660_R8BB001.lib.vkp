@@ -141,7 +141,7 @@
 06B0: 00000000 C1E62D45 ; 1AC: int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 06B4: 00000000 C5E52D45 ; 1AD: void * ListElement_GetByIndex(LIST * , int index);
 06B8: 00000000 15B96744 ; 1AE: wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
-06BC: 00000000 D95C3D45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
+06BC: 00000000 D95C3D45 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: 00000000 A9E42D45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 99A52C44 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: 00000000 1DC01345 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
@@ -227,7 +227,7 @@
 082C: 00000000 61BA4845 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 2DFF1545 ; 20C: int CreateSMSCont (int, void*);
 0834: 00000000 CD051645 ; 20D: int FreeSMSCont (void*);
-0838: 00000000 05011645 ; 20E: int PrepareSMSCont (void*,u16*,u16*,int,int);
+0838: 00000000 05011645 ; 20E: int PrepareSMSCont (void*,wchar_t*,wchar_t*,int,int);
 083C: 00000000 2D051645 ; 20F: int CteateNewMessage (int,void*,int);
 0840: 00000000 244FB145 ;8210: void * get_APP_DESC_TABLE(void);
 0844: 00000000 658A4845 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
@@ -438,6 +438,11 @@
 0B9C: 00000000 95493D45 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 0BA0: 00000000 E90F2C44 ; 2E8: char *GetIMSI(void);
 0BA4: 00000000 15553E45 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
+0BA8: 00000000 95483E45 ; 2EA: __thumb int MainInput_getCurPos(GUI*);
+0BAC: 00000000 65483E45 ; 2EB: __thumb void MainInput_Hide(GUI*);
+0BB0: 00000000 894D4A45 ; 2EC: __thumb void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
+0BB4: 00000000 615AF044 ; 2ED: __thumb STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
+0BB8: 00000000 2934F244 ; 2EE: __thumb int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
 
 
 
