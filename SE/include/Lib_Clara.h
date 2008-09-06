@@ -1310,4 +1310,13 @@ __swi __arm void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
 __swi __arm STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
 #pragma swi_number=0x2EE
 __swi __arm int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
+
+#pragma swi_number=0x2EF
+__swi __arm void * MetaData_Desc_Create(wchar_t * path,wchar_t * name);
+#pragma swi_number=0x2F0
+__swi __arm void MetaData_Desc_Destroy(void * MetaData_Desc);
+#pragma swi_number=0x2F1
+__swi __arm wchar_t * MetaData_Desc_GetTags(void * MetaData_Desc,int tagID);
+#pragma swi_number=0x2F2
+__swi __arm int MetaData_Desc_GetTrackNum(void * MetaData_Desc,int __NULL);
 #endif
