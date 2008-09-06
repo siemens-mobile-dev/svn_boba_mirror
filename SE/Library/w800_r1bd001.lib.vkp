@@ -142,7 +142,7 @@
 06B0: FFFFFFFF 0977E544 ; 1AC: int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 06B4: FFFFFFFF D575E544 ; 1AD: void * ListElement_GetByIndex(LIST * , int index);
 06B8: FFFFFFFF C91CBF44 ; 1AE: wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
-06BC: FFFFFFFF 3D28E844 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
+06BC: FFFFFFFF 3D28E844 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: FFFFFFFF 5574E544 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 7D8AAC44 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: FFFFFFFF 0DD7D344 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
@@ -175,6 +175,8 @@
 0738: FFFFFFFF 3965EA44 ; 1CE: GUI *GUI_Free(GUI*);
 073C: FFFFFFFF 4999D344 ; 1CF: void InputFeedback_SetIcon(GUI *gui, wchar_t icon);
 0740: FFFFFFFF 2196D544 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
+0744: FFFFFFFF D82B184C ;81D1: PAudioControl* GetAudioControlPtr();
+0748: FFFFFFFF A157F044 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
 074C: FFFFFFFF 957F0E45 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: FFFFFFFF 2956D644 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: FFFFFFFF F957D644 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
@@ -229,7 +231,7 @@
 082C: FFFFFFFF DD97D344 ; 20B: void SetFocus (GUI * , int);
 0830: FFFFFFFF E11CFA44 ; 20C: int CreateSMSCont (int, void*);
 0834: FFFFFFFF 7921FA44 ; 20D: int FreeSMSCont (void*);
-0838: FFFFFFFF 411EFA44 ; 20E: int PrepareSMSCont (void*,u16*,u16*,int,int);
+0838: FFFFFFFF 411EFA44 ; 20E: int PrepareSMSCont (void*,wchar_t*,wchar_t*,int,int);
 083C: FFFFFFFF C920FA44 ; 20F: int CteateNewMessage (int,void*,int);
 0840: FFFFFFFF 044D2444 ;8210: void * get_APP_DESC_TABLE(void);
 0844: FFFFFFFF D193D344 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
@@ -441,6 +443,11 @@
 ;0B9C: xxxxxxxx yyyyyyyy ; 2E7: void UI_Event_toSID(int event, int sess_id);
 ;0BA0: xxxxxxxx yyyyyyyy ; 2E8: char *GetIMSI(void);
 ;0BA4: xxxxxxxx yyyyyyyy ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
+;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos(GUI*);
+;0BAC: xxxxxxxx yyyyyyyy ; 2EB: void MainInput_Hide(GUI*);
+;0BB0: xxxxxxxx yyyyyyyy ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
+;0BB4: xxxxxxxx yyyyyyyy ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
+;0BB8: xxxxxxxx yyyyyyyy ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
 
 
 

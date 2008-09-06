@@ -714,4 +714,6 @@ typedef struct
   void (*NewonRedraw)(DISP_OBJ *,int ,int ,int);
 }SBY_REDRAW_RELEASE_MESSAGE;
 
+typedef void* PAudioControl;
+
 #endif

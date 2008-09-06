@@ -141,7 +141,7 @@
 06B0: 00000000 A50C2D45 ; 1AC: __thumb int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 06B4: 00000000 A90B2D45 ; 1AD: __thumb void * ListElement_GetByIndex(LIST * , int index);
 06B8: 00000000 3DBC6744 ; 1AE: __thumb wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
-06BC: 00000000 65693C45 ; 1AF: __thumb void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
+06BC: 00000000 65693C45 ; 1AF: __thumb void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: 00000000 8D0A2D45 ; 1B0: __unknown void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 A9A42C44 ; 1B1: __thumb void debug_printf(const char * fmt,...);
 06C8: 00000000 315D1345 ; 1B2: __thumb int PlayFile(const wchar_t * path, const wchar_t * fname);
@@ -173,6 +173,8 @@
 0738: 00000000 A9C34745 ; 1CE: __thumb GUI *GUI_Free(GUI*);
 073C: 00000000 C1E64045 ; 1CF: __thumb void InputFeedback_SetIcon(GUI *gui, wchar_t icon);
 0740: 00000000 51E54045 ; 1D0: __thumb int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
+0744: 00000000 BC581620 ;81D1: PAudioControl* GetAudioControlPtr();
+0748: 00000000 21E7D744 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
 074C: 00000000 491EFB44 ; 1D3: __unknown int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 71754345 ; 1D4: __thumb GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 B1774345 ; 1D5: __thumb void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
@@ -227,7 +229,7 @@
 082C: 00000000 C5C54745 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 61991545 ; 20C: __thumb int CreateSMSCont (int, void*);
 0834: 00000000 01A01545 ; 20D: __thumb int FreeSMSCont (void*);
-0838: 00000000 399B1545 ; 20E: __thumb int PrepareSMSCont (void*,u16*,u16*,int,int);
+0838: 00000000 399B1545 ; 20E: __thumb int PrepareSMSCont (void*,wchar_t*,wchar_t*,int,int);
 083C: 00000000 619F1545 ; 20F: __thumb int CteateNewMessage (int,void*,int);
 0840: 00000000 C8F6BD45 ;8210: __unknown void * get_APP_DESC_TABLE(void);
 0844: 00000000 C9954745 ; 211: __thumb C_INTERFACE *Window_GetComponentInterface(WINDOW*);
@@ -441,7 +443,11 @@
 0BA8: 00000000 35553D45 ; 2EA: __thumb int MainInput_getCurPos(GUI*);
 0BAC: 00000000 05553D45 ; 2EB: __thumb void MainInput_Hide(GUI*);
 0BB0: 00000000 25594945 ; 2EC: __thumb void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
-0BB4: 00000000 A134F044 ; 2ED: __thumb STRID PNUM2Name(void *pnum, int isIconNeeded, int ShortDisabled);
-0BB8: 00000000 750EF244 ; 2EE: __thumb int SpeedDial_GetPNUM(int _zero,char number, void * PNUM);
+0BB4: 00000000 A134F044 ; 2ED: __thumb STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
+0BB8: 00000000 750EF244 ; 2EE: __thumb int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
+
+
+
+
 
 ;locale=Russian_Russia.1251

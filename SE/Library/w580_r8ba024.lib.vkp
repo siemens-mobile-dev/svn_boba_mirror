@@ -141,7 +141,7 @@
 06B0: 00000000 91441B45 ; 1AC: int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 06B4: 00000000 95431B45 ; 1AD: void * ListElement_GetByIndex(LIST * , int index);
 06B8: 00000000 497C5544 ; 1AE: wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
-06BC: 00000000 EDCA2A45 ; 1AF: void BookObj_CallSubroutine(BOOK * , void * SubProcDesc);
+06BC: 00000000 EDCA2A45 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: 00000000 79421B45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 C1682344 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: 00000000 313F0045 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
@@ -171,6 +171,8 @@
 0738: 00000000 ED343645 ; 1CE: GUI *GUI_Free(GUI*);
 073C: 00000000 69383645 ; 1CF: void InputFeedback_SetIcon(GUI *gui, wchar_t icon);
 0740: 00000000 81562F45 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
+0744: 00000000 B0EC1720 ;81D1: PAudioControl* GetAudioControlPtr();
+0748: 00000000 F12CC544 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
 074C: 00000000 959FE844 ; 1D3: __thumb int GetVolumeSize(char * volume, VOLUMESIZE *);
 0750: 00000000 01E73145 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 41E93145 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
@@ -225,7 +227,7 @@
 082C: 00000000 09373645 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 49790245 ; 20C: int CreateSMSCont (int, void*);
 0834: 00000000 E97F0245 ; 20D: int FreeSMSCont (void*);
-0838: 00000000 217B0245 ; 20E: int PrepareSMSCont (void*,u16*,u16*,int,int);
+0838: 00000000 217B0245 ; 20E: int PrepareSMSCont (void*,wchar_t*,wchar_t*,int,int);
 083C: 00000000 497F0245 ; 20F: int CteateNewMessage (int,void*,int);
 0840: 00000000 6C56AF45 ;8210: void * get_APP_DESC_TABLE(void);
 0844: 00000000 0D073645 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
@@ -431,6 +433,16 @@
 ;0B88: xxxxxxxx yyyyyyyy ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 ;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 ;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+;0B94: xxxxxxxx yyyyyyyy ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+;0B98: xxxxxxxx yyyyyyyy ; 2E6: int BOOK_GetSessionID(BOOK *);
+;0B9C: xxxxxxxx yyyyyyyy ; 2E7: void UI_Event_toSID(int event, int sess_id);
+;0BA0: xxxxxxxx yyyyyyyy ; 2E8: char *GetIMSI(void);
+;0BA4: xxxxxxxx yyyyyyyy ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
+;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos(GUI*);
+;0BAC: xxxxxxxx yyyyyyyy ; 2EB: void MainInput_Hide(GUI*);
+;0BB0: xxxxxxxx yyyyyyyy ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
+;0BB4: xxxxxxxx yyyyyyyy ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
+;0BB8: xxxxxxxx yyyyyyyy ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
 
 
 

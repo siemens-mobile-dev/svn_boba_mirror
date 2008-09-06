@@ -661,8 +661,10 @@ __swi __arm void InputFeedback_SetIcon(GUI *gui, wchar_t icon);
 #pragma swi_number=0x1D0
 __swi __arm int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 
-//#pragma swi_number=0x1D3
-
+#pragma swi_number=0x81D1
+__swi __arm PAudioControl* GetAudioControlPtr();
+#pragma swi_number=0x1D2
+__swi __arm int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
 
 #pragma swi_number=0x1D4
 __swi __arm  GUI_NOFMANY * CreateNOfMany(BOOK *);
