@@ -9,6 +9,7 @@
 #include "language.h"
 #include "../inc/xtask_ipc.h"
 #include "smiles.h"
+#include "../inc/naticq_ipc.h"
 #include "naticq_ipc.h"
 #include "status_change.h"
 #include "strings.h"
@@ -2485,17 +2486,39 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	      }
 	    }
 	    break;
-     	  case IPC_SENDMSG: ;                                   //IPC_SENDMSG by BoBa 26.06.07
-            int l=strlen(((IPCMsg *)(ipc->data))->msg);
-            TPKT *msg=malloc(sizeof(PKT)+l);
-            msg->pkt.uin=((IPCMsg *)(ipc->data))->uin;
-            msg->pkt.type=T_SENDMSG;
-            msg->pkt.data_len=l;
-            memcpy(msg->data,((IPCMsg *)(ipc->data))->msg,l);
-            //slientsend=1;
-	    SENDMSGCOUNT++; //Номер сообщения
-            SUBPROC((void *)SendAnswer,0,msg);
+     	  case IPC_SENDMSG:                                   //IPC_SENDMSG by BoBa 26.06.07
+	    {
+	      int l=strlen(((IPCMsg *)(ipc->data))->msg);
+	      TPKT *msg=malloc(sizeof(PKT)+l);
+	      msg->pkt.uin=((IPCMsg *)(ipc->data))->uin;
+	      msg->pkt.type=T_SENDMSG;
+	      msg->pkt.data_len=l;
+	      memcpy(msg->data,((IPCMsg *)(ipc->data))->msg,l);
+	      //slientsend=1;
+	      SENDMSGCOUNT++; //Номер сообщения
+	      SUBPROC((void *)SendAnswer,0,msg);
+	    }
             break;
+	  case IPC_FREEMSG:
+	    ;
+	    IPCMsg_RECVMSG *fmp=((IPCMsg_RECVMSG *)(ipc->data));
+	    if (ipc->name_to!=ipc_my_name) break;
+	    if (!fmp->drop_msg)
+	    {
+	      //Добавляем сообщение в чат
+	      int l=strlen(fmp->msg);
+	      TPKT *msg=malloc(sizeof(PKT)+l+1);
+	      msg->pkt.uin=fmp->uin;
+	      msg->pkt.type=T_RECVMSG;
+	      msg->pkt.data_len=l;
+	      memcpy(msg->data,fmp->msg,l+1);
+	      ProcessPacket(msg);
+	    }
+	    mfree(fmp->msg); //Освобождаем сам текст сообщения
+	    mfree(fmp->ipc); //Освобождаем родительский IPC_REQ
+	    mfree(fmp); //Освобождаем собственно IPCMsg_RECVMSG
+	    mfree(ipc); //Освободили текущий IPC_REQ
+	    return 0; //вышли нах
 	  }
 	}
       }
@@ -2590,8 +2613,35 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       //Если наш сокет
       if ((((unsigned int)msg->data0)>>28)==0xA)
       {
+	TPKT *p=(TPKT *)msg->data0;
 	//Принят пакет
-	ProcessPacket((TPKT *)msg->data0);
+	if (p->pkt.type==T_RECVMSG)
+	{
+	  //Просунем через IPC
+
+	  int l=p->pkt.data_len+1; //С завершающим \0
+	  IPC_REQ *ripc=malloc(sizeof(IPC_REQ));
+	  IPC_REQ *fipc=malloc(sizeof(IPC_REQ));
+	  IPCMsg_RECVMSG *msg=malloc(sizeof(IPCMsg_RECVMSG));
+	  memcpy(msg->msg=malloc(l),p->data,l);
+	  msg->uin=p->pkt.uin;
+	  msg->drop_msg=0;
+	  msg->ipc=ripc;
+	  ripc->data=msg;
+	  fipc->data=msg;
+	  ripc->name_from=ipc_my_name;
+	  ripc->name_to=ipc_my_name;
+	  fipc->name_from=ipc_my_name;
+	  fipc->name_to=ipc_my_name;
+	  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_RECVMSG,ripc);
+	  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_FREEMSG,fipc);
+	  mfree(p);
+	}
+	else
+	{
+	  //Непосредственная обработка
+	  ProcessPacket(p);
+	}
 	return(0);
       }
       switch((int)msg->data0)
