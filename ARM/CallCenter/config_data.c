@@ -89,6 +89,10 @@ __root const CFG_HDR cfghdr_m30={CFG_LEVEL,"Setup Vibra at Call",1,0};
 __root const CFG_HDR cfghdr_m31={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"Setup MegaDial",1,0};
+
+  __root const CFG_HDR cfghdr67={CFG_UINT,"Search Groups",0,9};
+  __root const unsigned int MAX_GROUP_SEARCH=9;
+
   __root const CFG_HDR cfghdr00={CFG_COLOR,"Color Menu background",0,0};
   __root const char COLOR_MENU_BK[4]={0xFF,0xFF,0x0,0x64};
 

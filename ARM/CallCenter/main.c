@@ -38,6 +38,8 @@ extern const unsigned int TEXT_FONTSZ;
 extern char *s_ab_main;
 extern char *s_ab_entry;
 
+extern const unsigned int MAX_GROUP_SEARCH;
+
 const char *progress_colors[MAX_CASH_SIZE]=
 {
   COLOR_CASHPB1,
@@ -91,6 +93,7 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #define COMPANY_NAME 0x29
 #define POST_NAME 0x6F
 #define DISPLAY_NAME 0x60
+#define GROUP 0x32
 #else
 #define NICKNAME 0x12
 #define LAST_NAME 0x23
@@ -110,6 +113,7 @@ static void patch_input(const INPUTDIA_DESC* inp)
 #define E_MAIL2 0x5D
 #define PHONE_FAX2 0x5E
 #define WALKY_TALKY_ID 0x6D
+#define GROUP 0x32
 #endif
 
 char cur_imsi[IMSI_DATA_BYTE_LEN];
@@ -420,7 +424,12 @@ static void ConstructList(void)
 		AB_UNPRES_ITEM *r=ur.record_list+i;
 		if (r->no_data!=1)
 		{
-		  switch(GetTypeOfAB_UNPRES_ITEM(r->item_type))
+		  if (r->item_type==GROUP)
+                    if (*(char *)r->data > MAX_GROUP_SEARCH) {
+                      contact.next=0;
+                      break;
+                    }
+                  switch(GetTypeOfAB_UNPRES_ITEM(r->item_type))
 		  {
 		  case 0x05:
                     #ifdef NEWSGOLD

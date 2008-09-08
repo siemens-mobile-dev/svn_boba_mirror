@@ -559,12 +559,12 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
-          <state>2</state>
+          <version>7</version>
+          <state>16</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
-          <state>(None for the selected format)</state>
+          <state></state>
         </option>
         <option>
           <name>XDefines</name>
@@ -604,7 +604,7 @@
         </option>
         <option>
           <name>XIncludes</name>
-          <state></state>
+          <state>###Uninitialized###</state>
         </option>
         <option>
           <name>ModuleStatus</name>
@@ -612,11 +612,11 @@
         </option>
         <option>
           <name>XclOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\test.xcl</state>
+          <state>lnk0t.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -675,7 +675,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>2</state>
+          <state>0</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
@@ -684,15 +684,15 @@
         </option>
         <option>
           <name>XExtraOptionsCheck</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XExtraOptions</name>
-          <state>-ynpra</state>
+          <state></state>
         </option>
         <option>
           <name>IncludeSuppressed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OXLibIOConfig</name>
@@ -700,11 +700,11 @@
         </option>
         <option>
           <name>ModuleSummary</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
-          <state>main</state>
+          <state></state>
         </option>
         <option>
           <name>DebugInformation</name>
@@ -736,21 +736,21 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>CallCenter.a79</state>
+          <state></state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>60</state>
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
           <name>xcOverrideProgramEntryLabel</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>xcProgramEntryLabelSelect</name>
@@ -766,7 +766,7 @@
         </option>
         <option>
           <name>OverlaySystemMap</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>RawBinaryFile</name>
@@ -1373,7 +1373,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>CallCenter.elf</state>
+          <state></state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1382,12 +1382,12 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
-          <state>2</state>
+          <version>7</version>
+          <state>16</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
-          <state>(None for the selected format)</state>
+          <state></state>
         </option>
         <option>
           <name>XDefines</name>
@@ -1427,7 +1427,7 @@
         </option>
         <option>
           <name>XIncludes</name>
-          <state></state>
+          <state>###Uninitialized###</state>
         </option>
         <option>
           <name>ModuleStatus</name>
@@ -1435,11 +1435,11 @@
         </option>
         <option>
           <name>XclOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\test.xcl</state>
+          <state>lnk0t.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -1498,7 +1498,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>2</state>
+          <state>0</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
@@ -1507,15 +1507,15 @@
         </option>
         <option>
           <name>XExtraOptionsCheck</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>XExtraOptions</name>
-          <state>-ynpra</state>
+          <state></state>
         </option>
         <option>
           <name>IncludeSuppressed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OXLibIOConfig</name>
@@ -1523,11 +1523,11 @@
         </option>
         <option>
           <name>ModuleSummary</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
-          <state>main</state>
+          <state></state>
         </option>
         <option>
           <name>DebugInformation</name>
@@ -1559,21 +1559,21 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>CallCenter.a79</state>
+          <state></state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>60</state>
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
           <name>xcOverrideProgramEntryLabel</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>xcProgramEntryLabelSelect</name>
@@ -1589,7 +1589,7 @@
         </option>
         <option>
           <name>OverlaySystemMap</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>RawBinaryFile</name>
@@ -1753,7 +1753,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.42A</state>
+          <state>4.41A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -2206,7 +2206,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -2251,7 +2251,7 @@
         </option>
         <option>
           <name>XIncludes</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\</state>
         </option>
         <option>
           <name>ModuleStatus</name>
@@ -2263,7 +2263,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\test.xcl</state>
+          <state>$PROJ_DIR$/test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2339,7 +2339,7 @@
         </option>
         <option>
           <name>IncludeSuppressed</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OXLibIOConfig</name>
@@ -2347,7 +2347,7 @@
         </option>
         <option>
           <name>ModuleSummary</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
@@ -2383,16 +2383,16 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>CallCenter.a79</state>
+          <state>CallCenter.sim</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>60</state>
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>8</version>
+          <version>7</version>
           <state>2</state>
         </option>
         <option>
@@ -2413,7 +2413,7 @@
         </option>
         <option>
           <name>OverlaySystemMap</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>RawBinaryFile</name>
