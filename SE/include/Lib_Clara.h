@@ -1319,4 +1319,14 @@ __swi __arm void MetaData_Desc_Destroy(void * MetaData_Desc);
 __swi __arm wchar_t * MetaData_Desc_GetTags(void * MetaData_Desc,int tagID);
 #pragma swi_number=0x2F2
 __swi __arm int MetaData_Desc_GetTrackNum(void * MetaData_Desc,int __NULL);
+
+#pragma swi_number=0x2F3
+__swi __arm int DISP_OBJ_GetWindowWidth(DISP_OBJ *);
+#pragma swi_number=0x2F4
+__swi __arm int DISP_OBJ_GetWindowHeight(DISP_OBJ *);
+#pragma swi_number=0x2F5
+__swi __arm int get_system_langID(void);
+#pragma swi_number=0x2F6
+__swi __arm char * lang_get_name(int langID);
+
 #endif
