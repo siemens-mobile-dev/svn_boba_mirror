@@ -154,10 +154,10 @@ __swi __arm  int fwrite(int file , const void *ptr, int size);
 __swi __arm  int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 
 #pragma swi_number=0x11D
-__swi __arm  void * AllocDirHandle(const wchar_t * path);
+__swi __arm  DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 
 #pragma swi_number=0x11E
-__swi __arm  void *GetFname(void *, void*);
+__swi __arm  FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
 
 #pragma swi_number=0x11F
 __swi __arm  void * DataBrowserDesc_Create(void);
@@ -871,7 +871,7 @@ __swi __arm DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
 
 
 #pragma swi_number=0x22C
-__swi __arm void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
+__swi __arm void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
 #pragma swi_number=0x22D
 __swi __arm DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 #pragma swi_number=0x22E
@@ -945,7 +945,7 @@ __swi __arm  int List2LineGetCurrentIndex(void * msg);
 #pragma swi_number=0x253
 __swi __arm  int GUIonMessage_GetCurrentItemIndex(void * msg);
 #pragma swi_number=0x254
-__swi __arm  void DestroyDirHandle(void *handle);
+__swi __arm  void DestroyDirHandle(DIR_HANDLE *handle);
 #pragma swi_number=0x8255
 __swi __arm  DB_EXT *LastExtDB(void);
 #pragma swi_number=0x256
@@ -1329,4 +1329,24 @@ __swi __arm int get_system_langID(void);
 #pragma swi_number=0x2F6
 __swi __arm char * lang_get_name(int langID);
 
+#pragma swi_number=0x2F7
+__swi __arm int w_chdir(const wchar_t *path);
+#pragma swi_number=0x2F8
+__swi __arm int w_fopen(const wchar_t *name, int attr, int rights, int err);
+#pragma swi_number=0x2F9
+__swi __arm int w_fstat(const wchar_t *name, W_FSTAT *);
+#pragma swi_number=0x2FA
+__swi __arm int w_fwrite(int f, void *buf, int size);
+#pragma swi_number=0x2FB
+__swi __arm int w_fread(int f, void *buf, int size);
+#pragma swi_number=0x2FC
+__swi __arm int w_lseek(int f, int offs, int mode);
+#pragma swi_number=0x2FD
+__swi __arm int w_fclose(int f);
+#pragma swi_number=0x2FE
+__swi __arm int w_mkdir(const wchar_t *path, int mode);
+#pragma swi_number=0x2FF
+__swi __arm int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
+#pragma swi_number=0x300
+__swi __arm int Disp_GetStrIdWidth(STRID , int len);
 #endif

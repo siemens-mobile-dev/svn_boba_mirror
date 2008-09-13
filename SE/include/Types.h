@@ -111,8 +111,19 @@ typedef struct
   wchar_t * path;
   wchar_t * fname;
   char * content_type;
+  char unk1[0x2F0];
 }FILELISTITEM;
 
+typedef struct
+{
+  int unk_0;
+  u16 unk_4;
+  u16 unk_6;
+  int unk_8; 
+  char unk_C;    // на 2010 флажки отличаются...
+  char unk_D;
+  char ena_hidden;
+} DIR_HANDLE;
 
 typedef struct
 {
@@ -707,6 +718,34 @@ typedef struct
   GUI * gui;
   void * strinp_struct;
 }SUB_EXECUTE;
+
+typedef struct
+{
+  int unk1;
+  int unk_0x4;
+  int unk_0x8;
+  int unk_0xC;
+  int unk_0x10;
+  int unk_0x14;
+  int st_size;
+  unsigned int unk_0x1C;
+  unsigned int unk_0x20;
+  unsigned int unk_0x24;  
+} W_FSTAT;
+
+enum W_SEEK_SET {
+  WSEEK_CUR=0,
+  WSEEK_END=1,
+  WSEEK_SET=2
+};
+
+enum W_OPEN_ATTR {
+  WA_Read=1,
+  WA_Write=2,
+  WA_Append=4,
+  WA_Create=8,
+  WA_Truncate=0x40
+};
 
 typedef struct
 {
