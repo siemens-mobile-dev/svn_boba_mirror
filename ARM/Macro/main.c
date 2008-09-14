@@ -10,6 +10,7 @@
 #define SYM_LOOP_4 0x02
 #define SYM_LOOP_8 0x03
 #define SYM_LOOP_16 0x04
+#define SYM_LOOP_INF 0x05
 
 //SYM_LOOP_4 backlow backhigh|(ctr<<4)
 //   }         x      1
@@ -19,6 +20,23 @@
 
 //SYM_LOOP_16 backlow backhigh ctrhigh ctrlow
 //   }         x      1        2       3
+
+//SYM_LOOP_INF backlow backhigh 
+//   }         x          @     
+
+#define MAC_EXECUTING 0x3A
+#define MAC_SUICIDE   0x3E
+
+/*#define MAC_EXECUTING1 0xDA
+#define MAC_SUICIDE1   0xCE
+#define MAC_EXECUTING2 0xDB
+#define MAC_SUICIDE2   0xCF
+#define MAC_SUICIDE_ANY  0xC2*/
+
+///char die_code=MAC_SUICIDE1;
+
+//char * MutexByte(){return (RamMenuAnywhere()+10);};
+char * MutexByte(){return (RamMenuAnywhere()+14);};
 
  
 extern int delay_keybreak;
@@ -50,6 +68,7 @@ typedef enum
   ST_NORM,
   ST_ERROR,
   ST_END,
+  ST_END2,
   ST_LONG_1,
   ST_LONG_2,
   ST_WAIT,
@@ -218,18 +237,22 @@ if(c=='J') return INTERNET_BUTTON;
 
 
 
-
 void Step()
 {
-  //interrupted
+  //interrupted    
   if(brk) s=ST_END;
-  
   int delay;
   switch(s)
   {
   //------------------------------------  
   case ST_NORM:
     {
+//    if(*MutexByte()!=MAC_EXECUTING)
+    if(po == mac) *MutexByte()=MAC_EXECUTING;  
+    
+//    if(*MutexByte()==MAC_SUICIDE)
+//       ShowMSG(2,(int)"Ooops!");
+      
     delay=delay_keybreak;  
     while(*po==10||*po==13||*po==';'||*po==SYM_NOP) po++;
     switch(*po)
@@ -297,7 +320,19 @@ void Step()
         zz[3]=ctr && 0xFF;
         zz[4]=(ctr>>8);
         break;
-        };          
+        };       
+        
+//SYM_LOOP_inf backlow backhigh 
+//   }         x      @        
+        
+      case SYM_LOOP_INF:
+        {
+        unsigned char * zz=po;  
+        unsigned int back=(po[1])|(po[2]<<8);
+        po-=(1+back);
+        break;
+        };                  
+        
 
       case '{':
         {
@@ -333,7 +368,14 @@ void Step()
               goto fuck1;            
           };
         zu++;
-        unsigned int ctr=Str2Int(zu);
+        if(*zu=='@')
+          {
+          *la=SYM_LOOP_INF;  
+          la[1]=back & 0xFF;
+          la[2]=((back>>8) & 0xFF);          
+          break;  
+          };
+        unsigned int ctr=Str2Int(zu)-1;
         if(ctr<10)
           {
           *la=SYM_LOOP_4;
@@ -547,12 +589,14 @@ void Step()
   case ST_ERROR:
     ShowMSG(2,(int)ebu); 
   case ST_END:
-   LockSched();
-    brk=1;
+    LockSched();
+ //   brk=1;
     if(IsTimerProc(&watch_timer)) GBS_StopTimer(&watch_timer);
     if(show) if(IsTimerProc(&paint_timer)) GBS_StopTimer(&paint_timer);
    UnlockSched();
-    Suicide();
+  case ST_END2:   
+    if(brk!=2) *MutexByte()=0;    
+    Suicide();    
     return;
   //------------------------------------          
   default:
@@ -564,6 +608,7 @@ GBS_StartTimerProc(&step_timer,delay,&Step);
 
 void Watch()
 {
+LockSched();
 extern int bak;
 extern int breakeycode;  
 int rac;
@@ -571,12 +616,27 @@ if((rac=*RamPressedKey())!=0)
   {
   if(bak || (rac==breakeycode)) brk=1;
   };
-//wsprintf(&q,"~%d",rac);
-if(!brk)GBS_StartTimerProc(&watch_timer,watch_delay,&Watch);
+
+if(*MutexByte() == MAC_SUICIDE) 
+    {
+    brk=2;
+    *MutexByte()=0;    
+    };
+UnlockSched();
+
+if(!brk)
+  GBS_StartTimerProc(&watch_timer,watch_delay,&Watch);
+//else 
+//  ShowMSG(1,(int)"brk=1 by watch");
+//wsprintf(&q,"%d",*MutexByte());
+//  {
+//    s=ST_END2;
+//  };  
 };
 
 void Paint()
 {
+if(brk) return;
 static unsigned int Red=0x640000FF;  
 static unsigned int Black=0x64000000;  
 DrawString(s==ST_WAIT?&qw:&q,0,YDISP,256,256,FONT_SMALL_BOLD,0,(char*)&Black,(char*)&Red);
@@ -584,7 +644,17 @@ if(!brk)GBS_StartTimerProc(&paint_timer,paint_delay,&Paint);
 };
 
 int main(char * self,char * path)
-{
+{ 
+  if(*MutexByte() == MAC_EXECUTING) 
+    {
+    *MutexByte() = MAC_SUICIDE;
+    pre_delay+=watch_delay*16;
+    }
+  else 
+    {
+    *MutexByte() = MAC_EXECUTING;
+    };
+  
   strcpy(bpath,path);
   
   static const char pt[]="%t";
@@ -644,3 +714,23 @@ delay_wait_3=t(delay_wait_3);
   if(show)GBS_StartTimerProc(&paint_timer,pre_delay,&Paint);
   return 0;
 };
+
+/*  
+  AddKeybMsgHook((void *)KeybMsgHook);
+  
+  RemoveKeybMsgHook((void*)KeybMsgHook);
+
+#define KEYBHOOK_PASS   0
+#define KEYBHOOK_BLOCK  2
+  
+int KeybMsgHook(int key, int m)
+{  
+if(!IsUnlocked()||menu->Exists()) return 0;
+
+if((m==KEY_DOWN)&&(key==key_open))
+    {
+    return 2;
+    };
+return 0;
+};*/
+

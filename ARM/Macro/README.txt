@@ -59,6 +59,7 @@ Macro is a sequence of symbols:
   (1234m) пауза 1234 min/pause 1234 min
   
   { ... }x123 - повтор 123 раз
+  { ... }x@ - бесконечный цикл
   &call{+7915 ... } - набрать номер
 
   N native menu(требуется указать адрес ShowMativeMenu() в /you must enter address ShowMativeMenu() in  macro.bcfg) 
