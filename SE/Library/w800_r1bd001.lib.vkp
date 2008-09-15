@@ -332,9 +332,9 @@
 ;09DC: xxxxxxxx yyyyyyyy ; 277: int png_sig_cmp(png_bytep sig, png_size_t start, png_size_t num_to_check);
 09E0: FFFFFFFF 94E20644 ; 278: int setjmp(jmp_buf jmpbuf);
 09E4: FFFFFFFF B8E20644 ; 279: void longjmp(jmp_buf, int);
-;09E8: xxxxxxxx yyyyyyyy ; 27A: int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
-;09EC: xxxxxxxx yyyyyyyy ; 27B: int inflate (z_streamp strm, int flush);
-;09F0: xxxxxxxx yyyyyyyy ; 27C: int inflateEnd (z_streamp strm);
+09E8: FFFFFFFF F36F0344 ; 27A: int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
+09EC: FFFFFFFF C3700344 ; 27B: int inflate (z_streamp strm, int flush);
+09F0: FFFFFFFF EB800344 ; 27C: int inflateEnd (z_streamp strm);
 09F4: FFFFFFFF 212FB444 ; 27D: int memcmp (const void *m1,const void *m2,int n);
 09F8: FFFFFFFF B93FB444 ; 27E: int strncmp(const char *s1, const char *s2, int len);
 09FC: FFFFFFFF F53FB444 ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
@@ -363,12 +363,12 @@
 0A5C: FFFFFFFF 4D77E544 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void (*freefunc)(void * elem_from_list));
 0A60: FFFFFFFF 9140B444 ; 298: char * strstr(const char * str1,const char * str2);
 ;0A64: xxxxxxxx yyyyyyyy ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
-0A68: FFFFFFFF 3D1CBF44 ; 29A: int wstrcmpni(const wchar_t * wstr1,const wchar_t * wstr2,int len);
+0A68: FFFFFFFF D91DBF44 ; 29A: int wstrcmpni(const wchar_t * wstr1,const wchar_t * wstr2,int len);
 0A6C: FFFFFFFF 713CD344 ; 29B: int wtoi(const wchar_t * wstr,int len,int * dest);
 0A70: FFFFFFFF CD82E444 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
 0A74: FFFFFFFF 6113BB44 ; 29D: void Cale_GetSettings(int setID,void *);
 0A78: FFFFFFFF 0548B444 ; 29E: wchar_t * wstrwstr(const wchar_t * wstr1,const wchar_t * wstr2);
-;0A7C: xxxxxxxx yyyyyyyy ; 29F: int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
+0A7C: FFFFFFFF 511EBF44 ; 29F: int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
 0A80: FFFFFFFF AD45B444 ; 2A0: wchar_t * wstrchr(const wchar_t * source,wchar_t chr);
 0A84: FFFFFFFF 19B5D344 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
 0A88: FFFFFFFF 2DB5D344 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
@@ -396,8 +396,8 @@
 0AE0: FFFFFFFF D528E844 ; 2B8: void BookObj_CallPage(BOOK * book, const PAGE_DESC * page);
 0AE4: FFFFFFFF F1C0D344 ; 2B9: unsigned int DateInput_GetDateInt(void *dateinp_msg);
 0AE8: FFFFFFFF BDE5D344 ; 2BA: unsigned int TimeInput_GetTimeInt(void *timeinp_msg);
-;0AEC: xxxxxxxx yyyyyyyy ;82BB: FONT_DESC *GetFontDesc(void);
-;0AF0: xxxxxxxx yyyyyyyy ;82BC: int *GetFontCount();
+0AEC: FFFFFFFF DC29184C ;82BB: FONT_DESC *GetFontDesc(void);
+0AF0: FFFFFFFF 942B184C ;82BC: int *GetFontCount();
 0AF4: FFFFFFFF 0930D444 ; 2BD: int GC_GetBrushColor(void* GC);
 0AF8: FFFFFFFF C92FD444 ; 2BE: void GC_SetBrushColor(void* GC , int brush_color);
 0AFC: FFFFFFFF ED3AD444 ; 2BF: void GC_DrawRoundRect(void* GC ,RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);
@@ -413,8 +413,8 @@
 0B24: FFFFFFFF 71E1D344 ; 2C9: void Feedback_SetTextExtended(GUI_FEEDBACK *, STRID text, int where);
 ;0B28: xxxxxxxx yyyyyyyy ; 2CA: void TabMenuBar_SetOnTabSwitch(GUI_TABMENUBAR *,void (*proc)(BOOK *,int act_tab));
 0B2C: FFFFFFFF 4104CB44 ; 2CB: STRID KeyCode2Name(int key_code);
-;0B30: xxxxxxxx yyyyyyyy ; 2CC: int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,wchar_t * imageID);
-;0B34: xxxxxxxx yyyyyyyy ; 2CD: void ImageID_Free(wchar_t imageID);
+0B30: FFFFFFFF 8131F544 ; 2CC: int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,wchar_t * imageID);
+0B34: FFFFFFFF 2135F544 ; 2CD: void ImageID_Free(wchar_t imageID);
 ;0B38: xxxxxxxx yyyyyyyy ; 2CE: SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 ;0B3C: xxxxxxxx yyyyyyyy ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
 ;0B40: xxxxxxxx yyyyyyyy ; 2D0: int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
@@ -442,7 +442,7 @@
 ;0B98: xxxxxxxx yyyyyyyy ; 2E6: int BOOK_GetSessionID(BOOK *);
 ;0B9C: xxxxxxxx yyyyyyyy ; 2E7: void UI_Event_toSID(int event, int sess_id);
 ;0BA0: xxxxxxxx yyyyyyyy ; 2E8: char *GetIMSI(void);
-;0BA4: xxxxxxxx yyyyyyyy ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
+0BA4: FFFFFFFF 6D87D444 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 ;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos(GUI*);
 ;0BAC: xxxxxxxx yyyyyyyy ; 2EB: void MainInput_Hide(GUI*);
 ;0BB0: xxxxxxxx yyyyyyyy ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
@@ -453,6 +453,20 @@
 0BC4: FFFFFFFF D5BE0445 ; 2F1: wchar_t * MetaData_Desc_GetTags(void * MetaData_Desc,int tagID);
 0BC8: FFFFFFFF 65BF0445 ; 2F2: int MetaData_Desc_GetTrackNum(void * MetaData_Desc,int __NULL);
 
+;0BCC: xxxxxxxx yyyyyyyy ; 2F3: int DISP_OBJ_GetWindowWidth(DISP_OBJ *);
+;0BD0: xxxxxxxx yyyyyyyy ; 2F4: int DISP_OBJ_GetWindowHeight(DISP_OBJ *);
+;0BD4: FFFFFFFF yyyyyyyy ; 2F5: int get_system_langID(void);
+0BD8: FFFFFFFF FD38ED44 ; 2F6: char * lang_get_name(int langID);
+0BDC: FFFFFFFF 1D311145 ; 2F7: int w_chdir(const wchar_t *path);
+0BE0: FFFFFFFF 65D48044 ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
+0BE4: FFFFFFFF 0DD58044 ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
+0BE8: FFFFFFFF B9D48044 ; 2FA: int w_fwrite(int f, void *buf, int size);
+0BEC: FFFFFFFF 9DD48044 ; 2FB: int w_fread(int f, void *buf, int size);
+;0BF0: FFFFFFFF yyyyyyyy ; 2FC: int w_lseek(int f, int offs, int mode);
+0BF4: FFFFFFFF F1D48044 ; 2FD: int w_fclose(int f);
+;0BF8: FFFFFFFF yyyyyyyy ; 2FE: int w_mkdir(const wchar_t *path, int mode);
+0BFC: FFFFFFFF 79400E45 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
+0C00: FFFFFFFF EDF0E844 ; 300: int Disp_GetStrIdWidth(STRID , int len);
 
 
 
