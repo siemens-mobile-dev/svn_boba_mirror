@@ -453,7 +453,16 @@
 0BD0: 00000000 85374745 ; 2F4: __thumb int DISP_OBJ_GetWindowHeight(DISP_OBJ *);
 0BD4: 00000000 A5C33E45 ; 2F5: __thumb int get_system_langID(void);
 0BD8: 00000000 75AA4145 ; 2F6: __thumb char * lang_get_name(int langID);
-
+0BDC: 00000000 AD270B45 ; 2F7: __thumb int w_chdir(const wchar_t *path);
+0BE0: 00000000 E9D39844 ; 2F8: __thumb int w_fopen(const wchar_t *name, int attr, int rights, int err);
+0BE4: 00000000 A1D49844 ; 2F9: __thumb int w_fstat(const wchar_t *name, W_FSTAT *);
+0BE8: 00000000 31D49844 ; 2FA: __thumb int w_fwrite(int f, void *buf, int size);
+0BEC: 00000000 19D49844 ; 2FB: __thumb int w_fread(int f, void *buf, int size);
+0BF0: 00000000 D1E22C45 ; 2FC: __thumb int w_lseek(int f, int offs, int mode);
+0BF4: 00000000 49D49844 ; 2FD: __thumb int w_fclose(int f);
+0BF8: 00000000 D9460B45 ; 2FE: __thumb int w_mkdir(const wchar_t *path, int mode);
+0BFC: 00000000 99D3FA44 ; 2FF: __thumb int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
+0C00: 00000000 D9644745 ; 300: __thumb int Disp_GetStrIdWidth(STRID , int len);
 
 
 
