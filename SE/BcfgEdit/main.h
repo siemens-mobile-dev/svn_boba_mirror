@@ -26,7 +26,7 @@ typedef struct
   GUI_FEEDBACK *key_input;
   GUI_LIST * key_sel_list;
   GUI_ONEOFMANY * keymode_sel_list;
-  
+
   LIST *list;
   CFG_HDR *cur_hp;
   unsigned long old_crc;
@@ -35,6 +35,7 @@ typedef struct
   STRID changes_have_been_made;
   STRID save_before_exit;
   BCFG_DATA bdata;
+  int Platform;
 }MyBOOK;
 
 typedef struct

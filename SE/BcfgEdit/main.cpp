@@ -13,7 +13,7 @@
 #define MESSAGE(__STR__) MessageBox(LGP_NULL,__STR__,0, 1 ,11000,(BOOK*)FindBook(isBcfgEditBook));
 
 
-const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE"  = 
+const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE"  =
 {
   ELF_TERMINATE_EVENT,     TerminateElf,
   ELF_SHOW_INFO_EVENT,     ShowAuthorInfo,
@@ -54,7 +54,7 @@ unsigned long Crc32(unsigned char *buf, unsigned long len)
     crc_table[i] = crc;
   }
   crc = 0xFFFFFFFFUL;
-  while (len--) 
+  while (len--)
     crc = crc_table[(crc ^ *buf++) & 0xFF] ^ (crc >> 8);
   return crc ^ 0xFFFFFFFFUL;
 };
@@ -97,12 +97,12 @@ char *unicode2win1251(char *s, wchar_t *ws, int len)
 int getnumwidth(unsigned int num)
 {
   int i=1;
-  while(num>=10) 
+  while(num>=10)
   {
     num/=10;
     i++;
   }
-  return (i);  
+  return (i);
 }
 
 int SaveCfg(BCFG_DATA *bdata)
@@ -202,7 +202,7 @@ void OnBackBcfgGui(BOOK * bk, void *)
   {
     if (mbk->old_crc==Crc32(bdata->cfg,bdata->size_cfg))
     {
-      FreeBook(bk);     
+      FreeBook(bk);
     }
     else
     {
@@ -290,7 +290,7 @@ void CreateUnsignedNumberInput(MyBOOK *myBook)
   wchar_t ustr[64];
   CFG_HDR *hp=myBook->cur_hp;
   STRID text, header_name;
-  
+
   snwprintf(ustr,MAXELEMS(ustr)-1,L"%u",*((unsigned int *)((char *)hp+sizeof(CFG_HDR))));
   text=Str2ID(ustr,0,SID_ANY_LEN);
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
@@ -473,7 +473,7 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
     case CFG_INT:
       snwprintf(ustr,MAXELEMS(ustr)-1,L"%d",*((int *)((char *)hp+sizeof(CFG_HDR))));
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
-      break;      
+      break;
     case CFG_STR_WIN1251:
       win12512unicode(ustr,((char *)hp+sizeof(CFG_HDR)),MAXELEMS(ustr)-1);
       str_id=Str2ID(ustr,0,SID_ANY_LEN);
@@ -594,7 +594,7 @@ STRID GetParentName(BCFG_DATA *bdata)
   if (bdata->level)
   {
     CFG_HDR *hp=bdata->levelstack[bdata->level];
-    win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);    
+    win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   }
   else
   {
@@ -632,14 +632,14 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
   CFG_HDR *hp;
   int need_to_jump=0;
   LIST *list=mbk->list;
-  while(list->FirstFree)   ListElement_Remove(list,0); 
+  while(list->FirstFree)   ListElement_Remove(list,0);
   GUI *gui=NULL;
-  
+
   int i;
   unsigned int curlev=0;
   CFG_HDR *parent=NULL;
   CFG_HDR *parents[16];
-  
+
   while(n>=sizeof(CFG_HDR))
   {
     hp=(CFG_HDR*)p;
@@ -698,8 +698,8 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       n-=(hp->max+1+3)&(~3);
       if (n<0) goto L_ERRCONSTR;
       p+=(hp->max+1+3)&(~3);
-      break;      
-      
+      break;
+
     case CFG_CBOX:
       n-=hp->max*sizeof(CFG_CBOX_ITEM)+4;
       if (n<0) goto L_ERRCONSTR;
@@ -752,7 +752,7 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       if (n<0) goto L_ERRCONSTR;
       p+=sizeof(DATE);
       break;
-      
+
     case CFG_DATE:
       n-=sizeof(TIME);
       if (n<0) goto L_ERRCONSTR;
@@ -764,7 +764,7 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       if (n<0) goto L_ERRCONSTR;
       p+=sizeof(RECT);
       break;
-      
+
     case CFG_COLOR_INT:
       n-=sizeof(int);
       if (n<0) goto L_ERRCONSTR;
@@ -779,8 +779,8 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       n-=2*sizeof(int);
       if (n<0) goto L_ERRCONSTR;
       p+=2*sizeof(int);
-      break;      
-      
+      break;
+
     default:
       goto L_ENDCONSTR;
     }
@@ -801,7 +801,7 @@ static int CreateEdPageOnCreate(void *mess ,BOOK *bk)
   return(1);
 }
 
-const PAGE_MSG bk_msglst_editor[] @ "DYN_PAGE"  = 
+const PAGE_MSG bk_msglst_editor[] @ "DYN_PAGE"  =
 {
   PAGE_ENTER_EVENT_TAG,    CreateEdPageOnCreate,
   NIL_EVENT_TAG,           NULL
@@ -835,8 +835,10 @@ int SelBcfg_BcfgFilter(const wchar_t *ExtList, const wchar_t *ItemPath, const wc
 
 static int SelBcfgPageOnCreate(void *, BOOK *bk)
 {
+
   MyBOOK *mbk=(MyBOOK *)bk;
   void * DB_Desc=DataBrowserDesc_Create();
+
   const wchar_t * folder_list[2];
   folder_list[0]=GetDir(DIR_ELFS_CONFIG|MEM_INTERNAL);
   folder_list[1]=GetDir(DIR_ELFS_CONFIG|MEM_EXTERNAL);
@@ -844,9 +846,11 @@ static int SelBcfgPageOnCreate(void *, BOOK *bk)
   DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(&mbk->book));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,2);
+
   DataBrowserDesc_SetSelectAction(DB_Desc,1);
   DataBrowserDesc_SetFileExtList(DB_Desc,L"*.bcfg");
   DataBrowserDesc_SetItemFilter(DB_Desc,SelBcfg_BcfgFilter);
+
   DataBrowser_Create(DB_Desc);
   DataBrowserDesc_Destroy(DB_Desc);
   return(1);
@@ -876,7 +880,7 @@ static int SelBcfgPageOnCancel(void *data, BOOK *bk)
   return(1);
 }
 
-const PAGE_MSG bk_msglst_selbcfg[] @ "DYN_PAGE"  = 
+const PAGE_MSG bk_msglst_selbcfg[] @ "DYN_PAGE"  =
 {
   PAGE_ENTER_EVENT_TAG,    SelBcfgPageOnCreate,
   ACCEPT_EVENT_TAG,        SelBcfgPageOnAccept,
@@ -894,7 +898,8 @@ static int MainPageOnCreate(void *, BOOK *bk)
   int find_cfg=1;
   int icon_id;
   mbk->list=List_New();
-  
+  mbk->Platform=GetChipID()>>12;
+
   textidname2id(IDN_CHANGES_HAVE_BEEN_MADE,-1,&mbk->changes_have_been_made);
   textidname2id(IDN_SAVE_BEFORE_EXIT,-1,&mbk->save_before_exit);
   iconidname2id(IDN_CHECKBOX_UNCHECKED_ICON,-1,&icon_id);
@@ -916,7 +921,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   return (1);
 }
 
-const PAGE_MSG bk_msglst_main[] @ "DYN_PAGE"  = 
+const PAGE_MSG bk_msglst_main[] @ "DYN_PAGE"  =
 {
   PAGE_ENTER_EVENT_TAG,    MainPageOnCreate,
   NIL_EVENT_TAG,           NULL
@@ -938,6 +943,11 @@ int isBcfgEditBook(BOOK * struc)
 {
   return(struc->onClose==(void*)onMyBookClose);
 }
+__root void tst()
+{
+  int i[10];
+  StatusIndication_ShowNotes(i[5]);
+}
 
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
@@ -953,7 +963,7 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
   {
     delete myBook;
     SUBPROC(elf_exit);
-    return (0);    
+    return (0);
   }
   BookObj_GotoPage((BOOK *)myBook,&bk_main);
   return 0;

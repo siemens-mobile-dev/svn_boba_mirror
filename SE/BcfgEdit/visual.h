@@ -43,6 +43,7 @@ typedef struct {
   STRID str_id;
   int need_str;
   int cstep;
+  MyBOOK * mb;
 } DISP_OBJ_COORD;
 
 typedef union {
