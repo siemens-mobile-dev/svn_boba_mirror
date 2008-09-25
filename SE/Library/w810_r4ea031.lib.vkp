@@ -354,7 +354,7 @@
 0A3C: FFFFFFFF AD1D5B45 ; 28F: int mkdir(const wchar_t* path);
 ;0A40: xxxxxxxx yyyyyyyy ; 290: int rmdir(const wchar_t* path, int zero);
 ;0A44: xxxxxxxx yyyyyyyy ; 291: int chmod(const wchar_t* path, const wchar_t* fname, int amode);
-;0A48: xxxxxxxx yyyyyyyy ; 292: int rename(const wchar_t* oldpath, const wchar_t* oldfname, const wchar_t* newpath, const wchar_t* newfname, int zero);
+0A48: FFFFFFFF 55505B45 ; 292: int rename(const wchar_t* oldpath, const wchar_t* oldfname, const wchar_t* newpath, const wchar_t* newfname, int zero);
 0A4C: FFFFFFFF C17F3045 ; 293: int GetImageWidth(wchar_t ImageID);
 0A50: FFFFFFFF D97F3045 ; 294: int GetImageHeight(wchar_t ImageID);
 0A54: FFFFFFFF 71EA4045 ; 295: void * CallID_GetCallStatusDesc(int CallID);
@@ -367,7 +367,7 @@
 0A70: FFFFFFFF 01CB2645 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
 0A74: FFFFFFFF 45E7FA44 ; 29D: void Cale_GetSettings(int setID,void *);
 0A78: FFFFFFFF 495EE244 ; 29E: wchar_t * wstrwstr(const wchar_t * wstr1,const wchar_t * wstr2);
-;0A7C: xxxxxxxx yyyyyyyy ; 29F: int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
+0A7C: FFFFFFFF B5AFFE44 ; 29F: int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
 0A80: FFFFFFFF F15BE244 ; 2A0: wchar_t * wstrchr(const wchar_t * source,wchar_t chr);
 0A84: FFFFFFFF A5BE1945 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
 0A88: FFFFFFFF B1BE1945 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
@@ -414,10 +414,10 @@
 0B2C: FFFFFFFF 85930A45 ; 2CB: STRID KeyCode2Name(int key_code);
 0B30: FFFFFFFF 556B4245 ; 2CC: int ImageID_Get(const wchar_t * fpath,const wchar_t * fname,wchar_t * imageID);
 0B34: FFFFFFFF 456B4245 ; 2CD: void ImageID_Free(wchar_t imageID);
-;0B38: xxxxxxxx yyyyyyyy ; 2CE: SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
-;0B3C: xxxxxxxx yyyyyyyy ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
-;0B40: xxxxxxxx yyyyyyyy ; 2D0: int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
-;0B44: xxxxxxxx yyyyyyyy ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
+0B38: FFFFFFFF 65AB5B45 ; 2CE: SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
+0B3C: FFFFFFFF 8DB15B45 ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
+0B40: FFFFFFFF DD675C45 ; 2D0: int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
+0B44: FFFFFFFF 116A5C45 ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
 0B48: FFFFFFFF 096A5C45 ; 2D2: wchar_t *FILEITEM_GetFname(FILEITEM *f);
 0B4C: FFFFFFFF 6D6A5C45 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 ;0B50: xxxxxxxx yyyyyyyy ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
@@ -431,15 +431,15 @@
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 ;0B74: xxxxxxxx yyyyyyyy ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 ;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
-;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
+0B7C: FFFFFFFF 1DA12445 ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: FFFFFFFF DD4E5C45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
-;0B84: xxxxxxxx yyyyyyyy ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
-;0B88: xxxxxxxx yyyyyyyy ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
-;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
-;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
-;0B94: xxxxxxxx yyyyyyyy ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
-;0B98: xxxxxxxx yyyyyyyy ; 2E6: int BOOK_GetSessionID(BOOK *);
-;0B9C: xxxxxxxx yyyyyyyy ; 2E7: void UI_Event_toSID(int event, int sess_id);
+0B84: FFFFFFFF 75106445 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
+0B88: FFFFFFFF 3DB55345 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
+0B8C: FFFFFFFF D9115345 ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+0B90: FFFFFFFF 19152545 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B94: FFFFFFFF F1EE2945 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+0B98: FFFFFFFF 55FC2945 ; 2E6: int BOOK_GetSessionID(BOOK *);
+0B9C: FFFFFFFF 9D125345 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 ;0BA0: xxxxxxxx yyyyyyyy ; 2E8: char *GetIMSI(void);
 ;0BA4: xxxxxxxx yyyyyyyy ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 ;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos(GUI*);
@@ -447,7 +447,24 @@
 ;0BB0: xxxxxxxx yyyyyyyy ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
 ;0BB4: xxxxxxxx yyyyyyyy ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
 ;0BB8: xxxxxxxx yyyyyyyy ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
-
+;0BBC: xxxxxxxx yyyyyyyy ; 2EF: void * MetaData_Desc_Create(wchar_t * path,wchar_t * name);
+;0BC0: xxxxxxxx yyyyyyyy ; 2F0: void MetaData_Desc_Destroy(void * MetaData_Desc);
+;0BC4: xxxxxxxx yyyyyyyy ; 2F1: wchar_t * MetaData_Desc_GetTags(void * MetaData_Desc,int tagID);
+;0BC8: xxxxxxxx yyyyyyyy ; 2F2: int MetaData_Desc_GetTrackNum(void * MetaData_Desc,int __NULL);
+;0BCC: xxxxxxxx yyyyyyyy ; 2F3: int DISP_OBJ_GetWindowWidth(DISP_OBJ *);
+;0BD0: xxxxxxxx yyyyyyyy ; 2F4: int DISP_OBJ_GetWindowHeight(DISP_OBJ *);
+;0BD4: xxxxxxxx yyyyyyyy ; 2F5: int get_system_langID(void);
+;0BD8: xxxxxxxx yyyyyyyy ; 2F6: char * lang_get_name(int langID);
+0BDC: FFFFFFFF A5405E45 ; 2F7: int w_chdir(const wchar_t *path);
+0BE0: FFFFFFFF BD4AB244 ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
+0BE4: FFFFFFFF 654BB244 ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
+0BE8: FFFFFFFF 114BB244 ; 2FA: int w_fwrite(int f, void *buf, int size);
+0BEC: FFFFFFFF F54AB244 ; 2FB: int w_fread(int f, void *buf, int size);
+0BF0: FFFFFFFF B5A21045 ; 2FC: int w_lseek(int f, int offs, int mode);
+0BF4: FFFFFFFF 2D4BB244 ; 2FD: int w_fclose(int f);
+0BF8: FFFFFFFF 115C5E45 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
+0BFC: FFFFFFFF 11295B45 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
+0C00: FFFFFFFF 99803045 ; 300: int Disp_GetStrIdWidth(STRID , int len);
 
 
 
