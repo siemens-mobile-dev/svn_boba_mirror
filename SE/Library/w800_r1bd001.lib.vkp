@@ -356,8 +356,8 @@
 0A40: FFFFFFFF 113A0E45 ; 290: int rmdir(const wchar_t* path, int zero);
 0A44: FFFFFFFF 55600E45 ; 291: int chmod(const wchar_t* path, const wchar_t* fname, int amode);
 0A48: FFFFFFFF A9650E45 ; 292: int rename(const wchar_t* oldpath, const wchar_t* oldfname, const wchar_t* newpath, const wchar_t* newfname, int zero);
-0A4C: FFFFFFFF 2DF0E844 ; 293: int GetImageWidth(wchar_t ImageID);
-0A50: FFFFFFFF 45F0E844 ; 294: int GetImageHeight(wchar_t ImageID);
+0A4C: FFFFFFFF 15F0E844 ; 293: int GetImageWidth(wchar_t ImageID);
+0A50: FFFFFFFF 2DF0E844 ; 294: int GetImageHeight(wchar_t ImageID);
 ;0A54: xxxxxxxx yyyyyyyy ; 295: void * CallID_GetCallStatusDesc(int CallID);
 0A58: FFFFFFFF 29A4A644 ; 296: wchar_t * CallStatusDesc_GetName(void * CallStatusDesc);
 0A5C: FFFFFFFF 4D77E544 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void (*freefunc)(void * elem_from_list));
@@ -370,8 +370,8 @@
 0A78: FFFFFFFF 0548B444 ; 29E: wchar_t * wstrwstr(const wchar_t * wstr1,const wchar_t * wstr2);
 0A7C: FFFFFFFF 511EBF44 ; 29F: int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
 0A80: FFFFFFFF AD45B444 ; 2A0: wchar_t * wstrchr(const wchar_t * source,wchar_t chr);
-0A84: FFFFFFFF 19B5D344 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
-0A88: FFFFFFFF 2DB5D344 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
+0A84: FFFFFFFF 9923E844 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
+0A88: FFFFFFFF 9923E844 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
 ;0A8C: xxxxxxxx yyyyyyyy ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get(void);
 0A90: FFFFFFFF A9E20545 ; 2A4: int StandbyBackground_SetImage(int type,int,int,const wchar_t* path,const wchar_t* fname,int);
 0A94: FFFFFFFF 49E7D344 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
