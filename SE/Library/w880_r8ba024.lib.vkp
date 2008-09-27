@@ -16,8 +16,8 @@
 0468: 00000000 A1D49844 ; 11A: __thumb int _wstat(short *path, void *statbuf);
 046C: 00000000 25E12C45 ; 11B: __thumb int fputs(const char *s, int file);
 0470: 00000000 DDF9FA44 ; 11C: __thumb int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
-0474: 00000000 FDCFFA44 ; 11D: __thumb void * AllocDirHandle(const wchar_t * path);
-0478: 00000000 BDD1FA44 ; 11E: __thumb void *GetFname(void *, void*);
+0474: 00000000 FDCFFA44 ; 11D: __thumb DIR_HANDLE * AllocDirHandle(const wchar_t * path);
+0478: 00000000 BDD1FA44 ; 11E: __thumb FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
 047C: 00000000 25C7FE44 ; 11F: __thumb void * DataBrowserDesc_Create(void);
 0480: 00000000 E9C9FE44 ; 120: __thumb void DataBrowserDesc_SetStyle(void * db , int style);
 0484: 00000000 19CAFE44 ; 121: __thumb void DataBrowserDesc_SetHeaderText(void * db , int StrID);
@@ -257,7 +257,7 @@
 08A4: 00000000 B5E04645 ; 229: __thumb DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: 00000000 05E04645 ; 22A: __thumb void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: 00000000 EDE04645 ; 22B: __thumb DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-08B0: 00000000 01E04645 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
+08B0: 00000000 01E04645 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
 08B4: 00000000 D1E04645 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
@@ -293,7 +293,7 @@
 0938: 00000000 DD8D2C44 ; 24E: int GetChipID(void);
 0948: 00000000 C9674345 ; 252: __thumb int List2LineGetCurrentIndex(void * msg);
 094C: 00000000 BD674345 ; 253: __thumb int GUIonMessage_GetCurrentItemIndex(void * msg);
-0950: 00000000 39D3FA44 ; 254: __thumb void DestroyDirHandle(void *handle);
+0950: 00000000 39D3FA44 ; 254: __thumb void DestroyDirHandle(DIR_HANDLE *handle);
 0954: 00000000 441DBB45 ;8255: DB_EXT *LastExtDB(void);
 0958: 00000000 F533FE44 ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 095C: 00000000 B11D3D45 ; 257: void MessageBox(int HeaderStrID,int MessageStrID,wchar_t IconID, int style /*1 or 2*/,int time,BOOK * unk);
@@ -463,6 +463,8 @@
 0BF8: 00000000 D9460B45 ; 2FE: __thumb int w_mkdir(const wchar_t *path, int mode);
 0BFC: 00000000 99D3FA44 ; 2FF: __thumb int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 0C00: 00000000 D9644745 ; 300: __thumb int Disp_GetStrIdWidth(STRID , int len);
+
+
 
 
 

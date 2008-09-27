@@ -14,8 +14,8 @@
 0460: FFFFFFFF A5890D45 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF 418C0D45 ; 119: int fwrite(int file , const void *ptr, int size);
 0470: FFFFFFFF 697D0D45 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
-0474: FFFFFFFF 2D5A0D45 ; 11D: void * AllocDirHandle(const wchar_t * path);
-0478: FFFFFFFF CD5B0D45 ; 11E: void *GetFname(void *, void*);
+0474: FFFFFFFF 2D5A0D45 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
+0478: FFFFFFFF CD5B0D45 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
 047C: FFFFFFFF 0DD7E144 ; 11F: void * DataBrowserDesc_Create(void);
 0480: FFFFFFFF 1DD5E144 ; 120: void DataBrowserDesc_SetStyle(void * db , int style);
 0484: FFFFFFFF ADD5E144 ; 121: void DataBrowserDesc_SetHeaderText(void * db , int StrID);
@@ -254,7 +254,7 @@
 08A4: FFFFFFFF 3913E844 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: FFFFFFFF BD0FE844 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: FFFFFFFF 6113E844 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,void (*)(void*));
+;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
 ;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
@@ -291,7 +291,7 @@
 0938: FFFFFFFF D5BC9A44 ; 24E: int GetChipID(void);
 ;0948: xxxxxxxx yyyyyyyy ; 252: int List2LineGetCurrentIndex(void * msg);
 ;094C: xxxxxxxx yyyyyyyy ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
-0950: FFFFFFFF A15D0D45 ; 254: void DestroyDirHandle(void *handle);
+0950: FFFFFFFF A15D0D45 ; 254: void DestroyDirHandle(DIR_HANDLE *handle);
 0954: FFFFFFFF 20CD2244 ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF B9910E45 ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
 095C: FFFFFFFF AD920545 ; 257: void MessageBox(int HeaderStrID,int MessageStrID,wchar_t IconID, int style /*1 or 2*/,int time,BOOK * unk);
@@ -365,8 +365,8 @@
 0A78: FFFFFFFF 5587BE44 ; 29E: wchar_t * wstrwstr(const wchar_t * wstr1,const wchar_t * wstr2);
 0A7C: FFFFFFFF 1189BE44 ; 29F: int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
 0A80: FFFFFFFF 8987BE44 ; 2A0: wchar_t * wstrchr(const wchar_t * source,wchar_t chr);
-0A84: FFFFFFFF 79F0E944 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
-0A88: FFFFFFFF 79F0E944 ; 2A2: void GUIObject_ShowSoftkeys(void *gui);
+0A84: FFFFFFFF 79F0E944 ; 2A1: void GUIObject_HideSoftkeys(void *gui); //nullsub(void)
+0A88: FFFFFFFF 79F0E944 ; 2A2: void GUIObject_ShowSoftkeys(void *gui); //nullsub(void)
 0A8C: FFFFFFFF A5CED244 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get(void);
 0A90: FFFFFFFF 21010545 ; 2A4: int StandbyBackground_SetImage(int type,int,int,const wchar_t* path,const wchar_t* fname,int);
 0A94: FFFFFFFF 7146D344 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
@@ -375,7 +375,7 @@
 0AA0: FFFFFFFF F59A0D45 ; 2A8: int FSX_isNameInvalid(wchar_t * name);
 0AA4: FFFFFFFF 89D5E144 ; 2A9: void DataBrowserDesc_SetFoldersNumber(void * DataBrowserDesc,int state);
 0AA8: FFFFFFFF F5D4E144 ; 2AA: void DataBrowserDesc_SetActions(void * DataBrowserDesc,char * actions);
-0AAC: FFFFFFFF 45D3E144  ; 2AB: void DataBrowserDesc_SetSelectAction(void * DataBrowserDesc,int state);
+0AAC: FFFFFFFF 45D3E144 ; 2AB: void DataBrowserDesc_SetSelectAction(void * DataBrowserDesc,int state);
 0AB0: FFFFFFFF D1D3E144 ; 2AC: void DataBrowserDesc_SetSelectActionOnFolders(void * DataBrowserDesc,int state);
 0AB4: FFFFFFFF C9D2E144 ; 2AD: void DataBrowserDesc_SetBookID(void * DataBrowserDesc,int BookID);
 0AB8: FFFFFFFF 61D2E144 ; 2AE: void DataBrowserDesc_SetItemFilter(void * DataBrowserDesc,int (*proc)(const wchar_t * ExtList,const wchar_t * ItemPath,const wchar_t * ItemName));
@@ -447,6 +447,21 @@
 0BC0: FFFFFFFF 914A0445 ; 2F0: void MetaData_Desc_Destroy(void * MetaData_Desc);
 0BC4: FFFFFFFF 014A0445 ; 2F1: wchar_t * MetaData_Desc_GetTags(void * MetaData_Desc,int tagID);
 0BC8: FFFFFFFF A5217B44 ; 2F2: int MetaData_Desc_GetTrackNum(void * MetaData_Desc,int __NULL);
+;0BCC: xxxxxxxx yyyyyyyy ; 2F3: int DISP_OBJ_GetWindowWidth(DISP_OBJ *);
+;0BD0: xxxxxxxx yyyyyyyy ; 2F4: int DISP_OBJ_GetWindowHeight(DISP_OBJ *);
+;0BD4: xxxxxxxx yyyyyyyy ; 2F5: int get_system_langID(void);
+;0BD8: xxxxxxxx yyyyyyyy ; 2F6: char * lang_get_name(int langID);
+;0BDC: xxxxxxxx yyyyyyyy ; 2F7: int w_chdir(const wchar_t *path);
+;0BE0: xxxxxxxx yyyyyyyy ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
+;0BE4: xxxxxxxx yyyyyyyy ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
+;0BE8: xxxxxxxx yyyyyyyy ; 2FA: int w_fwrite(int f, void *buf, int size);
+;0BEC: xxxxxxxx yyyyyyyy ; 2FB: int w_fread(int f, void *buf, int size);
+;0BF0: xxxxxxxx yyyyyyyy ; 2FC: int w_lseek(int f, int offs, int mode);
+;0BF4: xxxxxxxx yyyyyyyy ; 2FD: int w_fclose(int f);
+;0BF8: xxxxxxxx yyyyyyyy ; 2FE: int w_mkdir(const wchar_t *path, int mode);
+;0BFC: xxxxxxxx yyyyyyyy ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
+;0C00: xxxxxxxx yyyyyyyy ; 300: int Disp_GetStrIdWidth(STRID , int len);
+
 
 
 
