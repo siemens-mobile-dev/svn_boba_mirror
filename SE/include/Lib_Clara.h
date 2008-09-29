@@ -1349,4 +1349,9 @@ __swi __arm int w_mkdir(const wchar_t *path, int mode);
 __swi __arm int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 #pragma swi_number=0x300
 __swi __arm int Disp_GetStrIdWidth(STRID , int len);
+
+#pragma swi_number=0x301
+__swi __arm int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
+#pragma swi_number=0x302
+__swi __arm int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
 #endif
