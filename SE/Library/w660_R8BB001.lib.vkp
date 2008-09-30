@@ -453,16 +453,18 @@
 0BD0: 00000000 752D4845 ; 2F4: int DISP_OBJ_GetWindowHeight(DISP_OBJ *);
 0BD4: 00000000 F9B63F45 ; 2F5: int get_system_langID(void);
 0BD8: 00000000 79A04245 ; 2F6: char * lang_get_name(int langID);
-;0BDC: xxxxxxxx yyyyyyyy ; 2F7: int w_chdir(const wchar_t *path);
-;0BE0: xxxxxxxx yyyyyyyy ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
-;0BE4: xxxxxxxx yyyyyyyy ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
-;0BE8: xxxxxxxx yyyyyyyy ; 2FA: int w_fwrite(int f, void *buf, int size);
-;0BEC: xxxxxxxx yyyyyyyy ; 2FB: int w_fread(int f, void *buf, int size);
-;0BF0: xxxxxxxx yyyyyyyy ; 2FC: int w_lseek(int f, int offs, int mode);
-;0BF4: xxxxxxxx yyyyyyyy ; 2FD: int w_fclose(int f);
-;0BF8: xxxxxxxx yyyyyyyy ; 2FE: int w_mkdir(const wchar_t *path, int mode);
-;0BFC: xxxxxxxx yyyyyyyy ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
-;0C00: xxxxxxxx yyyyyyyy ; 300: int Disp_GetStrIdWidth(STRID , int len);
+0BDC: 00000000 95550B45 ; 2F7: int w_chdir(const wchar_t *path);
+0BE0: 00000000 C5D09844 ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
+0BE4: 00000000 7DD19844 ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
+0BE8: 00000000 0DD19844 ; 2FA: int w_fwrite(int f, void *buf, int size);
+0BEC: 00000000 F5D09844 ; 2FB: int w_fread(int f, void *buf, int size);
+0BF0: 00000000 F9BC2D45 ; 2FC: int w_lseek(int f, int offs, int mode);
+0BF4: 00000000 25D19844 ; 2FD: int w_fclose(int f);
+0BF8: 00000000 51750B45 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
+0BFC: 00000000 25F8FA44 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
+0C00: 00000000 85594845 ; 300: int Disp_GetStrIdWidth(STRID , int len);
+0C04: 00000000 65D03545 ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
+0C08: 00000000 E566F644 ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
 
 
 

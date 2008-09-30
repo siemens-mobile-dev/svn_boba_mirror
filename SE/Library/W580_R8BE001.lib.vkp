@@ -463,7 +463,8 @@
 0BF8: 00000000 F5E5F844 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
 0BFC: 00000000 9D5DE844 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 0C00: 00000000 91ED3545 ; 300: int Disp_GetStrIdWidth(STRID , int len);
-
+0C04: 00000000 71482345 ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
+0C08: 00000000 65CCE344 ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
 
 
 
