@@ -151,7 +151,7 @@
 06DC: 00000000 C19A3845 ; 1B7: int isKeylocked(void);
 06E0: 00000000 FD7BF544 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E8: 00000000 9B4F2B45 ; 1BA: void ShuttingDown(void);
-06EC: 00000000 5935FE44 ; 1BB: void Vibra(int t1, int t2, int t3);
+06EC: 00000000 6DEAFD44 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 312BD544 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 C52BD544 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 B9192A45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
@@ -285,7 +285,7 @@
 0914: 00000000 09583145 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 FD573145 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 091C: 00000000 69FC2045 ; 247: void GoMusic(void);
-0920: 00000000 2D36FE44 ; 248: void Vibra_Off (int t1);
+0920: 00000000 41EBFD44 ; 248: void Vibra_Off (int t1);
 0928: 00000000 39D20045 ; 24A: int PlayFileV(const wchar_t * path,const wchar_t * fname, int vol);
 092C: 00000000 55DFFD44 ; 24B: int GetSilent(void);
 0930: 00000000 C5B7FD44 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
