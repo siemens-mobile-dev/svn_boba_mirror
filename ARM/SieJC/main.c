@@ -84,8 +84,9 @@ const char OS[] = "SGOLD_ELF-Platform";
 const char ipc_my_name[32]=IPC_SIEJC_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
+#ifdef SCRP
 IPC_REQ ipcscrp={"ScrD","SieJC",(void*)RedrawMainIcon};
-
+#endif
 int Is_Sounds_Enabled;
 int Is_Vibra_Enabled;
 int Is_Autostatus_Enabled;
@@ -1227,6 +1228,8 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         extern CLIST *cltop;
         CLIST* ClEx = cltop;
         CLIST* ActiveContact = NULL;
+        if(CList_GetActiveContact())
+        {
         char *gjid=CList_GetActiveContact()->full_name;
         while(ClEx)
         {
@@ -1236,6 +1239,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
             break;
           }
           ClEx = ClEx->next;
+        }
         }
         UnlockSched();
         if (ActiveContact)
@@ -1367,8 +1371,9 @@ void maincsm_oncreate(CSM_RAM *data)
   gipc.name_from=ipc_my_name;
   gipc.data=(void *)-1;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_CHECK_DOUBLERUN,&gipc);
-#ifndef NEWSGOLD
-  if ((IDLE_ICON)&&(*(RamMenuAnywhere()+10)==0xA8)) GBS_SendMessage(MMI_CEPID,MSG_IPC,0,&ipcscrp); //если стоит патч ScrP работаем через него
+
+#ifdef SCRP
+  if (IDLE_ICON) GBS_SendMessage(MMI_CEPID,MSG_IPC,0,&ipcscrp);
 #endif
 #ifdef LOG_ALL
   // Определим адреса некоторых процедур, на случай,
@@ -1388,8 +1393,9 @@ extern char Display_Offline;
 
 void maincsm_onclose(CSM_RAM *csm)
 {
-#ifndef NEWSGOLD
-  if ((IDLE_ICON)&&(*(RamMenuAnywhere()+10)==0xA8)) GBS_SendMessage(MMI_CEPID,MSG_IPC,1,&ipcscrp); //если стоит патч ScrP работаем через него
+
+#ifdef SCRP
+  if (IDLE_ICON) GBS_SendMessage(MMI_CEPID,MSG_IPC,1,&ipcscrp); //если стоит патч ScrP работаем через него
 #endif
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&Ping_Timer);
@@ -1484,7 +1490,12 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	    break;
           }
         }
-
+#ifdef IDLEUPD
+        if (stricmp(ipc->name_to,"IdleUpd")==0)
+        {
+          if(IDLE_ICON) RedrawMainIcon();
+        }
+#endif
         if(Is_Playerstatus_Enabled)
         {
           if ((stricmp(ipc->name_to,IPC_FROMMEDIA)==0)&&(Jabber_state == JS_ONLINE))//strcmp_nocase
@@ -1518,15 +1529,16 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
       }
     }
-    if (IDLE_ICON)
-#ifndef NEWSGOLD
-      if(*(RamMenuAnywhere()+10)!=0xA8)
-#endif
+#ifndef IDLEUPD
+#ifndef SCRP
+	if (IDLE_ICON)
      {
 #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
       CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
       if (IsGuiOnTop(idlegui_id)) RedrawMainIcon();
      }
+#endif
+#endif
     }
     if(Quit_Required)
     {
@@ -1609,6 +1621,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           }
           connect_state=0;
           Jabber_state = JS_NOT_CONNECTED;
+          My_Presence = PRESENCE_OFFLINE;
           sock=-1;
           Vibrate(4);
           SMART_REDRAW();
@@ -1625,10 +1638,16 @@ void RedrawMainIcon(void)
   GUI *igui=GetTopGUI();
   if (igui) //И он существует
  {
+#ifdef ELKA
+   {
+     void *canvasdata=BuildCanvas();
+#else
       void *idata=GetDataOfItemByID(igui,2);
       if (idata)
       {
         void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+#endif
+
 #ifdef USE_PNG_EXT
         char mypic[128];
         if (CList_GetUnreadMessages()>0)

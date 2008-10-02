@@ -390,6 +390,7 @@ void CList_Ch_Status(TRESOURCE* resource,
   }
   resource->status = status;
   resource->priority = priority;
+  if (status>PRESENCE_INVISIBLE) resource->compos = 0; //сброс компосинга если остался
   UnlockSched();
   CList_AddSystemMessage(resource->full_name, status, status_msg);
 }
