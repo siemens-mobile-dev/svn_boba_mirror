@@ -28,6 +28,7 @@ typedef struct
        Rewlet[64];
 }WEATHER;
 
+/*
 typedef struct
 {
   char yearNormBudd; //1 - norm, 2 - buddhist
@@ -43,6 +44,7 @@ __swi __arm TDateTimeSettings *RamDateTimeSettings(); //cepid=msg=0
 
 #pragma swi_number=0x230
 __swi __arm int GetTimeZoneShift(TDate* dd, TTime* tt, int timeZone);
+*/
 
 GBSTMR update_tmr;
 GBSTMR reconnect_tmr;

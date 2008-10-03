@@ -10,6 +10,7 @@ int sock;
 int connect_state;
 char buf[65546];
 int pbuf;
+void *canvasdata;
 
 void create_connect(void);
 void do_start_connection(void)
@@ -268,6 +269,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       if (igui) //И он существует
       {
 	//void *canvasdata=BuildCanvas();
+        canvasdata = BuildCanvas();
         
         sprintf(sss, "%s%s%s%s", 
                 SHOW_TEMP     ? weath.Temp       : "", 
@@ -277,11 +279,15 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         
         utf82win(sss,(const char *)sss);
         ascii2ws(ews, sss);
+        DrawCanvas(canvasdata, DATA_X, DATA_Y, DATA_X+Get_WS_width(ews, FONT_SIZE)+1, DATA_Y+GetFontYSIZE(FONT_SIZE), 1); 
         DrawString(ews, DATA_X, DATA_Y ,scr_w-4, scr_h-4-GetFontYSIZE(FONT_SIZE),
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
         
         if (SHOW_PIC)
+        {
+          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + GetImgWidth((int)MakeGlobalString(ICON_PATH, '\\', weath.Pic)), PICT_Y + GetImgHeight((int)MakeGlobalString(ICON_PATH, '\\', weath.Pic)), 1);
           DrawImg(PICT_X, PICT_Y, (int)MakeGlobalString(ICON_PATH, '\\', weath.Pic));
+        }
       }
     }    
   }
