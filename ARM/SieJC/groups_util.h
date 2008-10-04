@@ -31,4 +31,7 @@ GR_ITEM* GetGroupByID(int gr_id);
 
 // Возвращает имя группы с ID = gr_id или NULL, если такой нет
 char* GetGroupNameByID(int gr_id);
+
+//Возвращает количество групп
+int GetGroupCount(void);
 #endif

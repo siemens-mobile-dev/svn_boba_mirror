@@ -86,7 +86,7 @@ int med1_onkey(GUI *data, GUI_MSG *msg)
 void med1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
-  static SOFTKEY_DESC mmmmsk={0x0018, 0x0000,(int)LG_OK};
+  static SOFTKEY_DESC mmmmsk={0x0018, 0x0000,(int)LG_ENTER};
  
   if (cmd == TI_CMD_REDRAW)
   {
@@ -160,8 +160,7 @@ void Disp_MUC_Enter_Dialog()
 
   if(strlen(DEFAULT_MUC_NICK))
     utf8_2ws(ws, (char*)DEFAULT_MUC_NICK, 80);
-  else
-    ascii2ws(ws, USERNAME);
+  else utf8_2ws(ws, (char*)USERNAME, 80);
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 80);     // 4
   AddEditControlToEditQend(eq,&ec,ma);  
 
@@ -187,8 +186,4 @@ void Disp_MUC_Enter_Dialog()
   CreateInputTextDialog(&med1_desc, &med1_hdr,eq, 1, 0);
 }
 
-
-
-
-
-
+//EOL,EOF

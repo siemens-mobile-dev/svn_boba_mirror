@@ -241,7 +241,7 @@ void inp_ghook(GUI *gui, int cmd)
 #endif
 
   PNGTOP_DESC *pltop=PNG_TOP();
-  if (cmd==9)
+  if (cmd==TI_CMD_UNFOCUS)
   {
     pltop->dyn_pltop=NULL;
   }
@@ -437,7 +437,8 @@ void mGUI_onRedraw(GUI *data)
 
   // Делаем типо название окошка... :)
   WSHDR* ws_title = AllocWS(256);
-  utf8_2ws(ws_title, Resource_Ex->full_name, 256);
+  if (Resource_Ex->entry_type==T_CONF_NODE) utf8_2ws(ws_title, Resource_Ex->name, 256);
+   else utf8_2ws(ws_title, Resource_Ex->full_name, 256);
 
   DrawString(ws_title,1,SCR_START+1,ScreenW()-1,SCR_START+FontSize+1,MESSAGEWIN_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);
 

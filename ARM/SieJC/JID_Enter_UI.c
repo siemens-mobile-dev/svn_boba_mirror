@@ -30,11 +30,43 @@ JIDENTER_SETTINGS jid_set;
 WSHDR* jews;
 char jTerminate=0;
 
+typedef struct
+{
+  GUI *ed_grgui;
+  int count;
+}GRLIST_STRUCT;
+
+void ed_grouplist_handler(USR_MENU_ITEM *item)
+{
+  GRLIST_STRUCT *gr_str=item->user_pointer;
+  int i=item->cur_item;
+  if (item->type==0)
+  {
+      if (i<gr_str->count) utf8_2ws(item->ws,GetGroupNameByID(i),80);
+  }
+  if (item->type==1)
+  {
+      if (i<gr_str->count)
+      {
+	int c;
+	char *p=GetGroupNameByID(i);
+	WSHDR *ed_ws=AllocWS(strlen(p));
+        {
+          while(c=*p++)
+          {
+            wsAppendChar(ed_ws,char8to16(c));
+          }
+          EDIT_SetTextToEditControl(gr_str->ed_grgui,6,ed_ws);
+        }
+	FreeWS(ed_ws);
+      }
+  }
+}
+
 int jed1_onkey(GUI *data, GUI_MSG *msg)
 {
   //-1 - do redraw
   //1: close
-  
   // Если зелёная кнопка либо нажата кнопка, которую мы повесили в cmd=7
   if(msg->gbsmsg->submess==GREEN_BUTTON || msg->keys==0x18)
   {
@@ -59,6 +91,14 @@ if (msg->gbsmsg->msg==KEY_DOWN)
     EDIT_SetTextToFocused(data,jews);
     return (-1);
       }
+
+      if ((EDIT_GetFocus(data)==6)&&(!EDIT_IsMarkModeActive(data)))
+      {
+        GRLIST_STRUCT *gr_str=EDIT_GetUserPointer(data);
+        int i=gr_str->count=GetGroupCount();
+        EDIT_OpenOptionMenuWithUserItems(data,ed_grouplist_handler,gr_str,i);
+        return (-1);
+      }
     }
   }
   return 0;
@@ -68,8 +108,12 @@ void jed1_ghook(GUI *data, int cmd)
 {
   EDITCONTROL ec;
   static SOFTKEY_DESC mmmmsk={0x0018, 0x0000,(int)LG_OK};
- 
-  if (cmd==7)
+  if (cmd==TI_CMD_CREATE)
+  {
+      GRLIST_STRUCT *gr_str=EDIT_GetUserPointer(data);
+      gr_str->ed_grgui=data;
+  }
+  if (cmd==TI_CMD_REDRAW)
   {
     //OnRun
     ExtractEditControl(data,2,&ec);    
@@ -86,7 +130,7 @@ void jed1_ghook(GUI *data, int cmd)
 #endif 
   }
   
-  if(cmd==0x0A)   // Фокусирование
+  if(cmd==TI_CMD_FOCUS)   // Фокусирование
   {
      DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
@@ -126,7 +170,7 @@ void jed1_ghook(GUI *data, int cmd)
  if(jid_jid)
  {
   char answer[400];
-  char* di = "roster3";
+  char di[] = "roster3";
   if((jid_set.jid_del)&&(jid_set.jid_add))
   {
      sprintf(answer, "<item jid='%s' subscription='remove'/>", Mask_Special_Syms(jid_jid));
@@ -149,28 +193,24 @@ void jed1_ghook(GUI *data, int cmd)
   }
 
   SendIq(NULL, IQTYPE_SET, di, IQ_ROSTER, answer);
-  if(!jid_set.jid_add)
-  {
-    if(jid_set.jid_ask)
+  if((!jid_set.jid_add)&&(jid_set.jid_ask))
     {
       Send_ShortPresence(jid_jid,8);//посылаем запрос авторизации
     }
-  }
-      if(jid_name) mfree(jid_name);
-      if(jid_jid) mfree(jid_jid);
-      if(jid_group) mfree(jid_group);
  } else ShowMSG(1,(int)LG_JENOJID);
+ if(jid_name) mfree(jid_name);
+ if(jid_jid) mfree(jid_jid);
+ if(jid_group) mfree(jid_group);
  //end if(jid_jid)
  }
 
-  if(cmd==0x03)     // onDestroy
+  if(cmd==TI_CMD_DESTROY)     // onDestroy
   {
     FreeWS(jews);
   }
 }
 
-
-HEADER_DESC jed1_hdr={0,0,131,21,NULL,(int)"Контакт",LGP_NULL};
+HEADER_DESC jed1_hdr={0,0,131,21,NULL,(int)LG_JECONTACTHDR,LGP_NULL};
 
 void jed1_locret(void){}
 
@@ -284,8 +324,10 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,jews,jews->wsbody[0]); //8
   }
   AddEditControlToEditQend(eq,&ec,ma); 
-  
+  GRLIST_STRUCT *gr_str=malloc(sizeof(GRLIST_STRUCT));
   patch_input(&jed1_desc);
   patch_header(&jed1_hdr);
-  CreateInputTextDialog(&jed1_desc,&jed1_hdr,eq,1,0);
+  CreateInputTextDialog(&jed1_desc,&jed1_hdr,eq,1,gr_str);
 }
+
+//EOL,EOF

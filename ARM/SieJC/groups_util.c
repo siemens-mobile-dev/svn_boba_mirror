@@ -99,4 +99,14 @@ GR_ITEM* GetGroupByID(int gr_id)
   }
   return NULL; // не найдено
 }
+
+//Возвращает количество групп
+int GetGroupCount(void)
+{
+  int i=0;
+  // Ищем последний элемент списка, добавляем
+  GR_ITEM *tmp = GR_ROOT;
+  while(tmp->next){tmp=tmp->next;i++;}
+  return i;
+}
 //EOL,EOF

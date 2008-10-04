@@ -41,6 +41,7 @@
 #define LG_NAMEMUC          "Имя конференции:"
 #define LG_NICK             "Ник:"
 #define LG_GETMESSAGECOUNT  "Получить сообщений:"
+#define LG_ENTER            "Ввойти"
 //message_list.c
 #define LG_NOSENDNULLMESS   "Нельзя послать пустое сообщение!"
 #define LG_NEW              "Новое..."
@@ -277,6 +278,7 @@
 #define LG_JEASK            "Запросить подписку:"
 #define LG_JEGROUP          "Группа:"
 #define LG_JENOJID          "Нет JIDа!"
+#define LG_JECONTACTHDR     "Контакт:"
 //moods
 #define LG_M_AFRAID         "Боязнь"
 #define LG_M_AMAZED         "Поражение"
@@ -376,6 +378,7 @@
 #define LG_NAMEMUC          "Им'я конференції:"
 #define LG_NICK             "Нік:"
 #define LG_GETMESSAGECOUNT  "Отримати повідомлень:"
+#define LG_ENTER            "Увійти"
 //message_list.c
 #define LG_NOSENDNULLMESS   "Не можна відіслати порожнє повідомлення!"
 #define LG_NEW              "Нове..."
@@ -612,6 +615,7 @@
 #define LG_JEASK            "Запросити підпис:"
 #define LG_JEGROUP          "Група:"
 #define LG_JENOJID          "JID відсутній!"
+#define LG_JECONTACTHDR     "Контакт:"
 //moods
 #define LG_M_AFRAID         "Переляканий"
 #define LG_M_AMAZED         "Поразка"
@@ -711,6 +715,7 @@
 #define LG_NAMEMUC          "MUC name:"
 #define LG_NICK             "Nickname:"
 #define LG_GETMESSAGECOUNT  "Number of messages:"
+#define LG_ENTER            "To enter"
 //message_list.c
 #define LG_NOSENDNULLMESS   "It is impossible to send an empty message!"
 #define LG_NEW              "New..."
@@ -947,6 +952,7 @@
 #define LG_JEASK            "Ask subscribe:"
 #define LG_JEGROUP          "Group:"
 #define LG_JENOJID          "No JID!"
+#define LG_JECONTACTHDR     "Contact:"
 //moods
 #define LG_M_AFRAID         "Afraid"
 #define LG_M_AMAZED         "Amazed"
