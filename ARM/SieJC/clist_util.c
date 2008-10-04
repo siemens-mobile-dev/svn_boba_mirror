@@ -300,7 +300,7 @@ MUC_ITEM* CList_FindMUCByJID(char* jid)
   if(McEx)
   while(McEx)
   {
-    if(stristr(McEx->conf_jid,jid))
+    if(stristr(McEx->conf_jid,jid)==McEx->conf_jid)
     {
       UnlockSched();
       return McEx;
@@ -1046,3 +1046,4 @@ int CList_isMUC(CLIST *cont)
   if(cont->res_list->entry_type==T_CONF_ROOT) return 1;
   return 0;
 }
+//EOL,EOF

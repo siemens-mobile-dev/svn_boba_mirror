@@ -15,8 +15,6 @@
 #include "adv_login.h"
 #include "lang.h"
 
-extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
-
 extern const char JABBER_SERVER[];
 extern const char USERNAME[];
 extern const char PASSWORD[];
@@ -589,6 +587,7 @@ void Send_Initial_Presence_Helper()
   msg = realloc(msg, len+1);
   msg[len]='\0';
   pr_info->message=msg;
+  FreeWS(ws);
   Send_Presence(pr_info);
   Jabber_state = JS_ONLINE;
 }
@@ -1185,7 +1184,8 @@ if(!strcmp(gres,iqtype))
       //Формируем сообщение
       char *reply=malloc(512);
       unsigned int nsec, nmin, nhr, nd;
-      nsec = strtoul(cl_sec, &cl_sec, 10);
+      extern const char percent_d[];
+      sscanf(cl_sec, percent_d, &nsec);
       nmin = udiv(60, nsec);
       nsec -= nmin*60;
       nhr = udiv(60, nmin);
@@ -1301,8 +1301,36 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
   if(!error)return;
   char* errcode = XML_Get_Attr_Value("code", error->attr);
 //  Jabber_state = JS_ERROR;
-  if(errcode)sprintf(logmsg,"ERR:%s",errcode);
-  MsgBoxError(1,(int)logmsg);
+  if(errcode)
+  {
+    int errcode_n=0;
+    extern const char percent_d[];
+    sscanf(errcode,percent_d,&errcode_n);
+    {
+    switch (errcode_n)
+      {
+      case JABBER_ERROR_REDIRECT: sprintf(logmsg,LG_JABBER_ERROR_REDIRECT); break;
+      case JABBER_ERROR_BAD_REQUEST: sprintf(logmsg,LG_JABBER_ERROR_BAD_REQUEST); break;
+      case JABBER_ERROR_UNAUTHORIZED: sprintf(logmsg,LG_JABBER_ERROR_UNAUTHORIZED); break;
+      case JABBER_ERROR_PAYMENT_REQUIRED: sprintf(logmsg,LG_JABBER_ERROR_PAYMENT_REQUIRED); break;
+      case JABBER_ERROR_FORBIDDEN: sprintf(logmsg,LG_JABBER_ERROR_FORBIDDEN); break;
+      case JABBER_ERROR_NOT_FOUND: sprintf(logmsg,LG_JABBER_ERROR_NOT_FOUND); break;
+      case JABBER_ERROR_NOT_ALLOWED: sprintf(logmsg,LG_JABBER_ERROR_NOT_ALLOWED); break;
+      case JABBER_ERROR_NOT_ACCEPTABLE: sprintf(logmsg,LG_JABBER_ERROR_NOT_ACCEPTABLE); break;
+      case JABBER_ERROR_REGISTRATION_REQUIRED: sprintf(logmsg,LG_JABBER_ERROR_REGISTRATION_REQUIRED); break;
+      case JABBER_ERROR_REQUEST_TIMEOUT: sprintf(logmsg,LG_JABBER_ERROR_REQUEST_TIMEOUT); break;
+      case JABBER_ERROR_CONFLICT: sprintf(logmsg,LG_JABBER_ERROR_CONFLICT); break;
+      case JABBER_ERROR_INTERNAL_SERVER_ERROR: sprintf(logmsg,LG_JABBER_ERROR_INTERNAL_SERVER_ERROR); break;
+      case JABBER_ERROR_NOT_IMPLEMENTED: sprintf(logmsg,LG_JABBER_ERROR_NOT_IMPLEMENTED); break;
+      case JABBER_ERROR_REMOTE_SERVER_ERROR: sprintf(logmsg,LG_JABBER_ERROR_REMOTE_SERVER_ERROR); break;
+      case JABBER_ERROR_SERVICE_UNAVAILABLE: sprintf(logmsg,LG_JABBER_ERROR_SERVICE_UNAVAILABLE); break;
+      case JABBER_ERROR_REMOTE_SERVER_TIMEOUT: sprintf(logmsg,LG_JABBER_ERROR_REMOTE_SERVER_TIMEOUT); break;
+      default:sprintf(logmsg,"ERR:%s",errcode);
+      }
+      MsgBoxError(1,(int)logmsg);
+    }
+  }
+  
   if(!strcmp(id,auth_id))
   {
     Jabber_state = JS_AUTH_ERROR;
@@ -1318,12 +1346,13 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
 void Process_Presence_Change(XMLNode* node)
  {
   // Иар заебал
+   extern const char percent_d[];
 char loc_actor[]="actor";
 char loc_jid[]="jid";
 char loc_reason[]="reason";
 char loc_xmlns[]="xmlns";
 char loc_x[]="x";
-short priority = 0;
+int priority = 0;
 
   CONF_DATA priv;
   char Req_Set_Role=0;
@@ -1357,8 +1386,8 @@ short priority = 0;
     if(statusmsg_node)msg = statusmsg_node->value;
 
     XMLNode* prio_node = XML_Get_Child_Node_By_Name(node,"priority");
-    extern long  strtol (const char *nptr,char **endptr,int base);
-    if(prio_node)priority = strtol (prio_node->value,0,10);
+    if(prio_node)
+     sscanf(prio_node->value,percent_d,&priority);
   }
 
    // Предусматриваем случай, что послано нам что-то от конференции. Это важно.
@@ -1506,12 +1535,13 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
       {
         // Получаем код статуса
         char* st_code=XML_Get_Attr_Value("code", sstatus->attr);
-        sprintf(r,"%s - [Unknown action]",nick);
+        sprintf(r,"%s - [unknow action(%s)]",nick, st_code);
         // Разные коды статусов - разное варенье:)
-        if(!strcmp(st_code, MUCST_KICKED)) sprintf(r, MUCST_R_KICK,nick); // Сообщение о кике
-        if(!strcmp(st_code, MUCST_BANNED)) sprintf(r, MUCST_R_BAN, nick); // Сообщение о бане
-        if(!strcmp(st_code, MUCST_KICKED_MEMB_ONLY)) sprintf(r, MUCST_R_KICK_MEMB_ONLY, nick); // Сообщение о кике из мембер-онли румы
-        if(!strcmp(st_code, MUCST_CHNICK)) sprintf(r, MUCST_R_CHNICK, nick,  XML_Get_Attr_Value("nick", item->attr)); // Сообщение о смене ника
+        if(!strcmp(st_code, MUCST_KICKED)) sprintf(r, LG_MUCST_R_KICK,nick); // Сообщение о кике
+        if(!strcmp(st_code, MUCST_BANNED)) sprintf(r, LG_MUCST_R_BAN, nick); // Сообщение о бане
+        if(!strcmp(st_code, MUCST_KICKED_MEMB_ONLY)) sprintf(r, LG_MUCST_R_KICK_MEMB_ONLY, nick); // Сообщение о кике из мембер-онли румы
+        if(!strcmp(st_code, MUCST_CHNICK)) sprintf(r, LG_MUCST_R_CHNICK, nick,  XML_Get_Attr_Value("nick", item->attr)); // Сообщение о смене ника
+        if(!strcmp(st_code, MUCST_MUCCREATED)) sprintf(r, LG_MUCST_MUCCREATED, nick); // Сообщение о бане
         //sprintf(r,r,nick);
 
         XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
@@ -1527,8 +1557,6 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
             int l = strlen(r);
             if(MAX_STATUS_LEN-l-1>0)strncat(r, reason->value, MAX_STATUS_LEN-l-1);
           }
-
-
         }
         char *ansi_r = convUTF8_to_ANSI_STR(r);
         MsgBoxError(1,(int)ansi_r);
@@ -1720,13 +1748,11 @@ void Process_Incoming_Message(XMLNode* nodeEx)
         MUC_ITEM* muct = CList_FindMUCByJID(XML_Get_Attr_Value(from,nodeEx->attr)); 
         if(!muct) //если еще нетты такой конфы то добавим в список muctop, а вдруг зайдем
         {
-          
           CList_AddContact(XML_Get_Attr_Value(from,nodeEx->attr),XML_Get_Attr_Value(from,nodeEx->attr), SUB_BOTH, 0, 129);
-          
         }
        }
       }
-      }
+     }
     }
   }
 

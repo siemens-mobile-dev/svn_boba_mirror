@@ -98,6 +98,8 @@ char elf_path[256];
 char Is_Compression_Enabled = 0;
 
 const char percent_s[]="%s";
+const char percent_d[]="%d";
+
 const char empty_t[]="";
 const char conference_t[]="conference";
 const char png_t[]=".png";
@@ -2011,3 +2013,5 @@ int main(char *exename, char *fname)
 #endif
   return 0;
 }
+
+//EOL,EOF

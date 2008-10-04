@@ -1,6 +1,7 @@
 #include "../inc/swilib.h"
 #include "main.h"
 #include "clist_util.h"
+#include "cont_menu.h"
 #include "history.h"
 #include "message_list.h"
 #include "message_cmds.h"
@@ -197,7 +198,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
           Mess_was_sent = 1;
           mfree(body);
           FreeWS(ws);
-          return 0;
+          return 1;
         }
       }
       IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
@@ -718,6 +719,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         return 1;
 
       case LEFT_SOFT:
+       Disp_Contact_Menu();
         break;
         
       case '5':

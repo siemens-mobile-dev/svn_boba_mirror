@@ -95,7 +95,7 @@ if (msg->gbsmsg->msg==KEY_DOWN)
       if ((EDIT_GetFocus(data)==6)&&(!EDIT_IsMarkModeActive(data)))
       {
         GRLIST_STRUCT *gr_str=EDIT_GetUserPointer(data);
-        int i=gr_str->count=GetGroupCount();
+        int i=gr_str->count=GetGroupCount()+1;
         EDIT_OpenOptionMenuWithUserItems(data,ed_grouplist_handler,gr_str,i);
         return (-1);
       }

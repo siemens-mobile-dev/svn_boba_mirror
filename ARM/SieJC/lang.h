@@ -41,7 +41,7 @@
 #define LG_NAMEMUC          "Имя конференции:"
 #define LG_NICK             "Ник:"
 #define LG_GETMESSAGECOUNT  "Получить сообщений:"
-#define LG_ENTER            "Ввойти"
+#define LG_ENTER            "Войти"
 //message_list.c
 #define LG_NOSENDNULLMESS   "Нельзя послать пустое сообщение!"
 #define LG_NEW              "Новое..."

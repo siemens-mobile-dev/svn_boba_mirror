@@ -23,18 +23,35 @@
 #define JABBER_ERROR_SERVICE_UNAVAILABLE	503
 #define JABBER_ERROR_REMOTE_SERVER_TIMEOUT	504
 
+#define LG_JABBER_ERROR_REDIRECT		"Redirect"
+#define LG_JABBER_ERROR_BAD_REQUEST		"Bad request"
+#define LG_JABBER_ERROR_UNAUTHORIZED		"Unauthorized"
+#define LG_JABBER_ERROR_PAYMENT_REQUIRED	"Payment required"
+#define LG_JABBER_ERROR_FORBIDDEN		"Forbidden"
+#define LG_JABBER_ERROR_NOT_FOUND		"Not fonud"
+#define LG_JABBER_ERROR_NOT_ALLOWED		"Not allowed"
+#define LG_JABBER_ERROR_NOT_ACCEPTABLE		"Not acceptable"
+#define LG_JABBER_ERROR_REGISTRATION_REQUIRED	"Registration required"
+#define LG_JABBER_ERROR_REQUEST_TIMEOUT		"Request timeout"
+#define LG_JABBER_ERROR_CONFLICT		"Conflict"
+#define LG_JABBER_ERROR_INTERNAL_SERVER_ERROR	"Internal server error"
+#define LG_JABBER_ERROR_NOT_IMPLEMENTED         "Not mplemented"
+#define LG_JABBER_ERROR_REMOTE_SERVER_ERROR	"Remote server error"
+#define LG_JABBER_ERROR_SERVICE_UNAVAILABLE     "Service unavailable"
+#define LG_JABBER_ERROR_REMOTE_SERVER_TIMEOUT	"Remote server timeout"
+
+//MUC CODE
 #define MUCST_BANNED  "301"
-#define MUCST_R_BAN  "%s was BANNED! "
-
 #define MUCST_CHNICK  "303"
-#define MUCST_R_CHNICK  "%s is now known as %s"
-
 #define MUCST_KICKED  "307"
-#define MUCST_R_KICK  "%s was kicked! "
-
 #define MUCST_KICKED_MEMB_ONLY  "322"
-#define MUCST_R_KICK_MEMB_ONLY  "%s was kicked, because room became member-only!"
+#define MUCST_MUCCREATED  "201"
 
+#define LG_MUCST_R_BAN  "%s was BANNED! "
+#define LG_MUCST_R_CHNICK  "%s is now known as %s"
+#define LG_MUCST_R_KICK  "%s was kicked!"
+#define LG_MUCST_R_KICK_MEMB_ONLY  "%s was kicked, because room became member-only!"
+#define LG_MUCST_MUCCREATED "New MUC crated. Owner-%s"
 
 #define IQTYPE_GET "get"
 #define IQTYPE_SET "set"

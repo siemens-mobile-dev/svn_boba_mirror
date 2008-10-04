@@ -192,8 +192,8 @@ int edit_status_menu_onkey(GUI *data, GUI_MSG *msg)
     ExtractEditControl(data, 4, &ec2);
     char *status_prior = malloc(10);
     ws_2str(ec2.pWS, status_prior, 10);
-    long strtol(const char *, char **, int); // чтобы иар варнинг не выдавал
-    pr_info->priority = strtol(status_prior, 0, 0);
+    extern const char percent_d[];
+    sscanf(status_prior, percent_d, &pr_info->priority);
     pr_info->status = (int)EDIT_GetUserPointer(data);
     pr_info->message = (status_text) ? Mask_Special_Syms(status_text) : NULL;
     SUBPROC((void*)Send_Presence,pr_info);
@@ -286,3 +286,5 @@ void EditStatus(int status_n)
   CreateInputTextDialog(&edit_status_menu_struct, &edit_status_menu_header, eq, 1, (void *)status_n);
   FreeWS(ws);
 }
+
+//EOL,EOF

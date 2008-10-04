@@ -64,9 +64,10 @@ int med1_onkey(GUI *data, GUI_MSG *msg)
     // Число сообщений
     ExtractEditControl(data, 8, &ec);
     char ss[10];
+    extern const char percent_d[];
     ws_2str(ec.pWS, ss, 15);
-    extern long  strtol (const char *nptr,char **endptr,int base);
-    int n_messages = strtol (ss,0,10);
+    int n_messages=0;
+    sscanf(ss,percent_d, &n_messages);
     if(user_name && conf_name)
     {
       Enter_Conference(conf_name, user_name, pass_name, n_messages);
