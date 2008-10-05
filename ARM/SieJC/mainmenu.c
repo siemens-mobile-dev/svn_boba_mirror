@@ -119,7 +119,7 @@ void OpenDisp_MUC_Enter_Dialog(GUI *data)
 {
   if(Jabber_state==JS_ONLINE)
   {
-    Disp_MUC_Enter_Dialog();
+    Disp_MUC_Enter_Dialog(NULL, NULL, NULL);
   }
 }
 
@@ -245,7 +245,7 @@ void menuitemhandler(void *data, int curitem, void *unk)
 
 void mmenu_ghook(void *data, int cmd)
 {
-  if (cmd==0x0A)
+  if (cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
@@ -357,3 +357,4 @@ void MM_Show()
   patch_header(&menuhdr);
   MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,N_ITEMS,0,0);
 }
+//EOL,EOF

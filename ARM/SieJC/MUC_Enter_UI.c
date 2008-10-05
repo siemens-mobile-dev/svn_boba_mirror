@@ -68,13 +68,11 @@ int med1_onkey(GUI *data, GUI_MSG *msg)
     ws_2str(ec.pWS, ss, 15);
     int n_messages=0;
     sscanf(ss,percent_d, &n_messages);
-    if(user_name && conf_name)
-    {
-      Enter_Conference(conf_name, user_name, pass_name, n_messages);
-      mfree(user_name);
-      mfree(pass_name);
-      mfree(conf_name);
-    }
+    
+    if(user_name && conf_name) Enter_Conference(conf_name, user_name, pass_name, n_messages);
+    if(user_name) mfree(user_name);
+    if(pass_name) mfree(pass_name);
+    if(conf_name) mfree(conf_name);
     return 1;
   }
   if (msg->keys==0x0FF0) //Ëåâûé ñîôò ÑÃÎËÄ
@@ -133,7 +131,7 @@ INPUTDIA_DESC med1_desc=
   0x40000000
 };
 
-void Disp_MUC_Enter_Dialog()
+void Disp_MUC_Enter_Dialog(char* muc, char* nick, char* pass)
 {
   extern const char USERNAME[32];
   extern const char DEFAULT_MUC[64];
@@ -150,26 +148,29 @@ void Disp_MUC_Enter_Dialog()
   ascii2ws(ws, LG_NAMEMUC);
   ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
-
-  utf8_2ws(ws, (char*)DEFAULT_MUC, 128);
+ 
+  if (muc) utf8_2ws(ws, muc, 128);
+    else utf8_2ws(ws, (char*)DEFAULT_MUC, 128);
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 128);      //2
   AddEditControlToEditQend(eq,&ec,ma);  
 
   ascii2ws(ws, LG_NICK);
   ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);  
-
-  if(strlen(DEFAULT_MUC_NICK))
-    utf8_2ws(ws, (char*)DEFAULT_MUC_NICK, 80);
-  else utf8_2ws(ws, (char*)USERNAME, 80);
+  if(nick) utf8_2ws(ws, nick, 80);
+  else
+  {
+   if(strlen(DEFAULT_MUC_NICK)) utf8_2ws(ws, (char*)DEFAULT_MUC_NICK, 80);
+   else utf8_2ws(ws, (char*)USERNAME, 80);
+  }
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 80);     // 4
   AddEditControlToEditQend(eq,&ec,ma);  
 
   ascii2ws(ws, LG_PASSWORD);
   ConstructEditControl(&ec, ECT_HEADER,ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);  
-
-  ascii2ws(ws, "");
+  if(pass) utf8_2ws(ws, pass, 80);
+    else ascii2ws(ws, "");
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 80);     // 6
   AddEditControlToEditQend(eq,&ec,ma);  
 

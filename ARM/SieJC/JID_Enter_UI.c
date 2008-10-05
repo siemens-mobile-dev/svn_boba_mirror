@@ -42,14 +42,14 @@ void ed_grouplist_handler(USR_MENU_ITEM *item)
   int i=item->cur_item;
   if (item->type==0)
   {
-      if (i<gr_str->count) utf8_2ws(item->ws,GetGroupNameByID(i),80);
+      if (i<gr_str->count) utf8_2ws(item->ws,GetGroupNameByID(i+1),80);//пропускаем "No group"
   }
   if (item->type==1)
   {
       if (i<gr_str->count)
       {
 	int c;
-	char *p=GetGroupNameByID(i);
+	char *p=GetGroupNameByID(i+1); //пропускаем "No group"
 	WSHDR *ed_ws=AllocWS(strlen(p));
         {
           while(c=*p++)
@@ -95,7 +95,7 @@ if (msg->gbsmsg->msg==KEY_DOWN)
       if ((EDIT_GetFocus(data)==6)&&(!EDIT_IsMarkModeActive(data)))
       {
         GRLIST_STRUCT *gr_str=EDIT_GetUserPointer(data);
-        int i=gr_str->count=GetGroupCount()+1;
+        int i=gr_str->count=GetGroupCount();
         EDIT_OpenOptionMenuWithUserItems(data,ed_grouplist_handler,gr_str,i);
         return (-1);
       }
@@ -255,7 +255,7 @@ void Disp_JID_Enter_Dialog(CLIST* ClEx)
   jid_set.jid_add=1;
   jid = ClEx->JID;
   name = ClEx->name;
-  group = GetGroupNameByID(ClEx->group);
+  if(ClEx->group!=0) group = GetGroupNameByID(ClEx->group); //0я группа виртуальная, непоказываем
   }
   else
   {

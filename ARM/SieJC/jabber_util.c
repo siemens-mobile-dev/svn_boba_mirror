@@ -1335,6 +1335,7 @@ if(!strcmp(gerr,iqtype)) // Iq type = error
   {
     Jabber_state = JS_AUTH_ERROR;
     strcat(logmsg,"\nAuth error!");
+    MsgBoxError(1,(int)logmsg);
     extern void end_socket(void);
     SUBPROC((void*)end_socket);
   }

@@ -7,5 +7,5 @@
   #define _MUC_UTIL_H_
 
 // Показать диалог входа в конфу
-void Disp_MUC_Enter_Dialog();
+void Disp_MUC_Enter_Dialog(char* muc, char* nick, char* pass);
 #endif

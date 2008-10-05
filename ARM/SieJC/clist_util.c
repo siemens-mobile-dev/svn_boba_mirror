@@ -436,6 +436,7 @@ void CList_MakeAllContactsOFFLINE()
 void CList_ToggleVisibilityForGroup(int GID)
 {
   CLIST* ClEx = cltop;
+  ClEx = ClEx->next;  //skip (me)
   while(ClEx)
   {
     if(ClEx->group==GID)

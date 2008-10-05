@@ -2,6 +2,7 @@
 #include "main.h"
 #include "jabber_util.h"
 #include "bookmarks.h"
+#include "MUC_Enter_UI.h"
 #include "lang.h"
 #include "rect_patcher.h"
 
@@ -53,12 +54,13 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
       c_name = XML_Get_Attr_Value(jid,elem->attr);
       bm_name = XML_Get_Attr_Value("name",elem->attr);
       c_ajoin = XML_Get_Attr_Value("autojoin",elem->attr);
-       
+ 
       tmpnode = XML_Get_Child_Node_By_Name(elem, "nick");
       if(tmpnode)
       {
         c_nick = tmpnode->value;
       }else c_nick=NULL;
+
       tmpnode = XML_Get_Child_Node_By_Name(elem, "password");
       if(tmpnode)
       {
@@ -86,10 +88,10 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
       else bmitem->pass = NULL;
 
       // Создаём очередной элемент списка
-      //если нет ника и имени конфы такая закладка нам ненужна
-      if((bmitem->mucname)&&(bmitem->nick))
+      //если нет имени конфы такая закладка нам ненужна
+      if(bmitem->mucname)
       {
-      if(MUC_AUTOJOIN&&c_ajoin)
+      if(MUC_AUTOJOIN && c_ajoin && (bmitem->nick))
       {
       if((!strcmp(c_ajoin, "true"))||(!strcmp(c_ajoin, "1")))
         {
@@ -145,7 +147,7 @@ int bmmenusoftkeys[]={0,1,2};
 HEADER_DESC bm_menuhdr={0,0,0,0,NULL,(int)bmmenu_header,LGP_NULL};
 SOFTKEY_DESC bmmenu_sk[]=
 {
-  {0x0018,0x0000,(int)LG_SELECT},
+  {0x0018,0x0000,(int)LG_EDIT},
   {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
@@ -154,7 +156,6 @@ SOFTKEYSTAB bmmenu_skt=
 {
   bmmenu_sk,0
 };
-
 
 void bm_menu_ghook(void *data, int cmd);
 int bm_menu_onkey(void *data, GUI_MSG *msg);
@@ -172,11 +173,9 @@ MENU_DESC bm_menu=
   0   //n
 };
 
-
-
 void bm_menu_ghook(void *data, int cmd)
 {
-  if (cmd==0x0A)  // onFocus
+  if (cmd==TI_CMD_FOCUS)  // onFocus
   {
     DisableIDLETMR();
     if(Req_Close_BM_Menu)
@@ -194,23 +193,24 @@ void bm_menu_ghook(void *data, int cmd)
 int bm_menu_onkey(void *data, GUI_MSG *msg)
 {
   int i=GetCurMenuItem(data);
-  if(msg->keys==0x18 || msg->keys==0x3D)  
+  if(msg->keys==0x18 || msg->keys==0x3D)
   {
     char s=0;
     BM_ITEM *it = BM_ROOT;
     while(s!=i && it)
     {
       s++;
-      it=it->next;    
-      
+      it=it->next;
     };
-    extern const unsigned int DEFAULT_MUC_MSGCOUNT;
-    Enter_Conference(it->mucname, it->nick, it->pass, DEFAULT_MUC_MSGCOUNT);
+    if(it->mucname && it->nick && (msg->keys == 0x3D)) //Нажат центральный джой
+    {
+      extern const unsigned int DEFAULT_MUC_MSGCOUNT;
+      Enter_Conference(it->mucname, it->nick, it->pass, DEFAULT_MUC_MSGCOUNT);
+    } else Disp_MUC_Enter_Dialog(it->mucname, it->nick, it->pass);
     return 1;
   }
 return 0;
 }
-
 
 int BM_ICON[2];
 char ICON_MUC[128];
