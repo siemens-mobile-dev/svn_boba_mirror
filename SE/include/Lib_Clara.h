@@ -552,6 +552,9 @@ __swi __arm  void debug_printf(const char * fmt,...);
 #pragma swi_number=0x1B2
 __swi __arm  int PlayFile(const wchar_t * path, const wchar_t * fname);
 
+#pragma swi_number=0x1B5
+__swi __arm  int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
+
 #pragma swi_number=0x1B7
 __swi __arm  int  isKeylocked(void);
 

@@ -17,5 +17,6 @@ DEPRECATE(int,GetFocusetListObjectItem,ListMenu_GetSelectedItem)
 DEPRECATE(void,SetHeaderText,GUIObject_SetHeaderText)
 DEPRECATE(void,Hide,BookObj_Hide)
 DEPRECATE(void,Show,BookObj_Show)
+DEPRECATE(int,REQUEST_PROFILE_SETACTIVEPROFILE,Profile_SetActive)
 
 #endif
