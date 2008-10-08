@@ -145,7 +145,6 @@
 06C0: 00000000 79072D45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 71922C44 ; 1B1: void debug_printf(const char * fmt,...);
 ;06C8: xxxxxxxx yyyyyyyy ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
-06D4: 00000000 79DF3F45 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06DC: 00000000 5DB94A45 ; 1B7: int isKeylocked(void);
 ;06E0: xxxxxxxx yyyyyyyy ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 ;06F0: xxxxxxxx yyyyyyyy ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
