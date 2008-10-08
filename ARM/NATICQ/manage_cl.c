@@ -5,16 +5,17 @@
 #include "manage_cl.h"
 #include "strings.h"
 #include "main.h"
+#include "lang.h"
 
 extern int S_ICONS[];
 extern int CurrentPrivateStatus;
 
 static const int mmanage_cl_softkeys[] = {0,1,2};
 
-static const SOFTKEY_DESC mmanage_cl_sk[] =
+static SOFTKEY_DESC mmanage_cl_sk[] =
 {
   {0x0018, 0x0000, (int)""},
-  {0x0001, 0x0000, (int)LG_CLOSE},
+  {0x0001, 0x0000, NULL},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
 
@@ -23,10 +24,10 @@ const SOFTKEYSTAB mmanage_cl_skt =
   mmanage_cl_sk, 0
 };
 
-static const SOFTKEY_DESC acgd_sk[] =
+static SOFTKEY_DESC acgd_sk[] =
 {
   {0x0018, 0x0000, (int)""},
-  {0x0001, 0x0000, (int)LG_CLOSE},
+  {0x0001, 0x0000, NULL},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
 
@@ -38,10 +39,10 @@ const SOFTKEYSTAB acgd_skt =
 
 static const int pl_softkeys[] = {0,1,2};
 
-static const SOFTKEY_DESC pl_sk[] =
+static SOFTKEY_DESC pl_sk[] =
 {
   {0x0018, 0x0000, (int)""},
-  {0x0001, 0x0000, (int)LG_CLOSE},
+  {0x0001, 0x0000, NULL},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
 
@@ -103,9 +104,13 @@ int acgd_onkey(GUI *data, GUI_MSG *msg)
   return (0);
 }
 
+
+
 void acgd_ghook(GUI *data, int cmd)
 {
-  static SOFTKEY_DESC sk_add={0x0FFF,0x0000,(int)LG_ADD};
+  static SOFTKEY_DESC sk_add={0x0FFF,0x0000,NULL};
+  sk_add.lgp_id=(int)lgpData[LGP_Add];
+  
   GRP_ARRAY *grp=EDIT_GetUserPointer(data);
   EDITCONTROL ec;
   int i, j;
@@ -189,7 +194,7 @@ int CreateAddContactGrpDialog(CLIST *cl_sel)
   eq=AllocEQueue(ma,mfree_adr());
   ews=AllocWS(128);
   
-  ascii2ws(ews,LG_ENTERUIN);
+  ascii2ws(ews,(char*)lgpData[LGP_EnterUin]);
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);   //1
@@ -207,7 +212,7 @@ int CreateAddContactGrpDialog(CLIST *cl_sel)
   AddEditControlToEditQend(eq,&ec,ma);   //2
   
   
-  ascii2ws(ews,LG_ENTERNAME);
+  ascii2ws(ews,lgpData[LGP_EnterName]);
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);   //3
@@ -248,7 +253,7 @@ int CreateAddContactGrpDialog(CLIST *cl_sel)
       grp_n++;
     }
   }
-  ascii2ws(ews,LG_CHOOSEGROUP);
+  ascii2ws(ews,(char*)lgpData[LGP_ChooseGroup]);
   PrepareEditControl(&ec);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,ews->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);    //5
@@ -266,6 +271,11 @@ int CreateAddContactGrpDialog(CLIST *cl_sel)
   patch_header(&acgd_hdr);
   patch_input(&acgd_desc);
   FreeWS(ews);
+  
+  mmanage_cl_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  acgd_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  pl_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  
   return CreateInputTextDialog(&acgd_desc,&acgd_hdr,eq,1,grp);
 }
 
@@ -340,13 +350,13 @@ static void private_list_ghook(void *data, int cmd)
   }
 }
 
-static const MENUITEM_DESC private_list_ITEMS[PRIVATE_LIST_MAX]=
+static MENUITEM_DESC private_list_ITEMS[PRIVATE_LIST_MAX]=
 {
-  {S_ICONS+ICON_ALL_CAN_SEE,         (int)LG_ALL_CAN_SEE,           LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS+ICON_VISLIST_CAN_SEE,     (int)LG_VISLIST_CAN_SEE,       LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS+ICON_INVISLIST_CANNOT_SEE,(int)LG_INVISLIST_CANNOT_SEE,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS+ICON_CONTACTLIST_CAN_SEE, (int)LG_CONTACTLIST_CAN_SEE,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {S_ICONS+ICON_NOBODY_CAN_SEE,      (int)LG_NOBODY_CAN_SEE,        LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
+  {S_ICONS+ICON_ALL_CAN_SEE,          NULL, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_VISLIST_CAN_SEE,      NULL, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_INVISLIST_CANNOT_SEE, NULL, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_CONTACTLIST_CAN_SEE,  NULL, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {S_ICONS+ICON_NOBODY_CAN_SEE,       NULL, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
 static const MENUPROCS_DESC private_list_HNDLS[PRIVATE_LIST_MAX]=
@@ -358,7 +368,7 @@ static const MENUPROCS_DESC private_list_HNDLS[PRIVATE_LIST_MAX]=
   PL_InvisibleForAll
 };
 
-static const HEADER_DESC private_list_HDR={0,0,NULL,NULL,NULL,(int)"Приватный статус",LGP_NULL};
+static HEADER_DESC private_list_HDR={0,0,NULL,NULL,NULL,NULL,LGP_NULL};
 
 static const MENU_DESC private_list_MNU=
 {
@@ -376,6 +386,16 @@ static const MENU_DESC private_list_MNU=
 int CreatePrivateStatusMenu(void)
 {
   patch_header(&private_list_HDR);
+  
+  //Инициализация ленгпака
+  private_list_HDR.lgp_id=(int)lgpData[LGP_PrivStatus];
+  private_list_ITEMS[0].lgp_id_small=(int)lgpData[LGP_All_Can_See]; 
+  private_list_ITEMS[1].lgp_id_small=(int)lgpData[LGP_Vislist_Can_See];
+  private_list_ITEMS[2].lgp_id_small=(int)lgpData[LGP_Invislist_Cannot_See]; 
+  private_list_ITEMS[3].lgp_id_small=(int)lgpData[LGP_ContactList_Can_See];
+  private_list_ITEMS[4].lgp_id_small=(int)lgpData[LGP_Nobody_Can_See]; 
+
+  
   return CreateMenu(0,0,&private_list_MNU,&private_list_HDR,GetPrivatePosInMenu(),PRIVATE_LIST_MAX,0,0);  
 }
 
@@ -399,10 +419,10 @@ static void mmanage_cl_ghook(void *data, int cmd)
   }
 }
 
-static const MENUITEM_DESC mmanage_cl_ITEMS[M_MANAGE_CL_MAX]=
+static MENUITEM_DESC mmanage_cl_ITEMS[M_MANAGE_CL_MAX]=
 {
-  {NULL,(int)LG_ADDCNT,      LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_PRIVSTATUS,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL, NULL, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL, NULL, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
 };
 
 static const MENUPROCS_DESC mmanage_cl_HNDLS[M_MANAGE_CL_MAX]=
@@ -411,7 +431,7 @@ static const MENUPROCS_DESC mmanage_cl_HNDLS[M_MANAGE_CL_MAX]=
   PrivateStatus,
 };
 
-static const HEADER_DESC mmanage_cl_HDR={0,0,NULL,NULL,NULL,(int)"Управление списком",LGP_NULL};
+static HEADER_DESC mmanage_cl_HDR={0,0,NULL,NULL,NULL,NULL,LGP_NULL};
 
 static const MENU_DESC mmanage_cl_MNU=
 {
@@ -428,5 +448,10 @@ static const MENU_DESC mmanage_cl_MNU=
 int CreateManageCLMenu(void)
 {
   patch_header(&mmanage_cl_HDR);
+  
+  mmanage_cl_HDR.lgp_id=(int)lgpData[LGP_ManageList];
+  mmanage_cl_ITEMS[0].lgp_id_small=(int)lgpData[LGP_AddCont]; 
+  mmanage_cl_ITEMS[1].lgp_id_small=(int)lgpData[LGP_PrivStatus];
+  
   return CreateMenu(0,0,&mmanage_cl_MNU,&mmanage_cl_HDR,0,M_MANAGE_CL_MAX,0,0);
 }

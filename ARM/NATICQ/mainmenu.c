@@ -12,6 +12,7 @@
 #include "manage_cl.h"
 #include "rect_patcher.h"
 #include "cl_work.h"
+#include "lang.h"
 
 //==============================================================================
 int MainMenu_ID;
@@ -102,23 +103,23 @@ static void AboutDlg()
   ShowMSG(2, (int)s);
 }
 
-static const HEADER_DESC menuhdr={0,0,0,0,NULL,(int)LG_MENU,LGP_NULL};
+static HEADER_DESC menuhdr={0,0,0,0,NULL,NULL,LGP_NULL};
 
 static const int mmenusoftkeys[]={0,1,2};
 
-static const char * const menutexts[11]=
+static char * menutexts[11]=
 {
-  LG_MNUSTATUS,
-  LG_MNUXSTATUS,
-  LG_MANAGELIST,
-  LG_MNUVIBRA,
-  LG_MNUSOUND,
-  LG_MNUSHOWOFF,
-  LG_MNUSHOWGROUP,
-  LG_MNUEDCFG,
-  LG_MNUDISCONNECT,
-  LG_MNUPING,
-  LG_MNUABOUT
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 /*MENUITEM_DESC menuitems[7]=
@@ -147,14 +148,14 @@ static const void *menuprocs[11]=
   (void *)AboutDlg,
 };
 
-static const SOFTKEY_DESC mmenu_sk[]=
+static SOFTKEY_DESC mmenu_sk[]=
 {
-  {0x0018,0x0000,(int)LG_SELECT},
-  {0x0001,0x0000,(int)LG_BACK},
+  {0x0018,0x0000,NULL},
+  {0x0001,0x0000,NULL},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-static const SOFTKEYSTAB mmenu_skt=
+static SOFTKEYSTAB mmenu_skt=
 {
   mmenu_sk,0
 };
@@ -247,6 +248,25 @@ void ShowMainMenu()
 {
   icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+
+  //Инициализация ленгпака
+  menuhdr.lgp_id=(int)lgpData[LGP_Menu];
+  
+  mmenu_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  mmenu_sk[1].lgp_id=(int)lgpData[LGP_Back];
+  
+  menutexts[0]=(char *)lgpData[LGP_MnuStatus];
+  menutexts[1]=(char *)lgpData[LGP_MnuXStatus];
+  menutexts[2]=(char *)lgpData[LGP_ManageList];
+  menutexts[3]=(char *)lgpData[LGP_MnuVibra];
+  menutexts[4]=(char *)lgpData[LGP_MnuSound];
+  menutexts[5]=(char *)lgpData[LGP_MnuShowOff];
+  menutexts[6]=(char *)lgpData[LGP_MnuShowGroup];
+  menutexts[7]=(char *)lgpData[LGP_MnuEdCfg];
+  menutexts[8]=(char *)lgpData[LGP_MnuDisconnect];
+  menutexts[9]=(char *)lgpData[LGP_MnuPing];
+  menutexts[10]=(char *)lgpData[LGP_MnuAbout];
+  
   *((int **)(&menuhdr.icon))=S_ICONS+IS_ONLINE;
   patch_header(&menuhdr);
   MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,11,0,0);

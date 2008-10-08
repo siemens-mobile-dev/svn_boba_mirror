@@ -2,6 +2,7 @@
 #include "naticq.h"
 #include "history.h"
 #include "language.h"
+#include "lang.h"
 
 extern const char HIST_PATH[64];
 extern const int LOG_ALL;

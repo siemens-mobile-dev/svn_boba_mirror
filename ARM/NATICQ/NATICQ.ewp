@@ -559,8 +559,8 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
-          <state>16</state>
+          <version>8</version>
+          <state>17</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2205,7 +2205,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2391,7 +2391,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3029,7 +3029,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3215,7 +3215,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3852,7 +3852,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -4038,7 +4038,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -5029,6 +5029,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\history.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\lang.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\language.h</name>

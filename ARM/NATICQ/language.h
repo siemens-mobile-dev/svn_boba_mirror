@@ -76,6 +76,7 @@
 #define LG_CHGSTATUS "Сменить статус"
 #define LG_CHGXSTATUS "Сменить X-статус"
 
+
 #define LG_STONLINE "В сети"
 #define LG_STAWAY   "Отошёл"
 #define LG_STNA     "Недоступен"
@@ -88,6 +89,8 @@
 #define LG_STHOME "Дома"
 #define LG_STLUNCH "Жру"
 #define LG_STWORK "На работе"
+
+#define LG_COMMENT "Комментарий:"
 
 //================================
 
@@ -123,6 +126,7 @@
 //=================================
 
 #define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx:%db,Tx:%db\nQueue: %db\n%s\n%t"
+
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
 
@@ -223,6 +227,8 @@
 #define LG_STHOME "Вдома"
 #define LG_STLUNCH "Їм"
 #define LG_STWORK "На роботі"
+
+#define LG_COMMENT "Комментарий:"
 
 //================================
 
@@ -356,6 +362,8 @@
 #define LG_STHOME "Home"
 #define LG_STLUNCH "Lunch"
 #define LG_STWORK "Work"
+
+#define LG_COMMENT "Comment:"
 
 //================================
 

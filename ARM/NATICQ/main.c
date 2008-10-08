@@ -17,6 +17,7 @@
 #include "cl_work.h"
 #include "select_smile.h"
 #include "revision.h"
+#include "lang.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -363,17 +364,17 @@ void stop_vibra(void)
 void ChangeVibra(void)
 {
   if (!(Is_Vibra_Enabled=!(Is_Vibra_Enabled)))
-    ShowMSG(1,(int)LG_MSGVIBRADIS);
+    ShowMSG(1,(int)lgpData[LGP_MsgVibraDis]);
   else
-    ShowMSG(1,(int)LG_MSGVIBRAENA);
+    ShowMSG(1,(int)lgpData[LGP_MsgVibraEna]);
 }
 
 void ChangeSound(void)
 {
   if (!(Is_Sounds_Enabled=!(Is_Sounds_Enabled)))
-    ShowMSG(1,(int)LG_MSGSNDDIS);
+    ShowMSG(1,(int)lgpData[LGP_MsgSndDis]);
   else
-    ShowMSG(1,(int)LG_MSGSNDENA);
+    ShowMSG(1,(int)lgpData[LGP_MsgSndEna]);
 }
 
 //===================================================================
@@ -540,25 +541,35 @@ volatile int edchat_id;
 static int prev_clmenu_itemcount;
 
 char clm_hdr_text[48];
-static const char def_clm_hdr_text[] = LG_CLTITLE;
-static const char key_clm_hdr_text[] = LG_CLT9INP;
+static char def_clm_hdr_text[32] = "";//LgpData[LGP_ClTitle];
+static char key_clm_hdr_text[32] = "";//LgpData[LGP_ClT9Inp];
 
-static const HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, S_ICONS+ICON_HEAD, (int)clm_hdr_text, LGP_NULL};
+static HEADER_DESC contactlist_menuhdr = {0, 0, 0, 0, S_ICONS+ICON_HEAD, (int)clm_hdr_text, LGP_NULL};
 static const int menusoftkeys[] = {0,1,2};
-static const SOFTKEY_DESC menu_sk[] =
+
+static SOFTKEY_DESC menu_sk[] =
 {
-  {0x0018, 0x0000, (int)LG_SELECT},
-  {0x0001, 0x0000, (int)LG_CLOSE},
+  {0x0018, 0x0000, NULL},
+  {0x0001, 0x0000, NULL},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
 
 char clmenu_sk_r[16];
-static const char def_clmenu_sk_r[] = LG_CLOSE;
-static const char key_clmenu_sk_r[] = LG_CLEAR;
 
-static const SOFTKEY_DESC clmenu_sk[]=
+static char def_clmenu_sk_r[32] = "";
+static char key_clmenu_sk_r[32] = "";
+
+
+void lgpUpdateClHdr()
 {
-  {0x0018, 0x0000, (int)LG_OPTIONS},
+  strcpy(def_clm_hdr_text, (char*) lgpData[LGP_ClTitle]);
+  strcpy(key_clm_hdr_text, (char*) lgpData[LGP_ClT9Inp]);
+  strcpy(def_clmenu_sk_r,  (char*) lgpData[LGP_Close]);
+  strcpy(key_clmenu_sk_r,  (char*) lgpData[LGP_Clear]);
+}
+static SOFTKEY_DESC clmenu_sk[]=
+{
+  {0x0018, 0x0000, NULL},
   {0x0001, 0x0000, (int)clmenu_sk_r},
   {0x003D, 0x0000, (int)LGP_DOIT_PIC}
 };
@@ -784,13 +795,28 @@ void create_contactlist_menu(void)
   int i;
   i=CountContacts();
   prev_clmenu_itemcount=i;
+  
+  
+  //strcpy(def_clm_hdr_text, (char*)lgpData[LGP_ClTitle]);
+  //strcpy(key_clm_hdr_text, (char*)lgpData[LGP_ClT9Inp]);
+  
+  //strcpy(def_clmenu_sk_r,(char*) lgpData[LGP_Close]);
+  //strcpy(key_clmenu_sk_r,(char*) lgpData[LGP_Clear]);
+  
   UpdateCLheader();
   patch_header(&contactlist_menuhdr);
+  
+  clmenu_sk[0].lgp_id=(int)lgpData[LGP_Options];
+  menu_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  menu_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  
+
 #ifdef USE_MLMENU
   contactlist_menu_id=CreateMultiLinesMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i);
 #else
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 #endif
+  
 }
 
 void contactlist_menu_ghook(void *data, int cmd)
@@ -1034,7 +1060,7 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
   }
   else
   {
-    wsprintf(ws1, LG_CLERROR);
+    wsprintf(ws1, lgpData[LGP_ClError]);
   }
   ws2=AllocMenuWS(data,ws1->wsbody[0]);
   wstrcpy(ws2,ws1);
@@ -1218,7 +1244,7 @@ void create_connect(void)
 	  closesocket(sock);
 	  sock=-1;
 	  LockSched();
-	  ShowMSG(1,(int)LG_MSGCANTCONN);
+	  ShowMSG(1,(int)lgpData[LGP_MsgCantConn]);
 	  UnlockSched();
 	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
 	}
@@ -1226,7 +1252,7 @@ void create_connect(void)
       else
       {
 	LockSched();
-	ShowMSG(1,(int)LG_MSGCANTCRSC);
+	ShowMSG(1,(int)lgpData[LGP_MsgCantCrSc]);
 	UnlockSched();
 	//Не осилили создания сокета, закрываем GPRS-сессию
 	GPRS_OnOff(0,1);
@@ -1237,7 +1263,7 @@ void create_connect(void)
   {
     DNR_TRIES--;
     LockSched();
-    ShowMSG(1,(int)LG_MSGHOSTNFND);
+    ShowMSG(1,(int)lgpData[LGP_MsgHostNFnd]);
     UnlockSched();
   }
 }
@@ -2236,10 +2262,10 @@ void method0(MAIN_GUI *data)
   }*/
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t,cltop?LG_GRSKEYCLIST:empty_str);
+  wsprintf(data->ws2,percent_t,cltop? lgpData[LGP_GrsKeyClist] :empty_str);
   DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t,LG_GRSKEYEXIT);
+  wsprintf(data->ws2,percent_t, lgpData[LGP_GrsKeyExit] );
   DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     scr_w>>1,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
@@ -2383,6 +2409,7 @@ void maincsm_onclose(CSM_RAM *csm)
   //  FreeSmiles();
   FreeWS(ews);
   FreeXStatusText();
+  lgpFreeLangPack();
   //  MutexDestroy(&contactlist_mtx);
   SUBPROC((void *)FreeSmiles);
   SUBPROC((void *)FreeXStatusesImg);
@@ -2667,14 +2694,14 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  }
 	  GROUP_CACHE=0;
 	  SENDMSGCOUNT=0; //Начинаем отсчет
-	  if (!FindGroupByID(0)) AddGroup(0,LG_GROUPNOTINLIST);
-	  if (!FindContactByUin(UIN)) AddContact(UIN, LG_CLLOOPBACK,0,1);
+	  if (!FindGroupByID(0)) AddGroup(0,lgpData[LGP_GroupNotInList]);
+	  if (!FindContactByUin(UIN)) AddContact(UIN, lgpData[LGP_ClLoopback], 0,1);
 	  SUBPROC((void *)LoadLocalCL);
 	  SMART_REDRAW();
 	}
 	else
 	{
-	  ShowMSG(1,(int)LG_MSGILLEGMSGCON);
+	  ShowMSG(1,(int)lgpData[LGP_MsgIllegmsgcon]);
 	}
 	break;
       case ENIP_SOCK_DATA_READ:
@@ -2686,7 +2713,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
 	else
 	{
-	  ShowMSG(1,(int)LG_MSGILLEGMSGREA);
+	  ShowMSG(1,(int)lgpData[LGP_MsgIllegmsgrea]);
 	}
 	break;
       case ENIP_BUFFER_FREE:
@@ -2788,14 +2815,18 @@ int main(char *filename)
   WSHDR *ws;
 
   InitConfig();
+  
   s=strrchr(filename,'\\');
   len=(s-filename)+1;
   strncpy(elf_path,filename,len);
   elf_path[len]=0;
+  
+  lgpInitLangPack(elf_path);
+  
   if (!UIN)
   {
     LockSched();
-    ShowMSG(1,(int)LG_MSGNOUINPASS);
+    ShowMSG(1,(int)lgpData[LGP_MsgNoUinPass]);
     ws=AllocWS(150);
     str_2ws(ws,successed_config_filename,128);
     ExecuteFile(ws,0,0);
@@ -2803,6 +2834,7 @@ int main(char *filename)
     SUBPROC((void *)ElfKiller);
     return 0;
   }
+  
   ReadDefSettings();
   setup_ICONS();
   LoadXStatusText();
@@ -2939,10 +2971,10 @@ void ed_options_handler(USR_MENU_ITEM *item)
     switch(i)
     {
     case 0:
-      ascii2ws(item->ws,LG_MNUEDNEXTACT);
+      ascii2ws(item->ws,lgpData[LGP_MnuEdNextAct]);
       break;
     case 1:
-      ascii2ws(item->ws,LG_MNUEDPREVACT);
+      ascii2ws(item->ws,lgpData[LGP_MnuEdPrevAct]);
       break;
     default:
       i-=2;
@@ -3344,8 +3376,10 @@ void my_ed_redraw(void *data)
 void edchat_ghook(GUI *data, int cmd)
 {
 
-  static const SOFTKEY_DESC sk={0x0FFF,0x0000,(int)LG_MENU};
-  static const SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,(int)LG_CLOSE};
+  static SOFTKEY_DESC sk={0x0FFF,0x0000,NULL};
+  sk.lgp_id=(int)lgpData[LGP_Menu];
+  static SOFTKEY_DESC sk_cancel={0x0FF0,0x0000,NULL};
+  sk_cancel.lgp_id=(int)lgpData[LGP_Close];
   //  static SOFTKEY_DESC sk={0x0018,0x0000,(int)"Menu"};
   int j;
   EDITCONTROL ec;
@@ -3595,6 +3629,8 @@ void CreateEditChat(CLIST *t)
   patch_header(&edchat_hdr);
   patch_input(&edchat_desc);
   //  edchat_desc.font=ED_FONT_SIZE;
+  
+  
   edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,ed_struct);
 }
 
@@ -3694,7 +3730,10 @@ void SendAuthReq(GUI *data)
   TPKT *p;
   CLIST *t;
   int l;
-  const char s[]=LG_AUTHREQ;
+  //const char s[]=LG_AUTHREQ;
+  char s[]="";
+  strcpy(s,(char*)lgpData[LGP_AuthReq]);
+  
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
     p=malloc(sizeof(PKT)+(l=strlen(s))+1);
@@ -3718,7 +3757,10 @@ void SendAuthGrant(GUI *data)
   TPKT *p;
   CLIST *t;
   int l;
-  const char s[]=LG_AUTHGRANT;
+  //const char s[]=LG_AUTHGRANT;
+  char s[]="";
+  strcpy(s,(char*)lgpData[LGP_AuthGrant]);
+  
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
     p=malloc(sizeof(PKT)+(l=strlen(s))+1);
@@ -3809,16 +3851,16 @@ void ecmenu_ghook(void *data, int cmd)
   }
 }
 
-static const MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
+static MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
 {
-  {NULL,(int)LG_MNUQUOTE,    LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUADDSML,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUSHINFO,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUADDREN,   LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUSAUTHREQ, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUSAUTHGRT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUOPENLOG,  LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)LG_MNUCLEARCHT, LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
 extern void AddSmile(GUI *data);
@@ -3885,6 +3927,17 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
 
     patch_header(&ecmenu_HDR);
     to_remove[0]=remove;
+    
+    //Инициализация ленгпака
+    ecmenu_ITEMS[0].lgp_id_small=(int)lgpData[LGP_MnuQuote]; 
+    ecmenu_ITEMS[1].lgp_id_small=(int)lgpData[LGP_MnuAddSml];
+    ecmenu_ITEMS[2].lgp_id_small=(int)lgpData[LGP_MnuShInfo]; 
+    ecmenu_ITEMS[3].lgp_id_small=(int)lgpData[LGP_MnuAddRen];
+    ecmenu_ITEMS[4].lgp_id_small=(int)lgpData[LGP_MnuSAuthReq]; 
+    ecmenu_ITEMS[5].lgp_id_small=(int)lgpData[LGP_MnuSAuthGrt]; 
+    ecmenu_ITEMS[6].lgp_id_small=(int)lgpData[LGP_MnuOpenLog]; 
+    ecmenu_ITEMS[7].lgp_id_small=(int)lgpData[LGP_MnuClearCht]; 
+  
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,ed_struct,to_remove);
   }
 }
