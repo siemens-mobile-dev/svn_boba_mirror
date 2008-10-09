@@ -1,7 +1,7 @@
 #ifndef _LANG_H_
 #define _LANG_H_
 
-void lgpInitLangPack(char * elf_path);
+void lgpInitLangPack(void);
 void lgpFreeLangPack(void);
 void lgpUpdateClHdr(void);
 void PreFreeLangPack();

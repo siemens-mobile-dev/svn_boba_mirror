@@ -6,7 +6,7 @@ char * lgpData[LGP_DATA_NUM];
 int lgpLoaded;
 int loaded;
 
-void lgpInitLangPack(char * elf_path)
+void lgpInitLangPack()
 {
   PreFreeLangPack();
   
@@ -19,8 +19,10 @@ void lgpInitLangPack(char * elf_path)
   int buf_pos = 0; // Позиция в буфере
   FSTATS fstat;
   
-  char lang_file[256];
-  sprintf(lang_file,"%s%s",elf_path,"lang.txt");
+  char lang_file[128];
+  extern const char TEMPLATES_PATH[64];
+  strcpy(lang_file,TEMPLATES_PATH);
+  strcat(lang_file,"\\lang.txt");
 
   if (GetFileStats(lang_file, &fstat, &io_error)!=-1) // Получаем размер файла
   {

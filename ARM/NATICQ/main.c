@@ -2821,7 +2821,7 @@ int main(char *filename)
   strncpy(elf_path,filename,len);
   elf_path[len]=0;
   
-  lgpInitLangPack(elf_path);
+  lgpInitLangPack();
   
   if (!UIN)
   {
