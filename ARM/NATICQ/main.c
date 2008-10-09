@@ -2831,6 +2831,7 @@ int main(char *filename)
     str_2ws(ws,successed_config_filename,128);
     ExecuteFile(ws,0,0);
     UnlockSched();
+    lgpFreeLangPack();
     SUBPROC((void *)ElfKiller);
     return 0;
   }
@@ -3731,16 +3732,16 @@ void SendAuthReq(GUI *data)
   CLIST *t;
   int l;
   //const char s[]=LG_AUTHREQ;
-  char s[]="";
-  strcpy(s,(char*)lgpData[LGP_AuthReq]);
+  //char s[]="";
+  //strcpy(s,(char*)lgpData[LGP_AuthReq]);
   
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
-    p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+    p=malloc(sizeof(PKT)+(l=strlen((char*)lgpData[LGP_AuthReq]))+1);
     p->pkt.uin=t->uin;
     p->pkt.type=T_AUTHREQ;
     p->pkt.data_len=l;
-    strcpy(p->data,s);
+    strcpy(p->data,(char*)lgpData[LGP_AuthReq]);
     AddStringToLog(t,0x01,p->data,I_str,0xFFFFFFFF);
     AddMsgToChat(ed_struct->ed_chatgui);
     RecountMenu(t, 1);
@@ -3758,16 +3759,16 @@ void SendAuthGrant(GUI *data)
   CLIST *t;
   int l;
   //const char s[]=LG_AUTHGRANT;
-  char s[]="";
-  strcpy(s,(char*)lgpData[LGP_AuthGrant]);
+  //char s[]="";
+  //strcpy(s,(char*)lgpData[LGP_AuthGrant]);
   
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
-    p=malloc(sizeof(PKT)+(l=strlen(s))+1);
+    p=malloc(sizeof(PKT)+(l=strlen((char*)lgpData[LGP_AuthGrant]))+1);
     p->pkt.uin=t->uin;
     p->pkt.type=T_AUTHGRANT;
     p->pkt.data_len=l;
-    strcpy(p->data,s);
+    strcpy(p->data,(char*)lgpData[LGP_AuthGrant]);
     AddStringToLog(t,0x01,p->data,I_str,0xFFFFFFFF);
     AddMsgToChat(ed_struct->ed_chatgui);
     RecountMenu(t, 1);

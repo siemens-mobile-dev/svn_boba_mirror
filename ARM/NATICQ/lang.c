@@ -10,7 +10,7 @@ void lgpInitLangPack(char * elf_path)
 {
   PreFreeLangPack();
   
-  volatile int hFile;
+  int hFile;
   unsigned int io_error = 0;
   char * buf; // Буфер под файл
   char line[128]; // Текущая строка
