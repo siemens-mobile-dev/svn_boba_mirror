@@ -1357,4 +1357,14 @@ __swi __arm int Disp_GetStrIdWidth(STRID , int len);
 __swi __arm int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
 #pragma swi_number=0x302
 __swi __arm int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
+
+#pragma swi_number=0x303
+__swi __arm void unixtime2datetime(int, DATETIME * );
+#pragma swi_number=0x304
+__swi __arm void ListElement_Insert(LIST *lst, int i, void *new_item);
+#pragma swi_number=0x305
+__swi __arm int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+#pragma swi_number=0x306
+__swi __arm int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+
 #endif
