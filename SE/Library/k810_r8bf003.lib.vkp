@@ -463,6 +463,10 @@
 0C00: 00000000 F1A24645 ; 300: int Disp_GetStrIdWidth(STRID , int len);
 0C04: 00000000 49B03445 ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
 0C08: 00000000 D92EF544 ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
+;0C0C: xxxxxxxx yyyyyyyy ; 303: void unixtime2datetime(int, DATETIME * );
+;0C10: xxxxxxxx yyyyyyyy ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
+;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+;0C18: xxxxxxxx yyyyyyyy ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 
 
 

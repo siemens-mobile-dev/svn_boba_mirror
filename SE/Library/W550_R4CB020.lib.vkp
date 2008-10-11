@@ -146,7 +146,7 @@
 06C4: FFFFFFFF 15A6D044 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: FFFFFFFF 35F80745 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: FFFFFFFF 2D605745 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-06D4: FFFFFFFF 89605745 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
+;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06DC: FFFFFFFF 5D3B0845 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF C1A23645 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E4: FFFFFFFF 2DB83645 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);
@@ -463,6 +463,12 @@
 ;0BF8: xxxxxxxx yyyyyyyy ; 2FE: int w_mkdir(const wchar_t *path, int mode);
 ;0BFC: xxxxxxxx yyyyyyyy ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 ;0C00: xxxxxxxx yyyyyyyy ; 300: int Disp_GetStrIdWidth(STRID , int len);
+;0C04: xxxxxxxx yyyyyyyy ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
+;0C08: xxxxxxxx yyyyyyyy ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
+;0C0C: xxxxxxxx yyyyyyyy ; 303: void unixtime2datetime(int, DATETIME * );
+;0C10: xxxxxxxx yyyyyyyy ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
+;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+;0C18: xxxxxxxx yyyyyyyy ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 
 
 
