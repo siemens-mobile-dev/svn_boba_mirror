@@ -284,7 +284,7 @@ char *Generate_Caps()
   snprintf(q,127, caps_tpl, VERSION_VERS,__SVN_REVISION__,DELIVERY_EVENTS);
   char *Result_Resp = malloc(256);
   zeromem(Result_Resp, 256);
-  Base64Encode(q, 128,Result_Resp, 256);
+  Base64Encode(q, strlen(q),Result_Resp, 256);
   mfree(q);
   return Result_Resp;
 }
