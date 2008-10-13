@@ -19,8 +19,6 @@ wchar_t extFolder[512];
 wchar_t intFolder[512];
 int YSize;
 
-extern MUSIC nowmusic;
-
 wchar_t *checkfile(wchar_t *name)
 {
   FSTAT fst;
@@ -35,18 +33,6 @@ wchar_t *checkfile(wchar_t *name)
   return extFolder;
 };
 
-void abc2ABC(char *ws)
-{
-  // Нормально работает только с английскими буквами и цифрами
-  while (*ws) 
-  {
-    if (*ws>0x39)
-    {
-      *ws&=~0x20; 
-    }
-    *ws++;
-  }
-};
 
 void GetSize()
 {
@@ -83,7 +69,7 @@ int Startup()
   Images_Load();
   GetSize();
   Standby_SetOnRedraw();
-  if (AllowAnim==true)
+  if (AllowAnim)
   {
     locTime=AnimUpdateTime;
   }

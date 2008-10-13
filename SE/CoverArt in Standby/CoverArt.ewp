@@ -616,7 +616,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$PROJ_DIR$\..\include\1.xcl</state>
+          <state>$PROJ_DIR$\..\\include\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -1356,7 +1356,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>$PROJ_DIR$\RevisionControl.exe</prebuild>
+        <prebuild></prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -1439,7 +1439,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>F:\IAR\Embedded Workbench 4.0 Evaluation\SE_ELF\include\1.xcl</state>
+          <state>$PROJ_DIR$\..\include\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -1649,7 +1649,7 @@
     </settings>
   </configuration>
   <file>
-    <name>$EW_DIR$\Project\C++\_cpp2.cpp</name>
+    <name>$EW_DIR$\SE_ELF\C++\_cpp2.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Animation.c</name>
@@ -2127,7 +2127,7 @@
     <name>$PROJ_DIR$\encoding.c</name>
   </file>
   <file>
-    <name>$EW_DIR$\Project\include\func.asm</name>
+    <name>$EW_DIR$\SE_ELF\include\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Images.c</name>

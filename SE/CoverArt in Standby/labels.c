@@ -304,7 +304,7 @@ void CustomLbls()
   labels[0].scr.SCROLL_STRLEN=LABEL1_SCROLL_STRLEN;
   labels[0].ChangeEveryTime=LABEL1_NEED_REDRAW;
   labels[0].LINE_ON=LABEL1_LINE_ON;
-  labels[0].LINE_DIST=LABEL1_LINE_DIST;//+Font_GetHeight(labels[0].Font);
+  labels[0].LINE_DIST=LABEL1_LINE_DIST;
   labels[0].LINE_SIZE=LABEL1_LINE_SIZE;
   labels[0].FONT_SIZE=Font_GetHeight(labels[0].Font);
   labels[0].LINE_MINUS=LABEL1_LINE_MINUS;
@@ -329,7 +329,7 @@ void CustomLbls()
   labels[1].scr.SCROLL_STRLEN=LABEL2_SCROLL_STRLEN;
   labels[1].ChangeEveryTime=LABEL2_NEED_REDRAW;
   labels[1].LINE_ON=LABEL2_LINE_ON;
-  labels[1].LINE_DIST=LABEL2_LINE_DIST;//+Font_GetHeight(labels[1].Font);
+  labels[1].LINE_DIST=LABEL2_LINE_DIST;
   labels[1].LINE_SIZE=LABEL2_LINE_SIZE;
   labels[1].FONT_SIZE=Font_GetHeight(labels[1].Font);
   labels[1].LINE_MINUS=LABEL2_LINE_MINUS;
@@ -354,7 +354,7 @@ void CustomLbls()
   labels[2].scr.SCROLL_STRLEN=LABEL3_SCROLL_STRLEN;
   labels[2].ChangeEveryTime=LABEL3_NEED_REDRAW;
   labels[2].LINE_ON=LABEL3_LINE_ON;
-  labels[2].LINE_DIST=LABEL3_LINE_DIST;//+Font_GetHeight(labels[2].Font);
+  labels[2].LINE_DIST=LABEL3_LINE_DIST;
   labels[2].LINE_SIZE=LABEL3_LINE_SIZE;
   labels[2].FONT_SIZE=Font_GetHeight(labels[2].Font);
   labels[2].LINE_MINUS=LABEL3_LINE_MINUS;
@@ -379,7 +379,7 @@ void CustomLbls()
   labels[3].scr.SCROLL_STRLEN=LABEL4_SCROLL_STRLEN;
   labels[3].ChangeEveryTime=LABEL4_NEED_REDRAW;
   labels[3].LINE_ON=LABEL4_LINE_ON;
-  labels[3].LINE_DIST=LABEL4_LINE_DIST;//+Font_GetHeight(labels[3].Font);
+  labels[3].LINE_DIST=LABEL4_LINE_DIST;
   labels[3].LINE_SIZE=LABEL4_LINE_SIZE;
   labels[3].FONT_SIZE=Font_GetHeight(labels[3].Font);
   labels[3].LINE_MINUS=LABEL4_LINE_MINUS;
@@ -404,7 +404,7 @@ void CustomLbls()
   labels[4].scr.SCROLL_STRLEN=LABEL5_SCROLL_STRLEN;
   labels[4].ChangeEveryTime=LABEL5_NEED_REDRAW;
   labels[4].LINE_ON=LABEL5_LINE_ON;
-  labels[4].LINE_DIST=LABEL5_LINE_DIST;//+Font_GetHeight(labels[4].Font);
+  labels[4].LINE_DIST=LABEL5_LINE_DIST;
   labels[4].LINE_SIZE=LABEL5_LINE_SIZE;
   labels[4].FONT_SIZE=Font_GetHeight(labels[4].Font);
   labels[4].LINE_MINUS=LABEL5_LINE_MINUS;
@@ -428,7 +428,7 @@ void CustomLbls()
   labels[5].scr.SCROLL_STRLEN=LABEL6_SCROLL_STRLEN;
   labels[5].ChangeEveryTime=LABEL6_NEED_REDRAW;
   labels[5].LINE_ON=LABEL6_LINE_ON;
-  labels[5].LINE_DIST=LABEL6_LINE_DIST;//+Font_GetHeight(labels[5].Font);
+  labels[5].LINE_DIST=LABEL6_LINE_DIST;
   labels[5].LINE_SIZE=LABEL6_LINE_SIZE;
   labels[5].FONT_SIZE=Font_GetHeight(labels[5].Font);
   labels[5].LINE_MINUS=LABEL6_LINE_MINUS;
@@ -452,7 +452,7 @@ void CustomLbls()
   labels[6].scr.SCROLL_STRLEN=LABEL7_SCROLL_STRLEN;
   labels[6].ChangeEveryTime=LABEL7_NEED_REDRAW;
   labels[6].LINE_ON=LABEL7_LINE_ON;
-  labels[6].LINE_DIST=LABEL7_LINE_DIST;//+Font_GetHeight(labels[7].Font);
+  labels[6].LINE_DIST=LABEL7_LINE_DIST;
   labels[6].LINE_SIZE=LABEL7_LINE_SIZE;  
   labels[6].FONT_SIZE=Font_GetHeight(labels[6].Font);
   labels[6].LINE_MINUS=LABEL7_LINE_MINUS;
@@ -476,7 +476,7 @@ void CustomLbls()
   labels[7].scr.SCROLL_STRLEN=LABEL8_SCROLL_STRLEN;
   labels[7].ChangeEveryTime=LABEL8_NEED_REDRAW;
   labels[7].LINE_ON=LABEL8_LINE_ON;
-  labels[7].LINE_DIST=LABEL8_LINE_DIST;//+Font_GetHeight(labels[7].Font);
+  labels[7].LINE_DIST=LABEL8_LINE_DIST;
   labels[7].LINE_SIZE=LABEL8_LINE_SIZE;
   labels[7].FONT_SIZE=Font_GetHeight(labels[7].Font);
   labels[7].LINE_MINUS=LABEL8_LINE_MINUS;
@@ -523,7 +523,7 @@ void CustomLbls()
   labels[9].scr.SCROLL_STRLEN=LABEL10_SCROLL_STRLEN;
   labels[9].ChangeEveryTime=LABEL10_NEED_REDRAW;
   labels[9].LINE_ON=LABEL10_LINE_ON;
-  labels[9].LINE_DIST=LABEL10_LINE_DIST;//+Font_GetHeight(labels[9].Font);
+  labels[9].LINE_DIST=LABEL10_LINE_DIST;
   labels[9].LINE_SIZE=LABEL10_LINE_SIZE;
   labels[9].FONT_SIZE=Font_GetHeight(labels[9].Font);
   labels[9].LINE_MINUS=LABEL10_LINE_MINUS;
