@@ -3,7 +3,7 @@
 #include "..\\include\cfg_items.h"
 #include "conf_loader.h"
 
-#define LCFGFILENAME L"Management.bcfg"
+#define LCFGFILENAME L"MissedEvents.bcfg"
 
 const wchar_t *successed_config_path=L"";
 const wchar_t *successed_config_name=L"";
