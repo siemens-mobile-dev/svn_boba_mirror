@@ -1421,7 +1421,7 @@ void get_answer(void)
   int i=RXstate;
   int j;
   int n;
-  char rb[1024];
+  char rb[7168];
   char *rp=rb;
   if (connect_state<2) return;
   if (i==EOP) return;
@@ -2821,7 +2821,7 @@ int main(char *filename)
   strncpy(elf_path,filename,len);
   elf_path[len]=0;
   
-  lgpInitLangPack();
+  lgpLoadLangpack();
   
   if (!UIN)
   {
@@ -3602,7 +3602,7 @@ void CreateEditChat(CLIST *t)
   if (t->answer) ParseAnswer(ews,t->answer);
   else  CutWSTR(ews,0);
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,3,(FIRST_LETTER)?ECF_DEFAULT_BIG_LETTER:0,ews,1024);
+  ConstructEditControl(&ec,3,(FIRST_LETTER)?ECF_DEFAULT_BIG_LETTER:0,ews,7168);
 
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,ED_FONT_SIZE);

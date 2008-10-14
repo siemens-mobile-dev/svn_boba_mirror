@@ -1,10 +1,12 @@
 #ifndef _LANG_H_
 #define _LANG_H_
 
-void lgpInitLangPack(void);
+void lgpLoadLangpack(void);
 void lgpFreeLangPack(void);
-void lgpUpdateClHdr(void);
-void PreFreeLangPack();
+//void lgpUpdateClHdr(void);
+//void PreFreeLangPack();
+
+//---------------------------------------------------------------------------
 
 enum LGP_ID
 {
@@ -14,7 +16,7 @@ enum LGP_ID
   LGP_ClError,
   LGP_ClLoopback,
   LGP_GroupNotInList,
-  
+
   //=================
   LGP_Menu,
   LGP_Options,
@@ -117,7 +119,24 @@ enum LGP_ID
   LGP_DATA_NUM
 };
 
+//---------------------------------------------------------------------------
+typedef struct LGP_Item LGP_Item;
+
+struct LGP_Item
+{
+  char *tag;
+  int   id;
+};
+
+//---------------------------------------------------------------------------
+
+extern LGP_Item LGPTAGS[];
+
+//---------------------------------------------------------------------------
+
 extern char * lgpData[LGP_DATA_NUM];
+
+//---------------------------------------------------------------------------
 
 #endif /* _LANG_H_ */
 
