@@ -65,9 +65,10 @@ int select_status_menu_onkey(void *data, GUI_MSG *msg)
   if (msg->keys==0x3D)
   {
     int i = GetCurMenuItem(data);
+    extern ONLINEINFO OnlineInfo;
     char * status_text = ANSI2UTF8(status_texts[i], strlen(status_texts[i]));
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    pr_info->priority = 0;
+    pr_info->priority = OnlineInfo.priority;
     pr_info->status = i;
     pr_info->message = Mask_Special_Syms(status_text);
     mfree(status_text);
@@ -276,8 +277,9 @@ void EditStatus(int status_n)
   ascii2ws(ws, LG_PRIORITY);
   ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq, &ec, ma);
-
-  wsprintf(ws, "0");
+  
+  extern ONLINEINFO OnlineInfo;
+  wsprintf(ws, "%d",OnlineInfo.priority);
   ConstructEditControl(&ec, ECT_FIXED_STR_NUM, ECF_APPEND_EOL, ws, 2);
   AddEditControlToEditQend(eq, &ec, ma);
 
