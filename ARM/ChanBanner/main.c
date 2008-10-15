@@ -1,10 +1,23 @@
 #include "..\inc\swilib.h"
-
+#include "conf_loader.h"
+static char config_name[128];
 #pragma inline=forced
 int toupper(int c)
 {
   if ((c>='a')&&(c<='z')) c+='A'-'a';
   return(c);
+}
+
+unsigned int GetCC_NCfromIMSI(char *imsi)
+{
+  unsigned int cc, cc2, nc;
+  cc=(*(imsi+1)>>4)<<8;
+  cc2=*(imsi+2);
+  cc2=((cc2&0x0F)<<4)|(cc2>>4);
+  cc|=cc2;
+  nc=*(imsi+3);
+  nc=((nc&0x0F)<<4)|(nc>>4);
+  return ((cc<<16)|nc);
 }
 
 int strcmp_nocase(const char *s1,const char *s2)
@@ -36,14 +49,21 @@ unsigned int banner(int chan, unsigned int lvl)
 
 CHAN_BAN_Q my_q={NULL,banner};
 
-const char chanbantab_file[]="4:\\ZBin\\var\\chan_ban.tab";
-
 void LoadBanList(void)
 {
   unsigned int ul;
   int f;
+  extern const char chanbantab_dir[];
+  unsigned int cc;
+  unsigned int nc;
+  char *imsi=RAM_IMSI();
+  cc=GetCC_NCfromIMSI(imsi);
+  nc=cc&0xFFFF;
+  cc>>=16;
+  sprintf(config_name,"%schanban%02X-%03X.tab",chanbantab_dir,nc,cc);
+
   memset(ban_tab,0,sizeof(ban_tab));
-  if ((f=fopen(chanbantab_file,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return;
+  if ((f=fopen(config_name,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return;
   fread(f,ban_tab,sizeof(ban_tab),&ul);
   fclose(f,&ul);
 //  static const int _banned[]={102,104,707-(512-175),699-(512-175),684-(512-175),685-(512-175),709-(512-175),0};
@@ -54,7 +74,7 @@ static int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
-    if (strcmp_nocase(chanbantab_file,(char *)msg->data0)==0)
+    if (strcmp_nocase(config_name,(char *)msg->data0)==0)
     {
       ShowMSG(1,(int)"ChanBanner config updated!");
       LoadBanList();
@@ -152,8 +172,8 @@ int main(void)
   CSMROOT *csmr;
   CSM_RAM *save_cmpc;
   CSM_RAM main_csm;
-  //RereadSettings();
   UpdateCSMname();
+  InitConfig();
   LockSched();
   csmr=CSM_root();
   save_cmpc=csmr->csm_q->current_msg_processing_csm;

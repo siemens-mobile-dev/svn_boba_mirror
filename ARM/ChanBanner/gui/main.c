@@ -1,12 +1,19 @@
 #include "../../inc/swilib.h"
+#include "../gui/rect_patcher.h"
+#include "../conf_loader.h"
 
-#ifdef NEWSGOLD
-#define CBOX_CHECKED 0xE116
-#define CBOX_UNCHECKED 0xE117
-#else
-#define CBOX_CHECKED 0xE10B
-#define CBOX_UNCHECKED 0xE10C
-#endif
+static char config_name[128];
+unsigned int GetCC_NCfromIMSI(char *imsi)
+{
+  unsigned int cc, cc2, nc;
+  cc=(*(imsi+1)>>4)<<8;
+  cc2=*(imsi+2);
+  cc2=((cc2&0x0F)<<4)|(cc2>>4);
+  cc|=cc2;
+  nc=*(imsi+3);
+  nc=((nc&0x0F)<<4)|(nc>>4);
+  return ((cc<<16)|nc);
+}
 
 void Killer(void)
 {
@@ -21,7 +28,7 @@ typedef struct
   int gui_id;
 }MAIN_CSM;
 
-const char chanbantab_file[]="4:\\ZBin\\var\\chan_ban.tab";
+//char chanbantab_file[128]="4:\\ZBin\\var\\chan_ban.tab";
 char ban_tab[972];
 
 char hdrtxt[]="ChanBanner Config";
@@ -58,6 +65,7 @@ MENU_DESC menu=
 
 int create_menu(void)
 {
+  patch_header(&menuhdr);
   return(CreateMenu(0,0,&menu,&menuhdr,0,972,0,0));
 }
 
@@ -98,6 +106,32 @@ void menu_iconhndl(void *data, int curitem, void *unk)
 
 void menu_ghook(void *data, int cmd)
 {
+//  if (cmd==TI_CMD_FOCUS)
+//  {
+//    DisableIDLETMR();
+//  }
+  if (cmd==TI_CMD_CREATE)
+  {
+   RAMNET  *CurNET=RamNet();
+    int i=CurNET->ch_number;
+       if (i>124)
+      {
+	if ((i>973)&&(i<1024))
+	{
+	  i-=973;
+	  i+=125;
+	}
+	else
+	  if ((i>511)&&(i<885))
+	  {
+	    i-=512;
+	    i+=175;
+	  }
+	  else
+	    i=0;
+      }
+    SetCursorToMenuItem(data,i);
+  }
 }
 
 int menu_onkey(void *data, GUI_MSG *msg)
@@ -168,8 +202,16 @@ void LoadConfig(void)
 {
   unsigned int ul;
   int f;
+  extern const char chanbantab_dir[];
+  unsigned int cc;
+  unsigned int nc;
+  char *imsi=RAM_IMSI();
+  cc=GetCC_NCfromIMSI(imsi);
+  nc=cc&0xFFFF;
+  cc>>=16;
+  sprintf(config_name,"%schanban%02X-%03X.tab",chanbantab_dir,nc,cc);
   memset(ban_tab,0,sizeof(ban_tab));
-  if ((f=fopen(chanbantab_file,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return;
+  if ((f=fopen(config_name,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return;
   fread(f,ban_tab,sizeof(ban_tab),&ul);
   fclose(f,&ul);
 }
@@ -178,12 +220,12 @@ void SaveConfig(void)
 {
   unsigned int ul;
   int f;
-  if ((f=fopen(chanbantab_file,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&ul))!=-1)
+  if ((f=fopen(config_name,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&ul))!=-1)
   {
     fwrite(f,ban_tab,sizeof(ban_tab),&ul);
     fclose(f,&ul);
   }
-  GBS_SendMessage(MMI_CEPID, MSG_RECONFIGURE_REQ,0,chanbantab_file);
+  GBS_SendMessage(MMI_CEPID, MSG_RECONFIGURE_REQ,0,config_name);
 }
 
 void maincsm_oncreate(CSM_RAM *data)
@@ -213,7 +255,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       csm->gui_id=0;
     }
   }
-  if ((msg->msg==MSG_RECONFIGURE_REQ)&&(chanbantab_file==(char *)msg->data0))
+  if ((msg->msg==MSG_RECONFIGURE_REQ)&&(config_name==(char *)msg->data0))
   {
     csm->csm.state=-3;
   }
@@ -261,6 +303,7 @@ static void UpdateCSMname(void)
 int main(const char *elf_name, const char *fname)
 {
   MAIN_CSM main_csm;
+  InitConfig();
   LoadConfig();
   UpdateCSMname();
   LockSched();
