@@ -300,6 +300,7 @@ void  lgpLoadLangpack()
 
   fclose(hFile, &io_error);
   //FileClose(hFile);
+  lgpUpdateClHdr();
 
 }
 

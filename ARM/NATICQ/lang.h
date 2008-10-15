@@ -3,7 +3,7 @@
 
 void lgpLoadLangpack(void);
 void lgpFreeLangPack(void);
-//void lgpUpdateClHdr(void);
+void lgpUpdateClHdr(void);
 //void PreFreeLangPack();
 
 //---------------------------------------------------------------------------
