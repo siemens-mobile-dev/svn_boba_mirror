@@ -5,9 +5,9 @@
 #include "config_data.h"
 #include "util.h"
 
-#define ELFNAME "MissedEvents 2.0.8"
+#define ELFNAME "MissedEvents"
 #define LELFNAME L"Missed Events"
-#define LELFVERSION L"\nv2.0.8\nby den_po\n\nMods: Ploik & BigHercules"
+#define LELFVERSION L"\nv2.0.9\nby den_po\n\nMods: Ploik & BigHercules"
 
 void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay)=(void (*)(int,int id,int RED,int GREEN,int BLUE,int br,int delay))(0x4529BFA9);
 
@@ -23,11 +23,6 @@ void (*RedLED_On)(int)=(void(*) (int)) W850_R1KG001_RedLED_On;
 void (*RedLED_Off)(int)=(void(*) (int)) W850_R1KG001_RedLED_Off;
 
 static char myappname[]=ELFNAME;
-
-#pragma swi_number=0x1BB
-__swi __arm void Vibra(int t1, int t2, int t3);
-#pragma swi_number=0x248
-__swi __arm void Vibra_Off(int t1);
 
 bool disabled=false;
 bool disabled_by_mode=false;
@@ -55,7 +50,6 @@ u16 timer = 0;
 u16 offtimer = 0;
 u16 offtimerScreen = 0;
 u16 offtimerLED = 0;
-u16 vibratimer = 0;
 u16 modetimer = 0;
 
 int cfg_time1_flag = 1;
@@ -88,16 +82,6 @@ int timecmp(const TIME *t1, const TIME *t2)
     return 0;
 }
 
-void myVibraOff(u16 timerID, LPARAM lparam)
-{
-  if(vibratimer)
-  {
-    Timer_Kill(&vibratimer);
-    vibratimer=0;
-    Vibra_Off(0);
-  }
-}
-
 void onTimerLED(u16 timerID, LPARAM lparam)
 {
   if(cfg_phone_type == 1)
@@ -123,19 +107,19 @@ void onTimerLED(u16 timerID, LPARAM lparam)
       else LEDnum++;
       OrangeLED_Control(1,LEDnum,100,cfg_led_blink_speed);
     }
-    else 
+    else
       OrangeLED_Control(1,0,LED^=0x64,cfg_led_blink_speed);
   }
 }
 
 void onTimerFlash(u16 timerID, LPARAM lparam)
-{ 
+{
   switch(GetChipID())
   {
    case 0x7100:
    case 0x8000:
    case 0x8040:
-   {   
+   {
     SetLampLevel(lamp^=0x50);
    }
    break;
@@ -145,13 +129,13 @@ void onTimerFlash(u16 timerID, LPARAM lparam)
    }
    break;
   }
-  Timer_ReSet(&timerFlash,cfg_flash_blink_speed,onTimerFlash,0); 
+  Timer_ReSet(&timerFlash,cfg_flash_blink_speed,onTimerFlash,0);
 }
 
 void onTimerScreen(u16 timerID, LPARAM lparam)
 {
     IndicationDevice_Backlight_FadeToLevel(0,screen ^= cfg_screen_level);
-    Timer_ReSet(&timerScreen,cfg_screen_blink_speed,onTimerScreen,0); 
+    Timer_ReSet(&timerScreen,cfg_screen_blink_speed,onTimerScreen,0);
 }
 
 void offTimerLED(u16 timerID, LPARAM lparam)
@@ -268,7 +252,7 @@ void onTimer(u16 timerID, LPARAM lparam)
         screen_disabled_by_time = (cfg_time2_screen) ? false : true;
       }
     }
-    
+
     if(cfg_mode)
     {
         int* me=MissedEvents();
@@ -291,7 +275,7 @@ void onTimer(u16 timerID, LPARAM lparam)
         char mestatus=*(char*)me;
         if( mestatus & checkevents )
         {
-            if(state == WAIT) 
+            if(state == WAIT)
             {
                 state = MISS;
                 Timer_ReSet(&timer,cfg_pretime*1000,onTimer,lparam);
@@ -311,8 +295,8 @@ void onTimer(u16 timerID, LPARAM lparam)
             }
             if(GetVibrator(0,0) && (cfg_vibra==1) && (!vibra_disabled_by_time))
             {
-                Vibra(400,50,1500);
-                vibratimer=Timer_Set(cfg_vibra_time*1000,myVibraOff,NULL);
+                PAudioControl pAC = *GetAudioControlPtr();
+                AudioControl_Vibrate(pAC, 400, 50, cfg_vibra_time*1000);
             }
             if((cfg_flash==1) && (!flash_disabled_by_time))
             {
@@ -335,7 +319,7 @@ void onTimer(u16 timerID, LPARAM lparam)
                 offtimerLED=Timer_Set(cfg_led_time*1000,offTimerLED,0);
             }
         }
-        else 
+        else
         {
             state = WAIT;
         }
@@ -349,11 +333,11 @@ void onTimer(u16 timerID, LPARAM lparam)
         }
 #endif
     }
-    if(state == WAIT) 
+    if(state == WAIT)
     {
         Timer_ReSet(&timer,cfg_checkperiod*1000,onTimer,lparam);
     }
-    else 
+    else
     {
         Timer_ReSet(&timer,cfg_period*1000,onTimer,lparam);
     }
@@ -373,7 +357,7 @@ int UpdateParams(void)
 
   cfg_time2_on  = cfg_on_time2;
   cfg_time2_off = cfg_off_time2;
-  
+
   if(timecmp(&cfg_time1_on, &zero_time) == 0) cfg_time1_on.hour = 24;
   cfg_time1_flag = timecmp(&cfg_time1_on, &cfg_time1_off);
 
@@ -386,20 +370,20 @@ int UpdateParams(void)
     #else
       err="Notification file not found!";
     #endif
-  else 
+  else
     if(cfg_pretime < cfg_checkperiod) err="PRE_TIME < CHECK";
   else
     if(timecmp(&cfg_on_time1, &cfg_off_time1) == 0) err="ON_TIME1==OFF_TIME1";
   else
     if(timecmp(&cfg_on_time2, &cfg_off_time2) == 0) err="ON_TIME2==OFF_TIME2";
-                        
+
   if(err)
   {
     snwprintf(temp, MAXELEMS(temp), _T("Error!\n%s"),err);
     MessageBox(0x6FFFFFFF,Str2ID(temp,0,MAXELEMS(temp)),0xFFFF,1,0,0);
     return 1;
   }
-  return 0;  
+  return 0;
 }
 
 void elf_exit(void)
@@ -417,7 +401,6 @@ void bookOnDestroy(BOOK * book)
         if(timerLED) offTimerLED(0,0);
         if(offtimerLED) Timer_Kill(&offtimerLED);
         if(offtimerScreen) Timer_Kill(&offtimerScreen);
-        if(vibratimer) myVibraOff(0,0);
         if(modetimer) Timer_Kill(&modetimer);
         StatusIndication_ShowNotes(0x6FFFFFFF);
         SUBPROC(elf_exit);
@@ -510,7 +493,7 @@ int main(wchar_t* filename)
                     SUBPROC(elf_exit);
                     return 0;
                 }
-                 
+
                 switch(GetChipID())
                 {
                 case 0x7100://db2000
@@ -523,11 +506,11 @@ int main(wchar_t* filename)
                         skipevents=1|2;//KEYLOCKED|NOSOUND
                         checkevents=4|8|0x10|0x20;//MISSED_CALL|MISSED_SMS|MISSED_EMAIL|MISSED_MMS
                 }
-                
+
                 BOOK *myBook=(BOOK*)malloc(sizeof(BOOK));
                 memset(myBook,0,sizeof(BOOK));
                 CreateBook(myBook,bookOnDestroy,&defaultpage,myappname,-1,0);
-                
+
                 timer=Timer_Set(cfg_checkperiod*1000, onTimer, 0);
                 if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
                   StatusIndication_ShowNotes(0x6FFFFFFF);
@@ -538,13 +521,13 @@ int main(wchar_t* filename)
 
 /*
   Revision history
-  2.0.8
-     + Добавлена поддержка неофициального ELF_BCFG_CONFIG_EVENT
+  2.0.9
+     + Использование функции AudioControl_Vibrate вместо Vibra
   2.0.7
      + мелкие улучшения/исправления/оптимизация
   2.0.6
     + Изменения в структуре конфигурационного файла.
-    + Два диапазона времени для режима ограничения по времени с 
+    + Два диапазона времени для режима ограничения по времени с
       возможностью выбора чем напоминать в том или ином диапазоне.
       В случае перекрытия диапазонов, приоритетным будет запрещение напоминать чем либо,
       если в одном случае данный вид напоминания разрешен, а в другом запрещен.

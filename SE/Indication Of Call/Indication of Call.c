@@ -4,9 +4,9 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Indication of Call 2.0.6"
+#define ELFNAME "Indication of Call"
 #define LELFNAME L"Indication of Call"
-#define LELFVERSION L"\nv2.0.6\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan"
+#define LELFVERSION L"\nv2.0.7\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan"
 #define LINIFILENAME _T("Indication.ini")
 
 void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay)=(void (*)(int,int id,int RED,int GREEN,int BLUE,int br,int delay))(0x4529BFA9);
@@ -18,17 +18,11 @@ void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay
 
 static char myappname[]=ELFNAME;
 
-#pragma swi_number=0x1BB
-__swi __arm void Vibra(int t1, int t2, int t3);
-#pragma swi_number=0x248
-__swi __arm void Vibra_Off(int t1);
-
 int lamp = 0;
 int screen=0;
 u16 timerFlash = 0;
 u16 timerLED = 0;
 u16 timerScreen = 0;
-u16 vibratimer = 0;
 u16 vibraminutetimer = 0;
 u16 vibraNminutetimer = 0;
 u16 offtimer = 0;
@@ -80,16 +74,6 @@ int DisableDOWN(UI_MESSAGE*)
   return(0);
 }
 
-void myVibraOff(u16 timerID, LPARAM lparam)
-{
-  if(vibratimer)
-  {
-    Timer_Kill(&vibratimer);
-    Vibra_Off(0);
-    vibratimer=0;
-  }
-}
-
 void offTimerFlash(u16 timerID, LPARAM lparam)
 {
   if(timerFlash)
@@ -134,25 +118,25 @@ void offTimerScreen(u16 timerID, LPARAM lparam)
 
 void onVibraMinuteTimer(u16 timerID, LPARAM lparam)
 {
-   Vibra(400,50,1500);
-   vibratimer=Timer_Set(cfg_vibra_at_minute_end_time,myVibraOff,NULL);
-   Timer_ReSet(&vibraminutetimer,60000,onVibraMinuteTimer,0); 
+   PAudioControl pAC = *GetAudioControlPtr();
+   AudioControl_Vibrate(pAC, 400, 50, cfg_vibra_at_minute_end_time);
+   Timer_ReSet(&vibraminutetimer,60000,onVibraMinuteTimer,0);
 }
 
 void onVibraNMinuteTimer(u16 timerID, LPARAM lparam)
 {
-   Vibra(400,50,1500);
-   vibratimer=Timer_Set(cfg_vibra_at_n_minute_end_time,myVibraOff,NULL);
+   PAudioControl pAC = *GetAudioControlPtr();
+   AudioControl_Vibrate(pAC, 400, 50, cfg_vibra_at_n_minute_end_time);
 }
 
 void onTimerFlash(u16 timerID, LPARAM lparam)
-{ 
+{
     switch(GetChipID())
     {
         case 0x7100:
         case 0x8000:
         case 0x8040:
-        {   
+        {
             SetLampLevel(lamp^=0x50);
         }
         break;
@@ -162,7 +146,7 @@ void onTimerFlash(u16 timerID, LPARAM lparam)
         }
         break;
     }
-    Timer_ReSet(&timerFlash,cfg_flash_blink_speed,onTimerFlash,0); 
+    Timer_ReSet(&timerFlash,cfg_flash_blink_speed,onTimerFlash,0);
 }
 
 void onTimerLED(u16 timerID, LPARAM lparam)
@@ -190,7 +174,7 @@ void onTimerLED(u16 timerID, LPARAM lparam)
       else LEDnum++;
       OrangeLED_Control(1,LEDnum,100,cfg_led_blink_speed);
     }
-    else 
+    else
       OrangeLED_Control(1,0,LED^=0x64,cfg_led_blink_speed);
   }
 }
@@ -198,7 +182,7 @@ void onTimerLED(u16 timerID, LPARAM lparam)
 void onTimerScreen(u16 timerID, LPARAM lparam)
 {
     IndicationDevice_Backlight_FadeToLevel(0,screen ^= cfg_screen_level);
-    Timer_ReSet(&timerScreen,cfg_screen_blink_speed,onTimerScreen,0); 
+    Timer_ReSet(&timerScreen,cfg_screen_blink_speed,onTimerScreen,0);
 }
 
 void elf_exit(void)
@@ -208,21 +192,20 @@ void elf_exit(void)
 
 void bookOnDestroy(BOOK * book)
 {
-    if(timerFlash) 
+    if(timerFlash)
     {
         Timer_Kill(&timerFlash);
         offTimerFlash(0,0);
     }
     if(offtimer) Timer_Kill(&offtimer);
-    if(offtimerLED) 
+    if(offtimerLED)
     {
         Timer_Kill(&offtimerLED);
         offTimerLED(0,0);
     }
-    if(vibratimer)
     {
-        Timer_Kill(&vibratimer);
-        myVibraOff(0,0);
+        PAudioControl pAC = *GetAudioControlPtr();
+        AudioControl_Vibrate(pAC, 0, 0, 0);
     }
     if(timerScreen) offTimerScreen(0,0);
     if(offtimerScreen) Timer_Kill(&offtimerScreen);
@@ -261,8 +244,8 @@ int Connect(void* r0,BOOK* b)
 {
     if(cfg_vibraring==1)
     {
-        Vibra(400,50,1500);
-        vibratimer=Timer_Set(cfg_vibraring_time,myVibraOff,NULL);
+        PAudioControl pAC = *GetAudioControlPtr();
+        AudioControl_Vibrate(pAC, 400, 50, cfg_vibraring_time);
     }
     if(cfg_flashring==1)
     {
@@ -280,7 +263,7 @@ int Connect(void* r0,BOOK* b)
         offtimerScreen=Timer_Set(cfg_screenring_time*1000,offTimerScreen,0);
     }
     return(0);
-} 
+}
 
 int OnCallManagerEvent(void* r0,BOOK* b)
 {
@@ -291,7 +274,8 @@ int OnCallManagerEvent(void* r0,BOOK* b)
         {
             if(GetVibrator(0,0) && (cfg_vibra==0))
             {
-               myVibraOff(0,0);
+                PAudioControl pAC = *GetAudioControlPtr();
+                AudioControl_Vibrate(pAC, 0, 0, 0);
             }
             if(cfg_flash==1)
             {
@@ -309,10 +293,10 @@ int OnCallManagerEvent(void* r0,BOOK* b)
                 timerScreen=Timer_Set(cfg_screen_blink_speed,onTimerScreen,0);
                 if(cfg_screen_time > 0) offtimerScreen=Timer_Set(cfg_screen_time*1000,offTimerScreen,0);
             }
-            break; 
+            break;
         }
-       /*Поднятие трубки*/ 
-        case CALLMANAGER_CALL_CONNECTED: 
+       /*Поднятие трубки*/
+        case CALLMANAGER_CALL_CONNECTED:
         {
             if(timerFlash) offTimerFlash(0,0);
             if(timerLED) offTimerLED(0,0);
@@ -320,8 +304,8 @@ int OnCallManagerEvent(void* r0,BOOK* b)
 
             if((cfg_vibracon==1) && (incom==0))
             {
-                Vibra(400,50,1500);
-                vibratimer=Timer_Set(cfg_vibracon_time,myVibraOff,NULL);
+                PAudioControl pAC = *GetAudioControlPtr();
+                AudioControl_Vibrate(pAC, 400, 50, cfg_vibracon_time);
             }
             if((cfg_flashcon==1) && (incom==0))
             {
@@ -340,11 +324,11 @@ int OnCallManagerEvent(void* r0,BOOK* b)
             }
             if(cfg_vibra_at_minute_end==1)
             {
-                   vibraminutetimer = Timer_Set((60 - cfg_vibra_at_minute_end_lead) * 1000 ,onVibraMinuteTimer,0); 
+                   vibraminutetimer = Timer_Set((60 - cfg_vibra_at_minute_end_lead) * 1000 ,onVibraMinuteTimer,0);
             }
             if(cfg_vibra_at_n_minute_end > 0)
             {
-                   vibraNminutetimer = Timer_Set((cfg_vibra_at_n_minute_end * 60 - cfg_vibra_at_n_minute_end_lead) * 1000 ,onVibraNMinuteTimer,0); 
+                   vibraNminutetimer = Timer_Set((cfg_vibra_at_n_minute_end * 60 - cfg_vibra_at_n_minute_end_lead) * 1000 ,onVibraNMinuteTimer,0);
             }
             connect = 1;
             break;
@@ -354,14 +338,14 @@ int OnCallManagerEvent(void* r0,BOOK* b)
         {
             if(cfg_vibraon==1)
             {
-                Vibra(400,50,1500);
-                vibratimer=Timer_Set(cfg_vibraon_time,myVibraOff,NULL);
+                PAudioControl pAC = *GetAudioControlPtr();
+                AudioControl_Vibrate(pAC, 400, 50, cfg_vibraon_time);
             }
             if(cfg_flashon==1)
             {
                 timerFlash=Timer_Set(cfg_flash_blink_speed,onTimerFlash,0);
                 offtimer=Timer_Set(cfg_flashon_time*1000,offTimerFlash,0);
-            } 
+            }
             if(cfg_ledon==1)
             {
                 timerLED=Timer_Set(cfg_led_blink_speed,onTimerLED,0);
@@ -383,14 +367,14 @@ int OnCallManagerEvent(void* r0,BOOK* b)
 
             if((cfg_vibraend == 1) && (connect == 1))
             {
-                Vibra(400,50,1500);
-                vibratimer=Timer_Set(cfg_vibraend_time,myVibraOff,NULL);
+                PAudioControl pAC = *GetAudioControlPtr();
+                AudioControl_Vibrate(pAC, 400, 50, cfg_vibraend_time);
             }
             if((cfg_flashend == 1) && (connect == 1))
             {
                 timerFlash=Timer_Set(cfg_flash_blink_speed,onTimerFlash,0);
                 offtimer=Timer_Set(cfg_flashend_time*1000,offTimerFlash,0);
-            } 
+            }
             if((cfg_screenend==1) && (connect == 1))
             {
                 timerScreen=Timer_Set(cfg_screen_blink_speed,onTimerScreen,0);
@@ -402,7 +386,7 @@ int OnCallManagerEvent(void* r0,BOOK* b)
                 offtimerLED=Timer_Set(cfg_ledend_time*1000,offTimerLED,0);
             }
 
-            if(vibraminutetimer) 
+            if(vibraminutetimer)
             {
                 Timer_Kill(&vibraminutetimer);
                 vibraminutetimer = 0;
@@ -415,7 +399,7 @@ int OnCallManagerEvent(void* r0,BOOK* b)
             incom   = 0;
             connect = 0;
             break;
-        } 
+        }
     }
     return 1;
 }
@@ -453,7 +437,6 @@ int isChallengeBook(BOOK * book)
 
 int main(wchar_t* filename)
 {
-        InitConfig();
         BOOK* alreadyrunned=FindBook(isChallengeBook);
         if(alreadyrunned)
         {
@@ -464,7 +447,9 @@ int main(wchar_t* filename)
             #endif
         }
         else
-        {          
+        {
+            InitConfig();
+
             ModifyUIHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,1);
             ModifyUIHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,1);		
             BOOK *myBook=(BOOK*)malloc(sizeof(BOOK));
@@ -473,14 +458,14 @@ int main(wchar_t* filename)
 
             if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
               StatusIndication_ShowNotes(0x6FFFFFFF);
-        }        
+        }
         return 0;
 }
 
 /*
   Revision history.
-    2.0.6
-      + Добавлена поддержка неофициального ELF_BCFG_CONFIG_EVENT
+    2.0.7
+      + Использование функции AudioControl_Vibrate вместо Vibra
     2.0.5
       + мелкие улучшения/исправления/оптимизация
     2.0.4
