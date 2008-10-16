@@ -180,6 +180,16 @@ int menu_onkey(void *data, GUI_MSG *msg)
       RefreshGUI();
       return(-1);
     }
+    if (c=='#')
+    {
+      l=pos;
+      int i;
+      c=ban_tab[l];
+      if (c<1) c++; else c=0;
+      for (i=0;i<971;i++) ban_tab[i]=c;
+      RefreshGUI();
+      return(-1);
+    }
   }
   if (msg->keys==0x18)
   {
