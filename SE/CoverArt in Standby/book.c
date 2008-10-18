@@ -68,14 +68,12 @@ static int CABook_Reconfig(void *mess ,BOOK *book)
   {
     if (AllowAnim==true)
     {
-      //RemoveAnimation();
       Anim_Free();
     }
     InitConfig();
     Anim_Init();
     CustomLbls();
     InitLbls();
-    //InitializeLabels();
     Images_Unload();
     Images_Load();
     if (AllowAnim==true)
