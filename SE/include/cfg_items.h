@@ -15,15 +15,17 @@
 
 #define CFG_UTF8_STRING 10
 #define CFG_CHECKBOX 11
-#define CFG_TIME 12   
+#define CFG_TIME 12
 //TTime
-#define CFG_DATE 13  
+#define CFG_DATE 13
 //TDate
-#define CFG_RECT 14  
+#define CFG_RECT 14
 //RECT
-#define CFG_COLOR_INT 15  
+#define CFG_COLOR_INT 15
 #define CFG_FONT 16
 #define CFG_KEYCODE 17
+
+#define CFG_UTF16_STRING 18
 
 typedef struct
 {

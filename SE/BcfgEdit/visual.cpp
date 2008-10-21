@@ -6,6 +6,7 @@
 #include "visual.h"
 
 void OnOkCoordinatesEdit(BOOK * bk, void *);
+void OnBackCoordinatesEdit(BOOK * bk, void *);
 
 static const char EditColorGuiName[]="Gui_EditColor";
 int colors[4]={0xFFFF0000,0xFF00FF00,0xFF0000FF,0x80C6AAAF};
@@ -411,6 +412,7 @@ void CoordinatesGuiOnKey(DISP_OBJ_COORD *db,int key,int,int repeat,int type)
     db->need_str=1;
 
     if ((key==KEY_ENTER) || (key==KEY_LEFT_SOFT)) OnOkCoordinatesEdit((BOOK*)db->mb,0);
+    if (key==KEY_ESC) OnBackCoordinatesEdit((BOOK*)db->mb,0);
 
   }
   if (type==KBD_LONG_RELEASE) db->cstep=1;
@@ -515,17 +517,6 @@ GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook, int type)
   GUI_SetStyle(myBook->coord,4);
   GuiObject_SetTitleType(myBook->coord, 1);
   GUIObject_HideSoftkeys(myBook->coord);
-  GUIObject_Softkey_SetAction(myBook->coord,ACTION_BACK, OnBackCoordinatesEdit);
-
-  switch (myBook->Platform)
-  {
-  case 8: //DB2010
-    break;
-  case 9: //DB2020
-    GUIObject_Softkey_SetAction(myBook->coord,ACTION_ACCEPT, OnOkCoordinatesEdit);
-    break;
-  }
-
   ShowWindow(myBook->coord);
   return gui_coord;
 }

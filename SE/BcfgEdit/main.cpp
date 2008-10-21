@@ -391,6 +391,52 @@ void CreateWinOrPassSI(MyBOOK *myBook, int is_pass)
   delete ustr;
 }
 
+void OnOkCreateUnicodeGui(BOOK * bk, wchar_t *string, int len)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  CFG_HDR *hp=myBook->cur_hp;
+  wchar_t ustr[64];
+  if (len<hp->min || len>hp->max)
+  {
+    snwprintf(ustr,MAXELEMS(ustr)-1,L"min_string_len: %d\nmax_string_len: %d",hp->min,hp->max);
+    MessageBox(LGP_NULL,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
+  }
+  else
+  {
+//    unicode2win1251((char *)hp+sizeof(CFG_HDR),string,hp->max);
+    wstrncpy((wchar_t*)((char*)hp+sizeof(CFG_HDR)),string,hp->max-1);
+    FREE_GUI(myBook->text_input);
+  }
+}
+
+void CreateUnicodeSI(MyBOOK *myBook, int is_pass)
+{
+  wchar_t *ustr;
+  CFG_HDR *hp=myBook->cur_hp;
+  int len;
+  STRID text, header_name;
+  len=hp->max;
+  if (len<63) len=63;
+  ustr=new wchar_t[len+1];
+  win12512unicode(ustr,hp->name,len);
+  header_name=Str2ID(ustr,0,SID_ANY_LEN);
+//  win12512unicode(ustr,(char *)hp+sizeof(CFG_HDR),len);
+  wstrncpy(ustr,(wchar_t*)((char*)hp+sizeof(CFG_HDR)),len);
+  text=Str2ID(ustr,0,SID_ANY_LEN);
+  myBook->text_input=(GUI *)CreateStringInput(0,
+                                              VAR_HEADER_TEXT(header_name),
+                                              VAR_STRINP_MIN_LEN(hp->min),
+                                              VAR_STRINP_MAX_LEN(hp->max),
+                                              VAR_STRINP_MODE(IT_STRING),
+                                              VAR_BOOK(myBook),
+                                              VAR_STRINP_TEXT(text),
+                                              VAR_PREV_ACTION_PROC(OnBackCreateTextInputGui),
+                                              VAR_OK_PROC(OnOkCreateUnicodeGui),
+                                              VAR_STRINP_IS_PASS_MODE(is_pass),
+                                              0);
+  delete ustr;
+}
+
 void OnSelect1GuiBcfg(BOOK * bk, void *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
@@ -450,6 +496,9 @@ void OnSelect1GuiBcfg(BOOK * bk, void *)
     break;
   case CFG_KEYCODE:
     BookObj_CallPage(&mbk->book,&bk_keycode_select);
+    break;
+  case CFG_UTF16_STRING:
+    CreateUnicodeSI(mbk,0);
     break;
   default:
     return;
@@ -551,6 +600,10 @@ STRID GetSubItemText(MyBOOK * myBook, CFG_HDR *hp)
         s_ids[2]=GetKeyModeName(p[1]);
         str_id=Str2ID(s_ids,5,3);
       }
+      break;
+    case CFG_UTF16_STRING:
+//      win12512unicode(ustr,((char *)hp+sizeof(CFG_HDR)),MAXELEMS(ustr)-1);
+      str_id=Str2ID((wchar_t *)((char*)hp+sizeof(CFG_HDR)),0,SID_ANY_LEN);
       break;
     case CFG_STR_UTF8:
     case CFG_UTF8_STRING:
@@ -780,7 +833,11 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
       if (n<0) goto L_ERRCONSTR;
       p+=2*sizeof(int);
       break;
-
+    case CFG_UTF16_STRING:
+      n-=(((hp->max+1)*2)+3)&(~3);
+      if (n<0) goto L_ERRCONSTR;
+      p+=(((hp->max+1)*2)+3)&(~3);
+      break;
     default:
       goto L_ENDCONSTR;
     }
@@ -898,7 +955,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   int find_cfg=1;
   int icon_id;
   mbk->list=List_New();
-  mbk->Platform=GetChipID()>>12;
+//  mbk->Platform=GetChipID()>>12;
 
   textidname2id(IDN_CHANGES_HAVE_BEEN_MADE,-1,&mbk->changes_have_been_made);
   textidname2id(IDN_SAVE_BEFORE_EXIT,-1,&mbk->save_before_exit);
@@ -943,11 +1000,7 @@ int isBcfgEditBook(BOOK * struc)
 {
   return(struc->onClose==(void*)onMyBookClose);
 }
-__root void tst()
-{
-  int i[10];
-  StatusIndication_ShowNotes(i[5]);
-}
+
 
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {

@@ -35,7 +35,6 @@ typedef struct
   STRID changes_have_been_made;
   STRID save_before_exit;
   BCFG_DATA bdata;
-  int Platform;
 }MyBOOK;
 
 typedef struct

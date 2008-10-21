@@ -15,4 +15,5 @@ extern const char PASS_TEST[64];
 extern const int FONT;
 extern const int KEY;
 extern const int KEYMODE;
+extern const wchar_t  UTF16_TEST[512];
 #endif
