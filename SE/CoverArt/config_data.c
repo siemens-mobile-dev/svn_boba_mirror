@@ -1,7 +1,6 @@
 #include "..\\include\cfg_items.h"
 #include "config_data.h"
 #include "..\\include\Colors.h"
-#include "LNG-RU.h"
 
 #pragma diag_suppress=Pe177
 

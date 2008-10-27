@@ -9,7 +9,7 @@
 #include "string.h"
 #include "structs.h"
 #include "decoder.h"
-#include "LNG-RU.h"
+
 u16 StartupTimer;
 
 int StatusSize=18;
