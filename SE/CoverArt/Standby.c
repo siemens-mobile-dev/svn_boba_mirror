@@ -8,7 +8,6 @@
 
 wchar_t lastmusic[1024];
 wchar_t nowmus[1024];
-//wchar_t *mp3data=0;
 bool isInStandby=false;
 bool isAPBookFound=false;
 

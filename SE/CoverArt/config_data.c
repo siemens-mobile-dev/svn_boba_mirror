@@ -1,6 +1,7 @@
 #include "..\\include\cfg_items.h"
 #include "config_data.h"
 #include "..\\include\Colors.h"
+#include "LNG-RU.h"
 
 #pragma diag_suppress=Pe177
 
@@ -788,95 +789,98 @@ __root const CFG_HDR cfghdr295={CFG_LEVEL,lngProgressBar,1,0};
 __root const CFG_HDR cfghdr296={CFG_CHECKBOX,lngShow,0,0};
         __root const int ProgressBar_Show=0;
 
-__root const CFG_HDR cfghdr297={CFG_RECT,lngPosAndSize,0,0};
+__root const CFG_HDR cfghdr297={CFG_CHECKBOX,lngProgressBarFromTheme,0,0};
+__root const int ProgressBar_ColorFromTheme=0;
+        
+__root const CFG_HDR cfghdr298={CFG_RECT,lngPosAndSize,0,0};
         __root const RECT pbrect={0,0,100,20};
-__root const CFG_HDR cfghdr298={CFG_LEVEL,lngColors,1,0};
+__root const CFG_HDR cfghdr299={CFG_LEVEL,lngColors,1,0};
            
-__root const CFG_HDR cfghdr299={CFG_COLOR_INT,lngNowTime,0,0};
+__root const CFG_HDR cfghdr300={CFG_COLOR_INT,lngNowTime,0,0};
            __root const unsigned int ProgressBar_cColor=clRed;
            
-__root const CFG_HDR cfghdr300={CFG_COLOR_INT,lngLeftTime,0,0};
+__root const CFG_HDR cfghdr301={CFG_COLOR_INT,lngLeftTime,0,0};
            __root const unsigned int ProgressBar_oColor=clWhite;
            
-__root const CFG_HDR cfghdr301={CFG_COLOR_INT,lngHighlight,0,0};
+__root const CFG_HDR cfghdr302={CFG_COLOR_INT,lngHighlight,0,0};
            __root const unsigned int ProgressBar_bColor=clBlack;
            
-__root const CFG_HDR cfghdr302={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr303={CFG_LEVEL,"",0,0}; 
          
-__root const CFG_HDR cfghdr303={CFG_CBOX,lngStyle,0,2};
+__root const CFG_HDR cfghdr304={CFG_CBOX,lngStyle,0,2};
         __root const int ProgressBar_Style=0;
-__root const CFG_CBOX_ITEM cfgcbox304[2]={lngStyleDefault,lngStyleRounded};
+__root const CFG_CBOX_ITEM cfgcbox305[2]={lngStyleDefault,lngStyleRounded};
 
-__root const CFG_HDR cfghdr305={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr306={CFG_LEVEL,"",0,0}; 
 
-__root const CFG_HDR cfghdr306={CFG_LEVEL,lngAnim,2,0};
+__root const CFG_HDR cfghdr307={CFG_LEVEL,lngAnim,2,0};
        
-__root const CFG_HDR cfghdr307={CFG_CHECKBOX,lngAnim,0,2};
+__root const CFG_HDR cfghdr308={CFG_CHECKBOX,lngAnim,0,2};
         __root const int AllowAnim=1;
         
-__root const CFG_HDR cfghdr308={CFG_STR_WIN1251,lngAnimfname,0,255};
+__root const CFG_HDR cfghdr309={CFG_STR_WIN1251,lngAnimfname,0,255};
         __root const char ANIM_NAME[256]="standart";
-__root const CFG_HDR cfghdr309={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr310={CFG_LEVEL,"",0,0}; 
 
-__root const CFG_HDR cfghdr310={CFG_LEVEL,lngOptions,1,0};
+__root const CFG_HDR cfghdr311={CFG_LEVEL,lngOptions,1,0};
 
-__root const CFG_HDR cfghdr311={CFG_LEVEL,lngConfiguration,1,0};
-__root const CFG_HDR cfghdr312={CFG_LEVEL,lngWhenInStandby,2,0};
-__root const CFG_HDR cfghdr313={CFG_CBOX,lngZoneStandby,0,4};
+__root const CFG_HDR cfghdr312={CFG_LEVEL,lngConfiguration,1,0};
+__root const CFG_HDR cfghdr313={CFG_LEVEL,lngWhenInStandby,2,0};
+__root const CFG_HDR cfghdr314={CFG_CBOX,lngZoneStandby,0,4};
         __root const int DrawStandby=2;
-__root const CFG_CBOX_ITEM cfgcbox314[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
+__root const CFG_CBOX_ITEM cfgcbox315[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
          
-__root const CFG_HDR cfghdr315={CFG_CBOX,lngZoneSoft,0,4};
+__root const CFG_HDR cfghdr316={CFG_CBOX,lngZoneSoft,0,4};
         __root const int DrawSoftkey=1;
-__root const CFG_CBOX_ITEM cfgcbox316[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
+__root const CFG_CBOX_ITEM cfgcbox317[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
         
-__root const CFG_HDR cfghdr317={CFG_CBOX,lngZoneStatus,0,4};
+__root const CFG_HDR cfghdr318={CFG_CBOX,lngZoneStatus,0,4};
         __root const int DrawStatus=1;
-__root const CFG_CBOX_ITEM cfgcbox318[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
+__root const CFG_CBOX_ITEM cfgcbox319[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
 
-__root const CFG_HDR cfghdr319={CFG_LEVEL,"",0,0}; 
-__root const CFG_HDR cfghdr320={CFG_LEVEL,lngWhenNotInStandby,2,0};
+__root const CFG_HDR cfghdr320={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr321={CFG_LEVEL,lngWhenNotInStandby,2,0};
         
-__root const CFG_HDR cfghdr321={CFG_CBOX,lngZoneSoft,0,4};
+__root const CFG_HDR cfghdr322={CFG_CBOX,lngZoneSoft,0,4};
             __root const int DrawSoft2=1;
-__root const CFG_CBOX_ITEM cfgcbox322[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
+__root const CFG_CBOX_ITEM cfgcbox323[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
         
-__root const CFG_HDR cfghdr323={CFG_CBOX,lngZoneStatus,0,4};
+__root const CFG_HDR cfghdr324={CFG_CBOX,lngZoneStatus,0,4};
             __root const int DrawStatus2=1;
-__root const CFG_CBOX_ITEM cfgcbox324[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
+__root const CFG_CBOX_ITEM cfgcbox325[4]={lngOnlyStandart,lngStandartCover,lngCoverStandart, lngOnlyCover};
           
-__root const CFG_HDR cfghdr325={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr326={CFG_LEVEL,"",0,0}; 
 
-__root const CFG_HDR cfghdr326={CFG_LEVEL,lngUsedZones,2,0};
+__root const CFG_HDR cfghdr327={CFG_LEVEL,lngUsedZones,2,0};
                 
-__root const CFG_HDR cfghdr327={CFG_CHECKBOX,lngZoneStatus,0,2};
+__root const CFG_HDR cfghdr328={CFG_CHECKBOX,lngZoneStatus,0,2};
             __root const int AffectStatus=1;
             
-__root const CFG_HDR cfghdr328={CFG_CHECKBOX,lngZoneSoft,2,0};
+__root const CFG_HDR cfghdr329={CFG_CHECKBOX,lngZoneSoft,2,0};
             __root const int AffectSoft=0;
             
-__root const CFG_HDR cfghdr329={CFG_LEVEL,"",0,0};
+__root const CFG_HDR cfghdr330={CFG_LEVEL,"",0,0};
 
-__root const CFG_HDR cfghdr330={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr331={CFG_LEVEL,"",0,0}; 
         
-__root const CFG_HDR cfghdr331={CFG_CHECKBOX,lngAverage,0,0};
+__root const CFG_HDR cfghdr332={CFG_CHECKBOX,lngAverage,0,0};
         __root const int AverageVBR=0;
         
-__root const CFG_HDR cfghdr332={CFG_LEVEL,lngScrolling,2,0};
-__root const CFG_HDR cfghdr333={CFG_CHECKBOX,lngScrollOn,0,0};
+__root const CFG_HDR cfghdr333={CFG_LEVEL,lngScrolling,2,0};
+__root const CFG_HDR cfghdr334={CFG_CHECKBOX,lngScrollOn,0,0};
             __root const int ScrollWhenNot=0;
             
-__root const CFG_HDR cfghdr334={CFG_CHECKBOX,lngNSM,0,0};
+__root const CFG_HDR cfghdr335={CFG_CHECKBOX,lngNSM,0,0};
             __root const int ScrollingMode=0;
             
-__root const CFG_HDR cfghdr335={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr336={CFG_LEVEL,"",0,0}; 
         
-__root const CFG_HDR cfghdr336={CFG_CBOX,lngStartupMode,0,3};
+__root const CFG_HDR cfghdr337={CFG_CBOX,lngStartupMode,0,3};
         __root const int StartupMode=0;
-__root const CFG_CBOX_ITEM cfgcbox337[3]={lngStartupNoWait,lngStartupWait, lngStartupFirstLaunch};
+__root const CFG_CBOX_ITEM cfgcbox338[3]={lngStartupNoWait,lngStartupWait, lngStartupFirstLaunch};
         
-__root const CFG_HDR cfghdr338={CFG_INT,lngUpdateTime,1,5000};
+__root const CFG_HDR cfghdr339={CFG_INT,lngUpdateTime,1,5000};
 __root const int DefUpdateTime=1000;
         
-__root const CFG_HDR cfghdr339={CFG_LEVEL,"",0,0}; 
+__root const CFG_HDR cfghdr340={CFG_LEVEL,"",0,0}; 
 

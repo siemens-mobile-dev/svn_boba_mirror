@@ -109,6 +109,12 @@ void DrawHighlightID(int Font,int SIDtime,int CEN, int XPos, int YPos, int MaxXP
 
 void DrawProgress(int bColor, int cColor, int oColor, RECT rect, int progress, int time, signed int PlusY, int type)
 {
+  if (ProgressBar_ColorFromTheme)
+  {
+    bColor=GetThemeColor(0 , 110); //Color 110=Progress_bar_outline
+    oColor=GetThemeColor(0 , 113); //Color 113=Progress_bar_fill
+    cColor=GetThemeColor(0 , 112); //Color 112=Progress_bar_slider
+  }
   if (type)
   {
     // Закруглённый прогрессбар

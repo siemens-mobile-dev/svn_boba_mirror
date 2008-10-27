@@ -121,3 +121,4 @@
 #define lngDist "Расстояние"
 #define lngStrLength "Длина строки"
 #define lngCrMinus "Вычитать от расстояния.."
+#define lngProgressBarFromTheme "Цвет из темы"

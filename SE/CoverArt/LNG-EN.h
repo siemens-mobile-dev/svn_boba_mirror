@@ -129,3 +129,4 @@
 #define lngDist "Distance"
 #define lngStrLength "Line length"
 #define lngCrMinus "Subtract from distance"
+#define lngProgressBarFromTheme "Color from theme"

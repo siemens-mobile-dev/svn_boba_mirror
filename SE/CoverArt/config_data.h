@@ -335,4 +335,6 @@
     extern const int LABEL8_LINE_MINUS;
     extern const int LABEL9_LINE_MINUS;
     extern const int LABEL10_LINE_MINUS;
+    
+    extern const int ProgressBar_ColorFromTheme;
 #endif
