@@ -1367,4 +1367,8 @@ __swi __arm int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_pat
 #pragma swi_number=0x306
 __swi __arm int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 
+#pragma swi_number=0x307
+__swi __arm void RedLED_On(int int __NULL);
+#pragma swi_number=0x308
+__swi __arm void RedLED_Off(int int __NULL);
 #endif
