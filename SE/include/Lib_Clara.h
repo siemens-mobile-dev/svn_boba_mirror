@@ -1371,4 +1371,7 @@ __swi __arm int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_pat
 __swi __arm void RedLED_On(int __NULL);
 #pragma swi_number=0x308
 __swi __arm void RedLED_Off(int __NULL);
+
+#pragma swi_number=0x309
+__swi __arm void DispObject_SetLayerColor(DISP_OBJ *,int color);
 #endif

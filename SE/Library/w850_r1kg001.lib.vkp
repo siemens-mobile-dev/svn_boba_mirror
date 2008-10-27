@@ -467,8 +467,9 @@
 0C10: 00000000 1D792D45 ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
 0C14: 00000000 ED00FB44 ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 0C18: 00000000 1503FB44 ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
-0C1C: 00000000 111F2444 ; 307: void RedLED_On(int int __NULL);
-0C20: 00000000 5D1F2444 ; 308: void RedLED_Off(int int __NULL);
+0C1C: 00000000 111F2444 ; 307: void RedLED_On(int __NULL);
+0C20: 00000000 5D1F2444 ; 308: void RedLED_Off(int __NULL);
+0C24: 00000000 B1D24745 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
 
 
 
