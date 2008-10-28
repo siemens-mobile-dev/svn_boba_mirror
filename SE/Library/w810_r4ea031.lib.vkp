@@ -471,6 +471,8 @@
 ;0C10: xxxxxxxx yyyyyyyy ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
 ;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 ;0C18: xxxxxxxx yyyyyyyy ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+0C28: 00000000 C9400245 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: 00000000 7DBD5C45 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
 
 
 

@@ -470,6 +470,8 @@
 0C1C: 00000000 111F2444 ; 307: void RedLED_On(int __NULL);
 0C20: 00000000 5D1F2444 ; 308: void RedLED_Off(int __NULL);
 0C24: 00000000 B1D24745 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
+0C28: 00000000 118EFC44 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: 00000000 85B50945 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
 
 
 

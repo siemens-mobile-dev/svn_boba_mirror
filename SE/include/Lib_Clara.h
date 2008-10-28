@@ -1374,4 +1374,9 @@ __swi __arm void RedLED_Off(int __NULL);
 
 #pragma swi_number=0x309
 __swi __arm void DispObject_SetLayerColor(DISP_OBJ *,int color);
+
+#pragma swi_number=0x30A
+__swi __arm int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+#pragma swi_number=0x30B
+__swi __arm void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
 #endif
