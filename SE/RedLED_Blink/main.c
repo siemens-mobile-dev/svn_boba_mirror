@@ -124,6 +124,7 @@ int main (void)
   else
   {
     CreateRLBook();
+    InitConfig();
     BeginTimer(0,RLBook);
     return(0);
   }
