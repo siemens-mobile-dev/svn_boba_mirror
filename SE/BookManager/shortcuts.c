@@ -5,10 +5,11 @@
 #include "main.h"
 
 
+
 typedef struct
 {
   wchar_t * name;
-  wchar_t * vendor;
+  int appID;
 }java_list_elem;
 
 
@@ -291,9 +292,10 @@ int CreateSI(void *data, BOOK * book)
 void onEnter_JavaList(BOOK * book, void *)
 {
   java_list_elem * elem=(java_list_elem *)ListElement_GetByIndex(java_list,ListMenu_GetSelectedItem(java_list_menu));
-  int java_buf_len=wstrlen(elem->name)+wstrlen(elem->vendor)+8;
+  int java_buf_len=wstrlen(elem->name)+40;
   wchar_t * java_buf=new wchar_t[java_buf_len];
-  snwprintf(java_buf,java_buf_len,L"java:%ls//%ls",elem->name,elem->vendor);
+  snwprintf(java_buf,java_buf_len,L"java:%ls//ID=%d",elem->name,elem->appID);
+  
   WriteShortcut(java_buf);
   delete(java_buf);
   BookObj_ReturnPage(book,ACCEPT_EVENT);
@@ -318,7 +320,6 @@ void elem_free(void * elem)
 {
   java_list_elem * lm=(java_list_elem *)elem;
   if (lm->name) delete(lm->name);
-  if (lm->vendor) delete(lm->vendor);
   delete(lm);
 }
 
@@ -364,8 +365,7 @@ java_list_elem * CreateElem(void * JavaDesc)
   wchar_t * sp;
   JavaAppDesc_GetJavaAppInfo(JavaDesc,0,&sp);
   elem->name=sp;
-  JavaAppDesc_GetJavaAppInfo(JavaDesc,2,&sp);
-  elem->vendor=sp;
+  elem->appID=JavaAppDesc_GetJavaAppID(JavaDesc);
   return(elem);
 }
 
@@ -380,7 +380,7 @@ int CreateJavaList(void *data, BOOK * book)
   java_list=List_New();
   char sp1;
   void * JavaDesc;
-  JavaDialog_Init(1,&sp1,&JavaDesc);
+  JavaDialog_Init(0,&sp1,&JavaDesc);
   if (!JavaAppDesc_GetFirstApp(JavaDesc))
   {
     int result=0;
@@ -467,7 +467,6 @@ int but_list_callback(GUI_MESSAGE * msg)
   {
   case 1:
     int item_num=GUIonMessage_GetCreatedItemIndex(msg);
-//    char item_buf[100];
     char mask_buf[10];
     textidname2id(L"SHC_NONE_NAME_TXT",SID_ANY_LEN,&str_id);
     icon_id=0xFFFF;
@@ -565,16 +564,17 @@ void CancelButtonList(BOOK * book, void *)
 }
 
 
-void DeleteShortcut(char * mask_buf,int f)
+int DeleteShortcut(char * mask_buf,int f)
 {
   char * pos;
   char * param=0;
+  int res=0;
   if (buffer)
   {
     if (param=manifest_GetParam(buffer,mask_buf,0))
     {
       int len_minus=strlen(param);
-      if (len_minus)
+      if (len_minus>0)
       {
         pos=strstr(buffer,mask_buf);
         char * new_buf=new char[buf_size-len_minus];
@@ -582,15 +582,18 @@ void DeleteShortcut(char * mask_buf,int f)
         memcpy(new_buf+(pos-buffer+9+ActiveTab),pos+9+ActiveTab+len_minus,buf_size-(pos-buffer+9+ActiveTab)-len_minus);
         fwrite(f,new_buf,buf_size-len_minus);
         delete(new_buf);
+        res=1;
       }
     }
     if (param) mfree(param);
   }
+  return(res);
 }
 
 void But_onDelete(BOOK * book, void *)
 {
    int f;
+   int res;
    wchar_t * path = get_path();
    if ((f=_fopen(path,L"shortcuts.ini",0x204,0x180,0))>=0)
    {
@@ -600,16 +603,16 @@ void But_onDelete(BOOK * book, void *)
      {
        if (!ActiveTab) sprintf(mask_buf,"[S_KEY%d]",dig_num);
        else sprintf(mask_buf,"[ES_KEY%d]",dig_num);
-       DeleteShortcut(mask_buf,f);
+       res=DeleteShortcut(mask_buf,f);
      }
      else
      {
        if (!ActiveTab) sprintf(mask_buf,"[L_KEY%d]",dig_num);
        else sprintf(mask_buf,"[EL_KEY%d]",dig_num);
-       DeleteShortcut(mask_buf,f);
+       res=DeleteShortcut(mask_buf,f);
      }
      fclose(f);
-     CreateButtonList(0,book);
+     if (res) CreateButtonList(0,book);
    }
    else
    {

@@ -6,8 +6,7 @@
 #include "shortcuts.h"
 
 
-
-#define COPYRIGHT_STRING STR("\nBookManager v2.9\nbuild 170808\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
+#define COPYRIGHT_STRING STR("\nBookManager v2.95\nbuild 291008\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
 #define MESSAGE(__STR__) MessageBox(0x6fffffff,__STR__,0, 1 ,11000,(BOOK*)BookManager_Book);
 #define BOOKLIST 0
 #define ELFLIST 1
@@ -108,6 +107,7 @@ int blistcnt=0;
 int elistcnt=0;
 int ActiveTab=0;
 
+int CreateBookList(void * r0, BOOK * bk);
 int isBookManager(BOOK * struc);
 int onUserInactivity(void * r0, BOOK * bk);
 int onRootListChanged(void * r0, BOOK * bk);
@@ -120,14 +120,23 @@ void SessoinListsFree(BOOK * book);
 int get_file(wchar_t * fname,char ** buf_set);
 
 
-const PAGE_MSG bk_msglst[] @ "DYN_PAGE"  =
+const PAGE_MSG bk_main_msglst[] @ "DYN_PAGE"  =
+{
+  PAGE_ENTER_EVENT_TAG,CreateBookList,
+  NIL_EVENT_TAG,0
+};
+
+const PAGE_DESC BookManager_Main_Page = {"BookManager_Main_Page",0,bk_main_msglst};
+
+
+const PAGE_MSG bk_base_msglst[] @ "DYN_PAGE"  =
 {
   BOOK_DESTROYED_EVENT_TAG,onRootListChanged,
   USER_INACTIVITY_EVENT_TAG,onUserInactivity,
   NIL_EVENT_TAG,0
 };
 
-const PAGE_DESC BookManager_Base_Page = {"BookManager",0,bk_msglst};
+const PAGE_DESC BookManager_Base_Page = {"BookManager_Base_Page",0,bk_base_msglst};
 
 
 
@@ -598,28 +607,13 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
         str2wstr(par,param);
         if (strstr(param,"java:"))
         {
-          u16 name_len=strstr(param,"//")-param-5;
-          u16 vendor_len=strlen(param+7+name_len);
-          
-          MIDP_DESC * java=new MIDP_DESC;
-          java->name=new MIDP_DESC_ITEM;
-          java->vendor=new MIDP_DESC_ITEM;
-          java->point=0;
-          java->name->item_name=new wchar_t[name_len];
-          java->name->item_name_len=name_len;
-          java->name->const_2=2;
-          java->vendor->item_name=new wchar_t[vendor_len];
-          java->vendor->item_name_len=vendor_len;
-          java->vendor->const_2=2;
-          
-          wstrncpy(java->name->item_name,par+5,name_len);
-          wstrncpy(java->vendor->item_name,par+7+name_len,vendor_len);
-          _REQUEST_OAF_START_APPLICATION(ASYNC,0,java,0);
-          delete(java->name->item_name);
-          delete(java->vendor->item_name);
-          delete(java->vendor);
-          delete(java->name);
-          delete(java);
+          int id_len=strlen(strstr(param,"ID=")+3);
+          wchar_t buf[20];
+          str2wstr(buf,strstr(param,"ID=")+3);
+          int ID;
+          char sp_flag;
+          wtoi(buf,id_len,&ID);
+          REQUEST_UI_OAF_START_APPLICATION(ASYNC,ID+0x10000,&sp_flag);
         }
         else
         {
@@ -1021,14 +1015,11 @@ void get_iconsID(void)
 
 
 // собственно старт
-__root int CreateBookList(void)
+__root int CreateBookList(void * r0, BOOK * bk)
 {
-  if (!BookManager_Book)
+  if (BookManager_Book)
   {
-    MyBOOK * myBook =BookManager_Book= (MyBOOK *)malloc(sizeof(MyBOOK));
-    memset(myBook,0,sizeof(MyBOOK));
-    CreateBook(myBook,onMyBookClose,&BookManager_Base_Page,"BookManager",-1,0);
-    //
+    MyBOOK * myBook = (MyBOOK*)bk;
     myBook->session_list=List_New();
     myBook->elfs_list=List_New();
     char * sp;
@@ -1065,7 +1056,10 @@ int NewKey(int key, int r1 , int mode)
         BOOK * bk;
         if (!(bk=FindBook(isBookManager)))
         {
-          CreateBookList();
+          BookManager_Book = (MyBOOK *)malloc(sizeof(MyBOOK));
+          memset(BookManager_Book,0,sizeof(MyBOOK));
+          CreateBook(BookManager_Book,onMyBookClose,&BookManager_Base_Page,"BookManager",-1,0);
+          BookObj_GotoPage((BOOK*)BookManager_Book,&BookManager_Main_Page);
           return(-1);
         }
         else
