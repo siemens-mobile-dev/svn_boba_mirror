@@ -1649,7 +1649,7 @@
     </settings>
   </configuration>
   <file>
-    <name>$EW_DIR$\SE_ELF\C++\_cpp2.cpp</name>
+    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Animation.c</name>
