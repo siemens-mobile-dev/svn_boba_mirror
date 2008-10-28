@@ -1,5 +1,8 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
+#include "..\\include\cfg_items.h"
+#include "conf_loader.h"
+#include "config_data.h"
 
 u16 timer;
 
@@ -25,7 +28,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("Blinked Red LED\n(c) IronMaster"),0, 1 ,5000,msg->book);
+  MessageBox(0x6fFFFFFF,STR("RedLED Blinked v1.1\n(c) IronMaster"),0, 1 ,5000,msg->book);
   return(1);
 }
 
@@ -43,7 +46,7 @@ void BeginTimer(u16 unk,void * RLBook)
   if ((bat_struct.ChargingState!=7)&&(bat_struct.ChargingState!=8))
   {
     RedLED_On(0);
-    Timer_ReSet(&timer,500,onTimer,RLBook);
+    Timer_ReSet(&timer,OnTime,onTimer,RLBook);
   }
   else
   {
@@ -51,10 +54,23 @@ void BeginTimer(u16 unk,void * RLBook)
   }
 }
 
+static int ReconfigElf(void *mess ,BOOK *book)
+{
+  RECONFIG_EVENT_DATA *reconf=(RECONFIG_EVENT_DATA *)mess;
+  int result=0;
+  if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
+  {
+    InitConfig();
+    result=1;
+  }
+  return(result);
+}
+
 const PAGE_MSG HW_PageEvents[]@ "DYN_PAGE" ={
   ELF_TERMINATE_EVENT , TerminateElf,
   ELF_SHOW_INFO_EVENT  , ShowAuthorInfo,
   BATTERY_CHARGING_STATE_EVENT_TAG, BeginTimer_event,
+  ELF_RECONFIG_EVENT,ReconfigElf,
   NIL_EVENT_TAG,0
 };
 
@@ -71,7 +87,7 @@ void elf_exit(void)
 void onTimer (u16 unk,void * RLBook)
 {
   RedLED_Off(0);
-  Timer_ReSet(&timer,500,BeginTimer,RLBook);
+  Timer_ReSet(&timer,OffTime,BeginTimer,RLBook);
 }
 
 void onCloseRLBook(BOOK * RLBook)
