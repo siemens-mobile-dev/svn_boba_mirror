@@ -18,5 +18,7 @@ DEPRECATE(void,SetHeaderText,GUIObject_SetHeaderText)
 DEPRECATE(void,Hide,BookObj_Hide)
 DEPRECATE(void,Show,BookObj_Show)
 DEPRECATE(int,REQUEST_PROFILE_SETACTIVEPROFILE,Profile_SetActive)
+DEPRECATE(int,JavaDialog_Init,JavaDialog_Open)
+DEPRECATE(int,JavaDialog_Uninit,JavaDialog_Close)
 
 #endif

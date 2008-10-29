@@ -1256,9 +1256,9 @@ __swi __arm  int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fna
 __swi __arm  int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 
 #pragma swi_number=0x2D6
-__swi __arm  int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
+__swi __arm  int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
 #pragma swi_number=0x2D7
-__swi __arm  void JavaDialog_Uninit(int unk1);
+__swi __arm  void JavaDialog_Close(int unk1);
 #pragma swi_number=0x2D8
 __swi __arm  int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 #pragma swi_number=0x2D9

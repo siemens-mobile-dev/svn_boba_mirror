@@ -380,7 +380,7 @@ int CreateJavaList(void *data, BOOK * book)
   java_list=List_New();
   char sp1;
   void * JavaDesc;
-  JavaDialog_Init(0,&sp1,&JavaDesc);
+  JavaDialog_Open(0,&sp1,&JavaDesc);
   if (!JavaAppDesc_GetFirstApp(JavaDesc))
   {
     int result=0;
@@ -390,7 +390,7 @@ int CreateJavaList(void *data, BOOK * book)
       result=JavaAppDesc_GetNextApp(JavaDesc);
     }
   }
-  JavaDialog_Uninit(sp1);
+  JavaDialog_Close(sp1);
   if (java_list_menu) GUI_Free((GUI*)java_list_menu);
   java_list_menu=CreateListObject(book,0);
   GuiObject_SetTitleText(java_list_menu,STR("Java"));
