@@ -423,19 +423,19 @@
 0B4C: FFFFFFFF 21AF0F45 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 ;0B50: xxxxxxxx yyyyyyyy ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: FFFFFFFF DDAE0F45 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-;0B58: xxxxxxxx yyyyyyyy ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-;0B5C: xxxxxxxx yyyyyyyy ; 2D7: void JavaDialog_Uninit(int unk1);
-;0B60: xxxxxxxx yyyyyyyy ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
-;0B64: xxxxxxxx yyyyyyyy ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
-;0B68: xxxxxxxx yyyyyyyy ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
-;0B6C: xxxxxxxx yyyyyyyy ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
+0B58: FFFFFFFF 81B3C244 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
+0B5C: FFFFFFFF CDECC244 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B60: FFFFFFFF 89EEC244 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
+0B64: FFFFFFFF F155C244 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
+0B68: FFFFFFFF 1556C244 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
+0B6C: FFFFFFFF 1D52C244 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 ;0B74: xxxxxxxx yyyyyyyy ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 ;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 ;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: FFFFFFFF F98A0F45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
-;0B84: xxxxxxxx yyyyyyyy ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
-;0B88: xxxxxxxx yyyyyyyy ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
+0B84: FFFFFFFF 8192D444 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
+0B88: FFFFFFFF 51EC0645 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 ;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 ;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 ;0B94: xxxxxxxx yyyyyyyy ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
@@ -472,9 +472,11 @@
 ;0C10: xxxxxxxx yyyyyyyy ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
 ;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 ;0C18: xxxxxxxx yyyyyyyy ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
-
-
-
+;0C1C: xxxxxxxx yyyyyyyy ; 307: void RedLED_On(int __NULL);
+;0C20: xxxxxxxx yyyyyyyy ; 308: void RedLED_Off(int __NULL);
+;0C24: xxxxxxxx yyyyyyyy ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
+0C28: FFFFFFFF FDEDC244 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: FFFFFFFF D1001045 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
 
 
 ;locale=Russian_Russia.1251
