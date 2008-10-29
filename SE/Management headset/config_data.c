@@ -8,7 +8,14 @@ __root const CFG_HDR cfghdr_button={CFG_KEYCODE,"Кнопка управления",0,0};
 __root const int KeyControl=0;
 __root const int KeyControlPressMode=3;
 
-__root const CFG_HDR cfghdr_on={CFG_CBOX,"Включение",0,3};
+__root const CFG_HDR cfghdr_turn_0={CFG_LEVEL,"Гарнитура",1,0};
+  __root const CFG_HDR cfghdr_turnon={CFG_CHECKBOX,"Включать при подключении",0,0};
+  __root const int turn_on=0;
+  __root const CFG_HDR cfghdr_turnoff={CFG_CHECKBOX,"Выключать при отключении",0,0};
+  __root const int turn_off=0;
+__root const CFG_HDR cfghdr_turn_x={CFG_LEVEL,"",0,0};
+
+__root const CFG_HDR cfghdr_on={CFG_CBOX,"Включение кнопкой",0,3};
 __root const int mediaOn=1;
 __root const CFG_CBOX_ITEM cfgcbox_on[3]={"Короткое нажатие","Длинное нажатие","Двойное нажатие"};
 
@@ -44,3 +51,4 @@ __root const CFG_HDR cfghdr_player_x={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr7={CFG_UINT,"Время на двойное нажатие (мсек)",10,10000};
 __root const unsigned int detectTime=1000;
+

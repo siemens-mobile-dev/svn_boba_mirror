@@ -14,4 +14,7 @@ extern const int playerPrev;
 
 extern const unsigned int detectTime;
 
+extern const int turn_on;
+extern const int turn_off;
+
 #endif //_CONFIGDATA_H_

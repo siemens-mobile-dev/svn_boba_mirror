@@ -4,8 +4,8 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Management v.1.4"
-#define ABOUT L"Management\nv.1.4\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
+#define ELFNAME "Management v.1.4.1"
+#define ABOUT L"Management\nv.1.4.1\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
 
 enum mode_t {
     SHORT_PRESS  = 0,
@@ -22,6 +22,31 @@ int dbl   = 0;
 u16 timer = 0;
 
 int NewKey(int key, int r1 , int mode);
+
+int OnAccChangedEvent(void* r0,BOOK* b)
+{
+  AP = FindBook(isAudioPlayerBook());
+  FM = FindBook(isFmRadioBook());
+  
+  if(!AP && !FM && turn_on==1)
+  {
+       GoMusic();
+  }    
+    return (1);      
+}
+
+int OffAccChangedEvent(void* r0,BOOK* b)
+{
+  AP = FindBook(isAudioPlayerBook());
+  FM = FindBook(isFmRadioBook());
+  
+  if((AP || FM) && (turn_off==1))
+  {
+       UI_Event(RETURN_TO_STANDBY_EVENT);
+       GoMusic();
+  }     
+    return (1);    
+}
 
 int isManagementBook(BOOK * book)
 {
@@ -202,6 +227,8 @@ const PAGE_MSG Management_PageEvents[]@ "DYN_PAGE" =
          ELF_SHOW_INFO_EVENT,      ShowAuthorInfo,
          ELF_RECONFIG_EVENT,       onReconfigElf,
          ON_CALLMANAGER_EVENT_TAG, OnCallManagerEvent,
+         ACCESSORIES_ACCESSORY_CONNECTED_EVENT_TAG,OnAccChangedEvent,
+         ACCESSORIES_ACCESSORY_DISCONNECTED_EVENT_TAG,OffAccChangedEvent,
          NIL_EVENT_TAG,            NULL
 };
 
