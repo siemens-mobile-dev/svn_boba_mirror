@@ -1379,4 +1379,7 @@ __swi __arm void DispObject_SetLayerColor(DISP_OBJ *,int color);
 __swi __arm int JavaAppDesc_GetJavaAppID(void * JavaDesc);
 #pragma swi_number=0x30B
 __swi __arm void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+
+#pragma swi_number=0x30C
+__swi __arm int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
 #endif
