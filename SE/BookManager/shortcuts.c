@@ -5,11 +5,12 @@
 #include "main.h"
 
 
-
 typedef struct
 {
   wchar_t * name;
+  wchar_t * fullpath;
   int appID;
+  wchar_t imageID;
 }java_list_elem;
 
 
@@ -320,6 +321,8 @@ void elem_free(void * elem)
 {
   java_list_elem * lm=(java_list_elem *)elem;
   if (lm->name) delete(lm->name);
+  if (lm->fullpath) delete(lm->fullpath);
+  if (lm->imageID) ImageID_Free(lm->imageID);
   delete(lm);
 }
 
@@ -354,6 +357,8 @@ int java_list_callback(GUI_MESSAGE * msg)
   case 1:
     java_list_elem * elem=(java_list_elem*)ListElement_GetByIndex(java_list,GUIonMessage_GetCreatedItemIndex(msg));
     SetMenuItemText0(msg,Str2ID(elem->name,0,SID_ANY_LEN));
+    JavaApp_LogoImageID_Get(elem->fullpath,&elem->imageID);
+    SetListObjectItemIcon(msg,0,elem->imageID);
   }
   return(1);
 }
@@ -365,6 +370,8 @@ java_list_elem * CreateElem(void * JavaDesc)
   wchar_t * sp;
   JavaAppDesc_GetJavaAppInfo(JavaDesc,0,&sp);
   elem->name=sp;
+  JavaAppDesc_GetJavaAppInfo(JavaDesc,5,&sp);
+  elem->fullpath=sp;
   elem->appID=JavaAppDesc_GetJavaAppID(JavaDesc);
   return(elem);
 }
