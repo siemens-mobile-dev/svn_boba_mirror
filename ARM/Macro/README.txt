@@ -61,6 +61,10 @@ Macro is a sequence of symbols:
   { ... }x123 - повтор 123 раз
   { ... }x@ - бесконечный цикл
   &call{+7915 ... } - набрать номер
+  
+  &@A0122002; - entrypoint
+  &@A0122002{"строка",12122,$1AB} - entrypoint с параметрами
+  
 
   N native menu(требуется указать адрес ShowMativeMenu() в /you must enter address ShowMativeMenu() in  macro.bcfg) 
   

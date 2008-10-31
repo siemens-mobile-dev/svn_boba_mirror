@@ -53,6 +53,21 @@ extern int show;
 extern char ShowNativeMenu_[9];
 extern int wait_threshold;
 
+#define MAX_PAR 4
+
+static unsigned int pars[MAX_PAR]={0,0,0,0};
+static char free_pars[MAX_PAR]={0,0,0,0};
+
+void free_params_data()
+{
+  for(int i=0;i<MAX_PAR;i++)
+    if(free_pars[i])
+      {
+        free_pars[i]=0;
+        mfree((void*)free_pars[i]);        
+      };
+};
+
 void (*ShowNativeMenu)();
 GBSTMR step_timer;
 GBSTMR watch_timer;
@@ -116,6 +131,7 @@ void ELF_KILLER(void)
 void Suicide()
 {
    if(mac)mfree(mac);
+  free_params_data();
    FreeWS(ws1);
    SUBPROC((void *)ELF_KILLER);
 };
@@ -143,6 +159,23 @@ while(s[i]!=0)
 return a;
 };
 
+unsigned int Hex2Int_p(char *s,char ** next_not_digit)
+{
+if(s==0)
+  {
+  if(next_not_digit) *next_not_digit=0;
+  return 0;
+  };
+unsigned int a=0;
+while(*s!=0)
+  {
+  a=(a<<4)+_hc(*s++);
+  };
+if(next_not_digit) *next_not_digit=s;
+return a;
+};
+
+
 
 unsigned int Str2Int(char *s)
 {
@@ -155,6 +188,23 @@ while((s[i]>='0')&&(s[i]<='9'))
   };
 return a;
 };
+
+unsigned int Str2Int_p(char *s,char **nepo)
+{
+  if(s==0) {
+    if(nepo) *nepo=0;
+    return 0;
+  }
+unsigned int a=0;
+int i=0;
+while((*s>='0')&&(*s<='9'))
+  {
+  a=(a*10)+((*s++)-'0');
+  };
+if(nepo) *nepo=s;
+return a;
+};
+
 
 unsigned char * ReadFile(const char * path)
 {
@@ -178,7 +228,7 @@ if(mem!=0){
     };
   fclose(handle,&err);
   //if(size!=0) *size=sz;
-  return mem;
+  return (unsigned char*)mem;
   }
 else{
  fclose(handle,&err);
@@ -327,7 +377,6 @@ void Step()
         
       case SYM_LOOP_INF:
         {
-        unsigned char * zz=po;  
         unsigned int back=(po[1])|(po[2]<<8);
         po-=(1+back);
         break;
@@ -417,9 +466,91 @@ void Step()
           MakeVoiceCall(nu,0x10,0x20C0);
           delay=delay_longpause*2;  
           }
+        else if(po[0]=='@')
+          {
+            typedef void (*TVoidFunc)(unsigned int p0,unsigned int p1,unsigned int p2,unsigned int p3);
+            
+            //address
+            po++;
+            unsigned int addr=Hex2Int_p(po,&po);
+            if(*po!='{')
+              {
+              ((TVoidFunc)addr)(0,0,0,0);
+              delay=delay_longpause*2;
+              po++;
+              break;
+              };
+            po++;
+            char * poe=po;
+            while(*poe && *poe!='}') poe++;
+            if(*poe==0)
+                    {
+                    s=ST_ERROR;
+                    sprintf(ebu,"no closing `}` in func call");  
+                    break;
+                    };          
+            free_params_data();
+            int npars=0;                        
+            do
+              {
+                if(*po=='\"')
+                  {
+                    //string
+                    free_pars[npars]=1;
+                    po++;
+                    char* fu=po;
+                    while(*fu && *fu!='\"') fu++;
+                    *fu=0;
+                    pars[npars]=(unsigned int)clonestr(po);
+                    *fu='\"';                    
+                    po=fu+1;
+                  }
+                else if(*po=='$')
+                  {
+                    //hex
+                    free_pars[npars]=0;
+                    char * popo=po+1;
+                    pars[npars]=Hex2Int_p(popo,&po);
+                    if(po==popo)
+                      {
+                      s=ST_ERROR;
+                      sprintf(ebu,"wrong $hex param");
+                      break;
+                      };
+                    npars++;
+                  }
+                else
+                  {
+                    //int
+                    free_pars[npars]=0;
+                    char * popo=po+1;
+                    pars[npars]=Str2Int_p(popo,&po);
+                    if(po==popo)
+                      {
+                      s=ST_ERROR;
+                      sprintf(ebu,"wrong int param");
+                      break;
+                      };
+                    npars++;                    
+                  };
+                if(*po==',') po++;
+                else if(*po=='}') break;
+                else
+                      {
+                      s=ST_ERROR;
+                      sprintf(ebu,"wrong param list");
+                      break;
+                      };                  
+              }
+            while(1);
+            po=poe+1;
+            if(s!=ST_ERROR)
+              ((TVoidFunc)addr)(pars[0],pars[1],pars[2],pars[3]);
+          }
         else
           {
-          s=ST_ERROR;sprintf(ebu,"Unk cmd");
+          s=ST_ERROR;
+          sprintf(ebu,"Unk cmd in `&`");
           };     
         break;  
         };
