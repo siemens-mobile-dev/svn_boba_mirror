@@ -3,13 +3,38 @@
 #include "config_data.h"
 #include "structs.h"
 
+void get_nd_cost(int *costOut, int *costIn,int *length, int *cost)
+{
+  DATETIME dt;
+  REQUEST_DATEANDTIME_GET(SYNC, &dt);
+  char hour=dt.time.hour;
+  if (hour > DAY_TIME.hour && hour < NIGHT_TIME.hour)
+  {
+    costOut[0]=cfgDayCostOut;
+    costIn[0]=cfgDayCostIn;
+    length[0]=cfgDayLength;
+    cost[0]=cfgDayCost;
+  }
+  else
+  {
+    costOut[0]=cfgNightCostOut;
+    costIn[0]=cfgNightCostIn;
+    length[0]=cfgNightLength;
+    cost[0]=cfgNightCost;
+  }
+};
 
 TRAF TrafCost_Get(int rcv, int sent)
 {
-  TRAF traf;
+  int cfgLength, cfgCostOut, cfgCostIn, cfgCost;
+  get_nd_cost(&cfgCostOut, &cfgCostIn, &cfgLength, &cfgCost);
   int full = rcv+sent;
+  TRAF traf;
+  traf.rtraf=full;
   if (full<(cfgNotCountedTraf*1024))
   {
+    traf.in=0;
+    traf.out=0;
     traf.cost=0;
   }
   else
@@ -26,12 +51,25 @@ TRAF TrafCost_Get(int rcv, int sent)
         full=full-(full%cfgMinLength2)+cfgMinLength2;
       }
     }
-    float f_full, f_pkglen, f_cost, f_length;
-    f_full=(float)full;
+    float f_out, f_in, f_pkglen, f_costOut, f_costIn, f_length, f_full, f_cost;
+    f_out=(float)sent;
+    f_in=(float)rcv;
     f_length=(float)cfgLength;
     f_pkglen=f_length*1024.0;
+    f_costOut=(float)cfgCostOut;
+    f_costIn=(float)cfgCostIn;
     f_cost=(float)cfgCost;
-    traf.cost=f_full/f_pkglen * f_cost;
+    f_full=(float)full;
+    traf.out=f_out/f_pkglen * f_costOut;
+    traf.in=f_in/f_pkglen * f_costIn;
+    if (cfgDivide)
+    {
+      traf.cost=traf.out+traf.in;
+    }
+    else
+    {
+      traf.cost=f_full/f_pkglen * f_cost;
+    }
   }
   traf.traf=full;
   return traf;
@@ -73,25 +111,31 @@ void mbox_Create(BOOK *bk, int type)
   TRAF traf=TrafCost_Get(gprs.RcvBytes,gprs.SentBytes);
   if (type)
   {
-    snwprintf(str,512,L"GPRS %ls\n\nTime: %02d:%02d\nSent: %d KB\nReceived: %d KB\nReal traf: %d KB\nCost: %0.2f %s", 
+    snwprintf(str,512,L"GPRS %ls\n\nTime: %d:%02d\nSent: %d KB(%0.2f)\nRcvd: %d KB(%0.2f)\nTraf: %d (%d)KB\nCost: %0.2f %s", 
               get_gprstxt(mbk->stat),
               gprs.SesTime/60,
               gprs.SesTime%60, 
-              gprs.SentBytes/1024, 
+              gprs.SentBytes/1024,
+              traf.out,
               gprs.RcvBytes/1024, 
-              traf.traf /1024, 
+              traf.in,
+              traf.rtraf /1024, 
+              traf.traf /1024,
               traf.cost, 
               cfgCurrency);
   }
   else
   {
-    snwprintf(str,512,L"GPRS %ls\n\nTime: %02d:%02d\nSent: %d KB\nReceived: %d KB\nReal traf: %d KB\nCost: %0.2f %s\n© UltraShot", 
+    snwprintf(str,512,L"GPRS %ls\n\nTime: %d:%02d\nSent: %d KB(%0.2f)\nRcvd: %d KB(%0.2f)\nTraf: %d (%d)KB\nCost: %0.2f %s\n© UltraShot", 
               get_gprstxt(mbk->stat),
               gprs.SesTime/60,
               gprs.SesTime%60, 
-              gprs.SentBytes/1024, 
+              gprs.SentBytes/1024,
+              traf.out,
               gprs.RcvBytes/1024, 
-              traf.traf /1024, 
+              traf.in,
+              traf.rtraf /1024, 
+              traf.traf /1024,
               traf.cost, 
               cfgCurrency);
   }
@@ -133,7 +177,6 @@ int isRealGSIBook(BOOK * struc)
 {
   return(struc->onClose==(void*)onMyBookClose);
 }
-
 //_____________________
 int main()
 {

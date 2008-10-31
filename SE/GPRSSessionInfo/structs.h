@@ -17,8 +17,11 @@
   
   typedef struct
   {
+    int rtraf;
     int traf;
     float cost;
+    float in;
+    float out;
   } TRAF;
   
   #define SID_NULL 0x6FFFFFFF

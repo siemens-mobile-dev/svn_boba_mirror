@@ -35,6 +35,7 @@ int GPRS_Terminated(void *mess ,BOOK *bk)
   mbk->stat=1;
   BookObj_GotoPage(bk,&bk_main);
   mbk->stat=0;
+  BookObj_SetFocus(bk,0);
   return 0;
 }
 
