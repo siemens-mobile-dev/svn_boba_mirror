@@ -215,7 +215,7 @@ __swi __arm  void BookObj_GotoPage(BOOK * book, const PAGE_DESC  * page);
 __swi __arm  void BookObj_ReturnPage(BOOK * ,int);
 
 #pragma swi_number=0x12F
-__swi __arm  void FreeBook ( void *book);
+__swi __arm  void FreeBook ( BOOK *book);
 
 
 #pragma swi_number=0x130
@@ -1382,4 +1382,15 @@ __swi __arm void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,cha
 
 #pragma swi_number=0x30C
 __swi __arm int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+
+#pragma swi_number=0x30D
+__swi __arm GUI * CreateProgressBar(BOOK*,int);
+#pragma swi_number=0x30E
+__swi __arm void ProgressBar_SetText(GUI*,STRID text);
+#pragma swi_number=0x30F
+__swi __arm void ProgressBar_SetIcon(GUI*,u16 icon_id);
+#pragma swi_number=0x310
+__swi __arm void ProgressBar_SetPercentValue(GUI*,int value);
+#pragma swi_number=0x311
+__swi __arm void ProgressBar_SetBarDisabled(GUI*,int disabled);
 #endif
