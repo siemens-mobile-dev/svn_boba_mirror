@@ -447,7 +447,7 @@ void strip_html(char *s)
         debug_mfree(st1, "strip_html (a1)");
       }
     }
-    if(ss) a = s1;
+    if(ss) a = ss;
     a = strstr(a+1, "<a ");
   }
 
