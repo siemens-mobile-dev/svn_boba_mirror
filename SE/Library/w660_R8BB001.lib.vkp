@@ -476,10 +476,10 @@
 0C2C: 00000000 25EA0945 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
 0C30: 00000000 21430945 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
 0C34: 00000000 CDAF4945 ; 30D: GUI * CreateProgressBar(BOOK*,int);
-0C38: 00000000 81A81745 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+0C38: 00000000 15B34945 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
 0C3C: 00000000 09B44945 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 0C40: 00000000 D1B24945 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
-0C44: 00000000 89A81745 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C44: 00000000 19B44945 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 
 
 
