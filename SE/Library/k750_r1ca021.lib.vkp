@@ -430,7 +430,7 @@
 ;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: FFFFFFFF DDA70E45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: FFFFFFFF 094F1445 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
-0B88: FFFFFFFF 65090645 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
+0B88: FFFFFFFF A50A0645 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 ;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 0B90: FFFFFFFF A1C50E45 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 ;0B94: xxxxxxxx yyyyyyyy ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
