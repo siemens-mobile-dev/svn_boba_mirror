@@ -372,11 +372,11 @@
 0A80: FFFFFFFF AD45B444 ; 2A0: wchar_t * wstrchr(const wchar_t * source,wchar_t chr);
 0A84: FFFFFFFF 9923E844 ; 2A1: void GUIObject_HideSoftkeys(void *gui); //nullsub(void)
 0A88: FFFFFFFF 9923E844 ; 2A2: void GUIObject_ShowSoftkeys(void *gui); //nullsub(void)
-;0A8C: xxxxxxxx yyyyyyyy ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get(void);
+0A8C: FFFFFFFF C16DD344 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get(void);
 0A90: FFFFFFFF A9E20545 ; 2A4: int StandbyBackground_SetImage(int type,int,int,const wchar_t* path,const wchar_t* fname,int);
 0A94: FFFFFFFF 49E7D344 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
 0A98: FFFFFFFF D146D644 ; 2A6: void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
-;0A9C: xxxxxxxx yyyyyyyy ; 2A7: void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
+0A9C: FFFFFFFF BD45B444 ; 2A7: void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
 0AA0: FFFFFFFF 757D0E45 ; 2A8: int FSX_isNameInvalid(wchar_t * name);
 0AA4: FFFFFFFF FD53E244 ; 2A9: void DataBrowserDesc_SetFoldersNumber(void * DataBrowserDesc,int state);
 0AA8: FFFFFFFF 6953E244 ; 2AA: void DataBrowserDesc_SetActions(void * DataBrowserDesc,char * actions);
@@ -384,12 +384,12 @@
 0AB0: FFFFFFFF 4552E244 ; 2AC: void DataBrowserDesc_SetSelectActionOnFolders(void * DataBrowserDesc,int state);
 0AB4: FFFFFFFF 3D51E244 ; 2AD: void DataBrowserDesc_SetBookID(void * DataBrowserDesc,int BookID);
 0AB8: FFFFFFFF D550E244 ; 2AE: void DataBrowserDesc_SetItemFilter(void * DataBrowserDesc,int (*proc)(const wchar_t * ExtList,const wchar_t * ItemPath,const wchar_t * ItemName));
-;0ABC: xxxxxxxx yyyyyyyy ; 2AF: void DataBrowserDesc_SetOption(void * DataBrowserDesc,char * option);
-;0AC0: xxxxxxxx yyyyyyyy ; 2B0: void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
+0ABC: FFFFFFFF 3155E244 ; 2AF: void DataBrowserDesc_SetOption(void * DataBrowserDesc,char * option);
+0AC0: FFFFFFFF F53DFC44 ; 2B0: void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
 0AC4: FFFFFFFF F550E244 ; 2B1: void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
-;0AC8: xxxxxxxx yyyyyyyy ; 2B2: void FSX_RemoveIllegalSymbolsName(FILEITEM *);
-;0ACC: xxxxxxxx yyyyyyyy ; 2B3: FILEITEM * FILEITEM_Create(void);
-;0AD0: xxxxxxxx yyyyyyyy ; 2B4: void FILEITEM_Destroy(FILEITEM *);
+0AC8: FFFFFFFF 0143FF44 ; 2B2: void FSX_RemoveIllegalSymbolsName(FILEITEM *);
+0ACC: FFFFFFFF 49CAE344 ; 2B3: FILEITEM * FILEITEM_Create(void);
+0AD0: FFFFFFFF 65F90E45 ; 2B4: void FILEITEM_Destroy(FILEITEM *);
 0AD4: FFFFFFFF F9BED344 ; 2B5: GUI *CreateDateInputVA(int zero, ...);
 0AD8: FFFFFFFF 91E3D344 ; 2B6: GUI *CreateTimeInputVA(int zero, ...);
 0ADC: FFFFFFFF 7D96D544 ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
