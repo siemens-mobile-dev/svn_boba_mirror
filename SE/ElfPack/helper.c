@@ -37,7 +37,7 @@ void StartHelper(void)
 {
   __get_epd;
 
-  epd->HPID=create_process(0,"HelperProc",HelperEntryPoint,512,30,0,0,0,0,0);
+  epd->HPID=create_process(0,"HelperProc",HelperEntryPoint,32768,30,0,0,0,0,0);
   start(epd->HPID);
 
 }
