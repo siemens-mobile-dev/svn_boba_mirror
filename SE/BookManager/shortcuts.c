@@ -14,6 +14,8 @@ typedef struct
 }java_list_elem;
 
 
+#define ActiveTab GetActiveTab()
+
 int get_file(wchar_t * fname,char ** buf_set);
 int CreateButtonList(void *data, BOOK * book);
 
@@ -45,7 +47,7 @@ void Shortcut_Append(wchar_t * name_buf,char * mask_buf,wchar_t * path)
     MessageBox(0x6fFFFFFF,STR("Can't open shortcuts.ini"),0, 1 ,5000,0);
   }
 }
-            
+
 
 void ReWriteShortcut(wchar_t * name_buf,char * mask_buf,wchar_t * path)
 {
@@ -296,7 +298,7 @@ void onEnter_JavaList(BOOK * book, void *)
   int java_buf_len=wstrlen(elem->name)+40;
   wchar_t * java_buf=new wchar_t[java_buf_len];
   snwprintf(java_buf,java_buf_len,L"java:%ls//ID=%d",elem->name,elem->appID);
-  
+
   WriteShortcut(java_buf);
   delete(java_buf);
   BookObj_ReturnPage(book,ACCEPT_EVENT);
@@ -504,21 +506,23 @@ int but_list_callback(GUI_MESSAGE * msg)
             w_buf[0x64]=0x2;
             str2wstr(w_buf,param);
             str_id=Shortcut_Get_MenuItemName(w_buf);
-            if ((icon_id=Shortcut_Get_MenuItemIconID(w_buf))==0xFFFF) iconidname2id(L"RN_VERT_MY_SHORTCUTS_ICN",SID_ANY_LEN,&icon_id);
+            icon_id=Shortcut_Get_MenuItemIconID(w_buf);
+            if (icon_id==0xFFFF) iconidname2id(L"RN_VERT_MY_SHORTCUTS_ICN",SID_ANY_LEN,&icon_id);
           }
         }
       }
     }
     if (str_id==0x6FFFFFFF) str_id=Str2ID(param,6,SID_ANY_LEN);
-    int strID_array[5];
+    int strID_array[6];
     strID_array[0]=int2strID(item_num);
     strID_array[1]=0x7800003A;
     strID_array[2]=0x78000020;
     if (icon_id!=0xFFFF)
     {
       strID_array[3]=icon_id+0x78000000;
-      strID_array[4]=str_id;
-      count=5;
+      strID_array[4]=0x78000020;
+      strID_array[5]=str_id;
+      count=6;
     }
     else
     {
@@ -667,7 +671,7 @@ int CreateButtonList(void *data, BOOK * book)
     GUIObject_Softkey_SetText(but_list,2,str_id);
     */
   }
-    
+
   ShowWindow(but_list);
   return(0);
 }

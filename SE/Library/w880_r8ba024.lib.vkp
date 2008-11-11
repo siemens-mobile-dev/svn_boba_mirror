@@ -344,10 +344,10 @@
 0A18: 00000000 7D0DD644 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: 00000000 3D8CE644 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: 00000000 755D4345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
+0A28: 00000000 798CFC44 ;828A: IS_NEEDED_BOOK isFmRadioBook(void); // return(0)
 0A2C: 00000000 BDCC0545 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 F1130645 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
-;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
+0A34: 00000000 FD172D44 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int); // nullsub
 0A38: 00000000 49674A45 ; 28E: void Shortcut_Run (wchar_t * shortcut_name);
 0A3C: 00000000 85C5FA44 ; 28F: int mkdir(const wchar_t* path);
 0A40: 00000000 71CCFA44 ; 290: int rmdir(const wchar_t* path, int zero);
@@ -463,8 +463,8 @@
 0BF8: 00000000 D9460B45 ; 2FE: __thumb int w_mkdir(const wchar_t *path, int mode);
 0BFC: 00000000 99D3FA44 ; 2FF: __thumb int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 0C00: 00000000 D9644745 ; 300: __thumb int Disp_GetStrIdWidth(STRID , int len);
-;0C04: xxxxxxxx yyyyyyyy ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
-;0C08: xxxxxxxx yyyyyyyy ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
+0C04: 00000000 3DF53445 ; 301: __thumb int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
+0C08: 00000000 5942F644 ; 302: __thumb int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
 0C0C: 00000000 79771245 ; 303: void unixtime2datetime(int, DATETIME * );
 0C10: 00000000 51092D45 ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
 0C14: 00000000 1DFEFA44 ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
@@ -472,13 +472,14 @@
 0C1C: 00000000 05822C44 ; 307: void RedLED_On(int __NULL);
 0C20: 00000000 51822C44 ; 308: void RedLED_Off(int __NULL);
 0C24: 00000000 E5444745 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
-;0C28: xxxxxxxx yyyyyyyy ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
-;0C2C: xxxxxxxx yyyyyyyy ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
-;0C30: xxxxxxxx yyyyyyyy ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+0C28: 00000000 718CFC44 ; 30A: __thumb int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: 00000000 3DBC0945 ; 30B: __thumb void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+0C30: 00000000 31150945 ; 30C: __thumb int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
 0C34: 00000000 1DBB4845 ;30D: GUI * CreateProgressBar(BOOK*,int);  
 0C38: 00000000 81421745 ;30E: void ProgressBar_SetText(GUI*,STRID text);
 0C3C: 00000000 59BF4845 ;30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 0C40: 00000000 21BE4845 ;310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 89421745 ;311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+
 
 ;locale=Russian_Russia.1251

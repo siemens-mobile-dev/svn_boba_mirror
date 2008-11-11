@@ -1,8 +1,10 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+
 int isBookManager(BOOK * struc);
 char * unicode2win1251(char *s, wchar_t *ws, int len);
+int GetActiveTab(void);
 
 extern GUI_LIST * java_list_menu;
 extern LIST * java_list;
