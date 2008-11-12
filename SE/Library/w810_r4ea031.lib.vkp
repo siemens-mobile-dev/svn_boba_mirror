@@ -389,7 +389,7 @@
 0AC8: FFFFFFFF FD6A5C45 ; 2B2: void FSX_RemoveIllegalSymbolsName(FILEITEM *);
 0ACC: FFFFFFFF 25665C45 ; 2B3: FILEITEM * FILEITEM_Create(void);
 0AD0: FFFFFFFF 89675C45 ; 2B4: void FILEITEM_Destroy(FILEITEM *);
-0AD4: FFFFFFFF E13A1545 ; 2B5: GUI *CreateDateInputVA(int zero, ...);
+0AD4: FFFFFFFF 29521945 ; 2B5: GUI *CreateDateInputVA(int zero, ...);
 0AD8: FFFFFFFF 5D681945 ; 2B6: __thumb GUI *CreateTimeInputVA(int zero, ...);
 0ADC: FFFFFFFF D5641645 ; 2B7: void StringInput_SetCursorPosition(GUI *,u16 curs_pos,char unk);
 0AE0: FFFFFFFF DDF52945 ; 2B8: void BookObj_CallPage(BOOK * book, const PAGE_DESC * page);
