@@ -336,7 +336,7 @@
 09F0: FFFFFFFF 8F1F1544 ; 27C: int inflateEnd (z_streamp strm);
 09F4: FFFFFFFF F542E244 ; 27D: int memcmp (const void *m1,const void *m2,int n);
 09F8: FFFFFFFF 8D53E244 ; 27E: int strncmp(const char *s1, const char *s2, int len);
-09FC: FFFFFFFF 2960E244 ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
+09FC: FFFFFFFF C953E244 ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 0A00: FFFFFFFF B152E244 ; 280: char *strcat(char *dest, const char *src);
 0A04: FFFFFFFF 593F1945 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: FFFFFFFF 4D141745 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
