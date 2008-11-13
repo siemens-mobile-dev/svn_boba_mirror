@@ -1393,4 +1393,7 @@ __swi __arm void ProgressBar_SetIcon(GUI*,u16 icon_id);
 __swi __arm void ProgressBar_SetPercentValue(GUI*,int value);
 #pragma swi_number=0x311
 __swi __arm void ProgressBar_SetBarDisabled(GUI*,int disabled);
+
+#pragma swi_number=0x312
+__swi __arm void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 #endif

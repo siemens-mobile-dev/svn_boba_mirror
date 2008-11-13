@@ -478,6 +478,7 @@
 0C3C: 00000000 854B4945 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 0C40: 00000000 4D4A4945 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 954B4945 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C48: 00000000 E9D14045 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 

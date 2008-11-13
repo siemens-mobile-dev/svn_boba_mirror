@@ -483,5 +483,6 @@
 0C3C: FFFFFFFF BDD3D344 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 0C40: FFFFFFFF 09D3D344 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: FFFFFFFF CDD3D344 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C48: FFFFFFFF B10CEC44 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 ;locale=Russian_Russia.1251
