@@ -146,7 +146,7 @@
 6C4: 00000000 09F22344 ; 1B1: void debug_printf(const char * fmt,...);
 6C8: 00000000 6DE21145 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 6D0: 00000000 A1533E45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
+6D4: 00000000 21683D45 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 6DC: 00000000 29204945 ; 1B7: int isKeylocked(void);
 6E0: 00000000 399F0545 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 6EC: 00000000 99020E45 ; 1BB: void Vibra(int t1, int t2, int t3);
@@ -478,7 +478,7 @@ C38: 00000000 35364745 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
 C3C: 00000000 29374745 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 C40: 00000000 F1354745 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 C44: 00000000 39374745 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
-
+C48: 00000000 D9C33E45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 ;locale=Russian_Russia.1251

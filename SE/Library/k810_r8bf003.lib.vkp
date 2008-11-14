@@ -463,13 +463,22 @@
 0C00: 00000000 F1A24645 ; 300: int Disp_GetStrIdWidth(STRID , int len);
 0C04: 00000000 49B03445 ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
 0C08: 00000000 D92EF544 ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
-;0C0C: xxxxxxxx yyyyyyyy ; 303: void unixtime2datetime(int, DATETIME * );
-;0C10: xxxxxxxx yyyyyyyy ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
-;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
-;0C18: xxxxxxxx yyyyyyyy ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
-
-
-
+0C0C: 00000000 C5A41145 ; 303: void unixtime2datetime(int, DATETIME * );
+0C10: 00000000 D5BA2C45 ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
+0C14: 00000000 9DEAF944 ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+0C18: 00000000 C1ECF944 ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+0C1C: 00000000 8DCF2344 ; 307: void RedLED_On(int __NULL);
+0C20: 00000000 D9CF2344 ; 308: void RedLED_Off(int __NULL);
+0C24: 00000000 21844645 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
+0C28: 00000000 C17BFB44 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: 00000000 A18D0845 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+0C30: 00000000 89E60745 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+0C34: 00000000 29F84745 ; 30D: GUI * CreateProgressBar(BOOK*,int);
+0C38: 00000000 71FB4745 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+0C3C: 00000000 65FC4745 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
+0C40: 00000000 2DFB4745 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
+0C44: 00000000 75FC4745 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C48: 00000000 6D883F45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 ;locale=Russian_Russia.1251

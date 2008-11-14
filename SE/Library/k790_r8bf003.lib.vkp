@@ -480,6 +480,7 @@
 0C3C: 00000000 75F83245 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 0C40: 00000000 3DF73245 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 85F83245 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C48: 00000000 25852A45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 ;locale=Russian_Russia.1251
