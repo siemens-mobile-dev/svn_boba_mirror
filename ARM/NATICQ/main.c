@@ -221,6 +221,17 @@ int CurrentXStatus;
 int CurrentPrivateStatus;
 
 //===================================================================
+int InAway()
+{
+  extern const int STRONG_AWAY;
+  if((CurrentStatus == IS_NA || 
+     CurrentStatus == IS_DND || 
+     CurrentStatus == IS_OCCUPIED) &&
+     STRONG_AWAY)
+    return 1;
+  return 0;
+}
+//===================================================================
 const char def_setting[]="%sdef_settings_%d";
 
 void ReadDefSettings(void)
@@ -288,7 +299,7 @@ extern const unsigned int sndVolume;
 
 void Play(const char *fname)
 {
-  if ((!IsCalling())&&Is_Sounds_Enabled)
+  if ((!IsCalling())&&Is_Sounds_Enabled&&!InAway())
   {
     FSTATS fstats;
     unsigned int err;
@@ -337,7 +348,7 @@ void start_vibra(void)
 {
   extern const int VIBR_TYPE;
   void stop_vibra(void);
-  if((Is_Vibra_Enabled)&&(!IsCalling()))
+  if((Is_Vibra_Enabled)&&(!IsCalling())&&!InAway())
   {
     extern const unsigned int vibraPower;
     SetVibration(vibraPower);
@@ -1598,6 +1609,7 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
     Add2History(t, hs, s, code); // Çàïèñü õèñòîðè
   LOGQ *p=NewLOGQ(s);
   snprintf(p->hdr,79,"%02d:%02d %02d-%02d %s:",tt.hour,tt.min,d.day,d.month,name);
+//  snprintf(p->hdr,79,"%s:",name);
   p->type=code;
   p->ID=IDforACK;  //0-32767
   i=AddLOGQ(&t->log,p);
@@ -2092,10 +2104,10 @@ ProcessPacket(TPKT *p)
     switch (DEVELOP_IF)
     {
     case 0:
-      if ((((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id)) to_develop();
+      if ((((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id) && !InAway()) to_develop();
       break;
     case 1:
-      if ((((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id)&&(IsUnlocked())) to_develop();
+      if ((((CSM_RAM *)(CSM_root()->csm_q->csm.last))->id!=maincsm_id)&&(IsUnlocked())&&!InAway()) to_develop();
       break;
     case 2:
       break;
@@ -3061,7 +3073,7 @@ unsigned short * wstrstr(unsigned short *ws, char *str, int *wslen, int len)
 
 int IsUrl(WSHDR *ws, int pos, char *link)
 {
-  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&=/?àáâãäå¸æçèéêëìíîïðñòóôõö÷øùúûüýþÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß";
+  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&=/?#àáâãäå¸æçèéêëìíîïðñòóôõö÷øùúûüýþÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß~";
 
   int len = wstrlen(ws);
   unsigned short *str = ws->wsbody+1, *tmp, *begin;
