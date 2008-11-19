@@ -437,14 +437,14 @@
 0B84: FFFFFFFF 8192D444 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: FFFFFFFF 51EC0645 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
 ;0B8C: FFFFFFFF 41B50545 ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
-;0B90: xxxxxxxx yyyyyyyy ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
+0B90: FFFFFFFF B5A80F45 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 0B94: FFFFFFFF 4922E844 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
 0B98: FFFFFFFF 7D30E844 ; 2E6: int BOOK_GetSessionID(BOOK *);
 0B9C: FFFFFFFF 4173FB44 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 ;0BA0: xxxxxxxx yyyyyyyy ; 2E8: char *GetIMSI(void);
 0BA4: FFFFFFFF 6D87D444 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 ;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos(GUI*);
-;0BAC: xxxxxxxx yyyyyyyy ; 2EB: void MainInput_Hide(GUI*);
+0BAC: FFFFFFFF 91C5D3444 ; 2EB: void MainInput_Hide(GUI*);
 ;0BB0: xxxxxxxx yyyyyyyy ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
 ;0BB4: xxxxxxxx yyyyyyyy ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
 ;0BB8: xxxxxxxx yyyyyyyy ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
@@ -484,5 +484,7 @@
 0C40: FFFFFFFF 09D3D344 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: FFFFFFFF CDD3D344 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: FFFFFFFF B10CEC44 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
+
 
 ;locale=Russian_Russia.1251

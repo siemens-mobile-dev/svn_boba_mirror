@@ -459,18 +459,27 @@
 0BEC: 00000000 BDB38344 ; 2FB: int w_fread(int f, void *buf, int size);
 0BF0: 00000000 8DBA1945 ; 2FC: int w_lseek(int f, int offs, int mode);
 0BF4: 00000000 EDB38344 ; 2FD: int w_fclose(int f);
-0BF8: 00000000 31210B45 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
+0BF8: 00000000 055AF744 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
 0BFC: 00000000 B913E744 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 0C00: 00000000 C5673445 ; 300: int Disp_GetStrIdWidth(STRID , int len);
 0C04: 00000000 BDB82145 ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);
 0C08: 00000000 7D80E244 ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
-;0C0C: xxxxxxxx yyyyyyyy ; 303: void unixtime2datetime(int, DATETIME * );
-;0C10: xxxxxxxx yyyyyyyy ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
-;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
-;0C18: xxxxxxxx yyyyyyyy ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
-
-
-
+0C0C: 00000000 95E2FD44 ; 303: void unixtime2datetime(int, DATETIME * );
+0C10: 00000000 59E01945 ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
+0C14: 00000000 493EE744 ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+0C18: 00000000 7140E744 ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+0C1C: 00000000 E9812344 ; 307: void RedLED_On(int __NULL);
+0C20: 00000000 35822344 ; 308: void RedLED_Off(int __NULL);
+0C24: 00000000 11493445 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
+0C28: 00000000 FDC9E844 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: 00000000 F9C0F544 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+0C30: 00000000 6D19F544 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+0C34: 00000000 F1BD3545 ; 30D: GUI * CreateProgressBar(BOOK*,int);
+0C38: 00000000 3DC13545 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+0C3C: 00000000 31C23545 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
+0C40: 00000000 F5C03545 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
+0C44: 00000000 41C23545 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C48: 00000000 0D932C45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 ;locale=Russian_Russia.1251
