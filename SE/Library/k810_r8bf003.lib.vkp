@@ -38,7 +38,7 @@
 04C0: 00000000 BDA43B45 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: 00000000 95E13C45 ; 131: BOOK * Find_StandbyBook(void);
 04C8: 00000000 19AF3B45 ; 132: void BookObj_SetFocus(void *,int focus);
-04CC: 00000000 81084745 ; 133: void GuiObject_SetTitleText (void * gui , int StrID);
+04CC: 00000000 9D084745 ; 133: void GuiObject_SetTitleText (void * gui , int StrID);
 04D0: 00000000 21044745 ; 134: void ShowWindow (void * gui);
 04D4: 00000000 859F4245 ; 135: void SetCursorToItem ( void *obj , int item);
 04D8: 00000000 71044745 ; 136: void GUI_SetStyle(GUI *,int style);
