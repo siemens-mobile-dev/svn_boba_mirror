@@ -206,7 +206,7 @@
 07D0: 00000000 B5463D45 ; 1F4: UI_APP_SESSION *root_list_get_session(int num_session);
 07D4: 00000000 B13F3D45 ; 1F5: BOOK *SESSION_GetTopBook(UI_APP_SESSION *);
 07D8: 00000000 7D483E45 ; 1F6: int MainInput_getVisible(GUI *);
-07DC: 00000000 95483E45 ; 1F7: int MainInput_strlen(GUI *);
+07DC: 00000000 89483E45 ; 1F7: int MainInput_strlen(GUI *);
 07E0: 00000000 A1483E45 ; 1F8: char * MainInput_getPNUM(GUI *);
 07E4: 00000000 AD483E45 ; 1F9: int MainInput_isPlus(GUI *);
 07E8: 00000000 C5653D45 ; 1FA: int BOOK_GetBookID(BOOK * );
