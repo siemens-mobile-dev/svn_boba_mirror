@@ -62,7 +62,7 @@ __root const char DEFAULT_MUC_NICK[64]="";
 __root const CFG_HDR cfghdr59={CFG_UINT,LG_MUCDEFMSGCOUNT,0,20};
 __root const unsigned int DEFAULT_MUC_MSGCOUNT=20;
 
-__root const CFG_HDR cfghdr60={CFG_CHECKBOX,"Автовход в конференцию",0,2};
+__root const CFG_HDR cfghdr60={CFG_CHECKBOX,LG_AUTO_JOIN,0,2};
 __root const int MUC_AUTOJOIN=0;
 
 __root const CFG_HDR cfghdrshowii={CFG_CHECKBOX, LG_SHOWIDLEICON, 0, 2};
@@ -74,6 +74,9 @@ __root const unsigned int IDLE_ICON_Y=50;
 
 __root const CFG_HDR cfghdr17657={CFG_CHECKBOX,LG_POPUPDIS,0,2};
 __root const int DISPLAY_POPUPS=1;
+
+__root const CFG_HDR cfghdr17658={CFG_CHECKBOX,LG_FIRST_LETTER,0,2};
+__root const int FIRST_LETTER = 0;
 
 __root const CFG_HDR cfghdr13={CFG_CHECKBOX,LG_COMPOSEV,0,2};
 __root const int COMPOSING_EVENTS=1;

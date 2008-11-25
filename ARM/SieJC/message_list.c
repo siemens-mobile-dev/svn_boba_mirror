@@ -339,9 +339,10 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   EDITCONTROL ec;
   void *ma=malloc_adr();
   void *eq;
+  extern const int FIRST_LETTER;
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
-  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, MAX_MSG_LEN);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL | ((FIRST_LETTER)?ECF_DEFAULT_BIG_LETTER:0), ws, MAX_MSG_LEN);
   AddEditControlToEditQend(eq,&ec,ma);
   edmessage_id=CreateInputTextDialog(&inp_desc,&inp_hdr,eq,1,0);
   FreeWS(ws);
