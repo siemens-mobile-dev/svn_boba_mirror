@@ -7,7 +7,7 @@
 
 #define ELFNAME "MissedEvents"
 #define LELFNAME L"Missed Events"
-#define LELFVERSION L"\nv2.0.9\nby den_po\n\nMods: Ploik & BigHercules"
+#define LELFVERSION L"\nv2.0.10\nby den_po\n\nMods: Ploik & BigHercules"
 
 void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay)=(void (*)(int,int id,int RED,int GREEN,int BLUE,int br,int delay))(0x4529BFA9);
 
@@ -15,12 +15,6 @@ void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay
 #define COLOR_GET_R(x) (((unsigned int)x>>16)&0xFF)
 #define COLOR_GET_G(x) (((unsigned int)x>>8)&0xFF)
 #define COLOR_GET_B(x) ((unsigned int)x&0xFF)
-
-#define W850_R1KG001_RedLED_On 0x44241F11
-#define W850_R1KG001_RedLED_Off 0x44241F5D
-
-void (*RedLED_On)(int)=(void(*) (int)) W850_R1KG001_RedLED_On;
-void (*RedLED_Off)(int)=(void(*) (int)) W850_R1KG001_RedLED_Off;
 
 static char myappname[]=ELFNAME;
 
@@ -484,6 +478,7 @@ int main(wchar_t* filename)
             #else
                 MessageBox(0x6FFFFFFF, STR("MissedEvents\nalready runned"), 0, 1 ,5000, 0);
             #endif
+            SUBPROC(elf_exit);
         }
          else
         {
@@ -509,7 +504,12 @@ int main(wchar_t* filename)
 
                 BOOK *myBook=(BOOK*)malloc(sizeof(BOOK));
                 memset(myBook,0,sizeof(BOOK));
-                CreateBook(myBook,bookOnDestroy,&defaultpage,myappname,-1,0);
+                if(!CreateBook(myBook,bookOnDestroy,&defaultpage,myappname,-1,0))
+                {
+                  delete myBook;
+                  SUBPROC(elf_exit);
+                  return 0;
+                }
 
                 timer=Timer_Set(cfg_checkperiod*1000, onTimer, 0);
                 if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
@@ -521,6 +521,8 @@ int main(wchar_t* filename)
 
 /*
   Revision history
+  2.0.10
+     + Устранена утечка памяти
   2.0.9
      + Использование функции AudioControl_Vibrate вместо Vibra
   2.0.7

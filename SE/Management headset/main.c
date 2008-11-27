@@ -4,8 +4,8 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Management v.1.4.1"
-#define ABOUT L"Management\nv.1.4.1\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
+#define ELFNAME "Management"
+#define ABOUT L"Management\nv.1.4.2\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
 
 enum mode_t {
     SHORT_PRESS  = 0,
@@ -302,19 +302,13 @@ void onCloseManagementBook(BOOK * book)
   SUBPROC(elf_exit);
 }
 
-BOOK * CreateManagementBook()
-{
-  ManagementBook= new BOOK;
-  CreateBook(ManagementBook, onCloseManagementBook, &base_page, ELFNAME, -1, 0);
-  return(ManagementBook);
-}
-
 int main (void)
 {
   BOOK* alreadyrunned=FindBook(isManagementBook);
   if(alreadyrunned)
   {
     MessageBox(0x6FFFFFFF, STR("Management\nуже запущен"), 0, 1 ,5000, 0);
+    SUBPROC(elf_exit);
   }
   else
   {
@@ -324,7 +318,14 @@ int main (void)
       SUBPROC(elf_exit);
       return 0;
     }
-    CreateManagementBook();
+
+    ManagementBook = new BOOK;
+    if(!CreateBook(ManagementBook, onCloseManagementBook, &base_page, ELFNAME, -1, 0))
+    {
+      delete ManagementBook;
+      SUBPROC(elf_exit);
+      return 0;
+    }
     ModifyKeyHook(NewKey,1);
   }
   return(0);

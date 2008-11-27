@@ -6,7 +6,7 @@
 
 #define ELFNAME "Indication of Call"
 #define LELFNAME L"Indication of Call"
-#define LELFVERSION L"\nv2.0.7\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan"
+#define LELFVERSION L"\nv2.0.8\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan"
 #define LINIFILENAME _T("Indication.ini")
 
 void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay)=(void (*)(int,int id,int RED,int GREEN,int BLUE,int br,int delay))(0x4529BFA9);
@@ -437,14 +437,14 @@ int isChallengeBook(BOOK * book)
 
 int main(wchar_t* filename)
 {
-        BOOK* alreadyrunned=FindBook(isChallengeBook);
-        if(alreadyrunned)
+        if(FindBook(isChallengeBook))
         {
             #ifndef ENG
                 MessageBox(0x6FFFFFFF, STR("Indication of Call\nуже запущен"), 0, 1 ,5000, 0);
             #else
                 MessageBox(0x6FFFFFFF, STR("Indication of Call\nalready runned"), 0, 1 ,5000, 0);
             #endif
+            SUBPROC(elf_exit);
         }
         else
         {
@@ -452,9 +452,14 @@ int main(wchar_t* filename)
 
             ModifyUIHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,1);
             ModifyUIHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,1);		
-            BOOK *myBook=(BOOK*)malloc(sizeof(BOOK));
+            BOOK *myBook = (BOOK*)malloc(sizeof(BOOK));
             memset(myBook,0,sizeof(BOOK));
-            CreateBook(myBook,bookOnDestroy,&defaultpage,myappname,-1,0);
+            if(!CreateBook(myBook,bookOnDestroy,&defaultpage,myappname,-1,0))
+            {
+              delete myBook;
+              SUBPROC(elf_exit);
+              return 0;
+            }
 
             if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
               StatusIndication_ShowNotes(0x6FFFFFFF);
@@ -464,6 +469,8 @@ int main(wchar_t* filename)
 
 /*
   Revision history.
+    2.0.8
+      + Устранена утечка памяти.
     2.0.7
       + Использование функции AudioControl_Vibrate вместо Vibra
     2.0.5
