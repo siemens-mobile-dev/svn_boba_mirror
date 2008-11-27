@@ -34,7 +34,7 @@
 04B0: 00000000 615B2A45 ; 12C: void BookObj_KillBook(void *Book);
 04B4: 00000000 B5582A45 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: 00000000 1D592A45 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
-04BC: 00000000 55602A45 ; 12F: void FreeBook ( void *book);
+04BC: 00000000 55602A45 ; 12F: void FreeBook ( BOOK *book);
 04C0: 00000000 F9402A45 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: 00000000 AD8D2B45 ; 131: BOOK * Find_StandbyBook(void);
 04C8: 00000000 E55C2A45 ; 132: void BookObj_SetFocus(void *,int focus);
@@ -420,8 +420,8 @@
 0B4C: 00000000 DD75ED44 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 0B50: 00000000 A971ED44 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: 00000000 B575ED44 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-0B58: 00000000 7550EA44 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-0B5C: 00000000 358BEA44 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B58: 00000000 7550EA44 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+0B5C: 00000000 358BEA44 ; 2D7: void JavaDialog_Close(int unk1);
 0B60: 00000000 F98CEA44 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 0B64: 00000000 89EAE944 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 91EAE944 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);

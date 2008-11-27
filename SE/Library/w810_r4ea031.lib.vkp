@@ -34,7 +34,7 @@
 04B0: FFFFFFFF 49F82945 ; 12C: void BookObj_KillBook(void *Book);
 04B4: FFFFFFFF CDF42945 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: FFFFFFFF 49F62945 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
-04BC: FFFFFFFF 79FC2945 ; 12F: void FreeBook ( void *book);
+04BC: FFFFFFFF 79FC2945 ; 12F: void FreeBook ( BOOK *book);
 04C0: FFFFFFFF 61115345 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: FFFFFFFF B9C72A45 ; 131: BOOK * Find_StandbyBook(void);
 04C8: FFFFFFFF 95F92945 ; 132: void BookObj_SetFocus(void *,int focus);
@@ -422,8 +422,8 @@
 0B4C: FFFFFFFF 6D6A5C45 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 0B50: FFFFFFFF 39685C45 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: FFFFFFFF A1695C45 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-0B58: FFFFFFFF F10B0245 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-0B5C: FFFFFFFF 993F0245 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B58: FFFFFFFF F10B0245 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+0B5C: FFFFFFFF 993F0245 ; 2D7: void JavaDialog_Close(int unk1);
 0B60: FFFFFFFF 55410245 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 0B64: FFFFFFFF 91BE0145 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: FFFFFFFF 99BE0145 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
@@ -465,7 +465,7 @@
 0BF8: FFFFFFFF 115C5E45 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
 0BFC: FFFFFFFF 11295B45 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 0C00: FFFFFFFF 99803045 ; 300: int Disp_GetStrIdWidth(STRID , int len);
-0C04: FFFFFFFF 7D579644 ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset);//nullsub
+0C04: FFFFFFFF 7D579644 ; 301: int MetaData_Desc_GetCoverInfo(void * MetaData_Desc,char * cover_type,int * size,int * cover_offset); //nullsub(ret 0)
 0C08: FFFFFFFF 256D4245 ; 302: int ImageID_GetIndirect(void * buf_image,int size,int __NULL,wchar_t * image_type,wchar_t * imageID);
 0C0C: FFFFFFFF 51C92645 ; 303: void unixtime2datetime(int, DATETIME * );
 0C10: FFFFFFFF 1D792D45 ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
@@ -476,6 +476,13 @@
 0C24: FFFFFFFF C5603045 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
 0C28: FFFFFFFF C9400245 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
 0C2C: FFFFFFFF 7DBD5C45 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+;0C30: xxxxxxxx yyyyyyyy ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+;0C34: xxxxxxxx yyyyyyyy ; 30D: GUI * CreateProgressBar(BOOK*,int);
+;0C38: xxxxxxxx yyyyyyyy ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+;0C3C: xxxxxxxx yyyyyyyy ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
+;0C40: xxxxxxxx yyyyyyyy ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
+;0C44: xxxxxxxx yyyyyyyy ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+;0C48: xxxxxxxx yyyyyyyy ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 

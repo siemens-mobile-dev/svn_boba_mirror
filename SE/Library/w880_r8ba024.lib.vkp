@@ -34,7 +34,7 @@
 04B0: 00000000 9D6C3C45 ; 12C: __thumb void BookObj_KillBook(void *Book);
 04B4: 00000000 F1693C45 ; 12D: __thumb void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: 00000000 596A3C45 ; 12E: __thumb void BookObj_ReturnPage(BOOK * ,int);
-04BC: 00000000 91713C45 ; 12F: __thumb void FreeBook ( void *book);
+04BC: 00000000 91713C45 ; 12F: __thumb void FreeBook ( BOOK *book);
 04C0: 00000000 35523C45 ; 130: __thumb BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: 00000000 FDA03D45 ; 131: __unknown BOOK * Find_StandbyBook(void);
 04C8: 00000000 216E3C45 ; 132: __thumb void BookObj_SetFocus(void *,int focus);
@@ -344,10 +344,10 @@
 0A18: 00000000 7D0DD644 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: 00000000 3D8CE644 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: 00000000 755D4345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-0A28: 00000000 798CFC44 ;828A: IS_NEEDED_BOOK isFmRadioBook(void); // return(0)
+0A28: 00000000 798CFC44 ;828A: IS_NEEDED_BOOK isFmRadioBook(void); //nullsub(ret 0)
 0A2C: 00000000 BDCC0545 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 F1130645 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
-0A34: 00000000 FD172D44 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int); // nullsub
+0A34: 00000000 FD172D44 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int); //nullsub(void)
 0A38: 00000000 49674A45 ; 28E: void Shortcut_Run (wchar_t * shortcut_name);
 0A3C: 00000000 85C5FA44 ; 28F: int mkdir(const wchar_t* path);
 0A40: 00000000 71CCFA44 ; 290: int rmdir(const wchar_t* path, int zero);
@@ -420,8 +420,8 @@
 0B4C: 00000000 456BFF44 ; 2D3: __thumb wchar_t *FILEITEM_GetPath(FILEITEM *f);
 0B50: 00000000 1167FF44 ; 2D4: __thumb int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: 00000000 1D6BFF44 ; 2D5: __thumb int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-0B58: 00000000 9D50FC44 ; 2D6: __thumb int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-0B5C: 00000000 518BFC44 ; 2D7: __thumb void JavaDialog_Uninit(int unk1);
+0B58: 00000000 9D50FC44 ; 2D6: __thumb int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+0B5C: 00000000 518BFC44 ; 2D7: __thumb void JavaDialog_Close(int unk1);
 0B60: 00000000 158DFC44 ; 2D8: __thumb int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 0B64: 00000000 B9EAFB44 ; 2D9: __thumb int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 C1EAFB44 ; 2DA: __thumb int JavaAppDesc_GetNextApp(void * JavaDesc);
@@ -475,11 +475,15 @@
 0C28: 00000000 718CFC44 ; 30A: __thumb int JavaAppDesc_GetJavaAppID(void * JavaDesc);
 0C2C: 00000000 3DBC0945 ; 30B: __thumb void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
 0C30: 00000000 31150945 ; 30C: __thumb int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
-0C34: 00000000 1DBB4845 ;30D: GUI * CreateProgressBar(BOOK*,int);  
-0C38: 00000000 81421745 ;30E: void ProgressBar_SetText(GUI*,STRID text);
-0C3C: 00000000 59BF4845 ;30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
-0C40: 00000000 21BE4845 ;310: void ProgressBar_SetPercentValue(GUI*,int value);
-0C44: 00000000 89421745 ;311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C34: 00000000 1DBB4845 ; 30D: GUI * CreateProgressBar(BOOK*,int);
+0C38: 00000000 81421745 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+0C3C: 00000000 59BF4845 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
+0C40: 00000000 21BE4845 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
+0C44: 00000000 89421745 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+;0C48: xxxxxxxx yyyyyyyy ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
+
+
 
 
 ;locale=Russian_Russia.1251

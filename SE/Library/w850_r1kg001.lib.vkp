@@ -34,7 +34,7 @@
 04B0: 00000000 E5F63C45 ; 12C: void BookObj_KillBook(void *Book);
 04B4: 00000000 39F33C45 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: 00000000 A1F43C45 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
-04BC: 00000000 D9FB3C45 ; 12F: void FreeBook ( void *book);
+04BC: 00000000 D9FB3C45 ; 12F: void FreeBook ( BOOK *book);
 04C0: 00000000 1DEE3C45 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: 00000000 E5293E45 ; 131: BOOK * Find_StandbyBook(void);
 04C8: 00000000 69F83C45 ; 132: void BookObj_SetFocus(void *,int focus);
@@ -418,8 +418,8 @@
 0B4C: 00000000 396BFF44 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 0B50: 00000000 0567FF44 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: 00000000 116BFF44 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-0B58: 00000000 3152FC44 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-0B5C: 00000000 F18CFC44 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B58: 00000000 3152FC44 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+0B5C: 00000000 F18CFC44 ; 2D7: void JavaDialog_Close(int unk1);
 0B60: 00000000 B58EFC44 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 0B64: 00000000 59ECFB44 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 61ECFB44 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
@@ -473,12 +473,13 @@
 0C28: 00000000 118EFC44 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
 0C2C: 00000000 85B50945 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
 0C30: 00000000 790E0945 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
-0C34: 00000000 49474945 ; 30D: GUI * CreateProgressBar(BOOK*,int);  
+0C34: 00000000 49474945 ; 30D: GUI * CreateProgressBar(BOOK*,int);
 0C38: 00000000 914A4945 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
 0C3C: 00000000 854B4945 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 0C40: 00000000 4D4A4945 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 954B4945 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: 00000000 E9D14045 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
 
 
 

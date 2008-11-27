@@ -35,7 +35,7 @@
 04B0: FFFFFFFF 7D2BE844 ; 12C: void BookObj_KillBook(void *Book);
 04B4: FFFFFFFF BD27E844 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: FFFFFFFF 4529E844 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
-04BC: FFFFFFFF 9130E844 ; 12F: void FreeBook ( void *book);
+04BC: FFFFFFFF 9130E844 ; 12F: void FreeBook ( BOOK *book);
 04C0: FFFFFFFF C9B40545 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: FFFFFFFF F579EA44 ; 131: BOOK * Find_StandbyBook(void);
 04C8: FFFFFFFF F52CE844 ; 132: void BookObj_SetFocus(void *,int focus);
@@ -376,7 +376,7 @@
 0A90: FFFFFFFF A9E20545 ; 2A4: int StandbyBackground_SetImage(int type,int,int,const wchar_t* path,const wchar_t* fname,int);
 0A94: FFFFFFFF 49E7D344 ; 2A5: GUI *CreateYesNoQuestionVA(int zero, ...);
 0A98: FFFFFFFF D146D644 ; 2A6: void ListMenu_SetSecondLineText(GUI_LIST *,int elem_num,int StrID);
-0A9C: FFFFFFFF BD45B444 ; 2A7: void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
+0A9C: FFFFFFFF BD45B444 ; 2A7: void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero); //nullsub(void)
 0AA0: FFFFFFFF 757D0E45 ; 2A8: int FSX_isNameInvalid(wchar_t * name);
 0AA4: FFFFFFFF FD53E244 ; 2A9: void DataBrowserDesc_SetFoldersNumber(void * DataBrowserDesc,int state);
 0AA8: FFFFFFFF 6953E244 ; 2AA: void DataBrowserDesc_SetActions(void * DataBrowserDesc,char * actions);
@@ -423,8 +423,8 @@
 0B4C: FFFFFFFF 21AF0F45 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 ;0B50: xxxxxxxx yyyyyyyy ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: FFFFFFFF DDAE0F45 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-0B58: FFFFFFFF 81B3C244 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-0B5C: FFFFFFFF CDECC244 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B58: FFFFFFFF 81B3C244 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+0B5C: FFFFFFFF CDECC244 ; 2D7: void JavaDialog_Close(int unk1);
 0B60: FFFFFFFF 89EEC244 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 0B64: FFFFFFFF F155C244 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: FFFFFFFF 1556C244 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
@@ -436,7 +436,7 @@
 0B80: FFFFFFFF F98A0F45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: FFFFFFFF 8192D444 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: FFFFFFFF 51EC0645 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
-;0B8C: FFFFFFFF 41B50545 ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 0B90: FFFFFFFF B5A80F45 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 0B94: FFFFFFFF 4922E844 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
 0B98: FFFFFFFF 7D30E844 ; 2E6: int BOOK_GetSessionID(BOOK *);
@@ -477,13 +477,15 @@
 0C24: FFFFFFFF F1D2E844 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
 0C28: FFFFFFFF FDEDC244 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
 0C2C: FFFFFFFF D1001045 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
-0C30: FFFFFFFF 1D6Ff744 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+0C30: FFFFFFFF 1D6FF744 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
 0C34: FFFFFFFF 29D0D344 ; 30D: GUI * CreateProgressBar(BOOK*,int);
 0C38: FFFFFFFF 2DD3D344 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
 0C3C: FFFFFFFF BDD3D344 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 0C40: FFFFFFFF 09D3D344 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: FFFFFFFF CDD3D344 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: FFFFFFFF B10CEC44 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
+
 
 
 

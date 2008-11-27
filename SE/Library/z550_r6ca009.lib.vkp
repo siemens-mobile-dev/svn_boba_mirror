@@ -34,7 +34,7 @@
 04B0: FFFFFFFF D97D2545 ; 12C: void BookObj_KillBook(void *Book);
 04B4: FFFFFFFF 5D7A2545 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: FFFFFFFF D97B2545 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
-04BC: FFFFFFFF 09822545 ; 12F: void FreeBook ( void *book);
+04BC: FFFFFFFF 09822545 ; 12F: void FreeBook ( BOOK *book);
 04C0: FFFFFFFF AD752545 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: FFFFFFFF 25452645 ; 131: BOOK * Find_StandbyBook(void);
 04C8: FFFFFFFF 257F2545 ; 132: void BookObj_SetFocus(void *,int focus);
@@ -416,8 +416,8 @@
 0B4C: FFFFFFFF A97A5645 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 ;0B50: xxxxxxxx yyyyyyyy ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 ;0B54: xxxxxxxx yyyyyyyy ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-;0B58: xxxxxxxx yyyyyyyy ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-;0B5C: xxxxxxxx yyyyyyyy ; 2D7: void JavaDialog_Uninit(int unk1);
+;0B58: xxxxxxxx yyyyyyyy ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+;0B5C: xxxxxxxx yyyyyyyy ; 2D7: void JavaDialog_Close(int unk1);
 ;0B60: xxxxxxxx yyyyyyyy ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 ;0B64: xxxxxxxx yyyyyyyy ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 ;0B68: xxxxxxxx yyyyyyyy ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
@@ -465,6 +465,18 @@
 ;0C10: xxxxxxxx yyyyyyyy ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
 ;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 ;0C18: xxxxxxxx yyyyyyyy ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
+;0C1C: xxxxxxxx yyyyyyyy ; 307: void RedLED_On(int __NULL);
+;0C20: xxxxxxxx yyyyyyyy ; 308: void RedLED_Off(int __NULL);
+;0C24: xxxxxxxx yyyyyyyy ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
+;0C28: xxxxxxxx yyyyyyyy ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+;0C2C: xxxxxxxx yyyyyyyy ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+;0C30: xxxxxxxx yyyyyyyy ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+;0C34: xxxxxxxx yyyyyyyy ; 30D: GUI * CreateProgressBar(BOOK*,int);
+;0C38: xxxxxxxx yyyyyyyy ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+;0C3C: xxxxxxxx yyyyyyyy ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
+;0C40: xxxxxxxx yyyyyyyy ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
+;0C44: xxxxxxxx yyyyyyyy ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+;0C48: xxxxxxxx yyyyyyyy ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 

@@ -34,7 +34,7 @@
 4B0: 00000000 FDE83A45 ; 12C: void BookObj_KillBook(void *Book);
 4B4: 00000000 51E63A45 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 4B8: 00000000 B9E63A45 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
-4BC: 00000000 F1ED3A45 ; 12F: void FreeBook ( void *book);
+4BC: 00000000 F1ED3A45 ; 12F: void FreeBook ( BOOK *book);
 4C0: 00000000 95CE3A45 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 4C4: 00000000 011D3C45 ; 131: BOOK * Find_StandbyBook(void);
 4C8: 00000000 81EA3A45 ; 132: void BookObj_SetFocus(void *,int focus);
@@ -418,13 +418,13 @@ B44: 00000000 6DC4FD44 ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *f
 0B4C: 00000000 19C5FD44 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 B50: 00000000 E5C0FD44 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 B54: 00000000 F1C4FD44 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-B58: 00000000 91A6FA44 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-B5C: 00000000 45E1FA44 ; 2D7: void JavaDialog_Uninit(int unk1);
+B58: 00000000 91A6FA44 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+B5C: 00000000 45E1FA44 ; 2D7: void JavaDialog_Close(int unk1);
 B60: 00000000 09E3FA44 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 B64: 00000000 A940FA44 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 B68: 00000000 B140FA44 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 B6C: 00000000 C93CFA44 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
-;0B70: XXXXXXXX YYYYYYYY ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 B74: 00000000 259B4545 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 B78: 00000000 A59B4545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 B7C: 00000000 25EEFC44 ; 2DF: int isDataBrowserBook(BOOK *);
@@ -479,6 +479,9 @@ C3C: 00000000 29374745 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
 C40: 00000000 F1354745 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 C44: 00000000 39374745 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 C48: 00000000 D9C33E45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
+
+
 
 
 ;locale=Russian_Russia.1251

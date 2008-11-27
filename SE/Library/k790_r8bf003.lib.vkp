@@ -36,7 +36,7 @@
 04B0: 00000000 2DAC2645 ; 12C: void BookObj_KillBook(void *Book);
 04B4: 00000000 81A82645 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 04B8: 00000000 E9A92645 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
-04BC: 00000000 21B12645 ; 12F: void FreeBook ( void *book);
+04BC: 00000000 21B12645 ; 12F: void FreeBook ( BOOK *book);
 04C0: 00000000 55A32645 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
 04C4: 00000000 C9DE2745 ; 131: BOOK * Find_StandbyBook(void);
 04C8: 00000000 B1AD2645 ; 132: void BookObj_SetFocus(void *,int focus);
@@ -420,8 +420,8 @@
 0B4C: 00000000 719BEA44 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
 0B50: 00000000 3D97EA44 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: 00000000 499BEA44 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
-0B58: 00000000 617DE744 ; 2D6: int JavaDialog_Init(int unk1,char * unk2,void ** JavaDesc);
-0B5C: 00000000 15B8E744 ; 2D7: void JavaDialog_Uninit(int unk1);
+0B58: 00000000 617DE744 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
+0B5C: 00000000 15B8E744 ; 2D7: void JavaDialog_Close(int unk1);
 0B60: 00000000 D9B9E744 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
 0B64: 00000000 7917E744 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 8117E744 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
@@ -481,6 +481,9 @@
 0C40: 00000000 3DF73245 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 85F83245 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: 00000000 25852A45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
+
+
 
 
 ;locale=Russian_Russia.1251
