@@ -470,17 +470,15 @@
 0C1C: 00000000 4DE32C44 ; 307: void RedLED_On(int __NULL);
 0C20: 00000000 99E32C44 ; 308: void RedLED_Off(int __NULL);
 0C24: 00000000 29024945 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
-;0C28: xxxxxxxx yyyyyyyy ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
-;0C2C: xxxxxxxx yyyyyyyy ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
-;0C30: xxxxxxxx yyyyyyyy ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
-;0C34: xxxxxxxx yyyyyyyy ; 30D: GUI * CreateProgressBar(BOOK*,int);
-;0C38: xxxxxxxx yyyyyyyy ; 30E: void ProgressBar_SetText(GUI*,STRID text);
-;0C3C: xxxxxxxx yyyyyyyy ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
-;0C40: xxxxxxxx yyyyyyyy ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
-;0C44: xxxxxxxx yyyyyyyy ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
-;0C48: xxxxxxxx yyyyyyyy ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
-
-
+0C28: 00000000 59E1FD44 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: 00000000 8DEB0A45 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+0C30: 00000000 81440A45 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+0C34: 00000000 8D774A45 ; 30D: GUI * CreateProgressBar(BOOK*,int);
+0C38: 00000000 D57A4A45 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+0C3C: 00000000 C97B4A45 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
+0C40: 00000000 917A4A45 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
+0C44: 00000000 D97B4A45 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C48: 00000000 E5064245 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 
 
 

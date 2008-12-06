@@ -283,7 +283,7 @@
 0918: FFFFFFFF 85A5D544 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 091C: FFFFFFFF 0128D144 ; 247: void GoMusic(void);
 0920: FFFFFFFF 4150F844 ; 248: void Vibra_Off (int t1);
-0924: FFFFFFFF 44F6B3B5 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+0924: FFFFFFFF B5B3F644 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
 0928: FFFFFFFF 7136D344 ; 24A: int PlayFileV(const wchar_t * path,const wchar_t * fname, int vol);
 092C: FFFFFFFF F545F844 ; 24B: int GetSilent(void);
 0930: FFFFFFFF B912F844 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
