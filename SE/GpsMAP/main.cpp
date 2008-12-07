@@ -20,7 +20,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   GUI * map_gui=(GUI *)CreateMapGUI(bk);
-  AddMSGHook(map_gui,ACTION_BACK, CloseMyBook);
+  GUIObject_Softkey_SetAction(map_gui,ACTION_BACK, CloseMyBook);
   GuiObject_SetTitleType(map_gui, 1);
   ShowWindow(map_gui);
   mbk->map_gui=map_gui;

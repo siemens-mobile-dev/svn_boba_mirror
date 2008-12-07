@@ -31,6 +31,6 @@ PNG_CONVERT *InitPng(LIST *pnglist, int index_x, int index_y);
 void Destr_Png(PNG_CONVERT *usr_png);
 void RemovePngListElement(PNG_LIST *png_list);
 void process_data(PNG_CONVERT *usr_png, char *buffer, unsigned int length);
-int get_png_info(const u16 *path, const u16 *name, int *width, int *height);
+int get_png_info(const wchar_t *path, const wchar_t *name, int *width, int *height);
 
 #endif

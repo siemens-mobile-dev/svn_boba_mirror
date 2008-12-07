@@ -39,16 +39,16 @@ int GetLac_ByCh(int ch)
 
 int ReadPngFile(LIST *png_lst, char *town, int index_x, int index_y)
 {
-  u16 dir[64];
-  u16 name[64];
+  wchar_t dir[64];
+  wchar_t name[64];
   int result=0;
   int f;
   FSTAT stat;
   char *buf;
   PNG_CONVERT *usr_png;
-  snwprintf(dir,63,(u16*)L"%ls/GpsMAP/%s", GetDir(DIR_ELFS),town);
-  snwprintf(name,63,(u16*)L"%s_%02u_%02u.png",town,index_y,index_x);
-  if (isFileExist(dir,name,&stat)>=0)
+  snwprintf(dir,63,L"%ls/GpsMAP/%s", GetDir(DIR_ELFS),town);
+  snwprintf(name,63,L"%s_%02u_%02u.png",town,index_y,index_x);
+  if (fstat(dir,name,&stat)>=0)
   {
     if ((f=_fopen(dir,name,1,0x180,NULL))>=0)
     {
@@ -71,38 +71,38 @@ int ReadPngFile(LIST *png_lst, char *town, int index_x, int index_y)
 
 void InitDirPng(TOWN *town)
 {
-  u16 dir[64];
-  u16 name[64];
+  wchar_t dir[64];
+  wchar_t name[64];
   FSTAT stat;
   int width, height;
   int map_width=0,map_height=0;
-  snwprintf(dir,63,(u16*)L"%ls/GpsMAP/%s",GetDir(DIR_ELFS),town->name);
+  snwprintf(dir,63,L"%ls/GpsMAP/%s",GetDir(DIR_ELFS),town->name);
   int x_size=0, y_size=0;
   int f;
   while(x_size<100)
   {
-    snwprintf(name,63,(u16*)L"%s_00_%02u.png",town->name,x_size);
-    if (isFileExist(dir,name,&stat)<0) break;
+    snwprintf(name,63,L"%s_00_%02u.png",town->name,x_size);
+    if (fstat(dir,name,&stat)<0) break;
     x_size++;
   }
   while(y_size<100)
   {
-    snwprintf(name,63,(u16*)L"%s_%02u_00.png",town->name,y_size);
-    if (isFileExist(dir,name,&stat)<0) break;
+    snwprintf(name,63,L"%s_%02u_00.png",town->name,y_size);
+    if (fstat(dir,name,&stat)<0) break;
     y_size++;
   }
   town->sizes_x=new int [x_size];
   town->sizes_y=new int [y_size];
   for (int i=0; i<x_size; i++)
   {
-    snwprintf(name,63,(u16*)L"%s_00_%02u.png",town->name,i);
+    snwprintf(name,63,L"%s_00_%02u.png",town->name,i);
     f=get_png_info(dir,name,&width,&height);
     town->sizes_x[i]=f?width:0;
     map_width+=town->sizes_x[i];
   }  
   for (int i=0; i<y_size; i++)
   {
-    snwprintf(name,63,(u16*)L"%s_%02u_00.png",town->name,i);
+    snwprintf(name,63,L"%s_%02u_00.png",town->name,i);
     f=get_png_info(dir,name,&width,&height);
     town->sizes_y[i]=f?height:0;
     map_height+=town->sizes_y[i];
@@ -300,8 +300,8 @@ void MapGuiOnRedraw(DISP_OBJ_MAP *db,int ,int,int)
     GC_DrawBitmap(gc,db->x1,db->y1,db->x2,db->y2,db->scr_buf);
   }
   SetFont(FONT_E_20R);
-  u16 buf[64];
-  snwprintf(buf,63,(u16*)L"%f,%f",db->Xres, db->Yres);
+  wchar_t buf[64];
+  snwprintf(buf,63,L"%f,%f",db->Xres, db->Yres);
   if (str_id!=0x6FFFFFFF) TextFree(str_id);
   str_id=Str2ID(buf,0,0xFFFF);
   DrawString(str_id, 2, db->x1+2,db->y1+2,db->x2-2,db->y1+2+80,20,0,clBlack,0x00000000);

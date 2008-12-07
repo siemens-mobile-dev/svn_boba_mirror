@@ -10,7 +10,7 @@ enum CSV_STATE {CSV_CI, CSV_LAC, CSV_POINT_X, CSV_POINT_Y, CSV_SKIP};
 
 int ReadCsvFile(TOWN *town)
 {
-  u16 dir[64];
+  wchar_t dir[64];
   FSTAT stat;
   int f;
   char *buf,*s;
@@ -19,10 +19,10 @@ int ReadCsvFile(TOWN *town)
   int state, created_elem=0;
   int ci, lac;
   float point_x, point_y;
-  snwprintf(dir,63,(u16*)L"%ls/GpsMAP/%s",GetDir(DIR_ELFS),town->name);
-  if (isFileExist(dir,(u16*)L"bs_dat.csv",&stat)>=0)
+  snwprintf(dir,63,L"%ls/GpsMAP/%s",GetDir(DIR_ELFS),town->name);
+  if (fstat(dir,L"bs_dat.csv",&stat)>=0)
   {
-    if ((f=_fopen(dir,(u16*)L"bs_dat.csv",1,0x180,NULL))>=0)
+    if ((f=_fopen(dir,L"bs_dat.csv",1,0x180,NULL))>=0)
     {
       int fsize=stat.fsize;
       s=buf=new char[fsize+1];

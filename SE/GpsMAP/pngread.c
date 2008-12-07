@@ -129,7 +129,7 @@ unsigned int get_uint(const unsigned char *p)
   return (((unsigned int)(*p)<<24)|((unsigned int)(*(p+1))<<16)|((unsigned int)(*(p+2))<<8)|(unsigned int)(*(p+3)));
 }
 
-int get_png_info(const u16 *path, const u16 *name, int *width, int *height)
+int get_png_info(const wchar_t *path, const wchar_t *name, int *width, int *height)
 {
   int result=0;
   int f; 

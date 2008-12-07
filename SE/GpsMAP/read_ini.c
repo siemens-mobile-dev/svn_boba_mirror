@@ -95,10 +95,10 @@ void ReadMainIni(MAIN_INI *ini)
   int len;
   int pindex, to_skip;
   TOWN *town=NULL;
-  if (isFileExist(GetDir(DIR_ELFS_CONFIG),(u16*)L"GpsMAP.ini",&stat)<0) return;
+  if (fstat(GetDir(DIR_ELFS_CONFIG),L"GpsMAP.ini",&stat)<0) return;
   if ((fsize=stat.fsize)>0)
   {
-    if ((f=_fopen(GetDir(DIR_ELFS_CONFIG),(u16*)L"GpsMAP.ini",1,0x180,NULL))>=0)
+    if ((f=_fopen(GetDir(DIR_ELFS_CONFIG),L"GpsMAP.ini",1,0x180,NULL))>=0)
     {
       buf=new char[fsize+1];
       if ((s=buf))
