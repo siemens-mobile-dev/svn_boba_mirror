@@ -5,28 +5,28 @@
 
 extern bool isInStandby;
 
-void DrawLine(bool MustDraw,int Font,wchar_t NAME[31],int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor, int len, bool isAnimated, LABEL *lbl)
+void DrawLine(bool MustDraw,int Font,int SIDtime/*wchar_t *NAME*/,int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor, int len, bool isAnimated, LABEL *lbl)
 {
   if (MustDraw==true){
     if (isAnimated==true)
     {
       // Анимированному тексту обязательно надо указывать все координаты.
-      int SIDtime;
+      //int SIDtime;
       SetFont(Font);
-      SIDtime=Str2ID(NAME,0,len);
+      //SIDtime=Str2ID(NAME,0,len);
       DrawString(SIDtime,CEN,XPos-1,YPos-1,MaxXPos-1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos-1,YPos+1,MaxXPos-1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos+1,YPos-1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos+1,YPos+1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos,YPos,MaxXPos,MaxYPos,60,0x05,NormalColor,NormalColor);
-      TextFree(SIDtime);
+      //TextFree(SIDtime);
     }
     else
     {
       // Текст неанимированный, значит надо подобрать ему второстепенные координаты правильно :-)
-      int SIDtime;
+      //int SIDtime;
       SetFont(Font);
-      SIDtime=Str2ID(NAME,0,len);
+      //SIDtime=Str2ID(NAME,0,len);
       int dist=lbl->FONT_SIZE;
       if (lbl->LINE_ON)
       {
@@ -90,7 +90,7 @@ void DrawLine(bool MustDraw,int Font,wchar_t NAME[31],int CEN, int XPos, int YPo
       DrawString(SIDtime,CEN,XPos+1,YPos-1,MaxXPos+1,MaxYPos,dist,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos+1,YPos+1,MaxXPos+1,MaxYPos,dist,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos,YPos,MaxXPos,MaxYPos,dist,0x05,NormalColor,NormalColor);
-      TextFree(SIDtime);
+      //TextFree(SIDtime);
     }
   }
 };

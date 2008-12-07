@@ -130,3 +130,4 @@
 #define lngStrLength "Line length"
 #define lngCrMinus "Subtract from distance"
 #define lngProgressBarFromTheme "Color from theme"
+#define lngAbsentConsts L"You don't have all needed consts. Update your DYN_CONST.bin"

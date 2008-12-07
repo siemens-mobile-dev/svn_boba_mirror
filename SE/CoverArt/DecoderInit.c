@@ -89,6 +89,10 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
 void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta)
 {
     metadata_reset(meta);
+    if (GetCover_SWI!=true)
+    {
+      GetCover(0, path, name, meta);
+    }
     if (wstrlen(name)>5)
     {
       wstrncpy(meta->Title,name, wstrlen(name)-4);
@@ -100,7 +104,10 @@ void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta)
     void *TagStructure=0;
     if (TagStructure=MetaData_Desc_Create(path,name))
     {
-      GetCover(TagStructure, path, name, meta);
+      if (GetCover_SWI==true)
+      {
+        GetCover(TagStructure, path, name, meta);
+      }
       wchar_t *tag=0;
       if (tag=MetaData_Desc_GetTags(TagStructure,1))
       {

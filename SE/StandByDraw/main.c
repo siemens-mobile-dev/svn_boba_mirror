@@ -21,9 +21,10 @@ typedef struct
 void Send_REDRAW_RELEASE()
 {
   // посылаем всем  мессагу со старым и своим методами Redraw
-  SBY_REDRAW_RELEASE_MESSAGE * sbm= new SBY_REDRAW_RELEASE_MESSAGE;
-  sbm->OldonRedraw=SIonRedraw;
-  sbm->NewonRedraw=Draw;
+  REDRAW_RELEASE_MESSAGE * sbm= new REDRAW_RELEASE_MESSAGE;
+  memset(sbm,0,sizeof(REDRAW_RELEASE_MESSAGE));
+  sbm->SB_OldOnRedraw=SIonRedraw;
+  sbm->SB_NewOnRedraw=Draw;
   UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,sbm,(void (*)(void*))mfree_adr());
 }
 
@@ -45,22 +46,22 @@ int ShowAuthorInfo(void *mess ,BOOK* book)
 int SB_ELF_Killed(void *mess ,BOOK* book)
 {
   // если был убит эльф рисующий на √Ё или просто нужно перетосовать методы
-  SBY_REDRAW_RELEASE_MESSAGE * sbm=(SBY_REDRAW_RELEASE_MESSAGE*)mess;
+  REDRAW_RELEASE_MESSAGE * sbm=(REDRAW_RELEASE_MESSAGE*)mess;
 
   // его ли метод мы используем в качестве oldRedraw?
-  if (sbm->NewonRedraw==SIonRedraw)
+  if (sbm->SB_NewOnRedraw==SIonRedraw)
   {
-    SBY_REDRAW_RELEASE_MESSAGE * ms= new SBY_REDRAW_RELEASE_MESSAGE;
-
+    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
+    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
     // если он был убит, то замен€ем свой oldRedraw на его..
-    if (sbm->OldonRedraw) SIonRedraw=sbm->OldonRedraw;
+    if (sbm->SB_OldOnRedraw) SIonRedraw=sbm->SB_OldOnRedraw;
 
     // ставим сdой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),Draw);
 
     // и шлЄм мессагу снова, чтоб следующие ельфы сделали тоже самое
-    ms->OldonRedraw=0;
-    ms->NewonRedraw=Draw;
+    ms->SB_OldOnRedraw=0;
+    ms->SB_NewOnRedraw=Draw;
     UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
   }
   return(1);

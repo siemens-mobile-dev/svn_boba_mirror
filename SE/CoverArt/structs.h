@@ -52,6 +52,7 @@
   typedef struct
   {
     wchar_t label[256];
+    int str;
     bool SHOW;
     signed int X;
     signed int Y;
@@ -121,6 +122,8 @@
     wchar_t *path;
     wchar_t *name;
     int fulltime;
+    int pos;
+    int tracks_count;
   } TRACK_DESC;
   
   typedef struct
@@ -135,17 +138,27 @@
   
   typedef struct
   {
-    char dummy[0x6C];
+    char dummy4[0x5C];
+    wchar_t pos;
+    char dummy[0xE];
     int time;
     char dummy2[0x4];
     BOOK_PLAYER_TRACK_DESC * dsc;
+    char dummy3[28];
+    int tracks_count;
+    //char dummy4[98];
+    //int pos;
   } BOOK_PLAYER_2020;
   
   typedef struct
   {
-    char dummy[0x68];
+    char dummy[0x5C];
+    int pos;
+    //char dummy[0x68];
     int time;
     BOOK_PLAYER_TRACK_DESC * dsc;
+    char dummy2[28];
+    int tracks_count;
   } BOOK_PLAYER_2010;
   
   typedef struct

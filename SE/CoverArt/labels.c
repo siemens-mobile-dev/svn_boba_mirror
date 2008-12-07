@@ -138,6 +138,22 @@ void caprintf(wchar_t *prt, wchar_t *where)
         wstrcpy(&returnvalue[nox],length);
 	nox=nox+wstrlen(length);
       }
+      else if (prt[x+1]==L'i')
+      {
+        wchar_t length[50];
+        int pos = currenttrack->pos;
+        snwprintf(length,SID_ANY_LEN,L"%d",pos);
+        wstrcpy(&returnvalue[nox],length);
+	nox=nox+wstrlen(length);
+      }
+      else if (prt[x+1]==L'p')
+      {
+        wchar_t length[50];
+        int count= currenttrack->tracks_count;
+        snwprintf(length,SID_ANY_LEN,L"%d",count);
+        wstrcpy(&returnvalue[nox],length);
+	nox=nox+wstrlen(length);
+      }
       else
       {
 	nox+=1;
@@ -148,10 +164,14 @@ void caprintf(wchar_t *prt, wchar_t *where)
   returnvalue[nox]='\0';
   wstrcpy(where,returnvalue);
 };
-
+void lbl_okill();
+void lbl_kill();
+void lbl_ofill();
+void lbl_fill();
 void optimized_InitLbls()
 {
   wchar_t lbl[256];
+  lbl_okill();
   if (labels[0].ChangeEveryTime)
   {
     char2unicode(lbl,LABEL1_NAME,strlen(LABEL1_NAME));
@@ -198,7 +218,7 @@ void optimized_InitLbls()
     char2unicode(lbl,LABEL9_NAME,strlen(LABEL9_NAME));
     caprintf(lbl,labels[8].label);
   }
-      if (labels[9].ChangeEveryTime)
+  if (labels[9].ChangeEveryTime)
   {
     char2unicode(lbl,LABEL10_NAME,strlen(LABEL10_NAME));
     caprintf(lbl,labels[9].label);
@@ -216,10 +236,12 @@ void optimized_InitLbls()
     labels[8].scr.SCROLL_FLEN=GetLabelSize(labels[8].label,labels[8].Font);
     labels[9].scr.SCROLL_FLEN=GetLabelSize(labels[9].label,labels[9].Font);
   }
+  lbl_ofill();
 };
 
 void InitLbls()
 {
+  lbl_kill();
   wchar_t lbl[256];
   char2unicode(lbl,LABEL1_NAME,strlen(LABEL1_NAME));
   caprintf(lbl,labels[0].label);
@@ -264,6 +286,7 @@ void InitLbls()
     labels[8].scr.SCROLL_FLEN=GetLabelSize(labels[8].label,labels[8].Font);
     labels[9].scr.SCROLL_FLEN=GetLabelSize(labels[9].label,labels[9].Font);
   }
+  lbl_fill();
 };
 
 int Font_GetHeight(int FONT)
@@ -274,6 +297,7 @@ int Font_GetHeight(int FONT)
 
 void CustomLbls()
 {
+  memset(labels,0,sizeof(LABEL)*NUM);
   // Записываем всякую инфу в структуры надписей из бкфг.
   img.x=CustomRC.x1;
   img.y=CustomRC.y1;
@@ -532,5 +556,52 @@ void CustomLbls()
   for (x=0;x<10;x++)
   {
     labels[x].scr.SCROLL_WHERE=0;
+  }
+};
+
+void lbl_ofill()
+{
+  int x;
+  for (x=0;x<10;x++)
+  {
+    if (labels[x].ChangeEveryTime)
+    {
+      labels[x].str=Str2ID(labels[x].label,0,SID_ANY_LEN);
+    }
+  }
+};
+
+void lbl_okill()
+{
+  int x;
+  for (x=0;x<10;x++)
+  {
+    if (labels[x].str!=0 && labels[x].str!=0x6FFFFFFF && labels[x].ChangeEveryTime)
+    {
+      TextFree(labels[x].str);
+      labels[x].str=0x6FFFFFFF;
+    }
+  }
+};
+
+void lbl_fill()
+{
+  int x;
+  for (x=0;x<10;x++)
+  {
+    labels[x].str=Str2ID(labels[x].label,0,SID_ANY_LEN);
+  }
+};
+
+void lbl_kill()
+{
+  int x;
+  for (x=0;x<10;x++)
+  {
+    if (labels[x].str!=0 && labels[x].str!=0x6FFFFFFF)
+    {
+      TextFree(labels[x].str);
+      labels[x].str=0x6FFFFFFF;
+    }
   }
 };

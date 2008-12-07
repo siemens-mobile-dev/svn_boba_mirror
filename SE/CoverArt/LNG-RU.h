@@ -122,3 +122,4 @@
 #define lngStrLength "Длина строки"
 #define lngCrMinus "Вычитать от расстояния.."
 #define lngProgressBarFromTheme "Цвет из темы"
+#define lngAbsentConsts L"Отсутствуют необходимые для эльфа константы. Обновите ваш DYN_CONST.bin"

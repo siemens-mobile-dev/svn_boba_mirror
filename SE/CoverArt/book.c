@@ -13,13 +13,15 @@ extern MUSIC nowmusic;
 extern bool isInStandby;
 extern LABEL labels[10];
 extern UI_IMG img;
-
 bool PlayerRunned=false;
 
 int CurrentTime;
+
 BOOK * CABook;
 void decoder_Init(wchar_t *path, wchar_t *name);
 TRACK_DESC *currenttrack=0;
+int event1;
+int event2;
 
 void CA_Kill()
 {
@@ -36,16 +38,20 @@ int CABook_ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
   wchar_t text[512];
-  snwprintf( text, 512, L"CoverArt in Standby v3.51\r\n\r\n© UltraShot\n® IronMaster,\nJoker XT,\n2007KrasH\n\r\nbuild %d\n", BUILD );
+  snwprintf( text, 512, L"CoverArt in Standby v3.52\r\n\r\n© UltraShot\n® IronMaster,\nJoker XT,\n2007KrasH\n\r\nbuild %d\n", BUILD);
   MessageBox( SID_NULL, Str2ID(text,0,SID_ANY_LEN), 0, 1, 5000, msg->book ); 
   return(1);
 };
+int CABook_StandbyUnfocused(UI_MESSAGE *);
+int CABook_StandbyFocused(UI_MESSAGE *);
 
 void CABook_OnClose(BOOK * book)
 {
   if (book)
   {
     void Cover_Free();
+    ModifyUIHook(event1,CABook_StandbyFocused,0);
+    ModifyUIHook(event2,CABook_StandbyUnfocused,0);
     //Удаляем обложку, если она есть
     Cover_Free();
     // Закрываем всё открытое
@@ -88,7 +94,8 @@ static int CABook_Reconfig(void *mess ,BOOK *book)
   }
   return(result);
 };
-
+extern bool SoftUsed;
+extern bool StatusUsed;
 int isCoverArtBook(BOOK *bk)
 {
   if (!strcmp(bk->xbook->name,"CoverArt in Standby")) { return 1; }
@@ -98,31 +105,77 @@ int isCoverArtBook(BOOK *bk)
 void Send_REDRAW_RELEASE()
 {
   // посылаем всем  мессагу со старым и своим методами Redraw
-  SBY_REDRAW_RELEASE_MESSAGE * sbm= new SBY_REDRAW_RELEASE_MESSAGE;
-  sbm->OldonRedraw=Standby_DefaultRedraw;
-  sbm->NewonRedraw=Standby_CARedraw;
+  REDRAW_RELEASE_MESSAGE * sbm= new REDRAW_RELEASE_MESSAGE;
+  memset(sbm,0,sizeof(REDRAW_RELEASE_MESSAGE));
+  sbm->SB_OldOnRedraw=Standby_DefaultRedraw;
+  sbm->SB_NewOnRedraw=Standby_CARedraw;
+  if (StatusUsed)
+  {
+    sbm->SI_OldOnRedraw=StatusIndication_DefaultRedraw;
+    sbm->SI_NewOnRedraw=StatusIndication_CARedraw;
+  }
+  if (SoftUsed)
+  {
+    sbm->SK_OldOnRedraw=Softkey_DefaultRedraw;
+    sbm->SK_NewOnRedraw=Softkey_CARedraw;
+  }
   UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,sbm,(void (*)(void*))mfree_adr());
 };
+
+
 
 int SB_ELF_Killed(void *mess ,BOOK* book)
 {
   // если был убит эльф рисующий на ГЭ или просто нужно перетосовать методы
-  SBY_REDRAW_RELEASE_MESSAGE * sbm=(SBY_REDRAW_RELEASE_MESSAGE*)mess;
-
+  REDRAW_RELEASE_MESSAGE * sbm=(REDRAW_RELEASE_MESSAGE*)mess;
   // его ли метод мы используем в качестве oldRedraw?
-  if (sbm->NewonRedraw==Standby_DefaultRedraw)
+  if (sbm->SB_NewOnRedraw==Standby_DefaultRedraw)
   {
-    SBY_REDRAW_RELEASE_MESSAGE * ms= new SBY_REDRAW_RELEASE_MESSAGE;
-
+    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
+    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
     // если он был убит, то заменяем свой oldRedraw на его..
-    if (sbm->OldonRedraw) Standby_DefaultRedraw=sbm->OldonRedraw;
+    if (sbm->SB_OldOnRedraw) Standby_DefaultRedraw=sbm->SB_OldOnRedraw;
 
-    // ставим сdой метод наверх
+    // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Standby_DO),Standby_CARedraw);
 
     // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
-    ms->OldonRedraw=0;
-    ms->NewonRedraw=Standby_CARedraw;
+    ms->SB_OldOnRedraw=0;
+    ms->SB_NewOnRedraw=Standby_CARedraw;
+    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+  }
+  // его ли метод мы используем в качестве oldRedraw?
+  if (sbm->SI_NewOnRedraw==StatusIndication_DefaultRedraw)
+  {
+    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
+    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
+    // если он был убит, то заменяем свой oldRedraw на его..
+    if (sbm->SI_OldOnRedraw) StatusIndication_DefaultRedraw=sbm->SI_OldOnRedraw;
+
+    // ставим свой метод наверх
+    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication_DO),StatusIndication_CARedraw);
+
+    // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
+    ms->SI_OldOnRedraw=0;
+    ms->SI_NewOnRedraw=StatusIndication_CARedraw;
+    //UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+  }
+  // его ли метод мы используем в качестве oldRedraw?
+  if (sbm->SK_NewOnRedraw==Softkey_DefaultRedraw)
+  {
+    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
+    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
+    // если он был убит, то заменяем свой oldRedraw на его..
+    if (sbm->SK_OldOnRedraw) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
+
+    // ставим свой метод наверх
+    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Softkey_DO),Softkey_CARedraw);
+
+    // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
+    ms->SK_OldOnRedraw=0;
+    ms->SK_NewOnRedraw=Softkey_CARedraw;
+    //UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
     UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
   }
   return(1);
@@ -151,6 +204,7 @@ void ReInit()
 int CABook_onPlay(void * ,BOOK* bk)
 { 
   ReInit();
+  PlayerRunned=true;
 #ifdef DEBUG
   MessageBox(SID_NULL,Str2ID(L"PlayEvent",0,SID_ANY_LEN),0,1,0,0);
 #endif
@@ -161,13 +215,13 @@ int CABook_onCreate(void *, BOOK *bk)
 {
   if (FindBook(isAudioPlayerBook()))
   {
-    PlayerRunned=true;
+    //PlayerRunned=true;
 #ifdef DEBUG
     MessageBox(SID_NULL,Str2ID(L"CreatedEvent",0,SID_ANY_LEN),0,1,0,0);
 #endif
   }
   return 1;
-}
+};
 
 int CABook_onDestroy(void *, BOOK *bk)
 {
@@ -194,18 +248,19 @@ int CABook_onPlayTimer(void *message,BOOK* book)
   return 1;
 };
 
-int CABook_StandbyUnfocused(void *,BOOK* book)
-{
-  //Тел не на ГЭ
-  isInStandby=false;
-  return(0);
-};
 
-int CABook_StandbyFocused(void *,BOOK* book)
+
+int CABook_onPause(void *, BOOK* book)
 {
-  //Тел на ГЭ
-  isInStandby=true;
-  return(0);
+  if (FindBook(isAudioPlayerBook()))
+  {
+    PlayerRunned=true;
+  }
+  else
+  {
+    PlayerRunned=false;
+  }
+  return 0;
 };
 
 const PAGE_MSG CA_PageEvents[] @ "DYN_PAGE" ={
@@ -217,8 +272,7 @@ const PAGE_MSG CA_PageEvents[] @ "DYN_PAGE" ={
   UI_MEDIAPLAYER_AUDIO_PLAYING_TIME_EVENT_TAG,  CABook_onPlayTimer,
   UI_MEDIAPLAYER_CREATED_EVENT_TAG,             CABook_onCreate,
   UI_MEDIAPLAYER_DESTROYED_EVENT_TAG,           CABook_onDestroy,
-  STANDBY_NOT_IDLE_EVENT_TAG,                   CABook_StandbyUnfocused,
-  STANDBY_IDLE_EVENT_TAG,                       CABook_StandbyFocused,
+  UI_MEDIAPLAYER_PAUSE_PRESSED_EVENT_TAG,       CABook_onPause,
   NIL_EVENT_TAG,                                NULL
 };
 
@@ -226,10 +280,40 @@ PAGE_DESC base_page ={"CoverArtpage",
                       0,
                       CA_PageEvents};
 
+int CABook_StandbyUnfocused(UI_MESSAGE *)
+{
+  isInStandby=false;
+  return 0;
+};
+
+int CABook_StandbyFocused(UI_MESSAGE *)
+{
+  //Тел на ГЭ
+  isInStandby=true;
+  return(0);
+};
 
 BOOK * CreateCABook()
 {
   CABook= new BOOK;
+  memset(CABook,0,sizeof(BOOK));
+  event1=STANDBY_IDLE_EVENT;
+  event2=STANDBY_NOT_IDLE_EVENT;
+  switch (GetChipID())
+  {
+    case 0x7100:
+    case 0x8000:
+    case 0x8040:
+      event1=PHONE_IN_STBY_EVENT;
+      event2=PREVIOUS_IN_STBY_IDLE_EVENT;
+      break;
+    case 0x9900:
+      event1=STANDBY_IDLE_EVENT;
+      event2=STANDBY_NOT_IDLE_EVENT;
+      break;
+  }
+  ModifyUIHook(event1,CABook_StandbyFocused,1);
+  ModifyUIHook(event2,CABook_StandbyUnfocused,1);
   CreateBook(CABook,CABook_OnClose,&base_page,"CoverArt in Standby",-1,0);
   return(CABook);
 };

@@ -753,6 +753,16 @@ typedef struct
   void (*NewonRedraw)(DISP_OBJ *,int ,int ,int);
 }SBY_REDRAW_RELEASE_MESSAGE;
 
+typedef struct
+{
+  void (*SB_OldOnRedraw)(DISP_OBJ *,int ,int ,int);
+  void (*SB_NewOnRedraw)(DISP_OBJ *,int ,int ,int);
+  void (*SI_OldOnRedraw)(DISP_OBJ *,int ,int ,int);
+  void (*SI_NewOnRedraw)(DISP_OBJ *,int ,int ,int);
+  void (*SK_OldOnRedraw)(DISP_OBJ *,int ,int ,int);
+  void (*SK_NewOnRedraw)(DISP_OBJ *,int ,int ,int);
+}REDRAW_RELEASE_MESSAGE;
+
 typedef void* PAudioControl;
 
 #endif

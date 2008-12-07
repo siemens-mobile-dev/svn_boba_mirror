@@ -23,7 +23,6 @@
   extern DISP_DESC *StatusIndication_DD;
   extern DISP_OBJ *StatusIndication_DO;
   extern DISP_OBJ_ONREDRAW_METHOD StatusIndication_DefaultRedraw;
-  
   //Прочие переменные
   extern int locTime;
   extern int AnimUpdateTime;
@@ -49,6 +48,9 @@
   void RemoveAnimation();
   void Send_REDRAW_RELEASE();
   void Standby_CARedraw(DISP_OBJ* DO,int a,int b,int c);
+  void Softkey_CARedraw(DISP_OBJ *DO, int a, int b, int c);
+  void StatusIndication_CARedraw(DISP_OBJ *DO, int a, int b, int c);
+
   void CA_Kill();
   
   void optimized_InitLbls();

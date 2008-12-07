@@ -30,7 +30,7 @@ wchar_t *checkfile(wchar_t *name)
   {
     return intFolder;
   }
-  return extFolder;
+  return intFolder;
 };
 
 
@@ -102,8 +102,36 @@ void Startup_OnTimer(u16 timer,LPARAM lparam)
   }
 };
 
+int check(int smth)
+{
+  if (smth!=0xFFFFFFFF && smth!=0)
+  {
+    return 1;
+  }
+  return 0;
+};
+int checkevents()
+{
+  int res=0;
+  res=res+check(UI_MEDIAPLAYER_PLAY_PRESSED_EVENT);
+  res=res+check(UI_MEDIAPLAYER_AUDIO_PLAYING_TIME_EVENT);
+  res=res+check(UI_MEDIAPLAYER_CREATED_EVENT);
+  res=res+check(UI_MEDIAPLAYER_DESTROYED_EVENT);
+  res=res+check(UI_MEDIAPLAYER_PAUSE_PRESSED_EVENT);
+  if (res<5)
+  {
+    return 0;
+  }
+  return 1;
+};
+
 int main()
 {   
+  if (!checkevents())
+  {
+    MessageBox(SID_NULL,Str2ID(lngAbsentConsts,0,SID_ANY_LEN),0,1,0,0);
+    SUBPROC(CA_Kill);
+  }
   if (FindBook(isCoverArtBook))
   {
     // Уже запущен кавер
@@ -112,8 +140,16 @@ int main()
   }
   else
   {
-    wstrcpy(extFolder,GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG));
-    wstrcat(extFolder,L"/CoverArt/");
+    if (GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG))
+    {
+      wstrcpy(extFolder,GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG));
+      wstrcat(extFolder,L"/CoverArt/");
+    }
+    else
+    {
+      wstrcpy(extFolder,GetDir(MEM_INTERNAL+DIR_ELFS_CONFIG));
+      wstrcat(extFolder,L"/CoverArt/");
+    }
     wstrcpy(intFolder,GetDir(MEM_INTERNAL+DIR_ELFS_CONFIG));
     wstrcat(intFolder,L"/CoverArt/");
     YSize=Display_GetHeight(0);

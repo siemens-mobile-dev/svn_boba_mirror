@@ -31,21 +31,21 @@ int synchsafeToNormal(char tagSize[4])
 	return size;
 };
 
-long lngFileSize;
-
-ulong bithdr;
-bool boolVBitRate;
-int intVFrames;
-
-int getFrequency();
-int getMode();
-void LoadMP3Header(byte *c);
-bool LoadVBRHeader(byte *inputheader);
-int getLengthInSeconds();
-bool IsValidHeader();
-int getVersionIndex();
-int getBitrate();
-int getModeIndex();
+  long lngFileSize;
+  
+  ulong bithdr;
+  bool boolVBitRate;
+  int intVFrames;
+  
+  int getFrequency();
+  int getMode();
+  void LoadMP3Header(byte *c);
+  bool LoadVBRHeader(byte *inputheader);
+  int getLengthInSeconds();
+  bool IsValidHeader();
+  int getVersionIndex();
+  int getBitrate();
+  int getModeIndex();
     
     HEADER_INFO ReadMP3Information(wchar_t *path, wchar_t *name)
     {
