@@ -107,7 +107,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -153,23 +153,23 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -202,7 +202,7 @@
         <option>
           <name>CCOptimization</name>
           <version>0</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCAllowList</name>
@@ -271,7 +271,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -283,7 +283,7 @@
         </option>
         <option>
           <name>CCLangSelect</name>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -296,7 +296,7 @@
         <option>
           <name>CCOptimizationSlave</name>
           <version>0</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCCodeFunctions</name>
@@ -456,7 +456,7 @@
         </option>
         <option>
           <name>AXRef</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AXRefDefines</name>
@@ -546,16 +546,16 @@
         <debug>1</debug>
         <option>
           <name>XOutOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>main.hex</state>
+          <state>SShoot.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>16</state>
         </option>
         <option>
           <name>FormatVariant</name>
@@ -616,7 +616,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>F:\Projects\ARM\se\BookManeger\1.xcl</state>
+          <state>$PROJ_DIR$\..\include\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -704,7 +704,7 @@
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
-          <state>__program_start</state>
+          <state>main</state>
         </option>
         <option>
           <name>DebugInformation</name>
@@ -736,7 +736,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>main.a79</state>
+          <state>SShoot.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -750,7 +750,7 @@
         </option>
         <option>
           <name>xcOverrideProgramEntryLabel</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>xcProgramEntryLabelSelect</name>
@@ -909,24 +909,24 @@
         <option>
           <name>GRuntimeLibSelect</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>RTDescription</name>
-          <state>Do not link with a runtime library.</state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.r79</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
@@ -1498,7 +1498,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
