@@ -224,11 +224,11 @@ __root const CFG_HDR cfghdr81={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr82={CFG_LEVEL,lngLABEL4,3,0};
   
 __root const CFG_HDR cfghdr83={CFG_CHECKBOX,lngShow,0,0};
-        __root const int LABEL4_SHOW=0;
+        __root const int LABEL4_SHOW=1;
         
 __root const CFG_HDR cfghdr84={CFG_COORDINATES,lngPos,0,0};
-        __root const int LABEL4_X_POS=0;
-        __root const int LABEL4_Y_POS=0;
+        __root const int LABEL4_X_POS=170;
+        __root const int LABEL4_Y_POS=50;
 
 __root const CFG_HDR cfghdr85={CFG_COLOR_INT,lngColor,0,0};
          __root const unsigned int LABEL4_COLOR1=clWhite;
@@ -237,14 +237,14 @@ __root const CFG_HDR cfghdr86={CFG_COLOR_INT,lngColor2,0,0};
         __root const unsigned int LABEL4_COLOR2=clBlack;
       
 __root const CFG_HDR cfghdr87={CFG_FONT,lngFont,0,0};
-        __root const int LABEL4_FONT=0x11;
+        __root const int LABEL4_FONT=0x2C;
         
 __root const CFG_HDR cfghdr88={CFG_CBOX,lngCT,0,3};
-        __root const int LABEL4_CT=0;
+        __root const int LABEL4_CT=1;
 __root const CFG_CBOX_ITEM cfgcbox89[3]={lngLeft,lngRight,lngCenter};
         
 __root const CFG_HDR cfghdr90={CFG_STR_WIN1251,lngMask,0,255};
-        __root const char LABEL4_NAME[256]="$g";
+        __root const char LABEL4_NAME[256]="$i/";
         
 __root const CFG_HDR cfghdr91={CFG_LEVEL,lngScrolling,4,0};
         
@@ -288,17 +288,17 @@ __root const CFG_HDR cfghdr105={CFG_INT,lngCrMinus,0,1000};
 __root const CFG_HDR cfghdr106={CFG_LEVEL,"",0,0}; 
 
 __root const CFG_HDR cfghdr107={CFG_CHECKBOX,lngRedrawEverySecond,0,0};
-        __root const int LABEL4_NEED_REDRAW=0;
+        __root const int LABEL4_NEED_REDRAW=1;
 __root const CFG_HDR cfghdr108={CFG_LEVEL,"",0,0}; 
    
 __root const CFG_HDR cfghdr109={CFG_LEVEL,lngLABEL5,3,0};
   
 __root const CFG_HDR cfghdr110={CFG_CHECKBOX,lngShow,0,0};
-        __root const int LABEL5_SHOW=0;
+        __root const int LABEL5_SHOW=1;
         
 __root const CFG_HDR cfghdr111={CFG_COORDINATES,lngPos,0,0};
-        __root const int LABEL5_X_POS=0;
-        __root const int LABEL5_Y_POS=0;
+        __root const int LABEL5_X_POS=170;
+        __root const int LABEL5_Y_POS=53;
 
 __root const CFG_HDR cfghdr112={CFG_COLOR_INT,lngColor,0,0};
          __root const unsigned int LABEL5_COLOR1=clWhite;
@@ -307,14 +307,14 @@ __root const CFG_HDR cfghdr113={CFG_COLOR_INT,lngColor2,0,0};
         __root const unsigned int LABEL5_COLOR2=clBlack;
       
 __root const CFG_HDR cfghdr114={CFG_FONT,lngFont,0,0};
-        __root const int LABEL5_FONT=0x11;
+        __root const int LABEL5_FONT=0x19;
         
 __root const CFG_HDR cfghdr115={CFG_CBOX,lngCT,0,3};
         __root const int LABEL5_CT=0;
 __root const CFG_CBOX_ITEM cfgcbox116[3]={lngLeft,lngRight,lngCenter};
         
 __root const CFG_HDR cfghdr117={CFG_STR_WIN1251,lngMask,0,255};
-        __root const char LABEL5_NAME[256]="$y";
+        __root const char LABEL5_NAME[256]="$p";
         
 __root const CFG_HDR cfghdr118={CFG_LEVEL,lngScrolling,4,0};
         
@@ -365,11 +365,11 @@ __root const CFG_HDR cfghdr135={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr136={CFG_LEVEL,lngLABEL6,3,0};
   
 __root const CFG_HDR cfghdr137={CFG_CHECKBOX,lngShow,0,0};
-        __root const int LABEL6_SHOW=0;
+        __root const int LABEL6_SHOW=1;
         
 __root const CFG_HDR cfghdr138={CFG_COORDINATES,lngPos,0,0};
-        __root const int LABEL6_X_POS=0;
-        __root const int LABEL6_Y_POS=0;
+        __root const int LABEL6_X_POS=200;
+        __root const int LABEL6_Y_POS=110;
 
 __root const CFG_HDR cfghdr139={CFG_COLOR_INT,lngColor,0,0};
          __root const unsigned int LABEL6_COLOR1=clWhite;
@@ -381,11 +381,11 @@ __root const CFG_HDR cfghdr141={CFG_FONT,lngFont,0,0};
         __root const int LABEL6_FONT=0x11;
         
 __root const CFG_HDR cfghdr142={CFG_CBOX,lngCT,0,3};
-        __root const int LABEL6_CT=0;
+        __root const int LABEL6_CT=1;
 __root const CFG_CBOX_ITEM cfgcbox143[3]={lngLeft,lngRight,lngCenter};
         
 __root const CFG_HDR cfghdr144={CFG_STR_WIN1251,lngMask,0,255};
-        __root const char LABEL6_NAME[256]="$b";
+        __root const char LABEL6_NAME[256]="$b kb/s";
         
 __root const CFG_HDR cfghdr145={CFG_LEVEL,lngScrolling,4,0};
         
@@ -437,11 +437,11 @@ __root const CFG_HDR cfghdr162={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr163={CFG_LEVEL,lngLABEL7,3,0};
   
 __root const CFG_HDR cfghdr164={CFG_CHECKBOX,lngShow,0,0};
-        __root const int LABEL7_SHOW=0;
+        __root const int LABEL7_SHOW=1;
         
 __root const CFG_HDR cfghdr165={CFG_COORDINATES,lngPos,0,0};
         __root const int LABEL7_X_POS=0;
-        __root const int LABEL7_Y_POS=0;
+        __root const int LABEL7_Y_POS=110;
 
 __root const CFG_HDR cfghdr166={CFG_COLOR_INT,lngColor,0,0};
          __root const unsigned int LABEL7_COLOR1=clWhite;
@@ -450,14 +450,14 @@ __root const CFG_HDR cfghdr167={CFG_COLOR_INT,lngColor2,0,0};
         __root const unsigned int LABEL7_COLOR2=clBlack;
       
 __root const CFG_HDR cfghdr168={CFG_FONT,lngFont,0,0};
-        __root const int LABEL7_FONT=0x11;
+        __root const int LABEL7_FONT=0x12;
         
 __root const CFG_HDR cfghdr169={CFG_CBOX,lngCT,0,3};
         __root const int LABEL7_CT=0;
 __root const CFG_CBOX_ITEM cfgcbox170[3]={lngLeft,lngRight,lngCenter};
         
 __root const CFG_HDR cfghdr171={CFG_STR_WIN1251,lngMask,0,255};
-        __root const char LABEL7_NAME[256]="$f";
+        __root const char LABEL7_NAME[256]="$s";
         
 __root const CFG_HDR cfghdr172={CFG_LEVEL,lngScrolling,4,0};
         
@@ -502,17 +502,17 @@ __root const CFG_HDR cfghdr186={CFG_INT,lngCrMinus,0,1000};
 __root const CFG_HDR cfghdr187={CFG_LEVEL,"",0,0}; 
 
 __root const CFG_HDR cfghdr188={CFG_CHECKBOX,lngRedrawEverySecond,0,0};
-        __root const int LABEL7_NEED_REDRAW=0;
+        __root const int LABEL7_NEED_REDRAW=1;
 __root const CFG_HDR cfghdr189={CFG_LEVEL,"",0,0}; 
 
 __root const CFG_HDR cfghdr190={CFG_LEVEL,lngLABEL8,3,0};
    
 __root const CFG_HDR cfghdr191={CFG_CHECKBOX,lngShow,0,0};
-        __root const int LABEL8_SHOW=0;
+        __root const int LABEL8_SHOW=1;
         
 __root const CFG_HDR cfghdr192={CFG_COORDINATES,lngPos,0,0};
-        __root const int LABEL8_X_POS=0;
-        __root const int LABEL8_Y_POS=0;
+        __root const int LABEL8_X_POS=240;
+        __root const int LABEL8_Y_POS=110;
 
 __root const CFG_HDR cfghdr193={CFG_COLOR_INT,lngColor,0,0};
          __root const unsigned int LABEL8_COLOR1=clWhite;
@@ -521,14 +521,14 @@ __root const CFG_HDR cfghdr194={CFG_COLOR_INT,lngColor2,0,0};
         __root const unsigned int LABEL8_COLOR2=clBlack;
       
 __root const CFG_HDR cfghdr195={CFG_FONT,lngFont,0,0};
-        __root const int LABEL8_FONT=0x11;
+        __root const int LABEL8_FONT=0x12;
         
 __root const CFG_HDR cfghdr196={CFG_CBOX,lngCT,0,3};
-        __root const int LABEL8_CT=0;
+        __root const int LABEL8_CT=1;
 __root const CFG_CBOX_ITEM cfgcbox197[3]={lngLeft,lngRight,lngCenter};
         
 __root const CFG_HDR cfghdr198={CFG_STR_WIN1251,lngMask,0,255};
-        __root const char LABEL8_NAME[256]="$m";
+        __root const char LABEL8_NAME[256]="$l";
         
 __root const CFG_HDR cfghdr199={CFG_LEVEL,lngScrolling,4,0};
         
@@ -729,7 +729,7 @@ __root const CFG_HDR cfghdr273={CFG_CHECKBOX,lngShow,0,0};
         __root const int COVER_SHOW=1;
         
 __root const CFG_HDR cfghdr274={CFG_RECT,lngPosAndSize,0,0};
-        __root const RECT CoverRC={0,0,0,0};
+        __root const RECT CoverRC={0,150,26,176};
 
 __root const CFG_HDR cfghdr275={CFG_CHECKBOX,lngCoverUsePng,0,0};
         __root const int COVER_GETPNG=1;
@@ -739,7 +739,7 @@ __root const CFG_HDR cfghdr276={CFG_CBOX,lngDraw,0,3};
 __root const CFG_CBOX_ITEM cfgcbox277[3]={lngDrawEve,lngDrawSta,lngDrawOth};
         
 __root const CFG_HDR cfghdr278={CFG_CHECKBOX,lngDrawOnStandby,0,0};
-        __root const int Cover_DrawStandby=0;
+        __root const int Cover_DrawStandby=1;
         
 __root const CFG_HDR cfghdr279={CFG_CHECKBOX,lngDrawOnSoft,0,0};
         __root const int Cover_DrawSoft=0;
@@ -772,7 +772,7 @@ __root const CFG_HDR cfghdr290={CFG_CHECKBOX,lngDrawAfterCover,2,0};
         __root const int CustomImage_DrawAfter=1;
         
 __root const CFG_HDR cfghdr291={CFG_CHECKBOX,lngDrawOnStandby,0,0};
-        __root const int Custom_DrawStandby=0;
+        __root const int Custom_DrawStandby=1;
         
 __root const CFG_HDR cfghdr292={CFG_CHECKBOX,lngDrawOnSoft,0,0};
         __root const int Custom_DrawSoft=0;
@@ -786,23 +786,23 @@ __root const CFG_HDR cfghdr294={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr295={CFG_LEVEL,lngProgressBar,1,0};
 
 __root const CFG_HDR cfghdr296={CFG_CHECKBOX,lngShow,0,0};
-        __root const int ProgressBar_Show=0;
+        __root const int ProgressBar_Show=1;
 
 __root const CFG_HDR cfghdr297={CFG_CHECKBOX,lngProgressBarFromTheme,0,0};
 __root const int ProgressBar_ColorFromTheme=0;
         
 __root const CFG_HDR cfghdr298={CFG_RECT,lngPosAndSize,0,0};
-        __root const RECT pbrect={0,0,100,20};
+        __root const RECT pbrect={0,240,130,140};
 __root const CFG_HDR cfghdr299={CFG_LEVEL,lngColors,1,0};
            
 __root const CFG_HDR cfghdr300={CFG_COLOR_INT,lngNowTime,0,0};
-           __root const unsigned int ProgressBar_cColor=clRed;
+           __root const unsigned int ProgressBar_cColor=0x9F000000;
            
 __root const CFG_HDR cfghdr301={CFG_COLOR_INT,lngLeftTime,0,0};
-           __root const unsigned int ProgressBar_oColor=clWhite;
+           __root const unsigned int ProgressBar_oColor=0xFFFFFF;
            
 __root const CFG_HDR cfghdr302={CFG_COLOR_INT,lngHighlight,0,0};
-           __root const unsigned int ProgressBar_bColor=clBlack;
+           __root const unsigned int ProgressBar_bColor=0x6FFFFFFF;
            
 __root const CFG_HDR cfghdr303={CFG_LEVEL,"",0,0}; 
          

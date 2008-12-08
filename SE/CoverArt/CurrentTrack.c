@@ -65,7 +65,7 @@ TRACK_DESC * TrackDesc_Get(BOOK *bk)
       wstrcpy(track_desc->name,name);
       track_desc->fulltime=bkp->dsc->fulltime;
       track_desc->tracks_count=bkp->tracks_count;
-      track_desc->pos=bkp->pos;
+      track_desc->pos=bkp->pos+1;
       return track_desc;
     }
     else if (platform==2020)

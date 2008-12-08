@@ -152,7 +152,7 @@
   
   typedef struct
   {
-    char dummy[0x5C];
+    char dummy[0x64];
     int pos;
     //char dummy[0x68];
     int time;

@@ -47,9 +47,9 @@ void StatusIndication_SetOnRedraw();
 bool SoftUsed=false;
 bool StatusUsed=false;
 
-BOOK *Standby=0;
-GUI * MainInput=0;
-
+//BOOK *Standby=0;
+//GUI * MainInput=0;
+/*
 int CheckStandby()
 {
   if (SESSION_GetTopBook(root_list_get_session(root_list_get_session_count() - 1))==Standby)
@@ -61,7 +61,7 @@ int CheckStandby()
   }
   return 0;
 }
-
+*/
 void Standby_CARedraw(DISP_OBJ* DO,int a,int b,int c)
 {
   isInStandby=true;
@@ -207,10 +207,6 @@ int GetUpdateTime()
 
 void Standby_OnRedrawTimer(u16 timer,LPARAM lparam)
 {
-  if (isInStandby==true)
-  {
-    isInStandby=CheckStandby();
-  }
   if (PlayerRunned)
   {
     isAPBookFound=true;
@@ -306,33 +302,11 @@ void Standby_SetOnRedraw()
     StatusIndication_SetOnRedraw();
   }
 };
-int isSoftkeysBook(BOOK *bk)
-{
-  if (strcmp(bk->xbook->name,"Softkeys")==0) { return 1; }
-  else { return 0; }
-};
-typedef struct
-{
-  void (*proc)(DISP_OBJ *, int a, int b, int c);
-  int top; //0-behind, 1 - front
-}SOFT_REDRAW;
-typedef struct
-{
-  BOOK A2Book;
-  LIST *proc;
-  //int add;
-  //int remove;
-  void (*Softkeys_Add)(SOFT_REDRAW *func);
-  void (*Softkeys_Remove)(SOFT_REDRAW *func);
-}SoftkeysBOOK;
-SOFT_REDRAW *our=0;
-
-//void (*Softkeys_Add)(BOOK *bk, void *sr)=(void (*)(BOOK *bk, void *sr));
 
 void Softkey_SetOnRedraw()
 {
-  Standby=Find_StandbyBook();
-  MainInput=SBY_GetMainInput(Standby);
+  //Standby=Find_StandbyBook();
+  //MainInput=SBY_GetMainInput(Standby);
   //Врубаем софты
   SoftUsed=true;
   Softkey_DO=DispObject_SoftKeys_Get();
@@ -350,14 +324,7 @@ void StatusIndication_SetOnRedraw()
   StatusIndication_DD=DISP_OBJ_GetDESC(StatusIndication_DO);
   DISP_DESC_SetOnRedraw(StatusIndication_DD,StatusIndication_CARedraw);
 };
-int compare(void *p1, void *p2)
-{
-  if (p1==p2)
-  {
-    return 0;
-  }
-  return 1;
-}
+
 void Standby_ReturnRedraw()
 { 
   DISP_DESC_SetOnRedraw(Standby_DD, Standby_DefaultRedraw); 
