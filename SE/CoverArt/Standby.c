@@ -207,7 +207,7 @@ int GetUpdateTime()
 
 void Standby_OnRedrawTimer(u16 timer,LPARAM lparam)
 {
-  if (PlayerRunned)
+  if (PlayerRunned && FindBook(isAudioPlayerBook()))
   {
     isAPBookFound=true;
     if (isInStandby==true)
@@ -250,6 +250,7 @@ void Standby_OnRedrawTimer(u16 timer,LPARAM lparam)
   }
   else
   {
+    PlayerRunned=false;
     //Если бук был только что закрыт, то надо убрать его надписи с экрана
     if (isAPBookFound)
     {
