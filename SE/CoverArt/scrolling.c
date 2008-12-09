@@ -156,6 +156,7 @@ void NextScrollFrame(int mode)
     else
     {
       labels[x].scr.SCROLL_NEED_SCROLL=false;
+      labels[x].X=labels[x].scr.SCROLL_DEF_X;
     }
   }
 };

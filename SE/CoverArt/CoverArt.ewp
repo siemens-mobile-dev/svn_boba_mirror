@@ -1649,7 +1649,7 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
+    <name>$EW_DIR$\SE_ELF\C++\_cpp2.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Animation.c</name>
@@ -2127,7 +2127,7 @@
     <name>$PROJ_DIR$\encoding.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\include\func.asm</name>
+    <name>$EW_DIR$\SE_ELF\include\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Images.c</name>
@@ -2146,6 +2146,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\string.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\tag.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\tag_reset.c</name>

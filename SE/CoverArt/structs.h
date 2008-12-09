@@ -128,6 +128,15 @@
   
   typedef struct
   {
+    bool title;
+    bool artist;
+    bool album;
+    bool year;
+    bool genre;
+  }TAG_REQUEST;
+  
+  typedef struct
+  {
     u16 unk;
     u16 unk2;
     wchar_t * path;
@@ -135,7 +144,14 @@
     wchar_t * MIME;
     int fulltime;
   } BOOK_PLAYER_TRACK_DESC;
-  
+    typedef struct
+  {
+    wchar_t ImageID;
+    bool HasImage;
+    u16 ImageHandle;
+    bool Handle;
+  } IMG_DESC;
+  /*
   typedef struct
   {
     char dummy4[0x5C];
@@ -149,6 +165,19 @@
     //char dummy4[98];
     //int pos;
   } BOOK_PLAYER_2020;
+  */
+#pragma pack(1)
+  typedef struct
+  {
+    char dummy4[0x6C];
+    int time;
+    char dummy2[0x4];
+    BOOK_PLAYER_TRACK_DESC * dsc;
+    char dummy3[28];
+    int tracks_count;
+    char dummy5[102];
+    int pos;
+  } BOOK_PLAYER_2020;
   
   typedef struct
   {
@@ -160,13 +189,5 @@
     char dummy2[28];
     int tracks_count;
   } BOOK_PLAYER_2010;
-  
-  typedef struct
-  {
-    wchar_t ImageID;
-    bool HasImage;
-    u16 ImageHandle;
-    bool Handle;
-  } IMG_DESC;
 
 #endif

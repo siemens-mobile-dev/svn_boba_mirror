@@ -85,7 +85,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
   }
   return imageID;
 }
-
+void metadata_Read(wchar_t *path, wchar_t *name, METADATA *mt, TAG_REQUEST tr);
 void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta)
 {
     metadata_reset(meta);
@@ -101,6 +101,12 @@ void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta)
     {
       wstrcpy(meta->Title,name);
     }
+    TAG_REQUEST tr;
+    tr.album=1;
+    tr.title=1;
+    tr.artist=1;
+    tr.genre=1;
+    tr.year=1;
     void *TagStructure=0;
     if (TagStructure=MetaData_Desc_Create(path,name))
     {
@@ -114,38 +120,50 @@ void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta)
         if (tag[0]!=0)
         {
           wstrcpy(meta->Title,tag);
+          tr.title=0;
         }
       }
+
       tag=0;
       if (tag=MetaData_Desc_GetTags(TagStructure,2))
       {
         if (tag[0]!=0)
         {
           wstrcpy(meta->Album,tag);
+          tr.album=0;
         }
       }
+      
       tag=0;
       if (tag=MetaData_Desc_GetTags(TagStructure,0))
       {
         if (tag[0]!=0)
         {
           wstrcpy(meta->Artist,tag);
+          tr.artist=0;
         }
       }
+      
+      tag=0;
       if (tag=MetaData_Desc_GetTags(TagStructure,3))
       {
         if (tag[0]!=0)
         {
           wstrcpy(meta->Year,tag);
+          tr.year=0;
         }
       }
+      
+      tag=0;
       if (tag=MetaData_Desc_GetTags(TagStructure,4))
       {
         if (tag[0]!=0)
         {
           wstrcpy(meta->Genre,tag);
+          tr.genre=0;
         }
       }
+      
       if (MetaData_Desc_GetTrackNum(TagStructure,0)!=-1)
       {
         meta->TrackNum=MetaData_Desc_GetTrackNum(TagStructure,0);
@@ -155,6 +173,10 @@ void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta)
         meta->TrackNum=0;
       }
       MetaData_Desc_Destroy(TagStructure);
+    }
+    if (tr.title || tr.album || tr.artist || tr.year || tr.genre)
+    {
+      metadata_Read(path, name, meta, tr);
     }
 };
 
