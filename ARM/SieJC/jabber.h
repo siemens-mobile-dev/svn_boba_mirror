@@ -66,6 +66,7 @@
 #define IQ_IDLE "jabber:iq:last"
 
 #define JABBER_X_EVENT "jabber:x:event"
+#define JABBER_URN_PING "urn:xmpp:ping"
 
 #define DISCO_INFO "http://jabber.org/protocol/disco#info"
 

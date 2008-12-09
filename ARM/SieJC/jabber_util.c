@@ -278,14 +278,28 @@ void Send_LastActivity_Request(char *dest_jid)
 // Возвращаемую строку необходимо освобождать!
 char *Generate_Caps()
 {
-  char caps_tpl[]="%s:%i:%d";
-  char *q = malloc(64);
-  zeromem(q,64);
-  snprintf(q,127, caps_tpl, VERSION_VERS,__SVN_REVISION__,DELIVERY_EVENTS);
+  char data_tmpl[]="client/mobile//SieJC %s:%i"
+    "<http://jabber.org/protocol/disco#info"
+    "<http://jabber.org/protocol/muc"
+    "<jabber:iq:last"
+    "<jabber:iq:time"
+    "<jabber:iq:version"
+    "<urn:xmpp:ping";
+    //"<"JABBER_X_EVENT"; //Не полная подержка
+  SHA_CTX ctx;
+  char *hash_str = malloc(256);
+  zeromem(hash_str,256);
+  char *hash2 = malloc(256);
+  zeromem(hash2,256);
+  snprintf(hash_str,256, data_tmpl, VERSION_VERS, __SVN_REVISION__);
+  SHA1_Init(&ctx);
+  SHA1_Update(&ctx, hash_str, strlen(hash_str));
+  SHA1_Final(hash2,&ctx);
+  mfree(hash_str);
   char *Result_Resp = malloc(256);
   zeromem(Result_Resp, 256);
-  Base64Encode(q, strlen(q),Result_Resp, 256);
-  mfree(q);
+  Base64Encode(hash2, strlen(hash2),Result_Resp, 256);
+  mfree(hash2);
   return Result_Resp;
 }
 
@@ -534,7 +548,8 @@ void Report_DiscoInfo(char* id, char *to)
                     "<feature var='%s'/>"
                     "<feature var='%s'/>"
                     "<feature var='%s'/>"
-                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC, IQ_TIME, IQ_IDLE);
+                    "<feature var='%s'/>"
+                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC, IQ_TIME, IQ_IDLE,JABBER_URN_PING);
   if(DELIVERY_EVENTS)
   {
     char xevents_feature[]="<feature var='"JABBER_X_EVENT"'/>";
@@ -545,6 +560,20 @@ void Report_DiscoInfo(char* id, char *to)
 
   mfree(id);
   mfree(to);
+}
+
+void Report_PING(char* id, char *to)
+{
+/*
+  <iq from='juliet@capulet.lit/balcony' to='capulet.lit' id='s2c1' type='result'/>
+*/
+  char* xmlql=malloc(1024);
+  const char xmlql_tmpl[]="<iq type='result' id='%s' from='%s' to='%s'/>";
+  sprintf(xmlql, xmlql_tmpl, id, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(to));
+  SendAnswer(xmlql);
+  mfree(xmlql);
+  mfree(to);
+  mfree(id);
 }
 
 JABBER_SUBSCRIPTION GetSubscrType(char* subs)
@@ -1008,9 +1037,10 @@ if(!iqtype) return;
 if(!strcmp(gget,iqtype)) // Iq type = get
 {
   XMLNode* query;
-  if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
-  char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
-  if(!q_type)return;
+  char* q_type;
+  if(query = XML_Get_Child_Node_By_Name(nodeEx, "query"))
+  if(q_type = XML_Get_Attr_Value("xmlns", query->attr))
+  {
   // Тут мы знаем XMLNS поступившего запроса
   if(!strcmp(q_type,iq_version))
   {
@@ -1092,6 +1122,26 @@ if(!strcmp(gget,iqtype)) // Iq type = get
         return;
     }
   }
+ } //end "query" 
+ 
+   if(query = XML_Get_Child_Node_By_Name(nodeEx, "ping"))
+    if (q_type = XML_Get_Attr_Value("xmlns", query->attr))
+  if(!strcmp(q_type,JABBER_URN_PING))    // urn:xmpp:ping
+  {
+    if(from)
+    {
+      char* loc_id = NULL;
+      if(id)
+        {
+          loc_id=malloc(strlen(id)+1);
+          strcpy(loc_id,id);
+        }
+        char* loc_from=malloc(strlen(from)+1);
+        strcpy(loc_from,from);
+        SUBPROC((void*)Report_PING, loc_id, loc_from);
+        return;
+    }
+  } //end ping
 
   // Ни один обработчик не подошёл, отправляем ошибку.
   Send_Feature_Not_Implemented(from, id);

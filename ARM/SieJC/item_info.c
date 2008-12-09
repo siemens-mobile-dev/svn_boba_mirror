@@ -24,22 +24,22 @@ int info_onkey(GUI *gui, GUI_MSG *msg)
 
 void info_ghook(GUI *gui, int cmd)
 {
-  if (cmd==2)
+  if (cmd==TI_CMD_CREATE)
   {
     //Called after onCreate
   }
 
-  if (cmd==7)
+  if (cmd==TI_CMD_REDRAW)
   {
 
   }
 
-  if(cmd==0xA)
+  if(cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   }
 
-  if(cmd==0x03)     // onDestroy
+  if(cmd==TI_CMD_DESTROY)     // onDestroy
   {
     FreeWS(ws_info);
     ws_info = NULL;
@@ -101,7 +101,7 @@ void Disp_Info(TRESOURCE* ResEx)
 
   // Маленькая хитрость - пустой элемент, принимающий фокус ввода, в начале списка
   wsprintf(ws_info,"");
-  ConstructEditControl(&ec,ECT_READ_ONLY,0,ws_info,256);
+  ConstructEditControl(&ec,ECT_READ_ONLY,ECF_NORMAL_STR,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
   // Создаём поля
@@ -253,27 +253,27 @@ void Disp_Info(TRESOURCE* ResEx)
     {
     case SUB_NONE:
       {
-        wsprintf(ws_info, "%s", "NONE");
+        wsprintf(ws_info, percent_s, "NONE");
         break;
       }
     case SUB_TO:
       {
-        wsprintf(ws_info, "%s", "TO");
+        wsprintf(ws_info, percent_s, "TO");
         break;
       }
     case SUB_FROM:
       {
-        wsprintf(ws_info, "%s", "FROM");
+        wsprintf(ws_info, percent_s, "FROM");
         break;
       }
     case SUB_BOTH:
       {
-        wsprintf(ws_info, "%s", "BOTH");
+        wsprintf(ws_info, percent_s, "BOTH");
         break;
       }
     default:
       {
-        wsprintf(ws_info, "%s", "X.3.");
+        wsprintf(ws_info, percent_s, "X.3.");
         break;
       }
     }
@@ -333,22 +333,52 @@ void Disp_From_Disco(char *jid, XMLNode *info)
   PrepareEditControl(&ec);
   eq=AllocEQueue(ma,mfree_adr());
 
-
-  ConstructEditControl(&ec,1,0x40,ws_info,256);
+  ascii2ws(ws_info, "Identity:");
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
+
+  XMLNode *nodeExI = info->subnode;
+  while(nodeExI)
+  {
+    if(!strcmp(nodeExI->name,"identity"))
+    {
+      char *category = XML_Get_Attr_Value("category", nodeExI->attr);
+      if(category)
+      {
+        utf8_2ws(ws_info, category, 128);
+        ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
+        AddEditControlToEditQend(eq,&ec,ma);
+      }
+      char *type = XML_Get_Attr_Value("type", nodeExI->attr);
+      if(type)
+      {
+        utf8_2ws(ws_info, type, 128);
+        ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
+        AddEditControlToEditQend(eq,&ec,ma);
+      }
+      char *name = XML_Get_Attr_Value("name", nodeExI->attr);
+      if(name)
+      {
+        utf8_2ws(ws_info, name, 128);
+        ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
+        AddEditControlToEditQend(eq,&ec,ma);
+      }
+    }
+    nodeExI = nodeExI->next;
+  }        
 
   // JID
   ascii2ws(ws_info, "JID:");
-  ConstructEditControl(&ec,1,0x40,ws_info,256);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
   utf8_2ws(ws_info, jid, 128);
-  ConstructEditControl(&ec,3,0x40,ws_info,256);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
 
   ascii2ws(ws_info, LG_POSIBLCLIENT);
-  ConstructEditControl(&ec,1,0x40,ws_info,256);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_info,256);
   AddEditControlToEditQend(eq,&ec,ma);
 
   XMLNode *nodeEx = info->subnode;
@@ -361,7 +391,7 @@ void Disp_From_Disco(char *jid, XMLNode *info)
       {
         var = Lookup_Known_Vars(var);
         utf8_2ws(ws_info, var, 128);
-        ConstructEditControl(&ec,3,0x40,ws_info,256);
+        ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_info,256);
         AddEditControlToEditQend(eq,&ec,ma);
       }
     }
