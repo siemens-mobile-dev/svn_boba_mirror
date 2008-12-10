@@ -151,7 +151,7 @@
     u16 ImageHandle;
     bool Handle;
   } IMG_DESC;
-  /*
+  
   typedef struct
   {
     char dummy4[0x5C];
@@ -165,8 +165,9 @@
     //char dummy4[98];
     //int pos;
   } BOOK_PLAYER_2020;
-  */
-#pragma pack(1)
+  
+//#pragma pack(1)
+  /*
   typedef struct
   {
     char dummy4[0x6C];
@@ -178,7 +179,7 @@
     char dummy5[102];
     int pos;
   } BOOK_PLAYER_2020;
-  
+  */
   typedef struct
   {
     char dummy[0x64];

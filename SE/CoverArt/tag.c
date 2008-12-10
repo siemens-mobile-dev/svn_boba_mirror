@@ -196,23 +196,23 @@ void metadata_Read(wchar_t *path, wchar_t *name, METADATA *meta, TAG_REQUEST tr)
           album[30]='\0';
           year[4]='\0';
           comment[30]='\0';
-          if (tr.title)
+          if (tr.title && title[0]!=0)
           {
             char2unicode(meta->Title,title,SID_ANY_LEN);
           }
-          if (tr.artist)
+          if (tr.artist && artist[0]!=0)
           {
             char2unicode(meta->Artist,artist,SID_ANY_LEN);
           }
-          if (tr.album)
+          if (tr.album && album[0]!=0)
           {
             char2unicode(meta->Album,album,SID_ANY_LEN);
           }
-          if (tr.year)
+          if (tr.year && year[0]!=0)
           {
             char2unicode(meta->Year,year,SID_ANY_LEN);
           }
-          if (tr.genre)
+          if (tr.genre && year[0]!=0)
           {
             char2unicode(meta->Genre,GetGenre(genre),SID_ANY_LEN);
           }

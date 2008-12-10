@@ -38,7 +38,7 @@ int CABook_ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
   wchar_t text[512];
-  snwprintf( text, 512, L"CoverArt in Standby v3.54\r\n\r\n© UltraShot\n® IronMaster,\nJoker XT,\n2007KrasH\n\r\nbuild %d\n", BUILD);
+  snwprintf( text, 512, L"CoverArt in Standby v3.55\r\n\r\n© UltraShot\n® IronMaster,\nJoker XT,\n2007KrasH\n\r\nbuild %d\n", BUILD);
   MessageBox( SID_NULL, Str2ID(text,0,SID_ANY_LEN), 0, 1, 5000, msg->book ); 
   return(1);
 };
@@ -128,11 +128,15 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
 {
   // если был убит эльф рисующий на ГЭ или просто нужно перетосовать методы
   REDRAW_RELEASE_MESSAGE * sbm=(REDRAW_RELEASE_MESSAGE*)mess;
-  // его ли метод мы используем в качестве oldRedraw?
+  REDRAW_RELEASE_MESSAGE *res=0;
+  // его ли метод мы используем в качестве OldRedraw?
   if (sbm->SB_NewOnRedraw==Standby_DefaultRedraw)
   {
-    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
-    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
+    res=new REDRAW_RELEASE_MESSAGE;
+    
+    // копируем существующие методы в нашу мессагу
+    memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
+    
     // если он был убит, то заменяем свой oldRedraw на его..
     if (sbm->SB_OldOnRedraw) Standby_DefaultRedraw=sbm->SB_OldOnRedraw;
 
@@ -140,45 +144,39 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Standby_DO),Standby_CARedraw);
 
     // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
-    ms->SB_OldOnRedraw=0;
-    ms->SB_NewOnRedraw=Standby_CARedraw;
-    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+    res->SB_OldOnRedraw=0;
+    res->SB_NewOnRedraw=Standby_CARedraw;
   }
-  // его ли метод мы используем в качестве oldRedraw?
   if (sbm->SI_NewOnRedraw==StatusIndication_DefaultRedraw)
   {
-    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
-    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
-    // если он был убит, то заменяем свой oldRedraw на его..
+    if (!res)
+    {
+      res=new REDRAW_RELEASE_MESSAGE;
+      memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
+    }
     if (sbm->SI_OldOnRedraw) StatusIndication_DefaultRedraw=sbm->SI_OldOnRedraw;
-
-    // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication_DO),StatusIndication_CARedraw);
-
-    // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
-    ms->SI_OldOnRedraw=0;
-    ms->SI_NewOnRedraw=StatusIndication_CARedraw;
-    //UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
-    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+    res->SI_OldOnRedraw=0;
+    res->SI_NewOnRedraw=StatusIndication_CARedraw;
   }
-  // его ли метод мы используем в качестве oldRedraw?
   if (sbm->SK_NewOnRedraw==Softkey_DefaultRedraw)
   {
-    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
-    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
-    // если он был убит, то заменяем свой oldRedraw на его..
+    if (!res)
+    {
+      res=new REDRAW_RELEASE_MESSAGE;
+      memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
+    }
     if (sbm->SK_OldOnRedraw) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
-
-    // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Softkey_DO),Softkey_CARedraw);
-
-    // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
-    ms->SK_OldOnRedraw=0;
-    ms->SK_NewOnRedraw=Softkey_CARedraw;
-    //UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
-    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+    res->SK_OldOnRedraw=0;
+    res->SK_NewOnRedraw=Softkey_CARedraw;
   }
-  return(1);
+  if (res)
+  {
+    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,res,(void (*)(void*))mfree_adr());
+    return 1;
+  }
+  return 0;
 };
 
 void ReInit()
@@ -208,7 +206,7 @@ int CABook_onPlay(void * ,BOOK* bk)
 #ifdef DEBUG
   MessageBox(SID_NULL,Str2ID(L"PlayEvent",0,SID_ANY_LEN),0,1,0,0);
 #endif
-  return 1;
+  return 0;
 };
 
 int CABook_onCreate(void *, BOOK *bk)
@@ -220,7 +218,7 @@ int CABook_onCreate(void *, BOOK *bk)
     MessageBox(SID_NULL,Str2ID(L"CreatedEvent",0,SID_ANY_LEN),0,1,0,0);
 #endif
   }
-  return 1;
+  return 0;
 };
 
 int CABook_onDestroy(void *, BOOK *bk)
@@ -229,7 +227,7 @@ int CABook_onDestroy(void *, BOOK *bk)
 #ifdef DEBUG
   MessageBox(SID_NULL,Str2ID(L"DestroyedEvent",0,SID_ANY_LEN),0,1,0,0);
 #endif
-  return 1;
+  return 0;
 };
 
 int CABook_onPlayTimer(void *message,BOOK* book)
@@ -245,7 +243,7 @@ int CABook_onPlayTimer(void *message,BOOK* book)
     CurrentTime=(pl->hour * 60)+ ((pl->min * 60) + pl->sec);
     optimized_InitLbls();
   }
-  return 1;
+  return 0;
 };
 
 
@@ -280,17 +278,26 @@ PAGE_DESC base_page ={"CoverArtpage",
                       0,
                       CA_PageEvents};
 
+int CheckStandby()
+{
+  if (SESSION_GetTopBook(root_list_get_session(root_list_get_session_count() - 1))==Find_StandbyBook())
+  {
+    return 1;
+  }
+  return 0;
+}
+
 int CABook_StandbyUnfocused(UI_MESSAGE *)
 {
-  isInStandby=false;
+  isInStandby=CheckStandby();//false;
   return 0;
 };
 
 int CABook_StandbyFocused(UI_MESSAGE *)
 {
   //Тел на ГЭ
-  isInStandby=true;
-  return(0);
+  isInStandby=CheckStandby();//true;
+  return 0;
 };
 
 BOOK * CreateCABook()
