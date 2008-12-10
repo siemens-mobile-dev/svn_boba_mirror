@@ -47,24 +47,27 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
 {
   // если был убит эльф рисующий на √Ё или просто нужно перетосовать методы
   REDRAW_RELEASE_MESSAGE * sbm=(REDRAW_RELEASE_MESSAGE*)mess;
-
   // его ли метод мы используем в качестве oldRedraw?
   if (sbm->SB_NewOnRedraw==SIonRedraw)
   {
-    REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
-    memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
+    REDRAW_RELEASE_MESSAGE *res=new REDRAW_RELEASE_MESSAGE;
+    
+    // скопируем существующие методы в нашу мессагу
+    memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
+    
     // если он был убит, то замен€ем свой oldRedraw на его..
     if (sbm->SB_OldOnRedraw) SIonRedraw=sbm->SB_OldOnRedraw;
 
-    // ставим сdой метод наверх
+    // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),Draw);
 
-    // и шлЄм мессагу снова, чтоб следующие ельфы сделали тоже самое
-    ms->SB_OldOnRedraw=0;
-    ms->SB_NewOnRedraw=Draw;
-    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+    // и шлЄм мессагу снова, чтоб следующие эльфы сделали тоже самое
+    res->SB_OldOnRedraw=0;
+    res->SB_NewOnRedraw=Draw;
+    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,res,(void (*)(void*))mfree_adr());
+    return 1;
   }
-  return(1);
+  return 0;
 }
 
 
