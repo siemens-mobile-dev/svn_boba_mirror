@@ -57,6 +57,7 @@ TRACK_DESC * TrackDesc_Get(BOOK *bk)
     {
       BOOK_PLAYER_2010 *bkp=(BOOK_PLAYER_2010*)bk;
       TRACK_DESC *track_desc=new TRACK_DESC;
+      memset(track_desc,0,sizeof(TRACK_DESC));
       wchar_t *path=bkp->dsc->path;
       wchar_t *name=bkp->dsc->name;
       track_desc->path=new wchar_t[wstrlen(path)+1];
@@ -64,14 +65,29 @@ TRACK_DESC * TrackDesc_Get(BOOK *bk)
       track_desc->name=new wchar_t[wstrlen(name)+1];
       wstrcpy(track_desc->name,name);
       track_desc->fulltime=bkp->dsc->fulltime;
-      track_desc->tracks_count=bkp->tracks_count;
-      track_desc->pos=bkp->pos+1;
+      if (bkp->tracks_count)
+      {
+        track_desc->tracks_count=bkp->tracks_count;
+      }
+      else
+      {
+        track_desc->tracks_count=bkp->tracks_count2;
+      }
+      if (bkp->pos>10000)
+      {
+        track_desc->pos=bkp->pos2+1;
+      }
+      else
+      {
+        track_desc->pos=bkp->pos+1;
+      }
       return track_desc;
     }
     else if (platform==2020)
     {
       BOOK_PLAYER_2020 *bkp=(BOOK_PLAYER_2020*)bk;
       TRACK_DESC *track_desc=new TRACK_DESC;
+      memset(track_desc,0,sizeof(TRACK_DESC));
       wchar_t *path=bkp->dsc->path;
       wchar_t *name=bkp->dsc->name;
       track_desc->path=new wchar_t[wstrlen(path)+1];
@@ -80,15 +96,7 @@ TRACK_DESC * TrackDesc_Get(BOOK *bk)
       wstrcpy(track_desc->name,name);
       track_desc->fulltime=bkp->dsc->fulltime;
       track_desc->tracks_count=bkp->tracks_count;
-      if (bkp->pos!=65535)
-      {
-        track_desc->pos=bkp->pos+1;
-      }
-      else
-      {
-        delay(100);
-        track_desc->pos=bkp->pos+1;
-      }
+      track_desc->pos=bkp->pos2+1;
       return track_desc;
     }
   }

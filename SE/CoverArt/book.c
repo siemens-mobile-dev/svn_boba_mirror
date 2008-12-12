@@ -38,7 +38,7 @@ int CABook_ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
   wchar_t text[512];
-  snwprintf( text, 512, L"CoverArt in Standby v3.55\r\n\r\n© UltraShot\n® IronMaster,\nJoker XT,\n2007KrasH\n\r\nbuild %d\n", BUILD);
+  snwprintf( text, 512, L"CoverArt in Standby v3.56\r\n\r\n© UltraShot\n® IronMaster,\nJoker XT,\n2007KrasH\n\r\nbuild %d\n", BUILD);
   MessageBox( SID_NULL, Str2ID(text,0,SID_ANY_LEN), 0, 1, 5000, msg->book ); 
   return(1);
 };
@@ -230,7 +230,7 @@ int CABook_onDestroy(void *, BOOK *bk)
   return 0;
 };
 
-int CABook_onPlayTimer(void *message,BOOK* book)
+int CABook_onPlayTimer(void *message,BOOK* bk)
 {
   if (FindBook(isAudioPlayerBook()))
   {

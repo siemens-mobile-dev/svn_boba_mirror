@@ -124,9 +124,16 @@ int checkevents()
   }
   return 1;
 };
-
+//#define launchDEBUG
 int main()
 {   
+#ifdef launchDEBUG
+  TRACK_DESC *ntrack=TrackDesc_Get(FindBook(isAudioPlayerBook()));
+  wchar_t hz[500];
+  snwprintf(hz,499,L"%ls/%ls\n\n%d:%d:%d",ntrack->path, ntrack->name, ntrack->fulltime, ntrack->pos, ntrack->tracks_count);
+  MessageBox(SID_NULL,Str2ID(hz,0,SID_ANY_LEN),0,1,0,0);
+  return 0;
+#else
   if (!checkevents())
   {
     MessageBox(SID_NULL,Str2ID(lngAbsentConsts,0,SID_ANY_LEN),0,1,0,0);
@@ -168,4 +175,5 @@ int main()
     }
   }
   return 0;
+#endif
 };

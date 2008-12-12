@@ -144,7 +144,8 @@
     wchar_t * MIME;
     int fulltime;
   } BOOK_PLAYER_TRACK_DESC;
-    typedef struct
+  
+  typedef struct
   {
     wchar_t ImageID;
     bool HasImage;
@@ -154,41 +155,48 @@
   
   typedef struct
   {
-    char dummy4[0x5C];
+    char dummy[0x5C];
     wchar_t pos;
-    char dummy[0xE];
+    char dummy1[0xE];
     int time;
     char dummy2[0x4];
     BOOK_PLAYER_TRACK_DESC * dsc;
-    char dummy3[28];
+    char dummy3[2];
+    wchar_t pos2;
+    wchar_t pos3;
+    char dummy4[22];
     int tracks_count;
-    //char dummy4[98];
-    //int pos;
-  } BOOK_PLAYER_2020;
-  
-//#pragma pack(1)
+  }BOOK_PLAYER_2020;
+
+#pragma pack(1)
+  typedef struct
+  {
+    char dummy[0x5C];
+    wchar_t pos;
+    wchar_t unk1;
+    char dummy2[0x8];
+    int time;
+    BOOK_PLAYER_TRACK_DESC *dsc;
+    wchar_t unk2;
+    wchar_t pos2;
+    char unk3[12];
+    wchar_t tracks_count;
+    wchar_t unk4;
+    wchar_t tracks_count2;
+  } BOOK_PLAYER_2010;
   /*
   typedef struct
   {
-    char dummy4[0x6C];
+    char dummy[0x5C];
+    wchar_t pos;
+    wchar_t unk2;
+    char dummy2[0x8];
     int time;
-    char dummy2[0x4];
-    BOOK_PLAYER_TRACK_DESC * dsc;
-    char dummy3[28];
-    int tracks_count;
-    char dummy5[102];
-    int pos;
-  } BOOK_PLAYER_2020;
-  */
-  typedef struct
-  {
-    char dummy[0x64];
-    int pos;
-    //char dummy[0x68];
-    int time;
-    BOOK_PLAYER_TRACK_DESC * dsc;
-    char dummy2[28];
-    int tracks_count;
+    BOOK_PLAYER_TRACK_DESC *dsc;
+    char unk3[0x10];
+    wchar_t tracks_count;
+    wchar_t unk4;
+    wchar_t tracks_count2;
   } BOOK_PLAYER_2010;
-
+  */
 #endif
