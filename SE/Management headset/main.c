@@ -100,6 +100,18 @@ int OnCallManagerEvent(void* r0,BOOK* b)
           }
          }
          break;
+         /*Нажатие вызвать*/
+         case CALLMANAGER_CALL_SETUP:
+         {
+          ModifyKeyHook(NewKey,0);
+          if(timer)
+          {
+           Timer_Kill(&timer);
+           timer = 0;
+           dbl = 0;
+          }
+         }
+         break;
          /*Завершение соединения*/
          case CALLMANAGER_CALL_TERMINATED:
          {
@@ -109,6 +121,7 @@ int OnCallManagerEvent(void* r0,BOOK* b)
     }
   return 1;
 }
+
 
 int CheckConfig()
 {
