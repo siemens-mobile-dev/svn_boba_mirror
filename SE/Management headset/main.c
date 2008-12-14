@@ -5,7 +5,7 @@
 #include "conf_loader.h"
 
 #define ELFNAME "Management"
-#define ABOUT L"Management\nv.1.4.2\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
+#define ABOUT L"Management\nv.1.4.3\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
 
 enum mode_t {
     SHORT_PRESS  = 0,
