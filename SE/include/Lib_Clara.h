@@ -690,6 +690,9 @@ __swi __arm  int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 #pragma swi_number=0x1DA
 __swi __arm  void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
 
+#pragma swi_number=0x1DF
+__swi __arm  PAudioControl AudioControl_Init();
+
 #pragma swi_number=0x1E0
 __swi __arm  void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 #pragma swi_number=0x1E1

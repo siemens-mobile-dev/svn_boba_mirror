@@ -181,6 +181,7 @@
 0760: 00000000 4D394545 ; 1D8: int NOfMany_GetCheckedCount(GUI_NOFMANY *);
 0764: 00000000 3D394545 ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 0768: 00000000 9D394545 ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
+077C: 00000000 BDD61445 ; 1DF: PAudioControl AudioControl_Init();
 0780: 00000000 D13E4545 ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 0784: 00000000 353F4545 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
 0788: 00000000 290F3F45 ; 1E2: GUI_FEEDBACK * CreateFeedBack (int,...);
@@ -479,6 +480,8 @@
 0C40: 00000000 917A4A45 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 D97B4A45 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: 00000000 E5064245 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
+
 
 
 

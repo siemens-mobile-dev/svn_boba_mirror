@@ -181,6 +181,7 @@
 0760: 00000000 E1BA4245 ; 1D8: int NOfMany_GetCheckedCount(GUI_NOFMANY *);
 0764: 00000000 D1BA4245 ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 0768: 00000000 31BB4245 ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
+077C: 00000000 998C1245 ; 1DF: PAudioControl AudioControl_Init();
 0780: 00000000 65C04245 ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 0784: 00000000 C9C04245 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
 0788: 00000000 85913C45 ; 1E2: GUI_FEEDBACK * CreateFeedBack (int,...);

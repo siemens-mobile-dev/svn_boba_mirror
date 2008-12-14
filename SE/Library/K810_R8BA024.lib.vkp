@@ -181,6 +181,7 @@
 0760: 00000000 C59E4245 ; 1D8: int NOfMany_GetCheckedCount(GUI_NOFMANY *);
 0764: 00000000 B59E4245 ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 0768: 00000000 159F4245 ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
+077C: 00000000 A97E1245 ; 1DF: PAudioControl AudioControl_Init();
 0780: 00000000 49A44245 ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 0784: 00000000 ADA44245 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
 0788: 00000000 79753C45 ; 1E2: GUI_FEEDBACK * CreateFeedBack (int,...);
@@ -222,7 +223,7 @@
 0818: 00000000 3D58EF44 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 4958EF44 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 5952EF44 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: 00000000 E3241444 ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
+0824: 00000000 E3241444 ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error ); //nullsub(void)
 0828: 00000000 19DAF944 ; 20A: void FileDelete (wchar_t * path ,wchar_t * filename , int * error );
 082C: 00000000 B1E74645 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 11B51445 ; 20C: int CreateSMSCont (int, void*);
@@ -424,6 +425,7 @@
 0B64: 00000000 7DCCFA44 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 85CCFA44 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 9DC8FA44 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
+;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
 0B74: 00000000 9D434645 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 1D444645 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 017CFD44 ; 2DF: int isDataBrowserBook(BOOK *);
@@ -478,6 +480,7 @@
 0C40: 00000000 11DF4745 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 59E04745 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: 00000000 616C3F45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
 
 
 
