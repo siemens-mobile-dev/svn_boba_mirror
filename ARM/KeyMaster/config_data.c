@@ -33,10 +33,10 @@ __root const CFG_CBOX_ITEM cfgcbox4[2]={"No","Yes,Elf player"};
 #endif
 
 __root const CFG_HDR cfghdr5={CFG_STR_UTF8,"Path to Elf player",3,127};
-__root const char player_path[128]="2:\\Misc\\Data inbox\\SPlayer.elf";
+__root const char player_path[128]="0:\\ZBin\\SPlayer\\SPlayer.elf";
 
 __root const CFG_HDR cfghdr17={CFG_STR_UTF8,"Playlist for Elf player",3,127};
-__root const char playlist_path[128]="0:\\Sounds\\ Best.m3u";
+__root const char playlist_path[128]="";
 
 __root const CFG_HDR cfghdr_m20={CFG_LEVEL,"",0,0};
 
@@ -65,6 +65,10 @@ __root const CFG_HDR cfghdr_m41={CFG_LEVEL,"Red button settings",1,0};
 __root const CFG_HDR cfghdr10={CFG_CBOX,"Enable Red button menu on IDLE",0,2};
 __root const int ENA_RBM=1;
 __root const CFG_CBOX_ITEM cfgcbox10[2]={"No","Yes"};
+
+__root const CFG_HDR cfghdr18={CFG_CBOX,"Block Red Btn longpress on IDLE",0,3};
+__root const int BLOCK_RBLP=0;
+__root const CFG_CBOX_ITEM cfgcbox18[3]={"No","Yes","Yes, Show Menu"};
 
 __root const CFG_HDR cfghdr11={CFG_CBOX,"Red button longpress mode",0,2};
 __root const int RED_BUT_MODE=0;

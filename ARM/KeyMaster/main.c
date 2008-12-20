@@ -7,6 +7,7 @@ __swi __arm void ShowNativeMenu();
 
 extern const int ENA_HELLO_MSG;
 extern const int ENA_RBM;
+extern const int BLOCK_RBLP;
 extern const int RED_BUT_MODE;
 extern const int ENA_LONG_PRESS;
 extern const int ENA_LOCK;
@@ -123,12 +124,13 @@ int my_keyhook(int submsg, int msg)
   //Red button menu
   extern void CreateRBMenu(void); 
   if (IsIDLE() && (submsg==RED_BUTTON) && (msg==LONG_PRESS)){
-      nat_red_mode=0;
+      if (BLOCK_RBLP<2) nat_red_mode=0;
+      if (BLOCK_RBLP) return 2;
       return 0;
   }
   if (IsIDLE() && (submsg==RED_BUTTON) && (msg==KEY_DOWN) && IsUnlocked()) {
         if (((int)GetTypeUSSD())!=8) return(0) ; else nat_red_mode=1;
-        return(0);
+        return(2);
   }
   if (IsIDLE() && (submsg==RED_BUTTON) && (msg==KEY_UP) && (nat_red_mode)){
       CreateRBMenu();
