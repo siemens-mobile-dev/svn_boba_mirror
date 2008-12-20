@@ -1,6 +1,5 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
-#include "..\inc\csmicon.h"
 #include "AKKUSRC.h"
 
 #include "lograph.h"
@@ -235,4 +234,5 @@ int main(char* self)
   UnlockSched();
   return 0;
 }
+
 
