@@ -90,8 +90,10 @@ char * edit_bookmark_extract_name(GUI * gui)
   
   tmp_name = (char *)malloc(ec.maxlen);
   ws_2str(ec.pWS, tmp_name, ec.maxlen);
-  full_name = (char *)malloc(strlen(bookmarks_current_folder) + strlen(tmp_name) + 12);
+  full_name = (char *)malloc(strlen(bookmarks_current_folder) + strlen(tmp_name) + 13);
   strcpy(full_name, bookmarks_current_folder);
+  if(full_name[strlen(bookmarks_current_folder)-1] != '\\')
+    strcat(full_name, "\\");
   strcat(full_name, tmp_name);
   mfree(tmp_name);
   return full_name;
@@ -526,9 +528,9 @@ int FindFiles(char * str)
   
   Free_BList();
   
-  bookmarks_current_folder = (char *)malloc(strlen(str) + 1);
-  strcpy(bookmarks_current_folder, str);
-  
+  bookmarks_current_folder = (char *)malloc(strlen(path) + 1);
+  strcpy(bookmarks_current_folder, path);
+
   s=path;
   d=name;
   rev=0;
@@ -551,7 +553,7 @@ int FindFiles(char * str)
   
   i=strlen(path);
   path[i++]='*';
-  path[i]='\0';
+  path[i]=0;
   if (FindFirstFile(&de,path,&err))
   {
     do
