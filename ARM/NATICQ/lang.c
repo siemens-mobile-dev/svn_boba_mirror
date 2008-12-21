@@ -92,7 +92,7 @@ LGP_Item LGPTAGS[]=
   {"LGP_GrsKeyExit",             LGP_GrsKeyExit},
   {"LGP_GrsKeyClist",            LGP_GrsKeyClist},
   {"LGP_LangCode",               LGP_LangCode},
-  {"LGP_MnuRemCont",             LGP_MnuRemCont}
+  {"LGP_MnuRemCont",             LGP_MnuRemCont},
   {"LGP_DATA_NUM",               LGP_DATA_NUM}
 };
 
