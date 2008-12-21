@@ -1497,6 +1497,7 @@ void get_answer(void)
 	case T_GROUPID:
 	case T_GROUPFOLLOW:
 	case T_CLENTRY:
+        case T_CONTACTREMOVED: 
 	  //Посылаем в MMI
 	  n=i+sizeof(PKT)+1;
 	  p=malloc(n);
@@ -1928,7 +1929,7 @@ void ReqAddMsgToChat(CLIST *t)
 ProcessPacket(TPKT *p)
 {
   extern const int VIBR_TYPE, VIBR_ON_CONNECT;
-  CLIST *t;
+  CLIST *t,*t2;
   LOGQ *q;
   char s[256];
   switch(p->pkt.type)
@@ -1985,6 +1986,30 @@ ProcessPacket(TPKT *p)
   case T_GROUPFOLLOW:
     GROUP_CACHE=p->pkt.uin;
     break;
+  case T_CONTACTREMOVED:
+    t=FindContactByUin(p->pkt.uin);
+    if(!t) break;
+    if (edchat_id)
+        {
+        void *data=FindGUIbyId(edchat_id,NULL);
+        if (data)
+              {
+	      EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+	      if (ed_struct)
+            	    {
+	            if (ed_struct->ed_contact==t)
+	                {
+	                GeneralFunc_flag1(edchat_id,1);
+                        edchat_id=0;
+	                }
+	            }
+              };
+        };
+    t2=t->prev;
+    DeleteContact(t);
+    if(t2) RecountMenu(t2,1);
+    break;
+    
   case T_STATUSCHANGE:
     t=FindContactByUin(p->pkt.uin);
     if (t)
@@ -3648,7 +3673,7 @@ void CreateEditChat(CLIST *t)
 }
 
 //-----------------------------------------------------------------------------
-#define EC_MNU_MAX 8
+#define EC_MNU_MAX 9
 
 void Quote(GUI *data)
 {
@@ -3734,6 +3759,37 @@ void AddCurContact(GUI *data)
   if ((ed_struct->ed_contact)&&(connect_state==3)) AskNickAndAddContact(ed_struct);
   GeneralFuncF1(1);
 }
+
+void ActionOnCurContact(GUI *data,int msg) 
+{
+  EDCHAT_STRUCT *ed_struct;
+  ed_struct=MenuGetUserPointer(data);
+  CLIST *t;
+  if ((t=ed_struct->ed_contact)&&(connect_state==3))
+      {
+      TPKT *p;
+      p=malloc(sizeof(PKT));
+      p->pkt.uin=t->uin;
+      p->pkt.type=msg;
+      p->pkt.data_len=0;
+      //AddStringToLog(t, 0x01, logtext, I_str,0xFFFFFFFF);
+      RecountMenu(t, 1);
+      SUBPROC((void *)SendAnswer,0,p);
+      };
+  GeneralFuncF1(1);
+}
+
+
+void RemoveCurContact(GUI *data) //by captain_SISka 21.12.2008
+{
+ ActionOnCurContact(data,T_REMOVECONTACT);
+}
+
+/*void IgnoreCurContact(GUI *data) //by captain_SISka 21.12.2008
+{
+ ActionOnCurContact(data,T_ADDIGNORE);
+}*/
+
 
 void SendAuthReq(GUI *data)
 {
@@ -3873,6 +3929,7 @@ static MENUITEM_DESC ecmenu_ITEMS[EC_MNU_MAX]=
   {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,NULL,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
 };
 
@@ -3887,6 +3944,7 @@ static const MENUPROCS_DESC ecmenu_HNDLS[EC_MNU_MAX]=
   SendAuthGrant,
   OpenLogfile,
   ClearLog,
+  RemoveCurContact
 };
 
 char ecm_contactname[64];
@@ -3950,6 +4008,7 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
     ecmenu_ITEMS[5].lgp_id_small=(int)lgpData[LGP_MnuSAuthGrt]; 
     ecmenu_ITEMS[6].lgp_id_small=(int)lgpData[LGP_MnuOpenLog]; 
     ecmenu_ITEMS[7].lgp_id_small=(int)lgpData[LGP_MnuClearCht]; 
+    ecmenu_ITEMS[8].lgp_id_small=(int)lgpData[LGP_MnuRemCont]; 
   
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,ed_struct,to_remove);
   }

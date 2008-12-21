@@ -166,6 +166,7 @@ void lgpLoadDefault()
   strcpy(en_lgp[LGP_MnuAddSml],              "Add smile");
   strcpy(en_lgp[LGP_MnuShInfo],              "Get short info");
   strcpy(en_lgp[LGP_MnuAddRen],              "Add/rename");
+  strcpy(en_lgp[LGP_MnuRemCont],             "Remove");
   strcpy(en_lgp[LGP_MnuSAuthReq],            "Send Auth Req");
   strcpy(en_lgp[LGP_MnuSAuthGrt],            "Send Auth Grant");
   strcpy(en_lgp[LGP_MnuOpenLog],             "Open logfile");
@@ -317,3 +318,4 @@ void lgpFreeLangPack(void)
   }
 }
 //---------------------------------------------------------------------------
+

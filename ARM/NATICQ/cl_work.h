@@ -21,6 +21,7 @@ void ResortCL(void);
 CLIST *AddContactOrGroup(CLIST **top, CLIST *p);
 CLIST *AddContact(unsigned int uin, char *name, unsigned int group, int local);
 CLIST *AddGroup(unsigned int grp, char *name);
+void DeleteContact(CLIST *p);
 
 void LoadLocalCL(void);
 

@@ -55,6 +55,7 @@ enum LGP_ID
   LGP_MnuAbout,
   //=================
   LGP_MnuQuote,
+  LGP_MnuRemCont,
   LGP_MnuAddSml,
   LGP_MnuShInfo,
   LGP_MnuAddRen,

@@ -253,6 +253,25 @@ int CompareContacts(CLIST *t, CLIST *p)
   return(strcmp_nocase(t->name,p->name));
 }
 
+void DeleteContact(CLIST *p)
+{  
+  if(p->prev)
+    {
+    //not first
+    ((CLIST *)p->prev)->next=p->next;
+    if(p->next) ((CLIST *)p->next)->prev=p->prev;    
+    }
+  else
+    {
+    //first  
+    cltop=p->next;  
+    cltop->prev=0;
+    };
+if (p->log) FreeLOGQ(&p->log);
+if (p->answer) mfree(p->answer);
+if (p->xtext) mfree(p->xtext);
+mfree(p);  
+};
 
 CLIST *AddContactOrGroup(CLIST **top, CLIST *p)
 {
