@@ -246,7 +246,7 @@
 #define FONT_E_20B 0x2C
 #define FONT_E_20BI 0x2E
 #define FONT_E_20I 0x2D
-#define FONT_E_20R 0x35
+#define FONT_E_20R 0x2B
 //#define FONT_E_22B UNDEFINED
 //#define FONT_E_22BI UNDEFINED
 //#define FONT_E_22I UNDEFINED
@@ -254,7 +254,7 @@
 #define FONT_E_24B 0x36
 #define FONT_E_24BI 0x38
 #define FONT_E_24I 0x37
-//#define FONT_E_24R UNDEFINED
+#define FONT_E_24R 0x35
 //#define FONT_E_25B UNDEFINED
 //#define FONT_E_25BI UNDEFINED
 //#define FONT_E_25I UNDEFINED
