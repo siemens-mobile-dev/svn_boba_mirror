@@ -527,7 +527,6 @@ void mGUI_onFocus(GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *)
   }
   DisableIDLETMR();   // Отключаем таймер выхода по таймауту
   data->state=2;
-  REDRAW();
 }
 
 void mGUI_onUnfocus(GUI *data, void (*mfree_adr)(void *))

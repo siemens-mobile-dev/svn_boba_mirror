@@ -1463,7 +1463,7 @@ int priority = 0;
         {
           char q[40];
           char *code = XML_Get_Attr_Value("code",err_node->attr);
-          sprintf(q,"ERR %d",code);
+          sprintf(q,"ERR %s",code);
           MsgBoxError(1,(int)q);
         }
       }
