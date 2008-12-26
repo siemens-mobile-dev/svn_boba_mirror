@@ -282,6 +282,7 @@
 #define LG_JENOJID          "Нет JIDа!"
 #define LG_JECONTACTHDR     "Контакт:"
 //moods
+#define LG_M_EMPTY          "Нет"
 #define LG_M_AFRAID         "Боязнь"
 #define LG_M_AMAZED         "Поражение"
 #define LG_M_ANGRY          "Сердитый"
@@ -621,6 +622,7 @@
 #define LG_JENOJID          "JID відсутній!"
 #define LG_JECONTACTHDR     "Контакт:"
 //moods
+#define LG_M_EMPTY          "Відсутній"
 #define LG_M_AFRAID         "Переляканий"
 #define LG_M_AMAZED         "Поразка"
 #define LG_M_ANGRY          "Сердитий"
@@ -960,6 +962,7 @@
 #define LG_JENOJID          "No JID!"
 #define LG_JECONTACTHDR     "Contact:"
 //moods
+#define LG_M_EMPTY         "Null"
 #define LG_M_AFRAID         "Afraid"
 #define LG_M_AMAZED         "Amazed"
 #define LG_M_ANGRY          "Angry"

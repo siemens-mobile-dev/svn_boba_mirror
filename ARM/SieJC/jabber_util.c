@@ -40,6 +40,8 @@ MUC_ITEM *muctop = NULL;
 TTime intimes; //для idle
 TDate indates;
 
+unsigned int m_num=0; // ид сообщения, любого!
+
 extern JABBER_STATE Jabber_state;
 const char* PRESENCES[PRES_COUNT] = {"online",
                                      "chat",
@@ -70,11 +72,36 @@ ONLINEINFO OnlineInfo = {0,0,NULL};
 // Context: HELPER
 void Send_Mood(char *mood, char *text)
 {
-  char *reply = malloc(2048);
-  sprintf(reply, "<iq type='set'>\n<pubsub xmlns='http://jabber.org/protocol/pubsub'>\n<publish node='http://jabber.org/protocol/mood'>\n<item>\n<mood xmlns='http://jabber.org/protocol/mood'>\n<%s/>\n<text>%s</text>\n</mood>\n</item>\n</publish>\n</pubsub>\n</iq>", mood, text);
-  SendAnswer(reply);
-  mfree(reply);
-  //mfree(text);
+  char *reply = malloc(1024);
+  char *_from = Mask_Special_Syms(My_JID_full);
+  
+  char mod0_t[]="<iq type='set' from='%s' id='SieJC_p%d'>"
+    "<pubsub xmlns='http://jabber.org/protocol/pubsub'>"
+      "<publish node='http://jabber.org/protocol/mood'>"
+        "<item><mood xmlns='http://jabber.org/protocol/mood'><%s/>";
+  char mod2_t[]="</mood></item></publish></pubsub></iq>";
+  
+  char modn_t[]="<iq type='set' from='%s' id='SieJC_p%d'>"
+    "<pubsub xmlns='http://jabber.org/protocol/pubsub'>"
+      "<publish node='http://jabber.org/protocol/mood'>"
+        "<item><mood xmlns='http://jabber.org/protocol/mood'/>"
+          "</item></publish></pubsub></iq>";  
+  if (mood) 
+   {
+     sprintf(reply, mod0_t, _from, m_num, mood);
+     if (strlen(text)>0) 
+     {
+       char s_t[256];
+       snprintf(s_t,256,"<text>%s</text>", text);
+       strcat(reply, s_t);
+     }
+     strcat(reply, mod2_t);
+   }
+  else sprintf(reply, modn_t,_from ,m_num);
+  SUBPROC((void*)_sendandfree, reply);
+  m_num++;
+  mfree(_from);
+  if (text) mfree(text);
 }
 
 /*
@@ -420,9 +447,6 @@ void Send_Roster_Query()
   UnlockSched();
 }
 
-unsigned int m_num=0;
-
-
 // Context: HELPER
 void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 {
@@ -679,10 +703,10 @@ void Enter_Conference(char *room, char *roomnick, char *roompass, char N_message
     };
   }
 
+  CLIST* Conference = CList_FindContactByJID(room);
   if(!IsAlreadyInList)
   {
     // Добавляем контакт конференции в ростер
-    CLIST* Conference = CList_FindContactByJID(room);
     if(!Conference)
     {
       CList_AddContact(room,room, SUB_BOTH, 0, 129);
@@ -692,6 +716,10 @@ void Enter_Conference(char *room, char *roomnick, char *roompass, char N_message
 //      Conference->res_list->status=PRESENCE_ONLINE;
 //    }
   }
+  if((Conference)&&(m_ex))
+    if(Conference->res_list)
+      if((Conference->res_list->status==PRESENCE_ONLINE)&&(!strcmp(Get_Resource_Name_By_FullJID(m_ex->conf_jid),roomnick))) return; //Уже там, и нечего перезаходить
+
   // Готовим структуру для передачи в HELPER
   MUC_ENTER_PARAM* par = malloc(sizeof(MUC_ENTER_PARAM));
 //  par->room_nick =ANSI2UTF8(roomnick, strlen(roomnick)*2);
@@ -1764,7 +1792,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   char c_id[]="id";
 
   // Если включено обслуживание запросов о получении...
-  {
+  
     XMLNode* xnode = XML_Get_Child_Node_By_Name(nodeEx,"x");
     if(xnode)
     {
@@ -1802,10 +1830,10 @@ void Process_Incoming_Message(XMLNode* nodeEx)
           CList_AddContact(XML_Get_Attr_Value(from,nodeEx->attr),XML_Get_Attr_Value(from,nodeEx->attr), SUB_BOTH, 0, 129);
         }
        }
-      }
+      } //end invite
+
      }
     }
-  }
 
   XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");
   XMLNode* msgnodes = XML_Get_Child_Node_By_Name(nodeEx,"subject");  

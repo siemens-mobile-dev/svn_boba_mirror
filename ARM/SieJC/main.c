@@ -108,6 +108,7 @@ char logmsg[512];
 
 JABBER_STATE Jabber_state = JS_NOT_CONNECTED;
 char My_Presence = PRESENCE_OFFLINE;
+char My_Mood_Presence = 0;
 
 // Флаг необходимости завершить работу
 char Quit_Required = 0;

@@ -6,8 +6,8 @@
 #include "main.h"
 #include "jabber_util.h"
 
-#define moods_items 61
-
+#define moods_items 62
+extern char My_Mood_Presence;
 extern const char PATH_TO_PIC[128];
 char PATH_TO_MOODS[256];
 int moodt_pos;
@@ -15,6 +15,7 @@ char *smood;
 
 const char *moods_texts[moods_items] = 
 {
+  LG_M_EMPTY,
   LG_M_AFRAID,
   LG_M_AMAZED,
   LG_M_ANGRY,
@@ -80,6 +81,7 @@ const char *moods_texts[moods_items] =
 
 char *moods[moods_items] = 
 {
+  "EMPTY",
   "afraid",
   "amazed",
   "angry",
@@ -165,7 +167,7 @@ int moodt_onkey(GUI *gui, GUI_MSG *msg)
 
 void moodt_ghook(GUI *gui, int cmd)
 {
-  if (cmd == 7)
+  if (cmd == TI_CMD_REDRAW)
   {
     static SOFTKEY_DESC sk = {0x0018, 0x0000, (int)LG_OK};
 #ifdef NEWSGOLD
@@ -209,19 +211,25 @@ INPUTDIA_DESC moodt_desc=
 
 void ShowMoodTextDialog(char *mood)
 {
-  smood = mood;
+  if (mood=="EMPTY")
+  {
+    smood=NULL;
+    SUBPROC((void *)Send_Mood, NULL, NULL);
+    return;
+  } else smood = mood;
+  
   WSHDR *ws = AllocWS(256);
   EDITCONTROL ec;
   void *ma=malloc_adr();
   void *eq=AllocEQueue(ma,mfree_adr());
   
   extern const char empty_t[];
-  
+
   wsprintf(ws, empty_t);
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec, ECT_NORMAL_TEXT, 0, ws, 256);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
   moodt_pos = AddEditControlToEditQend(eq,&ec,ma);
-      
+  FreeWS(ws);
   patch_header(&moodt_hdr);
   patch_input(&moodt_desc);
   CreateInputTextDialog(&moodt_desc,&moodt_hdr,eq,1,NULL);
@@ -231,23 +239,35 @@ static int moodsmenu_keyhook(void *data, GUI_MSG *msg)
 {
   if ((msg->keys==0x18)||(msg->keys==0x3D))
   {
-    ShowMoodTextDialog(moods[GetCurMenuItem(data)]);
+    My_Mood_Presence = GetCurMenuItem(data);
+    ShowMoodTextDialog(moods[My_Mood_Presence]);
     return 1;
   }
   return 0;
 }
 
+int moods_icons[moods_items];
+
 void moodsmenu_ghook(void *data, int cmd)
 {
-  if (cmd==0x0A)
+  if (cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();
+  }
+  if (cmd==TI_CMD_CREATE)
+  {
+    SetCursorToMenuItem(data,My_Mood_Presence);
+  }
+  if (cmd==TI_CMD_DESTROY)
+  {
+  for (int i = 0; i < moods_items; i++)
+   {
+    mfree((void*)moods_icons[i]);
+   }
   }
 }
 
 int moodsmenusoftkeys[]={0,1,2};
-
-int moods_icons[moods_items];
 
 static const SOFTKEY_DESC moodsmenu_sk[]=
 {
@@ -291,12 +311,14 @@ HEADER_DESC moods_menuhdr={0,0,131,21,NULL,(int)LG_MOODS,LGP_NULL};
 void Show_Moods_Menu()
 {
   sprintf(PATH_TO_MOODS, "%smoods\\", PATH_TO_PIC);
-  for (int i = 0; i < 61; i++)
+  for (int i = 0; i < moods_items; i++)
   {
     char *text = malloc(256);
     sprintf(text, "%s%s.png", PATH_TO_MOODS, moods[i]);
     moods_icons[i] = (int)text;
   }
   patch_header(&moods_menuhdr);
+  moods_menuhdr.icon = &moods_icons[My_Mood_Presence];
   CreateMenu(0,0,&moods_menu,&moods_menuhdr,0,moods_items,0,0);
 }
+// EOL,EOF
