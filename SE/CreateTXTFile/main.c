@@ -136,7 +136,7 @@ int onAccept(void * data, BOOK *)
         MessageBox(0x6fFFFFFF,STR("Write File Error!!!"),0, 1 ,5000,0);
       }
       fclose(f);
-      FreeBook(CreateFileBook);
+      FreeBook((BOOK*)CreateFileBook);
     }
     else
     {
@@ -271,6 +271,7 @@ void CreateOOMList(void)
   GUIObject_Softkey_SetAction(oom_menu,ACTION_BACK,DestroyOOM);
   GUIObject_Softkey_SetAction(oom_menu,ACTION_LONG_BACK,ExitActionList);
   GUIObject_Softkey_SetAction(oom_menu,ACTION_SELECT1,oom_onEnter);
+  GUIObject_Softkey_SetAction(oom_menu,0xBC3,oom_onEnter);
   ShowWindow(oom_menu);
 };
 
@@ -293,12 +294,12 @@ void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
     int str_id;
     textidname2id(L"DB_ILLEGAL_CHAR_TXT",SID_ANY_LEN,&str_id);
     MessageBox(0x6fFFFFFF,str_id,0, 1 ,5000,0);
-    FILEITEM * item_desc=DataBrowser_ItemDesc_Create();
+    FILEITEM * item_desc=FILEITEM_Create();
     item_desc->fname=new wchar_t[20];
     wstrcpy(item_desc->fname,string);
     FSX_RemoveIllegalSymbolsName(item_desc);
     CreateNameInput(Str2ID(item_desc->fname,0,SID_ANY_LEN),wstrlen(item_desc->fname),2);
-    DataBrowser_ItemDesc_Destroy(item_desc);
+    FILEITEM_Destroy(item_desc);
   }
   else
   {
