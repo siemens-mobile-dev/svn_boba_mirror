@@ -13,7 +13,7 @@ __root const unsigned int INK=0;
 __root const CFG_HDR cfghdr1={CFG_UINT,"Paper color",0,22};
 __root const unsigned int PAPER=1;
 
-__root const CFG_HDR cfghdr2={CFG_STR_UTF8,"Files path",3,63};
+__root const CFG_HDR cfghdr2={CFG_STR_UTF8,"Files path",0,63};
 __root const char ted_path[64]=DEFAULT_DISK ":\\ZBin\\TED\\";
 
 __root const CFG_HDR cfghdr3={CFG_UINT,"Display light",0,100};
@@ -31,6 +31,6 @@ __root const CFG_HDR cfghdr6={CFG_CBOX,"Auto format",0,3};
 __root const int AUTOF_MODE=0;
 __root const CFG_CBOX_ITEM cfgcbox6[3]={"Direct","DOS","Win"};
 
-__root const CFG_HDR cfghdr7={CFG_CBOX,"Default font",0,5};
+__root const CFG_HDR cfghdr7={CFG_CBOX,"Default font",0,6};
 __root const int AUTOF_FONT=1;
-__root const CFG_CBOX_ITEM cfgcbox7[5]={"4","6","8","14","16"};
+__root const CFG_CBOX_ITEM cfgcbox7[6]={"4","6","8","14","16","Large"};

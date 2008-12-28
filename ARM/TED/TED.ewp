@@ -341,7 +341,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\INC\</state>
         </option>
         <option>
           <name>CCInlineThreshold</name>
@@ -559,8 +559,8 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
-          <state>16</state>
+          <version>8</version>
+          <state>17</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2205,7 +2205,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2391,7 +2391,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3029,7 +3029,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3215,7 +3215,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3307,7 +3307,7 @@
           <debug>0</debug>
           <option>
             <name>CCDefines</name>
-            <state></state>
+            <state>NEWSGOLD</state>
           </option>
           <option>
             <name>CCPreprocFile</name>
@@ -3755,7 +3755,7 @@
           <debug>0</debug>
           <option>
             <name>CCDefines</name>
-            <state></state>
+            <state>NEWSGOLD</state>
           </option>
           <option>
             <name>CCPreprocFile</name>

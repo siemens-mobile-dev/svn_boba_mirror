@@ -27,6 +27,10 @@ extern int win_dos_koi;
 extern const char wintranslation[];
 extern const char koi8translation[];
 
+extern void CharWidthForCodepage();
+
+extern char chars_width[];
+
 static const char ctype[128]=
 {
   2,1,1,1,1,2,1,1, 2,3,1,1,1,1,2,1,
@@ -92,6 +96,7 @@ unsigned int ConvertFormat(int fin,int fs,int fmt)
   s=FL_loader(fin,0xFFFFFFFF);
 
   if (win_dos_koi==0xFF) win_dos_koi=def_code ();
+  CharWidthForCodepage();
 
   //Подготавливаем массив ct
   c0=0;
@@ -145,7 +150,7 @@ unsigned int ConvertFormat(int fin,int fs,int fmt)
       if ((c1>' ')&&(fmt==2))
       {
 	us[d++]=' '; //Если сл. символ - буква, добавляем отступ
-	sl++;
+	sl+=chars_width[' ']; //добавим ширину символа
       }
       continue;
     }
@@ -155,7 +160,8 @@ unsigned int ConvertFormat(int fin,int fs,int fmt)
       us[d]=c0;
       //if ((c0==' ')&&sl) last_space=d; //Запоминаем последний пробел
       d++;
-      sl++;
+      sl+=chars_width[c0]; //добавим ширину символа
+//      sl++;
       if (sl>max_x)
       {
 	//Слишком длинная строка, ищем, куда вставить перенос
@@ -177,15 +183,20 @@ unsigned int ConvertFormat(int fin,int fs,int fmt)
 	    d=FL_saver(fs,d);
 	    us[d++]=0;
 	    us[d++]=c0;
-	    sl=1;
+	    sl=chars_width[c0]; //ширина символа в накопитель
 	    break;
 	  }
 	  if ((c==4)&&(pp<d))
 	  {
+            unsigned int wc;
 	    //Режем по пробелу
 	    if (us[pp-1]<2) goto L_CUT; //Первый пробел не обрезаем
 	    us[pp]=0; //Обрезаем по пробелу и признак форматирования
-	    sl=(d-pp)-1;
+            sl = 0;
+            for(wc = pp+1; wc < d; wc++)
+              sl+=chars_width[us[wc]];
+                
+	    //sl=(d-pp)-1;
 	    d=FL_saver(fs,d); //Сливаем не слитое
 	    //last_space=0xFFFF;
 	    break;
@@ -207,6 +218,7 @@ unsigned int ConvertFormat(int fin,int fs,int fmt)
 	      c=GetCharType(us[pm-2]);
 	      if ((pm<(d-1))&&(c>0)&&(c<4))
 	      {
+                unsigned int wc;
 		if (pm==pg2)
 		{
 		  //Если гласная непостредственно справа, проверяем не одна ли она
@@ -232,7 +244,12 @@ unsigned int ConvertFormat(int fin,int fs,int fmt)
 		us[pm++]='-';
 		us[pm++]=0;
 		d+=2; //Т.к. вставили 2 символа
-		sl=(d-pm);
+
+                sl = 0;
+                for(wc = pm; wc < d; wc++)
+                  sl+=chars_width[us[wc]];
+            
+  //              sl=(d-pm);
 		d=FL_saver(fs,d); //Сливаем не слитое
 		break;
 	      L_NOPERE:

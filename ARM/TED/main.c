@@ -77,6 +77,7 @@ volatile int stk_fhandle=-1;
 
 //Флаг необходимости перерисовать экран
 volatile unsigned int draw_mode=255;
+char font_file[256];
 volatile unsigned int font_size=6;
 
 volatile unsigned int clip_pasted;
@@ -178,7 +179,12 @@ unsigned int dbat[MAXBLOCK]; //Таблица распределения блоков нижнего стека во вре
 unsigned int ubat[MAXBLOCK]; //Таблица распределения блоков верхнего стека во временном файлe
 char bfree[MAXBLOCK]; //Таблица занятости блоков (0 - свободен)
 
-char font[4096]; //Буфер для шрифта
+//char font[4096]; //Буфер для шрифта
+unsigned char *font = 0; //Буфер для шрифта
+char chars_width[256]; //Ширины символов
+char chars_width_src[256]; //Ширины символов исходные
+int FW, FH; //Размер матрицы символа
+
 char editline[256]; //Буфер для редактирования строки
 char filename[128];
 struct
@@ -316,6 +322,28 @@ unsigned int char8to16(int c)
     return(dos2unicode[c-128]);
   }
   return(c);
+}
+
+void CharWidthForCodepage()
+{
+  int c;
+
+  for(c = 0; c < 128; c++)
+  chars_width[c] = chars_width_src[c];
+  for(c = 128; c < 256; c++)
+  {
+    switch(win_dos_koi)
+    {
+    case 1:
+      //Win->Dos
+      chars_width[c] = chars_width_src[wintranslation[c-128]];
+      break;
+    case 2:
+      //Koi8->Dos
+      chars_width[c] = chars_width_src[koi8translation[c-128]];
+      break;
+    }
+  }
 }
 
 // RECODING TABLE
@@ -474,11 +502,12 @@ unsigned int char16to8(unsigned int c)
 //Печать символа
 void DrawChar(int c,int x,int y)
 {
-  char *d; //Куда рисуем
-  char *s; //Откуда рисуем
-  int i;
-  int ms;
-  int md;
+  char *d, *dd; //Куда рисуем
+//  char *s; //Откуда рисуем
+  int i, j;
+  int xb, xsb;
+  int mask_h, mask_l;
+
   if (c>=128)
     switch(win_dos_koi)
     {
@@ -491,114 +520,38 @@ void DrawChar(int c,int x,int y)
       c=koi8translation[c-128];
       break;
     }
-  i=8;
-  switch(font_size)
+
+  xb = x >> 3;
+  xsb = x&7;
+  mask_h = (0xFF<<(8-xsb))&0xFF;
+  mask_l = (0xFF>>xsb)&0xFF;
+  unsigned char *l = malloc(FW+1);
+
+  dd=myscr+(y*(FH*SCR_MODULO)+xb); //Основной экран
+
+  for(i = 0; i < FH; i++)
   {
-  case 4:
-    s=font+(c<<3);
-    //Обрабатываем фонт размером 4
-    d=myscr+(y*(8*SCR_MODULO)+(x>>1)); //Основной экран
-    ms=0xF0;
-    md=0x0F;
-    if (x&1) {ms=0x0F;md=0xF0;}
-    //Печать в тетраде
-    do
+    l[FW] = 0;
+    memcpy(l, &font[FW*FH*c+i*FW], FW);
+    for(j = FW; j; j--)
     {
-      *d=(*d&md)|(*s++&ms);
-      d+=SCR_MODULO;
+      l[j] &= mask_l;
+      l[j] |= l[j-1]<<(8-xsb);
+      l[j-1] >>= xsb;
     }
-    while(--i);
-    break;
-  case 6:
-    s=font+(c<<3);
-    //Обрабатываем фонт размером 6
-    d=myscr+(y*(8*SCR_MODULO)+((x>>2)*3)); //0E:160C - Основной экран
-    switch(x&3)
-    {
-    case 0:
-      do
-      {
-	*d=(*d&0x03)|(*s++);
-	d+=SCR_MODULO;
-      }
-      while(--i);
-      break;
-    case 1:
-      do
-      {
-	*d=(*d&0xFC)|(*s>>6);
-	d++;
-	*d=(*d&0x0F)|(*s++<<2);
-	d+=SCR_MODULO-1;
-      }
-      while(--i);
-      break;
-    case 2:
-      d++;
-      do
-      {
-	*d=(*d&0xF0)|(*s>>4);
-	d++;
-	*d=(*d&0x3F)|(*s++<<4);
-	d+=SCR_MODULO-1;
-      }
-      while(--i);
-      break;
-    case 3:
-      d+=2;
-      do
-      {
-	*d=(*d&0xC0)|(*s++>>2);
-	d+=SCR_MODULO;
-      }
-      while(--i);
-      break;
-    }
-    break;
-  case 8:
-    s=font+(c<<3);
-    //Обрабатываем фонт размером 8
-    d=myscr+(y*(8*SCR_MODULO)+x); //0E:160C - Основной экран
-    do
-    {
-      *d=*s++;
-      d+=SCR_MODULO;
-    }
-    while(--i);
-    break;
-  case 14:
-    i=14;
-    s=font+(c*14);
-    //Обрабатываем фонт размером 8
-    d=myscr+(y*(14*SCR_MODULO)+x); //0E:160C - Основной экран
-    do
-    {
-      *d=*s++;
-      d+=SCR_MODULO;
-    }
-    while(--i);
-    break;
-  case 16:
-    i=16;
-    s=font+(c*16);
-    //Обрабатываем фонт размером 16
-    d=myscr+(y*(16*SCR_MODULO)+x); //0E:160C - Основной экран
-    do
-    {
-      *d=*s++;
-      d+=SCR_MODULO;
-    }
-    while(--i);
-    break;
-  default:
-    break;
+    l[0] |= (*dd)&mask_h;
+    for(j = 0, d = dd; j < FW+1 && xsb+j < SCR_MODULO; j++, d++)
+      *d = l[j];
+    dd += SCR_MODULO;
   }
+  mfree(l);
+  
 }
 
 //Печать строки из буфера текста
 void drawStkStr(char *p, unsigned int y, unsigned int vp, int ep)
 {
-  unsigned int i=0;
+  unsigned int iw=0;
   unsigned int c;
   do
   {
@@ -607,40 +560,51 @@ void drawStkStr(char *p, unsigned int y, unsigned int vp, int ep)
     {
       if (ep>=0) editline[ep++]=c;
       p++;
-      if (vp!=0) vp--; else DrawChar(c,i++,y);
+      if (vp!=0)
+        vp--;
+      else
+      {
+        DrawChar(c,iw,y); 
+        iw += chars_width[c];
+      }
     }
     else
     {
-      DrawChar(' ',i++,y);
+      DrawChar(' ',iw,y);
+      iw += chars_width[' '];
     }
   }
-  while(i<max_x);
+  while(iw<max_x);
   if (ep>=0) while((c=*p++)) editline[ep++]=c; //Добиваем остаток строки
 }
 
 void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
 {
-  unsigned int i=0;
+  unsigned int i=0, iw=0;
   unsigned int c;
   unsigned long spcsum;
   unsigned long spcadd;
   unsigned int spcs=0;
+
   
   //Надо посчитать пробелы
-  i=0;
   if (*p)
   {
-    i=1; //Считаем со второго символа
-    while((c=p[i])) //Пока не конец строки
+//    i=1; //Считаем со второго символа
+    iw += chars_width[p[0]];
+    while((c=p[i++])) //Пока не конец строки
     {
       if (c==' ') spcs++; //Считаем пробелы
-      i++;
+      iw += chars_width[c];
     }
   }
-  if (i>max_x)
+  if (iw>max_x)
     i=0; //Не добавляем пробелы, строка длиннее, чем экран
   else
-    i=max_x-i; //Теперь в i - общее количество добавляемых пробелов
+  {
+//    i=max_x-i; //Теперь в i - общее количество добавляемых пробелов
+    i=(max_x-iw)/chars_width[' ']; //Теперь в i - общее количество добавляемых пробелов
+  }
   spcadd=0;
   spcsum=0;
   if (spcs)
@@ -650,12 +614,12 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
   }
   spcsum+=spcadd; //Начальное значение
   
-  i=0;
+  iw=0;
   c=*p;
   if (c)
   {
     if (ep>=0) editline[ep++]=c;
-    if (vp!=0) vp--; else DrawChar(c,i++,y);
+    if (vp!=0) vp--; else {DrawChar(c,iw,y); iw += chars_width[c];}
     p++;
   }
   else goto L2;
@@ -665,7 +629,7 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
     if (c)
     {
       if (ep>=0) editline[ep++]=c;
-      if (vp!=0) vp--; else DrawChar(c,i++,y);
+      if (vp!=0) vp--; else {DrawChar(c,iw,y); iw += chars_width[c];}
       if (c==' ')
       {
 	//Добавляем пробелы
@@ -681,10 +645,11 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
     else
     {
     L2:
-      DrawChar(' ',i++,y);
+      DrawChar(' ',iw,y);
+      iw += chars_width[' '];
     }
   }
-  while(i<max_x);
+  while(iw<max_x);
   if (ep>=0) while((c=*p++)) editline[ep++]=c; //Добиваем остаток строки
 }
 
@@ -1020,6 +985,7 @@ void WordLeft(void)
 
 void WordRight(void)
 {
+  int p, x, xw;
   if (!editline[curpos]) return;
   for(;;)
   {
@@ -1027,9 +993,15 @@ void WordRight(void)
     if (!editline[curpos]) break;
     if ((editline[curpos-1]==' ')&&(editline[curpos]!=' ')) break;
   }
-  while((curpos-viewpos)>=max_x)
+  
+  for(x=curpos-viewpos, xw=0, p=dsp+viewpos; x; x--)
+    xw += chars_width[*(dstk+p++)];
+
+  while(xw>=max_x)
   {
     viewpos+=8;
+    for(x=curpos-viewpos, xw=0, p=dsp+viewpos; x; x--)
+      xw += chars_width[*(dstk+p++)];
   }
 }
 
@@ -1203,7 +1175,7 @@ void DrawScreen(void)
     L_WELLCOME2:
       DrawRoundedFrame(0,GetFontYSIZE(FONT_SMALL)+YDISP,scr_w-1,scr_h-1,0,0,0,paper,paper);
       str_2ws(e_ws,filename,126);
-      wsprintf(info_ws,"Text viewer/editor\nversion 1.6\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006\nby Rst7/CBSIE\n\n%w",e_ws);
+      wsprintf(info_ws,"Text viewer/editor\nversion 1.7\n" __DATE__ "\n" __TIME__ "\nCopyright(C)2006-2008\nby Rst7/CBSIE\n\n%w",e_ws);
       DrawString(info_ws,0,GetFontYSIZE(FONT_SMALL)+9+YDISP,scr_w-1,ScreenH()-1,FONT_SMALL,2,ink,paper);
       return;
     case 0:
@@ -1215,25 +1187,21 @@ void DrawScreen(void)
       }
     L_CURSOR:
       {
-	unsigned int x=curpos-viewpos;
+	unsigned int x, xw;
 	unsigned int y=curline-viewline;
 	unsigned int dy=editmode?((HeaderH()+7)&(~7)):0;
+
 	my=editmode?max_y_emode:max_y;
-	if ((x<max_x)&&(y<my)&&(!cursor_off))
+
+        for(x=curpos-viewpos, xw=0, p=dsp+viewpos; x && *(dstk+p); x--)
+          xw += chars_width[*(dstk+p++)];
+        for(; x; x--)
+          xw += chars_width[' '];
+    
+	if ((xw<max_x)&&(y<my)&&(!cursor_off))
 	{
-	  int xx=x*(font_size>8?8:font_size);
-	  int yy=y*(font_size>8?font_size:8)+dy;
-	  //static const int cur_color=0x40FFFFFF;
-	  if (font_size>8)
-	  {
-	    //DrawRoundedFrame(xx,yy,xx+8,yy+font_size,0,0,0,(int *)&cur_color,GetPaletteAdrByColorIndex(23));
-	    DrawRoundedFrame(xx,yy+YDISP,xx+8,yy+YDISP+font_size,0,0,0,ink,GetPaletteAdrByColorIndex(23));
-	  }
-	  else
-	  {
-	    //DrawRoundedFrame(xx,yy,xx+font_size,yy+8,0,0,0,(int *)&cur_color,GetPaletteAdrByColorIndex(23));
-	    DrawRoundedFrame(xx,yy+YDISP,xx+font_size,yy+YDISP+8,0,0,0,ink,GetPaletteAdrByColorIndex(23));
-	  }
+	  int yy=y*FH+dy;
+	  DrawRoundedFrame(xw,yy+YDISP,xw+chars_width[*(dstk+p)],yy+YDISP+FH,0,0,0,ink,GetPaletteAdrByColorIndex(23));
 	}
       }
       break;
@@ -1248,6 +1216,7 @@ void DrawSoftMenu(void);
 
 void doCurRight(void)
 {
+  int p, xw = 0, x;
   if (cursor_off)
   {
     if (curpos>=(256-8)) return;
@@ -1258,7 +1227,22 @@ void doCurRight(void)
   }
   if (curpos>=256) return;
   curpos++;
-  if ((curpos-viewpos)>=max_x)
+  
+  p=dsp+viewpos;
+  
+  for(x=curpos-viewpos; x; x--)
+  {
+    char c = *(dstk+p);
+    if(c!=13)
+    {
+      xw += chars_width[c];
+      p++;
+    }
+    else
+      xw += chars_width[' '];
+  };
+        
+  if (xw>=max_x)
   {
     viewpos+=8;
   }
@@ -1771,6 +1755,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       break;
     case '#':
       if (win_dos_koi>1) win_dos_koi=0; else win_dos_koi++;
+      CharWidthForCodepage();
       draw_mode=1;
       break;
     default:
@@ -1854,42 +1839,43 @@ void CreateSaveAsDialog(void)
   CreateInputTextDialog(&sf_inp_desc,&sf_inp_hdr,eq,1,0);
 }
 
-void loadfont(int flag)
+void LoadFont(int flag)
 {
-  char fn_font[128];
+  char fn_font[128], tmp;
   int fin;
-  unsigned int ul;
-  int bytew;
-  int pixw;
-  int eh;
+  unsigned ul;
+  int i, eh;
   
-  snprintf(fn_font,sizeof(fn_font),"%s%d.fnt",ted_path,font_size);
+  snprintf(fn_font,sizeof(fn_font),"%sm%d.tfn",ted_path,font_size);
+  
   if ((fin=fopen(fn_font,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
-    fread(fin,font,sizeof(font),&ul);
+
+    fread(fin,&tmp,1,&ul);
+    FW = tmp;
+    fread(fin,&tmp,1,&ul);
+    FH = tmp;
+    fread(fin,fn_font,16,&ul);
+
+    if(font)
+      mfree(font);
+    font = malloc(256*FH*FW);
+    for(i = 0; i < 256; i++)
+    {
+      fread(fin,&chars_width_src[i],1,&ul);
+      fread(fin,font+i*FW*FH,FW*FH,&ul);
+    }
+    
     fclose(fin,&ul);
   }
-  bytew=(ScreenW()-1)>>3;
-  pixw=bytew*8;
+
+  CharWidthForCodepage();
+
   sheight_emode=eh=(sheight=ScreenH()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
-  switch(font_size)
-  {
-  case 16:
-    max_y_emode=eh/16;
-    max_y=(ScreenH()-YDISP)/16;
-    max_x=pixw/8;
-    break;
-  case 14:
-    max_y_emode=eh/14;
-    max_y=(ScreenH()-YDISP)/14;
-    max_x=pixw/8;
-    break;
-  default:
-    max_y_emode=eh/8;
-    max_y=(ScreenH()-YDISP)/8;
-    max_x=pixw/font_size;
-    break;
-  }
+  
+  max_y_emode=eh/FH;
+  max_y=(ScreenH()-YDISP)/FH;
+  max_x=ScreenW()-1;
   zeromem(myscr,sizeof(myscr));
   if(flag)
   {
@@ -1897,10 +1883,12 @@ void loadfont(int flag)
     draw_mode=1;
     if (!terminated) REDRAW(); //Перерисовываем
   }
+
 }
 
 void setfont(char sz)
 {
+//  strcpy(font_file, fname);
   font_size=sz;
   if (disk_access==FIRSTLOAD) //Пришли из первой загрузки
   {
@@ -1909,7 +1897,8 @@ void setfont(char sz)
   }
   disk_access=FIRSTLOAD;
   draw_mode=255; //Экран приветствия
-  SUBPROC((void *)loadfont,1);
+//  SUBPROC((void *)loadfont,1);
+  SUBPROC((void *)LoadFont,1);
   GeneralFuncF1(1); //Закрываем меню
 }
 
@@ -1918,6 +1907,7 @@ void load_setfont6(void){setfont(6);}
 void load_setfont8(void){setfont(8);}
 void load_setfont14(void){setfont(14);}
 void load_setfont16(void){setfont(16);}
+void load_setfontL(void){setfont(0);}
 
 void FirstLoadFile(unsigned int fmt);
 
@@ -1963,13 +1953,14 @@ void load_save(void)
   CreateSaveAsDialog();
 }
 
-void *loadmenu_HNDLS[10]=
+void *loadmenu_HNDLS[11]=
 {
   (void *)load_setfont4,
   (void *)load_setfont6,
   (void *)load_setfont8,
   (void *)load_setfont14,
   (void *)load_setfont16,
+  (void *)load_setfontL,
   (void *)load_direct,
   (void *)load_format,
   (void *)load_eolspc,
@@ -1977,13 +1968,14 @@ void *loadmenu_HNDLS[10]=
   (void *)load_save
 };
 
-MENUITEM_DESC loadmenu_ITEMS[10]=
+MENUITEM_DESC loadmenu_ITEMS[11]=
 {
   {NULL,(int)"Font size = 4" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Font size = 6" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Font size = 8" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Font size = 14",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Font size = 16",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Large font"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Direct load"   ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"DOS format"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"WIN format"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -1995,20 +1987,20 @@ HEADER_DESC loadmenu_HDR={0,0,0,0,icon,(int)"General...",LGP_NULL};
 
 MENU_DESC loadmenu_STRUCT=
 {
-  8,NULL,NULL,NULL,
+  9,NULL,NULL,NULL,
   menusoftkeys,
   &menu_skt,
   0,
   NULL,
   loadmenu_ITEMS,
   (MENUPROCS_DESC*)&loadmenu_HNDLS,
-  8
+  9
 };
 
 int DrawLoadMenu(void)
 {
   int n;
-  if (disk_access==FIRSTLOAD) n=8; else n=10;
+  if (disk_access==FIRSTLOAD) n=9; else n=11;
   *((int *)(&loadmenu_STRUCT.n_items))=n;
   patch_header(&loadmenu_HDR);
   return CreateMenu(0,0,&loadmenu_STRUCT,&loadmenu_HDR,0,n,0,0);
@@ -2401,11 +2393,13 @@ void FirstLoadFile(unsigned int fmt)
       font_size=HISTORY.font;
       fmt=HISTORY.fmt;
       win_dos_koi=HISTORY.codepage;
+      CharWidthForCodepage();
       cursor_off=HISTORY.cursor_off;
     }
     else
     {
       win_dos_koi=0xFF; //Неизвестный
+      CharWidthForCodepage();
       switch(AUTOF_FONT) //Шрифт
       {
       case 0: font_size=4; break;
@@ -2414,6 +2408,7 @@ void FirstLoadFile(unsigned int fmt)
       case 2: font_size=8; break;
       case 3: font_size=14; break;
       case 4: font_size=16; break;
+      case 5: font_size=0; break;
       }
       zeromem(&HISTORY.line,4*6); //Все на самом верху
       HISTORY.cursor_off=cursor_off=1; //Выключить курсор
@@ -2434,8 +2429,10 @@ void FirstLoadFile(unsigned int fmt)
     }
   }
   if ((fmt&0x7F)>2) fmt=0;
+
   switch(font_size)
   {
+  case 0:
   case 4:
   case 6:
   case 8:
@@ -2446,8 +2443,10 @@ void FirstLoadFile(unsigned int fmt)
     font_size=6;
     break;
   }
+  
   //Загружаем шрифт
-  loadfont(0);
+  //loadfont(0);
+  LoadFont(0);
   
   //Конвертируем все строки в верхний стек
   fs=fopen(stkfile,A_Create+A_ReadWrite+A_BIN,P_READ+P_WRITE,&ul); //Файл верхнего стека
@@ -2463,6 +2462,7 @@ void FirstLoadFile(unsigned int fmt)
     case 0:
     default:
       if (win_dos_koi==0xFF) win_dos_koi=0;
+      CharWidthForCodepage();
       usp=ConvertSimple(fin,fs);
       break;
     }
@@ -2513,6 +2513,7 @@ void maincsm_oncreate(CSM_RAM *data)
   MAIN_CSM*csm=(MAIN_CSM*)data;
   zeromem(main_gui,sizeof(MAIN_GUI));
   
+  *font_file = 0;
   info_ws=AllocWS(512);
   upinfo_ws=AllocWS(256);
   e_ws=AllocWS(256);
@@ -2551,6 +2552,7 @@ void Killer(void)
   {
     SaveHistory();
   }
+  mfree(font);
   mfree(ustk);
   mfree(dstk);
   FreeWS(info_ws);
