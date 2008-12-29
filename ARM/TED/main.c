@@ -62,18 +62,10 @@ volatile int edit_id;
 
 volatile int text_changed=0;
 
-void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
-{
-  RECT rc;
-  DRWOBJ drwobj;
-  StoreXYWHtoRECT(&rc,x,y,img->w,img->h);
-  SetPropTo_Obj5(&drwobj,&rc,0,img);
-  SetColor(&drwobj,pen,brush);
-  DrawObject(&drwobj);
-}
-
 volatile unsigned int editmode=0;
 volatile int stk_fhandle=-1;
+
+volatile int rotate = 0;
 
 //Флаг необходимости перерисовать экран
 volatile unsigned int draw_mode=255;
@@ -192,6 +184,7 @@ struct
   char name[128]; //Имя файла
   char font; //Размер шрифта
   char fmt; //Тип форматера
+  char rotate; //Как повёрнут экран
   char codepage; //Кодировка
   char cursor_off; //Если 1 - выключен курсор при просмотре
   unsigned long line; //Номер строки для перехода
@@ -212,6 +205,52 @@ IMGHDR MyScrHdr = {SCR_WIDTH,320-YDISP,0x1,myscr};
 #else
 IMGHDR MyScrHdr = {255,255,0x1,myscr};
 #endif
+
+
+void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
+{
+  char *rscr = malloc(SCR_MODULO*320);
+  unsigned char block[8];
+  int xx, yy, i, dy, mx, my;
+  RECT rc;
+  DRWOBJ drwobj;
+  StoreXYWHtoRECT(&rc,x,y,img->w,img->h);
+
+  if(rotate && img==&MyScrHdr)
+  {
+#ifdef ELKA
+    IMGHDR R_hdr = {SCR_WIDTH,320-YDISP,0x1,rscr};
+#else
+    IMGHDR R_hdr = {255,255,0x1,rscr};
+#endif  
+    mx = ScreenH()-1;
+    my = ScreenW()-1;
+  
+    for(xx = 0; xx <= (mx>>3); xx++)
+    {
+      for(yy = 0; yy <= (my>>3); yy++)
+      {
+        for(dy = 0; dy < 8; dy++)
+        {
+          for(i = 0; i < 8; i++)
+          {
+            block[i] <<= 1;
+            block[i] |= ((*(myscr + ((yy<<3)+dy)*SCR_MODULO+xx))>>(7-i))&1;
+          }
+        }
+        for(i = 0; i < 8; i++)
+          *(rscr+((((mx>>3)-xx)<<3)+i)*SCR_MODULO+yy) = block[7-i];
+      }
+    }
+   SetPropTo_Obj5(&drwobj,&rc,0,&R_hdr);
+  }
+  else
+    SetPropTo_Obj5(&drwobj,&rc,0,img);
+  
+  SetColor(&drwobj,pen,brush);
+  DrawObject(&drwobj);
+  mfree(rscr);
+}
 
 /*GBSTMR tmr2sec;
 
@@ -820,6 +859,7 @@ void SaveHistory(void)
   history_pos=SearchHistory()&0x7FFF;
   memcpy(&HISTORY,ss,sizeof(HISTORY));
   memcpy(HISTORY.name,filename,128);
+  HISTORY.rotate=rotate;
   HISTORY.font=font_size;
   HISTORY.line=curline;
   HISTORY.total=total_line;
@@ -1035,6 +1075,18 @@ void DrawScreen(void)
   int scr_w=ScreenW();
   int scr_h=ScreenH();
   
+  int r_sw, r_sh;
+  if(rotate)
+  {
+    r_sw = scr_h;
+    r_sh = scr_w;
+  }
+  else
+  {
+    r_sw = scr_w;
+    r_sh = scr_h;
+  }
+  
   char *ink=GetPaletteAdrByColorIndex(INK);
   char *paper=GetPaletteAdrByColorIndex(PAPER);
   
@@ -1111,7 +1163,7 @@ void DrawScreen(void)
       //DrawCursor(curpos-viewpos,curline-viewline);
       {
 	//Рисуем скролл-бар
-	char *d=myscr+((scr_w-1)>>3); //Последний байт
+	char *d=myscr+((r_sw-1)>>3); //Последний байт
 	if (total_line)
 	{
 	  y=((editmode?sheight_emode-8:sheight-8)*curline)/total_line;
@@ -1134,7 +1186,7 @@ void DrawScreen(void)
 	  d+=SCR_MODULO;
 	  p++;
 	}
-	while(p<scr_h);
+	while(p<r_sh);
       }
       if (editmode)
       {
@@ -1142,9 +1194,9 @@ void DrawScreen(void)
         int rh=((h+7)&(~7));
         int s=SoftkeyH();
         int rs=((s+7)&(~7));
-	MyScrHdr.h=scr_h-rh-rs;
-	DrawRoundedFrame(0,h,scr_w-1,rh-1,0,0,0,paper,paper);
-	DrawRoundedFrame(0,scr_h-rs,scr_w-1,scr_h-s-1,0,0,0,paper,paper);
+	MyScrHdr.h=r_sh-rh-rs;
+	DrawRoundedFrame(0,h,r_sw-1,rh-1,0,0,0,paper,paper);
+	DrawRoundedFrame(0,r_sh-rs,r_sw-1,r_sh-s-1,0,0,0,paper,paper);
 	DrwImg(&MyScrHdr,0,rh,ink,paper);
       }
       else
@@ -1200,8 +1252,11 @@ void DrawScreen(void)
     
 	if ((xw<max_x)&&(y<my)&&(!cursor_off))
 	{
-	  int yy=y*FH+dy;
-	  DrawRoundedFrame(xw,yy+YDISP,xw+chars_width[*(dstk+p)],yy+YDISP+FH,0,0,0,ink,GetPaletteAdrByColorIndex(23));
+	  int yy=y*FH;
+          if(rotate)
+  	    DrawRoundedFrame(yy,r_sw-xw+YDISP-dy,yy+FH,r_sw-xw-chars_width[*(dstk+p)]+YDISP-dy,0,0,0,ink,GetPaletteAdrByColorIndex(23));
+          else
+	    DrawRoundedFrame(xw,yy+YDISP+dy,xw+chars_width[*(dstk+p)],yy+dy+YDISP+FH,0,0,0,ink,GetPaletteAdrByColorIndex(23));
 	}
       }
       break;
@@ -1424,6 +1479,8 @@ int ed_inp_onkey(GUI *data, GUI_MSG *msg)
     case GREEN_BUTTON:
     case UP_BUTTON:
     case DOWN_BUTTON:
+    case LEFT_BUTTON:
+    case RIGHT_BUTTON:
     case VOL_UP_BUTTON:
     case VOL_DOWN_BUTTON:
       editmode=k;
@@ -1674,11 +1731,25 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       DrawSoftMenu();
       return(0);
     case UP_BUTTON:
-      if (cursor_off)
-	PageUp(1);
+      if(rotate)
+      {
+        if (msg->gbsmsg->msg!=LONG_PRESS)
+          doCurRight();
+        else
+        {
+          WordRight();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
+      }
       else
-	LineUp();
-      draw_mode=1;
+      {
+        if (cursor_off)
+          PageUp(1);
+        else
+          LineUp();
+        draw_mode=1;
+      }
       break;
       /*    case RECORD_BUTTON:
       if (cursor_off||(dsp==STKSZ)) break;
@@ -1696,49 +1767,133 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     }
     }*/
     case DOWN_BUTTON:
-      if (cursor_off)
-	PageDw(1);
+      if(rotate)
+      {
+        if (msg->gbsmsg->msg!=LONG_PRESS)
+          doCurLeft();
+        else
+        {
+          WordLeft();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
+      }
       else
-	LineDw();
-      draw_mode=1;
+      {
+        if (cursor_off)
+          PageDw(1);
+        else
+          LineDw();
+        draw_mode=1;
+      }
       break;
     case VOL_UP_BUTTON:
-    case '2':
       PageUp(max_y);
       draw_mode=1;
       break;
+    case '2':
+      if(rotate)
+      {
+        WordRight();
+        cursor_off&=0xFE;
+        draw_mode=1;
+      }
+      else
+      {
+        PageUp(max_y);
+        draw_mode=1;
+      }
+      break;
     case VOL_DOWN_BUTTON:
-    case '8':
       PageDw(max_y);
       draw_mode=1;
+      break;
+    case '8':
+      if(rotate)
+      {
+        WordLeft();
+        cursor_off&=0xFE;
+        draw_mode=1;
+      }
+      else
+      {
+        PageDw(max_y);
+        draw_mode=1;
+      }
       break;
     case '5':
       cursor_off^=1;
       draw_mode=1;
       break;
     case LEFT_BUTTON:
-      if (msg->gbsmsg->msg!=LONG_PRESS)
+      if(rotate)
       {
-	doCurLeft();
-	break;
+        if (cursor_off)
+          PageUp(1);
+        else
+          LineUp();
+        draw_mode=1;
       }
+      else
+      {
+        if (msg->gbsmsg->msg!=LONG_PRESS)
+          doCurLeft();
+        else
+        {
+          WordLeft();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
+      }
+      break;
     case '4':
-      //На слово влево
-      WordLeft();
-      cursor_off&=0xFE;
-      draw_mode=1;
+      if(rotate)
+      {
+        PageUp(max_y);
+        draw_mode=1;        
+      }
+      else
+      {
+        //На слово влево
+        WordLeft();
+        cursor_off&=0xFE;
+        draw_mode=1;
+      }
       break;
     case RIGHT_BUTTON:
-      if (msg->gbsmsg->msg!=LONG_PRESS)
+      if(rotate)
       {
-	doCurRight();
-	break;
+        if (cursor_off)
+          PageDw(1);
+        else
+          LineDw();
+        draw_mode=1;
       }
+      else
+      {
+        if (msg->gbsmsg->msg!=LONG_PRESS)
+          doCurRight();
+        else
+        {
+          WordRight();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
+      }
+      break;
     case '6':
-      //На слово вправо
-      WordRight();
-      cursor_off&=0xFE;
-      draw_mode=1;
+      if(rotate)
+      {
+        PageDw(max_y);
+        draw_mode=1;
+      }
+      else
+      {
+        //На слово вправо
+        WordRight();
+        cursor_off&=0xFE;
+        draw_mode=1;
+      }
       break;
     case '9':
       ToEOL();
@@ -1969,12 +2124,25 @@ void LoadFont(int flag)
   }
 
   CharWidthForCodepage();
-
-  sheight_emode=eh=(sheight=ScreenH()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
   
-  max_y_emode=eh/FH;
-  max_y=(ScreenH()-YDISP)/FH;
-  max_x=ScreenW()-1;
+  if(rotate)
+  {
+    sheight_emode=eh=(sheight=ScreenW()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
+    
+    max_y_emode=eh/FH;
+    max_y=(ScreenW()-YDISP)/FH;
+    max_x=ScreenH()-4;
+  }
+  else
+  {
+    sheight_emode=eh=(sheight=ScreenH()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
+    
+    max_y_emode=eh/FH;
+    max_y=(ScreenH()-YDISP)/FH;
+    max_x=ScreenW()-4;
+  }
+
+    
   zeromem(myscr,sizeof(myscr));
   if(flag)
   {
@@ -2003,14 +2171,26 @@ void setfont(int sz)
   GeneralFuncF1(1); //Закрываем меню
 }
 
-void load_setfont4(void){setfont(4);}
-void load_setfont6(void){setfont(6);}
-void load_setfont8(void){setfont(8);}
-void load_setfont14(void){setfont(14);}
-void load_setfont16(void){setfont(16);}
-void load_setfontL(void){setfont(0);}
-
 void FirstLoadFile(unsigned int fmt);
+
+void do_rotate(void)
+{
+  if(rotate)
+    rotate = 0;
+  else
+    rotate = 1;
+  HISTORY.rotate = rotate;
+  if (disk_access==FIRSTLOAD) //Пришли из первой загрузки
+  {
+    ShowMSG(1,(int)"Screen rotated!");
+    return;
+  }
+  disk_access=FIRSTLOAD;
+  draw_mode=255; //Экран приветствия
+
+  GeneralFuncF1(1);
+  SUBPROC((void *)FirstLoadFile,HISTORY.fmt);
+}
 
 void load_direct(void)
 {
@@ -2072,18 +2252,21 @@ int load_menu_onkey(void *data, GUI_MSG *msg)
     switch(n-i)
     {
     case 0:
-      load_direct();
+      do_rotate();
       break;
     case 1:
-      load_format();
+      load_direct();
       break;
     case 2:
-      load_eolspc();
+      load_format();
       break;
     case 3:
-      load_pad();
+      load_eolspc();
       break;
     case 4:
+      load_pad();
+      break;
+    case 5:
       load_save();
       break;
     }
@@ -2126,18 +2309,21 @@ void load_menu_iconhndl(void * data, int curitem, void * user_pointer)
      switch(curitem-i)
      {
       case 0:
-        strcpy(tmp, "Direct load");
+        strcpy(tmp, "Rotate");
         break;
       case 1:
-        strcpy(tmp, "DOS format");
+        strcpy(tmp, "Direct load");
         break;
       case 2:
-        strcpy(tmp, "WIN format");
+        strcpy(tmp, "DOS format");
         break;
       case 3:
-        strcpy(tmp, "Padding on/off");
+        strcpy(tmp, "WIN format");
         break;
       case 4:
+        strcpy(tmp, "Padding on/off");
+        break;
+      case 5:
         strcpy(tmp, "Save as...");
         break;
       default:
@@ -2188,7 +2374,7 @@ int DrawLoadMenu(void)
  
   n = fonts_count;
  
-  if (disk_access==FIRSTLOAD) n+=3; else n+=5;
+  if (disk_access==FIRSTLOAD) n+=4; else n+=6;
 //  *((int *)(&loadmenu_STRUCT.n_items))=n;
   patch_header(&loadmenu_HDR);
   return CreateMenu(0,0,&loadmenu_STRUCT,&loadmenu_HDR,0,n,0,0);
@@ -2580,6 +2766,7 @@ void FirstLoadFile(unsigned int fmt)
     if (SearchHistory()&0x8000)
     {
       font_size=HISTORY.font;
+      rotate=HISTORY.rotate;
       fmt=HISTORY.fmt;
       win_dos_koi=HISTORY.codepage;
       cursor_off=HISTORY.cursor_off;
@@ -2602,6 +2789,7 @@ void FirstLoadFile(unsigned int fmt)
       HISTORY.total=1;
       //      HISTORY.fmt=0;
       HISTORY.fmt=255; //Первый запуск!!!!
+      HISTORY.rotate=0;
       if (ENA_AUTOF)
       {
         HISTORY.fmt=fmt=AUTOF_MODE;
@@ -2648,6 +2836,7 @@ void FirstLoadFile(unsigned int fmt)
   total_line=viewline=curline; //Находимся в последней строке
   HISTORY.font=font_size;
   HISTORY.fmt=fmt;
+  HISTORY.rotate=rotate;
   memcpy(HISTORY.name,filename,sizeof(HISTORY.name));
   //Расчитываем, куда перейти
   if (HISTORY.total==total_line)
@@ -2769,14 +2958,20 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	PageUp(max_y_emode);
 	break;
       case UP_BUTTON:
-	LineUp();
+	if(!rotate) LineUp();
 	break;
+      case LEFT_BUTTON:
+        if(rotate) LineUp();
+        break;
       case VOL_DOWN_BUTTON:
 	PageDw(max_y_emode);
 	break;
       case DOWN_BUTTON:
-	LineDw();
+	if(!rotate) LineDw();
 	break;
+      case RIGHT_BUTTON:
+        if(rotate) LineDw();
+        break;
       case 0xFFF: //Просто меню
 	break;
       default:
