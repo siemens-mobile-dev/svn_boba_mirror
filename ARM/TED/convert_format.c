@@ -88,7 +88,7 @@ unsigned int ConvertFormat(int fin,int fs,int fmt)
   extern unsigned int STKSZ50;
 
   int maxstk=STKSZ50;
-
+  
   d=0;
   us[d]=0;
   sl=0;

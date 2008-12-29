@@ -77,8 +77,8 @@ volatile int stk_fhandle=-1;
 
 //Флаг необходимости перерисовать экран
 volatile unsigned int draw_mode=255;
-char font_file[256];
-volatile unsigned int font_size=6;
+volatile unsigned int font_size=4;
+volatile unsigned int fonts_count = 0;
 
 volatile unsigned int clip_pasted;
 
@@ -1839,6 +1839,101 @@ void CreateSaveAsDialog(void)
   CreateInputTextDialog(&sf_inp_desc,&sf_inp_hdr,eq,1,0);
 }
 
+typedef struct FontListItem FontListItem;
+
+struct FontListItem
+{
+  char *name;
+  char *file;
+  FontListItem *next;
+};
+
+FontListItem *FontList = NULL;
+
+FontListItem *CreateFontListItem(char *n, char *f)
+{
+  FontListItem *ret = malloc(sizeof(FontListItem));
+  ret->next = NULL;
+  ret->name = malloc(strlen(n)+1);
+  ret->file = malloc(strlen(f)+1);
+  strcpy(ret->name, n);
+  strcpy(ret->file, f);
+  return ret;
+}
+                                  
+void AddFont(char *n, char *f)
+{
+  FontListItem *cur = FontList;
+  if(!FontList)
+  {
+    FontList = CreateFontListItem(n, f);
+    return;
+  }
+  while(cur->next)
+    cur = cur->next;
+  cur->next = CreateFontListItem(n, f);
+}
+
+void DeleteFonts(FontListItem *head)
+{
+  if(!head) return;
+  if(head->next)
+    DeleteFonts(head->next);
+  mfree(head->name);
+  mfree(head->file);
+  mfree(head);
+  fonts_count = 0;
+}
+
+int GetFontList()
+{
+  DIR_ENTRY de;
+  unsigned int err, ul;
+  char *path, *fname, tmp;
+  char fn_font[17];
+  int fin, n = 0;
+  
+  fn_font[16] = 0;
+  
+  DeleteFonts(FontList);
+  FontList = NULL;
+    
+  path = malloc(strlen(ted_path)+7);
+  strcpy(path, ted_path);
+  strcat(path, "*.tfn");
+  
+  if (FindFirstFile(&de,path,&err))
+  {
+    do
+    {
+      if (!(de.file_attr&FA_DIRECTORY))
+      {
+        fname = malloc(strlen(de.folder_name) + strlen(de.file_name)+2);
+        strcpy(fname, de.folder_name);
+        strcat(fname, "\\");
+        strcat(fname, de.file_name);
+        
+        if ((fin=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
+        {
+          fread(fin,&tmp,1,&ul);
+          fread(fin,&tmp,1,&ul);
+          fread(fin,fn_font,16,&ul);
+          fclose(fin,&ul);
+        }
+        AddFont(fn_font, fname);
+        n++;
+        mfree(fname);
+      }
+    }
+    while(FindNextFile(&de,&err));
+  }
+  FindClose(&de,&err);
+  
+  mfree(path);  
+  fonts_count = n;
+  return n;
+}
+
 void LoadFont(int flag)
 {
   char fn_font[128], tmp;
@@ -1846,9 +1941,13 @@ void LoadFont(int flag)
   unsigned ul;
   int i, eh;
   
-  snprintf(fn_font,sizeof(fn_font),"%sm%d.tfn",ted_path,font_size);
+  FontListItem *cur = FontList;
   
-  if ((fin=fopen(fn_font,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
+  //snprintf(fn_font,sizeof(fn_font),"%sm%d.tfn",ted_path,font_size);
+  for(i = 0; i < font_size && cur; i++)
+    cur=cur->next;
+
+  if ((fin=fopen(cur->file,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
   {
 
     fread(fin,&tmp,1,&ul);
@@ -1886,15 +1985,17 @@ void LoadFont(int flag)
 
 }
 
-void setfont(char sz)
+void setfont(int sz)
 {
 //  strcpy(font_file, fname);
+
   font_size=sz;
   if (disk_access==FIRSTLOAD) //Пришли из первой загрузки
   {
     ShowMSG(1,(int)"Font selected!");
     return;
   }
+  
   disk_access=FIRSTLOAD;
   draw_mode=255; //Экран приветствия
 //  SUBPROC((void *)loadfont,1);
@@ -1917,6 +2018,7 @@ void load_direct(void)
   draw_mode=255;
   disk_access=FIRSTLOAD;
   HISTORY.fmt=0;
+  
   GeneralFuncF1(1);
   SUBPROC((void *)FirstLoadFile,0);
 }
@@ -1927,6 +2029,7 @@ void load_format(void)
   draw_mode=255;
   disk_access=FIRSTLOAD;
   HISTORY.fmt=1;
+  
   GeneralFuncF1(1);
   SUBPROC((void *)FirstLoadFile,1);
 }
@@ -1937,6 +2040,7 @@ void load_eolspc(void)
   draw_mode=255;
   disk_access=FIRSTLOAD;
   HISTORY.fmt=2;
+    
   GeneralFuncF1(1);
   SUBPROC((void *)FirstLoadFile,2);
 }
@@ -1944,31 +2048,112 @@ void load_eolspc(void)
 void load_pad(void)
 {
   HISTORY.fmt^=0x80;
+  
   GeneralFuncF1(1);
 }
 
 void load_save(void)
 {
   GeneralFuncF1(1);
+  
   CreateSaveAsDialog();
 }
 
-void *loadmenu_HNDLS[11]=
+int load_menu_onkey(void *data, GUI_MSG *msg)
 {
-  (void *)load_setfont4,
-  (void *)load_setfont6,
-  (void *)load_setfont8,
-  (void *)load_setfont14,
-  (void *)load_setfont16,
-  (void *)load_setfontL,
-  (void *)load_direct,
-  (void *)load_format,
-  (void *)load_eolspc,
-  (void *)load_pad,
-  (void *)load_save
-};
+  int i, n = GetCurMenuItem(data);
+  FontListItem *cur = FontList;
+  
+  for(i = 0; i < n && cur; i++)
+    cur=cur->next;
+  
+  if(!cur && msg->keys==0x3D)
+  {
+    switch(n-i)
+    {
+    case 0:
+      load_direct();
+      break;
+    case 1:
+      load_format();
+      break;
+    case 2:
+      load_eolspc();
+      break;
+    case 3:
+      load_pad();
+      break;
+    case 4:
+      load_save();
+      break;
+    }
+    return (0);
+  }
+  
+  if (msg->keys==0x3D && cur)
+  {
+    setfont(i);
+    return(0);
+  }
+  return (0);
+}
 
-MENUITEM_DESC loadmenu_ITEMS[11]=
+void load_menu_ghook(void *data, int cmd)
+{
+  if (cmd == TI_CMD_FOCUS)
+    DisableIDLETMR();
+}
+
+void load_menu_iconhndl(void * data, int curitem, void * user_pointer)
+{
+  WSHDR * ws;
+  int i, len;
+  void * item = AllocMenuItem(data);
+  FontListItem *cur = FontList;
+  
+  for(i = 0; i < curitem && cur; i++)
+    cur=cur->next;
+  
+  if (cur)
+  {
+    len = strlen(cur->name);
+    ws = AllocMenuWS(data, len + 4);
+    str_2ws(ws, cur->name, len);
+  }
+  else
+  {
+    char tmp[32];
+     switch(curitem-i)
+     {
+      case 0:
+        strcpy(tmp, "Direct load");
+        break;
+      case 1:
+        strcpy(tmp, "DOS format");
+        break;
+      case 2:
+        strcpy(tmp, "WIN format");
+        break;
+      case 3:
+        strcpy(tmp, "Padding on/off");
+        break;
+      case 4:
+        strcpy(tmp, "Save as...");
+        break;
+      default:
+        strcpy(tmp, "Error");
+        break;       
+     }
+    len = strlen(tmp);
+    ws = AllocMenuWS(data, len + 4);
+    str_2ws(ws, tmp, len);
+  }
+  SetMenuItemText(data, item, ws, curitem);
+}
+
+
+MENUITEM_DESC *loadmenu_ITEMS;
+/*MENUITEM_DESC loadmenu_ITEMS[11]=
 {
   {NULL,(int)"Font size = 4" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Font size = 6" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -1981,27 +2166,30 @@ MENUITEM_DESC loadmenu_ITEMS[11]=
   {NULL,(int)"WIN format"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Padding on/off",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Save as..."    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
-};
+};*/
 
 HEADER_DESC loadmenu_HDR={0,0,0,0,icon,(int)"General...",LGP_NULL};
 
 MENU_DESC loadmenu_STRUCT=
 {
-  9,NULL,NULL,NULL,
+  8,load_menu_onkey,load_menu_ghook,NULL,
   menusoftkeys,
   &menu_skt,
   0,
-  NULL,
-  loadmenu_ITEMS,
-  (MENUPROCS_DESC*)&loadmenu_HNDLS,
-  9
+  load_menu_iconhndl,
+  0,
+  0, //(MENUPROCS_DESC*)&loadmenu_HNDLS,
+  0
 };
 
 int DrawLoadMenu(void)
 {
-  int n;
-  if (disk_access==FIRSTLOAD) n=9; else n=11;
-  *((int *)(&loadmenu_STRUCT.n_items))=n;
+  int n=0;
+ 
+  n = fonts_count;
+ 
+  if (disk_access==FIRSTLOAD) n+=3; else n+=5;
+//  *((int *)(&loadmenu_STRUCT.n_items))=n;
   patch_header(&loadmenu_HDR);
   return CreateMenu(0,0,&loadmenu_STRUCT,&loadmenu_HDR,0,n,0,0);
 }
@@ -2364,6 +2552,7 @@ void FirstLoadFile(unsigned int fmt)
 {
   int fin;
   int fs;
+  int fnts;
   unsigned int ul;
   
   extern const int ENA_AUTOF;
@@ -2393,22 +2582,20 @@ void FirstLoadFile(unsigned int fmt)
       font_size=HISTORY.font;
       fmt=HISTORY.fmt;
       win_dos_koi=HISTORY.codepage;
-      CharWidthForCodepage();
       cursor_off=HISTORY.cursor_off;
     }
     else
     {
       win_dos_koi=0xFF; //Неизвестный
-      CharWidthForCodepage();
       switch(AUTOF_FONT) //Шрифт
       {
-      case 0: font_size=4; break;
+      case 0: font_size=0; break;
       default:
-      case 1: font_size=6; break;
-      case 2: font_size=8; break;
-      case 3: font_size=14; break;
-      case 4: font_size=16; break;
-      case 5: font_size=0; break;
+      case 1: font_size=1; break;
+      case 2: font_size=2; break;
+      case 3: font_size=3; break;
+      case 4: font_size=4; break;
+      case 5: font_size=5; break;
       }
       zeromem(&HISTORY.line,4*6); //Все на самом верху
       HISTORY.cursor_off=cursor_off=1; //Выключить курсор
@@ -2430,24 +2617,13 @@ void FirstLoadFile(unsigned int fmt)
   }
   if ((fmt&0x7F)>2) fmt=0;
 
-  switch(font_size)
-  {
-  case 0:
-  case 4:
-  case 6:
-  case 8:
-  case 14:
-  case 16:
-    break;
-  default:
-    font_size=6;
-    break;
-  }
+  fnts = fonts_count;
+  if(font_size>fnts) font_size = fnts-1;
   
   //Загружаем шрифт
-  //loadfont(0);
+//  GetFontList();
   LoadFont(0);
-  
+ 
   //Конвертируем все строки в верхний стек
   fs=fopen(stkfile,A_Create+A_ReadWrite+A_BIN,P_READ+P_WRITE,&ul); //Файл верхнего стека
   if (fs==-1) DiskErrorMsg(3);
@@ -2513,7 +2689,7 @@ void maincsm_oncreate(CSM_RAM *data)
   MAIN_CSM*csm=(MAIN_CSM*)data;
   zeromem(main_gui,sizeof(MAIN_GUI));
   
-  *font_file = 0;
+ // *font_file = 0;
   info_ws=AllocWS(512);
   upinfo_ws=AllocWS(256);
   e_ws=AllocWS(256);
@@ -2552,6 +2728,7 @@ void Killer(void)
   {
     SaveHistory();
   }
+  DeleteFonts(FontList);
   mfree(font);
   mfree(ustk);
   mfree(dstk);
@@ -2721,6 +2898,7 @@ int main(char *exename, char *fname)
     }
   }
   UpdateCSMname();
+  fonts_count = GetFontList();
   if ((ustk=malloc(STKSZ)))
   {
     if ((dstk=malloc(STKSZ)))
