@@ -308,8 +308,8 @@ void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode)
   XMLNode *binval = XML_Get_Child_Node_By_Name(photonode, "BINVAL");
   int ln = strlen(binval->value);
   char *buf = malloc(ln+1);
-  buf[ln+1]=0x0;
   memcpy(buf, binval->value, ln);
+  buf[ln+1]='=';
   SUBPROC((void*)DecodePhoto, full_path, buf);
 }
 

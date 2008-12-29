@@ -259,7 +259,7 @@ int ReadColor(const char * fname)
   int hFile;
   FSTATS fstat;
   
-  char * color_file = (char *)malloc(strlen(color_PATH) + strlen(cur_color_name) + 16);
+  char * color_file = (char *)malloc(strlen(color_PATH) + strlen(fname) + 16);
   strcpy(color_file, color_PATH);
   strcat(color_file, fname);
   strcat(color_file, ".bcfg");
@@ -340,6 +340,18 @@ void select_color_menu_ghook(void *gui, int cmd)
       sbtop = sbtop->next;
       mfree(sb);
     }    
+  }
+  if (cmd == TI_CMD_CREATE)
+  {
+    int cur_it=0;
+    SEL_COLOR *sb = sbtop;
+    while(sb)
+    {
+      if(!strcmp(sb->cfgname, cur_color_name)) break;
+      sb = sb->next;
+      cur_it++;
+    }
+    SetCursorToMenuItem(gui,cur_it);
   }
   if (cmd == TI_CMD_FOCUS)
   {
@@ -451,3 +463,4 @@ void ShowSelectColorMenu()
   patch_header(&select_color_menu_header);
   CreateMenu(0, 0, &select_color_menu_struct, &select_color_menu_header, 0, n_bcfg, sbtop, 0);
 }
+// EOL, EOF

@@ -59,7 +59,6 @@ extern const char PATH_TO_PIC[];
 extern const int IS_IP;
 extern const int USE_SASL;
 extern const int USE_ZLIB;
-extern const unsigned int DEF_SKR;
 extern const int IDLE_ICON;
 extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
@@ -313,7 +312,8 @@ void _start_vibra()
   void _stop_vibra(void);
   if(Is_Vibra_Enabled)
   {
-    SetVibration(VIBRA_POWER);
+    extern const unsigned int vibraPower;
+    SetVibration(vibraPower);
     GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,_stop_vibra);
   }
 }
@@ -1532,6 +1532,19 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
       }
     }
+    if (msg->msg==MSG_RECONFIGURE_REQ)
+    {
+     char * color_file = (char *)malloc(strlen(color_PATH) + strlen(cur_color_name) + 16);
+     strcpy(color_file, color_PATH);
+     strcat(color_file, cur_color_name);
+     strcat(color_file, ".bcfg");
+    if (stricmp(color_file,(char *)msg->data0)==0)
+    {
+       ReadColor(cur_color_name);
+    }
+    mfree(color_file);
+    }
+    
 #ifndef IDLEUPD
 #ifndef SCRP
 	if (IDLE_ICON)

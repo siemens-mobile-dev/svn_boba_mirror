@@ -171,6 +171,7 @@
 #define LG_AUTO_JOIN        "Автовход в конференцию"
 
 #define LG_SETUPSND         "Настройка звука"
+#define LG_SETUPVIBRPWR     "Мощность вибры"
 #define LG_SNDVOL           "Громкость"
 #define LG_SNDMSGSND        "Звук отправки"
 #define LG_SNDMSGMUC        "Звук приема из MUC"
@@ -207,7 +208,7 @@
 #define LG_KBD_LAYOUT       "\"Раскладка\" клавиатуры"
 #define LG_KBD1             "Раскладка 1"
 #define LG_KBD2             "Раскладка 2"
-#define LG_SKROLL           "СКРОЛЛИНГ"
+#define LG_SKROLL           "Скроллинг"
 
 #define LG_AUTOSTATUS       "Автостатус"
 #define LG_AS_ENABLED       "Включен"
@@ -511,6 +512,7 @@
 #define LG_AUTO_JOIN        "Автовхід в конференцію"
 
 #define LG_SETUPSND         "Налаштування звуку"
+#define LG_SETUPVIBRPWR     "Потужність вібри"
 #define LG_SNDVOL           "Гучність"
 #define LG_SNDMSGSND        "Звук відправки"
 #define LG_SNDMSGMUC        "Звук прийому із MUC"
@@ -851,7 +853,8 @@
 #define LG_AUTO_JOIN        "MUC auto join"
 
 #define LG_SETUPSND         "Sounds setup"
-#define LG_SNDVOL           "sndVolume"
+#define LG_SETUPVIBRPWR     "Vibra power"
+#define LG_SNDVOL           "Sound Volume"
 #define LG_SNDMSGSND        "Sound Msg Send"
 #define LG_SNDMSGMUC        "Sound Msg Conf"
 #define LG_SNDMSGPM         "Sound Msg PM"

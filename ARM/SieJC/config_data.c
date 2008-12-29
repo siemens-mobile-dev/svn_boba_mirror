@@ -113,12 +113,12 @@ __root const CFG_CBOX_ITEM cfgcbox7_1[24]={
   "-11:00"
   };
 
-// Настройка звуков
+// Настройка сигналов
 ////////////////////////////////////////////////////////////////////////////////
 __root const CFG_HDR cfghdr_SOUNDS_SETUP={CFG_LEVEL,LG_SETUPSND,1,0};
 
-//__root const CFG_HDR cfghdr13={CFG_CHECKBOX,LG_SNDSTATE,0,2};
-//__root const int Default_Sounds_State=1;
+__root const CFG_HDR cfghdr130={CFG_UINT,LG_SETUPVIBRPWR,10,100};
+__root const unsigned int vibraPower=10;
 
 __root const CFG_HDR cfghdr14={CFG_UINT,LG_SNDVOL,0,6};
 __root const unsigned int sndVolume=6;
@@ -169,7 +169,7 @@ __root const CFG_HDR cfghdr23={CFG_STR_UTF8,LG_PATHSMILECFG,0,63};
 __root const char SMILE_FILE[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles.cfg";
 
 __root const CFG_HDR cfghdr233={CFG_STR_UTF8,LG_PATHSMILEDIR,0,63};
-__root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles";
+__root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles\\";
 
 __root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFAULTDISK,0,127};
 __root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
@@ -208,14 +208,16 @@ __root const CFG_HDR cfghdr141={CFG_STR_WIN1251, LG_PLAYER_STATUS ,0,255};
 __root const char DEFTEX_PLAYER[256]="Слушаю";
 
 __root const CFG_HDR cfghdr142={CFG_STR_WIN1251,"MUC offline",0,255};
-__root const char DEFTEX_MUCOFFLINE[256]="Off";
+__root const char DEFTEX_MUCOFFLINE[256]="";
 
 __root const CFG_HDR cfghdr_DEFTEXTSTAT_LEVEL_END={CFG_LEVEL,"",0,0};
 
+///////////////
 
 __root const CFG_HDR cfghdr35={CFG_UINT,LG_SKROLL,0,12};
 __root const unsigned int DEF_SKR=10;
 
+//Шрифты
 __root const CFG_HDR cfghdr_FONTS={CFG_LEVEL,LG_VIEW,1,0};
 
 __root const CFG_HDR cfghdr36={CFG_CBOX,LG_ROSTER_FONT,0,6};
@@ -259,7 +261,7 @@ __root const CFG_HDR cfghdr_AUTOSTATUS={CFG_LEVEL, LG_AUTOSTATUS, 1,0};
 __root const CFG_HDR cfghdr40={CFG_CHECKBOX,LG_AS_ENABLED,0,2};
 __root const int AUTOSTATUS_ENABLED = 0;
 
-__root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,0,60};
+__root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,1,60};
 __root const unsigned int AUTOSTATUS_TIME = 5;
 
 __root const CFG_HDR cfghdr42={CFG_STR_WIN1251, LG_AS_TEXT, 0, 255};
