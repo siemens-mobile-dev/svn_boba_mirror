@@ -24,8 +24,9 @@ extern const char VERSION_NAME[];
 extern const char VERSION_VERS[];
 extern const char OS[];
 extern const int USE_SASL;
-extern const int USE_ZLIB;
 extern const int DELIVERY_EVENTS;
+extern const int COMPOSING_EVENTS;
+extern const int USE_ATTENTION;
 extern const int DISPLAY_POPUPS;
 extern char My_JID_full[];
 extern char My_JID[];
@@ -305,24 +306,39 @@ void Send_LastActivity_Request(char *dest_jid)
 // Возвращаемую строку необходимо освобождать!
 char *Generate_Caps()
 {
-  char data_tmpl[]="client/mobile//SieJC %s:%i"
-    "<http://jabber.org/protocol/disco#info"
-    "<http://jabber.org/protocol/muc"
-    "<jabber:iq:last"
-    "<jabber:iq:time"
-    "<jabber:iq:version"
-    "<urn:xmpp:ping";
-    //"<"JABBER_X_EVENT"; //Не полная подержка
+  char answer[400];
+  sprintf(answer, "client/mobile//SieJC %s:%i"
+    "<%s"
+    "<%s"
+    "<%s"
+    "<%s"
+    "<%s"
+    "<%s", VERSION_VERS, __SVN_REVISION__, DISCO_INFO, XMLNS_MUC, IQ_IDLE, IQ_TIME, IQ_VERSION, JABBER_URN_PING);
+      
+  if(DELIVERY_EVENTS)
+  {
+    char xevents_feature[]="<"JABBER_XMPP_RECEIPTS;
+    strcat(answer, xevents_feature);
+  }
+
+  if(COMPOSING_EVENTS)
+  {
+    char xevents_feature[]="<"XMLNS_CHATSTATES;
+    strcat(answer, xevents_feature);
+  }
+
+  if(USE_ATTENTION)
+  {
+    char xevents_feature[]="<"JABBER_URN_ATTENTION;
+    strcat(answer, xevents_feature);
+  }
+      
   SHA_CTX ctx;
-  char *hash_str = malloc(256);
-  zeromem(hash_str,256);
   char *hash2 = malloc(256);
   zeromem(hash2,256);
-  snprintf(hash_str,256, data_tmpl, VERSION_VERS, __SVN_REVISION__);
   SHA1_Init(&ctx);
-  SHA1_Update(&ctx, hash_str, strlen(hash_str));
+  SHA1_Update(&ctx, answer, strlen(answer));
   SHA1_Final(hash2,&ctx);
-  mfree(hash_str);
   char *Result_Resp = malloc(256);
   zeromem(Result_Resp, 256);
   Base64Encode(hash2, strlen(hash2),Result_Resp, 256);
@@ -453,21 +469,20 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 /*
   <message to='romeo@montague.net' id='message22'>
       <body>Art thou not Romeo, and a Montague?</body>
-      <x xmlns='jabber:x:event'>
-        <offline/>
-        <delivered/>
-        <displayed/>
-        <composing/>
-      </x>
-    </message>
+      <request xmlns='urn:xmpp:receipts'/>
+  </message>
 */
+
   char *_jid = Mask_Special_Syms(jid);
-  char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body><x xmlns='jabber:x:event'></x></message>";
+  char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
   if(mess->IsGroupChat)
   {
      sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_GCHAT, mess->body);
   }else sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_CHAT, mess->body);
+  if (DELIVERY_EVENTS && !mess->IsGroupChat) strcat(msg_buf,"<request xmlns='urn:xmpp:receipts'/>"); //В конференции не посылается
+  if (COMPOSING_EVENTS && !mess->IsGroupChat) strcat(msg_buf,"<active xmlns='http://jabber.org/protocol/chatstates'/>");
+  strcat(msg_buf,"</message>");
   mfree(mess->body);
   mfree(mess);
   mfree(_jid);
@@ -482,32 +497,58 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
   GetDateTime(&indates, &intimes);
 }
 
-extern const int COMPOSING_EVENTS;
  // Context: HELPER
-void SendComposing(char* jid)
+void SendComposing(char* jid, IPC_MESSAGE_S *mess)
 {
+  /*
+  <message 
+    from='bernardo@shakespeare.lit/pda'
+    to='francisco@shakespeare.lit/elsinore'
+    type='chat'>
+  <composing xmlns='http://jabber.org/protocol/chatstates'/>
+</message>
+*/
+  extern const int COMPOSING_EVENTS;
   if(!COMPOSING_EVENTS)return;
   char* _jid = Mask_Special_Syms(jid);
-  const char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><composing/><id>SieJC_%d</id></x></message>";
+  const char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><composing xmlns='http://jabber.org/protocol/chatstates'/></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
-  sprintf(msg_buf, mes_template, _jid, m_num, m_num);
+  if(mess->IsGroupChat)
+  {
+     sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_GCHAT);
+  }else sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_CHAT);
+
   mfree(_jid);
   SendAnswer(msg_buf);
+  mfree(mess);
   mfree(msg_buf);
   m_num++;
 }
 
  // Context: HELPER
-void CancelComposing(char* jid)
+void CancelComposing(char* jid, IPC_MESSAGE_S *mess)
 {
+  /*
+  <message 
+    from='juliet@capulet.com/balcony'
+    to='romeo@shakespeare.lit/orchard'
+    type='chat'>
+  <thread>act2scene2chat1</thread>
+  <active xmlns='http://jabber.org/protocol/chatstates'/>
+</message>
+  */
   if(!COMPOSING_EVENTS)return;
   char* _jid= Mask_Special_Syms(jid);
-  const char mes_template[]="<message to='%s' id='SieJC_%d'><x xmlns='jabber:x:event'><id>SieJC_%d</id></x></message>";
+  const char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><active xmlns='http://jabber.org/protocol/chatstates'/></message>";
   char* msg_buf = malloc(MAX_MSG_LEN*2+200);
-  sprintf(msg_buf, mes_template, _jid, m_num-1, m_num-1);
+  if(mess->IsGroupChat)
+  {
+     sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_GCHAT);
+  }else sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_CHAT);
   mfree(_jid);
   SendAnswer(msg_buf);
   mfree(msg_buf);
+  mfree(mess);
   m_num++;
 }
 
@@ -567,7 +608,7 @@ void Report_IDLEInfo(char* id, char *to)
 void Report_DiscoInfo(char* id, char *to)
 {
   char answer[400];
-  sprintf(answer, "<identity category='client' type='mobile'/>"
+  sprintf(answer, "<identity category='client' type='phone'/>"
                     "<feature var='%s'/>"
                     "<feature var='%s'/>"
                     "<feature var='%s'/>"
@@ -576,10 +617,22 @@ void Report_DiscoInfo(char* id, char *to)
                     "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC, IQ_TIME, IQ_IDLE,JABBER_URN_PING);
   if(DELIVERY_EVENTS)
   {
-    char xevents_feature[]="<feature var='"JABBER_X_EVENT"'/>";
+    char xevents_feature[]="<feature var='urn:xmpp:receipts'/>";
     strcat(answer, xevents_feature);
   }
-//  ShowMSG(0,(int)to);
+
+  if(USE_ATTENTION)
+  {
+    char xevents_feature[]="<feature var='"JABBER_URN_ATTENTION"'/>";
+    strcat(answer, xevents_feature);
+  }
+
+  if(COMPOSING_EVENTS)
+  {
+    char xevents_feature[]="<feature var='http://jabber.org/protocol/chatstates'/>";
+    strcat(answer, xevents_feature);
+  }
+  //  ShowMSG(0,(int)to);
   SendIq(to, IQTYPE_RES, id, DISCO_INFO, answer);
 
   mfree(id);
@@ -1614,15 +1667,19 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
       {
         // Получаем код статуса
         char* st_code=XML_Get_Attr_Value("code", sstatus->attr);
-        sprintf(r,"%s - [unknow action(%s)]",nick, st_code);
+        int errcode_n=0;
+        extern const char percent_d[];
+        sscanf(st_code,percent_d,&errcode_n);
         // Разные коды статусов - разное варенье:)
-        if(!strcmp(st_code, MUCST_KICKED)) sprintf(r, LG_MUCST_R_KICK,nick); // Сообщение о кике
-        if(!strcmp(st_code, MUCST_BANNED)) sprintf(r, LG_MUCST_R_BAN, nick); // Сообщение о бане
-        if(!strcmp(st_code, MUCST_KICKED_MEMB_ONLY)) sprintf(r, LG_MUCST_R_KICK_MEMB_ONLY, nick); // Сообщение о кике из мембер-онли румы
-        if(!strcmp(st_code, MUCST_CHNICK)) sprintf(r, LG_MUCST_R_CHNICK, nick,  XML_Get_Attr_Value("nick", item->attr)); // Сообщение о смене ника
-        if(!strcmp(st_code, MUCST_MUCCREATED)) sprintf(r, LG_MUCST_MUCCREATED, nick); // Сообщение о бане
-        //sprintf(r,r,nick);
-
+        switch (errcode_n)
+        {
+         case MUCST_KICKED:  sprintf(r, LG_MUCST_R_KICK,nick); break; // Сообщение о кике
+         case MUCST_BANNED: sprintf(r, LG_MUCST_R_BAN, nick); break;// Сообщение о бане
+         case MUCST_KICKED_MEMB_ONLY: sprintf(r, LG_MUCST_R_KICK_MEMB_ONLY, nick); break; // Сообщение о кике из мембер-онли румы
+         case MUCST_CHNICK: sprintf(r, LG_MUCST_R_CHNICK, nick,  XML_Get_Attr_Value("nick", item->attr)); break; // Сообщение о смене ника
+         case MUCST_MUCCREATED: sprintf(r, LG_MUCST_MUCCREATED, nick); break; // Сообщение о бане
+         default: sprintf(r,"%s - [unknow action(%s)]",nick, st_code);
+        }
         XMLNode* item = XML_Get_Child_Node_By_Name(x_node,"item");
         if(item)
         {
@@ -1766,19 +1823,20 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
 static void Report_Delivery(char *mess_id, char *to)
 {
 /*
-RECV: <message
-          from='romeo@montague.net/orchard'
-          to='juliet@capulet.com/balcony'>
-      <x xmlns='jabber:x:event'>
-        <delivered/>
-        <id>message22</id>
-      </x>
-    </message>
+RECV:
+  <message
+    from='kingrichard@royalty.england.lit/throne'
+    id='richard2-4.1.247'
+    to='northumberland@shakespeare.lit/westminster'>
+  <received xmlns='urn:xmpp:receipts'/>
+</message>
 */
-  char notif_tpl[]="<message to='%s'><x xmlns='jabber:x:event'><id>%s</id><delivered/></x></message>";
+  char notif_tpl[]="<message to='%s' from='%s' id='%s'><received xmlns='urn:xmpp:receipts'/></message>";
   char *ans = malloc(256);
-  snprintf(ans,256,notif_tpl, Mask_Special_Syms(to), mess_id);
+  char *_from = Mask_Special_Syms(My_JID_full);
+  snprintf(ans,256,notif_tpl, Mask_Special_Syms(to), _from, mess_id);
   SUBPROC((void*)_sendandfree,ans);
+  mfree(_from);
 }
 
 /*
@@ -1799,26 +1857,6 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
       if(xmlns)
       {
-      if(!strcmp(xmlns,JABBER_X_EVENT))
-      {
-        // получили <x xmlns='jabber:x:event'>
-        // Проверяем <delivered/>, ибо не умеем ничего больше
-        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
-        XMLNode *delivery = XML_Get_Child_Node_By_Name(xnode,"delivered");
-        if((delivery)&&(DELIVERY_EVENTS)) //деливери
-        {
-          // Получаем ID сообщения
-          char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
-          if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
-        }
-        if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE)) //composing
-        {
-        delivery = XML_Get_Child_Node_By_Name(xnode,"composing");
-        if(delivery) CList_ChangeComposingStatus(Res_ex, 1);
-        else CList_ChangeComposingStatus(Res_ex, 0);
-        }
-      }
-
       if(!strcmp(xmlns,XMLNS_MUC_USER)) //обработка invite
       {
        XMLNode *invite =  XML_Get_Child_Node_By_Name(xnode,"invite");
@@ -1833,6 +1871,83 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       } //end invite
 
      }
+    }
+
+  //обработка attention xep-0224
+   XMLNode *attention =  XML_Get_Child_Node_By_Name(nodeEx,"attention");
+   if(attention && USE_ATTENTION)
+   {
+     char *xmlnsa = XML_Get_Attr_Value(c_xmlns,attention->attr);
+     if (xmlnsa)
+       if(!strcmp(xmlnsa,JABBER_URN_ATTENTION)) 
+       {
+         //ShowMSG(1,(int)"Agtung!");
+         Vibrate(2);
+       }
+   } //end attention
+
+    // delivery
+    if(DELIVERY_EVENTS)
+    {
+    xnode = XML_Get_Child_Node_By_Name(nodeEx,"request");
+    if(xnode)
+      {
+      char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
+      if(xmlns)
+       {
+       if(!strcmp(xmlns,"urn:xmpp:receipts"))
+        {
+          char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
+          if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
+        }
+       }
+      }
+    xnode = XML_Get_Child_Node_By_Name(nodeEx,"received");
+    if(xnode)
+    {
+      char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
+      if(xmlns)
+      if(!strcmp(xmlns,"urn:xmpp:receipts"))
+      {
+        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
+        if(Res_ex)
+        if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
+        {
+          //Пришло уведомление что наше сообщение получено, и как ето отобразить?
+          // ShowMSG(1,(int)Res_ex->name);
+        }
+      }
+    }
+    }
+    // composing
+    if(COMPOSING_EVENTS)
+    {
+    xnode = XML_Get_Child_Node_By_Name(nodeEx,"composing");
+    if(xnode)
+    {
+      char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
+      if(xmlns)
+      if(!strcmp(xmlns,"http://jabber.org/protocol/chatstates"))
+      {
+        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
+        if(Res_ex)
+        if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
+        CList_ChangeComposingStatus(Res_ex, 1);
+      }
+    }
+    xnode = XML_Get_Child_Node_By_Name(nodeEx,"active");
+    if(xnode)
+    {
+      char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
+      if(xmlns)
+      if(!strcmp(xmlns,"http://jabber.org/protocol/chatstates"))
+      {
+        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
+        if(Res_ex)
+        if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
+        CList_ChangeComposingStatus(Res_ex, 0);
+      }
+    }
     }
 
   XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");

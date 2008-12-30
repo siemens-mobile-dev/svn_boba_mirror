@@ -84,6 +84,9 @@ __root const int COMPOSING_EVENTS=1;
 __root const CFG_HDR cfghdr15345={CFG_CHECKBOX,LG_DELIVREP,0,2};
 __root const int DELIVERY_EVENTS=1;
 
+__root const CFG_HDR cfghdr15346={CFG_CHECKBOX,LG_USEATTENTION,0,2};
+__root const int USE_ATTENTION=0;
+
 __root const CFG_HDR cfghdr7_3={CFG_CBOX,"Time Zone",0,24};
 __root const int MY_DEF_ZONE = 2;
 __root const CFG_CBOX_ITEM cfgcbox7_1[24]={

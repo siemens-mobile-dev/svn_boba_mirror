@@ -268,7 +268,15 @@ void inp_ghook(GUI *gui, int cmd)
   if(cmd == TI_CMD_DESTROY)
   {
     //Send composing CANCELATION
-    if(!Mess_was_sent)SUBPROC((void*)CancelComposing,Resource_Ex->full_name);
+    if(!Mess_was_sent)
+      if((Resource_Ex->entry_type == T_NORMAL)||(Resource_Ex->entry_type == T_CONF_NODE))
+    {
+      char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
+      IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
+      mess->IsGroupChat = is_gchat;
+      mess->body = NULL;
+      SUBPROC((void*)CancelComposing,Resource_Ex->full_name, mess);
+    }
     Mess_was_sent = 0;
   }
 }
@@ -315,7 +323,11 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   //Send composing
   if((ContEx->entry_type == T_NORMAL)||(ContEx->entry_type == T_CONF_NODE))
   {
-    SUBPROC((void*)SendComposing,Resource_Ex->full_name);
+    char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
+    IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
+    mess->IsGroupChat = is_gchat;
+    mess->body = NULL;
+    SUBPROC((void*)SendComposing,Resource_Ex->full_name, mess);
   }
 
   patch_header(&inp_hdr);

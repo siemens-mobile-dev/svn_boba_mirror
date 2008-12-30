@@ -301,13 +301,7 @@ char *Lookup_Known_Vars(char *var_name)
     char path[255];
     strcpy(path,KNOW_FEATURES_PATH);
     volatile int hF=fopen(path ,A_ReadWrite + A_BIN,P_READ + P_WRITE, &io_error);
-    if(io_error)
-    {
-      char q[40];
-      sprintf(q,"Err %d",io_error);
-      ShowMSG(1,(int)q);
-      return var_name;
-    }
+    if(io_error) return var_name; //ненашли файл, ну и фиг с ним
     Known_Features=malloc(4096);
     zeromem(Known_Features,4096);
     fread(hF, Known_Features, 4095, &io_error);

@@ -167,6 +167,7 @@
 #define LG_POPUPDIS         "Отображать POPUP"
 #define LG_COMPOSEV         "События сообщений"
 #define LG_DELIVREP         "Отчет о доставке, если требуется"
+#define LG_USEATTENTION     "Принимать сигнал 'Attention'"
 #define LG_FIRST_LETTER     "Первая буква заглавная"
 #define LG_AUTO_JOIN        "Автовход в конференцию"
 
@@ -508,6 +509,7 @@
 #define LG_POPUPDIS         "Відображати POPUP"
 #define LG_COMPOSEV         "Події повідомлень"
 #define LG_DELIVREP         "Звіт о отриманні, якщо потрібно"
+#define LG_USEATTENTION     "Приймати сигнал 'Attention'"
 #define LG_FIRST_LETTER     "Перша літера заголовна"
 #define LG_AUTO_JOIN        "Автовхід в конференцію"
 
@@ -849,6 +851,7 @@
 #define LG_POPUPDIS         "Display pop-ups"
 #define LG_COMPOSEV         "Composing Events"
 #define LG_DELIVREP         "Delivery Report if required"
+#define LG_USEATTENTION     "Recive command 'Attention'"
 #define LG_FIRST_LETTER     "Big first letter"
 #define LG_AUTO_JOIN        "MUC auto join"
 

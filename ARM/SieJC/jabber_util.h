@@ -161,10 +161,10 @@ typedef struct
 void SendMessage(char* jid, IPC_MESSAGE_S *mess);
 
 // Context: HELPER
-void SendComposing(char* jid);
+void SendComposing(char* jid, IPC_MESSAGE_S *mess);
 
 // Context: HELPER
-void CancelComposing(char* jid);
+void CancelComposing(char* jid, IPC_MESSAGE_S *mess);
 
 // ”ничтожить список комнат  
 void MUCList_Destroy();

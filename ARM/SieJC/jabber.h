@@ -41,11 +41,11 @@
 #define LG_JABBER_ERROR_REMOTE_SERVER_TIMEOUT	"Remote server timeout"
 
 //MUC CODE
-#define MUCST_BANNED  "301"
-#define MUCST_CHNICK  "303"
-#define MUCST_KICKED  "307"
-#define MUCST_KICKED_MEMB_ONLY  "322"
-#define MUCST_MUCCREATED  "201"
+#define MUCST_BANNED  301
+#define MUCST_CHNICK  303
+#define MUCST_KICKED  307
+#define MUCST_KICKED_MEMB_ONLY  322
+#define MUCST_MUCCREATED  201
 
 #define LG_MUCST_R_BAN  "%s was BANNED! "
 #define LG_MUCST_R_CHNICK  "%s is now known as %s"
@@ -62,13 +62,20 @@
 #define IQ_VERSION "jabber:iq:version"
 #define IQ_ROSTER  "jabber:iq:roster"
 #define IQ_PRIVATE "jabber:iq:private"
-#define IQ_TIME "jabber:iq:time"
-#define IQ_IDLE "jabber:iq:last"
+#define IQ_TIME    "jabber:iq:time"
+#define IQ_IDLE    "jabber:iq:last"
 
-#define JABBER_X_EVENT "jabber:x:event"
-#define JABBER_URN_PING "urn:xmpp:ping"
-
-#define DISCO_INFO "http://jabber.org/protocol/disco#info"
+#define JABBER_X_EVENT       "jabber:x:event"
+#define JABBER_XMPP_RECEIPTS "urn:xmpp:receipts"
+#define JABBER_URN_PING      "urn:xmpp:ping"
+#define JABBER_URN_ATTENTION "urn:xmpp:attention:0"
+#define DISCO_INFO       "http://jabber.org/protocol/disco#info"
+#define XMLNS_CHATSTATES "http://jabber.org/protocol/chatstates"
+  
+#define XMLNS_MUC       "http://jabber.org/protocol/muc"
+#define XMLNS_MUC_USER  "http://jabber.org/protocol/muc#user"
+#define XMLNS_MUC_ADMIN "http://jabber.org/protocol/muc#admin"
+#define XMLNS_BOOKMARKS "storage:bookmarks"
 
 #define MSGSTR_CHAT "chat"
 #define MSGSTR_GCHAT "groupchat"
@@ -77,10 +84,6 @@
 //error
 //headline
 
-#define XMLNS_MUC "http://jabber.org/protocol/muc"
-#define XMLNS_MUC_USER  "http://jabber.org/protocol/muc#user"
-#define XMLNS_MUC_ADMIN "http://jabber.org/protocol/muc#admin"
-#define XMLNS_BOOKMARKS "storage:bookmarks"
 typedef enum {
 	SUB_NONE,
 	SUB_TO,
