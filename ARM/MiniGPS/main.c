@@ -120,19 +120,9 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
+void redraw()
 {
   CSM_RAM *icsm;
-  if(msg->msg == MSG_RECONFIGURE_REQ) 
-  {
-    extern const char *successed_config_filename;
-    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
-    {
-      ShowMSG(1,(int)"MiniGPS config updated!");
-      InitConfig();
-    }
-  }
-  
   if ((icsm=FindCSMbyID(CSM_root()->idle_id)))
   {
     if (IsGuiOnTop(idlegui_id))
@@ -142,7 +132,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       {
 #ifdef ELKA
         void *canvasdata = BuildCanvas();
-      {
+          {
 #else
         void *idata = GetDataOfItemByID(igui, 2);
         if (idata)
@@ -156,13 +146,30 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
+}
+
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
+{
+  if(msg->msg == MSG_RECONFIGURE_REQ) 
+  {
+    extern const char *successed_config_filename;
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
+    {
+      ShowMSG(0,(int)"MiniGPS config reloaded!");
+      InitConfig();
+    }
+  }
+  redraw();
   return(1);
 }
+
+IPC_REQ ipc={"ScrD","MiniGPS",(void*)redraw};
 
 static void maincsm_oncreate(CSM_RAM *data)
 {  
   corr_name=AllocWS(128);
   GBS_StartTimerProc(&mytmr,216*2,tmrproc);
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,0,&ipc); 
 }
 
 static void Killer(void)
@@ -175,6 +182,7 @@ static void Killer(void)
 
 static void maincsm_onclose(CSM_RAM *csm)
 {
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,1,&ipc); 
   SUBPROC((void *)Killer);
 }
 
