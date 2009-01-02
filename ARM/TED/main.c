@@ -198,32 +198,36 @@ struct
 #define SCR_WIDTH 256
 #define SCR_MODULO (SCR_WIDTH/8)
 
-char myscr[SCR_MODULO*320];
-
 #ifdef ELKA
-IMGHDR MyScrHdr = {SCR_WIDTH,320-YDISP,0x1,myscr};
+#define SCR_HEIGHT (320-YDISP)
 #else
-IMGHDR MyScrHdr = {255,255,0x1,myscr};
+#define SCR_HEIGHT (256)
 #endif
+
+char myscr[SCR_HEIGHT*SCR_WIDTH/8];
+
+//#ifdef ELKA
+IMGHDR MyScrHdr = {SCR_WIDTH-1,SCR_HEIGHT-1,0x1,myscr};
+//#else
+//IMGHDR MyScrHdr = {255,SCR_HEIGHT-1,0x1,myscr};
+//#endif
 
 
 void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
 {
-  char *rscr = malloc(SCR_MODULO*320);
+  char *rscr = malloc(SCR_WIDTH*SCR_HEIGHT/8);
   unsigned char block[8];
-  int xx, yy, i, dy, mx, my;
+  int xx, yy, i, dy, mx, my, scr_wb, scr_hb;
   RECT rc;
   DRWOBJ drwobj;
   StoreXYWHtoRECT(&rc,x,y,img->w,img->h);
 
   if(rotate && img==&MyScrHdr)
   {
-#ifdef ELKA
-    IMGHDR R_hdr = {SCR_WIDTH,320-YDISP,0x1,rscr};
-#else
-    IMGHDR R_hdr = {255,255,0x1,rscr};
-#endif  
-    mx = ScreenH()-1;
+    IMGHDR R_hdr = {SCR_WIDTH-1,SCR_HEIGHT-1,0x1,rscr};
+    scr_wb = SCR_HEIGHT>>3;
+    scr_hb = SCR_WIDTH>>3;
+    mx = ScreenH()-1-YDISP;
     my = ScreenW()-1;
   
     for(xx = 0; xx <= (mx>>3); xx++)
@@ -235,11 +239,11 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
           for(i = 0; i < 8; i++)
           {
             block[i] <<= 1;
-            block[i] |= ((*(myscr + ((yy<<3)+dy)*SCR_MODULO+xx))>>(7-i))&1;
+            block[i] |= ((*(myscr + ((yy<<3)+dy)*scr_wb+xx))>>(7-i))&1;
           }
         }
         for(i = 0; i < 8; i++)
-          *(rscr+((((mx>>3)-xx)<<3)+i)*SCR_MODULO+yy) = block[7-i];
+          *(rscr+((((mx>>3)-xx)<<3)+i)*scr_hb+yy) = block[7-i];
       }
     }
    SetPropTo_Obj5(&drwobj,&rc,0,&R_hdr);
@@ -546,6 +550,9 @@ void DrawChar(int c,int x,int y)
   int i, j;
   int xb, xsb;
   int mask_h, mask_l;
+  int scr_wb = rotate?(SCR_HEIGHT>>3):(SCR_WIDTH>>3);
+//  int scr_wb = (SCR_WIDTH>>3);
+  
 
   if (c>=128)
     switch(win_dos_koi)
@@ -565,8 +572,9 @@ void DrawChar(int c,int x,int y)
   mask_h = (0xFF<<(8-xsb))&0xFF;
   mask_l = (0xFF>>xsb)&0xFF;
   unsigned char *l = malloc(FW+1);
+  
 
-  dd=myscr+(y*(FH*SCR_MODULO)+xb); //Основной экран
+  dd=myscr+(y*(FH*(scr_wb))+xb); //Основной экран
 
   for(i = 0; i < FH; i++)
   {
@@ -579,9 +587,9 @@ void DrawChar(int c,int x,int y)
       l[j-1] >>= xsb;
     }
     l[0] |= (*dd)&mask_h;
-    for(j = 0, d = dd; j < FW+1 && xsb+j < SCR_MODULO; j++, d++)
+    for(j = 0, d = dd; j < (FW+1) && xb+j < (scr_wb); j++, d++)
       *d = l[j];
-    dd += SCR_MODULO;
+    dd += (scr_wb);
   }
   mfree(l);
   
@@ -1074,17 +1082,18 @@ void DrawScreen(void)
   unsigned int my;
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  int scr_wb = rotate?(SCR_HEIGHT>>3):(SCR_WIDTH>>3);
   
   int r_sw, r_sh;
   if(rotate)
   {
-    r_sw = scr_h;
+    r_sw = scr_h-YDISP;
     r_sh = scr_w;
   }
   else
   {
     r_sw = scr_w;
-    r_sh = scr_h;
+    r_sh = scr_h-YDISP;
   }
   
   char *ink=GetPaletteAdrByColorIndex(INK);
@@ -1165,25 +1174,17 @@ void DrawScreen(void)
 	//Рисуем скролл-бар
 	char *d=myscr+((r_sw-1)>>3); //Последний байт
 	if (total_line)
-	{
 	  y=((editmode?sheight_emode-8:sheight-8)*curline)/total_line;
-	}
 	else
-	{
 	  y=0;
-	}
 	p=0;
 	do
 	{
 	  if ((p<y)||(p>(y+7)))
-	  {
 	    *d=p&1?0x50:0x28;
-	  }
 	  else
-	  {
 	    *d=0x78;
-	  }
-	  d+=SCR_MODULO;
+	  d+=scr_wb;
 	  p++;
 	}
 	while(p<r_sh);
@@ -1699,6 +1700,7 @@ int method9(void){return(0);}
 //------------------------------------------------------------------------------
 int method5(MAIN_GUI *data, GUI_MSG *msg)
 {
+  void FirstLoadFile(unsigned int);
   if (disk_access) return(0); //Если дисковые операции
   if ((draw_mode>1)&&(draw_mode!=4)) return(0); //Если еще рисуем
   if (msg->gbsmsg->msg==KEY_UP)
@@ -1913,6 +1915,19 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       CharWidthForCodepage();
       draw_mode=1;
       break;
+    case '*':
+      if(rotate)
+        rotate = 0;
+      else
+        rotate = 1;
+      HISTORY.rotate = rotate;
+      disk_access=FIRSTLOAD;
+      draw_mode=255; //Экран приветствия
+    
+      SUBPROC((void *)FirstLoadFile,HISTORY.fmt);
+  
+      break;
+
     default:
       break;
     }
@@ -2130,8 +2145,8 @@ void LoadFont(int flag)
     sheight_emode=eh=(sheight=ScreenW()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
     
     max_y_emode=eh/FH;
-    max_y=(ScreenW()-YDISP)/FH;
-    max_x=ScreenH()-4;
+    max_y=(ScreenW())/FH;
+    max_x=ScreenH()-YDISP-4;
   }
   else
   {
