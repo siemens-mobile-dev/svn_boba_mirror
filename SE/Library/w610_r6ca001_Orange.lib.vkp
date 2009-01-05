@@ -130,7 +130,7 @@
 0684: 00000000 E9010345 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 3D020345 ; 1A2: void SendMessage(void **signal,int PID);
 068C: 00000000 C5020345 ; 1A3: void * WaitMessage(void *SIGSEL);
-0690: 00000000 D8020345 ; 1A4: int FreeMessage(void **Mess);
+0690: 00000000 D9020345 ; 1A4: int FreeMessage(void **Mess);
 0694: 00000000 596E0045 ; 1A5: void SendDispatchMessage(int id, int unk_zero, int size,void *mess);
 0698: 00000000 71822D45 ; 1A6: char * UIEventName(int event);
 069C: 00000000 F49B1820 ;81A7: int * MissedEvents(void);
