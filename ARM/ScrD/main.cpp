@@ -4,6 +4,7 @@
 
 hProc PTable[32];
 int tProc=0;
+char APP_PATH[254];
 
 #pragma segment="ELFBEGIN"
 void kill_data( void * p, void(*fptr)(void *))
@@ -89,19 +90,23 @@ int maincsm_onmessage(CSM_RAM* data, GBS_MSG* msg)
 static void maincsm_oncreate(CSM_RAM *data)
 {
   int* pRam=(int*)(RamMenuAnywhere()+7);
+  char * path = (char *)malloc(strlen(APP_PATH) + strlen("Scr\\*.elf") + 32);
+  sprintf(path, "%s%s", APP_PATH, "Scr\\*.elf");
   
   DIR_ENTRY dE; 
   unsigned int err;
-  char path[]={"0:\\ZBin\\daemons\\Scr\\*.elf"};
-  WSHDR*wS;
+   WSHDR*wS;
   
   LockSched();
   *pRam=(int)RedrawProc;
   UnlockSched();
   
-  if(isdir("0:\\ZBin\\daemons\\Scr",&err)==0)
+  char * d_path = (char *)malloc(strlen(APP_PATH) + strlen("Scr") + 32);
+  sprintf(d_path, "%s%s", APP_PATH, "Scr");
+  
+  if(isdir(d_path,&err)==0)
   {
-    mkdir("0:\\ZBin\\daemons\\Scr",&err);
+    mkdir(d_path,&err);
     return;
   }
  
@@ -162,8 +167,16 @@ static const struct
 
 
 
-int main()
+int main(const char *exename, const char *filename)
 {
+  // Пишем путь к папке с эльфом в APP_PATH
+  char *path=strrchr(exename,'\\');
+  int l;
+  if (!path) return 0; //Фигня какая-то
+  path++;
+  l=path-exename;
+  memcpy(APP_PATH,exename,l);
+  // Создаем CSM
   CSMROOT *csmr;
   CSM_RAM *save_cmpc;
   CSM_RAM main_csm;
@@ -174,6 +187,6 @@ int main()
   csmr->csm_q->current_msg_processing_csm=csmr->csm_q->csm.first;
   CreateCSM(&MAINCSM.maincsm,&main_csm,0);
   csmr->csm_q->current_msg_processing_csm=save_cmpc;
-  UnlockSched();
+  UnlockSched();  
   return (0);
 }
