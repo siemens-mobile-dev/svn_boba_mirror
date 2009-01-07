@@ -826,7 +826,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>Release</name>
+    <name>Release_SGOLD</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -848,15 +848,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>Release\Exe</state>
+          <state>Release_SGOLD\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>Release\Obj</state>
+          <state>Release_SGOLD\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>Release\List</state>
+          <state>Release_SGOLD\List</state>
         </option>
         <option>
           <name>Variant</name>
