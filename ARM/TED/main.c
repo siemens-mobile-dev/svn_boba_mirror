@@ -137,6 +137,7 @@ unsigned int viewpos;
 unsigned int max_y;
 unsigned int max_y_emode;
 unsigned int max_x;
+unsigned int max_x_emode;
 
 unsigned int sheight_emode;
 unsigned int sheight;
@@ -220,14 +221,16 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
   int xx, yy, i, dy, mx, my, scr_wb, scr_hb;
   RECT rc;
   DRWOBJ drwobj;
-  StoreXYWHtoRECT(&rc,x,y,img->w,img->h);
 
-  if(rotate && img==&MyScrHdr)
+  if(!editmode && rotate && img==&MyScrHdr)
   {
     IMGHDR R_hdr = {SCR_WIDTH-1,SCR_HEIGHT-1,0x1,rscr};
+//ScreenH()-(editmode?(HeaderH()+SoftkeyH()+YDISP+1):0)
+    StoreXYWHtoRECT(&rc,x,y,img->h,img->w);
+
     scr_wb = SCR_HEIGHT>>3;
     scr_hb = SCR_WIDTH>>3;
-    mx = ScreenH()-1-YDISP;
+    mx = ScreenH()-1;
     my = ScreenW()-1;
   
     for(xx = 0; xx <= (mx>>3); xx++)
@@ -249,7 +252,10 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
    SetPropTo_Obj5(&drwobj,&rc,0,&R_hdr);
   }
   else
+  {
+    StoreXYWHtoRECT(&rc,x,y,img->w,img->h);
     SetPropTo_Obj5(&drwobj,&rc,0,img);
+  }
   
   SetColor(&drwobj,pen,brush);
   DrawObject(&drwobj);
@@ -384,6 +390,9 @@ void CharWidthForCodepage()
     case 2:
       //Koi8->Dos
       chars_width[c] = chars_width_src[koi8translation[c-128]];
+      break;
+    default:
+      chars_width[c] = chars_width_src[c];      
       break;
     }
   }
@@ -550,6 +559,7 @@ void DrawChar(int c,int x,int y)
   int i, j;
   int xb, xsb;
   int mask_h, mask_l;
+//  if(rotate) {if(editmode) x+=SoftkeyH()+HeaderH()+YDISP+1; else x+=1;}
   int scr_wb = rotate?(SCR_HEIGHT>>3):(SCR_WIDTH>>3);
 //  int scr_wb = (SCR_WIDTH>>3);
   
@@ -621,7 +631,7 @@ void drawStkStr(char *p, unsigned int y, unsigned int vp, int ep)
       iw += chars_width[' '];
     }
   }
-  while(iw<max_x);
+  while(iw<(editmode?max_x_emode:max_x));
   if (ep>=0) while((c=*p++)) editline[ep++]=c; //Добиваем остаток строки
 }
 
@@ -645,12 +655,12 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
       iw += chars_width[c];
     }
   }
-  if (iw>max_x)
+  if (iw>(editmode?max_x_emode:max_x))
     i=0; //Не добавляем пробелы, строка длиннее, чем экран
   else
   {
 //    i=max_x-i; //Теперь в i - общее количество добавляемых пробелов
-    i=(max_x-iw)/chars_width[' ']; //Теперь в i - общее количество добавляемых пробелов
+    i=((editmode?max_x_emode:max_x)-iw)/chars_width[' ']; //Теперь в i - общее количество добавляемых пробелов
   }
   spcadd=0;
   spcsum=0;
@@ -696,7 +706,7 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
       iw += chars_width[' '];
     }
   }
-  while(iw<max_x);
+  while(iw<(editmode?max_x_emode:max_x));
   if (ep>=0) while((c=*p++)) editline[ep++]=c; //Добиваем остаток строки
 }
 
@@ -923,7 +933,7 @@ void GotoLine(void) //Переход на строку seek_to_line, вызывается в контексте MMC
       //Пытаемся идти вниз
       if (dsp==STKSZ) break; //Конец текста
       curline++;
-      if ((curline-viewline)==max_y)
+      if ((curline-viewline)==(editmode?max_y_emode:max_y))
       {
 	viewline++;
       }
@@ -957,7 +967,7 @@ void LineDw(void)
   // unsigned int p;
   if (dsp==STKSZ) return; //Конец текста
   curline++;
-  if ((curline-viewline)==max_y)
+  if ((curline-viewline)==(editmode?max_y_emode:max_y))
   {
     viewline++;
   }
@@ -1008,7 +1018,7 @@ void ToEOL(void)
 {
   unsigned int i=strlen(editline);
   if (i>255) curpos=0; else curpos=i;
-  if (curpos>=max_x) viewpos=curpos-max_x+1; else viewpos=0;
+  if (curpos>=(editmode?max_x_emode:max_x)) viewpos=curpos-(editmode?max_x_emode:max_x)+1; else viewpos=0;
 }
 
 void ToBOL(void)
@@ -1045,7 +1055,7 @@ void WordRight(void)
   for(x=curpos-viewpos, xw=0, p=dsp+viewpos; x; x--)
     xw += chars_width[*(dstk+p++)];
 
-  while(xw>=max_x)
+  while(xw>=(editmode?max_x_emode:max_x))
   {
     viewpos+=8;
     for(x=curpos-viewpos, xw=0, p=dsp+viewpos; x; x--)
@@ -1060,12 +1070,25 @@ void DrawInfo(void)
   GetDateTime(&d,&t);
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  char codepage[32];
+  switch(win_dos_koi)
+  {
+    case 1:
+      strcpy(codepage, "win1251");
+      break;
+    case 2:
+      strcpy(codepage, "koi8");
+      break;
+    default:
+      strcpy(codepage, "dos866");
+      break;
+  }
   
   DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(20));
   str_2ws(e_ws,filename,126);
   wsprintf(info_ws,"Time:\n%02d:%02d\n"
-	   "Current line %lu\nTotal lines %lu\n\nCurrent file:\n%w",
-	   t.hour,t.min,curline,total_line,e_ws);
+	   "Current line %lu\nTotal lines %lu\nCodepage: %s\n\nCurrent file:\n%w",
+	   t.hour,t.min,curline,total_line,codepage,e_ws);
   DrawString(info_ws,3,3+YDISP,scr_w-4,scr_h-4,FONT_SMALL,2,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
@@ -1085,7 +1108,7 @@ void DrawScreen(void)
   int scr_wb = rotate?(SCR_HEIGHT>>3):(SCR_WIDTH>>3);
   
   int r_sw, r_sh;
-  if(rotate)
+  if(rotate && !editmode)
   {
     r_sw = scr_h-YDISP;
     r_sh = scr_w;
@@ -1128,7 +1151,7 @@ void DrawScreen(void)
     switch(draw_mode)
     {
     case 1:
-      my=editmode?max_y_emode:max_y;
+      my=(editmode?max_y_emode:max_y);
       zeromem(editline,256);
       //Перерисовываем весь экран
       y=curline-viewline;
@@ -1195,9 +1218,9 @@ void DrawScreen(void)
         int rh=((h+7)&(~7));
         int s=SoftkeyH();
         int rs=((s+7)&(~7));
-	MyScrHdr.h=r_sh-rh-rs;
-	DrawRoundedFrame(0,h,r_sw-1,rh-1,0,0,0,paper,paper);
-	DrawRoundedFrame(0,r_sh-rs,r_sw-1,r_sh-s-1,0,0,0,paper,paper);
+	MyScrHdr.h=scr_h-rh-rs;
+	DrawRoundedFrame(0,h,scr_w-1,rh-1,0,0,0,paper,paper);
+	DrawRoundedFrame(0,scr_h-rs,scr_w-1,scr_h-s-1,0,0,0,paper,paper);
 	DrwImg(&MyScrHdr,0,rh,ink,paper);
       }
       else
@@ -1244,17 +1267,17 @@ void DrawScreen(void)
 	unsigned int y=curline-viewline;
 	unsigned int dy=editmode?((HeaderH()+7)&(~7)):0;
 
-	my=editmode?max_y_emode:max_y;
+	my=(editmode?max_y_emode:max_y);
 
         for(x=curpos-viewpos, xw=0, p=dsp+viewpos; x && *(dstk+p); x--)
           xw += chars_width[*(dstk+p++)];
         for(; x; x--)
           xw += chars_width[' '];
     
-	if ((xw<max_x)&&(y<my)&&(!cursor_off))
+	if ((xw<(editmode?max_x_emode:max_x))&&(y<my)&&(!cursor_off))
 	{
 	  int yy=y*FH;
-          if(rotate)
+          if(rotate && !editmode)
   	    DrawRoundedFrame(yy,r_sw-xw+YDISP-dy,yy+FH,r_sw-xw-chars_width[*(dstk+p)]+YDISP-dy,0,0,0,ink,GetPaletteAdrByColorIndex(23));
           else
 	    DrawRoundedFrame(xw,yy+YDISP+dy,xw+chars_width[*(dstk+p)],yy+dy+YDISP+FH,0,0,0,ink,GetPaletteAdrByColorIndex(23));
@@ -1298,7 +1321,7 @@ void doCurRight(void)
       xw += chars_width[' '];
   };
         
-  if (xw>=max_x)
+  if (xw>=(editmode?max_x_emode:max_x))
   {
     viewpos+=8;
   }
@@ -1478,14 +1501,27 @@ int ed_inp_onkey(GUI *data, GUI_MSG *msg)
     switch(k)
     {
     case GREEN_BUTTON:
-    case UP_BUTTON:
-    case DOWN_BUTTON:
-    case LEFT_BUTTON:
-    case RIGHT_BUTTON:
     case VOL_UP_BUTTON:
     case VOL_DOWN_BUTTON:
       editmode=k;
       return(1);
+    case LEFT_BUTTON:
+    case RIGHT_BUTTON:
+      if(rotate && !editmode)
+      {
+        editmode=k;
+        return(1);
+      }
+      break;
+
+    case UP_BUTTON:
+    case DOWN_BUTTON:
+      if(!rotate || editmode)
+      {
+        editmode=k;
+        return(1);
+      }
+      break;      
     }
   }
   return(0); //Do standart keys
@@ -1733,7 +1769,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       DrawSoftMenu();
       return(0);
     case UP_BUTTON:
-      if(rotate)
+      if(rotate && !editmode)
       {
         if (msg->gbsmsg->msg!=LONG_PRESS)
           doCurRight();
@@ -1769,7 +1805,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     }
     }*/
     case DOWN_BUTTON:
-      if(rotate)
+      if(rotate && !editmode)
       {
         if (msg->gbsmsg->msg!=LONG_PRESS)
           doCurLeft();
@@ -1790,11 +1826,11 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }
       break;
     case VOL_UP_BUTTON:
-      PageUp(max_y);
+      PageUp((editmode?max_y_emode:max_y));
       draw_mode=1;
       break;
     case '2':
-      if(rotate)
+      if(rotate && !editmode)
       {
         WordRight();
         cursor_off&=0xFE;
@@ -1802,16 +1838,16 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }
       else
       {
-        PageUp(max_y);
+        PageUp((editmode?max_y_emode:max_y));
         draw_mode=1;
       }
       break;
     case VOL_DOWN_BUTTON:
-      PageDw(max_y);
+      PageDw((editmode?max_y_emode:max_y));
       draw_mode=1;
       break;
     case '8':
-      if(rotate)
+      if(rotate && !editmode)
       {
         WordLeft();
         cursor_off&=0xFE;
@@ -1819,7 +1855,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }
       else
       {
-        PageDw(max_y);
+        PageDw((editmode?max_y_emode:max_y));
         draw_mode=1;
       }
       break;
@@ -1828,7 +1864,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       draw_mode=1;
       break;
     case LEFT_BUTTON:
-      if(rotate)
+      if(rotate && !editmode)
       {
         if (cursor_off)
           PageUp(1);
@@ -1849,9 +1885,9 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }
       break;
     case '4':
-      if(rotate)
+      if(rotate && !editmode)
       {
-        PageUp(max_y);
+        PageUp((editmode?max_y_emode:max_y));
         draw_mode=1;        
       }
       else
@@ -1863,7 +1899,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }
       break;
     case RIGHT_BUTTON:
-      if(rotate)
+      if(rotate && !editmode)
       {
         if (cursor_off)
           PageDw(1);
@@ -1884,9 +1920,9 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       }
       break;
     case '6':
-      if(rotate)
+      if(rotate && !editmode)
       {
-        PageDw(max_y);
+        PageDw((editmode?max_y_emode:max_y));
         draw_mode=1;
       }
       else
@@ -1916,7 +1952,7 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       draw_mode=1;
       break;
     case '*':
-      if(rotate)
+      if(rotate && !editmode)
         rotate = 0;
       else
         rotate = 1;
@@ -2142,9 +2178,11 @@ void LoadFont(int flag)
   
   if(rotate)
   {
-    sheight_emode=eh=(sheight=ScreenW()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
+    sheight_emode=eh=(sheight=ScreenH()-YDISP)-((HeaderH()+7)&(~7))-((SoftkeyH()+7)&(~7));
     
     max_y_emode=eh/FH;
+    max_x_emode=ScreenW()-4;
+    
     max_y=(ScreenW())/FH;
     max_x=ScreenH()-YDISP-4;
   }
@@ -2154,7 +2192,7 @@ void LoadFont(int flag)
     
     max_y_emode=eh/FH;
     max_y=(ScreenH()-YDISP)/FH;
-    max_x=ScreenW()-4;
+    max_x_emode=max_x=ScreenW()-4;
   }
 
     
@@ -2973,19 +3011,31 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
 	PageUp(max_y_emode);
 	break;
       case UP_BUTTON:
-	if(!rotate) LineUp();
+	if(!rotate || editmode)
+          LineUp();
+        else
+	  return(0);
 	break;
       case LEFT_BUTTON:
-        if(rotate) LineUp();
+        if(rotate && !editmode)
+          LineUp();
+        else
+	  return(0);
         break;
       case VOL_DOWN_BUTTON:
 	PageDw(max_y_emode);
 	break;
       case DOWN_BUTTON:
-	if(!rotate) LineDw();
+	if(!rotate || editmode)
+          LineDw();
+        else
+	  return(0);
 	break;
       case RIGHT_BUTTON:
-        if(rotate) LineDw();
+        if(rotate && !editmode)
+          LineDw();
+        else
+	  return(0);
         break;
       case 0xFFF: //Просто меню
 	break;
