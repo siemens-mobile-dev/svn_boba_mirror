@@ -5,6 +5,10 @@ __root const CFG_HDR cfghdr0={CFG_CBOX,"show title",0,2};
 __root const int show = 1;
 __root const CFG_CBOX_ITEM cfgcbox1[2]={"No","Yes"};
 
+__root const CFG_HDR cfghdr0asd0={CFG_CBOX,"break by any key",0,2};
+__root const int use_mutex_byte = 0;
+__root const CFG_CBOX_ITEM cfgcbox2sdf[2]={"No","Yes"};
+
 
 __root const CFG_HDR cfghdr00={CFG_CBOX,"break by any key",0,2};
 __root const int bak = 1;

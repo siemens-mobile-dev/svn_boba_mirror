@@ -1,6 +1,9 @@
 #include "..\inc\swilib.h"
 #include "conf_loader.h"
 
+//#define USE_MUTEX_BYTE
+
+
 #define MMI_CEPID 0x4209
 #define TMR_SECOND 216
 
@@ -11,6 +14,9 @@
 #define SYM_LOOP_8 0x03
 #define SYM_LOOP_16 0x04
 #define SYM_LOOP_INF 0x05
+
+
+extern int use_mutex_byte;
 
 //SYM_LOOP_4 backlow backhigh|(ctr<<4)
 //   }         x      1
@@ -35,9 +41,7 @@
 
 ///char die_code=MAC_SUICIDE1;
 
-//char * MutexByte(){return (RamMenuAnywhere()+10);};
-char * MutexByte(){return (RamMenuAnywhere()+14);};
-
+char * MutexByte(){return (RamMenuAnywhere()+10);};
  
 extern int delay_keybreak;
 extern int watch_delay;
@@ -147,6 +151,17 @@ int _hc(char c)
   return 0;
 };
 
+int _hc2(char c)
+{
+  if(c>='0'&&c<='9')
+   return c-'0';
+  else if(c>='A'&&c<='F')
+   return c-'A'+0xA;
+  if(c>='a'&&c<='f')
+   return c-'a'+0xA;
+  return 0x200;
+};
+
 unsigned int Hex2Int(char *s)
 {
 if(s==0) return 0;
@@ -167,9 +182,10 @@ if(s==0)
   return 0;
   };
 unsigned int a=0;
-while(*s!=0)
+unsigned int q=0;
+while(*s!=0 && ((q=_hc2(*s++))<0x100) )
   {
-  a=(a<<4)+_hc(*s++);
+  a=a*16+q;
   };
 if(next_not_digit) *next_not_digit=s;
 return a;
@@ -196,7 +212,6 @@ unsigned int Str2Int_p(char *s,char **nepo)
     return 0;
   }
 unsigned int a=0;
-int i=0;
 while((*s>='0')&&(*s<='9'))
   {
   a=(a*10)+((*s++)-'0');
@@ -298,7 +313,9 @@ void Step()
   case ST_NORM:
     {
 //    if(*MutexByte()!=MAC_EXECUTING)
+if(use_mutex_byte){  
     if(po == mac) *MutexByte()=MAC_EXECUTING;  
+}
     
 //    if(*MutexByte()==MAC_SUICIDE)
 //       ShowMSG(2,(int)"Ooops!");
@@ -466,7 +483,7 @@ void Step()
           MakeVoiceCall(nu,0x10,0x20C0);
           delay=delay_longpause*2;  
           }
-        else if(po[0]=='@')
+        else if(*po=='@')
           {
             typedef void (*TVoidFunc)(unsigned int p0,unsigned int p1,unsigned int p2,unsigned int p3);
             
@@ -476,8 +493,11 @@ void Step()
             if(*po!='{')
               {
               ((TVoidFunc)addr)(0,0,0,0);
+//static char bu[130];
+//sprintf(bu,"ad=`%x`",addr);
+//ShowMSG(2,(int)bu);         
               delay=delay_longpause*2;
-              po++;
+              //po++;
               break;
               };
             po++;
@@ -726,7 +746,9 @@ void Step()
     if(show) if(IsTimerProc(&paint_timer)) GBS_StopTimer(&paint_timer);
    UnlockSched();
   case ST_END2:   
+if(use_mutex_byte){
     if(brk!=2) *MutexByte()=0;    
+}
     Suicide();    
     return;
   //------------------------------------          
@@ -747,12 +769,13 @@ if((rac=*RamPressedKey())!=0)
   {
   if(bak || (rac==breakeycode)) brk=1;
   };
-
+if(use_mutex_byte){
 if(*MutexByte() == MAC_SUICIDE) 
     {
     brk=2;
     *MutexByte()=0;    
     };
+}
 UnlockSched();
 
 if(!brk)
@@ -776,6 +799,7 @@ if(!brk)GBS_StartTimerProc(&paint_timer,paint_delay,&Paint);
 
 int main(char * self,char * path)
 { 
+if(use_mutex_byte){
   if(*MutexByte() == MAC_EXECUTING) 
     {
     *MutexByte() = MAC_SUICIDE;
@@ -785,6 +809,7 @@ int main(char * self,char * path)
     {
     *MutexByte() = MAC_EXECUTING;
     };
+}
   
   strcpy(bpath,path);
   
