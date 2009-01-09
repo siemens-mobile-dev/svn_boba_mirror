@@ -233,20 +233,44 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
     mx = ScreenH()-1;
     my = ScreenW()-1;
   
-    for(xx = 0; xx <= (mx>>3); xx++)
+    if(rotate==2)
     {
-      for(yy = 0; yy <= (my>>3); yy++)
+      for(xx = 0; xx <= (mx>>3); xx++)
       {
-        for(dy = 0; dy < 8; dy++)
+        for(yy = 0; yy <= (my>>3); yy++)
         {
-          for(i = 0; i < 8; i++)
+          for(dy = 0; dy < 8; dy++)
           {
-            block[i] <<= 1;
-            block[i] |= ((*(myscr + ((yy<<3)+dy)*scr_wb+xx))>>(7-i))&1;
+            for(i = 0; i < 8; i++)
+            {
+              block[i] <<= 1;
+              block[i] |= ((*(myscr + ((yy<<3)+(7-dy))*scr_wb+xx))>>(i))&1;
+            }
           }
+          for(i = 0; i < 8; i++)
+            *(rscr+((xx<<3)+i)*scr_hb+((my>>3)-yy)) = block[7-i];
         }
-        for(i = 0; i < 8; i++)
-          *(rscr+((((mx>>3)-xx)<<3)+i)*scr_hb+yy) = block[7-i];
+      }
+      for(i = 1; i < SCR_WIDTH*SCR_HEIGHT/8; i++)
+        rscr[i-1] = ((rscr[i-1] << 4)&0xF0) | ((rscr[i] >> 4)&0x0F);
+    }
+    else
+    {
+      for(xx = 0; xx <= (mx>>3); xx++)
+      {
+        for(yy = 0; yy <= (my>>3); yy++)
+        {
+          for(dy = 0; dy < 8; dy++)
+          {
+            for(i = 0; i < 8; i++)
+            {
+              block[i] <<= 1;
+              block[i] |= ((*(myscr + ((yy<<3)+dy)*scr_wb+xx))>>(7-i))&1;
+            }
+          }
+          for(i = 0; i < 8; i++)
+            *(rscr+((((mx>>3)-xx)<<3)+i)*scr_hb+yy) = block[7-i];
+        }
       }
     }
    SetPropTo_Obj5(&drwobj,&rc,0,&R_hdr);
@@ -1278,7 +1302,12 @@ void DrawScreen(void)
 	{
 	  int yy=y*FH;
           if(rotate && !editmode)
-  	    DrawRoundedFrame(yy,r_sw-xw+YDISP-dy,yy+FH,r_sw-xw-chars_width[*(dstk+p)]+YDISP-dy,0,0,0,ink,GetPaletteAdrByColorIndex(23));
+          {
+            if(rotate==2)
+  	      DrawRoundedFrame(scr_w-(yy+FH),xw+YDISP,scr_w-yy,xw+YDISP+chars_width[*(dstk+p)],0,0,0,ink,GetPaletteAdrByColorIndex(23));
+            else
+  	      DrawRoundedFrame(yy,r_sw-xw+YDISP-dy,yy+FH,r_sw-xw-chars_width[*(dstk+p)]+YDISP-dy,0,0,0,ink,GetPaletteAdrByColorIndex(23));
+          }
           else
 	    DrawRoundedFrame(xw,yy+YDISP+dy,xw+chars_width[*(dstk+p)],yy+dy+YDISP+FH,0,0,0,ink,GetPaletteAdrByColorIndex(23));
 	}
@@ -1731,6 +1760,49 @@ int method8(void){return(0);}
 
 int method9(void){return(0);}
 
+void actLeft(int d)
+{
+  if (d)
+    doCurLeft();
+  else
+  {
+    WordLeft();
+    cursor_off&=0xFE;
+    draw_mode=1;
+  }
+}
+
+void actRight(int d)
+{
+  if (d)
+    doCurRight();
+  else
+  {
+    WordRight();
+    cursor_off&=0xFE;
+    draw_mode=1;
+  }  
+}
+
+void actUp()
+{
+  if (cursor_off)
+    PageUp(1);
+  else
+    LineUp();
+  draw_mode=1;
+}
+
+void actDown()
+{
+  if (cursor_off)
+    PageDw(1);
+  else
+    LineDw();
+  draw_mode=1;
+}
+
+
 //------------------------------------------------------------------------------
 // Осн. диалог - обработка кнопок
 //------------------------------------------------------------------------------
@@ -1771,23 +1843,13 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case UP_BUTTON:
       if(rotate && !editmode)
       {
-        if (msg->gbsmsg->msg!=LONG_PRESS)
-          doCurRight();
+        if(rotate==2)
+          actLeft(msg->gbsmsg->msg!=LONG_PRESS);
         else
-        {
-          WordRight();
-          cursor_off&=0xFE;
-          draw_mode=1;
-        }
+          actRight(msg->gbsmsg->msg!=LONG_PRESS);
       }
       else
-      {
-        if (cursor_off)
-          PageUp(1);
-        else
-          LineUp();
-        draw_mode=1;
-      }
+        actUp();
       break;
       /*    case RECORD_BUTTON:
       if (cursor_off||(dsp==STKSZ)) break;
@@ -1807,23 +1869,13 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case DOWN_BUTTON:
       if(rotate && !editmode)
       {
-        if (msg->gbsmsg->msg!=LONG_PRESS)
-          doCurLeft();
+        if(rotate==2)
+          actRight(msg->gbsmsg->msg!=LONG_PRESS);
         else
-        {
-          WordLeft();
-          cursor_off&=0xFE;
-          draw_mode=1;
-        }
+          actLeft(msg->gbsmsg->msg!=LONG_PRESS);
       }
       else
-      {
-        if (cursor_off)
-          PageDw(1);
-        else
-          LineDw();
-        draw_mode=1;
-      }
+        actDown();
       break;
     case VOL_UP_BUTTON:
       PageUp((editmode?max_y_emode:max_y));
@@ -1832,9 +1884,18 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case '2':
       if(rotate && !editmode)
       {
-        WordRight();
-        cursor_off&=0xFE;
-        draw_mode=1;
+        if(rotate==2)
+        {
+          WordLeft();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
+        else
+        {
+          WordRight();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
       }
       else
       {
@@ -1849,9 +1910,18 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case '8':
       if(rotate && !editmode)
       {
-        WordLeft();
-        cursor_off&=0xFE;
-        draw_mode=1;
+        if(rotate==2)
+        {
+          WordRight();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
+        else
+        {
+          WordLeft();
+          cursor_off&=0xFE;
+          draw_mode=1;
+        }
       }
       else
       {
@@ -1865,30 +1935,26 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       break;
     case LEFT_BUTTON:
       if(rotate && !editmode)
-      {
-        if (cursor_off)
-          PageUp(1);
+        if(rotate==2)
+          actDown();
         else
-          LineUp();
-        draw_mode=1;
-      }
+          actUp();
       else
-      {
-        if (msg->gbsmsg->msg!=LONG_PRESS)
-          doCurLeft();
-        else
-        {
-          WordLeft();
-          cursor_off&=0xFE;
-          draw_mode=1;
-        }
-      }
+          actLeft(msg->gbsmsg->msg!=LONG_PRESS);
       break;
     case '4':
       if(rotate && !editmode)
       {
-        PageUp((editmode?max_y_emode:max_y));
-        draw_mode=1;        
+        if(rotate==2)
+        {
+          PageDw((editmode?max_y_emode:max_y));
+          draw_mode=1;        
+        }
+        else
+        {
+          PageUp((editmode?max_y_emode:max_y));
+          draw_mode=1;        
+        }
       }
       else
       {
@@ -1900,30 +1966,26 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       break;
     case RIGHT_BUTTON:
       if(rotate && !editmode)
-      {
-        if (cursor_off)
-          PageDw(1);
+        if(rotate==2)
+          actUp();
         else
-          LineDw();
-        draw_mode=1;
-      }
+          actDown();
       else
-      {
-        if (msg->gbsmsg->msg!=LONG_PRESS)
-          doCurRight();
-        else
-        {
-          WordRight();
-          cursor_off&=0xFE;
-          draw_mode=1;
-        }
-      }
+          actRight(msg->gbsmsg->msg!=LONG_PRESS);
       break;
     case '6':
       if(rotate && !editmode)
       {
-        PageDw((editmode?max_y_emode:max_y));
-        draw_mode=1;
+        if(rotate==2)
+        {
+          PageUp((editmode?max_y_emode:max_y));
+          draw_mode=1;        
+        }
+        else
+        {
+          PageDw((editmode?max_y_emode:max_y));
+          draw_mode=1;        
+        }
       }
       else
       {
@@ -1952,10 +2014,10 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
       draw_mode=1;
       break;
     case '*':
-      if(rotate && !editmode)
+      if(!editmode)
+        rotate++;
+      if(rotate>2)
         rotate = 0;
-      else
-        rotate = 1;
       HISTORY.rotate = rotate;
       disk_access=FIRSTLOAD;
       draw_mode=255; //Экран приветствия
@@ -2228,10 +2290,9 @@ void FirstLoadFile(unsigned int fmt);
 
 void do_rotate(void)
 {
-  if(rotate)
+  rotate++;
+  if(rotate>2)
     rotate = 0;
-  else
-    rotate = 1;
   HISTORY.rotate = rotate;
   if (disk_access==FIRSTLOAD) //Пришли из первой загрузки
   {
