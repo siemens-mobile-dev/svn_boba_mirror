@@ -1399,4 +1399,41 @@ __swi __arm void ProgressBar_SetBarDisabled(GUI*,int disabled);
 
 #pragma swi_number=0x312
 __swi __arm void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+
+#pragma swi_number=0x313
+__swi __arm void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
+#pragma swi_number=0x314
+__swi __arm void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
+#pragma swi_number=0x315
+__swi __arm void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
+#pragma swi_number=0x316
+__swi __arm void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
+
+#pragma swi_number=0x317
+__swi __arm void *DispObject_Softkeys_GetParams(DISP_OBJ *);
+#pragma swi_number=0x318
+__swi __arm LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
+
+#pragma swi_number=0x319
+__swi __arm int BookObj_GetDisplayOrientation(BOOK *bk);
+#pragma swi_number=0x31A
+__swi __arm void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
+
+#pragma swi_number=0x31B
+__swi __arm BOOK *DISPLAY_GetTopBook(int display);
+#pragma swi_number=0x31C
+__swi __arm void DISPLAY_SetBrightness(int display, int brightness);
+#pragma swi_number=0x31D
+__swi __arm int DISPLAY_GetBrightness(int display);
+
+#pragma swi_number=0x31E
+__swi __arm void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
+#pragma swi_number=0x31F
+__swi __arm void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
+#pragma swi_number=0x320
+__swi __arm void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
+
+#pragma swi_number=0x321
+__swi __arm void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
+
 #endif
