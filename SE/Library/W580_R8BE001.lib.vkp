@@ -2,7 +2,7 @@
 ;Библиотека функций
 ;v221207
 ;(c) Hussein , IronMaster
-;(p) -=Tanusha_Se=-,UltraShot
+;(p) -=Tanusha_Se=-, UltraShot
 
 +45C3FC00
 0448: 00000000 50531444 ; 112: void memset(void *mem,char chr,int size);
@@ -346,7 +346,7 @@
 0A1C: 00000000 7517D444 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: 00000000 41E63145 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 0A28: 00000000 09AD0F45 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-0A2C: 00000000 5D65F344 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+0A2C: 00000000 554EF344 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 89B0F344 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 F18E0F45 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 19F03845 ; 28E: void Shortcut_Run (wchar_t * shortcut_name);
@@ -482,8 +482,21 @@
 0C40: 00000000 F1453745 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 39473745 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: 00000000 5DCC2E45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
-
-
+0C4C: 00000000 69543645 ; 313: void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
+0C50: 00000000 01543645 ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
+0C54: 00000000 C9FA3145 ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
+0C58: 00000000 D9FA3145 ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
+0C5C: 00000000 25F33745 ; 317: void* DispObject_Softkeys_GetParams(DISP_OBJ *);
+0C60: 00000000 6DF33745 ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
+0C64: 00000000 2DEC2A45 ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
+0C68: 00000000 89EB2A45 ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
+0C6C: 00000000 B5DC2A45 ; 31B: BOOK *DISPLAY_GetTopBook(int display);
+0C70: 00000000 B9613645 ; 31C: void DISPLAY_SetBrightness(int display, int brightness);
+0C74: 00000000 39623645 ; 31D: int DISPLAY_GetBrightness(int display);
+0C78: 00000000 D953EC44 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
+0C7C: 00000000 5D54EC44 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
+0C80: 00000000 6554EC44 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
+0C84: 00000000 0D273845 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 
 
 
