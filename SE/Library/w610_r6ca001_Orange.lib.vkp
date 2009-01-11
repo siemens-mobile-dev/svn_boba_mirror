@@ -258,8 +258,8 @@
 08A4: 00000000 21203845 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: 00000000 711F3845 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: 00000000 59203845 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+08B0: 00000000 6D1F3845 ; 22C: __tumb void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
+08B4: 00000000 3D203845 ; 22D: __tumb DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -482,7 +482,21 @@
 0C40: 00000000 F9FB3945 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 41FD3945 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: 00000000 A1843145 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
-
+0C4C: 00000000 B9093945 ; 313: void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
+0C50: 00000000 51093945 ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
+0C54: 00000000 85B23445 ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
+0C58: 00000000 95B23445 ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
+0C5C: 00000000 19A93A45 ; 317: void* DispObject_Softkeys_GetParams(DISP_OBJ *);
+0C60: 00000000 61A93A45 ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
+0C64: 00000000 71B42D45 ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
+0C68: 00000000 CDB32D45 ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
+0C6C: 00000000 F9A42D45 ; 31B: BOOK *DISPLAY_GetTopBook(int display);
+0C70: 00000000 0D173945 ; 31C: void DISPLAY_SetBrightness(int display, int brightness);
+0C74: 00000000 8D173945 ; 31D: int DISPLAY_GetBrightness(int display);
+0C78: 00000000 1DD0EF44 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
+0C7C: 00000000 A9D0EF44 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
+0C80: 00000000 B1D0EF44 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
+0C84: 00000000 F9DC3A45 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 
 
 

@@ -122,8 +122,8 @@
 060C: FFFFFFFF 708E0644 ; 183: int get_ptype(PROCESS pid);
 0610: FFFFFFFF BC8D0644 ; 184: PROCESS current_process(void);
 0614: FFFFFFFF F48C0644 ; 185: void delay(OSTIME timeout);
-;0618: xxxxxxxx yyyyyyyy ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
-;061C: xxxxxxxx yyyyyyyy ; 187: void kill_proc(PROCESS pid);
+0618: FFFFFFFF BC8E0644 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
+061C: FFFFFFFF E88E0644 ; 187: void kill_proc(PROCESS pid);
 ;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
@@ -260,8 +260,8 @@
 08A4: FFFFFFFF F998E844 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: FFFFFFFF A595E844 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: FFFFFFFF 2199E844 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+08B0: FFFFFFFF 8595E844 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
+08B4: FFFFFFFF 0D99E844 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -431,8 +431,8 @@
 0B68: FFFFFFFF 1556C244 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: FFFFFFFF 1D52C244 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
 ;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
-;0B74: xxxxxxxx yyyyyyyy ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
-;0B78: xxxxxxxx yyyyyyyy ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
+0B74: FFFFFFFF 659EE844 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
+0B78: FFFFFFFF D19EE844 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 ;0B7C: xxxxxxxx yyyyyyyy ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: FFFFFFFF F98A0F45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: FFFFFFFF 8192D444 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
@@ -485,7 +485,21 @@
 0C40: FFFFFFFF 09D3D344 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: FFFFFFFF CDD3D344 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: FFFFFFFF B10CEC44 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
-
+0C4C: FFFFFFFF DD55D644 ; 313: void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
+0C50: FFFFFFFF F196D344 ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
+0C54: FFFFFFFF BD55D644 ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
+0C58: FFFFFFFF CD55D644 ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
+0C5C: FFFFFFFF 6D78D344 ; 317: void* DispObject_Softkeys_GetParams(DISP_OBJ *);
+0C60: FFFFFFFF B578D344 ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
+0C64: FFFFFFFF B132E844 ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
+0C68: FFFFFFFF 8D32E844 ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
+0C6C: FFFFFFFF 8123E844 ; 31B: BOOK *DISPLAY_GetTopBook(int display);
+0C70: FFFFFFFF 25F50545 ; 31C: void DISPLAY_SetBrightness(int display, int brightness);
+0C74: FFFFFFFF 69F50545 ; 31D: int DISPLAY_GetBrightness(int display);
+0C78: FFFFFFFF 6151E244 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
+0C7C: FFFFFFFF B552E244 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
+0C80: FFFFFFFF D952E244 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
+0C84: FFFFFFFF 91FBEA44 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 
 
 
