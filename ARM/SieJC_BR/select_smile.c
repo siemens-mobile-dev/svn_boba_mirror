@@ -97,7 +97,7 @@ void PasteTextToEditControl(GUI * ed_gui, char * text)
   FreeWS(ed_ws);
 }
 
-int RenderPage(SMILE_GUI *data, int is_draw)   //¬озвращает номер последней нарисованной линии
+int RenderPageSm(SMILE_GUI *data, int is_draw)   //¬озвращает номер последней нарисованной линии
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
@@ -149,7 +149,7 @@ static void method0(SMILE_GUI *data)
   DrawRectangle(0,YDISP,scr_w,scr_h,0, 
                 color(MAINBG_CONNECTED),
                 color(MAINBG_CONNECTED));
-  RenderPage(data,1);
+  RenderPageSm(data,1);
 }
 
 static void method1(SMILE_GUI *data,void *(*malloc_adr)(int))
@@ -251,7 +251,7 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
           data->view_line=0;
           while(data->view_line<data->total_lines)
           {
-            if (data->cur_pos_y==RenderPage(data,0)) break;
+            if (data->cur_pos_y==RenderPageSm(data,0)) break;
             data->view_line++;
           }
         }
@@ -262,7 +262,7 @@ static int method5(SMILE_GUI *data,GUI_MSG *msg)
         if (data->cur_pos_y<data->total_lines-1)
         {
           data->cur_pos_y++;
-          if (data->cur_pos_y>RenderPage(data,0)) data->view_line++;
+          if (data->cur_pos_y>RenderPageSm(data,0)) data->view_line++;
         }
         else
         {

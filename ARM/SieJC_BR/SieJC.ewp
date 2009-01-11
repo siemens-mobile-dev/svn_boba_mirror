@@ -5770,6 +5770,12 @@
   <group>
     <name>Messaging</name>
     <file>
+      <name>$PROJ_DIR$\BalletView.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\BalletView.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\message_cmds.c</name>
     </file>
     <file>

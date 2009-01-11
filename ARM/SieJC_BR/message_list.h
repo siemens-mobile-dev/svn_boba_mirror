@@ -19,10 +19,10 @@ typedef struct
 }DISP_MESSAGE;
 
 // Отобразить список сообщений
-void Display_Message_List(TRESOURCE* ContEx);
+//void Display_Message_List(TRESOURCE* ContEx);
 
 // Открыть окно написания нового сообщения
-void Init_Message(TRESOURCE* ContEx, char *init_text);
-
+//void Init_Message(TRESOURCE* ContEx, char *init_text);
+void CharsToSmiles(WSHDR *ws, const char *s);
 void ParseMessagesIntoList(TRESOURCE* ContEx);
 #endif

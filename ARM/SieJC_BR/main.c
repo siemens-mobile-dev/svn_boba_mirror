@@ -4,7 +4,8 @@
 #include "history.h"
 #include "conf_loader.h"
 #include "main.h"
-#include "message_list.h"
+//#include "message_list.h"
+#include "BalletView.h"
 #include "xml_parser.h"
 #include "bookmarks.h"
 #include "adv_login.h"
@@ -1249,7 +1250,8 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
         {
           if(ActiveContact->res_list->entry_type!=T_GROUP)
           {
-            Display_Message_List(CList_GetActiveContact());
+            //Display_Message_List(CList_GetActiveContact());
+            VIEWDATA_Display(CList_GetActiveContact());
           }
           else
           {
