@@ -485,7 +485,7 @@
 0C50: 00000000 39CE3445 ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
 0C54: 00000000 E1723045 ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
 0C58: 00000000 F1723045 ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
-0C5C: 00000000 956F3645 ; 317: void* DispObject_Softkeys_GetParams(DISP_OBJ *);
+0C5C: 00000000 956F3645 ; 317: void *DispObject_Softkeys_GetParams(DISP_OBJ *);
 0C60: 00000000 DD6F3645 ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
 0C64: 00000000 F1A92845 ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
 0C68: 00000000 4DA92845 ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
@@ -496,6 +496,7 @@
 0C7C: 00000000 39FCEA44 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 0C80: 00000000 41FCEA44 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 0C84: 00000000 E5A33645 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
+
 
 
 

@@ -479,6 +479,21 @@
 ;0C40: xxxxxxxx yyyyyyyy ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 ;0C44: xxxxxxxx yyyyyyyy ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 ;0C48: xxxxxxxx yyyyyyyy ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+;0C4C: xxxxxxxx yyyyyyyy ; 313: void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
+;0C50: xxxxxxxx yyyyyyyy ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
+;0C54: xxxxxxxx yyyyyyyy ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
+;0C58: xxxxxxxx yyyyyyyy ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
+;0C5C: xxxxxxxx yyyyyyyy ; 317: void *DispObject_Softkeys_GetParams(DISP_OBJ *);
+;0C60: xxxxxxxx yyyyyyyy ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
+;0C64: xxxxxxxx yyyyyyyy ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
+;0C68: xxxxxxxx yyyyyyyy ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
+;0C6C: xxxxxxxx yyyyyyyy ; 31B: BOOK *DISPLAY_GetTopBook(int display);
+;0C70: xxxxxxxx yyyyyyyy ; 31C: void DISPLAY_SetBrightness(int display, int brightness);
+;0C74: xxxxxxxx yyyyyyyy ; 31D: int DISPLAY_GetBrightness(int display);
+;0C78: xxxxxxxx yyyyyyyy ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
+;0C7C: xxxxxxxx yyyyyyyy ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
+;0C80: xxxxxxxx yyyyyyyy ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
+;0C84: xxxxxxxx yyyyyyyy ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 
 
 
