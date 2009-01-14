@@ -765,4 +765,12 @@ typedef struct
 
 typedef void* PAudioControl;
 
+typedef struct
+{
+  STRID text;
+  wchar_t unk1;
+  char unk2;
+}SKLABEL;
+
+
 #endif

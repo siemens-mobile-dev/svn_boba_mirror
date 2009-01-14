@@ -1436,4 +1436,14 @@ __swi __arm void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 #pragma swi_number=0x321
 __swi __arm void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 
+#pragma swi_number=0x322
+__swi __arm void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
+
+#pragma swi_number=0x323
+__swi __arm void Softkeys_Update(DISP_OBJ *softkeys);
+
+#pragma swi_number=0x8324
+__swi __arm void * get_CellData(void);
+
+
 #endif
