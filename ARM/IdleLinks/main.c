@@ -4,6 +4,7 @@
 #include "IdleLinks.h"
 
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
+extern const unsigned int CLOSE_BTN;
 
 CSM_DESC icsmd;
 
