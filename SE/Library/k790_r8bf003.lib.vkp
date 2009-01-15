@@ -497,7 +497,9 @@
 0C7C: 00000000 4DF8E944 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 0C80: 00000000 55F8E944 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 0C84: 00000000 11D83345 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
-
+0C88: 00000000 7DC33345 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
+0C8C: 00000000 41BF3345 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
+0C90: 00000000 58FF1820 ;8324: void * get_CellData(void);
 
 
 
