@@ -180,16 +180,16 @@ static void newCacheLine(VIEWDATA *vd, LINECACHE *p)
 
 int LineDown(VIEWDATA *vd)
 {
+  LINECACHE lc;
   if (vd->view_line+1<vd->lines_cache_size)
   {
     vd->view_line++;
   }
   else
   {
-    LINECACHE *lc;
+    LINECACHE *plc;
     if (!vd->lines_cache_size)
     {
-      LINECACHE lc;
       lc.ink1=0x0000;
       lc.ink2=0x0064;
       lc.paper1=0xFFFF;
@@ -203,14 +203,14 @@ int LineDown(VIEWDATA *vd)
       lc.right=0;
       newCacheLine(vd,&lc);
     }
-    lc=vd->lines_cache+vd->lines_cache_size-1;
-    if (!SearchNextDisplayLine(vd,lc)) return 0; // can't caching futher
-    newCacheLine(vd,lc);
+    plc=vd->lines_cache+vd->lines_cache_size-1;
+    if (!SearchNextDisplayLine(vd,plc)) return 0; // can't caching futher
+    memcpy(&lc,plc,sizeof(LINECACHE));
+    newCacheLine(vd,&lc);
     vd->view_line++;
   }
   return 1;
 }
-
 // 0 page start
 int LineUp(VIEWDATA *vd)
 {

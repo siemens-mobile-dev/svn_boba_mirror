@@ -201,7 +201,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         if (prf!=rf) break;
         pos+=_rshort2(vd->oms+prf->id)+2;
         char *c=extract_omstr(vd,prf->value);
-        WSHDR *ws=AllocWS(256);
+        WSHDR *ws=AllocWS(strlen(c));
         oms2ws(ws,c,strlen(c));
         mfree(c);
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
@@ -324,7 +324,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         s[pos]='=';
         pos++;
         c=extract_omstr(vd,prf->value);
-        WSHDR *ws=AllocWS(256);
+        WSHDR *ws=AllocWS(strlen(c));
         oms2ws(ws,c,strlen(c));
         mfree(c);
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
