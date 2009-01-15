@@ -6,6 +6,14 @@ hProc PTable[32];
 int tProc=0;
 char APP_PATH[254];
 
+#define IPC_UPDATE_STAT 0
+const char ipc_my_name[]="IdleUpd";
+const IPC_REQ gipc={
+  ipc_my_name,
+  ipc_my_name,
+  NULL
+};
+
 #pragma segment="ELFBEGIN"
 void kill_data( void * p, void(*fptr)(void *))
 {
@@ -43,6 +51,8 @@ void RedrawProc()
     pF=(void(*)())PTable[a];
     pF();
   }
+   // Перерисовываем эльфы, заточенные под IdleDisp
+   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
 }
 
 
