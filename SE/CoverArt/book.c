@@ -280,7 +280,7 @@ PAGE_DESC base_page ={"CoverArtpage",
 
 int CheckStandby()
 {
-  if (SESSION_GetTopBook(root_list_get_session(root_list_get_session_count() - 1))==Find_StandbyBook())
+  if (DISPLAY_GetTopBook(0)==Find_StandbyBook())
   {
     return 1;
   }
@@ -289,14 +289,14 @@ int CheckStandby()
 
 int CABook_StandbyUnfocused(UI_MESSAGE *)
 {
-  isInStandby=CheckStandby();//false;
+  isInStandby=CheckStandby();
   return 0;
 };
 
 int CABook_StandbyFocused(UI_MESSAGE *)
 {
   //Тел на ГЭ
-  isInStandby=CheckStandby();//true;
+  isInStandby=CheckStandby();
   return 0;
 };
 
