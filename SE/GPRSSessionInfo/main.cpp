@@ -147,6 +147,7 @@ void mbox_Create(BOOK *bk, int type)
   Feedback_SetOnClose(mbk->mbox,Feedback_OnClose);
   Feedback_SetTimeout(mbk->mbox,cfgTimeout * 1000);
   ShowWindow(mbk->mbox);
+  BookObj_SetFocus(bk,0);
   mbk->stat=0;
 }
 //______________
