@@ -227,10 +227,11 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
     IMGHDR R_hdr = {SCR_WIDTH-1,SCR_HEIGHT-1,0x1,rscr};
 //ScreenH()-(editmode?(HeaderH()+SoftkeyH()+YDISP+1):0)
     StoreXYWHtoRECT(&rc,x,y,img->h,img->w);
-
+    //zeromem(rscr, SCR_WIDTH*SCR_HEIGHT/8);
+            
     scr_wb = SCR_HEIGHT>>3;
     scr_hb = SCR_WIDTH>>3;
-    mx = ScreenH()-1;
+    mx = ScreenH()-1-YDISP;
     my = ScreenW()-1;
   
     if(rotate==2)
@@ -1142,6 +1143,7 @@ void DrawScreen(void)
     r_sw = scr_w;
     r_sh = scr_h-YDISP;
   }
+  zeromem(myscr,sizeof(myscr));
   
   char *ink=GetPaletteAdrByColorIndex(INK);
   char *paper=GetPaletteAdrByColorIndex(PAPER);
@@ -1221,7 +1223,7 @@ void DrawScreen(void)
 	//Рисуем скролл-бар
 	char *d=myscr+((r_sw-1)>>3); //Последний байт
 	if (total_line)
-	  y=((editmode?sheight_emode-8:sheight-8)*curline)/total_line;
+	  y=((editmode?sheight_emode-8:r_sh-8)*curline)/total_line;
 	else
 	  y=0;
 	p=0;
