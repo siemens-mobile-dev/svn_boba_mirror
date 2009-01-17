@@ -256,8 +256,8 @@
 8A4: 00000000 69604545 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 8A8: 00000000 B95F4545 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 8AC: 00000000 A1604545 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+8B0: 00000000 B55F4545 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
+8B4: 00000000 85604545 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -495,10 +495,9 @@ C78: 00000000 4121FD44 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db
 C7C: 00000000 CD21FD44 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 C80: 00000000 D521FD44 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 C84: 00000000 D5164845 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
-;0C88: xxxxxxxx yyyyyyyy ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
-;0C8C: xxxxxxxx yyyyyyyy ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-0C90: 00000000 704B1820 ;8324: void * get_CellData(void); 
-
+C88: 00000000 41024845 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
+C8C: 00000000 05FE4745 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
+C90: 00000000 704B1820 ;8324: void * get_CellData(void); 
 
 
 
