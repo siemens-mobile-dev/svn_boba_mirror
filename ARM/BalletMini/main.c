@@ -17,6 +17,8 @@
 #include "lang.h"
 #include "../inc/sieget_ipc.h"
 #include "url_utils.h"
+#include "upload.h"
+#include "fileman.h"
 
 extern const char DEFAULT_PARAM[128];
 
@@ -224,6 +226,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         b=ToWeb(b,1);
         pos+=strlen(b);
         mfree(b);
+        if (!prf->upload_file_data_not_present)
+          pos+=GetFileDataLen(prf);
       }
       break;
     }
@@ -355,6 +359,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         memcpy(s+pos, b, strlen(b));
         pos+=strlen(b);
         mfree(b);
+        if (!prf->upload_file_data_not_present)
+          pos += FillFileData(prf, s+pos);
       }
       break;
     }
@@ -568,6 +574,19 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             // 0/http:        не загружать
             _safe_free(goto_url);
             goto_url=extract_omstr(vd,rf->id);
+            // 0/op:fileselect: select file for upload
+            if (!strcmp("0/op:fileselect",goto_url))
+            {
+              MAIN_CSM *main_csm;
+              int bookmark_menu_id;
+              if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+              {
+                REFCACHE *prev_ref=FindReference(vd,vd->pos_prev_ref);
+                bookmark_menu_id=open_fm(PrepareFileForUpload, prev_ref);
+                main_csm->sel_bmk=bookmark_menu_id;
+                break;
+              }
+            }
             // 0/javascript:  upload data
             if (!strncmp("0/javascript",goto_url,12))
             {

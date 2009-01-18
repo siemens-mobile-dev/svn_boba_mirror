@@ -73,7 +73,8 @@ typedef struct
   //WSHDR *ws;
   void *data;
   int size;
-  char no_upload:1, multiselect:1;
+  char no_upload:1, multiselect:1, upload_file_data_not_present:1;
+  char* full_filename; //path + filename of uploaded file
 }REFCACHE;
 
 
