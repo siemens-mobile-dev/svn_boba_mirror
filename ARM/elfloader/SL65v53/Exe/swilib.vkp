@@ -2,7 +2,7 @@
 ;Release 26.07.2007
 ;SL65v53
 
-;Library 25.12.2007
+;Library 20.01.2008
 
 +0FD4000
 #pragma enable old_equal_ff
@@ -535,7 +535,7 @@
 0798: 0xA113F54F   ; 1E6: __thumb void Menu_SetItemCountDyn(void *gui, int n);
 079C: 0xA11B4E94   ; 1E7: __arm char *GetLastJavaApplication();
 07A0: 0xA0C3BEFC   ; 1E8: __arm int IsNoJava();
-;7A4: 0x   ; 1E9: __arm IMGHDR *CreateIMGHDRFromPngFile(const char *fname, int type);
+;7A4:              ; 1E9: __arm IMGHDR *CreateIMGHDRFromPngFile(const char *fname, int type);
 07A8: 0xA1151E83   ; 1EA: __arm int GetMaxDynIcon(void);
 07AC: 0xA868B6FE   ; 1EB: __arm char *RAM_IMSI(void);
 07B0: 0xA1151EF7   ; 1EC: __arm void FreeDynIcon(int picture);
@@ -632,9 +632,61 @@
 0900: 0xA1512589 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA0B2719B ; 241: __thumb void SetDateTime(TDate *, TTime *);
 
-0918: 0xA0967330 ; 246: __arm int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder); 
-092C: 0xA1140A56 ; 24B: __arm void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc); 
+0910: 0xA0D9F03D ; 244: __arm int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize);
+0914: 0xA0D9F0ED ; 245: __arm int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5);
+0918: 0xA03484B4 ; 246: __arm int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder);
+091C: 0xA127D234 ; 247: __thumb NetOff();
+
+;920: NO_SGOLD65 ; 248: char *RamFormatTrack()
+;924: NO_SGOLD65 ; 249: char *RamFreq()
+;928: NO_SGOLD65 ; 24A: char *RamChannel()
+
+092C: 0xA077C9DA ; 24B: __arm void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc);
+0930: 0xA08D1A28 ; 24C: __arm int  GetPeripheryState (int device, int check_state); // device: 4-gprs  0 -BT  1 -irda   2 -COM ?; ChechState:    4 -IsActive  (1|2) - IsOn
+
+;934: NO_SGOLD65 ; 24D: __arm int PlayMelody_SetPosition(int handle, int pos_ms);
+;938: NO_SGOLD65 ; 24E: __arm void* GetPlayObjById(int handle);
+;93C: NO_SGOLD65 ; 24F: __arm int GetPlayObjPosition(void *playobj_3D0, int *pos_ms);
+;940: NO_SGOLD65 ; 250: __arm int GetPlayObjDuration(void *playobj_3D0, int *pos_ms);
+
+;944: NO_PATTERN ; 251: char *RamDataSendFName();
+;948: NO_PATTERN ; 252: char *RamDataReceiveFName();
+;94C: NO_PATTERN ; 253: char *RamLastCallNum();
+
 0950: 0xA0968E8C ; 254: __arm int StartNativeExplorer(NativeExplorerData* data);
+0954: 0xA1141640 ; 255: void MenuSetUserPointer(void *gui,void *user_pointer)
+
+; 256-26D: No patterns for SGOLD
+
+0A04: 0xA86DD6C0 ; 281: __arm char *RamIsRunJava(); (2 - no java)
+;A08: NO_PATTERN ; 282: __arm char *RamIsRunCamera();
+0A0C: 0xA0943BC0 ; 283: int runMidletLinkablely(const char *midlet_name, WSHDR *filename)
+0A10: 0xA0AAD29F ; 284: __arm int IsGPRS()
+0A14: 0xA0002070 ; 285: __arm int IsEDGE() (NO_SGOLD65, just dummy function to avoid craches)
+; 286-288: No patterns for SGOLD
+0A24: 0xA13387BD ; 289: __arm int isDecryption()
+; 28B-291: No patterns for SGOLD
+;A48: NO_PATTERN ; 292: __arm int RefreshAlarmClock()
+0A58: 0xA08CBDBF ; 296: void GetProfileNameByN(WSHDR *ws, int n, int _0)
+; 297-29B: Not for SGOLD
+;A70: NO_PATTERN ; 29C: char *RamInputLanguage()
+; 2A0-2A2: Not for SGOLD
+
+;(NOT TESTED)
+0A8C: 0xA113F5DB ; 2A3: void UpdateMenuCursorItem(void *gui, int n)
+0A90: 0xA113CC3F ; 2A4: void *GetMenuGUI(void *malloc_adr, void *mfree_adr)
+0A94: 0xA11768CD ; 2A5: void *GetMultiLinesMenuGUI(void *malloc_adr, void *mfree_adr)
+0A98: 0xA163F41D ; 2A6: void SetHeaderToMenu(void *gui, const HEADER_DESC *hdr, void *malloc_adr)
+0A9C: 0xA14325AD ; 2A7: void SetMenuToGUI(void *gui, const void *menu_desc)
+0AA0: 0xA113D80F ; 2A8: int GetMenuItemCount(void *gui)
+0AA4: 0xA113BBF7 ; 2A9: int CreatePopupGUI(int flag, void *user_pointer, const POPUP_DESC *, int lgp_msg)
+0AA8: 0xA113BB57 ; 2AA: int CreatePopupGUI_ws(int flag, void *user_pointer, const POPUP_DESC *, WSHDR *msg)
+0AB8: 0xA1310D6B ; 2AE: void *GetHeaderPointer(void *gui)
+0AC0: 0xA114150B ; 2B0: void SetMenuSoftKey(void *gui, const SOFTKEY_DESC *,int n)
+;(/NOT TESTED)
+
+0B08: 0xA0B4C025 ; 2C2: __arm int GetSubprovider(WSHDR* ws);
+0B0C: 0xA0B4C239 ; 2C3: __arm int GetRoamingState(); 
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
@@ -648,5 +700,9 @@
 //0xA087611B ;  __thumb int ZEXPORT inflateEnd OF((z_streamp strm));
 #pragma disable old_equal_ff
 +0
+
+
+
+;locale=Russian_Russia.1251
 
 ;locale=Russian_Russia.1251
