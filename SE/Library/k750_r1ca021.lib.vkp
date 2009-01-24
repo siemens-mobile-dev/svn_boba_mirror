@@ -497,7 +497,7 @@
 ;0C84: xxxxxxxx yyyyyyyy ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 ;0C88: xxxxxxxx yyyyyyyy ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
 ;0C8C: xxxxxxxx yyyyyyyy ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-0C90: 00000000 C419044C ;8324: void * get_CellData(void); 
+0C90: FFFFFFFF C419044C ;8324: void * get_CellData(void);
 
 
 
