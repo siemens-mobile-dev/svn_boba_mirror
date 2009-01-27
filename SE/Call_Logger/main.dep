@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <fileChecksum>2970825664</fileChecksum>
+  <configuration>
+    <name>Debug</name>
+    <outputs>
+      <file>$PROJ_DIR$\..\C++\_cpp2.cpp</file>
+      <file>$PROJ_DIR$\Debug\Obj\_cpp2.r79</file>
+      <file>$PROJ_DIR$\Debug\Exe\main.elf</file>
+      <file>$PROJ_DIR$\..\include\1.xcl</file>
+      <file>$PROJ_DIR$\Debug\Obj\func.r79</file>
+      <file>$PROJ_DIR$\Debug\Obj\_cpp2.pbi</file>
+      <file>$PROJ_DIR$\..\include\zconf.h</file>
+      <file>$PROJ_DIR$\..\include\Target.h</file>
+      <file>$PROJ_DIR$\..\include\png.h</file>
+      <file>$PROJ_DIR$\Debug\List\func.lst</file>
+      <file>$PROJ_DIR$\..\include\pngconf.h</file>
+      <file>$TOOLKIT_DIR$\lib\dl5tpainl8n.r79</file>
+      <file>$PROJ_DIR$\..\include\zlib.h</file>
+      <file>$PROJ_DIR$\..\include\DYN_tag.h</file>
+      <file>$PROJ_DIR$\..\include\Lib_Clara.h</file>
+      <file>$PROJ_DIR$\..\include\Colors.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbd</file>
+      <file>$PROJ_DIR$\..\include\var_arg.asm</file>
+      <file>$PROJ_DIR$\..\include\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r79</file>
+      <file>$PROJ_DIR$\..\include\DYN_ext.h</file>
+      <file>$PROJ_DIR$\..\include\Types.h</file>
+      <file>$PROJ_DIR$\..\include\dir.h</file>
+      <file>$PROJ_DIR$\Debug\List\main.map</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\..\include\DYN_mac.asm</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 14 7 22 8 12 6 10 21 13 15</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 14 7 22 8 12 6 10 21 13 15</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\main.elf</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 3 1 4 20 11</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 24 2</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Obj\main.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 5 25</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\include\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 4 9</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>AARM</name>
+          <file> 13 17 26</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 25</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 14 7 22 8 12 6 10 21 13 15 23</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 14 7 22 8 12 6 10 21 13 15 23</file>
+        </tool>
+      </inputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
+    <forcedrebuild>
+      <name>[REBUILD_ALL]</name>
+    </forcedrebuild>
+  </configuration>
+  <configuration>
+    <name>Release</name>
+    <outputs>
+      <file>$PROJ_DIR$\..\..\Proj_assembla\Call_Logger\main.c</file>
+      <file>$PROJ_DIR$\..\C++\_cpp2.cpp</file>
+      <file>$PROJ_DIR$\..\include\1.xcl</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.r79</file>
+      <file>$PROJ_DIR$\..\include\zconf.h</file>
+      <file>$PROJ_DIR$\..\include\Target.h</file>
+      <file>$PROJ_DIR$\..\include\png.h</file>
+      <file>$PROJ_DIR$\Release\List\conf_loader.s79</file>
+      <file>$PROJ_DIR$\Release\List\main.lst</file>
+      <file>$PROJ_DIR$\..\include\pngconf.h</file>
+      <file>$TOOLKIT_DIR$\lib\dl5tpainl8n.r79</file>
+      <file>$PROJ_DIR$\Release\Obj\func.r79</file>
+      <file>$PROJ_DIR$\..\..\Project_assembla\include\func.asm</file>
+      <file>$PROJ_DIR$\..\include\zlib.h</file>
+      <file>$PROJ_DIR$\..\include\DYN_tag.h</file>
+      <file>$PROJ_DIR$\..\include\Lib_Clara.h</file>
+      <file>$PROJ_DIR$\..\include\Colors.h</file>
+      <file>$PROJ_DIR$\config_data.c</file>
+      <file>$PROJ_DIR$\Release\List\main.s79</file>
+      <file>$PROJ_DIR$\..\include\var_arg.asm</file>
+      <file>$PROJ_DIR$\..\include\func.asm</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\..\include\DYN_ext.h</file>
+      <file>$PROJ_DIR$\..\include\Types.h</file>
+      <file>$PROJ_DIR$\Release\Exe\Call Logger.elf</file>
+      <file>$PROJ_DIR$\..\include\cfg_items.h</file>
+      <file>$PROJ_DIR$\Release\List\_cpp2.s79</file>
+      <file>$PROJ_DIR$\Release\List\config_data.lst</file>
+      <file>$PROJ_DIR$\config_data.h</file>
+      <file>$PROJ_DIR$\Release\Obj\_cpp2.r79</file>
+      <file>$PROJ_DIR$\Release\List\conf_loader.lst</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.pbi</file>
+      <file>$PROJ_DIR$\Release\List\_cpp2.lst</file>
+      <file>$PROJ_DIR$\..\include\dir.h</file>
+      <file>$PROJ_DIR$\Release\List\func.lst</file>
+      <file>$PROJ_DIR$\Release\List\config_data.s79</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbd</file>
+      <file>$PROJ_DIR$\Release\Obj\config_data.r79</file>
+      <file>$PROJ_DIR$\Release\List\Call Logger.map</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\..\..\Project_assembla\C++\_cpp2.cpp</file>
+      <file>$PROJ_DIR$\..\include\obsolete.h</file>
+      <file>$PROJ_DIR$\Proj_assembla\include\func.asm</file>
+      <file>$PROJ_DIR$\Release\Obj\_cpp2.pbi</file>
+      <file>$PROJ_DIR$\conf_loader.h</file>
+      <file>$PROJ_DIR$\..\include\DYN_mac.asm</file>
+      <file>$PROJ_DIR$\Release\Obj\conf_loader.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\main.r79</file>
+      <file>$PROJ_DIR$\Proj_assembla\C++\_cpp2.cpp</file>
+      <file>$PROJ_DIR$\conf_loader.cpp</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 29 26 32</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 43</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 5 23 6 13 4 9 22 14 16 41</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15 5 23 6 13 4 9 22 14 16 41</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 24 38</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Project_assembla\include\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\config_data.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 37 35 27</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 31</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25 23 28</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 25 23 28</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\include\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 11 34</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>AARM</name>
+          <file> 14 19 45</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 47 18 8</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 39</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 5 23 6 13 4 9 22 14 16 41 33 25 44 28</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15 5 23 6 13 4 9 22 14 16 41 33 25 44 28</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Exe\Call Logger.elf</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 38</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 2 29 3 37 11 47 10</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Release\Obj\main.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 43 46 31 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Project_assembla\C++\_cpp2.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 29</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 43</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Proj_assembla\include\func.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Proj_assembla\C++\_cpp2.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 29</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 43</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\conf_loader.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 3 7 30</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 46</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 5 23 6 13 4 9 22 14 16 41 33 25 44</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15 5 23 6 13 4 9 22 14 16 41 33 25 44</file>
+        </tool>
+      </inputs>
+    </file>
+    <forcedrebuild>
+      <name>[REBUILD_ALL]</name>
+    </forcedrebuild>
+  </configuration>
+</project>
+
+

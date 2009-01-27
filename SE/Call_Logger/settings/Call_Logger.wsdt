@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+  <CurrentConfigs><Project>main/Release</Project></CurrentConfigs></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>124</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>677</ColumnWidth1><ColumnWidth2>180</ColumnWidth2><ColumnWidth3>45</ColumnWidth3></Build>
+    </Static>
+    <Windows>
+      
+      
+    <Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-16973-28046</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>main</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-30168-28617</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>C:\Documents and Settings\Mehanoshin\&#x420;&#x430;&#x431;&#x43e;&#x447;&#x438;&#x439; &#x441;&#x442;&#x43e;&#x43B;\123\Embedded Workbench 4.0 Evaluation\Proj_assembla\Call_Logger\main.c</Filename><XPos>0</XPos><YPos>147</YPos><SelStart>2580</SelStart><SelEnd>2580</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\Documents and Settings\Mehanoshin\&#x420;&#x430;&#x431;&#x43e;&#x447;&#x438;&#x439; &#x441;&#x442;&#x43e;&#x43B;\123\Embedded Workbench 4.0 Evaluation\Proj_assembla\Call_Logger\conf_loader.cpp</Filename><XPos>0</XPos><YPos>12</YPos><SelStart>730</SelStart><SelEnd>730</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\Documents and Settings\Mehanoshin\&#x420;&#x430;&#x431;&#x43e;&#x447;&#x438;&#x439; &#x441;&#x442;&#x43e;&#x43B;\123\Embedded Workbench 4.0 Evaluation\Proj_assembla\Call_Logger\config_data.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>456</SelStart><SelEnd>456</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>C:\Documents and Settings\Mehanoshin\&#x420;&#x430;&#x431;&#x43e;&#x447;&#x438;&#x439; &#x441;&#x442;&#x43e;&#x43B;\123\Embedded Workbench 4.0 Evaluation\Project\Call_Logger\main.c</Filename><XPos>0</XPos><YPos>124</YPos><SelStart>2162</SelStart><SelEnd>2162</SelEnd></Tab><ActiveTab>3</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-00a7fb60><key>iaridepm.enu1</key></Toolbar-00a7fb60></Sizes></Row0></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>381</Bottom><Right>198</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>208117</sizeHorzCX><sizeHorzCY>321027</sizeHorzCY><sizeVertCX>208117</sizeVertCX><sizeVertCY>614767</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>963</Right><x>-2</x><y>-2</y><xscreen>965</xscreen><yscreen>200</yscreen><sizeHorzCX>1004162</sizeHorzCX><sizeHorzCY>321027</sizeHorzCY><sizeVertCX>208117</sizeVertCX><sizeVertCY>321027</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+

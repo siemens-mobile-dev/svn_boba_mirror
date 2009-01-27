@@ -1,0 +1,1390 @@
+###############################################################################
+#                                                                             #
+#     IAR Systems ARM Assembler V4.42A/W32 27/Jan/2009  11:16:26              #
+#     Copyright 1999-2007 IAR Systems. All rights reserved.                   #
+#                                                                             #
+#           Source file   =  C:\Documents and Settings\Mehanoshin\Рабочий стол\123\Embedded Workbench 4.0 Evaluation\Project\include\func.asm#
+#           List file     =  C:\Documents and Settings\Mehanoshin\Рабочий стол\123\Embedded Workbench 4.0 Evaluation\Project\Call_Logger\Release\List\func.lst#
+#           Object file   =  C:\Documents and Settings\Mehanoshin\Рабочий стол\123\Embedded Workbench 4.0 Evaluation\Project\Call_Logger\Release\Obj\func.r79#
+#           Command line  =  C:\Documents and Settings\Mehanoshin\Рабочий стол\123\Embedded Workbench 4.0 Evaluation\Project\include\func.asm #
+#                            -OC:\Documents and Settings\Mehanoshin\Рабочий стол\123\Embedded Workbench 4.0 Evaluation\Project\Call_Logger\Release\Obj\ #
+#                            -s+ -M<> -w+                                     #
+#                            -LC:\Documents and Settings\Mehanoshin\Рабочий стол\123\Embedded Workbench 4.0 Evaluation\Project\Call_Logger\Release\List\ #
+#                            -cE -t8 -xD --cpu ARM926EJ-S --fpu None          #
+#                            -IC:\Documents and Settings\Mehanoshin\Рабочий стол\123\Embedded Workbench 4.0 Evaluation\ARM\INC\ #
+#                                                                             #
+###############################################################################
+
+    1    00000000              #include "..\\include\DYN_tag.h"
+    2    00000000              
+    3    00000000              
+    4    00000000                      RTMODEL "ARMv4M", "USED"
+    5    00000000                      RTMODEL "ARMv4T", "USED"
+    6    00000000                      RTMODEL "ARMv5T", "USED"
+    7    00000000                      RTMODEL "StackAlign4", "USED"
+    8    00000000                      RTMODEL "__cpu_mode", "__pcs__interwork"
+    9    00000000                      RTMODEL "__data_model", "absolute"
+   10    00000000                      RTMODEL "__dlib_file_descriptor",
+                                "0"
+   11    00000000                      RTMODEL "__endian", "little"
+   12    00000000                      RTMODEL "__rt_version", "6"
+   13    00000000              
+   14    00000000              
+   15    00000000                      PUBLIC  ELF_BEGIN
+   16    00000000                      RSEG    ELFBEGIN:DATA
+   17    00000000              ELF_BEGIN
+   18    00000000              
+   19    00000000                      RSEG    CODE:CODE
+   20    00000000                      PUBLIC  kill_data
+   21    00000000                      CODE32
+   22    00000000              kill_data
+   23    00000000 11FF2FE1             BX      R1
+   24    00000000                      PUBLIC  seqkill
+   25    00000004              seqkill
+   26    00000004 13FF2FE1             BX      R3
+   27    00000008              
+   28    00000000                      PUBLIC  ASYNC
+   29    00000000                      PUBLIC  SYNC
+   30    00000008 00000000     _SYNC   DC32    0
+   31    0000000C 01000000     _ASYNC  DC32    1
+   32    00000010                      
+   33    00000010 ........     SYNC    DC32    _SYNC
+   34    00000014 ........     ASYNC   DC32    _ASYNC
+   35    00000018                      
+   36    00000018              
+   37    00000018              ;===============================================
+                               ================================================
+                               ======
+   38    00000018              ;
+   39    00000018                      #include "..\\include\var_arg.asm"
+   40    00000004              
+   47    00000004              ;
+   48    00000004                      #include "..\\include\DYN_mac.asm"
+   49    00000004              
+   50    00000004              
+   51    00000000                      RSEG    DYN_CONST_DESC:DATA:ROOT(2)
+   52    00000000 ........             DC32    (SFE(DYN_CONST)-SFB(DYN_CONST))>
+                                                              >2
+   53    00000004              
+   54    00000000                      RSEG    DYN_PAGE:DATA:NOROOT(2)
+   55    00000000              
+   56    00000000                      RSEG    DYN_PAGE_DESC:DATA:ROOT(2)
+   57    00000000 ........             DC32    (SFE(DYN_PAGE)-SFB(DYN_PAGE))>>3
+   58    00000004                      END
+
+
+AB_ITEM_DESC_ICON_DISPLACE_TAG #define, value: 0x00000151, line:     341:1      338:3
+AB_ITEM_DESC_ID_DISPLACE_TAG #define, value: 0x00000150, line:     340:1      337:3
+AB_ITEM_DESC_NUM_DISPLACE_TAG #define, value: 0x00000152, line:     342:1      339:3
+AB_ITEM_DESC_SIZE_TAG #define, value: 0x0000014F, line:     339:1      336:3
+AB_ITEM_FIELD_CITY_TAG #define, value: 0x0000013E, line:     322:1      319:3
+AB_ITEM_FIELD_COMPANY_TAG #define, value: 0x0000013C, line:     320:1      317:3
+AB_ITEM_FIELD_COUNTRY_TAG #define, value: 0x00000141, line:     325:1      322:3
+AB_ITEM_FIELD_DR_TAG #define, value: 0x00000143, line:     327:1      324:3
+AB_ITEM_FIELD_EMAIL1_TAG #define, value: 0x0000012F, line:     307:1      304:3
+AB_ITEM_FIELD_EMAIL2_TAG #define, value: 0x00000130, line:     308:1      305:3
+AB_ITEM_FIELD_EMAIL3_TAG #define, value: 0x00000131, line:     309:1      306:3
+AB_ITEM_FIELD_IMAGE_TAG #define, value: 0x00000134, line:     312:1      309:3
+AB_ITEM_FIELD_INFO_TAG #define, value: 0x00000142, line:     326:1      323:3
+AB_ITEM_FIELD_NAME_TAG #define, value: 0x00000128, line:     300:1      297:3
+AB_ITEM_FIELD_NEW_ITEM_TAG #define, value: 0x00000129, line:     301:1      298:3
+AB_ITEM_FIELD_N_FAX_TAG #define, value: 0x0000012D, line:     305:1      302:3
+AB_ITEM_FIELD_N_HOME_TAG #define, value: 0x0000012B, line:     303:1      300:3
+AB_ITEM_FIELD_N_MOBILE_TAG #define, value: 0x0000012A, line:     302:1      299:3
+AB_ITEM_FIELD_N_OTHER_TAG #define, value: 0x0000012E, line:     306:1      303:3
+AB_ITEM_FIELD_N_WORK_TAG #define, value: 0x0000012C, line:     304:1      301:3
+AB_ITEM_FIELD_POST_INDEX_TAG #define, value: 0x00000140, line:     324:1      321:3
+AB_ITEM_FIELD_REGION_TAG #define, value: 0x0000013F, line:     323:1      320:3
+AB_ITEM_FIELD_RINGTONE_TAG #define, value: 0x00000135, line:     313:1      310:3
+AB_ITEM_FIELD_STREET_TAG #define, value: 0x0000013D, line:     321:1      318:3
+AB_ITEM_FIELD_TITLE_TAG #define, value: 0x0000013B, line:     319:1      316:3
+AB_ITEM_FIELD_USERNAME_TAG #define, value: 0x00000132, line:     310:1      307:3
+AB_ITEM_FIELD_VOICE_CMD1_TAG #define, value: 0x00000136, line:     314:1      311:3
+AB_ITEM_FIELD_VOICE_CMD2_TAG #define, value: 0x00000137, line:     315:1      312:3
+AB_ITEM_FIELD_VOICE_CMD3_TAG #define, value: 0x00000138, line:     316:1      313:3
+AB_ITEM_FIELD_VOICE_CMD4_TAG #define, value: 0x00000139, line:     317:1      314:3
+AB_ITEM_FIELD_VOICE_CMD5_TAG #define, value: 0x0000013A, line:     318:1      315:3
+AB_ITEM_FIELD_WEB_TAG #define, value: 0x00000133, line:     311:1      308:3
+AB_ITEM_FPI_TAG      #define, value: 0x00000144, line:     328:1      325:3
+ACCEPT_EVENT_TAG     #define, value: 0x0000004C, line:      80:1       77:3
+ACCESSORIES_ACCESSORY_CONNECTED_EVENT_TAG
+                     #define, value: 0x00000083, line:     135:1      132:3
+ACCESSORIES_ACCESSORY_DISCONNECTED_EVENT_TAG
+                     #define, value: 0x00000084, line:     136:1      133:3
+ACCESSORIES_APPLICATION_INQUIRY_EVENT_TAG
+                     #define, value: 0x0000008C, line:     144:1      141:3
+ACCESSORIES_CALENDAR_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000089, line:     141:1      138:3
+ACCESSORIES_CREATE_DIALOG_EVENT_TAG
+                     #define, value: 0x00000081, line:     133:1      130:3
+ACCESSORIES_CREATE_STATUS_TEXT_EVENT_TAG
+                     #define, value: 0x0000007F, line:     131:1      128:3
+ACCESSORIES_EMAIL_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000087, line:     139:1      136:3
+ACCESSORIES_IMAGEBROWSER_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x0000008A, line:     142:1      139:3
+ACCESSORIES_MESSAGE_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000085, line:     137:1      134:3
+ACCESSORIES_NEW_ACCESSORY_EVENT_TAG
+                     #define, value: 0x0000007D, line:     129:1      126:3
+ACCESSORIES_NEW_SUBMENU_EVENT_TAG
+                     #define, value: 0x0000007E, line:     130:1      127:3
+ACCESSORIES_NOTES_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x0000008B, line:     143:1      140:3
+ACCESSORIES_PHONEBOOK_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000086, line:     138:1      135:3
+ACCESSORIES_REMOVE_ACCESSORY_EVENT_TAG
+                     #define, value: 0x00000082, line:     134:1      131:3
+ACCESSORIES_STATUS_TEXT_READ_EVENT_TAG
+                     #define, value: 0x00000080, line:     132:1      129:3
+ACCESSORIES_WAP_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000088, line:     140:1      137:3
+ACTION_ACCEPT_TAG    #define, value: 0x00000004, line:       8:1        5:3
+ACTION_ADD_TAG       #define, value: 0x00000005, line:       9:1        6:3
+ACTION_BACK_TAG      #define, value: 0x00000145, line:     329:1      326:3
+ACTION_CANCEL_TAG    #define, value: 0x00000003, line:       7:1        4:3
+ACTION_CHECK_TAG     #define, value: 0x00000006, line:      10:1        7:3
+ACTION_CONTACTS_TAG  #define, value: 0x0000000E, line:      18:1       15:3
+ACTION_CONTINUE_TAG  #define, value: 0x00000007, line:      11:1        8:3
+ACTION_DELETE_TAG    #define, value: 0x00000008, line:      12:1        9:3
+ACTION_DONE_TAG      #define, value: 0x00000009, line:      13:1       10:3
+ACTION_EDIT_TAG      #define, value: 0x0000000A, line:      14:1       11:3
+ACTION_EXPAND_TAG    #define, value: 0x00000002, line:       6:1        3:3
+ACTION_HELP_TAG      #define, value: 0x0000000B, line:      15:1       12:3
+ACTION_INFO_TAG      #define, value: 0x0000000D, line:      17:1       14:3
+ACTION_LONG_BACK_TAG #define, value: 0x00000146, line:     330:1      327:3
+ACTION_MORE1_TAG     #define, value: 0x00000001, line:       5:1        2:3
+ACTION_MORE_TAG      #define, value: 0x00000000, line:       4:1        1:3
+ACTION_NOT_EMPTY_TAG #define, value: 0x0000000F, line:      19:1       16:3
+ACTION_NO_TAG        #define, value: 0x00000010, line:      20:1       17:3
+ACTION_OK_TAG        #define, value: 0x00000011, line:      21:1       18:3
+ACTION_SAVE_TAG      #define, value: 0x00000012, line:      22:1       19:3
+ACTION_SELECT1_TAG   #define, value: 0x00000013, line:      23:1       20:3
+ACTION_SELECT_TAG    #define, value: 0x0000000C, line:      16:1       13:3
+ACTION_UNCHECK_TAG   #define, value: 0x00000014, line:      24:1       21:3
+ACTION_YES_TAG       #define, value: 0x00000015, line:      25:1       22:3
+ACTIVE_PROFILE_CHANGED_EVENT_TAG
+                     #define, value: 0x000000E3, line:     231:1      228:3
+ALIEN_BATTERY_CHARGER_CONNECTED_EVENT_TAG
+                     #define, value: 0x0000019B, line:     415:1      412:3
+ALIEN_BATTERY_CHARGER_DISCONNECTED_EVENT_TAG
+                     #define, value: 0x0000019C, line:     416:1      413:3
+ALL_LOCKS_UNLOCKED_EVENT_TAG #define, value: 0x0000009B, line:     159:1      156:3
+APP_NEEDS_VIDEOMEMORY_EVENT_TAG #define, value: 0x00000052, line:      86:1       83:3
+ASR_PLAY_STORED_SPEECH_RESULT_EVENT_TAG
+                     #define, value: 0x00000127, line:     299:1      296:3
+ASR_TAG_PLAYED_EVENT_TAG #define, value: 0x0000019A, line:     414:1      411:3
+BACKLIGHT_RESTORE_EVENT_TAG #define, value: 0x000000A8, line:     172:1      169:3
+BATTERY_CAPACITY_CHANGED_EVENT_TAG
+                     #define, value: 0x000000B0, line:     180:1      177:3
+BATTERY_CHARGER_CONNECTED_EVENT_TAG
+                     #define, value: 0x000000B3, line:     183:1      180:3
+BATTERY_CHARGER_DISCONNECTED_EVENT_TAG
+                     #define, value: 0x000000B4, line:     184:1      181:3
+BATTERY_CHARGING_ALERT_EVENT_TAG
+                     #define, value: 0x000000B6, line:     186:1      183:3
+BATTERY_CHARGING_STATE_EVENT_TAG
+                     #define, value: 0x000000B5, line:     185:1      182:3
+BATTERY_CONNECTED_EVENT_TAG #define, value: 0x000000B1, line:     181:1      178:3
+BATTERY_DISCONNECTED_EVENT_TAG #define, value: 0x000000B2, line:     182:1      179:3
+BATTERY_SYSTEM_VOLTAGE_STATUS_EVENT_TAG
+                     #define, value: 0x000000B7, line:     187:1      184:3
+BOOK_DESTROYED_EVENT_TAG #define, value: 0x00000041, line:      69:1       66:3
+CALENDAR_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000091, line:     149:1      146:3
+CALLMANAGER_CALL_END_SET_CALLTIME_EVENT_TAG
+                     #define, value: 0x000001CE, line:     466:1      463:3
+CALLMANAGER_KILL_CALLBOOK_EVENT_TAG
+                     #define, value: 0x000001CF, line:     467:1      464:3
+CALL_OFF_EVENT_TAG   #define, value: 0x000000FA, line:     254:1      251:3
+CALL_ON_EVENT_TAG    #define, value: 0x000000F9, line:     253:1      250:3
+CAMERACAPTUREKEY_LONG_PRESS_EVENT_TAG
+                     #define, value: 0x00000182, line:     390:1      387:3
+CAMERACAPTUREKEY_LONG_RELEASE_EVENT_TAG
+                     #define, value: 0x00000183, line:     391:1      388:3
+CAMERACAPTUREKEY_PRESSED_EVENT_TAG
+                     #define, value: 0x00000180, line:     388:1      385:3
+CAMERACAPTUREKEY_RELEASE_EVENT_TAG
+                     #define, value: 0x00000181, line:     389:1      386:3
+CAMERAFOCUSKEY_LONG_PRESS_EVENT_TAG
+                     #define, value: 0x0000017E, line:     386:1      383:3
+CAMERAFOCUSKEY_LONG_RELEASE_EVENT_TAG
+                     #define, value: 0x0000017F, line:     387:1      384:3
+CAMERAFOCUSKEY_PRESSED_EVENT_TAG
+                     #define, value: 0x0000017C, line:     384:1      381:3
+CAMERAFOCUSKEY_RELEASE_EVENT_TAG
+                     #define, value: 0x0000017D, line:     385:1      382:3
+CAMERAKEY_LONG_PRESS_EVENT_TAG #define, value: 0x00000065, line:     105:1      102:3
+CAMERAKEY_LONG_RELEASE_EVENT_TAG
+                     #define, value: 0x0000017B, line:     383:1      380:3
+CAMERAKEY_PRESSED_EVENT_TAG #define, value: 0x00000064, line:     104:1      101:3
+CAMERAKEY_RELEASE_EVENT_TAG #define, value: 0x0000017A, line:     382:1      379:3
+CAMERA_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x000001BF, line:     451:1      448:3
+CAMERA_LENSCOVER_CLOSE_EVENT_TAG
+                     #define, value: 0x00000060, line:     100:1       97:3
+CAMERA_LENSCOVER_OPEN_EVENT_TAG #define, value: 0x0000005F, line:      99:1       96:3
+CANCEL_EVENT_TAG     #define, value: 0x0000004E, line:      82:1       79:3
+CHF_CONNECTED_EVENT_TAG #define, value: 0x00000094, line:     152:1      149:3
+CHF_DISCONNECTED_EVENT_TAG #define, value: 0x00000095, line:     153:1      150:3
+CLOCK_ALARMCLOCK_STATUS_EVENT_TAG
+                     #define, value: 0x00000097, line:     155:1      152:3
+CLOCK_DATEANDTIME_IND_EVENT_TAG #define, value: 0x00000096, line:     154:1      151:3
+CT_CORDLESS_INRANGE_EVENT_TAG #define, value: 0x000000A5, line:     169:1      166:3
+CT_CORDLESS_OUTRANGE_EVENT_TAG #define, value: 0x000000A6, line:     170:1      167:3
+DISPATCH_ALARMRECURSTATUS_IND_EVENT_TAG
+                     #define, value: 0x00000098, line:     156:1      153:3
+DISPATCH_NITZTIMEINFORMATION_IND_EVENT_TAG
+                     #define, value: 0x000000E4, line:     232:1      229:3
+DISPATCH_NITZ_NETWORK_NAME_IND_EVENT_TAG
+                     #define, value: 0x00000099, line:     157:1      154:3
+DISPATCH_OFFICE_HF_STATE_CHANGED_EVENT_TAG
+                     #define, value: 0x000000EA, line:     238:1      235:3
+DISPATCH_SIM_SELECTED_LINE_CHANGED_EVENT_TAG
+                     #define, value: 0x000000EC, line:     240:1      237:3
+EMAIL_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x0000008F, line:     147:1      144:3
+ERROR_EVENT_TAG      #define, value: 0x0000004F, line:      83:1       80:3
+EXTERNAL_ACCESSORY_EVENT_TAG #define, value: 0x000000F7, line:     251:1      248:3
+FLIP_CLOSE_EVENT_TAG #define, value: 0x0000005B, line:      95:1       92:3
+FLIP_CLOSE_SHIFT_EVENT_TAG #define, value: 0x0000005C, line:      96:1       93:3
+FLIP_OPEN_EVENT_TAG  #define, value: 0x00000059, line:      93:1       90:3
+FLIP_OPEN_SHIFT_EVENT_TAG #define, value: 0x0000005A, line:      94:1       91:3
+FMRADIO_MODE_CHANGED_EVENT_TAG #define, value: 0x000001DC, line:     480:1      477:3
+FMRADIO_RDS_DATA_RECEIVED_EVENT_TAG
+                     #define, value: 0x000001DD, line:     481:1      478:3
+FONT_D_18B_TAG       #define, value: 0x0000014C, line:     336:1      333:3
+FONT_D_24B_TAG       #define, value: 0x0000003C, line:      64:1       61:3
+FONT_D_29B_TAG       #define, value: 0x0000003D, line:      65:1       62:3
+FONT_D_7R_TAG        #define, value: 0x0000002F, line:      51:1       48:3
+FONT_E_100R_TAG      #define, value: 0x00000170, line:     372:1      369:3
+FONT_E_12B_TAG       #define, value: 0x000001BC, line:     448:1      445:3
+FONT_E_12R_TAG       #define, value: 0x000001BB, line:     447:1      444:3
+FONT_E_14BI_TAG      #define, value: 0x00000033, line:      55:1       52:3
+FONT_E_14B_TAG       #define, value: 0x00000031, line:      53:1       50:3
+FONT_E_14I_TAG       #define, value: 0x00000032, line:      54:1       51:3
+FONT_E_14R_TAG       #define, value: 0x00000030, line:      52:1       49:3
+FONT_E_16BI_TAG      #define, value: 0x00000037, line:      59:1       56:3
+FONT_E_16B_TAG       #define, value: 0x00000035, line:      57:1       54:3
+FONT_E_16I_TAG       #define, value: 0x00000036, line:      58:1       55:3
+FONT_E_16R_TAG       #define, value: 0x00000034, line:      56:1       53:3
+FONT_E_18BI_TAG      #define, value: 0x00000160, line:     356:1      353:3
+FONT_E_18B_TAG       #define, value: 0x0000015E, line:     354:1      351:3
+FONT_E_18I_TAG       #define, value: 0x0000015F, line:     355:1      352:3
+FONT_E_18R_TAG       #define, value: 0x0000015D, line:     353:1      350:3
+FONT_E_20BI_TAG      #define, value: 0x0000003B, line:      63:1       60:3
+FONT_E_20B_TAG       #define, value: 0x00000039, line:      61:1       58:3
+FONT_E_20I_TAG       #define, value: 0x0000003A, line:      62:1       59:3
+FONT_E_20R_TAG       #define, value: 0x00000038, line:      60:1       57:3
+FONT_E_22BI_TAG      #define, value: 0x00000164, line:     360:1      357:3
+FONT_E_22B_TAG       #define, value: 0x00000162, line:     358:1      355:3
+FONT_E_22I_TAG       #define, value: 0x00000163, line:     359:1      356:3
+FONT_E_22R_TAG       #define, value: 0x00000161, line:     357:1      354:3
+FONT_E_24BI_TAG      #define, value: 0x000001BE, line:     450:1      447:3
+FONT_E_24B_TAG       #define, value: 0x00000166, line:     362:1      359:3
+FONT_E_24I_TAG       #define, value: 0x000001BD, line:     449:1      446:3
+FONT_E_24R_TAG       #define, value: 0x00000165, line:     361:1      358:3
+FONT_E_25BI_TAG      #define, value: 0x0000016A, line:     366:1      363:3
+FONT_E_25B_TAG       #define, value: 0x00000168, line:     364:1      361:3
+FONT_E_25I_TAG       #define, value: 0x00000169, line:     365:1      362:3
+FONT_E_25R_TAG       #define, value: 0x00000167, line:     363:1      360:3
+FONT_E_30R_TAG       #define, value: 0x0000016B, line:     367:1      364:3
+FONT_E_36R_TAG       #define, value: 0x0000016C, line:     368:1      365:3
+FONT_E_40R_TAG       #define, value: 0x0000016D, line:     369:1      366:3
+FONT_E_60R_TAG       #define, value: 0x0000016E, line:     370:1      367:3
+FONT_E_75R_TAG       #define, value: 0x0000016F, line:     371:1      368:3
+FONT_E_8R_TAG        #define, value: 0x0000015C, line:     352:1      349:3
+FONT_ICON_16BIT_V2_TAG #define, value: 0x0000003E, line:      66:1       63:3
+FONT_ICON_2BIT_V2_2NDLCD_TAG #define, value: 0x0000003F, line:      67:1       64:3
+FS_STATUS_EVENT_TAG  #define, value: 0x000000A7, line:     171:1      168:3
+GAMEINTERNALKEYA_PRESSED_EVENT_TAG
+                     #define, value: 0x00000192, line:     406:1      403:3
+GAMEINTERNALKEYB_PRESSED_EVENT_TAG
+                     #define, value: 0x00000193, line:     407:1      404:3
+GOMUSICKEY_LONG_PRESSED_EVENT_TAG
+                     #define, value: 0x0000011B, line:     287:1      284:3
+GOMUSICKEY_PRESSED_EVENT_TAG #define, value: 0x0000011A, line:     286:1      283:3
+HANDLE_TIMEZONE_RESULT_EVENT_TAG
+                     #define, value: 0x000000F1, line:     245:1      242:3
+ICON_OLD_GREEN_PHONE_TAG #define, value: 0x0000014E, line:     338:1      335:3
+ICON_WRITE_NEW_TAG   #define, value: 0x0000014D, line:     337:1      334:3
+IMAGEBROWSER_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000092, line:     150:1      147:3
+IMODEKEY_LONG_PRESSED_EVENT_TAG #define, value: 0x00000188, line:     396:1      393:3
+IMODEKEY_PRESSED_EVENT_TAG #define, value: 0x00000187, line:     395:1      392:3
+INCOMING_MT_CALL_EVENT_TAG #define, value: 0x000000F8, line:     252:1      249:3
+IR_AUTO_OFF_TIMER_EVENT_TAG #define, value: 0x000000E6, line:     234:1      231:3
+JACKKNIFE_CLOSE_EVENT_TAG #define, value: 0x0000005E, line:      98:1       95:3
+JACKKNIFE_OPEN_EVENT_TAG #define, value: 0x0000005D, line:      97:1       94:3
+JOYSTICK_DOWN_PRESSED_EVENT_TAG #define, value: 0x0000018F, line:     403:1      400:3
+JOYSTICK_LEFT_PRESSED_EVENT_TAG #define, value: 0x00000190, line:     404:1      401:3
+JOYSTICK_RIGHT_PRESSED_EVENT_TAG
+                     #define, value: 0x00000191, line:     405:1      402:3
+JOYSTICK_UP_PRESSED_EVENT_TAG #define, value: 0x0000018E, line:     402:1      399:3
+KBD_LONG_PRESS_TAG   #define, value: 0x0000002C, line:      48:1       45:3
+KBD_LONG_RELEASE_TAG #define, value: 0x0000002D, line:      49:1       46:3
+KBD_REPEAT_TAG       #define, value: 0x0000002E, line:      50:1       47:3
+KBD_SHORT_PRESS_TAG  #define, value: 0x0000002A, line:      46:1       43:3
+KBD_SHORT_RELEASE_TAG #define, value: 0x0000002B, line:      47:1       44:3
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_LONG_PRESSED_EVENT_TAG
+                     #define, value: 0x000001B8, line:     444:1      441:3
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_LONG_RELEASE_EVENT_TAG
+                     #define, value: 0x000001B9, line:     445:1      442:3
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_PRESSED_EVENT_TAG
+                     #define, value: 0x000001B7, line:     443:1      440:3
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_PRESS_EVENT_TAG
+                     #define, value: 0x000001B6, line:     442:1      439:3
+KEYLOCK_BYPASS_VOLUMEDOWN_LONG_EVENT_TAG
+                     #define, value: 0x000000BF, line:     195:1      192:3
+KEYLOCK_BYPASS_VOLUMEDOWN_REPEAT_EVENT_TAG
+                     #define, value: 0x000000C1, line:     197:1      194:3
+KEYLOCK_BYPASS_VOLUMEDOWN_SHORT_EVENT_TAG
+                     #define, value: 0x000001C3, line:     455:1      452:3
+KEYLOCK_BYPASS_VOLUMEUP_LONG_EVENT_TAG
+                     #define, value: 0x000000BE, line:     194:1      191:3
+KEYLOCK_BYPASS_VOLUMEUP_REPEAT_EVENT_TAG
+                     #define, value: 0x000000C0, line:     196:1      193:3
+KEYLOCK_BYPASS_VOLUMEUP_SHORT_EVENT_TAG
+                     #define, value: 0x000000BC, line:     192:1      189:3
+KEYLOCK_BYPASS_VOLUME_10_SEC_EVENT_TAG
+                     #define, value: 0x000001A6, line:     426:1      423:3
+KEYPLAYSTOP_LONG_PRESSED_EVENT_TAG
+                     #define, value: 0x0000018A, line:     398:1      395:3
+KEYPLAYSTOP_PRESSED_EVENT_TAG #define, value: 0x00000189, line:     397:1      394:3
+KEY_CAMERA_FOCUS_TAG #define, value: 0x00000021, line:      37:1       34:3
+KEY_CAMERA_SHOT_TAG  #define, value: 0x00000022, line:      38:1       35:3
+KEY_DEL_TAG          #define, value: 0x0000001C, line:      32:1       29:3
+KEY_DIEZ_TAG         #define, value: 0x00000028, line:      44:1       41:3
+KEY_DIGITAL_0_TAG    #define, value: 0x00000153, line:     343:1      340:3
+KEY_DOWN_TAG         #define, value: 0x00000017, line:      27:1       24:3
+KEY_ENTER_TAG        #define, value: 0x0000001A, line:      30:1       27:3
+KEY_ESC_TAG          #define, value: 0x0000001B, line:      31:1       28:3
+KEY_FLIP_CLOSE_TAG   #define, value: 0x0000014B, line:     335:1      332:3
+KEY_FLIP_OPEN_TAG    #define, value: 0x0000014A, line:     334:1      331:3
+KEY_GAME_A_TAG       #define, value: 0x00000155, line:     345:1      342:3
+KEY_GAME_B_TAG       #define, value: 0x00000156, line:     346:1      343:3
+KEY_JACKKNIFE_CLOSE_TAG #define, value: 0x0000015B, line:     351:1      348:3
+KEY_JACKKNIFE_OPEN_TAG #define, value: 0x0000015A, line:     350:1      347:3
+KEY_LEFT_SOFT_TAG    #define, value: 0x0000001D, line:      33:1       30:3
+KEY_LEFT_TAG         #define, value: 0x00000018, line:      28:1       25:3
+KEY_LENS_COVER_CLOSE_TAG #define, value: 0x00000026, line:      42:1       39:3
+KEY_LENS_COVER_OPEN_TAG #define, value: 0x00000025, line:      41:1       38:3
+KEY_MEDIAPLAYER_TAG  #define, value: 0x00000118, line:     284:1      281:3
+KEY_MEDIAPLEER_TAG   #define, value: 0x00000157, line:     347:1      344:3
+KEY_OPERATOR_TAG     #define, value: 0x00000154, line:     344:1      341:3
+KEY_PHF1_TAG         #define, value: 0x00000148, line:     332:1      329:3
+KEY_PHF_ENDOF_TAG    #define, value: 0x00000149, line:     333:1      330:3
+KEY_PHF_TAG          #define, value: 0x00000147, line:     331:1      328:3
+KEY_PLAY_TAG         #define, value: 0x00000020, line:      36:1       33:3
+KEY_POWER_TAG        #define, value: 0x00000029, line:      45:1       42:3
+KEY_RIGHT_SOFT_TAG   #define, value: 0x0000001E, line:      34:1       31:3
+KEY_RIGHT_TAG        #define, value: 0x00000019, line:      29:1       26:3
+KEY_SLIDER_CLOSE_TAG #define, value: 0x00000159, line:     349:1      346:3
+KEY_SLIDER_OPEN_TAG  #define, value: 0x00000158, line:     348:1      345:3
+KEY_STAR_TAG         #define, value: 0x00000027, line:      43:1       40:3
+KEY_TASK_TAG         #define, value: 0x0000001F, line:      35:1       32:3
+KEY_UP_TAG           #define, value: 0x00000016, line:      26:1       23:3
+KEY_VOL_DOWN_TAG     #define, value: 0x00000024, line:      40:1       37:3
+KEY_VOL_UP_TAG       #define, value: 0x00000023, line:      39:1       36:3
+LAMPKEY_LONG_PRESS_EVENT_TAG #define, value: 0x0000007B, line:     127:1      124:3
+LAMPKEY_PRESSED_EVENT_TAG #define, value: 0x0000007A, line:     126:1      123:3
+LOCKKEYSWITCH_OFF_EVENT_TAG #define, value: 0x00000185, line:     393:1      390:3
+LOCKKEYSWITCH_ON_EVENT_TAG #define, value: 0x00000184, line:     392:1      389:3
+LOCKKEY_EVENT_TAG    #define, value: 0x00000066, line:     106:1      103:3
+LONG_ACCEPT_EVENT_TAG #define, value: 0x00000050, line:      84:1       81:3
+LONG_PHONE_NUMBER_SEND_EVENT_TAG
+                     #define, value: 0x000000CE, line:     210:1      207:3
+MAGIC_WORD_DETECT_EVENT_TAG #define, value: 0x00000199, line:     413:1      410:3
+MAIN_DISPLAY_OVERLAY_MODE_OFF_TAG
+                     #define, value: 0x00000055, line:      89:1       86:3
+MAIN_DISPLAY_OVERLAY_MODE_ON_TAG
+                     #define, value: 0x00000054, line:      88:1       85:3
+MAIN_WINDOW_GOT_FOCUS_EVENT_TAG #define, value: 0x00000044, line:      72:1       69:3
+MAIN_WINDOW_LOST_FOCUS_EVENT_TAG
+                     #define, value: 0x00000045, line:      73:1       70:3
+MAIN_WINDOW_MINIMIZED_EVENT_TAG #define, value: 0x00000048, line:      76:1       73:3
+MAIN_WINDOW_RESTORED_EVENT_TAG #define, value: 0x00000049, line:      77:1       74:3
+MASTER_RESET_ALL_EVENT_TAG #define, value: 0x000000F3, line:     247:1      244:3
+MASTER_RESET_VALUES_EVENT_TAG #define, value: 0x000000F2, line:     246:1      243:3
+MASTER_SESSION_WINDOW_GOT_FOCUS_EVENT_TAG
+                     #define, value: 0x00000172, line:     374:1      371:3
+MASTER_SESSION_WINDOW_LOST_FOCUS_EVENT_TAG
+                     #define, value: 0x00000173, line:     375:1      372:3
+MC_PHONE_LOCK_OPEN_CNF_EVENT_TAG
+                     #define, value: 0x0000009E, line:     162:1      159:3
+MC_PHONE_LOCK_STATUS_IND_EVENT_TAG
+                     #define, value: 0x0000009C, line:     160:1      157:3
+MEDIAPLAYERKEY_LONG_PRESSED_EVENT_TAG
+                     #define, value: 0x0000011D, line:     289:1      286:3
+MEDIAPLAYERKEY_LONG_RELEASE_EVENT_TAG
+                     #define, value: 0x0000018C, line:     400:1      397:3
+MEDIAPLAYERKEY_PRESSED_EVENT_TAG
+                     #define, value: 0x0000011C, line:     288:1      285:3
+MEDIAPLAYERKEY_PRESS_EVENT_TAG #define, value: 0x0000018B, line:     399:1      396:3
+MEDIAPLAYER_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x000001C0, line:     452:1      449:3
+MEMORYMANAGER_FILESYSTEM_FULL_EVENT_TAG
+                     #define, value: 0x000000EE, line:     242:1      239:3
+MESSAGE_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x0000008D, line:     145:1      142:3
+MESSAGINGKEY_PRESSED_EVENT_TAG #define, value: 0x00000194, line:     408:1      405:3
+MISSED_CALL_EVENT_TAG #define, value: 0x000001CD, line:     465:1      462:3
+MMI_LANGUAGE_CHANGED_EVENT_TAG #define, value: 0x000000E9, line:     237:1      234:3
+MONITOR_HEAP_EVENT_TAG #define, value: 0x000000BA, line:     190:1      187:3
+MSGBOX_ACCEPT_EVENT_TAG #define, value: 0x000000C9, line:     205:1      202:3
+MSGBOX_CANCEL_EVENT_TAG #define, value: 0x000000CB, line:     207:1      204:3
+MSGBOX_PREVIOUS_EVENT_TAG #define, value: 0x000000CA, line:     206:1      203:3
+MSG_CONSUMED_META_EVENT_TAG #define, value: 0x00000171, line:     373:1      370:3
+MULTIKEY_LONG_PRESSED_EVENT_TAG #define, value: 0x0000018D, line:     401:1      398:3
+MULTIKEY_PRESSED_EVENT_TAG #define, value: 0x00000079, line:     125:1      122:3
+MUTE_EVENT_TAG       #define, value: 0x000000D1, line:     213:1      210:3
+NEW_UNIQUE_ACCESSORY_EVENT_TAG #define, value: 0x000000E7, line:     235:1      232:3
+NIL_EVENT_TAG        #define, value: 0x00000040, line:      68:1       65:3
+NOTES_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x00000093, line:     151:1      148:3
+ONGOINGCALL_CALL_CONNECTED_EVENT_TAG
+                     #define, value: 0x000001CB, line:     463:1      460:3
+ONGOINGCALL_CALL_START_EVENT_TAG
+                     #define, value: 0x000001CC, line:     464:1      461:3
+ONGOINGCALL_SET_CALLCOST_EVENT_TAG
+                     #define, value: 0x000001C9, line:     461:1      458:3
+ONGOINGCALL_SET_CALLTIME_EVENT_TAG
+                     #define, value: 0x000001C8, line:     460:1      457:3
+ONGOINGCALL_SPEAKER_ONOFF_EVENT_TAG
+                     #define, value: 0x000001CA, line:     462:1      459:3
+ONOFFKEY_LONG_PRESS_EVENT_TAG #define, value: 0x00000056, line:      90:1       87:3
+ONOFFKEY_SHORT_PRESS_EVENT_TAG #define, value: 0x00000119, line:     285:1      282:3
+ON_CALLMANAGER_EVENT_TAG #define, value: 0x000001BA, line:     446:1      443:3
+OPERATORKEY_LONG_PRESSED_EVENT_TAG
+                     #define, value: 0x00000186, line:     394:1      391:3
+OPERATORKEY_PRESSED_EVENT_TAG #define, value: 0x00000067, line:     107:1      104:3
+PAGE_ENTER_EVENT_TAG #define, value: 0x00000042, line:      70:1       67:3
+PAGE_EXIT_EVENT_TAG  #define, value: 0x00000043, line:      71:1       68:3
+PB_STATUS_CHANGED_EVENT_TAG #define, value: 0x000000A4, line:     168:1      165:3
+PHF_ENDOF_PRESSED_EVENT_TAG #define, value: 0x00000063, line:     103:1      100:3
+PHF_PRESSED_EVENT_TAG #define, value: 0x00000061, line:     101:1       98:3
+PHF_SEND_PRESSED_EVENT_TAG #define, value: 0x00000062, line:     102:1       99:3
+PHONEBOOK_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x0000008E, line:     146:1      143:3
+PHONEBOOK_CONTACT_CHANGED_EVENT_TAG
+                     #define, value: 0x000001D3, line:     471:1      468:3
+PHONEBOOK_CONTACT_CREATED_EVENT_TAG
+                     #define, value: 0x000001D2, line:     470:1      467:3
+PHONEBOOK_CONTACT_DELETED_EVENT_TAG
+                     #define, value: 0x000001D4, line:     472:1      469:3
+PHONE_IN_STBY_EVENT_TAG #define, value: 0x000000D8, line:     220:1      217:3
+PHONE_NUMBER_SEND_EVENT_TAG #define, value: 0x000000CD, line:     209:1      206:3
+PREVIOUS_EVENT_TAG   #define, value: 0x0000004D, line:      81:1       78:3
+PREVIOUS_IN_STBY_IDLE_EVENT_TAG #define, value: 0x000000D9, line:     221:1      218:3
+PROFILE_ACTIVATED_EVENT_TAG #define, value: 0x000000A3, line:     167:1      164:3
+PROFILE_ACTIVATED_SECOND_EVENT_TAG
+                     #define, value: 0x000001C4, line:     456:1      453:3
+PROFILE_CHANGED_EVENT_TAG #define, value: 0x000000E8, line:     236:1      233:3
+PROFILE_SETTING_CHANGED_EVENT_TAG
+                     #define, value: 0x00000126, line:     298:1      295:3
+PROFILE_UPDATE_TIMEOUT_EVENT_TAG
+                     #define, value: 0x000000E2, line:     230:1      227:3
+PTT_INITIATE_EVENT_TAG #define, value: 0x000000D0, line:     212:1      209:3
+PTT_KEY_LONG_PRESSED_EVENT_TAG #define, value: 0x00000077, line:     123:1      120:3
+PTT_KEY_LONG_RELEASE_EVENT_TAG #define, value: 0x00000078, line:     124:1      121:3
+PTT_KEY_PRESSED_EVENT_TAG #define, value: 0x00000075, line:     121:1      118:3
+PTT_KEY_RELEASE_EVENT_TAG #define, value: 0x00000076, line:     122:1      119:3
+RADIO_ACTIVATING_EVENT_TAG #define, value: 0x00000197, line:     411:1      408:3
+RADIO_DEACTIVATING_EVENT_TAG #define, value: 0x00000198, line:     412:1      409:3
+RADIO_OFF_EVENT_TAG  #define, value: 0x00000196, line:     410:1      407:3
+RADIO_ON_EVENT_TAG   #define, value: 0x00000195, line:     409:1      406:3
+RADIO_RECEIVE_STATUS_EVENT_TAG #define, value: 0x0000009F, line:     163:1      160:3
+REQUEST_CONSUMER_END_OF_DATA_EVENT_TAG
+                     #define, value: 0x000000AB, line:     175:1      172:3
+REQUEST_CONSUMER_END_OF_DATA_SECOND_EVENT_TAG
+                     #define, value: 0x000001C7, line:     459:1      456:3
+REQUEST_CONSUMER_GET_APPSKILL_EVENT_TAG
+                     #define, value: 0x000000A9, line:     173:1      170:3
+REQUEST_CONSUMER_GET_APPSKILL_SECOND_EVENT_TAG
+                     #define, value: 0x000001C5, line:     457:1      454:3
+REQUEST_CONSUMER_GET_FILENAME_EVENT_TAG
+                     #define, value: 0x000000AA, line:     174:1      171:3
+REQUEST_CONSUMER_GET_FILENAME_SECOND_EVENT_TAG
+                     #define, value: 0x000001C6, line:     458:1      455:3
+RESPONSE_ALS_MSISDN_STATUS_EVENT_TAG
+                     #define, value: 0x000000E5, line:     233:1      230:3
+RESPONSE_BTPORTSTATUS_EVENT_TAG #define, value: 0x000000AF, line:     179:1      176:3
+RESPONSE_IMAGEHANDLER_DECODE_EVENT_TAG
+                     #define, value: 0x000000ED, line:     241:1      238:3
+RESPONSE_PROFILE_RESETPROFILES_EVENT_TAG
+                     #define, value: 0x000000F0, line:     244:1      241:3
+RETURN_TO_STANDBY_EVENT_TAG #define, value: 0x000000D4, line:     216:1      213:3
+RETURN_TO_STANDBY_REFUSED_EVENT_TAG
+                     #define, value: 0x000000D5, line:     217:1      214:3
+RIGHTNOW_BUILD_OPERATOR_TAB_EVENT_TAG
+                     #define, value: 0x0000019E, line:     418:1      415:3
+RIGHTNOW_START_HOOK_EVENT_TAG #define, value: 0x000001A0, line:     420:1      417:3
+RIGHTNOW_START_OPERATOR_ACTION_EVENT_TAG
+                     #define, value: 0x000001A2, line:     422:1      419:3
+RIGHTNOW_START_SHORTCUT_EVENT_TAG
+                     #define, value: 0x0000019F, line:     419:1      416:3
+RIGHTNOW_START_URL_EVENT_TAG #define, value: 0x000001A1, line:     421:1      418:3
+RIGHTNOW_UPDATE_DATA_EVENT_TAG #define, value: 0x0000019D, line:     417:1      414:3
+SCREENSAVER_FINISHED_EVENT_TAG #define, value: 0x000000A2, line:     166:1      163:3
+SECOND_DISPLAY_OVERLAY_MODE_OFF_TAG
+                     #define, value: 0x00000177, line:     379:1      376:3
+SECOND_DISPLAY_OVERLAY_MODE_ON_TAG
+                     #define, value: 0x00000176, line:     378:1      375:3
+SECOND_WINDOW_GOT_FOCUS_EVENT_TAG
+                     #define, value: 0x00000046, line:      74:1       71:3
+SECOND_WINDOW_LOST_FOCUS_EVENT_TAG
+                     #define, value: 0x00000047, line:      75:1       72:3
+SECOND_WINDOW_MINIMIZED_EVENT_TAG
+                     #define, value: 0x0000004A, line:      78:1       75:3
+SECOND_WINDOW_RESTORED_EVENT_TAG
+                     #define, value: 0x0000004B, line:      79:1       76:3
+SEND_EVENT_TAG       #define, value: 0x000000CF, line:     211:1      208:3
+SESSION_CREATED_EVENT_TAG #define, value: 0x00000174, line:     376:1      373:3
+SESSION_DESTROYED_EVENT_TAG #define, value: 0x00000175, line:     377:1      374:3
+SIM_INITDATA_READ_EVENT_TAG #define, value: 0x000000A1, line:     165:1      162:3
+SIM_STATE_ACTIVE_EVENT_TAG #define, value: 0x0000009A, line:     158:1      155:3
+SLIDER_CLOSE_EVENT_TAG #define, value: 0x00000179, line:     381:1      378:3
+SLIDER_OPEN_EVENT_TAG #define, value: 0x00000178, line:     380:1      377:3
+SOUNDHANDLER_APPLICATION_START_EVENT_TAG
+                     #define, value: 0x000001C1, line:     453:1      450:3
+SPEECH_AUDIO_TERMINATED_EVENT_TAG
+                     #define, value: 0x00000102, line:     262:1      259:3
+SPEECH_RECOGNITION_FINISHED_EVENT_TAG
+                     #define, value: 0x00000109, line:     269:1      266:3
+SPEECH_RECOGNITION_SETUP_FAILURE_EVENT_TAG
+                     #define, value: 0x00000107, line:     267:1      264:3
+SPEECH_RECOGNITION_SETUP_FINISHED_EVENT_TAG
+                     #define, value: 0x00000108, line:     268:1      265:3
+SPEECH_RECOGNITION_STOPPED_EVENT_TAG
+                     #define, value: 0x00000106, line:     266:1      263:3
+SPEECH_TRAINING_FINISHED_EVENT_TAG
+                     #define, value: 0x00000105, line:     265:1      262:3
+SPEECH_TRAINING_STARTED_EVENT_TAG
+                     #define, value: 0x00000103, line:     263:1      260:3
+SPEECH_TRAINING_STOPPED_EVENT_TAG
+                     #define, value: 0x00000104, line:     264:1      261:3
+STANDBY_DISPLAY_DESKTOP_EVENT_TAG
+                     #define, value: 0x000000BB, line:     191:1      188:3
+STANDBY_IDLE_EVENT_TAG #define, value: 0x000001C2, line:     454:1      451:3
+STANDBY_NOT_IDLE_EVENT_TAG #define, value: 0x0000011E, line:     290:1      287:3
+STARKEY_PRESSED_EVENT_TAG #define, value: 0x00000074, line:     120:1      117:3
+SYSTEM_MODE_CHANGED_EVENT_TAG #define, value: 0x00000051, line:      85:1       82:3
+SYS_CTL_ON_SYSTEM_MODE_CHANGED_EVENT_TAG
+                     #define, value: 0x000000B8, line:     188:1      185:3
+TERMINATE_SESSION_EVENT_TAG #define, value: 0x000000D6, line:     218:1      215:3
+TERMINATE_SESSION_REFUSED_EVENT_TAG
+                     #define, value: 0x000000D7, line:     219:1      216:3
+TEST_SAT_EVENT_TAG   #define, value: 0x000000D3, line:     215:1      212:3
+THEMES_CHANGED_PROFILE_EVENT_TAG
+                     #define, value: 0x000000EF, line:     243:1      240:3
+THEMES_CORRUPT_FILE_EVENT_TAG #define, value: 0x000000F5, line:     249:1      246:3
+THEME_CHANGED_EVENT_TAG #define, value: 0x000000F6, line:     250:1      247:3
+THEME_DOWNLOADED_EVENT_TAG #define, value: 0x000000F4, line:     248:1      245:3
+TIMER_SLIDERRELEASED_TIMEOUT_EVENT_TAG
+                     #define, value: 0x0000007C, line:     128:1      125:3
+UIBASIC_MC_ETSI_LOCK_SIM_OK_IND_EVENT_TAG
+                     #define, value: 0x0000009D, line:     161:1      158:3
+UI_APPLICATION_VOLUMEDOWN_EVENT_TAG
+                     #define, value: 0x000000DF, line:     227:1      224:3
+UI_APPLICATION_VOLUMEDOWN_LONG_EVENT_TAG
+                     #define, value: 0x000000E1, line:     229:1      226:3
+UI_APPLICATION_VOLUMEUP_EVENT_TAG
+                     #define, value: 0x000000DE, line:     226:1      223:3
+UI_APPLICATION_VOLUMEUP_LONG_EVENT_TAG
+                     #define, value: 0x000000E0, line:     228:1      225:3
+UI_CALLMANAGER_IDLE_EVENT_TAG #define, value: 0x00000121, line:     293:1      290:3
+UI_CONNECTIONMANAGER_SESSION_ESTABLISHED_EVENT_TAG
+                     #define, value: 0x000001D0, line:     468:1      465:3
+UI_CONNECTIONMANAGER_SESSION_TERMINATED_EVENT_TAG
+                     #define, value: 0x000001D1, line:     469:1      466:3
+UI_CONTROLLED_SHUTDOWN_CONTINUE_OK_EVENT_TAG
+                     #define, value: 0x000000AD, line:     177:1      174:3
+UI_CONTROLLED_SHUTDOWN_OK_EVENT_TAG
+                     #define, value: 0x000000AE, line:     178:1      175:3
+UI_CONTROLLED_SHUTDOWN_REQUESTED_EVENT_TAG
+                     #define, value: 0x000000CC, line:     208:1      205:3
+UI_EXTERNAL_KEYLOCK_ACTIVATE_EVENT_TAG
+                     #define, value: 0x000001B3, line:     439:1      436:3
+UI_EXTERNAL_KEYLOCK_DEACTIVATE_EVENT_TAG
+                     #define, value: 0x000001B4, line:     440:1      437:3
+UI_FLIGHTMODE_SELECTION_EVENT_TAG
+                     #define, value: 0x000001A7, line:     427:1      424:3
+UI_INITIATED_EVENT_TAG #define, value: 0x000000C6, line:     202:1      199:3
+UI_INITIATED_SPECIAL_EVENT_TAG #define, value: 0x000000C7, line:     203:1      200:3
+UI_INITIATING_ALARM_EVENT_TAG #define, value: 0x000000C4, line:     200:1      197:3
+UI_INITIATING_CHARGING_EVENT_TAG
+                     #define, value: 0x000000C3, line:     199:1      196:3
+UI_INITIATING_CUSTOMIZATION_EVENT_TAG
+                     #define, value: 0x000000C5, line:     201:1      198:3
+UI_INITIATING_EVENT_TAG #define, value: 0x000000C2, line:     198:1      195:3
+UI_KEYLOCK_ACTIVATE_EVENT_TAG #define, value: 0x000001B0, line:     436:1      433:3
+UI_KEYLOCK_DEACTIVATE_EVENT_TAG #define, value: 0x000001B1, line:     437:1      434:3
+UI_KEYLOCK_REACTIVATE_EVENT_TAG #define, value: 0x000001B2, line:     438:1      435:3
+UI_MEDIAPLAYER_AUDIO_PLAYING_TIME_EVENT_TAG
+                     #define, value: 0x000001DA, line:     478:1      475:3
+UI_MEDIAPLAYER_CREATED_EVENT_TAG
+                     #define, value: 0x000001D8, line:     476:1      473:3
+UI_MEDIAPLAYER_DESTROYED_EVENT_TAG
+                     #define, value: 0x000001D9, line:     477:1      474:3
+UI_MEDIAPLAYER_NEXT_TRACK_EVENT_TAG
+                     #define, value: 0x00000125, line:     297:1      294:3
+UI_MEDIAPLAYER_PAUSE_PRESSED_EVENT_TAG
+                     #define, value: 0x000001D7, line:     475:1      472:3
+UI_MEDIAPLAYER_PLAY_PRESSED_EVENT_TAG
+                     #define, value: 0x000001D6, line:     474:1      471:3
+UI_MEDIAPLAYER_PREV_TRACK_EVENT_TAG
+                     #define, value: 0x00000124, line:     296:1      293:3
+UI_MEDIAPLAYER_STOP_PRESSED_EVENT_TAG
+                     #define, value: 0x000001D5, line:     473:1      470:3
+UI_MEDIAPLAYER_VIDEO_PLAYING_TIME_EVENT_TAG
+                     #define, value: 0x000001DB, line:     479:1      476:3
+UI_MEDIAPLAYER_VOLUMEDOWN_EVENT_TAG
+                     #define, value: 0x00000123, line:     295:1      292:3
+UI_MEDIAPLAYER_VOLUMEUP_EVENT_TAG
+                     #define, value: 0x00000122, line:     294:1      291:3
+UI_NEW_CALL_CONNECTED_EVENT_TAG #define, value: 0x00000120, line:     292:1      289:3
+UI_PRELOCK_ACTIVATE_EVENT_TAG #define, value: 0x000001AE, line:     434:1      431:3
+UI_PRELOCK_DEACTIVATE_EVENT_TAG #define, value: 0x000001AF, line:     435:1      432:3
+UI_SCREENSAVER_ACTIVATE_EVENT_TAG
+                     #define, value: 0x000001A8, line:     428:1      425:3
+UI_SCREENSAVER_DEACTIVATE_EVENT_TAG
+                     #define, value: 0x000001A9, line:     429:1      426:3
+UI_SCREENSAVER_FINISHED_EVENT_TAG
+                     #define, value: 0x000001AA, line:     430:1      427:3
+UI_SCREENSAVER_SHOW_INFO_EVENT_TAG
+                     #define, value: 0x000001AB, line:     431:1      428:3
+UI_SECRET_SEQ_DETECTED_EVENT_TAG
+                     #define, value: 0x000000C8, line:     204:1      201:3
+UI_SETTINGS_ICB_SIM_APPLICATION_TOOLKIT_REFRESH_EVENT_TAG
+                     #define, value: 0x000000EB, line:     239:1      236:3
+UI_SLEEPMODE_ACTIVATED_EVENT_TAG
+                     #define, value: 0x000001B5, line:     441:1      438:3
+UI_SLEEPMODE_ACTIVATE_EVENT_TAG #define, value: 0x000001AC, line:     432:1      429:3
+UI_SLEEPMODE_DEACTIVATED_EVENT_TAG
+                     #define, value: 0x000000DC, line:     224:1      221:3
+UI_SLEEPMODE_DEACTIVATE_EVENT_TAG
+                     #define, value: 0x000001AD, line:     433:1      430:3
+UI_STANDBY_TICKER_CREATED_EVENT_TAG
+                     #define, value: 0x000000DA, line:     222:1      219:3
+UI_STANDBY_TICKER_OPEN_BROWSER_EVENT_TAG
+                     #define, value: 0x000000DB, line:     223:1      220:3
+UI_STANDBY_UNFOCUS_EVENT_TAG #define, value: 0x000000DD, line:     225:1      222:3
+UI_TRANSFER_FOCUS_BY_SESSION_MANAGER_EVENT_TAG
+                     #define, value: 0x0000011F, line:     291:1      288:3
+UI_UTIL_SIM_GREETING_READ_EVENT_TAG
+                     #define, value: 0x000000B9, line:     189:1      186:3
+UNMUTE_EVENT_TAG     #define, value: 0x000000D2, line:     214:1      211:3
+UPDATE_BATTERY_ICON_EVENT_TAG #define, value: 0x000000A0, line:     164:1      161:3
+UPDATE_CUSTOMIZATION_PROGRESS_EVENT_TAG
+                     #define, value: 0x000000AC, line:     176:1      173:3
+USER_INACTIVITY_EVENT_TAG #define, value: 0x00000053, line:      87:1       84:3
+VAD_DELETED_EVENT_TAG #define, value: 0x000000FB, line:     255:1      252:3
+VAD_TAG_PLAYED_EVENT_TAG #define, value: 0x0000010A, line:     270:1      267:3
+VC_ANSWER_ACCEPT_RECOGNISED_EVENT_TAG
+                     #define, value: 0x00000116, line:     282:1      279:3
+VC_ANSWER_ACTIVATED_EVENT_TAG #define, value: 0x00000113, line:     279:1      276:3
+VC_ANSWER_DEACTIVATED_EVENT_TAG #define, value: 0x00000114, line:     280:1      277:3
+VC_ANSWER_REJECT_RECOGNISED_EVENT_TAG
+                     #define, value: 0x00000117, line:     283:1      280:3
+VC_ANSWER_SERVICE_FAILED_EVENT_TAG
+                     #define, value: 0x00000115, line:     281:1      278:3
+VC_MAGICWORD_ACTIVATED_EVENT_TAG
+                     #define, value: 0x0000010B, line:     271:1      268:3
+VC_MAGICWORD_DEACTIVATED_EVENT_TAG
+                     #define, value: 0x0000010C, line:     272:1      269:3
+VC_MAGICWORD_RECOGNISED_EVENT_TAG
+                     #define, value: 0x0000010E, line:     274:1      271:3
+VC_MAGICWORD_SERVICE_FAILED_EVENT_TAG
+                     #define, value: 0x0000010D, line:     273:1      270:3
+VC_NAMEDIAL_ACTIVATED_EVENT_TAG #define, value: 0x0000010F, line:     275:1      272:3
+VC_NAMEDIAL_DEACTIVATED_EVENT_TAG
+                     #define, value: 0x00000110, line:     276:1      273:3
+VC_NAMEDIAL_RECOGNISED_EVENT_TAG
+                     #define, value: 0x00000112, line:     278:1      275:3
+VC_NAMEDIAL_SERVICE_FAILED_EVENT_TAG
+                     #define, value: 0x00000111, line:     277:1      274:3
+VC_START_ANSWER_EVENT_TAG #define, value: 0x00000100, line:     260:1      257:3
+VC_START_MAGICWORD_EVENT_TAG #define, value: 0x000000FC, line:     256:1      253:3
+VC_START_NAMEDIAL_EVENT_TAG #define, value: 0x000000FE, line:     258:1      255:3
+VC_STOP_ANSWER_EVENT_TAG #define, value: 0x00000101, line:     261:1      258:3
+VC_STOP_MAGICWORD_EVENT_TAG #define, value: 0x000000FD, line:     257:1      254:3
+VC_STOP_NAMEDIAL_EVENT_TAG #define, value: 0x000000FF, line:     259:1      256:3
+VIDEOCALLKEY_LONG_PRESS_EVENT_TAG
+                     #define, value: 0x00000069, line:     109:1      106:3
+VIDEOCALLKEY_PRESSED_EVENT_TAG #define, value: 0x00000068, line:     108:1      105:3
+VN_BUTTON_LONG_PRESS_EVENT_TAG #define, value: 0x00000058, line:      92:1       89:3
+VN_BUTTON_SHORT_PRESS_EVENT_TAG #define, value: 0x00000057, line:      91:1       88:3
+VOLUMECONTROL_DECREASE_EVENT_TAG
+                     #define, value: 0x000001A4, line:     424:1      421:3
+VOLUMECONTROL_DECREASE_REPEAT_EVENT_TAG
+                     #define, value: 0x000000BD, line:     193:1      190:3
+VOLUMECONTROL_INCREASE_EVENT_TAG
+                     #define, value: 0x000001A3, line:     423:1      420:3
+VOLUMECONTROL_INCREASE_REPEAT_EVENT_TAG
+                     #define, value: 0x000001A5, line:     425:1      422:3
+VOLUMEDOWNKEY_LONG_PRESS_EVENT_TAG
+                     #define, value: 0x0000006E, line:     114:1      111:3
+VOLUMEDOWNKEY_LONG_RELEASE_EVENT_TAG
+                     #define, value: 0x00000073, line:     119:1      116:3
+VOLUMEDOWNKEY_PRESSED_EVENT_TAG #define, value: 0x00000072, line:     118:1      115:3
+VOLUMEDOWNKEY_REPEAT_EVENT_TAG #define, value: 0x0000006F, line:     115:1      112:3
+VOLUMEDOWNKEY_SHORT_PRESS_EVENT_TAG
+                     #define, value: 0x0000006D, line:     113:1      110:3
+VOLUMEUPKEY_LONG_PRESS_EVENT_TAG
+                     #define, value: 0x0000006B, line:     111:1      108:3
+VOLUMEUPKEY_LONG_RELEASE_EVENT_TAG
+                     #define, value: 0x00000071, line:     117:1      114:3
+VOLUMEUPKEY_PRESSED_EVENT_TAG #define, value: 0x00000070, line:     116:1      113:3
+VOLUMEUPKEY_REPEAT_EVENT_TAG #define, value: 0x0000006C, line:     112:1      109:3
+VOLUMEUPKEY_SHORT_PRESS_EVENT_TAG
+                     #define, value: 0x0000006A, line:     110:1      107:3
+WAP_APPLICATION_START_EVENT_TAG #define, value: 0x00000090, line:     148:1      145:3
+_DYN_TAG_H           #define, value: , line:       2:1  
+__ARM4TM__           #define, value: 4, line:         0  
+__ARM5E__            #define, value: 5, line:         0  
+__ARM5TM__           #define, value: 5, line:         0  
+__ARM5T__            #define, value: 5, line:         0  
+__ARM5__             #define, value: 5, line:         0  
+__BUILD_NUMBER__     #define,            line:         0  
+__CORE__             #define, value: __ARM5E__, line:         0  
+__DATE__             #define,            line:         0  
+__FILE__             #define,            line:         0  
+__IAR_SYSTEMS_ASM    #define,            line:         0  
+__IAR_SYSTEMS_ASM__  #define,            line:         0  
+__LINE__             #define,            line:         0  
+__LITTLE_ENDIAN__    #define, value: 1, line:         0  
+__SUBVERSION__       #define,            line:         0  
+__TID__              #define,            line:         0  
+__TIME__             #define,            line:         0  
+__VER__              #define,            line:         0  
+
+Segment             Type 	Mode
+----------------------------------------
+CODE                DATA  	REL 
+DYN_CONST           DATA  	REL 
+DYN_CONST_DESC      DATA  	REL 
+DYN_PAGE            DATA  	REL 
+DYN_PAGE_DESC       DATA  	REL 
+ELFBEGIN            DATA  	REL 
+
+Label               Mode   Type                   Segment    Value/Offset
+------------------------------------------------------------------------------
+AB_ITEM_DESC_ICON_DISPLACEREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_DESC_ID_DISPLACEREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_DESC_NUM_DISPLACEREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_DESC_SIZE   REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_CITY  REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_COMPANYREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_COUNTRYREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_DR    REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_EMAIL1REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_EMAIL2REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_EMAIL3REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_IMAGE REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_INFO  REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_NAME  REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_NEW_ITEMREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_N_FAX REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_N_HOMEREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_N_MOBILEREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_N_OTHERREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_N_WORKREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_POST_INDEXREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_REGIONREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_RINGTONEREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_STREETREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_TITLE REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_USERNAMEREL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_VOICE_CMD1REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_VOICE_CMD2REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_VOICE_CMD3REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_VOICE_CMD4REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_VOICE_CMD5REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FIELD_WEB   REL    CONST PUB UNTYP.       DYN_CONST  0 
+AB_ITEM_FPI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCEPT_EVENT        REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_ACCESSORY_CONNECTED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_ACCESSORY_DISCONNECTED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_APPLICATION_INQUIRY_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_CALENDAR_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_CREATE_DIALOG_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_CREATE_STATUS_TEXT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_EMAIL_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_IMAGEBROWSER_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_MESSAGE_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_NEW_ACCESSORY_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_NEW_SUBMENU_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_NOTES_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_PHONEBOOK_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_REMOVE_ACCESSORY_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_STATUS_TEXT_READ_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACCESSORIES_WAP_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_ACCEPT       REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_ADD          REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_BACK         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_CANCEL       REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_CHECK        REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_CONTACTS     REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_CONTINUE     REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_DELETE       REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_DONE         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_EDIT         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_EXPAND       REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_HELP         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_INFO         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_LONG_BACK    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_MORE         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_MORE1        REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_NO           REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_NOT_EMPTY    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_OK           REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_SAVE         REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_SELECT       REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_SELECT1      REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_UNCHECK      REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTION_YES          REL    CONST PUB UNTYP.       DYN_CONST  0 
+ACTIVE_PROFILE_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ALIEN_BATTERY_CHARGER_CONNECTED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ALIEN_BATTERY_CHARGER_DISCONNECTED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ALL_LOCKS_UNLOCKED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+APP_NEEDS_VIDEOMEMORY_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ASR_PLAY_STORED_SPEECH_RESULT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ASR_TAG_PLAYED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ASYNC               REL    CONST PUB UNTYP.       CODE       14 
+BACKLIGHT_RESTORE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_CAPACITY_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_CHARGER_CONNECTED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_CHARGER_DISCONNECTED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_CHARGING_ALERT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_CHARGING_STATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_CONNECTED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_DISCONNECTED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+BATTERY_SYSTEM_VOLTAGE_STATUS_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+BOOK_DESTROYED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CALENDAR_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+CALLMANAGER_CALL_END_SET_CALLTIME_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+CALLMANAGER_KILL_CALLBOOK_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CALL_OFF_EVENT      REL    CONST PUB UNTYP.       DYN_CONST  0 
+CALL_ON_EVENT       REL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERACAPTUREKEY_LONG_PRESS_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERACAPTUREKEY_LONG_RELEASE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERACAPTUREKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERACAPTUREKEY_RELEASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAFOCUSKEY_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAFOCUSKEY_LONG_RELEASE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAFOCUSKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAFOCUSKEY_RELEASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAKEY_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAKEY_LONG_RELEASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERAKEY_RELEASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERA_APPLICATION_START_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERA_LENSCOVER_CLOSE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CAMERA_LENSCOVER_OPEN_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CANCEL_EVENT        REL    CONST PUB UNTYP.       DYN_CONST  0 
+CHF_CONNECTED_EVENT REL    CONST PUB UNTYP.       DYN_CONST  0 
+CHF_DISCONNECTED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CLOCK_ALARMCLOCK_STATUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CLOCK_DATEANDTIME_IND_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CT_CORDLESS_INRANGE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+CT_CORDLESS_OUTRANGE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+DISPATCH_ALARMRECURSTATUS_IND_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+DISPATCH_NITZTIMEINFORMATION_IND_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+DISPATCH_NITZ_NETWORK_NAME_IND_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+DISPATCH_OFFICE_HF_STATE_CHANGED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+DISPATCH_SIM_SELECTED_LINE_CHANGED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ELF_BEGIN           REL    CONST PUB UNTYP.       ELFBEGIN   0 
+EMAIL_APPLICATION_START_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ERROR_EVENT         REL    CONST PUB UNTYP.       DYN_CONST  0 
+EXTERNAL_ACCESSORY_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+FLIP_CLOSE_EVENT    REL    CONST PUB UNTYP.       DYN_CONST  0 
+FLIP_CLOSE_SHIFT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+FLIP_OPEN_EVENT     REL    CONST PUB UNTYP.       DYN_CONST  0 
+FLIP_OPEN_SHIFT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+FMRADIO_MODE_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+FMRADIO_RDS_DATA_RECEIVED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_D_18B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_D_24B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_D_29B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_D_7R           REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_100R         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_12B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_12R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_14B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_14BI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_14I          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_14R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_16B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_16BI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_16I          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_16R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_18B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_18BI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_18I          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_18R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_20B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_20BI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_20I          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_20R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_22B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_22BI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_22I          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_22R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_24B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_24BI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_24I          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_24R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_25B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_25BI         REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_25I          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_25R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_30R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_36R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_40R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_60R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_75R          REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_E_8R           REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_ICON_16BIT_V2  REL    CONST PUB UNTYP.       DYN_CONST  0 
+FONT_ICON_2BIT_V2_2NDLCDREL    CONST PUB UNTYP.       DYN_CONST  0 
+FS_STATUS_EVENT     REL    CONST PUB UNTYP.       DYN_CONST  0 
+GAMEINTERNALKEYA_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+GAMEINTERNALKEYB_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+GOMUSICKEY_LONG_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+GOMUSICKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+HANDLE_TIMEZONE_RESULT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ICON_OLD_GREEN_PHONEREL    CONST PUB UNTYP.       DYN_CONST  0 
+ICON_WRITE_NEW      REL    CONST PUB UNTYP.       DYN_CONST  0 
+IMAGEBROWSER_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+IMODEKEY_LONG_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+IMODEKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+INCOMING_MT_CALL_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+IR_AUTO_OFF_TIMER_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+JACKKNIFE_CLOSE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+JACKKNIFE_OPEN_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+JOYSTICK_DOWN_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+JOYSTICK_LEFT_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+JOYSTICK_RIGHT_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+JOYSTICK_UP_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+KBD_LONG_PRESS      REL    CONST PUB UNTYP.       DYN_CONST  0 
+KBD_LONG_RELEASE    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KBD_REPEAT          REL    CONST PUB UNTYP.       DYN_CONST  0 
+KBD_SHORT_PRESS     REL    CONST PUB UNTYP.       DYN_CONST  0 
+KBD_SHORT_RELEASE   REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_LONG_PRESSED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_LONG_RELEASE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_PRESSED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_MEDIAPLAYERKEY_PRESS_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_VOLUMEDOWN_LONG_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_VOLUMEDOWN_REPEAT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_VOLUMEDOWN_SHORT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_VOLUMEUP_LONG_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_VOLUMEUP_REPEAT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_VOLUMEUP_SHORT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYLOCK_BYPASS_VOLUME_10_SEC_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYPLAYSTOP_LONG_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+KEYPLAYSTOP_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_CAMERA_FOCUS    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_CAMERA_SHOT     REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_DEL             REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_DIEZ            REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_DIGITAL_0       REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_DOWN            REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_ENTER           REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_ESC             REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_FLIP_CLOSE      REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_FLIP_OPEN       REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_GAME_A          REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_GAME_B          REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_JACKKNIFE_CLOSE REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_JACKKNIFE_OPEN  REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_LEFT            REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_LEFT_SOFT       REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_LENS_COVER_CLOSEREL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_LENS_COVER_OPEN REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_MEDIAPLAYER     REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_MEDIAPLEER      REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_OPERATOR        REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_PHF             REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_PHF1            REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_PHF_ENDOF       REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_PLAY            REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_POWER           REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_RIGHT           REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_RIGHT_SOFT      REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_SLIDER_CLOSE    REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_SLIDER_OPEN     REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_STAR            REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_TASK            REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_UP              REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_VOL_DOWN        REL    CONST PUB UNTYP.       DYN_CONST  0 
+KEY_VOL_UP          REL    CONST PUB UNTYP.       DYN_CONST  0 
+LAMPKEY_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+LAMPKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+LOCKKEYSWITCH_OFF_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+LOCKKEYSWITCH_ON_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+LOCKKEY_EVENT       REL    CONST PUB UNTYP.       DYN_CONST  0 
+LONG_ACCEPT_EVENT   REL    CONST PUB UNTYP.       DYN_CONST  0 
+LONG_PHONE_NUMBER_SEND_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MAGIC_WORD_DETECT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MAIN_DISPLAY_OVERLAY_MODE_OFFREL    CONST PUB UNTYP.       DYN_CONST  0 
+MAIN_DISPLAY_OVERLAY_MODE_ONREL    CONST PUB UNTYP.       DYN_CONST  0 
+MAIN_WINDOW_GOT_FOCUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MAIN_WINDOW_LOST_FOCUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MAIN_WINDOW_MINIMIZED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MAIN_WINDOW_RESTORED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MASTER_RESET_ALL_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MASTER_RESET_VALUES_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MASTER_SESSION_WINDOW_GOT_FOCUS_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+MASTER_SESSION_WINDOW_LOST_FOCUS_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+MC_PHONE_LOCK_OPEN_CNF_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MC_PHONE_LOCK_STATUS_IND_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MEDIAPLAYERKEY_LONG_PRESSED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+MEDIAPLAYERKEY_LONG_RELEASE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+MEDIAPLAYERKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MEDIAPLAYERKEY_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MEDIAPLAYER_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+MEMORYMANAGER_FILESYSTEM_FULL_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+MESSAGE_APPLICATION_START_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MESSAGINGKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MISSED_CALL_EVENT   REL    CONST PUB UNTYP.       DYN_CONST  0 
+MMI_LANGUAGE_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MONITOR_HEAP_EVENT  REL    CONST PUB UNTYP.       DYN_CONST  0 
+MSGBOX_ACCEPT_EVENT REL    CONST PUB UNTYP.       DYN_CONST  0 
+MSGBOX_CANCEL_EVENT REL    CONST PUB UNTYP.       DYN_CONST  0 
+MSGBOX_PREVIOUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MSG_CONSUMED_META_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MULTIKEY_LONG_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MULTIKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+MUTE_EVENT          REL    CONST PUB UNTYP.       DYN_CONST  0 
+NEW_UNIQUE_ACCESSORY_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+NIL_EVENT           REL    CONST PUB UNTYP.       DYN_CONST  0 
+NOTES_APPLICATION_START_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ONGOINGCALL_CALL_CONNECTED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+ONGOINGCALL_CALL_START_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ONGOINGCALL_SET_CALLCOST_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ONGOINGCALL_SET_CALLTIME_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ONGOINGCALL_SPEAKER_ONOFF_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ONOFFKEY_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ONOFFKEY_SHORT_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+ON_CALLMANAGER_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+OPERATORKEY_LONG_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+OPERATORKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PAGE_ENTER_EVENT    REL    CONST PUB UNTYP.       DYN_CONST  0 
+PAGE_EXIT_EVENT     REL    CONST PUB UNTYP.       DYN_CONST  0 
+PB_STATUS_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PHF_ENDOF_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PHF_PRESSED_EVENT   REL    CONST PUB UNTYP.       DYN_CONST  0 
+PHF_SEND_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PHONEBOOK_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+PHONEBOOK_CONTACT_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PHONEBOOK_CONTACT_CREATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PHONEBOOK_CONTACT_DELETED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PHONE_IN_STBY_EVENT REL    CONST PUB UNTYP.       DYN_CONST  0 
+PHONE_NUMBER_SEND_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PREVIOUS_EVENT      REL    CONST PUB UNTYP.       DYN_CONST  0 
+PREVIOUS_IN_STBY_IDLE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PROFILE_ACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PROFILE_ACTIVATED_SECOND_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PROFILE_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PROFILE_SETTING_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PROFILE_UPDATE_TIMEOUT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PTT_INITIATE_EVENT  REL    CONST PUB UNTYP.       DYN_CONST  0 
+PTT_KEY_LONG_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PTT_KEY_LONG_RELEASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PTT_KEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+PTT_KEY_RELEASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RADIO_ACTIVATING_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RADIO_DEACTIVATING_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RADIO_OFF_EVENT     REL    CONST PUB UNTYP.       DYN_CONST  0 
+RADIO_ON_EVENT      REL    CONST PUB UNTYP.       DYN_CONST  0 
+RADIO_RECEIVE_STATUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+REQUEST_CONSUMER_END_OF_DATA_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+REQUEST_CONSUMER_END_OF_DATA_SECOND_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+REQUEST_CONSUMER_GET_APPSKILL_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+REQUEST_CONSUMER_GET_APPSKILL_SECOND_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+REQUEST_CONSUMER_GET_FILENAME_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+REQUEST_CONSUMER_GET_FILENAME_SECOND_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+RESPONSE_ALS_MSISDN_STATUS_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+RESPONSE_BTPORTSTATUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RESPONSE_IMAGEHANDLER_DECODE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+RESPONSE_PROFILE_RESETPROFILES_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+RETURN_TO_STANDBY_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RETURN_TO_STANDBY_REFUSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RIGHTNOW_BUILD_OPERATOR_TAB_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+RIGHTNOW_START_HOOK_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RIGHTNOW_START_OPERATOR_ACTION_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+RIGHTNOW_START_SHORTCUT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RIGHTNOW_START_URL_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+RIGHTNOW_UPDATE_DATA_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SCREENSAVER_FINISHED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SECOND_DISPLAY_OVERLAY_MODE_OFFREL    CONST PUB UNTYP.       DYN_CONST  0 
+SECOND_DISPLAY_OVERLAY_MODE_ONREL    CONST PUB UNTYP.       DYN_CONST  0 
+SECOND_WINDOW_GOT_FOCUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SECOND_WINDOW_LOST_FOCUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SECOND_WINDOW_MINIMIZED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SECOND_WINDOW_RESTORED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SEND_EVENT          REL    CONST PUB UNTYP.       DYN_CONST  0 
+SESSION_CREATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SESSION_DESTROYED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SIM_INITDATA_READ_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SIM_STATE_ACTIVE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SLIDER_CLOSE_EVENT  REL    CONST PUB UNTYP.       DYN_CONST  0 
+SLIDER_OPEN_EVENT   REL    CONST PUB UNTYP.       DYN_CONST  0 
+SOUNDHANDLER_APPLICATION_START_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_AUDIO_TERMINATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_RECOGNITION_FINISHED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_RECOGNITION_SETUP_FAILURE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_RECOGNITION_SETUP_FINISHED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_RECOGNITION_STOPPED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_TRAINING_FINISHED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_TRAINING_STARTED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SPEECH_TRAINING_STOPPED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+STANDBY_DISPLAY_DESKTOP_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+STANDBY_IDLE_EVENT  REL    CONST PUB UNTYP.       DYN_CONST  0 
+STANDBY_NOT_IDLE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+STARKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SYNC                REL    CONST PUB UNTYP.       CODE       10 
+SYSTEM_MODE_CHANGED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+SYS_CTL_ON_SYSTEM_MODE_CHANGED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+TERMINATE_SESSION_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+TERMINATE_SESSION_REFUSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+TEST_SAT_EVENT      REL    CONST PUB UNTYP.       DYN_CONST  0 
+THEMES_CHANGED_PROFILE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+THEMES_CORRUPT_FILE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+THEME_CHANGED_EVENT REL    CONST PUB UNTYP.       DYN_CONST  0 
+THEME_DOWNLOADED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+TIMER_SLIDERRELEASED_TIMEOUT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UIBASIC_MC_ETSI_LOCK_SIM_OK_IND_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_APPLICATION_VOLUMEDOWN_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_APPLICATION_VOLUMEDOWN_LONG_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_APPLICATION_VOLUMEUP_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_APPLICATION_VOLUMEUP_LONG_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_CALLMANAGER_IDLE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_CONNECTIONMANAGER_SESSION_ESTABLISHED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_CONNECTIONMANAGER_SESSION_TERMINATED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_CONTROLLED_SHUTDOWN_CONTINUE_OK_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_CONTROLLED_SHUTDOWN_OK_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_CONTROLLED_SHUTDOWN_REQUESTED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_EXTERNAL_KEYLOCK_ACTIVATE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_EXTERNAL_KEYLOCK_DEACTIVATE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_FLIGHTMODE_SELECTION_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_INITIATED_EVENT  REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_INITIATED_SPECIAL_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_INITIATING_ALARM_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_INITIATING_CHARGING_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_INITIATING_CUSTOMIZATION_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_INITIATING_EVENT REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_KEYLOCK_ACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_KEYLOCK_DEACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_KEYLOCK_REACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_AUDIO_PLAYING_TIME_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_CREATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_DESTROYED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_NEXT_TRACK_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_PAUSE_PRESSED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_PLAY_PRESSED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_PREV_TRACK_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_STOP_PRESSED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_VIDEO_PLAYING_TIME_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_VOLUMEDOWN_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_MEDIAPLAYER_VOLUMEUP_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_NEW_CALL_CONNECTED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_PRELOCK_ACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_PRELOCK_DEACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SCREENSAVER_ACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SCREENSAVER_DEACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SCREENSAVER_FINISHED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SCREENSAVER_SHOW_INFO_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SECRET_SEQ_DETECTED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SETTINGS_ICB_SIM_APPLICATION_TOOLKIT_REFRESH_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SLEEPMODE_ACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SLEEPMODE_ACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SLEEPMODE_DEACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_SLEEPMODE_DEACTIVATE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_STANDBY_TICKER_CREATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_STANDBY_TICKER_OPEN_BROWSER_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_STANDBY_UNFOCUS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_TRANSFER_FOCUS_BY_SESSION_MANAGER_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+UI_UTIL_SIM_GREETING_READ_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UNMUTE_EVENT        REL    CONST PUB UNTYP.       DYN_CONST  0 
+UPDATE_BATTERY_ICON_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+UPDATE_CUSTOMIZATION_PROGRESS_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+USER_INACTIVITY_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VAD_DELETED_EVENT   REL    CONST PUB UNTYP.       DYN_CONST  0 
+VAD_TAG_PLAYED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_ANSWER_ACCEPT_RECOGNISED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_ANSWER_ACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_ANSWER_DEACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_ANSWER_REJECT_RECOGNISED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_ANSWER_SERVICE_FAILED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_MAGICWORD_ACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_MAGICWORD_DEACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_MAGICWORD_RECOGNISED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_MAGICWORD_SERVICE_FAILED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_NAMEDIAL_ACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_NAMEDIAL_DEACTIVATED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_NAMEDIAL_RECOGNISED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_NAMEDIAL_SERVICE_FAILED_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_START_ANSWER_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_START_MAGICWORD_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_START_NAMEDIAL_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_STOP_ANSWER_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_STOP_MAGICWORD_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VC_STOP_NAMEDIAL_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VIDEOCALLKEY_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VIDEOCALLKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VN_BUTTON_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VN_BUTTON_SHORT_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMECONTROL_DECREASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMECONTROL_DECREASE_REPEAT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMECONTROL_INCREASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMECONTROL_INCREASE_REPEAT_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEDOWNKEY_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEDOWNKEY_LONG_RELEASE_EVENT
+                    REL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEDOWNKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEDOWNKEY_REPEAT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEDOWNKEY_SHORT_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEUPKEY_LONG_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEUPKEY_LONG_RELEASE_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEUPKEY_PRESSED_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEUPKEY_REPEAT_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+VOLUMEUPKEY_SHORT_PRESS_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+WAP_APPLICATION_START_EVENTREL    CONST PUB UNTYP.       DYN_CONST  0 
+_ASYNC              REL    CONST UNTYP.           CODE       C 
+_SYNC               REL    CONST UNTYP.           CODE       8 
+__var_arg_book      REL    CONST PUB UNTYP.       CODE       0 
+__var_arg_call_back_long_backREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_call_back_okREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_call_back_prev_actREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_dateinp_dateREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_dateinp_date_formatREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_htext     REL    CONST PUB UNTYP.       CODE       0 
+__var_arg_perinp_cur_percentREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_perinp_row_numbersREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_empty_str_enREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_fixed_textREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_is_pass_modeREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_max_int_valREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_max_lenREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_min_int_valREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_min_lenREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_modeREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_new_lineREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_ok_on_diezREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_set_int_valREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_textREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_unk1REL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_unk2REL    CONST PUB UNTYP.       CODE       0 
+__var_arg_strinp_unk3REL    CONST PUB UNTYP.       CODE       0 
+__var_arg_timeinp_timeREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_timeinp_time_formatREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_yesno_no_actionREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_yesno_pre_questionREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_yesno_questionREL    CONST PUB UNTYP.       CODE       0 
+__var_arg_yesno_yes_actionREL    CONST PUB UNTYP.       CODE       0 
+kill_data           REL    CONST PUB UNTYP.       CODE       0 
+seqkill             REL    CONST PUB UNTYP.       CODE       4 
+
+
+##############################
+#          CRC:8477          #
+#        Errors:   0         #
+#        Warnings: 0         #
+#        Bytes: 2064         #
+##############################
+
+
+
+
