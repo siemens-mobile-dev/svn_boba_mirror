@@ -247,11 +247,13 @@ void  lgpLoadLangpack()
   int size, str_size;
   unsigned int io_error = 0;
   char lang_file[256];
+  const char _slash[]="\\";
   char *buf, *b, *e, *c, *str, *tagstr, *lgpstr;
   int ptr;
   extern const char TEMPLATES_PATH[64];
   strcpy(lang_file,TEMPLATES_PATH);
-  strcat(lang_file,"\\lang.txt");
+  if (lang_file[strlen(lang_file)-1]!='\\') strcat(lang_file,_slash);
+  strcat(lang_file,"lang.txt");
 
   lgpLoadDefault();
 

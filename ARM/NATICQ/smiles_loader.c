@@ -174,6 +174,7 @@ void ProcessNextSmile(void)
 {  
   int c;
   char fn[128];
+  const char _slash[]="\\";
   DYNPNGICONLIST *dp;
   S_SMILES *si;
   STXT_SMILES *st;
@@ -196,7 +197,7 @@ void ProcessNextSmile(void)
     if (!p) break;
     zeromem(fn,128);
     strcpy(fn,SMILE_PATH);
-    if (fn[strlen(fn)-1]!='\\') strcat(fn,"\\");
+    if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
     c=p-buf;
     if (c>(127-strlen(fn))) break;
     strncpy(fn+strlen(fn),buf,c);
@@ -295,6 +296,7 @@ void FreeXStatusesImg(void)
 void InitXStatusesImg(void)
 {
   char fn[128];
+  const char _slash[]="\\";
   FSTATS stat;
   unsigned err;
   
@@ -311,7 +313,8 @@ void InitXStatusesImg(void)
   do
   {
     strcpy(fn,XSTATUSES_PATH);
-    sprintf(fn+strlen(fn),"\\%d.png",pictures_max++);
+    if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
+    sprintf(fn+strlen(fn),"%d.png",pictures_max++);
     if (GetFileStats(fn,&stat,&err)==-1) break;
   }  
   while (stat.size>0);
@@ -324,13 +327,15 @@ void InitXStatusesImg(void)
 void ProcessNextXStatImg(void)
 {
   char fn[128];
+  const char _slash[]="\\";
   DYNPNGICONLIST *dp;
   unsigned int err;
   FSTATS stat;
   int i;
   
   strcpy(fn,XSTATUSES_PATH);
-  sprintf(fn+strlen(fn),"\\%d.png",total_xstatuses);
+  if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
+  sprintf(fn+strlen(fn),"%d.png",total_xstatuses);
   if (GetFileStats(fn,&stat,&err)!=-1)
   {
     if (stat.size>0)

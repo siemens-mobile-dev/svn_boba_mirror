@@ -363,9 +363,10 @@ void LoadLocalCL(void){
  char *p,*s;
  char cn[64];
  unsigned int uin;
-
+ const char _slash[]="\\";
  strcpy(fn,TEMPLATES_PATH);
- strcat(fn,"\\local.cl");
+ if (fn[strlen(fn)-1]!='\\') strcat(fn, _slash);
+ strcat(fn,"local.cl");
  if (GetFileStats(fn,&stat,&ul)==-1) return;
  if ((fsize=stat.size)<=0) return;
  if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1) return;

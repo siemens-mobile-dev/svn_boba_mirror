@@ -21,15 +21,18 @@ static do_logwrite(unsigned int uin, char *text)
   char error[36];
   char fullname[128];
   char hist_path[128];
+  const char _slash[]="\\";
+  zeromem(hist_path,128);
+  strcpy(hist_path,HIST_PATH);
+   if (hist_path[strlen(hist_path)-1]!='\\') strcat(hist_path,_slash);
   if(HISTORY_TYPE)
-    snprintf(hist_path,127,"%s\\%u",HIST_PATH, UIN);
-  else
-    snprintf(hist_path,127,"%s",HIST_PATH);
+    snprintf(hist_path,127,"%s%u\\",hist_path, UIN);
+
   if (!isdir(hist_path,&ul))
   {
     mkdir(hist_path,&ul);
   }
-  snprintf(fullname,127,"%s\\%u.txt", hist_path, uin);
+  snprintf(fullname,127,"%s%u.txt", hist_path, uin);
   // Открываем файл на дозапись и создаём в случае неудачи
   hFile = fopen(fullname,A_ReadWrite + A_Create + A_Append + A_BIN,P_READ+P_WRITE, &io_error);
   if(hFile!=-1)
@@ -117,21 +120,26 @@ int GetHistory(CLIST *t, int bufsize)
 {
   LOGQ *log, *head;
   static const char *delim = "\r\n--------------<>-000";
+  const char _slash[]="\\";
   volatile int hFile;
   unsigned int io_error = 0;
   char fullname[128], *s, *b, *e, *text, *str, *buf;
   int i, delimlen = strlen(delim)+3, direction;
   unsigned uin = t->uin;
-  
+  char hist_path[128];
+  zeromem(hist_path,128);
+  strcpy(hist_path,HIST_PATH);
+   if (hist_path[strlen(hist_path)-1]!='\\') strcat(hist_path,_slash);
+
   if(CheckLOGQ(t)) return 0;
   
   buf = text = malloc(bufsize);
   text[0] = 0;
   text[bufsize-1] = 0;
   if(HISTORY_TYPE)
-    snprintf(fullname,127,"%s\\%u\\%u.txt", HIST_PATH, UIN, uin);
+    snprintf(fullname,127,"%s%u\\%u.txt", hist_path, UIN, uin);
   else
-    snprintf(fullname,127,"%s\\%u.txt", HIST_PATH, uin);
+    snprintf(fullname,127,"%s%u.txt", hist_path, uin);
   // Открываем файл на чтение
   hFile = fopen(fullname,A_ReadOnly + A_BIN,P_READ, &io_error);
   if(hFile!=-1)

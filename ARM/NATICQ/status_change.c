@@ -8,7 +8,6 @@
 #include "main.h"
 #include "status_change.h"
 #include "strings.h"
-#include "language.h"
 #include "lang.h"
 
 //===============================================================================================
@@ -32,7 +31,7 @@ void patch_input(const INPUTDIA_DESC* inp)
 //===============================================================================================
 
 extern const char TEMPLATES_PATH[];
-static const char XS_FILE_NAME[]="\\XStatuses.txt";
+static const char XS_FILE_NAME[]="XStatuses.txt";
 
 
 char *XStatusText;
@@ -584,6 +583,7 @@ void DispXStatusChangeMenu(void)
 void LoadXStatusText(void)
 {
   FSTATS stat;
+  const char _slash[]="\\";
   char fn[256];
   int f;
   unsigned int ul;
@@ -592,6 +592,7 @@ void LoadXStatusText(void)
   int c;
   FreeXStatusText();
   strcpy(fn,TEMPLATES_PATH);
+  if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
   strcat(fn,XS_FILE_NAME);
   if (GetFileStats(fn,&stat,&ul)==-1) return;
   if ((fsize=stat.size)<=0) return;
@@ -620,9 +621,11 @@ void SaveXStatusText(void)
 {
   int f;
   char fn[256];
+  const char _slash[]="\\";
   unsigned int ul;
   if (!XStatusText) return;
   strcpy(fn,TEMPLATES_PATH);
+  if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
   strcat(fn,XS_FILE_NAME);
   if ((f=fopen(fn,A_ReadWrite+A_Create+A_Truncate+A_BIN,P_READ+P_WRITE,&ul))==-1) return;
   fwrite(f,XStatusText,strlen(XStatusText),&ul);

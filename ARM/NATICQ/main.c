@@ -121,14 +121,19 @@ static const char * const icons_names[TOTAL_ICONS]=
   "vis5.png"
 };
 
-extern const char ICON_PATH[];
 
 void setup_ICONS(void)
 {
+  extern const char ICON_PATH[];
+  const char _slash[]="\\";
+  char icon_path[128];
+  zeromem(icon_path,128);
+  strcpy(icon_path,ICON_PATH);
+  if (icon_path[strlen(icon_path)-1]!='\\') strcat(icon_path,_slash);
   int i=0;
   do
   {
-    if (!S_ICONS[i]) S_ICONS[i]=(int)MakeGlobalString(ICON_PATH,'\\',icons_names[i]);
+    if (!S_ICONS[i]) S_ICONS[i]=(int)MakeGlobalString(icon_path,0,icons_names[i]);
     i++;
   }
   while(i<TOTAL_ICONS);
@@ -414,16 +419,18 @@ int LoadTemplates(unsigned int uin)
   char *p;
   char *pp;
   int c;
+  const char _slash[]="\\";
   FreeTemplates();
   strcpy(fn,TEMPLATES_PATH);
+  if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
   i=strlen(fn);
-  sprintf(fn+i,"\\%d.txt",uin);
+  sprintf(fn+i,"%d.txt",uin);
   if (GetFileStats(fn,&stat,&ul)==-1) goto L1;
   if ((fsize=stat.size)<=0) goto L1;
   if ((f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul))==-1)
   {
   L1:
-    strcpy(fn+i,"\\0.txt");
+    strcpy(fn+i,"0.txt");
     if (GetFileStats(fn,&stat,&ul)==-1) return 0;
     if ((fsize=stat.size)<=0) return 0;
     f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul);
@@ -1519,7 +1526,10 @@ void get_answer(void)
             disautorecconect = 1;
           }
           else
+          {
             snprintf(logmsg,255,LG_GRERROR,RXbuf.data);
+            ShowMSG(1,(int)logmsg);
+          }
 
 	  SMART_REDRAW();
 	  break;
@@ -3326,7 +3336,13 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
                 
         if(IsUrl(ews, pos, link))
         {
-          snprintf(fn, 255, "%s\\tmp%u.url", TEMPLATES_PATH, GetTempName);
+          char templates_path[128];
+          zeromem(templates_path,128);
+          strcpy(templates_path,TEMPLATES_PATH);
+          const char _slash[]="\\";
+          if (templates_path[strlen(templates_path)-1]!='\\') strcat(templates_path,_slash);
+
+          snprintf(fn, 255, "%stmp%u.url", templates_path, GetTempName);
           if ((f=fopen(fn,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
           {
             fwrite(f,link,strlen(link),&err);
@@ -3852,14 +3868,20 @@ void OpenLogfile(GUI *data)
 
   extern const char HIST_PATH[64];
   extern const int HISTORY_TYPE;
+  const char _slash[]="\\";
   CLIST *t;
+  char hist_path[128];
+  zeromem(hist_path,128);
+  strcpy(hist_path,HIST_PATH);
+  if (hist_path[strlen(hist_path)-1]!='\\') strcat(hist_path,_slash);
+  
   WSHDR *ws=AllocWS(256);
   if ((t=ed_struct->ed_contact))
   {
     if (HISTORY_TYPE)
-      wsprintf(ws,"%s\\%u\\%u.txt",HIST_PATH,UIN,t->uin);
+      wsprintf(ws,"%s%u\\%u.txt",hist_path,UIN,t->uin);
     else
-      wsprintf(ws,"%s\\%u.txt",HIST_PATH,t->uin);
+      wsprintf(ws,"%s%u.txt",hist_path,t->uin);
     ExecuteFile(ws,NULL,NULL);
   }
   FreeWS(ws);

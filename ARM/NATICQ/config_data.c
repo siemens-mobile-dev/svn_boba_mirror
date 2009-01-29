@@ -1,5 +1,4 @@
 #include "..\inc\cfg_items.h"
-#include "language.h"
 //Конфигурация
 
 #ifdef NEWSGOLD
@@ -26,22 +25,22 @@ __root const CFG_HDR cfghdr2={CFG_LEVEL,"Hosts and paths",1,0};
   __root const unsigned int RECONNECT_TIME=10;
   
   __root const CFG_HDR cfghdr2_4={CFG_STR_UTF8,"History path",0,63};
-  __root const char HIST_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\history";
+  __root const char HIST_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\history\\";
 
   __root const CFG_HDR cfghdr2_5={CFG_STR_UTF8,"Smiles File",0,63};
   __root const char SMILE_FILE[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles.cfg";
 
   __root const CFG_HDR cfghdr2_6={CFG_STR_UTF8,"Smiles .png path",0,63};
-  __root const char SMILE_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles";
+  __root const char SMILE_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\smiles\\";
 
   __root const CFG_HDR cfghdr2_7={CFG_STR_UTF8,"Images .png path",0,63};
-  __root const char ICON_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img";
+  __root const char ICON_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\img\\";
 
   __root const CFG_HDR cfghdr2_8={CFG_STR_UTF8,"XStatus .png path",0,63};
-  __root const char XSTATUSES_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\ximg";
+  __root const char XSTATUSES_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\ximg\\";
 
   __root const CFG_HDR cfghdr2_9={CFG_STR_UTF8,"Templates path",0,63};
-  __root const char TEMPLATES_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\templates";
+  __root const char TEMPLATES_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\templates\\";
 __root const CFG_HDR cfghdr3={CFG_LEVEL,"",0,0};
 
 //View settings
