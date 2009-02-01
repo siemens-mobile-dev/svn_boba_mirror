@@ -1445,5 +1445,10 @@ __swi __arm void Softkeys_Update(DISP_OBJ *softkeys);
 #pragma swi_number=0x8324
 __swi __arm void * get_CellData(void);
 
+#pragma swi_number=0x325
+__swi __arm void * IncommingCall_Reject(BOOK* book);
+#pragma swi_number=0x326
+__swi __arm void * IncommingCall_Mute(BOOK* book);
+
 
 #endif
