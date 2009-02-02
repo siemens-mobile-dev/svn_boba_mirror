@@ -500,7 +500,8 @@
 0C88: 00000000 55C83A45 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
 0C8C: 00000000 19C43A45 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 0C90: 00000000 40081920 ;8324: void * get_CellData(void);
-
+0C94: 00000000 99F8DE44 ; 325: void * IncommingCall_Reject(BOOK* book);
+0C98: 00000000 9509DF44 ; 326: void * IncommingCall_Mute(BOOK* book);
 
 
 

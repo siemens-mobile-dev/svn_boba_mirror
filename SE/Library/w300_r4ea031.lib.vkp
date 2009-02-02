@@ -497,7 +497,8 @@
 0C88: FFFFFFFF ADD62945 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
 0C8C: FFFFFFFF 61D22945 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 0C90: FFFFFFFF B440024C ;8324: void * get_CellData(void);
-
+0C94: FFFFFFFF ADF21845 ; 325: void *IncommingCall_Reject(BOOK* book);
+0C98: FFFFFFFF BD061945 ; 326: void *IncommingCall_Mute(BOOK* book); 
 
 
 ;locale=Russian_Russia.1251
