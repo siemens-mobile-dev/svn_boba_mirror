@@ -1450,5 +1450,17 @@ __swi __arm void * IncommingCall_Reject(BOOK* book);
 #pragma swi_number=0x326
 __swi __arm void * IncommingCall_Mute(BOOK* book);
 
+#pragma swi_number=0x327
+__swi __arm int GetSignalLevel(void);
+
+#pragma swi_number=0x328
+__swi __arm int Bluetooth_GetState(void);
+#pragma swi_number=0x329
+__swi __arm int Bluetooth_GetPhoneVisibility(void);
+#pragma swi_number=0x32A
+__swi __arm int Bluetooth_isBusy(void);
+
+#pragma swi_number=0x32B
+__swi __arm int USB_isConnected(void);
 
 #endif

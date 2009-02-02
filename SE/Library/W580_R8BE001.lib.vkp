@@ -502,6 +502,11 @@
 0C90: 00000000 78EC1820 ;8324: void * get_CellData(void); 
 0C94: 00000000 FD6EDB44 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 8181DB44 ; 326: void * IncommingCall_Mute(BOOK* book);
+0C9C: 00000000 F1320245 ; 327: int GetSignalLevel(void);
+0CA0: 00000000 793ED844 ; 328: int Bluetooth_GetState(void);
+0CA4: 00000000 413ED844 ; 329: int Bluetooth_GetPhoneVisibility(void);
+0CA8: 00000000 013FD844 ; 32A: int Bluetooth_isBusy(void);
+0CAC: 00000000 557F1C45 ; 32B: int USB_isConnected(void);
 
 
 
