@@ -499,6 +499,13 @@
 0C88: 00000000 058F3645 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
 0C8C: 00000000 C98A3645 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 ;0C90: xxxxxxxx yyyyyyyy ; 324: void * get_CellData(void);
+0C94: 00000000 6D23DA44 ; 325: void * IncommingCall_Reject(BOOK* book);
+0C98: 00000000 D535DA44 ; 326: void * IncommingCall_Mute(BOOK* book);
+0C9C: 00000000 91B70045 ; 327: int GetSignalLevel(void);
+0CA0: 00000000 F5EBD644 ; 328: int Bluetooth_GetState(void);
+0CA4: 00000000 BDEBD644 ; 329: int Bluetooth_GetPhoneVisibility(void);
+0CA8: 00000000 7DECD644 ; 32A: int Bluetooth_isBusy(void);
+0CAC: 00000000 DD031B45 ; 32B: int USB_isConnected(void);
 
 
 

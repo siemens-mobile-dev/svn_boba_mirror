@@ -1,7 +1,7 @@
 ;W300 SW-R4EA031
 ;Elfpack Library
 ;(c) Hussein, IronMaster
-;(p) stuCk
+;(p) stuCk, Oganyan Arthur
 
 +4567CC00
 0448: FFFFFFFF CDB7DA44 ; 112: void memset(void *mem,char chr,int size);
@@ -499,6 +499,12 @@
 0C90: FFFFFFFF B440024C ;8324: void * get_CellData(void);
 0C94: FFFFFFFF ADF21845 ; 325: void *IncommingCall_Reject(BOOK* book);
 0C98: FFFFFFFF BD061945 ; 326: void *IncommingCall_Mute(BOOK* book); 
+0C9C: FFFFFFFF FDB03F45 ; 327: int GetSignalLevel(void);
+0CA0: FFFFFFFF 35755245 ; 328: int Bluetooth_GetState(void);
+0CA4: FFFFFFFF 11755245 ; 329: int Bluetooth_GetPhoneVisibility(void);
+0CA8: FFFFFFFF B9755245 ; 32A: int Bluetooth_isBusy(void);
+
+
 
 
 ;locale=Russian_Russia.1251
