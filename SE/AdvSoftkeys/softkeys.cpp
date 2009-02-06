@@ -1,0 +1,187 @@
+#include "..\\include\Lib_Clara.h" 
+#include "..\\include\Dir.h"
+#include "header\structs.h"
+#include "header\presets.h"
+
+ITEM *lastitem=0;
+extern LIST *csofts;
+
+int isSoftkeysBook(BOOK *bk);
+int getcount(LIST *lst, int check);
+//------------------------------------------------------------------
+ITEM *getbyname(wchar_t *name)
+{
+  if (!name)return 0;
+  if (csofts)
+  {
+    int x=0;
+    while(x<csofts->FirstFree)
+    {
+      ITEM *it=(ITEM*)csofts->listdata[x++];
+      if (!it)break;
+      if (!it->name)break;
+      if (wstrcmp(it->name,name)==0)
+      {
+        return it;
+      }
+    }
+  }
+  return 0;
+};
+
+void getitem(BOOK *bk)
+{
+  wchar_t ws[100];
+  char *bkname=bk->xbook->name;
+  if (bkname[0]=='C')
+  {
+    if (strcmp(bkname,"CUIDisplayableBook")==0)
+    {
+      TextID2wstr(bk->xbook->app_session->name,ws,99);
+    }
+    else goto L_NOT_JAVA;
+  }
+  else
+  {
+  L_NOT_JAVA:
+    str2wstr(ws,bk->xbook->name);
+  }
+  if (lastitem)
+  {
+    if (wstrcmp(ws,lastitem->name)==0)
+    {
+      return;
+    }
+  }
+  if (lastitem=getbyname(ws))
+  {
+    return;
+  }
+  else
+  {
+    lastitem=getbyname(L"DEFAULT");
+  }
+};
+//------------------------------------------------------------------
+bool get_enable(LIST *lst, int strid)
+{
+  int x=0;
+  while(x<lst->FirstFree)
+  {
+    SOFTKEY *sk=(SOFTKEY*)lst->listdata[x++];
+    if (sk->text==strid)
+    {
+      return sk->enable;
+    }
+  }
+  return 1;
+};
+
+wchar_t get_action(LIST *lst, int strid)
+{
+  int x=0;
+  while(x<lst->FirstFree)
+  {
+    SOFTKEY *sk=(SOFTKEY*)lst->listdata[x++];
+    if (sk->text==strid)
+    {
+      return sk->action;
+    }
+  }
+  return 0xF00;
+};
+
+void preset_calculate(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int left, int right)
+{
+  MyBOOK *our=(MyBOOK*)FindBook(isSoftkeysBook);
+  int cnt=getcount(lst,1);
+  if ((SBY_GetMainInput(Find_StandbyBook()))->DISP_OBJ==DO)
+  {
+    lastitem->type=T_STANDBY;
+    preset_standby(lbl,bk,DO, lst, cnt, our, left, right);
+  }
+  else
+  {
+    if (!isKeylocked())
+    {
+      if (our)
+      {
+        lbl->strids[2]=our->backstrid;
+        lbl->enable[2]=true;
+      }
+    }
+    bool isv=false;
+    int x;
+    for (x=0;x<3;x++)
+    {
+      if (presets[x*2])
+      {
+        bool (*isValid)(LIST *lst, int cnt, int left, int right)=(bool(*)(LIST *lst, int cnt, int left, int right))(presets[x*2]);
+        void (*preset)(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOOK *our, int left, int right)=(void(*)(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOOK *our, int left, int right))(presets[x*2+1]);
+        if (isValid(lst,cnt,left,right))
+        {
+          lastitem->type=2+x;
+          preset(lbl, bk, DO, lst, cnt, our, left, right);
+          isv=true;
+          break;
+        }
+      }
+      else break;
+    }
+    if (isv==false)
+    {
+      lastitem->type=T_DEFAULT;
+      preset_default(lbl, bk, DO, lst, cnt, our, left, right);
+    }
+  }
+};
+//------------------------------------------------------------------
+LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis)
+{
+  if (DO==0 || bk==0 || sk==0)return 0;
+  LABELS *ret=new LABELS;
+  memset(ret,0,sizeof(LABELS));
+  ret->strids[0]=0x6FFFFFFF;
+  ret->strids[1]=0x6FFFFFFF;
+  ret->strids[2]=0x6FFFFFFF;
+  
+  SKLABEL left;
+  Softkeys_GetLabel(sk,&left, 0);
+  SKLABEL right;
+  right.text=0xFFFFFFFF;
+  if (vis==2)
+  {
+    Softkeys_GetLabel(sk,&right, 1);
+  }
+  if (lastitem && csofts)
+  {
+    int style=lastitem->style;
+    LIST *lst = DispObject_Softkeys_GetList(DO,bk, 0);
+    if (lst)
+    {
+      preset_calculate(ret, bk, DO, lst, left.text, right.text);
+      if (lastitem->type!=T_DDMENU && lastitem->type!=T_MESSAGEBOX)
+      {
+        int x;
+        for (x=0;x<3;x++)
+        {
+          if (lastitem->strids[x]!=0x6FFFFFFF)
+          {
+            ret->strids[x]=lastitem->strids[x];
+          }
+        }
+      }
+      if (style==0)
+      {
+        ret->strids[2]=ret->strids[0];
+        ret->enable[2]=ret->enable[0];
+        ret->strids[0]=ret->strids[1];
+        ret->enable[0]=ret->enable[1];
+        ret->strids[1]=0x6FFFFFFF;
+        ret->enable[1]=0;
+      }
+    }
+  }
+  return ret;
+};
+//------------------------------------------------------------------
