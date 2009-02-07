@@ -97,7 +97,6 @@ int NewKey(int key, int r1 , int mode)
       pressed[2]=false;
     }
   }
-#define mDEBUG
 #ifdef mDEBUG
   if (key==KEY_POWER)
   {

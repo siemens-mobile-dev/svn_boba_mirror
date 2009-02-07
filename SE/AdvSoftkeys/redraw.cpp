@@ -194,6 +194,23 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     }
     b=clBlack;
     if (uic && color)c=color;
+    if (bk==FindBook(isImageViewerBook))
+    {
+      if (pressed[x])
+      {
+        b=clWhite;
+        c=clBlack;
+      }
+      else
+      {
+        b=clBlack;
+        c=clWhite;
+      }
+    }
+    else
+    {
+      b=clBlack;
+    }
     if (stat==0)
     {
       int pos=sk[x].y-(height-SoftSize);
