@@ -295,10 +295,17 @@ void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
     textidname2id(L"DB_ILLEGAL_CHAR_TXT",SID_ANY_LEN,&str_id);
     MessageBox(0x6fFFFFFF,str_id,0, 1 ,5000,0);
     FILEITEM * item_desc=FILEITEM_Create();
-    item_desc->fname=new wchar_t[20];
-    wstrcpy(item_desc->fname,string);
+    item_desc->fname=new wchar_t[40];
+    item_desc->fname[0]=0;
+    item_desc->fname[1]=0;
+    wchar_t * extpos = wstrrchr(string,L'.');
+    wstrncpy(item_desc->fname,string,extpos-string);
     FSX_RemoveIllegalSymbolsName(item_desc);
-    CreateNameInput(Str2ID(item_desc->fname,0,SID_ANY_LEN),wstrlen(item_desc->fname),2);
+    wchar_t sp[50];
+    sp[0]=0;
+    wstrcat(sp,item_desc->fname);
+    wstrcat(sp,extpos);
+    CreateNameInput(Str2ID(sp,0,SID_ANY_LEN),0,1);
     FILEITEM_Destroy(item_desc);
   }
   else
