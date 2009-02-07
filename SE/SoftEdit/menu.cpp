@@ -63,12 +63,17 @@ void OnDelGui(BOOK *bk, void *)
   int item=ListMenu_GetSelectedItem(mbk->lst);
   if (mbk->curit==0)
   {
-    mbk->main_lastindex=item;
+    mbk->main_lastindex=item;   
     if (customsofts)
     {
+      ITEM *it=(ITEM*)ListElement_GetByIndex(customsofts,item);
       if (item>=0 && item<(customsofts->FirstFree))
       {
-        RemoveItem(item);
+        if (wstrcmp(it->name,L"DEFAULT") && wstrcmp(it->name,L"StandbyBook"))
+        {
+          
+          RemoveItem(item);
+        }
       }
     }
     SetNumOfMenuItem(mbk->lst,customsofts->FirstFree+1);

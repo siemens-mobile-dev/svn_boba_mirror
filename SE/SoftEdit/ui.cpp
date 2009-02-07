@@ -4,7 +4,26 @@
 #include "header\extern.h"
 extern const PAGE_DESC bk_skin;
 
-UI_SOFTKEY sk[3]={ {0,296,0,0x18,0,220,1,0x12}, {0,293,2,0x2C,0,115,1,0x2C}, {240,296,1,0x18,0,0,1,0x12} };
+UI_SOFTKEY sk[3]={ {0,296,0,0x18,320,220,1,0x12}, {0,293,2,0x2C,320,115,1,0x2C}, {240,296,1,0x18,320,0,1,0x12} };
+int sk240[24]=   {  0,296,0,0x18,320,220,1,0x12  ,  0,293,2,0x2C,320,115,1,0x2C  ,  240,296,1,0x18,320,0,1,0x12 };
+int sk176[24]=   {  0,198,0,0x18,220,156,1,0x12  ,  0,193,2,0x2C,220,80 ,1,0x2C  ,  176,198,1,0x18,220,0,1,0x12 };
+
+void auto_select()
+{
+  int a=Display_GetHeight(0);
+  switch (a)
+  {
+  case 320:
+    memcpy(&sk[0], &sk240[0], 3*8*4);
+    break;
+  case 220:
+    memcpy(&sk[0], &sk176[0], 3*8*4);
+    break;
+  default:
+    memcpy(&sk[0], &sk176[0], 3*8*4);
+    break;
+  }
+};
 
 wchar_t *horiz[]={L"Lower softkey",L"Middle softkey",L"Upper softkey"};
 wchar_t *vert[]={L"Left softkey",L"Middle softkey",L"Right softkey"};
@@ -34,6 +53,7 @@ void addui(char *line,int elem)
 
 int set_ui(char *buf, int fsize)
 {
+  auto_select();
   int x;
   for (x=0;x<3;x++)
   {
@@ -266,7 +286,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     }
     InvalidateRect((DISP_OBJ*)db,0);
   }
-    else if (key-KEY_DIGITAL_0==3)
+  else if (key-KEY_DIGITAL_0==3)
   {
     if (db->cur==db->total_fonts)
     {

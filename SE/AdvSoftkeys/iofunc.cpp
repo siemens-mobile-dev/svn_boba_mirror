@@ -1,6 +1,6 @@
 #include "..\\include\Lib_Clara.h" 
 #include "..\\include\Dir.h" 
-#define COPYSIZE 90
+#define COPYSIZE 500
 #define F_READ 0x001
 #define F_RIGHTS 0x180
 #define F_WRITE 0x204

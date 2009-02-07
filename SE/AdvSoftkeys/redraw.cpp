@@ -192,7 +192,15 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     {
       c=colors[x*2+1];
     }
-    if (bk==FindBook(isImageViewerBook))
+    b=clBlack;
+    if (uic && color)c=color;
+    if (stat==0)
+    {
+      int pos=sk[x].y-(height-SoftSize);
+      if (pressed[x])pos++;
+      DrawHighlightID2(sk[x].font, lbl->strids[x], sk[x].ct, sk[x].x, pos, b, c);
+    }
+    else
     {
       if (pressed[x])
       {
@@ -204,21 +212,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
         b=clBlack;
         c=clWhite;
       }
-    }
-    else
-    {
-      b=clBlack;
-    }
-    if (uic && color)c=color;
-    if (stat==0)
-    {
-      int pos=sk[x].y-(height-SoftSize);
-      if (pressed[x])pos++;
-      DrawHighlightID2(sk[x].font, lbl->strids[x], sk[x].ct, sk[x].x, pos, b, c);
-    }
-    else
-    {
-      DrawHighlightID(sk[x].hfont,lbl->strids[x],sk[x].hct,sk[x].hx,sk[x].hy,/*112*//*210*/height-DISP_OBJ_GetWindowWidth(DO),width,b, c);
+      DrawHighlightID(sk[x].hfont,lbl->strids[x],sk[x].hct,sk[x].hx,sk[x].hy,height-DISP_OBJ_GetWindowWidth(DO),width,b, c);
     }
   }
 };

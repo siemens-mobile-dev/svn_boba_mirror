@@ -80,6 +80,10 @@ int onLBMessage2(GUI_MESSAGE * msg)
         if (myBook->curit->name)
         {
           SetMenuItemText1(msg,Str2ID(myBook->curit->name,0,SID_ANY_LEN));
+          if (wstrcmp(myBook->curit->name,L"DEFAULT")==0 ||  wstrcmp(myBook->curit->name,L"StandbyBook")==0)
+          {
+            GUIonMessage_SetItemDisabled (msg,1);
+          }
         }
         else
         {
@@ -181,6 +185,7 @@ int onLBMessage2(GUI_MESSAGE * msg)
         SetMenuItemText0(msg,Str2ID(L"Create",0,SID_ANY_LEN));
       }
     }
+
     break;
   }
   return(1);

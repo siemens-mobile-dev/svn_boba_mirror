@@ -97,6 +97,7 @@ int NewKey(int key, int r1 , int mode)
       pressed[2]=false;
     }
   }
+#define mDEBUG
 #ifdef mDEBUG
   if (key==KEY_POWER)
   {
@@ -113,6 +114,7 @@ int NewKey(int key, int r1 , int mode)
       {
         str2wstr(ws,bk->xbook->name);
       }
+      MessageBox(0x6FFFFFFF,int2strID(lastitem->type),0,1,0,0);
       MessageBox(0x6FFFFFFF,Str2ID(ws,0,SID_ANY_LEN),0,1,0,0);
       return -1;
     }

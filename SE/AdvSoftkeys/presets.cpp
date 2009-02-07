@@ -47,11 +47,6 @@ bool lookslike_YesNo(LIST *lst, int cnt, int left, int right)
   {
     wchar_t act = get_action(lst, left);
     wchar_t act2 = get_action(lst,right);
-    /*
-    wchar_t hz[50];
-    snwprintf(hz,49,L"%X:%X",act,act2);
-    MessageBox(0x6FFFFFFF,Str2ID(hz,0,SID_ANY_LEN),0,1,0,0);
-    */
     if (((act==ACTION_YES || act==ACTION_ACCEPT) && (act2==ACTION_NO || act2==ACTION_CANCEL))||((act2==ACTION_YES || act2==ACTION_ACCEPT) && (act==ACTION_NO || act==ACTION_CANCEL)))
     {
       return true;
@@ -144,6 +139,14 @@ void preset_default(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyB
   lbl->enable[1]=get_enable(lst,left);
   lbl->strids[0]=right;
   lbl->enable[0]=get_enable(lst,right);
+  if (get_action(lst, right)==ACTION_DONE) //поправка для окна ElfInstaller
+  {
+    lbl->strids[1]=right;
+    lbl->strids[0]=left;
+    int temp=lbl->enable[1];
+    lbl->enable[1]=lbl->enable[0];
+    lbl->enable[0]=temp;
+  }
 };
 //------------------------------------------------------------------
 //Пресет для главного экрана:
