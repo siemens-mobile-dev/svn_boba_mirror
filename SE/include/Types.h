@@ -396,8 +396,10 @@ typedef int (*IS_NEEDED_BOOK)(BOOK *);
 
 typedef struct
 {
-#ifndef SWI_HOOK
+#ifdef __cplusplus
   int (*SigHandler)(SIGNAL **sig);
+#else
+  int (*SigHandler)(void **sig);
 #endif
   PAGE_DESC     *default_page;
   char  * name;
@@ -721,7 +723,7 @@ typedef struct
 
 typedef struct
 {
-  int unk1;
+  int attr;
   int unk_0x4;
   int unk_0x8;
   int unk_0xC;
