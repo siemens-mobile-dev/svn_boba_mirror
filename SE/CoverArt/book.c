@@ -50,8 +50,8 @@ void CABook_OnClose(BOOK * book)
   if (book)
   {
     void Cover_Free();
-    ModifyUIHook(event1,CABook_StandbyFocused,0);
-    ModifyUIHook(event2,CABook_StandbyUnfocused,0);
+    //ModifyUIHook(event1,CABook_StandbyFocused,0);
+    //ModifyUIHook(event2,CABook_StandbyUnfocused,0);
     //Удаляем обложку, если она есть
     Cover_Free();
     // Закрываем всё открытое
@@ -121,8 +121,6 @@ void Send_REDRAW_RELEASE()
   }
   UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,sbm,(void (*)(void*))mfree_adr());
 };
-
-
 
 int SB_ELF_Killed(void *mess ,BOOK* book)
 {
@@ -286,7 +284,7 @@ int CheckStandby()
   }
   return 0;
 }
-
+/*
 int CABook_StandbyUnfocused(UI_MESSAGE *)
 {
   isInStandby=CheckStandby();
@@ -299,7 +297,7 @@ int CABook_StandbyFocused(UI_MESSAGE *)
   isInStandby=CheckStandby();
   return 0;
 };
-
+*/
 BOOK * CreateCABook()
 {
   CABook= new BOOK;
@@ -319,8 +317,8 @@ BOOK * CreateCABook()
       event2=STANDBY_NOT_IDLE_EVENT;
       break;
   }
-  ModifyUIHook(event1,CABook_StandbyFocused,1);
-  ModifyUIHook(event2,CABook_StandbyUnfocused,1);
+  //ModifyUIHook(event1,CABook_StandbyFocused,1);
+  //ModifyUIHook(event2,CABook_StandbyUnfocused,1);
   CreateBook(CABook,CABook_OnClose,&base_page,"CoverArt in Standby",-1,0);
   return(CABook);
 };

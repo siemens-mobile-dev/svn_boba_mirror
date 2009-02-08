@@ -10,7 +10,7 @@ wchar_t lastmusic[1024];
 wchar_t nowmus[1024];
 bool isInStandby=false;
 bool isAPBookFound=false;
-
+int CheckStandby();
 DISP_DESC *Standby_DD;
 DISP_OBJ *Standby_DO;
 DISP_OBJ_ONREDRAW_METHOD Standby_DefaultRedraw;
@@ -64,12 +64,13 @@ int CheckStandby()
 */
 void Standby_CARedraw(DISP_OBJ* DO,int a,int b,int c)
 {
-  isInStandby=true;
+  isInStandby=CheckStandby();
   Redraw(Standby_DefaultRedraw, DrawStandby, (-1)*StatusSize, DO, a, b, c, isInStandby, Cover_DrawStandby, Custom_DrawStandby);
 };
 
 void Softkey_CARedraw(DISP_OBJ *DO,int a,int b,int c)
 {
+  isInStandby=CheckStandby();
   if (DrawSoft2 && !isInStandby)
   {
     Redraw(Softkey_DefaultRedraw, DrawSoft2, SoftSize-YSize, DO, a, b, c, 1, Cover_DrawSoft, Custom_DrawSoft);
@@ -83,6 +84,7 @@ void Softkey_CARedraw(DISP_OBJ *DO,int a,int b,int c)
 
 void StatusIndication_CARedraw(DISP_OBJ *DO,int a, int b,int c)
 {
+  isInStandby=CheckStandby();
   if (DrawStatus2 && !isInStandby)
   {
     Redraw(StatusIndication_DefaultRedraw, DrawStatus2, 0, DO, a, b, c, 1, Cover_DrawStatus, Custom_DrawStatus);
