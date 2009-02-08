@@ -53,6 +53,10 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
     {
       c_name = XML_Get_Attr_Value(jid,elem->attr);
       bm_name = XML_Get_Attr_Value("name",elem->attr);
+      if(!bm_name) 
+        if(!c_name) bm_name = "Error bookmark!";
+         else bm_name = c_name;
+
       c_ajoin = XML_Get_Attr_Value("autojoin",elem->attr);
  
       tmpnode = XML_Get_Child_Node_By_Name(elem, "nick");
@@ -68,7 +72,7 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
       }else c_pass = NULL;
 
       BM_ITEM *bmitem = malloc(sizeof(BM_ITEM));
-            if(!bm_name) strcpy(bm_name ,c_name); //если нет имени, имя=JID
+
       bmitem->bmname = malloc(strlen(bm_name)+1);
       strcpy(bmitem->bmname, bm_name);
   
