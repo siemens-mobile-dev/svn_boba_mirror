@@ -464,31 +464,31 @@ void initprogr(int act)
   progr_act = act;
 }
 
-void REDRAW(void)
-{
-  if (DISPBASE_GetFocused(0)==main_obj) InvalidateRect(main_obj,0);
-}
 
 void incprogr(int inc)
 {
   if (inc > 0) progr_cur += inc;
   else if (!inc) progr_cur = 0;
+  RedrawGUI=1;
 }
 
 void incprogrsp(int inc)
 {
   if (inc) progrsp_cur += inc;
   else progrsp_cur = 0;
+  RedrawGUI=1;
 }
 
 void endprogr()
 {
   progr_start = 0;
+  RedrawGUI=1;
 }
 
 void endprogrsp()
 {
   progrsp_max = progrsp_cur = 0;
+  RedrawGUI=1;
 }
 
 
@@ -565,7 +565,7 @@ void S_ZipOpen(void)
       sprintf(msgbuf, "OpenZip error %i", zerr);
       MsgBoxError(msgbuf);
     }
-    MMIPROC(REDRAW);
+    RedrawGUI=1;
   }
 }
 

@@ -150,6 +150,8 @@ extern DRVINFO Drives[MAX_DRV];
 extern const wchar_t mcbm_ext[];
 extern volatile int Busy;
 extern volatile int Terminate;
+extern volatile int RedrawGUI;
+
 extern wchar_t folder_icn;
 extern wchar_t chmark_icn;
 extern wchar_t ch_rb_icn, rb_icn, ch_cb_icn, cb_icn;

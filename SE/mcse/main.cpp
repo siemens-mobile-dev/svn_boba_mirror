@@ -16,6 +16,7 @@ DISP_OBJ *main_obj=NULL;
 wchar_t strconv[128];
 volatile int Busy = 0;
 volatile int Terminate = 0; // флаг необходимости завершени€ работы
+volatile int RedrawGUI = 0; // флаг необходимости перерисовки гу€
 
 wchar_t folder_icn;
 wchar_t chmark_icn;
@@ -160,12 +161,13 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
     LoadMUI(NULL);
   else
     InitMUI();
-
+  DispObject_SetRefreshTimer(&db->dsp_obj,100);
   return (1);
 }
 
 void MainGuiOnClose(DISP_OBJ_MAIN *db)
 {
+  DispObject_KillRefreshTimer(&db->dsp_obj);
   WriteLog("MainGuiOnClose");
 }
 
@@ -238,6 +240,15 @@ void MainGuiOnKey(DISP_OBJ_MAIN *db,int key,int,int repeat,int type)
   lastIsLongPress = isLongPress;
 }
 
+void MainGuiOnRefresh(DISP_OBJ_MAIN *db)
+{
+  if (RedrawGUI){
+    InvalidateRect(&db->dsp_obj,0);
+    RedrawGUI=0;
+  }
+  DispObject_SetRefreshTimer(&db->dsp_obj,150);
+}
+
 
 static const char MainGuiName[]="Gui_MainMC";
 void MainGui_constr(DISP_DESC *desc)
@@ -248,6 +259,7 @@ void MainGui_constr(DISP_DESC *desc)
   DISP_DESC_SetOnClose(desc,(DISP_OBJ_ONCLOSE_METHOD)MainGuiOnClose);
   DISP_DESC_SetOnRedraw(desc,(DISP_OBJ_ONREDRAW_METHOD)MainGuiOnRedraw);
   DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)MainGuiOnKey);
+  DISP_DESC_SetonRefresh(desc,(DISP_OBJ_METHOD)MainGuiOnRefresh);
 }
 
 void MainGui_destr(DISP_DESC *desc){}

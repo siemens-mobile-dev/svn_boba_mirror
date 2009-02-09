@@ -1675,34 +1675,7 @@
       </file>
     </group>
     <file>
-      <name>$PROJ_DIR$\ZLib\adler32.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\compress.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\ZLib\CRC32.C</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\deflate.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\INFFAST.C</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\INFLATE.C</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\inftrees.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\trees.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\uncompr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\ZLib\zutil.c</name>
     </file>
     <configuration>
       <name>Release</name>
