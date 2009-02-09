@@ -118,7 +118,7 @@ void MC_Paste(void)
 
 void MC_Cancel(void)
 {
-  //DoCancel();
+  DoCancel();
   CloseAllMenu();
 }
 
@@ -344,7 +344,7 @@ void MM_Sort(void)
 
 void MC_Filter(void)
 {
-  //DoFilter();
+  DoFilter();
   CloseAllMenu();
 }
 

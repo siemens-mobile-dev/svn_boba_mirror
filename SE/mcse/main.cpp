@@ -131,6 +131,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
   LoadKeys();
   WriteLog("LoadCfg");
   LoadCfg();
+  fn_zero(&buffer);
   for(int ii=0; ii < MAX_TABS+1; ii++)
     InitTab(ii);
   if (CONFIG_SAVE_PATH)
@@ -170,7 +171,6 @@ void MainGuiOnClose(DISP_OBJ_MAIN *db)
 
 void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
 {
-  RECT rc_old;
   int font_old, gc_xx;
   int font=FONT_E_20R;
   void *gc=get_DisplayGC();
@@ -178,7 +178,6 @@ void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
   set_GC_xx(gc,1);
   font_old=SetFont(font);
   ShowFiles(gc, cur_rc);
-  GC_validate_RECT(gc,&rc_old);
   SetFont(font_old);
   set_GC_xx(gc,gc_xx);
 }
@@ -279,6 +278,8 @@ static int MainPageOnEnter(void *, BOOK *bk)
   mbk->main_gui=CreateMainGui(mbk);
   return (1);
 }
+
+
 
 int TerminateElf(void * ,BOOK* book)
 {

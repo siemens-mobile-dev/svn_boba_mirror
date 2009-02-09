@@ -18,6 +18,8 @@ wchar_t szLastNewDir[MAX_PATH];
 wchar_t wsbuf[MAX_PATH*2];
 int back_tab;
 
+const wchar_t def_filter[] = L"*.*";
+
 int progr_stop  = 0;
 int progr_act   = 0;
 
@@ -492,7 +494,7 @@ void endprogrsp()
 
 void CB_Paste(int id)
 {
-  if (id == IDYES) SUBPROC((void *)S_Paste);
+  if (id == IDYES) PasteFindFiles();
 }
 
 void DoPaste()
@@ -947,3 +949,34 @@ void DoNewDir()
     ws=(wchar_t *)str_empty;
   TextInput(muitxt(ind_name), 1, ws, _NewDir);
 }
+
+void CB_Cancel(int id)
+{
+  if (id==IDYES) fn_free(&buffer);
+}
+
+void DoCancel()
+{
+  if (buffer.count)
+    MsgBoxYesNo(muitxt(ind_pmt_cancel), CB_Cancel);
+}
+
+void _Filter(wchar_t *wsname)
+{
+  wstrncpy(_CurTab->szFilter, wsname, MAX_PATH);
+  if (wstrcmp(_CurTab->szFilter, def_filter) == 0)
+    _CurTab->szFilter[0] = 0;
+  
+  DoRefresh();
+}
+
+void DoFilter()
+{
+  const wchar_t *ws;
+  if (_CurTab->szFilter[0])
+    ws=_CurTab->szFilter;
+  else
+    ws=def_filter;
+  TextInput(muitxt(ind_name), 0, ws, _Filter);
+}
+

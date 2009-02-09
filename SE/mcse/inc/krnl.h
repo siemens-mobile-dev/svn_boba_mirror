@@ -73,7 +73,7 @@ extern const wchar_t keys_file[];
 void ExitFromZip();
 
 typedef void (*IFN_RET_PROC) (wchar_t *wsname);
-void TextInput(char *prmpt, int TestFileName, wchar_t *wsname, IFN_RET_PROC retproc);
+void TextInput(char *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc);
 
 typedef int (*ENUM_SEL_PROC) (FILEINF *file, int param);
 int EnumChk(ENUM_SEL_PROC EnumProc, int param);
@@ -103,4 +103,6 @@ void DoExit();
 void DoPaste();
 void DoCopy();
 void DoNewDir();
+void DoCancel();
+void DoFilter();
 #endif

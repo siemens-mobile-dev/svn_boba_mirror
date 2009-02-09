@@ -25,7 +25,7 @@ void OkTextInput(BOOK *,wchar_t * string,int len)
 }
 
 
-void TextInput(char *prmpt, int TestFileName, wchar_t *wsname, IFN_RET_PROC retproc)
+void TextInput(char *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc)
 {
   STRID pr, str;
   wchar_t buff[32];

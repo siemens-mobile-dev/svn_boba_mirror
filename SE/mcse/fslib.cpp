@@ -159,12 +159,61 @@ void CorFileName(wchar_t* wsname)
 }
 
 
+int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param, int recursive, int enumDirs)
+{
+  unsigned int ccFiles   = 0;
+  unsigned int ccSubDirs = 0;
+  wchar_t *path=new wchar_t[MAX_PATH];
+  FILELISTITEM *fli=new FILELISTITEM;
+  
+  if (fli && path)
+  {
+    DIR_HANDLE *handle=AllocDirHandle(dname);
+    snwprintf(path,MAX_PATH-1, _ls_stars, dname);
+    DirHandle_SetFilterStr(handle, path);
+    while(GetFname(handle,fli))
+    {
+      W_FSTAT fs;
+      if (!w_chdir(fli->path))
+        w_fstat(fli->fname,&fs);
+      if (fs.attr & FA_DIRECTORY)
+      {
+        if (enumDirs)
+        {
+          ccSubDirs++;
+          snwprintf(path, MAX_PATH-1,_ls_ls, fli->path, fli->fname);
+          int tmp = 0;
+          if (recursive) tmp = EnumFiles(path, enumproc, param);
+          ccSubDirs += tmp >> 16;
+          ccFiles += tmp & 0xffff;
+          if (enumproc)
+            if (enumproc(fli->path, fli->fname, &fs, param)==0)
+              break;
+        }
+      }
+      else
+      {
+        ccFiles++;
+        if (enumproc)
+          if (enumproc(fli->path, fli->fname, &fs, param)==0)
+            break;
+      }
+    }
+    DestroyDirHandle(handle);
+  }
+  delete path;
+  delete fli;
+  if (ccSubDirs > 0xffff) ccSubDirs = 0xffff;
+  if (ccFiles > 0xffff)   ccFiles = 0xffff;
+  
+  return (ccSubDirs << 16 | ccFiles);
+}
+
 
 int EnumFiles(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param)
 {
   // Рекурсивно пробегаем и по подкаталогам тоже
-  //return EnumFilesInDir( dname, enumproc, param, 1, 1);
-  return 0;
+  return EnumFilesInDir( dname, enumproc, param, 0, 1);
 }
 
 

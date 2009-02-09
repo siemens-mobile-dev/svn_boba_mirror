@@ -10,10 +10,10 @@ void FreeZipInfo(ZIPINF* pzi);
 int ReadZipInfo(ZIPINF* pzi);
 int OpenZip(ZIPINF* pzi, char* zipFileName);
 void CloseZip(ZIPINF* pzi);
-int ExtractCurrentFile(ZIPINF* pzi, int ind, char* extractDir, int usePaths, int ip);
-int ExtractFile(ZIPINF* pzi, char* fname, char* extractDir, int usePaths);
-int ExtractFileByID(ZIPINF* pzi, int id, char* extractDir, int usePaths, int ip);
-int ExtractDir(ZIPINF* pzi, char* dname, char* extractDir, int usePaths);
+int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, int ip);
+int ExtractFile(ZIPINF* pzi, wchar_t* fname, wchar_t* extractDir, int usePaths);
+int ExtractFileByID(ZIPINF* pzi, int id, wchar_t* extractDir, int usePaths, int ip);
+int ExtractDir(ZIPINF* pzi, wchar_t* dname, wchar_t* extractDir, int usePaths);
 
 // Tab functions
 int IsZipOpened(int tab);

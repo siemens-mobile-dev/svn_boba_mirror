@@ -23,16 +23,11 @@ void InitScr()
   scr_w = Display_GetWidth(0);
   scr_h = Display_GetHeight(0);
   old_font=SetFont(FONT_E_24R);
-  
-  txt_h = GetImageHeight(' ');
-  
-  if (iconidname2id(L"DB_LIST_FOLDER_ICN",-1,&tmp))
-    ico_hw=GetImageHeight(tmp);
-  
+  txt_h=GetImageHeight(' ');
+  ico_hw=GetImageHeight(folder_icn);
   tmp = ico_hw - ITM_B * 2;
   itm_ch = tmp > txt_h ? tmp : txt_h;
   SetFont(old_font);
-
   //itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-((itms_max + 1) * ITM_FH) ) / 2 );
 }
 

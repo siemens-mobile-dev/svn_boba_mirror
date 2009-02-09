@@ -161,31 +161,18 @@ FN_LIST buffer;
 
 void S_Paste(void)
 {
-  if (buffer.count)
   {
     int res=1;
-    Busy = 1;
-    
-    if (buffer.type == FNT_MOVE) progr_act = ind_moveing;
-    else if (buffer.type == FNT_COPY) progr_act = ind_copying;
-    
-    initprogr(progr_act);
     FN_ITM* itm = buffer.items;
     FN_ITM* last_itm = itm;
     while(itm)
     {
-      //	 progr_max+=itm->full[0]!=_CurPath[0] || buffer.type!=FNT_MOVE?GetFilesCnt(itm->full):1;
-      if (itm->ftype == TYPE_COMMON_DIR || itm->ftype == TYPE_COMMON_FILE)
-        progr_max += GetFilesCnt(itm->full);
-      else
-        progr_max++; // Для зипа пока заглушка
       last_itm = itm;
       itm = (FN_ITM *) itm->next;
     }
-    incprogr(0);
     
     itm = buffer.items;
-    //ZipBufferExtractBegin();
+    ZipBufferExtractBegin();
     while(itm && !progr_stop)
     {
       if (itm->ftype == TYPE_COMMON_DIR || itm->ftype == TYPE_COMMON_FILE)
@@ -206,12 +193,12 @@ void S_Paste(void)
       else
       {
         // Пока обрабатываем только копирование
-       // if (buffer.type == FNT_COPY)
-       //   res &= (ZipBufferExtract(itm, _CurPath) == UNZ_OK);
+        if (buffer.type == FNT_COPY)
+          res &= (ZipBufferExtract(itm, _CurPath) == UNZ_OK);
       }
       itm=(FN_ITM *)itm->next;
     }
-    //ZipBufferExtractEnd();
+    ZipBufferExtractEnd();
     
     if (!res)
       MMIPROC(MsgBoxErrorMmi,  (int)muitxt(ind_err_resnok));
@@ -227,8 +214,31 @@ void S_Paste(void)
     endprogr();
     Busy = 0;
   }
+}
+
+void PasteFindFiles(void)
+{
+  if (buffer.count)
+  {
+    Busy = 1;
+    if (buffer.type == FNT_MOVE) progr_act = ind_moveing;
+    else if (buffer.type == FNT_COPY) progr_act = ind_copying;
+    initprogr(progr_act);
+    FN_ITM* itm = buffer.items;
+    while(itm)
+    {
+      //	 progr_max+=itm->full[0]!=_CurPath[0] || buffer.type!=FNT_MOVE?GetFilesCnt(itm->full):1;
+      if (itm->ftype == TYPE_COMMON_DIR || itm->ftype == TYPE_COMMON_FILE)
+        progr_max += GetFilesCnt(itm->full);
+      else
+        progr_max++; // Для зипа пока заглушка
+      itm = (FN_ITM *) itm->next;
+    }
+    incprogr(0);
+    S_Paste();
+  }
   else
-    MMIPROC(MsgBoxErrorMmi,  (int)muitxt(ind_err_nofiles));
+    MsgBoxError(muitxt(ind_err_nofiles));
 }
 
 

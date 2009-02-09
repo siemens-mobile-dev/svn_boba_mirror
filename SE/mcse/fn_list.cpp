@@ -27,6 +27,7 @@ void fn_free(FN_LIST *list)
   }
 }
 
+
 void fn_rev(FN_LIST *list)
 {
   if (list==NULL) return;
@@ -92,11 +93,12 @@ void fn_add(FN_LIST* list, int type, int ftype, int pname, wchar_t* full, wchar_
   }
 }
 
-int _fn_fill(wchar_t *fname, W_FSTAT *fs, int param)
+int _fn_fill(wchar_t *path, wchar_t *name, W_FSTAT *fs, int param)
 {
   int ftype = fs->attr & FA_DIRECTORY ? TYPE_COMMON_DIR : TYPE_COMMON_FILE;
   FN_LIST *list = (FN_LIST *) param;
-  fn_add(list, FNT_NONE, ftype, 0, fname, NULL);
+  snwprintf(pathbuf_fn, MAXELEMS(pathbuf_fn)-1, _ls_ls, path, name);
+  fn_add(list, FNT_NONE, ftype, 0, pathbuf_fn, NULL);
   return 1;
 }
 

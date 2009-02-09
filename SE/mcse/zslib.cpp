@@ -273,22 +273,24 @@ int IsItZipFile(wchar_t* fname)
   }
 }
 
-/*
+
 int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, int ip)
 {
   unzFile uf = pzi->uf;
   wchar_t *filePathInZip = pzi->pszNames[ind];
   int res = UNZ_OK;
   int fout = 0;
-  wchar_t extractFilePath[MAX_PATH];
-  wchar_t fnbuf[MAX_PATH];
+  wchar_t *extractFilePath=new wchar_t[MAX_PATH];
+  wchar_t *temp=new wchar_t[MAX_PATH];
+  char fnbuf[MAX_PATH];
   
   if (filePathInZip == NULL)
   {
     // Считываем имя сами если нужно
     unz_file_info fi;
-    filePathInZip = fnbuf;
-    unzGetCurrentFileInfo(uf, &fi, filePathInZip, MAX_PATH, NULL, 0, NULL, 0);
+    unzGetCurrentFileInfo(uf, &fi, fnbuf, MAX_PATH, NULL, 0, NULL, 0);
+    dos2utf16(temp, fnbuf);
+    filePathInZip = temp;
   }
   uInt size_buf = WRITEBUFFERSIZE;
   void* buf = (void*)malloc(size_buf);
@@ -304,7 +306,7 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
     if (usePaths)
     {
       // Директория... создаем
-      sprintf(extractFilePath, _s_s, extractDir, filePathInZip);
+      snwprintf(extractFilePath,MAX_PATH-1, _ls_ls, extractDir, filePathInZip);
       mktree(extractFilePath);
     }
   }
@@ -312,28 +314,28 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
   {
     // File
     if (usePaths)
-      sprintf(extractFilePath, _s_s, extractDir, filePathInZip);
+      snwprintf(extractFilePath,MAX_PATH-1, _ls_ls, extractDir, filePathInZip);
     else
-      sprintf(extractFilePath, _s_s, extractDir, fileNameInZip);
+      snwprintf(extractFilePath,MAX_PATH-1, _ls_ls, extractDir, fileNameInZip);
     
     if (fexists(extractFilePath))
     {
       // ToDo: добавить проверку - если Temp, то переписывать не спрашивая, иначе - диалог
-      if (!unlink(extractFilePath, &err))
-        ZipError(res = 2, "ExtractCurrentFile.fsrm");
+    //  if (!unlink(extractFilePath, &err))
+    //    ZipError(res = 2, "ExtractCurrentFile.fsrm");
     }
     if (res == UNZ_OK)
     {
-      fout = fopen(extractFilePath, A_ReadWrite+A_Create+A_Truncate+A_BIN, P_READ+P_WRITE, &err);
+      fout = w_fopen(extractFilePath, WA_Write+WA_Create+WA_Truncate, 0x1FF, 0);
       
       	// some zipfile don't contain directory alone before file 
-      if (fout == -1 && usePaths && fileNameInZip != filePathInZip)
+      if (fout < 0 && usePaths && fileNameInZip != filePathInZip)
       {
-        char c = *(fileNameInZip - 1);
+        wchar_t c = *(fileNameInZip - 1);
         *(fileNameInZip - 1) = '\0';
         mktree(filePathInZip);
         *(fileNameInZip - 1) = c;
-        fout = fopen(extractFilePath, A_ReadWrite+A_Create+A_Truncate+A_BIN, P_READ+P_WRITE, &err);
+        fout = w_fopen(extractFilePath, WA_Write+WA_Create+WA_Truncate, 0x1FF, 0);
       }
       if (fout == -1)
         ZipError(res = 3, "ExtractCurrentFile.fopen");
@@ -376,7 +378,7 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
           }
           else if (cb > 0)
           {
-            if (fwrite(fout, buf, cb, &err) != cb)
+            if (w_fwrite(fout, buf, cb) != cb)
             {
               ZipError(res = 6, "ExtractCurrentFile.fwrite");
               break;
@@ -395,7 +397,7 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
             progr_start = 0;
           }
         }
-        if (fout) { fclose(fout, &err); fout = 0; }
+        if (fout) { w_fclose(fout); fout = 0; }
         if (res == UNZ_OK)    
         {
           
@@ -404,7 +406,7 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
         }
       }
       else ZipError(res = 7, "ExtractCurrentFile.unzOpenCurrentFile");
-      if (fout) fclose(fout, &err);
+      if (fout) w_fclose(fout);
     }
     if (res == UNZ_OK)
     {
@@ -414,10 +416,25 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
     else unzCloseCurrentFile(uf); // don't lose the error 
   }
   mfree(buf);
+  delete extractFilePath;
+  delete temp;
   return res;
 }
 
-
+int SetCurrentFileInZip(ZIPINF* pzi, int id)
+{
+  int zerr = unzGoToFirstFile(pzi->uf);
+  if (zerr != UNZ_OK)
+    return 1;
+  
+  for (int i = 1; i <= id; i++)
+  {
+    zerr = unzGoToNextFile(pzi->uf);
+    if (zerr != UNZ_OK)
+      return i + 1;
+  }
+  return 0;	
+}
 
 int ExtractFileByID(ZIPINF* pzi, int id, wchar_t* extractDir, int usePaths, int ip)
 {
@@ -435,7 +452,7 @@ int ExtractFile(ZIPINF* pzi, wchar_t* fname, wchar_t* extractDir, int usePaths)
   // Позиционируемся на нужном файле
   int found = 0;
   wchar_t buf[MAX_PATH + 1];
-  strcpy(buf + 1, fname);
+  wstrcpy(buf + 1, fname);
   buf[0] = '/'; // В начало запишем слеш на тот случай если fname без слеша
   
   wchar_t* nameWithoutSlash = ( (buf[1] == '/') ? (buf + 2) : (buf + 1) );
@@ -456,6 +473,40 @@ int ExtractFile(ZIPINF* pzi, wchar_t* fname, wchar_t* extractDir, int usePaths)
     }
   }
   return 1;
+}
+
+int ExtractDir(ZIPINF* pzi, wchar_t* dname, wchar_t* extractDir, int usePaths)
+{
+  int found = 0;
+  wchar_t *buf=new wchar_t[MAX_PATH + 1];
+  wstrcpy(buf + 1, dname);
+  buf[0] = '/'; // В начало запишем слеш на тот случай если fname без слеша
+  wchar_t* nameWithoutSlash = ( (buf[1] == '/') ? (buf + 2) : (buf + 1) );
+  wchar_t* nameWithSlash = ( (buf[1] == '/') ? (buf + 1) : (buf) );
+  
+  int zerr = UNZ_OK;
+  int dlen = wstrlen(nameWithoutSlash);
+  
+  // Перебираем все файлы
+  for (int i = 0; i < pzi->gi.number_entry; i++)
+  {
+    if (i == 0) zerr = unzGoToFirstFile(pzi->uf);
+    else zerr = unzGoToNextFile(pzi->uf);
+    
+    if (zerr) return zerr;
+    
+    // Проверяем начинается ли имя файла в зипе с этой директории, если да - извлекаем
+    found = (wstrcmpni(nameWithoutSlash, pzi->pszNames[i], dlen) == 0);
+    if (!found)
+    {
+      // Пробуем поискать со слешем
+      found = (wstrcmpni(nameWithSlash, pzi->pszNames[i], dlen + 1) == 0);
+    }
+    if (found)
+      ExtractCurrentFile(pzi, i, extractDir, 1, 0);
+  }
+  delete buf;
+  return zerr;
 }
 
 // Кэш на один :) зип файл
@@ -502,4 +553,9 @@ int ZipBufferExtract(FN_ITM* pi, wchar_t* extractDir)
 
     return 0;
 }
-*/
+
+void ZipBufferExtractEnd()
+{
+  if (zi.uf != 0)
+    CloseZip(&zi);
+}

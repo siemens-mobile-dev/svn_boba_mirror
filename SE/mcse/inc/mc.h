@@ -163,6 +163,7 @@ void S_Delit(void);
 void S_Paste(void);
 int M_MoveCopy(FILEINF *file, int param);
 void _NewDir(wchar_t *wsname);
+void PasteFindFiles(void);
 
 int isdir(wchar_t *name);
 void UseBM(wchar_t* filename);
