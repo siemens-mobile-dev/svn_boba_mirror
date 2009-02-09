@@ -259,8 +259,8 @@
 08A4: FFFFFFFF 65822F45 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: FFFFFFFF 09802F45 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: FFFFFFFF A5822F45 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+08B0: FFFFFFFF 05802F45 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
+08B4: FFFFFFFF 85822F45 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -488,22 +488,24 @@
 ;0C50: xxxxxxxx yyyyyyyy ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
 ;0C54: xxxxxxxx yyyyyyyy ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
 ;0C58: xxxxxxxx yyyyyyyy ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
-;0C5C: xxxxxxxx yyyyyyyy ; 317: void *DispObject_Softkeys_GetParams(DISP_OBJ *);
-;0C60: xxxxxxxx yyyyyyyy ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
-;0C64: xxxxxxxx yyyyyyyy ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
-;0C68: xxxxxxxx yyyyyyyy ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
-;0C6C: xxxxxxxx yyyyyyyy ; 31B: BOOK *DISPLAY_GetTopBook(int display);
+0C5C: FFFFFFFF A9001945 ; 317: void *DispObject_Softkeys_GetParams(DISP_OBJ *);
+0C60: FFFFFFFF F1001945 ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
+0C64: FFFFFFFF 7d602945 ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
+0C68: FFFFFFFF 51602945 ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
+0C6C: FFFFFFFF Ed522945 ; 31B: BOOK *DISPLAY_GetTopBook(int display);
 ;0C70: xxxxxxxx yyyyyyyy ; 31C: void DISPLAY_SetBrightness(int display, int brightness);
 ;0C74: xxxxxxxx yyyyyyyy ; 31D: int DISPLAY_GetBrightness(int display);
 ;0C78: xxxxxxxx yyyyyyyy ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
 ;0C7C: xxxxxxxx yyyyyyyy ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 ;0C80: xxxxxxxx yyyyyyyy ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 ;0C84: xxxxxxxx yyyyyyyy ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
-;0C88: xxxxxxxx yyyyyyyy ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
-;0C8C: xxxxxxxx yyyyyyyy ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
+0C88: FFFFFFFF A9B53045 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
+0C8C: FFFFFFFF 5dB13045 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 ;0C90: xxxxxxxx yyyyyyyy ;8324: void * get_CellData(void); 
-
-
-
+;0C94: xxxxxxxx yyyyyyyy ; 325: void * IncommingCall_Reject(BOOK* book);
+;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
+;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetSignalLevel(void);
+0CA0: FFFFFFFF 9d455945 ; 328: int Bluetooth_GetState(void);
+0CA4: FFFFFFFF 7d455945 ; 329: int Bluetooth_GetPhoneVisibility(void);
 
 ;locale=Russian_Russia.1251
