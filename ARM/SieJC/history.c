@@ -117,6 +117,8 @@ void Add2History(CLIST *CListEx, char *header, char *message)
   strcpy(buffer, delim);
   strcat(buffer, header);
   strcat(buffer, message);
+  mfree(message);
+  mfree(header);
   strcpy(fullname, HIST_PATH);
   sprintf(fullname,"%s%s.txt", fullname, CListEx->JID);
   

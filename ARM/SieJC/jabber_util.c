@@ -575,15 +575,21 @@ void Report_TimeInfo(char* id, char *to)
   char answer[200];
   TTime reqt;
   TDate reqd;
-  const char *TimeZone[24]={"+00:00","+01:00","+02:00","+03:00","+04:00","+05:00","+06:00","+07:00","+08:00",
-  "+09:00","+10:00","+11:00","+12:00","-01:00","-02:00","-03:00","-04:00","-05:00","-06:00","-07:00",
-  "-08:00","-09:00","-10:00","-11:00"};
-//  const signed int TimeZoneNum[24]={'0','1','2','3','4','5','6','7','8','9','10','11','12','-1','-2','-3','-4','-5','-6','-7','-8','-9','-10','-11'};
-  extern const int MY_DEF_ZONE;
-  char timzone[6];
   GetDateTime(&reqd, &reqt);
-  strcpy(timzone, TimeZone[MY_DEF_ZONE]);
-  sprintf(answer, "<utc>%04d%02d%02dT%02d:%02d:%02d</utc><tz>%s</tz><display>%02d-%02d-%04d %02d:%02d:%02d</display>",reqd.year,reqd.month,reqd.day,reqt.hour,reqt.min,reqt.sec, timzone,reqd.day,reqd.month,reqd.year,reqt.hour,reqt.min,reqt.sec);
+  int total=GetTimeZoneShift(&reqd, &reqt, RamDateTimeSettings()->timeZone);
+  int hour=0;
+  char znak[]="+";
+  if (total<0)
+  {
+    total=total*(-1);
+    znak[0]='-';
+  };
+  while(total>59)
+  {
+    total=total-60;
+    hour++;
+  };
+  sprintf(answer, "<utc>%04d%02d%02dT%02d:%02d:%02d</utc><tz>%s%02d:%02d</tz><display>%02d-%02d-%04d %02d:%02d:%02d</display>",reqd.year,reqd.month,reqd.day,reqt.hour,reqt.min,reqt.sec,znak, hour, total,reqd.day,reqd.month,reqd.year,reqt.hour,reqt.min,reqt.sec);
   SendIq(to, IQTYPE_RES, id, IQ_TIME, answer);
   mfree(id);
   mfree(to);

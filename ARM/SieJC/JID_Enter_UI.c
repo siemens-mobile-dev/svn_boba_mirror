@@ -48,16 +48,10 @@ void ed_grouplist_handler(USR_MENU_ITEM *item)
   {
       if (i<gr_str->count)
       {
-	int c;
 	char *p=GetGroupNameByID(i+1); //пропускаем "No group"
-	WSHDR *ed_ws=AllocWS(strlen(p));
-        {
-          while(c=*p++)
-          {
-            wsAppendChar(ed_ws,char8to16(c));
-          }
-          EDIT_SetTextToEditControl(gr_str->ed_grgui,6,ed_ws);
-        }
+	WSHDR *ed_ws=AllocWS(strlen(p)*2);
+        utf8_2ws(ed_ws,p,strlen(p)*2);
+        EDIT_SetTextToEditControl(gr_str->ed_grgui,6,ed_ws);
 	FreeWS(ed_ws);
       }
   }

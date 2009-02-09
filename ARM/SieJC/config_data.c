@@ -87,35 +87,6 @@ __root const int DELIVERY_EVENTS=1;
 __root const CFG_HDR cfghdr15346={CFG_CHECKBOX,LG_USEATTENTION,0,2};
 __root const int USE_ATTENTION=0;
 
-__root const CFG_HDR cfghdr7_3={CFG_CBOX,"Time Zone",0,24};
-__root const int MY_DEF_ZONE = 2;
-__root const CFG_CBOX_ITEM cfgcbox7_1[24]={
-  "+0:00",
-  "+1:00",
-  "+2:00",
-  "+3:00",
-  "+4:00",
-  "+5:00",
-  "+6:00",
-  "+7:00",
-  "+8:00",
-  "+9:00",
-  "+10:00",
-  "+11:00",
-  "+12:00",
-  "-1:00",
-  "-2:00",
-  "-3:00",
-  "-4:00",
-  "-5:00",
-  "-6:00",
-  "-7:00",
-  "-8:00",
-  "-9:00",
-  "-10:00",
-  "-11:00"
-  };
-
 // Настройка сигналов
 ////////////////////////////////////////////////////////////////////////////////
 __root const CFG_HDR cfghdr_SOUNDS_SETUP={CFG_LEVEL,LG_SETUPSND,1,0};
