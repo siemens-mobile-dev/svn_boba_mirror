@@ -60,6 +60,24 @@ int cd(int tab, wchar_t *dname)
   return res;
 }
 
+void _NewDir(wchar_t *wsname)
+{
+  wstrncpy(szLastNewDir, wsname, MAXELEMS(szLastNewDir));	// Сохраняем введенное имя
+  CurFullPath(wsname);
+  
+  if (w_mkdir(pathbuf, 0x1FF))
+    MsgBoxError(muitxt(ind_err_makedir));
+  else
+  {
+    DoRefresh();
+    //Ищим папку которую создали
+    int ind = GetCurTabFileIndex(wsname);
+    SetCurTabIndex(ind, 0);
+  }
+}
+
+
+
 int M_Delit(FILEINF *file, int param)
 {
   if (file && pathbuf && wstrlen(file->ws_name))
@@ -195,8 +213,8 @@ void S_Paste(void)
     }
     //ZipBufferExtractEnd();
     
-    //if (!res)
-     // MMIPROC(MsgBoxErrorMmi,  (int)muitxt(ind_err_resnok));
+    if (!res)
+      MMIPROC(MsgBoxErrorMmi,  (int)muitxt(ind_err_resnok));
 
     MMIPROC(UpdateAll);
     

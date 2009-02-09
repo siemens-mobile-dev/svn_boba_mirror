@@ -142,7 +142,7 @@ void MC_Delit(void)
 
 void MC_NewDir(void)
 {
-  //DoNewDir();
+  DoNewDir();
   CloseAllMenu();
 }
 

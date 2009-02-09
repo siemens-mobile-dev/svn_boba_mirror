@@ -7,11 +7,14 @@
 #include "inc\ColorMap.h"
 #include "inc\mui.h"
 #include "inc\exts.h"
+#include "inc\gui.h"
 
 char msgbuf[256];
 wchar_t mcpath[MAX_PATH];
 wchar_t pathbuf[MAX_PATH];
 wchar_t zippathbuf[MAX_PATH];
+wchar_t szLastNewFile[MAX_PATH];
+wchar_t szLastNewDir[MAX_PATH];
 wchar_t wsbuf[MAX_PATH*2];
 int back_tab;
 
@@ -76,6 +79,7 @@ void SetTabIndex(int tab, int num, int slide)
 
 void SetCurTabIndex(int num, int slide)
 {
+  DisableScroll();
   SetTabIndex(curtab, num, slide);
 }
 
@@ -154,7 +158,7 @@ void FillFileInfo(FILEINF *file)
     }
   }
   wchar_t *ws;
-  if (file->ws_showname) ws=file->ws_showname;
+  if (curtab == systab && file->ws_showname) ws=file->ws_showname;
   else ws=file->ws_name;
   file->sid_name=Str2ID(ws,0,SID_ANY_LEN);
   file->inited = 1;
@@ -278,7 +282,7 @@ int FillRealPathFiles(int tab, wchar_t* dname)
 }
 
 // Заполняет список файлов текущей директории
-int FillFiles(int tab, wchar_t* dname)
+int FillFiles(int tab, wchar_t* dname)   // Только в ММИ!!!
 {
   if (tabs[tab]->ccFiles) DelFiles(tab);
   if (IsZipOpened(tab))
@@ -467,26 +471,22 @@ void incprogr(int inc)
 {
   if (inc > 0) progr_cur += inc;
   else if (!inc) progr_cur = 0;
-  MMIPROC(REDRAW);
 }
 
 void incprogrsp(int inc)
 {
   if (inc) progrsp_cur += inc;
   else progrsp_cur = 0;
-  MMIPROC(REDRAW);
 }
 
 void endprogr()
 {
   progr_start = 0;
-  MMIPROC(REDRAW);
 }
 
 void endprogrsp()
 {
   progrsp_max = progrsp_cur = 0;
-  MMIPROC(REDRAW);
 }
 
 
@@ -935,3 +935,15 @@ void DoDel()
 }
 
 void DoMenu(void) {MM_Main();}
+
+void DoNewDir()
+{
+  wchar_t *ws;
+  if (IsInZip()) return; // Пока не обрабатывается
+  
+  if (*szLastNewDir)
+    ws=szLastNewDir;
+  else
+    ws=(wchar_t *)str_empty;
+  TextInput(muitxt(ind_name), 1, ws, _NewDir);
+}

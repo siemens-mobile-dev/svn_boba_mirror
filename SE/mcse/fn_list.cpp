@@ -1,5 +1,7 @@
 #include "inc\mc.h"
 
+wchar_t pathbuf_fn[MAX_PATH];
+
 void fn_zero(FN_LIST *list)
 {
   memset(list, 0, sizeof(FN_LIST));
@@ -7,21 +9,42 @@ void fn_zero(FN_LIST *list)
 
 void fn_free(FN_LIST *list)
 {
-  if (list==NULL) return;
-  if (list->count)
+  if (list)
   {
-    while(list->items)
+    if (list->count)
     {
-      FN_ITM *itm = list->items;
-      list->items = (FN_ITM *)itm->next;
+      while(list->items)
+      {
+        FN_ITM *itm = list->items;
+        list->items = (FN_ITM *)itm->next;
       
-      if (itm->full) delete(itm->full);
-      if (itm->zipPath) delete(itm->zipPath);
-      delete(itm);
-      list->count--;
+        if (itm->full) delete(itm->full);
+        if (itm->zipPath) delete(itm->zipPath);
+        delete(itm);
+        list->count--;
+      }
     }
   }
 }
+
+void fn_rev(FN_LIST *list)
+{
+  if (list==NULL) return;
+  
+  if (list->count)
+  {
+    FN_ITM *itm = list->items;
+    FN_ITM *next = (FN_ITM *)itm->next;
+    while(next)
+    {
+      itm->next=next->next;
+      next->next=list->items;
+      list->items = next;
+      next = (FN_ITM *)itm->next;
+    }
+  }
+}
+
 
 int fn_inlist(FN_LIST *list, wchar_t *full)
 {
@@ -67,4 +90,22 @@ void fn_add(FN_LIST* list, int type, int ftype, int pname, wchar_t* full, wchar_
     list->items = itm;
     list->count++;
   }
+}
+
+int _fn_fill(wchar_t *fname, W_FSTAT *fs, int param)
+{
+  int ftype = fs->attr & FA_DIRECTORY ? TYPE_COMMON_DIR : TYPE_COMMON_FILE;
+  FN_LIST *list = (FN_LIST *) param;
+  fn_add(list, FNT_NONE, ftype, 0, fname, NULL);
+  return 1;
+}
+
+void fn_fill(FN_LIST *list, wchar_t *path)
+{
+  if (list==NULL) return;
+  
+  int ftype = isdir(path) ? TYPE_COMMON_DIR : TYPE_COMMON_FILE;
+  if (ftype == TYPE_COMMON_DIR)
+    EnumFiles(path, _fn_fill, (int)list);
+  fn_add(list, FNT_NONE, ftype, 0, path, NULL);
 }

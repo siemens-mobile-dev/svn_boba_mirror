@@ -9,6 +9,7 @@
 #include "inc\mui.h"
 #include "inc\ColorMap.h"
 #include "inc\zslib.h"
+#include "inc\config.h"
 
 MyBOOK * MCBook;
 DISP_OBJ *main_obj=NULL;
@@ -21,11 +22,14 @@ wchar_t chmark_icn;
 wchar_t ch_rb_icn, rb_icn, ch_cb_icn, cb_icn;
 
 
-
+void FreeData();
 #pragma segment="ELFBEGIN"
 void elf_exit(void){
+  trace_done();
+  WriteLog("elf_exit");
   kill_data(__segment_begin("ELFBEGIN"), (void(*)(void*))mfree_adr());
 }
+
 #define MESSAGE(__STR__) MessageBox(0x6FFFFFFF,__STR__,0, 1 ,11000,NULL);
 
 void MsgBoxError(int lgind, char* str)
@@ -87,13 +91,13 @@ void MsgBoxYesNo(char *qv, void(*f)(int))
                                            VAR_PREV_ACTION_PROC(YSNo),
                                            0);
 }
+
 void FreeData()
 {
   if (CONFIG_LOAD_CS) SaveCS(NULL);
   if (CONFIG_LOAD_MUI) SaveMUI(NULL);
-  
-  //SaveCfg();
-  //fn_free(&buffer);
+  SaveCfg();
+  fn_free(&buffer);
   FreeMUI();
   //FreeExt();
   for(int ii=0; ii<MAX_TABS+1; ii++)
@@ -109,7 +113,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
 {
   int tmp;
   WriteLog("MainGuiOnCreate");
-  WriteLog("LoadKeys");
+  
   main_obj=&db->dsp_obj;
   if (iconidname2id(L"DB_LIST_FOLDER_ICN",-1,&tmp))
     folder_icn=tmp;
@@ -123,23 +127,45 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
     ch_cb_icn=tmp;
   if (iconidname2id(L"CHECKBOX_ICN",-1,&tmp))
     cb_icn=tmp;
+  WriteLog("LoadKeys");
   LoadKeys();
+  WriteLog("LoadCfg");
+  LoadCfg();
   for(int ii=0; ii < MAX_TABS+1; ii++)
     InitTab(ii);
-  WriteLog("InitCS");
+  if (CONFIG_SAVE_PATH)
+  {
+    WriteLog("Init Last Dirs");
+    for(int ii=0;ii<MAX_TABS;ii++)
+    {
+      int srt=MCConfig.tabs[ii].sort;
+      int srtH=(srt & STD_MASK);
+      int srtL=(srt & STV_MASK);
+      srt=(srtL<=ST_LAST?srtL:0) | srtH;
+      tabs[ii]->sort=srt;
+      if (MCConfig.tabs[ii].LastPath[0] /*&& isdir(MCConfig.tabs[ii].LastPath, &err)*/)
+      {
+        cd(ii, MCConfig.tabs[ii].LastPath);
+        SetTabIndex(ii, MCConfig.tabs[ii].LastInd, 0);
+      }
+    }
+    curtab = MCConfig.curtab;
+  }
+  WriteLog("InitScr");
   InitScr();
+  WriteLog("InitCS");
   InitCS();
   if (CONFIG_LOAD_MUI)
     LoadMUI(NULL);
   else
     InitMUI();
+
   return (1);
 }
 
 void MainGuiOnClose(DISP_OBJ_MAIN *db)
 {
-
-  WriteLog("gui.onClose");
+  WriteLog("MainGuiOnClose");
 }
 
 void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
@@ -151,11 +177,7 @@ void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
   gc_xx=get_GC_xx(gc);
   set_GC_xx(gc,1);
   font_old=SetFont(font);
-  
-  
-  if (progr_start) ShowProgr(gc, cur_rc);
-  else ShowFiles(gc, cur_rc);
-
+  ShowFiles(gc, cur_rc);
   GC_validate_RECT(gc,&rc_old);
   SetFont(font_old);
   set_GC_xx(gc,gc_xx);
@@ -260,8 +282,6 @@ static int MainPageOnEnter(void *, BOOK *bk)
 
 int TerminateElf(void * ,BOOK* book)
 {
-  //MyBOOK *mbk=(MyBOOK *)book;
-  //FREE_GUI(mbk->main_gui);
   FreeBook(book);
   return(1);
 }
@@ -286,8 +306,8 @@ const PAGE_DESC bk_main = {"MC_Main_Page",0,bk_msglst_main};
 // при закрытии книги
 static void onMyBookClose(BOOK * book)
 {
-  //MyBOOK *mbk=(MyBOOK *)book;
-  FreeData();
+  DisableScroll();
+  SUBPROC(FreeData);
   SUBPROC(elf_exit);
 }
 
@@ -298,6 +318,7 @@ int isMcBook(BOOK * struc)
 
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
+  trace_init();
   MCBook=new MyBOOK;
   GetFileDir(elfname, mcpath);
   StartLog();

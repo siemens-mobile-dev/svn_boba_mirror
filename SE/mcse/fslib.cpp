@@ -127,6 +127,38 @@ L_EXIT:
   return res;
 }
 
+const wchar_t badchars[] = {'?', '*', '"', ':', '<', '>', '/', '\\', '|', '\n', '\r'};
+
+int _IsBadChar(wchar_t wch)
+{
+  for(int cc = 0; cc < sizeof(badchars)/sizeof(wchar_t); cc++)
+    if (badchars[cc] == wch) return 1;
+  return 0;  
+}
+
+int TestFileName(wchar_t* wsname)
+{
+  wchar_t wchar;
+  while((wchar=*wsname++))
+  {
+    if (_IsBadChar(wchar)) return 0;
+  }
+  return 1;
+}
+
+void CorFileName(wchar_t* wsname)
+{
+  wchar_t wchar;
+  int i=0;
+  while((wchar=*wsname++))
+  {
+    if (!_IsBadChar(wchar)) 
+      wsname[i++]=wchar;
+  }
+  wsname[i]=0;
+}
+
+
 
 int EnumFiles(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param)
 {
@@ -134,6 +166,7 @@ int EnumFiles(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param)
   //return EnumFilesInDir( dname, enumproc, param, 1, 1);
   return 0;
 }
+
 
 int GetFilesCnt(wchar_t* path)
 {
@@ -145,6 +178,85 @@ int GetFilesCnt(wchar_t* path)
   }
   return res;
 }
+
+int mktree(wchar_t* path)
+{
+  if (isdir(path)) return 1;
+  int len = wstrlen(path);
+  int c;
+  wchar_t *buf=new wchar_t[len+1];
+  for(int ii=0;ii<len;ii++)
+  {
+    c = path[ii];
+    if (c=='/')
+    {
+      buf[ii]=0;
+      w_mkdir(buf, 0x1FF);
+    }
+    buf[ii]=c;
+  }
+  delete buf;
+  return !(w_mkdir(path, 0x1FF));
+}
+
+int cptree(wchar_t* src, wchar_t* dst, int ip)
+{
+  FN_LIST fnlist;
+  fn_zero(&fnlist);
+  fn_fill(&fnlist, src);
+  fn_rev(&fnlist);
+  
+  
+  wchar_t *dstfull=new wchar_t[MAX_PATH];
+  int psrc = wstrlen(src)+1;
+  int res = 1;
+  int attr=0;
+  
+  int tmp = progr_act;
+  progr_act = ind_dirmking;
+  incprogr(-1);
+  
+  FN_ITM *itm = fnlist.items;
+  while(itm && !progr_stop)
+  {
+    if (itm->ftype == TYPE_COMMON_DIR) // TODO: ZIP_DIR...
+    {
+      wchar_t* pdst;
+      if (itm->full[psrc-1])
+      {
+        wchar_t* psrcname = itm->full+psrc;
+        snwprintf(dstfull,MAX_PATH-1, _ls_ls, dst, psrcname);
+        pdst = dstfull;
+      }
+      else
+      {
+        pdst = dst;
+      }
+      res &= mktree(pdst);
+      //GetFileAttrib(itm->full, (unsigned char*)&attr, &err);
+      //SetFileAttrib(pdst, attr, &err);
+    }
+    itm=(FN_ITM *)itm->next;
+  }
+  progr_act = tmp;
+  
+  itm = fnlist.items;
+  while(itm && !progr_stop)
+  {
+    if (itm->ftype == TYPE_COMMON_FILE) // TODO: ZIP_FILE...
+    {
+      wchar_t* psrcname = itm->full+psrc;
+      snwprintf(dstfull,MAX_PATH-1, _ls_ls, dst, psrcname);
+      res &= fcopy(itm->full, dstfull);
+    }
+    itm=(FN_ITM *)itm->next;
+    if (ip) incprogr(1);
+  }
+  fn_free(&fnlist);
+  delete dstfull;
+  return res;
+}
+
 
 typedef struct
 {
@@ -209,7 +321,7 @@ int fscp(wchar_t* src, wchar_t* dst, int ip)
   int isSame = (wstrcmpi(src, dst) == 0);
   if (isdir(src))
   {
-    //res = cptree(src, dst, ip);
+    res = cptree(src, dst, ip);
   }
   else
   {

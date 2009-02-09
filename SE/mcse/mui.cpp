@@ -279,21 +279,21 @@ void MUIProc(char *name, char *value)
 
 int LoadMUIold(wchar_t* fname)
 {
-	int l;
-	wchar_t* fn;
-	if (fname)
-	{
-		l=0;
-		fn=fname;
-	}
-	else
-	{
-		l=1;
-		fn=(wchar_t *)mclg_deffile;
-	}
-	int res = EnumIni(l, fn, MUIProc);
-	InitMUI();
-	return res;
+  int l;
+  wchar_t* fn;
+  if (fname)
+  {
+    l=0;
+    fn=fname;
+  }
+  else
+  {
+    l=1;
+    fn=(wchar_t *)mclg_deffile;
+  }
+  int res = EnumIni(l, fn, MUIProc);
+  InitMUI();
+  return res;
 }
 
 void InitMUI()

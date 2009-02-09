@@ -75,5 +75,6 @@ void InitScr();
 void DrwName();
 void ShowFiles(void *gc, RECT *rc);
 void ShowProgr(void *gc, RECT *rc);
-
+void ScrollTimerProc (u16 tmr , void *);
+void DisableScroll ();
 #endif

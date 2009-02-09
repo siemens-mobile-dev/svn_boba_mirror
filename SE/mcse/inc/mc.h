@@ -115,7 +115,7 @@ typedef struct
 } mccfg_hdr;
 
 void fn_zero(FN_LIST *list);
-void fn_fill(FN_LIST *list, char* path);
+void fn_fill(FN_LIST *list, wchar_t* path);
 void fn_add(FN_LIST *list, int type, int ftype, int pname, wchar_t* full, wchar_t* zipPath);
 void fn_rev(FN_LIST *list);
 void fn_free(FN_LIST *list);
@@ -162,6 +162,7 @@ int cd(int tab, wchar_t *dname);
 void S_Delit(void);
 void S_Paste(void);
 int M_MoveCopy(FILEINF *file, int param);
+void _NewDir(wchar_t *wsname);
 
 int isdir(wchar_t *name);
 void UseBM(wchar_t* filename);

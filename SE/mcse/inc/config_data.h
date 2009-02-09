@@ -7,10 +7,15 @@ extern const int CONFIG_BACK_EXIT;
 extern const int CONFIG_CUR_DOWN_ON_CHECK;
 extern const int CONFIG_LOOP_NAVIGATION_ENABLE;
 
+extern const int CONFIG_SCROLL_TEXT_SPEED;
+extern const int CONFIG_SCROLL_TEXT_WAIT;
+extern const int CONFIG_USE_BOLD_FONT;
+
 extern const int CONFIG_LOAD_ICONS;
 extern const int CONFIG_LOAD_KEYS;
 extern const int CONFIG_LOAD_MUI;
 extern const int CONFIG_LOAD_CS;
+extern const wchar_t CONFIG_MCCONFIG_PATH[64];
 
 extern const int CONFIG_ZIP_ENABLE;
 extern const int CONFIG_ZIP_DETECT_BY;

@@ -187,7 +187,7 @@ int EnumIni(int local, const wchar_t *ininame, INIPROC proc)
   }
   else
   {
-    fn=MCFilePath(ininame);
+    fn=(wchar_t *)ininame;
   }
   int f;
   if (fn && (f = w_fopen(fn, WA_Read, 0x1FF, NULL)) >=0)

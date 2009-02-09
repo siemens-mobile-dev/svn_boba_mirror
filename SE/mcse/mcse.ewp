@@ -1131,7 +1131,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state></state>
+          <state>D:\PhoneWork\svn\SE\mcse\mem.h</state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -1930,9 +1930,6 @@
     </configuration>
   </group>
   <file>
-    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\bookmarks.cpp</name>
   </file>
   <file>
@@ -1940,6 +1937,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\conf_loader.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\config.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\config_data.c</name>
@@ -1978,6 +1978,9 @@
     <name>$PROJ_DIR$\main.cpp</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\mem.cpp</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\menus.cpp</name>
   </file>
   <file>
@@ -1991,6 +1994,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\sort.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\textinput.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\zslib.cpp</name>

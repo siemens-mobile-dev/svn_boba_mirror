@@ -25,6 +25,19 @@ __root const CFG_HDR cfghdr_m00 = { CFG_LEVEL, psz_sm_common, 1, 0 };
         
 __root const CFG_HDR cfghdr_m01 = { CFG_LEVEL, "", 0, 0 };
 
+__root const CFG_HDR cfghdr_m10 = { CFG_LEVEL, psz_sm_gui, 1, 0 };
+
+	__root const CFG_HDR cfghdr4 = { CFG_UINT, psz_scspeed, 0, 2000 };
+	__root const int CONFIG_SCROLL_TEXT_SPEED = 100;
+
+	__root const CFG_HDR cfghdr5 = { CFG_UINT, psz_scwait, 0, 200 };
+	__root const int CONFIG_SCROLL_TEXT_WAIT = 100;
+
+	__root const CFG_HDR cfghdr6 = { CFG_CBOX, psz_useboldf, 0, 2 };
+	__root const int CONFIG_USE_BOLD_FONT = 1;
+	__root const CFG_CBOX_ITEM cfgcbox6[] = { psz_no, psz_yes };
+
+__root const CFG_HDR cfghdr_m11 = { CFG_LEVEL, "", 0, 0 };
 
 __root const CFG_HDR cfghdr_m30 = { CFG_LEVEL, psz_sm_configs, 1, 0 };
 
@@ -44,6 +57,9 @@ __root const CFG_HDR cfghdr_m30 = { CFG_LEVEL, psz_sm_configs, 1, 0 };
 	__root const int CONFIG_LOAD_CS = 1;
 	__root const CFG_CBOX_ITEM cfgcbox14[] = { psz_no, psz_yes };
 
+	__root const CFG_HDR cfghdr15 = { CFG_UTF16_STRING, psz_configpath, 0, 63 };
+	__root const wchar_t CONFIG_MCCONFIG_PATH[64] = L"";
+        
 __root const CFG_HDR cfghdr_m31 = { CFG_LEVEL, "", 0, 0 };
 
 

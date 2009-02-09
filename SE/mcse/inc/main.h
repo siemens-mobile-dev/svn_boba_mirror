@@ -7,6 +7,9 @@ typedef struct
   GUI *main_gui;
   GUI *stop_progr;
   GUI *yes_no;
+  GUI *textinp;
+  int tstname;
+  IFN_RET_PROC retproc;
   void (*YesNoFunc)(int); //  1 - yes, 0 - no
 }MyBOOK;
 

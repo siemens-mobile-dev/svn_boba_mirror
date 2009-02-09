@@ -67,7 +67,7 @@ void SaveCS(wchar_t* filename)
   {
     MCCS_hdr hdr;
     hdr.sig=mccs_sig;
-    hdr.ver=mccs_ver;
+    hdr.ver=2;
     hdr.size=mccs_size;
     hdr.offset=mccs_offset;
     
@@ -99,7 +99,21 @@ int LoadCS(wchar_t* filename)
       if ((hdr.sig==mccs_sig) && (hdr.size>=mccs_size))
       {
         w_lseek(f,hdr.offset,WSEEK_SET);
-        res = w_fread(f, &Colors, sizeof(Colors))==sizeof(Colors);
+        if (hdr.ver==2)
+          res = w_fread(f, &Colors, sizeof(Colors))==sizeof(Colors);
+        else if (hdr.ver==1)
+        {
+          char v1[sizeof(Colors)];
+          char *t=v1;
+          res = w_fread(f, v1, sizeof(Colors))==sizeof(Colors);
+          for (int i=0; i<(clMAX+1); i++)
+          {
+            unsigned int color=0;
+            color=COLOR_RGBA(*t,*(t+1),*(t+2),(*(t+3)*0xFF/0x64));
+            Colors[i]=color;
+            t+=4;
+          }
+        }
       }
     }
     w_fclose(f);

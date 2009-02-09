@@ -56,7 +56,7 @@ voidpf fopen_file_func (
    int mode)
 {
 	FILE* pFile = malloc(sizeof(FILE));
-	zeromem(pFile, sizeof(FILE));
+	memset(pFile,0, sizeof(FILE));
 	unsigned int flags = 0;
 	unsigned int fmode = 0;
 	if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)

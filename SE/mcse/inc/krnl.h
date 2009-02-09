@@ -53,6 +53,9 @@ extern void DoErrKey();
 extern wchar_t mcpath[MAX_PATH];
 extern wchar_t pathbuf[MAX_PATH];
 extern wchar_t zippathbuf[MAX_PATH];
+extern wchar_t wsbuf[MAX_PATH*2];
+extern wchar_t szLastNewFile[MAX_PATH];
+extern wchar_t szLastNewDir[MAX_PATH];
 extern char msgbuf[256];
 
 void FillFileInfo(FILEINF *file);
@@ -69,7 +72,9 @@ extern wchar_t in_open_path[MAX_PATH];
 extern const wchar_t keys_file[];
 void ExitFromZip();
 
-typedef int (*ENUM_FILES_PROC) (int param);
+typedef void (*IFN_RET_PROC) (wchar_t *wsname);
+void TextInput(char *prmpt, int TestFileName, wchar_t *wsname, IFN_RET_PROC retproc);
+
 typedef int (*ENUM_SEL_PROC) (FILEINF *file, int param);
 int EnumChk(ENUM_SEL_PROC EnumProc, int param);
 int EnumSel(ENUM_SEL_PROC EnumProc, int param);
@@ -97,4 +102,5 @@ void DoMenu();
 void DoExit();
 void DoPaste();
 void DoCopy();
+void DoNewDir();
 #endif

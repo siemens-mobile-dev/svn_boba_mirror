@@ -144,6 +144,42 @@ void DrwDrvAc(int ind, void *gc, RECT *rc)
   TextFree(str);
 }
 
+u16 sctm=0;
+int max_scroll_disp;
+int scroll_disp;
+
+void ScrollTimerProc (u16 tmr , void *)
+{
+  DISP_OBJ *disp_obj;
+  if (MCBook->main_gui)
+  {
+    if ((disp_obj=GUIObj_GetDISPObj(MCBook->main_gui)))
+    {
+      int i=max_scroll_disp;
+      if (i)
+      {
+        if (scroll_disp>=i)
+        {
+          scroll_disp=0;
+        }
+        else
+        {
+          scroll_disp++;
+        }
+      }
+      InvalidateRect(disp_obj,0);
+      Timer_ReSet(&sctm, 1000, ScrollTimerProc, 0);
+    }    
+  }  
+}
+
+void DisableScroll ()
+{
+  Timer_Kill(&sctm);
+  max_scroll_disp=0;
+  scroll_disp=0;
+}
+
 void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
 { 
   int itms_max = ((FLS_H - ITM_S * 2) / ITM_FH)-1;
@@ -190,14 +226,50 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
   
   wchar_t icon=file->attr & FA_CHECK?chmark_icn:file->icon;
   putchar(gc,ICO_X, y+ICO_DY, 0,0,icon);
+  
+  
   int tc;
   //if (file->attr & FA_HIDDEN)
   //  tc=ind==_CurIndex-_CurBase?clSelFileHidden:clFileHidden;
   //else
-    tc=ind==_CurIndex-_CurBase?clSelFileNormal:clFileNormal;
-  STRID  fn = (file->uccnt ? file->ws_short :file->sid_name );
-  DrawString(fn,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
-             Colors[tc],0);
+  SetFont(FONT_E_24B);
+  if (ind==_CurIndex-_CurBase)
+  {
+    tc=clSelFileNormal;
+    int d=Disp_GetStrIdWidth(file->sid_name,TextGetLength(file->sid_name));
+    d-=(ITM_X2-ITM_B-2-TXT_X);
+    if (d<0)
+    {
+      DisableScroll();
+    }
+    else
+    {
+      if (!max_scroll_disp)
+      {
+        Timer_Set(CONFIG_SCROLL_TEXT_SPEED, ScrollTimerProc, 0);
+      }
+      max_scroll_disp=d;
+    }
+    DrawString(file->sid_name,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
+               Colors[tc],0);
+  }
+  else
+  {
+    tc=clFileNormal;
+    STRID  fn = (file->uccnt ? file->ws_short :file->sid_name );
+    DrawString(fn,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
+               Colors[tc],0);
+  }
+  
+    
+
+  
+  if (!Busy)
+  {
+    
+    
+    
+  }
 }
 
 void ShowFiles(void *gc, RECT *rc)
@@ -248,7 +320,9 @@ void ShowFiles(void *gc, RECT *rc)
   DrwSB(gc,rc);
   DrwSort(gc,rc);
   DrwIndex(gc,rc);
+  if (progr_start) ShowProgr(gc, rc);
 }
+
 void ShowProgr(void *gc, RECT *rc)
 {
   wchar_t temp[128];
