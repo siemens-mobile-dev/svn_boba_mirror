@@ -113,15 +113,17 @@ void DrwDrvAc(int ind, void *gc, RECT *rc)
   if (curtab < MAX_TABS)
   {
     x = DRV_X + DRV_O*ind;
-    if (IsInZip())
+    if (IsInArchive()==ZIP_ARCH)
       name = L"ZIP";
+    else if (IsInArchive()==_7Z_ARCH)
+      name = L"7Z";
     else
       name = Drives[ind].path;
   }
   else if (curtab == systab)
   {
     x = DRV_X;
-    name = L"ZIP";
+    name = L"MC";
   }
   str=Str2ID(name,0,SID_ANY_LEN);
   x+=rc->x1;
@@ -145,27 +147,25 @@ int scroll_disp;
 
 void ScrollTimerProc (u16 tmr , void *)
 {
-  DISP_OBJ *disp_obj;
-  if (MCBook->main_gui)
+  int time=CONFIG_SCROLL_TEXT_SPEED;
+  int i=max_scroll_disp;
+  if (i)
   {
-    if ((disp_obj=GUIObj_GetDISPObj(MCBook->main_gui)))
+    if (scroll_disp>=i)
     {
-      int i=max_scroll_disp;
-      if (i)
+      scroll_disp=0;
+    }
+    else
+    {
+      scroll_disp++;
+      if (scroll_disp==i)
       {
-        if (scroll_disp>=i)
-        {
-          scroll_disp=0;
-        }
-        else
-        {
-          scroll_disp++;
-        }
+        time=CONFIG_SCROLL_TEXT_WAIT;
       }
-      InvalidateRect(disp_obj,0);
-      Timer_ReSet(&sctm, 1000, ScrollTimerProc, 0);
-    }    
-  }  
+    }
+  }
+  RedrawGUI=1;
+  Timer_ReSet(&sctm, time, ScrollTimerProc, 0);
 }
 
 void DisableScroll ()
@@ -245,7 +245,7 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
       }
       max_scroll_disp=d;
     }
-    DrawString(file->sid_name,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
+    DrawString(file->sid_name,0, TXT_X-scroll_disp,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
                Colors[tc],0);
   }
   else

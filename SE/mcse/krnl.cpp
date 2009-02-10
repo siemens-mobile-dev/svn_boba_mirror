@@ -8,11 +8,12 @@
 #include "inc\mui.h"
 #include "inc\exts.h"
 #include "inc\gui.h"
+#include "inc\7zslib.h"
 
 char msgbuf[256];
 wchar_t mcpath[MAX_PATH];
 wchar_t pathbuf[MAX_PATH];
-wchar_t zippathbuf[MAX_PATH];
+wchar_t arcpathbuf[MAX_PATH];
 wchar_t szLastNewFile[MAX_PATH];
 wchar_t szLastNewDir[MAX_PATH];
 wchar_t wsbuf[MAX_PATH*2];
@@ -41,7 +42,7 @@ DRVINFO Drives[MAX_DRV] = {
 	{L"/tpa",    1},
 	{L"/card",   1},
 	{L"/system", 1},
-	{L"/ifs",    1}
+	{L"/IFS",    1}
 };
 
 int curtab=0;
@@ -92,7 +93,7 @@ int GetTabIndex(int tab)
 
 wchar_t* GetTabPath(int tab)
 {
-  if (IsZipOpened(tab))
+  if (IsArchiveOpened(tab))
     return tabs[tab]->zipInfo->szCurDir;
   else
     return tabs[tab]->szDirs[tabs[tab]->CurDrv];
@@ -147,7 +148,7 @@ void FillFileInfo(FILEINF *file)
     wstrcpy(file->ws_showname,buf);
   }
   
-  if (!file->ws_short)
+  if (file->ws_short==LGP_NULL)
   {
     wchar_t *ws;
     if (file->ws_showname) ws=file->ws_showname;
@@ -287,8 +288,10 @@ int FillRealPathFiles(int tab, wchar_t* dname)
 int FillFiles(int tab, wchar_t* dname)   // Только в ММИ!!!
 {
   if (tabs[tab]->ccFiles) DelFiles(tab);
-  if (IsZipOpened(tab))
+  if (IsArchiveOpened(tab)==ZIP_ARCH)
     tabs[tab]->ccFiles = FillZipFiles(tab, dname);
+  else if (IsArchiveOpened(tab)==_7Z_ARCH)
+    tabs[tab]->ccFiles = Fill7ZFiles(tab, dname);  
   else
     tabs[tab]->ccFiles = FillRealPathFiles(tab, dname);
   SortFiles(tab);
@@ -381,7 +384,7 @@ void UpdateAll()
 
 void _cd_tab(int tab, int drv, wchar_t *dname)
 {
-  if (IsZipOpened(tab))
+  if (IsArchiveOpened(tab))
   {
     if (wstrcmp(tabs[tab]->zipInfo->szCurDir, dname))
     {
@@ -409,9 +412,9 @@ int InitTab(int tab)
     tabs[tab]->sort = ST_FIRST;
     tabs[tab]->szFilter[0]=0;
   }
-  tabs[tab]->zipInfo = new ZIPINF;
+  tabs[tab]->zipInfo = new ARCHINFO;
   {
-    memset(tabs[tab]->zipInfo, 0, sizeof(ZIPINF));
+    memset(tabs[tab]->zipInfo, 0, sizeof(ARCHINFO));
   }
   FileListBase[tab] = new FILEINF;
   {
@@ -429,7 +432,10 @@ int InitTab(int tab)
 void FreeTab(int tab)
 {
   delete (FileListBase[tab]);
-  CloseTabZip(tab);
+  if (IsArchiveOpened(tab)==ZIP_ARCH)
+    CloseTabZip(tab);
+  else if (IsArchiveOpened(tab)==_7Z_ARCH)
+    CloseTab7Z(tab);
   delete (tabs[tab]->zipInfo);
   delete (tabs[tab]);
 }
@@ -449,7 +455,7 @@ FILEINF* _CurFile()
 
 wchar_t* CurFullPath(wchar_t* sfile)
 {
-  if (IsInZip())
+  if (IsInArchive())
     snwprintf(pathbuf,MAXELEMS(pathbuf)-1, _ls_ls, _CurTab->zipInfo->szCurDir, sfile);
   else
     snwprintf(pathbuf,MAXELEMS(pathbuf)-1,_ls_ls, _CurPath, sfile);
@@ -499,7 +505,7 @@ void CB_Paste(int id)
 
 void DoPaste()
 {
-  if (IsInZip()) return; // Пока не обрабатывается
+  if (IsInArchive()) return; // Пока не обрабатывается
   
   if (buffer.count)
   {
@@ -552,9 +558,9 @@ void CB_LG(int id)
 
 void S_ZipOpen(void)
 {
-  if (zippathbuf[0])
+  if (arcpathbuf[0])
   {
-    int zerr = OpenTabZip(curtab, zippathbuf);
+    int zerr = OpenTabZip(curtab, arcpathbuf);
     if (zerr == UNZ_OK)
     {
       cd(curtab, (wchar_t *)str_empty);
@@ -568,6 +574,26 @@ void S_ZipOpen(void)
     RedrawGUI=1;
   }
 }
+
+void S_7ZOpen(void)
+{
+  if (arcpathbuf[0])
+  {
+    int zerr = OpenTab7Z(curtab, arcpathbuf);
+    if (zerr == UNZ_OK)
+    {
+      cd(curtab, (wchar_t *)str_empty);
+      SetCurTabIndex(0, 0);
+    }
+    else if (zerr != -11111) // ignore propr_stop
+    {
+      sprintf(msgbuf, "OpenZip error %i", zerr);
+      //MsgBoxError(msgbuf);
+    }
+    RedrawGUI=1;
+  }
+}
+
 
 void ExecuteFile(wchar_t *fname, int, int)
 {
@@ -619,13 +645,20 @@ void _Open(int isSysOpen)
           return;
         }
       }
-      if (!isSysOpen && CONFIG_ZIP_ENABLE && !IsInZip() && IsItZipFile(pathbuf))
+      if (!isSysOpen && CONFIG_ZIP_ENABLE && !IsInArchive() && IsItZipFile(pathbuf))
       {
-        wstrcpy(zippathbuf, pathbuf);
+        wstrcpy(arcpathbuf, pathbuf);
         SUBPROC((void*)S_ZipOpen);
         return;
       }
-      if (IsInZip())
+      if (!isSysOpen && !IsInArchive() && IsIt7ZipFile(pathbuf))
+      {
+        wstrcpy(arcpathbuf, pathbuf);
+        WriteLog("открываем 7z");
+        SUBPROC((void*)S_7ZOpen);
+        return;
+      }
+      if (IsInArchive())
       {
         //SUBPROC((void*)S_ZipOpenFile);
         return;
@@ -663,7 +696,14 @@ void CB_Exit(int id)
       
       // Закрываем остальные зипы при выходе
       for (int i = 0; i < MAX_TABS; i++)
-        if (i != curtab && IsZipOpened(i)) CloseTabZip(i);
+      {
+        if (i != curtab)
+        {
+          if (IsArchiveOpened(i)==ZIP_ARCH) CloseTabZip(i);
+          else if (IsArchiveOpened(i)==_7Z_ARCH) CloseTab7Z(i);
+        }
+      }
+        
   
   /*
   // Очищаем темп, если разрешено в конфиге
@@ -718,13 +758,13 @@ int cordrv(int num, int inc)
 
 void DoPrvDrv()
 {
-  if (curtab < MAX_TABS && !IsInZip())
+  if (curtab < MAX_TABS && !IsInArchive())
     SetCurTabDrv(cordrv(_CurDrv, -1));
 }
 
 void DoNxtDrv()
 {
-  if (curtab < MAX_TABS && !IsInZip())
+  if (curtab < MAX_TABS && !IsInArchive())
     SetCurTabDrv(cordrv(_CurDrv, +1));
 }
 
@@ -780,7 +820,7 @@ void DoSortR()
 
 void ExitFromZip()
 {
-  if (IsInZip())
+  if (IsInArchive()==ZIP_ARCH)
   {
     //Сохраняем имя тек. зипа
     wchar_t lpname[MAX_PATH/2];
@@ -795,18 +835,36 @@ void ExitFromZip()
   }
 }
 
+
+void ExitFrom7Z()
+{
+  if (IsInArchive()==_7Z_ARCH)
+  {
+    //Сохраняем имя тек. зипа
+    wchar_t lpname[MAX_PATH/2];
+    wstrncpy(lpname, GetFileName(_CurTab->zipInfo->szZipPath), MAXELEMS(lpname));
+    
+    CloseTab7Z(curtab);
+    RefreshTab(curtab);
+    
+    //Ищем файл из которого вышли
+    int ind = GetCurTabFileIndex(lpname);
+    SetCurTabIndex(ind, 0);
+  }
+}
+
 int DoBack()
 {
   int res = 0;
   if (curtab < MAX_TABS)
   {
     wchar_t lpname[MAX_PATH/2];
-    wchar_t* path = IsInZip() ? _CurTab->zipInfo->szCurDir : _CurPath;
+    wchar_t* path = IsInArchive() ? _CurTab->zipInfo->szCurDir : _CurPath;
     
     // Читаем родительскуюя папку в pathbuf
     GetFileDir(path, pathbuf);
     // Проверка на корень
-    int goOut = IsInZip() ? *path == '\0' : *pathbuf == '\0';
+    int goOut = IsInArchive() ? *path == '\0' : *pathbuf == '\0';
     
     if (!goOut)
     {
@@ -818,7 +876,8 @@ int DoBack()
       int ind = GetCurTabFileIndex(lpname);
       SetCurTabIndex(ind, 0);
     }
-    else if (IsInZip()) ExitFromZip();
+    else if (IsInArchive()==ZIP_ARCH) ExitFromZip();
+    else if (IsInArchive()==_7Z_ARCH) ExitFrom7Z();
     else if (CONFIG_BACK_EXIT) DoExit();
   }
   else
@@ -928,7 +987,7 @@ void CB_Del(int id)
 
 void DoDel()
 {
-  if (IsInZip()) return; // Пока не обрабатывается
+  if (IsInArchive()) return; // Пока не обрабатывается
   
   //if (CONFIG_CONFIRM_DELETE)
    // MsgBoxYesNo(1, (int) muitxt(ind_pmt_del), CB_Del);
@@ -941,7 +1000,7 @@ void DoMenu(void) {MM_Main();}
 void DoNewDir()
 {
   wchar_t *ws;
-  if (IsInZip()) return; // Пока не обрабатывается
+  if (IsInArchive()) return; // Пока не обрабатывается
   
   if (*szLastNewDir)
     ws=szLastNewDir;

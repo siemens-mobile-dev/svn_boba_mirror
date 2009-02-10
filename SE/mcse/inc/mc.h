@@ -10,10 +10,13 @@
 #include "inc\main.h"
 #include "inc\config_data.h"
 #include "inc\menus.h"
+#include "inc\fn_list.h"
 
-
-#include "zlib\zlib.h"
 #include "zlib\minizip\unzip.h"
+
+#include "inc\7zslib.h"
+#include "inc\arch.h"
+
 
 #define LGP_NULL 0x6FFFFFFF
 
@@ -55,21 +58,14 @@ void DoErrKey();
 // for type in FILEINF
 #define TYPE_COMMON_FILE	0
 #define TYPE_COMMON_DIR		1
-#define TYPE_ZIP_FILE		2
-#define TYPE_ZIP_DIR		3
+#define TYPE_ZIP_FILE	        2
+#define TYPE_ZIP_DIR	        3
+#define TYPE_7Z_FILE	        4
+#define TYPE_7Z_DIR	        5
 
 
 
-typedef struct
-{
-	unzFile uf;
-	wchar_t szZipPath[MAX_PATH];
-	wchar_t szCurDir[MAX_PATH];
-	unz_global_info gi;
-	unz_file_info** pfi;
-	wchar_t** pszNames;
-	char* password;
-} ZIPINF;
+
 
 typedef struct
 {
@@ -80,7 +76,7 @@ typedef struct
 	short iBase[MAX_DRV];
 	wchar_t  szDirs[MAX_DRV][MAX_PATH];
 	wchar_t  szFilter[MAX_PATH];
-	ZIPINF* zipInfo;
+	ARCHINFO* zipInfo;
 } TABINFO;
 
 typedef struct
@@ -90,21 +86,7 @@ typedef struct
 } DRVINFO;
 
 
-typedef struct
-{
-	int ftype;
-	int pname;
-	wchar_t* full;
-	void* next;
-	wchar_t* zipPath;
-} FN_ITM;
 
-typedef struct
-{
-	int count;
-	int type;
-	FN_ITM *items;
-} FN_LIST;
 
 typedef struct
 {
@@ -114,19 +96,13 @@ typedef struct
 	int offset;
 } mccfg_hdr;
 
-void fn_zero(FN_LIST *list);
-void fn_fill(FN_LIST *list, wchar_t* path);
-void fn_add(FN_LIST *list, int type, int ftype, int pname, wchar_t* full, wchar_t* zipPath);
-void fn_rev(FN_LIST *list);
-void fn_free(FN_LIST *list);
-void fn_log(FN_LIST *list);
-
 extern FILEINF* scfile;
 void SortFiles(int tab);
 
 typedef void (*KEY_PROC) ();
 void win12512unicode(wchar_t *ws, const char *s, int len);
 void dos2utf16(wchar_t *ws, const char* s);
+int utf8_to_utf16(char *utf8, int cc, wchar_t *unicode16);
 
 extern "C" long  strtol (const char* nptr,char* *endptr,int base);
 KEY_PROC GetKeyprocByKey(char key);

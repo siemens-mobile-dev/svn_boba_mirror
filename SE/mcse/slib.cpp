@@ -119,20 +119,18 @@ int getLVC(wchar_t *wsbody, int font)
 {
   int old_font=SetFont(font);
   int width=0;
-  int c;
   int i=0;
-  while((c=*wsbody++))
+  int f=0;
+  STRID str=Str2ID(wsbody,0,SID_ANY_LEN);
+  while(*wsbody++)
   {
-    width+=GetImageWidth(c);
-    if (width>=MAX_TXT_W)
-    {
-      SetFont(old_font);
-      return i;
-    }
+    width=Disp_GetStrIdWidth(str,i);
+    if (width>=MAX_TXT_W) {f=1; break;}
     i++;
   }
+  TextFree(str);
   SetFont(old_font);
-  return 0;
+  return (f?i:0);
 }
 
 void cutname(wchar_t *fname, wchar_t *sname, int len)
@@ -178,16 +176,12 @@ int EnumIni(int local, const wchar_t *ininame, INIPROC proc)
   int p=0;
   char name[MAX_INIBUF];
   char value[MAX_INIBUF];
-  wchar_t* fn=NULL;
+  const wchar_t* fn=NULL;
   unsigned int size_cfg;
+  fn=ininame;
   if (local)
   {
-    if (!w_chdir(mcpath))
-      fn=(wchar_t *)ininame;
-  }
-  else
-  {
-    fn=(wchar_t *)ininame;
+    w_chdir(mcpath);
   }
   int f;
   if (fn && (f = w_fopen(fn, WA_Read, 0x1FF, NULL)) >=0)

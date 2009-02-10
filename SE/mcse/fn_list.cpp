@@ -1,6 +1,18 @@
 #include "inc\mc.h"
+#include "inc\fn_list.h"
 
-wchar_t pathbuf_fn[MAX_PATH];
+static wchar_t *st_pathbuf_fn=NULL;
+
+wchar_t *GetPathBuf(void)
+{
+  return (st_pathbuf_fn?st_pathbuf_fn:(st_pathbuf_fn=new wchar_t[MAX_PATH]));
+}
+
+void DestroyPathBuf(void)
+{
+  if (st_pathbuf_fn) delete st_pathbuf_fn;
+}
+
 
 void fn_zero(FN_LIST *list)
 {
@@ -95,11 +107,16 @@ void fn_add(FN_LIST* list, int type, int ftype, int pname, wchar_t* full, wchar_
 
 int _fn_fill(wchar_t *path, wchar_t *name, W_FSTAT *fs, int param)
 {
-  int ftype = fs->attr & FA_DIRECTORY ? TYPE_COMMON_DIR : TYPE_COMMON_FILE;
-  FN_LIST *list = (FN_LIST *) param;
-  snwprintf(pathbuf_fn, MAXELEMS(pathbuf_fn)-1, _ls_ls, path, name);
-  fn_add(list, FNT_NONE, ftype, 0, pathbuf_fn, NULL);
-  return 1;
+  wchar_t *p=GetPathBuf();
+  if (p)
+  {
+    int ftype = fs->attr & FA_DIRECTORY ? TYPE_COMMON_DIR : TYPE_COMMON_FILE;
+    FN_LIST *list = (FN_LIST *) param;
+    snwprintf(p, MAX_PATH-1, _ls_ls, path, name);
+    fn_add(list, FNT_NONE, ftype, 0, p, NULL);
+    return 1;
+  }
+  return 0;
 }
 
 void fn_fill(FN_LIST *list, wchar_t *path)

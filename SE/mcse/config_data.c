@@ -31,7 +31,7 @@ __root const CFG_HDR cfghdr_m10 = { CFG_LEVEL, psz_sm_gui, 1, 0 };
 	__root const int CONFIG_SCROLL_TEXT_SPEED = 100;
 
 	__root const CFG_HDR cfghdr5 = { CFG_UINT, psz_scwait, 0, 200 };
-	__root const int CONFIG_SCROLL_TEXT_WAIT = 100;
+	__root const int CONFIG_SCROLL_TEXT_WAIT = 200;
 
 	__root const CFG_HDR cfghdr6 = { CFG_CBOX, psz_useboldf, 0, 2 };
 	__root const int CONFIG_USE_BOLD_FONT = 1;

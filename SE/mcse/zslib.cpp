@@ -1,6 +1,7 @@
 #include "inc\mc.h"
 #include "inc\zslib.h"
 #include "inc\mui.h"
+#include "inc\arch.h"
 
 
 const wchar_t zip_ext[] = L"zip";
@@ -12,21 +13,12 @@ void ZipError(int zipErrNum, char* procName)
 }
 
 
-int IsZipOpened(int tab)
-{
-  return (tabs[tab]->zipInfo->uf != NULL);
-}
 
-int IsInZip()
+void CloseZip(ARCHINFO* pzi)
 {
-  return IsZipOpened(curtab);
-}
-
-void CloseZip(ZIPINF* pzi)
-{
-  if (pzi->uf)
+  if (pzi->info.zip.uf)
   {
-    unzClose(pzi->uf);
+    unzClose(pzi->info.zip.uf);
     FreeZipInfo(pzi);
   }
 }
@@ -36,74 +28,65 @@ void CloseTabZip(int tab)
   CloseZip(tabs[tab]->zipInfo);
 }
 
-void FreeZipInfo(ZIPINF* pzi)
+void FreeZipInfo(ARCHINFO* pzi)
 {
   if (pzi)
   {
-    if (pzi->pfi)
+    if (pzi->info.zip.pfi)
     {
-      for (int i=0; i < pzi->gi.number_entry; i++)
-        if (pzi->pfi[i]) delete (pzi->pfi[i]);
-      delete(pzi->pfi);
+      for (int i=0; i < pzi->info.zip.gi.number_entry; i++)
+        if (pzi->info.zip.pfi[i]) delete (pzi->info.zip.pfi[i]);
+      delete(pzi->info.zip.pfi);
     }
-    
-    if (pzi->pszNames)
-    {
-      for (int i=0; i < pzi->gi.number_entry; i++)
-        if (pzi->pszNames[i]) delete (pzi->pszNames[i]);
-      delete(pzi->pszNames);
-    }
-    
-    if (pzi->password)
-      delete(pzi->password);
-    
-    memset(pzi, 0, sizeof(ZIPINF));
+    FreeArchInfo(pzi);
   }
 }
+
+
 // Считываем и сохраняем информацию о содержимом архива в память
-int ReadZipInfo(ZIPINF* pzi)
+int ReadZipInfo(ARCHINFO* pzi)
 {
 	int zerr = UNZ_OK;
 
-	if (pzi->uf)
+	if (pzi->info.zip.uf)
 	{
-		zerr = unzGetGlobalInfo(pzi->uf, &pzi->gi);
+		zerr = unzGetGlobalInfo(pzi->info.zip.uf, &pzi->info.zip.gi);
 		if (zerr == UNZ_OK)
 		{
-			if (pzi->gi.number_entry > 0)
+			if (pzi->info.zip.gi.number_entry > 0)
 			{
+                                pzi->total_names=pzi->info.zip.gi.number_entry;
 				int useProgressBar = !progr_start;
 				if (useProgressBar)
 				{
 					// запускаем прогресс бар, если уже не запущен другой
 					Busy = 1;
 					initprogr(ind_msg_zreading);
-					progr_max = pzi->gi.number_entry;
+					progr_max = pzi->total_names;
 					incprogr(0);
 				}
 			
-				int total_entry = pzi->gi.number_entry;
-				pzi->pszNames = new wchar_t *[total_entry];
+				pzi->pszNames = new wchar_t *[pzi->total_names];
 				if (pzi->pszNames)
 				{
-					memset(pzi->pszNames, 0, total_entry*sizeof(wchar_t *));
-					pzi->pfi = new unz_file_info*[total_entry];
-					if (pzi->pfi) memset(pzi->pfi, 0, total_entry*sizeof(unz_file_info *));
+					memset(pzi->pszNames, 0, pzi->total_names*sizeof(wchar_t *));
+					pzi->info.zip.pfi = new unz_file_info*[pzi->total_names];
+					if (pzi->info.zip.pfi) memset(pzi->info.zip.pfi, 0, pzi->total_names*sizeof(unz_file_info *));
 				}
 				
-				if (pzi->pszNames && pzi->pfi)
+				if (pzi->pszNames && pzi->info.zip.pfi)
 				{
-					zerr = unzGoToFirstFile(pzi->uf);
+					zerr = unzGoToFirstFile(pzi->info.zip.uf);
 					if (zerr == UNZ_OK)
 					{
-						for (int i=0; i < pzi->gi.number_entry && zerr == UNZ_OK && !progr_stop; i++)
+						for (int i=0; i < pzi->total_names && zerr == UNZ_OK && !progr_stop; i++)
 						{
 							pzi->pszNames[i] = new wchar_t[MAX_PATH_INZIP];
-							pzi->pfi[i] = new unz_file_info;
-							if (pzi->pszNames[i] != NULL && pzi->pfi[i] != NULL)
+							pzi->info.zip.pfi[i] = new unz_file_info;
+							if (pzi->pszNames[i] != NULL && pzi->info.zip.pfi[i] != NULL)
 							{
                                                                 char zname[MAX_PATH_INZIP];
-								zerr = unzGetCurrentFileInfo(pzi->uf, pzi->pfi[i], zname, MAX_PATH_INZIP,
+								zerr = unzGetCurrentFileInfo(pzi->info.zip.uf, pzi->info.zip.pfi[i], zname, MAX_PATH_INZIP,
 									NULL, 0, NULL, 0);
 								if (zerr == UNZ_OK)
 								{
@@ -114,9 +97,9 @@ int ReadZipInfo(ZIPINF* pzi)
 									dos2utf16(pzi->pszNames[i], zname);
 									
 									// Переходим к следующему файлу
-									if ((i+1) < pzi->gi.number_entry)
+									if ((i+1) < pzi->info.zip.gi.number_entry)
 									{
-										zerr = unzGoToNextFile(pzi->uf);
+										zerr = unzGoToNextFile(pzi->info.zip.uf);
 										if (zerr != UNZ_OK) ZipError(zerr, "unzGoToNextFile");
 									}
 								}
@@ -147,15 +130,16 @@ int ReadZipInfo(ZIPINF* pzi)
 }
 
 
-int OpenZip(ZIPINF* pzi, wchar_t* zipFileName)
+int OpenZip(ARCHINFO* pzi, wchar_t* zipFileName)
 {
   int zerr = UNZ_OK;
   
   unzFile uf = unzOpen(zipFileName);
   if (uf != NULL)
   {
-    pzi->uf = uf;
+    pzi->info.zip.uf = uf;
     pzi->szCurDir[0] = '\0';
+    pzi->type = ZIP_ARCH;
     wstrcpy(pzi->szZipPath, zipFileName);
   }
   else zerr = UNZ_ERRNO;
@@ -173,7 +157,7 @@ int OpenTabZip(int tab, wchar_t* zipFileName)
 {
   int zerr = UNZ_ERRNO;
   
-  if (!IsZipOpened(tab)) // не обрабатываем вложенные архивы
+  if (!IsArchiveOpened(tab)) // не обрабатываем вложенные архивы
     zerr = OpenZip(tabs[tab]->zipInfo, zipFileName);
   return zerr;
 }
@@ -184,17 +168,17 @@ int FillZipFiles(int tab, wchar_t* subdname)
   wchar_t buf[MAX_PATH_INZIP];
   wchar_t* pszDirName = subdname[0] == '/' ? subdname + 1 : subdname; // Пропустим в начале обратный слеш
   int dirLen = wstrlen(pszDirName);
-  ZIPINF* pzi = tabs[tab]->zipInfo;
+  ARCHINFO* pzi = tabs[tab]->zipInfo;
   
   
-  if (pzi->uf)
+  if (pzi->info.zip.uf)
   {
-    for (int i=0; i < pzi->gi.number_entry; i++)
+    for (int i=0; i < pzi->info.zip.gi.number_entry; i++)
     {
       int ignore = 1;
       wstrncpy(buf, pzi->pszNames[i],MAX_PATH_INZIP-1);
       wchar_t* pFileNameStart = &buf[0];
-      unz_file_info* pfi = pzi->pfi[i];
+      unz_file_info* pfi = pzi->info.zip.pfi[i];
       if (dirLen == 0)
       {
         // Если ищем корневые элементы
@@ -274,19 +258,20 @@ int IsItZipFile(wchar_t* fname)
 }
 
 
-int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, int ip)
+int ExtractCurrentFile(ARCHINFO* pzi, int ind, wchar_t* extractDir, int usePaths, int ip)
 {
-  unzFile uf = pzi->uf;
+  unzFile uf = pzi->info.zip.uf;
   wchar_t *filePathInZip = pzi->pszNames[ind];
   int res = UNZ_OK;
   int fout = 0;
   wchar_t *extractFilePath=new wchar_t[MAX_PATH];
-  wchar_t *temp=new wchar_t[MAX_PATH];
+  wchar_t *temp=NULL;
   char fnbuf[MAX_PATH];
   
   if (filePathInZip == NULL)
   {
     // Считываем имя сами если нужно
+    temp=new wchar_t[MAX_PATH];
     unz_file_info fi;
     unzGetCurrentFileInfo(uf, &fi, fnbuf, MAX_PATH, NULL, 0, NULL, 0);
     dos2utf16(temp, fnbuf);
@@ -358,7 +343,7 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
             isnewprogr = 1;
           }
           progrsp_start = 1;
-          progrsp_max = pzi->pfi[ind]->uncompressed_size;
+          progrsp_max = pzi->info.zip.pfi[ind]->uncompressed_size;
           incprogrsp(0);
         }
         int cb = 0;
@@ -417,26 +402,26 @@ int ExtractCurrentFile(ZIPINF* pzi, int ind, wchar_t* extractDir, int usePaths, 
   }
   mfree(buf);
   delete extractFilePath;
-  delete temp;
+  if (temp) delete temp;
   return res;
 }
 
-int SetCurrentFileInZip(ZIPINF* pzi, int id)
+int SetCurrentFileInZip(ARCHINFO* pzi, int id)
 {
-  int zerr = unzGoToFirstFile(pzi->uf);
+  int zerr = unzGoToFirstFile(pzi->info.zip.uf);
   if (zerr != UNZ_OK)
     return 1;
   
   for (int i = 1; i <= id; i++)
   {
-    zerr = unzGoToNextFile(pzi->uf);
+    zerr = unzGoToNextFile(pzi->info.zip.uf);
     if (zerr != UNZ_OK)
       return i + 1;
   }
   return 0;	
 }
 
-int ExtractFileByID(ZIPINF* pzi, int id, wchar_t* extractDir, int usePaths, int ip)
+int ExtractFileByID(ARCHINFO* pzi, int id, wchar_t* extractDir, int usePaths, int ip)
 {
   // Позиционируемся на нужном файле
   if (SetCurrentFileInZip(pzi, id) == UNZ_OK)
@@ -447,7 +432,7 @@ int ExtractFileByID(ZIPINF* pzi, int id, wchar_t* extractDir, int usePaths, int 
   else return 1;
 }
 
-int ExtractFile(ZIPINF* pzi, wchar_t* fname, wchar_t* extractDir, int usePaths)
+int ExtractFile(ARCHINFO* pzi, wchar_t* fname, wchar_t* extractDir, int usePaths)
 {
   // Позиционируемся на нужном файле
   int found = 0;
@@ -458,7 +443,7 @@ int ExtractFile(ZIPINF* pzi, wchar_t* fname, wchar_t* extractDir, int usePaths)
   wchar_t* nameWithoutSlash = ( (buf[1] == '/') ? (buf + 2) : (buf + 1) );
   wchar_t* nameWithSlash = ( (buf[1] == '/') ? (buf + 1) : (buf) );
   
-  for (int i = 0; i < pzi->gi.number_entry; i++)
+  for (int i = 0; i < pzi->info.zip.gi.number_entry; i++)
   {
     found = (wstrcmpi(nameWithoutSlash, pzi->pszNames[i]) == 0);
     if (!found)
@@ -475,7 +460,7 @@ int ExtractFile(ZIPINF* pzi, wchar_t* fname, wchar_t* extractDir, int usePaths)
   return 1;
 }
 
-int ExtractDir(ZIPINF* pzi, wchar_t* dname, wchar_t* extractDir, int usePaths)
+int ExtractDir(ARCHINFO* pzi, wchar_t* dname, wchar_t* extractDir, int usePaths)
 {
   int found = 0;
   wchar_t *buf=new wchar_t[MAX_PATH + 1];
@@ -488,10 +473,10 @@ int ExtractDir(ZIPINF* pzi, wchar_t* dname, wchar_t* extractDir, int usePaths)
   int dlen = wstrlen(nameWithoutSlash);
   
   // Перебираем все файлы
-  for (int i = 0; i < pzi->gi.number_entry; i++)
+  for (int i = 0; i < pzi->info.zip.gi.number_entry; i++)
   {
-    if (i == 0) zerr = unzGoToFirstFile(pzi->uf);
-    else zerr = unzGoToNextFile(pzi->uf);
+    if (i == 0) zerr = unzGoToFirstFile(pzi->info.zip.uf);
+    else zerr = unzGoToNextFile(pzi->info.zip.uf);
     
     if (zerr) return zerr;
     
@@ -510,22 +495,17 @@ int ExtractDir(ZIPINF* pzi, wchar_t* dname, wchar_t* extractDir, int usePaths)
 }
 
 // Кэш на один :) зип файл
-ZIPINF zi;
 
-void ZipBufferExtractBegin()
-{
-}
 
-int ZipBufferExtract(FN_ITM* pi, wchar_t* extractDir)
+int ZipBufferExtract(ARCHINFO* pzi, FN_ITM* pi, wchar_t* extractDir)
 {
   if (pi && pi->zipPath && pi->full)
   {
-    ZIPINF* pzi = &zi;
     int usingZipFromTab = 0;
     
     for (int i = 0; i < MAX_TABS; i++)
     {
-      if (IsZipOpened(i) && wstrcmpi(tabs[i]->zipInfo->szZipPath, pi->zipPath) == 0)
+      if (IsArchiveOpened(i)==ZIP_ARCH && wstrcmpi(tabs[i]->zipInfo->szZipPath, pi->zipPath) == 0)
       {
         // Если уже открыт в табе, то используем его
         pzi = tabs[i]->zipInfo;
@@ -536,11 +516,11 @@ int ZipBufferExtract(FN_ITM* pi, wchar_t* extractDir)
     if (!usingZipFromTab)
     {
       // Если файл уже открыт, но имена не совпадают, то закрываем старый
-      if (pzi->uf != 0 && wstrcmpi(pzi->szZipPath, pi->zipPath) != 0)
+      if (pzi->info.zip.uf != 0 && wstrcmpi(pzi->szZipPath, pi->zipPath) != 0)
         CloseZip(pzi);
       
       // Если файл еще не открыт - то открываем
-      if (pzi->uf == 0)
+      if (pzi->info.zip.uf == 0)
         if (OpenZip(pzi, pi->zipPath) != UNZ_OK)
           return UNZ_ERRNO;
     }
@@ -549,13 +529,12 @@ int ZipBufferExtract(FN_ITM* pi, wchar_t* extractDir)
       return ExtractFile(pzi, pi->full, extractDir, 0);
     else if (pi->ftype == TYPE_ZIP_DIR)
       return ExtractDir(pzi, pi->full, extractDir, 1);
-	}
-
-    return 0;
+  }
+  return 0;
 }
 
-void ZipBufferExtractEnd()
+void ZipBufferExtractEnd(ARCHINFO* pzi)
 {
-  if (zi.uf != 0)
-    CloseZip(&zi);
+  if (pzi->type == ZIP_ARCH)
+    CloseZip(pzi);
 }

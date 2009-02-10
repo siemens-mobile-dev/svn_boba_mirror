@@ -52,7 +52,7 @@ void endprogrsp();
 extern void DoErrKey();
 extern wchar_t mcpath[MAX_PATH];
 extern wchar_t pathbuf[MAX_PATH];
-extern wchar_t zippathbuf[MAX_PATH];
+extern wchar_t arcpathbuf[MAX_PATH];
 extern wchar_t wsbuf[MAX_PATH*2];
 extern wchar_t szLastNewFile[MAX_PATH];
 extern wchar_t szLastNewDir[MAX_PATH];

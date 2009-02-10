@@ -12,7 +12,7 @@ int isdir(wchar_t *name){
 
 int isDir(int tab, wchar_t* dname)
 {
-  if (IsZipOpened(tab))
+  if (IsArchiveOpened(tab))
     return 1; // зипы рассматриваем как директорию
   else
     return isdir(dname);
@@ -27,7 +27,7 @@ void MsgBoxErrorMmi(int err)
 int cd(int tab, wchar_t *dname)
 {
   int drv;
-  if (IsZipOpened(tab))
+  if (IsArchiveOpened(tab))
   {
     drv = _CurDrv;
   }
@@ -149,7 +149,7 @@ int M_MoveCopy(FILEINF *file, int param)
   {
     int pname = wstrlen(_CurPath) + 1;
     CurFullPath(file->ws_name);
-    fn_add(&buffer, param, file->ftype, pname, pathbuf, IsInZip() ? _CurTab->zipInfo->szZipPath : NULL);
+    fn_add(&buffer, param, file->ftype, pname, pathbuf, IsInArchive() ? _CurTab->zipInfo->szZipPath : NULL);
     return 1;
   }
   return 0;
@@ -172,7 +172,7 @@ void S_Paste(void)
     }
     
     itm = buffer.items;
-    ZipBufferExtractBegin();
+    ArchiveBufferExtractBegin();
     while(itm && !progr_stop)
     {
       if (itm->ftype == TYPE_COMMON_DIR || itm->ftype == TYPE_COMMON_FILE)
@@ -190,15 +190,21 @@ void S_Paste(void)
           res &= fscp(itm->full, pathbuf, 1);
         }
       }
-      else
+      else if (itm->ftype == TYPE_ZIP_FILE || itm->ftype == TYPE_ZIP_DIR)
       {
         // Пока обрабатываем только копирование
         if (buffer.type == FNT_COPY)
-          res &= (ZipBufferExtract(itm, _CurPath) == UNZ_OK);
+          res &= (ArchiveBufferExtract(ZIP_ARCH, itm, _CurPath) == UNZ_OK);
+      }
+      else if (itm->ftype == TYPE_7Z_FILE || itm->ftype == TYPE_7Z_DIR)
+      {
+        // Пока обрабатываем только копирование
+        if (buffer.type == FNT_COPY)
+          res &= (ArchiveBufferExtract(_7Z_ARCH, itm, _CurPath) == UNZ_OK);
       }
       itm=(FN_ITM *)itm->next;
     }
-    ZipBufferExtractEnd();
+    ArchiveBufferExtractEnd();
     
     if (!res)
       MMIPROC(MsgBoxErrorMmi,  (int)muitxt(ind_err_resnok));

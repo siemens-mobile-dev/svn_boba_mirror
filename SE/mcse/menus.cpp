@@ -196,7 +196,7 @@ void MM_Oper(void)
   char *head;
   cur_gui=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(op_menu)];
-  if (IsInZip())
+  if (IsInArchive())
   {
     for (int i=0; i<MAXELEMS(op_menu); i++) op_menu[i].enabled=0;   // Вырубаем все
     op_menu[2].enabled=2;  
@@ -453,7 +453,7 @@ void MM_Main(void)
   menu_id[main_ind]=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(opt_menu)];
   for (int i=0; i<MAXELEMS(opt_menu); i++) opt_menu[i].enabled=1;   // Врубаем все
-  if (IsInZip())
+  if (IsInArchive())
   {
     opt_menu[0].enabled=0;
   }

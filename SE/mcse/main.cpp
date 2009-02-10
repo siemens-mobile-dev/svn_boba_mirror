@@ -106,6 +106,7 @@ void FreeData()
     DelFiles(ii);
     FreeTab(ii);
   }
+  DestroyPathBuf();
   WriteLog("FreeData");
 }
 
@@ -132,6 +133,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
   LoadKeys();
   WriteLog("LoadCfg");
   LoadCfg();
+  ZeroArchiveBuffer();
   fn_zero(&buffer);
   for(int ii=0; ii < MAX_TABS+1; ii++)
     InitTab(ii);
