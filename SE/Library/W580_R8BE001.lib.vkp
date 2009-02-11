@@ -507,8 +507,11 @@
 0CA4: 00000000 413ED844 ; 329: int Bluetooth_GetPhoneVisibility(void);
 0CA8: 00000000 013FD844 ; 32A: int Bluetooth_isBusy(void);
 0CAC: 00000000 557F1C45 ; 32B: int USB_isConnected(void);
-
-
+0CB0: 00000000 ADE7F844 ; 32C: void *w_diropen(const wchar_t *dir);
+0CB4: 00000000 21391B45 ; 32D: wchar_t *w_dirget(void *);
+0CB8: 00000000 19EBF844 ; 32E: int w_dirclose(void *);
+0CBC: 00000000 C9391B45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+0CC0: 00000000 6D391B45 ; 330: int w_remove(const wchar_t *dir);
 
 
 ;locale=Russian_Russia.1251
