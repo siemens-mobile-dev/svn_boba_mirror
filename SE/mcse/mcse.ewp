@@ -1131,7 +1131,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>D:\PhoneWork\svn\SE\mcse\mem.h</state>
+          <state>mem.h</state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -1834,7 +1834,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state>D:\PhoneWork\svn\SE\mcse\mem.h</state>
+            <state>mem.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
