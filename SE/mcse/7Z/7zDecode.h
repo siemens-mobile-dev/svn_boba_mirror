@@ -9,6 +9,10 @@
 #include "7zIn.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
 SZ_RESULT SzDecode(const CFileSize *packSizes, const CFolder *folder,
     #ifdef _LZMA_IN_CB
     ISzInStream *stream,
@@ -17,5 +21,9 @@ SZ_RESULT SzDecode(const CFileSize *packSizes, const CFolder *folder,
     #endif
     Byte *outBuffer, size_t outSize, 
     size_t *outSizeProcessed, ISzAlloc *allocMain);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

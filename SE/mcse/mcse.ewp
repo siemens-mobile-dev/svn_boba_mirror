@@ -1651,34 +1651,7 @@
   <group>
     <name>7Z</name>
     <file>
-      <name>$PROJ_DIR$\7Z\7zAlloc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zBuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zCrc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zDecode.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zExtract.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zHeader.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zIn.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zItem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\7zMethodID.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\7Z\LzmaDecode.c</name>
+      <name>$PROJ_DIR$\..\7zlib\Release\Exe\7zlib.r79</name>
     </file>
     <configuration>
       <name>Release</name>

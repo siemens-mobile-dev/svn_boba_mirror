@@ -116,9 +116,10 @@ int Open7ZFile(ARCHINFO* arc, wchar_t* zipFileName)
         }
         for (int i = 0; i < arc->total_names; i++)
         {
-          arc->pszNames[i] = new wchar_t[0x100];
           CFileItem *f = zinfo->db.Database.Files + i;
-          utf8_to_utf16(f->Name,0x100-1,arc->pszNames[i]);
+          arc->pszNames[i] = new wchar_t[strlen(f->Name)+1];
+          int len=utf8_to_utf16(f->Name,strlen(f->Name),arc->pszNames[i]);
+          arc->pszNames[i][len]=0;
           WriteLog(arc->pszNames[i]);
           if (useProgressBar) incprogr(1);
         }
@@ -250,7 +251,8 @@ int ExtractFileByID7Z(ARCHINFO* pzi, int id, wchar_t* extractDir, int usePaths, 
   {
     // —читываем им€ сами если нужно
     temp=new wchar_t[MAX_PATH];
-    utf8_to_utf16(file->Name,MAX_PATH-1,temp);
+    int len=utf8_to_utf16(file->Name,MAX_PATH-1,temp);
+    temp[len]=0;
     filePathInZip=temp;
   }
   wchar_t* fileNameInZip=GetFileName(filePathInZip);

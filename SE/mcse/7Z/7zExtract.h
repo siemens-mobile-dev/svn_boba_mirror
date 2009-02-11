@@ -25,6 +25,10 @@
     Free *outBuffer and set *outBuffer to 0, if you want to flush cache.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
 SZ_RESULT SzExtract(
     ISzInStream *inStream, 
     CArchiveDatabaseEx *db,
@@ -37,4 +41,7 @@ SZ_RESULT SzExtract(
     ISzAlloc *allocMain,
     ISzAlloc *allocTemp);
 
+#ifdef __cplusplus
+}
+#endif
 #endif

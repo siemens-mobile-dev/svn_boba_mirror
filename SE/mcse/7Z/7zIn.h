@@ -23,6 +23,10 @@ typedef struct _CArchiveDatabaseEx
   UInt32 *FileIndexToFolderIndexMap;
 }CArchiveDatabaseEx;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
 void SzArDbExInit(CArchiveDatabaseEx *db);
 void SzArDbExFree(CArchiveDatabaseEx *db, void (*freeFunc)(void *));
 CFileSize SzArDbGetFolderStreamPos(CArchiveDatabaseEx *db, UInt32 folderIndex, UInt32 indexInFolder);
@@ -52,4 +56,8 @@ int SzArchiveOpen(
     ISzAlloc *allocMain, 
     ISzAlloc *allocTemp);
  
+#ifdef __cplusplus
+}
+#endif
+
 #endif

@@ -982,7 +982,7 @@ void DoInvChk()
 
 void CB_Del(int id)
 {
-  if (id==1) SUBPROC((void *)S_Delit);
+  if (id==1) DeleteFileMMI();
 }
 
 void DoDel()

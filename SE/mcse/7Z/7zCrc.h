@@ -3,13 +3,17 @@
 #ifndef __7Z_CRC_H
 #define __7Z_CRC_H
 
-#include "..\..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara.h"
 #include "7zTypes.h"
 
+
 extern UInt32 g_CrcTable[256];
-void InitCrcTable();
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
+void InitCrcTable(void);
 void CrcInit(UInt32 *crc);
 UInt32 CrcGetDigest(UInt32 *crc);
 void CrcUpdateByte(UInt32 *crc, Byte v);
@@ -20,5 +24,8 @@ void CrcUpdate(UInt32 *crc, const void *data, size_t size);
  
 UInt32 CrcCalculateDigest(const void *data, size_t size);
 int CrcVerifyDigest(UInt32 digest, const void *data, size_t size);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

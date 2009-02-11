@@ -15,8 +15,16 @@ typedef struct _CCoderInfo
   CSzByteBuffer Properties;
 }CCoderInfo;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
 void SzCoderInfoInit(CCoderInfo *coder);
 void SzCoderInfoFree(CCoderInfo *coder, void (*freeFunc)(void *p));
+
+#ifdef __cplusplus
+}
+#endif
 
 typedef struct _CBindPair
 {
@@ -39,12 +47,18 @@ typedef struct _CFolder
   UInt32 NumUnPackStreams;
 }CFolder;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
 void SzFolderInit(CFolder *folder);
 CFileSize SzFolderGetUnPackSize(CFolder *folder);
 int SzFolderFindBindPairForInStream(CFolder *folder, UInt32 inStreamIndex);
 UInt32 SzFolderGetNumOutStreams(CFolder *folder);
 CFileSize SzFolderGetUnPackSize(CFolder *folder);
-
+#ifdef __cplusplus
+}
+#endif
 /* #define CArchiveFileTime UInt64 */
 
 typedef struct _CFileItem
@@ -69,8 +83,14 @@ typedef struct _CFileItem
   */
 }CFileItem;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
 void SzFileInit(CFileItem *fileItem);
-
+#ifdef __cplusplus
+}
+#endif
 typedef struct _CArchiveDatabase
 {
   UInt32 NumPackStreams;
@@ -83,8 +103,14 @@ typedef struct _CArchiveDatabase
   CFileItem *Files;
 }CArchiveDatabase;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
 void SzArchiveDatabaseInit(CArchiveDatabase *db);
 void SzArchiveDatabaseFree(CArchiveDatabase *db, void (*freeFunc)(void *));
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif

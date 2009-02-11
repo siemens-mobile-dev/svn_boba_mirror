@@ -57,22 +57,49 @@ int fexists(wchar_t* fname)
   return (w_fstat(fname,&fs)!=-1);
 }
 
+extern "C" int w_remove(const wchar_t *dir);
+
+
+
+int rmtree(wchar_t* path, int ip)
+{
+  FN_LIST fnlist;
+  fn_zero(&fnlist);
+  fn_fill(&fnlist, path);
+  fn_rev(&fnlist);
+  
+  int res = 1;
+  FN_ITM *itm = fnlist.items;
+  while(itm && !progr_stop)
+  {
+    switch (itm->ftype)
+    {
+    case TYPE_COMMON_DIR:
+      res &= w_remove(itm->full);
+      break;
+    case TYPE_COMMON_FILE:
+      res &= w_remove(itm->full);
+      break;
+    case TYPE_ZIP_DIR:
+    case TYPE_ZIP_FILE:
+    default:
+      break;
+    }
+    itm=(FN_ITM *)itm->next;
+    if (ip) incprogr(1);
+  }
+  fn_free(&fnlist);
+  return res;
+}
 int fsrm(wchar_t* path, int ip)
 {
   int err;
   int res;
   if (isdir(path))
-    res;// = rmtree(path, ip);
+    res= rmtree(path, ip);
   else
   {
-    wchar_t *r;
-    wchar_t *w=wstrrchr(path,'/');
-    if (w)
-    {
-      r=w+1;
-      *w=0;
-      FileDelete(path, r, &err);
-    }
+    res=w_remove(path);
     if (ip) incprogr(1);
   }
   return res;
@@ -213,7 +240,7 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
 int EnumFiles(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param)
 {
   // Рекурсивно пробегаем и по подкаталогам тоже
-  return EnumFilesInDir( dname, enumproc, param, 0, 1);
+  return EnumFilesInDir( dname, enumproc, param, 1, 1);
 }
 
 

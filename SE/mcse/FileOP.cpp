@@ -95,7 +95,7 @@ int M_Delit(FILEINF *file, int param)
     }
     else*/
     {
-      if (!fsrm(pathbuf, 1))
+      if (fsrm(pathbuf, 1))
         *(int*)param = 0;
     }
     return 1;
@@ -116,15 +116,34 @@ int M_FileCnt(FILEINF *file, int param)
 
 void S_Delit(void)
 {
-  if (_CurIndex < 0) return;
-  Busy = 1;
-  int res = 1;
+  int res = 1;  
+  // Store current file index
+  int ind = _CurIndex;
+  EnumSel(M_Delit, (int)&res);
   
+  if (!res)
+  {
+    MsgBoxError(muitxt(ind_err_delete));
+  }
+  else if (ind < _CurTab->ccFiles) // Только если есть куда идти вниз
+  {
+    // List is not refreshed yet, so move index to the next file if there are no errors
+    SetCurTabIndex(ind + 1, 0);
+  }
+  DoRefresh();
+  
+  endprogr();
+  Busy = 0;
+}
+
+void DeleteFileMMI()
+{
+  int res = 1;  
+  if (_CurIndex < 0) return;
+  Busy = 1; 
   initprogr(ind_deling);
   EnumSel(M_FileCnt, (int)&progr_max);
   incprogr(0);
-  
-  // Store current file index
   int ind = _CurIndex;
   EnumSel(M_Delit, (int)&res);
   
