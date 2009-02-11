@@ -500,7 +500,16 @@
 0C90: 00000000 545E1720 ;8324: void * get_CellData(void); 
 0C94: 00000000 61F0ED44 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 E901EE44 ; 326: void * IncommingCall_Mute(BOOK* book);
-
+0C9C: 00000000 2D4E1545 ; 327: int GetSignalLevel(void);
+0CA0: 00000000 A5B5EA44 ; 328: int Bluetooth_GetState(void);
+0CA4: 00000000 6DB5EA44 ; 329: int Bluetooth_GetPhoneVisibility(void);
+0CA8: 00000000 2DB6EA44 ; 32A: int Bluetooth_isBusy(void);
+0CAC: 00000000 F99F2E45 ; 32B: int USB_isConnected(void);
+0CB0: 00000000 E9220B45 ; 32C: void *w_diropen(const wchar_t *dir);
+0CB4: 00000000 895A2D45 ; 32D: wchar_t *w_dirread(void *);
+0CB8: 00000000 55260B45 ; 32E: int w_dirclose(void *);
+0CBC: 00000000 315B2D45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+0CC0: 00000000 D55A2D45 ; 330: int w_remove(const wchar_t *dir);
 
 
 
