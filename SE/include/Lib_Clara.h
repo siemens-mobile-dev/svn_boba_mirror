@@ -1469,7 +1469,7 @@ __swi __arm int USB_isConnected(void);
 #pragma swi_number=0x32C
 __swi __arm void *w_diropen(const wchar_t *dir);
 #pragma swi_number=0x32D
-__swi __arm wchar_t *w_dirget(void *);
+__swi __arm wchar_t *w_dirread(void *);
 #pragma swi_number=0x32E
 __swi __arm int w_dirclose(void *);
 #pragma swi_number=0x32F

@@ -250,7 +250,7 @@ int FillRealPathFiles(int tab, wchar_t* dname)
   if (handle)
   {
     w_chdir(dname);
-    while((next=w_dirget(handle)))
+    while((next=w_dirread(handle)))
     {
       w_fstat(next,&fs);
       if (!tabs[tab]->szFilter[0] || fs.attr&FA_DIRECTORY)
@@ -266,7 +266,7 @@ int FillRealPathFiles(int tab, wchar_t* dname)
     if (handle)
     {
       w_chdir(dname);
-      while((next=w_dirget(handle)))
+      while((next=w_dirread(handle)))
       {
         w_fstat(next,&fs);
         if (!(fs.attr&FA_DIRECTORY))

@@ -193,7 +193,7 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
   if (handle && path)
   {
     w_chdir(dname);
-    while((next=w_dirget(handle)))
+    while((next=w_dirread(handle)))
     {
       W_FSTAT fs;
       w_fstat(next,&fs);
