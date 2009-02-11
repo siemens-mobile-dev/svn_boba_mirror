@@ -1466,4 +1466,15 @@ __swi __arm int Bluetooth_isBusy(void);
 #pragma swi_number=0x32B
 __swi __arm int USB_isConnected(void);
 
+#pragma swi_number=0x32C
+__swi __arm void *w_diropen(const wchar_t *dir);
+#pragma swi_number=0x32D
+__swi __arm wchar_t *w_dirget(void *);
+#pragma swi_number=0x32E
+__swi __arm int w_dirclose(void *);
+#pragma swi_number=0x32F
+__swi __arm int w_rename(const wchar_t *dst, const wchar_t *src);
+#pragma swi_number=0x330
+__swi __arm int w_remove(const wchar_t *dir);
+
 #endif
