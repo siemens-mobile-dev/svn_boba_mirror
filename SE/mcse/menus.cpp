@@ -130,7 +130,7 @@ void MC_Copy(void)
 
 void MC_Move(void)
 {
-  //DoMove();
+  DoMove();
   CloseAllMenu();
 }
 
@@ -148,7 +148,7 @@ void MC_NewDir(void)
 
 void MC_Rename(void)
 {
-  //DoRen();
+  DoRen();
   CloseAllMenu();
 }
 
@@ -301,22 +301,23 @@ int MMS_On_Msg(GUI_MESSAGE * msg)
       str=Str2ID(ustr,0,SID_ANY_LEN);
       SetMenuItemText0(msg,str);
     }
+    int sort=_CurTab->sort;
     switch(d)
     {
     case 0:
-      icn=(_CurTab->sort&STV_MASK)==ST_NAME?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_NAME?ch_rb_icn:rb_icn;
       break;
     case 1:
-      icn=(_CurTab->sort&STV_MASK)==ST_EXT?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_EXT?ch_rb_icn:rb_icn;
       break;
     case 2:
-      icn=(_CurTab->sort&STV_MASK)==ST_SIZE?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_SIZE?ch_rb_icn:rb_icn;
       break;
     case 3:
-      icn=(_CurTab->sort&STV_MASK)==ST_DATE?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_DATE?ch_rb_icn:rb_icn;
       break;
     case 4:
-      icn=(_CurTab->sort&STD_MASK)==ST_REVERS?ch_cb_icn:cb_icn;
+      icn=(sort&STD_MASK)==ST_REVERS?ch_cb_icn:cb_icn;
       break;
     }
     if (icn)  SetListObjectItemIcon(msg,0,icn);
@@ -398,9 +399,125 @@ void MM_View(void)
   ShowWindow(lo);
 }
 
+
+
+
+
+
+
+void MC_BMAdd(void)
+{
+  DoBMAdd();
+  CloseAllMenu();
+}
+
+void MC_BMList(void)
+{
+  DoBMList();
+  CloseAllMenu();
+}
+
+MENU_DESC bm_menu[]={
+  {NULL, MC_BMAdd,0},
+  {NULL, MC_BMList,0},
+};
+
+void MMBM_OnBack(BOOK * bk, void *)
+{
+  FREE_GUI(cur_gui);
+}
+
+void MMBM_onEnterPressed(BOOK * bk, void *)
+{
+  int item=ListMenu_GetSelectedItem(cur_gui);
+  if (item<MAXELEMS(bm_menu))
+  {
+    if (bm_menu[item].proc) bm_menu[item].proc();
+  }
+}
+
+void MM_BM(void)
+{
+  wchar_t ustr[64];
+  GUI_LIST *lo;
+  STRID sid;
+  char *head=muitxt(ind_mcmenu);
+  cur_gui=lo=CreateListObject(&MCBook->book,0);
+  STRID texts[MAXELEMS(bm_menu)];
+  for (int i=0; i<MAXELEMS(bm_menu); i++)
+  {
+    win12512unicode(ustr,bm_menu[i].str,MAXELEMS(ustr)-1);
+    texts[i]=Str2ID(ustr,0,SID_ANY_LEN);
+  }
+  OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(bm_menu));
+  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
+  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  GuiObject_SetTitleText(lo,sid);
+  SetNumOfMenuItem(lo,MAXELEMS(bm_menu));
+  SetCursorToItem(lo,0);
+  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,MMBM_onEnterPressed); 
+  GUIObject_Softkey_SetAction(lo,ACTION_BACK,MMBM_OnBack);
+  ShowWindow(lo);
+}
+
+void MC_DrvInf(void)
+{
+
+}
+
+void MC_Options(void)
+{
+
+}
+
+void MC_AboutDlg(void)
+{
+
+}
+
+MENU_DESC mis_menu[]={
+  {NULL, MM_BM,0},
+  {NULL, MC_DrvInf,0},
+  {NULL, MC_Options,0},
+  {NULL, MC_AboutDlg,0}  
+};
+
+void MMM_OnBack(BOOK * bk, void *)
+{
+  CloseMenu();
+}
+
+void MMM_onEnterPressed(BOOK * bk, void *)
+{
+  int item=ListMenu_GetSelectedItem(menu_id[misc_ind]);
+  if (item<MAXELEMS(mis_menu))
+  {
+    if (mis_menu[item].proc) mis_menu[item].proc();
+  }
+}
+
 void MM_Misc(void)
 {
-  
+  wchar_t ustr[64];
+  GUI_LIST *lo;
+  STRID sid;
+  char *head=muitxt(ind_mcmenu);
+  menu_id[misc_ind]=lo=CreateListObject(&MCBook->book,0);
+  STRID texts[MAXELEMS(mis_menu)];
+  for (int i=0; i<MAXELEMS(mis_menu); i++)
+  {
+    win12512unicode(ustr,mis_menu[i].str,MAXELEMS(ustr)-1);
+    texts[i]=Str2ID(ustr,0,SID_ANY_LEN);
+  }
+  OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(mis_menu));
+  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
+  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  GuiObject_SetTitleText(lo,sid);
+  SetNumOfMenuItem(lo,MAXELEMS(mis_menu));
+  SetCursorToItem(lo,0);
+  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,MMM_onEnterPressed); 
+  GUIObject_Softkey_SetAction(lo,ACTION_BACK,MMM_OnBack);
+  ShowWindow(lo);
 }
 
 void MC_Exit(void)

@@ -329,5 +329,14 @@ void InitMUI()
   op_menu[5].str=muitxt(ind_rename);
   op_menu[6].str=muitxt(ind_newdir);
   op_menu[7].str=muitxt(ind_newfile);
+  
+  mis_menu[0].str=muitxt(ind_bm_m);
+  mis_menu[1].str=muitxt(ind_drvinf);
+  mis_menu[2].str=muitxt(ind_settings);
+  mis_menu[3].str=muitxt(ind_about_m);
+  
+  bm_menu[0].str=muitxt(ind_add);
+  bm_menu[1].str=muitxt(ind_bml);
+
 }
 

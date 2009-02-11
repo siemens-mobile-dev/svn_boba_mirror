@@ -57,9 +57,6 @@ int fexists(wchar_t* fname)
   return (w_fstat(fname,&fs)!=-1);
 }
 
-extern "C" int w_remove(const wchar_t *dir);
-
-
 
 int rmtree(wchar_t* path, int ip)
 {
@@ -75,10 +72,10 @@ int rmtree(wchar_t* path, int ip)
     switch (itm->ftype)
     {
     case TYPE_COMMON_DIR:
-      res &= w_remove(itm->full);
+      res &= (!w_remove(itm->full));
       break;
     case TYPE_COMMON_FILE:
-      res &= w_remove(itm->full);
+      res &= (!w_remove(itm->full));
       break;
     case TYPE_ZIP_DIR:
     case TYPE_ZIP_FILE:
@@ -93,13 +90,12 @@ int rmtree(wchar_t* path, int ip)
 }
 int fsrm(wchar_t* path, int ip)
 {
-  int err;
   int res;
   if (isdir(path))
     res= rmtree(path, ip);
   else
   {
-    res=w_remove(path);
+    res=!w_remove(path);
     if (ip) incprogr(1);
   }
   return res;
@@ -186,35 +182,33 @@ void CorFileName(wchar_t* wsname)
 }
 
 
+
 int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param, int recursive, int enumDirs)
 {
   unsigned int ccFiles   = 0;
   unsigned int ccSubDirs = 0;
   wchar_t *path=new wchar_t[MAX_PATH];
-  FILELISTITEM *fli=new FILELISTITEM;
-  
-  if (fli && path)
+  void *handle=w_diropen(dname);
+  wchar_t *next;
+  if (handle && path)
   {
-    DIR_HANDLE *handle=AllocDirHandle(dname);
-    snwprintf(path,MAX_PATH-1, _ls_stars, dname);
-    DirHandle_SetFilterStr(handle, path);
-    while(GetFname(handle,fli))
+    w_chdir(dname);
+    while((next=w_dirget(handle)))
     {
       W_FSTAT fs;
-      if (!w_chdir(fli->path))
-        w_fstat(fli->fname,&fs);
+      w_fstat(next,&fs);
       if (fs.attr & FA_DIRECTORY)
       {
         if (enumDirs)
         {
           ccSubDirs++;
-          snwprintf(path, MAX_PATH-1,_ls_ls, fli->path, fli->fname);
+          snwprintf(path, MAX_PATH-1,_ls_ls, dname, next);
           int tmp = 0;
           if (recursive) tmp = EnumFiles(path, enumproc, param);
           ccSubDirs += tmp >> 16;
           ccFiles += tmp & 0xffff;
           if (enumproc)
-            if (enumproc(fli->path, fli->fname, &fs, param)==0)
+            if (enumproc(dname, next, &fs, param)==0)
               break;
         }
       }
@@ -222,17 +216,15 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
       {
         ccFiles++;
         if (enumproc)
-          if (enumproc(fli->path, fli->fname, &fs, param)==0)
+          if (enumproc(dname, next, &fs, param)==0)
             break;
       }
     }
-    DestroyDirHandle(handle);
+    w_dirclose(handle);
   }
   delete path;
-  delete fli;
   if (ccSubDirs > 0xffff) ccSubDirs = 0xffff;
   if (ccFiles > 0xffff)   ccFiles = 0xffff;
-  
   return (ccSubDirs << 16 | ccFiles);
 }
 
@@ -286,7 +278,7 @@ int cptree(wchar_t* src, wchar_t* dst, int ip)
   wchar_t *dstfull=new wchar_t[MAX_PATH];
   int psrc = wstrlen(src)+1;
   int res = 1;
-  int attr=0;
+  //int attr=0;
   
   int tmp = progr_act;
   progr_act = ind_dirmking;

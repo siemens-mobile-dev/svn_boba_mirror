@@ -239,48 +239,44 @@ void DelFiles(int tab)
   }
 }
 
-extern "C" void DirHandle_EnableHiddenFiles(DIR_HANDLE *, int);
+
 
 int FillRealPathFiles(int tab, wchar_t* dname)
 {
-  FILELISTITEM *fli=new FILELISTITEM;
   W_FSTAT fs;
+  wchar_t *next;
   int num = 0;
+  void *handle=w_diropen(dname); 
+  if (handle)
   {
-    snwprintf(pathbuf,MAX_PATH-1, _ls_stars, dname);
-    DIR_HANDLE *handle=AllocDirHandle(dname);
-    DirHandle_SetFilterStr(handle, pathbuf);
-    DirHandle_EnableHiddenFiles(handle, 1);
-    while(GetFname(handle,fli))
+    w_chdir(dname);
+    while((next=w_dirget(handle)))
     {
-      if (!w_chdir(fli->path))
-        w_fstat(fli->fname,&fs);
+      w_fstat(next,&fs);
       if (!tabs[tab]->szFilter[0] || fs.attr&FA_DIRECTORY)
       {
-        AddFileFromDE(tab, num++, fli->fname, &fs);
+        AddFileFromDE(tab, num++, next, &fs);
       }
     }
-    DestroyDirHandle(handle);
-    if (tabs[tab]->szFilter[0])
+    w_dirclose(handle);
+  }
+  if (tabs[tab]->szFilter[0])
+  {
+    handle=w_diropen(dname);
+    if (handle)
     {
-      snwprintf(pathbuf, MAX_PATH-1,_ls_ls, dname, tabs[tab]->szFilter);
-      DIR_HANDLE *handle=AllocDirHandle(GetDir(DIR_OTHER));
-      DirHandle_SetFilterStr(handle, pathbuf);
-      while(GetFname(handle,fli))
+      w_chdir(dname);
+      while((next=w_dirget(handle)))
       {
-        if (!w_chdir(fli->path))
+        w_fstat(next,&fs);
+        if (!(fs.attr&FA_DIRECTORY))
         {
-          w_fstat(fli->fname,&fs);
-          if (!(fs.attr&FA_DIRECTORY))
-          {
-            AddFileFromDE(tab, num++, fli->fname, &fs);
-          }
+          AddFileFromDE(tab, num++, next, &fs);
         }
       }
-      DestroyDirHandle(handle);
+      w_dirclose(handle);
     }
   }
-  delete fli;
   return num;
 }
 
@@ -462,6 +458,13 @@ wchar_t* CurFullPath(wchar_t* sfile)
   return pathbuf;
 }
 
+wchar_t* CurFullPathBM(wchar_t* buff, wchar_t* sfile, int len)
+{
+  if (buff)
+    snwprintf(buff, len, _ls_ls, _CurPath, sfile);
+  return buff;
+}
+
 void initprogr(int act)
 {
   progr_start = 1;
@@ -500,7 +503,7 @@ void endprogrsp()
 
 void CB_Paste(int id)
 {
-  if (id == IDYES) PasteFindFiles();
+  if (id == IDYES) SUBPROC((void*)S_Paste);
 }
 
 void DoPaste()
@@ -735,6 +738,12 @@ void DoExit()
 void DoCopy()
 {
   EnumSel(M_MoveCopy, FNT_COPY);
+}
+
+void DoMove()
+{
+  if (IsInArchive()) return; // Пока не обрабатывается
+  EnumSel(M_MoveCopy, FNT_MOVE);
 }
 
 void DoSwapTab()
@@ -982,16 +991,16 @@ void DoInvChk()
 
 void CB_Del(int id)
 {
-  if (id==1) DeleteFileMMI();
+  if (id==1) SUBPROC((void*)S_Delit);
 }
 
 void DoDel()
 {
   if (IsInArchive()) return; // Пока не обрабатывается
   
-  //if (CONFIG_CONFIRM_DELETE)
-   // MsgBoxYesNo(1, (int) muitxt(ind_pmt_del), CB_Del);
-  //else
+  if (CONFIG_CONFIRM_DELETE)
+    MsgBoxYesNo(muitxt(ind_pmt_del), CB_Del);
+  else
     CB_Del(1);
 }
 
@@ -1039,3 +1048,65 @@ void DoFilter()
   TextInput(muitxt(ind_name), 0, ws, _Filter);
 }
 
+void CB_RenEx(int id)
+{
+  if (id==IDYES || id==-1 || id==-2)
+  {
+    wchar_t src[MAX_PATH];
+    FILEINF *file = _CurFile();
+    snwprintf(src, MAXELEMS(src)-1, _ls_ls, _CurPath, file->ws_name);
+    if (id==IDYES) w_remove(pathbuf);
+    int res=1;
+    if (id==-2)
+    {
+      //char tmpBuf[MAX_PATH];
+      //TmpFullPath2(tmpBuf, file->sname);
+      //res = fmove(src, tmpBuf, &err) && fmove(tmpBuf, pathbuf, &err);
+    }
+    else
+      res = w_rename(src, pathbuf);
+    
+    DoRefresh();
+    if (!res)
+    {
+      //Ищем
+      int ind = GetCurTabFileIndex(GetFileName(pathbuf));
+      SetCurTabIndex(ind, 0);
+    }
+    else
+      MsgBoxError(muitxt(ind_err_rename));
+    
+    RedrawGUI=1;
+  }
+}
+
+void _Rename(wchar_t *wsname)
+{
+  CurFullPath(wsname);
+  if (wstrcmpi(wsname, _CurFile()->ws_name))
+  {
+    if (fexists(pathbuf))
+    {
+      if (CONFIG_CONFIRM_REPLACE)
+        MsgBoxYesNo(muitxt(ind_pmt_exists), CB_RenEx);
+      else
+        CB_RenEx(IDYES);
+    }
+    else
+    {
+      CB_RenEx(-1);
+    }
+    
+  }
+  else
+    CB_RenEx(-2);
+}
+
+void DoRen()
+{
+  if (IsInArchive()) return; // Пока не обрабатывается
+  
+  FILEINF *cfile = _CurFile();
+  if (cfile)
+    TextInput(muitxt(ind_name), 1, cfile->ws_name, _Rename);
+}

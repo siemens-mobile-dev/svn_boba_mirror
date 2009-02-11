@@ -19,6 +19,8 @@ extern MENU_DESC fl_menu[];
 extern MENU_DESC st_menu[];
 extern MENU_DESC vw_menu[];
 extern MENU_DESC op_menu[];
+extern MENU_DESC mis_menu[];
+extern MENU_DESC bm_menu[];
 void MM_Main(void);
 
 #endif

@@ -60,6 +60,17 @@ int cd(int tab, wchar_t *dname)
   return res;
 }
 
+int cdsys(wchar_t *dname)
+{
+  if (cd(systab, dname))
+  {
+    back_tab = curtab;
+    curtab = systab;
+    return 1;
+  }
+  return 0;
+}
+
 void _NewDir(wchar_t *wsname)
 {
   wstrncpy(szLastNewDir, wsname, MAXELEMS(szLastNewDir));	// Сохраняем введенное имя
@@ -95,7 +106,7 @@ int M_Delit(FILEINF *file, int param)
     }
     else*/
     {
-      if (fsrm(pathbuf, 1))
+      if (!fsrm(pathbuf, 1))
         *(int*)param = 0;
     }
     return 1;
@@ -116,11 +127,16 @@ int M_FileCnt(FILEINF *file, int param)
 
 void S_Delit(void)
 {
+  if (_CurIndex < 0) return;
+  Busy = 1;
   int res = 1;  
+  
+  initprogr(ind_deling);
+  EnumSel(M_FileCnt, (int)&progr_max);
+  incprogr(0);
   // Store current file index
   int ind = _CurIndex;
   EnumSel(M_Delit, (int)&res);
-  
   if (!res)
   {
     MsgBoxError(muitxt(ind_err_delete));
@@ -136,31 +152,6 @@ void S_Delit(void)
   Busy = 0;
 }
 
-void DeleteFileMMI()
-{
-  int res = 1;  
-  if (_CurIndex < 0) return;
-  Busy = 1; 
-  initprogr(ind_deling);
-  EnumSel(M_FileCnt, (int)&progr_max);
-  incprogr(0);
-  int ind = _CurIndex;
-  EnumSel(M_Delit, (int)&res);
-  
-  if (!res)
-  {
-    MsgBoxError(muitxt(ind_err_delete));
-  }
-  else if (ind < _CurTab->ccFiles) // Только если есть куда идти вниз
-  {
-    // List is not refreshed yet, so move index to the next file if there are no errors
-    SetCurTabIndex(ind + 1, 0);
-  }
-  DoRefresh();
-  
-  endprogr();
-  Busy = 0;
-}
 
 int M_MoveCopy(FILEINF *file, int param)
 {
@@ -180,17 +171,29 @@ FN_LIST buffer;
 
 void S_Paste(void)
 {
+  if (buffer.count)
   {
     int res=1;
+    Busy = 1;
+    if (buffer.type == FNT_MOVE) progr_act = ind_moveing;
+    else if (buffer.type == FNT_COPY) progr_act = ind_copying;
+    initprogr(progr_act);
+    
     FN_ITM* itm = buffer.items;
     FN_ITM* last_itm = itm;
     while(itm)
     {
+      // progr_max+=itm->full[0]!=_CurPath[0] || buffer.type!=FNT_MOVE?GetFilesCnt(itm->full):1;
+      if (itm->ftype == TYPE_COMMON_DIR || itm->ftype == TYPE_COMMON_FILE)
+        progr_max += GetFilesCnt(itm->full);
+      else
+        progr_max++; // Для зипа пока заглушка
       last_itm = itm;
       itm = (FN_ITM *) itm->next;
     }
-    
+    incprogr(0);
     itm = buffer.items;
+    
     ArchiveBufferExtractBegin();
     while(itm && !progr_stop)
     {
@@ -228,7 +231,7 @@ void S_Paste(void)
     if (!res)
       MMIPROC(MsgBoxErrorMmi,  (int)muitxt(ind_err_resnok));
 
-    MMIPROC(UpdateAll);
+    UpdateAll();
     
     
     //Ищем первый файл
@@ -239,31 +242,8 @@ void S_Paste(void)
     endprogr();
     Busy = 0;
   }
-}
-
-void PasteFindFiles(void)
-{
-  if (buffer.count)
-  {
-    Busy = 1;
-    if (buffer.type == FNT_MOVE) progr_act = ind_moveing;
-    else if (buffer.type == FNT_COPY) progr_act = ind_copying;
-    initprogr(progr_act);
-    FN_ITM* itm = buffer.items;
-    while(itm)
-    {
-      //	 progr_max+=itm->full[0]!=_CurPath[0] || buffer.type!=FNT_MOVE?GetFilesCnt(itm->full):1;
-      if (itm->ftype == TYPE_COMMON_DIR || itm->ftype == TYPE_COMMON_FILE)
-        progr_max += GetFilesCnt(itm->full);
-      else
-        progr_max++; // Для зипа пока заглушка
-      itm = (FN_ITM *) itm->next;
-    }
-    incprogr(0);
-    S_Paste();
-  }
   else
-    MsgBoxError(muitxt(ind_err_nofiles));
+    MMIPROC(MsgBoxErrorMmi, (int)muitxt(ind_err_nofiles));
 }
 
 

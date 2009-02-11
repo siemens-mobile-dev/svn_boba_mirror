@@ -63,10 +63,12 @@ void _cd_tab(int tab, int drv, wchar_t *dname);
 int SetTabDrv(int tab, int num);
 void SetTabIndex(int tab, int num, int slide);
 wchar_t* CurFullPath(wchar_t* sfile);
+wchar_t* CurFullPathBM(wchar_t* buff, wchar_t* sfile, int len);
 void SetCurTabIndex(int num, int slide);
 int DoRefresh();
 void UpdateAll();
 int GetCurTabFileIndex(wchar_t* fname);
+FILEINF* _CurFile();
 
 extern wchar_t in_open_path[MAX_PATH];
 extern const wchar_t keys_file[];
@@ -105,4 +107,6 @@ void DoCopy();
 void DoNewDir();
 void DoCancel();
 void DoFilter();
+void DoMove();
+void DoRen();
 #endif
