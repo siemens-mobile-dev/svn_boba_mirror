@@ -81,10 +81,13 @@ __swi __arm  int fopen (const wchar_t * fname, int mode, int rights);
 __swi __arm  int ModifyKeyHook(int(*proc)(int,int,int),int mode);
 
 #pragma swi_number=0x108
-__swi __arm  void SUBPROC (void(*PROC)(void));
+__swi __arm  void SUBPROC (void *, ...);
 
 
 #ifdef __cplusplus
+#pragma swi_number=0x108
+__swi __arm  void SUBPROC (void(*PROC)(void));
+
 #pragma swi_number=0x108
 __swi __arm  void SUBPROC (void(*PROC)(int),int p1);
 
