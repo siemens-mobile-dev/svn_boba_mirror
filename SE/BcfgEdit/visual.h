@@ -70,4 +70,6 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type);
 GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook, int type);
 GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook);
 wchar_t *Font_GetNameByFontId(int id);
+GUI_LIST *CreateFileFolderSelect(MyBOOK * myBook, wchar_t *str);
+void Free_FLIST(void);
 #endif

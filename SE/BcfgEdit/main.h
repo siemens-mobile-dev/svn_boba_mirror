@@ -11,6 +11,11 @@ typedef struct
   CFG_HDR *levelstack[16];
 }BCFG_DATA;
 
+enum SELF {
+  SFOLDER=0,
+  SFILE=1
+};
+
 typedef struct
 {
   BOOK  book;
@@ -26,7 +31,9 @@ typedef struct
   GUI_FEEDBACK *key_input;
   GUI_LIST * key_sel_list;
   GUI_ONEOFMANY * keymode_sel_list;
-
+  GUI_LIST *selectf;
+  int type;
+  
   LIST *list;
   CFG_HDR *cur_hp;
   unsigned long old_crc;

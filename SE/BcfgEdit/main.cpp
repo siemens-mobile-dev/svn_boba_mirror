@@ -409,12 +409,33 @@ void OnOkCreateUnicodeGui(BOOK * bk, wchar_t *string, int len)
   }
 }
 
+void UnicodeOnSelFile(BOOK *bk,void*)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  myBook->type=SFILE;
+  wchar_t *str;
+  u16 len;
+  StringInput_GetStringAndLen(myBook->text_input,&str,&len);
+  myBook->selectf=CreateFileFolderSelect(myBook, str);
+}
+
+void UnicodeOnSelFolder(BOOK *bk,void*)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  myBook->type=SFOLDER;
+  wchar_t *str;
+  u16 len;
+  StringInput_GetStringAndLen(myBook->text_input,&str,&len);
+  myBook->selectf=CreateFileFolderSelect(myBook, str);
+}
+
 void CreateUnicodeSI(MyBOOK *myBook, int is_pass)
 {
   wchar_t *ustr;
   CFG_HDR *hp=myBook->cur_hp;
   int len;
-  STRID text, header_name;
+  STRID text, header_name, sel_file, sel_folder;
+  int tmp;
   len=hp->max;
   if (len<63) len=63;
   ustr=new wchar_t[len+1];
@@ -423,6 +444,10 @@ void CreateUnicodeSI(MyBOOK *myBook, int is_pass)
 //  win12512unicode(ustr,(char *)hp+sizeof(CFG_HDR),len);
   wstrncpy(ustr,(wchar_t*)((char*)hp+sizeof(CFG_HDR)),len);
   text=Str2ID(ustr,0,SID_ANY_LEN);
+  textidname2id(L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT",-1,&tmp);
+  sel_folder=tmp;
+  textidname2id(L"WAP_SELECT_FILE_TXT",-1,&tmp);
+  sel_file=tmp;
   myBook->text_input=(GUI *)CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MIN_LEN(hp->min),
@@ -434,6 +459,10 @@ void CreateUnicodeSI(MyBOOK *myBook, int is_pass)
                                               VAR_OK_PROC(OnOkCreateUnicodeGui),
                                               VAR_STRINP_IS_PASS_MODE(is_pass),
                                               0);
+  GUIObject_Softkey_SetAction(myBook->text_input, 1, UnicodeOnSelFolder);
+  GUIObject_Softkey_SetText(myBook->text_input, 1, sel_folder);
+  GUIObject_Softkey_SetAction(myBook->text_input, 2, UnicodeOnSelFile);
+  GUIObject_Softkey_SetText(myBook->text_input, 2, sel_file);
   delete ustr;
 }
 
@@ -991,6 +1020,7 @@ const PAGE_DESC bk_main = {"BcfgEdit_Main_Page",0,bk_msglst_main};
 static void onMyBookClose(BOOK * book)
 {
   MyBOOK *mbk=(MyBOOK *)book;
+  Free_FLIST();
   delete mbk->bdata.cfg;
   List_Free(mbk->list);
   SUBPROC(elf_exit);

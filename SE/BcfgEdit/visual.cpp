@@ -737,3 +737,267 @@ GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook)
   ShowWindow(myBook->font_select);
   return gui_fontsel;
 }
+
+
+typedef struct
+{
+  void *next;
+  int is_folder;
+  wchar_t *fullname;  
+  wchar_t *name;  
+}FLIST;
+
+
+volatile FLIST *fltop=NULL;
+
+enum TYPES {IS_BACK, IS_FOLDER, IS_FILE}; 
+const wchar_t back[]=L"..";     
+
+void Free_FLIST(void)
+{
+  FLIST *fl=(FLIST *)fltop;
+  fltop=0;
+  while(fl)
+  {
+    FLIST *fl_prev=fl;
+    delete fl_prev->fullname;
+    delete fl_prev->name;
+    fl=(FLIST *)fl->next;
+    delete fl_prev;
+  }
+}
+
+#define FREE_FLGUI(a) Free_FLIST();\
+  FREE_GUI(a);
+
+FLIST *AddToFList(const wchar_t* full_name, const wchar_t *name, int is_folder)
+{
+  int l_fname;
+  FLIST *fl;
+  FLIST *fn=new FLIST;
+  fn->fullname=new wchar_t[wstrlen(full_name)+1];
+  fn->name=new wchar_t[wstrlen(name)+1];
+  wstrcpy(fn->fullname,full_name);
+  wstrcpy(fn->name,name);
+  fn->is_folder=is_folder;
+  fn->next=0;
+  fl=(FLIST *)fltop;
+  if (fl)
+  {
+    FLIST *pr;
+    pr=(FLIST *)&fltop;
+    while(wstrcmpi(fl->name,fn->name)<0)
+    {
+      pr=fl;
+      fl=(FLIST *)fl->next;
+      if (!fl) break;
+    }
+    fn->next=fl;
+    pr->next=fn;
+  }
+  else
+  {
+    fltop=fn;
+  }
+  return (fn);
+}
+
+int FindFiles(wchar_t *str, int type)  // type == 0 SelectFolder, type == 1 SelectFile
+{
+  int i, c, n=0;  
+  Free_FLIST();
+  wchar_t *path=new wchar_t[256];
+  wchar_t *name=new wchar_t[64];
+  wchar_t *rev=NULL, *d=name, *s=str;
+  while((c=*s++))
+  {
+    *d=c;
+    if (c=='/' && *s!='\0') rev=d;
+    d++;
+  }
+  if(rev)
+  {
+    if (rev==name)  // Если идем на корень
+      *(rev+1)=0;
+    else
+      *rev=0;
+    AddToFList(name,back,IS_BACK);
+    n++;
+  }
+  void *dir=w_diropen(str);
+  if (dir)
+  {
+    wchar_t *next;
+    w_chdir(str);
+    while((next=w_dirread(dir)))
+    {
+      W_FSTAT fs;
+      w_fstat(next,&fs);
+      i=wstrlen(str);
+      wstrcpy(path,str);
+      if (rev)
+      {
+        path[i++]='/';
+      }
+      wstrcpy(path+i,next);
+      if (fs.attr&0x4000)
+      {
+        snwprintf(name,63,L"[%ls]",next);
+        AddToFList(path,name,IS_FOLDER);
+        n++;
+      }
+      else
+      {
+        if (type==SFILE)
+        {
+          AddToFList(path,next,IS_FILE);
+          n++;
+        }
+      }
+    }
+    w_dirclose(dir);
+  }
+  delete name;
+  delete path;
+  return n;
+}
+
+FLIST *FindFLISTtByNS(int *i, int si)
+{
+  FLIST *fl;
+  fl=(FLIST *)fltop;
+  while(fl)
+  {
+    if (fl->is_folder==si)
+    {
+      if (!(*i)) return (fl);
+      (*i)--;
+    }    
+    fl=(FLIST *)fl->next;
+  }
+  return fl;
+}
+  
+FLIST *FindFLISTtByN(int n)
+{
+  FLIST *fl;
+  fl=FindFLISTtByNS(&n,IS_BACK); if ((!n)&&(fl)) return(fl);
+  fl=FindFLISTtByNS(&n,IS_FOLDER); if ((!n)&&(fl)) return(fl);
+  fl=FindFLISTtByNS(&n,IS_FILE); if ((!n)&&(fl)) return(fl);
+  return fl;
+}
+
+
+int OnMessage(GUI_MESSAGE * msg)
+{
+  int d;
+  STRID str=LGP_NULL;
+  FLIST *f;
+  switch(msg->msg)
+  {
+  case 1:
+    d=GUIonMessage_GetCreatedItemIndex(msg);
+    f=FindFLISTtByN(d);
+    str=Str2ID(f->name,0,SID_ANY_LEN);
+    SetMenuItemText0(msg,str);
+    break;
+  }
+  return(1);
+};
+
+void Self_OnBack(BOOK * bk, void *)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  FREE_FLGUI(myBook->selectf);
+}
+
+void Self_onEnterPressed(BOOK * bk, void *)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  int item=ListMenu_GetSelectedItem(myBook->selectf);
+  FLIST *fl=FindFLISTtByN(item);
+  if (fl) 
+  {
+    wchar_t *path=new wchar_t[256];
+    if (fl->is_folder==IS_FOLDER || fl->is_folder==IS_BACK)
+    {
+      wstrncpy(path, fl->fullname,255);
+      FREE_FLGUI(myBook->selectf);
+      myBook->selectf=CreateFileFolderSelect(myBook, path);
+    }
+    else
+    {
+      STRID str=Str2ID(fl->fullname,0,SID_ANY_LEN);
+      StringInput_DispObject_SetText(GUIObj_GetDISPObj(myBook->text_input),str);  
+      FREE_FLGUI(myBook->selectf);
+    }
+    delete path;
+  }
+}
+
+void Self_onSelectPressed(BOOK * bk, void *)
+{
+  MyBOOK * myBook=(MyBOOK *)bk;
+  int item=ListMenu_GetSelectedItem(myBook->selectf);
+
+  FLIST *fl=FindFLISTtByN(item);
+  if (fl) 
+  {
+    if ((fl->is_folder==IS_FOLDER && myBook->type==SFOLDER) || fl->is_folder==IS_FILE)
+    {
+      STRID str=Str2ID(fl->fullname,0,SID_ANY_LEN);
+      StringInput_DispObject_SetText(GUIObj_GetDISPObj(myBook->text_input),str);
+      FREE_FLGUI(myBook->selectf);
+    }
+  }
+}
+
+int isdir(wchar_t *name){
+  W_FSTAT fs;
+  if (w_fstat(name,&fs)!=-1)
+    return(fs.attr&0x4000);
+  else return 0;
+}
+
+GUI_LIST *CreateFileFolderSelect(MyBOOK * myBook, wchar_t *str)
+{
+  wchar_t *ustr=new wchar_t[256];
+  wchar_t *s;
+  GUI_LIST *lo;
+  int n;
+  STRID sid=Str2ID(myBook->type==SFOLDER?L"Select folder":L"Select file",0,SID_ANY_LEN);
+  lo=CreateListObject(&myBook->book,0);
+  GuiObject_SetTitleText(lo,sid);
+  wstrcpy(ustr,str);
+  str=ustr;
+  int f=0;
+  do
+  {
+    if (isdir(ustr))
+    {
+      f=1;
+      break;
+    }
+    s=wstrrchr(ustr,L'/');
+    if (s==ustr) break;
+    if (s) *s=0;
+  }
+  while(s);
+  if (!f)
+    str=L"/";
+  
+  n=FindFiles(str,myBook->type);
+  SetNumOfMenuItem(lo,n);
+  SetCursorToItem(lo,0);
+  ListMenu_SetOnMessages(lo,OnMessage);
+  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,Self_onEnterPressed); 
+  GUIObject_Softkey_SetText(lo,ACTION_SELECT1,Str2ID(L"Open",0,SID_ANY_LEN));
+  GUIObject_Softkey_SetAction(lo,ACTION_BACK,Self_OnBack);
+  GUIObject_Softkey_SetAction(lo,1,Self_onSelectPressed); 
+  GUIObject_Softkey_SetText(lo,1,Str2ID(L"Select",0,SID_ANY_LEN));
+  ShowWindow(lo);
+  delete ustr;
+  return (lo);
+}
+
+
