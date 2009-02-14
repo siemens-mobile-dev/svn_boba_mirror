@@ -60,7 +60,7 @@ int onkey(int key)
   }
   return key;
 };
-#define mDEBUG
+
 
 int NewKey(int key, int r1 , int mode)
 {
