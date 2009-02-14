@@ -300,6 +300,18 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
     {
       lastitem->lbls[2]=true;
     }else lastitem->lbls[2]=false;
+    if (lastitem->type!=T_DDMENU)// && lastitem->type!=T_MESSAGEBOX)
+    {
+      int x;
+      for (x=0;x<3;x++)
+      {
+        if (lastitem->strids[x]!=0x6FFFFFFF)
+        {
+          lbl->strids[x]=lastitem->strids[x];
+          lbl->enable[x]=true;
+        }
+      }
+    }
     DrawSofts(DO, bk, lbl);
     pressed[0] = false;
     pressed[1] = false;

@@ -85,10 +85,7 @@ int skin_execute_xml(wchar_t *folder, wchar_t *name)
     {
       abc2ABC(val);
       int cl=h2i(val);
-      if (cl<0xFF000000)
-      {
-        cl=cl+0xFF000000;
-      }
+      cl=cl|0xFF000000;
       colors[x]=cl;
       delete(val);
     }

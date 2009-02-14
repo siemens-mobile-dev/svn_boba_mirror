@@ -2,6 +2,8 @@
 #include "..\\include\Dir.h" 
 #include "header\structs.h"
 #include "header\extern.h"
+#include "..\\include\var_arg.h"
+#include "revision.h"
 
 extern const PAGE_DESC bk_main;
 extern const PAGE_DESC bk_keycode_input;
@@ -18,6 +20,7 @@ int isSoftEditBook(BOOK *bk);
 void savecustomcfg(wchar_t *path, wchar_t *name);
 void openeditor(BOOK *bk);
 
+bool smthchanged=false;
 void TryToUpdate()
 {
   SKBOOK *sk=(SKBOOK*)FindBook(isSBook);
@@ -71,7 +74,6 @@ void OnDelGui(BOOK *bk, void *)
       {
         if (wstrcmp(it->name,L"DEFAULT") && wstrcmp(it->name,L"StandbyBook"))
         {
-          
           RemoveItem(item);
         }
       }
@@ -79,14 +81,18 @@ void OnDelGui(BOOK *bk, void *)
     SetNumOfMenuItem(mbk->lst,customsofts->FirstFree+1);
     BookObj_Hide(bk,0);
     BookObj_Show(bk,0);
+    smthchanged=true;
   }
   else
   {
     mbk->opt_lastindex=item;
     if (item==0)
     {
-      DELETE(mbk->curit->name);
-      ListMenu_SetSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      if (wstrcmp(mbk->curit->name,L"DEFAULT") && wstrcmp(mbk->curit->name,L"StandbyBook"))
+      {
+        DELETE(mbk->curit->name);
+        ListMenu_SetSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      }
     }
     if (item==1)
     {
@@ -138,16 +144,45 @@ void OnDelGui(BOOK *bk, void *)
         BookObj_CallPage(bk,&bk_main);
       }
     }
+    smthchanged=true;
   }
 }
+GUI *g_save=0;
 
+void OnYesExitGui(BOOK * bk, void *)
+{
+  GUI_Free(g_save);
+  savecustomcfg(GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG), L"AdvSoftkeys.cfg");
+  TryToUpdate();
+  FreeBook(bk);
+};
+
+void OnBackExitGui(BOOK * bk, void *)
+{
+  GUI_Free(g_save);
+  FreeBook(bk);
+};
+    
 void Escape(MyBOOK *mbk, bool save)
 {
   if (mbk->curit==0)
   {
-    savecustomcfg(GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG), L"AdvSoftkeys.cfg");
-    TryToUpdate();
-    FreeBook(&mbk->book);
+    if (smthchanged)
+    {
+      g_save=CreateYesNoQuestionVA(0,
+                                   VAR_BOOK(&mbk->book),
+                                   VAR_YESNO_PRE_QUESTION(Str2ID(L"Options were changed.",0,SID_ANY_LEN)),
+                                   VAR_YESNO_QUESTION(Str2ID(L"Do you want to save?",0,SID_ANY_LEN)),
+                                   0);
+      GUIObject_Softkey_SetAction(g_save,ACTION_YES,OnYesExitGui);
+      GUIObject_Softkey_SetAction(g_save,ACTION_NO,OnBackExitGui);
+      GUIObject_Softkey_SetAction(g_save,ACTION_BACK,OnBackExitGui);
+    }
+    else
+    {
+      GUI_Free(g_save);
+      FreeBook(&mbk->book);
+    }
   }
   else
   {
@@ -169,7 +204,9 @@ void onSkin(BOOK *bk, void *)
 
 void OnAuthor(BOOK *bk, void *)
 {
-  MessageBox(SID_NULL,Str2ID(L"SoftEdit v1.1\n© UltraShot\n",0,SID_ANY_LEN),0, 1 ,5000, bk);
+  wchar_t text[100];
+  snwprintf(text,99,L"SoftEdit\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
+  MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN),0, 1 ,5000, bk);
 };
 
 void onSave(BOOK *bk, void *)
@@ -190,6 +227,7 @@ void OnSelectGui(BOOK *bk, void *)
         mbk->main_lastindex=item;
         if (item==customsofts->FirstFree)
         {
+          smthchanged=true;
           ITEM *it = new ITEM;
           memset(it,0,sizeof(ITEM));
           ListElement_Add(customsofts, it);
@@ -208,10 +246,12 @@ void OnSelectGui(BOOK *bk, void *)
       mbk->curit=(ITEM*)ListElement_GetByIndex(customsofts,item);
       FREE_GUI(mbk->lst);
       openeditor(bk);
+      smthchanged=true;
     }
   }
   else
   {
+    smthchanged=true;
     mbk->opt_lastindex=item;
     if (item==0)
     {

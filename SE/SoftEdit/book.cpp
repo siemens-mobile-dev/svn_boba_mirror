@@ -2,6 +2,7 @@
 #include "..\\include\Dir.h" 
 #include "header\structs.h"
 #include "header\extern.h"
+#include "revision.h"
 int isSBook(BOOK *);
 void destroylists();
 #define SID_NULL 0x6FFFFFFF
@@ -46,9 +47,9 @@ static int TerminateElf(void *mess ,BOOK *book)
 static int ShowAuthorInfo(void *mess ,BOOK *book)
 {
   MSG * msg = (MSG *)mess;
-  wchar_t ustr[64];
-  snwprintf(ustr,MAXELEMS(ustr)-1,L"\nSoftEdit v1.1\n© UltraShot\n");
-  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,msg->book);
+  wchar_t text[100];
+  snwprintf(text,99,L"SoftEdit\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
+  MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN),0, 1 ,5000,msg->book);
   return(1);
 };
 

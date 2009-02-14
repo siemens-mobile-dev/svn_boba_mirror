@@ -6,11 +6,11 @@
 #include "header\conf_loader.h"
 #include "..\\include\cfg_items.h"
 #include "header\iofunc.h"
-
+#include "revision.h"
 //--------------------------------------------------------------
 #define VERSION_ 0x00AAAA01
 
-#define AuthorInfo L"AdvSoftkeys v1.1\n© UltraShot\n"
+#define AuthorInfo L"AdvSoftkeys\n© UltraShot\n"
 //--------------------------------------------------------------
 wchar_t myelfpath[512];
 MyBOOK *MyBook=0;
@@ -46,7 +46,9 @@ int MyBook_OnTerminate(void * ,BOOK* book)
 int MyBook_OnShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6FFFFFFF,Str2ID(AuthorInfo,0,SID_ANY_LEN), 0, 1 ,5000,msg->book);
+  wchar_t text[100];
+  snwprintf(text,99,L"%ls\n\nrevision %d", AuthorInfo, __SVN_REVISION__ );
+  MessageBox(0x6FFFFFFF,Str2ID(text, 0, SID_ANY_LEN), 0, 1 ,5000, msg->book);
   return(1);
 };
 
@@ -126,7 +128,7 @@ void onTimer2(u16 timerID, LPARAM lparam)
 int onThemeChange(void *mess,BOOK *bk)
 {
   count=0;
-  timer2=Timer_Set(100, onTimer2, 0);
+  timer2=Timer_Set(1000, onTimer2, 0);
   return 0;
 };
 //--------------------------------------------------------------

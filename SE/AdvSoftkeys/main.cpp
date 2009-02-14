@@ -10,6 +10,7 @@
 #include "header\iofunc.h"
 #include "header\untar.h"
 #include "header\xml.h"
+#include "..\\include\var_arg.h"
 
 extern wchar_t myelfpath[512];
 extern RECT rect;
@@ -48,12 +49,36 @@ void Init()
 
 int isSoftkeysBook_ByName(BOOK *bk);
 
+GUI *help=0;
+
+void OnYesExitGui(BOOK * bk, void *)
+{
+  GUI_Free(help);
+  FreeBook(bk);
+  SUBPROC(elf_exit);
+};
+
+void OnBackExitGui(BOOK * bk, void *)
+{
+  GUI_Free(help);
+  BookObj_Hide(bk, 0);
+  SUBPROC(elf_exit);
+};
+
 int main(wchar_t *elfpath)
 {
-  if (FindBook(isSoftkeysBook_ByName))
+  BOOK *bk=0;
+  if (bk=FindBook(isSoftkeysBook_ByName))
   {
-    MessageBox(0x6FFFFFFF, Str2ID(L"Already runned",0,SID_ANY_LEN), 0, 1, 5000, 0);
-    SUBPROC(elf_exit);
+    BookObj_Show(bk, 0);
+    help=CreateYesNoQuestionVA(0,
+                                     VAR_BOOK(bk),
+                                     VAR_YESNO_PRE_QUESTION(Str2ID(L"AdvSoftkeys is already runned",0,SID_ANY_LEN)),
+                                     VAR_YESNO_QUESTION(Str2ID(L"Do you want to close it now?",0,SID_ANY_LEN)),
+                                     0);
+    GUIObject_Softkey_SetAction(help,ACTION_YES,OnYesExitGui);
+    GUIObject_Softkey_SetAction(help,ACTION_NO,OnBackExitGui);
+    GUIObject_Softkey_SetAction(help,ACTION_BACK,OnBackExitGui);
     return 0;
   }
   wstrcpy(myelfpath,elfpath);

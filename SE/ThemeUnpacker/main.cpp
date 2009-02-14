@@ -2,6 +2,7 @@
 #include "..\\include\Dir.h"
 #include "structs.h"
 #include "untar.h"
+#include "revision.h"
 
 void elf_exit(void)
 {
@@ -41,7 +42,7 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
 {
   MSG * msg = (MSG *)mess;
   wchar_t ustr[64];
-  snwprintf(ustr,MAXELEMS(ustr)-1,L"\nThemeUnpacker v1.1\n© UltraShot");
+  snwprintf(ustr,MAXELEMS(ustr)-1,L"\nThemeUnpacker\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
   MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,msg->book);
   return(1);
 };

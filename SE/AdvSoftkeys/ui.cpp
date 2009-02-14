@@ -24,13 +24,13 @@ void auto_select()
   switch (a)
   {
   case 320:
-    memcpy(&sk[0], &sk240[0], 3*8 *4);
+    memcpy(&sk[0], &sk240[0], 96);
     break;
   case 220:
-    memcpy(&sk[0], &sk176[0], 3*8*4);
+    memcpy(&sk[0], &sk176[0], 96);
     break;
   default:
-    memcpy(&sk[0], &sk176[0], 3*8*4);
+    memcpy(&sk[0], &sk176[0], 96);
     break;
   }
 };

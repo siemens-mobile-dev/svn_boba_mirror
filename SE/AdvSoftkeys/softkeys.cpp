@@ -155,23 +155,12 @@ LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis)
   }
   if (lastitem && csofts)
   {
-    int style=lastitem->style;
+    //int style=lastitem->style;
     LIST *lst = DispObject_Softkeys_GetList(DO,bk, 0);
     if (lst)
     {
       preset_calculate(ret, bk, DO, lst, left.text, right.text);
-      if (lastitem->type!=T_DDMENU && lastitem->type!=T_MESSAGEBOX)
-      {
-        int x;
-        for (x=0;x<3;x++)
-        {
-          if (lastitem->strids[x]!=0x6FFFFFFF)
-          {
-            ret->strids[x]=lastitem->strids[x];
-          }
-        }
-      }
-      if (style==0)
+      if (lastitem->style==0)
       {
         ret->strids[2]=ret->strids[0];
         ret->enable[2]=ret->enable[0];
