@@ -10,7 +10,7 @@ wchar_t *GetPathBuf(void)
 
 void DestroyPathBuf(void)
 {
-  if (st_pathbuf_fn) {delete st_pathbuf_fn; st_pathbuf_fn=NULL};
+  if (st_pathbuf_fn) {delete st_pathbuf_fn; st_pathbuf_fn=NULL;};
 }
 
 
