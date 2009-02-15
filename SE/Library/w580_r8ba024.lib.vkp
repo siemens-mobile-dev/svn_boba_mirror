@@ -495,10 +495,21 @@
 ;0C7C: xxxxxxxx yyyyyyyy ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 ;0C80: xxxxxxxx yyyyyyyy ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 ;0C84: xxxxxxxx yyyyyyyy ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
-;0C88: xxxxxxxx yyyyyyyy ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
+;0C88: xxxxxxxx yyyyyyyy ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
 ;0C8C: xxxxxxxx yyyyyyyy ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-0C90: 00000000 5CEC1820 ;8324: void * get_CellData(void); 
-
+0C90: 00000000 5CEC1820 ;8324: void * get_CellData(void);
+;0C94: xxxxxxxx yyyyyyyy ; 325: void * IncommingCall_Reject(BOOK* book);
+;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
+;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetSignalLevel(void);
+;0CA0: xxxxxxxx yyyyyyyy ; 328: int Bluetooth_GetState(void);
+;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
+;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);
+;0CAC: xxxxxxxx yyyyyyyy ; 32B: int USB_isConnected(void);
+;0CB0: xxxxxxxx yyyyyyyy ; 32C: void *w_diropen(const wchar_t *dir);
+;0CB4: xxxxxxxx yyyyyyyy ; 32D: wchar_t *w_dirread(void *);
+;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
+;0CBC: xxxxxxxx yyyyyyyy ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
 
 
 

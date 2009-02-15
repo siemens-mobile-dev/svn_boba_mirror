@@ -258,8 +258,8 @@
 08A4: 00000000 C1CF3445 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: 00000000 11CF3445 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: 00000000 F9CF3445 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-08B0: 00000000 0DCF3445; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
-08B4: 00000000 DDCF3445; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+08B0: 00000000 0DCF3445 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
+08B4: 00000000 DDCF3445 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -497,9 +497,21 @@
 0C7C: 00000000 8DCDEC44 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 0C80: 00000000 95CDEC44 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 0C84: 00000000 A18C3745 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
-0C88: 00000000 FD773745 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
+0C88: 00000000 FD773745 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
 0C8C: 00000000 C1733745 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-0C90: 00000000 50071920 ;8324: void * get_CellData(void); 
+0C90: 00000000 50071920 ;8324: void * get_CellData(void);
+;0C94: xxxxxxxx yyyyyyyy ; 325: void * IncommingCall_Reject(BOOK* book);
+;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
+;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetSignalLevel(void);
+;0CA0: xxxxxxxx yyyyyyyy ; 328: int Bluetooth_GetState(void);
+;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
+;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);
+;0CAC: xxxxxxxx yyyyyyyy ; 32B: int USB_isConnected(void);
+;0CB0: xxxxxxxx yyyyyyyy ; 32C: void *w_diropen(const wchar_t *dir);
+;0CB4: xxxxxxxx yyyyyyyy ; 32D: wchar_t *w_dirread(void *);
+;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
+;0CBC: xxxxxxxx yyyyyyyy ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
 
 
 
