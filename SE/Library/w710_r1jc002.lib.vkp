@@ -498,7 +498,7 @@
 0C84: 00000000 E5A33645 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 0C88: 00000000 058F3645 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
 0C8C: 00000000 C98A3645 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-;0C90: xxxxxxxx yyyyyyyy ;8324: void * get_CellData(void);
+0C90: 00000000 A4883020 ;8324: void * get_CellData(void);
 0C94: 00000000 6D23DA44 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 D535DA44 ; 326: void * IncommingCall_Mute(BOOK* book);
 0C9C: 00000000 91B70045 ; 327: int GetSignalLevel(void);
