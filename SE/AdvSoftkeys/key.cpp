@@ -61,7 +61,6 @@ int onkey(int key)
   return key;
 };
 
-
 int NewKey(int key, int r1 , int mode)
 {
   if (mode==KBD_SHORT_PRESS)

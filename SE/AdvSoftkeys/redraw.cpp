@@ -300,7 +300,7 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
     {
       lastitem->lbls[2]=true;
     }else lastitem->lbls[2]=false;
-    if (lastitem->type!=T_DDMENU)// && lastitem->type!=T_MESSAGEBOX)
+    if (lastitem->type!=T_DDMENU && lastitem->type!=T_MESSAGEBOX)
     {
       int x;
       for (x=0;x<3;x++)

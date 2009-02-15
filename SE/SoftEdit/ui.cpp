@@ -383,8 +383,10 @@ void SkinGUI_Dummy(BOOK *bk, void *)
 {
   return;
 };
+extern bool smthchanged;
 int Skin_OnEnter(void *, BOOK * bk)
 {
+  smthchanged=true;
   GUI * skin_gui=(GUI *)CreateSkinGUI((MyBOOK*)bk);
   bool pl;
   switch(GetChipID())
