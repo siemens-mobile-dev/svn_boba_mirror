@@ -32,7 +32,7 @@
 4A8: 00000000 0DB63A45 ; 12A: void Timer_Kill(u16 *timerID);
 4AC: 00000000 D5E73A45 ; 12B: int CreateBook(void * mem, void (* onClose)(BOOK*), const PAGE_DESC * bp, const char * name, int __0xFFFFFFFF,int __0);
 4B0: 00000000 FDE83A45 ; 12C: void BookObj_KillBook(void *Book);
-4B4: 00000000 51E63A45 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
+4B4: 00000000 51E53A45 ; 12D: void BookObj_GotoPage(BOOK * book, const PAGE_DESC * page);
 4B8: 00000000 B9E63A45 ; 12E: void BookObj_ReturnPage(BOOK * ,int);
 4BC: 00000000 F1ED3A45 ; 12F: void FreeBook ( BOOK *book);
 4C0: 00000000 95CE3A45 ; 130: BOOK * FindBook(IS_NEEDED_BOOK);
