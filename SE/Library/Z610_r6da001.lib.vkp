@@ -146,7 +146,7 @@
 06C4: 00000000 F9E02344 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: 00000000 2DC30F45 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: 00000000 4D713B45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
+06D4: 00000000 29843A45 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06DC: 00000000 2D3C4645 ; 1B7: int isKeylocked(void);
 06E0: 00000000 E5ED0345 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06EC: 00000000 51F30B45 ; 1BB: void Vibra(int t1, int t2, int t3);
@@ -276,8 +276,8 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DISP_OBJ_GetMethod0B (DISP_OBJ *);
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
-;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager (int cmd);
-0904: 00000000 39384645 ; 241: int JavaSession_GetName(void); //nullsub(void)
+0900: 00000000 9D450345 ; 240: void JavaSession_Manager (int cmd); //nullsub(void)
+0904: 00000000 95E11D44 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: 00000000 A9884145 ; 242: int TextCopyId(int);
 090C: 00000000 39013845 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: 00000000 F5033F45 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
@@ -343,10 +343,10 @@
 0A18: 00000000 45C6D244 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: 00000000 293FE344 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: 00000000 3DFA3E45 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
-;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
+0A28: 00000000 95E11D44 ;828A: IS_NEEDED_BOOK isFmRadioBook(void); //nullsub(ret 0)
 0A2C: 00000000 29560245 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 31A90245 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
-;0A34: xxxxxxxx yyyyyyyy ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
+0A34: 00000000 9D450345 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int); //nullsub(void)
 0A38: 00000000 F9FA4545 ; 28E: void Shortcut_Run (wchar_t * shortcut_name);
 0A3C: 00000000 D183F744 ; 28F: int mkdir(const wchar_t* path);
 0A40: 00000000 BD8AF744 ; 290: int rmdir(const wchar_t* path, int zero);
@@ -470,34 +470,47 @@
 0C18: 00000000 8DBEF744 ; 306: __thumb int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 ;0C1C: xxxxxxxx yyyyyyyy ; 307: void RedLED_On(int __NULL);
 ;0C20: xxxxxxxx yyyyyyyy ; 308: void RedLED_Off(int __NULL);
-;0C24: xxxxxxxx yyyyyyyy ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
-;0C28: xxxxxxxx yyyyyyyy ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
-;0C2C: xxxxxxxx yyyyyyyy ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
-;0C30: xxxxxxxx yyyyyyyy ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
-;0C34: xxxxxxxx yyyyyyyy ; 30D: GUI * CreateProgressBar(BOOK*,int);
-;0C38: xxxxxxxx yyyyyyyy ; 30E: void ProgressBar_SetText(GUI*,STRID text);
-;0C3C: xxxxxxxx yyyyyyyy ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
-;0C40: xxxxxxxx yyyyyyyy ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
-;0C44: xxxxxxxx yyyyyyyy ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
-;0C48: xxxxxxxx yyyyyyyy ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
-;0C4C: xxxxxxxx yyyyyyyy ; 313: void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
-;0C50: xxxxxxxx yyyyyyyy ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
-;0C54: xxxxxxxx yyyyyyyy ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
-;0C58: xxxxxxxx yyyyyyyy ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
-;0C5C: xxxxxxxx yyyyyyyy ; 317: void *DispObject_Softkeys_GetParams(DISP_OBJ *);
-;0C60: xxxxxxxx yyyyyyyy ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
-;0C64: xxxxxxxx yyyyyyyy ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
-;0C68: xxxxxxxx yyyyyyyy ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
-;0C6C: xxxxxxxx yyyyyyyy ; 31B: BOOK *DISPLAY_GetTopBook(int display);
-;0C70: xxxxxxxx yyyyyyyy ; 31C: void DISPLAY_SetBrightness(int display, int brightness);
-;0C74: xxxxxxxx yyyyyyyy ; 31D: int DISPLAY_GetBrightness(int display);
-;0C78: xxxxxxxx yyyyyyyy ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
-;0C7C: xxxxxxxx yyyyyyyy ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
-;0C80: xxxxxxxx yyyyyyyy ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
-;0C84: xxxxxxxx yyyyyyyy ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
-;0C88: xxxxxxxx yyyyyyyy ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
-;0C8C: xxxxxxxx yyyyyyyy ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-;0C90: xxxxxxxx yyyyyyyy ;8324: void * get_CellData(void); 
+0C24: 00000000 75DF4245 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
+0C28: 00000000 CD49F944 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
+0C2C: 00000000 013D0645 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
+0C30: 00000000 9D950545 ; 30C: int JavaApp_LogoImageID_Get(wchar_t * fullpath,wchar_t * imageID);
+0C34: 00000000 8D524445 ; 30D: GUI * CreateProgressBar(BOOK*,int);
+0C38: 00000000 D5554445 ; 30E: void ProgressBar_SetText(GUI*,STRID text);
+0C3C: 00000000 C9564445 ; 30F: void ProgressBar_SetIcon(GUI*,u16 icon_id);
+0C40: 00000000 91554445 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
+0C44: 00000000 D9564445 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
+0C48: 00000000 8DE13B45 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
+0C4C: 00000000 A1644345 ; 313: void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
+0C50: 00000000 49644345 ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
+0C54: 00000000 890E3F45 ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
+0C58: 00000000 990E3F45 ; 316: void GuiObject_SetBackgroundImage(void *gui, wchar_t imageID);
+0C5C: 00000000 59034545 ; 317: void *DispObject_Softkeys_GetParams(DISP_OBJ *);
+0C60: 00000000 A1034545 ; 318: LIST *DispObject_Softkeys_GetList(DISP_OBJ *, BOOK *bk, char __zero);
+0C64: 00000000 A1023845 ; 319: int BookObj_GetDisplayOrientation(BOOK *bk);
+0C68: 00000000 FD013845 ; 31A: void BookObj_SetDisplayOrientation(BOOK *bk, int orientation);
+0C6C: 00000000 29F33745 ; 31B: BOOK *DISPLAY_GetTopBook(int display);
+0C70: 00000000 E5714345 ; 31C: void DISPLAY_SetBrightness(int display, int brightness);
+0C74: 00000000 65724345 ; 31D: int DISPLAY_GetBrightness(int display);
+0C78: 00000000 3580FB44 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
+0C7C: 00000000 B980FB44 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
+0C80: 00000000 C180FB44 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
+0C84: 00000000 41374545 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
+0C88: 00000000 AD224545 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
+0C8C: 00000000 711E4545 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
+;0C90: xxxxxxxx yyyyyyyy ;8324: void * get_CellData(void);
+0C94: 00000000 E1B1EA44 ; 325: void * IncommingCall_Reject(BOOK* book);
+0C98: 00000000 D1C4EA44 ; 326: void * IncommingCall_Mute(BOOK* book);
+;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetSignalLevel(void);
+0CA0: 00000000 1962E744 ; 328: int Bluetooth_GetState(void);
+0CA4: 00000000 E161E744 ; 329: int Bluetooth_GetPhoneVisibility(void);
+0CA8: 00000000 A162E744 ; 32A: int Bluetooth_isBusy(void);
+0CAC: 00000000 5D3F2A45 ; 32B: int USB_isConnected(void);
+0CB0: 00000000 A9A80745 ; 32C: void *w_diropen(const wchar_t *dir);
+0CB4: 00000000 8DFC2845 ; 32D: wchar_t *w_dirread(void *);
+0CB8: 00000000 15AC0745 ; 32E: int w_dirclose(void *);
+0CBC: 00000000 35FD2845 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+0CC0: 00000000 D9FC2845 ; 330: int w_remove(const wchar_t *dir);
+
 
 
 
