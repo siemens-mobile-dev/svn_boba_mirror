@@ -20,6 +20,7 @@ wchar_t *unixt2s(unsigned int time, wchar_t *buf);
 wchar_t *attr2s(int attr, wchar_t *buf);
 int getLVC(wchar_t *wsbody, int font);
 void cutname(wchar_t *fname, wchar_t *sname, int len);
+int match(wchar_t *pattern,wchar_t *string);
 
 int isNumericWstr(wchar_t *s);
 int stricmp(char* str1, char* str2);

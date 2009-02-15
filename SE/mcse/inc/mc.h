@@ -53,7 +53,6 @@ void DoErrKey();
 #define FA_RIGHTS_MASK          0x1FF
 #define FA_CHECK		0x1000
 #define FA_DIRECTORY            0x4000
-#define FA_HIDDEN               0x20000
 
 // for type in FILEINF
 #define TYPE_COMMON_FILE	0
@@ -128,9 +127,26 @@ extern volatile int Busy;
 extern volatile int Terminate;
 extern volatile int RedrawGUI;
 
-extern wchar_t folder_icn;
-extern wchar_t chmark_icn;
-extern wchar_t ch_rb_icn, rb_icn, ch_cb_icn, cb_icn;
+
+
+extern wchar_t STD_ICONS[];
+enum S_ICONS {
+  ICN_FOLDER=0,
+  ICN_CHMARK,
+  ICN_CH_RB,
+  ICN_RB,
+  ICN_CH_CB,
+  ICN_CB,
+  TOTAL_ICONS 
+};
+
+#define L_ICN_FOLDER        L"DB_LIST_FOLDER_ICN"
+#define L_ICN_CHMARK        L"CHECKMARK_ICN"
+#define L_ICN_CH_RB         L"CHECKED_RADIOBUTTON_ICN"
+#define L_ICN_RB            L"RADIOBUTTON_ICN"
+#define L_ICN_CH_CB         L"CHECKMARK_IN_BOX_ICN"
+#define L_ICN_CB            L"CHECKBOX_ICN"
+
 extern MyBOOK * MCBook;
 extern FN_LIST buffer;
 

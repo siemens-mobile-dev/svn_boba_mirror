@@ -5,7 +5,7 @@ wchar_t GetIcon(wchar_t *name, int fattr)
 {
   wchar_t icon;
   unsigned short d;
-  if (fattr&FA_DIRECTORY) return folder_icn;
+  if (fattr&FA_DIRECTORY) return STD_ICONS[ICN_FOLDER];
   SUB_EXECUTE *data;
   FILEITEM *fi=FILEITEM_Create();
   FILEITEM_SetFname(fi,name);

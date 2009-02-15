@@ -8,6 +8,7 @@
 int scr_w;
 int scr_h;
 int txt_h;
+int head_h;
 int ico_hw=0;
 int itm_ch;
 int itms_max;
@@ -22,9 +23,11 @@ void InitScr()
   int tmp;
   scr_w = Display_GetWidth(0);
   scr_h = Display_GetHeight(0);
-  old_font=SetFont(FONT_E_24R);
-  txt_h=GetImageHeight(' ');
-  ico_hw=GetImageHeight(folder_icn);
+  old_font=SetFont(CONFIG_FONT_FILES);
+  txt_h=GetImageHeight('A');
+  SetFont(CONFIG_FONT_HEADER);
+  head_h=GetImageHeight('A');
+  ico_hw=GetImageHeight(STD_ICONS[ICN_FOLDER]);
   tmp = ico_hw - ITM_B * 2;
   itm_ch = tmp > txt_h ? tmp : txt_h;
   SetFont(old_font);
@@ -35,6 +38,7 @@ void DrwCurTab(void *gc, RECT *rc)
 {
   STRID str=0x6FFFFFFF;  
   RECT rt;
+  int old_font;
   rt.x1=TAB_X;
   rt.y1=TOP_Y;
   rt.x2=TAB_X+TAB_W-1;
@@ -43,6 +47,7 @@ void DrwCurTab(void *gc, RECT *rc)
   GC_SetBrushColor(gc, Colors[clSlTabBG]);
   GC_DrawRoundRect(gc ,&rt,4,4,2,1);
   
+  old_font=SetFont(CONFIG_FONT_HEADER);
   str=curtab+'1'+0x78000000;
   DrawString(str,2,TAB_X,TOP_Y+TOP_B,TAB_X+TAB_W-2,TOP_Y+TOP_B+TOP_H-1,0,0,Colors[clTabTxt],0);
 }
@@ -71,7 +76,7 @@ void DrwSort(void *gc, RECT *rc)
   char s = stn[i];
   if (_CurTab->sort & STD_MASK) s -= 'a' - 'A';
   STRID str_id=s+0x78000000;
-  SetFont(FONT_E_24B);  
+  SetFont(CONFIG_FONT_HEADER);
   DrawString(str_id,0,SRT_X,TOP_Y+TOP_B,IND_X1,TOP_Y+TOP_B+TOP_H-1,0,0,
 		Colors[clIndexTxt],0);
 }
@@ -85,7 +90,7 @@ void DrwIndex(void *gc, RECT *rc)
   else
     snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%d/%d", _CurIndex+1, _CurCount);
   str=Str2ID(gui_buf,0,SID_ANY_LEN);  
-  SetFont(FONT_E_24B);
+  SetFont(CONFIG_FONT_HEADER);
   DrawString(str,2,IND_X1,TOP_Y+TOP_B,IND_X2-2,TOP_Y+TOP_B+TOP_H-1,0,0,
              Colors[clIndexTxt],0);
   TextFree(str);
@@ -110,6 +115,7 @@ void DrwDrvAc(int ind, void *gc, RECT *rc)
   RECT rt;
   wchar_t* name;
   int x;	
+  SetFont(CONFIG_FONT_HEADER);
   if (curtab < MAX_TABS)
   {
     x = DRV_X + DRV_O*ind;
@@ -198,7 +204,7 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
     {
       if (file->ws_size!=LGP_NULL)
       {
-        SetFont(FONT_E_24R);
+        SetFont(CONFIG_FONT_FILES);
         DrawString(file->ws_size,0,TXT_X,y2+ITM_B+1,ITM_X2-ITM_B-2,y2+ITM_B+txt_h,0,0,
                    Colors[clInfoTxt],0);
       }
@@ -206,20 +212,20 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
       {
         // рисовать будем посередине + отступ на 1/2 символа
         int posX = (ITM_X2 - ITM_B - 2 - TXT_X) / 2 + TXT_X + txt_h / 2;
-        SetFont(FONT_E_24R);
+        SetFont(CONFIG_FONT_FILES);
         DrawString(file->ws_ratio, 0, posX ,y2+ITM_B+1,ITM_X2-ITM_B-2,y2+ITM_B+txt_h,0,0,
                    Colors[clInfoTxt],0);
       }
     }
     if (file->ws_attr!=LGP_NULL)
     {
-      SetFont(FONT_E_24R);
+      SetFont(CONFIG_FONT_FILES);
       DrawString(file->ws_attr,1,TXT_X,y2+ITM_B+1,ITM_X2-ITM_B-2,y2+ITM_B+txt_h,0,0,
                  Colors[clInfoTxt],0);
     }
   }
   
-  wchar_t icon=file->attr & FA_CHECK?chmark_icn:file->icon;
+  wchar_t icon=file->attr & FA_CHECK?STD_ICONS[ICN_CHMARK]:file->icon;
   putchar(gc,ICO_X, y+ICO_DY, 0,0,icon);
   
   
@@ -227,7 +233,7 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
   //if (file->attr & FA_HIDDEN)
   //  tc=ind==_CurIndex-_CurBase?clSelFileHidden:clFileHidden;
   //else
-  SetFont(FONT_E_24B);
+  SetFont(CONFIG_FONT_FILES);
   if (ind==_CurIndex-_CurBase)
   {
     tc=clSelFileNormal;

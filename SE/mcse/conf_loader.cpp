@@ -8,13 +8,13 @@ const wchar_t *successed_config_path=L"";
 const wchar_t *successed_config_name=L"";
 
 #pragma segment="CONFIG_C"
-int LoadConfigData(const wchar_t *path,const wchar_t *fname)
+int LoadConfigData(const wchar_t *path, const wchar_t *fname)
 {
   int f;
   char *buf;
   int result=-1;
   void *cfg;
-  FSTAT _fstat;
+  W_FSTAT stat;
   unsigned int rlen;
 
   cfg=(char *)__segment_begin("CONFIG_C");
@@ -23,13 +23,13 @@ int LoadConfigData(const wchar_t *path,const wchar_t *fname)
 
   if ((buf=new char[len]))
   {
-    if (fstat(path,fname,&_fstat)!=-1)
+    if (w_fstat(fname,&stat)!=-1)
     {
-      if ((f=_fopen(path,fname,0x001,0x180,0))>=0)
+      if ((f=w_fopen(fname,WA_Read,0x1FF,0))>=0)
       {
-        rlen=fread(f,buf,len);
-        fclose(f);
-        if (rlen!=_fstat.fsize || rlen!=len)  goto L_SAVENEWCFG;
+        rlen=w_fread(f,buf,len);
+        w_fclose(f);
+        if (rlen!=stat.st_size || rlen!=len)  goto L_SAVENEWCFG;
         memcpy(cfg,buf,len);
         result=0;
       }
@@ -37,10 +37,10 @@ int LoadConfigData(const wchar_t *path,const wchar_t *fname)
     else
     {
     L_SAVENEWCFG:
-      if ((f=_fopen(path,fname,0x204,0x180,0))>=0)
+      if ((f=w_fopen(fname,WA_Write|WA_Create|WA_Truncate,0x1FF,0))>=0)
       {
-        if (fwrite(f,cfg,len)==len) result=0;
-        fclose(f);
+        if (w_fwrite(f,cfg,len)==len) result=0;
+        w_fclose(f);
       }
     }
     delete buf;
@@ -56,8 +56,13 @@ int LoadConfigData(const wchar_t *path,const wchar_t *fname)
 
 void InitConfig(void)
 {
-  if (LoadConfigData(GetDir(DIR_ELFS_CONFIG|MEM_EXTERNAL),L"BcfgExample.bcfg")<0)
+  wchar_t *s;
+  if (!w_chdir((s=GetDir(DIR_ELFS_CONFIG|MEM_EXTERNAL))))
   {
-    LoadConfigData(GetDir(DIR_ELFS_CONFIG|MEM_INTERNAL),L"BcfgExample.bcfg");
+    if (LoadConfigData(s,L"mcse.bcfg")<0)
+    {
+      if (!w_chdir((s=GetDir(DIR_ELFS_CONFIG|MEM_INTERNAL))))
+        LoadConfigData(s,L"mcse.bcfg");
+    }
   }
 }

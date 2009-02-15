@@ -1,5 +1,6 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
+#include "..\\include\cfg_items.h"
 
 #include "inc\log.h"
 #include "inc\mc.h"
@@ -10,6 +11,7 @@
 #include "inc\ColorMap.h"
 #include "inc\zslib.h"
 #include "inc\config.h"
+#include "inc\conf_loader.h"
 
 MyBOOK * MCBook;
 DISP_OBJ *main_obj=NULL;
@@ -18,10 +20,7 @@ volatile int Busy = 0;
 volatile int Terminate = 0; // флаг необходимости завершени€ работы
 volatile int RedrawGUI = 0; // флаг необходимости перерисовки гу€
 
-wchar_t folder_icn;
-wchar_t chmark_icn;
-wchar_t ch_rb_icn, rb_icn, ch_cb_icn, cb_icn;
-
+wchar_t STD_ICONS[TOTAL_ICONS];
 
 void FreeData();
 #pragma segment="ELFBEGIN"
@@ -110,6 +109,15 @@ void FreeData()
   WriteLog("FreeData");
 }
 
+wchar_t *SA_ICONS[]=
+{
+  L_ICN_FOLDER,
+  L_ICN_CHMARK,
+  L_ICN_CH_RB,
+  L_ICN_RB,
+  L_ICN_CH_CB,
+  L_ICN_CB  
+};
 
 int MainGuiOnCreate(DISP_OBJ_MAIN *db)
 {
@@ -117,18 +125,13 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
   WriteLog("MainGuiOnCreate");
   
   main_obj=&db->dsp_obj;
-  if (iconidname2id(L"DB_LIST_FOLDER_ICN",-1,&tmp))
-    folder_icn=tmp;
-  if (iconidname2id(L"CHECKMARK_ICN",-1,&tmp))
-    chmark_icn=tmp;
-  if (iconidname2id(L"CHECKED_RADIOBUTTON_ICN",-1,&tmp))
-    ch_rb_icn=tmp;
-  if (iconidname2id(L"RADIOBUTTON_ICN",-1,&tmp))
-    rb_icn=tmp;
-  if (iconidname2id(L"CHECKMARK_IN_BOX_ICN",-1,&tmp))
-    ch_cb_icn=tmp;
-  if (iconidname2id(L"CHECKBOX_ICN",-1,&tmp))
-    cb_icn=tmp;
+  for (int i=0; i<TOTAL_ICONS; i++)
+  {
+    if (iconidname2id(SA_ICONS[i],-1,&tmp))
+      STD_ICONS[i]=tmp;
+    else
+      STD_ICONS[i]=0xFFFF;
+  }
   WriteLog("LoadKeys");
   LoadKeys();
   WriteLog("LoadCfg");
@@ -288,12 +291,9 @@ static int MainPageOnEnter(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   WriteLog("MainPageOnEnter");
-  
   mbk->main_gui=CreateMainGui(mbk);
   return (1);
 }
-
-
 
 int TerminateElf(void * ,BOOK* book)
 {
@@ -301,9 +301,24 @@ int TerminateElf(void * ,BOOK* book)
   return(1);
 }
 
+static int ReconfigElf(void *mess ,BOOK *book)
+{
+  RECONFIG_EVENT_DATA *reconf=(RECONFIG_EVENT_DATA *)mess;
+  int result=0;
+  if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
+  {
+    InitConfig();
+    InitScr();
+    UpdateAll();
+    result=1;
+  }
+  return(result);
+}
+
 const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE"  = 
 {
-  ELF_TERMINATE_EVENT , TerminateElf,
+  ELF_TERMINATE_EVENT,     TerminateElf,
+  ELF_RECONFIG_EVENT,      ReconfigElf,
   NIL_EVENT_TAG,           NULL
 };
 
@@ -345,7 +360,8 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
     SUBPROC(elf_exit);
     return (0);    
   }
-  if (fname) wstrcpy(in_open_path, fname); else *in_open_path=0;
+  InitConfig();
+  if (path && fname) wstrcpy(in_open_path, fname); else *in_open_path=0;
   BookObj_GotoPage((BOOK *)MCBook,&bk_main);
   return 0;
 }

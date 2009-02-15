@@ -78,11 +78,12 @@ void SetTabIndex(int tab, int num, int slide)
     }
   }
   tmp->iIndex[tmp->CurDrv] = num;
+  DisableScroll();
+  RedrawGUI=1;
 }
 
 void SetCurTabIndex(int num, int slide)
 {
-  DisableScroll();
   SetTabIndex(curtab, num, slide);
 }
 
@@ -153,7 +154,7 @@ void FillFileInfo(FILEINF *file)
     wchar_t *ws;
     if (file->ws_showname) ws=file->ws_showname;
     else ws=file->ws_name;
-    file->uccnt = getLVC(ws, FONT_E_24B);
+    file->uccnt = getLVC(ws, CONFIG_FONT_FILES);
     if (file->uccnt)
     {
       cutname(ws, buf, file->uccnt>MAX_PATH/2?MAX_PATH/2:file->uccnt);
@@ -271,7 +272,10 @@ int FillRealPathFiles(int tab, wchar_t* dname)
         w_fstat(next,&fs);
         if (!(fs.attr&FA_DIRECTORY))
         {
-          AddFileFromDE(tab, num++, next, &fs);
+          if (match(tabs[tab]->szFilter, next))
+          {
+            AddFileFromDE(tab, num++, next, &fs);
+          }
         }
       }
       w_dirclose(handle);
@@ -1075,8 +1079,6 @@ void CB_RenEx(int id)
     }
     else
       MsgBoxError(muitxt(ind_err_rename));
-    
-    RedrawGUI=1;
   }
 }
 

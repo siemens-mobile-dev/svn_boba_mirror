@@ -25,13 +25,25 @@ __root const CFG_HDR cfghdr_m00 = { CFG_LEVEL, psz_sm_common, 1, 0 };
         
 __root const CFG_HDR cfghdr_m01 = { CFG_LEVEL, "", 0, 0 };
 
+
+__root const CFG_HDR cfghdr_m05 = { CFG_LEVEL, "Font setup", 1, 0 };
+
+	__root const CFG_HDR cfghdr050 = { CFG_FONT, "Font files", 0, 2 };
+	__root const int CONFIG_FONT_FILES = 0x35;
+
+	__root const CFG_HDR cfghdr051 = { CFG_FONT, "Font other", 0, 2 };
+	__root const int CONFIG_FONT_HEADER = 0x35;
+        
+__root const CFG_HDR cfghdr_m06 = { CFG_LEVEL, "", 0, 0 };
+
+
 __root const CFG_HDR cfghdr_m10 = { CFG_LEVEL, psz_sm_gui, 1, 0 };
 
 	__root const CFG_HDR cfghdr4 = { CFG_UINT, psz_scspeed, 0, 2000 };
-	__root const int CONFIG_SCROLL_TEXT_SPEED = 100;
+	__root const int CONFIG_SCROLL_TEXT_SPEED = 50;
 
 	__root const CFG_HDR cfghdr5 = { CFG_UINT, psz_scwait, 0, 200 };
-	__root const int CONFIG_SCROLL_TEXT_WAIT = 200;
+	__root const int CONFIG_SCROLL_TEXT_WAIT = 400;
 
 	__root const CFG_HDR cfghdr6 = { CFG_CBOX, psz_useboldf, 0, 2 };
 	__root const int CONFIG_USE_BOLD_FONT = 1;

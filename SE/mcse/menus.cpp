@@ -305,19 +305,19 @@ int MMS_On_Msg(GUI_MESSAGE * msg)
     switch(d)
     {
     case 0:
-      icn=(sort&STV_MASK)==ST_NAME?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_NAME?STD_ICONS[ICN_CH_RB]:STD_ICONS[ICN_RB];
       break;
     case 1:
-      icn=(sort&STV_MASK)==ST_EXT?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_EXT?STD_ICONS[ICN_CH_RB]:STD_ICONS[ICN_RB];
       break;
     case 2:
-      icn=(sort&STV_MASK)==ST_SIZE?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_SIZE?STD_ICONS[ICN_CH_RB]:STD_ICONS[ICN_RB];
       break;
     case 3:
-      icn=(sort&STV_MASK)==ST_DATE?ch_rb_icn:rb_icn;
+      icn=(sort&STV_MASK)==ST_DATE?STD_ICONS[ICN_CH_RB]:STD_ICONS[ICN_RB];
       break;
     case 4:
-      icn=(sort&STD_MASK)==ST_REVERS?ch_cb_icn:cb_icn;
+      icn=(sort&STD_MASK)==ST_REVERS?STD_ICONS[ICN_CH_CB]:STD_ICONS[ICN_CB];
       break;
     }
     if (icn)  SetListObjectItemIcon(msg,0,icn);

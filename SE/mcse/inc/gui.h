@@ -12,8 +12,8 @@
 #define MAIN_B	2
 
 #define TOP_B	2
-#define TOP_Y   (rc->y1+MAIN_B)
-#define TOP_H   (TOP_B+txt_h+TOP_B)
+#define TOP_Y   (rc->y1+MAIN_B)   // y1 заголовка
+#define TOP_H   (TOP_B+head_h+TOP_B)  // Высота заголвка
 #define DRV_O   2
 #define DRV_X   MAIN_B
 #define DRV_W   (txt_h*7/2)
@@ -24,16 +24,16 @@
 #define IND_X1  (SRT_X+SRT_W)
 #define IND_X2  (TAB_X-1)
 
-#define FLS_B   1
-#define FLS_Y   (TOP_Y+TOP_H+FLS_B)
-#define FLS_H   (rc->y2-rc->y1-FLS_B-FLS_Y)
+#define FLS_B   1          // fl border
+#define FLS_Y   (TOP_Y+TOP_H+FLS_B)   // y1 списка файлов
+#define FLS_H   (rc->y2-rc->y1-FLS_B-FLS_Y)  // Высота списка файлов
 
-#define ITM_B	1
+#define ITM_B	1  // Item border
 #define ITM_S	1
 #define ITM_FH  (ITM_H+ITM_S)
 #define ITM_X1  MAIN_B
 #define ITM_X2  SB_X
-#define ITM_H   (ITM_B+itm_ch+ITM_B)
+#define ITM_H   (ITM_B+itm_ch+ITM_B) // 
 #define ITM_W   MAIN_B
 #define ICO_X	(ITM_X1+ITM_B)
 #define ICO_DY  ((ITM_H-ico_hw) / 2)
@@ -45,9 +45,9 @@
 #define SB_X	(scr_w-MAIN_B-SB_HS)
 #define SB_H	(FLS_H-1-SB_B)
 
-#define PRGB_X1  (rc->x1+5)
-#define PRGB_X2  (rc->x2-5-1)
-#define PRGB_Y   (rc->y1+50)
+#define PRGB_X1  (rc->x1+5)   // x1 прогрессбара 
+#define PRGB_X2  (rc->x2-5-1)   // x2 прогрессбара 
+#define PRGB_Y   (rc->y1+50) // y1 прогрессбара 
 #define PRGB_H   (MAIN_B+txt_h+MAIN_B+txt_h+MAIN_B+PRGP_H+MAIN_B+MAIN_B+PRGP_H+MAIN_B)
 
 #define PRG_AT_Y (PRGB_Y+MAIN_B)

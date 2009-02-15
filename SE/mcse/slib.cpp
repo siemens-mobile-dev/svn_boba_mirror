@@ -78,7 +78,68 @@ wchar_t wcharlow(wchar_t wc)
 }
 
 
+const wchar_t *strpbrkw(const wchar_t *s1, const wchar_t *w1)
+{
+  int c;
+  while((c=*s1))
+  {
+    const wchar_t *w2=w1;
+    int d;
+    while((d=*w2++))
+    {
+      if(d==c) return s1;      
+    }   
+    s1++;    
+  }
+  return NULL;  
+}
 
+int match(wchar_t *pattern,wchar_t *string)
+{
+  for (;; ++string)
+  {
+    wchar_t stringc=wcharlow(*string);
+    wchar_t patternc=wcharlow(*pattern++);
+    switch (patternc)
+    {
+      case 0:
+        return(stringc==0);
+      case '?':
+        if (stringc == 0)
+          return(0);
+        break;
+      case '*':
+        if (*pattern==0)
+          return(1);
+        if (*pattern=='.')
+        {
+          if (pattern[1]=='*' && pattern[2]==0)
+            return(1);
+          wchar_t *dot=wstrchr(string,'.');
+          if (pattern[1]==0)
+            return (dot==NULL || dot[1]==0);
+          if (dot!=NULL)
+          {
+            string=dot;
+            if (strpbrkw(pattern,L"*?")==NULL && wstrchr(string+1,'.')==NULL)
+              return(wstrcmpi(pattern+1,string+1)==0);
+          }
+        }
+
+        while (*string)
+          if (match(pattern,string++))
+            return(1);
+        return(0);
+      default:
+        if (patternc != stringc)
+          if (patternc=='.' && stringc==0)
+            return(match(pattern,string));
+          else
+            return(0);
+        break;
+    }
+  }
+}
 
 wchar_t *sz2s(unsigned int size, wchar_t *buf)
 {
