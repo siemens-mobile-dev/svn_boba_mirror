@@ -144,7 +144,7 @@
 06BC: 00000000 39E22A45 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: 00000000 CD591B45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 516C2344 ; 1B1: void debug_printf(const char * fmt,...);
-06C8: 00000000 35480045 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
+06C8: 00000000 31480045 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: 00000000 515C2E45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 D1652D45 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06D8: 00000000 65E72D45 ; 1B6: void SetBrightnessOfScreen(int br);
@@ -427,7 +427,7 @@
 0B64: 00000000 9974E944 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 A174E944 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 B970E944 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
-;0B70: xxxxxxxx yyyyyyyy ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time);
+0B70: 00000000 3D472D45 ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time); //nullsub
 0B74: 00000000 01AB3545 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 81AB3545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 4922EC44 ; 2DF: int isDataBrowserBook(BOOK *);
