@@ -271,11 +271,7 @@ int CreateAddContactGrpDialog(CLIST *cl_sel)
   patch_header(&acgd_hdr);
   patch_input(&acgd_desc);
   FreeWS(ews);
-  
-  mmanage_cl_sk[1].lgp_id=(int)lgpData[LGP_Close];
-  acgd_sk[1].lgp_id=(int)lgpData[LGP_Close];
-  pl_sk[1].lgp_id=(int)lgpData[LGP_Close];
-  
+ 
   return CreateInputTextDialog(&acgd_desc,&acgd_hdr,eq,1,grp);
 }
 
@@ -452,6 +448,14 @@ int CreateManageCLMenu(void)
   mmanage_cl_HDR.lgp_id=(int)lgpData[LGP_ManageList];
   mmanage_cl_ITEMS[0].lgp_id_small=(int)lgpData[LGP_AddCont]; 
   mmanage_cl_ITEMS[1].lgp_id_small=(int)lgpData[LGP_PrivStatus];
+  
+  mmanage_cl_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  mmanage_cl_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  
+  acgd_sk[1].lgp_id=(int)lgpData[LGP_Close];
+  
+  pl_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  pl_sk[1].lgp_id=(int)lgpData[LGP_Close];
   
   return CreateMenu(0,0,&mmanage_cl_MNU,&mmanage_cl_HDR,0,M_MANAGE_CL_MAX,0,0);
 }
