@@ -1477,4 +1477,7 @@ __swi __arm int w_rename(const wchar_t *dst, const wchar_t *src);
 #pragma swi_number=0x330
 __swi __arm int w_remove(const wchar_t *dir);
 
+#pragma swi_number=0x331
+__swi __arm int ConnectionManager_Connection_GetState(void);
+
 #endif

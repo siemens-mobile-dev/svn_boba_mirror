@@ -510,6 +510,7 @@
 0CB8: 00000000 55260B45 ; 32E: int w_dirclose(void *);
 0CBC: 00000000 315B2D45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 0CC0: 00000000 D55A2D45 ; 330: int w_remove(const wchar_t *dir);
+0CC4: 00000000 61C12E45 ; 331: int ConnectionManager_Connection_GetState(void);
 
 
 
