@@ -495,7 +495,7 @@
 ;0C90: xxxxxxxx yyyyyyyy ;8324: void * get_CellData(void);
 ;0C94: xxxxxxxx yyyyyyyy ; 325: void * IncommingCall_Reject(BOOK* book);
 ;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
-;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetRadioState(void*, char* level, char* flag);
+0C9C: 00000000 8D047444 ; 327: int GetRadioState(void*, char* level, char* flag);
 ;0CA0: xxxxxxxx yyyyyyyy ; 328: int Bluetooth_GetState(void);
 ;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
 ;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);
@@ -505,6 +505,7 @@
 ;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
 ;0CBC: xxxxxxxx yyyyyyyy ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 ;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
+;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
 
 
 
