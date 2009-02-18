@@ -155,20 +155,20 @@ LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis)
   }
   if (lastitem && csofts)
   {
-    //int style=lastitem->style;
     LIST *lst = DispObject_Softkeys_GetList(DO,bk, 0);
     if (lst)
     {
-      preset_calculate(ret, bk, DO, lst, left.text, right.text);
       if (lastitem->style==0)
       {
-        ret->strids[2]=ret->strids[0];
-        ret->enable[2]=ret->enable[0];
-        ret->strids[0]=ret->strids[1];
-        ret->enable[0]=ret->enable[1];
+        ret->strids[2]=right.text;
+        ret->enable[2]=get_enable(lst,right.text);
+        ret->strids[0]=left.text;
+        ret->enable[0]=get_enable(lst,left.text);
         ret->strids[1]=0x6FFFFFFF;
-        ret->enable[1]=0;
+        ret->enable[1]=1;
+        return ret;
       }
+      preset_calculate(ret, bk, DO, lst, left.text, right.text);
     }
   }
   return ret;

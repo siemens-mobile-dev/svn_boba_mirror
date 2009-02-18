@@ -291,15 +291,18 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
     if (lbl->strids[0]!=0x6FFFFFFF)
     {
       lastitem->lbls[0]=true;
-    }else lastitem->lbls[0]=false;
+    }
+    else lastitem->lbls[0]=false;
     if (lbl->strids[1]!=0x6FFFFFFF)
     {
       lastitem->lbls[1]=true;
-    }else lastitem->lbls[1]=false;
+    }
+    else lastitem->lbls[1]=false;
     if (lbl->strids[2]!=0x6FFFFFFF)
     {
       lastitem->lbls[2]=true;
-    }else lastitem->lbls[2]=false;
+    }
+    else lastitem->lbls[2]=false;
     if (lastitem->type!=T_DDMENU && lastitem->type!=T_MESSAGEBOX)
     {
       int x;
