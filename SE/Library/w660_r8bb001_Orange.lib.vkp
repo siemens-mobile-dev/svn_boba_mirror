@@ -209,7 +209,7 @@
 07D8: 00000000 29024245 ; 1F6: int MainInput_getVisible(GUI *);
 07DC: 00000000 35024245 ; 1F7: int MainInput_strlen(GUI *);
 07E0: 00000000 4D024245 ; 1F8: char * MainInput_getPNUM(GUI *);
-07E4: 00000000 4D024245 ; 1F9: int MainInput_isPlus(GUI *);
+07E4: 00000000 59024245 ; 1F9: int MainInput_isPlus(GUI *);
 07E8: 00000000 791F4145 ; 1FA: int BOOK_GetBookID(BOOK * );
 07EC: 00000000 61426A44 ; 1FB: int wstrncmp(const wchar_t*,const wchar_t*,int);
 07F0: 00000000 A1E54B45 ; 1FC: int DISP_OBJ_GetAbsoluteXPos(DISP_OBJ *);
