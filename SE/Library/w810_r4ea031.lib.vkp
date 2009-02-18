@@ -259,8 +259,8 @@
 08A4: FFFFFFFF 8D1F3045 ; 229: DISP_OBJ_ONREDRAW_METHOD DISP_OBJ_GetOnRedraw (DISP_OBJ *);
 08A8: FFFFFFFF 311D3045 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: FFFFFFFF CD1F3045 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
-;08B0: xxxxxxxx yyyyyyyy ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
-;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+08B0: FFFFFFFF 2D1D3045 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
+08B4: FFFFFFFF AD1F3045 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
@@ -323,7 +323,7 @@
 09B8: FFFFFFFF 4915E944 ; 26E: void png_set_strip_16(png_structp png_ptr);
 09BC: FFFFFFFF 5D15E944 ; 26F: void png_set_gray_1_2_4_to_8(png_structp png_ptr);
 09C0: FFFFFFFF 6315E944 ; 270: void png_set_gray_to_rgb(png_structp png_ptr);
-09C4: FFFFFFFF 2D04E9FF ; 271: png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
+09C4: FFFFFFFF 2D04E944 ; 271: png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
 09C8: FFFFFFFF 5F15E944 ; 272: void png_set_tRNS_to_alpha(png_structp png_ptr);
 09CC: FFFFFFFF 253BE944 ; 273: void png_set_filler(png_structp png_ptr, png_uint_32 filler, int flags);
 09D0: FFFFFFFF 5115E944 ; 274: void png_set_palette_to_rgb(png_structp png_ptr);
@@ -443,7 +443,7 @@
 0B9C: FFFFFFFF 9D125345 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 0BA0: FFFFFFFF AD339F44 ; 2E8: char *GetIMSI(void);
 0BA4: FFFFFFFF 219B1545 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
-0BA8: FFFFFFFF 745C0745 ; 2EA: int MainInput_getCurPos(GUI*);
+0BA8: FFFFFFFF 755C0745 ; 2EA: int MainInput_getCurPos(GUI*);
 0BAC: FFFFFFFF 3B5C0745 ; 2EB: void MainInput_Hide(GUI*);
 0BB0: FFFFFFFF 618D1945 ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
 0BB4: FFFFFFFF 3D8C4145 ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
@@ -504,7 +504,7 @@
 0C90: FFFFFFFF 1056024C ;8324: void * get_CellData(void);
 0C94: FFFFFFFF 916B2045 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: FFFFFFFF 117E2045 ; 326: void * IncommingCall_Mute(BOOK* book);
-;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetSignalLevel(void);
+0C9C: FFFFFFFF DDF9A744 ; 327: int GetRadioState(void*, char* level, char* flag);
 ;0CA0: xxxxxxxx yyyyyyyy ; 328: int Bluetooth_GetState(void);
 ;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
 ;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);

@@ -158,7 +158,7 @@
 06FC: 00000000 55D64045 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
 0700: 00000000 A1074845 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: 00000000 D1094845 ; 1C1: void SetNumOfMenuItem(void * , int item_count);
-0708: 00000000 18901620 ;81C2: LIST ** ROOT_APP(void);
+0708: 00000000 AC911620 ;81C2: LIST ** ROOT_APP(void);
 070C: 00000000 413C4E45 ; 1C3: void SoftKey_AddHelpStr(void *gui,int msg,int StrID);
 0710: 00000000 353D4E45 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: 00000000 69794245 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
@@ -208,7 +208,7 @@
 07D4: 00000000 65F94045 ; 1F5: BOOK *SESSION_GetTopBook(UI_APP_SESSION *);
 07D8: 00000000 29024245 ; 1F6: int MainInput_getVisible(GUI *);
 07DC: 00000000 35024245 ; 1F7: int MainInput_strlen(GUI *);
-07E0: 00000000 41024245 ; 1F8: char * MainInput_getPNUM(GUI *);
+07E0: 00000000 4D024245 ; 1F8: char * MainInput_getPNUM(GUI *);
 07E4: 00000000 4D024245 ; 1F9: int MainInput_isPlus(GUI *);
 07E8: 00000000 791F4145 ; 1FA: int BOOK_GetBookID(BOOK * );
 07EC: 00000000 61426A44 ; 1FB: int wstrncmp(const wchar_t*,const wchar_t*,int);
@@ -270,7 +270,7 @@
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
 08D8: 00000000 DD8D4B45 ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD); /!\
 08DC: 00000000 0D8F4B45 ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *); /!\
-;08E0: xxxxxxxx yyyyyyyy ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
+08E0: 00000000 E18D4B45 ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 ;08E4: xxxxxxxx yyyyyyyy ; 239: DISP_OBJ_METHOD DISP_OBJ_GetMethod09 (DISP_OBJ *);
 ;08E8: xxxxxxxx yyyyyyyy ; 23A: void DISP_DESC_SetMethod0A (DISP_DESC* ,void (*)(void*));
 ;08EC: xxxxxxxx yyyyyyyy ; 23B: DISP_OBJ_METHOD DISP_OBJ_GetMethod0A (DISP_OBJ *);
@@ -319,7 +319,7 @@
 09B0: 00000000 45E3C344 ; 26C: __thumb png_voidp png_get_progressive_ptr(png_structp png_ptr);
 09B4: 00000000 A9CFC344 ; 26D: __thumb png_uint_32 png_get_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 *width, png_uint_32 *height, int *bit_depth, int *color_type, int *interlace_method, int *compression_method, int *filter_method);
 09B8: 00000000 35E6C344 ; 26E: __thumb void png_set_strip_16(png_structp png_ptr);
-09BC: 00000000 41E6C344 ; 26F: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
+09BC: 00000000 4DE6C344 ; 26F: __thumb void png_set_gray_1_2_4_to_8(png_structp png_ptr);
 09C0: 00000000 65E6C344 ; 270: __thumb void png_set_gray_to_rgb(png_structp png_ptr);
 09C4: 00000000 7DCFC344 ; 271: __thumb png_uint_32 png_get_valid(png_structp png_ptr, png_infop info_ptr, png_uint_32 flag);
 09C8: 00000000 59E6C344 ; 272: __thumb void png_set_tRNS_to_alpha(png_structp png_ptr);
@@ -377,7 +377,7 @@
 0A9C: 00000000 01DB0045 ; 2A7: __thumb void _REQUEST_OAF_START_APPLICATION(const int * __one,int __zero,MIDP_DESC *,int ___zero);
 0AA0: 00000000 8990FE44 ; 2A8: __thumb int FSX_isNameInvalid(wchar_t * name);
 0AA4: 00000000 C13D0245 ; 2A9: __thumb void DataBrowserDesc_SetFoldersNumber(void * DataBrowserDesc,int state);
-0AA8: 00000000 75EFFE44 ; 2AA: __thumb void DataBrowserDesc_SetActions(void * DataBrowserDesc,char * actions);
+0AA8: 00000000 993D0245 ; 2AA: __thumb void DataBrowserDesc_SetActions(void * DataBrowserDesc,char * actions);
 0AAC: 00000000 113D0245 ; 2AB: __thumb void DataBrowserDesc_SetSelectAction(void * DataBrowserDesc,int state);
 0AB0: 00000000 193D0245 ; 2AC: __thumb void DataBrowserDesc_SetSelectActionOnFolders(void * DataBrowserDesc,int state);
 0AB4: 00000000 ED3C0245 ; 2AD: __thumb void DataBrowserDesc_SetBookID(void * DataBrowserDesc,int BookID);
@@ -502,16 +502,16 @@
 0C90: 00000000 B45E1720 ;8324: void * get_CellData(void);
 0C94: 00000000 155BF144 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 956CF144 ; 326: void * IncommingCall_Mute(BOOK* book);
-0C9C: 00000000 F1181945 ; 327: int GetSignalLevel(void); ;
+0C9C: 00000000 71717744 ; 327: int GetRadioState(void*, char* level, char* flag);
 0CA0: 00000000 D515EE44 ; 328: int Bluetooth_GetState(void); ;
-0CA4: 00000000 9D15EE44 ; 329: int Bluetooth_GetPhoneVisibility(void); ;
+0CA4: 00000000 9D15EE44 ; 329: int Bluetooth_GetPhoneVisibility(void);
 0CA8: 00000000 5D16EE44 ; 32A: int Bluetooth_isBusy(void);
 0CAC: 00000000 05703245 ; 32B: int USB_isConnected(void);
-;0CB0: xxxxxxxx yyyyyyyy ; 32C: void *w_diropen(const wchar_t *dir);
-;0CB4: xxxxxxxx yyyyyyyy ; 32D: wchar_t *w_dirread(void *);
-;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
-;0CBC: xxxxxxxx yyyyyyyy ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
-;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
+0CB0: 00000000 9DDF0E45 ; 32C: void *w_diropen(const wchar_t *dir);
+0CB4: 00000000 952C3145 ; 32D: wchar_t *w_dirread(void *);
+0CB8: 00000000 09E30E45 ; 32E: int w_dirclose(void *);
+0CBC: 00000000 3D2D3145 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+0CC0: 00000000 E12C3145 ; 330: int w_remove(const wchar_t *dir);
 
 
 

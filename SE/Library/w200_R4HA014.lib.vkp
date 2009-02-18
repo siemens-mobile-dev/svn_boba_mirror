@@ -501,11 +501,11 @@
 ;0C90: xxxxxxxx yyyyyyyy ;8324: void * get_CellData(void);
 ;0C94: xxxxxxxx yyyyyyyy ; 325: void * IncommingCall_Reject(BOOK* book);
 ;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
-;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetSignalLevel(void);
-;0CA0: xxxxxxxx yyyyyyyy ; 328: int Bluetooth_GetState(void);
-;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
-;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);
-;0CAC: xxxxxxxx yyyyyyyy ; 32B: int USB_isConnected(void);
+0C9C: FFFFFFFF 8D6F8F44 ; 327: int GetRadioState(void*, char* level, char* flag);
+0CA0: FFFFFFFF A17AB144 ; 328: int Bluetooth_GetState(void);
+0CA4: FFFFFFFF A17AB144 ; 329: int Bluetooth_GetPhoneVisibility(void);
+0CA8: FFFFFFFF A17AB144 ; 32A: int Bluetooth_isBusy(void);
+0CAC: FFFFFFFF A17AB144 ; 32B: int USB_isConnected(void); 
 ;0CB0: xxxxxxxx yyyyyyyy ; 32C: void *w_diropen(const wchar_t *dir);
 ;0CB4: xxxxxxxx yyyyyyyy ; 32D: wchar_t *w_dirread(void *);
 ;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
