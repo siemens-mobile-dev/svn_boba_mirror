@@ -58,6 +58,7 @@ LIST * myList;
 LIST * myList_gprs;
 DATETIME * cur_date;
 
+int incomleted_connection=0;
 wchar_t * Money=0;
 
 //Название говорящее...
@@ -157,7 +158,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK * book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("Call Logger, v2.1\n\n(c) IronMaster"),0, 1 ,5000,msg->book);
+  MessageBox(0x6fFFFFFF,STR("Call Logger, v2.2\n\n(c) IronMaster"),0, 1 ,5000,msg->book);
   return(1);
 }
 
@@ -170,165 +171,181 @@ int BlackList(void * BlackStruct, BOOK *)
 }
 */
 
+
+void sum_traf_cost(DATETIME * cur_date)
+{
+  FSTAT _fstat;
+  wchar_t fpath[200];
+  wchar_t folder[20];
+  wstrcpy(fpath,GetDir(DIR_OTHER | MEM_EXTERNAL));
+  wstrcat(fpath,L"/Call Logger/");
+  snwprintf(folder,20,L"%04d-%02d-%02d",cur_date->date.year,cur_date->date.mon,cur_date->date.day);
+  wstrcat(fpath,folder);
+  if (fstat(fpath,L"gprs.txt",&_fstat)>=0)
+  {
+    char * buffer_gprs=new char[_fstat.fsize+2];
+    memset(buffer_gprs,0,_fstat.fsize+2);
+    int f=_fopen(fpath,L"gprs.txt",0x1,0x180,0);
+    fread(f,buffer_gprs,_fstat.fsize);
+    fclose(f);
+    wchar_t buffer_str[200];
+    if (!wstrwstr((wchar_t*)buffer_gprs,L"Total cost"))
+    {
+      int rub=0;
+      int kop=0;
+      int hex=0;
+      int len=0;
+      wchar_t temp_buf[50];
+      wchar_t * pos=(wchar_t *)buffer_gprs;
+      while (pos=wstrwstr(pos,L"cost -"))
+      {
+        pos=pos+7;
+        len=(wstrchr(pos,'.')-pos);
+        wstrncpy(temp_buf,pos,len);
+        wtoi(temp_buf,len,&hex);
+        rub=rub+hex;
+        hex=0;
+        pos=wstrchr(pos,'.')+1;
+        wstrncpy(temp_buf,pos,2);
+        wtoi(temp_buf,2,&hex);
+        kop=kop+hex;
+        hex=0;
+      }
+      rub=rub+kop/100;
+      kop=kop%100;
+      
+      pos=(wchar_t *)buffer_gprs;
+      int traf_whole=0;
+      int traf_fract=0;
+      hex=0;
+      len=0;        
+      if (TrafDiv)
+      {
+        int traf_whole_sent=0;
+        int traf_fract_sent=0;
+        int traf_whole_rec=0;
+        int traf_fract_rec=0;          
+        if (TrafKb)
+        {
+          while (pos=wstrwstr(pos,L"sent -"))
+          {
+            pos=pos+7;
+            len=(wstrchr(pos,'.')-pos);
+            wstrncpy(temp_buf,pos,len);
+            wtoi(temp_buf,len,&hex);
+            traf_whole_sent=traf_whole_sent+hex;
+            hex=0;
+            pos=wstrchr(pos,'.')+1;
+            wstrncpy(temp_buf,pos,2);
+            wtoi(temp_buf,2,&hex);
+            traf_fract_sent=traf_fract_sent+hex;
+            hex=0;
+          }
+          traf_whole_sent=traf_whole_sent+traf_fract_sent/100;
+          traf_fract_sent=traf_fract_sent%100;
+          pos=(wchar_t *)buffer_gprs;
+          while (pos=wstrwstr(pos,L"received -"))
+          {
+            pos=pos+11;
+            len=(wstrchr(pos,'.')-pos);
+            wstrncpy(temp_buf,pos,len);
+            wtoi(temp_buf,len,&hex);
+            traf_whole_rec=traf_whole_rec+hex;
+            hex=0;
+            pos=wstrchr(pos,'.')+1;
+            wstrncpy(temp_buf,pos,2);
+            wtoi(temp_buf,2,&hex);
+            traf_fract_rec=traf_fract_rec+hex;
+            hex=0;
+          }
+          traf_whole_rec=traf_whole_rec+traf_fract_rec/100;
+          traf_fract_rec=traf_fract_rec%100;
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d.%02d Kb\r\nTotal received - %d.%02d Kb\r\n\r\n",rub,kop,Money,traf_whole_sent,traf_fract_sent,traf_whole_rec,traf_fract_rec);
+        }
+        else
+        {
+          while (pos=wstrwstr(pos,L"sent -"))
+          {
+            pos=pos+7;
+            len=(wstrchr(pos,' ')-pos);
+            wstrncpy(temp_buf,pos,len);
+            wtoi(temp_buf,len,&hex);
+            traf_whole_sent=traf_whole_sent+hex;
+            hex=0;
+          }
+          pos=(wchar_t *)buffer_gprs;
+          while (pos=wstrwstr(pos,L"received -"))
+          {
+            pos=pos+11;
+            len=(wstrchr(pos,' ')-pos);
+            wstrncpy(temp_buf,pos,len);
+            wtoi(temp_buf,len,&hex);
+            traf_whole_rec=traf_whole_rec+hex;
+            hex=0;
+          }
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d b\r\nTotal received - %d b\r\n\r\n",rub,kop,Money,traf_whole_sent,traf_whole_rec);
+        }
+      }
+      else
+      {
+        if (TrafKb)
+        {
+          while (pos=wstrwstr(pos,L"traffic -"))
+          {
+            pos=pos+10;
+            len=(wstrchr(pos,'.')-pos);
+            wstrncpy(temp_buf,pos,len);
+            wtoi(temp_buf,len,&hex);
+            traf_whole=traf_whole+hex;
+            hex=0;
+            pos=wstrchr(pos,'.')+1;
+            wstrncpy(temp_buf,pos,2);
+            wtoi(temp_buf,2,&hex);
+            traf_fract=traf_fract+hex;
+            hex=0;
+          }
+          traf_whole=traf_whole+traf_fract/100;
+          traf_fract=traf_fract%100;
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d.%02d Kb\r\n\r\n",rub,kop,Money,traf_whole,traf_fract);
+        }
+        else
+        {
+          while (pos=wstrwstr(pos,L"traffic -"))
+          {
+            pos=pos+10;
+            len=(wstrchr(pos,' ')-pos);
+            wstrncpy(temp_buf,pos,len);
+            wtoi(temp_buf,len,&hex);
+            traf_whole=traf_whole+hex;
+            hex=0;
+          }
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d b\r\n\r\n",rub,kop,Money,traf_whole);
+        }
+      }
+      f=_fopen(fpath,L"gprs.txt",0x108,0x180,0);
+      fwrite(f,buffer_str,wstrlen(buffer_str)*2);
+      fclose(f);
+    }
+    delete(buffer_gprs);
+  }      
+}
+
 int onClockChange(void * r0, BOOK *)
 {
   DATETIME * datetime=new(DATETIME);
   REQUEST_DATEANDTIME_GET(SYNC,datetime);
   if (cur_date->date.day!=datetime->date.day)
   {
-    FSTAT _fstat;
-    wchar_t fpath[200];
-    wchar_t folder[20];
-    wstrcpy(fpath,GetDir(DIR_OTHER | MEM_EXTERNAL));
-    wstrcat(fpath,L"/Call Logger/");
-    snwprintf(folder,20,L"%04d-%02d-%02d",cur_date->date.year,cur_date->date.mon,cur_date->date.day);
-    wstrcat(fpath,folder);
-    if (fstat(fpath,L"gprs.txt",&_fstat)>=0)
+    if (!incomleted_connection)
     {
-      char * buffer_gprs=new char[_fstat.fsize+2];
-      memset(buffer_gprs,0,_fstat.fsize+2);
-      int f=_fopen(fpath,L"gprs.txt",0x1,0x180,0);
-      fread(f,buffer_gprs,_fstat.fsize);
-      fclose(f);
-      wchar_t buffer_str[200];
-      if (!wstrwstr((wchar_t*)buffer_gprs,L"Total cost"))
+      if (ConnectionManager_Connection_GetState())
       {
-        int rub=0;
-        int kop=0;
-        int hex=0;
-        int len=0;
-        wchar_t temp_buf[50];
-        wchar_t * pos=(wchar_t *)buffer_gprs;
-        while (pos=wstrwstr(pos,L"cost -"))
-        {
-          pos=pos+7;
-          len=(wstrchr(pos,'.')-pos);
-          wstrncpy(temp_buf,pos,len);
-          wtoi(temp_buf,len,&hex);
-          rub=rub+hex;
-          hex=0;
-          pos=wstrchr(pos,'.')+1;
-          wstrncpy(temp_buf,pos,2);
-          wtoi(temp_buf,2,&hex);
-          kop=kop+hex;
-          hex=0;
-        }
-        rub=rub+kop/100;
-        kop=kop%100;
-        
-        pos=(wchar_t *)buffer_gprs;
-        int traf_whole=0;
-        int traf_fract=0;
-        hex=0;
-        len=0;        
-        if (TrafDiv)
-        {
-          int traf_whole_sent=0;
-          int traf_fract_sent=0;
-          int traf_whole_rec=0;
-          int traf_fract_rec=0;          
-          if (TrafKb)
-          {
-            while (pos=wstrwstr(pos,L"sent -"))
-            {
-              pos=pos+7;
-              len=(wstrchr(pos,'.')-pos);
-              wstrncpy(temp_buf,pos,len);
-              wtoi(temp_buf,len,&hex);
-              traf_whole_sent=traf_whole_sent+hex;
-              hex=0;
-              pos=wstrchr(pos,'.')+1;
-              wstrncpy(temp_buf,pos,2);
-              wtoi(temp_buf,2,&hex);
-              traf_fract_sent=traf_fract_sent+hex;
-              hex=0;
-            }
-            traf_whole_sent=traf_whole_sent+traf_fract_sent/100;
-            traf_fract_sent=traf_fract_sent%100;
-            pos=(wchar_t *)buffer_gprs;
-            while (pos=wstrwstr(pos,L"received -"))
-            {
-              pos=pos+11;
-              len=(wstrchr(pos,'.')-pos);
-              wstrncpy(temp_buf,pos,len);
-              wtoi(temp_buf,len,&hex);
-              traf_whole_rec=traf_whole_rec+hex;
-              hex=0;
-              pos=wstrchr(pos,'.')+1;
-              wstrncpy(temp_buf,pos,2);
-              wtoi(temp_buf,2,&hex);
-              traf_fract_rec=traf_fract_rec+hex;
-              hex=0;
-            }
-            traf_whole_rec=traf_whole_rec+traf_fract_rec/100;
-            traf_fract_rec=traf_fract_rec%100;
-            snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d.%02d Kb\r\nTotal received - %d.%02d Kb\r\n\r\n",rub,kop,Money,traf_whole_sent,traf_fract_sent,traf_whole_rec,traf_fract_rec);
-          }
-          else
-          {
-            while (pos=wstrwstr(pos,L"sent -"))
-            {
-              pos=pos+7;
-              len=(wstrchr(pos,' ')-pos);
-              wstrncpy(temp_buf,pos,len);
-              wtoi(temp_buf,len,&hex);
-              traf_whole_sent=traf_whole_sent+hex;
-              hex=0;
-            }
-            pos=(wchar_t *)buffer_gprs;
-            while (pos=wstrwstr(pos,L"received -"))
-            {
-              pos=pos+11;
-              len=(wstrchr(pos,' ')-pos);
-              wstrncpy(temp_buf,pos,len);
-              wtoi(temp_buf,len,&hex);
-              traf_whole_rec=traf_whole_rec+hex;
-              hex=0;
-            }
-            snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d b\r\nTotal received - %d b\r\n\r\n",rub,kop,Money,traf_whole_sent,traf_whole_rec);
-          }
-        }
-        else
-        {
-          if (TrafKb)
-          {
-            while (pos=wstrwstr(pos,L"traffic -"))
-            {
-              pos=pos+10;
-              len=(wstrchr(pos,'.')-pos);
-              wstrncpy(temp_buf,pos,len);
-              wtoi(temp_buf,len,&hex);
-              traf_whole=traf_whole+hex;
-              hex=0;
-              pos=wstrchr(pos,'.')+1;
-              wstrncpy(temp_buf,pos,2);
-              wtoi(temp_buf,2,&hex);
-              traf_fract=traf_fract+hex;
-              hex=0;
-            }
-            traf_whole=traf_whole+traf_fract/100;
-            traf_fract=traf_fract%100;
-            snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d.%02d Kb\r\n\r\n",rub,kop,Money,traf_whole,traf_fract);
-          }
-          else
-          {
-            while (pos=wstrwstr(pos,L"traffic -"))
-            {
-              pos=pos+10;
-              len=(wstrchr(pos,' ')-pos);
-              wstrncpy(temp_buf,pos,len);
-              wtoi(temp_buf,len,&hex);
-              traf_whole=traf_whole+hex;
-              hex=0;
-            }
-            snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d b\r\n\r\n",rub,kop,Money,traf_whole);
-          }
-        }
-        f=_fopen(fpath,L"gprs.txt",0x108,0x180,0);
-        fwrite(f,buffer_str,wstrlen(buffer_str)*2);
-        fclose(f);
+        incomleted_connection=1;
       }
-      delete(buffer_gprs);
+      else
+      {
+        sum_traf_cost(cur_date);
+      }
     }
     memcpy(cur_date,datetime,7);
   }
@@ -597,6 +614,11 @@ int onSessionTerminated(void * r0, BOOK *)
         delete(new_buff);
       }
       fclose(f);
+      if (incomleted_connection)
+      {
+        sum_traf_cost(elem_gprs->SesEst);
+        incomleted_connection=0;
+      }
       myList_gprs_elem_Free(elem_gprs);
     }
     delete(buf_ses);
