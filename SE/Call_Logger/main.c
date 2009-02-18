@@ -616,8 +616,11 @@ int onSessionTerminated(void * r0, BOOK *)
       fclose(f);
       if (incomleted_connection)
       {
-        sum_traf_cost(elem_gprs->SesEst);
-        incomleted_connection=0;
+        if (!ConnectionManager_Connection_GetState())
+        {
+          sum_traf_cost(elem_gprs->SesEst);
+          incomleted_connection=0;
+        }
       }
       myList_gprs_elem_Free(elem_gprs);
     }
