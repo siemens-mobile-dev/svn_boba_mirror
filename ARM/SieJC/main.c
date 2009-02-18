@@ -555,7 +555,7 @@ void get_answer(void)
   j=0; //Баланс скобок
   p=Rstream_p;
   if ((strstr(p,"</stream:stream>"))&&(My_Presence == PRESENCE_OFFLINE)) QuitCallbackProc(0); //сервер потвердил завершение, можно выходить.
-  while((p=strstr(p,"<?xml version='1.0'?>"))) {i--; p++;} //Костыль - пропуск заголовков xml, для них нет закрывающих
+  while((p=strstr(p,"<?xml version='1.0'"))) {i--; p++;} //Костыль - пропуск заголовков xml, для них нет закрывающих
   p=Rstream_p;
   while((p=strstr(p,"<stream:stream"))) {i--; p++;} //Костыль - пропуск тегов stream, для них нет закрывающих (fuckin' XMPP)
 
@@ -1067,12 +1067,7 @@ void Enter_SiepatchDB()
   {
     sprintf(nick, nick_t,USERNAME);
   }
-
-  char *room_nick =ANSI2UTF8(nick, strlen(nick)*2);
-  char* room_name = ANSI2UTF8(room, strlen(room)*2);
   Enter_Conference(room, nick, NULL, DEFAULT_MUC_MSGCOUNT);
-  mfree(room_nick);
-  mfree(room_name);
 }
 
 void Disp_State()

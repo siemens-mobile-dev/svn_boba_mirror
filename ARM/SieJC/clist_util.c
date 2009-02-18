@@ -94,13 +94,10 @@ void CList_RedrawCList()
           {
             borderColor=lineColor=(Alternation==1)? CONTACT_BG_0 : CONTACT_BG_1;
           }
-
-          //ascii2ws(ClEx_name, ClEx->name);
           utf8_2ws(ClEx_name, ClEx->name, 128);
 
           if(resEx->name)
           {
-            ascii2ws(ResEx_name,resEx->name);
             utf8_2ws(ResEx_name,resEx->name, 128);
             if(resEx->entry_type==T_CONF_NODE)
             {
@@ -123,7 +120,7 @@ void CList_RedrawCList()
                            color(borderColor),  //ad: ободок
                            color(lineColor));   //ad: рисуем с чередованием... для наглядности
 
-          CutWSTR(out_ws, CHAR_ON_LINE);
+          //CutWSTR(out_ws, CHAR_ON_LINE);
           //DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0); // Перенесено дальше иконки
 
 #ifdef USE_PNG_EXT
