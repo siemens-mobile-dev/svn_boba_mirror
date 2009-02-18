@@ -480,7 +480,6 @@
 0C40: 00000000 917A4A45 ; 310: void ProgressBar_SetPercentValue(GUI*,int value);
 0C44: 00000000 D97B4A45 ; 311: void ProgressBar_SetBarDisabled(GUI*,int disabled);
 0C48: 00000000 E5064245 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
-0C48: 00000000 E5064245 ; 312: void StringInput_DispObject_SetText(DISP_OBJ *,int StrID);
 0C4C: 00000000 59884945 ; 313: void GuiObject_SetTitleImage(void *gui, wchar_t imageID);
 0C50: 00000000 F5874945 ; 314: void GuiObject_SetTitleIcon(void *gui, wchar_t imageID);
 0C54: 00000000 F9314545 ; 315: void GuiObject_SetHighlightImage(void *gui, wchar_t imageID);
@@ -496,7 +495,7 @@
 0C7C: 00000000 49200045 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 0C80: 00000000 51200045 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
 0C84: 00000000 695B4B45 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
-0C88: 00000000 D9464B45 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
+0C88: 00000000 D9464B45 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
 0C8C: 00000000 9D424B45 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 0C90: 00000000 CC6E1720 ;8324: void * get_CellData(void);
 0C94: 00000000 753AEF44 ; 325: void * IncommingCall_Reject(BOOK* book);
@@ -511,6 +510,8 @@
 0CB8: 00000000 DD7B0C45 ; 32E: int w_dirclose(void *);
 0CBC: 00000000 4DF52E45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 0CC0: 00000000 F1F42E45 ; 330: int w_remove(const wchar_t *dir);
+;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
+
 
 
 
