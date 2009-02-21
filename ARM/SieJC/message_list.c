@@ -453,7 +453,7 @@ void mGUI_onRedraw(GUI *data)
   WSHDR* ws_title = AllocWS(256);
   if (Resource_Ex->entry_type==T_CONF_NODE) utf8_2ws(ws_title, Resource_Ex->name, 256);
    else utf8_2ws(ws_title, Resource_Ex->full_name, 256);
-
+  CutWSStringWidth(ws_title,ScreenW()-1, MESSAGEWIN_FONT);
   DrawString(ws_title,1,SCR_START+1,ScreenW()-1,SCR_START+FontSize+1,MESSAGEWIN_FONT,0,color(MESSAGEWIN_TITLE_FONT),0);
 
   DISP_MESSAGE * ml = MessagesList;

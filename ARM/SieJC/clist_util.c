@@ -72,7 +72,6 @@ void CList_RedrawCList()
 
   WSHDR* ClEx_name = AllocWS(128);
   WSHDR* ResEx_name = AllocWS(128);
-
   while(ClEx)
   {
     if(ClEx->ResourceCount)
@@ -80,7 +79,6 @@ void CList_RedrawCList()
       resEx = ClEx->res_list;
       while(resEx)
       {
-
         Is_Right_Vis_Mode = (resEx->entry_type!=T_GROUP && resEx->entry_type!=T_CONF_ROOT && ClEx->IsVisible==1) || (resEx->entry_type==T_CONF_ROOT || resEx->entry_type==T_GROUP) ;
         if((i>(Active_page-1)*N_cont_disp) && ((Display_Offline  |  resEx->status!=PRESENCE_OFFLINE | resEx->has_unread_msg) && Is_Right_Vis_Mode))
         {
@@ -124,6 +122,9 @@ void CList_RedrawCList()
           //DrawString(out_ws,16,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0); // Перенесено дальше иконки
 
 #ifdef USE_PNG_EXT
+
+          CutWSStringWidth(out_ws,scr_w-Roster_getIconWidth(path_to_pic)-2, CLIST_FONT);
+          
           Roster_getIcon(path_to_pic, ClEx, resEx);
           Roster_DrawIcon(1, start_y+((font_y-Roster_getIconHeight(path_to_pic))>>1), (int)path_to_pic);
           DrawString(out_ws,Roster_getIconWidth(path_to_pic)+2,start_y+2,scr_w-1,start_y+font_y,CLIST_FONT,0,color(fcolor),0);

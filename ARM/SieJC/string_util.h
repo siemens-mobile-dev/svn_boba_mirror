@@ -57,4 +57,8 @@ void utf82win(char*d,const char *s);
 long GetIDLETime(TTime intime, TDate indate);
 
 char *utf82filename(char *str);
+
+//обрезает строку до заданой ширины
+void CutWSStringWidth(WSHDR *ws, int width, int font);
+
 #endif

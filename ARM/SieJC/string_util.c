@@ -935,6 +935,18 @@ char *utf82filename(char *str)
   return res;
 }
 
+void CutWSStringWidth(WSHDR *ws, int width, int font)
+{
+  unsigned short *wsbody=ws->wsbody;
+  int wi = 0;
+  int index=0;
+  while((wi<width)&&(index<=wsbody[0]))
+  {
+    index++;
+    wi += GetSymbolWidth(wsbody[index],font);
+  }
+  CutWSTR(ws, index-1);
+}
 
-
+//EOL,EOF
 
