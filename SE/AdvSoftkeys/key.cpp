@@ -159,7 +159,7 @@ void save()
   {
     if (fstat(GetDir(MEM_EXTERNAL+DIR_OTHER),L"Softs.txt",&fst)==0)
     {
-      JUST_BYTEARRAY *xls=(JUST_BYTEARRAY*)DispObject_Softkeys_GetParams(DISPBASE_GetFocused(0));
+      JUST_BYTEARRAY *xls=(JUST_BYTEARRAY*)bk;//DispObject_Softkeys_GetParams(DISPBASE_GetFocused(0));
       int x;
       for (x=0;x<199;x++)
       {

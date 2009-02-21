@@ -166,6 +166,14 @@ LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis)
         ret->enable[0]=get_enable(lst,left.text);
         ret->strids[1]=0x6FFFFFFF;
         ret->enable[1]=1;
+        if (get_action(lst, right.text)==ACTION_DONE && strcmp(bk->xbook->name,"Installer")==0) //поправка для окна ElfInstaller
+        {
+          ret->strids[0]=right.text;
+          ret->strids[2]=left.text;
+          int temp=ret->enable[0];
+          ret->enable[0]=ret->enable[0];
+          ret->enable[2]=temp;
+        }
         return ret;
       }
       preset_calculate(ret, bk, DO, lst, left.text, right.text);

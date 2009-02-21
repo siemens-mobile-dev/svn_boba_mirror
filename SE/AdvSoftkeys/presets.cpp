@@ -72,7 +72,7 @@ void preset_YesNo(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOO
     int ct=0;
     if (left!=0x6FFFFFFF)ct++;
     if (right!=0x6FFFFFFF)ct++;
-    if (ct==2)//nt==2 && left!=0x6FFFFFFF && right!=0x6FFFFFFF)
+    if (ct==2)
     {
       if (act==ACTION_YES || act==ACTION_ACCEPT)
       {
@@ -89,7 +89,7 @@ void preset_YesNo(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOO
         lbl->enable[2]=get_enable(lst, left);
       }
     }
-    else if (ct==1)// && right==0x6FFFFFFF)
+    else if (ct==1)
     {
       lbl->strids[2]=left;
       lbl->enable[2]=get_enable(lst, left);
@@ -146,7 +146,7 @@ void preset_default(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyB
   lbl->enable[0]=get_enable(lst,right);
   if (right==0x6FFFFFFF)
   {
-    if (act1==ACTION_BACK || act1==ACTION_CANCEL || act1==ACTION_NO || act1==0x3EA)
+    if (act1==ACTION_BACK || act1==ACTION_CANCEL || act1==ACTION_NO)
     {
       lbl->strids[2]=left;
       lbl->enable[2]=get_enable(lst, left);
@@ -164,7 +164,7 @@ void preset_default(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyB
       lbl->enable[0]=false;
     }
   }
-  if (get_action(lst, right)==ACTION_DONE) //поправка для окна ElfInstaller
+  if (get_action(lst, right)==ACTION_DONE)
   {
     lbl->strids[1]=right;
     lbl->strids[0]=left;

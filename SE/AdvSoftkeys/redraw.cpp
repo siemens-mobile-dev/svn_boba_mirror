@@ -9,6 +9,8 @@ typedef struct
 {
   char unk[0x18];
   char type;
+  char unk1[3];
+  void *defmenu;
 }MBOOK;
 
 DISP_OBJ *soft=0;
@@ -91,7 +93,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
   if (lastitem){ if (lastitem->style==2) return 0; }
   int stat=GetOrientation(bk);
   SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_Softkeys_GetParams(foc);
-  if (xls->visible_softs_count==3)return 0;
+  if (xls->visible_softs_count==3 && bk!=Find_StandbyBook())return 0;
   void *GC=get_DisplayGC();
   if (!GC)return 1;
   if (bk==FindBook(isMenuBook))
@@ -99,9 +101,12 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     MBOOK *mb=(MBOOK*)bk;
     if (mb->type==0)
     {
-      if (images[DESKTOP]!=0xFFFF)
+      if (mb->defmenu)
       {
-        putchar(GC,0,SoftSize-height,0,0,images[DESKTOP]);
+        if (images[DESKTOP]!=0xFFFF)
+        {
+          putchar(GC,0,SoftSize-height,0,0,images[DESKTOP]);
+        }
       }
     }
     else
@@ -272,11 +277,18 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
     vis = xls->visible_softs_count;
     if (vis==3)
     {
-      if (lastitem)
+      if (bk!=Find_StandbyBook())
       {
-        lastitem->type=T_3SK_LAYOUT;
+        if (lastitem)
+        {
+          lastitem->type=T_3SK_LAYOUT;
+        }
+        return;
       }
-      return;
+      else
+      {
+        if (lastitem)lastitem->type=T_STANDBY;
+      }
     }
     else if (vis==0xFFFF || vis==0)
     {
