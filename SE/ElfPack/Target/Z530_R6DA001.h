@@ -20,13 +20,13 @@
 #define PATH_OTHER_EXT 0x4462BB64
 
 #define PATH_ELF_ROOT_INT     (L"/usb/other/ZBin")
-#define PATH_ELF_ROOT_EXT     (L"/usb/other/ZBin")
+#define PATH_ELF_ROOT_EXT     (L"/card/MSSEMC/Media files/other/ZBin")
 #define PATH_ELF_INT          (L"/usb/other/ZBin")
-#define PATH_ELF_EXT          (L"/usb/other/ZBin")
+#define PATH_ELF_EXT          (L"/card/MSSEMC/Media files/other/ZBin")
 #define PATH_ELF_DAEMONS_INT  (L"/usb/other/ZBin/Daemons")
-#define PATH_ELF_DAEMONS_EXT  (L"/usb/other/ZBin/Daemons")
+#define PATH_ELF_DAEMONS_EXT  (L"/card/MSSEMC/Media files/other/ZBin/Daemons")
 #define PATH_ELF_CONFIG_INT   (L"/usb/other/ZBin/Config")
-#define PATH_ELF_CONFIG_EXT   (L"/usb/other/ZBin/Config")
+#define PATH_ELF_CONFIG_EXT   (L"/card/MSSEMC/Media files/other/ZBin/Config")
 #define PATH_INI              (L"/usb/other/ini")
 #define PATH_DEFAULT          (L"/usb/other")
 
