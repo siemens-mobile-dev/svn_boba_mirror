@@ -42,6 +42,9 @@
   #define COLOR_MSG "Цвет"
   #define PHONE_OTHER_MSG "Для других телефонов..."
   #define ITEMS_MSG "Чем напоминать"
+  #define REDLED_MSG "Красный светодиод"
+  #define ONTIME_MSG "Время во вкл. сост.(мсек)"
+  #define OFFTIME_MSG "Время в выкл. сост.(мсек)"
 #else
   #define CHECK_MSG "Check period (sec)"
   #define PRE_TIME_MSG "Pre Time (sec)"
@@ -81,6 +84,9 @@
   #define COLOR_MSG "Color"
   #define PHONE_OTHER_MSG "For other phone..."
   #define ITEMS_MSG "Items included"
+  #define REDLED_MSG "Red LED"
+  #define ONTIME_MSG "On time (ms)"
+  #define OFFTIME_MSG "Off time (ms)"
 #endif
 
 __root const CFG_HDR cfghdr_times_0={CFG_LEVEL,TIMES_MSG,1,0};
@@ -129,6 +135,21 @@ __root const CFG_HDR cfghdr_flash_0={CFG_LEVEL,FLASH_MSG "...",1,0};
   __root const CFG_HDR cfghdr_flash_blink_speed={CFG_UINT,FREQ_MSG,25,125};
   __root const int cfg_flash_blink_speed = 75;
 __root const CFG_HDR cfghdr_flash_x={CFG_LEVEL,"",0,0};
+
+__root const CFG_HDR cfghdr_redled_0={CFG_LEVEL,REDLED_MSG "...",1,0};
+  //Напоминать миганием светодиода (1 - вкл, 0 - выкл)
+  __root const CFG_HDR cfghdr_redled_1={CFG_CHECKBOX,IS_ENABLED_MSG,0,0};
+  __root const int cfg_redled=0;
+  //Длительность мигания в сек 
+  __root const CFG_HDR cfghdr_redled_2={CFG_UINT,TIME_MSG,1,1000};
+  __root const unsigned int cfg_redled_time=3;
+  //Время во вкл. сост.(мсек)
+  __root const CFG_HDR cfghdr_opt_redled_3={CFG_UINT,ONTIME_MSG,1,10000};
+  __root const int cfg_redled_ontime = 150;
+  //Время в выкл. сост.(мсек)
+  __root const CFG_HDR cfghdr_opt_redled_4={CFG_UINT,OFFTIME_MSG,1,10000};
+  __root const int cfg_redled_offtime = 150;
+__root const CFG_HDR cfghdr_redled_x={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_led_0={CFG_LEVEL,LED_MSG "...",1,0};
   //Напоминать миганием светодиода (1 - вкл, 0 - выкл)
@@ -191,11 +212,13 @@ __root const CFG_HDR cfghdr_time_1_0={CFG_LEVEL,TIME_LIMIT_MSG " 1...",1,0};
     __root const int cfg_time1_vibra=1;
     __root const CFG_HDR cfghdr_time_1_7={CFG_CHECKBOX,FLASH_MSG,0,0};
     __root const int cfg_time1_flash=1;
-    __root const CFG_HDR cfghdr_time_1_8={CFG_CHECKBOX,LED_MSG,0,0};
+    __root const CFG_HDR cfghdr_time_1_8={CFG_CHECKBOX,REDLED_MSG,0,0};
+    __root const int cfg_time1_redled=1;
+    __root const CFG_HDR cfghdr_time_1_9={CFG_CHECKBOX,LED_MSG,0,0};
     __root const int cfg_time1_leds=1;
-    __root const CFG_HDR cfghdr_time_1_9={CFG_CHECKBOX,SCREEN_MSG,0,0};
+    __root const CFG_HDR cfghdr_time_1_10={CFG_CHECKBOX,SCREEN_MSG,0,0};
     __root const int cfg_time1_screen=1;
-  __root const CFG_HDR cfghdr_time_1_10={CFG_LEVEL,"",0,0};
+  __root const CFG_HDR cfghdr_time_1_11={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_time_1_x={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_time_2_0={CFG_LEVEL,TIME_LIMIT_MSG " 2...",1,0};
@@ -215,11 +238,13 @@ __root const CFG_HDR cfghdr_time_2_0={CFG_LEVEL,TIME_LIMIT_MSG " 2...",1,0};
     __root const int cfg_time2_vibra=1;
     __root const CFG_HDR cfghdr_time_2_7={CFG_CHECKBOX,FLASH_MSG,0,0};
     __root const int cfg_time2_flash=1;
-    __root const CFG_HDR cfghdr_time_2_8={CFG_CHECKBOX,LED_MSG,0,0};
+    __root const CFG_HDR cfghdr_time_2_8={CFG_CHECKBOX,REDLED_MSG,0,0};
+    __root const int cfg_time2_redled=1;
+    __root const CFG_HDR cfghdr_time_2_9={CFG_CHECKBOX,LED_MSG,0,0};
     __root const int cfg_time2_leds=1;
-    __root const CFG_HDR cfghdr_time_2_9={CFG_CHECKBOX,SCREEN_MSG,0,0};
+    __root const CFG_HDR cfghdr_time_2_10={CFG_CHECKBOX,SCREEN_MSG,0,0};
     __root const int cfg_time2_screen=1;
-  __root const CFG_HDR cfghdr_time_2_10={CFG_LEVEL,"",0,0};
+  __root const CFG_HDR cfghdr_time_2_11={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr_time_2_x={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_mode_0={CFG_LEVEL,MODE_MSG,1,0};

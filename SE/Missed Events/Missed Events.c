@@ -5,9 +5,9 @@
 #include "config_data.h"
 #include "util.h"
 
-#define ELFNAME "MissedEvents"
+#define ELFNAME "MissedEvents v.2.3"
 #define LELFNAME L"Missed Events"
-#define LELFVERSION L"\nv2.0.10\nby den_po\n\nMods: Ploik & BigHercules"
+#define LELFVERSION L"\nv2.3\nby den_po\n\nMods: Ploik & BigHercules"
 
 void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay)=(void (*)(int,int id,int RED,int GREEN,int BLUE,int br,int delay))(0x4529BFA9);
 
@@ -24,12 +24,14 @@ bool disabled_by_mode=false;
 bool sound_disabled_by_time = false;
 bool vibra_disabled_by_time = false;
 bool flash_disabled_by_time = false;
+bool redled_disabled_by_time = false;
 bool led_disabled_by_time = false;
 bool screen_disabled_by_time = false;
 
 int lamp=0;
 int screen=0;
 
+int REDLED=0;
 int LED=0;
 int LED580=1;
 int LEDnum=2;
@@ -39,11 +41,13 @@ wchar_t cfg_filename[256];
 
 u16 timerFlash = 0;
 u16 timerScreen = 0;
+u16 timerREDLED = 0;
 u16 timerLED = 0;
 u16 timer = 0;
 u16 offtimer = 0;
 u16 offtimerScreen = 0;
 u16 offtimerLED = 0;
+u16 offtimerREDLED = 0;
 u16 modetimer = 0;
 
 int cfg_time1_flag = 1;
@@ -74,6 +78,22 @@ int timecmp(const TIME *t1, const TIME *t2)
     if(t1->min > t2->min) return 1;
     if(t1->min < t2->min) return -1;
     return 0;
+}
+
+void onTimerREDLED(u16 timerID, LPARAM lparam)
+{
+  if(REDLED == 0)
+  {
+    REDLED = 1;
+    RedLED_On(0);
+    Timer_ReSet(&timerREDLED,cfg_redled_ontime,onTimerREDLED,0);
+  }
+  else
+  {
+    REDLED = 0;
+    RedLED_Off(0);
+    Timer_ReSet(&timerREDLED,cfg_redled_offtime,onTimerREDLED,0);
+  }
 }
 
 void onTimerLED(u16 timerID, LPARAM lparam)
@@ -130,6 +150,17 @@ void onTimerScreen(u16 timerID, LPARAM lparam)
 {
     IndicationDevice_Backlight_FadeToLevel(0,screen ^= cfg_screen_level);
     Timer_ReSet(&timerScreen,cfg_screen_blink_speed,onTimerScreen,0);
+}
+
+void offTimerREDLED(u16 timerID, LPARAM lparam)
+{
+   if(timerREDLED)
+   {
+     Timer_Kill(&timerREDLED);
+     timerREDLED = 0;
+     RedLED_Off(0);
+   }
+   REDLED = 0;
 }
 
 void offTimerLED(u16 timerID, LPARAM lparam)
@@ -218,6 +249,7 @@ void onTimer(u16 timerID, LPARAM lparam)
       sound_disabled_by_time  =
       vibra_disabled_by_time  =
       flash_disabled_by_time  =
+      redled_disabled_by_time =
       led_disabled_by_time    =
       screen_disabled_by_time = false;
     }
@@ -226,6 +258,7 @@ void onTimer(u16 timerID, LPARAM lparam)
       sound_disabled_by_time  =
       vibra_disabled_by_time  =
       flash_disabled_by_time  =
+      redled_disabled_by_time =
       led_disabled_by_time    =
       screen_disabled_by_time = true;
 
@@ -234,6 +267,7 @@ void onTimer(u16 timerID, LPARAM lparam)
         sound_disabled_by_time  = (cfg_time1_sound)  ? false : true;
         vibra_disabled_by_time  = (cfg_time1_vibra)  ? false : true;
         flash_disabled_by_time  = (cfg_time1_flash)  ? false : true;
+        redled_disabled_by_time = (cfg_time1_redled) ? false : true;
         led_disabled_by_time    = (cfg_time1_leds)   ? false : true;
         screen_disabled_by_time = (cfg_time1_screen) ? false : true;
       }
@@ -242,6 +276,7 @@ void onTimer(u16 timerID, LPARAM lparam)
         sound_disabled_by_time  = (cfg_time2_sound)  ? false : true;
         vibra_disabled_by_time  = (cfg_time2_vibra)  ? false : true;
         flash_disabled_by_time  = (cfg_time2_flash)  ? false : true;
+        redled_disabled_by_time = (cfg_time2_redled) ? false : true;
         led_disabled_by_time    = (cfg_time2_leds)   ? false : true;
         screen_disabled_by_time = (cfg_time2_screen) ? false : true;
       }
@@ -289,7 +324,8 @@ void onTimer(u16 timerID, LPARAM lparam)
             }
             if(GetVibrator(0,0) && (cfg_vibra==1) && (!vibra_disabled_by_time))
             {
-                PAudioControl pAC = *GetAudioControlPtr();
+                PAudioControl pAC = AudioControl_Init();
+                if( !pAC ) pAC = *GetAudioControlPtr();
                 AudioControl_Vibrate(pAC, 400, 50, cfg_vibra_time*1000);
             }
             if((cfg_flash==1) && (!flash_disabled_by_time))
@@ -311,6 +347,11 @@ void onTimer(u16 timerID, LPARAM lparam)
             {
                 timerLED=Timer_Set(70,onTimerLED,0);
                 offtimerLED=Timer_Set(cfg_led_time*1000,offTimerLED,0);
+            }
+            if((cfg_redled==1) && (!redled_disabled_by_time))
+            {
+                timerREDLED=Timer_Set(70,onTimerREDLED,0);
+                offtimerREDLED=Timer_Set(cfg_redled_time*1000,offTimerREDLED,0);
             }
         }
         else
@@ -392,7 +433,9 @@ void bookOnDestroy(BOOK * book)
         if(timerFlash) offTimerFlash(0,0);
         if(timerScreen) offTimerScreen(0,0);
         if(offtimer) Timer_Kill(&offtimer);
+        if(timerREDLED) offTimerREDLED(0,0);
         if(timerLED) offTimerLED(0,0);
+        if(offtimerREDLED) Timer_Kill(&offtimerREDLED);
         if(offtimerLED) Timer_Kill(&offtimerLED);
         if(offtimerScreen) Timer_Kill(&offtimerScreen);
         if(modetimer) Timer_Kill(&modetimer);
@@ -449,7 +492,6 @@ static int onReconfigElf(void *mess ,BOOK *book)
   }
   return(result);
 }
-
 
 const PAGE_MSG evtlist[] @ "DYN_PAGE"=
 {
@@ -521,7 +563,12 @@ int main(wchar_t* filename)
 
 /*
   Revision history
-  2.0.10
+  2.3
+     + Добавлено мигание красным светодиодом
+  2.2
+     + Использование функции AudioControl_Init
+     + Устранена утечка памяти.
+  2.1
      + Устранена утечка памяти
   2.0.9
      + Использование функции AudioControl_Vibrate вместо Vibra
