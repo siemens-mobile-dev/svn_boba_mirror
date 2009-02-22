@@ -160,7 +160,7 @@
 0710: FFFFFFFF 3D6A0D45 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF 3D3D5845 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF 4D3D5845 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 89680D45 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: FFFFFFFF D1680D45 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF 69025445 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF 4D3A5845 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF 1DDD0845 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
