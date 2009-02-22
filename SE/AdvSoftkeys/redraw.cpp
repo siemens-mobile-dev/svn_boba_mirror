@@ -36,8 +36,8 @@ LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis);
 
 int GetOrientation(BOOK *bk);
 void __getitem(BOOK *bk);
-void DrawHighlightID2(int font,int text,int ct, int XPos, int YPos, int borderColor, int NormalColor);
-void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor);
+void DrawHighlightID2(int font,int text,int ct, int XPos, int YPos, int borderColor, int NormalColor, bool);
+void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor, bool);
 
 void GetSize()
 {
@@ -62,7 +62,7 @@ void GetSize()
     break;
   }
 };
-
+/*
 char *books[]={"MM_Browser",
                "ImageViewerBook",
                "AudioPlayerBook"};
@@ -83,7 +83,7 @@ int NotSupported(BOOK *bk)
   }
   return 0;
 };
-
+*/
 int ourredraw(DISP_OBJ *DO, int a, int b, int c)
 {
   if (!works) return 0;
@@ -134,7 +134,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
   else
   { 
     if (DB==2010)goto L_draw;
-    if (NotSupported(bk)==false && xls && xls->background==0 && stat==0)
+    if (xls->background==0 && stat==0)//NotSupported(bk)==false && xls && xls->background==0 && stat==0)
     {
     L_draw:
       if (images[NAVIGATION]!=0xFFFF)
@@ -171,7 +171,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
       pressed[1]=false;
       pressed[0]=true;
     }
-    if (bk!=FindBook(isImageViewerBook) && !FindBook(isMMBrowserBook) && bk!=FindBook(isAudioPlayerBook()) && bk!=FindBook(isMediaPlayerVideoBook()) && NotSupported(bk)==false && xls->background==0 && stat==0)
+    if (xls->background==0)//bk!=FindBook(isImageViewerBook) && !FindBook(isMMBrowserBook) && bk!=FindBook(isAudioPlayerBook()) && bk!=FindBook(isMediaPlayerVideoBook()) && NotSupported(bk)==false && xls->background==0 && stat==0)
     {
     L_draw2:
       if (pressed[0] && images[LEFT_PRESSED]!=0xFFFF && lastitem->lbls[0] && lastitem->type>T_STANDBY)
@@ -207,7 +207,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     }
     b=clBlack;
     if (uic && color)c=color;
-    if (bk==FindBook(isImageViewerBook))
+    if (xls->background==1)//bk==FindBook(isImageViewerBook))
     {
       if (pressed[x])
       {
@@ -228,7 +228,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     {
       int pos=sk[x].y-(height-SoftSize);
       if (pressed[x])pos++;
-      DrawHighlightID2(sk[x].font, lbl->strids[x], sk[x].ct, sk[x].x, pos, b, c);
+      DrawHighlightID2(sk[x].font, lbl->strids[x], sk[x].ct, sk[x].x, pos, b, c, xls->background);
     }
     else
     {
@@ -242,7 +242,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
         b=clBlack;
         c=clWhite;
       }
-      DrawHighlightID(sk[x].hfont,lbl->strids[x],sk[x].hct,sk[x].hx,sk[x].hy,height-DISP_OBJ_GetWindowWidth(DO),width,b, c);
+      DrawHighlightID(sk[x].hfont,lbl->strids[x],sk[x].hct,sk[x].hx,sk[x].hy,height-DISP_OBJ_GetWindowWidth(DO),width,b, c, xls->background);
     }
   }
 };

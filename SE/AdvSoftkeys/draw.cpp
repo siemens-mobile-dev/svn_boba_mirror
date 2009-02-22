@@ -2,7 +2,7 @@
 #include "..\\include\Dir.h" 
 
 extern int SoftSize;
-void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor)
+void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor, bool extshadow)
 {
   if (text && text!=0x6FFFFFFF)
   {
@@ -23,12 +23,26 @@ void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos,
       XPos=-500-last;
     }
     SetFont(font);
-    DrawString(text,CEN,XPos+1,YPos+1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
+    if (!extshadow)
+    {
+      DrawString(text,CEN,XPos+1,YPos+1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
+    }
+    else
+    {
+      DrawString(text,CEN,XPos-1,YPos-1,MaxXPos-1,MaxYPos-1,60,0x05,borderColor,borderColor);
+      DrawString(text,CEN,XPos-1,YPos,MaxXPos-1,MaxYPos,60,0x05,borderColor,borderColor);
+      DrawString(text,CEN,XPos-1,YPos+1,MaxXPos-1,MaxYPos+1,60,0x05,borderColor,borderColor);
+      DrawString(text,CEN,XPos,YPos-1,MaxXPos,MaxYPos-1,60,0x05,borderColor,borderColor);
+      DrawString(text,CEN,XPos,YPos+1,MaxXPos,MaxYPos+1,60,0x05,borderColor,borderColor);
+      DrawString(text,CEN,XPos+1,YPos-1,MaxXPos+1,MaxYPos-1,60,0x05,borderColor,borderColor);
+      DrawString(text,CEN,XPos+1,YPos,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
+      DrawString(text,CEN,XPos+1,YPos+1,MaxXPos+1,MaxYPos+1,60,0x05,borderColor,borderColor);
+    }
     DrawString(text,CEN,XPos,YPos,MaxXPos,MaxYPos,60,0x05,NormalColor,NormalColor);
   }
 };
 
-void DrawHighlightID2(int font,int text,int ct, int XPos, int YPos, int borderColor, int NormalColor)
+void DrawHighlightID2(int font,int text,int ct, int XPos, int YPos, int borderColor, int NormalColor, bool extshadow)
 {
   if (text && text!=0x6FFFFFFF)
   {
@@ -49,7 +63,21 @@ void DrawHighlightID2(int font,int text,int ct, int XPos, int YPos, int borderCo
       XPos=-500;
     }
     MaxYPos=SoftSize;
-    DrawString(text,ct,XPos+1,YPos+1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
+    if (!extshadow)
+    {
+      DrawString(text,ct,XPos+1,YPos+1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
+    }
+    else
+    {
+      DrawString(text,ct,XPos-1,YPos-1,MaxXPos-1,MaxYPos-1,60,0x05,borderColor,borderColor);
+      DrawString(text,ct,XPos-1,YPos,MaxXPos-1,MaxYPos,60,0x05,borderColor,borderColor);
+      DrawString(text,ct,XPos-1,YPos+1,MaxXPos-1,MaxYPos+1,60,0x05,borderColor,borderColor);
+      DrawString(text,ct,XPos,YPos-1,MaxXPos,MaxYPos-1,60,0x05,borderColor,borderColor);
+      DrawString(text,ct,XPos,YPos+1,MaxXPos,MaxYPos+1,60,0x05,borderColor,borderColor);
+      DrawString(text,ct,XPos+1,YPos-1,MaxXPos+1,MaxYPos-1,60,0x05,borderColor,borderColor);
+      DrawString(text,ct,XPos+1,YPos,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
+      DrawString(text,ct,XPos+1,YPos+1,MaxXPos+1,MaxYPos+1,60,0x05,borderColor,borderColor);
+    }
     DrawString(text,ct,XPos,YPos,MaxXPos,MaxYPos,30,5,NormalColor,NormalColor);
   }
 };
