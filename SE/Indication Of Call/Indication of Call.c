@@ -4,10 +4,9 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Indication of Call"
+#define ELFNAME "Indication of Call v.2.3"
 #define LELFNAME L"Indication of Call"
-#define LELFVERSION L"\nv2.0.8\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan"
-#define LINIFILENAME _T("Indication.ini")
+#define LELFVERSION L"\nv2.3\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan"
 
 void (*LEDControl_W580)(int,int id,int RED,int GREEN,int BLUE, int br, int delay)=(void (*)(int,int id,int RED,int GREEN,int BLUE,int br,int delay))(0x4529BFA9);
 
@@ -21,16 +20,22 @@ static char myappname[]=ELFNAME;
 int lamp = 0;
 int screen=0;
 u16 timerFlash = 0;
+u16 timerREDLED = 0;
 u16 timerLED = 0;
 u16 timerScreen = 0;
 u16 vibraminutetimer = 0;
 u16 vibraNminutetimer = 0;
 u16 offtimer = 0;
+u16 offtimerREDLED = 0;
 u16 offtimerLED = 0;
 u16 offtimerScreen = 0;
 
+u16 rejectTimer = 0;
+u16 muteTimer = 0;
+
 int skipevents;
 int checkevents;
+int REDLED=0;
 int LED=0;
 int LED580=1;
 int LEDnum=2;
@@ -39,7 +44,32 @@ int connect=0;
 
 void offTimerFlash(u16 timerID, LPARAM lparam);
 void offTimerLED(u16 timerID, LPARAM lparam);
+void offTimerREDLED(u16 timerID, LPARAM lparam);
 void offTimerScreen(u16 timerID, LPARAM lparam);
+
+int isMTCallBook(BOOK *bk)
+{
+  if (strcmp(bk->xbook->name,"MTCallBook")==0) { return 1; }
+  else { return 0; }
+};
+
+void onRejectTimer(u16 timerID, LPARAM lparam)
+{
+  BOOK *bk = FindBook(isMTCallBook);
+  if(bk)
+  {
+    IncommingCall_Reject(bk);
+  }
+}
+
+void onMuteTimer(u16 timerID, LPARAM lparam)
+{
+  BOOK *bk = FindBook(isMTCallBook);
+  if(bk)
+  {
+    IncommingCall_Mute(bk);
+  }
+}
 
 int DisableUP(UI_MESSAGE*)
 {
@@ -50,6 +80,10 @@ int DisableUP(UI_MESSAGE*)
   if((incom==1) && (cfg_led_silent==0))
   {
      offTimerLED(0,0);
+  }
+  if((incom==1) && (cfg_redled_silent==0))
+  {
+     offTimerREDLED(0,0);
   }
   if((incom==1) && (cfg_screen_silent==0))
   {
@@ -67,6 +101,10 @@ int DisableDOWN(UI_MESSAGE*)
   {
      offTimerLED(0,0);
   }
+  if((incom==1) && (cfg_redled_silent==0))
+  {
+     offTimerREDLED(0,0);
+  }
   if((incom==1) && (cfg_screen_silent==0))
   {
      offTimerScreen(0,0);
@@ -82,6 +120,17 @@ void offTimerFlash(u16 timerID, LPARAM lparam)
     timerFlash = 0;
     SetLampLevel(0);
   }
+}
+
+void offTimerREDLED(u16 timerID, LPARAM lparam)
+{
+   if(timerREDLED)
+   {
+     Timer_Kill(&timerREDLED);
+     timerREDLED = 0;
+     RedLED_Off(0);
+   }
+   REDLED = 0;
 }
 
 void offTimerLED(u16 timerID, LPARAM lparam)
@@ -118,14 +167,16 @@ void offTimerScreen(u16 timerID, LPARAM lparam)
 
 void onVibraMinuteTimer(u16 timerID, LPARAM lparam)
 {
-   PAudioControl pAC = *GetAudioControlPtr();
+   PAudioControl pAC = AudioControl_Init();
+   if( !pAC ) pAC = *GetAudioControlPtr();
    AudioControl_Vibrate(pAC, 400, 50, cfg_vibra_at_minute_end_time);
    Timer_ReSet(&vibraminutetimer,60000,onVibraMinuteTimer,0);
 }
 
 void onVibraNMinuteTimer(u16 timerID, LPARAM lparam)
 {
-   PAudioControl pAC = *GetAudioControlPtr();
+   PAudioControl pAC = AudioControl_Init();
+   if( !pAC ) pAC = *GetAudioControlPtr();
    AudioControl_Vibrate(pAC, 400, 50, cfg_vibra_at_n_minute_end_time);
 }
 
@@ -147,6 +198,22 @@ void onTimerFlash(u16 timerID, LPARAM lparam)
         break;
     }
     Timer_ReSet(&timerFlash,cfg_flash_blink_speed,onTimerFlash,0);
+}
+
+void onTimerREDLED(u16 timerID, LPARAM lparam)
+{
+  if(REDLED == 0)
+  {
+    REDLED = 1;
+    RedLED_On(0);
+    Timer_ReSet(&timerREDLED,cfg_redled_ontime,onTimerREDLED,0);
+  }
+  else
+  {
+    REDLED = 0;
+    RedLED_Off(0);
+    Timer_ReSet(&timerREDLED,cfg_redled_offtime,onTimerREDLED,0);
+  }
 }
 
 void onTimerLED(u16 timerID, LPARAM lparam)
@@ -198,19 +265,29 @@ void bookOnDestroy(BOOK * book)
         offTimerFlash(0,0);
     }
     if(offtimer) Timer_Kill(&offtimer);
+    if(offtimerREDLED)
+    {
+        Timer_Kill(&offtimerREDLED);
+        offTimerREDLED(0,0);
+    }
     if(offtimerLED)
     {
         Timer_Kill(&offtimerLED);
         offTimerLED(0,0);
     }
     {
-        PAudioControl pAC = *GetAudioControlPtr();
+        PAudioControl pAC = AudioControl_Init();
+        if( !pAC ) pAC = *GetAudioControlPtr();
         AudioControl_Vibrate(pAC, 0, 0, 0);
     }
     if(timerScreen) offTimerScreen(0,0);
     if(offtimerScreen) Timer_Kill(&offtimerScreen);
     if(vibraminutetimer) Timer_Kill(&vibraminutetimer);
     if(vibraNminutetimer) Timer_Kill(&vibraNminutetimer);
+
+    if(rejectTimer) Timer_Kill(&rejectTimer);
+    if(muteTimer) Timer_Kill(&muteTimer);
+
     ModifyUIHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0);
     ModifyUIHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0);
     StatusIndication_ShowNotes(0x6FFFFFFF);
@@ -224,7 +301,7 @@ int onExit(void* r0,BOOK* b)
     return 1;
 }
 
-int onAbout(void* mess,BOOK* b)
+int onAbout(void* mess, BOOK* b)
 {
     MessageBox(0x6fFFFFFF,Str2ID( LELFNAME LELFVERSION,0,SID_ANY_LEN),0xFFFF, 1 ,5000, *(BOOK**)mess);
     return 1;
@@ -244,13 +321,19 @@ int Connect(void* r0,BOOK* b)
 {
     if(cfg_vibraring==1)
     {
-        PAudioControl pAC = *GetAudioControlPtr();
+        PAudioControl pAC = AudioControl_Init();
+        if( !pAC ) pAC = *GetAudioControlPtr();
         AudioControl_Vibrate(pAC, 400, 50, cfg_vibraring_time);
     }
     if(cfg_flashring==1)
     {
         timerFlash=Timer_Set(70,onTimerFlash,0);
         offtimer=Timer_Set(cfg_flashring_time*1000,offTimerFlash,0);
+    }
+    if(cfg_redledring==1)
+    {
+        timerREDLED=Timer_Set(cfg_redled_ontime,onTimerREDLED,0);
+        offtimerREDLED=Timer_Set(cfg_redledring_time*1000,offTimerREDLED,0);
     }
     if(cfg_ledring==1)
     {
@@ -274,7 +357,8 @@ int OnCallManagerEvent(void* r0,BOOK* b)
         {
             if(GetVibrator(0,0) && (cfg_vibra==0))
             {
-                PAudioControl pAC = *GetAudioControlPtr();
+                PAudioControl pAC = AudioControl_Init();
+                if( !pAC ) pAC = *GetAudioControlPtr();
                 AudioControl_Vibrate(pAC, 0, 0, 0);
             }
             if(cfg_flash==1)
@@ -282,6 +366,11 @@ int OnCallManagerEvent(void* r0,BOOK* b)
                 timerFlash=Timer_Set(cfg_flash_blink_speed,onTimerFlash,0);
                 if(cfg_flash_time > 0) offtimer=Timer_Set(cfg_flash_time*1000,offTimerFlash,0);
                 incom=1;
+            }
+            if(cfg_redled==1)
+            {
+                timerREDLED=Timer_Set(cfg_redled_ontime,onTimerREDLED,0);
+                if(cfg_redled_time > 0) offtimerREDLED=Timer_Set(cfg_redled_time*1000,offTimerREDLED,0);
             }
             if(cfg_led==1)
             {
@@ -292,6 +381,14 @@ int OnCallManagerEvent(void* r0,BOOK* b)
             {
                 timerScreen=Timer_Set(cfg_screen_blink_speed,onTimerScreen,0);
                 if(cfg_screen_time > 0) offtimerScreen=Timer_Set(cfg_screen_time*1000,offTimerScreen,0);
+            }
+            if(cfg_reject_time)
+            {
+                rejectTimer=Timer_Set(cfg_reject_time*1000,onRejectTimer,0);
+            }
+            if(cfg_mute_time && (!GetSilent()))
+            {
+                muteTimer=Timer_Set(cfg_mute_time*1000,onMuteTimer,0);
             }
             break;
         }
@@ -304,13 +401,19 @@ int OnCallManagerEvent(void* r0,BOOK* b)
 
             if((cfg_vibracon==1) && (incom==0))
             {
-                PAudioControl pAC = *GetAudioControlPtr();
+                PAudioControl pAC = AudioControl_Init();
+                if( !pAC ) pAC = *GetAudioControlPtr();
                 AudioControl_Vibrate(pAC, 400, 50, cfg_vibracon_time);
             }
             if((cfg_flashcon==1) && (incom==0))
             {
                 timerFlash=Timer_Set(cfg_flash_blink_speed,onTimerFlash,0);
                 offtimer=Timer_Set(cfg_flashcon_time*1000,offTimerFlash,0);
+            }
+            if((cfg_redledcon==1) && (incom==0))
+            {
+                timerREDLED=Timer_Set(cfg_redled_ontime,onTimerREDLED,0);
+                offtimerREDLED=Timer_Set(cfg_redledcon_time*1000,offTimerREDLED,0);
             }
             if((cfg_ledcon==1) && (incom==0))
             {
@@ -338,13 +441,19 @@ int OnCallManagerEvent(void* r0,BOOK* b)
         {
             if(cfg_vibraon==1)
             {
-                PAudioControl pAC = *GetAudioControlPtr();
+                PAudioControl pAC = AudioControl_Init();
+                if( !pAC ) pAC = *GetAudioControlPtr();
                 AudioControl_Vibrate(pAC, 400, 50, cfg_vibraon_time);
             }
             if(cfg_flashon==1)
             {
                 timerFlash=Timer_Set(cfg_flash_blink_speed,onTimerFlash,0);
                 offtimer=Timer_Set(cfg_flashon_time*1000,offTimerFlash,0);
+            }
+            if(cfg_redledon==1)
+            {
+                timerREDLED=Timer_Set(cfg_redled_ontime,onTimerREDLED,0);
+                offtimerREDLED=Timer_Set(cfg_redledon_time*1000,offTimerREDLED,0);
             }
             if(cfg_ledon==1)
             {
@@ -362,12 +471,14 @@ int OnCallManagerEvent(void* r0,BOOK* b)
         case CALLMANAGER_CALL_TERMINATED:
         {
             if(cfg_flash  == 1) offTimerFlash(0,0);
+            if(cfg_redled == 1) offTimerREDLED(0,0);
             if(cfg_led    == 1) offTimerLED(0,0);
             if(cfg_screen == 1) offTimerScreen(0,0);
 
             if((cfg_vibraend == 1) && (connect == 1))
             {
-                PAudioControl pAC = *GetAudioControlPtr();
+                PAudioControl pAC = AudioControl_Init();
+                if( !pAC ) pAC = *GetAudioControlPtr();
                 AudioControl_Vibrate(pAC, 400, 50, cfg_vibraend_time);
             }
             if((cfg_flashend == 1) && (connect == 1))
@@ -379,6 +490,11 @@ int OnCallManagerEvent(void* r0,BOOK* b)
             {
                 timerScreen=Timer_Set(cfg_screen_blink_speed,onTimerScreen,0);
                 offtimerScreen=Timer_Set(cfg_screenend_time*1000,offTimerScreen,0);
+            }
+            if((cfg_redledend==1) && (connect == 1))
+            {
+                timerREDLED=Timer_Set(cfg_redled_ontime,onTimerREDLED,0);
+                offtimerREDLED=Timer_Set(cfg_redledend_time*1000,offTimerREDLED,0);
             }
             if((cfg_ledend==1) && (connect == 1))
             {
@@ -395,6 +511,16 @@ int OnCallManagerEvent(void* r0,BOOK* b)
             {
                 Timer_Kill(&vibraNminutetimer);
                 vibraNminutetimer = 0;
+            }
+            if(rejectTimer)
+            {
+              Timer_Kill(&rejectTimer);
+              rejectTimer = 0;
+            }
+            if(muteTimer)
+            {
+              Timer_Kill(&muteTimer);
+              muteTimer = 0;
             }
             incom   = 0;
             connect = 0;
@@ -415,7 +541,6 @@ static int onReconfigElf(void *mess ,BOOK *book)
   }
   return(result);
 }
-
 
 const PAGE_MSG evtlist[] @ "DYN_PAGE"=
 {
@@ -469,6 +594,14 @@ int main(wchar_t* filename)
 
 /*
   Revision history.
+    2.3
+      + Добавлены таймеры для сброса и/или отключения звука входящего вызова. 
+        При значении 0 - выключение таймера.
+    2.2
+      + Добавлено мигание красным светодиодом
+    2.1
+      + Использование функции AudioControl_Init
+      + Устранена утечка памяти.
     2.0.8
       + Устранена утечка памяти.
     2.0.7
