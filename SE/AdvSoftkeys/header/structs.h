@@ -73,7 +73,7 @@
      char visible;
      char unk6[6];
   }SOFTKEY;
-  
+#pragma pack(1)
   typedef struct
   {
     void *unk1;
@@ -90,7 +90,7 @@
     char unk9;
     int color;
   }SOFTKEY_PARAMS;
-  
+#pragma pack()
   typedef struct
   {
     int strids[3];
