@@ -164,20 +164,28 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
   if (!GC)return;
   int color=xls->color;
   if (DB==2010)goto L_draw2;
-  if (bk!=FindBook(isImageViewerBook) && !FindBook(isMMBrowserBook) && bk!=FindBook(isAudioPlayerBook()) && bk!=FindBook(isMediaPlayerVideoBook()) && NotSupported(bk)==false && xls->background==0 && stat==0)
+  if (lastitem)
   {
-  L_draw2:
-    if (pressed[0] && images[LEFT_PRESSED]!=0xFFFF && lastitem->lbls[0] && lastitem && lastitem->type>T_STANDBY)
+    if (lastitem->style==0 && pressed[1]==true && !lastitem->lbls[1])
     {
-      putchar(GC,0,0,0,0,images[LEFT_PRESSED]);
+      pressed[1]=false;
+      pressed[0]=true;
     }
-    else if (pressed[1] && images[MIDDLE_PRESSED]!=0xFFFF && lastitem->lbls[1])
+    if (bk!=FindBook(isImageViewerBook) && !FindBook(isMMBrowserBook) && bk!=FindBook(isAudioPlayerBook()) && bk!=FindBook(isMediaPlayerVideoBook()) && NotSupported(bk)==false && xls->background==0 && stat==0)
     {
-      putchar(GC,0,0,0,0,images[MIDDLE_PRESSED]);
-    }
-    else if (pressed[2] && images[RIGHT_PRESSED]!=0xFFFF && lastitem->lbls[2] && lastitem && lastitem->type>T_STANDBY)
-    {
-      putchar(GC,0,0,0,0,images[RIGHT_PRESSED]);
+    L_draw2:
+      if (pressed[0] && images[LEFT_PRESSED]!=0xFFFF && lastitem->lbls[0] && lastitem->type>T_STANDBY)
+      {
+        putchar(GC,0,0,0,0,images[LEFT_PRESSED]);
+      }
+      else if (pressed[1] && images[MIDDLE_PRESSED]!=0xFFFF && lastitem->lbls[1])
+      {
+        putchar(GC,0,0,0,0,images[MIDDLE_PRESSED]);
+      }
+      else if (pressed[2] && images[RIGHT_PRESSED]!=0xFFFF && lastitem->lbls[2] && lastitem->type>T_STANDBY)
+      {
+        putchar(GC,0,0,0,0,images[RIGHT_PRESSED]);
+      }
     }
   }
   int x;
