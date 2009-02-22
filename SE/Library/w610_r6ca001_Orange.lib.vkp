@@ -513,6 +513,7 @@
 0CBC: 00000000 D1F11D45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 0CC0: 00000000 75F11D45 ; 330: int w_remove(const wchar_t *dir);
 0CC4: 00000000 A5551F45 ; 331: int ConnectionManager_Connection_GetState(void);
+0CC8: 00000000 BD811A44 ; 332: int GetSignalQuality(char *rssi,char *ber);
 
 
 

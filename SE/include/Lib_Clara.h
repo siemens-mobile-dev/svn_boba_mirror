@@ -1480,4 +1480,7 @@ __swi __arm int w_remove(const wchar_t *dir);
 #pragma swi_number=0x331
 __swi __arm int ConnectionManager_Connection_GetState(void);
 
+#pragma swi_number=0x332
+__swi __arm int GetSignalQuality(char *rssi,char *ber);
+
 #endif
