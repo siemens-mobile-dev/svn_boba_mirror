@@ -144,7 +144,7 @@
 06BC: FFFFFFFF 49F52945 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: FFFFFFFF D1F02745 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 3DE1C944 ; 1B1: void debug_printf(const char * fmt,...);
-06C8: FFFFFFFF F13E1545 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
+06C8: FFFFFFFF E13E1545 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: FFFFFFFF 71D66445 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 ;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06D8: FFFFFFFF B1812B45 ; 1B6: void SetBrightnessOfScreen(int br);
@@ -164,7 +164,7 @@
 0710: FFFFFFFF C1BA1945 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF B13F6445 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF C13F6445 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 0DB91945 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: FFFFFFFF 55B91945 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF CDE66345 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF C13C6445 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF 59371545 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -226,7 +226,7 @@
 0818: FFFFFFFF B5D62045 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: FFFFFFFF C1D62045 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: FFFFFFFF B1CD2045 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: FFFFFFFF 8D621345 ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
+;0824: xxxxxxxx yyyyyyyy ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
 0828: FFFFFFFF F54B5B45 ; 20A: void FileDelete (wchar_t * path ,wchar_t * filename , int * error );
 082C: FFFFFFFF 0D3E1945 ; 20B: void SetFocus (GUI * , int);
 0830: FFFFFFFF D9444745 ; 20C: int CreateSMSCont (int, void*);
