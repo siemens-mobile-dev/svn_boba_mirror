@@ -143,7 +143,7 @@
 06BC: FFFFFFFF ADB02545 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: FFFFFFFF 79792445 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 2539DA44 ; 1B1: void debug_printf(const char * fmt,...);
-06C8: FFFFFFFF C90C1145 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
+06C8: FFFFFFFF B90C1145 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: FFFFFFFF A90B6045 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 ;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06D8: FFFFFFFF 81362745 ; 1B6: void SetBrightnessOfScreen(int br);
@@ -161,7 +161,7 @@
 0710: FFFFFFFF 258A1545 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF B9745F45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF C9745F45 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 71881545 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: FFFFFFFF B9881545 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF C5195F45 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF C9715F45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF 31051145 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -303,7 +303,7 @@
 0974: FFFFFFFF 1D061145 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
 0978: FFFFFFFF F5051145 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 097C: FFFFFFFF 99F01445 ; 25F: int GC_GetPenColor (void* GC);
-0980: FFFFFFFF 81221945 ; 260: void GC_SetPenColor(void* GC , int pen_color);
+0980: FFFFFFFF 59F01445 ; 260: void GC_SetPenColor(void* GC , int pen_color);
 0984: FFFFFFFF D7EC1445 ; 261: void GC_SetPixel (void* GC,int x1,int y1,int color);
 0988: FFFFFFFF A9FA1445 ; 262: void GC_DrawLine(void* GC,int x1, int y1, int x2, int y2);
 098C: FFFFFFFF 3DFC1445 ; 263: void GC_DrawFRect (void* GC,int color,int x1,int y1,int x2 ,int y2);
