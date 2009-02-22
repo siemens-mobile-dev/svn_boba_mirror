@@ -58,7 +58,11 @@ int LoadConfigData(const wchar_t *path,const wchar_t *fname)
       {
         rlen=fread(f,buf,len);
         fclose(f);
-        if (rlen!=_fstat.fsize || rlen!=len)  return SaveConfigData(path,fname);
+        if (rlen!=_fstat.fsize || rlen!=len)
+        {
+            delete buf;
+            return SaveConfigData(path,fname);
+        }
         memcpy(cfg,buf,len);
         result=0;
       }

@@ -4,8 +4,8 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Management"
-#define ABOUT L"Management\nv.1.4.3\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
+#define ELFNAME "Management v.1.4.4"
+#define ABOUT L"Management\nv.1.4.4\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
 
 enum mode_t {
     SHORT_PRESS  = 0,
@@ -208,9 +208,17 @@ int CheckConfig()
   }
 
   if((radio_short_press > 1) || (radio_long_press > 1) || (radio_double_press > 1))
+    #ifndef ENG
       err="Неправильно сконфигурировано управление радио!";
+    #else
+      err="Illegal radio configuration!";
+    #endif
   else if((player_short_press > 1) || (player_long_press > 1) || (player_double_press > 1))
+    #ifndef ENG
       err="Неправильно сконфигурировано управление плеером!";
+    #else
+      err="Illegal walkman configuration!";
+    #endif
 
   if(err)
   {
@@ -320,7 +328,11 @@ int main (void)
   BOOK* alreadyrunned=FindBook(isManagementBook);
   if(alreadyrunned)
   {
-    MessageBox(0x6FFFFFFF, STR("Management\nуже запущен"), 0, 1 ,5000, 0);
+    #ifndef ENG
+      MessageBox(0x6FFFFFFF, STR("Management headset\nуже запущен"), 0, 1 ,5000, 0);
+    #else
+      MessageBox(0x6FFFFFFF, STR("Management headset\nalready runned"), 0, 1 ,5000, 0);
+    #endif
     SUBPROC(elf_exit);
   }
   else
@@ -343,3 +355,10 @@ int main (void)
   }
   return(0);
 }
+
+/*
+  Revision history.
+    1.4.4
+      + Возможность компилировать английскую версию
+      + Устранена утечка памяти.
+*/
