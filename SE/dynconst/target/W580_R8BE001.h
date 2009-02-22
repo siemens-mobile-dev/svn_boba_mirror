@@ -327,8 +327,8 @@
 #define KEY_POWER 0x1
 #define KEY_RIGHT 0xB
 #define KEY_RIGHT_SOFT 0x3
-//#define KEY_SLIDER_CLOSE UNDEFINED
-//#define KEY_SLIDER_OPEN UNDEFINED
+#define KEY_SLIDER_CLOSE 0x40
+#define KEY_SLIDER_OPEN 0x3F
 #define KEY_STAR 0x1D
 #define KEY_TASK 0x1F
 #define KEY_UP 0x9
