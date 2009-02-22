@@ -114,7 +114,7 @@
 05F0: 00000000 A8E13044 ; 17C: union SIGNAL *alloc(OSBUFSIZE size,SIGSELECT signo);
 05F4: 00000000 C4E13044 ; 17D: union SIGNAL *receive(const SIGSELECT *sigsel);
 05F8: 00000000 B4E13044 ; 17E: void send(union SIGNAL **sig,PROCESS to);
-05FC: 00000000 14E23044 ; 17F: PROCESS sender(union SIGNAL **sig);
+05FC: 00000000 04E23044 ; 17F: PROCESS sender(union SIGNAL **sig);
 0600: 00000000 D4E13044 ; 180: void free_buf(union SIGNAL **sig);
 0604: 00000000 A0E23044 ; 181: PROCESS create_process(int proc_type,char *name,OSENTRYPOINT *entrypoint,OSADDRESS stack_size,OSPRIORITY priority,OSTIME timeslice,PROCESS pid_block,void *redir_table,OSVECTOR vector,OSUSER user);
 0608: 00000000 C0E43044 ; 182: void start(PROCESS pid);
