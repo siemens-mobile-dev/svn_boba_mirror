@@ -500,16 +500,17 @@ C8C: 00000000 05FE4745 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 C90: 00000000 704B1820 ;8324: void * get_CellData(void);
 C94: 00000000 9546EC44 ; 325: void * IncommingCall_Reject(BOOK* book);
 C98: 00000000 1D58EC44 ; 326: void * IncommingCall_Mute(BOOK* book);
-C9C: 00000000 69EF7444 ; 327: int GetRadioState(void*, char* level, char* flag);
+0C9C: 00000000 F92B1B44 ; 327: int GetRadioState(char* level, char* flag);
 CA0: 00000000 E504E944 ; 328: int Bluetooth_GetState(void);
 CA4: 00000000 AD04E944 ; 329: int Bluetooth_GetPhoneVisibility(void);
 CA8: 00000000 6D05E944 ; 32A: int Bluetooth_isBusy(void);
 CAC: 00000000 7D1C2D45 ; 32B: int USB_isConnected(void);
 CB0: 00000000 A5710945 ; 32C: void *w_diropen(const wchar_t *dir);
-CB4: 00000000 E9D62B45 ; 32D: wchar_t *w_dirget(void *);
+CB4: 00000000 E9D62B45 ; 32D: wchar_t *w_dirread(void *);
 CB8: 00000000 11750945 ; 32E: int w_dirclose(void *);
 CBC: 00000000 91D72B45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 CC0: 00000000 35D72B45 ; 330: int w_remove(const wchar_t *dir);
+;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
 
 
 

@@ -502,7 +502,7 @@
 0C90: 00000000 40081920 ;8324: void * get_CellData(void);
 0C94: 00000000 99F8DE44 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 9509DF44 ; 326: void * IncommingCall_Mute(BOOK* book);
-0C9C: 00000000 959B6444 ; 327: int GetRadioState(void*, char* level, char* flag);
+0C9C: 00000000 B1811A44 ; 327: int GetRadioState(char* level, char* flag);
 0CA0: 00000000 31C9DB44 ; 328: int Bluetooth_GetState(void);
 0CA4: 00000000 F9C8DB44 ; 329: int Bluetooth_GetPhoneVisibility(void);
 0CA8: 00000000 B9C9DB44 ; 32A: int Bluetooth_isBusy(void);

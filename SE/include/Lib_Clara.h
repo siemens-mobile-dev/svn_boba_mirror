@@ -1454,7 +1454,7 @@ __swi __arm void * IncommingCall_Reject(BOOK* book);
 __swi __arm void * IncommingCall_Mute(BOOK* book);
 
 #pragma swi_number=0x327
-__swi __arm int GetRadioState(void*, char* level, char* flag);
+__swi __arm int GetRadioState(char* level, char* flag);
 
 #pragma swi_number=0x328
 __swi __arm int Bluetooth_GetState(void);

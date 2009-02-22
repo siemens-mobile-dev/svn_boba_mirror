@@ -339,7 +339,7 @@
 0A08: FFFFFFFF 15A5D544 ; 282: __thumb void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
 0A0C: FFFFFFFF 2D0A0D45 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, wchar_t * ImageID ,char * error);
 0A10: FFFFFFFF AD0B0D45 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,wchar_t ImageID, int unk_1,char * error);
-0A14: FFFFFFFF 00000000 ;8285: SURFACE ** get_Surfaces(void);
+;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
 0A18: FFFFFFFF BD88EF44 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: FFFFFFFF A9BBDB44 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: FFFFFFFF 49F29B44 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str); //nullsub(void)
@@ -500,7 +500,7 @@
 0C90: FFFFFFFF C419044C ;8324: void * get_CellData(void);
 ;0C94: xxxxxxxx yyyyyyyy ; 325: void * IncommingCall_Reject(BOOK* book);
 ;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
-0C9C: FFFFFFFF 358BA544 ; 327: int GetRadioState(void*, char* level, char* flag);
+0C9C: FFFFFFFF DD2E8444 ; 327: int GetRadioState(char* level, char* flag);
 ;0CA0: xxxxxxxx yyyyyyyy ; 328: int Bluetooth_GetState(void);
 ;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
 ;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);
@@ -510,6 +510,7 @@
 ;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
 ;0CBC: xxxxxxxx yyyyyyyy ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 ;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
+;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
 
 
 

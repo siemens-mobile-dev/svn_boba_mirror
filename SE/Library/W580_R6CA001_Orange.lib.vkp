@@ -40,7 +40,7 @@
 04C8: 00000000 F9C12D45 ; 132: void BookObj_SetFocus(void *,int focus);
 04CC: 00000000 892A3945 ; 133: void GuiObject_SetTitleText (void * gui , int StrID);
 04D0: 00000000 59253945 ; 134: void ShowWindow (void * gui);
-04D4: 00000000 5dbc3445 ; 135: void SetCursorToItem ( void *obj , int item);
+04D4: 00000000 5DBC3445 ; 135: void SetCursorToItem ( void *obj , int item);
 04D8: 00000000 A9253945 ; 136: void GUI_SetStyle(GUI *,int style);
 04DC: 00000000 ADC73445 ; 137: int GUIonMessage_GetCreatedItemIndex ( void *msg);
 04E0: 00000000 B9C73445 ; 138: char SetMenuItemText0 ( GUI_MESSAGE *, int StrID);
@@ -64,7 +64,7 @@
 0528: 00000000 D5102F45 ; 14A: void StatusIndication_Item8_SetText(int StrID);
 052C: 00000000 B9ED3A45 ; 14B: void GUIObject_Softkey_SetAction(void * gui,u16 actionID,void (*proc)(BOOK *,void*));
 0530: 00000000 31EE3A45 ; 14C: void GUIObject_Softkey_SetText(void * gui,u16 actionID , int StrID);
-0534: 00000000 edee3a45 ; 14D: void GUIObject_SoftKey_SetEnable(void *gui,u16 actionID,int ena);
+0534: 00000000 EDEE3A45 ; 14D: void GUIObject_SoftKey_SetEnable(void *gui,u16 actionID,int ena);
 0538: 00000000 A5EE3A45 ; 14E: void GUIObject_SoftKey_AddErrorStr(void *gui,u16 actionID,int StrID);
 053C: 00000000 7DED3A45 ; 14F: void GUIObject_SoftKey_RemoveItem(void *gui,u16 actionID);
 0540: 00000000 81EE3A45 ; 150: void GUIObject_SoftKey_SetVisible(void *gui,u16 actionID,int visible);
@@ -176,7 +176,7 @@
 0744: 00000000 30EB1720 ;81D1: PAudioControl* GetAudioControlPtr();
 0748: 00000000 3575C744 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
 074C: 00000000 BD52EB44 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
-0750: 00000000 51d63445 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
+0750: 00000000 51D63445 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 91D83445 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 0758: 00000000 15D83445 ; 1D6: void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
 075C: 00000000 DDD73445 ; 1D7: void NOfMany_SetCursor(GUI_NOFMANY * , int item);
@@ -444,7 +444,7 @@
 0BA8: 00000000 59AA2E45 ; 2EA: int MainInput_getCurPos(GUI*);
 0BAC: 00000000 29AA2E45 ; 2EB: void MainInput_Hide(GUI*);
 0BB0: 00000000 B1B73A45 ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
-0BB4: 00000000 5162E044 ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);-----------strange-------------
+0BB4: 00000000 5162E044 ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag); -----------strange-------------
 0BB8: 00000000 9944E244 ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
 0BBC: 00000000 01F32545 ; 2EF: void * MetaData_Desc_Create(wchar_t * path,wchar_t * name);
 0BC0: 00000000 C1F32545 ; 2F0: void MetaData_Desc_Destroy(void * MetaData_Desc);
@@ -453,7 +453,7 @@
 0BCC: 00000000 39983845 ; 2F3: int DISP_OBJ_GetWindowWidth(DISP_OBJ *);
 0BD0: 00000000 59983845 ; 2F4: int DISP_OBJ_GetWindowHeight(DISP_OBJ *);
 0BD4: 00000000 99173045 ; 2F5: int get_system_langID(void);
-0BD8: 00000000 690B3345 ; 2F6: char * lang_get_name(int langID);--strange----
+0BD8: 00000000 690B3345 ; 2F6: char * lang_get_name(int langID); --strange----
 0BDC: 00000000 7174FB44 ; 2F7: int w_chdir(const wchar_t *path);
 0BE0: 00000000 11F28544 ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
 0BE4: 00000000 C9F28544 ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
@@ -471,7 +471,7 @@
 0C14: 00000000 7D32EB44 ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 0C18: 00000000 A534EB44 ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 0C1C: 00000000 1D4E2344 ; 307: void RedLED_On(int __NULL);
-0C20: 00000000 ADCD1C44 ; 308: void RedLED_Off(int __NULL);---strange---
+0C20: 00000000 ADCD1C44 ; 308: void RedLED_Off(int __NULL); ---strange---
 0C24: 00000000 C1A53845 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
 0C28: 00000000 75C9EC44 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
 0C2C: 00000000 7D1CFA44 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
@@ -496,13 +496,13 @@
 0C78: 00000000 95FAEE44 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions(void * db , int);
 0C7C: 00000000 19FBEE44 ; 31F: void DataBrowserDesc_Menu_AddNewFolder(void * db , int);
 0C80: 00000000 21FBEE44 ; 320: void DataBrowserDesc_Menu_AddMarkFiles(void * db , int);
-0C84: 00000000 B5FD3A45 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);------strange-----
-0C88: 00000000 19E93A45 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbk, int id);
+0C84: 00000000 B5FD3A45 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1); ------strange-----
+0C88: 00000000 19E93A45 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
 0C8C: 00000000 DDE43A45 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-0C90: 00000000 D8EA1820 ;8324: void * get_CellData(void); 
+0C90: 00000000 D8EA1820 ;8324: void * get_CellData(void);
 0C94: 00000000 691ADE44 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 ED2CDE44 ; 326: void * IncommingCall_Mute(BOOK* book);
-0C9C: 00000000 29356444 ; 327: int GetRadioState(void*, char* level, char* flag);
+0C9C: 00000000 01361A44 ; 327: int GetRadioState(char* level, char* flag);
 0CA0: 00000000 A1E7DA44 ; 328: int Bluetooth_GetState(void);
 0CA4: 00000000 69E7DA44 ; 329: int Bluetooth_GetPhoneVisibility(void);
 0CA8: 00000000 29E8DA44 ; 32A: int Bluetooth_isBusy(void);
@@ -512,6 +512,7 @@
 0CB8: 00000000 5199FB44 ; 32E: int w_dirclose(void *);
 0CBC: 00000000 39EA1D45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 0CC0: 00000000 DDE91D45 ; 330: int w_remove(const wchar_t *dir);
+;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
 
 
 

@@ -427,7 +427,7 @@
 0B64: 00000000 9974E944 ; 2D9: int JavaAppDesc_GetFirstApp(void * JavaDesc);
 0B68: 00000000 A174E944 ; 2DA: int JavaAppDesc_GetNextApp(void * JavaDesc);
 0B6C: 00000000 B970E944 ; 2DB: int JavaAppDesc_GetJavaAppInfo(void * JavaDesc,int ID,wchar_t ** wstr);
-0B70: 00000000 3D472D45 ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time); //nullsub
+0B70: 00000000 3D472D45 ; 2DC: void OrangeLED_Control(int _free_val, int or_LED_ID, int level, int fade_time); //nullsub(void)
 0B74: 00000000 01AB3545 ; 2DD: void DispObject_SetRefreshTimer(DISP_OBJ *,int time);
 0B78: 00000000 81AB3545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 4922EC44 ; 2DF: int isDataBrowserBook(BOOK *);
@@ -502,7 +502,7 @@
 0C90: 00000000 78EC1820 ;8324: void * get_CellData(void);
 0C94: 00000000 FD6EDB44 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 8181DB44 ; 326: void * IncommingCall_Mute(BOOK* book);
-0C9C: 00000000 B56C6244 ; 327: int GetRadioState(void*, char* level, char* flag);
+0C9C: 00000000 C1441A44 ; 327: int GetRadioState(char* level, char* flag);
 0CA0: 00000000 793ED844 ; 328: int Bluetooth_GetState(void);
 0CA4: 00000000 413ED844 ; 329: int Bluetooth_GetPhoneVisibility(void);
 0CA8: 00000000 013FD844 ; 32A: int Bluetooth_isBusy(void);
