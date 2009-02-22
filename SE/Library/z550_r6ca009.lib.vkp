@@ -48,7 +48,7 @@
 04E8: FFFFFFFF D5B21245 ; 13A: char SetMenuItemText2 ( GUI_MESSAGE *, int StrID);
 04EC: FFFFFFFF E5B21245 ; 13B: char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
 04F0: FFFFFFFF 05B31245 ; 13C: void SetListObjectItemIcon ( void *msg , int align , wchar_t iconID);
-04F4: FFFFFFFF 354A3045 ; 13D: void GUIObject_SetHeaderText(void *gui , int StrID);
+04F4: FFFFFFFF 1DC62B45 ; 13D: void GUIObject_SetHeaderText(void *gui , int StrID);
 04F8: FFFFFFFF 95A71245 ; 13E: int ListMenu_GetSelectedItem(GUI_LIST * );
 04FC: FFFFFFFF F9A71245 ; 13F: void SetMenuItemStyle( void *obj , int style);
 0500: FFFFFFFF ADC41445 ; 140: void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
@@ -58,7 +58,7 @@
 0510: FFFFFFFF FDFA1145 ; 144: GUI * CreateStringInput(int,...);
 0514: FFFFFFFF 1DC41245 ; 145: GUI_ONEOFMANY * CreateOneOfMany(BOOK *);
 0518: FFFFFFFF B1C51245 ; 146: void OneOfMany_SetItemCount(GUI_ONEOFMANY * , int count);
-051C: FFFFFFFF 01C61245 ; 147: void OneOfMany_SetChecked(GUI_ONEOFMANY * , int checked);
+051C: FFFFFFFF 89193F45 ; 147: void OneOfMany_SetChecked(GUI_ONEOFMANY * , int checked);
 0520: FFFFFFFF 09C61245 ; 148: void OneOfMany_SetTexts(GUI_ONEOFMANY * , int * StrID , int Count);
 0524: FFFFFFFF E5C51245 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 0528: FFFFFFFF D1622645 ; 14A: void StatusIndication_Item8_SetText(int StrID);
@@ -160,7 +160,7 @@
 0710: FFFFFFFF 055A1545 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF 3D465E45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF 4D465E45 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 51581545 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: FFFFFFFF 99581545 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF 49EB5D45 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF 4D435E45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF C9D81045 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
