@@ -143,7 +143,7 @@
 06BC: FFFFFFFF B57A2245 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: FFFFFFFF 19762045 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 69E6BF44 ; 1B1: void debug_printf(const char * fmt,...);
-06C8: FFFFFFFF 1DB80D45 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
+06C8: FFFFFFFF 0DB80D45 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: FFFFFFFF 15525D45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 ;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06DC: FFFFFFFF C1FB0D45 ; 1B7: int isKeylocked(void);
@@ -160,7 +160,7 @@
 0710: FFFFFFFF 35321245 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF 19BD5C45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF 29BD5C45 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 81301245 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: FFFFFFFF C9301245 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF 19625C45 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF 29BA5C45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF 85B00D45 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -339,8 +339,8 @@
 0A0C: FFFFFFFF E9625345 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, wchar_t * ImageID ,char * error);
 0A10: FFFFFFFF 7D635345 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,wchar_t ImageID, int unk_1,char * error);
 ;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
-0A18: FFFFFFFF 0DFF1645 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
-0A1C: FFFFFFFF B5142B45 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
+0A18: FFFFFFFF B5142B45 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
+0A1C: FFFFFFFF 0DFF1645 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: FFFFFFFF 35820F45 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 0A28: FFFFFFFF 69865845 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
 0A2C: FFFFFFFF 89863B45 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
