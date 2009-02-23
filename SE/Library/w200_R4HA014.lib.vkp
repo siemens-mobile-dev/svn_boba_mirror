@@ -151,7 +151,7 @@
 06E0: FFFFFFFF 313F2B45 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E4: FFFFFFFF 75B3DE44 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book); //nullsub(void)
 06EC: FFFFFFFF 39BC2C45 ; 1BB: void Vibra(int t1, int t2, int t3);
-;06F0: xxxxxxxx yyyyyyyy ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
+06F0: FFFFFFFF 25ED4045 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 ;06F4: xxxxxxxx yyyyyyyy ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 ;06F8: xxxxxxxx yyyyyyyy ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
 06FC: FFFFFFFF 557FFC44 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
@@ -162,7 +162,7 @@
 0710: FFFFFFFF D1B10045 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF AD7F4A45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF BD7F4A45 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 1DB00045 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+071C: FFFFFFFF 65B00045 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF 19274A45 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF BD7C4A45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF A1ABFC44 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -217,14 +217,14 @@
 07FC: FFFFFFFF A1F53945 ; 1FF: int GetThemeColor(int , int);
 0800: FFFFFFFF 9D0D4B45 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
 0804: FFFFFFFF 410D4B45 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
-0808: FFFFFFFF 410D4B45 ; 202: void VCALL_Init (void* vc);
+0808: FFFFFFFF B51D0845 ; 202: void VCALL_Init (void* vc);
 080C: FFFFFFFF A91E0845 ; 203: void VCALL_SetName (void * vc , wchar_t * name ,unsigned short name_len);
 0810: FFFFFFFF 0D1F0845 ; 204: void VCALL_SetNameIcon (void * vc , wchar_t icon);
 0814: FFFFFFFF C91E0845 ; 205: void VCALL_SetNumber (void * vc , wchar_t * number , unsigned short num_len);
 0818: FFFFFFFF F11E0845 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: FFFFFFFF FD1E0845 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: FFFFFFFF F1150845 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: FFFFFFFF F1D6FA44 ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
+;0824: xxxxxxxx yyyyyyyy ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
 0828: FFFFFFFF B1714245 ; 20A: void FileDelete (wchar_t * path ,wchar_t * filename , int * error );
 082C: FFFFFFFF 39340045 ; 20B: void SetFocus (GUI * , int);
 0830: FFFFFFFF 59262E45 ; 20C: int CreateSMSCont (int, void*);
@@ -279,7 +279,7 @@
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
 0900: FFFFFFFF 55564A45 ; 240: void JavaSession_Manager (int cmd);
 0904: FFFFFFFF 9D554A45 ; 241: int JavaSession_GetName(void);
-0908: FFFFFFFF 295E3445 ; 242: int TextCopyId(int);
+0908: FFFFFFFF 29251745 ; 242: int TextCopyId(int);
 090C: FFFFFFFF 753D1145 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
 0910: FFFFFFFF 5908FE44 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: FFFFFFFF E508FE44 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
