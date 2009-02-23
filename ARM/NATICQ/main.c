@@ -408,18 +408,21 @@ void FreeTemplates(void)
 
 extern const char TEMPLATES_PATH[];
 
-int LoadTemplates(unsigned int uin)
+int LoadTemplates(CLIST *t)
 {
   FSTATS stat;
   char fn[256];
   int f;
   unsigned int ul;
+  unsigned int uin;
   int i;
   int fsize;
-  char *p;
-  char *pp;
+  char *p, *pp, *j;
   int c;
+  LOGQ *curlog;
+  int loglen=0;
   const char _slash[]="\\";
+  uin = t->uin;
   FreeTemplates();
   strcpy(fn,TEMPLATES_PATH);
   if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
@@ -436,7 +439,19 @@ int LoadTemplates(unsigned int uin)
     f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul);
   }
   if (f==-1) return 0;
-  p=templates_chars=malloc(fsize+1);
+  
+  if(t->name[0] == '#')       //Это бот
+  {
+    curlog = t->log;
+    while(curlog)               //Посчитаем предельную длину
+    {
+      loglen += strlen(curlog->text)+1;
+      curlog = curlog->next;
+    }
+    p=templates_chars=malloc(fsize+1+loglen); //размер буфера под шаблоны
+  }
+  else  
+    p=templates_chars=malloc(fsize+1);
   p[fread(f,p,fsize,&ul)]=0;
   fclose(f,&ul);
   i=0;
@@ -461,6 +476,57 @@ int LoadTemplates(unsigned int uin)
     }
     p++;
   }
+  if(t->name[0] != '#')       //Это не бот
+    return i;
+  
+  curlog = t->log;
+
+  while(curlog->next) curlog = curlog->next;
+
+  pp = curlog->text;
+  
+  while(pp = strstr(pp, "add "))
+  {
+    for(j = pp = pp+4; *j >= '0' && *j <= '9'; j++);
+    if(j != pp)
+    {
+      memcpy(p, "add ", 4);
+      memcpy(p+4, pp, j-pp);
+      templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
+      templates_lines[i++]=p;
+      p+=j-pp+4;
+      *p=32;p++;
+      *p=0;p++;
+    }
+  }
+  
+  curlog = t->log;
+
+  while(curlog)
+  {
+    pp = curlog->text;
+    while(pp = strstr(pp, "| "))
+    {    
+      pp+=2; j = pp;
+      if(curlog->text[0] != 'g') for(j = pp; (*j >= '0' && *j <= '9') || *j == '*'; j++);
+      for(; *j == ' '; j++);
+      pp = j;
+
+      for(; *j && *j != 13 && *j != '|' && *j != '('; j++);
+
+      if(j != pp)
+      {
+        memcpy(p, pp, j-pp);
+
+        templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
+        templates_lines[i++]=p;
+        p+=j-pp;
+        *p=0;p++;
+      }
+    }
+    curlog = curlog->next;
+  }
+
   return i;
 }
 
@@ -2112,7 +2178,7 @@ ProcessPacket(TPKT *p)
       //Если нашли символ > и после него пробел и ник короче 16 символов
       if (s)
       {
-	if ((s[1]==' ')&&((s-p->data)<16))
+	if ((s[1]==' ')&&((s-p->data)<40))
 	{
 	  *s=0; //Режем строку
 	  AddStringToLog(t,0x02,s+2,p->data,0xFFFFFFFF); //Добавляем имя из текста сообщения
@@ -3360,7 +3426,7 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
         }
         else
         {
-          int i=ed_struct->loaded_templates=LoadTemplates(ed_struct->ed_contact->uin);
+          int i=ed_struct->loaded_templates=LoadTemplates(ed_struct->ed_contact);
           EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,i+2);
           mfree(link);
           return (-1);
@@ -3965,8 +4031,8 @@ static const MENUPROCS_DESC ecmenu_HNDLS[EC_MNU_MAX]=
   SendAuthReq,
   SendAuthGrant,
   OpenLogfile,
-  ClearLog,
-  RemoveCurContact
+  RemoveCurContact,
+  ClearLog
 };
 
 char ecm_contactname[64];
@@ -4029,8 +4095,8 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
     ecmenu_ITEMS[4].lgp_id_small=(int)lgpData[LGP_MnuSAuthReq]; 
     ecmenu_ITEMS[5].lgp_id_small=(int)lgpData[LGP_MnuSAuthGrt]; 
     ecmenu_ITEMS[6].lgp_id_small=(int)lgpData[LGP_MnuOpenLog]; 
-    ecmenu_ITEMS[7].lgp_id_small=(int)lgpData[LGP_MnuClearCht]; 
-    ecmenu_ITEMS[8].lgp_id_small=(int)lgpData[LGP_MnuRemCont]; 
+    ecmenu_ITEMS[7].lgp_id_small=(int)lgpData[LGP_MnuRemCont]; 
+    ecmenu_ITEMS[8].lgp_id_small=(int)lgpData[LGP_MnuClearCht]; 
   
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,ed_struct,to_remove);
   }
