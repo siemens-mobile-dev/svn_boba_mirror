@@ -512,7 +512,7 @@
 0CB8: 00000000 5199FB44 ; 32E: int w_dirclose(void *);
 0CBC: 00000000 39EA1D45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 0CC0: 00000000 DDE91D45 ; 330: int w_remove(const wchar_t *dir);
-;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
+0CC4: 00000000 61501F45 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: 00000000 0D361A44 ; 332: int GetSignalQuality(char *rssi,char *ber);
 
 
