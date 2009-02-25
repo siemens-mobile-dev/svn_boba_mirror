@@ -418,7 +418,7 @@ int LoadTemplates(CLIST *t)
   int i;
   int fsize;
   char *p, *pp, *j;
-  int c;
+  int c, firstgps;
   LOGQ *curlog;
   int loglen=0;
   const char _slash[]="\\";
@@ -480,6 +480,45 @@ int LoadTemplates(CLIST *t)
     return i;
   
   curlog = t->log;
+  firstgps = i;
+  while(curlog)
+  {
+    pp = curlog->text;
+    while(pp = strstr(pp, "| "))
+    {    
+      pp+=2; j = pp;
+      if(curlog->text[0] != 'g') for(j = pp; (*j >= '0' && *j <= '9') || *j == '*'; j++);
+      for(; *j == ' '; j++);
+      pp = j;
+
+      for(; *j && *j != 13 && *j != '|' && *j != '{'; j++);
+
+      if(j != pp)
+      {
+        memcpy(p, pp, j-pp);
+        *(p+(j-pp)) = 0;
+        for(c = j-pp-1; *(p+c) == ' '; *(p+c)=0, c--);
+        for(c = firstgps, f = 0; c < i; c++)
+          if(!strcmp(templates_lines[c], p)) {f = 1; break;}
+        if(!f)
+        {
+          templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
+          templates_lines[i++]=p;
+          p+=j-pp+1;
+        }
+//        *p=0;p++;
+      }
+    }
+    curlog = curlog->next;
+  }
+  
+  if(i > 27)
+  {
+    memcpy(&templates_lines[firstgps], &templates_lines[firstgps+(i-27)], (27-firstgps)*sizeof(char *));
+    i = 27;
+  }
+
+  curlog = t->log;
 
   while(curlog->next) curlog = curlog->next;
 
@@ -500,33 +539,6 @@ int LoadTemplates(CLIST *t)
     }
   }
   
-  curlog = t->log;
-
-  while(curlog)
-  {
-    pp = curlog->text;
-    while(pp = strstr(pp, "| "))
-    {    
-      pp+=2; j = pp;
-      if(curlog->text[0] != 'g') for(j = pp; (*j >= '0' && *j <= '9') || *j == '*'; j++);
-      for(; *j == ' '; j++);
-      pp = j;
-
-      for(; *j && *j != 13 && *j != '|' && *j != '('; j++);
-
-      if(j != pp)
-      {
-        memcpy(p, pp, j-pp);
-
-        templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
-        templates_lines[i++]=p;
-        p+=j-pp;
-        *p=0;p++;
-      }
-    }
-    curlog = curlog->next;
-  }
-
   return i;
 }
 
