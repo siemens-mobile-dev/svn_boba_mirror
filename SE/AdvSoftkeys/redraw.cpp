@@ -166,7 +166,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
   if (DB==2010)goto L_draw2;
   if (lastitem)
   {
-    if (lastitem->style==0 && pressed[1]==true && !lastitem->lbls[1])
+    if (lastitem->style==0 && pressed[1]==true && lbl->strids[1]==0x6FFFFFFF)
     {
       pressed[1]=false;
       pressed[0]=true;
@@ -174,15 +174,15 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     if (xls->background==0 && !FindBook(isMMBrowserBook) && bk!=FindBook(isAudioPlayerBook()) && bk!=FindBook(isMediaPlayerVideoBook()))//bk!=FindBook(isImageViewerBook) && ) ) && NotSupported(bk)==false && xls->background==0 && stat==0)
     {
     L_draw2:
-      if (pressed[0] && images[LEFT_PRESSED]!=0xFFFF && lastitem->lbls[0] && lastitem->type>T_STANDBY)
+      if (pressed[0] && images[LEFT_PRESSED]!=0xFFFF && lbl->strids[0]!=0x6FFFFFFF && lastitem->type>T_STANDBY)
       {
         putchar(GC,0,0,0,0,images[LEFT_PRESSED]);
       }
-      else if (pressed[1] && images[MIDDLE_PRESSED]!=0xFFFF && lastitem->lbls[1])
+      else if (pressed[1] && images[MIDDLE_PRESSED]!=0xFFFF && lbl->strids[1]!=0x6FFFFFFF)
       {
         putchar(GC,0,0,0,0,images[MIDDLE_PRESSED]);
       }
-      else if (pressed[2] && images[RIGHT_PRESSED]!=0xFFFF && lastitem->lbls[2] && lastitem->type>T_STANDBY)
+      else if (pressed[2] && images[RIGHT_PRESSED]!=0xFFFF && lbl->strids[2]!=0x6FFFFFFF && lastitem->type>T_STANDBY)
       {
         putchar(GC,0,0,0,0,images[RIGHT_PRESSED]);
       }
@@ -207,7 +207,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     }
     b=clBlack;
     if (uic && color)c=color;
-    if (xls->background==1)//bk==FindBook(isImageViewerBook))
+    if (xls->background==1)
     {
       if (pressed[x])
       {
@@ -308,21 +308,6 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
   if (lastitem && lbl)
   {
     if (lastitem->style==2)return;
-    if (lbl->strids[0]!=0x6FFFFFFF)
-    {
-      lastitem->lbls[0]=true;
-    }
-    else lastitem->lbls[0]=false;
-    if (lbl->strids[1]!=0x6FFFFFFF)
-    {
-      lastitem->lbls[1]=true;
-    }
-    else lastitem->lbls[1]=false;
-    if (lbl->strids[2]!=0x6FFFFFFF)
-    {
-      lastitem->lbls[2]=true;
-    }
-    else lastitem->lbls[2]=false;
     if (lastitem->type!=T_DDMENU && lastitem->type!=T_MESSAGEBOX)
     {
       int x;

@@ -42,8 +42,6 @@
     int style;
     LIST *keys;
     int type;
-    bool isStandby;
-    bool lbls[3];
   }ITEM;
   
   typedef struct

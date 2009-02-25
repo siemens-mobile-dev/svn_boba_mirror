@@ -32,17 +32,20 @@ int onkey(int key)
     if (lastitem)
     {
       if (lastitem->type==T_3SK_LAYOUT)return key;
-      if (lastitem->type==T_YESNO && key==KEY_RIGHT_SOFT)
+      if (lastitem->style==1)
       {
-        return KEY_RIGHT_SOFT;
-      }
-      if (lastitem->type==T_YESNO && key==KEY_LEFT_SOFT)
-      {
-        return 0xFF;
-      } 
-      if (lastitem->type==T_YESNO && key==KEY_DEL)
-      {
-        return KEY_ESC;
+        if (lastitem->type==T_YESNO && key==KEY_RIGHT_SOFT)
+        {
+          return KEY_RIGHT_SOFT;
+        }
+        if (lastitem->type==T_YESNO && key==KEY_LEFT_SOFT)
+        {
+          return 0xFF;
+        } 
+        if (lastitem->type==T_YESNO && key==KEY_DEL)
+        {
+          return KEY_ESC;
+        }
       }
       if (lastitem->keys && csofts)
       {
