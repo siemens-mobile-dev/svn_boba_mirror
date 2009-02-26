@@ -419,7 +419,7 @@ int LoadTemplates(CLIST *t)
   int fsize;
   char *p, *pp, *j;
   int c, firstgps;
-  LOGQ *curlog;
+  LOGQ *curlog, *lastadd;
   int loglen=0;
   const char _slash[]="\\";
   uin = t->uin;
@@ -498,20 +498,19 @@ int LoadTemplates(CLIST *t)
         memcpy(p, pp, j-pp);
         *(p+(j-pp)) = 0;
         for(c = j-pp-1; *(p+c) == ' '; *(p+c)=0, c--);
-        for(c = firstgps, f = 0; c < i; c++)
-          if(!strcmp(templates_lines[c], p)) {f = 1; break;}
-        if(!f)
-        {
-          templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
-          templates_lines[i++]=p;
-          p+=j-pp+1;
-        }
-//        *p=0;p++;
+        for(c = firstgps; c < i; c++)
+          if(!strcmp(templates_lines[c], p)) {*templates_lines[c] = 0; break;}
+        templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
+        templates_lines[i++]=p;
+        p+=j-pp+1;
       }
     }
     curlog = curlog->next;
   }
-  
+  for(c = f = firstgps; c < i; c++)
+    if(*templates_lines[c])
+      templates_lines[f++] = templates_lines[c];
+  i = f;
   if(i > 27)
   {
     memcpy(&templates_lines[firstgps], &templates_lines[firstgps+(i-27)], (27-firstgps)*sizeof(char *));
@@ -519,23 +518,32 @@ int LoadTemplates(CLIST *t)
   }
 
   curlog = t->log;
+  lastadd = 0;
+  if(strstr(curlog->text, "add ")) lastadd = curlog;
 
-  while(curlog->next) curlog = curlog->next;
-
-  pp = curlog->text;
-  
-  while(pp = strstr(pp, "add "))
+  while(curlog->next) 
   {
-    for(j = pp = pp+4; *j >= '0' && *j <= '9'; j++);
-    if(j != pp)
+    curlog = curlog->next;
+    if(strstr(curlog->text, "add ")) lastadd = curlog;
+  }
+
+  if(lastadd)
+  {
+    pp = lastadd->text;
+    
+    while(pp = strstr(pp, "add "))
     {
-      memcpy(p, "add ", 4);
-      memcpy(p+4, pp, j-pp);
-      templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
-      templates_lines[i++]=p;
-      p+=j-pp+4;
-      *p=32;p++;
-      *p=0;p++;
+      for(j = pp = pp+4; *j >= '0' && *j <= '9'; j++);
+      if(j != pp)
+      {
+        memcpy(p, "add ", 4);
+        memcpy(p+4, pp, j-pp);
+        templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
+        templates_lines[i++]=p;
+        p+=j-pp+4;
+        *p=32;p++;
+        *p=0;p++;
+      }
     }
   }
   
@@ -4087,7 +4095,7 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
       to_remove[++remove]=1;
     }
 
-    if (ed_struct->ed_answer<=2) to_remove[++remove]=7;
+    if (ed_struct->ed_answer<=2) to_remove[++remove]=8;
     if (!ed_struct->ed_contact || connect_state!=3)
     {
       to_remove[++remove]=2;
