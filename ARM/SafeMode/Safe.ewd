@@ -1069,7 +1069,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>Realese</name>
+    <name>Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>

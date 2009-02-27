@@ -1649,7 +1649,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>Realese</name>
+    <name>Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1671,15 +1671,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>Realese\Exe</state>
+          <state>Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>Realese\Obj</state>
+          <state>Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>Realese\List</state>
+          <state>Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2704,7 +2704,7 @@
       </settings>
     </configuration>
     <configuration>
-      <name>Realese</name>
+      <name>Release</name>
       <settings>
         <name>ICCARM</name>
         <data>

@@ -4,6 +4,9 @@
 extern const int b_welcome_message;
 extern const char s_welcome_message[128];
 extern const int i_questions;
+extern const char s_activation_key[128];
+extern const char s_path[128];
+extern const int b_refresher;
 
 WSHDR* run_elf;
 int is_safe;
@@ -12,6 +15,17 @@ char app_exe[512];
 char Message[128];
 unsigned int err;
 int in;
+
+#pragma swi_number=0x00BE
+__swi __arm void RunScaner();
+
+void RefreshMP (int res)
+{
+  if (!res)
+  {
+    RunScaner();    
+  }
+}
     
 void ShowWelcome()
 {
@@ -56,8 +70,7 @@ void runall(int res)
           {
               run_elf=AllocWS(64);
               str_2ws(run_elf,app_exe,strlen(app_exe)+1);  
-              sprintf(Message, "%s\\%s", dE.folder_name,dE.file_name);
-              ExecuteFile(run_elf, 0, Message);
+              ExecuteFile(run_elf, 0, dE.file_name);
               FreeWS(run_elf);
           }
         }while(FindNextFile(&dE,&err));
@@ -71,32 +84,39 @@ void runall(int res)
       ShowMSG(1, (int)Message);
     }
   }
-  ShowWelcome();
+  if (i_questions ==2)
+  {
+    ShowWelcome();
+  }
 }
 
 int main(const char *exename, const char *filename)
 {
+  char file[512]  = "";
   char *path=strrchr(exename,'\\');
   int l;
   if (!path) return 0; //Фигня какая-то
   path++;
   l=path-exename;
   memcpy(app_path,exename,l);
-  strcpy(app_exe, exename);
+  sprintf(file, "%s%s", app_path, "Daemons\\");
+  strcpy(app_exe, exename);  
   InitConfig();
   unsigned int err;
   int f;
-  if(f=fopen(filename,A_ReadOnly+A_BIN,P_READ,&err)!=-1)
+  sprintf(file, "%s%s", file, filename);
+  if(f=fopen(file,A_ReadOnly+A_BIN,P_READ,&err)!=-1)
   {
     fclose(f,&err);
-    sprintf(Message, "%s%s", "Run ", filename, "?");
+    sprintf(Message, "%s%s", "Run ", filename);
+    sprintf(Message, "%s%s", Message, "?");
     run_elf = AllocWS(64);
-    str_2ws(run_elf,filename,strlen(filename)+1);
+    str_2ws(run_elf,file,strlen(file)+1);
     MsgBoxYesNo(1, (int)Message, run);
   }
   else
   {
-    if (*RamPressedKey()== '#')
+    if (*RamPressedKey()== *s_activation_key)
     {
       is_safe = 1; 
     }
@@ -104,15 +124,30 @@ int main(const char *exename, const char *filename)
     {
       is_safe = 0;
     }
-    sprintf(app_path, "%s%s", app_path, "Deamons\\");
+    // welcome
     if ((is_safe == 1) & (i_questions == 0))
     {
       ShowWelcome();
       return 0;
     }
+    // mp
+    if (b_refresher == 1)
+    {
+      if (is_safe == 1)
+      {
+        MsgBoxYesNo(1, (int)"Apply mp-based patchs?", RefreshMP);
+      }
+      else
+      {
+        RefreshMP(0);
+      }
+    }
+    //daemons
+    sprintf(app_path, "%s%s", app_path, "Daemons\\");
     if ((is_safe == 1) & (i_questions == 1)) 
     {
       MsgBoxYesNo(1, (int)"Load deamons?", runall);
+      ShowWelcome();
     }
     if ((is_safe == 0) | ((is_safe == 1) & (i_questions == 2)))
     {
