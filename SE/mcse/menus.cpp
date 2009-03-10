@@ -2,7 +2,7 @@
 #include "inc\mc.h"
 #include "inc\zslib.h"
 #include "inc\mui.h"
-
+#include "inc\conf_loader.h"
 
 
 
@@ -65,10 +65,10 @@ void MC_InvChk(void)
 }
 
 MENU_DESC fl_menu[]={
-  {NULL, MC_Chk,0},
-  {NULL, MC_ChkAll,0},
-  {NULL, MC_UnChkAll,0},
-  {NULL, MC_InvChk,0}
+  {ind_chk,     MC_Chk,0},
+  {ind_chkall , MC_ChkAll,0},
+  {ind_unchall, MC_UnChkAll,0},
+  {ind_invchk,  MC_InvChk,0}
 };
 
 void MMF_OnBack(BOOK * bk, void *)
@@ -87,20 +87,18 @@ void MMF_onEnterPressed(BOOK * bk, void *)
 
 void MM_File(void)
 {
-  wchar_t ustr[64];
   GUI_LIST *lo;
   STRID sid;
-  char *head=muitxt(ind_mcmenu);
   cur_gui=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(fl_menu)];
+  wchar_t *names;
   for (int i=0; i<MAXELEMS(fl_menu); i++)
   {
-    win12512unicode(ustr,fl_menu[i].str,MAXELEMS(ustr)-1);
-    texts[i]=Str2ID(ustr,0,SID_ANY_LEN);
+    names=muitxt(fl_menu[i].id);
+    texts[i]=Str2ID(names,0,SID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(fl_menu));
-  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
-  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
   GuiObject_SetTitleText(lo,sid);
   SetNumOfMenuItem(lo,MAXELEMS(fl_menu));
   SetCursorToItem(lo,0);
@@ -159,14 +157,14 @@ void MC_NewFile(void)
 }
 
 MENU_DESC op_menu[]={
-  {NULL, MC_Paste,0},
-  {NULL, MC_Cancel,0},
-  {NULL, MC_Copy,0},
-  {NULL, MC_Move,0},
-  {NULL, MC_Delit,0},
-  {NULL, MC_Rename,0},
-  {NULL, MC_NewDir,0},
-  {NULL, MC_NewFile,0}
+  {ind_past,    MC_Paste,0},
+  {ind_cancel,  MC_Cancel,0},
+  {ind_copy,    MC_Copy,0},
+  {ind_move,    MC_Move,0},
+  {ind_del,     MC_Delit,0},
+  {ind_rename,  MC_Rename,0},
+  {ind_newdir,  MC_NewDir,0},
+  {ind_newfile, MC_NewFile,0}
 };
 
 void MMO_OnBack(BOOK * bk, void *)
@@ -190,10 +188,8 @@ void MMO_onEnterPressed(BOOK * bk, void *)
 
 void MM_Oper(void)
 {
-  wchar_t ustr[64];
   GUI_LIST *lo;
   STRID sid;
-  char *head;
   cur_gui=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(op_menu)];
   if (IsInArchive())
@@ -206,19 +202,18 @@ void MM_Oper(void)
     for (int i=0; i<MAXELEMS(op_menu); i++) op_menu[i].enabled=1;   // Врубаем все
   }
   int n=0;
+  wchar_t *names;
   for (int i=0; i<MAXELEMS(op_menu); i++)
   {
     if (op_menu[i].enabled)
     {
-      win12512unicode(ustr,op_menu[i].str,MAXELEMS(ustr)-1);
-      texts[n]=Str2ID(ustr,0,SID_ANY_LEN);
+      names=muitxt(op_menu[i].id);
+      texts[n]=Str2ID(names,0,SID_ANY_LEN);
       n++;
     }
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,n);
-  head=muitxt(ind_mcmenu);
-  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
-  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
   GuiObject_SetTitleText(lo,sid);
   SetNumOfMenuItem(lo,n);
   SetCursorToItem(lo,0);
@@ -264,11 +259,11 @@ void MC_SRTRev(void)
 
 
 MENU_DESC st_menu[]={
-  {NULL, MC_SRTName,0},
-  {NULL, MC_SRTExt,0},
-  {NULL, MC_SRTSize,0},
-  {NULL, MC_SRTDate,0},
-  {NULL, MC_SRTRev,0}
+  {ind_sortn, MC_SRTName,0},
+  {ind_sorte, MC_SRTExt,0},
+  {ind_sorts, MC_SRTSize,0},
+  {ind_sortd, MC_SRTDate,0},
+  {ind_sortr, MC_SRTRev,0}
 };
 
 void MMS_OnBack(BOOK * bk, void *)
@@ -287,7 +282,6 @@ void MMS_onEnterPressed(BOOK * bk, void *)
 
 int MMS_On_Msg(GUI_MESSAGE * msg)
 {
-  wchar_t ustr[64];
   wchar_t icn=0;
   int d;
   STRID str=LGP_NULL;
@@ -297,8 +291,7 @@ int MMS_On_Msg(GUI_MESSAGE * msg)
     d=GUIonMessage_GetCreatedItemIndex(msg);
     if (d<MAXELEMS(st_menu))
     {
-      win12512unicode(ustr,st_menu[d].str,MAXELEMS(ustr)-1);
-      str=Str2ID(ustr,0,SID_ANY_LEN);
+      str=Str2ID(muitxt(st_menu[d].id),0,SID_ANY_LEN);
       SetMenuItemText0(msg,str);
     }
     int sort=_CurTab->sort;
@@ -327,13 +320,11 @@ int MMS_On_Msg(GUI_MESSAGE * msg)
 
 void MM_Sort(void)
 {
-  wchar_t ustr[64];
   GUI_LIST *lo;
   STRID sid;
-  char *head=muitxt(ind_mcmenu);
+  wchar_t *head=muitxt(ind_mcmenu);
   cur_gui=lo=CreateListObject(&MCBook->book,0);
-  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
-  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  sid=Str2ID(head,0,SID_ANY_LEN);
   GuiObject_SetTitleText(lo,sid);
   SetNumOfMenuItem(lo,MAXELEMS(st_menu));
   SetCursorToItem(lo,0);
@@ -356,14 +347,14 @@ void MC_Refresh(void)
 }
 
 MENU_DESC vw_menu[]={
-  {NULL, MM_Sort,0},
-  {NULL, MC_Filter,0},
-  {NULL, MC_Refresh,0}
+  {ind_sort_m,  MM_Sort,0},
+  {ind_filter,  MC_Filter,0},
+  {ind_refresh, MC_Refresh,0}
 };
 
 void MMV_OnBack(BOOK * bk, void *)
 {
-  CloseMenu();
+  FREE_GUI(menu_id[view_ind]);
 }
 
 void MMV_onEnterPressed(BOOK * bk, void *)
@@ -377,20 +368,18 @@ void MMV_onEnterPressed(BOOK * bk, void *)
 
 void MM_View(void)
 {
-  wchar_t ustr[64];
   GUI_LIST *lo;
   STRID sid;
-  char *head=muitxt(ind_mcmenu);
   menu_id[view_ind]=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(vw_menu)];
+  wchar_t *names;
   for (int i=0; i<MAXELEMS(vw_menu); i++)
   {
-    win12512unicode(ustr,vw_menu[i].str,MAXELEMS(ustr)-1);
-    texts[i]=Str2ID(ustr,0,SID_ANY_LEN);
+    names=muitxt(vw_menu[i].id);
+    texts[i]=Str2ID(names,0,SID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(vw_menu));
-  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
-  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
   GuiObject_SetTitleText(lo,sid);
   SetNumOfMenuItem(lo,MAXELEMS(vw_menu));
   SetCursorToItem(lo,0);
@@ -418,8 +407,8 @@ void MC_BMList(void)
 }
 
 MENU_DESC bm_menu[]={
-  {NULL, MC_BMAdd,0},
-  {NULL, MC_BMList,0},
+  {ind_add, MC_BMAdd,0},
+  {ind_bml, MC_BMList,0},
 };
 
 void MMBM_OnBack(BOOK * bk, void *)
@@ -438,20 +427,19 @@ void MMBM_onEnterPressed(BOOK * bk, void *)
 
 void MM_BM(void)
 {
-  wchar_t ustr[64];
   GUI_LIST *lo;
   STRID sid;
-  char *head=muitxt(ind_mcmenu);
+  wchar_t *head=muitxt(ind_mcmenu);
   cur_gui=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(bm_menu)];
+  wchar_t *names;
   for (int i=0; i<MAXELEMS(bm_menu); i++)
   {
-    win12512unicode(ustr,bm_menu[i].str,MAXELEMS(ustr)-1);
-    texts[i]=Str2ID(ustr,0,SID_ANY_LEN);
+    names=muitxt(bm_menu[i].id);
+    texts[i]=Str2ID(names,0,SID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(bm_menu));
-  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
-  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  sid=Str2ID(head,0,SID_ANY_LEN);
   GuiObject_SetTitleText(lo,sid);
   SetNumOfMenuItem(lo,MAXELEMS(bm_menu));
   SetCursorToItem(lo,0);
@@ -462,29 +450,30 @@ void MM_BM(void)
 
 void MC_DrvInf(void)
 {
-
+  CloseMenu();
 }
 
 void MC_Options(void)
 {
-
+  ExecuteFile(successed_config_path, successed_config_name);
+  CloseMenu();
 }
 
 void MC_AboutDlg(void)
 {
-
+  CloseMenu();
 }
 
 MENU_DESC mis_menu[]={
-  {NULL, MM_BM,0},
-  {NULL, MC_DrvInf,0},
-  {NULL, MC_Options,0},
-  {NULL, MC_AboutDlg,0}  
+  {ind_bm_m,     MM_BM,0},
+  {ind_drvinf,   MC_DrvInf,0},
+  {ind_settings, MC_Options,0},
+  {ind_about_m,  MC_AboutDlg,0}  
 };
 
 void MMM_OnBack(BOOK * bk, void *)
 {
-  CloseMenu();
+  FREE_GUI(menu_id[misc_ind]);
 }
 
 void MMM_onEnterPressed(BOOK * bk, void *)
@@ -498,20 +487,19 @@ void MMM_onEnterPressed(BOOK * bk, void *)
 
 void MM_Misc(void)
 {
-  wchar_t ustr[64];
   GUI_LIST *lo;
   STRID sid;
-  char *head=muitxt(ind_mcmenu);
+  wchar_t *head=muitxt(ind_mcmenu);
   menu_id[misc_ind]=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(mis_menu)];
+  wchar_t *names;
   for (int i=0; i<MAXELEMS(mis_menu); i++)
   {
-    win12512unicode(ustr,mis_menu[i].str,MAXELEMS(ustr)-1);
-    texts[i]=Str2ID(ustr,0,SID_ANY_LEN);
+    names=muitxt(mis_menu[i].id);
+    texts[i]=Str2ID(names,0,SID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(mis_menu));
-  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
-  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  sid=Str2ID(head,0,SID_ANY_LEN);
   GuiObject_SetTitleText(lo,sid);
   SetNumOfMenuItem(lo,MAXELEMS(mis_menu));
   SetCursorToItem(lo,0);
@@ -528,13 +516,13 @@ void MC_Exit(void)
 
 
 MENU_DESC opt_menu[]={
-  {NULL, MC_Open,0},
-  {NULL, MM_File,0},
-  {NULL, MM_Oper,0},
-  {NULL, MC_FileProp,0},
-  {NULL, MM_View,0},
-  {NULL, MM_Misc,0},
-  {NULL, MC_Exit,0}
+  {ind_open,   MC_Open,0},
+  {ind_file_m, MM_File,0},
+  {ind_oper_m, MM_Oper,0},
+  {ind_prop,   MC_FileProp,0},
+  {ind_view_m, MM_View,0},
+  {ind_misc_m, MM_Misc,0},
+  {ind_exit,   MC_Exit,0}
 };
 
 int act_mmid=0;
@@ -563,10 +551,8 @@ void MM_onEnterPressed(BOOK * bk, void *)
 
 void MM_Main(void)
 {
-  wchar_t ustr[64];
   GUI_LIST *lo;
   STRID sid;
-  char *head;
   menu_id[main_ind]=lo=CreateListObject(&MCBook->book,0);
   STRID texts[MAXELEMS(opt_menu)];
   for (int i=0; i<MAXELEMS(opt_menu); i++) opt_menu[i].enabled=1;   // Врубаем все
@@ -575,19 +561,18 @@ void MM_Main(void)
     opt_menu[0].enabled=0;
   }
   int n=0;
+  wchar_t *names;
   for (int i=0; i<MAXELEMS(opt_menu); i++)
   {
     if (opt_menu[i].enabled)
     {
-      win12512unicode(ustr,opt_menu[i].str,MAXELEMS(ustr)-1);
-      texts[n]=Str2ID(ustr,0,SID_ANY_LEN);
+      names=muitxt(opt_menu[i].id);
+      texts[n]=Str2ID(names,0,SID_ANY_LEN);
       n++;
     }
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,n);
-  head=muitxt(ind_mcmenu);
-  win12512unicode(ustr,head,MAXELEMS(ustr)-1);
-  sid=Str2ID(ustr,0,SID_ANY_LEN);
+  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
   GuiObject_SetTitleText(lo,sid);
   SetNumOfMenuItem(lo,n);
   SetCursorToItem(lo,0);

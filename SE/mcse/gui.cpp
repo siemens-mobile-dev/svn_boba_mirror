@@ -9,11 +9,11 @@ int scr_w;
 int scr_h;
 int txt_h;
 int head_h;
+int attr_h;
 int ico_hw=0;
 int itm_ch;
 int itms_max;
-
-FILEINF* scfile=NULL;
+int itms_bs;
 
 wchar_t gui_buf[MAX_PATH*2];
 
@@ -24,13 +24,25 @@ void InitScr()
   scr_w = Display_GetWidth(0);
   scr_h = Display_GetHeight(0);
   old_font=SetFont(CONFIG_FONT_FILES);
-  txt_h=GetImageHeight('A');
+  txt_h=GetImageHeight(L'A');
   SetFont(CONFIG_FONT_HEADER);
-  head_h=GetImageHeight('A');
+  head_h=GetImageHeight(L'A');
+  SetFont(CONFIG_FONT_ATTR);
+  attr_h=GetImageHeight(L'A');
+  
   ico_hw=GetImageHeight(STD_ICONS[ICN_FOLDER]);
   tmp = ico_hw - ITM_B * 2;
   itm_ch = tmp > txt_h ? tmp : txt_h;
   SetFont(old_font);
+  int i=ITM_FH+ATTR_FH;
+  itms_max=1;
+  while((i+ITM_FH)<(FLS_H - ITM_S*2))
+  {
+    i+=ITM_FH;
+    itms_max++;
+  }
+  //itms_max = ((FLS_H - ITM_S * 2) / ITM_FH)-1;
+  itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-(((itms_max ) * ITM_FH) + ATTR_FH)) / 2 );
   //itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-((itms_max + 1) * ITM_FH) ) / 2 );
 }
 
@@ -38,7 +50,6 @@ void DrwCurTab(void *gc, RECT *rc)
 {
   STRID str=0x6FFFFFFF;  
   RECT rt;
-  int old_font;
   rt.x1=TAB_X;
   rt.y1=TOP_Y;
   rt.x2=TAB_X+TAB_W-1;
@@ -47,7 +58,7 @@ void DrwCurTab(void *gc, RECT *rc)
   GC_SetBrushColor(gc, Colors[clSlTabBG]);
   GC_DrawRoundRect(gc ,&rt,4,4,2,1);
   
-  old_font=SetFont(CONFIG_FONT_HEADER);
+  SetFont(CONFIG_FONT_HEADER);
   str=curtab+'1'+0x78000000;
   DrawString(str,2,TAB_X,TOP_Y+TOP_B,TAB_X+TAB_W-2,TOP_Y+TOP_B+TOP_H-1,0,0,Colors[clTabTxt],0);
 }
@@ -57,9 +68,9 @@ void DrwDrvBg(int ind, void *gc, RECT *rc)
 {
   int x = DRV_X+DRV_O*ind;
   RECT rt;
-  rt.x1=rc->x1+x;
+  rt.x1=x;
   rt.y1=TOP_Y;
-  rt.x2=rc->x1+x+DRV_W-1;
+  rt.x2=x+DRV_W-1;
   rt.y2=TOP_Y+TOP_H-1;
   GC_SetPenColor(gc, Colors[clUSTabBD]);
   GC_SetBrushColor(gc, Colors[clUSTabBG]);
@@ -183,28 +194,26 @@ void DisableScroll ()
 
 void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
 { 
-  int itms_max = ((FLS_H - ITM_S * 2) / ITM_FH)-1;
-  int itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-((itms_max + 1) * ITM_FH) ) / 2 );
-  if (ind > _CurIndex-_CurBase) ind++;
-  int y = itms_bs + ind*ITM_FH;
+  int y_offs=ind>_CurIndex-_CurBase?ATTR_FH:0;
+  int y = itms_bs + ind*ITM_FH+y_offs;
   if (ind == _CurIndex-_CurBase) 
   {
     RECT rect;
     rect.x1=ITM_X1;
     rect.y1=y;
     rect.x2=ITM_X2;
-    rect.y2=y+ITM_FH*2-1;
+    rect.y2=y+ITM_FH+ATTR_FH-1;
     GC_SetPenColor(gc, Colors[clSelItemBD]);
     GC_SetBrushColor(gc, Colors[clSelItemBG]);
     GC_DrawRoundRect(gc ,&rect,4,4,1,1); 
-  
-  
+    
+    
+    SetFont(CONFIG_FONT_ATTR);  
     int y2 = itms_bs+(ind+1)*ITM_FH;
     if (!(file->attr & FA_DIRECTORY))
     {
       if (file->ws_size!=LGP_NULL)
       {
-        SetFont(CONFIG_FONT_FILES);
         DrawString(file->ws_size,0,TXT_X,y2+ITM_B+1,ITM_X2-ITM_B-2,y2+ITM_B+txt_h,0,0,
                    Colors[clInfoTxt],0);
       }
@@ -212,14 +221,12 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
       {
         // рисовать будем посередине + отступ на 1/2 символа
         int posX = (ITM_X2 - ITM_B - 2 - TXT_X) / 2 + TXT_X + txt_h / 2;
-        SetFont(CONFIG_FONT_FILES);
         DrawString(file->ws_ratio, 0, posX ,y2+ITM_B+1,ITM_X2-ITM_B-2,y2+ITM_B+txt_h,0,0,
                    Colors[clInfoTxt],0);
       }
     }
     if (file->ws_attr!=LGP_NULL)
     {
-      SetFont(CONFIG_FONT_FILES);
       DrawString(file->ws_attr,1,TXT_X,y2+ITM_B+1,ITM_X2-ITM_B-2,y2+ITM_B+txt_h,0,0,
                  Colors[clInfoTxt],0);
     }
@@ -261,22 +268,10 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
     DrawString(fn,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
                Colors[tc],0);
   }
-  
-    
-
-  
-  if (!Busy)
-  {
-    
-    
-    
-  }
 }
 
 void ShowFiles(void *gc, RECT *rc)
-{
-  int itms_max = ((FLS_H - ITM_S * 2) / ITM_FH)-1;
-  
+{ 
   DrawRect(rc->x1,rc->y1,rc->x2,rc->y2,Colors[clBD],Colors[clBG]);
   
   if (curtab < MAX_TABS) DrwCurTab(gc,rc);
@@ -326,16 +321,14 @@ void ShowFiles(void *gc, RECT *rc)
 
 void ShowProgr(void *gc, RECT *rc)
 {
-  wchar_t temp[128];
-  STRID str=0x6FFFFFFF;
+  STRID str=LGP_NULL;
   DrawRect(PRGB_X1,PRGB_Y,PRGB_X2,PRGB_Y+PRGB_H-1,Colors[clProgrBoxBD],Colors[clProgrBoxBG]);
 
   int p = progr_cur * 100 / progr_max;
   
   if (progr_act)
   {
-    win12512unicode(temp,muitxt(progr_act),MAXELEMS(temp)-1);
-    snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%ls: ",temp);
+    snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%ls: ",muitxt(progr_act));
     str=Str2ID(gui_buf,0,SID_ANY_LEN);
     DrawString(str,2,PRGB_X1+2,PRG_AT_Y,PRGB_X2-2,PRG_AT_Y+txt_h,0,0,Colors[clProgrTxt],Colors[clProgrTxtBD]);
     TextFree(str);

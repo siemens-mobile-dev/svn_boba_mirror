@@ -512,6 +512,9 @@
 0CC0: 00000000 D55A2D45 ; 330: int w_remove(const wchar_t *dir);
 0CC4: 00000000 61C12E45 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: 00000000 B57D1B44 ; 332: int GetSignalQuality(char *rssi,char *ber);
+0CCC: 00000000 2DF11345 ;8333: IS_NEEDED_BOOK isCameraBook(void);
+0CD0: 00000000 C5D80745 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
+0CD4: 00000000 B5744145 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
 
 
 

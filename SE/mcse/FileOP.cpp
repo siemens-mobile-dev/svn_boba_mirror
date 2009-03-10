@@ -4,13 +4,13 @@
 
 
 
-int isdir(wchar_t *name){
+int isdir(const wchar_t *name){
   W_FSTAT fs;
   w_fstat(name,&fs);
   return(fs.attr&FA_DIRECTORY);
 }
 
-int isDir(int tab, wchar_t* dname)
+int isDir(int tab, const wchar_t* dname)
 {
   if (IsArchiveOpened(tab))
     return 1; // зипы рассматриваем как директорию
@@ -20,11 +20,11 @@ int isDir(int tab, wchar_t* dname)
 
 void MsgBoxErrorMmi(int err)
 {
-  char *e=(char *)err;
-  MsgBoxError(e,0);
+  wchar_t *e=(wchar_t *)err;
+  MsgBoxError(e);
 }
 
-int cd(int tab, wchar_t *dname)
+int cd(int tab, const wchar_t *dname)
 {
   int drv;
   if (IsArchiveOpened(tab))
@@ -39,7 +39,7 @@ int cd(int tab, wchar_t *dname)
       snwprintf(buf, MAXELEMS(buf)-1, L"%ls\\", dname);
       if (!isdir(buf))
       {
-        MsgBoxError(ind_err_badname_t, dname);
+        MsgBoxError(ind_err_badname_t, (wchar_t *)dname);
         return 0;
       }
     }
@@ -50,7 +50,7 @@ int cd(int tab, wchar_t *dname)
     }
     if (drv==-1)
     {
-      MsgBoxError(ind_err_baddrv_t, dname);
+      MsgBoxError(ind_err_baddrv_t,  (wchar_t *)dname);
       return 0;
     }
   }
@@ -116,10 +116,10 @@ int M_Delit(FILEINF *file, int param)
 
 int M_FileCnt(FILEINF *file, int param)
 {
-  if (file && pathbuf)
+  if (file)
   {
     CurFullPath(file->ws_name);
-    *(int*)param += GetFilesCnt(pathbuf);
+    *(int *)param += GetFilesCnt(pathbuf);
     return 1;
   }
   return 0;

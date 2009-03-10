@@ -8,7 +8,7 @@ const wchar_t zip_ext[] = L"zip";
 
 void ZipError(int zipErrNum, char* procName)
 {
-  sprintf(msgbuf, muitxt(ind_err_ziperr), zipErrNum, procName);
+  snwprintf(msgbuf, MAXELEMS(msgbuf),muitxt(ind_err_ziperr), zipErrNum, procName);
   MsgBoxError(msgbuf);
 }
 

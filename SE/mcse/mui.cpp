@@ -113,7 +113,7 @@ const MUI_STR mui[]={
 
 #define MUI_COUNT		 (sizeof(mui)/sizeof(MUI_STR))
 
-char* mui_ld[MUI_COUNT];
+wchar_t* mui_ld[MUI_COUNT];
 
 int getmuiind(int id)
 {
@@ -122,14 +122,27 @@ int getmuiind(int id)
 	return -1;  
 }
 
-char* muitxt(int ind)
+wchar_t* muitxt(int ind)
 {
 	if (ind < 0 || ind >= MUI_COUNT) return NULL;
 	return mui_ld[ind] ? mui_ld[ind] : mui[ind].df_str;
 }
 
-char* muibuff;
-int muibuffsz;
+wchar_t* muibuff=NULL;
+int muibuffsz=0;
+
+void InitDefStrs()   // исправляем косяк иара...
+{
+  int c;
+  for (int i=0; i<MUI_COUNT; i++)
+  {
+    wchar_t *t=mui[i].df_str;
+    while((c=*t))
+    {
+      *t++=char8to16(c,1);
+    }
+  } 
+}
 
 
 void SaveMUI(wchar_t* filename)
@@ -156,10 +169,10 @@ void SaveMUI(wchar_t* filename)
     
     int bufsz=0;
     for(int cc=0;cc<MUI_COUNT;cc++)
-      bufsz+=strlen(muitxt(cc))+1;
-    char* buff;
-    char* lp;
-    lp=buff=new char[bufsz];
+      bufsz+=wstrlen(muitxt(cc))+1;
+    wchar_t* buff;
+    wchar_t* lp;
+    lp=buff=new wchar_t[bufsz];
     
     hdr.size=mclg_size | (bufsz<<16);
     MC_LG* lgtbl;
@@ -168,14 +181,14 @@ void SaveMUI(wchar_t* filename)
     for(int cc=0;cc<MUI_COUNT;cc++)
     {
       lg->id=mui[cc].id;
-      lg->ofs=(int)lp-(int)buff;
-      strcpy(lp, muitxt(cc));
-      lp+=strlen(muitxt(cc))+1;
+      lg->ofs=lp-buff;
+      wstrcpy(lp, muitxt(cc));
+      lp+=wstrlen(muitxt(cc))+1;
       lg++;
     }
     w_fwrite(f,&hdr,sizeof(hdr));
     w_fwrite(f,lgtbl,MUI_COUNT*sizeof(MC_LG));
-    w_fwrite(f,buff,bufsz);
+    w_fwrite(f,buff,bufsz*sizeof(wchar_t));
     delete (lgtbl);
     delete (buff);
     w_fclose(f);
@@ -210,25 +223,57 @@ int LoadMUI(wchar_t* filename)
         int tblsz=tblcn*sizeof(MC_LG);
         int bufsz=hdr.size>>16;
         FreeMUI();
-        muibuff=new char[bufsz];
-        muibuffsz=bufsz;
+        
+        muibuff=new wchar_t[bufsz];
+        muibuffsz=bufsz*sizeof(wchar_t);
         MC_LG* tbl;
         MC_LG* lg;
         lg=tbl=new MC_LG[tblcn];
-        res = 
-          (w_fread(f, tbl, tblsz)==tblsz) &&
-            (w_fread(f, muibuff, bufsz)==bufsz);
-        if (res)
+        
+        if (hdr.ver==mclg_ver)
         {
-          for(int cc=0;cc<tblcn;cc++)
+          res = 
+            (w_fread(f, tbl, tblsz)==tblsz) &&
+              (w_fread(f, muibuff, bufsz*sizeof(wchar_t))==bufsz*sizeof(wchar_t));
+          if (res)
           {
-            int ind=getmuiind(lg->id);
-            mui_ld[ind]=muibuff + lg->ofs;
-            lg++;
+            for(int cc=0;cc<tblcn;cc++)
+            {
+              int ind=getmuiind(lg->id);
+              mui_ld[ind]=muibuff + lg->ofs;
+              lg++;
+            }
           }
+          else
+          {
+            delete(muibuff);
+            muibuff=NULL;
+          }
+        } 
+        else if (hdr.ver==2)
+        {
+          char *oldm=new char[bufsz];
+          res = 
+            (w_fread(f, tbl, tblsz)==tblsz) &&
+              (w_fread(f, oldm, bufsz)==bufsz);
+          if (res)
+          {
+            for(int cc=0;cc<tblcn;cc++)
+            {
+              int ind=getmuiind(lg->id);
+              wchar_t *tx=muibuff + lg->ofs;
+              win12512unicode(tx,oldm+lg->ofs,strlen(oldm+lg->ofs));
+              mui_ld[ind]=tx;
+              lg++;
+            }
+          }
+          else
+          {
+            delete(muibuff);
+            muibuff=NULL;
+          }
+          delete oldm;  
         }
-        else
-          delete(muibuff);
         delete(tbl);
       }
       else v1=1;
@@ -237,11 +282,10 @@ int LoadMUI(wchar_t* filename)
   }
   int LoadMUIold(wchar_t* fname);
   if (v1) res=LoadMUIold(filename);
-  else InitMUI();
   return res;
 }
 
-void freeb(char* buf)
+void freeb(wchar_t* buf)
 {
   if (buf)
     if ((int)buf<(int)muibuff || (int)buf>=(int)muibuff+muibuffsz)
@@ -263,18 +307,34 @@ void FreeMUI()
   }
 }
 
-void MUIProc(char *name, char *value)
+void MUIProc(char *name, char *value, int is_utf)
 {
-	int id=strtol(name,0,10);
-	int ind=getmuiind(id);
-	if (ind<0)return;
-
-	freeb(mui_ld[ind]);
-	char* buf = new char[strlen(value)+1];
-	strcpy(buf, value);
-	for(int cc=0;buf[cc];cc++)
-		if (buf[cc]=='^')buf[cc]='\n';
-	mui_ld[ind] = buf;
+  int id=strtol(name,0,10);
+  int ind=getmuiind(id);
+  int len;
+  if (ind<0)return;
+  
+  freeb(mui_ld[ind]);
+  wchar_t* buf=NULL; 
+  len=strlen(value);
+  if (!is_utf)
+  {
+    buf= new wchar_t[len+1];
+    win12512unicode(buf,value,len);
+  }
+  else
+  {
+    len=utf8_to_utf16(value,len,NULL);
+    if (len!=-1)
+    {
+      buf= new wchar_t[len+1];
+      len=utf8_to_utf16(value,len,buf);
+      if (len!=-1) buf[len]=0;
+    }
+  }
+  for(int cc=0;buf[cc];cc++)
+    if (buf[cc]==L'^')buf[cc]=L'\n';
+  mui_ld[ind] = buf;
 }
 
 int LoadMUIold(wchar_t* fname)
@@ -292,51 +352,7 @@ int LoadMUIold(wchar_t* fname)
     fn=(wchar_t *)mclg_deffile;
   }
   int res = EnumIni(l, fn, MUIProc);
-  InitMUI();
   return res;
 }
 
-void InitMUI()
-{
-  opt_menu[0].str=muitxt(ind_open);
-  opt_menu[1].str=muitxt(ind_file_m);
-  opt_menu[2].str=muitxt(ind_oper_m);
-  opt_menu[3].str=muitxt(ind_prop);
-  opt_menu[4].str=muitxt(ind_view_m);
-  opt_menu[5].str=muitxt(ind_misc_m);
-  opt_menu[6].str=muitxt(ind_exit);
-  
-  fl_menu[0].str=muitxt(ind_chk);
-  fl_menu[1].str=muitxt(ind_chkall);
-  fl_menu[2].str=muitxt(ind_unchall);
-  fl_menu[3].str=muitxt(ind_invchk);
-  
-  st_menu[0].str=muitxt(ind_sortn);
-  st_menu[1].str=muitxt(ind_sorte);
-  st_menu[2].str=muitxt(ind_sorts);
-  st_menu[3].str=muitxt(ind_sortd);
-  st_menu[4].str=muitxt(ind_sortr);
-  
-  vw_menu[0].str=muitxt(ind_sort_m);
-  vw_menu[1].str=muitxt(ind_filter);
-  vw_menu[2].str=muitxt(ind_refresh);
-  
-  op_menu[0].str=muitxt(ind_past);
-  op_menu[1].str=muitxt(ind_cancel);
-  op_menu[2].str=muitxt(ind_copy);
-  op_menu[3].str=muitxt(ind_move);
-  op_menu[4].str=muitxt(ind_del);
-  op_menu[5].str=muitxt(ind_rename);
-  op_menu[6].str=muitxt(ind_newdir);
-  op_menu[7].str=muitxt(ind_newfile);
-  
-  mis_menu[0].str=muitxt(ind_bm_m);
-  mis_menu[1].str=muitxt(ind_drvinf);
-  mis_menu[2].str=muitxt(ind_settings);
-  mis_menu[3].str=muitxt(ind_about_m);
-  
-  bm_menu[0].str=muitxt(ind_add);
-  bm_menu[1].str=muitxt(ind_bml);
-
-}
 

@@ -4,6 +4,7 @@
 #include "inc\gui.h"
 
 const char _ss[] = "%s: %s";
+const wchar_t _lsls[] = L"%ls: %ls";
 const wchar_t _ls_ls[] = L"%ls/%ls";
 const wchar_t _ls_stars[] = L"%ls/*";
 const wchar_t str_empty[] = L"";
@@ -144,7 +145,7 @@ int match(wchar_t *pattern,wchar_t *string)
 wchar_t *sz2s(unsigned int size, wchar_t *buf)
 {
   float s = size;
-  char *pref;
+  wchar_t *pref;
   char cbuf[64];
   pref=muitxt(ind_byte);
   if (s >= 1024)
@@ -156,11 +157,11 @@ wchar_t *sz2s(unsigned int size, wchar_t *buf)
       s /= 1024;
       pref=muitxt(ind_mbyte);
     }
-    sprintf(cbuf, "%.2f %s", s, pref);
+    sprintf(cbuf, "%.2f", s);
   }
   else
-    sprintf(cbuf, "%d %s", size, pref);
-  win12512unicode(buf, cbuf, 63);
+    sprintf(cbuf, "%d", size);
+  snwprintf(buf, 63, L"%s %ls", cbuf, pref);
   return buf;
 }
 
@@ -245,6 +246,7 @@ int EnumIni(int local, const wchar_t *ininame, INIPROC proc)
     w_chdir(mcpath);
   }
   int f;
+  int is_utf8=0;
   if (fn && (f = w_fopen(fn, WA_Read, 0x1FF, NULL)) >=0)
   {
     size_cfg = w_lseek(f,0,WSEEK_END);
@@ -254,6 +256,14 @@ int EnumIni(int local, const wchar_t *ininame, INIPROC proc)
     {
       size_cfg = w_fread(f, buf, size_cfg);
       buf[size_cfg] = 0;
+      if (size_cfg>3)
+      {
+        if (buf[0]==0xEF && buf[1]==0xBB && buf[2]==0xBF) 
+        {
+          is_utf8=1;
+          buf+=3;
+        }
+      }
       do
       {
         // Камент
@@ -281,7 +291,7 @@ int EnumIni(int local, const wchar_t *ininame, INIPROC proc)
         }
         value[p]=0;
         if (proc)
-          proc(name, value);
+          proc(name, value, is_utf8);
       }
       while (ch);
     }

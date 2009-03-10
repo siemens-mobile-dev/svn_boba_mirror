@@ -6,6 +6,8 @@
 #include "dialog.h"
 #include "conf_loader.h"
 
+extern char *successed_config_filename;
+
 void PandemonuimDialog::onCreate()
 {
   SetName("PANDEMONIUM");
@@ -22,7 +24,7 @@ int PandemonuimDialog::onMessage(GBS_MSG * msg)
     Close();
   }
   
- extern char * successed_config_filename;
+
   
   
   

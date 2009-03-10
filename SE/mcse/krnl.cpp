@@ -10,7 +10,7 @@
 #include "inc\gui.h"
 #include "inc\7zslib.h"
 
-char msgbuf[256];
+wchar_t msgbuf[256];
 wchar_t mcpath[MAX_PATH];
 wchar_t pathbuf[MAX_PATH];
 wchar_t arcpathbuf[MAX_PATH];
@@ -42,7 +42,7 @@ DRVINFO Drives[MAX_DRV] = {
 	{L"/tpa",    1},
 	{L"/card",   1},
 	{L"/system", 1},
-	{L"/IFS",    1}
+	{L"/ifs",    1}
 };
 
 int curtab=0;
@@ -382,7 +382,7 @@ void UpdateAll()
     RefreshTab(ii);
 }
 
-void _cd_tab(int tab, int drv, wchar_t *dname)
+void _cd_tab(int tab, int drv, const wchar_t *dname)
 {
   if (IsArchiveOpened(tab))
   {
@@ -543,7 +543,10 @@ void CB_CS(int id)
     if (!LoadCS(pathbuf))
       MsgBoxError(muitxt(ind_err_badformat));
     else
+    {
       SaveCS(NULL);
+      RedrawGUI=1;
+    }
   }
 }
 
@@ -556,7 +559,7 @@ void CB_LG(int id)
     else
     {
       SaveMUI(NULL);
-      sprintf(msgbuf, _ss, muitxt(ind_lng), muitxt(ind_lngname));
+      snwprintf(msgbuf, MAXELEMS(msgbuf),_lsls, muitxt(ind_lng), muitxt(ind_lngname));
       MsgBoxError(msgbuf);
     }
   }
@@ -575,7 +578,7 @@ void S_ZipOpen(void)
     }
     else if (zerr != -11111) // ignore propr_stop
     {
-      sprintf(msgbuf, "OpenZip error %i", zerr);
+      snwprintf(msgbuf, MAXELEMS(msgbuf), L"OpenZip error %i", zerr);
       MsgBoxError(msgbuf);
     }
     RedrawGUI=1;
@@ -594,30 +597,35 @@ void S_7ZOpen(void)
     }
     else if (zerr != -11111) // ignore propr_stop
     {
-      sprintf(msgbuf, "OpenZip error %i", zerr);
+      snwprintf(msgbuf, MAXELEMS(msgbuf), L"7Zip error %i", zerr);
       //MsgBoxError(msgbuf);
     }
     RedrawGUI=1;
   }
 }
 
+void ExecuteFile(const wchar_t *path, const wchar_t *fname)
+{
+  SUB_EXECUTE *data;
+  FILEITEM *fi=FILEITEM_Create();
+  FILEITEM_SetPathAndContentType(fi,path);
+  FILEITEM_SetFnameAndContentType(fi,fname);
+  data=DataBrowser_CreateSubExecute(BOOK_GetBookID(&MCBook->book), fi);
+  DataBrowser_ExecuteSubroutine(data,1,0);
+  DataBrowser_ExecuteSubroutine(data,0x2D,0);
+  FILEITEM_Destroy(fi);
+}
 
 void ExecuteFile(wchar_t *fname, int, int)
 {
-  SUB_EXECUTE *data;
   wchar_t *name;
   wchar_t *w=wstrrchr(fname, '/');
   if (w)
   {
     name=w+1;
     *w=0;
-    FILEITEM *fi=FILEITEM_Create();
-    FILEITEM_SetPathAndContentType(fi,fname);
-    FILEITEM_SetFnameAndContentType(fi,name);
-    data=DataBrowser_CreateSubExecute(BOOK_GetBookID(&MCBook->book), fi);
-    DataBrowser_ExecuteSubroutine(data,1,0);
-    DataBrowser_ExecuteSubroutine(data,0x2D,0);
-    FILEITEM_Destroy(fi);
+    ExecuteFile(fname,name);
+    *w='/';
   }
 }
 
@@ -691,6 +699,7 @@ void DoSysOpen()
 u16 ExitTimer;
 
 void DoExitIdYes(u16 , LPARAM );
+void ExitFrom7Z();
 void CB_Exit(int id)
 {
   if (id == IDYES)
@@ -699,7 +708,8 @@ void CB_Exit(int id)
     if (!Busy)
     {
       // Выходим из зипа на текущем табе с восстановлением позиции
-      ExitFromZip();
+      if (IsInArchive()==ZIP_ARCH) ExitFromZip();
+      else if (IsInArchive()==_7Z_ARCH) ExitFrom7Z();
       
       // Закрываем остальные зипы при выходе
       for (int i = 0; i < MAX_TABS; i++)
@@ -719,7 +729,6 @@ void CB_Exit(int id)
     DeleteTempFiles();
     fn_free(&tmp_files);
   }*/
-      //FREE_GUI(MCBook->main_gui);
       FreeBook(&MCBook->book);
     }
     else ExitTimer=Timer_Set(3000,DoExitIdYes,0);
@@ -756,8 +765,9 @@ void DoSwapTab()
   if (curtab >= MAX_TABS) curtab = 0;
   
   // Останавливаем скроллинг при смене таба
-  scfile = NULL;
+  //scfile = NULL;
 }
+
 
 int cordrv(int num, int inc)
 {
@@ -791,6 +801,39 @@ void DoDwn()
 {
   if (CONFIG_LOOP_NAVIGATION_ENABLE || _CurIndex < _CurCount - 1)
     SetCurTabIndex(++_CurIndex, 1);
+}
+
+void DoPgUp()
+{
+	_CurIndex -= LONG_SCRL;
+	if (_CurIndex < 0) _CurIndex = 0;		
+	SetCurTabIndex(_CurIndex, 0);
+}
+
+void DoPgDwn()
+{
+	_CurIndex += LONG_SCRL;
+	_CurBase  = _CurIndex;
+	if (_CurIndex >= _CurCount) _CurIndex = _CurCount - 1;
+	SetCurTabIndex(_CurIndex, 0);
+}
+
+void DoBegin()
+{
+	SetCurTabIndex(0, 0);
+}
+
+void DoRoot()
+{
+  if (IsInArchive())
+    cd(curtab, str_empty);
+  else if (curtab < MAX_TABS)
+    cd(curtab, Drives[_CurDrv].path);
+}
+
+void DoShowPath()
+{
+  MsgBoxError(_CurPath);
 }
 
 void DoSortN()
@@ -829,6 +872,36 @@ void DoSortR()
 {
 	_CurTab->sort=(_CurTab->sort & STV_MASK) | (~_CurTab->sort & STD_MASK);
 	DoRefresh();
+}
+
+void DoTabCopy()
+{
+  // Очищаем буфер
+  CB_Cancel(IDYES);
+  
+  // Копируем текущие файлы в буфер
+  DoCopy();
+  
+  // Переходим на другой таб
+  DoSwapTab();
+  
+  // Вставляем файлы на него
+  DoPaste();
+}
+
+void DoTabMove()
+{
+  // Очищаем буфер
+  CB_Cancel(IDYES);
+  
+  // Копируем текущие файлы в буфер
+  DoMove();
+  
+  // Переходим на другой таб
+  DoSwapTab();
+  
+  // Вставляем файлы на него
+  DoPaste();
 }
 
 void ExitFromZip()
@@ -995,7 +1068,7 @@ void DoInvChk()
 
 void CB_Del(int id)
 {
-  if (id==1) SUBPROC((void*)S_Delit);
+  if (id==IDYES) SUBPROC((void*)S_Delit);
 }
 
 void DoDel()

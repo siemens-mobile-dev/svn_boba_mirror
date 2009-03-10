@@ -56,7 +56,7 @@ void create_connect(void)
     sa.family=1;
     sa.port=htons(80);
     if(request_type==GET_TOWN)
-      sa.ip=htonl(IP_ADDR(212,48,138,20));
+      sa.ip=htonl(IP_ADDR(212,48,141,129));
     if(request_type==SEARCH)
       sa.ip=htonl(IP_ADDR(212,48,138,19));
     if (connect(sock,&sa,sizeof(sa))!=-1)

@@ -25,12 +25,10 @@ void OkTextInput(BOOK *,wchar_t * string,int len)
 }
 
 
-void TextInput(char *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc)
+void TextInput(wchar_t *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc)
 {
   STRID pr, str;
-  wchar_t buff[32];
-  win12512unicode(buff,prmpt,MAXELEMS(buff)-1);
-  pr=Str2ID(buff,0,SID_ANY_LEN);
+  pr=Str2ID(prmpt,0,SID_ANY_LEN);
   str=Str2ID(wsname,0,SID_ANY_LEN);
   MCBook->tstname=TestFileName;
   MCBook->retproc=retproc;

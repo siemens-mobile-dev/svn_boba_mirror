@@ -56,10 +56,10 @@ extern wchar_t arcpathbuf[MAX_PATH];
 extern wchar_t wsbuf[MAX_PATH*2];
 extern wchar_t szLastNewFile[MAX_PATH];
 extern wchar_t szLastNewDir[MAX_PATH];
-extern char msgbuf[256];
+extern wchar_t msgbuf[256];
 
 void FillFileInfo(FILEINF *file);
-void _cd_tab(int tab, int drv, wchar_t *dname);
+void _cd_tab(int tab, int drv, const wchar_t *dname);
 int SetTabDrv(int tab, int num);
 void SetTabIndex(int tab, int num, int slide);
 wchar_t* CurFullPath(wchar_t* sfile);
@@ -75,11 +75,14 @@ extern const wchar_t keys_file[];
 void ExitFromZip();
 
 typedef void (*IFN_RET_PROC) (wchar_t *wsname);
-void TextInput(char *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc);
+void TextInput(wchar_t *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc);
+void ExecuteFile(const wchar_t *path, const wchar_t *fname);
 
 typedef int (*ENUM_SEL_PROC) (FILEINF *file, int param);
 int EnumChk(ENUM_SEL_PROC EnumProc, int param);
 int EnumSel(ENUM_SEL_PROC EnumProc, int param);
+
+void CB_Cancel(int id);
 
 void DoSwapTab();
 void DoPrvDrv();
@@ -109,4 +112,12 @@ void DoCancel();
 void DoFilter();
 void DoMove();
 void DoRen();
+void DoPgUp();
+void DoPgDwn();
+void DoTabCopy();
+void DoTabMove();
+void DoRoot();
+void DoShowPath();
+void DoBegin();
+
 #endif

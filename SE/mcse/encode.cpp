@@ -111,94 +111,98 @@ void dos2utf16(wchar_t *ws, const char* s)
  */
 
 
+
 int utf8_to_utf16(char *utf8, int cc, wchar_t *unicode16)
 {
-	int count = 0;
-	unsigned char c0, c1;
-	unsigned long scalar;
-
-	while(--cc >= 0) {
-		c0 = *utf8++;
-		/*DPRINTF("Trying: %02x\n",c0);*/
-
-		if ( c0 < 0x80 ) {
-			/* Plain ASCII character, simple translation :-) */
-			*unicode16++ = c0;
-			count++;
-			continue;
-		}
-
-		if ( (c0 & 0xc0) == 0x80 )
-			/* Illegal; starts with 10xxxxxx */
-			return -1;
-
-		/* c0 must be 11xxxxxx if we get here => at least 2 bytes */
-		scalar = c0;
-		if(--cc < 0)
-			return -1;
-		c1 = *utf8++;
-		/*DPRINTF("c1=%02x\n",c1);*/
-		if ( (c1 & 0xc0) != 0x80 )
-			/* Bad byte */
-			return -1;
-		scalar <<= 6;
-		scalar |= (c1 & 0x3f);
-
-		if ( !(c0 & 0x20) ) {
-			/* Two bytes UTF-8 */
-			if ( scalar < 0x80 )
-				return -1;	/* Overlong encoding */
-			*unicode16++ = scalar & 0x7ff;
-			count++;
-			continue;
-		}
-
-		/* c0 must be 111xxxxx if we get here => at least 3 bytes */
-		if(--cc < 0)
-			return -1;
-		c1 = *utf8++;
-		/*DPRINTF("c1=%02x\n",c1);*/
-		if ( (c1 & 0xc0) != 0x80 )
-			/* Bad byte */
-			return -1;
-		scalar <<= 6;
-		scalar |= (c1 & 0x3f);
-
-		if ( !(c0 & 0x10) ) {
-			/*DPRINTF("####\n");*/
-			/* Three bytes UTF-8 */
-			if ( scalar < 0x800 )
-				return -1;	/* Overlong encoding */
-			if ( scalar >= 0xd800 && scalar < 0xe000 )
-				return -1;	/* UTF-16 high/low halfs */
-			*unicode16++ = scalar & 0xffff;
-			count++;
-			continue;
-		}
-
-		/* c0 must be 1111xxxx if we get here => at least 4 bytes */
-		c1 = *utf8++;
-		if(--cc < 0)
-			return -1;
-		/*DPRINTF("c1=%02x\n",c1);*/
-		if ( (c1 & 0xc0) != 0x80 )
-			/* Bad byte */
-			return -1;
-		scalar <<= 6;
-		scalar |= (c1 & 0x3f);
-
-		if ( !(c0 & 0x08) ) {
-			/* Four bytes UTF-8, needs encoding as surrogates */
-			if ( scalar < 0x10000 )
-				return -1;	/* Overlong encoding */
-			scalar -= 0x10000;
-			*unicode16++ = ((scalar >> 10) & 0x3ff) + 0xd800;
-			*unicode16++ = (scalar & 0x3ff) + 0xdc00;
-			count += 2;
-			continue;
-		}
-
-		return -1;	/* No support for more than four byte UTF-8 */
-	}
-	return count;
+  int count = 0;
+  unsigned char c0, c1;
+  unsigned long scalar;
+  
+  while(--cc >= 0) {
+    c0 = *utf8++;
+    
+    if ( c0 < 0x80 ) {
+      /* Plain ASCII character, simple translation :-) */
+      if (unicode16) *unicode16++ = c0;
+      count++;
+      continue;
+    }
+    
+    if ( (c0 & 0xc0) == 0x80 )
+      /* Illegal; starts with 10xxxxxx */
+      return -1;
+    
+    /* c0 must be 11xxxxxx if we get here => at least 2 bytes */
+    scalar = c0;
+    if(--cc < 0)
+      return -1;
+    
+    c1 = *utf8++;
+    
+    if ( (c1 & 0xc0) != 0x80 )
+      /* Bad byte */
+      return -1;
+    
+    scalar <<= 6;
+    scalar |= (c1 & 0x3f);
+    
+    if ( !(c0 & 0x20) ) {
+      /* Two bytes UTF-8 */
+      if ( scalar < 0x80 )
+        return -1;	/* Overlong encoding */
+      if (unicode16) *unicode16++ = scalar & 0x7ff;
+      count++;
+      continue;
+    }
+    
+    /* c0 must be 111xxxxx if we get here => at least 3 bytes */
+    if(--cc < 0)
+      return -1;
+    
+    c1 = *utf8++;
+    if ( (c1 & 0xc0) != 0x80 )
+      /* Bad byte */
+      return -1;
+    
+    scalar <<= 6;
+    scalar |= (c1 & 0x3f);
+    
+    if ( !(c0 & 0x10) ) {
+      /* Three bytes UTF-8 */
+      if ( scalar < 0x800 )
+        return -1;	/* Overlong encoding */
+      if ( scalar >= 0xd800 && scalar < 0xe000 )
+        return -1;	/* UTF-16 high/low halfs */
+      if (unicode16) *unicode16++ = scalar & 0xffff;
+      count++;
+      continue;
+    }
+    
+    /* c0 must be 1111xxxx if we get here => at least 4 bytes */
+    
+    c1 = *utf8++;
+    if(--cc < 0)
+      return -1;
+    
+    if ( (c1 & 0xc0) != 0x80 )
+      /* Bad byte */
+      return -1;
+    
+    scalar <<= 6;
+    scalar |= (c1 & 0x3f);
+    
+    if ( !(c0 & 0x08) ) {
+      /* Four bytes UTF-8, needs encoding as surrogates */
+      if ( scalar < 0x10000 )
+        return -1;	/* Overlong encoding */
+      scalar -= 0x10000;
+      if (unicode16) *unicode16++ = ((scalar >> 10) & 0x3ff) + 0xd800;
+      if (unicode16) *unicode16++ = (scalar & 0x3ff) + 0xdc00;
+      count += 2;
+      continue;
+    }
+    return -1;	/* No support for more than four byte UTF-8 */
+  }
+  return count;
 }
+

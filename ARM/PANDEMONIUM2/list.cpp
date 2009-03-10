@@ -149,7 +149,7 @@ else
 void list_options_update(GUI * data)
 {
     ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
-    extern int ASK_FOR_REBOOT;
+    extern const int ASK_FOR_REBOOT;
     ListOptions::DaemonList->Save(1);    
     
     if(ListOptions::DaemonList->reboot_required&&ASK_FOR_REBOOT)
@@ -159,7 +159,7 @@ void list_options_update(GUI * data)
     GeneralFunc_flag1(list_opt->gui_id, 1);
 };
 
-extern const char *successed_config_filename;
+extern char *successed_config_filename;
 
 
 void do_edit_config()

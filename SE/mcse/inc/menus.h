@@ -9,7 +9,7 @@ enum MENUS {
 };
 
 typedef struct {
-  char *str;
+  int id;
   void (*proc)(void);
   int enabled;
 } MENU_DESC;

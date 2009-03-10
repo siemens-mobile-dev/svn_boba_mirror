@@ -26,8 +26,9 @@
 void MsgBoxError(char *err);
 void MsgBoxError(int lgind, char* str);
 void MsgBoxError(int lgind, wchar_t* str);
-void MsgBoxYesNo(char *qv, void(*f)(int));
-void MsgBoxError(char *err, int a);
+void MsgBoxYesNo(wchar_t *qv, void(*f)(int));
+void MsgBoxError(wchar_t *err, int a);
+void MsgBoxError(wchar_t *err);
 
 void DoErrKey();
 
@@ -35,6 +36,7 @@ void DoErrKey();
 
 #define MAX_TABS		2
 #define systab			MAX_TABS
+#define LONG_SCRL		itms_max
 
 #define FNT_NONE		1
 #define FNT_COPY		1
@@ -95,13 +97,13 @@ typedef struct
 	int offset;
 } mccfg_hdr;
 
-extern FILEINF* scfile;
 void SortFiles(int tab);
 
 typedef void (*KEY_PROC) ();
 void win12512unicode(wchar_t *ws, const char *s, int len);
 void dos2utf16(wchar_t *ws, const char* s);
 int utf8_to_utf16(char *utf8, int cc, wchar_t *unicode16);
+unsigned int char8to16(int c, int type);
 
 extern "C" long  strtol (const char* nptr,char* *endptr,int base);
 KEY_PROC GetKeyprocByKey(char key);
@@ -151,7 +153,7 @@ extern MyBOOK * MCBook;
 extern FN_LIST buffer;
 
 extern DISP_OBJ *main_obj;
-int cd(int tab, wchar_t *dname);
+int cd(int tab, const wchar_t *dname);
 
 void S_Delit(void);
 void S_Paste(void);
@@ -159,7 +161,7 @@ int M_MoveCopy(FILEINF *file, int param);
 void _NewDir(wchar_t *wsname);
 int cdsys(wchar_t *dname);
 
-int isdir(wchar_t *name);
+int isdir(const wchar_t *name);
 void UseBM(wchar_t* filename);
 void DoBMAdd();
 void DoBMList();

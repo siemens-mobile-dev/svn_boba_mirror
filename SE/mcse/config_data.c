@@ -34,6 +34,9 @@ __root const CFG_HDR cfghdr_m05 = { CFG_LEVEL, "Font setup", 1, 0 };
 	__root const CFG_HDR cfghdr051 = { CFG_FONT, "Font other", 0, 2 };
 	__root const int CONFIG_FONT_HEADER = 0x35;
         
+	__root const CFG_HDR cfghdr052 = { CFG_FONT, "Font attributes", 0, 2 };
+	__root const int CONFIG_FONT_ATTR = 0x35;
+        
 __root const CFG_HDR cfghdr_m06 = { CFG_LEVEL, "", 0, 0 };
 
 

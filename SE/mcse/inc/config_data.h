@@ -9,6 +9,7 @@ extern const int CONFIG_LOOP_NAVIGATION_ENABLE;
 
 extern const int CONFIG_FONT_FILES;
 extern const int CONFIG_FONT_HEADER;
+extern const int CONFIG_FONT_ATTR;
 
 extern const int CONFIG_SCROLL_TEXT_SPEED;
 extern const int CONFIG_SCROLL_TEXT_WAIT;

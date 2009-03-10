@@ -15,7 +15,6 @@
 
 MyBOOK * MCBook;
 DISP_OBJ *main_obj=NULL;
-wchar_t strconv[128];
 volatile int Busy = 0;
 volatile int Terminate = 0; // флаг необходимости завершени€ работы
 volatile int RedrawGUI = 0; // флаг необходимости перерисовки гу€
@@ -34,35 +33,37 @@ void elf_exit(void){
 
 void MsgBoxError(int lgind, char* str)
 {
-  sprintf(msgbuf, muitxt(lgind), str);
-  win12512unicode(strconv,msgbuf,MAXELEMS(strconv)-1);
-  STRID q=Str2ID(strconv,0,SID_ANY_LEN);
+  snwprintf(msgbuf,MAXELEMS(msgbuf), muitxt(lgind), str);
+  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
   MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(int lgind, wchar_t* str)
 {
-  sprintf(msgbuf, muitxt(lgind), str);
-  win12512unicode(strconv,msgbuf,MAXELEMS(strconv)-1);
-  STRID q=Str2ID(strconv,0,SID_ANY_LEN);
+  snwprintf(msgbuf,MAXELEMS(msgbuf), muitxt(lgind), str);
+  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
   MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(char *err)
 {
-  win12512unicode(strconv,err,MAXELEMS(strconv)-1);
-  STRID q=Str2ID(strconv,0,SID_ANY_LEN);
+  win12512unicode(msgbuf,err,MAXELEMS(msgbuf)-1);
+  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
   MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
 }
 
-void MsgBoxError(char *err, int a)
+void MsgBoxError(wchar_t *err, int a)
 {
-  sprintf(msgbuf, err, a);
-  win12512unicode(strconv,msgbuf,MAXELEMS(strconv)-1);
-  STRID q=Str2ID(strconv,0,SID_ANY_LEN);
+  snwprintf(msgbuf,MAXELEMS(msgbuf), err, a);
+  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
   MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
 }
 
+void MsgBoxError(wchar_t *err)
+{
+  STRID q=Str2ID(err,0,SID_ANY_LEN);
+  MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
+}
 
 static void YSYes(BOOK * bk, void *)
 {
@@ -78,18 +79,17 @@ static void YSNo (BOOK * bk, void *)
   FREE_GUI(mcb->yes_no);
 }
 
-void MsgBoxYesNo(char *qv, void(*f)(int))
+void MsgBoxYesNo(wchar_t *qv, void(*f)(int))
 {
-  win12512unicode(strconv,qv,MAXELEMS(strconv)-1);
-  STRID q=Str2ID(strconv,0,SID_ANY_LEN);
+  STRID q=Str2ID(qv,0,SID_ANY_LEN);
   MCBook->YesNoFunc=f;
   MCBook->yes_no=CreateYesNoQuestionVA(0,
-                                           VAR_BOOK(MCBook),
-                                           VAR_YESNO_QUESTION(q),
-                                           VAR_YESNO_YES_ACTION(YSYes),
-                                           VAR_YESNO_NO_ACTION(YSNo),
-                                           VAR_PREV_ACTION_PROC(YSNo),
-                                           0);
+                                       VAR_BOOK(MCBook),
+                                       VAR_YESNO_QUESTION(q),
+                                       VAR_YESNO_YES_ACTION(YSYes),
+                                       VAR_YESNO_NO_ACTION(YSNo),
+                                       VAR_PREV_ACTION_PROC(YSNo),
+                                       0);
 }
 
 void FreeData()
@@ -162,18 +162,20 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
   InitScr();
   WriteLog("InitCS");
   InitCS();
+  InitDefStrs();
+  WriteLog("LoadMUI");
   if (CONFIG_LOAD_MUI)
     LoadMUI(NULL);
-  else
-    InitMUI();
   DispObject_SetRefreshTimer(&db->dsp_obj,100);
   return (1);
 }
 
 void MainGuiOnClose(DISP_OBJ_MAIN *db)
 {
-  DispObject_KillRefreshTimer(&db->dsp_obj);
   WriteLog("MainGuiOnClose");
+  DispObject_KillRefreshTimer(&db->dsp_obj);
+  DisableScroll();
+  FreeData();
 }
 
 void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
@@ -210,8 +212,7 @@ void MainGuiOnKey(DISP_OBJ_MAIN *db,int key,int,int repeat,int type)
   {
     if (key==KEY_LEFT_SOFT || key==KEY_RIGHT_SOFT)
     {
-      win12512unicode(strconv,muitxt(ind_pmt_stop),MAXELEMS(strconv)-1);
-      STRID q=Str2ID(strconv,0,SID_ANY_LEN);
+      STRID q=Str2ID(muitxt(ind_pmt_stop),0,SID_ANY_LEN);
       MCBook->stop_progr=CreateYesNoQuestionVA(0,
                                                VAR_BOOK(MCBook),
                                                VAR_YESNO_QUESTION(q),
@@ -295,6 +296,15 @@ static int MainPageOnEnter(void *, BOOK *bk)
   return (1);
 }
 
+static int MainPageOnExit(void *, BOOK *bk)
+{
+  MyBOOK *mbk=(MyBOOK *)bk;
+  WriteLog("MainPageOnExit");
+  FREE_GUI(mbk->main_gui);
+  return (1);
+}
+
+
 int TerminateElf(void * ,BOOK* book)
 {
   FreeBook(book);
@@ -328,6 +338,7 @@ const PAGE_DESC bk_base = {"MC_Base_Page",0,bk_msglst_base};
 const PAGE_MSG bk_msglst_main[] @ "DYN_PAGE"  = 
 {
   PAGE_ENTER_EVENT_TAG,    MainPageOnEnter,
+  PAGE_EXIT_EVENT_TAG,     MainPageOnExit,
   NIL_EVENT_TAG,           NULL
 };
 
@@ -336,8 +347,8 @@ const PAGE_DESC bk_main = {"MC_Main_Page",0,bk_msglst_main};
 // при закрытии книги
 static void onMyBookClose(BOOK * book)
 {
-  DisableScroll();
-  SUBPROC(FreeData);
+  WriteLog("onMyBookClose");
+  //SUBPROC(FreeData);
   SUBPROC(elf_exit);
 }
 
@@ -354,13 +365,13 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
   StartLog();
   WriteLog("Start");
   WriteLog("InitConfig");
+  InitConfig();
   if (!CreateBook(MCBook,onMyBookClose,&bk_base,"mc",-1,0))
   {
     delete MCBook;
     SUBPROC(elf_exit);
     return (0);    
   }
-  InitConfig();
   if (path && fname) wstrcpy(in_open_path, fname); else *in_open_path=0;
   BookObj_GotoPage((BOOK *)MCBook,&bk_main);
   return 0;

@@ -145,8 +145,8 @@ int fcopy(wchar_t* src, wchar_t* dst)
   }
 L_EXIT:
   if (buff) delete(buff);
-  if (fo != -1) w_fclose(fo);
-  if (fi !=- 1) w_fclose(fi);
+  if (fo>=0) w_fclose(fo);
+  if (fi>=0) w_fclose(fi);
   return res;
 }
 
@@ -181,48 +181,94 @@ void CorFileName(wchar_t* wsname)
   wsname[i]=0;
 }
 
+typedef struct {
+  int is_first;
+  wchar_t *name;
+  W_FSTAT fs;  
+} W_FIND;
+
+
+
 
 
 int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param, int recursive, int enumDirs)
 {
   unsigned int ccFiles   = 0;
   unsigned int ccSubDirs = 0;
-  wchar_t *path=new wchar_t[MAX_PATH];
-  void *handle=w_diropen(dname);
-  wchar_t *next;
-  if (handle && path)
+  LIST *lst=List_New();
+  W_FIND *t=new W_FIND;
+  if (t)
   {
-    w_chdir(dname);
-    while((next=w_dirread(handle)))
+    t->is_first=1;
+    t->name=new wchar_t[wstrlen(dname)+1];
+    wstrcpy(t->name,dname);
+    ListElement_AddtoTop(lst, t);
+    for (int i=0; i<lst->FirstFree; i++)
     {
-      W_FSTAT fs;
-      w_fstat(next,&fs);
-      if (fs.attr & FA_DIRECTORY)
+      W_FIND *cur=(W_FIND *)ListElement_GetByIndex(lst,i);
+      if (cur->is_first || ((cur->fs.attr & FA_DIRECTORY) && recursive))
       {
-        if (enumDirs)
+        wchar_t *dir=cur->name;
+        void *handle=w_diropen(dir);
+        if (handle)
         {
-          ccSubDirs++;
-          snwprintf(path, MAX_PATH-1,_ls_ls, dname, next);
-          int tmp = 0;
-          if (recursive) tmp = EnumFiles(path, enumproc, param);
-          ccSubDirs += tmp >> 16;
-          ccFiles += tmp & 0xffff;
-          if (enumproc)
-            if (enumproc(dname, next, &fs, param)==0)
-              break;
+          wchar_t *next;
+          w_chdir(dir);
+          int f;
+          while((next=w_dirread(handle)))
+          {
+            W_FSTAT fs;
+            w_fstat(next,&fs);
+            if (fs.attr & FA_DIRECTORY)
+            {
+              if (enumDirs)
+              {
+                f=1;
+              }
+            }
+            else f=1;
+            if (f)
+            {
+              t=new W_FIND;
+              int len=wstrlen(dir)+wstrlen(next)+1;
+              t->is_first=0;
+              t->name=new wchar_t[len+1];
+              snwprintf(t->name, len,_ls_ls, dir, next);
+              memcpy(&t->fs,&fs,sizeof(W_FSTAT));
+              ListElement_Add(lst, t);
+            }
+          }
+          w_dirclose(handle);
         }
       }
-      else
-      {
-        ccFiles++;
-        if (enumproc)
-          if (enumproc(dname, next, &fs, param)==0)
-            break;
-      }
     }
-    w_dirclose(handle);
+    int ex=0;
+    while(lst->FirstFree)
+    {
+      t=(W_FIND *)ListElement_Remove(lst,lst->FirstFree-1);
+      if (!ex)
+      {
+        if (!t->is_first)  // первую не обрабатываем
+        {
+          if (!(t->fs.attr & FA_DIRECTORY) || enumDirs)
+          {
+            wchar_t *name=wstrrchr(t->name,L'/');
+            if (name)
+            {
+              t->fs.attr&FA_DIRECTORY?ccSubDirs++:ccFiles++;
+              *name=0;
+              if (enumproc)
+                if (enumproc(t->name, name+1, &t->fs, param)==0)
+                  ex=1;
+            }
+          }
+        }
+      }
+      delete (t->name);
+      delete (t);
+    }
   }
-  delete path;
+  List_Free(lst);
   if (ccSubDirs > 0xffff) ccSubDirs = 0xffff;
   if (ccFiles > 0xffff)   ccFiles = 0xffff;
   return (ccSubDirs << 16 | ccFiles);

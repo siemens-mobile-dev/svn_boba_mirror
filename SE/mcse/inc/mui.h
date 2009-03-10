@@ -108,7 +108,7 @@
 typedef struct
 {
 	int id;
-	char* df_str;
+	wchar_t* df_str;
 }MUI_STR;
 
 typedef struct
@@ -120,7 +120,7 @@ typedef struct
 #define MCLG_hdr mccfg_hdr
 
 #define mclg_sig (*(int*)"mclg")
-#define mclg_ver 2
+#define mclg_ver 3
 #define mclg_size MUI_COUNT
 #define mclg_offset sizeof(MCLG_hdr)
 
@@ -129,10 +129,9 @@ extern const wchar_t mclg_ext[];
 
 void SaveMUI(wchar_t* filename);
 int LoadMUI(wchar_t* filename);
-void InitMUI();
 void FreeMUI();
-char* muitxt(int ind);
-
+wchar_t* muitxt(int ind);
+void InitDefStrs();
 
 
 

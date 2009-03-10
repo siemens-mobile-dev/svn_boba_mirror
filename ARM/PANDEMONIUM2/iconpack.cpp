@@ -30,7 +30,7 @@ extern char basepath[128];
 void IconPack::Setup()
 {
   Free();
-  extern char IMG_PATH[128]; 
+  extern const char IMG_PATH[128]; 
   Active = this;
   for(int i=0; i<TOTAL_ICONS_NUM; i++)
   {

@@ -1,10 +1,11 @@
 #ifndef _SLIB_H
   #define _SLIB_H
 
-typedef void (*INIPROC) (char* name, char* value);
+typedef void (*INIPROC) (char* name, char* value, int is_utf);
 #define MAX_INIBUF	256
 
 extern const wchar_t _ls_ls[];
+extern const wchar_t _lsls[];
 extern const wchar_t _ls_stars[];
 extern const wchar_t str_empty[];
 extern const wchar_t _d[];

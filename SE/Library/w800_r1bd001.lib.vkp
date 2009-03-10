@@ -503,21 +503,25 @@
 0C88: FFFFFFFF B512EA44 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
 0C8C: FFFFFFFF F90DEA44 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 0C90: FFFFFFFF 101E044C ;8324: void * get_CellData(void);
-;0C94: xxxxxxxx yyyyyyyy ; 325: void * IncommingCall_Reject(BOOK* book);
+0C94: FFFFFFFF B12EDE44 ; 325: void * IncommingCall_Reject(BOOK* book);
 ;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
 0C9C: FFFFFFFF 39928F44 ; 327: int GetRadioState(char* level, char* flag);
-;0CA0: xxxxxxxx yyyyyyyy ; 328: int Bluetooth_GetState(void);
-;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
-;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);
+0CA0: FFFFFFFF C5200D45 ; 328: int Bluetooth_GetState(void);
+0CA4: FFFFFFFF A1200D45 ; 329: int Bluetooth_GetPhoneVisibility(void);
+0CA8: FFFFFFFF 49210D45 ; 32A: int Bluetooth_isBusy(void);
 ;0CAC: xxxxxxxx yyyyyyyy ; 32B: int USB_isConnected(void);
-;0CB0: xxxxxxxx yyyyyyyy ; 32C: void *w_diropen(const wchar_t *dir);
-;0CB4: xxxxxxxx yyyyyyyy ; 32D: wchar_t *w_dirread(void *);
-;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
-;0CBC: xxxxxxxx yyyyyyyy ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
-;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
-;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
+0CB0: FFFFFFFF 554B1145 ; 32C: void *w_diropen(const wchar_t *dir);
+0CB4: FFFFFFFF ADC2CF44 ; 32D: wchar_t *w_dirread(void *);
+0CB8: FFFFFFFF DD4D1145 ; 32E: int w_dirclose(void *);
+0CBC: FFFFFFFF 49C3CF44 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+0CC0: FFFFFFFF F9C2CF44 ; 330: int w_remove(const wchar_t *dir);
+0CC4: FFFFFFFF 45F3CF44 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: FFFFFFFF 49928F44 ; 332: int GetSignalQuality(char *rssi,char *ber);
+0CCC: FFFFFFFF 2DDDF844 ;8333: IS_NEEDED_BOOK isCameraBook(void);
+0CD0: FFFFFFFF BDE2C744 ;8334: IS_NEEDED_BOOK isSoundRecoderBook(void);
+;0CD4: xxxxxxxx yyyyyyyy ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
 
+	
 
 
 

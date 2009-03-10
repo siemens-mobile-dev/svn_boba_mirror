@@ -17,9 +17,10 @@ const KEYNM_MAP keynames[] =
 	{&KEY_RIGHT, "right"},  //6
 	{&KEY_VOL_UP, "volup"},  // 7
 	{&KEY_VOL_DOWN, "voldown"},   //8
-        {&KEY_ESC, "esc"},  //9
-	{&KEY_STAR, "*"},  //10
-	{&KEY_DIEZ, "#"}, //11
+        {&KEY_DEL, "del"},  //9
+        {&KEY_ESC, "esc"},  //10
+	{&KEY_STAR, "*"},  //11
+	{&KEY_DIEZ, "#"}, //12
         
 	{&KEY_DIGITAL_0, "0"}, 
 	{&KEY_DIGITAL_0, "1"},
@@ -37,7 +38,7 @@ const KEYNM_MAP keynames[] =
 
 char keyMap[0xFF];
 
-KEY_PROC procmap[] = 
+KEY_PROC procmap[KEYS_COUNT] = 
 {
 	NULL,
 	DoMenu,
@@ -48,25 +49,24 @@ KEY_PROC procmap[] =
 	DoNxtDrv,
 	NULL,
 	NULL,
+        DoDel,
 	DoBackK,
 	NULL,
 	NULL,
-	NULL,
-	DoSwapTab,
-	DoSetSort,
-	NULL,
-	DoChk,
-	DoOpen,
-	DoDel,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL, 
+	DoChk,     //0
+	DoSwapTab,  //1
+	DoUp,  //2
+	DoPgUp,   // 3
+	DoPrvDrv,  // 4
+	DoOpen,   //5 
+	DoNxtDrv,  //6
+	NULL,   //7
+	DoDwn,  //8
+	DoPgDwn,
 };
 
 // long press
-KEY_PROC procmapl[] = 
+KEY_PROC procmapl[KEYS_COUNT] = 
 {
 	NULL,
 	NULL,
@@ -91,7 +91,6 @@ KEY_PROC procmapl[] =
 	NULL,
 	NULL,
 	NULL,
-	NULL, 
 };
 
 
@@ -102,11 +101,56 @@ typedef struct{
 
 const PROC_MAP keyprocs[]=
 {
-  {"none", NULL}  
+	{"none", NULL},
+	{"open", DoOpen},
+	{"back", DoBackK},
+	{"rename", DoRen},
+	{"past", DoPaste},
+	{"copy", DoCopy},
+	{"move", DoMove},
+	{"del", DoDel},
+	{"cancel", DoCancel},
+	{"newdir", DoNewDir},
+	{"menu", DoMenu},
+	//{"fileprop", (KEY_PROC)DoFileProp},
+	//{"drvinf", DoDrvInf},
+	{"swaptab", DoSwapTab},
+	{"prvdrv", DoPrvDrv},
+	{"nxtdrv", DoNxtDrv},
+	{"invchk", DoInvChk},
+	{"chk", DoChk},
+	{"chkall", DoChkAll},
+	{"unchall", DoUnCAll},
+	{"up", DoUp},
+	{"dwn", DoDwn},
+	{"pgup", DoPgUp},
+	{"pgdn", DoPgDwn},
+	{"bmlist", DoBMList},
+	{"bmadd", DoBMAdd},
+	{"filter", DoFilter},
+	{"refresh", (KEY_PROC)DoRefresh},
+	{"root", DoRoot},
+	{"exit", DoExit},
+	{"showpath", DoShowPath},
+	{"begin", DoBegin},
+	{"sortn", DoSortN},
+	{"sorte", DoSortE},
+	{"sorts", DoSortS},
+	{"sortd", DoSortD},
+	{"sortr", DoSortR},
+	{"setsort", DoSetSort},
+	//{"newfile", DoNewFile},
+	//{"showhid", DoShowHid},
+	//{"showsys", DoShowSys},
+	//{"showhs", DoShowHidSys},
+	//{"showhdrv", DoShowHidDrv},
+	{"tabcopy", DoTabCopy},
+	{"tabmove", DoTabMove},
+	{"sysopen", DoSysOpen},
 };
 
 
-void KeysProc(char *name, char *value)
+void KeysProc(char *name, char *value, int is_utf)
 {
   strtolower(name, name, -1);
   strtolower(value, value, -1);
@@ -114,38 +158,38 @@ void KeysProc(char *name, char *value)
   int inkey = -1;
   int islong = 0;
   KEY_PROC keyproc = DoErrKey;
-
-	int nameLen = strlen(name);
-	if (nameLen > 0 && name[nameLen - 1] == '+')
-	{
-		// Последний символ +, значит долгое нажатие
-		islong = 1;
-		name[nameLen - 1] = 0; // Убираем плюс
-	}
-
-	for(int cc=0; cc < KEYS_COUNT; cc++)
-	{
-		if (strcmp(keynames[cc].name, name)==0)
-		{
-			inkey = cc;
-			break;
-		}
-	}
-	if (inkey == -1) return;
-
-	for(int cc = 0; cc < sizeof(keyprocs) / sizeof(keyprocs[0]); cc++)
-	{
-		if (strcmp(keyprocs[cc].name, value) == 0)
-		{
-			keyproc = keyprocs[cc].proc;
-			break;
-		}
-	}
-
-	if (islong)
-		procmapl[inkey] = keyproc;
-	else
-		procmap[inkey] = keyproc;
+  
+  int nameLen = strlen(name);
+  if (nameLen > 0 && name[nameLen - 1] == '+')
+  {
+    // Последний символ +, значит долгое нажатие
+    islong = 1;
+    name[nameLen - 1] = 0; // Убираем плюс
+  }
+  
+  for(int cc=0; cc < KEYS_COUNT; cc++)
+  {
+    if (strcmp(keynames[cc].name, name)==0)
+    {
+      inkey = cc;
+      break;
+    }
+  }
+  if (inkey == -1) return;
+  
+  for(int cc = 0; cc < sizeof(keyprocs) / sizeof(keyprocs[0]); cc++)
+  {
+    if (strcmp(keyprocs[cc].name, value) == 0)
+    {
+      keyproc = keyprocs[cc].proc;
+      break;
+    }
+  }
+  
+  if (islong)
+    procmapl[inkey] = keyproc;
+  else
+    procmap[inkey] = keyproc;
 }
 
 void InitializeKeyMap()
@@ -154,7 +198,7 @@ void InitializeKeyMap()
   // Инициируем массив, 0xFF - значит нет такой клавиши
   memset(keyMap, 0xFF, sizeof(keyMap));
   // Сохраняем индексы
-  for (int i = 0; i < 12; i++)
+  for (int i = 0; i < 13; i++)
   {
     k=*keynames[i].key;
     if (k<0xFF)
@@ -164,32 +208,32 @@ void InitializeKeyMap()
   {
     k=KEY_DIGITAL_0+i;
     if (k<0xFF)
-      keyMap[k] = i+12;
+      keyMap[k] = i+13;
   }  
 }
 
 char GetKeynameIndexByKey(char key)
 {
-	if (key >= 0xFF) return 0xFF;
-	else return keyMap[key];
+  if (key >= 0xFF) return 0xFF;
+  else return keyMap[key];
 }
 
 KEY_PROC GetKeyprocByKey(char key)
 {
-	char idx = GetKeynameIndexByKey(key);
-	if (idx != 0xFF)
-		return procmap[idx];
-	else
-		return NULL;
+  char idx = GetKeynameIndexByKey(key);
+  if (idx != 0xFF)
+    return procmap[idx];
+  else
+    return NULL;
 }
 
 KEY_PROC GetKeyprocLongByKey(char key)
 {
-	char idx = GetKeynameIndexByKey(key);
-	if (idx != 0xFF)
-		return procmapl[idx];
-	else
-		return NULL;
+  char idx = GetKeynameIndexByKey(key);
+  if (idx != 0xFF)
+    return procmapl[idx];
+  else
+    return NULL;
 }
 
 void DoKey(int isLongPress, int key)

@@ -42,13 +42,6 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #define ELF_RECONFIG_EVENT 996
 #define SBY_REDRAW_RELEASE_EVENT 995
 
-// Str2ID conversion flag
-/*
-#define WSTR_2_ID 0
-
-#define NO_ERROR 0
-
-*/
 
 #pragma diag_suppress=Ta035
 #pragma diag_suppress=Ta036
@@ -285,9 +278,6 @@ __swi __arm  void SetMenuItemStyle( void *obj , int style);
 #pragma swi_number=0x140
 __swi __arm  void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
 
-//#pragma swi_number=0x141
-//__swi __arm  void SetGuiItemText(void *gui,int item,int StrID);
-
 #pragma swi_number=0x8141
 __swi __arm IS_NEEDED_BOOK isScreenSaverBook(void);
 
@@ -405,10 +395,6 @@ __swi __arm  int PNUM_len(void *pnum);
 #pragma swi_number=0x167
 __swi __arm  void PNUM2str(char *str,void *pnum,int len, int max_len);
 
-
-//#pragma swi_number=0x168
-//__swi __arm  void * ListElement_GetByNum(LIST *lst,int num_element);
-
 #pragma swi_number=0x168
 __swi __arm  DISP_OBJ * GUIObj_GetDISPObj (void * gui);
 
@@ -444,9 +430,6 @@ __swi __arm  void BookObj_Show(BOOK *,int display_type);
 
 #pragma swi_number=0x173
 __swi __arm  void StartAPP (const wchar_t * appname);
-
-//#pragma swi_number=0x174
-//__swi __arm  void CreateEvent(int event);
 
 #pragma swi_number=0x174
 __swi __arm  void ListMenu_SetOnMessages (GUI_LIST * , int (*proc)(GUI_MESSAGE *));
@@ -509,7 +492,7 @@ __swi   __arm OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 __swi   __arm int clear_bp_adr (void);
 
 #pragma swi_number=0x1A0
-__swi __arm  char* strcpy(char * dest, char * source);
+__swi __arm  char* strcpy(char * dest, const char * source);
 
 #pragma swi_number=0x1A1
 __swi __arm  void *CreateMessage(int size,int ev,char *name);
@@ -561,35 +544,8 @@ __swi __arm  int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 #pragma swi_number=0x1B7
 __swi __arm  int  isKeylocked(void);
 
-
 #pragma swi_number=0x81B8
 __swi __arm IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-//#pragma swi_number=0x81B9
-//__swi __arm void * get_APP_DESC_TABLE(void);
-
-
-
-/*
-06CC: FFFFFFFF 4D03D444 ; 1B3: int GetChargeBatteryInPercent(BOOK *standby , int *level);
-06D0: FFFFFFFF E13E1545 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-06D4: FFFFFFFF 3D3F1545 ; 1B5: void REQUEST_PROFILE_SETACTIVEPROFILE(const int *__zero , int NUMprof);
-06D8: FFFFFFFF ADA9EA44 ; 1B6: void SetBrightnessOfScreen(int br);
-06DC: FFFFFFFF 7DD9D344 ; 1B7: BOOK * Find_KeylockBook(void);
-06E0: FFFFFFFF 9199F644 ; 81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-06E4: FFFFFFFF 49B3F644 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);
-06E8: FFFFFFFF EDE5D344 ; 1BA: void ShuttingDown(void);
-06EC: FFFFFFFF 714FF844 ; 1BB: void Vibra(int t1, int t2, int t3);
-06F0: FFFFFFFF C9910B45 ; 1BC: char GetDateFormat(const int *zero, char *level);
-06F4: FFFFFFFF 69920B45 ; 1BD: char GetTimeFormat(const int *zero, char *level);
-06F8: FFFFFFFF CD92D244 ; 1BE: int Date2ID(int *, char DateFormat);
-06FC: FFFFFFFF E591D244 ; 1BF: int Time2ID(int *, char TimeFormat);
-
-
-
-
-
-*/
-
 
 #pragma swi_number=0x1BC
 __swi __arm int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
@@ -968,10 +924,6 @@ __swi __arm  int Display_GetWidth(int Display);
 #pragma swi_number=0x25A
 __swi __arm  void PlaySystemSound (int SndNumber);
 
-/*
-#pragma swi_number=0x25B
-#pragma swi_number=0x25C
-*/
 
 #pragma swi_number=0x25D
 __swi __arm  int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
@@ -1482,5 +1434,12 @@ __swi __arm int ConnectionManager_Connection_GetState(void);
 
 #pragma swi_number=0x332
 __swi __arm int GetSignalQuality(char *rssi,char *ber);
+
+#pragma swi_number=0x8333
+__swi __arm IS_NEEDED_BOOK isCameraBook(void);
+#pragma swi_number=0x8334
+__swi __arm IS_NEEDED_BOOK isSoundRecorderBook(void);
+#pragma swi_number=0x335
+__swi __arm void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
 
 #endif

@@ -509,12 +509,12 @@
 ;0CA4: xxxxxxxx yyyyyyyy ; 329: int Bluetooth_GetPhoneVisibility(void);
 ;0CA8: xxxxxxxx yyyyyyyy ; 32A: int Bluetooth_isBusy(void);
 ;0CAC: xxxxxxxx yyyyyyyy ; 32B: int USB_isConnected(void);
-;0CB0: xxxxxxxx yyyyyyyy ; 32C: void *w_diropen(const wchar_t *dir);
-;0CB4: xxxxxxxx yyyyyyyy ; 32D: wchar_t *w_dirread(void *);
-;0CB8: xxxxxxxx yyyyyyyy ; 32E: int w_dirclose(void *);
-;0CBC: xxxxxxxx yyyyyyyy ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
-;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
-;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
+0CB0: FFFFFFFF C15D5E45 ; 32C: void *w_diropen(const wchar_t *dir);
+0CB4: FFFFFFFF 69AA1045 ; 32D: wchar_t *w_dirread(void *);
+0CB8: FFFFFFFF 3D605E45 ; 32E: int w_dirclose(void *);
+0CBC: FFFFFFFF 71A71045 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
+0CC0: FFFFFFFF 2DA71045 ; 330: int w_remove(const wchar_t *dir);
+0CC4: FFFFFFFF CD091145 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: FFFFFFFF DD0CC244 ; 332: int GetSignalQuality(char *rssi,char *ber);
 
 

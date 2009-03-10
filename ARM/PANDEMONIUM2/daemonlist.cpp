@@ -7,15 +7,27 @@
 
 TDaemonList::TDaemonList()
 {
+  //
+  // 5 марта 2009, tridog
+  //
+  // —овместимость с SafeMode
+  //
   unsigned int err;
-  strcpy(daemon_path,"4:\\ZBin\\daemons\\");
+  extern char * successed_config_filename;
+  // »щем вложенную папку Daemons на диске, на котором нашли конфиг
+  sprintf(daemon_path, "%c%s", successed_config_filename[0], ":\\ZBin\\daemons\\daemons\\");
   if (!isdir((daemon_path),&err))
-      daemon_path[0]='0';
+  {
+    sprintf(daemon_path, "%c%s", successed_config_filename[0], ":\\ZBin\\daemons\\");  
+  }
+  //
+  //
   daemons=NULL;
   count=0;
   reboot_required=0;
   Load();  
 };
+
 
 TDaemonList::~TDaemonList()
 {

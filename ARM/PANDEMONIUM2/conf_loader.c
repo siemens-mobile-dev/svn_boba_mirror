@@ -2,12 +2,12 @@
 #include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 
-const char *successed_config_filename="";
+char *successed_config_filename="";
 #pragma segment="CONFIG_C"
 
 extern unsigned int reboot_address;
 
-int LoadConfigData(const char *fname)
+int LoadConfigData(char *fname)
 {
   int f;
   unsigned int ul;
