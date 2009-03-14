@@ -22923,6 +22923,28 @@
   </file>
   <file>
     <name>$PROJ_DIR$\rets_S75sw52.asm</name>
+    <excluded>
+      <configuration>S75sw40</configuration>
+      <configuration>CX70sw56</configuration>
+      <configuration>EL71sw41</configuration>
+      <configuration>S75sw47</configuration>
+      <configuration>SL75sw47</configuration>
+      <configuration>E71sw45</configuration>
+      <configuration>EL71sw45</configuration>
+      <configuration>C81sw51</configuration>
+      <configuration>S68sw47</configuration>
+      <configuration>SL65v53</configuration>
+      <configuration>S65v58</configuration>
+      <configuration>SK65sw50</configuration>
+      <configuration>M75sw25</configuration>
+      <configuration>C72sw22</configuration>
+      <configuration>CX75sw13</configuration>
+      <configuration>C75sw22</configuration>
+      <configuration>CX75sw25</configuration>
+      <configuration>SL75sw52</configuration>
+      <configuration>CX75sw12</configuration>
+      <configuration>M81sw51</configuration>
+    </excluded>
   </file>
   <file>
     <name>$PROJ_DIR$\rets_SK65sw50.asm</name>
