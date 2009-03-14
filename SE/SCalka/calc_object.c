@@ -928,6 +928,7 @@ void CalcGuiOnKey(DISP_OBJ_CALC *db,int key,int a,int b,int type)
       else
       {
         FreeBook(FindBook(isScalkaBook));
+        return;
       }
     }
   }
