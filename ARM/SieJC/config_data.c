@@ -14,7 +14,7 @@ __root const CFG_HDR cfghdr_CONNECT_LEVEL={CFG_LEVEL,LG_SETUPCONECT,1,0};
 __root const CFG_HDR cfghdr0={CFG_UTF8_STRING,LG_LOGIN,0,31};
 __root const char USERNAME[32]="";
 
-__root const CFG_HDR cfghdr1={CFG_STR_PASS,LG_PASSWORD,0,31};
+__root const CFG_HDR cfghdr1={CFG_UTF8_STRING_PASS,LG_PASSWORD,0,31};
 __root const char PASSWORD[32]="";
 
 __root const CFG_HDR cfghdr2={CFG_STR_WIN1251,LG_SERVER,0,127};
