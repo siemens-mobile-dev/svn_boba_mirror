@@ -19,6 +19,8 @@
 //TDate
 #define CFG_RECT 14  
 //RECT
+//#define CFG_STR_GB 15
+#define CFG_UTF8_STRING_PASS 16
 
 typedef struct
 {

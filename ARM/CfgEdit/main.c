@@ -305,6 +305,7 @@ void ed1_ghook(GUI *data, int cmd)
         ws_2str(ews,(char *)(hp+1),hp->max);
         break;
 
+      case CFG_UTF8_STRING_PASS:
       case CFG_UTF8_STRING:
         // ws_2utf8( WSHDR *from, char *to , int *result_length, int max_len);
         ws_2utf8(ews,(char *)(hp+1),&utf8conv_res_len,hp->max);
@@ -1071,7 +1072,19 @@ int create_ed(CFG_HDR *need_to_focus)
       }
       p+=(hp->max+1+3)&(~3);
       break;      
-      
+
+    case CFG_UTF8_STRING_PASS:
+      n-=(hp->max+1+3)&(~3);
+      if (n<0) goto L_ERRCONSTR;
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+        utf8_2ws(ews,p,hp->max);
+	ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_PASSW,ews,hp->max);
+	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
+      }
+      p+=(hp->max+1+3)&(~3);
+      break;      
+
     case CFG_CBOX:
       n-=hp->max*sizeof(CFG_CBOX_ITEM)+4;
       if (n<0) goto L_ERRCONSTR;
