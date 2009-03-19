@@ -1,6 +1,7 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 #include "main.h"
+#include "calc_menu.h"
 #include "calc_object.h"
 #include <math.h>
 
@@ -13,8 +14,7 @@ extern "C" {
   
 #define PI_CONST 3.1415926535897932384626433832795
 
-
-
+double vars['z'-'a'];
 double d_answer=0;
 
 char operation[256];
@@ -28,6 +28,7 @@ int FONTID;
 int FONTH;
 
 #define GetFontStyle(a)  (a>>16)
+#define GetFontSize(a)  (a&0xFFFF)
 
 enum FONT_STYLES {
   FONT_R=1,
@@ -94,27 +95,27 @@ void InitFonts()
   }
 }
 
-const char *const keydesc[4][12]=
+const char *const keydesc[48]=
 {
-  { "1"    ,"2"   ,"3",
+    "1"    ,"2"   ,"3",
     "4"    ,"5"   ,"6",
     "7"    ,"8"   ,"9",
-    "."    ,"0"   ,"#"},
+    "."    ,"0"   ,"#",
     
-  { "sin"  ,"*"   ,"/",
+    "sin"  ,"*"   ,"/",
     "cos"  ,"+"   ,"-",
     "tan"  ,"("   ,")",
-    "^2"   ,"sqrt"   ,"#"},
+    "^2"   ,"sqrt"   ,"#",
   
-  { "asin" ,"ln"  ,"log",
+    "asin" ,"ln"  ,"log",
     "acos" ,"e^"  ,"-",
     "atan" ,"10^" ,"pi",
-    "^"    ,""    ,"#"},
+    "^"    ,""    ,"#",
   
-  { "sh"   ,"ash" ,"ANS",
+    "sh"   ,"ash" ,"ANS",
     "ch"   ,"ach" ,"abs",
     "th"   ,"ath" ,"!",
-    "X"    ,"Y"   ,"#"}
+    "X"    ,"Y"   ,"#"
   
 };
 
@@ -170,7 +171,7 @@ int getXXXXwidth(int font)
 #pragma inline
 int IsCharNumber(int c)
 {
-  return ((c>=0 && c<=10) || c==29);
+  return ((c>=DIG_1 && c<=DIG_0) || c==OP_NEG);
 }
 
 #pragma inline
@@ -182,15 +183,33 @@ int GetCharByIndex(int c)
 #pragma inline 
 int IsMathFunc(int c)
 {
-  return (c==12 || c==15 || c==18 || c==21 || c==22 || c==24 ||
-          c==25 || c==26 || c==27 || c==28 || c==30 || c==31 || c==33 || c==41 || c==44 ||
-          c==36 || c==37 || c==39 || c==40 || c==42 || c==43);
+  return (c==OP_SIN ||
+          c==OP_COS ||
+          c==OP_TAN ||
+          c==OP_ASIN ||
+          c==OP_LN ||
+          c==OP_LOG || 
+          c==OP_ACOS ||
+          c==OP_ATAN || 
+          c==OP_SH ||
+          c==OP_ASH || 
+          c==OP_CH || 
+          c==OP_ACH ||
+          c==OP_ABS ||
+          c==OP_TH ||
+          c==OP_ATH ||
+          c==OP_FAC);     
 }
 
+int IsPowFunc(int c)
+{
+  return (c==OP_SQUARE || c==OP_SQRT || c==OP_EPOW || c==OP_TENPOW || c==OP_POW);
+}
 
 /* Функция PRIOR возвpащает пpиоpитет аpифм. опеpации */
 int PRIOR(int a)
 {
+  if (IsPowFunc(a)) return 5;
   if (IsMathFunc(a)) return 4;
   switch(a)
   {    
@@ -216,7 +235,7 @@ typedef struct {
   int st_size;
 }DSTACK;
 
-#define DSTACK_SIZE 32
+#define DSTACK_SIZE 16
 void PushDoubleStack(DSTACK *dstack, double value)
 {
   if (dstack->sp>=dstack->st_size)
@@ -263,7 +282,7 @@ void DestructDStackStruct(DSTACK *dstack)
 double FacN(double n)
 {
   double ans=n;
-  while(n>1)
+  while(n>1 && ans!=INFINITY)
   {
     ans*=--n;   
   }
@@ -271,25 +290,10 @@ double FacN(double n)
 }
 
 
-typedef enum {
-  DEGREES=0,
-  RADIANS,
-  GRADS
-}DRG;
-  
-typedef struct {
-  double x;
-  double y;
-  char fmt[16];
-  char drg;
-  char auto_recalc;
-} CALC_SETTINGS;
 
-CALC_SETTINGS calc_set;
 
 double ConvertAngleToRadians(double angle)
 {
-  calc_set.drg=DEGREES;
   double a=0;
   switch(calc_set.drg)
   {
@@ -310,7 +314,6 @@ double ConvertAngleToRadians(double angle)
 
 double ConvertRadiansToAngle(double radian)
 {
-  calc_set.drg=DEGREES;
   double a=0;
   switch(calc_set.drg)
   {
@@ -326,6 +329,21 @@ double ConvertRadiansToAngle(double radian)
     break;
   }
   return (a);
+}
+
+double asinh(double a)
+{
+  return log(a+sqrt(pow(a,2)+1));
+}
+
+double acosh(double a)
+{
+  return a>=1?log(a+sqrt(pow(a,2)-1)):NAN;
+}
+
+double athh(double a)
+{
+  return log((1+a)/(1-a))/2;
 }
 
 void ParseOperation(DSTACK *dstack, int operation)
@@ -429,6 +447,9 @@ void ParseOperation(DSTACK *dstack, int operation)
     PushDoubleStack(dstack, ans);
     break;
   case 37:    // asinh
+    a=PopDoubleStack(dstack);
+    ans=ConvertRadiansToAngle(asinh(a));
+    PushDoubleStack(dstack, ans);
     break;
   case 39:    // cosh
     a=PopDoubleStack(dstack);
@@ -436,13 +457,19 @@ void ParseOperation(DSTACK *dstack, int operation)
     PushDoubleStack(dstack, ans);
     break;
   case 40:    // acosh
+    a=PopDoubleStack(dstack);
+    ans=ConvertRadiansToAngle(acosh(a));
+    PushDoubleStack(dstack, ans);
     break;
-  case 42:    // tan
+  case 42:    // tanh
     a=PopDoubleStack(dstack);
     ans=tanh(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
   case 43:    // atanh
+    a=PopDoubleStack(dstack);
+    ans=ConvertRadiansToAngle(athh(a));
+    PushDoubleStack(dstack, ans);
     break;
   case 41:    // abs
     a=PopDoubleStack(dstack);
@@ -466,7 +493,7 @@ void calc_answer()
   int stack_depth=0;
   s=operation;
   DSTACK dstack;
-  char *d,value[256];
+  char *d,value[260];
   double ans=0;
   ConstructDStackStruct(&dstack);
   if (i)
@@ -510,19 +537,22 @@ void calc_answer()
       {
         PushDoubleStack(&dstack, calc_set.y);
       }
-      else if (c==20)   // Закрывающаяся скобка
+      else if (c>=VAR_A && c<=VAR_Z)
       {
-        while(stack[stack_depth-1]!=19)
-        {
-          ParseOperation(&dstack, stack[--stack_depth]);
-        }
-        stack_depth--;  // удаляем саму открывающуюся скобку
+        PushDoubleStack(&dstack, vars[c-VAR_A]);
       }
-      else if (c==19)  // Открывающаяся скобка
+      else if (c==RIGHTBRACKET)   // Закрывающаяся скобка
+      {
+        while(stack_depth && stack[--stack_depth]!=LEFTBRACKET)
+        {
+          ParseOperation(&dstack, stack[stack_depth]);
+        }
+      }
+      else if (c==LEFTBRACKET)  // Открывающаяся скобка
       {
         stack[stack_depth++]=c;
       }
-      else if (c==13 || c==14 || c==16 || c==17 || IsMathFunc(c))  // Если знак операции
+      else if (c==13 || c==14 || c==16 || c==17 || IsMathFunc(c) || IsPowFunc(c))  // Если знак операции
       {
         if (!stack_depth)  // Если стек пуст
         {
@@ -560,42 +590,37 @@ int CalcGuiOnCreate(DISP_OBJ_CALC *db)
   InitFonts();
   db->answer_sid=LGP_NULL;
   int font=SetFont(FONTID);
-  for (int tab=0; tab<4; tab++)
+  for (int x=0; x<VAR_A; x++)
   {
-    for (int y=0; y<4; y++)
-    {
-      for (int x=0; x<3; x++)
-      {
-        STRID text;
-        const char *txt=keydesc[tab][y*3+x];
-        if (!txt[1])
-          text=0x78000000|txt[0];
-        else
-          text=Str2ID(txt,6,SID_ANY_LEN);
-        db->yx[tab][y*3+x]=text;
-        db->names_len[tab][y*3+x]=Disp_GetStrIdWidth(text,TextGetLength(text));
-      }
-    }   
+    STRID text;
+    const char *txt=keydesc[x];
+    if (!txt[1])
+      text=0x78000000|txt[0];
+    else
+      text=Str2ID(txt,6,SID_ANY_LEN);
+    db->yx[x]=text;
+    db->names_len[x]=Disp_GetStrIdWidth(text,TextGetLength(text));
+  }
+  for (int x=VAR_A, a='a'; x<TOTAL_OPS; x++, a++)
+  {
+    STRID text=0x78000000|a;
+    db->yx[x]=text;
+    db->names_len[x]=Disp_GetStrIdWidth(text,TextGetLength(text));
   }
   SetFont(font);
   db->current_tab=0;
   db->cur_base=0;
   req_recalc=1;
+  for (int i=0; i<MAXELEMS(vars);i++) vars[i]=NAN;
   return (1);
 }
 
 void CalcGuiOnClose(DISP_OBJ_CALC *db)
 {
   TextFree(db->answer_sid);
-  for (int tab=0; tab<4; tab++)
+  for (int x=0; x<TOTAL_OPS; x++)
   {
-    for (int y=0; y<4; y++)
-    {
-      for (int x=0; x<3; x++)
-      {
-        TextFree(db->yx[tab][y*3+x]);
-      }
-    }   
+    TextFree(db->yx[x]); 
   }
 }
 
@@ -658,7 +683,7 @@ int GetMaxCurRow(DISP_OBJ_CALC *db, int *max, int *cur)
     }
     if (i<op_len)
     {
-      int tlen=db->names_len[0][operation[i]];
+      int tlen=db->names_len[operation[i]];
       if (tx+tlen>inp_w+f)
       {
         drow++;
@@ -690,7 +715,7 @@ void SetCursPos(DISP_OBJ_CALC *db, int cur, int pos)
     }
     if (i<op_len)
     {
-      int tlen=db->names_len[0][operation[i]];
+      int tlen=db->names_len[operation[i]];
       if (tx+tlen>inp_w+f)
       {
         if (cur==drow) 
@@ -797,8 +822,8 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
       }
       if (i<op_len)
       {
-        STRID text=db->yx[0][operation[i]];
-        int tlen=db->names_len[0][operation[i]];
+        STRID text=db->yx[operation[i]];
+        int tlen=db->names_len[operation[i]];
         if (tx+tlen>(inp_w+f))
         {
           drow++;
@@ -846,7 +871,7 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
       {
         unsigned int x_frame=start_x+XXXXwidth*x+5*2*x;
         unsigned int y_frame=start_y+FONTH*y+5*2*y;
-        STRID text=db->yx[db->current_tab][y*3+x];
+        STRID text=db->yx[db->current_tab*12+y*3+x];
         SetFont(FONTID);    
         //unsigned int str_width=db->names_len[db->current_tab][y*3+x];
         rt.x1=db->x1+x_frame;
@@ -881,13 +906,13 @@ void CalcGuiOnKey(DISP_OBJ_CALC *db,int key,int a,int b,int type)
     {
       insert_operation(GetOperIndexByKey(key)+((db->current_tab)*12));
       if (db->current_tab!=0) db->current_tab=0;
-      req_recalc=1;
+      if (calc_set.auto_recalc) req_recalc=1;
       reset_pos=1;
     }
     else if (key==KEY_DEL)
     {
       remove_operation();
-      req_recalc=1;
+      if (calc_set.auto_recalc) req_recalc=1;
       reset_pos=1;
     }
     else if (key==KEY_LEFT)
@@ -915,6 +940,14 @@ void CalcGuiOnKey(DISP_OBJ_CALC *db,int key,int a,int b,int type)
         if (cur<max) cur++;
       }
       SetCursPos(db,cur,db->curx_pos);
+    }
+    else if (key==KEY_RIGHT_SOFT)
+    {
+      CreateCalcMenu();
+    }
+    else if (key==KEY_LEFT_SOFT)
+    {
+      req_recalc=1;
     }
     else if (key==KEY_ESC)
     {

@@ -1,6 +1,7 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 #include "main.h"
+#include "calc_menu.h"
 #include "calc_object.h"
 
 const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE"  = 
@@ -25,6 +26,41 @@ void elf_exit(void){
 }
 
 
+void win12512unicode(wchar_t *ws, const char *s, int len)
+{
+  int c;
+  while((c=*s++)&&((len--)>0))
+  {
+    if (c==0xA8) c=0x401;
+    if (c==0xAA) c=0x404;
+    if (c==0xAF) c=0x407;
+    if (c==0xB8) c=0x451;
+    if (c==0xBA) c=0x454;
+    if (c==0xBF) c=0x457;
+    if ((c>=0xC0)&&(c<0x100)) c+=0x350;
+    *ws++=c;
+  }
+  *ws=0;
+}
+
+char *unicode2win1251(char *s, wchar_t *ws, int len)
+{
+  char *d=s;
+  int c;
+  while((c=*ws++)&&((len--)>0))
+  {
+    if (c==0x401) c=0xA8;
+    if (c==0x404) c=0xAA;
+    if (c==0x407) c=0xAF;
+    if (c==0x451) c=0xB8;
+    if (c==0x454) c=0xBA;
+    if (c==0x457) c=0xBF;
+    if ((c>=0x410)&&(c<0x450)) c-=0x350;
+    *s++=c;
+  }
+  *s=0;
+  return(d);
+}
 
 // при закрытии книги
 static void onMyBookClose(BOOK * book)
@@ -45,6 +81,7 @@ void CloseMyBook(BOOK * bk, void *)
 static int MainPageOnCreate(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
+  ReadCalcSettings();
   GUI * si=(GUI *)CreateCalkGUI(bk);
   ShowWindow(si);
   mbk->si=si;
@@ -54,6 +91,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
 static int MainPageOnClose(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
+  WriteCalcSettings();
   FREE_GUI(mbk->si);
   return (1);
 }
