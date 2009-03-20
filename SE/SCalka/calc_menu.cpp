@@ -68,6 +68,7 @@ void IV_onEnterPressed(BOOK * bk, void *)
   if (item<(VAR_Z-VAR_A+1))
     insert_operation(VAR_A+item);
   FREE_GUI(mbk->calc_insvar);
+  FREE_GUI(mbk->calc_menu);
 }
 
 int IV_On_Msg(GUI_MESSAGE * msg)

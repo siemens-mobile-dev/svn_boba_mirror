@@ -160,14 +160,6 @@ void remove_operation(void)
   }  
 }
 
-int getXXXXwidth(int font)
-{
-  int f=SetFont(font);
-  STRID str=0x78000000|L'X';
-  int w=Disp_GetStrIdWidth(str,1)*4;
-  SetFont(f);
-  return (w);
-}
 
 #pragma inline
 int IsCharNumber(int c)
@@ -601,8 +593,10 @@ int CalcGuiOnCreate(DISP_OBJ_CALC *db)
   InitFonts();
   db->answer_sid=LGP_NULL;
   int font=SetFont(FONTID);
-  for (int x=0; x<VAR_A; x++)
+  db->maxintab=0;
+  for (int x=0; x<=DIEZ_4; x++)
   {
+    int w;
     STRID text;
     const char *txt=keydesc[x];
     if (!txt[1])
@@ -610,7 +604,8 @@ int CalcGuiOnCreate(DISP_OBJ_CALC *db)
     else
       text=Str2ID(txt,6,SID_ANY_LEN);
     db->yx[x]=text;
-    db->names_len[x]=Disp_GetStrIdWidth(text,TextGetLength(text));
+    w=db->names_len[x]=Disp_GetStrIdWidth(text,TextGetLength(text));
+    if (w>db->maxintab) db->maxintab=w;    
   }
   for (int x=VAR_A, a='a'; x<TOTAL_OPS; x++, a++)
   {
@@ -861,13 +856,19 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
   
   if (db->current_tab!=0) // Если это не первый там рисуем подсказку
   {
-    int XXXXwidth=getXXXXwidth(FONTID);
+    int dx=0;
     int need_height=FONTH*4+5*2*4;
-    int need_width=XXXXwidth*3+5*2*3;
+    int need_width=db->maxintab*3;
     
+    if ((scr_w-need_width)>3)
+    {
+      dx=(scr_w-need_width)>>2;
+      need_width+=dx*3;
+    }
+        
     int start_y=need_height<scr_h?(scr_h-need_height)>>1:0;
     int start_x=need_width<scr_w?(scr_w-need_width)>>1:0;
-    
+
     rt.x1=db->x1+start_x;
     rt.y1=db->y1+start_y;
     rt.x2=db->x1+start_x+need_width;
@@ -880,20 +881,20 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
     {
       for (int x=0; x<3; x++)
       {
-        unsigned int x_frame=start_x+XXXXwidth*x+5*2*x;
+        unsigned int x_frame=start_x+db->maxintab*x+dx*x;
         unsigned int y_frame=start_y+FONTH*y+5*2*y;
         STRID text=db->yx[db->current_tab*12+y*3+x];
         SetFont(FONTID);    
         //unsigned int str_width=db->names_len[db->current_tab][y*3+x];
         rt.x1=db->x1+x_frame;
         rt.y1=db->y1+y_frame;
-        rt.x2=db->x1+x_frame+XXXXwidth+5*2;
+        rt.x2=db->x1+x_frame+db->maxintab+dx;
         rt.y2=db->y1+y_frame+FONTH+5*2;
         GC_SetPenColor(gc, clBlack);
         GC_SetBrushColor(gc, COLOR(0xC0,0xC0,0xC0,0xFF));
         DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc));
         //GC_DrawRoundRect(gc ,&rt,3,3,2,1);  // Рамка для вводимых чисел
-        DrawString(text,2,x_frame,y_frame+5,x_frame+XXXXwidth+10,y_frame+FONTH+10,
+        DrawString(text,2,rt.x1,rt.y1+5,rt.x2,rt.y2,
                    0,0,clBlack,0);
       }
     }
