@@ -3296,6 +3296,9 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\calc_object.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\edit_settings.c</name>
   </file>
   <file>

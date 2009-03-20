@@ -2,10 +2,12 @@
 #include "rect_patcher.h"
 #include "mainmenu.h"
 #include "edit_settings.h"
+#include "calc_object.h"
+
 #include <math.h>
 
-#define PI_CONST 3.141592653589793238
-
+//#define PI_CONST 3.141592653589793238
+#define PI_CONST 3.1415926535897932384626433832795
 typedef struct
 {
   CSM_RAM csm;
@@ -33,6 +35,7 @@ WSHDR *ews;
 const char empty_str[]="";
 const char percent_t[]="%t";
 
+double vars['z'-'a'];
 double d_answer=0;
 
 char operation[256];
@@ -118,7 +121,7 @@ int getXXXXwidth(int font)
 #pragma inline
 int IsCharNumber(int c)
 {
-  return ((c>=0 && c<=10) || c==29);
+  return ((c>=DIG_1 && c<=DIG_0) || c==OP_NEG);
 }
 
 #pragma inline
@@ -130,27 +133,45 @@ int GetCharByIndex(int c)
 #pragma inline 
 int IsMathFunc(int c)
 {
-  return (c==12 || c==15 || c==18 || c==21 || c==22 || c==24 ||
-          c==25 || c==26 || c==27 || c==28 || c==30 || c==31 || c==33 || c==41 || c==44 ||
-          c==36 || c==37 || c==39 || c==40 || c==42 || c==43);
+  return (c==OP_SIN ||
+          c==OP_COS ||
+          c==OP_TAN ||
+          c==OP_ASIN ||
+          c==OP_LN ||
+          c==OP_LOG || 
+          c==OP_ACOS ||
+          c==OP_ATAN || 
+          c==OP_SH ||
+          c==OP_ASH || 
+          c==OP_CH || 
+          c==OP_ACH ||
+          c==OP_ABS ||
+          c==OP_TH ||
+          c==OP_ATH ||
+          c==OP_FAC);     
 }
 
+int IsPowFunc(int c)
+{
+  return (c==OP_SQUARE || c==OP_SQRT || c==OP_EPOW || c==OP_TENPOW || c==OP_POW);
+}
 
 /* Функция PRIOR возвpащает пpиоpитет аpифм. опеpации */
 int PRIOR(int a)
 {
+  if (IsPowFunc(a)) return 5;
   if (IsMathFunc(a)) return 4;
   switch(a)
   {    
-  case 13:   // *
-  case 14:   // /
+  case OP_MULT:   // *
+  case OP_DIV:   // /
     return 3;
     
-  case 16:  // +
-  case 17:  // -
+  case OP_PLUS:  // +
+  case OP_MINUS:  // -
     return 2;
     
-  case 19:  // (
+  case LEFTBRACKET:  // (
          return 1;
   }
   return (0);
@@ -197,12 +218,22 @@ void DestructDStackStruct(DSTACK *dstack)
 
 double FacN(double n)
 {
-  double ans=n;
-  while(n>1)
+  double ans;
+  double frac, integer;
+  frac=modf(n,&integer);
+  if (frac==0)
   {
-    ans*=--n;   
+    ans=1;
+    while(integer>1 && ans!=INFINITY)
+    {
+      ans*=integer--;
+    }
   }
-  return ans;  
+  else
+  {
+    ans=log(FacN(integer))+frac*log(integer+1);
+  }
+  return ans;
 }
 
 double ConvertAngleToRadians(double angle)
@@ -244,128 +275,152 @@ double ConvertRadiansToAngle(double radian)
   return (a);
 }
 
+double asinh(double a)
+{
+  return log(a+sqrt(pow(a,2)+1));
+}
+
+double acosh(double a)
+{
+  return a>=1?log(a+sqrt(pow(a,2)-1)):NAN;
+}
+
+double athh(double a)
+{
+  return log((1+a)/(1-a))/2;
+}
+
 void ParseOperation(DSTACK *dstack, int operation)
 {
   double a, b, ans;
   switch (operation)
   {
-  case 12:    // sin
+  case OP_SIN:    // sin
     a=PopDoubleStack(dstack);
     ans=sin(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 13:    // *
+  case OP_MULT:    // *
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b*a;
     PushDoubleStack(dstack, ans);
     break;
-  case 14:    // /
+  case OP_DIV:    // /
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b/a;
     PushDoubleStack(dstack, ans);
     break;
-  case 15:    // cos
+  case OP_COS:    // cos
     a=PopDoubleStack(dstack);
     ans=cos(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 16:    // +
+  case OP_PLUS:    // +
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b+a;
     PushDoubleStack(dstack, ans);
     break;    
-  case 17:    // -
+  case OP_MINUS:    // -
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b-a;
     PushDoubleStack(dstack, ans);
     break;
-  case 18:    // tan
+  case OP_TAN:    // tan
     a=PopDoubleStack(dstack);
     ans=tan(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 21:    // ^2
+  case OP_SQUARE:    // ^2
     a=PopDoubleStack(dstack);
     ans=pow(a, 2);
     PushDoubleStack(dstack, ans);
     break;
-  case 22:    // sqrt
+  case OP_SQRT:    // sqrt
     a=PopDoubleStack(dstack);
     ans=sqrt(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 24:    // asin
+  case OP_ASIN:    // asin
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(asin(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 25:   // ln
+  case OP_LN:   // ln
     a=PopDoubleStack(dstack);
     ans=log(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 26:   // log 10
+  case OP_LOG:   // log 10
     a=PopDoubleStack(dstack);
     ans=log10(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 27:   // acos
+  case OP_ACOS:   // acos
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(acos(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 28:    // e^
+  case OP_EPOW:    // e^
     a=PopDoubleStack(dstack);
     ans=exp(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 30:    // atan
+  case OP_ATAN:    // atan
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(atan(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 31:    // 10^
+  case OP_TENPOW:    // 10^
     a=PopDoubleStack(dstack);
     ans=pow(10, a);
     PushDoubleStack(dstack, ans);
     break;
-  case 33:     // ^
+  case OP_POW:     // ^
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=pow(b, a);
     PushDoubleStack(dstack, ans);
     break;
-  case 36:    // sinh
+  case OP_SH:    // sinh
     a=PopDoubleStack(dstack);
     ans=sinh(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 37:    // asinh
+  case OP_ASH:    // asinh
+    a=PopDoubleStack(dstack);
+    ans=ConvertRadiansToAngle(asinh(a));
+    PushDoubleStack(dstack, ans);
     break;
-  case 39:    // cosh
+  case OP_CH:    // cosh
     a=PopDoubleStack(dstack);
     ans=cosh(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 40:    // acosh
+  case OP_ACH:    // acosh
+    a=PopDoubleStack(dstack);
+    ans=ConvertRadiansToAngle(acosh(a));
+    PushDoubleStack(dstack, ans);
     break;
-  case 42:    // tan
+  case OP_TH:    // tanh
     a=PopDoubleStack(dstack);
     ans=tanh(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 43:    // atanh
+  case OP_ATH:    // atanh
+    a=PopDoubleStack(dstack);
+    ans=ConvertRadiansToAngle(athh(a));
+    PushDoubleStack(dstack, ans);
     break;
-  case 41:    // abs
+  case OP_ABS:    // abs
     a=PopDoubleStack(dstack);
     ans=fabs(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 44:   // !
+  case OP_FAC:   // !
     a=PopDoubleStack(dstack);
     ans=FacN(a);
     PushDoubleStack(dstack, ans);
@@ -407,36 +462,39 @@ void calc_answer()
       PushDoubleStack(&dstack, a);
       if (!i) break;
     }
-    if (c==32)  // пи
+    if (c==NUM_PI)  // пи
     {
       double a=PI_CONST;
       PushDoubleStack(&dstack, a);
     }
-    else if (c==38)   // ANS
+    else if (c==NUM_ANS)   // ANS
     {
       PushDoubleStack(&dstack, d_answer);
     }
-    else if (c==45)   // X
+    else if (c==NUM_A)   // X
     {
       PushDoubleStack(&dstack, calc_set.x);
     }
-    else if (c==46)   // Y
+    else if (c==NUM_B)   // Y
     {
       PushDoubleStack(&dstack, calc_set.y);
     }
-    else if (c==20)   // Закрывающаяся скобка
-    {
-      while(stack[stack_depth-1]!=19)
+      else if (c>=VAR_A && c<=VAR_Z)
       {
-        ParseOperation(&dstack, stack[--stack_depth]);
+        PushDoubleStack(&dstack, vars[c-VAR_A]);
       }
-      stack_depth--;  // удаляем саму открывающуюся скобку
-    }
-    else if (c==19)  // Открывающаяся скобка
-    {
-      stack[stack_depth++]=c;
-    }
-    else if (c==13 || c==14 || c==16 || c==17 || IsMathFunc(c))  // Если знак операции
+      else if (c==RIGHTBRACKET)   // Закрывающаяся скобка
+      {
+        while(stack_depth && stack[--stack_depth]!=LEFTBRACKET)
+        {
+          ParseOperation(&dstack, stack[stack_depth]);
+        }
+      }
+      else if (c==LEFTBRACKET)  // Открывающаяся скобка
+      {
+        stack[stack_depth++]=c;
+      }
+    else if (c==OP_MULT || c==OP_DIV || c==OP_PLUS || c==OP_MINUS || IsMathFunc(c) || IsPowFunc(c))  // Если знак операции
     {
       if (!stack_depth)  // Если стек пуст
       {
@@ -467,7 +525,7 @@ L_ERROR:
   d_answer=ans;
 }
   
-void method0(CHTYPE_GUI *data)
+void MainOnRedraw(CHTYPE_GUI *data)
 {
   unsigned int scr_w=ScreenW();
   unsigned int scr_h=ScreenH();
@@ -509,25 +567,25 @@ void method0(CHTYPE_GUI *data)
 
 }
 
-void method1(CHTYPE_GUI *data,void *(*malloc_adr)(int))
+void MainOnCreate(CHTYPE_GUI *data,void *(*malloc_adr)(int))
 {
   data->ws1=AllocWS(128);
   data->gui.state=1;
 }
 
-void method2(CHTYPE_GUI *data,void (*mfree_adr)(void *))
+void MainOnClose(CHTYPE_GUI *data,void (*mfree_adr)(void *))
 {
   FreeWS(data->ws1);
   data->gui.state=0;
 }
 
-void method3(CHTYPE_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
+void MainOnFocus(CHTYPE_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
 {
   DisableIDLETMR();
   data->gui.state=2;
 }
 
-void method4(CHTYPE_GUI *data,void (*mfree_adr)(void *))
+void MainOnUnfocus(CHTYPE_GUI *data,void (*mfree_adr)(void *))
 {
   if (data->gui.state!=2)
     return;
@@ -535,7 +593,7 @@ void method4(CHTYPE_GUI *data,void (*mfree_adr)(void *))
 }
 
 
-int method5(CHTYPE_GUI *data,GUI_MSG *msg)
+int MainOnKey(CHTYPE_GUI *data,GUI_MSG *msg)
 {
   int i=msg->gbsmsg->submess;
   DirectRedrawGUI();
@@ -565,12 +623,12 @@ int method8(void){return(0);}
 int method9(void){return(0);}
 
 const void * const gui_methods[11]={
-  (void *)method0,	//Redraw
-  (void *)method1,	//Create
-  (void *)method2,	//Close
-  (void *)method3,	//Focus
-  (void *)method4,	//Unfocus
-  (void *)method5,	//OnKey
+  (void *)MainOnRedraw, //Redraw
+  (void *)MainOnCreate,	//Create
+  (void *)MainOnClose,	//Close
+  (void *)MainOnFocus,	//Focus
+  (void *)MainOnUnfocus,	//Unfocus
+  (void *)MainOnKey,	//OnKey
   0,
   (void *)kill_data, //method7,	//Destroy
   (void *)method8,
@@ -873,3 +931,4 @@ int main(const char *elf_name, const char *fname)
   UnlockSched();
   return 0;
 }
+
