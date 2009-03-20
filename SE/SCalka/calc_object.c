@@ -3,6 +3,7 @@
 #include "main.h"
 #include "calc_menu.h"
 #include "calc_object.h"
+#include "gammaf.h"
 #include <math.h>
 
 static const char CalcGuiName[]="CalcGui";
@@ -281,10 +282,20 @@ void DestructDStackStruct(DSTACK *dstack)
 
 double FacN(double n)
 {
-  double ans=n;
-  while(n>1 && ans!=INFINITY)
+  double ans;
+  double frac, integer;
+  frac=modf(n,&integer);
+  if (frac==0)
   {
-    ans*=--n;   
+    ans=1;
+    while(integer>1 && ans!=INFINITY)
+    {
+      ans*=--integer;
+    }
+  }
+  else
+  {
+    ans=log(FacN(integer))+frac*log(integer+1);
   }
   return ans;  
 }
@@ -478,7 +489,7 @@ void ParseOperation(DSTACK *dstack, int operation)
     break;
   case 44:   // !
     a=PopDoubleStack(dstack);
-    ans=FacN(a);
+    ans=gamma(a+1);
     PushDoubleStack(dstack, ans);
     break;
   }
@@ -851,8 +862,8 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
   if (db->current_tab!=0) // Если это не первый там рисуем подсказку
   {
     int XXXXwidth=getXXXXwidth(FONTID);
-    int need_height=FONTH*4+5*2*3+5*2;
-    int need_width=XXXXwidth*3+5*2*2+5*2;
+    int need_height=FONTH*4+5*2*4;
+    int need_width=XXXXwidth*3+5*2*3;
     
     int start_y=need_height<scr_h?(scr_h-need_height)>>1:0;
     int start_x=need_width<scr_w?(scr_w-need_width)>>1:0;
@@ -882,7 +893,7 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
         GC_SetBrushColor(gc, COLOR(0xC0,0xC0,0xC0,0xFF));
         DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc));
         //GC_DrawRoundRect(gc ,&rt,3,3,2,1);  // Рамка для вводимых чисел
-        DrawString(text,2,x_frame,y_frame+5,x_frame+XXXXwidth+10,y_frame+FONTH+5,
+        DrawString(text,2,x_frame,y_frame+5,x_frame+XXXXwidth+10,y_frame+FONTH+10,
                    0,0,clBlack,0);
       }
     }
