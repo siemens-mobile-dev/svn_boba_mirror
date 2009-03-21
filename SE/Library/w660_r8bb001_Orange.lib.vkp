@@ -533,7 +533,20 @@
 0D0C: 00000000 511C0B45 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
 0D10: 00000000 B9740945 ; 344: void Audio_Pause(BOOK *, void*);
 0D14: 00000000 B9710945 ; 345: void Audio_Play(BOOK *, void*);
-
+0D18: 00000000 79634D45 ; 346: GUI * CreateVolumeControl(BOOK *book, int null);
+0D1C: 00000000 CD654D45 ; 347: void VolumeControl_SetHeaderText(GUI *, STRID);
+0D20: 00000000 D9654D45 ; 348: void VolumeControl_SetValue(GUI *, int unk, int num);
+0D24: 00000000 E5654D45 ; 349: void VolumeControl_SetMaxValue(GUI *, int count);
+0D28: 00000000 BD654D45 ; 34A: int VolumeControl_GetValue(GUI *);
+0D2C: 00000000 793F4E45 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
+0D30: 00000000 853F4E45 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
+0D34: 00000000 196C4245 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
+0D38: 00000000 F5754445 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
+0D3C: 00000000 E5784445 ; 34F: int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);
+0D40: 00000000 E5774445 ; 350: int REQUEST_SETTING_RINGTYPESOUNDFILE_SET(const int *sync, int null, wchar_t *path, wchar_t *name);
+0D44: 00000000 817D4445 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
+0D48: 00000000 B1764445 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
+0D4C: 00000000 557B4445 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 
 
 
