@@ -514,7 +514,25 @@
 0CC0: 00000000 E12C3145 ; 330: int w_remove(const wchar_t *dir);
 0CC4: 00000000 39913245 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: 00000000 B5311B44 ; 332: int GetSignalQuality(char *rssi,char *ber);
-
+0CCC: 00000000 5DBD1745 ;8333: IS_NEEDED_BOOK isCameraBook(void);
+0CD0: 00000000 E1790B45 ;8334: IS_NEEDED_BOOK isSoundRecoderBook(void);
+0CD4: 00000000 79944545 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio, int actionID);
+0CD8: 00000000 4D240B45 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
+0CDÑ: 00000000 CD1A0B45 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
+0CE0: 00000000 A5340B45 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook, void*);
+0CE4: 00000000 811E0B45 ; 339: void Video_ZoomOn(BOOK *VideoPlayerBook, void*);
+0CE8: 00000000 7DDD4E45 ; 33A: void RightNow_SetActive(int flag);
+0CEC: 00000000 D51D0B45 ; 33B: void VideoResize_AutomateMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+0CF0: 00000000 711D0B45 ; 33C: void VideoResize_AllScreenMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+0CF4: 00000000 552E0B45 ; 33D: int Video_GetCurrentSkinID(BOOK *VideoPlayerBook);
+0CF8: 00000000 AD010B45 ; 33E: void Video_SetSkin(GUI* VideoPlayerGUI, int skinID);
+0CFC: 00000000 011D0B45 ; 33F: int Video_SetPermit(BOOK *VideoPlayerBook, u16 NewWidth, u16 NewHeight);
+0D00: 00000000 9D180B45 ; 340: int Video_Refresh(BOOK *VideoPlayerBook, GUI* VideoPlayerGUI);
+0D04: 00000000 4D1B0B45 ; 341: void Video_Play(BOOK *VideoPlayerBook, void*);
+0D08: 00000000 851C0B45 ; 342: void Video_Pause(BOOK *VideoPlayerBook, void*);
+0D0C: 00000000 511C0B45 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
+0D10: 00000000 B9740945 ; 344: void Audio_Pause(BOOK *, void*);
+0D14: 00000000 B9710945 ; 345: void Audio_Play(BOOK *, void*);
 
 
 
