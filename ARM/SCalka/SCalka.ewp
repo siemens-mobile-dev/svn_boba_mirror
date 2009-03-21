@@ -3305,6 +3305,12 @@
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\gammaf.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\gammaf.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>

@@ -3,6 +3,7 @@
 #include "mainmenu.h"
 #include "edit_settings.h"
 #include "calc_object.h"
+#include "gammaf.h"
 
 #include <math.h>
 
@@ -422,7 +423,7 @@ void ParseOperation(DSTACK *dstack, int operation)
     break;
   case OP_FAC:   // !
     a=PopDoubleStack(dstack);
-    ans=FacN(a);
+    ans=gamma(a+1);
     PushDoubleStack(dstack, ans);
     break;
   }
