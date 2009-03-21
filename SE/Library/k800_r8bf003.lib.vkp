@@ -500,7 +500,7 @@ C8C: 00000000 05FE4745 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 C90: 00000000 704B1820 ;8324: void * get_CellData(void);
 C94: 00000000 9546EC44 ; 325: void * IncommingCall_Reject(BOOK* book);
 C98: 00000000 1D58EC44 ; 326: void * IncommingCall_Mute(BOOK* book);
-0C9C: 00000000 F92B1B44 ; 327: int GetRadioState(char* level, char* flag);
+C9C: 00000000 F92B1B44 ; 327: int GetRadioState(char* level, char* flag);
 CA0: 00000000 E504E944 ; 328: int Bluetooth_GetState(void);
 CA4: 00000000 AD04E944 ; 329: int Bluetooth_GetPhoneVisibility(void);
 CA8: 00000000 6D05E944 ; 32A: int Bluetooth_isBusy(void);
@@ -510,9 +510,25 @@ CB4: 00000000 E9D62B45 ; 32D: wchar_t *w_dirread(void *);
 CB8: 00000000 11750945 ; 32E: int w_dirclose(void *);
 CBC: 00000000 91D72B45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 CC0: 00000000 35D72B45 ; 330: int w_remove(const wchar_t *dir);
-;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
-0CC8: 00000000 052C1B44 ; 332: int GetSignalQuality(char *rssi,char *ber);
-
+CC4: 00000000 B93D2D45 ; 331: int ConnectionManager_Connection_GetState(void);
+CC8: 00000000 052C1B44 ; 332: int GetSignalQuality(char *rssi,char *ber);
+CCC: 00000000 F1881245 ;8333: IS_NEEDED_BOOK isCameraBook(void);
+CD0: 00000000 B5140645 ;8334: IS_NEEDED_BOOK isSoundRecoderBook(void);
+CD4: 00000000 95663F45 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+CD8: 00000000 79BF0545 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
+CDC: 00000000 F5B50545 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
+CE0: 00000000 C1CF0545 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook);
+CE4: 00000000 ADB90545 ; 339: void Video_ZoomOn(BOOK *VideoPlayerBook, void*);
+CE8: 00000000 85A14845 ; 33A: void RightNow_SetActive(int flag);
+CEC: 00000000 01B90545 ; 33B: void VideoResize_AutomateMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+CF0: 00000000 99B80545 ; 33C: void VideoResize_AllScreenMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+CF4: 00000000 71C90545 ; 33D: int Video_GetCurrentSkinID(BOOK *VideoPlayerBook);
+CF8: 00000000 D59C0545 ; 33E: void Video_SetSkin(GUI* VideoPlayerGUI,int skinID);
+CFC: 00000000 29B80545 ; 33F: int Video_SetPermit(BOOK *VideoPlayerBook, u16 NewWidth, u16 NewHeight);
+D00: 00000000 C5B30545 ; 340: int Video_Refresh(BOOK *VideoPlayerBook, GUI* VideoPlayerGUI);
+D04: 00000000 75B60545 ; 341: void Video_Play(BOOK *VideoPlayerBook, void*);
+D08: 00000000 ADB70545 ; 342: void Video_Pause(BOOK *VideoPlayerBook, void*);
+D0C: 00000000 79B70545 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
 
 
 
