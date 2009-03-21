@@ -538,6 +538,9 @@ __swi __arm  void debug_printf(const char * fmt,...);
 #pragma swi_number=0x1B2
 __swi __arm  int PlayFile(const wchar_t * path, const wchar_t * fname);
 
+#pragma swi_number=0x1B4
+__swi __arm int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
+
 #pragma swi_number=0x1B5
 __swi __arm  int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 
@@ -1393,7 +1396,6 @@ __swi __arm void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 
 #pragma swi_number=0x322
 __swi __arm void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
-
 #pragma swi_number=0x323
 __swi __arm void Softkeys_Update(DISP_OBJ *softkeys);
 
@@ -1440,6 +1442,76 @@ __swi __arm IS_NEEDED_BOOK isCameraBook(void);
 #pragma swi_number=0x8334
 __swi __arm IS_NEEDED_BOOK isSoundRecorderBook(void);
 #pragma swi_number=0x335
-__swi __arm void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+__swi __arm void StringInput_MenuItem_SetPriority(GUI * strinp, int prio, int actionID);
+
+#pragma swi_number=0x336
+__swi __arm void VideoPlayerControl(BOOK *VideoPlayerBook, int);
+#pragma swi_number=0x337
+__swi __arm void Video_ActionBack(BOOK *VideoPlayerBook, void*);
+#pragma swi_number=0x338
+__swi __arm void Video_ExtractFrame(BOOK *VideoPlayerBook, void*);
+#pragma swi_number=0x339
+__swi __arm void Video_ZoomOn(BOOK *VideoPlayerBook, void*);
+
+#pragma swi_number=0x33A
+__swi __arm void RightNow_SetActive(int flag);
+
+#pragma swi_number=0x33B
+__swi __arm void VideoResize_AutomateMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+#pragma swi_number=0x33C
+__swi __arm void VideoResize_AllScreenMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+
+#pragma swi_number=0x33D
+__swi __arm int Video_GetCurrentSkinID(BOOK *VideoPlayerBook);
+#pragma swi_number=0x33E
+__swi __arm void Video_SetSkin(GUI* VideoPlayerGUI, int skinID);
+#pragma swi_number=0x33F
+__swi __arm int Video_SetPermit(BOOK *VideoPlayerBook, u16 NewWidth, u16 NewHeight);
+#pragma swi_number=0x340
+__swi __arm int Video_Refresh(BOOK *VideoPlayerBook, GUI* VideoPlayerGUI);
+
+#pragma swi_number=0x341
+__swi __arm void Video_Play(BOOK *VideoPlayerBook, void*);
+#pragma swi_number=0x342
+__swi __arm  void Video_Pause(BOOK *VideoPlayerBook, void*);
+#pragma swi_number=0x343
+__swi __arm void Video_Stop(BOOK *VideoPlayerBook, void*);
+
+#pragma swi_number=0x344
+__swi __arm void Audio_Pause(BOOK *);
+#pragma swi_number=0x345
+__swi __arm void Audio_Play(BOOK *);
+
+#pragma swi_number=0x346
+__swi __arm GUI *CreateVolumeControl(BOOK *book, int null);
+#pragma swi_number=0x347
+__swi __arm void VolumeControl_SetHeaderText(GUI *, STRID);
+#pragma swi_number=0x348
+__swi __arm void VolumeControl_SetValue(GUI *, int unk, int num);
+#pragma swi_number=0x349
+__swi __arm void VolumeControl_SetMaxValue(GUI *, int count);
+#pragma swi_number=0x34A
+__swi __arm int VolumeControl_GetValue(GUI *);
+
+#pragma swi_number=0x34B
+__swi __arm void GUIObject_Softkeys_RemoveBackground(void *gui);
+#pragma swi_number=0x34C
+__swi __arm void GUIObject_Softkeys_RestoreBackground(void *gui);
+
+#pragma swi_number=0x34D
+__swi __arm void SetTrayIcon(wchar_t iconID, char mode);
+
+#pragma swi_number=0x34E
+__swi __arm int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
+#pragma swi_number=0x34F
+__swi __arm int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);
+#pragma swi_number=0x350
+__swi __arm int REQUEST_SETTING_RINGTYPESOUNDFILE_SET(const int *sync, int null, wchar_t *path, wchar_t *name);
+#pragma swi_number=0x351
+__swi __arm int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
+#pragma swi_number=0x352
+__swi __arm int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
+#pragma swi_number=0x353
+__swi __arm int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 
 #endif
