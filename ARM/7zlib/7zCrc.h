@@ -3,7 +3,7 @@
 #ifndef __7Z_CRC_H
 #define __7Z_CRC_H
 
-#include "..\include\Lib_Clara.h"
+#include "..\inc\swilib.h"
 #include "7zTypes.h"
 
 

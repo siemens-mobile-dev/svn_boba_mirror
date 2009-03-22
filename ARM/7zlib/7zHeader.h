@@ -3,7 +3,7 @@
 #ifndef __7Z_HEADER_H
 #define __7Z_HEADER_H
 
-#include "..\include\Lib_Clara.h"
+#include "..\inc\swilib.h"
 #include "7zTypes.h"
 
 #define k7zSignatureSize 6

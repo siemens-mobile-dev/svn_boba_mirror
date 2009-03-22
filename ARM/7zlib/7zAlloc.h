@@ -3,7 +3,9 @@
 #ifndef __7Z_ALLOC_H
 #define __7Z_ALLOC_H
 
-#include "..\include\Lib_Clara.h"
+#include "..\inc\swilib.h"
+#undef Alloc
+#undef Free
 
 typedef struct _ISzAlloc
 {
