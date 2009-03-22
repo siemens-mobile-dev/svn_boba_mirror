@@ -64,7 +64,7 @@ extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Ќ≈ ћ≈Ќя“№!
-const char VERSION_VERS[] = "3.1.0-Z";
+const char VERSION_VERS[] = "3.1.1b-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
@@ -582,6 +582,9 @@ void get_answer(void)
       j--;
       if ((!i)&&(!j))
       {
+        //#ifdef LOG_ALL
+        //Log("IN<-", Rstream_p);
+        //#endif
         //—ошелс€ баланс, отдаем на обработку
         int bytecount=p-Rstream_p;
         IPC_BUFFER* tmp_buffer=malloc(sizeof(IPC_BUFFER)); // —ама структура
@@ -888,9 +891,9 @@ void __log(char* buffer, int size)
 void Process_XML_Packet(IPC_BUFFER* xmlbuf)
 {
   // —юда попадаем, если от трансл€тора прин€т указатель на порцию данных
-  LockSched();
+//  LockSched();
   XMLNode *data=XMLDecode(xmlbuf->xml_buffer,xmlbuf->buf_size);
-  UnlockSched();
+//  UnlockSched();
 
   // —юда было бы логичнее переставить блок записи, ибо тогда в логе будет идти
   // сначала прин€тый пакет, а потом предприн€тые действи€
@@ -1587,7 +1590,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         if ((((unsigned int)msg->data0)>>28)==0xA)
         {
           //ѕакет XML-данных готов к обработке и передаЄтс€ на обработку в контексте MMI
-          Process_XML_Packet((IPC_BUFFER*)msg->data0);
+            SUBPROC((void*)Process_XML_Packet, (IPC_BUFFER*)msg->data0);
           return(0);
         }
         switch((int)msg->data0)
