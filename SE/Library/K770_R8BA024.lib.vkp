@@ -149,6 +149,7 @@
 ;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06DC: 00000000 0D6D4C45 ; 1B7: int isKeylocked(void);
 06E0: 00000000 CD980845 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06E8: 00000000 FB1F3F45 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 C9F31045 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 B158E844 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 4559E844 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
@@ -510,8 +511,41 @@
 0CB8: 00000000 DD7B0C45 ; 32E: int w_dirclose(void *);
 0CBC: 00000000 4DF52E45 ; 32F: int w_rename(const wchar_t *dst, const wchar_t *src);
 0CC0: 00000000 F1F42E45 ; 330: int w_remove(const wchar_t *dir);
-;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
+0CC4: 00000000 055B3045 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: 00000000 B98C1B44 ; 332: int GetSignalQuality(char *rssi,char *ber);
+0CCC: 00000000 B9771545 ;8333: IS_NEEDED_BOOK isCameraBook(void);
+0CD0: 00000000 850E0945 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
+0CD4: 00000000 31AB1745 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+0CD8: 00000000 01B90845 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
+0CDC: 00000000 7DAF0845 ; 337: void Video_ActionBack(BOOK*,void*);
+0CE0: 00000000 49C90845 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook);
+0CE4: 00000000 35B30845 ; 339: void Video_ZoomOn(BOOK*,void*);
+0CE8: 00000000 31ED4B45 ; 33A: void RightNow_Active(int flag /*0-1*/);
+0CEC: 00000000 89B20845 ; 33B: void VideoResize_AutomateMode(BOOK*,u16,u16,u16*,u16*);
+0CF0: 00000000 21B20845 ; 33C: void VideoResize_AllScreenMode(BOOK*,u16,u16,u16*,u16*);
+0CF4: 00000000 F9C20845 ; 33D: int Video_GetCurrentSkinID(BOOK*);
+0CF8: 00000000 69960845 ; 33E: void Video_SetSkin(GUI*,int);
+0CFC: 00000000 B1B10845 ; 33F: int Video_SetPermit(BOOK*,u16,u16);
+0D00: 00000000 51AD0845 ; 340: int Video_Refresh(BOOK*,GUI*);
+0D04: 00000000 FDAF0845 ; 341: void Video_Play(BOOK*,void*);
+0D08: 00000000 35B10845 ; 342: void Video_Pause(BOOK*,void*);
+0D0C: 00000000 01B10845 ; 343: void Video_Stop(BOOK*,void*);
+0D10: 00000000 A11D0745 ; 344: void Audio_Pause(BOOK *);
+0D14: 00000000 E51A0745 ; 345: void Audio_Play(BOOK *);
+0D18: 00000000 790C3F45 ; 346: GUI * CreateVolumeControl(BOOK *book, int null);
+0D1C: 00000000 A1754A45 ; 347: void VolumeControl_SetHeaderText(GUI *, STRID);
+0D20: 00000000 AD754A45 ; 348: void VolumeControl_SetValue(GUI *, int unk, int num);
+0D24: 00000000 B9754A45 ; 349: void VolumeControl_SetMaxValue(GUI *, int count);
+0D28: 00000000 91754A45 ; 34A: int VolumeControl_GetValue(GUI *);
+0D2C: 00000000 BD2F4545 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
+0D30: 00000000 BD1F4545 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
+0D34: 00000000 697D3F45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
+0D38: 00000000 358B4145 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
+0D3C: 00000000 258E4145 ; 34F: int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);
+0D40: 00000000 258D4145 ; 350: int REQUEST_SETTING_RINGTYPESOUNDFILE_SET(const int *sync, int null, wchar_t *path, wchar_t *name);
+0D44: 00000000 C1924145 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
+0D48: 00000000 F18B4145 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
+0D4C: 00000000 95904145 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 
 
 
