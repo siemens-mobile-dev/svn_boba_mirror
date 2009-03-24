@@ -192,7 +192,6 @@ int main(const char *exename)
   unsigned int ul;
   unsigned int size_cfg;
 
-  REGEXPLEXT *oldrs;
   WSHDR *xws;
 
   ES *p=NULL;
@@ -304,7 +303,7 @@ int main(const char *exename)
       i=0;
       p=es;
 
-      oldrs=malloc(sizeof(REGEXPLEXT));
+      REGEXPLEXT* newreg=malloc(sizeof(REGEXPLEXT)); // Регать теперь будем это
       xws=AllocWS(256);
 
       while(i<ES_num)
@@ -319,24 +318,34 @@ int main(const char *exename)
 	  if (p)
 	  {
 #ifdef NEWSGOLD
-            memcpy(oldrs,pr,sizeof(TREGEXPLEXT));
+            memcpy(newreg,pr,sizeof(TREGEXPLEXT));
 #else
-            oldrs->ext=p->ext;
-            oldrs->unical_id=id;
+            newreg->ext=p->ext;
+            newreg->unical_id=id;
 #endif
-	    UnRegExplorerExt(oldrs);
+	    UnRegExplorerExt(newreg);
+            // Если в exstension.cfg есть данные - пишем, иначе не трогаем
+            if(p->small_png != uni_small) newreg->icon1=(int *)&(p->small_png);
+            if(p->large_png != uni_large) newreg->icon1=(int *)&(p->large_png);
+            if(p->elf != uni_elf) newreg->proc = (void *)do_ext;
+	    if(p->altelf != uni_altelf) newreg->altproc = (void *)do_alternate;
 	  }
 	}
-	reg.ext=p->ext;
-	reg.icon1=(int *)&(p->small_png);
-	reg.icon2=(int *)&(p->large_png);
-	reg.unical_id=0x56+i;
-	RegExplorerExt(&reg);
+        else
+        {
+          // Для новых типов
+          memcpy(newreg,&reg,sizeof(TREGEXPLEXT));
+          newreg->ext=p->ext;
+	  newreg->icon1=(int *)&(p->small_png);
+	  newreg->icon2=(int *)&(p->large_png);
+	  newreg->unical_id=0x56+i;
+        }
+	RegExplorerExt(newreg);
 	i++;
 	p++;
       }
       FreeWS(xws);
-      mfree(oldrs);
+      mfree(newreg);
       
       if (ES_num>0)
       {
@@ -379,4 +388,3 @@ int main(const char *exename)
   SUBPROC((void *)Killer);
   return 0;
 }
-
