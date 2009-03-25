@@ -97,7 +97,7 @@ REGEXPLEXT reg=
 {
   NULL,
   0x55,
-  0,
+  0xFF,           //Опции без "Задать как..."
   7,
   MENU_FLAG2, 
   NULL,
