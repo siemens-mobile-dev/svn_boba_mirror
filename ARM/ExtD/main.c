@@ -328,10 +328,17 @@ int main(const char *exename)
 #endif
 	    UnRegExplorerExt(newreg);
             // ≈сли в exstension.cfg есть данные - пишем, иначе не трогаем
+#ifdef NEWSGOLD
             if(p->small_png != uni_small) newreg->icon1=(int *)&(p->small_png);
             if(p->large_png != uni_large) newreg->icon2=(int *)&(p->large_png);
             if(p->elf != uni_elf) newreg->proc = (void *)do_ext;
 	    if(p->altelf != uni_altelf) newreg->altproc = (void *)do_alternate;
+#else
+            newreg->icon1 = (p->small_png != uni_small) ? (int *)&(p->small_png) : (int*)pr->icon1;
+            newreg->icon2 = (p->large_png != uni_large) ? (int *)&(p->large_png) : (int*)pr->icon2;
+            newreg->proc = (p->elf != uni_elf) ? (void *)do_ext : pr->proc;
+            newreg->altproc = (p->altelf != uni_altelf) ? (void *)do_alternate : pr->altproc;
+#endif
 	  }
 	}
         else
