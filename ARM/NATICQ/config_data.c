@@ -41,11 +41,30 @@ __root const CFG_HDR cfghdr2={CFG_LEVEL,"Hosts and paths",1,0};
 
   __root const CFG_HDR cfghdr2_9={CFG_STR_UTF8,"Templates path",0,63};
   __root const char TEMPLATES_PATH[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\templates\\";
+  
+#ifdef NEWSGOLD  
+  __root const CFG_HDR cfghdr2_9_1={CFG_UINT,"First status icon",0,10000};
+  __root const unsigned int ST_FIRST=8000;
+  
+  __root const CFG_HDR cfghdr2_9_2={CFG_UINT,"First xstatus icon",0,10000};
+  __root const unsigned int X_FIRST=8100;
+#endif
+  
 __root const CFG_HDR cfghdr3={CFG_LEVEL,"",0,0};
 
 //View settings
 __root const CFG_HDR cfghdr4={CFG_LEVEL,"Interface",1,0};
 //Status icon on mainscreen position
+
+#ifdef NEWSGOLD
+  __root const CFG_HDR cfghdr4_0={CFG_CBOX,"Show icon on",0,4};
+  __root const unsigned int ICON_ON = 1;
+  __root const CFG_CBOX_ITEM cfgcbox4_0_1[4]={"None","IDLE","Iconbar","Everywhere"};
+  
+  __root const CFG_HDR cfghdr4_0_2={CFG_CHECKBOX,"XStatus in iconbar",0,1};
+  __root const unsigned int XST_IC = 0;
+#endif
+
   __root const CFG_HDR cfghdr4_1={CFG_COORDINATES,"Idle icon position",0,0};
   __root const unsigned int IDLEICON_X=0;
   __root const unsigned int IDLEICON_Y=50;

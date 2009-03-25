@@ -156,6 +156,16 @@ void free_ICONS(void)
 extern const unsigned int IDLEICON_X;
 extern const unsigned int IDLEICON_Y;
 
+#ifdef NEWSGOLD
+#pragma swi_number=0x27 
+__swi __arm void AddIconToIconBar(int pic, short *num);
+
+extern const unsigned int ST_FIRST;
+extern const unsigned int X_FIRST;
+extern const unsigned int ICON_ON;
+extern const unsigned int XST_IC;
+#endif
+
 extern const unsigned int I_COLOR;
 extern const unsigned int TO_COLOR;
 extern const unsigned int X_COLOR;
@@ -2685,6 +2695,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     }
     //Нарисуем иконочку моего статуса
 #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+#ifdef NEWSGOLD
+    if(ICON_ON == 1 || ICON_ON == 3)
+    {
+#endif
     CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
     if (IsGuiOnTop(idlegui_id)/*&&IsUnlocked()*/) //Если IdleGui на самом верху
     {
@@ -2715,6 +2729,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	DrawImg(IDLEICON_X,IDLEICON_Y,S_ICONS[icn]);
       }
     }
+#ifdef NEWSGOLD
+    }
+#endif
+
   }
   if (msg->msg==MSG_RECONFIGURE_REQ)
   {
@@ -2899,15 +2917,52 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
   return(1);
 }
 
-
 const int minus11=-11;
 
 unsigned short maincsm_name_body[140];
 
-const struct
+#ifdef NEWSGOLD
+typedef struct
+{
+  char check_name[8];
+  int addr;
+}ICONBAR_H;
+
+static void addIconBar(short* num)
+{
+  if(ICON_ON > 1)
+  {
+    int icn;
+    if (total_unread)
+    icn=IS_MSG;
+    else
+    {
+      switch(connect_state)
+      {
+        case 0:
+        icn=IS_OFFLINE; break;
+        case 3:
+        icn=CurrentStatus; //IS_ONLINE;
+        break;
+        default:
+        icn=IS_UNKNOWN; break;
+      }
+    }
+    AddIconToIconBar(ST_FIRST+icn,num);
+  }
+  if(XST_IC) AddIconToIconBar(X_FIRST+CurrentXStatus,num);
+}
+#endif
+
+
+struct
 {
   CSM_DESC maincsm;
   WSHDR maincsm_name;
+#ifdef NEWSGOLD
+  ICONBAR_H iconbar_handler;
+#endif
+
 }MAINCSM =
 {
   {
@@ -2930,7 +2985,14 @@ sizeof(MAIN_CSM),
     NAMECSM_MAGIC2,
     0x0,
     139
+#ifdef NEWSGOLD
+  },
+  {
+    "IconBar"
   }
+#else
+  }
+#endif
 };
 
 void UpdateCSMname(void)
@@ -2938,6 +3000,12 @@ void UpdateCSMname(void)
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "NATICQ: %d",UIN);
 }
 
+#ifdef NEWSGOLD
+void SetIconBarHandler()
+{
+  MAINCSM.iconbar_handler.addr=(int)addIconBar;
+}
+#endif
 
 int main(char *filename)
 {
@@ -2973,6 +3041,9 @@ int main(char *filename)
   setup_ICONS();
   LoadXStatusText();
   UpdateCSMname();
+#ifdef NEWSGOLD
+  SetIconBarHandler();
+#endif
   LockSched();
   maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
   UnlockSched();
