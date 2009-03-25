@@ -322,11 +322,14 @@ int main(const char *exename)
 #else
             newreg->ext=p->ext;
             newreg->unical_id=id;
+            newreg->enabled_options=pr->enabled_options;
+            newreg->obex_path_id=pr->obex_path_id;
+            newreg->menu_flag=pr->menu_flag;
 #endif
 	    UnRegExplorerExt(newreg);
             // Если в exstension.cfg есть данные - пишем, иначе не трогаем
             if(p->small_png != uni_small) newreg->icon1=(int *)&(p->small_png);
-            if(p->large_png != uni_large) newreg->icon1=(int *)&(p->large_png);
+            if(p->large_png != uni_large) newreg->icon2=(int *)&(p->large_png);
             if(p->elf != uni_elf) newreg->proc = (void *)do_ext;
 	    if(p->altelf != uni_altelf) newreg->altproc = (void *)do_alternate;
 	  }
@@ -334,7 +337,7 @@ int main(const char *exename)
         else
         {
           // Для новых типов
-          memcpy(newreg,&reg,sizeof(TREGEXPLEXT));
+          memcpy(newreg,&reg,sizeof(REGEXPLEXT));
           newreg->ext=p->ext;
 	  newreg->icon1=(int *)&(p->small_png);
 	  newreg->icon2=(int *)&(p->large_png);
