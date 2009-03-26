@@ -10,7 +10,7 @@
 #include "vCard.h"
 #include "rect_patcher.h"
 
-#define N_VCARD_FIELDS 51
+#define N_VCARD_FIELDS 52
 
 char *vcard_index[N_VCARD_FIELDS] =
 {
@@ -73,7 +73,8 @@ char *vcard_index[N_VCARD_FIELDS] =
   "DESC",
   "TZ",
 
-  "!PHOTO" // Сюда мы пишем путь к аватаре
+  "!PHOTO", // Сюда мы пишем путь к аватаре
+  "!LOGO" // Сюда мы пишем путь к логотипу
 };
 
 char *vcard_names[N_VCARD_FIELDS] =
@@ -135,7 +136,8 @@ char *vcard_names[N_VCARD_FIELDS] =
   LG_VCARD_DESC,
   LG_VCARD_TZ,
 
-  LG_VCARD_AVATAR
+  LG_VCARD_AVATAR,
+  LG_VCARD_LOGO
 };
 
 // Служебная функция, заполняет структуру vCard
@@ -276,9 +278,14 @@ void DecodePhoto(char *path, void *data)
 }
 
 // Сохранение фотографии
-void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode)
+void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode, int logo)
 {
   // Prepare path
+  //а аватарка то пустой может быть...
+ XMLNode *binval = XML_Get_Child_Node_By_Name(photonode, "BINVAL");
+ if(binval)
+  if(binval->value)
+ {
   char ph_path[128];
   Get_Avatar_Path(ph_path, jid);
   char extension[]=".jpg";
@@ -298,19 +305,24 @@ void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode)
     {
       strcpy(extension,".gif");
     }
-  }
+  }// else надо автоопределение по сигнатуре
+  
   char *full_path = malloc(128);
   strcpy(full_path, ph_path);
+  if (logo)strcat(full_path, "_logo");
   strcat(full_path, extension);
-  Add_vCard_Value(vcard, "!PHOTO", full_path);
-
+  
   // Decode & write
-  XMLNode *binval = XML_Get_Child_Node_By_Name(photonode, "BINVAL");
   int ln = strlen(binval->value);
+  if(logo)
+      Add_vCard_Value(vcard, "!LOGO", full_path);
+    else
+    Add_vCard_Value(vcard, "!PHOTO", full_path);
   char *buf = malloc(ln+1);
   memcpy(buf, binval->value, ln);
   buf[ln+1]='=';
   SUBPROC((void*)DecodePhoto, full_path, buf);
+ }
 }
 
 // Обработчик vCard
@@ -342,7 +354,7 @@ void Process_vCard(char *from, XMLNode *vCard)
     {
       if (vCard_Node->value)
         Add_vCard_Value(vcard, vCard_Node->name, vCard_Node->value);
-      if (strcmp(vCard_Node->name, "PHOTO") && strcmp(vCard_Node->name, "PHOTO")) // Не дай бог нам залезть в аватары...
+      if (strcmp(vCard_Node->name, "PHOTO") && strcmp(vCard_Node->name, "LOGO")) // Не дай бог нам залезть в аватары...
       {
         vCard_NodeL2 = vCard_Node->subnode;
         while (vCard_NodeL2) // Обрабатываем поля второй вложенности
@@ -364,7 +376,11 @@ void Process_vCard(char *from, XMLNode *vCard)
   // Save photo :))
   XMLNode *photo = XML_Get_Child_Node_By_Name(vCard,"PHOTO");
   if(photo)
-    if(photo->subnode)SavePhoto(vcard, from, photo);
+    if(photo->subnode)SavePhoto(vcard, from, photo, 0);
+
+  XMLNode *logo = XML_Get_Child_Node_By_Name(vCard,"LOGO");
+  if(logo)
+    if(logo->subnode)SavePhoto(vcard, from, logo, 1);
 
   // Показываем vCard
 
@@ -375,7 +391,7 @@ void Process_vCard(char *from, XMLNode *vCard)
 
   Show_vCard(from);
 }
-
+/*
 int Show_vCard2(char *jid)
 {
   CLIST *ClEx = CList_FindContactByJID(jid);
@@ -398,7 +414,7 @@ int Show_vCard2(char *jid)
       if (vcard[i])
       {
         char *parname = ANSI2UTF8(vcard_names[i], 1024);
-        snprintf(param_pair, 2048, "%s: %s\n", parname+1 /* +1 - Фиг знает что, но помогает */, vcard[i]);
+        snprintf(param_pair, 2048, "%s: %s\n", parname+1 , vcard[i]);// +1 - Фиг знает что, но помогает 
         mfree(parname);
         unsigned int real_result_len, parpair_len;
         real_result_len = strlen(result);
@@ -417,7 +433,7 @@ int Show_vCard2(char *jid)
   }
   return 0;
 }
-
+*/
 //====================   GUI   ========================
 
 typedef struct
@@ -425,6 +441,7 @@ typedef struct
   char *jid;
   int update_pos;
   int photo_show_pos;
+  int photo_logo_pos;
 } VCARD_VIEW_DESC;
 
 int vcinfo_onkey(GUI *gui, GUI_MSG *msg)
@@ -471,7 +488,22 @@ int vcinfo_onkey(GUI *gui, GUI_MSG *msg)
       }
       vCard_Photo_Display(Get_VCard_Value(vcard, "!PHOTO"));
     }
+    if (msg->gbsmsg->msg==KEY_DOWN && msg->gbsmsg->submess==ENTER_BUTTON && EDIT_GetFocus(gui)==desc->photo_logo_pos)
+    {
+      CLIST *ClEx = CList_FindContactByJID(desc->jid);
+      if (!ClEx)
+        return 0;
+      VCARD vcard = ClEx->vcard;
+      if (!vcard) // Если не нашли - ищем в ресурсе (для конференции)
+      {
+        TRESOURCE *ResEx = CList_IsResourceInList(desc->jid);
+        if (ResEx)
+          vcard = ResEx->vcard;
+      }
+      vCard_Photo_Display(Get_VCard_Value(vcard, "!LOGO"));
+    }
   }
+
   return(0); //Do standart keys
 }
 
@@ -571,6 +603,7 @@ int Show_vCard(char *jid)
     for (int i=0; i<N_VCARD_FIELDS; i++)
     {
       if (vcard[i])
+      if (strcmp(vcard_index[i], "!PHOTO") && strcmp(vcard_index[i], "!LOGO"))
       {
         ascii2ws(ws_info, vcard_names[i]);
         ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
@@ -580,10 +613,6 @@ int Show_vCard(char *jid)
         AddEditControlToEditQend(eq,&ec,ma);
       }
     }
-
-    ascii2ws(ws_info, LG_UPDATE);
-    ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
-    view_desc->update_pos = AddEditControlToEditQend(eq,&ec,ma);
 
     if (Get_VCard_Value(vcard, "!PHOTO"))
     {
@@ -595,6 +624,21 @@ int Show_vCard(char *jid)
     {
       view_desc->photo_show_pos = 0;
     }
+
+    if (Get_VCard_Value(vcard, "!LOGO"))
+    {
+      ascii2ws(ws_info, LG_SHOW_PHOTO);
+      ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
+      view_desc->photo_logo_pos = AddEditControlToEditQend(eq,&ec,ma);
+    }
+    else
+    {
+      view_desc->photo_logo_pos = 0;
+    }
+
+    ascii2ws(ws_info, LG_UPDATE);
+    ConstructEditControl(&ec, ECT_LINK, ECF_APPEND_EOL, ws_info, MAX_VCARD_LINE_LEN);
+    view_desc->update_pos = AddEditControlToEditQend(eq,&ec,ma);
 
     patch_header(&vcinfo_hdr);
     patch_input(&vcinfo_desc);
