@@ -16,7 +16,7 @@
 #include "rect_patcher.h"
 #include "moods.h"
 
-#define N_ITEMS 16
+#define MAX_MMITEMS 17       // Максимальное количество пунктов меню
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
@@ -25,13 +25,28 @@ extern int Is_Autostatus_Enabled;
 extern int Is_Playerstatus_Enabled;
 extern int Is_Smiles_Enabled;
 
-int MainMenu_ID;
-
 extern char My_Presence;
 
 extern const char VERSION_VERS[];
 
-void AboutDlg(GUI *data)
+#define MM_CONTACT     		1
+#define MM_STATUS    		2
+#define MM_MUC     		3
+#define MM_BOOKMARK      	4
+#define MM_ADDCONTACT     	5
+#define MM_VIBRA_MODE       	6
+#define MM_SOUND_MODE      	7
+#define MM_OFFCONTACT_MODE      8
+#define MM_IPCSTATUS_MODE  	9
+#define MM_AUTOSTATUS_MODE  	10
+#define MM_OPEN_CONFIG  	11
+#define MM_OPEN_COLOR_CONFIG    12
+#define MM_ABOUT      		13
+#define MM_EXIT      		14
+#define MM_SMILE_MODE  		15
+#define MM_MOODS      		16
+
+void AboutDlg(void)
 {
   char msg_tpl[]=LG_COPYRIGHT;
   int l;
@@ -41,226 +56,32 @@ void AboutDlg(GUI *data)
   mfree(msg);
 };
 
-void Dummy(GUI *data)
-{
-  ShowMSG(1,(int)"Раздел в разработке :)");
-};
+char MMenu_Contents[MAX_MMITEMS-1];
+int cmMS_ICONS[MAX_MMITEMS+1];
+int MainMenu_ID;
 
-// Ad, сюда напиши номера, которые сочтёшь нужным!
-int icon[]={0x3DB,0};
-int about_icon[]={0x4DB,0};
-int dummy_icon[] = {0x50E,0};
-
+//int Req_Close_Cont_Menu=0;
 HEADER_DESC menuhdr={0,0,131,21,NULL,(int)LG_MENU,LGP_NULL};
-
 int mmenusoftkeys[]={0,1,2};
-
 int icon_array[2];
-extern JABBER_STATE Jabber_state; 
 
-void ChangeVibraMode(GUI *data)
-{
-  Is_Vibra_Enabled=!(Is_Vibra_Enabled);
-  RefreshGUI();
-}
-
-void ChangeSoundMode(GUI *data)
-{
-  Is_Sounds_Enabled=!(Is_Sounds_Enabled);
-  RefreshGUI();
-}
-
-void ChangeAutostatusMode(GUI *data)
-{
-  Is_Autostatus_Enabled=!(Is_Autostatus_Enabled);
-  RefreshGUI();
-}
-
-void ChangePlayerstatusMode(GUI *data)
-{
-  Is_Playerstatus_Enabled=!(Is_Playerstatus_Enabled);
-  RefreshGUI();
-}
-
-void ChangeSmilesMode(GUI *data)
-{
-  Is_Smiles_Enabled=!(Is_Smiles_Enabled);
-  RefreshGUI();
-}
-
-void ChangeOffContMode(GUI *data)
-{
-  CList_ToggleOfflineDisplay();
-  RefreshGUI();
-}
-
-void OpenSettings_(GUI *data)
-{
-  OpenSettings();
-  GeneralFuncF1(1);
-}
-
-void AddContact(GUI *data)
-{
- if(Jabber_state==JS_ONLINE)
- {
-  Disp_JID_Enter_Dialog(NULL);
- }
-}
-
-void OpenBookmarks_List(GUI *data)
-{
-  if(Jabber_state==JS_ONLINE)
-  {
-  Get_Bookmarks_List();
-  }
-}
-void OpenDisp_MUC_Enter_Dialog(GUI *data)
-{
-  if(Jabber_state==JS_ONLINE)
-  {
-    Disp_MUC_Enter_Dialog(NULL, NULL, NULL);
-  }
-}
-
-void Exit_SieJC(GUI *data)
-{
-  QuitCallbackProc(0);
-  GeneralFuncF1(1);
-}
-
-static const char * const menutexts[N_ITEMS]=
-{
-  LG_CONTACT,
-  LG_STATUS,
-  LG_MUC,
-  LG_BOOKMARK,
-  LG_ADDCONTACT,
-  LG_MVIBRA,
-  LG_MSOUND,
-  LG_MOFFLINE,
-  LG_AUTOSTATUS,
-  LG_PLAYER_STATUS,
-  LG_SMILE,
-  LG_SETTINGS,
-  LG_MOODS,
-  LG_COLOR,
-  LG_ABOUT,
-  LG_EXIT
-};
-
-
-//MENUITEM_DESC menuitems[N_ITEMS]=
-//{
-//  {dummy_icon,(int)"Контакт",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//  {dummy_icon,(int)"Статус",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//  {dummy_icon,(int)"Конференция",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//  {dummy_icon,(int)"Закладки",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//  {icon_array,(int)"Режим вибры",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//  {icon_array,(int)"Режим звука",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//  {dummy_icon,(int)"Об эльфе...",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//  {dummy_icon,(int)"Выход",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-//};
-
-static const MENUPROCS_DESC menuprocs[N_ITEMS]={
-                          Disp_Contact_Menu,
-                          ShowStatusSelectMenu,
-                          OpenDisp_MUC_Enter_Dialog,
-                          OpenBookmarks_List,
-                          AddContact,
-                          ChangeVibraMode,
-                          ChangeSoundMode,
-                          ChangeOffContMode,
-                          ChangeAutostatusMode,
-                          ChangePlayerstatusMode,
-                          ChangeSmilesMode,
-                          OpenSettings_,
-                          Show_Moods_Menu,
-                          ShowSelectColorMenu,
-                          AboutDlg,
-                          Exit_SieJC
-                         };
-
-static const SOFTKEY_DESC mmenu_sk[]=
+SOFTKEY_DESC mmenu_sk[]=
 {
   {0x0018,0x0000,(int)LG_SELECT},
   {0x0001,0x0000,(int)LG_BACK},
   {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
-static const SOFTKEYSTAB mmenu_skt=
+SOFTKEYSTAB mmenu_skt=
 {
   mmenu_sk,0
 };
 
-int S_ICONS[N_ITEMS];
+void mmenu_ghook(void *data, int cmd);
+int mmenu_keyhook(void *data, GUI_MSG *msg);
+void menuitemhandler(void *data, int curitem, void *unk);
 
-void menuitemhandler(void *data, int curitem, void *unk)
-{
-  WSHDR *ws;
-  void *item=AllocMenuItem(data);
-  ws=AllocMenuWS(data,strlen(menutexts[curitem]));
-  ascii2ws(ws, menutexts[curitem]);
-  switch(curitem)
-  {
-  case 0: SetMenuItemIconArray(data,item,S_ICONS+0); break;
-  case 1: SetMenuItemIconArray(data,item,S_ICONS+1); break;
-  case 2: SetMenuItemIconArray(data,item,S_ICONS+2); break;
-  case 3: SetMenuItemIconArray(data,item,S_ICONS+3); break;
-  case 4: SetMenuItemIconArray(data,item,S_ICONS+4); break;
-  case 5: SetMenuItemIconArray(data,item,icon_array+(Is_Vibra_Enabled?0:1)); break;
-  case 6:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Sounds_Enabled?0:1));
-    break;
-  case 7:
-    SetMenuItemIconArray(data,item,icon_array+(Display_Offline?0:1));
-    break;
-  case 8:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Autostatus_Enabled?0:1));
-    break;
-  case 9:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Playerstatus_Enabled?0:1));
-    break;
-  case 10:
-    SetMenuItemIconArray(data,item,icon_array+(Is_Smiles_Enabled?0:1));
-    break;
-  case 11:
-    SetMenuItemIconArray(data,item,S_ICONS+6);
-    break;
-  case 12:
-    SetMenuItemIconArray(data, item, S_ICONS+1);
-    break;
-  case 13:
-    SetMenuItemIconArray(data,item,S_ICONS+9);
-    break;
-  case 14:
-    SetMenuItemIconArray(data,item,S_ICONS+7);
-    break;  
-  case 15:
-    SetMenuItemIconArray(data,item,S_ICONS+8);
-    break;
-  }
-  SetMenuItemText(data, item, ws, curitem);
-}
-
-void mmenu_ghook(void *data, int cmd)
-{
-  if (cmd==TI_CMD_FOCUS)
-  {
-    DisableIDLETMR();
-  }
-}
-
-static int mmenu_keyhook(void *data, GUI_MSG *msg)
-{
-  if ((msg->keys==0x18)||(msg->keys==0x3D))
-  {
-    ((void (*)(void))(menuprocs[GetCurMenuItem(data)]))();
-  }
-  return(0);
-}
-
-static const MENU_DESC tmenu=
+MENU_DESC tmenu=
 {
   8,mmenu_keyhook,mmenu_ghook,NULL,
   mmenusoftkeys,
@@ -269,92 +90,336 @@ static const MENU_DESC tmenu=
   menuitemhandler,
   NULL, //menuitems,
   NULL, //menuprocs,
-  N_ITEMS
+  MAX_MMITEMS
 };
-extern const char PATH_TO_PIC[128], png_t[];
-char mypic[128];
-char confpic[128];
-char exitpic[128];
-char infopic[128];
-char settpic[128];
-char aboutpic[128];
-char color_icon[128];
-extern const char conference_t[];
-const char exit_t[] = "exit";
-const char info_t[] = "info";
-const char about_t[] = "about";
-const char sett_t[] = "settings";
-const char coloricon[] = "coloricon";
 
+void mmenu_ghook(void *data, int cmd)
+{
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+}
+
+/*
+Обработчик нажатий клавиш меню. Отсюда следует вызывать необходимые действия
+
+*/
+
+int mmenu_keyhook(void *data, GUI_MSG *msg)
+{
+  int i=GetCurMenuItem(data);
+  if(msg->keys==0x18 || msg->keys==0x3D)
+  {
+    switch(MMenu_Contents[i])
+    {
+    case MM_CONTACT:
+      {
+        Disp_Contact_Menu();
+        break;
+      }
+    case MM_STATUS:
+      {
+      ShowStatusSelectMenu();
+      break;
+      }
+    case MM_MUC:
+      {
+      Disp_MUC_Enter_Dialog(NULL,NULL,NULL);
+      break;
+      }
+    case MM_BOOKMARK:
+      {
+      Get_Bookmarks_List();
+      GeneralFuncF1(1);
+      break;
+      }
+    case MM_ADDCONTACT:
+      {
+	Disp_JID_Enter_Dialog(NULL);
+      break;
+      }
+    case MM_VIBRA_MODE:
+      {
+	Is_Vibra_Enabled=!(Is_Vibra_Enabled);
+        cmMS_ICONS[MM_VIBRA_MODE]=(int)icon_array[Is_Vibra_Enabled];
+	RefreshGUI();
+      break;
+      }
+    case MM_SOUND_MODE:
+      {
+	Is_Sounds_Enabled=!(Is_Sounds_Enabled);
+        cmMS_ICONS[MM_SOUND_MODE]=(int)icon_array[Is_Sounds_Enabled];
+	RefreshGUI();
+      break;
+      }
+    case MM_OFFCONTACT_MODE:
+      {
+	CList_ToggleOfflineDisplay();
+        cmMS_ICONS[MM_OFFCONTACT_MODE]=(int)icon_array[Display_Offline];
+	RefreshGUI();
+      break;
+      }
+    case MM_IPCSTATUS_MODE:
+      {
+	Is_Playerstatus_Enabled=!(Is_Playerstatus_Enabled);
+        cmMS_ICONS[MM_IPCSTATUS_MODE]=(int)icon_array[Is_Playerstatus_Enabled];
+	RefreshGUI();
+      break;
+      }
+    case MM_AUTOSTATUS_MODE:
+      {
+        Is_Autostatus_Enabled=!(Is_Autostatus_Enabled);
+        cmMS_ICONS[MM_AUTOSTATUS_MODE]=(int)icon_array[Is_Autostatus_Enabled];
+	RefreshGUI();
+	break;
+	}
+    case MM_OPEN_CONFIG:
+      {
+	OpenSettings();
+	GeneralFuncF1(1);
+      break;
+      }
+      
+    case MM_OPEN_COLOR_CONFIG:
+      {
+       ShowSelectColorMenu();
+        break;
+      }
+    case MM_ABOUT:
+      {
+        AboutDlg();
+        break;
+      }
+    case MM_EXIT:
+      {
+	QuitCallbackProc(0);
+        GeneralFuncF1(1);
+        break;
+      }      
+    case MM_SMILE_MODE:
+      {
+        Is_Smiles_Enabled=!(Is_Smiles_Enabled);
+        cmMS_ICONS[MM_SMILE_MODE]=(int)icon_array[Is_Smiles_Enabled];
+	RefreshGUI();
+        break;
+      }
+    case MM_MOODS:
+      {
+        Show_Moods_Menu();
+        break;
+      }
+    default:
+      {
+        MsgBoxError(1,(int)LG_UNKACTION);
+      }
+    }
+    return 0;
+  }
+  //  Req_Close_Cont_Menu = 1;
+  return 0;
+}
+
+void InitMMenuArray()
+{
+  for(int i=0;i<MAX_MMITEMS;i++)MMenu_Contents[i]=0;
+}
+
+/*
+Обработчик появления пунктов динамического меню
+Тут мы сами создаём каждый пункт, указывая для него иконку и текст.
+При создании мы опираемся на данные массива MMenu_Contents, в котором описано,
+какие пункты и в каком порядке необходимо создать.
+*/
+void menuitemhandler(void *data, int curitem, void *unk)
+{
+  WSHDR *ws;
+  char test_str[48];
+  void *item=AllocMenuItem(data);
+  strcpy(test_str,"(ошибка)");
+
+  switch(MMenu_Contents[curitem])
+  {
+    case MM_CONTACT:
+      {
+      strcpy(test_str,LG_CONTACT);
+        break;
+      }
+    case MM_STATUS:
+      {
+      strcpy(test_str,LG_STATUS);
+        break;
+      }
+    case MM_MUC:
+      {
+      strcpy(test_str,LG_MUC);
+        break;
+      }
+    case MM_BOOKMARK:
+      {
+      strcpy(test_str,LG_BOOKMARK);
+        break;
+      }
+    case MM_ADDCONTACT:
+      {
+      strcpy(test_str,LG_ADDCONTACT);
+        break;
+      }
+    case MM_VIBRA_MODE:
+      {
+      strcpy(test_str,LG_MVIBRA);
+        break;
+      }
+    case MM_SOUND_MODE:
+      {
+      strcpy(test_str,LG_MSOUND);
+        break;
+      }
+  case MM_OFFCONTACT_MODE:
+      {
+      strcpy(test_str,LG_MOFFLINE);
+        break;
+      }
+    case MM_IPCSTATUS_MODE:
+      {
+      strcpy(test_str,LG_PLAYER_STATUS);
+        break;
+      }
+    case MM_AUTOSTATUS_MODE:
+      {
+      strcpy(test_str,LG_AUTOSTATUS);
+        break;
+      }
+    case MM_OPEN_CONFIG:
+      {
+      strcpy(test_str,LG_SETTINGS);
+        break;
+      }
+    case MM_OPEN_COLOR_CONFIG:
+      {
+      strcpy(test_str,LG_COLOR);
+        break;
+      }
+    case MM_ABOUT:
+      {
+      strcpy(test_str,LG_ABOUT);
+        break;
+      }
+    case MM_EXIT:
+      {
+      strcpy(test_str,LG_EXIT);
+        break;
+      }
+    case MM_SMILE_MODE:
+      {
+      strcpy(test_str,LG_SMILE);
+        break;
+      }
+    case MM_MOODS:
+      {
+      strcpy(test_str,LG_MOODS);
+        break;
+      }
+  }
+
+  ws=AllocMenuWS(data,strlen(test_str));
+  ascii2ws(ws, test_str);
+
+  SetMenuItemIconArray(data,item,cmMS_ICONS+MMenu_Contents[curitem]);
+  SetMenuItemText(data,item,ws,curitem);
+};
+
+extern const char PATH_TO_PIC[128];
+char ICON_INFO[128];
+char ICON_STATUS[128];
+char ICON_MUCM[128];
+char ICON_BOOKMARK[128];
+char ICON_ADDCONT[128];
+//char ICON_VIBRA[128];
+//char ICON_SOUND[128];
+//char ICON_OFFCONTACT[128];
+//char ICON_IPCSTSTUS[128];
+//char ICON_AUTOSTATUS[128];
+//char ICON_SMILE[128];
+//char ICON_MOODS[128];
+char ICON_SETTING[128];
+char ICON_COLOR[128];
+char ICON_ABOUT[128];
+char ICON_EXIT[128];
+
+void Init_MMIcon_array()
+{
+  strcpy(ICON_INFO, PATH_TO_PIC);strcat(ICON_INFO, "info.png");
+  strcpy(ICON_MUCM, PATH_TO_PIC);strcat(ICON_MUCM, "conference.png");
+  strcpy(ICON_BOOKMARK, PATH_TO_PIC);strcat(ICON_BOOKMARK, "conference.png");
+  strcpy(ICON_ADDCONT, PATH_TO_PIC);strcat(ICON_ADDCONT, "conference.png");
+/* ICON_VIBRA
+  ICON_SOUND
+  ICON_OFFCONTACT
+  ICON_IPCSTSTUS
+  ICON_AUTOSTATUS
+  ICON_SMILE
+  ICON_MOODS*/
+  strcpy(ICON_SETTING, PATH_TO_PIC);strcat(ICON_SETTING, "settings.png");
+  strcpy(ICON_COLOR, PATH_TO_PIC);strcat(ICON_COLOR, "coloricon.png");
+  strcpy(ICON_ABOUT, PATH_TO_PIC);strcat(ICON_ABOUT, "about.png");
+  strcpy(ICON_EXIT, PATH_TO_PIC);strcat(ICON_EXIT, "exit.png");
+  Roster_getIconByStatus(ICON_STATUS, My_Presence);
+  
+  for(int i=0;i<=MAX_MMITEMS;i++)cmMS_ICONS[i]=0;
+
+  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
+  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
+  cmMS_ICONS[MM_VIBRA_MODE]=(int)icon_array[Is_Vibra_Enabled];
+  cmMS_ICONS[MM_SOUND_MODE]=(int)icon_array[Is_Sounds_Enabled];
+  cmMS_ICONS[MM_OFFCONTACT_MODE]=(int)icon_array[Display_Offline];
+  cmMS_ICONS[MM_IPCSTATUS_MODE]=(int)icon_array[Is_Playerstatus_Enabled];
+  cmMS_ICONS[MM_AUTOSTATUS_MODE]=(int)icon_array[Is_Autostatus_Enabled];
+  cmMS_ICONS[MM_SMILE_MODE]=(int)icon_array[Is_Smiles_Enabled];
+
+  cmMS_ICONS[MM_CONTACT]=(int)ICON_INFO;
+  cmMS_ICONS[MM_STATUS]=(int)ICON_STATUS;
+  cmMS_ICONS[MM_MUC]=(int)ICON_MUCM;
+  cmMS_ICONS[MM_BOOKMARK]=(int)ICON_BOOKMARK;
+  cmMS_ICONS[MM_ADDCONTACT]=(int)ICON_ADDCONT;
+  cmMS_ICONS[MM_OPEN_CONFIG]=(int)ICON_SETTING;
+  cmMS_ICONS[MM_OPEN_COLOR_CONFIG]=(int)ICON_COLOR;
+  cmMS_ICONS[MM_ABOUT]=(int)ICON_ABOUT;
+  cmMS_ICONS[MM_EXIT]=(int)ICON_EXIT;
+  cmMS_ICONS[MM_MOODS]=(int)ICON_STATUS;
+}
 
 void MM_Show()
 {
-#ifdef USE_PNG_EXT
-  // Контакт
-  strcpy(infopic, PATH_TO_PIC);
-  strcat(infopic,info_t);
-  strcat(infopic,png_t);
-  S_ICONS[0] = (int)infopic;
+  extern const int AUTOSTATUS_ENABLED;
+  extern JABBER_STATE Jabber_state; 
+  int n_items=0;
+  InitMMenuArray();
+  Init_MMIcon_array();
+  if(Jabber_state==JS_ONLINE)
+  {  
+  MMenu_Contents[n_items++]=MM_CONTACT;
+  MMenu_Contents[n_items++]=MM_STATUS;
+  MMenu_Contents[n_items++]=MM_MOODS;
+  MMenu_Contents[n_items++]=MM_MUC;
+  MMenu_Contents[n_items++]=MM_BOOKMARK;
+  MMenu_Contents[n_items++]=MM_ADDCONTACT;
+  }
+  MMenu_Contents[n_items++]=MM_VIBRA_MODE;
+  MMenu_Contents[n_items++]=MM_SOUND_MODE;
+  MMenu_Contents[n_items++]=MM_OFFCONTACT_MODE;
+  MMenu_Contents[n_items++]=MM_IPCSTATUS_MODE;
+  if(AUTOSTATUS_ENABLED) MMenu_Contents[n_items++]=MM_AUTOSTATUS_MODE;
+  MMenu_Contents[n_items++]=MM_SMILE_MODE;
+  MMenu_Contents[n_items++]=MM_OPEN_CONFIG;
+  MMenu_Contents[n_items++]=MM_OPEN_COLOR_CONFIG;
+  MMenu_Contents[n_items++]=MM_ABOUT;
+  MMenu_Contents[n_items++]=MM_EXIT;
 
-  // Статус
-  Roster_getIconByStatus(mypic, My_Presence);
-  S_ICONS[1] = (int)mypic;
-
-  //Конференция...
-  strcpy(confpic, PATH_TO_PIC);
-  strcat(confpic,conference_t);
-  strcat(confpic,png_t);
-  S_ICONS[2] = (int)confpic;
-
-  // Закладки
-  S_ICONS[3] = (int)confpic;
-
-  // Add Contact
-  S_ICONS[4] = (int)confpic;
-
-  // Режим звука
-  // S_ICONS[5]
-
-  // Настройки
-  strcpy(settpic, PATH_TO_PIC);
-  strcat(settpic,sett_t);
-  strcat(settpic,png_t);
-  S_ICONS[6] = (int)settpic;  
-
-  //цвета
-  strcpy(color_icon, PATH_TO_PIC);
-  strcat(color_icon,coloricon);
-  strcat(color_icon,png_t);
-  S_ICONS[9] =(int)color_icon;
-  // Об эльфе...
-  strcpy(aboutpic, PATH_TO_PIC);
-  strcat(aboutpic,about_t);
-  strcat(aboutpic,png_t);
-  S_ICONS[7] = (int)aboutpic;
-
-  // Выход
-  strcpy(exitpic, PATH_TO_PIC);
-  strcat(exitpic,exit_t);
-  strcat(exitpic,png_t);
-  S_ICONS[8] = (int)exitpic;
-
-//  menuitems[0].icon = S_ICONS+0;
-//  menuitems[1].icon = S_ICONS+1;
-//  menuitems[2].icon = S_ICONS+2;
-//  menuitems[3].icon = S_ICONS+3;
-//  menuitems[6].icon = S_ICONS+6;
-//  menuitems[7].icon = S_ICONS+7;
-
-
-#else
-  S_ICONS[0] = Roster_getIconByStatus(My_Presence);
-//  menuitems[1].icon = S_ICONS;
-#endif
-
-  icon_array[0]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
-  icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
-
-  patch_header(&menuhdr);
-  MainMenu_ID = CreateMenu(0,0,&tmenu,&menuhdr,0,N_ITEMS,0,0);
+  if(n_items)
+  {
+    patch_rect(&menuhdr.rc,0,YDISP,ScreenW()-1,HeaderH()+YDISP);
+    MainMenu_ID=CreateMenu(0,0,&tmenu,&menuhdr,0,n_items,0,0);
+  }
 }
 //EOL,EOF
