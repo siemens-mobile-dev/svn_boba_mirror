@@ -120,7 +120,41 @@ void Play(char *fname)
 
 int findlength(char *file)//длительность мелодии в тиках
 {
+  FILE_PROP wl;
+  zeromem(&wl, sizeof(wl));
+  WSHDR *ff=AllocWS(128);
+  str_2ws(ff,file,128);
+  wl.filename=ff;
 #ifdef NEWSGOLD
+  WSHDR *fn=AllocWS(128);
+  WSHDR *folder=AllocWS(128);
+  
+  bool is_mp3=(strcmp_nocase(file+strlen(file)-3,"mp3")==0)||(strcmp_nocase(file+strlen(file)-3,"aac")==0);
+  
+  char* f=file+strlen(file);
+  while((*f!='\\') && (f!=file))
+    f--;
+  int a=f-file;
+  str_2ws(fn,f+1,strlen(file)-a);
+  str_2ws(folder,file,a+1);
+  
+  wl.type=is_mp3?0x1800:0x1000;
+  GetFileProp(&wl,fn,folder);
+  
+  FreeWS(fn);
+  FreeWS(folder);
+#else
+  wl.type=0x2000;
+  GetFileProp(&wl,0,0);
+#endif
+  FreeWS(ff);
+  
+#ifdef NEWSGOLD
+  return MyMelodyLen=((is_mp3?(wl.duration_mp3):(wl.duration_wav))*216)/1000;
+#else
+  return MyMelodyLen=(wl.duration_wav*216)/1000;
+#endif
+/*#ifdef NEWSGOLD
   return MyMelodyLen=GetWavLen(file)*216;
 #else
   TWavLen wl;
@@ -131,7 +165,7 @@ int findlength(char *file)//длительность мелодии в тиках
   GetWavLen(&wl);
   FreeWS(wl.wfilename);
   return MyMelodyLen=(wl.length*216)/1000;
-#endif
+#endif*/
 }
 
 void LightOff();

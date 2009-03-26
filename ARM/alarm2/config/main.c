@@ -114,7 +114,11 @@ void UpdateHeader(int menu_num)
   case 0: {
     TTime t;
     GetDateTime(0,&t);
+#ifdef ELKA
+    sprintf(lm_hdr_text[0],"%s  %02d:%02d", LGP_ALARM, t.hour, t.min);
+#else
     sprintf(lm_hdr_text[0],"%s   %02d:%02d", LGP_ALARM, t.hour, t.min);
+#endif
   }break;
   case 1:{
     sprintf(lm_hdr_text[1],percent_s, weekdays[alarm_wd]);
@@ -273,9 +277,12 @@ void AddNewAlarm(){
     sprintf(l->ring.melody,default_cfgmelody);
   else
     strcpy(l->ring.melody,ring_melody);
-  //sprintf(l->ring.melody,"2:\\Default\\AlarmMelody.wav");
   l->ring.vibra_power=50;
+#ifdef NEWSGOLD
+  l->ring.volume=5;
+#else
   l->ring.volume=10;
+#endif  
   l->ring.set_profile=true;
   l->ring.restart_time=5;
   l->ring.count=0;
@@ -406,6 +413,12 @@ void on_utf8ec(USR_MENU_ITEM *item)
   }   
 }
 
+void restore(){
+        MYLIST *l=FindSettingsByNum(alarm_num);
+        memcpy(l,backup, sizeof(MYLIST));
+        mfree(backup);
+}
+
 int ed_onkey(GUI *data, GUI_MSG *msg)
 {
   int l,i;
@@ -425,20 +438,40 @@ int ed_onkey(GUI *data, GUI_MSG *msg)
         EDIT_OpenOptionMenuWithUserItems(data,on_utf8ec,data,1);
         return (-1);
       }
+#ifdef NEWSGOLD
+      else if (l==LEFT_SOFT)//выход с сохранением
+#else
       else if (l==RIGHT_SOFT)//выход с сохранением
+#endif
       {
 #warning TODO: проверять включен ли t9
         //**********************************************************************
         mfree(backup);
         return (1);
       }
+#ifdef NEWSGOLD
+      else if (l==RIGHT_SOFT)//выход без сохранения
+      {
+        int i=EDIT_GetFocus(data);
+        if (i==1){
+          int a = EDIT_GetCursorPos(data);
+          if (a==1){
+            restore();
+            return 1;
+          }
+        }
+        else{
+          restore();
+          return 1;
+        }
+      }
+#else
       else if (l==RED_BUTTON)//выход без сохранения
       {
-        MYLIST *l=FindSettingsByNum(alarm_num);
-        memcpy(l,backup, sizeof(MYLIST));
-        mfree(backup);
+        restore();
         return (1);
       }
+#endif
   }
   return(0); //Do standart keys
   //1: close
