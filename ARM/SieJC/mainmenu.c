@@ -16,7 +16,7 @@
 #include "rect_patcher.h"
 #include "moods.h"
 
-#define MAX_MMITEMS 17       // ћаксимальное количество пунктов меню
+#define MAX_MMITEMS 16       // ћаксимальное количество пунктов меню
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
