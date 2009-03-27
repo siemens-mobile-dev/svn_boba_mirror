@@ -774,5 +774,19 @@ typedef struct
   char unk2;
 }SKLABEL;
 
+typedef struct
+{
+  wchar_t name[0x31];
+  wchar_t null;
+  wchar_t shortcut_state;
+  wchar_t erasable_flag;
+}SHORTCUT;
+
+enum shortcut_state {
+  SC_Absent=0,
+  SC_Inactive=1,
+  SC_Present=2,
+  SC_MainMenu=3
+};
 
 #endif

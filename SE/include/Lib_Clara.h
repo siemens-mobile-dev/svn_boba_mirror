@@ -1244,9 +1244,9 @@ __swi __arm int isDataBrowserBook(BOOK *);
 __swi __arm SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 
 #pragma swi_number=0x2E1
-__swi __arm int Shortcut_Get_MenuItemName(wchar_t *);
+__swi __arm int Shortcut_Get_MenuItemName(SHORTCUT *);
 #pragma swi_number=0x2E2
-__swi __arm int Shortcut_Get_MenuItemIconID(wchar_t *);
+__swi __arm int Shortcut_Get_MenuItemIconID(SHORTCUT *);
 
 #pragma swi_number=0x2E3
 __swi __arm BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
