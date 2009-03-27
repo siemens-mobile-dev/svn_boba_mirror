@@ -222,6 +222,7 @@
 #endif
 //vCard.c
 #define LG_SHOW_AVATAR      "Показать аватару"
+#define LG_SHOW_PHOTO       "Показать логотип"
 
 #define LG_VCARD_JABBERID   "JID"
 #define LG_VCARD_FN         "Полное имя"
@@ -277,6 +278,7 @@
 #define LG_VCARD_DESC       "О себе"
 #define LG_VCARD_TZ         "Временной пояс"
 #define LG_VCARD_AVATAR     "Аватара"
+#define LG_VCARD_LOGO       "Логотип"
 //jid_enter_ui
 #define LG_JEDELCONTACT     "Удалить контакт:"
 #define LG_JEASK            "Запросить подписку:"
@@ -564,6 +566,7 @@
 #endif
 //vCard.c
 #define LG_SHOW_AVATAR      "Показать аватару"
+#define LG_SHOW_PHOTO       "Показать логотип"
 
 #define LG_VCARD_JABBERID   "JID"
 #define LG_VCARD_FN         "Повне ім'я"
@@ -619,6 +622,7 @@
 #define LG_VCARD_DESC       "Про себе"
 #define LG_VCARD_TZ         "Часовий пояс"
 #define LG_VCARD_AVATAR     "Аватара"
+#define LG_VCARD_LOGO       "Логотип"
 //jid_enter_ui
 #define LG_JEDELCONTACT     "Видалити контакт:"
 #define LG_JEASK            "Запросити підпис:"
@@ -906,6 +910,7 @@
 #endif
 //vCard.c
 #define LG_SHOW_AVATAR      "Show avatar"
+#define LG_SHOW_PHOTO       "Show logo"
 
 #define LG_VCARD_JABBERID   "JID"
 #define LG_VCARD_FN         "Full name"
@@ -961,6 +966,7 @@
 #define LG_VCARD_DESC       "Description"
 #define LG_VCARD_TZ         "Time zone"
 #define LG_VCARD_AVATAR     "Avatar"
+#define LG_VCARD_LOGO       "Logo"
 //jid_enter_ui
 #define LG_JEDELCONTACT     "Delete contact:"
 #define LG_JEASK            "Ask subscribe:"

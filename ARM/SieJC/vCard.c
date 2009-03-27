@@ -318,9 +318,8 @@ void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode, int logo)
       Add_vCard_Value(vcard, "!LOGO", full_path);
     else
     Add_vCard_Value(vcard, "!PHOTO", full_path);
-  char *buf = malloc(ln+1);
+  char *buf = malloc(ln);
   memcpy(buf, binval->value, ln);
-  buf[ln+1]='=';
   SUBPROC((void*)DecodePhoto, full_path, buf);
  }
 }
