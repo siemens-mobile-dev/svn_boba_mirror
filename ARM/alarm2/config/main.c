@@ -272,6 +272,7 @@ void AddNewAlarm(){
   l->min=0;
   
   sprintf(l->ring.name,txt_null);
+  l->ring.magic=MYMAGIC;
   l->ring.use=0;
   if (!strlen(ring_melody))
     sprintf(l->ring.melody,default_cfgmelody);
@@ -444,26 +445,20 @@ int ed_onkey(GUI *data, GUI_MSG *msg)
       else if (l==RIGHT_SOFT)//выход с сохранением
 #endif
       {
-#warning TODO: проверять включен ли t9
-        //**********************************************************************
-        mfree(backup);
-        return (1);
+        int a = EDIT_GetCursorPos(data);
+        if (a==1){
+          mfree(backup);
+          return 1;
+        }
       }
 #ifdef NEWSGOLD
       else if (l==RIGHT_SOFT)//выход без сохранения
       {
-        //int i=EDIT_GetFocus(data);
-        //if (i==1){
           int a = EDIT_GetCursorPos(data);
           if (a==1){
             restore();
             return 1;
           }
-        //}
-        //else{
-        //  restore();
-        //  return 1;
-        //}
       }
 #else
       else if (l==RED_BUTTON)//выход без сохранения

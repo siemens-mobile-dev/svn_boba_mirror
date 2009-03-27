@@ -446,11 +446,10 @@ void wait_calling(){
 
 int main(char *exename, ring_settings* myring)
 {
-#warning TODO: обрабатывать запуск эльфа без параметра
-  /*if(!myring){//не работает
+  if(myring->magic != MYMAGIC){
     ShowMSG(1,(int)LGP_STARTERROR);
     return 0;
-  }*/
+  }
   ring=myring;
   wait_calling();
   return 0;

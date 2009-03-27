@@ -27,6 +27,8 @@ const char percent_txt[]="%t: ";
 
 #define alarm_dir DEFAULT_DISK":\\Zbin\\alarm2\\"
 
+#define MYMAGIC 0xA1B2C3D4
+
 char icon1[] = alarm_dir"icons\\logo.png";		//значек будильника вверху
 char icon2[] = alarm_dir"icons\\alarm_on.png";		//в списке вкл
 char icon3[] = alarm_dir"icons\\alarm_off.png";		//выкл
@@ -53,6 +55,7 @@ const char alarm_name[]="alarm";
 
 typedef struct
 {
+  int magic;
   char name[64];
   char use;
   char melody[128];
