@@ -452,18 +452,18 @@ int ed_onkey(GUI *data, GUI_MSG *msg)
 #ifdef NEWSGOLD
       else if (l==RIGHT_SOFT)//выход без сохранения
       {
-        int i=EDIT_GetFocus(data);
-        if (i==1){
+        //int i=EDIT_GetFocus(data);
+        //if (i==1){
           int a = EDIT_GetCursorPos(data);
           if (a==1){
             restore();
             return 1;
           }
-        }
-        else{
-          restore();
-          return 1;
-        }
+        //}
+        //else{
+        //  restore();
+        //  return 1;
+        //}
       }
 #else
       else if (l==RED_BUTTON)//выход без сохранения

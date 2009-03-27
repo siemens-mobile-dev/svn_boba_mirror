@@ -18,6 +18,7 @@ int alarm_wd=-1;
 TDate date;
 TTime time;
 bool show_icon=false;
+bool need_save_ms=false;
 
 //******************************************************************************
 
@@ -112,6 +113,21 @@ void start_check(void)
   GBS_StartTimerProc(&mytmr,216*60,start_check);
 }
 
+void save_ms(){
+  int size = ScreenW()*ScreenH()*2;
+  char* data = malloc(size);
+  memcpy(data,RamScreenBuffer(),size);
+  volatile int hFile;
+  unsigned int io_error = 0;
+  hFile = fopen(ms_pic,A_WriteOnly + A_Create + A_BIN,P_WRITE, &io_error);
+  if(hFile!=-1)
+  {
+    fwrite(hFile, data, size, &io_error);
+    fclose(hFile, &io_error);
+  }
+  mfree(data);
+}
+
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
   if (msg->msg == MSG_IPC)
@@ -145,8 +161,11 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           {
             void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
-          //TODO:делать скриншот тут
           DrawCanvas(canvasdata, coord[0], coord[1], coord[0] + imgh, coord[1] + imgh, 1);
+          if (need_save_ms){//сохраняем картинку для конфигуратора
+            save_ms();
+            need_save_ms=false;
+          }
           if( IsUnlocked() && show_icon )
           {
             DrawImg(coord[0], coord[1], (int)icon_ms);
@@ -160,6 +179,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
     if (strcmp_nocase(alarm_name,(char *)msg->data0)==0)
     {
       LoadAlarmConfig();
+      need_save_ms=true;
     }
   }
 

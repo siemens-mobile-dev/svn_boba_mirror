@@ -91,16 +91,21 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
   SetColor(&drwobj,pen,brush);
   DrawObject(&drwobj);
 }
-//extern char picpath[];
+extern const char ms_pic[];
+extern const char icon_ms[];
+char* databuf;
+int draw_pic=0;
+IMGHDR ms_img={0,0,8,0};
+
 void method0_rect(RECT_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
-  //FSTATS fs;
-  //unsigned int ul;
-  //if (!GetFileStats(picpath,&fs,&ul))
-  //  DrawImg(0,0,(int)picpath);
-  //else
+  if (draw_pic){
+    DrwImg((IMGHDR *)&ms_img,0,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(0));
+    DrawImg(data->x_pos,data->y_pos,(int)icon_ms);
+  }
+  else
   {
     DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,white,white);
     // Нарисуем сетку
@@ -112,6 +117,8 @@ void method0_rect(RECT_GUI *data)
     {
       DrawLine(x_0,YDISP,x_0, scr_h-1,1,colors[3]);
     }
+    //Текущая позиция
+    DrwImg((IMGHDR *)&imgPointer,data->x_pos-2,data->y_pos-2,black,transparent);
   }
   
   if (data->is_rect_needed)
@@ -130,25 +137,48 @@ void method0_rect(RECT_GUI *data)
     }
     DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
   }
-  else
+  else if (!draw_pic)
   {
     wsprintf(data->ws1,"%u,%u",data->x_pos,data->y_pos);
     DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
   }
-  
-  //Текущая позиция
-  DrwImg((IMGHDR *)&imgPointer,data->x_pos-2,data->y_pos-2,black,transparent);
 }
 
 
 void method1_rect(RECT_GUI *data, void *(*malloc_adr)(int))
 {
+  FSTATS fs;
+  unsigned int ul;
+  if (!GetFileStats(ms_pic,&fs,&ul)){
+    volatile int hFile;
+    unsigned int io_error = 0;
+    if ((hFile=fopen(ms_pic,A_ReadOnly+A_BIN,P_READ,&io_error))!=-1)
+    {
+      int len=fs.size;
+      if (len>0){
+        databuf=malloc(len+1);
+        fread(hFile,databuf,len,&io_error);
+        ms_img.w=ScreenW();
+        ms_img.h=ScreenH();
+        ms_img.bpnum=8;
+        ms_img.bitmap=databuf;
+        draw_pic=1;
+      }
+      else
+        draw_pic=0;
+      fclose(hFile,&io_error);
+    }
+  }
+  else
+    draw_pic=0;
   data->ws1=AllocWS(256);
   data->gui.state=1;
 }
 
 void method2_rect(RECT_GUI *data, void (*mfree_adr)(void *))
 {
+  if (draw_pic)
+    mfree(databuf);
   FreeWS(data->ws1);
   data->gui.state=0;
 }
