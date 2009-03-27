@@ -502,12 +502,21 @@ int but_list_callback(GUI_MESSAGE * msg)
           }
           else
           {
-            wchar_t w_buf[0x66];
-            w_buf[0x64]=0x2;
-            str2wstr(w_buf,param);
+            SHORTCUT * w_buf =new(SHORTCUT);
+            memset(w_buf,0,0x32);
+            w_buf->shortcut_state=0x2;
+            if (strlen(param)<0x32) str2wstr(w_buf->name,param);
+            else
+            {
+              char temp_buf[0x32];
+              strncpy(temp_buf,param,0x31);
+              temp_buf[0x31]=0;
+              str2wstr(w_buf->name,temp_buf);
+            }
             str_id=Shortcut_Get_MenuItemName(w_buf);
             icon_id=Shortcut_Get_MenuItemIconID(w_buf);
             if (icon_id==0xFFFF) iconidname2id(L"RN_VERT_MY_SHORTCUTS_ICN",SID_ANY_LEN,&icon_id);
+            delete(w_buf);
           }
         }
       }

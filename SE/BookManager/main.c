@@ -6,7 +6,7 @@
 #include "shortcuts.h"
 
 
-#define COPYRIGHT_STRING STR("\nBookManager v2.97\nbuild 111108\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
+#define COPYRIGHT_STRING STR("\nBookManager v2.98\nbuild 111108\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster,KreN\n\n")
 #define MESSAGE(__STR__) MessageBox(0x6fffffff,__STR__,0, 1 ,11000,(BOOK*)BookManager_Book);
 #define BOOKLIST 0
 #define ELFLIST 1
