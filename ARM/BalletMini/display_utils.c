@@ -492,7 +492,11 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         len--;
       }
       ws->wsbody[0]=dc;
-      y2=lc->pixheight+ypos;
+
+      if (lcheck)
+        y2=ypos+lc[lprev].pixheight;
+      else
+        y2=lc->pixheight+ypos;
 
       if (do_draw&&y2!=ypos)
       {
