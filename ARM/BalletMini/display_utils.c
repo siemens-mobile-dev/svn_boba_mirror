@@ -493,12 +493,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       }
       ws->wsbody[0]=dc;
 
-      if (lcheck)
-        y2=ypos+lc[lprev].pixheight;
-      else
-        y2=lc->pixheight+ypos;
+      y2=lc->pixheight+ypos;
 
-      if (do_draw&&y2!=ypos)
+      if (do_draw&&(y2!=ypos||lcheck))
       {
         x=0;
         if (lc[lprev].right) x=scr_w-ws_width;
