@@ -542,9 +542,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           if (rcs_num)
           {
             char cl[4];
-            setColor(0,0,170,100,cl);
+            memcpy(cl, CUR_COLOR, 4);
             REFCACHE *rf=FindReferenceByBegin(vd,vd->pos_cur_ref);
-            if (rf->tag=='Z') setColor(190,0,0,100,cl);
+            if (rf->tag=='Z') memcpy(cl, CUR_PIC_COLOR, 4);
             for (int i=0;i<rcs_num;i++)
             {
                DrawLine(rcs[i].x2  ,rcs[i].y  ,rcs[i].x2  ,rcs[i].y2  ,0,cl);
@@ -584,9 +584,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           if (!lcheck||b>0)
           {
 #ifdef ELKA
-            DrawRectangle(scr_w-2,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+            DrawRectangle(scr_w-2,b,scr_w,e,0,COLOR(ROLL_COLOR),COLOR(ROLL_COLOR));
 #else
-            DrawRectangle(scr_w-1,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+            DrawRectangle(scr_w-1,b,scr_w,e,0,COLOR(ROLL_COLOR),COLOR(ROLL_COLOR));
 #endif
           }
           

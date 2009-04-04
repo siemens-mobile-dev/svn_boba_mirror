@@ -10,6 +10,7 @@
 #include "file_works.h"
 #include "lang.h"
 #include "url_utils.h"
+#include "display_utils.h"
 
 extern int view_url_mode;
 extern char *view_url;
@@ -1271,82 +1272,212 @@ static void main_menu_quit(GUI *gui)
   }
 }
 
-static const int main_menu_softkeys[]={0,1,2};
+int pos = 0;
+int maxlen = 0;
+int item_h = 0;
+int menu_enum = 6;
+int first;
 
-SOFTKEY_DESC main_menu_sk[]=
+void getMaxlen()
 {
-  {0x0018,0x0000,(int)"Select"},
-  {0x0001,0x0000,(int)"Back"},
-  {0x003D,0x0000,(int)LGP_DOIT_PIC}
-};
-
-static const SOFTKEYSTAB main_menu_skt=
-{
-  main_menu_sk,0
-};
-
-#define MAIN_MENU_ITEMS_N 6
-HEADER_DESC main_menu_header={0,0,0,0,NULL,(int)"Menu:",LGP_NULL};
-
-MENUITEM_DESC main_menu_items[MAIN_MENU_ITEMS_N]=
-{
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
-};
-
-static const MENUPROCS_DESC main_menu_procs[MAIN_MENU_ITEMS_N]=
-{
-  main_menu_goto_url,
-  main_menu_goto_bookmarks,
-  main_menu_goto_history,
-  main_menu_options,
-  main_menu_search,
-  main_menu_quit
-};
-
-static void main_menu_ghook(void *data, int cmd)
-{
-  if (cmd == TI_CMD_FOCUS)
-  {
-    DisableIDLETMR();
-  }
+  int t = 0;
+  WSHDR* ws = AllocWS(128);
+  wsprintf(ws, "%t", lgpData[LGP_GoTo]);
+  maxlen = Get_WS_width(ws,FONT_SMALL);
+  wsprintf(ws, "%t", lgpData[LGP_Bookmarks]);
+  t = Get_WS_width(ws,FONT_SMALL);
+  if(t > maxlen) maxlen = t;
+  wsprintf(ws, "%t", lgpData[LGP_Search]);
+  t = Get_WS_width(ws,FONT_SMALL);
+  if(t > maxlen) maxlen = t;
+  wsprintf(ws, "%t", lgpData[LGP_History]);
+  t = Get_WS_width(ws,FONT_SMALL);
+  if(t > maxlen) maxlen = t;
+  wsprintf(ws, "%t", lgpData[LGP_Settings]);
+  t = Get_WS_width(ws,FONT_SMALL);
+  if(t > maxlen) maxlen = t;
+  wsprintf(ws, "%t", lgpData[LGP_Exit]);
+  t = Get_WS_width(ws,FONT_SMALL);
+  if(t > maxlen) maxlen = t;
+  FreeWS(ws);
 }
 
-static const MENU_DESC main_menu_struct=
+typedef struct
 {
-  8, NULL, main_menu_ghook, NULL,
-  main_menu_softkeys,
-  &main_menu_skt,
-  0x10,//MENU_FLAG,
-  NULL,
-  main_menu_items,//menuitems,
-  main_menu_procs,//menuprocs,
-  MAIN_MENU_ITEMS_N
+  GUI gui;
+  VIEWDATA *vd;
+  WSHDR *ws;
+}MENU_GUI;
+
+static void method0(MENU_GUI *data)
+{
+  int scr_w=ScreenW()-1;
+  int scr_h=ScreenH()-1;
+  // Если дергать рендер, есть полупрозрачность в меню, но тормозит навигация
+  // и картинки почемуто на стандартные заменяются :]
+  /*DrawRectangle(0,0,scr_w,scr_h,0,
+      COLOR(BG_COLOR),
+      COLOR(BG_COLOR));
+  RenderPage(data->vd,1);*/
+  int y1 = scr_h-item_h*(menu_enum+1)-10;
+  int y2 = scr_h-item_h-3;
+  WSHDR *ws=AllocWS(128);
+  if(first)
+  {
+    first = 0;
+    DrawRectangle(0,y2+1,scr_w,scr_h,0,
+                COLOR(MST_FRAME_COLOR),
+                COLOR(MST_COLOR));
+    ascii2ws(ws, lgpData[LGP_Menu]);
+    DrawString(ws, 2,scr_h-item_h-2,scr_w, scr_h, FONT_SMALL, 0, COLOR(MST_TEXT_COLOR),GetPaletteAdrByColorIndex(23));
+    ascii2ws(ws, lgpData[LGP_Back]);
+    DrawString(ws, scr_w-Get_WS_width(ws,FONT_SMALL)-2,scr_h-item_h-2,scr_w, scr_h, FONT_SMALL, 0, COLOR(MST_TEXT_COLOR),GetPaletteAdrByColorIndex(23));
+  }
+  DrawRectangle(0, y1, maxlen+16, y2, 0, COLOR(M_BG1),COLOR(M_BG1));
+  DrawRectangle(4, y1+4, maxlen+12, y2-4, 0, COLOR(M_BG2),COLOR(M_BG2));
+  y2 = y1+(item_h*(pos-1)+4);
+  DrawRectangle(4, y2, maxlen+12, y2+item_h, 0, COLOR(M_CURSOR_FRAME),COLOR(M_CURSOR));
+  
+  ascii2ws(ws, lgpData[LGP_GoTo]);
+  y1+=4;
+  DrawString(ws, 7,y1,maxlen+11, y1+item_h, FONT_SMALL, 0, COLOR(M_TEXT),GetPaletteAdrByColorIndex(23));
+  y1+=item_h;
+  ascii2ws(ws, lgpData[LGP_Bookmarks]);
+  DrawString(ws, 7,y1,maxlen+11, y1+item_h, FONT_SMALL, 0, COLOR(M_TEXT),GetPaletteAdrByColorIndex(23));
+  y1+=item_h;
+  ascii2ws(ws, lgpData[LGP_Search]);
+  DrawString(ws, 7,y1,maxlen+11, y1+item_h, FONT_SMALL, 0, COLOR(M_TEXT),GetPaletteAdrByColorIndex(23));
+  y1+=item_h;
+  ascii2ws(ws, lgpData[LGP_History]);
+  DrawString(ws, 7,y1,maxlen+11, y1+item_h, FONT_SMALL, 0, COLOR(M_TEXT),GetPaletteAdrByColorIndex(23));
+  y1+=item_h;
+  ascii2ws(ws, lgpData[LGP_Settings]);
+  DrawString(ws, 7,y1,maxlen+11, y1+item_h, FONT_SMALL, 0, COLOR(M_TEXT),GetPaletteAdrByColorIndex(23));
+  y1+=item_h;
+  ascii2ws(ws, lgpData[LGP_Exit]);
+  DrawString(ws, 7,y1,maxlen+11, y1+item_h, FONT_SMALL, 0, COLOR(M_TEXT),GetPaletteAdrByColorIndex(23));
+  FreeWS(ws);
+}
+
+static void method1(MENU_GUI *data,void *(*malloc_adr)(int))
+{
+#ifdef ELKA
+  DisableIconBar(1);
+#endif
+  data->ws=AllocWS(50);
+  data->gui.state=1;
+  REDRAW();
+}
+
+static void method2(MENU_GUI *data,void (*mfree_adr)(void *))
+{
+#ifdef ELKA
+  DisableIconBar(0);
+#endif
+  data->gui.state=0;
+  FreeWS(data->ws);
+}
+
+static void method3(MENU_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
+{
+#ifdef ELKA
+  DisableIconBar(1);
+#endif
+  DisableIDLETMR();
+  data->gui.state=2;
+}
+
+static void method4(MENU_GUI *data,void (*mfree_adr)(void *))
+{
+#ifdef ELKA
+  DisableIconBar(0);
+#endif
+  if (data->gui.state!=2)
+    return;
+  data->gui.state=1;
+}
+
+static int method5(MENU_GUI *data,GUI_MSG *msg)
+{
+  int m=msg->gbsmsg->msg;
+  int key=msg->gbsmsg->submess;
+  if((m==KEY_DOWN)||(m==LONG_PRESS))
+  {
+    if (key==RIGHT_SOFT)
+    {
+        return (1);
+    }
+    if (key==DOWN_BUTTON)
+    {
+      pos++;
+      if (pos==7) pos=1;
+    }
+    if (key==UP_BUTTON)
+    {
+      pos--;
+      if (pos==0) pos=6;
+    }
+    if((key==ENTER_BUTTON || key == LEFT_SOFT) && (m==KEY_DOWN))
+    {
+      switch(pos)
+      {
+        case 1:
+          main_menu_goto_url(NULL);
+          break;
+        case 2:
+          main_menu_goto_bookmarks(NULL);
+          break;
+        case 3:
+          main_menu_search(NULL);
+          break;
+        case 4:
+          main_menu_goto_history(NULL);
+          break;
+        case 5:
+          main_menu_options(NULL);
+          break;
+        case 6:
+          main_menu_quit(NULL);
+          break;
+      }
+    }
+  }
+  DirectRedrawGUI();
+  return(0);
+}
+
+static int method8(void){return(0);}
+
+static int method9(void){return(0);}
+
+extern void kill_data(void *p, void (*func_p)(void *));
+static const void * const gui_methods[11]={
+  (void *)method0,  //Redraw
+  (void *)method1,  //Create
+  (void *)method2,  //Close
+  (void *)method3,  //Focus
+  (void *)method4,  //Unfocus
+  (void *)method5,  //OnKey
+  0,
+  (void *)kill_data, //method7, //Destroy
+  (void *)method8,
+  (void *)method9,
+  0
 };
 
 int CreateMainMenu(VIEWDATA *vd)
 {
-  MAIN_CSM * main_csm;
-  int main_menu_id;
-  if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
-  {
-    patch_header(&main_menu_header);
-    main_menu_sk[0].lgp_id=(int)lgpData[LGP_Select];
-    main_menu_sk[1].lgp_id=(int)lgpData[LGP_Back];
-    main_menu_header.lgp_id=(int)lgpData[LGP_Menu];
-    main_menu_items[0].lgp_id_small=(int)lgpData[LGP_GoTo];
-    main_menu_items[1].lgp_id_small=(int)lgpData[LGP_Bookmarks];
-    main_menu_items[2].lgp_id_small=(int)lgpData[LGP_History];
-    main_menu_items[3].lgp_id_small=(int)lgpData[LGP_Settings];
-    main_menu_items[4].lgp_id_small=(int)lgpData[LGP_Search];
-    main_menu_items[5].lgp_id_small=(int)lgpData[LGP_Exit];
-  
-    main_menu_id=CreateMenu(0, 0, &main_menu_struct, &main_menu_header, 0, MAIN_MENU_ITEMS_N, vd, 0);
-    main_csm->main_menu_id=main_menu_id;
-  }
-  return main_menu_id;
+  pos=1;
+  first = 1;
+  getMaxlen();
+  item_h = GetFontYSIZE(FONT_SMALL);
+  static const RECT Canvas={0,0,0,0};
+  MENU_GUI *menu_gui=malloc(sizeof(MENU_GUI));
+  zeromem(menu_gui,sizeof(MENU_GUI));
+  patch_rect((RECT*)&Canvas,0,0,ScreenW()-1,ScreenH()-1);
+  menu_gui->gui.canvas=(void *)(&Canvas);
+  menu_gui->gui.methods=(void *)gui_methods;
+  menu_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
+  menu_gui->vd=vd;
+  return CreateGUI(menu_gui);
 }
