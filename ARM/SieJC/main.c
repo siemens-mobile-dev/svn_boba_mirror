@@ -1825,13 +1825,13 @@ int status_keyhook(int submsg, int msg)
     {
       if (IsGuiOnTop(maingui_id)||IsGuiOnTop(Message_gui_ID))
       {
-        extern const char DEFTEX_ONLINE[256];
+        extern const char DEFTEX_ONLINE[];
         extern ONLINEINFO OnlineInfo;
         PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
         pr_info->priority=OnlineInfo.priority;
         pr_info->status=0;
-        char *msg = malloc(256);
-        WSHDR *ws = AllocWS(256);
+        char *msg = malloc(512);
+        WSHDR *ws = AllocWS(512);
         int len;
         ascii2ws(ws, DEFTEX_ONLINE);
         ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
@@ -1867,8 +1867,8 @@ void AutoStatus(void)
       PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
       pr_info->priority=OnlineInfo.priority;
       pr_info->status=3;
-      char *msg = malloc(256);
-      WSHDR *ws = AllocWS(256);
+      char *msg = malloc(512);
+      WSHDR *ws = AllocWS(512);
       int len;
       wsprintf(ws, "%t %02d.%02d.%04d %d:%02d", DEFTEX_AUTOSTATUS, date.day, date.month, date.year, time.hour, time.min);
       ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);

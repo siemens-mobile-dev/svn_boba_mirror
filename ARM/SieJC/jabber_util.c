@@ -690,15 +690,15 @@ void Send_Initial_Presence_Helper()
     pr_info->message = malloc(strlen(OnlineInfo.txt)+1);
     strcpy(pr_info->message,OnlineInfo.txt);
   }else pr_info->message = NULL;*/
-  WSHDR *ws = AllocWS(256);
-  char *msg = malloc(256);
+  WSHDR *ws = AllocWS(512);
+  char *msg = malloc(512);
   int len;
-  extern const char DEFTEX_ONLINE[256];
+  extern const char DEFTEX_ONLINE[];
   ascii2ws(ws,  DEFTEX_ONLINE);
   ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
   msg = realloc(msg, len+1);
   msg[len]='\0';
-  pr_info->message=msg;
+  pr_info->message =msg == NULL ? NULL : Mask_Special_Syms(msg);
   FreeWS(ws);
   Send_Presence(pr_info);
   Jabber_state = JS_ONLINE;
@@ -839,8 +839,8 @@ void _leaveconference(char *conf_jid)
   {
   char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'><status>%s</status></presence>";
   char* pr=malloc(1024);
-  char *msg = malloc(256);
-  WSHDR *ws = AllocWS(256);
+  char *msg = malloc(512);
+  WSHDR *ws = AllocWS(512);
   int len;
   ascii2ws(ws, DEFTEX_MUCOFFLINE);
   ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
