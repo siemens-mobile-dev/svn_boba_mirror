@@ -20,6 +20,8 @@
 #include "upload.h"
 #include "fileman.h"
 
+extern const char DEFAULT_PARAM[128];
+
 static void UpdateCSMname(void);
 static int ParseInputFilename(const char *fn);
 
@@ -387,8 +389,8 @@ static void method0(VIEW_GUI *data)
   if (data->gui.state==2)
   {
     DrawRectangle(0,0,scr_w,scr_h,0,
-      COLOR(BG_COLOR),
-      COLOR(BG_COLOR));
+      GetPaletteAdrByColorIndex(0),
+      GetPaletteAdrByColorIndex(0));
     RenderPage(vd,1);
 //    DrawString(ws_console,0,0,scr_w,20,
 //		  FONT_SMALL,TEXT_NOFORMAT,
@@ -418,25 +420,25 @@ static void method0(VIEW_GUI *data)
       ascii2ws(data->ws2, lgpData[LGP_Stop]);
       
       h1=scr_h-GetFontYSIZE(FONT_SMALL)-2;
-      w1=scr_w-Get_WS_width(data->ws2,FONT_SMALL)-4;
+      w1=scr_w-Get_WS_width(data->ws2,FONT_SMALL)-2;
       DrawRectangle(0,h1,w1,scr_h,0,
-        COLOR(ST_FRAME_COLOR),
-        COLOR(ST_COLOR));
+        GetPaletteAdrByColorIndex(1),
+        GetPaletteAdrByColorIndex(0));
       DrawRectangle(w1+1,h1,scr_w,scr_h,0,
-        COLOR(STOP_FRAME_COLOR),
-        COLOR(STOP_COLOR));
+        GetPaletteAdrByColorIndex(1),
+        GetPaletteAdrByColorIndex(0));
       if ((view_url_mode==MODE_FILE && vd->loaded_sz<vd->page_sz) ||
       (view_url_mode==MODE_URL && connect_state==3 && vd->loaded_sz<vd->page_sz))
       {
         DrawRectangle(1,h1+1,vd->loaded_sz*(w1-1)/vd->page_sz,scr_h-1,0,
-          COLOR(PR_COLOR),
-          COLOR(PR_COLOR));
+          GetPaletteAdrByColorIndex(2),
+          GetPaletteAdrByColorIndex(2));
         wsprintf(data->ws1,"%uB/%uB",vd->loaded_sz,vd->page_sz);
       }
       DrawString(data->ws1,0,h1+2,w1,scr_h,FONT_SMALL,TEXT_ALIGNMIDDLE,
-        COLOR(ST_TEXT_COLOR),GetPaletteAdrByColorIndex(23));   
+        GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));   
       DrawString(data->ws2,w1+1,h1+2,scr_w,scr_h,FONT_SMALL,TEXT_ALIGNMIDDLE,
-        COLOR(STOP_TEXT_COLOR),GetPaletteAdrByColorIndex(23));      
+        GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));      
       
 //      DrawString(ws_console,0,0,scr_w,20,
 //		    FONT_SMALL,TEXT_NOFORMAT,

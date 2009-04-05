@@ -1,29 +1,6 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define COLOR(x) (char *)(&(x)) // Приведение цвета из char[4]
-
-extern const char DEFAULT_PARAM[128];
-extern const char BG_COLOR[4];
-extern const char ST_COLOR[4];
-extern const char ST_FRAME_COLOR[4];
-extern const char ST_TEXT_COLOR[4];
-extern const char MST_COLOR[4];
-extern const char MST_FRAME_COLOR[4];
-extern const char MST_TEXT_COLOR[4];
-extern const char M_TEXT[4];
-extern const char M_CURSOR[4];
-extern const char M_CURSOR_FRAME[4];
-extern const char M_BG1[4];
-extern const char M_BG2[4];
-extern const char STOP_COLOR[4];
-extern const char STOP_FRAME_COLOR[4];
-extern const char STOP_TEXT_COLOR[4];
-extern const char PR_COLOR[4];
-extern const char ROLL_COLOR[4];
-extern const char CUR_COLOR[4];
-extern const char CUR_PIC_COLOR[4];
-
 void FreeViewUrl(void);
 char *globalstr(const char *s);
 int ReadUrlFile(char *url_file);
