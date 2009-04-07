@@ -158,7 +158,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK * book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("Call Logger, v2.2\n\n(c) IronMaster"),0, 1 ,5000,msg->book);
+  MessageBox(0x6fFFFFFF,STR("Call Logger, v2.21\n\n(c) IronMaster"),0, 1 ,5000,msg->book);
   return(1);
 }
 
@@ -377,6 +377,7 @@ int onSessionTerminated(void * r0, BOOK *)
     wchar_t folder_gprs[20];
     wchar_t buffer_gprs_ptr[400];
     wchar_t * buffer_gprs=buffer_gprs_ptr;
+    memset(buffer_gprs,0,800);
     GPRS_SESSION_INFO * buf_ses=new(GPRS_SESSION_INFO);
     GPRS_GetLastSessionInfo(0,buf_ses);
     
@@ -667,12 +668,13 @@ int OnCallManager(void * CallManStruct, BOOK *)
       REQUEST_DATEANDTIME_GET(SYNC,temp_elem->startdatetime);
       temp_elem->first_callstate=((CALLMANAGER_EVENT_DATA*)CallManStruct)->CallState;
       temp_elem->last_callstate=0;
-      if (CallStatusDesc_GetName(CallID_GetCallStatusDesc(temp_elem->line)))
+      wchar_t * CallName=CallStatusDesc_GetName(CallID_GetCallStatusDesc(temp_elem->line));
+      if (CallName)
       {
-        if (CallStatusDesc_GetName(CallID_GetCallStatusDesc(temp_elem->line))[0])
+        if (CallName[0])
         {
-          temp_elem->Name=new wchar_t[wstrlen(CallStatusDesc_GetName(CallID_GetCallStatusDesc(temp_elem->line))+1)];
-          wstrcpy(temp_elem->Name,CallStatusDesc_GetName(CallID_GetCallStatusDesc(temp_elem->line))+2);
+          temp_elem->Name=new wchar_t[wstrlen(CallName+1)];
+          wstrcpy(temp_elem->Name,CallName+2);
         }
         else
         {
@@ -715,7 +717,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
         wstrcat(fpath,L"/Call Logger/");
         wchar_t buffer_ptr[400];
         wchar_t * buffer=buffer_ptr;
-        memset(buffer,0,200);
+        memset(buffer,0,800);
         if (!elem->Name[0])
         {
           snwprintf(elem->Name,8,L"NoName");
