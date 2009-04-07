@@ -1,3 +1,4 @@
+/* -*- coding: windows-1251-dos */
 #include "../inc/swilib.h"
 #include "history.h"
 #include "main.h"
@@ -830,37 +831,112 @@ void Enter_Conference(char *room, char *roomnick, char *roompass, char N_message
   }
 }
 
+struct muc_hlp_data {
+  char *conf_jid;
+  char *aux0;
+};
 
 //Context: HELPER
-void _leaveconference(char *conf_jid)
+void _leaveconference(struct muc_hlp_data *ld)
 {
   extern const char DEFTEX_MUCOFFLINE[];
-  if(strlen(DEFTEX_MUCOFFLINE))
-  {
   char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'><status>%s</status></presence>";
-  char* pr=malloc(1024);
-  char *msg = malloc(512);
-  WSHDR *ws = AllocWS(512);
-  int len;
-  ascii2ws(ws, DEFTEX_MUCOFFLINE);
-  ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
-  msg=realloc(msg, len+1);
-  msg[len]='\0';
-  sprintf(pr, pr_templ, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(conf_jid), Mask_Special_Syms(msg));
+  char* pr, *msg;
+  unsigned int l;
+
+  pr = NULL;
+
+  if (!ld->aux0) {
+    
+    if(strlen(DEFTEX_MUCOFFLINE))
+      {
+	pr=malloc(1024);
+	msg = malloc(512);
+	WSHDR *ws = AllocWS(512);
+	int len;
+	ascii2ws(ws, DEFTEX_MUCOFFLINE);
+	ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+	msg=realloc(msg, len+1);
+	msg[len]='\0';
+	FreeWS(ws);
+	mfree(msg);
+	mfree(pr);
+      } else Send_ShortPresence(ld->conf_jid, PRESENCE_OFFLINE);
+  } else {
+    l = strlen(ld->aux0);
+    pr=malloc(1024 + l); /* 2 JID = max. 512 + XML-обёртка не будут длиннее 1024 байт */
+    msg = malloc(l*2 + 1);
+    strcpy(msg, ld->aux0);
+    mfree(ld->aux0);
+  }
+
+  if (pr) {
+    sprintf(pr, pr_templ, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(ld->conf_jid), Mask_Special_Syms(msg));
+    SendAnswer(pr);
+    mfree(msg);
+    mfree(pr);
+  }
+
+  mfree(ld->conf_jid);
+  mfree(ld);
+}
+
+/*
+ * Функция для подготовки служебных структур перед отправкой в HELPER
+ */
+void Muc_Ctl(char *room, char *str, void(proc)(struct muc_hlp_data*))
+{
+  struct muc_hlp_data *ld;
+  unsigned int l;
+
+  if (!room || !proc) return; /* Sanity checking */
+
+  ld = malloc(sizeof(struct muc_hlp_data));
+  ld->conf_jid = malloc(strlen(room)*2+1);
+  strcpy(ld->conf_jid, room);
+
+  if (str && (l = strlen(str))) {
+    ld->aux0 = malloc(l*2+1);
+    strcpy(ld->aux0, str);
+  } else ld->aux0 = NULL;
+  
+  SUBPROC((void*)proc, ld);
+
+  return;
+}
+
+//Context: HELPER
+void _setconferencetopic(struct muc_hlp_data *ld)
+{
+  char pr_templ[] = "<message to='%s' type='groupchat'><subject>%s</subject></message>";
+  char* pr;
+  unsigned int l;
+
+  if (!ld->aux0 || !(l = strlen(ld->aux0)))
+    goto _free;
+
+  pr = malloc(300 + l);
+  sprintf(pr, pr_templ, Mask_Special_Syms(ld->conf_jid), Mask_Special_Syms(ld->aux0));
   SendAnswer(pr);
-  FreeWS(ws);
-  mfree(msg);
+
   mfree(pr);
-  } else Send_ShortPresence(conf_jid,PRESENCE_OFFLINE);
-  mfree(conf_jid);
+ _free:
+  mfree(ld->conf_jid);
+  mfree(ld);
 }
 
 // Выходит из конференции
-void Send_Leave_Conference(char* room)
+void Send_Leave_Conference(char* room, char *reason)
 {
-      char* cj = malloc(strlen(room)*2+1);
-      strcpy(cj, room);
-      SUBPROC((void*)_leaveconference, cj);
+
+  Muc_Ctl(room, reason, _leaveconference);
+}
+
+// Задаёт тему базара
+void Set_Conference_Topic(char *room, char* topic)
+{
+
+  Muc_Ctl(room, topic, _setconferencetopic);
 }
 
 void Leave_Conference(char* room)

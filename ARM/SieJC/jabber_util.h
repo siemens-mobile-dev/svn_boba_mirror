@@ -173,7 +173,10 @@ void MUCList_Destroy();
 void Enter_Conference(char *room, char *roomnick, char *roompass, char N_messages);
 
 // Выйти из конференции
-void Send_Leave_Conference(char* room);
+void Send_Leave_Conference(char* room, char *reason);
+
+// Установить тему конфы
+void Set_Conference_Topic(char *room, char* topic);
 
 ///////////////////
 

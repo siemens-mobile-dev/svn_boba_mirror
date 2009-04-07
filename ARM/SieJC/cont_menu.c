@@ -287,7 +287,7 @@ int contact_menu_onkey(void *data, GUI_MSG *msg)
     case MI_CONF_LEAVE:
       {
         CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
-        Send_Leave_Conference(room->JID);
+        Send_Leave_Conference(room->JID, NULL);
         break;
       }
     case MI_CONF_CLEAR:

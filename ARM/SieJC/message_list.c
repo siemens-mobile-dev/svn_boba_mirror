@@ -1,3 +1,4 @@
+/* -*- coding: windows-1251-dos */
 #include "../inc/swilib.h"
 #include "main.h"
 #include "clist_util.h"
@@ -184,7 +185,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
       
       char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
       char part_str[]="/part";
-
+      char topic_str[]="/topic";
       if(!is_gchat)
       {
         CList_AddMessage(Resource_Ex->full_name, MSG_ME, body);
@@ -194,12 +195,22 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
         if(strstr(body, part_str)==body)  // Ключ в начале
         {
           CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
-          Send_Leave_Conference(room->JID);
+          Send_Leave_Conference(room->JID, (char*)(body+strlen(part_str)));
           Mess_was_sent = 1;
           mfree(body);
           FreeWS(ws);
           return 1;
         }
+        if(strstr(body, topic_str)==body)  // Ключ в начале
+        {
+          CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
+          Set_Conference_Topic(room->JID, (char*)(body+strlen(topic_str)));
+          Mess_was_sent = 1;
+          mfree(body);
+          FreeWS(ws);
+          return 1;
+        }
+
       }
       IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
       mess->IsGroupChat = is_gchat;
