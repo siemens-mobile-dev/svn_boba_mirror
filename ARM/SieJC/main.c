@@ -1,6 +1,16 @@
+/* -*- coding: windows-1251-dos -*-
+ *
+ *       SieNatJabber Project
+ *
+ * (c) Kibab
+ * (r) Rst7, MasterMind, AD, Borman99, Olexandr
+*/
+
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
-#include "..\inc\zlib.h"
+#include "../inc/zlib.h"
+#include "../inc/xtask_ipc.h"
+
 #include "history.h"
 #include "conf_loader.h"
 #include "main.h"
@@ -16,7 +26,6 @@
 #include "roster_icons.h"
 #include "mainmenu.h"
 #include "serial_dbg.h"
-#include "../inc/xtask_ipc.h"
 #include "lang.h"
 #include "smiles.h"
 #include "vCard.h"
@@ -26,9 +35,20 @@
 #include "transports_icons.h"
 
 /*
-(c) Kibab
-(r) Rst7, MasterMind, AD, Borman99
-*/
+ * Специфичные для SieJC ключи компиляции:
+ * #define ICONBAR          // Код взаимодействия с иконбаром
+ * #define SCRP             // Взаимодействие с эльфом ScrD
+ *
+ * Для включения вывода отладочных сведений можно использовать:
+ * #define LOG_ALL          // Включение логгинга всего (вход/выход + доп.инфа)
+ * #define LOG_IN_DATA      // Включение логгинга только входящих данных
+ * #define LOG_XML_TREE     // Запись распарсенного XML
+ * #define LOG_TO_COM_PORT  // Посылка лога в COM-порт ВМЕСТО записи в файл
+ */
+
+#ifdef LOG_ALL
+    #define LOG_IN_DATA
+#endif
 
 extern int status_keyhook(int submsg, int msg);
 extern void AutoStatus(void);
@@ -582,9 +602,6 @@ void get_answer(void)
       j--;
       if ((!i)&&(!j))
       {
-        //#ifdef LOG_ALL
-        //Log("IN<-", Rstream_p);
-        //#endif
         //Сошелся баланс, отдаем на обработку
         int bytecount=p-Rstream_p;
         IPC_BUFFER* tmp_buffer=malloc(sizeof(IPC_BUFFER)); // Сама структура
@@ -677,9 +694,9 @@ void SendAnswer(char *str)
 {
   unsigned int block_len= strlen(str);
   out_bytes_count += block_len;
-  //#ifdef LOG_ALL
-  //  Log("OUT->", str);
-  //#endif
+  #ifdef LOG_ALL
+    Log("OUT->", str);
+  #endif
 
   if(!Is_Compression_Enabled)
   {
@@ -2012,8 +2029,8 @@ int main(char *exename, char *fname)
   }
   if (AUTOSTATUS_ENABLED)
   {
-    if(AUTOSTATUS_TIME < 1) autostatus_time = 15000; //1min (интересный ефект если в конфиг внести 0 :)
-    else autostatus_time = 250*60*AUTOSTATUS_TIME;
+    if(AUTOSTATUS_TIME < 1) autostatus_time = 15000; //1min (интересный эффект, если в конфиг внести 0 :) )
+    else autostatus_time = TMR_SECOND*60*AUTOSTATUS_TIME;
     AddKeybMsgHook((void *)status_keyhook);
     GBS_StartTimerProc(&autostatus_tmr, autostatus_time, AutoStatus);
     as = 0;
