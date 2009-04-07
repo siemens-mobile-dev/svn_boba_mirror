@@ -279,7 +279,16 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         
         utf82win(sss,(const char *)sss);
         ascii2ws(ews, sss);
-        DrawCanvas(canvasdata, DATA_X, DATA_Y, DATA_X+Get_WS_width(ews, FONT_SIZE)+1, DATA_Y+GetFontYSIZE(FONT_SIZE), 1); 
+
+        DrawCanvas(canvasdata, DATA_X, DATA_Y, DATA_X+Get_WS_width(ews, FONT_SIZE)+1, 
+
+                ((SHOW_TEMP     ? 1 : 0)+ 
+                (SHOW_PRESSURE ? 1 : 0)+
+                (SHOW_WIND     ? 1 : 0)+ 
+                (SHOW_REWLET   ? 1 : 0))*
+
+			GetFontYSIZE(FONT_SIZE)+DATA_Y, 1); 
+
         DrawString(ews, DATA_X, DATA_Y ,scr_w-4, scr_h-4-GetFontYSIZE(FONT_SIZE),
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
         
