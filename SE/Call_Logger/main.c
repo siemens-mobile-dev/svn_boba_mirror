@@ -260,7 +260,7 @@ void sum_traf_cost(DATETIME * cur_date)
           }
           traf_whole_rec=traf_whole_rec+traf_fract_rec/100;
           traf_fract_rec=traf_fract_rec%100;
-          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d.%02d Kb\r\nTotal received - %d.%02d Kb\r\n\r\n",rub,kop,Money,traf_whole_sent,traf_fract_sent,traf_whole_rec,traf_fract_rec);
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d.%02d Kb\r\nTotal received - %d.%02d Kb\r\n",rub,kop,Money,traf_whole_sent,traf_fract_sent,traf_whole_rec,traf_fract_rec);
         }
         else
         {
@@ -283,7 +283,7 @@ void sum_traf_cost(DATETIME * cur_date)
             traf_whole_rec=traf_whole_rec+hex;
             hex=0;
           }
-          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d b\r\nTotal received - %d b\r\n\r\n",rub,kop,Money,traf_whole_sent,traf_whole_rec);
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal sent - %d b\r\nTotal received - %d b\r\n",rub,kop,Money,traf_whole_sent,traf_whole_rec);
         }
       }
       else
@@ -306,7 +306,7 @@ void sum_traf_cost(DATETIME * cur_date)
           }
           traf_whole=traf_whole+traf_fract/100;
           traf_fract=traf_fract%100;
-          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d.%02d Kb\r\n\r\n",rub,kop,Money,traf_whole,traf_fract);
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d.%02d Kb\r\n",rub,kop,Money,traf_whole,traf_fract);
         }
         else
         {
@@ -319,7 +319,7 @@ void sum_traf_cost(DATETIME * cur_date)
             traf_whole=traf_whole+hex;
             hex=0;
           }
-          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d b\r\n\r\n",rub,kop,Money,traf_whole);
+          snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d b\r\n",rub,kop,Money,traf_whole);
         }
       }
       f=_fopen(fpath,L"gprs.txt",0x108,0x180,0);
@@ -595,6 +595,7 @@ int onSessionTerminated(void * r0, BOOK *)
       if (fstat(fpath_gprs,L"gprs.txt",0)<0)
       {
         buffer_gprs=buffer_gprs-1;
+        str_len=str_len+2;
       }
       FSTAT _fstat;
       if ((fstat(fpath_gprs,L"gprs.txt",&_fstat)<0)||(!sort_order))
@@ -846,6 +847,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
         if (fstat(fpath,fname,0)<0)
         {
           buffer=buffer-1;
+          str_len=str_len+2;
         }
         if ((fstat(fpath,fname,&_fstat)<0)||(!sort_order))
         {
