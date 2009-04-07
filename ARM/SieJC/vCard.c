@@ -144,12 +144,15 @@ char *vcard_names[N_VCARD_FIELDS] =
 void Add_vCard_Value(VCARD dest, char *par_name, char *val)
 {
   int field_id = 0;
+
   while (field_id<N_VCARD_FIELDS && strcmp(par_name, vcard_index[field_id]))
     field_id++;
+  
   if (field_id<N_VCARD_FIELDS)
   {
-    if (!dest[field_id])
-      dest[field_id] = malloc(strlen(val)+1);
+    if (dest[field_id])
+      mfree(dest[field_id]);
+    dest[field_id] = malloc(strlen(val)+1);
     strcpy(dest[field_id], val);
   }
 }
@@ -230,14 +233,41 @@ void vCard_Photo_Display(char *path)
   FreeWS(fp);
 }
 
+void MsgBoxError_locked(const char *str)
+{
+    LockSched();
+    MsgBoxError(1,(int)str);
+    UnlockSched();
+}
+
 //Context:HELPER
 void DecodePhoto(char *path, void *data)
 {
-  char *buf = malloc(strlen(data));
-  zeromem(buf, strlen(data));
+  char *buf;
   int unk5 = 0;
-  int binlen = Base64Decode(data,strlen(data), buf, strlen(data), NULL, &unk5);  
-  unsigned int ec = 0;
+  int datlen, binlen;
+  unsigned int ec;
+
+  datlen = strlen(data);
+
+  buf = malloc(datlen + 1);
+  if (buf == NULL) {
+    mfree(data);
+    mfree(path);
+    MsgBoxError_locked("malloc error!");
+    return;
+  }
+  zeromem(buf, datlen + 1);
+  binlen = Base64Decode(data, datlen, buf, datlen, NULL, &unk5);
+
+  if (binlen == 0) {
+    MsgBoxError_locked("decode error (zero length)!");
+    mfree(data);
+    mfree(path);
+    mfree(buf);
+    return;
+  }
+  
   unlink(path, &ec);
   ec=0;   // похеру, чем закончится удаление.
   volatile int f = fopen(path, A_ReadWrite +A_Create+ A_Append + A_BIN, P_READ+ P_WRITE, &ec);
@@ -248,9 +278,7 @@ void DecodePhoto(char *path, void *data)
   }
   else
   {
-    LockSched();
-    MsgBoxError(1,(int)path);
-    UnlockSched();
+    MsgBoxError_locked(path);
   }
 
   /* // Теперь только по запросу
@@ -318,10 +346,15 @@ void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode, int logo)
       Add_vCard_Value(vcard, "!LOGO", full_path);
     else
     Add_vCard_Value(vcard, "!PHOTO", full_path);
-  char *buf = malloc(ln);
-  memcpy(buf, binval->value, ln);
-  SUBPROC((void*)DecodePhoto, full_path, buf);
- }
+  char *buf = malloc(ln + 1);
+  if (buf==NULL) {
+    MsgBoxError_locked("malloc buffer error!");
+  } else {
+    memcpy(buf, binval->value, ln);
+    buf[ln] = 0;
+    SUBPROC((void*)DecodePhoto, full_path, buf);
+  }
+}
 }
 
 // Обработчик vCard
@@ -345,10 +378,9 @@ void Process_vCard(char *from, XMLNode *vCard)
   char field_name[256];
   XMLNode *vCard_Node = vCard->subnode;
   XMLNode *vCard_NodeL2;
+
   while(vCard_Node)
   {
-    //if(vCard_Node->name && vCard_Node->value) // сюда не попадает Photo, и слава Богу
-    //  Add_vCard_Value(vcard, vCard_Node->name, vCard_Node->value);
     if (vCard_Node->name)
     {
       if (vCard_Node->value)
@@ -357,7 +389,7 @@ void Process_vCard(char *from, XMLNode *vCard)
       {
         vCard_NodeL2 = vCard_Node->subnode;
         while (vCard_NodeL2) // Обрабатываем поля второй вложенности
-        {
+	  {
           if (vCard_NodeL2->name && vCard_NodeL2->value)
           {
             sprintf(field_name, "%s/%s", vCard_Node->name, vCard_NodeL2->name);
@@ -374,12 +406,13 @@ void Process_vCard(char *from, XMLNode *vCard)
 
   // Save photo :))
   XMLNode *photo = XML_Get_Child_Node_By_Name(vCard,"PHOTO");
-  if(photo)
+  if(photo) {
     if(photo->subnode)SavePhoto(vcard, from, photo, 0);
-
-  XMLNode *logo = XML_Get_Child_Node_By_Name(vCard,"LOGO");
-  if(logo)
-    if(logo->subnode)SavePhoto(vcard, from, logo, 1);
+  } else {
+    XMLNode *logo = XML_Get_Child_Node_By_Name(vCard,"LOGO");
+    if(logo)
+      if(logo->subnode)SavePhoto(vcard, from, logo, 1);
+  }
 
   // Показываем vCard
 
