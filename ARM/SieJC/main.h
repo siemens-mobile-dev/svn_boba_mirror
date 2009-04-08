@@ -172,6 +172,9 @@ typedef struct{
   player_status:1,
   smiles_status:1;
   char color_name[32];
+  short priority;
+  char status;
+  char status_text[255];
 }DEF_SETTINGS;
 #pragma pack(pop)
 

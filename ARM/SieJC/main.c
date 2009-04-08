@@ -1109,7 +1109,7 @@ void Do_Reconnect()
 
   // ”ничтожаем все объекты
   ClearSendQ();
-  GBS_DelTimer(&Ping_Timer);
+//  GBS_DelTimer(&Ping_Timer); //неудал€ем, должен работать после реконекта.
   GBS_DelTimer(&TMR_Send_Presence);
 /*#ifndef NEWSGOLD
   GBS_DelTimer(&redraw_tmr);
@@ -1423,6 +1423,9 @@ void maincsm_onclose(CSM_RAM *csm)
   RemoveKeybMsgHook((void *)status_keyhook);  
   SetVibration(0);
 
+  void WriteDefSettings(char *elfpath);
+  WriteDefSettings(elf_path);
+
   extern ONLINEINFO OnlineInfo;
   if(OnlineInfo.txt)mfree(OnlineInfo.txt);
   CList_Destroy();
@@ -1436,8 +1439,6 @@ void maincsm_onclose(CSM_RAM *csm)
     inflateEnd(&d_stream);
   }
 
-  void WriteDefSettings(char *elfpath);
-  WriteDefSettings(elf_path);
   
   if (cur_color_name)
     mfree(cur_color_name);
@@ -1530,7 +1531,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           WSHDR *ws = AllocWS(256);
           WSHDR *ws2 = AllocWS(256);
           str_2ws(ws2, (char*)(ipc->data), 256);
-          wsprintf(ws, "%t%w", DEFTEX_PLAYER, ws2);
+          wsprintf(ws, "%s%w", DEFTEX_PLAYER, ws2);
           ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
           msg=realloc(msg, len+1);
           FreeWS(ws);
@@ -1775,6 +1776,7 @@ void Check_Settings_Cleverness()
 void ReadDefSettings(char *elfpath)
 {
   DEF_SETTINGS def_set;
+  extern ONLINEINFO OnlineInfo;
   int f;
   unsigned int err;
   char str[128];
@@ -1792,9 +1794,21 @@ void ReadDefSettings(char *elfpath)
     Is_Autostatus_Enabled=def_set.auto_status;
     Is_Playerstatus_Enabled=def_set.player_status;
     Is_Smiles_Enabled=def_set.smiles_status;
+    if (def_set.priority<255)OnlineInfo.priority = def_set.priority;
+    else def_set.priority = 0;
+    if(def_set.status<PRESENCE_OFFLINE) OnlineInfo.status =def_set.status;
+    else OnlineInfo.status = 0;
     if (cur_color_name) mfree(cur_color_name);
     cur_color_name = (char *)malloc(32);
     strcpy(cur_color_name, def_set.color_name);
+    int len=strlen(def_set.status_text);
+    if (OnlineInfo.txt) mfree(OnlineInfo.txt);
+    if (len)
+    {
+    OnlineInfo.txt = malloc(len+1);
+    OnlineInfo.txt[len]='\0';
+    strcpy(OnlineInfo.txt, def_set.status_text);
+    }
   }
   else
   {
@@ -1804,6 +1818,9 @@ void ReadDefSettings(char *elfpath)
     Is_Autostatus_Enabled=0;
     Is_Playerstatus_Enabled=0;
     Is_Smiles_Enabled=0;
+    OnlineInfo.status = 0;
+    OnlineInfo.priority = 0;
+    OnlineInfo.txt = NULL;
     if (cur_color_name) mfree(cur_color_name);
     cur_color_name = (char *)malloc(32);
     strcpy(cur_color_name, "default");
@@ -1813,6 +1830,7 @@ void ReadDefSettings(char *elfpath)
 void WriteDefSettings(char *elfpath)
 {
   DEF_SETTINGS def_set;
+  extern ONLINEINFO OnlineInfo;
   int f;
   unsigned int err;
   char str[128];
@@ -1825,10 +1843,17 @@ void WriteDefSettings(char *elfpath)
     def_set.vibra_status=Is_Vibra_Enabled;
     def_set.sound_status=Is_Sounds_Enabled;
     def_set.off_contacts=Display_Offline;
+    zeromem(def_set.color_name,32);
     strcpy(def_set.color_name, cur_color_name);
     def_set.auto_status=Is_Autostatus_Enabled;
     def_set.player_status=Is_Playerstatus_Enabled;
     def_set.smiles_status=Is_Smiles_Enabled;
+    def_set.priority= OnlineInfo.priority;
+    def_set.status = OnlineInfo.status;
+    zeromem(def_set.status_text, 255);
+    if (OnlineInfo.txt)
+    strcpy(def_set.status_text, OnlineInfo.txt);
+    
     fwrite(f, &def_set, sizeof(DEF_SETTINGS), &err);
     fclose(f, &err);
   }
@@ -1847,17 +1872,13 @@ int status_keyhook(int submsg, int msg)
         PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
         pr_info->priority=OnlineInfo.priority;
         pr_info->status=0;
-        char *msg = malloc(512);
-        WSHDR *ws = AllocWS(512);
-        int len;
-        ascii2ws(ws, DEFTEX_ONLINE);
-        ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
-        msg=realloc(msg, len+1);
+        int len = strlen(DEFTEX_ONLINE);
+        char *msg = malloc(len+1);
+        strcpy(msg, DEFTEX_ONLINE);
         msg[len]='\0';
         pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
         SUBPROC((void *)Send_Presence,pr_info);
         as = 0;
-        FreeWS(ws);
         mfree(msg);
       }
     }
@@ -1887,7 +1908,7 @@ void AutoStatus(void)
       char *msg = malloc(512);
       WSHDR *ws = AllocWS(512);
       int len;
-      wsprintf(ws, "%t %02d.%02d.%04d %d:%02d", DEFTEX_AUTOSTATUS, date.day, date.month, date.year, time.hour, time.min);
+      wsprintf(ws, "%s %02d.%02d.%04d %d:%02d", DEFTEX_AUTOSTATUS, date.day, date.month, date.year, time.hour, time.min);
       ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
       msg=realloc(msg, len+1);
       msg[len]='\0';

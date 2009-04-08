@@ -357,7 +357,14 @@ void Send_Presence(PRESENCE_INFO *pr_info)
 {
   extern char My_Presence;
   My_Presence = pr_info->status;
+  //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
+  // Генерируем капс исходя из включённых фич
+  char *caps = Generate_Caps();
 
+  char* presence = malloc(1024);
+  if(pr_info->status!=PRESENCE_OFFLINE)
+  {
+  //обновляем онлайнинфо только если не выбран офлайн статус, чтоб при выходе в конфиг записать
   OnlineInfo.status = pr_info->status;
   OnlineInfo.priority = pr_info->priority;
   if(OnlineInfo.txt)mfree(OnlineInfo.txt);
@@ -366,15 +373,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     OnlineInfo.txt = malloc(strlen(pr_info->message)+1);
     strcpy(OnlineInfo.txt, pr_info->message);
   }else OnlineInfo.txt = NULL;
-
-  //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
-
-  // Генерируем капс исходя из включённых фич
-  char *caps = Generate_Caps();
-
-  char* presence = malloc(1024);
-  if(pr_info->status!=PRESENCE_OFFLINE)
-  {
+  
   if(pr_info->status!=PRESENCE_INVISIBLE)
   {
     if(pr_info->message)
@@ -681,27 +680,24 @@ char* Get_Resource_Name_By_FullJID(char* full_jid)
 //Context: HELPER
 void Send_Initial_Presence_Helper()
 {
-//  OnlineInfo
-//  char *message = ANSI2UTF8(ansi_msg, strlen(ansi_msg));
   PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
   pr_info->priority = OnlineInfo.priority;
   pr_info->status=OnlineInfo.status;
-  /*if(OnlineInfo.txt)
-  {
-    pr_info->message = malloc(strlen(OnlineInfo.txt)+1);
-    strcpy(pr_info->message,OnlineInfo.txt);
-  }else pr_info->message = NULL;*/
-  WSHDR *ws = AllocWS(512);
-  char *msg = malloc(512);
   int len;
-  extern const char DEFTEX_ONLINE[];
-  ascii2ws(ws,  DEFTEX_ONLINE);
-  ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
-  msg = realloc(msg, len+1);
+  if(OnlineInfo.txt)
+  {
+  if(len = strlen(OnlineInfo.txt))
+  {
+  char *msg = malloc(len+1);
+  strcpy(msg, OnlineInfo.txt);
   msg[len]='\0';
   pr_info->message =msg == NULL ? NULL : Mask_Special_Syms(msg);
-  FreeWS(ws);
+    mfree(msg);
+  }
+  }else
+  pr_info->message = NULL;
   Send_Presence(pr_info);
+
   Jabber_state = JS_ONLINE;
 }
 
@@ -847,20 +843,13 @@ void _leaveconference(struct muc_hlp_data *ld)
   pr = NULL;
 
   if (!ld->aux0) {
-    
-    if(strlen(DEFTEX_MUCOFFLINE))
+    int len;
+    if(len = strlen(DEFTEX_MUCOFFLINE))
       {
 	pr=malloc(1024);
-	msg = malloc(512);
-	WSHDR *ws = AllocWS(512);
-	int len;
-	ascii2ws(ws, DEFTEX_MUCOFFLINE);
-	ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
-	msg=realloc(msg, len+1);
+	msg = malloc(len+1);
+	strcpy(msg, DEFTEX_MUCOFFLINE);
 	msg[len]='\0';
-	FreeWS(ws);
-	mfree(msg);
-	mfree(pr);
       } else Send_ShortPresence(ld->conf_jid, PRESENCE_OFFLINE);
   } else {
     l = strlen(ld->aux0);
@@ -1167,6 +1156,20 @@ void Send_Feature_Not_Implemented(char *to, char *id)
   char err_tpl[]="<iq to='%s' id='%s' type='error'>"
                  "<error type='cancel'>"
                     "<feature-not-implemented xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>"
+                  "</error>"
+                 "</iq>";
+  char *m=malloc(1024);
+  zeromem(m,1024);
+  snprintf(m,1023,err_tpl,to,id);
+  SUBPROC((void*)_sendandfree,m);
+}
+
+void Send_Service_Unavailable(char *to, char *id)
+{
+  if(!to || !id)return;
+  char err_tpl[]="<iq to='%s' id='%s' type='error'>"
+                 "<error type='cancel'>"
+                    "<service-unavailable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>"
                   "</error>"
                  "</iq>";
   char *m=malloc(1024);
@@ -1494,7 +1497,8 @@ if(!strcmp(gres,iqtype))
 if(!strcmp(gset,iqtype))
 {
     XMLNode* query;
-    if(!(query = XML_Get_Child_Node_By_Name(nodeEx, "query")))return;
+    if(query = XML_Get_Child_Node_By_Name(nodeEx, "query"))
+    {
     char* q_type = XML_Get_Attr_Value("xmlns", query->attr);
     if(!q_type)return;
 
@@ -1504,6 +1508,8 @@ if(!strcmp(gset,iqtype))
       ChangeRoster(query->subnode);
       return;
     }
+    }
+    Send_Service_Unavailable(from, id);
 }
 
 if(!strcmp(gerr,iqtype)) // Iq type = error

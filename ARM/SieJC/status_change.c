@@ -66,7 +66,8 @@ int select_status_menu_onkey(void *data, GUI_MSG *msg)
   {
     int i = GetCurMenuItem(data);
     extern ONLINEINFO OnlineInfo;
-    char * status_text = ANSI2UTF8(status_texts[i], strlen(status_texts[i]));
+    char * status_text = malloc(strlen(status_texts[i])+1);
+    strcpy(status_text, status_texts[i]);
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
     pr_info->priority = OnlineInfo.priority;
     pr_info->status = i;
@@ -110,7 +111,7 @@ void select_status_menu_itemhandler(void *data, int curitem, void *unk)
   WSHDR * ws1 = AllocMenuWS(data, strlen(select_status_menu_texts[curitem]));
   ascii2ws(ws1, select_status_menu_texts[curitem]);
   WSHDR * ws2 = AllocMenuWS(data, strlen(status_texts[curitem]));
-  ascii2ws(ws2, status_texts[curitem]);
+  utf8_2ws(ws2, status_texts[curitem], strlen(status_texts[curitem])*2);
   SetMenuItemIconArray(data, item, select_status_menu_icons + curitem);
   SetMLMenuItemText(data, item, ws1, ws2, curitem);
 }
@@ -179,7 +180,7 @@ int edit_status_menu_onkey(GUI *data, GUI_MSG *msg)
       ws_2utf8(ec.pWS, status_text, &res_len, ec.pWS->wsbody[0] * 2 + 1);
       status_text = realloc(status_text, res_len + 1);
       status_text[res_len]='\0';
-      utf82win((char *)status_texts[(int)EDIT_GetUserPointer(data)], status_text);
+      strcpy((char *)status_texts[(int)EDIT_GetUserPointer(data)], status_text);
     }
     else
     {
@@ -188,18 +189,7 @@ int edit_status_menu_onkey(GUI *data, GUI_MSG *msg)
       sprintf((char *)status_texts[(int)EDIT_GetUserPointer(data)], empty_t);
     }
     SaveConfigData(successed_config_filename);
-    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-    EDITCONTROL ec2;
-    ExtractEditControl(data, 4, &ec2);
-    char *status_prior = malloc(10);
-    ws_2str(ec2.pWS, status_prior, 10);
-    extern const char percent_d[];
-    sscanf(status_prior, percent_d, &pr_info->priority);
-    pr_info->status = (int)EDIT_GetUserPointer(data);
-    pr_info->message = (status_text) ? Mask_Special_Syms(status_text) : NULL;
-    SUBPROC((void*)Send_Presence,pr_info);
     if (status_text) mfree(status_text);
-    mfree(status_prior);
     return 1;
   }
   if (msg->keys==0x0FF0) //Ëåâûé ñîôò ÑÃÎËÄ
@@ -270,7 +260,7 @@ void EditStatus(int status_n)
   ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  ascii2ws(ws, status_texts[status_n]);
+  utf8_2ws(ws, status_texts[status_n], strlen(status_texts[status_n])*2);
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
   AddEditControlToEditQend(eq, &ec, ma);
 

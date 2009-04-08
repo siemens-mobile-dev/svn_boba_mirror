@@ -157,31 +157,31 @@ __root const CFG_HDR cfghdr_PATHS_LEVEL_END={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_DEFTEXTSTAT_LEVEL={CFG_LEVEL,LG_TEXTSTATUS,1,0};
 
-__root const CFG_HDR cfghdr25={CFG_STR_WIN1251,LG_STONLINE,0,255};
-__root const char DEFTEX_ONLINE[256]="В сети";
+__root const CFG_HDR cfghdr25={CFG_UTF8_STRING,LG_STONLINE,0,255};
+__root const char DEFTEX_ONLINE[256]="Online";
 
-__root const CFG_HDR cfghdr26={CFG_STR_WIN1251,LG_STCHAT,0,255};
-__root const char DEFTEX_CHAT[256]="Готов общаться";
+__root const CFG_HDR cfghdr26={CFG_UTF8_STRING,LG_STCHAT,0,255};
+__root const char DEFTEX_CHAT[256]="Chat";
 
-__root const CFG_HDR cfghdr27={CFG_STR_WIN1251,LG_STAWAY,0,255};
-__root const char DEFTEX_AWAY[256]="";
+__root const CFG_HDR cfghdr27={CFG_UTF8_STRING,LG_STAWAY,0,255};
+__root const char DEFTEX_AWAY[256]="Away";
 
-__root const CFG_HDR cfghdr28={CFG_STR_WIN1251,LG_STXA,0,255};
-__root const char DEFTEX_XA[256]="";
+__root const CFG_HDR cfghdr28={CFG_UTF8_STRING,LG_STXA,0,255};
+__root const char DEFTEX_XA[256]="Xa";
 
-__root const CFG_HDR cfghdr29={CFG_STR_WIN1251,LG_STDND,0,255};
-__root const char DEFTEX_DND[256]="Занят";
+__root const CFG_HDR cfghdr29={CFG_UTF8_STRING,LG_STDND,0,255};
+__root const char DEFTEX_DND[256]="DND";
 
-__root const CFG_HDR cfghdr30={CFG_STR_WIN1251,LG_STINVIS,0,255};
-__root const char DEFTEX_INVISIBLE[256]="";
+__root const CFG_HDR cfghdr30={CFG_UTF8_STRING,LG_STINVIS,0,255};
+__root const char DEFTEX_INVISIBLE[256]="Invisible";
 
-__root const CFG_HDR cfghdr31={CFG_STR_WIN1251,LG_STOFFLINE,0,255};
-__root const char DEFTEX_OFFLINE[256]="";
+__root const CFG_HDR cfghdr31={CFG_UTF8_STRING,LG_STOFFLINE,0,255};
+__root const char DEFTEX_OFFLINE[256]="Offline";
 
-__root const CFG_HDR cfghdr141={CFG_STR_WIN1251, LG_PLAYER_STATUS ,0,255};
-__root const char DEFTEX_PLAYER[256]="Слушаю";
+__root const CFG_HDR cfghdr141={CFG_UTF8_STRING, LG_PLAYER_STATUS ,0,255};
+__root const char DEFTEX_PLAYER[256]="";
 
-__root const CFG_HDR cfghdr142={CFG_STR_WIN1251,"MUC offline",0,255};
+__root const CFG_HDR cfghdr142={CFG_UTF8_STRING,"MUC offline",0,255};
 __root const char DEFTEX_MUCOFFLINE[256]="";
 
 __root const CFG_HDR cfghdr_DEFTEXTSTAT_LEVEL_END={CFG_LEVEL,"",0,0};
@@ -238,8 +238,8 @@ __root const int AUTOSTATUS_ENABLED = 0;
 __root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,1,60};
 __root const unsigned int AUTOSTATUS_TIME = 5;
 
-__root const CFG_HDR cfghdr42={CFG_STR_WIN1251, LG_AS_TEXT, 0, 255};
-__root const char DEFTEX_AUTOSTATUS[256]="Автостатус \"Недоступен\" сработал";
+__root const CFG_HDR cfghdr42={CFG_UTF8_STRING, LG_AS_TEXT, 0, 255};
+__root const char DEFTEX_AUTOSTATUS[256]="Auto away:";
 
 __root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
 
