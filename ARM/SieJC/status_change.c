@@ -188,8 +188,23 @@ int edit_status_menu_onkey(GUI *data, GUI_MSG *msg)
       sprintf(status_text, empty_t);
       sprintf((char *)status_texts[(int)EDIT_GetUserPointer(data)], empty_t);
     }
+    
+    PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
+    EDITCONTROL ec2;
+    ExtractEditControl(data, 4, &ec2);
+    char *status_prior = malloc(10);
+    ws_2str(ec2.pWS, status_prior, 10);
+    extern const char percent_d[];
+    sscanf(status_prior, percent_d, &pr_info->priority);
+    pr_info->status = (int)EDIT_GetUserPointer(data);
+    pr_info->message = (status_text) ? Mask_Special_Syms(status_text) : NULL;
+    extern ONLINEINFO OnlineInfo;
+    if(pr_info->priority!=OnlineInfo.priority)
+    SUBPROC((void*)Send_Presence,pr_info);
+    else mfree(pr_info);
     SaveConfigData(successed_config_filename);
     if (status_text) mfree(status_text);
+    mfree(status_prior);
     return 1;
   }
   if (msg->keys==0x0FF0) //ֻוגûי סמפע ֳׁ־ִֻ
