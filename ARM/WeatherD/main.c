@@ -8,9 +8,9 @@
 WSHDR *ews;
 int sock;
 int connect_state;
-char buf[65546];
+//char buf[65546]; раму пожалейте
+char *buf=0;
 int pbuf;
-void *canvasdata;
 
 void create_connect(void);
 void do_start_connection(void)
@@ -79,15 +79,16 @@ void create_connect(void)
   }
 }
 
-char req_buf[256];
-int page_num=1;
+char req_buf[80];
 void send_req(void)
 {
-      sprintf(req_buf,"GET /wap2/towns/%i.wap2"
+      snprintf(req_buf,79, "GET /wap2/towns/%i.wap2"
          " HTTP/1.0\r\nHost: wap.gismeteo.ru\r\n\r\n",TID);  
  
   send(sock,req_buf,strlen(req_buf),0);
   connect_state=2;
+
+  if (!buf) buf=malloc(0x500);
 }
 
 void end_socket(void)
@@ -103,12 +104,11 @@ void end_socket(void)
 
 void get_answer(void)
 {
-  int i=pbuf;
-  if (i==65535)
+  if (pbuf>=0x500)
     end_socket();
   else
   {
-    i=recv(sock,buf+i,65535-i,0);
+    int i=recv(sock,buf+pbuf,0x500-pbuf,0);
     if (i>=0)
     {
       pbuf+=i;
@@ -122,7 +122,6 @@ void get_answer(void)
 
 //==============================================================================
 
-
 void log_data(char *data)
 {
   int hFile;
@@ -132,7 +131,6 @@ void log_data(char *data)
   TTime time;
   TDate date;
   GetDateTime(&date, &time);
-  
   
   sprintf(fullname, "%s%i%i%i%i%i", DATA_PATH, date.year, date.month, date.day, time.hour, time.min);
   hFile = fopen(fullname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE, &io_error);
@@ -144,49 +142,61 @@ void log_data(char *data)
   }  
 }
 
+char *hbz(char *src,char *dst){
+ int c=0;
+ while (*src!='<'&&c<22){
+  *dst++=*src++;
+  c++;
+ }
+ *dst=0;
+ return src;
+}
+
 void Parsing()
 {  
+    if (!buf) return; 
+
     char *fcstr;
-    int i;  
-      
     fcstr=strstr(buf,"</table>");
       
     //Картинка
-    fcstr=strstr(fcstr,"/images/")+strlen ("/images/");
-    for (i=0;fcstr[i]!='.'&&(i<strlen (fcstr));i++);
-      strncpy(weath.Pic, fcstr, i+1);
-    weath.Pic[i]=0; 
-    strcat(weath.Pic, ".png");
+    fcstr=strstr(fcstr,"/images/")+8;
+    weath.Pic[0]=fcstr[0];
+    weath.Pic[1]=fcstr[1];
+    weath.Pic[2]=fcstr[2];
+    weath.Pic[3]=fcstr[3];
+    weath.Pic[4]='.';
+    weath.Pic[5]='p';
+    weath.Pic[6]='n';
+    weath.Pic[7]='g';
+    weath.Pic[8]=0;
     
     //Температура
-    fcstr=strstr(fcstr,"<b>")+strlen ("<b>");
-    for (i=0;fcstr[i]!='<'&&(i<strlen (fcstr));i++);
-      strncpy(weath.Temp, fcstr, i+1);
-      weath.Temp[i]=0;
+    fcstr=strstr(fcstr,"<b>")+3;
+    fcstr=hbz(fcstr,weath.Temp);
     strcat(weath.Temp, "\xB0\x43\n");     
       
     //Давление
-    fcstr=strstr(fcstr,"<tr><td")+strlen ("<tr><td");
+    fcstr=strstr(fcstr,"<tr><td")+7;
     fcstr=strstr(fcstr,">")+18;
-    for (i=0;fcstr[i]!='<'&&(i<strlen (fcstr));i++);
-      strncpy(weath.Pressure, fcstr, i+1);
-    weath.Pressure[i]='\n';    
+    fcstr=hbz(fcstr,weath.Pressure);
+    strcat(weath.Pressure, "\n");     
     
     //Ветер
-    fcstr=strstr(fcstr,"<tr><td")+strlen ("<tr><td");
+    fcstr=strstr(fcstr,"<tr><td")+7;
     fcstr=strstr(fcstr,">")+12;
-    for (i=0;fcstr[i]!='<'&&(i<strlen (fcstr));i++);
-      strncpy(weath.Wind, fcstr, i+1);
-    weath.Wind[i]='\n';    
+    fcstr=hbz(fcstr,weath.Wind);
+    strcat(weath.Wind, "\n");     
     
     //Влажность
-    fcstr=strstr(fcstr,"<tr><td")+strlen ("<tr><td");
+    fcstr=strstr(fcstr,"<tr><td")+7;
     fcstr=strstr(fcstr,">")+20;
-    for (i=0;fcstr[i]!='<'&&(i<strlen (fcstr));i++);
-      strncpy(weath.Rewlet, fcstr, i+1);
-    weath.Rewlet[i]='\n';    
+    fcstr=hbz(fcstr,weath.Rewlet);
   
     //SUBPROC((void *)log_data, buf);
+
+    mfree(buf);
+    buf=0;
 }
 
 //==============================================================================
@@ -200,45 +210,29 @@ typedef struct
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
-void CountTime(void)
-{
+void CountTime(void){
   TDate date;
   TTime time;
   unsigned int min_before_update;
 
   GetDateTime(&date, &time);
+  int h=(time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180;
 
-  if ((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180 >= 1230/*20.30 мск*/)
-    {
-      min_before_update = 1590-((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180)+10/*10 минут запаса*/;
-      goto L_END;
-    }
- 
-  if ((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180 < 150/*2.30 мск*/)
-    {
-      min_before_update = 150-((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180)+10/*10 минут запаса*/;
-      goto L_END;
-    }  
-  
-  if ((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180 >= 870/*14.30 мск*/)
-    {
-      min_before_update = 1230-((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180)+10/*10 минут запаса*/;
-      goto L_END;
-    }
- 
-  if ((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180 >= 510/*8.30 мск*/)
-    {
-      min_before_update = 870-((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180)+10/*10 минут запаса*/;
-      goto L_END;
-    }  
-  
-  if ((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180 >= 150/*2.30 мск*/)
-    {
-      min_before_update = 510-((time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180)+10/*10 минут запаса*/;
-      goto L_END;
-    }
+  if (h >= 1230/*20.30 мск*/)
+      min_before_update = 1590-h+10/*10 минут запаса*/;
+   else
+  if (h < 150/*2.30 мск*/)
+      min_before_update = 150-h+10/*10 минут запаса*/;
+   else  
+  if (h >= 870/*14.30 мск*/)
+      min_before_update = 1230-h+10/*10 минут запаса*/;
+   else
+  if (h >= 510/*8.30 мск*/)
+      min_before_update = 870-h+10/*10 минут запаса*/;
+   else  
+  if (h >= 150/*2.30 мск*/)
+      min_before_update = 510-h+10/*10 минут запаса*/;
 
-L_END:
   GBS_DelTimer(&update_tmr);
   GBS_StartTimerProc(&update_tmr, (216*60)*min_before_update, do_start_connection); 
 }
@@ -259,19 +253,25 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
   {
     int scr_w=ScreenW();
     int scr_h=ScreenH();
-    char sss[1024];
+    char sss[128];
 
     #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
     CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);    
-    if (IsGuiOnTop(idlegui_id)&&!IsScreenSaver()/*&&IsUnlocked()*/) //Если IdleGui на самом верху
+    if (icsm&&IsGuiOnTop(idlegui_id)&&!IsScreenSaver()/*&&IsUnlocked()*/) //Если IdleGui на самом верху
     {
       GUI *igui=GetTopGUI();
       if (igui) //И он существует
       {
-	//void *canvasdata=BuildCanvas();
-        canvasdata = BuildCanvas();
-        
-        sprintf(sss, "%s%s%s%s", 
+#ifdef ELKA
+   {
+     void *canvasdata=BuildCanvas();
+#else
+      void *idata=GetDataOfItemByID(igui,2);
+      if (idata)
+      {
+        void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+#endif        
+        snprintf(sss, 127, "%s%s%s%s", 
                 SHOW_TEMP     ? weath.Temp       : "", 
                 SHOW_PRESSURE ? weath.Pressure   : "", 
                 SHOW_WIND     ? weath.Wind       : "", 
@@ -280,14 +280,9 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         utf82win(sss,(const char *)sss);
         ascii2ws(ews, sss);
 
-        DrawCanvas(canvasdata, DATA_X, DATA_Y, DATA_X+Get_WS_width(ews, FONT_SIZE)+1, 
-
-                ((SHOW_TEMP     ? 1 : 0)+ 
-                (SHOW_PRESSURE ? 1 : 0)+
-                (SHOW_WIND     ? 1 : 0)+ 
-                (SHOW_REWLET   ? 1 : 0))*
-
-			GetFontYSIZE(FONT_SIZE)+DATA_Y, 1); 
+/* нахуй это уебище... иногда лучше думать чем кодить...
+        DrawCanvas(canvasdata, DATA_X, DATA_Y, DATA_X+Get_WS_width(ews, FONT_SIZE)+1, GetFontYSIZE(FONT_SIZE)+DATA_Y, 1); 
+*/
 
         DrawString(ews, DATA_X, DATA_Y ,scr_w-4, scr_h-4-GetFontYSIZE(FONT_SIZE),
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
@@ -298,7 +293,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           DrawImg(PICT_X, PICT_Y, (int)MakeGlobalString(ICON_PATH, '\\', weath.Pic));
         }
       }
-    }    
+   }}    
   }
   
   if (msg->msg==MSG_HELPER_TRANSLATOR)
@@ -345,13 +340,12 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       }
     }
   }
-  
   return (1);
 }
 
 static void maincsm_oncreate(CSM_RAM *data)
 {
-  ews=AllocWS(1024);
+  ews=AllocWS(128);
   do_start_connection();
 }
 
@@ -363,6 +357,7 @@ static void Killer(void)
 
 static void maincsm_onclose(CSM_RAM *csm)
 {
+  mfree(buf);
   FreeWS(ews);
   GBS_DelTimer(&update_tmr);
   GBS_DelTimer(&reconnect_tmr);
