@@ -178,9 +178,6 @@ __root const char DEFTEX_INVISIBLE[256]="Invisible";
 __root const CFG_HDR cfghdr31={CFG_UTF8_STRING,LG_STOFFLINE,0,255};
 __root const char DEFTEX_OFFLINE[256]="Offline";
 
-__root const CFG_HDR cfghdr141={CFG_UTF8_STRING, LG_PLAYER_STATUS ,0,255};
-__root const char DEFTEX_PLAYER[256]="";
-
 __root const CFG_HDR cfghdr142={CFG_UTF8_STRING,"MUC offline",0,255};
 __root const char DEFTEX_MUCOFFLINE[256]="";
 

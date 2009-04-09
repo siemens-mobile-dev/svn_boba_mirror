@@ -16,13 +16,12 @@
 #include "rect_patcher.h"
 #include "moods.h"
 
-#define MAX_MMITEMS 16       // ћаксимальное количество пунктов меню
+#define MAX_MMITEMS 15       // ћаксимальное количество пунктов меню
 
 extern int Is_Sounds_Enabled;
 extern int Is_Vibra_Enabled;
 extern char Display_Offline;
 extern int Is_Autostatus_Enabled;
-extern int Is_Playerstatus_Enabled;
 extern int Is_Smiles_Enabled;
 
 extern char My_Presence;
@@ -37,14 +36,13 @@ extern const char VERSION_VERS[];
 #define MM_VIBRA_MODE       	6
 #define MM_SOUND_MODE      	7
 #define MM_OFFCONTACT_MODE      8
-#define MM_IPCSTATUS_MODE  	9
+#define MM_MOODS      		9
 #define MM_AUTOSTATUS_MODE  	10
 #define MM_OPEN_CONFIG  	11
 #define MM_OPEN_COLOR_CONFIG    12
 #define MM_ABOUT      		13
 #define MM_EXIT      		14
 #define MM_SMILE_MODE  		15
-#define MM_MOODS      		16
 
 void AboutDlg(void)
 {
@@ -157,13 +155,6 @@ int mmenu_keyhook(void *data, GUI_MSG *msg)
       {
 	CList_ToggleOfflineDisplay();
         cmMS_ICONS[MM_OFFCONTACT_MODE]=(int)icon_array[Display_Offline];
-	RefreshGUI();
-      break;
-      }
-    case MM_IPCSTATUS_MODE:
-      {
-	Is_Playerstatus_Enabled=!(Is_Playerstatus_Enabled);
-        cmMS_ICONS[MM_IPCSTATUS_MODE]=(int)icon_array[Is_Playerstatus_Enabled];
 	RefreshGUI();
       break;
       }
@@ -280,11 +271,6 @@ void menuitemhandler(void *data, int curitem, void *unk)
       strcpy(test_str,LG_MOFFLINE);
         break;
       }
-    case MM_IPCSTATUS_MODE:
-      {
-      strcpy(test_str,LG_PLAYER_STATUS);
-        break;
-      }
     case MM_AUTOSTATUS_MODE:
       {
       strcpy(test_str,LG_AUTOSTATUS);
@@ -373,7 +359,6 @@ void Init_MMIcon_array()
   cmMS_ICONS[MM_VIBRA_MODE]=(int)icon_array[Is_Vibra_Enabled];
   cmMS_ICONS[MM_SOUND_MODE]=(int)icon_array[Is_Sounds_Enabled];
   cmMS_ICONS[MM_OFFCONTACT_MODE]=(int)icon_array[Display_Offline];
-  cmMS_ICONS[MM_IPCSTATUS_MODE]=(int)icon_array[Is_Playerstatus_Enabled];
   cmMS_ICONS[MM_AUTOSTATUS_MODE]=(int)icon_array[Is_Autostatus_Enabled];
   cmMS_ICONS[MM_SMILE_MODE]=(int)icon_array[Is_Smiles_Enabled];
 
@@ -408,7 +393,6 @@ void MM_Show()
   MMenu_Contents[n_items++]=MM_VIBRA_MODE;
   MMenu_Contents[n_items++]=MM_SOUND_MODE;
   MMenu_Contents[n_items++]=MM_OFFCONTACT_MODE;
-  MMenu_Contents[n_items++]=MM_IPCSTATUS_MODE;
   if(AUTOSTATUS_ENABLED) MMenu_Contents[n_items++]=MM_AUTOSTATUS_MODE;
   MMenu_Contents[n_items++]=MM_SMILE_MODE;
   MMenu_Contents[n_items++]=MM_OPEN_CONFIG;

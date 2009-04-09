@@ -109,7 +109,6 @@ IPC_REQ ipcscrp={"ScrD","SieJC",(void*)RedrawMainIcon};
 int Is_Sounds_Enabled;
 int Is_Vibra_Enabled;
 int Is_Autostatus_Enabled;
-int Is_Playerstatus_Enabled;
 int Is_Smiles_Enabled;
 char *exename2;
 char elf_path[256];
@@ -1515,37 +1514,6 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           if(IDLE_ICON) RedrawMainIcon();
         }
 #endif
-        if(Is_Playerstatus_Enabled)
-        {
-          if ((stricmp(ipc->name_to,IPC_FROMMEDIA)==0)&&(Jabber_state == JS_ONLINE))//strcmp_nocase
-          {
-          extern ONLINEINFO OnlineInfo;
-          extern const char DEFTEX_PLAYER[];
-          PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
-          pr_info->priority=OnlineInfo.priority;
-          pr_info->status=OnlineInfo.status;
-          char *msg = malloc(256);
-          if (ipc->data)
-          {
-          int len=0;
-          WSHDR *ws = AllocWS(256);
-          WSHDR *ws2 = AllocWS(256);
-          str_2ws(ws2, (char*)(ipc->data), 256);
-          wsprintf(ws, "%s%w", DEFTEX_PLAYER, ws2);
-          ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
-          msg=realloc(msg, len+1);
-          FreeWS(ws);
-          FreeWS(ws2);
-          msg[len]='\0';
-          pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
-          } else
-          {
-            pr_info->message= NULL;
-          }
-          SUBPROC((void *)Send_Presence,pr_info);
-          mfree(msg);
-          }
-        }
       }
     }
     if (msg->msg==MSG_RECONFIGURE_REQ)
@@ -1792,7 +1760,6 @@ void ReadDefSettings(char *elfpath)
     Is_Sounds_Enabled=def_set.sound_status;
     Display_Offline=def_set.off_contacts;
     Is_Autostatus_Enabled=def_set.auto_status;
-    Is_Playerstatus_Enabled=def_set.player_status;
     Is_Smiles_Enabled=def_set.smiles_status;
     if (def_set.priority<255)OnlineInfo.priority = def_set.priority;
     else def_set.priority = 0;
@@ -1816,7 +1783,6 @@ void ReadDefSettings(char *elfpath)
     Is_Sounds_Enabled=0;
     Display_Offline=0;
     Is_Autostatus_Enabled=0;
-    Is_Playerstatus_Enabled=0;
     Is_Smiles_Enabled=0;
     OnlineInfo.status = 0;
     OnlineInfo.priority = 0;
@@ -1846,12 +1812,11 @@ void WriteDefSettings(char *elfpath)
     zeromem(def_set.color_name,32);
     strcpy(def_set.color_name, cur_color_name);
     def_set.auto_status=Is_Autostatus_Enabled;
-    def_set.player_status=Is_Playerstatus_Enabled;
     def_set.smiles_status=Is_Smiles_Enabled;
     def_set.priority= OnlineInfo.priority;
     def_set.status = OnlineInfo.status;
-    zeromem(def_set.status_text, 255);
-    if (OnlineInfo.txt)
+    zeromem(def_set.status_text, 510);
+    if ((OnlineInfo.txt)&&(strlen(OnlineInfo.txt)<510))
     strcpy(def_set.status_text, OnlineInfo.txt);
     
     fwrite(f, &def_set, sizeof(DEF_SETTINGS), &err);
@@ -1904,19 +1869,16 @@ void AutoStatus(void)
       extern ONLINEINFO OnlineInfo;      
       PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
       pr_info->priority=OnlineInfo.priority;
-      pr_info->status=3;
-      char *msg = malloc(512);
-      WSHDR *ws = AllocWS(512);
-      int len;
-      wsprintf(ws, "%s %02d.%02d.%04d %d:%02d", DEFTEX_AUTOSTATUS, date.day, date.month, date.year, time.hour, time.min);
-      ws_2utf8(ws, msg, &len, wstrlen(ws)*2+1);
+      pr_info->status=PRESENCE_XA;
+      char *msg = malloc(strlen(DEFTEX_AUTOSTATUS)+50);
+      sprintf(msg, "%s %02d.%02d.%04d %d:%02d", DEFTEX_AUTOSTATUS, date.day, date.month, date.year, time.hour, time.min);
+      int len = strlen(msg);
       msg=realloc(msg, len+1);
       msg[len]='\0';
-      pr_info->message =msg == NULL ? NULL : Mask_Special_Syms(msg);
+      pr_info->message = (msg) ? Mask_Special_Syms(msg) : NULL;
       Send_Presence(pr_info);
       as = 1;
       GBS_DelTimer(&autostatus_tmr);
-      FreeWS(ws);    
       mfree(msg);
     }
   }
