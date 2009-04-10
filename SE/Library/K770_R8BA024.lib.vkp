@@ -498,7 +498,7 @@
 0C84: 00000000 695B4B45 ; 321: void SetTheme(wchar_t*path, wchar_t*name, int bookid, int unk_1);
 0C88: 00000000 D9464B45 ; 322: void Softkeys_GetLabel(DISP_OBJ *softkeys, SKLABEL *lbl, int id);
 0C8C: 00000000 9D424B45 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
-0C90: 00000000 CC6E1720 ;8324: void * get_CellData(void);
+0C90: 00000000 806E1720 ;8324: void * get_CellData(void);
 0C94: 00000000 753AEF44 ; 325: void * IncommingCall_Reject(BOOK* book);
 0C98: 00000000 014CEF44 ; 326: void * IncommingCall_Mute(BOOK* book);
 0C9C: 00000000 AD8C1B44 ; 327: int GetRadioState(char* level, char* flag);
