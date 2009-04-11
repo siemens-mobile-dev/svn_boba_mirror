@@ -744,7 +744,10 @@ void SendAnswer(char *str)
       c_stream.next_out = (Byte*)compr_buf;
       c_stream.avail_out = compr_buf_len;
       err = deflate(&c_stream, Z_SYNC_FLUSH);
-      if (err) {
+      /*
+       * Остальные коды возврата не фатальны
+       */
+      if (err==Z_STREAM_ERROR) {
 	Compression_Report_Error("Deflate", err);
 	end_socket();
       }
