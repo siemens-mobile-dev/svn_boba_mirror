@@ -1,21 +1,7 @@
 #ifndef _XML_PARSER_
   #define _XML_PARSER_
 
-typedef struct{
-  void *next;
-  char *name;
-  char *param;
-}XMLAttr;
-
-
-typedef struct{
-  void *next;
-  void *subnode;
-  char *name;
-  XMLAttr *attr;
-  char *value;
-} XMLNode;
-
+#include "xml_common.h"
 // Декодировать поток
 void* XMLDecode(char *buf, int size);
 

@@ -7174,6 +7174,9 @@
       <name>$PROJ_DIR$\md5.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\platform.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\revision.h</name>
     </file>
     <file>
@@ -7181,6 +7184,15 @@
     </file>
     <file>
       <name>$PROJ_DIR$\string_util.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\xml_common.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\xml_gen.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\xml_gen.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\xml_parser.c</name>

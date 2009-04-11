@@ -7,6 +7,7 @@
 #include "jabber_util.h"
 #include "string_util.h"
 #include "xml_parser.h"
+#include "xml_gen.h"
 #include "item_info.h"
 #include "vCard.h"
 #include "jabber.h"
@@ -109,46 +110,32 @@ void Send_Mood(char *mood, char *text)
 /*
   Посылка стандартного Jabber Iq
 */
-//Context: HELPER
 void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
 {
-  char* xmlq=malloc(1024);
-  char *xmlq2=malloc(1024);
-  char s_to[128];
-  char s_id[40];
-  if(id)
-  {
-    snprintf(s_id,40,"id='%s'", id);
-  }
-  else
-  {
-    strcpy(s_id, "");
-  }
-  char *_from = Mask_Special_Syms(My_JID_full);
-  sprintf(xmlq, "<iq type='%s' %s from='%s'", type, s_id, _from);
-  mfree(_from);
-  if(to)
-  {
-    char *_to = Mask_Special_Syms(to);
-    snprintf(s_to, 128, " to='%s'", _to);
-    strcat(xmlq, s_to);
-    mfree(_to);
-  }
-  if(payload)
-  {
-    strcat(xmlq, ">\r\n<query xmlns='%s'>\r\n%s\r\n</query>\r\n</iq>");
-    sprintf(xmlq2, xmlq, xmlns, payload);
-  }
-  else
-  {
-    strcat(xmlq, ">\r\n<query xmlns='%s'/>\r\n</iq>");
-    sprintf(xmlq2, xmlq, xmlns);
-  }
-  sprintf(xmlq2, xmlq, xmlns, payload);
-  SendAnswer(xmlq2);
-//  Log("IQ_OUT", xmlq2);
-  mfree(xmlq2);
-  mfree(xmlq);
+  XMLNode *iq, *query;
+  char *xml;
+  char xmlns_t[]="xmlns";
+  char query_t[]="query";
+  char iq_t[]="iq";
+  char id_t[]="id";
+  char to_t[]="to";
+  char type_t[]="type";
+
+  iq = XML_CreateNode(iq_t, NULL);
+  if (id)
+    XML_Set_Attr_Value(iq, id_t, id);
+  if (type)
+    XML_Set_Attr_Value(iq, type_t, type);
+  if (to)
+    XML_Set_Attr_Value(iq, to_t, to);
+
+  query = XML_CreateNode(query_t, payload);
+  XML_Set_Attr_Value(query, xmlns_t, xmlns);
+  
+  iq->subnode = query;
+  
+  xml = XML_Get_Node_As_Text(iq);
+  _sendandfree(xml);
 }
 
 /*
