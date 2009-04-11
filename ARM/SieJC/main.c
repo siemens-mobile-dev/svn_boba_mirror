@@ -504,7 +504,7 @@ void Compression_Report_Error(char *when, int code)
   char q[255];
 
   LockSched();
-  sprintf(q, "%d error: %s\n", when, z_errmsg[(-code)+2]);
+  sprintf(q, "%s error: %s\n", when, z_errmsg[(-code)+2]);
   MsgBoxError(1, (int)q);
   UnlockSched();
 }
@@ -543,11 +543,17 @@ void get_answer(void)
       d_stream.next_out = (Byte*)((Rstream_p=realloc(Rstream_p,Rstream_n+i+1))+Rstream_n); //Новый размер собираемого пакета
       d_stream.avail_out = (uInt)i;
       err = inflate(&d_stream, Z_SYNC_FLUSH);
-      if (err) {
-	Compression_Report_Error("inflating", err);
-        end_socket();
-        return;
+
+      switch (err) {
+      case Z_NEED_DICT:
+	 //ret = Z_DATA_ERROR;     /* and fall through */
+      case Z_DATA_ERROR:
+      case Z_MEM_ERROR:
+	Compression_Report_Error("Inflating", err);
+	end_socket();
+	return;
       }
+
       Rstream_n+=(i-d_stream.avail_out);
     }
     while(d_stream.avail_out==0);
@@ -672,7 +678,7 @@ void bsend(int len, void *p)
     {
       //Передали меньше чем заказывали
 #ifdef SEND_TIMER
-      GBS_StartTimerProc(&send_tmr,216*5,resend);
+      GBS_StartTimerProc(&send_tmr,TMR_SECOND*5,resend);
 #endif
       return; //Ждем сообщения ENIP_BUFFER_FREE1
     }
