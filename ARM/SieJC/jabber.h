@@ -69,6 +69,7 @@
 #define JABBER_XMPP_RECEIPTS "urn:xmpp:receipts"
 #define JABBER_URN_PING      "urn:xmpp:ping"
 #define JABBER_URN_ATTENTION "urn:xmpp:attention:0"
+#define JABBER_STORAGE_BOOKMARKS "storage:bookmarks"
 #define DISCO_INFO       "http://jabber.org/protocol/disco#info"
 #define XMLNS_CHATSTATES "http://jabber.org/protocol/chatstates"
   

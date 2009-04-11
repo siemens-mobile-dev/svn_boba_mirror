@@ -5,6 +5,7 @@
 #include "MUC_Enter_UI.h"
 #include "lang.h"
 #include "rect_patcher.h"
+#include "xml_gen.h"
 
 BM_ITEM *BM_ROOT  = NULL;
 int reqbook = 0; //флаг запроса закладок
@@ -125,10 +126,13 @@ void Process_Bookmarks_Storage(XMLNode* nodeEx)
 void _getbookmarkslist()
 {
   static char priv_id[]="SieJC_priv_req";
-  static char bm[]="<storage xmlns='storage:bookmarks'/>";
+  char storage_t[]="storage";
+  char xmlns_t[]="xmlns";
+  XMLNode *xml_bookmark = XML_CreateNode(storage_t, NULL);
+  XML_Set_Attr_Value(xml_bookmark, xmlns_t, JABBER_STORAGE_BOOKMARKS);
   char gget[]=IQTYPE_GET;
   char iqv[]=IQ_PRIVATE;
-  SendIq(NULL, gget, priv_id, iqv, bm);
+  SendIq(NULL, gget, priv_id, iqv, xml_bookmark);
 }
 
 void Get_Bookmarks_List()

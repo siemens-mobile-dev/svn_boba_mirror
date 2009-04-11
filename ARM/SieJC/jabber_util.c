@@ -110,7 +110,7 @@ void Send_Mood(char *mood, char *text)
 /*
   Посылка стандартного Jabber Iq
 */
-void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
+void SendIq(char* to, char* type, char* id, char* xmlns, XMLNode* payload)
 {
   XMLNode *iq, *query;
   char *xml;
@@ -129,9 +129,9 @@ void SendIq(char* to, char* type, char* id, char* xmlns, char* payload)
   if (to)
     XML_Set_Attr_Value(iq, to_t, to);
 
-  query = XML_CreateNode(query_t, payload);
+  query = XML_CreateNode(query_t, NULL);
+  query->subnode = payload;
   XML_Set_Attr_Value(query, xmlns_t, xmlns);
-  
   iq->subnode = query;
   
   xml = XML_Get_Node_As_Text(iq);
@@ -196,10 +196,24 @@ void Send_Auth()
 {
   sprintf(My_JID, "%s@%s",USERNAME, JABBER_SERVER);
   sprintf(My_JID_full,"%s/%s",My_JID, RESOURCE);
-  char* payload = malloc(256);
-  sprintf(payload,"<username>%s</username>\n<password>%s</password>\n<resource>%s</resource>",USERNAME, PASSWORD, RESOURCE);
-  SendIq(NULL, IQTYPE_SET, auth_id, IQ_AUTH, payload);
-  mfree(payload);
+  char* tmpstr = malloc(256);
+  XMLNode *xml, *xml_out;
+  strcpy(tmpstr, USERNAME);
+  char username_t[]="username";
+  char password_t[]="password";
+  char resource_t[]="resource";
+  strcpy(tmpstr, USERNAME);
+  xml = XML_CreateNode(username_t, tmpstr);
+
+  strcpy(tmpstr, PASSWORD);
+  xml->next = XML_CreateNode(password_t, tmpstr);
+
+  strcpy(tmpstr, RESOURCE);  
+  xml_out = XML_CreateNode(resource_t, tmpstr);
+  xml_out->next = xml;
+  
+  SendIq(NULL, IQTYPE_SET, auth_id, IQ_AUTH, xml_out);
+  mfree(tmpstr);
   LockSched();
   strcpy(logmsg,"Send auth");
   UnlockSched();
@@ -545,8 +559,22 @@ void Report_VersionInfo(char* id, char *to)
   char answer[200];
   char *ph_model = Get_Phone_Info(PI_MODEL);
   char *ph_sw = Get_Phone_Info(PI_SW_NUMBER);
-  sprintf(answer, "<name>%s</name><version>%s-r%d (%s)</version><os>SIE-%s/%s %s</os>", VERSION_NAME, VERSION_VERS, __SVN_REVISION__, CMP_DATE, ph_model, ph_sw, OS);
-  SendIq(to, IQTYPE_RES, id, IQ_VERSION, answer);
+  XMLNode *xml_name=NULL, *xml_version, *xml_os;
+  char name_t[]="name";
+  char version_t[]="version";
+  char os_t[]="os";
+  
+  strcpy(answer, VERSION_NAME);
+  xml_name = XML_CreateNode(name_t, answer);
+  
+  sprintf(answer, "%s-r%d (%s)", VERSION_VERS, __SVN_REVISION__, CMP_DATE);
+  xml_version = XML_CreateNode(version_t, answer);
+
+  sprintf(answer, "SIE-%s/%s %s", ph_model, ph_sw, OS);
+  xml_os = XML_CreateNode(os_t, answer);
+  xml_version->next = xml_os;
+  xml_name->next = xml_version;
+  SendIq(to, IQTYPE_RES, id, IQ_VERSION, xml_name);
 
   mfree(id);
   mfree(to);
@@ -576,8 +604,24 @@ void Report_TimeInfo(char* id, char *to)
     total=total-60;
     hour++;
   };
-  sprintf(answer, "<utc>%04d%02d%02dT%02d:%02d:%02d</utc><tz>%s%02d:%02d</tz><display>%02d-%02d-%04d %02d:%02d:%02d</display>",reqd.year,reqd.month,reqd.day,reqt.hour,reqt.min,reqt.sec,znak, hour, total,reqd.day,reqd.month,reqd.year,reqt.hour,reqt.min,reqt.sec);
-  SendIq(to, IQTYPE_RES, id, IQ_TIME, answer);
+
+  XMLNode *xml_utc=NULL, *xml_tz, *xml_display;
+  char utc_t[]="utc";
+  char tz_t[]="tz";
+  char display_t[]="display";
+  
+  sprintf(answer, "%04d%02d%02dT%02d:%02d:%02d", reqd.year,reqd.month,reqd.day,reqt.hour,reqt.min,reqt.sec);
+  xml_utc = XML_CreateNode(utc_t, answer);
+  
+  sprintf(answer, "%s%02d:%02d",znak, hour, total);
+  xml_tz = XML_CreateNode(tz_t, answer);
+
+  sprintf(answer, "%02d-%02d-%04d %02d:%02d:%02d",reqd.day,reqd.month,reqd.year,reqt.hour,reqt.min,reqt.sec);
+  xml_display = XML_CreateNode(display_t, answer);
+  
+  xml_utc->next = xml_display;
+  xml_tz->next = xml_utc;
+  SendIq(to, IQTYPE_RES, id, IQ_TIME, xml_tz);  
   mfree(id);
   mfree(to);
 };
@@ -626,7 +670,7 @@ void Report_DiscoInfo(char* id, char *to)
     strcat(answer, xevents_feature);
   }
   //  ShowMSG(0,(int)to);
-  SendIq(to, IQTYPE_RES, id, DISCO_INFO, answer);
+//  SendIq(to, IQTYPE_RES, id, DISCO_INFO, answer);
 
   mfree(id);
   mfree(to);
@@ -1255,7 +1299,7 @@ if(!strcmp(gget,iqtype)) // Iq type = get
   } //end jabber:iq:last
 
   //entity caps
-  if(!strcmp(q_type,disco_info))
+  if(!strcmp(q_type,disco_info)&&0) //not work yet
   {
     // http://jabber.org/protocol/disco#info
     if(from)
@@ -1798,13 +1842,11 @@ MESS_TYPE Get_Message_Type(char* mess_type_str)
 }
 
 //Context: HELPER
-void _mucadmincmd(char* room, char* iq_payload)
+void _mucadmincmd(char* room, XMLNode* iq_payload)
 {
-  //char* to, char* type, char* id, char* xmlns, char* payload
   char admin_iqid[]="SieJC_adm";
   char iqtypeset[]=IQTYPE_SET;
   SendIq(room, iqtypeset, admin_iqid, XMLNS_MUC_ADMIN, iq_payload);
-  mfree(iq_payload);
   mfree(room);
 }
 
@@ -1813,7 +1855,7 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
 {
   char* payload = malloc(1024);
   char *_room_name = Mask_Special_Syms(room_name);
-  char payload_tpl[]="<item nick='%s' %s='%s'><reason>%s</reason></item>";
+//  char payload_tpl[]="<item nick='%s' %s='%s'><reason>%s</reason></item>";
   char it[20];
   char val[20];
   char aff[]="affiliation";
@@ -1838,21 +1880,18 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
       strcpy(val,JABBER_ROLS[ROLE_PARTICIPANT]);
       break;
     }
-
   case ADM_PARTICIPANT:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_NONE]);
       break;
     }
-
   case ADM_MEMBER:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_MEMBER]);
       break;
     }
-
   case ADM_MODERATOR:
     {
       strcpy(it,role);
@@ -1865,34 +1904,37 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
       strcpy(val,JABBER_ROLS[ROLE_PARTICIPANT]);
       break;
     }
-
   case ADM_ADMIN:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_ADMIN]);
       break;
     }
-
   case ADM_OWNER:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_OWNER]);
       break;
     }
-
   case ADM_BAN:
     {
       strcpy(it,aff);
       strcpy(val,JABBER_AFFS[AFFILIATION_OUTCAST]);
       break;
     }
-
   }
+  
+  XMLNode *xml_item, *xml_reason;
+  char item_t[]="item";
+  char nick_t[]="nick";
+  char reason_t[]="reason";
 
-  char *_room_jid = Mask_Special_Syms(room_jid);
-  snprintf(payload, 1023, payload_tpl, _room_jid, it, val, reason);
-  mfree(_room_jid);
-  SUBPROC((void*)_mucadmincmd, _room_name, payload);
+  xml_item = XML_CreateNode(item_t, NULL);
+  xml_reason = XML_CreateNode(reason_t, reason);
+  XML_Set_Attr_Value(xml_item, it, val);
+  XML_Set_Attr_Value(xml_item, nick_t, room_jid);
+  xml_item->subnode = xml_reason;
+  SUBPROC((void*)_mucadmincmd, _room_name, xml_item);
 }
 
 static void Report_Delivery(char *mess_id, char *to)

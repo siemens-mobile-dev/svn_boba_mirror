@@ -45,7 +45,7 @@ void Send_Mood(char *mood, char *text);
 /*
   ѕосылка стандартного Jabber Iq
 */
-void SendIq(char* to, char* type, char* id, char* xmlns, char* payload);
+void SendIq(char* to, char* type, char* id, char* xmlns, XMLNode* payload);
 
 /*
   ѕослать приветствие, на него сервер высылает ответный stream.

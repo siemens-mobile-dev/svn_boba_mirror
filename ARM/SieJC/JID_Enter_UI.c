@@ -6,6 +6,7 @@
 #include "JID_Enter_UI.h"
 #include "lang.h"
 #include "rect_patcher.h"
+#include "xml_gen.h"
 
 typedef struct {
   char jid_ask;
@@ -163,30 +164,36 @@ void jed1_ghook(GUI *data, int cmd)
    
  if(jid_jid)
  {
-  char answer[400];
   char di[] = "roster3";
+  
+  XMLNode *xml_item, *xml_group;
+  char subscription_t[]="subscription";
+  char item_t[]="item";
+  char remove_t[]="remove";
+  char jid_t[]="jid";
+  char name_t[]="name";
+  char group_t[]="group";
+  xml_item = XML_CreateNode(item_t, NULL);
+  XML_Set_Attr_Value(xml_item, jid_t, jid_jid);
+
   if((jid_set.jid_del)&&(jid_set.jid_add))
   {
-     sprintf(answer, "<item jid='%s' subscription='remove'/>", Mask_Special_Syms(jid_jid));
+    XML_Set_Attr_Value(xml_item, subscription_t, remove_t);
   }
   else
   {
-    sprintf(answer, "<item jid='%s'", Mask_Special_Syms(jid_jid));
     if(jid_name)
       {
-      sprintf(answer,"%s name='%s'",answer, Mask_Special_Syms(jid_name));
+        XML_Set_Attr_Value(xml_item, name_t, jid_name);
       }
     if(jid_group)
     {
-      sprintf(answer,"%s><group>%s</group></item>",answer, Mask_Special_Syms(jid_group));
-    }
-    else 
-    {
-      strcat(answer,"/>");
+      xml_group = XML_CreateNode(group_t, jid_group);
+      xml_item->subnode = xml_group;
     }
   }
 
-  SendIq(NULL, IQTYPE_SET, di, IQ_ROSTER, answer);
+  SendIq(NULL, IQTYPE_SET, di, IQ_ROSTER, xml_item);
   if((!jid_set.jid_add)&&(jid_set.jid_ask))
     {
       Send_ShortPresence(jid_jid,8);//посылаем запрос авторизации
