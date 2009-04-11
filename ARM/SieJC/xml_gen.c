@@ -97,6 +97,7 @@ XML_Get_Node_As_Text(XMLNode *node)
 	XMLAttr *attr;
 	char *buf, *sub_buf, *conv_param;
 	u_int32_t buf_len, occ_len, l;
+	XMLNode *sn;
 
 #define CHK(b, l) b = chk_realloc_buf(b, &buf_len, buf_len - occ_len, l);
 
@@ -134,12 +135,17 @@ XML_Get_Node_As_Text(XMLNode *node)
 	if (node->subnode) {
 		CHK(buf, 1);
 		buf[occ_len++] = '>';
-		sub_buf = XML_Get_Node_As_Text(node->subnode);
-		if (sub_buf) {
-			l = strlen(sub_buf);
-			CHK(buf, l);
-			strncpy(buf + occ_len, sub_buf, buf_len - occ_len);
-			occ_len+=l;
+		
+		sn = node->subnode;
+		while (sn) {
+			sub_buf = XML_Get_Node_As_Text(sn);
+			if (sub_buf) {
+				l = strlen(sub_buf);
+				CHK(buf, l);
+				strncpy(buf + occ_len, sub_buf, buf_len - occ_len);
+				occ_len+=l;
+			}
+			sn = sn->next;
 		}
 		/* Closing tag */
 		l = strlen(node->name);
