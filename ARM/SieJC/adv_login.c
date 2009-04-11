@@ -264,39 +264,4 @@ static  char zlib_ask[]="<compress xmlns='http://jabber.org/protocol/compress'>"
   strcat(logmsg, "\nUsing ZLib ack");
 }
 
-//Context:HELPER
-void Compression_Send_Header()
-{
-  char cMethod = 8;
-  char cInfo = 3;
-  char cm = (char) (cMethod | (cInfo << 4));
-  extern int sock;
-  send(sock,&cm,1,0);
-  char flags = 0;// bez dictu a fastest
-  if ((cm * 256 + flags) % 31 != 0)
-  {
-    flags += 31 - ((cm * 256 + flags) % 31);
-  }
-  send(sock,&flags,1,0);
-}
-
-
-//Context:HELPER
-void Send_New_stream()
-{
-  Jabber_state = JS_ZLIB_STREAM_INIT_ACK;
-  Compression_Send_Header();
-  Send_Welcome_Packet_SASL();
-}
-
-//GBSTMR Newstream;
-// Инициализация нового потока (уже сжатого)
-void Compression_Init_Stream()
-{
-  strcat(logmsg, "\nOK, ZLib enable...");
-  extern char Is_Compression_Enabled;
-  Is_Compression_Enabled = 1;
-  SUBPROC((void*)Send_New_stream);
-}
-
 //EOL,EOF

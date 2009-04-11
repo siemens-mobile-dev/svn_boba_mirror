@@ -46,6 +46,8 @@
  * #define LOG_TO_COM_PORT  // Посылка лога в COM-порт ВМЕСТО записи в файл
  */
 
+//#define LOG_ALL
+
 #ifdef LOG_ALL
     #define LOG_IN_DATA
 #endif
@@ -84,7 +86,7 @@ extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "3.1.3-Z";
+const char VERSION_VERS[] = "3.5.0-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
@@ -464,13 +466,6 @@ void create_connect(void)
 GBSTMR send_tmr;
 #endif
 
-static void POPUP(const char *msg)
-{
-  LockSched();
-  ShowMSG(1,(int)msg);
-  UnlockSched();
-}
-
 void end_socket(void)
 {
   if (sock>=0)
@@ -483,20 +478,44 @@ void end_socket(void)
 #endif
 }
 
-unsigned int virt_buffer_len = 0; // Виртуальная длина принятого потока
-z_stream d_stream;                // Поток для ZLib
-char ZLib_Stream_Init=0;          // Признак того, что инициализирован поток сжатия
+unsigned int in_bytes_count = 0; // Количество принятых данных
+unsigned int in_virt_bytes_count = 0; // Принято (без ZLib)
+z_stream d_stream;                // Входящий поток
+z_stream c_stream;                // Исходящий поток
 unsigned int out_bytes_count = 0; // Количество отправленных данных
+unsigned int out_virt_bytes_count = 0; // Отправлено (без учёта сжатия)
 char *Rstream_p;                  // Указатель на собираемый пакет
 int Rstream_n;                    // Количество байт
 
+const char * const z_errmsg[10] = {
+"need dictionary",     /* Z_NEED_DICT       2  */
+"stream end",          /* Z_STREAM_END      1  */
+"",                    /* Z_OK              0  */
+"file error",          /* Z_ERRNO         (-1) */
+"stream error",        /* Z_STREAM_ERROR  (-2) */
+"data error",          /* Z_DATA_ERROR    (-3) */
+"insufficient memory", /* Z_MEM_ERROR     (-4) */
+"buffer error",        /* Z_BUF_ERROR     (-5) */
+"incompatible version",/* Z_VERSION_ERROR (-6) */
+""};
+
+void Compression_Report_Error(char *when, int code)
+{
+  char q[255];
+
+  LockSched();
+  sprintf(q, "%d error: %s\n", when, z_errmsg[(-code)+2]);
+  MsgBoxError(1, (int)q);
+  UnlockSched();
+}
+
 // Функции-заглушки для ZLib
-void* zcalloc(int unk,size_t nelem, size_t elsize)
+void* zcalloc(voidpf unk,size_t nelem, size_t elsize)
 {
   return (malloc(nelem*elsize));
 }
 
-void zcfree(int unk, void* ptr)
+void zcfree(voidpf unk, void* ptr)
 {
   mfree(ptr);
 }
@@ -512,28 +531,10 @@ void get_answer(void)
   int c;
   if (i<=0) return; //Сделаем, как в Натасе, по-простому; пускай нах при ошибке само закрывает
 
-  virt_buffer_len = virt_buffer_len + i;  // Виртуальная длина потока увеличилась
+  in_bytes_count += i;
 
   if (Is_Compression_Enabled)
   {
-
-
-    if(!ZLib_Stream_Init)
-    {
-      ZLib_Stream_Init=1;
-      d_stream.zalloc = (alloc_func)zcalloc;
-      d_stream.zfree = (free_func)zcfree;
-      d_stream.opaque = (voidpf)0;
-      err = inflateInit2(&d_stream,MAX_WBITS/*-MAX_WBITS*/);
-      if(err!=Z_OK)
-      {
-        char s[32];
-        sprintf(s,"inflateInit2 err %d",err);
-        POPUP(s);
-        return;
-      }
-    }
-
     //Используем ZLib для переноса данных в собираемый пакет
     d_stream.next_in  = (Byte*)rb;
     d_stream.avail_in = (uInt)i;
@@ -541,19 +542,9 @@ void get_answer(void)
     {
       d_stream.next_out = (Byte*)((Rstream_p=realloc(Rstream_p,Rstream_n+i+1))+Rstream_n); //Новый размер собираемого пакета
       d_stream.avail_out = (uInt)i;
-      err = inflate(&d_stream, /*Z_NO_FLUSH*/Z_SYNC_FLUSH);
-      switch (err)
-      {
-      case Z_NEED_DICT:
-        //ret = Z_DATA_ERROR;     /* and fall through */
-      case Z_DATA_ERROR:
-      case Z_MEM_ERROR:
-        //(void)inflateEnd(&strm);
-        {
-          char s[32];
-          sprintf(s,"ZLib Err %d",err);
-          POPUP(s);
-        }
+      err = inflate(&d_stream, Z_SYNC_FLUSH);
+      if (err) {
+	Compression_Report_Error("inflating", err);
         end_socket();
         return;
       }
@@ -569,6 +560,7 @@ void get_answer(void)
   }
   //Теперь считаем теги
   Rstream_p[Rstream_n]=0; //Ограничим строку \0 для упрощения
+  in_virt_bytes_count += Rstream_n;
 
   i=0; //Баланс тегов
   j=0; //Баланс скобок
@@ -612,7 +604,7 @@ void get_answer(void)
   }
 }
 
-int sendq_l=0;        // Длинна очереди для send
+int sendq_l=0;        // Длина очереди для send
 char *sendq_p=NULL;   // указатель очереди
 
 void ClearSendQ(void)
@@ -689,10 +681,48 @@ void bsend(int len, void *p)
   sendq_p=NULL;
 }
 
+void
+Compression_Init_Stream()
+{
+  int err;
+  
+  if (Is_Compression_Enabled)
+    return;
+
+  /*
+   * Заполняем служебные структуры ДО инициализации
+   */
+  c_stream.zalloc = d_stream.zalloc = (alloc_func)zcalloc;
+  c_stream.zfree = d_stream.zfree = (free_func)zcfree;
+  c_stream.opaque = d_stream.opaque = (voidpf)0;
+
+  err = inflateInit2(&d_stream,MAX_WBITS/*-MAX_WBITS*/);
+  if (err) {
+    Compression_Report_Error("Zlib inflate init", err);
+    Jabber_state = JS_NOT_CONNECTED;
+  }
+  
+  err = deflateInit(&c_stream, Z_BEST_COMPRESSION);
+  if (err) {
+    Compression_Report_Error("Zlib deflate init", err);
+    Jabber_state = JS_NOT_CONNECTED;
+  }
+  
+  Is_Compression_Enabled = 1;
+  
+  Jabber_state = JS_ZLIB_STREAM_INIT_ACK;
+  strcat(logmsg, "\nOK, ZLib enable...");
+  
+  Send_Welcome_Packet_SASL();
+}
+
 void SendAnswer(char *str)
 {
   unsigned int block_len= strlen(str);
-  out_bytes_count += block_len;
+  int err;
+  char *compr_buf;
+  unsigned int compr_buf_len;
+  out_virt_bytes_count += block_len;
   #ifdef LOG_ALL
     Log("OUT->", str);
   #endif
@@ -703,23 +733,27 @@ void SendAnswer(char *str)
   }
   else
   {
-    // Эмуляция компрессии ;)
-    // Пишем заголовок "блока"
-#pragma pack(1)
-    struct
-    {
-      char zero;
-      unsigned short len;
-      unsigned short notlen;
-    };
-#pragma pack()
-    zero=0;
-    len=block_len;
-    notlen=~block_len;
-    bsend(5,&zero);
-    out_bytes_count+=5;
-    // Записали, пишем сам блок
-    bsend(block_len,str);
+    compr_buf_len=1024;
+    compr_buf = malloc(compr_buf_len);
+    zeromem(compr_buf, compr_buf_len);
+    c_stream.next_in = (Byte*)str;
+    c_stream.avail_in = block_len;
+    c_stream.next_out = (Byte*)compr_buf;
+    c_stream.avail_out = compr_buf_len;
+    do {
+      c_stream.next_out = (Byte*)compr_buf;
+      c_stream.avail_out = compr_buf_len;
+      err = deflate(&c_stream, Z_SYNC_FLUSH);
+      if (err) {
+	Compression_Report_Error("Deflate", err);
+	end_socket();
+      }
+      bsend(compr_buf_len - c_stream.avail_out, compr_buf);
+      /* Реальное количество отправленных данных */
+      out_bytes_count += compr_buf_len - c_stream.avail_out;
+    } while(c_stream.avail_out==0);
+    
+    mfree(compr_buf);
   }
 }
 
@@ -977,11 +1011,11 @@ void onRedraw(MAIN_GUI *data)
 
   if (CList_GetUnreadMessages()>0) { //100000
                                      //100Kb
-    if (virt_buffer_len>99999)wsprintf(data->ws1,"%d(%d/%d)IN:%dKb",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len>>10);
-    else wsprintf(data->ws1,"%d(%d/%d)IN:%d",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+    if (in_bytes_count>99999)wsprintf(data->ws1,"%d(%d/%d)IN:%dKb",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),in_bytes_count>>10);
+    else wsprintf(data->ws1,"%d(%d/%d)IN:%d",CList_GetUnreadMessages(), CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),in_bytes_count);
   } else {
-    if(virt_buffer_len>99999)wsprintf(data->ws1,"(%d/%d)IN:%dKb",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len>>10);
-    else wsprintf(data->ws1,"(%d/%d)IN:%d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),virt_buffer_len);
+    if(in_bytes_count>99999)wsprintf(data->ws1,"(%d/%d)IN:%dKb",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),in_bytes_count>>10);
+    else wsprintf(data->ws1,"(%d/%d)IN:%d",CList_GetNumberOfOnlineUsers(),CList_GetNumberOfUsers(),in_bytes_count);
   }
   UnlockSched();
 
@@ -1091,8 +1125,10 @@ void Enter_SiepatchDB()
 
 void Disp_State()
 {
-  char q[80];
-  sprintf(q,"Jabber_state=%d\nOut bytes: %d\nSend query len: %d", Jabber_state, out_bytes_count, sendq_l);
+  char q[255];
+  sprintf(q,"Jabber_state=%d\nOut bytes: %d, Z=%d\nIn bytes: %d, Z=%d\nSend query len: %d",
+	  Jabber_state, out_virt_bytes_count, out_bytes_count,
+	  in_virt_bytes_count, in_bytes_count, sendq_l);
   ShowMSG(0,(int)q);
 }
 
@@ -1135,27 +1171,28 @@ void Do_Reconnect()
   KillBMList();
   UnlockSched();
 
-  virt_buffer_len = 0;
+  in_bytes_count = 0;
+  in_virt_bytes_count = 0;
+  out_bytes_count = 0;
+  out_virt_bytes_count = 0;
+  Rstream_n = 0;
+  Rstream_p = NULL;
+    
   Destroy_SASL_Ctx();
 
   // Ре-Инициализация сжатия
-  if(ZLib_Stream_Init)
+  if(Is_Compression_Enabled)
   {
     inflateEnd(&d_stream);
-    zeromem(&d_stream, sizeof(z_stream));
-    virt_buffer_len = 0;
-    ZLib_Stream_Init=0;
+    deflateEnd(&c_stream);
     Is_Compression_Enabled = 0;
-    out_bytes_count = 0; // Количество отправленных данных
-    Rstream_n = 0;
-    Rstream_p = NULL;
   }
 
   // Создание головы списка
   //InitGroupsList();
 
 
-	DNR_TRIES=3;
+  DNR_TRIES=3;
   SUBPROC((void *)create_connect);
 }
 
@@ -1433,9 +1470,10 @@ void maincsm_onclose(CSM_RAM *csm)
   KillGroupsList();
   Destroy_SASL_Ctx();
 
-  if(ZLib_Stream_Init)
+  if(Is_Compression_Enabled)
   {
     inflateEnd(&d_stream);
+    deflateEnd(&c_stream);
   }
 
   
@@ -1615,9 +1653,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           break;
         case ENIP_SOCK_CLOSED:
           SUBPROC((void *)ClearSendQ);
-          if(ZLib_Stream_Init)
+	  if(Is_Compression_Enabled)
           {
             inflateEnd(&d_stream);
+	    deflateEnd(&c_stream);
           }
           connect_state=0;
           Jabber_state = JS_NOT_CONNECTED;

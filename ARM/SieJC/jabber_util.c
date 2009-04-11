@@ -1,4 +1,4 @@
-/* -*- coding: windows-1251-dos */
+/* -*- coding: windows-1251-dos -*- */
 #include "../inc/swilib.h"
 #include "history.h"
 #include "main.h"
