@@ -7328,6 +7328,12 @@
     <name>$PROJ_DIR$\smiles.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\stat_info.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\stat_info.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\status_change.c</name>
   </file>
   <file>

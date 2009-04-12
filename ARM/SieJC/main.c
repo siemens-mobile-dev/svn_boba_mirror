@@ -33,6 +33,7 @@
 #include "color.h"
 #include "rect_patcher.h"
 #include "transports_icons.h"
+#include "stat_info.h"
 
 /*
  * Специфичные для SieJC ключи компиляции:
@@ -1348,7 +1349,7 @@ int onKey(MAIN_GUI *data, GUI_MSG *msg)
       break;
       
     case '6':
-      Disp_State();
+      Disp_stat_Info();
       break;
 
     case '7': // НЕ ЗАНИМАТЬ!!!
