@@ -129,13 +129,16 @@ void SendIq(char* to, char* type, char* id, char* xmlns, XMLNode* payload)
   if (to)
     XML_Set_Attr_Value(iq, to_t, to);
 
-  query = XML_CreateNode(query_t, NULL);
-  query->subnode = payload;
-  XML_Set_Attr_Value(query, xmlns_t, xmlns);
-  iq->subnode = query;
-  
+  if(xmlns)
+  {
+    query = XML_CreateNode(query_t, NULL);  
+    XML_Set_Attr_Value(query, xmlns_t, xmlns);
+    query->subnode = payload;
+    iq->subnode = query;
+  } else iq->subnode = payload;
   xml = XML_Get_Node_As_Text(iq);
   _sendandfree(xml);
+  DestroyTree(iq);
 }
 
 /*
@@ -274,10 +277,13 @@ void Send_Time_Request(char *dest_jid)
 
 void _sendvcardrequest(char *to)
 {
-  char* xmlq=malloc(1024);
-  sprintf(xmlq, "<iq to='%s' type='get' id='%s'>\r\n<vCard xmlns='vcard-temp'/>\r\n</iq>", Mask_Special_Syms(to), vcreq_id);
-  SendAnswer(xmlq);
-  mfree(xmlq);
+  char vcard_t[]="vCard";
+  char xmlns_t[]="xmlns";
+  char typ[]=IQTYPE_GET;
+  XMLNode *vcard_xml;
+  vcard_xml = XML_CreateNode(vcard_t, NULL);
+  XML_Set_Attr_Value(vcard_xml, xmlns_t, JABBER_VCARD_TEMP);
+  SendIq(to, typ, vcreq_id, NULL, vcard_xml);
   mfree(to);
 }
 
@@ -633,10 +639,21 @@ void Report_IDLEInfo(char* id, char *to)
     <query xmlns='jabber:iq:last' seconds=''/>
    </iq>
 */
-  char* xmlql=malloc(1024);
-  sprintf(xmlql, "<iq type='result' id='%s' from='%s' to='%s'>\r\n<query xmlns='jabber:iq:last' seconds='%d'/>\r\n</iq>", id, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(to),GetIDLETime(intimes, indates));
-  SendAnswer(xmlql);
-  mfree(xmlql);
+  extern const char percent_d[];
+  XMLNode *query;
+  char xmlns_t[]="xmlns";
+  char query_t[]="query";
+  char seconds_t[]="seconds";
+
+  query = XML_CreateNode(query_t, NULL);  
+  XML_Set_Attr_Value(query, xmlns_t, IQ_IDLE);
+  char* timestr=malloc(512);
+  sprintf(timestr, percent_d, GetIDLETime(intimes, indates));
+
+  XML_Set_Attr_Value(query, seconds_t, timestr);
+  mfree(timestr);
+  SendIq(to, IQTYPE_RES, id, NULL, query);
+
   mfree(to);
   mfree(id);
 }
@@ -681,11 +698,7 @@ void Report_PING(char* id, char *to)
 /*
   <iq from='juliet@capulet.lit/balcony' to='capulet.lit' id='s2c1' type='result'/>
 */
-  char* xmlql=malloc(1024);
-  const char xmlql_tmpl[]="<iq type='result' id='%s' from='%s' to='%s'/>";
-  sprintf(xmlql, xmlql_tmpl, id, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(to));
-  SendAnswer(xmlql);
-  mfree(xmlql);
+  SendIq(to, IQTYPE_RES, id, NULL, NULL);
   mfree(to);
   mfree(id);
 }
@@ -1492,7 +1505,7 @@ if(!strcmp(gres,iqtype))
     if(!(vcard = XML_Get_Child_Node_By_Name(nodeEx, "vCard")))return;
     char* v_type = XML_Get_Attr_Value("xmlns", vcard->attr);
     if(!v_type)return;
-    if(!strcmp(v_type,"vcard-temp"))Process_vCard(from, vcard);
+    if(!strcmp(v_type,JABBER_VCARD_TEMP))Process_vCard(from, vcard);
   }
 /////////////////
   if(!strcmp(id,disco_id))   // Запрос диско (ответ)
@@ -1854,8 +1867,6 @@ void _mucadmincmd(char* room, XMLNode* iq_payload)
 void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* reason)
 {
   char* payload = malloc(1024);
-  char *_room_name = Mask_Special_Syms(room_name);
-//  char payload_tpl[]="<item nick='%s' %s='%s'><reason>%s</reason></item>";
   char it[20];
   char val[20];
   char aff[]="affiliation";
@@ -1934,7 +1945,7 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
   XML_Set_Attr_Value(xml_item, it, val);
   XML_Set_Attr_Value(xml_item, nick_t, room_jid);
   xml_item->subnode = xml_reason;
-  SUBPROC((void*)_mucadmincmd, _room_name, xml_item);
+  SUBPROC((void*)_mucadmincmd, room_name, xml_item);
 }
 
 static void Report_Delivery(char *mess_id, char *to)

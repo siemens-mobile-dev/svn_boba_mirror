@@ -66,6 +66,7 @@
 #define IQ_IDLE    "jabber:iq:last"
 
 #define JABBER_X_EVENT       "jabber:x:event"
+#define JABBER_VCARD_TEMP    "vcard-temp"
 #define JABBER_XMPP_RECEIPTS "urn:xmpp:receipts"
 #define JABBER_URN_PING      "urn:xmpp:ping"
 #define JABBER_URN_ATTENTION "urn:xmpp:attention:0"

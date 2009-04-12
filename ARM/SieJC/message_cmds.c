@@ -329,7 +329,7 @@ SOFTKEY_DESC sel_menu_sk[]=
 
 SOFTKEYSTAB sel_menu_skt=
 {
-  tmpl_menu_sk,3
+  sel_menu_sk,3
 };
 
 void sel_menu_ghook(void *data, int cmd)

@@ -406,13 +406,12 @@ void Process_vCard(char *from, XMLNode *vCard)
 
   // Save photo :))
   XMLNode *photo = XML_Get_Child_Node_By_Name(vCard,"PHOTO");
-  if(photo) {
+  if(photo)
     if(photo->subnode)SavePhoto(vcard, from, photo, 0);
-  } else {
-    XMLNode *logo = XML_Get_Child_Node_By_Name(vCard,"LOGO");
-    if(logo)
-      if(logo->subnode)SavePhoto(vcard, from, logo, 1);
-  }
+  
+  XMLNode *logo = XML_Get_Child_Node_By_Name(vCard,"LOGO");
+  if(logo)
+    if(logo->subnode)SavePhoto(vcard, from, logo, 1);
 
   // Показываем vCard
 
