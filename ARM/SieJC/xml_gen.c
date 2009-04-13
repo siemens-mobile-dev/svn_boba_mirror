@@ -144,6 +144,7 @@ XML_Get_Node_As_Text(XMLNode *node)
 				CHK(buf, l);
 				strncpy(buf + occ_len, sub_buf, buf_len - occ_len);
 				occ_len+=l;
+				mfree(sub_buf);
 			}
 			sn = sn->next;
 		}
