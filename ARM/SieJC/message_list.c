@@ -214,8 +214,8 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
       }
       IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
       mess->IsGroupChat = is_gchat;
-      mess->body = Mask_Special_Syms(body);
-      mfree(body);
+      mess->body = body;
+//      mfree(body);
       SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);
       Mess_was_sent = 1;
       SUBPROC((void *)Play, sndMsgSend);

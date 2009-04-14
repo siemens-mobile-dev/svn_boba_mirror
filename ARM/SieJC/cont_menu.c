@@ -773,22 +773,22 @@ int contc_menu_onkey(void *data, GUI_MSG *msg)
     {
     case CONTC_SUBSCRIBE:
       {
-        Send_ShortPresence(jid,8);
+        Send_ShortPresence(jid,PRESENCE_SUBSCRIBE);
       break;    
       }
     case CONTC_SUBSCRIBED:
       {
-        Send_ShortPresence(jid,9);
+        Send_ShortPresence(jid,PRESENCE_SUBSCRIBED);
       break;    
       }
     case CONTC_UNSUBSCRIBE:
       {
-        Send_ShortPresence(jid,10);
+        Send_ShortPresence(jid,PRESENCE_UNSUBSCRIBE);
       break;    
       }
     case CONTC_UNSUBSCRIBED:
       {
-        Send_ShortPresence(jid,11);
+        Send_ShortPresence(jid,PRESENCE_UNSUBSCRIBED);
       break;    
       }
  default:

@@ -71,8 +71,8 @@ int select_status_menu_onkey(void *data, GUI_MSG *msg)
     PRESENCE_INFO *pr_info = malloc(sizeof(PRESENCE_INFO));
     pr_info->priority = OnlineInfo.priority;
     pr_info->status = i;
-    pr_info->message = Mask_Special_Syms(status_text);
-    mfree(status_text);
+    pr_info->message = status_text;
+    //mfree(status_text);
     SUBPROC((void*)Send_Presence,pr_info);    
     return 1;
   }  
@@ -197,13 +197,13 @@ int edit_status_menu_onkey(GUI *data, GUI_MSG *msg)
     extern const char percent_d[];
     sscanf(status_prior, percent_d, &pr_info->priority);
     pr_info->status = (int)EDIT_GetUserPointer(data);
-    pr_info->message = (status_text) ? Mask_Special_Syms(status_text) : NULL;
+    pr_info->message = status_text; //неосвобождать
+//    if (status_text) mfree(status_text);
     extern ONLINEINFO OnlineInfo;
     if(pr_info->priority!=OnlineInfo.priority)
     SUBPROC((void*)Send_Presence,pr_info);
     else mfree(pr_info);
     SaveConfigData(successed_config_filename);
-    if (status_text) mfree(status_text);
     mfree(status_prior);
     return 1;
   }

@@ -173,6 +173,31 @@ void Send_Message(char* to, char* type, char* id, XMLNode* payload)
 }
 
 /*
+  Посылка стандартного Jabber presence
+*/
+void SendPresence(char* to, char* type, char* id, XMLNode* payload)
+{
+  XMLNode *presence;
+  char *xml;
+  char presence_t[]="presence";
+  char id_t[]="id";
+  char to_t[]="to";
+  char type_t[]="type";
+
+  presence = XML_CreateNode(presence_t, NULL);
+  if (id)
+    XML_Set_Attr_Value(presence, id_t, id);
+  if (type)
+    XML_Set_Attr_Value(presence, type_t, type);
+  if (to)
+    XML_Set_Attr_Value(presence, to_t, to);
+
+  presence->subnode = payload;
+  xml = XML_Get_Node_As_Text(presence);
+  _sendandfree(xml);
+  DestroyTree(presence);
+}
+/*
   Послать приветствие, на него сервер высылает ответный stream.
   После этого можно общаться с сервером
 */
@@ -394,12 +419,23 @@ char *Generate_Caps()
 void Send_Presence(PRESENCE_INFO *pr_info)
 {
   extern char My_Presence;
+  extern const char percent_d[];
   My_Presence = pr_info->status;
   //<c xmlns='http://jabber.org/protocol/caps' node='VERSION_NAME' ver='VERSION_VERS __SVN_REVISION__' />
   // Генерируем капс исходя из включённых фич
-  char *caps = Generate_Caps();
-
+  char *caps_str = Generate_Caps();
+  char *tmp_str = malloc(256);
   char* presence = malloc(1024);
+  XMLNode *priority=NULL, *show=NULL, *status=NULL, *caps=NULL, *payload=NULL;
+  char *type = NULL;
+  char status_t[]="status";
+  char show_t[]="show";
+  char c_t[]="c";
+  char xmlns_t[]="xmlns_t";
+  char node_t[]="node";
+  char ver_t[]="ver";
+  char priority_t[]="priority";
+  
   if(pr_info->status!=PRESENCE_OFFLINE)
   {
   //обновляем онлайнинфо только если не выбран офлайн статус, чтоб при выходе в конфиг записать
@@ -411,64 +447,59 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     OnlineInfo.txt = malloc(strlen(pr_info->message)+1);
     strcpy(OnlineInfo.txt, pr_info->message);
   }else OnlineInfo.txt = NULL;
-  
+
+  if(pr_info->message)
+    if(strlen(pr_info->message)>0)status =XML_CreateNode(status_t, pr_info->message);
   if(pr_info->status!=PRESENCE_INVISIBLE)
   {
-    if(pr_info->message)
-    {
-      char presence_template[]="<presence><priority>%d</priority><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>"; //по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
-    }
-    else
-    {
-      char presence_template[]="<presence><priority>%d</priority><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, pr_info->priority, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
-    }
+    sprintf(tmp_str, percent_d, pr_info->priority);
+    priority = XML_CreateNode(priority_t, tmp_str);
+    show = XML_CreateNode(show_t, (char*)PRESENCES[pr_info->status]);
+    caps = XML_CreateNode(c_t, NULL);
+    XML_Set_Attr_Value(caps, xmlns_t, "http://jabber.org/protocol/caps");
+    sprintf(tmp_str, "%s %s-r%d", VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+    XML_Set_Attr_Value(caps, node_t, tmp_str);
+    XML_Set_Attr_Value(caps, ver_t, caps_str);
+    show->next = caps;
+    priority->next = show;
+    if(status) status->next = priority;
+      else status=priority;
+    type = NULL;
+    payload = status;
+  }
+  else type = (char*)PRESENCES[PRESENCE_INVISIBLE];
   }
   else
   {
-      char presence_template[]="<presence type='invisible'/>";
-      strcpy(presence,presence_template);
+    type=(char*)PRESENCES[PRESENCE_OFFLINE];
+    if(status) payload = status;
   }
-  }
-  else
-  {
-    if(pr_info->message)
-    {
-      char presence_template[]="<presence type='unavailable'><status>%s</status></presence>";
-      snprintf(presence,1024,presence_template, pr_info->message);
-    }
-    else
-    {
-      char presence_template[]="<presence type='unavailable'/>";
-      strcpy(presence,presence_template);
-    }
-  }
-  SendAnswer(presence);
+  SendPresence(NULL, type, NULL, payload);
 
 // MUC support
   MUC_ITEM* m_ex = muctop;
   while(m_ex)
   {
-    char *_to = Mask_Special_Syms(m_ex->conf_jid);
-    char *_from = Mask_Special_Syms(My_JID_full);
-    if(pr_info->message)
+    show = XML_CreateNode(show_t, (char*)PRESENCES[pr_info->status]);    
+    if(pr_info->message) 
+      if(strlen(pr_info->message)>0)
     {
-      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><status>%s</status><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, _from, _to, PRESENCES[pr_info->status], pr_info->message, VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
+      status =XML_CreateNode(status_t, pr_info->message);
+      show->next = status;
     }
-    else
-    {
-      char presence_template[]="<presence from='%s' to='%s'><show>%s</show><c xmlns='http://jabber.org/protocol/caps' node='%s %s-r%d' ver='%s' /></presence>";//по идее для инвиз/оффлайн не надо отправлять инфо
-      snprintf(presence,1024,presence_template, _from, _to, PRESENCES[pr_info->status], VERSION_NAME, VERSION_VERS, __SVN_REVISION__, caps);
-    }
-    mfree(_to);
-    mfree(_from);
-    SendAnswer(presence);
+    caps = XML_CreateNode(c_t, NULL);
+    XML_Set_Attr_Value(caps, xmlns_t, "http://jabber.org/protocol/caps");
+    sprintf(tmp_str, "%s %s-r%d", VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
+    XML_Set_Attr_Value(caps, node_t, tmp_str);
+    XML_Set_Attr_Value(caps, ver_t, caps_str);
+    caps->next = show;
+
+    SendPresence(m_ex->conf_jid, NULL, NULL, caps);
     m_ex=m_ex->next;
   };
-  mfree(caps);
+  mfree(caps_str);
   mfree(presence);
+  mfree(tmp_str);
   if(pr_info->message)mfree(pr_info->message);
   if(pr_info->status==PRESENCE_OFFLINE)
   {
@@ -482,11 +513,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
 
 void Send_ShortPresence(char *to,char type)
 {
-  char pr_templ[] = "<presence to='%s' type='%s'/>";
-  char* pr=malloc(1024);
-  sprintf(pr, pr_templ,Mask_Special_Syms(to),PRESENCES[type]);
-  SendAnswer(pr);
-  mfree(pr);
+  SendPresence(to, (char*)PRESENCES[type], NULL, NULL);
 }
 
 /*
@@ -795,8 +822,8 @@ void Send_Initial_Presence_Helper()
   char *msg = malloc(len+1);
   strcpy(msg, OnlineInfo.txt);
   msg[len]='\0';
-  pr_info->message =msg == NULL ? NULL : Mask_Special_Syms(msg);
-    mfree(msg);
+  pr_info->message =msg;
+    //mfree(msg);
   }
   }else
   pr_info->message = NULL;
@@ -808,32 +835,45 @@ void Send_Initial_Presence_Helper()
 //Context: HELPER
 void _enterconference(MUC_ENTER_PARAM *param)
 {
-  char *magic_ex = malloc(1024);
-  strcpy(magic_ex, "<presence from='%s' to='%s/%s'><x xmlns='http://jabber.org/protocol/muc'><history maxstanzas='%d'/>");
+  char *tmp_str = malloc(256);
+  XMLNode *history, *xml_x, *password, *show, *status;
+  char history_t[]="history";
+  char show_t[]="show";
+  char status_t[]="status";
+  char password_t[]="password";
+  char x_t[]="x";
+  char xmlns_t[]="xmlns";
+  char maxstanzas_t[]="maxstanzas";
+  extern const char percent_d[];
+  char slash_t[]="/";
+  history = XML_CreateNode(history_t, NULL);
+  sprintf(tmp_str, percent_d, param->mess_num);
+  XML_Set_Attr_Value(history, maxstanzas_t, tmp_str);
   if(param->pass)
   {
-    char *_room_pass = Mask_Special_Syms(param->pass);
-    char *pass_str = malloc(128);
-    sprintf(pass_str,"<password>%s</password>", _room_pass);
-    strcat(magic_ex, pass_str);
-    mfree(pass_str);
-    mfree(_room_pass);
+    password=XML_CreateNode(password_t, param->pass);
+    history->next=password;
   }
-  strcat(magic_ex, "</x><show>%s</show><status>%s</status></presence>");
-  char* magic = malloc(1024);
+  xml_x = XML_CreateNode(x_t, NULL);
+  XML_Set_Attr_Value(xml_x, xmlns_t, XMLNS_MUC);
+  xml_x->subnode=history;
+
   char *stext;
   extern char empty_str[];
   if(OnlineInfo.txt){stext= OnlineInfo.txt;}else{stext = empty_str;}
-  char *_from = Mask_Special_Syms(My_JID_full);
-  char *_room_name = Mask_Special_Syms(param->room_name);
-  char *_room_nick = Mask_Special_Syms(param->room_nick);
-  sprintf(magic,magic_ex, _from, _room_name,_room_nick, param->mess_num, PRESENCES[OnlineInfo.status], stext);
-  mfree(_from);
-  mfree(_room_name);
-  mfree(_room_nick);
-  mfree(magic_ex);
-  SendAnswer(magic);
-  mfree(magic);
+  show = XML_CreateNode(show_t, (char*)PRESENCES[OnlineInfo.status]);
+  if (stext)
+    if(strlen(stext)>0)
+    {
+      status = XML_CreateNode(status_t, stext);
+      xml_x->next = status;
+    }
+  show->next = xml_x;
+  strcpy(tmp_str, param->room_name);
+  strcat(tmp_str, slash_t);
+  strcat(tmp_str, param->room_nick);
+  SendPresence(tmp_str, NULL, NULL, show);
+  mfree(tmp_str);
   mfree(param->room_nick);
   mfree(param->room_name);
   if(param->pass)mfree(param->pass);
@@ -940,34 +980,29 @@ struct muc_hlp_data {
 void _leaveconference(struct muc_hlp_data *ld)
 {
   extern const char DEFTEX_MUCOFFLINE[];
-  char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'><status>%s</status></presence>";
-  char* pr, *msg;
+//  char pr_templ[] = "<presence from='%s' to='%s' type='unavailable'><status>%s</status></presence>";
+  char *msg=NULL;
   unsigned int l;
-
-  pr = NULL;
-
   if (!ld->aux0) {
     int len;
     if(len = strlen(DEFTEX_MUCOFFLINE))
       {
-	pr=malloc(1024);
 	msg = malloc(len+1);
 	strcpy(msg, DEFTEX_MUCOFFLINE);
 	msg[len]='\0';
       } else Send_ShortPresence(ld->conf_jid, PRESENCE_OFFLINE);
   } else {
     l = strlen(ld->aux0);
-    pr=malloc(1024 + l); /* 2 JID = max. 512 + XML-обёртка не будут длиннее 1024 байт */
     msg = malloc(l*2 + 1);
     strcpy(msg, ld->aux0);
     mfree(ld->aux0);
   }
 
-  if (pr) {
-    sprintf(pr, pr_templ, Mask_Special_Syms(My_JID_full), Mask_Special_Syms(ld->conf_jid), Mask_Special_Syms(msg));
-    SendAnswer(pr);
+  if (msg) {
+    char status_t[]="status";
+    XMLNode *status = XML_CreateNode(status_t, msg);
+    SendPresence(ld->conf_jid, (char*)PRESENCES[PRESENCE_OFFLINE], NULL, status);
     mfree(msg);
-    mfree(pr);
   }
 
   mfree(ld->conf_jid);

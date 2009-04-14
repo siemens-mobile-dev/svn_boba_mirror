@@ -1890,10 +1890,10 @@ int status_keyhook(int submsg, int msg)
         char *msg = malloc(len+1);
         strcpy(msg, DEFTEX_ONLINE);
         msg[len]='\0';
-        pr_info->message= msg ==NULL ? NULL : Mask_Special_Syms(msg);
+        pr_info->message= msg;
+        //mfree(msg);
         SUBPROC((void *)Send_Presence,pr_info);
         as = 0;
-        mfree(msg);
       }
     }
     else
@@ -1924,11 +1924,11 @@ void AutoStatus(void)
       int len = strlen(msg);
       msg=realloc(msg, len+1);
       msg[len]='\0';
-      pr_info->message = (msg) ? Mask_Special_Syms(msg) : NULL;
+      pr_info->message = (msg);
+      //mfree(msg);
       Send_Presence(pr_info);
       as = 1;
       GBS_DelTimer(&autostatus_tmr);
-      mfree(msg);
     }
   }
   else GBS_DelTimer(&autostatus_tmr);

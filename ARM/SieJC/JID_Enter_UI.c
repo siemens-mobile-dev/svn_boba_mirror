@@ -196,7 +196,7 @@ void jed1_ghook(GUI *data, int cmd)
   SendIq(NULL, IQTYPE_SET, di, IQ_ROSTER, xml_item);
   if((!jid_set.jid_add)&&(jid_set.jid_ask))
     {
-      Send_ShortPresence(jid_jid,8);//посылаем запрос авторизации
+      Send_ShortPresence(jid_jid,PRESENCE_SUBSCRIBE);//посылаем запрос авторизации
     }
  } else ShowMSG(1,(int)LG_JENOJID);
  if(jid_name) mfree(jid_name);
