@@ -142,6 +142,37 @@ void SendIq(char* to, char* type, char* id, char* xmlns, XMLNode* payload)
 }
 
 /*
+  Посылка стандартного Jabber message
+*/
+void Send_Message(char* to, char* type, char* id, XMLNode* payload)
+{
+  XMLNode *message;
+  char *xml;
+  char message_t[]="message";
+  char id_t[]="id";
+  char to_t[]="to";
+  char type_t[]="type";
+
+  message = XML_CreateNode(message_t, NULL);
+  if (id)
+    XML_Set_Attr_Value(message, id_t, id);
+  if (type)
+    XML_Set_Attr_Value(message, type_t, type);
+  if (to)
+    XML_Set_Attr_Value(message, to_t, to);
+
+  message->subnode = payload;
+  xml = XML_Get_Node_As_Text(message);
+#ifdef LOG_ALL
+  LockSched();
+  Log("MESS_OUT", xml);
+  UnlockSched();
+#endif
+  _sendandfree(xml);
+  DestroyTree(message);
+}
+
+/*
   Послать приветствие, на него сервер высылает ответный stream.
   После этого можно общаться с сервером
 */
@@ -479,27 +510,42 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
       <request xmlns='urn:xmpp:receipts'/>
   </message>
 */
-
-  char *_jid = Mask_Special_Syms(jid);
-  char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><body>%s</body>";
-  char* msg_buf = malloc(MAX_MSG_LEN*2+200);
+  extern const char percent_d[];
+  char* mnum_str = malloc(256);
+  XMLNode *body=NULL, *request=NULL, *active=NULL;
+  char body_t[]="body";
+  char request_t[]="request";
+  char xmlns_t[]="xmlns";
+  char active_t[]="active";
+  char *type ;
+  body = XML_CreateNode(body_t, mess->body);
   if(mess->IsGroupChat)
   {
-     sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_GCHAT, mess->body);
-  }else sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_CHAT, mess->body);
-  if (DELIVERY_EVENTS && !mess->IsGroupChat) strcat(msg_buf,"<request xmlns='urn:xmpp:receipts'/>"); //В конференции не посылается
-  if (COMPOSING_EVENTS && !mess->IsGroupChat) strcat(msg_buf,"<active xmlns='http://jabber.org/protocol/chatstates'/>");
-  strcat(msg_buf,"</message>");
+    type = MSGSTR_GCHAT;
+  }else type = MSGSTR_CHAT;
+  if (DELIVERY_EVENTS && !mess->IsGroupChat)
+  {
+    request=XML_CreateNode(request_t, NULL);
+    XML_Set_Attr_Value(request, xmlns_t, JABBER_XMPP_RECEIPTS);
+  }
+  if (COMPOSING_EVENTS && !mess->IsGroupChat)
+  {
+    active=XML_CreateNode(active_t, NULL);
+    XML_Set_Attr_Value(active, xmlns_t, XMLNS_CHATSTATES);
+  }
+  if(request) 
+  {
+    request->next = active;
+  }
+  else request = active;
+
+  if (request)  body->next = request;
+
+  sprintf(mnum_str, percent_d, m_num);
+  Send_Message(jid, type, mnum_str, body);
+  mfree(mnum_str);
   mfree(mess->body);
   mfree(mess);
-  mfree(_jid);
-#ifdef LOG_ALL
-  LockSched();
-  Log("MESS_OUT", msg_buf);
-  UnlockSched();
-#endif
-  SendAnswer(msg_buf);
-  mfree(msg_buf);
   m_num++;
   GetDateTime(&indates, &intimes);
 }
@@ -517,18 +563,25 @@ void SendComposing(char* jid, IPC_MESSAGE_S *mess)
 */
   extern const int COMPOSING_EVENTS;
   if(!COMPOSING_EVENTS)return;
-  char* _jid = Mask_Special_Syms(jid);
-  const char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><composing xmlns='http://jabber.org/protocol/chatstates'/></message>";
-  char* msg_buf = malloc(MAX_MSG_LEN*2+200);
+  char *type;
   if(mess->IsGroupChat)
   {
-     sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_GCHAT);
-  }else sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_CHAT);
+     type = MSGSTR_GCHAT;
+  }else type = MSGSTR_CHAT;
 
-  mfree(_jid);
-  SendAnswer(msg_buf);
+  XMLNode *composing;
+  char composing_t[]="composing";
+  char xmlns_t[]="xmlns";
+  char *str=malloc(256);
+  extern const char percent_d[];
+  
+  composing = XML_CreateNode(composing_t, NULL);
+  XML_Set_Attr_Value(composing, xmlns_t, XMLNS_CHATSTATES);
+  sprintf(str, percent_d, m_num);
+  Send_Message(jid, type, str, composing);
+
+  mfree(str);
   mfree(mess);
-  mfree(msg_buf);
   m_num++;
 }
 
@@ -544,17 +597,24 @@ void CancelComposing(char* jid, IPC_MESSAGE_S *mess)
   <active xmlns='http://jabber.org/protocol/chatstates'/>
 </message>
   */
+  extern const int COMPOSING_EVENTS;
   if(!COMPOSING_EVENTS)return;
-  char* _jid= Mask_Special_Syms(jid);
-  const char mes_template[]="<message to='%s' id='SieJC_%d' type='%s'><active xmlns='http://jabber.org/protocol/chatstates'/></message>";
-  char* msg_buf = malloc(MAX_MSG_LEN*2+200);
+  char *type;
   if(mess->IsGroupChat)
   {
-     sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_GCHAT);
-  }else sprintf(msg_buf, mes_template, _jid, m_num, MSGSTR_CHAT);
-  mfree(_jid);
-  SendAnswer(msg_buf);
-  mfree(msg_buf);
+     type = MSGSTR_GCHAT;
+  }else type = MSGSTR_CHAT;
+  XMLNode *active;
+  char active_t[]="active";
+  char xmlns_t[]="xmlns";
+  char *str=malloc(256);
+  extern const char percent_d[];
+  active = XML_CreateNode(active_t, NULL);
+  XML_Set_Attr_Value(active, xmlns_t, XMLNS_CHATSTATES);
+  sprintf(str, percent_d, m_num);
+  Send_Message(jid, type, str, active);
+
+  mfree(str);
   mfree(mess);
   m_num++;
 }
@@ -941,18 +1001,17 @@ void Muc_Ctl(char *room, char *str, void(proc)(struct muc_hlp_data*))
 //Context: HELPER
 void _setconferencetopic(struct muc_hlp_data *ld)
 {
-  char pr_templ[] = "<message to='%s' type='groupchat'><subject>%s</subject></message>";
-  char* pr;
-  unsigned int l;
+  XMLNode *subject;
+  char subject_t[]="subject";
+  extern const char percent_d[];
+  char *type = MSGSTR_GCHAT;
 
-  if (!ld->aux0 || !(l = strlen(ld->aux0)))
+  if (!ld->aux0 || !(strlen(ld->aux0)))
     goto _free;
+  
+  subject = XML_CreateNode(subject_t, ld->aux0);
+  Send_Message(ld->conf_jid, type, NULL, subject);
 
-  pr = malloc(300 + l);
-  sprintf(pr, pr_templ, Mask_Special_Syms(ld->conf_jid), Mask_Special_Syms(ld->aux0));
-  SendAnswer(pr);
-
-  mfree(pr);
  _free:
   mfree(ld->conf_jid);
   mfree(ld);
@@ -1866,7 +1925,8 @@ void _mucadmincmd(char* room, XMLNode* iq_payload)
 // Исполнение административных команд
 void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* reason)
 {
-  char* payload = malloc(1024);
+  char *_room_name=malloc(strlen(room_name)+1);
+  strcpy(_room_name,room_name);
   char it[20];
   char val[20];
   char aff[]="affiliation";
@@ -1945,7 +2005,7 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
   XML_Set_Attr_Value(xml_item, it, val);
   XML_Set_Attr_Value(xml_item, nick_t, room_jid);
   xml_item->subnode = xml_reason;
-  SUBPROC((void*)_mucadmincmd, room_name, xml_item);
+  SUBPROC((void*)_mucadmincmd, _room_name, xml_item);
 }
 
 static void Report_Delivery(char *mess_id, char *to)
@@ -1959,12 +2019,12 @@ RECV:
   <received xmlns='urn:xmpp:receipts'/>
 </message>
 */
-  char notif_tpl[]="<message to='%s' from='%s' id='%s'><received xmlns='urn:xmpp:receipts'/></message>";
-  char *ans = malloc(256);
-  char *_from = Mask_Special_Syms(My_JID_full);
-  snprintf(ans,256,notif_tpl, Mask_Special_Syms(to), _from, mess_id);
-  SUBPROC((void*)_sendandfree,ans);
-  mfree(_from);
+  XMLNode *received;
+  char received_t[]="received";
+  char xmlns_t[]="xmlns";  
+  received = XML_CreateNode(received_t, NULL);
+  XML_Set_Attr_Value(received, xmlns_t, JABBER_XMPP_RECEIPTS);
+  Send_Message(to, NULL, mess_id, received);
 }
 
 /*
@@ -2023,7 +2083,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
       if(xmlns)
        {
-       if(!strcmp(xmlns,"urn:xmpp:receipts"))
+       if(!strcmp(xmlns,JABBER_XMPP_RECEIPTS))
         {
           char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
           if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
@@ -2035,7 +2095,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     {
       char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
       if(xmlns)
-      if(!strcmp(xmlns,"urn:xmpp:receipts"))
+      if(!strcmp(xmlns,JABBER_XMPP_RECEIPTS))
       {
         TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
         if(Res_ex)
@@ -2055,7 +2115,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     {
       char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
       if(xmlns)
-      if(!strcmp(xmlns,"http://jabber.org/protocol/chatstates"))
+      if(!strcmp(xmlns,XMLNS_CHATSTATES))
       {
         TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
         if(Res_ex)
@@ -2068,7 +2128,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     {
       char *xmlns = XML_Get_Attr_Value(c_xmlns,xnode->attr);
       if(xmlns)
-      if(!strcmp(xmlns,"http://jabber.org/protocol/chatstates"))
+      if(!strcmp(xmlns,XMLNS_CHATSTATES))
       {
         TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
         if(Res_ex)
