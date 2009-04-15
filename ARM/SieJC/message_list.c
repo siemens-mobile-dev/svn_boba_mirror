@@ -1,4 +1,4 @@
-/* -*- coding: windows-1251-dos */
+/* -*- coding: windows-1251-dos -*- */
 #include "../inc/swilib.h"
 #include "main.h"
 #include "clist_util.h"
@@ -33,7 +33,8 @@ TRESOURCE* Resource_Ex = NULL;
 int Message_gui_ID;
 int edmessage_id;
 
-void CharsToSmiles(WSHDR *ws, const char *s)
+
+void CharsToSmilesUNI(WSHDR *ws, const char *s)
 {
   S_SMILES *t;
   S_SMILES *t_root=(S_SMILES *)s_top;
@@ -66,34 +67,24 @@ void CharsToSmiles(WSHDR *ws, const char *s)
     }
     else
     {
-      wchar=char8to16(wchar);
-      s++;
-      ulb>>=8;
-      ulb+=s[3]<<24;
+      const char *res;
+      wchar=utf8_2unicode(&res, s);
+      s=res;
+      ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
     }
-    //if (wchar!=10)
      wsAppendChar(ws,wchar);
   }
-  /*int i=ws->wsbody[0];
-  while(i>1)
-  {
-    if (ws->wsbody[i--]!=10) break;
-    ws->wsbody[0]=i;
-  }*/
 }
 
-void SmilesToChars(WSHDR *ws)
+void SmilesToCharsUNI(WSHDR *ws)
 {
   S_SMILES *t;
   int c;
-  int len=0;
-  int scur;
-  char * msg_buf=NULL;
   unsigned short *wsbody=ws->wsbody;
   int wslen=wsbody[0];
   if (wslen)
   {
-    for (int i=0; i<wslen; i++) // Посчитаем общую длину будущей строки
+    for (int i=0; i<wslen; i++) // оНЯВХРЮЕЛ НАЫСЧ ДКХМС АСДСЫЕИ ЯРПНЙХ
     {
       c=wsbody[i+1];
       if (c>=0xE100)
@@ -101,57 +92,24 @@ void SmilesToChars(WSHDR *ws)
         t=FindSmileByUni(c);
         if (t)
         {
-          if (t->lines)
+        	int w;
+        	char *s;
+          if (t->lines && (s=t->lines->text))
           {
-            len+=strlen(t->lines->text);
+          	wsRemoveChars(ws, i+1, 1);
+          	//i--;
+          	wslen--;
+          	while((w=*s++))
+          	{
+          		wsInsertChar(ws, w, ++i);
+          		wslen++;
+          	}
           }
         }
-        else  len++;
-      }
-      else  len++;
-    }
-
-    msg_buf = malloc(len+1);
-    scur=0;
-    for (int wcur=0; wcur<wslen && scur<len; wcur++)
-    {
-      c=wsbody[wcur+1];
-      if (c==10) c=13;
-      if (c>=0xE100)
-      {
-        t=FindSmileByUni(c);
-        if (t)
-        {
-          int w;
-          char *s;
-          if (t->lines)
-          {
-            s=t->lines->text;
-            while ((w=*s++) && scur<len)
-            {
-              msg_buf[scur]=w;
-              scur++;
-            }
-          }
-        }
-        else
-        {
-          msg_buf[scur]=char16to8(c);
-          scur++;
-        }
-      }
-      else
-      {
-        msg_buf[scur]=char16to8(c);
-        scur++;
       }
     }
-    msg_buf[scur] = 0;
-    ascii2ws(ws, msg_buf);
-    mfree(msg_buf);
   }
 }
-
 //---------------------------------------------------------------------------
 // Test edit dialog
 //---------------------------------------------------------------------------
@@ -175,7 +133,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
       WSHDR * ws = AllocWS(MAX_MSG_LEN);
       wstrcpy(ws, ec.pWS);
       if (Is_Smiles_Enabled && SmilesImgList)
-        SmilesToChars(ws);
+        SmilesToCharsUNI(ws);
       int res_len;
       char * body = malloc(MAX_MSG_LEN);
       ws_2utf8(ws, body, &res_len, MAX_MSG_LEN);
@@ -348,13 +306,7 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   {
     if (Is_Smiles_Enabled && SmilesImgList)
     {
-      char * tmp_str = NULL;
-      if (tmp_str = convUTF8_to_ANSI_STR(init_text))
-      {
-        CharsToSmiles(ws, tmp_str);
-        mfree(tmp_str);
-      }
-      else utf8_2ws(ws, init_text, MAX_MSG_LEN);
+      CharsToSmilesUNI(ws, init_text);
     }
     else
       utf8_2ws(ws, init_text, MAX_MSG_LEN);
@@ -944,13 +896,7 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
       temp_ws_1 = AllocWS(strlen(MessEx->mess)*2);
       if (Is_Smiles_Enabled && SmilesImgList)
       {
-        char * tmp_str = NULL;
-        if (tmp_str = convUTF8_to_ANSI_STR(MessEx->mess))
-        {
-          CharsToSmiles(temp_ws_1, tmp_str); // Добавляем иконки смайлов в сообщение
-          mfree(tmp_str);
-        }
-        else utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);
+	CharsToSmilesUNI(temp_ws_1, MessEx->mess); // Добавляем иконки смайлов в сообщение
       }
       else
         utf8_2ws(temp_ws_1, MessEx->mess, strlen(MessEx->mess)*2);

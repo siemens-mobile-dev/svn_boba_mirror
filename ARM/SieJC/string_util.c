@@ -20,6 +20,39 @@ REPL_ARRAY Repl_chars[] = {"&apos;\0",0x27,
 };
 
 /*
+ * UTF8 -> UTF16
+ */
+int utf8_2unicode(const char **res, const char *str)
+{
+  int zz=0;
+  int c=*str++;
+  char *s=(char *)&zz;
+  *res=NULL;
+  if ((c >> 7) == 0x0)
+  {
+    zz=c;
+  }
+  else if ((c >> 5) == 0x6)
+  {
+    s[1] = ((c & 0x1f) >> 2);
+    s[0] = c << 6;
+    c = *str++;
+    s[0] |= (c & 0x3f);
+  }
+  else if ((c >> 4) == 0xe)
+  {
+    s[1] = c << 4;
+    c = *str++;
+    s[1] |= ((c >> 2) & 0xf);
+    s[0] = c << 6;
+    c = *str++;
+    s[0] |= (c & 0x3f);
+  }
+  *res=str;
+  return zz;
+}
+
+/*
     Получить спецсимвол по его маске
 IN: mask_begin - строка символов
     out_ofs - число, к которому прибавится длина обработанной последовательности

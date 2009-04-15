@@ -1,3 +1,4 @@
+/* -*- coding: windows-1251-dos -*- */
 #ifndef _STRING_UTIL_H_
   #define _STRING_UTIL_H_
 
@@ -17,6 +18,8 @@ void* convUTF8_to_ANSI(char* tmp_out, char *UTF8_str, unsigned int size, int* fa
 char* convUTF8_to_ANSI_STR(char *UTF8_str);
 
 void ascii2ws(WSHDR *ws, const char *s);
+
+int utf8_2unicode(const char **res, const char *str);
 
 unsigned int char8to16(int c);
 
@@ -58,7 +61,7 @@ long GetIDLETime(TTime intime, TDate indate);
 
 char *utf82filename(char *str);
 
-//обрезает строку до заданой ширины
+//обрезает строку до заданной ширины
 void CutWSStringWidth(WSHDR *ws, int width, int font);
 
 #endif
