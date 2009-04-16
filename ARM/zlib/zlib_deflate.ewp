@@ -1638,7 +1638,7 @@
         </option>
         <option>
           <name>XAROutput</name>
-          <state>C:\windows\profiles\kibab\&#x41C;&#x43e;&#x438; &#x434;&#x43e;&#x43A;&#x443;&#x43C;&#x435;&#x43D;&#x442;&#x44B;\repos\svn.boba.su\ARM\zlib\Release\Exe\zlib_deflate.r79</state>
+          <state>Release\Exe\zlib_deflate.r79</state>
         </option>
       </data>
     </settings>
