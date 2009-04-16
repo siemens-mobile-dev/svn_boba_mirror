@@ -51,7 +51,7 @@
 #define LG_MUCST_R_CHNICK  "%s is now known as %s"
 #define LG_MUCST_R_KICK  "%s was kicked!"
 #define LG_MUCST_R_KICK_MEMB_ONLY  "%s was kicked, because room became member-only!"
-#define LG_MUCST_MUCCREATED "New MUC crated. Owner-%s"
+#define LG_MUCST_MUCCREATED "New MUC created. Owner-%s"
 
 #define IQTYPE_GET "get"
 #define IQTYPE_SET "set"
