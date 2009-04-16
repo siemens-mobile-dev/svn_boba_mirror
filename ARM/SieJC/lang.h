@@ -727,7 +727,7 @@
 #define LG_NAMEMUC          "MUC name:"
 #define LG_NICK             "Nickname:"
 #define LG_GETMESSAGECOUNT  "Number of messages:"
-#define LG_ENTER            "To enter"
+#define LG_ENTER            "Enter"
 //message_list.c
 #define LG_NOSENDNULLMESS   "It is impossible to send an empty message!"
 #define LG_NEW              "New..."

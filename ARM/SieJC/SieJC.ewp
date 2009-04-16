@@ -5804,9 +5804,6 @@
   <group>
     <name>Utility</name>
     <file>
-      <name>$PROJ_DIR$\adler32.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\conf_loader.c</name>
     </file>
     <file>
@@ -7162,15 +7159,6 @@
       </configuration>
     </file>
     <file>
-      <name>$PROJ_DIR$\crc32.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\deflate.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\deflate.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\func.asm</name>
     </file>
     <file>
@@ -7198,9 +7186,6 @@
       <name>$PROJ_DIR$\string_util.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\trees.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\xml_common.h</name>
     </file>
     <file>
@@ -7214,6 +7199,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\xml_parser.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\zlib\Release\Exe\zlib_deflate.r79</name>
     </file>
   </group>
   <group>

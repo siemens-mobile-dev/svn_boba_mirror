@@ -47,7 +47,7 @@
  * #define LOG_TO_COM_PORT  // Посылка лога в COM-порт ВМЕСТО записи в файл
  */
 
-//#define LOG_ALL
+#define LOG_ALL
 
 #ifdef LOG_ALL
     #define LOG_IN_DATA

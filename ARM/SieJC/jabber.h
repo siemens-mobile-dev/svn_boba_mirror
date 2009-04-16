@@ -28,7 +28,7 @@
 #define LG_JABBER_ERROR_UNAUTHORIZED		"Unauthorized"
 #define LG_JABBER_ERROR_PAYMENT_REQUIRED	"Payment required"
 #define LG_JABBER_ERROR_FORBIDDEN		"Forbidden"
-#define LG_JABBER_ERROR_NOT_FOUND		"Not fonud"
+#define LG_JABBER_ERROR_NOT_FOUND		"Not found"
 #define LG_JABBER_ERROR_NOT_ALLOWED		"Not allowed"
 #define LG_JABBER_ERROR_NOT_ACCEPTABLE		"Not acceptable"
 #define LG_JABBER_ERROR_REGISTRATION_REQUIRED	"Registration required"
