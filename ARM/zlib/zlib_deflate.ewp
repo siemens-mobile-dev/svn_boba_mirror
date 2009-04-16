@@ -95,7 +95,7 @@
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>dl-stnl0.r79</state>
+          <state>$TOOLKIT_DIR$\LIB\dl4tptnnl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
@@ -279,7 +279,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.r79</state>
         </option>
         <option>
           <name>CCLangSelect</name>
@@ -341,7 +341,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\INC\</state>
         </option>
         <option>
           <name>CCInlineThreshold</name>
@@ -905,24 +905,24 @@
         <option>
           <name>GRuntimeLibSelect</name>
           <version>0</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
           <version>0</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>RTDescription</name>
-          <state>To be used with the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
+          <state>Do not link with a runtime library.</state>
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.h</state>
+          <state></state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.r79</state>
+          <state></state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -1638,7 +1638,7 @@
         </option>
         <option>
           <name>XAROutput</name>
-          <state>Release\Exe\zlib_deflate.r79</state>
+          <state>C:\TMP\222\zlib\Release\Exe\zlib_deflate.r79</state>
         </option>
       </data>
     </settings>
