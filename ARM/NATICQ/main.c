@@ -57,6 +57,7 @@ void SMART_REDRAW(void)
 
 //Максимальное количество сообщений в логе
 #define MAXLOGMSG (20)
+#define MAXCHATSIZE 7168
 
 // Строковые описания статусов
 
@@ -528,35 +529,37 @@ int LoadTemplates(CLIST *t)
   }
 
   curlog = t->log;
-  lastadd = 0;
-  if(strstr(curlog->text, "add ")) lastadd = curlog;
-
-  while(curlog->next) 
+  if(curlog)
   {
-    curlog = curlog->next;
+    lastadd = 0;
     if(strstr(curlog->text, "add ")) lastadd = curlog;
-  }
-
-  if(lastadd)
-  {
-    pp = lastadd->text;
-    
-    while(pp = strstr(pp, "add "))
+  
+    while(curlog->next) 
     {
-      for(j = pp = pp+4; *j >= '0' && *j <= '9'; j++);
-      if(j != pp)
+      curlog = curlog->next;
+      if(strstr(curlog->text, "add ")) lastadd = curlog;
+    }
+  
+    if(lastadd)
+    {
+      pp = lastadd->text;
+      
+      while(pp = strstr(pp, "add "))
       {
-        memcpy(p, "add ", 4);
-        memcpy(p+4, pp, j-pp);
-        templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
-        templates_lines[i++]=p;
-        p+=j-pp+4;
-        *p=32;p++;
-        *p=0;p++;
+        for(j = pp = pp+4; *j >= '0' && *j <= '9'; j++);
+        if(j != pp)
+        {
+          memcpy(p, "add ", 4);
+          memcpy(p+4, pp, j-pp);
+          templates_lines=(char **)realloc(templates_lines,(i+1)*sizeof(char *));
+          templates_lines[i++]=p;
+          p+=j-pp+4;
+          *p=32;p++;
+          *p=0;p++;
+        }
       }
     }
   }
-  
   return i;
 }
 
@@ -1727,6 +1730,19 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
     i--;
   }
   t->msg_count=i;
+  
+  int allsize = 0;
+  p = t->log;
+  while(p->next) {allsize+=strlen(p->text);p=p->next;}
+
+  while(allsize > MAXCHATSIZE)
+  {
+    if (t->log==t->last_log) t->last_log=t->last_log->next;
+    allsize -= strlen(t->log->text);
+    RemoveLOGQ(&t->log,t->log);
+    t->msg_count--;
+  }
+  
   if (!t->last_log) t->last_log=p;
   if (code==3)
   {
