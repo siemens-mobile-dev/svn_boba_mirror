@@ -591,12 +591,11 @@ int onSessionTerminated(void * r0, BOOK *)
           snwprintf(buffer_gprs,390,L"Start time - %02d:%02d:%02d, traffic - %d b, cost - %d.%d%d %ls\r\n",elem_gprs->SesEst->time.hour,elem_gprs->SesEst->time.min,elem_gprs->SesEst->time.sec,traf,cost_rub,cost_kop1,cost_kop2,Money);
         }
       }
-      int str_len=(wstrlen(buffer_gprs))*2;
       if (fstat(fpath_gprs,L"gprs.txt",0)<0)
       {
         buffer_gprs=buffer_gprs-1;
-        str_len=str_len+2;
       }
+      int str_len=(wstrlen(buffer_gprs))*2;
       FSTAT _fstat;
       if ((fstat(fpath_gprs,L"gprs.txt",&_fstat)<0)||(!sort_order))
       {
@@ -809,7 +808,6 @@ int OnCallManager(void * CallManStruct, BOOK *)
           if (ptr)
           {
             char * region;
-            wstr2strn(PNUM_str,elem->PNUM,count);
             if (region=manifest_GetParam(buffer_ini,PNUM_str,0))
             {
               wchar_t * s2ws = new wchar_t[strlen(region)+1];
@@ -843,12 +841,11 @@ int OnCallManager(void * CallManStruct, BOOK *)
             snwprintf(buffer,390,L"%ls (%ls) - %02d:%02d:%02d, %02d:%02d\r\n",elem->Name,elem->PNUM,elem->startdatetime->time.hour,elem->startdatetime->time.min,elem->startdatetime->time.sec,m,s);
           }
         }
-        int str_len=(wstrlen(buffer))*2;
         if (fstat(fpath,fname,0)<0)
         {
           buffer=buffer-1;
-          str_len=str_len+2;
         }
+        int str_len=(wstrlen(buffer))*2;
         if ((fstat(fpath,fname,&_fstat)<0)||(!sort_order))
         {
           f=_fopen(fpath,fname,0x108,0x180,0);
