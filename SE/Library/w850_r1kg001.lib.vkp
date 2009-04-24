@@ -515,7 +515,38 @@
 0CCC: 00000000 2DF11345 ;8333: IS_NEEDED_BOOK isCameraBook(void);
 0CD0: 00000000 C5D80745 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
 0CD4: 00000000 B5744145 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+0CD8: 00000000 49830745 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
+0CDC: 00000000 C1790745 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
+0CE0: 00000000 81930745 ; 338: Video_ExtractFrame(BOOK *VideoPlayerBook);
+0CE4: 00000000 797D0745 ; 339: void Video_ZoomOn(BOOK *VideoPlayerBook, void*);
+0CE8: 00000000 CDBB4A45 ; 33A: void RightNow_SetActive(int flag);
+0CEC: 00000000 CD7C0745 ; 33B: void VideoResize_AutomateMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+0CF0: 00000000 657C0745 ; 33C: void VideoResize_AllScreenMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+0CF4: 00000000 318D0745 ; 33D: int Video_GetCurrentSkinID(BOOK *VideoPlayerBook);
+0CF8: 00000000 AD600745 ; 33E: void Video_SetSkin(GUI* VideoPlayerGUI, int skinID);
+0CFC: 00000000 F57B0745 ; 33F: int Video_SetPermit(BOOK *VideoPlayerBook, u16 NewWidth, u16 NewHeight);
+0D00: 00000000 8D770745 ; 340: int Video_Refresh(BOOK *VideoPlayerBook, GUI* VideoPlayerGUI);
+0D04: 00000000 417A0745 ; 341: void Video_Play(BOOK *VideoPlayerBook, void*);
+0D08: 00000000 797B0745 ; 342: void Video_Pause(BOOK *VideoPlayerBook, void*);
+0D0C: 00000000 457B0745 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
+0D10: 00000000 EDD70545 ; 344: void Audio_Pause(BOOK *);
+0D14: 00000000 F5D40545 ; 345: void Audio_Play(BOOK *);
+0D18: 00000000 AD434945 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: 00000000 4D454945 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 
+;0D20: xxxxxxxx yyyyyyyy ; 348: ;
+;0D24: xxxxxxxx yyyyyyyy ; 349: ;
+;0D28: xxxxxxxx yyyyyyyy ; 34A: ;
+
+0D2C: 00000000 211F4A45 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
+0D30: 00000000 2D1F4A45 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
+0D34: 00000000 CD473E45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
+0D38: 00000000 25564045 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
+0D3C: 00000000 15594045 ; 34F: int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);
+0D40: 00000000 15584045 ; 350: int REQUEST_SETTING_RINGTYPESOUNDFILE_SET(const int *sync, int null, wchar_t *path, wchar_t *name);
+0D44: 00000000 B15D4045 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
+0D48: 00000000 E1564045 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
+0D4C: 00000000 855B4045 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 0D50: 00000000 D9DEFB44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 
 
