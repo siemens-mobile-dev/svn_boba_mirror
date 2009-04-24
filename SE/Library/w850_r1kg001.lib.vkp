@@ -516,6 +516,7 @@
 0CD0: 00000000 C5D80745 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
 0CD4: 00000000 B5744145 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
 
+0D50: 00000000 D9DEFB44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 
 
 
