@@ -517,7 +517,7 @@
 0CD0: FFFFFFFF 5133CA44 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
 ;0CD4: xxxxxxxx yyyyyyyy ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
 0CD8: FFFFFFFF 01B7F644 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
-0CDÑ: FFFFFFFF 0DB0F644 ; 337: void Video_ActionBack(BOOK*,void*);
+0CDC: FFFFFFFF 0DB0F644 ; 337: void Video_ActionBack(BOOK*,void*);
 0CE0: FFFFFFFF ADC7F644 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook);
 ;0CE4: xxxxxxxx yyyyyyyy ; 339: void Video_ZoomOn(BOOK*,void*);
 ;0CE8: xxxxxxxx yyyyyyyy ; 33A: void RightNow_Active(int flag /*0-1*/);
