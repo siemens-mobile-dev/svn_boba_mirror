@@ -32,6 +32,7 @@ name:
         VARARG __var_arg_yesno_question,0xAD
         VARARG __var_arg_yesno_yes_action,0xC7
         VARARG __var_arg_yesno_no_action,0x9D
+	
         VARARG __var_arg_perinp_row_numbers,0xB7
         VARARG __var_arg_perinp_cur_percent,0x68
         

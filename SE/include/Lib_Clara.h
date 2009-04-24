@@ -1483,15 +1483,18 @@ __swi __arm void Audio_Pause(BOOK *);
 __swi __arm void Audio_Play(BOOK *);
 
 #pragma swi_number=0x346
-__swi __arm GUI *CreateVolumeControl(BOOK *book, int null);
+__swi __arm GUI * CreatePercentInputVA(int zero, ...);
 #pragma swi_number=0x347
-__swi __arm void VolumeControl_SetHeaderText(GUI *, STRID);
+__swi __arm int PercentInput_GetPercent(GUI * PercentInput);
+
+/*
 #pragma swi_number=0x348
-__swi __arm void VolumeControl_SetValue(GUI *, int unk, int num);
+__swi __arm 
 #pragma swi_number=0x349
-__swi __arm void VolumeControl_SetMaxValue(GUI *, int count);
+__swi __arm 
 #pragma swi_number=0x34A
-__swi __arm int VolumeControl_GetValue(GUI *);
+__swi __arm 
+*/
 
 #pragma swi_number=0x34B
 __swi __arm void GUIObject_Softkeys_RemoveBackground(void *gui);

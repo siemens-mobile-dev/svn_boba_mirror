@@ -24,6 +24,7 @@ extern int __var_arg_yesno_pre_question;
 extern int __var_arg_yesno_question;
 extern int __var_arg_yesno_yes_action;
 extern int __var_arg_yesno_no_action;
+
 extern int __var_arg_perinp_row_numbers;
 extern int __var_arg_perinp_cur_percent;
 
