@@ -1514,4 +1514,7 @@ __swi __arm int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int
 #pragma swi_number=0x353
 __swi __arm int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 
+#pragma swi_number=0x354
+__swi __arm int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
+
 #endif

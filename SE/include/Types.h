@@ -789,4 +789,11 @@ enum shortcut_state {
   SC_MainMenu=3
 };
 
+typedef struct
+{
+  wchar_t fullpath_len;
+  char unk_2;
+  wchar_t * fullpath;
+}JavaAppFullpath;
+
 #endif
