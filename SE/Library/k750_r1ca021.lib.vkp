@@ -530,11 +530,11 @@
 0D0C: FFFFFFFF D5B1F644 ; 343: void Video_Stop(BOOK*,void*);
 0D10: FFFFFFFF A574F544 ; 344: void Audio_Pause(BOOK *void*);
 0D14: FFFFFFFF 6172F544 ; 345: void Audio_Play(BOOK *void*);
-0D18: FFFFFFFF 492BD344 ; 346: GUI * CreateVolumeControl(BOOK *book, int null);
-0D1C: FFFFFFFF 8D2DD344 ; 347: void VolumeControl_SetHeaderText(GUI *, STRID);
-0D20: FFFFFFFF 992DD344 ; 348: void VolumeControl_SetValue(GUI *, int unk, int num);
-0D24: FFFFFFFF A52DD344 ; 349: void VolumeControl_SetMaxValue(GUI *, int count);
-0D28: FFFFFFFF 792DD344 ; 34A: int VolumeControl_GetValue(GUI *);
+0D18: FFFFFFFF E92BD344 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: FFFFFFFF 792DD344 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+;0D20: xxxxxxxx yyyyyyyy ; 348:
+;0D24: xxxxxxxx yyyyyyyy ; 349:
+;0D28: xxxxxxxx yyyyyyyy ; 34A:
 ;0D2C: xxxxxxxx yyyyyyyy ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 ;0D30: xxxxxxxx yyyyyyyy ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: FFFFFFFF 3511EA44 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -544,6 +544,7 @@
 0D44: FFFFFFFF 3D3A1545 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
 0D48: FFFFFFFF 59331545 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: FFFFFFFF FD371545 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
+0D50: FFFFFFFF 9DB1C144 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 
 
 
