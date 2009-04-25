@@ -533,11 +533,11 @@
 0D0C: 00000000 F520F544 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
 0D10: 00000000 CD76F344 ; 344: void Audio_Pause(BOOK *);
 0D14: 00000000 CD73F344 ; 345: void Audio_Play(BOOK *);
-0D18: 00000000 AD3E3745 ; 346: GUI * CreateVolumeControl(BOOK *book, int null);
-0D1C: 00000000 01413745 ; 347: void VolumeControl_SetHeaderText(GUI *, STRID);
-0D20: 00000000 0D413745 ; 348: void VolumeControl_SetValue(GUI *, int unk, int num);
-0D24: 00000000 19413745 ; 349: void VolumeControl_SetMaxValue(GUI *, int count);
-0D28: 00000000 F1403745 ; 34A: int VolumeControl_GetValue(GUI *);
+0D18: 00000000 513F3745 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: 00000000 F1403745 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+;0D20: xxxxxxxx yyyyyyyy ; 348:
+;0D24: xxxxxxxx yyyyyyyy ; 349:
+;0D28: xxxxxxxx yyyyyyyy ; 34A:
 0D2C: 00000000 9D1A3845 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 A91A3845 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 CD382C45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -547,6 +547,7 @@
 0D44: 00000000 65582E45 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
 0D48: 00000000 95512E45 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 39562E45 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
+0D50: 00000000 1967E944 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 
 
 
