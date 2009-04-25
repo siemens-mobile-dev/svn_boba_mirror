@@ -346,7 +346,7 @@
 0A1C: 00000000 65DAD144 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: 00000000 F19D2D45 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 0A28: 00000000 85FF0C45 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-0A2C: 00000000 3DEBF044 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+0A2C: 00000000 5DD9F044 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 CD2CF144 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 ADE10C45 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 2D993445 ; 28E: void Shortcut_Run (wchar_t * shortcut_name);
@@ -533,11 +533,11 @@
 0D0C: 00000000 D18DF244 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
 0D10: 00000000 45FAF044 ; 344: void Audio_Pause(BOOK *);
 0D14: 00000000 89F7F044 ; 345: void Audio_Play(BOOK *);
-0D18: 00000000 F9EF3245 ; 346: GUI * CreateVolumeControl(BOOK *book, int null);
-0D1C: 00000000 4DF23245 ; 347: void VolumeControl_SetHeaderText(GUI *, STRID);
-0D20: 00000000 59F23245 ; 348: void VolumeControl_SetValue(GUI *, int unk, int num);
-0D24: 00000000 65F23245 ; 349: void VolumeControl_SetMaxValue(GUI *, int count);
-0D28: 00000000 3DF23245 ; 34A: int VolumeControl_GetValue(GUI *);
+;0D18: xxxxxxxx yyyyyyyy ; 346: GUI * CreatePercentInputVA(int zero, ...);
+;0D1C: xxxxxxxx yyyyyyyy ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+;0D20: xxxxxxxx yyyyyyyy ; 348:
+;0D24: xxxxxxxx yyyyyyyy ; 349:
+;0D28: xxxxxxxx yyyyyyyy ; 34A:
 0D2C: 00000000 B9CB3345 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 C5CB3345 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 F9FC2745 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
