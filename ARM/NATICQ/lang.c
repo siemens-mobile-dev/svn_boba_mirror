@@ -93,6 +93,7 @@ LGP_Item LGPTAGS[]=
   {"LGP_GrsKeyClist",            LGP_GrsKeyClist},
   {"LGP_LangCode",               LGP_LangCode},
   {"LGP_MnuRemCont",             LGP_MnuRemCont},
+  {"LGP_MnuRemContQuestions",    LGP_MnuRemContQuestions},  
   {"LGP_DATA_NUM",               LGP_DATA_NUM}
 };
 

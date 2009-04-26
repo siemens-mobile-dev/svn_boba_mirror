@@ -14,6 +14,8 @@
 #include "cl_work.h"
 #include "lang.h"
 
+extern char *successed_config_filename;
+
 //==============================================================================
 int MainMenu_ID;
 
@@ -67,13 +69,7 @@ static void ChangeShowGroupsMode(void)
 
 static void EditConfig(void)
 {
-  extern const char *successed_config_filename;
-  WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,successed_config_filename,128);
-  ExecuteFile(ws,0,0);
-  FreeWS(ws);
-  GeneralFuncF1(1);
+  OpenConfig();
 }
 
 static void Disconnect(void)

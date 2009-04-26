@@ -56,6 +56,7 @@ enum LGP_ID
   //=================
   LGP_MnuQuote,
   LGP_MnuRemCont,
+  LGP_MnuRemContQuestions,
   LGP_MnuAddSml,
   LGP_MnuShInfo,
   LGP_MnuAddRen,

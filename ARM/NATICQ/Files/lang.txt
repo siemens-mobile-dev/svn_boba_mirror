@@ -35,6 +35,7 @@ LGP_MnuAbout=Об эльфе
 LGP_MnuQuote=Цитировать
 LGP_MnuAddSml=Добавить смайл
 LGP_MnuRemCont=Удалить
+LGP_MnuRemContQuestions=Удалить контакт?
 LGP_MnuShInfo=Получить инфо
 LGP_MnuAddRen=Доб./Изм.
 LGP_MnuSAuthReq=Запрос авторизации

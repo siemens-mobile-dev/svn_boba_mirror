@@ -23,11 +23,14 @@
 #define SEND_TIMER
 #endif
 
+GUI *deleting_contact;
+
 extern volatile int total_smiles;
 extern volatile int total_xstatuses;
 extern volatile int xstatuses_load;
 extern volatile int pictures_max;
 extern volatile int pictures_loaded;
+extern char *successed_config_filename;
 
 #define USE_MLMENU
 
@@ -40,8 +43,18 @@ IPC_REQ gipc;
 
 
 char elf_path[256];
+char *ExtCfg = "?:\\ZBin\\etc\\extension.cfg";
 int maincsm_id;
 int maingui_id;
+
+// tridog, 30.04.2009
+// Ибо IAR :'(
+char *ss = "%s%s";
+char *sd = "%s%d";
+char *s = "%s";
+char *empty_string = "";
+//
+
 
 void SMART_REDRAW(void)
 {
@@ -2048,6 +2061,7 @@ void ReqAddMsgToChat(CLIST *t)
   }
 }
 
+
 ProcessPacket(TPKT *p)
 {
   extern const int VIBR_TYPE, VIBR_ON_CONNECT;
@@ -2112,26 +2126,25 @@ ProcessPacket(TPKT *p)
     t=FindContactByUin(p->pkt.uin);
     if(!t) break;
     if (edchat_id)
+    {
+      void *data=FindGUIbyId(edchat_id,NULL);
+      if (data)
+      {
+        EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
+        if (ed_struct)
         {
-        void *data=FindGUIbyId(edchat_id,NULL);
-        if (data)
-              {
-	      EDCHAT_STRUCT *ed_struct=EDIT_GetUserPointer(data);
-	      if (ed_struct)
-            	    {
-	            if (ed_struct->ed_contact==t)
-	                {
-	                GeneralFunc_flag1(edchat_id,1);
-                        edchat_id=0;
-	                }
-	            }
-              };
-        };
+          if (ed_struct->ed_contact==t)
+          {
+            GeneralFunc_flag1(edchat_id,1);
+            edchat_id=0;
+          }
+        }
+      };
+    };
     t2=t->prev;
     DeleteContact(t);
-    if(t2) RecountMenu(t2,1);
+    if(t2) RecountMenu(t2,1); 
     break;
-    
   case T_STATUSCHANGE:
     t=FindContactByUin(p->pkt.uin);
     if (t)
@@ -2361,7 +2374,6 @@ ProcessPacket(TPKT *p)
   mfree(p);
 }
 
-
 IPC_REQ tmr_gipc;
 void process_active_timer(void)
 {
@@ -2421,7 +2433,7 @@ void method0(MAIN_GUI *data)
   }*/
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t,cltop? lgpData[LGP_GrsKeyClist] :empty_str);
+  wsprintf(data->ws2,percent_t,cltop? lgpData[LGP_GrsKeyClist] :empty_string);
   DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   wsprintf(data->ws2,percent_t, lgpData[LGP_GrsKeyExit] );
@@ -2752,15 +2764,15 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
   }
   if (msg->msg==MSG_RECONFIGURE_REQ)
   {
-    extern const char *successed_config_filename;
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
       ShowMSG(1,(int)"NatICQ config updated!");
-      InitConfig();
+      InitConfig(successed_config_filename);
       free_ICONS();
       setup_ICONS();
       ResortCL();
       RecountMenu(NULL, 1);
+      UpdateCSMname();
       //      InitSmiles();
     }
   }
@@ -2862,7 +2874,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  GROUP_CACHE=0;
 	  SENDMSGCOUNT=0; //Начинаем отсчет
 	  if (!FindGroupByID(0)) AddGroup(0,lgpData[LGP_GroupNotInList]);
-	  if (!FindContactByUin(UIN)) AddContact(UIN, lgpData[LGP_ClLoopback], 0,1);
+          extern const int b_loopback;
+          if (b_loopback ==1)
+          {
+            if (!FindContactByUin(UIN)) AddContact(UIN, lgpData[LGP_ClLoopback], 0,1);
+          }
 	  SUBPROC((void *)LoadLocalCL);
 	  SMART_REDRAW();
 	}
@@ -3011,9 +3027,88 @@ sizeof(MAIN_CSM),
 #endif
 };
 
-void UpdateCSMname(void)
+void UpdateCSMname()
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), "NATICQ: %d",UIN);
+  // tridog, 30.04.2009
+  // Поскольку теперь у нас теперь одновременно может быть запущено много Наташ
+  // старый вариант имени в таске на совсем удобен... Так что делаем конфигурируемый:
+  // из уина, имени профиля, и сепаратора :)
+  char *task_name;
+  extern int const task_name_left;
+  extern char const task_name_separator[128];
+  extern int const task_name_right;
+  char *profile_name;
+  profile_name = malloc(strlen(successed_config_filename));
+  strcpy(profile_name, successed_config_filename);
+  profile_name = get_fname_from_path(profile_name);
+  del_ext(profile_name);
+  task_name  = empty_string;
+  char *my_title = "NatICQ: ";
+  switch (task_name_left)
+  {
+  case 0: // UIN
+    {
+      sprintf(task_name, sd, my_title, UIN);
+      switch(task_name_right)
+      {
+      case 0: // UIN
+        {
+          sprintf(task_name, ss, task_name, task_name_separator);          
+          sprintf(task_name, sd, task_name, UIN); 
+          break;
+        }
+      case 1: // Profile name
+        {
+          sprintf(task_name, ss, task_name, task_name_separator);          
+          sprintf(task_name, ss, task_name, profile_name);
+          break;
+        }
+      }
+      break;
+    }
+  case 1: // Profile name
+    {
+      sprintf(task_name, ss, my_title, profile_name);
+      switch(task_name_right)
+      {
+      case 0: // UIN
+        {
+          sprintf(task_name, ss, task_name, task_name_separator);          
+          sprintf(task_name, sd, task_name, UIN); 
+          break;
+        }
+      case 1: // Profile name
+        {
+          sprintf(task_name, ss, task_name, task_name_separator);          
+          sprintf(task_name, ss, task_name, profile_name);
+          break;
+        }
+      }
+      break;
+    }
+  case 2: // None
+    {
+      switch(task_name_right)
+      {
+      case 0: // UIN
+        {
+          sprintf(task_name, sd, my_title, UIN); 
+          break;
+        }
+      case 1: // Profile name
+        {
+          sprintf(task_name, ss, my_title, profile_name);
+          break;
+        }
+      case 2: // None
+        {
+          sprintf(task_name, ss, "NatICQ", "");
+        }
+      }
+      break;
+    }
+  }
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), ss,task_name, "");
 }
 
 #ifdef NEWSGOLD
@@ -3023,15 +3118,84 @@ void SetIconBarHandler()
 }
 #endif
 
-int main(char *filename)
+char* GetCfgEdit()
 {
+  // Возвращаепуть к кфгэдиту. Нужна для открытия конфига на 
+  // редактирование независимо от его расширения
+  char *fname;
+  ExtCfg[0] = successed_config_filename[0];
+  fname = ExtCfg;
+  
+  int f;
+  unsigned int err;
+  FSTATS fstat;
+  char *buf, *p, *fl;
+  int c;
+  int next_save = 0;
+  
+  if (GetFileStats(fname,&fstat,&err)<0) return (empty_string);
+  if ((f=fopen(fname,A_ReadOnly|A_BIN,P_READ,&err))==-1) return (empty_string);
+  p=buf=malloc(fstat.size+1);
+  buf[fread(f,buf,fstat.size,&err)]=0;
+  fclose(f,&err);
+  fl=p;
+  for(;;)
+  {
+    c=*p;
+    if (c=='\r' || c=='\n' || c==0)
+    {
+      char *cline;
+      cline=malloc(p-fl+1);
+      memcpy(cline,fl,p-fl);
+      cline[p-fl]=0;
+      if (next_save == 1)
+      {
+        if (!strncmp(cline,"RUN=",4))
+        {
+          cline+=4;
+          return cline;
+        }
+      }
+      if (!strncmp(cline,"[bcfg]",6))
+      {
+        next_save = 1;
+      }
+      if (c=='\r' && *(p+1)=='\n') p++;
+      fl=p+1;
+      if (c==0) break;
+    }
+    p++;
+  }
+  mfree(buf);
+  return empty_string;  
+}
+
+void OpenConfig()
+{
+  WSHDR *ws;
+  ws=AllocWS(150);
+  char *CfgEditPath;
+  CfgEditPath = GetCfgEdit();
+  str_2ws(ws,CfgEditPath,128);
+  ExecuteFile(ws,0,successed_config_filename);
+  FreeWS(ws);
+  GeneralFuncF1(1);
+}
+
+int main(char *filename, char *config_name)
+{
+  // filename - путь к эльфу
+  // config_name - путь к конфигу
   MAIN_CSM main_csm;
   char *s;
   int len;
-  extern const char *successed_config_filename;
+
   WSHDR *ws;
 
-  InitConfig();
+  // tridog, 18 april 2009
+  // Делаем многопрофильность
+  InitConfig(config_name);
+  //
   
   s=strrchr(filename,'\\');
   len=(s-filename)+1;
@@ -3044,9 +3208,16 @@ int main(char *filename)
   {
     LockSched();
     ShowMSG(1,(int)lgpData[LGP_MsgNoUinPass]);
-    ws=AllocWS(150);
-    str_2ws(ws,successed_config_filename,128);
-    ExecuteFile(ws,0,0);
+    ws = AllocWS(150);
+    // tridog, 26.04.2009
+    // Поскольку конфиг у нас теперь с любым расширением 
+    // находим путь к cfgedit в extension.cfg и запускаем 
+    // его с конфигом в качестве параметра
+    char *CfgEditPath;
+    CfgEditPath = GetCfgEdit();
+    str_2ws(ws,CfgEditPath,128);
+    //extern char *successed_config_filename;
+    ExecuteFile(ws,0,successed_config_filename);
     UnlockSched();
     lgpFreeLangPack();
     SUBPROC((void *)ElfKiller);
@@ -3968,10 +4139,18 @@ void ActionOnCurContact(GUI *data,int msg)
   GeneralFuncF1(1);
 }
 
+void DeleteContactFromList(int res)
+{
+  if (!res)
+  {
+    ActionOnCurContact(deleting_contact,T_REMOVECONTACT);
+  }
+}
 
 void RemoveCurContact(GUI *data) //by captain_SISka 21.12.2008
 {
- ActionOnCurContact(data,T_REMOVECONTACT);
+  deleting_contact = data;
+  MsgBoxYesNo(1, (int)lgpData[LGP_MnuRemContQuestions], DeleteContactFromList);
 }
 
 /*void IgnoreCurContact(GUI *data) //by captain_SISka 21.12.2008
@@ -3989,7 +4168,7 @@ void SendAuthReq(GUI *data)
   CLIST *t;
   int l;
   //const char s[]=LG_AUTHREQ;
-  //char s[]="";
+  //char s[]=empty_string;
   //strcpy(s,(char*)lgpData[LGP_AuthReq]);
   
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
@@ -4016,7 +4195,7 @@ void SendAuthGrant(GUI *data)
   CLIST *t;
   int l;
   //const char s[]=LG_AUTHGRANT;
-  //char s[]="";
+  //char s[]=empty_string;
   //strcpy(s,(char*)lgpData[LGP_AuthGrant]);
   
   if ((t=ed_struct->ed_contact)&&(connect_state==3))

@@ -7,9 +7,9 @@
   #define _CONFLOADER_H_
 
 // Вызвать обязательно перед обращением к переменным конфигурации
-void InitConfig();
+void InitConfig(char *config);
 
-extern const char *successed_config_filename;
-int SaveConfigData(const char *fname);
+extern char *successed_config_filename;
+int SaveConfigData(char *fname);
 
 #endif
