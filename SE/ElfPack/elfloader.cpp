@@ -695,9 +695,8 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
 }
   */
   _IMB();
-  ((TElfEntry *)(base+ehdr.e_entry-minadr))(filename,param1,param2,param3);
+  long retcode=((TElfEntry *)(base+ehdr.e_entry-minadr))(filename,param1,param2,param3);
   //	mfree(base);
-  return 0;
 #endif
 #ifdef wintel
   FILE fout;
@@ -705,8 +704,8 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
   sprintf(foutbuff,"0x%08x",base);
   if ((fin=elfldr_fopen(foutbuff,"wb"))==NULL) return -1000;
   if (fwrite(base,maxadr-minadr,1,fin)!=1) return -1001; // vit
-  return 0;
 #endif
+  return retcode;
 }
 
 #ifdef wintel
