@@ -1487,9 +1487,9 @@ __swi __arm GUI * CreatePercentInputVA(int zero, ...);
 #pragma swi_number=0x347
 __swi __arm int PercentInput_GetPercent(GUI * PercentInput);
 
-/*
 #pragma swi_number=0x348
-__swi __arm 
+__swi __arm void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+/*
 #pragma swi_number=0x349
 __swi __arm 
 #pragma swi_number=0x34A
