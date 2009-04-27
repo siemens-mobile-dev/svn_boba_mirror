@@ -532,11 +532,11 @@
 0D0C: 00000000 01B10845 ; 343: void Video_Stop(BOOK*,void*);
 0D10: 00000000 A11D0745 ; 344: void Audio_Pause(BOOK *);
 0D14: 00000000 E51A0745 ; 345: void Audio_Play(BOOK *);
-0D18: 00000000 790C3F45 ; 346: GUI * CreateVolumeControl(BOOK *book, int null);
-0D1C: 00000000 A1754A45 ; 347: void VolumeControl_SetHeaderText(GUI *, STRID);
-0D20: 00000000 AD754A45 ; 348: void VolumeControl_SetValue(GUI *, int unk, int num);
-0D24: 00000000 B9754A45 ; 349: void VolumeControl_SetMaxValue(GUI *, int count);
-0D28: 00000000 91754A45 ; 34A: int VolumeControl_GetValue(GUI *);
+0D18: 00000000 F1734A45 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: 00000000 91754A45 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+0D20: 00000000 99294545 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+;0D24: xxxxxxxx yyyyyyyy ; 349:
+;0D28: xxxxxxxx yyyyyyyy ; 34A:
 0D2C: 00000000 BD2F4545 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 BD1F4545 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 697D3F45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
