@@ -535,7 +535,7 @@
 0D14: 00000000 6DE2F644 ; 345: void Audio_Play(BOOK *);
 0D18: 00000000 35F93A45 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 D5FA3A45 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
-;0D20: xxxxxxxx yyyyyyyy ; 348: ;
+0D20: 00000000 7DAA3545 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
 ;0D24: xxxxxxxx yyyyyyyy ; 349: ;
 ;0D28: xxxxxxxx yyyyyyyy ; 34A: ;
 0D2C: 00000000 81D43B45 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
