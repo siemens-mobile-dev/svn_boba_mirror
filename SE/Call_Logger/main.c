@@ -808,6 +808,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
           if (ptr)
           {
             char * region;
+            wstr2strn(PNUM_str,elem->PNUM,count);
             if (region=manifest_GetParam(buffer_ini,PNUM_str,0))
             {
               wchar_t * s2ws = new wchar_t[strlen(region)+1];
