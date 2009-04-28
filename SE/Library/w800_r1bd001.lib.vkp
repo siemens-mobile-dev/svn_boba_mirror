@@ -1,6 +1,5 @@
 ;W800 SW-R1BD001
 ;Библиотека функций
-;v
 ;
 ;(c) Hussein , IronMaster
 ;(p) HierOS
@@ -147,7 +146,7 @@
 06C4: FFFFFFFF 7D8AAC44 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: FFFFFFFF 0DD7D344 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: FFFFFFFF 71D31545 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
+06D4: FFFFFFFF CDD31545 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06D8: FFFFFFFF 7530EB44 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: FFFFFFFF E97AD444 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF C10DF744 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
@@ -270,8 +269,8 @@
 08CC: FFFFFFFF 3599E844 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
-;08D8: xxxxxxxx yyyyyyyy ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
-;08DC: xxxxxxxx yyyyyyyy ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
+08D8: FFFFFFFF 0596E844 ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
+08DC: FFFFFFFF 5D99E844 ; 237: DISP_OBJ_METHOD DISP_OBJ_GetMethod08 (DISP_OBJ *);
 ;08E0: xxxxxxxx yyyyyyyy ; 238: void DISP_DESC_SetMethod09 (DISP_DESC* ,void (*)(void*));
 ;08E4: xxxxxxxx yyyyyyyy ; 239: DISP_OBJ_METHOD DISP_OBJ_GetMethod09 (DISP_OBJ *);
 ;08E8: xxxxxxxx yyyyyyyy ; 23A: void DISP_DESC_SetMethod0A (DISP_DESC* ,void (*)(void*));
@@ -363,7 +362,7 @@
 0A58: FFFFFFFF 29A4A644 ; 296: wchar_t * CallStatusDesc_GetName(void * CallStatusDesc);
 0A5C: FFFFFFFF 4D77E544 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void (*freefunc)(void * elem_from_list));
 0A60: FFFFFFFF 9140B444 ; 298: char * strstr(const char * str1,const char * str2);
-;0A64: xxxxxxxx yyyyyyyy ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
+0A64: FFFFFFFF 85BAD744 ; 299: int GPRS_GetLastSessionInfo(int,GPRS_SESSION_INFO *);
 0A68: FFFFFFFF D91DBF44 ; 29A: int wstrcmpni(const wchar_t * wstr1,const wchar_t * wstr2,int len);
 0A6C: FFFFFFFF 713CD344 ; 29B: int wtoi(const wchar_t * wstr,int len,int * dest);
 0A70: FFFFFFFF CD82E444 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
@@ -422,7 +421,7 @@
 0B44: FFFFFFFF 71AE0F45 ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
 0B48: FFFFFFFF 39AE0F45 ; 2D2: wchar_t *FILEITEM_GetFname(FILEITEM *f);
 0B4C: FFFFFFFF 21AF0F45 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
-;0B50: xxxxxxxx yyyyyyyy ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+0B50: FFFFFFFF 49AA0F45 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
 0B54: FFFFFFFF DDAE0F45 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 0B58: FFFFFFFF 81B3C244 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
 0B5C: FFFFFFFF CDECC244 ; 2D7: void JavaDialog_Close(int unk1);
@@ -437,18 +436,18 @@
 0B80: FFFFFFFF F98A0F45 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
 0B84: FFFFFFFF 8192D444 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
 0B88: FFFFFFFF 51EC0645 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
-;0B8C: xxxxxxxx yyyyyyyy ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
+0B8C: FFFFFFFF 41B50545 ; 2E3: BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 0B90: FFFFFFFF B5A80F45 ; 2E4: FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 0B94: FFFFFFFF 4922E844 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
 0B98: FFFFFFFF 7D30E844 ; 2E6: int BOOK_GetSessionID(BOOK *);
 0B9C: FFFFFFFF 4173FB44 ; 2E7: void UI_Event_toSID(int event, int sess_id);
-;0BA0: xxxxxxxx yyyyyyyy ; 2E8: char *GetIMSI(void);
+0BA0: FFFFFFFF 25CC6D44 ; 2E8: char *GetIMSI(void);
 0BA4: FFFFFFFF 6D87D444 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
-;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos(GUI*);
+0BA8: FFFFFFFF C9C5D344 ; 2EA: int MainInput_getCurPos(GUI*);
 0BAC: FFFFFFFF 91C5D344 ; 2EB: void MainInput_Hide(GUI*);
 ;0BB0: xxxxxxxx yyyyyyyy ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
-;0BB4: xxxxxxxx yyyyyyyy ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
-;0BB8: xxxxxxxx yyyyyyyy ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
+0BB4: FFFFFFFF 2D2CF444 ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
+0BB8: FFFFFFFF F9B90445 ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
 0BBC: FFFFFFFF 71BE0445 ; 2EF: void * MetaData_Desc_Create(wchar_t * path,wchar_t * name);
 0BC0: FFFFFFFF 91BF0445 ; 2F0: void MetaData_Desc_Destroy(void * MetaData_Desc);
 0BC4: FFFFFFFF D5BE0445 ; 2F1: wchar_t * MetaData_Desc_GetTags(void * MetaData_Desc,int tagID);
@@ -504,12 +503,12 @@
 0C8C: FFFFFFFF F90DEA44 ; 323: void Softkeys_Update(DISP_OBJ *softkeys);
 0C90: FFFFFFFF 101E044C ;8324: void * get_CellData(void);
 0C94: FFFFFFFF B12EDE44 ; 325: void * IncommingCall_Reject(BOOK* book);
-;0C98: xxxxxxxx yyyyyyyy ; 326: void * IncommingCall_Mute(BOOK* book);
+0C98: FFFFFFFF F941DE44 ; 326: void * IncommingCall_Mute(BOOK* book);
 0C9C: FFFFFFFF 39928F44 ; 327: int GetRadioState(char* level, char* flag);
 0CA0: FFFFFFFF C5200D45 ; 328: int Bluetooth_GetState(void);
 0CA4: FFFFFFFF A1200D45 ; 329: int Bluetooth_GetPhoneVisibility(void);
 0CA8: FFFFFFFF 49210D45 ; 32A: int Bluetooth_isBusy(void);
-;0CAC: xxxxxxxx yyyyyyyy ; 32B: int USB_isConnected(void);
+0CAC: FFFFFFFF 61540745 ; 32B: int USB_isConnected(void);
 0CB0: FFFFFFFF 554B1145 ; 32C: void *w_diropen(const wchar_t *dir);
 0CB4: FFFFFFFF ADC2CF44 ; 32D: wchar_t *w_dirread(void *);
 0CB8: FFFFFFFF DD4D1145 ; 32E: int w_dirclose(void *);
@@ -520,8 +519,38 @@
 0CCC: FFFFFFFF 2DDDF844 ;8333: IS_NEEDED_BOOK isCameraBook(void);
 0CD0: FFFFFFFF BDE2C744 ;8334: IS_NEEDED_BOOK isSoundRecoderBook(void);
 ;0CD4: xxxxxxxx yyyyyyyy ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+0CD8: FFFFFFFF D12AF744 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
+0CDC: FFFFFFFF DD23F744 ; 337: void Video_ActionBack(BOOK*,void*);
+0CE0: FFFFFFFF A93BF744 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook);
+;0CE4: xxxxxxxx yyyyyyyy ; 339: void Video_ZoomOn(BOOK*,void*);
+;0CE8: xxxxxxxx yyyyyyyy ; 33A: void RightNow_Active(int flag /*0-1*/);
+;0CEC: xxxxxxxx yyyyyyyy ; 33B: void VideoResize_AutomateMode(BOOK*,u16,u16,u16*,u16*);
+;0CF0: xxxxxxxx yyyyyyyy ; 33C: void VideoResize_AllScreenMode(BOOK*,u16,u16,u16*,u16*);
+;0CF4: xxxxxxxx yyyyyyyy  ; 33D: int Video_GetCurrentSkinID(BOOK *VideoPlayerBook);
+;0CF8: xxxxxxxx yyyyyyyy  ; 33E: void Video_SetSkin(GUI* VideoPlayerGUI, int skinID);
+0CFC: FFFFFFFF B126F744 ; 33F: int Video_SetPermit(BOOK*,u16,u16);
+0D00: FFFFFFFF 7122F744 ; 340: int Video_Refresh(BOOK*,GUI*);
+0D04: FFFFFFFF 8D24F744 ; 341: void Video_Play(BOOK*,void*);
+0D08: FFFFFFFF E525F744 ; 342: void Video_Pause(BOOK*,void*);
+0D0C: FFFFFFFF A525F744 ; 343: void Video_Stop(BOOK*,void*);
+0D10: FFFFFFFF F1E1F544 ; 344: void Audio_Pause(BOOK *void*);
+0D14: FFFFFFFF 95DFF544 ; 345: void Audio_Play(BOOK *void*);
+0D18: FFFFFFFF 91CCD344 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: FFFFFFFF 21CED344 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+0D20: FFFFFFFF 654AD644 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+;0D24: xxxxxxxx yyyyyyyy ; 349:
+;0D28: xxxxxxxx yyyyyyyy ; 34A:
+;0D2C: xxxxxxxx yyyyyyyy ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
+;0D30: xxxxxxxx yyyyyyyy ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
+0D34: FFFFFFFF 5599EA44 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
+0D38: FFFFFFFF 25C71545 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
+0D3C: FFFFFFFF 05CA1545 ; 34F: int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);
+0D40: FFFFFFFF 09C91545 ; 350: int REQUEST_SETTING_RINGTYPESOUNDFILE_SET(const int *sync, int null, wchar_t *path, wchar_t *name);
+0D44: FFFFFFFF CDCE1545 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
+0D48: FFFFFFFF E9C71545 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
+0D4C: FFFFFFFF 8DCC1545 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
+0D50: FFFFFFFF B947C244 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 
-	
 
 
 
