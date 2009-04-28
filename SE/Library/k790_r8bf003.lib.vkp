@@ -533,9 +533,9 @@
 0D0C: 00000000 D18DF244 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
 0D10: 00000000 45FAF044 ; 344: void Audio_Pause(BOOK *);
 0D14: 00000000 89F7F044 ; 345: void Audio_Play(BOOK *);
-;0D18: xxxxxxxx yyyyyyyy ; 346: GUI * CreatePercentInputVA(int zero, ...);
-;0D1C: xxxxxxxx yyyyyyyy ; 347: int PercentInput_GetPercent(GUI * PercentInput);
-;0D20: xxxxxxxx yyyyyyyy ; 348:
+0D18: 00000000 9DF03245 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: 00000000 3DF23245 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+0D20: 00000000 CDA72D45 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
 ;0D24: xxxxxxxx yyyyyyyy ; 349:
 ;0D28: xxxxxxxx yyyyyyyy ; 34A:
 0D2C: 00000000 B9CB3345 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
@@ -547,7 +547,7 @@
 0D44: 00000000 01112A45 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
 0D48: 00000000 310A2A45 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 D50E2A45 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
-
+0D50: 00000000 F909E744 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 
 
 
