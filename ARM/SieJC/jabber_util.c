@@ -748,34 +748,49 @@ void Report_IDLEInfo(char* id, char *to)
 // Context: HELPER
 void Report_DiscoInfo(char* id, char *to)
 {
-  char answer[400];
-  sprintf(answer, "<identity category='client' type='phone'/>"
-                    "<feature var='%s'/>"
-                    "<feature var='%s'/>"
-                    "<feature var='%s'/>"
-                    "<feature var='%s'/>"
-                    "<feature var='%s'/>"
-                    "<feature var='%s'/>", DISCO_INFO, IQ_VERSION, XMLNS_MUC, IQ_TIME, IQ_IDLE,JABBER_URN_PING);
-  if(DELIVERY_EVENTS)
-  {
-    char xevents_feature[]="<feature var='urn:xmpp:receipts'/>";
-    strcat(answer, xevents_feature);
-  }
+  XMLNode *tmp, *out, *cur;
+  char feature_t[]="feature";
+  char var_t[]="var";
+  char identity_t[]="identity";
+  char category_t[]="category";
+  char type_t[]="type";
+  char phone_t[]="phone";
+  char client_t[]="client";
+  cur = XML_CreateNode(identity_t, NULL);
+  XML_Set_Attr_Value(cur, category_t, client_t);
+  XML_Set_Attr_Value(cur, type_t, phone_t);
+  out = cur;
 
-  if(USE_ATTENTION)
+  char *FeaturesList[9]={
+  DISCO_INFO,
+  IQ_VERSION,
+  XMLNS_MUC,
+  IQ_TIME,
+  IQ_IDLE,
+  JABBER_URN_PING,
+  JABBER_XMPP_RECEIPTS,
+  JABBER_URN_ATTENTION,
+  XMLNS_CHATSTATES};
+  
+  int featurescount;
+  for(featurescount=0; featurescount<10; featurescount++)
   {
-    char xevents_feature[]="<feature var='"JABBER_URN_ATTENTION"'/>";
-    strcat(answer, xevents_feature);
+  if ((featurescount<6)||(featurescount==6 && DELIVERY_EVENTS)
+  ||(featurescount==7 && USE_ATTENTION)||(featurescount==8 && COMPOSING_EVENTS))
+   {
+    cur = XML_CreateNode(feature_t, NULL);
+    XML_Set_Attr_Value(cur, var_t, FeaturesList[featurescount]);
+      tmp=out;
+      if(tmp)
+        while(tmp->next)tmp = tmp->next;
+      if(tmp)
+      {
+        tmp->next = cur;
+      }
+      else out = cur;
+   }
   }
-
-  if(COMPOSING_EVENTS)
-  {
-    char xevents_feature[]="<feature var='http://jabber.org/protocol/chatstates'/>";
-    strcat(answer, xevents_feature);
-  }
-  //  ShowMSG(0,(int)to);
-//  SendIq(to, IQTYPE_RES, id, DISCO_INFO, answer);
-
+  SendIq(to, IQTYPE_RES, id, DISCO_INFO, out);
   mfree(id);
   mfree(to);
 }
@@ -1291,29 +1306,39 @@ void FillRoster(XMLNode* items)
 void Send_Feature_Not_Implemented(char *to, char *id)
 {
   if(!to || !id)return;
-  char err_tpl[]="<iq to='%s' id='%s' type='error'>"
-                 "<error type='cancel'>"
-                    "<feature-not-implemented xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>"
-                  "</error>"
-                 "</iq>";
-  char *m=malloc(1024);
-  zeromem(m,1024);
-  snprintf(m,1023,err_tpl,to,id);
-  SUBPROC((void*)_sendandfree,m);
+  XMLNode *error, *feature;
+  char error_t[]="error";
+  char type_t[]="type";
+  char cancel_t[]="cancel";
+  char featureni_t[]="feature-not-implemented";
+  char xmlns_t[]="xmlns";
+  char urnietf_t[]="urn:ietf:params:xml:ns:xmpp-stanzas";
+  
+  feature = XML_CreateNode(featureni_t, NULL);
+  XML_Set_Attr_Value(feature, xmlns_t, urnietf_t);
+  error = XML_CreateNode(error_t, NULL);
+  XML_Set_Attr_Value(error, type_t, cancel_t);
+  error->subnode = feature;
+  SendIq(to, IQTYPE_ERR, id, NULL, error);
 }
 
 void Send_Service_Unavailable(char *to, char *id)
 {
   if(!to || !id)return;
-  char err_tpl[]="<iq to='%s' id='%s' type='error'>"
-                 "<error type='cancel'>"
-                    "<service-unavailable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>"
-                  "</error>"
-                 "</iq>";
-  char *m=malloc(1024);
-  zeromem(m,1024);
-  snprintf(m,1023,err_tpl,to,id);
-  SUBPROC((void*)_sendandfree,m);
+  XMLNode *error, *feature;
+  char error_t[]="error";
+  char type_t[]="type";
+  char cancel_t[]="cancel";
+  char serviceun_t[]="service-unavailable";
+  char xmlns_t[]="xmlns";
+  char urnietf_t[]="urn:ietf:params:xml:ns:xmpp-stanzas";
+  
+  feature = XML_CreateNode(serviceun_t, NULL);
+  XML_Set_Attr_Value(feature, xmlns_t, urnietf_t);
+  error = XML_CreateNode(error_t, NULL);
+  XML_Set_Attr_Value(error, type_t, cancel_t);
+  error->subnode = feature;
+  SendIq(to, IQTYPE_ERR, id, NULL, error);
 }
 
 /*
@@ -1406,7 +1431,7 @@ if(!strcmp(gget,iqtype)) // Iq type = get
   } //end jabber:iq:last
 
   //entity caps
-  if(!strcmp(q_type,disco_info)&&0) //not work yet
+  if(!strcmp(q_type,disco_info))
   {
     // http://jabber.org/protocol/disco#info
     if(from)

@@ -349,6 +349,18 @@
 #define LG_M_WORRIED        "Волнение"
 
 #define LG_MOOD_TEXT        "Текст настроения"
+//stat_info.c
+#define LG_STAT_CONDITION_  "Состояние:"
+#define LG_STAT_TRAFINPUT_  "Входящий [b]:"
+#define LG_STAT_TRAFOUTPUT_ "Исходящий [b]:"
+#define LG_STAT_ZIPTRAFINPUT "Входящий сжатый [b]:"
+#define LG_STAT_ZIPTRAFOUTPUT "Исходящий сжатый [b]:"
+#define LG_STAT_COMPRESIONIN "Сжатие вх.:"
+#define LG_STAT_COMPRESIONOUT "Сжатие исх.:"
+#define LG_STAT_QLENGTH "Длина очереди [b]:"
+#define LG_STAT_STATISTICS "Статистика"
+
+
 #endif //RU
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -692,6 +704,18 @@
 #define LG_M_WORRIED        "Хвилююсь"
 
 #define LG_MOOD_TEXT        "Текст настрою"
+
+//stat_info.c
+#define LG_STAT_CONDITION_  "Стан:"
+#define LG_STAT_TRAFINPUT_  "Вхідний [b]:"
+#define LG_STAT_TRAFOUTPUT_ "Вихідний [b]:"
+#define LG_STAT_ZIPTRAFINPUT "Вхідний стиснутий [b]:"
+#define LG_STAT_ZIPTRAFOUTPUT "Вихідний стиснутий [b]:"
+#define LG_STAT_COMPRESIONIN "Стиснення вх.:"
+#define LG_STAT_COMPRESIONOUT "Стиснення вих.:"
+#define LG_STAT_QLENGTH "Черга відправлення [b]:"
+#define LG_STAT_STATISTICS "Статистика"
+
 #endif //UA
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -1035,5 +1059,17 @@
 #define LG_M_WORRIED        "Worried"
 
 #define LG_MOOD_TEXT        "Mood text"
+
+//stat_info.c
+#define LG_STAT_CONDITION_  "Status:"
+#define LG_STAT_TRAFINPUT_  "Input [b]:"
+#define LG_STAT_TRAFOUTPUT_ "Output [b]:"
+#define LG_STAT_ZIPTRAFINPUT "Input copmressed [b]:"
+#define LG_STAT_ZIPTRAFOUTPUT "Output copmressed [b]:"
+#define LG_STAT_COMPRESIONIN "Compression in:"
+#define LG_STAT_COMPRESIONOUT "Compression out:"
+#define LG_STAT_QLENGTH "Queue length [b]:"
+#define LG_STAT_STATISTICS "Statistics"
+
 #endif //EN
 #endif

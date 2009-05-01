@@ -143,7 +143,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
       
       char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
       char part_str[]="/part";
-      char topic_str[]="/topic";
+      char topic_str[]="/topic ";
       if(!is_gchat)
       {
         CList_AddMessage(Resource_Ex->full_name, MSG_ME, body);
@@ -153,7 +153,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
         if(strstr(body, part_str)==body)  // Ключ в начале
         {
           CLIST* room=CList_FindContactByJID(CList_GetActiveContact()->full_name);
-          Send_Leave_Conference(room->JID, (char*)(body+strlen(part_str)));
+          Send_Leave_Conference(room->JID, strlen(body)>strlen(part_str) ? (char*)(body+strlen(part_str)+1):NULL);
           Mess_was_sent = 1;
           mfree(body);
           FreeWS(ws);

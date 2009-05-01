@@ -33,7 +33,7 @@ void stat_info_ghook(GUI *gui, int cmd)
   {
     //Called after onCreate
   }
-  if (cmd==TI_CMD_REDRAW)
+  if (cmd==TI_CMD_REDRAW && !EDIT_IsMarkModeActive(gui))
   {
   wsprintf(ws_stat_info,percent_i, Jabber_state);
     EDIT_SetTextToEditControl(gui, 3, ws_stat_info);
@@ -123,7 +123,7 @@ void Disp_stat_Info(void)
   ConstructEditControl(&ec,ECT_READ_ONLY,ECF_NORMAL_STR,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma); //1
 
-  ascii2ws(ws_stat_info,"Состояние:");
+  ascii2ws(ws_stat_info,LG_STAT_CONDITION_);
   ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//2
   wsprintf(ws_stat_info,percent_i, Jabber_state);
@@ -134,14 +134,14 @@ void Disp_stat_Info(void)
   {
     SW_Support_Compression = 0;
 
-  ascii2ws(ws_stat_info,"Входящий [b]:");
+  ascii2ws(ws_stat_info,LG_STAT_TRAFINPUT_);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//4
   wsprintf(ws_stat_info,percent_i, in_bytes_count);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//5
 
-  ascii2ws(ws_stat_info,"Исходящий [b]:");
+  ascii2ws(ws_stat_info,LG_STAT_TRAFOUTPUT_);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//6
   wsprintf(ws_stat_info,percent_i, out_bytes_count);
@@ -150,21 +150,21 @@ void Disp_stat_Info(void)
   } else
   {
     SW_Support_Compression = 1;
-  ascii2ws(ws_stat_info,"Входящий сжатый [b]:");
+  ascii2ws(ws_stat_info,LG_STAT_ZIPTRAFINPUT);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//-4
   wsprintf(ws_stat_info,percent_i, in_virt_bytes_count);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//-5
 
-  ascii2ws(ws_stat_info,"Исходящий сжатый [b]:");
+  ascii2ws(ws_stat_info,LG_STAT_ZIPTRAFOUTPUT);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//=6
   wsprintf(ws_stat_info,percent_i, out_virt_bytes_count);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//-7
 
-  ascii2ws(ws_stat_info,"Сжатие вх.:");
+  ascii2ws(ws_stat_info,LG_STAT_COMPRESIONIN);
   ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//8
   wsprintf(ws_stat_info,percent_i, 100-(in_bytes_count*100/in_virt_bytes_count));
@@ -174,7 +174,7 @@ void Disp_stat_Info(void)
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//10
 
-  ascii2ws(ws_stat_info,"Сжатие исх.:");
+  ascii2ws(ws_stat_info,LG_STAT_COMPRESIONOUT);
   ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//11
   wsprintf(ws_stat_info,percent_i, 100-(out_bytes_count*100/out_virt_bytes_count));
@@ -185,16 +185,17 @@ void Disp_stat_Info(void)
   AddEditControlToEditQend(eq,&ec,ma);//13
 
   }
-  ascii2ws(ws_stat_info,"Длина очереди [b]:");
+  ascii2ws(ws_stat_info,LG_STAT_QLENGTH);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//8 //14
   wsprintf(ws_stat_info,percent_i, sendq_l);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma); //9 //15
 
-  stat_info_hdr.lgp_id=(int)"Статистика";
+  stat_info_hdr.lgp_id=(int)LG_STAT_STATISTICS;
   patch_header(&stat_info_hdr);
   patch_input(&stat_info_desc);
   CreateInputTextDialog(&stat_info_desc,&stat_info_hdr,eq,1, 0);
 }
 //EOL,EOF
+
