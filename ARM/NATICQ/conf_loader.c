@@ -5,7 +5,7 @@
 char *successed_config_filename;
 
 #pragma segment="CONFIG_C"
-int SaveConfigData(char *fname)
+int SaveConfigData(const char *fname)
 {
   int f;
   unsigned int ul;
@@ -24,7 +24,7 @@ int SaveConfigData(char *fname)
 
 
 #pragma segment="CONFIG_C"
-int LoadConfigData(char *fname)
+int LoadConfigData(const char *fname)
 {
   int f;
   unsigned int ul;
@@ -56,27 +56,22 @@ int LoadConfigData(char *fname)
   mfree(buf);
   if (result>=0)
   {
-    successed_config_filename = malloc(strlen(fname));
+    successed_config_filename = malloc(strlen(fname)*2);
     strcpy(successed_config_filename, fname);
     //successed_config_filename = fname;
   }
   return(result);
 }
 
-void InitConfig(char *config)
+void InitConfig(const char *config)
 {
   // tridog, 18 april 2009
   // Делаем многопрофильность
-  if (*config>='0' && *config<='9' && *(config+1)==':')  // Наверное путь к bcfg :)
-  {
-    LoadConfigData(config);  
-  }
-  else
-  {
-    if (LoadConfigData("4:\\ZBin\\etc\\NATICQ.bcfg")<0)
+    if (LoadConfigData(config)<0)
     {
-      LoadConfigData("0:\\ZBin\\etc\\NATICQ.bcfg");
+      if (LoadConfigData("4:\\ZBin\\etc\\NATICQ.bcfg")<0)
+      {
+        LoadConfigData("0:\\ZBin\\etc\\NATICQ.bcfg");
+      }
     }
-  }
-  //
 }

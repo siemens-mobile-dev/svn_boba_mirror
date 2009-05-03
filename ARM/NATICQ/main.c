@@ -43,7 +43,6 @@ IPC_REQ gipc;
 
 
 char elf_path[256];
-char *ExtCfg = "?:\\ZBin\\etc\\extension.cfg";
 int maincsm_id;
 int maingui_id;
 
@@ -51,6 +50,7 @@ int maingui_id;
 // Ибо IAR :'(
 char *ss = "%s%s";
 char *sd = "%s%d";
+char *sw = "%s%w";
 char *s = "%s";
 char *empty_string = "";
 //
@@ -1664,6 +1664,7 @@ void get_answer(void)
 	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	  SMART_REDRAW();
 	  Play(sndMsg);
+          UpdateCSMname();
 	  break;
 	case T_SSLRESP:
 	  LockSched();
@@ -2766,7 +2767,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
   {
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
-      ShowMSG(1,(int)"NatICQ config updated!");
+      ShowMSG(1,(int)"NatICQ config reloaded!");
       InitConfig(successed_config_filename);
       free_ICONS();
       setup_ICONS();
@@ -3033,34 +3034,38 @@ void UpdateCSMname()
   // Поскольку теперь у нас теперь одновременно может быть запущено много Наташ
   // старый вариант имени в таске на совсем удобен... Так что делаем конфигурируемый:
   // из уина, имени профиля, и сепаратора :)
-  char *task_name;
-  extern int const task_name_left;
-  extern char const task_name_separator[128];
-  extern int const task_name_right;
-  char *profile_name;
-  profile_name = malloc(strlen(successed_config_filename));
-  strcpy(profile_name, successed_config_filename);
-  profile_name = get_fname_from_path(profile_name);
-  del_ext(profile_name);
-  task_name  = empty_string;
-  char *my_title = "NatICQ: ";
+  char *s_profile_name = malloc(strlen(successed_config_filename) * 2);
+  strcpy(s_profile_name, successed_config_filename);
+  s_profile_name = get_fname_from_path(s_profile_name);
+  del_ext(s_profile_name);
+  char* sdm = "%s: %d";
+  char* swm = "%s: %w";
+  extern const int task_name_left;
+  extern const int task_name_right;
+  extern const char task_name_separator[4];
+  extern const int b_unreaded_un_task;
+  char *my_title = "NatICQ";
+  WSHDR *profile_name=AllocWS(256);
+  str_2ws(profile_name,s_profile_name,128);
   switch (task_name_left)
   {
   case 0: // UIN
     {
-      sprintf(task_name, sd, my_title, UIN);
       switch(task_name_right)
       {
       case 0: // UIN
         {
-          sprintf(task_name, ss, task_name, task_name_separator);          
-          sprintf(task_name, sd, task_name, UIN); 
+          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %d%s%d",my_title,UIN,task_name_separator,UIN);
           break;
         }
       case 1: // Profile name
         {
-          sprintf(task_name, ss, task_name, task_name_separator);          
-          sprintf(task_name, ss, task_name, profile_name);
+          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %d%s%w",my_title,UIN,task_name_separator,profile_name);
+          break;
+        }
+      case 2:
+        {
+         wsprintf((WSHDR *)(&MAINCSM.maincsm_name),sdm,my_title,UIN);
           break;
         }
       }
@@ -3068,19 +3073,21 @@ void UpdateCSMname()
     }
   case 1: // Profile name
     {
-      sprintf(task_name, ss, my_title, profile_name);
       switch(task_name_right)
       {
       case 0: // UIN
         {
-          sprintf(task_name, ss, task_name, task_name_separator);          
-          sprintf(task_name, sd, task_name, UIN); 
+          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %w%s%d",my_title,profile_name,task_name_separator,UIN);
           break;
         }
       case 1: // Profile name
         {
-          sprintf(task_name, ss, task_name, task_name_separator);          
-          sprintf(task_name, ss, task_name, profile_name);
+            wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %w%s%w",my_title,profile_name,task_name_separator,profile_name);
+          break;
+        }
+      case 2:
+        {
+          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),swm,my_title,profile_name);
           break;
         }
       }
@@ -3092,23 +3099,24 @@ void UpdateCSMname()
       {
       case 0: // UIN
         {
-          sprintf(task_name, sd, my_title, UIN); 
+        wsprintf((WSHDR *)(&MAINCSM.maincsm_name),sdm,my_title,UIN);
           break;
         }
       case 1: // Profile name
         {
-          sprintf(task_name, ss, my_title, profile_name);
+          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),swm,my_title,profile_name);
           break;
         }
       case 2: // None
         {
-          sprintf(task_name, ss, "NatICQ", "");
+          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),s,my_title);
+          break;
         }
       }
-      break;
+      break; 
     }
   }
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name), ss,task_name, "");
+  FreeWS(profile_name);
 }
 
 #ifdef NEWSGOLD
@@ -3118,71 +3126,18 @@ void SetIconBarHandler()
 }
 #endif
 
-char* GetCfgEdit()
-{
-  // Возвращаепуть к кфгэдиту. Нужна для открытия конфига на 
-  // редактирование независимо от его расширения
-  char *fname;
-  ExtCfg[0] = successed_config_filename[0];
-  fname = ExtCfg;
-  
-  int f;
-  unsigned int err;
-  FSTATS fstat;
-  char *buf, *p, *fl;
-  int c;
-  int next_save = 0;
-  
-  if (GetFileStats(fname,&fstat,&err)<0) return (empty_string);
-  if ((f=fopen(fname,A_ReadOnly|A_BIN,P_READ,&err))==-1) return (empty_string);
-  p=buf=malloc(fstat.size+1);
-  buf[fread(f,buf,fstat.size,&err)]=0;
-  fclose(f,&err);
-  fl=p;
-  for(;;)
-  {
-    c=*p;
-    if (c=='\r' || c=='\n' || c==0)
-    {
-      char *cline;
-      cline=malloc(p-fl+1);
-      memcpy(cline,fl,p-fl);
-      cline[p-fl]=0;
-      if (next_save == 1)
-      {
-        if (!strncmp(cline,"RUN=",4))
-        {
-          cline+=4;
-          return cline;
-        }
-      }
-      if (!strncmp(cline,"[bcfg]",6))
-      {
-        next_save = 1;
-      }
-      if (c=='\r' && *(p+1)=='\n') p++;
-      fl=p+1;
-      if (c==0) break;
-    }
-    p++;
-  }
-  mfree(buf);
-  return empty_string;  
-}
 
 void OpenConfig()
 {
   WSHDR *ws;
   ws=AllocWS(150);
-  char *CfgEditPath;
-  CfgEditPath = GetCfgEdit();
-  str_2ws(ws,CfgEditPath,128);
+  str_2ws(ws,GetCfgEdit(),128);
   ExecuteFile(ws,0,successed_config_filename);
   FreeWS(ws);
   GeneralFuncF1(1);
 }
 
-int main(char *filename, char *config_name)
+int main(char *filename, const char *config_name)
 {
   // filename - путь к эльфу
   // config_name - путь к конфигу
@@ -3195,6 +3150,7 @@ int main(char *filename, char *config_name)
   // tridog, 18 april 2009
   // Делаем многопрофильность
   InitConfig(config_name);
+  
   //
   
   s=strrchr(filename,'\\');
@@ -3216,14 +3172,13 @@ int main(char *filename, char *config_name)
     char *CfgEditPath;
     CfgEditPath = GetCfgEdit();
     str_2ws(ws,CfgEditPath,128);
-    //extern char *successed_config_filename;
     ExecuteFile(ws,0,successed_config_filename);
     UnlockSched();
     lgpFreeLangPack();
     SUBPROC((void *)ElfKiller);
     return 0;
   }
-  
+ 
   ReadDefSettings();
   setup_ICONS();
   LoadXStatusText();

@@ -181,8 +181,8 @@ __root const CFG_HDR cfghdr4={CFG_LEVEL,"Interface",1,0};
     __root const CFG_CBOX_ITEM cfgcbox4_11_1[3]={"UIN","Profile","None"}; 
     
     // Сеператор
-    __root const CFG_HDR cfghdr4_11_2={CFG_STR_WIN1251,"Seperator",0,127};
-    __root const char task_name_separator[128]="";
+    __root const CFG_HDR cfghdr4_11_2={CFG_STR_UTF8,"Seperator",0,3};
+    __root const char task_name_separator[4]="";
     
     // Правая часть
     __root const CFG_HDR cfghdr4_11_3={CFG_CBOX,"Right",0,3};
