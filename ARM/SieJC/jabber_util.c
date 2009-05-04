@@ -1967,9 +1967,11 @@ MESS_TYPE Get_Message_Type(char* mess_type_str)
 {
   char m_chat[]=MSGSTR_CHAT;
   char m_gchat[]=MSGSTR_GCHAT;
+  char m_error[]=MSGSTR_ERROR;
   if(!mess_type_str)return MSG_NORMAL;
   if(!strcmp(mess_type_str,m_chat ))return MSG_CHAT;
   if(!strcmp(mess_type_str,m_gchat ))return MSG_GCHAT;
+  if(!strcmp(mess_type_str,m_error ))return MSG_STATUS;
   return MSG_NORMAL;
 }
 
@@ -2199,22 +2201,32 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     }
 
   XMLNode* msgnode = XML_Get_Child_Node_By_Name(nodeEx,"body");
-  XMLNode* msgnodes = XML_Get_Child_Node_By_Name(nodeEx,"subject");  
+  XMLNode* msgsubject = XML_Get_Child_Node_By_Name(nodeEx,"subject");
+  XMLNode* msgerror = XML_Get_Child_Node_By_Name(nodeEx,"error");
   if(!msgnode)
   {
-    msgnode = msgnodes;
+    msgnode = msgsubject;
     Is_subj = 1;
   }
-  if(msgnodes) //если есть тема, обработаем...
+  if(msgsubject && !msgerror) //если есть тема, обработаем...
   {
     MUC_ITEM* TmpMUC = CList_FindMUCByJID(CList_FindContactByJID(XML_Get_Attr_Value(from,nodeEx->attr))->JID);
       if(TmpMUC)
       {
        if(TmpMUC->muctema) mfree(TmpMUC->muctema);
-       TmpMUC->muctema = malloc(strlen(msgnodes->value)*2+1);
-       strcpy(TmpMUC->muctema ,msgnodes->value);
+       TmpMUC->muctema = malloc(strlen(msgsubject->value)*2+1);
+       strcpy(TmpMUC->muctema ,msgsubject->value);
       }
   }
+  if(msgerror)
+  {
+   XMLNode* texterror = XML_Get_Child_Node_By_Name(msgerror,"text");
+    if(texterror)
+      if(texterror->value)
+        if(strlen(texterror->value))
+          msgnode = texterror;
+  }
+  
   if(msgnode)
   if(msgnode->value)
   {
@@ -2246,8 +2258,15 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     {
       msgtype = MSG_SUBJECT;
     }
+    
+    if (!msgerror)
     CList_AddMessage(XML_Get_Attr_Value(from,nodeEx->attr), msgtype, msgnode->value);
-
+    else
+    {
+      char r[MAX_STATUS_LEN];
+      sprintf(r, "Error: %s", msgnode->value);
+      CList_AddSystemMessage(XML_Get_Attr_Value(from,nodeEx->attr), PRESENCE_ERROR, r);
+    }
     extern volatile int vibra_count;
     Vibrate(1);
   }

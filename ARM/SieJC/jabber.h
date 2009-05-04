@@ -83,7 +83,7 @@
 #define MSGSTR_GCHAT "groupchat"
 #define MSGSTR_NORMAL "normal"
 // Not implemented in SieJC yet
-//error
+#define MSGSTR_ERROR "error"
 //headline
 
 typedef enum {

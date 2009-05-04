@@ -87,7 +87,7 @@ extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "3.5.0-Z";
+const char VERSION_VERS[] = "3.5.1-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ÏËÌÛÚ˚
@@ -1790,6 +1790,22 @@ void Check_Settings_Cleverness()
     ShowMSG(0,(int)LG_ZLIBNOSASL);
 }
 
+void LoadDefSettings(void)
+{
+  extern ONLINEINFO OnlineInfo;
+  Is_Vibra_Enabled=0;
+  Is_Sounds_Enabled=0;
+  Display_Offline=0;
+  Is_Autostatus_Enabled=0;
+  Is_Smiles_Enabled=0;
+  OnlineInfo.status = 0;
+  OnlineInfo.priority = 0;
+  OnlineInfo.txt = NULL;
+  if (cur_color_name) mfree(cur_color_name);
+  cur_color_name = (char *)malloc(32);
+  strcpy(cur_color_name, "default");
+}
+
 void ReadDefSettings(char *elfpath)
 {
   DEF_SETTINGS def_set;
@@ -1803,8 +1819,13 @@ void ReadDefSettings(char *elfpath)
 
   if ((f=fopen(str,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
   {
-    fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
+    int f_size = fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
     fclose(f,&err);
+    if (f_size != sizeof(DEF_SETTINGS))
+    {
+      LoadDefSettings();
+      return;
+    }
     Is_Vibra_Enabled=def_set.vibra_status;
     Is_Sounds_Enabled=def_set.sound_status;
     Display_Offline=def_set.off_contacts;
@@ -1826,20 +1847,7 @@ void ReadDefSettings(char *elfpath)
     strcpy(OnlineInfo.txt, def_set.status_text);
     }
   }
-  else
-  {
-    Is_Vibra_Enabled=0;
-    Is_Sounds_Enabled=0;
-    Display_Offline=0;
-    Is_Autostatus_Enabled=0;
-    Is_Smiles_Enabled=0;
-    OnlineInfo.status = 0;
-    OnlineInfo.priority = 0;
-    OnlineInfo.txt = NULL;
-    if (cur_color_name) mfree(cur_color_name);
-    cur_color_name = (char *)malloc(32);
-    strcpy(cur_color_name, "default");
-  }
+  else LoadDefSettings();
 }  
 
 void WriteDefSettings(char *elfpath)
