@@ -481,5 +481,7 @@ extern const int FMRADIO_MODE_CHANGED_EVENT ;
 extern const int FMRADIO_RDS_DATA_RECEIVED_EVENT ;
 extern const int UI_MEDIAPLAYER_CONTROL_EVENT ;
 extern const int UI_FMRADIO_CONTROL_EVENT ;
+extern const int UI_MEDIAPLAYER_VIDEO_CREATED_EVENT ;
+
 
 #endif
