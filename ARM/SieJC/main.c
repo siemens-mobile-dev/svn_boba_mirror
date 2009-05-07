@@ -87,7 +87,7 @@ extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // Õ≈ Ã≈Õﬂ“‹!
-const char VERSION_VERS[] = "3.5.2-Z";
+const char VERSION_VERS[] = "3.5.2b-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ÏËÌÛÚ˚
@@ -1868,7 +1868,7 @@ void InitDefSetting()
   if (!ReadDefSettings(def_path))
   {
     def_path[0]='0';
-    ReadDefSettings(def_path);
+    if (!ReadDefSettings(def_path)) ShowMSG(1,(int)"Folder ''?:\\Zbin\\var'' not found!");
   }
 }
 

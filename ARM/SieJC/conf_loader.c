@@ -76,7 +76,7 @@ void InitConfig(char* fname)
       LoadConfigData("0:\\ZBin\\etc\\SieJC.bcfg");
     }
   }
-  #ifdef NEWSGOLD
+#ifdef NEWSGOLD
   else LoadConfigData(fname);
 #endif  
 }
@@ -135,7 +135,7 @@ int LoadIconSetData(const char *fname)
 
 void InitIconSet()
 {
-  if (LoadIconSetData("4:\\ZBin\\etc\\SieJCIconSet.bcfg")<0)
+  if (LoadIconSetData("4:\\ZBin\\etc\\SieJCIconSet.bcfg")<=0)
   {
     LoadIconSetData("0:\\ZBin\\etc\\SieJCIconSet.bcfg");
   }  
