@@ -22,10 +22,10 @@ extern RGBA MAINBG_ERROR;
 extern RGBA MAINFONT_NOT_CONNECTED;
 extern RGBA MAINFONT_CONNECTED;
 extern RGBA MAINFONT_ERROR;
-extern RGBA MESSAGEWIN_BGCOLOR; // ќбщий фон
+extern RGBA MESSAGEWIN_BGCOLOR; // ќбщий фон месаж листа
 extern RGBA MESSAGEWIN_TITLE_BGCOLOR; // ‘он заголовка
 extern RGBA MESSAGEWIN_TITLE_FONT; // ÷вет шрифта заголовка
-extern RGBA MESSAGEWIN_MY_BGCOLOR; // ÷вет фона исход€щих сообщений
+extern RGBA MESSAGEWIN_MY_BGCOLOR; // ÷вет фона исход€щих приватных сообщений
 extern RGBA MESSAGEWIN_CH_BGCOLOR; // ÷вет фона приватных сообщений
 extern RGBA MESSAGEWIN_CURSOR_BGCOLOR; // ÷вет фона курсора
 extern RGBA MESSAGEWIN_GCHAT_BGCOLOR_1; // „ередование: ÷вет фона сообщений конференции 1
@@ -37,27 +37,13 @@ extern RGBA CURSOR; // ÷вет курсора
 extern RGBA CURSOR_BORDER; // ÷вет ободка курсора
 extern RGBA CLIST_F_COLOR_0; // ÷вет шрифта
 extern RGBA CLIST_F_COLOR_1; // ÷вет шрифта (есть сообщени€)
-extern RGBA CONTACT_BG_0; // „ередование: цвет фона 1
-extern RGBA CONTACT_BG_1; // „ередование: цвет фона 2
-extern RGBA lineColor; // ÷вет текущей строчки
-extern RGBA borderColor; // ÷вет ободка текущей строчки
-
-extern RGBA OnlineColor;
-extern RGBA ChatColor;
-extern RGBA AwayColor;
-extern RGBA XAColor;
-extern RGBA DNDColor;
-extern RGBA InvisibleColor;
-extern RGBA OfflineColor;
-extern RGBA ErrorColor;
-extern RGBA SubscribeColor;
-extern RGBA SubscribedColor;
-extern RGBA UnsubscribeColor;
-extern RGBA UnsubscribedColor;
+extern RGBA CONTACT_BG_0; // „ередование линий контакт листа: цвет фона 1
+extern RGBA CONTACT_BG_1; // „ередование линий контакт листа: цвет фона 2
+extern RGBA lineColor; // ÷вет текущей строчки \\ дублируетс€ CURSOR!!!
+extern RGBA borderColor; // ÷вет ободка текущей строчки \\ дублируетс€ CURSOR_BORDER!!!
 
 extern RGBA PRES_COLORS[PRES_COUNT] ;
 
-int ReadColor(const char * fname);
 void ShowSelectColorMenu();
-
+int InitColorSet(const char *fname);
 #endif

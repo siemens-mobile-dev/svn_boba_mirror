@@ -10,4 +10,7 @@
 void InitConfig(char* fname);
 extern char * successed_config_filename;
 int SaveConfigData(const char *fname);
+void InitIconSet(void);
+int LoadColorSetData(const char *fname);
+int SaveColorSetData(const char * fname);
 #endif

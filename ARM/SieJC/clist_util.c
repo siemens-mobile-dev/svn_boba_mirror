@@ -111,7 +111,7 @@ void CList_RedrawCList()
 
           start_y = CLIST_Y1 + (i - (Active_page-1)*N_cont_disp)*font_y;
 
-          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_0;}
+          if(resEx->has_unread_msg){fcolor=CLIST_F_COLOR_1;}
           else {fcolor=PRES_COLORS[resEx->status];}
 
           DrawRoundedFrame(0,start_y+1,scr_w-1,start_y+font_y,0,0,0,

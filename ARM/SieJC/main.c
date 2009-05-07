@@ -39,7 +39,8 @@
  * Специфичные для SieJC ключи компиляции:
  * #define ICONBAR          // Код взаимодействия с иконбаром
  * #define SCRP             // Взаимодействие с эльфом ScrD
- *
+ * #define IDLEUPD          // Взаимодействие с патчем IdleUpd
+ * 
  * Для включения вывода отладочных сведений можно использовать:
  * #define LOG_ALL          // Включение логгинга всего (вход/выход + доп.инфа)
  * #define LOG_IN_DATA      // Включение логгинга только входящих данных
@@ -60,7 +61,6 @@ int autostatus_time;
 int as;
 int CLIST_FONT;
 int MESSAGEWIN_FONT;
-FSTATS fs;
 
 extern const char color_PATH[];
 
@@ -87,7 +87,7 @@ extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "3.5.1-Z";
+const char VERSION_VERS[] = "3.5.2-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
@@ -114,7 +114,7 @@ int Is_Vibra_Enabled;
 int Is_Autostatus_Enabled;
 int Is_Smiles_Enabled;
 char *exename2;
-char elf_path[256];
+char def_path[256];
 
 char Is_Compression_Enabled = 0;
 
@@ -145,17 +145,6 @@ int sock=-1;
 
 volatile int is_gprs_online=1;
 
-#ifdef ICONBAR
-int IB_NEWMESSAGE;
-int IB_ONLINE;
-int IB_CHAT;
-int IB_AWAY;
-int IB_XA;
-int IB_DND;
-int IB_INVISIBLE;
-int IB_OFFLINE;
-#endif
-
 GBSTMR TMR_Send_Presence; // Посылка презенса
 GBSTMR reconnect_tmr;
 GBSTMR Ping_Timer;
@@ -181,6 +170,15 @@ GBSTMR autostatus_tmr;
 #ifdef ICONBAR
 void addIconBar(short* num)
 {
+extern const unsigned int IB_NEWMESSAGE;
+extern const unsigned int IB_ONLINE;
+extern const unsigned int IB_CHAT;
+extern const unsigned int IB_AWAY;
+extern const unsigned int IB_XA;
+extern const unsigned int IB_DND;
+extern const unsigned int IB_INVISIBLE;
+extern const unsigned int IB_OFFLINE;
+
   #pragma swi_number=0x27 
   __swi __arm void AddIconToIconBar(int pic, short *num);
   int icon_num;
@@ -236,24 +234,6 @@ void addIconBar(short* num)
   AddIconToIconBar(icon_num, num);
 }
 #endif
-
-int writefile(char *color_PATH, char *colorshem_PATH, char *buf)
-{
- unsigned int err=0;
- int f=0;  
- char path[128];
-  
- strcpy(path, color_PATH);
- strcat(path, colorshem_PATH);
- 
-
- /*if((*/f=fopen(path,1+A_BIN+A_Create,P_WRITE,&err);//)==-1)
- fs.size=40;
-     fwrite(f,buf,fs.size,&err);
-  fclose(f,&err);
-return err;
-}
-
 //================================================
 
 extern void kill_data(void *p, void (*func_p)(void *));
@@ -1469,8 +1449,8 @@ void maincsm_onclose(CSM_RAM *csm)
   RemoveKeybMsgHook((void *)status_keyhook);  
   SetVibration(0);
 
-  void WriteDefSettings(char *elfpath);
-  WriteDefSettings(elf_path);
+  int WriteDefSettings(char *elfpath);
+  WriteDefSettings(def_path);
 
   extern ONLINEINFO OnlineInfo;
   if(OnlineInfo.txt)mfree(OnlineInfo.txt);
@@ -1572,7 +1552,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
      strcat(color_file, ".bcfg");
     if (stricmp(color_file,(char *)msg->data0)==0)
     {
-       ReadColor(cur_color_name);
+       InitColorSet(cur_color_name);
     }
     mfree(color_file);
     }
@@ -1806,25 +1786,24 @@ void LoadDefSettings(void)
   strcpy(cur_color_name, "default");
 }
 
-void ReadDefSettings(char *elfpath)
+int WriteDefSettings(char *elfpath);
+int ReadDefSettings(char *elfpath)
 {
   DEF_SETTINGS def_set;
   extern ONLINEINFO OnlineInfo;
   int f;
   unsigned int err;
-  char str[128];
 
-  strcpy(str, elfpath);  
-  strcat(str, USERNAME);
-
-  if ((f=fopen(str,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+  if ((f=fopen(elfpath,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
   {
-    int f_size = fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
+    int rlen = fread(f,&def_set,sizeof(DEF_SETTINGS),&err);
+    int end=lseek(f,0,S_END,&err,&err);
     fclose(f,&err);
-    if (f_size != sizeof(DEF_SETTINGS))
+    if (rlen!=end || rlen!=sizeof(DEF_SETTINGS))
     {
+      ShowMSG(0,(int)"Reinit Def config.");
       LoadDefSettings();
-      return;
+      return 1;
     }
     Is_Vibra_Enabled=def_set.vibra_status;
     Is_Sounds_Enabled=def_set.sound_status;
@@ -1832,9 +1811,9 @@ void ReadDefSettings(char *elfpath)
     Is_Autostatus_Enabled=def_set.auto_status;
     Is_Smiles_Enabled=def_set.smiles_status;
     if (def_set.priority<255)OnlineInfo.priority = def_set.priority;
-    else def_set.priority = 0;
+      else def_set.priority = 0;
     if(def_set.status<PRESENCE_OFFLINE) OnlineInfo.status =def_set.status;
-    else OnlineInfo.status = 0;
+      else OnlineInfo.status = 0;
     if (cur_color_name) mfree(cur_color_name);
     cur_color_name = (char *)malloc(32);
     strcpy(cur_color_name, def_set.color_name);
@@ -1842,27 +1821,27 @@ void ReadDefSettings(char *elfpath)
     if (OnlineInfo.txt) mfree(OnlineInfo.txt);
     if (len)
     {
-    OnlineInfo.txt = malloc(len+1);
-    OnlineInfo.txt[len]='\0';
-    strcpy(OnlineInfo.txt, def_set.status_text);
+      OnlineInfo.txt = malloc(len+1);
+      OnlineInfo.txt[len]='\0';
+      strcpy(OnlineInfo.txt, def_set.status_text);
     }
+    return 1;
   }
-  else LoadDefSettings();
-}  
+  else 
+  {
+    LoadDefSettings();
+    return(WriteDefSettings(elfpath));
+  }
+}
 
-void WriteDefSettings(char *elfpath)
+int WriteDefSettings(char *elfpath)
 {
   DEF_SETTINGS def_set;
   extern ONLINEINFO OnlineInfo;
   int f;
   unsigned int err;
-  char str[128];
 
-  strcpy(str, elfpath);  
-  strcat(str, USERNAME);
-
-  if ((f=fopen(str,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))!=-1)
-  {
+  if ((f=fopen(elfpath,A_WriteOnly+A_BIN+A_Create+A_Truncate,P_WRITE,&err))==-1) return 0;
     def_set.vibra_status=Is_Vibra_Enabled;
     def_set.sound_status=Is_Sounds_Enabled;
     def_set.off_contacts=Display_Offline;
@@ -1878,6 +1857,18 @@ void WriteDefSettings(char *elfpath)
     
     fwrite(f, &def_set, sizeof(DEF_SETTINGS), &err);
     fclose(f, &err);
+    return 1;
+}
+
+void InitDefSetting()
+{ 
+  strcpy(def_path, "4:\\ZBin\\var\\");
+  strcat(def_path, "SieJC_");
+  strcat(def_path, USERNAME);
+  if (!ReadDefSettings(def_path))
+  {
+    def_path[0]='0';
+    ReadDefSettings(def_path);
   }
 }
 
@@ -1913,7 +1904,6 @@ int status_keyhook(int submsg, int msg)
   return KEYHOOK_NEXT;
 }
 
-
 void AutoStatus(void)
 {
   if(Is_Autostatus_Enabled)
@@ -1942,36 +1932,18 @@ void AutoStatus(void)
   else GBS_DelTimer(&autostatus_tmr);
 }
 
-#ifdef ICONBAR
-void LoadIconSet(const char *fname)
-{
-  int hFile;
-  unsigned int err;
-  hFile = fopen(fname, A_ReadOnly + A_BIN, P_READ, &err);
-  if (hFile == -1) return;
-  FSTATS stats;
-  if (GetFileStats(fname, &stats, &err)) return;
-  int fs = stats.size;
-  char *buff = malloc(fs);
-  fread(hFile, buff, fs, &err);
-  IB_ONLINE = buff[0x2D] * 0x100 + buff[0x2C];
-  IB_CHAT = buff[0x5D] * 0x100 + buff[0x5C];
-  IB_AWAY = buff[0x8D] * 0x100 + buff[0x8C];
-  IB_XA = buff[0xBD] * 0x100 + buff[0xBC];
-  IB_DND = buff[0xED] * 0x100 + buff[0xEC];
-  IB_INVISIBLE = buff[0x11D] * 0x100 + buff[0x11C];
-  IB_OFFLINE = buff[0x14D] * 0x100 + buff[0x14C];
-  IB_NEWMESSAGE = buff[0x17D] * 0x100 + buff[0x17C];
-  fclose(hFile, &err);
-  mfree(buff);
-}
-#endif
-
 void OpenSettings(void)
 {
-  WSHDR * ws = AllocWS(150);
+  //(r) tridog
+  WSHDR * ws = AllocWS(256);
   str_2ws(ws, successed_config_filename, 128);
-  ExecuteFile(ws, 0, 0);
+  WSHDR *bcfgext = AllocWS(4);
+  wsprintf(bcfgext, "bcfg");
+  int id=GetExtUid_ws(bcfgext);
+  typedef unsigned int (*func)(WSHDR *p1, WSHDR *p2, int p3);
+  func RunBCFGedit = (func)(get_regextpnt_by_uid(id)->proc);
+  RunBCFGedit(ws, bcfgext, 0);
+  FreeWS(bcfgext);
   FreeWS(ws);
 }
 
@@ -1985,12 +1957,7 @@ void SetIconBarHandler()
 int main(char *exename, char *fname)
 {
   MAIN_CSM main_csm;
-    
-  char * s=strrchr(exename,'\\');
-  int len = (s - exename) + 1;
-  strncpy(elf_path, exename, len);
-  elf_path[len] = 0;    
-    
+
   exename2 = exename;
   if(!IsGoodPlatform())
   {
@@ -1999,7 +1966,7 @@ int main(char *exename, char *fname)
   }
   
   InitConfig(fname);
-  ReadDefSettings(elf_path);
+  InitDefSetting();
 
   if(!strlen(USERNAME))
   {
@@ -2007,10 +1974,10 @@ int main(char *exename, char *fname)
     OpenSettings();
     return 0;
   }
-
-  if(!ReadColor(cur_color_name))
+  if(!InitColorSet(cur_color_name))
   {
-    MsgBoxError(1,(int)"No color bcfg");
+    ShowMSG(1,(int)"No color bcfg");
+    OpenSettings();
     return 0;
   }
 
@@ -2076,8 +2043,7 @@ int main(char *exename, char *fname)
     as = 0;
   }
 #ifdef ICONBAR
-  extern const char ICONSET_FILENAME[128];
-  LoadIconSet(ICONSET_FILENAME);
+  InitIconSet();
   SetIconBarHandler();
 #endif
   return 0;

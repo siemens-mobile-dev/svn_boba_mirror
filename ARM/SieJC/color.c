@@ -3,6 +3,7 @@
 #include "string_util.h"
 #include "lang.h"
 #include "rect_patcher.h"
+#include "conf_loader.h"
 
 extern const char color_PATH[];
 char * cur_color_name;
@@ -34,257 +35,131 @@ RGBA CONTACT_BG_0;
 RGBA CONTACT_BG_1;
 RGBA lineColor;    
 RGBA borderColor;
-
-RGBA OnlineColor;
-RGBA ChatColor;
-RGBA AwayColor;
-RGBA XAColor;
-RGBA DNDColor;
-RGBA InvisibleColor;
-RGBA OfflineColor;
-RGBA ErrorColor;
-RGBA SubscribeColor;
-RGBA SubscribedColor;
-RGBA UnsubscribeColor;
-RGBA UnsubscribedColor;
-
 RGBA PRES_COLORS[PRES_COUNT];
 
 /* 
   Инициализация цветов.
   В параметр нужно передать буффер конфига цветов
 */
-void InitColor(char * color_cfg)
+RGBA Char4ToRGBA(const char in[4])
 {
-  CURSOR.r = color_cfg [44];
-  CURSOR.g = color_cfg [45];
-  CURSOR.b = color_cfg [46];
-  CURSOR.a = color_cfg [47];
-
-  OnlineColor.r = color_cfg [1196];
-  OnlineColor.g = color_cfg [1197];
-  OnlineColor.b = color_cfg [1198];
-  OnlineColor.a = color_cfg [1199];
-  PRES_COLORS[0] = OnlineColor;
-
-  ChatColor.r = color_cfg [1244];
-  ChatColor.g = color_cfg [1245];
-  ChatColor.b = color_cfg [1246];
-  ChatColor.a = color_cfg [1247];
-  PRES_COLORS[1] = ChatColor;
-
-  AwayColor.r = color_cfg [1292];
-  AwayColor.g = color_cfg [1293];
-  AwayColor.b = color_cfg [1294];
-  AwayColor.a = color_cfg [1295];
-  PRES_COLORS[2] = AwayColor;
-
-  XAColor.r = color_cfg [1340];
-  XAColor.g = color_cfg [1341];
-  XAColor.b = color_cfg [1342];
-  XAColor.a = color_cfg [1343];
-  PRES_COLORS[3] = XAColor;
-
-  DNDColor.r = color_cfg [1388];
-  DNDColor.g = color_cfg [1389];
-  DNDColor.b = color_cfg [1390];
-  DNDColor.a = color_cfg [1391];
-  PRES_COLORS[4] = DNDColor;
-
-  InvisibleColor.r = color_cfg [1436];
-  InvisibleColor.g = color_cfg [1437];
-  InvisibleColor.b = color_cfg [1438];
-  InvisibleColor.a = color_cfg [1439];
-  PRES_COLORS[5] = InvisibleColor;
-
-  OfflineColor.r = color_cfg [1484];
-  OfflineColor.g = color_cfg [1485];
-  OfflineColor.b = color_cfg [1486];
-  OfflineColor.a = color_cfg [1487];
-  PRES_COLORS[6] = OfflineColor;
-
-  ErrorColor.r = color_cfg [1532];
-  ErrorColor.g = color_cfg [1533];
-  ErrorColor.b = color_cfg [1534];
-  ErrorColor.a = color_cfg [1535];
-  PRES_COLORS[7] = ErrorColor;
-
-  SubscribeColor.r = color_cfg [1580];
-  SubscribeColor.g = color_cfg [1581];
-  SubscribeColor.b = color_cfg [1582];
-  SubscribeColor.a = color_cfg [1583];
-  PRES_COLORS[8] = SubscribeColor;
-
-  SubscribedColor.r = color_cfg [1628];
-  SubscribedColor.g = color_cfg [1629];
-  SubscribedColor.b = color_cfg [1630];
-  SubscribedColor.a = color_cfg [1631];
-  PRES_COLORS[9] = SubscribedColor;
-
-  UnsubscribeColor.r = color_cfg [1676];
-  UnsubscribeColor.g = color_cfg [1677];
-  UnsubscribeColor.b = color_cfg [1678];
-  UnsubscribeColor.a = color_cfg [1679];
-  PRES_COLORS[10] = UnsubscribeColor;
-
-  UnsubscribedColor.r = color_cfg [1724];
-  UnsubscribedColor.g = color_cfg [1725];
-  UnsubscribedColor.b = color_cfg [1726];
-  UnsubscribedColor.a = color_cfg [1727];
-  PRES_COLORS[11] = UnsubscribedColor;
-
-  CURSOR_BORDER.r = color_cfg [92];
-  CURSOR_BORDER.g = color_cfg [93];
-  CURSOR_BORDER.b = color_cfg [94];
-  CURSOR_BORDER.a = color_cfg [95];
-  
-  CLIST_F_COLOR_0.r = color_cfg [140];
-  CLIST_F_COLOR_0.g = color_cfg [141];
-  CLIST_F_COLOR_0.b = color_cfg [142];
-  CLIST_F_COLOR_0.a = color_cfg [143];
-  
-  CLIST_F_COLOR_1.r = color_cfg [188];
-  CLIST_F_COLOR_1.g = color_cfg [189];
-  CLIST_F_COLOR_1.b = color_cfg [190];
-  CLIST_F_COLOR_1.a = color_cfg [191];
-  
-  CONTACT_BG_0.r = color_cfg [236];
-  CONTACT_BG_0.g = color_cfg [237];
-  CONTACT_BG_0.b = color_cfg [238];
-  CONTACT_BG_0.a = color_cfg [239];
-  
-  CONTACT_BG_1.r = color_cfg [284];
-  CONTACT_BG_1.g = color_cfg [285];
-  CONTACT_BG_1.b = color_cfg [286];
-  CONTACT_BG_1.a = color_cfg [287];
-  
-  lineColor.r = color_cfg [332];
-  lineColor.g = color_cfg [333];
-  lineColor.b = color_cfg [334];
-  lineColor.a = color_cfg [335];
-  
-  borderColor.r = color_cfg [380];
-  borderColor.g = color_cfg [381];
-  borderColor.b = color_cfg [382];
-  borderColor.a = color_cfg [383];
-  
-  MAINBG_NOT_CONNECTED.r = color_cfg [428];
-  MAINBG_NOT_CONNECTED.g = color_cfg [429];
-  MAINBG_NOT_CONNECTED.b = color_cfg [430];
-  MAINBG_NOT_CONNECTED.a = color_cfg [431];
-  
-  MAINBG_CONNECTED.r = color_cfg [476];
-  MAINBG_CONNECTED.g = color_cfg [477];
-  MAINBG_CONNECTED.b = color_cfg [478];
-  MAINBG_CONNECTED.a = color_cfg [479];
-  
-  MAINBG_ERROR.r = color_cfg [524];
-  MAINBG_ERROR.g = color_cfg [525];
-  MAINBG_ERROR.b = color_cfg [526];
-  MAINBG_ERROR.a = color_cfg [527];
-  
-  MAINFONT_CONNECTED.r = color_cfg [572];
-  MAINFONT_CONNECTED.g = color_cfg [573];
-  MAINFONT_CONNECTED.b = color_cfg [574];
-  MAINFONT_CONNECTED.a = color_cfg [575];
-  
-  MAINFONT_ERROR.r = color_cfg [620];
-  MAINFONT_ERROR.g = color_cfg [621];
-  MAINFONT_ERROR.b = color_cfg [622];
-  MAINFONT_ERROR.a = color_cfg [623];
-  
-  MESSAGEWIN_BGCOLOR.r = color_cfg [668];
-  MESSAGEWIN_BGCOLOR.g = color_cfg [669];
-  MESSAGEWIN_BGCOLOR.b = color_cfg [670];
-  MESSAGEWIN_BGCOLOR.a = color_cfg [671];
-  
-  MESSAGEWIN_CURSOR_BGCOLOR.r = color_cfg [908];
-  MESSAGEWIN_CURSOR_BGCOLOR.g = color_cfg [909];
-  MESSAGEWIN_CURSOR_BGCOLOR.b = color_cfg [910];
-  MESSAGEWIN_CURSOR_BGCOLOR.a = color_cfg [911];
-  
-  MESSAGEWIN_TITLE_BGCOLOR.r = color_cfg [716];
-  MESSAGEWIN_TITLE_BGCOLOR.g = color_cfg [717];
-  MESSAGEWIN_TITLE_BGCOLOR.b = color_cfg [718];
-  MESSAGEWIN_TITLE_BGCOLOR.a = color_cfg [719];
-  
-  MESSAGEWIN_TITLE_FONT.r = color_cfg [764];
-  MESSAGEWIN_TITLE_FONT.g = color_cfg [765];
-  MESSAGEWIN_TITLE_FONT.b = color_cfg [766];
-  MESSAGEWIN_TITLE_FONT.a = color_cfg [767];
-  
-  MESSAGEWIN_MY_BGCOLOR.r = color_cfg [812];
-  MESSAGEWIN_MY_BGCOLOR.g = color_cfg [813];
-  MESSAGEWIN_MY_BGCOLOR.b = color_cfg [814];
-  MESSAGEWIN_MY_BGCOLOR.a = color_cfg [815];
-  
-  MESSAGEWIN_CH_BGCOLOR.r = color_cfg [860];
-  MESSAGEWIN_CH_BGCOLOR.g = color_cfg [861];
-  MESSAGEWIN_CH_BGCOLOR.b = color_cfg [862];
-  MESSAGEWIN_CH_BGCOLOR.a = color_cfg [863];
-  
-  MESSAGEWIN_GCHAT_BGCOLOR_1.r = color_cfg [956];
-  MESSAGEWIN_GCHAT_BGCOLOR_1.g = color_cfg [957];
-  MESSAGEWIN_GCHAT_BGCOLOR_1.b = color_cfg [958];
-  MESSAGEWIN_GCHAT_BGCOLOR_1.a = color_cfg [959];
-  
-  MESSAGEWIN_GCHAT_BGCOLOR_2.r = color_cfg [1004];
-  MESSAGEWIN_GCHAT_BGCOLOR_2.g = color_cfg [1005];
-  MESSAGEWIN_GCHAT_BGCOLOR_2.b = color_cfg [1006];
-  MESSAGEWIN_GCHAT_BGCOLOR_2.a = color_cfg [1007];
-  
-  MESSAGEWIN_SYS_BGCOLOR.r = color_cfg [1052];
-  MESSAGEWIN_SYS_BGCOLOR.g = color_cfg [1053];
-  MESSAGEWIN_SYS_BGCOLOR.b = color_cfg [1054];
-  MESSAGEWIN_SYS_BGCOLOR.a = color_cfg [1055];
-  
-  MESSAGEWIN_STATUS_BGCOLOR.r = color_cfg [1100];
-  MESSAGEWIN_STATUS_BGCOLOR.g = color_cfg [1101];
-  MESSAGEWIN_STATUS_BGCOLOR.b = color_cfg [1102];
-  MESSAGEWIN_STATUS_BGCOLOR.a = color_cfg [1103];
-  
-  MESSAGEWIN_CHAT_FONT.r = color_cfg [1148];
-  MESSAGEWIN_CHAT_FONT.g = color_cfg [1149];
-  MESSAGEWIN_CHAT_FONT.b = color_cfg [1150];
-  MESSAGEWIN_CHAT_FONT.a = color_cfg [1151];  
+  RGBA result;
+  result.r= in[0];
+  result.g= in[1];
+  result.b= in[2];
+  result.a= in[3];
+  return result;
 }
 
-/* 
-  Чтение конфига цветов
-  В параметр нужно передать имя нужного конфига
-*/
-int ReadColor(const char * fname)
+void InitColor()
 {
-  unsigned int io_error = NULL;
-  int hFile;
-  FSTATS fstat;
+  extern const char CURSOR_c[];
+  CURSOR = Char4ToRGBA(CURSOR_c);
+
+  extern const char CURSOR_BORDER_c[];
+  CURSOR_BORDER = Char4ToRGBA(CURSOR_BORDER_c);
   
-  char * color_file = (char *)malloc(strlen(color_PATH) + strlen(fname) + 16);
-  strcpy(color_file, color_PATH);
-  strcat(color_file, fname);
-  strcat(color_file, ".bcfg");
+  extern const char CLIST_F_COLOR_0_c[];
+  CLIST_F_COLOR_0 = Char4ToRGBA(CLIST_F_COLOR_0_c);
   
-  if (GetFileStats(color_file, &fstat, &io_error) != -1)
-  {
-    if (!io_error)
-    {
-      if ((hFile = fopen(color_file, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
-      {
-        if (!io_error)
-        {
-          char * buf = (char *)malloc(fstat.size + 1);
-          fread(hFile, buf, fstat.size, &io_error);
-          fclose(hFile, &io_error);
-          InitColor(buf);
-          mfree(buf);
-          mfree(color_file);
-          return 1;
-        }
-      }
-    }
-  }
-  mfree(color_file);
-  return 0;
+  extern const char CLIST_F_COLOR_1_c[];
+  CLIST_F_COLOR_1 = Char4ToRGBA(CLIST_F_COLOR_1_c);
+  
+  extern const char CONTACT_BG_0_c[];
+  CONTACT_BG_0 = Char4ToRGBA(CONTACT_BG_0_c);
+  
+  extern const char CONTACT_BG_1_c[];
+  CONTACT_BG_1 = Char4ToRGBA(CONTACT_BG_1_c);
+  
+//  extern const char lineColor_c[];
+//  lineColor = Char4ToRGBA(lineColor_c);
+  
+//  extern const char borderColor_c[];
+//  borderColor = Char4ToRGBA(borderColor_c);
+  
+  extern const char MAINBG_NOT_CONNECTED_c[];
+  MAINBG_NOT_CONNECTED = Char4ToRGBA(MAINBG_NOT_CONNECTED_c);
+  
+  extern const char MAINBG_CONNECTED_c[];
+  MAINBG_CONNECTED = Char4ToRGBA(MAINBG_CONNECTED_c);
+  
+  extern const char MAINBG_ERROR_c[];
+  MAINBG_ERROR = Char4ToRGBA(MAINBG_ERROR_c);
+  
+  extern const char MAINFONT_CONNECTED_c[];
+  MAINFONT_CONNECTED = Char4ToRGBA(MAINFONT_CONNECTED_c);
+  
+  extern const char MAINFONT_ERROR_c[];
+  MAINFONT_ERROR = Char4ToRGBA(MAINFONT_ERROR_c);
+  
+  extern const char MESSAGEWIN_BGCOLOR_c[];
+  MESSAGEWIN_BGCOLOR = Char4ToRGBA(MESSAGEWIN_BGCOLOR_c);
+  
+  extern const char MESSAGEWIN_CURSOR_BGCOLOR_c[];
+  MESSAGEWIN_CURSOR_BGCOLOR = Char4ToRGBA(MESSAGEWIN_CURSOR_BGCOLOR_c);
+  
+  extern const char MESSAGEWIN_TITLE_BGCOLOR_c[];
+  MESSAGEWIN_TITLE_BGCOLOR = Char4ToRGBA(MESSAGEWIN_TITLE_BGCOLOR_c);
+  
+  extern const char MESSAGEWIN_TITLE_FONT_c[];
+  MESSAGEWIN_TITLE_FONT = Char4ToRGBA(MESSAGEWIN_TITLE_FONT_c);
+  
+  extern const char MESSAGEWIN_MY_BGCOLOR_c[];
+  MESSAGEWIN_MY_BGCOLOR = Char4ToRGBA(MESSAGEWIN_MY_BGCOLOR_c);
+  
+  extern const char MESSAGEWIN_CH_BGCOLOR_c[];
+  MESSAGEWIN_CH_BGCOLOR = Char4ToRGBA(MESSAGEWIN_CH_BGCOLOR_c);
+  
+  extern const char MESSAGEWIN_GCHAT_BGCOLOR_1_c[];
+  MESSAGEWIN_GCHAT_BGCOLOR_1 = Char4ToRGBA(MESSAGEWIN_GCHAT_BGCOLOR_1_c);
+  
+  extern const char MESSAGEWIN_GCHAT_BGCOLOR_2_c[];
+  MESSAGEWIN_GCHAT_BGCOLOR_2 = Char4ToRGBA(MESSAGEWIN_GCHAT_BGCOLOR_2_c);
+  
+  extern const char MESSAGEWIN_SYS_BGCOLOR_c[];
+  MESSAGEWIN_SYS_BGCOLOR = Char4ToRGBA(MESSAGEWIN_SYS_BGCOLOR_c);
+  
+  extern const char MESSAGEWIN_STATUS_BGCOLOR_c[];
+  MESSAGEWIN_STATUS_BGCOLOR = Char4ToRGBA(MESSAGEWIN_STATUS_BGCOLOR_c);
+  
+  extern const char MESSAGEWIN_CHAT_FONT_c[];
+  MESSAGEWIN_CHAT_FONT = Char4ToRGBA(MESSAGEWIN_CHAT_FONT_c);
+  
+  extern const char OnlineColor_c[];
+  PRES_COLORS[0] = Char4ToRGBA(OnlineColor_c);
+
+  extern const char ChatColor_c[];
+  PRES_COLORS[1] = Char4ToRGBA(ChatColor_c);
+
+  extern const char AwayColor_c[];
+  PRES_COLORS[2] = Char4ToRGBA(AwayColor_c);
+
+  extern const char XAColor_c[];
+  PRES_COLORS[3] = Char4ToRGBA(XAColor_c);
+
+  extern const char DNDColor_c[];
+  PRES_COLORS[4] = Char4ToRGBA(DNDColor_c);
+
+  extern const char InvisibleColor_c[];
+  PRES_COLORS[5] = Char4ToRGBA(InvisibleColor_c);
+
+  extern const char OfflineColor_c[];
+  PRES_COLORS[6] = Char4ToRGBA(OfflineColor_c);
+
+  extern const char ErrorColor_c[];
+  PRES_COLORS[7] = Char4ToRGBA(ErrorColor_c);
+
+  extern const char SubscribeColor_c[];
+  PRES_COLORS[8] = Char4ToRGBA(SubscribeColor_c);
+
+  extern const char SubscribedColor_c[];
+  PRES_COLORS[9] = Char4ToRGBA(SubscribedColor_c);
+
+  extern const char UnsubscribeColor_c[];
+  PRES_COLORS[10] = Char4ToRGBA(UnsubscribeColor_c);
+
+  extern const char UnsubscribedColor_c[];
+  PRES_COLORS[11] = Char4ToRGBA(UnsubscribedColor_c);
 }
 
 /* Меню выбора цветовой схемы */
@@ -308,7 +183,7 @@ int select_color_menu_onkey(void *gui, GUI_MSG *msg)
       if (cur_color_name) mfree(cur_color_name);
       cur_color_name = (char *)malloc(32);
       strcpy(cur_color_name, sbtop->cfgname);
-      if (ReadColor(cur_color_name))
+      if (InitColorSet(cur_color_name))
         return (1);
     }
   }
@@ -462,5 +337,40 @@ void ShowSelectColorMenu()
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   patch_header(&select_color_menu_header);
   CreateMenu(0, 0, &select_color_menu_struct, &select_color_menu_header, 0, n_bcfg, sbtop, 0);
+}
+
+int InitColorSet(const char *fname) //1 - удачно, 0 - неполучилось...
+{
+  extern const char color_PATH[];
+  extern char * cur_color_name;
+  int result = 0;
+  char * color_file = (char *)malloc(strlen(color_PATH) + strlen(fname) + 16);
+  strcpy(color_file, color_PATH);
+  strcat(color_file, fname);
+  strcat(color_file, ".bcfg");
+  if (LoadColorSetData(color_file)<=0)
+  {
+    mfree(color_file);
+    color_file = (char *)malloc(strlen(color_PATH) + 16);
+    strcpy(color_file, color_PATH);
+    strcat(color_file, "default.bcfg");
+    if(LoadColorSetData(color_file)<=0)
+    {
+      if(SaveColorSetData(color_file))
+      {
+         if(LoadColorSetData(color_file)>0)
+         {
+           result = 1;
+           ShowMSG(1,(int)"Create default color.");
+         }
+      };
+    } else result = 1;
+    if (cur_color_name) mfree(cur_color_name);
+    cur_color_name = (char *)malloc(32);
+    strcpy(cur_color_name, "default");
+  } else result = 1;
+  mfree(color_file);
+  InitColor();
+  return (result);
 }
 // EOL, EOF

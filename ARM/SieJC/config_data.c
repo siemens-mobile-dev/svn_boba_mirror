@@ -8,7 +8,7 @@
 #define DEFAULT_DISK_CFG "0"
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
+// connect settings
 __root const CFG_HDR cfghdr_CONNECT_LEVEL={CFG_LEVEL,LG_SETUPCONECT,1,0};
 
 __root const CFG_HDR cfghdr0={CFG_UTF8_STRING,LG_LOGIN,0,31};
@@ -42,8 +42,7 @@ __root const CFG_HDR cfghdr7={CFG_UTF8_STRING,LG_RES,0,29};
 __root const char RESOURCE[30] = "SieJC";
 
 __root const CFG_HDR cfghdr_CONNECT_LEVEL_END={CFG_LEVEL,"",0,0};
-
-////////////////////////////////////////////////////////////////////////////////
+// end connect settings
 
 __root const CFG_HDR cfghdr8={CFG_CBOX,LG_HISTORY,0,2};
 __root const int WRITE_HISTORY = 0;
@@ -88,7 +87,6 @@ __root const CFG_HDR cfghdr15346={CFG_CHECKBOX,LG_USEATTENTION,0,2};
 __root const int USE_ATTENTION=0;
 
 // Настройка сигналов
-////////////////////////////////////////////////////////////////////////////////
 __root const CFG_HDR cfghdr_SOUNDS_SETUP={CFG_LEVEL,LG_SETUPSND,1,0};
 
 __root const CFG_HDR cfghdr130={CFG_UINT,LG_SETUPVIBRPWR,10,100};
@@ -117,8 +115,7 @@ __root const char sndComposing[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Sounds\\com
 
 __root const CFG_HDR cfghdr_SOUNDS_SETUP_END={CFG_LEVEL,"",0,0};
 
-////////////////////////////// Пути ////////////////////////////////////////////
-
+// Пути
 __root const CFG_HDR cfghdr_PATHS_LEVEL={CFG_LEVEL,LG_SETUPPATH,1,0};
 
 __root const CFG_HDR cfghdr18={CFG_STR_UTF8,LG_PATHHIST,0,127};
@@ -145,16 +142,15 @@ __root const char SMILE_FILE[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles.cfg";
 __root const CFG_HDR cfghdr233={CFG_STR_UTF8,LG_PATHSMILEDIR,0,63};
 __root const char SMILE_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\smiles\\";
 
-__root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFAULTDISK,0,127};
-__root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
-
 __root const CFG_HDR cfghdr244={CFG_STR_UTF8, LG_COLORPATH,0, 63};
 __root const char color_PATH[64]=DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\Color\\";
 
+__root const CFG_HDR cfghdr24={CFG_STR_WIN1251,LG_DEFAULTDISK,0,127};
+__root const char DEFAULT_DISC[128]=DEFAULT_DISK_CFG;
+
 __root const CFG_HDR cfghdr_PATHS_LEVEL_END={CFG_LEVEL,"",0,0};
 
-//////////////////Default text in status///////////////////////////
-
+// Default text in status
 __root const CFG_HDR cfghdr_DEFTEXTSTAT_LEVEL={CFG_LEVEL,LG_TEXTSTATUS,1,0};
 
 __root const CFG_HDR cfghdr25={CFG_UTF8_STRING,LG_STONLINE,0,255};
@@ -182,11 +178,19 @@ __root const CFG_HDR cfghdr142={CFG_UTF8_STRING,"MUC offline",0,255};
 __root const char DEFTEX_MUCOFFLINE[256]="";
 
 __root const CFG_HDR cfghdr_DEFTEXTSTAT_LEVEL_END={CFG_LEVEL,"",0,0};
-
 ///////////////
+__root const CFG_HDR cfghdr_AUTOSTATUS={CFG_LEVEL, LG_AUTOSTATUS, 1,0};
 
-__root const CFG_HDR cfghdr35={CFG_UINT,LG_SKROLL,0,12};
-__root const unsigned int DEF_SKR=10;
+__root const CFG_HDR cfghdr40={CFG_CHECKBOX,LG_AS_ENABLED,0,2};
+__root const int AUTOSTATUS_ENABLED = 0;
+
+__root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,1,60};
+__root const unsigned int AUTOSTATUS_TIME = 5;
+
+__root const CFG_HDR cfghdr42={CFG_UTF8_STRING, LG_AS_TEXT, 0, 255};
+__root const char DEFTEX_AUTOSTATUS[256]="Auto away:";
+
+__root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
 
 //Шрифты
 __root const CFG_HDR cfghdr_FONTS={CFG_LEVEL,LG_VIEW,1,0};
@@ -217,7 +221,6 @@ __root const CFG_HDR cfghdr38={CFG_CBOX,LG_UNDERLINING,0,2};
 __root const int pod_mess = 0;
 __root const CFG_CBOX_ITEM cfgcbox10[2]={LG_NO,LG_YES};
 
-
 __root const CFG_HDR cfghdr_FONTS_END={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr39={CFG_CBOX,LG_KBD_LAYOUT,0,2};
@@ -226,25 +229,6 @@ __root const CFG_CBOX_ITEM cfgcboxkbd[2]={
   LG_KBD1,
   LG_KBD2
 };
-
-__root const CFG_HDR cfghdr_AUTOSTATUS={CFG_LEVEL, LG_AUTOSTATUS, 1,0};
-
-__root const CFG_HDR cfghdr40={CFG_CHECKBOX,LG_AS_ENABLED,0,2};
-__root const int AUTOSTATUS_ENABLED = 0;
-
-__root const CFG_HDR cfghdr41={CFG_UINT,LG_AS_TIME,1,60};
-__root const unsigned int AUTOSTATUS_TIME = 5;
-
-__root const CFG_HDR cfghdr42={CFG_UTF8_STRING, LG_AS_TEXT, 0, 255};
-__root const char DEFTEX_AUTOSTATUS[256]="Auto away:";
-
-__root const CFG_HDR cfghdr_AUTOSTATUS_END={CFG_LEVEL,"",0,0};
-
-#ifdef ICONBAR
-__root const CFG_HDR cfghdr_IBI1={CFG_CHECKBOX, LG_ICONBAR_SI, 0, 2};
-__root const int SHOW_ICONBAR_ICON = 1;
-
-__root const CFG_HDR cfghdr_IBI2={CFG_STR_UTF8, LG_ICONSET_FILENAME, 0, 127};
-__root const char ICONSET_FILENAME[128] = DEFAULT_DISK_CFG ":\\ZBin\\SieJC\\IconSets\\default.bcfg";
-#endif
+__root const CFG_HDR cfghdr35={CFG_UINT,LG_SKROLL,0,12};
+__root const unsigned int DEF_SKR=10;
 // EOL, EOF
