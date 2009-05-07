@@ -68,10 +68,10 @@ void InitConfig(char* fname)
 #ifdef NEWSGOLD
   if(!fname)
 #else
-  if(LoadConfigData(fname)<0)
+  if(LoadConfigData(fname)<=0)
 #endif
   {
-    if (LoadConfigData("4:\\ZBin\\etc\\SieJC.bcfg")<0)
+    if (LoadConfigData("4:\\ZBin\\etc\\SieJC.bcfg")<=0)
     {
       LoadConfigData("0:\\ZBin\\etc\\SieJC.bcfg");
     }
