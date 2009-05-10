@@ -19,6 +19,9 @@ int in;
 #pragma swi_number=0x00BE
 __swi __arm void RunScaner();
 
+#pragma swi_number=0x80E2
+__swi __arm char *RamKeyBuffer();
+
 void RefreshMP (int res)
 {
   if (!res)
