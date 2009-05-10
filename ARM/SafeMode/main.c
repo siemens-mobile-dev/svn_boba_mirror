@@ -116,7 +116,11 @@ int main(const char *exename, const char *filename)
   }
   else
   {
-    if (*RamPressedKey()== *s_activation_key)
+#ifdef NEWSGOLD 
+    if (*RamPressedKey()== *s_activation_key) 
+#else 
+    if (*RamKeyBuffer()== *s_activation_key)        
+#endif
     {
       is_safe = 1; 
     }
