@@ -175,20 +175,19 @@ __root const CFG_HDR cfghdr4={CFG_LEVEL,"Interface",1,0};
   // Делаем многопрофильность
   __root const CFG_HDR cfghdr4_11={CFG_LEVEL,"Name in X-Task",1,0};
     
-    // Левая часть
-    __root const CFG_HDR cfghdr4_11_1={CFG_CBOX,"Left",0,3};
-    __root const int task_name_left = 1;
-    __root const CFG_CBOX_ITEM cfgcbox4_11_1[3]={"UIN","Profile","None"}; 
+    // Выводить ли иконку непрочитанных сообщений
+    __root const CFG_HDR cfghdr4_11_1={CFG_CHECKBOX,"Icon on unread message",0,2};
+    __root const int b__task_unread_icon=1;
     
-    // Сеператор
-    __root const CFG_HDR cfghdr4_11_2={CFG_STR_UTF8,"Seperator",0,3};
-    __root const char task_name_separator[4]="";
+    // Выводить ли количество непрочитанных сообщений
+    __root const CFG_HDR cfghdr4_11_2={CFG_CHECKBOX,"Count unreaded messages",0,2};
+    __root const int b__task_unread_count=0;
     
-    // Правая часть
-    __root const CFG_HDR cfghdr4_11_3={CFG_CBOX,"Right",0,3};
-    __root const int task_name_right = 2;
-    __root const CFG_CBOX_ITEM cfgcbox4_11_3[3]={"UIN","Profile","None"}; 
-      
+    // UIN/Profile name
+    __root const CFG_HDR cfghdr4_11_3={CFG_CBOX,"Show in X-Task",0,2};
+    __root const int task_show = 0;
+    __root const CFG_CBOX_ITEM cfgcbox4_11_3[2]={"UIN", "Profile"};
+              
   __root const CFG_HDR cfghdr4_12={CFG_LEVEL,"",0,0}; 
   //
  

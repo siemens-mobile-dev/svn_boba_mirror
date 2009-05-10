@@ -103,7 +103,6 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
 #endif
 
-char* GetCfgEdit();
 void OpenConfig();
 void UpdateCSMname();
 

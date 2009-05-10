@@ -625,6 +625,7 @@ void ElfKiller(void)
 }
 
 int total_unread;
+int messages_unread;
 
 //===============================================================================================
 #pragma inline
@@ -1664,7 +1665,7 @@ void get_answer(void)
 	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	  SMART_REDRAW();
 	  Play(sndMsg);
-          UpdateCSMname();
+//          UpdateCSMname();
 	  break;
 	case T_SSLRESP:
 	  LockSched();
@@ -1779,7 +1780,17 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
     goto L_NOINC;
   }
 L_INC:
-  if (!t->isunread) total_unread++;
+  // При приходе нового сообщения
+  if (!t->isunread) 
+  {
+    // Повышаем счетчик юзеров, от которых пришли новые сообщения
+    total_unread++;
+  }
+  // Повышаем счетчик непрочитанных сообщений по данному контакту
+  t->unreaded++;
+  // Повышаем общий счетчик непрочитанных сообщений
+  messages_unread++;
+  UpdateCSMname();
   t->isunread=1;
 L_NOINC:
   ChangeContactPos(t);
@@ -1915,10 +1926,20 @@ void AddMsgToChat(void *data)
     }
   }
   ed_struct->ed_contact->last_log=NULL;
-  if (IsGuiOnTop(edchat_id))
+  if (IsGuiOnTop(edchat_id)) // Если открыт активный чат
+  {
+    // Понижаем счетчик контактов с непрочитанными
     total_unread--;
+  }
   else
+  {
     ed_struct->requested_decrement_total_unread++;
+  }
+  // Понижаем счетчик непрочитанных
+  messages_unread =     messages_unread - ed_struct->ed_contact->unreaded;
+  // Обнуляем счетчик непрочитанных по данному контакту
+  ed_struct->ed_contact->unreaded = 0;
+  UpdateCSMname();
   ed_struct->ed_contact->isunread=0;
   ChangeContactPos(ed_struct->ed_contact);
   //  EDIT_SetFocus(data,ed_struct->ed_answer);
@@ -2722,6 +2743,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	}
       }
     }
+//    UpdateCSMname();
     //Нарисуем иконочку моего статуса
 #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
 #ifdef NEWSGOLD
@@ -3030,93 +3052,54 @@ sizeof(MAIN_CSM),
 
 void UpdateCSMname()
 {
-  // tridog, 30.04.2009
-  // Поскольку теперь у нас теперь одновременно может быть запущено много Наташ
-  // старый вариант имени в таске на совсем удобен... Так что делаем конфигурируемый:
-  // из уина, имени профиля, и сепаратора :)
-  char *s_profile_name = malloc(strlen(successed_config_filename) * 2);
-  strcpy(s_profile_name, successed_config_filename);
-  s_profile_name = get_fname_from_path(s_profile_name);
-  del_ext(s_profile_name);
-  char* sdm = "%s: %d";
-  char* swm = "%s: %w";
-  extern const int task_name_left;
-  extern const int task_name_right;
-  extern const char task_name_separator[4];
-  extern const int b_unreaded_un_task;
-  char *my_title = "NatICQ";
-  WSHDR *profile_name=AllocWS(256);
-  str_2ws(profile_name,s_profile_name,128);
-  switch (task_name_left)
+  // tridog, 09.05.09
+  // Поскольку у нас теперь может быть запущено несколько наташ сразу, старый
+  // вариант имени CSM состоящий из UIN'a не очень удобен.
+  extern const int b__task_unread_icon;
+  extern const int b__task_unread_count;
+  extern const int task_show;
+  // Формируем заголовок
+  WSHDR *task_name=AllocWS(256);
+  // Иконка при непрочитанных
+  if(b__task_unread_icon)
   {
-  case 0: // UIN
+    if(messages_unread > 0)
     {
-      switch(task_name_right)
-      {
-      case 0: // UIN
-        {
-          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %d%s%d",my_title,UIN,task_name_separator,UIN);
-          break;
-        }
-      case 1: // Profile name
-        {
-          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %d%s%w",my_title,UIN,task_name_separator,profile_name);
-          break;
-        }
-      case 2:
-        {
-         wsprintf((WSHDR *)(&MAINCSM.maincsm_name),sdm,my_title,UIN);
-          break;
-        }
-      }
-      break;
-    }
-  case 1: // Profile name
-    {
-      switch(task_name_right)
-      {
-      case 0: // UIN
-        {
-          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %w%s%d",my_title,profile_name,task_name_separator,UIN);
-          break;
-        }
-      case 1: // Profile name
-        {
-            wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%s: %w%s%w",my_title,profile_name,task_name_separator,profile_name);
-          break;
-        }
-      case 2:
-        {
-          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),swm,my_title,profile_name);
-          break;
-        }
-      }
-      break;
-    }
-  case 2: // None
-    {
-      switch(task_name_right)
-      {
-      case 0: // UIN
-        {
-        wsprintf((WSHDR *)(&MAINCSM.maincsm_name),sdm,my_title,UIN);
-          break;
-        }
-      case 1: // Profile name
-        {
-          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),swm,my_title,profile_name);
-          break;
-        }
-      case 2: // None
-        {
-          wsprintf((WSHDR *)(&MAINCSM.maincsm_name),s,my_title);
-          break;
-        }
-      }
-      break; 
+#ifdef NEWSGOLD
+      wsprintf(task_name, "%w%c ", task_name, 0xE16D); 
+#else
+      wsprintf(task_name, "%w%c ", task_name, 0xE17A);
+#endif
     }
   }
-  FreeWS(profile_name);
+  // Количество непрочитанных
+  if(b__task_unread_count)
+  {
+    if (messages_unread > 0)
+    {
+      wsprintf(task_name, "%w[%d] ", task_name, messages_unread);
+    }
+  }
+  // UIN
+  if(task_show == 0)
+  {
+    wsprintf(task_name, "%w%d", task_name, UIN);
+  }
+  // Profile name
+  else
+  {
+    char *s_profile_name = malloc(strlen(successed_config_filename) * 2);
+    strcpy(s_profile_name, successed_config_filename);
+    s_profile_name = get_fname_from_path(s_profile_name);
+    del_ext(s_profile_name);
+    WSHDR *profile_name=AllocWS(256);
+    str_2ws(profile_name,s_profile_name,128);
+    wsprintf(task_name, "%w%w", task_name, profile_name);
+    FreeWS(profile_name);
+  }
+  // Теперь пишем его в имя CSM
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%w",task_name);
+  FreeWS(task_name);
 }
 
 #ifdef NEWSGOLD
@@ -3126,15 +3109,26 @@ void SetIconBarHandler()
 }
 #endif
 
-
 void OpenConfig()
 {
+  // tridog, 05.05.2009
+  // Теперь будем запускать конфиг любого расширения на редактирование
+  // не читая Extension.cfg
   WSHDR *ws;
-  ws=AllocWS(150);
-  str_2ws(ws,GetCfgEdit(),128);
-  ExecuteFile(ws,0,successed_config_filename);
+  ws = AllocWS(256);
+  WSHDR *xws;
+  xws=AllocWS(256);
+  int id;
+  str_2ws(xws,"bcfg",255);
+  str_2ws(ws, successed_config_filename, 255);
+  id=GetExtUid_ws(xws);
+  TREGEXPLEXT *pr=get_regextpnt_by_uid(id);
+  typedef unsigned int (*func)(WSHDR *p1, WSHDR *p2, int p3);
+  func myproc = (func)(pr->proc);
+  myproc(ws, xws, 0);
   FreeWS(ws);
-  GeneralFuncF1(1);
+  FreeWS(xws);
+  //
 }
 
 int main(char *filename, const char *config_name)
@@ -3145,14 +3139,11 @@ int main(char *filename, const char *config_name)
   char *s;
   int len;
 
-  WSHDR *ws;
-
   // tridog, 18 april 2009
   // Делаем многопрофильность
   InitConfig(config_name);
-  
   //
-  
+ 
   s=strrchr(filename,'\\');
   len=(s-filename)+1;
   strncpy(elf_path,filename,len);
@@ -3164,15 +3155,7 @@ int main(char *filename, const char *config_name)
   {
     LockSched();
     ShowMSG(1,(int)lgpData[LGP_MsgNoUinPass]);
-    ws = AllocWS(150);
-    // tridog, 26.04.2009
-    // Поскольку конфиг у нас теперь с любым расширением 
-    // находим путь к cfgedit в extension.cfg и запускаем 
-    // его с конфигом в качестве параметра
-    char *CfgEditPath;
-    CfgEditPath = GetCfgEdit();
-    str_2ws(ws,CfgEditPath,128);
-    ExecuteFile(ws,0,successed_config_filename);
+    OpenConfig();
     UnlockSched();
     lgpFreeLangPack();
     SUBPROC((void *)ElfKiller);
@@ -3940,7 +3923,13 @@ void CreateEditChat(CLIST *t)
     AddEditControlToEditQend(eq,&ec,ma);
     lp=lp->next;
   }
-  if (t->isunread) total_unread--;
+  if (t->isunread) 
+  {
+    total_unread--;
+  }
+  messages_unread = messages_unread - t->unreaded;
+  t->unreaded = 0;
+  UpdateCSMname();
   t->isunread=0;
   ChangeContactPos(t);
   wsprintf(ews, "-------");
