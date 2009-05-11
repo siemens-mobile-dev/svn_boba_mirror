@@ -145,7 +145,7 @@
 06C4: FFFFFFFF 69E6BF44 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: FFFFFFFF 0DB80D45 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: FFFFFFFF 15525D45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
-;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
+06D4: FFFFFFFF 35AA2345 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06DC: FFFFFFFF C1FB0D45 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF ADD73C45 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06EC: FFFFFFFF 21583E45 ; 1BB: void Vibra(int t1, int t2, int t3);
