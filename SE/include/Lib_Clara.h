@@ -1489,7 +1489,10 @@ __swi __arm int PercentInput_GetPercent(GUI * PercentInput);
 
 #pragma swi_number=0x348
 __swi __arm void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+
 /*
+#pragma swi_number=0x348
+__swi __arm 
 #pragma swi_number=0x349
 __swi __arm 
 #pragma swi_number=0x34A
@@ -1519,5 +1522,25 @@ __swi __arm int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int
 
 #pragma swi_number=0x354
 __swi __arm int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
+
+#pragma swi_number=0x355
+__swi __arm void *SoundRecorderDesc_Create(void);
+#pragma swi_number=0x356
+__swi __arm void SoundRecorderDesc_Destroy(void * desc);
+#pragma swi_number=0x357
+__swi __arm int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+#pragma swi_number=0x358
+__swi __arm int SoundRecorderDesc_SetType(void * desc,const int type);
+#pragma swi_number=0x359
+__swi __arm int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+#pragma swi_number=0x35A
+__swi __arm int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+#pragma swi_number=0x35B
+__swi __arm int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+#pragma swi_number=0x35C
+__swi __arm int SoundRecorder_Create(void * desc);
+
+#pragma swi_number=0x35D
+__swi __arm int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 
 #endif

@@ -482,6 +482,8 @@ extern const int FMRADIO_RDS_DATA_RECEIVED_EVENT ;
 extern const int UI_MEDIAPLAYER_CONTROL_EVENT ;
 extern const int UI_FMRADIO_CONTROL_EVENT ;
 extern const int UI_MEDIAPLAYER_VIDEO_CREATED_EVENT ;
-
+extern const int UI_BLUETOOTH_STATE_CHANGED_EVENT ;
+extern const int UI_BLUETOOTH_ACTIVITY_CHANGED_EVENT ;
+extern const int UI_FMRADIO_CREATED_EVENT ;
 
 #endif
