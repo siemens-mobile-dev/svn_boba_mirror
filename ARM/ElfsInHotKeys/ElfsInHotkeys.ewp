@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ElfsInHotkeys.d79</state>
+          <state>ElfsInHotKeys.d79</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1369,11 +1369,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ElfsInHotkeys.elf</state>
+          <state>ElfsInHotKeys.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1439,7 +1439,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>D:\CODING\Projects\Elfs\ElfsInHotKeys\test.xcl</state>
+          <state>test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2192,11 +2192,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>ElfsInHotkeys.elf</state>
+          <state>ElfsInHotKeys.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2262,7 +2262,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>D:\CODING\Projects\Elfs\ElfsInHotKeys\test.xcl</state>
+          <state>test.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
