@@ -2,7 +2,10 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\Launch_elf.ewp</path>
+    <path>$WS_DIR$\patch\patch.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\elf\elf.ewp</path>
   </project>
   <batchBuild/>
 </workspace>

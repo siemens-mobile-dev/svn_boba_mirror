@@ -1181,6 +1181,20 @@ typedef struct
   int unk17_26[10]; 
 }NativeExplorerData;
 
+typedef struct
+{
+  char name[16];//имя шортката
+  void* pointer;//адрес функции
+  int unk_zero;
+  int unk_1;
+  int lgp_full_name;//полное имя
+  int unk_2;
+  int unk_3;
+  int lgp_short_name;//сокращенное имя
+  int unk_4;
+  int lgp_comment_msg;//текст справки по этому шорткату, в патче - путь к эльфу
+}shortcut;
+
 typedef int  (__interwork MenuSearchCallBack)(void *gui,WSHDR * searchstr);  // return -1 
 
 #pragma diag_suppress=Ta035

@@ -20,12 +20,30 @@
         LSR     R1, R1, #0x18
         BL timedate
                 
+	RSEG	GO_MAIN
+net_icons:
+        LDR     R0, =net_icons2
+        BX      R0
+acc_icons:
+        LDR     R0, =acc_icons2
+        BX      R0
+iconbar_x:
+        MOV     R7, R0
+        LDR     R0, =iconbar_x2
+        BX      R0
+iconbar_y:
+        LDR     R0, =iconbar_y2
+        BX      R0
+timedate:
+        LDR     R0, =timedate2
+        BX      R0
+        
         EXTERN get_icons
         EXTERN plus
         
         CODE16
         RSEG	CODE
-net_icons:
+net_icons2:
         PUSH    {R2-R7,LR}
         MOV     R0, #1
         BL get_icons
@@ -34,7 +52,7 @@ net_icons:
         BL get_icons
         MOV     R1, R7
         POP     {R2-R7,PC}
-acc_icons:
+acc_icons2:
         PUSH    {R2-R7,LR}
         MOV     R0, #3
         BL get_icons
@@ -44,15 +62,14 @@ acc_icons:
         MOV     R1, R7
         POP     {R2-R7,PC}
         
-iconbar_x:
+iconbar_x2:
         PUSH    {R1-R4,R6-R7,LR}
-        MOV     R7, R0
         MOV     R0, #4
         BL get_icons
         ADD     R0, R0, R7
         MOV     R5, #0
         POP     {R1-R4,R6-R7,PC}
-iconbar_y:
+iconbar_y2:
         PUSH    {R2-R7,LR}
         MOV     R0, #5
         BL get_icons
@@ -60,10 +77,9 @@ iconbar_y:
         ADD     R0, R7, #0
         POP     {R2-R7,PC}
         
-timedate:
+timedate2:
         PUSH    {R1,R3-R7,LR}
-        ADD     R0, R4, #0
-        MOV     R7, R0
+        MOV     R7, R4
         MOV     R0, #6
         BL get_icons
         MOV     R2, R0
@@ -72,6 +88,7 @@ timedate:
         
         
 	RSEG	PATCH_NET_CANVAS
+        LDR     R0, [SP,#0x14]
         CMP R0,#0
         CMP R0,#0
 	RSEG	PATCH_Battery_CANVAS

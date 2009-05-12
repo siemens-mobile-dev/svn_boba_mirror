@@ -597,8 +597,8 @@
 0904: 0xA07D82C3   ; 241: __thumb void SetDateTime(TDate *, TTime *)
 ;908:              ; 242: __unknown void gb2ws(WSHDR *ws, const char *s, int len)
 ;90C:              ; 243: __unknown void ws2gb(WSHDR *ws, char *s, int len)
-;910: 0xA0E40995   ; 244: __thumb int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize)
-;914: 0xA0E40A45   ; 245: __thumb int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5)
+0910: 0xA0E40995   ; 244: __thumb int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize)
+0914: 0xA0E40A45   ; 245: __thumb int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5)
 0918: 0xA0351658   ; 246: __arm int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder);
 091C: 0xA0AC7E1D   ; 247: __thumb NetOff()
 ;920:              ; 248: __unknown char *RamFormatTrack()
