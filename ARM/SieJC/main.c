@@ -87,7 +87,7 @@ extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // ÍÅ ÌÅÍßÒÜ!
-const char VERSION_VERS[] = "3.5.2b-Z";
+const char VERSION_VERS[] = "3.5.3-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 ìèíóòû
@@ -841,9 +841,17 @@ void Process_Decoded_XML(XMLNode* node)
     }
 
     //----------------
-    if(!strcmp(nodeEx->name,"success")&& Jabber_state == JS_SASL_AUTH_ACK)
+    if(!strcmp(nodeEx->name,"success"))
     {
-      SASL_Open_New_Stream();
+      if(Jabber_state == JS_SASL_NEG_ANS_WAIT)
+      {
+       if(nodeEx->value) 
+       {
+         Process_Auth_Answer(nodeEx->value, 0);
+       }
+      }
+      if(Jabber_state == JS_SASL_AUTH_ACK)
+        SASL_Open_New_Stream();
     }
 
     //----------------
@@ -856,7 +864,7 @@ void Process_Decoded_XML(XMLNode* node)
     //----------------
     if(!strcmp(nodeEx->name,"challenge")&& Jabber_state == JS_SASL_NEG_ANS_WAIT)
     {
-      Process_Auth_Answer(nodeEx->value);
+      Process_Auth_Answer(nodeEx->value, 1);
     }
     //----------------
     if(!strcmp(nodeEx->name,"challenge")&& Jabber_state == JS_SASL_NEGOTIATION)

@@ -17,6 +17,7 @@ typedef struct
   char *cnonce;
   char *qop;
   char *rsp_auth;
+  char *realm;
 }SASL_AUTH_DATA;
 
 void Send_Welcome_Packet_SASL();
@@ -25,7 +26,7 @@ void SASL_Init_Session();
 void Send_Login_Packet();
 void Use_Md5_Auth_Report();
 void Use_Plain_Auth_Report();
-void Process_Auth_Answer(char *challenge);
+void Process_Auth_Answer(char *challenge, char sendanswer);
 void SASL_Open_New_Stream();
 void SASL_Bind_Resource();
 void Decode_Challenge(char *challenge);

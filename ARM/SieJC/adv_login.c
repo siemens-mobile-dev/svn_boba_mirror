@@ -17,7 +17,7 @@ extern char My_JID_full[];
 extern char My_JID[];
 extern char logmsg[];
 
-SASL_AUTH_DATA SASL_Auth_data = {NULL, NULL, NULL, NULL};
+SASL_AUTH_DATA SASL_Auth_data = {NULL, NULL, NULL, NULL, NULL};
 
 
 void Send_Welcome_Packet_SASL()
@@ -42,6 +42,7 @@ void Destroy_SASL_Ctx()
   if(SASL_Auth_data.cnonce)mfree(SASL_Auth_data.cnonce);
   if(SASL_Auth_data.qop)mfree(SASL_Auth_data.qop);
   if(SASL_Auth_data.rsp_auth)mfree(SASL_Auth_data.rsp_auth);
+  if(SASL_Auth_data.realm)mfree(SASL_Auth_data.realm);
   zeromem(&SASL_Auth_data, sizeof(SASL_AUTH_DATA));
 }
 
@@ -125,6 +126,7 @@ void Decode_Challenge(char *challenge)
   Base64Decode(challenge,strlen(challenge), decoded_challenge, 1024, NULL, &unk5);  
   SASL_Auth_data.nonce = Get_Param_Value(decoded_challenge, "nonce",1);
   SASL_Auth_data.qop   = Get_Param_Value(decoded_challenge, "qop",1);
+  SASL_Auth_data.realm = Get_Param_Value(decoded_challenge, "realm",1);
 
 //SASL_Auth_data.nonce = malloc(128);strcpy(SASL_Auth_data.nonce,"455564019");
 //SASL_Auth_data.qop = malloc(128);strcpy(SASL_Auth_data.qop,"auth");
@@ -142,7 +144,7 @@ void mkhex(md5_byte_t digest[16], char *hex_output)
 
 char ans[]="<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>";
 
-void Process_Auth_Answer(char *challenge)
+void Process_Auth_Answer(char *challenge, char sendanswer)
 {
   char *decoded_challenge = malloc(256);
   zeromem(decoded_challenge, 256);
@@ -151,7 +153,7 @@ void Process_Auth_Answer(char *challenge)
   SASL_Auth_data.rsp_auth   = Get_Param_Value(decoded_challenge, "rspauth",0);
   mfree(decoded_challenge);
   Jabber_state = JS_SASL_AUTH_ACK;
-  SUBPROC((void*)SendAnswer,ans);
+  if(sendanswer) SUBPROC((void*)SendAnswer,ans);
 }
 
 
@@ -168,7 +170,7 @@ void Send_Login_Packet()
   char R_HEX[16*2 + 1];
 
   char *digest_uri = malloc(128);
-  char realm[]="";
+
   char *User_Realm_Pass = malloc(256);
   zeromem(digest_uri, 128);
   snprintf(digest_uri, 127, "AUTHENTICATE:xmpp/%s", JABBER_SERVER);
@@ -176,7 +178,7 @@ void Send_Login_Packet()
   md5_init(&state);
   md5_append(&state, (const md5_byte_t *)USERNAME, strlen(USERNAME));
   md5_append(&state, (const md5_byte_t *)colon_t,1);
-  md5_append(&state, (const md5_byte_t *)realm, strlen(realm));
+  md5_append(&state, (const md5_byte_t *)SASL_Auth_data.realm, strlen(SASL_Auth_data.realm));
   md5_append(&state, (const md5_byte_t *)colon_t,1);
   md5_append(&state, (const md5_byte_t *)PASSWORD, strlen(PASSWORD));
   md5_finish(&state, digest);
@@ -218,7 +220,7 @@ void Send_Login_Packet()
                 "qop=auth,digest-uri=\"xmpp/%s\",response=\"%s\",charset=utf-8";
   snprintf(Response_STR, 1024, Res_tpl,
            USERNAME,
-           realm,
+           SASL_Auth_data.realm,
            SASL_Auth_data.nonce,
            SASL_Auth_data.cnonce,
            JABBER_SERVER,
