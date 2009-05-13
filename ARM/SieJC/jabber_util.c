@@ -431,7 +431,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   char status_t[]="status";
   char show_t[]="show";
   char c_t[]="c";
-  char xmlns_t[]="xmlns_t";
+  char xmlns_t[]="xmlns";
   char node_t[]="node";
   char ver_t[]="ver";
   char priority_t[]="priority";
