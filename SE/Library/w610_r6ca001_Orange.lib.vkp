@@ -150,7 +150,7 @@
 06D8: 00000000 2DA03045 ; 1B6: __tumb void SetBrightnessOfScreen(int br);
 06DC: 00000000 45EA3B45 ; 1B7: int isKeylocked(void);
 06E0: 00000000 C99DF844 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-06E8: 00000000 E7A12E45 ; 1BA: __tumb void ShuttingDown(void);
+06E8: 00000000 E5A12E45 ; 1BA: __tumb void ShuttingDown(void);
 06EC: 00000000 2D080145 ; 1BB: __tumb void Vibra(int t1, int t2, int t3);
 06F0: 00000000 052AD844 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 992AD844 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
@@ -535,7 +535,7 @@
 0D14: 00000000 D90FF744 ; 345: void Audio_Play(BOOK *);
 0D18: 00000000 59F53945 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 F9F63945 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
-;0D20: 00000000 xxxxxxxx ; 348: ;
+0D20: 00000000 15A83445 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
 ;0D24: 00000000 xxxxxxxx ; 349: ;
 ;0D28: 00000000 xxxxxxxx ; 34A: ;
 0D2C: 00000000 91D03A45 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
@@ -548,6 +548,15 @@
 0D48: 00000000 A1093145 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 450E3145 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 0D50: 00000000 CDE1EC44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
+0D54: 00000000 0575F544 ; 355: void *SoundRecorderDesc_Create(void);
+0D58: 00000000 7d75F544 ; 356: void SoundRecorderDesc_Destroy(void * desc);
+0D5C: 00000000 A575F544 ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+0D60: 00000000 D175F544 ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
+0D64: 00000000 E575F544 ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+0D68: 00000000 0176F544 ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+0D6C: 00000000 1d76f544 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+0D70: 00000000 9576F544 ; 35C: int SoundRecorder_Create(void * desc);
+0D74: 00000000 65c4da44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 
 
 
