@@ -150,7 +150,7 @@
 06D8: 00000000 51A62D45 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: 00000000 4DF53845 ; 1B7: int isKeylocked(void);
 06E0: 00000000 11C6F544 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
-06E8: 00000000 0BA62B45 ; 1BA: void ShuttingDown(void);
+06E8: 00000000 09A62B45 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 5935FE44 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 516FD544 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 E56FD544 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
@@ -515,7 +515,49 @@
 ;0CC0: xxxxxxxx yyyyyyyy ; 330: int w_remove(const wchar_t *dir);
 ;0CC4: xxxxxxxx yyyyyyyy ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: 00000000 058E1A44 ; 332: int GetSignalQuality(char *rssi,char *ber);
-
+0CCC: 00000000 A5BE0145 ;8333: IS_NEEDED_BOOK isCameraBook(void);
+0CD0: 00000000 C93BF644 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
+0CD4: 00000000 A5EB0345 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+0CD8: 00000000 4DE6F544 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
+0CDC: 00000000 CDDCF544 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
+0CE0: 00000000 85F6F544 ; 338: Video_ExtractFrame(BOOK *VideoPlayerBook);
+0CE4: 00000000 81E0F544 ; 339: void Video_ZoomOn(BOOK *VideoPlayerBook, void*);
+0CE8: 00000000 E5763845 ; 33A: void RightNow_SetActive(int flag);
+0CEC: 00000000 D5DFF544 ; 33B: void VideoResize_AutomateMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+0CF0: 00000000 71DFF544 ; 33C: void VideoResize_AllScreenMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
+0CF4: 00000000 35F0F544 ; 33D: int Video_GetCurrentSkinID(BOOK *VideoPlayerBook);
+0CF8: 00000000 ADC3F544 ; 33E: void Video_SetSkin(GUI* VideoPlayerGUI, int skinID);
+0CFC: 00000000 01DFF544 ; 33F: int Video_SetPermit(BOOK *VideoPlayerBook, u16 NewWidth, u16 NewHeight);
+0D00: 00000000 9DDAF544 ; 340: int Video_Refresh(BOOK *VideoPlayerBook, GUI* VideoPlayerGUI);
+0D04: 00000000 4DDDF544 ; 341: void Video_Play(BOOK *VideoPlayerBook, void*);
+0D08: 00000000 85DEF544 ; 342: void Video_Pause(BOOK *VideoPlayerBook, void*);
+0D0C: 00000000 51DEF544 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
+0D10: 00000000 353BF444 ; 344: void Audio_Pause(BOOK *);
+0D14: 00000000 6D38F444 ; 345: void Audio_Play(BOOK *);
+0D18: 00000000 95FD3645 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: 00000000 35FF3645 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+0D20: 00000000 E9AE3145 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+;0D24: 00000000 xxxxxxxx ; 349: ;
+;0D28: 00000000 xxxxxxxx ; 34A: ;
+0D2C: 00000000 0DB53145 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
+0D30: 00000000 BDA43145 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
+0D34: 00000000 0D022C45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
+0D38: 00000000 650F2E45 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
+0D3C: 00000000 55122E45 ; 34F: int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);
+0D40: 00000000 55112E45 ; 350: int REQUEST_SETTING_RINGTYPESOUNDFILE_SET(const int *sync, int null, wchar_t *path, wchar_t *name);
+0D44: 00000000 F1162E45 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
+0D48: 00000000 21102E45 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
+0D4C: 00000000 C5142E45 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
+0D50: 00000000 5925EA44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
+0D54: 00000000 4D0AF944 ; 355: void *SoundRecorderDesc_Create(void);
+0D58: 00000000 C50AF944 ; 356: void SoundRecorderDesc_Destroy(void * desc);
+0D5C: 00000000 ED0AF944 ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+0D60: 00000000 190BF944 ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
+0D64: 00000000 2D0BF944 ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+0D68: 00000000 490BF944 ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+0D6C: 00000000 650BF944 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+0D70: 00000000 DD0BF944 ; 35C: int SoundRecorder_Create(void * desc);
+0D74: 00000000 9D52DE44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 
 
 
