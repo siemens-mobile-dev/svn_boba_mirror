@@ -545,6 +545,15 @@
 0D48: FFFFFFFF 59331545 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: FFFFFFFF FD371545 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 0D50: FFFFFFFF 9DB1C144 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
+0D54: FFFFFFFF EDF5F644 ; 355: void *SoundRecorderDesc_Create(void);
+0D58: FFFFFFFF 25F6F644 ; 356: void SoundRecorderDesc_Destroy(void * desc);
+0D5C: FFFFFFFF 3DF6F644 ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+0D60: FFFFFFFF 49F6F644 ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
+0D64: FFFFFFFF 5DF6F644 ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+0D68: FFFFFFFF 7DF6F644 ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+0D6C: FFFFFFFF 99F6F644 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+0D70: FFFFFFFF C5F6F644 ; 35C: int SoundRecorder_Create(void * desc);
+0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 
 
 
