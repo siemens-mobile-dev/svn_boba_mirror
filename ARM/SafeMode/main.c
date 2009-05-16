@@ -7,6 +7,8 @@ extern const int i_questions;
 extern const char s_activation_key[128];
 extern const char s_path[128];
 extern const int b_refresher;
+extern const char daemons_path[128];
+extern const int active_profile;
 
 WSHDR* run_elf;
 int is_safe;
@@ -102,7 +104,14 @@ int main(const char *exename, const char *filename)
   path++;
   l=path-exename;
   memcpy(app_path,exename,l);
-  sprintf(file, "%s%s", app_path, "Daemons\\");
+    if (strlen(daemons_path) == 0) //провер€ем, если путь пуст, то делаем постаринке
+     {
+      sprintf(file, "%s%s", app_path, "Daemons\\");
+     }
+    else //провер€ем, если путь Ќ≈ пуст, то делаем о нашему
+     {
+      sprintf(file, daemons_path);
+     } 
   strcpy(app_exe, exename);  
   InitConfig();
   unsigned int err;
@@ -120,9 +129,9 @@ int main(const char *exename, const char *filename)
   else
   {
 #ifdef NEWSGOLD 
-    if (*RamPressedKey()== *s_activation_key) 
+    if (*RamPressedKey()== *s_activation_key||GetProfile()== active_profile-1) 
 #else 
-    if (*RamKeyBuffer()== *s_activation_key)        
+    if (*RamKeyBuffer()== *s_activation_key||GetProfile()== active_profile-1)        
 #endif
     {
       is_safe = 1; 
@@ -150,7 +159,14 @@ int main(const char *exename, const char *filename)
       }
     }
     //daemons
-    sprintf(app_path, "%s%s", app_path, "Daemons\\");
+    if (strlen(daemons_path) == 0)  //провер€ем, если путь пуст, то делаем постаринке
+     {
+      sprintf(app_path, "%s%s", app_path, "Daemons\\");
+     }
+    else  //провер€ем, если путь Ќ≈ пуст, то делаем о нашему
+     {
+      sprintf(app_path, daemons_path);
+     }
     if ((is_safe == 1) & (i_questions == 1)) 
     {
       MsgBoxYesNo(1, (int)"Load deamons?", runall);
