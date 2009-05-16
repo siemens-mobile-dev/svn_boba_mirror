@@ -144,8 +144,8 @@ void SetCmdToEditMessage(char *command)
   {
   case 1:
     {
-      ascii2ws(ws_me, command);
-      WSHDR * ws = AllocWS(512);
+      ascii2ws(ws_me,command);
+      WSHDR * ws = AllocWS(wstrlen(ec.pWS) + wstrlen(ws_me));
       wstrcpy(ws, ws_me);
       wstrcat(ws, ec.pWS);
       EDIT_SetTextToEditControl(data, 1, ws);
@@ -169,15 +169,26 @@ void SetCmdToEditMessage(char *command)
    
   case 3:
     {
-      WSHDR * ws = AllocWS(512);
+      int msglen = wstrlen(ec.pWS);
       ascii2ws(ws_me,command);
+      WSHDR * ws = AllocWS(msglen + wstrlen(ws_me)+2);
       if (pos==1)
       {
         pos = pos+2;
         wsprintf(ws, "%w: %w",ws_me, ec.pWS);
       }
       else
-        wsprintf(ws, "%w%w",ec.pWS, ws_me);
+      {
+        wstrncpy(ws, ec.pWS, pos-1);
+        wstrcat(ws, ws_me);
+        if((pos+1)!=msglen)
+        {
+          WSHDR * ws2 = AllocWS(msglen-pos+1);
+          wstrcpybypos(ws2, ec.pWS, pos, msglen-pos+1);
+          wstrcat(ws, ws2);
+          FreeWS(ws2);
+        }
+      }
       EDIT_SetTextToEditControl(data, 1, ws);
       EDIT_SetCursorPos(data, pos + strlen(command));
       FreeWS(ws);
@@ -376,3 +387,4 @@ void DispSelectMenu()
   patch_header(&sel_menu_header);
   Select_Menu_ID = CreateMenu(0, 0, &sel_menu_struct, &sel_menu_header, 0, SEL_MENU_ITEMS_NUM, 0, to_remove);
 }
+

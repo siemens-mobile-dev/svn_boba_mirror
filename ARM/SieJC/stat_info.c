@@ -15,7 +15,6 @@ extern unsigned int out_bytes_count;
 extern unsigned int in_virt_bytes_count;
 extern unsigned int in_bytes_count;
 extern int sendq_l;
-extern char Support_Compression;
 char SW_Support_Compression=0;
 
 int stat_info_onkey(GUI *gui, GUI_MSG *msg)
@@ -109,6 +108,7 @@ HEADER_DESC stat_info_hdr={0,0,0,0,NULL,NULL,LGP_NULL};
 
 void Disp_stat_Info(void)
 {
+  extern const int USE_ZLIB;
   extern char Support_Compression;
   // Теперь выполним приготовление самого диалога ввода
   ws_stat_info = AllocWS(MAX_SYMB);
@@ -130,7 +130,7 @@ void Disp_stat_Info(void)
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//3
 
-  if(!Support_Compression)
+  if(!Support_Compression && !USE_ZLIB)
   {
     SW_Support_Compression = 0;
 
