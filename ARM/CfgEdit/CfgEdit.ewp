@@ -3296,7 +3296,13 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\color.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\func.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\keycodes.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>

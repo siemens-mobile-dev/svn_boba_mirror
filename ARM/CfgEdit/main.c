@@ -1,40 +1,14 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
+#include "rect_patcher.h"
 #include <errno.h>
 
 extern long  strtol (const char *nptr,char **endptr,int base);
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 
+void GetKeyCodes(void *key);
 void EditCoordinates(void *rect_or_xy, int is_rect);
-extern void EditColors(char*color);
-#pragma inline
-//===============================================================================================
-#pragma inline
-void patch_rect(RECT*rc,int x,int y, int x2, int y2)
-{
-  rc->x=x;
-  rc->y=y;
-  rc->x2=x2;
-  rc->y2=y2;
-}
-
-#pragma inline
-void patch_header(const HEADER_DESC* head)
-{
-  ((HEADER_DESC*)head)->rc.x=0;
-  ((HEADER_DESC*)head)->rc.y=YDISP;
-  ((HEADER_DESC*)head)->rc.x2=ScreenW()-1;
-  ((HEADER_DESC*)head)->rc.y2=HeaderH()+YDISP-1;
-}
-#pragma inline
-void patch_input(const INPUTDIA_DESC* inp)
-{
-  ((INPUTDIA_DESC*)inp)->rc.x=0;
-  ((INPUTDIA_DESC*)inp)->rc.y=HeaderH()+1+YDISP;
-  ((INPUTDIA_DESC*)inp)->rc.x2=ScreenW()-1;
-  ((INPUTDIA_DESC*)inp)->rc.y2=ScreenH()-SoftkeyH()-1;
-}
-//===============================================================================================
+extern void EditColors(char *color);
 
 #ifdef NEWSGOLD
 #define CBOX_CHECKED 0xE116
@@ -43,8 +17,6 @@ void patch_input(const INPUTDIA_DESC* inp)
 #define CBOX_CHECKED 0xE10B
 #define CBOX_UNCHECKED 0xE10C
 #endif
-
-
 
 unsigned int level=0;
 CFG_HDR *levelstack[16];
@@ -155,8 +127,6 @@ int IsFieldCorrect(void *data, int ec_index)
   return result;
 }
 
-
-
 void on_utf8ec(USR_MENU_ITEM *item)
 {
   if (item->type==0)
@@ -184,7 +154,6 @@ void on_utf8ec(USR_MENU_ITEM *item)
     }
   }   
 }
-
 
 int ed1_onkey(GUI *data, GUI_MSG *msg)
 {
@@ -226,6 +195,9 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
         case CFG_COLOR:
           EditColors((char *)(hp+1));
           break;
+        case CFG_KEYCODE:
+          GetKeyCodes((unsigned int *)(hp+1));
+          break;
 	case CFG_LEVEL:
 	  level++;
 	  levelstack[level]=hp;
@@ -234,10 +206,9 @@ int ed1_onkey(GUI *data, GUI_MSG *msg)
         case CFG_CHECKBOX:
           *((int *)(hp+1))=!*((int *)(hp+1));
           break;
-          
         case CFG_RECT:
           EditCoordinates((unsigned int *)(hp+1),1);
-          break;          
+          break;
           
         default:
           return(0);
@@ -269,18 +240,18 @@ void ed1_ghook(GUI *data, int cmd)
 
   CFG_HDR *hp;
   
-  if (cmd==2)
+  if (cmd==TI_CMD_CREATE)
   {
     //Create
     int need_to_jump=(int)EDIT_GetUserPointer(data);
     EDIT_SetFocus(data,need_to_jump);
   }
-  if (cmd==3)
+  if (cmd==TI_CMD_DESTROY)
   {
     i=EDIT_GetFocus(data);
     IsFieldCorrect(data,i);
   }
-  if (cmd==7)
+  if (cmd==TI_CMD_REDRAW)
   {
     i=EDIT_GetFocus(data);
     ExtractEditControl(data,i,&ec);
@@ -337,6 +308,11 @@ void ed1_ghook(GUI *data, int cmd)
         EDIT_SetTextToFocused(data,ews);  
         need_set_sk=1;
         break;
+      case CFG_KEYCODE:
+        wsprintf(ews,"%02X",*((int *)(hp+1)));
+        EDIT_SetTextToFocused(data,ews);  
+        need_set_sk=1;
+        break;
       case CFG_CHECKBOX:
         CutWSTR(ews,0);
         wsAppendChar(ews, *((int *)(hp+1))?CBOX_CHECKED:CBOX_UNCHECKED);
@@ -374,16 +350,16 @@ void ed1_ghook(GUI *data, int cmd)
       }
     }
   }
-  if (cmd==0x0A)
+  if (cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
-  if (cmd==0x0C)
+  if (cmd==TI_CMD_SUBFOCUS_CHANGE)
   {
     i=EDIT_GetUnFocus(data);
     IsFieldCorrect(data,i);
   }
-  if (cmd==0x0D)
+  if (cmd==TI_CMD_COMBOBOX_FOCUS)
   {
     //onCombo
     i=EDIT_GetFocus(data);
@@ -508,7 +484,7 @@ int selbcfg_menu_onkey(void *gui, GUI_MSG *msg)
 void selbcfg_menu_ghook(void *gui, int cmd)
 {
   SEL_BCFG *sbtop=MenuGetUserPointer(gui);
-  if (cmd==3)
+  if (cmd==TI_CMD_DESTROY)
   {
     while(sbtop)
     {
@@ -517,7 +493,7 @@ void selbcfg_menu_ghook(void *gui, int cmd)
       mfree(sb);
     }    
   }
-  if (cmd==0x0A)
+  if (cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
@@ -745,8 +721,6 @@ const struct
   }
 };
 
-
-
 typedef struct
 {
   unsigned short u;
@@ -956,7 +930,7 @@ int create_ed(CFG_HDR *need_to_focus)
   eq=AllocEQueue(ma,mfree_adr());
 
   //Имя конфигурации
-  ConstructEditControl(&ec,1,0x40,(WSHDR *)(&MAINCSM.maincsm_name),256);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,(WSHDR *)(&MAINCSM.maincsm_name),256);
   AddEditControlToEditQend(eq,&ec,ma); //EditControl 1
   parents[0]=NULL;
 
@@ -973,7 +947,7 @@ int create_ed(CFG_HDR *need_to_focus)
       {
         if ((curlev==level)&&(parent==levelstack[level]))
 	{
-	  ConstructEditControl(&ec,1,0x00,ews,256);
+	  ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,ews,256);
 	  AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+2
 	}
       }
@@ -990,11 +964,11 @@ int create_ed(CFG_HDR *need_to_focus)
       {
         if (hp->type!=CFG_CHECKBOX)
         {
-          ConstructEditControl(&ec,1,0x40,ews,256);
+          ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,256);
         }
         else 
         {
-          ConstructEditControl(&ec,1,0x00,ews,256);
+          ConstructEditControl(&ec,ECT_HEADER,ECF_NORMAL_STR,ews,256);
         }
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+2
       }
@@ -1010,7 +984,7 @@ int create_ed(CFG_HDR *need_to_focus)
       L_ERRCONSTR:
         wsprintf(ews,"Unexpected EOF!!!");
       L_ERRCONSTR1:
-        ConstructEditControl(&ec,1,0x40,ews,256);
+        ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,256);
         AddEditControlToEditQend(eq,&ec,ma);
         goto L_ENDCONSTR;
       }
@@ -1044,7 +1018,7 @@ int create_ed(CFG_HDR *need_to_focus)
       if ((curlev==level)&&(parent==levelstack[level]))
       {
         str_2ws(ews,p,hp->max);
-	ConstructEditControl(&ec,3,0x40,ews,hp->max);
+	ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,hp->max);
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       }
       p+=(hp->max+1+3)&(~3);
@@ -1055,7 +1029,7 @@ int create_ed(CFG_HDR *need_to_focus)
       if ((curlev==level)&&(parent==levelstack[level]))
       {
         wsprintf(ews,_percent_t,p);
-	ConstructEditControl(&ec,3,0x40,ews,hp->max);
+	ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,hp->max);
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       }
       p+=(hp->max+1+3)&(~3);
@@ -1067,24 +1041,22 @@ int create_ed(CFG_HDR *need_to_focus)
       if ((curlev==level)&&(parent==levelstack[level]))
       {
         utf8_2ws(ews,p,hp->max);
-	ConstructEditControl(&ec,3,0x40,ews,hp->max);
+	ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,hp->max);
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       }
       p+=(hp->max+1+3)&(~3);
-      break;      
-
+      break;
     case CFG_UTF8_STRING_PASS:
       n-=(hp->max+1+3)&(~3);
       if (n<0) goto L_ERRCONSTR;
       if ((curlev==level)&&(parent==levelstack[level]))
       {
         utf8_2ws(ews,p,hp->max);
-	ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_PASSW,ews,hp->max);
+	ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_PASSW,ews,hp->max);
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       }
       p+=(hp->max+1+3)&(~3);
       break;      
-
     case CFG_CBOX:
       n-=hp->max*sizeof(CFG_CBOX_ITEM)+4;
       if (n<0) goto L_ERRCONSTR;
@@ -1102,13 +1074,14 @@ int create_ed(CFG_HDR *need_to_focus)
       }
       p+=hp->max*sizeof(CFG_CBOX_ITEM)+4;
       break;
+      
     case CFG_STR_PASS:
       n-=(hp->max+1+3)&(~3);
       if (n<0) goto L_ERRCONSTR;
       if ((curlev==level)&&(parent==levelstack[level]))
       {
         wsprintf(ews,_percent_t,p);
-	ConstructEditControl(&ec,3,ECF_APPEND_EOL|ECF_PASSW,ews,hp->max);
+	ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|ECF_PASSW,ews,hp->max);
 	AddEditControlToEditQend(eq,&ec,ma); //EditControl n*2+3
       }
       p+=(hp->max+1+3)&(~3);
@@ -1119,7 +1092,7 @@ int create_ed(CFG_HDR *need_to_focus)
       if ((curlev==level)&&(parent==levelstack[level]))
       {
         wsprintf(ews,"%d,%d",*((int *)p),*((int *)p+1));
-	ConstructEditControl(&ec,9,ECF_APPEND_EOL,ews,10);
+	ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,ews,10);
 	AddEditControlToEditQend(eq,&ec,ma); 
       }
       p+=8;
@@ -1130,11 +1103,23 @@ int create_ed(CFG_HDR *need_to_focus)
       if ((curlev==level)&&(parent==levelstack[level]))
       {
         wsprintf(ews,"%02X,%02X,%02X,%02X",*((char *)p),*((char *)p+1),*((char *)p+2),*((char *)p+3));
-	ConstructEditControl(&ec,9,ECF_APPEND_EOL,ews,12);
-	AddEditControlToEditQend(eq,&ec,ma);           
+	ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,ews,12);
+	AddEditControlToEditQend(eq,&ec,ma);
       }
       p+=4;
       break;
+    case CFG_KEYCODE:
+      n-=4;
+      if (n<0) goto L_ERRCONSTR;
+      if ((curlev==level)&&(parent==levelstack[level]))
+      {
+        wsprintf(ews,"%02X",*(int *)p);
+	ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,ews,12);
+	AddEditControlToEditQend(eq,&ec,ma);
+      }
+      p+=4;
+      break;
+
     case CFG_LEVEL:
       if (n<0) goto L_ERRCONSTR;
       wsprintf(ews,_percent_t,"Enter");
@@ -1144,7 +1129,7 @@ int create_ed(CFG_HDR *need_to_focus)
 	{
           int n_edit;
 	  EDITC_OPTIONS ec_options;
-	  ConstructEditControl(&ec,8,ECF_APPEND_EOL,ews,256);
+	  ConstructEditControl(&ec,ECT_READ_ONLY_SELECTED,ECF_APPEND_EOL,ews,256);
 	  SetPenColorToEditCOptions(&ec_options,2);
 	  SetFontToEditCOptions(&ec_options,1);
 	  CopyOptionsToEditControl(&ec,&ec_options);
@@ -1167,7 +1152,7 @@ int create_ed(CFG_HDR *need_to_focus)
       wsAppendChar(ews, *((int *)p)?CBOX_CHECKED:CBOX_UNCHECKED);
       if ((curlev==level)&&(parent==levelstack[level]))
       {
-	ConstructEditControl(&ec,9,ECF_APPEND_EOL,ews,1);
+	ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,ews,1);
 	AddEditControlToEditQend(eq,&ec,ma);           
       }
       p+=4;
@@ -1206,7 +1191,7 @@ int create_ed(CFG_HDR *need_to_focus)
         EDITC_OPTIONS ec_options;
         RECT *rc=(RECT *)p;
         wsprintf(ews,"RECT:%03d;%03d;%03d;%03d;",rc->x,rc->y,rc->x2,rc->y2);
-	ConstructEditControl(&ec,9,ECF_APPEND_EOL,ews,ews->wsbody[0]);
+	ConstructEditControl(&ec,ECT_LINK,ECF_APPEND_EOL,ews,ews->wsbody[0]);
         SetFontToEditCOptions(&ec_options,1);
 	CopyOptionsToEditControl(&ec,&ec_options);
 	AddEditControlToEditQend(eq,&ec,ma);  
@@ -1216,7 +1201,7 @@ int create_ed(CFG_HDR *need_to_focus)
       
     default:
       wsprintf(ews,"Unsupported item %d",hp->type);
-      ConstructEditControl(&ec,1,ECF_APPEND_EOL,ews,256);
+      ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,256);
       AddEditControlToEditQend(eq,&ec,ma);
       goto L_ENDCONSTR;
     }

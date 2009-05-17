@@ -21,6 +21,7 @@
 //RECT
 //#define CFG_STR_GB 15
 #define CFG_UTF8_STRING_PASS 16
+#define CFG_KEYCODE 17
 
 typedef struct
 {
