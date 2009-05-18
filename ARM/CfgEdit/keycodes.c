@@ -22,6 +22,7 @@ char transparent[4]={0x00,0x00,0x00,0x00};
     wsprintf(data->ws1,"HEX: %02X",data->keyscancode);
     DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
     wsprintf(data->ws1,"DEC: %u",data->keyscancode);
+    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)*2-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
 
     if(data->needexit)
     {
