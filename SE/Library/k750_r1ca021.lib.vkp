@@ -13,6 +13,7 @@
 045C: FFFFFFFF 89860D45 ; 117: int fclose(int file);
 0460: FFFFFFFF A5890D45 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF 418C0D45 ; 119: int fwrite(int file , const void *ptr, int size);
+046C: FFFFFFFF 9D1BCF44 ; 11B: int fputs(const char *s, int file)
 0470: FFFFFFFF 697D0D45 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF 2D5A0D45 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: FFFFFFFF CD5B0D45 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -149,6 +150,7 @@
 06DC: FFFFFFFF A5D9D344 ; 1B7: int isKeylocked(void);
 06E0: FFFFFFFF 9199F644 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 06E4: FFFFFFFF 49B3F644 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book); // גלוסעמ get_APP_DESC_TABLE
+06E8: FFFFFFFF 15E6D344 ; 1BA: void ShuttingDown(void);
 06EC: FFFFFFFF 714FF844 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: FFFFFFFF C9910B45 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: FFFFFFFF 69920B45 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
@@ -292,7 +294,7 @@
 0934: FFFFFFFF C151F844 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: FFFFFFFF D5BC9A44 ; 24E: int GetChipID(void);
 0948: FFFFFFFF 75A5D544 ; 252: int List2LineGetCurrentIndex(void * msg);
-;094C: xxxxxxxx yyyyyyyy ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
+094C: FFFFFFFF 65A5D544 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF A15D0D45 ; 254: void DestroyDirHandle(DIR_HANDLE *handle);
 0954: FFFFFFFF 20CD2244 ;8255: DB_EXT *LastExtDB(void);
 0958: FFFFFFFF B9910E45 ; 256: void GetOtherExtMethods(FILESUBROUTINE **);
@@ -355,7 +357,7 @@
 0A48: FFFFFFFF 29830D45 ; 292: int rename(const wchar_t* oldpath, const wchar_t* oldfname, const wchar_t* newpath, const wchar_t* newfname, int zero);
 0A4C: FFFFFFFF 656AE844 ; 293: int GetImageWidth(wchar_t ImageID);
 0A50: FFFFFFFF 7D6AE844 ; 294: int GetImageHeight(wchar_t ImageID);
-;0A54: xxxxxxxx yyyyyyyy ; 295: void * CallID_GetCallStatusDesc(int CallID);
+0A54: FFFFFFFF 4987F444 ; 295: void * CallID_GetCallStatusDesc(int CallID);
 0A58: FFFFFFFF D1519E44 ; 296: wchar_t * CallStatusDesc_GetName(void * CallStatusDesc);
 0A5C: FFFFFFFF B1F1E444 ; 297: void List_FreeElements(LIST *,int (*cmp_proc)(void * elem_from_list),void (*freefunc)(void * elem_from_list));
 0A60: FFFFFFFF B987B344 ; 298: char * strstr(const char * str1,const char * str2);
@@ -439,10 +441,10 @@
 0B98: FFFFFFFF 15A0FB44 ; 2E6: int BOOK_GetSessionID(BOOK *);
 0B9C: FFFFFFFF B51AFB44 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 0BA0: FFFFFFFF F52A6C44 ; 2E8: char *GetIMSI(void);
-0BA4: FFFFFFFF FD0E7244 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
+0BA4: FFFFFFFF 3DE6D344 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
 0BA8: FFFFFFFF 2125D344 ; 2EA: int MainInput_getCurPos(GUI*);
 0BAC: FFFFFFFF E924D344 ; 2EB: void MainInput_Hide(GUI*);
-;0BB0: xxxxxxxx yyyyyyyy ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
+0BB0: FFFFFFFF 1DC6D244 ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
 0BB4: FFFFFFFF 19BCF344 ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
 0BB8: FFFFFFFF 25450445 ; 2EE: int SpeedDial_GetPNUM(int _zero,char charter0__9, void * PNUM);
 0BBC: FFFFFFFF 9D490445 ; 2EF: void * MetaData_Desc_Create(wchar_t * path,wchar_t * name);
