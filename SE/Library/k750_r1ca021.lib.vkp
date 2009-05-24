@@ -516,7 +516,7 @@
 0CC4: FFFFFFFF C552CF44 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: FFFFFFFF ED2E8444 ; 332: int GetSignalQuality(char *rssi,char *ber);
 0CCC: FFFFFFFF CD7DF844 ;8333: IS_NEEDED_BOOK isCameraBook(void);
-0CD0: FFFFFFFF 5133CA44 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
+0CD0: FFFFFFFF E94DC744 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
 ;0CD4: xxxxxxxx yyyyyyyy ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
 0CD8: FFFFFFFF 01B7F644 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
 0CDC: FFFFFFFF 0DB0F644 ; 337: void Video_ActionBack(BOOK*,void*);
