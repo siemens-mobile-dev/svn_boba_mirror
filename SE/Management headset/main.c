@@ -4,8 +4,8 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Management v.1.4.4"
-#define ABOUT L"Management\nv.1.4.4\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
+#define ELFNAME "Management v.2"
+#define ABOUT L"Management\nv.2\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
 
 enum mode_t {
     SHORT_PRESS  = 0,
@@ -31,7 +31,7 @@ int OnAccChangedEvent(void* r0,BOOK* b)
   if(!AP && !FM && turn_on==1)
   {
        GoMusic();
-  }    
+  }
     return (1);      
 }
 
@@ -40,11 +40,14 @@ int OffAccChangedEvent(void* r0,BOOK* b)
   AP = FindBook(isAudioPlayerBook());
   FM = FindBook(isFmRadioBook());
   
-  if((AP || FM) && (turn_off==1))
+  if(AP && turn_off==1)
   {
-       UI_Event(RETURN_TO_STANDBY_EVENT);
-       GoMusic();
-  }     
+       UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
+  }
+  if(FM && turn_off==1)
+  {
+       UI_Event(UI_FMRADIO_CONTROL_EVENT);
+  }
     return (1);    
 }
 
@@ -135,6 +138,20 @@ int CheckConfig()
   int player_long_press   = 0;
   int player_double_press = 0;
 
+  int radio_short_on_press  = 0;
+  int radio_long_on_press   = 0;
+  int player_short_on_press  = 0;
+  int player_long_on_press   = 0;
+  
+  switch(radioOn){
+  case SHORT_PRESS:
+    radio_short_on_press++;
+    break;
+  case LONG_PRESS:
+    radio_long_on_press++;
+    break;
+  }
+  
   switch(radioOff){
   case SHORT_PRESS:
     radio_short_press++;
@@ -171,6 +188,15 @@ int CheckConfig()
     break;
   }
 
+  switch(playerOn){
+  case SHORT_PRESS:
+    player_short_on_press++;
+    break;
+  case LONG_PRESS:
+    player_long_on_press++;
+    break;
+  }
+  
   switch(playerOff){
   case SHORT_PRESS:
     player_short_press++;
@@ -219,7 +245,13 @@ int CheckConfig()
     #else
       err="Illegal walkman configuration!";
     #endif
-
+  else if((radio_short_on_press ==  1 && player_short_on_press ==  1) || (radio_long_on_press == 1 && player_long_on_press ==  1))
+    #ifndef ENG
+      err="Неправильно сконфигурирован запуск кнопкой!";
+    #else
+      err="Illegal key run configuration!";
+    #endif
+      
   if(err)
   {
     snwprintf(temp, MAXELEMS(temp), _T("Error!\n%s"),err);
@@ -266,20 +298,21 @@ void MakeAction(int mode)
 {
   if (!AP && !FM)
   {
-    if(mode == mediaOn) GoMusic();
+    if(mode == playerOn)  UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
+    if(mode == radioOn)   UI_Event(UI_FMRADIO_CONTROL_EVENT);
   }
   else if (AP)
   {
     if(mode == playerNext) PlayerControl(AP, 6);
     if(mode == playerPrev) PlayerControl(AP, 7);
-    if(mode == playerOff)  GoMusic();
+    if(mode == playerOff)  UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
     return;
   }
   else if (FM)
   {
     if(mode == radioNext) SwitchRadioStationFromList(FM, 0);
     if(mode == radioPrev) SwitchRadioStationFromList(FM, 1);
-    if(mode == radioOff)  GoMusic();
+    if(mode == radioOff)  UI_Event(UI_FMRADIO_CONTROL_EVENT);
   }
 }
 
@@ -358,6 +391,10 @@ int main (void)
 
 /*
   Revision history.
+    2
+      + Изменения в структуре конфигурационного файла
+      + Добавлена возможность раздельного включения плеера и радио (на разные нажатия)
+
     1.4.4
       + Возможность компилировать английскую версию
       + Устранена утечка памяти.

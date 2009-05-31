@@ -44,15 +44,22 @@ __root const int KeyControl=0;
 __root const int KeyControlPressMode=3;
 
 __root const CFG_HDR cfghdr_turn_0={CFG_LEVEL,HEADSET_MSG,1,0};
+
   __root const CFG_HDR cfghdr_turnon={CFG_CHECKBOX,START_WHEN_CONNECTED_MSG,0,0};
   __root const int turn_on=0;
   __root const CFG_HDR cfghdr_turnoff={CFG_CHECKBOX,STOP_WHEN_DISCONNECTED_MSG,0,0};
   __root const int turn_off=0;
 __root const CFG_HDR cfghdr_turn_x={CFG_LEVEL,"",0,0};
 
-__root const CFG_HDR cfghdr_on={CFG_CBOX,START_MSG,0,3};
-__root const int mediaOn=1;
-__root const CFG_CBOX_ITEM cfgcbox_on[3]={SHORT_PRESS_MSG,LONG_PRESS_MSG,DOUBLE_PRESS_MSG};
+
+__root const CFG_HDR cfghdr_on={CFG_LEVEL,START_MSG,1,2};
+  __root const CFG_HDR cfghdr_playerOn={CFG_CBOX,PLAYER_MSG,0,2};
+  __root const int playerOn=0;
+  __root const CFG_CBOX_ITEM cfgcbox_playerOn[2]={SHORT_PRESS_MSG,LONG_PRESS_MSG};
+  __root const CFG_HDR cfghdr_radioOn={CFG_CBOX,RADIO_MSG,0,2};
+  __root const int radioOn=1;
+  __root const CFG_CBOX_ITEM cfgcbox_radioOn[2]={SHORT_PRESS_MSG,LONG_PRESS_MSG};
+__root const CFG_HDR cfghdr_on_x={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr_radio_0={CFG_LEVEL,RADIO_MSG,1,0};
   __root const CFG_HDR cfghdr_radio_on={CFG_CBOX,TURN_OFF_MSG,0,3};
