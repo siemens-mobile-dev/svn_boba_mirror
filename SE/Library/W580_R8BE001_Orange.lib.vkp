@@ -555,6 +555,9 @@
 0D6C: 00000000 C5E4F844 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 0D70: 00000000 3DE5F844 ; 35C: int SoundRecorder_Create(void * desc);
 0D74: 00000000 5914DE44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+0D78: 00000000 4DC8E444 ; 35E: int OpenURL(BOOK *, char * URL, int mode);
+0D7C: 00000000 B5982645 ; 35F: char * GetURIScheme (int scheme);
+0D80: 00000000 4D9D2645 ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 
 
 
