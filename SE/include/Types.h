@@ -796,4 +796,20 @@ typedef struct
   wchar_t * fullpath;
 }JavaAppFullpath;
 
+enum schemeID {
+  file=0,
+  http=1,
+  https=2,
+  rtsp=3,
+  mailto=4,
+  smsto=5,
+  mmsto=6,
+  sms=7,
+  mms=8,
+  tel=9,
+  vcard=10,
+  vnote=11,
+  vcal=12
+};
+
 #endif
