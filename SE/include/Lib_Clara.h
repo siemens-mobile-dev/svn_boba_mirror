@@ -1543,4 +1543,11 @@ __swi __arm int SoundRecorder_Create(void * desc);
 #pragma swi_number=0x35D
 __swi __arm int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 
+#pragma swi_number=0x35E
+__swi __arm int Browser_OpenURI(BOOK *, char * URI, int mode);
+#pragma swi_number=0x35F
+__swi __arm char * GetURIScheme (int schemeID);
+#pragma swi_number=0x360
+__swi __arm char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
+
 #endif
