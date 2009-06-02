@@ -126,7 +126,7 @@
 ;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
-0680: 00000000 DDBC5544 ; 1A0: char* strcpy(char * dest, char * source);
+0680: 00000000 DDBC5544 ; 1A0: char* strcpy(char * dest, const char * source);
 0684: 00000000 29E4FF44 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 7DE4FF44 ; 1A2: void SendMessage(void **signal,int PID);
 068C: 00000000 05E5FF44 ; 1A3: void * WaitMessage(void *SIGSEL);
@@ -432,8 +432,8 @@
 0B78: 00000000 51103545 ; 2DE: void DispObject_KillRefreshTimer(DISP_OBJ *);
 0B7C: 00000000 399AEC44 ; 2DF: int isDataBrowserBook(BOOK *);
 0B80: 00000000 0550EC44 ; 2E0: SUB_EXECUTE * BrowserItem_Get_SUB_EXECUTE(BOOK * BrowserItemBook);
-0B84: 00000000 B1403845 ; 2E1: int Shortcut_Get_MenuItemName(wchar_t *);
-0B88: 00000000 21D03745 ; 2E2: int Shortcut_Get_MenuItemIconID(wchar_t *);
+0B84: 00000000 B1403845 ; 2E1: int Shortcut_Get_MenuItemName(SHORTCUT *);
+0B88: 00000000 21D03745 ; 2E2: int Shortcut_Get_MenuItemIconID(SHORTCUT *);
 0B8C: 00000000 91522A45 ; 2E3: __thumb BOOK * FindBookEx(int (*cmp_proc)(BOOK* book_from_list ,int * param), int * param);
 0B90: 00000000 756FED44 ; 2E4: __thumb FILEITEM *FILEITEM_CreateCopy (FILEITEM *);
 0B94: 00000000 DD512A45 ; 2E5: ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
@@ -515,11 +515,11 @@
 0CC4: 00000000 E5371C45 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: 00000000 BD811A44 ; 332: int GetSignalQuality(char *rssi,char *ber);
 0CCC: 00000000 B9720145 ;8333: IS_NEEDED_BOOK isCameraBook(void);
-0CD0: 00000000 B5F1F544 ;8334: IS_NEEDED_BOOK isSoundRecoderBook(void);
-0CD4: 00000000 11D72E45 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+0CD0: 00000000 B5F1F544 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
+0CD4: 00000000 11D72E45 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio, int actionID);
 0CD8: 00000000 399CF544 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
 0CDC: 00000000 B592F544 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
-0CE0: 00000000 71ACF544 ; 338: Video_ExtractFrame(BOOK *VideoPlayerBook);
+0CE0: 00000000 71ACF544 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook, void*);
 0CE4: 00000000 6996F544 ; 339: void Video_ZoomOn(BOOK *VideoPlayerBook, void*);
 0CE8: 00000000 F11D3845 ; 33A: void RightNow_SetActive(int flag);
 0CEC: 00000000 BD95F544 ; 33B: void VideoResize_AutomateMode(BOOK *VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight);
@@ -536,8 +536,6 @@
 0D18: 00000000 01A53645 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 A1A63645 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 0D20: 00000000 B5573145 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
-;0D24: xxxxxxxx yyyyyyyy ; 349: ;
-;0D28: xxxxxxxx yyyyyyyy ; 34A: ;
 0D2C: 00000000 45803745 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 51803745 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 8DAB2B45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);

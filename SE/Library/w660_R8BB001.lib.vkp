@@ -535,6 +535,7 @@
 0D14: 00000000 0D050645 ; 345: void Audio_Play(BOOK *);
 0D18: 00000000 31AC4945 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 D1AD4945 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+;0D20: xxxxxxxx yyyyyyyy ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
 0D2C: 00000000 65874A45 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 71874A45 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 59B23E45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -545,6 +546,15 @@
 0D48: 00000000 DDBE4045 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 81C34045 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 0D50: 00000000 0902FC44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
+;0D54: xxxxxxxx yyyyyyyy ; 355: void *SoundRecorderDesc_Create(void);
+;0D58: xxxxxxxx yyyyyyyy ; 356: void SoundRecorderDesc_Destroy(void * desc);
+;0D5C: xxxxxxxx yyyyyyyy ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+;0D60: xxxxxxxx yyyyyyyy ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
+;0D64: xxxxxxxx yyyyyyyy ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+;0D68: xxxxxxxx yyyyyyyy ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+;0D6C: xxxxxxxx yyyyyyyy ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+;0D70: xxxxxxxx yyyyyyyy ; 35C: int SoundRecorder_Create(void * desc);
+;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 
 
 
