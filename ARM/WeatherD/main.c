@@ -3,6 +3,7 @@
 #include "string_works.h"
 #include "WeatherD.h"
 
+#define BUFFSIZE 0x500
 //=============================================================================
 
 WSHDR *ews;
@@ -11,6 +12,7 @@ int connect_state;
 //char buf[65546]; раму пожалейте
 char *buf=0;
 int pbuf;
+static char iconpath[137];
 
 void create_connect(void);
 void do_start_connection(void)
@@ -28,6 +30,7 @@ void create_connect(void)
 {
   SOCK_ADDR sa;
   //Устанавливаем соединение
+  weath.Temp[0]=0;  
   connect_state=0;
   pbuf=0;
 
@@ -88,7 +91,7 @@ void send_req(void)
   send(sock,req_buf,strlen(req_buf),0);
   connect_state=2;
 
-  if (!buf) buf=malloc(0x500);
+  if (!buf) buf=malloc(BUFFSIZE);
 }
 
 void end_socket(void)
@@ -102,21 +105,13 @@ void end_socket(void)
   }
 }
 
-void get_answer(void)
-{
-  if (pbuf>=0x500)
+void get_answer(void){
+  int i=recv(sock,buf+pbuf,BUFFSIZE-pbuf,0);
+  if (i>=0){
+    pbuf+=i;
+    if (pbuf>=BUFFSIZE) end_socket();
+  }else{
     end_socket();
-  else
-  {
-    int i=recv(sock,buf+pbuf,0x500-pbuf,0);
-    if (i>=0)
-    {
-      pbuf+=i;
-    }
-    else
-    {
-      end_socket();
-    }
   }
 }
 
@@ -195,6 +190,11 @@ void Parsing()
   
     //SUBPROC((void *)log_data, buf);
 
+    strcpy(iconpath,ICON_PATH);
+    strcat(iconpath,weath.Pic);    
+
+//    ShowMSG(1,(int)iconpath);
+    
     mfree(buf);
     buf=0;
 }
@@ -283,14 +283,13 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 /* нахуй это уебище... иногда лучше думать чем кодить...
         DrawCanvas(canvasdata, DATA_X, DATA_Y, DATA_X+Get_WS_width(ews, FONT_SIZE)+1, GetFontYSIZE(FONT_SIZE)+DATA_Y, 1); 
 */
-
         DrawString(ews, DATA_X, DATA_Y ,scr_w-4, scr_h-4-GetFontYSIZE(FONT_SIZE),
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
         
         if (SHOW_PIC)
         {
-          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + GetImgWidth((int)MakeGlobalString(ICON_PATH, '\\', weath.Pic)), PICT_Y + GetImgHeight((int)MakeGlobalString(ICON_PATH, '\\', weath.Pic)), 1);
-          DrawImg(PICT_X, PICT_Y, (int)MakeGlobalString(ICON_PATH, '\\', weath.Pic));
+          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + GetImgWidth((int)iconpath), PICT_Y + GetImgHeight((int)iconpath), 1);
+          DrawImg(PICT_X, PICT_Y, (int)iconpath);
         }
       }
    }}    

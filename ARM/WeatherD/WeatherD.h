@@ -21,7 +21,7 @@ extern const int SHOW_PIC;
 
 typedef struct
 {
-  char Pic[24],
+  char Pic[9],
        Temp[24],
        Pressure[24],
        Wind[24],
