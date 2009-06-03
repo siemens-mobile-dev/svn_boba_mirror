@@ -556,6 +556,7 @@
 0D78: 00000000 D9EFF344 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
 0D7C: 00000000 E5543545 ; 35F: char * GetURIScheme(int scheme);
 0D80: 00000000 7D593545 ; 360: char * CreateURI(wchar_t * fpath, wchar_t * fname, char * URIScheme);
+0D84: 00000000 D1C9FE44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
 
 
 

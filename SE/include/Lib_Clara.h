@@ -1550,4 +1550,7 @@ __swi __arm char * GetURIScheme (int schemeID);
 #pragma swi_number=0x360
 __swi __arm char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 
+#pragma swi_number=0x361
+__swi __arm void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
+
 #endif

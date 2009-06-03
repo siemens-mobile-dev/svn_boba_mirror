@@ -556,6 +556,10 @@
 0D6C: FFFFFFFF 99F6F644 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 0D70: FFFFFFFF C5F6F644 ; 35C: int SoundRecorder_Create(void * desc);
 ;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+0D78: FFFFFFFF 49CB0B45 ; 35E: int Browser_OpenURI(BOOK*, char * URI, int mode);
+0D7C: FFFFFFFF 69280245 ; 35F: char* GetURIScheme (int schemeID);
+0D80: FFFFFFFF F12C0245 ; 360: char* CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
+0D84: FFFFFFFF 41D5E144 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
 
 
 
