@@ -147,8 +147,10 @@
 06C8: 00000000 6DE21145 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
 06D0: 00000000 A1533E45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 21683D45 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
+06D8: 00000000 85DF3D45 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: 00000000 29204945 ; 1B7: int isKeylocked(void);
 06E0: 00000000 399F0545 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+06E8: 00000000 C5DD3B45 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 99020E45 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 B164E544 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 4565E544 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
@@ -531,9 +533,11 @@
 0D0C: 00000000 79B70545 ; 343: void Video_Stop(BOOK *VideoPlayerBook, void*);
 0D10: 00000000 05240445 ; 344: void Audio_Pause(BOOK *);
 0D14: 00000000 49210445 ; 345: void Audio_Play(BOOK *);
-;0D18: xxxxxxxx yyyyyyyy ; 346: GUI * CreatePercentInputVA(int zero, ...);
-;0D1C: xxxxxxxx yyyyyyyy ; 347: int PercentInput_GetPercent(GUI * PercentInput);
-;0D20: xxxxxxxx yyyyyyyy ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+0D18: 00000000 512F4745 ; 346: GUI * CreatePercentInputVA(int zero, ...);
+0D1C: 00000000 F1304745 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
+0D20: 00000000 99E64145 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+;0D24: xxxxxxxx yyyyyyyy ; 349:
+;0D28: xxxxxxxx yyyyyyyy ; 34A:
 0D2C: 00000000 7D0A4845 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 890A4845 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 253B3C45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -543,16 +547,16 @@
 0D44: 00000000 B54F3E45 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
 0D48: 00000000 E5483E45 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 894D3E45 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
-;0D50: xxxxxxxx yyyyyyyy ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
-;0D54: xxxxxxxx yyyyyyyy ; 355: void *SoundRecorderDesc_Create(void);
-;0D58: xxxxxxxx yyyyyyyy ; 356: void SoundRecorderDesc_Destroy(void * desc);
-;0D5C: xxxxxxxx yyyyyyyy ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
-;0D60: xxxxxxxx yyyyyyyy ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
-;0D64: xxxxxxxx yyyyyyyy ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
-;0D68: xxxxxxxx yyyyyyyy ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
-;0D6C: xxxxxxxx yyyyyyyy ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
-;0D70: xxxxxxxx yyyyyyyy ; 35C: int SoundRecorder_Create(void * desc);
-;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+0D50: 00000000 2933FA44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
+0D54: 00000000 D10B0645 ; 355: void *SoundRecorderDesc_Create(void);
+0D58: 00000000 490C0645 ; 356: void SoundRecorderDesc_Destroy(void * desc);
+0D5C: 00000000 710C0645 ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+0D60: 00000000 7D0C0645 ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
+0D64: 00000000 910C0645 ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+0D68: 00000000 AD0C0645 ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+0D6C: 00000000 C90C0645 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+0D70: 00000000 010D0645 ; 35C: int SoundRecorder_Create(void * desc);
+0D74: 00000000 FD93EB44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 
 
 

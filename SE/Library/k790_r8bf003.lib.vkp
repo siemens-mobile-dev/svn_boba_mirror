@@ -546,18 +546,19 @@
 0D48: 00000000 310A2A45 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 D50E2A45 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 0D50: 00000000 F909E744 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
-;0D54: xxxxxxxx yyyyyyyy ; 355: void *SoundRecorderDesc_Create(void);
-;0D58: xxxxxxxx yyyyyyyy ; 356: void SoundRecorderDesc_Destroy(void * desc);
-;0D5C: xxxxxxxx yyyyyyyy ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
-;0D60: xxxxxxxx yyyyyyyy ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
-;0D64: xxxxxxxx yyyyyyyy ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
-;0D68: xxxxxxxx yyyyyyyy ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
-;0D6C: xxxxxxxx yyyyyyyy ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
-;0D70: xxxxxxxx yyyyyyyy ; 35C: int SoundRecorder_Create(void * desc);
-;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+0D54: 00000000 29E2F244 ; 355: void *SoundRecorderDesc_Create(void);
+0D58: 00000000 A1E2F244 ; 356: void SoundRecorderDesc_Destroy(void * desc);
+0D5C: 00000000 C9E2F244 ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+0D60: 00000000 D5E2F244 ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
+0D64: 00000000 E9E2F244 ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+0D68: 00000000 05E3F244 ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+0D6C: 00000000 21E3F244 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+0D70: 00000000 59E3F244 ; 35C: int SoundRecorder_Create(void * desc);
+0D74: 00000000 9981D844 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 0D78: 00000000 5523DF44 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
 0D7C: 00000000 DD951F45 ; 35F: char * GetURIScheme(int schemeID);
 0D80: 00000000 759A1F45 ; 360: char * CreateURI(wchar_t * fpath, wchar_t * fname, char * URIScheme);
+0D84: 00000000 85F8E944 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
 
 
 
