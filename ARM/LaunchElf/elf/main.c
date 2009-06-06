@@ -286,7 +286,8 @@ int LoadSettings(){
         FreeShortcutNames();
         int i=0;
         MYLIST2 *b;
-        while ((i<200)&&(i<GetElfCount()))
+        int a = GetElfCount();
+        while ((i<200)&&(i<a))
         {
           MYLIST2 *l = malloc(sizeof(MYLIST2));
           l->next=0;
@@ -318,7 +319,7 @@ int LoadSettings(){
         FreeFRShortcuts();
         int i=0;
         MYLIST3 *b;
-        while ((i<200)&&(i*16<len)&&(strcmp(data+(i-1)*16,fast_run_last_name)!=0))
+        while ((i<200)&&(strcmp(data+(i-1)*16,fast_run_last_name)!=0))
         {
           MYLIST3 *l = malloc(sizeof(MYLIST3));
           l->next=0;
@@ -367,10 +368,14 @@ void SaveAlarmConfig(){
   unsigned int io_error = 0;
   int len=0;
   char* data=0;
-  char* names=malloc(GetElfCount()*160);
+  char* names=malloc(GetElfCount()*160+1);
   free_old_names(*table_point);
+  FSTATS fstat;
+  GetFileStats(shortcuts_filename,&fstat,&io_error);
   if ((hFile=fopen(shortcuts_filename,A_WriteOnly+A_BIN,P_WRITE,&io_error))!=-1){
     len=GetShortcutsCount()*sizeof(shortcut);
+    if (fstat.size>len)
+      len = fstat.size;
     data=malloc(len);
     memset(data,0,len);
     
@@ -381,14 +386,17 @@ void SaveAlarmConfig(){
       len+=sizeof(shortcut);
       l=l->next;
     }
+    if (fstat.size>len)
+      len = fstat.size;
     memcpy(*table_point,data,len);//сохраняем в рам
     fwrite(hFile, data, len, &io_error);
     mfree(data);
     fclose(hFile,&io_error);
   }
+  GetFileStats(shortcut_names_filename,&fstat,&io_error);
   if ((hFile=fopen(shortcut_names_filename,A_WriteOnly+A_BIN+A_Create,P_WRITE,&io_error))!=-1){
     int a = GetElfCount();
-    memset(names,0,a*160);
+    memset(names,0,a*160+1);
     
     int i = 0;
     len=0;
@@ -419,8 +427,11 @@ void SaveAlarmConfig(){
     fwrite(hFile, names, len, &io_error);
     fclose(hFile,&io_error);
   }
+  GetFileStats(fast_run_filename,&fstat,&io_error);
   if ((hFile=fopen(fast_run_filename,A_WriteOnly+A_BIN,P_WRITE,&io_error))!=-1){
     len=GetFRShortcutsCount()*16;
+    if (fstat.size>len)
+      len = fstat.size;
     data=malloc(len);
     memset(data,0,len);
     
@@ -431,6 +442,8 @@ void SaveAlarmConfig(){
       len+=16;
       l=l->next;
     }
+    if (fstat.size>len)
+      len = fstat.size;
     memcpy(*(table_point+1),data,len);//сохраняем в рам
     fwrite(hFile, data, len, &io_error);
     mfree(data);

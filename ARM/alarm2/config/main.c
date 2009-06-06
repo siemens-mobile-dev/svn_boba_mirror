@@ -537,7 +537,7 @@ int create_ed()
   
   //использование
   wsprintf(ews,percent_t,use_cbox[l->ring.use]);
-  ConstructComboBox(&ec,ECT_COMBO_BOX,ECF_APPEND_EOL,ews,32,0,4,l->ring.use+1);
+  ConstructComboBox(&ec,ECT_COMBO_BOX,ECF_APPEND_EOL,ews,32,0,5,l->ring.use+1);
   AddEditControlToEditQend(eq,&ec,ma);//5
 
   //путь к файлу

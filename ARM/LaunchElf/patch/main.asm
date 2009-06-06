@@ -315,7 +315,12 @@ run_elf:
         EXTERN return_addr
         EXTERN load_fast_run_addr
         
-        
+        RSEG	PATCH_MAX_COUNT1:CODE(1)
+        MOV     R6,#0xFF
+        RSEG	PATCH_MAX_COUNT2:CODE(1)
+        MOV     R4,#0xFF
+        RSEG	PATCH_MAX_COUNT3:CODE(1)
+        MOV     R5,#0xFF
         
         RSEG	CODE:DATA:ROOT(2)
         PUBLIC	shortcuts_filename

@@ -406,6 +406,14 @@ void init(){
       return;
     }
 #endif
+  case 4:
+    {
+      WSHDR* ews=AllocWS(128);
+      str_2ws(ews,ring->melody,strlen(ring->melody));
+      ExecuteFile(ews,0,0);
+      FreeWS(ews);
+      return;
+    }
   }
   
   Play(MyMelody);

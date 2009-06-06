@@ -1185,7 +1185,7 @@ typedef struct
 {
   char name[16];//им€ шортката
   void* pointer;//адрес функции
-  int unk_zero;
+  void* get_status;//адрес функции, определ€ющей статус активировано/деактивировано дл€ некоторых шорткатов
   int unk_1;
   int lgp_full_name;//полное им€
   int unk_2;
@@ -1496,12 +1496,9 @@ __swi __arm unsigned char GetCPULoad();
 //thumb
 //pattern=??,B5,??,??,??,68,??,28,??,D1,??,??,??,??,??,20,??,60,??,20,??,BD,??,??,??,??,??,BD
 
-#pragma swi_number=95
-__swi __arm unsigned int GetMMIMemUsed();
-
 ///јналог GetNonPermMemAvail дл€ SGOLD
 #pragma swi_number=95
-__swi __arm unsigned int GetFreeRamAvail();
+__swi __arm int GetFreeRamAvail();
 //arm
 //pattern=04,E0,2D,E5,??,??,??,E5,??,??,??,EB,??,??,??,E5,??,20,91,E5,??,10,91,E5,01,10,42,E0,01,00,80,E0,20,00,40,E2,04,F0,9D,E4
 

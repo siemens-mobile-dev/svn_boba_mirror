@@ -2,7 +2,7 @@
 #define LGP_H
 
 const char *weekdays[7]={"Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"};
-const char *use_cbox[4]={"файл","стандартная мелодия","AlarmClockRing","шорткат"};
+const char *use_cbox[5]={"файл","стандартная мелодия","AlarmClockRing","шорткат", "эльф/файл"};
 const char *msg_on_off[2]={"выкл","вкл"};
 const char *msg_yes_no[2]={"нет","да"};
 
