@@ -549,7 +549,7 @@ int mm_menu_onkey(void *data, GUI_MSG *msg)
         i=((CSM_RAM *)(nl->p))->id;
         if (i!=CSM_root()->idle_id) CloseCSM(i);
       }
-      return 0;
+      return -1;
     case '#':
       if (number_reald+number_nsd>0)
       {
