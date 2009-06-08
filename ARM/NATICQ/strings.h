@@ -4,4 +4,4 @@ void ascii2ws(WSHDR *ws, const char *s);
 char *MakeGlobalString(const char *first, int breakchar, const char *last);
 int strcmp_nocase(const char *s, const char *d);
 void del_ext(char * source);
-char * get_fname_from_path(char * path);
+char *get_fname_from_path(char* path, char* stemp);

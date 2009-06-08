@@ -216,11 +216,3 @@ void del_ext(char * source)
   *source=0;
 };
 
-char * get_fname_from_path(char*  path)
-{
-  char * stemp = malloc(strlen(path)*2);
-  strcpy(stemp, path);
-  return strrchr(stemp,'\\')+1;
-//  mfree(stemp);
-}
-

@@ -3090,12 +3090,13 @@ void UpdateCSMname()
   {
     char *s_profile_name = malloc(strlen(successed_config_filename) * 2);
     strcpy(s_profile_name, successed_config_filename);
-    s_profile_name = get_fname_from_path(s_profile_name);
-    del_ext(s_profile_name);
+    char *p = strrchr(s_profile_name, '\\') + 1;
+    del_ext(p);
     WSHDR *profile_name=AllocWS(256);
-    str_2ws(profile_name,s_profile_name,128);
+    str_2ws(profile_name,p,128);
     wsprintf(task_name, "%w%w", task_name, profile_name);
     FreeWS(profile_name);
+    mfree(s_profile_name);
   }
   // Теперь пишем его в имя CSM
   wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"%w",task_name);
