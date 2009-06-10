@@ -3975,10 +3975,22 @@
     </configuration>
   </file>
   <file>
+    <name>$PROJ_DIR$\cpu.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\net.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\ram.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\render.c</name>
   </file>
 </project>
 
