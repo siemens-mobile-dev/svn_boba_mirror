@@ -45,8 +45,8 @@ int LoadConfigData(const char *fname)
 
 void InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\CpuMon.bcfg")<0)
+  if (LoadConfigData("4:\\ZBin\\etc\\CPUMon.bcfg")<0)
   {
-    LoadConfigData("0:\\ZBin\\etc\\CpuMon.bcfg");
+    LoadConfigData("0:\\ZBin\\etc\\CPUMon.bcfg");
   }
 }

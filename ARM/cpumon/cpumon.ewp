@@ -3978,6 +3978,9 @@
     <name>$PROJ_DIR$\cpu.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\disk.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>

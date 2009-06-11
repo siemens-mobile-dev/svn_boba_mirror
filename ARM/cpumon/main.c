@@ -22,10 +22,12 @@ extern int const cfgRamType;
 extern TSensor ram_sensor;
 extern int const cfgNetType;
 extern TSensor net_sensor;
+extern int const cfgDiskType;
+extern TSensor disk_sensor;
 
 unsigned int uiWidth, uiHeight, uiUpdateTime, hhh;
 
-TSensor Sensors[3];
+TSensor Sensors[4];
 int nSensors;
 
 static IMGHDR img1;
@@ -63,7 +65,7 @@ void ElfKiller(void)
 static void RereadSettings()
 {
   unsigned int oldWidth=uiWidth,oldHeight=uiHeight;
-  int oldcpu=cfgLoadType,oldram=cfgRamType, oldnet=cfgNetType;
+  int oldcpu=cfgLoadType,oldram=cfgRamType,oldnet=cfgNetType;
 
   InitConfig();
   
@@ -97,6 +99,11 @@ static void RereadSettings()
     net_sensor.init(oldWidth!=uiWidth);
     Sensors[nSensors++]=net_sensor;
   }else if (oldnet) net_sensor.deinit();
+
+  if (cfgDiskType){
+    disk_sensor.init(0);
+    Sensors[nSensors++]=disk_sensor;
+  };
 }
 
 static void FreeMem()
