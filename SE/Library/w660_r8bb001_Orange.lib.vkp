@@ -536,6 +536,8 @@
 0D18: 00000000 1D644D45 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 BD654D45 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 0D20: 00000000 B9154845 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+0D24: 00000000 F18E4445 ; 349: int PHF_GetState(void);
+0D28: 00000000 F98E4445 ; 34A: int CHF_GetState(void);
 0D2C: 00000000 793F4E45 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 853F4E45 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 196C4245 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
