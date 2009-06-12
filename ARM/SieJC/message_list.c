@@ -167,7 +167,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
              char* bodymsg=malloc(MAX_MSG_LEN);
              strcpy(bodymsg,(char*)(body+strlen(message_str)+1+strlen(message_to)));
              mess->body = bodymsg;
-             mess->IsAttention = is_attention;
+             mess->IsAttention = 0;
              mfree(body);
              CLIST* messagenick=CList_FindContactByJID(message_to);
              mfree(message_to);
@@ -220,6 +220,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
         mess->IsAttention = 1;
       } else
       {
+        mess->IsAttention = 0;
         mess->body = body;
       }
       SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);

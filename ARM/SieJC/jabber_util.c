@@ -570,7 +570,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 
   if (request)  body->next = request;
 
-  if (USE_ATTENTION && mess->IsAttention)
+  if (USE_ATTENTION && mess->IsAttention && !mess->IsGroupChat)
   {
     attention=XML_CreateNode(attention_t, NULL);
     XML_Set_Attr_Value(attention, xmlns_t, JABBER_URN_ATTENTION);
