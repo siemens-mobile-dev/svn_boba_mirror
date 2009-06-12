@@ -134,7 +134,8 @@ void MUC_Admin_Command(char* room_name, char* room_jid, MUC_ADMIN cmd, char* rea
 typedef struct
 {
   char IsGroupChat;
-  char* body;  
+  char IsAttention;
+  char* body;
 }IPC_MESSAGE_S;
 
 typedef struct

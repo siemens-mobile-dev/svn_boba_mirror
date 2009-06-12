@@ -12,5 +12,7 @@ talkers
 wz 
 wtf 
 dfn =
+/attention 
+/message 
 /topic 
 /part

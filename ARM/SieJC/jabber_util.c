@@ -532,6 +532,7 @@ void Send_Roster_Query()
 void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 {
 /*
+  <attention xmlns='urn:xmpp:attention:0'/>
   <message to='romeo@montague.net' id='message22'>
       <body>Art thou not Romeo, and a Montague?</body>
       <request xmlns='urn:xmpp:receipts'/>
@@ -539,11 +540,12 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 */
   extern const char percent_d[];
   char* mnum_str = malloc(256);
-  XMLNode *body=NULL, *request=NULL, *active=NULL;
+  XMLNode *body=NULL, *request=NULL, *active=NULL, *attention=NULL;
   char body_t[]="body";
   char request_t[]="request";
   char xmlns_t[]="xmlns";
   char active_t[]="active";
+  char attention_t[]="attention";
   char *type ;
   body = XML_CreateNode(body_t, mess->body);
   if(mess->IsGroupChat)
@@ -560,7 +562,7 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
     active=XML_CreateNode(active_t, NULL);
     XML_Set_Attr_Value(active, xmlns_t, XMLNS_CHATSTATES);
   }
-  if(request) 
+  if(request)
   {
     request->next = active;
   }
@@ -568,8 +570,15 @@ void SendMessage(char* jid, IPC_MESSAGE_S *mess)
 
   if (request)  body->next = request;
 
+  if (USE_ATTENTION && mess->IsAttention)
+  {
+    attention=XML_CreateNode(attention_t, NULL);
+    XML_Set_Attr_Value(attention, xmlns_t, JABBER_URN_ATTENTION);
+    attention->next = body;
+  } else attention = body;
+
   sprintf(mnum_str, percent_d, m_num);
-  Send_Message(jid, type, mnum_str, body);
+  Send_Message(jid, type, mnum_str, attention);
   mfree(mnum_str);
   mfree(mess->body);
   mfree(mess);

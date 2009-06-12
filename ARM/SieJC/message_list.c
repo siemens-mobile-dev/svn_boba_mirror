@@ -134,6 +134,7 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
       wstrcpy(ws, ec.pWS);
       if (Is_Smiles_Enabled && SmilesImgList)
         SmilesToCharsUNI(ws);
+      char is_attention = 0;
       int res_len;
       char * body = malloc(MAX_MSG_LEN);
       ws_2utf8(ws, body, &res_len, MAX_MSG_LEN);
@@ -144,9 +145,48 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
       char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
       char part_str[]="/part";
       char topic_str[]="/topic ";
+      char attention_str[]="/attention ";
+      char message_str[]="/message ";
+        if(strstr(body, message_str)==body)  // Ключ в начале
+        {
+          if(strlen(body)>(strlen(message_str)+5))
+          {
+            char *message = (char*)(body+strlen(message_str));
+            char *message_body = (char*)(strstr(message, " ")+1);
+            if((strlen(message)+7)>strlen(message_body))
+            {
+            char *message_to = malloc(256);
+            zeromem(message_to, 255);
+            strncpy(message_to, message, strlen(message)-strlen(message_body)-1);
+            if(message_to && message_body)
+             if(strlen(message_to)>3 && strlen(message_body)>0)
+             {
+             CList_AddMessage(message_to, MSG_ME, message_body);
+             IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
+             mess->IsGroupChat = is_gchat;
+             char* bodymsg=malloc(MAX_MSG_LEN);
+             strcpy(bodymsg,(char*)(body+strlen(message_str)+1+strlen(message_to)));
+             mess->body = bodymsg;
+             mess->IsAttention = is_attention;
+             mfree(body);
+             CLIST* messagenick=CList_FindContactByJID(message_to);
+             mfree(message_to);
+             if(messagenick) SUBPROC((void*)SendMessage,messagenick->JID, mess);
+             Mess_was_sent = 1;
+             FreeWS(ws);
+             return 1;
+             }
+            mfree(message_to);
+            }
+          }
+        }
       if(!is_gchat)
       {
-        CList_AddMessage(Resource_Ex->full_name, MSG_ME, body);
+        if(strstr(body, attention_str)==body)  // Ключ в начале
+        {
+          is_attention = 1;
+        }
+        CList_AddMessage(Resource_Ex->full_name, MSG_ME,is_attention ? (char*)(body+strlen(attention_str)):body);
       }
       else
       {
@@ -168,12 +208,20 @@ int inp_onkey(GUI *gui, GUI_MSG *msg)
           FreeWS(ws);
           return 1;
         }
-
       }
       IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
       mess->IsGroupChat = is_gchat;
-      mess->body = body;
-//      mfree(body);
+      if(is_attention)
+      {
+        char * bodymsg = malloc(MAX_MSG_LEN);
+        strcpy(bodymsg, (char*)(body+strlen(attention_str)));
+        mess->body = bodymsg;
+        mfree(body);
+        mess->IsAttention = 1;
+      } else
+      {
+        mess->body = body;
+      }
       SUBPROC((void*)SendMessage,Resource_Ex->full_name, mess);
       Mess_was_sent = 1;
       SUBPROC((void *)Play, sndMsgSend);
@@ -238,7 +286,8 @@ void inp_ghook(GUI *gui, int cmd)
   {
     //Send composing CANCELATION
     if(!Mess_was_sent)
-      if((Resource_Ex->entry_type == T_NORMAL)||(Resource_Ex->entry_type == T_CONF_NODE))
+      if(((Resource_Ex->entry_type == T_NORMAL)||(Resource_Ex->entry_type == T_CONF_NODE))
+         && (Resource_Ex->status < PRESENCE_OFFLINE))
     {
       char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
       IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
@@ -290,7 +339,8 @@ void Init_Message(TRESOURCE* ContEx, char *init_text)
   Resource_Ex = ContEx;
 
   //Send composing
-  if((ContEx->entry_type == T_NORMAL)||(ContEx->entry_type == T_CONF_NODE))
+  if(((ContEx->entry_type == T_NORMAL)||(ContEx->entry_type == T_CONF_NODE))
+     &&(ContEx->status < PRESENCE_OFFLINE))
   {
     char is_gchat = Resource_Ex->entry_type== T_CONF_ROOT ? 1: 0;
     IPC_MESSAGE_S *mess = malloc(sizeof(IPC_MESSAGE_S));
