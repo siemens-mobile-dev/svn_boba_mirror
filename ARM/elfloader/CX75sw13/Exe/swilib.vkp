@@ -632,7 +632,7 @@
 
 0940: 0xA0309A48   ; 250: __arm int Obs_GetDuration(void *playobj_3D0, int *pos_ms)
 ;944:              ; 251: __unknown char *RamDataSendFName()
-;948:              ; 252: __unknown char *RamDataReceiveFName()
+;948: 0xA84487B0   ; 252: __unknown char *RamDataReceiveFName()
 ;94C:              ; 253: __unknown char *RamLastCallNum()
 0950: 0xA0353760   ; 254: __arm int StartNativeExplorer(NativeExplorerData* data)
 0954: 0xA07C7D39   ; 255: __thumb void MenuSetUserPointer(void *gui,void *user_pointer)
@@ -758,9 +758,16 @@
 0B60: 0xA080532F   ; 2D8: __thumb void TViewSetText(void *gui, WSHDR *text, void *malloc_adr, void *mfree_adr)
 0B64: 0xA08053CD   ; 2D9: __thumb void TViewSetUserPointer(void *gui,void *user_pointer)
 0B68: 0xA08053D1   ; 2DA: __thumb void *TViewGetUserPointer(void *gui)
-
-
 #pragma disable old_equal_ff
 +0
+
+;cut heap
+#pragma enable old_equal_ff
+0FC0830: 00B51060012292020868801A0860981A
+0FC0840: 111C58DF00BD
+#pragma disable old_equal_ff
+
+0977EF4: 000082E51EFF2FE1000000A8 04F01FE5,0xA0FC0831,0xA8000400
+
 
 ;locale=Russian_Russia.1251
