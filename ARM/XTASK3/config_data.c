@@ -20,14 +20,14 @@ __root const int ACTIVE_KEY_STYLE=0;
 __root const CFG_CBOX_ITEM cfgcbox23[4]={"Short press","Long press","* + #","Enter Button"};
 
 #ifndef NEWSGOLD
-__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
+__root const CFG_HDR cfghdr24={CFG_KEYCODE,"Activation key",0,99};
 __root const int ACTIVE_KEY=99;
 #else
 #ifdef ELKA
-__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
+__root const CFG_HDR cfghdr24={CFG_KEYCODE,"Activation key",0,99};
 __root const int ACTIVE_KEY=0x15;
 #else
-__root const CFG_HDR cfghdr24={CFG_UINT,"Activation key",0,99};
+__root const CFG_HDR cfghdr24={CFG_KEYCODE,"Activation key",0,99};
 __root const int ACTIVE_KEY=0x11;
 #endif
 #endif

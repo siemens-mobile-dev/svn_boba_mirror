@@ -15,7 +15,7 @@ __root const CFG_HDR cfghdr1={CFG_CBOX,"Только при забл. клав.",0,2};
 __root const int keypad_lock=0;
 __root const CFG_CBOX_ITEM cfgcbox2[2]={"Нет","Да"};
 
-__root const CFG_HDR cfghdr2={CFG_UINT,"Вызов по клавише",0,65535};
+__root const CFG_HDR cfghdr2={CFG_KEYCODE,"Вызов по клавише",0,65535};
 __root const unsigned int CALL_BUTTON=53;
 
 //---------------------------------------------------------------------------------------
