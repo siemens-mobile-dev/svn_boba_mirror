@@ -536,6 +536,8 @@
 0D18: 00000000 01A53645 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 A1A63645 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 0D20: 00000000 B5573145 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+0D24: 00000000 81D12D45 ; 349: int PHF_GetState(void);
+0D28: 00000000 89D12D45 ; 34A: int CHF_GetState(void);
 0D2C: 00000000 45803745 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 51803745 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 8DAB2B45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -555,7 +557,13 @@
 0D6C: 00000000 89E9F544 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 0D70: 00000000 01EAF544 ; 35C: int SoundRecorder_Create(void * desc);
 0D74: 00000000 8D4FDB44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
-
+0D78: 00000000 41EDE144 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
+0D7C: 00000000 01CD2245 ; 35F: char* GetURIScheme(int schemeID);
+0D80: 00000000 99D12245 ; 360: char* CreateURI(wchar_t * fpath, wchar_t * fname, char * URIScheme);
+0D84: 00000000 C5CDEC44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
+0D88: 00000000 BD0CD544 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
+0D8C: 00000000 19F8D444 ; 363: int Alarm_GetState(char *state, int AlarmID);
+0D90: 00000000 5D06D544 ; 364: int Alarm_GetTIME(TIME *AlarmTime, wchar_t *AlarmID);
 
 
 
