@@ -4,6 +4,7 @@
 	RSEG	PATCH_ENTER3:DATA:ROOT(2)
         DCD     MyDraw        
         
+#ifndef ELKA
 	RSEG	PATCH_ENTER1:DATA:ROOT(2)
         DCD     enter1
         DCD     enter2
@@ -28,5 +29,6 @@ write_param:
         SWI     0x80E4//freeram
         STR     R1,[R0,#0x80]
         POP     {R0,R1,PC}
+#endif
         
 	END

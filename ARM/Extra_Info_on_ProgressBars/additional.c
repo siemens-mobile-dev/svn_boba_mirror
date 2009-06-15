@@ -2,10 +2,12 @@
 #include "..\inc\cfg_items.h"
 
 extern void(*OldDraw)(void *);
-extern void(*OldEnter1)(void *, int param);
 extern char* LoadConfigData(const char *fn);
 void PrintProgress(void **data);
 
+#ifndef ELKA
+#define DEFAULT_DISK "0"
+extern void(*OldEnter1)(void *, int param);
 void enter1(void* data, int param)
 {
   OldEnter1(data,param);
@@ -14,6 +16,9 @@ void enter1(void* data, int param)
     ((int*)FreeRAM())[0x20]=0;
   }
 }
+#else
+#define DEFAULT_DISK "4"
+#endif
 
 void MyDraw(void *data)
 {
@@ -35,22 +40,28 @@ void PrintProgress(void **data)
     return;
   int** param=(int**)FreeRAM()+0x20;
   if (!param[1]){
-    param[1] = (int*)LoadConfigData("0:\\ZBin\\etc\\Extra_Info.bcfg");
+    param[1] = (int*)LoadConfigData(DEFAULT_DISK":\\ZBin\\etc\\Extra_Info.bcfg");
     if (!param[1])
       return;
   }
   char* cfg = (char*)param[1];
-  int type = (int)param[0];
   int cfg_begin = (int)&cfghdr0;
   if (!cfg[(int)&enable-cfg_begin])
     return;
   cfg -= cfg_begin;
   
   RECT* coord = *data;
+#ifndef ELKA
   int current = ((int*)data)[0x30/4];
   int all = ((int*)data)[0x2C/4];
-  char* format_str=0;
+#else
+  int current = ((int*)data)[0x34/4];
+  int all = ((int*)data)[0x30/4];
+#endif
   
+#ifndef ELKA
+  int type = (int)param[0];
+  char* format_str=0;
   switch (type){
   case 0x52:
     format_str=cfg+(int)&str_f;
@@ -66,9 +77,14 @@ void PrintProgress(void **data)
   default:
     format_str="%d/%d";
   }
+#endif
   
   WSHDR* ws = AllocWS(32);
+#ifndef ELKA
   wsprintf(ws,format_str,current,all);//сюда можно засунуть еще какие-нибудь навороты типа имени передаваемого файла
+#else
+  wsprintf(ws,"%d/%d",current,all);
+#endif
   int offset = GetFontYSIZE(FONT_SMALL)+2;
   DrawString(ws,
              coord->x,coord->y-offset,coord->x2,coord->y,
