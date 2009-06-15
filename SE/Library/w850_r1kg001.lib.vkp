@@ -561,7 +561,7 @@
 0D84: 00000000 D1C9FE44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
 0D88: 00000000 2DFEE644 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 0D8C: 00000000 89E9E644 ; 363: int Alarm_GetState(char *state, int AlarmID);
-0D90: 00000000 CDF7E644 ; 364: int Alarm_GetTIME(TIME *AlarmTime, wchar_t *AlarmID);
+0D90: 00000000 CDF7E644 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
 
 
 
