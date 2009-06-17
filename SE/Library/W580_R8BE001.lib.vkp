@@ -558,8 +558,8 @@
 0D70: 00000000 9576F544 ; 35C: int SoundRecorder_Create(void * desc);
 0D74: 00000000 65C4DA44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 0D84: 00000000 8D54EC44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
-0D88: 00000000 9D7BD444 ; 362: : int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
-;0D8C: 00000000 XXXXXXXX; 363: int Alarm_GetState(char *state, int AlarmID);
+0D88: 00000000 9D7BD444 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
+0D8C: 00000000 F166D444 ; 363: int Alarm_GetState(char *state, int AlarmID);
 0D90: 00000000 3D75D444 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
 
 
