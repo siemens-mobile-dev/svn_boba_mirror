@@ -564,7 +564,8 @@
 0D88: 00000000 793ED244 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 0D8C: 00000000 CD29D244 ; 363: int Alarm_GetState(char *state, int AlarmID);
 0D90: 00000000 1938D244 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-
+0D94: 00000000 1545D244 ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+0D98: 00000000 D9822945 ; 366: int IrDa_GetState(char *state);
 
 
 
