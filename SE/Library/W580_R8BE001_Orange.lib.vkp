@@ -536,6 +536,8 @@
 0D18: 00000000 35F93A45 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 D5FA3A45 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 0D20: 00000000 7DAA3545 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+0D24: 00000000 95233245 ; 349: int PHF_GetState(void);
+0D28: 00000000 9D233245 ; 34A: int CHF_GetState(void);
 0D2C: 00000000 81D43B45 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 8DD43B45 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 95F42F45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -558,6 +560,12 @@
 0D78: 00000000 4DC8E444 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
 0D7C: 00000000 B5982645 ; 35F: char * GetURIScheme(int scheme);
 0D80: 00000000 4D9D2645 ; 360: char * CreateURI(wchar_t * fpath, wchar_t * fname, char * URIScheme);
+0D84: 00000000 89A4EF44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
+0D88: 00000000 61C6D744 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
+0D8C: 00000000 B5B1D744 ; 363: int Alarm_GetState(char *state, int AlarmID);
+0D90: 00000000 01C0D744 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
+0D94: 00000000 FDCCD744 ; 365: int Alarm_GetWeekSettings(WEEK*, int AlarmID);
+0D98: 00000000 ED823145 ; 366: int IrDa_GetState(char *state);
 
 
 
