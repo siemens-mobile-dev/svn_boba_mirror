@@ -130,7 +130,7 @@ void FillFileInfo(FILEINF *file)
   }
   if (file->ftype == TYPE_ZIP_FILE && file->ws_ratio==LGP_NULL)
   {
-    if (file->size != 0 && file->csize != 0)
+    if (file->size && file->csize)
     {
       char cbuf[32];
       float ratio = (float)file->csize * (float)100 / (float)file->size;
@@ -590,7 +590,7 @@ void S_7ZOpen(void)
   if (arcpathbuf[0])
   {
     int zerr = OpenTab7Z(curtab, arcpathbuf);
-    if (zerr == UNZ_OK)
+    if (zerr == SZ_OK)
     {
       cd(curtab, (wchar_t *)str_empty);
       SetCurTabIndex(0, 0);
@@ -666,7 +666,7 @@ void _Open(int isSysOpen)
         SUBPROC((void*)S_ZipOpen);
         return;
       }
-      if (!isSysOpen && !IsInArchive() && IsIt7ZipFile(pathbuf))
+      if (!isSysOpen && CONFIG_7Z_ENABLE && !IsInArchive() && IsIt7ZipFile(pathbuf))
       {
         wstrcpy(arcpathbuf, pathbuf);
         WriteLog("открываем 7z");

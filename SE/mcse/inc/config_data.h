@@ -23,6 +23,9 @@ extern const wchar_t CONFIG_MCCONFIG_PATH[64];
 
 extern const int CONFIG_ZIP_ENABLE;
 extern const int CONFIG_ZIP_DETECT_BY;
+extern const int CONFIG_7Z_ENABLE;
+extern const int CONFIG_7Z_DETECT_BY;
+extern const wchar_t CONFIG_TEMP_PATH[64];
 extern const int CONFIG_DELETE_TEMP_FILES_ON_EXIT;
 
 extern const int CONFIG_CONFIRM_EXIT;

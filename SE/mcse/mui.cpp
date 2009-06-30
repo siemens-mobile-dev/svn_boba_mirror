@@ -324,12 +324,12 @@ void MUIProc(char *name, char *value, int is_utf)
   }
   else
   {
-    len=utf8_to_utf16(value,len,NULL);
-    if (len!=-1)
+    int ulen=utf8_to_utf16(value,len,NULL);
+    if (ulen!=-1)
     {
-      buf= new wchar_t[len+1];
-      len=utf8_to_utf16(value,len,buf);
-      if (len!=-1) buf[len]=0;
+      buf= new wchar_t[ulen+1];
+      ulen=utf8_to_utf16(value,len,buf);
+      if (ulen!=-1) buf[ulen]=0; else buf[0]=0;
     }
   }
   for(int cc=0;buf[cc];cc++)

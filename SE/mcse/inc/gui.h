@@ -36,8 +36,8 @@
 #define ITM_H   (ITM_B+itm_ch+ITM_B) // Item height
 #define ITM_W   MAIN_B
 #define ICO_X	(ITM_X1+ITM_B)
-#define ICO_DY  ((ITM_H-ico_hw) / 2)
-#define TXT_X	(ICO_X+ico_hw)
+#define ICO_DY  ((ITM_H-ico_h) / 2)
+#define TXT_X	(ICO_X+ico_h)
 
 #define ATTR_B  ITM_B
 #define ATTR_S  ITM_S
@@ -67,7 +67,8 @@
 
 extern int scr_h;
 extern int scr_w;
-extern int ico_hw;
+extern int ico_h;
+extern int ico_w;
 extern int itms_max;
 
 extern int NormalFont;

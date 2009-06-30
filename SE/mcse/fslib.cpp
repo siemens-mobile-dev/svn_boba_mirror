@@ -182,9 +182,9 @@ void CorFileName(wchar_t* wsname)
 }
 
 typedef struct {
-  int is_first;
   wchar_t *name;
-  W_FSTAT fs;  
+  W_FSTAT fs;
+  int is_first;
 } W_FIND;
 
 
@@ -196,13 +196,12 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
   unsigned int ccFiles   = 0;
   unsigned int ccSubDirs = 0;
   LIST *lst=List_New();
-  W_FIND *t=new W_FIND;
-  if (t)
+  W_FIND local, *t;
+  if (lst)
   {
-    t->is_first=1;
-    t->name=new wchar_t[wstrlen(dname)+1];
-    wstrcpy(t->name,dname);
-    ListElement_AddtoTop(lst, t);
+    local.is_first=1;
+    local.name=dname;
+    ListElement_AddtoTop(lst, &local);
     for (int i=0; i<lst->FirstFree; i++)
     {
       W_FIND *cur=(W_FIND *)ListElement_GetByIndex(lst,i);
@@ -221,10 +220,7 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
             w_fstat(next,&fs);
             if (fs.attr & FA_DIRECTORY)
             {
-              if (enumDirs)
-              {
-                f=1;
-              }
+              if (enumDirs) f=1;
             }
             else f=1;
             if (f)
@@ -246,9 +242,9 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
     while(lst->FirstFree)
     {
       t=(W_FIND *)ListElement_Remove(lst,lst->FirstFree-1);
-      if (!ex)
+      if (!t->is_first)  // первую не обрабатываем
       {
-        if (!t->is_first)  // первую не обрабатываем
+        if (!ex)
         {
           if (!(t->fs.attr & FA_DIRECTORY) || enumDirs)
           {
@@ -263,9 +259,9 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
             }
           }
         }
+        delete (t->name);
+        delete (t);
       }
-      delete (t->name);
-      delete (t);
     }
   }
   List_Free(lst);

@@ -9,7 +9,7 @@ void Close7Z(ARCHINFO* arc);
 
 int IsIt7ZipFile(wchar_t* fname)
 {
-  if (1) // by content
+  if (CONFIG_7Z_DETECT_BY) // by content
   {
     unsigned char buf[k7zSignatureSize];
     int f =w_fopen(fname, WA_Read, 0x1FF, NULL);

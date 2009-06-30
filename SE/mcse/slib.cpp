@@ -304,13 +304,10 @@ int EnumIni(int local, const wchar_t *ininame, INIPROC proc)
 
 wchar_t *attr2s(int attr, wchar_t *buf)
 {
-  for (int i=0x100; i!=0;)
-  {
-    *buf++ = attr & i ? 'r' : '-'; i>>=1;
-    *buf++ = attr & i ? 'w' : '-'; i>>=1;
-    *buf++ = attr & i ? 'x' : '-'; i>>=1;
-  }
-  *buf++ = attr & FA_DIRECTORY ? 'd' : '-';
+  *buf++=attr & 0x124?L'r':L'-';
+  *buf++=attr & 0x92?L'w':L'-';
+  *buf++=attr & 0x49?L'x':L'-';
+  *buf++=attr & FA_DIRECTORY?L'd':L'-';
   *buf = 0;
   return buf;
 }

@@ -94,6 +94,7 @@ void MsgBoxYesNo(wchar_t *qv, void(*f)(int))
 
 void FreeData()
 {
+  WriteLog("FreeData");
   if (CONFIG_LOAD_CS) SaveCS(NULL);
   if (CONFIG_LOAD_MUI) SaveMUI(NULL);
   SaveCfg();
@@ -106,7 +107,6 @@ void FreeData()
     FreeTab(ii);
   }
   DestroyPathBuf();
-  WriteLog("FreeData");
 }
 
 wchar_t *SA_ICONS[]=

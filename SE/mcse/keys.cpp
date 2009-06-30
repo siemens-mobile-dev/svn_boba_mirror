@@ -198,7 +198,7 @@ void InitializeKeyMap()
   // Инициируем массив, 0xFF - значит нет такой клавиши
   memset(keyMap, 0xFF, sizeof(keyMap));
   // Сохраняем индексы
-  for (int i = 0; i < 13; i++)
+  for (int i = 0; i < (KEYS_COUNT-10); i++)
   {
     k=*keynames[i].key;
     if (k<0xFF)
@@ -208,7 +208,7 @@ void InitializeKeyMap()
   {
     k=KEY_DIGITAL_0+i;
     if (k<0xFF)
-      keyMap[k] = i+13;
+      keyMap[k] = i+(KEYS_COUNT-10);
   }  
 }
 

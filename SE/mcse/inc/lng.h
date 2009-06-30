@@ -33,6 +33,10 @@
 
 #define psz_zip_enable		"Enable zip support"
 #define psz_zip_detect_by	"Detect zip by"
+
+#define psz_7z_enable		"Enable 7z support"
+#define psz_7z_detect_by	"Detect 7z by"
+
 #define psz_temppath		"Path for temp files"
 #define psz_cleartemp		"Delete temp files on exit"
 
@@ -61,7 +65,8 @@
 #define psz_sm_gui		"GUI"
 #define psz_sm_autoexit	"AutoExit"
 #define psz_sm_zip		"Zip"
-
+#define psz_sm_7z		"7z"
+#define psz_sm_archive	"Archives"
 
 #define sz_no			L"Нет"
 #define sz_yes			L"Да"

@@ -10,7 +10,8 @@ int scr_h;
 int txt_h;
 int head_h;
 int attr_h;
-int ico_hw=0;
+int ico_h=0;
+int ico_w=0;
 int itm_ch;
 int itms_max;
 int itms_bs;
@@ -30,8 +31,9 @@ void InitScr()
   SetFont(CONFIG_FONT_ATTR);
   attr_h=GetImageHeight(L'A');
   
-  ico_hw=GetImageHeight(STD_ICONS[ICN_FOLDER]);
-  tmp = ico_hw - ITM_B * 2;
+  ico_h=GetImageHeight(STD_ICONS[ICN_FOLDER]);
+  ico_w=GetImageWidth(STD_ICONS[ICN_FOLDER]);
+  tmp = ico_h - ITM_B * 2;
   itm_ch = tmp > txt_h ? tmp : txt_h;
   SetFont(old_font);
   int i=ITM_FH+ATTR_FH;
@@ -42,7 +44,7 @@ void InitScr()
     itms_max++;
   }
   //itms_max = ((FLS_H - ITM_S * 2) / ITM_FH)-1;
-  itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-(((itms_max ) * ITM_FH) + ATTR_FH)) / 2 );
+  itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-(itms_max * ITM_FH + ATTR_FH)) / 2 );
   //itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-((itms_max + 1) * ITM_FH) ) / 2 );
 }
 
@@ -233,7 +235,7 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
   }
   
   wchar_t icon=file->attr & FA_CHECK?STD_ICONS[ICN_CHMARK]:file->icon;
-  putchar(gc,ICO_X, y+ICO_DY, 0,0,icon);
+  putchar(gc,ICO_X, y+ICO_DY, ico_w,ico_h,icon);
   
   
   int tc;
@@ -241,6 +243,13 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
   //  tc=ind==_CurIndex-_CurBase?clSelFileHidden:clFileHidden;
   //else
   SetFont(CONFIG_FONT_FILES);
+  RECT tmp_rc, txt_rc;
+  get_GC_RECT(gc, &tmp_rc);
+  txt_rc.x1=TXT_X;
+  txt_rc.x2=ITM_X2-ITM_B-2;
+  txt_rc.y1=tmp_rc.y1;
+  txt_rc.y2=tmp_rc.y2;
+  GC_validate_RECT(gc, &txt_rc);
   if (ind==_CurIndex-_CurBase)
   {
     tc=clSelFileNormal;
@@ -268,6 +277,7 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
     DrawString(fn,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
                Colors[tc],0);
   }
+  GC_validate_RECT(gc, &tmp_rc);
 }
 
 void ShowFiles(void *gc, RECT *rc)
