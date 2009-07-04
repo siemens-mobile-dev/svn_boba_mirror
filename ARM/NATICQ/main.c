@@ -1790,8 +1790,8 @@ L_INC:
   t->unreaded++;
   // Повышаем общий счетчик непрочитанных сообщений
   messages_unread++;
-  UpdateCSMname();
   t->isunread=1;
+  UpdateCSMname();
 L_NOINC:
   ChangeContactPos(t);
 }
@@ -1930,17 +1930,19 @@ void AddMsgToChat(void *data)
   {
     // Понижаем счетчик контактов с непрочитанными
     total_unread--;
+    // Понижаем счетчик непрочитанных
+    messages_unread =     messages_unread - ed_struct->ed_contact->unreaded;
+    // Обнуляем счетчик непрочитанных по данному контакту
+    ed_struct->ed_contact->unreaded = 0;
+    ed_struct->ed_contact->isunread=0;
   }
   else
   {
+    // Пришло сообщение при свернутом чате
     ed_struct->requested_decrement_total_unread++;
+    ed_struct->ed_contact->isunread=1;
   }
-  // Понижаем счетчик непрочитанных
-  messages_unread =     messages_unread - ed_struct->ed_contact->unreaded;
-  // Обнуляем счетчик непрочитанных по данному контакту
-  ed_struct->ed_contact->unreaded = 0;
   UpdateCSMname();
-  ed_struct->ed_contact->isunread=0;
   ChangeContactPos(ed_struct->ed_contact);
   //  EDIT_SetFocus(data,ed_struct->ed_answer);
 }
@@ -2758,7 +2760,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       {
 	void *canvasdata=BuildCanvas();
 	int icn;
-	if (total_unread)
+	if (messages_unread > 0)
 	  icn=IS_MSG;
 	else
 	{
@@ -2988,7 +2990,7 @@ static void addIconBar(short* num)
   if(ICON_ON > 1)
   {
     int icn;
-    if (total_unread)
+    if (messages_unread >0)
     icn=IS_MSG;
     else
     {
@@ -3059,7 +3061,7 @@ void UpdateCSMname()
   extern const int b__task_unread_count;
   extern const int task_show;
   // Формируем заголовок
-  WSHDR *task_name=AllocWS(256);
+  WSHDR *task_name=AllocWS(512);
   // Иконка при непрочитанных
   if(b__task_unread_icon)
   {
@@ -3080,10 +3082,15 @@ void UpdateCSMname()
       wsprintf(task_name, "%w[%d] ", task_name, messages_unread);
     }
   }
+  // NatICQ
+  if ((!messages_unread) | (!b__task_unread_icon))
+  {
+    wsprintf(task_name, "%wNatICQ:", task_name);
+  }
   // UIN
   if(task_show == 0)
   {
-    wsprintf(task_name, "%w%d", task_name, UIN);
+    wsprintf(task_name, "%w %d", task_name, UIN);
   }
   // Profile name
   else
@@ -3094,7 +3101,7 @@ void UpdateCSMname()
     del_ext(p);
     WSHDR *profile_name=AllocWS(256);
     str_2ws(profile_name,p,128);
-    wsprintf(task_name, "%w%w", task_name, profile_name);
+    wsprintf(task_name, "%w %w", task_name, profile_name);
     FreeWS(profile_name);
     mfree(s_profile_name);
   }
@@ -3761,8 +3768,14 @@ void edchat_ghook(GUI *data, int cmd)
   {
     pltop->dyn_pltop=SmilesImgList;
     DisableIDLETMR();
-    total_unread-=ed_struct->requested_decrement_total_unread;
+    total_unread = total_unread - ed_struct->requested_decrement_total_unread;
+    // Понижаем счетчик непрочитанных
+    messages_unread =     messages_unread - ed_struct->ed_contact->unreaded;
+    // Обнуляем счетчик непрочитанных по данному контакту
+    ed_struct->ed_contact->unreaded = 0;
+    ed_struct->ed_contact->isunread=0;
     ed_struct->requested_decrement_total_unread=0;
+    UpdateCSMname();
 /*    if (request_close_edchat)
     {
       request_close_edchat=0;
@@ -3926,12 +3939,12 @@ void CreateEditChat(CLIST *t)
   }
   if (t->isunread) 
   {
-    total_unread--;
+    total_unread = total_unread - t->unreaded;
   }
   messages_unread = messages_unread - t->unreaded;
   t->unreaded = 0;
-  UpdateCSMname();
   t->isunread=0;
+  UpdateCSMname();
   ChangeContactPos(t);
   wsprintf(ews, "-------");
   PrepareEditControl(&ec);
@@ -3962,6 +3975,7 @@ void CreateEditChat(CLIST *t)
   ed_struct->ed_contact=t;
   ed_struct->ed_answer=edchat_toitem;
   ed_struct->requested_decrement_total_unread=0;
+  
   t->req_add=0;
   t->last_log=NULL;
 
