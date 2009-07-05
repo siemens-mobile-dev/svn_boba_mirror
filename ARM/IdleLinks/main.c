@@ -350,13 +350,19 @@ int MyIDLECSM_onMessage(CSM_RAM* data, GBS_MSG* msg)
   int pic;
   do
   {
-    pic = CalcPic(LabelData[i].Pic); 
+    pic = CalcPic(LabelData[i].Pic);
+    ////////////////////////////////////////////////////////////////////////////
+    void *canvasdata = BuildCanvas();
+    DrawCanvas(canvasdata,LabelData[i].x-1,
+                          LabelData[i].y-1, 
+                          LabelData[i].x+GetImgWidth(pic)+1, 
+                          LabelData[i].y+GetImgHeight(pic)+1, 1); 
+    ////////////////////////////////////////////////////////////////////////////
     DrawImg(LabelData[i].x,LabelData[i].y,pic);    
     i++;
   }
   while (i<=count);  
-  }
-  
+  }  
   return (csm_result);
 }  
 
