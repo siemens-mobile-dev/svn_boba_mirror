@@ -156,7 +156,7 @@
 06F0: FFFFFFFF BD555945 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: FFFFFFFF 5D565945 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: FFFFFFFF E10B1545 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
-06FC: FFFFFFFF F90A1545 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
+06FC: FFFFFFFF F90A1545 ; 1BF: int Time2ID(TIME *, char TimeFormat,int isSec);
 0700: FFFFFFFF 75061745 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: FFFFFFFF 9D081745 ; 1C1: void SetNumOfMenuItem(void * , int item_count);
 0708: FFFFFFFF 94C72D4C ;81C2: LIST ** ROOT_APP(void);
@@ -538,8 +538,8 @@
 0D18: FFFFFFFF 01551945 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: FFFFFFFF 7D561945 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 0D20: FFFFFFFF 65141745 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
-;0D24: xxxxxxxx yyyyyyyy ; 349:
-;0D28: xxxxxxxx yyyyyyyy ; 34A:
+0D24: FFFFFFFF 7D6C5345 ; 349: int PHF_GetState(void);
+0D28: FFFFFFFF 896C5345 ; 34A: int CHF_GetState(void);
 ;0D2C: xxxxxxxx yyyyyyyy ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 ;0D30: xxxxxxxx yyyyyyyy ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: FFFFFFFF 59E72A45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -563,6 +563,12 @@
 0D7C: FFFFFFFF F9925245 ; 35F: char* GetURIScheme (int schemeID);
 0D80: FFFFFFFF 41975245 ; 360: char* CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 0D84: FFFFFFFF 45A52445 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
+;0D88: xxxxxxxx yyyyyyyy ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
+;0D8C: xxxxxxxx yyyyyyyy ; 363: int Alarm_GetState(char *state, int AlarmID);
+;0D90: xxxxxxxx yyyyyyyy ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
+;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(WEEK*, int AlarmID);
+0D98: FFFFFFFF 3D5C5345 ; 366: int IrDa_GetState(char *state);
+0D9C: FFFFFFFF F9CE6445 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 
 
 

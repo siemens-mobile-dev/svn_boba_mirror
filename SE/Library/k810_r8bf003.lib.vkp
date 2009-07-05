@@ -153,7 +153,7 @@
 06F0: 00000000 9DFBE544 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 31FCE544 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 ED6B3B45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
-06FC: 00000000 156B3B45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
+06FC: 00000000 156B3B45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int isSec);
 0700: 00000000 7D9D4245 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: 00000000 AD9F4245 ; 1C1: void SetNumOfMenuItem(void * , int item_count);
 0708: 00000000 ECAA1620 ;81C2: LIST ** ROOT_APP(void);
@@ -562,7 +562,7 @@
 0D90: 00000000 C9D6E544 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
 0D94: 00000000 C5E3E544 ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
 0D98: 00000000 F1853E45 ; 366: int IrDa_GetState(char *state);
-0D9C: 00000000 2D4D3E45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
+0D9C: 00000000 C1113F45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 
 
 

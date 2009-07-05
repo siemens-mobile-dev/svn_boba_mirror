@@ -156,7 +156,7 @@
 06F0: FFFFFFFF 05740C45 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: FFFFFFFF A5740C45 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: FFFFFFFF 6133D344 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
-06FC: FFFFFFFF 7932D344 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
+06FC: FFFFFFFF 7932D344 ; 1BF: int Time2ID(TIME *, char TimeFormat,int isSec);
 0700: FFFFFFFF 4541D644 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: FFFFFFFF 0143D644 ; 1C1: void SetNumOfMenuItem(void * , int item_count);
 0708: FFFFFFFF F427184C ;81C2: LIST ** ROOT_APP(void);
@@ -508,7 +508,7 @@
 0CA0: FFFFFFFF C5200D45 ; 328: int Bluetooth_GetState(void);
 0CA4: FFFFFFFF A1200D45 ; 329: int Bluetooth_GetPhoneVisibility(void);
 0CA8: FFFFFFFF 49210D45 ; 32A: int Bluetooth_isBusy(void);
-0CAC: FFFFFFFF 61540745 ; 32B: int USB_isConnected(void);
+;0CAC: xxxxxxxx yyyyyyyy ; 32B: int USB_isConnected(void);
 0CB0: FFFFFFFF 554B1145 ; 32C: void *w_diropen(const wchar_t *dir);
 0CB4: FFFFFFFF ADC2CF44 ; 32D: wchar_t *w_dirread(void *);
 0CB8: FFFFFFFF DD4D1145 ; 32E: int w_dirclose(void *);

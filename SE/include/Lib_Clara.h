@@ -560,7 +560,7 @@ __swi __arm int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 __swi __arm int Date2ID(DATE *, int TimeFormat,int);
 
 #pragma swi_number=0x1BF
-__swi __arm int Time2ID(TIME *, char TimeFormat,int);
+__swi __arm int Time2ID(TIME *, char TimeFormat,int isSec);
 
 #pragma swi_number=0x1C0
 __swi __arm  GUI_LIST * CreateListObject(BOOK * , void * unk);

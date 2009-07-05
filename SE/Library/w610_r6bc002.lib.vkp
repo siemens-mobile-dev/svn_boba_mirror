@@ -155,7 +155,7 @@
 06F0: 00000000 312BD544 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 C52BD544 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 B9192A45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
-06FC: 00000000 E1182A45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int);
+06FC: 00000000 E1182A45 ; 1BF: int Time2ID(TIME *, char TimeFormat,int isSec);
 0700: 00000000 9D493145 ; 1C0: GUI_LIST * CreateListObject(BOOK * , void * unk);
 0704: 00000000 CD4B3145 ; 1C1: void SetNumOfMenuItem(void * , int item_count);
 0708: 00000000 8C3F1820 ;81C2: LIST ** ROOT_APP(void); //Application session list
