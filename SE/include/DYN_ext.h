@@ -497,5 +497,8 @@ extern const int UI_OBEX_FTP_SEND_FILE_EVENT ;
 extern const int UI_OBEX_REFRESH_TRANSFER_PROGRESS_EVENT ;
 extern const int UI_OBEX_CONNECTING_STATE_EVENT ;
 extern const int UI_OBEX_TRANSFER_FAILED_EVENT ;
+extern const int UI_MESSAGING_SMS_RECEIVED_EVENT ;
+extern const int UI_MESSAGING_SMS_SENT_EVENT ;
+extern const int UI_MESSAGING_SMS_SENDING_EVENT ;
 
 #endif
