@@ -561,7 +561,9 @@
 0D88: 00000000 9D7BD444 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 0D8C: 00000000 F166D444 ; 363: int Alarm_GetState(char *state, int AlarmID);
 0D90: 00000000 3D75D444 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-
+0D94: 00000000 3982D444 ; 365: int Alarm_GetWeekSettings(WEEK*, int AlarmID);
+0D98: 00000000 C1C72D45 ; 366: int IrDa_GetState(char *state);
+0D9C: 00000000 955B2E45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 
 
 
