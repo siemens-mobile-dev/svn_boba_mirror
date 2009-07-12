@@ -557,6 +557,9 @@
 0D6C: 00000000 1D76F544 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 0D70: 00000000 9576F544 ; 35C: int SoundRecorder_Create(void * desc);
 0D74: 00000000 65C4DA44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+0D78: 00000000 2D77E144 ; 35E: int OpenURL(BOOK *, char * URL, int mode);
+0D7C: 00000000 D52E2345 ; 35F: char* GetURIScheme (int schemeID);
+0D80: 00000000 6D332345 ; 360: char* CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 0D84: 00000000 8D54EC44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
 0D88: 00000000 9D7BD444 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 0D8C: 00000000 F166D444 ; 363: int Alarm_GetState(char *state, int AlarmID);
