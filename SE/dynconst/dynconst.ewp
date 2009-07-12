@@ -22754,7 +22754,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>$PROJ_DIR$\mkinctmp.exe W610_R6CA001_Orange</prebuild>
+        <prebuild>$PROJ_DIR$\mkinctmp.exe W660_R8BB001_ORANGE</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
