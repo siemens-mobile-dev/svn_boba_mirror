@@ -13,6 +13,7 @@
 045C: FFFFFFFF 89860D45 ; 117: int fclose(int file);
 0460: FFFFFFFF A5890D45 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF 418C0D45 ; 119: int fwrite(int file , const void *ptr, int size);
+;0468: xxxxxxxx yyyyyyyy ; 11A:
 046C: FFFFFFFF 9D1BCF44 ; 11B: int fputs(const char *s, int file)
 0470: FFFFFFFF 697D0D45 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF 2D5A0D45 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
@@ -125,6 +126,27 @@
 ;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
+;062C: xxxxxxxx yyyyyyyy ; 18B:
+;0630: xxxxxxxx yyyyyyyy ; 18C:
+;0634: xxxxxxxx yyyyyyyy ; 18D:
+;0638: xxxxxxxx yyyyyyyy ; 18E:
+;063C: xxxxxxxx yyyyyyyy ; 18F:
+;0640: xxxxxxxx yyyyyyyy ; 190:
+;0644: xxxxxxxx yyyyyyyy ; 191:
+;0648: xxxxxxxx yyyyyyyy ; 192:
+;064C: xxxxxxxx yyyyyyyy ; 193:
+;0650: xxxxxxxx yyyyyyyy ; 194:
+;0654: xxxxxxxx yyyyyyyy ; 195:
+;0658: xxxxxxxx yyyyyyyy ; 196:
+;065C: xxxxxxxx yyyyyyyy ; 197:
+;0660: xxxxxxxx yyyyyyyy ; 198:
+;0664: xxxxxxxx yyyyyyyy ; 199:
+;0668: xxxxxxxx yyyyyyyy ; 19A:
+;066C: xxxxxxxx yyyyyyyy ; 19B:
+;0670: xxxxxxxx yyyyyyyy ; 19C:
+;0674: xxxxxxxx yyyyyyyy ; 19D:
+;0678: xxxxxxxx yyyyyyyy ; 19E:
+;067C: xxxxxxxx yyyyyyyy ; 19F:
 0680: FFFFFFFF 7186B344 ; 1A0: char* strcpy(char * dest, const char * source);
 0684: FFFFFFFF 9D75C944 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: FFFFFFFF F175C944 ; 1A2: void SendMessage(void **signal,int PID);
@@ -144,6 +166,7 @@
 06C0: FFFFFFFF B9EEE444 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 957DAE44 ; 1B1: void debug_printf(const char * fmt,...);
 06C8: FFFFFFFF 6536D344 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
+;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: FFFFFFFF E13E1545 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: FFFFFFFF 3D3F1545 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
 06D8: FFFFFFFF 512FC444 ; 1B6: void SetBrightnessOfScreen(int br);
@@ -183,6 +206,10 @@
 0760: FFFFFFFF 45B2D544 ; 1D8: int NOfMany_GetCheckedCount(GUI_NOFMANY *);
 0764: FFFFFFFF 31B2D544 ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 0768: FFFFFFFF B1B2D544 ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
+;076C: xxxxxxxx yyyyyyyy ; 1DB:
+;0770: xxxxxxxx yyyyyyyy ; 1DC:
+;0774: xxxxxxxx yyyyyyyy ; 1DD:
+;0778: xxxxxxxx yyyyyyyy ; 1DE:
 077C: FFFFFFFF 91190244 ; 1DF: PAudioControl AudioControl_Init(); //nullsub(ret 0)
 0780: FFFFFFFF 8DB4D544 ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 0784: FFFFFFFF EDB4D544 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
@@ -243,6 +270,8 @@
 0860: FFFFFFFF D9470A45 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy);
 0864: FFFFFFFF B1B80B45 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: FFFFFFFF 707D0C4C ;821A: int * PID_MMI(void);
+;086C: xxxxxxxx yyyyyyyy ; 21B:
+;0870: xxxxxxxx yyyyyyyy ; 21C:
 0874: FFFFFFFF 5917E844 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: FFFFFFFF A51BE844 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: FFFFFFFF 79130645 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
@@ -293,6 +322,9 @@
 0930: FFFFFFFF B912F844 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: FFFFFFFF C151F844 ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: FFFFFFFF D5BC9A44 ; 24E: int GetChipID(void);
+;093C: xxxxxxxx yyyyyyyy ; 24F:
+;0940: xxxxxxxx yyyyyyyy ; 250:
+;0944: xxxxxxxx yyyyyyyy ; 251:
 0948: FFFFFFFF 75A5D544 ; 252: int List2LineGetCurrentIndex(void * msg);
 094C: FFFFFFFF 65A5D544 ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: FFFFFFFF A15D0D45 ; 254: void DestroyDirHandle(DIR_HANDLE *handle);
@@ -302,6 +334,8 @@
 0960: FFFFFFFF 1D5A0545 ; 258: int Display_GetHeight(int Display);
 0964: FFFFFFFF 2D5A0545 ; 259: int Display_GetWidth(int Display);
 0968: FFFFFFFF F135D344 ; 25A: void PlaySystemSound (int SndNumber);
+;096C: xxxxxxxx yyyyyyyy ; 25B:
+;0970: xxxxxxxx yyyyyyyy ; 25C:
 0974: FFFFFFFF F115D344 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
 0978: FFFFFFFF C515D344 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 097C: FFFFFFFF 698ED344 ; 25F: int GC_GetPenColor (void* GC);
@@ -346,6 +380,7 @@
 0A18: FFFFFFFF BD88EF44 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: FFFFFFFF A9BBDB44 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: FFFFFFFF 49F29B44 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str); //nullsub(void)
+;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: FFFFFFFF B9EB1145 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
 0A2C: FFFFFFFF 1955F544 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: FFFFFFFF CDA3F544 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
@@ -558,16 +593,10 @@
 0D6C: FFFFFFFF 99F6F644 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 0D70: FFFFFFFF C5F6F644 ; 35C: int SoundRecorder_Create(void * desc);
 ;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
-0D78: FFFFFFFF 49CB0B45 ; 35E: int Browser_OpenURI(BOOK*, char * URI, int mode);
-0D7C: FFFFFFFF 69280245 ; 35F: char* GetURIScheme (int schemeID);
-0D80: FFFFFFFF F12C0245 ; 360: char* CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
+0D78: FFFFFFFF 49CB0B45 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
+0D7C: FFFFFFFF 69280245 ; 35F: char * GetURIScheme (int schemeID);
+0D80: FFFFFFFF F12C0245 ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 0D84: FFFFFFFF 41D5E144 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
-;0D88: xxxxxxxx yyyyyyyy ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
-;0D8C: xxxxxxxx yyyyyyyy ; 363: int Alarm_GetState(char *state, int AlarmID);
-;0D90: xxxxxxxx yyyyyyyy ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(WEEK*, int AlarmID);
-0D98: FFFFFFFF 29AF0545 ; 366: int IrDa_GetState(char *state);
-0D9C: FFFFFFFF 9D371545 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 
 
 

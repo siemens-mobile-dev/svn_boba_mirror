@@ -126,6 +126,27 @@
 ;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
+;062C: xxxxxxxx yyyyyyyy ; 18B:
+;0630: xxxxxxxx yyyyyyyy ; 18C:
+;0634: xxxxxxxx yyyyyyyy ; 18D:
+;0638: xxxxxxxx yyyyyyyy ; 18E:
+;063C: xxxxxxxx yyyyyyyy ; 18F:
+;0640: xxxxxxxx yyyyyyyy ; 190:
+;0644: xxxxxxxx yyyyyyyy ; 191:
+;0648: xxxxxxxx yyyyyyyy ; 192:
+;064C: xxxxxxxx yyyyyyyy ; 193:
+;0650: xxxxxxxx yyyyyyyy ; 194:
+;0654: xxxxxxxx yyyyyyyy ; 195:
+;0658: xxxxxxxx yyyyyyyy ; 196:
+;065C: xxxxxxxx yyyyyyyy ; 197:
+;0660: xxxxxxxx yyyyyyyy ; 198:
+;0664: xxxxxxxx yyyyyyyy ; 199:
+;0668: xxxxxxxx yyyyyyyy ; 19A:
+;066C: xxxxxxxx yyyyyyyy ; 19B:
+;0670: xxxxxxxx yyyyyyyy ; 19C:
+;0674: xxxxxxxx yyyyyyyy ; 19D:
+;0678: xxxxxxxx yyyyyyyy ; 19E:
+;067C: xxxxxxxx yyyyyyyy ; 19F:
 0680: 00000000 D1796744 ; 1A0: char* strcpy(char * dest, const char * source);
 0684: 00000000 95F81145 ; 1A1: void *CreateMessage(int size,int ev,char *name);
 0688: 00000000 E9F81145 ; 1A2: void SendMessage(void **signal,int PID);
@@ -145,10 +166,15 @@
 06C0: 00000000 79072D45 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: 00000000 71922C44 ; 1B1: void debug_printf(const char * fmt,...);
 ;06C8: xxxxxxxx yyyyyyyy ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
+;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 ;06D0: xxxxxxxx yyyyyyyy ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 ;06D4: xxxxxxxx yyyyyyyy ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
+;06D8: xxxxxxxx yyyyyyyy ; 1B6:
 06DC: 00000000 5DB94A45 ; 1B7: int isKeylocked(void);
 ;06E0: xxxxxxxx yyyyyyyy ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
+;06E4: xxxxxxxx yyyyyyyy ; 1B9:
+;06E8: xxxxxxxx yyyyyyyy ; 1BA:
+;06EC: xxxxxxxx yyyyyyyy ; 1BB:
 ;06F0: xxxxxxxx yyyyyyyy ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 ;06F4: xxxxxxxx yyyyyyyy ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
 06F8: 00000000 D1343C45 ; 1BE: int Date2ID(DATE *, int TimeFormat,int);
@@ -172,6 +198,7 @@
 ;0740: xxxxxxxx yyyyyyyy ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 ;0744: xxxxxxxx yyyyyyyy ;81D1: PAudioControl* GetAudioControlPtr();
 0748: 00000000 317BD744 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
+;074C: xxxxxxxx yyyyyyyy ; 1D3:
 ;0750: xxxxxxxx yyyyyyyy ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 ;0754: xxxxxxxx yyyyyyyy ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 ;0758: xxxxxxxx yyyyyyyy ; 1D6: void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
@@ -179,6 +206,10 @@
 ;0760: xxxxxxxx yyyyyyyy ; 1D8: int NOfMany_GetCheckedCount(GUI_NOFMANY *);
 ;0764: xxxxxxxx yyyyyyyy ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
 ;0768: xxxxxxxx yyyyyyyy ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
+;076C: xxxxxxxx yyyyyyyy ; 1DB:
+;0770: xxxxxxxx yyyyyyyy ; 1DC:
+;0774: xxxxxxxx yyyyyyyy ; 1DD:
+;0778: xxxxxxxx yyyyyyyy ; 1DE:
 077C: 00000000 6DC11345 ; 1DF: PAudioControl AudioControl_Init();
 ;0780: xxxxxxxx yyyyyyyy ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
 0784: 00000000 B9884345 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
@@ -199,7 +230,7 @@
 ;07C0: xxxxxxxx yyyyyyyy ; 1F0: int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,void(*)(),int,int size_obj);
 07C4: 00000000 A1674745 ; 1F1: int SetFont(int);
 ;07C8: xxxxxxxx yyyyyyyy ;81F2: DISP_OBJ ** StatusRow_p(void);
-07CC: 00000000 F95D3C45 ; 1F3: int root_list_get_session_count(void); /!\
+07CC: 00000000 F95D3C45 ; 1F3: int root_list_get_session_count(void); /!
 07D0: 00000000 055E3C45 ; 1F4: UI_APP_SESSION *root_list_get_session(int num_session);
 ;07D4: xxxxxxxx yyyyyyyy ; 1F5: BOOK *SESSION_GetTopBook(UI_APP_SESSION *);
 ;07D8: xxxxxxxx yyyyyyyy ; 1F6: int MainInput_getVisible(GUI *);
@@ -235,9 +266,12 @@
 ;0850: xxxxxxxx yyyyyyyy ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
 ;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum(AB_GET_STRUCT *);
 ;0858: xxxxxxxx yyyyyyyy ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
+;085C: xxxxxxxx yyyyyyyy ; 217:
 0860: 00000000 BDC8B844 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy);
 ;0864: xxxxxxxx yyyyyyyy ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: 00000000 F03D0820 ;821A: int * PID_MMI(void);
+;086C: xxxxxxxx yyyyyyyy ; 21B:
+;0870: xxxxxxxx yyyyyyyy ; 21C:
 ;0874: xxxxxxxx yyyyyyyy ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 ;0878: xxxxxxxx yyyyyyyy ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 B5235445 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
@@ -281,11 +315,16 @@
 ;0914: xxxxxxxx yyyyyyyy ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 ;0918: xxxxxxxx yyyyyyyy ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 ;091C: xxxxxxxx yyyyyyyy ; 247: void GoMusic(void);
+;0920: xxxxxxxx yyyyyyyy ; 248:
+;0924: xxxxxxxx yyyyyyyy ; 249:
 ;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV(const wchar_t * path,const wchar_t * fname, int vol);
 ;092C: xxxxxxxx yyyyyyyy ; 24B: int GetSilent(void);
 ;0930: xxxxxxxx yyyyyyyy ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 ;0934: xxxxxxxx yyyyyyyy ; 24D: int GetAudioSettings(int what, char* retvalue);
 0938: 00000000 A57B2C44 ; 24E: int GetChipID(void);
+;093C: xxxxxxxx yyyyyyyy ; 24F:
+;0940: xxxxxxxx yyyyyyyy ; 250:
+;0944: xxxxxxxx yyyyyyyy ; 251:
 ;0948: xxxxxxxx yyyyyyyy ; 252: int List2LineGetCurrentIndex(void * msg);
 ;094C: xxxxxxxx yyyyyyyy ; 253: int GUIonMessage_GetCurrentItemIndex(void * msg);
 0950: 00000000 7D74FA44 ; 254: void DestroyDirHandle(DIR_HANDLE *handle);
@@ -295,6 +334,8 @@
 0960: 00000000 2DFF4845 ; 258: int Display_GetHeight(int Display);
 0964: 00000000 39FF4845 ; 259: int Display_GetWidth(int Display);
 ;0968: xxxxxxxx yyyyyyyy ; 25A: void PlaySystemSound (int SndNumber);
+;096C: xxxxxxxx yyyyyyyy ; 25B:
+;0970: xxxxxxxx yyyyyyyy ; 25C:
 0974: 00000000 E9DD4745 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
 0978: 00000000 D9DD4745 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 ;097C: xxxxxxxx yyyyyyyy ; 25F: int GC_GetPenColor (void* GC);
@@ -339,6 +380,7 @@
 0A18: 00000000 B59DD544 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: 00000000 F930E644 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
 0A20: 00000000 E5684345 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
+;0A24: xxxxxxxx yyyyyyyy ; 289:
 ;0A28: xxxxxxxx yyyyyyyy ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
 ;0A2C: xxxxxxxx yyyyyyyy ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 ;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
@@ -530,6 +572,8 @@
 ;0D18: xxxxxxxx yyyyyyyy ; 346: GUI * CreatePercentInputVA(int zero, ...);
 ;0D1C: xxxxxxxx yyyyyyyy ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 ;0D20: xxxxxxxx yyyyyyyy ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
+;0D24: xxxxxxxx yyyyyyyy ; 349:
+;0D28: xxxxxxxx yyyyyyyy ; 34A:
 ;0D2C: xxxxxxxx yyyyyyyy ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 ;0D30: xxxxxxxx yyyyyyyy ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 ;0D34: xxxxxxxx yyyyyyyy ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
@@ -549,6 +593,10 @@
 ;0D6C: xxxxxxxx yyyyyyyy ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 ;0D70: xxxxxxxx yyyyyyyy ; 35C: int SoundRecorder_Create(void * desc);
 ;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+;0D78: xxxxxxxx yyyyyyyy ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
+;0D7C: xxxxxxxx yyyyyyyy ; 35F: char * GetURIScheme (int schemeID);
+;0D80: xxxxxxxx yyyyyyyy ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
+;0D84: xxxxxxxx yyyyyyyy ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
 
 
 
