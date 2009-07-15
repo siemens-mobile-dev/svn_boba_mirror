@@ -1492,11 +1492,11 @@ __swi __arm void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
 
 /*
 #pragma swi_number=0x348
-__swi __arm 
+__swi __arm
 #pragma swi_number=0x349
-__swi __arm 
+__swi __arm
 #pragma swi_number=0x34A
-__swi __arm 
+__swi __arm
 */
 
 #pragma swi_number=0x34B
@@ -1552,5 +1552,18 @@ __swi __arm char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme
 
 #pragma swi_number=0x361
 __swi __arm void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
+
+#pragma swi_number=0x362
+__swi __arm int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
+#pragma swi_number=0x363
+__swi __arm int Alarm_GetState(char *state, int AlarmID);
+#pragma swi_number=0x364
+__swi __arm int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
+#pragma swi_number=0x365
+__swi __arm int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+#pragma swi_number=0x366
+__swi __arm int IrDa_GetState(char *state);
+#pragma swi_number=0x367
+__swi __arm void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 
 #endif

@@ -597,6 +597,12 @@
 0D7C: 00000000 25D23345 ; 35F: char * GetURIScheme (int schemeID);
 0D80: 00000000 BDD63345 ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 0D84: 00000000 0522FD44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
+0D88: 00000000 3D46E544 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
+0D8C: 00000000 9131E544 ; 363: int Alarm_GetState(char *state, int AlarmID);
+0D90: 00000000 DD3FE544 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
+0D94: 00000000 D94CE544 ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+0D98: 00000000 5DC13D45 ; 366: int IrDa_GetState(char *state);
+0D9C: 00000000 2D4D3E45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 
 
 
