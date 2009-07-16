@@ -507,5 +507,8 @@ extern const int UI_MESSAGING_MMS_SENT_EVENT ;
 extern const int UI_MESSAGING_MMS_SENDING_EVENT ;
 extern const int DATA_DOWNLOAD_ERROR_EVENT ;
 extern const int UI_OBEX_UPD_STATE_EVENT ;
+extern const int DOWNLOAD_ERROR_EVENT ;
+extern const int DOWNLOAD_PROGRESS_EVENT ;
+extern const int DOWNLOAD_COMPLETED_EVENT ;
 
 #endif
