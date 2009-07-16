@@ -1560,7 +1560,7 @@ __swi __arm int Alarm_GetState(char *state, int AlarmID);
 #pragma swi_number=0x364
 __swi __arm int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
 #pragma swi_number=0x365
-__swi __arm int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+__swi __arm int Alarm_GetWeekSettings(void* week,int AlarmID);
 #pragma swi_number=0x366
 __swi __arm int IrDa_GetState(char *state);
 #pragma swi_number=0x367
