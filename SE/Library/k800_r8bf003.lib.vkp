@@ -2,7 +2,7 @@
 ;elf library
 ;v
 ;(c) Hussein , IronMaster
-;(p) hippy dave
+;(p) hippy dave, michlantecuhtli
 
 +45D1FC00
 0448: 00000000 94300020 ; 112: void memset(void *mem,char chr,int size);
@@ -382,7 +382,7 @@
 0A20: 00000000 BDDC4145 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 E5252145 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
-0A2C: 00000000 FD140445 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
+0A2C: 00000000 1D030445 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
 0A30: 00000000 8D560445 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 0D082145 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 11D84845 ; 28E: void Shortcut_Run (wchar_t * shortcut_name);
