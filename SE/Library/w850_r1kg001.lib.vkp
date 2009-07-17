@@ -603,6 +603,7 @@
 ;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
 ;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState(char *state);
 ;0D9C: xxxxxxxx yyyyyyyy ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
+0DA0: 00000000 21EFED44 ; 368: void * IncommingCall_Accept(BOOK* book);
 
 
 
