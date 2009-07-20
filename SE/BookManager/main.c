@@ -952,6 +952,9 @@ void onMyBookClose(BOOK * book)
   // освободили списки книг/сессий
   SessoinListsFree(book);
 
+  //убили гуи
+  if (((MyBOOK*)book)->gui) GUI_Free((GUI*)((MyBOOK*)book)->gui);
+
   // выгрузили иконки
   int i;
   for (i=0;i<ICONS_COUNT;i++)
