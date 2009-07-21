@@ -264,14 +264,14 @@
 0848: 00000000 0907EE44 ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
 084C: 00000000 3106EE44 ; 213: int AB_NAME_ITEM2StrID(void * ab_name);
 0850: 00000000 7906EE44 ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
-;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum(AB_GET_STRUCT *);
+0854: 00000000 9D450345 ; 215: int GetABRecNum(AB_GET_STRUCT *); //nullsub(void)
 0858: 00000000 FC1EA345 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
 085C: 00000000 917FFB44 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); //замена несуществующей
 0860: 00000000 8D7FFB44 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy); //замена несуществующей
 0864: 00000000 299AE544 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: 00000000 E8300820 ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
-;0870: xxxxxxxx yyyyyyyy ; 21C:
+0870: 00000000 B9B94245 ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: 00000000 09B94245 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 BDBE4245 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 AD5D9F44 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
@@ -294,7 +294,7 @@
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
 ;08C4: xxxxxxxx yyyyyyyy ; 231: DISP_OBJ_METHOD DISP_OBJ_GetMethod05 (DISP_OBJ *);
 08C8: 00000000 817F4245 ; 232: void DISP_DESC_SetMethod06 (DISP_DESC* ,DISP_OBJ_METHOD);
-;08CC: xxxxxxxx yyyyyyyy ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
+08CC: 00000000 81804245 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
 08D8: 00000000 897F4245 ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
@@ -600,7 +600,7 @@
 ;0D88: xxxxxxxx yyyyyyyy ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 ;0D8C: xxxxxxxx yyyyyyyy ; 363: int Alarm_GetState(char *state, int AlarmID);
 ;0D90: xxxxxxxx yyyyyyyy ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(void* week,int AlarmID);
 ;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState(char *state);
 ;0D9C: xxxxxxxx yyyyyyyy ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 

@@ -792,6 +792,9 @@ __swi __arm  int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, in
 #pragma swi_number=0x821A
 __swi __arm  int * PID_MMI(void);
 
+#pragma swi_number=0x21C
+__swi __arm GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
+
 #pragma swi_number=0x21D
 __swi __arm DISP_OBJ* DISPBASE_GetFocused(int display);
 #pragma swi_number=0x21E

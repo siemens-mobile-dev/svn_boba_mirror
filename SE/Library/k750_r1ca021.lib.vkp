@@ -271,7 +271,7 @@
 0864: FFFFFFFF B1B80B45 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: FFFFFFFF 707D0C4C ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
-;0870: xxxxxxxx yyyyyyyy ; 21C:
+0870: FFFFFFFF CD17E844 ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: FFFFFFFF 5917E844 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: FFFFFFFF A51BE844 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: FFFFFFFF 79130645 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
@@ -600,7 +600,7 @@
 ;0D88: xxxxxxxx yyyyyyyy ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 ;0D8C: xxxxxxxx yyyyyyyy ; 363: int Alarm_GetState(char *state, int AlarmID);
 ;0D90: xxxxxxxx yyyyyyyy ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(void* week,int AlarmID);
 0D98: FFFFFFFF 29AF0545 ; 366: int IrDa_GetState(char *state);
 0D9C: FFFFFFFF 9D371545 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 0DA0: FFFFFFFF 75AADD44 ; 368: void * IncommingCall_Accept(BOOK* book);
