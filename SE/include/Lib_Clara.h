@@ -490,6 +490,10 @@ __swi   __arm union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 __swi   __arm OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
 #pragma swi_number=0x818A
 __swi   __arm int clear_bp_adr (void);
+#pragma swi_number=0x18B
+__swi   __arm void stop(PROCESS pid);
+#pragma swi_number=0x18C
+__swi   __arm OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
 
 #pragma swi_number=0x1A0
 __swi __arm  char* strcpy(char * dest, const char * source);
@@ -1568,5 +1572,7 @@ __swi __arm int Alarm_GetWeekSettings(void* week,int AlarmID);
 __swi __arm int IrDa_GetState(char *state);
 #pragma swi_number=0x367
 __swi __arm void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
+#pragma swi_number=0x368
+__swi __arm void * IncommingCall_Accept(BOOK* book);
 
 #endif
