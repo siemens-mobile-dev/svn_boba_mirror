@@ -128,8 +128,8 @@
 ;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
-;062C: xxxxxxxx yyyyyyyy ; 18B:
-;0630: xxxxxxxx yyyyyyyy ; 18C:
+;062C: xxxxxxxx yyyyyyyy ; 18B: void stop(PROCESS pid);
+0630: 00000000 E0EB3044 ; 18C: OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
 ;0634: xxxxxxxx yyyyyyyy ; 18D:
 ;0638: xxxxxxxx yyyyyyyy ; 18E:
 ;063C: xxxxxxxx yyyyyyyy ; 18F:
@@ -273,7 +273,7 @@
 0864: 00000000 1D35D444 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *); /
 0868: 00000000 30EA0920 ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
-;0870: xxxxxxxx yyyyyyyy ; 21C:
+;0870: xxxxxxxx yyyyyyyy ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: 00000000 855A3145 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 39603145 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 E14E8F44 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
@@ -602,7 +602,7 @@
 0D88: 00000000 793ED244 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 0D8C: 00000000 CD29D244 ; 363: int Alarm_GetState(char *state, int AlarmID);
 0D90: 00000000 1938D244 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-0D94: 00000000 1545D244 ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+0D94: 00000000 1545D244 ; 365: int Alarm_GetWeekSettings(void* week,int AlarmID);
 0D98: 00000000 D9822945 ; 366: int IrDa_GetState(char *state);
 0D9C: 00000000 790E2A45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 0DA0: 00000000 4927D944 ; 368: void * IncommingCall_Accept(BOOK* book);
