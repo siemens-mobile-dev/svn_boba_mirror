@@ -1,6 +1,6 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
-#include "conf_loader.h"
+
 
 const char *successed_config_filename="";
 
@@ -14,7 +14,7 @@ int LoadConfigData(const char *fname)
   void *cfg;
   unsigned int rlen, end;
 
-  extern const CFG_HDR cfghdr0; //first var in CONFIG
+  extern const CFG_HDR cfghdr0;
   cfg=(void*)&cfghdr0;
 
   unsigned int len=(int)__segment_end("CONFIG_C")-(int)__segment_begin("CONFIG_C");
@@ -51,3 +51,4 @@ void InitConfig()
     LoadConfigData("0:\\ZBin\\etc\\IdleLinks.bcfg");
   }
 }
+

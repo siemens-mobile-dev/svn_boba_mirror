@@ -559,7 +559,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -745,7 +745,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1382,7 +1382,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -1568,7 +1568,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2206,7 +2206,7 @@
         </option>
         <option>
           <name>FormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -2392,7 +2392,7 @@
         </option>
         <option>
           <name>ExtraFormatVariant</name>
-          <version>7</version>
+          <version>8</version>
           <state>2</state>
         </option>
         <option>
@@ -3157,10 +3157,28 @@
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\gui.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\idle.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\IdleLinks.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\keyhook.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\main.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\nsd.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\revision.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\utils.c</name>
   </file>
 </project>
 

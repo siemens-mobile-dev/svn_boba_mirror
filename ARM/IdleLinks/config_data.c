@@ -1,11 +1,14 @@
 #include "..\inc\cfg_items.h"
 #include "..\inc\swilib.h"
 
+
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
 #else
 #define DEFAULT_DISK "0"
 #endif
+
+
 
 __root const CFG_HDR cfghdr0={CFG_KEYCODE,"Клавиша вызова",0,100};
 __root const unsigned int CALL_BTN=RIGHT_SOFT;

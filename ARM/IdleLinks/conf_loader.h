@@ -8,5 +8,6 @@
 
 // Вызвать обязательно перед обращением к переменным конфигурации
 void InitConfig();
+void RereadSettings(void);
 
 #endif
