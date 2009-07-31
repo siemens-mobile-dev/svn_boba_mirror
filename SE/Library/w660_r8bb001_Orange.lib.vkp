@@ -608,7 +608,8 @@
 0DA8: 00000000 59460945 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
 0DAC: 00000000 19470945 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
 0DB0: 00000000 A9460945 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
-
+0DB4: 00000000 E13B0945 ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ* disp_obj, int);
+0DB8: 00000000 D9D04B45 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 
 
 

@@ -271,7 +271,7 @@
 0864: 00000000 DDB0E744 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *); /
 0868: 00000000 E05B0820 ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
-;0870: xxxxxxxx yyyyyyyy ; 21C:
+0870: 00000000 69424645 ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: 00000000 B9414645 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 6D474645 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 31C0A244 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
@@ -572,8 +572,8 @@
 0D18: 00000000 71D84745 ; 346: GUI * CreatePercentInputVA(int zero, ...);
 0D1C: 00000000 11DA4745 ; 347: int PercentInput_GetPercent(GUI * PercentInput);
 0D20: 00000000 118F4245 ; 348: void GUIonMessage_SetLineSeparator(GUI_MESSAGE *,int _unk1);
-;0D24: xxxxxxxx yyyyyyyy ; 349:
-;0D28: xxxxxxxx yyyyyyyy ; 34A:
+0D24: 00000000 AD093F45 ; 349: int PHF_GetState(void);
+0D28: 00000000 B5093F45 ; 34A: int CHF_GetState(void);
 0D2C: 00000000 9DB34845 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
 0D30: 00000000 A9B34845 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
 0D34: 00000000 ADE33C45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);

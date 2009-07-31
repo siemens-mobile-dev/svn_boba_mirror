@@ -604,7 +604,10 @@
 0D98: 00000000 5DC13D45 ; 366: int IrDa_GetState(char *state);
 0D9C: 00000000 2D4D3E45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 ;0DA0: xxxxxxxx yyyyyyyy ; 368: void * IncommingCall_Accept(BOOK* book);
-
+0DA4: 00000000 E9FD0345 ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+0DA8: 00000000 B5FD0345 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+0DAC: 00000000 75FE0345 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+0DB0: 00000000 05FE0345 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
 
 
 

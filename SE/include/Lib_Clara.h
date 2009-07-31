@@ -1575,4 +1575,19 @@ __swi __arm void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int Profile
 #pragma swi_number=0x368
 __swi __arm void * IncommingCall_Accept(BOOK* book);
 
+#pragma swi_number=0x369
+__swi __arm void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+#pragma swi_number=0x36A
+__swi __arm void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+#pragma swi_number=0x36B
+__swi __arm void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+#pragma swi_number=0x36C
+__swi __arm void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
+#pragma swi_number=0x36D
+__swi __arm void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
+
+#pragma swi_number=0x36E
+__swi __arm void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+
+
 #endif
