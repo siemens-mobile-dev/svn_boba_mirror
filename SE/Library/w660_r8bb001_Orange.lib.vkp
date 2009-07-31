@@ -126,8 +126,8 @@
 ;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
-;062C: xxxxxxxx yyyyyyyy ; 18B:
-;0630: xxxxxxxx yyyyyyyy ; 18C:
+062C: 00000000 30D74244 ; 18B: void stop(PROCESS pid);
+0630: 00000000 9CD54244 ; 18C: OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
 ;0634: xxxxxxxx yyyyyyyy ; 18D:
 ;0638: xxxxxxxx yyyyyyyy ; 18E:
 ;063C: xxxxxxxx yyyyyyyy ; 18F:
@@ -604,6 +604,10 @@
 0D98: 00000000 CDF14345 ; 366: int IrDa_GetState(char *state);
 0D9C: 00000000 F97A4445 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 0DA0: 00000000 C959F144 ; 368: void * IncommingCall_Accept(BOOK* book);
+0DA4: 00000000 8D460945 ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+0DA8: 00000000 59460945 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+0DAC: 00000000 19470945 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+0DB0: 00000000 A9460945 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
 
 
 
