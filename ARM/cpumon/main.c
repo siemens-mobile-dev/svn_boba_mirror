@@ -75,7 +75,7 @@ static void RereadSettings()
   
   if ((oldWidth!=uiWidth)||(oldHeight!=uiHeight)){
     mfree(img1_bmp);
-    img1_bmp = malloc(2 * uiWidth * uiHeight);
+    img1_bmp = malloc(4 * uiWidth * uiHeight);
 //    zeromem(img1_bmp, 2 * uiWidth * uiHeight);
 //    memset(img1_bmp,0xaaaa,2 * uiWidth * uiHeight);
     img1.w = uiWidth;
