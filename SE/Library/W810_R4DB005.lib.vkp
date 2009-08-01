@@ -601,8 +601,15 @@
 ;0D8C: xxxxxxxx yyyyyyyy ; 363: int Alarm_GetState(char *state, int AlarmID);
 ;0D90: xxxxxxxx yyyyyyyy ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
 ;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
-;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState(char *state);
-;0D9C: xxxxxxxx yyyyyyyy ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
+0D98: FFFFFFFF 55B15245 ; 366: int IrDa_GetState(char *state);
+0D9C: FFFFFFFF 950F6445 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
+;0DA0: xxxxxxxx yyyyyyyy ; 368: void * IncommingCall_Accept(BOOK* book);
+0DA4: FFFFFFFF 4DB70645 ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+0DA8: FFFFFFFF 19B70645 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+0DAC: FFFFFFFF BDB70645 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+0DB0: FFFFFFFF 69B70645 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
+0DB4: FFFFFFFF C9D62445 ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ* disp_obj, int);
+0DB8: FFFFFFFF B98A2F45 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 
 
 
