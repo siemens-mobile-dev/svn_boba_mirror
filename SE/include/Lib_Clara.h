@@ -1588,6 +1588,8 @@ __swi __arm void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
 
 #pragma swi_number=0x36E
 __swi __arm void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+#pragma swi_number=0x36F
+__swi __arm int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
 
 
 #endif
