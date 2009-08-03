@@ -1591,5 +1591,7 @@ __swi __arm void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 #pragma swi_number=0x36F
 __swi __arm int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
 
+#pragma swi_number=0x370
+__swi __arm void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 
 #endif
