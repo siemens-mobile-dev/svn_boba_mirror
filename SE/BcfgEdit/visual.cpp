@@ -7,6 +7,7 @@
 
 void OnOkCoordinatesEdit(BOOK * bk, void *);
 void OnBackCoordinatesEdit(BOOK * bk, void *);
+void OnOrientationChangeCoordinatesEdit(BOOK *bk, void *);
 
 static const char EditColorGuiName[]="Gui_EditColor";
 int colors[4]={0xFFFF0000,0xFF00FF00,0xFF0000FF,0x80C6AAAF};
@@ -285,6 +286,16 @@ void DrawOwnRect(int _x1, int _y1,int _x2 ,int _y2,int pen_color,int brush_color
     DrawRect(x1,y1,x2,y2,pen_color,brush_color);
 }
 
+void DrawArrow(int x, int y, int color)
+{
+  DrawOwnRect(x,   y , x+13,y+2,clBlack,clBlack); 
+  DrawOwnRect(x+11,y+2,x+13,y+6,clBlack,clBlack); 
+  DrawOwnRect(x+8, y+5,x+16,y+6,clBlack,clBlack); 
+  DrawOwnRect(x+9, y+6,x+15,y+7,clBlack,clBlack);
+  DrawOwnRect(x+10,y+7,x+14,y+8,clBlack,clBlack);
+  DrawOwnRect(x+11,y+8,x+13,y+9,clBlack,clBlack);
+};
+
 void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
 {
   RECT rc_old, rc_new;
@@ -359,6 +370,15 @@ void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
   GC_SetPenColor(gc,clBlack);
   GC_DrawLine(gc,db->x-3,db->y,db->x+3,db->y);
   GC_DrawLine(gc,db->x,db->y-3,db->x,db->y+3);
+  
+  if (BookObj_GetDisplayOrientation((BOOK*)db->mb)==0)
+  {
+    DrawArrow(scr_w-19, scr_h-13, clBlack);
+  }
+  else
+  {
+    DrawArrow(scr_w-19, 3, clBlack);
+  }
   GC_SetPenColor(gc,old_pen);
   GC_validate_RECT(gc,&rc_old);
   SetFont(font_old);
@@ -413,7 +433,7 @@ void CoordinatesGuiOnKey(DISP_OBJ_COORD *db,int key,int,int repeat,int type)
 
     if ((key==KEY_ENTER) || (key==KEY_LEFT_SOFT)) OnOkCoordinatesEdit((BOOK*)db->mb,0);
     if (key==KEY_ESC) OnBackCoordinatesEdit((BOOK*)db->mb,0);
-
+    if (key==KEY_RIGHT_SOFT) OnOrientationChangeCoordinatesEdit((BOOK*)db->mb,0);
   }
   if (type==KBD_LONG_RELEASE) db->cstep=1;
   InvalidateRect(&db->dsp_obj,0);
@@ -435,6 +455,15 @@ void EditCoordinatesGui_destr(DISP_DESC *desc)
 {
 }
 
+void OnOrientationChangeCoordinatesEdit(BOOK *bk, void *)
+{
+  char orientation=BookObj_GetDisplayOrientation(bk);
+  if (orientation==0)
+    BookObj_SetDisplayOrientation(bk,1);
+  else
+    BookObj_SetDisplayOrientation(bk,0);
+};
+
 void OnBackCoordinatesEdit(BOOK * bk, void *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
@@ -449,7 +478,12 @@ void OnBackCoordinatesEdit(BOOK * bk, void *)
       InvalidateRect((DISP_OBJ*)disp_obj,0);
     }
   }
-  if (!f) FREE_GUI(myBook->coord);
+  
+  if (!f) 
+  {
+    BookObj_SetDisplayOrientation(bk, 0);
+    FREE_GUI(myBook->coord);
+  }
 }
 
 void OnOkCoordinatesEdit(BOOK * bk, void *)
@@ -481,7 +515,12 @@ void OnOkCoordinatesEdit(BOOK * bk, void *)
     coordinates[0]=disp_obj->x;
     coordinates[1]=disp_obj->y;
   }
-  if (!f) FREE_GUI(myBook->coord);
+  
+  if (!f)
+  {
+    BookObj_SetDisplayOrientation(bk, 0);
+    FREE_GUI(myBook->coord);
+  }
 }
 
 
@@ -772,7 +811,7 @@ void Free_FLIST(void)
 
 FLIST *AddToFList(const wchar_t* full_name, const wchar_t *name, int is_folder)
 {
-  int l_fname;
+  //int l_fname;
   FLIST *fl;
   FLIST *fn=new FLIST;
   fn->fullname=new wchar_t[wstrlen(full_name)+1];
