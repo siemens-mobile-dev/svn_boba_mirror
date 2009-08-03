@@ -584,8 +584,6 @@
 0D48: 00000000 6DF13E45 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 11F63E45 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 0D50: 00000000 FDBEFA44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
-0D4C: 00000000 11F63E45 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
-0D50: 00000000 FDBEFA44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 0D54: 00000000 99990645 ; 355: void *SoundRecorderDesc_Create(void);
 0D58: 00000000 119A0645 ; 356: void SoundRecorderDesc_Destroy(void * desc);
 0D5C: 00000000 399A0645 ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
@@ -595,17 +593,25 @@
 0D6C: 00000000 B19A0645 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 0D70: 00000000 299B0645 ; 35C: int SoundRecorder_Create(void * desc);
 0D74: 00000000 CD1DEC44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
-0D78: 00000000 CDD5F244 ; 35E: int Browser_OpenURI(BOOK*, char * URI, int mode);
-0D7C: 00000000 817A3445 ; 35F: char* GetURIScheme (int schemeID);
-0D80: 00000000 197F3445 ; 360: char* CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
+0D78: 00000000 CDD5F244 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
+0D7C: 00000000 817A3445 ; 35F: char * GetURIScheme (int schemeID);
+0D80: 00000000 197F3445 ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 0D84: 00000000 E1AFFD44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
 0D88: 00000000 1DD0E544 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
 0D8C: 00000000 71BBE544 ; 363: int Alarm_GetState(char *state, int AlarmID);
 0D90: 00000000 BDC9E544 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-0D94: 00000000 B9D6E544 ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
+0D94: 00000000 B9D6E544 ; 365: int Alarm_GetWeekSettings(void* week,int AlarmID);
 0D98: 00000000 E5693E45 ; 366: int IrDa_GetState(char *state);
 0D9C: 00000000 B5F53E45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 0DA0: 00000000 15CFEC44 ; 368: void * IncommingCall_Accept(BOOK* book);
+;0DA4: xxxxxxxx yyyyyyyy ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+;0DA8: xxxxxxxx yyyyyyyy ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
+;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
+;0DB8: xxxxxxxx yyyyyyyy ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
+;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 
 
 
