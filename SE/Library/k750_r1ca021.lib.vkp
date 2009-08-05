@@ -610,6 +610,7 @@
 0DB0: FFFFFFFF D139C744 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
 ;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ* disp_obj, int);
 0DB8: FFFFFFFF 991AE844 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+0DBC: FFFFFFFF 11628C44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
 
 
 
