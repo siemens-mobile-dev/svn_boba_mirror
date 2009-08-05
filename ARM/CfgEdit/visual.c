@@ -9,7 +9,7 @@ extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 #define MIN(a,b) (a<b)?a:b
 #define MAX(a,b) (a>b)?a:b
 
-//  YDISP нам больше не нужен так как иконбар отключим
+////  YDISP нам больше не нужен так как иконбар отключим
 #ifdef ELKA  
 #undef YDISP
 #define   YDISP 0

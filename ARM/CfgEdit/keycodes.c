@@ -1,6 +1,8 @@
 #include "..\inc\swilib.h"
 #include "rect_patcher.h"
 
+#define UTF16_FONT_SMALL_BOLD (0xE013)
+
 typedef struct
 {
   GUI gui;
@@ -12,28 +14,34 @@ typedef struct
 
 void OnReadraw_key(KEY_GUI *data)
 {
-char black[4]={0x00,0x00,0x00,0x64};
-char white[4]={0xFF,0xFF,0xFF,0x64};
-char transparent[4]={0x00,0x00,0x00,0x00};
+
+  char black[4]={0x00,0x00,0x00,0x64};
+  char white[4]={0xFF,0xFF,0xFF,0x64};
+  char transparent[4]={0x00,0x00,0x00,0x00};
 
   int scr_w=ScreenW();
   int scr_h=ScreenH();
+  int fsize=GetFontYSIZE(FONT_SMALL)+1;
     DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,white,white);
-    wsprintf(data->ws1,"HEX: %02X",data->keyscancode);
-    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
-    wsprintf(data->ws1,"DEC: %u",data->keyscancode);
-    DrawString(data->ws1,3,scr_h-GetFontYSIZE(FONT_SMALL)*2-1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
-
+    ////////////////////////////////////////////////////////////////////////////
+    // tridog, 05.08.09 ////////////////////////////////////////////////////////
+    // Точим окошко выбора CFG_KEY на елках ////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     if(data->needexit)
     {
-      wsprintf(data->ws1,"Pres Red or LeftSoft button to cancel.\n Enter button to acept.");
-      DrawString(data->ws1,3,GetFontYSIZE(FONT_SMALL)*1+1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
+      wsprintf(data->ws1,"Press <Enter> button to accept.\nPress  <Red> or <Left> button to cancel.");
+      DrawString(data->ws1,3,YDISP + 1 + fsize,scr_w-4,YDISP + fsize*5,FONT_SMALL,1,black,transparent);
     }
     else
     {
       wsprintf(data->ws1,"Press #Any# key");
-      DrawString(data->ws1,3,GetFontYSIZE(FONT_SMALL)*1+1,scr_w-4,scr_h-1,FONT_SMALL,1,black,transparent);
-    }
+      DrawString(data->ws1,3,YDISP + 1 + fsize,scr_w-4,YDISP + fsize*5,FONT_SMALL,1,black,transparent);
+    }   
+    wsprintf(data->ws1,"HEX: %c%02X",UTF16_FONT_SMALL_BOLD,data->keyscancode);
+    DrawString(data->ws1,3,YDISP + 1 + fsize*7,scr_w-4,YDISP + fsize*8,FONT_SMALL,1,black,transparent);    
+    wsprintf(data->ws1,"DEC: %c%u",UTF16_FONT_SMALL_BOLD,data->keyscancode);
+    DrawString(data->ws1,3,YDISP + 1 + fsize*8,scr_w-4,YDISP + fsize*9,FONT_SMALL,1,black,transparent); 
+    ////////////////////////////////////////////////////////////////////////////
 }
 
 void OnCreate_key(KEY_GUI *data, void *(*malloc_adr)(int))
