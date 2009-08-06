@@ -252,7 +252,7 @@
 0818: 00000000 DD76E144 ; 206: void VCALL_SetHZ1 (void * vc, int , u16 );
 081C: 00000000 E976E144 ; 207: void VCALL_SetHZ2 (void * vc , u16 );
 0820: 00000000 7971E144 ; 208: void MakeVoiceCall (int SessioID , void * vc ,int flag);
-0824: 00000000 F5FF0345 ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error ); ?????????
+;0824: xxxxxxxx yyyyyyyy ; 209: int isDirectory (wchar_t * path ,wchar_t * filename , int * error );
 0828: 00000000 1100EC44 ; 20A: void FileDelete (wchar_t * path ,wchar_t * filename , int * error );
 082C: 00000000 95033945 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 89400645 ; 20C: int CreateSMSCont (int, void*);
@@ -584,15 +584,15 @@
 0D48: 00000000 A1093145 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
 0D4C: 00000000 450E3145 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
 0D50: 00000000 CDE1EC44 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
-0D54: 00000000 0575F544 ; 355: void *SoundRecorderDesc_Create(void);
-0D58: 00000000 7D75F544 ; 356: void SoundRecorderDesc_Destroy(void * desc);
-0D5C: 00000000 A575F544 ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
-0D60: 00000000 D175F544 ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
-0D64: 00000000 E575F544 ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
-0D68: 00000000 0176F544 ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
-0D6C: 00000000 1D76F544 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
-0D70: 00000000 9576F544 ; 35C: int SoundRecorder_Create(void * desc);
-0D74: 00000000 65C4DA44 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+;0D54: xxxxxxxx yyyyyyyy ; 355: void *SoundRecorderDesc_Create(void);
+;0D58: xxxxxxxx yyyyyyyy ; 356: void SoundRecorderDesc_Destroy(void * desc);
+;0D5C: xxxxxxxx yyyyyyyy ; 357: int SoundRecorderDesc_SetBookID(void * desc,int BookID);
+;0D60: xxxxxxxx yyyyyyyy ; 358: int SoundRecorderDesc_SetType(void * desc,const int type);
+;0D64: xxxxxxxx yyyyyyyy ; 359: int SoundRecorderDesc_SetFolder(void * desc,const wchar_t * fpath);
+;0D68: xxxxxxxx yyyyyyyy ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
+;0D6C: xxxxxxxx yyyyyyyy ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
+;0D70: xxxxxxxx yyyyyyyy ; 35C: int SoundRecorder_Create(void * desc);
+;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 0D78: 00000000 79F1E444 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
 0D7C: 00000000 A9EA2545 ; 35F: char * GetURIScheme (int schemeID);
 0D80: 00000000 41EF2545 ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
@@ -604,6 +604,14 @@
 0D98: 00000000 25833045 ; 366: int IrDa_GetState(char *state);
 ;0D9C: xxxxxxxx yyyyyyyy ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 ;0DA0: xxxxxxxx yyyyyyyy ; 368: void * IncommingCall_Accept(BOOK* book);
+;0DA4: xxxxxxxx yyyyyyyy ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+;0DA8: xxxxxxxx yyyyyyyy ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
+;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
+;0DB8: xxxxxxxx yyyyyyyy ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
+;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 
 
 
