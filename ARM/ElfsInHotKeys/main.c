@@ -1,9 +1,6 @@
 #include "../inc/swilib.h"
 #include "conf_loader.h"
 
-#pragma swi_number=0x80E2
-__swi __arm char *RamKeyBuffer();
-
 extern unsigned long  strtoul (const char *nptr,char **endptr,int base);
 extern const int i_action;
 extern const char action_parameter[256];
@@ -36,6 +33,37 @@ int main()
     ShowMSG(1, (int)"Press on key not enough long!!!");
     return 0;
   }
+  // Проверяем наличие каталога X:\ZBin\etc\hotkeys
+  int found = 0;
+  unsigned int err;
+  if(isdir("4:\\Zbin\\etc", &err))
+  {
+    found = 1;
+    // Если нашли Zbin\etc на диске 4 проверяем наличие там hotkeys
+    if(!isdir("4:\\Zbin\\etc\\hotkeys", &err))
+    {
+      // Если не создаем - создаем
+      mkdir("4:\\Zbin\\etc\\hotkeys", &err);
+    }
+  }
+  else
+  {
+    // Иначе ищем Zbin\etc на диске 0
+    if(isdir("0:\\Zbin\\etc", &err))
+    {
+      found = 1;
+      // Если нашли - ищем hotkeys
+      if(!isdir("0:\\Zbin\\etc\\hotkeys", &err))
+      {
+        mkdir("0:\\Zbin\\etc\\hotkeys", &err);        
+      }
+    }
+  }
+  if (!found) // Если таки не нашли - выходим нафиг
+  {
+    ShowMSG(1, (int)"Path '?:\\Zbin\\etc' not found!");
+    return 0;
+  }
   // Читаем конфиг
   char *config_name = malloc(256);
   sprintf(config_name, "4:\\ZBin\\etc\\hotkeys\\ElfsInHotkeys_%s.bcfg",current_key);
@@ -44,7 +72,7 @@ int main()
     config_name[0] = '0';
     if (LoadConfigData(config_name)<0) // Ищес конфиг на диске 0
     {
-      ShowMSG(1, (int)"X:\\Zbin\\etc\\hotkeys\\ not found!!!"); // Материмся
+      ShowMSG(1, (int)"Unsupported button :("); // Материмся
       return 0;
     }
   }
