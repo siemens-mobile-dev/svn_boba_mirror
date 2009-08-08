@@ -1594,4 +1594,7 @@ __swi __arm int Request_EventChannel_Subscribe(const int *SYNC, int mode, int ev
 #pragma swi_number=0x370
 __swi __arm void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 
+#pragma swi_number=0x371
+__swi __arm int Request_ICA_ShutdownAllConnections(const int *sync);
+
 #endif

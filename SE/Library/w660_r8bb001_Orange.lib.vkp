@@ -612,6 +612,7 @@
 0DB8: 00000000 D9D04B45 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 0DBC: 00000000 05D31D44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
 0DC0: 00000000 413F4E45 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
+0DC4: 00000000 29B79944 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
 
 
 

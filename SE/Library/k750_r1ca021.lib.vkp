@@ -611,6 +611,8 @@
 ;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ* disp_obj, int);
 0DB8: FFFFFFFF 991AE844 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 0DBC: FFFFFFFF 11628C44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
+;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 action);
+0DC4: FFFFFFFF 11D68C44 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
 
 
 
