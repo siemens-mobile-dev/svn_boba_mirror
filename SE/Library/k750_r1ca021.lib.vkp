@@ -613,7 +613,7 @@
 0DBC: FFFFFFFF 11628C44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
 ;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 action);
 0DC4: FFFFFFFF 11D68C44 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
-
+0DC8: FFFFFFFF C93F1545 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,NAME *,char *error);
 
 
 

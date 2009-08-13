@@ -1597,4 +1597,7 @@ __swi __arm void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 #pragma swi_number=0x371
 __swi __arm int Request_ICA_ShutdownAllConnections(const int *sync);
 
+#pragma swi_number=0x372
+__swi __arm int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,NAME *,char *error);
+
 #endif
