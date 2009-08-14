@@ -610,7 +610,7 @@
 0DA8: 00000000 F5D3F044 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
 0DAC: 00000000 B5D4F044 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
 0DB0: 00000000 45D4F044 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
-0DB4: 00000000 3D8F1D44 ; 36D: void MediaPlayer_ShowNowPlaying (DISP_OBJ* disp_obj, int);
+0DB4: 00000000 59CCF044 ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
 0DB8: 00000000 B95E3145 ; 36E: void DispObject_Show (DISP_OBJ *disp_obj, int mode);
 0DBC: 00000000 A1021D44 ; 36F: int Request_EventChannel_Subscribe (const int *SYNC, int mode, int event);
 0DC0: 00000000 81CB3345 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 action);
