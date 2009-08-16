@@ -2,7 +2,7 @@
 #include "..\\include\Dir.h"
 #include "..\\include\var_arg.h"
 #include "main.h"
-#include "log.h"
+//#include "log.h"
 #include "revision.h"
 
 MyBOOK * EEBook;
