@@ -1598,7 +1598,7 @@ __swi __arm void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 __swi __arm int Request_ICA_ShutdownAllConnections(const int *sync);
 
 #pragma swi_number=0x372
-__swi __arm int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,NAME *,char *error);
+__swi __arm int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,STRID_DATA *,char *error);
 
 #pragma swi_number=0x373
 __swi __arm int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);

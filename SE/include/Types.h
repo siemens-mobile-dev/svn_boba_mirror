@@ -383,6 +383,8 @@ typedef struct
   LIST	*OseHookList;
   DB_EXT **dbe;
   FILESUBROUTINE* elf_ext_m;
+  LIST * DLLList;
+  LIST *UIPageHook;
 }EP_DATA;
 
 typedef struct
@@ -811,5 +813,11 @@ enum schemeID {
   vnote=11,
   vcal=12
 };
+
+typedef struct {
+  wchar_t lenght;
+  char flag;
+  void* ptr;
+} STRID_DATA;
 
 #endif
