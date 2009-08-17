@@ -455,8 +455,8 @@
 0B44: FFFFFFFF 19EF5445 ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
 0B48: FFFFFFFF 11EF5445 ; 2D2: wchar_t *FILEITEM_GetFname(FILEITEM *f);
 0B4C: FFFFFFFF 75EF5445 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
-0B50: FFFFFFFF 41ED5445 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
-0B54: FFFFFFFF A9EE5445 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+0B50: FFFFFFFF 5D184F45 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+0B54: FFFFFFFF A1184F45 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 0B58: FFFFFFFF 3DB5FA44 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
 0B5C: FFFFFFFF E5E8FA44 ; 2D7: void JavaDialog_Close(int unk1);
 0B60: FFFFFFFF A1EAFA44 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
@@ -496,7 +496,7 @@
 0BE8: FFFFFFFF C913A644 ; 2FA: int w_fwrite(int f, void *buf, int size);
 0BEC: FFFFFFFF AD13A644 ; 2FB: int w_fread(int f, void *buf, int size);
 0BF0: FFFFFFFF 09440945 ; 2FC: int w_lseek(int f, int offs, int mode);
-0BF4: FFFFFFFF E513A644 ; 2FD: int w_fclose(int f);
+0BF4: FFFFFFFF 0114A644 ; 2FD: int w_fclose(int f); 
 0BF8: FFFFFFFF 15E15645 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
 0BFC: FFFFFFFF A9AD5345 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 0C00: FFFFFFFF 65042945 ; 300: int Disp_GetStrIdWidth(STRID , int len);
@@ -603,6 +603,18 @@
 ;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(WEEK *,int AlarmID);
 0D98: FFFFFFFF 69D64B45 ; 366: int IrDa_GetState(char *state);
 0D9C: FFFFFFFF 954C5D45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
+0DA0: FFFFFFFF 69F11845 ; 368: void * IncommingCall_Accept(BOOK* book);
+0DA4: FFFFFFFF 5DFCFF44 ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+0DA8: FFFFFFFF 29FCFF44 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+0DAC: FFFFFFFF CDFCFF44 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+0DB0: FFFFFFFF 79FCFF44 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
+0DB4: FFFFFFFF 0D021E45 ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ* disp_obj, int);
+0DB8: FFFFFFFF 85AB2845 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+0DBC: FFFFFFFF E101C144 ; 36F: int Request_EventChannel_Subscribe (const int *SYNC, int mode, int event);
+;0DC0: FFFFFFFF yyyyyyyy ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
+0DC4: FFFFFFFF B5AEC144 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);3D0EC144;
+0DC8: FFFFFFFF 41555D45 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,NAME *,char *error);
+0DCC: FFFFFFFF D52F1D45 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
 
 
 

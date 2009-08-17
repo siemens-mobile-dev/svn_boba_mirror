@@ -612,9 +612,10 @@
 0DB8: 00000000 51AD3545 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 0DBC: 00000000 ADB61C44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
 0DC0: 00000000 651A3845 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
-;0DC4: xxxxxxxx yyyyyyyy ; 371:
-;0DC8: xxxxxxxx yyyyyyyy ; 372:
+0DC4: 00000000 216A8344 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
+0DC8: 00000000 7D5D2E45 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,NAME *,char *error);
 0DCC: 00000000 7955EC44 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
+
 
 
 
