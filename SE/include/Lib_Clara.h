@@ -181,6 +181,8 @@ __swi __arm  wchar_t * getFileExtention(wchar_t * fnane);
 
 #pragma swi_number=0x127
 __swi __arm  int DataBrowser_isFileInListExt(const wchar_t * ext_table,const wchar_t * path ,const wchar_t *fname );
+#pragma swi_number=0x8127
+__swi __arm  DB_FILE_FILTER DataBrowser_isFileInListExt_adr(void);
 
 #pragma swi_number=0x128
 __swi __arm  void Timer_ReSet(u16 * timer ,int time, void (*onTimer)(u16 timerID, LPARAM lparam), LPARAM lparam);
@@ -1126,7 +1128,7 @@ __swi __arm void DataBrowserDesc_SetSelectActionOnFolders(void * DataBrowserDesc
 #pragma swi_number=0x2AD
 __swi __arm void DataBrowserDesc_SetBookID(void * DataBrowserDesc,int BookID);
 #pragma swi_number=0x2AE
-__swi __arm void DataBrowserDesc_SetItemFilter(void * DataBrowserDesc,int (*proc)(const wchar_t * ExtList,const wchar_t * ItemPath,const wchar_t * ItemName));
+__swi __arm void DataBrowserDesc_SetItemFilter(void * DataBrowserDesc,DB_FILE_FILTER);
 #pragma swi_number=0x2AF
 __swi __arm void DataBrowserDesc_SetOption(void * DataBrowserDesc,char * option);
 #pragma swi_number=0x2B0
@@ -1603,4 +1605,14 @@ __swi __arm int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,STRID_DAT
 #pragma swi_number=0x373
 __swi __arm int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
 
+#pragma swi_number=0x374
+__swi __arm  int GUIonMessage_GetMsg ( void *msg);
+#pragma swi_number=0x375
+__swi __arm  BOOK *GUIonMessage_GetBook ( void *msg);
+#pragma swi_number=0x376
+__swi __arm  GUI *GUIonMessage_GetGui ( void *msg);
+#pragma swi_number=0x377
+__swi __arm  int GUIonMessage_GetSelectedItem ( void *msg);
+#pragma swi_number=0x378
+__swi __arm  int GUIonMessage_GetPrevSelectedItem ( void *msg);
 #endif

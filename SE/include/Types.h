@@ -412,6 +412,7 @@ typedef struct
 typedef struct
 {
   char  msg;
+  void *gui;
   BOOK * book;
 
 
@@ -819,5 +820,21 @@ typedef struct {
   char flag;
   void* ptr;
 } STRID_DATA;
+
+typedef int (*DB_FILE_FILTER)(const wchar_t *ExtList, const wchar_t *ItemPath, const wchar_t *ItemName);
+
+enum LISTMSGS {
+  LISTMSG_HighlightChanged=0,
+  LISTMSG_GetItem=1,
+  LISTMSG_SubItemHighlightChanged=2,
+  LISTMSG_GetSubItem=3,
+  LISTMSG_Edit=4,
+  LISTMSG_Delete=5,
+  LISTMSG_SearchIndex=7,
+  LISTMSG_GetKeyboard=8,
+  LISTMSG_ItemSelectionChanged=9,
+  LISTMSG_DrawComplete=10,
+  LISTMSG_ListBusy=11,
+};
 
 #endif

@@ -615,8 +615,11 @@
 0DC4: 00000000 216A8344 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
 0DC8: 00000000 7D5D2E45 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,NAME *,char *error);
 0DCC: 00000000 7955EC44 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
-
-
+0DD0: 00000000 75EF3145 ; 374: int GUIonMessage_GetMsg ( void *msg);
+0DD4: 00000000 7DEF3145 ; 375: BOOK *GUIonMessage_GetBook ( void *msg);
+0DD8: 00000000 79EF3145 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
+0DDC: 00000000 81EF3145 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
+0DE0: 00000000 8DEF3145 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
 
 
 ;locale=Russian_Russia.1251
