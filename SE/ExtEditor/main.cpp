@@ -5,10 +5,6 @@
 //#include "log.h"
 #include "revision.h"
 
-MyBOOK * EEBook;
-int is_changed=0;
-
-
 #pragma segment="ELFBEGIN"
 void elf_exit(void){
   kill_data(__segment_begin("ELFBEGIN"), (void(*)(void*))mfree_adr());
@@ -32,6 +28,7 @@ void win12512unicode(wchar_t *ws, const char *s, int len)
   }
   *ws=0;
 }
+
 char *unicode2win1251(char *s, wchar_t *ws, int len)
 {
   char *d=s;
@@ -145,34 +142,6 @@ int IsDigit(int c)
   return (c>='0' && c<='9');  
 }
 
-int IsStringValid(char *s)
-{
-  int valid=0;
-  int c;
-  if (s)
-  {
-    while((c=*s)) 
-    {
-      if (c!=' ') break;
-      s++;
-    }    
-    if (s[0]=='[' && s[1]=='E' && s[2]=='X' && s[3]=='T' &&
-        IsDigit(s[4]) && IsDigit(s[5]) && s[6]==']')
-    {
-      s+=7;
-      int param=0;
-      while((s=strchr(s,',')))
-      {
-        s++;
-        param++;
-      }
-      if (param>=3)
-        valid=1;    
-    }
-  }
-  return valid;  
-}
-
 
 
 
@@ -181,79 +150,73 @@ int GetExtInfo(char *str, char *ext, char *elf, char *ismall, char *ibig)
 {
   int ret=-1;
   char *s=str;
-  int c;
-  while((c=*s)) 
-  {
-    if (c!=' ') break;
-    s++;
-  }
+  while(*s==' ') s++; 
   if (s[0]=='[' && s[1]=='E' && s[2]=='X' && s[3]=='T' &&
       IsDigit(s[4]) && IsDigit(s[5]) && s[6]==']')
   {
     int id=((s[4])-'0')*10+((s[5])-'0');
     s+=7;
-    
-    // Extension
-    while((c=*s))
+    s=strchr(s, ':');
+    if (s)
     {
-      if (c!=' ' && c!=':') break;
       s++;
+      while(*s==' ') s++;
+      char *next=strchr(s, ',');
+      if (next)   // ext
+      {
+        char *ss=next-1;
+        while(*ss==' ') ss--;
+        if (ext)
+        {
+          while(s<=ss) *ext++=*s++;
+          *ext=0;        
+        }
+        s=next+1;
+        while(*s==' ') s++;
+        next=strchr(s, ',');
+        if (next)     // big
+        {
+          ss=next-1;
+          while(*ss==' ') ss--;
+          if (ibig)
+          {
+            while(s<=ss) *ibig++=*s++;
+            *ibig=0;        
+          }
+          s=next+1;
+          while(*s==' ') s++;
+          next=strchr(s, ',');
+          if (next)   // small
+          {
+            ss=next-1;
+            while(*ss==' ') ss--;
+            if (ismall)
+            {
+              while(s<=ss) *ismall++=*s++;
+              *ismall=0;        
+            }
+            s=next+1;   // elf
+            while(*s==' ') s++;
+            ss=s+strlen(s)-1;
+            while(*ss==' ') ss--;
+            if (elf)
+            {
+              while(s<=ss) *elf++=*s++;
+              *elf=0;        
+            }
+            ret=id;
+          }
+        }
+      }
     }
-    while((c=*s))
-    {
-      if (c==' ' || c==',') break;
-      if(ext) *ext++=c;
-      s++;
-    }
-    if(ext) *ext=0;
-    
-    //Big Icon
-    while((c=*s))
-    {
-      if (c!=' ' && c!=',') break;
-      s++;
-    }
-    while((c=*s))
-    {
-      if (c==' ' || c==',') break;
-      if(ibig) *ibig++=c;
-      s++;
-    }
-    if(ibig) *ibig=0;
-    
-    //  Small Icon
-    while((c=*s))
-    {
-      if (c!=' ' && c!=',') break;
-      s++;
-    }
-    while((c=*s))
-    {
-      if (c==' ' || c==',') break;
-      if(ismall) *ismall++=c;
-      s++;
-    }    
-    if(ismall) *ismall=0;
-    
-    // Elf
-    while((c=*s))
-    {
-      if (c!=' ' && c!=',') break;
-      s++;
-    }
-    while((c=*s))
-    {
-      if (c==' ' || c==',') break;
-      if(elf) *elf++=c;
-      s++;
-    }
-    if(elf) *elf=0;
-    ret=id;
   }
   return (ret);
 }
 
-
+int IsStringValid(char *s)
+{
+  return (GetExtInfo(s,0,0,0,0)!=-1);
+}
 
 // ============================= INI ================================
 void SaveIni(MyBOOK *mbk)
@@ -268,12 +231,7 @@ void SaveIni(MyBOOK *mbk)
     {
       char *str=(char *)ListElement_GetByIndex(mbk->astr,i);
       char *s=str;
-      int c;
-      while((c=*s))
-      {
-        if (c!=' ') break;
-        s++;
-      }
+      while(*s==' ') s++; 
       if (s[0]=='[' && s[1]=='E' && s[2]=='X' && s[3]=='T' &&
         IsDigit(s[4]) && IsDigit(s[5]) && s[6]==']')
       {
@@ -309,25 +267,23 @@ void ReadIni(MyBOOK *mbk)
     int skip=0;
     do {
       s+=skip;
+      if (!*s) break;  // не фиг последнюю строку добавл€ть если ее нету
       ListElement_Add(mbk->astr, s);
       s=find_eol(s, &skip);
       if (s) *s=0;
     } while(s);
-    // ѕроверим какие строки нам нужны а какие пускай останутс€ как есть
+    // ѕроверим какие строки нам нужны а какие пусть останутс€ как есть
   }
 }
 
 // ========================= DataBrowser ============================
 
-int SelFileFilter(const wchar_t *ExtList, const wchar_t *ItemPath, const wchar_t *ItemName)
+int SelFileFilterElf(const wchar_t *ExtList, const wchar_t *ItemPath, const wchar_t *ItemName)
 {
   if (DataBrowser_isFileInListExt(ExtList,ItemPath,ItemName)) return(1);
-  if (EEBook->DB_State==0)
-  { 
-    FSTAT fs;
-    fstat(ItemPath,ItemName,&fs);
-    if ((fs.unk1&0x10000)) return(1);
-  }
+  FSTAT fs;
+  fstat(ItemPath,ItemName,&fs);
+  if ((fs.unk1&0x10000)) return(1);
   return(0);
 }
 
@@ -341,7 +297,8 @@ static int SelFilePageOnCreate(void *, BOOK *bk)
   static wchar_t folderpics[128];
   const wchar_t * folder_list[2];
   wchar_t *filter;
-  if (mbk->DB_State==0)
+  DB_FILE_FILTER filefilter;
+  if (mbk->edit_list_selected==1)
   {
     W_FSTAT wf;
     wchar_t path[256];
@@ -368,8 +325,9 @@ static int SelFilePageOnCreate(void *, BOOK *bk)
     folder_list[1]=GetDir(DIR_ELFS|MEM_EXTERNAL);
     folder_num=2;
     filter=L"*.elf";
+    filefilter=SelFileFilterElf;
   }
-  else
+  else if (mbk->edit_list_selected==2 || mbk->edit_list_selected==3)
   {
     wchar_t fname[64];
     char *s;
@@ -377,12 +335,13 @@ static int SelFilePageOnCreate(void *, BOOK *bk)
     wstrcpy(folderpics,GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL));
     wstrcat(folderpics,L"/Extension");
     FILEITEM_SetPathAndContentType(fi, folderpics);
-    s=mbk->DB_State==1?mbk->el_smicon: mbk->el_bicon;
+    s=mbk->edit_list_selected==2?mbk->el_smicon: mbk->el_bicon;
     win12512unicode(fname,s ,MAXELEMS(fname)-1);
     FILEITEM_SetFnameAndContentType(fi, fname);
     folder_list[0]=folderpics;
     folder_num=1;
     filter=L"*.png;*.gif;*.jpg;*.jpeg";
+    filefilter=DataBrowser_isFileInListExt_adr();
   }
   DataBrowserDesc_SetHeaderText(DB_Desc,Str2ID(L"SelectFile",0,SID_ANY_LEN));
   DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(&mbk->book));
@@ -391,7 +350,7 @@ static int SelFilePageOnCreate(void *, BOOK *bk)
 
   DataBrowserDesc_SetSelectAction(DB_Desc,1);
   DataBrowserDesc_SetFileExtList(DB_Desc,filter);
-  DataBrowserDesc_SetItemFilter(DB_Desc,SelFileFilter);
+  DataBrowserDesc_SetItemFilter(DB_Desc,filefilter);
   if (fi){
     DataBrowserDesc_SetFocusToFILEITEM(DB_Desc, fi);
     FILEITEM_Destroy(fi);
@@ -406,14 +365,15 @@ static int SelFilePageOnAccept(void *data, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   FILEITEM *file=(FILEITEM *)data;
-  if (mbk->DB_State==1 || mbk->DB_State==2)
+  char *second_line=NULL;
+  if (mbk->edit_list_selected==2 || mbk->edit_list_selected==3)
   {
-    if (mbk->DB_State==1)
-      unicode2win1251(mbk->el_smicon, FILEITEM_GetFname(file), sizeof(mbk->el_smicon)-1);
+    if (mbk->edit_list_selected==2)
+      unicode2win1251((second_line=mbk->el_smicon), FILEITEM_GetFname(file), sizeof(mbk->el_smicon)-1);
     else
-      unicode2win1251(mbk->el_bicon, FILEITEM_GetFname(file), sizeof(mbk->el_bicon)-1);
+      unicode2win1251((second_line=mbk->el_bicon), FILEITEM_GetFname(file), sizeof(mbk->el_bicon)-1);
   }
-  else
+  else if (mbk->edit_list_selected==1)
   {
     wchar_t *p, *f;
     int pl;
@@ -429,7 +389,10 @@ static int SelFilePageOnAccept(void *data, BOOK *bk)
     else if (!wstrcmpni(f, path, (pl=wstrlen(f))))
       unicode2win1251(mbk->el_elf, path+pl, sizeof(mbk->el_elf)-1);
     delete path;
+    second_line=mbk->el_elf;
   }
+  if (second_line)
+    ListMenu_SetSecondLineText((GUI_LIST *)mbk->edit_list, mbk->edit_list_selected, Str2ID(second_line,6,SID_ANY_LEN));
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
   return(1);
 }
@@ -517,41 +480,19 @@ void MsgBoxYesNo(MyBOOK *mbk, wchar_t *qv, void(*f)(BOOK *, int))
                                        0);
 }
 // ========================= EditExtList ============================
-const wchar_t * menu_items[] =
-{
-  L"extension",
-  L"elf",
-  L"small img",
-  L"big img",
-};
-
-STRID GetMenuItemName(int item)
-{
-  return (item<MAXELEMS(menu_items)?Str2ID(menu_items[item],0,SID_ANY_LEN):LGP_NULL);
-}
-
 void OnSelect1EditExtList(BOOK * bk, void *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
-  int item=ListMenu_GetSelectedItem((GUI_LIST *)mbk->edit_list);
-  switch(item)
+  mbk->edit_list_selected=ListMenu_GetSelectedItem((GUI_LIST *)mbk->edit_list);
+  switch(mbk->edit_list_selected)
   {
   case 0:  // «апускаем редактор...
     CreateSI_EditExt(mbk);
     break;
     
   case 1:  // ƒата браузер
-    mbk->DB_State=0;
-    BookObj_CallPage(&mbk->book,&bk_selbcfg);
-    break;
-    
   case 2:  // ≈щЄ..
-    mbk->DB_State=1;
-    BookObj_CallPage(&mbk->book,&bk_selbcfg);
-    break;
-    
   case 3:  // и ещЄ..
-    mbk->DB_State=2;
     BookObj_CallPage(&mbk->book,&bk_selbcfg);
     break;
   }
@@ -577,7 +518,7 @@ void YesNoOnBackExt(BOOK * bk, int i)
     {
       ListElement_Add(mbk->astr, newstr);
     }
-    is_changed=1;
+    mbk->is_changed=1;
     CreateGuiList(mbk);
   }
   FREE_GUI(mbk->edit_list);
@@ -618,36 +559,36 @@ void OnBackEditExtList(BOOK * bk, void *)
 // устанавливаем тексты в пунктах меню
 int onLBMessageEditExtList(GUI_MESSAGE * msg)
 {
-  MyBOOK * myBook = (MyBOOK *) FindBook(isExtEditorBook);
+  MyBOOK * myBook = (MyBOOK *)GUIonMessage_GetBook(msg);
   int item;
-  char *str;
-  STRID first=LGP_NULL, second=LGP_NULL;
+  char *str="";
+  wchar_t *first_txt=L"";
   switch(msg->msg)
   {
     // onCreateListItem
   case 1:
     item=GUIonMessage_GetCreatedItemIndex(msg);
-    first=GetMenuItemName(item);
     switch(item)
     {
     case 0:
       str=myBook->el_ext;
+      first_txt=L"extension";
       break;
     case 1:
       str=myBook->el_elf;
+      first_txt=L"elf";
       break;
     case 2:
       str=myBook->el_smicon;
+      first_txt=L"small img";
       break;
     case 3:
       str=myBook->el_bicon;
+      first_txt=L"big img";
       break;
     }
-    second=Str2ID(str,6,SID_ANY_LEN);
-    SetMenuItemText0(msg,first);
-    
-    SetMenuItemText2(msg,second);
-    SetMenuItemText1(msg,second);
+    SetMenuItemText0(msg,Str2ID(first_txt,0,SID_ANY_LEN));
+    SetMenuItemText1(msg,Str2ID(str,6,SID_ANY_LEN));
   }
   return(1);
 };
@@ -687,8 +628,7 @@ GUI_LIST *CreateEditExtList(MyBOOK *mbk, int list_id)
 // устанавливаем тексты в пунктах меню
 int onLBMessage(GUI_MESSAGE * msg)
 {
-  MyBOOK * myBook = (MyBOOK *) FindBook(isExtEditorBook);
-  wchar_t ustr[32];
+  MyBOOK * myBook = (MyBOOK *)GUIonMessage_GetBook(msg);
   int item;
   char *str;
   switch(msg->msg)
@@ -698,7 +638,8 @@ int onLBMessage(GUI_MESSAGE * msg)
     item=GUIonMessage_GetCreatedItemIndex(msg);
     if (item>0)
     {
-      char ext[20], elf[100];
+      char el_ext[36];
+      char el_elf[128];
       for (int i=0, icount=1; i<myBook->astr->FirstFree; i++)
       {
       
@@ -711,13 +652,9 @@ int onLBMessage(GUI_MESSAGE * msg)
             icount++;
         }
       }
-      GetExtInfo(str, ext, elf, 0, 0);
-      win12512unicode(ustr,ext,MAXELEMS(ustr)-1);
-      SetMenuItemText0(msg,Str2ID(ustr,0,SID_ANY_LEN));
-    
-      SetMenuItemText2(msg,Str2ID(ustr,0,SID_ANY_LEN));
-      win12512unicode(ustr,elf,MAXELEMS(ustr)-1);;
-      SetMenuItemText1(msg,Str2ID(ustr,0,SID_ANY_LEN));
+      GetExtInfo(str, el_ext, el_elf, 0, 0);
+      SetMenuItemText0(msg,Str2ID(el_ext,6,SID_ANY_LEN));
+      SetMenuItemText1(msg,Str2ID(el_elf,6,SID_ANY_LEN));
     }
     else
     {
@@ -741,7 +678,7 @@ void YesNoOnBackGuiList(BOOK * bk, int i)
 void OnBackGuiList(BOOK * bk, void *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
-  if (is_changed)
+  if (mbk->is_changed)
     MsgBoxYesNo(mbk, L"Do you want to save ext.ini?",YesNoOnBackGuiList);
   else
     FreeBook(&mbk->book);
@@ -785,15 +722,13 @@ void OnDeleteGuiList(BOOK * bk, void *)
       char *str=(char *)ListElement_GetByIndex(mbk->astr,listitem);
       if (IsStringValid(str))
       {
-        if (icount==item)
+        if (icount++==item)
           break;
-        else 
-          icount++;
       }
     }
     char *str=(char *)ListElement_Remove(mbk->astr,listitem);
     SafeFreeString(mbk, str);
-    is_changed=1;
+    mbk->is_changed=1;
     CreateGuiList(mbk);
   }
 }
@@ -820,6 +755,7 @@ GUI_LIST * CreateGuiList(MyBOOK * mbk)
   GUIObject_Softkey_SetAction(mbk->main_gui,ACTION_BACK, OnBackGuiList);
   GUIObject_Softkey_SetAction(mbk->main_gui,ACTION_SELECT1,OnSelect1GuiList);
   GUIObject_Softkey_SetAction(mbk->main_gui,ACTION_DELETE,OnDeleteGuiList);
+  GUIObject_SoftKey_SetVisible(mbk->main_gui,ACTION_DELETE,0);
   ShowWindow(mbk->main_gui);
   return(mbk->main_gui);
 };
@@ -881,14 +817,14 @@ int isExtEditorBook(BOOK * struc)
 
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
-  EEBook=new MyBOOK;
-  memset(EEBook,0,sizeof(MyBOOK));
-  if (!CreateBook(EEBook,onMyBookClose,&bk_base,"ExtEditor",-1,0))
+  MyBOOK *mbk=new MyBOOK;
+  memset(mbk,0,sizeof(MyBOOK));
+  if (!CreateBook(mbk,onMyBookClose,&bk_base,"ExtEditor",-1,0))
   {
-    delete EEBook;
+    delete mbk;
     SUBPROC(elf_exit);
     return (0);    
   }
-  BookObj_GotoPage(&EEBook->book,&bk_main);
+  BookObj_GotoPage(&mbk->book,&bk_main);
   return 0;
 }

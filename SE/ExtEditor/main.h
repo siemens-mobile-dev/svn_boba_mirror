@@ -15,13 +15,14 @@ typedef struct
   char el_elf[128];
   char el_smicon[64];
   char el_bicon[64];
-  
-  int DB_State; // 0 -select elf, 1 - small, 2 - big
+  int edit_list_selected;   // 1 -select elf, 2 - small, 3 - big
   
   GUI *si_editext;
   
   GUI *yes_no;
   void (*YesNoFunc)(BOOK * mbk, int); //  1 - yes, 0 - no
+  
+  int is_changed;
 }MyBOOK;
 
 typedef struct
