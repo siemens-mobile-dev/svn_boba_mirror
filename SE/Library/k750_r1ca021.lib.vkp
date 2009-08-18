@@ -615,6 +615,11 @@
 0DC4: FFFFFFFF 11D68C44 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
 0DC8: FFFFFFFF C93F1545 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,STRID_DATA *,char *error);
 0DCC: FFFFFFFF C1D6E144 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
+0DD0: FFFFFFFF 41A4D544 ; 374: int GUIonMessage_GetMsg ( void *msg);
+0DD4: FFFFFFFF 49A4D544 ; 375: BOOK *GUIonMessage_GetBook ( void *msg);
+0DD8: FFFFFFFF 45A4D544 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
+0DDC: FFFFFFFF 4DA4D544 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
+0DE0: FFFFFFFF 5DA4D544 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
 
 
 
