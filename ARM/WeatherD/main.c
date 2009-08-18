@@ -9,10 +9,10 @@
 WSHDR *ews;
 int sock;
 int connect_state;
-//char buf[65546]; раму пожалейте
 char *buf=0;
 int pbuf;
-static char iconpath[137];
+int scr_w;
+int scr_h;
 
 void create_connect(void);
 void do_start_connection(void)
@@ -60,7 +60,7 @@ void create_connect(void)
   {
     sa.family=1;
     sa.port=htons(80);
-    sa.ip=htonl(IP_ADDR(212,48,141,129));
+    sa.ip=htonl(IP_ADDR(92,241,171,120));
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
       connect_state=1;
@@ -85,8 +85,8 @@ void create_connect(void)
 char req_buf[80];
 void send_req(void)
 {
-      snprintf(req_buf,79, "GET /wap2/towns/%i.wap2"
-         " HTTP/1.0\r\nHost: wap.gismeteo.ru\r\n\r\n",TID);  
+      snprintf(req_buf,79, "GET /xml/%i_1.xml"
+         " HTTP/1.0\r\nHost: informer.gismeteo.ru\r\n\r\n",TID);  
  
   send(sock,req_buf,strlen(req_buf),0);
   connect_state=2;
@@ -133,13 +133,25 @@ void log_data(char *data)
   {
     fwrite(hFile, data, strlen(data)-1, &io_error);
     fclose(hFile, &io_error);
-    //ShowMSG(1, (int)"Writed!");
   }  
 }
 
-char *hbz(char *src,char *dst){
+void GenerateString(){
+    char sss[128];
+    snprintf(sss, 127, "%s%s%s%s", 
+                SHOW_TEMP     ? weath.Temp       : "", 
+                SHOW_PRESSURE ? weath.Pressure   : "", 
+                SHOW_WIND     ? weath.Wind       : "", 
+                SHOW_REWLET   ? weath.Rewlet     : "");
+        
+    utf82win(sss,(const char *)sss);
+    ascii2ws(ews, sss);
+};
+
+char *valuetag(char *src,char *dst){
  int c=0;
- while (*src!='<'&&c<22){
+ dst=dst+strlen(dst);
+ while (*src!='"'&&c<22){
   *dst++=*src++;
   c++;
  }
@@ -147,56 +159,103 @@ char *hbz(char *src,char *dst){
  return src;
 }
 
-void Parsing()
-{  
-    if (!buf) return; 
+char * findtag(char *src, char *tag){
+  return strstr(src,tag)+strlen(tag);
+}
 
-    char *fcstr;
-    fcstr=strstr(buf,"</table>");
-      
-    //Картинка
-    fcstr=strstr(fcstr,"/images/")+8;
-    weath.Pic[0]=fcstr[0];
-    weath.Pic[1]=fcstr[1];
-    weath.Pic[2]=fcstr[2];
-    weath.Pic[3]=fcstr[3];
-    weath.Pic[4]='.';
-    weath.Pic[5]='p';
-    weath.Pic[6]='n';
-    weath.Pic[7]='g';
-    weath.Pic[8]=0;
+void Parsing(){
+    if (!buf) return; 
+    //SUBPROC((void *)log_data, buf);
+
+    char *forecast=findtag(buf,"FORECAST ");
+
+    //главная картинка
+    strcpy(weath.MainPic.path,ICON_PATH);
+
+    char *tod=findtag(forecast,"tod=\"");
+    if (*tod=='1'||*tod=='2')
+        strcat(weath.MainPic.path,"d.sun");
+      else
+        strcat(weath.MainPic.path,"n.moon");
     
+    char *phenomena=findtag(forecast,"PHENOMENA ");
+    char *cloudiness=findtag(phenomena,"cloudiness=\"");
+    if (*cloudiness!='0'){
+      strcat(weath.MainPic.path,".c");
+      valuetag(cloudiness, weath.MainPic.path);
+    }
+
+    char *rpower=findtag(phenomena,"rpower=\"");
+    if (*rpower!='0'){
+      char *precipitation=findtag(phenomena,"precipitation=\"");
+      if (*precipitation=='4'||*precipitation=='5'||*precipitation=='8'){
+        strcat(weath.MainPic.path,".r");
+      }else{
+        strcat(weath.MainPic.path,".s");
+      }
+      valuetag(rpower, weath.MainPic.path);
+    }
+
+    char *spower=findtag(phenomena,"spower=\"");
+    if (*spower=='1'){
+      strcat(weath.MainPic.path,".st");
+    }
+    strcat(weath.MainPic.path,".png");
+    weath.MainPic.height=GetImgHeight((int)weath.MainPic.path);
+    weath.MainPic.width=GetImgWidth((int)weath.MainPic.path);
+
     //Температура
-    fcstr=strstr(fcstr,"<b>")+3;
-    fcstr=hbz(fcstr,weath.Temp);
+    char *temp=findtag(forecast,"TEMPERATURE ");
+    char *tempmin=findtag(temp,"min=\"");
+    char *tempmax=findtag(temp,"max=\"");
+    weath.Temp[0]=0;
+    valuetag(tempmin, weath.Temp);
+    strcat(weath.Temp, "-");     
+    valuetag(tempmax, weath.Temp);
     strcat(weath.Temp, "\xB0\x43\n");     
-      
+
     //Давление
-    fcstr=strstr(fcstr,"<tr><td")+7;
-    fcstr=strstr(fcstr,">")+18;
-    fcstr=hbz(fcstr,weath.Pressure);
+    char *press=findtag(forecast,"PRESSURE ");
+    char *pressmin=findtag(press,"min=\"");
+    char *pressmax=findtag(press,"max=\"");
+    weath.Pressure[0]=0;
+    valuetag(pressmin, weath.Pressure);
+    strcat(weath.Pressure, "-");     
+    valuetag(pressmax, weath.Pressure);
     strcat(weath.Pressure, "\n");     
     
     //Ветер
-    fcstr=strstr(fcstr,"<tr><td")+7;
-    fcstr=strstr(fcstr,">")+12;
-    fcstr=hbz(fcstr,weath.Wind);
+    char *wind=findtag(forecast,"WIND ");
+    char *windmin=findtag(wind,"min=\"");
+    char *windmax=findtag(wind,"max=\"");
+    weath.Wind[0]=0;
+    valuetag(windmin, weath.Wind);
+    strcat(weath.Wind, "-");     
+    valuetag(windmax, weath.Wind);
     strcat(weath.Wind, "\n");     
+
+    strcpy(weath.WindPic.path,ICON_PATH);
+    char *winddir=findtag(wind,"direction=\"");
+    weath.WindPic.path[strlen(weath.WindPic.path)]=(*winddir)+1;
+    strcat(weath.WindPic.path,"w.png");
+    weath.WindPic.height=GetImgHeight((int)weath.WindPic.path);
+    weath.WindPic.width=GetImgWidth((int)weath.WindPic.path);
     
+//    ShowMSG(1,(int)weath.MainPic.path);
+
     //Влажность
-    fcstr=strstr(fcstr,"<tr><td")+7;
-    fcstr=strstr(fcstr,">")+20;
-    fcstr=hbz(fcstr,weath.Rewlet);
-  
-    //SUBPROC((void *)log_data, buf);
+    char *rewlet=findtag(forecast,"RELWET ");
+    char *rewletmin=findtag(rewlet,"min=\"");
+    char *rewletmax=findtag(rewlet,"max=\"");
+    weath.Rewlet[0]=0;
+    valuetag(rewletmin, weath.Rewlet);
+    strcat(weath.Rewlet, "-");     
+    valuetag(rewletmax, weath.Rewlet);
 
-    strcpy(iconpath,ICON_PATH);
-    strcat(iconpath,weath.Pic);    
-
-//    ShowMSG(1,(int)iconpath);
-    
     mfree(buf);
     buf=0;
+    
+    GenerateString();
 }
 
 //==============================================================================
@@ -244,16 +303,14 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
     extern const char *successed_config_filename;
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
-      ShowMSG(1,(int)"WeatherD config updated!");
       InitConfig();
+      GenerateString();
+      ShowMSG(1,(int)"WeatherD config updated!");
     }
   }
 
-  if (weath.Temp[0]=='+' || weath.Temp[0]=='-')
+//  if (weath.Temp[0]=='+' || weath.Temp[0]=='-')
   {
-    int scr_w=ScreenW();
-    int scr_h=ScreenH();
-    char sss[128];
 
     #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
     CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);    
@@ -271,25 +328,14 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       {
         void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
 #endif        
-        snprintf(sss, 127, "%s%s%s%s", 
-                SHOW_TEMP     ? weath.Temp       : "", 
-                SHOW_PRESSURE ? weath.Pressure   : "", 
-                SHOW_WIND     ? weath.Wind       : "", 
-                SHOW_REWLET   ? weath.Rewlet     : "");
-        
-        utf82win(sss,(const char *)sss);
-        ascii2ws(ews, sss);
 
-/* нахуй это уебище... иногда лучше думать чем кодить...
-        DrawCanvas(canvasdata, DATA_X, DATA_Y, DATA_X+Get_WS_width(ews, FONT_SIZE)+1, GetFontYSIZE(FONT_SIZE)+DATA_Y, 1); 
-*/
-        DrawString(ews, DATA_X, DATA_Y ,scr_w-4, scr_h-4-GetFontYSIZE(FONT_SIZE),
+        DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
         
-        if (SHOW_PIC)
-        {
-          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + GetImgWidth((int)iconpath), PICT_Y + GetImgHeight((int)iconpath), 1);
-          DrawImg(PICT_X, PICT_Y, (int)iconpath);
+        if (SHOW_PIC){
+          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.MainPic.width, PICT_Y + weath.MainPic.width, 1);
+          DrawImg(PICT_X, PICT_Y, (int)weath.MainPic.path);
+          DrawImg(PICT_X+weath.MainPic.width-weath.WindPic.width, PICT_Y+weath.MainPic.width-weath.WindPic.width, (int)weath.WindPic.path);
         }
       }
    }}    
@@ -344,6 +390,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 
 static void maincsm_oncreate(CSM_RAM *data)
 {
+  scr_w=ScreenW();
+  scr_h=ScreenH();
   ews=AllocWS(128);
   do_start_connection();
 }

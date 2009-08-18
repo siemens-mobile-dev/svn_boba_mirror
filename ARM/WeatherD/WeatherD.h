@@ -18,14 +18,18 @@ extern const int SHOW_WIND;
 extern const int SHOW_REWLET;
 extern const int SHOW_PIC;
 
+typedef struct{
+  char path[256];
+  int  height,width;
+}TPic;
 
-typedef struct
-{
-  char Pic[9],
-       Temp[24],
-       Pressure[24],
-       Wind[24],
-       Rewlet[24];
+typedef struct{
+  TPic MainPic,
+       WindPic;
+  char Temp[16],
+       Pressure[16],
+       Wind[16],
+       Rewlet[16];
 }WEATHER;
 
 /*
