@@ -106,35 +106,27 @@ int char16to8(int c)
 
 void utf82win(char*d,const char *s)
 {
-  int ds = 2;
-  for (; *s; s+=ds)
+  for (; *s; s+=2)
   {
     unsigned char ub = *s, lb = *(s+1);
-    ds = 1;
-    if (ub == 0xD0)
+    if (ub == 208)
       if (lb != 0x81)
         {*d = lb + 48; d++;}
       else
         {*d = '¨'; d++;}
 
-    if (ub == 0xD1)
+    if (ub == 209)
       if (lb != 0x91)
         {*d = lb + 112; d++;}
       else
         {*d = '¸'; d++;}
 
-    if (ub == 0xE2)
-      if (lb == 0x80)
-        if ((unsigned char)*(s+2) == 0x94)
-          {*d = '-'; d++; ds = 3;}
-
-    if(!(ub & 0x80))
+    if ((ub != 208) && (ub != 209) && (lb != 91) && (lb != 81))
     {
       *d = ub;
       d++;
+      s--;
     }
-    else
-      for(ds = 0; ub&0x80; ub <<= 1, ds++);
   }
   *d = 0;
 }
