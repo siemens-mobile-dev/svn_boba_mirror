@@ -374,13 +374,13 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
         
         if (SHOW_PIC){
-          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.dt.width, PICT_Y + weath.dt.width, 1);
+          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.dt.width, PICT_Y + weath.dt.height, 1);
           DrawImg(PICT_X, PICT_Y, (int)weath.dt.path);
           if(weath.cloudness) DrawImg(PICT_X, PICT_Y, (int)weath.c.path);
           if(weath.rain)      DrawImg(PICT_X, PICT_Y, (int)weath.r.path);
           if(weath.snow)      DrawImg(PICT_X, PICT_Y, (int)weath.s.path);
           if(weath.storm)     DrawImg(PICT_X, PICT_Y, (int)weath.st.path);
-          DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.width-weath.WindPic.width, (int)weath.WindPic.path);
+          DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
         }
       }
    }}    
