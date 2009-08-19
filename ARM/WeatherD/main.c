@@ -170,39 +170,47 @@ void Parsing(){
     char *forecast=findtag(buf,"FORECAST ");
 
     //главная картинка
-    strcpy(weath.MainPic.path,ICON_PATH);
+    //strcpy(weath.MainPic.path,ICON_PATH);
 
     char *tod=findtag(forecast,"tod=\"");
     if (*tod=='1'||*tod=='2')
-        strcat(weath.MainPic.path,"d.sun");
+        weath.daytime = 0;//strcat(weath.MainPic.path,"d.sun");
       else
-        strcat(weath.MainPic.path,"n.moon");
+        weath.daytime = 1;//strcat(weath.MainPic.path,"n.moon");
     
     char *phenomena=findtag(forecast,"PHENOMENA ");
     char *cloudiness=findtag(phenomena,"cloudiness=\"");
-    if (*cloudiness!='0'){
+    weath.cloudness = *cloudiness - 0x30;
+    if(weath.cloudness>4) weath.cloudness = 0;
+   /* if (*cloudiness!='0'){
       strcat(weath.MainPic.path,".c");
       valuetag(cloudiness, weath.MainPic.path);
-    }
+    }*/
 
+    weath.rain = weath.snow = 0;
     char *rpower=findtag(phenomena,"rpower=\"");
-    if (*rpower!='0'){
+   // if (*rpower!='0'){
       char *precipitation=findtag(phenomena,"precipitation=\"");
       if (*precipitation=='4'||*precipitation=='5'||*precipitation=='8'){
-        strcat(weath.MainPic.path,".r");
+        weath.rain = *rpower - 0x30;//strcat(weath.MainPic.path,".r");
+        if(weath.rain>4) weath.rain = 0;
       }else{
-        strcat(weath.MainPic.path,".s");
+        weath.snow = *rpower - 0x30;
+        if(weath.snow>4) weath.snow = 0;
+        //strcat(weath.MainPic.path,".s");
       }
-      valuetag(rpower, weath.MainPic.path);
-    }
+      //valuetag(rpower, weath.MainPic.path);
+    //}
 
     char *spower=findtag(phenomena,"spower=\"");
+    weath.storm = 0;
     if (*spower=='1'){
-      strcat(weath.MainPic.path,".st");
+      //strcat(weath.MainPic.path,".st");
+      weath.storm = 1;
     }
-    strcat(weath.MainPic.path,".png");
-    weath.MainPic.height=GetImgHeight((int)weath.MainPic.path);
-    weath.MainPic.width=GetImgWidth((int)weath.MainPic.path);
+    //strcat(weath.MainPic.path,".png");
+    //weath.MainPic.height=GetImgHeight((int)weath.MainPic.path);
+    //weath.MainPic.width=GetImgWidth((int)weath.MainPic.path);
 
     //Температура
     char *temp=findtag(forecast,"TEMPERATURE ");
@@ -254,6 +262,39 @@ void Parsing(){
 
     mfree(buf);
     buf=0;
+
+    strcpy(weath.dt.path,ICON_PATH);
+    strcat(weath.dt.path,weath.daytime?"moon.png":"sun.png");
+    weath.dt.height=GetImgHeight((int)weath.dt.path);
+    weath.dt.width=GetImgWidth((int)weath.dt.path);
+    
+    char tmp[3];
+    
+    tmp[0] = 'c'; tmp[1] = weath.cloudness + '0'; tmp[2] = 0;
+    strcpy(weath.c.path,ICON_PATH);
+    strcat(weath.c.path, tmp);
+    strcat(weath.c.path, ".png");
+    weath.c.height=GetImgHeight((int)weath.c.path);
+    weath.c.width=GetImgWidth((int)weath.c.path);
+
+    tmp[0] = 'r'; tmp[1] = weath.rain + '0';
+    strcpy(weath.r.path,ICON_PATH);
+    strcat(weath.r.path, tmp);
+    strcat(weath.r.path, ".png");
+    weath.r.height=GetImgHeight((int)weath.r.path);
+    weath.r.width=GetImgWidth((int)weath.r.path);
+
+    tmp[0] = 's'; tmp[1] = weath.snow + '0';
+    strcpy(weath.s.path,ICON_PATH);
+    strcat(weath.s.path, tmp);
+    strcat(weath.s.path, ".png");
+    weath.s.height=GetImgHeight((int)weath.s.path);
+    weath.s.width=GetImgWidth((int)weath.s.path);
+
+    strcpy(weath.st.path,ICON_PATH);
+    strcat(weath.st.path, "st.png");
+    weath.st.height=GetImgHeight((int)weath.st.path);
+    weath.st.width=GetImgWidth((int)weath.st.path);
     
     GenerateString();
 }
@@ -333,9 +374,13 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
         
         if (SHOW_PIC){
-          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.MainPic.width, PICT_Y + weath.MainPic.width, 1);
-          DrawImg(PICT_X, PICT_Y, (int)weath.MainPic.path);
-          DrawImg(PICT_X+weath.MainPic.width-weath.WindPic.width, PICT_Y+weath.MainPic.width-weath.WindPic.width, (int)weath.WindPic.path);
+          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.dt.width, PICT_Y + weath.dt.width, 1);
+          DrawImg(PICT_X, PICT_Y, (int)weath.dt.path);
+          if(weath.cloudness) DrawImg(PICT_X, PICT_Y, (int)weath.c.path);
+          if(weath.rain)      DrawImg(PICT_X, PICT_Y, (int)weath.r.path);
+          if(weath.snow)      DrawImg(PICT_X, PICT_Y, (int)weath.s.path);
+          if(weath.storm)     DrawImg(PICT_X, PICT_Y, (int)weath.st.path);
+          DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.width-weath.WindPic.width, (int)weath.WindPic.path);
         }
       }
    }}    

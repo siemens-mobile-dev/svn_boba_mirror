@@ -24,12 +24,18 @@ typedef struct{
 }TPic;
 
 typedef struct{
-  TPic MainPic,
+  TPic dt, c, r, s, st;
+  TPic //MainPic,
        WindPic;
   char Temp[16],
        Pressure[16],
        Wind[16],
        Rewlet[16];
+  char daytime,
+       cloudness,
+       rain,
+       storm,
+       snow;
 }WEATHER;
 
 /*
