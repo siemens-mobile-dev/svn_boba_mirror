@@ -190,20 +190,32 @@ void Parsing(){
     weath.rain = weath.snow = 0;
     char *rpower=findtag(phenomena,"rpower=\"");
    // if (*rpower!='0'){
-      char *precipitation=findtag(phenomena,"precipitation=\"");
-      if (*precipitation=='4'||*precipitation=='5'||*precipitation=='8'){
-        weath.rain = *rpower - 0x30;//strcat(weath.MainPic.path,".r");
-        if(weath.rain>4) weath.rain = 0;
-      }else{
-        weath.snow = *rpower - 0x30;
-        if(weath.snow>4) weath.snow = 0;
-        //strcat(weath.MainPic.path,".s");
-      }
-      //valuetag(rpower, weath.MainPic.path);
-    //}
+    char *precipitation=findtag(phenomena,"precipitation=\"");
+    weath.storm = 0;
+    switch(*precipitation)  
+    {
+      case '4':
+        weath.rain = *rpower - 0x30 + 1;
+        break;
+      case '5':
+        weath.rain = *rpower - 0x30 + 3;
+        break;
+      case '6':
+        weath.snow = *rpower - 0x30 + 1;
+        break;
+      case '7':
+        weath.snow = *rpower - 0x30 + 3;
+        break;
+      case '8':
+        weath.storm = 1;
+        break;
+      default:
+        break;
+     }
+     if(weath.rain>4) weath.rain = 0;
+     if(weath.snow>4) weath.snow = 0;
 
     char *spower=findtag(phenomena,"spower=\"");
-    weath.storm = 0;
     if (*spower=='1'){
       //strcat(weath.MainPic.path,".st");
       weath.storm = 1;
@@ -274,27 +286,19 @@ void Parsing(){
     strcpy(weath.c.path,ICON_PATH);
     strcat(weath.c.path, tmp);
     strcat(weath.c.path, ".png");
-    weath.c.height=GetImgHeight((int)weath.c.path);
-    weath.c.width=GetImgWidth((int)weath.c.path);
 
     tmp[0] = 'r'; tmp[1] = weath.rain + '0';
     strcpy(weath.r.path,ICON_PATH);
     strcat(weath.r.path, tmp);
     strcat(weath.r.path, ".png");
-    weath.r.height=GetImgHeight((int)weath.r.path);
-    weath.r.width=GetImgWidth((int)weath.r.path);
 
     tmp[0] = 's'; tmp[1] = weath.snow + '0';
     strcpy(weath.s.path,ICON_PATH);
     strcat(weath.s.path, tmp);
     strcat(weath.s.path, ".png");
-    weath.s.height=GetImgHeight((int)weath.s.path);
-    weath.s.width=GetImgWidth((int)weath.s.path);
 
     strcpy(weath.st.path,ICON_PATH);
     strcat(weath.st.path, "st.png");
-    weath.st.height=GetImgHeight((int)weath.st.path);
-    weath.st.width=GetImgWidth((int)weath.st.path);
     
     GenerateString();
 }
@@ -370,9 +374,6 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
 #endif        
 
-        DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
-	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
-        
         if (SHOW_PIC){
           DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.dt.width, PICT_Y + weath.dt.height, 1);
           DrawImg(PICT_X, PICT_Y, (int)weath.dt.path);
@@ -382,6 +383,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           if(weath.storm)     DrawImg(PICT_X, PICT_Y, (int)weath.st.path);
           DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
         }
+        DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
+	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
       }
    }}    
   }
