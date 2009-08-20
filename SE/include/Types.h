@@ -837,4 +837,31 @@ enum LISTMSGS {
   LISTMSG_ListBusy=11,
 };
 
+typedef struct{
+  wchar_t fname[255];
+  wchar_t fpath[255];  
+}BT_FILE_2020;
+
+typedef struct{
+  wchar_t fname[252];
+  wchar_t fpath[252];  
+}BT_FILE_2010;
+
+typedef struct {
+  char is_multiple;
+  int Book_ID;
+  STRID send;
+  STRID sent;
+  u16 obex_flag;
+  union 
+  {
+    LIST *lst;
+    union
+    {
+      BT_FILE_2020 btf2020;
+      BT_FILE_2010 btf2010;
+    };
+  };
+} SEND_OBEX_STRUCT;
+
 #endif

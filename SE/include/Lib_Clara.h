@@ -1615,4 +1615,7 @@ __swi __arm  GUI *GUIonMessage_GetGui ( void *msg);
 __swi __arm  int GUIonMessage_GetSelectedItem ( void *msg);
 #pragma swi_number=0x378
 __swi __arm  int GUIonMessage_GetPrevSelectedItem ( void *msg);
+
+#pragma swi_number=0x379
+__swi __arm  void ObexSendFile (SEND_OBEX_STRUCT *);
 #endif
