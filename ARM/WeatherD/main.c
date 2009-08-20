@@ -278,12 +278,13 @@ void Parsing(){
 
     strcpy(weath.WindPic.path,ICON_PATH);
     char *winddir=findtag(wind,"direction=\"");
-    weath.WindPic.path[strlen(weath.WindPic.path)]=(*winddir)+1;
+    int wpl = strlen(weath.WindPic.path);
+    weath.WindPic.path[wpl]=(*winddir)+1; weath.WindPic.path[wpl+1] = 0;
     strcat(weath.WindPic.path,"w.png");
     weath.WindPic.height=GetImgHeight((int)weath.WindPic.path);
     weath.WindPic.width=GetImgWidth((int)weath.WindPic.path);
     
-    SUBPROC((void *)log_data, weath.WindPic.path);
+    //SUBPROC((void *)log_data, weath.WindPic.path);
    // ShowMSG(1,(int)weath.WindPic.path);
 
     //Влажность
