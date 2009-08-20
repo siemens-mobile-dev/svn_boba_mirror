@@ -143,15 +143,16 @@ void GenerateString(){
                 SHOW_PRESSURE ? weath.Pressure   : "", 
                 SHOW_WIND     ? weath.Wind       : "", 
                 SHOW_REWLET   ? weath.Rewlet     : "");
-        
+
+    //ShowMSG(1,(int)sss);
     utf82win(sss,(const char *)sss);
     ascii2ws(ews, sss);
 };
 
-char *valuetag(char *src,char *dst){
+char *valuetag(char *src,char *dst, int maxlen){
  int c=0;
  dst=dst+strlen(dst);
- while (*src!='"'&&c<22){
+ while (*src!='"' && c < maxlen){
   *dst++=*src++;
   c++;
  }
@@ -165,8 +166,10 @@ char * findtag(char *src, char *tag){
 
 void Parsing(){
     if (!buf) return; 
-    //SUBPROC((void *)log_data, buf);
+    SUBPROC((void *)log_data, buf);
 
+    char val[23];
+    int vmin, vmax, vmid;
     char *forecast=findtag(buf,"FORECAST ");
 
     //главная картинка
@@ -228,31 +231,50 @@ void Parsing(){
     char *temp=findtag(forecast,"TEMPERATURE ");
     char *tempmin=findtag(temp,"min=\"");
     char *tempmax=findtag(temp,"max=\"");
-    weath.Temp[0]=0;
+    //weath.Temp[0]=0;
+
+    *val = 0;
+    valuetag(tempmin, val, 22);
+    vmin = atoi(val); *val = 0;
+    valuetag(tempmax, val, 22);
+    vmax = atoi(val); *val = 0;
+    vmid = (vmax+vmin)>>1;
+    
+    snprintf(weath.Temp, 16, "%c%d \xB0\x43\n", (vmid>0)?'+':' ', vmid);
+    /*
     valuetag(tempmin, weath.Temp);
     strcat(weath.Temp, "-");     
     valuetag(tempmax, weath.Temp);
     strcat(weath.Temp, "\xB0\x43\n");     
+    */
 
     //Давление
     char *press=findtag(forecast,"PRESSURE ");
     char *pressmin=findtag(press,"min=\"");
     char *pressmax=findtag(press,"max=\"");
-    weath.Pressure[0]=0;
-    valuetag(pressmin, weath.Pressure);
+    //weath.Pressure[0]=0;
+    
+    valuetag(pressmin, val, 22);
+    vmin = atoi(val); *val = 0;
+    valuetag(pressmax, val, 22);
+    vmax = atoi(val); *val = 0;
+    vmid = (vmax+vmin)>>1;
+    
+    snprintf(weath.Pressure, 16, "%d мм\n", vmid);    
+/*    valuetag(pressmin, weath.Pressure);
     strcat(weath.Pressure, "-");     
     valuetag(pressmax, weath.Pressure);
-    strcat(weath.Pressure, "\n");     
+    strcat(weath.Pressure, "\n");     */
     
     //Ветер
     char *wind=findtag(forecast,"WIND ");
     char *windmin=findtag(wind,"min=\"");
     char *windmax=findtag(wind,"max=\"");
     weath.Wind[0]=0;
-    valuetag(windmin, weath.Wind);
+    valuetag(windmin, weath.Wind, 22);
     strcat(weath.Wind, "-");     
-    valuetag(windmax, weath.Wind);
-    strcat(weath.Wind, "\n");     
+    valuetag(windmax, weath.Wind, 22);
+    strcat(weath.Wind, " м/с\n");     
 
     strcpy(weath.WindPic.path,ICON_PATH);
     char *winddir=findtag(wind,"direction=\"");
@@ -261,17 +283,26 @@ void Parsing(){
     weath.WindPic.height=GetImgHeight((int)weath.WindPic.path);
     weath.WindPic.width=GetImgWidth((int)weath.WindPic.path);
     
-//    ShowMSG(1,(int)weath.MainPic.path);
+    SUBPROC((void *)log_data, weath.WindPic.path);
+   // ShowMSG(1,(int)weath.WindPic.path);
 
     //Влажность
     char *rewlet=findtag(forecast,"RELWET ");
     char *rewletmin=findtag(rewlet,"min=\"");
     char *rewletmax=findtag(rewlet,"max=\"");
-    weath.Rewlet[0]=0;
+/*    weath.Rewlet[0]=0;
     valuetag(rewletmin, weath.Rewlet);
     strcat(weath.Rewlet, "-");     
-    valuetag(rewletmax, weath.Rewlet);
-
+    valuetag(rewletmax, weath.Rewlet);*/
+    
+    valuetag(rewletmin, val, 22);
+    vmin = atoi(val); *val = 0;
+    valuetag(rewletmax, val, 22);
+    vmax = atoi(val); *val = 0;
+    vmid = (vmax+vmin)>>1;
+    
+    snprintf(weath.Rewlet, 16, "%d %%\n", vmid);        
+    //ShowMSG(1,(int)weath.Rewlet);
     mfree(buf);
     buf=0;
 

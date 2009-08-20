@@ -130,3 +130,15 @@ void utf82win(char*d,const char *s)
   }
   *d = 0;
 }
+
+int atoi(char *str)
+{
+  int res = 0, sign = 0;
+  if(!*str) return 0;
+  if(*str == '-') {sign = 1; *str++;}
+  while(*str && *str >= '0' && *str <= '9')
+  {
+    res *= 10; res += *str-'0'; str++;
+  }
+  return res;
+}
