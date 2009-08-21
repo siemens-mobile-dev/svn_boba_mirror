@@ -140,5 +140,5 @@ int atoi(char *str)
   {
     res *= 10; res += *str-'0'; str++;
   }
-  return res;
+  return sign?-res:res;
 }
