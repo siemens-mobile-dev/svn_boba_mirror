@@ -518,5 +518,11 @@ extern const int EVENT_ID_ICA_DATACOUNTERS_ENDSESSION_REQUEST ;
 extern const int EVENT_ID_ICA_DATACOUNTERS_ENDSESSION_RESPONSE ;
 extern const int EVENT_ID_ICA_DATACOUNTERS_REQUEST ;
 extern const int EVENT_ID_ICA_DATACOUNTERS_RESPONSE ;
-
+extern const int DB_CMD_RUN ;
+extern const int DB_CMD_DELETE ;
+extern const int DB_CMD_RENAME ;
+extern const int DB_CMD_INFO ;
+extern const int DB_CMD_SETSMALLICON ;
+extern const int DB_CMD_DESTROY_SUBROUTINE ;
+extern const int DB_CMD_LAST ;
 #endif
