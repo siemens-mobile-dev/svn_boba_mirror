@@ -461,8 +461,10 @@ void CreateUnicodeSI(MyBOOK *myBook, int is_pass)
                                               0);
   GUIObject_Softkey_SetAction(myBook->text_input, 1, UnicodeOnSelFolder);
   GUIObject_Softkey_SetText(myBook->text_input, 1, sel_folder);
+  StringInput_MenuItem_SetPriority(myBook->text_input, 0, 1);
   GUIObject_Softkey_SetAction(myBook->text_input, 2, UnicodeOnSelFile);
   GUIObject_Softkey_SetText(myBook->text_input, 2, sel_file);
+  StringInput_MenuItem_SetPriority(myBook->text_input, 0, 2);
   delete ustr;
 }
 
@@ -921,8 +923,8 @@ int SelBcfg_BcfgFilter(const wchar_t *ExtList, const wchar_t *ItemPath, const wc
 
 static int SelBcfgPageOnCreate(void *, BOOK *bk)
 {
-
   MyBOOK *mbk=(MyBOOK *)bk;
+  static char actions[4];
   void * DB_Desc=DataBrowserDesc_Create();
 
   const wchar_t * folder_list[2];
@@ -936,6 +938,10 @@ static int SelBcfgPageOnCreate(void *, BOOK *bk)
   DataBrowserDesc_SetSelectAction(DB_Desc,1);
   DataBrowserDesc_SetFileExtList(DB_Desc,L"*.bcfg");
   DataBrowserDesc_SetItemFilter(DB_Desc,SelBcfg_BcfgFilter);
+  
+  actions[0]=DB_CMD_DELETE;
+  actions[1]=DB_CMD_LAST;
+  DataBrowserDesc_SetActions(DB_Desc,actions);
 
   DataBrowser_Create(DB_Desc);
   DataBrowserDesc_Destroy(DB_Desc);
