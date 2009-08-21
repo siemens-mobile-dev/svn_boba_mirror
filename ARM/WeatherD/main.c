@@ -166,7 +166,7 @@ char * findtag(char *src, char *tag){
 
 void Parsing(){
     if (!buf) return; 
-    SUBPROC((void *)log_data, buf);
+//    SUBPROC((void *)log_data, buf);
 
     char val[23];
     int vmin, vmax, vmid;
@@ -413,7 +413,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           if(weath.rain)      DrawImg(PICT_X, PICT_Y, (int)weath.r.path);
           if(weath.snow)      DrawImg(PICT_X, PICT_Y, (int)weath.s.path);
           if(weath.storm)     DrawImg(PICT_X, PICT_Y, (int)weath.st.path);
-          DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
+          DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y, (int)weath.WindPic.path);
+          //DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
         }
         DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
