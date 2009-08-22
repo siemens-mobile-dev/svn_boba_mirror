@@ -620,6 +620,8 @@
 0DD8: 00000000 D9144845 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
 0DDC: 00000000 E1144845 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
 0DE0: 00000000 ED144845 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
+0DE4: 00000000 1D75F344 ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
+0DE8: 00000000 95E14C45 ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
 
 
 

@@ -552,7 +552,7 @@
 0CC8: FFFFFFFF DD0CC244 ; 332: int GetSignalQuality(char *rssi,char *ber);
 0CCC: FFFFFFFF 59610745 ;8333: IS_NEEDED_BOOK isCameraBook(void);
 0CD0: FFFFFFFF C5A84345 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
-;0CD4: xxxxxxxx yyyyyyyy ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio, int actionID);
+0CD4: FFFFFFFF CD651645 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio, int actionID);
 0CD8: FFFFFFFF AD684445 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
 0CDC: FFFFFFFF E9624445 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
 0CE0: FFFFFFFF 05784445 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook, void*);

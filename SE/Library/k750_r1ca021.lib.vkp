@@ -620,6 +620,7 @@
 0DD8: FFFFFFFF 45A4D544 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
 0DDC: FFFFFFFF 4DA4D544 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
 0DE0: FFFFFFFF 5DA4D544 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
+0DE4: FFFFFFFF 81D1BC44 ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
 
 
 

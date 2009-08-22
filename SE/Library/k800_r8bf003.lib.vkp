@@ -608,7 +608,20 @@
 0DA8: 00000000 B5FD0345 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
 0DAC: 00000000 75FE0345 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
 0DB0: 00000000 05FE0345 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
-
+0DB4: 00000000 19F60345 ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ* disp_obj, int);
+0DB8: 00000000 759D4545 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+0DBC: 00000000 CDCE1D44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
+0DC0: 00000000 45480A44 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
+0DC4: 00000000 290D9744 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
+0DC8: 00000000 CD543E45 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,NAME *,char *error);
+0DCC: 00000000 F122FD44 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
+0DD0: 00000000 B5E54145 ; 374: int GUIonMessage_GetMsg ( void *msg);
+0DD4: 00000000 BDE54145 ; 375: BOOK *GUIonMessage_GetBook ( void *msg);
+0DD8: 00000000 B9E54145 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
+0DDC: 00000000 C1E54145 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
+0DE0: 00000000 CDE54145 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
+;0DE4: xxxxxxxx yyyyyyyy ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
+0DE8: 00000000 0DAD4645 ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
 
 
 
