@@ -604,7 +604,7 @@
 0D98: 00000000 81312D45 ; 366: int IrDa_GetState(char *state);
 ;0D9C: xxxxxxxx yyyyyyyy ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 ;0DA0: xxxxxxxx yyyyyyyy ; 368: void * IncommingCall_Accept(BOOK* book);
-
+0DEC: 00000000 316CFD44 ; 37B: int EqualizerGain_Set (int AudioSessionID,int Band,int Level);
 
 
 

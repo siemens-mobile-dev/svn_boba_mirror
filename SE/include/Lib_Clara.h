@@ -1618,4 +1618,7 @@ __swi __arm  int GUIonMessage_GetPrevSelectedItem ( void *msg);
 
 #pragma swi_number=0x379
 __swi __arm  void ObexSendFile (SEND_OBEX_STRUCT *);
+
+#pragma swi_number=0x37B
+__swi __arm  int EqualizerGain_Set (int AudioSessionID,int Band,int Level);
 #endif
