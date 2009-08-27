@@ -1,6 +1,6 @@
 #include "inc\mc.h"
 #include "inc\mui.h"
-
+#include "inc\file_op.h"
 
 //File Name
 wchar_t* GetFileExt(wchar_t* fname)
@@ -29,7 +29,7 @@ wchar_t* GetFileName(wchar_t* fname)
 }
 
 
-wchar_t* GetFileDir(wchar_t* fname, wchar_t* buf)
+wchar_t* GetFileDir(wchar_t* fname, wchar_t* buf, int is_arch)
 {
   int c;
   wchar_t *s=fname;
@@ -42,9 +42,10 @@ wchar_t* GetFileDir(wchar_t* fname, wchar_t* buf)
   }
   if (buf)
   {
+    if (!len && !is_arch) len=1;
     if (len)
     {
-      wstrncpy(buf,fname,len);      
+      wstrncpy(buf,fname,len);
     }
     buf[len]=0;    
   }

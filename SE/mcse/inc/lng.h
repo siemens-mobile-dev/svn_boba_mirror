@@ -122,6 +122,8 @@
 #define sz_about_m			L"Об эльфе..."
 #define sz_exit			L"Выход"
 
+#define sz_sendfile             L"Передать через BT"
+
 #define sz_bm			L"Закладка"
 
 #define sz_name			L"Имя"

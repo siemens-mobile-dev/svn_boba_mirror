@@ -3,7 +3,8 @@
 #include "inc\zslib.h"
 #include "inc\mui.h"
 #include "inc\conf_loader.h"
-
+#include "inc\menus.h"
+#include "inc\bookmarks.h"
 
 
 
@@ -107,6 +108,12 @@ void MM_File(void)
   ShowWindow(lo);
 }
 
+void MC_Send(void)
+{
+  DoSendFile();
+  CloseAllMenu();
+}
+
 
 void MC_Paste(void)
 {
@@ -157,6 +164,7 @@ void MC_NewFile(void)
 }
 
 MENU_DESC op_menu[]={
+  {ind_sendfile,MC_Send,0},
   {ind_past,    MC_Paste,0},
   {ind_cancel,  MC_Cancel,0},
   {ind_copy,    MC_Copy,0},
@@ -195,7 +203,7 @@ void MM_Oper(void)
   if (IsInArchive())
   {
     for (int i=0; i<MAXELEMS(op_menu); i++) op_menu[i].enabled=0;   // Вырубаем все
-    op_menu[2].enabled=2;  
+    op_menu[3].enabled=1;  
   }
   else
   {
@@ -455,7 +463,7 @@ void MC_DrvInf(void)
 
 void MC_Options(void)
 {
-  ExecuteFile(successed_config_path, successed_config_name);
+  DoExecFile(successed_config_path, successed_config_name);
   CloseMenu();
 }
 

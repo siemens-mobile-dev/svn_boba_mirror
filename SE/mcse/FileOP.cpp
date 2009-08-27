@@ -1,6 +1,7 @@
 #include "inc\mc.h"
 #include "inc\mui.h"
 #include "inc\zslib.h"
+#include "inc\file_op.h"
 
 
 
@@ -24,9 +25,8 @@ void MsgBoxErrorMmi(int err)
   MsgBoxError(e);
 }
 
-int cd(int tab, const wchar_t *dname)
+int cd(int tab, const wchar_t *dname, int drv)
 {
-  int drv;
   if (IsArchiveOpened(tab))
   {
     drv = _CurDrv;
@@ -43,10 +43,16 @@ int cd(int tab, const wchar_t *dname)
         return 0;
       }
     }
-    drv=-1;
-    for (int i=0; i<MAX_DRV; i++)
+    if (drv==-1)
     {
-      if (!wstrcmpni(Drives[i].path,dname,wstrlen(Drives[i].path))) drv=i;
+      for (int i=0; i<MAX_DRV; i++)
+      {
+        if (!wstrcmpni(Drives[i].path,dname,wstrlen(Drives[i].path)))
+        {
+          drv=i;
+          break;
+        }
+      }
     }
     if (drv==-1)
     {
@@ -62,7 +68,7 @@ int cd(int tab, const wchar_t *dname)
 
 int cdsys(wchar_t *dname)
 {
-  if (cd(systab, dname))
+  if (cd(systab, dname, -1))
   {
     back_tab = curtab;
     curtab = systab;

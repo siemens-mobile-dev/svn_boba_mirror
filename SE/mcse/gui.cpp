@@ -10,8 +10,8 @@ int scr_h;
 int txt_h;
 int head_h;
 int attr_h;
-int ico_h=0;
-int ico_w=0;
+int ico_h;
+int ico_w;
 int itm_ch;
 int itms_max;
 int itms_bs;
@@ -137,7 +137,7 @@ void DrwDrvAc(int ind, void *gc, RECT *rc)
     else if (IsInArchive()==_7Z_ARCH)
       name = L"7Z";
     else
-      name = Drives[ind].path;
+      name = Drives[ind].name;
   }
   else if (curtab == systab)
   {

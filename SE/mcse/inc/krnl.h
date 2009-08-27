@@ -71,18 +71,22 @@ int GetCurTabFileIndex(wchar_t* fname);
 FILEINF* _CurFile();
 
 extern wchar_t in_open_path[MAX_PATH];
-extern const wchar_t keys_file[];
 void ExitFromZip();
+void S_ZipOpen(void);
+void S_7ZOpen(void);
 
 typedef void (*IFN_RET_PROC) (wchar_t *wsname);
 void TextInput(wchar_t *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc);
-void ExecuteFile(const wchar_t *path, const wchar_t *fname);
+
+
+void DoExecFile(const wchar_t *path, const wchar_t *fname);
 
 typedef int (*ENUM_SEL_PROC) (FILEINF *file, int param);
 int EnumChk(ENUM_SEL_PROC EnumProc, int param);
 int EnumSel(ENUM_SEL_PROC EnumProc, int param);
 
 void CB_Cancel(int id);
+void DestroySendList(LIST *lst);
 
 void DoSwapTab();
 void DoPrvDrv();
@@ -119,5 +123,5 @@ void DoTabMove();
 void DoRoot();
 void DoShowPath();
 void DoBegin();
-
+void DoSendFile();
 #endif

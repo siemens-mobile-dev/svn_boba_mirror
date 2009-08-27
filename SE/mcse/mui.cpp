@@ -60,6 +60,8 @@ const MUI_STR mui[]={
 	{id_settings, sz_settings},
 	{id_about_m, sz_about_m},
 	{id_exit, sz_exit},
+        
+        {id_sendfile, sz_sendfile},
 
 	{id_name, sz_name},
 	{id_fullname, sz_fullname},
@@ -130,19 +132,6 @@ wchar_t* muitxt(int ind)
 
 wchar_t* muibuff=NULL;
 int muibuffsz=0;
-
-void InitDefStrs()   // исправляем косяк иара...
-{
-  int c;
-  for (int i=0; i<MUI_COUNT; i++)
-  {
-    wchar_t *t=mui[i].df_str;
-    while((c=*t))
-    {
-      *t++=char8to16(c,1);
-    }
-  } 
-}
 
 
 void SaveMUI(wchar_t* filename)

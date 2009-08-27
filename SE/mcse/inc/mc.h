@@ -9,7 +9,6 @@
 #include "inc\log.h"
 #include "inc\main.h"
 #include "inc\config_data.h"
-#include "inc\menus.h"
 #include "inc\fn_list.h"
 
 #include "zlib\minizip\unzip.h"
@@ -32,7 +31,7 @@ void MsgBoxError(wchar_t *err);
 
 void DoErrKey();
 
-#define MAX_DRV			4
+#define MAX_DRV			3
 
 #define MAX_TABS		2
 #define systab			MAX_TABS
@@ -41,6 +40,7 @@ void DoErrKey();
 #define FNT_NONE		1
 #define FNT_COPY		1
 #define FNT_MOVE		2
+#define FNT_SEND                3
 
 #define ST_REVERS		0x0100
 #define ST_NAME			0x0
@@ -82,7 +82,8 @@ typedef struct
 
 typedef struct
 {
-	wchar_t path[8];
+	wchar_t *path;
+        wchar_t name[8];
 	int  enabled;
 } DRVINFO;
 
@@ -106,11 +107,7 @@ int utf8_to_utf16(char *utf8, int cc, wchar_t *unicode16);
 unsigned int char8to16(int c, int type);
 
 extern "C" long  strtol (const char* nptr,char* *endptr,int base);
-KEY_PROC GetKeyprocByKey(char key);
-KEY_PROC GetKeyprocLongByKey(char key);
-void DoKey(int isLongPress, int key);
 
-void LoadKeys();
 
 extern int back_tab;
 #define _CurTab   tabs[curtab]
@@ -124,7 +121,6 @@ extern TABINFO* tabs[];
 extern FILEINF* FileListBase[MAX_TABS+1];
 extern DRVINFO Drives[MAX_DRV];
 
-extern const wchar_t mcbm_ext[];
 extern volatile int Busy;
 extern volatile int Terminate;
 extern volatile int RedrawGUI;
@@ -150,21 +146,9 @@ enum S_ICONS {
 #define L_ICN_CB            L"CHECKBOX_ICN"
 
 extern MyBOOK * MCBook;
-extern FN_LIST buffer;
+
 
 extern DISP_OBJ *main_obj;
-int cd(int tab, const wchar_t *dname);
 
-void S_Delit(void);
-void S_Paste(void);
-int M_MoveCopy(FILEINF *file, int param);
-void _NewDir(wchar_t *wsname);
-int cdsys(wchar_t *dname);
 
-int isdir(const wchar_t *name);
-void UseBM(wchar_t* filename);
-void DoBMAdd();
-void DoBMList();
-
-void MC_NewDir(void);
 #endif

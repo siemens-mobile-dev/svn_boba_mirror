@@ -1,4 +1,5 @@
 #include "inc\mc.h"
+#include "inc\file_op.h"
 #include "inc\fn_list.h"
 
 static wchar_t *st_pathbuf_fn=NULL;

@@ -22,7 +22,10 @@ __root const CFG_HDR cfghdr_m00 = { CFG_LEVEL, psz_sm_common, 1, 0 };
   __root const CFG_HDR cfghdr3 = { CFG_CBOX, psz_loopnav, 0, 2 };
   __root const int CONFIG_LOOP_NAVIGATION_ENABLE = 1;
   __root const CFG_CBOX_ITEM cfgcbox3[] = { psz_no, psz_yes };
-        
+  
+  __root const CFG_HDR cfghdr34 = { CFG_CBOX, "Show root folder", 0, 2 };
+  __root const int SHOW_ROOT_FOLDER = 1;
+  __root const CFG_CBOX_ITEM cfgcbox34[] = { psz_no, psz_yes }; 
 __root const CFG_HDR cfghdr_m01 = { CFG_LEVEL, "", 0, 0 };
 
 

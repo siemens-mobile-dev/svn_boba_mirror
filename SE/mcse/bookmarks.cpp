@@ -1,5 +1,7 @@
 #include "inc\mc.h"
 #include "inc\mui.h"
+#include "inc\bookmarks.h"
+#include "inc\file_op.h"
 
 const wchar_t mcbm_path[] = L"Bookmarks";
 const wchar_t mcbm_ext[] = L"mcbm";
@@ -32,7 +34,7 @@ void UseBM(wchar_t* filename)
         curtab = back_tab < MAX_TABS ? back_tab : 0;
         
       if (isdir(pathbuf))
-        cd(curtab, pathbuf);
+        cd(curtab, pathbuf, -1);
       else
         //if (wsbuf)
         {

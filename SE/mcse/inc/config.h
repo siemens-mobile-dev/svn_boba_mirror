@@ -5,6 +5,7 @@ typedef struct
 {
 	int sort;
 	int LastInd;
+        int drv;
 	wchar_t LastPath[MAX_PATH];
 } MC_CFGti;
 

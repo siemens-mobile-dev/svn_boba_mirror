@@ -1,10 +1,11 @@
 #include "inc\mc.h"
 #include "inc\krnl.h"
+#include "inc\keys.h"
+#include "inc\bookmarks.h"
 
-typedef struct{
-	const int *key;
-	char* name;
-} KEYNM_MAP;
+const wchar_t keys_file[] = L"mckeys.cfg";
+
+
 
 const KEYNM_MAP keynames[] = 
 {

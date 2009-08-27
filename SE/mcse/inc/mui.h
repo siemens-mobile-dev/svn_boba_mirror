@@ -56,6 +56,8 @@
 #define id_about_m			1072
 #define id_exit				1100
 
+#define id_sendfile                     1200
+
 #define id_name				1500
 #define id_fullname			1501
 #define id_size				1502
@@ -131,115 +133,116 @@ void SaveMUI(wchar_t* filename);
 int LoadMUI(wchar_t* filename);
 void FreeMUI();
 wchar_t* muitxt(int ind);
-void InitDefStrs();
 
 
 
 
 
+enum lng_ids {
+  ind_no=0,
+  ind_yes,
+  ind_byte,
+  ind_kbyte,
+  ind_mbyte,
 
-#define ind_no				0
-#define ind_yes				1
+  ind_reconfig,
+  ind_lng,
+  ind_lngname,
 
-#define ind_byte			2
-#define ind_kbyte			3
-#define ind_mbyte			4
+  ind_dirmking,
+  ind_copying,
+  ind_moveing,
+  ind_deling,
 
-#define ind_reconfig		5
-#define ind_lng				6
-#define ind_lngname			7
+  ind_mcmenu,
+  ind_select,
+  ind_back,
 
-#define ind_dirmking		8
-#define ind_copying			9
-#define ind_moveing			10
-#define ind_deling			11
+  ind_open,
+  ind_file_m,
+  ind_chk,
+  ind_chkall,
+  ind_invchk,
+  ind_unchall,
+  ind_oper_m,
+  ind_past,
+  ind_cancel,
+  ind_copy,
+  ind_move,
+  ind_del,
+  ind_rename,
+  ind_newdir,
+  ind_prop,
+  ind_drvinf,
+  ind_view_m,
+  ind_sort_m,
+  ind_sortn,
+  ind_sorte,
+  ind_sorts,
+  ind_sortd,
+  ind_sortr,
+  ind_filter,
+  ind_refresh,
+  ind_newfile,
+  ind_bm_m,
+  ind_bm,
+  ind_add,
+  ind_bml,
+  ind_misc_m,
+  ind_settings,
+  ind_about_m,
+  ind_exit,
 
-#define ind_mcmenu			12
-#define ind_select			13
-#define ind_back			14
+  ind_sendfile,
 
-#define ind_open			15
-#define ind_file_m			16
-#define ind_chk				17
-#define ind_chkall			18
-#define ind_invchk			19
-#define ind_unchall			20
-#define ind_oper_m			21
-#define ind_past			22
-#define ind_cancel			23
-#define ind_copy			24
-#define ind_move			25
-#define ind_del				26
-#define ind_rename			27
-#define ind_newdir			28
-#define ind_prop			29
-#define ind_drvinf			30
-#define ind_view_m			31
-#define ind_sort_m			32
-#define ind_sortn			33
-#define ind_sorte			34
-#define ind_sorts			35
-#define ind_sortd			36
-#define ind_sortr			37
-#define ind_filter			38
-#define ind_refresh			39
-#define ind_newfile			40
-#define ind_bm_m		   	41
-#define ind_bm				42
-#define ind_add				43
-#define ind_bml				44
-#define ind_misc_m			45
-#define ind_settings		46
-#define ind_about_m			47
-#define ind_exit			48
+  ind_name,
+  ind_fullname,
+  ind_size,
+  ind_global,
+  ind_folders,
+  ind_files,
+  ind_date,
+  ind_attr,
+  ind_readonly,
+  ind_hidden,
+  ind_system,
+  ind_arh,
+  ind_subdirs,
+  ind_ncsize,
+  ind_csize,
+  ind_cglobal,
 
-#define ind_name			49
-#define ind_fullname		50
-#define ind_size			51
-#define ind_global			52
-#define ind_folders			53
-#define ind_files			54
-#define ind_date			55
-#define ind_attr			56
-#define ind_readonly		57
-#define ind_hidden			58
-#define ind_system			59
-#define ind_arh				60
-#define ind_subdirs			61
-#define ind_ncsize			62
-#define ind_csize			63
-#define ind_cglobal			64
+  ind_pmt_del,
+  ind_pmt_copy,
+  ind_pmt_move,
+  ind_pmt_stop,
+  ind_pmt_cancel,
+  ind_pmt_exists,
+  ind_pmt_exit,
+  ind_pmt_impcs,
+  ind_pmt_implg,
+  ind_pmt_rodel,
 
-#define ind_pmt_del			65
-#define ind_pmt_copy		66
-#define ind_pmt_move		67
-#define ind_pmt_stop		68
-#define ind_pmt_cancel		69
-#define ind_pmt_exists		70
-#define ind_pmt_exit		71
-#define ind_pmt_impcs		72
-#define ind_pmt_implg		73
-#define ind_pmt_rodel		74
+  ind_err_attrset,
+  ind_err_makedir,
+  ind_err_rename,
+  ind_err_delete,
+  ind_err_badname_t,
+  ind_err_baddrv_t,
+  ind_err_resnok,
+  ind_err_nofiles,
+  ind_err_badname,
+  ind_err_badkey,
+  ind_err_badformat,
+  ind_err_nomemory,
+  ind_err_makefile,
+  ind_err_ziperr,
 
-#define ind_err_attrset		75
-#define ind_err_makedir		76
-#define ind_err_rename		77
-#define ind_err_delete		78
-#define ind_err_badname_t	79
-#define ind_err_baddrv_t	80
-#define ind_err_resnok		81
-#define ind_err_nofiles		82
-#define ind_err_badname		83
-#define ind_err_badkey		84
-#define ind_err_badformat	85
-#define ind_err_nomemory	86
-#define ind_err_makefile	87
-#define ind_err_ziperr		88
-
-#define ind_msg_zreading			89
-#define ind_msg_showhid_files		90
-#define ind_msg_showsys_files		91
-#define ind_msg_showhidsys_files	92
-#define ind_msg_showhid_drv			93
+  ind_msg_zreading,
+  ind_msg_showhid_files,
+  ind_msg_showsys_files,
+  ind_msg_showhidsys_files,
+  ind_msg_showhid_drv
+};
 
 #endif

@@ -10,8 +10,8 @@ wchar_t GetIcon(wchar_t *name, int fattr)
   FILEITEM *fi=FILEITEM_Create();
   FILEITEM_SetFname(fi,name);
   data=DataBrowser_CreateSubExecute(-1, fi);
-  DataBrowser_ExecuteSubroutine(data,0x3B,&d);
-  DataBrowser_ExecuteSubroutine(data,0x2D,0);
+  DataBrowser_ExecuteSubroutine(data,DB_CMD_SETSMALLICON,&d);
+  DataBrowser_ExecuteSubroutine(data,DB_CMD_DESTROY_SUBROUTINE,0);
   FILEITEM_Destroy(fi);
   icon=d;
   return icon;

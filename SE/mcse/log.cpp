@@ -3,6 +3,8 @@
 #include "inc\log.h"
 
 #ifdef LOG
+
+extern "C" void GetDateTime(DATETIME *);
 void StartLog(void)
 {
   int f;
@@ -32,7 +34,7 @@ void WriteLog(char *buf)
 {
   char msg[512];
   DATETIME dt;
-  //REQUEST_DATEANDTIME_GET(SYNC,&dt);
+  GetDateTime(&dt);
   sprintf(msg, "%02d:%02d:%02d %s\n", dt.time.hour,dt.time.min,dt.time.sec,buf);
   _WriteLog(msg);
 }
@@ -41,7 +43,7 @@ void WriteLog(wchar_t *buf)
 {
   char msg[512];
   DATETIME dt;
-  //REQUEST_DATEANDTIME_GET(SYNC,&dt);
+  GetDateTime(&dt);
   sprintf(msg, "%02d:%02d:%02d %ls\n", dt.time.hour,dt.time.min,dt.time.sec,buf);
   _WriteLog(msg);
 }
@@ -50,7 +52,7 @@ void WriteLog(int buf)
 {
   char msg[512];
   DATETIME dt;
-  //REQUEST_DATEANDTIME_GET(SYNC,&dt);
+  GetDateTime(&dt);
   sprintf(msg, "%02d:%02d:%02d %08X\n", dt.time.hour,dt.time.min,dt.time.sec,buf);
   _WriteLog(msg);
 }
@@ -59,7 +61,7 @@ void WriteLog(char *buf1, char *buf2)
 {
   char msg[512];
   DATETIME dt;
-  //REQUEST_DATEANDTIME_GET(SYNC,&dt);
+  GetDateTime(&dt);
   sprintf(msg, "%02d:%02d:%02d %s %s\n", dt.time.hour,dt.time.min,dt.time.sec,buf1, buf2);
   _WriteLog(msg);
 }

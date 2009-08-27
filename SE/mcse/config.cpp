@@ -37,6 +37,7 @@ void InitCfg()
       int dr = tabs[ii]->CurDrv;
       MCConfig.tabs[ii].sort = tabs[ii]->sort;
       MCConfig.tabs[ii].LastInd = tabs[ii]->iIndex[dr];
+      MCConfig.tabs[ii].drv = tabs[ii]->CurDrv;
       wstrcpy(MCConfig.tabs[ii].LastPath, tabs[ii]->szDirs[dr]);
     }
   }

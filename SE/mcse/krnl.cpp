@@ -4,11 +4,14 @@
 #include "inc\lng.h"
 #include "inc\zslib.h"
 #include "inc\krnl.h"
-#include "inc\ColorMap.h"
-#include "inc\mui.h"
 #include "inc\exts.h"
 #include "inc\gui.h"
 #include "inc\7zslib.h"
+#include "inc\menus.h"
+#include "inc\ColorMap.h"
+#include "inc\mui.h"
+#include "inc\bookmarks.h"
+#include "inc\file_op.h"
 
 wchar_t msgbuf[256];
 wchar_t mcpath[MAX_PATH];
@@ -34,15 +37,14 @@ int progrsp_start = 0;
 
 wchar_t in_open_path[MAX_PATH];
 
-const wchar_t keys_file[] = L"mckeys.cfg";
+
 
 
 
 DRVINFO Drives[MAX_DRV] = {
-	{L"/tpa",    1},
-	{L"/card",   1},
-	{L"/system", 1},
-	{L"/ifs",    1}
+	{NULL, L"",  0},
+	{NULL, L"",  0},
+	{NULL, L"",  0},
 };
 
 int curtab=0;
@@ -285,7 +287,7 @@ int FillRealPathFiles(int tab, wchar_t* dname)
 }
 
 // Заполняет список файлов текущей директории
-int FillFiles(int tab, wchar_t* dname)   // Только в ММИ!!!
+int FillFiles(int tab, wchar_t* dname) 
 {
   if (tabs[tab]->ccFiles) DelFiles(tab);
   if (IsArchiveOpened(tab)==ZIP_ARCH)
@@ -458,7 +460,16 @@ wchar_t* CurFullPath(wchar_t* sfile)
   if (IsInArchive())
     snwprintf(pathbuf,MAXELEMS(pathbuf)-1, _ls_ls, _CurTab->zipInfo->szCurDir, sfile);
   else
-    snwprintf(pathbuf,MAXELEMS(pathbuf)-1,_ls_ls, _CurPath, sfile);
+  {
+    if (_CurPath[0]=='/' && _CurPath[1]==0)
+    {
+      wstrcpy(pathbuf+1, sfile);
+    }
+    else
+    {
+      snwprintf(pathbuf,MAXELEMS(pathbuf)-1,_ls_ls, _CurPath, sfile);
+    }
+  }   
   return pathbuf;
 }
 
@@ -573,7 +584,7 @@ void S_ZipOpen(void)
     int zerr = OpenTabZip(curtab, arcpathbuf);
     if (zerr == UNZ_OK)
     {
-      cd(curtab, (wchar_t *)str_empty);
+      cd(curtab, (wchar_t *)str_empty, -1);
       SetCurTabIndex(0, 0);
     }
     else if (zerr != -11111) // ignore propr_stop
@@ -592,7 +603,7 @@ void S_7ZOpen(void)
     int zerr = OpenTab7Z(curtab, arcpathbuf);
     if (zerr == SZ_OK)
     {
-      cd(curtab, (wchar_t *)str_empty);
+      cd(curtab, (wchar_t *)str_empty, -1);
       SetCurTabIndex(0, 0);
     }
     else if (zerr != -11111) // ignore propr_stop
@@ -604,16 +615,55 @@ void S_7ZOpen(void)
   }
 }
 
-void ExecuteFile(const wchar_t *path, const wchar_t *fname)
+
+
+static int EF_OnEnter(void *, BOOK * bk)
 {
-  SUB_EXECUTE *data;
-  FILEITEM *fi=FILEITEM_Create();
-  FILEITEM_SetPathAndContentType(fi,path);
-  FILEITEM_SetFnameAndContentType(fi,fname);
-  data=DataBrowser_CreateSubExecute(BOOK_GetBookID(&MCBook->book), fi);
-  DataBrowser_ExecuteSubroutine(data,1,0);
-  DataBrowser_ExecuteSubroutine(data,0x2D,0);
-  FILEITEM_Destroy(fi);
+  MyBOOK *mbk=(MyBOOK *)bk;
+  if (mbk->subr)
+    DataBrowser_ExecuteSubroutine(mbk->subr,DB_CMD_DESTROY_SUBROUTINE,0);
+  mbk->subr=DataBrowser_CreateSubExecute(BOOK_GetBookID(&mbk->book), mbk->fitem);
+  DataBrowser_ExecuteSubroutine(mbk->subr,DB_CMD_RUN,0);
+  FILEITEM_Destroy(mbk->fitem);
+  mbk->fitem=NULL;
+  return (1);
+}
+
+static int EF_OnExit(void *, BOOK * bk)
+{
+  MyBOOK *mbk=(MyBOOK *)bk;
+  WriteLog("EF_OnExit");
+  DataBrowser_ExecuteSubroutine(mbk->subr,DB_CMD_DESTROY_SUBROUTINE,0);
+  mbk->subr=NULL;
+  return (1);  
+}
+
+static int EF_OnPreviuos(void *data, BOOK *bk)
+{
+  WriteLog("EF_OnPreviuos");
+  BookObj_ReturnPage(bk,PREVIOUS_EVENT);
+  return (1);
+}
+
+const PAGE_MSG bk_msglst_execfile[] @ "DYN_PAGE"  = 
+{
+  PAGE_ENTER_EVENT_TAG,    EF_OnEnter,
+  PAGE_EXIT_EVENT_TAG,     EF_OnExit,
+  PREVIOUS_EVENT_TAG,      EF_OnPreviuos,
+  NIL_EVENT_TAG,           NULL
+};
+
+const PAGE_DESC bk_execfile = {"MC_ExecuteFile_Page",0,bk_msglst_execfile};
+
+void DoExecFile(const wchar_t *path, const wchar_t *fname)
+{
+  MyBOOK *mbk=MCBook;
+  if (mbk->fitem)
+    FILEITEM_Destroy(mbk->fitem);
+  mbk->fitem=FILEITEM_Create();
+  FILEITEM_SetPathAndContentType(mbk->fitem,path);
+  FILEITEM_SetFnameAndContentType(mbk->fitem,fname);
+  BookObj_CallPage(&MCBook->book,&bk_execfile);
 }
 
 void ExecuteFile(wchar_t *fname, int, int)
@@ -624,7 +674,7 @@ void ExecuteFile(wchar_t *fname, int, int)
   {
     name=w+1;
     *w=0;
-    ExecuteFile(fname,name);
+    DoExecFile(fname,name);
     *w='/';
   }
 }
@@ -638,7 +688,7 @@ void _Open(int isSysOpen)
   {
     CurFullPath(file->ws_name);
     if (file->attr & FA_DIRECTORY)
-      cd(curtab, pathbuf);  
+      cd(curtab, pathbuf, _CurDrv);  
     else
     {
       wchar_t* sz = GetFileExt(file->ws_name);
@@ -681,6 +731,7 @@ void _Open(int isSysOpen)
       else
       {
         ExecuteFile(pathbuf, 0, 0);
+        WriteLog(pathbuf);
       }
     }
   }
@@ -826,9 +877,9 @@ void DoBegin()
 void DoRoot()
 {
   if (IsInArchive())
-    cd(curtab, str_empty);
+    cd(curtab, str_empty, -1);
   else if (curtab < MAX_TABS)
-    cd(curtab, Drives[_CurDrv].path);
+    cd(curtab, Drives[_CurDrv].path, _CurDrv);
 }
 
 void DoShowPath()
@@ -948,15 +999,20 @@ int DoBack()
     wchar_t* path = IsInArchive() ? _CurTab->zipInfo->szCurDir : _CurPath;
     
     // Читаем родительскуюя папку в pathbuf
-    GetFileDir(path, pathbuf);
+    GetFileDir(path, pathbuf, IsInArchive());
     // Проверка на корень
-    int goOut = IsInArchive() ? *path == '\0' : *pathbuf == '\0';
+    int goOut;
+    if (IsInArchive())
+      goOut=*path == '\0';
+    else
+      goOut=!wstrcmpi(path, Drives[_CurDrv].path);
     
+    WriteLog(path);
     if (!goOut)
     {
       	//Сохраняем имя тек. папки
       wstrncpy(lpname, GetFileName(path),MAXELEMS(lpname)-1);
-      res = cd(curtab, pathbuf);
+      res = cd(curtab, pathbuf, _CurDrv);
       
       //Ищем папку из которой вышли
       int ind = GetCurTabFileIndex(lpname);
@@ -1184,4 +1240,147 @@ void DoRen()
   FILEINF *cfile = _CurFile();
   if (cfile)
     TextInput(muitxt(ind_name), 1, cfile->ws_name, _Rename);
+}
+
+
+
+int M_Send(FILEINF *file, int param)
+{
+  if (file && wstrlen(file->ws_name))
+  {
+    int pname = wstrlen(_CurPath) + 1;
+    CurFullPath(file->ws_name);
+    fn_add(&buffer, param, file->ftype, pname, pathbuf, IsInArchive() ? _CurTab->zipInfo->szZipPath : NULL);
+    return 1;
+  }
+  return 0;
+}
+
+void DestroySendList(LIST *lst)
+{
+  WriteLog("DestroySendList");
+  while(lst->FirstFree)
+  {
+    void *f=ListElement_Remove(lst,0);
+    delete (f);
+  }
+}
+
+extern "C" void SendObexFile(void *send);
+
+void SendBT_page()
+{
+  if (IsInArchive()) return; // Пока не обрабатывается
+  // Очищаем буфер
+  CB_Cancel(IDYES);
+  // Копируем текущие файлы в буфер
+  EnumSel(M_Send, FNT_SEND);
+  if (buffer.count)
+  {
+    DestroySendList(MCBook->lst_send);
+    SEND_OBEX_STRUCT *send=new SEND_OBEX_STRUCT;
+    memset(send,0,sizeof(SEND_OBEX_STRUCT));
+    FN_ITM* itm = buffer.items;
+    while(itm)
+    {
+      if(!isdir(itm->full))
+      {
+        wchar_t *fname=wstrrchr(itm->full, L'/');
+        if (fname)
+        {
+          if (buffer.count==1)
+          {
+            if (is_db2020) {
+              GetFileDir(itm->full, send->btf2020.fpath,0);
+              wstrcpy(send->btf2020.fname,fname+1);
+            }
+            else {
+              GetFileDir(itm->full, send->btf2010.fpath,0);
+              wstrcpy(send->btf2010.fname,fname+1);
+            }
+          }else{
+            if (is_db2020) {
+              BT_FILE_2020 *f=new BT_FILE_2020;
+              GetFileDir(itm->full, f->fpath,0);
+              wstrcpy(f->fname,fname+1);
+              ListElement_AddtoTop(MCBook->lst_send, f);
+            }
+            else {
+              BT_FILE_2010 *f=new BT_FILE_2010;
+              GetFileDir(itm->full, f->fpath,0);
+              wstrcpy(f->fname,fname+1);
+              ListElement_AddtoTop(MCBook->lst_send, f);
+            }
+          }
+        }
+      }
+      itm=(FN_ITM *)itm->next;
+    }
+    if (MCBook->lst_send->FirstFree)
+    {
+      send->is_multiple=1;
+      send->lst=MCBook->lst_send;
+    }else if(buffer.count==1){
+      send->is_multiple=0;
+    }
+    send->Book_ID=BOOK_GetBookID(&MCBook->book);
+    send->send=Str2ID(L"Первая строка",0,SID_ANY_LEN);
+    send->sent=Str2ID(L"Вторая строка",0,SID_ANY_LEN);
+    send->obex_flag=2;
+    ObexSendFile(send);
+    delete (send);
+    fn_free(&buffer);
+  }
+}
+
+static int SF_OnEnter(void *, BOOK * bk)
+{
+  SendBT_page();
+  return (1);
+}
+
+static int SF_OnExit(void *, BOOK * bk)
+{
+  MyBOOK *mbk=(MyBOOK *)bk;
+  WriteLog("SF_OnExit");
+  DestroySendList(mbk->lst_send);
+  return (1);  
+}
+
+static int SF_OnAccept(void *data, BOOK *bk)
+{
+  WriteLog("SF_OnAccept");
+  BookObj_ReturnPage(bk, PREVIOUS_EVENT);
+  return (1);
+}
+
+static int SF_OnCancel(void *data, BOOK *bk)
+{
+  WriteLog("SF_OnCancel");
+  BookObj_ReturnPage(bk, PREVIOUS_EVENT);
+  return (1);
+}
+
+static int SF_OnPreviuos(void *data, BOOK *bk)
+{
+  WriteLog("SF_OnPreviuos");
+  BookObj_ReturnPage(bk,PREVIOUS_EVENT);
+  return (1);
+}
+
+const PAGE_MSG bk_msglst_sendfile[] @ "DYN_PAGE"  = 
+{
+  PAGE_ENTER_EVENT_TAG,    SF_OnEnter,
+  PAGE_EXIT_EVENT_TAG,     SF_OnExit,
+  ACCEPT_EVENT_TAG,        SF_OnAccept,
+  PREVIOUS_EVENT_TAG,      SF_OnPreviuos,
+  CANCEL_EVENT_TAG,        SF_OnCancel,
+  NIL_EVENT_TAG,           NULL
+};
+
+const PAGE_DESC bk_sendfile = {"MC_SendFile_Page",0,bk_msglst_sendfile};
+
+void DoSendFile()
+{
+  BookObj_CallPage(&MCBook->book,&bk_sendfile);
 }

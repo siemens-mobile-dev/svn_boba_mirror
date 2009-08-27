@@ -6,6 +6,7 @@ extern const int CONFIG_SAVE_PATH;
 extern const int CONFIG_BACK_EXIT;
 extern const int CONFIG_CUR_DOWN_ON_CHECK;
 extern const int CONFIG_LOOP_NAVIGATION_ENABLE;
+extern const int SHOW_ROOT_FOLDER;
 
 extern const int CONFIG_FONT_FILES;
 extern const int CONFIG_FONT_HEADER;

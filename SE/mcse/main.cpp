@@ -12,16 +12,24 @@
 #include "inc\zslib.h"
 #include "inc\config.h"
 #include "inc\conf_loader.h"
+#include "inc\zslib.h"
+#include "inc\7zslib.h"
+#include "inc\keys.h"
+#include "inc\file_op.h"
 
+extern void CloseAllFiles(MyBOOK *mbk);
 MyBOOK * MCBook;
 DISP_OBJ *main_obj=NULL;
 volatile int Busy = 0;
 volatile int Terminate = 0; // флаг необходимости завершени€ работы
 volatile int RedrawGUI = 0; // флаг необходимости перерисовки гу€
+int is_db2020=0;
 
 wchar_t STD_ICONS[TOTAL_ICONS];
 
 void FreeData();
+void FreeDrvInfo();
+
 #pragma segment="ELFBEGIN"
 void elf_exit(void){
   trace_done();
@@ -95,6 +103,7 @@ void MsgBoxYesNo(wchar_t *qv, void(*f)(int))
 void FreeData()
 {
   WriteLog("FreeData");
+  
   if (CONFIG_LOAD_CS) SaveCS(NULL);
   if (CONFIG_LOAD_MUI) SaveMUI(NULL);
   SaveCfg();
@@ -106,7 +115,10 @@ void FreeData()
     DelFiles(ii);
     FreeTab(ii);
   }
+  FreeDrvInfo();
   DestroyPathBuf();
+  DestroySendList(MCBook->lst_send);
+  List_Free(MCBook->lst_send);
 }
 
 wchar_t *SA_ICONS[]=
@@ -119,11 +131,59 @@ wchar_t *SA_ICONS[]=
   L_ICN_CB  
 };
 
+void InitDrvInfo()
+{
+  int drv_num=wstrcmpi(GetDir(DIR_OTHER|MEM_INTERNAL),GetDir(DIR_OTHER|MEM_EXTERNAL))?3:2;
+  FreeDrvInfo();
+  if (SHOW_ROOT_FOLDER)
+  {
+    Drives[drv_num-1].path=new wchar_t[2];
+    wstrcpy(Drives[drv_num-1].path, L"/");
+    wstrcpy(Drives[drv_num-1].name,L"root");
+    Drives[drv_num-1].enabled=1;
+  }
+  else
+  {
+    Drives[drv_num-1].enabled=0;    
+  }
+  wchar_t *ws=new wchar_t[wstrlen(GetDir(DIR_OTHER|MEM_INTERNAL))+1];
+  wstrcpy(ws, GetDir(DIR_OTHER|MEM_INTERNAL));
+  wchar_t *last=wstrrchr(ws,L'/');
+  if (last) *last=0;
+  Drives[drv_num-2].path=ws;
+  wstrcpy(Drives[drv_num-2].name,L"phone");
+  Drives[drv_num-2].enabled=1;
+  
+  if (drv_num==3)
+  {
+    wchar_t *ws=new wchar_t[wstrlen(GetDir(DIR_OTHER|MEM_EXTERNAL))+1];
+    wstrcpy(ws, GetDir(DIR_OTHER|MEM_EXTERNAL));
+    wchar_t *last=wstrrchr(ws,L'/');
+    if (last) *last=0;
+    Drives[drv_num-3].path=ws;
+    wstrcpy(Drives[drv_num-3].name,L"card");
+    Drives[drv_num-3].enabled=1;
+  }
+  else
+    Drives[drv_num-3].enabled=0;
+}
+
+
+void FreeDrvInfo()
+{
+  for (int i=0; i<MAX_DRV; i++)
+  {
+    delete (Drives[i].path);
+    Drives[i].path=NULL;
+    Drives[i].enabled=0;    
+  }
+}
+
+
 int MainGuiOnCreate(DISP_OBJ_MAIN *db)
 {
   int tmp;
   WriteLog("MainGuiOnCreate");
-  
   main_obj=&db->dsp_obj;
   for (int i=0; i<TOTAL_ICONS; i++)
   {
@@ -132,6 +192,8 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
     else
       STD_ICONS[i]=0xFFFF;
   }
+  is_db2020=(GetChipID()>>8)==0x99;
+  InitDrvInfo();
   WriteLog("LoadKeys");
   LoadKeys();
   WriteLog("LoadCfg");
@@ -152,7 +214,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
       tabs[ii]->sort=srt;
       if (MCConfig.tabs[ii].LastPath[0] /*&& isdir(MCConfig.tabs[ii].LastPath, &err)*/)
       {
-        cd(ii, MCConfig.tabs[ii].LastPath);
+        cd(ii, MCConfig.tabs[ii].LastPath, MCConfig.tabs[ii].drv);
         SetTabIndex(ii, MCConfig.tabs[ii].LastInd, 0);
       }
     }
@@ -162,11 +224,41 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
   InitScr();
   WriteLog("InitCS");
   InitCS();
-  InitDefStrs();
   WriteLog("LoadMUI");
   if (CONFIG_LOAD_MUI)
     LoadMUI(NULL);
+  WriteLog("Create lst_send");
+  MCBook->lst_send=List_New();
   DispObject_SetRefreshTimer(&db->dsp_obj,100);
+  if (in_open_path[0]=='/')
+  {
+    if (isdir(in_open_path))
+    {
+      cd(curtab = 0, in_open_path, -1);
+    }
+    else if (CONFIG_ZIP_ENABLE && IsItZipFile(in_open_path))
+    {
+      // переходим в папку с зипом
+      cd(curtab = 0, GetFileDir(in_open_path, pathbuf,0), -1);
+      // ищем наш зип файл
+      int idx = GetCurTabFileIndex(GetFileName(in_open_path));
+      SetCurTabIndex(idx, 0);
+      // открываем
+      wstrcpy(arcpathbuf, in_open_path);
+      SUBPROC((void*)S_ZipOpen);
+    }
+    else if (CONFIG_7Z_ENABLE && IsIt7ZipFile(in_open_path))
+    {
+      // переходим в папку с зипом
+      cd(curtab = 0, GetFileDir(in_open_path, pathbuf,0), -1);
+      // ищем наш зип файл
+      int idx = GetCurTabFileIndex(GetFileName(in_open_path));
+      SetCurTabIndex(idx, 0);
+      // открываем
+      wstrcpy(arcpathbuf, in_open_path);
+      SUBPROC((void*)S_7ZOpen);
+    }
+  }
   return (1);
 }
 
@@ -181,7 +273,7 @@ void MainGuiOnClose(DISP_OBJ_MAIN *db)
 void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
 {
   int font_old, gc_xx;
-  int font=FONT_E_20R;
+  int font=CONFIG_FONT_ATTR;
   void *gc=get_DisplayGC();
   gc_xx=get_GC_xx(gc);
   set_GC_xx(gc,1);
@@ -318,6 +410,7 @@ static int ReconfigElf(void *mess ,BOOK *book)
   if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
   {
     InitConfig();
+    InitDrvInfo();
     InitScr();
     UpdateAll();
     result=1;
@@ -357,11 +450,32 @@ int isMcBook(BOOK * struc)
   return(struc->onClose==(void*)onMyBookClose);
 }
 
+#pragma segment="DYN_CONST"
+#pragma segment="DYN_CONST_DESC"
+int CheckConst(void)
+{
+  int result=1;
+  int const_count=*(int *)__segment_begin("DYN_CONST_DESC");
+  int *constt=(int *)__segment_begin("DYN_CONST");
+  for (int i=0; i<const_count; i++)
+  {
+    if (constt[i]==0xFFFFFFFF) {result=0; break;}
+  }
+  return (result);
+}
+
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
+  if (!CheckConst())
+  {
+    MESSAGE(Str2ID(L"Go smoke bamboo or update dynconst",0,SID_ANY_LEN));
+    SUBPROC(elf_exit);
+    return 0;
+  }
   trace_init();
   MCBook=new MyBOOK;
-  GetFileDir(elfname, mcpath);
+  memset(MCBook,0,sizeof(MyBOOK));
+  GetFileDir(elfname, mcpath,0);
   StartLog();
   WriteLog("Start");
   WriteLog("InitConfig");
@@ -372,7 +486,14 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
     SUBPROC(elf_exit);
     return (0);    
   }
-  if (path && fname) wstrcpy(in_open_path, fname); else *in_open_path=0;
+  if (path && fname) 
+  {
+    wstrcpy(in_open_path, path);
+    int l=wstrlen(path);
+    in_open_path[l++]=L'/';
+    wstrcpy(in_open_path+l, fname);
+  }
+  else *in_open_path=0;
   BookObj_GotoPage((BOOK *)MCBook,&bk_main);
   return 0;
 }
