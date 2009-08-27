@@ -5,7 +5,7 @@
 #define MAXSTACK 2048		// максимальный размер стека
 #define SWAP(x, y) { void* t = a[x]; a[x] = a[y]; a[y] = t;  }
 
-void quickSort1(void** a, long size, IsGreaterFunc gt)
+void quickSort(void** a, long size, IsGreaterFunc gt)
 {
 
 	long i, j;   		// указатели, участвующие в разделении
@@ -96,7 +96,7 @@ void quickSort1(void** a, long size, IsGreaterFunc gt)
 	delete (lbstack);
 }
 
-void quickSort(void** a, long size, IsGreaterFunc gt)
+void quickSort1(void** a, long size, IsGreaterFunc gt)
 {
   long i = 0, j = size - 1; // начальные значения
   void *temp;
