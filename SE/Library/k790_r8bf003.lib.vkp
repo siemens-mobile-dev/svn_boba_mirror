@@ -622,6 +622,10 @@
 0DD8: 00000000 EDA62D45 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
 0DDC: 00000000 F5A62D45 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
 0DE0: 00000000 01A72D45 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
+0DE4: 00000000 493ADB44 ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
+0DE8: 00000000 596E3245 ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
+0DEC: 00000000 5D58FA44 ; 37B: int EqualizerGain_Set (int AudioSessionID,int Band,int Level);
+
 
 
 
