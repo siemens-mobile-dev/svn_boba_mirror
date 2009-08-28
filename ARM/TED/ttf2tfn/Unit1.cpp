@@ -54,7 +54,7 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
   DeleteFile(ComboBox1->Text+".tfn");
   int f = FileCreate(ComboBox1->Text+".tfn");
   char font_name[256];
-  strcpy(font_name, ComboBox1->Text.c_str());
+  strcpy(font_name, Edit2->Text.c_str());
   font_name[15] = 0;
 
   unsigned char buf[65536];
@@ -334,3 +334,13 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
   Image1->Canvas->Rectangle(0,0,132,132);
 }
 //---------------------------------------------------------------------------
+void __fastcall TForm1::ComboBox1Change(TObject *Sender)
+{
+  char font_name[512];
+  strcpy(font_name, ComboBox1->Text.c_str());
+  font_name[15] = 0;
+  Edit2->Text = font_name;
+}
+//---------------------------------------------------------------------------
+
+

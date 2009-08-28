@@ -1,9 +1,9 @@
 object Form1: TForm1
   Left = 275
-  Top = 188
+  Top = 132
   BorderStyle = bsSingle
   Caption = 'TTF 2 TFN'
-  ClientHeight = 423
+  ClientHeight = 479
   ClientWidth = 592
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,16 +16,16 @@ object Form1: TForm1
   TextHeight = 13
   object Image1: TImage
     Left = 0
-    Top = 41
+    Top = 65
     Width = 592
-    Height = 382
+    Height = 414
     Align = alClient
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 592
-    Height = 41
+    Height = 65
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
@@ -37,6 +37,7 @@ object Form1: TForm1
       ItemHeight = 13
       TabOrder = 0
       Text = 'MS Sanf Serif'
+      OnChange = ComboBox1Change
     end
     object Edit1: TEdit
       Left = 344
@@ -64,6 +65,14 @@ object Form1: TForm1
       Default = True
       TabOrder = 3
       OnClick = Button1Click
+    end
+    object Edit2: TEdit
+      Left = 8
+      Top = 40
+      Width = 153
+      Height = 21
+      MaxLength = 15
+      TabOrder = 4
     end
   end
 end

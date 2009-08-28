@@ -58,6 +58,7 @@ extern const unsigned int DISPLAY_LIGHT;
 
 volatile int terminated=0;
 volatile int loadmenu_id;
+
 volatile int edit_id;
 
 volatile int text_changed=0;
@@ -67,9 +68,13 @@ volatile int stk_fhandle=-1;
 
 volatile int rotate = 0;
 
+// Флаг необходимости завершить работу
+char Quit_Required = 0;
+char *asterix="*";
+
 //Флаг необходимости перерисовать экран
 volatile unsigned int draw_mode=255;
-volatile unsigned int font_size=4;
+volatile unsigned int font_selected=0;
 volatile unsigned int fonts_count = 0;
 
 volatile unsigned int clip_pasted;
@@ -903,7 +908,7 @@ void SaveHistory(void)
   memcpy(&HISTORY,ss,sizeof(HISTORY));
   memcpy(HISTORY.name,filename,128);
   HISTORY.rotate=rotate;
-  HISTORY.font=font_size;
+  HISTORY.font=font_selected;
   HISTORY.line=curline;
   HISTORY.total=total_line;
   HISTORY.codepage=win_dos_koi;
@@ -1673,32 +1678,6 @@ void CreateEditDialog(void)
   edit_id=CreateInputTextDialog(&ed_inp_desc,&ed_inp_hdr,eq,1,0);
 }
 
-/*void add_to_clip(char far *s)
-{
-int f=FileOpen((STR)clipfile,
-clip_pasted?_O_CREAT+_O_RDWR+_O_TRUNC:_O_CREAT+_O_RDWR+_O_APPEND
-,_S_IREAD);
-if (f!=-1)
-{
-FileWrite(f,s,strlen(s));
-FileClose(f);
-  }
-EX_heap_free_with_lock(s);
-clip_pasted=0;
-}*/
-
-/*volatile int light_count;
-
-GBSTMR light_tmr;
-
-void LightTimerProc(void)
-{
-if (light_count)
-{
-light_count--;
-GBS_StartTimerProc(&light_tmr,262,LightTimerProc);
-  }
-}*/
 
 void SetViewIllumination(void)
 {
@@ -1716,7 +1695,7 @@ void SetViewIllumination(void)
 }
 
 //Перерисовка основного диалога
-void method0(MAIN_GUI *data)
+void maincsm_onRedraw(MAIN_GUI *data)
 {
   if (data->gui.state==2)
   {
@@ -1724,27 +1703,27 @@ void method0(MAIN_GUI *data)
   }
 }
 
-void method1(MAIN_GUI *data, void *(*malloc_adr)(int))
+void maincsm_onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
   void FirstLoadFile(unsigned int);
   SUBPROC((void *)FirstLoadFile,0xFFFFFFFF);
   data->gui.state=1;
 }
 
-void method2(MAIN_GUI *data, void (*mfree_adr)(void *))
+void maincsm_onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   terminated=1;
   data->gui.state=0;
 }
 
-void method3(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
+void maincsm_onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))
 {
   if (!draw_mode) draw_mode=1;
   DisableIDLETMR();
   data->gui.state=2;
 }
 
-void method4(MAIN_GUI *data, void (*mfree_adr)(void *))
+void maincsm_onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   if (data->gui.state!=2) return;
   data->gui.state=1;
@@ -1752,7 +1731,7 @@ void method4(MAIN_GUI *data, void (*mfree_adr)(void *))
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
-void method7(MAIN_GUI *data, void (*mfree_adr)(void *))
+void maincsm_onDestroy(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
   kill_data(data,mfree_adr);
   //  mfree_adr(data);
@@ -1804,11 +1783,21 @@ void actDown()
   draw_mode=1;
 }
 
+void QuitCallbackProc(int decision)
+{
+  if(!decision)
+    Quit_Required = 1;
+}
+
+void DisplayQuitQuery()
+{
+  MsgBoxYesNo(1,(int)"Exit without save?",QuitCallbackProc);
+}
 
 //------------------------------------------------------------------------------
 // Осн. диалог - обработка кнопок
 //------------------------------------------------------------------------------
-int method5(MAIN_GUI *data, GUI_MSG *msg)
+int maincsm_onKey(MAIN_GUI *data, GUI_MSG *msg)
 {
   void FirstLoadFile(unsigned int);
   if (disk_access) return(0); //Если дисковые операции
@@ -1830,14 +1819,18 @@ int method5(MAIN_GUI *data, GUI_MSG *msg)
     case RED_BUTTON:
     case RIGHT_SOFT:
       //  L_EXIT:
-      return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      if (text_changed)
+        DisplayQuitQuery();
+      else
+        return(1); //Происходит вызов GeneralFunc для тек. GUI -> закрытие GUI
+      break;
     case GREEN_BUTTON:
       //    L_EDIT:
       CreateEditDialog();
       return(0);
     case ENTER_BUTTON:
-      DrawLoadMenu();
-      loadmenu_id=0;
+      loadmenu_id=DrawLoadMenu();
+//      loadmenu_id=0;
       return(0);
     case LEFT_SOFT:
       DrawSoftMenu();
@@ -2114,13 +2107,14 @@ typedef struct FontListItem FontListItem;
 struct FontListItem
 {
   char *name;
+  int size;
   char *file;
   FontListItem *next;
 };
 
 FontListItem *FontList = NULL;
 
-FontListItem *CreateFontListItem(char *n, char *f)
+FontListItem *CreateFontListItem(char *n, char *f, int size)
 {
   FontListItem *ret = malloc(sizeof(FontListItem));
   ret->next = NULL;
@@ -2128,20 +2122,21 @@ FontListItem *CreateFontListItem(char *n, char *f)
   ret->file = malloc(strlen(f)+1);
   strcpy(ret->name, n);
   strcpy(ret->file, f);
+  ret->size = size;
   return ret;
 }
                                   
-void AddFont(char *n, char *f)
+void AddFont(char *n, char *f, int size)
 {
   FontListItem *cur = FontList;
   if(!FontList)
   {
-    FontList = CreateFontListItem(n, f);
+    FontList = CreateFontListItem(n, f, size);
     return;
   }
   while(cur->next)
     cur = cur->next;
-  cur->next = CreateFontListItem(n, f);
+  cur->next = CreateFontListItem(n, f, size);
 }
 
 void DeleteFonts(FontListItem *head)
@@ -2162,6 +2157,7 @@ int GetFontList()
   char *path, *fname, tmp;
   char fn_font[17];
   int fin, n = 0;
+  char size = 0;
   
   fn_font[16] = 0;
   
@@ -2186,11 +2182,11 @@ int GetFontList()
         if ((fin=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
         {
           fread(fin,&tmp,1,&ul);
-          fread(fin,&tmp,1,&ul);
+          fread(fin,&size,1,&ul);
           fread(fin,fn_font,16,&ul);
           fclose(fin,&ul);
+          AddFont(fn_font, fname, size);
         }
-        AddFont(fn_font, fname);
         n++;
         mfree(fname);
       }
@@ -2214,7 +2210,7 @@ void LoadFont(int flag)
   FontListItem *cur = FontList;
   
   //snprintf(fn_font,sizeof(fn_font),"%sm%d.tfn",ted_path,font_size);
-  for(i = 0; i < font_size && cur; i++)
+  for(i = 0; i < font_selected && cur; i++)
     cur=cur->next;
 
   if ((fin=fopen(cur->file,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
@@ -2274,7 +2270,7 @@ void setfont(int sz)
 {
 //  strcpy(font_file, fname);
 
-  font_size=sz;
+  font_selected=sz;
   if (disk_access==FIRSTLOAD) //Пришли из первой загрузки
   {
     ShowMSG(1,(int)"Font selected!");
@@ -2289,6 +2285,7 @@ void setfont(int sz)
 }
 
 void FirstLoadFile(unsigned int fmt);
+
 
 void do_rotate(void)
 {
@@ -2310,18 +2307,18 @@ void do_rotate(void)
 
 void load_direct(void)
 {
-  loadmenu_id=0;
+//  loadmenu_id=0;
+  if(HISTORY.fmt!=255) GeneralFuncF1(1);
   draw_mode=255;
   disk_access=FIRSTLOAD;
   HISTORY.fmt=0;
   
-  GeneralFuncF1(1);
   SUBPROC((void *)FirstLoadFile,0);
 }
 
 void load_format(void)
 {
-  loadmenu_id=0;
+//  loadmenu_id=0;
   draw_mode=255;
   disk_access=FIRSTLOAD;
   HISTORY.fmt=1;
@@ -2332,7 +2329,7 @@ void load_format(void)
 
 void load_eolspc(void)
 {
-  loadmenu_id=0;
+//  loadmenu_id=0;
   draw_mode=255;
   disk_access=FIRSTLOAD;
   HISTORY.fmt=2;
@@ -2355,7 +2352,106 @@ void load_save(void)
   CreateSaveAsDialog();
 }
 
-int load_menu_onkey(void *data, GUI_MSG *msg)
+//-------------------------------------------------------------------
+int mode_menu_onkey(void *data, GUI_MSG *msg)
+{
+  int n = GetCurMenuItem(data);
+  
+  if(msg->keys==0x3D)
+  {
+    switch(n)
+    {
+    case 0:
+//      GeneralFunc_flag1(loadmenu_id, 1);
+      load_direct();
+      break;
+    case 1:
+//      GeneralFunc_flag1(loadmenu_id, 1);
+      load_format();
+      break;
+    case 2:
+//      GeneralFunc_flag1(loadmenu_id, 1);
+      load_eolspc();
+      break;
+    }
+    return (0);
+  }
+  
+  return (0);
+}
+
+void mode_menu_ghook(void *data, int cmd)
+{
+  if (cmd == TI_CMD_FOCUS)
+    DisableIDLETMR();
+}
+
+void mode_menu_iconhndl(void * data, int curitem, void * user_pointer)
+{
+  WSHDR * ws;
+  char tmp[128];
+  int len;
+  void * item = AllocMenuItem(data);
+  tmp[0] = 0;
+  switch(curitem)
+  {
+    case 0:
+      if(HISTORY.fmt==0) strcat(tmp, asterix);
+      strcat(tmp, "Direct load");
+      //GeneralFunc_flag1(loadmenu_id, 1);
+      break;
+    case 1:
+      if(HISTORY.fmt==1) strcat(tmp, asterix);
+      strcat(tmp, "DOS format");
+      //GeneralFunc_flag1(loadmenu_id, 1);
+      break;
+    case 2:
+      if(HISTORY.fmt==2) strcat(tmp, asterix);
+      strcat(tmp, "WIN format");
+      //GeneralFunc_flag1(loadmenu_id, 1);
+      break;
+    default:
+      strcpy(tmp, "Error");
+      break;       
+  }
+  len = strlen(tmp);
+  ws = AllocMenuWS(data, len + 4);
+  str_2ws(ws, tmp, len);
+  
+  SetMenuItemText(data, item, ws, curitem);
+}
+
+
+MENUITEM_DESC modemenu_ITEMS[3]=
+{
+  {NULL,(int)"Direct load"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"DOS format"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"WIN format"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
+};
+
+HEADER_DESC modemenu_HDR={0,0,0,0,icon,(int)"Select mode",LGP_NULL};
+
+MENU_DESC modemenu_STRUCT=
+{
+  8,mode_menu_onkey,mode_menu_ghook,NULL,
+  menusoftkeys,
+  &menu_skt,
+  0,
+  mode_menu_iconhndl,
+  0,
+  0, 
+  3
+};
+
+int DrawModeMenu(void)
+{
+  patch_header(&modemenu_HDR);
+  return CreateMenu(0,0,&modemenu_STRUCT,&modemenu_HDR,0,3,0,0);
+}
+
+//------------------------------------------------------------------------------
+
+int font_menu_onkey(void *data, GUI_MSG *msg)
 {
   int i, n = GetCurMenuItem(data);
   FontListItem *cur = FontList;
@@ -2363,37 +2459,94 @@ int load_menu_onkey(void *data, GUI_MSG *msg)
   for(i = 0; i < n && cur; i++)
     cur=cur->next;
   
-  if(!cur && msg->keys==0x3D)
-  {
-    switch(n-i)
-    {
-    case 0:
-      do_rotate();
-      break;
-    case 1:
-      load_direct();
-      break;
-    case 2:
-      load_format();
-      break;
-    case 3:
-      load_eolspc();
-      break;
-    case 4:
-      load_pad();
-      break;
-    case 5:
-      load_save();
-      break;
-    }
-    return (0);
-  }
-  
   if (msg->keys==0x3D && cur)
   {
     setfont(i);
     return(0);
   }
+  return (0);
+}
+
+void font_menu_ghook(void *data, int cmd)
+{
+  if (cmd == TI_CMD_FOCUS)
+    DisableIDLETMR();
+}
+
+void font_menu_iconhndl(void * data, int curitem, void * user_pointer)
+{
+  WSHDR * ws;
+  int i, len;
+  void * item = AllocMenuItem(data);
+  FontListItem *cur = FontList;
+  
+  for(i = 0; i < curitem && cur; i++)
+    cur=cur->next;
+  
+  if (cur)
+  {
+    len = strlen(cur->name);
+    ws = AllocMenuWS(data, len + 4);
+    str_2ws(ws, cur->name, len);
+  }
+
+  SetMenuItemText(data, item, ws, curitem);
+}
+
+
+MENUITEM_DESC *fontmenu_ITEMS;
+
+HEADER_DESC fontmenu_HDR={0,0,0,0,icon,(int)"Select font",LGP_NULL};
+
+MENU_DESC fontmenu_STRUCT=
+{
+  8,font_menu_onkey,font_menu_ghook,NULL,
+  menusoftkeys,
+  &menu_skt,
+  0,
+  font_menu_iconhndl,
+  0,
+  0, //(MENUPROCS_DESC*)&loadmenu_HNDLS,
+  0
+};
+
+int DrawFontMenu(void)
+{
+  int n=fonts_count;
+ 
+  patch_header(&fontmenu_HDR);
+  return CreateMenu(0,0,&fontmenu_STRUCT,&fontmenu_HDR,0,n,0,0);
+}
+
+//------------------------------------------------------------------------------
+
+int load_menu_onkey(void *data, GUI_MSG *msg)
+{
+  int n = GetCurMenuItem(data);
+  
+  if(msg->keys==0x3D)
+  {
+    switch(n)
+    {
+    case 0:
+      DrawFontMenu();
+      break;
+    case 1:
+      do_rotate();
+      break;
+    case 2:
+      DrawModeMenu();
+      break;
+    case 3:
+      load_pad();
+      break;
+    case 4:
+      load_save();
+      break;
+    }
+    return (0);
+  }
+ 
   return (0);
 }
 
@@ -2410,65 +2563,61 @@ void load_menu_iconhndl(void * data, int curitem, void * user_pointer)
   void * item = AllocMenuItem(data);
   FontListItem *cur = FontList;
   
-  for(i = 0; i < curitem && cur; i++)
+  for(i = 0; i < font_selected && cur; i++)
     cur=cur->next;
   
-  if (cur)
-  {
-    len = strlen(cur->name);
-    ws = AllocMenuWS(data, len + 4);
-    str_2ws(ws, cur->name, len);
-  }
-  else
-  {
-    char tmp[32];
-     switch(curitem-i)
-     {
-      case 0:
-        strcpy(tmp, "Rotate");
-        break;
-      case 1:
-        strcpy(tmp, "Direct load");
-        break;
-      case 2:
-        strcpy(tmp, "DOS format");
-        break;
-      case 3:
-        strcpy(tmp, "WIN format");
-        break;
-      case 4:
-        strcpy(tmp, "Padding on/off");
-        break;
-      case 5:
-        strcpy(tmp, "Save as...");
-        break;
-      default:
-        strcpy(tmp, "Error");
-        break;       
-     }
-    len = strlen(tmp);
-    ws = AllocMenuWS(data, len + 4);
-    str_2ws(ws, tmp, len);
-  }
+   char tmp[128];
+   switch(curitem)
+   {
+    case 0:
+      if (cur)
+      {
+        strcpy(tmp, ">");
+        strcat(tmp, cur->name);
+      }
+      else
+        strcpy(tmp, ">Select font");
+      break;
+    case 1:
+      strcpy(tmp, "Rotate");
+      break;
+    case 2:
+      switch(HISTORY.fmt+100)
+      {
+        case 100:
+          strcpy(tmp, ">Direct load");
+          break;
+        case 101:
+          strcpy(tmp, ">DOS format");
+          break;
+        case 102:
+          strcpy(tmp, ">WIN format");
+          break;
+        default:
+          strcpy(tmp, ">Direct load");
+          //HISTORY.fmt=0;
+          break;
+      }
+      break;
+    case 3:
+      strcpy(tmp, "Padding on/off");
+      break;
+    case 4:
+      strcpy(tmp, "Save as...");
+      break;
+    default:
+      strcpy(tmp, "Error");
+      break;       
+   }
+  len = strlen(tmp);
+  ws = AllocMenuWS(data, len + 4);
+  str_2ws(ws, tmp, len);
+    
   SetMenuItemText(data, item, ws, curitem);
 }
 
 
 MENUITEM_DESC *loadmenu_ITEMS;
-/*MENUITEM_DESC loadmenu_ITEMS[11]=
-{
-  {NULL,(int)"Font size = 4" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Font size = 6" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Font size = 8" ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Font size = 14",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Font size = 16",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Large font"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Direct load"   ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"DOS format"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"WIN format"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Padding on/off",LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
-  {NULL,(int)"Save as..."    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2}
-};*/
 
 HEADER_DESC loadmenu_HDR={0,0,0,0,icon,(int)"General...",LGP_NULL};
 
@@ -2486,17 +2635,19 @@ MENU_DESC loadmenu_STRUCT=
 
 int DrawLoadMenu(void)
 {
-  int n=0;
+  int n=1;
  
-  n = fonts_count;
  
-  if (disk_access==FIRSTLOAD) n+=4; else n+=6;
+  if (disk_access==FIRSTLOAD) n+=2; else n+=4;
 //  *((int *)(&loadmenu_STRUCT.n_items))=n;
   patch_header(&loadmenu_HDR);
-  return CreateMenu(0,0,&loadmenu_STRUCT,&loadmenu_HDR,0,n,0,0);
+  return CreateMenu(0,0,&loadmenu_STRUCT,&loadmenu_HDR,0,5,0,0);
 }
 
+
+
 //-------------------------------------------------------------------
+
 
 //===================================================================
 // Меню Goto...
@@ -2881,7 +3032,7 @@ void FirstLoadFile(unsigned int fmt)
     //Ищем историю
     if (SearchHistory()&0x8000)
     {
-      font_size=HISTORY.font;
+      font_selected=HISTORY.font;
       rotate=HISTORY.rotate;
       fmt=HISTORY.fmt;
       win_dos_koi=HISTORY.codepage;
@@ -2890,16 +3041,11 @@ void FirstLoadFile(unsigned int fmt)
     else
     {
       win_dos_koi=0xFF; //Неизвестный
-      switch(AUTOF_FONT) //Шрифт
-      {
-      case 0: font_size=0; break;
-      default:
-      case 1: font_size=1; break;
-      case 2: font_size=2; break;
-      case 3: font_size=3; break;
-      case 4: font_size=4; break;
-      case 5: font_size=5; break;
-      }
+      FontListItem *cur = FontList;
+      for(font_selected = 0; cur && cur->size != AUTOF_FONT; font_selected++)
+        cur=cur->next;
+      //font_selected = cur->size;
+    
       zeromem(&HISTORY.line,4*6); //Все на самом верху
       HISTORY.cursor_off=cursor_off=1; //Выключить курсор
       HISTORY.total=1;
@@ -2909,9 +3055,10 @@ void FirstLoadFile(unsigned int fmt)
       if (ENA_AUTOF)
       {
         HISTORY.fmt=fmt=AUTOF_MODE;
+
       }
       else
-      {
+      {  
         LockSched();
         loadmenu_id=DrawLoadMenu(); //Определяем, как грузить через меню
         UnlockSched();
@@ -2922,7 +3069,7 @@ void FirstLoadFile(unsigned int fmt)
   if ((fmt&0x7F)>2) fmt=0;
 
   fnts = fonts_count;
-  if(font_size>fnts) font_size = fnts-1;
+  if(font_selected>fnts) font_selected = fnts-1;
   
   //Загружаем шрифт
 //  GetFontList();
@@ -2950,7 +3097,7 @@ void FirstLoadFile(unsigned int fmt)
   }
   fclose(fs,&ul);
   total_line=viewline=curline; //Находимся в последней строке
-  HISTORY.font=font_size;
+  HISTORY.font=font_selected;
   HISTORY.fmt=fmt;
   HISTORY.rotate=rotate;
   memcpy(HISTORY.name,filename,sizeof(HISTORY.name));
@@ -2973,14 +3120,14 @@ void FirstLoadFile(unsigned int fmt)
 
 //=========================================================================
 const void * const gui_methods[11]={
-  (void *)method0,	//Redraw
-  (void *)method1,	//Create
-  (void *)method2,	//Close
-  (void *)method3,	//Focus
-  (void *)method4,	//Unfocus
-  (void *)method5,	//OnKey
+  (void *)maincsm_onRedraw,	//Redraw
+  (void *)maincsm_onCreate,	//Create
+  (void *)maincsm_onClose,	//Close
+  (void *)maincsm_onFocus,	//Focus
+  (void *)maincsm_onUnfocus,	//Unfocus
+  (void *)maincsm_onKey,	//OnKey
   0,
-  (void *)method7,	//Destroy
+  (void *)maincsm_onDestroy,	//Destroy
   (void *)method8,
   (void *)method9,
   0
@@ -3017,7 +3164,7 @@ void Killer2(void)
 void Killer(void)
 {
   static unsigned int ul;
-  if (text_changed)
+/*  if (text_changed)
   {
     extern void savetext(void);
     LockSched();
@@ -3028,7 +3175,7 @@ void Killer(void)
     disk_access=SAVE_FILE;
     text_changed=0;    
     savetext();	
-  }
+  }*/ //Это уже лишнее
   if (HISTORY.fmt!=255)
   {
     SaveHistory();
@@ -3058,7 +3205,8 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
   {
     if ((int)msg->data0==loadmenu_id)
     {
-      GeneralFuncF1(1);
+      if(HISTORY.fmt == 255)
+        load_direct();
     }
     if ((int)msg->data0==csm->gui_id)
     {
@@ -3114,6 +3262,10 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       }
       CreateEditDialog();
     }
+  }
+  if(Quit_Required)
+  {
+    csm->csm.state=-3;
   }
   return(1);
 }
