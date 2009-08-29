@@ -66,12 +66,9 @@ void ReWriteShortcut(wchar_t * name_buf,char * mask_buf,wchar_t * path)
           int len_minus=strlen(param);
           char * str_buf=new char[len+1];
           unicode2win1251(str_buf,name_buf,len);
-          char * new_buf=new char[buf_size+len-len_minus];
-          memcpy(new_buf,buffer,pos-buffer+9+ActiveTab);
-          memcpy(new_buf+(pos-buffer+9+ActiveTab),str_buf,len);
-          memcpy(new_buf+(pos-buffer+9+ActiveTab+len),pos+9+ActiveTab+len_minus,(buf_size-(pos-buffer+9+ActiveTab))-len_minus);
-          fwrite(f,new_buf,buf_size+len-len_minus);
-          delete(new_buf);
+          fwrite(f,buffer,pos-buffer+9+ActiveTab); //(9+ActiveTab) - длина префикса кнопки
+          fwrite(f,str_buf,len);
+          fwrite(f,pos+9+ActiveTab+len_minus,(buf_size-(pos-buffer+9+ActiveTab))-len_minus);
           delete(str_buf);
           fclose(f);
         }
@@ -95,12 +92,9 @@ void ReWriteShortcut(wchar_t * name_buf,char * mask_buf,wchar_t * path)
           int len=wstrlen(name_buf);
           char * str_buf=new char[len+1];
           unicode2win1251(str_buf,name_buf,len);
-          char * new_buf=new char[buf_size+len];
-          memcpy(new_buf,buffer,pos-buffer+9+ActiveTab);
-          memcpy(new_buf+(pos-buffer+9+ActiveTab),str_buf,len);
-          memcpy(new_buf+(pos-buffer+9+ActiveTab+len),pos+9+ActiveTab,buf_size-(pos-buffer+9+ActiveTab));
-          fwrite(f,new_buf,buf_size+len);
-          delete(new_buf);
+          fwrite(f,buffer,pos-buffer+9+ActiveTab);
+          fwrite(f,str_buf,len);
+          fwrite(f,pos+9+ActiveTab,buf_size-(pos-buffer+9+ActiveTab));
           delete(str_buf);
           fclose(f);
         }

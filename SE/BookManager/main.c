@@ -404,7 +404,7 @@ int onUserInactivity(void * r0, BOOK * bk)
 // устанавливаем тексты в пунктах меню
 int onLBMessage(GUI_MESSAGE * msg)
 {
-  MyBOOK * myBook = (MyBOOK *) FindBook(isBookManager);
+  MyBOOK * myBook = (MyBOOK *)GUIonMessage_GetBook(msg);
   int item;
   SESSION_ITEM * si;
   switch(msg->msg)
@@ -421,7 +421,7 @@ int onLBMessage(GUI_MESSAGE * msg)
 
 int onLBMessage1(GUI_MESSAGE * msg)
 {
-  MyBOOK * myBook = (MyBOOK *) FindBook(isBookManager);
+  MyBOOK * myBook = (MyBOOK *)GUIonMessage_GetBook(msg);
   int item;
   SESSION_ITEM * si;
   switch(msg->msg)
