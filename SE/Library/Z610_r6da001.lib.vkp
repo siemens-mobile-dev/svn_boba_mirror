@@ -417,7 +417,7 @@
 0AAC: 00000000 5180FB44 ; 2AB: __thumb void DataBrowserDesc_SetSelectAction(void * DataBrowserDesc,int state);
 0AB0: 00000000 5980FB44 ; 2AC: __thumb void DataBrowserDesc_SetSelectActionOnFolders(void * DataBrowserDesc,int state);
 0AB4: 00000000 2D80FB44 ; 2AD: __thumb void DataBrowserDesc_SetBookID(void * DataBrowserDesc,int BookID);
-0AB8: 00000000 D57FFB44 ; 2AE: __thumb void DataBrowserDesc_SetItemFilter(void * DataBrowserDesc,int (*proc)(const wchar_t * ExtList,const wchar_t * ItemPath,const wchar_t * ItemName));
+0AB8: 00000000 D57FFB44 ; 2AE: __thumb void DataBrowserDesc_SetItemFilter(void * DataBrowserDesc,DB_FILE_FILTER);
 0ABC: 00000000 3181FB44 ; 2AF: __thumb void DataBrowserDesc_SetOption(void * DataBrowserDesc,char * option);
 0AC0: 00000000 C581FB44 ; 2B0: __thumb void DataBrowserDesc_SetOpenEmptyFolder(void * DataBrowserDesc,int state);
 0AC4: 00000000 DD7FFB44 ; 2B1: __thumb void DataBrowserDesc_SetFileExtList(void * DataBrowserDesc,const wchar_t * ExtList);
@@ -597,13 +597,32 @@
 0D7C: 00000000 49ED3045 ; 35F: char * GetURIScheme (int schemeID);
 0D80: 00000000 E1F13045 ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
 0D84: 00000000 E980FB44 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder(void * db,int view_sort_ID);
-;0D88: xxxxxxxx yyyyyyyy ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
-;0D8C: xxxxxxxx yyyyyyyy ; 363: int Alarm_GetState(char *state, int AlarmID);
-;0D90: xxxxxxxx yyyyyyyy ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
-;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings(void* week,int AlarmID);
-;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState(char *state);
-;0D9C: xxxxxxxx yyyyyyyy ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
-;0DA0: xxxxxxxx yyyyyyyy ; 368: void * IncommingCall_Accept(BOOK* book);
+0D88: 00000000 7DA2E344 ; 362: int Alarm_GetCurrentTypeAndAlarmID(char *type, wchar_t *AlarmID);
+0D8C: 00000000 1D8EE344 ; 363: int Alarm_GetState(char *state, int AlarmID);
+0D90: 00000000 1D9CE344 ; 364: int Alarm_GetTIME(TIME *AlarmTime, int AlarmID);
+0D94: 00000000 19A9E344 ; 365: int Alarm_GetWeekSettings(void* week,int AlarmID);
+0D98: 00000000 ADDE3A45 ; 366: int IrDa_GetState(char *state);
+0D9C: 00000000 D96A3B45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
+0DA0: 00000000 A1B0EA44 ; 368: void * IncommingCall_Accept(BOOK* book);
+;0DA4: xxxxxxxx yyyyyyyy ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+;0DA8: xxxxxxxx yyyyyyyy ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
+;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
+0DB8: 00000000 3DBD4245 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
+0DBC: 00000000 15C61D44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
+0DC0: 00000000 A92A4545 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
+0DC4: 00000000 BD387344 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
+0DC8: 00000000 79723B45 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,STRID_DATA *,char *error);
+0DCC: 00000000 CD81FB44 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
+0DD0: 00000000 35033F45 ; 374: int GUIonMessage_GetMsg ( void *msg);
+0DD4: 00000000 3D033F45 ; 375: BOOK *GUIonMessage_GetBook ( void *msg);
+0DD8: 00000000 39033F45 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
+0DDC: 00000000 41033F45 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
+0DE0: 00000000 4D033F45 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
+0DE4: 00000000 21C7EC44 ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
+0DE8: 00000000 D1CD4345 ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
+0DEC: 00000000 C5740B45 ; 37B: int EqualizerGain_Set (int AudioSessionID,int Band,int Level);
 
 
 
