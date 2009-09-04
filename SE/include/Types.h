@@ -864,4 +864,35 @@ typedef struct {
   };
 } SEND_OBEX_STRUCT;
 
+typedef void* PCANVAS;
+
+typedef struct
+{
+  PCANVAS* pcanvas;
+  char unk[0x20];
+  PCANVAS* pcanvas_text;
+  int unk2;
+  PCANVAS* pcanvas_icon;
+}GC;
+
+typedef void* GVI_OBJ;
+typedef GVI_OBJ GVI_GC;
+typedef GVI_OBJ GVI_BMP;
+typedef GVI_OBJ GVI_PEN;
+typedef GVI_OBJ GVI_BRUSH;
+
+typedef struct 
+{
+  int x;
+  int y; 
+} POINT;
+
+typedef struct {
+    int x;
+    int y;
+    int w;
+    int h;
+} GVI_XYWH;
+
+
 #endif

@@ -1625,4 +1625,67 @@ __swi __arm  void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,in
 
 #pragma swi_number=0x37B
 __swi __arm  int EqualizerGain_Set (int AudioSessionID,int Band,int Level);
+
+#pragma swi_number=0x37C
+__swi __arm  int CANVAS_Get_GviGC(PCANVAS pcanvas, GVI_GC* dest);
+#pragma swi_number=0x37D
+__swi __arm  void GVI_BitBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3);
+#pragma swi_number=0x37E
+__swi __arm  void GVI_StretchBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3);
+#pragma swi_number=0x37F
+__swi __arm  void GVI_TransformBlt(GVI_GC destgc, int destx, int desty, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int orientation, int _0);
+
+#pragma swi_number=0x380
+__swi __arm  GVI_PEN GVI_CreatePen(char thikness, int color);
+#pragma swi_number=0x381
+__swi __arm  GVI_PEN GVI_CreateDashedPen(char thikness, int color, int bitmask, int step, int offset);
+#pragma swi_number=0x382
+__swi __arm  GVI_BRUSH GVI_CreateSolidBrush(int color);
+#pragma swi_number=0x383
+__swi __arm  bool GVI_Delete_GVI_Object(GVI_OBJ*);
+
+#pragma swi_number=0x384
+__swi __arm  void GVI_DrawEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, GVI_PEN pen);
+#pragma swi_number=0x385
+__swi __arm  void GVI_DrawLine(GVI_GC, int x1, int y1, int x2, int y2, GVI_PEN pen);
+#pragma swi_number=0x386
+__swi __arm  void GVI_DrawLines(GVI_GC gc, POINT* points, int count, GVI_PEN pen);
+#pragma swi_number=0x387
+__swi __arm  void GVI_DrawPolyLine(GVI_GC gc, POINT* points, int count, GVI_PEN pen, int is_closed);
+#pragma swi_number=0x388
+__swi __arm  void GVI_DrawRectangle(GVI_GC gc, int x, int y, int w, int h, GVI_PEN pen);
+#pragma swi_number=0x389
+__swi __arm  void GVI_DrawRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcw, int arch, GVI_PEN pen);
+
+#pragma swi_number=0x38A
+__swi __arm  void GVI_DrawSolidLines(GVI_GC gc, POINT* points, int count, int color, int width);
+#pragma swi_number=0x38B
+__swi __arm  void GVI_DrawSolidPolyLine(GVI_GC gc, POINT* points, int count, int is_closed, int color, int width);
+#pragma swi_number=0x38C
+__swi __arm  void GVI_DrawSolidRectangle(GVI_GC gc, int x, int y, int w, int h, int color, int width);
+
+#pragma swi_number=0x38D
+__swi __arm  void GVI_FillEllipse(GVI_GC destgc, int x, int y, int w, int h, GVI_BRUSH brush);
+#pragma swi_number=0x38E
+__swi __arm  void GVI_FillPolygon(GVI_GC destgc, POINT *pp, int count, GVI_BRUSH brush); 
+#pragma swi_number=0x38F
+__swi __arm  void GVI_FillRectangle(GVI_GC , int x, int y, int w, int h, GVI_BRUSH brush);
+#pragma swi_number=0x390
+__swi __arm  void GVI_FillRectangles(GVI_GC , GVI_XYWH *rcs, int count, GVI_BRUSH brush); 
+
+#pragma swi_number=0x391
+__swi __arm  void GVI_FillSolidEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, int color);
+#pragma swi_number=0x392
+__swi __arm  void GVI_FillSolidRectangle(GVI_GC , int x, int y, int w, int h, int color);
+#pragma swi_number=0x393
+__swi __arm  int GVI_FillSolidRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcx, int arcy, int color);
+#pragma swi_number=0x394
+__swi __arm  void GVI_FillSolidTriangle(GVI_GC destgc, int x1, int y1, int x2, int y2, int x3, int  y3, int color); 
+
+#pragma swi_number=0x395
+__swi __arm  GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void* somefn , int unk2);
+#pragma swi_number=0x396
+__swi __arm  void GC_FreeGC(GC* gc);
+
+
 #endif
