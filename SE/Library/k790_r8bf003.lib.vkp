@@ -629,7 +629,7 @@
 0DF4: 00000000 913D9F44 ; 37D: void GVI_BitBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3);
 0DF8: 00000000 FD3E9F44 ; 37E: void GVI_StretchBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3);
 0DFC: 00000000 B13F9F44 ; 37F: void GVI_TransformBlt(GVI_GC destgc, int destx, int desty, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int orientation, int _0);
-0E08: 00000000 B52F9F44 ; 380: GVI_PEN GVI_CreatePen(char thikness, int color);
+0E00: 00000000 B52F9F44 ; 380: GVI_PEN GVI_CreatePen(char thikness, int color);
 0E04: 00000000 05309F44 ; 381: GVI_PEN GVI_CreateDashedPen(char thikness, int color, int bitmask, int step, int offset);
 0E08: 00000000 A92E9F44 ; 382: GVI_BRUSH GVI_CreateSolidBrush(int color);
 0E0C: 00000000 69289F44 ; 383: bool GVI_Delete_GVI_Object(GVI_OBJ*);
