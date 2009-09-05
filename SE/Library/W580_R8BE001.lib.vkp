@@ -621,7 +621,35 @@
 0DDC: 00000000 81EF3145 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
 0DE0: 00000000 8DEF3145 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
 0DE4: 00000000 F183DD44 ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
-
+0DE8: 00000000 9DBD3645 ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
+0DEC: 00000000 A1DEFC44 ; 37B: int EqualizerGain_Set (int AudioSessionID,int Band,int Level);
+0DF0: 00000000 05DC5F44 ; 37C: int CANVAS_Get_GviGC(PCANVAS pcanvas, GVI_GC* dest);
+0DF4: 00000000 ADE49E44 ; 37D: void GVI_BitBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3);
+0DF8: 00000000 19E69E44 ; 37E: void GVI_StretchBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3);
+0DFC: 00000000 CDE69E44 ; 37F: void GVI_TransformBlt(GVI_GC destgc, int destx, int desty, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int orientation, int _0);
+0E00: 00000000 D1D69E44 ; 380: GVI_PEN GVI_CreatePen(char thikness, int color);
+0E04: 00000000 21D79E44 ; 381: GVI_PEN GVI_CreateDashedPen(char thikness, int color, int bitmask, int step, int offset);
+0E08: 00000000 C5D59E44 ; 382: GVI_BRUSH GVI_CreateSolidBrush(int color);
+0E0C: 00000000 85CF9E44 ; 383: bool GVI_Delete_GVI_Object(GVI_OBJ*);
+0E10: 00000000 A5DD9E44 ; 384: void GVI_DrawEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, GVI_PEN pen);
+0E14: 00000000 79EC9E44 ; 385: void GVI_DrawLine(GVI_GC, int x1, int y1, int x2, int y2, GVI_PEN pen);
+0E18: 00000000 85F39E44 ; 386: void GVI_DrawLines(GVI_GC gc, POINT* points, int count, GVI_PEN pen);
+0E1C: 00000000 19F49E44 ; 387: void GVI_DrawPolyLine(GVI_GC gc, POINT* points, int count, GVI_PEN pen, int is_closed);
+0E20: 00000000 9DF69E44 ; 388: void GVI_DrawRectangle(GVI_GC , int x, int y, int w, int h, GVI_PEN pen);
+0E24: 00000000 E5E29E44 ; 389: void GVI_DrawRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcw, int arch, GVI_PEN pen);
+0E28: 00000000 39EF9E44 ; 38A: void GVI_DrawSolidLines(GVI_GC gc, POINT* points, int count, int color, int width);
+0E2C: 00000000 55F19E44 ; 38B: void GVI_DrawSolidPolyLine(GVI_GC gc, POINT* points, int count, int is_closed, int color, int width);
+0E30: 00000000 0DF29E44 ; 38C: void GVI_DrawSolidRectangle(GVI_GC gc, int x, int y, int w, int h, int color, int width);
+0E34: 00000000 7DE19E44 ; 38D: void GVI_FillEllipse(GVI_GC destgc, int x, int y, int w, int h, GVI_BRUSH brush);
+0E38: 00000000 EDEA9E44 ; 38E: void GVI_FillPolygon(GVI_GC destgc, POINT *pp, int n, GVI_BRUSH brush);
+0E3C: 00000000 29F59E44 ; 38F: void GVI_FillRectangle(GVI_GC , int x, int y, int w, int h, GVI_BRUSH brush);
+0E40: 00000000 C1F59E44 ; 390: void GVI_FillRectangles(GVI_GC , GVI_XYWH *rcs, int n, GVI_BRUSH brush);
+0E44: 00000000 49E29E44 ; 391: void GVI_FillSolidEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, int color);
+0E48: 00000000 39F69E44 ; 392: void GVI_FillSolidRectangle(GVI_GC , int x, int y, int w, int h, int color);
+0E4C: 00000000 39E49E44 ; 393: int GVI_FillSolidRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcx, int arcy, int color);
+0E50: 00000000 5DEA9E44 ; 394: void GVI_FillSolidTriangle(GVI_GC destgc, int x1, int y1, int x2, int y2, int x3, int  y3, int color);
+0E54: 00000000 25273645 ; 395: GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void* somefn , int unk2);
+0E58: 00000000 FD273645 ; 396: void GC_FreeGC(GC* gc);
 
 
 
