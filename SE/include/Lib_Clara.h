@@ -1642,7 +1642,7 @@ __swi __arm  GVI_PEN GVI_CreateDashedPen(char thikness, int color, int bitmask, 
 #pragma swi_number=0x382
 __swi __arm  GVI_BRUSH GVI_CreateSolidBrush(int color);
 #pragma swi_number=0x383
-__swi __arm  bool GVI_Delete_GVI_Object(GVI_OBJ*);
+__swi __arm  BOOL GVI_Delete_GVI_Object(GVI_OBJ*);
 
 #pragma swi_number=0x384
 __swi __arm  void GVI_DrawEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, GVI_PEN pen);

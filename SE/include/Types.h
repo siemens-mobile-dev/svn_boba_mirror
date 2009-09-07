@@ -7,6 +7,7 @@ typedef unsigned short u16;
 typedef unsigned short wchar_t;
 #endif
 
+typedef int BOOL;
 typedef int STRID;
 
 union SIGNAL;
