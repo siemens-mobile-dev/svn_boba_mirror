@@ -206,10 +206,18 @@ int getFormat(wchar_t *name)
   return FORMAT_OTHER;
 };
 
+void freemeta(MUSIC *music)
+{
+  memset(&music->meta,0,sizeof(METADATA));
+  music->meta.ImageID=0xFFFF;
+  memset(&music->hdr,0,sizeof(HEADER_INFO));
+};
+
 #pragma optimize = s 9
 void decoder_Init(wchar_t *path, wchar_t *name)
 {
   Cover_Free();
+  freemeta(&nowmusic);
   int format=getFormat(name);
   nowmusic.format=format;
   metadata_Get(path, name, &nowmusic.meta, format);

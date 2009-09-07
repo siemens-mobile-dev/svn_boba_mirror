@@ -10,6 +10,7 @@
 #include "header\config_data.h"
 #include "header\skin_data.h"
 #include "header\skin_loader.h"
+//#include "gvi.h"
 
 #include "header\rus.h"
 #include "header\eng.h"
@@ -363,6 +364,9 @@ __EVENT( onReconfig )
 #define EVENT_HOOK_TABLE(x) const PAGE_MSG x[]@ "DYN_PAGE" = {
 #define EVENT_HOOK_TABLE_END 0,0}
 
+extern GC* hMGC;
+extern GVI_GC imggc;
+bool test=false;
 __EVENT ( onStyleChanged )
 {
   if (working)
@@ -381,6 +385,20 @@ __EVENT ( onStyleChanged )
         skin_InitConfig(skin_str, 0);
         deinit_resources();
         init_resources(skin_str);
+        
+        GUI *g=FindGuiInBook((BOOK*)wb,"MediaPlayer_Audio");
+        DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
+        
+        if (d->imageID!=0xFFFF)
+          v_MPA_ID=d->imageID;
+        
+        if (BookObj_GetDisplayOrientation((BOOK*)wb))
+          d->imageID=playview_h;
+        InvalidateRect((DISP_OBJ*)d, 0);
+        if (hMGC)
+          GC_FreeGC(hMGC);
+        hMGC=0;
+        imggc=0;
         debug_printf("\nWalkmanDisplay: onStyleChanged. New skin: %ls\n", skin_str);
       }
       delete(str);
@@ -719,6 +737,12 @@ int isVolCtrl(BOOK *bk)
   return 0;
 };
 
+GC* hMGC=NULL;
+GVI_GC imggc=NULL;
+
+GVI_GC gvigcdisp=NULL;
+
+
 #define BENCH_START bench_n=0;
 #define BENCH_GET bench_n
 #pragma optimize= z 9
@@ -731,7 +755,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
                               putchar(a,b,c,d,e,f)
   
     BOOK *audio=FindBook(isAudioPlayerBook());
-  void *GC=get_DisplayGC();
+  GC *GCanvas=(GC*)get_DisplayGC();
   int orient=BookObj_GetDisplayOrientation(audio);
   if (!currenttrack)
   {
@@ -840,27 +864,34 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   }
   if (orient==0)/*>0 && DISPLAY_GetTopBook(0)==audio)*/
   {
-    //typedef void (*T)(wchar_t imageID, int x, int y, int a, int black, int white);
-    //T putc=(T)(0x4535DC18+1);
-    //putc(playnow_h, 0, 0, a, clBlack, clWhite);
-    putchar_(GC,0,0,0,0,playnow_h);
+    if(imggc==0)
+    {
+      //first call initialization
+      hMGC = GC_CreateMemoryGC(320,240, 16,0,0,0);
+      CANVAS_Get_GviGC(hMGC->pcanvas ,&imggc);
+      
+      GC_DrawFRect (hMGC, clBlack, 0,0,20,20);
+      putchar_(hMGC,0,0,0,0,playnow_h);
+    }
+    CANVAS_Get_GviGC(GCanvas->pcanvas,&gvigcdisp);
+    GVI_BitBlt(gvigcdisp, 0, 0, 320, 240, imggc, 0, 0, 204, 0, 0, 0);
   }
   //-------------------------------------------------------------------
   WALKMAN_BOOK *wb=(WALKMAN_BOOK*)audio;
   DISP_OBJ_ *do_=(DISP_OBJ_*)DO;
   
   RECT gc_rc,rc;
-  get_GC_RECT(GC, &gc_rc);
+  get_GC_RECT(GCanvas, &gc_rc);
   rc.y1 = gc_rc.y1;
   rc.y2 = gc_rc.y2;
-  putchar_(GC, 
+  putchar_(GCanvas, 
            orient ? cover_rect.x1 : cover_rect_h.x1, 
            orient ? cover_rect.y1 - StatusSize : cover_rect_h.y1,
            orient ? cover_rect.x2-cover_rect.x1 : cover_rect_h.x2-cover_rect_h.x1,
            orient ? cover_rect.y2-cover_rect.y1 : cover_rect_h.y2-cover_rect_h.y1,
            orient ? cover_v_ : cover_h_);
     
-  putchar_(GC, 
+  putchar_(GCanvas, 
            orient ? cover_rect.x1 : cover_rect_h.x1, 
            orient ? cover_rect.y1 - StatusSize : cover_rect_h.y1,
            orient ? cover_rect.x2-cover_rect.x1 : cover_rect_h.x2-cover_rect_h.x1,
@@ -936,7 +967,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   //Artist icon
   if (orient ? aricn_show : aricn_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? aricn_rect.x1 : aricn_rect_h.x1, 
             orient ? aricn_rect.y1 - StatusSize : aricn_rect_h.y1,
             orient ? aricn_rect.x2 - aricn_rect.x1 : aricn_rect_h.x2 - aricn_rect_h.x1,
@@ -947,7 +978,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   //Album icon
   if (orient ? alicn_show : alicn_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? alicn_rect.x1 : alicn_rect_h.x1, 
             orient ? alicn_rect.y1 - StatusSize: alicn_rect_h.y1,
             orient ? alicn_rect.x2 - alicn_rect.x1 : alicn_rect_h.x2 - alicn_rect_h.x1,
@@ -958,7 +989,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   //Title icon
   if (orient ? ticn_show : ticn_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? ticn_rect.x1 : ticn_rect_h.x1, 
             orient ? ticn_rect.y1 - StatusSize : ticn_rect_h.y1,
             orient ? ticn_rect.x2 - ticn_rect.x1 : ticn_rect_h.y2 - ticn_rect_h.y1,
@@ -970,7 +1001,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   //Equalizer preset icon
   if (orient ? eq_preset_show : eq_preset_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
              orient ? eq_preset_rect.x1 : eq_preset_rect_h.x1, 
              orient ? eq_preset_rect.y1 - StatusSize : eq_preset_rect_h.y1,
              orient ? eq_preset_rect.x2 - eq_preset_rect.x1 : eq_preset_rect_h.y2 - eq_preset_rect_h.y1,
@@ -982,7 +1013,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   //Play/Stop icon
   if (orient ? pls_show : pls_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? pls_rect.x1 : pls_rect_h.x1, 
             orient ? pls_rect.y1 - StatusSize : pls_rect_h.y1,
             orient ? pls_rect.x2 - pls_rect.x1 : pls_rect_h.x2 - pls_rect_h.x1,
@@ -1005,7 +1036,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     
     rc.x1 = orient ? ctime_rc.x1 : ctime_rc_h.x1;
     rc.x2 = orient ? ctime_rc.x2 : ctime_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine(orient ? ctime_font : ctime_font_h, 
              buf, 
              orient ? ctime_ct : ctime_ct_h, 
@@ -1027,7 +1058,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     snwprintf(buf,49,orient ? ftime_mask : ftime_mask_h,MIN,SEC);
     rc.x1 = orient ? ftime_rc.x1 : ftime_rc_h.x1;
     rc.x2 = orient ? ftime_rc.x2 : ftime_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine(orient ? ftime_font : ftime_font_h, 
              buf, 
              orient ? ftime_ct : ftime_ct_h, 
@@ -1050,7 +1081,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     snwprintf(buf,49,orient ? ltime_mask : ltime_mask_h,MIN,SEC);
     rc.x1 = orient ? ltime_rc.x1 : ltime_rc_h.x1;
     rc.x2 = orient ? ltime_rc.x2 : ltime_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine(orient ? ltime_font : ltime_font_h, 
              buf, 
              orient ? ltime_ct : ltime_ct_h, 
@@ -1069,7 +1100,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   {
     rc.x1 = orient ? title_rc.x1 : title_rc_h.x1;
     rc.x2 = orient ? title_rc.x2 : title_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine2(orient ? title_font : title_font_h, 
               mm_info->title_str, 
               orient ? title_ct : title_ct_h, 
@@ -1090,7 +1121,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   {
     rc.x1 = orient ? album_rc.x1 : album_rc_h.x1;
     rc.x2 = orient ? album_rc.x2 : album_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine2(orient ? album_font : album_font_h, 
               mm_info->album_str, 
               orient ? album_ct : album_ct_h, 
@@ -1110,7 +1141,7 @@ L_SkipAlbum:
   {
     rc.x1 = orient ? artist_rc.x1 : artist_rc_h.x1;
     rc.x2 = orient ? artist_rc.x2 : artist_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine2(orient ? artist_font : artist_font_h, 
               mm_info->artist_str, 
               orient ? artist_ct : artist_ct_h, 
@@ -1129,7 +1160,7 @@ L_SkipAlbum:
   {
     rc.x1 = orient ? genre_rc.x1 : genre_rc_h.x1;
     rc.x2 = orient ? genre_rc.x2 : genre_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine(orient ? genre_font : genre_font_h, 
              nowmusic.meta.Genre, 
              orient ? genre_ct : genre_ct_h, 
@@ -1148,7 +1179,7 @@ L_SkipAlbum:
   {
     rc.x1 = orient ? year_rc.x1 : year_rc_h.x1;
     rc.x2 = orient ? year_rc.x2 : year_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine(orient ? year_font : year_font_h, 
              nowmusic.meta.Year, 
              orient ? year_ct : year_ct_h, 
@@ -1169,7 +1200,7 @@ L_SkipAlbum:
     snwprintf(buf, 49, orient ? trackn_mask : trackn_mask_h, bkp->pos2+1);
     rc.x1 = orient ? trackn_rc.x1 : trackn_rc_h.x1;
     rc.x2 = orient ? trackn_rc.x2 : trackn_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine(orient ? trackn_font : trackn_font_h, 
              buf, 
              orient ? trackn_ct : trackn_ct_h, 
@@ -1190,7 +1221,7 @@ L_SkipAlbum:
     snwprintf(buf,49, orient ? tracks_mask : tracks_mask_h, bkp->tracks_count);
     rc.x1 = orient ? tracks_rc.x1 : tracks_rc_h.x1;
     rc.x2 = orient ? tracks_rc.x2 : tracks_rc_h.x2;
-    GC_validate_RECT(GC,&rc);
+    GC_validate_RECT(GCanvas,&rc);
     DrawLine(orient ? tracks_font : tracks_font_h, 
              buf, 
              orient ? tracks_ct : tracks_ct_h, 
@@ -1222,7 +1253,7 @@ L_SkipAlbum:
         snwprintf(buf,49, orient ? bitrate_mask : bitrate_mask_h, nowmusic.hdr.bitrate);
       rc.x1 = orient ? bitrate_rc.x1 : bitrate_rc_h.x1;
       rc.x2 = orient ? bitrate_rc.x2 : bitrate_rc_h.x2;
-      GC_validate_RECT(GC,&rc);
+      GC_validate_RECT(GCanvas,&rc);
       DrawLine(orient ? bitrate_font : bitrate_font_h, 
                vbr ? (wchar_t*)vbr : buf, 
                orient ? bitrate_ct : bitrate_ct_h, 
@@ -1242,7 +1273,7 @@ L_SkipAlbum:
       snwprintf(buf,49, orient ? freq_mask : freq_mask_h,nowmusic.hdr.frequency);
       rc.x1 = orient ? freq_rc.x1 : freq_rc_h.x1;
       rc.x2 = orient ? freq_rc.x2 : freq_rc_h.x2;
-      GC_validate_RECT(GC,&rc);
+      GC_validate_RECT(GCanvas,&rc);
       DrawLine(orient ? freq_font : freq_font_h, 
                buf, 
                orient ? freq_ct : freq_ct_h, 
@@ -1271,7 +1302,7 @@ L_SkipAlbum:
       }
       rc.x1 = orient ? ch_rc.x1 : ch_rc_h.x1;
       rc.x2 = orient ? ch_rc.x2 : ch_rc_h.x2;
-      GC_validate_RECT(GC,&rc);
+      GC_validate_RECT(GCanvas,&rc);
       DrawLine(orient ? ch_font : ch_font_h, 
                ch, 
                orient ? ch_ct : ch_ct_h, 
@@ -1286,12 +1317,12 @@ L_SkipAlbum:
       
     }
   }
-  GC_validate_RECT(GC, &gc_rc);
+  GC_validate_RECT(GCanvas, &gc_rc);
   //----------------------------------------------------------------------------
   //Navigation image
   if (orient ? navigimg_show : navigimg_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? navigimg_rect.x1 : navigimg_rect_h.x1, 
             orient ? navigimg_rect.y1 - StatusSize: navigimg_rect_h.y1,
             orient ? navigimg_rect.x2 - navigimg_rect.x1 : navigimg_rect_h.x2 - navigimg_rect_h.x1,
@@ -1303,7 +1334,7 @@ L_SkipAlbum:
   //Up arrow
   if (orient ? upimg_show : upimg_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? upimg_rect.x1 : upimg_rect_h.x1, 
             orient ? upimg_rect.y1 - StatusSize: upimg_rect_h.y1,
             orient ? upimg_rect.x2 - upimg_rect.x1 : upimg_rect_h.x2 - upimg_rect_h.x1,
@@ -1314,7 +1345,7 @@ L_SkipAlbum:
   //Down arrow
   if (orient ? downimg_show : downimg_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? downimg_rect.x1 : downimg_rect_h.x1, 
             orient ? downimg_rect.y1 - StatusSize: downimg_rect_h.y1,
             orient ? downimg_rect.x2 - downimg_rect.x1 : downimg_rect_h.x2 - downimg_rect_h.x1,
@@ -1325,7 +1356,7 @@ L_SkipAlbum:
   //Left arrow
   if (orient ? leftimg_show : leftimg_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
              orient ? leftimg_rect.x1 : leftimg_rect_h.x1, 
              orient ? leftimg_rect.y1 - StatusSize: leftimg_rect_h.y1,
              orient ? leftimg_rect.x2 - leftimg_rect.x1 : leftimg_rect_h.x2 - leftimg_rect_h.x1,
@@ -1336,7 +1367,7 @@ L_SkipAlbum:
   //Right arrow
   if (orient ? rightimg_show : rightimg_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
              orient ? rightimg_rect.x1 : rightimg_rect_h.x1, 
              orient ? rightimg_rect.y1 - StatusSize: rightimg_rect_h.y1,
              orient ? rightimg_rect.x2 - rightimg_rect.x1 : rightimg_rect_h.x2 - rightimg_rect_h.x1,
@@ -1347,7 +1378,7 @@ L_SkipAlbum:
   //Play/Stop mini icon
   if (orient ? centerimg_show : centerimg_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
              orient ? centerimg_rect.x1 : centerimg_rect_h.x1, 
              orient ? centerimg_rect.y1 - StatusSize: centerimg_rect_h.y1,
              orient ? centerimg_rect.x2 - centerimg_rect.x1 : centerimg_rect_h.x2 - centerimg_rect_h.x1,
@@ -1358,7 +1389,7 @@ L_SkipAlbum:
   //Repeat icon
   if (orient ? repeat_show : repeat_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
              orient ? repeat_rect.x1 : repeat_rect_h.x1, 
              orient ? repeat_rect.y1 - StatusSize: repeat_rect_h.y1,
              orient ? repeat_rect.x2 - repeat_rect.x1 : repeat_rect_h.x2 - repeat_rect_h.x1,
@@ -1369,7 +1400,7 @@ L_SkipAlbum:
   //Shuffle icon
     if (orient ? shuffle_show : shuffle_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? shuffle_rect.x1 : shuffle_rect_h.x1, 
             orient ? shuffle_rect.y1 - StatusSize: shuffle_rect_h.y1,
             orient ? shuffle_rect.x2 - shuffle_rect.x1 : shuffle_rect_h.x2 - shuffle_rect_h.x1,
@@ -1380,14 +1411,15 @@ L_SkipAlbum:
   //Stereo widening icon
   if (orient ? stereo_show : stereo_show_h)
   {
-    putchar_(GC, 
+    putchar_(GCanvas, 
             orient ? stereo_rect.x1 : stereo_rect_h.x1, 
             orient ? stereo_rect.y1 - StatusSize: stereo_rect_h.y1,
             orient ? stereo_rect.x2 - stereo_rect.x1 : stereo_rect_h.x2 - stereo_rect_h.x1,
             orient ? stereo_rect.y2 - stereo_rect.y1 : stereo_rect_h.y2 - stereo_rect_h.y1,
             wb->StereoWidening==1 ? media_images[IMG_STEREOWIDENING] : media_images[IMG_STEREOWIDENING_OFF]);
   }
-#ifndef NDEBUG
+  /*
+//#ifndef NDEBUG
   rc.x1 = 0;
   rc.x2 = orient ? 240 : 320;
   GC_validate_RECT(GC,&rc);
@@ -1404,7 +1436,7 @@ L_SkipAlbum:
             0);
   
     GC_validate_RECT(GC,&gc_rc);
-#endif
+//#endif*/
 };
 
 int GetIconID(wchar_t *txt);
@@ -1501,6 +1533,10 @@ void CMyBook::onClose()
 #ifndef NDEBUG
   kill_proc(proc_bench);
 #endif
+  if (hMGC)
+  {
+    GC_FreeGC(hMGC);
+  }
   #define IDFREE(a) if (a!=0xFFFF && a!=0) {ImageID_Free(a);} a=0xFFFF
   IDFREE(nowmusic.meta.ImageID);
   ModifyKeyHook(NewKey, 0);
@@ -1675,6 +1711,10 @@ int main()
 
 
 /*
+
+    2.1x:
+    -переход на GVI-функции, пока только для фона
+
     2.1:
     -исправлены ошибки с загрузкой bcfg
     -исправлена перезагрузка при воспроизведении музыки из диспетчера файлов

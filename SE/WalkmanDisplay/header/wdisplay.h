@@ -54,8 +54,6 @@ typedef struct
 
 typedef struct
 {
-  wchar_t *path;
-  wchar_t *name;
   HEADER_INFO hdr;
   METADATA meta;
   int format;
