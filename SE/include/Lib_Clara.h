@@ -269,7 +269,7 @@ __swi __arm  char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
 __swi __arm  void SetListObjectItemIcon ( void *msg , int align , wchar_t iconID);
 
 #pragma swi_number=0x13D
-__swi __arm  void GUIObject_SetHeaderText(void *gui , int StrID);
+__swi __arm  void DispObject_SetTitleText(DISP_OBJ* DispObj , int StrID);
 
 #pragma swi_number=0x13E
 __swi __arm  int ListMenu_GetSelectedItem(GUI_LIST * );
