@@ -2,8 +2,8 @@
 ;Библиотека функций
 ;(c) Hussein , IronMaster
 ;(p) Joker777, ZEN, TahaSPAWN
-+456BFC00
 
++456BFC00
 0448: FFFFFFFF D5ACE144 ; 112: void memset(void *mem,char chr,int size);
 044C: FFFFFFFF 40C51844 ; 113: int memcpy(void *dest,const void *source,int cnt);
 0450: FFFFFFFF F5B7E144 ; 114: int sprintf(char *buf, const char *fmt, ...);
@@ -47,7 +47,7 @@
 04E8: FFFFFFFF 01761645 ; 13A: char SetMenuItemText2 ( GUI_MESSAGE *, int StrID);
 04EC: FFFFFFFF 11761645 ; 13B: char SetMenuItemText3 ( GUI_MESSAGE *, int StrID);
 04F0: FFFFFFFF 31761645 ; 13C: void SetListObjectItemIcon ( void *msg , int align , wchar_t iconID);
-04F4: FFFFFFFF 0DAD2F45 ; 13D: void GUIObject_SetHeaderText(void *gui , int StrID);
+04F4: FFFFFFFF 0DAD2F45 ; 13D: void DispObject_SetTitleText(DISP_OBJ* DispObj , int StrID);
 04F8: FFFFFFFF C16A1645 ; 13E: int ListMenu_GetSelectedItem(GUI_LIST * );
 04FC: FFFFFFFF 256B1645 ; 13F: void SetMenuItemStyle( void *obj , int style);
 0500: FFFFFFFF F5871845 ; 140: void putchar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
@@ -122,14 +122,14 @@
 0614: FFFFFFFF F0B41844 ; 185: void delay(OSTIME timeout);
 0618: FFFFFFFF B8B61844 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 061C: FFFFFFFF E4B61844 ; 187: void kill_proc(PROCESS pid);
-;0620: xxxxxxxx yyyyyyyy ; 188: OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+;0620: xxxxxxxx yyyyyyyy ; 188:
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
-;0628: xxxxxxxx yyyyyyyy ; 18A: OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
+;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: FFFFFFFF CCB71844 ; 18B: void stop(PROCESS pid);
 0630: FFFFFFFF 68B81844 ; 18C: OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
-;0634: xxxxxxxx yyyyyyyy ; 18D:
-;0638: xxxxxxxx yyyyyyyy ; 18E:
-;063C: xxxxxxxx yyyyyyyy ; 18F:
+;0634: xxxxxxxx yyyyyyyy ; 18D: OSADDRESS get_envp (PROCESS pid, char *name);
+;0638: xxxxxxxx yyyyyyyy ; 18E: OSBOOLEAN set_envp (PROCESS pid, char *name, OSADDRESS value);
+;063C: xxxxxxxx yyyyyyyy ; 18F: PROCESS get_bid (PROCESS pid);
 ;0640: xxxxxxxx yyyyyyyy ; 190:
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
@@ -551,7 +551,7 @@
 0CC8: FFFFFFFF 9576CF44 ; 332: int GetSignalQuality(char *rssi,char *ber);
 0CCC: FFFFFFFF 615D4545 ;8333: IS_NEEDED_BOOK isCameraBook(void);
 0CD0: FFFFFFFF 9F074345 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
-0CD4: FFFFFFFF 09C81545 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio,int actionID);
+0CD4: FFFFFFFF 09C81545 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio, int actionID);
 0CD8: FFFFFFFF B5C74345 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
 0CDC: FFFFFFFF F1C14345 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
 0CE0: FFFFFFFF 0DD74345 ; 338: void Video_ExtractFrame(BOOK *VideoPlayerBook, void*);

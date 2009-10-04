@@ -482,20 +482,26 @@ __swi   __arm void delay(OSTIME timeout);
 __swi   __arm OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 #pragma swi_number=0x187
 __swi   __arm void kill_proc(PROCESS pid);
-#pragma swi_number=0x188
-__swi   __arm OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
-#pragma swi_number=0x8188
-__swi   __arm int set_bp_adr (void);
+//#pragma swi_number=0x188
+//__swi   __arm OSBOOLEAN set_bp (PROCESS pid,OSADDRESS address,OSADDRESS attribute,union SIGNAL **trapsig);
+//#pragma swi_number=0x8188
+//__swi   __arm int set_bp_adr (void);
 #pragma swi_number=0x189
 __swi   __arm union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
-#pragma swi_number=0x18A
-__swi   __arm OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
-#pragma swi_number=0x818A
-__swi   __arm int clear_bp_adr (void);
+//#pragma swi_number=0x18A
+//__swi   __arm OSBOOLEAN clear_bp (PROCESS pid, OSADDRESS addr);
+//#pragma swi_number=0x818A
+//__swi   __arm int clear_bp_adr (void);
 #pragma swi_number=0x18B
 __swi   __arm void stop(PROCESS pid);
 #pragma swi_number=0x18C
 __swi   __arm OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
+#pragma swi_number=0x18D
+__swi   __arm OSADDRESS get_envp (PROCESS pid, char *name);
+#pragma swi_number=0x18E
+__swi   __arm OSBOOLEAN set_envp (PROCESS pid, char *name, OSADDRESS value);
+#pragma swi_number=0x18F
+__swi   __arm PROCESS get_bid (PROCESS pid);
 
 #pragma swi_number=0x1A0
 __swi __arm  char* strcpy(char * dest, const char * source);
@@ -816,7 +822,7 @@ typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ *,int ,int,int,int);
 typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 
 #pragma swi_number=0x21F
-__swi __arm DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);                          // !!!!!  не настоящий !!!!!!
+__swi __arm DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj);                          // !!!!!  не настоящий !!!!!!
 
 #pragma swi_number=0x220
 __swi __arm void DISP_DESC_SetName (DISP_DESC* , const char * name);
