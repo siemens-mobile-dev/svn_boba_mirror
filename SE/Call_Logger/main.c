@@ -4,6 +4,14 @@
 #include "conf_loader.h"
 #include "config_data.h"
 
+#define PLATFORM_DB3150_1 0xC8
+#define PLATFORM_DB3150_2 0xC9
+#define PLATFORM_DB3200_1 0xD8
+#define PLATFORM_DB3200_2 0xD9
+#define PLATFORM_DB3210_1 0xE8
+#define PLATFORM_DB3210_2 0xE9
+#define PLATFORM_DB3350 0xF0
+
 /*
 typedef struct
 {
@@ -11,6 +19,14 @@ typedef struct
   char * PNUM;
 }MTCALL_EVENT_DATA;
 */
+
+typedef struct
+{
+  char CallState;
+  char CallID;
+  int * PNUM;
+}CALLMANAGER_DATA;
+  
 
 typedef struct
 {
@@ -158,7 +174,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK * book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("Call Logger, v2.21\n\n(c) IronMaster"),0, 1 ,5000,msg->book);
+  MessageBox(0x6fFFFFFF,STR("Call Logger, v2.3\n\n(c) IronMaster"),0, 1 ,5000,msg->book);
   return(1);
 }
 
@@ -630,18 +646,37 @@ int onSessionTerminated(void * r0, BOOK *)
   }
   return(0);
 }
+
+void get_from_a1(CALLMANAGER_DATA * cms,CALLMANAGER_EVENT_DATA * CallManStruct)
+{
+  cms->CallState=CallManStruct->CallState;
+  cms->PNUM=CallManStruct->PNUM;
+  cms->CallID=CallManStruct->CallID;
+}
+
+void get_from_a2(CALLMANAGER_DATA * cms,CALLMANAGER_EVENT_DATA_A2 * CallManStruct)
+{
+  cms->CallState=CallManStruct->CallState;
+  cms->PNUM=CallManStruct->PNUM;
+  cms->CallID=CallManStruct->CallID;
+}
   
 //Оновное действо.... Все в куче....
 int OnCallManager(void * CallManStruct, BOOK *)
 {
+  int platform=GetChipID();
+  platform=platform&0xFF;
+  CALLMANAGER_DATA cms;
+  if (platform==PLATFORM_DB3150_1||platform==PLATFORM_DB3150_2||platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2||platform==PLATFORM_DB3350) get_from_a2(&cms,(CALLMANAGER_EVENT_DATA_A2*)CallManStruct);
+  else get_from_a1(&cms,(CALLMANAGER_EVENT_DATA*)CallManStruct);
   //Ловим всех кроме idle
-  if (((CALLMANAGER_EVENT_DATA*)CallManStruct)->CallState)
+  if (cms.CallState)
   {
     //Создаем структурку
     myList_elem* temp_elem=new(myList_elem);
-    int length=PNUM_len(((CALLMANAGER_EVENT_DATA*)CallManStruct)->PNUM);
+    int length=PNUM_len(cms.PNUM);
     //Проверяем наличие элемента в листе
-    if (((CALLMANAGER_EVENT_DATA*)CallManStruct)->CallID==0xFF)
+    if (cms.CallID==0xFF)
     {
       if (myList->FirstFree)
       {
@@ -654,19 +689,19 @@ int OnCallManager(void * CallManStruct, BOOK *)
     }
     else
     {
-      temp_elem->line=((CALLMANAGER_EVENT_DATA*)CallManStruct)->CallID;
+      temp_elem->line=cms.CallID;
     }
     temp_elem->PNUM=new wchar_t[length+1];
     char * sp=new char[length+1];
     memset(sp,0,length+1);
-    PNUM2str(sp,((CALLMANAGER_EVENT_DATA*)CallManStruct)->PNUM,length,length+1);
+    PNUM2str(sp,cms.PNUM,length,length+1);
     str2wstr(temp_elem->PNUM,sp);
     delete(sp);
     if (ListElement_Find(myList,temp_elem,myList_Find)==0xFFFF)
     {
       temp_elem->startdatetime=new DATETIME;
       REQUEST_DATEANDTIME_GET(SYNC,temp_elem->startdatetime);
-      temp_elem->first_callstate=((CALLMANAGER_EVENT_DATA*)CallManStruct)->CallState;
+      temp_elem->first_callstate=cms.CallState;
       temp_elem->last_callstate=0;
       wchar_t * CallName=CallStatusDesc_GetName(CallID_GetCallStatusDesc(temp_elem->line));
       if (CallName)
@@ -697,7 +732,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
     }
     else
     {
-      if (((CALLMANAGER_EVENT_DATA*)CallManStruct)->CallState==6)
+      if (cms.CallState==6)
       {
         DATETIME * enddatetime=new DATETIME;
         REQUEST_DATEANDTIME_GET(SYNC,enddatetime);
@@ -868,7 +903,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
         delete(enddatetime);
         myList_elem_Free(elem);
       }
-      if (((CALLMANAGER_EVENT_DATA*)CallManStruct)->CallState==1)
+      if (cms.CallState==1)
       {
         myList_elem * elem=(myList_elem*)ListElement_GetByIndex(myList,ListElement_Find(myList,temp_elem,myList_Find));
         if (elem->last_callstate!=1)

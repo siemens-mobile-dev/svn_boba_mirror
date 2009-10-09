@@ -684,6 +684,19 @@ typedef struct
 
 typedef struct
 {
+  char CallID;
+  int unk1;
+  char unk2;
+  char CallType;
+  char CallState;
+  int  *PNUM;
+  char unk3;
+  char unk4;
+  char CallCause;
+}CALLMANAGER_EVENT_DATA_A2;
+
+typedef struct
+{
   int SesTime;
   int SentBytes;
   int RcvBytes;
