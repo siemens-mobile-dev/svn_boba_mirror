@@ -17,12 +17,12 @@ void PrepareFileForUpload(void* data, char* fullname, char* name)
   ref->upload_file_data_not_present = 0;
   if ((int)ref->full_filename != 0xFFFFFFFF)
     mfree(ref->full_filename);
-  ref->full_filename = (char*)malloc(strlen(fullname));
+  ref->full_filename = (char*)malloc(strlen(fullname)+1);
   strcpy(ref->full_filename, fullname);
    
   FreeWS(((WSHDR *)ref->data));
   ref->data=(void *)AllocWS(strlen(name));
-  ascii2ws(((WSHDR *)ref->data), name);
+  str_2ws(((WSHDR *)ref->data), name);
 }
 
 unsigned int GetFileDataLen(REFCACHE* ref)
@@ -40,7 +40,7 @@ unsigned int GetFileDataLen(REFCACHE* ref)
         return 0;
       }
       else
-        return CALCLEN(filesize, strlen(file_data_signature));
+        return maxlen;
     }
   return 0;
 }
