@@ -22,7 +22,7 @@ void PrepareFileForUpload(void* data, char* fullname, char* name)
    
   FreeWS(((WSHDR *)ref->data));
   ref->data=(void *)AllocWS(strlen(name));
-  str_2ws(((WSHDR *)ref->data), name);
+  str_2ws(((WSHDR *)ref->data), name, strlen(name));
 }
 
 unsigned int GetFileDataLen(REFCACHE* ref)
