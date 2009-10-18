@@ -4,7 +4,7 @@
 	RSEG	PATCH_ENTER3:DATA:ROOT(2)
         DCD     MyDraw        
         
-#ifndef ELKA
+#ifdef ENABLE_PARAMS
 	RSEG	PATCH_ENTER1:DATA:ROOT(2)
         DCD     enter1
         DCD     enter2

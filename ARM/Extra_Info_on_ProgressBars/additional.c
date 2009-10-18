@@ -5,8 +5,7 @@ extern void(*OldDraw)(void *);
 extern char* LoadConfigData(const char *fn);
 void PrintProgress(void **data);
 
-#ifndef ELKA
-#define DEFAULT_DISK "0"
+#ifdef ENABLE_PARAMS
 extern void(*OldEnter1)(void *, int param);
 void enter1(void* data, int param)
 {
@@ -16,8 +15,12 @@ void enter1(void* data, int param)
     ((int*)FreeRAM())[0x20]=0;
   }
 }
-#else
+#endif
+
+#ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
+#else
+#define DEFAULT_DISK "0"
 #endif
 
 void MyDraw(void *data)
@@ -51,15 +54,15 @@ void PrintProgress(void **data)
   cfg -= cfg_begin;
   
   RECT* coord = *data;
-#ifndef ELKA
-  int current = ((int*)data)[0x30/4];
-  int all = ((int*)data)[0x2C/4];
-#else
+#ifdef NEWSGOLD
   int current = ((int*)data)[0x34/4];
   int all = ((int*)data)[0x30/4];
+#else
+  int current = ((int*)data)[0x30/4];
+  int all = ((int*)data)[0x2C/4];
 #endif
   
-#ifndef ELKA
+#ifdef ENABLE_PARAMS
   int type = (int)param[0];
   char* format_str=0;
   switch (type){
@@ -80,7 +83,7 @@ void PrintProgress(void **data)
 #endif
   
   WSHDR* ws = AllocWS(32);
-#ifndef ELKA
+#ifdef ENABLE_PARAMS
   wsprintf(ws,format_str,current,all);//сюда можно засунуть еще какие-нибудь навороты типа имени передаваемого файла
 #else
   wsprintf(ws,"%d/%d",current,all);

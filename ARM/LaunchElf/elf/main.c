@@ -457,7 +457,7 @@ void AddNewELF(){
   MYLIST* l=malloc(sizeof(MYLIST));
   memset(l,0,sizeof(MYLIST));
   l->a.pointer=(void*)0xFFFFFFFF;//TODO: найти какой-то loopback на всякий случай
-  l->a.unk_zero=0;
+  l->a.get_status=0;
   l->a.unk_1=0x578;//хз что такое, но так работает
   l->a.lgp_full_name=MYMAGIC;
   l->a.unk_2=0x7FFF;
