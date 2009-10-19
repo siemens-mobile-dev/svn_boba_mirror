@@ -130,9 +130,9 @@
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: 00000000 74ED3044 ; 18B: void stop(PROCESS pid);
 0630: 00000000 E0EB3044 ; 18C: OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
-;0634: xxxxxxxx yyyyyyyy ; 18D: OSADDRESS get_envp (PROCESS pid, char *name);
-;0638: xxxxxxxx yyyyyyyy ; 18E: OSBOOLEAN set_envp (PROCESS pid, char *name, OSADDRESS value);
-;063C: xxxxxxxx yyyyyyyy ; 18F: PROCESS get_bid (PROCESS pid);
+0634: 00000000 75612C44 ; 18D: OSADDRESS get_envp (PROCESS pid, char *name);
+0638: 00000000 89612C44 ; 18E: OSBOOLEAN set_envp (PROCESS pid, char *name, OSADDRESS value);
+063C: 00000000 98EB3044 ; 18F: PROCESS get_bid (PROCESS pid);
 ;0640: xxxxxxxx yyyyyyyy ; 190:
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
@@ -273,7 +273,7 @@
 0864: 00000000 1D35D444 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *); /
 0868: 00000000 30EA0920 ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
-;0870: xxxxxxxx yyyyyyyy ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
+0870: 00000000 355B3145 ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: 00000000 855A3145 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 39603145 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 E14E8F44 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
