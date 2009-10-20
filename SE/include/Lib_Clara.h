@@ -1693,5 +1693,11 @@ __swi __arm  GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void*
 #pragma swi_number=0x396
 __swi __arm  void GC_FreeGC(GC* gc);
 
+#pragma swi_number=0x397
+__swi __arm  void REQUEST_ALARMCLOCKSTATUS_GET(const int *SYNC, char * alarm_status);
+#pragma swi_number=0x398
+__swi __arm  void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
+#pragma swi_number=0x399
+__swi __arm  void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
 
 #endif
