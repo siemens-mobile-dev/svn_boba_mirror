@@ -590,11 +590,11 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
       if (i4==KBD_SHORT_RELEASE)
       {
         BOOK *stby_bk=Find_StandbyBook();
-	if (stby_bk) BookObj_SetFocus(stby_bk,0);
+        if (stby_bk) BookObj_SetFocus(stby_bk,0);
       }
       else
       {
-	UI_Event(RETURN_TO_STANDBY_EVENT);
+        UI_Event(RETURN_TO_STANDBY_EVENT);
       }
       CloseMyBook((BOOK*)myBook,0);
     }
@@ -632,7 +632,7 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
             Shortcut_Run(par);
           }
         }
-	mfree(param);
+        mfree(param);
         CloseMyBook((BOOK*)myBook,0);
       }
       mfree(short_buf);
@@ -692,7 +692,7 @@ void myOnKey1(void *p, int i1, int i2, int i3, int i4)
       if (i4==KBD_SHORT_RELEASE)
       {
         BOOK *stby_bk=Find_StandbyBook();
-	if (stby_bk) BookObj_SetFocus(stby_bk,0);
+        if (stby_bk) BookObj_SetFocus(stby_bk,0);
       }
       /*
       else
@@ -713,7 +713,7 @@ void myOnKey1(void *p, int i1, int i2, int i3, int i4)
       sprintf(key,i4==3?"[ES_KEY%d]":"[EL_KEY%d]",i1-KEY_DIGITAL_0);
       if (param=manifest_GetParam(short_buf,key,0))
       {
-	if(StartElf(GetDir(DIR_ELFS | MEM_INTERNAL),param))
+        if(StartElf(GetDir(DIR_ELFS | MEM_INTERNAL),param))
           if (StartElf(GetDir(DIR_ELFS | MEM_EXTERNAL),param))
           {
             int ms[3];
@@ -722,7 +722,7 @@ void myOnKey1(void *p, int i1, int i2, int i3, int i4)
             ms[2]=STR("\n\nnot found..");
             MESSAGE(Str2ID(ms,5,3));
           }
-	mfree(param);
+        mfree(param);
         CloseMyBook((BOOK*)myBook,0);
       }
       mfree(short_buf);
@@ -773,9 +773,9 @@ GUI_TABMENUBAR * CreateGuiList(int tab_pos, BOOK * bk)
   GUIObject_Softkey_SetAction(lo,1,Copyright);
   GUIObject_Softkey_SetText(lo,1,STR("About"));
 
-  ((MyBOOK*)bk)->oldOnKey=(void*)DISP_OBJ_GetOnKey(lo->DISP_OBJ);
+  ((MyBOOK*)bk)->oldOnKey=(void*)DISP_OBJ_GetOnKey(GUIObj_GetDISPObj(lo));
 
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (lo->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)myOnKey );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (GUIObj_GetDISPObj(lo)), (DISP_OBJ_ONKEY_METHOD)myOnKey );
   //---------------
 
 
@@ -809,9 +809,9 @@ GUI_TABMENUBAR * CreateGuiList(int tab_pos, BOOK * bk)
     ListMenu_SetNoItemText(elist,STR("No elfs in memory"));
   }
 
-  ((MyBOOK*)bk)->oldOnKey1=(void*)DISP_OBJ_GetOnKey(elist->DISP_OBJ);
+  ((MyBOOK*)bk)->oldOnKey1=(void*)DISP_OBJ_GetOnKey(GUIObj_GetDISPObj(elist));
 
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (elist->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)myOnKey1 );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (GUIObj_GetDISPObj(elist)), (DISP_OBJ_ONKEY_METHOD)myOnKey1 );
 
 
   GUI_TABMENUBAR * tab = CreateTabMenuBar(bk);
