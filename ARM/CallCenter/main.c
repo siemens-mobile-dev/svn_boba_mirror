@@ -1093,7 +1093,6 @@ int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-const char white[4]={0xFF,0xFF,0xFF,0x64};
 const char transparent[4]={0,0,0,0};
 static void DrawMyProgress(int x, int y, int n)
 {
@@ -1102,17 +1101,16 @@ static void DrawMyProgress(int x, int y, int n)
   scr_w=ScreenW();
   cur=CurrentCASH[n];
   max=MaxCASH[n];
-  fill=((long long)((cur<0)?0:cur))*(scr_w-x-4)/max;
+  fill=((long long)((cur<0)?0:cur))*(scr_w-(x<<1)-2)/max;
   font_size=GetFontYSIZE(TEXT_FONTSZ)+1;
   start_y=y+n*font_size;
   end_y=y+(n+1)*font_size-1;
 
   DrawCanvas(BuildCanvas(), x, start_y, scr_w-x-1, end_y, 1);
   DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, COLOR_TEXTPB, transparent);
-//  DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, white, transparent);
-  DrawRectangle(x+1, start_y+1, fill+2, end_y-1, 0, progress_colors[n], progress_colors[n]);
+  DrawRectangle(x+1, start_y+1, x+1+fill, end_y-1, 0, progress_colors[n], progress_colors[n]);
   wsprintf(ws, "%s%u.%02u/%u.%02u", ((cur<0)?"-":""), ((cur<0)?(0-cur):cur)/100, ((cur<0)?(0-cur):cur)%100, max/100, max%100);
-  DrawString(ws, x+2, start_y+1, scr_w-x-3, end_y-1, TEXT_FONTSZ, TEXT_ALIGNMIDDLE, COLOR_TEXTPB, transparent);
+  DrawString(ws, 0, start_y+1, scr_w, end_y-1, TEXT_FONTSZ, TEXT_ALIGNMIDDLE, COLOR_TEXTPB, transparent);
   FreeWS(ws);
 }
 
@@ -1153,11 +1151,11 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
   {
     if (ProcessUSSD(data,(GBS_USSD_MSG *)msg)) return 0; //Обработанно
   }
-  if (msg->msg==MSG_END_CALL)
+  if (msg->msg==MSG_END_CALL || msg->msg==MSG_HELPER_TRANSLATOR && (int)msg->data0==LMAN_DISCONNECT_IND)
   {
     if (ENA_CASHTRACE)
     {
-      if (is_voice_connected)
+      if (is_voice_connected || msg->msg==MSG_HELPER_TRANSLATOR)
       {
 	GBS_DelTimer(&hours_tmr);
 	SendCashReq();
@@ -1204,6 +1202,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
     }
     is_incoming_call=0;
   }
+
   csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
 
   if (cfgShowIn != 1 - IsUnlocked())
