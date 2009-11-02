@@ -1101,7 +1101,7 @@ static void DrawMyProgress(int x, int y, int n)
   scr_w=ScreenW();
   cur=CurrentCASH[n];
   max=MaxCASH[n];
-  fill=((long long)((cur<0)?0:cur))*(scr_w-(x<<1)-2)/max;
+  fill=((long long)((cur<0)?0:cur))*(scr_w-(x<<1)-3)/max;
   font_size=GetFontYSIZE(TEXT_FONTSZ)+1;
   start_y=y+n*font_size;
   end_y=y+(n+1)*font_size-1;
