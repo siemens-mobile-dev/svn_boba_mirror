@@ -1700,4 +1700,7 @@ __swi __arm  void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
 #pragma swi_number=0x399
 __swi __arm  void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
 
+#pragma swi_number=0x39A
+__swi __arm  int Settings_ShowNumber_Get(char *state);
+
 #endif

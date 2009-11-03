@@ -653,7 +653,7 @@
 ;0E5C: xxxxxxxx yyyyyyyy ; 397: void REQUEST_ALARMCLOCKSTATUS_GET(const int *SYNC, char * alarm_status);
 ;0E60: xxxxxxxx yyyyyyyy ; 398: void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
 ;0E64: xxxxxxxx yyyyyyyy ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
-
+0E68: 00000000 9924F344 ; 39A: int Settings_ShowNumber_Get(char *state);
 
 
 
