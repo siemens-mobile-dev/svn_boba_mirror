@@ -3,12 +3,14 @@
 #include "display_utils.h"
 #include "siemens_unicode.h"
 #include "string_works.h"
-#include "rect_patcher.h"
+#include "rect_patcher.h" 
 #include "main.h"
 #include "file_works.h"
 #include "lang.h"
 
 extern int maincsm_id;
+
+extern const int scr_shift;
 
 int GetFontHeight(int font, int atribute)
 {
@@ -21,7 +23,8 @@ int GetFontHeight(int font, int atribute)
 
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *max_h*/)
 {
-  int left=ScreenW();
+  int scrW = ScreenW()-MARGIN;
+  int left=scrW;
   int c,h,cw,f=0;
   p->centerAtAll=0;
   p->pixheight=0;
@@ -68,10 +71,14 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       p->underline=1;
       continue;
     case UTF16_FONT_SMALL:
-      p->bold=0;
+      {
+        p->bold=0;
+      }
       continue;
     case UTF16_FONT_SMALL_BOLD:
-      p->bold=1;
+      {
+        p->bold=1;
+      }
       continue;
     case UTF16_INK_RGBA:
       if (p->pos>(vd->rawtext_size-2)) return 0;
@@ -100,13 +107,14 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       {
         while (1)
         {
+          if (vd->rawtext[p->pos-b]==UTF16_SPACE) { b--; break;}
           if (vd->rawtext[p->pos-b]==UTF16_ENA_INVERT) break;
           if (vd->rawtext[p->pos-b]==UTF16_NEWLINE)
           {
             b++;
             break;
           }
-          if (cw>=ScreenW()/2)
+          if (cw>=(scrW*3/4))
           {
             b=1;
             break;
@@ -117,17 +125,32 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       }
       else
       {
-        ;
+        while (1)
+        {
+          if (vd->rawtext[p->pos-b]==UTF16_SPACE) { b--; break;}
+          if (vd->rawtext[p->pos-b]==UTF16_DIS_INVERT) break;
+          if (vd->rawtext[p->pos-b]==UTF16_NEWLINE)
+          {
+            b++;
+            break;
+          }
+          if (cw>=(scrW*3/4))
+          {
+            b=1;
+            break;
+          }
+          cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+          b++;
+        }
       }
       p->pos-=b;
       return 1; // here can be a bug with line height
     }
     
-    if (cw>=ScreenW()/2||h>GetFontHeight(FONT_SMALL,0)*2) // Картинки отдельно
+    /*if (cw>=(scrW/2)||h>(GetFontHeight(FONT_SMALL,0)*2)) // Картинки отдельно
     {
-      if (left+cw<ScreenW()) // image is last character
+      if ((left+cw)<scrW) // image is last character
       {
-        p->centerAtAll=1;
         if (vd->rawtext[p->pos-1]==UTF16_ENA_INVERT)
         {
           p->pos-=2;
@@ -139,12 +162,12 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
           return 1;
         }
       }
-    }
+    }*/
     if (h>p->pixheight) p->pixheight=h;
       
-    if (cw>=ScreenW()/2||h>GetFontHeight(FONT_SMALL,0)*2) // Картинки отдельно
+    if ((cw>=scrW/2)&&h>(GetFontHeight(FONT_SMALL,0)*3)) // Картинки отдельно
     {
-      if (left+cw==ScreenW()) // image is first character
+      if ((left+cw)==scrW) // image is first character
       {
         if (p->pos>(vd->rawtext_size-1)) return 0;
         p->centerAtAll=1;
@@ -201,6 +224,7 @@ int LineDown(VIEWDATA *vd)
       lc.pos=0;
       lc.center=0;
       lc.right=0;
+      lc.centerAtAll=0;
       newCacheLine(vd,&lc);
     }
     plc=vd->lines_cache+vd->lines_cache_size-1;
@@ -243,7 +267,7 @@ L1:
     {
       while(LineDown(vd)) ;
       vd->pixdisp=(vd->lines_cache+vd->lines_cache_size-1)->pixheight;
-      scrollUp(vd,ScreenH()-1);
+      scrollUp(vd,ScreenH()-1-scr_shift);
       return;
     }
     vd->pixdisp=pd;
@@ -255,7 +279,7 @@ L1:
     {
       while(LineDown(vd)) ;
       vd->pixdisp=(vd->lines_cache+vd->lines_cache_size-1)->pixheight;
-      scrollUp(vd,ScreenH()-1);
+      scrollUp(vd,ScreenH()-1-scr_shift);
     }
   }
 }
@@ -281,7 +305,8 @@ typedef struct {
   int end_x;
 } COLOR_RC;
 
-void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y)
+
+void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
 {
   if (rf->tag=='x'||rf->tag=='p')
   {
@@ -303,7 +328,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y)
     }
     DrawString(ws2,x+d,y+d,ScreenW(),ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
-      GetPaletteAdrByColorIndex(1),
+      GetPaletteAdrByColorIndex(2),
       GetPaletteAdrByColorIndex(23));
     FreeWS(ws2);
   }
@@ -333,19 +358,25 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y)
     FreeWS(ws2);
     mfree(c);
   }
+  if (rf->tag=='u')
+  {
+    DrawString((WSHDR *)rf->data,x+4,y+3+(y2-y-GetImgHeight(GetPicNByUnicodeSymbol(wchar))),ScreenW(),ScreenH(),
+      FONT_SMALL,TEXT_NOFORMAT,
+      GetPaletteAdrByColorIndex(1),
+      GetPaletteAdrByColorIndex(23));
+  }
 }
-
 // возвращает 1, если видна последняя строка
 // возвращает 2, если виден конец страницы
 int RenderPage(VIEWDATA *vd, int do_draw)
 {
-  int scr_w=ScreenW()-1;
+  int scr_w=ScreenW()-MARGIN/2-1;
   int scr_h=ScreenH()-1;
   int sc=0;
   int dc;
   WSHDR *ws=vd->ws;
   LINECACHE *lc;
-  int ypos=-vd->pixdisp;
+  int ypos=scr_shift-vd->pixdisp;
   unsigned int vl;
   unsigned int store_line=vl=vd->view_line;
   unsigned int len;
@@ -358,6 +389,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   
   int c;
   int ena_ref=0;
+  int isBold = 0;
+  int isUnderline = 0;
+  int max_ref_height;
   
   unsigned int flag=0;
   
@@ -368,8 +402,16 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   
   int dfh=GetFontHeight(FONT_SMALL,0)*2; //double font height
   
-  int rnd_x;
+  typedef struct
+  {
+    REFCACHE *form_rf;
+    int       form_x;
+    int       form_char;
+  }tFormData;
+  
   REFCACHE *rnd_rf;
+  tFormData form_data[32];
+  int form_num;
   
   RECT rcs[32]; // cursor
   RECT rcs_work;
@@ -380,12 +422,16 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   
   int x;
   
+  
   while(ypos<=scr_h)
   {
-    if (!lcheck) lcheck=!LineDown(vd);
-    else lcheck++;
+    if (!lcheck) 
+      lcheck=!LineDown(vd);
+    else 
+      lcheck++;
     if (lcheck<=1&&vd->lines_cache_size>0)
     {
+
       lc=vd->lines_cache+vl;
       if (vl) lprev=-1;
       dc=0;
@@ -393,8 +439,10 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       cur_rc=1;
       rnd_rf=NULL;
       zeromem(&rcs_work,sizeof(RECT));
-      
-      rc[0].start_x=0;
+      zeromem(&form_data, 32*sizeof(tFormData));
+      form_num = 0;
+      max_ref_height = 0;
+      rc[0].start_x=MARGIN/2;
       rc[0].end_x=scr_w;
       rc[0].color[0]=lc[lprev].paper1>>8;
       rc[0].color[1]=lc[lprev].paper1;
@@ -404,6 +452,16 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       if (vl) sc=lc[lprev].pos;
       len=lc->pos-sc;
       
+      if (lc[lprev].bold)
+      {
+        isBold = 1;
+      }
+      
+      if (lc[lprev].underline)
+      {
+        isUnderline = 1;
+      }
+          
       while(len>0&&dc<250)
       {
         c=vd->rawtext[sc];
@@ -415,7 +473,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           if ((lc->pixheight<dfh)?(ypos+lc->pixheight>scr_h):(ypos+dfh>scr_h))
             goto L1;
           if (vd->pos_cur_ref==sc)
-          {
+          { 
             flag=1;
             ena_ref=1;
             rcs_work.x=ws_width;
@@ -457,8 +515,11 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             rc[cur_rc].color[3]=vd->rawtext[sc+2];
             if (memcmp((void *)rc[cur_rc].color,(void *)prev->color,4))  // Только если цвет не равен предыдущему (очередь объектов не резиновая ;))
             {
-              prev->end_x=ws_width-1;
-              rc[cur_rc].start_x=ws_width;
+              if (ws_width)
+                prev->end_x=ws_width-1+MARGIN/2;
+              else
+                prev->end_x = MARGIN/2;
+              rc[cur_rc].start_x=ws_width+MARGIN/2;
               rc[cur_rc].end_x=scr_w;
               cur_rc++;
             }
@@ -471,15 +532,48 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         }
         if ((c&0xFF00)==0xE100)
         {
-          if (c==vd->WCHAR_TEXT_FORM||c==vd->WCHAR_LIST_FORM)
+          rnd_rf=FindReferenceByBegin(vd,sc-1);         
+          if ((rnd_rf) && (c==vd->WCHAR_TEXT_FORM||c==vd->WCHAR_LIST_FORM||rnd_rf->tag == 'u'))
           {
-            rnd_rf=FindReferenceByBegin(vd,sc-1);
-            rnd_x=ws_width;
-          }
+            form_data[form_num].form_rf = rnd_rf;
+            form_data[form_num].form_x = ws_width;
+            form_data[form_num].form_char = c;
+            form_num++;    
+          }  
+        }
+        if (c==UTF16_ENA_UNDERLINE)
+        {
+          isUnderline = 1;
+        }
+        if (c==UTF16_DIS_UNDERLINE)
+        {
+          isUnderline = 0;
+        }
+        if (c==UTF16_FONT_SMALL_BOLD)
+        {
+          isBold = 1;
+        }
+        if (c==UTF16_FONT_SMALL)
+        {
+          isBold = 0;
         }
         ws->wsbody[++dc]=c;
-        ws_width+=GetSymbolWidth(c,lc[lprev].bold?FONT_SMALL_BOLD:FONT_SMALL);
-        
+        ws_width+=GetSymbolWidth(c,isBold?FONT_SMALL_BOLD:FONT_SMALL);
+        if (ena_ref)
+        {
+          int th;
+          if ((c&0xFF00)==0xE100)
+          {
+            th=GetImgHeight(GetPicNByUnicodeSymbol(c));
+          }
+          else
+          {
+            th=GetFontHeight(isBold?FONT_SMALL_BOLD:FONT_SMALL,isUnderline?TEXT_UNDERLINE:0);
+          }
+          if ( th > max_ref_height)
+            max_ref_height = th;
+        }
+
         if ((c==UTF16_PAPER_RGBA)||(c==UTF16_INK_RGBA))
         {
           len--;
@@ -492,50 +586,58 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         len--;
       }
       ws->wsbody[0]=dc;
-
       y2=lc->pixheight+ypos;
-
-      if (do_draw&&(y2!=ypos||lcheck))
+      if (do_draw)
       {
-        x=0;
-        if (lc[lprev].right) x=scr_w-ws_width;
-        if (lc[lprev].center||lc->centerAtAll) x=(scr_w-ws_width)/2;
-        
-        def_ink[0]=lc[lprev].ink1>>8;
-        def_ink[1]=lc[lprev].ink1;
-        def_ink[2]=lc[lprev].ink2>>8;
-        def_ink[3]=lc[lprev].ink2;
-        
-        for (int i=0; i!=cur_rc; i++)
+        if (y2!=ypos)
         {
-          DrawRectangle(rc[i].start_x,ypos,rc[i].end_x,y2,
-		                    RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
+          x=MARGIN/2;
+          if (lc[lprev+1].right) x=scr_w-ws_width;
+          if (lc[lprev+1].center||lc->centerAtAll) x=(ScreenW()-ws_width)/2;
+          
+          def_ink[0]=lc[lprev].ink1>>8;
+          def_ink[1]=lc[lprev].ink1;
+          def_ink[2]=lc[lprev].ink2>>8;
+          def_ink[3]=lc[lprev].ink2;
+          
+          for (int i=0; i!=cur_rc; i++)
+          {
+            DrawRectangle(rc[i].start_x,ypos,rc[i].end_x,y2,
+                          RECT_FILL_WITH_PEN,rc[i].color,rc[i].color);
+          }
+          
+          if (ena_ref) rcs_work.x2=ws_width;
+          if ((rcs_work.x!=0||rcs_work.x2!=0)&&rcs_work.x!=rcs_work.x2)
+          {
+            rcs_work.y=y2-max_ref_height;
+            rcs_work.y2=y2;
+            rcs_work.x+=x;
+            rcs_work.x2+=x;
+           
+            
+            rcs_work.x-=2;
+            rcs_work.x2++;
+            rcs_work.y--;
+            
+            if (rcs_work.x<0) rcs_work.x=0;
+            if (rcs_work.x2>(scr_w+1)) rcs_work.x2=scr_w+1;
+            
+            memcpy(&rcs[rcs_num],&rcs_work,sizeof(RECT));
+            rcs_num++;
+          }
+ 
+          DrawString(ws,x,ypos,scr_w,y2,
+                     lc[lprev].bold?FONT_SMALL_BOLD:FONT_SMALL,
+                     TEXT_NOFORMAT+(lc[lprev].underline?TEXT_UNDERLINE:0),
+                     def_ink,GetPaletteAdrByColorIndex(23));
+          
+          for (int i = 0; form_data[i].form_rf != 0; i++)
+          {           
+            renderForm(vd, form_data[i].form_rf, form_data[i].form_x+x, ypos, y2, form_data[i].form_char);
+          }
+           
         }
         
-        if (ena_ref) rcs_work.x2=ws_width;
-        if ((rcs_work.x!=0||rcs_work.x2!=0)&&rcs_work.x!=rcs_work.x2)
-        {
-          rcs_work.y=ypos;
-          rcs_work.y2=y2;
-          rcs_work.x+=x;
-          rcs_work.x2+=x;
-          
-          rcs_work.x-=2;
-          rcs_work.x2++;
-          rcs_work.y--;
-          
-          if (rcs_work.x<0) rcs_work.x=0;
-          if (rcs_work.x2>scr_w) rcs_work.x2=scr_w;
-          
-          memcpy(&rcs[rcs_num],&rcs_work,sizeof(RECT));
-          rcs_num++;
-        }
-	      DrawString(ws,x,ypos,scr_w,y2,
-		               lc[lprev].bold?FONT_SMALL_BOLD:FONT_SMALL,
-                   TEXT_NOFORMAT+(lc[lprev].underline?TEXT_UNDERLINE:0),
-		               def_ink,GetPaletteAdrByColorIndex(23));
-        
-        if (rnd_rf) renderForm(vd,rnd_rf,rnd_x+x,ypos);
         
         if (y2>=scr_h||lcheck)
         {
@@ -547,6 +649,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             if (rf->tag=='Z') setColor(190,0,0,100,cl);
             for (int i=0;i<rcs_num;i++)
             {
+ 
                DrawLine(rcs[i].x2  ,rcs[i].y  ,rcs[i].x2  ,rcs[i].y2  ,0,cl);
                DrawLine(rcs[i].x2-1,rcs[i].y  ,rcs[i].x2-1,rcs[i].y2  ,0,cl);
                if (i+1<rcs_num&&rcs[i].x<rcs[i+1].x2)
@@ -579,14 +682,14 @@ int RenderPage(VIEWDATA *vd, int do_draw)
                }
             }
           }
-          int b=((store_line?vd->lines_cache[store_line+lprev].pos:0)*1000)/vd->rawtext_size*scr_h/1000-2; // no float
-          int e=(lc->pos*1000)/vd->rawtext_size*scr_h/1000+2;
-          if (!lcheck||b>0)
+          int b=((store_line?vd->lines_cache[store_line+lprev].pos:0)*1000)/vd->rawtext_size*(scr_h-scr_shift)/1000-2+scr_shift; // no float
+          int e=(lc->pos*1000)/vd->rawtext_size*(scr_h-scr_shift)/1000+2+scr_shift;
+          if (!lcheck||b>scr_shift)
           {
 #ifdef ELKA
-            DrawRectangle(scr_w-2,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+            DrawRectangle(ScreenW()-2,b,ScreenW(),e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
 #else
-            DrawRectangle(scr_w-1,b,scr_w,e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+            DrawRectangle(ScreenW()-1,b,ScreenW(),e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
 #endif
           }
           
@@ -622,8 +725,13 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       vl++;
     }
     else
+    {
       break;
+    }
   }
+  
+ 
+
   if (flag==0) vd->pos_cur_ref=0xFFFFFFFF;
   vd->view_line=store_line;
   
@@ -696,7 +804,7 @@ int FindReferenceById(VIEWDATA *vd, unsigned int id, int i) // Находит index'ы в
 /*******************************************************************************
   Templates menu
 *******************************************************************************/
-GUI *paste_gui;
+//GUI *paste_gui;
 
 //Templates
 char * templates_chars; //Собственно файл
@@ -761,6 +869,9 @@ int LoadTemplates()
   return templates_num;
 }
 
+int curpos;
+int curpos_changed = 0;
+
 int templates_menu_onkey(void *gui, GUI_MSG *msg)
 {
   if (msg->keys == 0x3D || msg->keys == 0x18)
@@ -768,12 +879,16 @@ int templates_menu_onkey(void *gui, GUI_MSG *msg)
     int i = GetCurMenuItem(gui);
     if (templates_lines[i])
     {
+      GUI* paste_gui = (GUI*)MenuGetUserPointer(gui);
       EDITCONTROL ec;
       ExtractEditControl(paste_gui, 1, &ec);
-      WSHDR * ws = AllocWS(ec.maxlen);
-      ascii2ws(ws, templates_lines[i]);
-      EDIT_SetTextToEditControl(paste_gui, 1, ws);
-      FreeWS(ws);
+      curpos=EDIT_GetCursorPos(paste_gui);
+      char c;
+      while((c=*(templates_lines[i])++))
+      {
+        wsInsertChar(ec.pWS,char8to16(c),curpos++);
+      }
+      curpos_changed = 1;
     }
     return (1);
   }
@@ -827,7 +942,7 @@ MENU_DESC templates_menu_struct=
   0   //n
 };
 
-void createTemplatesMenu()
+void createTemplatesMenu(void* data)
 {
   patch_header(&templates_menu_header);
   
@@ -835,7 +950,7 @@ void createTemplatesMenu()
   templates_menu_sk[1].lgp_id=(int)lgpData[LGP_Back];
   templates_menu_header.lgp_id=(int)lgpData[LGP_Templates];
   
-  CreateMenu(0, 0, &templates_menu_struct, &templates_menu_header, 0, LoadTemplates(), 0, 0);
+  CreateMenu(0, 0, &templates_menu_struct, &templates_menu_header, 0, LoadTemplates(), data, 0);
 }
 
 // EDIT BOX
@@ -873,6 +988,14 @@ static void input_box_ghook(GUI *data, int cmd)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
   }
+  if(cmd==TI_CMD_FOCUS)
+  {
+    if (curpos_changed)
+    {
+      curpos_changed = 0;
+      EDIT_SetCursorPos(data, curpos);
+    }
+  }
 }
 
 static void input_box_locret(void){}
@@ -893,7 +1016,7 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
     switch(item->cur_item)
     {
     case 0:
-      createTemplatesMenu();
+      createTemplatesMenu(item->user_pointer);
       break;
     }
   }
@@ -903,11 +1026,11 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
   if (msg->gbsmsg->msg==KEY_DOWN&&msg->gbsmsg->submess==ENTER_BUTTON)
-	{
-    paste_gui=data;
-    EDIT_OpenOptionMenuWithUserItems(data,input_box_onkey_options,0,1);
+  {
+    //paste_gui=data;
+    EDIT_OpenOptionMenuWithUserItems(data,input_box_onkey_options,data,1);
     return (-1);
-	}
+  }
   if (msg->keys==0xFFF)
   {
     // set value
@@ -1052,6 +1175,7 @@ void createTextView(WSHDR *ws)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
+  EDITC_OPTIONS ec_options;
   eq=AllocEQueue(ma,mfree_adr());
   if (!wstrlen(ws))
   {
@@ -1059,7 +1183,10 @@ void createTextView(WSHDR *ws)
     return;
   }
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,512);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,2048);
+  PrepareEditCOptions(&ec_options);
+  SetFontToEditCOptions(&ec_options,FONT_SMALL);
+  CopyOptionsToEditControl(&ec,&ec_options);
   AddEditControlToEditQend(eq,&ec,ma);
   FreeWS(ws);
   patch_header(&txtview_hdr);
@@ -1252,3 +1379,122 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
   return CreateMenu(0,0,&sel_STRUCT,&sel_HDR,start,n_sel,ustop,0);
 }
 
+
+SOFTKEY_DESC link_box_menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Ok"},
+  {0x0001,0x0000,(int)"Cancel"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+static const SOFTKEYSTAB link_box_menu_skt=
+{
+  link_box_menu_sk,0
+};
+
+HEADER_DESC link_box_hdr={0,0,0,0,NULL,(int)"Link:",LGP_NULL};
+
+static void link_box_locret(void){}
+
+static void link_box_ghook(GUI *data, int cmd)
+{
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Ok]};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+}
+
+static int link_box_onkey(GUI *data, GUI_MSG *msg)
+{
+  if (msg->keys==0xFFF)
+  {
+    return (0xFF);
+  }
+  return (0);
+}
+
+static const INPUTDIA_DESC link_box_desc =
+{
+  1,
+  link_box_onkey,
+  link_box_ghook,
+  (void *)link_box_locret,
+  0,
+  &link_box_menu_skt,
+  {0,0,0,0},
+  FONT_SMALL,
+  100,
+  101,
+  0,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+int ShowLink(char *link)
+{
+  
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  WSHDR* wslink = AllocWS(512);
+  ascii2ws(wslink, link);
+  
+  eq=AllocEQueue(ma,mfree_adr());
+  
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,wslink,512);
+  AddEditControlToEditQend(eq,&ec,ma);
+  FreeWS(wslink);
+
+  patch_header(&link_box_hdr);
+  patch_input(&link_box_desc);
+  link_box_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
+  link_box_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  return CreateInputTextDialog(&link_box_desc,&link_box_hdr,eq,1,0);
+}
+
+void FindStringOnPage(VIEWDATA* cur_vd)
+{
+    LineDown(cur_vd);
+    int i;
+    i = (cur_vd->lines_cache[cur_vd->view_line]).pos+1;
+    int j = 0;
+    int found = 0;
+    while ((i < cur_vd->rawtext_size) && (!found))
+    {
+      while ((j < wstrlen(cur_vd->search_string)) && 
+             CompareWchar(cur_vd->rawtext[i+j], (cur_vd->search_string)->wsbody[1+j], cur_vd->search_isCaseSens))
+        j++;
+      if (j == wstrlen(cur_vd->search_string))
+      {
+        found = 1;
+      }
+      else
+      {
+        i += 1+j;
+        j = 0;
+      }
+    }
+    if (found)
+    {
+      if (LineDown(cur_vd))
+      {
+        while (((cur_vd->lines_cache[cur_vd->view_line]).pos < i) && (LineDown(cur_vd)));
+      }
+    }
+    LineUp(cur_vd);
+}

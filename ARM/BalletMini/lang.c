@@ -113,6 +113,8 @@ void lgpInitLangPack(void)
   lgpData[LGP_LinkHeader]=            "Link:";
   lgpData[LGP_TextHeader]=            "Text:";
   lgpData[LGP_SearchEngine]=          "Search engine:";
+  lgpData[LGP_FindString]=            "Find:";
+  lgpData[LGP_SavePageString]=        "Name:";
   lgpData[LGP_SelectHeader]=          "Select:";
   lgpData[LGP_EnterHeader]=           "Enter:";
   lgpData[LGP_Add]=                   "Add";
@@ -128,6 +130,9 @@ void lgpInitLangPack(void)
   lgpData[LGP_Options]=               "Options";
   lgpData[LGP_SelectBookmarkHeader]=  "Select bookmark:";
   lgpData[LGP_SearchHeader]=          "Search:";
+  lgpData[LGP_FindHeader]=            "Find string:";
+  lgpData[LGP_SavePageHeader]=        "Enter name:";
+  lgpData[LGP_MatchCase]=             "Match case";
   lgpData[LGP_Go]=                    "Go";
   lgpData[LGP_HistoryHeader]=         "History:";
   lgpData[LGP_AddressHeader]=         "Address";
@@ -138,11 +143,18 @@ void lgpInitLangPack(void)
   lgpData[LGP_Settings]=              "Settings";
   lgpData[LGP_Exit]=                  "Exit";
   lgpData[LGP_Search]=                "Search";
+  lgpData[LGP_Find]=                  "Find on page";
+  lgpData[LGP_SavePage]=              "Save page";
   lgpData[LGP_EnterName]=             "Enter name!";
   lgpData[LGP_EnterURL]=              "Enter URL!";
-  lgpData[LGP_FolderExists]=          "Folder is allready exists!";
-  lgpData[LGP_FileExists]=            "File is allready exists!";
+  lgpData[LGP_FolderExists]=          "Folder is already exists!";
+  lgpData[LGP_FileExists]=            "File is already exists!";
+  lgpData[LGP_FileInvalid]=           "Invalid filename";
   lgpData[LGP_FolderNotEmpty]=        "Folder is not empty!";
+  lgpData[LGP_Yes]=                   "Yes";
+  lgpData[LGP_No]=                    "No";
+  lgpData[LGP_Root]=                  "Root";
+    
   
   lgpData[LGP_LangCode]=              "en";
 }

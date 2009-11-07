@@ -149,7 +149,7 @@ void AddURLToHistory(const char *url)
       break;
     }
   }
-  if(strcmp(history[0], url))
+  if(HISTORY_DEPTH && strcmp(history[0], url))
   {
     if(history[HISTORY_DEPTH-1])
       mfree(history[HISTORY_DEPTH-1]);

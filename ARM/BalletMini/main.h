@@ -23,6 +23,9 @@ typedef struct
   GUI gui;
   VIEWDATA *vd;
   int cached;
+  unsigned int view_line;
+  unsigned int pos_cur_ref;
+  int isPositionDataPresent;
   WSHDR *ws1;
   WSHDR *ws2;
 }VIEW_GUI;

@@ -10,6 +10,7 @@
 #include "file_works.h"
 #include "lang.h"
 #include "url_utils.h"
+#include "display_utils.h"
 
 extern int view_url_mode;
 extern char *view_url;
@@ -17,6 +18,8 @@ extern char *goto_url;
 extern int maincsm_id;
 
 //----------------------------------- Add bookmark -----------------------------
+
+const char* sEmpty = "";
 
 typedef enum
 {
@@ -823,7 +826,8 @@ int search_menu_onkey(GUI *data, GUI_MSG *msg)
     char url_file[256];
     
     char * search_path = getSymbolicPath("$search\\");
-    sprintf(url_file,"%s%s.url", search_path, search_engines[selected_search_engine]);
+    const char* _ss = "%s%s.url";
+    sprintf(url_file,_ss, search_path, search_engines[selected_search_engine]);
     mfree(search_path);
     if (GetFileStats(url_file,&stat,&err)==-1) goto fail;
     if ((fsize=stat.size)<=0)  goto fail;
@@ -839,28 +843,39 @@ int search_menu_onkey(GUI *data, GUI_MSG *msg)
     
     //build search url
     _safe_free(goto_url);
-    goto_url=malloc(2+fsize+ql+2);    
+    goto_url=malloc(2+fsize+6*ql+2);    
     goto_url[0]='0';
     goto_url[1]='/';          
     
     s=strstr(url, "%s");
+    char* ts;
     if(s)
     {
       int ofs=s-url;
       memcpy(goto_url+2,url,ofs);
       s=goto_url+2+ofs;
       for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
-      memcpy(goto_url+2+ofs+ql,url+ofs+2,fsize-ofs-1);
+      *s = 0;
+      ts = malloc(ql+1);
+      strcpy(ts,goto_url+2+ofs);
+      ts = ToWeb(ts,1,0);
+      memcpy(goto_url+2+ofs,ts,strlen(ts));
+      memcpy(goto_url+2+ofs+strlen(ts),url+ofs+2,fsize-ofs-1);
     }
     else
     {
       memcpy(goto_url+2,url,fsize);  
       s=goto_url+2+fsize;
       for (int i=0; i<ql; i++) *s++=char16to8(ws->wsbody[i+1]);
-      *s = 0;  
-    };       
+      *s = 0;
+      ts = malloc(ql+1);
+      strcpy(ts,goto_url+2+fsize);
+      ts = ToWeb(ts,1,0);
+      memcpy(goto_url+2+fsize,ts,strlen(ts)+1);
+    };  
+    mfree(ts);
     mfree(url);
-    goto_url = ToWeb(goto_url,0);
+    goto_url = ToWeb(goto_url,0,0);
     
     return (0xFF);     
     
@@ -941,7 +956,7 @@ static int CreateSearchDialog()
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,"");
+  wsprintf(ews,sEmpty);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
   
@@ -949,7 +964,7 @@ static int CreateSearchDialog()
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
   
-  wsprintf(ews,"");
+  wsprintf(ews,sEmpty);
   ConstructComboBox(&ec,7,ECF_APPEND_EOL,ews,32,0,search_engine_count,selected_search_engine+1);
   AddEditControlToEditQend(eq,&ec,ma);
   
@@ -962,6 +977,292 @@ static int CreateSearchDialog()
   return CreateInputTextDialog(&search_menu_struct, &search_menu_header, eq, 1, 0);  
 };
 
+//--------------------------------Find string menu------------------------------
+SOFTKEY_DESC find_box_menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Ok"},
+  {0x0001,0x0000,(int)"Cancel"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+static const SOFTKEYSTAB find_box_menu_skt=
+{
+  find_box_menu_sk,0
+};
+
+HEADER_DESC find_box_hdr={0,0,0,0,NULL,(int)"Find:",LGP_NULL};
+
+static void find_box_ghook(GUI *data, int cmd)
+{
+  const char* _t = "%t";
+  int i;
+  WSHDR* ews;
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Ok]};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+  if (cmd==0x0D)
+  {
+    ews = AllocWS(256);
+    if ((i=EDIT_GetItemNumInFocusedComboBox(data)))
+    {
+      VIEWDATA* vd = EDIT_GetUserPointer(data);
+      if (i == 2)
+      {
+       wsprintf(ews,_t,lgpData[LGP_Yes]);
+       vd->search_isCaseSens = 1;
+      }
+      else
+      {
+       wsprintf(ews,_t,lgpData[LGP_No]); 
+       vd->search_isCaseSens = 0;
+      }
+    }
+    EDIT_SetTextToFocused(data,ews);
+    FreeWS(ews);
+  }
+}
+
+static void find_box_locret(void){}
+
+
+static int find_box_onkey(GUI *data, GUI_MSG *msg)
+{
+  EDITCONTROL ec;
+  VIEWDATA* vd;
+  if (msg->keys==0xFFF)
+  {
+    ExtractEditControl(data,2,&ec);
+    vd = EDIT_GetUserPointer(data);
+    wstrcpy(vd->search_string, ec.pWS);
+    FindStringOnPage(vd);
+    return (0xFF);
+  }
+  return (0);
+}
+
+static const INPUTDIA_DESC find_box_desc =
+{
+  1,
+  find_box_onkey,
+  find_box_ghook,
+  (void *)find_box_locret,
+  0,
+  &find_box_menu_skt,
+  {0,0,0,0},
+  FONT_SMALL,
+  100,
+  101,
+  0,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+int CreateFindDialog(VIEWDATA *vd)
+{
+  
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  WSHDR * ews=AllocWS(256);
+  
+  eq=AllocEQueue(ma,mfree_adr());
+  
+  ascii2ws(ews,lgpData[LGP_FindString]);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,128);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,vd->search_string,256);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  ascii2ws(ews,lgpData[LGP_MatchCase]);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,128);
+  AddEditControlToEditQend(eq,&ec,ma);
+ 
+  wsprintf(ews,sEmpty);
+  ConstructComboBox(&ec,7,ECF_APPEND_EOL,ews,32,0,2,1);
+  AddEditControlToEditQend(eq,&ec,ma);
+  FreeWS(ews);
+
+  patch_header(&find_box_hdr);
+  patch_input(&find_box_desc);
+  find_box_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
+  find_box_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  find_box_hdr.lgp_id=(int)lgpData[LGP_FindHeader];
+  return CreateInputTextDialog(&find_box_desc,&find_box_hdr,eq,1,vd);
+}
+
+//-------------------------------Save Page--------------------------------------
+SOFTKEY_DESC savepage_box_menu_sk[]=
+{
+  {0x0018,0x0000,(int)"Ok"},
+  {0x0001,0x0000,(int)"Cancel"},
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
+};
+
+static const SOFTKEYSTAB savepage_box_menu_skt=
+{
+  savepage_box_menu_sk,0
+};
+
+HEADER_DESC savepage_box_hdr={0,0,0,0,NULL,(int)"Save page:",LGP_NULL};
+
+static void savepage_box_ghook(GUI *data, int cmd)
+{
+  SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Ok]};
+  if (cmd==0x0A)
+  {
+    DisableIDLETMR();
+  }
+  if (cmd==7)
+  {
+    SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+  }
+}
+
+static void savepage_box_locret(void){}
+
+#define BUF_SIZE 0x4000
+int fcopy(char* src, char* dst) //From MC source code
+{
+	int fi=-1, fo=-1;
+	char* buff=0;
+	int cb, left;
+	int res = 0;
+        unsigned int err;
+        FSTATS fs;
+	if (GetFileStats(dst,&fs,&err)!=-1)
+          ShowMSG(1, (int)lgpData[LGP_FileExists]); 
+        else
+        {
+	  fi = fopen(src, A_ReadOnly + A_BIN, P_READ, &err);
+          if (fi != -1) 
+          {
+                  fo = fopen(dst, A_ReadWrite+A_BIN+A_Create+A_Truncate, P_READ+P_WRITE, &err);
+                  if (fo != -1) 
+                  {
+  
+                          left = lseek(fi, 0, S_END, &err, &err);
+                          lseek(fi, 0, S_SET, &err, &err);
+                          if (left)
+                          {
+                                  buff = malloc(BUF_SIZE);
+                                  if (!buff) goto L_EXIT;
+                          }
+                          while (left) 
+                          {
+                                  cb = left < BUF_SIZE ? left : BUF_SIZE;
+                                  left -= cb;
+  
+                                  if (fread(fi, buff, cb, &err) != cb) goto L_EXIT;
+                                  if (fwrite(fo, buff, cb, &err) != cb) goto L_EXIT;
+                          }
+                          res = 1;
+                  }
+                  else
+                    ShowMSG(1, (int)lgpData[LGP_FileInvalid]);
+                    
+          }
+        }
+L_EXIT:
+	if (buff) mfree(buff);
+	if (fo != -1) fclose(fo, &err);
+	if (fi !=- 1) fclose(fi, &err);
+	return res;
+}
+
+static int savepage_box_onkey(GUI *data, GUI_MSG *msg)
+{
+  EDITCONTROL ec;
+  if (msg->keys==0xFFF)
+  {
+    char fname[256];
+    char tfname[128];
+    ExtractEditControl(data,2,&ec);
+    char* src_fname = getCurrPageName();
+    strcpy(fname, "$pages\\");
+    ws_2str(ec.pWS, tfname, 127);
+    strcat(fname, tfname);
+    strcat(fname,".oms");
+    char* dest_fname = getSymbolicPath(fname);
+    int res = fcopy(src_fname, dest_fname);
+    mfree(src_fname);
+    mfree(dest_fname);
+    if (res)
+      return (0xFF);
+  }
+  return (0);
+}
+
+static const INPUTDIA_DESC savepage_box_desc =
+{
+  1,
+  savepage_box_onkey,
+  savepage_box_ghook,
+  (void *)savepage_box_locret,
+  0,
+  &savepage_box_menu_skt,
+  {0,0,0,0},
+  FONT_SMALL,
+  100,
+  101,
+  0,
+  //  0x00000001 - Выровнять по правому краю
+  //  0x00000002 - Выровнять по центру
+  //  0x00000004 - Инверсия знакомест
+  //  0x00000008 - UnderLine
+  //  0x00000020 - Не переносить слова
+  //  0x00000200 - bold
+  0,
+  //  0x00000002 - ReadOnly
+  //  0x00000004 - Не двигается курсор
+  //  0x40000000 - Поменять местами софт-кнопки
+  0x40000000
+};
+
+int CreateSavePageDialog(VIEWDATA *vd)
+{
+  
+  void *ma=malloc_adr();
+  void *eq;
+  EDITCONTROL ec;
+  WSHDR * ews=AllocWS(256);
+  
+  eq=AllocEQueue(ma,mfree_adr());
+  
+  ascii2ws(ews,lgpData[LGP_SavePageString]);
+  ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,128);
+  AddEditControlToEditQend(eq,&ec,ma);
+  
+  PrepareEditControl(&ec);
+  ascii2ws(ews, vd->title);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,256);
+  AddEditControlToEditQend(eq,&ec,ma);
+
+  FreeWS(ews);
+  patch_header(&savepage_box_hdr);
+  patch_input(&savepage_box_desc);
+  savepage_box_menu_sk[0].lgp_id=(int)lgpData[LGP_Ok];
+  savepage_box_menu_sk[1].lgp_id=(int)lgpData[LGP_Cancel];
+  savepage_box_hdr.lgp_id=(int)lgpData[LGP_SavePageHeader];
+  return CreateInputTextDialog(&savepage_box_desc,&savepage_box_hdr,eq,1,vd);
+}
+
 //------------------------------- History menu ---------------------------------
 
 int history_menu_onkey(void *gui, GUI_MSG *msg) //history
@@ -973,13 +1274,43 @@ int history_menu_onkey(void *gui, GUI_MSG *msg) //history
   {
     if (history[i])
     {
-      _safe_free(goto_url);
-      goto_url=malloc(strlen(history[i])+3);
-      goto_url[0] = '0'; goto_url[1] = '/';      
-      strcpy(goto_url+2,history[i]);
-      return (0xFF);
+      char *histdelim = strchr(history[i], '|');
+      if (histdelim)
+      {
+        *histdelim = 0;   
+        _safe_free(goto_url);
+        goto_url=malloc(strlen(history[i])+3);
+        goto_url[0] = '0'; goto_url[1] = '/';      
+        strcpy(goto_url+2,history[i]);
+        return (0xFF);
+      }
     }
     return(1);
+  }
+  if (msg->gbsmsg->submess == '#')
+  {
+    if (history[i])
+    {
+      char *histdelim = strchr(history[i], '|');
+      if (histdelim)
+      {
+        char histurl[256];
+        memcpy(histurl, history[i], histdelim-history[i]);
+        histurl[histdelim-history[i]] = 0;
+        ShowLink(histurl);
+      }
+    }
+  }
+  if (msg->gbsmsg->submess == '*')
+  {
+    if (history[i])
+    {
+      char* histtitle = strchr(history[i], '|');
+      if (histtitle)
+      {
+        ShowLink(histtitle+1);
+      }
+    }
   }
   return (0);
 }
@@ -1011,9 +1342,19 @@ void history_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
 
   if (history[cur_item])
   {
-    len=strlen(history[cur_item]);
-    ws=AllocMenuWS(gui,len+4);
-    str_2ws(ws,history[cur_item],64);
+    char* histtitle = strchr(history[cur_item], '|');
+    if (histtitle)
+    {
+      histtitle++;
+      len=strlen(histtitle);
+      ws=AllocMenuWS(gui,len+4);
+      ascii2ws(ws,histtitle);
+    }
+    else
+    {
+      ws=AllocMenuWS(gui,10);
+      ascii2ws(ws,lgpData[LGP_Error]);
+    }
   }
   else
   {
@@ -1107,7 +1448,7 @@ static int input_url_onkey(GUI *data, GUI_MSG *msg)
     *s++='/';
     for (int i=0; i<ec.pWS->wsbody[0]; i++) *s++=char16to8(ec.pWS->wsbody[i+1]);
     *s = 0;
-    goto_url = ToWeb(goto_url,0);
+    goto_url = ToWeb(goto_url,0,0);
     return 0xFF;
   }
   return (0);
@@ -1144,7 +1485,7 @@ int CreateInputUrl()
 {
   void *ma=malloc_adr();
   void *eq;
-  char *url_start;
+  char *url_start = "";
   EDITCONTROL ec;
   
   eq=AllocEQueue(ma,mfree_adr());    // Extension
@@ -1173,7 +1514,6 @@ int CreateInputUrl()
         URL_unescape(url_start);
         break;
       default:
-        url_start=lgpData[LGP_Absent]; // HACK, symbols will be taken from the bottom table part
         break;
       }
     }
@@ -1232,6 +1572,15 @@ static void main_menu_search(GUI *gui)
   GeneralFuncF1(1);
 }
 
+static void main_menu_find(GUI *gui)
+{
+  if (FindCSMbyID(maincsm_id))
+  {
+    CreateFindDialog(MenuGetUserPointer(gui));
+  } 
+  GeneralFuncF1(1);
+}
+
 
 static void main_menu_goto_history(GUI *gui)
 {
@@ -1271,6 +1620,15 @@ static void main_menu_quit(GUI *gui)
   }
 }
 
+static void main_menu_savepage(GUI *gui)
+{
+  if (FindCSMbyID(maincsm_id))
+  {
+    CreateSavePageDialog(MenuGetUserPointer(gui));
+  } 
+  GeneralFuncF1(1);
+}
+
 static const int main_menu_softkeys[]={0,1,2};
 
 SOFTKEY_DESC main_menu_sk[]=
@@ -1285,7 +1643,7 @@ static const SOFTKEYSTAB main_menu_skt=
   main_menu_sk,0
 };
 
-#define MAIN_MENU_ITEMS_N 6
+#define MAIN_MENU_ITEMS_N 8
 HEADER_DESC main_menu_header={0,0,0,0,NULL,(int)"Menu:",LGP_NULL};
 
 MENUITEM_DESC main_menu_items[MAIN_MENU_ITEMS_N]=
@@ -1293,6 +1651,8 @@ MENUITEM_DESC main_menu_items[MAIN_MENU_ITEMS_N]=
   {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
   {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
   {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
   {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
   {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
   {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
@@ -1305,6 +1665,8 @@ static const MENUPROCS_DESC main_menu_procs[MAIN_MENU_ITEMS_N]=
   main_menu_goto_history,
   main_menu_options,
   main_menu_search,
+  main_menu_find,
+  main_menu_savepage,
   main_menu_quit
 };
 
@@ -1343,7 +1705,9 @@ int CreateMainMenu(VIEWDATA *vd)
     main_menu_items[2].lgp_id_small=(int)lgpData[LGP_History];
     main_menu_items[3].lgp_id_small=(int)lgpData[LGP_Settings];
     main_menu_items[4].lgp_id_small=(int)lgpData[LGP_Search];
-    main_menu_items[5].lgp_id_small=(int)lgpData[LGP_Exit];
+    main_menu_items[5].lgp_id_small=(int)lgpData[LGP_Find];
+    main_menu_items[6].lgp_id_small=(int)lgpData[LGP_SavePage];
+    main_menu_items[7].lgp_id_small=(int)lgpData[LGP_Exit];
   
     main_menu_id=CreateMenu(0, 0, &main_menu_struct, &main_menu_header, 0, MAIN_MENU_ITEMS_N, vd, 0);
     main_csm->main_menu_id=main_menu_id;

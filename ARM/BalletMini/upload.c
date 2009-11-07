@@ -4,11 +4,13 @@
 #include "display_utils.h"
 #include "upload.h"
 
+#pragma swi_number=0x244
+__swi __arm int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize);
 
 const char* file_data_signature = "file=";
 int filesize=0;
 
-#define CALCLEN(a,b) ((a*4)/3+1+b+1)
+#define CALCLEN(a,b) ((a*4)/3+2+b+1)
 
 void PrepareFileForUpload(void* data, char* fullname, char* name)
 { 
@@ -41,7 +43,7 @@ unsigned int GetFileDataLen(REFCACHE* ref)
       }
       else
         return maxlen;
-    }
+    } 
   return 0;
 }
 

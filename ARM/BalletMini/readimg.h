@@ -11,4 +11,6 @@ IMGHDR *CreateFrame(int width, int height, const char *color);
 
 IMGHDR *CreateDelimiter(int width, int height, const char *color);
 
+IMGHDR *CreateButton(int width, int height);
+
 #endif /* _READ_IMG_H_ */

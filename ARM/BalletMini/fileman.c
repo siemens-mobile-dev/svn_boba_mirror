@@ -3,6 +3,7 @@
 #include "upload.h"
 #include "fileman.h"
 #include "rect_patcher.h"
+#include "lang.h"
 
 
 typedef struct
@@ -86,7 +87,7 @@ int FindFilesFM(char *str)
       rev=d;
   }
   if(rev==0)
-    AddToFListFM("ROOT",back_fl,IS_BACK);
+    AddToFListFM(lgpData[LGP_Root],back_fl,IS_BACK);
   else
   {
     *rev=0;
@@ -174,7 +175,7 @@ int CreateRootMenu()
       n++;
     }
   }
-  strcpy(header,"Root");
+  strcpy(header,lgpData[LGP_Root]);
   return (n);
 }
 
@@ -194,7 +195,7 @@ int filelist_menu_onkey(void *data, GUI_MSG *msg)
       if (fl->is_folder==IS_FOLDER || fl->is_folder==IS_BACK)
       {
         int len;
-        if (strcmp(fl->fullname,"ROOT"))
+        if (strcmp(fl->fullname,lgpData[LGP_Root]))
         {
           strncpy(header,fl->fullname,sizeof(header)-1);
           len=strlen(fl->fullname);
@@ -247,7 +248,7 @@ void filelist_menu_ghook(void *data, int cmd)
 
 void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
 {
-  FLIST *fl;
+  FLIST *fl; 
   WSHDR *ws;
   void *item=AllocMenuItem(data);
   int len;
@@ -259,7 +260,7 @@ void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
     if (fl->is_folder==IS_BACK || fl->is_folder==IS_FOLDER)
     {
       str_2ws(ws,fl->name,len);
-      wsInsertChar(ws,0x0002,1);
+      wsInsertChar(ws,0x0001,1);
       wsInsertChar(ws,0xE008,1);
     }
     else
@@ -270,7 +271,7 @@ void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
   else
   {
     ws=AllocMenuWS(data,10);
-    wsprintf(ws, "Ошибка");
+    wsprintf(ws, lgpData[LGP_Error]);
   }
   SetMenuItemText(data, item, ws, curitem);
 }
@@ -280,7 +281,7 @@ SOFTKEY_DESC fmenu_sk[]=
 {
   {0x0018,0x0000,(int)"Select"},
   {0x0001,0x0000,(int)"Close"},
-  {0x003D,0x0000,(int)"+"}
+  {0x003D,0x0000,(int)LGP_DOIT_PIC}
 };
 
 SOFTKEYSTAB fmenu_skt=
@@ -326,5 +327,7 @@ int open_fm(func cbk_func, void* data)
     n=FindFilesFM(path);
   }    
   patch_header(&filelist_HDR);
+  fmenu_sk[0].lgp_id=(int)lgpData[LGP_Select];
+  fmenu_sk[1].lgp_id=(int)lgpData[LGP_Close];
   return CreateMenu(0,0,&filelist_STRUCT,&filelist_HDR,0,n,(void*)cbk_func,0);
 }

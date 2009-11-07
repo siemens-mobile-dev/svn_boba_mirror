@@ -33,6 +33,15 @@ char * getSymbolicPath(const char * cFileName)
           ps+=9;
           continue;
         }
+      case 'p':
+         {
+          strcpy(path + pp, BALLET_PATH);
+          pp+=strlen(BALLET_PATH);
+          strcpy(path+pp,"Pages");
+          pp+=5;
+          ps+=5;
+          continue;
+        }
       case 'd': // date
         {
           TDate d;

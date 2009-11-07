@@ -16,5 +16,8 @@ int FindReferenceById(VIEWDATA *vd, unsigned int id, int i);
 int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf);
 int CreateInputBox(VIEWDATA *vd, REFCACHE *rf);
 void createTextView(WSHDR *ws);
+int CreateFindBox(VIEWDATA *vd);
+int ShowLink(char *link);
+void FindStringOnPage(VIEWDATA *vd);
 
 #endif /* _DISPLAY_UTILS_H_ */

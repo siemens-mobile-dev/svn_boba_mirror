@@ -47,6 +47,8 @@ S + T S L B D T B S E T B h_opf_1 B Y L T B E L T B E L
 #include "parse_oms.h"
 #include "additems.h"
 #include "string_works.h"
+#include "main.h"
+#include "display_utils.h"
 #include "..\inc\zlib.h"
 //#include <stdlib.h>
 //#include <string.h>
@@ -391,7 +393,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       {
       case 'A':
         i=_rshort(vd);
-        //vd->work_ref.tag='A';
+        vd->work_ref.tag='A';
         vd->oms_wanted+=i;
         vd->parse_state=OMS_TAGA_STAGE3;
         goto L_STAGE3_WANTED;
@@ -588,11 +590,18 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     L_STAGE3_WANTED:
       break;
     case OMS_TAGA_STAGE3:
-      i=vd->oms_wanted-vd->oms_pos;
-      //AddTextItem(vd,vd->oms+vd->oms_pos,i);
-      vd->oms_pos=vd->oms_wanted;
-      vd->oms_wanted++;
-      vd->parse_state=OMS_TAG_NAME;
+      {
+        i=vd->oms_wanted-vd->oms_pos;
+        vd->work_ref.value = vd->oms_pos;
+        vd->work_ref.size = i;
+        vd->work_ref.id2 = vd->rawtext_size;
+        AddToRefCache(vd);
+        
+        //AddTextItem(vd,vd->oms+vd->oms_pos,i);
+        vd->oms_pos=vd->oms_wanted;
+        vd->oms_wanted++;
+        vd->parse_state=OMS_TAG_NAME;
+      }
       break;
     case OMS_TAGT_STAGE3:
       i=vd->oms_wanted-vd->oms_pos;
@@ -820,6 +829,13 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       AddPictureItemHr(vd);
       sprintf(s,vd->ih?"New AuthCode: ":"New AuthPrefix: ",vd->ih);
       AddTextItem(vd,s,strlen(s));
+      extern int view_url_mode;
+      if (view_url_mode == MODE_URL)
+      {
+        extern char AUTH_PREFIX[];
+        memcpy(AUTH_PREFIX, vd->oms+vd->oms_pos, i);
+        AUTH_PREFIX[i] = 0;
+      }
       AddTextItem(vd,vd->oms+vd->oms_pos,i);
       AddPictureItemHr(vd);
       vd->oms_pos=vd->oms_wanted;

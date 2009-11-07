@@ -1,7 +1,7 @@
 #include "../inc/swilib.h"
 #include "view.h"
 #include "parse_oms.h"
-#include "main.h"
+#include "main.h" 
 #include "rect_patcher.h"
 #include "local_ipc.h"
 #include "display_utils.h"
@@ -20,15 +20,23 @@
 #include "upload.h"
 #include "fileman.h"
 
+#pragma swi_number=0x221
+__swi __arm void SetCpuClockLow(int);
+
+#pragma swi_number=0x222
+__swi __arm void SetCpuClockHi(int);
+
 extern const char DEFAULT_PARAM[128];
 
-static void UpdateCSMname(void);
+static void UpdateCSMname(char* url, int mode);
 static int ParseInputFilename(const char *fn);
 
 volatile int TERMINATED=0;
 volatile int STOPPED=0;
 
 int ENABLE_REDRAW=0;
+
+const int scr_shift = 0;
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -104,6 +112,11 @@ static void StartGetFile(int dummy, char *fncache)
     mfree(fncache);
     STOPPED=1;
     SmartREDRAW();
+    sipc=malloc(sizeof(IPC_REQ));
+    sipc->name_to=ipc_my_name;
+    sipc->name_from=ipc_my_name;
+    sipc->data=NULL;
+    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_END,sipc);
   }
   if (view_url_mode==MODE_URL)
   {
@@ -209,7 +222,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
         for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
+        b=ToWeb(b,1,0);
         pos+=strlen(b);
         mfree(b);
         FreeWS(ws);
@@ -223,7 +236,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
         for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
+        b=ToWeb(b,1,0);
         pos+=strlen(b);
         mfree(b);
         if (!prf->upload_file_data_not_present)
@@ -233,8 +246,8 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
     }
   }
 //  DEBUGS("pos:%i\r\n",pos);
-  char *s=malloc(pos+1);
-  pos=0;
+  char* s=malloc(pos+1+GOTO_PARAMS_OFFSET);
+  pos=GOTO_PARAMS_OFFSET;
   for (int i=0;i<vd->ref_cache_size;i++)
   {
     REFCACHE *prf=vd->ref_cache+i;
@@ -334,7 +347,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(ws->wsbody[0]+3);
         for (int i=0; i<ws->wsbody[0]; i++) *c++=char16to8(ws->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
+        b=ToWeb(b,1,0);
         memcpy(s+pos, b, strlen(b));
         pos+=strlen(b);
         mfree(b);
@@ -355,7 +368,7 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
         char *b=c=(char *)malloc(((WSHDR *)prf->data)->wsbody[0]+3);
         for (int i=0; i<((WSHDR *)prf->data)->wsbody[0]; i++) *c++=char16to8(((WSHDR *)prf->data)->wsbody[i+1]);
         *c=0;
-        b=ToWeb(b,1);
+        b=ToWeb(b,1,0);
         memcpy(s+pos, b, strlen(b));
         pos+=strlen(b);
         mfree(b);
@@ -388,14 +401,16 @@ static void method0(VIEW_GUI *data)
   
   if (data->gui.state==2)
   {
-    DrawRectangle(0,0,scr_w,scr_h,0,
+    DrawRectangle(0,scr_shift,scr_w,scr_h,0,
       GetPaletteAdrByColorIndex(0),
       GetPaletteAdrByColorIndex(0));
+       
     RenderPage(vd,1);
 //    DrawString(ws_console,0,0,scr_w,20,
 //		  FONT_SMALL,TEXT_NOFORMAT,
 //		  GetPaletteAdrByColorIndex(1),
 //      GetPaletteAdrByColorIndex(0));
+    
     extern int connect_state;
     if (!STOPPED)
     {
@@ -452,6 +467,8 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
   VIEWDATA *vd=malloc(sizeof(VIEWDATA));
   zeromem(vd,sizeof(VIEWDATA));
   vd->ws=AllocWS(256);
+  vd->search_string = AllocWS(256);
+  CutWSTR(vd->search_string,0);
   vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
@@ -478,6 +495,7 @@ static void method2(VIEW_GUI *data,void (*mfree_adr)(void *))
 {
   STOPPED=1;
   SUBPROC((void*)StopINET);
+  setPageParams(data->vd->view_line, data->vd->pos_cur_ref);
   FreeViewData(data->vd);
   data->vd=NULL;
   FreeWS(data->ws1);
@@ -491,6 +509,7 @@ static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(vo
 #ifdef ELKA
   DisableIconBar(1);
 #endif
+  SetCpuClockHi(2);
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=&data->vd->dynpng_list->dp;
   ENABLE_REDRAW=1;
@@ -503,6 +522,7 @@ static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
 #ifdef ELKA
   DisableIconBar(0);
 #endif
+  SetCpuClockLow(2);
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=NULL;
   ENABLE_REDRAW=0;
@@ -522,21 +542,62 @@ static void RunOtherCopyByURL(const char *url, int isNativeBrowser)
   {
     fwrite(f,url,strlen(url),&err);
     fclose(f,&err);
-    ws=AllocWS(256);
+    ws=AllocWS(512);
     if (isNativeBrowser)
     {
-      str_2ws(ws,filename,255);
+      str_2ws(ws,filename,511);
       ExecuteFile(ws,NULL,NULL);
     }
     else
     {
-      str_2ws(ws,BALLET_EXE,255);
+      str_2ws(ws,BALLET_EXE,511);
       ExecuteFile(ws,NULL,filename);
     } 
     FreeWS(ws);
     unlink(filename,&err);
   }
   mfree(filename);
+}
+
+GoToLocalLinkPos(VIEWDATA* vd, char* anchor)
+{
+  int j = 0;
+  REFCACHE* rf_taga;
+  int found = 0;
+  while((j<vd->ref_cache_size) && (!found))
+  {
+    rf_taga = vd->ref_cache+j;
+    if (rf_taga->tag == 'A')
+    {
+      if (!strncmp(anchor, vd->oms+rf_taga->value, rf_taga->size))
+      {
+        found = 1;
+      }
+    }
+    j++;
+  }
+  if (found)
+  {
+    found = 0;
+    int anchor_line = 0;
+    while ((anchor_line <= vd->view_line) && (!found))
+    {
+      if ((vd->lines_cache[anchor_line]).pos >= rf_taga->id2)
+      {
+        vd->view_line = anchor_line;
+        found = 1;
+      }
+      else
+        anchor_line++;
+    }
+    if ((!found) && LineDown(vd))
+    {
+      while (((vd->lines_cache[vd->view_line]).pos < rf_taga->id2) && (LineDown(vd)));
+      if ((vd->lines_cache[vd->view_line]).pos >= rf_taga->id2)
+        LineUp(vd);
+      LineUp(vd);
+    }
+  }
 }
 
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
@@ -574,7 +635,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             // 0/http:        не загружать
             _safe_free(goto_url);
             goto_url=extract_omstr(vd,rf->id);
-            // 0/op:fileselect: select file for upload
+            
+            // 0/op:fileselect select file for upload
             if (!strcmp("0/op:fileselect",goto_url))
             {
               MAIN_CSM *main_csm;
@@ -587,6 +649,13 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
                 break;
               }
             }
+            
+            if (goto_url[0] == '#') //local link
+            {
+              GoToLocalLinkPos(vd, goto_url+1);
+              break;
+            }
+            
             // 0/javascript:  upload data
             if (!strncmp("0/javascript",goto_url,12))
             {
@@ -598,6 +667,14 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
           break;
         case '@':
+          if (rf->id!=_NOREF)
+          {
+            char *s=extract_omstr(vd,rf->id);
+            RunOtherCopyByURL(s,1);
+            mfree(s);
+          }
+          break;
+        case '^':
           if (rf->id!=_NOREF)
           {
             char *s=extract_omstr(vd,rf->id);
@@ -724,13 +801,19 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         }
       break;
     case RIGHT_BUTTON:
+      scrollDown(vd,ScreenH()-20-scr_shift);
+      vd->pos_cur_ref=0xFFFFFFFF;
+      break;
     case VOL_DOWN_BUTTON:
-      scrollDown(vd,ScreenH()-20);
+      scrollDown(vd,(ScreenH()-20-scr_shift)/2);
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_BUTTON:
+      scrollUp(vd,ScreenH()-20-scr_shift);
+      vd->pos_cur_ref=0xFFFFFFFF;
+      break;
     case VOL_UP_BUTTON:
-      scrollUp(vd,ScreenH()-20);
+      scrollUp(vd,(ScreenH()-20-scr_shift)/2);
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
     case LEFT_SOFT:
@@ -740,7 +823,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     case RIGHT_SOFT:
       if (STOPPED)
       {
-        mfree(PopPageFromStack());
         return 0xFE;
       }
       else
@@ -755,14 +837,63 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         }
         break;
       }
-      case 0x31: // '1'
+    case '#': //reload
+      {
+       _safe_free(goto_url);
+       if (vd->pageurl)
+       {
+         goto_url=malloc(strlen(vd->pageurl)+1);
+         strcpy(goto_url,vd->pageurl);
+       }
+       else
+       {
+         if (view_url)
+         {
+           goto_url=malloc(strlen(view_url)+1);
+           strcpy(goto_url,view_url);
+         }
+         else
+           break;
+       }
+       return 0xFB;
+      }
+    case 0x36: //forward
+      {
+        if (CheckPageStackTop())
+        {
+          return 0xFD;
+        }
+        break;
+      }
+    case 0x34:
+      {
+        if (vd->pos_cur_ref==0xFFFFFFFF) break;
+        rf=FindReference(vd,vd->pos_cur_ref);
+        if ((rf->id!=_NOREF) && 
+            (rf->tag == 'L' || rf->tag == 'Z' || rf->tag == '@' || rf->tag == '^'))
+        {
+          char *s=extract_omstr(vd,rf->id);
+          char *ss = s;
+          if (rf->tag == 'L')
+          {
+            if (s[0] != '#')
+              s += 2;
+          }
+          if (rf->tag == 'Z') s += strlen(s) + 1;
+          ShowLink(s);
+          mfree(ss);
+        }
+        break;
+      }
+    case 0x31: // '1'
         if (rf = FindReference(vd,vd->pos_cur_ref))
         {
           if (rf->id != _NOREF)
           {
-            if (rf->tag == 'L' || rf->tag == 'Z' || rf->tag == '@')
+            if (rf->tag == 'L' || rf->tag == 'Z' || rf->tag == '@' || rf->tag == '^')
             {
               char * s = extract_omstr(vd, rf->id);
+              char *ss = s;
               if (rf->tag == 'L') s += 2;
               if (rf->tag == 'Z') s += strlen(s) + 1;
               
@@ -772,9 +903,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               sieget_ipc.data = malloc(strlen(s) + 1);
               strcpy((char *)sieget_ipc.data, s);
               GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &sieget_ipc);
-
-              s=0; // is it necessary
-              mfree(s);
+              mfree(ss);
             }
           }
         }
@@ -786,9 +915,10 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       {
         if (rf->id!=_NOREF)
         {
-          if (rf->tag=='L'||rf->tag=='Z')
+          if (rf->tag=='L'||rf->tag=='Z'||rf->tag=='^')
           {
             char *s=extract_omstr(vd,rf->id);
+            char *ss = s;
             if (rf->tag=='L')
               s+=2;
             if (rf->tag=='Z')
@@ -801,8 +931,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             {
               RunOtherCopyByURL(s,0);
             }
-            s=0; // is it necessary
-            mfree(s);
+            mfree(ss);
           }
         }
       }
@@ -812,19 +941,19 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       vd->view_line=0;
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
-    /*case 0x34: // '4'
+    /*case 0x37: 
       {
         //Dump RAWTEXT
         unsigned int ul;
         int f;
-        if ((f=fopen("0:\\zbin\\balletmini\\dumpraw.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        if ((f=fopen("4:\\zbin\\balletmini\\dumpraw.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
           fwrite(f,vd->rawtext,vd->rawtext_size*2,&ul);
           fclose(f,&ul);
         }
       }
-      break;
-    case 0x37: // '7'
+      break;*/
+    /*case 0x37: // '7'
       {
         //Dump REFCACHE
         unsigned int ul;
@@ -899,21 +1028,22 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           fclose(f,&ul);
         }
       }
-      break;
-    case 0x38: // '8'
+      break;*/
+    /*case 0x38: // '8'
       {
         //Dump LINECACHE
         unsigned int ul;
         int f;
-        if ((f=fopen("0:\\zbin\\balletmini\\dumplc.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
+        if ((f=fopen("4:\\zbin\\balletmini\\dumplc.txt",A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
         {
           char c[256];
-          sprintf(c,"\nlines_cache_size : %i\n",vd->lines_cache_size);
+          sprintf(c,"\nlines_cache_size : %i, pos : %d\n",vd->lines_cache_size, vd->lines_cache_pos);
           fwrite(f,c,strlen(c),&ul);
           for (int i=0;i<vd->lines_cache_size;i++)
           {
             LINECACHE *lc=vd->lines_cache+i;
-            sprintf(c,"%i\n  pos : %u\n  pix : %u\n",i,lc->pos,lc->pixheight);
+            sprintf(c,"%i  pos:%u, pix:%u, bold:%d, ref:%d, center:%d, right:%d, centerAll:%d \n",i,lc->pos,lc->pixheight,
+                    lc->bold, lc->ref, lc->center, lc->right, lc->centerAtAll);
             fwrite(f,c,strlen(c),&ul);
           }
          fclose(f,&ul);
@@ -926,15 +1056,39 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       scrollUp(vd,ScreenH()-1);
       vd->pos_cur_ref=0xFFFFFFFF;
       break;
+      
+    case 0x35:
+      if (wstrlen(vd->search_string))
+      {
+        FindStringOnPage(vd);
+      }
+      break;
+    /*case 0x2A: //'*' exit
+    {
+      MAIN_CSM *main_csm;
+      if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
+      {
+        FreePageStack();
+        goto_url = 0;
+        GeneralFunc_flag1(main_csm->view_id,0xFF);
+        GeneralFuncF1(1);
+      }
+      else
+      {
+        GeneralFuncF1(1);
+      }
+    }
+    break;*/
+    
     case 0x30: // '0'
       {
         // get text from page
         int scr_h=ScreenH()-1;
-        WSHDR *ws=AllocWS(512);
+        WSHDR *ws=AllocWS(2048);
         LINECACHE *lc;
-        unsigned int vl;
-        int ypos=-vd->pixdisp;
-        unsigned int store_line=vl=vd->view_line;
+        int ypos=scr_shift-vd->pixdisp;
+        unsigned int store_line=vd->view_line;
+        int vl = vd->view_line-1;
         unsigned int len;
         int sc;
         int c;
@@ -943,14 +1097,23 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         {
           if (LineDown(vd))
           {
-            lc=vd->lines_cache+vl;
-            if ((vl+1)<vd->lines_cache_size)
+            if (vl < 0)
             {
-              len=(lc[1]).pos-(lc[0]).pos;
+              lc=vd->lines_cache;
+              len = (lc[0]).pos;
+              sc = 0;
             }
             else
-              len=vd->rawtext_size-lc->pos;
-            sc=lc->pos;
+            {
+              lc=vd->lines_cache+vl;
+              if ((vl+1)<vd->lines_cache_size)
+              {
+                len=(lc[1]).pos-(lc[0]).pos;
+              }
+              else
+                len=vd->rawtext_size-lc->pos;
+              sc=lc->pos;
+            }
             while(len>0)
             {
               c=vd->rawtext[sc];
@@ -1017,7 +1180,7 @@ static const void * const gui_methods[11]={
   0
 };
 
-static int CreateViewGUI(int cached)
+static int CreateViewGUI(int cached, void* data)
 {
   static const RECT Canvas={0,0,0,0};
   VIEW_GUI *view_gui=malloc(sizeof(VIEW_GUI));
@@ -1028,17 +1191,30 @@ static int CreateViewGUI(int cached)
   view_gui->gui.methods=(void *)gui_methods;
   view_gui->gui.item_ll.data_mfree=(void (*)(void *))mfree_adr();
   view_gui->cached=cached;
+  if (data)
+  {
+    view_gui->view_line=getViewLine(data);
+    view_gui->pos_cur_ref=getPosCurRef(data);
+    view_gui->isPositionDataPresent = 1;
+  }
+  else
+  {
+    view_gui->view_line=0;
+    view_gui->pos_cur_ref=0xFFFFFFFF;
+    view_gui->isPositionDataPresent = 0;
+  }
   return CreateGUI(view_gui);
 }
 
 static void maincsm_oncreate(CSM_RAM *data)
 {
   goto_url = NULL;
+  InitUrlStack();
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ws_console=AllocWS(1024);
   csm->csm.state=0;
   csm->csm.unk1=0;
-  csm->view_id=CreateViewGUI(0);
+  csm->view_id=CreateViewGUI(0,0);
   sieget_ipc.data = NULL;
 }
 
@@ -1049,9 +1225,11 @@ static void KillAll(void)
   lgpFreeLangPack();
 }
 
+extern void *ELF_BEGIN;
+
 static void Killer(void)
 {
-  extern void *ELF_BEGIN;
+  //extern void *ELF_BEGIN;
   KillAll();
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
@@ -1064,7 +1242,7 @@ static void maincsm_onclose(CSM_RAM *csm)
   SUBPROC((void *)Killer);
 }
 
-void GotoLink(void)
+void GotoLink(void* data)
 {
   LockSched();
   if (!TERMINATED)
@@ -1073,13 +1251,13 @@ void GotoLink(void)
     sipc=malloc(sizeof(IPC_REQ));
     sipc->name_to=ipc_my_name;
     sipc->name_from=ipc_my_name;
-    sipc->data=NULL;
+    sipc->data=data;
     GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_GOTO_URL,sipc);
   }
   UnlockSched();
 }
 
-void GotoFile(void)
+void GotoFile(void* data)
 {
   LockSched();
   if (!TERMINATED)
@@ -1088,7 +1266,7 @@ void GotoFile(void)
     sipc=malloc(sizeof(IPC_REQ));
     sipc->name_to=ipc_my_name;
     sipc->name_from=ipc_my_name;
-    sipc->data=NULL;
+    sipc->data=data;
     GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_GOTO_FILE,sipc);
   }
   UnlockSched();
@@ -1130,30 +1308,118 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             csm_result=0;  //Обработали сообщение 
           }
           break;
+        case IPC_DATA_END:
+          if (ipc->name_from==ipc_my_name)
+          {
+            VIEW_GUI *p=FindGUIbyId(csm->view_id,NULL);
+            VIEWDATA *vd;
+            if (p)
+            {
+              vd=p->vd;
+              if (vd)
+              {
+                if (view_url_mode == MODE_URL)
+                {
+                  char histbuf[512];
+                  strcpy(histbuf, view_url+2);
+                  strcat(histbuf, "|");
+                  if (vd->title)
+                  {
+                    strcat(histbuf, vd->title);
+                    UpdateCSMname(vd->title, MODE_URL);
+                  }
+                  else
+                  {
+                    strcat(histbuf, view_url+2);
+                    UpdateCSMname(view_url+2, MODE_URL);
+                  }
+                  AddURLToHistory(histbuf);
+                }
+                if (view_url_mode == MODE_FILE)
+                {
+                  if (vd->title)
+                  {
+                    UpdateCSMname(vd->title, MODE_URL);
+                  }
+                  else
+                  {
+                    UpdateCSMname(view_url, MODE_FILE);
+                  }
+                }
+                if (p->isPositionDataPresent)
+                {
+                  unsigned int saved_viewline=p->view_line;
+                  int line_diff = saved_viewline - vd->view_line;
+                  int go_up = 0;
+                  if (line_diff < 0)
+                  {
+                    go_up = 1;
+                    line_diff = vd->view_line - saved_viewline;
+                  }
+                  while (line_diff--)
+                  {
+                    if (go_up)
+                    {
+                      LineUp(vd);
+                    }
+                    else
+                    {
+                      LineDown(vd);
+                    }
+                  }
+                }
+                if (p->pos_cur_ref != 0xFFFFFFFF)
+                  vd->pos_cur_ref = p->pos_cur_ref;
+                else
+                {
+                  if (view_url_mode == MODE_URL)
+                  {
+                    char* local_link = strchr(view_url+2, '#');
+                    if (local_link)
+                    {
+                      GoToLocalLinkPos(vd,local_link+1);
+                    }  
+                  }
+                }
+                
+                if (IsGuiOnTop(csm->view_id)) DirectRedrawGUI();
+                
+                if ((p->pos_cur_ref != 0xFFFFFFFF) && (vd->pos_cur_ref == 0xFFFFFFFF))
+                {
+                  LineDown(vd);
+                  vd->pos_cur_ref = p->pos_cur_ref;
+                  if (IsGuiOnTop(csm->view_id)) DirectRedrawGUI();
+                }
+                    
+              }
+            }
+            mfree(ipc);
+            csm_result=0;  //Обработали сообщение 
+          }
+          break; 
         case IPC_GOTO_URL:
           if (ipc->name_from==ipc_my_name)
           {
-            mfree(ipc);
             FreeViewUrl();
+            goto_url = ToWeb(goto_url,1,1);
             view_url=goto_url;
             view_url_mode=MODE_URL;
             goto_url=NULL;
-            UpdateCSMname();
-            csm->view_id=CreateViewGUI(0);
-            csm_result=0;  //Обработали сообщение 
+            csm->view_id=CreateViewGUI(0, ipc->data);
+            csm_result=0;  //Обработали сообщение
+            mfree(ipc);
           }
           break;
         case IPC_GOTO_FILE:
           if (ipc->name_from==ipc_my_name)
           {
-            mfree(ipc);
             if (ParseInputFilename(goto_url))
             {
-              UpdateCSMname();
-              csm->view_id=CreateViewGUI(1);
+              csm->view_id=CreateViewGUI(1, ipc->data);
             }
             _safe_free(goto_url);
             csm_result=0;   //Обработали сообщение 
+            mfree(ipc);
           }
           break;
         }
@@ -1176,17 +1442,41 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     {
       switch((int)msg->data1)
       {
-      case 0xFE: //Пробуем идти по стеку назад
-        if ((goto_url=PopPageFromStack()))
+      case 0xFD: //forward
         {
-          SUBPROC((void*)GotoFile);
-          break;
+          mfree(PopPageFromStack());
+          if ((goto_url=ForwardPageFromStack()))
+          {
+            SUBPROC((void*)GotoFile, getPageParams());
+            break;
+          }
+          goto L_CLOSE;
         }
-        goto L_CLOSE;
+      case 0xFE: //Пробуем идти по стеку назад
+        {
+          mfree(PopPageFromStack());
+          if ((goto_url=PopPageFromStack()))
+          {
+            SUBPROC((void*)GotoFile, getPageParams());
+            break;
+          }
+          goto L_CLOSE;
+        }
+      case 0xFB: //reload
+        {
+          mfree(PopPageFromStack());
+          if (goto_url)
+          {
+            SUBPROC((void*)GotoLink, getPageParams());
+            break;
+          }
+          else
+            goto L_CLOSE;
+        }
       case 0xFF: //Есть куда пойти
         if (goto_url)
         {
-          SUBPROC((void*)GotoLink);
+          SUBPROC((void*)GotoLink, 0);
           break;
         }
         else
@@ -1252,16 +1542,16 @@ static const struct
   }
 };
 
-static void UpdateCSMname(void)
+static void UpdateCSMname(char *url, int mode)
 {
   WSHDR *ws=AllocWS(256);
-  switch(view_url_mode)
+  switch(mode)
   {
   case MODE_FILE:
-    str_2ws(ws,view_url,255);
+    str_2ws(ws,url,255);
     break;
   case MODE_URL:
-    ascii2ws(ws,view_url+2);
+    ascii2ws(ws,url);
     break;
   default:
     str_2ws(ws,"",1);
@@ -1400,6 +1690,7 @@ void GenerateFile(char *path, char *name, unsigned char *from, unsigned size)
 
 }
 
+
 int main(const char *exename, const char *filename)
 {
   char dummy[sizeof(MAIN_CSM)];
@@ -1436,7 +1727,10 @@ int main(const char *exename, const char *filename)
 
   if (ParseInputFilename(filename)) // open oms or url
   {
-    UpdateCSMname();
+    if (view_url_mode == MODE_URL)
+      UpdateCSMname(view_url+2, view_url_mode);
+    else
+      UpdateCSMname(view_url, view_url_mode);
     LockSched();
     maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
     UnlockSched();
@@ -1445,7 +1739,7 @@ int main(const char *exename, const char *filename)
   {
     if (ParseInputFilename(DEFAULT_PARAM))
     {
-      UpdateCSMname();
+      UpdateCSMname(view_url, view_url_mode);
       LockSched();
       maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
       UnlockSched();
@@ -1453,11 +1747,11 @@ int main(const char *exename, const char *filename)
     else
     {
       // create smiles view
-      UpdateCSMname();
+      view_url_mode=MODE_NONE;
+      UpdateCSMname(view_url, view_url_mode);
       LockSched();
       maincsm_id=CreateCSM(&MAINCSM.maincsm,dummy,0);
       UnlockSched();
-      view_url_mode=MODE_NONE;
     }
   }
   return 0;

@@ -52,23 +52,28 @@ void AddBeginRefZ(VIEWDATA *vd)
   RawInsertChar(vd,UTF16_ENA_INVERT);
 }
 
-void AddEndRef(VIEWDATA *vd)
+void AddToRefCache(VIEWDATA *vd)
 {
-  RawInsertChar(vd,UTF16_DIS_INVERT);
-  REFCACHE *p;
+  REFCACHE* p;
   if ((vd->ref_cache_size%REFCACHECHUNK)==0)
   {
     vd->ref_cache=realloc(vd->ref_cache,(vd->ref_cache_size+REFCACHECHUNK)*sizeof(REFCACHE));
   }
   p=vd->ref_cache+vd->ref_cache_size;
   memcpy(p,&(vd->work_ref),sizeof(REFCACHE));
-  p->end=vd->rawtext_size;
   vd->ref_cache_size++;
+  memset(&(vd->work_ref),0xFF,sizeof(REFCACHE));
+}
+
+void AddEndRef(VIEWDATA *vd)
+{
+  RawInsertChar(vd,UTF16_DIS_INVERT);
   if (vd->pos_cur_ref==0xFFFFFFFF)
   {
     vd->pos_cur_ref=vd->work_ref.begin;
   }
-  memset(&(vd->work_ref),0xFF,sizeof(REFCACHE));
+  vd->work_ref.end = vd->rawtext_size;
+  AddToRefCache(vd);
 }
 
 void AddTextItem(VIEWDATA *vd, const char *text, int len)
@@ -134,15 +139,16 @@ void AddPictureItemIndex(VIEWDATA *vd, int index)
 //is_index <0 - задать  принудительно
 OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
 {
-  int wchar, i, index;
+  int wchar, i, index, icon;
   OMS_DYNPNGLIST *dpl;
   OMS_DYNPNGLIST *odp=malloc(sizeof(OMS_DYNPNGLIST));
   odp->dp.next=0;
   odp->dp.img=img;
   dpl=vd->dynpng_list;
+#define FIRST_UCS2_USER_BITMAP 0xE100
   if (!dpl)
   {
-    odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_BITMAP));
+    odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_USER_BITMAP));
     odp->w_char=wchar;
     if (is_index>=0) odp->index=0;
     else odp->index=is_index;
@@ -163,8 +169,24 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
       i++;
     }
     while((dpl=dpl->dp.next));
-    wchar=FIRST_UCS2_BITMAP+i;
-    odp->dp.icon=GetPicNByUnicodeSymbol(wchar);
+    wchar=FIRST_UCS2_USER_BITMAP+i;
+    icon = GetPicNByUnicodeSymbol(wchar);
+    if (icon != 0xFFFF)
+    {
+      dpl=vd->dynpng_list;
+      do
+      {
+        if (icon == dpl->dp.icon)
+        {
+          icon = GetPicNByUnicodeSymbol(++wchar);
+          dpl = vd->dynpng_list;
+        } 
+        else
+          dpl = dpl->dp.next;
+      }
+      while(dpl);
+    }
+    odp->dp.icon=icon;
     odp->w_char=wchar;
     if (is_index>=0)  odp->index=index;
     else odp->index=is_index;
@@ -258,7 +280,7 @@ void AddPictureItemHr(VIEWDATA *vd)
   OMS_DYNPNGLIST *dpl;
   if (!vd->wchar_hr)
   {
-    img=CreateDelimiter(ScreenW()-1,3,GetPaletteAdrByColorIndex(1));
+    img=CreateDelimiter(ScreenW()-MARGIN,3,GetPaletteAdrByColorIndex(1));
     if (img)
     {
       dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
@@ -338,9 +360,21 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
 
 void AddButtonItem(VIEWDATA *vd, const char *text, int len)
 {
-  RawInsertChar(vd,'[');
-  AddTextItem(vd,text,len);
-  RawInsertChar(vd,']');
+  int wchar=0xE115;
+  IMGHDR *img;
+  OMS_DYNPNGLIST *dpl;
+  int cw = 0;
+  vd->work_ref.data=(void *)AllocWS(len);
+  oms2ws(((WSHDR *)vd->work_ref.data),text,len);
+  for (int i = 1; i <= ((WSHDR *)vd->work_ref.data)->wsbody[0]; i++)
+    cw+=GetSymbolWidth(((WSHDR *)vd->work_ref.data)->wsbody[i],FONT_SMALL);
+  img=CreateButton(cw+8,GetFontYSIZE(FONT_SMALL)+6);
+  if (img)
+  {
+    dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
+    wchar=dpl->w_char;
+  }
+  RawInsertChar(vd,wchar);
 }
 
 void AddDropDownList(VIEWDATA *vd)

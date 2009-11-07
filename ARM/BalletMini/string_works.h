@@ -27,9 +27,10 @@ int char16to8(int c);
 int char8to16(int c);
 void ascii2ws(WSHDR *ws, const char *s);
 char *extract_omstr(VIEWDATA *vd, unsigned int pos);
-int char_win2utf8(char*d,const char *s);
-char * ToWeb(char *src,int special);
+int char_win2utf8(char*d,const char *s, char* symbols_array);
+char * ToWeb(char *src,int special, int conv_percent);
 void oms2ws(WSHDR *ws, const char *text, int len);
 void utf82win(char*d,const char *s);
+int CompareWchar(short wchar1, short wchar2, int isCaseSensitive);
 
 #endif /* _STRING_WORKS_H_ */

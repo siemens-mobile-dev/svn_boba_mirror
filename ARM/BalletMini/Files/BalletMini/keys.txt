@@ -1,0 +1,17 @@
+RIGHT_SOFT     Menu
+LEFT_SOFT      Stop/Back
+GREEN_BUTTON   Start new copy of ballet
+RIGHT_BUTTON   Page down
+LEFT_BUTTON    Page up
+VOL_DOWN       Half page down
+VOL_UP         Half page up
+'1'            SieGet start
+'2'            Native browser start
+'3'            Go to start
+'4'            Show link
+'5'            Find next 
+'6'            Forward
+'9'            Go to end
+'0'            Show text from screen
+'#'            Reload
+ 

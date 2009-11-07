@@ -7,7 +7,7 @@ int debug_file;
 
 void debugv(char *file,int line,void *p, int sz)
 {
-  if ((debug_file=fopen("0:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&debug_ul))!=-1)
+  if ((debug_file=fopen("4:\\zbin\\balletmini\\debug.txt",A_ReadWrite+A_Create+debugA,P_READ+P_WRITE,&debug_ul))!=-1)
   {
     fwrite(debug_file,p,sz,&debug_ul);
     fclose(debug_file,&debug_ul);
@@ -224,6 +224,8 @@ void utf82win(char*d,const char *s)
 
 char symbols[]={0x0A,0x20,0x23,0x24,0x25,0x26,0x2B,0x2C,0x2F,0x3A,0x3B,0x3D,0x3F,0x40,0x7E,0x00};
 
+char percent_symb[]={0x25, 0x00};
+
 int sfind8(char s,char *v)
 {
   for (int i=0;i<strlen(v);i++)
@@ -232,14 +234,14 @@ int sfind8(char s,char *v)
   return -1;
 }
 
-int char_win2utf8(char*d,const char *s) // функция возвращает количество 
+int char_win2utf8(char*d,const char *s, char* symbols_array) // функция возвращает количество 
 {                                       // добавленных символов в d
   char hex[] = "0123456789abcdef";
   char *d0 = "%d0%";
   char *d1 = "%d1%";
   unsigned char b = *s, lb, ub;
   int r = 0, ab;
-  if (sfind8(b,symbols)>=0)
+  if (sfind8(b,symbols_array)>=0)
   {
     *d = '%'; d++;
     *d = hex[(b>>4)&0xF]; d++;
@@ -281,22 +283,28 @@ int char_win2utf8(char*d,const char *s) // функция возвращает количество
   return r;
 }
 
-char * ToWeb(char *src,int special)                   //конвертируем ссылку в utf8
+char * ToWeb(char *src, int special, int conv_percent)                   //конвертируем ссылку в utf8
 {
   int cnt = 0, i, j;
+  char* symbols_array;
+  if (conv_percent)
+    symbols_array = percent_symb;
+  else
+    symbols_array = symbols;
   char *ret;
   for(i = 0; src[i]; i++)                 //считаем русские символы
   {
     unsigned char c=src[i];
     if(c>=0x80) cnt+=2;
-    if(special&&(sfind8(c,symbols)>=0)) cnt++;
+    else
+      if(special&&(sfind8(c,symbols_array)>=0)) cnt++;
   }
   ret = malloc(strlen(src) + cnt*3 + 1);  //выделяем память под utf8-строку
   for(i = 0, j = 0; src[i]; i++)
   {
     unsigned char c=src[i];
-    if(c>=0x80||(special&&(sfind8(c,symbols)>=0)))
-      j += char_win2utf8(ret+j, src+i);   //получаем вместо русского символа utf8-замену
+    if(c>=0x80||(special&&(sfind8(c,symbols_array)>=0)))
+      j += char_win2utf8(ret+j, src+i, symbols_array);   //получаем вместо русского символа utf8-замену
     else
       ret[j++] = src[i];
   }
@@ -335,5 +343,19 @@ void oms2ws(WSHDR *ws, const char *text, int len)
         }
       }
     ws->wsbody[++(ws->wsbody[0])]=c;
+  }
+}
+
+int CompareWchar(short wchar1, short wchar2, int isCaseSensitive)
+{
+  if (isCaseSensitive)
+    return (wchar1 == wchar2);
+  else
+  {
+    if ((wchar1 < 0x100)&&(wchar1&0x40)) wchar1&=0xDF;
+    if ((wchar2 < 0x100)&&(wchar2&0x40)) wchar2&=0xDF;
+    if ((wchar1 >= 0x430)&&(wchar1 < 0x450)) wchar1-=0x20;
+    if ((wchar2 >= 0x430)&&(wchar2 < 0x450)) wchar2-=0x20;
+    return (wchar1 == wchar2);
   }
 }

@@ -310,3 +310,44 @@ IMGHDR *CreateDelimiter(int width, int height, const char *color)
   }
   return (img_hc);  
 }
+
+IMGHDR *CreateButton(int width, int height)
+{
+#define RGB16(R, G, B) (((B>>3)&0x1F) | ((G<<3)&0x7E0) | ((R<<8)&0xF800))
+  IMGHDR * img_hc=malloc(sizeof(IMGHDR));
+  short *iimg=malloc(width*height*2);
+  img_hc->w=width;
+  img_hc->h=height;
+  img_hc->bpnum=8;
+  img_hc->bitmap=(char*)iimg;
+  
+  for (unsigned int y = 0; y<height; y++)
+  {
+    for (unsigned int x = 0; x<width; x++)
+    {
+     
+      if ((y == 0)|| (y == (height-1))||(x==0)||(x==width-1))
+      {
+        *iimg++ = 0xE000; //transparent
+        continue;
+      }
+      if ((y == 1)|| (y == (height-2))||(x==1)||(x==width-2))
+      {
+        *iimg++ = RGB16(88,92,88);
+        continue;
+      }
+      if ((y==2)||(x==2))
+      {
+        *iimg++ = RGB16(248,252,248);
+        continue;
+      }
+      if ((y == (height-3))||(x==width-3))
+      {
+        *iimg++ = RGB16(200,204,200);
+        continue;
+      }
+      *iimg++ = RGB16(224,228,224);
+    }
+  }
+  return (img_hc);  
+}

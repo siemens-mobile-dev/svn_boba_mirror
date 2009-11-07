@@ -5,7 +5,7 @@
 #include "view.h"
 #include "history.h"
 #include "lang.h"
-
+ 
 #ifndef NEWSGOLD
 #define SEND_TIMER
 #endif
@@ -252,7 +252,7 @@ static void bsend(int len, void *p)
         return;
       }
     }
-    memcpy(sendq_p,sendq_p+j,sendq_l-=j); //Удалили переданное
+    memmove(sendq_p,sendq_p+j,sendq_l-=j); //Удалили переданное
     if (j<i)
     {
       //Передали меньше чем заказывали
@@ -344,14 +344,19 @@ static void SendPost(void)
   extern char *goto_params;
   
   char *buf;
-  int buf_max_sz=1024+strlen(URL);
+  
+  int buf_max_sz=1024+strlen(URL); 
   if (from_url)
+  {
     buf_max_sz+=strlen(from_url);
-  if (goto_params)
-    buf_max_sz+=strlen(goto_params);
+  }
+  
+  //if (goto_params)
+    //buf_max_sz+=strlen(goto_params);
   buf=malloc(buf_max_sz);
 
   int content_len=0;
+  int full_content_len;
   int l;
   int i, j;
   char *content=NULL;
@@ -464,11 +469,12 @@ static void SendPost(void)
 
   if (goto_params)
   {
-    sprintf(buf,"j=opf=1%s",goto_params);
-    strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
-    mfree(goto_params);
-    goto_params=0;
+    sprintf(buf,"j=opf=1");
+    strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l; 
+    full_content_len = content_len + strlen(goto_params+GOTO_PARAMS_OFFSET);
   }
+  else
+    full_content_len = content_len;
   
   sprintf(buf,
           "POST / HTTP/1.1\r\n"
@@ -477,15 +483,21 @@ static void SendPost(void)
 		      "Content-Length: %d\r\n"
 		      "Host: %s:%d\r\n"
 		      "\r\n",
-		      content_len,OM_POST_HOST,OM_POST_PORT);
+		      full_content_len,OM_POST_HOST,OM_POST_PORT);
   req=malloc(l=(i=strlen(buf))+content_len);
   memcpy(req,buf,i);
   memcpy(req+i,content,content_len);
+  if (goto_params)
+  {
+    memcpy(goto_params,req,l);
+    memmove(goto_params+l-1,goto_params+GOTO_PARAMS_OFFSET, strlen(goto_params+GOTO_PARAMS_OFFSET)+1);
+    mfree(req);
+    req=goto_params;
+    goto_params = 0;
+  }
   mfree(content);
   
-  //DEBUGV(req,l);
-  
-  bsend(l,req);
+  bsend(full_content_len+i,req);
   freegstr(&URL);
   mfree(buf);
 }
@@ -554,6 +566,13 @@ int ParseSocketMsg(GBS_MSG *msg)
         case -1:
           connect_state=0;
           SUBPROC((void*)free_socket);
+          extern const char ipc_my_name[];
+          IPC_REQ *sipc;
+          sipc=malloc(sizeof(IPC_REQ));
+          sipc->name_to=ipc_my_name;
+          sipc->name_from=ipc_my_name;
+          sipc->data=NULL;
+          GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_DATA_END,sipc);
           //ShowMSG(1,(int)"BM: Socket closed");
           break;
         case 0:
@@ -595,7 +614,6 @@ void StartINET(const char *url, char *fncache)
     STOPPED=1;
     goto ERR;
   }
-  AddURLToHistory(url+2);
   URL=globalstr(url);
   if ((FNCACHE=fncache))
   {

@@ -37,4 +37,6 @@ void AddButtonItem(VIEWDATA *vd, const char *text, int len);
 
 void AddDropDownList(VIEWDATA *vd);
 
+void AddToRefCache(VIEWDATA *vd);
+
 #endif /* _ADDITEMS_H_ */
