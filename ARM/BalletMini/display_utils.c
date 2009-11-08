@@ -1137,6 +1137,8 @@ static void txtview_ghook(GUI *data, int cmd)
   {
     DisableIDLETMR();
   }
+  if (cmd==0x0C)
+    EDIT_SetCursorPos(data, 1);
   if (cmd==7)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
@@ -1184,7 +1186,7 @@ void createTextView(WSHDR *ws)
     return;
   }
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,2048);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,16384);
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,FONT_SMALL);
   CopyOptionsToEditControl(&ec,&ec_options);

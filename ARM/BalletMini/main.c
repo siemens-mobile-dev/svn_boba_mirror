@@ -29,6 +29,10 @@ __swi __arm void SetCpuClockHi(int);
 extern const char DEFAULT_PARAM[128];
 
 static void UpdateCSMname(char* url, int mode);
+extern int mrand(void);
+extern int mrandom(int);
+extern void msrand(unsigned seed);
+
 static int ParseInputFilename(const char *fn);
 
 volatile int TERMINATED=0;
@@ -1085,7 +1089,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       {
         // get text from page
         int scr_h=ScreenH()-1;
-        WSHDR *ws=AllocWS(2048);
+        WSHDR *ws=AllocWS(16384);
         LINECACHE *lc;
         int ypos=scr_shift-vd->pixdisp;
         unsigned int store_line=vd->view_line;
@@ -1094,7 +1098,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         int sc;
         int c;
 
-        while(ypos<=scr_h)
+        while(ypos<=16384)
         {
           if (LineDown(vd))
           {
@@ -1664,6 +1668,21 @@ LEND:
   return err;
 }
 
+int SaveAuthCode(char *prefix, char *code)
+{
+  int f;
+  unsigned int err;
+  char * authdata_file = getSymbolicPath("$ballet\\AuthCode");
+  f=fopen(authdata_file,A_ReadWrite+A_BIN+A_Create+A_Truncate,P_READ+P_WRITE,&err); //Создаем файл
+  mfree(authdata_file);
+  if(f==-1) return 0;
+  fwrite(f,prefix,6,&err);
+  fwrite(f,"\r\n",2,&err);
+  fwrite(f,code,32,&err);
+  fclose(f, &err);
+  return 1;
+}
+
 void GenerateFile(char *path, char *name, unsigned char *from, unsigned size)
 {
   unsigned ul;
@@ -1719,11 +1738,30 @@ int main(const char *exename, const char *filename)
 
   if (!LoadAuthCode())
   {
-    LockSched();
-    ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
-    UnlockSched();
-    SUBPROC((void *)Killer);
-    return 0;
+    char prefix[7];
+    int p1 = mrandom(15), p2 = mrandom(15);
+    snprintf(prefix, 7, "p%02d-%02d", p1, p2);
+    char code[32];
+    for(int i = 0; i < 16; i++)
+      snprintf(code+(i<<1), 3, "%02X", mrandom(255));    
+    
+    if(!SaveAuthCode(prefix, code))
+    {
+      LockSched();
+      ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
+      UnlockSched();
+      SUBPROC((void *)Killer);
+      return 0;
+    }
+    else
+      if (!LoadAuthCode())
+      {
+        LockSched();
+        ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
+        UnlockSched();
+        SUBPROC((void *)Killer);
+        return 0;
+      }
   }
 
   if (ParseInputFilename(filename)) // open oms or url

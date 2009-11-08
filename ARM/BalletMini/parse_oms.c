@@ -54,6 +54,10 @@ S + T S L B D T B S E T B h_opf_1 B Y L T B E L T B E L
 //#include <string.h>
 //#include <stdio.h>
 
+extern char AUTH_PREFIX[64];
+extern char AUTH_CODE[128];
+extern int SaveAuthCode(char *prefix, char *code);
+
 #pragma inline
 unsigned int _rbyte(VIEWDATA *vd)
 {
@@ -828,6 +832,18 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->iw;
       AddPictureItemHr(vd);
       sprintf(s,vd->ih?"New AuthCode: ":"New AuthPrefix: ",vd->ih);
+      if(vd->ih)
+      {
+        memcpy(AUTH_CODE, vd->oms+vd->oms_pos, i);
+        AUTH_CODE[i] = 0;
+        SaveAuthCode(AUTH_PREFIX, AUTH_CODE);
+      }
+      else
+      {
+        memcpy(AUTH_PREFIX, vd->oms+vd->oms_pos, i);
+        AUTH_PREFIX[i] = 0;
+        SaveAuthCode(AUTH_PREFIX, AUTH_CODE);
+      }
       AddTextItem(vd,s,strlen(s));
       extern int view_url_mode;
       if (view_url_mode == MODE_URL)
