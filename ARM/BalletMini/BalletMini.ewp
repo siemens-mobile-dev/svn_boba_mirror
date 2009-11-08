@@ -4023,6 +4023,9 @@
     <name>$PROJ_DIR$\parse_oms.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\rand.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\readimg.c</name>
   </file>
   <file>
