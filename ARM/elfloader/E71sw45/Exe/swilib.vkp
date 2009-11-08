@@ -616,5 +616,11 @@
 08E4: 0xA04E76F4 ; 239: __arm int EEFullDeleteBlock(unsigned int block,int cepid,int msg);
 08E8: 0xA04E7860 ; 23A: __unknown int EEFullCreateBlock(unsigned int block,int size,int version,int cepid,int msg);
 08EC: 0xA09585AB ; 23B: __thumb void DisableIconBar(int disable);
+
+08F4: 0xA0F2BFD1 ; 23D __thumb void MD5_Init(MD5_CTX *c);
+08F8: 0xA0F2BC41 ; 23E __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
+08FC: 0xA0F2BED8 ; 23F __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);
+0900: 0xA0F2C961 ; 240 __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
+0904: 0xA08CF5A7 ; 241: __thumb void SetDateTime(TDate *, TTime *);
 #pragma disable old_equal_ff
 +0
