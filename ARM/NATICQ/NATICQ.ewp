@@ -5046,6 +5046,9 @@
     <name>$PROJ_DIR$\manage_cl.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\rand.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\revision.h</name>
   </file>
   <file>

@@ -19,6 +19,7 @@
 #include "revision.h"
 #include "lang.h"
 
+
 #ifndef NEWSGOLD
 #define SEND_TIMER
 #endif
@@ -31,6 +32,9 @@ extern volatile int xstatuses_load;
 extern volatile int pictures_max;
 extern volatile int pictures_loaded;
 extern char *successed_config_filename;
+
+extern int mrand(void);
+extern void msrand(unsigned seed);
 
 #define USE_MLMENU
 
@@ -1309,11 +1313,13 @@ void create_connect(void)
   }
   DNR_ID=0;
   *socklasterr()=0;
-
-  if(host_counter > GetHostsCount(NATICQ_HOST)-1) host_counter = 0;
+  
+  if(connect_state<2)
+    host_counter = mrand()%(GetHostsCount(NATICQ_HOST)+1);
+  //if(host_counter > GetHostsCount(NATICQ_HOST)-1) host_counter = 0;
   GetHost(host_counter, NATICQ_HOST, hostbuf);
   hostport = GetPort(host_counter, NATICQ_HOST);
-  host_counter++;
+  //host_counter++;
 
   sprintf(hostname, "%s:%d", hostbuf, hostport);
 
@@ -1336,7 +1342,7 @@ void create_connect(void)
     {
       if (DNR_ID)
       {
-        host_counter--;
+        //host_counter--;
 	return; //∆дем готовности DNR
       }
     }
@@ -1357,6 +1363,9 @@ void create_connect(void)
       DNR_TRIES=0;
       sa.ip=p_res[3][0][0];
     L_CONNECT:
+      sprintf(hostname, "%s:%d\n%d.%d.%d.%d", hostbuf, hostport,
+              (sa.ip>>24)&0xFF,(sa.ip>>16)&0xFF,(sa.ip>>8)&0xFF,sa.ip&0xFF);
+
       sock=socket(1,1,0);
       if (sock!=-1)
       {
@@ -1610,7 +1619,7 @@ void get_answer(void)
 	  //        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
 	  snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
 	  connect_state=3;
-          host_counter--; //≈сли уж законнектились, будем сидеть на этом сервере
+          //host_counter--; //≈сли уж законнектились, будем сидеть на этом сервере
 	  SMART_REDRAW();
 	  break;
 	case T_XTEXT_ACK:
