@@ -68,7 +68,7 @@ void render()
   for(unsigned int x = 0; x < uiWidth; x++)
   {
     for(int y = 0; y < uiHeight; y++)
-      img1_bmp[x + y * uiWidth] = RGB16(0xff,0xff,0xff);
+      img1_bmp[x + y * uiWidth] = 0xe000; //RGB16(0xff,0xff,0xff);
    for(unsigned int n=0; n<nSensors; n++)
     {
       unsigned y, ptr;
