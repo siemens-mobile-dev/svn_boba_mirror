@@ -260,7 +260,7 @@ void filelist_menu_iconhndl(void *data, int curitem, void *user_pointer)
     if (fl->is_folder==IS_BACK || fl->is_folder==IS_FOLDER)
     {
       str_2ws(ws,fl->name,len);
-      wsInsertChar(ws,0x0001,1);
+      wsInsertChar(ws,0x0002,1);
       wsInsertChar(ws,0xE008,1);
     }
     else

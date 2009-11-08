@@ -127,6 +127,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       {
         while (1)
         {
+          if ((vd->rawtext[p->pos-b]&0xFF00)==0xE100){b--; break;}
           if (vd->rawtext[p->pos-b]==UTF16_SPACE) { b--; break;}
           if (vd->rawtext[p->pos-b]==UTF16_DIS_INVERT) break;
           if (vd->rawtext[p->pos-b]==UTF16_NEWLINE)
@@ -328,7 +329,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
     }
     DrawString(ws2,x+d,y+d,ScreenW(),ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
-      GetPaletteAdrByColorIndex(2),
+      GetPaletteAdrByColorIndex(1),
       GetPaletteAdrByColorIndex(23));
     FreeWS(ws2);
   }

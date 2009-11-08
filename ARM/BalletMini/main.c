@@ -105,6 +105,7 @@ static void StartGetFile(int dummy, char *fncache)
     }
     else
     {
+      UpPageStack();
       LockSched();
       ShowMSG(1,(int)lgpData[LGP_CantOpenFile]);
       UnlockSched();
