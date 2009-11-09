@@ -1,8 +1,7 @@
 ;W810 SW-R4EA031
 ;Библиотека функций
-;v
 ;(c) Hussein , IronMaster
-;(p) zoyd
+;(p) zoyd, InvisibleW, TahaSPAWN, MNS81
 
 +456BFC00
 0448: FFFFFFFF 6143E244 ; 112: void memset(void *mem,char chr,int size);
@@ -451,12 +450,12 @@
 0B34: FFFFFFFF 456B4245 ; 2CD: void ImageID_Free(wchar_t imageID);
 0B38: FFFFFFFF 65AB5B45 ; 2CE: SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 0B3C: FFFFFFFF 8DB15B45 ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
-0B40: FFFFFFFF DD675C45 ; 2D0: int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
+0B40: FFFFFFFF DD675C45 ; 2D0: __thumb int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
 0B44: FFFFFFFF 116A5C45 ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
 0B48: FFFFFFFF 096A5C45 ; 2D2: wchar_t *FILEITEM_GetFname(FILEITEM *f);
 0B4C: FFFFFFFF 6D6A5C45 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
-0B50: FFFFFFFF 39685C45 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
-0B54: FFFFFFFF A1695C45 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
+0B50: FFFFFFFF DD675C45 ; 2D4: int FILEITEM_SetFnameAndContentType(FILEITEM *f, const wchar_t *fname);
+0B54: FFFFFFFF 116A5C45 ; 2D5: int FILEITEM_SetPathAndContentType(FILEITEM *f, const wchar_t *fpath);
 0B58: FFFFFFFF F10B0245 ; 2D6: int JavaDialog_Open(int unk1,char * unk2,void ** JavaDesc);
 0B5C: FFFFFFFF 993F0245 ; 2D7: void JavaDialog_Close(int unk1);
 0B60: FFFFFFFF 55410245 ; 2D8: int JavaAppDesc_Get(int unk1,void ** JavaDesc);
@@ -496,7 +495,7 @@
 0BE8: FFFFFFFF 114BB244 ; 2FA: int w_fwrite(int f, void *buf, int size);
 0BEC: FFFFFFFF F54AB244 ; 2FB: int w_fread(int f, void *buf, int size);
 0BF0: FFFFFFFF B5A21045 ; 2FC: int w_lseek(int f, int offs, int mode);
-0BF4: FFFFFFFF 2D4BB244 ; 2FD: int w_fclose(int f);
+0BF4: FFFFFFFF 494BB244 ; 2FD: int w_fclose(int f);
 0BF8: FFFFFFFF 115C5E45 ; 2FE: int w_mkdir(const wchar_t *path, int mode);
 0BFC: FFFFFFFF 11295B45 ; 2FF: int DirHandle_SetFilterStr(DIR_HANDLE *, const wchar_t *filter);
 0C00: FFFFFFFF 99803045 ; 300: int Disp_GetStrIdWidth(STRID , int len);
@@ -614,42 +613,46 @@
 ;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 0DC4: FFFFFFFF 099CCB44 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
 0DC8: FFFFFFFF A5D76445 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,STRID_DATA *,char *error);
-;0DCC: xxxxxxxx yyyyyyyy ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
-;0DD0: xxxxxxxx yyyyyyyy ; 374: int GUIonMessage_GetMsg ( void *msg);
-;0DD4: xxxxxxxx yyyyyyyy ; 375: BOOK *GUIonMessage_GetBook ( void *msg);
-;0DD8: xxxxxxxx yyyyyyyy ; 376: GUI *GUIonMessage_GetGui ( void *msg);
-;0DDC: xxxxxxxx yyyyyyyy ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
-;0DE0: xxxxxxxx yyyyyyyy ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
-;0DE4: xxxxxxxx yyyyyyyy ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
-;0DE8: xxxxxxxx yyyyyyyy ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
-;0DEC: xxxxxxxx yyyyyyyy ; 37B: int EqualizerGain_Set (int AudioSessionID,int Band,int Level);
-;0DF0: xxxxxxxx yyyyyyyy ; 37C: int CANVAS_Get_GviGC(PCANVAS pcanvas, GVI_GC* dest);
-;0DF4: xxxxxxxx yyyyyyyy ; 37D: void GVI_BitBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3);
-;0DF8: xxxxxxxx yyyyyyyy ; 37E: void GVI_StretchBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3);
-;0DFC: xxxxxxxx yyyyyyyy ; 37F: void GVI_TransformBlt(GVI_GC destgc, int destx, int desty, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int orientation, int _0);
-;0E00: xxxxxxxx yyyyyyyy ; 380: GVI_PEN GVI_CreatePen(char thikness, int color);
-;0E04: xxxxxxxx yyyyyyyy ; 381: GVI_PEN GVI_CreateDashedPen(char thikness, int color, int bitmask, int step, int offset);
-;0E08: xxxxxxxx yyyyyyyy ; 382: GVI_BRUSH GVI_CreateSolidBrush(int color);
-;0E0C: xxxxxxxx yyyyyyyy ; 383: BOOL GVI_Delete_GVI_Object(GVI_OBJ*);
-;0E10: xxxxxxxx yyyyyyyy ; 384: void GVI_DrawEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, GVI_PEN pen);
-;0E14: xxxxxxxx yyyyyyyy ; 385: void GVI_DrawLine(GVI_GC, int x1, int y1, int x2, int y2, GVI_PEN pen);
-;0E18: xxxxxxxx yyyyyyyy ; 386: void GVI_DrawLines(GVI_GC gc, POINT* points, int count, GVI_PEN pen);
-;0E1C: xxxxxxxx yyyyyyyy ; 387: void GVI_DrawPolyLine(GVI_GC gc, POINT* points, int count, GVI_PEN pen, int is_closed);
-;0E20: xxxxxxxx yyyyyyyy ; 388: void GVI_DrawRectangle(GVI_GC gc, int x, int y, int w, int h, GVI_PEN pen);
-;0E24: xxxxxxxx yyyyyyyy ; 389: void GVI_DrawRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcw, int arch, GVI_PEN pen);
-;0E28: xxxxxxxx yyyyyyyy ; 38A: void GVI_DrawSolidLines(GVI_GC gc, POINT* points, int count, int color, int width);
-;0E2C: xxxxxxxx yyyyyyyy ; 38B: void GVI_DrawSolidPolyLine(GVI_GC gc, POINT* points, int count, int is_closed, int color, int width);
-;0E30: xxxxxxxx yyyyyyyy ; 38C: void GVI_DrawSolidRectangle(GVI_GC gc, int x, int y, int w, int h, int color, int width);
-;0E34: xxxxxxxx yyyyyyyy ; 38D: void GVI_FillEllipse(GVI_GC destgc, int x, int y, int w, int h, GVI_BRUSH brush);
-;0E38: xxxxxxxx yyyyyyyy ; 38E: void GVI_FillPolygon(GVI_GC destgc, POINT *pp, int count, GVI_BRUSH brush);
-;0E3C: xxxxxxxx yyyyyyyy ; 38F: void GVI_FillRectangle(GVI_GC , int x, int y, int w, int h, GVI_BRUSH brush);
-;0E40: xxxxxxxx yyyyyyyy ; 390: void GVI_FillRectangles(GVI_GC , GVI_XYWH *rcs, int count, GVI_BRUSH brush);
-;0E44: xxxxxxxx yyyyyyyy ; 391: void GVI_FillSolidEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, int color);
-;0E48: xxxxxxxx yyyyyyyy ; 392: void GVI_FillSolidRectangle(GVI_GC , int x, int y, int w, int h, int color);
-;0E4C: xxxxxxxx yyyyyyyy ; 393: int GVI_FillSolidRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcx, int arcy, int color);
-;0E50: xxxxxxxx yyyyyyyy ; 394: void GVI_FillSolidTriangle(GVI_GC destgc, int x1, int y1, int x2, int y2, int x3, int y3, int color);
-;0E54: xxxxxxxx yyyyyyyy ; 395: GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void* somefn , int unk2);
-;0E58: xxxxxxxx yyyyyyyy ; 396: void GC_FreeGC(GC* gc);
+0DCC: FFFFFFFF C9A52445 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
+0DD0: FFFFFFFF 79131745 ; 374: int GUIonMessage_GetMsg ( void *msg);
+0DD4: FFFFFFFF 81131745 ; 375: BOOK *GUIonMessage_GetBook ( void *msg);
+0DD8: FFFFFFFF 7D131745 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
+0DDC: FFFFFFFF 85131745 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
+0DE0: FFFFFFFF 95131745 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
+0DE4: FFFFFFFF 6D35FD44 ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
+0DE8: FFFFFFFF F4DF3045 ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
+0DEC: FFFFFFFF 79D54545 ; 37B: int EqualizerGain_Set(int AudioSessionID,int Band,int Level);
+0DF0: FFFFFFFF F1CAA444 ; 37C: int CANVAS_Get_GviGC(PCANVAS pcanvas, GVI_GC* dest);
+0DF4: FFFFFFFF 39EEB344 ; 37D: void GVI_BitBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3);
+0DF8: FFFFFFFF A9EFB344 ; 37E: void GVI_StretchBlt(GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3);
+0DFC: FFFFFFFF 55F0B344 ; 37F: void GVI_TransformBlt(GVI_GC destgc, int destx, int desty, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int orientation, int _0);
+0E00: FFFFFFFF 99E4B344 ; 380: GVI_PEN GVI_CreatePen(char thikness, int color);
+0E04: FFFFFFFF D5E4B344 ; 381: GVI_PEN GVI_CreateDashedPen(char thikness, int color, int bitmask, int step, int offset);
+0E08: FFFFFFFF 25E4B344 ; 382: GVI_BRUSH GVI_CreateSolidBrush(int color);
+0E0C: FFFFFFFF 81DEB344 ; 383: bool GVI_Delete_GVI_Object(GVI_OBJ*);
+0E10: FFFFFFFF 69E9B344 ; 384: void GVI_DrawEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, GVI_PEN pen);
+0E14: FFFFFFFF F1F4B344 ; 385: void GVI_DrawLine(GVI_GC, int x1, int y1, int x2, int y2, GVI_PEN pen);
+0E18: FFFFFFFF 89F9B344 ; 386: void GVI_DrawLines(GVI_GC gc, POINT* points, int count, GVI_PEN pen);
+0E1C: FFFFFFFF 11FAB344 ; 387: void GVI_DrawPolyLine(GVI_GC gc, POINT* points, int count, GVI_PEN pen, int is_closed);
+0E20: FFFFFFFF F9FBB344 ; 388: void GVI_DrawRectangle(GVI_GC , int x, int y, int w, int h, GVI_PEN pen);
+0E24: FFFFFFFF 2DEDB344 ; 389: void GVI_DrawRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcw, int arch, GVI_PEN pen);
+0E28: FFFFFFFF F5F5B344 ; 38A: void GVI_DrawSolidLines(GVI_GC gc, POINT* points, int count, int color, int width);
+0E2C: FFFFFFFF D1F7B344 ; 38B: void GVI_DrawSolidPolyLine(GVI_GC gc, POINT* points, int count, int is_closed, int color, int width);
+0E30: FFFFFFFF 91F8B344 ; 38C: void GVI_DrawSolidRectangle(GVI_GC gc, int x, int y, int w, int h, int color, int width);
+0E34: FFFFFFFF E5EBB344 ; 38D: void GVI_FillEllipse(GVI_GC destgc, int x, int y, int w, int h, GVI_BRUSH brush);
+0E38: FFFFFFFF EDF3B344 ; 38E: void GVI_FillPolygon(GVI_GC destgc, POINT *pp, int n, GVI_BRUSH brush);
+0E3C: FFFFFFFF 09FBB344 ; 38F: void GVI_FillRectangle(GVI_GC , int x, int y, int w, int h, GVI_BRUSH brush);
+0E40: FFFFFFFF 69FBB344 ; 390: void GVI_FillRectangles(GVI_GC , GVI_XYWH *rcs, int n, GVI_BRUSH brush);
+0E44: FFFFFFFF 7DECB344 ; 391: void GVI_FillSolidEllipse(GVI_GC destgc, int x1, int y1, int x2, int y2, int color);
+0E48: FFFFFFFF B5FBB344 ; 392: void GVI_FillSolidRectangle(GVI_GC , int x, int y, int w, int h, int color);
+0E4C: FFFFFFFF 15EEB344 ; 393: int GVI_FillSolidRoundRect(GVI_GC destgc, int x, int y, int w, int h, int arcx, int arcy, int color);
+0E50: FFFFFFFF 65F3B344 ; 394: void GVI_FillSolidTriangle(GVI_GC destgc, int x1, int y1, int x2, int y2, int x3, int y3, int color);
+0E54: FFFFFFFF A51A1945 ; 395: GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void* somefn , int unk2);
+0E58: FFFFFFFF 591B1945 ; 396: void GC_FreeGC(GC* gc);
+0E5C: FFFFFFFF 69575945 ; 397: void REQUEST_ALARMCLOCKSTATUS_GET(const int *SYNC, char * alarm_status);
+0E60: FFFFFFFF F1565945 ; 398: void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
+0E64: FFFFFFFF 395A5945 ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
+0E68: FFFFFFFF 8D5F4145 ; 39A: int Settings_ShowNumber_Get(char *state);
 
 
 

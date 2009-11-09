@@ -649,6 +649,10 @@
 0E50: FFFFFFFF BD38C544 ; 394: void GVI_FillSolidTriangle(GVI_GC destgc, int x1, int y1, int x2, int y2, int x3, int y3, int color);
 0E54: FFFFFFFF DD7C1845 ; 395: GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void* somefn , int unk2);
 0E58: FFFFFFFF 917D1845 ; 396: void GC_FreeGC(GC* gc);
+0E5C: FFFFFFFF 15AC5845 ; 397: void REQUEST_ALARMCLOCKSTATUS_GET(const int *SYNC, char * alarm_status);
+0E60: FFFFFFFF 9DAB5845 ; 398: void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
+0E64: FFFFFFFF E5AE5845 ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
+0E68: FFFFFFFF ADBE4045 ; 39A: int Settings_ShowNumber_Get(char *state);
 
 
 
