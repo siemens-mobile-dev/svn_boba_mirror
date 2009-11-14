@@ -351,8 +351,6 @@ static void SendPost(void)
     buf_max_sz+=strlen(from_url);
   }
   
-  //if (goto_params)
-    //buf_max_sz+=strlen(goto_params);
   buf=malloc(buf_max_sz);
 
   int content_len=0;
@@ -429,7 +427,7 @@ static void SendPost(void)
   }
   
   extern const int JAVA_HEAP_SIZE;
-  sprintf(buf,"d=w:%d;h:%d;c:65536;m:%d;i:%d;q:%d;f:0;j:0;l:256",ScreenW(),ScreenH(),JAVA_HEAP_SIZE*1024,i,j);
+  sprintf(buf,"d=w:%d;h:%d;c:65536;m:%d;i:%d;q:%d;f:0;j:0;l:256",ScreenW()-MARGIN,ScreenH(),JAVA_HEAP_SIZE*1024,i,j);
   strcpy((content=realloc(content,content_len+(l=strlen(buf)+1)))+content_len,buf);content_len+=l;
 
   sprintf(buf,"c=%s",AUTH_CODE);

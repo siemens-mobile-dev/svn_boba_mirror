@@ -35,7 +35,6 @@ void FreeViewData(VIEWDATA *vd)
     mfree(vd->zs);
   }
   if (vd->ws) FreeWS(vd->ws);
-  if (vd->search_string) FreeWS(vd->search_string);
   for (int i=0;i<vd->ref_cache_size;i++)
   {
     REFCACHE *rf=vd->ref_cache+i;

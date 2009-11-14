@@ -11,6 +11,10 @@
 extern int maincsm_id;
 
 extern const int scr_shift;
+extern const int word_wrap;
+
+extern WSHDR *search_string;
+extern int search_isCaseSens;
 
 int GetFontHeight(int font, int atribute)
 {
@@ -107,41 +111,44 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       {
         while (1)
         {
-          if (vd->rawtext[p->pos-b]==UTF16_SPACE) { b--; break;}
+          cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+          if (cw>=(scrW*3/4))
+          {
+            b=1;
+            break;
+          }
+          if (word_wrap && (vd->rawtext[p->pos-b]==UTF16_SPACE)) { /*b--;*/ break;}
           if (vd->rawtext[p->pos-b]==UTF16_ENA_INVERT) break;
           if (vd->rawtext[p->pos-b]==UTF16_NEWLINE)
           {
             b++;
             break;
           }
-          if (cw>=(scrW*3/4))
-          {
-            b=1;
-            break;
-          }
-          cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
           b++;
         }
       }
       else
       {
-        while (1)
+        if (word_wrap)
         {
-          if ((vd->rawtext[p->pos-b]&0xFF00)==0xE100){b--; break;}
-          if (vd->rawtext[p->pos-b]==UTF16_SPACE) { b--; break;}
-          if (vd->rawtext[p->pos-b]==UTF16_DIS_INVERT) break;
-          if (vd->rawtext[p->pos-b]==UTF16_NEWLINE)
+          while (1)
           {
+            cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+            if (cw>=(scrW*3/4))
+            {
+              b=1;
+              break;
+            }
+            if ((vd->rawtext[p->pos-b]&0xFF00)==0xE100) {b--; break;}
+            if (vd->rawtext[p->pos-b]==UTF16_SPACE) { b--; break;}
+            if (vd->rawtext[p->pos-b]==UTF16_DIS_INVERT) break;
+            if (vd->rawtext[p->pos-b]==UTF16_NEWLINE)
+            {
+              b++;
+              break;
+            }
             b++;
-            break;
           }
-          if (cw>=(scrW*3/4))
-          {
-            b=1;
-            break;
-          }
-          cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
-          b++;
         }
       }
       p->pos-=b;
@@ -309,6 +316,7 @@ typedef struct {
 
 void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
 {
+  int scr_w = ScreenW() - MARGIN/2;
   if (rf->tag=='x'||rf->tag=='p')
   {
     // calc pos
@@ -327,7 +335,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
       else
         ws2->wsbody[ws2->wsbody[0]]=((WSHDR *)rf->data)->wsbody[ws2->wsbody[0]];
     }
-    DrawString(ws2,x+d,y+d,ScreenW(),ScreenH(),
+    DrawString(ws2,x+d,y+d,scr_w,ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
       GetPaletteAdrByColorIndex(1),
       GetPaletteAdrByColorIndex(23));
@@ -352,7 +360,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
         break;
       ws2->wsbody[0]++;
     }
-    DrawString(ws2,x+d,y+d,ScreenW(),ScreenH(),
+    DrawString(ws2,x+d,y+d,scr_w,ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
       GetPaletteAdrByColorIndex(1),
       GetPaletteAdrByColorIndex(23));
@@ -361,7 +369,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
   }
   if (rf->tag=='u')
   {
-    DrawString((WSHDR *)rf->data,x+4,y+3+(y2-y-GetImgHeight(GetPicNByUnicodeSymbol(wchar))),ScreenW(),ScreenH(),
+    DrawString((WSHDR *)rf->data,x+4,y+3+(y2-y-GetImgHeight(GetPicNByUnicodeSymbol(wchar))),scr_w,ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
       GetPaletteAdrByColorIndex(1),
       GetPaletteAdrByColorIndex(23));
@@ -955,8 +963,8 @@ void createTemplatesMenu(void* data)
 }
 
 // EDIT BOX
-REFCACHE *cur_ref;
 VIEWDATA *cur_vd;
+unsigned int pos_ref;
 
 extern char *goto_url;
 extern char *from_url;
@@ -1036,16 +1044,17 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
   {
     // set value
     ExtractEditControl(data,1,&ec);
-    FreeWS(((WSHDR *)cur_ref->data));
-    cur_ref->data=(void *)AllocWS(ec.pWS->wsbody[0]);
-    wstrcpy(((WSHDR *)cur_ref->data),ec.pWS);
-    if (!cur_ref->no_upload)
+    REFCACHE* text_ref = FindReference(cur_vd,pos_ref);
+    FreeWS(((WSHDR *)text_ref->data));
+    text_ref->data=(void *)AllocWS(ec.pWS->wsbody[0]);
+    wstrcpy(((WSHDR *)text_ref->data),ec.pWS);
+    if (!text_ref->no_upload)
     {
       goto_url=malloc(strlen(cur_vd->pageurl)+1);
       strcpy(goto_url,cur_vd->pageurl);
       from_url=malloc(strlen(cur_vd->pageurl)+1);
       strcpy(from_url,cur_vd->pageurl);
-      goto_params=collectItemsParams(cur_vd,cur_ref);
+      goto_params=collectItemsParams(cur_vd,text_ref);
     }
     else
     {
@@ -1055,7 +1064,6 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
         main_csm->sel_bmk=0;
       }
     }
-    cur_ref=NULL;
     cur_vd=NULL;
     return (0xFF);
   }
@@ -1088,9 +1096,9 @@ static const INPUTDIA_DESC input_box_desc =
   0x40000000
 };
 
-int CreateInputBox(VIEWDATA *vd, REFCACHE *rf)
+int CreateInputBox(VIEWDATA *vd, REFCACHE* rf, unsigned int cur_pos_ref)
 {
-  cur_ref=rf;
+  pos_ref=cur_pos_ref;
   cur_vd=vd;
   
   void *ma=malloc_adr();
@@ -1186,7 +1194,7 @@ void createTextView(WSHDR *ws)
     return;
   }
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,16384);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws,2048);
   PrepareEditCOptions(&ec_options);
   SetFontToEditCOptions(&ec_options,FONT_SMALL);
   CopyOptionsToEditControl(&ec,&ec_options);
@@ -1216,29 +1224,30 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
   {
     int i=GetCurMenuItem(gui);
     int n=0;
+    REFCACHE* sel_ref = FindReference(cur_vd,pos_ref);
     for (; n!=i; n++) ustop=ustop->next;
     if (ustop)
     {
-      if (cur_ref->multiselect)
+      if (sel_ref->multiselect)
       {
-        if(((char*)cur_ref->data)[n])
-          ((char*)cur_ref->data)[n]=0;
+        if(((char*)sel_ref->data)[n])
+          ((char*)sel_ref->data)[n]=0;
         else
-          ((char*)cur_ref->data)[n]=1;
-        SetMenuItemIcon(gui,i,((char*)cur_ref->data)[n]);
+          ((char*)sel_ref->data)[n]=1;
+        SetMenuItemIcon(gui,i,((char*)sel_ref->data)[n]);
         RefreshGUI();
       }
       else
       {
-        cur_ref->value=ustop->value;
-        cur_ref->id2=ustop->id2;
-        if (!cur_ref->no_upload)
+        sel_ref->value=ustop->value;
+        sel_ref->id2=ustop->id2;
+        if (!sel_ref->no_upload)
         {
           goto_url=malloc(strlen(cur_vd->pageurl)+1);
           strcpy(goto_url,cur_vd->pageurl);
           from_url=malloc(strlen(cur_vd->pageurl)+1);
           strcpy(from_url,cur_vd->pageurl);
-          goto_params=collectItemsParams(cur_vd,cur_ref);
+          goto_params=collectItemsParams(cur_vd,sel_ref);
         }
         else
         {
@@ -1248,7 +1257,7 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
             main_csm->sel_bmk=0;
           }
         }
-        cur_ref=NULL;
+
         cur_vd=NULL;
         return 0xFF;
       }
@@ -1290,10 +1299,11 @@ void sel_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
     len=strlen(ustop->name);
     ws=AllocMenuWS(gui,len+4);
     oms2ws(ws,ustop->name,len);
-    if (cur_ref->multiselect)
+    REFCACHE* sel_ref = FindReference(cur_vd,pos_ref);
+    if (sel_ref->multiselect)
     {
       SetMenuItemIconArray(gui,item,icon_array);
-      SetMenuItemIcon(gui,cur_item,((char*)cur_ref->data)[n]);
+      SetMenuItemIcon(gui,cur_item,((char*)sel_ref->data)[n]);
     }
   }
   else
@@ -1331,7 +1341,7 @@ MENU_DESC sel_STRUCT=
   0   //n
 };
 
-int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
+int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf, unsigned int cur_pos_ref)
 {
   int start=0;
   SEL_STRUCT *ustop=0, *usbot=0;
@@ -1369,8 +1379,8 @@ int ChangeMenuSelection(VIEWDATA *vd, REFCACHE *rf)
       usbot=us;
     }
   }
-  cur_ref=rf;
   cur_vd=vd;
+  pos_ref = cur_pos_ref;
   icon_array[0]=GetPicNByUnicodeSymbol(CBOX_UNCHECKED);
   icon_array[1]=GetPicNByUnicodeSymbol(CBOX_CHECKED);
   if (rf->multiselect) sel_STRUCT.flags2=0x11;
@@ -1479,10 +1489,10 @@ void FindStringOnPage(VIEWDATA* cur_vd)
     int found = 0;
     while ((i < cur_vd->rawtext_size) && (!found))
     {
-      while ((j < wstrlen(cur_vd->search_string)) && 
-             CompareWchar(cur_vd->rawtext[i+j], (cur_vd->search_string)->wsbody[1+j], cur_vd->search_isCaseSens))
+      while ((j < wstrlen(search_string)) && 
+             CompareWchar(cur_vd->rawtext[i+j], search_string->wsbody[1+j], search_isCaseSens))
         j++;
-      if (j == wstrlen(cur_vd->search_string))
+      if (j == wstrlen(search_string))
       {
         found = 1;
       }

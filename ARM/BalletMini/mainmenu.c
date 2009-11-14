@@ -17,9 +17,14 @@ extern char *view_url;
 extern char *goto_url;
 extern int maincsm_id;
 
+extern WSHDR *search_string;
+extern int search_isCaseSens;
+
 //----------------------------------- Add bookmark -----------------------------
 
 const char* sEmpty = "";
+
+const char* ext_url = "url";
 
 typedef enum
 {
@@ -347,7 +352,21 @@ void bookmarks_options_edit(GUI * data)
 {
   BList * bl = (BList *)MenuGetUserPointer(data);
   if(bl->type == IS_FILE)
-    show_edit_bookmark_menu(bl, EditBookmark);
+  {
+    char *s=strrchr(bl->fullname,'.');
+    if (s)
+    {
+      s++;
+      if (!strcmp_nocase(s,ext_url))
+      {
+        show_edit_bookmark_menu(bl, EditBookmark);
+      }
+      else
+      {
+        show_edit_bookmark_menu(bl, RenameFolder);
+      }
+    }
+  }
   if(bl->type == IS_FOLDER)
     show_edit_bookmark_menu(bl, RenameFolder);
   GeneralFuncF1(2);
@@ -577,8 +596,10 @@ int FindFiles(char * str)
       else
       {
         i = strlen(de.file_name);
-        strncpy(name, de.file_name, i - 4);
-        name[i - 4] = NULL;
+        strncpy(name, de.file_name, i);
+        name[i] = NULL;
+        if (!strcmp_nocase(name + i - 4,".url"))
+          name[i-4] = NULL;                   
         AddToFList(path, name, IS_FILE);
         n ++;
       }
@@ -629,13 +650,26 @@ int bookmarks_menu_onkey(void *data, GUI_MSG *msg)
       }
       else
       {
-        if (ReadUrlFile(bl->fullname))
+        char *s=strrchr(bl->fullname,'.');
+        if (s)
         {
-          int len = strlen(view_url);
-          _safe_free(goto_url);
-          goto_url = URL_reencode_escapes(view_url);
-          return (0xFF);
-        }      
+          s++;
+          if (!strcmp_nocase(s,"oms"))
+          {
+            goto_url=globalstr(bl->fullname);
+            return (0xFA);
+          }
+          if (!strcmp_nocase(s,ext_url))
+          {
+            if (ReadUrlFile(bl->fullname))
+            {
+              int len = strlen(view_url);
+              _safe_free(goto_url);
+              goto_url = URL_reencode_escapes(view_url);
+              return (0xFF);
+            }
+          }
+        }
         return (1);
       }
     }
@@ -1015,12 +1049,12 @@ static void find_box_ghook(GUI *data, int cmd)
       if (i == 2)
       {
        wsprintf(ews,_t,lgpData[LGP_Yes]);
-       vd->search_isCaseSens = 1;
+       search_isCaseSens = 1;
       }
       else
       {
        wsprintf(ews,_t,lgpData[LGP_No]); 
-       vd->search_isCaseSens = 0;
+       search_isCaseSens = 0;
       }
     }
     EDIT_SetTextToFocused(data,ews);
@@ -1039,7 +1073,7 @@ static int find_box_onkey(GUI *data, GUI_MSG *msg)
   {
     ExtractEditControl(data,2,&ec);
     vd = EDIT_GetUserPointer(data);
-    wstrcpy(vd->search_string, ec.pWS);
+    wstrcpy(search_string, ec.pWS);
     FindStringOnPage(vd);
     return (0xFF);
   }
@@ -1087,7 +1121,7 @@ int CreateFindDialog(VIEWDATA *vd)
   AddEditControlToEditQend(eq,&ec,ma);
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,vd->search_string,256);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,search_string,256);
   AddEditControlToEditQend(eq,&ec,ma);
   
   ascii2ws(ews,lgpData[LGP_MatchCase]);

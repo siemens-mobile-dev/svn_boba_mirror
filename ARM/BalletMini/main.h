@@ -1,6 +1,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+void UpdateCSMname(char *url, int mode);
 void FreeViewUrl(void);
 char *globalstr(const char *s);
 int ReadUrlFile(char *url_file);

@@ -4,8 +4,11 @@ __root const CFG_HDR cfghdr0={CFG_CBOX,"Picture Quality",0,4};
 __root const int PIC_QUALITY=2;
 __root const CFG_CBOX_ITEM cfgcbox0[]={"None","Text","Low","High"};
 
+__root const CFG_HDR cfghdr01 = {CFG_CHECKBOX, "Word wrap", 0, 2};
+__root const int word_wrap = 1;
+
 __root const CFG_HDR cfghdr1={CFG_UINT,"History depth",0,128};
-__root const int HISTORY_DEPTH=20;
+__root const int HISTORY_DEPTH=100;
 
 __root const CFG_HDR cfghdr2={CFG_UINT,"Java Heap value(kb)",0,16384};
 #ifdef NEWSGOLD
@@ -27,6 +30,16 @@ __root const CFG_HDR cfghdr3_2={CFG_UINT,"Port",0,65535};
 __root const unsigned int OM_POST_PORT=80;
 
 __root const CFG_HDR cfghdr3_end={CFG_LEVEL,"",0,0};
+
+__root const CFG_HDR cfghdr35={CFG_LEVEL,"Authentication",1,0};
+
+__root const CFG_HDR cfghdr350 = {CFG_CHECKBOX, "Save received AuthCode to file", 0, 2};
+__root const int authcode_write_file = 0;
+
+__root const CFG_HDR cfghdr351 = {CFG_CHECKBOX, "Generate AuthCode", 0, 2};
+__root const int authcode_create_new = 0;
+  
+__root const CFG_HDR cfghdr35_end={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr4={CFG_STR_UTF8,"Default launch parameter",0,127};
 __root const char DEFAULT_PARAM[128]="bookmarks";

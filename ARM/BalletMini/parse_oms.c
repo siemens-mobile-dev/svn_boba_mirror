@@ -49,6 +49,7 @@ S + T S L B D T B S E T B h_opf_1 B Y L T B E L T B E L
 #include "string_works.h"
 #include "main.h"
 #include "display_utils.h"
+#include "history.h"
 #include "..\inc\zlib.h"
 //#include <stdlib.h>
 //#include <string.h>
@@ -57,6 +58,7 @@ S + T S L B D T B S E T B h_opf_1 B Y L T B E L T B E L
 extern char AUTH_PREFIX[64];
 extern char AUTH_CODE[128];
 extern int SaveAuthCode(char *prefix, char *code);
+extern const int authcode_write_file;
 
 #pragma inline
 unsigned int _rbyte(VIEWDATA *vd)
@@ -616,6 +618,16 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         memcpy(vd->title,vd->oms+vd->oms_pos,i);
         vd->title[i]=NULL;
         utf82win(vd->title, vd->title);
+        UpdateCSMname(vd->title, MODE_URL);
+        extern int view_url_mode;
+        if (view_url_mode == MODE_URL)
+        {
+          char histbuf[512];
+          strcpy(histbuf, vd->pageurl+2);
+          strcat(histbuf, "|");
+          strcat(histbuf, vd->title);
+          AddURLToHistory(histbuf);
+        }
         AddBrItem(vd);
       }
       vd->oms_pos=vd->oms_wanted;
@@ -832,17 +844,20 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       i=vd->iw;
       AddPictureItemHr(vd);
       sprintf(s,vd->ih?"New AuthCode: ":"New AuthPrefix: ",vd->ih);
-      if(vd->ih)
+      if (authcode_write_file)
       {
-        memcpy(AUTH_CODE, vd->oms+vd->oms_pos, i);
-        AUTH_CODE[i] = 0;
-        SaveAuthCode(AUTH_PREFIX, AUTH_CODE);
-      }
-      else
-      {
-        memcpy(AUTH_PREFIX, vd->oms+vd->oms_pos, i);
-        AUTH_PREFIX[i] = 0;
-        SaveAuthCode(AUTH_PREFIX, AUTH_CODE);
+        if(vd->ih)
+        {
+          memcpy(AUTH_CODE, vd->oms+vd->oms_pos, i);
+          AUTH_CODE[i] = 0;
+          SaveAuthCode(AUTH_PREFIX, AUTH_CODE);
+        }
+        else
+        {
+          memcpy(AUTH_PREFIX, vd->oms+vd->oms_pos, i);
+          AUTH_PREFIX[i] = 0;
+          SaveAuthCode(AUTH_PREFIX, AUTH_CODE);
+        }
       }
       AddTextItem(vd,s,strlen(s));
       extern int view_url_mode;

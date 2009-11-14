@@ -11,6 +11,8 @@
 #define RAWTEXTCHUNK (16384)
 #define REFCACHECHUNK (256)
 
+#define FIRST_UCS2_USER_BITMAP 0xE100
+
 /*static*/ void RawInsertChar(VIEWDATA *vd, int wchar)
 {
   if ((vd->rawtext_size%RAWTEXTCHUNK)==0)
@@ -120,7 +122,7 @@ void AddPItem(VIEWDATA *vd)
 
 void AddPictureItemIndex(VIEWDATA *vd, int index)
 {
-  int w_char=0xE115;
+  int w_char=FIRST_UCS2_USER_BITMAP;
   OMS_DYNPNGLIST *dpl=vd->dynpng_list;
   while(dpl)
   {
@@ -139,13 +141,14 @@ void AddPictureItemIndex(VIEWDATA *vd, int index)
 //is_index <0 - задать  принудительно
 OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
 {
+  if (img->w > ScreenW()-MARGIN)
+    img->w = ScreenW()-MARGIN;
   int wchar, i, index, icon;
   OMS_DYNPNGLIST *dpl;
   OMS_DYNPNGLIST *odp=malloc(sizeof(OMS_DYNPNGLIST));
   odp->dp.next=0;
   odp->dp.img=img;
   dpl=vd->dynpng_list;
-#define FIRST_UCS2_USER_BITMAP 0xE100
   if (!dpl)
   {
     odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_USER_BITMAP));
@@ -169,7 +172,7 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
       i++;
     }
     while((dpl=dpl->dp.next));
-    wchar=FIRST_UCS2_USER_BITMAP+i;
+    wchar=FIRST_UCS2_USER_BITMAP+1+i;
     icon = GetPicNByUnicodeSymbol(wchar);
     if (icon != 0xFFFF)
     {
@@ -199,7 +202,7 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
 
 void AddPictureItem(VIEWDATA *vd, void *picture)
 {
-  int wchar=0xE115;
+  int wchar=FIRST_UCS2_USER_BITMAP;
   IMGHDR *img;
   OMS_DYNPNGLIST *dpl;
   if (picture)
@@ -220,7 +223,7 @@ void AddPictureItem(VIEWDATA *vd, void *picture)
 
 void AddPictureItemRGBA(VIEWDATA *vd, void *picture, int width, int height)
 {
-  int wchar=0xE115;
+  int wchar=FIRST_UCS2_USER_BITMAP;
   IMGHDR *img;
   OMS_DYNPNGLIST *dpl;
   if (picture)
@@ -256,7 +259,7 @@ OMS_DYNPNGLIST *FindOmsFrameBySize(VIEWDATA *vd,int width,int height)
 
 void AddPictureItemFrame(VIEWDATA *vd,int width,int height)
 {
-  int wchar=0xE115;
+  int wchar=FIRST_UCS2_USER_BITMAP;
   IMGHDR *img;
   OMS_DYNPNGLIST *dpl;
   dpl=FindOmsFrameBySize(vd,width,height);
@@ -275,7 +278,7 @@ void AddPictureItemFrame(VIEWDATA *vd,int width,int height)
 
 void AddPictureItemHr(VIEWDATA *vd)
 {
-  int wchar=0xE115;
+  int wchar=FIRST_UCS2_USER_BITMAP;
   IMGHDR *img;
   OMS_DYNPNGLIST *dpl;
   if (!vd->wchar_hr)
@@ -293,7 +296,7 @@ void AddPictureItemHr(VIEWDATA *vd)
 
 int AddPictureItemFile(VIEWDATA *vd, const char *file)
 {
-  int wchar=0xE115;
+  int wchar=FIRST_UCS2_USER_BITMAP;
   IMGHDR *img;
   OMS_DYNPNGLIST *dpl;
 	FSTATS fs;
@@ -315,11 +318,9 @@ void AddRadioButton(VIEWDATA *vd, int checked)
   {
     char * radio_bttn_clkd = getSymbolicPath("$resources\\radio_bttn_clkd.png");
     vd->WCHAR_RADIO_ON=AddPictureItemFile(vd, radio_bttn_clkd);
-    if (vd->WCHAR_RADIO_ON==0xE115) vd->WCHAR_RADIO_ON=0xE116;
     mfree(radio_bttn_clkd);
     char * radio_bttn = getSymbolicPath("$resources\\radio_bttn.png");
     vd->WCHAR_RADIO_OFF=AddPictureItemFile(vd, radio_bttn);
-    if (vd->WCHAR_RADIO_OFF==0xE115) vd->WCHAR_RADIO_OFF=0xE117;
     mfree(radio_bttn);
   }
   RawInsertChar(vd,checked?vd->WCHAR_RADIO_ON:vd->WCHAR_RADIO_OFF);
@@ -331,11 +332,9 @@ void AddCheckBoxItem(VIEWDATA *vd, int checked)
   {
     char * button_clkd = getSymbolicPath("$resources\\button_clkd.png");
     vd->WCHAR_BUTTON_ON=AddPictureItemFile(vd, button_clkd);
-    if (vd->WCHAR_BUTTON_ON==0xE115) vd->WCHAR_BUTTON_ON=0xE116;
     mfree(button_clkd);
     char * button = getSymbolicPath("$resources\\button.png");
     vd->WCHAR_BUTTON_OFF=AddPictureItemFile(vd, button);
-    if (vd->WCHAR_BUTTON_OFF==0xE115) vd->WCHAR_BUTTON_OFF=0xE117;
     mfree(button);
   }
   RawInsertChar(vd,checked?vd->WCHAR_BUTTON_ON:vd->WCHAR_BUTTON_OFF);
@@ -347,7 +346,6 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
   {
     char * text_form = getSymbolicPath("$resources\\text_form.png");
     vd->WCHAR_TEXT_FORM=AddPictureItemFile(vd, text_form);
-    if (vd->WCHAR_TEXT_FORM==0xE115) vd->WCHAR_TEXT_FORM=0xE11E;
     mfree(text_form);
   }
   RawInsertChar(vd,vd->WCHAR_TEXT_FORM);
@@ -360,15 +358,29 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
 
 void AddButtonItem(VIEWDATA *vd, const char *text, int len)
 {
-  int wchar=0xE115;
+  int wchar=FIRST_UCS2_USER_BITMAP;
   IMGHDR *img;
   OMS_DYNPNGLIST *dpl;
   int cw = 0;
   vd->work_ref.data=(void *)AllocWS(len);
   oms2ws(((WSHDR *)vd->work_ref.data),text,len);
-  for (int i = 1; i <= ((WSHDR *)vd->work_ref.data)->wsbody[0]; i++)
+  int datalen = ((WSHDR *)vd->work_ref.data)->wsbody[0];
+  for (int i = 1; i <= datalen; i++)
     cw+=GetSymbolWidth(((WSHDR *)vd->work_ref.data)->wsbody[i],FONT_SMALL);
-  img=CreateButton(cw+8,GetFontYSIZE(FONT_SMALL)+6);
+  cw+=8;
+  if (cw > ScreenW() - MARGIN)
+  {
+    while (cw > ScreenW() - MARGIN)
+    {
+      cw -= GetSymbolWidth(((WSHDR *)vd->work_ref.data)->wsbody[datalen--],FONT_SMALL);
+    }
+    ((WSHDR *)vd->work_ref.data)->wsbody[0] = datalen;
+    ((WSHDR *)vd->work_ref.data)->wsbody[datalen--] = 0x002E; // "."
+    ((WSHDR *)vd->work_ref.data)->wsbody[datalen--] = 0x002E;
+    ((WSHDR *)vd->work_ref.data)->wsbody[datalen--] = 0x002E;
+  }
+  
+  img=CreateButton(cw,GetFontYSIZE(FONT_SMALL)+6);
   if (img)
   {
     dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
@@ -383,7 +395,6 @@ void AddDropDownList(VIEWDATA *vd)
   {
     char * fname = getSymbolicPath("$resources\\list.png");
     vd->WCHAR_LIST_FORM=AddPictureItemFile(vd, fname);
-    if (vd->WCHAR_LIST_FORM==0xE115) vd->WCHAR_LIST_FORM=0xE11B;
     mfree(fname);
   }
   RawInsertChar(vd,vd->WCHAR_LIST_FORM);

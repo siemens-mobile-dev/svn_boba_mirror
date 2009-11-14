@@ -27,8 +27,9 @@ __swi __arm void SetCpuClockLow(int);
 __swi __arm void SetCpuClockHi(int);
 
 extern const char DEFAULT_PARAM[128];
+extern const int authcode_create_new;
 
-static void UpdateCSMname(char* url, int mode);
+void UpdateCSMname(char* url, int mode);
 extern int mrand(void);
 extern int mrandom(int);
 extern void msrand(unsigned seed);
@@ -58,6 +59,9 @@ char *from_url;
 char *goto_params;
 
 WSHDR *ws_console;
+
+WSHDR *search_string;
+int search_isCaseSens;
 
 int maincsm_id;
 
@@ -472,8 +476,6 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
   VIEWDATA *vd=malloc(sizeof(VIEWDATA));
   zeromem(vd,sizeof(VIEWDATA));
   vd->ws=AllocWS(256);
-  vd->search_string = AllocWS(256);
-  CutWSTR(vd->search_string,0);
   vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   data->vd=vd;
@@ -737,7 +739,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             int bookmark_menu_id;
             if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
             {
-              bookmark_menu_id=CreateInputBox(vd,rf);
+              bookmark_menu_id=CreateInputBox(vd, rf, vd->pos_cur_ref);
               main_csm->sel_bmk=bookmark_menu_id;
             }
           }
@@ -758,7 +760,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             int bookmark_menu_id;
             if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
             {
-              bookmark_menu_id=ChangeMenuSelection(vd, rf);
+              bookmark_menu_id=ChangeMenuSelection(vd, rf, vd->pos_cur_ref);
               main_csm->sel_bmk=bookmark_menu_id;
             }
           }
@@ -1063,7 +1065,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       break;
       
     case 0x35:
-      if (wstrlen(vd->search_string))
+      if (wstrlen(search_string))
       {
         FindStringOnPage(vd);
       }
@@ -1217,6 +1219,9 @@ static void maincsm_oncreate(CSM_RAM *data)
   InitUrlStack();
   MAIN_CSM *csm=(MAIN_CSM*)data;
   ws_console=AllocWS(1024);
+  search_string = AllocWS(256);
+  CutWSTR(search_string,0);
+  search_isCaseSens = 0;
   csm->csm.state=0;
   csm->csm.unk1=0;
   csm->view_id=CreateViewGUI(0,0);
@@ -1227,6 +1232,7 @@ static void KillAll(void)
 {
   FreePageStack();
   FreeWS(ws_console);
+  FreeWS(search_string);
   lgpFreeLangPack();
 }
 
@@ -1323,30 +1329,13 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
               vd=p->vd;
               if (vd)
               {
-                if (view_url_mode == MODE_URL)
+                if (!vd->title)
                 {
-                  char histbuf[512];
-                  strcpy(histbuf, view_url+2);
-                  strcat(histbuf, "|");
-                  if (vd->title)
+                  if (view_url_mode == MODE_URL)
                   {
-                    strcat(histbuf, vd->title);
-                    UpdateCSMname(vd->title, MODE_URL);
+                    UpdateCSMname(view_url+2, MODE_URL);             
                   }
-                  else
-                  {
-                    strcat(histbuf, view_url+2);
-                    UpdateCSMname(view_url+2, MODE_URL);
-                  }
-                  AddURLToHistory(histbuf);
-                }
-                if (view_url_mode == MODE_FILE)
-                {
-                  if (vd->title)
-                  {
-                    UpdateCSMname(vd->title, MODE_URL);
-                  }
-                  else
+                  if (view_url_mode == MODE_FILE)
                   {
                     UpdateCSMname(view_url, MODE_FILE);
                   }
@@ -1420,7 +1409,10 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           {
             if (ParseInputFilename(goto_url))
             {
-              csm->view_id=CreateViewGUI(1, ipc->data);
+              if (ipc->data == (void*)0xFA) //Special case for OMS bookmarks
+                csm->view_id=CreateViewGUI(0, 0); //cached = false, no data
+              else
+                csm->view_id=CreateViewGUI(1, ipc->data);
             }
             _safe_free(goto_url);
             csm_result=0;   //Обработали сообщение 
@@ -1486,6 +1478,11 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
         }
         else
           goto L_CLOSE;
+      case 0xFA:
+        {
+          SUBPROC((void*)GotoFile, 0xFA); //OMS bookmarks
+          break;
+        }
       default:
       L_CLOSE:
         csm->csm.state=-3;
@@ -1505,6 +1502,10 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       if ((int)msg->data1==0xFF)
       {
         GeneralFunc_flag1(csm->view_id,0xFF);
+      }
+      if ((int)msg->data1==0xFA)
+      {
+        GeneralFunc_flag1(csm->view_id,0xFA);
       }
       csm->sel_bmk=0;
     }
@@ -1547,7 +1548,7 @@ static const struct
   }
 };
 
-static void UpdateCSMname(char *url, int mode)
+void UpdateCSMname(char *url, int mode)
 {
   WSHDR *ws=AllocWS(256);
   switch(mode)
@@ -1738,23 +1739,16 @@ int main(const char *exename, const char *filename)
 
   if (!LoadAuthCode())
   {
-    char prefix[7];
-    int p1 = mrandom(15), p2 = mrandom(15);
-    snprintf(prefix, 7, "p%02d-%02d", p1, p2);
-    char code[32];
-    for(int i = 0; i < 16; i++)
-      snprintf(code+(i<<1), 3, "%02X", mrandom(255));    
-    
-    if(!SaveAuthCode(prefix, code))
+    if (authcode_create_new)
     {
-      LockSched();
-      ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
-      UnlockSched();
-      SUBPROC((void *)Killer);
-      return 0;
-    }
-    else
-      if (!LoadAuthCode())
+      char prefix[7];
+      int p1 = mrandom(15), p2 = mrandom(15);
+      snprintf(prefix, 7, "p%02d-%02d", p1, p2);
+      char code[32];
+      for(int i = 0; i < 16; i++)
+        snprintf(code+(i<<1), 3, "%02X", mrandom(255));    
+      
+      if(!SaveAuthCode(prefix, code))
       {
         LockSched();
         ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
@@ -1762,6 +1756,24 @@ int main(const char *exename, const char *filename)
         SUBPROC((void *)Killer);
         return 0;
       }
+      else
+        if (!LoadAuthCode())
+        {
+          LockSched();
+          ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
+          UnlockSched();
+          SUBPROC((void *)Killer);
+          return 0;
+        }
+    }
+    else
+    {
+      LockSched();
+      ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
+      UnlockSched();
+      SUBPROC((void *)Killer);
+      return 0;
+    }
   }
 
   if (ParseInputFilename(filename)) // open oms or url

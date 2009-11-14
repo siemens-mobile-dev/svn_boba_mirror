@@ -11,7 +11,7 @@
 #define MARGIN 2
 #endif
 
-#define GOTO_PARAMS_OFFSET 1200
+#define GOTO_PARAMS_OFFSET 2000
 
 typedef struct
 {
@@ -153,9 +153,6 @@ typedef struct
   char *title;
   
   int WCHAR_BUTTON_OFF, WCHAR_BUTTON_ON, WCHAR_RADIO_OFF, WCHAR_RADIO_ON, WCHAR_TEXT_FORM, WCHAR_LIST_FORM;
-  
-  WSHDR *search_string;
-  int    search_isCaseSens;
   
 }VIEWDATA;
 
