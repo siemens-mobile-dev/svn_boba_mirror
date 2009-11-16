@@ -622,11 +622,12 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         extern int view_url_mode;
         if (view_url_mode == MODE_URL)
         {
-          char histbuf[512];
+          char *histbuf = malloc(strlen(vd->pageurl) + strlen(vd->title) + 2);
           strcpy(histbuf, vd->pageurl+2);
           strcat(histbuf, "|");
           strcat(histbuf, vd->title);
           AddURLToHistory(histbuf);
+          mfree(histbuf);
         }
         AddBrItem(vd);
       }
@@ -926,7 +927,10 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
   }
   if (vd->zs)
   {
-    if (vd->zs->avail_out==0) goto L_ZNEXT;
+    if (vd->zs->avail_out==0)
+    {
+      goto L_ZNEXT;
+    }
   }
 }
 

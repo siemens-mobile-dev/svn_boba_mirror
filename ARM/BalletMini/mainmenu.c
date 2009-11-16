@@ -1328,10 +1328,11 @@ int history_menu_onkey(void *gui, GUI_MSG *msg) //history
       char *histdelim = strchr(history[i], '|');
       if (histdelim)
       {
-        char histurl[256];
+        char* histurl = malloc(histdelim-history[i]+1);;
         memcpy(histurl, history[i], histdelim-history[i]);
         histurl[histdelim-history[i]] = 0;
         ShowLink(histurl);
+        mfree(histurl);
       }
     }
   }

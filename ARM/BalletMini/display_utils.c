@@ -986,6 +986,13 @@ static const SOFTKEYSTAB input_box_menu_skt=
 
 HEADER_DESC input_box_hdr={0,0,0,0,NULL,(int)"Enter:",LGP_NULL};
 
+#pragma swi_number=0x2AF
+__swi __arm void SetHeaderText(void *hdr_pointer, WSHDR *txt, void *malloc_adr, void *mfree_adr);
+
+#pragma swi_number=0x2AE
+__swi __arm void *GetHeaderPointer(void *gui);
+
+
 static void input_box_ghook(GUI *data, int cmd)
 {
   SOFTKEY_DESC sk={0x0FFF,0x0000,(int)lgpData[LGP_Ok]};
@@ -996,6 +1003,13 @@ static void input_box_ghook(GUI *data, int cmd)
   if (cmd==7)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
+    void *ma=malloc_adr();
+    void *mf=mfree_adr();
+    WSHDR* htext = AllocWS(256);
+    EDITCONTROL ec;
+    ExtractEditControl(data,1,&ec);
+    wsprintf(htext,"%t    %d", lgpData[LGP_EnterHeader], ec.pWS->wsbody[0]);
+    SetHeaderText(GetHeaderPointer(data), htext, ma, mf);
   }
   if(cmd==TI_CMD_FOCUS)
   {
