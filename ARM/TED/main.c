@@ -231,7 +231,7 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
   {
     IMGHDR R_hdr = {SCR_WIDTH-1,SCR_HEIGHT-1,0x1,rscr};
 //ScreenH()-(editmode?(HeaderH()+SoftkeyH()+YDISP+1):0)
-    StoreXYWHtoRECT(&rc,x,y,img->h,img->w);
+    StoreXYWHtoRECT(&rc,x,y,img->w,img->h);
     //zeromem(rscr, SCR_WIDTH*SCR_HEIGHT/8);
             
     scr_wb = SCR_HEIGHT>>3;
@@ -257,8 +257,10 @@ void DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
             *(rscr+((xx<<3)+i)*scr_hb+((my>>3)-yy)) = block[7-i];
         }
       }
+#ifndef ELKA
       for(i = 1; i < SCR_WIDTH*SCR_HEIGHT/8; i++)
         rscr[i-1] = ((rscr[i-1] << 4)&0xF0) | ((rscr[i] >> 4)&0x0F);
+#endif
     }
     else
     {
@@ -678,10 +680,12 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
   if (*p)
   {
 //    i=1; //Считаем со второго символа
+    if(*p == ' ') *p = 1; //костыль для попиксельного расширения
     iw += chars_width[p[0]];
     while((c=p[i++])) //Пока не конец строки
     {
-      if (c==' ') spcs++; //Считаем пробелы
+      if(c == ' ') c = 1; //костыль для попиксельного расширения
+      if (c==1) spcs++; //Считаем пробелы
       iw += chars_width[c];
     }
   }
@@ -690,7 +694,8 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
   else
   {
 //    i=max_x-i; //Теперь в i - общее количество добавляемых пробелов
-    i=((editmode?max_x_emode:max_x)-iw)/chars_width[' ']; //Теперь в i - общее количество добавляемых пробелов
+//    i=((editmode?max_x_emode:max_x)-iw)/chars_width[' ']; //Теперь в i - общее количество добавляемых пробелов
+    i=((editmode?max_x_emode:max_x)-iw)/chars_width[1]; //Теперь в i - общее количество добавляемых пробелов
   }
   spcadd=0;
   spcsum=0;
@@ -713,11 +718,12 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
   do
   {
     c=*p;
+    if(c == ' ') c = 1; //костыль для попиксельного расширения
     if (c)
     {
       if (ep>=0) editline[ep++]=c;
       if (vp!=0) vp--; else {DrawChar(c,iw,y); iw += chars_width[c];}
-      if (c==' ')
+      if (c==1)
       {
 	//Добавляем пробелы
 	if (spcsum>=65536)
@@ -732,8 +738,10 @@ void drawFrmStkStr(char *p, unsigned int y, unsigned int vp, int ep)
     else
     {
     L2:
-      DrawChar(' ',iw,y);
-      iw += chars_width[' '];
+//      DrawChar(' ',iw,y);
+//      iw += chars_width[' '];
+      DrawChar(1,iw,y);
+      iw += chars_width[1];
     }
   }
   while(iw<(editmode?max_x_emode:max_x));
@@ -1192,7 +1200,7 @@ void DrawScreen(void)
       {
 	//Есть строки выше текущей
 	p=bl_us(p);
-	if ((c>' ')&&(!(HISTORY.fmt&0x80))&&(cursor_off))
+	if ((c>' ')&&((HISTORY.fmt&0x80))&&(cursor_off))
 	  drawFrmStkStr(ustk+p,--y,viewpos,-1);
 	else
 	  drawStkStr(ustk+p,--y,viewpos,-1);
@@ -1215,7 +1223,7 @@ void DrawScreen(void)
 	  unsigned int p1;
 	  p1=bl_ds(p);
 	  if (p1!=STKSZ) c=dstk[p1]; else c=0; //Посл. строка не расширяется
-	  if ((c>' ')&&(!(HISTORY.fmt&0x80))&&(cursor_off))
+	  if ((c>' ')&&((HISTORY.fmt&0x80))&&(cursor_off))
 	    drawFrmStkStr(dstk+p,y++,viewpos,f);
 	  else
 	    drawStkStr(dstk+p,y++,viewpos,f);
@@ -1485,8 +1493,8 @@ void clearclipb(void)
 
 void* edmenu_HNDLS[8]=
 {
-  (void *)insline,
   (void *)delline,
+  (void *)insline,
   (void *)splitline,
   (void *)joinlines,
   (void *)instime,
@@ -1497,8 +1505,8 @@ void* edmenu_HNDLS[8]=
 
 MENUITEM_DESC edmenu_ITEMS[8]=
 {
-  {NULL,(int)"Insert line"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Delete line"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
+  {NULL,(int)"Insert line"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Split line"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Join lines"     ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
   {NULL,(int)"Insert time"    ,LGP_NULL,0,NULL,MENU_FLAG3,MENU_FLAG2},
@@ -2230,9 +2238,10 @@ void LoadFont(int flag)
       fread(fin,&chars_width_src[i],1,&ul);
       fread(fin,font+i*FW*FH,FW*FH,&ul);
     }
-    
     fclose(fin,&ul);
   }
+  chars_width_src[1] = 1;
+  zeromem(font+FW*FH, FW*FH);
 
   CharWidthForCodepage();
   
@@ -2311,7 +2320,7 @@ void load_direct(void)
   if(HISTORY.fmt!=255) GeneralFuncF1(1);
   draw_mode=255;
   disk_access=FIRSTLOAD;
-  HISTORY.fmt=0;
+  HISTORY.fmt = 0|(HISTORY.fmt&0x80);
   
   SUBPROC((void *)FirstLoadFile,0);
 }
@@ -2321,7 +2330,7 @@ void load_format(void)
 //  loadmenu_id=0;
   draw_mode=255;
   disk_access=FIRSTLOAD;
-  HISTORY.fmt=1;
+  HISTORY.fmt=1|(HISTORY.fmt&0x80);
   
   GeneralFuncF1(1);
   SUBPROC((void *)FirstLoadFile,1);
@@ -2332,7 +2341,7 @@ void load_eolspc(void)
 //  loadmenu_id=0;
   draw_mode=255;
   disk_access=FIRSTLOAD;
-  HISTORY.fmt=2;
+  HISTORY.fmt=2|(HISTORY.fmt&0x80);
     
   GeneralFuncF1(1);
   SUBPROC((void *)FirstLoadFile,2);
@@ -2396,17 +2405,17 @@ void mode_menu_iconhndl(void * data, int curitem, void * user_pointer)
   switch(curitem)
   {
     case 0:
-      if(HISTORY.fmt==0) strcat(tmp, asterix);
+      if((HISTORY.fmt&0x7F)==0) strcat(tmp, asterix);
       strcat(tmp, "Direct load");
       //GeneralFunc_flag1(loadmenu_id, 1);
       break;
     case 1:
-      if(HISTORY.fmt==1) strcat(tmp, asterix);
+      if((HISTORY.fmt&0x7F)==1) strcat(tmp, asterix);
       strcat(tmp, "DOS format");
       //GeneralFunc_flag1(loadmenu_id, 1);
       break;
     case 2:
-      if(HISTORY.fmt==2) strcat(tmp, asterix);
+      if((HISTORY.fmt&0x7F)==2) strcat(tmp, asterix);
       strcat(tmp, "WIN format");
       //GeneralFunc_flag1(loadmenu_id, 1);
       break;
@@ -2529,7 +2538,7 @@ int load_menu_onkey(void *data, GUI_MSG *msg)
     switch(n)
     {
     case 0:
-      DrawFontMenu();
+      load_save();
       break;
     case 1:
       do_rotate();
@@ -2541,8 +2550,9 @@ int load_menu_onkey(void *data, GUI_MSG *msg)
       load_pad();
       break;
     case 4:
-      load_save();
+      DrawFontMenu();
       break;
+
     }
     return (0);
   }
@@ -2570,19 +2580,13 @@ void load_menu_iconhndl(void * data, int curitem, void * user_pointer)
    switch(curitem)
    {
     case 0:
-      if (cur)
-      {
-        strcpy(tmp, ">");
-        strcat(tmp, cur->name);
-      }
-      else
-        strcpy(tmp, ">Select font");
+      strcpy(tmp, "Save as...");
       break;
     case 1:
       strcpy(tmp, "Rotate");
       break;
     case 2:
-      switch(HISTORY.fmt+100)
+      switch((HISTORY.fmt&0x7F)+100)
       {
         case 100:
           strcpy(tmp, ">Direct load");
@@ -2600,10 +2604,19 @@ void load_menu_iconhndl(void * data, int curitem, void * user_pointer)
       }
       break;
     case 3:
-      strcpy(tmp, "Padding on/off");
+      if(HISTORY.fmt & 0x80)
+        strcpy(tmp, "Padding on");
+      else
+        strcpy(tmp, "Padding off");
       break;
     case 4:
-      strcpy(tmp, "Save as...");
+      if (cur)
+      {
+        strcpy(tmp, ">");
+        strcat(tmp, cur->name);
+      }
+      else
+        strcpy(tmp, ">Select font");
       break;
     default:
       strcpy(tmp, "Error");
