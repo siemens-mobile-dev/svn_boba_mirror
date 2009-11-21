@@ -222,15 +222,21 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->parse_state=OMS_PAGEURL_DATA;
       break;
     case OMS_PAGEURL_DATA:
+      {
       i=vd->oms_wanted-vd->oms_pos;
       //AddTextItem(vd,vd->oms+vd->oms_pos,i);
       //AddBrItem(vd);
       vd->pageurl=(char *)malloc(i+1);
+      char* ttt = malloc(i+1);
       memcpy(vd->pageurl,vd->oms+vd->oms_pos,i);
       vd->pageurl[i]=NULL;
+      utf82win(ttt,vd->pageurl);
+      strcpy(vd->pageurl, ttt);
+      mfree(ttt);
       vd->oms_pos=vd->oms_wanted;
       vd->oms_wanted++;
       vd->parse_state=OMS_TAG_NAME;
+      }
       break;
     case OMS_TAG_NAME:
       // STAGE 1

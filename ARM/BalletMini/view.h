@@ -11,7 +11,7 @@
 #define MARGIN 2
 #endif
 
-#define GOTO_PARAMS_OFFSET 2000
+#define GOTO_PARAMS_OFFSET 4096
 
 typedef struct
 {

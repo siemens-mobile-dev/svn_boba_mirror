@@ -5,6 +5,7 @@
 #include "string_works.h"
 #include "siemens_unicode.h"
 #include "file_works.h"
+#include "urlstack.h"
 
 #define DP_IS_FRAME (-2)
 #define DP_IS_NOINDEX (-1)
@@ -349,11 +350,20 @@ void AddInputItem(VIEWDATA *vd, unsigned int pos)
     mfree(text_form);
   }
   RawInsertChar(vd,vd->WCHAR_TEXT_FORM);
-  int len=_rshort2(vd->oms+pos);
-  vd->work_ref.data=(void *)AllocWS(len);
-  char *c=extract_omstr(vd,pos);
-  oms2ws(((WSHDR *)vd->work_ref.data),c,len);
-  mfree(c);
+  WSHDR* saved_text = getUserTextByRefId(vd->work_ref.id);
+  if (saved_text)
+  {
+    vd->work_ref.data=(void *)AllocWS(wstrlen(saved_text));
+    wstrcpy((WSHDR *)vd->work_ref.data, saved_text);
+  }
+  else
+  {
+    int len=_rshort2(vd->oms+pos);
+    vd->work_ref.data=(void *)AllocWS(len);
+    char *c=extract_omstr(vd,pos);
+    oms2ws(((WSHDR *)vd->work_ref.data),c,len);
+    mfree(c);
+  }
 }
 
 void AddButtonItem(VIEWDATA *vd, const char *text, int len)
@@ -397,5 +407,6 @@ void AddDropDownList(VIEWDATA *vd)
     vd->WCHAR_LIST_FORM=AddPictureItemFile(vd, fname);
     mfree(fname);
   }
+  getUserListByRefId(vd->work_ref.id, &(vd->work_ref.value), &(vd->work_ref.id2));
   RawInsertChar(vd,vd->WCHAR_LIST_FORM);
 }

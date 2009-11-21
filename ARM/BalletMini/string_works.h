@@ -32,5 +32,6 @@ char * ToWeb(char *src,int special, int conv_percent);
 void oms2ws(WSHDR *ws, const char *text, int len);
 void utf82win(char*d,const char *s);
 int CompareWchar(short wchar1, short wchar2, int isCaseSensitive);
+int ws2ascii(char *buf, WSHDR *ws);
 
 #endif /* _STRING_WORKS_H_ */

@@ -6,12 +6,16 @@
 #include "rect_patcher.h" 
 #include "main.h"
 #include "file_works.h"
+#include "urlstack.h"
 #include "lang.h"
 
 extern int maincsm_id;
 
 extern const int scr_shift;
 extern const int word_wrap;
+
+extern const int cfgPwdNormalText;
+extern const int cfgShowCharCounter;
 
 extern WSHDR *search_string;
 extern int search_isCaseSens;
@@ -1003,13 +1007,16 @@ static void input_box_ghook(GUI *data, int cmd)
   if (cmd==7)
   {
     SetSoftKey(data,&sk,SET_SOFT_KEY_N);
-    void *ma=malloc_adr();
-    void *mf=mfree_adr();
-    WSHDR* htext = AllocWS(256);
-    EDITCONTROL ec;
-    ExtractEditControl(data,1,&ec);
-    wsprintf(htext,"%t    %d", lgpData[LGP_EnterHeader], ec.pWS->wsbody[0]);
-    SetHeaderText(GetHeaderPointer(data), htext, ma, mf);
+    if (cfgShowCharCounter)
+    {
+      void *ma=malloc_adr();
+      void *mf=mfree_adr();
+      WSHDR* htext = AllocWS(256);
+      EDITCONTROL ec;
+      ExtractEditControl(data,1,&ec);
+      wsprintf(htext,"%t    %d", lgpData[LGP_EnterHeader], ec.pWS->wsbody[0]);
+      SetHeaderText(GetHeaderPointer(data), htext, ma, mf);
+    }
   }
   if(cmd==TI_CMD_FOCUS)
   {
@@ -1062,6 +1069,7 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
     FreeWS(((WSHDR *)text_ref->data));
     text_ref->data=(void *)AllocWS(ec.pWS->wsbody[0]);
     wstrcpy(((WSHDR *)text_ref->data),ec.pWS);
+    setUserText(text_ref->id, ec.pWS);
     if (!text_ref->no_upload)
     {
       goto_url=malloc(strlen(cur_vd->pageurl)+1);
@@ -1125,7 +1133,7 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE* rf, unsigned int cur_pos_ref)
   wstrcpy(ews,((WSHDR *)rf->data));
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|(rf->tag=='p'?ECF_PASSW:NULL),ews,16384);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|(((rf->tag=='p')&&(!cfgPwdNormalText))?ECF_PASSW:NULL),ews,16384);
   AddEditControlToEditQend(eq,&ec,ma);
 
   FreeWS(ews);
@@ -1255,6 +1263,7 @@ int sel_menu_onkey(void *gui, GUI_MSG *msg)
       {
         sel_ref->value=ustop->value;
         sel_ref->id2=ustop->id2;
+        setUserList(sel_ref->id, sel_ref->value, sel_ref->id2);
         if (!sel_ref->no_upload)
         {
           goto_url=malloc(strlen(cur_vd->pageurl)+1);
@@ -1436,11 +1445,41 @@ static void link_box_ghook(GUI *data, int cmd)
   }
 }
 
+void link_options(USR_MENU_ITEM *item)
+{
+  const char per_t[] = "%t";
+  if (item->type==0)
+  {
+    switch(item->cur_item)
+    {
+      case 0: wsprintf(item->ws,per_t,"ballet"); break;
+      case 1: wsprintf(item->ws,per_t,"browser");break;
+      case 2: wsprintf(item->ws,per_t,"nrss");break;
+      case 3: wsprintf(item->ws,per_t,"sieget");break;
+    }
+  }
+  if (item->type==1)
+  {
+    GUI *gui = (GUI*)(item->user_pointer);
+    EDITCONTROL ec;
+    ExtractEditControl(gui,1,&ec);
+    char* s = malloc(wstrlen(ec.pWS)+1);
+    ws2ascii(s, ec.pWS);
+    RunOtherByURL(s,item->cur_item);
+    mfree(s);
+  }   
+}
+
 static int link_box_onkey(GUI *data, GUI_MSG *msg)
 {
   if (msg->keys==0xFFF)
   {
     return (0xFF);
+  }
+  if ((msg->gbsmsg->msg==KEY_DOWN) && (msg->gbsmsg->submess == ENTER_BUTTON))
+  {
+    EDIT_OpenOptionMenuWithUserItems(data,link_options,data,4);
+    return -1;
   }
   return (0);
 }
@@ -1477,13 +1516,13 @@ int ShowLink(char *link)
   void *ma=malloc_adr();
   void *eq;
   EDITCONTROL ec;
-  WSHDR* wslink = AllocWS(512);
+  WSHDR* wslink = AllocWS(strlen(link));
   ascii2ws(wslink, link);
   
   eq=AllocEQueue(ma,mfree_adr());
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,wslink,512);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,wslink,wstrlen(wslink)*2);
   AddEditControlToEditQend(eq,&ec,ma);
   FreeWS(wslink);
 

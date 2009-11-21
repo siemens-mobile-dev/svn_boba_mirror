@@ -1,14 +1,33 @@
 #include "..\inc\swilib.h"
 #include "urlstack.h"
 #include "file_works.h"
+#include "string_works.h"
 
 static const int DMonth[]={0,31,59,90,120,151,181,212,243,273,304,334,365};
+
+typedef struct
+{
+  unsigned int ref_id;
+  WSHDR* text;
+}tUserText;
+
+typedef struct
+{
+  unsigned int ref_id;
+  unsigned int value;
+  unsigned int id2;  
+}tUserList;
+
 
 typedef struct
 {
   unsigned long id;
   unsigned int  view_line;
   unsigned int  pos_cur_ref;
+  unsigned int user_text_counter;
+  tUserText* user_text;
+  unsigned int user_list_counter;
+  tUserList* user_list;
 }tPageStack;
 
 tPageStack PageSTACK[PageSTACK_SIZE];
@@ -34,10 +53,73 @@ void* getPageParams(void)
   return &(PageSTACK[stack_top]);
 }
 
+void setUserList(unsigned int refid, unsigned int value, unsigned int id2)
+{
+  for (int i = 0; i < PageSTACK[stack_top-1].user_list_counter; i++)
+  {
+    if (PageSTACK[stack_top-1].user_list[i].ref_id == refid)
+    {
+      PageSTACK[stack_top-1].user_list[i].value = value;
+      PageSTACK[stack_top-1].user_list[i].id2 = id2;
+      return;
+    }
+  }
+  int cntr = PageSTACK[stack_top-1].user_list_counter++;
+  PageSTACK[stack_top-1].user_list = realloc(PageSTACK[stack_top-1].user_list, 
+                                             sizeof(tUserList)*(cntr+1));
+  PageSTACK[stack_top-1].user_list[cntr].ref_id = refid;
+  PageSTACK[stack_top-1].user_list[cntr].value = value;
+  PageSTACK[stack_top-1].user_list[cntr].id2 = id2;
+}
+
+void setUserText(unsigned int refid, WSHDR* text)
+{
+  for (int i = 0; i < PageSTACK[stack_top-1].user_text_counter; i++)
+  {
+    if (PageSTACK[stack_top-1].user_text[i].ref_id == refid)
+    {
+      FreeWS(PageSTACK[stack_top-1].user_text[i].text);
+      PageSTACK[stack_top-1].user_text[i].text = AllocWS(wstrlen(text));
+      wstrcpy(PageSTACK[stack_top-1].user_text[i].text, text);
+      return;
+    }
+  }
+  int cntr = PageSTACK[stack_top-1].user_text_counter++;
+  PageSTACK[stack_top-1].user_text = realloc(PageSTACK[stack_top-1].user_text, 
+                                             sizeof(tUserText)*(cntr+1));
+  PageSTACK[stack_top-1].user_text[cntr].ref_id = refid;
+  PageSTACK[stack_top-1].user_text[cntr].text = AllocWS(wstrlen(text));
+  wstrcpy(PageSTACK[stack_top-1].user_text[cntr].text, text);
+}
+
 void setPageParams(unsigned int view_line, unsigned int pos_cur_ref)
 {
   PageSTACK[stack_top-1].view_line = view_line;
   PageSTACK[stack_top-1].pos_cur_ref = pos_cur_ref;
+}
+
+WSHDR* getUserTextByRefId(unsigned int refid)
+{
+  for (int i = 0; i < PageSTACK[stack_top-1].user_text_counter; i++)
+  {
+    if (PageSTACK[stack_top-1].user_text[i].ref_id == refid)
+      return PageSTACK[stack_top-1].user_text[i].text;
+  }
+  return NULL;   
+}
+
+int getUserListByRefId(unsigned int refid , unsigned int *value, unsigned int *id2)
+{
+  for (int i = 0; i < PageSTACK[stack_top-1].user_list_counter; i++)
+  {
+    if (PageSTACK[stack_top-1].user_list[i].ref_id == refid)
+    {
+      *value = PageSTACK[stack_top-1].user_list[i].value;
+      *id2 = PageSTACK[stack_top-1].user_list[i].id2;
+      return 1;
+    }
+  }
+  return 0;   
 }
 
 unsigned int getViewLine(void* data)
@@ -56,6 +138,16 @@ static void killpage(int n)
   unlink(fn,&err);
   PageSTACK[n].id=0;
   PageSTACK[n].view_line=0;
+  for (int i = 0; i < PageSTACK[n].user_text_counter; i++)
+  {
+    FreeWS(PageSTACK[n].user_text[i].text);
+  }
+  PageSTACK[n].user_text_counter = 0;
+  mfree(PageSTACK[n].user_text);
+  PageSTACK[n].user_text = NULL;
+  PageSTACK[n].user_list_counter = 0;
+  mfree(PageSTACK[n].user_list);
+  PageSTACK[n].user_list = NULL;
   mfree(fn);
 }
 
@@ -91,7 +183,6 @@ char *PushPageToStack(void)
     i++;
   }
   PageSTACK[stack_top].id=iday;
-  PageSTACK[stack_top].view_line=0;
   return pagename(stack_top++);
 }
 

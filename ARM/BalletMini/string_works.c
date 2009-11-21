@@ -164,6 +164,21 @@ int char8to16(int c)
   return (c); 
 }
 
+int ws2ascii(char *buf, WSHDR *ws)
+{
+  unsigned int sWs=ws->wsbody[0];
+  int p=0;
+  unsigned int cWs;
+  while(p<sWs)
+  {
+    cWs=ws->wsbody[p+1];
+    buf[p]=char16to8(cWs);
+    p++;
+  }
+  buf[p] = 0;
+  return p;
+}
+
 void ascii2ws(WSHDR *ws, const char *s)
 {
   char c;
@@ -356,6 +371,8 @@ int CompareWchar(short wchar1, short wchar2, int isCaseSensitive)
     if ((wchar2 < 0x100)&&(wchar2&0x40)) wchar2&=0xDF;
     if ((wchar1 >= 0x430)&&(wchar1 < 0x450)) wchar1-=0x20;
     if ((wchar2 >= 0x430)&&(wchar2 < 0x450)) wchar2-=0x20;
+    if ((wchar1 > 0x450)&&(wchar1 <= 0x45F)) wchar1-=0x50;
+    if ((wchar2 > 0x450)&&(wchar2 <= 0x45F)) wchar2-=0x50;
     return (wchar1 == wchar2);
   }
 }

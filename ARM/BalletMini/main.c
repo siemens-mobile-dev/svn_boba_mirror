@@ -538,32 +538,54 @@ static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
   data->gui.state=1;
 }
 
-static void RunOtherCopyByURL(const char *url, int isNativeBrowser)
+void RunOtherByURL(const char *url, int other)
 {
   int f;
   unsigned int err;
   WSHDR *ws;
-  char * filename = getSymbolicPath("$urlcache\\$date$time.url");
-  f=fopen(filename,A_Create+A_Truncate+A_BIN+A_ReadWrite,P_READ+P_WRITE,&err);
-  if (f!=-1)
+  char* filename;
+  if (other == 3) //sieget
   {
-    fwrite(f,url,strlen(url),&err);
-    fclose(f,&err);
-    ws=AllocWS(512);
-    if (isNativeBrowser)
+    if (sieget_ipc.data) mfree(sieget_ipc.data);
+    sieget_ipc.name_to = sieget_ipc_name; // Посылка url в SieGet
+    sieget_ipc.name_from = ipc_my_name;
+    sieget_ipc.data = malloc(strlen(url) + 1);
+    strcpy((char *)sieget_ipc.data, url);
+    GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &sieget_ipc);
+  }
+  else
+  {
+    if (other <= 1)
     {
-      str_2ws(ws,filename,511);
-      ExecuteFile(ws,NULL,NULL);
+      filename = getSymbolicPath("$urlcache\\$date$time.url");
     }
     else
     {
-      str_2ws(ws,BALLET_EXE,511);
-      ExecuteFile(ws,NULL,filename);
-    } 
-    FreeWS(ws);
-    unlink(filename,&err);
+      filename = getSymbolicPath("$urlcache\\$date$time.urss");
+    }
+    f=fopen(filename,A_Create+A_Truncate+A_BIN+A_ReadWrite,P_READ+P_WRITE,&err);
+    if (f!=-1)
+    {
+      fwrite(f,url,strlen(url),&err);
+      fclose(f,&err);
+      ws=AllocWS(512);
+      switch (other)
+      {
+      case 0: //other copy of ballet
+        str_2ws(ws,BALLET_EXE,511);
+        ExecuteFile(ws,NULL,filename);
+        break;
+      case 1: //native browser
+      case 2: //nrss
+        str_2ws(ws,filename,511);
+        ExecuteFile(ws,NULL,NULL);
+        break;
+      }
+      FreeWS(ws);
+      unlink(filename,&err);
+    }
+    mfree(filename);
   }
-  mfree(filename);
 }
 
 GoToLocalLinkPos(VIEWDATA* vd, char* anchor)
@@ -677,7 +699,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           if (rf->id!=_NOREF)
           {
             char *s=extract_omstr(vd,rf->id);
-            RunOtherCopyByURL(s,1);
+            RunOtherByURL(s,1);
             mfree(s);
           }
           break;
@@ -685,7 +707,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           if (rf->id!=_NOREF)
           {
             char *s=extract_omstr(vd,rf->id);
-            RunOtherCopyByURL(s,1);
+            RunOtherByURL(s,1);
             mfree(s);
           }
           break;
@@ -915,7 +937,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
         }
       break;
-    case 0x32:
     case GREEN_BUTTON:
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
@@ -930,14 +951,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               s+=2;
             if (rf->tag=='Z')
               s+=strlen(s)+1;
-            if (msg->gbsmsg->submess==0x32)
-            {
-              RunOtherCopyByURL(s,1);
-            }
-            else
-            {
-              RunOtherCopyByURL(s,0);
-            }
+            RunOtherByURL(s,0);
             mfree(ss);
           }
         }

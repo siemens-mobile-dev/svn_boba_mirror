@@ -21,6 +21,16 @@ __root const int JAVA_HEAP_SIZE=3072;
 __root const int JAVA_HEAP_SIZE=768;
 #endif
 
+__root const CFG_HDR cfghdr01_beg={CFG_LEVEL,"Text edit field",1,0};
+
+__root const CFG_HDR cfghdr001 = {CFG_CHECKBOX, "Show char counter", 0, 2};
+__root const int cfgShowCharCounter = 0;
+
+__root const CFG_HDR cfghdr002 = {CFG_CHECKBOX, "Edit passwords as normal text", 0, 2};
+__root const int cfgPwdNormalText = 0;
+
+__root const CFG_HDR cfghdr01_end={CFG_LEVEL,"",0,0};
+
 __root const CFG_HDR cfghdr3={CFG_LEVEL,"Server",1,0};
 
 __root const CFG_HDR cfghdr3_1={CFG_STR_WIN1251,"Host",0,31};

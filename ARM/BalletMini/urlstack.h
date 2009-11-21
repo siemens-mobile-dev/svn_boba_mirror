@@ -15,5 +15,9 @@ void setPageParams(unsigned int view_line, unsigned int pos_cur_ref);
 int CheckPageStackTop(void);
 void InitUrlStack(void);
 char* getCurrPageName();
+WSHDR* getUserTextByRefId(unsigned int refid);
+void setUserText(unsigned int refid, WSHDR* text);
+int getUserListByRefId(unsigned int refid , unsigned int *value, unsigned int *id2);
+void setUserList(unsigned int refid, unsigned int value, unsigned int id2);
 
 #endif /* _URLSTACK_H_ */
