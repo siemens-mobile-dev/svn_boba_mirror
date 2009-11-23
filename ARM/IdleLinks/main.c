@@ -1,10 +1,7 @@
 #include "..\inc\swilib.h"
-#include "..\inc\cfg_items.h"
 #include "conf_loader.h"
 #include "nsd.h"
-#include "IdleLinks.h"
-#include "keyhook.h"
-#include "main.h"
+#include "conf_ex.h"
 
 extern void kill_data(void *p,void (*func_p)(void *));
 void ElfKiller(void)
@@ -15,6 +12,15 @@ void ElfKiller(void)
 
 int main(void)
 {
-  NSD_Create();
+  if (CreatePathToBcfgs() == 1) // Если есть (или  создалась) подпапка в etc
+  {
+    InitConfig(); // Загружаем основной конфиг
+    LoadBcfgs(); // Загружаем конфиги с ярлычками
+    NSD_Create(); // Пускаем NSD демона
+  }
+  else
+  {
+    ShowMSG(1, (int)"Error creating '?:\\Zbin\\etc\\IdleLinks' folder!"); // Нецнзурно материмся
+  }
   return 0;
 }

@@ -8,6 +8,6 @@
 
 // Вызвать обязательно перед обращением к переменным конфигурации
 void InitConfig();
-void RereadSettings(void);
+void InitLink(const char *fname);
 
 #endif

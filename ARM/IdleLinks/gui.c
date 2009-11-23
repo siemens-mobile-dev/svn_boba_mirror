@@ -3,15 +3,20 @@
 #include "conf_loader.h"
 #include "utils.h"
 #include "idle.h"
+#include "navigation.h"
+#include "IdleLinks.h"
 
-extern  const int count;
-extern const int vybor;
+extern const int BCFG_SELECT_TYPE;
 
 extern const int minus11;
 unsigned short maincsm_name_body[140];
 extern void kill_data(void *p,void (*func_p)(void *));
 
 int pos;
+TLabelData *Current;
+
+extern TLabelData *TLabels;
+
 const RECT Canvas={0,0,0,0};
 
 typedef struct
@@ -24,81 +29,95 @@ typedef struct
 
 void OnRedraw(MAIN_GUI *data) // OnRedraw
 {
-  int i=0;
-  do
+  Draw_ScreenShot();
+  TLabelData *all = TLabels;
+  if (TLabels)
+  {
+    Draw_GUI(all);
+    while(all->next)
     {
-      Draw_GUI(i, pos);
-      i++;
+      all = all->next;
+      Draw_GUI(all);
     }
-  while (i<=count);
-
-  if (vybor==1)
-    {
-      Draw_Select(pos);        
-    }
+    Draw_Select(Current);
+  }
 }
 
 void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int)) //Create
 {
   data->gui.state=1;
-  pos=1;
+  if (TLabels)
+  {
+    Current = GetFirstLink();
+  }  
+  Draw_ScreenShot(1);
 }
 
 void onClose(MAIN_GUI *data, void (*mfree_adr)(void *)) //Close
 {
+  extern short *ScreenBuff;
+  mfree(ScreenBuff);
   data->gui.state=0;
 }
 
 void onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(void *))//Focus
 {
+#ifdef ELKA
+  DisableIconBar(1);
+#endif
   data->gui.state=2;
 }
 
 void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *)) //Unfocus
 {
+#ifdef ELKA
+  DisableIconBar(0);
+#endif
   if (data->gui.state!=2) return;
   data->gui.state=1;
 }
 
 int OnKey(MAIN_GUI *data, GUI_MSG *msg) //OnKey
 {
-  extern const unsigned int CLOSE_BTN;
+  extern const unsigned int BCFG_CLOSE_BTN;
   
   DirectRedrawGUI();  
   
-  if (msg->gbsmsg->msg==KEY_DOWN)
-  { 
-    if (msg->gbsmsg->submess == CLOSE_BTN) return (1);
-    switch (msg->gbsmsg->submess)
-    {
-    case RIGHT_BUTTON:
+    if (msg->gbsmsg->msg==KEY_DOWN)
+    { 
+      if (msg->gbsmsg->submess == BCFG_CLOSE_BTN) return (1);
+      switch (msg->gbsmsg->submess)
       {
-        pos+=1;
-        if (pos==(count+2)) pos=1;
+      case RIGHT_BUTTON:
+        {
+          FindNextLink(msg->gbsmsg->submess);
+        }
+          break;
+       case LEFT_BUTTON:
+         {
+           FindNextLink(msg->gbsmsg->submess);         
+  
+         }
+          break;        
+      case DOWN_BUTTON:
+        {
+           FindNextLink(msg->gbsmsg->submess);         
+  
+         }
+          break;  
+      case UP_BUTTON:
+        {
+           FindNextLink(msg->gbsmsg->submess);         
+  
+         }
+          break;  
+      case ENTER_BUTTON:
+        {
+          Draw_DoLabel(Current);   
+          return(1);
+        }    
       }
-        break;
-     case LEFT_BUTTON:
-       {
-          pos-=1;
-          if (pos==0) pos=count+1;
-       }
-        break;        
-    case ENTER_BUTTON:
-      {
-        Draw_DoLabel(pos);   
-        return(1);
-      }
-    case 49: case 50: case 51:  case 52:  case 53:  case 54:  case 55:  case 56: case 57: //1-9
-      {
-        if (msg->gbsmsg->submess-49>count) return(0);
-        
-        pos = msg->gbsmsg->submess-48;
-        Draw_DoLabel(pos);
-        return(1);        
-      }
-      
     }
-  }
   return(0);
 }
 
@@ -132,8 +151,7 @@ void maincsm_oncreate(CSM_RAM *data)
   patch_rect((RECT*)&Canvas,0,YDISP,ScreenW()-1,ScreenH()-1);
   csm->csm.state=0;
   csm->csm.unk1=0;
-  csm->gui_id=CreateGUI(main_gui);
-  InitConfig();
+  csm->gui_id=CreateGUI(main_gui);  
 }
 
 void maincsm_onclose(CSM_RAM *csm)

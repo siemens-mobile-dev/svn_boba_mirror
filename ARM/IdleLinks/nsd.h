@@ -1,7 +1,7 @@
 #ifndef _NSD_H_
   #define _NSD_H_
 
-void NSD_Create();
+int NSD_Create();
 
 
 #endif
