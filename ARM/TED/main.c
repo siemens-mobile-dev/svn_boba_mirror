@@ -3057,6 +3057,8 @@ void FirstLoadFile(unsigned int fmt)
       FontListItem *cur = FontList;
       for(font_selected = 0; cur && cur->size != AUTOF_FONT; font_selected++)
         cur=cur->next;
+
+      if(!cur) font_selected = 0;
       //font_selected = cur->size;
     
       zeromem(&HISTORY.line,4*6); //Все на самом верху
