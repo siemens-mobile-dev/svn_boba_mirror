@@ -169,8 +169,9 @@ char *PushPageToStack(void)
   {
     //Убиваем лишнее
     killpage(0);
-    memcpy(PageSTACK,PageSTACK+1,(PageSTACK_SIZE-1)*sizeof(tPageStack));
-    PageSTACK[--stack_top].id=0;
+    memmove(PageSTACK,PageSTACK+1,(PageSTACK_SIZE-1)*sizeof(tPageStack));
+    stack_top--;
+    zeromem(PageSTACK+stack_top, sizeof(tPageStack));
   }
   i=stack_top;
   //Убираем возможность пойти вперед ;)

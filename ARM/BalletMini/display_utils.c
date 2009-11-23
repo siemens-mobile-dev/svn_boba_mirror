@@ -16,6 +16,8 @@ extern const int word_wrap;
 
 extern const int cfgPwdNormalText;
 extern const int cfgShowCharCounter;
+extern const char cfgCursorColor[4];
+extern const char cfgCursorColorPictures[4];
 
 extern WSHDR *search_string;
 extern int search_isCaseSens;
@@ -656,10 +658,11 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         {
           if (rcs_num)
           {
-            char cl[4];
-            setColor(0,0,170,100,cl);
+            char* cl;
+            cl = (char*)cfgCursorColor;
             REFCACHE *rf=FindReferenceByBegin(vd,vd->pos_cur_ref);
-            if (rf->tag=='Z') setColor(190,0,0,100,cl);
+            if (rf->tag=='Z') 
+              cl = (char*)cfgCursorColorPictures;
             for (int i=0;i<rcs_num;i++)
             {
  
@@ -989,13 +992,6 @@ static const SOFTKEYSTAB input_box_menu_skt=
 };
 
 HEADER_DESC input_box_hdr={0,0,0,0,NULL,(int)"Enter:",LGP_NULL};
-
-#pragma swi_number=0x2AF
-__swi __arm void SetHeaderText(void *hdr_pointer, WSHDR *txt, void *malloc_adr, void *mfree_adr);
-
-#pragma swi_number=0x2AE
-__swi __arm void *GetHeaderPointer(void *gui);
-
 
 static void input_box_ghook(GUI *data, int cmd)
 {

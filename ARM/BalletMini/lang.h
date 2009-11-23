@@ -24,6 +24,8 @@ enum LGP_ID
   LGP_AnswerDNR,
   LGP_Connected,
   LGP_DataReceived,
+  LGP_DataSending,
+  LGP_DataSent,
   LGP_RemoteClosed,
   LGP_LocalClosed,
   LGP_InetBusy,

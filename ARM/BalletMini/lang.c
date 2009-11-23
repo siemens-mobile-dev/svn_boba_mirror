@@ -99,6 +99,8 @@ void lgpInitLangPack(void)
   lgpData[LGP_AnswerDNR]=             "DNR answer...";
   lgpData[LGP_Connected]=             "Connected...";
   lgpData[LGP_DataReceived]=          "Data received...";
+  lgpData[LGP_DataSending]=           "Sending... %uB left";
+  lgpData[LGP_DataSent]=              "Waiting for answer...";
   lgpData[LGP_RemoteClosed]=          "Remote closed!";
   lgpData[LGP_LocalClosed]=           "Local closed!";
   lgpData[LGP_InetBusy]=              "INET process busy!";

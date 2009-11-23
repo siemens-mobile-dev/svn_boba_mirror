@@ -211,6 +211,7 @@ static void bsend(int len, void *p)
 {
   int i;
   int j;
+  char c[128];
   if (connect_state<2)
   {
     mfree(p);
@@ -253,6 +254,16 @@ static void bsend(int len, void *p)
       }
     }
     memmove(sendq_p,sendq_p+j,sendq_l-=j); //Удалили переданное
+    LockSched();
+    if (sendq_l)
+    {
+      sprintf(c,lgpData[LGP_DataSending], sendq_l);
+      ascii2ws(ws_console,c);
+    }
+    else
+      ascii2ws(ws_console,lgpData[LGP_DataSent]);
+    UnlockSched();
+    SmartREDRAW();
     if (j<i)
     {
       //Передали меньше чем заказывали

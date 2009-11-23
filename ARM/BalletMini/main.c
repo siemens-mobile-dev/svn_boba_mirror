@@ -20,12 +20,6 @@
 #include "upload.h"
 #include "fileman.h"
 
-#pragma swi_number=0x221
-__swi __arm void SetCpuClockLow(int);
-
-#pragma swi_number=0x222
-__swi __arm void SetCpuClockHi(int);
-
 extern const char DEFAULT_PARAM[128];
 extern const int authcode_create_new;
 
@@ -629,17 +623,37 @@ GoToLocalLinkPos(VIEWDATA* vd, char* anchor)
   }
 }
 
+extern const unsigned int cfgKeyEnter;
+extern const unsigned int cfgKeyScrollUp;
+extern const unsigned int cfgKeyScrollDown;
+extern const unsigned int cfgKeyPageUp;
+extern const unsigned int cfgKeyPageDown;
+extern const unsigned int cfgKeyHalfPageUp;
+extern const unsigned int cfgKeyHalfPageDown;
+extern const unsigned int cfgKeyBegin;
+extern const unsigned int cfgKeyEnd;
+extern const unsigned int cfgKeyBack;
+extern const unsigned int cfgKeyForward;
+extern const unsigned int cfgKeyReload;
+extern const unsigned int cfgKeyShowURL;
+extern const unsigned int cfgKeySearchAgain;
+extern const unsigned int cfgKeyTextPage;
+extern const unsigned int cfgKeyMenu;
+extern const unsigned int cfgKeyNewCopy;
+extern const unsigned int cfgKeySieget;
+extern const unsigned int cfgKeyBrowser;
+extern const unsigned int cfgKeyQuit;
+
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
 {
   VIEWDATA *vd=data->vd;
   REFCACHE *rf;
   int m=msg->gbsmsg->msg;
+  int k=msg->gbsmsg->submess;
   if ((m==KEY_DOWN)||(m==LONG_PRESS))
   {
-    switch(msg->gbsmsg->submess)
+    if ((k == cfgKeyEnter) && (vd->pos_cur_ref!=0xFFFFFFFF))
     {
-    case ENTER_BUTTON:
-      if (vd->pos_cur_ref==0xFFFFFFFF) break;
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
@@ -800,8 +814,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       {
 	      ShowMSG(1,(int)lgpData[LGP_RefEmpty]);
       }
-      break;
-    case UP_BUTTON:
+    }
+    else if (k == cfgKeyScrollUp)
+    {
       if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_last_ref!=0xFFFFFFFF)
         vd->pos_cur_ref=vd->pos_last_ref;
       else
@@ -814,8 +829,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           if (vd->pos_prev_ref!=0xFFFFFFFF)
             vd->pos_cur_ref=vd->pos_prev_ref;
         }
-      break;
-    case DOWN_BUTTON:
+    }
+    else if (k == cfgKeyScrollDown)
+    {
       if (vd->pos_cur_ref==0xFFFFFFFF&&vd->pos_first_ref!=0xFFFFFFFF)
         vd->pos_cur_ref=vd->pos_first_ref;
       else
@@ -828,28 +844,34 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           if (vd->pos_next_ref!=0xFFFFFFFF)
             vd->pos_cur_ref=vd->pos_next_ref;
         }
-      break;
-    case RIGHT_BUTTON:
+    }
+    else if (k == cfgKeyPageDown)
+    {
       scrollDown(vd,ScreenH()-20-scr_shift);
       vd->pos_cur_ref=0xFFFFFFFF;
-      break;
-    case VOL_DOWN_BUTTON:
+    }
+    else if (k == cfgKeyHalfPageDown)
+    {
       scrollDown(vd,(ScreenH()-20-scr_shift)/2);
       vd->pos_cur_ref=0xFFFFFFFF;
-      break;
-    case LEFT_BUTTON:
+    }
+    else if (k == cfgKeyPageUp)
+    {
       scrollUp(vd,ScreenH()-20-scr_shift);
       vd->pos_cur_ref=0xFFFFFFFF;
-      break;
-    case VOL_UP_BUTTON:
+    }
+    else if (k == cfgKeyHalfPageUp)
+    {
       scrollUp(vd,(ScreenH()-20-scr_shift)/2);
       vd->pos_cur_ref=0xFFFFFFFF;
-      break;
-    case LEFT_SOFT:
+    }
+    else if (k == cfgKeyMenu)
+    {
       STOPPED=1;
       CreateMainMenu(vd);
-      break;
-    case RIGHT_SOFT:
+    }
+    else if (k == cfgKeyBack)
+    {
       if (STOPPED)
       {
         return 0xFE;
@@ -864,57 +886,57 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         {
           STOPPED=1;
         }
-        break;
       }
-    case '#': //reload
+    }
+    else if (k == cfgKeyReload)
+    {
+      _safe_free(goto_url);
+      if (vd->pageurl)
       {
-       _safe_free(goto_url);
-       if (vd->pageurl)
-       {
-         goto_url=malloc(strlen(vd->pageurl)+1);
-         strcpy(goto_url,vd->pageurl);
-       }
-       else
-       {
-         if (view_url)
-         {
-           goto_url=malloc(strlen(view_url)+1);
-           strcpy(goto_url,view_url);
-         }
-         else
-           break;
-       }
-       return 0xFB;
+        goto_url=malloc(strlen(vd->pageurl)+1);
+        strcpy(goto_url,vd->pageurl);
+        return 0xFB;
       }
-    case 0x36: //forward
+      else
       {
-        if (CheckPageStackTop())
+        if (view_url)
         {
-          return 0xFD;
+          goto_url=malloc(strlen(view_url)+1);
+          strcpy(goto_url,view_url);
+          return 0xFB;
         }
-        break;
       }
-    case 0x34:
+    }
+    else if (k == cfgKeyForward)
+    {
+      if (CheckPageStackTop())
       {
-        if (vd->pos_cur_ref==0xFFFFFFFF) break;
-        rf=FindReference(vd,vd->pos_cur_ref);
-        if ((rf->id!=_NOREF) && 
-            (rf->tag == 'L' || rf->tag == 'Z' || rf->tag == '@' || rf->tag == '^'))
+        return 0xFD;
+      }
+    }
+    else if (k == cfgKeyShowURL)
+      {
+        if (vd->pos_cur_ref!=0xFFFFFFFF)
         {
-          char *s=extract_omstr(vd,rf->id);
-          char *ss = s;
-          if (rf->tag == 'L')
+          rf=FindReference(vd,vd->pos_cur_ref);
+          if ((rf->id!=_NOREF) && 
+              (rf->tag == 'L' || rf->tag == 'Z' || rf->tag == '@' || rf->tag == '^'))
           {
-            if (s[0] != '#')
-              s += 2;
+            char *s=extract_omstr(vd,rf->id);
+            char *ss = s;
+            if (rf->tag == 'L')
+            {
+              if (s[0] != '#')
+                s += 2;
+            }
+            if (rf->tag == 'Z') s += strlen(s) + 1;
+            ShowLink(s);
+            mfree(ss);
           }
-          if (rf->tag == 'Z') s += strlen(s) + 1;
-          ShowLink(s);
-          mfree(ss);
         }
-        break;
       }
-    case 0x31: // '1'
+    else if (k == cfgKeySieget)
+    {
         if (rf = FindReference(vd,vd->pos_cur_ref))
         {
           if (rf->id != _NOREF)
@@ -936,8 +958,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
             }
           }
         }
-      break;
-    case GREEN_BUTTON:
+    }
+    else if ((k == cfgKeyNewCopy) || (k == cfgKeyBrowser))
+    {
       rf=FindReference(vd,vd->pos_cur_ref);
       if (rf)
       {
@@ -951,17 +974,21 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               s+=2;
             if (rf->tag=='Z')
               s+=strlen(s)+1;
-            RunOtherByURL(s,0);
+            if (k == cfgKeyNewCopy)
+              RunOtherByURL(s,0);
+            else
+              RunOtherByURL(s,1);
             mfree(ss);
           }
         }
       }
-      break;
-    case 0x33: // '3'
+    }
+    else if (k == cfgKeyBegin)
+    {
       vd->pixdisp=0;
       vd->view_line=0;
       vd->pos_cur_ref=0xFFFFFFFF;
-      break;
+    }
     /*case 0x37: 
       {
         //Dump RAWTEXT
@@ -1071,20 +1098,21 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         }
       }
       break;*/
-    case 0x39: // '9'
+    else if (k == cfgKeyEnd)
+    {
       while(LineDown(vd)) ;
       vd->pixdisp=0;
       scrollUp(vd,ScreenH()-1);
       vd->pos_cur_ref=0xFFFFFFFF;
-      break;
-      
-    case 0x35:
+    } 
+    else if (k == cfgKeySearchAgain)
+    {
       if (wstrlen(search_string))
       {
         FindStringOnPage(vd);
       }
-      break;
-    /*case 0x2A: //'*' exit
+    }
+    else if (k == cfgKeyQuit)
     {
       MAIN_CSM *main_csm;
       if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
@@ -1099,9 +1127,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         GeneralFuncF1(1);
       }
     }
-    break;*/
-    
-    case 0x30: // '0'
+    else if (k == cfgKeyTextPage)
       {
         // get text from page
         int scr_h=ScreenH()-1;
@@ -1176,8 +1202,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         vd->view_line=store_line;
         createTextView(ws);
       }
-      break;
-    }
   }
   DirectRedrawGUI();
   return(0);
