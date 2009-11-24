@@ -195,6 +195,10 @@ static void method3(SMILE_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(v
 {
   DisableIDLETMR();
   data->gui.state=2;
+#ifdef ELKA
+  DisableIconBar(0);
+  GBS_SendMessage(0x4209, 0x642C, 0, 0, 0);
+#endif
 }
 
 static void method4(SMILE_GUI *data,void (*mfree_adr)(void *))
