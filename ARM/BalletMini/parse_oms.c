@@ -850,7 +850,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
     case OMS_TAGk_STAGE3:
       i=vd->iw;
       AddPictureItemHr(vd);
-      sprintf(s,vd->ih?"New AuthCode: ":"New AuthPrefix: ",vd->ih);
+      sprintf(s,vd->ih?"New AuthCode: ":"New AuthPrefix: ");
       if (authcode_write_file)
       {
         if(vd->ih)
@@ -868,9 +868,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       }
       AddTextItem(vd,s,strlen(s));
       extern int view_url_mode;
-      if (view_url_mode == MODE_URL)
+      if ((view_url_mode == MODE_URL)&&(!vd->ih))
       {
-        extern char AUTH_PREFIX[];
         memcpy(AUTH_PREFIX, vd->oms+vd->oms_pos, i);
         AUTH_PREFIX[i] = 0;
       }

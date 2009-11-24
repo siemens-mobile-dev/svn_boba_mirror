@@ -1716,8 +1716,9 @@ int SaveAuthCode(char *prefix, char *code)
   mfree(authdata_file);
   if(f==-1) return 0;
   fwrite(f,prefix,6,&err);
-  fwrite(f,"\r\n",2,&err);
-  fwrite(f,code,32,&err);
+  fwrite(f,".",1,&err);
+  fwrite(f,code,64,&err);
+  fwrite(f,".",1,&err);
   fclose(f, &err);
   return 1;
 }
@@ -1779,12 +1780,13 @@ int main(const char *exename, const char *filename)
   {
     if (authcode_create_new)
     {
+      msrand(GetSessionAge());
       char prefix[7];
       int p1 = mrandom(15), p2 = mrandom(15);
       snprintf(prefix, 7, "p%02d-%02d", p1, p2);
-      char code[32];
-      for(int i = 0; i < 16; i++)
-        snprintf(code+(i<<1), 3, "%02X", mrandom(255));    
+      char code[65];
+      for(int i = 0; i < 32; i++)
+        snprintf(code+(i<<1), 3, "%02x", mrandom(255));    
       
       if(!SaveAuthCode(prefix, code))
       {
@@ -1803,15 +1805,7 @@ int main(const char *exename, const char *filename)
           SUBPROC((void *)Killer);
           return 0;
         }
-    }
-    else
-    {
-      LockSched();
-      ShowMSG(1,(int)lgpData[LGP_CantLoadAuthCode]);
-      UnlockSched();
-      SUBPROC((void *)Killer);
-      return 0;
-    }
+    } 
   }
 
   if (ParseInputFilename(filename)) // open oms or url
