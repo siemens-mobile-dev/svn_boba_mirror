@@ -1363,8 +1363,8 @@ void create_connect(void)
       DNR_TRIES=0;
       sa.ip=p_res[3][0][0];
     L_CONNECT:
-      sprintf(hostname, "%s:%d\n%d.%d.%d.%d", hostbuf, hostport,
-              (sa.ip>>24)&0xFF,(sa.ip>>16)&0xFF,(sa.ip>>8)&0xFF,sa.ip&0xFF);
+      sprintf(hostname, "%s:%d\n(IP: %d.%d.%d.%d)", hostbuf, hostport,
+              sa.ip&0xFF, (sa.ip>>8)&0xFF, (sa.ip>>16)&0xFF, (sa.ip>>24)&0xFF);
 
       sock=socket(1,1,0);
       if (sock!=-1)
@@ -2428,7 +2428,7 @@ void process_active_timer(void)
 //===============================================================================================
 
 
-void method0(MAIN_GUI *data)
+void onRedraw(MAIN_GUI *data)
 {
   int scr_w=ScreenW();
   int scr_h=ScreenH();
@@ -2437,71 +2437,81 @@ void method0(MAIN_GUI *data)
 /*  DrawRoundedFrame(0,YDISP,scr_w-1,scr_h-1,0,0,0,
 		   GetPaletteAdrByColorIndex(0),
 		   GetPaletteAdrByColorIndex(20));*/
+  if (data->gui.state==2)
+  {
 
-  DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,
-		   GetPaletteAdrByColorIndex(1),
-		   GetPaletteAdrByColorIndex(1));
-  DrawImg(0,0,S_ICONS[ICON_LOGO]);
-  unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
-  wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
-
-  if(pm != pl)
-  {
-     DrawRectangle(0,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD),scr_w-1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-2,0,
-                     GetPaletteAdrByColorIndex(0),
-                     GetPaletteAdrByColorIndex(0));
-    pos_status = ((scr_w-1) * pl) / pm;
-    DrawRectangle(1,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD)+1,pos_status,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-3,0,
-                     GetPaletteAdrByColorIndex(14),
-                     GetPaletteAdrByColorIndex(14));  
-    wstrcatprintf(data->ws1,"\nLoading images...");
+    DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,
+                     GetPaletteAdrByColorIndex(1),
+                     GetPaletteAdrByColorIndex(1));
+    DrawImg(0,0,S_ICONS[ICON_LOGO]);
+    unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
+    wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
+  
+    if(pm != pl)
+    {
+       DrawRectangle(0,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD),scr_w-1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-2,0,
+                       GetPaletteAdrByColorIndex(0),
+                       GetPaletteAdrByColorIndex(0));
+      pos_status = ((scr_w-1) * pl) / pm;
+      DrawRectangle(1,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD)+1,pos_status,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-3,0,
+                       GetPaletteAdrByColorIndex(14),
+                       GetPaletteAdrByColorIndex(14));  
+      wstrcatprintf(data->ws1,"\nLoading images...");
+    }
+    /*  if (total_smiles)
+    {
+      wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
+    }
+    if (xstatuses_load)
+    {
+      wstrcatprintf(data->ws1,"\nLoaded %d/%d xstatus",total_xstatuses, xstatuses_max);
+    }*/
+    DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+               FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+    wsprintf(data->ws2,percent_t,cltop? lgpData[LGP_GrsKeyClist] :empty_string);
+    DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+               scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+    wsprintf(data->ws2,percent_t, lgpData[LGP_GrsKeyExit] );
+    DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+               scr_w>>1,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
   }
-  /*  if (total_smiles)
-  {
-    wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
-  }
-  if (xstatuses_load)
-  {
-    wstrcatprintf(data->ws1,"\nLoaded %d/%d xstatus",total_xstatuses, xstatuses_max);
-  }*/
-  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
-	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t,cltop? lgpData[LGP_GrsKeyClist] :empty_string);
-  DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
-	     scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-  wsprintf(data->ws2,percent_t, lgpData[LGP_GrsKeyExit] );
-  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
-	     scr_w>>1,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
 }
 
-void method1(MAIN_GUI *data,void *(*malloc_adr)(int))
+void onCreate(MAIN_GUI *data,void *(*malloc_adr)(int))
 {
   data->ws1=AllocWS(256);
   data->ws2=AllocWS(256);
   data->gui.state=1;
 }
 
-void method2(MAIN_GUI *data,void (*mfree_adr)(void *))
+void onClose(MAIN_GUI *data,void (*mfree_adr)(void *))
 {
   FreeWS(data->ws1);
   FreeWS(data->ws2);
   data->gui.state=0;
 }
 
-void method3(MAIN_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
+void onFocus(MAIN_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  DisableIconBar(1);
+#endif
   DisableIDLETMR();
   data->gui.state=2;
+  DirectRedrawGUI();
 }
 
-void method4(MAIN_GUI *data,void (*mfree_adr)(void *))
+void onUnfocus(MAIN_GUI *data,void (*mfree_adr)(void *))
 {
+#ifdef ELKA
+  DisableIconBar(0);
+#endif
   if (data->gui.state!=2)
     return;
   data->gui.state=1;
 }
 
-int method5(MAIN_GUI *data,GUI_MSG *msg)
+int onKey(MAIN_GUI *data,GUI_MSG *msg)
 {
   DirectRedrawGUI();
   if (msg->gbsmsg->msg==KEY_DOWN)
@@ -2540,12 +2550,12 @@ int method8(void){return(0);}
 int method9(void){return(0);}
 
 const void * const gui_methods[11]={
-  (void *)method0,  //Redraw
-  (void *)method1,  //Create
-  (void *)method2,  //Close
-  (void *)method3,  //Focus
-  (void *)method4,  //Unfocus
-  (void *)method5,  //OnKey
+  (void *)onRedraw, //Redraw
+  (void *)onCreate, //Create
+  (void *)onClose,  //Close
+  (void *)onFocus,  //Focus
+  (void *)onUnfocus,//Unfocus
+  (void *)onKey,    //OnKey
   0,
   (void *)kill_data, //method7, //Destroy
   (void *)method8,
