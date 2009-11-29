@@ -68,6 +68,7 @@ typedef struct
   unsigned short paper2;
   unsigned short bold:1,underline:1,ref:1,center:1,right:1,centerAtAll:1;
   unsigned short pixheight; // line height
+  unsigned int ycoord;
 }LINECACHE;
 
 typedef struct
@@ -151,6 +152,8 @@ typedef struct
   
   char *pageurl;    //utf8
   char *title;
+  
+  int found_word_pos;
   
   int WCHAR_BUTTON_OFF, WCHAR_BUTTON_ON, WCHAR_RADIO_OFF, WCHAR_RADIO_ON, WCHAR_TEXT_FORM, WCHAR_LIST_FORM;
   

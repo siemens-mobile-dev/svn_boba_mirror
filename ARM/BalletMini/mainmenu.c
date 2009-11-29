@@ -11,6 +11,7 @@
 #include "lang.h"
 #include "url_utils.h"
 #include "display_utils.h"
+#include "revision.h"
 
 extern int view_url_mode;
 extern char *view_url;
@@ -598,8 +599,9 @@ int FindFiles(char * str)
         i = strlen(de.file_name);
         strncpy(name, de.file_name, i);
         name[i] = NULL;
-        if (!strcmp_nocase(name + i - 4,".url"))
-          name[i-4] = NULL;                   
+        char* pext = strrchr(name, '.');
+        if (pext)
+          *pext = 0;
         AddToFList(path, name, IS_FILE);
         n ++;
       }
@@ -718,7 +720,23 @@ void bookmarks_menu_iconhndl(void * data, int curitem, void * user_pointer)
     if (bl->type == IS_BACK || bl->type == IS_FOLDER)
       SetMenuItemIconArray(data, item, &bookmarks_menu_icons[1]);
     else
-      SetMenuItemIconArray(data, item, &bookmarks_menu_icons[0]);
+    {
+      WSHDR* wsext = AllocWS(256);
+      char* pext = strrchr(bl->fullname, '.');
+      if (pext)
+        str_2ws(wsext, pext+1, 255);
+      else
+        CutWSTR(wsext, 0);
+      int uid = GetExtUid_ws(wsext);
+      FreeWS(wsext);
+      if (uid)
+      {
+        TREGEXPLEXT* pr = get_regextpnt_by_uid(uid);
+        SetMenuItemIconArray(data, item, pr->icon1);
+      }
+      else
+        SetMenuItemIconArray(data, item, &bookmarks_menu_icons[0]);
+    }
   }
   else
   {
@@ -1321,29 +1339,32 @@ int history_menu_onkey(void *gui, GUI_MSG *msg) //history
     }
     return(1);
   }
-  if (msg->gbsmsg->submess == '#')
+  if (msg->gbsmsg->msg==KEY_DOWN)
   {
-    if (history[i])
+    if (msg->gbsmsg->submess == '#')
     {
-      char *histdelim = strchr(history[i], '|');
-      if (histdelim)
+      if (history[i])
       {
-        char* histurl = malloc(histdelim-history[i]+1);;
-        memcpy(histurl, history[i], histdelim-history[i]);
-        histurl[histdelim-history[i]] = 0;
-        ShowLink(histurl);
-        mfree(histurl);
+        char *histdelim = strchr(history[i], '|');
+        if (histdelim)
+        {
+          char* histurl = malloc(histdelim-history[i]+1);;
+          memcpy(histurl, history[i], histdelim-history[i]);
+          histurl[histdelim-history[i]] = 0;
+          ShowLink(histurl);
+          mfree(histurl);
+        }
       }
     }
-  }
-  if (msg->gbsmsg->submess == '*')
-  {
-    if (history[i])
+    if (msg->gbsmsg->submess == '*')
     {
-      char* histtitle = strchr(history[i], '|');
-      if (histtitle)
+      if (history[i])
       {
-        ShowLink(histtitle+1);
+        char* histtitle = strchr(history[i], '|');
+        if (histtitle)
+        {
+          ShowLink(histtitle+1);
+        }
       }
     }
   }
@@ -1713,9 +1734,27 @@ static void main_menu_ghook(void *data, int cmd)
   }
 }
 
+static void About()
+{
+  #define COPYRIGHT "BalletMini\nRevision %d\n(C) by Rst7/CBSIE\nKren\nKalemas\nSinclair\nCaptain_SISka\nThe_Zen\nMiha_r"
+  char s[256];
+  snprintf(s,255,COPYRIGHT,__SVN_REVISION__);
+  ShowMSG(2, (int)s);
+}
+
+
+static int main_menu_onkey(void *data, GUI_MSG *msg)
+{
+  if ((msg->gbsmsg->msg==KEY_DOWN) && (msg->gbsmsg->submess == '#'))
+  {
+    About();
+  }
+  return 0;
+}
+
 static const MENU_DESC main_menu_struct=
 {
-  8, NULL, main_menu_ghook, NULL,
+  8, main_menu_onkey, main_menu_ghook, NULL,
   main_menu_softkeys,
   &main_menu_skt,
   0x10,//MENU_FLAG,

@@ -6,5 +6,6 @@
 int CreateMainMenu(VIEWDATA *vd);
 int CreateInputUrl();
 int CreateBookmarksMenu();
+int CreateFindDialog(VIEWDATA *vd);
 
 #endif /* _MAIN_MENU_H_ */

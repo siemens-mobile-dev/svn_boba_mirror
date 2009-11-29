@@ -404,7 +404,9 @@ static void method0(VIEW_GUI *data)
   
   if (data->gui.state==2)
   {
-    DrawRectangle(0,scr_shift,scr_w,scr_h,0,
+    int shift = scr_shift - 10;
+    if (shift < 0) shift = 0;
+    DrawRectangle(0,shift,scr_w,scr_h,0,
       GetPaletteAdrByColorIndex(0),
       GetPaletteAdrByColorIndex(0));
        
@@ -472,6 +474,7 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
   vd->ws=AllocWS(256);
   vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
+  vd->found_word_pos = -1;
   data->vd=vd;
   data->ws1=AllocWS(128);
   data->ws2=AllocWS(128);
@@ -1077,7 +1080,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         }
       }
       break;*/
-    /*case 0x38: // '8'
+    /*else if (k == 0x38) // '8'
       {
         //Dump LINECACHE
         unsigned int ul;
@@ -1090,14 +1093,13 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           for (int i=0;i<vd->lines_cache_size;i++)
           {
             LINECACHE *lc=vd->lines_cache+i;
-            sprintf(c,"%i  pos:%u, pix:%u, bold:%d, ref:%d, center:%d, right:%d, centerAll:%d \n",i,lc->pos,lc->pixheight,
-                    lc->bold, lc->ref, lc->center, lc->right, lc->centerAtAll);
+            sprintf(c,"%i  pos:%u, ycoord:%u, pix:%u, bold:%d, ref:%d, center:%d, right:%d, centerAll:%d \n",i,lc->pos,
+                    lc->ycoord, lc->pixheight, lc->bold, lc->ref, lc->center, lc->right, lc->centerAtAll);
             fwrite(f,c,strlen(c),&ul);
           }
          fclose(f,&ul);
         }
-      }
-      break;*/
+      }*/
     else if (k == cfgKeyEnd)
     {
       while(LineDown(vd)) ;
@@ -1107,7 +1109,11 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
     } 
     else if (k == cfgKeySearchAgain)
     {
-      if (wstrlen(search_string))
+      if (m == LONG_PRESS)
+      {
+        CreateFindDialog(vd);
+      }
+      else if (wstrlen(search_string))
       {
         FindStringOnPage(vd);
       }
@@ -1349,6 +1355,9 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
               if (vd)
               {
                 OMS_DataArrived(vd,buf,len);
+                int curr_view_line = vd->view_line;
+                while(LineDown(vd)); //make linecache
+                vd->view_line = curr_view_line;
                 if (IsGuiOnTop(csm->view_id)) DirectRedrawGUI();
               }
             }

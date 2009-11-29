@@ -232,6 +232,7 @@ int LineDown(VIEWDATA *vd)
       lc.paper1=0xFFFF;
       lc.paper2=0xFF64;
       lc.pixheight=0;
+      lc.ycoord = 0;
       lc.bold=0;
       lc.underline=0;
       lc.ref=0;
@@ -244,6 +245,7 @@ int LineDown(VIEWDATA *vd)
     plc=vd->lines_cache+vd->lines_cache_size-1;
     if (!SearchNextDisplayLine(vd,plc)) return 0; // can't caching futher
     memcpy(&lc,plc,sizeof(LINECACHE));
+    lc.ycoord += plc->pixheight;
     newCacheLine(vd,&lc);
     vd->view_line++;
   }
@@ -385,7 +387,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
 // возвращает 2, если виден конец страницы
 int RenderPage(VIEWDATA *vd, int do_draw)
 {
-  int scr_w=ScreenW()-MARGIN/2-1;
+  int scr_w=ScreenW()-MARGIN/2;
   int scr_h=ScreenH()-1;
   int sc=0;
   int dc;
@@ -430,6 +432,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   
   RECT rcs[32]; // cursor
   RECT rcs_work;
+  RECT rc_search;
   int  rcs_num=0;
   
   int lcheck=0; // last line checker
@@ -453,12 +456,13 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       ws_width=0;
       cur_rc=1;
       rnd_rf=NULL;
+      zeromem(&rc_search,sizeof(RECT));
       zeromem(&rcs_work,sizeof(RECT));
       zeromem(&form_data, 32*sizeof(tFormData));
       form_num = 0;
       max_ref_height = 0;
       rc[0].start_x=MARGIN/2;
-      rc[0].end_x=scr_w;
+      rc[0].end_x=scr_w-1;
       rc[0].color[0]=lc[lprev].paper1>>8;
       rc[0].color[1]=lc[lprev].paper1;
       rc[0].color[2]=lc[lprev].paper2>>8;
@@ -480,6 +484,16 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       while(len>0&&dc<250)
       {
         c=vd->rawtext[sc];
+        
+        if (sc == vd->found_word_pos)
+        {
+          rc_search.x=ws_width+MARGIN/2;
+        }
+          
+        if ((vd->found_word_pos != -1) && (sc == vd->found_word_pos+wstrlen(search_string)))
+        {
+          rc_search.x2=ws_width+MARGIN/2;
+        }
         
         if (c==UTF16_ENA_INVERT)
         {
@@ -535,7 +549,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
               else
                 prev->end_x = MARGIN/2;
               rc[cur_rc].start_x=ws_width+MARGIN/2;
-              rc[cur_rc].end_x=scr_w;
+              rc[cur_rc].end_x=scr_w-1;
               cur_rc++;
             }
           }
@@ -607,8 +621,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         if (y2!=ypos)
         {
           x=MARGIN/2;
-          if (lc[lprev+1].right) x=scr_w-ws_width;
-          if (lc[lprev+1].center||lc->centerAtAll) x=(ScreenW()-ws_width)/2;
+          if (lc->right) x=scr_w-ws_width;
+          if (lc->center||lc->centerAtAll) x=(ScreenW()-ws_width)/2;
           
           def_ink[0]=lc[lprev].ink1>>8;
           def_ink[1]=lc[lprev].ink1;
@@ -635,13 +649,14 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             rcs_work.y--;
             
             if (rcs_work.x<0) rcs_work.x=0;
-            if (rcs_work.x2>(scr_w+1)) rcs_work.x2=scr_w+1;
+            if (rcs_work.x2>scr_w) rcs_work.x2=scr_w;
             
             memcpy(&rcs[rcs_num],&rcs_work,sizeof(RECT));
             rcs_num++;
           }
+          
  
-          DrawString(ws,x,ypos,scr_w,y2,
+          DrawString(ws,x,ypos,scr_w-1,y2,
                      lc[lprev].bold?FONT_SMALL_BOLD:FONT_SMALL,
                      TEXT_NOFORMAT+(lc[lprev].underline?TEXT_UNDERLINE:0),
                      def_ink,GetPaletteAdrByColorIndex(23));
@@ -649,6 +664,18 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           for (int i = 0; form_data[i].form_rf != 0; i++)
           {           
             renderForm(vd, form_data[i].form_rf, form_data[i].form_x+x, ypos, y2, form_data[i].form_char);
+          }
+          
+          if (rc_search.x!=rc_search.x2)
+          {
+            char cl[4];
+            setColor(255,0,0,100,cl);
+            if (rc_search.x == 0)
+              rc_search.x = MARGIN/2;
+            if (rc_search.x2 == 0)
+              rc_search.x2 = scr_w-1;
+            DrawLine(rc_search.x,y2-2,rc_search.x2,y2-2, 0, cl);
+            DrawLine(rc_search.x,y2-1,rc_search.x2,y2-1, 0, cl);
           }
            
         }
@@ -698,15 +725,38 @@ int RenderPage(VIEWDATA *vd, int do_draw)
                }
             }
           }
-          int b=((store_line?vd->lines_cache[store_line+lprev].pos:0)*1000)/vd->rawtext_size*(scr_h-scr_shift)/1000-2+scr_shift; // no float
-          int e=(lc->pos*1000)/vd->rawtext_size*(scr_h-scr_shift)/1000+2+scr_shift;
-          if (!lcheck||b>scr_shift)
+          
+          if (vd->lines_cache_size)
           {
-#ifdef ELKA
-            DrawRectangle(ScreenW()-2,b,ScreenW(),e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
-#else
-            DrawRectangle(ScreenW()-1,b,ScreenW(),e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
-#endif
+            LINECACHE *lastline = vd->lines_cache + vd->lines_cache_size - 1;
+            int pageheight = lastline->ycoord + lastline->pixheight;
+            if (pageheight)
+            {
+              unsigned int ycoord = vd->lines_cache[store_line].ycoord;
+              unsigned int scrh = scr_h-scr_shift+1;
+              int b = (ycoord+vd->pixdisp)*scrh/pageheight+scr_shift;
+              int e = scrh*scrh/pageheight;
+              if (e < 4) e = 4;  
+              if (e < scrh)
+              {
+    #ifdef ELKA
+                char cl1[4];
+                setColor(160,48,48,100,cl1);
+                char cl2[4];
+                setColor(160,16,16,100,cl2);
+                char cl3[4];
+                setColor(136,140,136,100,cl3);
+                char cl4[4];
+                setColor(200,204,200,100,cl4);
+                DrawLine(ScreenW()-2,scr_shift,ScreenW()-2,ScreenH()-1, 0, cl3);
+                DrawLine(ScreenW()-1,scr_shift,ScreenW()-1,ScreenH()-1, 0, cl4);
+                DrawLine(ScreenW()-2,b,ScreenW()-2,b+e, 0, cl1);
+                DrawLine(ScreenW()-1,b,ScreenW()-1,b+e, 0, cl2);
+    #else
+                DrawRectangle(ScreenW()-1,b,ScreenW(),b+e,0,GetPaletteAdrByColorIndex(2),GetPaletteAdrByColorIndex(2));
+    #endif
+              }
+            }
           }
           
 //        if (ballet_fexists("$ballet\\debug.txt"))
@@ -737,6 +787,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
 //        }
         }
       }
+      else
+        vd->found_word_pos = -1;
       ypos=y2;
       vl++;
     }
@@ -1035,6 +1087,9 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
     case 0:
       ascii2ws(item->ws,lgpData[LGP_Templates]);
       break;
+    case 1:
+      ascii2ws(item->ws,lgpData[LGP_Clear]);
+      break;
     }
   }
   if (item->type==1)
@@ -1044,6 +1099,14 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
     case 0:
       createTemplatesMenu(item->user_pointer);
       break;
+    case 1:
+      {
+        GUI *data = item->user_pointer;
+        EDITCONTROL ec;
+        ExtractEditControl(data,1,&ec);
+        CutWSTR(ec.pWS,0);
+      }
+      break;
     }
   }
 }
@@ -1051,10 +1114,10 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
 static int input_box_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
-  if (msg->gbsmsg->msg==KEY_DOWN&&msg->gbsmsg->submess==ENTER_BUTTON)
+  if ((msg->gbsmsg->msg==KEY_DOWN)&&(msg->gbsmsg->submess==ENTER_BUTTON))
   {
     //paste_gui=data;
-    EDIT_OpenOptionMenuWithUserItems(data,input_box_onkey_options,data,1);
+    EDIT_OpenOptionMenuWithUserItems(data,input_box_onkey_options,data,2);
     return (-1);
   }
   if (msg->keys==0xFFF)
@@ -1531,7 +1594,7 @@ int ShowLink(char *link)
 
 void FindStringOnPage(VIEWDATA* cur_vd)
 {
-    LineDown(cur_vd);
+    int ld = LineDown(cur_vd);
     int i;
     i = (cur_vd->lines_cache[cur_vd->view_line]).pos+1;
     int j = 0;
@@ -1544,6 +1607,7 @@ void FindStringOnPage(VIEWDATA* cur_vd)
       if (j == wstrlen(search_string))
       {
         found = 1;
+        cur_vd->found_word_pos = i;
       }
       else
       {
@@ -1558,5 +1622,6 @@ void FindStringOnPage(VIEWDATA* cur_vd)
         while (((cur_vd->lines_cache[cur_vd->view_line]).pos < i) && (LineDown(cur_vd)));
       }
     }
-    LineUp(cur_vd);
+    if (ld)
+      LineUp(cur_vd);
 }

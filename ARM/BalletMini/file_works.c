@@ -37,8 +37,8 @@ char * getSymbolicPath(const char * cFileName)
          {
           strcpy(path + pp, BALLET_PATH);
           pp+=strlen(BALLET_PATH);
-          strcpy(path+pp,"Pages");
-          pp+=5;
+          strcpy(path+pp,"Bookmarks\\oms_pages");
+          pp+=19;
           ps+=5;
           continue;
         }
