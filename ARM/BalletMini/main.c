@@ -393,6 +393,13 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
   return s;
 }
 
+void FillLineCache(VIEWDATA *vd)
+{
+  int curr_view_line = vd->view_line;
+  while(LineDown(vd));
+  vd->view_line = curr_view_line;
+}
+
 //===============================================================================================
 
 static void method0(VIEW_GUI *data)
@@ -516,6 +523,7 @@ static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(vo
   SetCpuClockHi(2);
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=&data->vd->dynpng_list->dp;
+  FillLineCache(data->vd);
   ENABLE_REDRAW=1;
   DisableIDLETMR();
   data->gui.state=2;
@@ -1355,9 +1363,10 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
               if (vd)
               {
                 OMS_DataArrived(vd,buf,len);
-                int curr_view_line = vd->view_line;
-                while(LineDown(vd)); //make linecache
-                vd->view_line = curr_view_line;
+                if ((p->gui).state == 2)
+                {
+                  FillLineCache(vd);
+                }
                 if (IsGuiOnTop(csm->view_id)) DirectRedrawGUI();
               }
             }
