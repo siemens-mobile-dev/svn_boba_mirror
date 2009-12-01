@@ -26,6 +26,7 @@ public:
   void RefreshList();
 private:
   IPC_REQ Xipc; // Для связи с XTASK
+  IPC_REQ Lipc;
   char * url;
 };
 

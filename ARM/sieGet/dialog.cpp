@@ -82,11 +82,10 @@ void SieGetDialog::RefreshList()
 {
   if (!list->gui_id) return;
   if (!IsGuiOnTop(list->gui_id)) return;
-  IPC_REQ ipc;
-  ipc.name_to = sieget_ipc_name;
-  ipc.name_from = sieget_ipc_name;
-  ipc.data = NULL;
-  GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_REFRESH_LIST, &ipc);
+  Lipc.name_to = sieget_ipc_name;
+  Lipc.name_from = sieget_ipc_name;
+  Lipc.data = NULL;
+  GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_REFRESH_LIST, &Lipc);
 }
 
 void SieGetDialog::onClose()
