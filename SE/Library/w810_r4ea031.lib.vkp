@@ -549,8 +549,8 @@
 0CC0: FFFFFFFF 2DA71045 ; 330: int w_remove(const wchar_t *dir);
 0CC4: FFFFFFFF CD091145 ; 331: int ConnectionManager_Connection_GetState(void);
 0CC8: FFFFFFFF DD0CC244 ; 332: int GetSignalQuality(char *rssi,char *ber);
-0CCC: FFFFFFFF 59610745 ;8333: IS_NEEDED_BOOK isCameraBook(void);
-0CD0: FFFFFFFF C5A84345 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
+0CCC: FFFFFFFF 61FF4545 ;8333: IS_NEEDED_BOOK isCameraBook(void);
+0CD0: FFFFFFFF 59610745 ;8334: IS_NEEDED_BOOK isSoundRecorderBook(void);
 0CD4: FFFFFFFF CD651645 ; 335: void StringInput_MenuItem_SetPriority(GUI * strinp, int prio, int actionID);
 0CD8: FFFFFFFF AD684445 ; 336: void VideoPlayerControl(BOOK *VideoPlayerBook, int);
 0CDC: FFFFFFFF E9624445 ; 337: void Video_ActionBack(BOOK *VideoPlayerBook, void*);
@@ -591,7 +591,7 @@
 0D68: FFFFFFFF 3D9F4445 ; 35A: int SoundRecorderDesc_SetFname(void * desc,const wchar_t * fname);
 0D6C: FFFFFFFF 599F4445 ; 35B: int SoundRecorderDesc_SetRecordSize(void * desc,const int size);
 0D70: FFFFFFFF 859F4445 ; 35C: int SoundRecorder_Create(void * desc);
-;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
+0D74: FFFFFFFF 35B54045 ; 35D: int SoundRecorder_RecordCall(BOOK * OngoingCallBook);
 0D78: FFFFFFFF 19094245 ; 35E: int Browser_OpenURI(BOOK *, char * URI, int mode);
 0D7C: FFFFFFFF F9925245 ; 35F: char * GetURIScheme (int schemeID);
 0D80: FFFFFFFF 41975245 ; 360: char * CreateURI (wchar_t * fpath, wchar_t * fname, char * URIScheme);
