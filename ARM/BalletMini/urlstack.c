@@ -3,6 +3,8 @@
 #include "file_works.h"
 #include "string_works.h"
 
+extern const unsigned int PageSTACK_SIZE;
+
 static const int DMonth[]={0,31,59,90,120,151,181,212,243,273,304,334,365};
 
 typedef struct
@@ -30,7 +32,7 @@ typedef struct
   tUserList* user_list;
 }tPageStack;
 
-tPageStack PageSTACK[PageSTACK_SIZE];
+tPageStack* PageSTACK;
 
 static int stack_top;
 
@@ -225,7 +227,8 @@ void FreePageStack(void)
       killpage(i);
     }
     i++;
-  }  
+  }
+  mfree(PageSTACK);
 }
 
 void UpPageStack(void)
@@ -237,5 +240,6 @@ void UpPageStack(void)
 void InitUrlStack(void)
 {
   stack_top = 0;
-  zeromem(PageSTACK, (PageSTACK_SIZE)*sizeof(tPageStack));
+  PageSTACK = malloc((PageSTACK_SIZE+1)*sizeof(tPageStack));
+  zeromem(PageSTACK, (PageSTACK_SIZE+1)*sizeof(tPageStack));
 }

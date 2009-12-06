@@ -1,7 +1,9 @@
 #include "..\inc\swilib.h"
 #include "..\inc\cfg_items.h"
 
-__root const CFG_HDR cfghdr0={CFG_CBOX,"Picture Quality",0,4};
+__root const CFG_HDR cfghdr0={CFG_LEVEL,"Main settings",1,0};
+
+__root const CFG_HDR cfghdr00={CFG_CBOX,"Picture Quality",0,4};
 __root const int PIC_QUALITY=2;
 __root const CFG_CBOX_ITEM cfgcbox0[]={"None","Text","Low","High"};
 
@@ -18,6 +20,14 @@ __root const int JAVA_HEAP_SIZE=3072;
 #else
 __root const int JAVA_HEAP_SIZE=768;
 #endif
+
+__root const CFG_HDR cfghdr4={CFG_STR_UTF8,"Default launch parameter",0,127};
+__root const char DEFAULT_PARAM[128]="bookmarks";
+
+__root const CFG_HDR cfghdr5={CFG_UINT,"Max cache size",4,64};
+__root const unsigned int PageSTACK_SIZE=32;
+
+__root const CFG_HDR cfghdr0_end={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr001_beg={CFG_LEVEL,"Screen",1,0};
 
@@ -126,5 +136,3 @@ __root const int authcode_create_new = 0;
   
 __root const CFG_HDR cfghdr35_end={CFG_LEVEL,"",0,0};
 
-__root const CFG_HDR cfghdr4={CFG_STR_UTF8,"Default launch parameter",0,127};
-__root const char DEFAULT_PARAM[128]="bookmarks";

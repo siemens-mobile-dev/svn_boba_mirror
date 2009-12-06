@@ -31,6 +31,41 @@ int GetFontHeight(int font, int atribute)
   return height;
 }
 
+int GetSymbolBitmapWidth(VIEWDATA *vd, int wchar,int font)
+{
+  if ((wchar&0xFF00)==0xE100)
+  {
+    OMS_DYNPNGLIST *dpl = vd->dynpng_list;
+    do
+    {
+      if (dpl->w_char == wchar)
+      {
+        return (dpl->dp.img)->w;
+      }
+    }
+    while(dpl=dpl->dp.next);
+    return 0;
+  }
+  else
+  {
+    return GetSymbolWidth(wchar,font);
+  }
+}
+
+int GetBitmapHeight(VIEWDATA *vd, int wchar)
+{
+  OMS_DYNPNGLIST *dpl = vd->dynpng_list;
+  do
+  {
+    if (dpl->w_char == wchar)
+    {
+      return (dpl->dp.img)->h;
+    }
+  }
+  while(dpl=dpl->dp.next);
+  return 0;
+}
+
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *max_h*/)
 {
   int scrW = ScreenW()-MARGIN;
@@ -44,7 +79,8 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
     c=vd->rawtext[p->pos++];
     if ((c&0xFF00)==0xE100)
     {
-      h=GetImgHeight(GetPicNByUnicodeSymbol(c));
+      
+      h=GetBitmapHeight(vd,c);
     }
     else
     {
@@ -107,7 +143,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       continue;
     }
     // компоновка элементов здесь
-    cw=GetSymbolWidth(c,p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+    cw=GetSymbolBitmapWidth(vd,c,p->bold?FONT_SMALL_BOLD:FONT_SMALL);
     left-=cw;
     if (left<0)
     {
@@ -117,7 +153,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       {
         while (1)
         {
-          cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+          cw+=GetSymbolBitmapWidth(vd,vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
           if (cw>=(scrW*3/4))
           {
             b=1;
@@ -139,7 +175,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
         {
           while (1)
           {
-            cw+=GetSymbolWidth(vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
+            cw+=GetSymbolBitmapWidth(vd,vd->rawtext[p->pos-b],p->bold?FONT_SMALL_BOLD:FONT_SMALL);
             if (cw>=(scrW*3/4))
             {
               b=1;
@@ -439,7 +475,6 @@ int RenderPage(VIEWDATA *vd, int do_draw)
   int lprev=0; // prev line
   
   int x;
-  
   
   while(ypos<=scr_h)
   {

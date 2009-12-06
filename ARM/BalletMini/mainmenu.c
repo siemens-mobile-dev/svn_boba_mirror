@@ -21,6 +21,8 @@ extern int maincsm_id;
 extern WSHDR *search_string;
 extern int search_isCaseSens;
 
+extern WSHDR *search_inet_string;
+
 //----------------------------------- Add bookmark -----------------------------
 
 const char* sEmpty = "";
@@ -867,6 +869,7 @@ int search_menu_onkey(GUI *data, GUI_MSG *msg)
     //query
     ExtractEditControl(data,2,&ec);
     WSHDR *ws = ec.pWS;
+    wstrcpy(search_inet_string, ws);
     int ql=ws->wsbody[0];
     
     //read url file    
@@ -1008,7 +1011,7 @@ static int CreateSearchDialog()
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
 
-  wsprintf(ews,sEmpty);
+  wstrcpy(ews,search_inet_string);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ews,1024);
   AddEditControlToEditQend(eq,&ec,ma);
   
@@ -1665,7 +1668,6 @@ static void main_menu_quit(GUI *gui)
   MAIN_CSM *main_csm;
   if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
   {
-    FreePageStack();
     _safe_free(goto_url);
     GeneralFunc_flag1(main_csm->view_id,0xFF);
     GeneralFuncF1(1);

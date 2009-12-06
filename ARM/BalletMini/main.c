@@ -19,6 +19,9 @@
 #include "url_utils.h"
 #include "upload.h"
 #include "fileman.h"
+#include "../inc/xtask_ipc.h"
+
+char xtask_ipc_name[]= IPC_XTASK_NAME;
 
 extern const char DEFAULT_PARAM[128];
 extern const int authcode_create_new;
@@ -36,6 +39,8 @@ volatile int STOPPED=0;
 int ENABLE_REDRAW=0;
 
 const int scr_shift = 0;
+
+IPC_REQ Xipc;
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
@@ -56,6 +61,8 @@ WSHDR *ws_console;
 
 WSHDR *search_string;
 int search_isCaseSens;
+
+WSHDR *search_inet_string;
 
 int maincsm_id;
 
@@ -393,13 +400,6 @@ char *collectItemsParams(VIEWDATA *vd, REFCACHE *rf)
   return s;
 }
 
-void FillLineCache(VIEWDATA *vd)
-{
-  int curr_view_line = vd->view_line;
-  while(LineDown(vd));
-  vd->view_line = curr_view_line;
-}
-
 //===============================================================================================
 
 static void method0(VIEW_GUI *data)
@@ -523,7 +523,6 @@ static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(vo
   SetCpuClockHi(2);
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=&data->vd->dynpng_list->dp;
-  FillLineCache(data->vd);
   ENABLE_REDRAW=1;
   DisableIDLETMR();
   data->gui.state=2;
@@ -970,30 +969,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
           }
         }
     }
-    else if ((k == cfgKeyNewCopy) || (k == cfgKeyBrowser))
-    {
-      rf=FindReference(vd,vd->pos_cur_ref);
-      if (rf)
-      {
-        if (rf->id!=_NOREF)
-        {
-          if (rf->tag=='L'||rf->tag=='Z'||rf->tag=='^')
-          {
-            char *s=extract_omstr(vd,rf->id);
-            char *ss = s;
-            if (rf->tag=='L')
-              s+=2;
-            if (rf->tag=='Z')
-              s+=strlen(s)+1;
-            if (k == cfgKeyNewCopy)
-              RunOtherByURL(s,0);
-            else
-              RunOtherByURL(s,1);
-            mfree(ss);
-          }
-        }
-      }
-    }
     else if (k == cfgKeyBegin)
     {
       vd->pixdisp=0;
@@ -1131,7 +1106,6 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
       MAIN_CSM *main_csm;
       if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
       {
-        FreePageStack();
         goto_url = 0;
         GeneralFunc_flag1(main_csm->view_id,0xFF);
         GeneralFuncF1(1);
@@ -1217,6 +1191,51 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         createTextView(ws);
       }
   }
+  if ((m==KEY_UP)||(m==LONG_PRESS))
+  {
+    if ((k == cfgKeyNewCopy) || (k == cfgKeyBrowser))
+    {
+      rf=FindReference(vd,vd->pos_cur_ref);
+      if (rf)
+      {
+        if (rf->id!=_NOREF)
+        {
+          if (rf->tag=='L'||rf->tag=='Z'||rf->tag=='^')
+          {
+            char *s=extract_omstr(vd,rf->id);
+            char *ss = s;
+            if (rf->tag=='L')
+              s+=2;
+            if (rf->tag=='Z')
+              s+=strlen(s)+1;
+            if (k == cfgKeyNewCopy)
+            {
+              RunOtherByURL(s,0);
+              if (m==LONG_PRESS)
+              {
+                Xipc.name_to = xtask_ipc_name;
+                Xipc.name_from = ipc_my_name;
+                Xipc.data = (void *)maincsm_id;
+                GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_XTASK_SHOW_CSM, &Xipc);
+              }
+            }
+            else
+            {
+              if (m==LONG_PRESS)
+              {
+                RunOtherByURL(s,2);
+              }
+              else
+              {
+                RunOtherByURL(s,1);
+              }
+            }
+            mfree(ss);
+          }
+        }
+      }
+    }
+  }
   DirectRedrawGUI();
   return(0);
 }
@@ -1273,6 +1292,8 @@ static void maincsm_oncreate(CSM_RAM *data)
   ws_console=AllocWS(1024);
   search_string = AllocWS(256);
   CutWSTR(search_string,0);
+  search_inet_string = AllocWS(1024);
+  CutWSTR(search_inet_string,0);
   search_isCaseSens = 0;
   csm->csm.state=0;
   csm->csm.unk1=0;
@@ -1285,6 +1306,7 @@ static void KillAll(void)
   FreePageStack();
   FreeWS(ws_console);
   FreeWS(search_string);
+  FreeWS(search_inet_string);
   lgpFreeLangPack();
 }
 
@@ -1363,10 +1385,9 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
               if (vd)
               {
                 OMS_DataArrived(vd,buf,len);
-                if ((p->gui).state == 2)
-                {
-                  FillLineCache(vd);
-                }
+                int curr_view_line = vd->view_line;
+                while(LineDown(vd)); // fill line cache
+                vd->view_line = curr_view_line;
                 if (IsGuiOnTop(csm->view_id)) DirectRedrawGUI();
               }
             }
