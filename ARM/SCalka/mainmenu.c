@@ -4,6 +4,27 @@
 #include "mainmenu.h"
 
 extern volatile int calc_gui_id;;
+extern CALC_SETTINGS calc_set;
+extern double d_answer;
+
+static void mm_ac(GUI *gui)
+{
+  extern void remove_all_operation(void);
+  remove_all_operation();
+  GeneralFuncF1(1);
+}
+
+static void mm_ans2x(GUI *gui)
+{
+  calc_set.x=d_answer;
+  GeneralFuncF1(1);
+}
+
+static void mm_ans2y(GUI *gui)
+{
+  calc_set.y=d_answer;
+  GeneralFuncF1(1);
+}
 
 static void mm_settings(GUI *gui)
 {
@@ -32,17 +53,23 @@ static const SOFTKEYSTAB mmenu_skt=
   mmenu_sk,0
 };
 
-#define MAIN_MENU_ITEMS_N 2
+#define MAIN_MENU_ITEMS_N 5
 static HEADER_DESC mmenu_hdr={0,0,0,0,NULL,(int)"Меню",LGP_NULL};
 
 static MENUITEM_DESC mmenu_ITEMS[MAIN_MENU_ITEMS_N]=
 {
+  {NULL,(int)"AC",           LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL,(int)"ANS->X",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL,(int)"ANS->Y",       LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
   {NULL,(int)"Настройки",    LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
   {NULL,(int)"Выход",        LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2} //0
 };
 
 static const MENUPROCS_DESC mmenu_HNDLS[MAIN_MENU_ITEMS_N]=
 {
+  mm_ac,
+  mm_ans2x,
+  mm_ans2y,
   mm_settings,
   mm_exit
 };

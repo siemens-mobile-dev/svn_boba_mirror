@@ -96,6 +96,19 @@ void insert_operation(int op)
   } 
 }
 
+void remove_all_operation(void)
+{
+// Функция AC
+  int i=0;
+  while(i<=op_len)
+  {
+    operation[i]=0;
+    i++;
+  }
+  op_pos=0;
+  op_len=0;
+}
+
 void remove_operation(void)
 {
   if (op_len && op_pos)
@@ -731,13 +744,13 @@ void ed1_ghook(GUI *data, int cmd)
   int i;
   static SOFTKEY_DESC sk={0x0FFF,0x0000,(int)"Options"};
   static SOFTKEY_DESC sk_del={0x0FFE,0x0FFE,(int)"< C"};
-  if (cmd==2)
+  if (cmd==TI_CMD_CREATE)
   {
     op_len=0;
     req_recalc=0;
     EDIT_SetFocus(data, 4);
   }
-  if (cmd==7)
+  if (cmd==TI_CMD_REDRAW)
   {
     i=EDIT_GetFocus(data);
     if (i==4)
@@ -776,7 +789,7 @@ void ed1_ghook(GUI *data, int cmd)
       EDIT_SetTextToEditControl(data,2,ews);
     }
   }
-  if (cmd==0x0A)
+  if (cmd==TI_CMD_FOCUS)
   {
     DisableIDLETMR();
   }
