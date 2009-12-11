@@ -78,7 +78,9 @@ void Socket::Send(const char * data, int size)
       send_q = (char *)realloc(send_q, send_q_size + size);
       memcpy(send_q + send_q_size, data, size);
       send_q_size += size;
+#ifdef SOCK_SEND_TIMER
       SUBPROC((void *)sock_resend, this);
+#endif
       return;
     }
     send_q = new char[size + 1];

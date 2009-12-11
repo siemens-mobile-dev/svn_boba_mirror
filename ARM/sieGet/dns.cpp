@@ -104,6 +104,9 @@ void DNR::SendReq()
   {
     if (res[3])
     {
+      #ifdef DNR_SEND_TIMER
+      if(IsTimerProc(&send_tmr)) GBS_StopTimer(&send_tmr);
+      #endif
       onResolve(DNR_RESULT_OK, res[3][0][0]); // Получили адрес
       DNR_ID = 0;
     }
