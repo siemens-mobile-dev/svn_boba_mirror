@@ -22,9 +22,13 @@ void patch_header(HEADER_DESC * head, int * icon, int lgp_id)
 void patch_header_small(HEADER_DESC * head)
 {
   head->rc.x=3;
-  head->rc.y=0x18;
+  head->rc.y=HeaderH()+YDISP;
   head->rc.x2=ScreenW()-6;
-  head->rc.y2=0x18+0x13;
+#ifdef ELKA
+  head->rc.y2=HeaderH()*2+YDISP;
+#else
+  head->rc.y2=HeaderH()+0x11;
+#endif
 }
 
 void patch_input(INPUTDIA_DESC * inp)

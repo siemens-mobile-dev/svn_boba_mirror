@@ -3,6 +3,7 @@
 
 #define LGP_SMILE_OK 0xE41F // :)
 #define LGP_SMILE_NO 0xE43D // :(
+#define UTF16_SPACE 0x0020
 
 enum ICON_ID
 {

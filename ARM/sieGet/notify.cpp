@@ -4,12 +4,10 @@
 
 int IsMediaActive(void)
 {
-  char s[40];
-  sprintf(s, RamMediaIsPlaying());
 #ifdef NEWSGOLD
-  if (s[0]==1) return 1;
+  if (*RamMediaIsPlaying()) return 1;
 #else
-  if (s[0]==2) return 1;// для SGOLD s[0]!=2    
+  if (*RamMediaIsPlaying()==2) return 1;// для SGOLD s[0]!=2    
 #endif 
   return 0;
 }

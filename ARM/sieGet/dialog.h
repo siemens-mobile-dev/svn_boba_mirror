@@ -17,6 +17,7 @@ public:
   virtual void onClose();
   void Show(char * _url);
   void ProcessIPC(const char * from, int submsg, void * data);
+  void Close();
   
   SieGetDialog();
   ~SieGetDialog();

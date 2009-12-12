@@ -20,6 +20,11 @@ void SieGetDialog::onCreate()
   list->Show();
 }
 
+void SieGetDialog::Close()
+{
+  CloseCSM(csm_id);
+}
+
 void SieGetDialog::Show(char * _url)
 {
   if (!csm_id) Create();

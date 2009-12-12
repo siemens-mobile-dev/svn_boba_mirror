@@ -129,7 +129,7 @@ void List::wsprintf_bytes(WSHDR * ws, int bytes)
   if(bytes > 1024 && bytes < (1024 * 1024))
     wsprintf(ws, "%u Kb", bytes/1024);
   if(bytes > (1024 * 1024))
-    wsprintf(ws, "%u Mb", bytes/1024/1024);
+    wsprintf(ws, "%d.%02d Mb", bytes/1024/1024, bytes % (1024*1024) / 10000);
 }
 
 void List::wsprintf_bytes(WSHDR * ws, int bytes1, int bytes2)
@@ -139,7 +139,7 @@ void List::wsprintf_bytes(WSHDR * ws, int bytes1, int bytes2)
   if(bytes2 > 1024 && bytes2 < (1024 * 1024))
     wsprintf(ws, "/%u Kb, %d%", bytes2/1024, bytes1 * 100 / bytes2);
   if(bytes2 > (1024 * 1024))
-    wsprintf(ws, "/%u Mb, %d%", bytes2/(1024 * 1024), bytes1 * 100 / bytes2);
+    wsprintf(ws, "/%d.%02d Mb, %d%", bytes2/(1024 * 1024), bytes2 % (1024 * 1024) / 10000, bytes1 * 100 / bytes2);
 }
 
 void List::ItemHandler(void * data, int curitem, void * unk)
@@ -199,7 +199,10 @@ void List::ItemHandler(void * data, int curitem, void * unk)
     break;
   }
   if (dl->ranges_support != -1) // Вставляем смайл - индикатор поддержки докачки
+  {
+    wsInsertChar(ws2, UTF16_SPACE, 1); // Пробел после смайла
     wsInsertChar(ws2, dl->ranges_support == 1?LGP_SMILE_OK:LGP_SMILE_NO, 1);
+  }
   SetMLMenuItemText(data, item, ws1, ws2, curitem);
 }
 

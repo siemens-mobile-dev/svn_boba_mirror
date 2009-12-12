@@ -55,6 +55,9 @@ __root const unsigned int CFG_IDLE_ICON_Y = 35;
 
 __root const CFG_HDR cfghdr3_3 = {CFG_LEVEL, "", 0, 0};
 
+__root const CFG_HDR cfghdr4 = {CFG_CHECKBOX, "Close GUI after add", 0, 3};
+__root const int CFG_CLOSE_GUI = 1;
+
 
 
 
