@@ -1,24 +1,12 @@
 #include "include.h"
 #include "csm.h"
+#include "main.h"
 
 const int minus11=-11;
 
 void csm_oncreate(CSM_RAM *data);
 int csm_onmessage(CSM_RAM* data,GBS_MSG* msg);
 void csm_onclose(CSM_RAM *data);
-
-typedef struct
-{
-  CSM_RAM csm;
-  int gui_id;
-} MAIN_CSM;
-
-typedef struct
-{
-  CSM_DESC csm;
-  WSHDR csm_name;
-  AbstractCSM *csm_class;
-} EXTRA_CSM_DESC;
 
 const EXTRA_CSM_DESC TEMPLATECSM =
 {
@@ -43,6 +31,9 @@ sizeof(CSM_RAM),
     0x0,
     139
   },
+#ifdef NEWSGOLD
+  NULL,
+#endif
   NULL
 };
 
@@ -136,7 +127,12 @@ void DaemonCSM::Create()
   desc->csm_name.wsbody = new unsigned short[desc->csm_name.maxlen+1];
   this->name = &(desc->csm_name);
   desc->csm_class = this;
-
+  
+#ifdef NEWSGOLD
+  desc->iconbar_handler.addr=(int)addIconBar;
+  sprintf(desc->iconbar_handler.check_name, "%s", "IconBar");
+#endif
+  
   CSM_RAM *save_cmpc;
   LockSched();
   save_cmpc = CSM_root()->csm_q->current_msg_processing_csm;

@@ -25,6 +25,30 @@ public:
   CSM_RAM *data;
 };
 
+typedef struct
+{
+  CSM_RAM csm;
+  int gui_id;
+} MAIN_CSM;
+
+#ifdef NEWSGOLD
+typedef struct
+{
+  char check_name[8];
+  int addr;
+}ICONBAR_H;
+#endif
+
+typedef struct
+{
+  CSM_DESC csm;
+  WSHDR csm_name;
+#ifdef NEWSGOLD
+  ICONBAR_H iconbar_handler;
+#endif
+  AbstractCSM *csm_class;
+} EXTRA_CSM_DESC;
+
 class DialogCSM: public AbstractCSM
 {
 public:
@@ -37,6 +61,7 @@ class DaemonCSM: public AbstractCSM
 public:
   virtual void Create();
   ~DaemonCSM();
+  EXTRA_CSM_DESC *desc;
 };
 
 #endif

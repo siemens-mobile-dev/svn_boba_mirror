@@ -13,6 +13,9 @@ extern const int CFG_LOG_DATE_TIME;
 extern const int CFG_SHOW_IDLE_ICON;
 extern const unsigned int CFG_IDLE_ICON_X;
 extern const unsigned int CFG_IDLE_ICON_Y;
+extern const int CFG_SHOW_TRAY_ICON;
+extern const unsigned int TRAY_ICON_OFF;
+extern const unsigned int TRAY_ICON_ON;
 
 extern const int CFG_CLOSE_GUI;
 
