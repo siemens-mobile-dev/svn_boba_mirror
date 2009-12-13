@@ -4,8 +4,8 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Management v.2"
-#define ABOUT L"Management\nv.2\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
+#define ELFNAME "Management v.2.3"
+#define ABOUT L"Management\nv.2.3\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
 
 enum mode_t {
     SHORT_PRESS  = 0,
@@ -20,18 +20,37 @@ BOOK * FM = 0;
 
 int dbl   = 0;
 u16 timer = 0;
+u16 timer_call_off = 0;
+int Connect = 0;
 
 int NewKey(int key, int r1 , int mode);
+int ControlKey(int key, int r1 , int mode);
+
+int isMTCallBook(BOOK *bk)
+{
+  if (strcmp(bk->xbook->name,"MTCallBook")==0) { return 1; }
+  else { return 0; }
+};
 
 int OnAccChangedEvent(void* r0,BOOK* b)
 {
   AP = FindBook(isAudioPlayerBook());
   FM = FindBook(isFmRadioBook());
   
+ //if (PHF_GetState ())
+  //{
   if(!AP && !FM && turn_on==1)
   {
-       GoMusic();
-  }
+    if(turn_on_pr==0)
+    {
+       UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
+    }
+     else
+    {
+        UI_Event(UI_FMRADIO_CONTROL_EVENT);
+    }
+   //}
+ }
     return (1);      
 }
 
@@ -40,13 +59,9 @@ int OffAccChangedEvent(void* r0,BOOK* b)
   AP = FindBook(isAudioPlayerBook());
   FM = FindBook(isFmRadioBook());
   
-  if(AP && turn_off==1)
+  if(AP && FM && turn_off==1)
   {
-       UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
-  }
-  if(FM && turn_off==1)
-  {
-       UI_Event(UI_FMRADIO_CONTROL_EVENT);
+    GoMusic();
   }
     return (1);    
 }
@@ -77,6 +92,11 @@ int ShowAuthorInfo(void *mess ,BOOK* book)
          return(1);
 }
 
+void onTimer_Call (u16 timerID, LPARAM lparam)
+{
+    ModifyKeyHook(NewKey,1);
+}
+
 enum
 {
          CALLMANAGER_IDLE            =0,
@@ -91,10 +111,17 @@ int OnCallManagerEvent(void* r0,BOOK* b)
 {
     switch(((CALLMANAGER_EVENT_DATA*)r0)->CallState)
        {
+         /*Поднятие трубки*/
+         case CALLMANAGER_CALL_CONNECTED:
+         {
+           ModifyKeyHook(ControlKey,0);
+         }
+         break;
          /*Входящий вызов*/
          case CALLMANAGER_CALL_ALERT:
          {
           ModifyKeyHook(NewKey,0);
+          ModifyKeyHook(ControlKey,1);
           if(timer)
           {
            Timer_Kill(&timer);
@@ -118,7 +145,8 @@ int OnCallManagerEvent(void* r0,BOOK* b)
          /*Завершение соединения*/
          case CALLMANAGER_CALL_TERMINATED:
          {
-          ModifyKeyHook(NewKey,1);
+          ModifyKeyHook(ControlKey,0);
+          timer_call_off=Timer_Set(2000,onTimer_Call,0);
          }
       break;
     }
@@ -273,7 +301,6 @@ static int onReconfigElf(void *mess ,BOOK *book)
   }
   return(result);
 }
-
 const PAGE_MSG Management_PageEvents[]@ "DYN_PAGE" =
 {
          ELF_TERMINATE_EVENT,      TerminateElf,
@@ -349,10 +376,29 @@ int NewKey(int key, int r1 , int mode)
   return(0);
 }
 
+int ControlKey(int key, int r1 , int mode)
+{
+  BOOK *bk = FindBook(isMTCallBook);
+  if (key==KeyControl)
+  {
+    if (mode==KBD_SHORT_RELEASE)
+    {
+      IncommingCall_Accept(bk);
+    }
+    if (mode==KBD_LONG_PRESS)
+    {
+      IncommingCall_Reject(bk);
+    }
+    return(-1);
+  }
+  return(0);
+}
 void onCloseManagementBook(BOOK * book)
 {
   ModifyKeyHook(NewKey,0);
+  ModifyKeyHook(ControlKey,0);
   if(timer) Timer_Kill(&timer);
+  if(timer_call_off) Timer_Kill(&timer_call_off);
   SUBPROC(elf_exit);
 }
 

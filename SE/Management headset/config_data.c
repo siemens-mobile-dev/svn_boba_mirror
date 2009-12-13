@@ -4,6 +4,7 @@
 
 #pragma diag_suppress=Pe177
 #ifndef ENG
+  #define TURN_ON_MSG "Включать"
   #define CTRL_BUTTOM_MSG "Кнопка управления"
   #define HEADSET_MSG "Гарнитура"
   #define START_WHEN_CONNECTED_MSG "Включать при подключении"
@@ -21,6 +22,7 @@
   #define PREV_TRACK_MSG "Предыдущий трек"
   #define DOUBLE_PRESS_TIME_MSG "Время на двойное нажатие (мсек)"
 #else
+  #define TURN_ON_MSG "Turn on"
   #define CTRL_BUTTOM_MSG "Сontrol button"
   #define HEADSET_MSG "Headsfree"
   #define START_WHEN_CONNECTED_MSG "Turn on when connected"
@@ -44,9 +46,13 @@ __root const int KeyControl=0;
 __root const int KeyControlPressMode=3;
 
 __root const CFG_HDR cfghdr_turn_0={CFG_LEVEL,HEADSET_MSG,1,0};
-
-  __root const CFG_HDR cfghdr_turnon={CFG_CHECKBOX,START_WHEN_CONNECTED_MSG,0,0};
-  __root const int turn_on=0;
+__root const CFG_HDR cfghdr_turn_1={CFG_LEVEL,START_WHEN_CONNECTED_MSG,1,0};
+__root const CFG_HDR cfghdr_turnon_={CFG_CHECKBOX,TURN_ON_MSG,0,0};
+  __root const int turn_on=0;  
+  __root const CFG_HDR cfghdr_turnon={CFG_CBOX,START_WHEN_CONNECTED_MSG,0,2};
+  __root const int turn_on_pr=0;
+  __root const CFG_CBOX_ITEM cfgcbox_turn_on[2]={PLAYER_MSG,RADIO_MSG};
+  __root const CFG_HDR cfghdr_turn_1x={CFG_LEVEL,"",0,0};  
   __root const CFG_HDR cfghdr_turnoff={CFG_CHECKBOX,STOP_WHEN_DISCONNECTED_MSG,0,0};
   __root const int turn_off=0;
 __root const CFG_HDR cfghdr_turn_x={CFG_LEVEL,"",0,0};
