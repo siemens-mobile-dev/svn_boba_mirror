@@ -563,7 +563,8 @@ void Download::StartDownload()
   req_len=snprintf(req_str, 511, "\r\n");
   req_buf->Write(req_str, req_len);
   
-  Start(HTTPRequest->Host, HTTPRequest->Port);
+  if((HTTPRequest->IP = str2ip(HTTPRequest->Host)) != 0xFFFFFFFF) Start(HTTPRequest->IP, HTTPRequest->Port);
+  else Start(HTTPRequest->Host, HTTPRequest->Port);
   
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
   
@@ -794,12 +795,14 @@ void DownloadHandler::LoadQueue()
               }
               if(strstr(line, QL_Size))
               {
-                top_download->file_size = (DOWNLOAD_STATE)strtoul(line + sizeof(QL_Size), 0, 10);
+                //top_download->file_size = (DOWNLOAD_STATE)strtoul(line + sizeof(QL_Size), 0, 10);
+                sscanf(line + sizeof(QL_Size), "%d", &top_download->file_size);
                 goto end_of_loop;
               }
               if(strstr(line, QL_Downloaded))
               {
-                top_download->file_loaded_size = (DOWNLOAD_STATE)strtoul(line + sizeof(QL_Downloaded), 0, 10);
+                //top_download->file_loaded_size = (DOWNLOAD_STATE)strtoul(line + sizeof(QL_Downloaded), 0, 10);
+                sscanf(line + sizeof(QL_Downloaded), "%d", &top_download->file_loaded_size);
                 goto end_of_loop;
               }
             end_of_loop: // Конец цикла

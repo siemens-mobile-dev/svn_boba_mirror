@@ -33,6 +33,7 @@ public:
   char * Referer;
   char * TE;
   char * User_Agent;
+  unsigned int IP;
 };
 
 class HTTP_Response

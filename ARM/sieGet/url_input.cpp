@@ -158,7 +158,7 @@ int  URLInput::onKey(GUI *gui, GUI_MSG *msg)
     new_dl->file_path = path;
     new_dl->StartDownload();
     if(CFG_CLOSE_GUI) SieGetDialog::Active->Close();
-    return GUI_RESULT_CLOSE;
+    else return GUI_RESULT_CLOSE;
   }
   if(msg->gbsmsg->msg==KEY_DOWN && msg->gbsmsg->submess==ENTER_BUTTON)
   {
