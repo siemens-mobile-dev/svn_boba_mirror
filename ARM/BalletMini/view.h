@@ -150,7 +150,7 @@ typedef struct
   int loaded_sz;
   unsigned short wchar_hr;
   
-  char *pageurl;    //utf8
+  char *pageurl;
   char *title;
   
   int found_word_pos;

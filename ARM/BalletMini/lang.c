@@ -157,6 +157,7 @@ void lgpInitLangPack(void)
   lgpData[LGP_No]=                    "No";
   lgpData[LGP_Root]=                  "Root";
   lgpData[LGP_Clear]=                 "Clear text";
+  lgpData[LGP_AddToTemplate]=         "Add to templates";
     
   
   lgpData[LGP_LangCode]=              "en";

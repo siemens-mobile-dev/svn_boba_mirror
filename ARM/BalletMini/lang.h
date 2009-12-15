@@ -82,6 +82,7 @@ enum LGP_ID
   LGP_No,
   LGP_Root,
   LGP_Clear,
+  LGP_AddToTemplate,
   
   LGP_LangCode, // Пусть всегда будет в конце
   

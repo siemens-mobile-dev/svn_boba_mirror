@@ -38,7 +38,10 @@ __root const CFG_HDR cfghdr0011 = {CFG_COLOR, "Cursor color", 0, 0};
 __root const char cfgCursorColor[4]={0,0,170,100};
   
 __root const CFG_HDR cfghdr0012 = {CFG_COLOR, "Cursor color for pictures", 0, 0};
-__root const char cfgCursorColorPictures[4]={190,0,0,100};  
+__root const char cfgCursorColorPictures[4]={190,0,0,100};
+
+__root const CFG_HDR cfghdr0013 = {CFG_CHECKBOX, "Inverted cursor", 0, 2};
+__root const int cfgInvertCursor = 0;
 
 __root const CFG_HDR cfghdr001_end={CFG_LEVEL,"",0,0};
 

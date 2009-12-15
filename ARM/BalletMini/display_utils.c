@@ -18,6 +18,7 @@ extern const int cfgPwdNormalText;
 extern const int cfgShowCharCounter;
 extern const char cfgCursorColor[4];
 extern const char cfgCursorColorPictures[4];
+extern const int cfgInvertCursor;
 
 extern WSHDR *search_string;
 extern int search_isCaseSens;
@@ -358,7 +359,7 @@ typedef struct {
 } COLOR_RC;
 
 
-void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
+void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar, int isRef)
 {
   int scr_w = ScreenW() - MARGIN/2;
   if (rf->tag=='x'||rf->tag=='p')
@@ -381,7 +382,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
     }
     DrawString(ws2,x+d,y+d,scr_w,ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
-      GetPaletteAdrByColorIndex(1),
+      GetPaletteAdrByColorIndex(isRef?0:1),
       GetPaletteAdrByColorIndex(23));
     FreeWS(ws2);
   }
@@ -406,7 +407,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
     }
     DrawString(ws2,x+d,y+d,scr_w,ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
-      GetPaletteAdrByColorIndex(1),
+      GetPaletteAdrByColorIndex(isRef?0:1),
       GetPaletteAdrByColorIndex(23));
     FreeWS(ws2);
     mfree(c);
@@ -415,7 +416,7 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar)
   {
     DrawString((WSHDR *)rf->data,x+4,y+3+(y2-y-GetImgHeight(GetPicNByUnicodeSymbol(wchar))),scr_w,ScreenH(),
       FONT_SMALL,TEXT_NOFORMAT,
-      GetPaletteAdrByColorIndex(1),
+      GetPaletteAdrByColorIndex(isRef?0:1),
       GetPaletteAdrByColorIndex(23));
   }
 }
@@ -460,6 +461,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
     REFCACHE *form_rf;
     int       form_x;
     int       form_char;
+    int       isRef;
   }tFormData;
   
   REFCACHE *rnd_rf;
@@ -515,6 +517,9 @@ int RenderPage(VIEWDATA *vd, int do_draw)
       {
         isUnderline = 1;
       }
+      
+      if ((cfgInvertCursor) && (ena_ref))
+        ws->wsbody[++dc]=UTF16_ENA_INVERT;
           
       while(len>0&&dc<250)
       {
@@ -555,7 +560,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             if (ena_ref) ena_ref++;
             goto L1;
           }
-          goto L1;
+          if (!cfgInvertCursor)
+            goto L1;
         }
         if (c==UTF16_DIS_INVERT)
         {
@@ -566,7 +572,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           }
           rcs_work.x2=ws_width;
           ena_ref=0;
-          goto L1;
+          if (!cfgInvertCursor)
+            goto L1;
         }
         if (c==UTF16_PAPER_RGBA)
         {
@@ -602,6 +609,8 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             form_data[form_num].form_rf = rnd_rf;
             form_data[form_num].form_x = ws_width;
             form_data[form_num].form_char = c;
+            if (cfgInvertCursor)
+              form_data[form_num].isRef = ena_ref;
             form_num++;    
           }  
         }
@@ -698,7 +707,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
           
           for (int i = 0; form_data[i].form_rf != 0; i++)
           {           
-            renderForm(vd, form_data[i].form_rf, form_data[i].form_x+x, ypos, y2, form_data[i].form_char);
+            renderForm(vd, form_data[i].form_rf, form_data[i].form_x+x, ypos, y2, form_data[i].form_char, form_data[i].isRef);
           }
           
           if (rc_search.x!=rc_search.x2)
@@ -718,7 +727,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
         
         if (y2>=scr_h||lcheck)
         {
-          if (rcs_num)
+          if ((!cfgInvertCursor) && (rcs_num))
           {
             char* cl;
             cl = (char*)cfgCursorColor;
@@ -921,7 +930,21 @@ void FreeTemplates(void)
   templates_chars=NULL;
 }
 
-extern const char TEMPLATES_PATH[];
+SaveTextToTemplate(WSHDR* ws)
+{
+  int hFile;
+  unsigned int io_error;
+  char* s = malloc(wstrlen(ws)+2);
+  ws2ascii(s, ws);
+  strcat(s,"\n");
+  char * templates_file = getSymbolicPath("$ballet\\templates.txt");
+  if ((hFile = fopen(templates_file, A_ReadWrite+A_Create+A_Append,P_READ+P_WRITE, &io_error)) != -1)
+  {
+    fwrite(hFile,s,strlen(s),&io_error);
+    fclose(hFile,&io_error);
+  }
+  mfree(s);
+}
 
 int LoadTemplates()
 {
@@ -1123,24 +1146,28 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
       ascii2ws(item->ws,lgpData[LGP_Templates]);
       break;
     case 1:
+      ascii2ws(item->ws,lgpData[LGP_AddToTemplate]);
+      break;
+    case 2:
       ascii2ws(item->ws,lgpData[LGP_Clear]);
       break;
     }
   }
   if (item->type==1)
   {
+    GUI *data = item->user_pointer;
+    EDITCONTROL ec;
+    ExtractEditControl(data,1,&ec);
     switch(item->cur_item)
     {
     case 0:
-      createTemplatesMenu(item->user_pointer);
+      createTemplatesMenu(data);
       break;
     case 1:
-      {
-        GUI *data = item->user_pointer;
-        EDITCONTROL ec;
-        ExtractEditControl(data,1,&ec);
-        CutWSTR(ec.pWS,0);
-      }
+      SaveTextToTemplate(ec.pWS);
+      break;
+    case 2:
+      CutWSTR(ec.pWS,0);
       break;
     }
   }
@@ -1152,7 +1179,7 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
   if ((msg->gbsmsg->msg==KEY_DOWN)&&(msg->gbsmsg->submess==ENTER_BUTTON))
   {
     //paste_gui=data;
-    EDIT_OpenOptionMenuWithUserItems(data,input_box_onkey_options,data,2);
+    EDIT_OpenOptionMenuWithUserItems(data,input_box_onkey_options,data,3);
     return (-1);
   }
   if (msg->keys==0xFFF)
@@ -1550,6 +1577,7 @@ void link_options(USR_MENU_ITEM *item)
       case 1: wsprintf(item->ws,per_t,"browser");break;
       case 2: wsprintf(item->ws,per_t,"nrss");break;
       case 3: wsprintf(item->ws,per_t,"sieget");break;
+      case 4: ascii2ws(item->ws,lgpData[LGP_Clear]);break;
     }
   }
   if (item->type==1)
@@ -1557,10 +1585,15 @@ void link_options(USR_MENU_ITEM *item)
     GUI *gui = (GUI*)(item->user_pointer);
     EDITCONTROL ec;
     ExtractEditControl(gui,1,&ec);
-    char* s = malloc(wstrlen(ec.pWS)+1);
-    ws2ascii(s, ec.pWS);
-    RunOtherByURL(s,item->cur_item);
-    mfree(s);
+    if (item->cur_item == 4)
+      CutWSTR(ec.pWS,0);
+    else
+    {
+      char* s = malloc(wstrlen(ec.pWS)+1);
+      ws2ascii(s, ec.pWS);
+      RunOtherByURL(s,item->cur_item);
+      mfree(s);
+    }
   }   
 }
 
@@ -1572,7 +1605,7 @@ static int link_box_onkey(GUI *data, GUI_MSG *msg)
   }
   if ((msg->gbsmsg->msg==KEY_DOWN) && (msg->gbsmsg->submess == ENTER_BUTTON))
   {
-    EDIT_OpenOptionMenuWithUserItems(data,link_options,data,4);
+    EDIT_OpenOptionMenuWithUserItems(data,link_options,data,5);
     return -1;
   }
   return (0);

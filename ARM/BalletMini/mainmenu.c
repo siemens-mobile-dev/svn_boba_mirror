@@ -1495,6 +1495,25 @@ static void input_url_ghook(GUI *data, int cmd)
 
 static void input_url_locret(void){}
 
+void input_url_options(USR_MENU_ITEM *item)
+{
+  if (item->type==0)
+  {
+    switch(item->cur_item)
+    {
+      case 0: ascii2ws(item->ws,lgpData[LGP_Clear]);break;
+    }
+  }
+  if (item->type==1)
+  {
+    GUI *gui = (GUI*)(item->user_pointer);
+    EDITCONTROL ec;
+    ExtractEditControl(gui,1,&ec);
+    if (item->cur_item == 0)
+      CutWSTR(ec.pWS,0);
+  }   
+}
+
 static int input_url_onkey(GUI *data, GUI_MSG *msg)
 {
   if (msg->keys==0xFFF || msg->keys == 0x18)
@@ -1509,6 +1528,11 @@ static int input_url_onkey(GUI *data, GUI_MSG *msg)
     *s = 0;
     goto_url = ToWeb(goto_url,0,0);
     return 0xFF;
+  }
+  if ((msg->gbsmsg->msg==KEY_DOWN) && (msg->gbsmsg->submess == ENTER_BUTTON))
+  {
+    EDIT_OpenOptionMenuWithUserItems(data,input_url_options,data,1);
+    return -1;
   }
   return (0);
 }

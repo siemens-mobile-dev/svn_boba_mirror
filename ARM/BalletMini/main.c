@@ -553,7 +553,9 @@ void RunOtherByURL(const char *url, int other)
     if (sieget_ipc.data) mfree(sieget_ipc.data);
     sieget_ipc.name_to = sieget_ipc_name; // Посылка url в SieGet
     sieget_ipc.name_from = ipc_my_name;
-    sieget_ipc.data = malloc(strlen(url) + 1);
+    int len = strlen(url)+1;
+    if (len%32 == 0) len+=1;
+    sieget_ipc.data = malloc(len);
     strcpy((char *)sieget_ipc.data, url);
     GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &sieget_ipc);
   }
@@ -653,6 +655,8 @@ extern const unsigned int cfgKeyNewCopy;
 extern const unsigned int cfgKeySieget;
 extern const unsigned int cfgKeyBrowser;
 extern const unsigned int cfgKeyQuit;
+
+int longpress;
 
 static int method5(VIEW_GUI *data,GUI_MSG *msg)
 {
@@ -961,8 +965,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               if (sieget_ipc.data) mfree(sieget_ipc.data);
               sieget_ipc.name_to = sieget_ipc_name; // Посылка url в SieGet
               sieget_ipc.name_from = ipc_my_name;
-              sieget_ipc.data = malloc(strlen(s) + 1);
+              sieget_ipc.data = malloc(strlen(s) + 1 + strlen(vd->pageurl) + 1);
               strcpy((char *)sieget_ipc.data, s);
+              strcpy((char *)sieget_ipc.data + strlen(s) + 1, vd->pageurl);
               GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &sieget_ipc);
               mfree(ss);
             }
@@ -1210,14 +1215,25 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               s+=strlen(s)+1;
             if (k == cfgKeyNewCopy)
             {
-              RunOtherByURL(s,0);
               if (m==LONG_PRESS)
               {
-                Xipc.name_to = xtask_ipc_name;
-                Xipc.name_from = ipc_my_name;
-                Xipc.data = (void *)maincsm_id;
-                GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_XTASK_SHOW_CSM, &Xipc);
+                if (!longpress)
+                {
+                  longpress = 1;
+                  RunOtherByURL(s,0);
+                  Xipc.name_to = xtask_ipc_name;
+                  Xipc.name_from = ipc_my_name;
+                  Xipc.data = (void *)maincsm_id;
+                  GBS_SendMessage(MMI_CEPID, MSG_IPC, IPC_XTASK_SHOW_CSM, &Xipc);
+                }
               }
+              else
+              {
+                if (!longpress)
+                  RunOtherByURL(s,0);
+                longpress = 0;
+              }
+                
             }
             else
             {
