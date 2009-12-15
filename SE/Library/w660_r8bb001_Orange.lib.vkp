@@ -654,7 +654,9 @@
 ;0E60: xxxxxxxx yyyyyyyy ; 398: void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
 ;0E64: xxxxxxxx yyyyyyyy ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
 0E68: 00000000 9924F344 ; 39A: int Settings_ShowNumber_Get(char *state);
-
+0E6C: 00000000 A1E3B344 ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
+0E70: 00000000 E103B444 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
+0E74: 00000000 5D268944 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 
 
 ;locale=Russian_Russia.1251

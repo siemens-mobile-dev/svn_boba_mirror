@@ -1703,4 +1703,11 @@ __swi __arm  void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *
 #pragma swi_number=0x39A
 __swi __arm  int Settings_ShowNumber_Get(char *state);
 
+#pragma swi_number=0x39B
+__swi __arm  GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
+#pragma swi_number=0x39C
+__swi __arm  GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
+#pragma swi_number=0x39D
+__swi __arm  void GVI_DeleteMemoryGC(GVI_GC srcgc);
+
 #endif
