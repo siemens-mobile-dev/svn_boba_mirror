@@ -965,9 +965,9 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               if (sieget_ipc.data) mfree(sieget_ipc.data);
               sieget_ipc.name_to = sieget_ipc_name; // Посылка url в SieGet
               sieget_ipc.name_from = ipc_my_name;
-              sieget_ipc.data = malloc(strlen(s) + 1 + strlen(vd->pageurl) + 1);
+              sieget_ipc.data = malloc(strlen(s) + 1 + strlen(vd->pageurl) - 1);
               strcpy((char *)sieget_ipc.data, s);
-              strcpy((char *)sieget_ipc.data + strlen(s) + 1, vd->pageurl);
+              strcpy((char *)sieget_ipc.data + strlen(s) + 1, vd->pageurl+2);
               GBS_SendMessage(MMI_CEPID, MSG_IPC, SIEGET_GOTO_URL, &sieget_ipc);
               mfree(ss);
             }
