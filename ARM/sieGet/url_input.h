@@ -6,13 +6,14 @@
 class URLInput
 {
 public:
-  void Show(char * url_str);
+  void Show(char * url_str, char * ref_str);
   int onKey(GUI *gui, GUI_MSG *msg);
   void gHook(GUI *gui, int cmd);
 private:
   int url_pos;
   int path_pos;
   int fname_pos;
+  int referer_pos;
 };
 
 void input_options_select_bookmark(USR_MENU_ITEM *item);

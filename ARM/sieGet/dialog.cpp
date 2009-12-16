@@ -38,8 +38,17 @@ void SieGetDialog::Show(char * _url)
   if (_url)
   {
     _safe_delete(url);
-    url = new char[strlen(_url) + 1];
+    _safe_delete(ref);
+    ref=NULL;
+    int len = strlen(_url) + 1;
+    url = new char[len];
     strcpy(url, _url);
+    char* ref_new = _url+len; // Из балета приходит url+\0+referer+\0
+    if(ref_new[0]=='h' && ref_new[1]=='t' && ref_new[2]=='t' && ref_new[3]=='p') // Для совместимости со старым балетом
+    {
+      ref = new char[strlen(ref_new)+1];
+      strcpy(ref, ref_new);
+    }
   }
 }
 
@@ -62,8 +71,9 @@ int SieGetDialog::onMessage(GBS_MSG * msg)
   if (url)
   {
     URLInput * ui = new URLInput;
-    ui->Show(url);
+    ui->Show(url, ref);
     delete url;
+    _safe_delete(ref);
     url = NULL;
   }
   return CSM_MSG_RESULT_CONTINUE;
@@ -100,12 +110,14 @@ void SieGetDialog::onClose()
 SieGetDialog::SieGetDialog()
 {
   url = NULL;
+  ref = NULL;
   list = new List;
 }
 
 SieGetDialog::~SieGetDialog()
 {
   _safe_delete(url);
+  _safe_delete(ref);
   delete list;
 }
 

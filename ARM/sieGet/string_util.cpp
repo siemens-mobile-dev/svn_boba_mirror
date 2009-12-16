@@ -881,3 +881,12 @@ void remove_bad_chars(char *s)
     s++;
   }
 }
+
+char *find_eol(char *str)
+{
+  char* s = str;
+  s--;
+  do s++;
+  while((*s)&&(*s!=0x0D)&&(*(s+1)!=0x0A));
+  return s;
+}

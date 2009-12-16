@@ -512,9 +512,13 @@ void Download::StartDownload()
     }
     // Port. Берем из URL
     HTTPRequest->Port = tmp_url->port;
-    // Referer. Полный URL
-    HTTPRequest->Referer = new char[strlen(url) + 1];
-    strcpy(HTTPRequest->Referer, url);
+    // Referer.
+    if(referer) HTTPRequest->Referer = URL_reencode_escapes(referer); // Если Пришел/ввели referer - юзаем его
+    else
+    {
+      HTTPRequest->Referer = new char[strlen(url) + 1];
+      strcpy(HTTPRequest->Referer, url);  // Иначе копируем туда URL как раньше
+    }
     URL_unescape(url); // Конвертируем URL из Web формата в обычный вид
     delete tmp_url;
   }
@@ -586,6 +590,7 @@ Download::Download()
   file_path = NULL;
   file_size = NULL;
   file_loaded_size = NULL;
+  referer = NULL;
   
   hFile = -1;
   if (DownloadHandler::Top)
@@ -604,6 +609,7 @@ Download::~Download()
   _safe_delete(file_name);
   _safe_delete(full_file_name);
   _safe_delete(file_path);
+  _safe_delete(referer);
 
   if (DownloadHandler::Top)
     DownloadHandler::Top->DeleteDownload(this);
@@ -729,6 +735,7 @@ char QL_FileName[]="FileName=";
 char QL_FullName[]="FullName=";
 char QL_SaveTo[]="SaveTo=";
 char QL_URL[]="URL=";
+char QL_Referer[]="Referer=";
 char QL_State[]="State=";
 char QL_Size[]="Size=";
 char QL_Downloaded[]="Downloaded=";
@@ -744,12 +751,12 @@ void DownloadHandler::LoadQueue()
   volatile int hFile;
   unsigned int io_error = 0;
   char * buf; // Буфер под файл
-  char line[256]; // Текущая строка
   int line_size = 0; // Длина текущей строки
-  int buf_pos = 0; // Позиция в буфере
+  int data_len = 0;
   Download * top_download;
   FSTATS fstat;
   char * list_file = getSymbolicPath("$sieget\\List.txt");
+  
   if (GetFileStats(list_file, &fstat, &io_error)!=-1) // Получаем размер файла
   {
     if((hFile=fopen(list_file, A_ReadOnly + A_BIN, P_READ, &io_error))!=-1) // Открываем файл для чтения
@@ -757,66 +764,78 @@ void DownloadHandler::LoadQueue()
       if (buf = new char[fstat.size+1]) // Выделяем память под буфер
       {
         buf[fread(hFile, buf, fstat.size, &io_error)]=0; // Читаем файл в буфер
-        while(buf[buf_pos]!=0 && buf_pos < fstat.size) // Пока не конец файла
+        char* s = buf;
+        while(*s) // Пока не конец файла
         {
-          if (buf[buf_pos]=='\r' && buf[buf_pos + 1]=='\n') // Rонец строки
+          char* c = find_eol(s);
+          line_size = c - s;
+          if (line_size > 0)
           {
-            if (line_size > 0)
+            if(!strncmp(s,QL_FileName,sizeof(QL_FileName)-1))
             {
-              line[line_size] = NULL;
-              if(strstr(line, QL_FileName))
-              {
-                top_download->file_name = new char[line_size - sizeof(QL_FileName) + 1];
-                strcpy(top_download->file_name, line + sizeof(QL_FileName));
-                goto end_of_loop; // Дальше проверять уже ничего не нужно. Идем в конец цикла
-              }
-              if(strstr(line, QL_FullName))
-              {
-                top_download->full_file_name = new char[line_size - sizeof(QL_FullName) + 1];
-                strcpy(top_download->full_file_name, line + sizeof(QL_FullName));
-                goto end_of_loop;
-              }
-              if(strstr(line, QL_SaveTo))
-              {
-                top_download->file_path = new char[line_size - sizeof(QL_SaveTo) + 1];
-                strcpy(top_download->file_path, line + sizeof(QL_SaveTo));
-                goto end_of_loop;
-              }
-              if(strstr(line, QL_URL))
-              {
-                top_download->url = new char[line_size - sizeof(QL_URL) + 1];
-                strcpy(top_download->url, line + sizeof(QL_URL));
-                goto end_of_loop;
-              }
-              if(strstr(line, QL_State))
-              {
-                top_download->download_state = (DOWNLOAD_STATE)strtoul(line + sizeof(QL_State), 0, 10);
-                goto end_of_loop;
-              }
-              if(strstr(line, QL_Size))
-              {
-                //top_download->file_size = (DOWNLOAD_STATE)strtoul(line + sizeof(QL_Size), 0, 10);
-                sscanf(line + sizeof(QL_Size), "%d", &top_download->file_size);
-                goto end_of_loop;
-              }
-              if(strstr(line, QL_Downloaded))
-              {
-                //top_download->file_loaded_size = (DOWNLOAD_STATE)strtoul(line + sizeof(QL_Downloaded), 0, 10);
-                sscanf(line + sizeof(QL_Downloaded), "%d", &top_download->file_loaded_size);
-                goto end_of_loop;
-              }
-            end_of_loop: // Конец цикла
-              if (buf[buf_pos + 2]=='\r' && buf[buf_pos + 3]=='\n' && buf[buf_pos + 4]!=NULL)
-              {
-                Download * new_download = new Download;
-                top_download = new_download;
-              }
-              line_size=0;
+              data_len = line_size - sizeof(QL_FileName)+1;
+              top_download->file_name = new char[data_len+1];
+              memcpy(top_download->file_name, s+sizeof(QL_FileName)-1, data_len);
+              top_download->file_name[data_len] = NULL;
+              goto end_of_loop; // Дальше проверять уже ничего не нужно. Идем в конец цикла
+            }
+            if(!strncmp(s,QL_FullName,sizeof(QL_FullName)-1))
+            {
+              data_len = line_size - sizeof(QL_FullName)+1;
+              top_download->full_file_name = new char[data_len+1];
+              memcpy(top_download->full_file_name, s+sizeof(QL_FullName)-1, data_len);
+              top_download->full_file_name[data_len] = NULL;
+              goto end_of_loop;
+            }
+            if(!strncmp(s,QL_SaveTo,sizeof(QL_SaveTo)-1))
+            {
+              data_len = line_size - sizeof(QL_SaveTo)+1;
+              top_download->file_path = new char[data_len+1];
+              memcpy(top_download->file_path, s+sizeof(QL_SaveTo)-1, data_len);
+              top_download->file_path[data_len] = NULL;
+              goto end_of_loop;
+            }
+            if(!strncmp(s,QL_URL,sizeof(QL_URL)-1))
+            {
+              data_len = line_size - sizeof(QL_URL)+1;
+              top_download->url = new char[data_len+1];
+              memcpy(top_download->url, s+sizeof(QL_URL)-1, data_len);
+              top_download->url[data_len] = NULL;
+              goto end_of_loop;
+            }
+            if(!strncmp(s,QL_Referer,sizeof(QL_Referer)-1))
+            {
+              data_len = line_size - sizeof(QL_Referer)+1;
+              top_download->referer = new char[data_len+1];
+              memcpy(top_download->referer, s+sizeof(QL_Referer)-1, data_len);
+              top_download->referer[data_len] = NULL;
+              goto end_of_loop;
+            }
+            if(!strncmp(s,QL_State,sizeof(QL_State)-1))
+            {
+              top_download->download_state = (DOWNLOAD_STATE)strtoul(s+sizeof(QL_State)-1, 0, 10);
+              goto end_of_loop;
+            }
+            if(!strncmp(s,QL_Size,sizeof(QL_Size)-1))
+            {
+              top_download->file_size = strtoul(s+sizeof(QL_Size)-1, 0, 10);
+              goto end_of_loop;
+            }
+            if(!strncmp(s,QL_Downloaded,sizeof(QL_Downloaded)-1))
+            {
+              top_download->file_loaded_size = strtoul(s+sizeof(QL_Downloaded)-1, 0, 10);
+              goto end_of_loop;
+            }
+          end_of_loop: // Конец цикла
+            s+=line_size+2;
+            if (*s==0x0D && *(s+1)==0x0A && *(s+2)!=NULL)
+            {
+              Download * new_download = new Download;
+              top_download = new_download;
+              s+=2;
             }
           }
-          else
-            line[line_size++]=buf[buf_pos]; // Добавляем в строку символы из буфера, пока не конец сроки
-          buf_pos++;
+          else s+=2;
         }
         delete buf; // Удаляем буфер. он нам уже не понадобится
         
@@ -848,7 +867,7 @@ void DownloadHandler::SaveQueue()
   volatile int hFile;
   unsigned int io_error = 0;
   int download_n = 0; // Номер текущей закачки
-  char * tmp_str = new char[512]; // Временная строка
+  char * tmp_str = new char[1024]; // Временная строка(пока только увеличу, хз как резиновой сделать)
   int tmp_str_len = 0; // Длина временной строки
   Buffer * tmp_buf = new Buffer; // Буфер данных
   
@@ -860,41 +879,47 @@ void DownloadHandler::SaveQueue()
   if(!io_error)
   {
     DownloadQ * tmp = queue; // Очередь закачек
-    tmp_str_len = snprintf(tmp_str, 511, "SieGet downloads list\r\n");
+    tmp_str_len = snprintf(tmp_str, 1023, "SieGet downloads list\r\n");
     tmp_buf->Write(tmp_str, tmp_str_len);
     // Добавляем в буфер дату и время генерации файла
     TTime time; TDate date;
     GetDateTime(&date, &time); // Получаем текущие дату и время
-    tmp_str_len = snprintf(tmp_str, 511, "%s%02d.%02d.%02d %02d:%02d:%02d\r\n", QL_GeneratedDateTime, date.day, date.month, date.year, time.hour, time.min, time.sec);
+    tmp_str_len = snprintf(tmp_str, 1023, "%s%02d.%02d.%02d %02d:%02d:%02d\r\n", QL_GeneratedDateTime, date.day, date.month, date.year, time.hour, time.min, time.sec);
     tmp_buf->Write(tmp_str, tmp_str_len);
     // Добавляем в буфер число закачек в очереди
-    tmp_str_len = snprintf(tmp_str, 511, "%s%d\r\n\r\n", QL_Total_downloads, GetNumOfDownloads());
+    tmp_str_len = snprintf(tmp_str, 1023, "%s%d\r\n\r\n", QL_Total_downloads, GetNumOfDownloads());
     tmp_buf->Write(tmp_str, tmp_str_len);
     while(tmp) // Далее делаем в цикле для каждой закачки
     {
       // Добавляем в буфер номер текущей сохраняемой закачки
-      tmp_str_len = snprintf(tmp_str, 511, "%s %d:\r\n", QL_Download, download_n + 1);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s %d:\r\n", QL_Download, download_n + 1);
       tmp_buf->Write(tmp_str, tmp_str_len);
       // Добавляем в буфер имя закачиваемого файла
-      tmp_str_len = snprintf(tmp_str, 511, "%s%s\r\n", QL_FileName, tmp->download->file_name);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s%s\r\n", QL_FileName, tmp->download->file_name);
       tmp_buf->Write(tmp_str, tmp_str_len);
       // Добавляем в буфер имя закачиваемого файла
-      tmp_str_len = snprintf(tmp_str, 511, "%s%s\r\n", QL_FullName, tmp->download->full_file_name);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s%s\r\n", QL_FullName, tmp->download->full_file_name);
       tmp_buf->Write(tmp_str, tmp_str_len);
       // Добавляем в буфер папку, куда сохраняется файл
-      tmp_str_len = snprintf(tmp_str, 511, "%s%s\r\n", QL_SaveTo, tmp->download->file_path);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s%s\r\n", QL_SaveTo, tmp->download->file_path);
       tmp_buf->Write(tmp_str, tmp_str_len);
       // Добавляем в буфер URL, по которому производилась закачка
-      tmp_str_len = snprintf(tmp_str, 511, "%s%s\r\n", QL_URL, tmp->download->url);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s%s\r\n", QL_URL, tmp->download->url);
       tmp_buf->Write(tmp_str, tmp_str_len);
+      // Добавляем в буфер Referer, если вписывали
+      if(tmp->download->referer)
+      {
+        tmp_str_len = snprintf(tmp_str, 1023, "%s%s\r\n", QL_Referer, tmp->download->referer);
+        tmp_buf->Write(tmp_str, tmp_str_len);
+      }
       // Добавляем в буфер состояние закачки
-      tmp_str_len = snprintf(tmp_str, 511, "%s%d\r\n", QL_State, tmp->download->download_state);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s%d\r\n", QL_State, tmp->download->download_state);
       tmp_buf->Write(tmp_str, tmp_str_len);
       // Добавляем в буфер размер закачиваемого файла
-      tmp_str_len = snprintf(tmp_str, 511, "%s%u\r\n", QL_Size, tmp->download->file_size);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s%u\r\n", QL_Size, tmp->download->file_size);
       tmp_buf->Write(tmp_str, tmp_str_len);
       // Добавляем в буфер число закачанных байт файла
-      tmp_str_len = snprintf(tmp_str, 511, "%s%u\r\n\r\n", QL_Downloaded, tmp->download->file_loaded_size);
+      tmp_str_len = snprintf(tmp_str, 1023, "%s%u\r\n\r\n", QL_Downloaded, tmp->download->file_loaded_size);
       tmp_buf->Write(tmp_str, tmp_str_len);
       
       download_n++;

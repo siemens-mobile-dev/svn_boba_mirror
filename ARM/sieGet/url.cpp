@@ -133,7 +133,7 @@ int URL::Parse(char * s_url)
 
 void URL::Print(Log * log)
 {
-  char * msg = new char[128];
+  char * msg = new char[512];
   if (scheme)
   {
     sprintf(msg, "Scheme: %s", scheme);

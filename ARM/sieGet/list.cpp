@@ -83,7 +83,7 @@ int List::onKey(void * data, GUI_MSG * msg)
       case GREEN_BUTTON:
         {
           URLInput * ui = new URLInput(); // Новая закачка
-          ui->Show("http://");
+          ui->Show("http://", NULL);
         }
         break;
       case '#':
@@ -241,7 +241,7 @@ void list_options_new_download(GUI * data)
 {
   ListOptions * list_opt = (ListOptions *)MenuGetUserPointer(data);
   URLInput * ui = new URLInput();
-  ui->Show("http://");
+  ui->Show("http://", NULL);
   GeneralFunc_flag1(list_opt->gui_id, 1);
 }
 

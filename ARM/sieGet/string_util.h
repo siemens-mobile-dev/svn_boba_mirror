@@ -59,4 +59,7 @@ void del_ext(char *source);
 char * get_fname_from_path(char * path);
 void remove_bad_chars(char *s);
 
+// Поиск конца строки
+char *find_eol(char *s);
+
 #endif

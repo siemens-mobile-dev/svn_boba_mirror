@@ -148,6 +148,13 @@ int  URLInput::onKey(GUI *gui, GUI_MSG *msg)
       fname = new char[ec.maxlen];
       ws_2str(ec.pWS, fname, ec.maxlen);
     }
+    char * referer = NULL;
+    ExtractEditControl(gui, referer_pos, &ec);
+    if(ec.pWS->wsbody[0])
+    {
+      referer = new char[ec.maxlen];
+      ws_2str(ec.pWS, referer, ec.maxlen);
+    }
     Download * new_dl = new Download;
     new_dl->url = url;
     if (fname)
@@ -155,6 +162,7 @@ int  URLInput::onKey(GUI *gui, GUI_MSG *msg)
       new_dl->is_const_file_name = 1;
       new_dl->file_name = fname;
     }
+    new_dl->referer = referer;
     new_dl->file_path = path;
     new_dl->StartDownload();
     if(CFG_CLOSE_GUI) SieGetDialog::Active->Close();
@@ -199,7 +207,7 @@ void URLInput::gHook(GUI *gui, int cmd)
   }
 }
 
-void URLInput::Show(char * url_str)
+void URLInput::Show(char * url_str, char * ref_str)
 {
   WSHDR * ws = AllocWS(512);
   EDITCONTROL ec;
@@ -238,6 +246,16 @@ void URLInput::Show(char * url_str)
   PrepareEditControl(&ec);
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
   fname_pos = AddEditControlToEditQend(eq, &ec, ma);
+  
+  ascii2ws(ws, "Referer:");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
+  AddEditControlToEditQend(eq, &ec, ma);
+  
+  ascii2ws(ws, ref_str ? ref_str : "");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
+  referer_pos = AddEditControlToEditQend(eq, &ec, ma);
 
   FreeWS(ws);
   

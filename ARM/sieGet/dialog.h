@@ -29,6 +29,7 @@ private:
   IPC_REQ Xipc; // Для связи с XTASK
   IPC_REQ Lipc;
   char * url;
+  char * ref;
 };
 
 #endif

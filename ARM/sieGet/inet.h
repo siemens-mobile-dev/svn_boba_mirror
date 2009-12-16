@@ -116,6 +116,7 @@ public:
   int is_const_file_name; // Флаг, указывающий, что имя файла указано юзером и его не следует менять
   char * full_file_name;  // Полное имя файла
   char * file_path;       // Папка сохранения
+  char * referer;         // Referer
   int file_size;          // Полный размер файла
   int file_loaded_size;   // Размер закачанной части
   
