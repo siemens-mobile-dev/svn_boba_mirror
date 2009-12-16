@@ -656,7 +656,7 @@
 0E6C: FFFFFFFF 6DE5B344 ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
 0E70: FFFFFFFF C9FCB344 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 0E74: FFFFFFFF 8588B844 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
-0E78: FFFFFFFF 11852C45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STING_INPUT *,int langID,int flag);
+0E78: FFFFFFFF 11852C45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 
 
 ;locale=Russian_Russia.1251

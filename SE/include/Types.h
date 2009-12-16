@@ -908,14 +908,12 @@ typedef struct {
     int h;
 } GVI_XYWH;
 
-tydedef struct
-{
+typedef struct {
     char count;
     char *langs;
 }LANGUAGE;
 
-tydedef struct
-{
+typedef struct {
     char dummy[0x424];
     LANGUAGE *lng;
     char cur_langID;

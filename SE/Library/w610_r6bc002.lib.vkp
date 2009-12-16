@@ -657,7 +657,7 @@
 ;0E6C: xxxxxxxx yyyyyyyy ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
 ;0E70: xxxxxxxx yyyyyyyy ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 ;0E74: xxxxxxxx yyyyyyyy ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
-0E78: 00000000 3D762E45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STING_INPUT *,int langID,int flag);
+0E78: 00000000 3D762E45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 
 
 
