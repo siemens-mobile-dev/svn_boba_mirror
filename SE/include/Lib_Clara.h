@@ -1710,4 +1710,7 @@ __swi __arm  GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 #pragma swi_number=0x39D
 __swi __arm  void GVI_DeleteMemoryGC(GVI_GC srcgc);
 
+#pragma swi_number=0x39E
+__swi __arm  int StringInput_DispObject_SetLanguage(DISP_OBJ_STING_INPUT *,int langID,int flag);
+
 #endif

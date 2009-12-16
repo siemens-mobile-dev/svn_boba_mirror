@@ -908,5 +908,17 @@ typedef struct {
     int h;
 } GVI_XYWH;
 
+tydedef struct
+{
+    char count;
+    char *langs;
+}LANGUAGE;
+
+tydedef struct
+{
+    char dummy[0x424];
+    LANGUAGE *lng;
+    char cur_langID;
+}DISP_OBJ_STRING_INPUT;
 
 #endif

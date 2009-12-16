@@ -650,7 +650,14 @@
 0E50: 00000000 75C79F44 ; 394: void GVI_FillSolidTriangle(GVI_GC destgc, int x1, int y1, int x2, int y2, int x3, int y3, int color);
 0E54: 00000000 5D8C3545 ; 395: GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void* somefn , int unk2);
 0E58: 00000000 358D3545 ; 396: void GC_FreeGC(GC* gc);
+;0E5C: xxxxxxxx yyyyyyyy ; 397: void REQUEST_ALARMCLOCKSTATUS_GET(const int *SYNC, char * alarm_status);
+;0E60: xxxxxxxx yyyyyyyy ; 398: void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
+;0E64: xxxxxxxx yyyyyyyy ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
 0E68: 00000000 A5B6DD44 ; 39A: int Settings_ShowNumber_ Get char *state);
+;0E6C: xxxxxxxx yyyyyyyy ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
+;0E70: xxxxxxxx yyyyyyyy ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
+;0E74: xxxxxxxx yyyyyyyy ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
+0E78: 00000000 3D762E45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STING_INPUT *,int langID,int flag);
 
 
 
