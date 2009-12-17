@@ -765,7 +765,7 @@ void DownloadHandler::LoadQueue()
       {
         buf[fread(hFile, buf, fstat.size, &io_error)]=0; // Читаем файл в буфер
         char* s = buf;
-        while(*s) // Пока не конец файла
+        while(*s && s <= buf+fstat.size) // Пока не конец файла
         {
           char* c = find_eol(s);
           line_size = c - s;
