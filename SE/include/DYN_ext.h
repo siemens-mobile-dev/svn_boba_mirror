@@ -525,4 +525,5 @@ extern const int DB_CMD_INFO ;
 extern const int DB_CMD_SETSMALLICON ;
 extern const int DB_CMD_DESTROY_SUBROUTINE ;
 extern const int DB_CMD_LAST ;
+extern const int USSD_RECIEVED_EVENT ;
 #endif
