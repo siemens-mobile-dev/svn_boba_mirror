@@ -266,15 +266,15 @@
 0850: 00000000 7906EE44 ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
 0854: 00000000 9D450345 ; 215: int GetABRecNum(AB_GET_STRUCT *); //nullsub(void)
 0858: 00000000 FC1EA345 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
-085C: 00000000 917FFB44 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); //замена несуществующей
-0860: 00000000 8D7FFB44 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy); //замена несуществующей
+085C: 00000000 917FFB44 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); // !!!!! не настоящий !!!!!!
+0860: 00000000 8D7FFB44 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy); // !!!!! не настоящий !!!!!!
 0864: 00000000 299AE544 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: 00000000 E8300820 ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
 0870: 00000000 B9B94245 ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: 00000000 09B94245 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 BDBE4245 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
-087C: 00000000 AD5D9F44 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
+087C: 00000000 AD5D9F44 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj); // !!!!! не настоящий !!!!!!
 0880: 00000000 657F4245 ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name);
 0884: 00000000 2DD04245 ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: 00000000 697F4245 ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
@@ -604,11 +604,11 @@
 0D98: 00000000 ADDE3A45 ; 366: int IrDa_GetState(char *state);
 0D9C: 00000000 D96A3B45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET(const int *sync, int ProfileNum, char *state);
 0DA0: 00000000 A1B0EA44 ; 368: void * IncommingCall_Accept(BOOK* book);
-;0DA4: xxxxxxxx yyyyyyyy ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
-;0DA8: xxxxxxxx yyyyyyyy ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
-;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
-;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
-;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
+0DA4: 00000000 E14F0245 ; 369: void MediaPlayer_SoftKey_SetText(void *player_gui,int actionID , int StrID);
+0DA8: 00000000 AD4F0245 ; 36A: void MediaPlayer_SoftKey_SetAction(void *player_gui,int actionID ,void (*proc)(BOOK *,void*));
+0DAC: 00000000 6D500245 ; 36B: void MediaPlayer_SoftKey_SetItemAsSubItem(void *player_gui,int item,int subitem);
+0DB0: 00000000 FD4F0245 ; 36C: void MediaPlayer_SoftKey_AddHelpStr(void *player_gui,int item,int StrID);
+0DB4: 00000000 D1470245 ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
 0DB8: 00000000 3DBD4245 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 0DBC: 00000000 15C61D44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
 0DC0: 00000000 A92A4545 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
@@ -657,6 +657,8 @@
 0E6C: 00000000 B58CB044 ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
 0E70: 00000000 F5ACB044 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 0E74: 00000000 3D808444 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
+;0E78: xxxxxxxx yyyyyyyy ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
+0E7C: FFFFFFFF C51C2945 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
 
 
 

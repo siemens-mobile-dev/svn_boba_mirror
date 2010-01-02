@@ -1713,4 +1713,7 @@ __swi __arm  void GVI_DeleteMemoryGC(GVI_GC srcgc);
 #pragma swi_number=0x39E
 __swi __arm  int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 
+#pragma swi_number=0x39F
+__swi __arm  int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
+
 #endif
