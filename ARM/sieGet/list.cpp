@@ -96,8 +96,11 @@ int List::onKey(void * data, GUI_MSG * msg)
       case '*':
         {
           dl = DownloadHandler::Top->GetDownloadbyN(GetCurMenuItem(data));
-          Info * inf = new Info;
-          inf->Show(dl, Info::DownloadInfo);
+          if(dl)
+          {
+            Info * inf = new Info;
+            inf->Show(dl, Info::DownloadInfo);
+          }
         }
         break;
       case '5':

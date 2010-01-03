@@ -863,7 +863,7 @@ char * get_fname_from_path(char * path)
   return fname;
 }
 
-const char badchars[] = {'?', '*', '"', ':', '<', '>', '/', '\\', '|', '\n', '\r'};
+const char badchars[] = {'?', '*', '"', ':', '<', '>', '/', '\\', '|', '\n', '\r', ','};
 
 void remove_bad_chars(char *s)
 {
