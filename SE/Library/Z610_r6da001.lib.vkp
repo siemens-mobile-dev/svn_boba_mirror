@@ -658,7 +658,7 @@
 0E70: 00000000 F5ACB044 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 0E74: 00000000 3D808444 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 ;0E78: xxxxxxxx yyyyyyyy ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
-0E7C: FFFFFFFF C51C2945 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
+0E7C: 00000000 C51C2945 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
 
 
 
