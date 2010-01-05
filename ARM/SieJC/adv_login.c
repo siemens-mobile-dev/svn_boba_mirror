@@ -7,6 +7,7 @@
 #include "jabber_util.h"
 #include "history.h"
 #include "adv_login.h"
+#include "lang.h"
 
 extern JABBER_STATE Jabber_state;
 extern const char JABBER_SERVER[];
@@ -23,9 +24,9 @@ SASL_AUTH_DATA SASL_Auth_data = {NULL, NULL, NULL, NULL, NULL};
 void Send_Welcome_Packet_SASL()
 {
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n"
-    "<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en' version='1.0'>";
+    "<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='%s' version='1.0'>";
   char* buf=malloc(256);
-  sprintf(buf,streamheader,JABBER_SERVER);
+  sprintf(buf,streamheader,JABBER_SERVER, LG_XML_LANG);
   SendAnswer(buf);
   mfree(buf);
   LockSched();

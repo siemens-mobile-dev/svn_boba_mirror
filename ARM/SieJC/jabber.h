@@ -73,7 +73,7 @@
 #define JABBER_STORAGE_BOOKMARKS "storage:bookmarks"
 #define DISCO_INFO       "http://jabber.org/protocol/disco#info"
 #define XMLNS_CHATSTATES "http://jabber.org/protocol/chatstates"
-  
+#define XMLNS_CAPS       "http://jabber.org/protocol/caps"
 #define XMLNS_MUC       "http://jabber.org/protocol/muc"
 #define XMLNS_MUC_USER  "http://jabber.org/protocol/muc#user"
 #define XMLNS_MUC_ADMIN "http://jabber.org/protocol/muc#admin"

@@ -212,9 +212,9 @@ void Send_Welcome_Packet()
     return;
   }
   char streamheader[]="<?xml version='1.0' encoding='UTF-8'?>\n"
-    "<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en'>";
+    "<stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='%s'>";
   char* buf=malloc(256);
-  sprintf(buf,streamheader,JABBER_SERVER);
+  sprintf(buf,streamheader,JABBER_SERVER, LG_XML_LANG);
   SendAnswer(buf);
   mfree(buf);
   LockSched();
@@ -434,6 +434,7 @@ void Send_Presence(PRESENCE_INFO *pr_info)
   char xmlns_t[]="xmlns";
   char node_t[]="node";
   char ver_t[]="ver";
+  char hash_t[]="hash";
   char priority_t[]="priority";
   
   if(pr_info->status!=PRESENCE_OFFLINE)
@@ -456,10 +457,11 @@ void Send_Presence(PRESENCE_INFO *pr_info)
     priority = XML_CreateNode(priority_t, tmp_str);
     show = XML_CreateNode(show_t, (char*)PRESENCES[pr_info->status]);
     caps = XML_CreateNode(c_t, NULL);
-    XML_Set_Attr_Value(caps, xmlns_t, "http://jabber.org/protocol/caps");
+    XML_Set_Attr_Value(caps, xmlns_t, XMLNS_CAPS);
     sprintf(tmp_str, "%s %s-r%d", VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
     XML_Set_Attr_Value(caps, node_t, tmp_str);
     XML_Set_Attr_Value(caps, ver_t, caps_str);
+    XML_Set_Attr_Value(caps, hash_t, "sha-1");
     show->next = caps;
     priority->next = show;
     if(status) status->next = priority;
@@ -488,10 +490,11 @@ void Send_Presence(PRESENCE_INFO *pr_info)
       show->next = status;
     }
     caps = XML_CreateNode(c_t, NULL);
-    XML_Set_Attr_Value(caps, xmlns_t, "http://jabber.org/protocol/caps");
+    XML_Set_Attr_Value(caps, xmlns_t, XMLNS_CAPS);
     sprintf(tmp_str, "%s %s-r%d", VERSION_NAME, VERSION_VERS, __SVN_REVISION__);
     XML_Set_Attr_Value(caps, node_t, tmp_str);
     XML_Set_Attr_Value(caps, ver_t, caps_str);
+    XML_Set_Attr_Value(caps, hash_t, "sha-1");
     caps->next = show;
 
     SendPresence(m_ex->conf_jid, NULL, NULL, caps);

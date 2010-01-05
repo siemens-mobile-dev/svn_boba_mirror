@@ -199,6 +199,7 @@ void Get_Avatar_Path(char *path, char *jid)
   strcpy(path, PATH_TO_AVATARS);
   TRESOURCE *ResEx = CList_IsResourceInList(jid);
   CLIST *ClEx = CList_FindContactByJID(jid);
+  if(!ClEx) return;
   unsigned int err;
   if (ResEx)
   {
@@ -206,11 +207,13 @@ void Get_Avatar_Path(char *path, char *jid)
     {
       char *s1, *s2;
       s1 = utf82filename(ClEx->JID);
+      remove_bad_chars(s1);
       strcat(path, s1);
       if (!isdir(path, &err))
         mkdir(path, &err);
       strcat(path, _slash);
       s2 = utf82filename(ResEx->name);
+      remove_bad_chars(s2);
       strcat(path, s2);
       mfree(s1);
       mfree(s2);
@@ -219,10 +222,19 @@ void Get_Avatar_Path(char *path, char *jid)
     {
       char *s1;
       s1 = utf82filename(ClEx->JID);
-      strcat(path, ClEx->JID);
+      remove_bad_chars(s1);
+      strcat(path, s1);
       mfree(s1);
     }
   }
+      else
+    {
+      char *s1;
+      s1 = utf82filename(ClEx->JID);
+      remove_bad_chars(s1);
+      strcat(path, s1);
+      mfree(s1);
+    }
 }
 
 void vCard_Photo_Display(char *path)
@@ -280,25 +292,6 @@ void DecodePhoto(char *path, void *data)
   {
     MsgBoxError_locked(path);
   }
-
-  /* // Теперь только по запросу
-  // Display
-  if(Saved_OK)
-  {
-    //WSHDR *fp = AllocWS(128);
-    //str_2ws(fp,full_path,128);
-    //ExecuteFile(fp, NULL, NULL);
-    //FreeWS(fp);
-    char *fp = malloc(128);
-    strcpy(fp, path);
-
-    vcard_ipc.name_to=ipc_my_name;
-    vcard_ipc.name_from=ipc_my_name;
-    vcard_ipc.data=fp;
-    GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_AVATAR_DECODE_OK,&vcard_ipc);
-  }
-  */
-
   // Cleanup
   mfree(buf);
   mfree(data);
@@ -333,7 +326,7 @@ void SavePhoto(VCARD vcard, char *jid, XMLNode *photonode, int logo)
     {
       strcpy(extension,".gif");
     }
-  }// else надо автоопределение по сигнатуре
+  }
   
   char *full_path = malloc(128);
   strcpy(full_path, ph_path);
@@ -395,12 +388,10 @@ void Process_vCard(char *from, XMLNode *vCard)
             sprintf(field_name, "%s/%s", vCard_Node->name, vCard_NodeL2->name);
             Add_vCard_Value(vcard, field_name, vCard_NodeL2->value);
           }
-
           vCard_NodeL2 = vCard_NodeL2->next;
         }
       }
     }
-
     vCard_Node = vCard_Node->next;
   }
 
@@ -422,49 +413,7 @@ void Process_vCard(char *from, XMLNode *vCard)
 
   Show_vCard(from);
 }
-/*
-int Show_vCard2(char *jid)
-{
-  CLIST *ClEx = CList_FindContactByJID(jid);
-  if (!ClEx)
-    return 0;
-  VCARD vcard = ClEx->vcard;
-  if (!vcard) // Если не нашли - ищем в ресурсе (для конференции)
-  {
-    TRESOURCE *ResEx = CList_IsResourceInList(jid);
-    if (ResEx)
-      vcard = ResEx->vcard;
-  }
-  if (vcard)
-  {
-    char *result = malloc(1024);
-    int result_len = 1024;
-    strcpy(result, "VCard:\n");
-    char *param_pair = malloc(2048);
-    for (int i=0; i<N_VCARD_FIELDS; i++)
-      if (vcard[i])
-      {
-        char *parname = ANSI2UTF8(vcard_names[i], 1024);
-        snprintf(param_pair, 2048, "%s: %s\n", parname+1 , vcard[i]);// +1 - Фиг знает что, но помогает 
-        mfree(parname);
-        unsigned int real_result_len, parpair_len;
-        real_result_len = strlen(result);
-        parpair_len = strlen(param_pair);
-        while(real_result_len+parpair_len>result_len)
-        {
-          result_len += 1024;
-          result = realloc(result, result_len);
-        }
-        strcat(result,param_pair);
-      }
-    CList_AddMessage(jid, MSG_SYSTEM, result);
-    mfree(param_pair);
-    mfree(result);
-    return 1;
-  }
-  return 0;
-}
-*/
+
 //====================   GUI   ========================
 
 typedef struct

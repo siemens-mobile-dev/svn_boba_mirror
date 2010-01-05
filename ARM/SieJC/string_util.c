@@ -981,5 +981,23 @@ void CutWSStringWidth(WSHDR *ws, int width, int font)
   CutWSTR(ws, index-1);
 }
 
+const char badchars[] = {'?', '*', '"', ':', '<', '>', '/', '\\', '|', '\n', '\r', ','};
+
+void remove_bad_chars(char *s)
+{
+  int c;
+  while((c=*s))
+  {
+    for (int i=0; i<(sizeof(badchars)/sizeof(char)); i++)
+    {
+      if (c==badchars[i])
+      {
+        *s='_';
+        break;
+      }    
+    }
+    s++;
+  }
+}
 //EOL,EOF
 

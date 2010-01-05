@@ -64,4 +64,6 @@ char *utf82filename(char *str);
 //обрезает строку до заданной ширины
 void CutWSStringWidth(WSHDR *ws, int width, int font);
 
+void remove_bad_chars(char *s);
+
 #endif

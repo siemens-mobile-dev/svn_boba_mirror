@@ -14,6 +14,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 #ifdef LANG_RU
+#define LG_XML_LANG         "ru"
 #define LG_SELECT           "Выбор"
 #define LG_BACK             "Назад"
 #define LG_OK               "OK"
@@ -369,6 +370,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 #ifdef LANG_UA
+#define LG_XML_LANG         "uk"
 #define LG_SELECT           "Вибір"
 #define LG_BACK             "Назад"
 #define LG_OK               "Добре"
@@ -724,6 +726,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 #ifdef LANG_EN
+#define LG_XML_LANG         "en"
 #define LG_SELECT           "Select"
 #define LG_BACK             "Back"
 #define LG_OK               "OK"
