@@ -657,6 +657,8 @@
 0E70: FFFFFFFF C9FCB344 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 0E74: FFFFFFFF 8588B844 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 0E78: FFFFFFFF 11852C45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
+0E7C: FFFFFFFF 11F12745 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
+0E80: FFFFFFFF 410B1745 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 
 
 ;locale=Russian_Russia.1251

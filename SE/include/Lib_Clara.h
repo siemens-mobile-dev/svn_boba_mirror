@@ -1716,4 +1716,7 @@ __swi __arm  int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int 
 #pragma swi_number=0x39F
 __swi __arm  int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
 
+#pragma swi_number=0x3A0
+__swi __arm  int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
+
 #endif

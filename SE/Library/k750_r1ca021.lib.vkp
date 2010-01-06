@@ -654,7 +654,12 @@
 0E60: FFFFFFFF FD920B45 ; 398: void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
 0E64: FFFFFFFF 45960B45 ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
 0E68: FFFFFFFF 4D98F344 ; 39A: int Settings_ShowNumber_Get(char *state);
-
+0E6C: FFFFFFFF 75647744 ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
+0E70: FFFFFFFF D17B7744 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
+0E74: FFFFFFFF 499D7B44 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
+0E78: FFFFFFFF A5C8EB44 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
+0E7C: FFFFFFFF F9EEE444 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
+0E80: FFFFFFFF 559FD544 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 
 
 ;locale=Russian_Russia.1251

@@ -658,6 +658,8 @@
 ;0E70: xxxxxxxx yyyyyyyy ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 ;0E74: xxxxxxxx yyyyyyyy ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 0E78: 00000000 3D762E45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
+;0E7C: xxxxxxxx yyyyyyyy ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
+0E80: 00000000 D14E3145 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 
 
 
