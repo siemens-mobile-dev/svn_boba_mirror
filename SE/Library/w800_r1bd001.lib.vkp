@@ -86,8 +86,8 @@
 0580: FFFFFFFF 3145EF44 ; 160: int TextGetLength(int StrID);
 0584: FFFFFFFF 9D44EF44 ; 161: void TextFree(int StrID);
 0588: FFFFFFFF 254EDF44 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
-058C: FFFFFFFF A970DF44 ; 163: int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
-0590: FFFFFFFF 8577DF44 ; 164: int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
+058C: FFFFFFFF A970DF44 ; 163: int AB_READSTRING(AB_STR_ITEM *,int rec_num, int field_ID);
+0590: FFFFFFFF 8577DF44 ; 164: int AB_READPHONENBR(AB_NUM_ITEM *,int rec_num, int field_ID);
 0594: FFFFFFFF D178DF44 ; 165: int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: FFFFFFFF 693AEF44 ; 166: int PNUM_len(void *pnum);
 059C: FFFFFFFF DD3DF344 ; 167: void PNUM2str(char *str,void *pnum,int len, int max_len);
@@ -262,8 +262,8 @@
 0840: FFFFFFFF 044D2444 ;8210: void * get_APP_DESC_TABLE(void);
 0844: FFFFFFFF D193D344 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 0848: FFFFFFFF ED7DDF44 ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
-084C: FFFFFFFF 917ADF44 ; 213: int AB_NAME_ITEM2StrID(void * ab_name);
-0850: FFFFFFFF F97ADF44 ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
+084C: FFFFFFFF 917ADF44 ; 213: int AB_NAME_ITEM2StrID(AB_STR_ITEM * ab_name);
+0850: FFFFFFFF F97ADF44 ; 214: int AB_NUM_ITEM2StrID(AB_NUM_ITEM * ab_num_item);
 0854: FFFFFFFF B1430A45 ; 215: int GetABRecNum(AB_GET_STRUCT *);
 0858: FFFFFFFF 308F2144 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
 085C: FFFFFFFF 192A0B45 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); // !!!!! не настоящий !!!!!!
@@ -662,6 +662,7 @@
 ;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 0E84: FFFFFFFF AD08BF44 ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 0E88: FFFFFFFF 993BCD44 ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
+
 
 
 

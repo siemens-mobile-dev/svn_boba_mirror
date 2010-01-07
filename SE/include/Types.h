@@ -244,24 +244,17 @@ typedef struct
 typedef struct
 {
   u16 RecordID;
-  char num[40];//2
-  char unk1; //43
-  char plus;
-  char unk2;
-  char len;
-  // и еще какоето гавно....
-  char unk3;
-
-  char xx[0x200];
+  char num[41];//2
+  char xx[0x35];
 }AB_NUM_ITEM;
-/*
+
+
 typedef struct
 {
-u16 len;
-u16 unk;
-char str[];
+  u16 len;
+  char encodingID;
+  char str[255];
 }AB_STR_ITEM;
-*/
 
 
 
@@ -586,17 +579,20 @@ typedef struct
 
 typedef struct
 {
-#ifdef DB2020
   u16 num;
   u16 tab;
   u16 num_in_tab;
   u16 icon;
   int name;
-  u16 field_C;
+  char field_C;
+  char field_D;
   u16 big_icon;
   u16 field_10;
   u16 ID;
-#else
+}AB_ITEM_DESC_2020;
+
+typedef struct
+{
   u16 num;
   u16 field_2;
   u16 field_4;
@@ -614,7 +610,6 @@ typedef struct
   char field_19;
   char field_1A;
   char field_1B;
-#endif
 }AB_ITEM_DESC;
 
 typedef struct {

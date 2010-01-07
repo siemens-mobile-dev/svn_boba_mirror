@@ -85,8 +85,8 @@
 0580: FFFFFFFF FDE82F45 ; 160: int TextGetLength(int StrID);
 0584: FFFFFFFF 6DE82F45 ; 161: void TextFree(int StrID);
 0588: FFFFFFFF 0D432145 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
-058C: FFFFFFFF AD962145 ; 163: int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
-0590: FFFFFFFF 55972145 ; 164: int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
+058C: FFFFFFFF AD962145 ; 163: int AB_READSTRING(AB_STR_ITEM *,int rec_num, int field_ID);
+0590: FFFFFFFF 55972145 ; 164: int AB_READPHONENBR(AB_NUM_ITEM *,int rec_num, int field_ID);
 0594: FFFFFFFF F5972145 ; 165: int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: FFFFFFFF 81DF2F45 ; 166: int PNUM_len(void *pnum);
 059C: FFFFFFFF E1364045 ; 167: void PNUM2str(char *str,void *pnum,int len, int max_len);
@@ -261,19 +261,19 @@
 0840: FFFFFFFF C0475044 ;8210: void * get_APP_DESC_TABLE(void);
 0844: FFFFFFFF AD545445 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 0848: FFFFFFFF 259A2145 ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
-084C: FFFFFFFF C5982145 ; 213: int AB_NAME_ITEM2StrID(void * ab_name);
-0850: FFFFFFFF 19992145 ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
+084C: FFFFFFFF C5982145 ; 213: int AB_NAME_ITEM2StrID(AB_STR_ITEM * ab_name);
+0850: FFFFFFFF 19992145 ; 214: int AB_NUM_ITEM2StrID(AB_NUM_ITEM * ab_num_item);
 0854: FFFFFFFF FDA96445 ; 215: int GetABRecNum(AB_GET_STRUCT *); //nullsub(void)
 0858: FFFFFFFF 20CA4D44 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
-085C: FFFFFFFF 4D95D744 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy)
-0860: FFFFFFFF 4995D744 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy)
+085C: FFFFFFFF 4D95D744 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); // !!!!! не настоящий !!!!!!
+0860: FFFFFFFF 4995D744 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy); // !!!!! не настоящий !!!!!!
 0864: FFFFFFFF D17C5945 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: FFFFFFFF A4CC0B4C ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
 ;0870: xxxxxxxx yyyyyyyy ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: FFFFFFFF D5233045 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: FFFFFFFF F5283045 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
-087C: FFFFFFFF 79E63145 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
+087C: FFFFFFFF 79E63145 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj); // !!!!! не настоящий !!!!!!
 0880: FFFFFFFF 0D1D3045 ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name);
 0884: FFFFFFFF 91463045 ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: FFFFFFFF 1D1D3045 ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
@@ -450,7 +450,7 @@
 0B34: FFFFFFFF 456B4245 ; 2CD: void ImageID_Free(wchar_t imageID);
 0B38: FFFFFFFF 65AB5B45 ; 2CE: SUB_EXECUTE *DataBrowser_CreateSubExecute(int BookID, FILEITEM *f);
 0B3C: FFFFFFFF 8DB15B45 ; 2CF: int DataBrowser_ExecuteSubroutine(SUB_EXECUTE *sub, int action, u16 *unk);
-0B40: FFFFFFFF DD675C45 ; 2D0: __thumb int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
+0B40: FFFFFFFF DD675C45 ; 2D0: int FILEITEM_SetFname(FILEITEM *f, const wchar_t *fname);
 0B44: FFFFFFFF 116A5C45 ; 2D1: int FILEITEM_SetPath(FILEITEM *f, const wchar_t *fpath);
 0B48: FFFFFFFF 096A5C45 ; 2D2: wchar_t *FILEITEM_GetFname(FILEITEM *f);
 0B4C: FFFFFFFF 6D6A5C45 ; 2D3: wchar_t *FILEITEM_GetPath(FILEITEM *f);
@@ -659,6 +659,11 @@
 0E78: FFFFFFFF 11852C45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 0E7C: FFFFFFFF 11F12745 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
 0E80: FFFFFFFF 410B1745 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
+;0E84: xxxxxxxx yyyyyyyy ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
+;0E88: xxxxxxxx yyyyyyyy ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
+
+
+
 
 
 ;locale=Russian_Russia.1251

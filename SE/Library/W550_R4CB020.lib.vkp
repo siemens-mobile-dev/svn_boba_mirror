@@ -86,8 +86,8 @@
 0580: FFFFFFFF B9612245 ; 160: int TextGetLength(int StrID);
 0584: FFFFFFFF 29612245 ; 161: void TextFree(int StrID);
 0588: FFFFFFFF 81DF1345 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
-058C: FFFFFFFF 31331445 ; 163: int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
-0590: FFFFFFFF D9331445 ; 164: int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
+058C: FFFFFFFF 31331445 ; 163: int AB_READSTRING(AB_STR_ITEM *,int rec_num, int field_ID);
+0590: FFFFFFFF D9331445 ; 164: int AB_READPHONENBR(AB_NUM_ITEM *,int rec_num, int field_ID);
 0594: FFFFFFFF 79341445 ; 165: int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: FFFFFFFF 3D582245 ; 166: int PNUM_len(void *pnum);
 059C: FFFFFFFF 4D963245 ; 167: void PNUM2str(char *str,void *pnum,int len, int max_len);
@@ -262,19 +262,19 @@
 0840: FFFFFFFF 20434644 ;8210: void * get_APP_DESC_TABLE(void);
 0844: FFFFFFFF 39854645 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 0848: FFFFFFFF A9361445 ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
-084C: FFFFFFFF 49351445 ; 213: int AB_NAME_ITEM2StrID(void * ab_name);
-0850: FFFFFFFF 9D351445 ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
+084C: FFFFFFFF 49351445 ; 213: int AB_NAME_ITEM2StrID(AB_STR_ITEM * ab_name);
+0850: FFFFFFFF 9D351445 ; 214: int AB_NUM_ITEM2StrID(AB_NUM_ITEM * ab_num_item);
 0854: FFFFFFFF B9335745 ; 215: int GetABRecNum(AB_GET_STRUCT *); //nullsub(void)
 0858: FFFFFFFF 08CD4344 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
-085C: FFFFFFFF 5129C444 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy)
-0860: FFFFFFFF 4D29C444 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy)
+085C: FFFFFFFF 5129C444 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); // !!!!! не настоящий !!!!!!
+0860: FFFFFFFF 4D29C444 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy); // !!!!! не настоящий !!!!!!
 0864: FFFFFFFF 2D6C4C45 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET(const int * __zero, int *);
 0868: FFFFFFFF FC460A4C ;821A: int * PID_MMI(void);
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
 ;0870: xxxxxxxx yyyyyyyy ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: FFFFFFFF 119B2245 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: FFFFFFFF 31A02245 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
-087C: FFFFFFFF 0D532445 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ*);
+087C: FFFFFFFF 0D532445 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj); // !!!!! не настоящий !!!!!!
 0880: FFFFFFFF 49942245 ; 220: void DISP_DESC_SetName (DISP_DESC* , const char * name);
 0884: FFFFFFFF 6DBD2245 ; 221: char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: FFFFFFFF 59942245 ; 222: void DISP_DESC_SetSize (DISP_DESC* , u16 size);
@@ -650,6 +650,18 @@
 ;0E50: xxxxxxxx yyyyyyyy ; 394: void GVI_FillSolidTriangle(GVI_GC destgc, int x1, int y1, int x2, int y2, int x3, int y3, int color);
 ;0E54: xxxxxxxx yyyyyyyy ; 395: GC* GC_CreateMemoryGC(int xsize, int ysize, int bpp, int unk, void* somefn , int unk2);
 ;0E58: xxxxxxxx yyyyyyyy ; 396: void GC_FreeGC(GC* gc);
+;0E5C: xxxxxxxx yyyyyyyy ; 397: void REQUEST_ALARMCLOCKSTATUS_GET(const int *SYNC, char * alarm_status);
+;0E60: xxxxxxxx yyyyyyyy ; 398: void REQUEST_ALARMCLOCKTIME_GET(const int *SYNC, TIME *t);
+;0E64: xxxxxxxx yyyyyyyy ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
+;0E68: xxxxxxxx yyyyyyyy ; 39A: int Settings_ShowNumber_Get(char *state);
+;0E6C: xxxxxxxx yyyyyyyy ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
+;0E70: xxxxxxxx yyyyyyyy ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
+;0E74: xxxxxxxx yyyyyyyy ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
+;0E78: xxxxxxxx yyyyyyyy ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
+;0E7C: xxxxxxxx yyyyyyyy ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
+;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
+;0E84: xxxxxxxx yyyyyyyy ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
+;0E88: xxxxxxxx yyyyyyyy ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
 
 
 

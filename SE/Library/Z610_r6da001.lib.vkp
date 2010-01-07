@@ -86,8 +86,8 @@
 0580: 00000000 DD894145 ; 160: int TextGetLength(int StrID);
 0584: 00000000 41894145 ; 161: void TextFree(int StrID);
 0588: 00000000 05B4ED44 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
-058C: 00000000 AD03EE44 ; 163: int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
-0590: 00000000 7904EE44 ; 164: int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
+058C: 00000000 AD03EE44 ; 163: int AB_READSTRING(AB_STR_ITEM *,int rec_num, int field_ID);
+0590: 00000000 7904EE44 ; 164: int AB_READPHONENBR(AB_NUM_ITEM *,int rec_num, int field_ID);
 0594: 00000000 3105EE44 ; 165: int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: 00000000 E57D4145 ; 166: int PNUM_len(void *pnum);
 059C: 00000000 21FB3045 ; 167: void PNUM2str(char *str,void *pnum,int len, int max_len);
@@ -262,8 +262,8 @@
 0840: 00000000 C0B1A745 ;8210: void * get_APP_DESC_TABLE(void);
 0844: 00000000 8D2F4345 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 0848: 00000000 0907EE44 ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
-084C: 00000000 3106EE44 ; 213: int AB_NAME_ITEM2StrID(void * ab_name);
-0850: 00000000 7906EE44 ; 214: int AB_NUM_ITEM2StrID(void * ab_num_item);
+084C: 00000000 3106EE44 ; 213: int AB_NAME_ITEM2StrID(AB_STR_ITEM * ab_name);
+0850: 00000000 7906EE44 ; 214: int AB_NUM_ITEM2StrID(AB_NUM_ITEM * ab_num_item);
 0854: 00000000 9D450345 ; 215: int GetABRecNum(AB_GET_STRUCT *); //nullsub(void)
 0858: 00000000 FC1EA345 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
 085C: 00000000 917FFB44 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); // !!!!! не настоящий !!!!!!

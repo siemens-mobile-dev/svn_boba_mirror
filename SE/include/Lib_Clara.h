@@ -383,10 +383,10 @@ __swi __arm  void TextFree(int StrID);
 __swi __arm  int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
 
 #pragma swi_number=0x163
-__swi __arm  int AB_READSTRING(void * mem_0x30,int rec_num, int rec_item_num);
+__swi __arm  int AB_READSTRING(AB_STR_ITEM *,int rec_num, int field_ID);
 
 #pragma swi_number=0x164
-__swi __arm  int AB_READPHONENBR(void * mem_0x30,int rec_num, int rec_item_num);
+__swi __arm  int AB_READPHONENBR(AB_NUM_ITEM *,int rec_num, int field_ID);
 
 #pragma swi_number=0x165
 __swi __arm  int AB_GETNBROFITEMS(int get_from,int unk_0);
@@ -784,9 +784,9 @@ __swi __arm  C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 #pragma swi_number=0x212
 __swi __arm  int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
 #pragma swi_number=0x213
-__swi __arm  int AB_NAME_ITEM2StrID(void * ab_name);
+__swi __arm  int AB_NAME_ITEM2StrID(AB_STR_ITEM * ab_name);
 #pragma swi_number=0x214
-__swi __arm  int AB_NUM_ITEM2StrID(void * ab_num_item);
+__swi __arm  int AB_NUM_ITEM2StrID(AB_NUM_ITEM * ab_num_item);
 #pragma swi_number=0x215
 __swi __arm  int GetABRecNum(AB_GET_STRUCT *);
 #pragma swi_number=0x8216
