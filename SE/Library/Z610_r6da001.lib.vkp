@@ -659,6 +659,9 @@
 0E74: 00000000 3D808444 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 ;0E78: xxxxxxxx yyyyyyyy ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 0E7C: 00000000 C51C2945 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
+;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
+0E84: 00000000 91B2F344 ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
+0E88: 00000000 C17D1C45 ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
 
 
 

@@ -1719,4 +1719,9 @@ __swi __arm  int ListElement_InsertSorted(LIST * list, void * pelem, int (*compa
 #pragma swi_number=0x3A0
 __swi __arm  int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 
+#pragma swi_number=0x3A1
+__swi __arm  void wstrnupr(wchar_t * wstr, int maxlen);
+#pragma swi_number=0x3A2
+__swi __arm  void wstrnlwr(wchar_t * wstr, int maxlen);
+
 #endif
