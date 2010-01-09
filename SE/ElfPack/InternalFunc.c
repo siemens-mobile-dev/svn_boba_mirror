@@ -422,27 +422,8 @@ void AddExt(DB_EXT * dbe)
 }
 
 
+extern DB_EXT * CreateDbExt();
 
-
-/*
-
-void AssociateELF(void)
-{
-FILESUBROUTINE * fsr;
-__get_epd;
-int i=0;
-int j;
-if (epd->dbe)
-{
-while  (epd->dbe[i]->content_type[0]) i++;
-  }
-epd->dbe[i]->PROC(&j);
-
-
-
-}
-
-*/
 void CreateLists(void)
 {
   EP_DATA * epd = malloc(sizeof(EP_DATA));
@@ -465,6 +446,7 @@ void CreateLists(void)
   //  _printf("   epd->elflist @%x",epd->elflist)  ;
 
   epd->dbe=MoveExtTable((DB_EXT **)EXT_TABLE);
+  epd->CreateDbExt = CreateDbExt;
   ELFExtrRegister(epd);
 }
 

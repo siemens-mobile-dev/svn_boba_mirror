@@ -13,7 +13,6 @@ extern __thumb long elfload(const unsigned short *filename, void *param1, void *
 extern EP_DATA * getepd(void);
 
 
-
 const u16 ext[]={L"elf"};
 const char ctype[]={"application/elf"};
 
@@ -22,26 +21,64 @@ const int ct[2]={(int)ctype,0};
 
 const char ers[]={"Elf_Run_Subroutine"};
 
-
-__root void onEv(FILESUBROUTINE ** r0)
+DB_EXT * OtherDbExt()
 {
-  EP_DATA *epd=getepd();
-  *r0=epd->elf_ext_m;
+  __get_epd;
+  int db_ext_count = 0;
+  while  (epd->dbe[db_ext_count++] != LastExtDB());
+  return epd->dbe[db_ext_count-2];
 }
 
-__arm int SetSmallIcon(void * r0, u16 *r1)
+DB_EXT * CreateDbExt()
+{
+  DB_EXT * other_db_ext = OtherDbExt();
+#if (DB2020 || A2)
+  DB_EXT * db_ext = malloc(sizeof(DB_EXT));
+  db_ext->type_group = other_db_ext->type_group;
+#else
+  DB_EXT_2010 * db_ext = malloc(sizeof(DB_EXT_2010));
+#endif
+  db_ext->content_type = 0;
+  db_ext->ext_list = 0;
+  db_ext->GetMethods = 0;
+  db_ext->sub_execute_size = other_db_ext->sub_execute_size;
+  db_ext->dbf = 0;
+  db_ext->drm_flags = 0;
+  db_ext->unk2 = 0;
+  db_ext->unk3 = 0;
+  return (DB_EXT*)db_ext;
+}
+/*
+//рабочая
+void AddDbExt(DB_EXT * db_ext)
+{
+  __get_epd;
+  int db_ext_count = 0;
+  while  (epd->dbe[db_ext_count++] != LastExtDB());
+  DB_EXT ** db_ext_list = malloc((db_ext_count+1)*sizeof(DB_EXT*));
+  memcpy(db_ext_list+1, epd->dbe, db_ext_count*4);
+  db_ext_list[0] = db_ext;
+  mfree(epd->dbe);
+  epd->dbe = db_ext_list;
+}
+*/
+__root void GetMethods(SUB_EXECUTE * sub_execute)
+{
+  sub_execute->filesub = getepd()->elf_ext_m;
+}
+
+__arm int SetSmallIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
 {
   int tmp;
   iconidname2id(IDN_ELF_SMALL_ICON,-1,&tmp);
-  *r1=tmp;
+  *iconid=tmp;
   return 0;
 }
 
 #ifdef DB_CMD_SETTHUMBNAILICON
-__arm int SetThumbnailIcon(void * r0, u16 *r1)
+__arm int SetThumbnailIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
 {
-  //2do: read external images
-  return SetSmallIcon(r0,r1);
+  return SetSmallIcon(sub_execute, iconid);
 }
 #endif
 
@@ -60,14 +97,9 @@ __arm int Elf_Run(void * r0, BOOK * book)
 
   wstr2strn(ch,filename,MAXELEMS(ch)-1);
 
-  _printf("Starting %s",ch)  ;
+  _printf("Starting %s",ch);
 
-  {
-    //    int err;
-    //    err=
-    elfload(filename,0,0,0);
-  }
-
+  elfload(filename,0,0,0);
 
   mfree(filename);
   BookObj_ReturnPage(book,PREVIOUS_EVENT);
@@ -88,101 +120,91 @@ const PAGE_DESC erun_page={"Elf_Run_Page",0,erp_msg};
 
 const int subrout[]={(int)&ers,(int)&erun_page,0,0};
 
-const DB_EXT dbe_ELF={(char**)ct,(u16**)ex,onEv,DB_DB_EXT_C1,NULL,0x0,0x00};
-
-
-__arm int Elf_Run_Subroutine(void * r0)
+__arm int Elf_Run_Subroutine(SUB_EXECUTE * sub_execute)
 {
-  BookObj_CallSubroutine(((SUB_EXECUTE*)r0)->BrowserItemBook,(void*)subrout);
+  BookObj_CallSubroutine(sub_execute->BrowserItemBook,(void*)subrout);
   return(1);
 };
 
-
 __arm void ELFExtrRegister(EP_DATA * epd)
 {
-  FILESUBROUTINE * fsr;
-  FILESUBROUTINE * fs;
-  FILESUBROUTINE * fsnew;
-  int i=0;
-  int j=0;
-
-  if (epd->dbe)
+  int ofs_count = 0;
+  FILESUBROUTINE * OtherFileSub;
+  FILESUBROUTINE * NewFileSub;
+  
+  GetOtherExtMethods(&OtherFileSub);
+  while (OtherFileSub[ofs_count++].ON_CMD);
+  epd->elf_ext_m = NewFileSub = (FILESUBROUTINE*)malloc((ofs_count+1)*sizeof(FILESUBROUTINE));
+  memcpy(NewFileSub+1, OtherFileSub, ofs_count*sizeof(FILESUBROUTINE));
+  
+  NewFileSub->cmd = 1;
+  NewFileSub->ON_CMD_RUN = Elf_Run_Subroutine;
+  NewFileSub->ON_CMD_RUN_CHECK = (int(*)(SUB_EXECUTE*))RUN_CHECK;
+  textidname2id(IDN_START,-1,&NewFileSub->StrID);
+  
+  while (NewFileSub->ON_CMD)
   {
-    // берем его методы
-    GetOtherExtMethods(&fsr);
-    fs=fsr;
-    // считаем их
-    while (fs[j++].PROC);
-    // выделяем память под n+1
-    fsnew=malloc((j+1)*sizeof(FILESUBROUTINE));
-    // первым вставляем своё
-    fsnew->cmd=1;
-    fsnew->PROC=Elf_Run_Subroutine;
-    fsnew->PROC1=(int(*)(void*,void*))RUN_CHECK;
-    textidname2id(IDN_START,-1,&fsnew->StrID);
-    // забираем к себе старые методы
-    memcpy(fsnew+1,fsr,j*sizeof(FILESUBROUTINE));
-    fs=fsnew;
-    // проходимся по всем, и кого надо, правим..
-    while (fs->PROC)
+    int cmd = NewFileSub->cmd;
+    if (cmd == DB_CMD_SETSMALLICON)
     {
-      if (fs->cmd==DB_CMD_SETSMALLICON) fs->PROC=(int(*)(void*))SetSmallIcon;
+      NewFileSub->ON_CMD_ICON = SetSmallIcon;
+    }
 #ifdef DB_CMD_SETTHUMBNAILICON
-      if (fs->cmd==DB_CMD_SETTHUMBNAILICON) fs->PROC=(int(*)(void*))SetThumbnailIcon;
-#endif
-      fs++;
-    }
-    epd->elf_ext_m=fsnew;
+    else if(cmd == DB_CMD_SETTHUMBNAILICON)
     {
-      //build dbfolders + dbe_ELF
-      DB_EXT_FOLDERS* dbfolders;
-      DB_EXT* new_dbe_ELF;
-#ifndef DAEMONS_INTERNAL
-      int efnum=3;
-#else
-      int efnum=2;
-#endif
-      dbfolders = malloc( sizeof(DB_EXT_FOLDERS)* efnum-- );
-      //last empty record
-      dbfolders[efnum].StrID_FolderName = dbfolders[efnum].StrID_SavedTo = 0x6FFFFFFF;
-      dbfolders[efnum].Path=NULL;
-      dbfolders[efnum--].isInternal=0;
-      //internal folder
-      textidname2id( IDN_FOLDERNAME, -1, &dbfolders[efnum].StrID_FolderName );
-      textidname2id( IDN_SAVED_ON_PH, -1, &dbfolders[efnum].StrID_SavedTo );
-      dbfolders[efnum].Path=PATH_ELF_ROOT_INT;
-      dbfolders[efnum--].isInternal=1;
-#ifndef DAEMONS_INTERNAL
-      //external folder
-      textidname2id( IDN_FOLDERNAME, -1, &dbfolders[efnum].StrID_FolderName );
-      textidname2id( IDN_SAVED_ON_MS, -1, &dbfolders[efnum].StrID_SavedTo );
-      dbfolders[efnum].Path=PATH_ELF_ROOT_EXT;
-      dbfolders[efnum].isInternal=0;
-#endif
-      memcpy( new_dbe_ELF = malloc( sizeof(dbe_ELF) ), &dbe_ELF, sizeof(dbe_ELF) );
-      new_dbe_ELF->dbf = dbfolders;
-
-      DB_EXT ** m;
-      i=0;
-      while  (epd->dbe[i++]!=LastExtDB());
-      m=malloc((i+1)*sizeof(DB_EXT *));
-      memcpy(&m[1],epd->dbe,(i)*sizeof(DB_EXT *));
-      m[0] = new_dbe_ELF ;
-
-      mfree(epd->dbe);
-      epd->dbe=m;
+      NewFileSub->ON_CMD_ICON = SetThumbnailIcon;
     }
+#endif
+    NewFileSub++;
   }
+  NewFileSub = epd->elf_ext_m;
+  
+#ifndef DAEMONS_INTERNAL
+  int efnum=3;
+#else
+  int efnum=2;
+#endif
+  DB_EXT_FOLDERS * dbfolders = malloc(sizeof(DB_EXT_FOLDERS)*efnum--);
+  //last empty record
+  dbfolders[efnum].StrID_FolderName = 0x6FFFFFFF;
+  dbfolders[efnum].StrID_SavedTo = 0x6FFFFFFF;
+  dbfolders[efnum].Path = NULL;
+  dbfolders[efnum--].isInternal = NULL;
+  //internal folder
+  textidname2id(IDN_FOLDERNAME, -1, &dbfolders[efnum].StrID_FolderName);
+  textidname2id(IDN_SAVED_ON_PH, -1, &dbfolders[efnum].StrID_SavedTo);
+  dbfolders[efnum].Path = PATH_ELF_ROOT_INT;
+  dbfolders[efnum--].isInternal = 1;
+#ifndef DAEMONS_INTERNAL
+  //external folder
+  textidname2id( IDN_FOLDERNAME, -1, &dbfolders[efnum].StrID_FolderName);
+  textidname2id( IDN_SAVED_ON_MS, -1, &dbfolders[efnum].StrID_SavedTo);
+  dbfolders[efnum].Path = PATH_ELF_ROOT_EXT;
+  dbfolders[efnum].isInternal = 0;
+#endif
+  
+  DB_EXT * db_ext = CreateDbExt();
+  db_ext->content_type = (char**)ct;
+  db_ext->ext_list = (wchar_t**)ex;
+  db_ext->GetMethods = GetMethods;
+  db_ext->dbf = dbfolders;
+  
+  int db_ext_count = 0;
+  while  (epd->dbe[db_ext_count++] != LastExtDB());
+  DB_EXT ** db_ext_list;
+  db_ext_list = malloc((db_ext_count+1)*sizeof(DB_EXT*));
+  memcpy(db_ext_list+1, epd->dbe, db_ext_count*4);
+  db_ext_list[0] = db_ext ;
+  mfree(epd->dbe);
+  epd->dbe=db_ext_list;
 }
-
-
 
 __arm DB_EXT **MoveExtTable(DB_EXT **old)
 {
-  int i=0;
-  DB_EXT **m;
-  while(old[i++]!=LastExtDB());
-  m=malloc(i*sizeof(DB_EXT *));
-  memcpy(m,old,i*sizeof(DB_EXT *));
-  return (m);
+  int db_ext_count = 0;
+  DB_EXT ** db_ext_list;
+  while(old[db_ext_count++] != LastExtDB());
+  db_ext_list = malloc(db_ext_count*sizeof(DB_EXT *));
+  memcpy(db_ext_list, old, db_ext_count*sizeof(DB_EXT *));
+  return db_ext_list;
 }

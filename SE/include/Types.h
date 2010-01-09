@@ -334,38 +334,51 @@ typedef struct
   void * APP_DESC;
   void * PAGE_DESC;
 }ACTION;
-/*
-typedef struct
-{
-char ** content_type;
-int ext_list;
-void (*PROC)(int*);
-int u3;
-u16* u4;
-int u5;
-int u6;
-}DB_EXT;
-*/
+
+struct SUB_EXECUTE;
 
 typedef struct
 {
   int cmd;
-  int (*PROC)(void*);
+  union
+  {
+    int (*ON_CMD)(struct SUB_EXECUTE*);
+    int (*ON_CMD_RUN)(struct SUB_EXECUTE*);
+    int (*ON_CMD_ICON)(struct SUB_EXECUTE*, wchar_t * iconid);
+    int (*ON_CMD_STRID)(struct SUB_EXECUTE*, STRID * strid);
+  };
   int StrID;
-  int (*PROC1)(void * , void *);
+  union
+  {
+    int (*ON_CHECK)(struct SUB_EXECUTE*, void*);
+    int (*ON_CMD_RUN_CHECK)(struct SUB_EXECUTE*);
+  };
 }FILESUBROUTINE;
-
 
 typedef struct
 {
   char **content_type;
-  u16 **ext_list;
-  void (*GetMethods)( FILESUBROUTINE **);
-  int u1;
+  wchar_t **ext_list;
+  void (*GetMethods)(struct SUB_EXECUTE*);
+  int sub_execute_size;
   const DB_EXT_FOLDERS * dbf;
-  int u2;
-  int u3;
+  char type_group;
+  int drm_flags;
+  char unk2;
+  char unk3;
 }DB_EXT;
+
+typedef struct
+{
+  char **content_type;
+  wchar_t **ext_list;
+  void (*GetMethods)(struct SUB_EXECUTE*);
+  int sub_execute_size;
+  const DB_EXT_FOLDERS * dbf;
+  int drm_flags;
+  char unk2;
+  char unk3;
+}DB_EXT_2010;
 
 typedef struct
 {
@@ -374,11 +387,12 @@ typedef struct
   LIST *elflist;
   PROCESS HPID;
   LIST *UIHookList;
-  LIST	*OseHookList;
+  LIST *OseHookList;
   DB_EXT **dbe;
   FILESUBROUTINE* elf_ext_m;
   LIST * DLLList;
   LIST *UIPageHook;
+  DB_EXT * (*CreateDbExt)(void);
 }EP_DATA;
 
 typedef struct
@@ -721,9 +735,9 @@ typedef struct
 
 
 
-typedef struct
+typedef struct SUB_EXECUTE
 {
-  void * ext_methods_table;
+  FILESUBROUTINE * filesub;
   FILEITEM * file_item;
   BOOK * BrowserItemBook;
   int DB_BookID;
