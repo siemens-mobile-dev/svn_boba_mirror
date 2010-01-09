@@ -86,6 +86,12 @@ __root const int DELIVERY_EVENTS=1;
 __root const CFG_HDR cfghdr15346={CFG_CHECKBOX,LG_USEATTENTION,0,2};
 __root const int USE_ATTENTION=0;
 
+__root const CFG_HDR cfghdr18001={CFG_CHECKBOX,LG_SHOWSTAT_MUCINOUT,0,2};
+__root const int SHOWSTAT_MUCINOUT=1;
+
+__root const CFG_HDR cfghdr18002={CFG_CHECKBOX,LG_SHOWSTAT_MUCCHANGESTAT,0,2};
+__root const int SHOWSTAT_MUCCHANGESTAT=1;
+
 // Настройка сигналов
 __root const CFG_HDR cfghdr_SOUNDS_SETUP={CFG_LEVEL,LG_SETUPSND,1,0};
 

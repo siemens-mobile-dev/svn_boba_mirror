@@ -1557,7 +1557,6 @@ if(!strcmp(gres,iqtype))
       char *reply=malloc(512);
       snprintf(reply, 512,LG_VERINFO,cl_name->value, cl_version->value, vers_os_str);
       CList_AddMessage(from, MSG_SYSTEM, reply);
-      ShowMSG(0,(int)reply);
       mfree(reply);
       return;
     }
@@ -1585,7 +1584,6 @@ if(!strcmp(gres,iqtype))
       nhr -= nd*24;
       snprintf(reply, 512,LG_LASTACTIVMSG, nd, nhr, nmin, nsec);
       CList_AddMessage(from, MSG_SYSTEM, reply);
-      ShowMSG(0,(int)reply);
       mfree(reply);
       return;
     }
@@ -1625,7 +1623,6 @@ if(!strcmp(gres,iqtype))
       char *reply=malloc(512);
       snprintf(reply, 512,LG_TIMEINFO,cl_utc->value, tz_str, display_str);
       CList_AddMessage(from, MSG_SYSTEM, reply);
-      ShowMSG(0,(int)reply);
       mfree(reply);
       return;
     }
@@ -1742,6 +1739,9 @@ void Process_Presence_Change(XMLNode* node)
  {
   // Иар заебал
    extern const char percent_d[];
+   extern const int SHOWSTAT_MUCINOUT;
+   extern const int SHOWSTAT_MUCCHANGESTAT;
+   
 char loc_actor[]="actor";
 char loc_jid[]="jid";
 char loc_reason[]="reason";
@@ -1800,7 +1800,12 @@ int priority = 0;
         if(err_desc)
         {
           if(err_desc->value)msg = err_desc->value;
-          MsgBoxError(1,(int)err_desc->value);
+          if (DISPLAY_POPUPS)
+          {
+            char *ansi_r = convUTF8_to_ANSI_STR(err_desc->value);
+            MsgBoxError(1,(int)ansi_r);
+            mfree(ansi_r);
+          }
           CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, err_desc->value);
         }
         else
@@ -1869,8 +1874,10 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           Req_Set_Role = 1;
         }
         else
+        {
           sprintf(r, "%s joined as %s and %s", nick, affiliation, role);
           Req_Set_Role = 1;
+        }
 
         }
         else 
@@ -1893,7 +1900,8 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
           Conference->res_list->status=PRESENCE_ONLINE;
           ShowMSG(1,(int)LG_MUCCROK);
         };
-        CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
+        if((SHOWSTAT_MUCINOUT&&Req_Set_Role)||(SHOWSTAT_MUCCHANGESTAT&&!Req_Set_Role))
+         CList_AddSystemMessage(Conference->JID,PRESENCE_ONLINE, r);
       }
 
 
@@ -1917,7 +1925,8 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         extern const char sndOffline[64];
         //Play(sndOffline);
         SUBPROC((void *)Play, sndOffline);
-        CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
+        if(SHOWSTAT_MUCINOUT)
+          CList_AddSystemMessage(Conference->JID,PRESENCE_OFFLINE, r);
         priv.role = ROLE_NONE;
         priv.aff  = AFFILIATION_NONE;
         Req_Set_Role = 1;
@@ -1957,9 +1966,12 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
             if(MAX_STATUS_LEN-l-1>0)strncat(r, reason->value, MAX_STATUS_LEN-l-1);
           }
         }
-        char *ansi_r = convUTF8_to_ANSI_STR(r);
-        MsgBoxError(1,(int)ansi_r);
-        mfree(ansi_r);
+        if(DISPLAY_POPUPS)
+        {
+          char *ansi_r = convUTF8_to_ANSI_STR(r);
+          MsgBoxError(1,(int)ansi_r);
+          mfree(ansi_r);
+        }
         CList_AddSystemMessage(Conference->JID,status, r);
         msg = r;
       }
