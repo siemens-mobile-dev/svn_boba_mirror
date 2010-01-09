@@ -655,7 +655,7 @@
 ;0E64: xxxxxxxx yyyyyyyy ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET(const int *SYNC, DATETIME *);
 0E68: 00000000 E9B9EF44 ; 39A: int Settings_ShowNumber_Get(char *state);
 0E6C: 00000000 3537B144 ; 39B: GVI_BMP GVI_CreateBitmap(int xsize, int ysize, int bpp);
-0E70: 00000000 3537B144 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
+0E70: 00000000 7557B144 ; 39C: GVI_GC GVI_CreateMemoryGC(GVI_BMP bitmap);
 0E74: 00000000 A1818544 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 0E78: 00000000 E5134145 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 0E7C: 00000000 7D7A2D45 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
