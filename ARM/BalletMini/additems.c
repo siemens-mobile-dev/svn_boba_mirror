@@ -152,7 +152,8 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
   dpl=vd->dynpng_list;
   if (!dpl)
   {
-    odp->dp.icon=GetPicNByUnicodeSymbol((wchar=FIRST_UCS2_USER_BITMAP));
+    wchar=FIRST_UCS2_USER_BITMAP+1;
+    odp->dp.icon=GetPicNByUnicodeSymbol(wchar);
     odp->w_char=wchar;
     if (is_index>=0) odp->index=0;
     else odp->index=is_index;
@@ -173,10 +174,10 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
       i++;
     }
     while((dpl=dpl->dp.next));
-    wchar=FIRST_UCS2_USER_BITMAP+1+i;
-    icon = GetPicNByUnicodeSymbol(wchar);
-    if (icon != 0xFFFF)
+    if (d->dp.icon != 0xFFFF)
     {
+      wchar=FIRST_UCS2_USER_BITMAP+1+i;
+      icon = GetPicNByUnicodeSymbol(wchar);
       dpl=vd->dynpng_list;
       do
       {
@@ -189,6 +190,13 @@ OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
           dpl = dpl->dp.next;
       }
       while(dpl);
+    }
+    else
+    {
+      mfree(odp->dp.img->bitmap);
+      mfree(odp->dp.img);
+      mfree(odp);
+      return 0;
     }
     odp->dp.icon=icon;
     odp->w_char=wchar;
@@ -211,12 +219,14 @@ void AddPictureItem(VIEWDATA *vd, void *picture)
     if ((img=read_pngimg(picture)))
     {
       dpl=AddToDPngQueue(vd, img, 0);
-      wchar=dpl->w_char;
+      if (dpl)
+        wchar=dpl->w_char;
     }
     else  if ((img=read_jpgimg(picture)))
     {
       dpl=AddToDPngQueue(vd, img, 0);
-      wchar=dpl->w_char;
+      if (dpl)
+        wchar=dpl->w_char;
     }
   }
   RawInsertChar(vd,wchar);
@@ -233,7 +243,8 @@ void AddPictureItemRGBA(VIEWDATA *vd, void *picture, int width, int height)
     if (img)
     {
       dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
-      wchar=dpl->w_char;
+      if (dpl)
+        wchar=dpl->w_char;
     }
   }
   //Prepare Wide String
@@ -271,7 +282,8 @@ void AddPictureItemFrame(VIEWDATA *vd,int width,int height)
     if (img)
     {
       dpl=AddToDPngQueue(vd, img, DP_IS_FRAME);
-      wchar=dpl->w_char;
+      if (dpl)
+        wchar=dpl->w_char;
     }
   }
   RawInsertChar(vd,wchar);  
@@ -288,7 +300,8 @@ void AddPictureItemHr(VIEWDATA *vd)
     if (img)
     {
       dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
-      vd->wchar_hr=wchar=dpl->w_char;
+      if (dpl)
+        vd->wchar_hr=wchar=dpl->w_char;
     }
   }
   else wchar=vd->wchar_hr;
@@ -307,7 +320,8 @@ int AddPictureItemFile(VIEWDATA *vd, const char *file)
     if (img=CreateIMGHDRFromPngFile(file, 0))
     {
       dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
-      wchar=dpl->w_char;
+      if (dpl)
+        wchar=dpl->w_char;
     }
   }
   return wchar;
@@ -394,7 +408,8 @@ void AddButtonItem(VIEWDATA *vd, const char *text, int len)
   if (img)
   {
     dpl=AddToDPngQueue(vd, img, DP_IS_NOINDEX);
-    wchar=dpl->w_char;
+    if (dpl)
+      wchar=dpl->w_char;
   }
   RawInsertChar(vd,wchar);
 }

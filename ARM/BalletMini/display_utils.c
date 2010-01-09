@@ -45,12 +45,8 @@ int GetSymbolBitmapWidth(VIEWDATA *vd, int wchar,int font)
       }
     }
     while(dpl=dpl->dp.next);
-    return 0;
   }
-  else
-  {
-    return GetSymbolWidth(wchar,font);
-  }
+  return GetSymbolWidth(wchar,font);
 }
 
 int GetBitmapHeight(VIEWDATA *vd, int wchar)
@@ -64,7 +60,7 @@ int GetBitmapHeight(VIEWDATA *vd, int wchar)
     }
   }
   while(dpl=dpl->dp.next);
-  return 0;
+  return GetImgHeight(GetPicNByUnicodeSymbol(wchar));;
 }
 
 unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *max_h*/)
@@ -1176,13 +1172,16 @@ void input_box_onkey_options(USR_MENU_ITEM *item)
 static int input_box_onkey(GUI *data, GUI_MSG *msg)
 {
   EDITCONTROL ec;
+  int gb_pressed = 0;
   if ((msg->gbsmsg->msg==KEY_DOWN)&&(msg->gbsmsg->submess==ENTER_BUTTON))
   {
     //paste_gui=data;
     EDIT_OpenOptionMenuWithUserItems(data,input_box_onkey_options,data,3);
     return (-1);
   }
-  if (msg->keys==0xFFF)
+  if ((msg->gbsmsg->msg==KEY_DOWN)&&(msg->gbsmsg->submess==GREEN_BUTTON))
+    gb_pressed = 1;
+  if ((msg->keys==0xFFF) || (gb_pressed))
   {
     // set value
     ExtractEditControl(data,1,&ec);
@@ -1191,7 +1190,7 @@ static int input_box_onkey(GUI *data, GUI_MSG *msg)
     text_ref->data=(void *)AllocWS(ec.pWS->wsbody[0]);
     wstrcpy(((WSHDR *)text_ref->data),ec.pWS);
     setUserText(text_ref->id, ec.pWS);
-    if (!text_ref->no_upload)
+    if ((!text_ref->no_upload) || (gb_pressed))
     {
       goto_url=malloc(strlen(cur_vd->pageurl)+1);
       strcpy(goto_url,cur_vd->pageurl);
