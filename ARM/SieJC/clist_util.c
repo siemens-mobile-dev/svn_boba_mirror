@@ -722,7 +722,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
     mfree(qjid);
     CList_AddResourceWithPresence(jid, PRESENCE_OFFLINE, NULL,0);
   }
-  TRESOURCE* cont = (contEx->group & 0x80 && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT)) ? contEx->res_list : CList_IsResourceInList(jid);
+  TRESOURCE* cont = (contEx->group & 0x80 && (mtype==MSG_GCHAT || mtype==MSG_SUBJECT || mtype==MSG_NICKGCHAT)) ? contEx->res_list : CList_IsResourceInList(jid);
   if(!cont)
   {
     // У контакта нет ресурсов или такого ресурса нет. Добавляем на первый же.
@@ -739,6 +739,7 @@ void CList_AddMessage(char* jid, MESS_TYPE mtype, char* mtext)
   snprintf(timestamp, 12, timestamp, now_time.hour, now_time.min);
   switch(mtype)
   {
+  case MSG_NICKGCHAT:
   case MSG_GCHAT:
     {
       char* conf_nickname = Get_Resource_Name_By_FullJID(jid);

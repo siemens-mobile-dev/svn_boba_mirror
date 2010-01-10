@@ -218,6 +218,7 @@
 
 #define LG_SHOWSTAT_MUCINOUT      "Отображать вход\\выход в MUC"
 #define LG_SHOWSTAT_MUCCHANGESTAT "Показывать смену статусов в MUC"
+#define LG_BOLDNICKINMUC          "Выделять сообщения с Вашим ником"
 
 #ifdef ICONBAR
 #define LG_ICONBAR_SI       "Показывать иконку в IconBar"
@@ -577,7 +578,7 @@
 
 #define LG_SHOWSTAT_MUCINOUT      "Відображати вхід\\вихід в MUC"
 #define LG_SHOWSTAT_MUCCHANGESTAT "Відображати зміну статусів в MUC"
-
+#define LG_BOLDNICKINMUC          "Позначати повід. з Вашим ніком"
 #ifdef ICONBAR
 #define LG_ICONBAR_SI       "Показувати іконку в IconBar"
 #define LG_ICONSET_FILENAME "Им'я файла з номерами іконок"
@@ -936,6 +937,7 @@
 
 #define LG_SHOWSTAT_MUCINOUT      "Show in/out statuss in MUC"
 #define LG_SHOWSTAT_MUCCHANGESTAT "Show status change in MUC"
+#define LG_BOLDNICKINMUC          "Mark mess. with Your nick"
 
 #ifdef ICONBAR
 #define LG_ICONBAR_SI       "Show icon in IconBar"

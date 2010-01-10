@@ -488,6 +488,7 @@ void mGUI_onRedraw(GUI *data)
       case MSG_SYSTEM:  MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;
       case MSG_STATUS:  MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;
       case MSG_GCHAT:   MsgBgColor=ml->log_mess_number %2==0? MESSAGEWIN_GCHAT_BGCOLOR_1 : MESSAGEWIN_GCHAT_BGCOLOR_2; break;
+      case MSG_NICKGCHAT: MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;
       }
       MsgBg2Color=MsgBgColor;
       
@@ -515,8 +516,10 @@ void mGUI_onRedraw(GUI *data)
       DrawRectangle(0, SCR_START + FontSize + 2 + Y_pos, ScreenW() - 1, SCR_START + FontSize + 2 + ml->line_height + Y_pos - kur, 0,
                        color(MsgBg2Color), color(MsgBgColor));
 
-      DrawString(ml->mess, MSG_START_X, SCR_START + FontSize + 2 + Y_pos, ScreenW()-1, SCR_START + FontSize + 2 + ml->line_height + Y_pos, MESSAGEWIN_FONT, 0,
-                 color(MESSAGEWIN_CHAT_FONT), 0);
+      DrawString(ml->mess, MSG_START_X, SCR_START + FontSize + 2 + Y_pos, 
+                ScreenW()-1, SCR_START + FontSize + 2 + ml->line_height + Y_pos,
+                ml->mtype==MSG_NICKGCHAT?FONT_SMALL_BOLD:MESSAGEWIN_FONT, 0,
+                color(MESSAGEWIN_CHAT_FONT), 0);
 
       Y_pos += ml->line_height;
     }
@@ -707,7 +710,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
           LOG_MESSAGE *msg = GetCurMessage();
           if(msg)
           {
-            if(msg->mtype==MSG_GCHAT)
+            if((msg->mtype==MSG_GCHAT)||(msg->mtype==MSG_NICKGCHAT))
             {
               unsigned int au_nick_len = strlen(msg->muc_author);
               char *init_text = malloc(au_nick_len+3);
@@ -850,7 +853,7 @@ int mGUI_onKey(GUI *data, GUI_MSG *msg)
         {
           LOG_MESSAGE *msg = GetCurMessage();
           if(msg)
-            if(msg->mtype==MSG_GCHAT)
+            if((msg->mtype==MSG_GCHAT)||(msg->mtype==MSG_NICKGCHAT))
             {
               unsigned int au_nick_len = strlen(msg->muc_author);
               char *init_text = malloc(au_nick_len+3);
@@ -999,7 +1002,8 @@ void ParseMessagesIntoList(TRESOURCE* ContEx)
 	}
 	else
 	{
-          symbol_width = GetSymbolWidth(symb,MESSAGEWIN_FONT);
+          if(MessEx->mtype==MSG_NICKGCHAT)symbol_width = GetSymbolWidth(symb,FONT_SMALL_BOLD);
+            else symbol_width = GetSymbolWidth(symb,MESSAGEWIN_FONT);
 	  line_width += symbol_width;
 	  if (line_width > screen_width)
 	  {

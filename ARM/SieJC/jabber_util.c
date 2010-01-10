@@ -1831,7 +1831,8 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
       {
         return;
       }
-      if (!CList_FindMUCByJID(Conference->JID)) return; //нету такой конференции, значит мы ёё несоздавали
+      MUC_ITEM *MucClist = CList_FindMUCByJID(Conference->JID);
+      if (!MucClist) return; //нету такой конференции, значит мы ёё несоздавали
       char* nick = Get_Resource_Name_By_FullJID(from);
 
       // Тут можно обрабатывать события входа/выхода в конфу
@@ -1894,7 +1895,7 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         }
         };
 
-        char* my_nick = Get_Resource_Name_By_FullJID(CList_FindMUCByJID(Conference->JID)->conf_jid);
+        char* my_nick = Get_Resource_Name_By_FullJID(MucClist->conf_jid);
         if ((!strcmp(nick,my_nick))&&(Conference->res_list->status==PRESENCE_OFFLINE)) //если ето мы, входим в нее.
         {
           Conference->res_list->status=PRESENCE_ONLINE;
@@ -1913,10 +1914,10 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         else 
         {
          if(statusmsg_node->value) sprintf(r, "%s left us (%s)", nick, statusmsg_node->value);
-         else sprintf(r, "%s left us", nick);
+           else sprintf(r, "%s left us", nick);
         }
 
-        char* my_nick = Get_Resource_Name_By_FullJID(CList_FindMUCByJID(Conference->JID)->conf_jid);
+        char* my_nick = Get_Resource_Name_By_FullJID(MucClist->conf_jid);
         if (!strcmp(nick,my_nick)) //если ето мы, удаляем конфу.
         {
           Leave_Conference(Conference->JID);
@@ -1931,7 +1932,6 @@ static char r[MAX_STATUS_LEN];       // Статик, чтобы не убило её при завершении
         priv.aff  = AFFILIATION_NONE;
         Req_Set_Role = 1;
       }
-
 
       // Получаем дочерний узел статуса
       XMLNode* sstatus = XML_Get_Child_Node_By_Name(x_node,"status");
@@ -2122,9 +2122,9 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   char from[]="from";
   char c_xmlns[]="xmlns";
   char c_id[]="id";
-
+  extern const int BOLD_NICK_INMUC;
   // Если включено обслуживание запросов о получении...
-  
+  char *chr_from = XML_Get_Attr_Value(from,nodeEx->attr);
     XMLNode* xnode = XML_Get_Child_Node_By_Name(nodeEx,"x");
     if(xnode)
     {
@@ -2136,10 +2136,10 @@ void Process_Incoming_Message(XMLNode* nodeEx)
        XMLNode *invite =  XML_Get_Child_Node_By_Name(xnode,"invite");
        if(invite)
        {
-        MUC_ITEM* muct = CList_FindMUCByJID(XML_Get_Attr_Value(from,nodeEx->attr)); 
+        MUC_ITEM* muct = CList_FindMUCByJID(chr_from); 
         if(!muct) //если еще нетты такой конфы то добавим в список muctop, а вдруг зайдем
         {
-          CList_AddContact(XML_Get_Attr_Value(from,nodeEx->attr),XML_Get_Attr_Value(from,nodeEx->attr), SUB_BOTH, 0, 129);
+          CList_AddContact(chr_from,chr_from, SUB_BOTH, 0, 129);
         }
        }
       } //end invite
@@ -2172,7 +2172,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
        if(!strcmp(xmlns,JABBER_XMPP_RECEIPTS))
         {
           char *id = XML_Get_Attr_Value(c_id, nodeEx->attr);
-          if(id)Report_Delivery(id, XML_Get_Attr_Value(from,nodeEx->attr));
+          if(id)Report_Delivery(id, chr_from);
         }
        }
       }
@@ -2183,7 +2183,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       if(xmlns)
       if(!strcmp(xmlns,JABBER_XMPP_RECEIPTS))
       {
-        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
+        TRESOURCE* Res_ex = CList_IsResourceInList(chr_from);
         if(Res_ex)
         if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
         {
@@ -2203,7 +2203,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       if(xmlns)
       if(!strcmp(xmlns,XMLNS_CHATSTATES))
       {
-        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
+        TRESOURCE* Res_ex = CList_IsResourceInList(chr_from);
         if(Res_ex)
         if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
         CList_ChangeComposingStatus(Res_ex, 1);
@@ -2216,7 +2216,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
       if(xmlns)
       if(!strcmp(xmlns,XMLNS_CHATSTATES))
       {
-        TRESOURCE* Res_ex = CList_IsResourceInList(XML_Get_Attr_Value(from,nodeEx->attr));
+        TRESOURCE* Res_ex = CList_IsResourceInList(chr_from);
         if(Res_ex)
         if((Res_ex->entry_type == T_NORMAL)||(Res_ex->entry_type == T_CONF_NODE))
         CList_ChangeComposingStatus(Res_ex, 0);
@@ -2234,7 +2234,7 @@ void Process_Incoming_Message(XMLNode* nodeEx)
   }
   if(msgsubject && !msgerror) //если есть тема, обработаем...
   {
-    MUC_ITEM* TmpMUC = CList_FindMUCByJID(CList_FindContactByJID(XML_Get_Attr_Value(from,nodeEx->attr))->JID);
+    MUC_ITEM* TmpMUC = CList_FindMUCByJID(CList_FindContactByJID(chr_from)->JID);
       if(TmpMUC)
       {
        if(TmpMUC->muctema) mfree(TmpMUC->muctema);
@@ -2257,12 +2257,12 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     MESS_TYPE msgtype = Get_Message_Type(XML_Get_Attr_Value("type",nodeEx->attr));
 
     // Не показываем попапы для групчата, ибо достаёт трындец как
-    if(msgtype!=MSG_GCHAT)
+    if((msgtype!=MSG_GCHAT)&&(msgtype!=MSG_NICKGCHAT))
     {
       if(DISPLAY_POPUPS)
       {
         char* m = malloc(128+5+strlen(msgnode->value));
-        sprintf(m,"%s: %s", XML_Get_Attr_Value(from,nodeEx->attr), msgnode->value);
+        sprintf(m,"%s: %s", chr_from, msgnode->value);
         //char *ansi_m=convUTF8_to_ANSI_STR(m);
         char *ansi_m = m;
         utf82win(ansi_m, ansi_m);
@@ -2275,6 +2275,21 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     }
       else
         {
+          if(BOLD_NICK_INMUC)
+          if(msgtype==MSG_GCHAT)
+          {
+          CLIST* clMuc = CList_FindContactByJID(chr_from);
+          if(clMuc)
+          {
+            MUC_ITEM* TmpMUC = CList_FindMUCByJID(clMuc->JID);
+            if (TmpMUC)
+            {
+              char* my_nick = Get_Resource_Name_By_FullJID(TmpMUC->conf_jid);
+              if (strstr(msgnode->value, my_nick)) 
+                msgtype=MSG_NICKGCHAT;
+            }
+          }
+          }
           extern const char sndConf[];
           SUBPROC((void *)Play,sndConf);
         }
@@ -2284,12 +2299,12 @@ void Process_Incoming_Message(XMLNode* nodeEx)
     }
     
     if (!msgerror)
-    CList_AddMessage(XML_Get_Attr_Value(from,nodeEx->attr), msgtype, msgnode->value);
+    CList_AddMessage(chr_from, msgtype, msgnode->value);
     else
     {
       char r[MAX_STATUS_LEN];
       sprintf(r, "Error: %s", msgnode->value);
-      CList_AddSystemMessage(XML_Get_Attr_Value(from,nodeEx->attr), PRESENCE_ERROR, r);
+      CList_AddSystemMessage(chr_from, PRESENCE_ERROR, r);
     }
     extern volatile int vibra_count;
     Vibrate(1);
