@@ -797,6 +797,12 @@ void StartINET(void)
   if ((!strlen(USERNAME))||(!strlen(PASSWORD))) return;
   if (!connect_state)
   {
+    if (IsGPRSEnabled()) is_gprs_online=1;
+    else
+    {
+      is_gprs_online=0;
+      return;
+    }
     enable_connect=1;
     do_reconnect();
   }
