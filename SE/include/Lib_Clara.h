@@ -371,7 +371,7 @@ __swi __arm  int Str2ID(const void * wstr , int  flag , int len);
 __swi __arm  void StrID2Str(int StrID,char * str,int maxlen);
 
 #pragma swi_number=0x15F
-__swi __arm  void TextID2wstr(int StrID,wchar_t * str,int maxlen);
+__swi __arm  int TextID2wstr(int StrID,wchar_t * str,int maxlen);
 
 #pragma swi_number=0x160
 __swi __arm  int TextGetLength(int StrID);
