@@ -662,7 +662,7 @@
 0E80: 00000000 D50C4845 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 0E84: 00000000 E568FA44 ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 0E88: 00000000 45392445 ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
-
+0E8C: 00000000 25114845 ; 3A3: int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
 
 
 

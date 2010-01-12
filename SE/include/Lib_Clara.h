@@ -1724,4 +1724,6 @@ __swi __arm  void wstrnupr(wchar_t * wstr, int maxlen);
 #pragma swi_number=0x3A2
 __swi __arm  void wstrnlwr(wchar_t * wstr, int maxlen);
 
+#pragma swi_number=0x3A3
+__swi __arm  int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
 #endif
