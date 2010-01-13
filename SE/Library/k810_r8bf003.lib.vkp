@@ -82,7 +82,7 @@
 0570: 00000000 212C4545 ; 15C: int int2strID (int num);
 0574: 00000000 D52E4545 ; 15D: int Str2ID(const void * wstr , int flag , int len);
 0578: 00000000 69334545 ; 15E: void StrID2Str(int StrID,char * str,int maxlen);
-057C: 00000000 59324545 ; 15F: void TextID2wstr(int StrID,wchar_t * str,int maxlen);
+057C: 00000000 59324545 ; 15F: int TextID2wstr(int StrID,wchar_t * str,int maxlen);
 0580: 00000000 39314545 ; 160: int TextGetLength(int StrID);
 0584: 00000000 9D304545 ; 161: void TextFree(int StrID);
 0588: 00000000 E1E3EF44 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
@@ -662,6 +662,7 @@
 0E80: 00000000 71A24245 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 0E84: 00000000 0DE1F544 ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 0E88: 00000000 AD941F45 ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
+0E8C: 00000000 C1A64245 ; 3A3: int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
 
 
 
