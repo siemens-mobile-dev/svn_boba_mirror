@@ -611,7 +611,7 @@
 0DB4: 00000000 19F60345 ; 36D: void MediaPlayer_ShowNowPlaying(DISP_OBJ*disp_obj, int);
 0DB8: 00000000 759D4545 ; 36E: void DispObject_Show(DISP_OBJ *disp_obj, int mode);
 0DBC: 00000000 CDCE1D44 ; 36F: int Request_EventChannel_Subscribe(const int *SYNC, int mode, int event);
-0DC0: 00000000 45480A44 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
+0DC0: 00000000 450A4845 ; 370: void GUIObject_Softkey_ExecuteAction(void *gui, u16 actionID);
 0DC4: 00000000 290D9744 ; 371: int Request_ICA_ShutdownAllConnections(const int *sync);
 0DC8: 00000000 CD543E45 ; 372: int REQUEST_PROFILE_GETPROFILENAME(const int *SYNC,int unk,STRID_DATA *,char *error);
 0DCC: 00000000 F122FD44 ; 373: int DataBrowserDesc_SetFocusToFILEITEM(void *DataBrowserDesc, FILEITEM *fi);
@@ -662,7 +662,14 @@
 ;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 ;0E84: xxxxxxxx yyyyyyyy ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 ;0E88: xxxxxxxx yyyyyyyy ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
-
+;0E8C: xxxxxxxx yyyyyyyy ; 3A3: int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
+0E90: 00000000 E1434645 ; 3A4: void GuiObject_SetTitleTextColor(void *gui, int color);
+0E94: 00000000 29F14145 ; 3A5: void GuiObject_SetListTextColor(void *gui, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _NULL);
+0E98: 00000000 C1904545 ; 3A6: void DISP_OBJ_SetTitleTextColor(void *disp_obj, int color);
+0E9C: 00000000 CD094145 ; 3A7: void DISP_OBJ_SetListTextColor(void *disp_obj, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _NULL);
+0EA0: 00000000 89094145 ; 3A8: void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
+0EA4: 00000000 A5094145 ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
+0EA8: 00000000 E1904545 ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
 
 
 

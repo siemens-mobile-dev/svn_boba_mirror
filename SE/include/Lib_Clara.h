@@ -1726,4 +1726,19 @@ __swi __arm  void wstrnlwr(wchar_t * wstr, int maxlen);
 
 #pragma swi_number=0x3A3
 __swi __arm  int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
+
+#pragma swi_number=0x3A4
+__swi __arm  void GuiObject_SetTitleTextColor(void *gui, int color);
+#pragma swi_number=0x3A5
+__swi __arm  void GuiObject_SetListTextColor(void *gui, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+#pragma swi_number=0x3A6
+__swi __arm  void DISP_OBJ_SetTitleTextColor(void *disp_obj, int color);
+#pragma swi_number=0x3A7
+__swi __arm  void DISP_OBJ_SetListTextColor(void *disp_obj, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+#pragma swi_number=0x3A8
+__swi __arm  void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
+#pragma swi_number=0x3A9
+__swi __arm  void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
+#pragma swi_number=0x3AA
+__swi __arm  void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
 #endif
