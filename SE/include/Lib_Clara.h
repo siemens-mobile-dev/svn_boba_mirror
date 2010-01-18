@@ -1741,4 +1741,8 @@ __swi __arm  void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
 __swi __arm  void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
 #pragma swi_number=0x3AA
 __swi __arm  void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
+
+#pragma swi_number=0x3AB
+__swi __arm  void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
+
 #endif
