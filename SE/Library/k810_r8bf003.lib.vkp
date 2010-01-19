@@ -663,6 +663,14 @@
 0E84: 00000000 0DE1F544 ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 0E88: 00000000 AD941F45 ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
 0E8C: 00000000 C1A64245 ; 3A3: int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
+0E90: 00000000 1D094745 ; 3A4: void GuiObject_SetTitleTextColor(void *gui, int color);
+0E94: 00000000 BDB54245 ; 3A5: void GuiObject_SetListTextColor(void *gui, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+0E98: 00000000 55554645 ; 3A6: void DISP_OBJ_SetTitleTextColor(void *disp_obj, int color);
+0E9C: 00000000 61CE4145 ; 3A7: void DISP_OBJ_SetListTextColor(void *disp_obj, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+0EA0: 00000000 1DCE4145 ; 3A8: void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
+0EA4: 00000000 39CE4145 ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
+0EA8: 00000000 75554645 ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
+;0EAC: xxxxxxxx yyyyyyyy ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
 
 
 
