@@ -274,7 +274,7 @@
 ;0870: xxxxxxxx yyyyyyyy ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: 00000000 79C71614 ; 21D: __thumb DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 3DD71614 ; 21E: __thumb char DISP_OBJ_getVisible(DISP_OBJ*);
-087C: 00000000 CD7F1E10 ; 21F: __thumb DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj); // !!!!! не настоящий !!!!!!
+087C: 00000000 85040815 ; 21F: __thumb DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj); // !!!!! не настоящий !!!!!!
 0880: 00000000 E1765014 ; 220: __thumb void DISP_DESC_SetName (DISP_DESC* , const char * name);
 0884: 00000000 B1C91614 ; 221: __thumb char* DISP_OBJ_GetName (DISP_OBJ *);
 0888: 00000000 2D775014 ; 222: __thumb void DISP_DESC_SetSize (DISP_DESC* , u16 size);
@@ -383,7 +383,7 @@
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 1D59EE14 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
 0A2C: 00000000 85092714 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
-0A30: 00000000 D5E0CC14 ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
+;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl(BOOK *AudioPlayerBook, int);
 0A34: 00000000 5583DB14 ; 28D: void SwitchRadioStationFromList(BOOK *FmRadioBook, int);
 0A38: 00000000 29A1F514 ; 28E: void Shortcut_Run (wchar_t * shortcut_name);
 0A3C: 00000000 19000A14 ; 28F: int mkdir(const wchar_t* path);
@@ -662,6 +662,15 @@
 ;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 ;0E84: xxxxxxxx yyyyyyyy ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 ;0E88: xxxxxxxx yyyyyyyy ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
+;0E8C: xxxxxxxx yyyyyyyy ; 3A3: int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
+;0E90: xxxxxxxx yyyyyyyy ; 3A4: void GuiObject_SetTitleTextColor(void *gui, int color);
+;0E94: xxxxxxxx yyyyyyyy ; 3A5: void GuiObject_SetListTextColor(void *gui, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+;0E98: xxxxxxxx yyyyyyyy ; 3A6: void DISP_OBJ_SetTitleTextColor(void *disp_obj, int color);
+;0E9C: xxxxxxxx yyyyyyyy ; 3A7: void DISP_OBJ_SetListTextColor(void *disp_obj, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+;0EA0: xxxxxxxx yyyyyyyy ; 3A8: void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
+;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
+;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
+0EAC: 00000000 4DC00214 ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
 
 
 
