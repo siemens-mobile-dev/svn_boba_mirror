@@ -643,6 +643,9 @@ __swi __arm PAudioControl* GetAudioControlPtr();
 #pragma swi_number=0x1D2
 __swi __arm int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
 
+#pragma swi_number=0x1D3
+__swi __arm  int GetVolumeSize(wchar_t *root_folder, VOLUMESIZE *);
+
 #pragma swi_number=0x1D4
 __swi __arm  GUI_NOFMANY * CreateNOfMany(BOOK *);
 
@@ -1717,7 +1720,7 @@ __swi __arm  int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int 
 __swi __arm  int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
 
 #pragma swi_number=0x3A0
-__swi __arm  int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
+__swi __arm  int ListMenu_SetItemIcon(GUI_LIST *,int Item,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 
 #pragma swi_number=0x3A1
 __swi __arm  void wstrnupr(wchar_t * wstr, int maxlen);

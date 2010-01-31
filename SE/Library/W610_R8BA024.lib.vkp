@@ -82,7 +82,7 @@
 0570: 00000000 FD2F3445 ; 15C: int int2strID (int num);
 0574: 00000000 B1323445 ; 15D: int Str2ID(const void * wstr , int flag , int len);
 0578: 00000000 45373445 ; 15E: void StrID2Str(int StrID,char * str,int maxlen);
-057C: 00000000 35363445 ; 15F: void TextID2wstr(int StrID,wchar_t * str,int maxlen);
+057C: 00000000 35363445 ; 15F: int TextID2wstr(int StrID,wchar_t * str,int maxlen);
 0580: 00000000 15353445 ; 160: int TextGetLength(int StrID);
 0584: 00000000 79343445 ; 161: void TextFree(int StrID);
 0588: 00000000 B935DF44 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
@@ -198,7 +198,7 @@
 0740: 00000000 852C2F45 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 0744: 00000000 D40E1820 ;81D1: PAudioControl* GetAudioControlPtr();
 0748: 00000000 B124C644 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
-074C: 00000000 2566E944 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
+074C: 00000000 2566E944 ; 1D3: int GetVolumeSize(wchar_t *root_folder, VOLUMESIZE *);
 0750: 00000000 CDBC3145 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 0DBF3145 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 0758: 00000000 91BE3145 ; 1D6: void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
@@ -659,9 +659,18 @@
 ;0E74: xxxxxxxx yyyyyyyy ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 ;0E78: xxxxxxxx yyyyyyyy ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 ;0E7C: xxxxxxxx yyyyyyyy ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
-;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
+;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,int Item,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 ;0E84: xxxxxxxx yyyyyyyy ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 ;0E88: xxxxxxxx yyyyyyyy ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
+;0E8C: xxxxxxxx yyyyyyyy ; 3A3: int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
+;0E90: xxxxxxxx yyyyyyyy ; 3A4: void GuiObject_SetTitleTextColor(void *gui, int color);
+;0E94: xxxxxxxx yyyyyyyy ; 3A5: void GuiObject_SetListTextColor(void *gui, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+;0E98: xxxxxxxx yyyyyyyy ; 3A6: void DISP_OBJ_SetTitleTextColor(void *disp_obj, int color);
+;0E9C: xxxxxxxx yyyyyyyy ; 3A7: void DISP_OBJ_SetListTextColor(void *disp_obj, int unk1, int list_color, int unk2,int unk3,int list_select_color,int unk4,int _zerro);
+;0EA0: xxxxxxxx yyyyyyyy ; 3A8: void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
+;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
+;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
+;0EAC: xxxxxxxx yyyyyyyy ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
 
 
 

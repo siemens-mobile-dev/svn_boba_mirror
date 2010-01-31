@@ -928,4 +928,28 @@ typedef struct {
     char cur_langID;
 }DISP_OBJ_STRING_INPUT;
 
+typedef struct
+{
+  int   TotalSpace;
+  int   FreeSpace;
+  int   BytesPerCluster;
+  int   TotalClusters;
+  int   TotalFreeClusters;
+  int   unk0;
+  int   unk1;
+  int   unk2;
+}VOLUMESIZE;
+
+typedef struct
+{
+  long long   TotalSpace;
+  long long   FreeSpace;
+  int   BytesPerCluster;
+  int   TotalClusters;
+  int   TotalFreeClusters;
+  int   unk0;
+  int   unk1;
+  int   unk2;
+}VOLUMESIZE_A2;
+
 #endif

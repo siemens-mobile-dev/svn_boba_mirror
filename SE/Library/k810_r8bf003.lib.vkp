@@ -124,7 +124,7 @@
 0618: 00000000 3C5D4344 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 061C: 00000000 685D4344 ; 187: void kill_proc(PROCESS pid);
 ;0620: xxxxxxxx yyyyyyyy ; 188:
-;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
+0624: 00000000 A05B4344 ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: 00000000 505E4344 ; 18B: void stop(PROCESS pid);
 0630: 00000000 BC5C4344 ; 18C: OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
@@ -198,7 +198,7 @@
 0740: 00000000 CD294045 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 0744: 00000000 90781620 ;81D1: PAudioControl* GetAudioControlPtr();
 0748: 00000000 89ACD644 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
-074C: 00000000 C90AFA44 ; 1D3: int GetVolumeSize(char * volume, VOLUMESIZE *);
+074C: 00000000 C90AFA44 ; 1D3: int GetVolumeSize(wchar_t *root_folder, VOLUMESIZE *);
 0750: 00000000 F9B84245 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 39BB4245 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
 0758: 00000000 BDBA4245 ; 1D6: void NOfMany_SetChecked(GUI_NOFMANY * , u16 * checked_table, int items_count);
@@ -659,7 +659,7 @@
 0E74: 00000000 31828644 ; 39D: void GVI_DeleteMemoryGC(GVI_GC srcgc);
 0E78: 00000000 61CA3F45 ; 39E: int StringInput_DispObject_SetLanguage(DISP_OBJ_STRING_INPUT *,int langID,int flag);
 0E7C: 00000000 2DBC2C45 ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
-0E80: 00000000 71A24245 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,wchar_t ItemID,wchar_t unk_FFFF,int mode,wchar_t ImageID);
+0E80: 00000000 71A24245 ; 3A0: int ListMenu_SetItemIcon(GUI_LIST *,int Item,wchar_t unk_FFFF,int mode,wchar_t ImageID);
 0E84: 00000000 0DE1F544 ; 3A1: void wstrnupr(wchar_t * wstr, int maxlen);
 0E88: 00000000 AD941F45 ; 3A2: void wstrnlwr(wchar_t * wstr, int maxlen);
 0E8C: 00000000 C1A64245 ; 3A3: int ListMenu_SetItemTextScroll(GUI_LIST *, int scroll);
