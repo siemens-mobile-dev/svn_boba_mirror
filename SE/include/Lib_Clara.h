@@ -1748,4 +1748,7 @@ __swi __arm  void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
 #pragma swi_number=0x3AB
 __swi __arm  void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
 
+#pragma swi_number=0x3AC
+__swi __arm BOOK* GUI_GetBook(GUI* gui);
+
 #endif

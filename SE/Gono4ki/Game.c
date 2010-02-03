@@ -336,22 +336,22 @@ void onfTimer (u16 tmr , void *)
     rs->x2=MyBK()->dis[GetDis()]->cub*12;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->p[0]->y*MyBK()->dis[GetDis()]->cub-MyBK()->dis[GetDis()]->cub;
     rs->y2=MyBK()->dis[GetDis()]->y-MyBK()->p[0]->y*MyBK()->dis[GetDis()]->cub+MyBK()->dis[GetDis()]->cub;
-    InvalidateRect(((GUI*)np)->DISP_OBJ,rs);
+    InvalidateRect( GUIObj_GetDISPObj(np), rs);
     rs->x1=0;
     rs->x2=MyBK()->dis[GetDis()]->cub*12;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->p[1]->y*MyBK()->dis[GetDis()]->cub-MyBK()->dis[GetDis()]->cub;
     rs->y2=MyBK()->dis[GetDis()]->y-MyBK()->p[1]->y*MyBK()->dis[GetDis()]->cub+MyBK()->dis[GetDis()]->cub;
-    InvalidateRect(((GUI*)np)->DISP_OBJ,rs);
+    InvalidateRect( GUIObj_GetDISPObj(np), rs);
     rs->x1=MyBK()->dis[GetDis()]->cub*12;
     rs->x2=MyBK()->dis[GetDis()]->x;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub*20;
     rs->y2=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub*20+MyBK()->dis[GetDis()]->FS*8;
-    InvalidateRect(((GUI*)np)->DISP_OBJ,rs);
+    InvalidateRect( GUIObj_GetDISPObj(np), rs);
     rs->x1=0;
     rs->x2=MyBK()->dis[GetDis()]->cub*12;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub;
     rs->y2=MyBK()->dis[GetDis()]->y;
-    InvalidateRect(((GUI*)np)->DISP_OBJ,rs);
+    InvalidateRect( GUIObj_GetDISPObj(np), rs);
     for(int i=0; i<2; i++)
     {
       if(!Check(MyBK()->p[i], MyBK()->tank))
@@ -390,7 +390,7 @@ int CreateGame(void*, BOOK*bk)
   MyBK()->pause=0;
   MyBK()->palka=0;
   np=custom_create(bk);
-  dd=DISP_OBJ_GetDESC (((GUI*)np)->DISP_OBJ); 
+  dd=DISP_OBJ_GetDESC ( GUIObj_GetDISPObj((GUI*)np) ); 
   DISP_DESC_SetOnKey(dd, myOnKey);
   DISP_DESC_SetOnRedraw(dd, myOnRedraw);
   ShowWindow((GUI*)np);

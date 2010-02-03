@@ -239,7 +239,7 @@
 #define KEY_DIGITAL_0 0x18
 #define KEY_DOWN 0xD
 #define KEY_ENTER 0x8
-#define KEY_ESC 0x4
+#define KEY_ESC 0x3 //RIGHT SOFT
 #define KEY_FLIP_CLOSE 0x4A
 #define KEY_FLIP_OPEN 0x49
 #define KEY_GAME_A 0x47

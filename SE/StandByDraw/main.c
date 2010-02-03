@@ -138,7 +138,7 @@ int main (void)
   Width=Display_GetWidth(0);;
   CreateSBDBook();
 
-  StatusIndication=((GUI*)SBY_GetStatusIndication(Find_StandbyBook()))->DISP_OBJ;
+  StatusIndication=GUIObj_GetDISPObj ( SBY_GetStatusIndication(Find_StandbyBook()) );
   SIonRedraw=DISP_OBJ_GetOnRedraw(StatusIndication);
   DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),Draw);
   ftimer=Timer_Set(20,onfTimer,0);

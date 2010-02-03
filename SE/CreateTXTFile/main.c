@@ -107,7 +107,7 @@ int DestroyTextInput()
 
 int onAccept(void * data, BOOK *)
 {
-  if (fstat(((FILEITEM*)data)->path,CreateFileBook->FileName,0)>=0)
+  if (fstat( FILEITEM_GetPath((FILEITEM*)data), CreateFileBook->FileName, 0)>=0)
   {
     int str_id;
     textidname2id(L"DB_NAME_EXIST_TXT",SID_ANY_LEN,&str_id);
@@ -118,7 +118,7 @@ int onAccept(void * data, BOOK *)
   {
     int f;
     int len;
-    if ((f=_fopen(((FILEITEM*)data)->path,CreateFileBook->FileName,0x2,0x180,0))>=0)
+    if ( (f=_fopen( FILEITEM_GetPath((FILEITEM*)data), CreateFileBook->FileName, 0x2, 0x180, 0)) >=0 )
     {
       void * str_buf;
       if (CreateFileBook->coding)
@@ -295,16 +295,17 @@ void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
     textidname2id(L"DB_ILLEGAL_CHAR_TXT",SID_ANY_LEN,&str_id);
     MessageBox(0x6fFFFFFF,str_id,0, 1 ,5000,0);
     FILEITEM * item_desc=FILEITEM_Create();
-    item_desc->fname=new wchar_t[40];
-    item_desc->fname[0]=0;
-    item_desc->fname[1]=0;
+    wchar_t* fname = new wchar_t[40];
+    fname[0]=0;
+    fname[1]=0;
+    FILEITEM_SetFname(item_desc, fname);
     wchar_t * extpos = wstrrchr(string,L'.');
-    wstrncpy(item_desc->fname,string,extpos-string);
+    wstrncpy(fname, string, extpos-string);
     FSX_RemoveIllegalSymbolsName(item_desc);
     wchar_t sp[50];
     sp[0]=0;
-    wstrcat(sp,item_desc->fname);
-    wstrcat(sp,extpos);
+    wstrcat(sp, fname);
+    wstrcat(sp, extpos);
     CreateNameInput(Str2ID(sp,0,SID_ANY_LEN),0,1);
     FILEITEM_Destroy(item_desc);
   }

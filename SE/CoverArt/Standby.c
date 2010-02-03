@@ -23,7 +23,7 @@ DISP_DESC *StatusIndication_DD;
 DISP_OBJ *StatusIndication_DO;
 DISP_OBJ_ONREDRAW_METHOD StatusIndication_DefaultRedraw;
 
-void *GC=0;
+void *gc=0;
 
 u16 Standby_RedrawTimer;
 
@@ -105,22 +105,22 @@ void Redraw(DISP_OBJ_ONREDRAW_METHOD DefRedraw, int DrawOld, signed int PlusY, D
       {
         DefRedraw(DO,a,b,c);
       }
-      GC=get_DisplayGC();
+      gc=get_DisplayGC();
       if (CustomImage_DrawAfter==false)
       {
          if (img.isImage==true && CustomImage_Show==true && DrawCustom==true)
          {
             if (CustomImage_Draw==0)
             {
-              putchar(GC,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==1 && isInStandby==true)
             {
-              putchar(GC,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==2 && isInStandby==false)
             {
-              putchar(GC,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
           }
         }
@@ -130,15 +130,15 @@ void Redraw(DISP_OBJ_ONREDRAW_METHOD DefRedraw, int DrawOld, signed int PlusY, D
           {
             if (COVER_DRAW==0)
             {
-              putchar(GC,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
+              putchar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
             }
             else if (COVER_DRAW==1 && isInStandby==true)
             {
-              putchar(GC,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
+              putchar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
             }
             else if (COVER_DRAW==2 && isInStandby==false)
             {
-              putchar(GC,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
+              putchar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
             }
           }
         }
@@ -148,15 +148,15 @@ void Redraw(DISP_OBJ_ONREDRAW_METHOD DefRedraw, int DrawOld, signed int PlusY, D
           {
             if (CustomImage_Draw==0)
             {
-              putchar(GC,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==1 && isInStandby==true)
             {
-              putchar(GC,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==2 && isInStandby==false)
             {
-              putchar(GC,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
           }
         }
@@ -290,7 +290,7 @@ void Standby_SetOnRedraw()
   //Система тройной прорисовки для целостности ГЭ.
   wstrcpy(lastmusic,L"no");
   
-  Standby_DO=((GUI*)SBY_GetStatusIndication(Find_StandbyBook()))->DISP_OBJ;
+  Standby_DO= GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
   Standby_DefaultRedraw=DISP_OBJ_GetOnRedraw(Standby_DO);
   Standby_DD=DISP_OBJ_GetDESC (Standby_DO);
   DISP_DESC_SetOnRedraw(Standby_DD,Standby_CARedraw); 

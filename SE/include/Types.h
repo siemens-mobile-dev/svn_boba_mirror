@@ -474,6 +474,8 @@ typedef struct
   char	* animation;
   char dummy1[20];
   char dummy2[20];
+
+  char dummy3[0x120-0xD0];//A2
 }DISP_OBJ;
 
 typedef struct GUI_type
@@ -482,6 +484,8 @@ typedef struct GUI_type
   BOOK * book;
   void * unk;
   void * unk1;
+
+  char dummy[0x44-0x10];//A2
 }_GUI;
 
 typedef struct

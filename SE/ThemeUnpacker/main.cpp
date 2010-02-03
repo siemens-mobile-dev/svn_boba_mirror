@@ -79,7 +79,7 @@ extern const PAGE_DESC bk_main;
 
 int onAccept_DB(void * data, BOOK * book)
 {
-  int res=tar_uncompress(((FILEITEM*)data)->path,((FILEITEM*)data)->fname);
+  int res=tar_uncompress( FILEITEM_GetPath((FILEITEM*)data), FILEITEM_GetFname((FILEITEM*)data) );
   wchar_t ustr[64];
   if (res>0)
   {

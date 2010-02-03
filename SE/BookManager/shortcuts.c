@@ -192,12 +192,12 @@ int DB_Filter(const wchar_t * ext_table,const wchar_t * path ,const wchar_t * na
 
 int onAccept_DB(void * data, BOOK * book)
 {
-  wchar_t * path_ptr=wstrwstr(((FILEITEM*)data)->path,L"ZBin/");
-  wchar_t * elf_buf=new wchar_t[wstrlen(path_ptr+4)+wstrlen(((FILEITEM*)data)->fname)+1];
+  wchar_t * path_ptr=wstrwstr( FILEITEM_GetPath((FILEITEM*)data), L"ZBin/");
+  wchar_t * elf_buf=new wchar_t[wstrlen(path_ptr+4)+wstrlen( FILEITEM_GetFname((FILEITEM*)data) )+1];
   elf_buf[0]=0;
   if (path_ptr) wstrcpy(elf_buf,path_ptr+4);
   wstrcat(elf_buf,L"/");
-  wstrcat(elf_buf,((FILEITEM*)data)->fname);
+  wstrcat(elf_buf, FILEITEM_GetFname((FILEITEM*)data) );
   WriteShortcut(elf_buf);
   delete(elf_buf);
   BookObj_ReturnPage(book,ACCEPT_EVENT);

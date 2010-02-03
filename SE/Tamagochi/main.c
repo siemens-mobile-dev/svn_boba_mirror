@@ -1693,7 +1693,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   }
   if(!GUI_display)
   {
-    GUI_display = SBY_GetStatusIndication(Find_StandbyBook())->DISP_OBJ;
+    GUI_display = GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
     Display_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_display);
     Display_desc = DISP_OBJ_GetDESC (GUI_display);
     DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);

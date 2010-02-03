@@ -336,10 +336,10 @@ GUI_REMIND *GUI_REMIND_Create(BOOK *bk)
     delete gui_read;
     return 0;    
   }
-  DispObject_SetLayerColor(((GUI*)gui_read)->DISP_OBJ,BG_COLOR);
+  DispObject_SetLayerColor( GUIObj_GetDISPObj((GUI*)gui_read), BG_COLOR);
   if (bk) addGui2book(bk,(GUI*)gui_read);
-  DispObject_SetLayerColor(((GUI*)gui_read)->DISP_OBJ,BG_COLOR);
-  DispObject_SetRefreshTimer(((GUI*)gui_read)->DISP_OBJ, 1000);
+  DispObject_SetLayerColor( GUIObj_GetDISPObj((GUI*)gui_read), BG_COLOR);
+  DispObject_SetRefreshTimer( GUIObj_GetDISPObj((GUI*)gui_read), 1000);
   return gui_read;
 };
 
@@ -352,7 +352,7 @@ void GuiRemind_AddNote(GUI_REMIND *g, REMIND *rem)
 {
   if (!g)return;
   if (!rem)return;
-  DISP_OBJ_REMIND *DO=(DISP_OBJ_REMIND*)((GUI*)g)->DISP_OBJ;
+  DISP_OBJ_REMIND *DO=(DISP_OBJ_REMIND*) GUIObj_GetDISPObj((GUI*)g);
   if (!DO)return;
   ListElement_Add(DO->rems,rem);
 };
@@ -360,7 +360,7 @@ void GuiRemind_AddNote(GUI_REMIND *g, REMIND *rem)
 void GuiRemind_CheckSelected(GUI_REMIND *g)
 {
   GUI *gb=(GUI*)g;
-  DISP_OBJ_REMIND *db=(DISP_OBJ_REMIND*)gb->DISP_OBJ;
+  DISP_OBJ_REMIND *db= (DISP_OBJ_REMIND*)GUIObj_GetDISPObj(gb);
   if (db->rems && db->num<db->rems->FirstFree)
   {
     REMIND *rem=(REMIND*)ListElement_GetByIndex(db->rems,db->num);
@@ -378,7 +378,7 @@ void GuiRemind_CheckSelected(GUI_REMIND *g)
 int GuiRemind_NextRemind(GUI_REMIND *g)
 {
   GUI *gb=(GUI*)g;
-  DISP_OBJ_REMIND *db=(DISP_OBJ_REMIND*)gb->DISP_OBJ;
+  DISP_OBJ_REMIND *db=(DISP_OBJ_REMIND*)GUIObj_GetDISPObj(gb);
   if (db->rems)
   {
     if (db->num!=db->rems->FirstFree-1)

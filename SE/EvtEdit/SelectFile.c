@@ -91,20 +91,20 @@ int DB_Filter(const wchar_t * ext_table,const wchar_t * path ,const wchar_t * na
 
 int onAccept_DB(void * data, BOOK * book)
 {
-  wchar_t *full=new wchar_t[wstrlen(((FILEITEM*)data)->path)+1+wstrlen(((FILEITEM*)data)->fname)+1];
-  wstrcpy(full,((FILEITEM*)data)->path);
+  wchar_t *full=new wchar_t[wstrlen( FILEITEM_GetPath((FILEITEM*)data) )+1+wstrlen( FILEITEM_GetFname((FILEITEM*)data) )+1];
+  wstrcpy(full, FILEITEM_GetPath((FILEITEM*)data) );
   wstrcat(full,L"/");
-  wstrcat(full,((FILEITEM*)data)->fname);
+  wstrcat(full, FILEITEM_GetFname((FILEITEM*)data) );
   MyBOOK *mbk=(MyBOOK*)book;
   kickbadsymbols(full,wstrlen(full));
   if (mbk->selectfiletype==2)
   {
     DELETE(mbk->indpath);
     DELETE(mbk->indname);
-    mbk->indpath=new wchar_t[wstrlen(((FILEITEM*)data)->path)+1];
-    wstrcpy(mbk->indpath, ((FILEITEM*)data)->path);
-    mbk->indname=new wchar_t[wstrlen(((FILEITEM*)data)->fname)+1];
-    wstrcpy(mbk->indname, ((FILEITEM*)data)->fname);
+    mbk->indpath=new wchar_t[wstrlen( FILEITEM_GetPath((FILEITEM*)data) )+1];
+    wstrcpy(mbk->indpath, FILEITEM_GetPath((FILEITEM*)data) );
+    mbk->indname=new wchar_t[wstrlen( FILEITEM_GetFname((FILEITEM*)data) )+1];
+    wstrcpy(mbk->indname, FILEITEM_GetFname((FILEITEM*)data) );
     BookObj_ReturnPage(book,ACCEPT_EVENT);
   }
   else if (mbk->selectfiletype==1)

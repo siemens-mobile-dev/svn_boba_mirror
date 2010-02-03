@@ -1564,10 +1564,10 @@ void OnEntGM(BOOK * bk, void *)
 
 int onAccept_DB(void * data, BOOK * book)
 {
-  wchar_t *name=new wchar_t[wstrlen(((FILEITEM*)data)->fname)+1];
-  wchar_t *path=new wchar_t[wstrlen(((FILEITEM*)data)->path)+1];
-  wstrcpy(name,((FILEITEM*)data)->fname);
-  wstrcpy(path,((FILEITEM*)data)->path);
+  wchar_t *name=new wchar_t[wstrlen( FILEITEM_GetFname((FILEITEM*)data) )+1];
+  wchar_t *path=new wchar_t[wstrlen( FILEITEM_GetPath((FILEITEM*)data) )+1];
+  wstrcpy(name, FILEITEM_GetFname((FILEITEM*)data) );
+  wstrcpy(path, FILEITEM_GetPath((FILEITEM*)data) );
   FileRead(path, name);
   return (0);
 };

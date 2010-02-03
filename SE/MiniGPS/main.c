@@ -1094,7 +1094,7 @@ int main (void)
     Soft_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_soft);
     DISP_DESC_SetOnRedraw(Soft_desc, (DISP_OBJ_ONREDRAW_METHOD)Soft_ReDraw);
 
-    GUI_display = SBY_GetStatusIndication(Find_StandbyBook())->DISP_OBJ;
+    GUI_display = GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
     Display_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_display);
     Display_desc = DISP_OBJ_GetDESC (GUI_display);
     DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);

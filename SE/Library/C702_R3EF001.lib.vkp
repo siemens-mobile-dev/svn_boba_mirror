@@ -671,6 +671,7 @@
 ;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
 ;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
 ;0EAC: xxxxxxxx yyyyyyyy ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
+0EB0: 00000000 E10DA410 ; 3AC: BOOK* GUI_GetBook(GUI* gui); //см. GUI_Free
 
 
 

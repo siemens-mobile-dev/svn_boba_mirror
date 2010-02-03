@@ -95,7 +95,7 @@ void preset_calculate(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int left, 
 {
   MyBOOK *our=(MyBOOK*)FindBook(isSoftkeysBook);
   int cnt=getcount(lst,1);
-  if ((SBY_GetMainInput(Find_StandbyBook()))->DISP_OBJ==DO)
+  if ( GUIObj_GetDISPObj(SBY_GetMainInput(Find_StandbyBook()))==DO)
   {
     lastitem->type=T_STANDBY;
     preset_standby(lbl,bk,DO, lst, cnt, our, left, right);

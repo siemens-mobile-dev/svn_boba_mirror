@@ -224,7 +224,7 @@ int main (void)
   Height=Display_GetHeight(0);
   Width=Display_GetWidth(0);;
   CreateEvtDeskBook();
-  StatusIndication=((GUI*)SBY_GetStatusIndication(Find_StandbyBook()))->DISP_OBJ;
+  StatusIndication= GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
   SIonRedraw=DISP_OBJ_GetOnRedraw(StatusIndication);
   DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),Draw);
   timer=Timer_Set(1000,onTimer,0);
