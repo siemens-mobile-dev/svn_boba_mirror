@@ -156,7 +156,7 @@
 0698: 00000000 E9725B11 ; 1A6: char * UIEventName(int event);
 069C: 00000000 184DC829 ;81A7: int * MissedEvents(void);
 06A0: 00000000 15905B11 ; 1A8: void UI_Event(int event);
-06A4: 00000000 26905B11 ; 1A9: void UI_Event_wData(int event,void *message,void (*mfree)(void*));
+06A4: 00000000 25905B11 ; 1A9: void UI_Event_wData(int event,void *message,void (*mfree)(void*));
 06A8: 00000000 6D905B11 ; 1AA: void UI_Event_toBookID(int event,int BookID);
 06AC: 00000000 81905B11 ; 1AB: void UI_Event_toBookIDwData(int event,int BookID,void *message,void (*mfree)(void*));
 06B0: 00000000 E9C83D11 ; 1AC: int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
@@ -230,7 +230,7 @@
 07C0: 00000000 61D36511 ; 1F0: int CreateObject(GUI*,void (*)(DISP_DESC *),void (*)(DISP_DESC *),BOOK *,void(*)(),int,int size_obj);
 ;07C4: xxxxxxxx yyyyyyyy ; 1F1: int SetFont(int);
 ;07C8: xxxxxxxx yyyyyyyy ;81F2: DISP_OBJ ** StatusRow_p(void);
-;07CC: xxxxxxxx yyyyyyyy ; 1F3: int root_list_get_session_count(void);
+07CC: 00000000 D8F6C429 ; 1F3: int root_list_get_session_count(void);
 ;07D0: xxxxxxxx yyyyyyyy ; 1F4: UI_APP_SESSION *root_list_get_session(int num_session);
 ;07D4: xxxxxxxx yyyyyyyy ; 1F5: BOOK *SESSION_GetTopBook(UI_APP_SESSION *);
 ;07D8: xxxxxxxx yyyyyyyy ; 1F6: int MainInput_getVisible(GUI *);

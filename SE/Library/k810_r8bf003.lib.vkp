@@ -173,7 +173,7 @@
 06DC: 00000000 11E64945 ; 1B7: int isKeylocked(void);
 06E0: 00000000 893A0645 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
-06E8: 00000000 57A23C45 ; 1BA: void ShuttingDown(void);
+06E8: 00000000 55A23C45 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 6DAB0E45 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 9DFBE544 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 31FCE544 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);
@@ -671,6 +671,7 @@
 0EA4: 00000000 39CE4145 ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
 0EA8: 00000000 75554645 ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
 0EAC: 00000000 A5134745 ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
+0EB0: 00000000 35024745 ; 3AC: BOOK* GUI_GetBook(GUI* gui); //см. GUI_Free
 
 
 

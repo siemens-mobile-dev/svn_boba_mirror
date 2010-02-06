@@ -2,10 +2,8 @@
 
 #define DEPRECATE(t,f,n) extern t f##_FUNCTION_IS_DEPRECATED_USE_##n(); static t f(...){ f##_FUNCTION_IS_DEPRECATED_USE_##n(); return (t)0; }
 
-DEPRECATE(int,BOOK_GetSessionID,BOOK_GetBookID)
 DEPRECATE(int,isFileExist,fstat)
 DEPRECATE(void,AddMSGHook,GUIObject_Softkey_SetAction)
-DEPRECATE(void,UI_Event_toSID,UI_Event_toBookID)
 DEPRECATE(void,UI_Event_toSIDwData,UI_Event_toBookIDwData)
 DEPRECATE(void,AddCommand,GUIObject_Softkey_SetText)
 DEPRECATE(void,SoftKey_SetEnable,GUIObject_SoftKey_SetEnable)

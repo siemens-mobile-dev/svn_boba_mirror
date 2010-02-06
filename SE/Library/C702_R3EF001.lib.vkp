@@ -86,7 +86,7 @@
 0580: 00000000 9D4BFD10 ; 160: int TextGetLength(int StrID); !!! доп параметры
 0584: 00000000 954AFD10 ; 161: void TextFree(int StrID);
 0588: 00000000 7D36BD10 ; 162: int AB_DEFAULTNBR_GET(int rec_num, void * mem_0x30, int * unk);
-;058C: xxxxxxxx yyyyyyyy ; 163: int AB_READSTRING(AB_STR_ITEM *,int rec_num, int field_ID);
+058C: 00000000 A9A3BE10 ; 163: int AB_READSTRING(AB_STR_ITEM *,int rec_num, int field_ID);
 0590: 00000000 559ABD10 ; 164: int AB_READPHONENBR(AB_NUM_ITEM *,int rec_num, int field_ID);
 0594: 00000000 0D9BBD10 ; 165: int AB_GETNBROFITEMS(int get_from,int unk_0);
 0598: 00000000 593DFD10 ; 166: int PNUM_len(void *pnum);
@@ -106,8 +106,8 @@
 05D0: 00000000 556EAF11 ; 174: void ListMenu_SetOnMessages (GUI_LIST * , int (*proc)(GUI_MESSAGE *));
 05D4: 00000000 6546B710 ; 175: char * manifest_GetParam(const char *buf, const char *param_name,int unk);
 05D8: 00000000 319B9C10 ; 176: int lseek(int file,int offset,int mode);
-;05DC: xxxxxxxx yyyyyyyy ;8177: int get_VBUFFER(void);
-;05E0: xxxxxxxx yyyyyyyy ; 178: void SetLampLevel (int level);
+05DC: 00000000 217F0010 ;8177: int get_VBUFFER(void); //nullsub(ret 0)
+05E0: 00000000 4D71BA10 ; 178: void SetLampLevel (int level);
 05E4: 00000000 C1D0B311 ; 179: void * ListElement_Remove(LIST *lst,int index);
 05E8: 00000000 655E0010 ; 17A: int GetCurrentPID(void);
 05EC: 00000000 05D0B311 ; 17B: int ListElement_Prt2NumElement(LIST *lst,void *ptr);
@@ -197,7 +197,7 @@
 073C: 00000000 0910A410 ; 1CF: void InputFeedback_SetIcon(GUI *gui, wchar_t icon);
 0740: 00000000 B58E9010 ; 1D0: int StringInput_GetStringAndLen (GUI*,wchar_t**,u16*);
 0744: 00000000 A070FC2A ;81D1: PAudioControl* GetAudioControlPtr();
-0748: 00000000 05595C11 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
+0748: 00000000 455B5C11 ; 1D2: int AudioControl_Vibrate(PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime);
 074C: 00000000 B1B19C10 ; 1D3: int GetVolumeSize(wchar_t *root_folder, VOLUMESIZE *);
 0750: 00000000 198BAF11 ; 1D4: GUI_NOFMANY * CreateNOfMany(BOOK *);
 0754: 00000000 1D8DAF11 ; 1D5: void NOfMany_SetTexts(GUI_NOFMANY * , int * StrIDtable, int items_count);
@@ -264,7 +264,7 @@
 0848: 00000000 F99CBD10 ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
 084C: 00000000 0D9CBD10 ; 213: int AB_NAME_ITEM2StrID(AB_STR_ITEM * ab_name);
 0850: 00000000 719CBD10 ; 214: int AB_NUM_ITEM2StrID(AB_NUM_ITEM * ab_num_item);
-;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum(AB_GET_STRUCT *);
+0854: 00000000 C5AABE10 ; 215: int GetABRecNum(AB_GET_STRUCT *); //nullsub(void)
 0858: 00000000 30E7BD11 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
 085C: 00000000 859A9110 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); // !!!!! не настоящий !!!!!!
 0860: 00000000 31F47D10 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy); // !!!!! не настоящий !!!!!!
@@ -307,7 +307,7 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DISP_OBJ_GetMethod0B (DISP_OBJ *);
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C (DISP_DESC* ,void (*)(void*));
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DISP_OBJ_GetMethod0C (DISP_OBJ *);
-;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager (int cmd);
+0900: 00000000 217F0010 ; 240: void JavaSession_Manager (int cmd); //nullsub(ret 0)
 0904: 00000000 217F0010 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: 00000000 3949FD10 ; 242: int TextCopyId(int); !!! доп параметры
 090C: 00000000 911BE610 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
@@ -374,8 +374,8 @@
 0A00: 00000000 7DF37610 ; 280: char *strcat(char *dest, const char *src);
 0A04: 00000000 2D11A410 ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
 0A08: 00000000 BD79AF11 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
-;0A0C: xxxxxxxx yyyyyyyy ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, wchar_t * ImageID ,char * error);
-;0A10: xxxxxxxx yyyyyyyy ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,wchar_t ImageID, int unk_1,char * error);
+0A0C: 00000000 497F8110 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, wchar_t * ImageID ,char * error);
+0A10: 00000000 D17F8110 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,wchar_t ImageID, int unk_1,char * error);
 0A14: 00000000 503A182B ;8285: SURFACE ** get_Surfaces(void);
 0A18: 00000000 FD295911 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: 00000000 A1B17711 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
@@ -670,7 +670,7 @@
 ;0EA0: xxxxxxxx yyyyyyyy ; 3A8: void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
 ;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
 ;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
-;0EAC: xxxxxxxx yyyyyyyy ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
+0EAC: 00000000 21587F11 ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
 0EB0: 00000000 E10DA410 ; 3AC: BOOK* GUI_GetBook(GUI* gui); //см. GUI_Free
 
 
