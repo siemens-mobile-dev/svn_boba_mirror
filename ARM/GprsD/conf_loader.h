@@ -17,6 +17,8 @@ void FillProfile(char *profile);
 #define coIntName   0x00   // внутреннее имя профиля
 #define coName      0x35   // имя профиля
 #define coAPN_name  0x58   // расположение имени точки доступа
+#define coDNS       0xA1   // Смещение IP-адреса
+#define coDNS_flag  0xA8   // Флаг наличия DNS
 #define coLogin     0x1AD  // имени пользователя точки доступа
 #define coPass      0x1E0  // пароля точки доступа
 #define coTimeout   0x190  // времени разъединения
