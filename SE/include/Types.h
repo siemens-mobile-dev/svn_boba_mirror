@@ -494,46 +494,12 @@ typedef struct GUI_type
   char dummy[0x44];//A2
 }_GUI;
 
-typedef struct
-{
-  DISP_OBJ * DISP_OBJ;
-  BOOK * book;
-  void * unk;
-  int (* onMessage)(GUI_MESSAGE*);
-}GUI_LIST;
-
-typedef struct
-{
-  DISP_OBJ * DISP_OBJ;
-  BOOK * book;
-  void * unk;
-}GUI_TABMENUBAR;
-
-typedef struct
-{
-  DISP_OBJ * DISP_OBJ;
-  BOOK * book;
-  void * unk;
-  int (* onMessage)(GUI_MESSAGE*);
-}GUI_ONEOFMANY;
-
-typedef struct
-{
-  DISP_OBJ * DISP_OBJ;
-  BOOK * book;
-  void * unk;
-  int (* onMessage)(GUI_MESSAGE*);
-}GUI_NOFMANY;
-
-
-typedef struct
-{
-  DISP_OBJ * DISP_OBJ;
-  BOOK * book;
-  void * unk;
-  int (* onMessage)(GUI_MESSAGE*);
-}GUI_FEEDBACK;
-
+//2do: remove these types
+typedef struct GUI_type GUI_LIST;
+typedef struct GUI_type GUI_TABMENUBAR;
+typedef struct GUI_type GUI_ONEOFMANY;
+typedef struct GUI_type GUI_NOFMANY;
+typedef struct GUI_type GUI_FEEDBACK;
 
 
 typedef struct DISP_DESC
