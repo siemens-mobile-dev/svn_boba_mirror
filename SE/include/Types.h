@@ -460,6 +460,7 @@ typedef struct WINDOW
 
 typedef struct
 {
+/*
   void * parrent;
   struct DISP_DESC * desc;
   struct WINDOW *window;
@@ -476,16 +477,21 @@ typedef struct
   char dummy2[20];
 
   char dummy3[0x120-0xD0];//A2
+*/
+  char dummy3[0x120];//A2
 }DISP_OBJ;
 
 typedef struct GUI_type
 {
-  DISP_OBJ * DISP_OBJ;
-  BOOK * book;
+/*
+  DISP_OBJ * __DISP_OBJ; //use GUIObj_GetDISPObj
+  BOOK * __book; //use GUI_GetBook
   void * unk;
   void * unk1;
 
   char dummy[0x44-0x10];//A2
+*/
+  char dummy[0x44];//A2
 }_GUI;
 
 typedef struct
@@ -771,6 +777,12 @@ enum W_SEEK_SET {
   WSEEK_SET=2
 };
 
+enum _SEEK_SET {
+  SEEK_SET=0,
+  SEEK_CUR,
+  SEEK_END
+};
+
 enum W_OPEN_ATTR {
   WA_Read=1,
   WA_Write=2,
@@ -955,5 +967,12 @@ typedef struct
   int   unk1;
   int   unk2;
 }VOLUMESIZE_A2;
+
+typedef int (*DISP_OBJ_ONCREATE_METHOD)(DISP_OBJ *);
+typedef void (*DISP_OBJ_ONCLOSE_METHOD)(DISP_OBJ *);
+typedef void (*DISP_OBJ_ONREDRAW_METHOD)(DISP_OBJ *,int ,int,int);
+typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ *,int ,int,int,int);
+
+typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 
 #endif

@@ -31,6 +31,7 @@ extern void kill_data(void *p, void (*func_p)(void *));
 #endif /* NULL */
 
 #define SID_ANY_LEN 0xFFFF
+#define EMPTY_SID 0x6FFFFFFF
 #define TEXT(__STR__) L##__STR__
 #define _T(__STR__) L##__STR__
 #define MAXELEMS(x) (sizeof(x)/sizeof(x[0]))
@@ -814,15 +815,6 @@ __swi __arm GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 __swi __arm DISP_OBJ* DISPBASE_GetFocused(int display);
 #pragma swi_number=0x21E
 __swi __arm char DISP_OBJ_getVisible(DISP_OBJ*);
-
-
-typedef int (*DISP_OBJ_ONCREATE_METHOD)(DISP_OBJ *);
-typedef void (*DISP_OBJ_ONCLOSE_METHOD)(DISP_OBJ *);
-typedef void (*DISP_OBJ_ONREDRAW_METHOD)(DISP_OBJ *,int ,int,int);
-typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ *,int ,int,int,int);
-
-
-typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 
 #pragma swi_number=0x21F
 __swi __arm DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj);                          // !!!!!  не настоящий !!!!!!
