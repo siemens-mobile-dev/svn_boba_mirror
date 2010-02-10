@@ -76,7 +76,7 @@ void FillProfile(char *profile)
   memcpy(timeout_place, &cfgTimeout, 4);
   unsigned int dnsip;
   dnsip=str2ip(cfgDNS);
-  if (dnsip)
+  if (dnsip != 0xFFFFFFFF)
   {
     memcpy(profile+coDNS,&dnsip,4);
     profile[coDNS_flag]=1;
