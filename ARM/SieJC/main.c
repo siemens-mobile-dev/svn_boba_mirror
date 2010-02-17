@@ -87,7 +87,7 @@ extern const unsigned int IDLE_ICON_X;
 extern const unsigned int IDLE_ICON_Y;
 
 const char VERSION_NAME[]= "Siemens Native Jabber Client";  // НЕ МЕНЯТЬ!
-const char VERSION_VERS[] = "3.5.3-Z";
+const char VERSION_VERS[] = "3.5.4-Z";
 const char CMP_DATE[] = __DATE__;
 #define TMR_SECOND 216
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
@@ -1123,15 +1123,6 @@ void Enter_SiepatchDB()
     sprintf(nick, nick_t,USERNAME);
   }
   Enter_Conference(room, nick, NULL, DEFAULT_MUC_MSGCOUNT);
-}
-
-void Disp_State()
-{
-  char q[255];
-  sprintf(q,"Jabber_state=%d\nOut bytes: %d, Z=%d\nIn bytes: %d, Z=%d\nSend query len: %d",
-	  Jabber_state, out_virt_bytes_count, out_bytes_count,
-	  in_virt_bytes_count, in_bytes_count, sendq_l);
-  ShowMSG(0,(int)q);
 }
 
 // Переподключение

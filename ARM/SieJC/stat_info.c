@@ -41,7 +41,7 @@ void stat_info_ghook(GUI *gui, int cmd)
   {
   wsprintf(ws_stat_info,percent_i, in_bytes_count);
     EDIT_SetTextToEditControl(gui, 5, ws_stat_info);
-  wsprintf(ws_stat_info,percent_i, out_bytes_count);
+  wsprintf(ws_stat_info,percent_i, out_virt_bytes_count);
     EDIT_SetTextToEditControl(gui, 7, ws_stat_info);
   wsprintf(ws_stat_info,percent_i, sendq_l);
     EDIT_SetTextToEditControl(gui, 9, ws_stat_info); //9 //15
@@ -130,7 +130,7 @@ void Disp_stat_Info(void)
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//3
 
-  if(!Support_Compression && !USE_ZLIB)
+  if(!Support_Compression || !USE_ZLIB)
   {
     SW_Support_Compression = 0;
 
@@ -144,7 +144,7 @@ void Disp_stat_Info(void)
   ascii2ws(ws_stat_info,LG_STAT_TRAFOUTPUT_);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//6
-  wsprintf(ws_stat_info,percent_i, out_bytes_count);
+  wsprintf(ws_stat_info,percent_i, out_virt_bytes_count);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//7
   } else
@@ -160,7 +160,7 @@ void Disp_stat_Info(void)
   ascii2ws(ws_stat_info,LG_STAT_ZIPTRAFOUTPUT);
   ConstructEditControl(&ec,ECT_HEADER,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//=6
-  wsprintf(ws_stat_info,percent_i, out_virt_bytes_count);
+  wsprintf(ws_stat_info,percent_i, out_bytes_count);
   ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL,ws_stat_info,256);
   AddEditControlToEditQend(eq,&ec,ma);//-7
 

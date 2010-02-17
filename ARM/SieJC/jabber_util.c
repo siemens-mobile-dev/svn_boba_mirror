@@ -2285,8 +2285,11 @@ void Process_Incoming_Message(XMLNode* nodeEx)
             if (TmpMUC)
             {
               char* my_nick = Get_Resource_Name_By_FullJID(TmpMUC->conf_jid);
-              if (strstr(msgnode->value, my_nick)) 
-                msgtype=MSG_NICKGCHAT;
+              if (strstr(msgnode->value, my_nick))
+              {
+                if(strcmp(Get_Resource_Name_By_FullJID(chr_from), my_nick)) 
+                  msgtype=MSG_NICKGCHAT;
+              }
             }
           }
           }

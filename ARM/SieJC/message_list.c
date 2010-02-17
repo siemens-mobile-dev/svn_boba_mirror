@@ -487,8 +487,8 @@ void mGUI_onRedraw(GUI *data)
       case MSG_CHAT:    MsgBgColor=MESSAGEWIN_CH_BGCOLOR;break;
       case MSG_SYSTEM:  MsgBgColor=MESSAGEWIN_SYS_BGCOLOR;break;
       case MSG_STATUS:  MsgBgColor=MESSAGEWIN_STATUS_BGCOLOR;break;
+      case MSG_NICKGCHAT:
       case MSG_GCHAT:   MsgBgColor=ml->log_mess_number %2==0? MESSAGEWIN_GCHAT_BGCOLOR_1 : MESSAGEWIN_GCHAT_BGCOLOR_2; break;
-      case MSG_NICKGCHAT: MsgBgColor=MESSAGEWIN_MY_BGCOLOR;break;
       }
       MsgBg2Color=MsgBgColor;
       
