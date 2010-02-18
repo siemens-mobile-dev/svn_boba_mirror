@@ -13,8 +13,8 @@
 045C: FFFFFFFF 09690E45 ; 117: int fclose(int file);
 0460: FFFFFFFF 256C0E45 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF C16E0E45 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: FFFFFFFF 0DD58044 ; 11A: int _wstat(short *path, void *statbuf)
-046C: FFFFFFFF 49BCCF44 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: FFFFFFFF E95F0E45 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF A13C0E45 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: FFFFFFFF 453E0E45 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -235,7 +235,7 @@
 07D4: FFFFFFFF E9AE0545 ; 1F5: BOOK *SESSION_GetTopBook(UI_APP_SESSION *);
 07D8: FFFFFFFF A9C5D344 ; 1F6: int MainInput_getVisible(GUI *);
 07DC: FFFFFFFF B5C5D344 ; 1F7: int MainInput_strlen(GUI *);
-07E0: FFFFFFFF C9C5D344 ; 1F8: char * MainInput_getPNUM(GUI *);
+;07E0: xxxxxxxx yyyyyyyy ; 1F8: char* MainInput_getPNUM( GUI* );
 07E4: FFFFFFFF D5C5D344 ; 1F9: int MainInput_isPlus(GUI *);
 07E8: FFFFFFFF E531E844 ; 1FA: int BOOK_GetBookID(BOOK * );
 07EC: FFFFFFFF 3D1CBF44 ; 1FB: int wstrncmp(const wchar_t*,const wchar_t*,int);
@@ -477,7 +477,7 @@
 0B9C: FFFFFFFF 4173FB44 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 0BA0: FFFFFFFF 25CC6D44 ; 2E8: char *GetIMSI(void);
 0BA4: FFFFFFFF 6D87D444 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
-0BA8: FFFFFFFF C9C5D344 ; 2EA: int MainInput_getCurPos(GUI*);
+;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos( GUI* );
 0BAC: FFFFFFFF 91C5D344 ; 2EB: void MainInput_Hide(GUI*);
 0BB0: FFFFFFFF 2166D344 ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
 0BB4: FFFFFFFF 2D2CF444 ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);

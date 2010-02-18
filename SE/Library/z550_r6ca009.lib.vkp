@@ -13,8 +13,8 @@
 045C: FFFFFFFF 85655545 ; 117: int fclose(int file);
 0460: FFFFFFFF E5675545 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF C9695545 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: FFFFFFFF 9572AB44 ; 11A: int _wstat(short *path, void *statbuf)
-046C: FFFFFFFF 655B0C45 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: FFFFFFFF C15B5545 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF 9D365545 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: FFFFFFFF 21385545 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -492,7 +492,7 @@
 ;0BD8: xxxxxxxx yyyyyyyy ; 2F6: char * lang_get_name(int langID);
 ;0BDC: xxxxxxxx yyyyyyyy ; 2F7: int w_chdir(const wchar_t *path);
 ;0BE0: xxxxxxxx yyyyyyyy ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
-;0BE4: xxxxxxxx yyyyyyyy ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
+0BE4: FFFFFFFF 9572AB44 ; 2F9: int w_fstat( const wchar_t* name, W_FSTAT* );
 ;0BE8: xxxxxxxx yyyyyyyy ; 2FA: int w_fwrite(int f, void *buf, int size);
 ;0BEC: xxxxxxxx yyyyyyyy ; 2FB: int w_fread(int f, void *buf, int size);
 ;0BF0: xxxxxxxx yyyyyyyy ; 2FC: int w_lseek(int f, int offs, int mode);

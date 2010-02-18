@@ -13,8 +13,8 @@
 045C: 00000000 3558FC44 ; 117: int fclose(int file);
 0460: 00000000 BD5AFC44 ; 118: int fread(int file , void *ptr, int size);
 0464: 00000000 895CFC44 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: 00000000 81FF9944 ; 11A: int _wstat(short *path, void *statbuf)
-046C: 00000000 FDEB2E45 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 FD4BFC44 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 1D22FC44 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 DD23FC44 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -379,7 +379,7 @@
 0A14: 00000000 18E32E20 ;8285: SURFACE ** get_Surfaces(void);
 0A18: 00000000 BD3ED744 ; 286: int iconidname2id(const wchar_t* idname,int maxnamelen,int *id);
 0A1C: 00000000 25D6E744 ; 287: int textidname2id(const wchar_t* idname,int maxnamelen,int* id);
-0A20: 00000000 BD1F4545 ; 288: void ListMenu_SetNoItemText(GUI_LIST *, int str);
+;0A20: xxxxxxxx yyyyyyyy ; 288: void ListMenu_SetNoItemText( GUI_LIST*, int str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 F15A2445 ;828A: IS_NEEDED_BOOK isFmRadioBook(void);
 0A2C: 00000000 BDFC0645 ;828B: IS_NEEDED_BOOK isAudioPlayerBook(void);
@@ -575,7 +575,7 @@
 0D24: 00000000 31A44145 ; 349: int PHF_GetState (void);
 0D28: 00000000 39A44145 ; 34A: int CHF_GetState (void);
 0D2C: 00000000 BD2F4545 ; 34B: void GUIObject_Softkeys_RemoveBackground(void *gui);
-0D30: 00000000 BD1F4545 ; 34C: void GUIObject_Softkeys_RestoreBackground(void *gui);
+;0D30: xxxxxxxx yyyyyyyy ; 34C: void GUIObject_Softkeys_RestoreBackground( GUI* );
 0D34: 00000000 697D3F45 ; 34D: void SetTrayIcon(wchar_t iconID, char mode);
 0D38: 00000000 358B4145 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
 0D3C: 00000000 258E4145 ; 34F: int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);

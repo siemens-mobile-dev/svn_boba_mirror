@@ -13,8 +13,8 @@
 045C: 00000000 F14DE944 ; 117: int fclose(int file);
 0460: 00000000 7950E944 ; 118: int fread(int file , void *ptr, int size);
 0464: 00000000 4552E944 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: 00000000 D9C28644 ; 11A: int _wstat(short *path, void *statbuf)
-046C: 00000000 AD161B45 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 B941E944 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 D917E944 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 9919E944 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -63,11 +63,11 @@
 0524: 00000000 81C43145 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 0528: 00000000 5DFF2B45 ; 14A: void StatusIndication_Item8_SetText(int StrID);
 052C: 00000000 25D53745 ; 14B: void GUIObject_Softkey_SetAction(void * gui,u16 actionID,void (*proc)(BOOK *,void*));
-0530: 00000000 9DD53745 ; 14C: void GUIObject_Softkey_SetText(void * gui,u16 actionID , int StrID);
-0534: 00000000 59D63745 ; 14D: void GUIObject_SoftKey_SetEnable(void *gui,u16 actionID,int ena);
+;0530: xxxxxxxx yyyyyyyy ; 14C: void GUIObject_Softkey_SetText( GUI*, u16 actionID, STRID );
+;0534: xxxxxxxx yyyyyyyy ; 14D: void GUIObject_SoftKey_SetEnable( GUI*, u16 actionID, int ena );
 0538: 00000000 11D63745 ; 14E: void GUIObject_SoftKey_AddErrorStr(void *gui,u16 actionID,int StrID);
 053C: 00000000 E9D43745 ; 14F: void GUIObject_SoftKey_RemoveItem(void *gui,u16 actionID);
-0540: 00000000 9DD53745 ; 150: void GUIObject_SoftKey_SetVisible(void *gui,u16 actionID,int visible);
+;0540: xxxxxxxx yyyyyyyy ; 150: void GUIObject_SoftKey_SetVisible( GUI*, u16 actionID, int visible );
 0544: 00000000 5DD83745 ; 151: void GUIObject_SoftKey_SuppressDefaultAction(void *gui,u16 actionID);
 0548: 00000000 55D95544 ; 152: wchar_t* wstrcpy(wchar_t * dest, const wchar_t * source);
 054C: 00000000 01DA5544 ; 153: wchar_t* wstrncpy(wchar_t * dest, const wchar_t * source, int maxlen);
@@ -311,7 +311,7 @@
 0904: 00000000 FD34DE44 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: 00000000 E1333445 ; 242: int TextCopyId(int);
 090C: 00000000 85B62A45 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
-0910: 00000000 C5AE3145 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
+;0910: xxxxxxxx yyyyyyyy ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 3DAF3145 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 31AF3145 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 091C: 00000000 914A2145 ; 247: void GoMusic(void);
@@ -335,7 +335,7 @@
 0964: 00000000 D13C3745 ; 259: int Display_GetWidth(int Display);
 0968: 00000000 E11D0145 ; 25A: void PlaySystemSound (int SndNumber);
 ;096C: xxxxxxxx yyyyyyyy ; 25B:
-0970: 00000000 59D63745 ; 25C: void ListMenu_SetItemUnavailable(void * menu, void *item, int available);
+;0970: xxxxxxxx yyyyyyyy ; 25C:
 0974: 00000000 411B3645 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );
 0978: 00000000 311B3645 ; 25E: void TabMenuBar_SetTabFocused(GUI_TABMENUBAR * , int tab_num);
 097C: 00000000 71ED3545 ; 25F: int GC_GetPenColor (void* GC);
@@ -373,7 +373,7 @@
 09FC: 00000000 F9D05544 ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 0A00: 00000000 F5CF5544 ; 280: char *strcat(char *dest, const char *src);
 0A04: 00000000 25113645 ; 281: __thumb void GuiObject_SetTitleType(GUI *gui, int type);
-0A08: 00000000 C5AE3145 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+;0A08: xxxxxxxx yyyyyyyy ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, int Disabled );
 0A0C: 00000000 2DD1E444 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, wchar_t * ImageID ,char * error);
 0A10: 00000000 DDD1E444 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,wchar_t ImageID, int unk_1,char * error);
 0A14: 00000000 14972F20 ;8285: SURFACE ** get_Surfaces(void);

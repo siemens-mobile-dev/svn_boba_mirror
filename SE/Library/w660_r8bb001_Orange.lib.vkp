@@ -13,8 +13,8 @@
 045C: 00000000 6D7AFE44 ; 117: int fclose(int file);
 0460: 00000000 F57CFE44 ; 118: int fread(int file , void *ptr, int size);
 0464: 00000000 C17EFE44 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: 00000000 B95B9B44 ; 11A: int _wstat(short *path, void *statbuf)
-046C: 00000000 ED233145 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 356EFE44 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 5544FE44 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 1546FE44 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -670,7 +670,7 @@
 0EA0: 00000000 0D384745 ; 3A8: void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
 0EA4: 00000000 29384745 ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
 0EA8: 00000000 45C44B45 ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
-;0EAC: xxxxxxxx yyyyyyyy ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
+0EAC: 00000000 E1824C45 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 
 
 

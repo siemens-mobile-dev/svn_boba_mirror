@@ -15,8 +15,8 @@
 045C: 00000000 8D32E644 ; 117: int fclose(int file);
 0460: 00000000 1535E644 ; 118: int fread(int file , void *ptr, int size);
 0464: 00000000 E136E644 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: 00000000 15708544 ; 11A: int _wstat(short *path, void *statbuf)
-046C: 00000000 31921745 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 5526E644 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 75FCE544 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 35FEE544 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);

@@ -13,8 +13,8 @@
 045C: FFFFFFFF 39D95345 ; 117: int fclose(int file);
 0460: FFFFFFFF 99DB5345 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF 7DDD5345 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: FFFFFFFF 1D14A644 ; 11A: int _wstat(short *path, void *statbuf)
-046C: FFFFFFFF 3D420945 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: FFFFFFFF 75CF5345 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF 51AA5345 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: FFFFFFFF D5AB5345 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -63,7 +63,7 @@
 0524: FFFFFFFF 999E0F45 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 0528: FFFFFFFF 51672345 ; 14A: void StatusIndication_Item8_SetText(int StrID);
 052C: FFFFFFFF 992F1245 ; 14B: void GUIObject_Softkey_SetAction(void * gui,u16 actionID,void (*proc)(BOOK *,void*));
-0530: FFFFFFFF 81301245 ; 14C: void GUIObject_Softkey_SetText(void * gui,u16 actionID , int StrID);
+;0530: xxxxxxxx yyyyyyyy ; 14C: void GUIObject_Softkey_SetText( GUI*, u16 actionID, STRID );
 0534: FFFFFFFF ED311245 ; 14D: void GUIObject_SoftKey_SetEnable(void *gui,u16 actionID,int ena);
 0538: FFFFFFFF 5D311245 ; 14E: void GUIObject_SoftKey_AddErrorStr(void *gui,u16 actionID,int StrID);
 053C: FFFFFFFF 292F1245 ; 14F: void GUIObject_SoftKey_RemoveItem(void *gui,u16 actionID);
@@ -165,7 +165,7 @@
 06BC: FFFFFFFF B57A2245 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: FFFFFFFF 19762045 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 69E6BF44 ; 1B1: void debug_printf(const char * fmt,...);
-06C8: FFFFFFFF 1DB80D45 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname); /15525D45;
+;06C8: xxxxxxxx yyyyyyyy ; 1B2: int PlayFile( const wchar_t* path, const wchar_t* fname );
 ;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: FFFFFFFF 0D545D45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: FFFFFFFF 35AA2345 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
@@ -186,7 +186,7 @@
 0710: FFFFFFFF 35321245 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF 19BD5C45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF 29BD5C45 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 81301245 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+;071C: xxxxxxxx yyyyyyyy ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF 19625C45 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF 29BA5C45 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF 85B00D45 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -288,13 +288,13 @@
 08A8: FFFFFFFF D5A02845 ; 22A: void DISP_DESC_SetOnKey (DISP_DESC* , DISP_OBJ_ONKEY_METHOD);
 08AC: FFFFFFFF 71A32845 ; 22B: DISP_OBJ_ONKEY_METHOD DISP_OBJ_GetOnKey (DISP_OBJ *);
 08B0: FFFFFFFF D1A02845 ; 22C: void DISP_DESC_SetonRefresh (DISP_DESC* ,DISP_OBJ_METHOD);
-08B4: FFFFFFFF 91A32845 ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
+;08B4: xxxxxxxx yyyyyyyy ; 22D: DISP_OBJ_METHOD DISP_OBJ_GetonRefresh (DISP_OBJ *);
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04 (DISP_DESC* ,void (*)(void*));
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
 ;08C4: xxxxxxxx yyyyyyyy ; 231: DISP_OBJ_METHOD DISP_OBJ_GetMethod05 (DISP_OBJ *);
 08C8: FFFFFFFF D9A02845 ; 232: void DISP_DESC_SetMethod06 (DISP_DESC* ,DISP_OBJ_METHOD);
-08CC: FFFFFFFF 91A32845 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
+;08CC: xxxxxxxx yyyyyyyy ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
 08D8: FFFFFFFF E1A02845 ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
@@ -317,7 +317,7 @@
 091C: FFFFFFFF 21910B45 ; 247: void GoMusic(void);
 0920: FFFFFFFF F9583E45 ; 248: void Vibra_Off (int t1);
 ;0924: xxxxxxxx yyyyyyyy ; 249:
-0928: FFFFFFFF 1DB80D45 ; 24A: int PlayFileV(const wchar_t * path,const wchar_t * fname, int vol);
+;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: FFFFFFFF 294E3E45 ; 24B: int GetSilent(void);
 0930: FFFFFFFF E9233E45 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: FFFFFFFF 755B3E45 ; 24D: int GetAudioSettings(int what, char* retvalue);

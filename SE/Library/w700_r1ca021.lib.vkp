@@ -14,8 +14,8 @@
 045C: FFFFFFFF 55D50E45 ; 117: int fclose(int file);
 0460: FFFFFFFF 71D80E45 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF 0DDB0E45 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: FFFFFFFF 85D17644 ; 11A: int _wstat(short *path, void *statbuf)
-046C: FFFFFFFF 01FECF44 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: FFFFFFFF 35CC0E45 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF EDA80E45 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: FFFFFFFF 91AA0E45 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -158,8 +158,8 @@
 069C: FFFFFFFF CEAF284C ;81A7: int * MissedEvents(void);
 06A0: FFFFFFFF 25220645 ; 1A8: void UI_Event(int event);
 06A4: FFFFFFFF 31220645 ; 1A9: void UI_Event_wData(int event,void *message,void (*mfree)(void*));
-06A8: FFFFFFFF 55220645 ; 1AA: void UI_Event_toBookID(int event,int BookID);
-06AC: FFFFFFFF 55220645 ; 1AB: void UI_Event_toBookIDwData(int event,int BookID,void *message,void (*mfree)(void*));
+;06A8: xxxxxxxx yyyyyyyy ; 1AA: void UI_Event_toBookID( int event, int BookID );
+;06AC: xxxxxxxx yyyyyyyy ; 1AB: void UI_Event_toBookIDwData( int event, int BookID, void* message, void (*free_proc)( void* ) );
 06B0: FFFFFFFF 99D7E544 ; 1AC: int ListElement_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
 06B4: FFFFFFFF 65D6E544 ; 1AD: void * ListElement_GetByIndex(LIST * , int index);
 06B8: FFFFFFFF DD5FBF44 ; 1AE: wchar_t* wstrrchr(const wchar_t* wstr, wchar_t wchar);
@@ -258,8 +258,8 @@
 082C: FFFFFFFF A9D9D344 ; 20B: void SetFocus (GUI * , int);
 0830: FFFFFFFF 11A2FA44 ; 20C: int CreateSMSCont (int, void*);
 0834: FFFFFFFF A9A6FA44 ; 20D: int FreeSMSCont (void*);
-0838: FFFFFFFF 71A3FA44 ; 20E: int PrepareSMSCont (void*,wchar_t*,wchar_t*,int,int);
-083C: FFFFFFFF 71A3FA44 ; 20F: int CteateNewMessage (int,void*,int);
+;0838: xxxxxxxx yyyyyyyy ; 20E: int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
+;083C: xxxxxxxx yyyyyyyy ; 20F: int CteateNewMessage( int, void*, int );
 0840: FFFFFFFF 28552444 ;8210: void * get_APP_DESC_TABLE(void);
 0844: FFFFFFFF 9DD5D344 ; 211: C_INTERFACE *Window_GetComponentInterface(WINDOW*);
 0848: FFFFFFFF 65DFDF4C ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
@@ -294,8 +294,8 @@
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DISP_OBJ_GetMethod04 (DISP_OBJ *);
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05 (DISP_DESC* ,void (*)(void*));
 ;08C4: xxxxxxxx yyyyyyyy ; 231: DISP_OBJ_METHOD DISP_OBJ_GetMethod05 (DISP_OBJ *);
-08C8: FFFFFFFF 5DF6E844 ; 232: void DISP_DESC_SetMethod06 (DISP_DESC* ,DISP_OBJ_METHOD);
-08CC: FFFFFFFF 5DF6E844 ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
+;08C8: xxxxxxxx yyyyyyyy ; 232: void DISP_DESC_SetMethod06( DISP_DESC*, DISP_OBJ_METHOD );
+;08CC: xxxxxxxx yyyyyyyy ; 233: DISP_OBJ_METHOD DISP_OBJ_GetMethod06 (DISP_OBJ *);
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07 (DISP_DESC* ,void (*)(void*));
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DISP_OBJ_GetMethod07 (DISP_OBJ *);
 ;08D8: xxxxxxxx yyyyyyyy ; 236: void DISP_DESC_SetMethod08 (DISP_DESC* ,DISP_OBJ_METHOD);
@@ -312,7 +312,7 @@
 0904: FFFFFFFF 9DE7A144 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: FFFFFFFF 99A4EF44 ; 242: int TextCopyId(int);
 090C: FFFFFFFF 6D91E844 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
-0910: FFFFFFFF FD8CD644 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
+;0910: xxxxxxxx yyyyyyyy ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: FFFFFFFF 6D8DD644 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: FFFFFFFF 5D8DD644 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 091C: FFFFFFFF 5D0AD244 ; 247: void GoMusic(void);
@@ -374,7 +374,7 @@
 ;09FC: xxxxxxxx yyyyyyyy ; 27F: char *strncpy (char *dest,const char *source,int maxlen);
 ;0A00: xxxxxxxx yyyyyyyy ; 280: char *strcat(char *dest, const char *src);
 ;0A04: xxxxxxxx yyyyyyyy ; 281: void GuiObject_SetTitleType(GUI *gui, int type);
-0A08: FFFFFFFF FD8CD644 ; 282: void GUIonMessage_SetItemDisabled (void * msg, int Disabled);
+;0A08: xxxxxxxx yyyyyyyy ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, int Disabled );
 0A0C: FFFFFFFF 75580E45 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(const int * __zero,u16 ImageHandle,wchar_t *path,wchar_t *fname,int unk, wchar_t * ImageID ,char * error);
 0A10: FFFFFFFF F5590E45 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER (const int * __zero,u16 ImageHandle,u16* ,u16* ,wchar_t ImageID, int unk_1,char * error);
 ;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE ** get_Surfaces(void);
@@ -493,7 +493,7 @@
 ;0BD8: xxxxxxxx yyyyyyyy ; 2F6: char * lang_get_name(int langID);
 ;0BDC: xxxxxxxx yyyyyyyy ; 2F7: int w_chdir(const wchar_t *path);
 ;0BE0: xxxxxxxx yyyyyyyy ; 2F8: int w_fopen(const wchar_t *name, int attr, int rights, int err);
-;0BE4: xxxxxxxx yyyyyyyy ; 2F9: int w_fstat(const wchar_t *name, W_FSTAT *);
+0BE4: FFFFFFFF 85D17644 ; 2F9: int w_fstat( const wchar_t* name, W_FSTAT* );
 ;0BE8: xxxxxxxx yyyyyyyy ; 2FA: int w_fwrite(int f, void *buf, int size);
 ;0BEC: xxxxxxxx yyyyyyyy ; 2FB: int w_fread(int f, void *buf, int size);
 ;0BF0: xxxxxxxx yyyyyyyy ; 2FC: int w_lseek(int f, int offs, int mode);

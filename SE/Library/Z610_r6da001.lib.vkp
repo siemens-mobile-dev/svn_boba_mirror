@@ -13,8 +13,8 @@
 045C: 00000000 69C4F744 ; 117: int fclose(int file);
 0460: 00000000 F1C6F744 ; 118: int fread(int file , void *ptr, int size);
 0464: 00000000 BDC8F744 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: 00000000 F94C9644 ; 11A: int _wstat(short *path, void *statbuf)
-046C: 00000000 E5F32845 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 25B8F744 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 498EF744 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 0990F744 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -124,7 +124,7 @@
 0618: 00000000 90B24244 ; 186: OSBOOLEAN hunt(const char *name, OSUSER user, PROCESS *name_, union SIGNAL **hunt_sig);
 061C: 00000000 BCB24244 ; 187: void kill_proc(PROCESS pid);
 ;0620: xxxxxxxx yyyyyyyy ; 188:
-;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL *receive_w_tmo (OSTIME timeout, SIGSELECT *sel);
+0624: 00000000 F4B04244 ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: 00000000 A4B34244 ; 18B: void stop(PROCESS pid);
 0630: 00000000 10B24244 ; 18C: OSBOOLEAN get_mem(PROCESS pid, OSADDRESS from, void* to, OSADDRESS size);
@@ -169,11 +169,11 @@
 ;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: 00000000 4D713B45 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: 00000000 29843A45 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
-;06D8: xxxxxxxx yyyyyyyy ; 1B6:
+06D8: 00000000 7DFD3A45 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: 00000000 2D3C4645 ; 1B7: int isKeylocked(void);
 06E0: 00000000 E5ED0345 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook(void);
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
-;06E8: xxxxxxxx yyyyyyyy ; 1BA:
+06E8: 00000000 05F13845 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 51F30B45 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 F1C0E344 ; 1BC: int REQUEST_DATEFORMAT_GET(const int *SYNC, char *DateFormat);
 06F4: 00000000 85C1E344 ; 1BD: int REQUEST_TIMEFORMAT_GET(const int *SYNC, char *TimeFormat);

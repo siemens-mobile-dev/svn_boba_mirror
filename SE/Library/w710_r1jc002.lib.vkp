@@ -12,8 +12,8 @@
 045C: 00000000 5146E744 ; 117: int fclose(int file);
 0460: 00000000 CD48E744 ; 118: int fread(int file , void *ptr, int size);
 0464: 00000000 994AE744 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: 00000000 45B48344 ; 11A: int _wstat(short *path, void *statbuf)
-046C: 00000000 E1B81945 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 093AE744 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 2110E744 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 E111E744 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -234,7 +234,7 @@
 07D4: 00000000 BD822845 ; 1F5: BOOK *SESSION_GetTopBook(UI_APP_SESSION *);
 07D8: 00000000 E18F2945 ; 1F6: int MainInput_getVisible(GUI *);
 07DC: 00000000 ED8F2945 ; 1F7: int MainInput_strlen(GUI *);
-07E0: 00000000 F98F2945 ; 1F8: char * MainInput_getPNUM(GUI *);
+;07E0: xxxxxxxx yyyyyyyy ; 1F8: char* MainInput_getPNUM( GUI* );
 07E4: 00000000 05902945 ; 1F9: int MainInput_isPlus(GUI *);
 07E8: 00000000 E9A82845 ; 1FA: int BOOK_GetBookID(BOOK * );
 07EC: 00000000 29375444 ; 1FB: int wstrncmp(const wchar_t*,const wchar_t*,int);
@@ -310,7 +310,7 @@
 0904: 00000000 5126DC44 ; 241: int JavaSession_GetName(void); //nullsub(ret 0)
 0908: 00000000 D5EE3245 ; 242: int TextCopyId(int);
 090C: 00000000 89A82845 ; 243: UI_APP_SESSION *Book_GetSession(BOOK*);
-0910: 00000000 4D683045 ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
+;0910: xxxxxxxx yyyyyyyy ; 244: void List2lineSetAsSubitem (void* msg,int unk,int n_sub_items);
 0914: 00000000 C5683045 ; 245: void List2lineSubitemAddText(void* msg,int StrID);
 0918: 00000000 B9683045 ; 246: int GUIonMessage_GetCreatedSubItemParrentIndex(void * msg);
 091C: 00000000 41E51F45 ; 247: void GoMusic(void);
@@ -476,7 +476,7 @@
 0B9C: 00000000 C98C2845 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 0BA0: 00000000 1D192344 ; 2E8: char *GetIMSI(void);
 0BA4: 00000000 ED9C2945 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
-0BA8: 00000000 F98F2945 ; 2EA: int MainInput_getCurPos(GUI*);
+;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos( GUI* );
 0BAC: 00000000 C98F2945 ; 2EB: void MainInput_Hide(GUI*);
 0BB0: 00000000 695D3645 ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
 0BB4: 00000000 5973DC44 ; 2ED: STRID PNUM2Name(void *pnum, int isIconNeeded, int only_full_number_flag);
@@ -618,7 +618,7 @@
 0DD4: 00000000 21691B45 ; 375: BOOK *GUIonMessage_GetBook ( void *msg);
 0DD8: 00000000 51C98244 ; 376: GUI *GUIonMessage_GetGui ( void *msg);
 0DDC: 00000000 99673045 ; 377: int GUIonMessage_GetSelectedItem ( void *msg);
-0DE0: 00000000 4D683045 ; 378: int GUIonMessage_GetPrevSelectedItem ( void *msg);
+;0DE0: xxxxxxxx yyyyyyyy ; 378: int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
 ;0DE4: xxxxxxxx yyyyyyyy ; 379: void ObexSendFile (SEND_OBEX_STRUCT *);
 0DE8: 00000000 61383545 ; 37A: void Feedback_SetManualScrollingText(DISP_OBJ* feedback_disp_obj,int);
 0DEC: 00000000 9D62FB44 ; 37B: int EqualizerGain_Set (int AudioSessionID,int Band,int Level);

@@ -14,8 +14,8 @@
 045C: 00000000 B5BB4D14 ; 117: int fclose(int file);
 0460: 00000000 956A1714 ; 118: int fread(int file , void *ptr, int size);
 0464: 00000000 F1E33214 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: 00000000 11703314 ; 11A: int _wstat(short *path, void *statbuf)	; ???
-046C: 00000000 4DAC8315 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 ED284D14 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 355A1714 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 E9661714 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -206,14 +206,14 @@
 075C: 00000000 B197FD14 ; 1D7: void NOfMany_SetCursor(GUI_NOFMANY * , int item);
 0760: 00000000 790F4A14 ; 1D8: int NOfMany_GetCheckedCount(GUI_NOFMANY *);
 0764: 00000000 ED998415 ; 1D9: int NOfMany_GetChecked(GUI_NOFMANY * , u16 * buffer );
-0768: 00000000 3DDB0714 ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
+;0768: xxxxxxxx yyyyyyyy ; 1DA: void NOfMany_SetonMessage(GUI_NOFMANY * , void * proc );
 ;076C: xxxxxxxx yyyyyyyy ; 1DB:
 ;0770: xxxxxxxx yyyyyyyy ; 1DC:
 ;0774: xxxxxxxx yyyyyyyy ; 1DD:
 ;0778: xxxxxxxx yyyyyyyy ; 1DE:
 077C: 00000000 25532914 ; 1DF: PAudioControl AudioControl_Init();
 0780: 00000000 DDA02214 ; 1E0: void OneOfMany_SetFocused(GUI_ONEOFMANY * , int item);
-0784: 00000000 3DDB0714 ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
+;0784: xxxxxxxx yyyyyyyy ; 1E1: void OneOfMany_SetonMessage(GUI_ONEOFMANY * , int (*proc)(GUI_MESSAGE *));
 0788: 00000000 FDCF8315 ; 1E2: GUI_FEEDBACK * CreateFeedBack (int,...);
 078C: 00000000 ADD08315 ; 1E3: void FeedBack_SetText(GUI_FEEDBACK*,int);
 0790: 00000000 A9A61610 ; 1E4: int GetBattaryState(const int * , BATT *);
@@ -265,7 +265,7 @@
 0848: 00000000 098D2615 ; 212: int AB_POSITIONNBR_GET(void * ab_name,char * ,u16 * ,void * ab_num);
 084C: 00000000 B98C2615 ; 213: int AB_NAME_ITEM2StrID(AB_STR_ITEM * ab_name);
 0850: 00000000 6D52DF14 ; 214: int AB_NUM_ITEM2StrID(AB_NUM_ITEM * ab_num_item);
-;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum(AB_GET_STRUCT *);
+0854: 00000000 0F000014 ; 215: int GetABRecNum( AB_GET_STRUCT* ); //nullsub(void)
 0858: 00000000 2DD89015 ;8216: AB_ITEM_DESC * get_AB_ITEMS_DESC();
 085C: 00000000 0B434914 ; 217: GUI * SBY_GetMainInput(BOOK * StandBy); // !!!!! не настоящий !!!!!!
 0860: 00000000 07434914 ; 218: GUI * SBY_GetStatusIndication(BOOK * StandBy); // !!!!! не настоящий !!!!!!
@@ -671,7 +671,7 @@
 ;0EA0: xxxxxxxx yyyyyyyy ; 3A8: void DISP_OBJ_SetHighlightImage(void *disp_obj, wchar_t imageID);
 ;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DISP_OBJ_SetBackgroundImage(void *disp_obj, wchar_t imageID);
 ;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
-;0EAC: xxxxxxxx yyyyyyyy ; 3AB: void TabMenuBar_SetTabTitle(GUI_TABMENUBAR*,int tab_num,int strID);
+0EAC: 00000000 51462814 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 
 
 

@@ -13,8 +13,8 @@
 045C: FFFFFFFF D5CF4D20 ; 117: int fclose(int file);
 0460: FFFFFFFF F1D24D20 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF 8DD54D20 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: FFFFFFFF D5D18E20 ; 11A: int _wstat(short *path, void *statbuf)
-046C: FFFFFFFF 1D5C7120 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: FFFFFFFF B5C64D20 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF 75A34D20 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: FFFFFFFF 19A54D20 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);

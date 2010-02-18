@@ -12,8 +12,8 @@
 045C: FFFFFFFF 65A95A45 ; 117: int fclose(int file);
 0460: FFFFFFFF C5AB5A45 ; 118: int fread(int file , void *ptr, int size);
 0464: FFFFFFFF A9AD5A45 ; 119: int fwrite(int file , const void *ptr, int size);
-0468: FFFFFFFF F9299A44 ; 11A: int _wstat(short *path, void *statbuf)
-046C: FFFFFFFF B9F70F45 ; 11B: int fputs(const char *s, int file)
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: FFFFFFFF A19F5A45 ; 11C: int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: FFFFFFFF 797A5A45 ; 11D: DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: FFFFFFFF FD7B5A45 ; 11E: FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
@@ -62,7 +62,7 @@
 0524: FFFFFFFF 11891645 ; 149: int OneOfMany_GetSelected(GUI_ONEOFMANY * rb);
 0528: FFFFFFFF 31472A45 ; 14A: void StatusIndication_Item8_SetText(int StrID);
 052C: FFFFFFFF 611A1945 ; 14B: void GUIObject_Softkey_SetAction(void * gui,u16 actionID,void (*proc)(BOOK *,void*));
-0530: FFFFFFFF 491B1945 ; 14C: void GUIObject_Softkey_SetText(void * gui,u16 actionID , int StrID);
+;0530: xxxxxxxx yyyyyyyy ; 14C: void GUIObject_Softkey_SetText( GUI*, u16 actionID, STRID );
 0534: FFFFFFFF B51C1945 ; 14D: void GUIObject_SoftKey_SetEnable(void *gui,u16 actionID,int ena);
 0538: FFFFFFFF 251C1945 ; 14E: void GUIObject_SoftKey_AddErrorStr(void *gui,u16 actionID,int StrID);
 053C: FFFFFFFF F1191945 ; 14F: void GUIObject_SoftKey_RemoveItem(void *gui,u16 actionID);
@@ -164,7 +164,7 @@
 06BC: FFFFFFFF 19582945 ; 1AF: void BookObj_CallSubroutine(BOOK * , BOOK_SUBROUTINE *subr);
 06C0: FFFFFFFF A9532745 ; 1B0: void ListElement_Add(LIST *lst,void *newElement);
 06C4: FFFFFFFF 0972D344 ; 1B1: void debug_printf(const char * fmt,...);
-06C8: FFFFFFFF 5D931445 ; 1B2: int PlayFile(const wchar_t * path, const wchar_t * fname);
+;06C8: xxxxxxxx yyyyyyyy ; 1B2: int PlayFile( const wchar_t* path, const wchar_t* fname );
 ;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: FFFFFFFF 0D176445 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE(const int *__zero , int *level);
 06D4: FFFFFFFF 0D892A45 ; 1B5: int Profile_SetActive(int NUMprof,int set_in_gdfs_flag);
@@ -185,7 +185,7 @@
 0710: FFFFFFFF FD1C1945 ; 1C4: void SoftKey_SetItemAsSubItem(void *gui,int item,int subitem);
 0714: FFFFFFFF 4D806345 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN(void);
 0718: FFFFFFFF 5D806345 ; 1C6: int REQUEST_SYSTEM_RESTART(void);
-071C: FFFFFFFF 491B1945 ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
+;071C: xxxxxxxx yyyyyyyy ; 1C7: void SoftKeys_SetText(void *gui,int msg,int StrID,int StrID1);
 0720: FFFFFFFF 49296345 ; 1C8: int isRightNowBook(BOOK *);
 0724: FFFFFFFF 5D7D6345 ; 1C9: int isVolumeControllerBook(BOOK *);
 0728: FFFFFFFF C58B1445 ; 1CA: GUI_TABMENUBAR * CreateTabMenuBar(BOOK *);
@@ -242,7 +242,7 @@
 07F4: FFFFFFFF 99AB2F45 ; 1FD: int DISP_OBJ_GetAbsoluteYPos(DISP_OBJ *);
 07F8: FFFFFFFF ED932F45 ; 1FE: WINDOW * DISP_OBJ_GetWindow(DISP_OBJ *);
 07FC: FFFFFFFF 557F5245 ; 1FF: int GetThemeColor(int , int);
-0800: FFFFFFFF E10E6445 ; 200: int REQUEST_SETTING_SILENCE_SET(const int * __zero,u16 profile,u16 value);
+;0800: xxxxxxxx yyyyyyyy ; 200: int REQUEST_SETTING_SILENCE_SET( const int* __zero, u16 profile, u16 value );
 0804: FFFFFFFF 850E6445 ; 201: int REQUEST_SETTING_SILENCE_GET(const int * __zero,u16 profile, char * silence_mode);
 0808: FFFFFFFF A5372045 ; 202: void VCALL_Init (void* vc);
 080C: FFFFFFFF 99382045 ; 203: void VCALL_SetName (void * vc , wchar_t * name ,unsigned short name_len);
@@ -316,7 +316,7 @@
 091C: FFFFFFFF FD6C1245 ; 247: void GoMusic(void);
 0920: FFFFFFFF 7D2F4545 ; 248: void Vibra_Off (int t1);
 0924: FFFFFFFF 41C54345 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
-0928: FFFFFFFF 5D931445 ; 24A: int PlayFileV(const wchar_t * path,const wchar_t * fname, int vol);
+;0928: xxxxxxxx yyyyyyyy ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: FFFFFFFF BD244545 ; 24B: int GetSilent(void);
 0930: FFFFFFFF 7DFB4445 ; 24C: int GetVibrator(int ignorevibrator,int ignoresilent);
 0934: FFFFFFFF E9314545 ; 24D: int GetAudioSettings(int what, char* retvalue);
@@ -400,7 +400,7 @@
 0A6C: FFFFFFFF 49691445 ; 29B: int wtoi(const wchar_t * wstr,int len,int * dest);
 0A70: FFFFFFFF E12D2645 ; 29C: void DATE_GetWeekDay(DATE *,char * dest);
 0A74: FFFFFFFF 7150FA44 ; 29D: void Cale_GetSettings(int setID,void *);
-0A78: FFFFFFFF B5C7E144 ; 29E: wchar_t * wstrwstr(const wchar_t * wstr1,const wchar_t * wstr2);
+;0A78: xxxxxxxx yyyyyyyy ; 29E: wchar_t* wstrwstr( const wchar_t* wstr1, const wchar_t* wstr2 );
 0A7C: FFFFFFFF 9917FE44 ; 29F: int wstrcmpi(const wchar_t *ws1, const wchar_t *ws2);
 0A80: FFFFFFFF 5DC5E144 ; 2A0: wchar_t * wstrchr(const wchar_t * source,wchar_t chr);
 0A84: FFFFFFFF E1201945 ; 2A1: void GUIObject_HideSoftkeys(void *gui);
@@ -475,7 +475,7 @@
 0B98: FFFFFFFF 255F2945 ; 2E6: int BOOK_GetSessionID(BOOK *);
 0B9C: FFFFFFFF C1675245 ; 2E7: void UI_Event_toSID(int event, int sess_id);
 0BA0: FFFFFFFF 11B5B344 ; 2E8: char *GetIMSI(void);
-0BA4: FFFFFFFF B5C7E144 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE(int book_id);
+;0BA4: xxxxxxxx yyyyyyyy ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE( int book_id );
 0BA8: FFFFFFFF D5E21445 ; 2EA: int MainInput_getCurPos(GUI*);
 0BAC: FFFFFFFF 9DE21445 ; 2EB: void MainInput_Hide(GUI*);
 0BB0: FFFFFFFF 9DEF1845 ; 2EC: void DispObject_SoftKey_RestoreDefaultAction(DISP_OBJ*,int action);
@@ -505,8 +505,8 @@
 0C10: FFFFFFFF B5522745 ; 304: void ListElement_Insert(LIST *lst, int i, void *new_item);
 0C14: FFFFFFFF 89A35A45 ; 305: int FileCopy(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
 0C18: FFFFFFFF 19A55A45 ; 306: int FileMove(wchar_t *src_path, wchar_t *src_name, wchar_t *dest_path, wchar_t *dest_name, int);
-0C1C: FFFFFFFF 117BD244 ; 307: void RedLED_On(int __NULL);
-0C20: FFFFFFFF 117BD244 ; 308: void RedLED_Off(int __NULL);
+;0C1C: xxxxxxxx yyyyyyyy ; 307: void RedLED_On( int __NULL );
+;0C20: xxxxxxxx yyyyyyyy ; 308: void RedLED_Off( int __NULL );
 0C24: FFFFFFFF 9DC32F45 ; 309: void DispObject_SetLayerColor(DISP_OBJ *,int color);
 0C28: FFFFFFFF 4DA80145 ; 30A: int JavaAppDesc_GetJavaAppID(void * JavaDesc);
 0C2C: FFFFFFFF 3D125C45 ; 30B: void REQUEST_UI_OAF_START_APPLICATION(const int *ASYNC,int appID,char * flag);
@@ -579,9 +579,9 @@
 0D38: FFFFFFFF 650A6445 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET(const int *sync, int unk, int null, int vol);
 0D3C: FFFFFFFF 6D0D6445 ; 34F: int REQUEST_SETTING_VIBRATOR_SET(const int *sync, int unk, int mode);
 0D40: FFFFFFFF 4D0C6445 ; 350: int REQUEST_SETTING_RINGTYPESOUNDFILE_SET(const int *sync, int null, wchar_t *path, wchar_t *name);
-0D44: FFFFFFFF E10E6445 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET(const int *sync, int unk, int mode);
+;0D44: xxxxxxxx yyyyyyyy ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET( const int* sync, int unk, int mode );
 0D48: FFFFFFFF 290B6445 ; 352: int REQUEST_SETTING_INCREASINGRING_SET(const int *sync, int unk, int unk2, int mode);
-0D4C: FFFFFFFF E10E6445 ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET(const int *sync, int unk, int mode);
+;0D4C: xxxxxxxx yyyyyyyy ; 353: int REQUEST_SETTING_ALLOWEDCALLERS_SET( const int* sync, int unk, int mode );
 0D50: FFFFFFFF 351A0145 ; 354: int JavaAppDesc_GetJavaAppFullpath(void * JavaDesc,JavaAppFullpath *);
 0D54: FFFFFFFF C5FD4345 ; 355: void *SoundRecorderDesc_Create(void);
 0D58: FFFFFFFF F1FD4345 ; 356: void SoundRecorderDesc_Destroy(void * desc);

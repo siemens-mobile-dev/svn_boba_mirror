@@ -13,8 +13,8 @@
 045C: 00000000 1506FB44 ; 117: __thumb int fclose(int file);
 0460: 00000000 9D08FB44 ; 118: __thumb int fread(int file , void *ptr, int size);
 0464: 00000000 690AFB44 ; 119: __thumb int fwrite(int file , const void *ptr, int size);
-0468: 00000000 A1D49844 ; 11A: __thumb int _wstat(short *path, void *statbuf);
-046C: 00000000 25E12C45 ; 11B: __thumb int fputs(const char *s, int file);
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 DDF9FA44 ; 11C: __thumb int fstat(const wchar_t * path, const wchar_t *fname , FSTAT * fstat_stuct);
 0474: 00000000 FDCFFA44 ; 11D: __thumb DIR_HANDLE * AllocDirHandle(const wchar_t * path);
 0478: 00000000 BDD1FA44 ; 11E: __thumb FILELISTITEM *GetFname(DIR_HANDLE *, FILELISTITEM *);
