@@ -46,10 +46,7 @@
     SET_STATE SetWorkState;
     int version;
   }SKBOOK;
-  typedef struct 
-  {
-    char dummy[0x2C]; 
-  } GUI_SKIN;
+  typedef GUI_type GUI_SKIN;
   
   typedef struct 
   {

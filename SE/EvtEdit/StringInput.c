@@ -355,7 +355,7 @@ void CreateTextInput(MyBOOK *myBook)
   {
     en=1;
   }
-  myBook->text_input=(GUI *)CreateStringInput(0,
+  myBook->text_input = CreateStringInput(0,
                                               VAR_HEADER_TEXT(get_headerstrid(myBook->TextInputType)),
                                               VAR_STRINP_FIXED_TEXT(GetStrID(L"EC_TEXTP_TXT")),
                                               VAR_STRINP_ENABLE_EMPTY_STR(en),

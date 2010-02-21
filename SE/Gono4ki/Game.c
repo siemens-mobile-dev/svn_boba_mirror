@@ -9,13 +9,10 @@
 #include "NewRecord.h"
 u16 ftimer;
 
-typedef struct
-{
-  char dummy[0x2C]; 
-}GUI_CUSTOM;
+typedef GUI_type GUI_CUSTOM;
 
 DISP_DESC *dd;
-GUI_CUSTOM*np;
+GUI_CUSTOM* np;
 
 static const char custom_guiname[]="gui_custom";
 
@@ -53,15 +50,15 @@ void custom_destr(DISP_DESC *desc)
 GUI_CUSTOM *custom_create(BOOK *bk)
 {
   GUI_CUSTOM *gui_cs=new GUI_CUSTOM;
-  if (!CreateObject((GUI*)gui_cs,custom_destr, custom_constr,bk,0,0,0))
+  if (!CreateObject(gui_cs,custom_destr, custom_constr,bk,0,0,0))
   {
     delete gui_cs;
     return 0;    
   }
-  if (bk) addGui2book(bk,(GUI*)gui_cs);
-  GUI_SetStyle((GUI*)gui_cs, 4);
-  GuiObject_SetTitleType((GUI*)gui_cs, 1);
-  GUIObject_HideSoftkeys((GUI*)gui_cs);
+  if (bk) addGui2book(bk,gui_cs);
+  GUI_SetStyle(gui_cs, 4);
+  GuiObject_SetTitleType(gui_cs, 1);
+  GUIObject_HideSoftkeys(gui_cs);
   return gui_cs;
 };
 
@@ -212,7 +209,7 @@ void myOnKey(DISP_OBJ *db,int key,int a,int b,int type)
   }
   if(key==KEY_ESC && type==KBD_LONG_PRESS)
   {
-    GUI_Free((GUI*)np);
+    GUI_Free(np);
     BookObj_GotoPage(isBookX(NameMyElf, 0),&bk_go);
     Timer_Kill(&ftimer);
     return;
@@ -273,7 +270,7 @@ void myOnKey(DISP_OBJ *db,int key,int a,int b,int type)
   if(!Check(MyBK()->p[i], MyBK()->tank))
     {
       vibra();
-      GUI_Free((GUI*)np);
+      GUI_Free(np);
       BookObj_GotoPage(isBookX(NameMyElf, 0),&bk_go);
       Timer_Kill(&ftimer);
       return;
@@ -358,7 +355,7 @@ void onfTimer (u16 tmr , void *)
       {
         PlayMyMusic(2);
         vibra();
-        GUI_Free((GUI*)np);
+        GUI_Free(np);
         BookObj_GotoPage(isBookX(NameMyElf, 0),&bk_go);
         Timer_Kill(&ftimer);
         return;
@@ -390,10 +387,10 @@ int CreateGame(void*, BOOK*bk)
   MyBK()->pause=0;
   MyBK()->palka=0;
   np=custom_create(bk);
-  dd=DISP_OBJ_GetDESC ( GUIObj_GetDISPObj((GUI*)np) ); 
+  dd=DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(np) ); 
   DISP_DESC_SetOnKey(dd, myOnKey);
   DISP_DESC_SetOnRedraw(dd, myOnRedraw);
-  ShowWindow((GUI*)np);
+  ShowWindow(np);
   BookObj_Show(bk, 0);
   BookObj_SetFocus(bk, 0);
   PlayMyMusic(0);

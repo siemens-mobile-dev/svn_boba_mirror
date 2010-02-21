@@ -266,7 +266,7 @@ int GetNumOfActions()
 int SelectEvent_onLBMessage(GUI_MESSAGE * msg)
 {
   MyBOOK * myBook = (MyBOOK *) FindBook(isEvtEditBook);
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);

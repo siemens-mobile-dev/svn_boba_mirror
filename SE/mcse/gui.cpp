@@ -48,7 +48,7 @@ void InitScr()
   //itms_bs = FLS_Y + ( ( (FLS_H - ITM_S * 2)-((itms_max + 1) * ITM_FH) ) / 2 );
 }
 
-void DrwCurTab(void *gc, RECT *rc)
+void DrwCurTab(GC *gc, RECT *rc)
 {
   STRID str=0x6FFFFFFF;  
   RECT rt;
@@ -66,7 +66,7 @@ void DrwCurTab(void *gc, RECT *rc)
 }
 
 
-void DrwDrvBg(int ind, void *gc, RECT *rc)
+void DrwDrvBg(int ind, GC *gc, RECT *rc)
 {
   int x = DRV_X+DRV_O*ind;
   RECT rt;
@@ -114,7 +114,7 @@ int GetSBY(RECT *rc, int i, int c)
   return (c<=1)?0:((SB_H-SB_VS+1)*i/(c-1));
 }
 
-void DrwSB(void *gc, RECT *rc)
+void DrwSB(GC *gc, RECT *rc)
 {
   int sby = FLS_Y+1+GetSBY(rc, _CurIndex, _CurCount);
   GC_SetPenColor(gc , Colors[clScBarBG]);
@@ -122,7 +122,7 @@ void DrwSB(void *gc, RECT *rc)
   DrawRect(SB_X,sby,SB_X+SB_HS-1,sby+SB_VS-1,Colors[clScBarBG],Colors[clScBarBG]);
 }
 
-void DrwDrvAc(int ind, void *gc, RECT *rc)
+void DrwDrvAc(int ind, GC *gc, RECT *rc)
 {
   STRID str=0x6FFFFFFF;
   RECT rt;
@@ -194,7 +194,7 @@ void DisableScroll ()
   scroll_disp=0;
 }
 
-void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
+void DrwFile(GC *gc, RECT *rc, int ind, FILEINF* file)
 { 
   int y_offs=ind>_CurIndex-_CurBase?ATTR_FH:0;
   int y = itms_bs + ind*ITM_FH+y_offs;
@@ -280,7 +280,7 @@ void DrwFile(void *gc, RECT *rc, int ind, FILEINF* file)
   GC_validate_RECT(gc, &tmp_rc);
 }
 
-void ShowFiles(void *gc, RECT *rc)
+void ShowFiles(GC *gc, RECT *rc)
 { 
   DrawRect(rc->x1,rc->y1,rc->x2,rc->y2,Colors[clBD],Colors[clBG]);
   
@@ -329,7 +329,7 @@ void ShowFiles(void *gc, RECT *rc)
   if (progr_start) ShowProgr(gc, rc);
 }
 
-void ShowProgr(void *gc, RECT *rc)
+void ShowProgr(GC *gc, RECT *rc)
 {
   STRID str=LGP_NULL;
   DrawRect(PRGB_X1,PRGB_Y,PRGB_X2,PRGB_Y+PRGB_H-1,Colors[clProgrBoxBD],Colors[clProgrBoxBG]);

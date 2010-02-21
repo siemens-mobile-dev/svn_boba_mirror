@@ -4,9 +4,7 @@
 #include "pngread.h"
 #include "read_ini.h"
 
-typedef struct {
-  char dummy[0x2c]; 
-} GUI_MAP;
+typedef GUI_type GUI_MAP;
 
 
 typedef struct {

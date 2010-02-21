@@ -1,7 +1,6 @@
 #include "..\\include\cfg_items.h"
 #include "inc\config_data.h"
 #include "inc\lng.h"
-#include "inc\mc.h"
 
 #pragma diag_suppress=Pe177
 

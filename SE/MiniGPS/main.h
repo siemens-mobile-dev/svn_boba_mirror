@@ -44,7 +44,7 @@ typedef struct
 {
   BOOK book;
   GUI_LIST *menu;
-  void *oldOnKey;
+  DISP_OBJ_ONKEY_METHOD oldOnKey;
   GUI *text_input;
 }MyBOOK;
 

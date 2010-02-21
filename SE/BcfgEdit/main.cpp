@@ -295,7 +295,7 @@ void CreateUnsignedNumberInput(MyBOOK *myBook)
   text=Str2ID(ustr,0,SID_ANY_LEN);
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   header_name=Str2ID(ustr,0,SID_ANY_LEN);
-  myBook->text_input=(GUI *)CreateStringInput(0,
+  myBook->text_input = CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MAX_LEN(getnumwidth(hp->max)),
                                               VAR_STRINP_MODE(IT_UNSIGNED_DIGIT),
@@ -334,7 +334,7 @@ void CreateSignedNumberInput(MyBOOK *myBook)
   STRID header_name;
   win12512unicode(ustr,hp->name,MAXELEMS(ustr)-1);
   header_name=Str2ID(ustr,0,SID_ANY_LEN);
-  myBook->text_input=(GUI *)CreateStringInput(0,
+  myBook->text_input = CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MODE(IT_INTEGER),
                                               VAR_BOOK(myBook),
@@ -377,7 +377,7 @@ void CreateWinOrPassSI(MyBOOK *myBook, int is_pass)
   header_name=Str2ID(ustr,0,SID_ANY_LEN);
   win12512unicode(ustr,(char *)hp+sizeof(CFG_HDR),len);
   text=Str2ID(ustr,0,SID_ANY_LEN);
-  myBook->text_input=(GUI *)CreateStringInput(0,
+  myBook->text_input = CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MIN_LEN(hp->min),
                                               VAR_STRINP_MAX_LEN(hp->max),
@@ -448,7 +448,7 @@ void CreateUnicodeSI(MyBOOK *myBook, int is_pass)
   sel_folder=tmp;
   textidname2id(L"WAP_SELECT_FILE_TXT",-1,&tmp);
   sel_file=tmp;
-  myBook->text_input=(GUI *)CreateStringInput(0,
+  myBook->text_input = CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MIN_LEN(hp->min),
                                               VAR_STRINP_MAX_LEN(hp->max),
@@ -500,7 +500,7 @@ void OnSelect1GuiBcfg(BOOK * bk, void *)
   case CFG_LEVEL:
     bdata->level++;
     bdata->levelstack[bdata->level]=mbk->cur_hp;
-    GUI_Free((GUI*)mbk->bcfg);
+    GUI_Free( mbk->bcfg);
     mbk->bcfg=NULL;
     create_ed(bk, NULL);
     return;
@@ -655,7 +655,7 @@ int onLBMessage(GUI_MESSAGE * msg)
   int item;
   int str_id;
   CFG_HDR *hp;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     // onCreateListItem
   case 1:
@@ -875,7 +875,7 @@ GUI *create_ed(BOOK *book, CFG_HDR *need_to_focus)
     }
   }
 L_ENDCONSTR:
-  gui=(GUI *)CreateGuiList(mbk, need_to_jump);
+  gui= CreateGuiList(mbk, need_to_jump);
   ShowWindow(gui);
   return(gui);
 }
@@ -1035,7 +1035,7 @@ static void onMyBookClose(BOOK * book)
 
 int isBcfgEditBook(BOOK * struc)
 {
-  return(struc->onClose==(void*)onMyBookClose);
+  return(struc->onClose == onMyBookClose);
 }
 
 

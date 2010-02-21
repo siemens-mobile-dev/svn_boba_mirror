@@ -26,7 +26,7 @@ void CreateAutoLacationInput()
   MyBOOK * bk = (MyBOOK *) FindBook(isMiniGPSBook);
   FREE_GUI(bk->text_input);
   STRID text = Str2ID(SIwstr,0,SID_ANY_LEN);
-  bk->text_input = (GUI *)CreateStringInput(0,
+  bk->text_input = CreateStringInput(0,
                             VAR_BOOK(bk),
                             VAR_STRINP_FIXED_TEXT(Str2ID(LG_CURRENTLOCATION,0,SID_ANY_LEN)),
                             VAR_STRINP_TEXT(text),
@@ -37,14 +37,14 @@ void CreateAutoLacationInput()
                             VAR_OK_PROC(AutoOKPressed),
                             VAR_PREV_ACTION_PROC(AutoBackPressed),
                             0);
-  BookObj_SetFocus(bk,0);
+  BookObj_SetFocus( &bk->book,0);
   ShowWindow(bk->text_input);
 }
 
 int menu_callback(GUI_MESSAGE * msg)
 {
   int str_id;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int curitem = GUIonMessage_GetCreatedItemIndex(msg);
@@ -128,10 +128,8 @@ void MenuOnEnter(BOOK * book, void *)
 
 void MenuOnKey(DISP_OBJ *db, int key, int unk, int repeat, int type)
 {
-  void (*OldOnKey)(void *, int, int, int, int);
   MyBOOK * bk = (MyBOOK *) FindBook(isMiniGPSBook);
-  OldOnKey = (void(*)(void *,int,int,int,int))bk->oldOnKey;
-  OldOnKey(db, key, unk, repeat, type);
+  bk->oldOnKey(db, key, unk, repeat, type);
   if(type == KBD_SHORT_RELEASE)
   {
     int num = key - KEY_DIGITAL_0;
@@ -169,10 +167,10 @@ void CreateMenu(MyBOOK *mbk)
   GUIObject_Softkey_SetAction(mbk->menu,ACTION_LONG_BACK, MenuOnBack);
   GUIObject_Softkey_SetAction(mbk->menu,ACTION_SELECT1, MenuOnEnter);
 
-  mbk->oldOnKey = (void *)DISP_OBJ_GetOnKey(mbk->menu->DISP_OBJ);
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (mbk->menu->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)MenuOnKey );
+  mbk->oldOnKey = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(mbk->menu) );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(mbk->menu) ), MenuOnKey );
 
-  BookObj_SetFocus(mbk,0);
+  BookObj_SetFocus( &mbk->book,0);
   ShowWindow(mbk->menu);
 }
 

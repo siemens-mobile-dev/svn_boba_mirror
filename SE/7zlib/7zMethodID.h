@@ -5,6 +5,7 @@
 
 #include "..\include\Lib_Clara.h"
 #include "7zTypes.h"
+#include "LzmaTypes.h"
 
 #define kMethodIDSize 15
   

@@ -435,7 +435,7 @@ void CreateSI_EditExt(MyBOOK *myBook)
   header_name=Str2ID(L"Input new ext",0,SID_ANY_LEN);
   win12512unicode(ustr,myBook->el_ext,MAXELEMS(ustr)-1);
   text=Str2ID(ustr,0,SID_ANY_LEN);
-  myBook->si_editext=(GUI *)CreateStringInput(0,
+  myBook->si_editext = CreateStringInput(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MIN_LEN(0),
                                               VAR_STRINP_MAX_LEN(35),
@@ -563,7 +563,7 @@ int onLBMessageEditExtList(GUI_MESSAGE * msg)
   int item;
   char *str="";
   wchar_t *first_txt=L"";
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     // onCreateListItem
   case 1:
@@ -631,7 +631,7 @@ int onLBMessage(GUI_MESSAGE * msg)
   MyBOOK * myBook = (MyBOOK *)GUIonMessage_GetBook(msg);
   int item;
   char *str;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     // onCreateListItem
   case 1:
@@ -766,7 +766,7 @@ GUI *CreateEditGui(MyBOOK *bk)
 {
   GUI *gui=NULL;
   ReadIni(bk);
-  gui=(GUI *)CreateGuiList(bk);  
+  gui = CreateGuiList(bk);  
   return (gui);
 }
 
@@ -812,7 +812,7 @@ static void onMyBookClose(BOOK * book)
 
 int isExtEditorBook(BOOK * struc)
 {
-  return(struc->onClose==(void*)onMyBookClose);
+  return(struc->onClose == onMyBookClose);
 }
 
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)

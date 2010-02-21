@@ -50,9 +50,9 @@ typedef struct
   GUI *yesno;
   GUI_TABMENUBAR * gui;
   GUI_LIST * menu_list[MAX_PET_COUNT_GLB];
-  void * Menu_oldOnKey[MAX_PET_COUNT_GLB];
+  DISP_OBJ_ONKEY_METHOD Menu_oldOnKey[MAX_PET_COUNT_GLB];
   GUI_LIST * stat_list;
-  void * Status_oldOnKey;
+  DISP_OBJ_ONKEY_METHOD Status_oldOnKey;
 }MyBOOK;
 
 enum PET_SND {

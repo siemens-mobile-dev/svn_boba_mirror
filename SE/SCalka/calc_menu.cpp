@@ -75,7 +75,7 @@ int IV_On_Msg(GUI_MESSAGE * msg)
 {
   int d;
   STRID str=LGP_NULL;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     d=GUIonMessage_GetCreatedItemIndex(msg);
@@ -160,7 +160,7 @@ void CreateEditFmtStr(MyBOOK *myBook)
   win12512unicode(ustr,calc_set.fmt,sizeof(calc_set.fmt)-1);
   text=Str2ID(ustr,0,SID_ANY_LEN);
   header_name=Str2ID("Edit format str",6,SID_ANY_LEN);
-  myBook->edit_fmtstr=(GUI *)CreateStringInput(0,
+  myBook->edit_fmtstr = CreateStringInput(0,
                                                VAR_HEADER_TEXT(header_name),
                                                VAR_STRINP_MIN_LEN(1),
                                                VAR_STRINP_MAX_LEN(sizeof(calc_set.fmt)-1),
@@ -244,7 +244,7 @@ int CS_On_Msg(GUI_MESSAGE * msg)
   };
   int d;
   STRID str=LGP_NULL;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     d=GUIonMessage_GetCreatedItemIndex(msg);

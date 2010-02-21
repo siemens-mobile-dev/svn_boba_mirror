@@ -79,8 +79,8 @@ extern FILEINF *scfile;
 
 void InitScr();
 void DrwName();
-void ShowFiles(void *gc, RECT *rc);
-void ShowProgr(void *gc, RECT *rc);
+void ShowFiles(GC *gc, RECT *rc);
+void ShowProgr(GC *gc, RECT *rc);
 void ScrollTimerProc (u16 tmr , void *);
 void DisableScroll ();
 #endif

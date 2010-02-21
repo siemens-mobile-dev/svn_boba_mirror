@@ -97,9 +97,9 @@ typedef struct
   int sizeAlbum2;
   int sizeAutor2;
   int sizeTitle2;
-  void * OldKey;
-  void * OldKey1;
-  void * OldKey2;
+  DISP_OBJ_ONKEY_METHOD OldKey;
+  DISP_OBJ_ONKEY_METHOD OldKey1;
+  DISP_OBJ_ONKEY_METHOD OldKey2;
   wchar_t * name;
   wchar_t * path;
   wchar_t * TON;
@@ -587,17 +587,17 @@ void DestroyInputBooks2()
 {
   if(TagBook->InputTitle2)
   {
-    GUI_Free((GUI*)TagBook->InputTitle2);
+    GUI_Free(TagBook->InputTitle2);
     TagBook->InputTitle2=0;
   }
   if(TagBook->InputAlbum2)
   {
-    GUI_Free((GUI*)TagBook->InputAlbum2);
+    GUI_Free(TagBook->InputAlbum2);
     TagBook->InputAlbum2=0;
   }
   if(TagBook->InputAutor2)
   {
-    GUI_Free((GUI*)TagBook->InputAutor2);
+    GUI_Free(TagBook->InputAutor2);
     TagBook->InputAutor2=0;
   }
 }
@@ -694,7 +694,7 @@ void OnEntML2(BOOK * bk, void *)
 
 void ExitML2(BOOK*, void*)
 {
-  GUI_Free((GUI*)TagBook->MenuList2);
+  GUI_Free(TagBook->MenuList2);
   TagBook->MenuList2=0;
   CreateGlavMenu(1);
 }
@@ -703,7 +703,7 @@ int SetTitleML2(GUI_MESSAGE * msg)
 {
   int item;
   int imgID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -774,7 +774,7 @@ void DeleteTag2(int x){
     }
   }
   TagBook->change++;
-  if((GUI*)TagBook->MenuList2) GUI_Free((GUI*)TagBook->MenuList2);
+  if(TagBook->MenuList2) GUI_Free(TagBook->MenuList2);
   CreateML2(x);
 }
 
@@ -876,7 +876,7 @@ void CopyFromName2(int x)
     }
   }
   TagBook->change++;
-  if((GUI*)TagBook->MenuList2) GUI_Free((GUI*)TagBook->MenuList2);
+  if(TagBook->MenuList2) GUI_Free(TagBook->MenuList2);
   CreateML2(x);
 }
 
@@ -908,15 +908,13 @@ void CopyFromID3v1(int x)
     }
   }
   TagBook->change++;
-  if((GUI*)TagBook->MenuList2) GUI_Free((GUI*)TagBook->MenuList2);
+  if(TagBook->MenuList2) GUI_Free(TagBook->MenuList2);
   CreateML2(x);
 }
   
-void NewKey2(void * p, int i1, int i2, int i3, int i4)
+void NewKey2(DISP_OBJ * p, int i1, int i2, int i3, int i4)
 {
-  void(*OldKey)(void*, int, int, int, int);
-  OldKey=(void(*)(void*, int, int, int, int))TagBook->OldKey2;
-  OldKey(p, i1, i2, i3, i4);
+  TagBook->OldKey2(p, i1, i2, i3, i4);
   if(i4==KBD_SHORT_RELEASE && i1==KEY_DEL)
   {
     int sel=ListMenu_GetSelectedItem(TagBook->MenuList2);
@@ -961,7 +959,7 @@ void CreateML2(int x)
   TagBook->MenuList2=MList2;
   GuiObject_SetTitleText(MList2, Str2ID(NAME_EDIT2,0,SID_ANY_LEN));
   SetNumOfMenuItem(MList2, 3);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)MList2,SetTitleML2);
+  OneOfMany_SetonMessage(MList2,SetTitleML2);
   SetCursorToItem(MList2,x);
   SetMenuItemStyle(MList2,3);
   GUIObject_Softkey_SetAction(MList2,ACTION_BACK,ExitML2);
@@ -969,14 +967,14 @@ void CreateML2(int x)
   GUIObject_Softkey_SetAction(MList2,ACTION_SELECT1,OnEntML2);	
   GUIObject_Softkey_SetAction(MList2,1,PlayF2);
   GUIObject_Softkey_SetText(MList2,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
-  TagBook->OldKey2=(void*)DISP_OBJ_GetOnKey(MList2->DISP_OBJ);
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (MList2->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)NewKey2);
+  TagBook->OldKey2 = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(MList2) );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(MList2) ), NewKey2);
   ShowWindow(MList2);
 }
 
 void ExitMG(BOOK*,void*)
 {
-  GUI_Free((GUI*)TagBook->GList);
+  GUI_Free(TagBook->GList);
   TagBook->GList=0;
   ShowWindow(TagBook->MenuList1);
 }
@@ -998,7 +996,7 @@ void OnEntMG(BOOK*bk,void*)
 int SetTitlePunktsMG(GUI_MESSAGE * msg)
 {
   int item;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -1022,7 +1020,7 @@ int MGList()
   TagBook->GList=MGList;
   GuiObject_SetTitleText(MGList, Str2ID(NAME_GENRE,0,SID_ANY_LEN));
   SetNumOfMenuItem(MGList, 148);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)MGList,SetTitlePunktsMG);
+  OneOfMany_SetonMessage(MGList,SetTitlePunktsMG);
   SetCursorToItem(MGList,TagBook->genre);
   GUIObject_Softkey_SetAction(MGList,ACTION_BACK,ExitMG);
   GUIObject_Softkey_SetAction(MGList,ACTION_LONG_BACK,ExitMG);
@@ -1035,27 +1033,27 @@ void DestroyInputBooks()
 {
   if(TagBook->InputTitle)
   {
-    GUI_Free((GUI*)TagBook->InputTitle);
+    GUI_Free(TagBook->InputTitle);
     TagBook->InputTitle=0;
   }
   if(TagBook->InputAlbum)
   {
-    GUI_Free((GUI*)TagBook->InputAlbum);
+    GUI_Free(TagBook->InputAlbum);
     TagBook->InputAlbum=0;
   }
   if(TagBook->InputAutor)
   {
-    GUI_Free((GUI*)TagBook->InputAutor);
+    GUI_Free(TagBook->InputAutor);
     TagBook->InputAutor=0;
   }
   if(TagBook->InputYear)
   {
-    GUI_Free((GUI*)TagBook->InputYear);
+    GUI_Free(TagBook->InputYear);
     TagBook->InputYear=0;
   }
   if(TagBook->InputComment)
   {
-    GUI_Free((GUI*)TagBook->InputComment);
+    GUI_Free(TagBook->InputComment);
     TagBook->InputComment=0;
   }
 }
@@ -1234,7 +1232,7 @@ void OnEntML1(BOOK * bk, void *)
 
 void ExitML1(BOOK*,void*)
 {
-  GUI_Free((GUI*)TagBook->MenuList1);
+  GUI_Free(TagBook->MenuList1);
   TagBook->MenuList1=0;
   CreateGlavMenu(0);
 }
@@ -1243,7 +1241,7 @@ int SetTitleML1(GUI_MESSAGE * msg)
 {
   int item;
   int imgID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -1352,7 +1350,7 @@ void DeleteTag1(int x)
     }
   }
   TagBook->change++;
-  if((GUI*)TagBook->MenuList1) GUI_Free((GUI*)TagBook->MenuList1);
+  if(TagBook->MenuList1) GUI_Free(TagBook->MenuList1);
   CreateML1(x);
 }
 
@@ -1405,7 +1403,7 @@ void CopyFromName1(int x)
     }
   }
   TagBook->change++;
-  if((GUI*)TagBook->MenuList1) GUI_Free((GUI*)TagBook->MenuList1);
+  if(TagBook->MenuList1) GUI_Free(TagBook->MenuList1);
   CreateML1(x);
 }
 
@@ -1458,17 +1456,15 @@ void CopyFromID3v2(int x)
     }
   }
   TagBook->change++;
-  if((GUI*)TagBook->MenuList1) GUI_Free((GUI*)TagBook->MenuList1);
+  if(TagBook->MenuList1) GUI_Free(TagBook->MenuList1);
   CreateML1(x);
 }
       
   
 
-void NewKey1(void * p, int i1, int i2, int i3, int i4)
+void NewKey1(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 {
-  void(*OldKey)(void*, int, int, int, int);
-  OldKey=(void(*)(void*, int, int, int, int))TagBook->OldKey1;
-  OldKey(p, i1, i2, i3, i4);
+  TagBook->OldKey1(p, i1, i2, i3, i4);
   if(i4==KBD_SHORT_RELEASE && i1==KEY_DEL)
   {
     int sel=ListMenu_GetSelectedItem(TagBook->MenuList1);
@@ -1525,7 +1521,7 @@ void CreateML1(int x)
   TagBook->MenuList1=MList1;
   GuiObject_SetTitleText(MList1, Str2ID(NAME_EDIT1,0,SID_ANY_LEN));
   SetNumOfMenuItem(MList1, 6);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)MList1,SetTitleML1);
+  OneOfMany_SetonMessage(MList1,SetTitleML1);
   SetCursorToItem(MList1,x);
   SetMenuItemStyle(MList1,3);
   GUIObject_Softkey_SetAction(MList1,ACTION_BACK,ExitML1);
@@ -1533,8 +1529,8 @@ void CreateML1(int x)
   GUIObject_Softkey_SetAction(MList1,ACTION_SELECT1,OnEntML1);	
   GUIObject_Softkey_SetAction(MList1,1,PlayF1);
   GUIObject_Softkey_SetText(MList1,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
-  TagBook->OldKey1=(void*)DISP_OBJ_GetOnKey(MList1->DISP_OBJ);
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (MList1->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)NewKey1);
+  TagBook->OldKey1 = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(MList1) );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(MList1) ), NewKey1);
   ShowWindow(MList1);
 }
   
@@ -1557,7 +1553,7 @@ void OnEntGM(BOOK * bk, void *)
   }
   if(item!=2)
   {
-    GUI_Free((GUI*)TagBook->GlavMenu);
+    GUI_Free(TagBook->GlavMenu);
     TagBook->GlavMenu=0;
   }
 }
@@ -1693,7 +1689,7 @@ int SetTitlePunktsGM(GUI_MESSAGE * msg)
 {
   int item;
   int imgID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -1773,11 +1769,9 @@ void DeleteTag(int x)
   TagBook->change++;
 }
 
-void NewKey(void * p, int i1, int i2, int i3, int i4)
+void NewKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 {
-  void(*OldKey)(void*, int, int, int, int);
-  OldKey=(void(*)(void*, int, int, int, int))TagBook->OldKey;
-  OldKey(p, i1, i2, i3, i4);
+  TagBook->OldKey(p, i1, i2, i3, i4);
   if(i4==KBD_SHORT_RELEASE && i1==KEY_DEL)
   {
     int sel=ListMenu_GetSelectedItem(TagBook->GlavMenu);
@@ -1793,13 +1787,13 @@ void NewKey(void * p, int i1, int i2, int i3, int i4)
   if(i4==KBD_SHORT_RELEASE && i1==(KEY_DIGITAL_0+1))
   {
     CreateML1(0);
-    GUI_Free((GUI*)TagBook->GlavMenu);
+    GUI_Free(TagBook->GlavMenu);
     TagBook->GlavMenu=0;
   }
   if(i4==KBD_SHORT_RELEASE && i1==(KEY_DIGITAL_0+2))
   {
     CreateML2(0);
-    GUI_Free((GUI*)TagBook->GlavMenu);
+    GUI_Free(TagBook->GlavMenu);
     TagBook->GlavMenu=0;
   }
   if(i4==KBD_SHORT_RELEASE && i1==(KEY_DIGITAL_0+3))
@@ -1818,7 +1812,7 @@ void CreateGlavMenu(int x)
   TagBook->GlavMenu=GM;
   GuiObject_SetTitleText(GM, Str2ID(NAME_TAG_EDITOR,0,SID_ANY_LEN));
   SetNumOfMenuItem(GM, 3);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)GM,SetTitlePunktsGM);
+  OneOfMany_SetonMessage(GM,SetTitlePunktsGM);
   SetCursorToItem(GM,x);
   SetMenuItemStyle(GM,3);
   GUIObject_Softkey_SetAction(GM,ACTION_BACK,ExitGM);
@@ -1826,8 +1820,8 @@ void CreateGlavMenu(int x)
   GUIObject_Softkey_SetAction(GM,ACTION_SELECT1,OnEntGM);	
   GUIObject_Softkey_SetAction(GM,1,PlayF);
   GUIObject_Softkey_SetText(GM,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
-  TagBook->OldKey=(void*)DISP_OBJ_GetOnKey(GM->DISP_OBJ);
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (GM->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)NewKey);
+  TagBook->OldKey = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(GM) );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(GM) ), NewKey);
   ShowWindow(GM);
 }
   

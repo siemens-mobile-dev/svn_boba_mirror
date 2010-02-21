@@ -21,7 +21,7 @@ int GetIconID(wchar_t *txt)
 
 int onLBMessage(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -63,7 +63,7 @@ wchar_t *names[]={L"Book name",L"Left softkey string",L"Middle softkey string", 
 int onLBMessage2(GUI_MESSAGE * msg)
 {
   MyBOOK * myBook = (MyBOOK*)FindBook(isSoftEditBook);
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);

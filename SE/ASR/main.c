@@ -34,39 +34,38 @@ void elf_exit(void)
   kill_data(&ELF_BEGIN, (void(*)(void*))mfree_adr());
 }
 
-int SoundRecorderDesc_SetRecordTime(void * desc,...)
+int SoundRecorderDesc_SetRecordTime(SOUND_RECORDER_DESC * sd,...)
 {
-  if(!desc) return 0;
-  SOUND_RECORDER_DESC * sd=(SOUND_RECORDER_DESC*)desc;
-  memcpy(sd->t,&desc+sizeof(int),0x10);
+  if(!sd) return 0;
+  memcpy(sd->t,&sd+sizeof(SOUND_RECORDER_DESC *),0x10);
   sd->RecordTimeFlag=1;
   return 1;
 }
 
-int SoundRecorderDesc_SetRadioVal(void * desc,int value)
+int SoundRecorderDesc_SetRadioVal(SOUND_RECORDER_DESC* desc,int value)
 {
   if(!desc) return 0;
-  ((SOUND_RECORDER_DESC*)desc)->RadioVal=value;
+  desc->RadioVal=value;
   return 1;
 }
 
-int SoundRecorderDesc_SetTitle(void * desc,STRID Title)
+int SoundRecorderDesc_SetTitle(SOUND_RECORDER_DESC * desc,STRID Title)
 {
   if(!desc) return 0;
-  ((SOUND_RECORDER_DESC*)desc)->RecorderTitle=Title;
+  desc->RecorderTitle = Title;
   return 1;
 }
 
-int SoundRecorderDesc_SetStyle(void * desc,int style)
+int SoundRecorderDesc_SetStyle(SOUND_RECORDER_DESC * desc,int style)
 {
   if(!desc) return 0;
-  ((SOUND_RECORDER_DESC*)desc)->RecorderStyle=style;
+  desc->RecorderStyle = style;
   return 1;
 }
 
 int Record_FM(FM_RADIO_BOOK * fm_book)
 {
-  void * desc=SoundRecorderDesc_Create();
+  SOUND_RECORDER_DESC * desc = (SOUND_RECORDER_DESC*)SoundRecorderDesc_Create();
   SoundRecorderDesc_SetBookID(desc,BOOK_GetBookID(myBook));
   SoundRecorderDesc_SetType(desc,1+FmRadioRecorderType);
   if(wstrlen(_FmTitle))SoundRecorderDesc_SetTitle(desc,Str2ID(_FmTitle,0,40));
@@ -90,7 +89,7 @@ int Record_FM(FM_RADIO_BOOK * fm_book)
  
 int Record_User(BOOK * bk)
 {
-  void * desc = SoundRecorderDesc_Create();
+  SOUND_RECORDER_DESC* desc = (SOUND_RECORDER_DESC*)SoundRecorderDesc_Create();
   SoundRecorderDesc_SetBookID(desc,BOOK_GetBookID(myBook));
   SoundRecorderDesc_SetType(desc,1+UserSoundRecorderType);
   if(wstrlen(_UserTitle))SoundRecorderDesc_SetTitle(desc,Str2ID(_UserTitle,0,40));

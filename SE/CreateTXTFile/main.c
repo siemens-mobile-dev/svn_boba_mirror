@@ -71,7 +71,7 @@ void DestroyList(BOOK * bk, void *)
 {
   if (CreateFileBook->list)
   {
-    GUI_Free((GUI*)CreateFileBook->list);
+    GUI_Free(CreateFileBook->list);
     CreateFileBook->list=0;
   }
 }
@@ -80,7 +80,7 @@ void DestroyOOM(BOOK * bk, void *)
 {
   if (CreateFileBook->oom_list)
   {
-    GUI_Free((GUI*)CreateFileBook->oom_list);
+    GUI_Free(CreateFileBook->oom_list);
     CreateFileBook->oom_list=0;
   }
 }
@@ -196,7 +196,7 @@ void onEnter(BOOK * bk, void *)
 int list_callback(GUI_MESSAGE * msg)
 {
   int str_id;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     if (GUIonMessage_GetCreatedItemIndex(msg))
@@ -227,7 +227,7 @@ void CreateList(void)
   textidname2id(L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT",SID_ANY_LEN,&str_id);
   GuiObject_SetTitleText(list_menu,str_id);
   SetNumOfMenuItem(list_menu,2);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)list_menu,list_callback);
+  OneOfMany_SetonMessage(list_menu,list_callback);
   SetCursorToItem(list_menu,0);
   GUIObject_Softkey_SetAction(list_menu,ACTION_BACK,DestroyList);
   GUIObject_Softkey_SetAction(list_menu,ACTION_LONG_BACK,ExitActionList);
@@ -243,7 +243,7 @@ void oom_onEnter(BOOK * bk, void *)
 
 int oom_callback(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     if (GUIonMessage_GetCreatedItemIndex(msg))
@@ -266,7 +266,7 @@ void CreateOOMList(void)
   textidname2id(L"ES_TEXT_FORMAT_TXT",SID_ANY_LEN,&str_id);
   GuiObject_SetTitleText(oom_menu,str_id);
   OneOfMany_SetItemCount(oom_menu,2);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)oom_menu,oom_callback);
+  OneOfMany_SetonMessage(oom_menu,oom_callback);
   OneOfMany_SetChecked(oom_menu,0);
   GUIObject_Softkey_SetAction(oom_menu,ACTION_BACK,DestroyOOM);
   GUIObject_Softkey_SetAction(oom_menu,ACTION_LONG_BACK,ExitActionList);

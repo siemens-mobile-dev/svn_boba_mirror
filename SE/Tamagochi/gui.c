@@ -139,7 +139,7 @@ int menu_list_callback(GUI_MESSAGE * msg)
 {
   int str_id;
   int icon_id;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int curitem=GUIonMessage_GetCreatedItemIndex(msg);
@@ -189,14 +189,11 @@ void Menu_onEnter(BOOK * book, void *)
   //BookObj_ReturnPage(book,ACCEPT_EVENT);
 }
 
-void Menu_OnKey(void *p, int i1, int i2, int i3, int i4)
+void Menu_OnKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 {
-  void (*OldOnKey)(void *, int, int, int, int);
-
   MyBOOK * bk = (MyBOOK *) FindBook(isTamagochiBook);
   int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);
-  OldOnKey=(void(*)(void *,int,int,int,int))bk->Menu_oldOnKey[indx];
-  OldOnKey(p,i1,i2,i3,i4);
+  bk->Menu_oldOnKey[indx](p,i1,i2,i3,i4);
   if(i4==KBD_SHORT_RELEASE)
   {
     int num = i1 - KEY_DIGITAL_0;
@@ -231,14 +228,14 @@ int CreateMenuList(void *data, BOOK * book)
   if(tab_pos >= Pets[0].Status.Count) tab_pos = 0;
   if(menu_pos >= MENU_ITEMS_COUNT) menu_pos = 0;
   MyBOOK * bk = (MyBOOK *)book;
-  if(bk->gui) GUI_Free((GUI*)bk->gui);
+  if(bk->gui) GUI_Free( bk->gui);
   FREE_GUI(bk->stat_list);
 
   bk->gui = CreateTabMenuBar(book);
   TabMenuBar_SetTabCount(bk->gui,Pets[0].Status.Count);
   for(int indx=0; indx < Pets[0].Status.Count; indx++)
   {
-    if (bk->menu_list[indx]) GUI_Free((GUI*)bk->menu_list[indx]);
+    if (bk->menu_list[indx]) GUI_Free( bk->menu_list[indx]);
     bk->menu_list[indx]=CreateListObject(book,0);
     GuiObject_SetTitleText(bk->menu_list[indx],Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN));
 
@@ -250,8 +247,8 @@ int CreateMenuList(void *data, BOOK * book)
     GUIObject_Softkey_SetAction(bk->menu_list[indx],ACTION_LONG_BACK,CancelMenuList);
     GUIObject_Softkey_SetAction(bk->menu_list[indx],ACTION_SELECT1,Menu_onEnter);
 
-    bk->Menu_oldOnKey[indx]=(void*)DISP_OBJ_GetOnKey(bk->menu_list[indx]->DISP_OBJ);
-    DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (bk->menu_list[indx]->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)Menu_OnKey );
+    bk->Menu_oldOnKey[indx] = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(bk->menu_list[indx]) );
+    DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(bk->menu_list[indx]) ), Menu_OnKey );
 
     TabMenuBar_AssignGuiObj(bk->gui,indx,bk->menu_list[indx]);
 
@@ -271,7 +268,7 @@ int ExitMenuList(void *data, BOOK * book)
 
   if (bk->stat_list)
   {
-    GUI_Free((GUI*)bk->stat_list);
+    GUI_Free( bk->stat_list);
     bk->stat_list=0;
   }
 
@@ -279,7 +276,7 @@ int ExitMenuList(void *data, BOOK * book)
   {
     if (bk->menu_list[i])
     {
-      GUI_Free((GUI*)bk->menu_list[i]);
+      GUI_Free( bk->menu_list[i]);
       bk->menu_list[i]=0;
     }
   }
@@ -287,7 +284,7 @@ int ExitMenuList(void *data, BOOK * book)
   if (bk->gui)
   {
     ActiveTAB = TabMenuBar_GetFocusedTabIndex(bk->gui);
-    GUI_Free((GUI*)bk->gui);
+    GUI_Free( bk->gui);
     bk->gui=0;
   }
 

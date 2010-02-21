@@ -1,3 +1,4 @@
+#define USEPNG
 #include "..\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 #include "main.h"
@@ -281,7 +282,7 @@ void MapGuiOnRedraw(DISP_OBJ_MAP *db,int ,int,int)
 {
   RECT rc_old;
   int font, gc_xx;
-  void *gc=get_DisplayGC();
+  GC *gc=get_DisplayGC();
   get_GC_RECT(gc, &rc_old);
   if (db->x1!=rc_old.x1 || db->x2!=rc_old.x2 || db->y1!=rc_old.y1 || db->y2!=rc_old.y2)
   {
@@ -366,13 +367,13 @@ void MapGui_destr(DISP_DESC *desc)
 GUI_MAP *CreateMapGUI(BOOK *bk)
 {
   GUI_MAP *gui_map=new GUI_MAP;
-  if (!CreateObject((GUI *)gui_map,MapGui_destr,MapGui_constr, bk,0,0,0))
+  if (!CreateObject( gui_map,MapGui_destr,MapGui_constr, bk,0,0,0))
   {
     delete gui_map;
     return 0;    
   }
-  if (bk) addGui2book(bk,(GUI*)gui_map);
-  GUI_SetStyle((GUI *)gui_map,3);
+  if (bk) addGui2book(bk, gui_map);
+  GUI_SetStyle( gui_map,3);
   return gui_map;
 }
 

@@ -90,7 +90,7 @@ typedef struct
   NASTROIKI*nast;
   int pause;
   DISPLAY*dis[3];
-  void*OldKey1;
+  DISP_OBJ_ONKEY_METHOD OldKey1;
   GUI*guigame;
   PREGRADA*p[2];
   int megaspeed;

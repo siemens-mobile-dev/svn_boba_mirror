@@ -1,3 +1,4 @@
+#define USEPNG
 #include "..\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 #include "map_object.h"

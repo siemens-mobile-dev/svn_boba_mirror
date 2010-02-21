@@ -1,3 +1,4 @@
+#define USEPNG
 #include "..\include\Lib_Clara.h"
 #include "pngread.h"
 #include "map_object.h"
@@ -19,7 +20,7 @@ void CloseMyBook(BOOK * bk, void *)
 static int MainPageOnCreate(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  GUI * map_gui=(GUI *)CreateMapGUI(bk);
+  GUI * map_gui = CreateMapGUI(bk);
   GUIObject_Softkey_SetAction(map_gui,ACTION_BACK, CloseMyBook);
   GuiObject_SetTitleType(map_gui, 1);
   ShowWindow(map_gui);

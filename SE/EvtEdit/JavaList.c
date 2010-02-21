@@ -72,7 +72,7 @@ int onExit_JavaList(void *data, BOOK * book)
 
 int java_list_callback(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     java_list_elem * elem=(java_list_elem*)ListElement_GetByIndex(java_list,GUIonMessage_GetCreatedItemIndex(msg));

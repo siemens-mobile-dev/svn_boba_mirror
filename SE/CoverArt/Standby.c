@@ -23,7 +23,7 @@ DISP_DESC *StatusIndication_DD;
 DISP_OBJ *StatusIndication_DO;
 DISP_OBJ_ONREDRAW_METHOD StatusIndication_DefaultRedraw;
 
-void *gc=0;
+GC *gc=0;
 
 u16 Standby_RedrawTimer;
 

@@ -510,7 +510,7 @@ int equ2manual_profile(int profile)
 
 void DrawParams(int y)
 {
-  void *GC_DISP=get_DisplayGC ();
+  GC *GC_DISP=get_DisplayGC ();
 
   if ((cfg_show_type & 2) && visible && (location_image.ImageID != 0xFFFF))
   {
@@ -976,7 +976,7 @@ int NewKey(int key, int r1, int mode)
           {
             if(MiniGPSBook->text_input) GUI_Free(MiniGPSBook->text_input);
             STRID text = Str2ID(SIwstr,0,SID_ANY_LEN);
-            MiniGPSBook->text_input = (GUI *)CreateStringInput(0,
+            MiniGPSBook->text_input = CreateStringInput(0,
                                           VAR_BOOK(MiniGPSBook),
                                           VAR_STRINP_FIXED_TEXT(Str2ID(LG_CURRENTLOCATION,0,SID_ANY_LEN)),
                                           VAR_STRINP_TEXT(text),
@@ -987,7 +987,7 @@ int NewKey(int key, int r1, int mode)
                                           VAR_OK_PROC(OKPressed),
                                           VAR_PREV_ACTION_PROC(BackPressed),
                                           0);
-            BookObj_SetFocus(MiniGPSBook,0);
+            BookObj_SetFocus( &MiniGPSBook->book,0);
             ShowWindow(MiniGPSBook->text_input);
           }
           else

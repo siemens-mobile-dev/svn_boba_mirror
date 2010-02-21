@@ -740,7 +740,7 @@ void SetCursPos(DISP_OBJ_CALC *db, int cur, int pos)
 
 void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
 {
-  void *gc=get_DisplayGC();
+  GC *gc=get_DisplayGC();
   int gc_xx, font;
   int scr_h, scr_w;
   db->x1=cur_rc->x1;
@@ -1013,15 +1013,15 @@ enum TITLE_TYPE {
 GUI_CALC *CreateCalkGUI(BOOK *bk)
 {
   GUI_CALC *gui_calc=new GUI_CALC;
-  if (!CreateObject((GUI *)gui_calc,CalcGui_destr,CalcGui_constr, bk,0,0,0))
+  if (!CreateObject(gui_calc,CalcGui_destr,CalcGui_constr, bk,0,0,0))
   {
     delete gui_calc;
     return 0;    
   }
-  if (bk) addGui2book(bk,(GUI*)gui_calc);
-  GUI_SetStyle((GUI *)gui_calc,4);
-  GuiObject_SetTitleType((GUI *)gui_calc, 1);
-  GUIObject_HideSoftkeys((GUI *)gui_calc);
+  if (bk) addGui2book(bk,gui_calc);
+  GUI_SetStyle(gui_calc,4);
+  GuiObject_SetTitleType(gui_calc, 1);
+  GUIObject_HideSoftkeys(gui_calc);
   return gui_calc;
 }
 

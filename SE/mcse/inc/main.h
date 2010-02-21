@@ -21,9 +21,7 @@ typedef struct {
   DISP_OBJ dsp_obj;
 } DISP_OBJ_MAIN;
 
-typedef struct {
-  char gui[0x2c];
-} MAIN_GUI;
+typedef GUI_type MAIN_GUI;
 
 extern int is_db2020;
 #define FREE_GUI(a) if (a) a=GUI_Free(a)

@@ -40,7 +40,7 @@ void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, boo
     if (replace)
     {
       kill_rems(mbk->remlst, mbk, 0);
-      GUI_Free((GUI*)mbk->remind);
+      GUI_Free(mbk->remind);
       mbk->remind=GUI_REMIND_Create(bk);
       created=true;
     }
@@ -50,7 +50,7 @@ void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, boo
     mbk->remind=GUI_REMIND_Create(bk);
     created=true;
   }
-  GUI *gRemind=(GUI*)mbk->remind;
+  GUI *gRemind = mbk->remind;
   if (text && utext && time)
   {
     REMIND *rem=new REMIND;
@@ -64,7 +64,7 @@ void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, boo
     GuiRemind_AddNote(mbk->remind, rem);
   }
   GUI_SetStyle(gRemind, 4);
-  GuiObject_SetTitleType((GUI*)gRemind, 1);
+  GuiObject_SetTitleType(gRemind, 1);
   GUIObject_HideSoftkeys(gRemind);
   if (created)
   {

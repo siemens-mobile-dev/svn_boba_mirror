@@ -89,7 +89,7 @@ void Days_OnSelect(BOOK *bk, void *)
 
 int Days_onLBMessage(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
@@ -111,7 +111,7 @@ int Days_onLBMessage(GUI_MESSAGE * msg)
 
 int Days_onLBMessage2(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);

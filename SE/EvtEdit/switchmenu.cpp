@@ -27,7 +27,7 @@ void kill_switchlst(MyBOOK *mbk)
 
 int Switch_onLBMessage(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);

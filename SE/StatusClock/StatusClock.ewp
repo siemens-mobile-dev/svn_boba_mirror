@@ -137,7 +137,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -961,6 +961,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

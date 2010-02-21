@@ -44,7 +44,7 @@ void OnEnterGui(BOOK * bk, void *)
 };
 int onLBMessage(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);

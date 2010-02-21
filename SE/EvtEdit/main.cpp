@@ -81,7 +81,7 @@ static void onMyBookClose(BOOK * book)
 
 int isEvtEditBook(BOOK * struc)
 {
-  return(struc->onClose==(void*)onMyBookClose);
+  return(struc->onClose == onMyBookClose);
 };
 
 static int TerminateElf(void *mess ,BOOK *book)
@@ -113,7 +113,7 @@ extern wchar_t *items[50];
 int onLBMessage(GUI_MESSAGE * msg)
 {
   MyBOOK * myBook = (MyBOOK *) FindBook(isEvtEditBook);
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -157,7 +157,7 @@ wchar_t *iticons[] = {L"TR_TIME_UPDATE_ICN", L"TR_TIME_UPDATE_ICN", L"CALE_TASK_
 int onLBMessage2(GUI_MESSAGE * msg)
 {
   MyBOOK * myBook = (MyBOOK *) FindBook(isEvtEditBook);
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);

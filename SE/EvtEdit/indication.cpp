@@ -33,7 +33,7 @@ int set_param(int par, int item)
 
 int Indic_onLBMessage(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);

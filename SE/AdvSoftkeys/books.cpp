@@ -32,7 +32,7 @@ int isImageViewerBook(BOOK *bk)
 
 int isSoftkeysBook(BOOK *bk)
 {
-  if (bk->onClose==(void*)MyBook_OnClose)return 1;
+  if (bk->onClose == MyBook_OnClose)return 1;
   return 0;
 };
 

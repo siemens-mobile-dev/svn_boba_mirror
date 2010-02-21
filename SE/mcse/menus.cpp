@@ -293,7 +293,7 @@ int MMS_On_Msg(GUI_MESSAGE * msg)
   wchar_t icn=0;
   int d;
   STRID str=LGP_NULL;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     d=GUIonMessage_GetCreatedItemIndex(msg);

@@ -333,7 +333,7 @@ int onExit_JavaList(void *data, BOOK * book)
 {
   if (java_list_menu)
   {
-    GUI_Free((GUI*)java_list_menu);
+    GUI_Free(java_list_menu);
     java_list_menu=0;
   }
   if (java_list)
@@ -348,7 +348,7 @@ int onExit_JavaList(void *data, BOOK * book)
 
 int java_list_callback(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     java_list_elem * elem=(java_list_elem*)ListElement_GetByIndex(java_list,GUIonMessage_GetCreatedItemIndex(msg));
@@ -394,11 +394,11 @@ int CreateJavaList(void *data, BOOK * book)
     }
   }
   JavaDialog_Close(sp1);
-  if (java_list_menu) GUI_Free((GUI*)java_list_menu);
+  if (java_list_menu) GUI_Free(java_list_menu);
   java_list_menu=CreateListObject(book,0);
   GuiObject_SetTitleText(java_list_menu,STR("Java"));
   SetNumOfMenuItem(java_list_menu,java_list->FirstFree);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)java_list_menu,java_list_callback);
+  OneOfMany_SetonMessage(java_list_menu,java_list_callback);
   SetCursorToItem(java_list_menu,0);
   GUIObject_Softkey_SetAction(java_list_menu,ACTION_BACK,DestroyJavaList);
   GUIObject_Softkey_SetAction(java_list_menu,ACTION_LONG_BACK,ExitJavaList);
@@ -466,7 +466,7 @@ int but_list_callback(GUI_MESSAGE * msg)
   int icon_id;
   int count;
   char * param=0;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int item_num=GUIonMessage_GetCreatedItemIndex(msg);
@@ -564,7 +564,7 @@ int ExitButtonList(void *data, BOOK * book)
 {
   if (but_list)
   {
-    GUI_Free((GUI*)but_list);
+    GUI_Free(but_list);
     but_list=0;
   }
   return(0);
@@ -649,12 +649,12 @@ int CreateButtonList(void *data, BOOK * book)
   if (but_list)
   {
     but_pos=ListMenu_GetSelectedItem(but_list);
-    GUI_Free((GUI*)but_list);
+    GUI_Free(but_list);
   }
   but_list=CreateListObject(book,0);
   GuiObject_SetTitleText(but_list,STR("Buttons"));
   SetNumOfMenuItem(but_list,10);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)but_list,but_list_callback);
+  OneOfMany_SetonMessage(but_list,but_list_callback);
   SetCursorToItem(but_list,but_pos);
   GUIObject_Softkey_SetAction(but_list,ACTION_BACK,DestroyButList);
   GUIObject_Softkey_SetAction(but_list,ACTION_LONG_BACK,CancelButtonList);
@@ -704,7 +704,7 @@ void onEnter_ModeList(BOOK * book, void *)
 
 int list_callback(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     if (GUIonMessage_GetCreatedItemIndex(msg))
@@ -726,12 +726,12 @@ int CreateModeList(void *data, BOOK * book)
   if (mode_list)
   {
     mode_list_pos=ListMenu_GetSelectedItem(mode_list);
-    GUI_Free((GUI*)mode_list);
+    GUI_Free(mode_list);
   }
   mode_list=CreateListObject(book,0);
   GuiObject_SetTitleText(mode_list,STR("Press Mode"));
   SetNumOfMenuItem(mode_list,2);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)mode_list,list_callback);
+  OneOfMany_SetonMessage( mode_list,list_callback);
   SetCursorToItem(mode_list,mode_list_pos);
   GUIObject_Softkey_SetAction(mode_list,ACTION_BACK,DestroyModeList);
   GUIObject_Softkey_SetAction(mode_list,ACTION_LONG_BACK,DestroyModeList);
@@ -745,12 +745,12 @@ int ExitShortcutsSet(void *data, BOOK *)
 {
   if (mode_list)
   {
-    GUI_Free((GUI*)mode_list);
+    GUI_Free(mode_list);
     mode_list=0;
   }
   if (but_list)
   {
-    GUI_Free((GUI*)but_list);
+    GUI_Free(but_list);
     but_list=0;
   }
   if (buffer)

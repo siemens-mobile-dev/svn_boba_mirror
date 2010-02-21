@@ -17,7 +17,7 @@
         <debug>1</debug>
         <option>
           <name>GProcessorMode</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>ExePath</name>
@@ -34,7 +34,7 @@
         <option>
           <name>Variant</name>
           <version>5</version>
-          <state>0</state>
+          <state>11</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -42,7 +42,7 @@
         </option>
         <option>
           <name>GInterwork</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GStackAlign</name>
@@ -55,7 +55,7 @@
         </option>
         <option>
           <name>Input description</name>
-          <state></state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>Output variant</name>
@@ -64,7 +64,7 @@
         </option>
         <option>
           <name>Output description</name>
-          <state></state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -91,15 +91,15 @@
         </option>
         <option>
           <name>RTDescription</name>
-          <state></state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\dl4tptnnl8n.h</state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpannl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state>dl-stnl0.r79</state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpannl8n.r79</state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -107,7 +107,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state></state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -124,7 +124,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state></state>
+          <state>default	None</state>
         </option>
       </data>
     </settings>
@@ -137,7 +137,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -263,7 +263,7 @@
         </option>
         <option>
           <name>CCMultibyteSupport</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -283,7 +283,7 @@
         </option>
         <option>
           <name>CCLangSelect</name>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>Gono4ki.d79</state>
+          <state>Gono4ki.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -560,11 +560,11 @@
         <option>
           <name>FormatVariant</name>
           <version>8</version>
-          <state>17</state>
+          <state>2</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
-          <state></state>
+          <state>(None for the selected format)</state>
         </option>
         <option>
           <name>XDefines</name>
@@ -604,7 +604,7 @@
         </option>
         <option>
           <name>XIncludes</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\LIB\</state>
         </option>
         <option>
           <name>ModuleStatus</name>
@@ -612,11 +612,11 @@
         </option>
         <option>
           <name>XclOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>XclFile</name>
-          <state>lnk0t.xcl</state>
+          <state>..\include\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -704,11 +704,11 @@
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
-          <state></state>
+          <state>main</state>
         </option>
         <option>
           <name>DebugInformation</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>RuntimeControl</name>
@@ -736,7 +736,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state></state>
+          <state>Gono4ki.sim</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -750,7 +750,7 @@
         </option>
         <option>
           <name>xcOverrideProgramEntryLabel</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>xcProgramEntryLabelSelect</name>
@@ -961,6 +961,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

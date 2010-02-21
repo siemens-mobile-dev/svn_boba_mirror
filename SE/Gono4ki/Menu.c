@@ -96,7 +96,7 @@ void OnEntINM(BOOK * bk, void *)
 int SetTitlePunktsINM(GUI_MESSAGE * msg)
 {
   int item, ID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -145,7 +145,7 @@ void CreateINM(MyBook*bk, int x)
   ((MyBook*)bk)->gui=INM;
   GuiObject_SetTitleText(INM, Str2ID(L"Картинки",0,SID_ANY_LEN));
   SetNumOfMenuItem(INM, 4);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)INM,SetTitlePunktsINM);
+  OneOfMany_SetonMessage(INM,SetTitlePunktsINM);
   SetCursorToItem(INM,x);
   SetMenuItemStyle(INM,3);
   GUIObject_Softkey_SetAction(INM,ACTION_BACK,ExitINM);
@@ -237,7 +237,7 @@ void OnEntMNM(BOOK * bk, void *)
 int SetTitlePunktsMNM(GUI_MESSAGE * msg)
 {
   int item, ID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -285,11 +285,9 @@ void Set(int item)
   }
 }
 
-void NewKey1(void * p, int i1, int i2, int i3, int i4)
+void NewKey1(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 {
-  void(*OldKey)(void*, int, int, int, int);
-  OldKey=((void(*)(void*, int, int, int, int))((MyBook*)isBookX(NameMyElf, 0))->OldKey1);
-  OldKey(p, i1, i2, i3, i4);
+  ((MyBook*)isBookX(NameMyElf, 0))->OldKey1(p, i1, i2, i3, i4);
   int item=ListMenu_GetSelectedItem(MyBK()->gui);
   Set(item);
 }
@@ -302,15 +300,15 @@ void CreateMNM(MyBook*bk, int x)
   ((MyBook*)bk)->gui=MNM;
   GuiObject_SetTitleText(MNM, Str2ID(L"Музыка",0,SID_ANY_LEN));
   SetNumOfMenuItem(MNM, 7);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)MNM,SetTitlePunktsMNM);
+  OneOfMany_SetonMessage(MNM,SetTitlePunktsMNM);
   SetCursorToItem(MNM,x);
   SetMenuItemStyle(MNM,3);
   GUIObject_Softkey_SetAction(MNM,ACTION_BACK,ExitMNM);
   GUIObject_Softkey_SetAction(MNM,ACTION_LONG_BACK,ExitMNM);
   Set(x);
   //GUIObject_Softkey_SetAction(MNM,ACTION_SELECT1,OnEntMNM);
-  bk->OldKey1=(void*)DISP_OBJ_GetOnKey(MNM->DISP_OBJ);
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (MNM->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)NewKey1);
+  bk->OldKey1 = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(MNM) );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(MNM) ), NewKey1);
   ShowWindow(MNM);
 }
 
@@ -366,7 +364,7 @@ void OnEntNM(BOOK * bk, void *)
 int SetTitlePunktsNM(GUI_MESSAGE * msg)
 {
   int item, ID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -407,7 +405,7 @@ int SetTitlePunktsMR(GUI_MESSAGE * msg)
 {
   int item;
   int ID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -441,7 +439,7 @@ void MenuResultat(MyBook*bk)
   ((MyBook*)bk)->gui=MR;
   GuiObject_SetTitleText(MR, Str2ID(L"Результаты",0,SID_ANY_LEN));
   SetNumOfMenuItem(MR, 3);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)MR,SetTitlePunktsMR);
+  OneOfMany_SetonMessage(MR,SetTitlePunktsMR);
   SetCursorToItem(MR,0);
   SetMenuItemStyle(MR,0);
   GUIObject_Softkey_SetAction(MR,ACTION_BACK,ExitNM);
@@ -461,7 +459,7 @@ void CreateNM(MyBook*bk)
   ((MyBook*)bk)->gui=NM;
   GuiObject_SetTitleText(NM, Str2ID(L"Настройки",0,SID_ANY_LEN));
   SetNumOfMenuItem(NM, 2);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)NM,SetTitlePunktsNM);
+  OneOfMany_SetonMessage(NM,SetTitlePunktsNM);
   SetCursorToItem(NM,0);
   SetMenuItemStyle(NM,0);
   GUIObject_Softkey_SetAction(NM,ACTION_BACK,ExitNM);
@@ -511,7 +509,7 @@ void CreateGameM(MyBook*bk)
   ((MyBook*)bk)->gui=GameM;
   GuiObject_SetTitleText(GameM, Str2ID(L"Выбор уровня",0,SID_ANY_LEN));
   SetNumOfMenuItem(GameM, 3);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)GameM,SetTitlePunktsMR);
+  OneOfMany_SetonMessage(GameM,SetTitlePunktsMR);
   SetCursorToItem(GameM,0);
   SetMenuItemStyle(GameM,0);
   GUIObject_Softkey_SetAction(GameM,ACTION_BACK,ExitNM);
@@ -549,7 +547,7 @@ int SetTitlePunktsGM(GUI_MESSAGE * msg)
 {
   int item;
   int ID;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
     case 1:
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -612,7 +610,7 @@ int CreateGM(void*, BOOK*bk)
   ID=Str2ID(L"Gono4ki",0,SID_ANY_LEN);
   GuiObject_SetTitleText(GM, ID);
   SetNumOfMenuItem(GM, 5);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)GM,SetTitlePunktsGM);
+  OneOfMany_SetonMessage(GM,SetTitlePunktsGM);
   SetCursorToItem(GM,0);
   SetMenuItemStyle(GM,3);
   GUIObject_Softkey_SetAction(GM,ACTION_BACK,ExitGM);

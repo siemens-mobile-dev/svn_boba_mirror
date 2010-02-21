@@ -10,10 +10,7 @@
     bool checked;
   }REMIND;
   
-  typedef struct 
-  {
-    char dummy[0x2C]; 
-  } GUI_REMIND;
+  typedef GUI_type GUI_REMIND;
   
   typedef struct 
   {

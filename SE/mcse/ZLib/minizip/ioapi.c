@@ -6,6 +6,7 @@
    Copyright (C) 1998-2005 Gilles Vollant
 */
 
+#include "..\..\..\include\types.h"
 #include "..\zlib.h"
 #include "ioapi.h"
 

@@ -883,7 +883,7 @@ void ChangeName(int indx, BOOK * book, int snd)
   header_name = Str2ID(LG_NAME,0,SID_ANY_LEN);
   text = Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN);
   FREE_GUI(bk->text_input);
-  bk->text_input=(GUI *)CreateStringInput(0,
+  bk->text_input = CreateStringInput(0,
                                           VAR_HEADER_TEXT(header_name),
                                           VAR_STRINP_MIN_LEN(1),
                                           VAR_STRINP_MAX_LEN(MAXELEMS(Pets[indx].Status.name)),
@@ -1411,7 +1411,7 @@ int NewKey(int key, int r1 , int mode)
 // ----------------------------------------------------------------------------
 void DrawParams(int y)
 {
-  void *GC_DISP=get_DisplayGC ();
+  GC *GC_DISP=get_DisplayGC ();
   for(int i=0; i<Pets[0].Status.Count; i++)
   {
     putchar(GC_DISP, Pets[i].x, Pets[i].y - y, Pets[i].img_size, Pets[i].img_size, img_names[Pets[i].Status.ImageStatus].ImageID);
@@ -1950,7 +1950,7 @@ void onCloseTamagochiBook(BOOK * book)
 
     if(bk->gui)
     {
-      GUI_Free((GUI*)bk->gui);
+      GUI_Free( bk->gui);
       bk->gui = 0;
     }
 

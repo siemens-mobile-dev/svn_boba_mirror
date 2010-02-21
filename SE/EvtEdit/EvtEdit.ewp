@@ -21,7 +21,7 @@
         </option>
         <option>
           <name>GProcessorMode</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>ExePath</name>
@@ -38,7 +38,7 @@
         <option>
           <name>Variant</name>
           <version>5</version>
-          <state>0</state>
+          <state>11</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -107,7 +107,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state></state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -137,7 +137,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -480,7 +480,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.r79</state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>EvtEdit.d79</state>
+          <state>EvtEdit.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -560,7 +560,7 @@
         <option>
           <name>FormatVariant</name>
           <version>8</version>
-          <state>17</state>
+          <state>2</state>
         </option>
         <option>
           <name>SecondaryOutputFile</name>
@@ -612,11 +612,11 @@
         </option>
         <option>
           <name>XclOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\config\lnkarm.xcl</state>
+          <state>..\include\1.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -704,11 +704,11 @@
         </option>
         <option>
           <name>xcProgramEntryLabel</name>
-          <state>__program_start</state>
+          <state>main</state>
         </option>
         <option>
           <name>DebugInformation</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>RuntimeControl</name>
@@ -736,7 +736,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>templproj.a79</state>
+          <state>EvtEdit.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -750,7 +750,7 @@
         </option>
         <option>
           <name>xcOverrideProgramEntryLabel</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>xcProgramEntryLabelSelect</name>
@@ -961,6 +961,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

@@ -138,6 +138,7 @@
         <option>
           <name>CCDefines</name>
           <state>RUS</state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -962,6 +963,7 @@
           <name>CCDefines</name>
           <state>NDEBUG</state>
           <state>ENG</state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1786,6 +1788,7 @@
           <name>CCDefines</name>
           <state>NDEBUG</state>
           <state>RUS</state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

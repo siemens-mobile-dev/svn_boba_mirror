@@ -137,7 +137,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -736,7 +736,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>templproj.a79</state>
+          <state>7zlib.a79</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -960,7 +960,8 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>NDEBUG</state>
+          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1638,7 +1639,7 @@
         </option>
         <option>
           <name>XAROutput</name>
-          <state>D:\PhoneWork\svn\SE\7zlib\Release\Exe\7zlib.r79</state>
+          <state>D:\svn\se_z610_new\7zlib\Release\Exe\7zlib.r79</state>
         </option>
       </data>
     </settings>

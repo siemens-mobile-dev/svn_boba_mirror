@@ -11,7 +11,7 @@ void elf_exit(void)
 
 int main(u16 *exename,u16 *filename)
 {
-  GetBattaryState((int const*)1 , &bat);
+  GetBattaryState(NULL , &bat);
   snwprintf(ws,193,L"Temp = %d C",bat.SystemTemperature);
   MessageBox(0x6fFFFFFF,Str2ID(ws,0,SID_ANY_LEN),0, 1 ,5000 , 0);
   SUBPROC(elf_exit);

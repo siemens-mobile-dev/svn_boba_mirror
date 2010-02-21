@@ -41,8 +41,8 @@ typedef struct
   BOOK  book;
   GUI_TABMENUBAR * gui;
   char * filebuf;
-  void * oldOnKey;
-  void * oldOnKey1;
+  DISP_OBJ_ONKEY_METHOD oldOnKey;
+  DISP_OBJ_ONKEY_METHOD oldOnKey1;
   LIST * session_list;
   LIST * elfs_list;
 }MyBOOK;
@@ -155,7 +155,7 @@ int GetActiveTab()
 
 int isBookManager(BOOK * struc)
 {
-  if (struc->onClose==(void*)onMyBookClose)
+  if (struc->onClose == onMyBookClose)
   {
     return(1);
   }
@@ -223,10 +223,10 @@ int w1251toUNICODE (u16 * wstr)
 // проверка, обрабатывает ли Ѕ≈…«_ѕ≈…ƒ∆ книги событие
 int CheckEv(BOOK * bk, int ev)
 {
-  PAGE_MSG * pm;
+  const PAGE_MSG * pm;
   if (bk->base_page)
   {
-    pm=(PAGE_MSG *)bk->base_page->msg_lst;
+    pm = bk->base_page->msg_lst;
     if (pm)
     {
       while ((pm->msg) && (pm->proc))
@@ -385,7 +385,7 @@ int onRootListChanged(void * r0, BOOK * bk)
   {
     // если √”» есть, то убили
     ActiveTAB=GetActiveTab();
-    if (((MyBOOK*)bk)->gui) GUI_Free((GUI*)((MyBOOK*)bk)->gui);
+    if (((MyBOOK*)bk)->gui) GUI_Free(((MyBOOK*)bk)->gui);
 
     // создали меню
     CreateMenu(ActiveTAB,bk);
@@ -407,9 +407,9 @@ int onLBMessage(GUI_MESSAGE * msg)
   MyBOOK * myBook = (MyBOOK *)GUIonMessage_GetBook(msg);
   int item;
   SESSION_ITEM * si;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
-  case 1:
+  case LISTMSG_GetItem:
     item=GUIonMessage_GetCreatedItemIndex(msg);
     si=(SESSION_ITEM *)ListElement_GetByIndex(myBook->session_list,item);
     SetMenuItemText0(msg,TextCopyId(si->session_name));
@@ -424,9 +424,9 @@ int onLBMessage1(GUI_MESSAGE * msg)
   MyBOOK * myBook = (MyBOOK *)GUIonMessage_GetBook(msg);
   int item;
   SESSION_ITEM * si;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
-  case 1:
+  case LISTMSG_GetItem:
     if (myBook->elfs_list->FirstFree)
     {
       item=GUIonMessage_GetCreatedItemIndex(msg);
@@ -572,18 +572,16 @@ void Copyright(BOOK * book,void * lt)
 };
 
 // патченый onKey от своей менюхи...;)
-void myOnKey(void *p, int i1, int i2, int i3, int i4)
+void myOnKey(DISP_OBJ *p, int i1, int i2, int i3, int i4)
 {
-  void (*OldOnKey)(void *, int, int, int, int);
-
   MyBOOK * myBook = (MyBOOK *) FindBook(isBookManager);
-  OldOnKey=(void(*)(void *,int,int,int,int))myBook->oldOnKey;
-  OldOnKey(p,i1,i2,i3,i4);
+
+  myBook->oldOnKey(p,i1,i2,i3,i4);
   if ((i4==KBD_SHORT_RELEASE)||(i4==KBD_LONG_PRESS))
   {
     if (i1==KEY_DEL)
     {
-      onDelPressed((BOOK*)myBook,0);
+      onDelPressed( &myBook->book,0);
     }
     if (i1==KEY_DIEZ)
     {
@@ -596,7 +594,7 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
       {
         UI_Event(RETURN_TO_STANDBY_EVENT);
       }
-      CloseMyBook((BOOK*)myBook,0);
+      CloseMyBook( &myBook->book,0);
     }
     char * sp;
     get_file(L"shortcuts.ini",&sp);
@@ -633,7 +631,7 @@ void myOnKey(void *p, int i1, int i2, int i3, int i4)
           }
         }
         mfree(param);
-        CloseMyBook((BOOK*)myBook,0);
+        CloseMyBook( &myBook->book,0);
       }
       mfree(short_buf);
     }
@@ -674,18 +672,16 @@ int StartElf(wchar_t * path , char * name)
 
 
 // патченый onKey от вкладки "ЁЋ№‘џ"...;)
-void myOnKey1(void *p, int i1, int i2, int i3, int i4)
+void myOnKey1(DISP_OBJ *p, int i1, int i2, int i3, int i4)
 {
-  void (*OldOnKey)(void *, int, int, int, int);
-
   MyBOOK * myBook = (MyBOOK *) FindBook(isBookManager);
-  OldOnKey=(void(*)(void *,int,int,int,int))myBook->oldOnKey;
-  OldOnKey(p,i1,i2,i3,i4);
+
+  myBook->oldOnKey(p,i1,i2,i3,i4);
   if ((i4==KBD_SHORT_RELEASE)||(i4==KBD_LONG_PRESS))
   {
     if (i1==KEY_DEL)
     {
-      onDelPressed1((BOOK*)myBook,0);
+      onDelPressed1( &myBook->book,0);
     }
     if (i1==KEY_DIEZ)
     {
@@ -700,7 +696,7 @@ void myOnKey1(void *p, int i1, int i2, int i3, int i4)
       UI_Event(RETURN_TO_STANDBY_EVENT);
     }
       */
-      CloseMyBook((BOOK*)myBook,0);
+      CloseMyBook( &myBook->book,0);
 
     }
     char * sp;
@@ -723,7 +719,7 @@ void myOnKey1(void *p, int i1, int i2, int i3, int i4)
             MESSAGE(Str2ID(ms,5,3));
           }
         mfree(param);
-        CloseMyBook((BOOK*)myBook,0);
+        CloseMyBook( &myBook->book,0);
       }
       mfree(short_buf);
     }
@@ -745,14 +741,14 @@ GUI_TABMENUBAR * CreateGuiList(int tab_pos, BOOK * bk)
   GUI_LIST * lo;
   blist =lo =CreateListObject(bk,0);
   elist =CreateListObject(bk,0);
-//  bk->gui=(GUI*)lo;
+//  bk->gui=lo;
   CreateBookLst((MyBOOK*)bk);
   p[0]=Str2ID (L"Heap : ",0,7);
   p[1]=int2strID (GetFreeBytesOnHeap());
   GuiObject_SetTitleText(lo,Str2ID(p,5,2));
 
 
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)lo,onLBMessage);
+  OneOfMany_SetonMessage(lo,onLBMessage);
   SetNumOfMenuItem(lo,blistcnt);
   if (blistpos>blistcnt)
   {
@@ -773,16 +769,16 @@ GUI_TABMENUBAR * CreateGuiList(int tab_pos, BOOK * bk)
   GUIObject_Softkey_SetAction(lo,1,Copyright);
   GUIObject_Softkey_SetText(lo,1,STR("About"));
 
-  ((MyBOOK*)bk)->oldOnKey=(void*)DISP_OBJ_GetOnKey(GUIObj_GetDISPObj(lo));
+  ((MyBOOK*)bk)->oldOnKey = DISP_OBJ_GetOnKey(GUIObj_GetDISPObj(lo));
 
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (GUIObj_GetDISPObj(lo)), (DISP_OBJ_ONKEY_METHOD)myOnKey );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (GUIObj_GetDISPObj(lo)), myOnKey );
   //---------------
 
 
 
   GuiObject_SetTitleText(elist,(STR("Elfs")));
   SetCursorToItem(elist,0);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)elist,onLBMessage1);
+  OneOfMany_SetonMessage(elist,onLBMessage1);
   SetNumOfMenuItem(elist,elistcnt);
   if (elistpos>elistcnt)
   {
@@ -809,9 +805,9 @@ GUI_TABMENUBAR * CreateGuiList(int tab_pos, BOOK * bk)
     ListMenu_SetNoItemText(elist,STR("No elfs in memory"));
   }
 
-  ((MyBOOK*)bk)->oldOnKey1=(void*)DISP_OBJ_GetOnKey(GUIObj_GetDISPObj(elist));
+  ((MyBOOK*)bk)->oldOnKey1 = DISP_OBJ_GetOnKey(GUIObj_GetDISPObj(elist));
 
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (GUIObj_GetDISPObj(elist)), (DISP_OBJ_ONKEY_METHOD)myOnKey1 );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (GUIObj_GetDISPObj(elist)), myOnKey1 );
 
 
   GUI_TABMENUBAR * tab = CreateTabMenuBar(bk);
@@ -914,7 +910,7 @@ void onMyBookClose(BOOK * book)
   }
     if (java_list_menu)
   {
-    GUI_Free((GUI*)java_list_menu);
+    GUI_Free(java_list_menu);
     java_list_menu=0;
   }
   if (java_list)
@@ -925,12 +921,12 @@ void onMyBookClose(BOOK * book)
   }
   if (mode_list)
   {
-    GUI_Free((GUI*)mode_list);
+    GUI_Free(mode_list);
     mode_list=0;
   }
   if (but_list)
   {
-    GUI_Free((GUI*)but_list);
+    GUI_Free(but_list);
     but_list=0;
   }
 /*  if (str_inp)
@@ -953,7 +949,7 @@ void onMyBookClose(BOOK * book)
   SessoinListsFree(book);
 
   //убили гуи
-  if (((MyBOOK*)book)->gui) GUI_Free((GUI*)((MyBOOK*)book)->gui);
+  if (((MyBOOK*)book)->gui) GUI_Free(((MyBOOK*)book)->gui);
 
   // выгрузили иконки
   int i;
@@ -1049,7 +1045,7 @@ __root int CreateBookList(void * r0, BOOK * bk)
     int tab_pos;
     if (!FirstTab) tab_pos=ActiveTAB;
     else tab_pos=FirstTab-1;
-    CreateMenu(tab_pos,(BOOK*)myBook);
+    CreateMenu(tab_pos, &myBook->book);
   }
   return(0);
 }
@@ -1070,7 +1066,7 @@ int NewKey(int key, int r1 , int mode)
           BookManager_Book = (MyBOOK *)malloc(sizeof(MyBOOK));
           memset(BookManager_Book,0,sizeof(MyBOOK));
           CreateBook(BookManager_Book,onMyBookClose,&BookManager_Base_Page,"BookManager",-1,0);
-          BookObj_GotoPage((BOOK*)BookManager_Book,&BookManager_Main_Page);
+          BookObj_GotoPage( &BookManager_Book->book, &BookManager_Main_Page);
           return(-1);
         }
         else

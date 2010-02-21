@@ -185,7 +185,7 @@ void GUI_REMIND_OnRedraw(DISP_OBJ_REMIND *db,int ,int,int)
 
     int icon_id=0xFFFF;
     iconidname2id(L"CALE_RN_APPOINTMENT_STATUS_ICN",-1,&icon_id);
-    void *gc=get_DisplayGC();
+    GC *gc=get_DisplayGC();
     putchar(gc,0,0,0,0,icon_id);
     SetFont(FONT_E_20I);
     DrawLine(Str2ID(rem->text,0,SID_ANY_LEN),2,0,height/2-10,width,height,20,clWhite);
@@ -234,7 +234,7 @@ void Reminder_onOK(BOOK *bk, void *)
   int res=GuiRemind_NextRemind(mbk->remind);
   if (res==0)
   {
-    GUI_Free((GUI*)mbk->remind);
+    GUI_Free(mbk->remind);
     mbk->remind=0;
     BookObj_Hide(bk, 0);
   }
@@ -331,15 +331,15 @@ void GUI_REMIND_destr(DISP_DESC *desc)
 GUI_REMIND *GUI_REMIND_Create(BOOK *bk)
 {
   GUI_REMIND *gui_read=new GUI_REMIND;
-  if (!CreateObject((GUI*)gui_read,GUI_REMIND_destr, GUI_REMIND_constr,bk,0,0,0))
+  if (!CreateObject( gui_read,GUI_REMIND_destr, GUI_REMIND_constr,bk,0,0,0))
   {
     delete gui_read;
     return 0;    
   }
-  DispObject_SetLayerColor( GUIObj_GetDISPObj((GUI*)gui_read), BG_COLOR);
-  if (bk) addGui2book(bk,(GUI*)gui_read);
-  DispObject_SetLayerColor( GUIObj_GetDISPObj((GUI*)gui_read), BG_COLOR);
-  DispObject_SetRefreshTimer( GUIObj_GetDISPObj((GUI*)gui_read), 1000);
+  DispObject_SetLayerColor( GUIObj_GetDISPObj( gui_read), BG_COLOR);
+  if (bk) addGui2book(bk, gui_read);
+  DispObject_SetLayerColor( GUIObj_GetDISPObj( gui_read), BG_COLOR);
+  DispObject_SetRefreshTimer( GUIObj_GetDISPObj( gui_read), 1000);
   return gui_read;
 };
 
@@ -352,14 +352,14 @@ void GuiRemind_AddNote(GUI_REMIND *g, REMIND *rem)
 {
   if (!g)return;
   if (!rem)return;
-  DISP_OBJ_REMIND *DO=(DISP_OBJ_REMIND*) GUIObj_GetDISPObj((GUI*)g);
+  DISP_OBJ_REMIND *DO=(DISP_OBJ_REMIND*) GUIObj_GetDISPObj(g);
   if (!DO)return;
   ListElement_Add(DO->rems,rem);
 };
 
 void GuiRemind_CheckSelected(GUI_REMIND *g)
 {
-  GUI *gb=(GUI*)g;
+  GUI *gb = g;
   DISP_OBJ_REMIND *db= (DISP_OBJ_REMIND*)GUIObj_GetDISPObj(gb);
   if (db->rems && db->num<db->rems->FirstFree)
   {
@@ -377,7 +377,7 @@ void GuiRemind_CheckSelected(GUI_REMIND *g)
 
 int GuiRemind_NextRemind(GUI_REMIND *g)
 {
-  GUI *gb=(GUI*)g;
+  GUI *gb = g;
   DISP_OBJ_REMIND *db=(DISP_OBJ_REMIND*)GUIObj_GetDISPObj(gb);
   if (db->rems)
   {

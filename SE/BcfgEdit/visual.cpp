@@ -35,7 +35,7 @@ void ColorGuiOnRedraw(DISP_OBJ_COLOR *db,int ,int,int)
   RECT rc_old;
   int font_old, gc_xx;
   int font=FONT_E_20R, fsize=20;
-  void *gc=get_DisplayGC();
+  GC *gc=get_DisplayGC();
   int column_height, column_width;
   int start_column, y_line;
   wchar_t ustr[32];
@@ -214,7 +214,7 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type)
   GUI_COLOR *gui_color=new GUI_COLOR;
   DISP_OBJ_COLOR *disp_obj;
 
-  if (!CreateObject((GUI *)gui_color,EditColorGui_destr,EditColorGui_constr, &myBook->book,0,0,0))
+  if (!CreateObject( gui_color,EditColorGui_destr,EditColorGui_constr, &myBook->book,0,0,0))
   {
     myBook->color=NULL;
     delete gui_color;
@@ -239,8 +239,8 @@ GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type)
   }
   disp_obj->type=type;
 
-  myBook->color=(GUI *)gui_color;
-  if (myBook) addGui2book(&myBook->book,(GUI*)gui_color);
+  myBook->color = gui_color;
+  if (myBook) addGui2book(&myBook->book, gui_color);
   //GUI_SetStyle(myBook->color,4);
   win12512unicode(ustr,myBook->cur_hp->name,MAXELEMS(ustr)-1);
   GuiObject_SetTitleText(myBook->color, Str2ID(ustr,0,SID_ANY_LEN));
@@ -277,7 +277,7 @@ void DrawOwnRect(int _x1, int _y1,int _x2 ,int _y2,int pen_color,int brush_color
   if (_y1>_y2){ y1=_y2;  y2=_y1;} else { y1=_y1;  y2=_y2;}
   if (y1==y2 || x1==x2)
   {
-    void *gc=get_DisplayGC();
+    GC *gc=get_DisplayGC();
     GC_SetPenColor(gc,pen_color);
     GC_SetBrushColor(gc,brush_color);
     GC_DrawLine(gc,x1,y1,x2,y2);
@@ -301,7 +301,7 @@ void CoordinatesGuiOnRedraw(DISP_OBJ_COORD *db,int ,int,int)
   RECT rc_old, rc_new;
   int font_old, gc_xx;
   int font=FONT_E_20R, fsize=20;
-  void *gc=get_DisplayGC();
+  GC *gc=get_DisplayGC();
   wchar_t ustr[32];
   int old_pen;
   int scr_w=Display_GetWidth(0), scr_h=Display_GetHeight(0);
@@ -528,7 +528,7 @@ GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook, int type)
 {
   GUI_COORDINATES *gui_coord=new GUI_COORDINATES;
   DISP_OBJ_COORD *disp_obj;
-  if (!CreateObject((GUI *)gui_coord,EditCoordinatesGui_destr,EditCoordinatesGui_constr, &myBook->book,0,0,0))
+  if (!CreateObject( gui_coord,EditCoordinatesGui_destr,EditCoordinatesGui_constr, &myBook->book,0,0,0))
   {
     delete gui_coord;
     return 0;
@@ -550,7 +550,7 @@ GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook, int type)
   }
   disp_obj->type=type;
   disp_obj->mb=myBook;
-  myBook->coord=(GUI *)gui_coord;
+  myBook->coord = gui_coord;
   if (myBook) addGui2book(&myBook->book,myBook->coord);
 
   GUI_SetStyle(myBook->coord,4);
@@ -650,7 +650,7 @@ void FontSelectGuiOnRedraw(DISP_OBJ_FONT_SEL *db,int, RECT *cur_rc,int)
 {
 
   int font_old, gc_xx;
-  void *gc=get_DisplayGC();
+  GC *gc=get_DisplayGC();
   int x1,y1,x2,y2;
   int y_offs;
   STRID selfont;
@@ -752,7 +752,7 @@ GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook)
   DISP_OBJ_FONT_SEL *disp_obj;
 
   wchar_t ustr[64];
-  if (!CreateObject((GUI *)gui_fontsel,FontSelectGui_destr,FontSelectGui_constr, &myBook->book,0,0,0))
+  if (!CreateObject( gui_fontsel,FontSelectGui_destr,FontSelectGui_constr, &myBook->book,0,0,0))
   {
     delete gui_fontsel;
     return 0;
@@ -764,7 +764,7 @@ GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook)
   disp_obj->cur_pos=GetIdByFontId(*((int *)((char *)myBook->cur_hp+sizeof(CFG_HDR))));
 
 
-  myBook->font_select=(GUI *)gui_fontsel;
+  myBook->font_select = gui_fontsel;
   if (myBook) addGui2book(&myBook->book,myBook->font_select);
   //GUI_SetStyle(myBook->font_select,4);
   win12512unicode(ustr,myBook->cur_hp->name,MAXELEMS(ustr)-1);
@@ -932,7 +932,7 @@ int OnMessage(GUI_MESSAGE * msg)
   int d;
   STRID str=LGP_NULL;
   FLIST *f;
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     d=GUIonMessage_GetCreatedItemIndex(msg);

@@ -210,7 +210,7 @@ int status_list_callback(GUI_MESSAGE * msg)
   int str_id;
   wchar_t icon_id;
   wchar_t ws[128];
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int curitem=GUIonMessage_GetCreatedItemIndex(msg);
@@ -283,13 +283,10 @@ void Status_onEnter(BOOK * book, void *)
   //BookObj_ReturnPage(book,ACCEPT_EVENT);
 }
 
-void Status_OnKey(void *p, int i1, int i2, int i3, int i4)
+void Status_OnKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 {
-  void (*OldOnKey)(void *, int, int, int, int);
-
   MyBOOK * bk = (MyBOOK *) FindBook(isTamagochiBook);
-  OldOnKey=(void(*)(void *,int,int,int,int))bk->Status_oldOnKey;
-  OldOnKey(p,i1,i2,i3,i4);
+  bk->Status_oldOnKey(p,i1,i2,i3,i4);
   if(i4==KBD_SHORT_RELEASE)
   {
     int num = i1 - KEY_DIGITAL_0;
@@ -332,8 +329,8 @@ int CreateStatusList(void *data, BOOK * book)
   GUIObject_Softkey_SetAction(bk->stat_list,ACTION_LONG_BACK,CancelStatusList);
   GUIObject_Softkey_SetAction(bk->stat_list,ACTION_SELECT1,Status_onEnter);
 
-  bk->Status_oldOnKey = (void *)DISP_OBJ_GetOnKey(bk->stat_list->DISP_OBJ);
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC (bk->stat_list->DISP_OBJ), (DISP_OBJ_ONKEY_METHOD)Status_OnKey );
+  bk->Status_oldOnKey = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(bk->stat_list) );
+  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(bk->stat_list) ), Status_OnKey );
 
   CountSex = 0;
 

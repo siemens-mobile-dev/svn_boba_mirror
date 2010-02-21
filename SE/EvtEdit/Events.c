@@ -530,7 +530,7 @@ void Saver_OnBack(BOOK *bk, void *)
 //wchar_t *str[]={L"На карту",L"На телефон"};
 int Saver_onLBMessage(GUI_MESSAGE * msg)
 {
-  switch(msg->msg)
+  switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);

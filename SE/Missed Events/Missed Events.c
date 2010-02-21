@@ -284,8 +284,8 @@ void onTimer(u16 timerID, LPARAM lparam)
 
     if(cfg_mode)
     {
-        int* me=MissedEvents();
-        char mestatus=*(char*)me;
+        char* me=MissedEvents();
+        char mestatus=*me;
         if( !(mestatus & checkevents) )
         {
             if(modetimer)
@@ -300,8 +300,8 @@ void onTimer(u16 timerID, LPARAM lparam)
 
     if((!disabled) && (!disabled_by_mode))
     {
-        int* me=MissedEvents();
-        char mestatus=*(char*)me;
+        char* me=MissedEvents();
+        char mestatus=*me;
         if( mestatus & checkevents )
         {
             if(state == WAIT)

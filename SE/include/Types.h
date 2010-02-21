@@ -182,10 +182,10 @@ typedef struct
 
 struct PAGE_DESC;
 
-typedef struct
+typedef struct BOOK_
 {
   XBOOK * xbook;
-  void * onClose;
+  void (*onClose)(struct BOOK_*);
   int    BookID;
   struct PAGE_DESC * current_page;
   struct PAGE_DESC  * base_page;
@@ -840,6 +840,11 @@ enum LISTMSGS {
   LISTMSG_ItemSelectionChanged=9,
   LISTMSG_DrawComplete=10,
   LISTMSG_ListBusy=11,
+
+  LISTMSG_KeyRepeat = 12,
+  LISTMSG_StringInputCharProtYesCB = 13,
+  LISTMSG_StringInputCharProtNoCB = 14,
+  LISTMSG_Minipopup = 15
 };
 
 typedef struct{

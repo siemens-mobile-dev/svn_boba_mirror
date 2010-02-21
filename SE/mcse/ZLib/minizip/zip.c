@@ -14,9 +14,8 @@
 //#include <stdlib.h>
 //#include <string.h>
 //#include <time.h>
-#include "..\zlib.h"
+#include "..\..\..\include\types.h"
 #include "zip.h"
-#include "..\..\..\include\Lib_Clara.h"
 
 #ifdef STDC
 //#  include <stddef.h>
@@ -61,6 +60,7 @@
 
 /* I've found an old Unix (a SunOS 4.1.3_U1) without all SEEK_* defined.... */
 
+/*
 #ifndef SEEK_CUR
 #define SEEK_CUR	1
 #endif
@@ -72,6 +72,7 @@
 #ifndef SEEK_SET
 #define SEEK_SET	0
 #endif
+*/
 
 #ifndef DEF_MEM_LEVEL
 #if MAX_MEM_LEVEL >= 8

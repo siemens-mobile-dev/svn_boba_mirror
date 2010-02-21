@@ -343,13 +343,13 @@ void SkinGui_OnBack(BOOK * bk, void *)
 GUI_SKIN *CreateSkinGUI(MyBOOK *mbk)
 {
   GUI_SKIN *gui_skin=new GUI_SKIN;
-  if (!CreateObject((GUI*)gui_skin,SkinGui_destr, SkinGui_constr,&mbk->book,0,0,0))
+  if (!CreateObject( gui_skin,SkinGui_destr, SkinGui_constr,&mbk->book,0,0,0))
   {
     delete gui_skin;
     return 0;    
   }
-  if (mbk) addGui2book(&mbk->book,(GUI*)gui_skin);
-  mbk->skin=(GUI *)gui_skin;
+  if (mbk) addGui2book(&mbk->book, gui_skin);
+  mbk->skin = gui_skin;
   return gui_skin;
 };
 
@@ -387,7 +387,7 @@ extern bool smthchanged;
 int Skin_OnEnter(void *, BOOK * bk)
 {
   smthchanged=true;
-  GUI * skin_gui=(GUI *)CreateSkinGUI((MyBOOK*)bk);
+  GUI * skin_gui = CreateSkinGUI((MyBOOK*)bk);
   bool pl;
   switch(GetChipID())
   {
@@ -437,7 +437,7 @@ int Skin_OnEnter(void *, BOOK * bk)
 int Skin_OnExit(void *, BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  if (mbk->skin)GUI_Free((GUI*)mbk->skin);
+  if (mbk->skin)GUI_Free( mbk->skin);
   mbk->skin=0;
   return (1);
 };

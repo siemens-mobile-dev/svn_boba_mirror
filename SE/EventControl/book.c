@@ -132,7 +132,7 @@ void ECBook_OnClose(BOOK * book)
     if (mbk->g_test)
       GUI_Free(mbk->g_test);
     if (mbk->remind)
-      GUI_Free((GUI*)mbk->remind);
+      GUI_Free(mbk->remind);
     kill_rems(mbk->remlst, mbk, 0);
     DestroyEvents((MyBOOK*)book);
     destroy_innative_lng();
@@ -149,7 +149,7 @@ void ECBook_OnClose(BOOK * book)
  */
 int isEvtBook(BOOK *bk)
 {
-  if (bk->onClose=(void*)ECBook_OnClose)return 1;
+  if (bk->onClose == ECBook_OnClose)return 1;
   return 0;
 };
 

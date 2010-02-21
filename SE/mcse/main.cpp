@@ -274,7 +274,7 @@ void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
 {
   int font_old, gc_xx;
   int font=CONFIG_FONT_ATTR;
-  void *gc=get_DisplayGC();
+  GC *gc=get_DisplayGC();
   gc_xx=get_GC_xx(gc);
   set_GC_xx(gc,1);
   font_old=SetFont(font);
@@ -365,12 +365,12 @@ void MainGui_destr(DISP_DESC *desc){}
 static GUI *CreateMainGui(MyBOOK *mbk)
 {
   MAIN_GUI *main_gui=new MAIN_GUI;
-  if (!CreateObject((GUI *)main_gui,MainGui_destr,MainGui_constr, &mbk->book,0,0,0))
+  if (!CreateObject( main_gui,MainGui_destr,MainGui_constr, &mbk->book,0,0,0))
   {
     delete main_gui;
     return 0;    
   }
-  GUI *gui=(GUI *)main_gui;
+  GUI *gui = main_gui;
   if (mbk) addGui2book(&mbk->book,gui);
   GUI_SetStyle(gui,4);
   GuiObject_SetTitleType(gui, 1);
@@ -447,7 +447,7 @@ static void onMyBookClose(BOOK * book)
 
 int isMcBook(BOOK * struc)
 {
-  return(struc->onClose==(void*)onMyBookClose);
+  return(struc->onClose==onMyBookClose);
 }
 
 #pragma segment="DYN_CONST"

@@ -176,7 +176,7 @@ static void onMyBookClose(BOOK * book)
 }
 int isRealGSIBook(BOOK * struc)
 {
-  return(struc->onClose==(void*)onMyBookClose);
+  return(struc->onClose == onMyBookClose);
 }
 //_____________________
 int main()

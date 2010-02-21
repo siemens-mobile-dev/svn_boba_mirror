@@ -24,7 +24,7 @@ typedef struct
 
 int isThmUnpackerBook(BOOK * struc)
 {
-  return(struc->onClose==(void*)onMyBookClose);
+  return(struc->onClose == onMyBookClose);
 };
 
 static int TerminateElf(void *mess ,BOOK *book)

@@ -83,7 +83,7 @@ void mbox_Create(BOOK * bk, wchar_t *text, int minutes, bool vibra)
   GUIObject_Softkey_SetText(gMBox,ACTION_OK,Str2ID(L"OK",0,SID_ANY_LEN));
   GUIObject_Softkey_SetAction(gMBox,ACTION_BACK,mbox_onOK);
   GUI_SetStyle(gMBox, 4);
-  GuiObject_SetTitleType((GUI*)gMBox, 1);
+  GuiObject_SetTitleType(gMBox, 1);
   GUIObject_HideSoftkeys(gMBox);
   Feedback_SetTimeout(gMBox, 5000);
   if (created==true)

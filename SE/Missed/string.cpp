@@ -13,16 +13,7 @@ char* strrchr(char* str,char c)
 	return retpos;
 }
 
-//u16* wstrrchr(u16* str,u16 c) //declared in lib
-
 char* strncpy(char* dest,char* src,size_t len)
-{
-	for(; *src && len; len--)*dest++=*src++;
-	if(len)*dest=0;
-	return dest;
-}
-
-u16* wstrncpy(u16* dest,u16* src,size_t len)
 {
 	for(; *src && len; len--)*dest++=*src++;
 	if(len)*dest=0;
@@ -36,7 +27,7 @@ int strncmp(char* s1,char* s2,size_t len)
 	return 0;
 }
 
-int wstrncmp(u16* s1,u16* s2,size_t len)
+int wstrncmp(wchar_t* s1,wchar_t* s2,size_t len)
 {
 	for(; *s1 && *s2 && len; len--, s1++, s2++)if(*s1-*s2)return *s1-*s2;
 	if(len)return *s1-*s2;
@@ -63,36 +54,16 @@ int strncmpi(char* s1,char* s2,size_t len)
 }
 
 
-
-char* strstr (const char * str1, const char * str2)
+wchar_t* wstrstr (const wchar_t * str1, const wchar_t * str2)
 {
-	char *cp = (char *) str1;
-	char *s1, *s2;
+	wchar_t *cp = (wchar_t *) str1;
+	const wchar_t *s1, *s2;
 	if ( !*str2 )
-		return((char *)str1);
+		return((wchar_t *)str1);
 	while (*cp)
 	{
 		s1 = cp;
-		s2 = (char *) str2;
-		while ( *s1 && *s2 && !(*s1-*s2) )
-			s1++, s2++;
-		if (!*s2)
-			return(cp);
-		cp++;
-	}
-	return(NULL);
-}
-
-u16* wstrstr (const u16 * str1, const u16 * str2)
-{
-	u16 *cp = (u16 *) str1;
-	u16 *s1, *s2;
-	if ( !*str2 )
-		return((u16 *)str1);
-	while (*cp)
-	{
-		s1 = cp;
-		s2 = (u16 *) str2;
+		s2 = str2;
 		while ( *s1 && *s2 && !(*s1-*s2) )
 			s1++, s2++;
 		if (!*s2)

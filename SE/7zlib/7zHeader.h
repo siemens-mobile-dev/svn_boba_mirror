@@ -5,6 +5,7 @@
 
 #include "..\include\Lib_Clara.h"
 #include "7zTypes.h"
+#include "LzmaTypes.h"
 
 #define k7zSignatureSize 6
 extern Byte k7zSignature[k7zSignatureSize];

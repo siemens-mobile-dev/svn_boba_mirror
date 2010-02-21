@@ -70,7 +70,7 @@ static void onMyBookClose(BOOK * book)
 
 int isScalkaBook(BOOK * struc)
 {
-  return(struc->onClose==(void*)onMyBookClose);
+  return(struc->onClose==onMyBookClose);
 }
 
 void CloseMyBook(BOOK * bk, void *)
@@ -82,7 +82,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   ReadCalcSettings();
-  GUI * si=(GUI *)CreateCalkGUI(bk);
+  GUI * si=CreateCalkGUI(bk);
   ShowWindow(si);
   mbk->si=si;
   return (1);

@@ -94,8 +94,8 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
   int stat=GetOrientation(bk);
   SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_Softkeys_GetParams(foc);
   if (xls->visible_softs_count==3 && bk!=Find_StandbyBook())return 0;
-  void *GC=get_DisplayGC();
-  if (!GC)return 1;
+  GC* gc=get_DisplayGC();
+  if (!gc)return 1;
   if (bk==FindBook(isMenuBook))
   {
     MBOOK *mb=(MBOOK*)bk;
@@ -105,7 +105,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
       {
         if (images[DESKTOP]!=0xFFFF)
         {
-          putchar(GC,0,SoftSize-height,0,0,images[DESKTOP]);
+          putchar(gc,0,SoftSize-height,0,0,images[DESKTOP]);
         }
       }
     }
@@ -113,7 +113,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     {
       if (images[NAVIGATION]!=0xFFFF)
       {
-        putchar(GC,0,SoftSize-height,0,0,images[NAVIGATION]);
+        putchar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
       }
     }
   }
@@ -123,11 +123,11 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     {
       if (images[STANDBY]!=0xFFFF)
       {
-        putchar(GC,0,SoftSize-height,0,0,images[STANDBY]);
+        putchar(gc,0,SoftSize-height,0,0,images[STANDBY]);
       }
       if (images[STANDBY_SOFTKEY]!=0xFFFF)
       {
-        putchar(GC,0,0,0,0,images[STANDBY_SOFTKEY]);
+        putchar(gc,0,0,0,0,images[STANDBY_SOFTKEY]);
       }
     }
   }
@@ -139,7 +139,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     L_draw:
       if (images[NAVIGATION]!=0xFFFF)
       {
-        putchar(GC,0,SoftSize-height,0,0,images[NAVIGATION]);
+        putchar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
       }
     }
   }
@@ -158,10 +158,10 @@ int GetOrientation(BOOK *bk)
 void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
 {
   int stat=GetOrientation(bk);
-  void *GC=get_DisplayGC();
+  GC* gc=get_DisplayGC();
   SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_Softkeys_GetParams(DISPBASE_GetFocused(0));
   if (!xls)return;
-  if (!GC)return;
+  if (!gc)return;
   int color=xls->color;
   if (DB==2010)goto L_draw2;
   if (lastitem)
@@ -176,15 +176,15 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     L_draw2:
       if (pressed[0] && images[LEFT_PRESSED]!=0xFFFF && lbl->strids[0]!=0x6FFFFFFF && lastitem->type>T_STANDBY)
       {
-        putchar(GC,0,0,0,0,images[LEFT_PRESSED]);
+        putchar(gc,0,0,0,0,images[LEFT_PRESSED]);
       }
       else if (pressed[1] && images[MIDDLE_PRESSED]!=0xFFFF && lbl->strids[1]!=0x6FFFFFFF)
       {
-        putchar(GC,0,0,0,0,images[MIDDLE_PRESSED]);
+        putchar(gc,0,0,0,0,images[MIDDLE_PRESSED]);
       }
       else if (pressed[2] && images[RIGHT_PRESSED]!=0xFFFF && lbl->strids[2]!=0x6FFFFFFF && lastitem->type>T_STANDBY)
       {
-        putchar(GC,0,0,0,0,images[RIGHT_PRESSED]);
+        putchar(gc,0,0,0,0,images[RIGHT_PRESSED]);
       }
     }
   }
