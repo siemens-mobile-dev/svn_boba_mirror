@@ -673,7 +673,7 @@
 0EAC: 00000000 E1824C45 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 9D704C45 ; 3AC: BOOK* GUI_GetBook(GUI* gui);
 0EB4: 00000000 25054E45 ; 3AD: u16 Softkeys_GetSelectedAction( void );
-;0EB8: xxxxxxxx yyyyyyyy ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
+0EB8: 00000000 8DFE4145 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
 
 
 

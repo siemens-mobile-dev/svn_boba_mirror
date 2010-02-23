@@ -672,8 +672,8 @@
 0EA8: 00000000 75554645 ; 3AA: void DISP_OBJ_SetTitleImage(void *disp_obj, wchar_t imageID);
 0EAC: 00000000 A5134745 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 35024745 ; 3AC: BOOK* GUI_GetBook(GUI* gui); //см. GUI_Free
-;0EB4: xxxxxxxx yyyyyyyy ; 3AD: u16 Softkeys_GetSelectedAction( void );
-;0EB8: xxxxxxxx yyyyyyyy ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
+0EB4: 00000000 6D954845 ; 3AD: u16 Softkeys_GetSelectedAction( void );
+0EB8: 00000000 45923C45 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
 
 
 
