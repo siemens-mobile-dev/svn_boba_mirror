@@ -271,7 +271,7 @@
 0864: 00000000 053EE744 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 0868: 00000000 FC5B0820 ;821A: int* PID_MMI( void );
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
-;0870: xxxxxxxx yyyyyyyy ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
+0870: 00000000 454599F1 ; 21C: GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
 0874: 00000000 41994545 ; 21D: DISP_OBJ* DISPBASE_GetFocused(int display);
 0878: 00000000 F59E4545 ; 21E: char DISP_OBJ_getVisible(DISP_OBJ*);
 087C: 00000000 19ECA144 ; 21F: DISP_DESC* DISP_OBJ_GetDESC (DISP_OBJ* obj); // !!!!! не настоящий !!!!!!
@@ -653,11 +653,11 @@
 ;0E5C: xxxxxxxx yyyyyyyy ; 397: void REQUEST_ALARMCLOCKSTATUS_GET( const int* sync, char* alarm_status );
 ;0E60: xxxxxxxx yyyyyyyy ; 398: void REQUEST_ALARMCLOCKTIME_GET( const int* sync, TIME* t );
 ;0E64: xxxxxxxx yyyyyyyy ; 399: void REQUEST_ALARMDATEANDTIMESTATUS_GET( const int* sync, DATETIME* );
-;0E68: xxxxxxxx yyyyyyyy ; 39A: int Settings_ShowNumber_Get( char* state );
-;0E6C: xxxxxxxx yyyyyyyy ; 39B: GVI_BMP GVI_CreateBitmap( int xsize, int ysize, int bpp );
-;0E70: xxxxxxxx yyyyyyyy ; 39C: GVI_GC GVI_CreateMemoryGC( GVI_BMP bitmap );
-;0E74: xxxxxxxx yyyyyyyy ; 39D: void GVI_DeleteMemoryGC( GVI_GC gc );
-;0E78: xxxxxxxx yyyyyyyy ; 39E: int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int langID, int flag );
+0E68: 00000000 44EE1021 ; 39A: int Settings_ShowNumber_Get( char* state );
+0E6C: 00000000 44B1C841 ; 39B: GVI_BMP GVI_CreateBitmap( int xsize, int ysize, int bpp );
+0E70: 00000000 44B1E881 ; 39C: GVI_GC GVI_CreateMemoryGC( GVI_BMP bitmap );
+0E74: 00000000 4485EB35 ; 39D: void GVI_DeleteMemoryGC( GVI_GC gc );
+0E78: 00000000 453F05CD ; 39E: int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int langID, int flag );
 ;0E7C: xxxxxxxx yyyyyyyy ; 39F: int ListElement_InsertSorted(LIST * list, void * pelem, int (*compare)(void *, void *));
 ;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
 ;0E84: xxxxxxxx yyyyyyyy ; 3A1: void wstrnupr( wchar_t* wstr, int maxlen );
