@@ -968,9 +968,9 @@ __swi __arm int png_sig_cmp( png_bytep sig, png_size_t start, png_size_t num_to_
 __swi __arm int setjmp(jmp_buf jmpbuf);
 #pragma swi_number=0x279
 __swi __arm void longjmp(jmp_buf, int);
-#pragma swi_number=0x27A
 
 #ifdef USEZLIB
+#pragma swi_number=0x27A
 __swi __arm int inflateInit2_ (z_streamp strm, int windowBits,const char *version, int stream_size);
 #pragma swi_number=0x27B
 __swi __arm int inflate (z_streamp strm, int flush);
