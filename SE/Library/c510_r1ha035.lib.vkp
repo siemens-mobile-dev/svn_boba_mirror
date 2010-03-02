@@ -613,7 +613,7 @@
 0DB8: 00000000 71A80C14 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 ;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 0DC0: 00000000 65DF0F15 ; 370: void GUIObject_Softkey_ExecuteAction( GUI*, u16 actionID );
-;0DC4: xxxxxxxx yyyyyyyy ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
+0DC4: 00000000 41F54810 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
 0DC8: 00000000 1D5D2314 ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 0DCC: 00000000 1DFA7415 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
 0DD0: 00000000 A55C2C14 ; 374: int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
@@ -674,7 +674,7 @@
 0EAC: 00000000 DD7D2814 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 C9AE0C14 ; 3AC: BOOK* GUI_GetBook(GUI* gui);
 0EB4: 00000000 ED8D2714 ; 3AD: u16 Softkeys_GetSelectedAction( void );
-;0EB8: xxxxxxxx yyyyyyyy ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
+0EB8: 00000000 49BA8515 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
 
 
 

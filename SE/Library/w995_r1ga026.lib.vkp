@@ -254,7 +254,7 @@
 0820: 00000000 718ADC14 ; 208: void MakeVoiceCall( int SessioID, void* vc, int flag );
 ;0824: xxxxxxxx yyyyyyyy ; 209:
 0828: 00000000 65062914 ; 20A: void FileDelete( wchar_t* path, wchar_t* filename, int* error );
-082C: 00000000 B97D3814 ; 20B: void SetFocus (GUI * , int);
+082C: 00000000 49CA4A14 ; 20B: void SetFocus (GUI * , int);
 0830: 00000000 C1B52914 ; 20C: int CreateSMSCont( int, void* );
 0834: 00000000 7D533E14 ; 20D: int FreeSMSCont( void* );
 0838: 00000000 EDE29315 ; 20E: int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );

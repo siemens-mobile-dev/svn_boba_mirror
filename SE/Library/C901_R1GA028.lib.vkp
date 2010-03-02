@@ -333,7 +333,7 @@
 095C: 00000000 29098415 ; 257: int MessageBox( STRID header_text, STRID message_text, wchar_t IconID, int style, int time, BOOK* book );
 0960: 00000000 F9A51114 ; 258: int Display_GetHeight( int display );
 0964: 00000000 31911A14 ; 259: int Display_GetWidth( int display );
-0968: 00000000 0DDD5214 ; 25A: void PlaySystemSound( int SndNumber );
+0968: 00000000 798F4714 ; 25A: void PlaySystemSound( int SndNumber );
 ;096C: xxxxxxxx yyyyyyyy ; 25B:
 ;0970: xxxxxxxx yyyyyyyy ; 25C:
 0974: 00000000 E1E81F14 ; 25D: int TabMenuBar_GetFocusedTabIndex(GUI_TABMENUBAR * );

@@ -478,7 +478,7 @@ typedef struct
 
   char dummy3[0x120-0xD0];//A2
 */
-  char dummy3[0x120];//A2
+  char dummy3[0x150];//A2
 }DISP_OBJ;
 
 typedef struct GUI_type

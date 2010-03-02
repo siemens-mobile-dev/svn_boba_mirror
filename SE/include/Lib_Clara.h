@@ -442,7 +442,7 @@ __swi __arm void SetLampLevel( int level );
 __swi __arm  void * ListElement_Remove(LIST *lst,int index);
 
 #pragma swi_number=0x17A
-__swi __arm int GetCurrentPID( void );
+__swi __arm PROCESS GetCurrentPID( void );
 
 #pragma swi_number=0x17B
 __swi __arm  int ListElement_Prt2NumElement(LIST *lst,void *ptr);
@@ -773,7 +773,7 @@ __swi __arm GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий
 __swi __arm int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 
 #pragma swi_number=0x821A
-__swi __arm int* PID_MMI( void );
+__swi __arm PROCESS* PID_MMI( void );
 
 #pragma swi_number=0x21C
 __swi __arm GUI * DISP_OBJ_GetGUI(DISP_OBJ *);
