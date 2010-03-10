@@ -480,7 +480,7 @@ void MsgBoxYesNo(MyBOOK *mbk, wchar_t *qv, void(*f)(BOOK *, int))
                                        0);
 }
 // ========================= EditExtList ============================
-void OnSelect1EditExtList(BOOK * bk, void *)
+void OnSelect1EditExtList(BOOK * bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   mbk->edit_list_selected=ListMenu_GetSelectedItem((GUI_LIST *)mbk->edit_list);
@@ -524,7 +524,7 @@ void YesNoOnBackExt(BOOK * bk, int i)
   FREE_GUI(mbk->edit_list);
 }
 
-void OnBackEditExtList(BOOK * bk, void *)
+void OnBackEditExtList(BOOK * bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   int cmp=0;
@@ -675,7 +675,7 @@ void YesNoOnBackGuiList(BOOK * bk, int i)
 }
 
 
-void OnBackGuiList(BOOK * bk, void *)
+void OnBackGuiList(BOOK * bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   if (mbk->is_changed)
@@ -684,7 +684,7 @@ void OnBackGuiList(BOOK * bk, void *)
     FreeBook(&mbk->book);
 }
 
-void OnSelect1GuiList(BOOK * bk, void *)
+void OnSelect1GuiList(BOOK * bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem((GUI_LIST *)mbk->main_gui);
@@ -710,7 +710,7 @@ void OnSelect1GuiList(BOOK * bk, void *)
   ShowWindow(mbk->edit_list);
 }
 
-void OnDeleteGuiList(BOOK * bk, void *)
+void OnDeleteGuiList(BOOK * bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem((GUI_LIST *)mbk->main_gui);

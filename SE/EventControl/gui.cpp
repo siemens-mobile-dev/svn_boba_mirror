@@ -75,14 +75,14 @@ int onLBMessage(GUI_MESSAGE * msg)
   return(1);
 };
 
-void OnSelect1Gui(BOOK *bk, void *)
+void OnSelect1Gui(BOOK *bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(g);
   EVENT *ev=(EVENT*)ListElement_GetByIndex(events,item);
   MMIPROC(action_processor,ev);
 };
 
-void OnSelect2Gui(BOOK *bk, void *)
+void OnSelect2Gui(BOOK *bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(g);
   wchar_t text[1024];
@@ -90,7 +90,7 @@ void OnSelect2Gui(BOOK *bk, void *)
   snwprintf(text, 1023, L"%d-%d-%d-%d-%d-%d-%d\n\n%d-%d-%d-%d-%d-%d-%d\n\n%d-%d-%d-%d-%d-%d-%d\n%d:%d:%d", ev->days[0], ev->days[1], ev->days[2], ev->days[3], ev->days[4], ev->days[5], ev->days[6], ev->remdays[0], ev->remdays[1], ev->remdays[2], ev->remdays[3], ev->remdays[4], ev->remdays[5], ev->remdays[6], ev->remdays2[0], ev->remdays2[1], ev->remdays2[2], ev->remdays2[3], ev->remdays2[4], ev->remdays2[5], ev->remdays2[6], ev->tm_start, ev->ask_before, ev->ask_after);
   MessageBox(0x6FFFFFFF,Str2ID(text,0,SID_ANY_LEN),0,1,0,0);
 };
-void OnBackGui(BOOK * bk, void *)
+void OnBackGui(BOOK * bk, GUI* )
 {
   GUI_Free(g);
   g=0;

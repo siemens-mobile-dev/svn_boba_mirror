@@ -39,7 +39,7 @@ int Switch_onLBMessage(GUI_MESSAGE * msg)
   return(1);
 };
 
-void Switch_OnSelect(BOOK *bk, void *)
+void Switch_OnSelect(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   int item=ListMenu_GetSelectedItem(mbk->switch_gui);
@@ -48,7 +48,7 @@ void Switch_OnSelect(BOOK *bk, void *)
   snwprintf(mbk->selev->param,1,L"%d", item);
   BookObj_CallPage(bk,&bk_main);
 };
-void Switch_OnBack(BOOK * bk, void *)
+void Switch_OnBack(BOOK * bk, GUI* )
 {
   indic_last=0;
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);

@@ -10,7 +10,7 @@ int LastIndex=0;
 
 int isEvtEditBook(BOOK *);
 
-void Days_OnSelect2(BOOK *bk, void *)
+void Days_OnSelect2(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->days);
@@ -59,7 +59,7 @@ void Days_OnSelect2(BOOK *bk, void *)
   }
 };
 
-void Days_OnSelect(BOOK *bk, void *)
+void Days_OnSelect(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   bool b=false;
@@ -150,13 +150,13 @@ int Days_onLBMessage2(GUI_MESSAGE * msg)
   return(1);
 };
 
-void Days_OnBack(BOOK *bk, void *)
+void Days_OnBack(BOOK *bk, GUI* )
 {
   LastIndex=0;
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 };
 
-void Days_OnWorkdays(BOOK *bk, void *)
+void Days_OnWorkdays(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   bool days[7];
@@ -179,7 +179,7 @@ void Days_OnWorkdays(BOOK *bk, void *)
   }
 };
 
-void Days_OnWeekend(BOOK *bk, void *)
+void Days_OnWeekend(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   bool days[7];
@@ -196,7 +196,7 @@ void Days_OnWeekend(BOOK *bk, void *)
   }
 };
 
-void Days_OnEveryday(BOOK *bk, void *)
+void Days_OnEveryday(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   bool days[7];

@@ -284,7 +284,7 @@ typedef struct
   UPDATE_METHOD update;
 }EVTBOOK;
 
-void OnYesExitGui(BOOK * bk, void *)
+void OnYesExitGui(BOOK * bk, GUI* )
 {
   
   MyBOOK * mbk=(MyBOOK *)bk;
@@ -300,7 +300,7 @@ void OnYesExitGui(BOOK * bk, void *)
   }
 };
 
-void OnNoExitGui(BOOK * bk, void *)
+void OnNoExitGui(BOOK * bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   FREE_GUI(mbk->lst);
@@ -308,7 +308,7 @@ void OnNoExitGui(BOOK * bk, void *)
   FreeBook(bk);
 };
 
-void OnBackExitGui(BOOK * bk, void *)
+void OnBackExitGui(BOOK * bk, GUI* )
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->yesno);
@@ -344,7 +344,7 @@ void Escape(MyBOOK *mbk, bool dontsave)
     FreeBook(&mbk->book);
   }
 };
-void OnBackGui(BOOK * bk, void *)
+void OnBackGui(BOOK * bk, GUI* )
 {
   Escape((MyBOOK*)bk, false);
 };
@@ -365,7 +365,7 @@ void EvRem(EVENT *event)
    }
 };
 
-void OnDelGui(BOOK *bk, void *)
+void OnDelGui(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->lst);
@@ -389,14 +389,14 @@ void OnDelGui(BOOK *bk, void *)
   }
 };
 
-void OnAuthor(BOOK *bk, void *)
+void OnAuthor(BOOK *bk, GUI* )
 {
   wchar_t ustr[64];
   snwprintf(ustr,MAXELEMS(ustr)-1,L"\nEvtEdit v1.0\n(c) UltraShot\n%s",BUILD);
   MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,bk);
 };
 
-void OnSelect1Gui(BOOK *bk, void *)
+void OnSelect1Gui(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->lst);
@@ -475,19 +475,19 @@ void OnSelect1Gui(BOOK *bk, void *)
   }
 };
 
-void onDummy(BOOK *bk, void*)
+void onDummy(BOOK *bk, GUI* )
 {
   return;
 };
 
-void onDType0Press(BOOK *bk, void *)
+void onDType0Press(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->selev->dtype=0;
   BookObj_CallPage(bk,&bk_main);
 };
 
-void onDType1Press(BOOK *bk, void *)
+void onDType1Press(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   if (mbk->selev->date.year==0 && mbk->selev->date.mon==0 && mbk->selev->date.day==0)
@@ -510,21 +510,21 @@ void onDType1Press(BOOK *bk, void *)
   BookObj_CallPage(bk,&bk_main);
 };
 
-void onTType0Press(BOOK *bk, void *)
+void onTType0Press(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->selev->ttype=0;
   BookObj_CallPage(bk,&bk_main);
 };
 
-void onTType1Press(BOOK *bk, void *)
+void onTType1Press(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->selev->ttype=1;
   BookObj_CallPage(bk,&bk_main);
 };
 
-void onEventClone(BOOK *bk, void *)
+void onEventClone(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->inputType=IT_UNSIGNED_DIGIT;
@@ -534,7 +534,7 @@ void onEventClone(BOOK *bk, void *)
   BookObj_CallPage(bk,&bk_StringInput);
 };
 
-void onIndication(BOOK *bk, void *)
+void onIndication(BOOK *bk, GUI* )
 {
   extern const PAGE_DESC bk_indic;
   BookObj_CallPage(bk, &bk_indic);

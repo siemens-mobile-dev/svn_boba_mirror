@@ -7,7 +7,7 @@
 
 int isEvtEditBook(BOOK * struc);
 
-void onShortcutSet(BOOK * MainMenu,void*)
+void onShortcutSet(BOOK * MainMenu, GUI* )
 {
   wchar_t*name_buf=MenuBook_Desktop_GetSelectedItemID(MainMenu);
   if (name_buf)

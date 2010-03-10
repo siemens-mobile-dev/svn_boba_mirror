@@ -82,12 +82,12 @@ int menu_callback(GUI_MESSAGE * msg)
   return(1);
 }
 
-void MenuOnBack(BOOK * book, void *)
+void MenuOnBack( BOOK* book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
 }
 
-void MenuOnEnter(BOOK * book, void *)
+void MenuOnEnter( BOOK* book, GUI* )
 {
   MyBOOK *bk = (MyBOOK *)book;
   int item_num = ListMenu_GetSelectedItem(bk->menu);

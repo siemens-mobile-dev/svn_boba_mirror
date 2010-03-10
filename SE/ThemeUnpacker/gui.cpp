@@ -5,7 +5,7 @@ int tar_uncompress(wchar_t *path, wchar_t *name);
 extern const PAGE_DESC bk_gui;
 extern const PAGE_DESC bk_main;
 
-void OnBackGui(BOOK * bk, void *)
+void OnBackGui( BOOK* bk, GUI* )
 {
   FreeBook(bk);
 };
@@ -15,7 +15,7 @@ int isA2Book(BOOK *bk)
   else { return 0; }
 };
 
-void OnEnterGui(BOOK * bk, void *)
+void OnEnterGui( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   int x=ListMenu_GetSelectedItem(mbk->lst);

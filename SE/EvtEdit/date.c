@@ -14,7 +14,7 @@
 #define DI_GET_MONTH(x) (((unsigned int)x>>16)&0xFF)
 #define DI_GET_DAY(x) ((unsigned int)x>>24)
 
-void AcceptDIinput(BOOK *bk, void *data)
+void AcceptDIinput(BOOK *bk, GUI* data)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   unsigned int i=DateInput_GetDateInt(data);
@@ -25,7 +25,7 @@ void AcceptDIinput(BOOK *bk, void *data)
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 };
 
-void CloseDIinput(BOOK * bk, void *)
+void CloseDIinput(BOOK * bk, GUI* )
 {
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 };

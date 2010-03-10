@@ -135,7 +135,7 @@ void WriteShortcut(wchar_t * name_buf)
   delete(path);
 }
 
-void onShortcutSet(BOOK * MainMenu,void*)
+void onShortcutSet(BOOK * MainMenu, GUI* )
 {
   wchar_t*name_buf=MenuBook_Desktop_GetSelectedItemID(MainMenu);
   if (name_buf)
@@ -286,7 +286,7 @@ int CreateSI(void *data, BOOK * book)
 }
 */
 
-void onEnter_JavaList(BOOK * book, void *)
+void onEnter_JavaList(BOOK * book, GUI* )
 {
   java_list_elem * elem=(java_list_elem *)ListElement_GetByIndex(java_list,ListMenu_GetSelectedItem(java_list_menu));
   int java_buf_len=wstrlen(elem->name)+40;
@@ -299,7 +299,7 @@ void onEnter_JavaList(BOOK * book, void *)
 }
 
 
-void ExitJavaList(BOOK * book, void *)
+void ExitJavaList(BOOK * book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
   BookObj_ReturnPage(book,NIL_EVENT);
@@ -307,7 +307,7 @@ void ExitJavaList(BOOK * book, void *)
 }
 
 
-void DestroyJavaList(BOOK * book, void *)
+void DestroyJavaList(BOOK * book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
 }
@@ -447,13 +447,13 @@ const PAGE_MSG SetJava_PageEvents[]@ "DYN_PAGE" ={
 PAGE_DESC ChangeShortcuts_SetJava_page ={"BookManager_ChangeShortcuts_SetJava_Page",0,SetJava_PageEvents};
 
 
-void But_SetJava(BOOK * book, void *)
+void But_SetJava(BOOK * book, GUI* )
 {
   BookObj_CallPage(book,&ChangeShortcuts_SetJava_page);
 }
 
 
-void DestroyButList(BOOK * book, void *)
+void DestroyButList(BOOK * book, GUI* )
 {
   BookObj_ReturnPage(book,ACCEPT_EVENT);
 }
@@ -545,7 +545,7 @@ void But_EditShortcut(BOOK * book, void *)
 }
 */
 
-void But_SetMM(BOOK * book, void *)
+void But_SetMM(BOOK * book, GUI* )
 {
   wchar_t name_buf[20];
   wstrcpy(name_buf,L"MainMenu");
@@ -553,7 +553,7 @@ void But_SetMM(BOOK * book, void *)
   CreateButtonList(0,book);
 }
 
-void But_onEnter(BOOK * book, void *)
+void But_onEnter(BOOK * book, GUI* )
 {
   if (!ActiveTab) BookObj_CallPage(book,&SelectShortcut_page);
   else BookObj_CallPage(book,&SelectElf_page);
@@ -571,7 +571,7 @@ int ExitButtonList(void *data, BOOK * book)
 }
 
 
-void CancelButtonList(BOOK * book, void *)
+void CancelButtonList(BOOK * book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
   BookObj_ReturnPage(book,NIL_EVENT);
@@ -604,7 +604,7 @@ int DeleteShortcut(char * mask_buf,int f)
   return(res);
 }
 
-void But_onDelete(BOOK * book, void *)
+void But_onDelete(BOOK * book, GUI* )
 {
    int f;
    int res;
@@ -690,13 +690,13 @@ const PAGE_MSG ChangeShortcuts_Buttons_PageEvents[]@ "DYN_PAGE" ={
 PAGE_DESC ChangeShortcuts_Buttons_page ={"BookManager_ChangeShortcuts_Buttons_Page",0,ChangeShortcuts_Buttons_PageEvents};
 
 
-void DestroyModeList(BOOK * book, void *)
+void DestroyModeList(BOOK * book, GUI* )
 {
   BookObj_ReturnPage(book,ACCEPT_EVENT);
 }
 
 
-void onEnter_ModeList(BOOK * book, void *)
+void onEnter_ModeList(BOOK * book, GUI* )
 {
   BookObj_CallPage(book,&ChangeShortcuts_Buttons_page);
 }
@@ -778,7 +778,7 @@ const PAGE_MSG ChangeShortcuts_PageEvents[]@ "DYN_PAGE" ={
 PAGE_DESC ChangeShortcuts_page ={"BookManager_ChangeShortcuts_Main_Page",0,ChangeShortcuts_PageEvents};
 
 
-void Shortcuts(BOOK * book,void *)
+void Shortcuts(BOOK * book, GUI* )
 {
   BookObj_CallPage(book,&ChangeShortcuts_page);
 }

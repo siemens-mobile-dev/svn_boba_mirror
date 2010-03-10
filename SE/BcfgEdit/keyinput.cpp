@@ -100,13 +100,13 @@ STRID GetKeyModeName(int mode)
   return (mode<MAXELEMS(modes)?Str2ID(modes[mode],0,SID_ANY_LEN):LGP_NULL);
 }
 
-void KeyModeSelect_OnCloseCBoxGui(BOOK * bk, void *)
+void KeyModeSelect_OnCloseCBoxGui(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->keymode_sel_list);
 }
 
-void KeyModeSelect_OnSelectCBoxGui(BOOK * bk, void *)
+void KeyModeSelect_OnSelectCBoxGui(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   int item=OneOfMany_GetSelected(myBook->keymode_sel_list);
@@ -134,7 +134,7 @@ void KeyModeSelect_CreateCBoxGui(MyBOOK *myBook)
 }
 
 
-void KeyCodeSelect_onEnterPressed(BOOK * bk, void *)
+void KeyCodeSelect_onEnterPressed(BOOK * bk, GUI *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
 
@@ -151,7 +151,7 @@ void KeyCodeSelect_onEnterPressed(BOOK * bk, void *)
   }
 }
 
-void KeyCodeSelect_OnBack(BOOK * bk, void *)
+void KeyCodeSelect_OnBack(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->key_sel_list);

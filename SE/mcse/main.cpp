@@ -360,7 +360,7 @@ void MainGui_constr(DISP_DESC *desc)
   DISP_DESC_SetonRefresh(desc,(DISP_OBJ_METHOD)MainGuiOnRefresh);
 }
 
-void MainGui_destr(DISP_DESC *desc){}
+void MainGui_destr( GUI* ){}
 
 static GUI *CreateMainGui(MyBOOK *mbk)
 {

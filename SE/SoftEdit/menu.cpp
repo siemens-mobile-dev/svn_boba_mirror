@@ -60,7 +60,7 @@ void RemoveItem(int index)
   }
 };
 
-void OnDelGui(BOOK *bk, void *)
+void OnDelGui( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->lst);
@@ -149,7 +149,7 @@ void OnDelGui(BOOK *bk, void *)
 }
 GUI *g_save=0;
 
-void OnYesExitGui(BOOK * bk, void *)
+void OnYesExitGui( BOOK* bk, GUI* )
 {
   GUI_Free(g_save);
   savecustomcfg(GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG), L"AdvSoftkeys.cfg");
@@ -157,7 +157,7 @@ void OnYesExitGui(BOOK * bk, void *)
   FreeBook(bk);
 };
 
-void OnBackExitGui(BOOK * bk, void *)
+void OnBackExitGui( BOOK* bk, GUI* )
 {
   GUI_Free(g_save);
   FreeBook(bk);
@@ -192,29 +192,29 @@ void Escape(MyBOOK *mbk, bool save)
   }
 };
 
-void OnBackGui(BOOK * bk, void *)
+void OnBackGui( BOOK* bk, GUI* )
 {
   Escape((MyBOOK*)bk, false);
 };
 
-void onSkin(BOOK *bk, void *)
+void onSkin( BOOK* bk, GUI* )
 {
   BookObj_CallPage(bk,&bk_skin);
 };
 
-void OnAuthor(BOOK *bk, void *)
+void OnAuthor( BOOK* bk, GUI* )
 {
   wchar_t text[100];
   snwprintf(text,99,L"SoftEdit\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
   MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN),0, 1 ,5000, bk);
 };
 
-void onSave(BOOK *bk, void *)
+void onSave( BOOK* bk, GUI* )
 {
   savecustomcfg(GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG), L"AdvSoftkeys.cfg");
 };
 
-void OnSelectGui(BOOK *bk, void *)
+void OnSelectGui( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->lst);

@@ -6,7 +6,7 @@
 #include "main.h"
 #include "datetime.h"
 
-void AcceptTIinput(BOOK *bk, void *data)
+void AcceptTIinput(BOOK *bk, GUI *data)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   unsigned int i=TimeInput_GetTimeInt(data);
@@ -17,7 +17,7 @@ void AcceptTIinput(BOOK *bk, void *data)
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 }
 
-void CloseTIinput(BOOK * bk, void *)
+void CloseTIinput(BOOK * bk, GUI *)
 {
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 }
@@ -58,7 +58,7 @@ static int TI_OnExit(void *, BOOK * bk)
   return (1);  
 }
 // ----------------------------------------------------------------
-void AcceptDIinput(BOOK *bk, void *data)
+void AcceptDIinput(BOOK *bk, GUI *data)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   unsigned int i=DateInput_GetDateInt(data);
@@ -69,7 +69,7 @@ void AcceptDIinput(BOOK *bk, void *data)
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 }
 
-void CloseDIinput(BOOK * bk, void *)
+void CloseDIinput(BOOK * bk, GUI *)
 {
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 }

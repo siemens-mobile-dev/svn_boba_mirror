@@ -675,7 +675,7 @@ void InputAlbumF2()
                                        0); 
 }
 
-void OnEntML2(BOOK * bk, void *)
+void OnEntML2( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(TagBook->MenuList2);
   if(item==0)
@@ -692,7 +692,7 @@ void OnEntML2(BOOK * bk, void *)
   }
 }
 
-void ExitML2(BOOK*, void*)
+void ExitML2( BOOK*, GUI* )
 {
   GUI_Free(TagBook->MenuList2);
   TagBook->MenuList2=0;
@@ -732,7 +732,7 @@ int SetTitleML2(GUI_MESSAGE * msg)
   return(1);        
 }
 
-void PlayF2(BOOK*bk,void*)
+void PlayF2( BOOK* bk, GUI* )
 {
   if(TagBook->PlayMode==0)
   {
@@ -972,14 +972,14 @@ void CreateML2(int x)
   ShowWindow(MList2);
 }
 
-void ExitMG(BOOK*,void*)
+void ExitMG( BOOK*, GUI* )
 {
   GUI_Free(TagBook->GList);
   TagBook->GList=0;
   ShowWindow(TagBook->MenuList1);
 }
 
-void OnEntMG(BOOK*bk,void*)
+void OnEntMG( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(TagBook->GList);
   for(int i=0;i<=147;i++)
@@ -1204,7 +1204,7 @@ void InputCommentF()
                                        0); 
 }
 
-void OnEntML1(BOOK * bk, void *)
+void OnEntML1( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(TagBook->MenuList1);
   if(item==0)
@@ -1230,7 +1230,7 @@ void OnEntML1(BOOK * bk, void *)
   }
 }
 
-void ExitML1(BOOK*,void*)
+void ExitML1( BOOK*, GUI* )
 {
   GUI_Free(TagBook->MenuList1);
   TagBook->MenuList1=0;
@@ -1293,7 +1293,7 @@ int SetTitleML1(GUI_MESSAGE * msg)
   return(1);        
 }
 
-void PlayF1(BOOK*bk,void*)
+void PlayF1( BOOK* bk, GUI* )
 {
   if(TagBook->PlayMode==0)
   {
@@ -1536,7 +1536,7 @@ void CreateML1(int x)
   
   
 
-void OnEntGM(BOOK * bk, void *)
+void OnEntGM( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(TagBook->GlavMenu);
   if(item==0)
@@ -1625,7 +1625,7 @@ const PAGE_MSG bk_msglst_db[] @ "DYN_PAGE"  =
 
 const PAGE_DESC base_db = {"TagEditor_openFile",0,bk_msglst_db};
 
-void YesPress(BOOK*bk,void*)
+void YesPress( BOOK* bk, GUI* )
 {
   GUI_Free(TagBook->yn);
   TagBook->yn=0;
@@ -1635,7 +1635,7 @@ void YesPress(BOOK*bk,void*)
   BookObj_GotoPage(&TagBook->book, &base_db);
 }
 
-void NoPress(BOOK*bk,void*)
+void NoPress( BOOK* bk, GUI* )
 {
   if(TagBook->Run!=0)
   {
@@ -1648,7 +1648,7 @@ void NoPress(BOOK*bk,void*)
   BookObj_GotoPage(&TagBook->book, &base_db);
 }
 
-void ExitYN(BOOK*bk,void*)
+void ExitYN( BOOK* bk, GUI* )
 {
   GUI_Free(TagBook->yn);
   TagBook->yn=0;
@@ -1671,7 +1671,7 @@ void YesNo()
   GUIObject_Softkey_SetAction(TagBook->yn, ACTION_LONG_BACK, ExitYN);
 }
 
-void ExitGM(BOOK*bk,void*)
+void ExitGM( BOOK* bk, GUI* )
 {
   if(TagBook->change)
   {
@@ -1719,7 +1719,7 @@ int SetTitlePunktsGM(GUI_MESSAGE * msg)
   return(1);        
 }
 
-void PlayF(BOOK*bk,void*)
+void PlayF( BOOK* bk, GUI* )
 {
   if(TagBook->PlayMode==0)
   {

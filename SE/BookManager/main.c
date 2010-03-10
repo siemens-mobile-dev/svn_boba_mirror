@@ -112,9 +112,9 @@ int isBookManager(BOOK * struc);
 int onUserInactivity(void * r0, BOOK * bk);
 int onRootListChanged(void * r0, BOOK * bk);
 void onMyBookClose(BOOK *);
-void CloseMyBook(BOOK * Book, void *);
+void CloseMyBook(BOOK * Book, GUI *);
 int CreateMenu(int r0, BOOK * bk);
-void TerminateManager(BOOK * Book, void *);
+void TerminateManager(BOOK * Book, GUI *);
 int NewKey(int key, int r1 , int mode);
 void SessoinListsFree(BOOK * book);
 int get_file(wchar_t * fname,char ** buf_set);
@@ -469,14 +469,14 @@ BOOK * GetBook(int list)
 }
 
 // при выборе пункта
-void onEnterPressed(BOOK * book,void * lt)
+void onEnterPressed(BOOK * book, GUI * lt)
 {
   BookObj_SetFocus(GetBook(BOOKLIST),0);
   CloseMyBook(book,0);
 };
 
 // при выборе эльфа
-void onEnterPressed1(BOOK * book,void * lt)
+void onEnterPressed1(BOOK * book, GUI* lt)
 {
   BOOK * bk = GetBook(ELFLIST );
   if (bk)
@@ -542,7 +542,7 @@ typedef struct
 }MSG;
 
 // при нажатии "Автора!" на эльфе
-void Author(BOOK * book,void * lt)
+void Author(BOOK * book, GUI* lt)
 {
 
   BOOK * bk = GetBook(ELFLIST );
@@ -565,7 +565,7 @@ void Author(BOOK * book,void * lt)
   }
 };
 
-void Copyright(BOOK * book,void * lt)
+void Copyright(BOOK * book, GUI* lt)
 {
   blistpos=ListMenu_GetSelectedItem(blist);
   MESSAGE(COPYRIGHT_STRING);
@@ -960,13 +960,13 @@ void onMyBookClose(BOOK * book)
 }
 
 
-void CloseMyBook(BOOK * Book, void *)
+void CloseMyBook(BOOK * Book, GUI *)
 {
   FreeBook(Book);
   BookManager_Book=0;
 };
 
-void TerminateManager(BOOK * Book, void *)
+void TerminateManager(BOOK * Book, GUI *)
 {
   MESSAGE(STR("BookManager\n\nterminated"));
   FreeBook(Book);

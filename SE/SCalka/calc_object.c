@@ -991,7 +991,7 @@ void CalcGui_constr(DISP_DESC *desc)
   DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)CalcGuiOnKey);
 }
 
-void CalcGui_destr(DISP_DESC *desc)
+void CalcGui_destr( GUI* )
 {
 }
 

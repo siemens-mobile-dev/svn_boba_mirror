@@ -29,7 +29,7 @@ void mbox_OnClose(BOOK *bk)
 *                          Обработка нажатия ОК
 *===========================================================================
 */
-void mbox_onOK(BOOK *bk, void *)
+void mbox_onOK(BOOK *bk, GUI* )
 {
   MBK(bk);
   GUI_Free(mbk->g_mbox);

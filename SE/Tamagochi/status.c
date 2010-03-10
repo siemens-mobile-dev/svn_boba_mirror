@@ -90,14 +90,14 @@ static void (*smenuprocs[STATUS_ITEMS_COUNT])(int) =
   ViewFatigue
 };
 
-void OnCloseSetSex(BOOK * book, void *)
+void OnCloseSetSex( BOOK* book, GUI* )
 {
   CountSex = 0;
   MyBOOK * bk=(MyBOOK *)book;
   FREE_GUI(bk->cbox_gui);
 }
 
-void OnSelectSetSex(BOOK * book, void *)
+void OnSelectSetSex( BOOK* book, GUI* )
 {
   CountSex = 0;
   MyBOOK * bk=(MyBOOK *)book;
@@ -263,18 +263,18 @@ int status_list_callback(GUI_MESSAGE * msg)
   return(1);
 }
 
-void DestroyStatusList(BOOK * book, void *)
+void DestroyStatusList( BOOK* book, GUI* )
 {
   BookObj_ReturnPage(book,ACCEPT_EVENT);
 }
 
-void CancelStatusList(BOOK * book, void *)
+void CancelStatusList( BOOK* book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
   BookObj_ReturnPage(book,NIL_EVENT);
 }
 
-void Status_onEnter(BOOK * book, void *)
+void Status_onEnter( BOOK* book, GUI* )
 {
   MyBOOK *bk = (MyBOOK *)book;
   int item_num = ListMenu_GetSelectedItem(bk->stat_list);

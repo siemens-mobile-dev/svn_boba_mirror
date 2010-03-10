@@ -16,7 +16,7 @@ extern const PAGE_DESC bk_indic;
 void kill_switchlst(MyBOOK *mbk);
 int isEvtEditBook(BOOK *);
 int Switch_onLBMessage(GUI_MESSAGE * msg);
-void Switch_OnBack(BOOK * bk, void *);
+void Switch_OnBack(BOOK * bk, GUI* );
 
 int indic_last=0;
 
@@ -67,7 +67,7 @@ int Indic_onLBMessage(GUI_MESSAGE * msg)
   }
   return(1);
 };
-void Indic_OnSelect(BOOK *bk, void *)
+void Indic_OnSelect(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   int item=ListMenu_GetSelectedItem(mbk->ind);
@@ -107,7 +107,7 @@ void Indic_OnSelect(BOOK *bk, void *)
   BookObj_CallPage(bk,&bk_indic);
 };
 
-void Switch_SetIndfile(BOOK *bk, void *)
+void Switch_SetIndfile(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->selectfiletype=2;
@@ -117,7 +117,7 @@ void Switch_SetIndfile(BOOK *bk, void *)
   BookObj_CallPage(bk,&SelectFile_page);
 };
 
-void Switch_curstat(BOOK *bk, void *)
+void Switch_curstat(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   if (mbk->indpath && mbk->indname)

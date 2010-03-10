@@ -97,7 +97,7 @@ void Feedback_OnClose(BOOK *bk)
   }
 }
 
-void Feedback_OnOK(BOOK *bk, void *)
+void Feedback_OnOK( BOOK* bk, GUI* )
 {
   Feedback_OnClose(bk);
 }

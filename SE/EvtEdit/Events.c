@@ -491,7 +491,7 @@ typedef struct
   UPDATE_METHOD update;
 }EVTBOOK;
 
-void Saver_OnSelect(BOOK*bk, void*)
+void Saver_OnSelect(BOOK*bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   int item=ListMenu_GetSelectedItem(g);
@@ -523,7 +523,7 @@ void Saver_OnSelect(BOOK*bk, void*)
   }
   FreeBook(bk);
 };
-void Saver_OnBack(BOOK *bk, void *)
+void Saver_OnBack(BOOK *bk, GUI* )
 {
   GUI_Free(g);
 };

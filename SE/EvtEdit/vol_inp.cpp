@@ -19,7 +19,7 @@ GUI *CreateVolInput(BOOK *bk, int vol, int maxvol)
   return g;
 };
 
-void Vol_OnSave(BOOK *bk, void *)
+void Vol_OnSave(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   int v=PercentInput_GetPercent(mbk->vol);
@@ -37,7 +37,7 @@ void Vol_OnSave(BOOK *bk, void *)
   }
 };
 
-void Vol_OnBack(BOOK *bk, void *)
+void Vol_OnBack(BOOK *bk, GUI* )
 {
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 };

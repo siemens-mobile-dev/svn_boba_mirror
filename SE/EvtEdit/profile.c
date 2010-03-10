@@ -10,7 +10,7 @@ wchar_t *picns[]={L"JOYSTICK_DESKTOP_MENU_ICN",L"PROFILE_NORMAL_LIST_ICN", L"PRO
 
 int isEvtEditBook(BOOK * struc);
 
-void Profiles_OnSelect(BOOK *bk, void *)
+void Profiles_OnSelect(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->profiles);
@@ -42,7 +42,7 @@ int Profiles_onLBMessage(GUI_MESSAGE * msg)
   return(1);
 };
 
-void Profiles_OnBack(BOOK *bk, void *)
+void Profiles_OnBack(BOOK *bk, GUI* )
 {
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 };

@@ -15,7 +15,7 @@ typedef struct
 
 LIST * java_list;
 
-void onEnter_JavaList(BOOK * book, void *)
+void onEnter_JavaList(BOOK * book, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)book;
   
@@ -28,14 +28,14 @@ void onEnter_JavaList(BOOK * book, void *)
   BookObj_CallPage(book,&bk_main);
 };
 
-void ExitJavaList(BOOK * book, void *)
+void ExitJavaList(BOOK * book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
   BookObj_ReturnPage(book,NIL_EVENT);
   BookObj_ReturnPage(book,NIL_EVENT);
 };
 
-void DestroyJavaList(BOOK * book, void *)
+void DestroyJavaList(BOOK * book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
 };

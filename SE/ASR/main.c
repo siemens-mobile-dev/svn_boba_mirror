@@ -129,7 +129,7 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
   return(1);
 }
 
-void RecFM(BOOK * fm,void*)
+void RecFM(BOOK * fm,GUI*)
 {
   Record_FM((FM_RADIO_BOOK*)fm);
 }

@@ -55,13 +55,13 @@ void WriteCalcSettings(void)
 }
 
 //==============================================================================
-void IV_OnBack(BOOK * bk, void *)
+void IV_OnBack( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   FREE_GUI(mbk->calc_insvar);
 }
 
-void IV_onEnterPressed(BOOK * bk, void *)
+void IV_onEnterPressed( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->calc_insvar);
@@ -105,13 +105,13 @@ void InsertVar_CreateMenu(MyBOOK *mbk)
 }
 //==============================================================================
 
-void AngleSelect_OnCloseCBoxGui(BOOK * bk, void *)
+void AngleSelect_OnCloseCBoxGui( BOOK* bk, GUI* )
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->angle_sel_list);
 }
 
-void AngleSelect_OnSelectCBoxGui(BOOK * bk, void *)
+void AngleSelect_OnSelectCBoxGui( BOOK* bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   int item=OneOfMany_GetSelected(mbk->angle_sel_list);
@@ -172,13 +172,13 @@ void CreateEditFmtStr(MyBOOK *myBook)
                                                0);
 }
 //------------------------------------------------------------------------------
-void AutocalcSelect_OnCloseCBoxGui(BOOK * bk, void *)
+void AutocalcSelect_OnCloseCBoxGui( BOOK* bk, GUI* )
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->autocalc_sel_list);
 }
 
-void AutocalcSelect_OnSelectCBoxGui(BOOK * bk, void *)
+void AutocalcSelect_OnSelectCBoxGui( BOOK* bk, GUI* )
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   int item=OneOfMany_GetSelected(mbk->autocalc_sel_list);
@@ -207,13 +207,13 @@ void AutocalcSelect_CreateCBoxGui(MyBOOK *mbk)
 }
 
 //------------------------------------------------------------------------------
-void CS_OnBack(BOOK * bk, void *)
+void CS_OnBack( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   FREE_GUI(mbk->calc_settings);
 }
 
-void CS_onEnterPressed(BOOK * bk, void *)
+void CS_onEnterPressed( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->calc_settings);
@@ -289,13 +289,13 @@ void CreateCalcSettings(MyBOOK *mbk)
 
 //==============================================================================
 
-void CM_OnBack(BOOK * bk, void *)
+void CM_OnBack( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   FREE_GUI(mbk->calc_menu);
 }
 
-void CM_onEnterPressed(BOOK * bk, void *)
+void CM_onEnterPressed( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->calc_menu);

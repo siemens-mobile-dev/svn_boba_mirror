@@ -72,12 +72,12 @@ MENU_DESC fl_menu[]={
   {ind_invchk,  MC_InvChk,0}
 };
 
-void MMF_OnBack(BOOK * bk, void *)
+void MMF_OnBack( BOOK* bk, GUI* )
 {
   FREE_GUI(cur_gui);
 }
 
-void MMF_onEnterPressed(BOOK * bk, void *)
+void MMF_onEnterPressed( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(cur_gui);
   if (item<MAXELEMS(fl_menu))
@@ -175,12 +175,12 @@ MENU_DESC op_menu[]={
   {ind_newfile, MC_NewFile,0}
 };
 
-void MMO_OnBack(BOOK * bk, void *)
+void MMO_OnBack( BOOK* bk, GUI* )
 {
   FREE_GUI(cur_gui);
 }
 
-void MMO_onEnterPressed(BOOK * bk, void *)
+void MMO_onEnterPressed( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(cur_gui);
   int n=0;
@@ -274,12 +274,12 @@ MENU_DESC st_menu[]={
   {ind_sortr, MC_SRTRev,0}
 };
 
-void MMS_OnBack(BOOK * bk, void *)
+void MMS_OnBack( BOOK* bk, GUI* )
 {
   FREE_GUI(cur_gui);
 }
 
-void MMS_onEnterPressed(BOOK * bk, void *)
+void MMS_onEnterPressed( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(cur_gui);
   if (item<MAXELEMS(st_menu))
@@ -360,12 +360,12 @@ MENU_DESC vw_menu[]={
   {ind_refresh, MC_Refresh,0}
 };
 
-void MMV_OnBack(BOOK * bk, void *)
+void MMV_OnBack( BOOK* bk, GUI* )
 {
   FREE_GUI(menu_id[view_ind]);
 }
 
-void MMV_onEnterPressed(BOOK * bk, void *)
+void MMV_onEnterPressed( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(menu_id[view_ind]);
   if (item<MAXELEMS(vw_menu))
@@ -419,12 +419,12 @@ MENU_DESC bm_menu[]={
   {ind_bml, MC_BMList,0},
 };
 
-void MMBM_OnBack(BOOK * bk, void *)
+void MMBM_OnBack( BOOK* bk, GUI* )
 {
   FREE_GUI(cur_gui);
 }
 
-void MMBM_onEnterPressed(BOOK * bk, void *)
+void MMBM_onEnterPressed( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(cur_gui);
   if (item<MAXELEMS(bm_menu))
@@ -479,12 +479,12 @@ MENU_DESC mis_menu[]={
   {ind_about_m,  MC_AboutDlg,0}  
 };
 
-void MMM_OnBack(BOOK * bk, void *)
+void MMM_OnBack( BOOK* bk, GUI* )
 {
   FREE_GUI(menu_id[misc_ind]);
 }
 
-void MMM_onEnterPressed(BOOK * bk, void *)
+void MMM_onEnterPressed( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(menu_id[misc_ind]);
   if (item<MAXELEMS(mis_menu))
@@ -535,12 +535,12 @@ MENU_DESC opt_menu[]={
 
 int act_mmid=0;
 
-void MM_OnBack(BOOK * bk, void *)
+void MM_OnBack( BOOK* bk, GUI* )
 {
   CloseMenu();
 }
 
-void MM_onEnterPressed(BOOK * bk, void *)
+void MM_onEnterPressed( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(menu_id[main_ind]);
   int n=0;

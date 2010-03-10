@@ -330,7 +330,7 @@ void SkinGui_constr(DISP_DESC *desc)
   DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)SkinGui_OnKey);
 };
 
-void SkinGui_destr(DISP_DESC *desc)
+void SkinGui_destr( GUI* )
 {
   return;
 };
@@ -353,13 +353,13 @@ GUI_SKIN *CreateSkinGUI(MyBOOK *mbk)
   return gui_skin;
 };
 
-void SkinGUI_OnBack(BOOK *bk, void *)
+void SkinGUI_OnBack( BOOK* bk, GUI* )
 {
   BookObj_SetDisplayOrientation(bk,0);
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
 };
 
-void SkinGUI_Test(BOOK *bk, void* )
+void SkinGUI_Test( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   DISP_OBJ_SKIN *db=(DISP_OBJ_SKIN*)GUIObj_GetDISPObj(mbk->skin);
@@ -379,7 +379,7 @@ void SkinGUI_Test(BOOK *bk, void* )
   BookObj_Show(bk,0);
 };
 
-void SkinGUI_Dummy(BOOK *bk, void *)
+void SkinGUI_Dummy( BOOK* bk, GUI* )
 {
   return;
 };

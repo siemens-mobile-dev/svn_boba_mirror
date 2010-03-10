@@ -318,7 +318,7 @@ void GUI_REMIND_constr(DISP_DESC *desc)
 *                       ƒеструктор гу€
 *===========================================================================
 */
-void GUI_REMIND_destr(DISP_DESC *desc)
+void GUI_REMIND_destr( GUI* )
 {
   return;
 };

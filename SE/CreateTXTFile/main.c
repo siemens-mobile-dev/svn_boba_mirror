@@ -67,7 +67,7 @@ int ShowAuthorInfo(void *mess ,BOOK* book)
   return(1);
 }
 
-void DestroyList(BOOK * bk, void *)
+void DestroyList(BOOK * bk, GUI* )
 {
   if (CreateFileBook->list)
   {
@@ -76,7 +76,7 @@ void DestroyList(BOOK * bk, void *)
   }
 }
 
-void DestroyOOM(BOOK * bk, void *)
+void DestroyOOM(BOOK * bk, GUI* )
 {
   if (CreateFileBook->oom_list)
   {
@@ -168,13 +168,13 @@ void CreateBrowser(wchar_t const ** folder_list)
 }
 
 
-void ExitActionList(BOOK * bk, void *)
+void ExitActionList(BOOK * bk, GUI* )
 {
   FreeBook((BOOK*)CreateFileBook);
 }
 
 
-void onEnter(BOOK * bk, void *)
+void onEnter(BOOK * bk, GUI* )
 {
   if (ListMenu_GetSelectedItem(CreateFileBook->list))
   {
@@ -235,7 +235,7 @@ void CreateList(void)
   ShowWindow(list_menu);
 };
 
-void oom_onEnter(BOOK * bk, void *)
+void oom_onEnter(BOOK * bk, GUI* )
 {
   CreateFileBook->coding=OneOfMany_GetSelected(CreateFileBook->oom_list);
   CreateList();

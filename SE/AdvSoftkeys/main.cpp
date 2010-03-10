@@ -51,14 +51,14 @@ int isSoftkeysBook_ByName(BOOK *bk);
 
 GUI *help=0;
 
-void OnYesExitGui(BOOK * bk, void *)
+void OnYesExitGui(BOOK * bk, GUI *)
 {
   GUI_Free(help);
   FreeBook(bk);
   SUBPROC(elf_exit);
 };
 
-void OnBackExitGui(BOOK * bk, void *)
+void OnBackExitGui(BOOK * bk, GUI *)
 {
   GUI_Free(help);
   BookObj_Hide(bk, 0);

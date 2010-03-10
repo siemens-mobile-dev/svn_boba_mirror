@@ -179,17 +179,17 @@ void EditColorGui_constr(DISP_DESC *desc)
   DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)ColorGuiOnKey);
 }
 
-void EditColorGui_destr(DISP_DESC *desc)
+void EditColorGui_destr( GUI* )
 {
 }
 
-void OnBackColorEdit(BOOK * bk, void *)
+void OnBackColorEdit(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->color);
 }
 
-void OnOkColorEdit(BOOK * bk, void *)
+void OnOkColorEdit(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   DISP_OBJ_COLOR *disp_obj=(DISP_OBJ_COLOR *)GUIObj_GetDISPObj(myBook->color);
@@ -451,7 +451,7 @@ void EditCoordinatesGui_constr(DISP_DESC *desc)
   DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)CoordinatesGuiOnKey);
 }
 
-void EditCoordinatesGui_destr(DISP_DESC *desc)
+void EditCoordinatesGui_destr( GUI* )
 {
 }
 
@@ -714,13 +714,13 @@ void FontSelectGuiOnKey(DISP_OBJ_FONT_SEL *db,int key,int,int repeat,int type)
   }
 }
 
-void OnBackFontSelect(BOOK * bk, void *)
+void OnBackFontSelect(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->font_select);
 }
 
-void OnOkFontSelect(BOOK * bk, void *)
+void OnOkFontSelect(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   DISP_OBJ_FONT_SEL *disp_obj=(DISP_OBJ_FONT_SEL *)GUIObj_GetDISPObj(myBook->font_select);
@@ -741,7 +741,7 @@ void FontSelectGui_constr(DISP_DESC *desc)
 
 
 
-void FontSelectGui_destr(DISP_DESC *desc)
+void FontSelectGui_destr( GUI* )
 {
 }
 
@@ -944,13 +944,13 @@ int OnMessage(GUI_MESSAGE * msg)
   return(1);
 };
 
-void Self_OnBack(BOOK * bk, void *)
+void Self_OnBack(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_FLGUI(myBook->selectf);
 }
 
-void Self_onEnterPressed(BOOK * bk, void *)
+void Self_onEnterPressed(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(myBook->selectf);
@@ -974,7 +974,7 @@ void Self_onEnterPressed(BOOK * bk, void *)
   }
 }
 
-void Self_onSelectPressed(BOOK * bk, void *)
+void Self_onSelectPressed(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(myBook->selectf);

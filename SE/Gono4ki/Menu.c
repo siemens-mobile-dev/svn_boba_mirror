@@ -76,7 +76,7 @@ void CreateInputI(int x, IMGN*i, MyBook*bk)
                                        0); 
 }
 
-void OnEntINM(BOOK * bk, void *)
+void OnEntINM( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   if(item<3)
@@ -130,7 +130,7 @@ int SetTitlePunktsINM(GUI_MESSAGE * msg)
   return 0;
 }
 
-void ExitINM(BOOK*bk,void*)
+void ExitINM( BOOK* bk, GUI* )
 {
   GUI_Free(((MyBook*)bk)->gui);
   ((MyBook*)bk)->gui=0;
@@ -155,14 +155,14 @@ void CreateINM(MyBook*bk, int x)
   ShowWindow(INM);
 }
 
-void ExitMNM(BOOK*bk,void*)
+void ExitMNM( BOOK* bk, GUI* )
 {
   GUI_Free(((MyBook*)bk)->gui);
   ((MyBook*)bk)->gui=0;
   CreateNM((MyBook*)bk);
 }
 
-void OnMNM1(BOOK * bk, void *)
+void OnMNM1( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   for(int i=0; i<6; i++)
@@ -217,7 +217,7 @@ void CreateInput(int x, SOUND*s, MyBook*bk)
 
 
 
-void OnEntMNM(BOOK * bk, void *)
+void OnEntMNM( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   if(item==0)
@@ -312,7 +312,7 @@ void CreateMNM(MyBook*bk, int x)
   ShowWindow(MNM);
 }
 
-void ExitNM(BOOK*bk,void*)
+void ExitNM( BOOK* bk, GUI* )
 {
   GUI_Free(((MyBook*)bk)->gui);
   ((MyBook*)bk)->gui=0;
@@ -320,7 +320,7 @@ void ExitNM(BOOK*bk,void*)
   //CreatePM(bk);
 }
 
-void OnEntGameM(BOOK * bk, void *)
+void OnEntGameM( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   ((MyBook*)bk)->speed=item+1;
@@ -331,7 +331,7 @@ void OnEntGameM(BOOK * bk, void *)
   ((MyBook*)bk)->gui=0;  
 }
 
-void OnEntMR(BOOK * bk, void *)
+void OnEntMR( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   if(item==0)
@@ -348,7 +348,7 @@ void OnEntMR(BOOK * bk, void *)
   }
 }
 
-void OnEntNM(BOOK * bk, void *)
+void OnEntNM( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   if(item==0)
@@ -384,7 +384,7 @@ int SetTitlePunktsNM(GUI_MESSAGE * msg)
   return(1);        
 }
 
-void DeleteRes(BOOK * bk, void *)
+void DeleteRes( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   if(item==0)
@@ -469,12 +469,12 @@ void CreateNM(MyBook*bk)
 }
   
 
-void YesPress(BOOK*bk,void*)
+void YesPress( BOOK* bk, GUI* )
 {
   FreeBook(bk);
 }
 
-void NoPress(BOOK*bk,void*)
+void NoPress( BOOK* bk, GUI* )
 {
   GUI_Free(((MyBook*)bk)->gui1);
   ((MyBook*)bk)->gui1=0;
@@ -494,7 +494,7 @@ void YesNo(MyBook*bk)
   ShowWindow(((MyBook*)bk)->gui1);
 }
 
-void ExitGM(BOOK*bk,void*)
+void ExitGM( BOOK* bk, GUI* )
 {
   YesNo((MyBook*)bk);
 }
@@ -518,7 +518,7 @@ void CreateGameM(MyBook*bk)
   ShowWindow(GameM);
 }
 
-void OnEntGM(BOOK * bk, void *)
+void OnEntGM( BOOK* bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(((MyBook*)bk)->gui);
   if(item==0)

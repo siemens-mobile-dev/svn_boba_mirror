@@ -11,7 +11,7 @@ void elf_exit(void){
 }
 
 
-void CloseMyBook(BOOK * bk, void *)
+void CloseMyBook( BOOK* bk, GUI* )
 {
   FreeBook(bk);
 }

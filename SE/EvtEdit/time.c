@@ -23,7 +23,7 @@ extern LIST *events;
 int InitializeEvents(BOOK *myBook);
 void DestroyEvents(BOOK *myBook);
 
-void AcceptTIinput(BOOK *bk, void *data)
+void AcceptTIinput(BOOK *bk, GUI* data )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   unsigned int i=TimeInput_GetTimeInt(data);
@@ -37,7 +37,7 @@ void AcceptTIinput(BOOK *bk, void *data)
   BookObj_CallPage(bk, &bk_StringInput);
 };
 
-void CloseTIinput(BOOK * bk, void *)
+void CloseTIinput(BOOK * bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   mbk->curtime=0;

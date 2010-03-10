@@ -49,7 +49,7 @@ AT_NULL, AT_NULL, AT_NULL, AT_NULL, AT_NULL, AT_STRING, AT_VOLUME, AT_CHOOSE_MEN
 
 int temp_act=0;
 wchar_t *old=0;
-void SelectEvent_OnEnter(BOOK *bk, void *)
+void SelectEvent_OnEnter(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   int item=ListMenu_GetSelectedItem(mbk->addgui);
@@ -230,7 +230,7 @@ void SelectEvent_OnEnter(BOOK *bk, void *)
   }
 };
 
-void SelectEvent_OnBack(BOOK *bk, void *)
+void SelectEvent_OnBack(BOOK *bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   mbk->selev->type=temp_act;

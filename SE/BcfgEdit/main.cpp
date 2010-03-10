@@ -165,7 +165,7 @@ void SendReconfigEvent(BCFG_DATA *bdata)
 }
 
 
-void OnYesExitGui(BOOK * bk, void *)
+void OnYesExitGui(BOOK * bk, GUI *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   BCFG_DATA *bdata=&mbk->bdata;
@@ -174,18 +174,18 @@ void OnYesExitGui(BOOK * bk, void *)
   FreeBook(bk);
 }
 
-void OnNoExitGui(BOOK * bk, void *)
+void OnNoExitGui(BOOK * bk, GUI *)
 {
   FreeBook(bk);
 }
 
-void OnBackExitGui(BOOK * bk, void *)
+void OnBackExitGui(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->yesno);
 }
 
-void OnBackBcfgGui(BOOK * bk, void *)
+void OnBackBcfgGui(BOOK * bk, GUI *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   BCFG_DATA *bdata=&mbk->bdata;
@@ -218,13 +218,13 @@ void OnBackBcfgGui(BOOK * bk, void *)
   }
 }
 
-void OnCloseCBoxGui(BOOK * bk, void *)
+void OnCloseCBoxGui(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   FREE_GUI(myBook->cbox_gui);
 }
 
-void OnSelectCBoxGui(BOOK * bk, void *)
+void OnSelectCBoxGui(BOOK * bk, GUI *)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   int item=OneOfMany_GetSelected(myBook->cbox_gui);
@@ -409,7 +409,7 @@ void OnOkCreateUnicodeGui(BOOK * bk, wchar_t *string, int len)
   }
 }
 
-void UnicodeOnSelFile(BOOK *bk,void*)
+void UnicodeOnSelFile(BOOK *bk, GUI*)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   myBook->type=SFILE;
@@ -419,7 +419,7 @@ void UnicodeOnSelFile(BOOK *bk,void*)
   myBook->selectf=CreateFileFolderSelect(myBook, str);
 }
 
-void UnicodeOnSelFolder(BOOK *bk,void*)
+void UnicodeOnSelFolder(BOOK *bk, GUI*)
 {
   MyBOOK * myBook=(MyBOOK *)bk;
   myBook->type=SFOLDER;
@@ -468,7 +468,7 @@ void CreateUnicodeSI(MyBOOK *myBook, int is_pass)
   delete ustr;
 }
 
-void OnSelect1GuiBcfg(BOOK * bk, void *)
+void OnSelect1GuiBcfg(BOOK * bk, GUI *)
 {
   MyBOOK * mbk=(MyBOOK *)bk;
   BCFG_DATA *bdata=&mbk->bdata;

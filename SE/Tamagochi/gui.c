@@ -169,18 +169,18 @@ int menu_list_callback(GUI_MESSAGE * msg)
   return(1);
 }
 
-void DestroyMenuList(BOOK * book, void *)
+void DestroyMenuList( BOOK* book, GUI* )
 {
   BookObj_ReturnPage(book,ACCEPT_EVENT);
 }
 
-void CancelMenuList(BOOK * book, void *)
+void CancelMenuList( BOOK* book, GUI* )
 {
   BookObj_ReturnPage(book,NIL_EVENT);
   BookObj_ReturnPage(book,NIL_EVENT);
 }
 
-void Menu_onEnter(BOOK * book, void *)
+void Menu_onEnter( BOOK* book, GUI* )
 {
   MyBOOK * bk = (MyBOOK *)book;
   int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);

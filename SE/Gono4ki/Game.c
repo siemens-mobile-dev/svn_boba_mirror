@@ -42,7 +42,7 @@ void custom_constr(DISP_DESC *desc)
   DISP_DESC_SetOnClose(desc,(DISP_OBJ_ONCLOSE_METHOD)custom_onClose);
 };
 
-void custom_destr(DISP_DESC *desc)
+void custom_destr( GUI* )
 {
   return;
 };
