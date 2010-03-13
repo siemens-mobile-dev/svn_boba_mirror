@@ -1,21 +1,104 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+#define COPYRIGHT_STRING STR( "\nBookManager v3.0\nbuild 030310\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
+#define ICONS_COUNT 4
+#define BOOKLIST 0
+#define ELFLIST 1
+#define ICONS_COUNT 4
+#define DIGITS_COUNT 10
 
-int isBookManager(BOOK * struc);
-char * unicode2win1251(char *s, wchar_t *ws, int len);
-int GetActiveTab(void);
 
-extern GUI_LIST * java_list_menu;
-extern LIST * java_list;
+#define IDN_BOOKS_DEACT_ICON _T( "RN_TAB_SESSION_MANAGER_DESELECTED_ICN" )
+#define IDN_BOOKS_ACT_ICON _T( "RN_TAB_SESSION_MANAGER_SELECTED_ICN" )
+#define IDN_ELFS_DEACT_ICON _T( "RN_TAB_BOOKMARKS_DESELECTED_ICN" )
+#define IDN_ELFS_ACT_ICON _T( "RN_TAB_BOOKMARKS_SELECTED_ICN" )
 
-extern GUI_LIST * mode_list;
-extern GUI_LIST * but_list;
-//extern GUI * str_inp;
-extern char * buffer;
-extern int buf_size;
-extern int MainMenuID;
-extern int ActiveTab;
 
+#define PLATFORM_DB3150_1 0xC8
+#define PLATFORM_DB3150_2 0xC9
+#define PLATFORM_DB3200_1 0xD8
+#define PLATFORM_DB3200_2 0xD9
+#define PLATFORM_DB3210_1 0xE8
+#define PLATFORM_DB3210_2 0xE9
+#define PLATFORM_DB3350 0xF0
+
+
+typedef struct
+{
+  wchar_t ImageID;
+}IMG;
+
+typedef struct _MYBOOK : BOOK
+{
+  GUI_TABMENUBAR* gui;
+  char* ini_buf;
+  int ini_buf_size;
+  char* shortcuts_buf;
+  int shortcuts_buf_size;
+  DISP_OBJ_ONKEY_METHOD oldOnKey;
+  DISP_OBJ_ONKEY_METHOD oldOnKey1;
+  LIST* books_list;
+  LIST* elfs_list;
+  LIST* java_list;
+  GUI_LIST* java_list_menu;
+  GUI_LIST* blist;
+  GUI_LIST* elist;
+  GUI_LIST* mode_list;
+  GUI_LIST* but_list;
+  GUI* YesNoQuestion;
+  GUI* StringInput;
+  IMG tabs_image[ICONS_COUNT];
+  IMG digs_image[DIGITS_COUNT];
+  int MainMenuID;
+  wchar_t blistpos;
+  wchar_t elistpos;
+  wchar_t blistcnt;
+  wchar_t elistcnt;
+  wchar_t ActiveTAB;
+  char isA2;
+}MyBOOK;
+
+
+typedef struct
+{
+  BOOK* book;
+  UI_APP_SESSION* session;
+  int book_name;
+  
+}BOOK_ITEM;
+
+
+typedef struct
+{
+  BOOK * book;
+  char * book_name;
+  int isGuiBook;
+}BOOK_LIST_ITEM;
+
+
+typedef struct
+{
+  int BookID;
+}DESTROYBOOK_DATA;
+
+
+int CreateBookList( void* r0, BOOK* bk );
+int RecreateBookList( void* r0, BOOK* bk );
+int isBookManager( BOOK* struc );
+int onUserInactivity( void* r0, BOOK* bk );
+int onRootListChanged( void* r0, BOOK* bk );
+void onMyBookClose( BOOK* );
+void CloseMyBook( BOOK* Book, GUI* );
+int CreateMenu( int r0, BOOK* bk );
+void PreTerminateManager( BOOK* Book, GUI* );
+int NewKey( int key, int r1, int mode );
+void SessoinListsFree( MyBOOK* book );
+int get_file( wchar_t* fname, char** buf_set );
+void RefreshElfSoftkeys( MyBOOK* mbk, int item );
+char* unicode2win1251(char* s, wchar_t* ws, int len);
+int GetActiveTab(MyBOOK*);
+int GetParam( char* name);
+char* unicode2win1251(char* s, wchar_t* ws, int len);
 
 #endif

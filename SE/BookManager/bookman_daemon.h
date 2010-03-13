@@ -2,12 +2,17 @@
 #define _BOOKMAN_DAEMON_H_
 
 //Создаем демона
-void CreateDaemon(void);
+void CreateDaemon( void );
 
 //Убиваем демона
-void DestroyDaemon(void);
+void DestroyDaemon( void );
 
 //Для файнда
-int isBookmanDaemonBook(BOOK * book);
+int isBookmanDaemonBook( BOOK* book );
+
+typedef struct _DaemonBook : BOOK
+{
+  wchar_t ActiveTAB;
+}DaemonBook;
 
 #endif

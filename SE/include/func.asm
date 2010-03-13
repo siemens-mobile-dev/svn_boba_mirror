@@ -1,6 +1,3 @@
-#include "..\\include\DYN_tag.h"
-
-
         RTMODEL "ARMv4M", "USED"
         RTMODEL "ARMv4T", "USED"
         RTMODEL "ARMv5T", "USED"
@@ -36,7 +33,7 @@ ASYNC	DC32	_ASYNC
 
 ;=====================================================================================================
 ;
-        #include "..\\include\var_arg.asm"
+	#include "..\\include\DYN_tag.h"
 
 DYNCONST        MACRO name,tag
         RSEG    DYN_CONST:DATA:NOROOT(2)
@@ -46,7 +43,6 @@ name:
         ENDM
 ;
         #include "..\\include\DYN_mac.asm"
-
 
         RSEG    DYN_CONST_DESC:DATA:ROOT(2)
         DC32    (SFE(DYN_CONST)-SFB(DYN_CONST))>>2

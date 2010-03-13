@@ -137,8 +137,8 @@ typedef struct
 
 typedef struct
 {
-  wchar_t * fname;
-  wchar_t * path;
+  wchar_t * __fname; //use FILEITEM_SetFname/FILEITEM_GetFname
+  wchar_t * __path; //use FILEITEM_SetPath/FILEITEM_GetPath
   char *MIME_type;
   wchar_t * extension;
   int * FSTAT;
@@ -169,7 +169,7 @@ typedef struct
   char   isDestroyed;
   char * name;
   UI_APP_SESSION * app_session;
-  int   parrent_BookID;
+  int   parent_BookID;
   u16   unk2;
   int   unk3;
   int   unk4;
@@ -419,11 +419,9 @@ typedef struct
 
 typedef struct
 {
-  char  msg;
-  void *gui;
-  BOOK * book;
-
-
+  char __msg; //use GUIonMessage_GetMsg()
+  GUI* __gui; //use GUIonMessage_GetGui()
+  BOOK* __book; //use GUIonMessage_GetBook()
 }GUI_MESSAGE;
 
 struct DISP_DESC;
@@ -461,37 +459,19 @@ typedef struct WINDOW
 typedef struct
 {
 /*
-  void * parrent;
-  struct DISP_DESC * desc;
-  struct WINDOW *window;
-  int Win_ID;
-  int COLOR1;
-  int COLOR2;
-  char  font;
-  char  font1;
-  char  unk;
-  char  unk1;
-  char dummy[0x88];
-  char	* animation;
-  char dummy1[20];
-  char dummy2[20];
-
-  char dummy3[0x120-0xD0];//A2
+  struct DISP_DESC * desc; //use DispObject_GetDESC
+  struct WINDOW *window; //use DispObject_GetWindow
 */
-  char dummy3[0x150];//A2
+  char dummy[0x16C];
 }DISP_OBJ;
 
 typedef struct GUI_type
 {
 /*
-  DISP_OBJ * __DISP_OBJ; //use GUIObj_GetDISPObj
-  BOOK * __book; //use GUI_GetBook
-  void * unk;
-  void * unk1;
-
-  char dummy[0x44-0x10];//A2
+  DISP_OBJ * __DISP_OBJ; //use GUIObject_GetDispObject
+  BOOK * __book; //use GUIObject_GetBook
 */
-  char dummy[0x44];//A2
+  char dummy[0x90];
 }_GUI;
 
 //2do: remove these types
@@ -788,13 +768,35 @@ typedef struct
   wchar_t null;
   wchar_t shortcut_state;
   wchar_t erasable_flag;
-}SHORTCUT;
+}SHORTCUT_DESC;
+
+
+typedef struct
+{
+  wchar_t name[0xC8];
+  wchar_t name1[0xC8];
+  wchar_t name2[0xC8];
+  char shortcut_state;
+  char unk2;
+  char unk3;
+  char is_name1_present;
+  char name_type;
+  char isEditable;
+}SHORTCUT_DESC_A2;
+
 
 enum shortcut_state {
-  SC_Absent=0,
-  SC_Inactive=1,
-  SC_Present=2,
-  SC_MainMenu=3
+  SC_State_Absent=0,
+  SC_State_Inactive=1,
+  SC_State_Present=2,
+  SC_State_MainMenu=3
+};
+
+enum name_type {
+  SC_Name_StandName=0,
+  SC_Name_NameAbsent=1,
+  SC_Name_MainMenu=2,
+  SC_Name_AddShortcut=3
 };
 
 typedef struct
@@ -895,7 +897,7 @@ typedef struct
 {
   int x;
   int y; 
-} POINT;
+}POINT;
 
 typedef struct {
     int x;

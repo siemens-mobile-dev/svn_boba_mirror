@@ -137,7 +137,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>OLDFUNCTIONS</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -263,7 +263,7 @@
         </option>
         <option>
           <name>CCMultibyteSupport</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>main.hex</state>
+          <state>BookManager.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -961,7 +961,6 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1087,7 +1086,7 @@
         </option>
         <option>
           <name>CCMultibyteSupport</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -1653,10 +1652,22 @@
     <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\book_names.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\book_names.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\bookman_daemon.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\bookman_daemon.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\conf_loader.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\conf_loader.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\config_data.c</name>
@@ -1670,7 +1681,7 @@
           <debug>1</debug>
           <option>
             <name>CCDefines</name>
-            <state>OLDFUNCTIONS</state>
+            <state></state>
           </option>
           <option>
             <name>CCPreprocFile</name>
@@ -1796,7 +1807,7 @@
           </option>
           <option>
             <name>CCMultibyteSupport</name>
-            <state>0</state>
+            <state>1</state>
           </option>
           <option>
             <name>CCDiagWarnAreErr</name>
@@ -2110,16 +2121,22 @@
     </configuration>
   </file>
   <file>
+    <name>$PROJ_DIR$\config_data.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\..\include\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\Release\Exe\main.elf</name>
+    <name>$PROJ_DIR$\main.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\shortcuts.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\shortcuts.h</name>
   </file>
 </project>
 
