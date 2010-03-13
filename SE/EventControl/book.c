@@ -6,9 +6,9 @@
 #define __version__ L"EventControl v2.0\r\n\r\n© UltraShot, Slaventino\n\r\n%s\n\r\nIn a memory of PSIX\n"
 #define BUILD "public version"
 
-#include "mem.h"
-#include "..\\include\Lib_Clara.h" 
-#include "..\\include\Dir.h" 
+#include "..\deleaker\mem2.h"
+#include "..\include\Lib_Clara.h" 
+#include "..\include\Dir.h" 
 #include "header\structs.h"
 
 extern PROCESS proc_;

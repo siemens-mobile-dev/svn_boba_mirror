@@ -5,7 +5,7 @@
      Author: UltraShot
      Supported phones: W580 R8BE001, W580 R8BA024, W580 R8BE001 Orange, W580 R6CA001 Orange, W710 R1JC002
 */
-#include "header\mem.h"
+#include "..\deleaker\mem2.h"
 #include "..\include\Lib_Clara.h"
 
 

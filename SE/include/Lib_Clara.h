@@ -402,7 +402,7 @@ __swi __arm LIST* List_Create( void );
 __swi __arm void List_Destroy( LIST* lst );
 
 #pragma swi_number=0x16B
-__swi __arm void List_InsertFirst( LIST* lst, void* item );
+__swi __arm int List_InsertFirst( LIST* lst, void* item );
 
 #pragma swi_number=0x16C
 __swi __arm int Gif2ID( u16 IMAGEHANDLE, const wchar_t* path, const wchar_t* fname, wchar_t* ID );
@@ -537,7 +537,7 @@ __swi __arm wchar_t* wstrrchr( const wchar_t* wstr, wchar_t wchar );
 #pragma swi_number=0x1AF
 __swi __arm void BookObj_CallSubroutine( BOOK* book, BOOK_SUBROUTINE* subr );
 #pragma swi_number=0x1B0
-__swi __arm void List_InsertLast( LIST* lst, void* item );
+__swi __arm int List_InsertLast( LIST* lst, void* item );
 
 #pragma swi_number=0x1B1
 __swi __arm void debug_printf( const char* fmt, ... );
@@ -1307,7 +1307,7 @@ __swi __arm int ImageID_GetIndirect( void* buf_image, int size, int __NULL, wcha
 #pragma swi_number=0x303
 __swi __arm void unixtime2datetime( int, DATETIME* );
 #pragma swi_number=0x304
-__swi __arm void List_Insert( LIST* lst, int i, void* item );
+__swi __arm int List_Insert( LIST* lst, int i, void* item );
 #pragma swi_number=0x305
 __swi __arm int FileCopy( wchar_t* src_path, wchar_t* src_name, wchar_t* dest_path, wchar_t* dest_name, int );
 #pragma swi_number=0x306
@@ -1545,13 +1545,13 @@ __swi __arm void REQUEST_SETTING_ALLOWEDCALLERS_GET( const int* sync, int Profil
 __swi __arm void* IncommingCall_Accept( BOOK* book );
 
 #pragma swi_number=0x369
-__swi __arm void MediaPlayer_SoftKeys_SetText( void* player_gui, int actionID, STRID );
+__swi __arm void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
 #pragma swi_number=0x36A
-__swi __arm void MediaPlayer_SoftKeys_SetAction( void* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
+__swi __arm void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
 #pragma swi_number=0x36B
-__swi __arm void MediaPlayer_SoftKeys_SetItemAsSubItem( void* player_gui, int item, int subitem );
+__swi __arm void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
 #pragma swi_number=0x36C
-__swi __arm void MediaPlayer_SoftKeys_AddHelpStr( void* player_gui, int item, STRID );
+__swi __arm void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 #pragma swi_number=0x36D
 __swi __arm void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
 

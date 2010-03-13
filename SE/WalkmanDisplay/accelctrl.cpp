@@ -1,4 +1,4 @@
-#include "header\mem.h"
+#include "..\deleaker\mem2.h"
 #include "..\include\Lib_Clara.h"
 #include "header\accelctrl.h"
 

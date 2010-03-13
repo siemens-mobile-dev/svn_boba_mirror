@@ -1,7 +1,7 @@
-#include "header\mem.h"
-#include "..\\include\Lib_Clara.h"
-#include "..\\include\Dir.h"
-#include "..\\include\cfg_items.h"
+#include "..\deleaker\mem2.h"
+#include "..\include\Lib_Clara.h"
+#include "..\include\Dir.h"
+#include "..\include\cfg_items.h"
 #include "header\conf_loader.h"
 
 const wchar_t *successed_config_path=L"";

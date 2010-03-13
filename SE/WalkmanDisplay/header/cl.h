@@ -1,4 +1,4 @@
-#include "..\\include\types.h"
+#include "..\include\types.h"
 
 typedef wchar_t (*GET_IMGID)(wchar_t old);
 typedef void (*GET_OLD_REDR)(DISP_OBJ_ONREDRAW_METHOD);

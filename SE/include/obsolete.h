@@ -52,10 +52,8 @@ DEPRECATE(DISP_OBJ_METHOD,DISP_OBJ_GetMethod0B,DispObject_GetMethod0B)
 DEPRECATE(DISP_OBJ_METHOD,DISP_OBJ_GetMethod0C,DispObject_GetMethod0C)
 DEPRECATE(char*,DISP_OBJ_GetName,DispObject_GetName)
 DEPRECATE(DISP_OBJ_ONCLOSE_METHOD,DISP_OBJ_GetOnClose,DispObject_GetOnClose)
-DEPRECATE(DISP_OBJ_METHOD,DISP_OBJ_GetOnConfig,DispObject_GetOnConfig)
 DEPRECATE(DISP_OBJ_ONCREATE_METHOD,DISP_OBJ_GetOnCreate,DispObject_GetOnCreate)
 DEPRECATE(DISP_OBJ_ONKEY_METHOD,DISP_OBJ_GetOnKey,DispObject_GetOnKey)
-DEPRECATE(DISP_OBJ_METHOD,DISP_OBJ_GetOnLayout,DispObject_GetOnLayout)
 DEPRECATE(DISP_OBJ_ONREDRAW_METHOD,DISP_OBJ_GetOnRedraw,DispObject_GetOnRedraw)
 DEPRECATE(DISP_OBJ_METHOD,DISP_OBJ_GetonRefresh,DispObject_GetonRefresh)
 DEPRECATE(WINDOW*,DISP_OBJ_GetWindow,DispObject_GetWindow)
@@ -180,10 +178,8 @@ DEPRECATE(void,MediaPlayer_SoftKey_SetText,MediaPlayer_SoftKeys_SetText)
 #define DISP_OBJ_GetMethod0C DispObject_GetMethod0C
 #define DISP_OBJ_GetName DispObject_GetName
 #define DISP_OBJ_GetOnClose DispObject_GetOnClose
-#define DISP_OBJ_GetOnConfig DispObject_GetOnConfig
 #define DISP_OBJ_GetOnCreate DispObject_GetOnCreate
 #define DISP_OBJ_GetOnKey DispObject_GetOnKey
-#define DISP_OBJ_GetOnLayout DispObject_GetOnLayout
 #define DISP_OBJ_GetOnRedraw DispObject_GetOnRedraw
 #define DISP_OBJ_GetonRefresh DispObject_GetonRefresh
 #define DISP_OBJ_GetWindow DispObject_GetWindow

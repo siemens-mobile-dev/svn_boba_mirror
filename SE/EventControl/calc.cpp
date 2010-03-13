@@ -3,9 +3,9 @@
 *                    Модуль вычисления даты
 ****************************************************************************
 */
-#include "mem.h"
-#include "..\\include\Lib_Clara.h" 
-#include "..\\include\Dir.h" 
+#include "..\deleaker\mem2.h"
+#include "..\include\Lib_Clara.h" 
+#include "..\include\Dir.h" 
 
 #define IS_LARGE_YEAR(a) ((a%4==0 && a%100!=0) || a%400==0)
 

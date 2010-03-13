@@ -1,7 +1,7 @@
-#include "header\mem.h"
-#include "..\\include\cfg_items.h"
+#include "..\deleaker\mem2.h"
+#include "..\include\cfg_items.h"
 #include "header\skin_data.h"
-#include "..\\include\Colors.h"
+#include "..\include\Colors.h"
 
 #pragma diag_suppress=Pe177
 

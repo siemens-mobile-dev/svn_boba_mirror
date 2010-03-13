@@ -4,7 +4,11 @@
 
 #ifdef LOG
 
-extern "C" void GetDateTime(DATETIME *);
+void GetDateTime(DATETIME* dt)
+{
+	REQUEST_DATEANDTIME_GET( SYNC, dt);
+}
+
 void StartLog(void)
 {
   int f;

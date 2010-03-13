@@ -3194,7 +3194,10 @@
     <name>$PROJ_DIR$\main.cpp</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\mem.cpp</name>
+    <name>$PROJ_DIR$\..\deleaker\mem2.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\deleaker\mem2.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\migrate_2_0.cpp</name>
