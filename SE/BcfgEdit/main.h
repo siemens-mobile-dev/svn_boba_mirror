@@ -1,52 +1,69 @@
 #ifndef _MAIN_H_
-  #define _MAIN_H_
+#define _MAIN_H_
 
 typedef struct
 {
-  wchar_t path[128];
-  wchar_t name[128];
-  unsigned char *cfg;
-  int size_cfg;
-  unsigned int level;
-  CFG_HDR *levelstack[16];
+	wchar_t path[128];
+	wchar_t name[128];
+	unsigned char *cfg;
+	int size_cfg;
+	unsigned int level;
+	CFG_HDR *levelstack[16];
 }BCFG_DATA;
 
 enum SELF {
-  SFOLDER=0,
-  SFILE=1
+	SFOLDER=0,
+	SFILE=1
 };
 
-typedef struct
+typedef struct _MyBOOK : BOOK
 {
-  BOOK  book;
-  GUI_LIST *bcfg;
-  GUI_ONEOFMANY *cbox_gui;
-  GUI *text_input;
-  GUI *yesno;
-  GUI *color;
-  GUI *coord;
-  GUI *tinput;
-  GUI *dinput;
-  GUI *font_select;
-  GUI_FEEDBACK *key_input;
-  GUI_LIST * key_sel_list;
-  GUI_ONEOFMANY * keymode_sel_list;
-  GUI_LIST *selectf;
-  int type;
-  
-  LIST *list;
-  CFG_HDR *cur_hp;
-  unsigned long old_crc;
-  u16 check_box_unchecked;
-  u16 check_box_checked;
-  STRID changes_have_been_made;
-  STRID save_before_exit;
-  BCFG_DATA bdata;
+	GUI_LIST *bcfg;
+	GUI_ONEOFMANY *cbox_gui;
+	GUI *text_input;
+	GUI *yesno;
+	GUI *color;
+	GUI *coord;
+	GUI *tinput;
+	GUI *dinput;
+	GUI *font_select;
+	GUI_FEEDBACK *key_input;
+	GUI_LIST * key_sel_list;
+	GUI_ONEOFMANY * keymode_sel_list;
+	GUI_LIST *selectf;
+	int type;
+	
+	LIST *list;
+	
+	union
+	{
+		CFG_HDR* hdr;
+		CFG_HDR_DATE* date;
+		CFG_HDR_TIME* time;
+		CFG_HDR_KEY* key;
+		CFG_HDR_COLOR* color;
+		CFG_HDR_RECT* rect;
+		CFG_HDR_POINT* point;
+		CFG_HDR_FONT* font;
+		CFG_HDR_CHECKBOX* checkbox;
+		CFG_HDR_SIGNEDINT* signedint;
+		CFG_HDR_UNSIGNEDINT* unsignedint;
+		CFG_HDR_CBOX* cbox;
+		CFG_HDR_STR* str;
+		CFG_HDR_WSTR* wstr;
+	} cur_hp;
+	
+	unsigned long old_crc;
+	u16 check_box_unchecked;
+	u16 check_box_checked;
+	STRID changes_have_been_made;
+	STRID save_before_exit;
+	BCFG_DATA bdata;
 }MyBOOK;
 
 typedef struct
 {
-  BOOK * book;
+	BOOK * book;
 }MSG;
 
 int TerminateElf(void * ,BOOK* book);
@@ -68,5 +85,5 @@ extern "C" long wcstol(const wchar_t *, wchar_t **, int);
 #define IDN_CHECKBOX_CHECKED_ICON L"CHECKMARK_IN_BOX_ICN"
 
 #define LGP_NULL 0x6FFFFFFF
-#define FREE_GUI(a) if (a) a=GUI_Free(a)
+#define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
 #endif

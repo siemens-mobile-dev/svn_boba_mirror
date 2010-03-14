@@ -46,6 +46,8 @@ void*  __deleaker_mfree_adr(char* __file__,  int __line__);
 void  __deleaker_mfree(void* p, char* __file__,  int __line__);
 #define FreeBook(book) __deleaker_FreeBook(book, __FILE__,  __LINE__)
 void  __deleaker_FreeBook(BOOK* book, char* __file__,  int __line__);
+#define BookObj_KillBook(book) __deleaker_BookObj_KillBook(book, __FILE__,  __LINE__)
+void  __deleaker_BookObj_KillBook(BOOK* book, char* __file__,  int __line__);
 #define List_Create() __deleaker_List_Create(__FILE__,  __LINE__)
 LIST*  __deleaker_List_Create(char* __file__,  int __line__);
 #define List_Destroy(lst) __deleaker_List_Destroy(lst, __FILE__,  __LINE__)
@@ -180,8 +182,20 @@ GVI_PEN  __deleaker_GVI_CreateDashedPen(char thikness, int color, int bitmask, i
 GVI_PEN  __deleaker_GVI_CreatePen(char thikness, int color, char* __file__,  int __line__);
 #define GVI_CreateSolidBrush(color) __deleaker_GVI_CreateSolidBrush(color, __FILE__,  __LINE__)
 GVI_BRUSH  __deleaker_GVI_CreateSolidBrush(int color, char* __file__,  int __line__);
+#define GVI_CreateBitmap(xsize, ysize, bpp) __deleaker_GVI_CreateBitmap(xsize, ysize, bpp, __FILE__,  __LINE__)
+GVI_BMP  __deleaker_GVI_CreateBitmap(int xsize, int ysize, int bpp, char* __file__,  int __line__);
+#define GVI_CreateMemoryGC(bitmap) __deleaker_GVI_CreateMemoryGC(bitmap, __FILE__,  __LINE__)
+GVI_GC  __deleaker_GVI_CreateMemoryGC(GVI_BMP bitmap, char* __file__,  int __line__);
 #define GVI_Delete_GVI_Object(__unknwnargname1) __deleaker_GVI_Delete_GVI_Object(__unknwnargname1, __FILE__,  __LINE__)
 BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__,  int __line__);
+#define GVI_DeleteMemoryGC(gc) __deleaker_GVI_DeleteMemoryGC(gc, __FILE__,  __LINE__)
+void  __deleaker_GVI_DeleteMemoryGC(GVI_GC gc, char* __file__,  int __line__);
+#define TextFeedbackWindow(book, zero) __deleaker_TextFeedbackWindow(book, zero, __FILE__,  __LINE__)
+GUI_FEEDBACK*  __deleaker_TextFeedbackWindow(BOOK* book, int zero, char* __file__,  int __line__);
+#define DataBrowserDesc_Create() __deleaker_DataBrowserDesc_Create(__FILE__,  __LINE__)
+void*  __deleaker_DataBrowserDesc_Create(char* __file__,  int __line__);
+#define DataBrowserDesc_Destroy(DataBrowserDesc) __deleaker_DataBrowserDesc_Destroy(DataBrowserDesc, __FILE__,  __LINE__)
+void  __deleaker_DataBrowserDesc_Destroy(void* DataBrowserDesc, char* __file__,  int __line__);
 
 #endif
 #endif

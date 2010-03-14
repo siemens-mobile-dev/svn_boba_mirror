@@ -1,5 +1,5 @@
 #ifndef _DATETIME_H_
-  #define _DATETIME_H_
+#define _DATETIME_H_
 
 #define TI_GET_HOUR(x) ((unsigned int)x&0xFF)
 #define TI_GET_MIN(x) (((unsigned int)x>>8)&0xFF)

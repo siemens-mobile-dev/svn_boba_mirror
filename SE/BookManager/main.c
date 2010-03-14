@@ -754,6 +754,9 @@ GUI_TABMENUBAR* CreateGuiList( int tab_pos, BOOK* bk )
   p[0] = Str2ID ( L"Heap : ", 0, 7 );
   p[1] = int2strID ( GetFreeBytesOnHeap() );
   // GUIObject_SetTitleText( lo, Str2ID( p, 5, 2 ) );
+
+  GUI_TABMENUBAR* tab = CreateTabMenuBar( bk );
+  TabMenuBar_SetTabCount( tab, 2 );
   
   ListMenu_SetOnMessage( mbk->blist, onLBMessage );
   ListMenu_SetItemCount( mbk->blist, mbk->blistcnt );
@@ -820,10 +823,11 @@ GUI_TABMENUBAR* CreateGuiList( int tab_pos, BOOK* bk )
   mbk->oldOnKey1 = DispObject_GetOnKey( GUIObject_GetDispObject( mbk->elist ) );
   
   DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject( mbk->elist ) ), myOnKey1 );
+
+  RefreshElfSoftkeys( mbk, ListMenu_GetSelectedItem( mbk->elist ) );
   
-  GUI_TABMENUBAR* tab = CreateTabMenuBar( bk );
-  TabMenuBar_SetTabCount( tab, 2 );
-  TabMenuBar_SetFocusedTab( tab, tab_pos );
+  GUIObject_Show(mbk->elist);
+  
   TabMenuBar_SetTabGui( tab, 0, mbk->blist );
   TabMenuBar_SetTabGui( tab, 1, mbk->elist );
   
@@ -836,9 +840,10 @@ GUI_TABMENUBAR* CreateGuiList( int tab_pos, BOOK* bk )
   TabMenuBar_SetTabTitle( tab, 0, Str2ID( p, 5, 2 ) );
   TabMenuBar_SetTabTitle( tab, 1, STR( "Elfs" ) );
   
+  TabMenuBar_SetFocusedTab( tab, tab_pos );
+  
   // TabMenuBar_SetOnTabSwitch( tab, onTabSwitch );
   
-  RefreshElfSoftkeys( mbk, ListMenu_GetSelectedItem( mbk->elist ) );
   return tab;
 };
 
@@ -883,7 +888,7 @@ int CreateMenu( int tab_pos, BOOK* bk )
   }
   LoadIniFiles(mbk);
   mbk->gui = CreateGuiList( tab_pos, bk );
-  GUIObject_Show( mbk->gui );
+  GUIObject_SetFocus( mbk->gui,1);
   return 0;
 }
 

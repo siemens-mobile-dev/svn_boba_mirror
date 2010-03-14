@@ -28,7 +28,7 @@ enum trace_types
 };
 
 static char* leaktypes[]={
-  "memory/book/gui",
+  "memory/book/gui/gc",
   "strid",
   "iconid",
   "timer",
@@ -163,6 +163,12 @@ void  __deleaker_FreeBook(BOOK* book, char* __file__,  int __line__)
 {
   trace_free(trace_memory, book, __file__, __line__);
   __original_FreeBook(book);
+}
+
+void  __deleaker_BookObj_KillBook(BOOK* book, char* __file__,  int __line__)
+{
+  trace_free(trace_memory, book, __file__, __line__);
+  __original_BookObj_KillBook(book);
 }
 
 LIST*  __deleaker_List_Create(char* __file__,  int __line__)
@@ -611,21 +617,63 @@ GVI_BRUSH  __deleaker_GVI_CreateSolidBrush(int color, char* __file__,  int __lin
   return ret;
 }
 
+GVI_BMP  __deleaker_GVI_CreateBitmap(int xsize, int ysize, int bpp, char* __file__,  int __line__)
+{
+  GVI_BMP  ret = __original_GVI_CreateBitmap(xsize, ysize, bpp);
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
+GVI_GC  __deleaker_GVI_CreateMemoryGC(GVI_BMP bitmap, char* __file__,  int __line__)
+{
+  GVI_GC  ret = __original_GVI_CreateMemoryGC(bitmap);
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
 BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__,  int __line__)
 {
   trace_free(trace_memory, *__unknwnargname1, __file__, __line__);
   return __original_GVI_Delete_GVI_Object(__unknwnargname1);
 }
+
+void  __deleaker_GVI_DeleteMemoryGC(GVI_GC gc, char* __file__,  int __line__)
+{
+  trace_free(trace_memory, gc, __file__, __line__);
+  return __original_GVI_DeleteMemoryGC(gc);
+}
+
+//баг скрипта
+//__make CreateMonitorFeedback
+//{
+//  __R ret = __O__;
+//  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+//  return ret;
+//}
+
+GUI_FEEDBACK*  __deleaker_TextFeedbackWindow(BOOK* book, int zero, char* __file__,  int __line__)
+{
+  GUI_FEEDBACK*  ret = __original_TextFeedbackWindow(book, zero);
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
+void*  __deleaker_DataBrowserDesc_Create(char* __file__,  int __line__)
+{
+  void*  ret = __original_DataBrowserDesc_Create();
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
+void  __deleaker_DataBrowserDesc_Destroy(void* DataBrowserDesc, char* __file__,  int __line__)
+{
+  trace_free(trace_memory, DataBrowserDesc, __file__, __line__);
+  return __original_DataBrowserDesc_Destroy(DataBrowserDesc);
+}
 //__swi __arm ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
-//__swi __arm void BookObj_AddGUIObject( BOOK* book, GUI* );
-//__swi __arm UI_APP_SESSION* BookObj_GetSession( BOOK* book );
-//__swi __arm void BookObj_KillBook( BOOK* book );
 //__swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
-//__swi __arm int CANVAS_Get_GviGC( PCANVAS pcanvas, GVI_GC* dest );
-//__swi __arm void Cale_GetSettings( int setID, void* );
 //__swi __arm void* CallID_GetCallStatusDesc( int CallID );
 //__swi __arm wchar_t* CallStatusDesc_GetName( void* CallStatusDesc );
-//__swi __arm int CreateBook( void* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
 //__swi __arm GUI* CreateDateInputVA( int zero, ... );
 //__swi __arm void* CreateMessage( int size, int ev, char* name );
 //__swi __arm GUI_FEEDBACK* CreateMonitorFeedback( STRID , BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
@@ -636,34 +684,21 @@ BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__
 //__swi __arm char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
 //__swi __arm GUI* CreateYesNoQuestionVA( int zero, ... );
 //__swi __arm int CteateNewMessage( int, void*, int );
-//__swi __arm void* DataBrowserDesc_Create( void );
-//__swi __arm void DataBrowserDesc_Destroy( void* DataBrowserDesc );
-//__swi __arm void DataBrowserDesc_Menu_AddFSFunctions( void* DataBrowserDesc, int );
-//__swi __arm void DataBrowserDesc_Menu_AddMarkFiles( void* DataBrowserDesc, int );
-//__swi __arm void DataBrowserDesc_Menu_AddNewFolder( void* DataBrowserDesc, int );
 //__swi __arm void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
-//__swi __arm void DataBrowserDesc_SetBookID( void* DataBrowserDesc, int BookID );
 //__swi __arm void DataBrowserDesc_SetFileExtList( void* DataBrowserDesc, const wchar_t* ExtList );
 //__swi __arm void DataBrowserDesc_SetFolders( void* DataBrowserDesc, const wchar_t** FolderList );
-//__swi __arm void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
 //__swi __arm void DataBrowserDesc_SetItemFilter( void* DataBrowserDesc, DB_FILE_FILTER );
-//__swi __arm void DataBrowserDesc_SetOpenEmptyFolder( void* DataBrowserDesc, int state );
 //__swi __arm void DataBrowserDesc_SetOption( void* DataBrowserDesc, char* option );
-//__swi __arm void DataBrowserDesc_SetSelectAction( void* DataBrowserDesc, int state );
-//__swi __arm void DataBrowserDesc_SetSelectActionOnFolders( void* DataBrowserDesc, int state );
 //__swi __arm void DataBrowserDesc_SetViewModeAndSortOrder( void* DataBrowserDesc, int view_sort_ID );
 //__swi __arm void DataBrowser_Create( void* DataBrowserDesc );
 //__swi __arm SUB_EXECUTE* DataBrowser_CreateSubExecute( int BookID, FILEITEM* );
 //__swi __arm int DataBrowser_ExecuteSubroutine( SUB_EXECUTE* sub, int action, u16* unk );
 //__swi __arm DB_FILE_FILTER DataBrowser_isFileInListExt_adr( void );
 //__swi __arm int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
-//__swi __arm void DispObject_KillRefreshTimer( DISP_OBJ* );
 //__swi __arm void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
 //__swi __arm void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 //__swi __arm void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
-//__swi __arm LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
 //__swi __arm void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
-//__swi __arm void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 //__swi __arm FILEITEM* FILEITEM_Create( void );
 //__swi __arm FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
 //__swi __arm void FILEITEM_Destroy( FILEITEM* );
@@ -676,26 +711,9 @@ BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__
 //__swi __arm int FreeMessage( void** Mess );
 //__swi __arm int FreeSMSCont( void* );
 //__swi __arm int GPRS_GetLastSessionInfo( int, GPRS_SESSION_INFO* );
-//__swi __arm int GUIObject_Create( GUI*, void (*GuiDestroy)( GUI* ), void (*DispDescCreate)( DISP_DESC* ), BOOK*, void (*DispObjCallBack)( DISP_OBJ*, void* msg, GUI* ), int display, int size_of_gui );
 //__swi __arm void GUIObject_SetBackgroundImage( GUI*, wchar_t imageID );
 //__swi __arm void GUIObject_SetCursorImage( GUI*, wchar_t imageID );
 //__swi __arm void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
-//__swi __arm void GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
-//__swi __arm void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, void (*proc)( BOOK*, GUI* ) );
-//__swi __arm void GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
-//__swi __arm void GUIObject_SoftKeys_SuppressDefaultAction( GUI*, u16 actionID );
-//__swi __arm int GUIonMessage_GetCreatedItemIndex( GUI_MESSAGE* msg );
-//__swi __arm int GUIonMessage_GetCreatedSubItemParentIndex( GUI_MESSAGE* msg );
-//__swi __arm int GUIonMessage_GetCurrentItemIndex( GUI_MESSAGE* msg );
-//__swi __arm int GUIonMessage_GetCurrentSubItem( GUI_MESSAGE* msg );
-//__swi __arm int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
-//__swi __arm int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
-//__swi __arm int GUIonMessage_GetSelectedItem( GUI_MESSAGE* msg );
-//__swi __arm void GUIonMessage_SetItemAsSubitem( GUI_MESSAGE* msg, int unk, int n_sub_items );
-//__swi __arm GVI_BMP GVI_CreateBitmap( int xsize, int ysize, int bpp );
-//__swi __arm GVI_GC GVI_CreateMemoryGC( GVI_BMP bitmap );
-//__swi __arm void GVI_DeleteMemoryGC( GVI_GC gc );
-//__swi __arm int GetABRecNum( AB_GET_STRUCT* );
 //__swi __arm FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 //__swi __arm char* GetURIScheme( int schemeID );
 //__swi __arm void* GetUserData( int size, void (*constr)( void*, void* ), void* constr_param );
@@ -713,15 +731,10 @@ BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__
 //__swi __arm int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
 //__swi __arm int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
 //__swi __arm void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
-//__swi __arm void ListMenu_SetOnMessage( GUI_LIST*, int (*proc)( GUI_MESSAGE* ) );
-//__swi __arm void List_DestroyElements( LIST* lst, int (*cmp_proc)( void* item ), void (*free_proc)( void* item ) );
-//__swi __arm int List_InsertSorted( LIST* list, void* item, int (*cmp_proc)( void*, void* ) );
 //__swi __arm void* LoadDLL( wchar_t* DllName );
 //__swi __arm char* MainInput_getPNUM( GUI* );
 //__swi __arm void MakeVoiceCall( int SessioID, void* vc, int flag );
 //__swi __arm void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
-//__swi __arm void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
-//__swi __arm void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
 //__swi __arm void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
 //__swi __arm BOOK* MenuBook_Desktop( int mode, int BookID );
 //__swi __arm wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
@@ -731,7 +744,6 @@ BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__
 //__swi __arm wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
 //__swi __arm int MetaData_Desc_GetTrackNum( void* MetaData_Desc, int __NULL );
 //__swi __arm int ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
-//__swi __arm void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
 //__swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
 //__swi __arm void PNUM2str( char* str, void* pnum, int len, int max_len );
 //__swi __arm int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
@@ -748,11 +760,9 @@ BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__
 //__swi __arm int Request_ICA_ShutdownAllConnections( const int* sync );
 //__swi __arm void SendDispatchMessage( int id, int unk_zero, int size, void* mess );
 //__swi __arm void SendMessage( void** signal, int PID );
-//__swi __arm int Settings_ShowNumber_Get( char* state );
 //__swi __arm int Shortcut_Get_MenuItemIconID( void* );
 //__swi __arm int Shortcut_Get_MenuItemName( void* );
 //__swi __arm void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
-//__swi __arm u16 SoftKeys_GetSelectedAction( void );
 //__swi __arm void* SoundRecorderDesc_Create( void );
 //__swi __arm void SoundRecorderDesc_Destroy( void* desc );
 //__swi __arm int SoundRecorderDesc_SetBookID( void* desc, int BookID );
@@ -763,15 +773,11 @@ BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__
 //__swi __arm int SoundRecorder_Create( void* desc );
 //__swi __arm int SoundRecorder_RecordCall( BOOK* OngoingCallBook );
 //__swi __arm int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
-//__swi __arm int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int langID, int flag );
 //__swi __arm int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 //__swi __arm void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
-//__swi __arm GUI_FEEDBACK* TextFeedbackWindow( BOOK* book, int zero );
 //__swi __arm void Timer_Kill( u16* timerID );
 //__swi __arm void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* );
 //__swi __arm u16 Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void* );
-//__swi __arm void UI_Event_toBookIDwData( int event, int BookID, void* message, void (*free_proc)( void* ) );
-//__swi __arm void UI_Event_wData( int event, void* message, void (*free_proc)( void* ) );
 //__swi __arm int UnLoadDLL( void* DllData );
 //__swi __arm void VCALL_Init( void* vc );
 //__swi __arm void VCALL_SetHZ1( void* vc, int, u16 );
@@ -780,7 +786,6 @@ BOOL  __deleaker_GVI_Delete_GVI_Object(GVI_OBJ* __unknwnargname1, char* __file__
 //__swi __arm void VCALL_SetNumber( void* vc, wchar_t* number, unsigned short num_len );
 //__swi __arm void* WaitMessage( void* SIGSEL );
 //__swi __arm C_INTERFACE* Window_GetComponentInterface( WINDOW* );
-//__swi __arm void XGUIList_AddGUIObject( void* xguilist, GUI* );
 //__swi __arm PROCESS create_process( int proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
 //__swi __arm PROCESS current_process( void );
 //__swi __arm void free_buf( union SIGNAL** sig );

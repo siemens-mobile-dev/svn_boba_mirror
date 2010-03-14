@@ -1,5 +1,5 @@
 #ifndef _VISUAL_H_
-  #define _VISUAL_H_
+#define _VISUAL_H_
 
 #include "main.h"
 
@@ -13,51 +13,51 @@
 
 typedef struct GUI_type GUI_COLOR;
 
-typedef struct {
-  DISP_OBJ dsp_obj;
-  int r, g, b, a;
-  int type;
-  int current_column;
-  STRID str_id;
-  int need_str;
-  int cstep;
+typedef struct _DISP_OBJ_COLOR : DISP_OBJ
+{
+	int r, g, b, a;
+	int type;
+	int current_column;
+	STRID str_id;
+	int need_str;
+	int cstep;
 } DISP_OBJ_COLOR;
 
 typedef union {
-  unsigned int int_color;
-  char *char_color;
+	unsigned int int_color;
+	char *char_color;
 } COLOR_TYPE;
 
 typedef struct GUI_type GUI_COORDINATES;
 
-typedef struct {
-  DISP_OBJ dsp_obj;
-  int x, y, x2, y2;
-  int type;
-  int is_first_set;
-  RECT old_rect;
-  STRID str_id;
-  int need_str;
-  int cstep;
-  MyBOOK * mb;
+typedef struct _DISP_OBJ_COORD : DISP_OBJ
+{
+	int x, y, x2, y2;
+	int type;
+	int is_first_set;
+	RECT old_rect;
+	STRID str_id;
+	int need_str;
+	int cstep;
+	MyBOOK * mb;
 } DISP_OBJ_COORD;
 
 typedef union {
-  int xy[2];
-  RECT rc;
+	int xy[2];
+	RECT rc;
 } COORD_TYPE;
 
 
 typedef struct GUI_type GUI_FONT_SEL;
 
-typedef struct {
-  DISP_OBJ dsp_obj;
-  int cur_font;
-  int cur_offs, cur_pos;
-  int total_fonts;
-  STRID test_str_id;
-  u16 *font_heights;
-  int req_check_vis;
+typedef struct _DISP_OBJ_FONT_SEL : DISP_OBJ
+{
+	int cur_font;
+	int cur_offs, cur_pos;
+	int total_fonts;
+	STRID test_str_id;
+	u16 *font_heights;
+	int req_check_vis;
 } DISP_OBJ_FONT_SEL;
 
 GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type);

@@ -137,7 +137,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>OLDFUNCTIONS</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -961,7 +961,6 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1087,7 +1086,7 @@
         </option>
         <option>
           <name>CCMultibyteSupport</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -1656,16 +1655,28 @@
     <name>$PROJ_DIR$\datetime.cpp</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\datetime.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\..\include\func.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\keyinput.cpp</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\keyinput.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\main.cpp</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\main.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\visual.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\visual.h</name>
   </file>
 </project>
 

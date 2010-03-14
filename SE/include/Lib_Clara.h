@@ -204,7 +204,7 @@ __swi __arm u16 Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void
 __swi __arm void Timer_Kill( u16* timerID );
 
 #pragma swi_number=0x12B
-__swi __arm int CreateBook( void* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+__swi __arm int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
 
 #pragma swi_number=0x12C
 __swi __arm void BookObj_KillBook( BOOK* book );
@@ -675,7 +675,7 @@ __swi __arm void DrawRect( int x1, int y1, int x2, int y2, int pen_color, int br
 #pragma swi_number=0x1ED
 __swi __arm void DrawString( STRID, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color );
 #pragma swi_number=0x1EE
-__swi __arm void XGUIList_AddGUIObject( void* xguilist, GUI* );
+__swi __arm void XGUIList_AddGUIObject( XGUILIST* xguilist, GUI* );
 #pragma swi_number=0x1EF
 __swi __arm void DispObject_InvalidateRect( DISP_OBJ*, RECT* );
 #pragma swi_number=0x1F0

@@ -28,7 +28,7 @@ enum trace_types
 };
 
 static char* leaktypes[]={
-  "memory/book/gui",
+  "memory/book/gui/gc",
   "strid",
   "iconid",
   "timer",

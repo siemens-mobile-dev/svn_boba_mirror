@@ -16,10 +16,12 @@ skip Audio_Play
 skip Bluetooth_GetPhoneVisibility
 skip Bluetooth_GetState
 skip Bluetooth_isBusy
+skip BookObj_AddGUIObject
 skip BookObj_CallPage
 skip BookObj_CallSubroutine
 skip BookObj_GetBookID
 skip BookObj_GetDisplayOrientation
+skip BookObj_GetSession
 skip BookObj_GetSessionID
 skip BookObj_GotoPage
 skip BookObj_Hide
@@ -29,9 +31,20 @@ skip BookObj_SetFocus
 skip BookObj_Show
 skip BookObj_SoftKeys_SetAction
 skip Browser_OpenURI
+skip Cale_GetSettings
+skip CANVAS_Get_GviGC
 skip chmod
 skip ConnectionManager_Connection_GetState
+skip CreateBook
+skip DataBrowserDesc_Menu_AddFSFunctions
+skip DataBrowserDesc_Menu_AddMarkFiles
+skip DataBrowserDesc_Menu_AddNewFolder
+skip DataBrowserDesc_SetBookID
 skip DataBrowserDesc_SetFocusToFILEITEM
+skip DataBrowserDesc_SetFoldersNumber
+skip DataBrowserDesc_SetOpenEmptyFolder
+skip DataBrowserDesc_SetSelectAction
+skip DataBrowserDesc_SetSelectActionOnFolders
 skip DataBrowserDesc_SetStyle
 skip DataBrowser_isFileInListExt
 skip DATE_GetWeekDay
@@ -68,12 +81,15 @@ skip DispObject_GetWindow
 skip DispObject_GetWindowHeight
 skip DispObject_GetWindowWidth
 skip DispObject_InvalidateRect
+skip DispObject_KillRefreshTimer
 skip DispObject_SetLayerColor
 skip DispObject_SetListTextColor
 skip DispObject_SetRefreshTimer
 skip DispObject_SetTitleTextColor
 skip DispObject_Show
 skip DispObject_SoftKeys_Get
+skip DispObject_SoftKeys_GetList
+skip DispObject_SoftKeys_RestoreDefaultAction
 skip DISP_DESC_GetSize
 skip DISP_DESC_SetMethod04
 skip DISP_DESC_SetMethod05
@@ -127,6 +143,7 @@ skip GC_SetPixel
 skip GC_SetXX
 skip GC_ValidateRect
 skip GC_WritePixels
+skip GetABRecNum
 skip GetAudioControlPtr
 skip GetAudioSettings
 skip GetBatteryState
@@ -158,6 +175,7 @@ skip get_Surfaces
 skip get_system_langID
 skip get_VBUFFER
 skip GoMusic
+skip GUIObject_Create
 skip GUIObject_GetBook
 skip GUIObject_GetDispObject
 skip GUIObject_SetFocus
@@ -166,15 +184,27 @@ skip GUIObject_SetStyle
 skip GUIObject_SetTitleTextColor
 skip GUIObject_SetTitleType
 skip GUIObject_Show
+skip GUIObject_SoftKeys_ExecuteAction
 skip GUIObject_SoftKeys_Hide
 skip GUIObject_SoftKeys_RemoveBackground
+skip GUIObject_SoftKeys_RemoveItem
 skip GUIObject_SoftKeys_RestoreBackground
-skip GUIObject_SoftKeys_Show
-skip GUIObject_SoftKeys_ExecuteAction
+skip GUIObject_SoftKeys_SetAction
 skip GUIObject_SoftKeys_SetEnable
+skip GUIObject_SoftKeys_SetItemAsSubItem
 skip GUIObject_SoftKeys_SetVisible
+skip GUIObject_SoftKeys_Show
+skip GUIObject_SoftKeys_SuppressDefaultAction
 skip GUIonMessage_GetBook
+skip GUIonMessage_GetCreatedItemIndex
+skip GUIonMessage_GetCreatedSubItemParentIndex
+skip GUIonMessage_GetCurrentItemIndex
+skip GUIonMessage_GetCurrentSubItem
 skip GUIonMessage_GetGui
+skip GUIonMessage_GetMsg
+skip GUIonMessage_GetPrevSelectedItem
+skip GUIonMessage_GetSelectedItem
+skip GUIonMessage_SetItemAsSubitem
 skip GUIonMessage_SetItemDisabled
 skip GUIonMessage_SetLineSeparator
 skip GVI_BitBlt
@@ -221,12 +251,15 @@ skip LastExtDB
 skip ListMenu_GetSelectedItem
 skip ListMenu_SetCursorToItem
 skip ListMenu_SetItemCount
+skip ListMenu_SetOnMessage
+skip List_DestroyElements
 skip List_Find
 skip List_Get
 skip List_IndexOf
 skip List_Insert
 skip List_InsertFirst
 skip List_InsertLast
+skip List_InsertSorted
 skip List_RemoveAt
 skip longjmp
 skip lseek
@@ -236,12 +269,15 @@ skip MainInput_Hide
 skip MainInput_isPlus
 skip MainInput_strlen
 skip MediaPlayer_ShowNowPlaying
+skip MediaPlayer_SoftKeys_SetAction
+skip MediaPlayer_SoftKeys_SetItemAsSubItem
 skip memcmp
 skip memcpy
 skip memset
 skip MissedEvents
 skip mkdir
 skip MMIPROC
+skip MonitorFeedback_SetTimer
 skip NOfMany_GetChecked
 skip NOfMany_GetCheckedCount
 skip NOfMany_SetChecked
@@ -295,10 +331,12 @@ skip SetFont
 skip SetLampLevel
 skip SetMenuItemStyle
 skip SetTheme
+skip Settings_ShowNumber_Get
 skip SetTrayIcon
 skip set_envp
 skip Shortcut_Run
 skip snwprintf
+skip SoftKeys_GetSelectedAction
 skip SoftKeys_Update
 skip sprintf
 skip StandbyBackground_SetImage
@@ -311,6 +349,7 @@ skip strcat
 skip strcmp
 skip strcpy
 skip StrID2Str
+skip StringInput_DispObject_SetLanguage
 skip StringInput_MenuItem_SetPriority
 skip StringInput_SetCursorPosition
 skip strlen
@@ -330,7 +369,9 @@ skip UIEventName
 skip UI_CONTROLLED_SHUTDOWN_RESPONSE
 skip UI_Event
 skip UI_Event_toBookID
+skip UI_Event_toBookIDwData
 skip UI_Event_toSID
+skip UI_Event_wData
 skip unixtime2datetime
 skip USB_isConnected
 skip VideoPlayerControl
@@ -370,6 +411,7 @@ skip w_lseek
 skip w_mkdir
 skip w_remove
 skip w_rename
+skip XGUIList_AddGUIObject
 skip _REQUEST_OAF_START_APPLICATION
 
 
@@ -399,6 +441,12 @@ __make mfree
 }
 
 __make FreeBook
+{
+  trace_free(trace_memory, book, __file__, __line__);
+  __O__;
+}
+
+__make BookObj_KillBook
 {
   trace_free(trace_memory, book, __file__, __line__);
   __O__;
@@ -850,8 +898,56 @@ __make GVI_CreateSolidBrush
   return ret;
 }
 
+__make GVI_CreateBitmap
+{
+  __R ret = __O__;
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
+__make GVI_CreateMemoryGC
+{
+  __R ret = __O__;
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
 __make GVI_Delete_GVI_Object
 {
   trace_free(trace_memory, *__unknwnargname1, __file__, __line__);
+  return __O__;
+}
+
+__make GVI_DeleteMemoryGC
+{
+  trace_free(trace_memory, gc, __file__, __line__);
+  return __O__;
+}
+
+//баг скрипта
+//__make CreateMonitorFeedback
+//{
+//  __R ret = __O__;
+//  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+//  return ret;
+//}
+
+__make TextFeedbackWindow
+{
+  __R ret = __O__;
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
+__make DataBrowserDesc_Create
+{
+  __R ret = __O__;
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
+
+__make DataBrowserDesc_Destroy
+{
+  trace_free(trace_memory, DataBrowserDesc, __file__, __line__);
   return __O__;
 }
