@@ -826,8 +826,6 @@ GUI_TABMENUBAR* CreateGuiList( int tab_pos, BOOK* bk )
 
   RefreshElfSoftkeys( mbk, ListMenu_GetSelectedItem( mbk->elist ) );
   
-  GUIObject_Show(mbk->elist);
-  
   TabMenuBar_SetTabGui( tab, 0, mbk->blist );
   TabMenuBar_SetTabGui( tab, 1, mbk->elist );
   
@@ -843,7 +841,6 @@ GUI_TABMENUBAR* CreateGuiList( int tab_pos, BOOK* bk )
   TabMenuBar_SetFocusedTab( tab, tab_pos );
   
   // TabMenuBar_SetOnTabSwitch( tab, onTabSwitch );
-  
   return tab;
 };
 
@@ -888,7 +885,7 @@ int CreateMenu( int tab_pos, BOOK* bk )
   }
   LoadIniFiles(mbk);
   mbk->gui = CreateGuiList( tab_pos, bk );
-  GUIObject_SetFocus( mbk->gui,1);
+  GUIObject_Show( mbk->gui);
   return 0;
 }
 

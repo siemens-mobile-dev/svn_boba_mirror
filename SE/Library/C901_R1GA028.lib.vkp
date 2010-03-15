@@ -602,7 +602,7 @@
 ;0D90: xxxxxxxx yyyyyyyy ; 364: int Alarm_GetTIME( TIME* AlarmTime, int AlarmID );
 ;0D94: xxxxxxxx yyyyyyyy ; 365: int Alarm_GetWeekSettings( void* week, int AlarmID );
 ;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState( char* state );
-;0D9C: xxxxxxxx yyyyyyyy ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET( const int* sync, int ProfileNum, char* state );
+0D9C: 00000000 8D381D14 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET( const int* sync, int ProfileNum, char* state );
 ;0DA0: xxxxxxxx yyyyyyyy ; 368: void* IncommingCall_Accept( BOOK* book );
 ;0DA4: xxxxxxxx yyyyyyyy ; 369: void MediaPlayer_SoftKeys_SetText( void* player_gui, int actionID, STRID );
 ;0DA8: xxxxxxxx yyyyyyyy ; 36A: void MediaPlayer_SoftKeys_SetAction( void* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
@@ -612,7 +612,7 @@
 0DB8: 00000000 09AA1614 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 ;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 0DC0: 00000000 F1B9D014 ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
-;0DC4: xxxxxxxx yyyyyyyy ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
+0DC4: 00000000 7DEC3510 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
 0DC8: 00000000 45200115 ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 0DCC: 00000000 F1D37315 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
 0DD0: 00000000 75FC2E14 ; 374: int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
