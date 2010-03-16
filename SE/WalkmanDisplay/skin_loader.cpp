@@ -61,14 +61,14 @@ int LoadSkinData(const wchar_t *path,const wchar_t *fname)
         {
           migrate_from_2_0corrupted_to_2_1((CFG_2_0_corrupted*)buf, (CFG_2_1*)cfg);
           SaveSkinData(path,fname);
-          MessageBox(0x6FFFFFFF,Str2ID(L"Migrated from 2.0 rus",0,SID_ANY_LEN),0,1,0,0);
+          MessageBox(EMPTY_SID,Str2ID(L"Migrated from 2.0 rus",0,SID_ANY_LEN),NOIMAGE,1,0,0);
           return 1;
         }
         else if (rlen==sizeof(CFG_2_0))
         {
           migrate_from_2_0_to_2_1((CFG_2_0*)buf, (CFG_2_1*)cfg);
           SaveSkinData(path,fname);
-          MessageBox(0x6FFFFFFF,Str2ID(L"Migrated from 2.0 eng",0,SID_ANY_LEN),0,1,0,0);
+          MessageBox(EMPTY_SID,Str2ID(L"Migrated from 2.0 eng",0,SID_ANY_LEN),NOIMAGE,1,0,0);
           return 1;
         }
         delete(buf);

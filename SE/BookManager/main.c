@@ -348,7 +348,7 @@ void SessoinListsFree( MyBOOK* myBook )
     while ( lst->FirstFree )
     {
       elem = (BOOK_LIST_ITEM*) List_RemoveAt( lst, 0 );
-      if ( List_IndexOf( myBook->elfs_list, elem ) == 0xFFFF )
+      if ( List_IndexOf( myBook->elfs_list, elem ) == LIST_ERROR )
       {
         // удаляем, если не в списке эльфов
         delete(elem->book_name);
@@ -529,7 +529,7 @@ void onDelPressed1( BOOK* book, void* lt )
       }
       else
       {
-        MessageBox(0x6fffffff,STR("TerminateEvent not supported by elf..."),0,1,3000,book);
+        MessageBox(EMPTY_SID,STR("TerminateEvent not supported by elf..."),NOIMAGE,1,3000,book);
       }
     }
   }
@@ -554,7 +554,7 @@ void Author( BOOK* book, GUI* lt )
     }
     else
     {
-      MessageBox(0x6fffffff,STR("Author unknown"),0,1,3000,book);
+      MessageBox(EMPTY_SID,STR("Author unknown"),NOIMAGE,1,3000,book);
     }
   }
 };
@@ -563,7 +563,7 @@ void Copyright( BOOK* book, GUI* lt )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   mbk->blistpos = ListMenu_GetSelectedItem( mbk->blist );
-  MessageBox(0x6fffffff,COPYRIGHT_STRING,0,1,3000,book);
+  MessageBox(EMPTY_SID,COPYRIGHT_STRING,NOIMAGE,1,3000,book);
 };
 
 // патченый onKey от своей менюхи...; )
@@ -713,7 +713,7 @@ void myOnKey1( DISP_OBJ* p, int keyID, int i2, int i3, int press_mode )
             ms[0] = STR( "ZBin" );
             ms[1] = Str2ID( param, 1, strlen( param ) );
             ms[2] = STR( "\n\nnot found.." );
-            MessageBox( 0x6fffffff,Str2ID(ms,5,3),0,1,3000,FindBook(isBookManager));
+            MessageBox( EMPTY_SID,Str2ID(ms,5,3),NOIMAGE,1,3000,FindBook(isBookManager));
           }
         
         mfree( param );
@@ -1004,7 +1004,7 @@ void CloseMyBook( BOOK* Book, GUI* )
 
 void TerminateManager( BOOK* Book, GUI* )
 {
-  MessageBox( 0x6fffffff,STR("BookManager\n\nterminated"),0,1,3000,0);
+  MessageBox( EMPTY_SID,STR("BookManager\n\nterminated"),NOIMAGE,1,3000,0);
   FreeBook( Book );
   DestroyDaemon();
   ModifyKeyHook( NewKey, 0 );
@@ -1206,7 +1206,7 @@ int main ( void )
   }
   else
   {
-    MessageBox( 0x6fFFFFFF, STR( "BookManager is already runed" ), 0, 1, 5000, 0 );
+    MessageBox( EMPTY_SID, STR( "BookManager is already runed" ), NOIMAGE, 1, 5000, 0 );
     SUBPROC( elf_exit );
   }
   return 0;

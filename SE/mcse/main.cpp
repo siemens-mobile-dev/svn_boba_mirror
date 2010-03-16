@@ -37,40 +37,40 @@ void elf_exit(void){
   kill_data(__segment_begin("ELFBEGIN"), (void(*)(void*))mfree_adr());
 }
 
-#define MESSAGE(__STR__) MessageBox(0x6FFFFFFF,__STR__,0, 1 ,11000,NULL);
+#define MESSAGE(__STR__) MessageBox(EMPTY_SID,__STR__,NOIMAGE, 1 ,11000,NULL);
 
 void MsgBoxError(int lgind, char* str)
 {
   snwprintf(msgbuf,MAXELEMS(msgbuf), muitxt(lgind), str);
   STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
-  MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
+  MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(int lgind, wchar_t* str)
 {
   snwprintf(msgbuf,MAXELEMS(msgbuf), muitxt(lgind), str);
   STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
-  MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
+  MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(char *err)
 {
   win12512unicode(msgbuf,err,MAXELEMS(msgbuf)-1);
   STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
-  MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
+  MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(wchar_t *err, int a)
 {
   snwprintf(msgbuf,MAXELEMS(msgbuf), err, a);
   STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
-  MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
+  MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(wchar_t *err)
 {
   STRID q=Str2ID(err,0,SID_ANY_LEN);
-  MessageBox(LGP_NULL,q,0, 1 ,11000,(BOOK*)MCBook);
+  MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 static void YSYes(BOOK * bk, void *)
@@ -190,7 +190,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
     if (iconidname2id(SA_ICONS[i],-1,&tmp))
       STD_ICONS[i]=tmp;
     else
-      STD_ICONS[i]=0xFFFF;
+      STD_ICONS[i]=NOIMAGE;
   }
   is_db2020=(GetChipID()>>8)==0x99;
   InitDrvInfo();
@@ -480,7 +480,7 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
   WriteLog("Start");
   WriteLog("InitConfig");
   InitConfig();
-  if (!CreateBook(MCBook,onMyBookClose,&bk_base,"mc",-1,0))
+  if (!CreateBook((BOOK*)MCBook,onMyBookClose,&bk_base,"mc",-1,0))
   {
     delete MCBook;
     SUBPROC(elf_exit);

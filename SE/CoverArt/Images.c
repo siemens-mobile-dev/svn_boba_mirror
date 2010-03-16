@@ -9,8 +9,8 @@ UI_IMG img;
 wchar_t ImageHandler_Get(UI_IMG * i , wchar_t * path, wchar_t * fname)
 {
   char error_code;
-  i->ImageID=0xFFFF;
-  i->ImageHandle=0xFFFF;
+  i->ImageID=NOIMAGE;
+  i->ImageHandle=NOIMAGE;
   if (!fstat(path,fname,0))
   {
     if (!REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(SYNC,&i->ImageHandle,&error_code))
@@ -19,7 +19,7 @@ wchar_t ImageHandler_Get(UI_IMG * i , wchar_t * path, wchar_t * fname)
       {
         if (error_code)
         {
-          i->ImageHandle=0xFFFF;
+          i->ImageHandle=NOIMAGE;
         }
       }
     }
@@ -30,8 +30,8 @@ wchar_t ImageHandler_Get(UI_IMG * i , wchar_t * path, wchar_t * fname)
 wchar_t ImageHandler_Get(METADATA * i , wchar_t * path, wchar_t * fname)
 {
   char error_code;
-  i->ImageID=0xFFFF;
-  i->ImageHandle=0xFFFF;
+  i->ImageID=NOIMAGE;
+  i->ImageHandle=NOIMAGE;
   i->Handle=true;
   if (!fstat(path,fname,0))
   {
@@ -42,7 +42,7 @@ wchar_t ImageHandler_Get(METADATA * i , wchar_t * path, wchar_t * fname)
         if (error_code)
         {
           i->Handle=false;
-          i->ImageHandle=0xFFFF;
+          i->ImageHandle=NOIMAGE;
         }
       }
     }
@@ -53,8 +53,8 @@ wchar_t ImageHandler_Get(METADATA * i , wchar_t * path, wchar_t * fname)
 wchar_t ImageHandler_Get(IMG_DESC * i , wchar_t * path, wchar_t * fname)
 {
   char error_code;
-  i->ImageID=0xFFFF;
-  i->ImageHandle=0xFFFF;
+  i->ImageID=NOIMAGE;
+  i->ImageHandle=NOIMAGE;
   i->Handle=true;
   i->HasImage=true;
   if (!fstat(path,fname,0))
@@ -67,7 +67,7 @@ wchar_t ImageHandler_Get(IMG_DESC * i , wchar_t * path, wchar_t * fname)
         {
           i->Handle=false;
           i->HasImage=false;
-          i->ImageHandle=0xFFFF;
+          i->ImageHandle=NOIMAGE;
         }
       }
     }
@@ -80,8 +80,8 @@ wchar_t ImageHandler_Free(UI_IMG *i)
 {
   char error_code;
   REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER(SYNC,i->ImageHandle,0,0,i->ImageID,1,&error_code);
-  i->ImageID=0xFFFF;
-  i->ImageHandle=0xFFFF;
+  i->ImageID=NOIMAGE;
+  i->ImageHandle=NOIMAGE;
   i->isImage=false;
   return 0;
 };
@@ -92,8 +92,8 @@ wchar_t ImageHandler_Free(METADATA *i)
   if (!i->Handle)
   {
     ImageID_Free(i->ImageID);
-    i->ImageID=0xFFFF;
-    i->ImageHandle=0xFFFF;
+    i->ImageID=NOIMAGE;
+    i->ImageHandle=NOIMAGE;
     i->HasImage=false;
     i->Handle=false;
   }
@@ -101,8 +101,8 @@ wchar_t ImageHandler_Free(METADATA *i)
   {
     char error_code;
     REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER(SYNC,i->ImageHandle,0,0,i->ImageID,1,&error_code);
-    i->ImageID=0xFFFF;
-    i->ImageHandle=0xFFFF;
+    i->ImageID=NOIMAGE;
+    i->ImageHandle=NOIMAGE;
     i->HasImage=false;
     i->Handle=false;
   }

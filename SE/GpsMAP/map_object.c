@@ -138,7 +138,7 @@ void RecalkPos(DISP_OBJ_MAP *db)
     cidlac[0]=GetCid_ByCh(i);
     cidlac[1]=GetLac_ByCh(i);
     int index=ListElement_Find(db->ini.cur_town->bs_dat,&cidlac,FindBSByCiLac);
-    if (index!=0xFFFF)
+    if (index!=LIST_ERROR)
     {
       int rx=GetRxLev_ByCh(i);
       BS_POINT *bs=(BS_POINT *)ListElement_GetByIndex(db->ini.cur_town->bs_dat,index);
@@ -196,7 +196,7 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
       int xy[2];
       xy[0]=x;
       xy[1]=y;
-      if (ListElement_Find(db->png_cache,&xy,PngCmpProc)==0xFFFF) ReadPngFile(db->png_cache,db->ini.cur_town->name,x,y);
+      if (ListElement_Find(db->png_cache,&xy,PngCmpProc)==LIST_ERROR) ReadPngFile(db->png_cache,db->ini.cur_town->name,x,y);
     }
   }
   
@@ -213,7 +213,7 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
           xy[0]=x;
           xy[1]=y;
           index=ListElement_Find(db->png_cache,&xy,PngCmpProc);
-          if (index!=0xFFFF)
+          if (index!=LIST_ERROR)
           {
             PNG_LIST *png_lst=(PNG_LIST *)ListElement_GetByIndex(db->png_cache,index);
             int img_x_offs=x_offs-cur_x_offs;
@@ -248,7 +248,7 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
 
 static const char MapGuiName[]="Gui_GpsMAP";
 
-int str_id=0x6FFFFFFF;
+int str_id=EMPTY_SID;
 int MapGuiOnCreate(DISP_OBJ_MAP *db)
 {
   TOWN *town;
@@ -303,8 +303,8 @@ void MapGuiOnRedraw(DISP_OBJ_MAP *db,int ,int,int)
   SetFont(FONT_E_20R);
   wchar_t buf[64];
   snwprintf(buf,63,L"%f,%f",db->Xres, db->Yres);
-  if (str_id!=0x6FFFFFFF) TextFree(str_id);
-  str_id=Str2ID(buf,0,0xFFFF);
+  if (str_id!=EMPTY_SID) TextFree(str_id);
+  str_id=Str2ID(buf,0,SID_ANY_LEN);
   DrawString(str_id, 2, db->x1+2,db->y1+2,db->x2-2,db->y1+2+80,20,0,clBlack,0x00000000);
   set_GC_xx(gc,gc_xx);
 }

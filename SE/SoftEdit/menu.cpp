@@ -111,7 +111,7 @@ void OnDelGui( BOOK* bk, GUI* )
     }
     else if (item==4)
     {
-      int icon_id=0xFFFF;;
+      int icon_id=NOIMAGE;;
       int ids;
       mbk->curit->style=0;
       iconidname2id(IDN_CHECKBOX_UNCHECKED_ICON,-1,&icon_id);
@@ -206,7 +206,7 @@ void OnAuthor( BOOK* bk, GUI* )
 {
   wchar_t text[100];
   snwprintf(text,99,L"SoftEdit\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
-  MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN),0, 1 ,5000, bk);
+  MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN), NOIMAGE, 1, 5000, bk);
 };
 
 void onSave( BOOK* bk, GUI* )
@@ -283,7 +283,7 @@ void OnSelectGui( BOOK* bk, GUI* )
     }
     else if (item==4)
     {
-      int icon_id=0xFFFF;;
+      int icon_id=NOIMAGE;;
       int ids;
       if (mbk->curit->style==0)
       {

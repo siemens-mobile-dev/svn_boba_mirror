@@ -49,7 +49,7 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
   MSG * msg = (MSG *)mess;
   wchar_t text[100];
   snwprintf(text,99,L"SoftEdit\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
-  MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN),0, 1 ,5000,msg->book);
+  MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN), NOIMAGE, 1, 5000,msg->book);
   return(1);
 };
 

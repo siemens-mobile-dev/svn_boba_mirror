@@ -28,7 +28,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("RedLED Blinked v1.1\n(c) IronMaster"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("RedLED Blinked v1.1\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -118,7 +118,7 @@ int main (void)
 {
   if (FindBook(myFind))
   {
-    MessageBox(0x6fFFFFFF,STR("Already runed"),0, 1 ,5000,0);
+    MessageBox(EMPTY_SID,STR("Already runed"), NOIMAGE, 1, 5000,0);
     SUBPROC(elf_exit);
   }
   else

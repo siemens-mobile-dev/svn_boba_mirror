@@ -10,7 +10,7 @@
 #include "revision.h"
 #include "main.h"
 
-#define MESSAGE( __STR__ ) MessageBox( LGP_NULL, __STR__, 0, 1 , 11000, (BOOK*) FindBook( isBcfgEditBook ) );
+#define MESSAGE( __STR__ ) MessageBox( LGP_NULL, __STR__, NOIMAGE, 1 , 11000, (BOOK*) FindBook( isBcfgEditBook ) );
 
 const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE" =
 {
@@ -301,7 +301,7 @@ void OnOkCreateUnsignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	if( ui < myBook->cur_hp.unsignedint->min || ui > myBook->cur_hp.unsignedint->max || *_Geterrno() == ERANGE )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min: %u\nmax: %u", myBook->cur_hp.unsignedint->min, myBook->cur_hp.unsignedint->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), 0, 1 , 5000, bk );
+		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -342,7 +342,7 @@ void OnOkCreateSignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	if( i < (int) myBook->cur_hp.signedint->min || i > (int) myBook->cur_hp.signedint->max || *_Geterrno() == ERANGE )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min: %d\nmax: %d", myBook->cur_hp.signedint->min, myBook->cur_hp.signedint->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), 0, 1 , 5000, bk );
+		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -377,7 +377,7 @@ void OnOkCreateWinOrPassGui( BOOK* bk, wchar_t* string, int len )
 	if( len < myBook->cur_hp.str->min || len > myBook->cur_hp.str->max )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min_string_len: %d\nmax_string_len: %d", myBook->cur_hp.str->min, myBook->cur_hp.str->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), 0, 1 , 5000, bk );
+		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -422,7 +422,7 @@ void OnOkCreateUnicodeGui( BOOK* bk, wchar_t* string, int len )
 	if( len < myBook->cur_hp.wstr->min || len > myBook->cur_hp.wstr->max )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min_string_len: %d\nmax_string_len: %d", myBook->cur_hp.wstr->min, myBook->cur_hp.wstr->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), 0, 1 , 5000, bk );
+		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -969,7 +969,7 @@ static int ShowAuthorInfo( void* mess , BOOK* book )
 	MSG* msg = ( MSG*)mess;
 	wchar_t ustr[64];
 	snwprintf( ustr, MAXELEMS( ustr ) - 1, L"\nBcfgEdit v1.0\nRevision %d\n( c ) Rst7, KreN, Hussein", __SVN_REVISION__ );
-	MessageBox( LGP_NULL, Str2ID( ustr, 0, MAXELEMS( ustr ) - 1 ), 0, 1 , 5000, msg->book );
+	MessageBox( LGP_NULL, Str2ID( ustr, 0, MAXELEMS( ustr ) - 1 ), NOIMAGE, 1 , 5000, msg->book );
 	return 1;
 }
 

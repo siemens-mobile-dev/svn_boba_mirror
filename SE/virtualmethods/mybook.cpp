@@ -21,7 +21,7 @@ int TerminateElf(BOOKMANMSG *msg, CBook* book)
 
 int ShowAuthorInfo(BOOKMANMSG *msg, CBook* book)
 {
-	MessageBox(0x6fFFFFFF,STR("Hello Wordl!\n\nExample elf.."),0, 1 ,5000, msg->bookmanbook);
+	MessageBox(EMPTY_SID,STR("Hello Wordl!\n\nExample elf.."),NOIMAGE, 1 ,5000, msg->bookmanbook);
 	return 1;
 }
 

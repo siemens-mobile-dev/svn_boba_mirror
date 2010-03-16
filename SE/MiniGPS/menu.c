@@ -110,7 +110,7 @@ void MenuOnEnter( BOOK* book, GUI* )
     else
     {
       AutoLocation = false;
-      MessageBox(0x6fFFFFFF, Str2ID(LG_AUTOLOCATIONOFF,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+      MessageBox(EMPTY_SID, Str2ID(LG_AUTOLOCATIONOFF,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
       InvalidateAll();
       BookObj_ReturnPage(book,NIL_EVENT);
     }

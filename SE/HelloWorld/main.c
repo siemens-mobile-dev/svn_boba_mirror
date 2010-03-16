@@ -19,7 +19,7 @@ typedef struct
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("Hello Wordl!\n\nExample elf.."),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("Hello Wordl!\n\nExample elf.."), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -55,7 +55,7 @@ void onCloseHWBook(BOOK * book)
   if (book)
   {
     Timer_Kill(&timer);
-    StatusIndication_ShowNotes(0x6FFFFFFF);
+    StatusIndication_ShowNotes(EMPTY_SID);
     SetLampLevel(0);
     SUBPROC(elf_exit);
   }

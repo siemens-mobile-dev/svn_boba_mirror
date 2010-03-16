@@ -70,8 +70,8 @@ void preset_YesNo(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOO
     wchar_t act = get_action(lst, left);
     wchar_t act2 = get_action(lst,right);
     int ct=0;
-    if (left!=0x6FFFFFFF)ct++;
-    if (right!=0x6FFFFFFF)ct++;
+    if (left!=EMPTY_SID)ct++;
+    if (right!=EMPTY_SID)ct++;
     if (ct==2)
     {
       if (act==ACTION_YES || act==ACTION_ACCEPT)
@@ -107,7 +107,7 @@ void preset_YesNo(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOO
 //пресет для МессагБокса:
 bool lookslike_OK(LIST *lst, int cnt, int left, int right)
 {
-  if (cnt==1 && right==0x6FFFFFFF)
+  if (cnt==1 && right==EMPTY_SID)
   {
     wchar_t act=get_action(lst, left);
     if (act==ACTION_OK)
@@ -124,7 +124,7 @@ void preset_OK(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOOK *
     lbl->strids[1]=left;
     lbl->enable[1]=get_enable(lst,left);
     lbl->enable[2]=false;
-    lbl->strids[2]=0x6FFFFFFF;
+    lbl->strids[2]=EMPTY_SID;
   }
   else
   {
@@ -137,20 +137,20 @@ void preset_OK(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOOK *
 void preset_default(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyBOOK *our, int left, int right)
 {
   if (lastitem)lastitem->type=T_DEFAULT;
-  if (cnt==1 && right!=0x6FFFFFFF)cnt++;
+  if (cnt==1 && right!=EMPTY_SID)cnt++;
   wchar_t act1=get_action(lst, left);
   wchar_t act2=get_action(lst, right);
   lbl->strids[1]=left;
   lbl->enable[1]=get_enable(lst, left);
   lbl->strids[0]=right;
   lbl->enable[0]=get_enable(lst,right);
-  if (right==0x6FFFFFFF)
+  if (right==EMPTY_SID)
   {
     if (act1==ACTION_BACK || act1==ACTION_CANCEL || act1==ACTION_NO)
     {
       lbl->strids[2]=left;
       lbl->enable[2]=get_enable(lst, left);
-      lbl->strids[1]=0x6FFFFFFF;
+      lbl->strids[1]=EMPTY_SID;
       lbl->enable[1]=false;
     }
   }
@@ -160,7 +160,7 @@ void preset_default(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int cnt, MyB
     {
       lbl->strids[2]=right;
       lbl->enable[2]=get_enable(lst, right);
-      lbl->strids[0]=0x6FFFFFFF;
+      lbl->strids[0]=EMPTY_SID;
       lbl->enable[0]=false;
     }
   }

@@ -384,7 +384,7 @@
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 45560411 ;828A: IS_NEEDED_BOOK isFmRadioBook( void );
 0A2C: 00000000 0D1FD210 ;828B: IS_NEEDED_BOOK isAudioPlayerBook( void );
-;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
+0A30: 00000000 3D19D210 ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
 0A34: 00000000 81350411 ; 28D: void SwitchRadioStationFromList( BOOK* FmRadioBook, int );
 0A38: 00000000 6181E710 ; 28E: void Shortcut_Run( wchar_t* shortcut_name );
 0A3C: 00000000 D9059F10 ; 28F: int mkdir( const wchar_t* path );

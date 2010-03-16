@@ -61,7 +61,7 @@ int isvisible(LIST *lst, int index)
     if (index!=-1)
     {
       SOFTKEY *sk2=(SOFTKEY*)ListElement_GetByIndex(lst,index);
-      if (sk2->visible && sk2->text!=0x6FFFFFFF)
+      if (sk2->visible && sk2->text!=EMPTY_SID)
       {
         return 1;
       }
@@ -77,7 +77,7 @@ int getcount(LIST *lst, int check)
   for (x=0;x<lst->FirstFree;x++)
   {
     SOFTKEY *sk=(SOFTKEY*)ListElement_GetByIndex(lst,x);
-    if (sk->visible && sk->action!=ACTION_BACK && sk->action!=ACTION_LONG_BACK && isvisible(lst,x) && isInIronPatch(sk->action)!=true && sk->text!=0x6FFFFFFF && sk->parent_action==0xFFFF && checkelement(sk, check))
+    if (sk->visible && sk->action!=ACTION_BACK && sk->action!=ACTION_LONG_BACK && isvisible(lst,x) && isInIronPatch(sk->action)!=true && sk->text!=EMPTY_SID && sk->parent_action==0xFFFF && checkelement(sk, check))
     {
       res++;
     }

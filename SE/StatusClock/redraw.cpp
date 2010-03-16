@@ -6,7 +6,7 @@ DISP_OBJ_ONREDRAW_METHOD DREDRAW;
 
 void DrawHighlightID(int font,int text,int ct, int XPos, int YPos, int borderColor, int shadowColor, int NormalColor)
 {
-  if (text && text!=0x6FFFFFFF)
+  if (text && text!=EMPTY_SID)
   {
     SetFont(font);
     int MaxXPos,MaxYPos;

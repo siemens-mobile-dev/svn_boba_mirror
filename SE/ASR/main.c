@@ -125,7 +125,7 @@ typedef struct
 static int ShowAuthorInfo(void *mess ,BOOK *book)
 {
   MSG * msg = (MSG *)mess;
-  MessageBox(0x6fffffff,STR("AdvancedSoundRecorder v.1.1\n (c) 2007KrasH\n Respect to SlaveMaster"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("AdvancedSoundRecorder v.1.1\n (c) 2007KrasH\n Respect to SlaveMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 

@@ -50,7 +50,7 @@ void InitScr()
 
 void DrwCurTab(GC *gc, RECT *rc)
 {
-  STRID str=0x6FFFFFFF;  
+  STRID str=EMPTY_SID;  
   RECT rt;
   rt.x1=TAB_X;
   rt.y1=TOP_Y;
@@ -97,7 +97,7 @@ void DrwSort(void *gc, RECT *rc)
 void DrwIndex(void *gc, RECT *rc)
 {
   int chkcnt = EnumChk(NULL,0);
-  STRID str=0x6FFFFFFF;
+  STRID str=EMPTY_SID;
   if (chkcnt)
     snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%d(%d)", chkcnt, _CurCount);
   else
@@ -124,7 +124,7 @@ void DrwSB(GC *gc, RECT *rc)
 
 void DrwDrvAc(int ind, GC *gc, RECT *rc)
 {
-  STRID str=0x6FFFFFFF;
+  STRID str=EMPTY_SID;
   RECT rt;
   wchar_t* name;
   int x;	

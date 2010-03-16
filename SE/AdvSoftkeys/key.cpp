@@ -115,8 +115,8 @@ int NewKey(int key, int r1 , int mode)
       {
         str2wstr(ws,bk->xbook->name);
       }
-      MessageBox(0x6FFFFFFF,int2strID(lastitem->type),0,1,0,0);
-      MessageBox(0x6FFFFFFF,Str2ID(ws,0,SID_ANY_LEN),0,1,0,0);
+      MessageBox(EMPTY_SID,int2strID(lastitem->type),NOIMAGE,1,0,0);
+      MessageBox(EMPTY_SID,Str2ID(ws,0,SID_ANY_LEN),NOIMAGE,1,0,0);
       return -1;
     }
     
@@ -190,7 +190,7 @@ void save()
         
         wchar_t name[128];
         char name2[128];
-        if (sk->text!=0x6FFFFFFF)
+        if (sk->text!=EMPTY_SID)
         {
           TextID2wstr(sk->text,name,100);
           unicode2win1251(name2, name, 100);
@@ -244,13 +244,13 @@ void save()
       for (x=0;x<lst->FirstFree;x++)
       {
         SOFTKEY * sk = (SOFTKEY*)ListElement_GetByIndex(lst,x);
-        if (sk->visible && sk->action!=ACTION_BACK && isvisible(lst,x) && isInIronPatch(sk->action)!=true && sk->text!=0x6FFFFFFF && sk->parent_action==0xFFFF)
+        if (sk->visible && sk->action!=ACTION_BACK && isvisible(lst,x) && isInIronPatch(sk->action)!=true && sk->text!=EMPTY_SID && sk->parent_action==0xFFFF)
         {
           char pattern[1024];
           
           wchar_t name[128];
           char name2[128];
-          if (sk->text!=0x6FFFFFFF)
+          if (sk->text!=EMPTY_SID)
           {
             TextID2wstr(sk->text,name,100);
             unicode2win1251(name2, name, 100);

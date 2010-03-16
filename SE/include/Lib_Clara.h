@@ -39,7 +39,9 @@ extern void kill_data( void* p, void (*func_p)( void* ) );
 #endif /* NULL */
 
 #define SID_ANY_LEN 0xFFFF
+#define NOIMAGE 0xFFFF
 #define EMPTY_SID 0x6FFFFFFF
+#define LIST_ERROR 0xFFFF
 #define TEXT(__STR__) L##__STR__
 #define _T(__STR__) L##__STR__
 #define MAXELEMS(x) (sizeof(x)/sizeof(x[0]))

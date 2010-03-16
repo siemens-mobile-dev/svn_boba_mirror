@@ -7,8 +7,8 @@ u16 handles[10]={IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL}
 wchar_t ImageHandler_Get(wchar_t * path, wchar_t * fname, int x)
 {
   char error_code;
-  images[x]=0xFFFF;
-  handles[x]=0xFFFF;
+  images[x]=NOIMAGE;
+  handles[x]=NOIMAGE;
   if (!fstat(path,fname,0))
   {
     if (!REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(SYNC,&handles[x],&error_code))
@@ -17,7 +17,7 @@ wchar_t ImageHandler_Get(wchar_t * path, wchar_t * fname, int x)
       {
         if (error_code)
         {
-          handles[x]=0xFFFF;
+          handles[x]=NOIMAGE;
         }
       }
     }
@@ -27,12 +27,12 @@ wchar_t ImageHandler_Get(wchar_t * path, wchar_t * fname, int x)
 
 wchar_t ImageHandler_Free(int x)
 {
-  if (images[x]!=0xFFFF)
+  if (images[x]!=NOIMAGE)
   {
     char error_code;
     REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER(SYNC,handles[x],0,0,images[x],1,&error_code);
-    images[x]=0xFFFF;
-    handles[x]=0xFFFF;
+    images[x]=NOIMAGE;
+    handles[x]=NOIMAGE;
   }
   return 0;
 };

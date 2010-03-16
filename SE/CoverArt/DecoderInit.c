@@ -31,7 +31,7 @@ wchar_t * GetType_str(int cover_type)
 
 wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *meta)
 {
-  wchar_t imageID = 0xFFFF;
+  wchar_t imageID = NOIMAGE;
   if (GetCover_SWI==true)
   {
     char cover_type;
@@ -47,7 +47,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
           char * my_buf=new char[size+1];
           fread(f,my_buf,size);
           meta->Handle=false;
-          meta->ImageHandle=0xFFFF;
+          meta->ImageHandle=NOIMAGE;
           if (ImageID_GetIndirect(my_buf,size,0,GetType_str(cover_type),&imageID)==0)
           {
             meta->ImageID=imageID;
@@ -55,7 +55,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
           }
           else
           {
-            meta->ImageID=0xFFFF;
+            meta->ImageID=NOIMAGE;
             meta->HasImage=false;
           }
         }
@@ -74,7 +74,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
   if (meta->HasImage==false && COVER_GETPNG==true)
   {
     ImageHandler_Get(meta,path,L"album.png");
-    if (meta->ImageID!=0xFFFF)
+    if (meta->ImageID!=NOIMAGE)
     {
       meta->HasImage=true;
     }
@@ -183,9 +183,9 @@ void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta)
 IMG_DESC GetBitmap(wchar_t *path, wchar_t *name)
 {
   IMG_DESC id;
-  id.ImageID=0xFFFF;
+  id.ImageID=NOIMAGE;
   id.HasImage=false;
-  id.ImageHandle=0xFFFF;
+  id.ImageHandle=NOIMAGE;
   id.Handle=false;
 
   int error;
@@ -284,14 +284,14 @@ IMG_DESC GetBitmap(wchar_t *path, wchar_t *name)
               id.ImageID=imageID;
               id.HasImage=true;
               id.Handle=false;
-              id.ImageHandle=0xFFFF;
+              id.ImageHandle=NOIMAGE;
             }
             else
             {
-              id.ImageID=0xFFFF;
+              id.ImageID=NOIMAGE;
               id.HasImage=false;
               id.Handle=false;
-              id.ImageHandle=0xFFFF;
+              id.ImageHandle=NOIMAGE;
               nowmusic.meta.HasImage=false;
             }
           }
@@ -317,10 +317,10 @@ void Cover_Free()
       ImageHandler_Free(&nowmusic.meta);
     }
   }
-  nowmusic.meta.ImageID=0xFFFF;
+  nowmusic.meta.ImageID=NOIMAGE;
   nowmusic.meta.HasImage=false;
   nowmusic.meta.Handle=false;
-  nowmusic.meta.ImageHandle=0xFFFF;
+  nowmusic.meta.ImageHandle=NOIMAGE;
 };
 
 void decoder_Init(wchar_t *path, wchar_t *name)

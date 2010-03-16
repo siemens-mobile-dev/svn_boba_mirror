@@ -363,7 +363,7 @@ void onTimer(u16 timerID, LPARAM lparam)
         {
             u16 temp[256];
             snwprintf(temp, MAXELEMS(temp), _T("Неизвесный статус\n%x: %x"), me, mestatus &~(skipevents|checkevents));
-            MessageBox(0x6FFFFFFF, Str2ID(temp,0,MAXELEMS(temp)), 0xFFFF, 1, 0, 0);
+            MessageBox(EMPTY_SID, Str2ID(temp,0,MAXELEMS(temp)), NOIMAGE, 1, 0, 0);
             skipevents|=mestatus;
         }
 #endif
@@ -415,7 +415,7 @@ int UpdateParams(void)
   if(err)
   {
     snwprintf(temp, MAXELEMS(temp), _T("Error!\n%s"),err);
-    MessageBox(0x6FFFFFFF,Str2ID(temp,0,MAXELEMS(temp)),0xFFFF,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(temp,0,MAXELEMS(temp)),NOIMAGE,1,0,0);
     return 1;
   }
   return 0;
@@ -439,7 +439,7 @@ void bookOnDestroy(BOOK * book)
         if(offtimerLED) Timer_Kill(&offtimerLED);
         if(offtimerScreen) Timer_Kill(&offtimerScreen);
         if(modetimer) Timer_Kill(&modetimer);
-        StatusIndication_ShowNotes(0x6FFFFFFF);
+        StatusIndication_ShowNotes(EMPTY_SID);
         SUBPROC(elf_exit);
 }
 
@@ -451,7 +451,7 @@ int onExit(void* r0,BOOK* b)
 
 int onAbout(void* mess,BOOK* b)
 {
-        MessageBox(0x6fFFFFFF,Str2ID( LELFNAME LELFVERSION,0,SID_ANY_LEN),0xFFFF, 1 ,5000, *(BOOK**)mess);
+        MessageBox(EMPTY_SID,Str2ID( LELFNAME LELFVERSION,0,SID_ANY_LEN),NOIMAGE, 1 ,5000, *(BOOK**)mess);
         return 1;
 }
 
@@ -516,9 +516,9 @@ int main(wchar_t* filename)
         if(alreadyrunned)
         {
             #ifndef ENG
-                MessageBox(0x6FFFFFFF, STR("MissedEvents\nуже запущен"), 0, 1 ,5000, 0);
+                MessageBox(EMPTY_SID, STR("MissedEvents\nуже запущен"), NOIMAGE, 1 ,5000, 0);
             #else
-                MessageBox(0x6FFFFFFF, STR("MissedEvents\nalready runned"), 0, 1 ,5000, 0);
+                MessageBox(EMPTY_SID, STR("MissedEvents\nalready runned"), NOIMAGE, 1 ,5000, 0);
             #endif
             SUBPROC(elf_exit);
         }
@@ -555,7 +555,7 @@ int main(wchar_t* filename)
 
                 timer=Timer_Set(cfg_checkperiod*1000, onTimer, 0);
                 if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
-                  StatusIndication_ShowNotes(0x6FFFFFFF);
+                  StatusIndication_ShowNotes(EMPTY_SID);
         }
 
         return 0;

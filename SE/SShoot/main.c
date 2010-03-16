@@ -50,7 +50,7 @@ typedef struct
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("ScreenShooter v1.2\n\n(c)2007-2008 Hussein"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("ScreenShooter v1.2\n\n(c)2007-2008 Hussein"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 

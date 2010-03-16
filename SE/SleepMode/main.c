@@ -181,7 +181,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("SleepMode v1.1\n\n(c) Hussein"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("SleepMode v1.1\n\n(c) Hussein"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -259,7 +259,7 @@ int main()
 {
   if (FindBook(myFind))
   {
-    MessageBox(0x6fFFFFFF,STR("Already runed"),0, 1 ,5000,0);
+    MessageBox(EMPTY_SID,STR("Already runed"), NOIMAGE, 1, 5000,0);
     SUBPROC(elf_exit);
   }
   else

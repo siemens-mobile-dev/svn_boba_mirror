@@ -138,7 +138,7 @@ int TerminateElf(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("TagEditor v1.4\n(c) MoneyMasteR\naka\nDoCent"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("TagEditor v1.4\n(c) MoneyMasteR\naka\nDoCent"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -818,7 +818,7 @@ int ShowInfo()
   wstrcat(info_mp3,INFO_ALBUM);
   wstrcat(info_mp3,TagBook->UAlbum2);
   wstrcat(info_mp3,L"\n");
-  MessageBox(Str2ID(INFO_TEXT,0,SID_ANY_LEN),Str2ID(info_mp3,0,SID_ANY_LEN),0, 2 ,0,0);
+  MessageBox(Str2ID(INFO_TEXT,0,SID_ANY_LEN),Str2ID(info_mp3,0,SID_ANY_LEN), NOIMAGE, 2 ,0,0);
   delete info_mp3;
   delete Gen;
   return 1;
@@ -2168,7 +2168,7 @@ const PAGE_DESC base_page_main = {"TagEditor_base_main",0,bk_msglst_base};
 int main(wchar_t * elfname, wchar_t * path, wchar_t *name, wchar_t*TagOpen)
 {
   TagBook=new MyBook;
-  CreateBook(TagBook,onCloseCreateFileBook,&base_page_main,"TagEditor",-1,0);
+  CreateBook((BOOK*)TagBook,onCloseCreateFileBook,&base_page_main,"TagEditor",-1,0);
   InitConfig();
   TagBook->PlayMode=0;
   if(path && name)

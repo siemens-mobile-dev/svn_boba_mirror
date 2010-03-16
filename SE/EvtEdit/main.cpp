@@ -39,14 +39,14 @@ wchar_t *defName=0;
 
 int GetStrID(wchar_t *txt)
 {
-  int id=0x6FFFFFFF;
+  int id=EMPTY_SID;
   textidname2id(txt,0xFFFFFFFF,&id);
   return id;
 };
 
 int GetIconID(wchar_t *txt)
 {
-  int id=0xFFFF;
+  int id=NOIMAGE;
   iconidname2id(txt,0xFFFFFFFF,&id);
   return id;
 };
@@ -95,7 +95,7 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
   MSG * msg = (MSG *)mess;
   wchar_t ustr[64];
   snwprintf(ustr,MAXELEMS(ustr)-1,L"\nEvtEdit v1.0\n(c) UltraShot\n%s",BUILD);
-  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,msg->book);
+  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,msg->book);
   return(1);
 };
 
@@ -393,7 +393,7 @@ void OnAuthor(BOOK *bk, GUI* )
 {
   wchar_t ustr[64];
   snwprintf(ustr,MAXELEMS(ustr)-1,L"\nEvtEdit v1.0\n(c) UltraShot\n%s",BUILD);
-  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,bk);
+  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,bk);
 };
 
 void OnSelect1Gui(BOOK *bk, GUI* )

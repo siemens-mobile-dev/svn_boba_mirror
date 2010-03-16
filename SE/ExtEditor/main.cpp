@@ -76,7 +76,7 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
   MSG * msg = (MSG *)mess;
   wchar_t ustr[64];
   snwprintf(ustr,MAXELEMS(ustr)-1,L"\nExtEditor v1.0\nRevision %d\n(c) KreN",__SVN_REVISION__);
-  MessageBox(LGP_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,msg->book);
+  MessageBox(LGP_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -819,7 +819,7 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
   MyBOOK *mbk=new MyBOOK;
   memset(mbk,0,sizeof(MyBOOK));
-  if (!CreateBook(mbk,onMyBookClose,&bk_base,"ExtEditor",-1,0))
+  if (!CreateBook((BOOK*)mbk,onMyBookClose,&bk_base,"ExtEditor",-1,0))
   {
     delete mbk;
     SUBPROC(elf_exit);

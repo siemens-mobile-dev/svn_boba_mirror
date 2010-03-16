@@ -25,7 +25,7 @@ extern wchar_t media_images[];
 #define IMG_DOWN 7
 extern wchar_t images[];
 
-#define ICON(a,b) (a!=0xFFFF ? a : b)
+#define ICON(a,b) (a!=NOIMAGE ? a : b)
 
 #define ICN_ARTIST 0
 #define ICN_ALBUM 1

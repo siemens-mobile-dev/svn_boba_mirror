@@ -94,7 +94,7 @@ void OnOkCreateWinOrPassGui(BOOK * bk, wchar_t *string, int len)
       {
         wchar_t ustr[64];
         snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %u\nmax: %u",mbk->minint , mbk->maxint );
-        MessageBox(0x6FFFFFFF,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
+        MessageBox(EMPTY_SID,Str2ID(ustr,0,SID_ANY_LEN), NOIMAGE, 1, 5000, bk);
         return;
       }
       else
@@ -157,7 +157,7 @@ void OnOkCreateWinOrPassGui(BOOK * bk, wchar_t *string, int len)
     {
       wchar_t ustr[64];
       snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %u\nmax: %u",mbk->minint , mbk->maxint );
-      MessageBox(0x6FFFFFFF,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
+      MessageBox(EMPTY_SID,Str2ID(ustr,0,SID_ANY_LEN), NOIMAGE, 1, 5000, bk);
       return;
     }
     else
@@ -176,7 +176,7 @@ void OnOkCreateWinOrPassGui(BOOK * bk, wchar_t *string, int len)
     {
       wchar_t ustr[64];
       snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %u\nmax: %u",mbk->minint , mbk->maxint );
-      MessageBox(0x6FFFFFFF,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
+      MessageBox(EMPTY_SID,Str2ID(ustr,0,SID_ANY_LEN), NOIMAGE, 1, 5000, bk);
       return;
     }
     for (x=x;x<86400;x+=step)
@@ -218,7 +218,7 @@ void OnOkCreateWinOrPassGui(BOOK * bk, wchar_t *string, int len)
     {
       wchar_t ustr[64];
       snwprintf(ustr,MAXELEMS(ustr)-1,L"min: %u\nmax: %u",mbk->minint , mbk->maxint );
-      MessageBox(0x6FFFFFFF,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, bk);
+      MessageBox(EMPTY_SID,Str2ID(ustr,0,SID_ANY_LEN), NOIMAGE, 1, 5000, bk);
       return;
     }
     else
@@ -273,7 +273,7 @@ int get_headerstrid(int type)
   case 8:
     return Str2ID(lng[INTERVAL],0,SID_ANY_LEN);
   default:
-    return 0x6FFFFFFF;
+    return EMPTY_SID;
   }
 };
 int get_curstrid(MyBOOK *mbk)
@@ -322,7 +322,7 @@ int get_curstrid(MyBOOK *mbk)
   case 8:
     return int2strID(0);
   }
-  return 0x6FFFFFFF;
+  return EMPTY_SID;
 };
 
 int getnumwidth(unsigned int num)
@@ -338,7 +338,7 @@ int getnumwidth(unsigned int num)
 
 void CreateTextInput(MyBOOK *myBook)
 {
-  int text=0x6FFFFFFF;
+  int text=EMPTY_SID;
   int type=myBook->inputType;
   int size=0;
   text=get_curstrid(myBook);

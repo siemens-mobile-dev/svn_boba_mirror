@@ -32,7 +32,7 @@ void EditConfig(int indx, BOOK * book, int snd)
   }
   else
   {
-    MessageBox(0x6fFFFFFF, Str2ID(LG_GFGBCFGEDITNOTFOUND,0,SID_ANY_LEN), 0, 1, 5000*msgShowTime, 0);
+    MessageBox(EMPTY_SID, Str2ID(LG_GFGBCFGEDITNOTFOUND,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   }
   wstrcat(path,L"/");
   wstrcat(path,name);
@@ -52,9 +52,9 @@ int isAnyDeath()
 static void AboutDlg(int indx, BOOK * book, int snd)
 {
 #if (!defined(LANG_RU) && !defined(LANG_EN))
-  MessageBox(0x6fFFFFFF,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
 #else
-  MessageBox(0x6fFFFFFF,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
 #endif
 }
 

@@ -67,7 +67,7 @@ void onAccept_SI( BOOK* book, wchar_t* string, int len )
           }
           else
           {
-            MessageBox( 0x6fFFFFFF, STR( "Can't open bookman.ini when write" ), 0, 1 , 5000, mbk );
+            MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
           }
         }
         delete(param);
@@ -89,7 +89,7 @@ void onAccept_SI( BOOK* book, wchar_t* string, int len )
         }
         else
         {
-          MessageBox( 0x6fFFFFFF, STR( "Can't open bookman.ini when append" ), 0, 1 , 5000, mbk );
+          MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when append" ), NOIMAGE, 1 , 5000, mbk );
         }
       }
     }
@@ -110,7 +110,7 @@ void onAccept_SI( BOOK* book, wchar_t* string, int len )
       }
       else
       {
-        MessageBox( 0x6fFFFFFF, STR( "Can't open bookman.ini when delete" ), 0, 1 , 5000, mbk );
+        MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when delete" ), NOIMAGE, 1 , 5000, mbk );
       }
       delete(param);
     }

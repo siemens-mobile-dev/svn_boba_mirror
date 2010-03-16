@@ -4,7 +4,7 @@
 extern int SoftSize;
 void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor, bool extshadow)
 {
-  if (text && text!=0x6FFFFFFF)
+  if (text && text!=EMPTY_SID)
   {
     int last=MaxXPos;
     if (CEN==0)
@@ -44,7 +44,7 @@ void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos,
 
 void DrawHighlightID2(int font,int text,int ct, int XPos, int YPos, int borderColor, int NormalColor, bool extshadow)
 {
-  if (text && text!=0x6FFFFFFF)
+  if (text && text!=EMPTY_SID)
   {
     SetFont(font); //Устанавливаем шрифт из первого параметра функции.
     int MaxXPos,MaxYPos;

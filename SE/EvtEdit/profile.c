@@ -28,10 +28,10 @@ int Profiles_onLBMessage(GUI_MESSAGE * msg)
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    int id=0x6FFFFFFF;
+    int id=EMPTY_SID;
     textidname2id(profiles[item],0xFFFFFFFF,&id);
     SetMenuItemText0(msg,id);
-    int ic=0xFFFF;
+    int ic=NOIMAGE;
     iconidname2id(picns[item],0xFFFFFFFF,&ic);
     SetListObjectItemIcon (msg,0, ic);
     if (item==0 && mbk->prof_type==1)

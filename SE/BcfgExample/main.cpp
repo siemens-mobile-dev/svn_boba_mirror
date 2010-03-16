@@ -11,7 +11,7 @@ typedef struct
 }MyBOOK;
 
 DISP_OBJ * StatusRow;
-STRID SIDheap=0x6FFFFFFF;
+STRID SIDheap=EMPTY_SID;
 void (*SIonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
 
 u16 timer; // ID таймера
@@ -41,7 +41,7 @@ void Draw(DISP_OBJ * db,int r1, int r2,int r3)
 
 void onTimer(u16 r0, void * r1)
 {
-  if (SIDheap!=0x6FFFFFFF){TextFree(SIDheap);SIDheap=0x6FFFFFFF;}
+  if (SIDheap!=EMPTY_SID){TextFree(SIDheap);SIDheap=EMPTY_SID;}
   SIDheap=int2strID(GetFreeBytesOnHeap());
   Timer_ReSet(&timer,REFRESH_TIME,onTimer,0);
   InvalidateRect(StatusRow,0);
@@ -64,7 +64,7 @@ typedef struct
 static int ShowAuthorInfo(void *mess ,BOOK *book)
 {
   MSG * msg = (MSG *)mess;
-  MessageBox(0x6fffffff,STR("BcfgExample"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("BcfgExample"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -103,7 +103,7 @@ int main()
 { 
   MyBOOK * myBook=new MyBOOK;
   memset(myBook,0,sizeof(MyBOOK));
-  if (!CreateBook(myBook,onMyBookClose,&bk_base,"BcfgExample",-1,0))
+  if (!CreateBook((BOOK*)myBook,onMyBookClose,&bk_base,"BcfgExample",-1,0))
   {
     delete myBook;
     SUBPROC(elf_exit);

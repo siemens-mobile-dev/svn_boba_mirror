@@ -43,7 +43,7 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
   MSG * msg = (MSG *)mess;
   wchar_t ustr[64];
   snwprintf(ustr,MAXELEMS(ustr)-1,L"\nThemeUnpacker\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
-  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,msg->book);
+  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,msg->book);
   return(1);
 };
 
@@ -89,7 +89,7 @@ int onAccept_DB(void * data, BOOK * book)
   {
     snwprintf(ustr,MAXELEMS(ustr)-1,L"Unpacking failed\nTotal files: %d", res);
   }
-  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,0);
+  MessageBox(SID_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,0);
   FreeBook(book);
   return(0);
 };

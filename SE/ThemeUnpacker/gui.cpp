@@ -38,7 +38,7 @@ void OnEnterGui( BOOK* bk, GUI* )
     {
       snwprintf(ustr,MAXELEMS(ustr)-1,L"Unpacking failed\nTotal files: %d", res);
     }
-    MessageBox(0x6FFFFFFF,Str2ID(ustr,0,MAXELEMS(ustr)-1),0, 1 ,5000,0);
+    MessageBox(EMPTY_SID,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,0);
     FreeBook(bk);
   }
 };

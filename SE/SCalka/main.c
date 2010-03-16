@@ -100,7 +100,7 @@ int main()
 {
   MyBOOK * myBook=new MyBOOK;
   memset(myBook,0,sizeof(MyBOOK));
-  if (!CreateBook(myBook,onMyBookClose,&bk_base,"SCalka",-1,0))
+  if (!CreateBook((BOOK*)myBook,onMyBookClose,&bk_base,"SCalka",-1,0))
   {
     delete myBook;
     SUBPROC(elf_exit);

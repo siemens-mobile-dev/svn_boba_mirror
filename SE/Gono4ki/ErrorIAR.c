@@ -32,5 +32,5 @@ void ShowInfo()
   met[7]=STR("Долгое Назад - выход\n\n");
   met[8]=STR("# - вкл./откл. звук\n\n");
   met[9]=STR("* - свернуть\n");
-  MessageBox(STR("Инфо"), Str2ID(met, 5, 10), 0, 2, 0, 0);
+  MessageBox(STR("Инфо"), Str2ID(met, 5, 10), NOIMAGE, 2, 0, 0);
 }

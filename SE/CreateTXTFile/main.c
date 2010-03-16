@@ -63,7 +63,7 @@ int TerminateElf(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("CreateTXTFile, v.1.1\r\n\r\n(c) IronMaster"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("CreateTXTFile, v.1.1\r\n\r\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -111,7 +111,7 @@ int onAccept(void * data, BOOK *)
   {
     int str_id;
     textidname2id(L"DB_NAME_EXIST_TXT",SID_ANY_LEN,&str_id);
-    MessageBox(0x6fFFFFFF,str_id,0, 1 ,5000,0);
+    MessageBox(EMPTY_SID,str_id, NOIMAGE, 1, 5000,0);
     DestroyList(0,0);
   }
   else
@@ -133,14 +133,14 @@ int onAccept(void * data, BOOK *)
       }
       if (fwrite(f,str_buf,len)!=len)
       {
-        MessageBox(0x6fFFFFFF,STR("Write File Error!!!"),0, 1 ,5000,0);
+        MessageBox(EMPTY_SID,STR("Write File Error!!!"), NOIMAGE, 1, 5000,0);
       }
       fclose(f);
       FreeBook((BOOK*)CreateFileBook);
     }
     else
     {
-      MessageBox(0x6fFFFFFF,STR("Can't open file. Try later."),0, 1 ,5000,0);
+      MessageBox(EMPTY_SID,STR("Can't open file. Try later."), NOIMAGE, 1, 5000,0);
     }
   }
   return(0);
@@ -293,7 +293,7 @@ void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
   {
     int str_id;
     textidname2id(L"DB_ILLEGAL_CHAR_TXT",SID_ANY_LEN,&str_id);
-    MessageBox(0x6fFFFFFF,str_id,0, 1 ,5000,0);
+    MessageBox(EMPTY_SID,str_id, NOIMAGE, 1, 5000,0);
     FILEITEM * item_desc=FILEITEM_Create();
     wchar_t* fname = new wchar_t[40];
     fname[0]=0;
@@ -388,7 +388,7 @@ void onCloseCreateFileBook(BOOK *)
 int CreateCreateFileBook()
 {
   CreateFileBook = new MyBOOK;
-  CreateBook(CreateFileBook,onCloseCreateFileBook,&base_page,"CreateTXTFile",-1,0);
+  CreateBook((BOOK*)CreateFileBook,onCloseCreateFileBook,&base_page,"CreateTXTFile",-1,0);
   CreateFileBook->NameInput=0;
   CreateFileBook->w_string=0;
   CreateFileBook->string=0;
@@ -426,7 +426,7 @@ int main (void)
   }
   else
   {
-    MessageBox(0x6fFFFFFF,STR("Already runed"),0, 1 ,5000,0);
+    MessageBox(EMPTY_SID,STR("Already runed"), NOIMAGE, 1, 5000,0);
     SUBPROC(elf_exit);
   }
 }

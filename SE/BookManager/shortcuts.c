@@ -32,7 +32,7 @@ void Shortcut_Append( wchar_t* name_buf, char* mask_buf, wchar_t* path )
   }
   else
   {
-    MessageBox( 0x6fFFFFFF, STR( "Can't open shortcuts.ini" ), 0, 1 , 5000, 0 );
+    MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
   }
 }
 
@@ -62,7 +62,7 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
       }
       else
       {
-        MessageBox( 0x6fFFFFFF, STR( "Can't open shortcuts.ini" ), 0, 1 , 5000, mbk );
+        MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, mbk );
       }
       mfree( param );
     }
@@ -79,7 +79,7 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
         }
         else
         {
-          MessageBox( 0x6fFFFFFF, STR( "Can't open shortcuts.ini" ), 0, 1 , 5000, 0 );
+          MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
         }
       }
       else
@@ -249,7 +249,7 @@ BookObj_ReturnPage( book, ACCEPT_EVENT );
 int CreateSI( void* data, BOOK* book )
 {
 int str_id;
-int editable_strID = 0x6FFFFFFF;
+int editable_strID = EMPTY_SID;
 if ( shortcuts_buf )
 {
 char mask_buf[10];
@@ -507,8 +507,8 @@ void * SHORTCUT_DESC_A2_Init(char * param)
 
 int but_list_callback( GUI_MESSAGE* msg )
 {
-  int str_id=0x6FFFFFFF;
-  int icon_id=0xFFFF;
+  int str_id=EMPTY_SID;
+  int icon_id=NOIMAGE;
   char* param = 0;
   MyBOOK* mbk = (MyBOOK*) GUIonMessage_GetBook( msg );
   
@@ -552,11 +552,11 @@ int but_list_callback( GUI_MESSAGE* msg )
             str_id = Shortcut_Get_MenuItemName( w_buf );
             icon_id = Shortcut_Get_MenuItemIconID( w_buf );
             
-            if ( icon_id == 0xFFFF ) iconidname2id( L"RN_VERT_MY_SHORTCUTS_ICN", SID_ANY_LEN, &icon_id );
+            if ( icon_id == NOIMAGE ) iconidname2id( L"RN_VERT_MY_SHORTCUTS_ICN", SID_ANY_LEN, &icon_id );
             
             delete( w_buf );
             
-            if ( str_id == 0x6FFFFFFF ) str_id = Str2ID( param, 6, SID_ANY_LEN );
+            if ( str_id == EMPTY_SID ) str_id = Str2ID( param, 6, SID_ANY_LEN );
           }
         }
         delete(param);
@@ -683,7 +683,7 @@ void But_onDelete( BOOK* book, GUI* )
   }
   else
   {
-    MessageBox( 0x6fFFFFFF, STR( "Can't open shortcuts.ini" ), 0, 1 , 5000, 0 );
+    MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
   }
   delete( path );
 }

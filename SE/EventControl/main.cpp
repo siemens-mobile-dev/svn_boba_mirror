@@ -195,7 +195,7 @@ int main(wchar_t *elfpath)
   }
   if (FindBook(isEVBookByName))
   {
-    MessageBox(0x6FFFFFFF, Str2ID(lng[LNG_ALREADY_RUNNED],0,SID_ANY_LEN), 0, 1, 0, 0);
+    MessageBox(EMPTY_SID, Str2ID(lng[LNG_ALREADY_RUNNED],0,SID_ANY_LEN), NOIMAGE, 1, 0, 0);
     delete(extFolder);
     delete(intFolder);
     destroy_innative_lng();
@@ -228,7 +228,7 @@ int main(wchar_t *elfpath)
     //exec_indication(0xFFFFF);
     //wchar_t str[50];
     ///snwprintf(str,49,L"%X,%X,%X,%X,%X,%X,%X", 0xF00F, (0xF00F)&0xF, (0xF00F>>4)&0xF, (0xF00F>>8)&0xF, (0xF00F>>12)&0xF, (0xF00F>>16)&0xF, (0xF00F>>20)&0xF);
-    //MessageBox(0x6FFFFFFF,Str2ID(str,0,SID_ANY_LEN),0,1,0,0);
+    //MessageBox(EMPTY_SID,Str2ID(str,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     //create_ed(&bk->bk);
   }
   else

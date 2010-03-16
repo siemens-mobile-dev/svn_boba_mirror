@@ -7,14 +7,14 @@ int isSoftEditBook(BOOK *bk);
 
 int GetStrID(wchar_t *txt)
 {
-  int id=0x6FFFFFFF;
+  int id=EMPTY_SID;
   textidname2id(txt,0xFFFFFFFF,&id);
   return id;
 };
 
 int GetIconID(wchar_t *txt)
 {
-  int id=0xFFFF;
+  int id=NOIMAGE;
   iconidname2id(txt,0xFFFFFFFF,&id);
   return id;
 };
@@ -92,7 +92,7 @@ int onLBMessage2(GUI_MESSAGE * msg)
       }
       else if (item==4)
       {
-        int icon_id=0xFFFF;;
+        int icon_id=NOIMAGE;;
         int ids;
         int id[2];
         if (myBook->curit->style==0)

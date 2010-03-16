@@ -13,7 +13,7 @@ int CMyBook::TerminateElf(CBook** pbookmanbook, CMyBook* book)
 
 int CMyBook::ShowAuthorInfo(CBook** pbookmanbook, CMyBook* book)
 {
-	MessageBox(0x6fFFFFFF,STR("tic tac toe\n\n(c) den_po "),0, 1 ,5000, *pbookmanbook);
+	MessageBox(EMPTY_SID,STR("tic tac toe\n\n(c) den_po "),NOIMAGE, 1 ,5000, *pbookmanbook);
 	return 1;
 }
 

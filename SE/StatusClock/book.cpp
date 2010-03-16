@@ -29,7 +29,7 @@ int MyBook_OnTerminate(void * ,BOOK* book)
 int MyBook_OnShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,Str2ID(AuthorInfo,0,SID_ANY_LEN), 0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,Str2ID(AuthorInfo,0,SID_ANY_LEN), NOIMAGE, 1 ,5000,msg->book);
   return(1);
 };
 

@@ -39,7 +39,7 @@ void ShowResults(TABL*t)
     j++;
   }
   int ID=Str2ID(text, 5, 60);
-  MessageBox(STR("Результаты"), ID, 0, 2, 0, 0);
+  MessageBox(STR("Результаты"), ID, NOIMAGE, 2, 0, 0);
 }
 
 void DestroyInputI()

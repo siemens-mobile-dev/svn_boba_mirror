@@ -84,10 +84,10 @@ bool isUCodeFile = false;
 
 char * db_buf = 0;
 
-IMG auto_image = {0xFFFF};
+IMG auto_image = {NOIMAGE};
 STRID CellNameID = empty;
 
-IMG location_image = {0xFFFF};
+IMG location_image = {NOIMAGE};
 int imageWidth = 0;
 int imageHeight = 0;
 
@@ -348,7 +348,7 @@ void GetLocationImage(wchar_t *path, wchar_t *name)
 {
   if(ImageID_Get(path,name,&location_image.ImageID)<0)
   {
-    location_image.ImageID = 0xFFFF;
+    location_image.ImageID = NOIMAGE;
   }
   else
   {
@@ -372,10 +372,10 @@ void UpdateLocationImage()
 {
   FSTAT _fstat;
   imageWidth = imageHeight = 0;
-  if(location_image.ImageID != 0xFFFF)
+  if(location_image.ImageID != NOIMAGE)
   {
     ImageID_Free(location_image.ImageID);
-    location_image.ImageID = 0xFFFF;
+    location_image.ImageID = NOIMAGE;
   }
 
   if(cfg_show_type & 2)
@@ -416,10 +416,10 @@ void InitVar()
   SoftBarY      = DisplayHeight - DISP_OBJ_GetWindowHeight(DispObject_SoftKeys_Get());
 
   FSTAT _fstat;
-  if(auto_image.ImageID != 0xFFFF)
+  if(auto_image.ImageID != NOIMAGE)
   {
     ImageID_Free(auto_image.ImageID);
-    auto_image.ImageID = 0xFFFF;
+    auto_image.ImageID = NOIMAGE;
   }
 
   if(cfg_auto_image_show)
@@ -427,9 +427,9 @@ void InitVar()
     extractdir(tmppath, tmpname, cfg_auto_file);
     if(fstat(tmppath,tmpname,&_fstat)!=0)
     {
-      MessageBox(0x6fFFFFFF, Str2ID(LG_AUTOLOCATIONIMG,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+      MessageBox(EMPTY_SID, Str2ID(LG_AUTOLOCATIONIMG,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
-    else if(ImageID_Get(tmppath,tmpname,&auto_image.ImageID)<0) auto_image.ImageID = 0xFFFF;
+    else if(ImageID_Get(tmppath,tmpname,&auto_image.ImageID)<0) auto_image.ImageID = NOIMAGE;
   }
 
   isUCodeFile = false;
@@ -438,7 +438,7 @@ void InitVar()
     encode_type = 0;
     if(!load_encode_file())
     {
-      MessageBox(0x6fFFFFFF, Str2ID(LG_GFGENCODEFILENOTFOUND,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+      MessageBox(EMPTY_SID, Str2ID(LG_GFGENCODEFILENOTFOUND,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
   }
   else
@@ -448,13 +448,13 @@ void InitVar()
     if(CODEMAP_ADDR == 0)
     {
       encode_type = 0;
-      MessageBox(0x6fFFFFFF, Str2ID(LG_GFGINCORRECTCODEMAPADDR,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+      MessageBox(EMPTY_SID, Str2ID(LG_GFGINCORRECTCODEMAPADDR,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
   }
 
   if(!load_db_file())
   {
-    MessageBox(0x6fFFFFFF, Str2ID(LG_DBLOADERROR,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+    MessageBox(EMPTY_SID, Str2ID(LG_DBLOADERROR,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
   }
 
   getdir(logFolder, cfg_logs_path);
@@ -512,12 +512,12 @@ void DrawParams(int y)
 {
   GC *GC_DISP=get_DisplayGC ();
 
-  if ((cfg_show_type & 2) && visible && (location_image.ImageID != 0xFFFF))
+  if ((cfg_show_type & 2) && visible && (location_image.ImageID != NOIMAGE))
   {
     putchar(GC_DISP, cfg_location_image.x1, cfg_location_image.y1 - y, imageWidth, imageHeight, location_image.ImageID);
   }
 
-  if(cfg_auto_image_show && AutoLocation && (auto_image.ImageID != 0xFFFF))
+  if(cfg_auto_image_show && AutoLocation && (auto_image.ImageID != NOIMAGE))
   {
     putchar(GC_DISP, cfg_auto_image_x, cfg_auto_image_y - y, 0, 0, auto_image.ImageID);
   }
@@ -830,9 +830,9 @@ int TerminateElf(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
 #if (!defined(LANG_RU) && !defined(LANG_EN))
-  MessageBox(0x6fFFFFFF,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
 #else
-  MessageBox(0x6fFFFFFF,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
 #endif
   return(1);
 }
@@ -843,7 +843,7 @@ static int onReconfigElf(void *mess , BOOK *book)
   int result=0;
   if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
   {
-    MessageBox(0x6fFFFFFF, Str2ID(LG_UPDSETTING,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+    MessageBox(EMPTY_SID, Str2ID(LG_UPDSETTING,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     InitVar();
     CheckCurrentCell();
 
@@ -874,7 +874,7 @@ int onBcfgConfig(void* mess, BOOK* bk)
   }
   else
   {
-    MessageBox(0x6fFFFFFF, Str2ID(LG_GFGBCFGEDITNOTFOUND,0,SID_ANY_LEN), 0, 1, 5000, 0);
+    MessageBox(EMPTY_SID, Str2ID(LG_GFGBCFGEDITNOTFOUND,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     return 1;
   }
   wstrcat(tmppath,L"/");
@@ -993,7 +993,7 @@ int NewKey(int key, int r1, int mode)
           else
           {
             AutoLocation = false;
-            MessageBox(0x6fFFFFFF, Str2ID(LG_AUTOLOCATIONOFF,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+            MessageBox(EMPTY_SID, Str2ID(LG_AUTOLOCATIONOFF,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
           }
         }
         InvalidateAll();
@@ -1037,16 +1037,16 @@ void onCloseMiniGPSBook(BOOK * book)
     FREE_GUI(mbk->menu);
     FREE_GUI(mbk->text_input);
 
-    if(auto_image.ImageID != 0xFFFF)
+    if(auto_image.ImageID != NOIMAGE)
     {
       ImageID_Free(auto_image.ImageID);
-      auto_image.ImageID = 0xFFFF;
+      auto_image.ImageID = NOIMAGE;
     }
 
-    if(location_image.ImageID != 0xFFFF)
+    if(location_image.ImageID != NOIMAGE)
     {
       ImageID_Free(location_image.ImageID);
-      location_image.ImageID = 0xFFFF;
+      location_image.ImageID = NOIMAGE;
     }
 
     if(CellNameID != empty)
@@ -1064,7 +1064,7 @@ int main (void)
 {
   if(FindBook(isMiniGPSBook))
   {
-    MessageBox(0x6fFFFFFF, Str2ID(LELFNAME _T("\n") LG_ALREADY_STARTED,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+    MessageBox(EMPTY_SID, Str2ID(LELFNAME _T("\n") LG_ALREADY_STARTED,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     SUBPROC(elf_exit);
   }
   else
@@ -1074,7 +1074,7 @@ int main (void)
     InitVar();
     MiniGPSBook = new MyBOOK;
     memset(MiniGPSBook,0,sizeof(MyBOOK));
-    if(!CreateBook(MiniGPSBook,onCloseMiniGPSBook,&base_page,ELFNAME,-1,0))
+    if(!CreateBook((BOOK*)MiniGPSBook,onCloseMiniGPSBook,&base_page,ELFNAME,-1,0))
     {
       delete MiniGPSBook;
       SUBPROC(elf_exit);

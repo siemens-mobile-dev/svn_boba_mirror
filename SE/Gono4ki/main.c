@@ -64,7 +64,7 @@ int main()
   int j, i;
   Game=new MyBook;
   memset(Game,0,sizeof(MyBook));
-  CreateBook(Game,onMyBookClose,&bk_base,NameMyElf,-1,0);
+  CreateBook((BOOK*)Game,onMyBookClose,&bk_base,NameMyElf,-1,0);
   Game->guido=0;
   Game->gui=0;
   for(i=0; i<10; i++)

@@ -7,7 +7,7 @@
 #include <math.h>
 
 static const char CalcGuiName[]="CalcGui";
-#define MESSAGE(__STR__) MessageBox(0x6fffffff,__STR__,0, 1 ,11000,(BOOK*)NULL);
+#define MESSAGE(__STR__) MessageBox(EMPTY_SID,__STR__,NOIMAGE, 1 ,11000,(BOOK*)NULL);
 extern "C" {
   double strtod(const char *_S, char **_Endptr);
   int abs(int);

@@ -126,11 +126,11 @@ void Switch_curstat(BOOK *bk, GUI* )
     wstrcpy(str,mbk->indpath);
     wstrcat(str,L"/");
     wstrcat(str,mbk->indname);
-    MessageBox(0x6FFFFFFF,Str2ID(str,0,SID_ANY_LEN),0,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(str,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     delete(str);
   }
   else
-    MessageBox(0x6FFFFFFF,Str2ID(lng[NOTSETTED],0,SID_ANY_LEN),0,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(lng[NOTSETTED],0,SID_ANY_LEN),NOIMAGE,1,0,0);
 };
 
 GUI_LIST * CreateIndicList(BOOK * book, int cnt)

@@ -174,7 +174,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK * book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(0x6fFFFFFF,STR("Call Logger, v2.3\n\n(c) IronMaster"),0, 1 ,5000,msg->book);
+  MessageBox(EMPTY_SID,STR("Call Logger, v2.3\n\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -400,7 +400,7 @@ int onSessionTerminated(void * r0, BOOK *)
     myList_gprs_elem * temp_elem_gprs=new(myList_gprs_elem);
     temp_elem_gprs->ID=((ses_term*)r0)->unkID;
     int pos=ListElement_Find(myList_gprs,temp_elem_gprs,myList_gprs_Find);
-    if (pos!=0xFFFF)
+    if (pos!=LIST_ERROR)
     {
       myList_gprs_elem * elem_gprs=(myList_gprs_elem*)ListElement_Remove(myList_gprs,pos);
       wstrcpy(fpath_gprs,GetDir(DIR_OTHER | MEM_EXTERNAL));
@@ -697,7 +697,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
     PNUM2str(sp,cms.PNUM,length,length+1);
     str2wstr(temp_elem->PNUM,sp);
     delete(sp);
-    if (ListElement_Find(myList,temp_elem,myList_Find)==0xFFFF)
+    if (ListElement_Find(myList,temp_elem,myList_Find)==LIST_ERROR)
     {
       temp_elem->startdatetime=new DATETIME;
       REQUEST_DATEANDTIME_GET(SYNC,temp_elem->startdatetime);
@@ -990,7 +990,7 @@ int main (void)
 {
   if (FindBook(myFind))
   {
-    MessageBox(0x6fFFFFFF,STR("Already runed"),0, 1 ,5000,0);
+    MessageBox(EMPTY_SID,STR("Already runed"), NOIMAGE, 1, 5000,0);
     SUBPROC(elf_exit);
   }
   else

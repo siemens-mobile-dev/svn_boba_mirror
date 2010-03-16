@@ -576,10 +576,10 @@ void lbl_okill()
   int x;
   for (x=0;x<10;x++)
   {
-    if (labels[x].str!=0 && labels[x].str!=0x6FFFFFFF && labels[x].ChangeEveryTime)
+    if (labels[x].str!=0 && labels[x].str!=EMPTY_SID && labels[x].ChangeEveryTime)
     {
       TextFree(labels[x].str);
-      labels[x].str=0x6FFFFFFF;
+      labels[x].str=EMPTY_SID;
     }
   }
 };
@@ -598,10 +598,10 @@ void lbl_kill()
   int x;
   for (x=0;x<10;x++)
   {
-    if (labels[x].str!=0 && labels[x].str!=0x6FFFFFFF)
+    if (labels[x].str!=0 && labels[x].str!=EMPTY_SID)
     {
       TextFree(labels[x].str);
-      labels[x].str=0x6FFFFFFF;
+      labels[x].str=EMPTY_SID;
     }
   }
 };

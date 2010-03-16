@@ -110,14 +110,14 @@ void CAccelCtrl::AddHook(void (*proc)(void*, int, int), char on)
   int i=ListElement_Prt2NumElement(hooks,(void*)proc);
   if (on)
   {
-    if (i==0xFFFF)
+    if (i==LIST_ERROR)
     {
       ListElement_Add(hooks, (void*)proc);
     }
   }
   else
   {
-    if (i!=0xFFFF)
+    if (i!=LIST_ERROR)
     {
       ListElement_Remove(hooks, i);
     }

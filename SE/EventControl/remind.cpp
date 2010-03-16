@@ -42,7 +42,7 @@ int GUI_REMIND_OnCreate(DISP_OBJ_REMIND *db)
 
 int GetIconID(wchar_t *txt)
 {
-  int id=0xFFFF;
+  int id=NOIMAGE;
   iconidname2id(txt,0xFFFFFFFF,&id);
   return id;
 };
@@ -183,7 +183,7 @@ void GUI_REMIND_OnRedraw(DISP_OBJ_REMIND *db,int ,int,int)
     DrawLine(Str2ID(L"EventControl",0,SID_ANY_LEN),0,25,0,width,25,20,clWhite);
     DrawLine(Str2ID(str,0,SID_ANY_LEN),1,0,0,width,25,20,clWhite);
 
-    int icon_id=0xFFFF;
+    int icon_id=NOIMAGE;
     iconidname2id(L"CALE_RN_APPOINTMENT_STATUS_ICN",-1,&icon_id);
     GC *gc=get_DisplayGC();
     putchar(gc,0,0,0,0,icon_id);
@@ -214,7 +214,7 @@ void GUI_REMIND_OnRedraw(DISP_OBJ_REMIND *db,int ,int,int)
 */
 void Reminder_onInfo(BOOK *bk, void *)
 {
-  MessageBox(0x6FFFFFFF,Str2ID(lng[LNG_FINFO],0,SID_ANY_LEN),0,1,0,0);
+  MessageBox(EMPTY_SID,Str2ID(lng[LNG_FINFO],0,SID_ANY_LEN),NOIMAGE,1,0,0);
 };
 
 /*

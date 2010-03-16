@@ -103,7 +103,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     {
       if (mb->defmenu)
       {
-        if (images[DESKTOP]!=0xFFFF)
+        if (images[DESKTOP]!=NOIMAGE)
         {
           putchar(gc,0,SoftSize-height,0,0,images[DESKTOP]);
         }
@@ -111,7 +111,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     }
     else
     {
-      if (images[NAVIGATION]!=0xFFFF)
+      if (images[NAVIGATION]!=NOIMAGE)
       {
         putchar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
       }
@@ -121,11 +121,11 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
   {
     if (lastitem && lastitem->type>T_STANDBY)
     {
-      if (images[STANDBY]!=0xFFFF)
+      if (images[STANDBY]!=NOIMAGE)
       {
         putchar(gc,0,SoftSize-height,0,0,images[STANDBY]);
       }
-      if (images[STANDBY_SOFTKEY]!=0xFFFF)
+      if (images[STANDBY_SOFTKEY]!=NOIMAGE)
       {
         putchar(gc,0,0,0,0,images[STANDBY_SOFTKEY]);
       }
@@ -137,7 +137,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     if (xls->background==0 && stat==0 && NotSupported(bk)==false)
     {
     L_draw:
-      if (images[NAVIGATION]!=0xFFFF)
+      if (images[NAVIGATION]!=NOIMAGE)
       {
         putchar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
       }
@@ -166,7 +166,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
   if (DB==2010)goto L_draw2;
   if (lastitem)
   {
-    if (lastitem->style==0 && pressed[1]==true && lbl->strids[1]==0x6FFFFFFF)
+    if (lastitem->style==0 && pressed[1]==true && lbl->strids[1]==EMPTY_SID)
     {
       pressed[1]=false;
       pressed[0]=true;
@@ -174,15 +174,15 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     if (xls->background==0 && !FindBook(isMMBrowserBook) && bk!=FindBook(isAudioPlayerBook()) && bk!=FindBook(isMediaPlayerVideoBook()))//bk!=FindBook(isImageViewerBook) && ) ) && NotSupported(bk)==false && xls->background==0 && stat==0)
     {
     L_draw2:
-      if (pressed[0] && images[LEFT_PRESSED]!=0xFFFF && lbl->strids[0]!=0x6FFFFFFF && lastitem->type>T_STANDBY)
+      if (pressed[0] && images[LEFT_PRESSED]!=NOIMAGE && lbl->strids[0]!=EMPTY_SID && lastitem->type>T_STANDBY)
       {
         putchar(gc,0,0,0,0,images[LEFT_PRESSED]);
       }
-      else if (pressed[1] && images[MIDDLE_PRESSED]!=0xFFFF && lbl->strids[1]!=0x6FFFFFFF)
+      else if (pressed[1] && images[MIDDLE_PRESSED]!=NOIMAGE && lbl->strids[1]!=EMPTY_SID)
       {
         putchar(gc,0,0,0,0,images[MIDDLE_PRESSED]);
       }
-      else if (pressed[2] && images[RIGHT_PRESSED]!=0xFFFF && lbl->strids[2]!=0x6FFFFFFF && lastitem->type>T_STANDBY)
+      else if (pressed[2] && images[RIGHT_PRESSED]!=NOIMAGE && lbl->strids[2]!=EMPTY_SID && lastitem->type>T_STANDBY)
       {
         putchar(gc,0,0,0,0,images[RIGHT_PRESSED]);
       }
@@ -313,7 +313,7 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
       int x;
       for (x=0;x<3;x++)
       {
-        if (lastitem->strids[x]!=0x6FFFFFFF)
+        if (lastitem->strids[x]!=EMPTY_SID)
         {
           lbl->strids[x]=lastitem->strids[x];
           lbl->enable[x]=true;

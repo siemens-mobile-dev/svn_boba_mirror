@@ -6,19 +6,19 @@
 #include "header\config_data.h"
 #include "header\images.h"
 
-wchar_t playnow_h=0xFFFF;
-wchar_t playview_h=0xFFFF;
+wchar_t playnow_h=NOIMAGE;
+wchar_t playview_h=NOIMAGE;
 
-wchar_t imageID=0xFFFF;
-wchar_t cover_h_=0xFFFF;
-wchar_t cover_v_=0xFFFF;
+wchar_t imageID=NOIMAGE;
+wchar_t cover_h_=NOIMAGE;
+wchar_t cover_v_=NOIMAGE;
 
-wchar_t playicn=0xFFFF;
-wchar_t stopicn=0xFFFF;
-wchar_t pauseicn=0xFFFF;
+wchar_t playicn=NOIMAGE;
+wchar_t stopicn=NOIMAGE;
+wchar_t pauseicn=NOIMAGE;
 
 
-wchar_t images[]={0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF}; //left,right,left2,right2,play,stop,up,down
+wchar_t images[]={NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE}; //left,right,left2,right2,play,stop,up,down
 wchar_t *images_fnames[]={
   L"Prev_nav_icn.png",
   L"Next_nav_icn.png",
@@ -39,8 +39,8 @@ int images_offsets[]={
   -7,
   -10
 };
-wchar_t presets[]={0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF, 0xFFFF};
-wchar_t navigimg=0xFFFF;
+wchar_t presets[]={NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE, NOIMAGE};
+wchar_t navigimg=NOIMAGE;
 wchar_t *presets_names[]={
   L"MP_EQ_NORMAL_ICN",
   L"MP_EQ_BASS_ICN",
@@ -51,7 +51,7 @@ wchar_t *presets_names[]={
   L"MP_EQ_MANUAL_ICN"
 };
 
-wchar_t media_images[]={0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF};
+wchar_t media_images[]={NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE};
 wchar_t *media_names[]={
   L"MEDIAPLAYER_FAST_FORWARD_ICN",
   L"MEDIAPLAYER_REWIND_ICN",
@@ -86,20 +86,20 @@ inline wchar_t RegisterImage (wchar_t  * path, wchar_t * fname)
   }
   else
   {
-    return 0xFFFF;
+    return NOIMAGE;
   }
 }; 
 
-#define IDFREE(a) if (a!=0xFFFF && a!=0) {ImageID_Free(a);} a=0xFFFF
+#define IDFREE(a) if (a!=NOIMAGE && a!=0) {ImageID_Free(a);} a=NOIMAGE
 
 int GetIconID(wchar_t *txt)
 {
-  int id=0xFFFF;
+  int id=NOIMAGE;
   iconidname2id(txt,0xFFFFFFFF,&id);
   return id;
 };
 
-wchar_t main_icons[]={0xFFFF,0xFFFF,0xFFFF};
+wchar_t main_icons[]={NOIMAGE,NOIMAGE,NOIMAGE};
 wchar_t *main_icons_fnames[]={
   L"Artist_icn.png",
   L"Album_icn.png",
@@ -109,7 +109,7 @@ wchar_t *main_icons_fnames[]={
 #pragma optimize = s 9
 void init_resources(wchar_t *path)
 {
-#define REGISTER(__iconname__,__internalname__,__filename__) if (img_priority==0 || img_priority==2) {__iconname__=GetIconID(__internalname__);} if (img_priority<2) {    wchar_t img=RegisterImage(checkfile_(__filename__,path),__filename__); if (img!=0xFFFF) { __iconname__=img; }}
+#define REGISTER(__iconname__,__internalname__,__filename__) if (img_priority==0 || img_priority==2) {__iconname__=GetIconID(__internalname__);} if (img_priority<2) {    wchar_t img=RegisterImage(checkfile_(__filename__,path),__filename__); if (img!=NOIMAGE) { __iconname__=img; }}
   
   IDFREE(playview_h);
   REGISTER(playview_h,L"EMPTY_ICN",L"PlayView_Background_h.png");
@@ -122,7 +122,7 @@ void init_resources(wchar_t *path)
     
   IDFREE(pauseicn);
   REGISTER(pauseicn,L"MEDIAPLAYER_STOP_ICN",L"Pause_icn.png");
-  if (pauseicn==0xFFFF)
+  if (pauseicn==NOIMAGE)
   {
     REGISTER(pauseicn,L"MEDIAPLAYER_STOP_ICN",L"Stop_icn.png");
   }
@@ -135,7 +135,7 @@ void init_resources(wchar_t *path)
     for (int j=0;j<3;j++)
     {
       wchar_t img=RegisterImage(checkfile_(main_icons_fnames[j],path),main_icons_fnames[j]);
-      if (img!=0xFFFF)
+      if (img!=NOIMAGE)
         main_icons[j]=img;
     }
     int imageID;
@@ -144,7 +144,7 @@ void init_resources(wchar_t *path)
     {
       images[j]=imageID+images_offsets[j];
       wchar_t img=RegisterImage(checkfile_(images_fnames[j],path),images_fnames[j]);
-      if (img!=0xFFFF)
+      if (img!=NOIMAGE)
         images[j]=img;
     }
   }

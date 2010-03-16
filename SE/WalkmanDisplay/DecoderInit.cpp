@@ -37,7 +37,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
   char cover_type;
   int size;
   int cover_offset;
-  meta->ImageID=0xFFFF;
+  meta->ImageID=NOIMAGE;
   if (MetaData_Desc_GetCoverInfo(TagStructure,&cover_type,&size,&cover_offset)!=0)
   {
     if (cover_offset>0 && size>0)
@@ -57,7 +57,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
     }
   }
 
-  if (meta->ImageID==0xFFFF && use_albumpng==true)
+  if (meta->ImageID==NOIMAGE && use_albumpng==true)
   {
     FSTAT fst;
     if (fstat(path,L"album.png",&fst)==0)
@@ -169,11 +169,11 @@ void metadata_Get(wchar_t *path, wchar_t *name, METADATA *meta, int format)
 
 void Cover_Free()
 {
-  if(nowmusic.meta.ImageID!=0xFFFF)
+  if(nowmusic.meta.ImageID!=NOIMAGE)
   {
     ImageID_Free(nowmusic.meta.ImageID);
   }
-  nowmusic.meta.ImageID=0xFFFF;
+  nowmusic.meta.ImageID=NOIMAGE;
 };
 
 int getFormat(wchar_t *name)
@@ -209,7 +209,7 @@ int getFormat(wchar_t *name)
 void freemeta(MUSIC *music)
 {
   memset(&music->meta,0,sizeof(METADATA));
-  music->meta.ImageID=0xFFFF;
+  music->meta.ImageID=NOIMAGE;
   memset(&music->hdr,0,sizeof(HEADER_INFO));
 };
 

@@ -121,7 +121,7 @@ void trace_free(int mt,void* p, char* file, int line)
 
 bool isallocatedstrid(int strid)
 {
-  return strid!=0x6fffffff && (strid&0xFFFF0000)!=0;
+  return strid!=EMPTY_SID && (strid&0xFFFF0000)!=0;
 }
 
 bool isallocatediconid(int strid)

@@ -154,7 +154,7 @@ int get_curstrid(MyBOOK *mbk)
       return Str2ID(L"",0,SID_ANY_LEN);
     }
   }
-  return 0x6FFFFFFF;
+  return EMPTY_SID;
 };
 
 int getnumwidth(unsigned int num)
@@ -170,7 +170,7 @@ int getnumwidth(unsigned int num)
 
 void CreateTextInput(MyBOOK *myBook)
 {
-  int text=0x6FFFFFFF;
+  int text=EMPTY_SID;
   int type=myBook->inputType;
   int size=0;
   text=get_curstrid(myBook);

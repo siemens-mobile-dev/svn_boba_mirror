@@ -259,8 +259,8 @@ void WriteLog(char *buf)
 }
 
 /*
-wchar_t ImageID=0xFFFF;
-wchar_t ImageHandle=0xFFFF;
+wchar_t ImageID=NOIMAGE;
+wchar_t ImageHandle=NOIMAGE;
 
 wchar_t RegisterImage(wchar_t * path, wchar_t * fname)
 {
@@ -275,7 +275,7 @@ wchar_t RegisterImage(wchar_t * path, wchar_t * fname)
       {
         if (!REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(&sync,ImageHandle,path,fname,0,&ImageID,&error_code))
         {
-          if (error_code) ImageHandle=0xFFFF;
+          if (error_code) ImageHandle=NOIMAGE;
         }
       }
     }
@@ -287,8 +287,8 @@ wchar_t UnRegisterImage()
 {
   char error_code;
   REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER(SYNC,ImageHandle,0,0,ImageID,1,&error_code);
-  ImageID=0xFFFF;
-  ImageHandle=0xFFFF;
+  ImageID=NOIMAGE;
+  ImageHandle=NOIMAGE;
   return 0;
 };
 */
@@ -586,22 +586,22 @@ void ChangeStatusImage(int indx, BOOK *bk, int snd)
 
   if (StatusPet->Dirtiness >= (StatusPet->MaxDirtiness - 10))
   {
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGDIRTINESS,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGDIRTINESS,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     sound_name = SoundName[OHDEER_SND];
   }
   if (StatusPet->Boredom >= (StatusPet->MaxBoredom - 10))
   {
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGBOREDOM,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGBOREDOM,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     sound_name = SoundName[BORING_SND];
   }
   if (StatusPet->Hunger >= (StatusPet->MaxHunger - 10))
   {
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGHUNGER,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGHUNGER,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     sound_name = SoundName[ILLGETYOU_SND];
   }
   if (StatusPet->Health <= 10)
   {
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGHEALTH,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGHEALTH,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     sound_name = SoundName[COMEON_SND];
   }
   if (StatusPet->Happiness <= 10)
@@ -645,14 +645,14 @@ void GamePlay(int indx, BOOK * bk, int snd)
   if(Pets[indx].Status.StatusDeath == 1)
   {
     if(snd) PlayFileV(sound_path, SoundName[FATALITY_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
 
   if(Pets[indx].Sleep != 0)
   {
     if(snd) PlayFileV(sound_path, SoundName[LEAVEME_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
 
@@ -661,7 +661,7 @@ void GamePlay(int indx, BOOK * bk, int snd)
   Pets[indx].Status.Hunger    += 10;
   Pets[indx].Fatigue                 += 10;
   if(snd) PlayFileV(sound_path, SoundName[LAUGH_SND], sndVolume);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_COOL,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_COOL,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   ChangeStatusImage(indx, bk, snd);
   VerifyStatus(indx);
 }
@@ -674,19 +674,19 @@ void Vaccinate(int indx, BOOK * bk, int snd)
   if (Pets[indx].Status.StatusDeath == 1)
   {
     if(snd) PlayFileV(sound_path, SoundName[FATALITY_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
   if (Pets[indx].Sleep != 0)
   {
     if(snd) PlayFileV(sound_path, SoundName[LEAVEME_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
   if (Pets[indx].Status.Behaviour < Pets[indx].Status.MaxBehaviour/4)
   {
     if(snd) PlayFileV(sound_path, SoundName[LEAVEME_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_DONTDISTURB,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_DONTDISTURB,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
 
@@ -695,7 +695,7 @@ void Vaccinate(int indx, BOOK * bk, int snd)
   Pets[indx].Status.Boredom   -= 10;
 
   if(snd) PlayFileV(sound_path, SoundName[OUCH_SND], sndVolume);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_PAIN,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_PAIN,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   ChangeStatusImage(indx, bk, snd);
   VerifyStatus(indx);
 }
@@ -708,13 +708,13 @@ void Discipline(int indx, BOOK * bk, int snd)
   if (Pets[indx].Status.StatusDeath == 1)
   {
     if(snd) PlayFileV(sound_path, SoundName[FATALITY_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
   if (Pets[indx].Sleep != 0)
   {
     if(snd) PlayFileV(sound_path, SoundName[LEAVEME_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
 
@@ -723,7 +723,7 @@ void Discipline(int indx, BOOK * bk, int snd)
   Pets[indx].Status.Boredom   -= 10;
 
   if(snd) PlayFileV(sound_path, SoundName[YESSIR_SND], sndVolume);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_SHREW,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_SHREW,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   ChangeStatusImage(indx, bk, snd);
   VerifyStatus(indx);
 }
@@ -740,7 +740,7 @@ void SleepProc(int indx, BOOK *bk, int snd, int type)
   if (Pets[indx].Status.StatusDeath==1)
   {
     if(snd) PlayFileV(sound_path, SoundName[FATALITY_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
 
@@ -748,9 +748,9 @@ void SleepProc(int indx, BOOK *bk, int snd, int type)
   {
     if(snd) PlayFileV(sound_path, SoundName[LEAVEME_SND], sndVolume);
     if(Pets[indx].Sleep)
-      MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+      MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     else
-      MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_DONTDISTURB,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+      MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_DONTDISTURB,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
 
@@ -788,13 +788,13 @@ void SleepProc(int indx, BOOK *bk, int snd, int type)
     Pets[indx].Sleep=1;
     Pets[indx].Bathe=0;
     if(snd) PlayFileV(sound_path, sound_name0, sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(msg0,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(msg0,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   }
   else
   {
     Pets[indx].Sleep=0;
     if(snd) PlayFileV(sound_path, sound_name1, sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(msg1,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(msg1,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   }
   ChangeStatusImage(indx, bk, snd);
 
@@ -830,20 +830,20 @@ void BatheCommand(int indx, BOOK *bk, int snd)
   if (Pets[indx].Status.StatusDeath == 1)
   {
     if(snd) PlayFileV(sound_path, SoundName[FATALITY_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMDIE,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
   if (Pets[indx].Sleep != 0)
   {
     if(snd) PlayFileV(sound_path, SoundName[LEAVEME_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_IAMSLEEP,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     return;
   }
 
   Pets[indx].Bathe = 1;
 
   if(snd) PlayFileV(sound_path, SoundName[BATHE_SND], sndVolume);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_BLISS,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_BLISS,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   ChangeStatusImage(indx, bk, snd);
   VerifyStatus(indx);
 }
@@ -864,7 +864,7 @@ void OnOkChangeName(BOOK * book, wchar_t *string, int len)
   {
     wchar_t ustr[64];
     snwprintf(ustr,MAXELEMS(ustr)-1,L"min_string_len: 1\nmax_string_len: %d",MAXELEMS(Pets[indx].Status.name));
-    MessageBox(0x6FFFFFFF,Str2ID(ustr,0,SID_ANY_LEN),0, 1 ,5000, book);
+    MessageBox(EMPTY_SID,Str2ID(ustr,0,SID_ANY_LEN), NOIMAGE, 1, 5000, book);
   }
   else
   {
@@ -1067,14 +1067,14 @@ void life_proc(int indx, BOOK *bk, int snd)
         if(snd) PlayFileV(sound_path, SoundName[CRY_SND], sndVolume);
         start_vibra();
         Light();
-        MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEWPET,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+        MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEWPET,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     }
     else
     {
       if(snd) PlayFileV(sound_path, SoundName[BIRTHDAY_SND], sndVolume);
       start_vibra();
       Light();
-      MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGAGE,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+      MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGAGE,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     }
 
     UpdateName();
@@ -1290,7 +1290,7 @@ void life_proc(int indx, BOOK *bk, int snd)
   else
   {
     if(snd) PlayFileV(sound_path, SoundName[OHDEER_SND], sndVolume);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGROOMERR,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGROOMERR,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   }
   // голод
   if (Pets[indx].Status.Hunger > 2*Pets[indx].Status.MaxHunger/3)
@@ -1326,9 +1326,9 @@ void life_proc(int indx, BOOK *bk, int snd)
       if((Pets[0].Status.Sex == 0) || (Pets[0].Status.Sex == 1))
       {
         if(Pets[0].Status.Sex == 0)
-          MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEEDFRIEND,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+          MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEEDFRIEND,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
         else
-          MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEEDGIRL,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+          MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEEDGIRL,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
 
         if(snd) PlayFileV(sound_path, SoundName[OW_SND], sndVolume);
         start_vibra();
@@ -1365,7 +1365,7 @@ void life_proc(int indx, BOOK *bk, int snd)
     start_vibra();
     Light();
     Pets[indx].Behaviour=0;
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(SpeakMessage[Random() & mess_mask],0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(SpeakMessage[Random() & mess_mask],0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   }
 }
 
@@ -1417,8 +1417,8 @@ void DrawParams(int y)
     putchar(GC_DISP, Pets[i].x, Pets[i].y - y, Pets[i].img_size, Pets[i].img_size, img_names[Pets[i].Status.ImageStatus].ImageID);
     if(Pets[i].simg_status) putchar(GC_DISP, Pets[i].x + Pets[i].img_size - StatSize, Pets[i].y + Pets[i].img_size - StatSize - y, StatSize, StatSize, img_status[Pets[i].simg_status].ImageID);
   }
-//  if(ImageID != 0xFFFF) DrawString(ImageID + 0x78000000,0,50,50,150,150,1,1,clGreen,clRed);
-//  if(ImageID != 0xFFFF) putchar(GC_DISP, 150, 150, 0, 0, ImageID);
+//  if(ImageID != NOIMAGE) DrawString(ImageID + 0x78000000,0,50,50,150,150,1,1,clGreen,clRed);
+//  if(ImageID != NOIMAGE) putchar(GC_DISP, 150, 150, 0, 0, ImageID);
 }
 
 void Display_ReDraw(DISP_OBJ* DO,int a,int b,int c)
@@ -1623,7 +1623,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
     InitStatus(0, 0, 2);
     if(SaveStatus(0))
     {
-      MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_ERRSTATUS,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+      MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_ERRSTATUS,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     }
   }
   InitPetVar(0);
@@ -1817,9 +1817,9 @@ int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
 #if (!defined(LANG_RU) && !defined(LANG_EN))
-  MessageBox(0x6fFFFFFF,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), 0xFFFF, 1, 5000, msg->book);
+  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), NOIMAGE, 1, 5000, msg->book);
 #else
-  MessageBox(0x6fFFFFFF,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), 0xFFFF, 1, 5000, msg->book);
+  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), NOIMAGE, 1, 5000, msg->book);
 #endif
   return(1);
 }
@@ -1830,7 +1830,7 @@ static int onReconfigElf(void *mess , BOOK *book)
   int result=0;
   if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
   {
-    MessageBox(0x6fFFFFFF, Str2ID(LG_UPDSETTING,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+    MessageBox(EMPTY_SID, Str2ID(LG_UPDSETTING,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
     InitConfig();
     load_icons();
     load_strings();
@@ -1889,12 +1889,12 @@ int onHelloMsg(void* mess, BOOK* book)
       Pets[0].Status.Count = 2;
 
       if(snd) PlayFileV(sound_path, SoundName[indx_snd], sndVolume);
-      MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEWPET,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+      MessageBox(Str2ID(Pets[0].Status.name,0,SID_ANY_LEN), Str2ID(LG_MSGNEWPET,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
 
     }
     else
     {
-      MessageBox(0x6fFFFFFF, Str2ID(LELFNAME _T("\n") LG_ALREADY_STARTED,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+      MessageBox(EMPTY_SID, Str2ID(LELFNAME _T("\n") LG_ALREADY_STARTED,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
   }
   return 1;
@@ -2019,7 +2019,7 @@ int main (void)
     }
     else
     {
-      MessageBox(0x6fFFFFFF, Str2ID(LELFNAME _T("\n") LG_ALREADY_STARTED,0,SID_ANY_LEN), 0xFFFF, 1, 5000, 0);
+      MessageBox(EMPTY_SID, Str2ID(LELFNAME _T("\n") LG_ALREADY_STARTED,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
     SUBPROC(elf_exit);
     return 0;
@@ -2028,14 +2028,14 @@ int main (void)
   InitConfig();
   TamagochiBook = new MyBOOK;
   memset(TamagochiBook,0,sizeof(MyBOOK));
-  if(!CreateBook(TamagochiBook,onCloseTamagochiBook,&base_page,myappname,-1,0))
+  if(!CreateBook((BOOK*)TamagochiBook,onCloseTamagochiBook,&base_page,myappname,-1,0))
   {
     delete TamagochiBook;
     SUBPROC(elf_exit);
     return 0;
   }
   ModifyKeyHook(NewKey,1);
-  if(ENA_HELLO_MSG) MessageBox(0x6fFFFFFF, Str2ID(LG_LOADING,0,SID_ANY_LEN), 0xFFFF, 1, 5000*msgShowTime, 0);
+  if(ENA_HELLO_MSG) MessageBox(EMPTY_SID, Str2ID(LG_LOADING,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   BookObj_GotoPage((BOOK *)TamagochiBook,&main_page);
   return 0;
 }

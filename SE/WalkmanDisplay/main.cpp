@@ -61,7 +61,7 @@ CAccelCtrl *AccelCtrl=0;
 bool working=false;
 bool accel_wrk=true;
 int curmode=2;
-wchar_t v_MPA_ID=0xFFFF;
+wchar_t v_MPA_ID=NOIMAGE;
 int StatusSize=18;
 int SoftSize=26;
 int ScreenHeight;
@@ -205,7 +205,7 @@ __EVENT( TerminateElf )
 #pragma optimize = s 9
 __EVENT( ShowAuthorInfo )
 {
-  MessageBox(0x6fFFFFFF,STR(PROJECT_ABOUT),0, 1 ,5000, ((BOOKMANMSG*)msg)->bookmanbook);
+  MessageBox(EMPTY_SID,STR(PROJECT_ABOUT), NOIMAGE, 1, 5000, ((BOOKMANMSG*)msg)->bookmanbook);
   return(1);
 };
 
@@ -389,7 +389,7 @@ __EVENT ( onStyleChanged )
         GUI *g=FindGuiInBook((BOOK*)wb,"MediaPlayer_Audio");
         DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
         
-        if (d->imageID!=0xFFFF)
+        if (d->imageID!=NOIMAGE)
           v_MPA_ID=d->imageID;
         
         if (BookObj_GetDisplayOrientation((BOOK*)wb))
@@ -460,7 +460,7 @@ __EVENT( onBcfgConfig )
   }
   else
   {
-    MessageBox(0x6FFFFFFF,Str2ID(lng_msgSkinNotLoaded,0,SID_ANY_LEN),0,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(lng_msgSkinNotLoaded,0,SID_ANY_LEN),NOIMAGE,1,0,0);
   }
   return 1;
 }
@@ -751,7 +751,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
 #ifndef NDEBUG
   BENCH_START
 #endif
-#define putchar_(a,b,c,d,e,f) if (f && f!=0xFFFF) \
+#define putchar_(a,b,c,d,e,f) if (f && f!=NOIMAGE) \
                               putchar(a,b,c,d,e,f)
   
     BOOK *audio=FindBook(isAudioPlayerBook());
@@ -814,7 +814,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
         }
       }
     }
-    MessageBox(0x6FFFFFFF,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),0,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     UI_Event_toBookID(ELF_TERMINATE_EVENT,BOOK_GetBookID(&MyBook->bk));
     return;
   L_SkinManager_Detected:
@@ -826,7 +826,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
     if (orient==0)
     {
-      if (d->imageID!=0xFFFF)
+      if (d->imageID!=NOIMAGE)
         v_MPA_ID=d->imageID;
     }
     GUI_SetStyle(g,2);
@@ -910,13 +910,13 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     {
       int *integer=(int*)&phone;
       integer[0]=PHONE_W580;
-      MessageBox(0x6FFFFFFF,Str2ID(lng_msgW580detected,0,SID_ANY_LEN),0,1,0,0);
+      MessageBox(EMPTY_SID,Str2ID(lng_msgW580detected,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     }
     else
     {
       int *integer=(int*)&phone;
       integer[0]=PHONE_W610;
-      MessageBox(0x6FFFFFFF,Str2ID(lng_msgW610detected,0,SID_ANY_LEN),0,1,0,0);
+      MessageBox(EMPTY_SID,Str2ID(lng_msgW610detected,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     }
     SaveConfigData(successed_config_path,successed_config_name);
   }
@@ -1115,7 +1115,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   }
   //----------------------------------------------------------------------------
   //Album
-  if (restr_CoverAlbum && nowmusic.meta.ImageID==0xFFFF)
+  if (restr_CoverAlbum && nowmusic.meta.ImageID==NOIMAGE)
     goto L_SkipAlbum;
   if (orient ? album_show : album_show_h)
   {
@@ -1537,7 +1537,7 @@ void CMyBook::onClose()
   {
     GC_FreeGC(hMGC);
   }
-  #define IDFREE(a) if (a!=0xFFFF && a!=0) {ImageID_Free(a);} a=0xFFFF
+  #define IDFREE(a) if (a!=NOIMAGE && a!=0) {ImageID_Free(a);} a=NOIMAGE
   IDFREE(nowmusic.meta.ImageID);
   ModifyKeyHook(NewKey, 0);
   if (RedrawUsed)
@@ -1668,19 +1668,19 @@ int main()
   trace_init();
   if (FindBook(isWalkmanDisplayBook))
   {
-    MessageBox(0x6FFFFFFF,Str2ID(lng_txtAlreadyRunned,0,SID_ANY_LEN),0,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(lng_txtAlreadyRunned,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(elf_exit);
     return 0;
   }
   if (wchar_t *consts=checkConsts())
   {
-    MessageBox(0x6FFFFFFF,Str2ID(consts,0,SID_ANY_LEN),0,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(consts,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(elf_exit);
     return 0;
   }
   if (GetChipID()!=0x9900)
   {
-    MessageBox(0x6FFFFFFF,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),0,1,0,0);
+    MessageBox(EMPTY_SID,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(elf_exit);
     return 0;
   }

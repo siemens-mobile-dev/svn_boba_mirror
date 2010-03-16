@@ -9,8 +9,8 @@ wchar_t ImageHandler_Free(IMG*i)
 {
   char error_code;
   REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER(SYNC,i->ImageHandle,0,0,i->ImageID,1,&error_code);
-  i->ImageID=0xFFFF;
-  i->ImageHandle=0xFFFF;
+  i->ImageID=NOIMAGE;
+  i->ImageHandle=NOIMAGE;
   i->isImage=false;
   return 0;
 };
@@ -26,15 +26,15 @@ void ImagesDel(BOOK*bk)
 u16 RegisterImage(IMG * i , wchar_t * path, wchar_t fname[256]) 
 {
   char error_code;
-  i->ImageID=0xFFFF;
-  i->ImageHandle=0xFFFF;
+  i->ImageID=NOIMAGE;
+  i->ImageHandle=NOIMAGE;
   if (!REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE(SYNC,&i->ImageHandle,&error_code))
   {
     if (!REQUEST_IMAGEHANDLER_INTERNAL_REGISTER(SYNC,i->ImageHandle,path, fname,0,&i->ImageID,&error_code))
     {
       if (error_code)
       {
-        i->ImageHandle=0xFFFF;
+        i->ImageHandle=NOIMAGE;
       }
     }
   }
