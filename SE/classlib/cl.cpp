@@ -397,23 +397,11 @@ void CGUIMessage::SetLineSeparator( int _unk1 )
 
 ////////////////////////////////////////////////////////////////////////
 
-CGuiVtblPatchClass::CGuiVtblPatchClass(CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*), 
-									   void (*ondispmessage)( DISP_OBJ*, void*, GUI* ), int size )
+CStdGui::CStdGui(CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*),
+				 void (*ondispmessage)( DISP_OBJ*, void*, GUI* ) )
 {
-	GUIObject_Create(this, onguidestroy, ondesccreate, book,
-					 ondispmessage, display, size > sizeof(*this)? size : sizeof(*this) );
-}
-
-CGuiVtblPatchClass::~CGuiVtblPatchClass()
-{
-}
-
-////////////////////////////////////////////////////////////////////////
-
-CStdGui::CStdGui(CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*), 
-				 void (*ondispmessage)( DISP_OBJ*, void*, GUI* ), int size )
-: CGuiVtblPatchClass( book, display, (void(*)(GUI*))__onclose, ondesccreate, ondispmessage, size )
-{
+	GUIObject_Create(this, (void(*)(GUI*))__onclose, ondesccreate, book,
+					 ondispmessage, display, sizeof(CGuiBase) );
 	oldonclose = onguidestroy;
 	if(book)
 		book->AddGUIObject(this);
@@ -442,8 +430,8 @@ int CGuiListMenu::__onmessage( CGUIMessage* msg )
 	return ( static_cast<CGuiListMenu*>( msg->GetGui() ) ) -> OnMessage( msg );
 }
 
-CGuiListMenu::CGuiListMenu(CBook* book, int display, int size)
-: CStdGui( book, display, getListMenuOnGuiDestroy(), getListMenuOnDescCreate(), getListMenuOnDispMessage(), size )
+CGuiListMenu::CGuiListMenu( CBook* book, int display )
+: CStdGui( book, display, getListMenuOnGuiDestroy(), getListMenuOnDescCreate(), getListMenuOnDispMessage() )
 {
 	ListMenu_SetOnMessage( this, (int(*)(GUI_MESSAGE*))__onmessage );
 }
@@ -481,8 +469,8 @@ int CGuiOneOfMany::__onmessage( CGUIMessage* msg )
 	return ( static_cast<CGuiOneOfMany*>( msg->GetGui() ) ) -> OnMessage( msg );
 }
 
-CGuiOneOfMany::CGuiOneOfMany(CBook* book, int display, int size)
-: CStdGui( book, display, getOneOfManyOnGuiDestroy(), getOneOfManyOnDescCreate(), getOneOfManyOnDispMessage(), size )
+CGuiOneOfMany::CGuiOneOfMany( CBook* book, int display )
+: CStdGui( book, display, getOneOfManyOnGuiDestroy(), getOneOfManyOnDescCreate(), getOneOfManyOnDispMessage() )
 {
 	OneOfMany_SetOnMessage( this, (int(*)(GUI_MESSAGE*))__onmessage );
 }
@@ -524,8 +512,8 @@ int CGuiNOfMany::__onmessage( CGUIMessage* msg )
 	return ( static_cast<CGuiNOfMany*>( msg->GetGui() ) ) -> OnMessage( msg );
 }
 
-CGuiNOfMany::CGuiNOfMany(CBook* book, int display, int size)
-: CStdGui( book, display, getNOfManyOnGuiDestroy(), getNOfManyOnDescCreate(), getNOfManyOnDispMessage(), size )
+CGuiNOfMany::CGuiNOfMany( CBook* book, int display )
+: CStdGui( book, display, getNOfManyOnGuiDestroy(), getNOfManyOnDescCreate(), getNOfManyOnDispMessage() )
 {
 	NOfMany_SetOnMessage( this, (int(*)(GUI_MESSAGE*))__onmessage );
 }
@@ -562,8 +550,8 @@ void CGuiNOfMany::SetTexts( STRID* strids, int count )
 
 ////////////////////////////////////////////////////////////////////////
 
-CGuiTabMenuBar::CGuiTabMenuBar(CBook* book, int display, int size)
-: CStdGui( book, display, getTabMenuBarOnGuiDestroy(), getTabMenuBarOnDescCreate(), getTabMenuBarOnDispMessage(), size )
+CGuiTabMenuBar::CGuiTabMenuBar( CBook* book, int display )
+: CStdGui( book, display, getTabMenuBarOnGuiDestroy(), getTabMenuBarOnDescCreate(), getTabMenuBarOnDispMessage() )
 {
 }
 

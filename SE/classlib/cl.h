@@ -38,7 +38,7 @@ public:
 	void SetTitleText(int StrID);         //DispObject_SetTitleText
 	void Show(int mode);                  //DispObject_Show
 	WINDOW* GetWindow();                  //DispObject_GetWindow
-	
+
 	/*
 	LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
 	u16 DISP_DESC_GetSize( DISP_OBJ* );
@@ -50,7 +50,7 @@ public:
 	void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
 	void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 	void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
-	
+
 	DISP_OBJ_METHOD DispObject_GetMethod04( DISP_OBJ* );
 	DISP_OBJ_METHOD DispObject_GetMethod05( DISP_OBJ* );
 	DISP_OBJ_METHOD DispObject_GetMethod06( DISP_OBJ* );
@@ -65,7 +65,7 @@ public:
 	DISP_OBJ_ONCREATE_METHOD DispObject_GetOnCreate( DISP_OBJ* );
 	DISP_OBJ_ONKEY_METHOD DispObject_GetOnKey( DISP_OBJ* );
 	DISP_OBJ_ONREDRAW_METHOD DispObject_GetOnRedraw( DISP_OBJ* );
-	
+
 	void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int );
 	void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
 	void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
@@ -108,26 +108,26 @@ public:
 	void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 	void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
 	void GUIObject_SetTitleTextColor( GUI*, int color );
-	
+
 	void GUIInput_SetIcon( GUI* , wchar_t icon );
-	
+
 	int PercentInput_GetPercent( GUI* PercentInput );
-	
+
 	int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 	void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 	void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
-	
+
 	void ProgressBar_SetBarDisabled( GUI*, int disabled );
 	void ProgressBar_SetIcon( GUI*, u16 icon_id );
 	void ProgressBar_SetPercentValue( GUI*, int value );
 	void ProgressBar_SetText( GUI*, STRID text );
-	
+
 	void StatusIndication_SetItemText( GUI* , int item, STRID );
-	
+
 	void TabMenuBar_SetTabGui( GUI_TABMENUBAR*, int tab, GUI* );
-	
+
 	void Video_SetSkin( GUI* VideoPlayerGUI, int skinID );
-	
+
 	char* MainInput_getPNUM( GUI* );
 	int MainInput_getCurPos( GUI* );
 	int MainInput_getVisible( GUI* );
@@ -159,18 +159,18 @@ public:
 	void BookObj_SetFocus( BOOK* book, int focus );
 	void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, void (*proc)( BOOK*, CGuiBase* ) );
 	void BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
-	
+
 	void* IncommingCall_Accept( BOOK* book );
 	void* IncommingCall_Mute( BOOK* book );
 	void* IncommingCall_Reject( BOOK* book );
-	
+
 	wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
-	
+
 	int SoundRecorder_RecordCall( BOOK* OngoingCallBook );
-	
+
 	void Audio_Pause( BOOK* );
 	void Audio_Play( BOOK* );
-	
+
 	int Video_GetCurrentSkinID( BOOK* VideoPlayerBook );
 	int Video_Refresh( BOOK* VideoPlayerBook, GUI* VideoPlayerGUI );
 	int Video_SetPermit( BOOK* VideoPlayerBook, u16 NewWidth, u16 NewHeight );
@@ -183,13 +183,13 @@ public:
 	void Video_Play( BOOK* VideoPlayerBook, void* );
 	void Video_Stop( BOOK* VideoPlayerBook, void* );
 	void Video_ZoomOn( BOOK* VideoPlayerBook, void* );
-	
+
 	void PlayerControl( BOOK* AudioPlayerBook, int );
-	
+
 	void SwitchRadioStationFromList( BOOK* FmRadioBook, int );
-	
+
 	SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
-	
+
 	GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
 	GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
 	*/
@@ -255,7 +255,7 @@ public:
 		DISP_DESC_SetOnKey(desc, (DISP_OBJ_ONKEY_METHOD)__onKey );
 		DISP_DESC_SetOnRefresh(desc,(DISP_OBJ_METHOD)__onRefresh);
 	}
-	
+
 	static char* getName();
 	void onKey(int key,int,int repeat,int type){}
 	void onDraw(int a,int b,int c){}
@@ -272,14 +272,18 @@ class CGuiT: public CGuiBase
 	explicit CGuiT();
 	static void __onclose( CGuiT<T>* gui )
 	{
+		gui-> ~CGuiT();
 	}
-	~CGuiT();
 protected:
+	virtual ~CGuiT()
+	{
+	}
 public:
 	CGuiT(CBook* book, int display)
 	{
 		GUIObject_Create(this, (void(*)(GUI*))__onclose, (void(*)(DISP_DESC*))T::DispDescCreate, book,
-						 0, display, sizeof(CGuiT<T>));
+					 0, display, sizeof(CGuiBase) );
+		
 		if(book)
 			book->AddGUIObject(this);
 	}
@@ -288,8 +292,8 @@ public:
 /////////////////////////////////////////////////////////////////////////
 
 class CGUIMessage : public GUI_MESSAGE
-{       
-public: 
+{
+public:
 	CBook* GetBook();//
 	CGuiBase* GetGui();//GUIonMessage_GetGui
 	int GetMsg();//GUIonMessage_GetMsg
@@ -312,20 +316,7 @@ public:
 
 /////////////////////////////////////////////////////////////////////////
 
-//служебный класс, чтоб таблица виртуальных методов не страдала при инициализации структуры
-class CGuiVtblPatchClass : public CGuiBase
-{
-	explicit CGuiVtblPatchClass();
-protected:
-	virtual ~CGuiVtblPatchClass();
-public:
-	CGuiVtblPatchClass(CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*), 
-					   void (*ondispmessage)( DISP_OBJ*, void*, GUI* ), int size =0 );
-};
-
-/////////////////////////////////////////////////////////////////////////
-
-class CStdGui : public CGuiVtblPatchClass
+class CStdGui : public CGuiBase
 {
 	void (*oldonclose)(GUI*);
 	explicit CStdGui();
@@ -333,8 +324,8 @@ class CStdGui : public CGuiVtblPatchClass
 protected:
 	virtual ~CStdGui();
 public:
-	CStdGui(CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*), 
-			void (*ondispmessage)( DISP_OBJ*, void*, GUI* ), int size =0 );
+	CStdGui(CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*),
+			void (*ondispmessage)( DISP_OBJ*, void*, GUI* ) );
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -344,9 +335,9 @@ class CGuiListMenu : public CStdGui
 protected:
 	static int __onmessage( CGUIMessage* msg );
 public:
-	CGuiListMenu(CBook* book, int display=0, int size=sizeof(CGuiListMenu));
+	CGuiListMenu( CBook* book, int display=0 );
 	virtual int OnMessage( CGUIMessage* msg );
-	
+
 	void SetItemCount( int count );
 	int GetSelectedItem();
 	void SetFocused( int item );
@@ -360,9 +351,9 @@ class CGuiOneOfMany : public CStdGui
 protected:
 	static int __onmessage( CGUIMessage* msg );
 public:
-	CGuiOneOfMany(CBook* book, int display=0, int size=sizeof(CGuiOneOfMany));
+	CGuiOneOfMany( CBook* book, int display=0 );
 	virtual int OnMessage( CGUIMessage* msg );
-	
+
 	void SetItemCount( int count );
 	int GetSelectedItem();
 	void SetFocused( int item );
@@ -377,9 +368,9 @@ class CGuiNOfMany : public CStdGui
 protected:
 	static int __onmessage( CGUIMessage* msg );
 public:
-	CGuiNOfMany(CBook* book, int display=0, int size=sizeof(CGuiNOfMany));
+	CGuiNOfMany( CBook* book, int display=0 );
 	virtual int OnMessage( CGUIMessage* msg );
-	
+
 	void SetItemCount( int count );
 	int GetChecked( u16* buffer );
 	int GetCheckedCount();
@@ -393,7 +384,7 @@ public:
 class CGuiTabMenuBar : public CStdGui
 {
 public:
-	CGuiTabMenuBar(CBook* book, int display=0, int size=sizeof(CGuiTabMenuBar));
+	CGuiTabMenuBar( CBook* book, int display=0 );
 	int GetFocusedTab();
 	void SetTabCount( int count );
 	void SetFocusedTab( int tab );
@@ -449,55 +440,55 @@ template <class X>
 class auto_ptr {
 	X* m_ptr;
 public:
-	
+
 	explicit auto_ptr(X* p =0) : m_ptr(p)
 	{
 	}
-	
+
 	auto_ptr(auto_ptr& copy) : m_ptr( copy.release() )
 	{
 	}
-	
+
 	auto_ptr& operator=(auto_ptr& copy)
 	{
 		reset(copy.release());
 		return *this;
 	}
-	
+
 	~auto_ptr()
 	{
 		delete m_ptr;
 	}
-	
+
 	X* get() const
 	{
 		return m_ptr;
 	}
-	
+
 	X* release()
 	{
 		X* retvalue = m_ptr;
 		m_ptr = NULL;
 		return retvalue;
 	}
-	
+
 	void reset(X* p =0)
 	{
 		if(m_ptr !=p)
 			delete m_ptr;
 		m_ptr = p;
 	}
-	
+
 	X& operator*() const
 	{
 		return *get();
 	}
-	
+
 	X* operator->() const
 	{
 		return get();
 	}
-	
+
 	/*
 	template <class Y> auto_ptr(auto_ptr<Y>&) throw();
 	template <class Y> auto_ptr& operator=(auto_ptr<Y>&) throw();
