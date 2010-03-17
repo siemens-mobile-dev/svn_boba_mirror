@@ -40,51 +40,80 @@ void onAccept_SI( BOOK* book, wchar_t* string, int len )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   int f;
-  char * param;
+  char * param=0;
   char * pos;
-  char * cur_book = GetCurrentName(mbk);
-  if (len)
+  char * pos_uni_pair;
+  char * cur_name;
+  char * orig_name = GetCurrentName(mbk);
+  
+  char new_name[50];
+  unicode2win1251(new_name,string,MAXELEMS(new_name));
+  
+  if (mbk->ini_buf) param = manifest_GetParam( mbk->ini_buf, orig_name, 0 );
+  
+  if (param) cur_name = param;
+  else cur_name = orig_name;
+  
+  int new_name_len = strlen(new_name);
+  int cur_name_len = strlen(cur_name);
+  int orig_name_len = strlen(orig_name);
+  
+  char uni_pair[100];
+  uni_pair[0]=0;
+  strcpy(uni_pair,orig_name);
+  strcat(uni_pair,": ");
+  
+  if ( (!len) || ( (!strcmp(orig_name,new_name)) && (new_name_len==orig_name_len) ) )
   {
-    char new_name[50];
-    unicode2win1251(new_name,string,MAXELEMS(new_name));
-    int new_name_len = strlen(new_name);
-    if (strcmp(cur_book,new_name))
+    if ( param )
     {
-      param = manifest_GetParam( mbk->ini_buf, cur_book, 0 );
+      pos = strstr(mbk->ini_buf,uni_pair);
+      if ( ( f = _fopen( get_path(), L"bookman.ini", 0x204, 0x180, 0 ) ) >= 0 )
+      {
+        //Delete
+        fwrite( f, mbk->ini_buf, pos - mbk->ini_buf);     //пишем начало файла
+        char * pos_end=strstr(pos,"\r\n")+2;
+        fwrite( f, pos_end, mbk->ini_buf_size - (pos_end - mbk->ini_buf));     //пишем остаток файла
+        fclose( f );
+      }
+      else
+      {
+        MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when delete" ), NOIMAGE, 1 , 5000, mbk );
+      }
+    }
+  }
+  else
+  {
+    if ( (strcmp(cur_name,new_name)) || ( (!strcmp(cur_name,new_name)) && (new_name_len!=cur_name_len) ) )
+    {
       if ( param )
       {
-        if (strcmp(new_name,param))
+        //ReWrite
+        pos_uni_pair = strstr(mbk->ini_buf,uni_pair);
+        pos = pos_uni_pair + strlen(uni_pair);
+        if ( ( f = _fopen( get_path(), L"bookman.ini", 0x204, 0x180, 0 ) ) >= 0 )
         {
-          //ReWrite
-          pos = strstr(mbk->ini_buf,param);
-          if ( ( f = _fopen( get_path(), L"bookman.ini", 0x204, 0x180, 0 ) ) >= 0 )
-          {
-           int len_minus = strlen( param );    //длина старого названия
-           fwrite( f, mbk->ini_buf, pos - mbk->ini_buf);     //пишем начало файла
-           fwrite( f, new_name, new_name_len );      //пишем новое название
-           fwrite( f, pos + len_minus, ( mbk->ini_buf_size - ( pos - mbk->shortcuts_buf )) - len_minus );      //пишем остаток файла
-           fclose( f );
-          }
-          else
-          {
-            MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
-          }
+          int len_minus = strlen( param );    //длина старого названия
+          fwrite( f, mbk->ini_buf, pos - mbk->ini_buf);     //пишем начало файла
+          fwrite( f, new_name, new_name_len );      //пишем новое название
+          fwrite( f, pos + len_minus, ( mbk->ini_buf_size - ( pos - mbk->ini_buf )) - len_minus );      //пишем остаток файла
+          fclose( f );
         }
-        delete(param);
+        else
+        {
+          MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
+        }
+
       }
       else
       {
         //Append
         if ( ( f = _fopen( get_path(), L"bookman.ini", 0x204, 0x180, 0 ) ) >= 0 )
         {
-          char temp_buf[100];
-          temp_buf[0]=0;
-          strcpy(temp_buf,cur_book);
-          strcat(temp_buf,": ");
-          strcat(temp_buf,new_name);
-          strcat(temp_buf,"\r\n");
+          strcat(uni_pair,new_name);
+          strcat(uni_pair,"\r\n");
           fwrite( f, mbk->ini_buf, mbk->ini_buf_size);     //пишем старый файла
-          fwrite( f, temp_buf,strlen(temp_buf));
+          fwrite( f, uni_pair,strlen(uni_pair));
           fclose(f);
         }
         else
@@ -94,27 +123,8 @@ void onAccept_SI( BOOK* book, wchar_t* string, int len )
       }
     }
   }
-  else
-  {
-    param = manifest_GetParam( mbk->ini_buf, cur_book, 0 );
-    if ( param )
-    {
-      pos = strstr(mbk->ini_buf,cur_book);
-      if ( ( f = _fopen( get_path(), L"bookman.ini", 0x204, 0x180, 0 ) ) >= 0 )
-      {
-        //Delete
-        fwrite( f, mbk->ini_buf, pos - mbk->ini_buf);     //пишем начало файла
-        char * pos_end=strstr(pos,"\r\n")+2;
-        fwrite( f, pos_end, mbk->ini_buf_size-(pos_end-mbk->ini_buf));     //пишем остаток файла
-        fclose( f );
-      }
-      else
-      {
-        MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when delete" ), NOIMAGE, 1 , 5000, mbk );
-      }
-      delete(param);
-    }
-  }
+  if (param) delete(param);
+  
   BookObj_ReturnPage( book, ACCEPT_EVENT );
 }
 
