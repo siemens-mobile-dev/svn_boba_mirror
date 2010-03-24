@@ -155,19 +155,41 @@
           if(!preg_match("/\((.*)\)/",$m[4],$m2))
             die("args =(\r\n");
 
-          $as=$m2[1];
-          if(trim($as)=="void")$as="";
+          $as=trim($m2[1]);
+          if($as=="void")$as="";
           $unkarg=1;
           //парсим аргументы
-          while(preg_match("/((([^,]*\(.*\))|.)*?)\s*,\s*(.*)/",$as,$m3))
+          while($as!="")
           {
-            doargument($m3[1],$arglisttype,$arglistname,$arglistsize,$unkarg);
-            $as=$m3[4];
-            $unkarg++;
-          }
-          if($as!="")
-          {
-            doargument($as,$arglisttype,$arglistname,$arglistsize,$unkarg);
+            if(preg_match("/^([^\(]+?)\s*,\s*(.*)$/",$as,$m3))
+            {
+              doargument($m3[1],$arglisttype,$arglistname,$arglistsize,$unkarg);
+              $as=$m3[2];
+              $unkarg++;
+            }else
+            if(preg_match("/^([^,\(]+?\(\s*\*\s*.*?\)\s*\()(.*)$/",$as,$m3))
+            {
+              $br=1;
+              while($br>0 && $m3[2]!="")
+              {
+                if($m3[2][0]=='(')
+                  $br++;
+                else
+                if($m3[2][0]==')')
+                  $br--;
+                $m3[1].=$m3[2][0];
+                $m3[2]=substr($m3[2],1);
+              }
+              $m3[2]=trim($m3[2]);
+              if($m3[2]!="" && $m3[2][0]==',')$m3[2]=trim(substr($m3[2],1));
+              doargument($m3[1],$arglisttype,$arglistname,$arglistsize,$unkarg);
+              $as=$m3[2];
+              $unkarg++;
+            }else
+            {
+              doargument($as,$arglisttype,$arglistname,$arglistsize,$unkarg);
+              $as="";
+            }
           }
           //с горем пополам аргументы распарсили
 
@@ -236,7 +258,12 @@
       while($f[$i]!="}")$i++;
 //      for($k=0;$k<sizeof($fnarray[$curfname]); $k++)
 
-    }else 
+    }else//if(preg_match("/^__make\s+([^\s]+)$/",$f[$i],$m))
+    if(preg_match("/#define\s+([^\s\(]+)/",$f[$i],$m))
+    {
+       fprintf($fcpp,"%s\r\n",$f[$i]);
+       unset($globalfn[$m[1]]);
+    }else
     if(preg_match("/^skip (.*)$/",$f[$i],$m))
     {
        unset($globalfn[$m[1]]);

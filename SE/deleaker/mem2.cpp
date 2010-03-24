@@ -87,12 +87,20 @@ void trace_done()
     __original_w_fclose(f);
 }
 
-void trace_alloc(int mt, void* ptr,char *file, int line)
+void trace_alloc(int mt, void* ptr, char *file, int line)
 {
     __original_List_InsertLast(buffers[mt],ptr);
     __original_List_InsertLast(buffers[mt],file);
     __original_List_InsertLast(buffers[mt],(void*)line);
 }
+
+void* trace_alloc_ret(int mt, void* ptr, void* badvalue,char *file, int line)
+{
+  if( ptr != badvalue )
+     trace_alloc( mt, ptr, file, line);
+  return ptr;
+}
+
 
 void trace_free(int mt,void* p, char* file, int line)
 {
@@ -643,14 +651,6 @@ void  __deleaker_GVI_DeleteMemoryGC(GVI_GC gc, char* __file__,  int __line__)
   return __original_GVI_DeleteMemoryGC(gc);
 }
 
-//баг скрипта
-//__make CreateMonitorFeedback
-//{
-//  __R ret = __O__;
-//  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-//  return ret;
-//}
-
 GUI_FEEDBACK*  __deleaker_TextFeedbackWindow(BOOK* book, int zero, char* __file__,  int __line__)
 {
   GUI_FEEDBACK*  ret = __original_TextFeedbackWindow(book, zero);
@@ -670,19 +670,32 @@ void  __deleaker_DataBrowserDesc_Destroy(void* DataBrowserDesc, char* __file__, 
   trace_free(trace_memory, DataBrowserDesc, __file__, __line__);
   return __original_DataBrowserDesc_Destroy(DataBrowserDesc);
 }
+
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreatePercentInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreatePercentInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateTimeInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateTimeInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateYesNoQuestionVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateYesNoQuestionVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __unknwnargname2, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*), char* __file__,  int __line__)
+{
+  GUI_FEEDBACK*  ret = __original_CreateMonitorFeedback(__unknwnargname1, __unknwnargname2, onbusy, onedit, ondelete);
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
+}
 //__swi __arm ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
 //__swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 //__swi __arm void* CallID_GetCallStatusDesc( int CallID );
 //__swi __arm wchar_t* CallStatusDesc_GetName( void* CallStatusDesc );
-//__swi __arm GUI* CreateDateInputVA( int zero, ... );
 //__swi __arm void* CreateMessage( int size, int ev, char* name );
-//__swi __arm GUI_FEEDBACK* CreateMonitorFeedback( STRID , BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
-//__swi __arm GUI* CreatePercentInputVA( int zero, ... );
 //__swi __arm int CreateSMSCont( int, void* );
-//__swi __arm GUI* CreateStringInputVA( int, ... );
-//__swi __arm GUI* CreateTimeInputVA( int zero, ... );
 //__swi __arm char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
-//__swi __arm GUI* CreateYesNoQuestionVA( int zero, ... );
 //__swi __arm int CteateNewMessage( int, void*, int );
 //__swi __arm void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 //__swi __arm void DataBrowserDesc_SetFileExtList( void* DataBrowserDesc, const wchar_t* ExtList );
@@ -728,6 +741,7 @@ void  __deleaker_DataBrowserDesc_Destroy(void* DataBrowserDesc, char* __file__, 
 //__swi __arm int JavaDialog_Open( int unk1, char* unk2, void** JavaDesc );
 //__swi __arm int JavaSession_GetName( void );
 //__swi __arm void JavaSession_Manager( int cmd );
+//__swi __arm void ListMenu_DestroyItems( GUI_LIST* );
 //__swi __arm int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
 //__swi __arm int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
 //__swi __arm void ListMenu_SetNoItemText( GUI_LIST*, STRID str );

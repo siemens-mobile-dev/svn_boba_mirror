@@ -13,6 +13,7 @@
 void trace_init();
 void trace_done();
 void trace_alloc(int mt, void* ptr,char *file, int line);
+void* trace_alloc_ret(int mt, void* ptr, void* badvalue,char *file, int line);
 void trace_free(int mt,void* p, char* file, int line);
 
 //эти нужны обязательно

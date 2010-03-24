@@ -924,14 +924,6 @@ __make GVI_DeleteMemoryGC
   return __O__;
 }
 
-//баг скрипта
-//__make CreateMonitorFeedback
-//{
-//  __R ret = __O__;
-//  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-//  return ret;
-//}
-
 __make TextFeedbackWindow
 {
   __R ret = __O__;
@@ -950,4 +942,23 @@ __make DataBrowserDesc_Destroy
 {
   trace_free(trace_memory, DataBrowserDesc, __file__, __line__);
   return __O__;
+}
+
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreatePercentInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreatePercentInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateTimeInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateTimeInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+#define CreateYesNoQuestionVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateYesNoQuestionVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+
+__make CreateMonitorFeedback
+{
+  __R ret = __O__;
+  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+  return ret;
 }

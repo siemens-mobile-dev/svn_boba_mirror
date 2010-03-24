@@ -10,8 +10,6 @@
 
 
 
-
-
 #pragma swi_number=0x100
 __swi __arm void  __original_IMB ( void );
 
@@ -82,7 +80,7 @@ __swi __arm int  __original_UnLoadDLL( void* DllData );
 __swi __arm int  __original_ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
 
 #pragma swi_number=0x112
-__swi __arm void  __original_memset( void* mem, char chr, int size );
+__swi __arm void*  __original_memset( void* mem, char chr, int size );
 
 #pragma swi_number=0x113
 __swi __arm int  __original_memcpy( void* dest, const void* source, int cnt );
@@ -1671,3 +1669,6 @@ __swi __arm void  __original_MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, 
 //__swi __arm void (*getNOfManyOnGuiDestroy())( GUI* );
 #pragma swi_number=0x83BA
 //__swi __arm void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+#pragma swi_number=0x3BB
+__swi __arm void  __original_ListMenu_DestroyItems( GUI_LIST* );
+

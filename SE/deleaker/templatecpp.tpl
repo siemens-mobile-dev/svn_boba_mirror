@@ -87,12 +87,20 @@ void trace_done()
     __original_w_fclose(f);
 }
 
-void trace_alloc(int mt, void* ptr,char *file, int line)
+void trace_alloc(int mt, void* ptr, char *file, int line)
 {
     __original_List_InsertLast(buffers[mt],ptr);
     __original_List_InsertLast(buffers[mt],file);
     __original_List_InsertLast(buffers[mt],(void*)line);
 }
+
+void* trace_alloc_ret(int mt, void* ptr, void* badvalue,char *file, int line)
+{
+  if( ptr != badvalue )
+     trace_alloc( mt, ptr, file, line);
+  return ptr;
+}
+
 
 void trace_free(int mt,void* p, char* file, int line)
 {

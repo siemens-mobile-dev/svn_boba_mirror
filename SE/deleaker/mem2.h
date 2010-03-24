@@ -13,6 +13,7 @@
 void trace_init();
 void trace_done();
 void trace_alloc(int mt, void* ptr,char *file, int line);
+void* trace_alloc_ret(int mt, void* ptr, void* badvalue,char *file, int line);
 void trace_free(int mt,void* p, char* file, int line);
 
 //эти нужны обязательно
@@ -196,6 +197,8 @@ GUI_FEEDBACK*  __deleaker_TextFeedbackWindow(BOOK* book, int zero, char* __file_
 void*  __deleaker_DataBrowserDesc_Create(char* __file__,  int __line__);
 #define DataBrowserDesc_Destroy(DataBrowserDesc) __deleaker_DataBrowserDesc_Destroy(DataBrowserDesc, __FILE__,  __LINE__)
 void  __deleaker_DataBrowserDesc_Destroy(void* DataBrowserDesc, char* __file__,  int __line__);
+#define CreateMonitorFeedback(__unknwnargname1, __unknwnargname2, onbusy, onedit, ondelete) __deleaker_CreateMonitorFeedback(__unknwnargname1, __unknwnargname2, onbusy, onedit, ondelete, __FILE__,  __LINE__)
+GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __unknwnargname2, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*), char* __file__,  int __line__);
 
 #endif
 #endif
