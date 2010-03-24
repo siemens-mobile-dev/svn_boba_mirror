@@ -265,7 +265,7 @@
 ;084C: xxxxxxxx yyyyyyyy ; 213: STRID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
 ;0850: xxxxxxxx yyyyyyyy ; 214: STRID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
 ;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum( AB_GET_STRUCT* );
-;0858: xxxxxxxx yyyyyyyy ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( );
+0858: 00000000 38209E11 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( );
 ;085C: xxxxxxxx yyyyyyyy ; 217: GUI* SBY_GetMainInput( BOOK* StandBy );// !!!!! не настоящий !!!!!!
 ;0860: xxxxxxxx yyyyyyyy ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy );// !!!!! не настоящий !!!!!!
 ;0864: xxxxxxxx yyyyyyyy ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
@@ -430,8 +430,8 @@
 ;0AE0: xxxxxxxx yyyyyyyy ; 2B8: void BookObj_CallPage( BOOK* book, const PAGE_DESC* page );
 ;0AE4: xxxxxxxx yyyyyyyy ; 2B9: unsigned int DateInput_GetDateInt( GUI* );
 ;0AE8: xxxxxxxx yyyyyyyy ; 2BA: unsigned int TimeInput_GetTimeInt( GUI* );
-;0AEC: xxxxxxxx yyyyyyyy ;82BB: FONT_DESC* GetFontDesc( void );
-;0AF0: xxxxxxxx yyyyyyyy ;82BC: int* GetFontCount( );
+0AEC: 00000000 743DC829 ;82BB: FONT_DESC* GetFontDesc( void );
+0AF0: 00000000 E440C829 ;82BC: int* GetFontCount( );
 ;0AF4: xxxxxxxx yyyyyyyy ; 2BD: int GC_GetBrushColor( GC* gc );
 ;0AF8: xxxxxxxx yyyyyyyy ; 2BE: void GC_SetBrushColor( GC* gc, int brush_color );
 ;0AFC: xxxxxxxx yyyyyyyy ; 2BF: void GC_DrawRoundRect( GC* gc, RECT*, int arcWidth, int arcHeight, int border_flag, int fill_flag );
