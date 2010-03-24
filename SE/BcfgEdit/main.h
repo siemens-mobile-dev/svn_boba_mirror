@@ -66,6 +66,7 @@ typedef struct
 	BOOK * book;
 }MSG;
 
+void RefreshEdList(BOOK * bk);
 int TerminateElf(void * ,BOOK* book);
 int ShowAuthorInfo(void *mess ,BOOK* book);
 int MainPageOnCreate(void *, BOOK *bk);
@@ -84,6 +85,5 @@ extern "C" long wcstol(const wchar_t *, wchar_t **, int);
 #define IDN_CHECKBOX_UNCHECKED_ICON L"CHECKBOX_ICN"
 #define IDN_CHECKBOX_CHECKED_ICON L"CHECKMARK_IN_BOX_ICN"
 
-#define LGP_NULL 0x6FFFFFFF
 #define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
 #endif

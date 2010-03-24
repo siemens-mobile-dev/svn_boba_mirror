@@ -7,6 +7,8 @@
 #define _printf(...)
 #endif
 
+#define __get_epd EP_DATA * epd = getepd();
+
 #ifdef DB2020
 #define PAGE_ENTER_EVENT 7
 #define PAGE_EXIT_EVENT 8

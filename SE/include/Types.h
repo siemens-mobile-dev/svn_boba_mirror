@@ -1,6 +1,23 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
+
+#define SID_ANY_LEN 0xFFFF
+#define NOIMAGE 0xFFFF
+#define EMPTY_SID 0x6FFFFFFF
+#define LIST_ERROR 0xFFFF
+#define TEXT(__STR__) L##__STR__
+#define _T(__STR__) L##__STR__
+#define MAXELEMS(x) (sizeof(x)/sizeof(x[0]))
+#define STR(__STR__) Str2ID(_T(__STR__),0,SID_ANY_LEN)
+
+#define MINUTE_TICK_EVENT 999
+#define ELF_SHOW_INFO_EVENT 998
+#define ELF_TERMINATE_EVENT 997
+#define ELF_RECONFIG_EVENT 996
+#define SBY_REDRAW_RELEASE_EVENT 995
+
+
 typedef unsigned short u16;
 
 #ifndef __cplusplus

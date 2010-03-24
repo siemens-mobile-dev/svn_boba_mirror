@@ -1,4 +1,5 @@
 #include "..\\include\Lib_Clara.h"
+#include "vars.h"
 
 union SIGNAL
 {

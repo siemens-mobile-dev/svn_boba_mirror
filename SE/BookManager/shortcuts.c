@@ -5,7 +5,11 @@
 #include "shortcuts.h"
 #include "main.h"
 
-
+typedef struct
+{
+  int str_id;
+  int icon_id;
+}SC_DATA;
 
 wchar_t* get_path()
 {
@@ -216,68 +220,6 @@ int CreateDB( void* data, BOOK* book )
   return 0;
 }
 
-/*
-void onPrevious_SI( BOOK* book )
-{
-BookObj_ReturnPage( book, ACCEPT_EVENT );
-}
-
-void onCancel_SI( BOOK* book )
-{
-BookObj_ReturnPage( book, NIL_EVENT );
-BookObj_ReturnPage( book, NIL_EVENT );
-BookObj_ReturnPage( book, NIL_EVENT );
-}
-
-int onExit_SI( void* data, BOOK* book )
-{
-if ( str_inp )
-{
-GUIObject_Destroy( str_inp );
-str_inp = 0;
-}
-return 0;
-}
-
-void onAccept_SI( BOOK* book, wchar_t* string, int len )
-{
-WriteShortcut( string );
-BookObj_ReturnPage( book, ACCEPT_EVENT );
-}
-
-
-int CreateSI( void* data, BOOK* book )
-{
-int str_id;
-int editable_strID = EMPTY_SID;
-if ( shortcuts_buf )
-{
-char mask_buf[10];
-int dig_num = ListMenu_GetSelectedItem( but_list );
-if ( !ListMenu_GetSelectedItem( mode_list ) ) sprintf( mask_buf, "[S_KEY%d]", dig_num );
-else sprintf( mask_buf, "[L_KEY%d]", dig_num );
-char* param;
-if ( param = manifest_GetParam( shortcuts_buf, mask_buf, 0 ) )
-{
-editable_strID = Str2ID( param, 6, SID_ANY_LEN );
-mfree( param );
-}
-}
-textidname2id( L"SHC_SET_SHORTCUT_SK", SID_ANY_LEN, &str_id );
-if ( str_inp ) GUIObject_Destroy( str_inp );
-str_inp = CreateStringInputVA( 0,
-VAR_PREV_ACTION_PROC( onPrevious_SI ),
-VAR_LONG_BACK_PROC( onCancel_SI ),
-VAR_BOOK( book ),
-VAR_OK_PROC( onAccept_SI ),
-VAR_STRINP_FIXED_TEXT( str_id ),
-VAR_STRINP_TEXT( editable_strID ),
-VAR_STRINP_MIN_LEN( 0 ),
-VAR_STRINP_MAX_LEN( 200 ),
-0 );
-return 0;
-}
-*/
 
 void onEnter_JavaList( BOOK* book, GUI* )
 {
@@ -388,6 +330,7 @@ int CreateJavaList( void* data, BOOK* book )
   
   mbk->java_list = List_Create();
   char sp1;
+  wchar_t* sp;
   void* JavaDesc;
   JavaDialog_Open( 0, &sp1, &JavaDesc );
   
@@ -396,7 +339,13 @@ int CreateJavaList( void* data, BOOK* book )
     int result = 0;
     while ( !result )
     {
-      List_InsertLast( mbk->java_list, CreateElem( JavaDesc ) );
+      //check if semclet
+      JavaAppDesc_GetJavaAppInfo( JavaDesc, 6, &sp );
+      if (sp[0])
+      {
+        List_InsertLast( mbk->java_list, CreateElem( JavaDesc ) );
+      }
+      delete(sp);
       result = JavaAppDesc_GetNextApp( JavaDesc );
     }
   }
@@ -504,76 +453,86 @@ void * SHORTCUT_DESC_A2_Init(char * param)
   return(w_buf);
 }
 
+int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
+{
+  char* param = 0;
+  char mask_buf[10];
+  
+  if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
+  {
+    if ( !mbk->ActiveTAB )
+      sprintf( mask_buf, "[S_KEY%d]", item_num );
+    else
+      sprintf( mask_buf, "[ES_KEY%d]", item_num );
+  }
+  else
+  {
+    if ( !mbk->ActiveTAB )
+      sprintf( mask_buf, "[L_KEY%d]", item_num );
+    else
+      sprintf( mask_buf, "[EL_KEY%d]", item_num );
+  }
+  
+  param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0);
+  
+  if ( param )
+  {
+    if ( strlen( param ) )
+    {
+      if (!scdata)
+      {
+        delete(param);
+        return (1);
+      }
+      if ( strstr( param, "java:" ) )
+      {
+        scdata->str_id = Str2ID( param + 5, 6, strstr( param, "//" ) - ( param + 5 ) );
+        iconidname2id( L"DB_LIST_JAVA_ICN", SID_ANY_LEN, &scdata->icon_id );
+      }
+      else
+      {
+        void * w_buf;
+        if (mbk->isA2) w_buf = SHORTCUT_DESC_A2_Init(param);
+        else w_buf = SHORTCUT_DESC_Init(param);
+        
+        scdata->str_id = Shortcut_Get_MenuItemName( w_buf );
+        scdata->icon_id = Shortcut_Get_MenuItemIconID( w_buf );
+        
+        if ( scdata->icon_id == NOIMAGE ) iconidname2id( L"RN_VERT_MY_SHORTCUTS_ICN", SID_ANY_LEN, &scdata->icon_id );
+        
+        delete( w_buf );
+        
+        if ( scdata->str_id == EMPTY_SID ) scdata->str_id = Str2ID( param, 6, SID_ANY_LEN );
+      }
+    }
+    delete(param);
+  }
+  else
+  {
+    if (!scdata) return(0);
+    textidname2id( L"SHC_NONE_NAME_TXT", SID_ANY_LEN, &scdata->str_id );
+  }
+  return(0);
+}
 
 int but_list_callback( GUI_MESSAGE* msg )
 {
-  int str_id=EMPTY_SID;
-  int icon_id=NOIMAGE;
-  char* param = 0;
-  MyBOOK* mbk = (MyBOOK*) GUIonMessage_GetBook( msg );
+  SC_DATA scdata;
+  scdata.str_id = EMPTY_SID;
+  scdata.icon_id = NOIMAGE;
+  int item_num;
+  MyBOOK * mbk = (MyBOOK*) GUIonMessage_GetBook( msg );
   
   switch( GUIonMessage_GetMsg( msg ) )
   {
   case LISTMSG_GetItem:
-    int item_num = GUIonMessage_GetCreatedItemIndex( msg );
-    char mask_buf[10];
+    item_num = GUIonMessage_GetCreatedItemIndex( msg );
     
-    if ( mbk->shortcuts_buf )
-    {
-      if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
-      {
-        if ( !mbk->ActiveTAB )
-          sprintf( mask_buf, "[S_KEY%d]", item_num );
-        else
-          sprintf( mask_buf, "[ES_KEY%d]", item_num );
-      }
-      else
-      {
-        if ( !mbk->ActiveTAB )
-          sprintf( mask_buf, "[L_KEY%d]", item_num );
-        else
-          sprintf( mask_buf, "[EL_KEY%d]", item_num );
-      }
-      if ( param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0 ) )
-      {
-        if ( strlen( param ) )
-        {
-          if ( strstr( param, "java:" ) )
-          {
-            str_id = Str2ID( param + 5, 6, strstr( param, "//" ) - ( param + 5 ) );
-            iconidname2id( L"DB_LIST_JAVA_ICN", SID_ANY_LEN, &icon_id );
-          }
-          else
-          {
-            void * w_buf;
-            if (mbk->isA2) w_buf = SHORTCUT_DESC_A2_Init(param);
-            else w_buf = SHORTCUT_DESC_Init(param);
-            
-            str_id = Shortcut_Get_MenuItemName( w_buf );
-            icon_id = Shortcut_Get_MenuItemIconID( w_buf );
-            
-            if ( icon_id == NOIMAGE ) iconidname2id( L"RN_VERT_MY_SHORTCUTS_ICN", SID_ANY_LEN, &icon_id );
-            
-            delete( w_buf );
-            
-            if ( str_id == EMPTY_SID ) str_id = Str2ID( param, 6, SID_ANY_LEN );
-          }
-        }
-        delete(param);
-      }
-      else
-      {
-        textidname2id( L"SHC_NONE_NAME_TXT", SID_ANY_LEN, &str_id );
-      }
-    }
-    else
-    {
-      textidname2id( L"SHC_NONE_NAME_TXT", SID_ANY_LEN, &str_id );
-    }
+    GetShortcutName(mbk,item_num,&scdata);
     
-    GUIonMessage_SetMenuItemText( msg, str_id );
+    GUIonMessage_SetMenuItemText( msg, scdata.str_id );
     GUIonMessage_SetMenuItemIcon(msg, 0, mbk->digs_image[item_num].ImageID );
-    GUIonMessage_SetMenuItemIcon(msg, 2, icon_id );
+    GUIonMessage_SetMenuItemIcon(msg, 2, scdata.icon_id );
     break;
   }
 
@@ -630,7 +589,8 @@ int DeleteShortcut( MyBOOK* mbk, char* mask_buf, int f )
   
   if ( mbk->shortcuts_buf )
   {
-    if ( param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0 ) )
+    param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0 );
+    if ( param )
     {
       int len_minus = strlen( param );
       if ( len_minus > 0 )
@@ -642,7 +602,7 @@ int DeleteShortcut( MyBOOK* mbk, char* mask_buf, int f )
         res = 1;
       }
     }
-    if ( param ) mfree( param );
+    if ( param ) delete( param );
   }
   return res;
 }
@@ -652,11 +612,13 @@ void But_onDelete( BOOK* book, GUI* )
   MyBOOK* mbk = (MyBOOK*) book;
   int f;
   int res;
+  int dig_num = ListMenu_GetSelectedItem( mbk->but_list );
+  if (!GetShortcutName(mbk,dig_num,0)) return;
+  
   wchar_t* path = get_path();
   if ( ( f = _fopen( path, L"shortcuts.ini", 0x204, 0x180, 0 ) ) >= 0 )
   {
     char mask_buf[10];
-    int dig_num = ListMenu_GetSelectedItem( mbk->but_list );
     
     if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
     {
@@ -689,8 +651,6 @@ void But_onDelete( BOOK* book, GUI* )
 }
 
 
-
-
 int CreateButtonList( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
@@ -707,9 +667,12 @@ int CreateButtonList( void* data, BOOK* book )
   if ( mbk->but_list )
   {
     but_pos = ListMenu_GetSelectedItem( mbk->but_list );
-    GUIObject_Destroy( mbk->but_list );
+    ListMenu_DestroyItems(mbk->but_list);
+    ListMenu_SetItemCount( mbk->but_list, 10 );
+    ListMenu_SetCursorToItem( mbk->but_list, but_pos );
+    GUIObject_SoftKeys_SetVisible(mbk->but_list, ACTION_SELECT1, 1);
+    return 0;
   }
-  
   mbk->but_list = CreateListMenu( book, 0 );
   GUIObject_SetTitleText( mbk->but_list, STR( "Buttons" ) );
   ListMenu_SetItemCount( mbk->but_list, 10 );
@@ -728,11 +691,6 @@ int CreateButtonList( void* data, BOOK* book )
     GUIObject_SoftKeys_SetText( mbk->but_list, 0, str_id );
     GUIObject_SoftKeys_SetAction( mbk->but_list, 1, But_SetJava );
     GUIObject_SoftKeys_SetText( mbk->but_list, 1, STR( "Java" ) );
-    /*
-    GUIObject_SoftKeys_SetAction( but_list, 2, But_EditShortcut );
-    textidname2id( L"CALE_EDIT_EVENT_TXT", SID_ANY_LEN, &str_id );
-    GUIObject_SoftKeys_SetText( but_list, 2, str_id );
-    */
   }
   
   GUIObject_Show( mbk->but_list );
@@ -801,7 +759,10 @@ int CreateModeList( void* data, BOOK* book )
   if ( mbk->mode_list )
   {
     mode_list_pos = ListMenu_GetSelectedItem( mbk->mode_list );
-    GUIObject_Destroy( mbk->mode_list );
+    ListMenu_DestroyItems(mbk->mode_list);
+    ListMenu_SetItemCount( mbk->mode_list, 2 );
+    ListMenu_SetCursorToItem( mbk->mode_list, mode_list_pos );
+    return 0;
   }
   mbk->mode_list = CreateListMenu( book, 0 );
   GUIObject_SetTitleText( mbk->mode_list, STR( "Press Mode" ) );

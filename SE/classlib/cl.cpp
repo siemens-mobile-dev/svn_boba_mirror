@@ -171,6 +171,18 @@ void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiB
 	::GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*,GUI*))proc );
 }
 
+void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID strid )
+{
+	::GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*,GUI*))proc );
+	::GUIObject_SoftKeys_SetText( this, actionID, strid );
+}
+
+void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID short_text, STRID full_text )
+{
+	::GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*,GUI*))proc );
+	::GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
+}
+
 void CGuiBase::SoftKeys_SetEnable(u16 actionID, int ena )
 {
 	::GUIObject_SoftKeys_SetEnable( this, actionID, ena );
@@ -456,6 +468,10 @@ void CGuiListMenu::SetNoItemText( STRID strid )
 	ListMenu_SetNoItemText( this, strid );
 }
 
+void CGuiListMenu::DestroyItems()
+{
+	ListMenu_DestroyItems( this );
+}
 
 ////////////////////////////////////////////////////////////////////////
 

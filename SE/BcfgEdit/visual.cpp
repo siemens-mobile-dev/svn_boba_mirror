@@ -17,7 +17,7 @@ int colors[4] = { 0xFFFF0000, 0xFF00FF00, 0xFF0000FF, 0x80C6AAAF };
 
 int ColorGuiOnCreate( DISP_OBJ_COLOR* db )
 {
-	db->str_id = LGP_NULL;
+	db->str_id = EMPTY_SID;
 	db->need_str = 1;
 	db->current_column = 0;
 	db->cstep = 1;
@@ -130,7 +130,7 @@ void ColorGuiOnKey( DISP_OBJ_COLOR* db, int key, int, int repeat, int type )
 					db->b = 0;
 				break;
 			case 3:
-				if ( ( db->a += db->cstep ) >  db->type == 0 ? 0x64 : 0xFF )
+				if ( ( db->a += db->cstep ) > ( db->type == 0 ? 0x64 : 0xFF ) )
 					db->a = 0;
 				break;
 			}
@@ -155,7 +155,7 @@ void ColorGuiOnKey( DISP_OBJ_COLOR* db, int key, int, int repeat, int type )
 				break;
 			case 3:
 				if ( ( db->a -= db->cstep ) < 0 )
-					db->a = db->type == 0 ? 0x64 : 0xFF;
+					db->a = ( db->type == 0 ? 0x64 : 0xFF );
 					break;
 			}
 			
@@ -217,6 +217,7 @@ void OnOkColorEdit( BOOK* bk, GUI* )
 		myBook->cur_hp.color->color = COLOR_RGBA( disp_obj->r, disp_obj->g, disp_obj->b, disp_obj->a );
 	}
 	FREE_GUI( myBook->color );
+        RefreshEdList(bk);
 }
 
 GUI_COLOR* CreateEditColorGUI( MyBOOK* myBook, int type )
@@ -274,7 +275,7 @@ static const char CooordinatesGuiName[] = "Gui_Coordinates";
 
 int CoordinatesGuiOnCreate( DISP_OBJ_COORD* db )
 {
-	db->str_id = LGP_NULL;
+	db->str_id = EMPTY_SID;
 	db->need_str = 1;
 	db->is_first_set = 0;
 	db->cstep = 1;
@@ -560,6 +561,7 @@ void OnOkCoordinatesEdit( BOOK* bk, void* )
 	{
 		BookObj_SetDisplayOrientation( bk, 0 );
 		FREE_GUI( myBook->coord );
+                RefreshEdList(bk);
 	}
 }
 
@@ -658,7 +660,7 @@ int FontSelectGuiOnCreate( DISP_OBJ_FONT_SEL* db )
 
 void FontSelectGuiOnClose( DISP_OBJ_FONT_SEL* db )
 {
-	TextFree( db->test_str_id ); db->test_str_id = LGP_NULL;
+	TextFree( db->test_str_id ); db->test_str_id = EMPTY_SID;
 	delete db->font_heights;
 }
 
@@ -773,6 +775,7 @@ void OnOkFontSelect( BOOK* bk, GUI* )
 	DISP_OBJ_FONT_SEL* disp_obj = (DISP_OBJ_FONT_SEL*) GUIObject_GetDispObject( myBook->font_select );
 	myBook->cur_hp.font->font = GetFontDesc()[disp_obj->cur_pos].id;
 	FREE_GUI( myBook->font_select );
+        RefreshEdList(bk);
 }
 
 
@@ -992,7 +995,7 @@ FLIST* FindFLISTtByN( int n )
 int OnMessage( GUI_MESSAGE* msg )
 {
 	int d;
-	STRID str = LGP_NULL;
+	STRID str = EMPTY_SID;
 	FLIST* f;
 	switch( GUIonMessage_GetMsg( msg ) )
 	{

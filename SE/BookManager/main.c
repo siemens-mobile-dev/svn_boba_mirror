@@ -8,7 +8,6 @@
 #include "main.h"
 #include "book_names.h"
 
-
 wchar_t* id_digits[DIGITS_COUNT] =
 {
   IDN_DIGIT_0_ICON,
@@ -739,109 +738,137 @@ void RefreshElfSoftkeys( MyBOOK* mbk, int item )
     {
       GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, 0 );
     }
+    else
+    {
+      GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, 1 );
+    }
+  }
+  else
+  {
+    ListMenu_SetNoItemText( mbk->elist, STR( "No elfs in memory" ) );
+    GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, 0 );
+    GUIObject_SoftKeys_SetVisible( mbk->elist, 1, 0 );
+    GUIObject_SoftKeys_SetVisible( mbk->elist, 2, 0 );
   }
 }
 
 // создание меню
-GUI_TABMENUBAR* CreateGuiList( int tab_pos, BOOK* bk )
+void CreateGuiList( int tab_pos, BOOK* bk )
 {
   MyBOOK* mbk = (MyBOOK*) bk;
   int str_id;
   int p[2];
-  mbk->blist = CreateListMenu( bk, 0 );
-  mbk->elist = CreateListMenu( bk, 0 );
+  int list_pos;
+  
   CreateBookLst( mbk );
   p[0] = Str2ID ( L"Heap : ", 0, 7 );
   p[1] = int2strID ( GetFreeBytesOnHeap() );
-  // GUIObject_SetTitleText( lo, Str2ID( p, 5, 2 ) );
 
-  GUI_TABMENUBAR* tab = CreateTabMenuBar( bk );
-  TabMenuBar_SetTabCount( tab, 2 );
-  
-  ListMenu_SetOnMessage( mbk->blist, onLBMessage );
-  ListMenu_SetItemCount( mbk->blist, mbk->blistcnt );
-  if ( mbk->blistpos > mbk->blistcnt )
+  if ( !mbk->gui )
   {
-    ListMenu_SetCursorToItem( mbk->blist, mbk->blistcnt );
+    mbk->gui = CreateTabMenuBar( bk );
+    TabMenuBar_SetTabCount( mbk->gui, 2 );
+    
+    TabMenuBar_SetTabIcon( mbk->gui, 0, mbk->tabs_image[0].ImageID, 0 );
+    TabMenuBar_SetTabIcon( mbk->gui, 0, mbk->tabs_image[1].ImageID, 1 );
+    
+    TabMenuBar_SetTabIcon( mbk->gui, 1, mbk->tabs_image[2].ImageID, 0 );
+    TabMenuBar_SetTabIcon( mbk->gui, 1, mbk->tabs_image[3].ImageID, 1 );
+    
+    TabMenuBar_SetTabTitle( mbk->gui, 0, Str2ID( p, 5, 2 ) );
+    TabMenuBar_SetTabTitle( mbk->gui, 1, STR( "Elfs" ) );
+  }
+  
+  if ( mbk->blist )
+  {
+    list_pos = ListMenu_GetSelectedItem(mbk->blist);
+    ListMenu_DestroyItems(mbk->blist);
+    ListMenu_SetItemCount( mbk->blist, mbk->blistcnt );
+    ListMenu_SetCursorToItem( mbk->blist, list_pos );
+    GUIObject_SoftKeys_SetVisible(mbk->blist, ACTION_SELECT1, 1);
   }
   else
   {
-    ListMenu_SetCursorToItem( mbk->blist, mbk->blistpos );
+    mbk->blist = CreateListMenu( bk, 0 );
+    ListMenu_SetOnMessage( mbk->blist, onLBMessage );
+    ListMenu_SetItemCount( mbk->blist, mbk->blistcnt );
+    if ( mbk->blistpos > mbk->blistcnt )
+    {
+      ListMenu_SetCursorToItem( mbk->blist, mbk->blistcnt );
+    }
+    else
+    {
+      ListMenu_SetCursorToItem( mbk->blist, mbk->blistpos );
+    }
+    
+    GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_BACK, CloseMyBook );
+    GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_LONG_BACK, PreTerminateManager );
+    GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_SELECT1, onEnterPressed );
+    
+    GUIObject_SoftKeys_SetAction( mbk->blist, 0, Shortcuts );
+    textidname2id( L"SHC_EDIT_SHORTCUT_TXT", SID_ANY_LEN, &str_id );
+    GUIObject_SoftKeys_SetText( mbk->blist, 0, str_id );
+    GUIObject_SoftKeys_SetAction( mbk->blist, 1, BookNames );
+    textidname2id( L"DB_RENAME_TXT", SID_ANY_LEN, &str_id );
+    GUIObject_SoftKeys_SetText( mbk->blist, 1, str_id );
+    GUIObject_SoftKeys_SetAction( mbk->blist, 2, Copyright );
+    GUIObject_SoftKeys_SetText( mbk->blist, 2, STR( "About" ) );
+    
+    mbk->oldOnKey = DispObject_GetOnKey( GUIObject_GetDispObject( mbk->blist ) );
+    
+    DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject( mbk->blist ) ), myOnKey );
+    
+    TabMenuBar_SetTabGui( mbk->gui, 0, mbk->blist );
   }
-  
-  GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_BACK, CloseMyBook );
-  GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_LONG_BACK, PreTerminateManager );
-  GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_SELECT1, onEnterPressed );
-  
-  GUIObject_SoftKeys_SetAction( mbk->blist, 0, Shortcuts );
-  textidname2id( L"SHC_EDIT_SHORTCUT_TXT", SID_ANY_LEN, &str_id );
-  GUIObject_SoftKeys_SetText( mbk->blist, 0, str_id );
-  GUIObject_SoftKeys_SetAction( mbk->blist, 1, BookNames );
-  textidname2id( L"DB_RENAME_TXT", SID_ANY_LEN, &str_id );
-  GUIObject_SoftKeys_SetText( mbk->blist, 1, str_id );
-  GUIObject_SoftKeys_SetAction( mbk->blist, 2, Copyright );
-  GUIObject_SoftKeys_SetText( mbk->blist, 2, STR( "About" ) );
-  
-  mbk->oldOnKey = DispObject_GetOnKey( GUIObject_GetDispObject( mbk->blist ) );
-  
-  DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject( mbk->blist ) ), myOnKey );
   //---------------
   
-  // GUIObject_SetTitleText( elist, ( STR( "Elfs" ) ) );
-  ListMenu_SetCursorToItem( mbk->elist, 0 );
-  ListMenu_SetOnMessage( mbk->elist, onLBMessage1 );
-  ListMenu_SetItemCount( mbk->elist, mbk->elistcnt );
-  if ( mbk->elistpos > mbk->elistcnt )
+  if ( mbk->elist )
   {
-    ListMenu_SetCursorToItem( mbk->elist, mbk->elistcnt );
+    list_pos = ListMenu_GetSelectedItem(mbk->elist);
+    ListMenu_DestroyItems(mbk->elist);
+    ListMenu_SetItemCount( mbk->elist, mbk->elistcnt );
+    ListMenu_SetCursorToItem( mbk->elist, list_pos );
+    RefreshElfSoftkeys( mbk, ListMenu_GetSelectedItem(mbk->elist) );
   }
   else
   {
-    ListMenu_SetCursorToItem( mbk->elist, mbk->elistpos );
-  }
-  
-  GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_BACK, CloseMyBook );
-  GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_LONG_BACK, PreTerminateManager );
-  GUIObject_SoftKeys_SetAction( mbk->elist, 0, Shortcuts );
-  textidname2id( L"SHC_EDIT_SHORTCUT_TXT", SID_ANY_LEN, &str_id );
-  GUIObject_SoftKeys_SetText( mbk->elist, 0, str_id );
-  
-  if ( mbk->elfs_list->FirstFree )
-  {
+    mbk->elist = CreateListMenu( bk, 0 );
+    ListMenu_SetCursorToItem( mbk->elist, 0 );
+    ListMenu_SetOnMessage( mbk->elist, onLBMessage1 );
+    ListMenu_SetItemCount( mbk->elist, mbk->elistcnt );
+    if ( mbk->elistpos > mbk->elistcnt )
+    {
+      ListMenu_SetCursorToItem( mbk->elist, mbk->elistcnt );
+    }
+    else
+    {
+      ListMenu_SetCursorToItem( mbk->elist, mbk->elistpos );
+    }
+    
+    GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_BACK, CloseMyBook );
+    GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_LONG_BACK, PreTerminateManager );
+    GUIObject_SoftKeys_SetAction( mbk->elist, 0, Shortcuts );
+    textidname2id( L"SHC_EDIT_SHORTCUT_TXT", SID_ANY_LEN, &str_id );
+    GUIObject_SoftKeys_SetText( mbk->elist, 0, str_id );
     GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_SELECT1, onEnterPressed1 );
     GUIObject_SoftKeys_SetAction( mbk->elist, 1, BookNames );
     textidname2id( L"DB_RENAME_TXT", SID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->elist, 1, str_id );
     GUIObject_SoftKeys_SetAction( mbk->elist, 2, Author );
     GUIObject_SoftKeys_SetText( mbk->elist, 2, STR( "Author" ) );
+    
+    mbk->oldOnKey1 = DispObject_GetOnKey( GUIObject_GetDispObject( mbk->elist ) );
+    
+    DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject( mbk->elist ) ), myOnKey1 );
+    
+    RefreshElfSoftkeys( mbk, ListMenu_GetSelectedItem(mbk->elist) );
+    
+    TabMenuBar_SetTabGui( mbk->gui, 1, mbk->elist );
   }
-  else
-  {
-    ListMenu_SetNoItemText( mbk->elist, STR( "No elfs in memory" ) );
-  }
   
-  mbk->oldOnKey1 = DispObject_GetOnKey( GUIObject_GetDispObject( mbk->elist ) );
+  TabMenuBar_SetFocusedTab( mbk->gui, tab_pos );
   
-  DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject( mbk->elist ) ), myOnKey1 );
-
-  RefreshElfSoftkeys( mbk, ListMenu_GetSelectedItem( mbk->elist ) );
-  
-  TabMenuBar_SetTabGui( tab, 0, mbk->blist );
-  TabMenuBar_SetTabGui( tab, 1, mbk->elist );
-  
-  TabMenuBar_SetTabIcon( tab, 0, mbk->tabs_image[0].ImageID, 0 );
-  TabMenuBar_SetTabIcon( tab, 0, mbk->tabs_image[1].ImageID, 1 );
-  
-  TabMenuBar_SetTabIcon( tab, 1, mbk->tabs_image[2].ImageID, 0 );
-  TabMenuBar_SetTabIcon( tab, 1, mbk->tabs_image[3].ImageID, 1 );
-  
-  TabMenuBar_SetTabTitle( tab, 0, Str2ID( p, 5, 2 ) );
-  TabMenuBar_SetTabTitle( tab, 1, STR( "Elfs" ) );
-  
-  TabMenuBar_SetFocusedTab( tab, tab_pos );
-  
-  // TabMenuBar_SetOnTabSwitch( tab, onTabSwitch );
-  return tab;
+  GUIObject_Show(mbk->gui);
 };
 
 void LoadIniFiles(MyBOOK * mbk)
@@ -868,24 +895,10 @@ int CreateMenu( int tab_pos, BOOK* bk )
 {
   MyBOOK* mbk = (MyBOOK*) bk;
 
-  if ( mbk->blist )
-  {
-    GUIObject_Destroy( mbk->blist );
-    mbk->blist = 0;
-  }
-  if ( mbk->elist )
-  {
-    GUIObject_Destroy( mbk->elist );
-    mbk->elist = 0;
-  }
-  if ( mbk->gui )
-  {
-    GUIObject_Destroy( mbk->gui );
-    mbk->gui = 0;
-  }
   LoadIniFiles(mbk);
-  mbk->gui = CreateGuiList( tab_pos, bk );
-  GUIObject_Show( mbk->gui);
+  
+  CreateGuiList( tab_pos, bk );
+
   return 0;
 }
 
@@ -1152,7 +1165,7 @@ int NewKey( int key, int r1, int mode )
         CreateBook( BookManager_Book, onMyBookClose, &BookManager_Base_Page, "BookManager", -1, 0 );
         MyBOOK* mbk = (MyBOOK*) BookManager_Book;
         //Init flags
-        mbk->gui = NULL;
+        mbk->gui = 0;
         mbk->ini_buf=0;
         mbk->ini_buf_size=0;
         mbk->shortcuts_buf = 0;

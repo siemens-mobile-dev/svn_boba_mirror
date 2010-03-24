@@ -1,4 +1,3 @@
-#include "..\\include\Target.h"
 #ifndef _LIB_CLARA_H
 #define _LIB_CLARA_H
 
@@ -37,21 +36,6 @@ extern void kill_data( void* p, void (*func_p)( void* ) );
 #ifndef NULL
 #define NULL   _NULL
 #endif /* NULL */
-
-#define SID_ANY_LEN 0xFFFF
-#define NOIMAGE 0xFFFF
-#define EMPTY_SID 0x6FFFFFFF
-#define LIST_ERROR 0xFFFF
-#define TEXT(__STR__) L##__STR__
-#define _T(__STR__) L##__STR__
-#define MAXELEMS(x) (sizeof(x)/sizeof(x[0]))
-#define STR(__STR__) Str2ID(_T(__STR__),0,SID_ANY_LEN)
-
-#define MINUTE_TICK_EVENT 999
-#define ELF_SHOW_INFO_EVENT 998
-#define ELF_TERMINATE_EVENT 997
-#define ELF_RECONFIG_EVENT 996
-#define SBY_REDRAW_RELEASE_EVENT 995
 
 
 #pragma diag_suppress=Ta035
@@ -125,7 +109,7 @@ __swi __arm int elfload( const wchar_t* filename, void* param1, void* param2, vo
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
-__swi __arm void memset( void* mem, char chr, int size );
+__swi __arm void* memset( void* mem, char chr, int size );
 
 #pragma swi_number=0x113
 __swi __arm int memcpy( void* dest, const void* source, int cnt );
@@ -1745,5 +1729,8 @@ __swi __arm void (*getNOfManyOnGuiDestroy())( GUI* );
 __swi __arm void (*getNOfManyOnDescCreate())( DISP_DESC* );
 #pragma swi_number=0x83BA
 __swi __arm void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+
+#pragma swi_number=0x3BB
+__swi __arm void ListMenu_DestroyItems( GUI_LIST* );
 
 #endif

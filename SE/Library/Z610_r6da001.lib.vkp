@@ -673,19 +673,19 @@
 0EAC: 00000000 1D6F4345 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 A95D4345 ; 3AC: BOOK* GUIObject_GetBook( GUI* ); //см. GUIObject_Destroy
 ;0EB4: xxxxxxxx yyyyyyyy ; 3AD: u16 SoftKeys_GetSelectedAction( void );
-;0EB8: xxxxxxxx yyyyyyyy ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
-;0EBC: xxxxxxxx yyyyyyyy ;83AF: void (*getListMenuOnGuiDestroy())( GUI* );
-;0EC0: xxxxxxxx yyyyyyyy ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
-;0EC4: xxxxxxxx yyyyyyyy ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
-;0EC8: xxxxxxxx yyyyyyyy ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* );
-;0ECC: xxxxxxxx yyyyyyyy ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
-;0ED0: xxxxxxxx yyyyyyyy ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
-;0ED4: xxxxxxxx yyyyyyyy ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* );
-;0ED8: xxxxxxxx yyyyyyyy ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
-;0EDC: xxxxxxxx yyyyyyyy ;83B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
-;0EE0: xxxxxxxx yyyyyyyy ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* );
-;0EE4: xxxxxxxx yyyyyyyy ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
-;0EE8: xxxxxxxx yyyyyyyy ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EB8: 00000000 09E13845 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
+0EBC: 00000000 15F73E45 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* );
+0EC0: 00000000 81DF3D45 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
+0EC4: 00000000 31F73E45 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EC8: 00000000 896C4345 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* );
+0ECC: 00000000 F1194345 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
+0ED0: 00000000 556C4345 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0ED4: 00000000 49183F45 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* );
+0ED8: 00000000 49413E45 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
+0EDC: 00000000 65183F45 ;83B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EE0: 00000000 89123F45 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* );
+0EE4: 00000000 99353E45 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
+0EE8: 00000000 A5123F45 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 
 
 

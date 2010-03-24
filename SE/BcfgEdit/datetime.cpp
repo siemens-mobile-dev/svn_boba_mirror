@@ -15,7 +15,7 @@ void AcceptTIinput( BOOK* bk, GUI* data )
 	mbk->cur_hp.time->time.min = TI_GET_MIN( i );
 	mbk->cur_hp.time->time.sec = TI_GET_SEC( i );
 	
-	BookObj_ReturnPage( bk, PREVIOUS_EVENT );
+	BookObj_ReturnPage( bk, ACCEPT_EVENT );
 }
 
 void CloseTIinput( BOOK* bk, GUI*)
@@ -72,7 +72,7 @@ void AcceptDIinput( BOOK* bk, GUI* data )
 	mbk->cur_hp.date->date.mon = TI_GET_MONTH( i );
 	mbk->cur_hp.date->date.day = TI_GET_DAY( i );
 	
-	BookObj_ReturnPage( bk, PREVIOUS_EVENT );
+	BookObj_ReturnPage( bk, ACCEPT_EVENT );
 }
 
 void CloseDIinput( BOOK* bk, GUI* )

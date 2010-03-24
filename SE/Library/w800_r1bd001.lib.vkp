@@ -686,6 +686,7 @@
 0EE0: FFFFFFFF 9556D644 ;83B8: void (*getNOfManyOnDestroy())( DISP_DESC* ); //nullsub(void)
 0EE4: FFFFFFFF 054FEE44 ;83B9: void (*getNOfManyOnCreate())( DISP_DESC* );
 0EE8: FFFFFFFF 9956D644 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EEC: FFFFFFFF 8D48D644 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
 
 
 

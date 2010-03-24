@@ -97,6 +97,8 @@ public:
 	void SoftKeys_ExecuteAction( u16 actionID );   //GUIObject_SoftKeys_ExecuteAction
 	void SoftKeys_RemoveItem( u16 actionID );//GUIObject_SoftKeys_RemoveItem
 	void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ) ); //GUIObject_SoftKeys_SetAction
+	void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID strid );
+	void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID short_text, STRID full_text );
 	void SoftKeys_SetEnable( u16 actionID, int ena );//GUIObject_SoftKeys_SetEnable
 	void SoftKeys_SetInfoText( u16 actionID, STRID );//GUIObject_SoftKeys_SetInfoText
 	void SoftKeys_SetItemAsSubItem( u16 actionID, int subitem );//GUIObject_SoftKeys_SetItemAsSubItem
@@ -342,6 +344,7 @@ public:
 	int GetSelectedItem();
 	void SetFocused( int item );
 	void SetNoItemText( STRID );
+	void DestroyItems();
 };
 
 /////////////////////////////////////////////////////////////////////////

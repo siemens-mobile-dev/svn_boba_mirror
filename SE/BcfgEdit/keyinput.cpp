@@ -97,7 +97,7 @@ const wchar_t* modes[] =
 
 STRID GetKeyModeName( int mode )
 {
-	return mode < MAXELEMS( modes ) ? Str2ID( modes[mode], 0, SID_ANY_LEN ) : LGP_NULL;
+	return mode < MAXELEMS( modes ) ? Str2ID( modes[mode], 0, SID_ANY_LEN ) : EMPTY_SID;
 }
 
 void KeyModeSelect_OnCloseCBoxGui( BOOK* bk, GUI* )
@@ -159,6 +159,8 @@ void KeyCodeSelect_OnBack( BOOK* bk, GUI* )
 {
 	MyBOOK* myBook = (MyBOOK*) bk;
 	FREE_GUI( myBook->key_sel_list );
+        
+        BookObj_ReturnPage( bk, ACCEPT_EVENT );
 }
 
 int KeyCodeSelect_OnEnter( void* , BOOK* bk )

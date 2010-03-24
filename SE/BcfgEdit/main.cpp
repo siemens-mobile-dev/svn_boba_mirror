@@ -10,7 +10,7 @@
 #include "revision.h"
 #include "main.h"
 
-#define MESSAGE( __STR__ ) MessageBox( LGP_NULL, __STR__, NOIMAGE, 1 , 11000, (BOOK*) FindBook( isBcfgEditBook ) );
+#define MESSAGE( __STR__ ) MessageBox( EMPTY_SID, __STR__, NOIMAGE, 1 , 11000, (BOOK*) FindBook( isBcfgEditBook ) );
 
 const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE" =
 {
@@ -258,6 +258,7 @@ void OnSelectCBoxGui( BOOK* bk, GUI* )
 		myBook->cur_hp.cbox->selected = item;
 	
 	FREE_GUI( myBook->cbox_gui );
+        RefreshEdList(bk);
 }
 
 void CreateCBoxGui( MyBOOK* myBook )
@@ -301,12 +302,13 @@ void OnOkCreateUnsignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	if( ui < myBook->cur_hp.unsignedint->min || ui > myBook->cur_hp.unsignedint->max || *_Geterrno() == ERANGE )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min: %u\nmax: %u", myBook->cur_hp.unsignedint->min, myBook->cur_hp.unsignedint->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
 		myBook->cur_hp.unsignedint->unsignedint = ui;
 		FREE_GUI( myBook->text_input );
+                RefreshEdList(bk);
 	}
 }
 
@@ -342,12 +344,13 @@ void OnOkCreateSignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	if( i < (int) myBook->cur_hp.signedint->min || i > (int) myBook->cur_hp.signedint->max || *_Geterrno() == ERANGE )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min: %d\nmax: %d", myBook->cur_hp.signedint->min, myBook->cur_hp.signedint->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
 		myBook->cur_hp.signedint->signedint = i;
 		FREE_GUI( myBook->text_input );
+                RefreshEdList(bk);
 	}
 }
 
@@ -377,12 +380,13 @@ void OnOkCreateWinOrPassGui( BOOK* bk, wchar_t* string, int len )
 	if( len < myBook->cur_hp.str->min || len > myBook->cur_hp.str->max )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min_string_len: %d\nmax_string_len: %d", myBook->cur_hp.str->min, myBook->cur_hp.str->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
 		unicode2win1251( &myBook->cur_hp.str->chars[0], string, myBook->cur_hp.str->max );
 		FREE_GUI( myBook->text_input );
+                RefreshEdList(bk);
 	}
 }
 
@@ -422,13 +426,14 @@ void OnOkCreateUnicodeGui( BOOK* bk, wchar_t* string, int len )
 	if( len < myBook->cur_hp.wstr->min || len > myBook->cur_hp.wstr->max )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min_string_len: %d\nmax_string_len: %d", myBook->cur_hp.wstr->min, myBook->cur_hp.wstr->max );
-		MessageBox( LGP_NULL, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
 		// unicode2win1251( ( char*)hp + sizeof( CFG_HDR ), string, hp->max );
 		wstrncpy( &myBook->cur_hp.wstr->chars[0], string, myBook->cur_hp.wstr->max - 1 );
 		FREE_GUI( myBook->text_input );
+                RefreshEdList(bk);
 	}
 }
 
@@ -565,7 +570,7 @@ void OnSelect1GuiBcfg( BOOK* bk, GUI* )
 STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 {
 	wchar_t ustr[64];
-	STRID str_id = LGP_NULL;
+	STRID str_id = EMPTY_SID;
 	if( hp )
 	{
 		switch( hp->type )
@@ -663,12 +668,12 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 // устанавливаем тексты в пунктах меню
 int onLBMessage( GUI_MESSAGE* msg )
 {
-	MyBOOK* myBook = (MyBOOK*) FindBook( isBcfgEditBook );
+	MyBOOK* myBook = (MyBOOK*) GUIonMessage_GetBook( msg );
 	
 	switch( GUIonMessage_GetMsg( msg ) )
 	{
 		// onCreateListItem
-	case 1:
+	case LISTMSG_GetItem:
 		int item = GUIonMessage_GetCreatedItemIndex( msg );
 		CFG_HDR* hp = (CFG_HDR*) List_Get( myBook->list, item );
 		wchar_t ustr[32];
@@ -677,7 +682,7 @@ int onLBMessage( GUI_MESSAGE* msg )
 		GUIonMessage_SetMenuItemInfoText( msg, Str2ID( ustr, 0, SID_ANY_LEN ) );
 		int str_id = GetSubItemText( myBook, hp );
 		
-		if( str_id == LGP_NULL ) 
+		if( str_id == EMPTY_SID ) 
 			str_id = Str2ID ( L"Хрень", 0, SID_ANY_LEN );
 		
 		GUIonMessage_SetMenuItemSecondLineText( msg, str_id );
@@ -717,9 +722,21 @@ GUI_LIST* CreateGuiList( MyBOOK* bk, int set_focus )
 	SetMenuItemStyle( lo, 3 );
 	ListMenu_SetItemTextScroll( lo, 1 );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_BACK, OnBackBcfgGui );
+        GUIObject_SoftKeys_SetAction( lo, ACTION_LONG_BACK, OnBackBcfgGui );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_SELECT1, OnSelect1GuiBcfg );
 	return lo;
 };
+
+
+void RefreshEdList(BOOK * bk)
+{
+  MyBOOK* mbk = (MyBOOK*) bk;
+  int pos = ListMenu_GetSelectedItem(mbk->bcfg);
+  ListMenu_DestroyItems(mbk->bcfg);
+  ListMenu_SetItemCount( mbk->bcfg, mbk->list->FirstFree );
+  ListMenu_SetCursorToItem( mbk->bcfg, pos );
+  GUIObject_SoftKeys_SetVisible( mbk->bcfg, ACTION_SELECT1, 1 );
+}
 
 
 GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
@@ -936,6 +953,12 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 	return gui;
 }
 
+static int RecreateEdPage( void* mess , BOOK* bk )
+{
+        RefreshEdList(bk);
+        return 1;
+}
+
 
 static int CreateEdPageOnCreate( void* mess , BOOK* bk )
 {
@@ -949,6 +972,7 @@ static int CreateEdPageOnCreate( void* mess , BOOK* bk )
 const PAGE_MSG bk_msglst_editor[] @ "DYN_PAGE" =
 {
 	PAGE_ENTER_EVENT_TAG, CreateEdPageOnCreate,
+        ACCEPT_EVENT_TAG, RecreateEdPage,
 	NIL_EVENT_TAG, NULL
 };
 
@@ -969,7 +993,7 @@ static int ShowAuthorInfo( void* mess , BOOK* book )
 	MSG* msg = ( MSG*)mess;
 	wchar_t ustr[64];
 	snwprintf( ustr, MAXELEMS( ustr ) - 1, L"\nBcfgEdit v1.0\nRevision %d\n( c ) Rst7, KreN, Hussein", __SVN_REVISION__ );
-	MessageBox( LGP_NULL, Str2ID( ustr, 0, MAXELEMS( ustr ) - 1 ), NOIMAGE, 1 , 5000, msg->book );
+	MessageBox( EMPTY_SID, Str2ID( ustr, 0, MAXELEMS( ustr ) - 1 ), NOIMAGE, 1 , 5000, msg->book );
 	return 1;
 }
 

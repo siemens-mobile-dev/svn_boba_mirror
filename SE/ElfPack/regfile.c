@@ -166,8 +166,8 @@ __arm void ELFExtrRegister(EP_DATA * epd)
 #endif
   DB_EXT_FOLDERS * dbfolders = malloc(sizeof(DB_EXT_FOLDERS)*efnum--);
   //last empty record
-  dbfolders[efnum].StrID_FolderName = 0x6FFFFFFF;
-  dbfolders[efnum].StrID_SavedTo = 0x6FFFFFFF;
+  dbfolders[efnum].StrID_FolderName = EMPTY_SID;
+  dbfolders[efnum].StrID_SavedTo = EMPTY_SID;
   dbfolders[efnum].Path = NULL;
   dbfolders[efnum--].isInternal = NULL;
   //internal folder
