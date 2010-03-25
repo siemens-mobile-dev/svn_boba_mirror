@@ -123,7 +123,7 @@ void CGameDisp::onDestroy()
 	delete gameptr;
 }
 
-void CGameDisp::onCreate()
+int CGameDisp::onCreate()
 {
 	isondraw = false;
 	gameptr = NULL;
@@ -137,6 +137,8 @@ void CGameDisp::onCreate()
 
 	SetRefreshTimer( TIMEINTERVAL );
 	StartGame();
+
+	return 1;
 }
 
 void CGameDisp::onRefresh()

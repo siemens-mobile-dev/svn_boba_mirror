@@ -23,7 +23,7 @@ public:
 	void onDraw(int a,int b,int c);
 	
 	void onDestroy();
-	void onCreate();
+	int onCreate();
 	void onRefresh();
 };
 

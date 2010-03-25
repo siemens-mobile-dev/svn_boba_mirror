@@ -38,3 +38,6 @@
 
 // UIHook
 -Z(CODE)PATCH_PageAction=452AD1DC-452AD1E3
+
+// TabMenuBar check
+-Z(CODE)PATCH_TabMenuCheck=45365DA0-45365DA7

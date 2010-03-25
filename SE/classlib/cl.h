@@ -234,9 +234,9 @@ private:
 	{
 		db->onDraw( a, b, c );
 	}
-	static void __onCreate(T* db)
+	static int __onCreate(T* db)
 	{
-		db->onCreate();
+		return db->onCreate();
 	}
 	static void __onDestroy(T* db)
 	{
@@ -245,6 +245,10 @@ private:
 	static void __onRefresh(T* db)
 	{
 		db->onRefresh();
+	}
+	static void __onLayout(T* db)
+	{
+		db->onLayout();
 	}
 public:
 	static void DispDescCreate(DISP_DESC *desc)
@@ -256,14 +260,19 @@ public:
 		DISP_DESC_SetOnRedraw(desc,(DISP_OBJ_ONREDRAW_METHOD)__onDraw);
 		DISP_DESC_SetOnKey(desc, (DISP_OBJ_ONKEY_METHOD)__onKey );
 		DISP_DESC_SetOnRefresh(desc,(DISP_OBJ_METHOD)__onRefresh);
+		DISP_DESC_SetOnLayout(desc,(DISP_OBJ_METHOD)__onLayout);
 	}
 
 	static char* getName();
+	int onCreate()
+	{
+		return 1;
+	}
 	void onKey(int key,int,int repeat,int type){}
 	void onDraw(int a,int b,int c){}
-	void onCreate(){}
 	void onDestroy(){}
 	void onRefresh(){}
+	void onLayout(){}
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -284,8 +293,8 @@ public:
 	CGuiT(CBook* book, int display)
 	{
 		GUIObject_Create(this, (void(*)(GUI*))__onclose, (void(*)(DISP_DESC*))T::DispDescCreate, book,
-					 0, display, sizeof(CGuiBase) );
-		
+						 0, display, sizeof(CGuiBase) );
+
 		if(book)
 			book->AddGUIObject(this);
 	}

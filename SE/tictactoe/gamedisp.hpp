@@ -25,7 +25,7 @@ public:
 	void onRefresh();
 
 	void onDestroy();
-	void onCreate();
+	int onCreate();
 
 	void Touch(int n);
 	void StartGame(void);

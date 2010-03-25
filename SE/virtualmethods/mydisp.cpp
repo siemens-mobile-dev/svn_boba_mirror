@@ -35,7 +35,7 @@ void CMyDisp::onDestroy()
 	}
 }
 
-void CMyDisp::onCreate()
+int CMyDisp::onCreate()
 {
 	isondraw = false;
 	
@@ -48,6 +48,8 @@ void CMyDisp::onCreate()
 	}
 	
 	SetRefreshTimer( TIMEINTERVAL );
+
+	return 1;
 }
 
 void CMyDisp::onDraw(int a,int b,int c)

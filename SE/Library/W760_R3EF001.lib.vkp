@@ -198,7 +198,7 @@
 073C: 00000000 49D6A610 ; 1CF: void GUIInput_SetIcon( GUI* , wchar_t icon );
 0740: 00000000 85239310 ; 1D0: int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 0744: 00000000 0C7ABC4B ;81D1: PAudioControl* GetAudioControlPtr( );
-0748: 00000000 D92D5F11 ; 1D2: int AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
+0748: 00000000 19305F11 ; 1D2: int AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
 074C: 00000000 E5639F10 ; 1D3: int GetVolumeSize( wchar_t* root_folder, VOLUMESIZE* );
 0750: 00000000 256BB211 ; 1D4: GUI_NOFMANY* CreateNOfMany( BOOK* book );
 0754: 00000000 296DB211 ; 1D5: void NOfMany_SetTexts( GUI_NOFMANY*, STRID* strids, int items_count );

@@ -3,6 +3,8 @@
 #ifdef W810_R4EA031
         CODE32
 
+TABMENUBAR_NAME EQU 0x449600AF //getTabMenuBarOnDescCreate
+
 defadr  MACRO   a,b
         PUBLIC  a
 a       EQU     b
@@ -103,5 +105,29 @@ DBEXT:
         RSEG   PATCH_DB2
         CODE16
         BL       DBEXT
+
+        RSEG   CODE
+        CODE16
+
+TabMenuCheck:
+        PUSH    {LR}
+        LDR     R0, [R0, #0] //GUIObject_GetDispObject
+        LDR     R0, [R0, #8] //DispObject_GetName ptr1
+        LDR     R0, [R0, #0] //DispObject_GetName ptr2
+        LDR     R1, =TABMENUBAR_NAME
+        CMP     R0, R1
+        BNE     TabMenuCheck_false
+        MOV     R0, #1
+        POP     {PC}
+TabMenuCheck_false:                     
+        MOV     R0, #0
+        POP     {PC}
+
+
+        RSEG   PATCH_TabMenuCheck
+        CODE16
+        LDR     R3, =TabMenuCheck
+        BX      R3
+
 #endif
         END

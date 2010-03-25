@@ -4,6 +4,7 @@
         CODE32
 
 EXT_TABLE EQU 0x45A4E168
+TABMENUBAR_NAME EQU 0x45B42900 //getTabMenuBarOnDescCreate
 
 defadr  MACRO   a,b
         PUBLIC  a
@@ -11,15 +12,15 @@ a       EQU     b
         ENDM
 
         RSEG  CODE
-        defadr   STANDBY_RET,PATCH_STANDBY_CALL_start+8
-        defadr   DB_PATCH_RET,PATCH_DB1_start+8
-        defadr   DB_EXT_RET, PATCH_DB2_start+8
-        defadr   DB_PATCH3_RET,PATCH_DB3_start+0x0A
-        defadr   DB_PATCH4_RET,PATCH_DB4_start+8
-        defadr   MESS_HOOK_RET,PATCH_MMI_MESSAGE_HOOK_start+8
-        defadr   PAGE_ACTION_RET,PATCH_PageAction_start+8
+STANDBY_RET	equ	PATCH_STANDBY_CALL_start+8
+DB_PATCH_RET	equ	PATCH_DB1_start+8
+DB_EXT_RET	equ	PATCH_DB2_start+8
+DB_PATCH3_RET	equ	PATCH_DB3_start+0x0A
+DB_PATCH4_RET	equ	PATCH_DB4_start+8
+MESS_HOOK_RET	equ	PATCH_MMI_MESSAGE_HOOK_start+8
+PAGE_ACTION_RET	equ	PATCH_PageAction_start+8
 
-        defadr  memalloc,0x44E35A08+1
+	defadr	memalloc,0x44E35A08+1
         defadr  memfree,0x44E35A34+1
 // --- CreateLists ---
 
@@ -191,5 +192,28 @@ PATCH_DB4_start:
         RSEG   CUT_PRINT_BUF_SIZE3(2)
         DATA
         DCD    0xC351-0x1000
+
+
+        RSEG   CODE
+        CODE16
+TabMenuCheck:
+        PUSH    {LR}
+        LDR     R0, [R0, #0] //GUIObject_GetDispObject
+        LDR     R0, [R0, #8] //DispObject_GetName ptr1
+        LDR     R0, [R0, #0] //DispObject_GetName ptr2
+        LDR     R1, =TABMENUBAR_NAME
+        CMP     R0, R1
+        BNE     TabMenuCheck_false
+        MOV     R0, #1
+        POP     {PC}
+TabMenuCheck_false:                     
+        MOV     R0, #0
+        POP     {PC}
+
+
+        RSEG   PATCH_TabMenuCheck
+        CODE16
+        LDR     R3, =TabMenuCheck
+        BX      R3
 #endif
         END
