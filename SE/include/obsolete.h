@@ -127,6 +127,7 @@ DEPRECATE(void,MediaPlayer_SoftKey_AddHelpStr,MediaPlayer_SoftKeys_AddHelpStr)
 DEPRECATE(void,MediaPlayer_SoftKey_SetAction,MediaPlayer_SoftKeys_SetAction)
 DEPRECATE(void,MediaPlayer_SoftKey_SetItemAsSubItem,MediaPlayer_SoftKeys_SetItemAsSubItem)
 DEPRECATE(void,MediaPlayer_SoftKey_SetText,MediaPlayer_SoftKeys_SetText)
+DEPRECATE(void,SetMenuItemStyle,ListMenu_SetItemStyle)
 
 #else
 
@@ -253,6 +254,7 @@ DEPRECATE(void,MediaPlayer_SoftKey_SetText,MediaPlayer_SoftKeys_SetText)
 #define MediaPlayer_SoftKey_SetAction MediaPlayer_SoftKeys_SetAction
 #define MediaPlayer_SoftKey_SetItemAsSubItem MediaPlayer_SoftKeys_SetItemAsSubItem
 #define MediaPlayer_SoftKey_SetText MediaPlayer_SoftKeys_SetText
+#define SetMenuItemStyle ListMenu_SetItemStyle
 
 #endif
 

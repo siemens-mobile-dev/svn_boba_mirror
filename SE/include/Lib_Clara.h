@@ -251,7 +251,7 @@ __swi __arm void DispObject_SetTitleText( DISP_OBJ* , STRID );
 __swi __arm int ListMenu_GetSelectedItem( GUI_LIST* );
 
 #pragma swi_number=0x13F
-__swi __arm void SetMenuItemStyle( void* obj, int style );
+__swi __arm void ListMenu_SetItemStyle( GUI_LIST*, int style );
 
 #pragma swi_number=0x140
 __swi __arm void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
@@ -1732,5 +1732,20 @@ __swi __arm void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 
 #pragma swi_number=0x3BB
 __swi __arm void ListMenu_DestroyItems( GUI_LIST* );
+
+#pragma swi_number=0x3BC
+__swi __arm void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
+#pragma swi_number=0x3BD
+__swi __arm void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
+#pragma swi_number=0x3BE
+__swi __arm void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
+
+#pragma swi_number=0x3BF
+__swi __arm void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
+#pragma swi_number=0x3C0
+__swi __arm void GUIObject_SetBacklightTimeout( GUI*, int time );
+
+#pragma swi_number=0x3C1
+__swi __arm void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
 
 #endif

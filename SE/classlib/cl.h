@@ -40,16 +40,19 @@ public:
 	WINDOW* GetWindow();                  //DispObject_GetWindow
 
 	/*
-	LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
-	u16 DISP_DESC_GetSize( DISP_OBJ* );
-	void DispObject_GetRect( DISP_OBJ*, RECT* );
-	void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
-	void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
-	void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
-	void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
-	void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
-	void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
-	void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
+        LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
+        u16 DISP_DESC_GetSize( DISP_OBJ* );
+        void DispObject_GetRect( DISP_OBJ*, RECT* );
+        void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
+        void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
+        void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
+        void DispObject_SetScrollBarBackgroundColor(void *disp_obj,int color);
+        void DispObject_SetScrollBarColor(void *disp_obj,int color);
+        void DispObject_SetSoftkeysColor(void *disp_obj,int color);
+        void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
+        void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
+        void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
+        void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
 
 	DISP_OBJ_METHOD DispObject_GetMethod04( DISP_OBJ* );
 	DISP_OBJ_METHOD DispObject_GetMethod05( DISP_OBJ* );
@@ -77,35 +80,36 @@ public:
 class CGuiBase: public GUI
 {
 public:
-	CBookBase* GetBook();                         //GUIObject_GetBook
-	CDispObjBase* GetDISPObj();                   //GUIObject_GetDispObject
-	CGuiBase* Free();                             //GUIObject_Destroy
-	void SetBackgroundImage(wchar_t imageID);     //GUIObject_SetBackgroundImage
-	void SetCursorImage(wchar_t imageID);         //GUIObject_SetCursorImage
-	void SetFocus (int i);                        //GUIObject_SetFocus
-	void SetStyle(int style);                     //GUIObject_SetStyle
-	void SetTitleIcon(wchar_t imageID);           //GUIObject_SetTitleIcon
-	void SetTitleImage(wchar_t imageID);          //GUIObject_SetTitleBackgroundImage
-	void SetTitleText(STRID strid);                 //GUIObject_SetTitleText
-	void SetTitleType(int type);                  //GUIObject_SetTitleType
-	void Show();                                  //GUIObject_Show
-	void SoftKeys_Hide();                         //GUIObject_SoftKeys_Hide
-	void SoftKeys_RemoveBackground();             //GUIObject_SoftKeys_RemoveBackground
-	void SoftKeys_RestoreBackground();            //GUIObject_SoftKeys_RestoreBackground
-	void SoftKeys_Show();                         //GUIObject_SoftKeys_Show
-	void SoftKeys_AddErrorStr( u16 actionID, STRID );//GUIObject_SoftKeys_AddErrorStr
-	void SoftKeys_ExecuteAction( u16 actionID );   //GUIObject_SoftKeys_ExecuteAction
-	void SoftKeys_RemoveItem( u16 actionID );//GUIObject_SoftKeys_RemoveItem
-	void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ) ); //GUIObject_SoftKeys_SetAction
-	void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID strid );
-	void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID short_text, STRID full_text );
-	void SoftKeys_SetEnable( u16 actionID, int ena );//GUIObject_SoftKeys_SetEnable
-	void SoftKeys_SetInfoText( u16 actionID, STRID );//GUIObject_SoftKeys_SetInfoText
-	void SoftKeys_SetItemAsSubItem( u16 actionID, int subitem );//GUIObject_SoftKeys_SetItemAsSubItem
-	void SoftKeys_SetText( u16 actionID, STRID );  //GUIObject_SoftKeys_SetText
-	void SoftKeys_SetTexts( u16 actionID, STRID short_text, STRID full_text );//GUIObject_SoftKeys_SetTexts
-	void SoftKeys_SetVisible( u16 actionID, int visible );//GUIObject_SoftKeys_SetVisible
-	void SoftKeys_SuppressDefaultAction( u16 actionID );//GUIObject_SoftKeys_SuppressDefaultAction
+        CBookBase* GetBook();                         //GUIObject_GetBook
+        CDispObjBase* GetDISPObj();                   //GUIObject_GetDispObject
+        CGuiBase* Free();                             //GUIObject_Destroy
+        void SetBackgroundImage(wchar_t imageID);     //GUIObject_SetBackgroundImage
+        void SetBacklightTimeout( int time );	      //GUIObject_SetBacklightTimeout
+        void SetCursorImage(wchar_t imageID);         //GUIObject_SetCursorImage
+        void SetFocus (int i);                        //GUIObject_SetFocus
+        void SetStyle(int style);                     //GUIObject_SetStyle
+        void SetTitleIcon(wchar_t imageID);           //GUIObject_SetTitleIcon
+        void SetTitleImage(wchar_t imageID);          //GUIObject_SetTitleBackgroundImage
+        void SetTitleText(STRID strid);                 //GUIObject_SetTitleText
+        void SetTitleType(int type);                  //GUIObject_SetTitleType
+        void Show();                                  //GUIObject_Show
+        void SoftKeys_AddErrorStr( u16 actionID, STRID );//GUIObject_SoftKeys_AddErrorStr
+        void SoftKeys_ExecuteAction( u16 actionID );   //GUIObject_SoftKeys_ExecuteAction
+        void SoftKeys_Hide();                         //GUIObject_SoftKeys_Hide
+        void SoftKeys_RemoveBackground();             //GUIObject_SoftKeys_RemoveBackground
+        void SoftKeys_RemoveItem( u16 actionID );//GUIObject_SoftKeys_RemoveItem
+        void SoftKeys_RestoreBackground();            //GUIObject_SoftKeys_RestoreBackground
+        void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ) ); //GUIObject_SoftKeys_SetAction
+        void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID short_text, STRID full_text );
+        void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID strid );
+        void SoftKeys_SetEnable( u16 actionID, int ena );//GUIObject_SoftKeys_SetEnable
+        void SoftKeys_SetInfoText( u16 actionID, STRID );//GUIObject_SoftKeys_SetInfoText
+        void SoftKeys_SetItemAsSubItem( u16 actionID, int subitem );//GUIObject_SoftKeys_SetItemAsSubItem
+        void SoftKeys_SetText( u16 actionID, STRID );  //GUIObject_SoftKeys_SetText
+        void SoftKeys_SetTexts( u16 actionID, STRID short_text, STRID full_text );//GUIObject_SoftKeys_SetTexts
+        void SoftKeys_SetVisible( u16 actionID, int visible );//GUIObject_SoftKeys_SetVisible
+        void SoftKeys_Show();                         //GUIObject_SoftKeys_Show
+        void SoftKeys_SuppressDefaultAction( u16 actionID );//GUIObject_SoftKeys_SuppressDefaultAction
 	/*
 	void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 	void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
@@ -136,6 +140,10 @@ public:
 	int MainInput_isPlus( GUI* );
 	int MainInput_strlen( GUI* );
 	void MainInput_Hide( GUI* );
+
+	void YesNoQuestion_SetIcon(GUI*, wchar_t iconId);
+
+	void ListMenu_SetHotkeyMode(GUI*, int mode);
 	*/
 };
 

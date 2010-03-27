@@ -719,7 +719,7 @@ GUI_LIST* CreateGuiList( MyBOOK* bk, int set_focus )
 	ListMenu_SetItemCount( lo, bk->list->FirstFree );
 	ListMenu_SetOnMessage( lo, onLBMessage );
 	ListMenu_SetCursorToItem( lo, set_focus );
-	SetMenuItemStyle( lo, 3 );
+	ListMenu_SetItemStyle( lo, 3 );
 	ListMenu_SetItemTextScroll( lo, 1 );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_BACK, OnBackBcfgGui );
         GUIObject_SoftKeys_SetAction( lo, ACTION_LONG_BACK, OnBackBcfgGui );

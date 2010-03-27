@@ -743,9 +743,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm void JavaSession_Manager( int cmd );
 //__swi __arm void ListMenu_DestroyItems( GUI_LIST* );
 //__swi __arm int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
-//__swi __arm int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
 //__swi __arm void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
-//__swi __arm void* LoadDLL( wchar_t* DllName );
 //__swi __arm char* MainInput_getPNUM( GUI* );
 //__swi __arm void MakeVoiceCall( int SessioID, void* vc, int flag );
 //__swi __arm void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
@@ -757,7 +755,6 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
 //__swi __arm wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
 //__swi __arm int MetaData_Desc_GetTrackNum( void* MetaData_Desc, int __NULL );
-//__swi __arm int ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
 //__swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
 //__swi __arm void PNUM2str( char* str, void* pnum, int len, int max_len );
 //__swi __arm int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
@@ -792,7 +789,6 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm void Timer_Kill( u16* timerID );
 //__swi __arm void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* );
 //__swi __arm u16 Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void* );
-//__swi __arm int UnLoadDLL( void* DllData );
 //__swi __arm void VCALL_Init( void* vc );
 //__swi __arm void VCALL_SetHZ1( void* vc, int, u16 );
 //__swi __arm void VCALL_SetHZ2( void* vc, u16 );
@@ -800,6 +796,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm void VCALL_SetNumber( void* vc, wchar_t* number, unsigned short num_len );
 //__swi __arm void* WaitMessage( void* SIGSEL );
 //__swi __arm C_INTERFACE* Window_GetComponentInterface( WINDOW* );
+//__swi __arm void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 //__swi __arm PROCESS create_process( int proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
 //__swi __arm PROCESS current_process( void );
 //__swi __arm void free_buf( union SIGNAL** sig );

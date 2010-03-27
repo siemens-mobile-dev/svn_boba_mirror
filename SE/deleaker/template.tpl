@@ -85,6 +85,9 @@ skip DispObject_KillRefreshTimer
 skip DispObject_SetLayerColor
 skip DispObject_SetListTextColor
 skip DispObject_SetRefreshTimer
+skip DispObject_SetScrollBarBackgroundColor
+skip DispObject_SetScrollBarColor
+skip DispObject_SetSoftkeysColor
 skip DispObject_SetTitleTextColor
 skip DispObject_Show
 skip DispObject_SoftKeys_Get
@@ -178,6 +181,7 @@ skip GoMusic
 skip GUIObject_Create
 skip GUIObject_GetBook
 skip GUIObject_GetDispObject
+skip GUIObject_SetBacklightTimeout
 skip GUIObject_SetFocus
 skip GUIObject_SetListTextColor
 skip GUIObject_SetStyle
@@ -250,7 +254,10 @@ skip lang_get_name
 skip LastExtDB
 skip ListMenu_GetSelectedItem
 skip ListMenu_SetCursorToItem
+skip ListMenu_SetHotkeyMode
 skip ListMenu_SetItemCount
+skip ListMenu_SetItemStyle
+skip ListMenu_SetItemTextScroll
 skip ListMenu_SetOnMessage
 skip List_DestroyElements
 skip List_Find
@@ -329,7 +336,6 @@ skip sender
 skip SESSION_GetTopBook
 skip SetFont
 skip SetLampLevel
-skip SetMenuItemStyle
 skip SetTheme
 skip Settings_ShowNumber_Get
 skip SetTrayIcon

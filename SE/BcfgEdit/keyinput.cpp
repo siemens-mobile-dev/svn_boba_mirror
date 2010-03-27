@@ -186,7 +186,7 @@ int KeyCodeSelect_OnEnter( void* , BOOK* bk )
 	ListMenu_SetSecondLineText( lo, 1, Str2ID( modes[ mbk->cur_hp.key->keymode ], 0, SID_ANY_LEN ) );
 	
 	ListMenu_SetCursorToItem( lo, 0 );
-	SetMenuItemStyle( lo, 1 );
+	ListMenu_SetItemStyle( lo, 1 );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_SELECT1, KeyCodeSelect_onEnterPressed );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_BACK, KeyCodeSelect_OnBack );
 	GUIObject_Show( lo );

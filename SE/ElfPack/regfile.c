@@ -48,23 +48,10 @@ DB_EXT * CreateDbExt()
   db_ext->unk3 = 0;
   return (DB_EXT*)db_ext;
 }
-/*
-//рабочая
-void AddDbExt(DB_EXT * db_ext)
-{
-  __get_epd;
-  int db_ext_count = 0;
-  while  (epd->dbe[db_ext_count++] != LastExtDB());
-  DB_EXT ** db_ext_list = malloc((db_ext_count+1)*sizeof(DB_EXT*));
-  memcpy(db_ext_list+1, epd->dbe, db_ext_count*4);
-  db_ext_list[0] = db_ext;
-  mfree(epd->dbe);
-  epd->dbe = db_ext_list;
-}
-*/
+
 __root void GetMethods(SUB_EXECUTE * sub_execute)
 {
-  sub_execute->filesub = getepd()->elf_ext_m;
+	sub_execute->filesub = getepd()->elf_ext_m;
 }
 
 __arm int SetSmallIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)

@@ -126,7 +126,6 @@ __thumb int RemoveUserData(void (*constr)(void *, void *))
 
 __thumb void * malloc (int size)
 {
-//previous versions had separate ifdefs for each FW-version
 #ifndef DB2020  
   return(memalloc(size,1,5,"SwiLib",0));
 #else
@@ -136,7 +135,6 @@ __thumb void * malloc (int size)
 
 __thumb void mfree (void * mem)
 {
-//previous versions had separate ifdefs for each FW-version
 #ifndef DB2020
   memfree(mem,"SwiLib",0);
 #else
@@ -524,29 +522,6 @@ __thumb void Init()
   _printf("     Exit Init")  ;
 }
 
-/*
-static void _ELF_RemoveFromList(int dummy, void *elf_begin)
-{
-__get_epd;
-LIST * List=epd->elflist;
-ELF_DESC * ed = ListElement_Remove(List,ListElement_Prt2NumElement(List,elf_begin));
-//  mfree(ed->fname);
-mfree(ed);
-_printf("     _ELF_RemoveFromList OK..");
-
-}
-*/
-/*
-void ELF_RemoveFromList(void *elf_begin)
-{
-
-void MMIPROCExec (void(*PROC)(int,void*),int p1 , void * p2);
-
-_printf("     MMIPROCExec(_ELF_RemoveFromList,0,%x)",elf_begin)  ;
-
-MMIPROCExec(_ELF_RemoveFromList,0,elf_begin);
-}
-*/
 __root  const int PATCH_AUTO_RUN @ "PATCH_AUTO_RUN" =(int)PAGE_ENTER_EVENT;
 __root  const int PATCH_AUTO_RUN1 @ "PATCH_AUTO_RUN1" =(int)Init;
 

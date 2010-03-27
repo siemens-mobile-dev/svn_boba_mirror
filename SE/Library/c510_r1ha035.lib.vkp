@@ -6,7 +6,7 @@
 ;pAtChFiLe=/boot/phone_app.cxc
 
 +15D96C00
-0448: 00000000 801CB314 ; 112: void memset( void* mem, char chr, int size );
+0448: 00000000 801CB314 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 94AD2814 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 155D4014 ; 114: int sprintf( char* buf, const char* fmt, ... );
 0454: 00000000 C5EB3E14 ; 115: int snwprintf( wchar_t* buffer, int size, const wchar_t* fmt, ... );
@@ -51,7 +51,7 @@
 04F0: 00000000 B5C84C14 ; 13C: void GUIonMessage_SetMenuItemIcon( GUI_MESSAGE* msg, int align, wchar_t iconID );
 04F4: 00000000 FDF94314 ; 13D: void DispObject_SetTitleText( DISP_OBJ* , STRID );
 04F8: 00000000 F9002814 ; 13E: int ListMenu_GetSelectedItem( GUI_LIST* );
-04FC: 00000000 F19B0B14 ; 13F: void SetMenuItemStyle( void* obj, int style );
+04FC: 00000000 F19B0B14 ; 13F: void ListMenu_SetItemStyle( GUI_LIST*, int style );
 ;0500: xxxxxxxx yyyyyyyy ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
 0504: 00000000 D9224814 ;8141: IS_NEEDED_BOOK isScreenSaverBook( void );
 0508: 00000000 F19E3014 ; 142: void StatusIndication_SetItemText( GUI* , int item, STRID );
@@ -100,7 +100,7 @@
 05B4: 00000000 9D9C4B14 ; 16D: int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE( const int* sync, u16* IMAGEHANDLE, char* unk );
 05B8: 00000000 494E0C14 ; 16E: void REQUEST_DATEANDTIME_GET( const int* sync, DATETIME* dt );
 05BC: 00000000 D52F3F14 ; 16F: void IndicationDevice_Backlight_FadeToLevel( int unk_zero, int bl_level );
-05C0: 00000000 E9871B14 ; 170: int GetFreeBytesOnHeap( void ); //nullsub(ret 0)
+05C0: 00000000 E9882114 ; 170: int GetFreeBytesOnHeap( void );
 05C4: 00000000 C5532714 ; 171: void BookObj_Hide( BOOK* book, int display_type );
 05C8: 00000000 D58C0214 ; 172: void BookObj_Show( BOOK* book, int display_type );
 05CC: 00000000 71BCE614 ; 173: void StartAPP( const wchar_t* appname );
@@ -688,6 +688,12 @@
 0EE4: 00000000 9103F914 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 19700114 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 85092814 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
+;0EF0: xxxxxxxx yyyyyyyy ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
+;0EF4: xxxxxxxx yyyyyyyy ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
+;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
+0EFC: 00000000 29743314 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
+0F00: 00000000 810B2F14 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
+;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
 
 
 

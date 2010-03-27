@@ -70,15 +70,6 @@ __swi __arm int  __original_ModifyUIHook( int event, int (*PROC)( UI_MESSAGE* ),
 #pragma swi_number=0x10D
 __swi __arm int  __original_elfload( const wchar_t* filename, void* param1, void* param2, void* param3 );
 
-#pragma swi_number=0x10E
-__swi __arm void*  __original_LoadDLL( wchar_t* DllName );
-
-#pragma swi_number=0x10F
-__swi __arm int  __original_UnLoadDLL( void* DllData );
-
-#pragma swi_number=0x110
-__swi __arm int  __original_ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
-
 #pragma swi_number=0x112
 __swi __arm void*  __original_memset( void* mem, char chr, int size );
 
@@ -222,7 +213,7 @@ __swi __arm void  __original_DispObject_SetTitleText( DISP_OBJ* , STRID );
 __swi __arm int  __original_ListMenu_GetSelectedItem( GUI_LIST* );
 
 #pragma swi_number=0x13F
-__swi __arm void  __original_SetMenuItemStyle( void* obj, int style );
+__swi __arm void  __original_ListMenu_SetItemStyle( GUI_LIST*, int style );
 
 #pragma swi_number=0x140
 __swi __arm void  __original_GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
@@ -1671,4 +1662,19 @@ __swi __arm void  __original_MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, 
 //__swi __arm void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 #pragma swi_number=0x3BB
 __swi __arm void  __original_ListMenu_DestroyItems( GUI_LIST* );
+
+#pragma swi_number=0x3BC
+__swi __arm void  __original_DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
+#pragma swi_number=0x3BD
+__swi __arm void  __original_DispObject_SetScrollBarColor( DISP_OBJ*, int color );
+#pragma swi_number=0x3BE
+__swi __arm void  __original_DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
+
+#pragma swi_number=0x3BF
+__swi __arm void  __original_YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
+#pragma swi_number=0x3C0
+__swi __arm void  __original_GUIObject_SetBacklightTimeout( GUI*, int time );
+
+#pragma swi_number=0x3C1
+__swi __arm void  __original_ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
 
