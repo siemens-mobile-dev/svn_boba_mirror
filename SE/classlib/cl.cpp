@@ -228,7 +228,7 @@ void CGuiBase::SoftKeys_RestoreBackground()
 	::GUIObject_SoftKeys_RestoreBackground( this );
 }
 
-void CGuiBase::SetBacklightTimeout( int time );
+void CGuiBase::SetBacklightTimeout( int time )
 {
 	::GUIObject_SetBacklightTimeout( this, time );
 }
