@@ -674,17 +674,17 @@
 0EB0: 00000000 25C10C14 ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 0EB4: 00000000 25CA2714 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 BD348D15 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
-0EBC: 00000000 C9C73914 ;83AF: void (*getListMenuOnDestroy())( DISP_DESC* ); //nullsub(void)
-0EC0: 00000000 C1932914 ;83B0: void (*getListMenuOnCreate())( DISP_DESC* );
+0EBC: 00000000 C9C73914 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* ); //nullsub(void)
+0EC0: 00000000 C1932914 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
 0EC4: 00000000 D5382814 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EC8: 00000000 61043B14 ;83B2: void (*getTabMenuBarOnDestroy())( DISP_DESC* ); //nullsub(void)
-0ECC: 00000000 B9982914 ;83B3: void (*getTabMenuBarOnCreate())( DISP_DESC* );
+0EC8: 00000000 61043B14 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
+0ECC: 00000000 B9982914 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
 0ED0: 00000000 C9981214 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0ED4: 00000000 B94E1514 ;83B5: void (*getOneOfManyOnDestroy())( DISP_DESC* ); //nullsub(void)
-0ED8: 00000000 F9293814 ;83B6: void (*getOneOfManyOnCreate())( DISP_DESC* );
+0ED4: 00000000 B94E1514 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* ); //nullsub(void)
+0ED8: 00000000 F9293814 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
 0EDC: 00000000 35AA1814 ;83B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EE0: 00000000 55FE8D15 ;83B8: void (*getNOfManyOnDestroy())( DISP_DESC* ); //nullsub(void)
-0EE4: 00000000 0151FC14 ;83B9: void (*getNOfManyOnCreate())( DISP_DESC* );
+0EE0: 00000000 55FE8D15 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* ); //nullsub(void)
+0EE4: 00000000 0151FC14 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 85740114 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 C9442814 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
 ;0EF0: xxxxxxxx yyyyyyyy ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );

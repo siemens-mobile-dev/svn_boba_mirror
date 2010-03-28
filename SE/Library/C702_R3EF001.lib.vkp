@@ -672,13 +672,13 @@
 ;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
 0EAC: 00000000 21587F11 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 E10DA410 ; 3AC: BOOK* GUIObject_GetBook( GUI* ); //см. GUIObject_Destroy
-;0EB4: xxxxxxxx yyyyyyyy ; 3AD: u16 SoftKeys_GetSelectedAction( void );
+0EB4: 00000000 B1ED8710 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 3103AD11 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
-0EBC: 00000000 AD6BAF11 ;83AF: void (*getListMenuOnDestroy())( DISP_DESC* ); //nullsub(void)
-0EC0: 00000000 B551AE11 ;83B0: void (*getListMenuOnCreate())( DISP_DESC* );
+0EBC: 00000000 AD6BAF11 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* ); //nullsub(void)
+0EC0: 00000000 B551AE11 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
 0EC4: 00000000 B16BAF11 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EC8: 00000000 85567F11 ;83B2: void (*getTabMenuBarOnDestroy())( DISP_DESC* ); //nullsub(void)
-0ECC: 00000000 85C57E11 ;83B3: void (*getTabMenuBarOnCreate())( DISP_DESC* );
+0EC8: 00000000 85567F11 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
+0ECC: 00000000 85C57E11 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
 0ED0: 00000000 D5557F11 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0ED4: 00000000 8191AF11 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* ); //nullsub(void)
 0ED8: 00000000 41BAAE11 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
@@ -690,8 +690,8 @@
 ;0EF0: xxxxxxxx yyyyyyyy ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
 ;0EF4: xxxxxxxx yyyyyyyy ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
 ;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
-;0EFC: xxxxxxxx yyyyyyyy ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
-;0F00: xxxxxxxx yyyyyyyy ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
+0EFC: 00000000 31787F11 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
+0F00: 00000000 8910A410 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
 ;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
 
 

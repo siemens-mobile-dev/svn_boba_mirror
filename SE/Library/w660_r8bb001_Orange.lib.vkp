@@ -674,17 +674,17 @@
 0EB0: 00000000 9D704C45 ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 0EB4: 00000000 25054E45 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 8DFE4145 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
-0EBC: 00000000 4D084845 ;83AF: void (*getListMenuOnDestroy())( DISP_DESC* );
-0EC0: 00000000 39F04645 ;83B0: void (*getListMenuOnCreate())( DISP_DESC* );
+0EBC: 00000000 4D084845 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* );
+0EC0: 00000000 39F04645 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
 0EC4: 00000000 69084845 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EC8: 00000000 4D804C45 ;83B2: void (*getTabMenuBarOnDestroy())( DISP_DESC* ); //nullsub(void)
-0ECC: 00000000 952C4C45 ;83B3: void (*getTabMenuBarOnCreate())( DISP_DESC* );
+0EC8: 00000000 4D804C45 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
+0ECC: 00000000 952C4C45 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
 0ED0: 00000000 19804C45 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0ED4: 00000000 012A4845 ;83B5: void (*getOneOfManyOnDestroy())( DISP_DESC* );
-0ED8: 00000000 49524745 ;83B6: void (*getOneOfManyOnCreate())( DISP_DESC* );
+0ED4: 00000000 012A4845 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* );
+0ED8: 00000000 49524745 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
 0EDC: 00000000 1D2A4845 ;83B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EE0: 00000000 41244845 ;83B8: void (*getNOfManyOnDestroy())( DISP_DESC* );
-0EE4: 00000000 99464745 ;83B9: void (*getNOfManyOnCreate())( DISP_DESC* );
+0EE0: 00000000 41244845 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* );
+0EE4: 00000000 99464745 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 5D244845 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 A50E4845 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
 0EF0: 00000000 25E84B45 ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );

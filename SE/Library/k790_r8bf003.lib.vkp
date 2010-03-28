@@ -689,12 +689,12 @@
 0EE4: 00000000 41D92C45 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 59B62D45 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 E1A02D45 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
-;0EF0: xxxxxxxx yyyyyyyy ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
-;0EF4: xxxxxxxx yyyyyyyy ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
-;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
+0EF0: 00000000 AD753145 ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
+0EF4: 00000000 89753145 ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
+0EF8: 00000000 49973345 ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 0EFC: 00000000 F50B3345 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 0F00: 00000000 9D013245 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
-;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
+0F04: 00000000 8D9D2D45 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
 
 
 
