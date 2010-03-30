@@ -965,4 +965,12 @@ typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ *,int ,int,int,int);
 
 typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 
+typedef enum _LISTMENU_HOTKEY_MODE
+{
+  LKHM_SEARCH = 0,
+  LKHM_SHORTCUT = 1,
+  LKHM_FOCUS = 2,
+  LKHM_PRESS = 3
+} LISTMENU_HOTKEY_MODE;
+
 #endif

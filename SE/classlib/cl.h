@@ -102,12 +102,12 @@ public:
         void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ) ); //GUIObject_SoftKeys_SetAction
         void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID short_text, STRID full_text );
         void SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID strid );
-        void SoftKeys_SetEnable( u16 actionID, int ena );//GUIObject_SoftKeys_SetEnable
+        void SoftKeys_SetEnable( u16 actionID, BOOL enabled );//GUIObject_SoftKeys_SetEnable
         void SoftKeys_SetInfoText( u16 actionID, STRID );//GUIObject_SoftKeys_SetInfoText
         void SoftKeys_SetItemAsSubItem( u16 actionID, int subitem );//GUIObject_SoftKeys_SetItemAsSubItem
         void SoftKeys_SetText( u16 actionID, STRID );  //GUIObject_SoftKeys_SetText
         void SoftKeys_SetTexts( u16 actionID, STRID short_text, STRID full_text );//GUIObject_SoftKeys_SetTexts
-        void SoftKeys_SetVisible( u16 actionID, int visible );//GUIObject_SoftKeys_SetVisible
+        void SoftKeys_SetVisible( u16 actionID, BOOL visible );//GUIObject_SoftKeys_SetVisible
         void SoftKeys_Show();                         //GUIObject_SoftKeys_Show
         void SoftKeys_SuppressDefaultAction( u16 actionID );//GUIObject_SoftKeys_SuppressDefaultAction
 	/*
@@ -123,7 +123,7 @@ public:
 	void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 	void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
 
-	void ProgressBar_SetBarDisabled( GUI*, int disabled );
+	void ProgressBar_SetBarDisabled( GUI*, BOOL disabled );
 	void ProgressBar_SetIcon( GUI*, u16 icon_id );
 	void ProgressBar_SetPercentValue( GUI*, int value );
 	void ProgressBar_SetText( GUI*, STRID text );
@@ -142,8 +142,6 @@ public:
 	void MainInput_Hide( GUI* );
 
 	void YesNoQuestion_SetIcon(GUI*, wchar_t iconId);
-
-	void ListMenu_SetHotkeyMode(GUI*, int mode);
 	*/
 };
 
@@ -158,15 +156,15 @@ public:
 	void CallPage(const PAGE_DESC* page);         //BookObj_CallPage
 	void Free();                                  //FreeBook
 	void GotoPage(const PAGE_DESC* page);         //BookObj_GotoPage
-	void Hide(int display_type);                  //BookObj_Hide
+	void Hide( int display );                     //BookObj_Hide
 	void ReturnPage(int event);                   //BookObj_ReturnPage
 	void SetDisplayOrientation(int orientation);  //BookObj_SetDisplayOrientation
-	void Show(int display_type);                  //BookObj_Show
+	void Show( int display );                     //BookObj_Show
 	void UI_Event(int event);                     //UI_Event_toBookID
 	void UI_Event_wData(int event,void *message,void (*mfree)(void*));    //UI_Event_toBookIDwData
 	/*
 	void BookObj_CallSubroutine( BOOK* book, BOOK_SUBROUTINE* subr );
-	void BookObj_SetFocus( BOOK* book, int focus );
+	void BookObj_SetFocus( BOOK* book, int display );
 	void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, void (*proc)( BOOK*, CGuiBase* ) );
 	void BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
 
@@ -329,8 +327,10 @@ public:
 	int GetCurrentItem();//GUIonMessage_GetCurrentItemIndex
 	void SetItemIcon( int align, wchar_t iconID );
 	void SetItemAsSubitem( int unk, int n_sub_items );
-	void SetItemDisabled( int Disabled );
+	void SetItemDisabled( BOOL disabled );
 	void SetLineSeparator( int _unk1 );
+	wchar_t* GetSearchString();
+	int GetSearchStringLength();
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -362,6 +362,9 @@ public:
 	void SetFocused( int item );
 	void SetNoItemText( STRID );
 	void DestroyItems();
+//	void ListMenu_SetHotkeyMode(GUI*, LISTMENU_HOTKEY_MODE mode);
+//	void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+//	void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
 };
 
 /////////////////////////////////////////////////////////////////////////

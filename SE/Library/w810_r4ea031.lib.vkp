@@ -691,7 +691,11 @@
 ;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 0EFC: FFFFFFFF A96E1945 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 0F00: FFFFFFFF B5401945 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
-0F04: FFFFFFFF 050A1745 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
+0F04: FFFFFFFF 050A1745 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
+0F08: FFFFFFFF 990E1745 ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+0F0C: FFFFFFFF C10E1745 ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+0F10: FFFFFFFF D1151745 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
+0F14: FFFFFFFF F1151745 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 
 
 

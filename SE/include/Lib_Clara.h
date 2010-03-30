@@ -212,7 +212,7 @@ __swi __arm BOOK* FindBook( IS_NEEDED_BOOK );
 __swi __arm BOOK* Find_StandbyBook( void );
 
 #pragma swi_number=0x132
-__swi __arm void BookObj_SetFocus( BOOK* book, int focus );
+__swi __arm void BookObj_SetFocus( BOOK* book, int display );
 
 #pragma swi_number=0x133
 __swi __arm void GUIObject_SetTitleText( GUI*, STRID );
@@ -293,7 +293,7 @@ __swi __arm void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, void (*proc)(
 __swi __arm void GUIObject_SoftKeys_SetText( GUI*, u16 actionID, STRID );
 
 #pragma swi_number=0x14D
-__swi __arm void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, int ena );
+__swi __arm void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, BOOL );
 
 #pragma swi_number=0x14E
 __swi __arm void GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, STRID );
@@ -302,7 +302,7 @@ __swi __arm void GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, STRID );
 __swi __arm void GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
 
 #pragma swi_number=0x150
-__swi __arm void GUIObject_SoftKeys_SetVisible( GUI*, u16 actionID, int visible );
+__swi __arm void GUIObject_SoftKeys_SetVisible( GUI*, u16 actionID, BOOL );
 
 #pragma swi_number=0x151
 __swi __arm void GUIObject_SoftKeys_SuppressDefaultAction( GUI*, u16 actionID );
@@ -406,10 +406,10 @@ __swi __arm void IndicationDevice_Backlight_FadeToLevel( int unk_zero, int bl_le
 __swi __arm int GetFreeBytesOnHeap( void );
 
 #pragma swi_number=0x171
-__swi __arm void BookObj_Hide( BOOK* book, int display_type );
+__swi __arm void BookObj_Hide( BOOK* book, int display );
 
 #pragma swi_number=0x172
-__swi __arm void BookObj_Show( BOOK* book, int display_type );
+__swi __arm void BookObj_Show( BOOK* book, int display );
 
 #pragma swi_number=0x173
 __swi __arm void StartAPP( const wchar_t* appname );
@@ -981,7 +981,7 @@ __swi __arm char* strcat( char* dest, const char* src );
 __swi __arm void GUIObject_SetTitleType( GUI* , int type );
 
 #pragma swi_number=0x282
-__swi __arm void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, int Disabled );
+__swi __arm void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
 #pragma swi_number=0x283
 __swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandle, wchar_t* path, wchar_t* fname, int unk, wchar_t* ImageID, char* error );
 #pragma swi_number=0x284
@@ -1324,7 +1324,7 @@ __swi __arm void ProgressBar_SetIcon( GUI*, u16 icon_id );
 #pragma swi_number=0x310
 __swi __arm void ProgressBar_SetPercentValue( GUI*, int value );
 #pragma swi_number=0x311
-__swi __arm void ProgressBar_SetBarDisabled( GUI*, int disabled );
+__swi __arm void ProgressBar_SetBarDisabled( GUI*, BOOL );
 
 #pragma swi_number=0x312
 __swi __arm void StringInput_DispObject_SetText( DISP_OBJ*, STRID );
@@ -1746,6 +1746,15 @@ __swi __arm void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 __swi __arm void GUIObject_SetBacklightTimeout( GUI*, int time );
 
 #pragma swi_number=0x3C1
-__swi __arm void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
+__swi __arm void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
+
+#pragma swi_number=0x3C2
+__swi __arm void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+#pragma swi_number=0x3C3
+__swi __arm void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+#pragma swi_number=0x3C4
+__swi __arm wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
+#pragma swi_number=0x3C5
+__swi __arm int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 
 #endif

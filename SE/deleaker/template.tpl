@@ -207,6 +207,8 @@ skip GUIonMessage_GetCurrentSubItem
 skip GUIonMessage_GetGui
 skip GUIonMessage_GetMsg
 skip GUIonMessage_GetPrevSelectedItem
+skip GUIonMessage_GetSearchString
+skip GUIonMessage_GetSearchStringLength
 skip GUIonMessage_GetSelectedItem
 skip GUIonMessage_SetItemAsSubitem
 skip GUIonMessage_SetItemDisabled
@@ -252,6 +254,7 @@ skip isSoundRecorderBook
 skip isVolumeControllerBook
 skip lang_get_name
 skip LastExtDB
+skip ListMenu_EnableSearchHeader
 skip ListMenu_GetSelectedItem
 skip ListMenu_SetCursorToItem
 skip ListMenu_SetHotkeyMode
@@ -259,6 +262,7 @@ skip ListMenu_SetItemCount
 skip ListMenu_SetItemStyle
 skip ListMenu_SetItemTextScroll
 skip ListMenu_SetOnMessage
+skip ListMenu_SetSearchLanguageMode
 skip List_DestroyElements
 skip List_Find
 skip List_Get

@@ -183,9 +183,9 @@ void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiB
 	::GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
 }
 
-void CGuiBase::SoftKeys_SetEnable(u16 actionID, int ena )
+void CGuiBase::SoftKeys_SetEnable(u16 actionID, BOOL enabled )
 {
-	::GUIObject_SoftKeys_SetEnable( this, actionID, ena );
+	::GUIObject_SoftKeys_SetEnable( this, actionID, enabled );
 }
 
 void CGuiBase::SoftKeys_SetInfoText( u16 actionID, STRID strid)
@@ -208,7 +208,7 @@ void CGuiBase::SoftKeys_SetTexts( u16 actionID, STRID short_text, STRID full_tex
 	::GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
 }
 
-void CGuiBase::SoftKeys_SetVisible(u16 actionID, int visible )
+void CGuiBase::SoftKeys_SetVisible(u16 actionID, BOOL visible )
 {
 	::GUIObject_SoftKeys_SetVisible( this, actionID, visible );
 }
@@ -245,14 +245,14 @@ void CBookBase::Free()
 	FreeBook(this);
 }
 
-void CBookBase::Hide(int display_type)
+void CBookBase::Hide( int display )
 {
-	BookObj_Hide(this, display_type);
+	BookObj_Hide( this, display );
 }
 
-void CBookBase::Show(int display_type)
+void CBookBase::Show( int display )
 {
-	BookObj_Show(this, display_type);
+	BookObj_Show( this, display );
 }
 
 int CBookBase::GetBookID()
@@ -402,14 +402,24 @@ void CGUIMessage::SetItemAsSubitem( int unk, int n_sub_items )
 	GUIonMessage_SetItemAsSubitem( this, unk, n_sub_items );
 }
 
-void CGUIMessage::SetItemDisabled( int Disabled )
+void CGUIMessage::SetItemDisabled( BOOL disabled )
 {
-	GUIonMessage_SetItemDisabled( this, Disabled );
+	GUIonMessage_SetItemDisabled( this, disabled );
 }
 
 void CGUIMessage::SetLineSeparator( int _unk1 )
 {
 	GUIonMessage_SetLineSeparator( this, _unk1 );
+}
+
+wchar_t* CGUIMessage::GetSearchString()
+{
+	return ::GUIonMessage_GetSearchString( this );
+}
+
+int CGUIMessage::GetSearchStringLength()
+{
+	return ::GUIonMessage_GetSearchStringLength( this );
 }
 
 ////////////////////////////////////////////////////////////////////////

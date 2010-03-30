@@ -340,7 +340,7 @@
 0978: FFFFFFFF C515D344 ; 25E: void TabMenuBar_SetFocusedTab( GUI_TABMENUBAR*, int tab_num );
 097C: FFFFFFFF 698ED344 ; 25F: int GC_GetPenColor( GC* gc );
 0980: FFFFFFFF 298ED344 ; 260: void GC_SetPenColor( GC* gc, int pen_color );
-0984: FFFFFFFF E78AD344 ; 261: void GC_SetPixel( GC* gc, int x1, int y1, int color );
+0984: FFFFFFFF E58AD344 ; 261: void GC_SetPixel( GC* gc, int x1, int y1, int color );
 0988: FFFFFFFF DD97D344 ; 262: void GC_DrawLine( GC* gc, int x1, int y1, int x2, int y2 );
 098C: FFFFFFFF 7199D344 ; 263: void GC_DrawFRect( GC* gc, int color, int x1, int y1, int x2, int y2 );
 0990: FFFFFFFF 218BD344 ; 264: int GC_WritePixels( GC* gc, int x1, int y1, int x2, int y2, int* bmp );
@@ -692,7 +692,11 @@
 ;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 0EFC: FFFFFFFF F948D344 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 0F00: FFFFFFFF EDF6D244 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
-0F04: FFFFFFFF 299ED544 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
+0F04: FFFFFFFF 299ED544 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
+0F08: FFFFFFFF 85A2D544 ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+0F0C: FFFFFFFF 95A2D544 ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+0F10: FFFFFFFF 9DA6D544 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
+0F14: FFFFFFFF BDA6D544 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 
 
 
