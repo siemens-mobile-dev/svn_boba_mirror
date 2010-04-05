@@ -856,11 +856,11 @@ __swi __arm int TextCopyId( STRID );
 #pragma swi_number=0x243
 __swi __arm UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 #pragma swi_number=0x244
-__swi __arm void GUIonMessage_SetItemAsSubitem( GUI_MESSAGE* msg, int unk, int n_sub_items );
+__swi __arm void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 #pragma swi_number=0x245
-__swi __arm void GUIonMessage_SetSubitemText( GUI_MESSAGE* msg, STRID );
+__swi __arm void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
 #pragma swi_number=0x246
-__swi __arm int GUIonMessage_GetCreatedSubItemParentIndex( GUI_MESSAGE* msg );
+__swi __arm int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x247
 __swi __arm void GoMusic( void );
 
@@ -877,9 +877,9 @@ __swi __arm int GetAudioSettings( int what, char* retvalue );
 __swi __arm int GetChipID( void );
 
 #pragma swi_number=0x252
-__swi __arm int GUIonMessage_GetCurrentSubItem( GUI_MESSAGE* msg );
+__swi __arm int GUIonMessage_SubItem_GetCreatedIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x253
-__swi __arm int GUIonMessage_GetCurrentItemIndex( GUI_MESSAGE* msg );
+__swi __arm int GUIonMessage_SubItem_GetSelectedParentIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x254
 __swi __arm void DestroyDirHandle( DIR_HANDLE* handle );
 #pragma swi_number=0x8255
