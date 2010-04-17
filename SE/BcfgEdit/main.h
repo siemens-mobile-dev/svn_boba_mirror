@@ -54,8 +54,8 @@ typedef struct _MyBOOK : BOOK
 	} cur_hp;
 	
 	unsigned long old_crc;
-	u16 check_box_unchecked;
-	u16 check_box_checked;
+	STRID check_box_unchecked;
+	STRID check_box_checked;
 	STRID changes_have_been_made;
 	STRID save_before_exit;
 	BCFG_DATA bdata;
@@ -82,8 +82,8 @@ extern "C" long wcstol(const wchar_t *, wchar_t **, int);
 #define IDN_CHANGES_HAVE_BEEN_MADE L"HPB_SAVE_BEFORE_EXITD_TXT"
 #define IDN_SAVE_BEFORE_EXIT L"HPB_SAVE_BEFORE_EXITQ_TXT"
 
-#define IDN_CHECKBOX_UNCHECKED_ICON L"CHECKBOX_ICN"
-#define IDN_CHECKBOX_CHECKED_ICON L"CHECKMARK_IN_BOX_ICN"
+#define IDN_CHECKBOX_UNCHECKED_ICON L"OFF_TXT"
+#define IDN_CHECKBOX_CHECKED_ICON L"ON_TXT"
 
 #define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
 #endif

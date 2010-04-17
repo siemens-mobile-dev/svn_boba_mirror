@@ -693,7 +693,7 @@
 ;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 0EFC: 00000000 29743314 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 0F00: 00000000 810B2F14 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
-;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
+0F04: 00000000 197B4114 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
 
 
 

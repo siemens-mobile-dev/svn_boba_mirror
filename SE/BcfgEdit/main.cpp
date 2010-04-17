@@ -537,7 +537,7 @@ void OnSelect1GuiBcfg( BOOK* bk, GUI* )
 		return;
 	case CFG_CHECKBOX:
 		mbk->cur_hp.checkbox->isChecked = !mbk->cur_hp.checkbox->isChecked;
-		ListMenu_SetSecondLineText( mbk->bcfg, item, (mbk->cur_hp.checkbox->isChecked ? mbk->check_box_checked : mbk->check_box_unchecked) | 0x78000000 );
+		ListMenu_SetSecondLineText( mbk->bcfg, item, (mbk->cur_hp.checkbox->isChecked ? mbk->check_box_checked : mbk->check_box_unchecked) );
 		break;
 	case CFG_TIME:
 		BookObj_CallPage( mbk, &bk_time_input );
@@ -612,7 +612,7 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 			}
 			break;
 		case CFG_CHECKBOX:
-			str_id = ( ((CFG_HDR_CHECKBOX*)hp)->isChecked ? myBook->check_box_checked : myBook->check_box_unchecked ) | 0x78000000;
+			str_id = ( ((CFG_HDR_CHECKBOX*)hp)->isChecked ? myBook->check_box_checked : myBook->check_box_unchecked );
 			break;
 		case CFG_TIME:
 			{
@@ -1069,16 +1069,13 @@ static int MainPageOnCreate( void* , BOOK* bk )
 	MyBOOK* mbk = (MyBOOK*) bk;
 	BCFG_DATA* bdata = &mbk->bdata;
 	int find_cfg = 1;
-	int icon_id;
 	mbk->list = List_Create();
 	// mbk->Platform = GetChipID() >> 12;
 	
 	textidname2id( IDN_CHANGES_HAVE_BEEN_MADE, - 1, &mbk->changes_have_been_made );
 	textidname2id( IDN_SAVE_BEFORE_EXIT, - 1, &mbk->save_before_exit );
-	iconidname2id( IDN_CHECKBOX_UNCHECKED_ICON, - 1, &icon_id );
-	mbk->check_box_unchecked = icon_id;
-	iconidname2id( IDN_CHECKBOX_CHECKED_ICON, - 1, &icon_id );
-	mbk->check_box_checked = icon_id;
+	textidname2id( IDN_CHECKBOX_UNCHECKED_ICON, - 1, &mbk->check_box_unchecked );
+	textidname2id( IDN_CHECKBOX_CHECKED_ICON, - 1, &mbk->check_box_checked );
 	if( *bdata->path == '/' ) // Вероятно передали указатель на файл
 	{
 		if( LoadCfg( bdata ) )

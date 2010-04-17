@@ -363,8 +363,8 @@
 ;09D4: xxxxxxxx yyyyyyyy ; 275: png_uint_32 png_get_rowbytes( png_structp png_ptr, png_infop info_ptr );
 ;09D8: xxxxxxxx yyyyyyyy ; 276: void png_progressive_combine_row( png_structp png_ptr, png_bytep old_row, png_bytep new_row );
 ;09DC: xxxxxxxx yyyyyyyy ; 277: int png_sig_cmp( png_bytep sig, png_size_t start, png_size_t num_to_check );
-;09E0: xxxxxxxx yyyyyyyy ; 278: int setjmp( jmp_buf jmpbuf );
-;09E4: xxxxxxxx yyyyyyyy ; 279: void longjmp( jmp_buf, int );
+09E0: 00000000 40BB1410 ; 278: int setjmp( jmp_buf jmpbuf );
+09E4: 00000000 40BB1410 ; 279: void longjmp( jmp_buf, int );
 ;09E8: xxxxxxxx yyyyyyyy ; 27A: int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );
 ;09EC: xxxxxxxx yyyyyyyy ; 27B: int inflate( z_streamp strm, int flush );
 ;09F0: xxxxxxxx yyyyyyyy ; 27C: int inflateEnd( z_streamp strm );
