@@ -17443,6 +17443,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>X75</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
