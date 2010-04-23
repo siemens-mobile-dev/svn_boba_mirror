@@ -1109,7 +1109,7 @@ static void DrawMyProgress(int x, int y, int n)
   DrawCanvas(BuildCanvas(), x, start_y, scr_w-x-1, end_y, 1);
   DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, COLOR_TEXTPB, transparent);
   DrawRectangle(x+1, start_y+1, x+1+fill, end_y-1, 0, progress_colors[n], progress_colors[n]);
-  wsprintf(ws, "%s%u.%02u/%u.%02u", ((cur<0)?"-":""), ((cur<0)?(0-cur):cur)/100, ((cur<0)?(0-cur):cur)%100, max/100, max%100);
+  wsprintf(ws, "%d.%02d/%d.%02d", cur/100, ((cur<0)?(0-cur):cur)%100, max/100, ((max>0)?max:-max)%100);
   DrawString(ws, 0, start_y+1, scr_w, end_y-1, TEXT_FONTSZ, TEXT_ALIGNMIDDLE, COLOR_TEXTPB, transparent);
   FreeWS(ws);
 }
