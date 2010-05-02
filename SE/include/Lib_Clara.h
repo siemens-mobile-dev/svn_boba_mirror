@@ -1757,4 +1757,7 @@ __swi __arm wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 #pragma swi_number=0x3C5
 __swi __arm int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 
+#pragma swi_number=0x3C6
+__swi __arm int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+
 #endif
