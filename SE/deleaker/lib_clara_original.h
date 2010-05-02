@@ -800,11 +800,11 @@ __swi __arm int  __original_TextCopyId( STRID );
 #pragma swi_number=0x243
 __swi __arm UI_APP_SESSION*  __original_BookObj_GetSession( BOOK* book );
 #pragma swi_number=0x244
-__swi __arm void  __original_GUIonMessage_SetItemAsSubitem( GUI_MESSAGE* msg, int unk, int n_sub_items );
+__swi __arm void  __original_GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 #pragma swi_number=0x245
-__swi __arm void  __original_GUIonMessage_SetSubitemText( GUI_MESSAGE* msg, STRID );
+__swi __arm void  __original_GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
 #pragma swi_number=0x246
-__swi __arm int  __original_GUIonMessage_GetCreatedSubItemParentIndex( GUI_MESSAGE* msg );
+__swi __arm int  __original_GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x247
 __swi __arm void  __original_GoMusic( void );
 
@@ -821,9 +821,9 @@ __swi __arm int  __original_GetAudioSettings( int what, char* retvalue );
 __swi __arm int  __original_GetChipID( void );
 
 #pragma swi_number=0x252
-__swi __arm int  __original_GUIonMessage_GetCurrentSubItem( GUI_MESSAGE* msg );
+__swi __arm int  __original_GUIonMessage_SubItem_GetCreatedIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x253
-__swi __arm int  __original_GUIonMessage_GetCurrentItemIndex( GUI_MESSAGE* msg );
+__swi __arm int  __original_GUIonMessage_SubItem_GetSelectedParentIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x254
 __swi __arm void  __original_DestroyDirHandle( DIR_HANDLE* handle );
 #pragma swi_number=0x8255
@@ -1686,4 +1686,7 @@ __swi __arm void  __original_ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
 __swi __arm wchar_t*  __original_GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 #pragma swi_number=0x3C5
 __swi __arm int  __original_GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
+
+#pragma swi_number=0x3C6
+__swi __arm int  __original_EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 

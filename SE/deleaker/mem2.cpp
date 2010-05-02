@@ -444,10 +444,10 @@ void  __deleaker_ListMenu_SetSecondLineText(GUI_LIST* __unknwnargname1, int elem
   return __original_ListMenu_SetSecondLineText(__unknwnargname1, elem_num, __unknwnargname3);
 }
 
-void  __deleaker_GUIonMessage_SetSubitemText(GUI_MESSAGE* msg, STRID __unknwnargname2, char* __file__,  int __line__)
+void  __deleaker_GUIonMessage_SubItem_SetText(GUI_MESSAGE* msg, STRID __unknwnargname2, char* __file__,  int __line__)
 {
   if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __original_GUIonMessage_SetSubitemText(msg, __unknwnargname2);
+  return __original_GUIonMessage_SubItem_SetText(msg, __unknwnargname2);
 }
 
 void  __deleaker_Feedback_SetTextExtended(GUI_FEEDBACK* __unknwnargname1, STRID text, int where, char* __file__,  int __line__)
@@ -712,6 +712,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 //__swi __arm void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
 //__swi __arm void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
+//__swi __arm int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 //__swi __arm FILEITEM* FILEITEM_Create( void );
 //__swi __arm FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
 //__swi __arm void FILEITEM_Destroy( FILEITEM* );
@@ -727,6 +728,10 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm void GUIObject_SetBackgroundImage( GUI*, wchar_t imageID );
 //__swi __arm void GUIObject_SetCursorImage( GUI*, wchar_t imageID );
 //__swi __arm void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
+//__swi __arm void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
+//__swi __arm int GUIonMessage_SubItem_GetCreatedIndex( GUI_MESSAGE* msg );
+//__swi __arm int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
+//__swi __arm int GUIonMessage_SubItem_GetSelectedParentIndex( GUI_MESSAGE* msg );
 //__swi __arm FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 //__swi __arm char* GetURIScheme( int schemeID );
 //__swi __arm void* GetUserData( int size, void (*constr)( void*, void* ), void* constr_param );

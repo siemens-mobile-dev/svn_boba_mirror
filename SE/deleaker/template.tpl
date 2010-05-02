@@ -727,7 +727,7 @@ __make ListMenu_SetSecondLineText
   return __O__;
 }
 
-__make GUIonMessage_SetSubitemText
+__make GUIonMessage_SubItem_SetText
 {
   if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
   return __O__;

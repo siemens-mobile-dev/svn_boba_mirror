@@ -129,8 +129,8 @@ void  __deleaker_StringInput_DispObject_SetText(DISP_OBJ* __unknwnargname1, STRI
 void  __deleaker_GUIObject_SoftKeys_SetInfoText(GUI* __unknwnargname1, u16 actionID, STRID __unknwnargname3, char* __file__,  int __line__);
 #define ListMenu_SetSecondLineText(__unknwnargname1, elem_num, __unknwnargname3) __deleaker_ListMenu_SetSecondLineText(__unknwnargname1, elem_num, __unknwnargname3, __FILE__,  __LINE__)
 void  __deleaker_ListMenu_SetSecondLineText(GUI_LIST* __unknwnargname1, int elem_num, STRID __unknwnargname3, char* __file__,  int __line__);
-#define GUIonMessage_SetSubitemText(msg, __unknwnargname2) __deleaker_GUIonMessage_SetSubitemText(msg, __unknwnargname2, __FILE__,  __LINE__)
-void  __deleaker_GUIonMessage_SetSubitemText(GUI_MESSAGE* msg, STRID __unknwnargname2, char* __file__,  int __line__);
+#define GUIonMessage_SubItem_SetText(msg, __unknwnargname2) __deleaker_GUIonMessage_SubItem_SetText(msg, __unknwnargname2, __FILE__,  __LINE__)
+void  __deleaker_GUIonMessage_SubItem_SetText(GUI_MESSAGE* msg, STRID __unknwnargname2, char* __file__,  int __line__);
 #define Feedback_SetTextExtended(__unknwnargname1, text, where) __deleaker_Feedback_SetTextExtended(__unknwnargname1, text, where, __FILE__,  __LINE__)
 void  __deleaker_Feedback_SetTextExtended(GUI_FEEDBACK* __unknwnargname1, STRID text, int where, char* __file__,  int __line__);
 #define GUIObject_SoftKeys_SetTexts(__unknwnargname1, actionID, short_text, full_text) __deleaker_GUIObject_SoftKeys_SetTexts(__unknwnargname1, actionID, short_text, full_text, __FILE__,  __LINE__)

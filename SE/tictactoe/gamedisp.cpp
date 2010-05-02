@@ -279,13 +279,13 @@ void CGameDisp::onDraw(int a, int b, int c)
 {
 	isondraw = true;
 
-	GC* _displaygc=(GC*)get_DisplayGC();
+	GC* _displaygc = get_DisplayGC();
 	GVI_GC displaygc;
 	CANVAS_Get_GviGC( _displaygc->pcanvas, &displaygc );
 
-    GC* _gc = GC_CreateMemoryGC(xsize, ysize, 16, 0, 0, 0);
+	GC* _gc = GC_CreateMemoryGC(xsize, ysize, 16, 0, 0, 0);
 	GVI_GC gc;
-    CANVAS_Get_GviGC( _gc->pcanvas ,&gc );
+	CANVAS_Get_GviGC( _gc->pcanvas ,&gc );
 
 
 	GVI_BRUSH backbrush = GVI_CreateSolidBrush(0xFFFFFFFF);
