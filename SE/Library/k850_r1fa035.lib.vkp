@@ -164,7 +164,7 @@
 06B8: 00000000 4902F910 ; 1AE: wchar_t* wstrrchr( const wchar_t* wstr, wchar_t wchar );
 06BC: 00000000 B99F5B11 ; 1AF: void BookObj_CallSubroutine( BOOK* book, BOOK_SUBROUTINE* subr );
 06C0: 00000000 95C73D11 ; 1B0: int List_InsertLast( LIST* lst, void* item );
-06C4: 00000000 B9AD7511 ; 1B1: void debug_printf( const char* fmt, ... );
+06C4: 00000000 E134C129 ; 1B1: void debug_printf( const char* fmt, ... );
 06C8: 00000000 7DD31A11 ; 1B2: int PlayFile( const wchar_t* path, const wchar_t* fname );
 ;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: 00000000 DD8B7511 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE( const int* sync, int* level );
