@@ -70,6 +70,15 @@ __swi __arm int  __original_ModifyUIHook( int event, int (*PROC)( UI_MESSAGE* ),
 #pragma swi_number=0x10D
 __swi __arm int  __original_elfload( const wchar_t* filename, void* param1, void* param2, void* param3 );
 
+#pragma swi_number=0x10E
+__swi __arm void*  __original_LoadDLL( wchar_t* DllName );
+
+#pragma swi_number=0x10F
+__swi __arm int  __original_UnLoadDLL( void* DllData );
+
+#pragma swi_number=0x110
+__swi __arm int  __original_ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
+
 #pragma swi_number=0x112
 __swi __arm void*  __original_memset( void* mem, char chr, int size );
 

@@ -105,6 +105,15 @@ __swi __arm int ModifyUIHook( int event, int (*PROC)( UI_MESSAGE* ), int mode );
 #ifndef SWI_HOOK
 #pragma swi_number=0x10D
 __swi __arm int elfload( const wchar_t* filename, void* param1, void* param2, void* param3 );
+
+#pragma swi_number=0x10E
+__swi __arm void* LoadDLL( wchar_t* DllName );
+
+#pragma swi_number=0x10F
+__swi __arm int UnLoadDLL( void* DllData );
+
+#pragma swi_number=0x110
+__swi __arm int ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
 #endif
 //-------------------------------------------------------------------------------------------
 

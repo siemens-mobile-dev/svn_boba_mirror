@@ -401,15 +401,17 @@ typedef struct
 {
   LIST *UserDataList;
   LIST *gKbdHookList;
-  LIST *elflist;
+  //LIST *elflist;
   PROCESS HPID;
   LIST *UIHookList;
   LIST *OseHookList;
-  DB_EXT **dbe;
+  LIST *DBExtList;
   FILESUBROUTINE* elf_ext_m;
-  LIST * DLLList;
+  LIST *DLLList;
   LIST *UIPageHook;
   DB_EXT * (*CreateDbExt)(void);
+  wchar_t IconSmall;
+  wchar_t IconBig;
 }EP_DATA;
 
 typedef struct

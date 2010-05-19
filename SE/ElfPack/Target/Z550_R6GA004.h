@@ -4,9 +4,8 @@
 #ifndef _Z550_R6GA004_
 #define _Z550_R6GA004_
 
-#define RUN_CHECK 0x455741A5
-#define HELPER_SIG 0x6FF0
 #define EXT_TABLE 0x444E2ECC
+#define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x44630322
 #define PATH_AUDIO_EXT 0x4462ECC0
@@ -19,25 +18,29 @@
 #define PATH_OTHER_INT 0x44630430
 #define PATH_OTHER_EXT 0x4462EE50
 
-#define PATH_ELF_ROOT_INT          (L"/usb/other/ZBin")
-#define PATH_ELF_ROOT_EXT          (L"/card/MSSEMC/Media files/other/ZBin")
+#define PATH_ELF_ROOT_INT     (L"/usb/other/ZBin")
+#define PATH_ELF_ROOT_EXT     (L"/card/MSSEMC/Media files/other/ZBin")
 #define PATH_ELF_INT          (L"/usb/other/ZBin")
 #define PATH_ELF_EXT          (L"/card/MSSEMC/Media files/other/ZBin")
-#define PATH_ELF_DAEMONS_INT      (L"/usb/other/ZBin/Daemons")
-#define PATH_ELF_DAEMONS_EXT     (L"/card/MSSEMC/Media files/other/ZBin/Daemons")
-#define PATH_ELF_CONFIG_INT      (L"/usb/other/ZBin/Config")
-#define PATH_ELF_CONFIG_EXT     (L"/card/MSSEMC/Media files/other/ZBin/Config")
-#define PATH_INI          (L"/usb/other/ini")
+#define PATH_ELF_DAEMONS_INT  (L"/usb/other/ZBin/Daemons")
+#define PATH_ELF_DAEMONS_EXT  (L"/card/MSSEMC/Media files/other/ZBin/Daemons")
+#define PATH_ELF_CONFIG_INT   (L"/usb/other/ZBin/Config")
+#define PATH_ELF_CONFIG_EXT   (L"/card/MSSEMC/Media files/other/ZBin/Config")
+#define PATH_INI              (L"/usb/other/ini")
+#define PATH_DLL              (L"/usb/other/ZBin/DLL")
 #define PATH_DEFAULT          (L"/usb/other")
 
-
-#define ELF_RUN_PAGE_PREVIOUS_EVENT  0x45571051
-#define ELF_RUN_PAGE_ACCEPT_EVENT    0x45571051
-#define ELF_RUN_PAGE_CANCEL_EVENT    0x45571059
-#define ELF_RUN_PAGE_PAGE_EXIT_EVENT 0x455710ED
+#define PATH_USER_INT         (L"/usb")
+#define PATH_USER_EXT         (L"/card/MSSEMC/Media files")
 
 #define DB_CMD_SETSMALLICON 0x36
-#define DB_DB_EXT_C1 0x290
+
+#define PAGE_ENTER_EVENT 5
+#define PAGE_EXIT_EVENT 6
+#define ACCEPT_EVENT 0x0F
+#define PREVIOUS_EVENT 0x10
+#define CANCEL_EVENT 0x11
+
 #endif
 #endif
 

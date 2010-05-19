@@ -5,7 +5,6 @@
 #define _W800_R1BD001_
 
 #define EXT_TABLE 0x4422C6D0
-#define RUN_CHECK 0x450F28A1
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x441EC49C
@@ -28,15 +27,20 @@
 #define PATH_ELF_CONFIG_INT   (L"/tpa/user/other/Config")
 #define PATH_ELF_CONFIG_EXT   (L"/card/MSSEMC/Media files/other/Config")
 #define PATH_INI              (L"/tpa/user/other/ini")
+#define PATH_DLL              (L"/tpa/user/other/DLL")
 #define PATH_DEFAULT          (L"/tpa/user/other")
 
-#define ELF_RUN_PAGE_PREVIOUS_EVENT  0x450EEF91
-#define ELF_RUN_PAGE_ACCEPT_EVENT    0x450EEF91
-#define ELF_RUN_PAGE_CANCEL_EVENT    0x450EEF99
-#define ELF_RUN_PAGE_PAGE_EXIT_EVENT 0x450EEFF1
+#define PATH_USER_INT         (L"/tpa/user")
+#define PATH_USER_EXT         (L"/card/MSSEMC/Media files")
 
 #define DB_CMD_SETSMALLICON 0x35
-#define DB_DB_EXT_C1 0x258
+#define DB_CMD_SETTHUMBNAILICON 0x36
+
+#define PAGE_ENTER_EVENT 0x5
+#define PAGE_EXIT_EVENT 0x6
+#define ACCEPT_EVENT 0xF
+#define PREVIOUS_EVENT 0x10
+#define CANCEL_EVENT 0x11
 
 #endif
 #endif

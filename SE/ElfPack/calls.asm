@@ -29,29 +29,28 @@ defadr  MACRO   a,b
 a       EQU     b
         ENDM
 
-        call    ListElement_Prt2NumElement,0x17B
+        call    List_IndexOf,0x17B
         call    AllocDirHandle,0x11D
         call    GetFname,0x11E
         call    memset,0x112
         call    memcpy,0x113
-        call    List_New,0x169
-        call    ListElement_Find,0x1AC
-        call    ListElement_GetByIndex,0x1AD
-        call    ListElement_AddtoTop,0x16B
-        call    ListElement_Remove,0x179
+        call    List_Create,0x169
+        call    List_Find,0x1AC
+        call    List_Get,0x1AD
+        call    List_InsertFirst,0x16B
+        call    List_RemoveAt,0x179
+        call    List_InsertLast,0x1B0
         call    wstrrchr,0x1AE
-
         call    _fopen,0x116
-        call    BookObj_CallSubroutine,0x1AF
         call    wstrlen,0x157
         call    wstrcpy,0x152
         call    wstrcat,0x154
-        call    BookObj_ReturnPage,0x12E
         call    debug_printf,0x1B1
-        call    wstr2str,0x15B
-
-        call    int2strID,0x15C
-        call    StatusIndication_ShowNotes,0x143
         call    DestroyDirHandle,0x254
+        call    get_envp,0x18D
+        call    set_envp,0x18E
+        call    get_bid,0x18F
+        call    current_process,0x184
+        call    ActionCreate,0x2E5
 
    END

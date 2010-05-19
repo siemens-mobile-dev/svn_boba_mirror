@@ -38,7 +38,7 @@
 04BC: 00000000 D17D1214 ; 12F: void FreeBook( BOOK* book );
 04C0: 00000000 4DAC0C14 ; 130: BOOK* FindBook( IS_NEEDED_BOOK );
 04C4: 00000000 6DA41A14 ; 131: BOOK* Find_StandbyBook( void );
-04C8: 00000000 5D504C14 ; 132: void BookObj_SetFocus( BOOK* book, int focus );
+04C8: 00000000 5D504C14 ; 132: void BookObj_SetFocus( BOOK* book, int display );
 04CC: 00000000 21A34314 ; 133: void GUIObject_SetTitleText( GUI*, STRID );
 04D0: 00000000 71584C14 ; 134: void GUIObject_Show( GUI* );
 04D4: 00000000 85264114 ; 135: void ListMenu_SetCursorToItem( GUI_LIST*, int item );
@@ -65,10 +65,10 @@
 0528: 00000000 F94A3E15 ; 14A: void StatusIndication_Item8_SetText( STRID );
 052C: 00000000 69991714 ; 14B: void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, void (*proc)( BOOK*, GUI* ) );
 0530: 00000000 052A1C14 ; 14C: void GUIObject_SoftKeys_SetText( GUI*, u16 actionID, STRID );
-0534: 00000000 452A1C14 ; 14D: void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, int ena );
+0534: 00000000 452A1C14 ; 14D: void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, BOOL );
 0538: 00000000 25B64214 ; 14E: void GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, STRID );
 053C: 00000000 C9CF1714 ; 14F: void GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
-0540: 00000000 69271C14 ; 150: void GUIObject_SoftKeys_SetVisible( GUI*, u16 actionID, int visible );
+0540: 00000000 69271C14 ; 150: void GUIObject_SoftKeys_SetVisible( GUI*, u16 actionID, BOOL );
 0544: 00000000 419A2C14 ; 151: void GUIObject_SoftKeys_SuppressDefaultAction( GUI*, u16 actionID );
 0548: 00000000 4D224D14 ; 152: wchar_t* wstrcpy( wchar_t* dest, const wchar_t* source );
 054C: 00000000 41993E14 ; 153: wchar_t* wstrncpy( wchar_t* dest, const wchar_t* source, int maxlen );
@@ -101,8 +101,8 @@
 05B8: 00000000 CD3A0C14 ; 16E: void REQUEST_DATEANDTIME_GET( const int* sync, DATETIME* dt );
 ;05BC: xxxxxxxx yyyyyyyy ; 16F: void IndicationDevice_Backlight_FadeToLevel( int unk_zero, int bl_level );
 05C0: 00000000 0D5F2114 ; 170: int GetFreeBytesOnHeap( void );
-05C4: 00000000 2D1C2714 ; 171: void BookObj_Hide( BOOK* book, int display_type );
-05C8: 00000000 49890214 ; 172: void BookObj_Show( BOOK* book, int display_type );
+05C4: 00000000 2D1C2714 ; 171: void BookObj_Hide( BOOK* book, int display );
+05C8: 00000000 49890214 ; 172: void BookObj_Show( BOOK* book, int display );
 05CC: 00000000 DDBDE514 ; 173: void StartAPP( const wchar_t* appname );
 05D0: 00000000 7DE82F14 ; 174: void ListMenu_SetOnMessage( GUI_LIST*, int (*proc)( GUI_MESSAGE* ) );
 05D4: 00000000 ED371F14 ; 175: char* manifest_GetParam( const char* buf, const char* param_name, int unk );
@@ -312,9 +312,9 @@
 ;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName( void );
 0908: 00000000 51FC1714 ; 242: int TextCopyId( STRID );
 090C: 00000000 69C34714 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
-0910: 00000000 11AB0414 ; 244: void GUIonMessage_SetItemAsSubitem( GUI_MESSAGE* msg, int unk, int n_sub_items );
-0914: 00000000 B9A90414 ; 245: void GUIonMessage_SetSubitemText( GUI_MESSAGE* msg, STRID );
-0918: 00000000 19D82C14 ; 246: int GUIonMessage_GetCreatedSubItemParentIndex( GUI_MESSAGE* msg );
+0910: 00000000 11AB0414 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
+0914: 00000000 B9A90414 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
+0918: 00000000 19D82C14 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 351FF014 ; 247: void GoMusic( void );
 0920: 00000000 79D13F14 ; 248: void Vibra_Off (int t1);
 ;0924: xxxxxxxx yyyyyyyy ; 249:
@@ -326,8 +326,8 @@
 ;093C: xxxxxxxx yyyyyyyy ; 24F:
 ;0940: xxxxxxxx yyyyyyyy ; 250:
 ;0944: xxxxxxxx yyyyyyyy ; 251:
-0948: 00000000 C5251D14 ; 252: int GUIonMessage_GetCurrentSubItem( GUI_MESSAGE* msg );
-094C: 00000000 15918415 ; 253: int GUIonMessage_GetCurrentItemIndex( GUI_MESSAGE* msg );
+0948: 00000000 C5251D14 ; 252: int GUIonMessage_SubItem_GetCreatedIndex( GUI_MESSAGE* msg );
+094C: 00000000 15918415 ; 253: int GUIonMessage_SubItem_GetSelectedParentIndex( GUI_MESSAGE* msg );
 0950: 00000000 D1453514 ; 254: void DestroyDirHandle( DIR_HANDLE* handle );
 0954: 00000000 C8B8B315 ;8255: DB_EXT* LastExtDB( void );
 0958: 00000000 D5C94214 ; 256: void GetOtherExtMethods( FILESUBROUTINE** );
@@ -374,7 +374,7 @@
 09FC: 00000000 89A80814 ; 27F: char* strncpy( char* dest, const char* source, int maxlen );
 0A00: 00000000 A5423715 ; 280: char* strcat( char* dest, const char* src );
 0A04: 00000000 A9250914 ; 281: void GUIObject_SetTitleType( GUI* , int type );
-0A08: 00000000 31964D14 ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, int Disabled );
+0A08: 00000000 31964D14 ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
 0A0C: 00000000 B9240C15 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandle, wchar_t* path, wchar_t* fname, int unk, wchar_t* ImageID, char* error );
 0A10: 00000000 41250C15 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandle, u16*, u16*, wchar_t ImageID, int unk_1, char* error );
 0A14: 00000000 8C78D54B ;8285: SURFACE** get_Surfaces( void );
@@ -517,7 +517,7 @@
 0C38: 00000000 11FA0114 ; 30E: void ProgressBar_SetText( GUI*, STRID text );
 0C3C: 00000000 C15BFA14 ; 30F: void ProgressBar_SetIcon( GUI*, u16 icon_id );
 0C40: 00000000 4DBA4214 ; 310: void ProgressBar_SetPercentValue( GUI*, int value );
-0C44: 00000000 EDEC0314 ; 311: void ProgressBar_SetBarDisabled( GUI*, int disabled );
+0C44: 00000000 EDEC0314 ; 311: void ProgressBar_SetBarDisabled( GUI*, BOOL );
 0C48: 00000000 E990D514 ; 312: void StringInput_DispObject_SetText( DISP_OBJ*, STRID );
 ;0C4C: xxxxxxxx yyyyyyyy ; 313: void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
 0C50: 00000000 91FF1E14 ; 314: void GUIObject_SetTitleIcon( GUI*, wchar_t imageID );
@@ -693,7 +693,12 @@
 ;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 ;0EFC: xxxxxxxx yyyyyyyy ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 ;0F00: xxxxxxxx yyyyyyyy ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
-;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, int mode );
+;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
+;0F08: xxxxxxxx yyyyyyyy ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+;0F0C: xxxxxxxx yyyyyyyy ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+;0F10: xxxxxxxx yyyyyyyy ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
+;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
+;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 
 
 

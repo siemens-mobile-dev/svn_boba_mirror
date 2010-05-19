@@ -280,13 +280,13 @@ typedef const char *FILENAME;
 
 #else
 
-typedef const unsigned short *FILENAME;
+typedef const wchar_t* FILENAME;
 
 __arm int elfldr_fopen(FILENAME fname, int param1, int param2, unsigned int *err)
 {
   return (int)fopen(fname,param1,param2);
 }
-__arm int _elfldr_fopen(u16 * path, u16 * name, int param1, int param2, unsigned int *err)
+__arm int _elfldr_fopen(wchar_t * path, wchar_t * name, int param1, int param2, unsigned int *err)
 {
   return (int)_fopen(path,name,param1,param2,0);
 }
@@ -317,11 +317,10 @@ __arm void elfldr_mfree(void *p)
   mfree(p);
 }
 
-__arm void _IMB(void){IMB();}
-
+/*
 __arm  void elfldr_ListElement_AddtoTop(LIST *lst,void *newElement)
 {
-  ListElement_AddtoTop(lst,newElement);
+  List_InsertFirst(lst,newElement);
 }
 __arm  int elfldr_wstrlen(u16 * wstr)
 {
@@ -338,11 +337,6 @@ __arm  BOOK * elfldr_Find_StandbyBook(void)
   return(Find_StandbyBook());
 }
 
-__arm void elfldr_debug_printf(char * fmt,int n)
-{
-  debug_printf(fmt,n);
-}
-
 __arm int elfldr_FStat(u16 * pach, u16 *fname , FSTAT * fstat_stuct)
 {
   return(fstat(pach,fname,fstat_stuct));
@@ -353,15 +347,24 @@ __arm u16 * elfldr_GetDir(int i)
   return(GetDir(i));
 }
 
-
-
-/*
-__arm  LIST * elfldr_List_New(void)
-{
-return(List_New());
-}
 */
 
+__arm void elfldr_debug_printf(char * fmt,int n)
+{
+  debug_printf(fmt,n);
+}
+
+__arm void _IMB(void){IMB();}
+
+__interwork wchar_t * elfldr_getFileExtention(FILENAME fname)
+{
+  return getFileExtention((wchar_t*)fname);
+}
+
+__interwork int elfldr_wstrcmpi(const wchar_t *ws1, const wchar_t *ws2)
+{
+  return wstrcmpi(ws1, ws2);
+}
 #endif
 
 
@@ -374,19 +377,20 @@ __arm int PatchDynConst (int * p)
   int *DynConst;
   int file;
   unsigned int iError;
-  FSTAT fstat;
-  if (elfldr_FStat(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin",&fstat)==0)  
+  FSTAT _fstat;
+//  if (elfldr_FStat(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin",&fstat)==0)  
+  if (fstat( GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL), L"DYN_CONST.bin", &_fstat)==0)    
   {
-    if ((file=_elfldr_fopen(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin", A_ReadOnly+A_BIN, P_READ, &iError))<0) return (-101);	//не открывается DYN_CONST.
+    if ((file=_elfldr_fopen( GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL), L"DYN_CONST.bin", A_ReadOnly+A_BIN, P_READ, &iError))<0) return (-101);	//не открывается DYN_CONST.
     
-    DynConst=elfldr_malloc(fstat.fsize);
-    if (elfldr_fread(file, DynConst, fstat.fsize, &iError)!=fstat.fsize)	
+    DynConst=elfldr_malloc(_fstat.fsize);
+    if (elfldr_fread(file, DynConst, _fstat.fsize, &iError) != _fstat.fsize)	
     {
       elfldr_mfree(DynConst);
       elfldr_fclose(file, &iError);
       return(-103);                     //не читается DYN_CONST
     }
-    maxi=fstat.fsize/sizeof(int);
+    maxi=_fstat.fsize/sizeof(int);
     elfldr_fclose(file, &iError);
   }
   else
@@ -688,12 +692,17 @@ __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3
     //    ExecuteIMB();	
     PatchDynConst((int*)(base+(maxadr-minadr)));
   }
-  /*  {
-  char * tmp=elfldr_malloc(32000);
-  zeromem_a(tmp,31999);
-  elfldr_mfree(tmp);
-}
-  */
+
+  wchar_t* wsext;
+  // если DLLка, то не запускаем, а возвращаем entrypoint
+  if ( wsext = elfldr_getFileExtention( filename ) )
+  {
+    if (!elfldr_wstrcmpi(wsext, L"dll"))
+    {
+      return((long)base+ehdr.e_entry-minadr);
+    }
+  }
+
   _IMB();
   long retcode=((TElfEntry *)(base+ehdr.e_entry-minadr))(filename,param1,param2,param3);
   //	mfree(base);

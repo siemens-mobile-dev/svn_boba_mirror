@@ -1,5 +1,5 @@
 /*
-	Thanks to GPcH for sponsoring this hard work
+        Thanks to GPcH for sponsoring this hard work
 */
 
 -carm
@@ -11,18 +11,6 @@
 
 // инициализация списков
 -Z(CODE)PATCH_STANDBY_CALL=4527DB34-4527DB3B
-
-// статическая рама
--Z(DATA)DATA_N=202FBFA4-202FCFA3
-
-// cut print buffer first point
--Z(CODE)CUT_PRINT_BUF1=4423B524-4423B527
--Z(CODE)CUT_PRINT_BUF2=4423B788-4423B78B
-
-// cut print buffer size
--Z(CODE)CUT_PRINT_BUF_SIZE1=4423B78C-4423B78F
--Z(CODE)CUT_PRINT_BUF_SIZE2=4423B444-4423B447
--Z(CODE)CUT_PRINT_BUF_SIZE3=4423B520-4423B523
 
 // change keyhandler
 -Z(CODE)OLD_KEY_HANDLER=20050984-20050987
@@ -42,3 +30,6 @@
 
 // UIHook
 -Z(CODE)PATCH_PageAction=45269898-4526989F
+
+// PageActionHook
+-Z(CODE)PATCH_PageActionImpl=45269E78-45269E7F

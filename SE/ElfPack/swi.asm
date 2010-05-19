@@ -113,6 +113,11 @@ pLIB_TOP:
         EXTERN  ModifyUIHook
         EXTERN  elfload
 
+        EXTERN  LoadDLL
+        EXTERN  UnLoadDLL
+        
+        EXTERN  ModifyUIHook1
+
 	RSEG    LIB:DATA(2)
 	PUBLIC	Library
 Library:
@@ -134,6 +139,9 @@ Library:
         DC32    ModifyUIHook
         DC32    elfload
 
+        DC32    LoadDLL
+        DC32    UnLoadDLL
 
+        DC32    ModifyUIHook1
 
         END     main

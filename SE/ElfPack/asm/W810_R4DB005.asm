@@ -72,7 +72,26 @@ MESS_HOOK:
         LDR     R3,=MESS_HOOK
         BLX     R3
 
+// --- PageAction1 ---
+        EXTERN  PageAction_Hook1
+        RSEG    PATCH_PageActionImpl
+        RSEG   CODE
+        CODE16
+PG_ACTION:
+        BL      PageAction_Hook1
+        MOV     R0, #0
+        MOV     R1, SP
+        STRB    R0, [R1,#0]
+        LDR     R1, [SP,#0xC]
+        LDR     R3,=SFE(PATCH_PageActionImpl)+1
+        BX      R3
 
+
+
+        RSEG    PATCH_PageActionImpl
+        CODE16
+        LDR     R3, =PG_ACTION
+        BX      R3
 // --- Data Browser ---
 
         EXTERN  GetExtTable

@@ -12,5 +12,7 @@
 #define DIR_ELFS_DAEMONS 	18
 #define DIR_ELFS_CONFIG         20
 #define DIR_INI                 22
+#define DIR_DLL                 24
 
+#define DIR_USER                26
 

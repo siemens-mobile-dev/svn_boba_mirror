@@ -42,13 +42,13 @@ PATCH_STANDBY:
 
 // --- PageAction_Hook ---
         EXTERN  PageAction_Hook
-        EXTERN  ListElement_Remove
+        EXTERN  List_RemoveAt
         RSEG  CODE
         CODE16
 _PageAction:
         LDR     R0, [R0, #0]
         MOV     R1, #0
-        BLX     ListElement_Remove
+        BLX     List_RemoveAt
         BL      PageAction_Hook
         MOV     R6, R0
         LDR     R1, =PAGE_ACTION_RET
@@ -162,26 +162,5 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-
-        RSEG   DATA_N
-        RSEG   CUT_PRINT_BUF1(2)
-        DATA
-        DCD    SFB(DATA_N)+0x1000
-
-        RSEG   CUT_PRINT_BUF2(2)
-        DATA
-        DCD    SFB(DATA_N)+0x1000
-
-        RSEG   CUT_PRINT_BUF_SIZE1(2)
-        DATA
-        DCD    0xC350-0x1000
-
-        RSEG   CUT_PRINT_BUF_SIZE2(2)
-        DATA
-        DCD    0xC350-0x1000
-
-        RSEG   CUT_PRINT_BUF_SIZE3(2)
-        DATA
-        DCD    0xC351-0x1000
 #endif
         END

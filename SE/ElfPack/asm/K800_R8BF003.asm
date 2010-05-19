@@ -46,13 +46,13 @@ PATCH_STANDBY_CALL_start:
 
 // --- PageAction_Hook ---
         EXTERN  PageAction_Hook
-        EXTERN  ListElement_Remove
+        EXTERN  List_RemoveAt
         RSEG  CODE
         CODE16
 _PageAction:
         LDR     R0, [R0, #0]
         MOV     R1, #0
-        BLX     ListElement_Remove
+        BLX     List_RemoveAt
         BL      PageAction_Hook
         MOV     R6, R0
         LDR     R1, =PAGE_ACTION_RET
@@ -83,6 +83,26 @@ PATCH_MMI_MESSAGE_HOOK_start:
         LDR     R3,=MESS_HOOK
         BX      R3
 
+// --- PageAction1 ---
+        EXTERN  PageAction_Hook1
+        RSEG    PATCH_PageActionImpl
+        RSEG   CODE
+        CODE16
+PG_ACTION:
+        BL      PageAction_Hook1
+        MOV     R0, SP
+        MOV     R1, #0
+        STRB    R1, [R0,#4]
+        ADD     R6, R1, #0
+        LDR     R3,=SFE(PATCH_PageActionImpl)+1
+        BX      R3
+
+
+
+        RSEG    PATCH_PageActionImpl
+        CODE16
+        LDR     R3, =PG_ACTION
+        BX      R3
 // --- Data Browser ---
 
         EXTERN  GetExtTable
@@ -170,26 +190,5 @@ PATCH_DB4_start:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-
-        RSEG   DATA_N
-        RSEG   CUT_PRINT_BUF1(2)
-        DATA
-        DCD    SFB(DATA_N)+0x1000
-
-        RSEG   CUT_PRINT_BUF2(2)
-        DATA
-        DCD    SFB(DATA_N)+0x1000
-
-        RSEG   CUT_PRINT_BUF_SIZE1(2)
-        DATA
-        DCD    0xC350-0x1000
-
-        RSEG   CUT_PRINT_BUF_SIZE2(2)
-        DATA
-        DCD    0xC350-0x1000
-
-        RSEG   CUT_PRINT_BUF_SIZE3(2)
-        DATA
-        DCD    0xC351-0x1000
 #endif
         END

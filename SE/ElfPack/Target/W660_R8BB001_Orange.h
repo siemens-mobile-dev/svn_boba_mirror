@@ -5,7 +5,6 @@
 #define _W660_R8BB001_Orange_
 
 #define EXT_TABLE 0x45B14034
-#define RUN_CHECK 0x45019A3D
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x458B9E50
@@ -28,16 +27,20 @@
 #define PATH_ELF_CONFIG_INT   (L"/tpa/user/other/ZBin/Config")
 #define PATH_ELF_CONFIG_EXT   (L"/card/other/ZBin/Config")
 #define PATH_INI              (L"/tpa/user/other/ini")
+#define PATH_DLL              (L"/tpa/user/other/ZBin/DLL")
 #define PATH_DEFAULT          (L"/tpa/user/other")
 
-#define ELF_RUN_PAGE_PREVIOUS_EVENT  0x45018DC9
-#define ELF_RUN_PAGE_ACCEPT_EVENT    0x45018DC5
-#define ELF_RUN_PAGE_CANCEL_EVENT    0x45018DD9
-#define ELF_RUN_PAGE_PAGE_EXIT_EVENT 0x45011871
+#define PATH_USER_INT         (L"/tpa/user")
+#define PATH_USER_EXT         (L"/card")
 
 #define DB_CMD_SETSMALLICON 0x3B
 #define DB_CMD_SETTHUMBNAILICON 0x3C
-#define DB_DB_EXT_C1 0x2EC
+
+#define PAGE_ENTER_EVENT 7
+#define PAGE_EXIT_EVENT 8
+#define ACCEPT_EVENT 2
+#define PREVIOUS_EVENT 3
+#define CANCEL_EVENT 4
 
 #endif
 #endif
