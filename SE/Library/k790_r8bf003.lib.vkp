@@ -699,7 +699,7 @@
 0F0C: 00000000 69A22D45 ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
 0F10: 00000000 01A92D45 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 0F14: 00000000 21A92D45 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
-;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+0F18: 00000000 3558FA44 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 
 
 

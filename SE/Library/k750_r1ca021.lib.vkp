@@ -519,7 +519,7 @@
 0C44: FFFFFFFF 2533D344 ; 311: void ProgressBar_SetBarDisabled( GUI*, BOOL );
 0C48: FFFFFFFF 7187EB44 ; 312: void StringInput_DispObject_SetText( DISP_OBJ*, STRID );
 0C4C: FFFFFFFF 29CED544 ; 313: void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
-;0C50: xxxxxxxx yyyyyyyy ; 314: void GUIObject_SetTitleIcon( GUI*, wchar_t imageID );
+0C50: FFFFFFFF B1F6D244 ; 314: void GUIObject_SetTitleIcon( GUI*, wchar_t imageID );
 ;0C54: xxxxxxxx yyyyyyyy ; 315: void GUIObject_SetCursorImage( GUI*, wchar_t imageID );
 ;0C58: xxxxxxxx yyyyyyyy ; 316: void GUIObject_SetBackgroundImage( GUI*, wchar_t imageID );
 0C5C: FFFFFFFF 5DD8D244 ; 317: void* DispObject_SoftKeys_GetParams( DISP_OBJ* );

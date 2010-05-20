@@ -266,8 +266,8 @@
 0850: 00000000 991CFA10 ; 214: STRID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
 ;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum( AB_GET_STRUCT* );
 0858: 00000000 2891A611 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( );
-085C: 00000000 B9E3FE10 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy );// !!!!! не настоящий !!!!!!
-0860: 00000000 65BB2D11 ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy );// !!!!! не настоящий !!!!!!
+085C: 00000000 B9E3FE10 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
+0860: 00000000 65BB2D11 ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
 0864: 00000000 1D4BF110 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 0868: 00000000 EC87272A ;821A: PROCESS* PID_MMI( void );
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
