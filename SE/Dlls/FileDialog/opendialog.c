@@ -189,7 +189,7 @@ wchar_t * CreateFileDialog (
                             int flags,
                             wchar_t * header,
                             wchar_t * filters,
-                            ...
+                            va_list ap
                               )
 {
   
@@ -220,30 +220,25 @@ wchar_t * CreateFileDialog (
   ofd->folders=0;
   
   // создаём список папок
-  va_list ap;
-  va_start(ap, filters);
   args = va_arg(ap, int);
-  if (args>=0)
-  {
-    while (args>=0)
-    {
-      if (args>0x1000)
-      {
-        ws = (wchar_t *)args;
-      }
-      else
-      {
-        ws = GetDir(args);
-      }
-      wchar_t * wsnew= new wchar_t[wstrlen(ws)+1];
-      wstrncpy(wsnew,ws,wstrlen(ws)+1);
-      List_InsertLast(ofd->folders_list,wsnew);
-      args = va_arg(ap, int);
-      ofd->folders++;
-    }
-  }
-  va_end(ap);
   
+  while (args>=0)
+  {
+    if (args>0x1000)
+    {
+      ws = (wchar_t *)args;
+    }
+    else
+    {
+      ws = GetDir(args);
+    }
+    wchar_t * wsnew= new wchar_t[wstrlen(ws)+1];
+    wstrncpy(wsnew,ws,wstrlen(ws)+1);
+    List_InsertLast(ofd->folders_list,wsnew);
+    args = va_arg(ap, int);
+    ofd->folders++;
+  }
+ 
   BookObj_GotoPage((BOOK*)ofd,&ofd_file_dialog_msglist);
   return(0);
 }

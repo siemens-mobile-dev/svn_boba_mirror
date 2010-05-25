@@ -39,8 +39,7 @@ wchar_t * CreateFD (FILE_DIALOG* fd,
   wchar_t * res;
   va_list ap;
   va_start(ap, filters);
-  args = va_arg(ap, int);
-  res=CreateFileDialog (book, flags, header, filters,&args);
+  res=CreateFileDialog (book, flags, header, filters, ap);
   va_end(ap);
   return(res);
 }

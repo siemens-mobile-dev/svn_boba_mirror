@@ -1,6 +1,8 @@
 #ifndef __OPENDIALOG_H__
 #define __OPENDIALOG_H__
 
+#include <stdarg.h>
+
 typedef struct
 {
   BOOK book;
@@ -52,7 +54,7 @@ wchar_t * CreateFileDialog (
                           int flags,
                           wchar_t * header, // wchar_t либо STRID
                           wchar_t * filters,
-                          ...  // folders list: wchar_t либо DIR_*
+                          va_list ap  // folders list: wchar_t либо DIR_*
                           );
 
 #endif
