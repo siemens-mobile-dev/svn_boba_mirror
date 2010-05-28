@@ -36,7 +36,7 @@
 04B4: 00000000 F9B8E810 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 B1BAE810 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
 04BC: 00000000 69C2E810 ; 12F: void FreeBook( BOOK* book );
-04C0: 00000000 B1B6E810 ; 130: BOOK* FindBook( IS_NEEDED_BOOK );
+04C0: 00000000 219EE810 ; 130: BOOK* FindBook( IS_NEEDED_BOOK );
 04C4: 00000000 2D8CE210 ; 131: BOOK* Find_StandbyBook( void );
 04C8: 00000000 99BEE810 ; 132: void BookObj_SetFocus( BOOK* book, int display );
 04CC: 00000000 89D7A610 ; 133: void GUIObject_SetTitleText( GUI*, STRID );
