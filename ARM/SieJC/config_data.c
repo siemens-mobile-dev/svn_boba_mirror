@@ -95,6 +95,9 @@ __root const int SHOWSTAT_MUCCHANGESTAT=1;
 __root const CFG_HDR cfghdr18003={CFG_CHECKBOX,LG_BOLDNICKINMUC,0,2};
 __root const int BOLD_NICK_INMUC=0;
 
+__root const CFG_HDR cfghdr18004={CFG_CHECKBOX,LG_EXT_VERSION_INFO,0,2};
+__root const int EXT_VERSION_INFO=0;
+
 // Настройка сигналов
 __root const CFG_HDR cfghdr_SOUNDS_SETUP={CFG_LEVEL,LG_SETUPSND,1,0};
 

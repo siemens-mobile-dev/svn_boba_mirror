@@ -93,14 +93,16 @@ const char CMP_DATE[] = __DATE__;
 const unsigned long PING_INTERVAL = 3*60*TMR_SECOND; // 3 минуты
 #ifdef NEWSGOLD
 #ifdef ELKA
-const char OS[] = "NewSGOLD_ELKA_ELF-Platform";
+const char OS[] = "NewSGOLD_ELKA";
 #else
-const char OS[] = "NewSGOLD_ELF-Platform";
+const char OS[] = "NewSGOLD";
 #endif
 #else
-const char OS[] = "SGOLD_ELF-Platform";
+const char OS[] = "SGOLD";
 #define SEND_TIMER
 #endif
+
+const char OS_postfix[] = "_ELF-Platform";
 
 //IPC
 const char ipc_my_name[32]=IPC_SIEJC_NAME;

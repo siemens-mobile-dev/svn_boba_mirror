@@ -25,6 +25,7 @@ extern const char CMP_DATE[];
 extern const char VERSION_NAME[];
 extern const char VERSION_VERS[];
 extern const char OS[];
+extern const char OS_postfix[];
 extern const int USE_SASL;
 extern const int DELIVERY_EVENTS;
 extern const int COMPOSING_EVENTS;
@@ -37,6 +38,8 @@ extern char logmsg[];
 extern GR_ITEM *GR_ROOT;
 extern CLIST* cltop;
 extern unsigned int NContacts;
+
+extern const int EXT_VERSION_INFO;
 
 MUC_ITEM *muctop = NULL;
 
@@ -674,8 +677,35 @@ void Report_VersionInfo(char* id, char *to)
   
   sprintf(answer, "%s-r%d (%s)", VERSION_VERS, __SVN_REVISION__, CMP_DATE);
   xml_version = XML_CreateNode(version_t, answer);
+  
+  // Не будем издеваться над Костиным сервером)
+  #pragma swi_number=0x41
+  __swi __arm char GetProvider(WSHDR* name, int unk_1);
 
-  sprintf(answer, "SIE-%s/%s %s", ph_model, ph_sw, OS);
+  #pragma swi_number=0x2C2
+  __swi __arm int GetSubprovider(WSHDR* ws);
+  
+  // Аццкий процент не экранируется
+  #define percent "%"
+  
+  if(EXT_VERSION_INFO)
+  {
+    WSHDR* prov = AllocWS(128);
+#ifdef NEWSGOLD
+    GetSubprovider(prov);
+    if(!prov->wsbody[0]) GetProvider(prov, 1);
+#else
+    GetProvider(prov, 1);
+#endif
+    char provider[128];
+    ws_2str(prov, provider, 128);
+    FreeWS(prov);
+    RAMNET *net_data = RamNet();
+    sprintf(answer, "SIE-%s/%s %s (%s:%ddB BAT:%d%s RAM:%dKb)", ph_model, ph_sw, OS, provider, net_data->power, *RamCap(), percent, GetFreeRamAvail()/1000);
+  }
+  else sprintf(answer, "SIE-%s/%s %s%s", ph_model, ph_sw, OS, OS_postfix);
+  
+  
   xml_os = XML_CreateNode(os_t, answer);
   xml_version->next = xml_os;
   xml_name->next = xml_version;
