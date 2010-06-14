@@ -1,6 +1,6 @@
 ;W890 SW-R1FA035
 ;Function Library
-;Last Update 20.05.2010 10:00
+;Last Update 7.06.2010 10:00
 ;(c) Hussein , IronMaster
 ;(p) MaW
 
@@ -197,7 +197,7 @@
 073C: 00000000 E18D6E11 ; 1CF: void GUIInput_SetIcon( GUI* , wchar_t icon );
 0740: 00000000 998B6711 ; 1D0: int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 0744: 00000000 C492272A ;81D1: PAudioControl* GetAudioControlPtr( );
-;0748: xxxxxxxx yyyyyyyy ; 1D2: int AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
+0748: 00000000 458DD810 ; 1D2: int AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
 074C: 00000000 79860111 ; 1D3: int GetVolumeSize( wchar_t* root_folder, VOLUMESIZE* );
 0750: 00000000 D9C16911 ; 1D4: GUI_NOFMANY* CreateNOfMany( BOOK* book );
 0754: 00000000 FDC36911 ; 1D5: void NOfMany_SetTexts( GUI_NOFMANY*, STRID* strids, int items_count );
@@ -224,7 +224,7 @@
 07A8: 00000000 35686E11 ; 1EA: void GC_ValidateRect( GC* gc, RECT* );
 07AC: 00000000 155E6411 ; 1EB: void BookObj_AddGUIObject( BOOK* book, GUI* );
 07B0: 00000000 B1126E11 ; 1EC: void DrawRect( int x1, int y1, int x2, int y2, int pen_color, int brush_color );
-07B4: 00000000 F1156E11 ; 1ED: void DrawString( STRID, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color );
+07B4: 00000000 B1156E11 ; 1ED: void DrawString( STRID, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color );
 07B8: 00000000 61626411 ; 1EE: void XGUIList_AddGUIObject( XGUILIST* xguilist, GUI* );
 07BC: 00000000 E1E36D11 ; 1EF: void DispObject_InvalidateRect( DISP_OBJ*, RECT* );
 07C0: 00000000 118A6E11 ; 1F0: int GUIObject_Create( GUI*, void (*GuiDestroy)( GUI* ), void (*DispDescCreate)( DISP_DESC* ), BOOK*, void (*DispObjCallBack)( DISP_OBJ*, void* msg, GUI* ), int display, int size_of_gui );
@@ -261,7 +261,7 @@
 083C: 00000000 35F32911 ; 20F: int CteateNewMessage( int, void*, int );
 0840: 00000000 2C2DAB11 ;8210: void* get_APP_DESC_TABLE( void );
 0844: 00000000 25576E11 ; 211: C_INTERFACE* Window_GetComponentInterface( WINDOW* );
-;0848: xxxxxxxx yyyyyyyy ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
+0848: 00000000 211DFA10 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
 084C: 00000000 351CFA10 ; 213: STRID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
 0850: 00000000 991CFA10 ; 214: STRID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
 ;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum( AB_GET_STRUCT* );
@@ -274,7 +274,7 @@
 0870: 00000000 D5DC6D11 ; 21C: GUI* DispObject_GetGUI( DISP_OBJ* );
 0874: 00000000 21DC6D11 ; 21D: DISP_OBJ* Display_GetFocusedDispObject( int display );
 0878: 00000000 79E26D11 ; 21E: char DispObject_GetVisible( DISP_OBJ* );
-087C: 00000000 E1FEA310 ; 21F: DISP_DESC* DispObject_GetDESC( DISP_OBJ* ); // !!!!! не настоящий !!!!!!
+087C: 00000000 CD920B10 ; 21F: DISP_DESC* DispObject_GetDESC( DISP_OBJ* ); // !!!!! не настоящий !!!!!!
 0880: 00000000 BD926D11 ; 220: void DISP_DESC_SetName( DISP_DESC*, const char* name );
 0884: 00000000 6DF36D11 ; 221: char* DispObject_GetName( DISP_OBJ* );
 0888: 00000000 C1926D11 ; 222: void DISP_DESC_SetSize( DISP_DESC*, u16 size );
@@ -448,7 +448,7 @@
 0B28: 00000000 7D5E6F11 ; 2CA: void TabMenuBar_SetOnTabSwitch( GUI_TABMENUBAR*, void (*proc)( BOOK*, int act_tab ) );
 0B2C: 00000000 9DDF2811 ; 2CB: STRID KeyCode2Name( int key_code );
 0B30: 00000000 11FAFF10 ; 2CC: int ImageID_Get( const wchar_t* fpath, const wchar_t* fname, wchar_t* imageID );
-0B34: 00000000 05FAFF10 ; 2CD: void ImageID_Free( wchar_t imageID );
+0B34: 00000000 41000011 ; 2CD: void ImageID_Free( wchar_t imageID );
 0B38: 00000000 F55B0411 ; 2CE: SUB_EXECUTE* DataBrowser_CreateSubExecute( int BookID, FILEITEM* );
 0B3C: 00000000 75670411 ; 2CF: int DataBrowser_ExecuteSubroutine( SUB_EXECUTE* sub, int action, u16* unk );
 0B40: 00000000 D9520611 ; 2D0: int FILEITEM_SetFname( FILEITEM*, const wchar_t* fname );
@@ -516,7 +516,7 @@
 0C38: 00000000 6D6A6F11 ; 30E: void ProgressBar_SetText( GUI*, STRID text );
 0C3C: 00000000 896B6F11 ; 30F: void ProgressBar_SetIcon( GUI*, u16 icon_id );
 0C40: 00000000 296A6F11 ; 310: void ProgressBar_SetPercentValue( GUI*, int value );
-0C44: 00000000 F5537811 ; 311: void ProgressBar_SetBarDisabled( GUI*, BOOL );
+0C44: 00000000 996B6F11 ; 311: void ProgressBar_SetBarDisabled( GUI*, BOOL );
 0C48: 00000000 C5DE6611 ; 312: void StringInput_DispObject_SetText( DISP_OBJ*, STRID );
 ;0C4C: xxxxxxxx yyyyyyyy ; 313: void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
 0C50: 00000000 61926E11 ; 314: void GUIObject_SetTitleIcon( GUI*, wchar_t imageID );
@@ -606,13 +606,13 @@
 0DA0: 00000000 8D5EF610 ; 368: void* IncommingCall_Accept( BOOK* book );
 0DA4: 00000000 B9EE5F11 ; 369: void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
 0DA8: 00000000 71EE5F11 ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
-;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
-;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
+0DAC: 00000000 19EF5F11 ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
+0DB0: 00000000 49EF5F11 ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 ;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
 0DB8: 00000000 19E16D11 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 0DBC: 00000000 FDF20310 ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 0DC0: 00000000 C9287011 ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
-0DC4: 00000000 59BE9E10 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
+0DC4: 00000000 45CB9E10 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
 0DC8: 00000000 39567E11 ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 0DCC: 00000000 79C70511 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
 0DD0: 00000000 1DB16911 ; 374: int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
@@ -698,9 +698,6 @@
 0F10: 00000000 3DB36911 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 0F14: 00000000 5DB36911 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 59151F11 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
-
-
-
 
 
 ;locale=Russian_Russia.1251

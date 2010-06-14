@@ -613,7 +613,7 @@
 0DB8: 00000000 793AA610 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 0DBC: 00000000 256A7112 ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 0DC0: 00000000 2DC28A10 ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
-0DC4: 00000000 89AD5311 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
+0DC4: 00000000 75BA5311 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
 0DC8: 00000000 5122B411 ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 0DCC: 00000000 9DAA8911 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
 0DD0: 00000000 F158B211 ; 374: int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
@@ -667,8 +667,8 @@
 ;0E90: xxxxxxxx yyyyyyyy ; 3A4: void GUIObject_SetTitleTextColor( GUI*, int color );
 0E94: 00000000 1165B211 ; 3A5: void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 ;0E98: xxxxxxxx yyyyyyyy ; 3A6: void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
-;0E9C: xxxxxxxx yyyyyyyy ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
-;0EA0: xxxxxxxx yyyyyyyy ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
+0E9C: 00000000 F980B111 ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
+0EA0: 00000000 DD80B111 ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 ;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
 ;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
 0EAC: 00000000 192E8211 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
@@ -693,12 +693,13 @@
 ;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 0EFC: 00000000 294E8211 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 0F00: 00000000 C9D6A610 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
-;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
-;0F08: xxxxxxxx yyyyyyyy ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
-;0F0C: xxxxxxxx yyyyyyyy ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
-;0F10: xxxxxxxx yyyyyyyy ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
-;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
-;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+0F04: 00000000 A54EB211 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
+0F08: 00000000 2153B211 ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+0F0C: 00000000 4953B211 ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+0F10: 00000000 F95AB211 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
+0F14: 00000000 195BB211 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
+0F18: 00000000 0D41A811 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+0F1C: 00000000 015DE710 ; 3C7: int Theme_DestroyMenuIcons( void );
 
 
 

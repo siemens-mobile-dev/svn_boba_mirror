@@ -435,7 +435,7 @@
 0AF8: 00000000 213F6711 ; 2BE: void GC_SetBrushColor( GC* gc, int brush_color );
 0AFC: 00000000 D54A6711 ; 2BF: void GC_DrawRoundRect( GC* gc, RECT*, int arcWidth, int arcHeight, int border_flag, int fill_flag );
 0B00: 00000000 D55C6911 ; 2C0: BOOK* MenuBook_Desktop( int mode, int BookID );
-0B04: 00000000 255E6911 ; 2C1: wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
+0B04: 00000000 29536911 ; 2C1: wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
 0B08: 00000000 C5A06811 ; 2C2: void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, void (*proc)( BOOK*, GUI* ) );
 0B0C: 00000000 FDA06811 ; 2C3: void BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
 0B10: 00000000 150C5D11 ; 2C4: BOOK* FindBookByID( int BookID );

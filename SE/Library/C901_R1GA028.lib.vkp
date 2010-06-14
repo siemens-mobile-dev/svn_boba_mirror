@@ -376,7 +376,7 @@
 0A08: 00000000 3D7F2514 ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
 0A0C: 00000000 5D1E0A15 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandle, wchar_t* path, wchar_t* fname, int unk, wchar_t* ImageID, char* error );
 0A10: 00000000 E51E0A15 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandle, u16*, u16*, wchar_t ImageID, int unk_1, char* error );
-;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE** get_Surfaces( void );
+0A14: 00000000 C87DD54B ;8285: SURFACE** get_Surfaces( void );
 0A18: 00000000 71E84B14 ; 286: int iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
 0A1C: 00000000 01EC4B14 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
 0A20: 00000000 F11A0115 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );

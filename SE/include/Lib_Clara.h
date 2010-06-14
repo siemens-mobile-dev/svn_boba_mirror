@@ -1769,4 +1769,7 @@ __swi __arm int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 #pragma swi_number=0x3C6
 __swi __arm int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 
+#pragma swi_number=0x3C7
+__swi __arm int Theme_DestroyMenuIcons( void );
+
 #endif

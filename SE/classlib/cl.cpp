@@ -5,6 +5,11 @@
 
 ////////////////////////////////////////////////////////////////////////
 
+void CDispObjBase::GetRect( RECT* retrect )
+{
+	::DispObject_GetRect( this, retrect );
+}
+
 void CDispObjBase::InvalidateRect(RECT* rect)
 {
 	::DispObject_InvalidateRect(this, rect);
@@ -306,6 +311,81 @@ void CBookBase::CallPage(const PAGE_DESC  * page)
 
 ////////////////////////////////////////////////////////////////////////
 
+CGCBase::CGCBase()
+{
+}
+
+CGCBase::~CGCBase()
+{
+}
+
+int CGCBase::DrawRawBitmap(int x1, int y1, int x2, int y2, int * bmp)
+{
+	return ::GC_WritePixels(gc, x1, y1, x2, y2, bmp);
+}
+
+int CGCBase::GetBrushColor()
+{
+	return GC_GetBrushColor(gc);
+}
+
+int CGCBase::GetPenColor()
+{
+	return GC_GetPenColor(gc);
+}
+
+int CGCBase::GetXX()
+{
+	return GC_GetXX(gc);
+}
+
+void CGCBase::SetXX(int arg)
+{
+	GC_SetXX(gc, arg);
+}
+
+void CGCBase::DrawFRect(int color,int x1,int y1,int x2 ,int y2)
+{
+	GC_DrawFRect(gc, color, x1, y1, x2, y2);
+}
+
+void CGCBase::DrawLine(int x1, int y1, int x2, int y2)
+{
+	GC_DrawLine(gc, x1,  y1, x2, y2);
+}
+
+void CGCBase::DrawRoundRect(RECT* rect,int arcWidth,int arcHeight,int border_flag,int fill_flag)
+{
+	GC_DrawRoundRect(gc, rect, arcWidth, arcHeight, border_flag, fill_flag);
+}
+
+void CGCBase::SetBrushColor(int brush_color)
+{
+	GC_SetBrushColor(gc, brush_color);
+}
+
+void CGCBase::SetPenColor(int pen_color)
+{
+	GC_SetPenColor(gc, pen_color);
+}
+
+void CGCBase::SetPixel(int x1,int y1,int color)
+{
+	GC_SetPixel(gc, x1, y1, color);
+}
+
+void CGCBase::ValidateRect(RECT* rect)
+{
+	GC_ValidateRect(gc, rect);
+}
+
+void CGCBase::GetRect(RECT* rect)
+{
+	GC_GetRect(gc,rect);
+}
+
+////////////////////////////////////////////////////////////////////////
+
 CBook::CBook(char* pBookName, const PAGE_DESC * bp)
 {
 	CreateBook( this, (void(*)(BOOK*)) & __onClose, bp, pBookName, -1, 0);
@@ -372,24 +452,24 @@ char CGUIMessage::SetItemUnavailableText( STRID strid )
 	return GUIonMessage_SetMenuItemUnavailableText( this, strid );
 }
 
-void CGUIMessage::SetSubitemText( STRID strid )
+void CGUIMessage::SubItem_SetText( STRID strid )
 {
-	GUIonMessage_SetSubitemText( this, strid );
+	GUIonMessage_SubItem_SetText( this, strid );
 }
 
-int CGUIMessage::GetCreatedSubitemParent()
+int CGUIMessage::SubItem_GetCreatedParentIndex()
 {
-	return GUIonMessage_GetCreatedSubItemParentIndex( this );
+	return GUIonMessage_SubItem_GetCreatedParentIndex( this );
 }
 
-int CGUIMessage::GetCurrentSubitem()
+int CGUIMessage::SubItem_GetCreatedIndex()
 {
-	return GUIonMessage_GetCurrentSubItem( this );
+	return GUIonMessage_SubItem_GetCreatedIndex( this );
 }
 
-int CGUIMessage::GetCurrentItem()
+int CGUIMessage::SubItem_GetSelectedParentIndex()
 {
-	return GUIonMessage_GetCurrentItemIndex( this );
+	return GUIonMessage_SubItem_GetSelectedParentIndex( this );
 }
 
 void CGUIMessage::SetItemIcon( int align, wchar_t iconID )
@@ -397,9 +477,9 @@ void CGUIMessage::SetItemIcon( int align, wchar_t iconID )
 	GUIonMessage_SetMenuItemIcon( this, align, iconID );
 }
 
-void CGUIMessage::SetItemAsSubitem( int unk, int n_sub_items )
+void CGUIMessage::SetNumberOfSubItems( int unk, int n_sub_items )
 {
-	GUIonMessage_SetItemAsSubitem( this, unk, n_sub_items );
+	GUIonMessage_SetNumberOfSubItems( this, unk, n_sub_items );
 }
 
 void CGUIMessage::SetItemDisabled( BOOL disabled )
@@ -621,78 +701,28 @@ void CGuiTabMenuBar::SetTabTitle( int tab, STRID strid )
 CPaintGC::CPaintGC()
 {
 	gc= get_DisplayGC();
-	gc_xx_old = GC_GetXX(gc);
-	GC_SetXX(gc, 1);
+	gc_xx_old = GetXX();
+	SetXX(1);
 }
 
 CPaintGC::~CPaintGC()
 {
-	GC_SetXX(gc, gc_xx_old);
+	SetXX(gc_xx_old);
 }
 
-int CPaintGC::DrawRawBitmap(int x1, int y1, int x2, int y2, int * bmp)
+/////////////////////////////////////////////////////////////////////////
+
+CMemoryGC::CMemoryGC( int xsize, int ysize, int bpp )
 {
-	return ::GC_WritePixels(gc, x1, y1, x2, y2, bmp);
+	gc= GC_CreateMemoryGC( xsize, ysize, bpp, 0, 0, 0 );
+	gc_xx_old = GetXX();
+	SetXX(1);
 }
 
-int CPaintGC::GetBrushColor()
+CMemoryGC::~CMemoryGC()
 {
-	return GC_GetBrushColor(gc);
-}
-
-int CPaintGC::GetPenColor()
-{
-	return GC_GetPenColor(gc);
-}
-
-int CPaintGC::GetXX()
-{
-	return GC_GetXX(gc);
-}
-
-void CPaintGC::SetXX(int arg)
-{
-	GC_SetXX(gc, arg);
-}
-
-void CPaintGC::DrawFRect(int color,int x1,int y1,int x2 ,int y2)
-{
-	GC_DrawFRect(gc, color, x1, y1, x2, y2);
-}
-
-void CPaintGC::DrawLine(int x1, int y1, int x2, int y2)
-{
-	GC_DrawLine(gc, x1,  y1, x2, y2);
-}
-
-void CPaintGC::DrawRoundRect(RECT* rect,int arcWidth,int arcHeight,int border_flag,int fill_flag)
-{
-	GC_DrawRoundRect(gc, rect, arcWidth, arcHeight, border_flag, fill_flag);
-}
-
-void CPaintGC::SetBrushColor(int brush_color)
-{
-	GC_SetBrushColor(gc, brush_color);
-}
-
-void CPaintGC::SetPenColor(int pen_color)
-{
-	GC_SetPenColor(gc, pen_color);
-}
-
-void CPaintGC::SetPixel(int x1,int y1,int color)
-{
-	GC_SetPixel(gc, x1, y1, color);
-}
-
-void CPaintGC::ValidateRect(RECT* rect)
-{
-	GC_ValidateRect(gc, rect);
-}
-
-void CPaintGC::GetRect(RECT* rect)
-{
-	GC_GetRect(gc,rect);
+	SetXX(gc_xx_old);
+	GC_FreeGC( gc );
 }
 
 /////////////////////////////////////////////////////////////////////////

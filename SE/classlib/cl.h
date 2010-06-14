@@ -7,6 +7,7 @@
 //class CDispObjBase;
 class CGuiBase;
 class CBookBase;
+//class CGCBase;
 //class CBook;
 //template class CDispObjT;
 //template class CGuiT;
@@ -17,8 +18,12 @@ class CBookBase;
 //class CGuiNOfMany;
 //class CGuiTabMenuBar;
 //class CPaintGC;
+//class CMemoryGC;
 
-//template class class auto_ptr;
+//template class auto_ptr;
+
+
+
 
 class CDispObjBase : public DISP_OBJ
 {
@@ -38,11 +43,11 @@ public:
 	void SetTitleText(int StrID);         //DispObject_SetTitleText
 	void Show(int mode);                  //DispObject_Show
 	WINDOW* GetWindow();                  //DispObject_GetWindow
+	void GetRect( RECT* retrect );	      //DispObject_GetRect
 
 	/*
         LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
         u16 DISP_DESC_GetSize( DISP_OBJ* );
-        void DispObject_GetRect( DISP_OBJ*, RECT* );
         void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
         void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
         void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
@@ -204,14 +209,31 @@ public:
 };
 
 /////////////////////////////////////////////////////////////////////////
-/*
+
 class CGCBase
 {
-CGCBase();
-~CGCBase();
+protected:
+	GC* gc;
+	int gc_xx_old;
+	CGCBase();
+	~CGCBase();
 public:
+	int DrawRawBitmap(int x1, int y1, int x2, int y2, int * bmp); //GC_WritePixels
+	int GetBrushColor();                  //GC_GetBrushColor
+	int GetPenColor();                    //GC_GetPenColor
+	int GetXX();                          //GC_GetXX
+	void DrawFRect (int color,int x1,int y1,int x2 ,int y2);      //GC_DrawFRect
+	void DrawLine(int x1, int y1, int x2, int y2);                //GC_DrawLine
+	void DrawRoundRect(RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);  //GC_DrawRoundRect
+	void GetRect(RECT*);                  //GC_GetRect
+	void SetBrushColor(int brush_color);  //GC_SetBrushColor
+	void SetPenColor(int pen_color);      //GC_SetPenColor
+	void SetPixel (int x1,int y1,int color);      //GC_SetPixel
+	void SetXX(int);                      //GC_SetXX
+	void ValidateRect(RECT*);             //GC_ValidateRect
+	//void GC_PutChar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
 };
-*/
+
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -321,12 +343,12 @@ public:
 	char SetItemSecondLineText( STRID strid );
 	char SetItemInfoText( STRID strid );
 	char SetItemUnavailableText( STRID strid );
-	void SetSubitemText( STRID strid );
-	int GetCreatedSubitemParent();//GUIonMessage_GetCreatedSubItemParentIndex
-	int GetCurrentSubitem();//GUIonMessage_GetCurrentSubItem
-	int GetCurrentItem();//GUIonMessage_GetCurrentItemIndex
+	void SubItem_SetText( STRID strid );//GUIonMessage_SubItem_SetText
+	int SubItem_GetCreatedParentIndex();//GUIonMessage_SubItem_GetCreatedParentIndex
+	int SubItem_GetCreatedIndex();//GUIonMessage_SubItem_GetCreatedIndex
+	int SubItem_GetSelectedParentIndex();//GUIonMessage_SubItem_GetSelectedParentIndex
 	void SetItemIcon( int align, wchar_t iconID );
-	void SetItemAsSubitem( int unk, int n_sub_items );
+	void SetNumberOfSubItems( int unk, int n_sub_items );//GUIonMessage_SetNumberOfSubItems
 	void SetItemDisabled( BOOL disabled );
 	void SetLineSeparator( int _unk1 );
 	wchar_t* GetSearchString();
@@ -418,27 +440,18 @@ public:
 
 /////////////////////////////////////////////////////////////////////////
 
-class CPaintGC
+class CPaintGC : public CGCBase
 {
-	GC* gc;
-	int gc_xx_old;
 public:
 	CPaintGC();
 	~CPaintGC();
-	int DrawRawBitmap(int x1, int y1, int x2, int y2, int * bmp); //GC_WritePixels
-	int GetBrushColor();                  //GC_GetBrushColor
-	int GetPenColor();                    //GC_GetPenColor
-	int GetXX();                          //GC_GetXX
-	void DrawFRect (int color,int x1,int y1,int x2 ,int y2);      //GC_DrawFRect
-	void DrawLine(int x1, int y1, int x2, int y2);                //GC_DrawLine
-	void DrawRoundRect(RECT *,int arcWidth,int arcHeight,int border_flag,int fill_flag);  //GC_DrawRoundRect
-	void GetRect(RECT*);                  //GC_GetRect
-	void SetBrushColor(int brush_color);  //GC_SetBrushColor
-	void SetPenColor(int pen_color);      //GC_SetPenColor
-	void SetPixel (int x1,int y1,int color);      //GC_SetPixel
-	void SetXX(int);                      //GC_SetXX
-	void ValidateRect(RECT*);             //GC_ValidateRect
-	//void GC_PutChar( void *xx , int x, int y, int _zero, int zero1 , short wchar);
+};
+
+class CMemoryGC : public CGCBase
+{
+public:
+	CMemoryGC( int xsize, int ysize, int bpp );
+	~CMemoryGC();
 };
 
 /////////////////////////////////////////////////////////////////////////
