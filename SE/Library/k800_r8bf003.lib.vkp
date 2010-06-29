@@ -2,7 +2,7 @@
 ;elf library
 ;v
 ;(c) Hussein , IronMaster
-;(p) hippy dave, michlantecuhtli
+;(p) hippy dave, michlantecuhtli, MaPkiZzz, Alex_1992
 
 +45D1FC00
 0448: 00000000 94300020 ; 112: void* memset( void* mem, char chr, int size );
@@ -658,11 +658,11 @@
 0E70: 00000000 81E8B144 ; 39C: GVI_GC GVI_CreateMemoryGC( GVI_BMP bitmap );
 0E74: 00000000 35EB8544 ; 39D: void GVI_DeleteMemoryGC( GVI_GC gc );
 0E78: 00000000 CD053F45 ; 39E: int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int langID, int flag );
-;0E7C: xxxxxxxx yyyyyyyy ; 39F: int List_InsertSorted( LIST* list, void* item, int (*cmp_proc)( void*, void* ) );
-;0E80: xxxxxxxx yyyyyyyy ; 3A0: int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
-;0E84: xxxxxxxx yyyyyyyy ; 3A1: void wstrnupr( wchar_t* wstr, int maxlen );
-;0E88: xxxxxxxx yyyyyyyy ; 3A2: void wstrnlwr( wchar_t* wstr, int maxlen );
-;0E8C: xxxxxxxx yyyyyyyy ; 3A3: int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
+0E7C: 00000000 C5F72B45 ; 39F: int List_InsertSorted( LIST* list, void* item, int (*cmp_proc)( void*, void* ) );
+0E80: 00000000 DDDD4145 ; 3A0: int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
+0E84: 00000000 354AF544 ; 3A1: void wstrnupr( wchar_t* wstr, int maxlen );
+0E88: 00000000 EDD01E45 ; 3A2: void wstrnlwr( wchar_t* wstr, int maxlen );
+0E8C: 00000000 2DE24145 ; 3A3: int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
 0E90: 00000000 E1434645 ; 3A4: void GUIObject_SetTitleTextColor( GUI*, int color );
 0E94: 00000000 29F14145 ; 3A5: void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 0E98: 00000000 C1904545 ; 3A6: void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
