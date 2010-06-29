@@ -677,7 +677,7 @@
 0EBC: 00000000 95D94145 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* );
 0EC0: 00000000 E5C14045 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
 0EC4: 00000000 B1D94145 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EC8: 00000000 D54B4645 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* );
+0EC8: 00000000 D54B4645 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
 0ECC: 00000000 F9F84545 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
 0ED0: 00000000 A14B4645 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0ED4: 00000000 C9FA4145 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* );

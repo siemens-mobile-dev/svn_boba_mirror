@@ -569,6 +569,20 @@ typedef struct
 typedef struct
 {
   u16 num;
+  u16 icon;
+  int name;
+  int name2;
+  u16 field_C;
+  u16 field_D;
+  u16 big_icon;
+  u16 field_10;
+  u16 ID;
+  u16 null;
+}AB_ITEM_DESC_A2;
+
+typedef struct
+{
+  u16 num;
   u16 tab;
   u16 num_in_tab;
   u16 icon;

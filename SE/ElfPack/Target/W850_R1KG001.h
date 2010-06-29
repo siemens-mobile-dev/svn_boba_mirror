@@ -33,6 +33,7 @@
 #define PATH_USER_INT         (L"/tpa/user")
 #define PATH_USER_EXT         (L"/card")
 
+#define DB_CMD_SETSAVEDICON 0x3A
 #define DB_CMD_SETSMALLICON 0x3B
 #define DB_CMD_SETTHUMBNAILICON 0x3C
 

@@ -84,7 +84,9 @@ __arm int SetSmallIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
 	if (epd->IconSmall == NOIMAGE)
 	{
 #ifdef USESMALLICON
-		ImageID_GetIndirect( (void*)exticon_small, sizeof(exticon_small),0, L"png", &epd->IconSmall);
+		void * pexticon_small = malloc(sizeof(exticon_small));
+		memcpy(pexticon_small,exticon_small,sizeof(exticon_small));
+		ImageID_GetIndirect( pexticon_small, sizeof(exticon_small),0, L"png", &epd->IconSmall);
 #else
 		int iconsmall;
 		iconidname2id(IDN_ELF_SMALL_ICON,-1,&iconsmall);
@@ -101,7 +103,9 @@ __arm int SetThumbnailIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
 	if (epd->IconBig == NOIMAGE)
 	{
 #ifdef USEBIGICON
-		ImageID_GetIndirect( (void*)exticon_big, sizeof(exticon_big),0, L"png", &epd->IconBig);
+		void * pexticon_big = malloc(sizeof(exticon_big));
+		memcpy(pexticon_big,exticon_big,sizeof(exticon_big));
+		ImageID_GetIndirect( pexticon_big, sizeof(exticon_big),0, L"png", &epd->IconBig);
 #else
 		int iconbig;
 		iconidname2id(IDN_ELF_BIG_ICON,-1,&iconbig);
