@@ -12,8 +12,8 @@
 045C: 00000000 49A05711 ; 117: int fclose( int file );
 0460: 00000000 094CFB10 ; 118: int fread( int file, void* ptr, int size );
 0464: 00000000 D54DFB10 ; 119: int fwrite( int file, const void* ptr, int size );
-0468: 00000000 999E7A10 ; 11A: int _wstat(short *path, void *statbuf);
-046C: 00000000 91073F11 ; 11B: int fputs(const char *s, int file);
+;0468: xxxxxxxx yyyyyyyy ; 11A:
+;046C: xxxxxxxx yyyyyyyy ; 11B:
 0470: 00000000 BD3DFB10 ; 11C: int fstat( const wchar_t* path, const wchar_t* fname, FSTAT* fstat_stuct );
 0474: 00000000 BD14FB10 ; 11D: DIR_HANDLE* AllocDirHandle( const wchar_t* path );
 0478: 00000000 8D16FB10 ; 11E: FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
@@ -697,6 +697,7 @@
 0F10: 00000000 D5856211 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 0F14: 00000000 F5856211 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 55E71811 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
 
 
 
