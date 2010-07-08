@@ -103,7 +103,7 @@ void onAccept_SI( BOOK* book, wchar_t* string, int len )
         {
           MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
         }
-
+        
       }
       else
       {
@@ -134,16 +134,16 @@ int CreateSI( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   int editable_strID = GetParam(GetCurrentName(mbk));
-
+  
   mbk->StringInput = CreateStringInputVA( 0,
-                                VAR_PREV_ACTION_PROC( onPrevious_SI ),
-                                VAR_LONG_BACK_PROC( onCancel_SI ),
-                                VAR_BOOK( book ),
-                                VAR_OK_PROC( onAccept_SI ),
-                                VAR_STRINP_TEXT( editable_strID ),
-                                VAR_STRINP_MIN_LEN( 0 ),
-                                VAR_STRINP_MAX_LEN( 50 ),
-                                0 );
+                                         VAR_PREV_ACTION_PROC( onPrevious_SI ),
+                                         VAR_LONG_BACK_PROC( onCancel_SI ),
+                                         VAR_BOOK( book ),
+                                         VAR_OK_PROC( onAccept_SI ),
+                                         VAR_STRINP_TEXT( editable_strID ),
+                                         VAR_STRINP_MIN_LEN( 0 ),
+                                         VAR_STRINP_MAX_LEN( 50 ),
+                                         0 );
   return 0;
 }
 

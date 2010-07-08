@@ -225,9 +225,9 @@ void onEnter_JavaList( BOOK* book, GUI* )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   java_list_elem* elem = (java_list_elem*) List_Get( mbk->java_list, ListMenu_GetSelectedItem( mbk->java_list_menu ) );
-  int java_buf_len = wstrlen( elem->name ) + 40;
+  int java_buf_len = wstrlen( elem->name ) + wstrlen( elem->hash_name ) + 10;
   wchar_t* java_buf = new wchar_t[java_buf_len];
-  snwprintf( java_buf, java_buf_len, L"java:%ls//ID=%d", elem->name, elem->appID );
+  snwprintf( java_buf, java_buf_len, L"java:%ls//%ls", elem->name, elem->hash_name );
   
   WriteShortcut( java_buf );
   delete( java_buf );
@@ -256,6 +256,9 @@ void elem_free( void* elem )
   
   if ( lm->fullpath )
     delete( lm->fullpath );
+  
+  if ( lm->hash_name )
+    delete( lm->hash_name );
   
   if ( lm->imageID )
     ImageID_Free( lm->imageID );
@@ -313,7 +316,9 @@ java_list_elem* CreateElem( void* JavaDesc )
   elem->name = sp;
   JavaAppDesc_GetJavaAppInfo( JavaDesc, 5, &sp );
   elem->fullpath = sp;
-  elem->appID = JavaAppDesc_GetJavaAppID( JavaDesc );
+  JavaAppDesc_GetJavaAppInfo( JavaDesc, 4, &sp );
+  elem->hash_name = sp;
+//  elem->appID = JavaAppDesc_GetJavaAppID( JavaDesc );
   return elem;
 }
 
@@ -535,7 +540,7 @@ int but_list_callback( GUI_MESSAGE* msg )
     GUIonMessage_SetMenuItemIcon(msg, 2, scdata.icon_id );
     break;
   }
-
+  
   return 1;
 }
 

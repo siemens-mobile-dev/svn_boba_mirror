@@ -16,7 +16,7 @@ typedef struct
 {
 	wchar_t* name;
 	wchar_t* fullpath;
-	int appID;
+	wchar_t* hash_name;
 	wchar_t imageID;
 }java_list_elem;
 
