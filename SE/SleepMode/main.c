@@ -1,8 +1,16 @@
-#include "..\\include\Lib_Clara.h"
+#include "..\\include\Lib_Clara_DLL.h"
 #include "..\\include\Dir.h"
 #include "..\\include\cfg_items.h"
 #include "config_data.h"
 #include "conf_loader.h"
+
+#define PLATFORM_DB3150_1 0xC8
+#define PLATFORM_DB3150_2 0xC9
+#define PLATFORM_DB3200_1 0xD8
+#define PLATFORM_DB3200_2 0xD9
+#define PLATFORM_DB3210_1 0xE8
+#define PLATFORM_DB3210_2 0xE9
+#define PLATFORM_DB3350 0xF0
 
 #define ICONS_COUNT 8
 #define color clBlack
@@ -66,8 +74,15 @@ BOOK * RLBook;
 
 int missed_icons[ICONS_COUNT];
 int days[7];
-int Offset1=0x146;
-int Offset2=0x14C;
+//3210
+//int Offset1=0x21C;
+//int Offset2=0x216;
+//3150
+//int Offset1=0x1D0;
+//int Offset2=0x1CA;
+//2020
+int Offset1=0x14C;
+int Offset2=0x146;
 int DISPLAY_WIDTH;
 
 
@@ -137,7 +152,7 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
     DrawString(SIDtime,2,1,y2,DISPLAY_WIDTH,y2+GetImageHeight(30),20,0x05,color ,color);
     TextFree(SIDtime);
     
-    int missed[ICONS_COUNT+2];
+    int missed[ICONS_COUNT];
     int *p=missed;
     int m=*MissedEvents();
     int i;
@@ -146,13 +161,22 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
       if (m&(1<<i))
       {
         *p++=missed_icons[i];
-        if (i<2) *p++=0x78000020;
       }
     }
+
     
-    SIDtime=Str2ID(&missed[0],5,p-missed);
-    DrawString(SIDtime,2,1,y3,DISPLAY_WIDTH,y3+GetImageHeight(30),40,0x05,color ,color);
-    TextFree(SIDtime);
+    int x = 0;
+    for (i=0;i<(p-missed);i++)
+    {
+      x = x + GetImageWidth(missed[i]);
+    }
+    
+    x = (DISPLAY_WIDTH - (x + (i-1)*10) )/2;
+    for (i=0;i<(p-missed);i++)
+    {
+      GC_PutChar(get_DisplayGC(),x,y3,0,0,missed[i]);
+      x = x + 10 + GetImageWidth(missed[i]);
+    }
     
   }
 }
@@ -233,7 +257,7 @@ BOOK * CreateSleepModeBook()
   for (i=0;i<ICONS_COUNT;i++)
   {
     iconidname2id(icons[i],SID_ANY_LEN,&icon_id);
-    missed_icons[i]=icon_id+0x78000000;
+    missed_icons[i]=icon_id;
   }
   
   //Дни недели
@@ -243,6 +267,18 @@ BOOK * CreateSleepModeBook()
     days[i]=icon_id;
   }
   
+  int platform=GetChipID()&0xFF;
+  
+  if (platform==PLATFORM_DB3150_1||platform==PLATFORM_DB3150_2)
+  {
+    Offset1=0x1D0;
+    Offset2=0x1CA;
+  }
+  if (platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2)
+  {
+    Offset1=0x21C;
+    Offset2=0x216;
+  }
   CreateBook(SM_Book,onCloseSMBook,&base_page,"SleepMode",-1,0);
   return(SM_Book);
 }
