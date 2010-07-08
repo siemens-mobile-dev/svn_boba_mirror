@@ -646,7 +646,7 @@
 0E3C: 00000000 D9D21D11 ; 38F: void GVI_FillRectangle( GVI_GC gc, int x, int y, int w, int h, GVI_BRUSH brush );
 0E40: 00000000 65D31D11 ; 390: void GVI_FillRectangles( GVI_GC gc, GVI_XYWH* rcs, int count, GVI_BRUSH brush );
 0E44: 00000000 71C01D11 ; 391: void GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, int color );
-0E48: 00000000 59CB1D11 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
+0E48: 00000000 E1D31D11 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
 0E4C: 00000000 49C21D11 ; 393: int GVI_FillSolidRoundRect( GVI_GC , int x, int y, int w, int h, int arcx, int arcy, int color );
 0E50: 00000000 0DC91D11 ; 394: void GVI_FillSolidTriangle( GVI_GC gc, int x1, int y1, int x2, int y2, int x3, int y3, int color );
 0E54: 00000000 E1B3A610 ; 395: GC* GC_CreateMemoryGC( int xsize, int ysize, int bpp, int unk, void* somefn, int unk2 );

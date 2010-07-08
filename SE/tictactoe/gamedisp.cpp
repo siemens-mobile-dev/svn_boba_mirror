@@ -1,5 +1,5 @@
 #include "..\deleaker\mem2.h"
-#include "..\include\lib_clara.h"
+#include "..\include\lib_clara_Dll.h"
 #include "gamedisp.hpp"
 
 #define PCSTEPDELAY (1000/25)
@@ -272,8 +272,8 @@ void drawfig(GVI_GC gc, POINT* frame, int x, int y, int type, int color)
 }
 
 
-#pragma swi_number=0x81ED
-__swi __arm int IsDrawString();
+//#pragma swi_number=0x81ED
+//__swi __arm int IsDrawString();
 
 void CGameDisp::onDraw(int a, int b, int c)
 {
@@ -407,7 +407,7 @@ void CGameDisp::onDraw(int a, int b, int c)
 	GC_FreeGC( _gc );
 
 	if(gameptr->GetGameState() != CGame::GAMEINPROGRESS)
-		if(IsDrawString()!=0 && IsDrawString()!=0xFFFFFFFF)
+//		if(IsDrawString()!=0 && IsDrawString()!=0xFFFFFFFF)
 		{
 			int font=FONT_E_16R;
 			if(font==0xFFFFFFFF)

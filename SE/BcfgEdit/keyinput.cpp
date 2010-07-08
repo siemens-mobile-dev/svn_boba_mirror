@@ -1,4 +1,4 @@
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 #include "..\include\Dir.h"
 
 #include "..\include\cfg_items.h"
@@ -10,11 +10,11 @@ void KeyCode_KeyHook( BOOK* bk, int key, int unk, int unk2 )
 	MyBOOK* mbk = (MyBOOK*) bk;
 	wchar_t ustr[64];
 	STRID sid[3];
-	
+
 	snwprintf( ustr, MAXELEMS( ustr )-1, L"\n\nHEX: 0x%02X\nDEC: %d", key, key );
-	
+
 	mbk->cur_hp.key->keycode = key;
-	
+
 	sid[0] = Str2ID( L"Current key:\n\n", 0, SID_ANY_LEN );
 	sid[1] = KeyCode2Name( key );
 	sid[2] = Str2ID( ustr, 0, SID_ANY_LEN );
@@ -36,15 +36,15 @@ int KeyCode_OnEnter( void* , BOOK* bk )
 	int key;
 	STRID sid[3];
 	mbk->key_input = TextFeedbackWindow( mbk, 0 );
-	
+
 	key = mbk->cur_hp.key->keycode;
-	
+
 	snwprintf( ustr, MAXELEMS( ustr )-1, L"\n\nHEX: 0x%02X\nDEC: %d", key, key );
-	
+
 	sid[0] = Str2ID( L"Current key:\n\n", 0, SID_ANY_LEN );
 	sid[1] = KeyCode2Name( key );
 	sid[2] = Str2ID( ustr, 0, SID_ANY_LEN );
-	
+
 	Feedback_SetTextExtended( mbk->key_input, Str2ID( sid, 5, 3 ), 0 );
 	GUIObject_SetStyle( mbk->key_input, 1 );
 	Feedback_SetKeyHook( mbk->key_input, KeyCode_KeyHook );
@@ -110,9 +110,9 @@ void KeyModeSelect_OnSelectCBoxGui( BOOK* bk, GUI* )
 {
 	MyBOOK* myBook = (MyBOOK*) bk;
 	int item = OneOfMany_GetSelected( myBook->keymode_sel_list );
-	
+
 	myBook->cur_hp.key->keymode = item;
-	
+
 	ListMenu_SetSecondLineText( myBook->key_sel_list, 1, Str2ID( modes[item], 0, SID_ANY_LEN ) );
 	FREE_GUI( myBook->keymode_sel_list );
 }
@@ -122,14 +122,14 @@ void KeyModeSelect_CreateCBoxGui( MyBOOK* myBook )
 	STRID strid[MAXELEMS( modes )];
 	GUI_ONEOFMANY* om = CreateOneOfMany( myBook );
 	myBook->keymode_sel_list = om;
-	
+
 	wchar_t ustr[64];
 	win12512unicode( ustr, myBook->cur_hp.key->name, MAXELEMS( ustr )-1 );
 	GUIObject_SetTitleText( om, Str2ID( ustr, 0, SID_ANY_LEN ) );
-	
+
 	for ( int i = 0; i<MAXELEMS( modes ); i++ )
 		strid[i] = GetKeyModeName( i );
-	
+
 	OneOfMany_SetTexts( om, strid, MAXELEMS( modes ) );
 	OneOfMany_SetChecked( om, myBook->cur_hp.key->keymode );
 	GUIObject_SoftKeys_SetAction( om, ACTION_BACK, KeyModeSelect_OnCloseCBoxGui );
@@ -141,7 +141,7 @@ void KeyModeSelect_CreateCBoxGui( MyBOOK* myBook )
 void KeyCodeSelect_onEnterPressed( BOOK* bk, GUI* )
 {
 	MyBOOK* mbk = (MyBOOK*) bk;
-	
+
 	int item = ListMenu_GetSelectedItem( mbk->key_sel_list );
 	switch ( item )
 	{
@@ -149,7 +149,7 @@ void KeyCodeSelect_onEnterPressed( BOOK* bk, GUI* )
 		BookObj_CallPage( mbk, &bk_keycode_input );
 		break;
 	case 1:
-		
+
 		KeyModeSelect_CreateCBoxGui( mbk );
 		break;
 	}
@@ -159,32 +159,32 @@ void KeyCodeSelect_OnBack( BOOK* bk, GUI* )
 {
 	MyBOOK* myBook = (MyBOOK*) bk;
 	FREE_GUI( myBook->key_sel_list );
-        
+
         BookObj_ReturnPage( bk, ACCEPT_EVENT );
 }
 
 int KeyCodeSelect_OnEnter( void* , BOOK* bk )
 {
 	MyBOOK* mbk = (MyBOOK*) bk;
-	
+
 	wchar_t ustr[64];
 	GUI_LIST* lo;
 	STRID strid[2];
-	
+
 	strid[0] = Str2ID( L"Select key", 0, SID_ANY_LEN );
 	strid[1] = Str2ID( L"Key mode", 0, SID_ANY_LEN );
 	lo = CreateListMenu( mbk, 0 );
 	mbk->key_sel_list = lo;
-	
-	
+
+
 	win12512unicode( ustr, mbk->cur_hp.key->name, MAXELEMS( ustr )-1 );
 	GUIObject_SetTitleText( lo, Str2ID( ustr, 0, SID_ANY_LEN ) );
 	ListMenu_SetItemCount( lo, 2 );
 	OneOfMany_SetTexts( lo, strid, 2 );
-	
+
 	ListMenu_SetSecondLineText( lo, 0, KeyCode2Name( mbk->cur_hp.key->keycode ) );
 	ListMenu_SetSecondLineText( lo, 1, Str2ID( modes[ mbk->cur_hp.key->keymode ], 0, SID_ANY_LEN ) );
-	
+
 	ListMenu_SetCursorToItem( lo, 0 );
 	ListMenu_SetItemStyle( lo, 1 );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_SELECT1, KeyCodeSelect_onEnterPressed );

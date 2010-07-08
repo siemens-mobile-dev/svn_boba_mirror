@@ -1,4 +1,4 @@
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 #include "..\include\Dir.h"
 #include "..\include\var_arg.h"
 #include "..\include\cfg_items.h"
@@ -56,10 +56,10 @@ unsigned long Crc32( unsigned char* buf, unsigned long len )
 		crc_table[i] = crc;
 	}
 	crc = 0xFFFFFFFFUL;
-	
+
 	while ( len -- )
 		crc = crc_table[ ( crc ^* buf ++ ) & 0xFF ] ^ ( crc >> 8 );
-	
+
 	return crc ^ 0xFFFFFFFFUL;
 };
 
@@ -132,7 +132,7 @@ int SaveCfg( BCFG_DATA* bdata )
 	{
 		if( fwrite( f, bdata->cfg, bdata->size_cfg ) == bdata->size_cfg )
 			result = 1;
-		
+
 		fclose( f );
 	}
 	return result;
@@ -143,10 +143,10 @@ int LoadCfg( BCFG_DATA* bdata )
 	int f;
 	FSTAT _fstat;
 	int result = 0;
-	
+
 	if( bdata->cfg )
 		delete bdata->cfg;
-	
+
 	if( bdata->path )
 	{
 		if( fstat( bdata->path, bdata->name, &_fstat ) != - 1 )
@@ -253,10 +253,10 @@ void OnSelectCBoxGui( BOOK* bk, GUI* )
 {
 	MyBOOK* myBook = (MyBOOK*) bk;
 	int item = OneOfMany_GetSelected( myBook->cbox_gui );
-	
+
 	if( item < myBook->cur_hp.cbox->max )
 		myBook->cur_hp.cbox->selected = item;
-	
+
 	FREE_GUI( myBook->cbox_gui );
         RefreshEdList(bk);
 }
@@ -264,19 +264,19 @@ void OnSelectCBoxGui( BOOK* bk, GUI* )
 void CreateCBoxGui( MyBOOK* myBook )
 {
 	GUI_ONEOFMANY* om = CreateOneOfMany( myBook );
-	
+
 	wchar_t ustr[64];
 	myBook->cbox_gui = om;
 	win12512unicode( ustr, myBook->cur_hp.cbox->name, MAXELEMS( ustr ) - 1 );
 	GUIObject_SetTitleText( om, Str2ID( ustr, 0, SID_ANY_LEN ) );
 	STRID* strid = new STRID[ myBook->cur_hp.cbox->max ];
-	
+
 	for ( int i = 0; i < myBook->cur_hp.cbox->max; i ++ )
 	{
 		win12512unicode( ustr, myBook->cur_hp.cbox->items[i].cbox_text, MAXELEMS( ustr ) - 1 );
 		strid[i] = Str2ID( ustr, 0, SID_ANY_LEN );
 	}
-	
+
 	OneOfMany_SetTexts( om, strid, myBook->cur_hp.cbox->max );
 	delete strid;
 	OneOfMany_SetChecked( om, myBook->cur_hp.cbox->selected );
@@ -317,7 +317,7 @@ void CreateUnsignedNumberInput( MyBOOK* myBook )
 {
 	wchar_t ustr[64];
 	STRID text, header_name;
-	
+
 	snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%u", myBook->cur_hp.unsignedint->unsignedint );
 	text = Str2ID( ustr, 0, SID_ANY_LEN );
 	win12512unicode( ustr, myBook->cur_hp.unsignedint->name, MAXELEMS( ustr ) - 1 );
@@ -396,10 +396,10 @@ void CreateWinOrPassSI( MyBOOK* myBook, int is_pass )
 	int len;
 	STRID text, header_name;
 	len = myBook->cur_hp.str->max;
-	
+
 	if( len < 63 )
 		len = 63;
-	
+
 	ustr = new wchar_t[len + 1];
 	win12512unicode( ustr, myBook->cur_hp.str->name, len );
 	header_name = Str2ID( ustr, 0, SID_ANY_LEN );
@@ -462,13 +462,13 @@ void CreateUnicodeSI( MyBOOK* myBook, int is_pass )
 	wchar_t* ustr;
 	int len;
 	STRID text, header_name, sel_file, sel_folder;
-	int tmp;
-	
+	int tmp=EMPTY_SID;
+
 	len = myBook->cur_hp.wstr->max;
-	
+
 	if( len < 63 )
 		len = 63;
-	
+
 	ustr = new wchar_t[len + 1];
 	win12512unicode( ustr, myBook->cur_hp.wstr->name, len );
 	header_name = Str2ID( ustr, 0, SID_ANY_LEN );
@@ -476,7 +476,8 @@ void CreateUnicodeSI( MyBOOK* myBook, int is_pass )
 	wstrncpy( ustr, &myBook->cur_hp.wstr->chars[0], len );
 	text = Str2ID( ustr, 0, SID_ANY_LEN );
 	textidname2id( L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT", - 1, &tmp );
-	sel_folder = tmp;
+	if (tmp==EMPTY_SID) tmp = Str2ID(L"Select folder",0,SID_ANY_LEN);
+        sel_folder = tmp;
 	textidname2id( L"WAP_SELECT_FILE_TXT", - 1, &tmp );
 	sel_file = tmp;
 	myBook->text_input = CreateStringInputVA( 0,
@@ -640,7 +641,28 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 			}
 			break;
 		case CFG_FONT:
-			str_id = Str2ID( Font_GetNameByFontId( ((CFG_HDR_FONT*)hp)->font ), 0, SID_ANY_LEN );
+                        int platform=GetChipID()&0xFF;
+                        if (platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2||platform==PLATFORM_DB3350)
+                        {
+                          int n=1;
+                          int sp[5];
+                          sp[0] = int2strID (((CFG_HDR_FONT*)hp)->font&0xFF);
+                          int style_flags = ((CFG_HDR_FONT*)hp)->font>>8;
+                          if (style_flags&bold)
+                          {
+                            sp[n] = 0x78000000 + '_';
+                            sp[n+1] = 0x78000000 + 'B';
+                            n = n+2;
+                          }
+                          if (style_flags&italic)
+                          {
+                            sp[n] = 0x78000000 + '_';
+                            sp[n+1] = 0x78000000 + 'I';
+                            n = n+2;
+                          }
+                          str_id = Str2ID(sp,0x5,n);
+                        }
+                        else str_id = Str2ID( Font_GetNameByFontId( ((CFG_HDR_FONT*)hp)->font ), 0, SID_ANY_LEN );
 			break;
 		case CFG_KEYCODE:
 			{
@@ -669,7 +691,7 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 int onLBMessage( GUI_MESSAGE* msg )
 {
 	MyBOOK* myBook = (MyBOOK*) GUIonMessage_GetBook( msg );
-	
+
 	switch( GUIonMessage_GetMsg( msg ) )
 	{
 		// onCreateListItem
@@ -681,10 +703,10 @@ int onLBMessage( GUI_MESSAGE* msg )
 		GUIonMessage_SetMenuItemText( msg, Str2ID( ustr, 0, SID_ANY_LEN ) );
 		GUIonMessage_SetMenuItemInfoText( msg, Str2ID( ustr, 0, SID_ANY_LEN ) );
 		int str_id = GetSubItemText( myBook, hp );
-		
-		if( str_id == EMPTY_SID ) 
+
+		if( str_id == EMPTY_SID )
 			str_id = Str2ID ( L"Υπενό", 0, SID_ANY_LEN );
-		
+
 		GUIonMessage_SetMenuItemSecondLineText( msg, str_id );
 	}
 	return 1;
@@ -748,19 +770,19 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 	CFG_HDR* hp;
 	int need_to_jump = 0;
 	LIST* list = mbk->list;
-	
+
 	while( list->FirstFree )
 		List_RemoveAt( list, 0 );
-	
+
 	GUI* gui = NULL;
-	
+
 	int i;
 	unsigned int curlev = 0;
 	CFG_HDR* parent = NULL;
 	CFG_HDR* parents[16];
-	
+
 	bool error = false;
-	
+
 	while( !error && n >= sizeof( CFG_HDR ) )
 	{
 		hp = (CFG_HDR*) p;
@@ -787,7 +809,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 		}
 		n -= sizeof( CFG_HDR );
 		p += sizeof( CFG_HDR );
-		
+
 		switch( hp->type )
 		{
 		case CFG_UINT:
@@ -818,7 +840,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			else
 				p += ( hp->max + 1 + 3 )&( ~3 );
 			break;
-			
+
 		case CFG_UTF8_STRING:
 			n -= ( hp->max + 1 + 3 )&( ~3 );
 			if( n < 0 )
@@ -826,7 +848,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			else
 				p += ( hp->max + 1 + 3 )&( ~3 );
 			break;
-			
+
 		case CFG_CBOX:
 			n -= hp->max * sizeof( CFG_CBOX_ITEM ) + 4;
 			if( n < 0 )
@@ -889,7 +911,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			else
 				p += sizeof(int) ;
 			break;
-			
+
 		case CFG_TIME:
 			n -= sizeof( DATE );
 			if( n < 0 )
@@ -897,7 +919,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			else
 				p += sizeof( DATE );
 			break;
-			
+
 		case CFG_DATE:
 			n -= sizeof( TIME );
 			if( n < 0 )
@@ -905,7 +927,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			else
 				p += sizeof( TIME );
 			break;
-			
+
 		case CFG_RECT:
 			n -= sizeof( RECT );
 			if( n < 0 )
@@ -913,7 +935,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			else
 				p += sizeof( RECT );
 			break;
-			
+
 		case CFG_COLOR_INT:
 			n -= sizeof(int) ;
 			if( n < 0 )
@@ -947,7 +969,7 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			break;
 		}
 	}
-	
+
 	gui = CreateGuiList( mbk, need_to_jump );
 	GUIObject_Show( gui );
 	return gui;
@@ -1007,7 +1029,7 @@ static int SelBcfgPageOnCreate( void* , BOOK* bk )
 	MyBOOK* mbk = (MyBOOK*) bk;
 	static char actions[4];
 	void* DB_Desc = DataBrowserDesc_Create();
-	
+
 	const wchar_t* folder_list[2];
 	folder_list[0] = GetDir( DIR_ELFS_CONFIG|MEM_INTERNAL );
 	folder_list[1] = GetDir( DIR_ELFS_CONFIG|MEM_EXTERNAL );
@@ -1015,15 +1037,15 @@ static int SelBcfgPageOnCreate( void* , BOOK* bk )
 	DataBrowserDesc_SetBookID( DB_Desc, BookObj_GetBookID( mbk ) );
 	DataBrowserDesc_SetFolders( DB_Desc, folder_list );
 	DataBrowserDesc_SetFoldersNumber( DB_Desc, 2 );
-	
+
 	DataBrowserDesc_SetSelectAction( DB_Desc, 1 );
 	DataBrowserDesc_SetFileExtList( DB_Desc, L"*.bcfg" );
 	DataBrowserDesc_SetItemFilter( DB_Desc, SelBcfg_BcfgFilter );
-	
+
 	actions[0] = DB_CMD_DELETE;
 	actions[1] = DB_CMD_LAST;
 	DataBrowserDesc_SetActions( DB_Desc, actions );
-	
+
 	DataBrowser_Create( DB_Desc );
 	DataBrowserDesc_Destroy( DB_Desc );
 	return 1;
@@ -1071,7 +1093,7 @@ static int MainPageOnCreate( void* , BOOK* bk )
 	int find_cfg = 1;
 	mbk->list = List_Create();
 	// mbk->Platform = GetChipID() >> 12;
-	
+
 	textidname2id( IDN_CHANGES_HAVE_BEEN_MADE, - 1, &mbk->changes_have_been_made );
 	textidname2id( IDN_SAVE_BEFORE_EXIT, - 1, &mbk->save_before_exit );
 	textidname2id( IDN_CHECKBOX_UNCHECKED_ICON, - 1, &mbk->check_box_unchecked );

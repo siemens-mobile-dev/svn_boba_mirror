@@ -529,7 +529,7 @@
 0C68: 00000000 69AD1214 ; 31A: void BookObj_SetDisplayOrientation( BOOK* book, int orientation );
 0C6C: 00000000 297DF714 ; 31B: BOOK* Display_GetTopBook( int display );
 0C70: 00000000 99E05115 ; 31C: void Display_SetBrightness( int display, int brightness );
-0C74: 00000000 DDA71514 ; 31D: int Display_GetBrightness( int display );
+0C74: 00000000 B178DF14 ; 31D: int Display_GetBrightness( int display );
 0C78: 00000000 2DDD8515 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions( void* DataBrowserDesc, int );
 0C7C: 00000000 A5014014 ; 31F: void DataBrowserDesc_Menu_AddNewFolder( void* DataBrowserDesc, int );
 0C80: 00000000 95613114 ; 320: void DataBrowserDesc_Menu_AddMarkFiles( void* DataBrowserDesc, int );
@@ -646,7 +646,7 @@
 0E3C: 00000000 DD230A10 ; 38F: void GVI_FillRectangle( GVI_GC gc, int x, int y, int w, int h, GVI_BRUSH brush );
 0E40: 00000000 D1CC5110 ; 390: void GVI_FillRectangles( GVI_GC gc, GVI_XYWH* rcs, int count, GVI_BRUSH brush );
 0E44: 00000000 F5C05110 ; 391: void GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, int color );
-0E48: 00000000 C9E21210 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
+0E48: 00000000 61C50210 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
 0E4C: 00000000 5D1C2710 ; 393: int GVI_FillSolidRoundRect( GVI_GC , int x, int y, int w, int h, int arcx, int arcy, int color );
 0E50: 00000000 0DF20010 ; 394: void GVI_FillSolidTriangle( GVI_GC gc, int x1, int y1, int x2, int y2, int x3, int y3, int color );
 0E54: 00000000 91F00314 ; 395: GC* GC_CreateMemoryGC( int xsize, int ysize, int bpp, int unk, void* somefn, int unk2 );
@@ -699,6 +699,7 @@
 0F10: 00000000 ADE9F214 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 0F14: 00000000 651F2A14 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 950B9315 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+0F1C: 00000000 B13FF714 ; 3C7: int Theme_DestroyMenuIcons( void );
 
 
 

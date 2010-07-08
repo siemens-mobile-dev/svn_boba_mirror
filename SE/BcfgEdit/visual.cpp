@@ -1,4 +1,4 @@
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 #include "..\include\Dir.h"
 
 #include "..\include\cfg_items.h"
@@ -41,7 +41,7 @@ void ColorGuiOnRedraw( DISP_OBJ_COLOR* db, int, int, int )
 	wchar_t ustr[32];
 	int scr_w, scr_h, x1, y1;
 	int testcolor;
-	
+
 	GC_GetRect( gc, &rc_old );
 	gc_xx = GC_GetXX( gc );
 	GC_SetXX( gc, 1 );
@@ -49,7 +49,7 @@ void ColorGuiOnRedraw( DISP_OBJ_COLOR* db, int, int, int )
 	y1 = rc_old.y1;
 	scr_w = rc_old.x2 - x1;
 	scr_h = rc_old.y2 - y1;
-	
+
 	font_old = SetFont( font );
 	column_height = scr_h - fsize - fsize;
 	column_width = scr_w / 9;
@@ -63,18 +63,18 @@ void ColorGuiOnRedraw( DISP_OBJ_COLOR* db, int, int, int )
 	}
 	DrawString( db->str_id, 0, x1 + 1, y1 + 1, x1 + scr_w - 30, y1 + 1 + fsize + 1, 0, 0, clBlack, 0x00000000 );
 	fsize += 3;
-	
+
 	for ( int i = 0; i != 4; i++ )
 	{
 		start_column = column_width + 2 * i * column_width;
 		column_height++; // Какая то фигня с DrawRect, координаты не совпадают с DrawLine. Оно и понятно, DrawRect не GC_.
-		
+
 		if ( db->current_column == i )
 			DrawRect( x1 + start_column - 2, y1 + fsize - 2, x1 + start_column + column_width + 2, y1 + fsize + column_height + 2, clBlack, clWhite );
-		
+
 		DrawRect( x1 + start_column, y1 + fsize, x1 + start_column + column_width, y1 + fsize + column_height, clBlack, colors[i] );
 		column_height--;
-		
+
 		switch( i )
 		{
 		case 0:
@@ -90,7 +90,7 @@ void ColorGuiOnRedraw( DISP_OBJ_COLOR* db, int, int, int )
 			y_line = fsize + column_height - ( db->a * column_height ) / ( db->type == 0 ? 0x64 : 0xFF );
 			break;
 		}
-		
+
 		int old_pen = GC_GetPenColor( gc );
 		GC_SetPenColor( gc, clBlack );
 		GC_DrawLine( gc, x1 + start_column, y1 + y_line, x1 + start_column + column_width - 1, y1 + y_line );
@@ -98,7 +98,7 @@ void ColorGuiOnRedraw( DISP_OBJ_COLOR* db, int, int, int )
 	}
 	testcolor = COLOR_RGBA( db->r, db->g, db->b, db->type == 0? ( db->a * 0xFF / 0x64 ) : ( db->a ) );
 	DrawRect( x1 + scr_w - fsize - 1, y1 + 1, x1 + scr_w - 1, y1 + fsize + 1, clBlack, testcolor );
-	
+
 	SetFont( font_old );
 	GC_SetXX( gc, gc_xx );
 }
@@ -112,7 +112,7 @@ void ColorGuiOnKey( DISP_OBJ_COLOR* db, int key, int, int repeat, int type )
 		else
 			if ( type == KBD_REPEAT && repeat  >  10 )
 				db->cstep = 8;
-		
+
 		if ( key == KEY_UP || key == KEY_DIGITAL_0 + 2 )
 		{
 			switch( db->current_column )
@@ -134,7 +134,7 @@ void ColorGuiOnKey( DISP_OBJ_COLOR* db, int key, int, int repeat, int type )
 					db->a = 0;
 				break;
 			}
-			
+
 			db->need_str = 1;
 		}
 		else if ( key == KEY_DOWN || key == KEY_DIGITAL_0 + 8 )
@@ -155,10 +155,10 @@ void ColorGuiOnKey( DISP_OBJ_COLOR* db, int key, int, int repeat, int type )
 				break;
 			case 3:
 				if ( ( db->a -= db->cstep ) < 0 )
-					db->a = ( db->type == 0 ? 0x64 : 0xFF );
+					db->a = db->type == 0 ? 0x64 : 0xFF;
 					break;
 			}
-			
+
 			db->need_str = 1;
 		}
 		else if ( key == KEY_LEFT || key == KEY_DIGITAL_0 + 4 )
@@ -172,10 +172,10 @@ void ColorGuiOnKey( DISP_OBJ_COLOR* db, int key, int, int repeat, int type )
 				db->current_column = 0;
 		}
 	}
-	
+
 	if ( type == KBD_LONG_RELEASE )
 		db->cstep = 1;
-	
+
 	DispObject_InvalidateRect( db, 0 );
 }
 
@@ -225,16 +225,16 @@ GUI_COLOR* CreateEditColorGUI( MyBOOK* myBook, int type )
 	wchar_t ustr[32];
 	GUI_COLOR* gui_color = new GUI_COLOR;
 	DISP_OBJ_COLOR* disp_obj;
-	
+
 	if ( !GUIObject_Create( gui_color, EditColorGui_destr, EditColorGui_constr, myBook, 0, 0, 0 ) )
 	{
 		myBook->color = NULL;
 		delete gui_color;
 		return 0;
 	}
-	
+
 	disp_obj = (DISP_OBJ_COLOR*) GUIObject_GetDispObject( gui_color );
-	
+
 	if ( type == 0 )
 	{
 		disp_obj->r = myBook->cur_hp.color->rgb[0];
@@ -250,14 +250,14 @@ GUI_COLOR* CreateEditColorGUI( MyBOOK* myBook, int type )
 		disp_obj->b = COLOR_GET_B( color );
 		disp_obj->a = COLOR_GET_A( color );
 	}
-	
+
 	disp_obj->type = type;
-	
+
 	myBook->color = gui_color;
-	
+
 	if ( myBook )
 		BookObj_AddGUIObject( myBook, gui_color );
-	
+
 	// GUIObject_SetStyle( myBook->color, 4 );
 	win12512unicode( ustr, myBook->cur_hp.color->name, MAXELEMS( ustr ) - 1 );
 	GUIObject_SetTitleText( myBook->color, Str2ID( ustr, 0, SID_ANY_LEN ) );
@@ -290,12 +290,12 @@ void CoordinatesGuiOnClose( DISP_OBJ_COORD* db )
 void DrawOwnRect( int _x1, int _y1, int _x2, int _y2, int pen_color, int brush_color )
 {
 	int x1, x2, y1, y2;
-	
+
 	x1 = MIN( _x1, _x2 );
 	x2 = MAX( _x1, _x2 );
 	y1 = MIN( _y1, _y2 );
 	y2 = MAX( _y1, _y2 );
-	
+
 	if ( y1 == y2 || x1 == x2 )
 	{
 		GC* gc = get_DisplayGC();
@@ -323,41 +323,41 @@ void CoordinatesGuiOnRedraw( DISP_OBJ_COORD* db, int, int, int )
 	int font_old, gc_xx;
 	int font = FONT_E_20R;
 	int fsize = 20;
-	
+
 	GC* gc = get_DisplayGC();
 	wchar_t ustr[32];
 	int old_pen;
-	
+
 	int scr_w = Display_GetWidth( 0 );
 	int scr_h = Display_GetHeight( 0 );
-	
+
 	GC_GetRect( gc, &rc_old );
 	gc_xx = GC_GetXX( gc );
 	GC_SetXX( gc, 1 );
-	
+
 	rc_new.x1 = 0;
 	rc_new.x2 = scr_w;
 	rc_new.y1 = 0;
 	rc_new.y2 = scr_h;
 	GC_ValidateRect( gc, &rc_new );
-	
+
 	font_old = SetFont( font );
 	DrawRect( 0, 0, scr_w, scr_h, clWhite, clWhite );
 	old_pen = GC_GetPenColor( gc );
 	GC_SetPenColor( gc, colors[3] );
-	
+
 	for ( int y_0 = 0; y_0 < scr_h; y_0 += 10 )
 	{
 		GC_DrawLine( gc, 0, y_0, scr_w, y_0 );
 	}
-	
+
 	for ( int x_0 = 0; x_0 < scr_w; x_0 += 10 )
 	{
 		GC_DrawLine( gc, x_0, 0, x_0, scr_h );
 	}
-	
+
 	GC_SetPenColor( gc, old_pen );
-	
+
 	if ( db->type ) // Если нужен рект
 	{
 		DrawOwnRect( db->old_rect.x1, db->old_rect.y1, db->old_rect.x2, db->old_rect.y2, 0xC0808080, 0x00000000 ); // Нарисуем старый рект
@@ -394,12 +394,12 @@ void CoordinatesGuiOnRedraw( DISP_OBJ_COORD* db, int, int, int )
 		}
 	}
 	DrawString( db->str_id, 0, 3, scr_h - fsize - 2, scr_w - 4, scr_h - 1, 0, 0, clBlack, 0x00000000 );
-	
+
 	old_pen = GC_GetPenColor( gc );
 	GC_SetPenColor( gc, clBlack );
 	GC_DrawLine( gc, db->x - 3, db->y, db->x + 3, db->y );
 	GC_DrawLine( gc, db->x, db->y - 3, db->x, db->y + 3 );
-	
+
 	if ( BookObj_GetDisplayOrientation( db->mb ) == 0 )
 	{
 		DrawArrow( scr_w - 19, scr_h - 13, clBlack );
@@ -420,13 +420,13 @@ void CoordinatesGuiOnKey( DISP_OBJ_COORD* db, int key, int, int repeat, int type
 	{
 		int scr_w = Display_GetWidth( 0 );
 		int scr_h = Display_GetHeight( 0 );
-		
+
 		if ( type == KBD_SHORT_RELEASE )
 			db->cstep = 1;
 		else
 			if ( type == KBD_REPEAT && repeat>10 )
 				db->cstep = 8;
-		
+
 		if ( key == KEY_DIGITAL_0 + 1 )
 		{
 			if ( ( db->x -= db->cstep ) < 0 )
@@ -468,20 +468,20 @@ void CoordinatesGuiOnKey( DISP_OBJ_COORD* db, int key, int, int repeat, int type
 			if ( ( db->y += db->cstep )>scr_h ) db->y = scr_h;
 		}
 		db->need_str = 1;
-		
+
 		if ( key == KEY_ENTER || key == KEY_LEFT_SOFT )
 			OnOkCoordinatesEdit( db->mb, 0 );
-		
+
 		if ( key == KEY_ESC )
 			OnBackCoordinatesEdit( db->mb, 0 );
-		
+
 		if ( key == KEY_RIGHT_SOFT )
 			OnOrientationChangeCoordinatesEdit( db->mb, 0 );
 	}
-	
+
 	if ( type == KBD_LONG_RELEASE )
 		db->cstep = 1;
-	
+
 	DispObject_InvalidateRect( db, 0 );
 }
 
@@ -511,7 +511,7 @@ void OnBackCoordinatesEdit( BOOK* bk, void* )
 	MyBOOK* myBook = (MyBOOK*) bk;
 	DISP_OBJ_COORD* disp_obj = (DISP_OBJ_COORD*) GUIObject_GetDispObject( myBook->coord );
 	int f = 0;
-	
+
 	if ( disp_obj->type )
 	{
 		if ( disp_obj->is_first_set )
@@ -521,7 +521,7 @@ void OnBackCoordinatesEdit( BOOK* bk, void* )
 			DispObject_InvalidateRect( disp_obj, 0 );
 		}
 	}
-	
+
 	if ( !f )
 	{
 		BookObj_SetDisplayOrientation( bk, 0 );
@@ -556,7 +556,7 @@ void OnOkCoordinatesEdit( BOOK* bk, void* )
 		myBook->cur_hp.point->point.x = disp_obj->x;
 		myBook->cur_hp.point->point.y = disp_obj->y;
 	}
-	
+
 	if ( !f )
 	{
 		BookObj_SetDisplayOrientation( bk, 0 );
@@ -591,10 +591,10 @@ GUI_COORDINATES* CreateEditCoordinatesGUI( MyBOOK* myBook, int type )
 	disp_obj->type = type;
 	disp_obj->mb = myBook;
 	myBook->coord = gui_coord;
-	
-	if ( myBook ) 
+
+	if ( myBook )
 		BookObj_AddGUIObject( myBook, myBook->coord );
-	
+
 	GUIObject_SetStyle( myBook->coord, 4 );
 	GUIObject_SetTitleType( myBook->coord, 1 );
 	GUIObject_SoftKeys_Hide( myBook->coord );
@@ -607,6 +607,7 @@ static const char FontSelectGuiName[] = "Gui_FontSelect";
 
 
 const char test_str[] = "Test string 123";
+
 
 wchar_t* Font_GetNameByFontId( int id )
 {
@@ -622,6 +623,7 @@ wchar_t* Font_GetNameByFontId( int id )
 	}
 	return txt;
 }
+
 
 int GetIdByFontId( int id )
 {
@@ -641,18 +643,35 @@ int GetIdByFontId( int id )
 int FontSelectGuiOnCreate( DISP_OBJ_FONT_SEL* db )
 {
 	wchar_t ustr[64];
-	int font_old;
+        int font_old;
 	win12512unicode( ustr, test_str, MAXELEMS( test_str ) - 1 );
 	db->test_str_id = Str2ID( ustr, 0, SID_ANY_LEN );
-	db->total_fonts = * GetFontCount();
-	font_old = SetFont( FONT_E_20R );
-	db->font_heights = new u16[db->total_fonts];
-	for ( int i = 0; i < db->total_fonts; i++ )
-	{
-		SetFont( GetFontDesc()[i].id );
-		db->font_heights[i] = GetImageHeight( ' ' );
-	}
-	SetFont( font_old );
+
+        int platform=GetChipID()&0xFF;
+        if (platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2||platform==PLATFORM_DB3350) db->platform_flag=1;
+        else db->platform_flag=0;
+
+        if (db->platform_flag)
+        {
+          db->total_fonts = max_size/font_step;
+          db->font_heights = new u16[db->total_fonts];
+          for ( int i = 0; i < db->total_fonts; i++ )
+          {
+            db->font_heights[i] = (i+1)*font_step;
+          }
+        }
+	else
+        {
+          db->total_fonts = * GetFontCount();
+          db->font_heights = new u16[db->total_fonts];
+          font_old = SetFont( FONT_E_20R );
+          for ( int i = 0; i < db->total_fonts; i++ )
+          {
+            SetFont( GetFontDesc()[i].id );
+            db->font_heights[i] = GetImageHeight( ' ' );
+          }
+          SetFont( font_old );
+        }
 	db->cur_offs = 0;
 	db->req_check_vis = 1;
 	return 1;
@@ -679,15 +698,15 @@ void CheckStringVisibility( DISP_OBJ_FONT_SEL* db, int x1, int y1, int x2, int y
 			for ( int i = db->cur_offs, k = 0; i < db->total_fonts; i++ )
 			{
 				int sum;
-				if ( db->cur_pos == i ) 
+				if ( db->cur_pos == i )
 					k = 1;
-				
-				if ( ( ( sum = cur_y + db->font_heights[i] + 2 ) + 1 ) < y2 && k ) 
+
+				if ( ( ( sum = cur_y + db->font_heights[i] + 2 ) + 1 ) < y2 && k )
 					f = 1;
-				
+
 				cur_y = sum;
-				
-				if ( cur_y  >  y2 ) 
+
+				if ( cur_y  >  y2 )
 					break;
 			}
 		} while( !f && ++db->cur_offs < db->total_fonts );
@@ -696,13 +715,13 @@ void CheckStringVisibility( DISP_OBJ_FONT_SEL* db, int x1, int y1, int x2, int y
 
 void FontSelectGuiOnRedraw( DISP_OBJ_FONT_SEL* db, int, RECT* cur_rc, int )
 {
-	
+
 	int font_old, gc_xx;
 	GC* gc = get_DisplayGC();
 	int x1, y1, x2, y2;
 	int y_offs;
 	STRID selfont;
-	
+
 	gc_xx = GC_GetXX( gc );
 	GC_SetXX( gc, 1 );
 	x1 = cur_rc->x1;
@@ -715,32 +734,52 @@ void FontSelectGuiOnRedraw( DISP_OBJ_FONT_SEL* db, int, RECT* cur_rc, int )
 		CheckStringVisibility( db, x1, y1, x2, y2, y_offs );
 		db->req_check_vis = 0;
 	}
-	
+
 	font_old = SetFont( FONT_E_20R );
 	DrawRect( x1, y1, x2, y2, clBlack, clBlack );
-	
-	selfont = Str2ID( GetFontDesc()[db->cur_pos].name, 0, 9 );
+
+	if (db->platform_flag)
+        {
+          int n=1;
+          int sp[5];
+          sp[0] = int2strID((db->cur_pos+1)*font_step);
+          if (db->style_bold)
+          {
+            sp[n] = 0x78000000 + '_';
+            sp[n+1] = 0x78000000 + 'B';
+            n = n+2;
+          }
+          if (db->style_italic)
+          {
+            sp[n] = 0x78000000 + '_';
+            sp[n+1] = 0x78000000 + 'I';
+            n = n+2;
+          }
+          selfont = Str2ID(sp,0x5,n);
+        }
+        else selfont = Str2ID( GetFontDesc()[db->cur_pos].name, 0, 9 );
 	DrawString( selfont, 0, x1 + 3, y1 + 1, x2 - 2, y_offs - 1, 0, 0, 0xFF0080FF, 0x00000000 ); // Рисуем выбранный шрифт в шапке меню
 	TextFree( selfont );
-	
+        
 	int cur_y = y_offs;
 	for ( int i = db->cur_offs; i < db->total_fonts; i++ )
 	{
-		int font, font_h;
-		font = GetFontDesc()[i].id;
-		SetFont( font );
-		font_h = db->font_heights[i];
-		if ( i == db->cur_pos ) // Если это выбранный шрифт
-			DrawRect( x1 + 1, cur_y, x2 - 1, cur_y + font_h + 2, 0xFF00FF00, 0xFF408000 );
-		DrawString( db->test_str_id, 0, x1 + 2, cur_y + 1, x2 - 2, cur_y + font_h + 1, 0, 0, clWhite, 0x00000000 );
-		cur_y += font_h + 2;
-		if ( cur_y>y2 ) break;
+          int font, font_h;
+          font_h = db->font_heights[i];
+          if (db->platform_flag) font = font_h + (db->style_bold<<8) + (db->style_italic<<9);
+          else font = GetFontDesc()[i].id;
+          SetFont( font );
+          if ( i == db->cur_pos ) // Если это выбранный шрифт
+            DrawRect( x1 + 1, cur_y, x2 - 1, cur_y + font_h + 2, 0xFF00FF00, 0xFF408000 );
+          DrawString( db->test_str_id, 0, x1 + 2, cur_y + 1, x2 - 2, cur_y + font_h + 1, 0, 0, clWhite, 0x00000000 );
+          cur_y += font_h + 2;
+          if ( cur_y>y2 ) break;
 	}
-	
+        
 	SetFont( font_old );
 	GC_SetXX( gc, gc_xx );
-	
-}
+        
+        }
 
 
 
@@ -758,6 +797,27 @@ void FontSelectGuiOnKey( DISP_OBJ_FONT_SEL* db, int key, int, int repeat, int ty
 			if ( ++db->cur_pos  >= db->total_fonts )
 				db->cur_pos = 0;
 		}
+                if ( key == KEY_DEL )
+                {
+                        if ((!db->style_bold)&&(!db->style_italic))
+                        {
+                                db->style_bold=1;
+                        }
+                        else if ((db->style_bold)&&(!db->style_italic))
+                        {
+                                db->style_bold=0;
+                                db->style_italic=1;
+                        }
+                        else if ((!db->style_bold)&&(db->style_italic))
+                        {
+                                db->style_bold=1;
+                        }
+                        else if ((db->style_bold)&&(db->style_italic))
+                        {
+                                db->style_bold=0;
+                                db->style_italic=0;
+                        }
+                }
 		db->req_check_vis = 1;
 		DispObject_InvalidateRect( db, 0 );
 	}
@@ -773,8 +833,9 @@ void OnOkFontSelect( BOOK* bk, GUI* )
 {
 	MyBOOK* myBook = (MyBOOK*) bk;
 	DISP_OBJ_FONT_SEL* disp_obj = (DISP_OBJ_FONT_SEL*) GUIObject_GetDispObject( myBook->font_select );
-	myBook->cur_hp.font->font = GetFontDesc()[disp_obj->cur_pos].id;
-	FREE_GUI( myBook->font_select );
+	if (disp_obj->platform_flag) myBook->cur_hp.font->font = (disp_obj->cur_pos+1)*font_step + (disp_obj->style_bold<<8) + (disp_obj->style_italic<<9);
+        else myBook->cur_hp.font->font = GetFontDesc()[disp_obj->cur_pos].id;
+        FREE_GUI( myBook->font_select );
         RefreshEdList(bk);
 }
 
@@ -797,27 +858,33 @@ void FontSelectGui_destr( GUI* gui )
 
 GUI_FONT_SEL* CreateFontSelectGUI( MyBOOK* myBook )
 {
-	
+
 	GUI_FONT_SEL* gui_fontsel = new GUI_FONT_SEL;
 	DISP_OBJ_FONT_SEL* disp_obj;
-	
+
 	wchar_t ustr[64];
 	if ( !GUIObject_Create( gui_fontsel, FontSelectGui_destr, FontSelectGui_constr, myBook, 0, 0, 0 ) )
 	{
 		delete gui_fontsel;
 		return 0;
 	}
-	
-	
-	disp_obj = (DISP_OBJ_FONT_SEL*) GUIObject_GetDispObject( gui_fontsel );
-	
-	disp_obj->cur_pos = GetIdByFontId( myBook->cur_hp.font->font );
-	
+
+        disp_obj = (DISP_OBJ_FONT_SEL*) GUIObject_GetDispObject( gui_fontsel );
+        
+        if (disp_obj->platform_flag)
+        {
+          disp_obj->cur_pos = (myBook->cur_hp.font->font&0xFF)/font_step-1;
+          int style_flags = myBook->cur_hp.font->font>>8;
+          disp_obj->style_bold=style_flags&bold;
+          disp_obj->style_italic=(style_flags&italic)>>1;
+        }
+        else disp_obj->cur_pos = GetIdByFontId( myBook->cur_hp.font->font );
+
 	myBook->font_select = gui_fontsel;
-	
-	if ( myBook ) 
+
+	if ( myBook )
 		BookObj_AddGUIObject( myBook, myBook->font_select );
-	
+
 	// GUIObject_SetStyle( myBook->font_select, 4 );
 	win12512unicode( ustr, myBook->cur_hp.font->name, MAXELEMS( ustr ) - 1 );
 	GUIObject_SetTitleText( myBook->font_select, Str2ID( ustr, 0, SID_ANY_LEN ) );
@@ -881,8 +948,8 @@ FLIST* AddToFList( const wchar_t* full_name, const wchar_t* name, int is_folder 
 		{
 			pr = fl;
 			fl = (FLIST*) fl->next;
-			
-			if ( !fl ) 
+
+			if ( !fl )
 				break;
 		}
 		fn->next = fl;
@@ -963,7 +1030,7 @@ FLIST* FindFLISTtByNS( int* i, int si )
 	{
 		if ( fl->is_folder == si )
 		{
-			if ( !(*i) ) 
+			if ( !(*i) )
 				return fl;
 			(*i)--;
 		}
@@ -975,18 +1042,18 @@ FLIST* FindFLISTtByNS( int* i, int si )
 FLIST* FindFLISTtByN( int n )
 {
 	FLIST* fl;
-	fl = FindFLISTtByNS( &n, IS_BACK ); 
-	
-	if ( !n && fl ) 
+	fl = FindFLISTtByNS( &n, IS_BACK );
+
+	if ( !n && fl )
 		return fl;
-	
-	fl = FindFLISTtByNS( &n, IS_FOLDER ); 
-	if ( !n && fl ) 
+
+	fl = FindFLISTtByNS( &n, IS_FOLDER );
+	if ( !n && fl )
 		return fl;
-	
-	fl = FindFLISTtByNS( &n, IS_FILE ); 
-	
-	if ( !n && fl ) 
+
+	fl = FindFLISTtByNS( &n, IS_FILE );
+
+	if ( !n && fl )
 		return fl;
 	return fl;
 }
@@ -1043,7 +1110,7 @@ void Self_onSelectPressed( BOOK* bk, GUI* )
 {
 	MyBOOK* myBook = (MyBOOK*) bk;
 	int item = ListMenu_GetSelectedItem( myBook->selectf );
-	
+
 	FLIST* fl = FindFLISTtByN( item );
 	if ( fl )
 	{
@@ -1083,17 +1150,17 @@ GUI_LIST* CreateFileFolderSelect( MyBOOK* myBook, wchar_t* str )
 			break;
 		}
 		s = wstrrchr( ustr, L'/' );
-		
-		if ( s == ustr ) 
+
+		if ( s == ustr )
 			break;
-		
+
 		if ( s )
 			*s = 0;
 	}while( s );
-	
+
 	if ( !f )
 		str = L"/";
-	
+
 	n = FindFiles( str, myBook->type );
 	ListMenu_SetItemCount( lo, n );
 	ListMenu_SetCursorToItem( lo, 0 );

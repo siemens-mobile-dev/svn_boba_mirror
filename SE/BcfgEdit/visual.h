@@ -58,6 +58,9 @@ typedef struct _DISP_OBJ_FONT_SEL : DISP_OBJ
 	STRID test_str_id;
 	u16 *font_heights;
 	int req_check_vis;
+	int platform_flag;
+	int style_bold;
+	int style_italic;
 } DISP_OBJ_FONT_SEL;
 
 GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type);

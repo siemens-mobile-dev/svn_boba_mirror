@@ -412,6 +412,7 @@ typedef struct
   DB_EXT * (*CreateDbExt)(void);
   wchar_t IconSmall;
   wchar_t IconBig;
+  void *LibraryDLL;
 }EP_DATA;
 
 typedef struct

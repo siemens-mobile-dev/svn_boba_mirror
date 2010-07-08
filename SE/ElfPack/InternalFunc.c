@@ -2,6 +2,7 @@
 
 #include "..\\include\Dir.h"
 #include "..\\include\Types.h"
+#include "..\\include\dll.h"
 #include "calls.h"
 #include "vars.h"
 
@@ -27,6 +28,7 @@ void HelperEntryPoint(void);
 //-------
 typedef const unsigned short *FILENAME;
 __thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3);
+void * LoadDLL(wchar_t * DllName);
 //-------
 
 
@@ -506,6 +508,7 @@ void CreateLists(void)
 	epd->CreateDbExt = CreateDbExt;
 	epd->IconSmall = NOIMAGE;
 	epd->IconBig = NOIMAGE;
+	epd->LibraryDLL = 0x0;
 	ELFExtrRegister(epd);
 }
 
@@ -518,12 +521,6 @@ __thumb void Init()
 	//CreateLists();
 	
 	char * mem = malloc(0x300);
-	
-#ifdef DAEMONS_INTERNAL
-	int * handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_INTERNAL));
-#else
-	int * handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_EXTERNAL));
-#endif
 	
 	FILELISTITEM * fli;
 	__get_epd;
@@ -546,11 +543,29 @@ __thumb void Init()
 	StartHelper();
 	
 	_printf("     StartHelper OK. PID=%x",epd->HPID)  ;
+
+	// инитим DLL библиотеку
+
+	_printf("     Load DLL Library....")  ;
+
+	epd->LibraryDLL = LoadDLL(L"LibraryDLL.dll");
+        if ((INVALID(epd->LibraryDLL)))
+        {
+          _printf("     Load LibraryDLL Error")  ;
+          epd->LibraryDLL = 0;
+        }
+	else _printf("     Load DLL OK")  ;
 	
 	// запустили демонов
 	
 	_printf("     StartDaemons....")  ;
 	_printf("     ------Begin List-------")  ;
+
+#ifdef DAEMONS_INTERNAL
+	int * handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_INTERNAL));
+#else
+	int * handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_EXTERNAL));
+#endif
 	
 	do
 	{
@@ -577,7 +592,7 @@ __thumb void Init()
 	
 	if (handle) DestroyDirHandle(handle);
 	mfree(mem);
-	
+
 	_printf("     Exit Init")  ;
 }
 

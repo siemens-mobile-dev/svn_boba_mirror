@@ -611,7 +611,7 @@
 ;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
 0DB8: 00000000 3974A310 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 ;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
-;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
+0DC0: 00000000 A9308810 ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
 ;0DC4: xxxxxxxx yyyyyyyy ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
 ;0DC8: xxxxxxxx yyyyyyyy ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 0DCC: 00000000 B1D28611 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
@@ -698,6 +698,7 @@
 ;0F10: xxxxxxxx yyyyyyyy ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 ;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
 
 
 
