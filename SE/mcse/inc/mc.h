@@ -1,7 +1,7 @@
 #ifndef _MC_H
 #define _MC_H
 
-#include "..\\include\Lib_Clara.h"
+#include "..\\include\Lib_Clara_DLL.h"
 #include "..\\include\var_arg.h"
 #include "inc\slib.h"
 #include "inc\fslib.h"

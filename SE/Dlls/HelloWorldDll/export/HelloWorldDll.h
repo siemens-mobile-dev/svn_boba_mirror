@@ -1,6 +1,4 @@
 
-typedef struct HELLO_WORLD_DLL_DATA _HELLO_WORLD_DLL_DATA;
-
 typedef struct HELLO_WORLD_DLL_DATA
 {
   wchar_t * dll_name; // об€зательное поле.не перемещать!!! необходимо дл€ UnLoadDLL

@@ -1,4 +1,4 @@
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 #include "..\include\Dir.h"
 #include "..\include\var_arg.h"
 #include "conf_loader.h"

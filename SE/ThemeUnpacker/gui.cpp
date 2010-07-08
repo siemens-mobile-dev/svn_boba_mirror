@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara.h"
+#include "..\\include\Lib_Clara_DLL.h"
 #include "..\\include\Dir.h"
 #include "structs.h"
 int tar_uncompress(wchar_t *path, wchar_t *name);

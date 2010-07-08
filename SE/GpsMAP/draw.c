@@ -1,5 +1,5 @@
 #define USEPNG
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 #include "..\\include\Dir.h"
 #include "math.h"
 #include "main.h"

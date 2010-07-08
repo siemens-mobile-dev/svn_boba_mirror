@@ -1,4 +1,3 @@
-#include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 #include "inc\mc.h"
 #include "inc\lng.h"

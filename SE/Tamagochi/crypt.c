@@ -1,4 +1,4 @@
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 
 #include "crypt.h"
 unsigned long mycrc_table[256];

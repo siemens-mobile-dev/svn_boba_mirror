@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara.h" 
+#include "..\\include\Lib_Clara_DLL.h" 
 #include "..\\include\Dir.h" 
 
 void DrawHighlightID(int font,int text,int CEN, int XPos, int YPos, int MaxXPos, int MaxYPos, int borderColor, int NormalColor)

@@ -1,4 +1,3 @@
-typedef struct LIBRARY_DLL_DATA _LIBRARY_DLL_DATA;
 
 typedef struct LIBRARY_DLL_DATA
 {
@@ -40,7 +39,7 @@ typedef struct LIBRARY_DLL_DATA
 #define LIBRARY_DLL_MetaData_Desc_Create(__this__,...) __this__->dll_MetaData_Desc_Create(__this__,__VA_ARGS__)
 #define LIBRARY_DLL_MetaData_Desc_Destroy(__this__,...) __this__->dll_MetaData_Desc_Destroy(__this__,__VA_ARGS__)
 #define LIBRARY_DLL_MetaData_Desc_GetTags(__this__,...) __this__->dll_MetaData_Desc_GetTags(__this__,__VA_ARGS__)
-#define LIBRARY_DLL_MetaData_Desc_GetTrackNum(__this__,...) __this__->dll_MetaData_Desc_GetTrackNum(__this__,__
+#define LIBRARY_DLL_MetaData_Desc_GetTrackNum(__this__,...) __this__->dll_MetaData_Desc_GetTrackNum(__this__,__VA_ARGS__)
 #define LIBRARY_DLL_MetaData_Desc_GetCoverInfo(__this__,...) __this__->dll_MetaData_Desc_GetCoverInfo(__this__,__VA_ARGS__)
 #define LIBRARY_DLL_RedLED_On(__this__,...) __this__->dll_RedLED_On(__this__,__VA_ARGS__)
 #define LIBRARY_DLL_RedLED_Off(__this__,...) __this__->dll_RedLED_Off(__this__,__VA_ARGS__)

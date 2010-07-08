@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara.h"
+#include "..\\include\Lib_Clara_DLL.h"
 #include "inc\krnl.h"
 #include "inc\log.h"
 

@@ -4,8 +4,6 @@
 #include <stdarg.h>
 #include "opendialog.h"
 
-typedef struct FILE_DIALOG _FILE_DIALOG;
-
 typedef struct FILE_DIALOG
 {
   wchar_t * dll_name; // об€зательное поле.не перемещать!!! необходимо дл€ UnLoadDLL

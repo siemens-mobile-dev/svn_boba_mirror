@@ -1,5 +1,5 @@
 #include "..\deleaker\mem2.h"
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 #include "..\include\Dir.h"
 #include "..\include\cfg_items.h"
 #include "header\skin_loader.h"

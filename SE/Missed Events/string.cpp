@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara.h"
+#include "..\\include\Lib_Clara_DLL.h"
 
 char* strchr(char* str, char c)
 {

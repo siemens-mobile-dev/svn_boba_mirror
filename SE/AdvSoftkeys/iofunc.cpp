@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara.h" 
+#include "..\\include\Lib_Clara_DLL.h" 
 #include "..\\include\Dir.h" 
 #define COPYSIZE 500
 #define F_READ 0x001

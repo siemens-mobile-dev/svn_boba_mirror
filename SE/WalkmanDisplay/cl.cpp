@@ -1,5 +1,5 @@
 #include "..\deleaker\mem2.h"
-#include "..\include\Lib_Clara.h"
+#include "..\include\Lib_Clara_DLL.h"
 #include "header\cl.h"
 
 MyBOOK *MyBook=0;
