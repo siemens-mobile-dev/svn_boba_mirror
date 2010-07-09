@@ -7,3 +7,4 @@ int (*Illumination_LedID_SetLevel)(int LED_ID,int level)=(int(*)(int LED_ID,int 
 int (*Illumination_LedID_Off)(int LED_ID)=(int(*)(int LED_ID))0x115F2D09;
 int (*REQUEST_HPHONEBOOK_READSTRING)(const int* sync,void * buf)=(int(*)(const int* sync,void * buf))0x10ED92F5;
 void (*AB_STR_ITEM_Copy)(AB_STR_ITEM * dest,AB_STR_ITEM * source)=(void(*)(AB_STR_ITEM * dest,AB_STR_ITEM * source))0x10F67F99;
+int (*GetImageHeight_int)(wchar_t ImageID)=(int(*)(wchar_t ImageID))0x116A287D;

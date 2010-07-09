@@ -35,9 +35,9 @@ typedef struct LIBRARY_DLL_DATA
   int num16;
   int (*dll_Disp_GetStrIdWidth)( STRID strid, int len );
   int num17;
-  FONT_DESC* (*dll_GetFontDesc)(  );
+  FONT_DESC* dll_GetFontDesc;
   int num18;
-  int* (*dll_GetFontCount)(  );
+  int* dll_GetFontCount;
   int end_marker;
 
 

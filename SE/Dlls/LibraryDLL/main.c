@@ -192,7 +192,7 @@ int dll_GetImageHeight_0( wchar_t imageID )
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
     pFont->GetFontSize(&image_height);
 #elif defined(DB3150)
-    image_height=GetImageHeight( imageID );
+    image_height=GetImageHeight_int( imageID );
 #endif
   }
   else
@@ -350,20 +350,6 @@ int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
 }
 #endif
 
-#if defined(DB3200) || defined(DB3210) || defined(DB3350)
-FONT_DESC* dll_GetFontDesc_0(  )
-{
-  return(&font_desc);
-}
-#endif
-
-#if defined(DB3200) || defined(DB3210) || defined(DB3350)
-int* dll_GetFontCount_0(  )
-{
-  return(&font_count);
-}
-#endif
-
 
 
 // -------------------  Private area  ------------------
@@ -384,6 +370,12 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
     // data == NULL
     debug_printf("\nlibrary.dll: dll init\n");
     usage_count=0;
+#ifdef A2
+    pFont=0;
+    font_count=1;
+    font_desc.id=20;
+    wstrcpy(font_desc.name,L"E_20R");
+#endif
 
 
     return(0);
@@ -466,22 +458,16 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
     #endif
     #if defined(DB3200) || defined(DB3210) || defined(DB3350)
     p->num17=0x2BB-const_minus;
-    p->dll_GetFontDesc=dll_GetFontDesc_0;
+    p->dll_GetFontDesc=&font_desc;
     #endif
     #if defined(DB3200) || defined(DB3210) || defined(DB3350)
     p->num18=0x2BC-const_minus;
-    p->dll_GetFontCount=dll_GetFontCount_0;
+    p->dll_GetFontCount=&font_count;
     #endif
     p->end_marker=-1;
     
     
     // Private area
-#ifdef A2
-    pFont=0;
-    font_count=1;
-    font_desc.id=20;
-    wstrcpy(font_desc.name,L"E_20R");
-#endif
     
     return((int)p);
 
