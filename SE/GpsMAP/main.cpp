@@ -1,5 +1,5 @@
 #define USEPNG
-#include "..\include\Lib_Clara_DLL.h"
+#include "..\include\Lib_Clara.h"
 #include "pngread.h"
 #include "map_object.h"
 #include "main.h"

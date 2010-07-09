@@ -1,5 +1,5 @@
 #include "..\deleaker\mem2.h"
-#include "..\include\lib_clara_DLL.h"
+#include "..\include\lib_clara.h"
 #include "cunitstars.hpp"
 #include "rand.h"
 #include "sin.h"

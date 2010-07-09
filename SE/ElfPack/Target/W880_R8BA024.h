@@ -5,6 +5,7 @@
 #define _W880_R8BA024_
 
 #define EXT_TABLE 0x45BB1C5C
+#define Library_Start 0x45D08000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45B10850

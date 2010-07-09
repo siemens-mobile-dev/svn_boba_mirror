@@ -24,11 +24,14 @@ _HUNK1
         CMP     R0,#0x100
         BEQ     IMB
 	STMFD	SP!,{R1-R3}
+        STMFD   SP!,{R0,LR}
+        BL      getepd
 	ADR	R2,arm_jumper		; Берем адрес джампера
-	LDR	R1,=pLIB_TOP		; Указатель на таблицу адресов
-	LDR	R1,[R1]
-	CMP	R1,#0
-	LDREQ	R1,=(Library-0x400)
+        CMP     R0,#0
+        LDRNE   R1,[R0,#44]		; Указатель на таблицу адресов
+	LDREQ	R1,=Library
+        SUB     R1,R1,#0x400
+        LDMFD	SP!,{R0,LR}
 	BIC	R3,R0,#0x8000
         CMP	R3,#4096
         BHI	exit
@@ -39,9 +42,9 @@ _HUNK1
 	STRNE	R12,[SP,#0x14]		; пишем адрес в R0(стек)
 	BNE	exit
 
-;	CMP	R12,#0xFFFFFFFF
-;	LDREQ	R2,=FUNC_ABORT
-;	STREQ	R0,[SP,#0x14]
+//	CMP	R12,#0xFFFFFFFF
+//	LDREQ	R2,=FUNC_ABORT
+//	STREQ	R0,[SP,#0x14]
 
 	STR	R2,[SP,#0x18]		; Пишем адрес джампера для возврата в стеке (PC)
 exit:
@@ -117,7 +120,9 @@ pLIB_TOP:
         EXTERN  UnLoadDLL
         
         EXTERN  ModifyUIHook1
-
+        
+        EXTERN getepd
+        
 	RSEG    LIB:DATA(2)
 	PUBLIC	Library
 Library:

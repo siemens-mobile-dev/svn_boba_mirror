@@ -114,7 +114,7 @@ public:
   virtual void method16();
   virtual void method17();
   virtual void method18(void * buf);
-  virtual void method19();
+  virtual void GetTextInfo(void * buf);
   virtual void method20();
   virtual void DrawString(IUnknown * pGC,int x1,int y1,WINDOW_RECT * rect);
   virtual void method22(IUnknown * pGC,int x1,int y1,WINDOW_RECT * rect);

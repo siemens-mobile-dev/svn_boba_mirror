@@ -5,6 +5,7 @@
 #define _K600_R2BB001_
 
 #define EXT_TABLE 0x20F1E088
+#define Library_Start 0x21470000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x20EDE5B8

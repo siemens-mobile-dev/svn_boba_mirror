@@ -1,4 +1,4 @@
-#include "..\include\Lib_Clara_DLL.h"
+#include "..\include\Lib_Clara.h"
 #include "..\include\dir.h"
 #include "structs.h"
 #include "decoder_init.h"

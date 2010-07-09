@@ -5,6 +5,7 @@
 #define _W800_R1BD001_
 
 #define EXT_TABLE 0x4422C6D0
+#define Library_Start 0x45200000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x441EC49C

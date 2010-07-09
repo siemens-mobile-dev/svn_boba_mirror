@@ -1,5 +1,5 @@
 #include "..\deleaker\mem2.h"
-#include "..\include\Lib_Clara_DLL.h" 
+#include "..\include\Lib_Clara.h" 
 #include "..\include\Dir.h" 
 void *memmem(const unsigned char *haystack, size_t haystacklen, const void *needle, size_t needlelen);
 

@@ -401,7 +401,6 @@ typedef struct
 {
   LIST *UserDataList;
   LIST *gKbdHookList;
-  //LIST *elflist;
   PROCESS HPID;
   LIST *UIHookList;
   LIST *OseHookList;
@@ -412,6 +411,7 @@ typedef struct
   DB_EXT * (*CreateDbExt)(void);
   wchar_t IconSmall;
   wchar_t IconBig;
+  void ** LibraryCache;  //Не перемещать!!!!!
   void *LibraryDLL;
 }EP_DATA;
 

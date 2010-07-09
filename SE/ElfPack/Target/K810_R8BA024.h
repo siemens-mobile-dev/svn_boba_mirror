@@ -5,6 +5,7 @@
 #define _K810_R8BA024_
 
 #define EXT_TABLE 0x45B75F44
+#define Library_Start 0x45CCB200
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45842278

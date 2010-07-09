@@ -5,6 +5,7 @@
 #define _Z610_R6DA001_
 
 #define EXT_TABLE 0x45A4E168
+#define Library_Start 0x45B88000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT (L"/tpa/user/music")

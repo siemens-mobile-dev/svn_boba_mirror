@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara_DLL.h" 
+#include "..\\include\Lib_Clara.h" 
 #include "..\\include\Dir.h" 
 #include "header\untar.h"
 #include "header\string.h"

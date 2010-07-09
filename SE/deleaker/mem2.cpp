@@ -1,6 +1,6 @@
 #ifdef NDEBUG
 
-#include "..\include\Lib_Clara_DLL.h"
+#include "..\include\Lib_Clara.h"
 
 void* operator new(size_t sz){return malloc(sz);};
 void* operator new[](size_t sz){return malloc(sz);};

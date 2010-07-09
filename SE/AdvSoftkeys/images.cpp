@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara_DLL.h" 
+#include "..\\include\Lib_Clara.h" 
 #include "..\\include\Dir.h" 
 #include "header\images.h"
 wchar_t images[10]={IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL};

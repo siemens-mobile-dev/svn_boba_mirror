@@ -497,6 +497,8 @@ void CreateLists(void)
 	epd->OseHookList=List_Create();
 	epd->DLLList=List_Create();
 	epd->UIPageHook=List_Create();
+        epd->LibraryCache=malloc(0x4000);
+	memcpy(epd->LibraryCache,(void*)Library_Start,0x4000);
 	
 	_printf("   epd->UserDataList @%x",epd->UserDataList)  ;
 	_printf("   epd->gKbdHookList @%x",epd->gKbdHookList)  ;
@@ -509,6 +511,7 @@ void CreateLists(void)
 	epd->IconSmall = NOIMAGE;
 	epd->IconBig = NOIMAGE;
 	epd->LibraryDLL = 0x0;
+	
 	ELFExtrRegister(epd);
 }
 
@@ -546,7 +549,7 @@ __thumb void Init()
 
 	// инитим DLL библиотеку
 
-	_printf("     Load DLL Library....")  ;
+	_printf("     Load LibraryDLL....")  ;
 
 	epd->LibraryDLL = LoadDLL(L"LibraryDLL.dll");
         if ((INVALID(epd->LibraryDLL)))
@@ -554,8 +557,30 @@ __thumb void Init()
           _printf("     Load LibraryDLL Error")  ;
           epd->LibraryDLL = 0;
         }
-	else _printf("     Load DLL OK")  ;
+	else _printf("     Load LibraryDLL OK")  ;
 	
+        // правим кэш либы
+        
+        _printf("     Patching LibraryCache....")  ;
+        
+typedef struct
+{
+  int num;
+  void * func;
+}LIBPATCH_ELEM;
+
+        if (epd->LibraryDLL)
+        {
+          LIBPATCH_ELEM * lp = (LIBPATCH_ELEM*)((char*)epd->LibraryDLL + 0x4);
+          while (lp->num!=-1)
+          {
+            if (lp->func) epd->LibraryCache[lp->num]=lp->func;
+            lp++;
+          }
+        }
+        
+        _printf("     Patching LibraryCache OK")  ;
+        
 	// запустили демонов
 	
 	_printf("     StartDaemons....")  ;
