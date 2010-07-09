@@ -1,6 +1,6 @@
-#include "..\..\\include\Lib_Clara.h"
-#include "..\..\\include\Types.h"
-#include "..\..\\include\dll.h"
+#include "..\..\include\Lib_Clara.h"
+#include "..\..\include\Types.h"
+#include "..\..\include\dll.h"
 //#include "classes.h"
 
 

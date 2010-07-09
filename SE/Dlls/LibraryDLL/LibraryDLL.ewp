@@ -310,7 +310,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\C510_R1FA035.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -1135,7 +1135,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\C510_R1HA035.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -1960,7 +1960,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\C702_R3EF001.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -2785,7 +2785,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\C901_R1GA028.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -3610,7 +3610,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\C905_R1FA035.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -4435,7 +4435,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\J105_R1HA035.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -5260,7 +5260,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\K660_R1FA037_Hutchison.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -6085,7 +6085,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\K850_R1FA035.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -6910,7 +6910,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W595_R3EF001.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -7735,7 +7735,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W705_R1GA031.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -8560,7 +8560,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W715_R1GA030.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -9385,7 +9385,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W760_R3EF001.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -10210,7 +10210,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W760_R3EM001.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -11035,7 +11035,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W890_R1FA035.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -11860,7 +11860,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W910_R1FA035.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -12685,7 +12685,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W910_R1FA037.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -13510,7 +13510,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state>$PROJ_DIR$\Target\W995_R1GA026.h</state>
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -14028,10 +14028,13 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\1.xcl</name>
+    <name>$PROJ_DIR$\..\..\C++\_cpp2.cpp</name>
   </file>
   <file>
-    <name>$EW_DIR$\Den_Po\elfpacka2\C++\_cpp2.cpp</name>
+    <name>$PROJ_DIR$\..\..\include\func.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\main.c</name>
     <configuration>
       <name>C510_R1FA035</name>
       <settings>
@@ -14215,7 +14218,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\C510_R1FA035.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -14441,7 +14444,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\C510_R1HA035.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -14667,7 +14670,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\C702_R3EF001.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -14893,7 +14896,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\C901_R1GA028.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -15119,7 +15122,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\C905_R1FA035.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -15345,7 +15348,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\J105_R1HA035.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -15571,7 +15574,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\K660_R1FA037_Hutchison.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -15797,7 +15800,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\K850_R1FA035.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -16023,7 +16026,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W595_R3EF001.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -16249,7 +16252,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W705_R1GA031.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -16475,7 +16478,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W715_R1GA030.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -16701,7 +16704,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W760_R3EF001.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -16927,7 +16930,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W760_R3EM001.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -17153,7 +17156,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W890_R1FA035.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -17379,7 +17382,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W910_R1FA035.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -17605,7 +17608,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W910_R1FA037.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -17831,7 +17834,7 @@
           </option>
           <option>
             <name>PreInclude</name>
-            <state></state>
+            <state>$PROJ_DIR$\Target\W995_R1GA026.h</state>
           </option>
           <option>
             <name>CompilerMisraRules</name>
@@ -17874,18 +17877,6 @@
         </data>
       </settings>
     </configuration>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\include\dir.h</name>
-  </file>
-  <file>
-    <name>$EW_DIR$\Den_Po\elfpacka2\include\func.asm</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\include\Lib_Clara.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\main.c</name>
   </file>
 </project>
 
