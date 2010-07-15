@@ -5,7 +5,7 @@
 ;(p)-=Tanusha_SE=-
 ;pAtChFiLe=/boot/phone_app.cxc
 
-+12789C00
++1277FC00
 0448: 00000000 4411B04B ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 98781410 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 81867910 ; 114: int sprintf( char* buf, const char* fmt, ... );
@@ -699,6 +699,7 @@
 ;0F10: xxxxxxxx yyyyyyyy ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 ;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
 
 
 

@@ -137,9 +137,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>C510_R1FA035</state>
-          <state>A2</state>
-          <state>DB3210</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -962,9 +960,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>C510_R1HA035</state>
-          <state>A2</state>
-          <state>DB3210</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1787,9 +1783,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>C702_R3EF001</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -2612,9 +2606,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>C901_R1GA028</state>
-          <state>A2</state>
-          <state>DB3210</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -3437,9 +3429,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>C905_R1FA035</state>
-          <state>A2</state>
-          <state>DB3210</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -4262,9 +4252,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>J105_R1HA035</state>
-          <state>A2</state>
-          <state>DB3200</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -5087,9 +5075,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>K660_R1FA037_Hutchison</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -5912,9 +5898,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>K850_R1FA035</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -6737,9 +6721,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W595_R3EF001</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -7562,9 +7544,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W705_R1GA031</state>
-          <state>A2</state>
-          <state>DB3210</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -8387,9 +8367,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W715_R1GA030</state>
-          <state>A2</state>
-          <state>DB3210</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -9212,9 +9190,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W760_R3EF001</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -10037,9 +10013,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W760_R3EM001</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -10862,9 +10836,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W890_R1FA035</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -11687,9 +11659,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W910_R1FA035</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -12512,9 +12482,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W910_R1FA037</state>
-          <state>A2</state>
-          <state>DB3150</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -13337,9 +13305,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>W995_R1GA026</state>
-          <state>A2</state>
-          <state>DB3210</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -14032,6 +13998,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\..\..\include\func.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\export\LibraryDLL.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>

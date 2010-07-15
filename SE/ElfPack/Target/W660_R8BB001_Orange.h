@@ -5,7 +5,6 @@
 #define _W660_R8BB001_Orange_
 
 #define EXT_TABLE 0x45B14034
-#define Library_Start 0x45D50000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x458B9E50

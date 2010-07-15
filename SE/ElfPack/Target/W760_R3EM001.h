@@ -5,7 +5,6 @@
 #define _W760_R3EM001_
 
 #define EXT_TABLE 0x11ED5DF0
-#define Library_Start 0x1278A000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT (L"/usb/music")

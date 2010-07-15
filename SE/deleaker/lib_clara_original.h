@@ -1699,3 +1699,6 @@ __swi __arm int  __original_GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg
 #pragma swi_number=0x3C6
 __swi __arm int  __original_EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 
+#pragma swi_number=0x3C7
+__swi __arm int  __original_Theme_DestroyMenuIcons( void );
+

@@ -4,7 +4,7 @@
 ;(c) Hussein , IronMaster
 ;(p) Joker XT, Xamid, Lost
 ;pAtChFiLe=/boot/phone_app.cxc
-+15D8FC00
++15D88C00
 0448: 00000000 E863B914 ; 112: __arm void* memset( void* mem, char chr, int size );
 044C: 00000000 18080215 ; 113: __arm int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 4D6C2D14 ; 114: int sprintf( char* buf, const char* fmt, ... );
@@ -366,7 +366,7 @@
 09E0: 00000000 7DE22914 ; 278: int setjmp( jmp_buf jmpbuf );
 09E4: 00000000 75F7C714 ; 279: void longjmp( jmp_buf, int );
 09E8: 00000000 89972814 ; 27A: int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );
-09EC: 00000000 57950214 ; 27B: int inflate( z_streamp strm, int flush );
+09EC: 00000000 59950214 ; 27B: int inflate( z_streamp strm, int flush );
 09F0: 00000000 8DB11214 ; 27C: int inflateEnd( z_streamp strm );
 09F4: 00000000 E8177610 ; 27D: __arm int memcmp( const void* m1, const void* m2, int n );
 09F8: 00000000 29A11A14 ; 27E: int strncmp( const char* s1, const char* s2, int len );
@@ -479,7 +479,7 @@
 0BA4: 00000000 A1600714 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE( int book_id );
 ;0BA8: xxxxxxxx yyyyyyyy ; 2EA: int MainInput_getCurPos( GUI* );
 0BAC: 00000000 DD55D714 ; 2EB: void MainInput_Hide( GUI* );
-0BB0: 00000000 CDBE1014 ; 2EC: void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
+0BB0: 00000000 5D4B2314 ; 2EC: void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 0BB4: 00000000 E104EF14 ; 2ED: STRID PNUM2Name( void* pnum, int isIconNeeded, int only_full_number_flag );
 0BB8: 00000000 D92B2815 ; 2EE: int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
 ;0BBC: xxxxxxxx yyyyyyyy ; 2EF: void* MetaData_Desc_Create( wchar_t* path, wchar_t* name );
@@ -513,7 +513,7 @@
 0C2C: 00000000 BD253015 ; 30B: void REQUEST_UI_OAF_START_APPLICATION( const int* sync, int appID, char* flag );
 0C30: 00000000 3D8DE314 ; 30C: int JavaApp_LogoImageID_Get( wchar_t* fullpath, wchar_t* imageID );
 0C34: 00000000 A9BA3D14 ; 30D: GUI* CreateProgressBar( BOOK* book, int display );
-0C38: 00000000 712B0814 ; 30E: void ProgressBar_SetText( GUI*, STRID text );
+0C38: 00000000 61482314 ; 30E: void ProgressBar_SetText( GUI*, STRID text );
 0C3C: 00000000 CDFAF114 ; 30F: void ProgressBar_SetIcon( GUI*, u16 icon_id );
 0C40: 00000000 C1452314 ; 310: void ProgressBar_SetPercentValue( GUI*, int value );
 0C44: 00000000 01812A14 ; 311: void ProgressBar_SetBarDisabled( GUI*, BOOL );

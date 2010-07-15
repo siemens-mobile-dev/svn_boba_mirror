@@ -5,7 +5,6 @@
 #define _K750_R1CA021_
 
 #define EXT_TABLE 0x4422CC50
-#define Library_Start 0x451D0000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x441EC7A4

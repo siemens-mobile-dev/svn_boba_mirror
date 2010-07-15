@@ -5,7 +5,6 @@
 #define _W610_R6CA001_Orange_
 
 #define EXT_TABLE 0x45991230
-#define Library_Start 0x45C40000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45A35A0C

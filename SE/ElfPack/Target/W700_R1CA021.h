@@ -5,7 +5,6 @@
 #define _W700_R1CA021_
 
 #define EXT_TABLE 0x4422CE80
-#define Library_Start 0x451E8000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x441ECB20

@@ -1,8 +1,9 @@
 //#define K750_R1CA021
 
-#include "..\\include\Dir.h"
-#include "..\\include\Types.h"
-#include "..\\include\dll.h"
+#include "..\include\Dir.h"
+#include "..\include\Types.h"
+#include "..\include\dll.h"
+#include "..\Dlls\LibraryDLL\export\LibraryDLL.h"
 #include "calls.h"
 #include "vars.h"
 
@@ -481,38 +482,39 @@ __thumb int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book
 
 extern LIST *CreateDBExtList();
 extern DB_EXT * CreateDbExt();
+extern void* Library;
 
 void CreateLists(void)
 {
-	
-	EP_DATA * epd = malloc(sizeof(EP_DATA));
-	memset(epd,0,sizeof(EP_DATA));
-	set_envp(get_bid(current_process()),EPDVARNAME,(OSADDRESS)epd);
-	
-	_printf("EP_DATA @%x",epd)  ;
-	
-	epd->UserDataList=List_Create();
-	epd->gKbdHookList=List_Create();
-	epd->UIHookList=List_Create();
-	epd->OseHookList=List_Create();
-	epd->DLLList=List_Create();
-	epd->UIPageHook=List_Create();
-        epd->LibraryCache=malloc(0x4000);
-	memcpy(epd->LibraryCache,(void*)Library_Start,0x4000);
-	
-	_printf("   epd->UserDataList @%x",epd->UserDataList)  ;
-	_printf("   epd->gKbdHookList @%x",epd->gKbdHookList)  ;
-	_printf("   epd->UIHookList @%x",epd->UIHookList)  ;
-	_printf("   epd->OseHookList @%x",epd->OseHookList)  ;
-	//  _printf("   epd->elflist @%x",epd->elflist)  ;
-	
-	epd->DBExtList=CreateDBExtList();
-	epd->CreateDbExt = CreateDbExt;
-	epd->IconSmall = NOIMAGE;
-	epd->IconBig = NOIMAGE;
-	epd->LibraryDLL = 0x0;
-	
-	ELFExtrRegister(epd);
+    
+    EP_DATA * epd = malloc(sizeof(EP_DATA));
+    memset(epd,0,sizeof(EP_DATA));
+    
+    _printf("EP_DATA @%x",epd)  ;
+    
+    epd->UserDataList=List_Create();
+    epd->gKbdHookList=List_Create();
+    epd->UIHookList=List_Create();
+    epd->OseHookList=List_Create();
+    epd->DLLList=List_Create();
+    epd->UIPageHook=List_Create();
+    epd->LibraryCache = NULL;
+    
+    _printf("   epd->UserDataList @%x",epd->UserDataList)  ;
+    _printf("   epd->gKbdHookList @%x",epd->gKbdHookList)  ;
+    _printf("   epd->UIHookList @%x",epd->UIHookList)  ;
+    _printf("   epd->OseHookList @%x",epd->OseHookList)  ;
+    //  _printf("   epd->elflist @%x",epd->elflist)  ;
+    
+    epd->DBExtList=CreateDBExtList();
+    epd->CreateDbExt = CreateDbExt;
+    epd->IconSmall = NOIMAGE;
+    epd->IconBig = NOIMAGE;
+    epd->LibraryDLL = NULL;
+    
+    set_envp(get_bid(current_process()),EPDVARNAME,(OSADDRESS)epd);
+    
+    ELFExtrRegister(epd);
 }
 
 
@@ -557,33 +559,33 @@ __thumb void Init()
           _printf("     Load LibraryDLL Error")  ;
           epd->LibraryDLL = 0;
         }
-	else _printf("     Load LibraryDLL OK")  ;
-	
-        // правим кэш либы
-        
+    else _printf("     Load LibraryDLL OK")  ;
+    
+    // правим кэш либы
+    
+    if (epd->LibraryDLL)
+    {
         _printf("     Patching LibraryCache....")  ;
         
-typedef struct
-{
-  int num;
-  void * func;
-}LIBPATCH_ELEM;
-
-        if (epd->LibraryDLL)
+        void** lib = malloc(0x4000);
+        memcpy(lib, &Library, 0x4000);
+        
+	const LIBRARY_DLL_FUNCTIONINFO* fns = ( (const LIBRARY_DLL_DATA*)epd->LibraryDLL )->functions;
+        while (fns->functionnum)
         {
-          LIBPATCH_ELEM * lp = (LIBPATCH_ELEM*)((char*)epd->LibraryDLL + 0x4);
-          while (lp->num!=-1)
-          {
-            if (lp->func) epd->LibraryCache[lp->num]=lp->func;
-            lp++;
-          }
+	    lib[ fns->functionnum - 0x100 ] = fns->functionptr;
+            fns++;
         }
-        
-        _printf("     Patching LibraryCache OK")  ;
-        
-	// запустили демонов
+
+        epd->LibraryCache = lib;
 	
-	_printf("     StartDaemons....")  ;
+        _printf("     Patching LibraryCache OK")  ;
+    }
+    
+    
+    // запустили демонов
+    
+    _printf("     StartDaemons....")  ;
 	_printf("     ------Begin List-------")  ;
 
 #ifdef DAEMONS_INTERNAL

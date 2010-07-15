@@ -4,7 +4,7 @@
 ;(c) Hussein , IronMaster
 ;(p) mc_kibel, Blend, Cyrax
 ;pAtChFiLe=/boot/phone_app.cxc
-+15DE6C00
++15DDFC00
 0448: 00000000 ACF1B714 ; 112: __arm void* memset( void* mem, char chr, int size );
 044C: 00000000 2060CA14 ; 113: __arm int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 817AB714 ; 114: int sprintf( char* buf, const char* fmt, ... );

@@ -17,7 +17,8 @@ void elf_exit(void)
 // данные самой DLL. их копии не создаются.
 
 volatile int usage_count;
-#ifdef A2
+#if defined(DB3200) || defined(DB3210) || defined(DB3350)
+#define USE_FONTS
 IFont * pFont;
 FONT_DESC font_desc;
 int font_count;
@@ -36,6 +37,7 @@ int font_count;
 }*/
 
 #ifdef A2
+#define USE_dll_GC_PutChar_0
 void dll_GC_PutChar_0( GC* gc, int x, int y, int width, int height, wchar_t imageID )
 {
   IImageManager * pImageManager=0;
@@ -56,6 +58,7 @@ void dll_GC_PutChar_0( GC* gc, int x, int y, int width, int height, wchar_t imag
 #endif
 
 #ifdef A2
+#define USE_dll_AB_READSTRING_0
 int dll_AB_READSTRING_0( AB_STR_ITEM* ab, int rec_num, int field_ID )
 {
   int res = 1;
@@ -87,50 +90,7 @@ int dll_AB_READSTRING_0( AB_STR_ITEM* ab, int rec_num, int field_ID )
 #endif
 
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-void dll_DrawString_0( STRID strid, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color )
-{
-  WINDOW_RECT rect;
-  
-  int right_border = x2-x1;
-  
-  ITextRenderingManager * pTextRenderingManager=0;
-  ITextRenderingFactory * pTextRenderingFactory=0;
-  IRichTextLayout * pRichTextLayout=0;
-  IRichText * pTextObject=0;
-  IUnknown * pGC =0;
-  
-  CoCreateInstance(CTextRenderingManagerCreator_guid,ITextRenderingManager_guid,&pTextRenderingManager);
-  pTextRenderingManager->CreateTextRenderingFactory(&pTextRenderingFactory);
-  pTextRenderingFactory->CreateRichText(&pTextObject);
-  pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
-  
-  if (!pFont) SetFont(10);
-  TextObject_SetText(pTextObject,strid);
-  TextObject_SetFont(pTextObject,pFont,0x8000000A,0x7FFFFFF5);
-  pTextObject->SetForegroundColor(pen_color,0x8000000A,0x7FFFFFF5);
-  
-  pTextObject->SetTextAlign(align,0x8000000A,0x7FFFFFF5);
-  
-  pRichTextLayout->SetRightBorder(right_border);
-  
-  rect.x1=x1;
-  rect.y1=y1;
-  rect.width=x2-x1;
-  rect.height=y2-y1;
-  
-  DisplayGC_AddRef(get_DisplayGC(),&pGC);
-  
-  pRichTextLayout->DrawString(pGC,x1,y1,&rect);
-  
-  if (pTextRenderingManager) pTextRenderingManager->Release();
-  if (pTextRenderingFactory) pTextRenderingFactory->Release();
-  if (pRichTextLayout) pRichTextLayout->Release();
-  if (pTextObject) pTextObject->Release();
-  if (pGC) pGC->Release();
-}
-#endif
-
-#if defined(DB3200) || defined(DB3210) || defined(DB3350)
+#define USE_dll_SetFont_0
 int dll_SetFont_0( int font_size )
 {
   IFontManager * pFontManager=0;
@@ -161,7 +121,53 @@ int dll_SetFont_0( int font_size )
 }
 #endif
 
+#if defined(DB3200) || defined(DB3210) || defined(DB3350)
+#define USE_dll_DrawString_0
+void dll_DrawString_0( STRID strid, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color )
+{
+  WINDOW_RECT rect;
+  
+  int right_border = x2-x1;
+  
+  ITextRenderingManager * pTextRenderingManager=0;
+  ITextRenderingFactory * pTextRenderingFactory=0;
+  IRichTextLayout * pRichTextLayout=0;
+  IRichText * pTextObject=0;
+  IUnknown * pGC =0;
+  
+  CoCreateInstance(CTextRenderingManagerCreator_guid,ITextRenderingManager_guid,&pTextRenderingManager);
+  pTextRenderingManager->CreateTextRenderingFactory(&pTextRenderingFactory);
+  pTextRenderingFactory->CreateRichText(&pTextObject);
+  pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
+  
+  if (!pFont) dll_SetFont_0(20);
+  TextObject_SetText(pTextObject,strid);
+  TextObject_SetFont(pTextObject,pFont,0x8000000A,0x7FFFFFF5);
+  pTextObject->SetForegroundColor(pen_color,0x8000000A,0x7FFFFFF5);
+  
+  pTextObject->SetTextAlign(align,0x8000000A,0x7FFFFFF5);
+  
+  pRichTextLayout->SetRightBorder(right_border);
+  
+  rect.x1=x1;
+  rect.y1=y1;
+  rect.width=x2-x1;
+  rect.height=y2-y1;
+  
+  DisplayGC_AddRef(get_DisplayGC(),&pGC);
+  
+  pRichTextLayout->DrawString(pGC,x1,y1,&rect);
+  
+  if (pTextRenderingManager) pTextRenderingManager->Release();
+  if (pTextRenderingFactory) pTextRenderingFactory->Release();
+  if (pRichTextLayout) pRichTextLayout->Release();
+  if (pTextObject) pTextObject->Release();
+  if (pGC) pGC->Release();
+}
+#endif
+
 #ifdef A2
+#define USE_dll_GetImageWidth_0
 int dll_GetImageWidth_0( wchar_t imageID )
 {
   IIconImage * pIconImage=0;
@@ -180,6 +186,7 @@ int dll_GetImageWidth_0( wchar_t imageID )
 #endif
 
 #ifdef A2
+#define USE_dll_GetImageHeight_0
 int dll_GetImageHeight_0( wchar_t imageID )
 {
   IIconImage * pIconImage=0;
@@ -208,20 +215,16 @@ int dll_GetImageHeight_0( wchar_t imageID )
 }
 #endif
 
-#if defined(W705_R1GA031) || defined(W715_R1GA030) || defined(W995_R1GA026)
+#ifdef OrangeLED_ID
+#define USE_dll_OrangeLED_Control_0
 void dll_OrangeLED_Control_0( int _free_val, int or_LED_ID, int level, int fade_time )
 {
-#ifdef W705_R1GA031
-  Illumination_LedID_SetLevel_Gradually(2,level,fade_time);
-#elif W715_R1GA030
-  Illumination_LedID_SetLevel_Gradually(2,level,fade_time); 
-#elif W995_R1GA026
-  Illumination_LedID_SetLevel_Gradually(4,level,fade_time);
-#endif
+  Illumination_LedID_SetLevel_Gradually(OrangeLED_ID,level,fade_time);
 }
 #endif
 
 #ifdef A2
+#define USE_dll_MetaData_Desc_Create_0
 void* dll_MetaData_Desc_Create_0( wchar_t* path, wchar_t* name )
 {
   METADATA_DESC * MetaData_Desc = new METADATA_DESC;
@@ -240,6 +243,7 @@ void* dll_MetaData_Desc_Create_0( wchar_t* path, wchar_t* name )
 #endif
 
 #ifdef A2
+#define USE_dll_MetaData_Desc_Destroy_0
 void dll_MetaData_Desc_Destroy_0( void* MetaData_Desc )
 {
   if (((METADATA_DESC*)MetaData_Desc)->pMetaData) ((METADATA_DESC*)MetaData_Desc)->pMetaData->Release();
@@ -248,6 +252,7 @@ void dll_MetaData_Desc_Destroy_0( void* MetaData_Desc )
 #endif
 
 #ifdef A2
+#define USE_dll_MetaData_Desc_GetTags_0
 wchar_t* dll_MetaData_Desc_GetTags_0( void* MetaData_Desc, int tagID )
 {
   METADATA_DESC * mdd = (METADATA_DESC*)MetaData_Desc;
@@ -282,6 +287,7 @@ wchar_t* dll_MetaData_Desc_GetTags_0( void* MetaData_Desc, int tagID )
 #endif
 
 #ifdef A2
+#define USE_dll_MetaData_Desc_GetTrackNum_0
 int dll_MetaData_Desc_GetTrackNum_0( void* MetaData_Desc, int __NULL )
 {
   int track_num;
@@ -291,6 +297,7 @@ int dll_MetaData_Desc_GetTrackNum_0( void* MetaData_Desc, int __NULL )
 #endif
 
 #ifdef A2
+#define USE_dll_MetaData_Desc_GetCoverInfo_0
 int dll_MetaData_Desc_GetCoverInfo_0( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset )
 {
   COVER_INFO_DESC cover_info;
@@ -303,6 +310,7 @@ int dll_MetaData_Desc_GetCoverInfo_0( void* MetaData_Desc, char* cover_type, int
 #endif
 
 #ifdef A2
+#define USE_dll_RedLED_On_0
 void dll_RedLED_On_0( int __NULL )
 {
   Illumination_LedID_SetLevel(5,100);
@@ -311,6 +319,7 @@ void dll_RedLED_On_0( int __NULL )
 #endif
 
 #ifdef A2
+#define USE_dll_RedLED_Off_0
 void dll_RedLED_Off_0( int __NULL )
 {
   Illumination_LedID_Off(5);
@@ -319,14 +328,16 @@ void dll_RedLED_Off_0( int __NULL )
 #endif
 
 #ifdef A2
+#define USE_dll_Display_SetBrightness_0
 void dll_Display_SetBrightness_0( int display, int brightness )
 {
-  Display_SetBrightness( brightness, 0 );
+  Display_SetBrightnessLevel( brightness );
 //  remove_tail_call();
 }
 #endif
 
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
+#define USE_dll_Disp_GetStrIdWidth_0
 int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
 {
   ITextRenderingManager * pTextRenderingManager=0;
@@ -352,6 +363,81 @@ int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
 
 
 
+const LIBRARY_DLL_FUNCTIONINFO functions[]=
+{
+    #ifdef USE_dll_GC_PutChar_0
+    0x140, (void*) dll_GC_PutChar_0,
+    #endif
+    
+    #ifdef USE_dll_AB_READSTRING_0
+    0x163, (void*) dll_AB_READSTRING_0,
+    #endif
+    
+    #ifdef USE_dll_DrawString_0
+    0x1ED, (void*) dll_DrawString_0,
+    #endif
+    
+    #ifdef USE_dll_SetFont_0
+    0x1F1, (void*) dll_SetFont_0,
+    #endif
+    
+    #ifdef USE_dll_GetImageWidth_0
+    0x293, (void*) dll_GetImageWidth_0,
+    #endif
+    
+    #ifdef USE_dll_GetImageHeight_0
+    0x294, (void*) dll_GetImageHeight_0,
+    #endif
+    
+    #ifdef USE_dll_OrangeLED_Control_0
+    0x2DC, (void*) dll_OrangeLED_Control_0,
+    #endif
+    
+    #ifdef USE_dll_MetaData_Desc_Create_0
+    0x2EF, (void*) dll_MetaData_Desc_Create_0,
+    #endif
+    
+    #ifdef USE_dll_MetaData_Desc_Destroy_0
+    0x2F0, (void*) dll_MetaData_Desc_Destroy_0,
+    #endif
+    
+    #ifdef USE_dll_MetaData_Desc_GetTags_0
+    0x2F1, (void*) dll_MetaData_Desc_GetTags_0,
+    #endif
+    
+    #ifdef USE_dll_MetaData_Desc_GetTrackNum_0
+    0x2F2, (void*) dll_MetaData_Desc_GetTrackNum_0,
+    #endif
+    
+    #ifdef USE_dll_MetaData_Desc_GetCoverInfo_0
+    0x301, (void*) dll_MetaData_Desc_GetCoverInfo_0,
+    #endif
+    
+    #ifdef USE_dll_RedLED_On_0
+    0x307, (void*) dll_RedLED_On_0,
+    #endif
+    
+    #ifdef USE_dll_RedLED_Off_0
+    0x308, (void*) dll_RedLED_Off_0,
+    #endif
+    
+    #ifdef USE_dll_Display_SetBrightness_0
+    0x31C, (void*) dll_Display_SetBrightness_0,
+    #endif
+    
+    #ifdef USE_dll_Disp_GetStrIdWidth_0
+    0x300, (void*) dll_Disp_GetStrIdWidth_0,
+    #endif
+    
+    #ifdef USE_FONTS
+    0x2BB, (void*) &font_desc,
+    0x2BC, (void*) &font_count,
+    #endif
+    
+	//финиш
+    0, NULL
+};
+
 // -------------------  Private area  ------------------
 // Ввиду того, что нельзя использовать глобальные переменные в Public методах,
 // то описываем переменнуй в DLLFILENAME_private.h используем.
@@ -360,7 +446,6 @@ int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
 
 int main ( int Action , LIBRARY_DLL_DATA * data )
 {
-  int const_minus = 0x100;
   LIBRARY_DLL_DATA * p;
   switch (Action)
   {
@@ -370,7 +455,7 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
     // data == NULL
     debug_printf("\nlibrary.dll: dll init\n");
     usage_count=0;
-#ifdef A2
+#ifdef USE_FONTS
     pFont=0;
     font_count=1;
     font_desc.id=20;
@@ -378,6 +463,7 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
 #endif
 
 
+    debug_printf("\nlibrary.dll: dll init done\n");
     return(0);
 
   case DLL_LOAD:
@@ -387,88 +473,15 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
 
     usage_count++;                      // увеличение счетчика использования этой DLL
 
-    if (!(p = new LIBRARY_DLL_DATA)) return(0);;       // создание this и инициализация свойств и методов
+    if (!(p = new LIBRARY_DLL_DATA)) return(0);       // создание this и инициализация свойств и методов
 
     memset(p,0,sizeof(LIBRARY_DLL_DATA));
-
-    // Public area
-    #ifdef A2
-    p->num1=0x140-const_minus;  //swi num - 0x100
-    p->dll_GC_PutChar=dll_GC_PutChar_0;
-    #endif
-    #ifdef A2
-    p->num2=0x163-const_minus;
-    p->dll_AB_READSTRING=dll_AB_READSTRING_0;
-    #endif
-    #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-    p->num3=0x1ED-const_minus;
-    p->dll_DrawString=dll_DrawString_0;
-    #endif
-    #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-    p->num4=0x1F1-const_minus;
-    p->dll_SetFont=dll_SetFont_0;
-    #endif
-    #ifdef A2
-    p->num5=0x293-const_minus;
-    p->dll_GetImageWidth=dll_GetImageWidth_0;
-    #endif
-    #ifdef A2
-    p->num6=0x294-const_minus;
-    p->dll_GetImageHeight=dll_GetImageHeight_0;
-    #endif
-    #if defined(W705_R1GA031) || defined(W715_R1GA030) || defined(W995_R1GA026)
-    p->num7=0x2DC-const_minus;
-    p->dll_OrangeLED_Control=dll_OrangeLED_Control_0;
-    #endif
-    #ifdef A2
-    p->num8=0x2EF-const_minus;
-    p->dll_MetaData_Desc_Create=dll_MetaData_Desc_Create_0;
-    #endif
-    #ifdef A2
-    p->num9=0x2F0-const_minus;
-    p->dll_MetaData_Desc_Destroy=dll_MetaData_Desc_Destroy_0;
-    #endif
-    #ifdef A2
-    p->num10=0x2F1-const_minus;
-    p->dll_MetaData_Desc_GetTags=dll_MetaData_Desc_GetTags_0;
-    #endif
-    #ifdef A2
-    p->num11=0x2F2-const_minus;
-    p->dll_MetaData_Desc_GetTrackNum=dll_MetaData_Desc_GetTrackNum_0;
-    #endif
-    #ifdef A2
-    p->num12=0x301-const_minus;
-    p->dll_MetaData_Desc_GetCoverInfo=dll_MetaData_Desc_GetCoverInfo_0;
-    #endif
-    #ifdef A2
-    p->num13=0x307-const_minus;
-    p->dll_RedLED_On=dll_RedLED_On_0;
-    #endif
-    #ifdef A2
-    p->num14=0x308-const_minus;
-    p->dll_RedLED_Off=dll_RedLED_Off_0;
-    #endif
-    #ifdef A2
-    p->num15=0x31C-const_minus;
-    p->dll_Display_SetBrightness=dll_Display_SetBrightness_0;
-    #endif
-    #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-    p->num16=0x300-const_minus;
-    p->dll_Disp_GetStrIdWidth=dll_Disp_GetStrIdWidth_0;
-    #endif
-    #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-    p->num17=0x2BB-const_minus;
-    p->dll_GetFontDesc=&font_desc;
-    #endif
-    #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-    p->num18=0x2BC-const_minus;
-    p->dll_GetFontCount=&font_count;
-    #endif
-    p->end_marker=-1;
     
-    
+    p->functions = ::functions;
+   
     // Private area
     
+    debug_printf("\nlibrary.dll: dll load done\n");
     return((int)p);
 
   case DLL_UNLOAD:

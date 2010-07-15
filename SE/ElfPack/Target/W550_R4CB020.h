@@ -5,7 +5,6 @@
 #define _W550_R4CB020_
 
 #define EXT_TABLE 0x4444E170
-#define Library_Start 0x45620000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x445B0F9E

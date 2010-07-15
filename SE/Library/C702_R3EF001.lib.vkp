@@ -4,7 +4,7 @@
 ;(c) Hussein , IronMaster
 ;pAtChFiLe=/boot/phone_app.cxc
 
-+127CBC00
++127C4C00
 0448: 00000000 2010F02A ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 A4781410 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 2DF17610 ; 114: int sprintf( char* buf, const char* fmt, ... );
@@ -364,7 +364,7 @@
 09D8: 00000000 B9198A11 ; 276: void png_progressive_combine_row( png_structp png_ptr, png_bytep old_row, png_bytep new_row );
 09DC: 00000000 A1008A11 ; 277: int png_sig_cmp( png_bytep sig, png_size_t start, png_size_t num_to_check );
 09E0: 00000000 40BB1410 ; 278: int setjmp( jmp_buf jmpbuf );
-09E4: 00000000 40BB1410 ; 279: void longjmp( jmp_buf, int );
+09E4: 00000000 64BB1410 ; 279: void longjmp( jmp_buf, int );
 09E8: 00000000 55578A11 ; 27A: int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );
 09EC: 00000000 FD588A11 ; 27B: int inflate( z_streamp strm, int flush );
 09F0: 00000000 F56B8A11 ; 27C: int inflateEnd( z_streamp strm );

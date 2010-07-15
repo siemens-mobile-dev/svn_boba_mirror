@@ -5,7 +5,6 @@
 #define _K810_R8BA024_Orange_Gen_
 
 #define EXT_TABLE 0x45BA5630
-#define Library_Start 0x45CECB30
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x4587DF90

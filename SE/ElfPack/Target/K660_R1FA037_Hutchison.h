@@ -5,7 +5,6 @@
 #define _K660_R1FA037_Hutchison_
 
 #define EXT_TABLE 0x11A38500
-#define Library_Start 0x12197000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x1198B8A8

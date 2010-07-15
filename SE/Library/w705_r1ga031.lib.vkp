@@ -4,7 +4,7 @@
 ;(c) Hussein , IronMaster
 ;
 
-+15CE9C00
++15CE3C00
 0448: 00000000 4C417910 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 8CEA2814 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 55C64014 ; 114: int sprintf( char* buf, const char* fmt, ... );
@@ -197,7 +197,7 @@
 073C: 00000000 69633114 ; 1CF: void GUIInput_SetIcon( GUI* , wchar_t icon );
 0740: 00000000 315F2014 ; 1D0: int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 0744: 00000000 58D0A24B ;81D1: PAudioControl* GetAudioControlPtr( );
-0748: 00000000 69BC1214 ; 1D2: int AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
+0748: 00000000 41054114 ; 1D2: int AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
 074C: 00000000 65F13514 ; 1D3: int GetVolumeSize( wchar_t* root_folder, VOLUMESIZE* );
 0750: 00000000 4D290215 ; 1D4: GUI_NOFMANY* CreateNOfMany( BOOK* book );
 0754: 00000000 9987CE14 ; 1D5: void NOfMany_SetTexts( GUI_NOFMANY*, STRID* strids, int items_count );

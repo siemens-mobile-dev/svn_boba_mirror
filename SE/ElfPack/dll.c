@@ -26,12 +26,12 @@ void * LoadDLL(wchar_t * DllName)
 	if (index==LIST_ERROR)
 	{
 		//если не загружена DLLка
+		if (fstat(GetDir(DIR_DLL | MEM_INTERNAL),DllName,0))  return(DLL_ERROR_FILE_NOT_FOUND);
 		wchar_t * dllfullname = malloc( (wstrlen( GetDir(DIR_DLL | MEM_INTERNAL))*2)+ sizeof(L"/")+ (wstrlen(DllName)*2)+2);
 		DLL_LIST_ELEMENT * newdll = malloc(sizeof(DLL_LIST_ELEMENT));
 		wchar_t * name = malloc((wstrlen(DllName)*2)+2);
 		// собрали путь
 		wstrcpy(dllfullname,GetDir(DIR_DLL | MEM_INTERNAL));
-		if (fstat(dllfullname,DllName,0))  return(DLL_ERROR_FILE_NOT_FOUND);
 		wstrcat(dllfullname,L"/");
 		wstrcat(dllfullname,DllName);
 		//забрали новое имя
@@ -68,7 +68,8 @@ void * LoadDLL(wchar_t * DllName)
 		// добавили в список загруженных DLL
 		List_InsertLast(epd->DLLList,newdll);
 		// имя DLL сунули в this
-		dll_public_data->name = DllName;
+		dll_public_data->name =  malloc((wstrlen(DllName)*2)+2);
+		wstrcpy(dll_public_data->name,DllName);
 		// вернули новый this
 		return(dll_public_data);
 	}
@@ -85,7 +86,8 @@ void * LoadDLL(wchar_t * DllName)
 	}
 	
 	// имя DLL сунули в this
-	dll_public_data->name = DllName;
+	dll_public_data->name = malloc((wstrlen(DllName)*2)+2);
+	wstrcpy(dll_public_data->name,DllName);
 	
 	// вернули новый this
 	return(dll_public_data);
@@ -108,6 +110,7 @@ int UnLoadDLL(DLL_DATA * DllData)
 	dll = List_Get(epd->DLLList,index);
 	
 	// вызываем её UnLoader
+	mfree(DllData->name);
 	usage_count=dll->EntryPoint(DLL_UNLOAD,DllData);
 	
 	// если используется еще кем то

@@ -11,3 +11,4 @@ int (*Illumination_LedID_Off)(int LED_ID)=(int(*)(int LED_ID))0x14337B65;
 int (*RichTextLayout_GetTextWidth)(STRID strid,IRichTextLayout * pRichTextLayout,IUnknown * pFont)=(int(*)(STRID strid,IRichTextLayout * pRichTextLayout,IUnknown * pFont))0x14421A99;
 int (*REQUEST_HPHONEBOOK_READSTRING)(const int* sync,void * buf)=(int(*)(const int* sync,void * buf))0x141AC701;
 void (*AB_STR_ITEM_Copy)(AB_STR_ITEM * dest,AB_STR_ITEM * source)=(void(*)(AB_STR_ITEM * dest,AB_STR_ITEM * source))0x15278CA1;
+void (*Display_SetBrightnessLevel)(int level)=(void(*)(int level))0x154058E5;

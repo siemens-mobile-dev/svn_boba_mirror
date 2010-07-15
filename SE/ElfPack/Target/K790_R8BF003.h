@@ -9,7 +9,6 @@
 #define _K790_R8BF003_
 
 #define EXT_TABLE 0x459D869C
-#define Library_Start 0x45B20000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x456AEDD0

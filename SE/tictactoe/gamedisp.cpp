@@ -1,5 +1,5 @@
 #include "..\deleaker\mem2.h"
-#include "..\include\lib_clara_Dll.h"
+#include "..\include\lib_clara.h"
 #include "gamedisp.hpp"
 
 #define PCSTEPDELAY (1000/25)

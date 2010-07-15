@@ -5,7 +5,6 @@
 #define _W715_R1GA030_
 
 #define EXT_TABLE 0x15BD4374
-#define Library_Start 0x15D90000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT (L"/usb/music")

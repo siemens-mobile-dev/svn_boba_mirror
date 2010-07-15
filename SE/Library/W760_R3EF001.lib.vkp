@@ -5,7 +5,7 @@
 ;
 ;pAtChFiLe=/boot/phone_app.cxc
 
-+12789C00
++1277FC00
 0448: 00000000 AC10B04B ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 98781410 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 A15D7910 ; 114: int sprintf( char* buf, const char* fmt, ... );

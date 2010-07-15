@@ -5,7 +5,6 @@
 #define _W760_R3EF001_
 
 #define EXT_TABLE 0x11EF99A8
-#define Library_Start 0x1278A000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x11E4C4C8

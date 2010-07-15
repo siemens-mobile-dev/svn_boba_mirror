@@ -5,7 +5,7 @@
 ;(p) 2007KrasH, awg, timos_06
 ;pAtChFiLe=/boot/phone_app.cxc
 
-+15CEBC00
++15CE4C00
 0448: 00000000 8C702814 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 08762814 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 2D084014 ; 114: int sprintf( char* buf, const char* fmt, ... );
@@ -699,6 +699,7 @@
 ;0F10: xxxxxxxx yyyyyyyy ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 ;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
 
 
 

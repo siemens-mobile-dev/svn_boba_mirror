@@ -4,7 +4,7 @@
 ;(c) Hussein , IronMaster
 ;(p) MaW
 
-+1221FC00
++1220FC00
 0448: 00000000 2C160010 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 08F40B10 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 F57D5610 ; 114: int sprintf( char* buf, const char* fmt, ... );
@@ -698,6 +698,10 @@
 0F10: 00000000 3DB36911 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 0F14: 00000000 5DB36911 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 59151F11 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
+
+
+
 
 
 ;locale=Russian_Russia.1251

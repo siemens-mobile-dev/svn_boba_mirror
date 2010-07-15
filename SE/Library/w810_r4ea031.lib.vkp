@@ -697,6 +697,7 @@
 0F10: FFFFFFFF D1151745 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 0F14: FFFFFFFF F1151745 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
 
 
 

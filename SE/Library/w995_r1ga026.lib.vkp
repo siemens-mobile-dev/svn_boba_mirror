@@ -4,7 +4,7 @@
 ;(c) Hussein , IronMaster
 ;(p) Joker XT, HotRabbit
 ;pAtChFiLe=/boot/phone_app.cxc
-+15ECFC00
++15EBFC00
 0448: 00000000 0CF0C414 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 18940D15 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 917D2D14 ; 114: int sprintf( char* buf, const char* fmt, ... );

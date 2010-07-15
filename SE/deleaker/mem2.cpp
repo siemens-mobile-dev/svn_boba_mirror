@@ -793,6 +793,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
 //__swi __arm int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 //__swi __arm void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
+//__swi __arm int Theme_DestroyMenuIcons( void );
 //__swi __arm void Timer_Kill( u16* timerID );
 //__swi __arm void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* );
 //__swi __arm u16 Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void* );

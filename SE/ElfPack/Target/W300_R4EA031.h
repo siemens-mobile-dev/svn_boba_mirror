@@ -5,7 +5,6 @@
 #define _W300_R4EA031_
 
 #define EXT_TABLE 0x444F1F2C
-#define Library_Start 0x4567D000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x4464C292

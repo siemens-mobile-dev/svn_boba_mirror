@@ -29,6 +29,7 @@ _HUNK1
 	ADR	R2,arm_jumper		; Берем адрес джампера
         CMP     R0,#0
         LDRNE   R1,[R0,#44]		; Указатель на таблицу адресов
+        CMPNE   R1,#0
 	LDREQ	R1,=Library
         SUB     R1,R1,#0x400
         LDMFD	SP!,{R0,LR}

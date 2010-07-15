@@ -3,7 +3,7 @@
 ;(c) Hussein , IronMaster
 ;(p) dimonp25, Троян
 ;pAtChFiLe=/boot/phone_app.cxc
-+12233CA0
++12228C00
 0448: 00000000 A0071C2A ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 A8840B10 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 D5015110 ; 114: int sprintf( char* buf, const char* fmt, ... );

@@ -5,7 +5,6 @@
 #define _W580_R6CA001_Orange_
 
 #define EXT_TABLE  0x45ACB380
-#define Library_Start 0x45D00000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x45740CD4

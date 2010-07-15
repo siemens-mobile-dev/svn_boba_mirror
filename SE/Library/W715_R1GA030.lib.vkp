@@ -5,7 +5,7 @@
 ;(p) A1z , myrzeug
 ;pAtChFiLe=/boot/phone_app.cxc
 
-+15D8FC00
++15D88C00
 0448: 00000000 309C8310 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 8CEA2814 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 69C64014 ; 114: int sprintf( char* buf, const char* fmt, ... );

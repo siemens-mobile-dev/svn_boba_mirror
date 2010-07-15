@@ -5,7 +5,6 @@
 #define _Z550_R6GA004_
 
 #define EXT_TABLE 0x444E2ECC
-#define Library_Start 0x456C0000
 #define HELPER_SIG 0x6FF0
 
 #define PATH_AUDIO_INT 0x44630322
