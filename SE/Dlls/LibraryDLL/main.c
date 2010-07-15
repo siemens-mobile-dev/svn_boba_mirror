@@ -32,10 +32,6 @@ int font_count;
 // Чтобы не было проблем при компиляции с несколькими DLL, имена - DLLFILENAME_FunctionName.
 //
 
-/*void remove_tail_call()
-{
-}*/
-
 #ifdef A2
 #define USE_dll_GC_PutChar_0
 void dll_GC_PutChar_0( GC* gc, int x, int y, int width, int height, wchar_t imageID )
@@ -314,7 +310,6 @@ int dll_MetaData_Desc_GetCoverInfo_0( void* MetaData_Desc, char* cover_type, int
 void dll_RedLED_On_0( int __NULL )
 {
   Illumination_LedID_SetLevel(5,100);
-//  remove_tail_call();
 }
 #endif
 
@@ -323,7 +318,6 @@ void dll_RedLED_On_0( int __NULL )
 void dll_RedLED_Off_0( int __NULL )
 {
   Illumination_LedID_Off(5);
-//  remove_tail_call();
 }
 #endif
 
@@ -332,7 +326,6 @@ void dll_RedLED_Off_0( int __NULL )
 void dll_Display_SetBrightness_0( int display, int brightness )
 {
   Display_SetBrightnessLevel( brightness );
-//  remove_tail_call();
 }
 #endif
 
@@ -358,6 +351,54 @@ int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
   if (pTextObject) pTextObject->Release();
   
   return(width);
+}
+#endif
+
+#ifdef A2
+#define USE_dll_int2strID_0
+STRID dll_int2strID_0( int num )
+{
+  return int2strID_int( num, 0, 0 );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_Str2ID_0
+STRID dll_Str2ID_0( const void* wstr,int flag,int len )
+{
+  return Str2ID_int( wstr, flag, len, 0, 0 );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_TextID2wstr_0
+int dll_TextID2wstr_0( STRID strid,wchar_t * dest,int maxlen )
+{
+  return TextID2wstr_int( strid, dest, maxlen, 0, 0 );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_TextGetLength_0
+int dll_TextGetLength_0( STRID strid )
+{
+  return TextGetLength_int( strid, 0, 0 );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_TextFree_0
+void dll_TextFree_0( STRID strid )
+{
+  TextFree_int( strid, 0, 0 );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_TextCopyId_0
+STRID dll_TextCopyId_0( STRID strid )
+{
+  return TextCopyId_int( strid, 0, 0 );
 }
 #endif
 
@@ -427,6 +468,30 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     
     #ifdef USE_dll_Disp_GetStrIdWidth_0
     0x300, (void*) dll_Disp_GetStrIdWidth_0,
+    #endif
+    
+    #ifdef USE_dll_int2strID_0
+    0x15C, (void*) dll_int2strID_0,
+    #endif
+    
+    #ifdef USE_dll_Str2ID_0
+    0x15D, (void*) dll_Str2ID_0,
+    #endif
+    
+    #ifdef USE_dll_TextID2wstr_0
+    0x15F, (void*) dll_TextID2wstr_0,
+    #endif
+    
+    #ifdef USE_dll_TextGetLength_0
+    0x160, (void*) dll_TextGetLength_0,
+    #endif
+    
+    #ifdef USE_dll_TextFree_0
+    0x161, (void*) dll_TextFree_0,
+    #endif
+    
+    #ifdef USE_dll_TextCopyId_0
+    0x242, (void*) dll_TextCopyId_0,
     #endif
     
     #ifdef USE_FONTS

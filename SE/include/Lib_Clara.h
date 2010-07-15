@@ -861,7 +861,7 @@ __swi __arm void JavaSession_Manager( int cmd );
 #pragma swi_number=0x241
 __swi __arm int JavaSession_GetName( void );
 #pragma swi_number=0x242
-__swi __arm int TextCopyId( STRID );
+__swi __arm STRID TextCopyId( STRID );
 #pragma swi_number=0x243
 __swi __arm UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 #pragma swi_number=0x244

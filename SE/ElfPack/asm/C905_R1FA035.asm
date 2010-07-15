@@ -175,12 +175,5 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-// --- Str2ID ---
-
-	RSEG   PATCH_Str2ID(1)
-	CODE16
-	MOV	R5, #0
-
-
 #endif
         END
