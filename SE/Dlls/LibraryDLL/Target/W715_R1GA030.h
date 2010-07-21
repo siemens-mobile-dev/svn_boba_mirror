@@ -2,6 +2,10 @@
 #include "..\classes.h"
 
 #define OrangeLED_ID 2
+#define GetSignalQuality_Send_SignalID 0x12C00040
+#define GetSignalQuality_Receive_SignalID 0x12C007C0
+#define MainInput_data 0x4BA26C9C
+#define MainInput_CurPos_Offset 0x8
 
 void (*CoCreateInstance)(char * guid1,char * guid2,void *pInterface)=(void(*)(char * guid1,char * guid2,void *pInterface))0x14011499;
 void (*DisplayGC_AddRef)(GC*,void *)=(void(*)(GC*,void *))0x144D5BE5;
@@ -20,3 +24,7 @@ int (*TextID2wstr_int)(STRID strid,wchar_t * dest,int maxlen,char * filename,int
 int (*TextGetLength_int)(STRID strid,char * filename,int line_num)=(int(*)(STRID strid,char * filename,int line_num))0x14186395;
 void (*TextFree_int)(STRID strid,char * filename,int line_num)=(void(*)(STRID strid,char * filename,int line_num))0x14185B91;
 STRID (*TextCopyId_int)(STRID strid,char * filename,int line_num)=(int(*)(STRID strid,char * filename,int line_num))0x141852DD;
+int (*Request_SIM_IMSI_Read)(const int* sync,const int unk,char * imsi,char * error_cause)=(int(*)(const int* sync,const int unk,char * imsi,char * error_cause))0x100EB9AD;
+int (*get_imsi_const)()=(int(*)())0x100F5F39;
+int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * error_cause)=(int(*)(const int* sync,char * level,char * flag,char * error_cause))0x1060076D;
+int (*Network_INetworkConnection_GetConnectionInfo)(CONNECTION_INFO_DESC * desc)=(int(*)(CONNECTION_INFO_DESC * desc))0x141CFF29;

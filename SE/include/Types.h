@@ -990,4 +990,23 @@ typedef enum _LISTMENU_HOTKEY_MODE
   LKHM_PRESS = 3
 } LISTMENU_HOTKEY_MODE;
 
+
+typedef struct
+{
+  char unk1;	//на 2010 этого нету, но пока rat никому не нужен, пусть будет так
+  char RAT;
+  int CI;
+  int unk2;	//этого на 2010 тоже нету, но пока не критично
+}RAT_CI_DESC;
+
+
+typedef struct
+{
+  char MCC[3];
+  char MNC[2];
+  char PLMN_x;
+  int LAC;
+}PLMN_LAC_DESC;
+
+
 #endif

@@ -17,6 +17,7 @@ void elf_exit(void)
 // данные самой DLL. их копии не создаются.
 
 volatile int usage_count;
+
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
 #define USE_FONTS
 IFont * pFont;
@@ -402,6 +403,147 @@ STRID dll_TextCopyId_0( STRID strid )
 }
 #endif
 
+#ifdef A2
+#define USE_dll_MainInput_getVisible_0
+int dll_MainInput_getVisible_0( GUI * gui )
+{
+  return DispObject_GetVisible( GUIObject_GetDispObject(gui) );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_MainInput_isPlus_0
+int dll_MainInput_isPlus_0( GUI * gui )
+{
+  char str[1];
+  PNUM2str( str, MainInput_getPNUM( gui ), 1, 1 );
+  if (str[0]=='+') return(1);
+  return(0);
+}
+#endif
+
+#ifdef A2
+#define USE_dll_MainInput_getCurPos_0
+char dll_MainInput_getCurPos_0( GUI * gui )
+{
+  char * data = (char*)MainInput_data;
+  return data[MainInput_CurPos_Offset];
+}
+#endif
+
+#ifdef A2
+#define USE_dll_GUIObject_SetTitleBackgroundImage_0
+void dll_GUIObject_SetTitleBackgroundImage_0( GUI * gui,wchar_t imageID )
+{
+  DispObject_SetTitleBackgroundImage( GUIObject_GetDispObject(gui), imageID );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_GUIObject_SetCursorImage_0
+void dll_GUIObject_SetCursorImage_0( GUI * gui,wchar_t imageID )
+{
+  DispObject_SetCursorImage( GUIObject_GetDispObject(gui), imageID );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_GUIObject_SetBackgroundImage_0
+void dll_GUIObject_SetBackgroundImage_0( GUI * gui,wchar_t imageID )
+{
+  DispObject_SetBackgroundImage( GUIObject_GetDispObject(gui), imageID );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_GUIObject_SetTitleTextColor_0
+void dll_GUIObject_SetTitleTextColor_0( GUI * gui,int color )
+{
+  DispObject_SetTitleTextColor( GUIObject_GetDispObject(gui), color );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_GetIMSI_0
+char* dll_GetIMSI_0( void )
+{
+  static char imsi[9]={0};
+  char error;
+  if (!imsi[0]) Request_SIM_IMSI_Read(SYNC,get_imsi_const(),imsi,&error);
+  return(imsi);
+}
+#endif
+
+#ifdef A2
+#define USE_dll_GetRadioState_0
+int dll_GetRadioState_0( char * level, char * flag )
+{
+  char error_cause;
+  return Request_SL_GetRadioState(SYNC,level,flag,&error_cause);
+}
+#endif
+
+#ifdef A2
+#define USE_dll_GetSignalQuality_0
+
+struct GET_SIGNAL_QUALITY_SIGNAL
+{
+  SIGSELECT signo;
+  int null;
+  char unk_er;
+  char rssi;
+  char ber;
+  char error_cause;
+};
+
+union SIGNAL
+{
+  SIGSELECT signo;
+  struct GET_SIGNAL_QUALITY_SIGNAL hsig;
+};
+
+int dll_GetSignalQuality_0( char * rssi, char * ber )
+{
+  static const SIGSELECT sg[]={1,GetSignalQuality_Receive_SignalID};
+  char res=0;
+  PROCESS pid;
+  
+  hunt("LNH_ACC_SIDE/SL_Process",NULL,&pid,NULL);
+  union SIGNAL * mem = alloc(8,GetSignalQuality_Send_SignalID);
+  mem->hsig.null=0;
+  send(&mem,pid);
+  union SIGNAL * rec_buf = receive(sg);
+  if (rec_buf->signo==GetSignalQuality_Receive_SignalID)
+  {
+    rssi[0]=rec_buf->hsig.rssi;
+    ber[0]=rec_buf->hsig.ber;
+    res=rec_buf->hsig.unk_er;
+  }
+  free_buf(&rec_buf);
+  return(res);
+}
+#endif
+
+#if defined(DB3200) || defined(DB3210) || defined(DB3350)
+#define USE_dll_get_CellData_0
+int dll_get_CellData_0( PLMN_LAC_DESC * plmn_lac, RAT_CI_DESC * rat_ci, char * CSReg )
+{
+  CONNECTION_INFO_DESC con_info;
+  if(Network_INetworkConnection_GetConnectionInfo(&con_info)<0) return(0);
+  plmn_lac->MCC[0]=con_info.MCC[0];
+  plmn_lac->MCC[1]=con_info.MCC[1];
+  plmn_lac->MCC[2]=con_info.MCC[2];
+  plmn_lac->MNC[0]=con_info.MNC[0];
+  plmn_lac->MNC[1]=con_info.MNC[1];
+  plmn_lac->PLMN_x=con_info.PLMN_x;
+  plmn_lac->LAC=con_info.LAC;
+  rat_ci->RAT=con_info.RAT;
+  rat_ci->CI=con_info.CI;
+  CSReg[0]=con_info.CSReg;
+  
+  return(1);
+}
+#endif
 
 
 const LIBRARY_DLL_FUNCTIONINFO functions[]=
@@ -494,6 +636,50 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     0x242, (void*) dll_TextCopyId_0,
     #endif
     
+    #ifdef USE_dll_MainInput_getVisible_0
+    0x1F6, (void*) dll_MainInput_getVisible_0,
+    #endif
+    
+    #ifdef USE_dll_MainInput_isPlus_0
+    0x1F9, (void*) dll_MainInput_isPlus_0,
+    #endif
+    
+    #ifdef USE_dll_MainInput_getCurPos_0
+    0x2EA, (void*) dll_MainInput_getCurPos_0,
+    #endif
+    
+    #ifdef USE_dll_GUIObject_SetTitleBackgroundImage_0
+    0x313, (void*) dll_GUIObject_SetTitleBackgroundImage_0,
+    #endif
+    
+    #ifdef USE_dll_GUIObject_SetCursorImage_0
+    0x315, (void*) dll_GUIObject_SetCursorImage_0,
+    #endif
+    
+    #ifdef USE_dll_GUIObject_SetBackgroundImage_0
+    0x316, (void*) dll_GUIObject_SetBackgroundImage_0,
+    #endif
+    
+    #ifdef USE_dll_GUIObject_SetTitleTextColor_0
+    0x3A4, (void*) dll_GUIObject_SetTitleTextColor_0,
+    #endif
+    
+    #ifdef USE_dll_GetIMSI_0
+    0x2E8, (void*) dll_GetIMSI_0,
+    #endif
+    
+    #ifdef USE_dll_GetRadioState_0
+    0x327, (void*) dll_GetRadioState_0,
+    #endif
+    
+    #ifdef USE_dll_GetSignalQuality_0
+    0x332, (void*) dll_GetSignalQuality_0,
+    #endif
+    
+    #ifdef USE_dll_get_CellData_0
+    0x324, (void*) dll_get_CellData_0,
+    #endif
+    
     #ifdef USE_FONTS
     0x2BB, (void*) &font_desc,
     0x2BC, (void*) &font_count,
@@ -526,8 +712,7 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
     font_desc.id=20;
     wstrcpy(font_desc.name,L"E_20R");
 #endif
-
-
+    
     debug_printf("\nlibrary.dll: dll init done\n");
     return(0);
 

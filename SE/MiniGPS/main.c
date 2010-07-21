@@ -62,7 +62,6 @@ wchar_t SIwstr[MAX_AUTOLOCATION_LEN] = {0,};
 wchar_t  wsnewdb[MAX_AUTOLOCATION_LEN];
 char snewdb[MAX_AUTOLOCATION_LEN];
 
-unsigned char *cellData = 0;
 u16 currentLAC = 0;
 u16 currentCID = 0;
 u16 prevLAC = 0;
@@ -721,8 +720,12 @@ void onTimerNewAction(u16 timerID, LPARAM lparam)
 
 void onTimer(u16 timerID, LPARAM lparam)
 {
-  currentLAC = cellData[8] | (cellData[7] << 8);
-  currentCID  = cellData[0] | (cellData[1] << 8);
+  PLMN_LAC_DESC plmn_lac;
+  RAT_CI_DESC rat_ci;
+  char CSReg;
+  get_CellData(&plmn_lac,&rat_ci,&CSReg);
+  currentLAC = plmn_lac.LAC;
+  currentCID  = rat_ci.CI;
   if((currentLAC != prevLAC) || (currentCID != prevCID)) CheckCellName();
   if (visible && (cfg_location < 9)) {
     StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, Str2ID(CellNameStatus,0,SID_ANY_LEN));
@@ -1069,7 +1072,6 @@ int main (void)
   }
   else
   {
-    cellData = (unsigned char *)get_CellData();
 
     InitVar();
     MiniGPSBook = new MyBOOK;

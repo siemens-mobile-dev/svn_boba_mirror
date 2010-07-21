@@ -133,6 +133,7 @@ DEPRECATE(int,GUIonMessage_GetCreatedSubItemParentIndex,GUIonMessage_SubItem_Get
 DEPRECATE(int,GUIonMessage_GetCurrentItemIndex,GUIonMessage_SubItem_GetSelectedParentIndex)
 DEPRECATE(int,GUIonMessage_SetSubitemText,GUIonMessage_SubItem_SetText)
 DEPRECATE(int,GUIonMessage_SetItemAsSubitem,GUIonMessage_SetNumberOfSubItems)
+DEPRECATE(void,DispObject_SetTitleImage,DispObject_SetTitleBackgroundImage)
 
 #else
 
@@ -265,6 +266,7 @@ DEPRECATE(int,GUIonMessage_SetItemAsSubitem,GUIonMessage_SetNumberOfSubItems)
 #define GUIonMessage_GetCurrentItemIndex GUIonMessage_SubItem_GetSelectedParentIndex
 #define GUIonMessage_SetSubitemText GUIonMessage_SubItem_SetText
 #define GUIonMessage_SetItemAsSubitem GUIonMessage_SetNumberOfSubItems
+#define DispObject_SetTitleImage DispObject_SetTitleBackgroundImage
 
 #endif
 

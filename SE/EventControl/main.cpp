@@ -30,7 +30,6 @@ void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, boo
 
 PROCESS proc_=0;
 
-unsigned char *cellData=0;
 wchar_t oldcell[10]=L"old";
 wchar_t ccell[10];
 
@@ -125,9 +124,12 @@ void onEventTimer(u16 timerID, LPARAM lparam)
     DateAndTime_Update(0);
   
   bool need_to_watch=false;
-  if (cellData)
+  PLMN_LAC_DESC plmn_lac;
+  RAT_CI_DESC rat_ci;
+  char CSReg;
+  if (get_CellData(&plmn_lac,&rat_ci,&CSReg))
   {
-    snwprintf(ccell,9,L"%02X%02X-%02X%02X", cellData[7], cellData[8], cellData[1], cellData[0]);
+    snwprintf(ccell,9,L"%04X-%04X", plmn_lac.LAC, rat_ci.CI);
     if (wstrcmp(oldcell,ccell))
     {
       need_to_watch=true;
@@ -202,7 +204,6 @@ int main(wchar_t *elfpath)
     SUBPROC(elf_exit);
     return 0;
   }
-  cellData=(unsigned char *)get_CellData();
   MyBOOK *bk=EC_Create();
   if (bk)
   {

@@ -1379,8 +1379,8 @@ __swi __arm void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 #pragma swi_number=0x323
 __swi __arm void SoftKeys_Update( DISP_OBJ* softkeys );
 
-#pragma swi_number=0x8324
-__swi __arm void* get_CellData( void );
+#pragma swi_number=0x324
+__swi __arm int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 
 #pragma swi_number=0x325
 __swi __arm void* IncommingCall_Reject( BOOK* book );
@@ -1696,7 +1696,7 @@ __swi __arm void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 #pragma swi_number=0x3A9
 __swi __arm void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
 #pragma swi_number=0x3AA
-__swi __arm void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
+__swi __arm void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 
 #pragma swi_number=0x3AB
 __swi __arm void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );

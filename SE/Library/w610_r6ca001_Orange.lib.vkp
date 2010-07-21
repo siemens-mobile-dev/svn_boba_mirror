@@ -309,7 +309,7 @@
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 0900: 00000000 8BF2E044 ; 240: void JavaSession_Manager( int cmd ); //nullsub(void)
 0904: 00000000 89F2E044 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
-0908: 00000000 BD2C3745 ; 242: int TextCopyId( STRID );
+0908: 00000000 BD2C3745 ; 242: STRID TextCopyId( STRID );
 090C: 00000000 09B32D45 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: 00000000 F1A73445 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 0914: 00000000 69A83445 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
@@ -535,7 +535,7 @@
 0C84: 00000000 F9DC3A45 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 55C83A45 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 19C43A45 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-0C90: 00000000 30091920 ;8324: void* get_CellData( void );
+;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: 00000000 99F8DE44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 9509DF44 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 B1811A44 ; 327: int GetRadioState( char* level, char* flag );
@@ -669,7 +669,7 @@
 ;0E9C: xxxxxxxx yyyyyyyy ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 ;0EA0: xxxxxxxx yyyyyyyy ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 ;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
-;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
+;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 ;0EAC: xxxxxxxx yyyyyyyy ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 ;0EB0: xxxxxxxx yyyyyyyy ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 ;0EB4: xxxxxxxx yyyyyyyy ; 3AD: u16 SoftKeys_GetSelectedAction( void );

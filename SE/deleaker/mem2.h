@@ -86,7 +86,7 @@ GUI*  __deleaker_CreateProgressBar(BOOK* book, int display, char* __file__,  int
 #define Str2ID(wstr, flag, len) __deleaker_Str2ID(wstr, flag, len, __FILE__,  __LINE__)
 STRID  __deleaker_Str2ID(const void* wstr, int flag, int len, char* __file__,  int __line__);
 #define TextCopyId(__unknwnargname1) __deleaker_TextCopyId(__unknwnargname1, __FILE__,  __LINE__)
-int  __deleaker_TextCopyId(STRID __unknwnargname1, char* __file__,  int __line__);
+STRID  __deleaker_TextCopyId(STRID __unknwnargname1, char* __file__,  int __line__);
 #define int2strID(num) __deleaker_int2strID(num, __FILE__,  __LINE__)
 STRID  __deleaker_int2strID(int num, char* __file__,  int __line__);
 #define TextFree(__unknwnargname1) __deleaker_TextFree(__unknwnargname1, __FILE__,  __LINE__)

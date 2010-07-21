@@ -309,7 +309,7 @@
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 0900: FFFFFFFF C9541445 ; 240: void JavaSession_Manager( int cmd );
 0904: FFFFFFFF 11541445 ; 241: int JavaSession_GetName( void );
-0908: FFFFFFFF 15C5EE44 ; 242: int TextCopyId( STRID );
+0908: FFFFFFFF 15C5EE44 ; 242: STRID TextCopyId( STRID );
 090C: FFFFFFFF E5AAE744 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: FFFFFFFF 09A5D544 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 0914: FFFFFFFF 95A5D544 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
@@ -535,7 +535,7 @@
 0C84: FFFFFFFF 7974EA44 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: FFFFFFFF F98CE944 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: FFFFFFFF 3D88E944 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-0C90: FFFFFFFF C419044C ;8324: void* get_CellData( void );
+0C90: FFFFFFFF 49700645 ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: FFFFFFFF A5AADD44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: FFFFFFFF F5BDDD44 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: FFFFFFFF DD2E8444 ; 327: int GetRadioState( char* level, char* flag );
@@ -669,7 +669,7 @@
 0E9C: FFFFFFFF 91BCED44 ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 0EA0: FFFFFFFF 75BCED44 ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 ;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
-;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
+;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 0EAC: FFFFFFFF A917D344 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: FFFFFFFF F9E1E944 ; 3AC: BOOK* GUIObject_GetBook( GUI* ); //см. GUIObject_Destroy
 0EB4: FFFFFFFF 95C5D244 ; 3AD: u16 SoftKeys_GetSelectedAction( void );

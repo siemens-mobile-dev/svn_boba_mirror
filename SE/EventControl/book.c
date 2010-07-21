@@ -12,7 +12,6 @@
 #include "header\structs.h"
 
 extern PROCESS proc_;
-extern unsigned char *cellData;
 extern u16 EventTimer;
 extern wchar_t *extFolder;
 extern wchar_t *intFolder;
@@ -92,9 +91,12 @@ int ECBook_ShowAuthorInfo(void *mess ,BOOK* book)
   }
   wchar_t text[512];
   snwprintf(text,511, __version__ , BUILD);
-  if (cellData)
+  PLMN_LAC_DESC plmn_lac;
+  RAT_CI_DESC rat_ci;
+  char CSReg;
+  if (get_CellData(&plmn_lac,&rat_ci,&CSReg))
   {
-    snwprintf(text,511,L"%ls \nCurrent CID-LAC: %02X%02X-%02X%02X", text, cellData[7], cellData[8], cellData[1], cellData[0]);
+    snwprintf(text,511,L"%ls \nCurrent LAC-CID: %04X-%04X", text, plmn_lac.LAC, rat_ci.CI);
   }
   mbox_Create(book, text, 0, false);
   return 1;

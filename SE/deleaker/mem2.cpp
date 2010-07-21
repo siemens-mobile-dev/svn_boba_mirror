@@ -308,9 +308,9 @@ STRID  __deleaker_Str2ID(const void* wstr, int flag, int len, char* __file__,  i
   return ret;
 }
 
-int  __deleaker_TextCopyId(STRID __unknwnargname1, char* __file__,  int __line__)
+STRID  __deleaker_TextCopyId(STRID __unknwnargname1, char* __file__,  int __line__)
 {
-  int  ret = __original_TextCopyId(__unknwnargname1);
+  STRID  ret = __original_TextCopyId(__unknwnargname1);
   trace_alloc(trace_strid, (void*)ret, __file__, __line__);
   return ret;
 }
@@ -710,7 +710,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
 //__swi __arm void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
 //__swi __arm void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
-//__swi __arm void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
+//__swi __arm void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 //__swi __arm void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
 //__swi __arm int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 //__swi __arm FILEITEM* FILEITEM_Create( void );
@@ -809,7 +809,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm PROCESS create_process( int proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
 //__swi __arm PROCESS current_process( void );
 //__swi __arm void free_buf( union SIGNAL** sig );
-//__swi __arm void* get_CellData( void );
+//__swi __arm int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 //__swi __arm int inflate( z_streamp strm, int flush );
 //__swi __arm int inflateEnd( z_streamp strm );
 //__swi __arm int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );

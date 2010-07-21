@@ -1,6 +1,11 @@
 #include "..\..\..\\include\Types.h"
 #include "..\classes.h"
 
+#define GetSignalQuality_Send_SignalID 0x12C00080
+#define GetSignalQuality_Receive_SignalID 0x12C007C0
+#define MainInput_data 0x29C8480C
+#define MainInput_CurPos_Offset 0x3
+
 void (*CoCreateInstance)(char * guid1,char * guid2,void *pInterface)=(void(*)(char * guid1,char * guid2,void *pInterface))0x116BD0BD;
 void (*DisplayGC_AddRef)(GC*,void *)=(void(*)(GC*,void *))0x1165AFC9;
 int (*Illumination_LedID_SetLevel)(int LED_ID,int level)=(int(*)(int LED_ID,int level))0x115A4949;
@@ -15,3 +20,6 @@ int (*TextID2wstr_int)(STRID strid,wchar_t * dest,int maxlen,char * filename,int
 int (*TextGetLength_int)(STRID strid,char * filename,int line_num)=(int(*)(STRID strid,char * filename,int line_num))0x1163B07D;
 void (*TextFree_int)(STRID strid,char * filename,int line_num)=(void(*)(STRID strid,char * filename,int line_num))0x1163AFA9;
 STRID (*TextCopyId_int)(STRID strid,char * filename,int line_num)=(int(*)(STRID strid,char * filename,int line_num))0x1163AEB5;
+int (*Request_SIM_IMSI_Read)(const int* sync,const int unk,char * imsi,char * error_cause)=(int(*)(const int* sync,const int unk,char * imsi,char * error_cause))0x107A12B1;
+int (*get_imsi_const)()=(int(*)())0x1070007D;
+int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * error_cause)=(int(*)(const int* sync,char * level,char * flag,char * error_cause))0x29C06015;

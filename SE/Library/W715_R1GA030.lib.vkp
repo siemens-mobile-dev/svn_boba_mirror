@@ -44,7 +44,7 @@
 04D4: 00000000 89E74114 ; 135: void ListMenu_SetCursorToItem( GUI_LIST*, int item );
 04D8: 00000000 89AE1214 ; 136: void GUIObject_SetStyle( GUI*, int style );
 04DC: 00000000 7DA12C14 ; 137: int GUIonMessage_GetCreatedItemIndex( GUI_MESSAGE* msg );
-04E0: 00000000 75043914 ; 138: char GUIonMessage_SetMenuItemText( GUI_MESSAGE* msg, STRID ); !!! доп параметры
+04E0: 00000000 75043914 ; 138: char GUIonMessage_SetMenuItemText( GUI_MESSAGE* msg, STRID );
 04E4: 00000000 313D1314 ; 139: char GUIonMessage_SetMenuItemSecondLineText( GUI_MESSAGE* msg, STRID );
 04E8: 00000000 C1053914 ; 13A: char GUIonMessage_SetMenuItemInfoText( GUI_MESSAGE* msg, STRID );
 04EC: 00000000 C5630714 ; 13B: char GUIonMessage_SetMenuItemUnavailableText( GUI_MESSAGE* msg, STRID );
@@ -80,11 +80,11 @@
 0564: 00000000 A18BCC14 ; 159: int strcmp( const char* str1, const char* str2 );
 0568: 00000000 FD8BCC14 ; 15A: int strlen( const char* str );
 056C: 00000000 652E0C14 ; 15B: char* wstr2strn( char* str, const wchar_t* wstr, int maxlen );
-0570: 00000000 95F90114 ; 15C: STRID int2strID( int num ); !!! доп параметры
-0574: 00000000 2D4D1814 ; 15D: STRID Str2ID( const void* wstr, int flag, int len ); !!! доп параметры
+0570: 00000000 95F90114 ; 15C: STRID int2strID( int num );
+0574: 00000000 2D4D1814 ; 15D: STRID Str2ID( const void* wstr, int flag, int len );
 0578: 00000000 21551814 ; 15E: void StrID2Str( STRID, char* str, int maxlen, int null = 0 );
 057C: 00000000 59581814 ; 15F: int TextID2wstr( STRID, wchar_t* dest, int maxlen );
-0580: 00000000 95631814 ; 160: int TextGetLength( STRID ); !!! доп параметры
+0580: 00000000 95631814 ; 160: int TextGetLength( STRID );
 0584: 00000000 915B1814 ; 161: void TextFree( STRID );
 0588: 00000000 6DE31614 ; 162: int AB_DEFAULTNBR_GET( int rec_num, void* mem_0x30, int* unk );
 058C: 00000000 3927FF14 ; 163: int AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_ID );
@@ -310,7 +310,7 @@
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 0900: 00000000 21000014 ; 240: void JavaSession_Manager( int cmd ); //nullsub(ret 0)
 0904: 00000000 21000014 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
-0908: 00000000 DD521814 ; 242: int TextCopyId( STRID ); !!! доп параметры
+0908: 00000000 DD521814 ; 242: STRID TextCopyId( STRID );
 090C: 00000000 8D9B4814 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: 00000000 9DB90414 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 0914: 00000000 45B80414 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
@@ -536,7 +536,7 @@
 0C84: 00000000 0168E614 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 A5E31714 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 91E11714 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ;8324: void* get_CellData( void );
+;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: 00000000 F5135415 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 FD12DB14 ; 326: void* IncommingCall_Mute( BOOK* book );
 ;0C9C: xxxxxxxx yyyyyyyy ; 327: int GetRadioState( char* level, char* flag );
@@ -670,7 +670,7 @@
 0E9C: 00000000 7953F114 ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 ;0EA0: xxxxxxxx yyyyyyyy ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 ;0EA4: xxxxxxxx yyyyyyyy ; 3A9: void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
-;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
+;0EA8: xxxxxxxx yyyyyyyy ; 3AA: void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 0EAC: 00000000 D5BA2814 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 25C10C14 ; 3AC: BOOK* GUIObject_GetBook( GUI* ); //см. GUIObject_Destroy
 0EB4: 00000000 25CA2714 ; 3AD: u16 SoftKeys_GetSelectedAction( void );

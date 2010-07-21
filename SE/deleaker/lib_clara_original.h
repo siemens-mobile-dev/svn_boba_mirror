@@ -805,7 +805,7 @@ __swi __arm void  __original_JavaSession_Manager( int cmd );
 #pragma swi_number=0x241
 __swi __arm int  __original_JavaSession_GetName( void );
 #pragma swi_number=0x242
-__swi __arm int  __original_TextCopyId( STRID );
+__swi __arm STRID  __original_TextCopyId( STRID );
 #pragma swi_number=0x243
 __swi __arm UI_APP_SESSION*  __original_BookObj_GetSession( BOOK* book );
 #pragma swi_number=0x244
@@ -1321,8 +1321,8 @@ __swi __arm void  __original_SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl
 #pragma swi_number=0x323
 __swi __arm void  __original_SoftKeys_Update( DISP_OBJ* softkeys );
 
-#pragma swi_number=0x8324
-__swi __arm void*  __original_get_CellData( void );
+#pragma swi_number=0x324
+__swi __arm int  __original_get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 
 #pragma swi_number=0x325
 __swi __arm void*  __original_IncommingCall_Reject( BOOK* book );
@@ -1638,7 +1638,7 @@ __swi __arm void  __original_DispObject_SetCursorImage( DISP_OBJ*, wchar_t image
 #pragma swi_number=0x3A9
 __swi __arm void  __original_DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
 #pragma swi_number=0x3AA
-__swi __arm void  __original_DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
+__swi __arm void  __original_DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 
 #pragma swi_number=0x3AB
 __swi __arm void  __original_TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );

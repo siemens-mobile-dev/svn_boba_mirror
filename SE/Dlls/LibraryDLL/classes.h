@@ -23,6 +23,35 @@ class IMetaData;
 
 typedef struct
 {
+  char ValidLAI;
+  char unk1;
+  char MCC[3];
+  char MNC[2];
+  char PLMN_x;
+  u16 LAC;
+  char ValidRAC;
+  char ValidCI;
+#if defined (DB3200) || defined (DB3210) || defined (DB3350)
+  int unk2;
+#endif
+  int CI;
+  char RAT;
+  char Coverage;
+  char CSReg;
+  char PSReg;
+  char Priority;
+  char EPriority;
+  char EGPRS;
+  char DTMSup;
+  char HSDPA;
+  char unk3;
+  char MSC;
+  char SGSN;
+}CONNECTION_INFO_DESC;
+
+
+typedef struct
+{
   wchar_t artist[0x100];
   wchar_t title[0x100];
   wchar_t album[0x100];
