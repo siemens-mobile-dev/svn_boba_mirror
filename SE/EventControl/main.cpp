@@ -218,19 +218,6 @@ int main(wchar_t *elfpath)
     start(proc_);
     EventTimer = Timer_Set(1000, onEventTimer, 0);
     onEventTimer(EventTimer, 0);
-    /*
-    void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, bool vibra, bool replace);
-    CreateReminder(&bk->bk, L" 1" , L" 2", L" 3", true, false);
-    CreateReminder(&bk->bk, L" 1" , L" 2", L" 3", true, false);
-    CreateReminder(&bk->bk, L" 1" , L" 2", L" 3", true, false);
-    */
-    //exec_indication(int ind)
-    //void exec_indication(int ind);
-    //exec_indication(0xFFFFF);
-    //wchar_t str[50];
-    ///snwprintf(str,49,L"%X,%X,%X,%X,%X,%X,%X", 0xF00F, (0xF00F)&0xF, (0xF00F>>4)&0xF, (0xF00F>>8)&0xF, (0xF00F>>12)&0xF, (0xF00F>>16)&0xF, (0xF00F>>20)&0xF);
-    //MessageBox(EMPTY_SID,Str2ID(str,0,SID_ANY_LEN),NOIMAGE,1,0,0);
-    //create_ed(&bk->bk);
   }
   else
   {

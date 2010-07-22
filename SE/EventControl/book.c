@@ -20,7 +20,7 @@ int readConfig(MyBOOK *mbk, wchar_t *fpath, wchar_t *fname);
 int InitializeEvents(MyBOOK *myBook);
 void DestroyEvents(MyBOOK *myBook);
 
-void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, bool vibra, bool replace);
+void CreateReminder(REMINDER_STRUCT * rem_str);
 GUI_LIST *create_ed(BOOK *book);
 void mbox_Create(BOOK * bk, wchar_t *text, int minutes, bool vibra);
 
@@ -84,8 +84,15 @@ int ECBook_ShowAuthorInfo(void *mess ,BOOK* book)
   {
     if (mbk->remlst->FirstFree>0)
     {
-      void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, bool vibra, bool replace);
-      CreateReminder(&ECBook->bk, 0, 0, 0, 0, 0);
+      REMINDER_STRUCT rem_str;
+      rem_str.bk=&ECBook->bk;
+      rem_str.text=0;
+      rem_str.utext=0;
+      rem_str.time=0;
+      rem_str.vibra=0;
+      rem_str.replace=0;
+      rem_str.need_to_destroy=false;
+      CreateReminder(&rem_str);
       return 1;
     }
   }

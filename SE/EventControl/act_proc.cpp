@@ -17,7 +17,7 @@ extern wchar_t *extFolder;
 extern wchar_t *intFolder;
 
 int readConfig(MyBOOK *myBook, wchar_t *myFolder, wchar_t *fname);
-void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, bool vibra, bool replace);
+void CreateReminder(REMINDER_STRUCT * rem_str);
 void mbox_Create(BOOK * bk, wchar_t *text, int minutes, bool vibra);
 
 void SUBPROC_(void(*PROC)(int,void*),int p1, void * p2);
@@ -27,6 +27,9 @@ __swi __arm  void MMIPROC (void(*PROC)(EVENT *), EVENT *);
 
 #pragma swi_number=0x109
 __swi __arm  void MMIPROC (void(*PROC)(wchar_t *),wchar_t *);
+
+#pragma swi_number=0x109
+__swi __arm  void MMIPROC (void(*PROC)(REMINDER_STRUCT *),REMINDER_STRUCT *);
 
 /*
 *===========================================================================
@@ -157,36 +160,40 @@ void (*CONTROL)(int a, int id, int br, int c)=0;
 
 int getfw()
 {
-  char *test=(char*)(0x4529BFA8);
-  if (test[0]==0x30 && test[1]==0xB5)
+  if (GetChipID()==0x9900)
   {
-    //W580 R8BE001
-    LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R8BE);
-    CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R8BE);
+    char *test=(char*)(0x4529BFA8);
+    if (test[0]==0x30 && test[1]==0xB5)
+    {
+      //W580 R8BE001
+      LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R8BE);
+      CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R8BE);
+    }
+    else if (test[0]==0xE5 && test[1]==0xFD)
+    {
+      //W580 R8BA024
+      LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R8BA);
+      CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R8BA);
+    }
+    else if (test[0]==0xA8 && test[1]==0x33)
+    {
+      //W580 R6CA001 Orange
+      LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R6CA);
+      CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R6CA);
+    }
+    else if (test[0]==0x00 && test[1]==0x28)
+    {
+      //W580 R8BE001 Orange
+      LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R8BE_Orange);
+      CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R8BE_Orange);
+    }
+    else
+    {
+      notsupported=1;
+      return 0;
+    }
   }
-  else if (test[0]==0xE5 && test[1]==0xFD)
-  {
-    //W580 R8BA024
-    LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R8BA);
-    CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R8BA);
-  }
-  else if (test[0]==0xA8 && test[1]==0x33)
-  {
-    //W580 R6CA001 Orange
-    LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R6CA);
-    CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R6CA);
-  }
-  else if (test[0]==0x00 && test[1]==0x28)
-  {
-    //W580 R8BE001 Orange
-    LED=(int (*)(void *,int id,int RED,int GREEN,int BLUE,int delay,int onoff))(LED_R8BE_Orange);
-    CONTROL=(void (*)(int a, int id, int br, int c))(CTRL_R8BE_Orange);
-  }
-  else
-  {
-    notsupported=1;
-    return 0;
-  }
+  else return 0;
   return 1;
 };
 
@@ -523,10 +530,17 @@ void act_proc(EVENT *ev)
   }
   else if (t==30)
   {
-    void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, bool vibra, bool replace);
     wchar_t time[50];
     snwprintf(time, 49, L"%02d:%02d:%02d", h, m, s);
-    CreateReminder(&ECBook->bk, ev->param, L" ", time, true, false);
+    REMINDER_STRUCT * rem_str = new REMINDER_STRUCT;
+    rem_str->bk=&ECBook->bk;
+    rem_str->text=ev->param;
+    rem_str->utext=L" ";
+    rem_str->time=time;
+    rem_str->vibra=true;
+    rem_str->replace=false;
+    rem_str->need_to_destroy=true;
+    MMIPROC(CreateReminder, rem_str);
   }
   else if (t==31)
   {
@@ -624,10 +638,16 @@ void reminder_sub(EVENT *ev)
   snwprintf(str, 49, lng[LNG_MIN_AGO_MASK], min);
   wchar_t time[50];
   snwprintf(time, 49, L"%02d:%02d:%02d", h, m, s);
-  if (ev->txt)
-    CreateReminder(&ECBook->bk, ev->txt, str, time, true, false); 
-  else
-    CreateReminder(&ECBook->bk, lng[LNG_IMPORTANT_EVENT], str, time, true, false); 
+  REMINDER_STRUCT rem_str;
+  rem_str.bk=&ECBook->bk;
+  if (ev->txt) rem_str.text=ev->txt;
+  else rem_str.text=lng[LNG_IMPORTANT_EVENT];
+  rem_str.utext=str;
+  rem_str.time=time;
+  rem_str.vibra=true;
+  rem_str.replace=false;
+  rem_str.need_to_destroy=false;
+  CreateReminder(&rem_str); 
   ev->after_done=true;
 };
 
@@ -668,10 +688,16 @@ void event_checktime(EVENT *ev, int mode, int rem1, int rem2)
     snwprintf(str, 49, lng[LNG_MIN_REM_MASK],min);
     wchar_t time[50];
     snwprintf(time, 49, L"%02d:%02d:%02d", h, m, s);
-    if (ev->txt)
-      CreateReminder(&ECBook->bk, ev->txt, str, time, true, false); 
-    else
-      CreateReminder(&ECBook->bk, lng[LNG_IMPORTANT_EVENT], str, time, true, false); 
+    REMINDER_STRUCT * rem_str = new REMINDER_STRUCT;
+    rem_str->bk=&ECBook->bk;
+    if (ev->txt) rem_str->text=ev->txt;
+    else rem_str->text=lng[LNG_IMPORTANT_EVENT];
+    rem_str->utext=str;
+    rem_str->time=time;
+    rem_str->vibra=true;
+    rem_str->replace=false;
+    rem_str->need_to_destroy=true;
+    MMIPROC(CreateReminder,rem_str);
     ev->before_done=true;
   }
   if (ev->ask_after==now && ((mode==0 && rem2==0 && done==false) || (mode==2 && rem2!=0)))

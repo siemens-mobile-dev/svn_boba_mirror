@@ -127,8 +127,8 @@ int lng_load(wchar_t *path, wchar_t *name)
       }
     L_away:
       ;
+      fclose(file);
     }
-    fclose(file);
   }
   return res;
 };
@@ -193,8 +193,8 @@ void Lang_Initialize()
     {
       fbuf = new char[512];
       fread(file, fbuf, 512);
+      fclose(file);
     }
-    fclose(file);
   }
 };
 

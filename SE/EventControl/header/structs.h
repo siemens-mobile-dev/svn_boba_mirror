@@ -18,6 +18,7 @@
     int num;
     LIST *rems;
   } DISP_OBJ_REMIND;
+
   typedef struct
   {
     BOOK bk;
@@ -91,4 +92,16 @@
     void (*myled)(void *i,int id,int RED,int GREEN,int BLUE, int delay, int onoff);
     void (*changestate)(bool state);
   }CSBOOK;
+
+  typedef struct
+  {
+    BOOK * bk;
+    wchar_t *text;
+    wchar_t *utext;
+    wchar_t *time;
+    bool vibra;
+    bool replace;
+    bool need_to_destroy;
+  }REMINDER_STRUCT;
+
 #endif

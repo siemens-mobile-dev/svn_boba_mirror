@@ -413,12 +413,12 @@ int readConfig(MyBOOK *mbk, wchar_t *myFolder, wchar_t *fname)
       {
         SortList(events);
       }
+      fclose(file);
     }
     else
     {
       result=-2;
     }
-    fclose(file);
   }
   return result;
 };

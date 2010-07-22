@@ -25,10 +25,10 @@ void kill_rems(LIST *lst, MyBOOK *mbk, bool check);
 *                     Создаём напоминальщика...
 *===========================================================================
 */
-void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, bool vibra, bool replace)
+void CreateReminder(REMINDER_STRUCT * rem_str)
 {
-  MBK(bk);
-  if (vibra)
+  MBK(rem_str->bk);
+  if (rem_str->vibra)
   {
     PAudioControl pAC = AudioControl_Init();
     if(!pAC)pAC = *GetAudioControlPtr();
@@ -37,30 +37,30 @@ void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, boo
   bool created=false;
   if (mbk->remind)
   {
-    if (replace)
+    if (rem_str->replace)
     {
       kill_rems(mbk->remlst, mbk, 0);
       GUI_Free(mbk->remind);
-      mbk->remind=GUI_REMIND_Create(bk);
+      mbk->remind=GUI_REMIND_Create(rem_str->bk);
       created=true;
     }
   }
   if (!mbk->remind)
   {
-    mbk->remind=GUI_REMIND_Create(bk);
+    mbk->remind=GUI_REMIND_Create(rem_str->bk);
     created=true;
   }
   GUI *gRemind = mbk->remind;
-  if (text && utext && time)
+  if (rem_str->text && rem_str->utext && rem_str->time)
   {
     REMIND *rem=new REMIND;
     memset(rem,0,sizeof(REMIND));
-    rem->text=new wchar_t[wstrlen(text)+1];
-    wstrcpy(rem->text, text);
-    rem->utext=new wchar_t[wstrlen(utext)+1];
-    wstrcpy(rem->utext,utext);
-    rem->time=new wchar_t[wstrlen(time)+1];
-    wstrcpy(rem->time,time);
+    rem->text=new wchar_t[wstrlen(rem_str->text)+1];
+    wstrcpy(rem->text, rem_str->text);
+    rem->utext=new wchar_t[wstrlen(rem_str->utext)+1];
+    wstrcpy(rem->utext,rem_str->utext);
+    rem->time=new wchar_t[wstrlen(rem_str->time)+1];
+    wstrcpy(rem->time,rem_str->time);
     GuiRemind_AddNote(mbk->remind, rem);
   }
   GUI_SetStyle(gRemind, 4);
@@ -69,8 +69,9 @@ void CreateReminder(BOOK * bk, wchar_t *text, wchar_t *utext, wchar_t *time, boo
   if (created)
   {
     ShowWindow(gRemind);
-    BookObj_Show(bk, 0);
-    BookObj_SetFocus(bk, 0);
+    BookObj_Show(rem_str->bk, 0);
+    BookObj_SetFocus(rem_str->bk, 0);
   }
+  if (rem_str->need_to_destroy==true) delete rem_str;
 };
 
