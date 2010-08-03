@@ -263,7 +263,7 @@ __root const CFG_HDR cfghdr_setother={CFG_LEVEL,LG_GFGSETOTHER,1,0};
     __root const CFG_HDR cfghdr_encode_file={CFG_UTF16_STRING,LG_GFGPATHENCODE,0,255};
     __root const wchar_t cfg_encode_file[256]=L"%ELFS_INT%/MiniGPS/Encode/cyrillic.bin";
 
-    __root const CFG_HDR cfghdr_codemap_addr={CFG_UTF16_STRING,LG_GFGCODEMAPADDR,10,11};
+    __root const CFG_HDR cfghdr_codemap_addr={CFG_UTF16_STRING,LG_GFGCODEMAPADDR,10,15};
     __root const wchar_t cfg_codemap_addr[16]=L"0x";
 
   __root const CFG_HDR cfghdr_setencode_x={CFG_LEVEL,"",0,0};
