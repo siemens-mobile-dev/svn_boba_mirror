@@ -2,6 +2,8 @@
 #include "..\..\include\Types.h"
 #include "..\..\include\dll.h"
 //#include "classes.h"
+#include "..\..\include\dir.h"
+#include "vkp.h"
 
 
 #define DLL_PRIVATE_AREA  // использовать “ќЋ№ ќ!! при компил€ции самой DLL
@@ -695,6 +697,60 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
 // Ёта переменна€ будет видна в пределах DLL ( func2 , func3 , main )
 // -----------------------------------------------------
 
+void tryvkp(int dirplace, Vkp& vkp)
+{
+    wchar_t* patchesdir = GetDir(dirplace | DIR_ELFS_CONFIG);
+    FILELISTITEM * fli;
+    FILELISTITEM* mem = (FILELISTITEM* ) malloc(sizeof(FILELISTITEM));
+    DIR_HANDLE * handle = AllocDirHandle( patchesdir );
+    if(handle)
+    {
+        while(fli=(FILELISTITEM*)GetFname(handle,mem))
+        {
+            wchar_t* ext = getFileExtention(fli->fname);
+            if(ext && !wstrcmpi(ext,L"vkp"))
+            {
+                FSTAT st;
+                if(!fstat(patchesdir,fli->fname,&st))
+                {
+                    int f;
+                    
+                    if ((f=_fopen(patchesdir,fli->fname,0x001,0x180,0))>=0)
+                    {
+                        char* vkpf = (char*)malloc(st.fsize);
+                        fread(f,vkpf,st.fsize);
+                        fclose(f);
+                        
+                        int errorline = vkp.dovkp(vkpf, st.fsize);
+                        //писать в лог об ошибках?
+                        
+                        mfree( vkpf );
+                    }
+                }
+            }
+        }
+        DestroyDirHandle( handle);
+    }
+    mfree( mem );
+}
+
+LIBRARY_DLL_FUNCTIONINFO* dovkp()
+{
+    Vkp vkp;
+    
+    tryvkp(MEM_INTERNAL, vkp);
+    tryvkp(MEM_EXTERNAL, vkp);
+    
+    int size = vkp.gettable( NULL );
+    
+    LIBRARY_DLL_FUNCTIONINFO* ptr = new LIBRARY_DLL_FUNCTIONINFO[size + MAXELEMS(functions)];
+    
+    vkp.gettable( (void**)ptr );
+    memcpy( &ptr[size], functions, sizeof(functions) );
+    
+    return ptr;
+}
+
 int main ( int Action , LIBRARY_DLL_DATA * data )
 {
   LIBRARY_DLL_DATA * p;
@@ -726,9 +782,11 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
     if (!(p = new LIBRARY_DLL_DATA)) return(0);       // создание this и инициализаци€ свойств и методов
 
     memset(p,0,sizeof(LIBRARY_DLL_DATA));
+
+    //тут можно ifdef например
+    p->functions = dovkp();
+    //p->functions = ::functions;
     
-    p->functions = ::functions;
-   
     // Private area
     
     debug_printf("\nlibrary.dll: dll load done\n");
@@ -741,6 +799,7 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
 
     //  освобождеем при необходимости data->...
 
+    delete[] data->functions;
 
     //  освобождеем всегда data
     mfree(data);
