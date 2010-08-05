@@ -541,7 +541,7 @@ void Display_ReDraw(DISP_OBJ* DO,int a,int b,int c)
   IsInStandby = true;
   Timer_ReSet(&timer_disable,cfg_update_interval << 1, onTimer_disable,0);
   DrawParams(StatusBarY);
-  Display_oldReDraw(DO,a,b,c);
+  if (Display_oldReDraw) Display_oldReDraw(DO,a,b,c);
 }
 
 void Status_ReDraw(DISP_OBJ * d, int a, int b, int c)
@@ -886,7 +886,7 @@ int onBcfgConfig(void* mess, BOOK* bk)
   return 1;
 }
 
-const PAGE_MSG MiniGPS_PageEvents[]@ "DYN_PAGE" ={
+const PAGE_MSG MiniGPS_BasePageEvents[]@ "DYN_PAGE" ={
   SBY_REDRAW_RELEASE_EVENT,  SB_ELF_Killed,
   ELF_TERMINATE_EVENT,       TerminateElf,
   ELF_SHOW_INFO_EVENT,       ShowAuthorInfo,
@@ -894,7 +894,8 @@ const PAGE_MSG MiniGPS_PageEvents[]@ "DYN_PAGE" ={
   NIL_EVENT_TAG,             NULL
 };
 
-PAGE_DESC base_page ={"MiniGPS_BasePage",0,MiniGPS_PageEvents};
+PAGE_DESC base_page ={"MiniGPS_BasePage",0,MiniGPS_BasePageEvents};
+
 
 void elf_exit(void)
 {
@@ -1063,6 +1064,39 @@ void onCloseMiniGPSBook(BOOK * book)
   }
 }
 
+int MainPageEnter(void *, BOOK *bk)
+{
+  myModifyUIHook(STANDBY_NOT_IDLE_EVENT,UI_STANDBY_UNFOCUS_EVENT,StandbyModeDeactivatedHook,1);
+  myModifyUIHook(STANDBY_IDLE_EVENT,PHONE_IN_STBY_EVENT,StandbyModeActivatedHook,1);
+  
+  GUI_status = StatusRow_p();
+  Status_desc = DISP_OBJ_GetDESC (* GUI_status);
+  Status_oldReDraw = DISP_OBJ_GetOnRedraw (* GUI_status);
+  DISP_DESC_SetOnRedraw (Status_desc, (DISP_OBJ_ONREDRAW_METHOD)Status_ReDraw);
+  
+  GUI_soft = DispObject_SoftKeys_Get();
+  Soft_desc = DISP_OBJ_GetDESC (GUI_soft);
+  Soft_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_soft);
+  DISP_DESC_SetOnRedraw(Soft_desc, (DISP_OBJ_ONREDRAW_METHOD)Soft_ReDraw);
+  
+  GUI_display = GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
+  Display_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_display);
+  Display_desc = DISP_OBJ_GetDESC (GUI_display);
+  DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);
+  
+  ModifyKeyHook(NewKey, 1);
+  Timer_ReSet(&timer, 1000, onTimer, 0);
+  Timer_ReSet(&timerNewAction, NewActionTimeout, onTimerNewAction, 0);
+  return(0);
+}
+
+const PAGE_MSG MiniGPS_MainPageEvents[]@ "DYN_PAGE" ={
+  PAGE_ENTER_EVENT_TAG,      MainPageEnter,
+  NIL_EVENT_TAG,             NULL
+};
+
+PAGE_DESC main_page ={"MiniGPS_MainPage",0,MiniGPS_MainPageEvents};
+
 int main (void)
 {
   if(FindBook(isMiniGPSBook))
@@ -1082,28 +1116,9 @@ int main (void)
       SUBPROC(elf_exit);
       return 0;
     }
+    
+    BookObj_GotoPage((BOOK*)MiniGPSBook,&main_page);
 
-    myModifyUIHook(STANDBY_NOT_IDLE_EVENT,UI_STANDBY_UNFOCUS_EVENT,StandbyModeDeactivatedHook,1);
-    myModifyUIHook(STANDBY_IDLE_EVENT,PHONE_IN_STBY_EVENT,StandbyModeActivatedHook,1);
-
-    GUI_status = StatusRow_p();
-    Status_desc = DISP_OBJ_GetDESC (* GUI_status);
-    Status_oldReDraw = DISP_OBJ_GetOnRedraw (* GUI_status);
-    DISP_DESC_SetOnRedraw (Status_desc, (DISP_OBJ_ONREDRAW_METHOD)Status_ReDraw);
-
-    GUI_soft = DispObject_SoftKeys_Get();
-    Soft_desc = DISP_OBJ_GetDESC (GUI_soft);
-    Soft_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_soft);
-    DISP_DESC_SetOnRedraw(Soft_desc, (DISP_OBJ_ONREDRAW_METHOD)Soft_ReDraw);
-
-    GUI_display = GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
-    Display_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_display);
-    Display_desc = DISP_OBJ_GetDESC (GUI_display);
-    DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);
-
-    ModifyKeyHook(NewKey, 1);
-    Timer_ReSet(&timer, 1000, onTimer, 0);
-    Timer_ReSet(&timerNewAction, NewActionTimeout, onTimerNewAction, 0);
   }
   return 0;
 }
