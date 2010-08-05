@@ -431,15 +431,15 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
       res=new REDRAW_RELEASE_MESSAGE;
       memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     }
-    if (sbm->SK_OldOnRedraw) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
+    if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Softkey_DO),softredraw);
-    res->SK_OldOnRedraw=0;
+    res->SK_OldOnRedraw=EMPTY_REDRAW_METHOD;
     res->SK_NewOnRedraw=softredraw;
   }
   if (res)
   {
     UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,res,(void (*)(void*))mfree_adr());
-    return 1;
+    return BLOCK_EVENT_GLOBALLY;
   }
   return 0;
 };

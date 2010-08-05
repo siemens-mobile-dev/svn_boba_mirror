@@ -765,13 +765,13 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     memcpy(ms, sbm, sizeof(REDRAW_RELEASE_MESSAGE));
 
     // если он был убит, то заменяем свой oldRedraw на его..
-    if (sbm->SI_OldOnRedraw) Status_oldReDraw = sbm->SI_OldOnRedraw;
+    if (sbm->SI_OldOnRedraw!=EMPTY_REDRAW_METHOD) Status_oldReDraw = sbm->SI_OldOnRedraw;
 
     // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(*GUI_status), Status_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
-    ms->SI_OldOnRedraw = 0;
+    ms->SI_OldOnRedraw = EMPTY_REDRAW_METHOD;
     ms->SI_NewOnRedraw = Status_ReDraw;
   }
 
@@ -786,13 +786,13 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     }
 
     // если он был убит, то заменяем свой oldRedraw на его..
-    if (sbm->SB_OldOnRedraw) Display_oldReDraw = sbm->SB_OldOnRedraw;
+    if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) Display_oldReDraw = sbm->SB_OldOnRedraw;
 
     // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(GUI_display), Display_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
-    ms->SB_OldOnRedraw = 0;
+    ms->SB_OldOnRedraw = EMPTY_REDRAW_METHOD;
     ms->SB_NewOnRedraw = Display_ReDraw;
   }
 
@@ -807,19 +807,19 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     }
 
     // если он был убит, то заменяем свой oldRedraw на его..
-    if (sbm->SK_OldOnRedraw) Soft_oldReDraw = sbm->SK_OldOnRedraw;
+    if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) Soft_oldReDraw = sbm->SK_OldOnRedraw;
 
     // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(GUI_soft), Soft_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
-    ms->SK_OldOnRedraw = 0;
+    ms->SK_OldOnRedraw = EMPTY_REDRAW_METHOD;
     ms->SK_NewOnRedraw = Soft_ReDraw;
   }
   if(ms)
   {
     UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
-    return(1);
+    return(BLOCK_EVENT_GLOBALLY);
   }
   return(0);
 }

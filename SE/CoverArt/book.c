@@ -136,13 +136,13 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     
     // если он был убит, то заменяем свой oldRedraw на его..
-    if (sbm->SB_OldOnRedraw) Standby_DefaultRedraw=sbm->SB_OldOnRedraw;
+    if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) Standby_DefaultRedraw=sbm->SB_OldOnRedraw;
 
     // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Standby_DO),Standby_CARedraw);
 
     // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
-    res->SB_OldOnRedraw=0;
+    res->SB_OldOnRedraw=EMPTY_REDRAW_METHOD;
     res->SB_NewOnRedraw=Standby_CARedraw;
   }
   if (sbm->SI_NewOnRedraw==StatusIndication_DefaultRedraw)
@@ -152,9 +152,9 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
       res=new REDRAW_RELEASE_MESSAGE;
       memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     }
-    if (sbm->SI_OldOnRedraw) StatusIndication_DefaultRedraw=sbm->SI_OldOnRedraw;
+    if (sbm->SI_OldOnRedraw!=EMPTY_REDRAW_METHOD) StatusIndication_DefaultRedraw=sbm->SI_OldOnRedraw;
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication_DO),StatusIndication_CARedraw);
-    res->SI_OldOnRedraw=0;
+    res->SI_OldOnRedraw=EMPTY_REDRAW_METHOD;
     res->SI_NewOnRedraw=StatusIndication_CARedraw;
   }
   if (sbm->SK_NewOnRedraw==Softkey_DefaultRedraw)
@@ -164,15 +164,15 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
       res=new REDRAW_RELEASE_MESSAGE;
       memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     }
-    if (sbm->SK_OldOnRedraw) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
+    if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Softkey_DO),Softkey_CARedraw);
-    res->SK_OldOnRedraw=0;
+    res->SK_OldOnRedraw=EMPTY_REDRAW_METHOD;
     res->SK_NewOnRedraw=Softkey_CARedraw;
   }
   if (res)
   {
     UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,res,(void (*)(void*))mfree_adr());
-    return 1;
+    return BLOCK_EVENT_GLOBALLY;
   }
   return 0;
 };

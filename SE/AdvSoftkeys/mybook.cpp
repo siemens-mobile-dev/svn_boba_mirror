@@ -74,16 +74,16 @@ int onElfKilled(void *mess ,BOOK* book)
     memcpy(ms,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     //memset(ms,0,sizeof(REDRAW_RELEASE_MESSAGE));
     // если он был убит, то заменяем свой oldRedraw на его..
-    if (sbm->SK_OldOnRedraw) DREDRAW=sbm->SK_OldOnRedraw;
+    if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) DREDRAW=sbm->SK_OldOnRedraw;
 
     // ставим свой метод наверх
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(DispObject_SoftKeys_Get()),DispDraw);
 
     // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
-    ms->SK_OldOnRedraw=0;
+    ms->SK_OldOnRedraw=EMPTY_REDRAW_METHOD;
     ms->SK_NewOnRedraw=DispDraw;
     UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
-    return 1;
+    return BLOCK_EVENT_GLOBALLY;
   }
   return 0;
 };

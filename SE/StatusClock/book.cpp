@@ -63,15 +63,15 @@ int onElfKilled(void *mess ,BOOK* book)
   {
     REDRAW_RELEASE_MESSAGE * ms= new REDRAW_RELEASE_MESSAGE;
     memcpy(ms,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
-    if (sbm->SK_OldOnRedraw) DREDRAW=sbm->SK_OldOnRedraw;
+    if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) DREDRAW=sbm->SK_OldOnRedraw;
 
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(*StatusRow_p()),DispDraw);
 
-    ms->SI_OldOnRedraw=0;
+    ms->SI_OldOnRedraw=EMPTY_REDRAW_METHOD;
     ms->SI_NewOnRedraw=DispDraw;
 
     UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
-    return 1;
+    return BLOCK_EVENT_GLOBALLY;
   }
   return 0;
 };
