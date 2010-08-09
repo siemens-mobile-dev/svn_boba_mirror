@@ -1,4 +1,4 @@
-//#include "..\\include\DevDef.h"
+//#include "..\include\DevDef.h"
         RTMODEL "ARMv4M", "USED"
         RTMODEL "ARMv4T", "USED"
         RTMODEL "ARMv5T", "USED"
@@ -47,7 +47,6 @@ a       EQU     b
         call    wstrcat,0x154
         call    debug_printf,0x1B1
         call    DestroyDirHandle,0x254
-        call    get_envp,0x18D
         call    set_envp,0x18E
         call    get_bid,0x18F
         call    current_process,0x184

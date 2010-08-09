@@ -32,3 +32,6 @@
 
 // TabMenuBar check
 -Z(CODE)PATCH_TabMenuCheck=45153804-4515380B
+
+//elfpackdata
+-Z(CODE)EPD=4C055894-4C055897

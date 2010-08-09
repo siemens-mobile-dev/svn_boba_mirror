@@ -26,3 +26,9 @@
 
 // UIHook
 -Z(CODE)PATCH_PageAction=452D9A20-452D9A28
+
+// PageActionHook
+-Z(CODE)PATCH_PageActionImpl=452DA000-452DA007
+
+//elfpackdata
+-Z(CODE)EPD=2005B4C0-2005B4C3

@@ -623,7 +623,7 @@
 0DE4: 00000000 BD76FF14 ; 379: void ObexSendFile( SEND_OBEX_STRUCT* );
 0DE8: 00000000 B1B9CD14 ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, STRID );
 0DEC: 00000000 FDA53114 ; 37B: int EqualizerGain_Set( int AudioSessionID, int Band, int Level );
-0DF0: 00000000 FDE4BA14 ; 37C: int CANVAS_Get_GviGC( PCANVAS pcanvas, GVI_GC* dest );
+0DF0: 00000000 25260A10 ; 37C: int CANVAS_Get_GviGC( PCANVAS pcanvas, GVI_GC* dest );
 0DF4: 00000000 09230A10 ; 37D: void GVI_BitBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3 );
 0DF8: 00000000 C9CA4B10 ; 37E: void GVI_StretchBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3 );
 0DFC: 00000000 E1B31110 ; 37F: void GVI_TransformBlt( GVI_GC destgc, int destx, int desty, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int orientation, int _0 );

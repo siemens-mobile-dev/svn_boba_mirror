@@ -1,130 +1,24 @@
-//#define K750_R1CA021
-
 #include "..\include\Dir.h"
 #include "..\include\Types.h"
 #include "..\include\dll.h"
 #include "..\Dlls\LibraryDLL\export\LibraryDLL.h"
 #include "calls.h"
 #include "vars.h"
+#include "regfile.h"
+#include "helper.h"
+#include "dll.h"
+#include "elfloader.h"
 
 
-#define EPDVARNAME "elfpackdata"
-
-
-__no_init int (*pKBD) (int,int,int) @ "OLD_KEY_HANDLER";
-
-void StartHelper(void);
-
+typedef void (*USERDATACONSTRUCTOR)(void*, void*);
 
 typedef struct
 {
-	void (* constr)(void *, void *);
+	USERDATACONSTRUCTOR constr;
 	void * data;
 }UDATA;
 
-void * malloc (int size);
-void mfree (void * mem);
-void HelperEntryPoint(void);
-
-//-------
-typedef const unsigned short *FILENAME;
-__thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3);
-void * LoadDLL(wchar_t * DllName);
-//-------
-
-
-
-EP_DATA * getepd(void)
-{
-	return (EP_DATA *)get_envp(get_bid(current_process()),EPDVARNAME);
-}
-
-
-__thumb int CmpProc(void * e1, void * e2)
-{
-	UDATA * ud = (UDATA*)e1;
-	if ((int)ud->constr==(int)e2) return (0); else  return(1);
-}
-
-__thumb void * GetUserData (int size,void (*constr)(void *, void *), void *param)
-{
-	
-	UDATA * ud;
-	__get_epd;
-	int index;
-	
-	_printf("GetUserData(0x%X,0x%X,0x%X)",size,constr,param);
-	index=List_Find(epd->UserDataList,(void*)constr,CmpProc);
-	if (index!=0xFFFF)
-	{
-		ud=List_Get(epd->UserDataList,index);
-		_printf("UserData  @0x%X",ud->data);
-	}
-	else
-	{
-		if (constr)
-		{
-			ud=malloc(sizeof(UDATA));
-			ud->constr=constr;
-			ud->data=malloc(size);
-			List_InsertFirst(epd->UserDataList,ud);
-			constr(ud->data,param);
-			
-			_printf("New UserData  @0x%X",ud->data);
-			_printf("Total Used Bloks  0x%%X",epd->UserDataList->FirstFree);
-			
-			
-		}
-		else
-		{
-			
-			_printf("Error. GetUserData() without Constructor!!");
-			// нет конструктора
-			return(0);
-		}
-	}
-	return(ud->data);
-	
-};
-
-
-
-__thumb int RemoveUserData(void (*constr)(void *, void *))
-{
-	__get_epd;
-	UDATA * ud;
-	int index;
-	
-	_printf("RemoveUserData(0x%X)",constr);
-	
-	index=List_Find(epd->UserDataList,(void*)constr,CmpProc);
-	if (index!=0xFFFF)
-	{
-		ud=List_RemoveAt(epd->UserDataList,index);
-		{
-			mfree(ud->data);
-			mfree(ud);
-			
-			_printf("Removed OK...");
-			
-			return(0);
-			
-		}
-	}
-	else
-	{
-		
-		_printf("0x%X Not in List!!",constr);
-		
-		// нет элемента в списке
-		return(1);
-	}
-	
-}
-
-//============================================================================
-
-__thumb void * malloc (int size)
+void * malloc (int size)
 {
 #ifdef DB2020
 	return(memalloc(0,size,1,5,"SwiLib",0));
@@ -135,7 +29,7 @@ __thumb void * malloc (int size)
 #endif
 }
 
-__thumb void mfree (void * mem)
+void mfree (void * mem)
 {
 #ifdef DB2020
 	if (mem) memfree(0, mem,"SwiLib",0);
@@ -145,42 +39,117 @@ __thumb void mfree (void * mem)
 	memfree(mem,"SwiLib",0);
 #endif
 }
+
+int CmpProc(UDATA* listitem, USERDATACONSTRUCTOR itemtofind)
+{
+	return listitem->constr != itemtofind;
+}
+
+void* GetUserData (int size, USERDATACONSTRUCTOR constr, void* param)
+{
+
+	UDATA * ud;
+	int index;
+
+	_printf("GetUserData(0x%X,0x%X,0x%X)",size,constr,param);
+	index = LIST_FIND(elfpackdata->UserDataList, constr, CmpProc);
+	if (index!=0xFFFF)
+	{
+		ud=List_Get(elfpackdata->UserDataList,index);
+		_printf("UserData  @0x%X",ud->data);
+	}
+	else
+	{
+		if (constr)
+		{
+			ud=malloc(sizeof(UDATA));
+			ud->constr=constr;
+			ud->data=malloc(size);
+			List_InsertFirst(elfpackdata->UserDataList,ud);
+			constr(ud->data,param);
+
+			_printf("New UserData  @0x%X",ud->data);
+			_printf("Total Used Bloks  0x%%X",epd->UserDataList->FirstFree);
+		}
+		else
+		{
+			_printf("Error. GetUserData() without Constructor!!");
+			// нет конструктора
+			return(0);
+		}
+	}
+	return(ud->data);
+
+};
+
+
+
+int RemoveUserData(void (*constr)(void *, void *))
+{
+	UDATA * ud;
+	int index;
+
+	_printf("RemoveUserData(0x%X)",constr);
+
+	index = LIST_FIND(elfpackdata->UserDataList, constr, CmpProc);
+	if (index!=0xFFFF)
+	{
+		ud=List_RemoveAt(elfpackdata->UserDataList,index);
+		{
+			mfree(ud->data);
+			mfree(ud);
+
+			_printf("Removed OK...");
+
+			return(0);
+		}
+	}
+	else
+	{
+		_printf("0x%X Not in List!!",constr);
+
+		// нет элемента в списке
+		return(1);
+	}
+
+}
+
 //============================================================================
 
-__thumb u16 * GetDir (int DirIndex)
+wchar_t* GetDir (int DirIndex)
 {
-	
+
 	_printf("GetDir(0x%X)",DirIndex);
-	
+
 	switch (DirIndex>>1)
 	{
-	case  DIR_AUDIO>>1 : return (DirIndex&1)? (u16*)PATH_AUDIO_INT: (u16*)PATH_AUDIO_EXT;
-	case  DIR_IMAGE>>1 : return (DirIndex&1)? (u16*)PATH_IMAGE_INT: (u16*)PATH_IMAGE_EXT;
-	case  DIR_VIDEO>>1 : return (DirIndex&1)? (u16*)PATH_VIDEO_INT: (u16*)PATH_VIDEO_EXT;
-	case  DIR_THEME>>1 : return (DirIndex&1)? (u16*)PATH_THEME_INT: (u16*)PATH_THEME_EXT;
-	case  DIR_OTHER>>1 : return (DirIndex&1)? (u16*)PATH_OTHER_INT: (u16*)PATH_OTHER_EXT;
-	
+	case  DIR_AUDIO>>1 : return (DirIndex&1)? PATH_AUDIO_INT: PATH_AUDIO_EXT;
+	case  DIR_IMAGE>>1 : return (DirIndex&1)? PATH_IMAGE_INT: PATH_IMAGE_EXT;
+	case  DIR_VIDEO>>1 : return (DirIndex&1)? PATH_VIDEO_INT: PATH_VIDEO_EXT;
+	case  DIR_THEME>>1 : return (DirIndex&1)? PATH_THEME_INT: PATH_THEME_EXT;
+	case  DIR_OTHER>>1 : return (DirIndex&1)? PATH_OTHER_INT: PATH_OTHER_EXT;
+
 	case  DIR_ELFS>>1 : return (DirIndex&1)? PATH_ELF_INT: PATH_ELF_EXT;
 	case  DIR_ELFS_DAEMONS>>1 : return (DirIndex&1)? PATH_ELF_DAEMONS_INT: PATH_ELF_DAEMONS_EXT;
 	case  DIR_ELFS_CONFIG>>1 : return (DirIndex&1)? PATH_ELF_CONFIG_INT: PATH_ELF_CONFIG_EXT;
 	case  DIR_INI>>1 : return PATH_INI;
 	case  DIR_DLL>>1: return PATH_DLL;
-	
-	case  DIR_USER>>1 : return (DirIndex&1)? (u16*)PATH_USER_INT: (u16*)PATH_USER_EXT;
-	
+
+	case  DIR_USER>>1 : return (DirIndex&1)? PATH_USER_INT: PATH_USER_EXT;
+
 	default: return(PATH_DEFAULT);
 	}
 }
 
-__thumb int fopen (const u16 * fname, int mode, int rights)
+int fopen (const wchar_t* fname, int mode, int rights)
 {
-	u16 *path;
-	u16 *name;
+	wchar_t* path;
+	wchar_t* name;
 	int len;
 	name=wstrrchr(fname,0x2F);
 	if (!name) return -1;
-	path=malloc(((len=name-fname)+1)*sizeof(u16));
-	memcpy(path,fname,len*sizeof(u16));
+	path=malloc(((len=name-fname)+1)*sizeof(wchar_t));
+	memcpy(path,fname,len*sizeof(wchar_t));
 	path[len]=0;
 	name++;
 	len=_fopen(path,name,mode,rights,NULL);
@@ -191,110 +160,112 @@ __thumb int fopen (const u16 * fname, int mode, int rights)
 
 //===============  KBD_HOOK  ================
 
-
-__thumb int ModifyKeyHook(int(*proc)(int,int,int),int mode)
+typedef struct
 {
-	__get_epd;
+	KEYHOOKPROC proc;
+	void *data;
+}KEY_HOOK_ELEM;
+
+int KeyHookCmpProc(KEY_HOOK_ELEM* listitem, KEYHOOKPROC itemtofind)
+{
+	return listitem->proc != itemtofind;
+}
+
+int ModifyKeyHook( KEYHOOKPROC proc, int mode , void *data )
+{
 	int i=0;
-	
+
 	_printf("ModifyKeyHook PROC@0x%x, mode=0x%x",proc,mode)  ;
-	
-	i=List_IndexOf(epd->gKbdHookList,(void*)proc);
+
+	i = LIST_FIND(elfpackdata->gKbdHookList, proc, KeyHookCmpProc);
 	switch (mode)
 	{
 	case 0: //remove
 		if (i!=0xFFFF)
 		{
-			List_RemoveAt(epd->gKbdHookList,i);
-			
+			mfree(List_Get(elfpackdata->gKbdHookList,i));
+			List_RemoveAt(elfpackdata->gKbdHookList,i);
+
 			_printf("PROC(0x%x) Removed..",proc)  ;
-			
+
 			return(0);
 		}
 		else
 		{
-			
 			_printf("PROC(0x%x) Not in List !!!",proc)  ;
-			
+
 			return(-2);
 		}
-	case 1:
+	case 1: //add
 		if (i==0xFFFF)
 		{
-			List_InsertFirst(epd->gKbdHookList,(void*)proc);
-			
+			KEY_HOOK_ELEM *elem = malloc(sizeof(KEY_HOOK_ELEM));
+			elem->proc = proc;
+			elem->data = data;
+			List_InsertFirst(elfpackdata->gKbdHookList,(void*)elem);
+
 			_printf("PROC(0x%x) Added in List",proc)  ;
-			
+
 			return(0);
 		}
 		else
 		{
-			
 			_printf("Warning! PROC(0x%x) was in List",proc)  ;
-			
+
 			return(-3);
 		}
 	default:
 		{
-			
 			_printf("Error. Wrong mode(0x%x). Use 0/1 for remove/add",proc)  ;
-			
-			
+
+
 			return(-4);
 		}
 	}
-	
 }
 
-__thumb int KbdHook(int r0,int r1,int r2)
+int KbdHook(int r0,int r1,int r2)
 {
-	__get_epd;
 	int i=0;
 	int result;
-	int(*proc)(int,int,int);
-	while(i<epd->gKbdHookList->FirstFree)
+	while(i < elfpackdata->gKbdHookList->FirstFree)
 	{
-		proc=(int(*)(int,int,int))(epd->gKbdHookList->listdata[i++]);
-		result=proc(r0,r1,r2);
+		KEY_HOOK_ELEM *elem = (KEY_HOOK_ELEM *)List_Get(elfpackdata->gKbdHookList,i++);
+		result = elem->proc(r0,r1,r2,elem->data);
 		if (result==-1) return(0);
 	}
 	return(0);
 }
 //===============  OSE_HOOK  ================
-
-__thumb int OSEHookCmpProc(void * e1, void * e2)
+int OSEHookCmpProc(OSE_HOOK_ITEM* ud, void (*e2)(void*))
 {
-	OSE_HOOK_ITEM * ud = (OSE_HOOK_ITEM*)e1;
-	if ((int)ud->HOOK==(int)e2) return (0); else  return(1);
+	return ud->HOOK != e2;
 }
 
-__thumb int ModifyOSEHook(int event , void (*PROC)(void*),int mode)
+int ModifyOSEHook(int event , void (*proc)(void*),int mode)
 {
-	__get_epd;
-	LIST * OSE_Hook_List=epd->OseHookList;
-	
-	int n=List_Find(OSE_Hook_List,(void*)PROC,OSEHookCmpProc);
-	
+	int n = LIST_FIND(elfpackdata->OseHookList, proc, OSEHookCmpProc);
+
 	switch (mode)
 	{
 	case 0: //remove
 		if (n!=0xFFFF)
 		{
-			mfree(List_RemoveAt(OSE_Hook_List,n));
+			mfree(List_RemoveAt(elfpackdata->OseHookList, n));
 			return(0);
 		}
 		else
 		{
 			return(-2);
 		}
-		
+
 	case 1:
 		if (n==0xFFFF)
 		{
 			OSE_HOOK_ITEM *item=malloc(sizeof(OSE_HOOK_ITEM));
 			item->signo=event;
-			item->HOOK=PROC;
-			List_InsertFirst(OSE_Hook_List,(void*)item);
+			item->HOOK = proc;
+			List_InsertFirst(elfpackdata->OseHookList,(void*)item);
 			return(0);
 		}
 		else
@@ -306,20 +277,17 @@ __thumb int ModifyOSEHook(int event , void (*PROC)(void*),int mode)
 }
 
 //===============  UI_HOOK  ================
-
 __thumb UI_MESSAGE * PageAction_Hook(UI_MESSAGE * ui)
-//__thumb void UI_Message_Hook(LIST * lst, UI_MESSAGE *ui)
 {
 	int f=0;
 	int n;
-	
-	__get_epd;
-	if (epd)
+
+	if (elfpackdata)
 	{
-		LIST * UI_Hook_List=epd->UIHookList;
+		LIST * UI_Hook_List = elfpackdata->UIHookList;
 		_printf("PageAction_Hook msg:0x%X",ui->event)  ;
 		n=UI_Hook_List->FirstFree;
-		
+
 		if (n)
 		{
 			n--;
@@ -342,37 +310,35 @@ __thumb UI_MESSAGE * PageAction_Hook(UI_MESSAGE * ui)
 }
 
 
-__thumb int UIHookCmpProc(void * e1, void * e2)
+int UIHookCmpProc(UI_HOOK_ITEM* listitem, int (*itemtofind)(UI_MESSAGE*))
 {
-	UI_HOOK_ITEM * ud = (UI_HOOK_ITEM*)e1;
-	if ((int)ud->HOOK==(int)e2) return (0); else  return(1);
+	return listitem->HOOK != itemtofind;
 }
 
-__thumb int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode)
+int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode)
 {
-	__get_epd;
-	LIST * UI_Hook_List=epd->UIHookList;
-	
-	int n=List_Find(UI_Hook_List,(void*)PROC,UIHookCmpProc);
-	
+	LIST * UI_Hook_List = elfpackdata->UIHookList;
+
+	int n = LIST_FIND(UI_Hook_List, PROC, UIHookCmpProc);
+
 	_printf("ModifyUIHook PROC@0x%x, mode=0x%x",PROC,mode)  ;
-	
+
 	switch (mode)
 	{
 	case 0: //remove
 		if (n!=0xFFFF)
 		{
 			mfree(List_RemoveAt(UI_Hook_List,n));
-			
+
 			_printf("PROC@0x%X, Removed OK..",PROC)  ;
-			
+
 			return(0);
 		}
 		else
 		{
 			return(-2);
 		}
-		
+
 	case 1:
 		if (n==0xFFFF)
 		{
@@ -380,10 +346,10 @@ __thumb int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode)
 			item->event=event;
 			item->HOOK=PROC;
 			List_InsertFirst(UI_Hook_List,(void*)item);
-			
+
 			_printf("PROC@0x%X, Added OK..",PROC)  ;
 			_printf("Total HookItems : 0x%X",UI_Hook_List->FirstFree)  ;
-			
+
 			return(0);
 		}
 		else
@@ -403,10 +369,9 @@ typedef struct {
 
 __thumb void PageAction_Hook1(LIST *lst)
 {
-	__get_epd;
-	if (epd)
+	if (elfpackdata)
 	{
-		LIST *UIPageHook=epd->UIPageHook;
+		LIST *UIPageHook = elfpackdata->UIPageHook;
 		int n_pages=UIPageHook->FirstFree;
 		while(n_pages--)
 		{
@@ -432,24 +397,23 @@ __thumb void PageAction_Hook1(LIST *lst)
 }
 
 
-__thumb int UIHook1CmpProc(void * e1, void * e2)
+int UIHook1CmpProc(void * e1, void * e2)
 {
 	ACTION * ud = (ACTION*)e1;
 	PAGE_HOOK_ELEM *page_elem=(PAGE_HOOK_ELEM *)e2;
 	if (ud->PROC==page_elem->PROC && ud->event==page_elem->event) return (0); else  return(1);
 }
 
-__thumb int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book_id ,int mode)
+int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book_id ,int mode)
 {
-	__get_epd;
-	LIST * UIPageHook=epd->UIPageHook;
+	LIST * UIPageHook = elfpackdata->UIPageHook;
 	PAGE_HOOK_ELEM page_elem;
 	page_elem.PROC=PROC;
 	page_elem.event=event;
 	page_elem.book_id=book_id;
-	int n=List_Find(UIPageHook,&page_elem,UIHook1CmpProc);
+	int n = List_Find(UIPageHook,&page_elem,UIHook1CmpProc);
 	_printf("ModifyUIHook PROC@0x%x, mode=0x%x",PROC,mode)  ;
-	
+
 	switch (mode)
 	{
 	case 0: //remove
@@ -462,7 +426,7 @@ __thumb int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book
 		{
 			return(-2);
 		}
-		
+
 	case 1:
 		if (n==0xFFFF)
 		{
@@ -480,129 +444,116 @@ __thumb int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book
 }
 
 
-extern LIST *CreateDBExtList();
-extern DB_EXT * CreateDbExt();
 extern void* Library;
 
 void CreateLists(void)
 {
-    
-    EP_DATA * epd = malloc(sizeof(EP_DATA));
-    memset(epd,0,sizeof(EP_DATA));
-    
-    _printf("EP_DATA @%x",epd)  ;
-    
-    epd->UserDataList=List_Create();
-    epd->gKbdHookList=List_Create();
-    epd->UIHookList=List_Create();
-    epd->OseHookList=List_Create();
-    epd->DLLList=List_Create();
-    epd->UIPageHook=List_Create();
-    epd->LibraryCache = NULL;
-    
-    _printf("   epd->UserDataList @%x",epd->UserDataList)  ;
-    _printf("   epd->gKbdHookList @%x",epd->gKbdHookList)  ;
-    _printf("   epd->UIHookList @%x",epd->UIHookList)  ;
-    _printf("   epd->OseHookList @%x",epd->OseHookList)  ;
-    //  _printf("   epd->elflist @%x",epd->elflist)  ;
-    
-    epd->DBExtList=CreateDBExtList();
-    epd->CreateDbExt = CreateDbExt;
-    epd->IconSmall = NOIMAGE;
-    epd->IconBig = NOIMAGE;
-    epd->LibraryDLL = NULL;
-    
-    set_envp(get_bid(current_process()),EPDVARNAME,(OSADDRESS)epd);
-    
-    ELFExtrRegister(epd);
+	elfpackdata = malloc(sizeof(EP_DATA));
+	memset(elfpackdata,0,sizeof(EP_DATA));
+
+	_printf("EP_DATA @%x",epd)  ;
+
+	elfpackdata->UserDataList=List_Create();
+	elfpackdata->gKbdHookList=List_Create();
+	elfpackdata->UIHookList=List_Create();
+	elfpackdata->OseHookList=List_Create();
+	elfpackdata->DLLList=List_Create();
+	elfpackdata->UIPageHook=List_Create();
+	elfpackdata->LibraryCache = NULL;
+
+	_printf("   epd->UserDataList @%x",elfpackdata->UserDataList)  ;
+	_printf("   epd->gKbdHookList @%x",elfpackdata->gKbdHookList)  ;
+	_printf("   epd->UIHookList @%x",elfpackdata->UIHookList)  ;
+	_printf("   epd->OseHookList @%x",elfpackdata->OseHookList)  ;
+	//  _printf("   epd->elflist @%x",elfpackdata->elflist)  ;
+
+	elfpackdata->DBExtList=CreateDBExtList();
+	elfpackdata->CreateDbExt = CreateDbExt;
+	elfpackdata->IconSmall = NOIMAGE;
+	elfpackdata->IconBig = NOIMAGE;
+	elfpackdata->LibraryDLL = NULL;
+
+	set_envp(get_bid(current_process()),"elfpackdata",(OSADDRESS)elfpackdata);
+
+	ELFExtrRegister(elfpackdata);
 }
 
 
-
-
-__thumb void Init()
+void Init()
 {
-	
 	//CreateLists();
-	
-	char * mem = malloc(0x300);
-	
-	FILELISTITEM * fli;
-	__get_epd;
-	
-	LIST * gkhook;
-	
+
+	FILELISTITEM* mem = malloc(sizeof(FILELISTITEM));
+
+	FILELISTITEM* fli;
+
 	_printf("     Entered Init...")  ;
-	
+
 	// отняли обработчик клавы
-	gkhook=epd->gKbdHookList;
-	List_InsertFirst(gkhook,(void*)pKBD);
+	ModifyKeyHook((KEYHOOKPROC)pKBD, 1, NULL);
 	pKBD=KbdHook;
-	
-	_printf("     Changing KBD Hook (LIST@0x%X OldProc=0x%x)",gkhook,(void*)pKBD)  ;
-	
+
 	// запустили хелпера
-	
+
 	_printf("     StartHelper....")  ;
-	
+
 	StartHelper();
-	
+
 	_printf("     StartHelper OK. PID=%x",epd->HPID)  ;
 
 	// инитим DLL библиотеку
 
 	_printf("     Load LibraryDLL....")  ;
 
-	epd->LibraryDLL = LoadDLL(L"LibraryDLL.dll");
-        if ((INVALID(epd->LibraryDLL)))
-        {
-          _printf("     Load LibraryDLL Error")  ;
-          epd->LibraryDLL = 0;
-        }
-    else _printf("     Load LibraryDLL OK")  ;
-    
-    // правим кэш либы
-    
-    if (epd->LibraryDLL)
-    {
-        _printf("     Patching LibraryCache....")  ;
-        
-        void** lib = malloc(0x4000);
-        memcpy(lib, &Library, 0x4000);
-        
-	const LIBRARY_DLL_FUNCTIONINFO* fns = ( (const LIBRARY_DLL_DATA*)epd->LibraryDLL )->functions;
-        while (fns->functionnum)
-        {
-	    lib[ fns->functionnum - 0x100 ] = fns->functionptr;
-            fns++;
-        }
+	elfpackdata->LibraryDLL = LoadDLL(L"LibraryDLL.dll");
+	if ((INVALID(elfpackdata->LibraryDLL)))
+	{
+		_printf("     Load LibraryDLL Error")  ;
+		elfpackdata->LibraryDLL = 0;
+	}
+	else _printf("     Load LibraryDLL OK")  ;
 
-        epd->LibraryCache = lib;
-	
-        _printf("     Patching LibraryCache OK")  ;
-    }
-    
-    
-    // запустили демонов
-    
-    _printf("     StartDaemons....")  ;
+	// правим кэш либы
+
+	if (elfpackdata->LibraryDLL)
+	{
+		_printf("     Patching LibraryCache....")  ;
+
+		void** lib = malloc(0x4000);
+		memcpy(lib, &Library, 0x4000);
+
+		const LIBRARY_DLL_FUNCTIONINFO* fns = ( (const LIBRARY_DLL_DATA*)elfpackdata->LibraryDLL )->functions;
+		while (fns->functionnum)
+		{
+			lib[ fns->functionnum - 0x100 ] = fns->functionptr;
+			fns++;
+		}
+
+		elfpackdata->LibraryCache = lib;
+
+		_printf("     Patching LibraryCache OK")  ;
+	}
+
+	// запустили демонов
+
+	_printf("     StartDaemons....")  ;
 	_printf("     ------Begin List-------")  ;
 
 #ifdef DAEMONS_INTERNAL
-	int * handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_INTERNAL));
+	DIR_HANDLE* handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_INTERNAL));
 #else
-	int * handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_EXTERNAL));
+	DIR_HANDLE* handle=AllocDirHandle(GetDir(DIR_ELFS_DAEMONS | MEM_EXTERNAL));
 #endif
-	
+
 	do
 	{
 		if(fli=GetFname(handle,mem))
 		{
-			u16 * filename = malloc((wstrlen(fli->path)+wstrlen(fli->fname)+2)*2);
+			wchar_t* filename = malloc((wstrlen(fli->path)+wstrlen(fli->fname)+2)*2);
 			wstrcpy(filename,fli->path);
 			wstrcat(filename,L"/");
 			wstrcat(filename,fli->fname);
-			
+
 			_printf("     ->...")  ;
 #ifdef DBG
 			_printf("     elfload Result=0x%X",elfload(filename,0,0,0));
@@ -613,10 +564,10 @@ __thumb void Init()
 		}
 	}
 	while(fli);
-	
+
 	_printf("     ------End List-------")  ;
-	
-	
+
+
 	if (handle) DestroyDirHandle(handle);
 	mfree(mem);
 
@@ -628,6 +579,5 @@ __root  const int PATCH_AUTO_RUN1 @ "PATCH_AUTO_RUN1" =(int)Init;
 
 int GetExtTable()
 {
-	__get_epd;
-	return((int)epd->DBExtList->listdata);
+	return((int)elfpackdata->DBExtList->listdata);
 }

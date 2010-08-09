@@ -7,16 +7,16 @@
 #define EXT_TABLE 0x4422CE80
 #define HELPER_SIG 0x6FF0
 
-#define PATH_AUDIO_INT 0x441ECB20
-#define PATH_AUDIO_EXT 0x443FAD2E
-#define PATH_IMAGE_INT 0x441ECBC8
-#define PATH_IMAGE_EXT 0x443FAE0C
-#define PATH_VIDEO_INT 0x441ECC8C
-#define PATH_VIDEO_EXT 0x443FAEF8
-#define PATH_THEME_INT 0x441ECC6C
-#define PATH_THEME_EXT 0x443FAEBA
-#define PATH_OTHER_INT 0x441ECC4C
-#define PATH_OTHER_EXT 0x443FAE7C
+#define PATH_AUDIO_INT (wchar_t*)0x441ECB20
+#define PATH_AUDIO_EXT (wchar_t*)0x443FAD2E
+#define PATH_IMAGE_INT (wchar_t*)0x441ECBC8
+#define PATH_IMAGE_EXT (wchar_t*)0x443FAE0C
+#define PATH_VIDEO_INT (wchar_t*)0x441ECC8C
+#define PATH_VIDEO_EXT (wchar_t*)0x443FAEF8
+#define PATH_THEME_INT (wchar_t*)0x441ECC6C
+#define PATH_THEME_EXT (wchar_t*)0x443FAEBA
+#define PATH_OTHER_INT (wchar_t*)0x441ECC4C
+#define PATH_OTHER_EXT (wchar_t*)0x443FAE7C
 
 #define PATH_ELF_ROOT_INT     (L"/tpa/user/other")
 #define PATH_ELF_ROOT_EXT     (L"/card/MSSEMC/Media files/other")

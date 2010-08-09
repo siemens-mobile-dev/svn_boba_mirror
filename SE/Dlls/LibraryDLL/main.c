@@ -40,18 +40,24 @@ int font_count;
 void dll_GC_PutChar_0( GC* gc, int x, int y, int width, int height, wchar_t imageID )
 {
   IImageManager * pImageManager=0;
-  IIconImage * pIconImage=0;
+  IUIImage * pUIImage=0;
   IUnknown * pGC =0;
   
+  TUIRectangle rect;
+  rect.Point.X=x;
+  rect.Point.Y=y;
+  rect.Size.Width=width;
+  rect.Size.Height=height;
+  
   CoCreateInstance(CImageManagerCreator_guid,IImageManager_guid,&pImageManager);
-  pImageManager->CreateIconImage_Internal(imageID,&pIconImage);
+  pImageManager->CreateFromIcon(imageID,&pUIImage);
 
   DisplayGC_AddRef(gc,&pGC);
   
-  pImageManager->DrawIconEx(pIconImage,pGC,x,y,width,height);
+  pImageManager->Draw(pUIImage,pGC,rect);
   
   if (pImageManager) pImageManager->Release();
-  if (pIconImage) pIconImage->Release();
+  if (pUIImage) pUIImage->Release();
   if (pGC) pGC->Release();
 }
 #endif
@@ -94,8 +100,8 @@ int dll_SetFont_0( int font_size )
 {
   IFontManager * pFontManager=0;
   IFontFactory * pFontFactory=0;
-  FONT_DATA pFontData;
-  memset(&pFontData,0,sizeof(FONT_DATA));
+  TUIFontData pFontData;
+  memset(&pFontData,0,sizeof(TUIFontData));
   
   if (pFont)
   {
@@ -104,14 +110,14 @@ int dll_SetFont_0( int font_size )
   }
 
   CoCreateInstance(CFontManagerCreator_guid,IFontManager_guid,&pFontManager);
-  pFontManager->CreateFontFactory(&pFontFactory);
+  pFontManager->GetFontFactory(&pFontFactory);
   
   int font_size_without_style = font_size&0xFF;
   
-  pFontFactory->GetDefaultFontSettings(large_size,&pFontData);
+  pFontFactory->GetDefaultFontSettings(UIFontSizeLarge,&pFontData);
   pFontData.size=(float)font_size_without_style;
-  pFontData.style=font_size>>8;
-  pFontFactory->CreateFont(&pFontData,&pFont);
+  pFontData.TUIEmphasisStyle=font_size>>8;
+  pFontFactory->CreateDefaultFont(&pFontData,&pFont);
   
   if (pFontManager) pFontManager->Release();
   if (pFontFactory) pFontFactory->Release();
@@ -122,11 +128,11 @@ int dll_SetFont_0( int font_size )
 
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
 #define USE_dll_DrawString_0
-void dll_DrawString_0( STRID strid, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color )
+void dll_DrawString_0( STRID strid, TUITextAlignment align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color )
 {
-  WINDOW_RECT rect;
+  TUIRectangle rect;
   
-  int right_border = x2-x1;
+  int lineWidth = x2-x1;
   
   ITextRenderingManager * pTextRenderingManager=0;
   ITextRenderingFactory * pTextRenderingFactory=0;
@@ -135,27 +141,27 @@ void dll_DrawString_0( STRID strid, int align, int x1, int y1, int x2, int y2, i
   IUnknown * pGC =0;
   
   CoCreateInstance(CTextRenderingManagerCreator_guid,ITextRenderingManager_guid,&pTextRenderingManager);
-  pTextRenderingManager->CreateTextRenderingFactory(&pTextRenderingFactory);
+  pTextRenderingManager->GetTextRenderingFactory(&pTextRenderingFactory);
   pTextRenderingFactory->CreateRichText(&pTextObject);
   pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
   
   if (!pFont) dll_SetFont_0(20);
   TextObject_SetText(pTextObject,strid);
   TextObject_SetFont(pTextObject,pFont,0x8000000A,0x7FFFFFF5);
-  pTextObject->SetForegroundColor(pen_color,0x8000000A,0x7FFFFFF5);
+  pTextObject->SetTextColor(pen_color,0x8000000A,0x7FFFFFF5);
   
-  pTextObject->SetTextAlign(align,0x8000000A,0x7FFFFFF5);
+  pTextObject->SetAlignment(align,0x8000000A,0x7FFFFFF5);
   
-  pRichTextLayout->SetRightBorder(right_border);
+  pRichTextLayout->Compose(lineWidth);
   
-  rect.x1=x1;
-  rect.y1=y1;
-  rect.width=x2-x1;
-  rect.height=y2-y1;
+  rect.Point.X=x1;
+  rect.Point.Y=y1;
+  rect.Size.Width=x2-x1;
+  rect.Size.Height=y2-y1;
   
   DisplayGC_AddRef(get_DisplayGC(),&pGC);
   
-  pRichTextLayout->DrawString(pGC,x1,y1,&rect);
+  pRichTextLayout->Display(pGC,x1,y1,&rect);
   
   if (pTextRenderingManager) pTextRenderingManager->Release();
   if (pTextRenderingFactory) pTextRenderingFactory->Release();
@@ -169,17 +175,17 @@ void dll_DrawString_0( STRID strid, int align, int x1, int y1, int x2, int y2, i
 #define USE_dll_GetImageWidth_0
 int dll_GetImageWidth_0( wchar_t imageID )
 {
-  IIconImage * pIconImage=0;
+  IUIImage * pUIImage=0;
   IImageManager * pImageManager=0;
-  int image_width;
-  int image_height;
+  long image_width;
+  long image_height;
   
   CoCreateInstance(CImageManagerCreator_guid,IImageManager_guid,&pImageManager);
-  pImageManager->CreateIconImage_Internal(imageID,&pIconImage);
-  pIconImage->GetImageSize(&image_width,0,&image_height,0);
+  pImageManager->CreateFromIcon(imageID,&pUIImage);
+  pUIImage->GetDimensions(&image_width,0,&image_height,0);
   
   if (pImageManager) pImageManager->Release();
-  if (pIconImage) pIconImage->Release();
+  if (pUIImage) pUIImage->Release();
   return(image_width);
 }
 #endif
@@ -188,15 +194,15 @@ int dll_GetImageWidth_0( wchar_t imageID )
 #define USE_dll_GetImageHeight_0
 int dll_GetImageHeight_0( wchar_t imageID )
 {
-  IIconImage * pIconImage=0;
+  IUIImage * pUIImage=0;
   IImageManager * pImageManager=0;
-  int image_width;
-  int image_height;
+  long image_width;
+  long image_height;
   
   if (imageID<100)
   {
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-    pFont->GetFontSize(&image_height);
+    pFont->GetFontHeight(&image_height);
 #elif defined(DB3150)
     image_height=GetImageHeight_int( imageID );
 #endif
@@ -204,12 +210,12 @@ int dll_GetImageHeight_0( wchar_t imageID )
   else
   {
     CoCreateInstance(CImageManagerCreator_guid,IImageManager_guid,&pImageManager);
-    pImageManager->CreateIconImage_Internal(imageID,&pIconImage);
-    pIconImage->GetImageSize(&image_width,0,&image_height,0);
+    pImageManager->CreateFromIcon(imageID,&pUIImage);
+    pUIImage->GetDimensions(&image_width,0,&image_height,0);
   }
   
   if (pImageManager) pImageManager->Release();
-  if (pIconImage) pIconImage->Release();
+  if (pUIImage) pUIImage->Release();
   return(image_height);
 }
 #endif
@@ -342,7 +348,7 @@ int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
   IRichText * pTextObject=0;
   
   CoCreateInstance(CTextRenderingManagerCreator_guid,ITextRenderingManager_guid,&pTextRenderingManager);
-  pTextRenderingManager->CreateTextRenderingFactory(&pTextRenderingFactory);
+  pTextRenderingManager->GetTextRenderingFactory(&pTextRenderingFactory);
   pTextRenderingFactory->CreateRichText(&pTextObject);
   pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
   

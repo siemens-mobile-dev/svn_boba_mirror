@@ -29,3 +29,6 @@
 
 // PageActionHook
 -Z(CODE)PATCH_PageActionImpl=453E1D6C-453E1D73
+
+//elfpackdata
+-Z(CODE)EPD=2005A458-2005A45B

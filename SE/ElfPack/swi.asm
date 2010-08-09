@@ -14,6 +14,7 @@ SWI_RET
 
 ;======================================
 	RSEG   CODE
+	extern	elfpackdata
 _HUNK1
 	TST     R0, #0x20
 	BNE	_RETURN
@@ -21,21 +22,20 @@ _HUNK1
 	BIC	R0,R0,#0xFF000000
 	CMP	R0,#255
 	BLS	_RETURN
-        CMP     R0,#0x100
-        BEQ     IMB
+	CMP	R0,#0x100
+	BEQ	IMB
 	STMFD	SP!,{R1-R3}
-        STMFD   SP!,{R0,LR}
-        BL      getepd
-	ADR	R2,arm_jumper		; Берем адрес джампера
-        CMP     R0,#0
-        LDRNE   R1,[R0,#44]		; Указатель на таблицу адресов
-        CMPNE   R1,#0
+	LDR	R2,=elfpackdata
+	LDR	R2,[R2]
+	CMP	R2,#0
+	LDRNE	R1,[R2,#44]		; Указатель на таблицу адресов
+	CMPNE	R1,#0
 	LDREQ	R1,=Library
-        SUB     R1,R1,#0x400
-        LDMFD	SP!,{R0,LR}
+	SUB	R1,R1,#0x400
+	ADR	R2,arm_jumper		; Берем адрес джампера
 	BIC	R3,R0,#0x8000
-        CMP	R3,#4096
-        BHI	exit
+	CMP	R3,#4096
+	BHI	exit
 	TST	R0,#0x8000		; А не адрес нам надо получить?
 	STMEQFD	SP!,{LR}		; Копируем адрес возврата из LR_svc только если вызов функции
 	LDMEQFD	SP!,{LR}^		; в LR_usr, он будет использован вызываемой функцией
@@ -119,11 +119,11 @@ pLIB_TOP:
 
         EXTERN  LoadDLL
         EXTERN  UnLoadDLL
-        
+
         EXTERN  ModifyUIHook1
-        
+
         EXTERN getepd
-        
+
 	RSEG    LIB:DATA(2)
 	PUBLIC	Library
 Library:

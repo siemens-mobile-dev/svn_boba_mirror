@@ -65,8 +65,13 @@ __swi __arm wchar_t* GetDir( int DirIndex );
 #pragma swi_number=0x106
 __swi __arm int fopen( const wchar_t* fname, int mode, int rights );
 
+#ifdef __cplusplus
 #pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( int (*proc)( int, int, int ), int mode );
+__swi __arm int ModifyKeyHook( int (*proc)( int, int, int ), int mode, LPARAM lparam = NULL );
+#else
+#pragma swi_number=0x107
+__swi __arm int ModifyKeyHook( int (*proc)( int, int, int ), int mode, void* lparam );
+#endif
 
 #pragma swi_number=0x108
 __swi __arm void SUBPROC( void*, ... );
@@ -175,7 +180,7 @@ __swi __arm void DataBrowser_Create( void* DataBrowserDesc );
 __swi __arm void DataBrowserDesc_Destroy( void* DataBrowserDesc );
 
 #pragma swi_number=0x126
-__swi __arm wchar_t* getFileExtention( wchar_t* fnane );
+__swi __arm wchar_t* getFileExtention( wchar_t* fname );
 
 #pragma swi_number=0x127
 __swi __arm int DataBrowser_isFileInListExt( const wchar_t* ext_table, const wchar_t* path, const wchar_t* fname );
@@ -521,9 +526,11 @@ __swi __arm void UI_Event_wData( int event, void* message, void (*free_proc)( vo
 __swi __arm void UI_Event_toBookID( int event, int BookID );
 #pragma swi_number=0x1AB
 __swi __arm void UI_Event_toBookIDwData( int event, int BookID, void* message, void (*free_proc)( void* ) );
-#pragma swi_number=0x1AC
-__swi __arm int List_Find( LIST* lst, void* item, int (*cmp_proc)( void*, void* ) );
 
+#pragma swi_number=0x1AC
+__swi __arm int List_Find( LIST* lst, void* itemtofind, LISTFINDCALLBACK cmp_proc );
+
+#define LIST_FIND(lst, itemtofind, cmp_proc) List_Find( lst, (void*) itemtofind, (LISTFINDCALLBACK) cmp_proc )
 
 #pragma swi_number=0x1AD
 __swi __arm void* List_Get( LIST* lst, int index );

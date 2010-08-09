@@ -1,4 +1,4 @@
-;W995 R1HA035 GEN 
+;W995 R1HA035 GEN
 ;Function library
 ;(c) Hussein , IronMaster
 ;(p) blacklizard, Fernandodks, thomassafca
@@ -55,7 +55,7 @@
 0508: 00000000 15F63414 ; 142: void StatusIndication_SetItemText( GUI* , int item, STRID );
 050C: 00000000 39DC4E15 ; 143: void StatusIndication_ShowNotes( STRID );
 0510: 00000000 3D871F15 ; 144: GUI* CreateStringInputVA( int, ... );
-0514: 00000000 6D6A0F14; 145: GUI_ONEOFMANY* CreateOneOfMany( BOOK* book );
+0514: 00000000 6D6A0F14 ; 145: GUI_ONEOFMANY* CreateOneOfMany( BOOK* book );
 0518: 00000000 55E90C15 ; 146: void OneOfMany_SetItemCount( GUI_ONEOFMANY*, int count );
 051C: 00000000 A1171114 ; 147: void OneOfMany_SetChecked( GUI_ONEOFMANY*, int checked );
 0520: 00000000 8DE31A14 ; 148: void OneOfMany_SetTexts( GUI_ONEOFMANY*, STRID* strids, int Count );
@@ -99,8 +99,8 @@
 05B8: 00000000 A1FE3414 ; 16E: void REQUEST_DATEANDTIME_GET( const int* sync, DATETIME* dt );
 05BC: 00000000 85984814 ; 16F: void IndicationDevice_Backlight_FadeToLevel( int unk_zero, int bl_level );
 05C0: 00000000 D03CA34B ; 170: int GetFreeBytesOnHeap( void );
-05C4: 00000000 09202014 ; 171: void BookObj_Hide( BOOK* book, int display);
-05C8: 00000000 815D0314 ; 172: void BookObj_Show( BOOK* book, int display);
+05C4: 00000000 09202014 ; 171: void BookObj_Hide( BOOK* book, int display );
+05C8: 00000000 815D0314 ; 172: void BookObj_Show( BOOK* book, int display );
 05CC: 00000000 218B0415 ; 173: void StartAPP( const wchar_t* appname );
 05D0: 00000000 21A72D14 ; 174: void ListMenu_SetOnMessage( GUI_LIST*, int (*proc)( GUI_MESSAGE* ) );
 05D4: 00000000 0DAF1A14 ; 175: char* manifest_GetParam( const char* buf, const char* param_name, int unk );
@@ -223,7 +223,6 @@
 07A8: 00000000 15033D14 ; 1EA: void GC_ValidateRect( GC* gc, RECT* );
 07AC: 00000000 2D2F1314 ; 1EB: void BookObj_AddGUIObject( BOOK* book, GUI* );
 07B0: 00000000 817C1014 ; 1EC: void DrawRect( int x1, int y1, int x2, int y2, int pen_color, int brush_color );
-
 07B4: 00000000 D11BA5ED ; 1ED: void DrawString( STRID, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color );
 07B8: 00000000 9D5A0414 ; 1EE: void XGUIList_AddGUIObject( XGUILIST* xguilist, GUI* );
 07BC: 00000000 89BA1614 ; 1EF: void DispObject_InvalidateRect( DISP_OBJ*, RECT* );
@@ -266,15 +265,15 @@
 0850: 00000000 C5E80014 ; 214: STRID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
 0854: 00000000 2D842B14 ; 215: int GetABRecNum( AB_GET_STRUCT* ); //nullsub(void)
 0858: 00000000 04A4A415 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( );
-085C: 00000000 71D10614 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy );
-0860: 00000000 BD220714 ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); 
+085C: 00000000 71D10614 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
+0860: 00000000 BD220714 ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
 0864: 00000000 0D952A14 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 0868: 00000000 3CCCA24B ;821A: PROCESS* PID_MMI( void );
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
 0870: 00000000 F97A3814 ; 21C: GUI* DispObject_GetGUI( DISP_OBJ* );
 0874: 00000000 81D61614 ; 21D: DISP_OBJ* Display_GetFocusedDispObject( int display );
 0878: 00000000 45E61614 ; 21E: char DispObject_GetVisible( DISP_OBJ* );
-087C: 00000000 F4F15615 ; 21F: DISP_DESC* DispObject_GetDESC( DISP_OBJ* ); 
+087C: 00000000 F4F15615 ; 21F: DISP_DESC* DispObject_GetDESC( DISP_OBJ* ); // !!!!! не настоящий !!!!!!
 0880: 00000000 D19E5014 ; 220: void DISP_DESC_SetName( DISP_DESC*, const char* name );
 0884: 00000000 B9D81614 ; 221: char* DispObject_GetName( DISP_OBJ* );
 0888: 00000000 1D9F5014 ; 222: void DISP_DESC_SetSize( DISP_DESC*, u16 size );

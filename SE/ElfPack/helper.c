@@ -1,4 +1,4 @@
-#include "..\\include\Lib_Clara.h"
+#include "..\include\Lib_Clara.h"
 #include "vars.h"
 
 union SIGNAL
@@ -8,7 +8,6 @@ union SIGNAL
 };
 
 const SIGSELECT sg[]={3,HELPER_SIG,HELPER_SIG+1,HELPER_SIG+2};
-EP_DATA * getepd(void);
 
 void HelperEntryPoint(void)
 {
@@ -19,7 +18,6 @@ void HelperEntryPoint(void)
 		switch(sig->signo)
 		{
 		case HELPER_SIG:
-			
 			{
 				if (sig->hsig.PROC)
 					sig->hsig.PROC(sig->hsig.param1,sig->hsig.param2);
@@ -37,29 +35,25 @@ void HelperEntryPoint(void)
 
 void StartHelper(void)
 {
-	__get_epd;
-	
-	epd->HPID=create_process(0,"HelperProc",HelperEntryPoint,32768,30,0,0,0,0,0);
-	start(epd->HPID);
-	
+	elfpackdata->HPID = create_process(0,"HelperProc",HelperEntryPoint,32768,30,0,0,0,0,0);
+	start(elfpackdata->HPID);
 }
 
 void SUBPROCExec (void(*PROC)(int,void*),int p1 , void * p2)
 {
-	__get_epd;
 	union SIGNAL *sig;
-	
+
 	sig = alloc(sizeof(union SIGNAL),HELPER_SIG);
 	sig->hsig.PROC=PROC;
 	sig->hsig.param1=p1;
 	sig->hsig.param2=p2;
-	send(&sig,epd->HPID);
+	send(&sig,elfpackdata->HPID);
 }
 
 void MMIPROCExec (void(*PROC)(int,void*),int p1 , void * p2)
 {
 	union SIGNAL *sig;
-	
+
 	sig = alloc(sizeof(union SIGNAL),HELPER_SIG);
 	sig->hsig.PROC=PROC;
 	sig->hsig.param1=p1;
@@ -67,15 +61,10 @@ void MMIPROCExec (void(*PROC)(int,void*),int p1 , void * p2)
 	send(&sig,(*PID_MMI())&~0x8000);
 }
 
-void tst(int r0, void *r1)
-{
-}
-
-
 int ParseHelperMessage(struct HELPER_SIGNAL * mess)
 {
 	int PID=GetCurrentPID();
-	
+
 	switch(mess->signo)
 	{
 	case HELPER_SIG:
@@ -87,7 +76,8 @@ int ParseHelperMessage(struct HELPER_SIGNAL * mess)
 	case HELPER_SIG+2:
 		break;
 	default:
+		break;
 	}
-	
+
 	return(PID);
 }

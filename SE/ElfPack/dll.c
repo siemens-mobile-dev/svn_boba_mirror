@@ -1,28 +1,21 @@
-#include "..\\include\Lib_Clara.h"
-#include "..\\include\Dir.h"
-#include "..\\include\dll.h"
+#include "..\include\Lib_Clara.h"
+#include "..\include\Dir.h"
+#include "..\include\dll.h"
 #include "vars.h"
+#include "elfloader.h"
 
-extern EP_DATA * getepd(void);
-extern long elfload(const unsigned short * filename, void *param1, void *param2, void *param3);
-
-
-int isInDllList(void * p0,void * p1)
+int CompareDllListElements(DLL_LIST_ELEMENT* listitem, wchar_t* itemtofind)
 {
-	DLL_LIST_ELEMENT *p = (DLL_LIST_ELEMENT*)p0;
-	if (!wstrcmp(p->name,p1)) return(0);
-	return(1);
+	return wstrcmpi(listitem->name, itemtofind);
 }
 
 // возвращает новый this или errorcode
 void * LoadDLL(wchar_t * DllName)
 {
-	__get_epd;
-	
 	DLL_LIST_ELEMENT * dll;
 	DLL_DATA * dll_public_data;
-	
-	int index = List_Find(epd->DLLList,DllName,isInDllList);
+
+	int index = LIST_FIND(elfpackdata->DLLList, DllName, CompareDllListElements);
 	if (index==LIST_ERROR)
 	{
 		//если не загружена DLLка
@@ -37,10 +30,10 @@ void * LoadDLL(wchar_t * DllName)
 		//забрали новое имя
 		wstrcpy(name,DllName);
 		newdll->name=name;
-		
+
 		newdll->EntryPoint = (int (*)(int,DLL_DATA*)) elfload(dllfullname,0,0,0);
 		mfree(dllfullname);
-		
+
 		// если не получили EntryPoint
 		if ((int)newdll->EntryPoint<=0)
 		{
@@ -56,7 +49,7 @@ void * LoadDLL(wchar_t * DllName)
 			mfree(newdll);
 			return(DLL_ERROR_INIT);
 		}
-		
+
 		// если DLL не отдала новый this
 		if (!(dll_public_data=(void*)newdll->EntryPoint(DLL_LOAD,0)))
 		{
@@ -64,9 +57,9 @@ void * LoadDLL(wchar_t * DllName)
 			mfree(newdll);
 			return(DLL_ERROR_LOAD);
 		}
-		
+
 		// добавили в список загруженных DLL
-		List_InsertLast(epd->DLLList,newdll);
+		List_InsertLast(elfpackdata->DLLList, newdll);
 		// имя DLL сунули в this
 		dll_public_data->name =  malloc((wstrlen(DllName)*2)+2);
 		wstrcpy(dll_public_data->name,DllName);
@@ -76,19 +69,19 @@ void * LoadDLL(wchar_t * DllName)
 	else
 	{
 		// если такая DLL загруженна, то взяли из списка
-		dll = List_Get(epd->DLLList,index);
+		dll = List_Get(elfpackdata->DLLList, index);
 	}
-	
+
 	// если DLL не отдала новый this
 	if (!(dll_public_data=(void*)dll->EntryPoint(DLL_LOAD,0)))
 	{
 		return(DLL_ERROR_LOAD);
 	}
-	
+
 	// имя DLL сунули в this
 	dll_public_data->name = malloc((wstrlen(DllName)*2)+2);
 	wstrcpy(dll_public_data->name,DllName);
-	
+
 	// вернули новый this
 	return(dll_public_data);
 }
@@ -96,28 +89,27 @@ void * LoadDLL(wchar_t * DllName)
 
 int UnLoadDLL(DLL_DATA * DllData)
 {
-	__get_epd;
 	DLL_LIST_ELEMENT * dll;
 	int usage_count;
-	
+
 	// если нету this
 	if (!DllData)    return(DLL_ERROR_NO_DATA_P);
-	
+
 	// ищем в списке DLL
-	int index = List_Find(epd->DLLList,DllData->name,isInDllList);
+	int index = LIST_FIND(elfpackdata->DLLList, DllData->name, CompareDllListElements);
 	if (index==LIST_ERROR) return(DLL_ERROR_DLL_NOT_LOADED);
-	
-	dll = List_Get(epd->DLLList,index);
-	
+
+	dll = List_Get(elfpackdata->DLLList, index);
+
 	// вызываем её UnLoader
 	mfree(DllData->name);
 	usage_count=dll->EntryPoint(DLL_UNLOAD,DllData);
-	
+
 	// если используется еще кем то
 	if (usage_count) return(usage_count);
-	
+
 	// иначе убиваем имя,убираем из списка и убиваем сам DLL_LIST_ELEMENT
 	mfree(dll->name);
-	mfree(List_RemoveAt(epd->DLLList,index));
+	mfree(List_RemoveAt(elfpackdata->DLLList, index));
 	return(0);
 }

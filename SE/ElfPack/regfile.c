@@ -1,6 +1,7 @@
-#include "..\\include\Lib_Clara.h"
-#include "..\\include\Types.h"
+#include "..\include\Lib_Clara.h"
+#include "..\include\Types.h"
 #include "vars.h"
+#include "elfloader.h"
 
 #define IDN_ELF_SMALL_ICON _T("CALE_LUNAR_12ANIMALS_1ST_MOUSE_ICN")
 #define IDN_ELF_BIG_ICON _T("CALE_LUNAR_12ANIMALS_10TH_ROOSTER_ICN")
@@ -34,11 +35,7 @@
 #include "exticons\56x42.inc"
 #endif
 
-extern __thumb long elfload(const unsigned short *filename, void *param1, void *param2, void *param3);
-extern EP_DATA * getepd(void);
-
-
-const u16 ext[]={L"elf"};
+const wchar_t ext[]={L"elf"};
 const char ctype[]={"application/elf"};
 
 const int ex[2]={(int)ext,0};
@@ -48,9 +45,8 @@ const char ers[]={"Elf_Run_Subroutine"};
 
 DB_EXT * OtherDbExt()
 {
-	__get_epd;
-	int i = List_IndexOf(epd->DBExtList, LastExtDB());
-	return (DB_EXT*)List_Get(epd->DBExtList, i-1);
+	int i = List_IndexOf(elfpackdata->DBExtList, LastExtDB());
+	return (DB_EXT*)List_Get(elfpackdata->DBExtList, i-1);
 }
 
 DB_EXT * CreateDbExt()
@@ -73,65 +69,63 @@ DB_EXT * CreateDbExt()
 	return (DB_EXT*)db_ext;
 }
 
-__root void GetMethods(SUB_EXECUTE * sub_execute)
+void GetMethods(SUB_EXECUTE * sub_execute)
 {
-	sub_execute->filesub = getepd()->elf_ext_m;
+	sub_execute->filesub = elfpackdata->elf_ext_m;
 }
 
-__arm int SetSmallIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
+int SetSmallIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
 {
-	__get_epd;
-	if (epd->IconSmall == NOIMAGE)
+	if (elfpackdata->IconSmall == NOIMAGE)
 	{
 #ifdef USESMALLICON
 		void * pexticon_small = malloc(sizeof(exticon_small));
 		memcpy(pexticon_small,exticon_small,sizeof(exticon_small));
-		ImageID_GetIndirect( pexticon_small, sizeof(exticon_small),0, L"png", &epd->IconSmall);
+		ImageID_GetIndirect( pexticon_small, sizeof(exticon_small),0, L"png", &elfpackdata->IconSmall);
 #else
 		int iconsmall;
 		iconidname2id(IDN_ELF_SMALL_ICON,-1,&iconsmall);
-		epd->IconSmall = iconsmall;
+		elfpackdata->IconSmall = iconsmall;
 #endif
 	}
-	*iconid = epd->IconSmall;
+	*iconid = elfpackdata->IconSmall;
 	return 0;
 }
 
-__arm int SetThumbnailIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
+int SetThumbnailIcon(SUB_EXECUTE * sub_execute, wchar_t * iconid)
 {
-	__get_epd;
-	if (epd->IconBig == NOIMAGE)
+	if (elfpackdata->IconBig == NOIMAGE)
 	{
 #ifdef USEBIGICON
 		void * pexticon_big = malloc(sizeof(exticon_big));
 		memcpy(pexticon_big,exticon_big,sizeof(exticon_big));
-		ImageID_GetIndirect( pexticon_big, sizeof(exticon_big),0, L"png", &epd->IconBig);
+		ImageID_GetIndirect( pexticon_big, sizeof(exticon_big),0, L"png", &elfpackdata->IconBig);
 #else
 		int iconbig;
 		iconidname2id(IDN_ELF_BIG_ICON,-1,&iconbig);
-		epd->IconBig = iconbig;
+		elfpackdata->IconBig = iconbig;
 #endif
 	}
-	*iconid = epd->IconBig;
+	*iconid = elfpackdata->IconBig;
 	return 0;
 }
 
-__arm int Elf_Run_Page_PAGE_ENTER_EVENT(void * r0, BOOK * book)
+int Elf_Run_Page_PAGE_ENTER_EVENT(void * r0, BOOK * book)
 {
 	SUB_EXECUTE * data = BrowserItem_Get_SUB_EXECUTE(book);
-	
-	wchar_t * fpath = FILEITEM_GetPath(data->file_item);
-	wchar_t * fname = FILEITEM_GetFname(data->file_item);
-	u16 * filename = malloc((wstrlen(fpath)+wstrlen(fname)+2)*2);
-	
+
+	wchar_t* fpath = FILEITEM_GetPath(data->file_item);
+	wchar_t* fname = FILEITEM_GetFname(data->file_item);
+	wchar_t* filename = malloc((wstrlen(fpath)+wstrlen(fname)+2)*2);
+
 	wstrcpy(filename,fpath);
 	wstrcat(filename,L"/");
 	wstrcat(filename,fname);
-	
+
 	_printf("Starting %ls",filename);
-	
+
 	elfload(filename,0,0,0);
-	
+
 	mfree(filename);
 	BookObj_ReturnPage(book,PREVIOUS_EVENT);
 	return(1);
@@ -173,7 +167,7 @@ const PAGE_DESC erun_page={"Elf_Run_Page",0,erp_msg};
 
 const int subrout[]={(int)&ers,(int)&erun_page,0,0};
 
-__arm int Elf_Run_Subroutine(SUB_EXECUTE * sub_execute)
+int Elf_Run_Subroutine(SUB_EXECUTE * sub_execute)
 {
 	BookObj_CallSubroutine(sub_execute->BrowserItemBook,(void*)subrout);
 	return(1);
@@ -184,25 +178,23 @@ int Elf_Run_Check(SUB_EXECUTE * sub_execute)
 	return 2;
 }
 
-
-
-__arm void ELFExtrRegister(EP_DATA * epd)
+void ELFExtrRegister()
 {
 	int ofs_count = 0;
 	FILESUBROUTINE * OtherFileSub;
 	FILESUBROUTINE * NewFileSub;
-	
+
 	GetOtherExtMethods(&OtherFileSub);
 	while (OtherFileSub[ofs_count++].ON_CMD);
-	epd->elf_ext_m = NewFileSub = (FILESUBROUTINE*)malloc((ofs_count+1)*sizeof(FILESUBROUTINE));
+	elfpackdata->elf_ext_m = NewFileSub = (FILESUBROUTINE*)malloc((ofs_count+1)*sizeof(FILESUBROUTINE));
 	memcpy(NewFileSub+1, OtherFileSub, ofs_count*sizeof(FILESUBROUTINE));
-	
+
 	NewFileSub->cmd = 1;
 	NewFileSub->ON_CMD_RUN = Elf_Run_Subroutine;
 	NewFileSub->ON_CMD_RUN_CHECK = Elf_Run_Check;
 	textidname2id(IDN_START,-1,&NewFileSub->StrID);
-	
-	
+
+
 	while (NewFileSub->ON_CMD)
 	{
 		int cmd = NewFileSub->cmd;
@@ -224,8 +216,8 @@ __arm void ELFExtrRegister(EP_DATA * epd)
 #endif
 		NewFileSub++;
 	}
-	NewFileSub = epd->elf_ext_m;
-	
+	NewFileSub = elfpackdata->elf_ext_m;
+
 #ifndef DAEMONS_INTERNAL
 	int efnum=3;
 #else
@@ -249,17 +241,17 @@ __arm void ELFExtrRegister(EP_DATA * epd)
 	dbfolders[efnum].Path = PATH_ELF_ROOT_EXT;
 	dbfolders[efnum].isInternal = 0;
 #endif
-	
+
 	DB_EXT * db_ext = CreateDbExt();
 	db_ext->content_type = (char**)ct;
 	db_ext->ext_list = (wchar_t**)ex;
 	db_ext->GetMethods = GetMethods;
 	db_ext->dbf = dbfolders;
-	
-	List_InsertFirst(epd->DBExtList, db_ext);
+
+	List_InsertFirst(elfpackdata->DBExtList, db_ext);
 }
 
-__arm LIST *CreateDBExtList()
+LIST *CreateDBExtList()
 {
 	LIST * dbe = List_Create();
 	DB_EXT ** old = (DB_EXT**)EXT_TABLE;

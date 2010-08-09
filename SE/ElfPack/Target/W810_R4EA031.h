@@ -7,16 +7,16 @@
 #define EXT_TABLE 0x444EE010
 #define HELPER_SIG 0x6FF0
 
-#define PATH_AUDIO_INT 0x4464C474
-#define PATH_AUDIO_EXT 0x4464AE12
-#define PATH_IMAGE_INT 0x4464C4F4
-#define PATH_IMAGE_EXT 0x4464AF32
-#define PATH_VIDEO_INT 0x4464C5D0
-#define PATH_VIDEO_EXT 0x4464B01E
-#define PATH_THEME_INT 0x4464C5BA
-#define PATH_THEME_EXT 0x4464AFE0
-#define PATH_OTHER_INT 0x4464C582
-#define PATH_OTHER_EXT 0x4464AFA2
+#define PATH_AUDIO_INT (wchar_t*)0x4464C474
+#define PATH_AUDIO_EXT (wchar_t*)0x4464AE12
+#define PATH_IMAGE_INT (wchar_t*)0x4464C4F4
+#define PATH_IMAGE_EXT (wchar_t*)0x4464AF32
+#define PATH_VIDEO_INT (wchar_t*)0x4464C5D0
+#define PATH_VIDEO_EXT (wchar_t*)0x4464B01E
+#define PATH_THEME_INT (wchar_t*)0x4464C5BA
+#define PATH_THEME_EXT (wchar_t*)0x4464AFE0
+#define PATH_OTHER_INT (wchar_t*)0x4464C582
+#define PATH_OTHER_EXT (wchar_t*)0x4464AFA2
 
 #define PATH_ELF_ROOT_INT     (L"/usb/other/ZBin")
 #define PATH_ELF_ROOT_EXT     (L"/card/MSSEMC/Media files/other/ZBin")

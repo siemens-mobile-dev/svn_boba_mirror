@@ -16,12 +16,14 @@
 
 #ifndef winntel
 
-#include "..\\include\Lib_Clara.h"
-#include "..\\include\Dir.h"
-//#include "..\\include\StandBy.h"
+#include "..\include\Lib_Clara.h"
+#include "..\include\Dir.h"
+//#include "..\include\StandBy.h"
 
 
 #endif
+
+#include "elfloader.h"
 
 typedef unsigned long  Elf32_Addr;	//Unsigned program address 4
 typedef unsigned short Elf32_Half;	//Unsigned medium integer  2
@@ -276,11 +278,7 @@ __arm zeromem_a(void *d, int l){memset(d,0,l);}
 #define elfldr_lseek lseek
 #define elfldr_malloc malloc
 #define elfldr_mfree mfree
-typedef const char *FILENAME;
-
 #else
-
-typedef const wchar_t* FILENAME;
 
 __arm int elfldr_fopen(FILENAME fname, int param1, int param2, unsigned int *err)
 {
@@ -356,9 +354,9 @@ __arm void elfldr_debug_printf(char * fmt,int n)
 
 __arm void _IMB(void){IMB();}
 
-__interwork wchar_t * elfldr_getFileExtention(FILENAME fname)
+__interwork wchar_t* elfldr_getFileExtention(FILENAME fname)
 {
-  return getFileExtention((wchar_t*)fname);
+  return getFileExtention( fname );
 }
 
 __interwork int elfldr_wstrcmpi(const wchar_t *ws1, const wchar_t *ws2)
@@ -428,7 +426,7 @@ __arm int PatchDynConst (int * p)
 
 
 
-__thumb long elfload(FILENAME filename, void *param1, void *param2, void *param3){
+long elfload(FILENAME filename, void *param1, void *param2, void *param3){
   
   
   Elf32_Ehdr ehdr;				                        //заголовок ельфа

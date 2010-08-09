@@ -173,7 +173,7 @@
 06DC: 00000000 D9B04F14 ; 1B7: int isKeylocked( void );
 06E0: 00000000 F5DA5414 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook( void );
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
-06E8: 00000000 C173F914 ; 1BA: void ShuttingDown(void);
+06E8: 00000000 A59CEC14 ; 1BA: void ShuttingDown(void);
 06EC: 00000000 61143414 ; 1BB: void Vibra(int t1, int t2, int t3);
 06F0: 00000000 05A71914 ; 1BC: int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
 06F4: 00000000 65A71914 ; 1BD: int REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );

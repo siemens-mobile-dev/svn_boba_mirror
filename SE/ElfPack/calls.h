@@ -1,5 +1,7 @@
+#ifndef _CALLS_H_
+#define _CALLS_H_
 
-#include "..\\include\Types.h"
+#include "..\include\Types.h"
 
 #define NULL    0
 
@@ -8,39 +10,41 @@
 
 #ifdef DB2020
 //DB2020
-extern __thumb void *memalloc(int zero, int size,int f1,int f2,const char *fname,int fline);
-extern __thumb void memfree(int zero, void * mem,const char * fname ,int fline);
+extern void *memalloc(int zero, int size,int f1,int f2,const char *fname,int fline);
+extern void memfree(int zero, void * mem,const char * fname ,int fline);
 #elif A2
 //A2
-extern __thumb void *memalloc(int minus_one, int size,int f1,int f2,const char *fname,int fline);
-extern __thumb void memfree(int zero, void * mem,const char * fname ,int fline);
+extern void *memalloc(int minus_one, int size,int f1,int f2,const char *fname,int fline);
+extern void memfree(int zero, void * mem,const char * fname ,int fline);
 #else
 //DB2000/2010
-extern __thumb void *memalloc(int size,int f1,int f2,const char *fname,int fline);
-extern __thumb void memfree(void * mem,const char * fname ,int fline);
+extern void *memalloc(int size,int f1,int f2,const char *fname,int fline);
+extern void memfree(void * mem,const char * fname ,int fline);
 #endif
 
-extern __thumb void memset(void *mem,char chr,int size);
-extern __arm memcpy(void *dest,const void *source,int cnt);
-extern __thumb int _fopen(const unsigned short *filpath, const unsigned short *filname,unsigned int mode , unsigned int rights, unsigned int __0);
-extern __thumb u16* wstrrchr(const u16* wstr,u16 wchar);
-extern __thumb int wstrlen(u16 * wstr);
-extern __thumb u16* wstrcpy(u16 * dest, u16 * source);
-extern __thumb u16* wstrcat(u16 * wstr, u16 * subwstr);
-extern __thumb int List_Find(LIST *lst,void *element, int (*cmp_proc)(void *,void *));
-extern __thumb void * List_RemoveAt(LIST *lst,int index);
-extern __thumb void * List_Get(LIST *lst,int num_element);
-extern __thumb void List_InsertFirst(LIST *lst,void *newElement);
-extern __thumb int List_IndexOf(LIST *lst,void *ptr);
-extern __thumb void List_InsertLast(LIST *lst,void *newElement);
-extern __thumb LIST *List_Create(void);
-extern __thumb void * AllocDirHandle(u16 * path);
-extern __thumb void *GetFname(void *, void*);
-extern __thumb void  DestroyDirHandle(void *handle);
-extern __arm OSADDRESS get_envp (PROCESS pid, char *name);
-extern __arm OSBOOLEAN set_envp (PROCESS pid, char *name, OSADDRESS value);
-extern __arm PROCESS get_bid (PROCESS pid);
-extern __arm PROCESS current_process (void);
-extern __thumb ACTION *ActionCreate(int (*PROC)(void *msg,BOOK*), int BookID, u16 event, APP_DESC *app_desc, PAGE_DESC *pag_desc);
+extern void* memset( void* mem, char chr, int size );
+extern int memcpy( void* dest, const void* source, int cnt );
+extern int _fopen( const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, unsigned int __0 );
+extern wchar_t* wstrrchr( const wchar_t* wstr, wchar_t wchar );
+extern int wstrlen( const wchar_t* wstr );
+extern wchar_t* wstrcpy( wchar_t* dest, const wchar_t* source );
+extern wchar_t* wstrcat( wchar_t* wstr, const wchar_t* subwstr );
+extern int List_Find( LIST* lst, void* itemtofind, LISTFINDCALLBACK cmp_proc );
+#define LIST_FIND(lst, itemtofind, cmp_proc) List_Find( lst, (void*) itemtofind, (LISTFINDCALLBACK) cmp_proc )
+extern void* List_RemoveAt( LIST* lst, int index );
+extern void* List_Get( LIST* lst, int index );
+extern int List_InsertFirst( LIST* lst, void* item );
+extern int List_IndexOf( LIST* lst, void* item );
+extern int List_InsertLast( LIST* lst, void* item );
+extern LIST* List_Create( void );
+extern DIR_HANDLE* AllocDirHandle( const wchar_t* path );
+extern FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
+extern void DestroyDirHandle( DIR_HANDLE* handle );
+extern OSBOOLEAN set_envp(PROCESS pid, char *name, OSADDRESS value);
+extern PROCESS get_bid(PROCESS pid);
+extern PROCESS current_process(void);
+extern ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
+
+#endif
 
 #endif

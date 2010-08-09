@@ -7,16 +7,16 @@
 #define EXT_TABLE 0x45B14034
 #define HELPER_SIG 0x6FF0
 
-#define PATH_AUDIO_INT 0x458B9E50
-#define PATH_AUDIO_EXT 0x458BA170
-#define PATH_IMAGE_INT 0x458B9EF4
-#define PATH_IMAGE_EXT 0x458BA1DC
-#define PATH_VIDEO_INT 0x458B9F7C
-#define PATH_VIDEO_EXT 0x458BA264
-#define PATH_THEME_INT 0x458B9F5C
-#define PATH_THEME_EXT 0x458BA24C
-#define PATH_OTHER_INT 0x458B9F18
-#define PATH_OTHER_EXT 0x458BA234
+#define PATH_AUDIO_INT (wchar_t*)0x458B9E50
+#define PATH_AUDIO_EXT (wchar_t*)0x458BA170
+#define PATH_IMAGE_INT (wchar_t*)0x458B9EF4
+#define PATH_IMAGE_EXT (wchar_t*)0x458BA1DC
+#define PATH_VIDEO_INT (wchar_t*)0x458B9F7C
+#define PATH_VIDEO_EXT (wchar_t*)0x458BA264
+#define PATH_THEME_INT (wchar_t*)0x458B9F5C
+#define PATH_THEME_EXT (wchar_t*)0x458BA24C
+#define PATH_OTHER_INT (wchar_t*)0x458B9F18
+#define PATH_OTHER_EXT (wchar_t*)0x458BA234
 
 #define PATH_ELF_ROOT_INT     (L"/tpa/user/other/ZBin")
 #define PATH_ELF_ROOT_EXT     (L"/card/other/ZBin")

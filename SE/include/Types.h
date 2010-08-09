@@ -986,6 +986,9 @@ typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ *,int ,int,int,int);
 
 typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 
+typedef int (*KEYHOOKPROC)(int, int, int, void*);
+typedef int (*LISTFINDCALLBACK)(void* listitem, void* itemtofind);
+
 typedef enum _LISTMENU_HOTKEY_MODE
 {
   LKHM_SEARCH = 0,
@@ -997,10 +1000,10 @@ typedef enum _LISTMENU_HOTKEY_MODE
 
 typedef struct
 {
-  char unk1;        //на 2010 этого нету, но пока rat никому не нужен, пусть будет так
+  char unk1;		//на 2010 этого нету, но пока rat никому не нужен, пусть будет так
   char RAT;
   int CI;
-  char dummy[0x10];    //для 3150 достаточно 0x4, для 2020 надо 0x10, для 2010 вообще не надо
+  char dummy[0x10];	//для 3150 достаточно 0x4, для 2020 надо 0x10, для 2010 вообще не надо
 }RAT_CI_DESC;
 
 

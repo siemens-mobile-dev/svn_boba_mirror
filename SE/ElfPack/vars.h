@@ -7,9 +7,7 @@
 #define _printf(...)
 #endif
 
-#define __get_epd EP_DATA * epd = getepd();
-
-void ELFExtrRegister(EP_DATA * epd);
-
+extern EP_DATA * elfpackdata;
+extern int (*pKBD) (int,int,int);
 
 #endif
