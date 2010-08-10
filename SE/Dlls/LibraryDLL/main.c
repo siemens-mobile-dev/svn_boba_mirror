@@ -49,7 +49,7 @@ void dll_GC_PutChar_0( GC* gc, int x, int y, int width, int height, wchar_t imag
   rect.Size.Width=width;
   rect.Size.Height=height;
   
-  CoCreateInstance(&CImageManagerCreator_guid, &IImageManager_guid, &pImageManager);
+  CoCreateInstance(&CID_CImageManager, &IID_IImageManager, &pImageManager);
   pImageManager->CreateFromIcon(imageID,&pUIImage);
 
   DisplayGC_AddRef(gc,&pGC);
@@ -109,7 +109,7 @@ int dll_SetFont_0( int font_size )
     pFont=0;
   }
 
-  CoCreateInstance(CFontManagerCreator_guid,IFontManager_guid,&pFontManager);
+  CoCreateInstance(&CID_CFontManager,&IID_IFontManager,&pFontManager);
   pFontManager->GetFontFactory(&pFontFactory);
   
   int font_size_without_style = font_size&0xFF;
@@ -140,7 +140,7 @@ void dll_DrawString_0( STRID strid, TUITextAlignment align, int x1, int y1, int 
   IRichText * pTextObject=0;
   IUnknown * pGC =0;
   
-  CoCreateInstance(CTextRenderingManagerCreator_guid,ITextRenderingManager_guid,&pTextRenderingManager);
+  CoCreateInstance(&CID_CTextRenderingManager,&IID_ITextRenderingManager,&pTextRenderingManager);
   pTextRenderingManager->GetTextRenderingFactory(&pTextRenderingFactory);
   pTextRenderingFactory->CreateRichText(&pTextObject);
   pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
@@ -180,7 +180,7 @@ int dll_GetImageWidth_0( wchar_t imageID )
   long image_width;
   long image_height;
   
-  CoCreateInstance(&CImageManagerCreator_guid, &IImageManager_guid, &pImageManager);
+  CoCreateInstance(&CID_CImageManager, &IID_IImageManager, &pImageManager);
   pImageManager->CreateFromIcon(imageID,&pUIImage);
   pUIImage->GetDimensions(&image_width,0,&image_height,0);
   
@@ -209,7 +209,7 @@ int dll_GetImageHeight_0( wchar_t imageID )
   }
   else
   {
-    CoCreateInstance(&CImageManagerCreator_guid, &IImageManager_guid, &pImageManager);
+    CoCreateInstance(&CID_CImageManager, &IID_IImageManager, &pImageManager);
     pImageManager->CreateFromIcon(imageID,&pUIImage);
     pUIImage->GetDimensions(&image_width,0,&image_height,0);
   }
@@ -241,7 +241,7 @@ void* dll_MetaData_Desc_Create_0( wchar_t* path, wchar_t* name )
   MetaData_Desc->genre[0]=0;
   MetaData_Desc->x6[0]=0;
   MetaData_Desc->x7[0]=0;
-  CoCreateInstance(&CMetaDataCreator_guid, &IMetaData_guid, &MetaData_Desc->pMetaData);
+  CoCreateInstance(&CID_CMetaData, &IID_IMetaData, &MetaData_Desc->pMetaData);
   MetaData_Desc->pMetaData->SetFile(path,name);
   return(MetaData_Desc);
 }
@@ -347,7 +347,7 @@ int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
   IRichTextLayout * pRichTextLayout=0;
   IRichText * pTextObject=0;
   
-  CoCreateInstance(CTextRenderingManagerCreator_guid,ITextRenderingManager_guid,&pTextRenderingManager);
+  CoCreateInstance(&CID_CTextRenderingManager,&IID_ITextRenderingManager,&pTextRenderingManager);
   pTextRenderingManager->GetTextRenderingFactory(&pTextRenderingFactory);
   pTextRenderingFactory->CreateRichText(&pTextObject);
   pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
