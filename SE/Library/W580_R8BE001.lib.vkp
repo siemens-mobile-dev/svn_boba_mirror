@@ -25,7 +25,7 @@
 048C: 00000000 BD54EC44 ; 123: void DataBrowserDesc_SetOKSoftKeyText( void* DataBrowserDesc, STRID );
 0490: 00000000 691AEC44 ; 124: void DataBrowser_Create( void* DataBrowserDesc );
 0494: 00000000 7552EC44 ; 125: void DataBrowserDesc_Destroy( void* DataBrowserDesc );
-0498: 00000000 31ABE844 ; 126: wchar_t* getFileExtention( wchar_t* fnane );
+0498: 00000000 31ABE844 ; 126: wchar_t* getFileExtention( wchar_t* fname );
 049C: 00000000 2D5EE844 ; 127: int DataBrowser_isFileInListExt( const wchar_t* ext_table, const wchar_t* path, const wchar_t* fname );
 04A0: 00000000 39B42A45 ; 128: void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
 04A4: 00000000 05B42A45 ; 129: u16 Timer_Set( int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
@@ -159,7 +159,7 @@
 06A4: 00000000 E1CE2A45 ; 1A9: void UI_Event_wData( int event, void* message, void (*free_proc)( void* ) );
 06A8: 00000000 29CF2A45 ; 1AA: void UI_Event_toBookID( int event, int BookID );
 06AC: 00000000 3DCF2A45 ; 1AB: void UI_Event_toBookIDwData( int event, int BookID, void* message, void (*free_proc)( void* ) );
-06B0: 00000000 E55B1B45 ; 1AC: int List_Find( LIST* lst, void* item, int (*cmp_proc)( void*, void* ) );
+06B0: 00000000 E55B1B45 ; 1AC: int List_Find( LIST* lst, void* itemtofind, LISTFINDCALLBACK cmp_proc );
 06B4: 00000000 E95A1B45 ; 1AD: void* List_Get( LIST* lst, int index );
 06B8: 00000000 4D7E5544 ; 1AE: wchar_t* wstrrchr( const wchar_t* wstr, wchar_t wchar );
 06BC: 00000000 39E22A45 ; 1AF: void BookObj_CallSubroutine( BOOK* book, BOOK_SUBROUTINE* subr );
@@ -699,6 +699,7 @@
 ;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 ;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
+0F20: 00000000 F1A43A45 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
 
 
 

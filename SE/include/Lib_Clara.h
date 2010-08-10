@@ -1779,4 +1779,7 @@ __swi __arm int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 #pragma swi_number=0x3C7
 __swi __arm int Theme_DestroyMenuIcons( void );
 
+#pragma swi_number=0x3C8
+__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+
 #endif

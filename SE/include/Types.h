@@ -1016,4 +1016,9 @@ typedef struct
 }PLMN_LAC_DESC;
 
 
+typedef struct
+{
+  unsigned char data[16];
+}UUID, *PUUID;
+
 #endif

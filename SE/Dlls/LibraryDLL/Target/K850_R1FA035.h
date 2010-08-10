@@ -6,7 +6,6 @@
 #define MainInput_data 0x29C8480C
 #define MainInput_CurPos_Offset 0x3
 
-void (*CoCreateInstance)(char * guid1,char * guid2,void *pInterface)=(void(*)(char * guid1,char * guid2,void *pInterface))0x116BD0BD;
 void (*DisplayGC_AddRef)(GC*,void *)=(void(*)(GC*,void *))0x1165AFC9;
 int (*Illumination_LedID_SetLevel)(int LED_ID,int level)=(int(*)(int LED_ID,int level))0x115A4949;
 int (*Illumination_LedID_Off)(int LED_ID)=(int(*)(int LED_ID))0x115A4AD9;

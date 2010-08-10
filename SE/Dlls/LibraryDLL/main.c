@@ -49,7 +49,7 @@ void dll_GC_PutChar_0( GC* gc, int x, int y, int width, int height, wchar_t imag
   rect.Size.Width=width;
   rect.Size.Height=height;
   
-  CoCreateInstance(CImageManagerCreator_guid,IImageManager_guid,&pImageManager);
+  CoCreateInstance(&CImageManagerCreator_guid, &IImageManager_guid, &pImageManager);
   pImageManager->CreateFromIcon(imageID,&pUIImage);
 
   DisplayGC_AddRef(gc,&pGC);
@@ -180,7 +180,7 @@ int dll_GetImageWidth_0( wchar_t imageID )
   long image_width;
   long image_height;
   
-  CoCreateInstance(CImageManagerCreator_guid,IImageManager_guid,&pImageManager);
+  CoCreateInstance(&CImageManagerCreator_guid, &IImageManager_guid, &pImageManager);
   pImageManager->CreateFromIcon(imageID,&pUIImage);
   pUIImage->GetDimensions(&image_width,0,&image_height,0);
   
@@ -209,7 +209,7 @@ int dll_GetImageHeight_0( wchar_t imageID )
   }
   else
   {
-    CoCreateInstance(CImageManagerCreator_guid,IImageManager_guid,&pImageManager);
+    CoCreateInstance(&CImageManagerCreator_guid, &IImageManager_guid, &pImageManager);
     pImageManager->CreateFromIcon(imageID,&pUIImage);
     pUIImage->GetDimensions(&image_width,0,&image_height,0);
   }
@@ -241,7 +241,7 @@ void* dll_MetaData_Desc_Create_0( wchar_t* path, wchar_t* name )
   MetaData_Desc->genre[0]=0;
   MetaData_Desc->x6[0]=0;
   MetaData_Desc->x7[0]=0;
-  CoCreateInstance(CMetaDataCreator_guid,IMetaData_guid,&MetaData_Desc->pMetaData);
+  CoCreateInstance(&CMetaDataCreator_guid, &IMetaData_guid, &MetaData_Desc->pMetaData);
   MetaData_Desc->pMetaData->SetFile(path,name);
   return(MetaData_Desc);
 }

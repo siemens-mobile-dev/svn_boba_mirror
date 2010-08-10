@@ -6,7 +6,6 @@
 #define MainInput_data 0x4BA25794
 #define MainInput_CurPos_Offset 0x8
 
-void (*CoCreateInstance)(char * guid1,char * guid2,void *pInterface)=(void(*)(char * guid1,char * guid2,void *pInterface))0x1415188D;
 void (*DisplayGC_AddRef)(GC*,void *)=(void(*)(GC*,void *))0x1419CA95;
 void (*TextObject_SetText)(IRichText * pTextObject,STRID strid)=(void(*)(IRichText * pTextObject,STRID strid))0x14225D4D;
 void (*TextObject_SetFont)(IRichText * pTextObject,void * pFont,const int _0x8000000A,const int _0x7FFFFFF5)=(void(*)(IRichText * pTextObject,void * pFont,const int _0x8000000A,const int _0x7FFFFFF5))0x1419D3BD;
