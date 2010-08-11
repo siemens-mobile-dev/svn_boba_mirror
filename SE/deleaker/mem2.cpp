@@ -554,13 +554,30 @@ void  __deleaker_VCALL_SetNameIcon(void* vc, wchar_t icon, char* __file__,  int 
   __original_VCALL_SetNameIcon(vc, icon);
 }
 
-int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int ), int mode, char* __file__,  int __line__)
+#ifdef __cplusplus
+int  __deleaker_ModifyKeyHook(KEYHOOKPROC proc, int mode, LPARAM lparam = NULL, char* __file__,  int __line__)
 {
-  int  ret = __original_ModifyKeyHook(proc, mode);
+  int  ret = __original_ModifyKeyHook(proc, mode, NULL);
   if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
   if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
   return ret;
 }
+int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int ), int mode, LPARAM lparam = NULL, char* __file__,  int __line__)
+{
+  int  ret = __original_ModifyKeyHook(proc, mode, NULL);
+  if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+  if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
+  return ret;
+}
+#else
+int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int, void* ), int mode, void* lparam, char* __file__,  int __line__)
+{
+  int  ret = __original_ModifyKeyHook(proc, mode, lparam);
+  if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+  if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
+  return ret;
+}
+#endif
 
 int  __deleaker_ModifyUIHook(int event, int (*PROC)( UI_MESSAGE* ), int mode, char* __file__,  int __line__)
 {
@@ -693,6 +710,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 //__swi __arm void* CallID_GetCallStatusDesc( int CallID );
 //__swi __arm wchar_t* CallStatusDesc_GetName( void* CallStatusDesc );
+//__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
 //__swi __arm void* CreateMessage( int size, int ev, char* name );
 //__swi __arm int CreateSMSCont( int, void* );
 //__swi __arm char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );

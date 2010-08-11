@@ -67,10 +67,14 @@ __swi __arm int fopen( const wchar_t* fname, int mode, int rights );
 
 #ifdef __cplusplus
 #pragma swi_number=0x107
+__swi __arm int ModifyKeyHook( KEYHOOKPROC proc, int mode, LPARAM lparam = NULL );
+
+//устаревший вариант, пока для совместимости
+#pragma swi_number=0x107
 __swi __arm int ModifyKeyHook( int (*proc)( int, int, int ), int mode, LPARAM lparam = NULL );
 #else
 #pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( int (*proc)( int, int, int ), int mode, void* lparam );
+__swi __arm int ModifyKeyHook( int (*proc)( int, int, int, void* ), int mode, void* lparam );
 #endif
 
 #pragma swi_number=0x108

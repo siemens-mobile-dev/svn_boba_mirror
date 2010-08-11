@@ -163,8 +163,13 @@ void  __deleaker_GUIonMessage_SetMenuItemIcon(GUI_MESSAGE* msg, int align, wchar
 void  __deleaker_TabMenuBar_SetTabIcon(GUI_TABMENUBAR* __unknwnargname1, int tab, wchar_t icon, int for_state, char* __file__,  int __line__);
 #define VCALL_SetNameIcon(vc, icon) __deleaker_VCALL_SetNameIcon(vc, icon, __FILE__,  __LINE__)
 void  __deleaker_VCALL_SetNameIcon(void* vc, wchar_t icon, char* __file__,  int __line__);
-#define ModifyKeyHook(proc, mode) __deleaker_ModifyKeyHook(proc, mode, __FILE__,  __LINE__)
-int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int ), int mode, char* __file__,  int __line__);
+#ifdef __cplusplus
+#define ModifyKeyHook(proc, mode, NULL) __deleaker_ModifyKeyHook(proc, mode, NULL, __FILE__,  __LINE__)
+int  __deleaker_ModifyKeyHook(KEYHOOKPROC proc, int mode, LPARAM lparam = NULL, char* __file__,  int __line__);
+int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int ), int mode, LPARAM lparam = NULL, char* __file__,  int __line__);
+#else
+int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int, void* ), int mode, void* lparam, char* __file__,  int __line__);
+#endif
 #define ModifyUIHook(event, PROC, mode) __deleaker_ModifyUIHook(event, PROC, mode, __FILE__,  __LINE__)
 int  __deleaker_ModifyUIHook(int event, int (*PROC)( UI_MESSAGE* ), int mode, char* __file__,  int __line__);
 #define ImageID_Get(fpath, fname, imageID) __deleaker_ImageID_Get(fpath, fname, imageID, __FILE__,  __LINE__)
