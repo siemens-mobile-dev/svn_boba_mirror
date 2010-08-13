@@ -64,7 +64,7 @@
 0528: 00000000 DDF9DF10 ; 14A: void StatusIndication_Item8_SetText( STRID );
 052C: 00000000 112D8810 ; 14B: void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, void (*proc)( BOOK*, GUI* ) );
 0530: 00000000 892D8810 ; 14C: void GUIObject_SoftKeys_SetText( GUI*, u16 actionID, STRID );
-0534: 00000000 AD2E8810 ; 14D: void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, BOOL ); 10882E78?
+0534: 00000000 792E8810 ; 14D: void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, BOOL );
 0538: 00000000 312E8810 ; 14E: void GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, STRID );
 053C: 00000000 C52C8810 ; 14F: void GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
 0540: 00000000 0D2E8810 ; 150: void GUIObject_SoftKeys_SetVisible( GUI*, u16 actionID, BOOL );

@@ -1770,7 +1770,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>default        None</state>
+          <state>default	None</state>
         </option>
       </data>
     </settings>
@@ -1786,6 +1786,8 @@
           <state>A2</state>
           <state>C510_R1FA035</state>
           <state>SWI_HOOK</state>
+          <state>EP_EXTICON24x24</state>
+          <state>EP_EXTICON42x32</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -4270,6 +4272,8 @@
           <state>A2</state>
           <state>C901_R1GA028</state>
           <state>SWI_HOOK</state>
+          <state>EP_EXTICON24x24</state>
+          <state>EP_EXTICON42x32</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -5096,6 +5100,8 @@
           <state>A2</state>
           <state>C905_R1FA035</state>
           <state>SWI_HOOK</state>
+          <state>EP_EXTICON24x24</state>
+          <state>EP_EXTICON42x32</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -29930,6 +29936,8 @@
           <state>A2</state>
           <state>W715_R1GA030</state>
           <state>SWI_HOOK</state>
+          <state>EP_EXTICON24x24</state>
+          <state>EP_EXTICON42x32</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -38205,6 +38213,8 @@
           <state>A2</state>
           <state>W995_R1GA026</state>
           <state>SWI_HOOK</state>
+          <state>EP_EXTICON24x24</state>
+          <state>EP_EXTICON42x32</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -39031,6 +39041,8 @@
           <state>A2</state>
           <state>W995_R1HA035</state>
           <state>SWI_HOOK</state>
+          <state>EP_EXTICON24x24</state>
+          <state>EP_EXTICON42x32</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
