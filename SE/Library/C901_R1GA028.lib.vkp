@@ -84,7 +84,7 @@
 0578: 00000000 BDE51614 ; 15E: void StrID2Str( STRID, char* str, int maxlen, int null = 0 );
 057C: 00000000 D11BA5ED ; 15F: int TextID2wstr( STRID, wchar_t* dest, int maxlen );
 0580: 00000000 D11BA5ED ; 160: int TextGetLength( STRID );
-0584: 00000000 D11BA5ED ; 161: void TextFree( STRID ); 3 параметра инт,0,0
+0584: 00000000 D11BA5ED ; 161: void TextFree( STRID );
 0588: 00000000 25004914 ; 162: int AB_DEFAULTNBR_GET( int rec_num, void* mem_0x30, int* unk );
 058C: 00000000 D11BA5ED ; 163: int AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_ID );
 0590: 00000000 E98B2715 ; 164: int AB_READPHONENBR( AB_NUM_ITEM*, int rec_num, int field_ID );
@@ -527,7 +527,7 @@
 0C64: 00000000 D9660414 ; 319: int BookObj_GetDisplayOrientation( BOOK* book );
 0C68: 00000000 81FE3914 ; 31A: void BookObj_SetDisplayOrientation( BOOK* book, int orientation );
 0C6C: 00000000 D1CBEB14 ; 31B: BOOK* Display_GetTopBook( int display );
-0C70: 00000000 E5584015 ; 31C: void Display_SetBrightness( int display, int brightness );
+0C70: 00000000 D11BA5ED ; 31C: void Display_SetBrightness( int display, int brightness );
 0C74: 00000000 E195FC14 ; 31D: int Display_GetBrightness( int display );
 0C78: 00000000 2DB0CF14 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions( void* DataBrowserDesc, int );
 0C7C: 00000000 71A82614 ; 31F: void DataBrowserDesc_Menu_AddNewFolder( void* DataBrowserDesc, int );

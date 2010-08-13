@@ -50,7 +50,7 @@
 04F4: 00000000 91071114 ; 13D: void DispObject_SetTitleText( DISP_OBJ* , STRID );
 04F8: 00000000 25BF1114 ; 13E: int ListMenu_GetSelectedItem( GUI_LIST* );
 04FC: 00000000 E96A0F14 ; 13F: void ListMenu_SetItemStyle( GUI_LIST*, int style );
-;0500: xxxxxxxx yyyyyyyy ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
+0500: 00000000 D11BA5ED ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
 0504: 00000000 0DF42B14 ;8141: IS_NEEDED_BOOK isScreenSaverBook( void );
 0508: 00000000 15F63414 ; 142: void StatusIndication_SetItemText( GUI* , int item, STRID );
 050C: 00000000 39DC4E15 ; 143: void StatusIndication_ShowNotes( STRID );
@@ -78,14 +78,14 @@
 0564: 00000000 5DB4D314 ; 159: int strcmp( const char* str1, const char* str2 );
 0568: 00000000 B9B4D314 ; 15A: int strlen( const char* str );
 056C: 00000000 51E90914 ; 15B: char* wstr2strn( char* str, const wchar_t* wstr, int maxlen );
-0570: 00000000 85643D14 ; 15C: STRID int2strID( int num );
-0574: 00000000 81832D14 ; 15D: STRID Str2ID( const void* wstr, int flag, int len );
+0570: 00000000 D11BA5ED ; 15C: STRID int2strID( int num );
+0574: 00000000 D11BA5ED ; 15D: STRID Str2ID( const void* wstr, int flag, int len );
 0578: 00000000 19F51614 ; 15E: void StrID2Str( STRID, char* str, int maxlen, int null = 0 );
-057C: 00000000 EDF71614 ; 15F: int TextID2wstr( STRID, wchar_t* dest, int maxlen );
-0580: 00000000 39041714 ; 160: int TextGetLength( STRID );
-0584: 00000000 99FB1614 ; 161: void TextFree( STRID );
+057C: 00000000 D11BA5ED ; 15F: int TextID2wstr( STRID, wchar_t* dest, int maxlen );
+0580: 00000000 D11BA5ED ; 160: int TextGetLength( STRID );
+0584: 00000000 D11BA5ED ; 161: void TextFree( STRID );
 0588: 00000000 111D4914 ; 162: int AB_DEFAULTNBR_GET( int rec_num, void* mem_0x30, int* unk );
-058C: 00000000 052FFE14 ; 163: int AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_ID );
+058C: 00000000 D11BA5ED ; 163: int AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_ID );
 0590: 00000000 69183715 ; 164: int AB_READPHONENBR( AB_NUM_ITEM*, int rec_num, int field_ID );
 0594: 00000000 C90C5114 ; 165: int AB_GETNBROFITEMS( int get_from, int unk_0 );
 0598: 00000000 25810F14 ; 166: int PNUM_len( void* pnum );
@@ -526,7 +526,7 @@
 0C64: 00000000 DD6A0414 ; 319: int BookObj_GetDisplayOrientation( BOOK* book );
 0C68: 00000000 FD143A14 ; 31A: void BookObj_SetDisplayOrientation( BOOK* book, int orientation );
 0C6C: 00000000 3D8CF714 ; 31B: BOOK* Display_GetTopBook( int display );
-0C70: 00000000 9DB75015 ; 31C: void Display_SetBrightness( int display, int brightness );
+0C70: 00000000 D11BA5ED ; 31C: void Display_SetBrightness( int display, int brightness );
 0C74: 00000000 F1600815 ; 31D: int Display_GetBrightness( int display );
 0C78: 00000000 F96ADB14 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions( void* DataBrowserDesc, int );
 0C7C: 00000000 F5BC2614 ; 31F: void DataBrowserDesc_Menu_AddNewFolder( void* DataBrowserDesc, int );
