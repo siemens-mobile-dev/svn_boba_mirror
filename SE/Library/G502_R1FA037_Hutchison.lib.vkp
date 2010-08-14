@@ -79,7 +79,7 @@
 0564: 00000000 A1425510 ; 159: int strcmp( const char* str1, const char* str2 );
 0568: 00000000 FD425510 ; 15A: int strlen( const char* str );
 056C: 00000000 ADD3FC10 ; 15B: char* wstr2strn( char* str, const wchar_t* wstr, int maxlen );
-0570: 00000000 D11BA5ED ; 15C: int int2StrID ( int num);
+0570: 00000000 D11BA5ED ; 15C: STRID int2strID( int num );
 0574: 00000000 D11BA5ED ; 15D: STRID Str2ID( const void* wstr, int flag, int len );
 0578: 00000000 D1496811 ; 15E: void StrID2Str( STRID, char* str, int maxlen, int null = 0 );
 057C: 00000000 D11BA5ED ; 15F: int TextID2wstr( STRID, wchar_t* dest, int maxlen );
@@ -262,8 +262,8 @@
 0840: 00000000 D89DA611 ;8210: void* get_APP_DESC_TABLE( void );
 0844: 00000000 75366A11 ; 211: C_INTERFACE* Window_GetComponentInterface( WINDOW* );
 0848: 00000000 7183F610 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
-084C: 00000000 8582F610 ; 213: int AB_NAME_ITEM2STRID(AB_STR_ITEM * ab_name);
-0850: 00000000 E982F610 ; 214: int AB_NUM_ITEM2STRID(AB_NUM_ITEM * ab_num_item);
+084C: 00000000 8582F610 ; 213: STRID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
+0850: 00000000 E982F610 ; 214: STRID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
 0854: 00000000 CBB8F710 ; 215: int GetABRecNum( AB_GET_STRUCT* ); //nullsub(void)
 0858: 00000000 8401A211 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( );
 085C: 00000000 254CFB10 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
@@ -404,8 +404,8 @@
 0A78: 00000000 C14D5510 ; 29E: wchar_t* wstrwstr( const wchar_t* wstr1, const wchar_t* wstr2 );
 0A7C: 00000000 F1E6FC10 ; 29F: int wstrcmpi( const wchar_t* ws1, const wchar_t* ws2 );
 0A80: 00000000 A94B5510 ; 2A0: wchar_t* wstrchr( const wchar_t* source, wchar_t chr );
-0A84: 00000000 39086C11 ; 2A1: void GUIObject_Softkeys_Hide( void *gui );
-0A88: 00000000 45086C11 ; 2A2: void GUIObject_Softkeys_Show( void *gui );
+0A84: 00000000 39086C11 ; 2A1: void GUIObject_SoftKeys_Hide( GUI* );
+0A88: 00000000 45086C11 ; 2A2: void GUIObject_SoftKeys_Show( GUI* );
 0A8C: 00000000 0DCE6B11 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
 0A90: 00000000 C13F6911 ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
 0A94: 00000000 FD5B6B11 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
@@ -499,7 +499,7 @@
 0BF4: 00000000 7D9F7E10 ; 2FD: int w_fclose( int f );
 0BF8: 00000000 C8EA0910 ; 2FE: int w_mkdir( const wchar_t* path, int mode );
 0BFC: 00000000 ADA1FD10 ; 2FF: int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
-0C00: 00000000 11076A11 ; 300: int Disp_GetSTRIDWidth( STRID , int len );
+0C00: 00000000 11076A11 ; 300: int Disp_GetStrIdWidth( STRID, int len );
 0C04: 00000000 D11BA5ED ; 301: int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
 0C08: 00000000 F562FC10 ; 302: int ImageID_GetIndirect( void* buf_image, int size, int __NULL, wchar_t* image_type, wchar_t* imageID );
 0C0C: 00000000 15091E11 ; 303: void unixtime2datetime( int, DATETIME* );
@@ -669,7 +669,7 @@
 0E9C: 00000000 21CD6411 ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 0EA0: 00000000 DDCC6411 ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 0EA4: 00000000 F9CC6411 ; 3A9: void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
-0EA8: 00000000 1DB26911 ; 3AA: void DISP_OBJ_SetTitleImage( void *disp_obj, wchar_t imageID);
+0EA8: 00000000 1DB26911 ; 3AA: void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 0EAC: 00000000 B93D6B11 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 D56A6A11 ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 0EB4: 00000000 EDC66B11 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
