@@ -4,14 +4,6 @@
 #include "conf_loader.h"
 #include "config_data.h"
 
-#define PLATFORM_DB3150_1 0xC8
-#define PLATFORM_DB3150_2 0xC9
-#define PLATFORM_DB3200_1 0xD8
-#define PLATFORM_DB3200_2 0xD9
-#define PLATFORM_DB3210_1 0xE8
-#define PLATFORM_DB3210_2 0xE9
-#define PLATFORM_DB3350 0xF0
-
 /*
 typedef struct
 {
@@ -664,11 +656,12 @@ void get_from_a2(CALLMANAGER_DATA * cms,CALLMANAGER_EVENT_DATA_A2 * CallManStruc
 //Оновное действо.... Все в куче....
 int OnCallManager(void * CallManStruct, BOOK *)
 {
-  int platform=GetChipID();
-  platform=platform&0xFF;
+  int platform=GetChipID()&CHIPID_MASK;
   CALLMANAGER_DATA cms;
-  if (platform==PLATFORM_DB3150_1||platform==PLATFORM_DB3150_2||platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2||platform==PLATFORM_DB3350) get_from_a2(&cms,(CALLMANAGER_EVENT_DATA_A2*)CallManStruct);
-  else get_from_a1(&cms,(CALLMANAGER_EVENT_DATA*)CallManStruct);
+  if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+    get_from_a2(&cms,(CALLMANAGER_EVENT_DATA_A2*)CallManStruct);
+  else
+    get_from_a1(&cms,(CALLMANAGER_EVENT_DATA*)CallManStruct);
   //Ловим всех кроме idle
   if (cms.CallState)
   {

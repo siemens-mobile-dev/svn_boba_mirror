@@ -389,15 +389,14 @@ int Skin_OnEnter(void *, BOOK * bk)
   smthchanged=true;
   GUI * skin_gui = CreateSkinGUI((MyBOOK*)bk);
   bool pl;
-  switch(GetChipID())
+  switch(GetChipID()&CHIPID_MASK)
   {
-  case 0x7100:
-  case 0x8000:
-  case 0x8040:
+  case CHIPID_DB2000:
+  case CHIPID_DB2010:
     GUI_SetStyle(skin_gui,3);
     pl=0;
     break;
-  case 0x9900:
+  case CHIPID_DB2020:
     GUI_SetStyle(skin_gui,4);
     pl=1;
     break;

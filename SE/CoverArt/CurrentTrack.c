@@ -42,14 +42,13 @@ TRACK_DESC * TrackDesc_Get(BOOK *bk)
   if (bk)
   {
     int platform=0;
-    switch (GetChipID())
+    switch (GetChipID()&CHIPID_MASK)
     {
-      case 0x7100:
-      case 0x8000:
-      case 0x8040:
+      case CHIPID_DB2000:
+      case CHIPID_DB2010:
         platform = 2010;
         break;
-      case 0x9900:
+      case CHIPID_DB2020:
         platform = 2020;
         break;
     }

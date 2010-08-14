@@ -1021,4 +1021,15 @@ typedef struct
   unsigned char data[16];
 }UUID, *PUUID;
 
+// if( GetChipID()&CHIPID_MASK == CHIPID_DB... )
+#define CHIPID_MASK 0xFE00
+#define CHIPID_DB2000 0x7000
+#define CHIPID_DB2010 0x8000
+#define CHIPID_DB2020 0x9800
+#define CHIPID_PNX5230 0xD000
+#define CHIPID_DB3150 0xC800
+#define CHIPID_DB3200 0xD800
+#define CHIPID_DB3210 0xE800
+#define CHIPID_DB3350 0xF000
+
 #endif

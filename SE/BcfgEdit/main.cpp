@@ -641,8 +641,8 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 			}
 			break;
 		case CFG_FONT:
-                        int platform=GetChipID()&0xFF;
-                        if (platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2||platform==PLATFORM_DB3350)
+                        int platform=GetChipID()&CHIPID_MASK;
+                        if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
                         {
                           int n=1;
                           int sp[5];
@@ -1092,7 +1092,6 @@ static int MainPageOnCreate( void* , BOOK* bk )
 	BCFG_DATA* bdata = &mbk->bdata;
 	int find_cfg = 1;
 	mbk->list = List_Create();
-	// mbk->Platform = GetChipID() >> 12;
 
 	textidname2id( IDN_CHANGES_HAVE_BEEN_MADE, - 1, &mbk->changes_have_been_made );
 	textidname2id( IDN_SAVE_BEFORE_EXIT, - 1, &mbk->save_before_exit );

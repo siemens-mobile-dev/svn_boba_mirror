@@ -15,15 +15,6 @@
 #define IDN_ELFS_ACT_ICON _T( "RN_TAB_BOOKMARKS_SELECTED_ICN" )
 
 
-#define PLATFORM_DB3150_1 0xC8
-#define PLATFORM_DB3150_2 0xC9
-#define PLATFORM_DB3200_1 0xD8
-#define PLATFORM_DB3200_2 0xD9
-#define PLATFORM_DB3210_1 0xE8
-#define PLATFORM_DB3210_2 0xE9
-#define PLATFORM_DB3350 0xF0
-
-
 typedef struct
 {
   wchar_t ImageID;

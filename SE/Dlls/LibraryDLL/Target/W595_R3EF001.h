@@ -22,3 +22,4 @@ STRID (*TextCopyId_int)(STRID strid,char * filename,int line_num)=(int(*)(STRID 
 int (*Request_SIM_IMSI_Read)(const int* sync,const int unk,char * imsi,char * error_cause)=(int(*)(const int* sync,const int unk,char * imsi,char * error_cause))0x1129BB25;
 int (*get_imsi_const)()=(int(*)())0x112012AD;
 int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * error_cause)=(int(*)(const int* sync,char * level,char * flag,char * error_cause))0x4BB45701;
+int (*GetChipID_int)()=(int(*)())0x12632EB5;

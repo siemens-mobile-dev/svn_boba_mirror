@@ -1214,9 +1214,9 @@ int NewKey( int key, int r1, int mode )
         mbk->ActiveTAB = 0;
         mbk->isA2 = 0;
         //End init
-        int platform=GetChipID();
-        platform=platform&0xFF;
-        if (platform==PLATFORM_DB3150_1||platform==PLATFORM_DB3150_2||platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2||platform==PLATFORM_DB3350) mbk->isA2 = 1;
+        int platform=GetChipID()&CHIPID_MASK;
+        if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+          mbk->isA2 = 1;
         BookObj_GotoPage( BookManager_Book, &BookManager_Main_Page );
         return -1;
       }

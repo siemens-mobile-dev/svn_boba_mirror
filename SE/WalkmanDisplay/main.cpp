@@ -1678,7 +1678,7 @@ int main()
     SUBPROC(elf_exit);
     return 0;
   }
-  if (GetChipID()!=0x9900)
+  if (GetChipID()&CHIPID_MASK!=CHIPID_DB2020)
   {
     MessageBox(EMPTY_SID,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(elf_exit);

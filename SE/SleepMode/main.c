@@ -4,14 +4,6 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define PLATFORM_DB3150_1 0xC8
-#define PLATFORM_DB3150_2 0xC9
-#define PLATFORM_DB3200_1 0xD8
-#define PLATFORM_DB3200_2 0xD9
-#define PLATFORM_DB3210_1 0xE8
-#define PLATFORM_DB3210_2 0xE9
-#define PLATFORM_DB3350 0xF0
-
 #define ICONS_COUNT 8
 #define color clBlack
 
@@ -267,14 +259,14 @@ BOOK * CreateSleepModeBook()
     days[i]=icon_id;
   }
   
-  int platform=GetChipID()&0xFF;
+  int platform=GetChipID()&CHIPID_MASK;
   
-  if (platform==PLATFORM_DB3150_1||platform==PLATFORM_DB3150_2)
+  if (platform==CHIPID_DB3150)
   {
     Offset1=0x1D0;
     Offset2=0x1CA;
   }
-  if (platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2)
+  if (platform==CHIPID_DB3200||platform==CHIPID_DB3210)
   {
     Offset1=0x21C;
     Offset2=0x216;

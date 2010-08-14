@@ -182,16 +182,15 @@ void onVibraNMinuteTimer(u16 timerID, LPARAM lparam)
 
 void onTimerFlash(u16 timerID, LPARAM lparam)
 {
-    switch(GetChipID())
+    switch(GetChipID()&CHIPID_MASK)
     {
-        case 0x7100:
-        case 0x8000:
-        case 0x8040:
+        case CHIPID_DB2000:
+        case CHIPID_DB2010:
         {
             SetLampLevel(lamp^=0x50);
         }
         break;
-        case 0x9900:
+        case CHIPID_DB2020:
         {
             SetLampLevel(lamp^=1);
         }

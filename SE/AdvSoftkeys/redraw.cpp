@@ -341,15 +341,14 @@ int redraw_init()
 {
   height=Display_GetHeight(0);
   width=Display_GetWidth(0);
-  switch(GetChipID())
+  switch(GetChipID()&CHIPID_MASK)
   {
-  case 0x7100:
-  case 0x8000:
-  case 0x8040:
+  case CHIPID_DB2000:
+  case CHIPID_DB2010:
     DB=2010;
     uic=false;
     break;
-  case 0x9900:
+  case CHIPID_DB2020:
     DB=2020;
     uic=true;
     break;

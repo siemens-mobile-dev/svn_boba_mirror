@@ -185,16 +185,18 @@ int main(wchar_t* filename)
 			return 0;
 		}
 		//---------------------
-		switch(GetChipID())
+		switch(GetChipID()&CHIPID_MASK)
 		{
-		case 0x7100://db2000
-		case 0x8000://db2010
-		case 0x8040://db2010
+                case CHIPID_DB2000:
+                case CHIPID_DB2010:
 			skipevents=0;
 			checkevents=1|2|4|8;//MISSED_CALL|MISSED_SMS|MISSED_EMAIL|MISSED_MMS
 			break;
-		case 0x9900://db2020
-		case 0xC9://db3150
+                case CHIPID_DB2020:
+                case CHIPID_DB3150:
+                case CHIPID_DB3200:
+                case CHIPID_DB3210:
+                case CHIPID_DB3350:
 			skipevents=1|2;//KEYLOCKED|NOSOUND
 			checkevents=4|8|0x10|0x20;//MISSED_CALL|MISSED_SMS|MISSED_EMAIL|MISSED_MMS
 		}

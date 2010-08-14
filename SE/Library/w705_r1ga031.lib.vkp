@@ -127,7 +127,7 @@
 0624: 00000000 64EB1C10 ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: 00000000 00EE1C10 ; 18B: void stop( PROCESS pid );
-0630: 00000000 74EC1C10 ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
+0630: 00000000 D11BA5ED ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
 0634: 00000000 B1561D10 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 C5561D10 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 2CEC1C10 ; 18F: PROCESS get_bid( PROCESS pid );
@@ -321,7 +321,7 @@
 092C: 00000000 39453314 ; 24B: int GetSilent( void );
 0930: 00000000 81B04014 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
 0934: 00000000 D94B3314 ; 24D: int GetAudioSettings( int what, char* retvalue );
-0938: 00000000 85767B10 ; 24E: int GetChipID( void );
+0938: 00000000 D11BA5ED ; 24E: int GetChipID( void );
 ;093C: xxxxxxxx yyyyyyyy ; 24F:
 ;0940: xxxxxxxx yyyyyyyy ; 250:
 ;0944: xxxxxxxx yyyyyyyy ; 251:

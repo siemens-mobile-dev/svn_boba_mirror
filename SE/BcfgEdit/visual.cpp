@@ -647,9 +647,11 @@ int FontSelectGuiOnCreate( DISP_OBJ_FONT_SEL* db )
 	win12512unicode( ustr, test_str, MAXELEMS( test_str ) - 1 );
 	db->test_str_id = Str2ID( ustr, 0, SID_ANY_LEN );
 
-        int platform=GetChipID()&0xFF;
-        if (platform==PLATFORM_DB3200_1||platform==PLATFORM_DB3200_2||platform==PLATFORM_DB3210_1||platform==PLATFORM_DB3210_2||platform==PLATFORM_DB3350) db->platform_flag=1;
-        else db->platform_flag=0;
+        int platform=GetChipID()&CHIPID_MASK;
+        if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+          db->platform_flag=1;
+        else
+          db->platform_flag=0;
 
         if (db->platform_flag)
         {

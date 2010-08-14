@@ -127,7 +127,7 @@
 0624: 00000000 D8E91C10 ; 189: __arm union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: 00000000 74EC1C10 ; 18B: __arm void stop( PROCESS pid );
-0630: 00000000 E8EA1C10 ; 18C: __arm OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
+0630: 00000000 D11BA5ED ; 18C: __arm OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
 0634: 00000000 25551D10 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 39551D10 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 A0EA1C10 ; 18F: __arm PROCESS get_bid( PROCESS pid );
@@ -321,7 +321,7 @@
 092C: 00000000 E9302714 ; 24B: int GetSilent( void );
 0930: 00000000 F5382714 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
 0934: 00000000 45322714 ; 24D: int GetAudioSettings( int what, char* retvalue );
-0938: 00000000 8D387710 ; 24E: int GetChipID( void );
+0938: 00000000 D11BA5ED ; 24E: int GetChipID( void );
 ;093C: xxxxxxxx yyyyyyyy ; 24F:
 ;0940: xxxxxxxx yyyyyyyy ; 250:
 ;0944: xxxxxxxx yyyyyyyy ; 251:
@@ -645,7 +645,7 @@
 0E3C: 00000000 85610910 ; 38F: void GVI_FillRectangle( GVI_GC gc, int x, int y, int w, int h, GVI_BRUSH brush );
 0E40: 00000000 1DD64B10 ; 390: void GVI_FillRectangles( GVI_GC gc, GVI_XYWH* rcs, int count, GVI_BRUSH brush );
 0E44: 00000000 41CA4B10 ; 391: void GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, int color );
-0E48: 00000000 ED0B1210 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
+0E48: 00000000 418B0210 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
 0E4C: 00000000 F9632410 ; 393: int GVI_FillSolidRoundRect( GVI_GC , int x, int y, int w, int h, int arcx, int arcy, int color );
 0E50: 00000000 71D00010 ; 394: void GVI_FillSolidTriangle( GVI_GC gc, int x1, int y1, int x2, int y2, int x3, int y3, int color );
 0E54: 00000000 99FC4D14 ; 395: GC* GC_CreateMemoryGC( int xsize, int ysize, int bpp, int unk, void* somefn, int unk2 );

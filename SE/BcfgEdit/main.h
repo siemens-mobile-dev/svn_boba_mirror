@@ -1,14 +1,6 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define PLATFORM_DB3150_1 0xC8
-#define PLATFORM_DB3150_2 0xC9
-#define PLATFORM_DB3200_1 0xD8
-#define PLATFORM_DB3200_2 0xD9
-#define PLATFORM_DB3210_1 0xE8
-#define PLATFORM_DB3210_2 0xE9
-#define PLATFORM_DB3350 0xF0
-
 #define font_step 5
 #define max_size 100
 #define bold 1

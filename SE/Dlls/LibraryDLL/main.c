@@ -553,6 +553,37 @@ int dll_get_CellData_0( PLMN_LAC_DESC * plmn_lac, RAT_CI_DESC * rat_ci, char * C
 }
 #endif
 
+#ifdef A2
+#define USE_dll_GetChipID_0
+int dll_GetChipID_0()
+{
+  return ((GetChipID_int()&0xFF) <<8);
+}
+#endif
+
+#if defined(DB3200) || defined(DB3210) || defined(DB3350)
+#define USE_dll_get_mem_0
+
+typedef struct
+{
+  PROCESS pid;
+  OSADDRESS from;
+  void* to;
+  OSADDRESS size;
+}get_mem_struct;
+
+OSBOOLEAN dll_get_mem_0( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size )
+{
+  get_mem_struct buf;
+  buf.pid=pid;
+  buf.from=from;
+  buf.to=to;
+  buf.size=size;
+  
+  return(get_mem_int(0,0,&buf));
+}
+#endif
+
 
 const LIBRARY_DLL_FUNCTIONINFO functions[]=
 {
@@ -686,6 +717,14 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     
     #ifdef USE_dll_get_CellData_0
     0x324, (void*) dll_get_CellData_0,
+    #endif
+    
+    #ifdef USE_dll_GetChipID_0
+    0x24E, (void*) dll_GetChipID_0,
+    #endif
+    
+    #ifdef USE_dll_get_mem_0
+    0x18C, (void*) dll_get_mem_0,
     #endif
     
     #ifdef USE_FONTS

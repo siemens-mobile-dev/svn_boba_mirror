@@ -191,7 +191,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
     else
       STD_ICONS[i]=NOIMAGE;
   }
-  is_db2020=(GetChipID()>>8)==0x99;
+  is_db2020=(GetChipID()&CHIPID_MASK)==CHIPID_DB2020;
   InitDrvInfo();
   WriteLog("LoadKeys");
   LoadKeys();

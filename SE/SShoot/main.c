@@ -1,9 +1,6 @@
 #include "..\\include\Lib_Clara.h"
 #include "..\\include\Dir.h"
 
-#define PLATFORM_DB2010 8
-#define PLATFORM_DB2020 9
-
 #pragma pack(1)
 typedef struct
 {
@@ -97,16 +94,16 @@ void Snap(void)
   wchar_t * fname =new wchar_t[50];
   wchar_t * fpath =new wchar_t[wstrlen(path)+20];
   DATETIME dt;
-  int platform = GetChipID()>>12;
+  int platform = GetChipID()&CHIPID_MASK;
   char * BUFF_p;
   switch (platform)
   {
-  case PLATFORM_DB2010:
+  case CHIPID_DB2010:
     {
       BUFF_p=(char*)(**(int**)get_VBUFFER());
     }
     break;
-  case PLATFORM_DB2020:
+  case CHIPID_DB2020:
     {
       SURFACE * mx =(SURFACE*)(*get_Surfaces());
       while ((mx->RefCount!=1)&&(!mx->Display)) mx=mx->next;
@@ -126,7 +123,7 @@ void Snap(void)
     x=0;
     do
     {
-      if (platform==PLATFORM_DB2020)
+      if (platform==CHIPID_DB2020)
       {
         cl=p[0]+(p[1]<<8);
       }

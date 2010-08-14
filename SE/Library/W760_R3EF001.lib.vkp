@@ -322,7 +322,7 @@
 092C: 00000000 0957A811 ; 24B: int GetSilent( void );
 0930: 00000000 D111A811 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
 0934: 00000000 0D6AA811 ; 24D: int GetAudioSettings( int what, char* retvalue );
-0938: 00000000 3D8D6D12 ; 24E: int GetChipID( void );
+0938: 00000000 D11BA5ED ; 24E: int GetChipID( void );
 ;093C: xxxxxxxx yyyyyyyy ; 24F:
 ;0940: xxxxxxxx yyyyyyyy ; 250:
 ;0944: xxxxxxxx yyyyyyyy ; 251:

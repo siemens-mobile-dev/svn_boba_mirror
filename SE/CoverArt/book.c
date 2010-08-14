@@ -304,15 +304,14 @@ BOOK * CreateCABook()
   memset(CABook,0,sizeof(BOOK));
   event1=STANDBY_IDLE_EVENT;
   event2=STANDBY_NOT_IDLE_EVENT;
-  switch (GetChipID())
+  switch (GetChipID()&CHIPID_MASK)
   {
-    case 0x7100:
-    case 0x8000:
-    case 0x8040:
+    case CHIPID_DB2000:
+    case CHIPID_DB2010:
       event1=PHONE_IN_STBY_EVENT;
       event2=PREVIOUS_IN_STBY_IDLE_EVENT;
       break;
-    case 0x9900:
+    case CHIPID_DB2020:
       event1=STANDBY_IDLE_EVENT;
       event2=STANDBY_NOT_IDLE_EVENT;
       break;

@@ -26,3 +26,5 @@ int (*Request_SIM_IMSI_Read)(const int* sync,const int unk,char * imsi,char * er
 int (*get_imsi_const)()=(int(*)())0x100E8E49;
 int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * is_error)=(int(*)(const int* sync,char * level,char * flag,char * is_error))0x10559075;
 int (*Network_INetworkConnection_GetConnectionInfo)(CONNECTION_INFO_DESC * desc)=(int(*)(CONNECTION_INFO_DESC * desc))0x1423D1E1;
+int (*GetChipID_int)()=(int(*)())0x1077388D;
+OSBOOLEAN (*get_mem_int)(int,int,void*)=(OSBOOLEAN(*)(int,int,void*))0x101CEAE8;
