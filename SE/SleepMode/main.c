@@ -4,6 +4,8 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
+void (*OldonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
+
 #define ICONS_COUNT 8
 #define color clBlack
 
@@ -74,7 +76,6 @@ int days[7];
 //int Offset2=0x1CA;
 //2020
 int Offset1=0x14C;
-int Offset2=0x146;
 int DISPLAY_WIDTH;
 
 
@@ -121,7 +122,8 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
   char weekday;
   
   char * p=(char*)dobj;
-  if ((!p[Offset1])||((p[Offset1]&&(!p[Offset2]))))
+  if ( p[Offset1] ) OldonRedraw(dobj,r1,r2,r3);
+  else
   {
     REQUEST_DATEANDTIME_GET(SYNC,&dt);
 
@@ -169,7 +171,6 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
       GC_PutChar(get_DisplayGC(),x,y3,0,0,missed[i]);
       x = x + 10 + GetImageWidth(missed[i]);
     }
-    
   }
 }
 
@@ -181,6 +182,7 @@ int onSleepModeActivate (void * ,BOOK * book)
   if (ScreenSaverBook)
   {
     DISP_OBJ * g=GUIObj_GetDISPObj(((ScrSavBook*)ScreenSaverBook)->SleepMode);
+    OldonRedraw=DISP_OBJ_GetOnRedraw(g);
     DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(g),DrawScreenSaver);
   }
   return(0);
@@ -261,16 +263,8 @@ BOOK * CreateSleepModeBook()
   
   int platform=GetChipID()&CHIPID_MASK;
   
-  if (platform==CHIPID_DB3150)
-  {
-    Offset1=0x1D0;
-    Offset2=0x1CA;
-  }
-  if (platform==CHIPID_DB3200||platform==CHIPID_DB3210)
-  {
-    Offset1=0x21C;
-    Offset2=0x216;
-  }
+  if (platform==CHIPID_DB3150) Offset1=0x1D0;
+  if (platform==CHIPID_DB3200||platform==CHIPID_DB3210) Offset1=0x21C;
   CreateBook(SM_Book,onCloseSMBook,&base_page,"SleepMode",-1,0);
   return(SM_Book);
 }
